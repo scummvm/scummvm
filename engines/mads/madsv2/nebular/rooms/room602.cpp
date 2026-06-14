@@ -34,7 +34,7 @@ Scene602::Scene602(RexNebularEngine *vm) : Scene6xx(vm) {
 	_safeMode = -1;
 }
 
-void Scene602::synchronize(Common::Serializer &s) {
+void room_602_synchronize(Common::Serializer &s) {
 	Scene6xx::synchronize(s);
 
 	s.syncAsSint16LE(_lastSpriteIdx);
@@ -51,7 +51,7 @@ void Scene602::setup() {
 	_scene->addActiveVocab(NOUN_LASER_BEAM);
 }
 
-void Scene602::enter() {
+static void room_602_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('h', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 1));
@@ -209,7 +209,7 @@ void Scene602::handleSafeActions() {
 	}
 }
 
-void Scene602::actions() {
+static void room_602_parser() {
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_HALLWAY))
 		_scene->_nextSceneId = 601;
 	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY))

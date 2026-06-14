@@ -31,7 +31,7 @@ Scene810::Scene810(RexNebularEngine *vm) : Scene8xx(vm) {
 	_moveAllowed = false;
 }
 
-void Scene810::synchronize(Common::Serializer &s) {
+void room_810_synchronize(Common::Serializer &s) {
 	Scene8xx::synchronize(s);
 
 	s.syncAsByte(_moveAllowed);
@@ -42,7 +42,7 @@ void Scene810::setup() {
 	setAAName();
 }
 
-void Scene810::enter() {
+static void room_810_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 	_game._player._visible = false;
 	_game._player._stepEnabled = false;

@@ -31,7 +31,7 @@ Scene508::Scene508(RexNebularEngine *vm) : Scene5xx(vm) {
 	_chosenObject = -1;
 }
 
-void Scene508::synchronize(Common::Serializer &s) {
+void room_508_synchronize(Common::Serializer &s) {
 	Scene5xx::synchronize(s);
 
 	s.syncAsSint16LE(_chosenObject);
@@ -45,7 +45,7 @@ void Scene508::setup() {
 	_scene->addActiveVocab(NOUN_LASER_BEAM);
 }
 
-void Scene508::enter() {
+static void room_508_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('m', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('h', 0));
@@ -104,7 +104,7 @@ void Scene508::enter() {
 	}
 }
 
-void Scene508::preActions() {
+static void room_508_pre_parser() {
 	if (_action.isAction(VERB_WALK, NOUN_OUTSIDE))
 		_game._player._walkOffScreenSceneId = 506;
 }
@@ -162,7 +162,7 @@ void Scene508::handlePedestral() {
 	}
 }
 
-void Scene508::actions() {
+static void room_508_parser() {
 	if (_action.isAction(VERB_PULL, NOUN_LEVER)) {
 		if (!_globals[kLaserOn]) {
 			switch (_game._trigger) {

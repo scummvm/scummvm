@@ -19,59 +19,62 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
-#include "mads/nebular/nebular.h"
-#include "mads/nebular/core/scene.h"
-#include "mads/nebular/nebular_scenes.h"
-#include "mads/nebular/nebular_scenes4.h"
+#include "mads/madsv2/core/config.h"
+#include "mads/madsv2/core/global.h"
+#include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/core/pal.h"
+#include "mads/madsv2/core/player.h"
+#include "mads/madsv2/nebular/rooms/section4.h"
+#include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/global.h"
 
 namespace MADS {
+namespace MADSV2 {
+namespace RexNebular {
+namespace Rooms {
 
-namespace Nebular {
-
-void Scene4xx::setAAName() {
-	_game._aaName = Resources::formatAAName(4);
+void section_4_interface() {
+	Common::strcpy_s(kernel.interface, kernel_interface_name(4));
 }
 
-void Scene4xx::setPlayerSpritesPrefix() {
-	_vm->_sound->command(5);
-	Common::String oldName = _game._player._spritesPrefix;
+void section_4_walker() {
+	g_engine->_soundManager->command(5);
+	Common::String oldName = player.series_name;
 
-	if ((_scene->_nextSceneId == 403) || (_scene->_nextSceneId == 409))
-		_game._player._spritesPrefix = "";
-	else if (_globals[kSexOfRex] == REX_FEMALE)
-		_game._player._spritesPrefix = "ROX";
+	if ((new_room == 403) || (new_room == 409))
+		*player.series_name = '\0';
+	else if (global[kSexOfRex] == REX_FEMALE)
+		Common::strcpy_s(player.series_name, "ROX");
 	else
-		_game._player._spritesPrefix = "RXM";
+		Common::strcpy_s(player.series_name, "RXM");
 
-	_game._player._scalingVelocity = true;
+	player.scaling_velocity = true;
 
-	if (oldName != _game._player._spritesPrefix)
-		_game._player._spritesChanged = true;
+	if (oldName != Common::String(player.series_name))
+		player.walker_must_reload = true;
 
-	_vm->_palette->setEntry(16, 10, 63, 63);
-	_vm->_palette->setEntry(17, 10, 45, 45);
+	pal_change_color(16, 10, 63, 63);
+	pal_change_color(17, 10, 45, 45);
 }
 
-void Scene4xx::sceneEntrySound() {
-	if (!_vm->_musicFlag) {
-		_vm->_sound->command(2);
+void section_4_music() {
+	if (!config_file.music_flag) {
+		g_engine->_soundManager->command(2);
 		return;
 	}
 
-	switch (_scene->_nextSceneId) {
+	switch (new_room) {
 	case 401:
-		_vm->_sound->startQueuedCommands();
-		if (_scene->_priorSceneId == 402)
-			_vm->_sound->command(12, 64);
+		g_engine->_soundManager->startQueuedCommands();
+		if (previous_room == 402)
+			g_engine->_soundManager->command(12, 64);
 		else
-			_vm->_sound->command(12, 1);
+			g_engine->_soundManager->command(12, 1);
 		break;
 
 	case 402:
-		_vm->_sound->startQueuedCommands();
-		_vm->_sound->command(12, 127);
+		g_engine->_soundManager->startQueuedCommands();
+		g_engine->_soundManager->command(12, 127);
 		break;
 
 	case 405:
@@ -79,11 +82,11 @@ void Scene4xx::sceneEntrySound() {
 	case 409:
 	case 410:
 	case 413:
-		_vm->_sound->command(10);
+		g_engine->_soundManager->command(10);
 		break;
 
 	case 408:
-		_vm->_sound->command(52);
+		g_engine->_soundManager->command(52);
 		break;
 
 	default:
@@ -91,5 +94,7 @@ void Scene4xx::sceneEntrySound() {
 	}
 }
 
-} // namespace Nebular
+} // namespace Rooms
+} // namespace RexNebular
+} // namespace MADSV2
 } // namespace MADS

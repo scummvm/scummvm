@@ -19,38 +19,37 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section4.h"
+#include "mads/madsv2/nebular/rooms/teleporter.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene409::setup() {
-	_game._player._spritesPrefix = "";
+static void room_409_init() {
+	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*ROXHAND");
+	teleporter_init();
 
-	// The original is calling Scene4xx::setAAName()
-	_game._aaName = Resources::formatAAName(4);
-}
-
-void Scene409::enter() {
-	_handSpriteId = _scene->_sprites.addSprites("*ROXHAND");
-	teleporterEnter();
-
-	// The original is calling Scene4xx::sceneEntrySound()
+	// The original is calling Scene4xx::section_4_music()
 	if (!_vm->_musicFlag)
 		_vm->_sound->command(2);
 	else
 		_vm->_sound->command(10);
 }
 
-void Scene409::step() {
-	teleporterStep();
+static void room_409_daemon() {
+	teleporter_daemon();
 }
 
-void Scene409::actions() {
-	if (teleporterActions()) {
+static void room_409_parser() {
+	if (teleporter_parser()) {
 		_action._inProgress = false;
 		return;
 	}
@@ -82,6 +81,20 @@ void Scene409::actions() {
 	_action._inProgress = false;
 }
 
+void room_409_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_409_preload() {
+	room_init_code_pointer = room_409_init;
+	room_parser_code_pointer = room_409_parser;
+	room_daemon_code_pointer = room_409_daemon;
+
+	*player.series_name = '\0';
+	section_4_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

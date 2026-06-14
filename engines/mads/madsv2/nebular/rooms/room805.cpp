@@ -35,7 +35,7 @@ void Scene805::setup() {
 	_scene->addActiveVocab(NOUN_SHIELD_MODULATOR);
 }
 
-void Scene805::enter() {
+static void room_805_init() {
 	_game._player._visible = false;
 	_scene->_userInterface.setup(kInputLimitedSentences);
 
@@ -101,11 +101,11 @@ void Scene805::step() {
 	}
 }
 
-void Scene805::preActions() {
+static void room_805_pre_parser() {
 	_game._player._needToWalk = false;
 }
 
-void Scene805::actions() {
+static void room_805_parser() {
 	if (_action.isAction(VERB_EXIT, NOUN_SERVICE_PANEL))
 		_scene->_nextSceneId = 804;
 	else if (_action.isAction(VERB_INSTALL, NOUN_SHIELD_MODULATOR) && _game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) {

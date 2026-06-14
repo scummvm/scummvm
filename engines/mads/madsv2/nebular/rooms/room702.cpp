@@ -32,7 +32,7 @@ void Scene702::setup() {
 	setAAName();
 }
 
-void Scene702::enter() {
+static void room_702_init() {
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites("*RXMBD_8");
 
 	if (_scene->_priorSceneId == 701) {
@@ -63,12 +63,12 @@ void Scene702::enter() {
 	sceneEntrySound();
 }
 
-void Scene702::preActions() {
+static void room_702_pre_parser() {
 	if (_action.isAction(VERB_WALKTO, NOUN_WEST_END_OF_PLATFORM))
 		_game._player._walkOffScreenSceneId = 701;
 }
 
-void Scene702::actions() {
+static void room_702_parser() {
 	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM))
 		; // Only set the action as finished
 	else if (_action.isAction(VERB_STEP_INTO, NOUN_TELEPORTER)) {

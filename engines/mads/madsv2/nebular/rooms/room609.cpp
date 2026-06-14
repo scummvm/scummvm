@@ -31,7 +31,7 @@ Scene609::Scene609(RexNebularEngine *vm) : Scene6xx(vm) {
 	_videoDoorMode = -1;
 }
 
-void Scene609::synchronize(Common::Serializer &s) {
+void room_609_synchronize(Common::Serializer &s) {
 	Scene6xx::synchronize(s);
 
 	s.syncAsSint16LE(_videoDoorMode);
@@ -42,7 +42,7 @@ void Scene609::setup() {
 	setAAName();
 }
 
-void Scene609::enter() {
+static void room_609_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('h', 0));
@@ -157,7 +157,7 @@ void Scene609::step() {
 	}
 }
 
-void Scene609::enterStore() {
+static void room_609_initStore() {
 	switch (_game._trigger) {
 	case 0:
 		_game._player._stepEnabled = false;
@@ -239,12 +239,12 @@ void Scene609::enterStore() {
 	}
 }
 
-void Scene609::preActions() {
+static void room_609_pre_parser() {
 	if (_action.isAction(VERB_UNLOCK, NOUN_DOOR_KEY, NOUN_VIDEO_STORE_DOOR))
 		_game._player.walk(Common::Point(78, 99), FACING_NORTHWEST);
 }
 
-void Scene609::actions() {
+static void room_609_parser() {
 	if (_action.isAction(VERB_WALK_TOWARDS, NOUN_ALLEY))
 		_scene->_nextSceneId = 611;
 	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_VIDEO_STORE_DOOR)) {

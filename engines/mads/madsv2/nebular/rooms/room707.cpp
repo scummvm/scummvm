@@ -33,7 +33,7 @@ void Scene707::setup() {
 	_game._aaName = Resources::formatAAName(5);
 }
 
-void Scene707::enter() {
+static void room_707_init() {
 	_handSpriteId = _scene->_sprites.addSprites("*REXHAND");
 	teleporterEnter();
 
@@ -48,7 +48,7 @@ void Scene707::step() {
 	teleporterStep();
 }
 
-void Scene707::actions() {
+static void room_707_parser() {
 	if (teleporterActions()) {
 		_action._inProgress = false;
 		return;

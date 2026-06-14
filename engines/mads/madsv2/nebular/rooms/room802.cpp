@@ -35,7 +35,7 @@ void Scene802::setup() {
 	_scene->addActiveVocab(NOUN_REMOTE);
 }
 
-void Scene802::enter() {
+static void room_802_init() {
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRC_8");
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 2));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 0));
@@ -115,7 +115,7 @@ void Scene802::step() {
 		_vm->_sound->command(13);
 }
 
-void Scene802::preActions() {
+static void room_802_pre_parser() {
 	if (_action.isAction(VERB_WALK_TOWARDS, NOUN_BUILDING_TO_WEST))
 		_game._player._walkOffScreenSceneId = 801;
 
@@ -128,7 +128,7 @@ void Scene802::preActions() {
 		_game._player._needToWalk = false;
 }
 
-void Scene802::actions() {
+static void room_802_parser() {
 	if (_action.isAction(VERB_TAKE, NOUN_SHIELD_MODULATOR) && !_game._objects.isInInventory(OBJ_SHIELD_MODULATOR)) {
 		switch (_game._trigger) {
 		case 0:

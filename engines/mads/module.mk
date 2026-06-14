@@ -130,9 +130,20 @@ MODULE_OBJS += \
 	madsv2/nebular/rooms/room390.o \
 	madsv2/nebular/rooms/room391.o \
 	madsv2/nebular/rooms/room399.o \
+	madsv2/nebular/rooms/room401.o \
+	madsv2/nebular/rooms/room402.o \
+	madsv2/nebular/rooms/room405.o \
+	madsv2/nebular/rooms/room406.o \
+	madsv2/nebular/rooms/room407.o \
+	madsv2/nebular/rooms/room408.o \
+	madsv2/nebular/rooms/room409.o \
+	madsv2/nebular/rooms/room410.o \
+	madsv2/nebular/rooms/room411.o \
+	madsv2/nebular/rooms/room413.o \
 	madsv2/nebular/rooms/section1.o \
 	madsv2/nebular/rooms/section2.o \
 	madsv2/nebular/rooms/section3.o \
+	madsv2/nebular/rooms/section4.o \
 	madsv2/nebular/rooms/conversation.o \
 	madsv2/nebular/rooms/forcefield.o \
 	madsv2/nebular/rooms/teleporter.o \

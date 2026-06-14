@@ -19,22 +19,20 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section4.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene408::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_TARGET_MODULE);
-	_scene->addActiveVocab(VERB_WALKTO);
-}
-
-void Scene408::enter() {
+static void room_408_init() {
 	_game._player._playerPos = Common::Point(137, 150);
 	_game._player._facing = FACING_NORTH;
 
@@ -47,10 +45,10 @@ void Scene408::enter() {
 		int idx = _scene->_dynamicHotspots.add(NOUN_TARGET_MODULE, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(283, 128), FACING_NORTHEAST);
 	}
-	sceneEntrySound();
+	section_4_music();
 }
 
-void Scene408::preActions() {
+static void room_408_pre_parser() {
 	if ((_action.isAction(VERB_TAKE) && !_action.isObject(NOUN_TARGET_MODULE)) || _action.isAction(VERB_PULL, NOUN_PIN) || _action.isAction(VERB_OPEN, NOUN_CARTON))
 		_game._player._needToWalk = false;
 
@@ -58,7 +56,7 @@ void Scene408::preActions() {
 		_game._player._needToWalk = true;
 }
 
-void Scene408::actions() {
+static void room_408_parser() {
 	if (_action.isAction(VERB_WALK_INTO, NOUN_CORRIDOR_TO_SOUTH)) {
 		_scene->_nextSceneId = 405;
 		_vm->_sound->command(58);
@@ -179,6 +177,22 @@ void Scene408::actions() {
 	_action._inProgress = false;
 }
 
+void room_408_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_408_preload() {
+	room_init_code_pointer = room_408_init;
+	room_pre_parser_code_pointer = room_408_pre_parser;
+	room_parser_code_pointer = room_408_parser;
+
+	section_4_walker();
+	section_4_interface();
+	_scene->addActiveVocab(NOUN_TARGET_MODULE);
+	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

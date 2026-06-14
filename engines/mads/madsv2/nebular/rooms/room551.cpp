@@ -32,7 +32,7 @@ void Scene551::setup() {
 	setAAName();
 }
 
-void Scene551::enter() {
+static void room_551_init() {
 	if (_globals[kSexOfRex] == REX_MALE)
 		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0));
 	else
@@ -128,12 +128,12 @@ void Scene551::step() {
 	}
 }
 
-void Scene551::preActions() {
+static void room_551_pre_parser() {
 	if (_action.isAction(VERB_WALK_DOWN) && (_action.isObject(NOUN_STREET_TO_WEST) || _action.isObject(NOUN_SIDEWALK_TO_WEST)))
 		_game._player._walkOffScreenSceneId = 501;
 }
 
-void Scene551::actions() {
+static void room_551_parser() {
 	if (_action.isAction(VERB_STEP_INTO, NOUN_TELEPORTER))
 		_scene->_nextSceneId = 502;
 	else if ((_action._lookFlag))

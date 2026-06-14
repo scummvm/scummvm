@@ -42,7 +42,7 @@ Scene703::Scene703(RexNebularEngine *vm) : Scene7xx(vm) {
 	_monsterTime = 0;
 }
 
-void Scene703::synchronize(Common::Serializer &s) {
+void room_703_synchronize(Common::Serializer &s) {
 	Scene7xx::synchronize(s);
 
 	s.syncAsSint16LE(_monsterMode);
@@ -143,7 +143,7 @@ void Scene703::handleFillBottle(int quote) {
 	}
 }
 
-void Scene703::enter() {
+static void room_703_init() {
 	_game._player._visible = false;
 
 	if (!_game._visitedScenes._sceneRevisited) {
@@ -501,7 +501,7 @@ void Scene703::step() {
 	}
 }
 
-void Scene703::actions() {
+static void room_703_parser() {
 	if (_game._screenObjects._inputMode == kInputConversation)
 		handleFillBottle(_action._activeAction._verbId);
 	else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_DOCK_TO_SOUTH)) {

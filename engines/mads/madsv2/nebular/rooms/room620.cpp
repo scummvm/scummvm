@@ -32,7 +32,7 @@ void Scene620::setup() {
 	setAAName();
 }
 
-void Scene620::enter() {
+static void room_620_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0));
 	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
 	_game._player._stepEnabled = false;

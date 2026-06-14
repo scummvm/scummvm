@@ -19,49 +19,46 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section4.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene407::Scene407(RexNebularEngine *vm) : Scene4xx(vm), _destPos(0, 0) {
-	_fromNorth = false;
-}
+struct Scratch {
+	bool _fromNorth;
+	int16 _dest_x;
+	int16 _dest_y;
+};
 
-void Scene407::synchronize(Common::Serializer &s) {
-	Scene4xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_fromNorth);
-	s.syncAsSint16LE(_destPos.x);
-	s.syncAsSint16LE(_destPos.y);
-}
 
-void Scene407::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene407::enter() {
+static void room_407_init() {
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_fromNorth = false;
+		local._fromNorth = false;
 
 	if (_scene->_priorSceneId == 318) {
 		_game._player._playerPos = Common::Point(172, 92);
 		_game._player._facing = FACING_SOUTH;
-		_fromNorth = true;
+		local._fromNorth = true;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(172, 132);
 		_game._player._facing = FACING_NORTH;
 	}
 
 	_game.loadQuoteSet(0x250, 0);
-	sceneEntrySound();
+	section_4_music();
 }
 
-void Scene407::step() {
+static void room_407_daemon() {
 	if (_game._trigger == 70) {
 		_scene->_nextSceneId = 318;
 		_scene->_reloadSceneFlag = true;
@@ -71,12 +68,12 @@ void Scene407::step() {
 		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
 		_game._player._stepEnabled = true;
 		_game._player._visible = true;
-		_fromNorth = false;
+		local._fromNorth = false;
 		_game._player.walk(Common::Point(173, 104), FACING_SOUTH);
 	}
 }
 
-void Scene407::preActions() {
+static void room_407_pre_parser() {
 	if (_action.isAction(VERB_TAKE))
 		_game._player._needToWalk = false;
 
@@ -85,21 +82,23 @@ void Scene407::preActions() {
 
 	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_NORTH)) {
 		_game._player.walk(Common::Point(172, 91), FACING_NORTH);
-		_fromNorth = false;
+		local._fromNorth = false;
 	}
 
-	if (_game._player._needToWalk && _fromNorth) {
-		if (_globals[kSexOfRex] == REX_MALE)
-			_destPos = Common::Point(171, 95);
-		else
-			_destPos = Common::Point(173, 96);
-
-		_game._player.walk(_destPos, FACING_SOUTH);
+	if (_game._player._needToWalk && local._fromNorth) {
+		if (_globals[kSexOfRex] == REX_MALE) {
+			local._dest_x = 171;
+			local._dest_y = 95;
+		} else {
+			local._dest_x = 173;
+			local._dest_y = 96;
+		}
+		_game._player.walk(Common::Point(local._dest_x, local._dest_y), FACING_SOUTH);
 	}
 }
 
-void Scene407::actions() {
-	if ((_game._player._playerPos == _destPos) && _fromNorth) {
+static void room_407_parser() {
+	if (_game._player._playerPos.x == local._dest_x && _game._player._playerPos.y == local._dest_y && local._fromNorth) {
 		if (_globals[kSexOfRex] == REX_MALE) {
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 			_game._player._stepEnabled = false;
@@ -122,7 +121,7 @@ void Scene407::actions() {
 		}
 	}
 
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) && !_fromNorth)
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) && !local._fromNorth)
 		_scene->_nextSceneId = 406;
 	else if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_NORTH))
 		_scene->_nextSceneId = 318;
@@ -145,6 +144,23 @@ void Scene407::actions() {
 	_action._inProgress = false;
 }
 
+void room_407_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._fromNorth);
+	s.syncAsSint16LE(local._dest_x);
+	s.syncAsSint16LE(local._dest_y);
+}
+
+void room_407_preload() {
+	room_init_code_pointer = room_407_init;
+	room_pre_parser_code_pointer = room_407_pre_parser;
+	room_parser_code_pointer = room_407_parser;
+	room_daemon_code_pointer = room_407_daemon;
+
+	section_4_walker();
+	section_4_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

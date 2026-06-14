@@ -19,30 +19,27 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section4.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene406::Scene406(RexNebularEngine *vm) : Scene4xx(vm) {
-	_hitStorageDoor = false;
-}
+struct Scratch {
+	bool _hitStorageDoor;
+};
 
-void Scene406::synchronize(Common::Serializer &s) {
-	Scene4xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_hitStorageDoor);
-}
 
-void Scene406::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene406::enter() {
+static void room_406_init() {
 	_game._player._visible = true;
 	if (_scene->_priorSceneId == 405) {
 		_game._player._playerPos = Common::Point(15, 129);
@@ -84,11 +81,11 @@ void Scene406::enter() {
 	}
 
 	_game.loadQuoteSet(0x24F, 0);
-	_hitStorageDoor = false;
-	sceneEntrySound();
+	local._hitStorageDoor = false;
+	section_4_music();
 }
 
-void Scene406::step() {
+static void room_406_daemon() {
 	if (_game._trigger == 90) {
 		_game._player._stepEnabled = true;
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
@@ -99,7 +96,7 @@ void Scene406::step() {
 
 	if (_game._trigger == 100) {
 		_vm->_dialogs->show(40622);
-		_hitStorageDoor = true;
+		local._hitStorageDoor = true;
 	}
 
 	if (_game._trigger == 110) {
@@ -138,7 +135,7 @@ void Scene406::step() {
 	}
 }
 
-void Scene406::preActions() {
+static void room_406_pre_parser() {
 	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_WEST))
 		_game._player._walkOffScreenSceneId = 405;
 
@@ -152,7 +149,7 @@ void Scene406::preActions() {
 		_game._player._needToWalk = true;
 }
 
-void Scene406::actions() {
+static void room_406_parser() {
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR) && (_game._player._targetPos.x > 100)) {
 		_game._player._stepEnabled = false;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
@@ -164,7 +161,7 @@ void Scene406::actions() {
 		_scene->_nextSceneId = 410;
 	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR) && !_globals[kStorageDoorOpen] && (_game._player._targetPos.x < 100)) {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(0x24F));
-		if (!_hitStorageDoor) {
+		if (!local._hitStorageDoor) {
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 			_scene->_sequences.addTimer(80, 100);
 		}
@@ -240,6 +237,21 @@ void Scene406::actions() {
 	_action._inProgress = false;
 }
 
+void room_406_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._hitStorageDoor);
+}
+
+void room_406_preload() {
+	room_init_code_pointer = room_406_init;
+	room_pre_parser_code_pointer = room_406_pre_parser;
+	room_parser_code_pointer = room_406_parser;
+	room_daemon_code_pointer = room_406_parser;
+
+	section_4_walker();
+	section_4_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

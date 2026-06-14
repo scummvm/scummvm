@@ -34,7 +34,7 @@ void Scene601::setup() {
 	_scene->addActiveVocab(VERB_LOOK_AT);
 }
 
-void Scene601::enter() {
+static void room_601_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXCD_4");
@@ -90,7 +90,7 @@ void Scene601::step() {
 	}
 }
 
-void Scene601::actions() {
+static void room_601_parser() {
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_ENTRANCE))
 		_scene->_nextSceneId = 602;
 	else if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {

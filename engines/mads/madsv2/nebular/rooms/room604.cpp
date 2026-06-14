@@ -38,7 +38,7 @@ Scene604::Scene604(RexNebularEngine *vm) : Scene6xx(vm) {
 	_animationActiveFl = false;
 }
 
-void Scene604::synchronize(Common::Serializer &s) {
+void room_604_synchronize(Common::Serializer &s) {
 	Scene6xx::synchronize(s);
 
 	s.syncAsSint16LE(_timebombHotspotId);
@@ -59,7 +59,7 @@ void Scene604::setup() {
 	_scene->addActiveVocab(NOUN_TIMEBOMB);
 }
 
-void Scene604::enter() {
+static void room_604_init() {
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 0));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_9");
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(Resources::formatName(620, 'b', 0, EXT_SS, ""));
@@ -231,7 +231,7 @@ void Scene604::handleBombActions() {
 	}
 }
 
-void Scene604::actions() {
+static void room_604_parser() {
 	if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {
 		switch (_game._trigger) {
 		case 0:

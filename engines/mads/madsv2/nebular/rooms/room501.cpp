@@ -35,7 +35,7 @@ Scene501::Scene501(RexNebularEngine *vm) : Scene5xx(vm) {
 	_rexPunched = false;
 }
 
-void Scene501::synchronize(Common::Serializer &s) {
+void room_501_synchronize(Common::Serializer &s) {
 	Scene5xx::synchronize(s);
 
 	s.syncAsSint16LE(_mainSequenceId);
@@ -95,7 +95,7 @@ void Scene501::handleSlotActions() {
 	}
 }
 
-void Scene501::enter() {
+static void room_501_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 0));
@@ -225,12 +225,12 @@ void Scene501::step() {
 	}
 }
 
-void Scene501::preActions() {
+static void room_501_pre_parser() {
 	if (_action.isAction(VERB_WALK_DOWN) && (_action.isObject(NOUN_STREET_TO_EAST) || _action.isObject(NOUN_SIDEWALK_TO_EAST)))
 		_game._player._walkOffScreenSceneId = 551;
 }
 
-void Scene501::actions() {
+static void room_501_parser() {
 	if (_action.isAction(VERB_GET_INTO, NOUN_CAR)) {
 		switch (_game._trigger) {
 		case 0:

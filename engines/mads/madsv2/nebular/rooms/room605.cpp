@@ -32,7 +32,7 @@ void Scene605::setup() {
 	setAAName();
 }
 
-void Scene605::enter() {
+static void room_605_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('r', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', -1));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('l', -1));
@@ -67,7 +67,7 @@ void Scene605::step() {
 	}
 }
 
-void Scene605::actions() {
+static void room_605_parser() {
 	return;
 }
 

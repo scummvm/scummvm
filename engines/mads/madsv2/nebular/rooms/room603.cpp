@@ -32,7 +32,7 @@ Scene603::Scene603(RexNebularEngine *vm) : Scene6xx(vm) {
 	_noteHotspotId = -1;
 }
 
-void Scene603::synchronize(Common::Serializer &s) {
+void room_603_synchronize(Common::Serializer &s) {
 	Scene6xx::synchronize(s);
 
 	s.syncAsSint16LE(_compactCaseHotspotId);
@@ -47,7 +47,7 @@ void Scene603::setup() {
 	_scene->addActiveVocab(NOUN_NOTE);
 }
 
-void Scene603::enter() {
+static void room_603_init() {
 	if (_game._objects[OBJ_COMPACT_CASE]._roomNumber == _scene->_currentSceneId) {
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXMRD_3");
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
@@ -72,7 +72,7 @@ void Scene603::enter() {
 	sceneEntrySound();
 }
 
-void Scene603::actions() {
+static void room_603_parser() {
 	if (_action.isAction(VERB_WALK_TOWARDS, NOUN_LIVINGROOM))
 		_scene->_nextSceneId = 602;
 	else if (_action.isAction(VERB_TAKE, NOUN_COMPACT_CASE)) {

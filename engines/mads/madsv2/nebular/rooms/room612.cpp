@@ -32,7 +32,7 @@ Scene612::Scene612(RexNebularEngine *vm) : Scene6xx(vm) {
 	_cycleIndex = -1;
 }
 
-void Scene612::synchronize(Common::Serializer &s) {
+void room_612_synchronize(Common::Serializer &s) {
 	Scene6xx::synchronize(s);
 
 	s.syncAsSint16LE(_actionMode);
@@ -100,7 +100,7 @@ void Scene612::handleWinchMovement() {
 	}
 }
 
-void Scene612::enter() {
+static void room_612_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('p', -1));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXCD_3");
@@ -166,7 +166,7 @@ void Scene612::step() {
 	}
 }
 
-void Scene612::actions() {
+static void room_612_parser() {
 	if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {
 		switch (_game._trigger) {
 		case 0:

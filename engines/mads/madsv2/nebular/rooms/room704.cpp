@@ -36,7 +36,7 @@ Scene704::Scene704(RexNebularEngine *vm) : Scene7xx(vm) {
 	_takeBottleFl = false;
 }
 
-void Scene704::synchronize(Common::Serializer &s) {
+void room_704_synchronize(Common::Serializer &s) {
 	Scene7xx::synchronize(s);
 
 	s.syncAsSint16LE(_bottleHotspotId);
@@ -133,7 +133,7 @@ void Scene704::handleFillBottle(int quote) {
 	}
 }
 
-void Scene704::enter() {
+static void room_704_init() {
 	if (_game._objects[OBJ_BOTTLE]._roomNumber == _scene->_currentSceneId) {
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0));
 		_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
@@ -329,7 +329,7 @@ void Scene704::step() {
 	}
 }
 
-void Scene704::actions() {
+static void room_704_parser() {
 	if (_game._screenObjects._inputMode == kInputConversation)
 		handleFillBottle(_action._activeAction._verbId);
 	else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_OPEN_WATER_TO_SOUTH)) {

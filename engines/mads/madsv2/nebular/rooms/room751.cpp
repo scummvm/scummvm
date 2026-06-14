@@ -31,7 +31,7 @@ Scene751::Scene751(RexNebularEngine *vm) : Scene7xx(vm) {
 	_rexHandingLine = false;
 }
 
-void Scene751::synchronize(Common::Serializer &s) {
+void room_751_synchronize(Common::Serializer &s) {
 	Scene7xx::synchronize(s);
 
 	s.syncAsByte(_rexHandingLine);
@@ -44,7 +44,7 @@ void Scene751::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
-void Scene751::enter() {
+static void room_751_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RM701X0");
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('f', 0));
@@ -168,7 +168,7 @@ void Scene751::step() {
 	}
 }
 
-void Scene751::preActions() {
+static void room_751_pre_parser() {
 	if (_action.isAction(VERB_LOOK, NOUN_TALL_BUILDING))
 		_game._player.walk(Common::Point(154, 129), FACING_NORTHEAST);
 
@@ -210,7 +210,7 @@ void Scene751::preActions() {
 	}
 }
 
-void Scene751::actions() {
+static void room_751_parser() {
 	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM))
 		; // Nothing
 	else if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_TALL_BUILDING)) {

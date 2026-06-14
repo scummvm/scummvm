@@ -32,7 +32,7 @@ Scene504::Scene504(RexNebularEngine *vm) : Scene5xx(vm) {
 	_carFrame = -1;
 }
 
-void Scene504::synchronize(Common::Serializer &s) {
+void room_504_synchronize(Common::Serializer &s) {
 	Scene5xx::synchronize(s);
 
 	s.syncAsSint16LE(_carAnimationMode);
@@ -44,7 +44,7 @@ void Scene504::setup() {
 	setAAName();
 }
 
-void Scene504::enter() {
+static void room_504_init() {
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 2));
 
 	for (int i = 0; i < 4; i++)
@@ -140,11 +140,11 @@ void Scene504::step() {
 	}
 }
 
-void Scene504::preActions() {
+static void room_504_pre_parser() {
 	_game._player._needToWalk = false;
 }
 
-void Scene504::actions() {
+static void room_504_parser() {
 	if (_action.isAction(VERB_EXIT_FROM, NOUN_CAR)) {
 		_vm->_sound->command(15);
 		_scene->_nextSceneId = _globals[kHoverCarLocation];

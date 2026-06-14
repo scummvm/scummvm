@@ -27,6 +27,7 @@
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/mcga.h"
+#include "mads/madsv2/core/object.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/sprite.h"
 #include "mads/madsv2/core/text.h"
@@ -153,6 +154,15 @@ struct Scene {
 	}
 
 	struct Animation {
+		int16 _id;
+		int &_currentFrame;
+
+		// TODO: Not sure what to map this to
+		bool _resetFlag = false;
+		int16 _spriteListIndexes[16] = {};
+
+		Animation(int anim_id);
+
 		Animation *operator->() {
 			return this;
 		}
@@ -160,7 +170,6 @@ struct Scene {
 			return this;
 		}
 
-		int16 _id = -1;
 		bool operator!() const {
 			return _id == -1;
 		}
@@ -175,16 +184,18 @@ struct Scene {
 		}
 		Animation &operator=(std::nullptr_t);
 
-		// TODO: Not sure what to map this to
-		bool _resetFlag;
-		int16 _spriteListIndexes[16];
 
 		int getCurrentFrame() const;
 		void setNextFrameTimer(long time);
 		void setCurrentFrame(int frameNum);
 		void resetSpriteSetsCount();
 	};
-	Animation _animation[10];
+	struct Animations {
+		Animation operator[](int anim_id) {
+			return Animation(anim_id);
+		}
+	};
+	Animations _animation;
 
 	struct CustomDest {
 		int &x = inter_point_x;
@@ -379,9 +390,12 @@ struct Game {
 	}
 
 	struct Object {
+		int _object_id;
 		int16 &_roomNumber;
 
 		Object(int objectNum);
+		int getQuality(int quality_id);
+		void setQuality(int quality_id, long quality_value);
 	};
 
 	struct Objects {
@@ -449,6 +463,25 @@ struct Game {
 		};
 		PlayerPrepare _prepareWalkPos;
 
+		struct TargetPos {
+			int &x = player.target_x;
+			int &y = player.target_y;
+
+			TargetPos &operator=(const Common::Point &pt) {
+				x = pt.x;
+				y = pt.y;
+				return *this;
+			}
+			operator Common::Point() {
+				return Common::Point(x, y);
+			}
+
+			bool operator==(const Common::Point &rhs) const {
+				return x == rhs.x && y == rhs.y;
+			}
+		};
+		TargetPos _targetPos;
+
 		int &_facing = player.facing;
 		int &_prepareFacing = player.prepare_walk_facing;
 		bool &_visible = player.walker_visible;
@@ -476,6 +509,7 @@ struct Game {
 		void cancelCommand();
 		void update();
 		void removePlayerSprites();
+		void selectSeries();
 	};
 	Player _player;
 

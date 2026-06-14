@@ -59,7 +59,7 @@ Scene608::Scene608(RexNebularEngine *vm) : Scene6xx(vm) {
 	_dogTimer2 = 0;
 }
 
-void Scene608::synchronize(Common::Serializer &s) {
+void room_608_synchronize(Common::Serializer &s) {
 	Scene6xx::synchronize(s);
 
 	s.syncAsSint16LE(_carMode);
@@ -207,7 +207,7 @@ void Scene608::handleThrowingBone() {
 	}
 }
 
-void Scene608::enter() {
+static void room_608_init() {
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRD_7");
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXMRC_9");
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('c', 2));
@@ -717,7 +717,7 @@ void Scene608::step() {
 	}
 }
 
-void Scene608::preActions() {
+static void room_608_pre_parser() {
 	_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 
 	if ((_action.isAction(VERB_THROW, NOUN_BONE, NOUN_REAR_OF_GARAGE) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_REAR_OF_GARAGE)
@@ -740,7 +740,7 @@ void Scene608::preActions() {
 		_buttonPressedonTimeFl = false;
 }
 
-void Scene608::actions() {
+static void room_608_parser() {
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY))
 		_scene->_nextSceneId = 607;
 	else if (_action.isAction(VERB_PUSH, NOUN_DOWN_BUTTON)) {

@@ -40,7 +40,7 @@ Scene506::Scene506(RexNebularEngine *vm) : Scene5xx(vm), _doorPos(0, 0) {
 	_actionFl = false;
 }
 
-void Scene506::synchronize(Common::Serializer &s) {
+void room_506_synchronize(Common::Serializer &s) {
 	Scene5xx::synchronize(s);
 
 	s.syncAsSint16LE(_doorPos.x);
@@ -66,7 +66,7 @@ void Scene506::setup() {
 	_scene->addActiveVocab(NOUN_LABORATORY);
 }
 
-void Scene506::enter() {
+static void room_506_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('q', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('q', 1));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('c', -1));
@@ -237,7 +237,7 @@ void Scene506::handleDoorSequences() {
 	}
 }
 
-void Scene506::actions() {
+static void room_506_parser() {
 	if (_action.isAction(VERB_WALK_INTO, NOUN_LABORATORY)) {
 		if (_firstDoorFl) {
 			_heroFacing = FACING_NORTHWEST;

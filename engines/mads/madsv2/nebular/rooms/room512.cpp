@@ -32,7 +32,7 @@ Scene512::Scene512(RexNebularEngine *vm) : Scene5xx(vm) {
 	_keyHotspotId = -1;
 }
 
-void Scene512::synchronize(Common::Serializer &s) {
+void room_512_synchronize(Common::Serializer &s) {
 	Scene5xx::synchronize(s);
 
 	s.syncAsSint16LE(_fishingRodHotspotId);
@@ -48,7 +48,7 @@ void Scene512::setup() {
 	_scene->addActiveVocab(NOUN_REGISTER_DRAWER);
 }
 
-void Scene512::enter() {
+static void room_512_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('r', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRC_9");
 	_globals._spriteIndexes[8] = _scene->_sprites.addSprites("*RXMRC_8");
@@ -100,7 +100,7 @@ void Scene512::enter() {
 	sceneEntrySound();
 }
 
-void Scene512::actions() {
+static void room_512_parser() {
 	if (_action.isAction(VERB_WALK, NOUN_OUTSIDE))
 		_scene->_nextSceneId = 511;
 	else if (_action.isAction(VERB_TAKE, NOUN_FISHING_ROD)) {

@@ -32,7 +32,7 @@ void Scene515::setup() {
 	setAAName();
 }
 
-void Scene515::enter() {
+static void room_515_init() {
 	_game._player._visible = false;
 	_game._player._stepEnabled = false;
 	_scene->_sequences.addTimer(30, 70);

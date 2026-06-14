@@ -46,7 +46,7 @@ void Scene711::setup() {
 	_game._player._spritesPrefix = "";
 }
 
-void Scene711::enter() {
+static void room_711_init() {
 	if (_globals[kSexOfRex] == REX_FEMALE)
 		_handSpriteId = _scene->_sprites.addSprites("*ROXHAND");
 	else
@@ -65,7 +65,7 @@ void Scene711::step() {
 	teleporterStep();
 }
 
-void Scene711::actions() {
+static void room_711_parser() {
 	if (teleporterActions())
 		_action._inProgress = false;
 }

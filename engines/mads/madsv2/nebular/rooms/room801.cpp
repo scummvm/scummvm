@@ -31,7 +31,7 @@ Scene801::Scene801(RexNebularEngine *vm) : Scene8xx(vm) {
 	_walkThroughDoor = false;
 }
 
-void Scene801::synchronize(Common::Serializer &s) {
+void room_801_synchronize(Common::Serializer &s) {
 	Scene8xx::synchronize(s);
 
 	s.syncAsByte(_walkThroughDoor);
@@ -42,7 +42,7 @@ void Scene801::setup() {
 	setAAName();
 }
 
-void Scene801::enter() {
+static void room_801_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 2));
@@ -201,7 +201,7 @@ void Scene801::step() {
 	}
 }
 
-void Scene801::preActions() {
+static void room_801_pre_parser() {
 	if (_action.isAction(VERB_LOOK, NOUN_CONTROL_PANEL)) {
 		_game._player.walk(Common::Point(148, 110), FACING_NORTH);
 		_game._player._needToWalk = true;
@@ -218,7 +218,7 @@ void Scene801::preActions() {
 	}
 }
 
-void Scene801::actions() {
+static void room_801_parser() {
 	if (_action.isAction(VERB_LOOK, NOUN_CONTROL_PANEL))
 		_scene->_nextSceneId = 808;
 	else if (_action.isAction(VERB_WALK_INSIDE, NOUN_TELEPORTER)) {

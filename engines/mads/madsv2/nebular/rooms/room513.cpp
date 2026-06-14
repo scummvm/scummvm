@@ -34,7 +34,7 @@ void Scene513::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
-void Scene513::enter() {
+static void room_513_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXCD_9");
@@ -128,7 +128,7 @@ void Scene513::step() {
 	}
 }
 
-void Scene513::actions() {
+static void room_513_parser() {
 	if (_action.isAction(VERB_GET_INTO, NOUN_CAR)) {
 		switch (_game._trigger) {
 		case 0:

@@ -31,7 +31,7 @@ Scene808::Scene808(RexNebularEngine *vm) : Scene8xx(vm) {
 	_goingTo803 = false;
 }
 
-void Scene808::synchronize(Common::Serializer &s) {
+void room_808_synchronize(Common::Serializer &s) {
 	Scene8xx::synchronize(s);
 
 	s.syncAsByte(_goingTo803);
@@ -42,7 +42,7 @@ void Scene808::setup() {
 	setAAName();
 }
 
-void Scene808::enter() {
+static void room_808_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*REXHAND");
@@ -83,7 +83,7 @@ void Scene808::enter() {
 	sceneEntrySound();
 }
 
-void Scene808::actions() {
+static void room_808_parser() {
 	if (_action.isAction(VERB_PRESS, NOUN_START_BUTTON_2)) {
 		switch (_game._trigger) {
 		case 0:

@@ -19,34 +19,30 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section4.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene413::Scene413(RexNebularEngine *vm) : Scene4xx(vm) {
-	_rexDeath = -1;
-	_canMove = -1;
-}
+struct Scratch {
+	int32 _rexDeath = -1;
+	int32 _canMove = -1;
+};
 
-void Scene413::synchronize(Common::Serializer &s) {
-	Scene4xx::synchronize(s);
+static Scratch  local;
 
-	s.syncAsSint32LE(_rexDeath);
-	s.syncAsSint32LE(_canMove);
-}
 
-void Scene413::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene413::enter() {
+static void room_413_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 2));
-	_rexDeath = false;
+	local._rexDeath = false;
 
 	if (_scene->_priorSceneId == 405) {
 		_game._player._playerPos = Common::Point(142, 146);
@@ -58,7 +54,7 @@ void Scene413::enter() {
 			_vm->_sound->command(30);
 			_game._player._visible = false;
 			_game._player._stepEnabled = false;
-			_rexDeath = true;
+			local._rexDeath = true;
 		} else if (!_globals[kTeleporterCommand]) {
 			_game._player._playerPos = Common::Point(136, 117);
 			_game._player.walk(Common::Point(141, 130), FACING_SOUTH);
@@ -67,7 +63,7 @@ void Scene413::enter() {
 		}
 	}
 
-	if ((_globals[kTeleporterCommand]) && (!_rexDeath)) {
+	if ((_globals[kTeleporterCommand]) && (!local._rexDeath)) {
 		switch (_globals[kTeleporterCommand]) {
 		case 1:
 			_vm->_sound->command(30);
@@ -102,17 +98,17 @@ void Scene413::enter() {
 		_globals[kTeleporterCommand] = 0;
 	}
 
-	_canMove = true;
-	sceneEntrySound();
+	local._canMove = true;
+	section_4_music();
 }
 
-void Scene413::step() {
+static void room_413_daemon() {
 	if (_scene->_animation[0] && _scene->_animation[0]->getCurrentFrame() == 38)
 		_scene->_animation[0]->setCurrentFrame(37);
 
-	if (_scene->_animation[0] && _scene->_animation[0]->getCurrentFrame() == 21 && _canMove) {
+	if (_scene->_animation[0] && _scene->_animation[0]->getCurrentFrame() == 21 && local._canMove) {
 		_vm->_sound->command(27);
-		_canMove = false;
+		local._canMove = false;
 	}
 
 	if (_game._trigger == 76) {
@@ -137,7 +133,7 @@ void Scene413::step() {
 	}
 }
 
-void Scene413::preActions() {
+static void room_413_pre_parser() {
 	if (_action.isAction(VERB_TAKE) || _action.isAction(VERB_PUT, NOUN_CONVEYOR_BELT))
 		_game._player._needToWalk = false;
 
@@ -147,7 +143,7 @@ void Scene413::preActions() {
 	}
 }
 
-void Scene413::actions() {
+static void room_413_parser() {
 	if (_action.isAction(VERB_WALK_INSIDE, NOUN_TELEPORTER)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
@@ -182,6 +178,22 @@ void Scene413::actions() {
 	_action._inProgress = false;
 }
 
+void room_413_synchronize(Common::Serializer &s) {
+	s.syncAsSint32LE(local._rexDeath);
+	s.syncAsSint32LE(local._canMove);
+}
+
+void room_413_preload() {
+	room_init_code_pointer = room_413_init;
+	room_pre_parser_code_pointer = room_413_pre_parser;
+	room_parser_code_pointer = room_413_parser;
+	room_daemon_code_pointer = room_413_daemon;
+
+	section_4_walker();
+	section_4_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

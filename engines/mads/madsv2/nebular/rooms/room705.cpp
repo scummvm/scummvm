@@ -32,7 +32,7 @@ void Scene705::setup() {
 	setAAName();
 }
 
-void Scene705::synchronize(Common::Serializer &s) {
+void room_705_synchronize(Common::Serializer &s) {
 	Scene7xx::synchronize(s);
 }
 
@@ -114,7 +114,7 @@ void Scene705::handleFillBottle(int quote) {
 	}
 }
 
-void Scene705::enter() {
+static void room_705_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 1));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 0));
@@ -222,7 +222,7 @@ void Scene705::step() {
 	}
 }
 
-void Scene705::actions() {
+static void room_705_parser() {
 	if (_game._screenObjects._inputMode == kInputConversation)
 		handleFillBottle(_action._activeAction._verbId);
 	else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_OPEN_WATER_TO_SOUTH)) {

@@ -19,38 +19,35 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section4.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene401::Scene401(RexNebularEngine *vm) : Scene4xx(vm), _destPos(0, 0) {
-	_northFl = false;
-	_timer = 0;
-}
+struct Scratch {
+	bool _northFl;
+	int16 _dest_x;
+	int16 _dest_y;
+	int32 _timer;
+};
 
-void Scene401::synchronize(Common::Serializer &s) {
-	Scene4xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_northFl);
-	s.syncAsSint16LE(_destPos.x);
-	s.syncAsSint16LE(_destPos.y);
-	s.syncAsUint32LE(_timer);
-}
 
-void Scene401::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene401::enter() {
+static void room_401_init() {
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_northFl = false;
+		local._northFl = false;
 
-	_timer = 0;
+	local._timer = 0;
 
 	if (_scene->_priorSceneId == 402) {
 		_game._player._playerPos = Common::Point(203, 115);
@@ -58,17 +55,17 @@ void Scene401::enter() {
 	} else if (_scene->_priorSceneId == 354) {
 		_game._player._playerPos = Common::Point(149, 90);
 		_game._player._facing = FACING_SOUTH;
-		_northFl = true;
+		local._northFl = true;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(142, 131);
 		_game._player._facing = FACING_NORTH;
 	}
 
 	_game.loadQuoteSet(0x1D4, 0);
-	sceneEntrySound();
+	section_4_music();
 }
 
-void Scene401::step() {
+static void room_401_daemon() {
 	if (_game._trigger == 70) {
 		_scene->_nextSceneId = 354;
 		_scene->_reloadSceneFlag = true;
@@ -78,11 +75,11 @@ void Scene401::step() {
 		_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
 		_game._player._stepEnabled = true;
 		_game._player._visible = true;
-		_northFl = false;
+		local._northFl = false;
 		_game._player.walk(Common::Point(149, 110), FACING_SOUTH);
 	}
 
-	if (_scene->_frameStartTime >= _timer) {
+	if (_scene->_frameStartTime >= local._timer) {
 		int dist = 64 - ((Math::hypotenuse(_game._player._playerPos.x - 219, _game._player._playerPos.y - 115) * 64) / 120);
 
 		if (dist > 64)
@@ -91,35 +88,38 @@ void Scene401::step() {
 			dist = 1;
 
 		_vm->_sound->command(12, dist);
-		_timer = _scene->_frameStartTime + _game._player._ticksAmount;
+		local._timer = _scene->_frameStartTime + _game._player._ticksAmount;
 	}
 
 }
 
-void Scene401::preActions() {
+static void room_401_pre_parser() {
 	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_NORTH)) {
 		_game._player.walk(Common::Point(149, 89), FACING_NORTH);
-		_northFl = false;
+		local._northFl = false;
 	}
 
-	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) && !_northFl)
+	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) && !local._northFl)
 		_game._player._walkOffScreenSceneId = 405;
 
 	if (_action.isAction(VERB_TAKE))
 		_game._player._needToWalk = false;
 
-	if (_game._player._needToWalk && _northFl) {
-		if (_globals[kSexOfRex] == REX_MALE)
-			_destPos = Common::Point(148, 94);
-		else
-			_destPos = Common::Point(149, 99);
+	if (_game._player._needToWalk && local._northFl) {
+		if (_globals[kSexOfRex] == REX_MALE) {
+			local._dest_x = 148;
+			local._dest_y = 94;
+		} else {
+			local._dest_x = 149;
+			local._dest_y = 99;
+		}
 
-		_game._player.walk(_destPos, FACING_SOUTH);
+		_game._player.walk(Common::Point(local._dest_x, local._dest_y), FACING_SOUTH);
 	}
 }
 
-void Scene401::actions() {
-	if ((_game._player._playerPos == _destPos) && _northFl) {
+static void room_401_parser() {
+	if (_game._player._playerPos.x == local._dest_x && _game._player._playerPos.y && local._northFl) {
 		if (_globals[kSexOfRex] == REX_MALE) {
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 			_game._player._stepEnabled = false;
@@ -144,7 +144,7 @@ void Scene401::actions() {
 	}
 
 	if (_action.isAction(VERB_WALK_INTO, NOUN_BAR)) {
-		if (!_northFl)
+		if (!local._northFl)
 			_scene->_nextSceneId = 402;
 	} else if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_NORTH))
 		_scene->_nextSceneId = 354;
@@ -169,6 +169,23 @@ void Scene401::actions() {
 	_action._inProgress = false;
 }
 
+void room_401_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._northFl);
+	s.syncAsSint16LE(local._dest_x);
+	s.syncAsSint16LE(local._dest_y);
+	s.syncAsUint32LE(local._timer);
+}
+
+void room_401_preload() {
+	room_init_code_pointer = room_401_init;
+	room_pre_parser_code_pointer = room_401_pre_parser;
+	room_parser_code_pointer = room_401_parser;
+
+	section_4_walker();
+	section_4_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

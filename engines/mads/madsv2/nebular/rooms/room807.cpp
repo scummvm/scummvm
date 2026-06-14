@@ -33,7 +33,7 @@ void Scene807::setup() {
 	_game._aaName = Resources::formatAAName(5);
 }
 
-void Scene807::enter() {
+static void room_807_init() {
 	if (_globals[kSexOfRex] == REX_FEMALE)
 		_handSpriteId = _scene->_sprites.addSprites("*ROXHAND");
 	else
@@ -52,7 +52,7 @@ void Scene807::step() {
 	teleporterStep();
 }
 
-void Scene807::actions() {
+static void room_807_parser() {
 	if (teleporterActions()) {
 		_action._inProgress = false;
 		return;

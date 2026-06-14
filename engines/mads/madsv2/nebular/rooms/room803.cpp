@@ -40,7 +40,7 @@ void Scene803::setup() {
 	}
 }
 
-void Scene803::enter() {
+static void room_803_init() {
 	_globals[kBetweenRooms] = false;
 	_game._player._visible = false;
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('f', 1));
@@ -247,7 +247,7 @@ void Scene803::step() {
 	}
 }
 
-void Scene803::preActions() {
+static void room_803_pre_parser() {
 	if (_action.isAction(VERB_WALK_DOWN, NOUN_PATH_TO_WEST))
 		_game._player._walkOffScreenSceneId = 802;
 
@@ -255,7 +255,7 @@ void Scene803::preActions() {
 		_game._player._needToWalk = false;
 }
 
-void Scene803::actions() {
+static void room_803_parser() {
 	if (_action.isAction(VERB_TAKE, NOUN_GUTS)) {
 		switch (_game._trigger) {
 		case 0:

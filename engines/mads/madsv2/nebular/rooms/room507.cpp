@@ -31,7 +31,7 @@ Scene507::Scene507(RexNebularEngine *vm) : Scene5xx(vm) {
 	_penlightHotspotId = -1;
 }
 
-void Scene507::synchronize(Common::Serializer &s) {
+void room_507_synchronize(Common::Serializer &s) {
 	Scene5xx::synchronize(s);
 
 	s.syncAsSint16LE(_penlightHotspotId);
@@ -44,7 +44,7 @@ void Scene507::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
-void Scene507::enter() {
+static void room_507_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('p', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRD_3");
 
@@ -61,7 +61,7 @@ void Scene507::enter() {
 
 	sceneEntrySound();
 }
-void Scene507::actions() {
+static void room_507_parser() {
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_ENTRANCE))
 		_scene->_nextSceneId = 506;
 	else if (_action.isAction(VERB_TAKE, NOUN_PENLIGHT)) {

@@ -19,68 +19,69 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section4.h"
+#include "mads/madsv2/nebular/rooms/conversation.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene411::Scene411(RexNebularEngine *vm) : Scene4xx(vm) {
-	_curAnimationFrame = -1;
-	_newIngredient = -1;
-	_newQuantity = -1;
-	_resetFrame = -1;
-	_badThreshold = -1;
+struct Scratch {
+	int32 _curAnimationFrame;
+	int32 _newIngredient;
+	int32 _newQuantity;
+	int32 _resetFrame;
+	int32 _badThreshold;
 
-	_killRox = false;
-	_makeMushroomCloud = false;
-}
+	bool _killRox;
+	bool _makeMushroomCloud;
 
-void Scene411::synchronize(Common::Serializer &s) {
-	Scene4xx::synchronize(s);
+	Conversation _dialog1;
+	Conversation _dialog2;
+	Conversation _dialog3;
+	Conversation _dialog4;
+};
 
-	s.syncAsSint32LE(_curAnimationFrame);
-	s.syncAsSint32LE(_newIngredient);
-	s.syncAsSint32LE(_newQuantity);
-	s.syncAsSint32LE(_resetFrame);
-	s.syncAsSint32LE(_badThreshold);
+static Scratch local;
 
-	s.syncAsByte(_killRox);
-	s.syncAsByte(_makeMushroomCloud);
-}
 
-bool Scene411::addIngredient() {
+static bool addIngredient() {
 	bool retVal = false;
 
-	switch (_newIngredient) {
+	switch (local._newIngredient) {
 	case OBJ_LECITHIN:
 		if (_globals[kIngredientList + _globals[kNextIngredient]] == 1)
 			retVal = true;
 
-		_badThreshold = 1;
+		local._badThreshold = 1;
 		break;
 
 	case OBJ_ALIEN_LIQUOR:
 		if (_globals[kIngredientList + _globals[kNextIngredient]] == 0)
 			retVal = true;
 
-		_badThreshold = 0;
+		local._badThreshold = 0;
 		break;
 
 	case OBJ_FORMALDEHYDE:
 		if (_globals[kIngredientList + _globals[kNextIngredient]] == 3)
 			retVal = true;
 
-		_badThreshold = 3;
+		local._badThreshold = 3;
 		break;
 
 	case OBJ_PETROX:
 		if (_globals[kIngredientList + _globals[kNextIngredient]] == 2)
 			retVal = true;
 
-		_badThreshold = 2;
+		local._badThreshold = 2;
 		break;
 
 	default:
@@ -88,7 +89,7 @@ bool Scene411::addIngredient() {
 	}
 
 	if (!retVal && (_globals[kNextIngredient] == 0))
-		_globals[kBadFirstIngredient] = _badThreshold;
+		_globals[kBadFirstIngredient] = local._badThreshold;
 
 	if (_globals[kNextIngredient] == 0)
 		retVal = true;
@@ -96,14 +97,14 @@ bool Scene411::addIngredient() {
 	return(retVal);
 }
 
-bool Scene411::addQuantity() {
+static bool addQuantity() {
 	bool retVal = false;
 
-	if (_globals[kIngredientQuantity + _globals[kNextIngredient]] == _newQuantity)
+	if (_globals[kIngredientQuantity + _globals[kNextIngredient]] == local._newQuantity)
 		retVal = true;
 
 	if (!retVal && (_globals[kNextIngredient] == 0))
-		_globals[kBadFirstIngredient] = _badThreshold;
+		_globals[kBadFirstIngredient] = local._badThreshold;
 
 	if (_globals[kNextIngredient] == 0)
 		retVal = true;
@@ -111,7 +112,7 @@ bool Scene411::addQuantity() {
 	return(retVal);
 }
 
-int Scene411::computeQuoteAndQuantity() {
+static int computeQuoteAndQuantity() {
 	int quoteId;
 	int quantity;
 
@@ -206,7 +207,7 @@ int Scene411::computeQuoteAndQuantity() {
 	return quantity;
 }
 
-void Scene411::handleKettleAction() {
+static void handleKettleAction() {
 	switch (_globals[kNextIngredient]) {
 	case 1:
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4],
@@ -220,7 +221,7 @@ void Scene411::handleKettleAction() {
 		break;
 
 	case 3:
-		_makeMushroomCloud = true;
+		local._makeMushroomCloud = true;
 		break;
 
 	default:
@@ -228,49 +229,49 @@ void Scene411::handleKettleAction() {
 	}
 }
 
-void Scene411::handleDialog() {
+static void handleDialog() {
 	if ((_action._activeAction._verbId != 0x262) && (_game._trigger == 0)) {
-		if (_game._objects.isInInventory(_newIngredient)) {
-			switch (_newIngredient) {
+		if (_game._objects.isInInventory(local._newIngredient)) {
+			switch (local._newIngredient) {
 			case OBJ_FORMALDEHYDE:
-				_resetFrame = 17;
+				local._resetFrame = 17;
 				break;
 
 			case OBJ_PETROX:
-				_resetFrame = 55;
+				local._resetFrame = 55;
 				break;
 
 			case OBJ_LECITHIN:
-				_resetFrame = 36;
+				local._resetFrame = 36;
 				break;
 
 			default:
-				_resetFrame = 112;
+				local._resetFrame = 112;
 				break;
 			}
 
 			_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
 			_game._player._visible = false;
 			_game._player._stepEnabled = false;
-			_scene->_animation[0]->setCurrentFrame(_resetFrame);
+			_scene->_animation[0]->setCurrentFrame(local._resetFrame);
 		}
 		_scene->_kernelMessages.reset();
-		_newQuantity = computeQuoteAndQuantity();
+		local._newQuantity = computeQuoteAndQuantity();
 
 		if ((_globals[kNextIngredient] == 1) && (_globals[kBadFirstIngredient] > -1))
-			_killRox = true;
+			local._killRox = true;
 		else if (addIngredient() && addQuantity()) {
 			handleKettleAction();
 			_globals[kNextIngredient]++;
 		} else
-			_killRox = true;
+			local._killRox = true;
 
 		_scene->_userInterface.setup(kInputBuildingSentences);
 	} else if (_action._activeAction._verbId == 0x262)
 		_scene->_userInterface.setup(kInputBuildingSentences);
 }
 
-void Scene411::giveToRex(int object) {
+static void giveToRex(int object) {
 	switch (object) {
 	case 0:
 		_game._objects.addToInventory(OBJ_ALIEN_LIQUOR);
@@ -293,17 +294,7 @@ void Scene411::giveToRex(int object) {
 	}
 }
 
-void Scene411::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_ALIEN_LIQUOR);
-	_scene->addActiveVocab(NOUN_FORMALDEHYDE);
-	_scene->addActiveVocab(NOUN_PETROX);
-	_scene->addActiveVocab(NOUN_LECITHIN);
-}
-
-void Scene411::enter() {
+static void room_411_init() {
 	if (_scene->_priorSceneId == 411) {
 		if ((_globals[kNextIngredient] == 1) && (_globals[kBadFirstIngredient] > -1))
 			giveToRex(_globals[kBadFirstIngredient]);
@@ -333,10 +324,10 @@ void Scene411::enter() {
 		0x261, 0x25D, 0x259, 0x262, 0x267, 0x263, 0x26B, 0x26F, 0x268, 0x264, 0x26C, 0x270, 0x26A, 0x266, 0x26E,
 		0x272, 0x269, 0x265, 0x26D, 0x271, 0);
 
-	_dialog1.setup(0x5B, 0x252, 0x25E, 0x25A, 0x256, 0x262, -1);
-	_dialog2.setup(0x5C, 0x253, 0x25F, 0x25B, 0x257, 0x262, -1);
-	_dialog3.setup(0x5D, 0x254, 0x260, 0x25C, 0x258, 0x262, -1);
-	_dialog4.setup(0x5E, 0x255, 0x261, 0x25D, 0x259, 0x262, -1);
+	local._dialog1.setup(0x5B, 0x252, 0x25E, 0x25A, 0x256, 0x262, -1);
+	local._dialog2.setup(0x5C, 0x253, 0x25F, 0x25B, 0x257, 0x262, -1);
+	local._dialog3.setup(0x5D, 0x254, 0x260, 0x25C, 0x258, 0x262, -1);
+	local._dialog4.setup(0x5E, 0x255, 0x261, 0x25D, 0x259, 0x262, -1);
 
 	if (_globals[kNextIngredient] >= 4 && !_game._objects[OBJ_CHARGE_CASES].getQuality(3)) {
 		_scene->_hotspots.activate(NOUN_KETTLE, false);
@@ -412,7 +403,7 @@ void Scene411::enter() {
 		_game._player._facing = FACING_NORTHEAST;
 	}
 
-	sceneEntrySound();
+	section_4_music();
 
 	if (_scene->_roomChanged) {
 		_game._objects.addToInventory(OBJ_ALIEN_LIQUOR);
@@ -424,33 +415,33 @@ void Scene411::enter() {
 	_scene->loadAnimation(formAnimName('a', -1));
 	_scene->_animation[0]->setCurrentFrame(128);
 
-	_makeMushroomCloud = false;
-	_killRox = false;
+	local._makeMushroomCloud = false;
+	local._killRox = false;
 }
 
-void Scene411::step() {
+static void room_411_daemon() {
 	if (_scene->_animation[0] != nullptr) {
-		if (_curAnimationFrame != _scene->_animation[0]->getCurrentFrame()) {
-			_curAnimationFrame = _scene->_animation[0]->getCurrentFrame();
-			_resetFrame = -1;
+		if (local._curAnimationFrame != _scene->_animation[0]->getCurrentFrame()) {
+			local._curAnimationFrame = _scene->_animation[0]->getCurrentFrame();
+			local._resetFrame = -1;
 
-			switch (_curAnimationFrame) {
+			switch (local._curAnimationFrame) {
 			case 16:
 				_game._player._stepEnabled = true;
 				_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
 				_game._player._visible = true;
-				_resetFrame = 128;
+				local._resetFrame = 128;
 				break;
 
 			case 35:
 			case 54:
 			case 71:
 			case 127:
-				if (_killRox) {
-					_resetFrame = 72;
+				if (local._killRox) {
+					local._resetFrame = 72;
 				} else {
-					_resetFrame = 0;
-					_game._objects.removeFromInventory(_newIngredient, NOWHERE);
+					local._resetFrame = 0;
+					_game._objects.removeFromInventory(local._newIngredient, NOWHERE);
 					switch (_globals[kNextIngredient]) {
 					case 1:
 						_vm->_sound->command(53);
@@ -478,30 +469,30 @@ void Scene411::step() {
 			case 41:
 			case 59:
 			case 115:
-				if (_makeMushroomCloud) {
+				if (local._makeMushroomCloud) {
 					_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 5, 1, 0, 0);
-					_makeMushroomCloud = false;
+					local._makeMushroomCloud = false;
 					_scene->_hotspots.activate(NOUN_KETTLE, false);
 					_scene->_hotspots.activate(NOUN_EXPLOSIVES, true);
 				}
 				break;
 
 			case 111:
-				_resetFrame = 111;
+				local._resetFrame = 111;
 				_scene->_reloadSceneFlag = true;
 				break;
 
 			case 129:
-				_resetFrame = 128;
+				local._resetFrame = 128;
 				break;
 
 			default:
 				break;
 			}
 
-			if ((_resetFrame >= 0) && (_resetFrame != _scene->_animation[0]->getCurrentFrame())) {
-				_scene->_animation[0]->setCurrentFrame(_resetFrame);
-				_curAnimationFrame = _resetFrame;
+			if ((local._resetFrame >= 0) && (local._resetFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(local._resetFrame);
+				local._curAnimationFrame = local._resetFrame;
 			}
 		}
 	}
@@ -510,7 +501,7 @@ void Scene411::step() {
 		_vm->_sound->command(59);
 }
 
-void Scene411::preActions() {
+static void room_411_pre_parser() {
 	if (_action.isAction(VERB_LOOK, NOUN_PETROX) && (_game._objects.isInRoom(OBJ_PETROX)))
 		_game._player._needToWalk = true;
 
@@ -529,7 +520,7 @@ void Scene411::preActions() {
 		_game._player._needToWalk = false;
 }
 
-void Scene411::actions() {
+static void room_411_parser() {
 	if (_game._screenObjects._inputMode == kInputConversation) {
 		handleDialog();
 		_action._inProgress = false;
@@ -703,22 +694,22 @@ void Scene411::actions() {
 			_action.isObject(NOUN_FORMALDEHYDE) ||
 			_action.isObject(NOUN_LECITHIN) ||
 			_action.isObject(NOUN_ALIEN_LIQUOR)) {
-			_newIngredient = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
-			switch (_newIngredient) {
+			local._newIngredient = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
+			switch (local._newIngredient) {
 			case OBJ_ALIEN_LIQUOR:
-				_dialog1.start();
+				local._dialog1.start();
 				break;
 
 			case OBJ_FORMALDEHYDE:
-				_dialog3.start();
+				local._dialog3.start();
 				break;
 
 			case OBJ_PETROX:
-				_dialog4.start();
+				local._dialog4.start();
 				break;
 
 			case OBJ_LECITHIN:
-				_dialog2.start();
+				local._dialog2.start();
 				break;
 
 			default:
@@ -796,6 +787,33 @@ void Scene411::actions() {
 	_action._inProgress = false;
 }
 
+void room_411_synchronize(Common::Serializer &s) {
+	s.syncAsSint32LE(local._curAnimationFrame);
+	s.syncAsSint32LE(local._newIngredient);
+	s.syncAsSint32LE(local._newQuantity);
+	s.syncAsSint32LE(local._resetFrame);
+	s.syncAsSint32LE(local._badThreshold);
+
+	s.syncAsByte(local._killRox);
+	s.syncAsByte(local._makeMushroomCloud);
+}
+
+void room_411_preload() {
+	room_init_code_pointer = room_411_init;
+	room_pre_parser_code_pointer = room_411_pre_parser;
+	room_parser_code_pointer = room_411_parser;
+	room_daemon_code_pointer = room_411_daemon;
+
+	section_4_walker();
+	section_4_interface();
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_ALIEN_LIQUOR);
+	_scene->addActiveVocab(NOUN_FORMALDEHYDE);
+	_scene->addActiveVocab(NOUN_PETROX);
+	_scene->addActiveVocab(NOUN_LECITHIN);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

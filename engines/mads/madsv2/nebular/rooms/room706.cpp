@@ -36,7 +36,7 @@ Scene706::Scene706(RexNebularEngine *vm) : Scene7xx(vm) {
 	_emptyPedestral = false;
 }
 
-void Scene706::synchronize(Common::Serializer &s) {
+void room_706_synchronize(Common::Serializer &s) {
 	Scene7xx::synchronize(s);
 
 	s.syncAsSint16LE(_vaseHotspotId);
@@ -122,7 +122,7 @@ void Scene706::handleTakeVase() {
 	}
 }
 
-void Scene706::enter() {
+static void room_706_init() {
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXMRC_3");
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('b', -1));
 
@@ -221,12 +221,12 @@ void Scene706::step() {
 	}
 }
 
-void Scene706::preActions() {
+static void room_706_pre_parser() {
 	if (_action.isAction(VERB_LOOK, NOUN_PORTRAIT))
 		_game._player._needToWalk = true;
 }
 
-void Scene706::actions() {
+static void room_706_parser() {
 	if (_action.isAction(VERB_WALK_INSIDE, NOUN_TELEPORTER)) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;

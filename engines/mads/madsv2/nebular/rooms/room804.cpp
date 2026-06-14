@@ -40,7 +40,7 @@ Scene804::Scene804(RexNebularEngine *vm) : Scene8xx(vm) {
 	_resetFrame = -1;
 }
 
-void Scene804::synchronize(Common::Serializer &s) {
+void room_804_synchronize(Common::Serializer &s) {
 	Scene8xx::synchronize(s);
 
 	s.syncAsByte(_messWithThrottle);
@@ -60,7 +60,7 @@ void Scene804::setup() {
 	Scene8xx::setAAName();
 }
 
-void Scene804::enter() {
+static void room_804_init() {
 	_messWithThrottle = false;
 	_throttleCounter = 0;
 	_movingThrottle = false;
@@ -294,7 +294,7 @@ void Scene804::step() {
 	}
 }
 
-void Scene804::actions() {
+static void room_804_parser() {
 	if (_action.isAction(VERB_LOOK, NOUN_SERVICE_PANEL) ||
 		_action.isAction(VERB_OPEN, NOUN_SERVICE_PANEL)) {
 		_scene->_nextSceneId = 805;

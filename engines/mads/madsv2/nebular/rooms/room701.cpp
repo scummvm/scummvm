@@ -31,7 +31,7 @@ Scene701::Scene701(RexNebularEngine *vm) : Scene7xx(vm) {
 	_fishingLineId = -1;
 }
 
-void Scene701::synchronize(Common::Serializer &s) {
+void room_701_synchronize(Common::Serializer &s) {
 	Scene7xx::synchronize(s);
 
 	s.syncAsSint16LE(_fishingLineId);
@@ -47,7 +47,7 @@ void Scene701::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
-void Scene701::enter() {
+static void room_701_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 5));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('b', 0));
@@ -207,7 +207,7 @@ void Scene701::step() {
 	}
 }
 
-void Scene701::preActions() {
+static void room_701_pre_parser() {
 	if (_action.isAction(VERB_WALKTO, NOUN_EAST_END_OF_PLATFORM))
 		_game._player._walkOffScreenSceneId = 702;
 
@@ -218,7 +218,7 @@ void Scene701::preActions() {
 		_game._player.walk(Common::Point(154, 129), FACING_NORTH);
 }
 
-void Scene701::actions() {
+static void room_701_parser() {
 	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM)) {
 	} else if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_BUILDING) && _game._objects[OBJ_VASE]._roomNumber == 706) {
 		switch (_game._trigger) {

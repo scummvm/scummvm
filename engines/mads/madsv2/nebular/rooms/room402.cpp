@@ -19,138 +19,97 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section4.h"
+#include "mads/madsv2/nebular/rooms/conversation.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene402::Scene402(RexNebularEngine *vm) : Scene4xx(vm) {
-	_lightOn = false;
-	_blowingSmoke = false;
-	_leftWomanMoving = false;
-	_rightWomanMoving = false;
-	_firstTalkToGirlInChair = false;
-	_waitingGinnyMove = false;
-	_ginnyLooking = false;
-	_bigBeatFl = false;
-	_roxOnStool = false;
-	_bartenderSteady = false;
-	_bartenderHandsHips = false;
-	_bartenderLooksLeft = false;
-	_bartenderReady = false;
-	_bartenderTalking = false;
-	_bartenderCalled = false;
-	_conversationFl = false;
-	_activeTeleporter = false;
-	_activeArrows = false;
-	_activeArrow1 = false;
-	_activeArrow2 = false;
-	_activeArrow3 = false;
-	_cutSceneReady = false;
-	_cutSceneNeeded = false;
-	_helgaReady = false;
-	_refuseAlienLiquor = false;
+struct Scratch {
+	bool _lightOn;
+	bool _blowingSmoke;
+	bool _leftWomanMoving;
+	bool _rightWomanMoving;
+	bool _firstTalkToGirlInChair;
+	bool _waitingGinnyMove;
+	bool _ginnyLooking;
+	bool _bigBeatFl;
+	bool _roxOnStool;
+	bool _bartenderSteady;
+	bool _bartenderHandsHips;
+	bool _bartenderLooksLeft;
+	bool _bartenderReady;
+	bool _bartenderTalking;
+	bool _bartenderCalled;
+	bool _conversationFl;
+	bool _activeTeleporter;
+	bool _activeArrows;
+	bool _activeArrow1;
+	bool _activeArrow2;
+	bool _activeArrow3;
+	bool _cutSceneReady;
+	bool _cutSceneNeeded;
+	bool _helgaReady;
+	bool _refuseAlienLiquor;
 
-	_drinkTimer = -1;
-	_beatCounter = -1;
-	_bartenderMode = -1;
-	_bartenderDialogNode = -1;
-	_bartenderCurrentQuestion = -1;
-	_helgaTalkMode = -1;
-	_roxMode = -1;
-	_rexMode = -1;
-	_talkTimer = -1;
-}
+	int32 _drinkTimer;
+	int32 _beatCounter;
+	int32 _bartenderMode;
+	int32 _bartenderDialogNode;
+	int32 _bartenderCurrentQuestion;
+	int32 _helgaTalkMode;
+	int32 _roxMode;
+	int32 _rexMode;
+	int32 _talkTimer;
 
-void Scene402::synchronize(Common::Serializer &s) {
-	Scene4xx::synchronize(s);
+	Conversation _dialog1;
+	Conversation _dialog2;
+	Conversation _dialog3;
+	Conversation _dialog4;
+};
 
-	s.syncAsByte(_lightOn);
-	s.syncAsByte(_blowingSmoke);
-	s.syncAsByte(_leftWomanMoving);
-	s.syncAsByte(_rightWomanMoving);
-	s.syncAsByte(_firstTalkToGirlInChair);
-	s.syncAsByte(_waitingGinnyMove);
-	s.syncAsByte(_ginnyLooking);
-	s.syncAsByte(_bigBeatFl);
-	s.syncAsByte(_roxOnStool);
-	s.syncAsByte(_bartenderSteady);
-	s.syncAsByte(_bartenderHandsHips);
-	s.syncAsByte(_bartenderLooksLeft);
-	s.syncAsByte(_bartenderReady);
-	s.syncAsByte(_bartenderTalking);
-	s.syncAsByte(_bartenderCalled);
-	s.syncAsByte(_conversationFl);
-	s.syncAsByte(_activeTeleporter);
-	s.syncAsByte(_activeArrows);
-	s.syncAsByte(_activeArrow1);
-	s.syncAsByte(_activeArrow2);
-	s.syncAsByte(_activeArrow3);
-	s.syncAsByte(_cutSceneReady);
-	s.syncAsByte(_cutSceneNeeded);
-	s.syncAsByte(_helgaReady);
-	s.syncAsByte(_refuseAlienLiquor);
+static Scratch local;
 
-	s.syncAsSint16LE(_drinkTimer);
-	s.syncAsSint16LE(_beatCounter);
-	s.syncAsSint16LE(_bartenderMode);
-	s.syncAsSint16LE(_bartenderDialogNode);
-	s.syncAsSint16LE(_bartenderCurrentQuestion);
-	s.syncAsSint16LE(_helgaTalkMode);
-	s.syncAsSint16LE(_roxMode);
-	s.syncAsSint16LE(_rexMode);
-	s.syncAsSint16LE(_talkTimer);
-}
 
-void Scene402::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-
-	_scene->addActiveVocab(NOUN_BARTENDER);
-	_scene->addActiveVocab(NOUN_ALIEN_LIQUOR);
-	_scene->addActiveVocab(VERB_DRINK);
-	_scene->addActiveVocab(NOUN_BINOCULARS);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_CREDIT_CHIP);
-	_scene->addActiveVocab(VERB_TAKE);
-	_scene->addActiveVocab(NOUN_REPAIR_LIST);
-	_scene->addActiveVocab(VERB_LOOK_AT);
-}
-
-void Scene402::setDialogNode(int node) {
+static void setDialogNode(int node) {
 	if (node > 0)
-		_bartenderDialogNode = node;
+		local._bartenderDialogNode = node;
 
 	_game._player._stepEnabled = true;
 
 	switch (node) {
 	case 0:
 		_scene->_userInterface.setup(kInputBuildingSentences);
-		_conversationFl = false;
-		_bartenderDialogNode = 0;
+		local._conversationFl = false;
+		local._bartenderDialogNode = 0;
 		break;
 
 	case 1:
-		_dialog1.start();
-		_bartenderDialogNode = 1;
+		local._dialog1.start();
+		local._bartenderDialogNode = 1;
 		break;
 
 	case 2:
-		_dialog2.start();
-		_bartenderDialogNode = 2;
+		local._dialog2.start();
+		local._bartenderDialogNode = 2;
 		break;
 
 	case 3:
-		_dialog3.start();
-		_bartenderDialogNode = 3;
+		local._dialog3.start();
+		local._bartenderDialogNode = 3;
 		break;
 
 	case 4:
-		_dialog4.start();
-		_bartenderDialogNode = 4;
+		local._dialog4.start();
+		local._bartenderDialogNode = 4;
 		break;
 
 	default:
@@ -158,7 +117,7 @@ void Scene402::setDialogNode(int node) {
 	}
 }
 
-void Scene402::handleConversation1() {
+static void handleConversation1() {
 	switch (_action._activeAction._verbId) {
 	case 0x214:
 	{
@@ -167,19 +126,19 @@ void Scene402::handleConversation1() {
 		switch (_vm->getRandomNumber(1, 3)) {
 		case 1:
 			quoteId = 0x1E4;
-			_bartenderCurrentQuestion = 4;
+			local._bartenderCurrentQuestion = 4;
 			quotePosX = 205;
 			break;
 
 		case 2:
 			quoteId = 0x1E5;
-			_bartenderCurrentQuestion = 5;
+			local._bartenderCurrentQuestion = 5;
 			quotePosX = 203;
 			break;
 
 		case 3:
 			quoteId = 0x1E6;
-			_bartenderCurrentQuestion = 6;
+			local._bartenderCurrentQuestion = 6;
 			quotePosX = 260;
 			break;
 
@@ -190,7 +149,7 @@ void Scene402::handleConversation1() {
 		_scene->_kernelMessages.add(Common::Point(quotePosX, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(quoteId));
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
-		_talkTimer = 120;
+		local._talkTimer = 120;
 		setDialogNode(2);
 	}
 	break;
@@ -200,8 +159,8 @@ void Scene402::handleConversation1() {
 		_scene->_kernelMessages.add(Common::Point(260, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EC));
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
-		_talkTimer = 120;
-		_bartenderCurrentQuestion = 1;
+		local._talkTimer = 120;
+		local._bartenderCurrentQuestion = 1;
 		setDialogNode(3);
 		break;
 
@@ -211,7 +170,7 @@ void Scene402::handleConversation1() {
 		setDialogNode(0);
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
-		_talkTimer = 1120;
+		local._talkTimer = 1120;
 		break;
 
 	default:
@@ -219,62 +178,62 @@ void Scene402::handleConversation1() {
 	}
 }
 
-void Scene402::handleConversation2() {
+static void handleConversation2() {
 	switch (_action._activeAction._verbId) {
 	case 0x216:
-		_dialog2.write(0x216, false);
-		_dialog2.write(0x21D, true);
+		local._dialog2.write(0x216, false);
+		local._dialog2.write(0x21D, true);
 		break;
 
 	case 0x219:
-		_dialog2.write(0x219, false);
-		_dialog2.write(0x220, true);
+		local._dialog2.write(0x219, false);
+		local._dialog2.write(0x220, true);
 		break;
 
 	case 0x21A:
-		_dialog2.write(0x21A, false);
-		_dialog2.write(0x223, true);
+		local._dialog2.write(0x21A, false);
+		local._dialog2.write(0x223, true);
 		break;
 
 	case 0x21B:
-		_dialog2.write(0x21B, false);
-		_dialog2.write(0x224, true);
+		local._dialog2.write(0x21B, false);
+		local._dialog2.write(0x224, true);
 		break;
 
 	case 0x21D:
-		_dialog2.write(0x21D, false);
-		_dialog2.write(0x227, true);
+		local._dialog2.write(0x21D, false);
+		local._dialog2.write(0x227, true);
 		break;
 
 	case 0x220:
-		_dialog2.write(0x220, false);
-		_dialog2.write(0x22A, true);
+		local._dialog2.write(0x220, false);
+		local._dialog2.write(0x22A, true);
 		break;
 
 	case 0x223:
-		_dialog2.write(0x223, false);
-		_dialog2.write(0x22D, true);
+		local._dialog2.write(0x223, false);
+		local._dialog2.write(0x22D, true);
 		break;
 
 	case 0x224:
-		_dialog2.write(0x224, false);
-		_dialog2.write(0x230, true);
+		local._dialog2.write(0x224, false);
+		local._dialog2.write(0x230, true);
 		break;
 
 	case 0x227:
-		_dialog2.write(0x227, false);
+		local._dialog2.write(0x227, false);
 		break;
 
 	case 0x22A:
-		_dialog2.write(0x22A, false);
+		local._dialog2.write(0x22A, false);
 		break;
 
 	case 0x22D:
-		_dialog2.write(0x22D, false);
+		local._dialog2.write(0x22D, false);
 		break;
 
 	case 0x230:
-		_dialog2.write(0x230, false);
+		local._dialog2.write(0x230, false);
 		break;
 
 	case 0x21C:
@@ -291,46 +250,46 @@ void Scene402::handleConversation2() {
 		case 1:
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 			_scene->_sequences.addTimer(1, 100);
-			_talkTimer = 180;
+			local._talkTimer = 180;
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(198, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E7));
 			_scene->_kernelMessages.add(Common::Point(201, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E8));
-			_bartenderCurrentQuestion = 7;
+			local._bartenderCurrentQuestion = 7;
 			break;
 
 		case 2:
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 			_scene->_sequences.addTimer(1, 100);
-			_talkTimer = 180;
+			local._talkTimer = 180;
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(220, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E9));
 			_scene->_kernelMessages.add(Common::Point(190, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EA));
-			_bartenderCurrentQuestion = 8;
+			local._bartenderCurrentQuestion = 8;
 			break;
 
 		case 3:
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 			_scene->_sequences.addTimer(1, 100);
-			_talkTimer = 150;
+			local._talkTimer = 150;
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(196, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EB));
-			_bartenderCurrentQuestion = 9;
+			local._bartenderCurrentQuestion = 9;
 			break;
 
 		default:
 			break;
 		}
-		_dialog2.start();
+		local._dialog2.start();
 	} else {
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.add(Common::Point(208, 41), 0xFDFC, 0, 0, 100, _game.getQuote(0x1FD));
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
-		_talkTimer = 1120;
+		local._talkTimer = 1120;
 	}
 }
 
-void Scene402::handleConversation3() {
+static void handleConversation3() {
 	switch (_action._activeAction._verbId) {
 	case 0x233:
 	case 0x234:
@@ -342,7 +301,7 @@ void Scene402::handleConversation3() {
 		_scene->_kernelMessages.add(Common::Point(188, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1ED));
 		_scene->_kernelMessages.add(Common::Point(199, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EE));
 		setDialogNode(4);
-		_bartenderCurrentQuestion = 2;
+		local._bartenderCurrentQuestion = 2;
 		break;
 
 	case 0x237:
@@ -350,7 +309,7 @@ void Scene402::handleConversation3() {
 		_scene->_kernelMessages.add(Common::Point(208, 41), 0xFDFC, 0, 0, 100, _game.getQuote(0x1FD));
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
-		_talkTimer = 1120;
+		local._talkTimer = 1120;
 		setDialogNode(0);
 		break;
 
@@ -359,7 +318,7 @@ void Scene402::handleConversation3() {
 	}
 }
 
-void Scene402::handleConversation4() {
+static void handleConversation4() {
 	switch (_action._activeAction._verbId) {
 	case 0x238:
 		_scene->_kernelMessages.reset();
@@ -370,21 +329,21 @@ void Scene402::handleConversation4() {
 		_scene->_kernelMessages.add(Common::Point(200, 41), 0xFDFC, 0, 0, 180, _game.getQuote(0x1F2));
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
-		_talkTimer = 1100;
-		_dialog4.write(0x238, false);
-		_bartenderMode = 22;
+		local._talkTimer = 1100;
+		local._dialog4.write(0x238, false);
+		local._bartenderMode = 22;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(100, 95);
-		_refuseAlienLiquor = true;
+		local._refuseAlienLiquor = true;
 		break;
 
 	case 0x239:
 		_game._player._stepEnabled = false;
-		_roxMode = 21;
+		local._roxMode = 21;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 92);
 		_scene->_userInterface.setup(kInputBuildingSentences);
-		_conversationFl = false;
+		local._conversationFl = false;
 		break;
 
 	case 0x23A:
@@ -392,15 +351,15 @@ void Scene402::handleConversation4() {
 		_game._player._stepEnabled = false;
 		_scene->_kernelMessages.add(Common::Point(193, 27), 0xFDFC, 0, 0, 150, _game.getQuote(0x1F4));
 		_scene->_kernelMessages.add(Common::Point(230, 41), 0xFDFC, 0, 0, 150, _game.getQuote(0x1F5));
-		_dialog4.write(0x23A, false);
+		local._dialog4.write(0x23A, false);
 		_globals[kHasSaidTimer] = true;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
-		_talkTimer = 1100;
-		_bartenderMode = 22;
+		local._talkTimer = 1100;
+		local._bartenderMode = 22;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(100, 95);
-		_refuseAlienLiquor = true;
+		local._refuseAlienLiquor = true;
 		break;
 
 	case 0x23D:
@@ -408,15 +367,15 @@ void Scene402::handleConversation4() {
 		_game._player._stepEnabled = false;
 		_scene->_kernelMessages.add(Common::Point(153, 27), 0xFDFC, 0, 0, 150, _game.getQuote(0x1F6));
 		_scene->_kernelMessages.add(Common::Point(230, 41), 0xFDFC, 0, 0, 150, _game.getQuote(0x1F7));
-		_dialog4.write(0x23D, false);
+		local._dialog4.write(0x23D, false);
 		_globals[kHasSaidBinocs] = true;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
-		_talkTimer = 1100;
-		_bartenderMode = 22;
+		local._talkTimer = 1100;
+		local._bartenderMode = 22;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(100, 95);
-		_refuseAlienLiquor = true;
+		local._refuseAlienLiquor = true;
 		break;
 
 	case 0x23E:
@@ -424,13 +383,13 @@ void Scene402::handleConversation4() {
 		setDialogNode(0);
 		_game._player._stepEnabled = false;
 		_scene->_kernelMessages.add(Common::Point(205, 41), 0xFDFC, 0, 0, 100, _game.getQuote(0x1F8));
-		_bartenderMode = 22;
+		local._bartenderMode = 22;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 100);
-		_talkTimer = 1050;
+		local._talkTimer = 1050;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(50, 95);
-		_refuseAlienLiquor = true;
+		local._refuseAlienLiquor = true;
 		break;
 
 	default:
@@ -438,7 +397,7 @@ void Scene402::handleConversation4() {
 	}
 }
 
-void Scene402::handleDialogs() {
+static void handleDialogs() {
 	if (_game._trigger == 0) {
 		_scene->_kernelMessages.reset();
 		_game._player._stepEnabled = false;
@@ -455,7 +414,7 @@ void Scene402::handleDialogs() {
 		}
 	} else if (_game._trigger == 120) {
 		_game._player._stepEnabled = true;
-		switch (_bartenderDialogNode) {
+		switch (local._bartenderDialogNode) {
 		case 1:
 			handleConversation1();
 			break;
@@ -478,7 +437,7 @@ void Scene402::handleDialogs() {
 	}
 }
 
-void Scene402::enter() {
+static void room_402_init() {
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites(formAnimName('n', -1));
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 2));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 0));
@@ -506,18 +465,18 @@ void Scene402::enter() {
 	if (_scene->_priorSceneId == 401) {
 		_game._player._playerPos = Common::Point(160, 150);
 		_game._player._facing = FACING_NORTH;
-		_roxOnStool = false;
-		_bartenderDialogNode = 1;
-		_conversationFl = false;
+		local._roxOnStool = false;
+		local._bartenderDialogNode = 1;
+		local._conversationFl = false;
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(160, 150);
 		_game._player._facing = FACING_NORTH;
 		_game._objects.addToInventory(OBJ_CREDIT_CHIP);
 		_game._objects.addToInventory(OBJ_BINOCULARS);
 		_game._objects.addToInventory(OBJ_TIMER_MODULE);
-		_roxOnStool = false;
-		_bartenderDialogNode = 1;
-		_conversationFl = false;
+		local._roxOnStool = false;
+		local._bartenderDialogNode = 1;
+		local._conversationFl = false;
 	}
 
 	_game.loadQuoteSet(0x1D7, 0x1D8, 0x1D9, 0x1DA, 0x1DB, 0x1DC, 0x1DD, 0x1DE, 0x1DF, 0x1E2, 0x1E3, 0x1E6, 0x1E5, 0x1E7,
@@ -532,63 +491,63 @@ void Scene402::enter() {
 	_vm->_palette->setEntry(252, 38, 34, 25);
 	_vm->_palette->setEntry(253, 45, 41, 35);
 
-	_dialog1.setup(0x60, 0x214, 0x215, 0x237, 0);
-	_dialog2.setup(0x61, 0x216, 0x219, 0x21A, 0x21B, 0x21D, 0x220, 0x223, 0x224, 0x227, 0x22A, 0x22D, 0x230, 0x21C, 0);
-	_dialog3.setup(0x62, 0x233, 0x234, 0x235, 0x236, 0x237, -1);
-	_dialog4.setup(0x63, 0x238, 0x239, 0x23A, 0x23D, 0x23E, 0);
+	local._dialog1.setup(0x60, 0x214, 0x215, 0x237, 0);
+	local._dialog2.setup(0x61, 0x216, 0x219, 0x21A, 0x21B, 0x21D, 0x220, 0x223, 0x224, 0x227, 0x22A, 0x22D, 0x230, 0x21C, 0);
+	local._dialog3.setup(0x62, 0x233, 0x234, 0x235, 0x236, 0x237, -1);
+	local._dialog4.setup(0x63, 0x238, 0x239, 0x23A, 0x23D, 0x23E, 0);
 
 	if (!_game._visitedScenes._sceneRevisited) {
-		_dialog2.set(0x61, 0x216, 0x219, 0x21A, 0x21B, 0x21C, 0);
-		_dialog4.set(0x63, 0x238, 0x23E, 0);
-		_dialog1.set(0x60, 0x214, 0x215, 0x237, 0);
+		local._dialog2.set(0x61, 0x216, 0x219, 0x21A, 0x21B, 0x21C, 0);
+		local._dialog4.set(0x63, 0x238, 0x23E, 0);
+		local._dialog1.set(0x60, 0x214, 0x215, 0x237, 0);
 	}
 
 	if (_game._objects.isInInventory(OBJ_CREDIT_CHIP))
-		_dialog4.write(0x239, true);
+		local._dialog4.write(0x239, true);
 	else
-		_dialog4.write(0x239, false);
+		local._dialog4.write(0x239, false);
 
 	if (_game._objects.isInInventory(OBJ_BINOCULARS) && !_globals[kHasSaidBinocs])
-		_dialog4.write(0x23D, true);
+		local._dialog4.write(0x23D, true);
 	else
-		_dialog4.write(0x23D, false);
+		local._dialog4.write(0x23D, false);
 
 	if (_game._objects.isInInventory(OBJ_TIMER_MODULE) && !_globals[kHasSaidTimer])
-		_dialog4.write(0x23A, true);
+		local._dialog4.write(0x23A, true);
 	else
-		_dialog4.write(0x23A, false);
+		local._dialog4.write(0x23A, false);
 
-	if (_dialog2.read(0) <= 1)
-		_dialog1.write(0x214, false);
+	if (local._dialog2.read(0) <= 1)
+		local._dialog1.write(0x214, false);
 
-	if (_conversationFl) {
-		switch (_bartenderDialogNode) {
+	if (local._conversationFl) {
+		switch (local._bartenderDialogNode) {
 		case 0:
 			_scene->_userInterface.setup(kInputBuildingSentences);
-			_bartenderDialogNode = 1;
+			local._bartenderDialogNode = 1;
 			break;
 
 		case 1:
-			_dialog1.start();
+			local._dialog1.start();
 			break;
 
 		case 2:
-			_dialog2.start();
+			local._dialog2.start();
 			break;
 
 		case 3:
-			_dialog3.start();
+			local._dialog3.start();
 			break;
 
 		case 4:
-			_dialog4.start();
+			local._dialog4.start();
 			break;
 
 		default:
 			break;
 		}
 
-		switch (_bartenderCurrentQuestion) {
+		switch (local._bartenderCurrentQuestion) {
 		case 1:
 			_scene->_kernelMessages.add(Common::Point(260, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EC));
 			break;
@@ -638,33 +597,33 @@ void Scene402::enter() {
 		}
 	}
 
-	_firstTalkToGirlInChair = false;
-	_lightOn = false;
-	_blowingSmoke = false;
-	_leftWomanMoving = false;
-	_rightWomanMoving = false;
-	_ginnyLooking = false;
-	_beatCounter = 0;
-	_waitingGinnyMove = false;
-	_bigBeatFl = true;
-	_bartenderHandsHips = false;
-	_bartenderSteady = true;
-	_bartenderLooksLeft = false;
-	_activeTeleporter = false;
-	_activeArrows = false;
-	_activeArrow1 = false;
-	_activeArrow2 = false;
-	_activeArrow3 = false;
-	_cutSceneReady = false;
-	_cutSceneNeeded = false;
-	_helgaReady = true;
-	_bartenderReady = true;
-	_drinkTimer = 0;
-	_bartenderTalking = false;
-	_bartenderCalled = false;
-	_helgaTalkMode = 0;
-	_rexMode = 0;
-	_refuseAlienLiquor = false;
+	local._firstTalkToGirlInChair = false;
+	local._lightOn = false;
+	local._blowingSmoke = false;
+	local._leftWomanMoving = false;
+	local._rightWomanMoving = false;
+	local._ginnyLooking = false;
+	local._beatCounter = 0;
+	local._waitingGinnyMove = false;
+	local._bigBeatFl = true;
+	local._bartenderHandsHips = false;
+	local._bartenderSteady = true;
+	local._bartenderLooksLeft = false;
+	local._activeTeleporter = false;
+	local._activeArrows = false;
+	local._activeArrow1 = false;
+	local._activeArrow2 = false;
+	local._activeArrow3 = false;
+	local._cutSceneReady = false;
+	local._cutSceneNeeded = false;
+	local._helgaReady = true;
+	local._bartenderReady = true;
+	local._drinkTimer = 0;
+	local._bartenderTalking = false;
+	local._bartenderCalled = false;
+	local._helgaTalkMode = 0;
+	local._rexMode = 0;
+	local._refuseAlienLiquor = false;
 
 	_scene->loadAnimation(Resources::formatName(402, 'd', 1, EXT_AA, ""));
 	_scene->_animation[0]->_resetFlag = true;
@@ -707,16 +666,16 @@ void Scene402::enter() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 7);
 	}
 
-	if (_roxOnStool) {
+	if (local._roxOnStool) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 11);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 5);
 		_game._player._visible = false;
 	}
 
-	sceneEntrySound();
+	section_4_music();
 }
 
-void Scene402::step() {
+static void room_402_daemon() {
 	if (_game._trigger == 104) {
 		_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
 		_game._player._visible = true;
@@ -726,56 +685,56 @@ void Scene402::step() {
 		_game._player._stepEnabled = true;
 	}
 
-	if ((_vm->getRandomNumber(1, 1500) == 1) && (!_activeTeleporter) && (_game._player._playerPos.x < 150)) {
+	if ((_vm->getRandomNumber(1, 1500) == 1) && (!local._activeTeleporter) && (_game._player._playerPos.x < 150)) {
 		_vm->_sound->command(30);
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 13, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 1, 11);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 14);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 48);
-		_activeTeleporter = true;
+		local._activeTeleporter = true;
 		_globals[kSomeoneHasExploded] = true;
 	}
 
 	if (_game._trigger == 48)
-		_activeTeleporter = false;
+		local._activeTeleporter = false;
 
 	if (_game._trigger == 100) {
-		_bartenderReady = false;
-		if (_bartenderHandsHips) {
+		local._bartenderReady = false;
+		if (local._bartenderHandsHips) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[10]);
-			_bartenderHandsHips = false;
-		} else if (_bartenderLooksLeft) {
+			local._bartenderHandsHips = false;
+		} else if (local._bartenderLooksLeft) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[11]);
-			_bartenderLooksLeft = false;
-		} else if (_bartenderSteady) {
+			local._bartenderLooksLeft = false;
+		} else if (local._bartenderSteady) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[9]);
-			_bartenderSteady = false;
+			local._bartenderSteady = false;
 		}
 
-		if (!_bartenderTalking) {
+		if (!local._bartenderTalking) {
 			_globals._sequenceIndexes[10] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[10], false, 7, 0, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[10], 3, 4);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 8);
 			int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, VERB_WALKTO, _globals._sequenceIndexes[10], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
-			_bartenderTalking = true;
-			if (_talkTimer > 1000)
-				_scene->_sequences.addTimer(_talkTimer - 1000, 101);
+			local._bartenderTalking = true;
+			if (local._talkTimer > 1000)
+				_scene->_sequences.addTimer(local._talkTimer - 1000, 101);
 			else
-				_scene->_sequences.addTimer(_talkTimer, 101);
+				_scene->_sequences.addTimer(local._talkTimer, 101);
 		}
 	}
 
-	if ((_game._trigger == 101) && _bartenderTalking) {
+	if ((_game._trigger == 101) && local._bartenderTalking) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[10]);
 		_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
 		int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, VERB_WALKTO, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
-		_bartenderSteady = true;
-		_bartenderTalking = false;
-		if (_talkTimer < 1000)
-			_bartenderReady = true;
+		local._bartenderSteady = true;
+		local._bartenderTalking = false;
+		if (local._talkTimer < 1000)
+			local._bartenderReady = true;
 	}
 
 	if (_game._trigger == 28)
@@ -794,7 +753,7 @@ void Scene402::step() {
 	case 93:
 	{
 		int seqIdx = _globals._sequenceIndexes[7];
-		switch (_roxMode) {
+		switch (local._roxMode) {
 		case 20:
 			_vm->_sound->command(57);
 			_scene->_sequences.remove(_globals._sequenceIndexes[15]);
@@ -825,11 +784,11 @@ void Scene402::step() {
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[7], seqIdx);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_EXPIRE, 0, 94);
 
-		if (_roxMode == 21) {
+		if (local._roxMode == 21) {
 			if (_game._objects.isInInventory(OBJ_CREDIT_CHIP))
 				_game._objects.setRoom(OBJ_CREDIT_CHIP, NOWHERE);
 
-			_bartenderMode = 20;
+			local._bartenderMode = 20;
 			_scene->_sequences.addTimer(60, 95);
 		}
 	}
@@ -841,13 +800,13 @@ void Scene402::step() {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 11);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 5);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[6], seqIdx);
-		if (_roxMode == 22) {
+		if (local._roxMode == 22) {
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(230, 56), 0x1110, 32, 0, 120, _game.getQuote(0x23F));
-			_bartenderMode = 21;
+			local._bartenderMode = 21;
 			_globals[kHasPurchased] = true;
 			_scene->_sequences.addTimer(140, 95);
-		} else if (_roxMode == 20)
+		} else if (local._roxMode == 20)
 			_game._player._stepEnabled = true;
 
 	}
@@ -859,22 +818,22 @@ void Scene402::step() {
 
 	switch (_game._trigger) {
 	case 95:
-		_bartenderReady = false;
+		local._bartenderReady = false;
 		_game._player._stepEnabled = false;
-		if (_bartenderHandsHips || _bartenderTalking) {
+		if (local._bartenderHandsHips || local._bartenderTalking) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[10]);
-			_bartenderHandsHips = false;
-			_bartenderTalking = false;
+			local._bartenderHandsHips = false;
+			local._bartenderTalking = false;
 		}
 
-		if (_bartenderLooksLeft) {
+		if (local._bartenderLooksLeft) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[11]);
-			_bartenderLooksLeft = false;
+			local._bartenderLooksLeft = false;
 		}
 
-		if (_bartenderSteady) {
+		if (local._bartenderSteady) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[9]);
-			_bartenderSteady = false;
+			local._bartenderSteady = false;
 		}
 		_globals._sequenceIndexes[12] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[12], false, 10, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[12], 1, 4);
@@ -896,7 +855,7 @@ void Scene402::step() {
 	case 97:
 	{
 		int seqIdx = _globals._sequenceIndexes[12];
-		switch (_bartenderMode) {
+		switch (local._bartenderMode) {
 		case 20:
 			_scene->_sequences.remove(_globals._sequenceIndexes[15]);
 			break;
@@ -939,21 +898,21 @@ void Scene402::step() {
 	{
 		int seqIdx = _globals._sequenceIndexes[12];
 		_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
-		_bartenderSteady = true;
+		local._bartenderSteady = true;
 		int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, VERB_WALKTO, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[9], seqIdx);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
-		if (_bartenderMode == 20) {
+		if (local._bartenderMode == 20) {
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(210, 41), 0xFDFC, 0, 0, 100, _game.getQuote(0x1F3));
 			_scene->_sequences.addTimer(5, 100);
-			_talkTimer = 180;
-			_roxMode = 22;
+			local._talkTimer = 180;
+			local._roxMode = 22;
 			_scene->_sequences.addTimer(65, 92);
-		} else if ((_bartenderMode == 21) || (_bartenderMode == 22)) {
+		} else if ((local._bartenderMode == 21) || (local._bartenderMode == 22)) {
 			_game._player._stepEnabled = true;
-			_bartenderReady = true;
+			local._bartenderReady = true;
 		}
 
 	}
@@ -965,18 +924,18 @@ void Scene402::step() {
 
 	switch (_game._trigger) {
 	case 86:
-		_bartenderReady = false;
+		local._bartenderReady = false;
 		_game._player._stepEnabled = false;
-		if ((_bartenderHandsHips) || (_bartenderTalking)) {
+		if ((local._bartenderHandsHips) || (local._bartenderTalking)) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[10]);
-			_bartenderHandsHips = false;
-			_bartenderTalking = false;
-		} else if (_bartenderLooksLeft) {
+			local._bartenderHandsHips = false;
+			local._bartenderTalking = false;
+		} else if (local._bartenderLooksLeft) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[11]);
-			_bartenderLooksLeft = false;
-		} else if (_bartenderSteady) {
+			local._bartenderLooksLeft = false;
+		} else if (local._bartenderSteady) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[9]);
-			_bartenderSteady = false;
+			local._bartenderSteady = false;
 		}
 		_globals._sequenceIndexes[9] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[9], false, 10, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], 1, 9);
@@ -1026,9 +985,9 @@ void Scene402::step() {
 		int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, VERB_WALKTO, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
-		_bartenderSteady = true;
+		local._bartenderSteady = true;
 		_game._player._stepEnabled = true;
-		_bartenderReady = true;
+		local._bartenderReady = true;
 	}
 	break;
 
@@ -1036,12 +995,12 @@ void Scene402::step() {
 		break;
 	}
 
-	if (!_waitingGinnyMove && !_ginnyLooking) {
-		_waitingGinnyMove = true;
-		++_beatCounter;
-		if (_beatCounter >= 20) {
-			_ginnyLooking = true;
-			_beatCounter = 0;
+	if (!local._waitingGinnyMove && !local._ginnyLooking) {
+		local._waitingGinnyMove = true;
+		++local._beatCounter;
+		if (local._beatCounter >= 20) {
+			local._ginnyLooking = true;
+			local._beatCounter = 0;
 			_scene->_sequences.addTimer(60, 54);
 		} else {
 			_scene->_sequences.addTimer(30, 75);
@@ -1051,9 +1010,9 @@ void Scene402::step() {
 	switch (_game._trigger) {
 	case 75:
 		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
-		_bigBeatFl = !_bigBeatFl;
+		local._bigBeatFl = !local._bigBeatFl;
 
-		if (_bigBeatFl) {
+		if (local._bigBeatFl) {
 			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 5);
 			_scene->_sequences.addTimer(8, 130);
 		} else {
@@ -1082,20 +1041,20 @@ void Scene402::step() {
 		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
-		_waitingGinnyMove = false;
+		local._waitingGinnyMove = false;
 		break;
 
 	default:
 		break;
 	}
 
-	if ((_game._trigger == 54) && _ginnyLooking) {
-		++_beatCounter;
-		if (_beatCounter >= 10) {
-			_ginnyLooking = false;
-			_waitingGinnyMove = false;
-			_beatCounter = 0;
-			_bigBeatFl = true;
+	if ((_game._trigger == 54) && local._ginnyLooking) {
+		++local._beatCounter;
+		if (local._beatCounter >= 10) {
+			local._ginnyLooking = false;
+			local._waitingGinnyMove = false;
+			local._beatCounter = 0;
+			local._bigBeatFl = true;
 		} else {
 			_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 			_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, _vm->getRandomNumber(1, 4));
@@ -1104,17 +1063,17 @@ void Scene402::step() {
 		}
 	}
 
-	if (_bartenderReady) {
+	if (local._bartenderReady) {
 		if (_vm->getRandomNumber(1, 250) == 1) {
-			if (_bartenderLooksLeft) {
+			if (local._bartenderLooksLeft) {
 				_scene->_sequences.remove(_globals._sequenceIndexes[11]);
-				_bartenderLooksLeft = false;
-			} else if (_bartenderHandsHips) {
+				local._bartenderLooksLeft = false;
+			} else if (local._bartenderHandsHips) {
 				_scene->_sequences.remove(_globals._sequenceIndexes[10]);
-				_bartenderHandsHips = false;
-			} else if (_bartenderSteady) {
+				local._bartenderHandsHips = false;
+			} else if (local._bartenderSteady) {
 				_scene->_sequences.remove(_globals._sequenceIndexes[9]);
-				_bartenderSteady = false;
+				local._bartenderSteady = false;
 			}
 
 			switch (_vm->getRandomNumber(1, 3)) {
@@ -1124,7 +1083,7 @@ void Scene402::step() {
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 8);
 				int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, VERB_WALKTO, _globals._sequenceIndexes[10], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
-				_bartenderHandsHips = true;
+				local._bartenderHandsHips = true;
 			}
 			break;
 
@@ -1134,7 +1093,7 @@ void Scene402::step() {
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[11], 8);
 				int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, VERB_WALKTO, _globals._sequenceIndexes[11], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
-				_bartenderLooksLeft = true;
+				local._bartenderLooksLeft = true;
 			}
 			break;
 
@@ -1144,7 +1103,7 @@ void Scene402::step() {
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
 				int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, VERB_WALKTO, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
-				_bartenderSteady = true;
+				local._bartenderSteady = true;
 			}
 			break;
 
@@ -1161,11 +1120,11 @@ void Scene402::step() {
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[6], seqIdx);
 		if (!_globals[kBeenThruHelgaScene]) {
 			_game._player._stepEnabled = false;
-			_cutSceneNeeded = true;
+			local._cutSceneNeeded = true;
 		} else {
 			_game._player._stepEnabled = true;
 		}
-		_roxOnStool = true;
+		local._roxOnStool = true;
 	}
 
 	switch (_game._trigger) {
@@ -1211,29 +1170,29 @@ void Scene402::step() {
 		break;
 	}
 
-	if (_cutSceneNeeded && _cutSceneReady) {
-		_cutSceneNeeded = false;
+	if (local._cutSceneNeeded && local._cutSceneReady) {
+		local._cutSceneNeeded = false;
 		_scene->_sequences.addTimer(20, 55);
-		_helgaReady = false;
-		_bartenderReady = false;
+		local._helgaReady = false;
+		local._bartenderReady = false;
 	}
 
 	if (_vm->getRandomNumber(1, 25) == 1) {
-		if (_lightOn) {
+		if (local._lightOn) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[0]);
-			_lightOn = false;
+			local._lightOn = false;
 		} else {
 			_globals._sequenceIndexes[0] = _scene->_sequences.startCycle(_globals._spriteIndexes[0], false, 1);
-			_lightOn = true;
+			local._lightOn = true;
 		}
 	}
 
-	if (!_blowingSmoke && (_vm->getRandomNumber(1, 300) == 1)) {
+	if (!local._blowingSmoke && (_vm->getRandomNumber(1, 300) == 1)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 14);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 14);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 30);
-		_blowingSmoke = true;
+		local._blowingSmoke = true;
 	}
 
 	switch (_game._trigger) {
@@ -1245,27 +1204,27 @@ void Scene402::step() {
 		break;
 
 	case 31:
-		_blowingSmoke = false;
+		local._blowingSmoke = false;
 		break;
 
 	default:
 		break;
 	}
 
-	if (!_leftWomanMoving) {
+	if (!local._leftWomanMoving) {
 		if (_vm->getRandomNumber(1, 1000) == 1) {
 			switch (_vm->getRandomNumber(1, 2)) {
 			case 1:
 				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 12, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 8);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 33);
-				_leftWomanMoving = true;
+				local._leftWomanMoving = true;
 				break;
 
 			case 2:
 				_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 				_scene->_sequences.addTimer(12, 35);
-				_leftWomanMoving = true;
+				local._leftWomanMoving = true;
 				break;
 
 			default:
@@ -1305,46 +1264,46 @@ void Scene402::step() {
 
 	case 37:
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-		_leftWomanMoving = false;
+		local._leftWomanMoving = false;
 		break;
 
 	case 38:
-		_leftWomanMoving = false;
+		local._leftWomanMoving = false;
 		break;
 
 	default:
 		break;
 	}
 
-	if (!_rightWomanMoving) {
+	if (!local._rightWomanMoving) {
 		if (_vm->getRandomNumber(1, 300) == 1) {
 			switch (_vm->getRandomNumber(1, 4)) {
 			case 1:
 				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 12, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 32);
-				_rightWomanMoving = true;
+				local._rightWomanMoving = true;
 				break;
 
 			case 2:
 				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 12, 2, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 4, 5);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 32);
-				_rightWomanMoving = true;
+				local._rightWomanMoving = true;
 				break;
 
 			case 3:
 				_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 12, 2, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 4, 5);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 32);
-				_rightWomanMoving = true;
+				local._rightWomanMoving = true;
 				break;
 
 			case 4:
 				_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 12, 2, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 3, 4);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 32);
-				_rightWomanMoving = true;
+				local._rightWomanMoving = true;
 				break;
 
 			default:
@@ -1354,7 +1313,7 @@ void Scene402::step() {
 	}
 
 	if (_game._trigger == 32)
-		_rightWomanMoving = false;
+		local._rightWomanMoving = false;
 
 	if (_scene->_animation[0]->getCurrentFrame() == 1) {
 		switch (_vm->getRandomNumber(1, 50)) {
@@ -1376,13 +1335,13 @@ void Scene402::step() {
 		}
 	}
 
-	if ((_scene->_animation[0]->getCurrentFrame() == 4) && (_drinkTimer < 10)) {
-		++_drinkTimer;
+	if ((_scene->_animation[0]->getCurrentFrame() == 4) && (local._drinkTimer < 10)) {
+		++local._drinkTimer;
 		_scene->_animation[0]->setCurrentFrame(3);
 	}
 
-	if (_drinkTimer == 10) {
-		_drinkTimer = 0;
+	if (local._drinkTimer == 10) {
+		local._drinkTimer = 0;
 		_scene->_animation[0]->setCurrentFrame(4);
 		_scene->_animation[0]->_currentFrame = 5;
 	}
@@ -1437,21 +1396,21 @@ void Scene402::step() {
 
 	switch (_game._trigger) {
 	case 55:
-		if (_bartenderHandsHips) {
+		if (local._bartenderHandsHips) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[10]);
-			_bartenderHandsHips = false;
+			local._bartenderHandsHips = false;
 			_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
 			int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, VERB_WALKTO, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
-			_bartenderSteady = true;
+			local._bartenderSteady = true;
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
-		} else if (_bartenderLooksLeft) {
+		} else if (local._bartenderLooksLeft) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[11]);
-			_bartenderLooksLeft = false;
+			local._bartenderLooksLeft = false;
 			_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
 			int idx = _scene->_dynamicHotspots.add(NOUN_BARTENDER, VERB_WALKTO, _globals._sequenceIndexes[9], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(228, 83), FACING_SOUTH);
-			_bartenderSteady = true;
+			local._bartenderSteady = true;
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 8);
 		}
 		_game._player._stepEnabled = false;
@@ -1549,7 +1508,7 @@ void Scene402::step() {
 		_scene->_kernelMessages.add(Common::Point(198, 41), 0xFDFC, 0, 0, 130, _game.getQuote(0x1E1));
 		_scene->_sequences.addTimer(150, 65);
 		_scene->_sequences.addTimer(1, 100);
-		_talkTimer = 1130;
+		local._talkTimer = 1130;
 		break;
 
 	case 65:
@@ -1623,7 +1582,7 @@ void Scene402::step() {
 		_scene->_kernelMessages.add(Common::Point(168, 33), 0xFBFA, 0, 0, 180, _game.getQuote(0x205));
 		_scene->_kernelMessages.add(Common::Point(151, 47), 0xFBFA, 0, 0, 180, _game.getQuote(0x206));
 		if (!_game._objects.isInInventory(OBJ_REPAIR_LIST))
-			_activeArrows = true;
+			local._activeArrows = true;
 		break;
 
 	case 72:
@@ -1639,25 +1598,25 @@ void Scene402::step() {
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.add(Common::Point(177, 33), 0xFBFA, 0, 0, 150, _game.getQuote(0x207));
 		_scene->_kernelMessages.add(Common::Point(172, 47), 0xFBFA, 0, 0, 150, _game.getQuote(0x208));
-		_bartenderSteady = true;
+		local._bartenderSteady = true;
 		_game._player._stepEnabled = true;
-		_helgaReady = true;
-		_bartenderReady = true;
+		local._helgaReady = true;
+		local._bartenderReady = true;
 		_globals[kBeenThruHelgaScene] = true;
-		_activeArrows = false;
+		local._activeArrows = false;
 		break;
 
 	default:
 		break;
 	}
 
-	if (_helgaReady) {
+	if (local._helgaReady) {
 		int rndVal = _vm->getRandomNumber(1, 1000);
 		if (rndVal < 6)
 			switch (rndVal) {
 			case 1:
-				_cutSceneReady = false;
-				_helgaReady = false;
+				local._cutSceneReady = false;
+				local._helgaReady = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[13]);
 				_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[13], false, 10, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[13], 2, 5);
@@ -1666,8 +1625,8 @@ void Scene402::step() {
 				break;
 
 			case 2:
-				_cutSceneReady = false;
-				_helgaReady = false;
+				local._cutSceneReady = false;
+				local._helgaReady = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[13]);
 				_globals._sequenceIndexes[13] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[13], false, 15, 2, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[13], 11, 13);
@@ -1676,8 +1635,8 @@ void Scene402::step() {
 				break;
 
 			case 3:
-				_cutSceneReady = false;
-				_helgaReady = false;
+				local._cutSceneReady = false;
+				local._helgaReady = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[13]);
 				_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[13], false, 10, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[13], 10, 11);
@@ -1686,8 +1645,8 @@ void Scene402::step() {
 				break;
 
 			case 4:
-				_cutSceneReady = false;
-				_helgaReady = false;
+				local._cutSceneReady = false;
+				local._helgaReady = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[13]);
 				_globals._sequenceIndexes[13] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[13], false, 15, 2, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[13], 14, 15);
@@ -1696,8 +1655,8 @@ void Scene402::step() {
 				break;
 
 			case 5:
-				_cutSceneReady = false;
-				_helgaReady = false;
+				local._cutSceneReady = false;
+				local._helgaReady = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[13]);
 				_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[13], false, 10, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[13], 16, 19);
@@ -1731,10 +1690,10 @@ void Scene402::step() {
 		_globals._sequenceIndexes[13] = _scene->_sequences.startCycle(_globals._spriteIndexes[13], false, 2);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[13], seqIdx);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 8);
-		_cutSceneReady = true;
+		local._cutSceneReady = true;
 
-		if (!_cutSceneNeeded)
-			_helgaReady = true;
+		if (!local._cutSceneNeeded)
+			local._helgaReady = true;
 	}
 
 	if (_game._trigger == 82) {
@@ -1774,9 +1733,9 @@ void Scene402::step() {
 		_globals._sequenceIndexes[13] = _scene->_sequences.startCycle(_globals._spriteIndexes[13], false, 2);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[13], seqIdx);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 8);
-		_cutSceneReady = true;
-		if (!_cutSceneNeeded)
-			_helgaReady = true;
+		local._cutSceneReady = true;
+		if (!local._cutSceneNeeded)
+			local._helgaReady = true;
 	}
 
 	if (_game._trigger == 102) {
@@ -1788,7 +1747,7 @@ void Scene402::step() {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_EXPIRE, 0, 103);
 	} else if (_game._trigger == 103) {
 		_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
-		_roxOnStool = false;
+		local._roxOnStool = false;
 		_game._player._facing = FACING_SOUTH;
 		_game._player.selectSeries();
 		_game._player._visible = true;
@@ -1796,26 +1755,26 @@ void Scene402::step() {
 		_game._player._readyToWalk = true;
 	}
 
-	if (_activeArrows) {
-		if (!_activeArrow1) {
+	if (local._activeArrows) {
+		if (!local._activeArrow1) {
 			_globals._sequenceIndexes[17] = _scene->_sequences.startCycle(_globals._spriteIndexes[17], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[17], 1);
 			_scene->_sequences.addTimer(_vm->getRandomNumber(10, 15), 49);
-			_activeArrow1 = true;
+			local._activeArrow1 = true;
 		}
 
-		if (!_activeArrow2) {
+		if (!local._activeArrow2) {
 			_globals._sequenceIndexes[18] = _scene->_sequences.startCycle(_globals._spriteIndexes[18], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[18], 1);
 			_scene->_sequences.addTimer(_vm->getRandomNumber(10, 15), 50);
-			_activeArrow2 = true;
+			local._activeArrow2 = true;
 		}
 
-		if (!_activeArrow3) {
+		if (!local._activeArrow3) {
 			_globals._sequenceIndexes[19] = _scene->_sequences.startCycle(_globals._spriteIndexes[19], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[19], 1);
 			_scene->_sequences.addTimer(_vm->getRandomNumber(10, 15), 51);
-			_activeArrow3 = true;
+			local._activeArrow3 = true;
 		}
 	}
 
@@ -1825,7 +1784,7 @@ void Scene402::step() {
 	}
 
 	if (_game._trigger == 45)
-		_activeArrow1 = false;
+		local._activeArrow1 = false;
 
 	if (_game._trigger == 50) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[18]);
@@ -1833,7 +1792,7 @@ void Scene402::step() {
 	}
 
 	if (_game._trigger == 46)
-		_activeArrow2 = false;
+		local._activeArrow2 = false;
 
 	if (_game._trigger == 51) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[19]);
@@ -1841,26 +1800,26 @@ void Scene402::step() {
 	}
 
 	if (_game._trigger == 47)
-		_activeArrow3 = false;
+		local._activeArrow3 = false;
 }
 
-void Scene402::preActions() {
+static void room_402_pre_parser() {
 	if (_action.isAction(VERB_SIT_ON, NOUN_BAR_STOOL) && (_game._player._prepareWalkPos.x != 248))
 		_game._player.walk(Common::Point(232, 112), FACING_EAST);
 
 	if (_action.isAction(VERB_WALKTO, NOUN_WOMAN_ON_BALCONY))
 		_game._player._needToWalk = _game._player._readyToWalk;
 
-	if (!_roxOnStool && _action.isAction(VERB_TAKE, NOUN_CREDIT_CHIP) && !_game._objects.isInInventory(OBJ_CREDIT_CHIP))
+	if (!local._roxOnStool && _action.isAction(VERB_TAKE, NOUN_CREDIT_CHIP) && !_game._objects.isInInventory(OBJ_CREDIT_CHIP))
 		_game._player.walk(Common::Point(246, 108), FACING_NORTH);
 
 	if (_action.isAction(VERB_TAKE))
 		_game._player._needToWalk = false;
 
-	if (_action.isAction(VERB_TAKE, NOUN_CREDIT_CHIP) && !_roxOnStool)
+	if (_action.isAction(VERB_TAKE, NOUN_CREDIT_CHIP) && !local._roxOnStool)
 		_game._player._needToWalk = true;
 
-	if (_roxOnStool) {
+	if (local._roxOnStool) {
 		if (_action.isAction(VERB_LOOK) || _action.isObject(NOUN_BAR_STOOL) || _action.isAction(VERB_TALKTO))
 			_game._player._needToWalk = false;
 
@@ -1879,22 +1838,22 @@ void Scene402::preActions() {
 		}
 	}
 
-	if (_action.isAction(VERB_TAKE, NOUN_REPAIR_LIST) && !_roxOnStool && !_game._objects.isInInventory(OBJ_REPAIR_LIST))
+	if (_action.isAction(VERB_TAKE, NOUN_REPAIR_LIST) && !local._roxOnStool && !_game._objects.isInInventory(OBJ_REPAIR_LIST))
 		_game._player.walk(Common::Point(191, 99), FACING_NORTHEAST);
 
-	if (_action.isAction(VERB_TALKTO, NOUN_BARTENDER) && !_roxOnStool)
+	if (_action.isAction(VERB_TALKTO, NOUN_BARTENDER) && !local._roxOnStool)
 		_game._player.walk(Common::Point(228, 83), FACING_SOUTH);
 
-	if (_action.isAction(VERB_TALKTO, NOUN_REPAIR_WOMAN) && !_roxOnStool)
+	if (_action.isAction(VERB_TALKTO, NOUN_REPAIR_WOMAN) && !local._roxOnStool)
 		_game._player.walk(Common::Point(208, 102), FACING_NORTHEAST);
 }
 
-void Scene402::actions() {
-	if (_action.isAction(VERB_TAKE, NOUN_REPAIR_LIST) && _game._objects.isInRoom(OBJ_REPAIR_LIST) && _roxOnStool) {
+static void room_402_parser() {
+	if (_action.isAction(VERB_TAKE, NOUN_REPAIR_LIST) && _game._objects.isInRoom(OBJ_REPAIR_LIST) && local._roxOnStool) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 77);
 		_game._player._needToWalk = false;
-	} else if (_action.isAction(VERB_TAKE, NOUN_REPAIR_LIST) && _game._objects.isInRoom(OBJ_REPAIR_LIST) && !_roxOnStool) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_REPAIR_LIST) && _game._objects.isInRoom(OBJ_REPAIR_LIST) && !local._roxOnStool) {
 		if (_game._trigger == 0) {
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
@@ -1926,12 +1885,12 @@ void Scene402::actions() {
 		{
 			_game._player._stepEnabled = false;
 			int random = _vm->getRandomNumber(1, 3);
-			if (_helgaTalkMode == 0)
+			if (local._helgaTalkMode == 0)
 				random = 1;
 
 			int centerFlag;
 			Common::Point centerPos;
-			if (_roxOnStool) {
+			if (local._roxOnStool) {
 				centerFlag = 0;
 				centerPos = Common::Point(230, 56);
 			} else {
@@ -1962,10 +1921,10 @@ void Scene402::actions() {
 		break;
 
 		case 25:
-			switch (_helgaTalkMode) {
+			switch (local._helgaTalkMode) {
 			case 0:
 				_game._player._stepEnabled = false;
-				_helgaTalkMode = 1;
+				local._helgaTalkMode = 1;
 				_scene->_kernelMessages.add(Common::Point(177, 33), 0xFBFA, 0, 0, 130, _game.getQuote(0x209));
 				_scene->_kernelMessages.add(Common::Point(182, 47), 0xFBFA, 0, 0, 130, _game.getQuote(0x20A));
 				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
@@ -1974,7 +1933,7 @@ void Scene402::actions() {
 
 			case 1:
 				_game._player._stepEnabled = false;
-				_helgaTalkMode = 2;
+				local._helgaTalkMode = 2;
 				_scene->_kernelMessages.add(Common::Point(157, 47), 0xFBFA, 0, 0, 100, _game.getQuote(0x20B));
 				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(100, 28);
@@ -1982,7 +1941,7 @@ void Scene402::actions() {
 
 			case 2:
 				_game._player._stepEnabled = false;
-				_helgaTalkMode = 3;
+				local._helgaTalkMode = 3;
 				_scene->_kernelMessages.add(Common::Point(172, 47), 0xFBFA, 0, 0, 100, _game.getQuote(0x20C));
 				_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 				_scene->_sequences.addTimer(100, 28);
@@ -2000,13 +1959,13 @@ void Scene402::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_TALKTO, NOUN_WOMAN_IN_CHAIR) && !_firstTalkToGirlInChair) {
+	} else if (_action.isAction(VERB_TALKTO, NOUN_WOMAN_IN_CHAIR) && !local._firstTalkToGirlInChair) {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x1D7));
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(150, 39);
 		_game._player._stepEnabled = false;
-		_firstTalkToGirlInChair = true;
-	} else if (_action.isAction(VERB_TALKTO, NOUN_WOMAN_IN_CHAIR) && _firstTalkToGirlInChair) {
+		local._firstTalkToGirlInChair = true;
+	} else if (_action.isAction(VERB_TALKTO, NOUN_WOMAN_IN_CHAIR) && local._firstTalkToGirlInChair) {
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x1DB));
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(150, 42);
@@ -2019,7 +1978,7 @@ void Scene402::actions() {
 	} else if (_action.isAction(VERB_SIT_ON, NOUN_BAR_STOOL) && (_game._player._targetPos.x == 248)) {
 		_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 120, _game.getQuote(0x20D));
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x20E));
-	} else if (_action.isAction(VERB_SIT_ON, NOUN_BAR_STOOL) && !_roxOnStool && (_game._player._targetPos.x != 248)) {
+	} else if (_action.isAction(VERB_SIT_ON, NOUN_BAR_STOOL) && !local._roxOnStool && (_game._player._targetPos.x != 248)) {
 		_game._player._visible = false;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
@@ -2027,11 +1986,11 @@ void Scene402::actions() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 5);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
 		_game._player._stepEnabled = false;
-	} else if (_action.isAction(VERB_TAKE, NOUN_CREDIT_CHIP) && !_game._objects.isInInventory(OBJ_CREDIT_CHIP) && _roxOnStool) {
-		_roxMode = 20;
+	} else if (_action.isAction(VERB_TAKE, NOUN_CREDIT_CHIP) && !_game._objects.isInInventory(OBJ_CREDIT_CHIP) && local._roxOnStool) {
+		local._roxMode = 20;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(1, 92);
-	} else if (_action.isAction(VERB_TAKE, NOUN_CREDIT_CHIP) && !_game._objects.isInInventory(OBJ_CREDIT_CHIP) && !_roxOnStool) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_CREDIT_CHIP) && !_game._objects.isInInventory(OBJ_CREDIT_CHIP) && !local._roxOnStool) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
@@ -2048,7 +2007,7 @@ void Scene402::actions() {
 		{
 			int centerFlag;
 			Common::Point centerPos;
-			if (_roxOnStool) {
+			if (local._roxOnStool) {
 				centerFlag = 0;
 				centerPos = Common::Point(230, 56);
 			} else {
@@ -2058,11 +2017,11 @@ void Scene402::actions() {
 
 			_game._player._stepEnabled = false;
 			int quoteId;
-			if (_bartenderCalled) {
+			if (local._bartenderCalled) {
 				quoteId = 0x210;
 			} else {
 				quoteId = 0x20F;
-				_bartenderCalled = true;
+				local._bartenderCalled = true;
 			}
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(centerPos, 0x1110, 32 | centerFlag, 0, 90, _game.getQuote(quoteId));
@@ -2074,76 +2033,76 @@ void Scene402::actions() {
 
 		case 29:
 			_scene->_kernelMessages.reset();
-			if (!_roxOnStool) {
+			if (!local._roxOnStool) {
 				if (_game._objects.isInRoom(OBJ_ALIEN_LIQUOR)) {
 					_scene->_kernelMessages.add(Common::Point(177, 41), 0xFDFC, 0, 0, 120, _game.getQuote(0x1DF));
 					_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 					_scene->_sequences.addTimer(1, 100);
-					_talkTimer = 120;
-				} else if (_rexMode == 0) {
+					local._talkTimer = 120;
+				} else if (local._rexMode == 0) {
 					_scene->_kernelMessages.add(Common::Point(175, 13), 0xFDFC, 0, 0, 180, _game.getQuote(0x1F9));
 					_scene->_kernelMessages.add(Common::Point(184, 27), 0xFDFC, 0, 0, 180, _game.getQuote(0x1FA));
 					_scene->_kernelMessages.add(Common::Point(200, 41), 0xFDFC, 0, 0, 180, _game.getQuote(0x1FB));
 					_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 					_scene->_sequences.addTimer(1, 100);
-					_talkTimer = 180;
-					_rexMode = 1;
-				} else if (_rexMode == 1) {
+					local._talkTimer = 180;
+					local._rexMode = 1;
+				} else if (local._rexMode == 1) {
 					_scene->_kernelMessages.add(Common::Point(205, 41), 0xFDFC, 0, 0, 120, _game.getQuote(0x1FC));
 					_game._player._stepEnabled = true;
 					_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 					_scene->_sequences.addTimer(1, 100);
-					_talkTimer = 120;
-					_rexMode = 3;
+					local._talkTimer = 120;
+					local._rexMode = 3;
 				} else {
 					_game._player._stepEnabled = true;
 				}
 			} else {
 				if (_game._objects.isInRoom(OBJ_ALIEN_LIQUOR)) {
-					if (!_refuseAlienLiquor) {
+					if (!local._refuseAlienLiquor) {
 						_scene->_kernelMessages.reset();
 						_scene->_kernelMessages.add(Common::Point(198, 27), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E2));
 						_scene->_kernelMessages.add(Common::Point(199, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1E3));
-						_bartenderCurrentQuestion = 10;
+						local._bartenderCurrentQuestion = 10;
 						_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 						_scene->_sequences.addTimer(1, 100);
-						_talkTimer = 120;
-						_conversationFl = true;
-						_bartenderDialogNode = 1;
-						if (_dialog2.read(0) <= 1)
-							_dialog1.write(0x214, false);
+						local._talkTimer = 120;
+						local._conversationFl = true;
+						local._bartenderDialogNode = 1;
+						if (local._dialog2.read(0) <= 1)
+							local._dialog1.write(0x214, false);
 
-						_dialog1.start();
+						local._dialog1.start();
 					} else {
 						_scene->_kernelMessages.add(Common::Point(177, 41), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, _game.getQuote(0x1EF));
 						_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 						_scene->_sequences.addTimer(1, 100);
-						_talkTimer = 120;
-						_bartenderCurrentQuestion = 3;
-						_conversationFl = true;
-						_bartenderDialogNode = 1;
-						if (_dialog2.read(0) <= 1)
-							_dialog1.write(0x214, false);
+						local._talkTimer = 120;
+						local._bartenderCurrentQuestion = 3;
+						local._conversationFl = true;
+						local._bartenderDialogNode = 1;
+						if (local._dialog2.read(0) <= 1)
+							local._dialog1.write(0x214, false);
 
-						_dialog1.start();
+						local._dialog1.start();
 						_game._player._stepEnabled = true;
 					}
 				} else {
-					if (_rexMode == 0) {
+					if (local._rexMode == 0) {
 						_scene->_kernelMessages.add(Common::Point(175, 13), 0xFDFC, 0, 0, 180, _game.getQuote(0x1F9));
 						_scene->_kernelMessages.add(Common::Point(184, 27), 0xFDFC, 0, 0, 180, _game.getQuote(0x1FA));
 						_scene->_kernelMessages.add(Common::Point(200, 41), 0xFDFC, 0, 0, 180, _game.getQuote(0x1FB));
 						_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 						_scene->_sequences.addTimer(1, 100);
-						_talkTimer = 180;
-						_rexMode = 1;
-					} else if (_rexMode == 1) {
+						local._talkTimer = 180;
+						local._rexMode = 1;
+					} else if (local._rexMode == 1) {
 						_scene->_kernelMessages.add(Common::Point(205, 41), 0xFDFC, 0, 0, 120, _game.getQuote(0x1FC));
 						_game._player._stepEnabled = true;
 						_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 						_scene->_sequences.addTimer(1, 100);
-						_talkTimer = 120;
-						_rexMode = 3;
+						local._talkTimer = 120;
+						local._rexMode = 3;
 					} else {
 						_game._player._stepEnabled = true;
 					}
@@ -2221,6 +2180,65 @@ void Scene402::actions() {
 	_action._inProgress = false;
 }
 
+void room_402_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._lightOn);
+	s.syncAsByte(local._blowingSmoke);
+	s.syncAsByte(local._leftWomanMoving);
+	s.syncAsByte(local._rightWomanMoving);
+	s.syncAsByte(local._firstTalkToGirlInChair);
+	s.syncAsByte(local._waitingGinnyMove);
+	s.syncAsByte(local._ginnyLooking);
+	s.syncAsByte(local._bigBeatFl);
+	s.syncAsByte(local._roxOnStool);
+	s.syncAsByte(local._bartenderSteady);
+	s.syncAsByte(local._bartenderHandsHips);
+	s.syncAsByte(local._bartenderLooksLeft);
+	s.syncAsByte(local._bartenderReady);
+	s.syncAsByte(local._bartenderTalking);
+	s.syncAsByte(local._bartenderCalled);
+	s.syncAsByte(local._conversationFl);
+	s.syncAsByte(local._activeTeleporter);
+	s.syncAsByte(local._activeArrows);
+	s.syncAsByte(local._activeArrow1);
+	s.syncAsByte(local._activeArrow2);
+	s.syncAsByte(local._activeArrow3);
+	s.syncAsByte(local._cutSceneReady);
+	s.syncAsByte(local._cutSceneNeeded);
+	s.syncAsByte(local._helgaReady);
+	s.syncAsByte(local._refuseAlienLiquor);
+
+	s.syncAsSint16LE(local._drinkTimer);
+	s.syncAsSint16LE(local._beatCounter);
+	s.syncAsSint16LE(local._bartenderMode);
+	s.syncAsSint16LE(local._bartenderDialogNode);
+	s.syncAsSint16LE(local._bartenderCurrentQuestion);
+	s.syncAsSint16LE(local._helgaTalkMode);
+	s.syncAsSint16LE(local._roxMode);
+	s.syncAsSint16LE(local._rexMode);
+	s.syncAsSint16LE(local._talkTimer);
+}
+
+void room_402_preload() {
+	room_init_code_pointer = room_402_init;
+	room_pre_parser_code_pointer = room_402_pre_parser;
+	room_parser_code_pointer = room_402_parser;
+	room_daemon_code_pointer = room_402_daemon;
+
+	section_4_walker();
+	section_4_interface();
+
+	_scene->addActiveVocab(NOUN_BARTENDER);
+	_scene->addActiveVocab(NOUN_ALIEN_LIQUOR);
+	_scene->addActiveVocab(VERB_DRINK);
+	_scene->addActiveVocab(NOUN_BINOCULARS);
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_CREDIT_CHIP);
+	_scene->addActiveVocab(VERB_TAKE);
+	_scene->addActiveVocab(NOUN_REPAIR_LIST);
+	_scene->addActiveVocab(VERB_LOOK_AT);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

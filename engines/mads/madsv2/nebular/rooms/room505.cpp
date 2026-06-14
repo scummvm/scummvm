@@ -38,7 +38,7 @@ Scene505::Scene505(RexNebularEngine *vm) : Scene5xx(vm) {
 		_carLocations[i] = -1;
 }
 
-void Scene505::synchronize(Common::Serializer &s) {
+void room_505_synchronize(Common::Serializer &s) {
 	Scene5xx::synchronize(s);
 
 	s.syncAsSint16LE(_frame);
@@ -56,7 +56,7 @@ void Scene505::setup() {
 	setAAName();
 }
 
-void Scene505::enter() {
+static void room_505_init() {
 	for (int i = 0; i < 9; i++)
 		_globals._spriteIndexes[i] = _scene->_sprites.addSprites(formAnimName('a', i + 1));
 
@@ -290,7 +290,7 @@ void Scene505::step() {
 	}
 }
 
-void Scene505::actions() {
+static void room_505_parser() {
 	if (_action.isAction(VERB_PRESS))
 		_nextButtonId = _action._activeAction._objectNameId;
 	else if (_action.isAction(VERB_RETURN_TO, NOUN_INSIDE_OF_CAR))

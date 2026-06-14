@@ -31,7 +31,7 @@ Scene752::Scene752(RexNebularEngine *vm) : Scene7xx(vm) {
 	_cardId = -1;
 }
 
-void Scene752::synchronize(Common::Serializer &s) {
+void room_752_synchronize(Common::Serializer &s) {
 	Scene7xx::synchronize(s);
 
 	s.syncAsSint16LE(_cardId);
@@ -47,7 +47,7 @@ void Scene752::setup() {
 	_scene->addActiveVocab(NOUN_LASER_BEAM);
 }
 
-void Scene752::enter() {
+static void room_752_init() {
 	_globals._spriteIndexes[14] = _scene->_sprites.addSprites(formAnimName('l', -1));
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites("*RXMBD_8");
 
@@ -106,13 +106,13 @@ void Scene752::step() {
 	}
 }
 
-void Scene752::preActions() {
+static void room_752_pre_parser() {
 	if (_action.isAction(VERB_WALKTO, NOUN_WEST_END_OF_PLATFORM)) {
 		_game._player._walkOffScreenSceneId = 751;
 	}
 }
 
-void Scene752::actions() {
+static void room_752_parser() {
 	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM))
 		;
 	else if (_action.isAction(VERB_STEP_INTO, NOUN_TELEPORTER)) {

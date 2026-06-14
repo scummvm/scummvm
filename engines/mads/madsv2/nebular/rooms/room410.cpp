@@ -19,20 +19,20 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section4.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene410::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene410::enter() {
+static void room_410_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('y', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*ROXRC_7");
 
@@ -46,13 +46,13 @@ void Scene410::enter() {
 		_game._player._facing = FACING_NORTH;
 	}
 
-	sceneEntrySound();
+	section_4_music();
 
 	_scene->loadAnimation(Resources::formatName(410, 'r', -1, EXT_AA, ""));
 	_scene->_animation[0]->_resetFlag = true;
 }
 
-void Scene410::step() {
+static void room_410_daemon() {
 	if (_scene->_animation[0]->getCurrentFrame() == 1) {
 		if (_vm->getRandomNumber(1, 30) == 1)
 			_scene->_animation[0]->setCurrentFrame(2);
@@ -82,7 +82,7 @@ void Scene410::step() {
 	}
 }
 
-void Scene410::preActions() {
+static void room_410_pre_parser() {
 	if (_action.isAction(VERB_TAKE) && !_action.isObject(NOUN_CHARGE_CASES))
 		_game._player._needToWalk = false;
 
@@ -96,7 +96,7 @@ void Scene410::preActions() {
 		_game._player._needToWalk = true;
 }
 
-void Scene410::actions() {
+static void room_410_parser() {
 	if (_action.isAction(VERB_WALK_INTO, NOUN_CORRIDOR_TO_SOUTH))
 		_scene->_nextSceneId = 406;
 	else if (_action.isAction(VERB_TAKE, NOUN_CHARGE_CASES) && (_game._objects.isInRoom(OBJ_CHARGE_CASES) || _game._trigger)) {
@@ -187,6 +187,21 @@ void Scene410::actions() {
 	_action._inProgress = false;
 }
 
+void room_410_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_410_preload() {
+	room_init_code_pointer = room_410_init;
+	room_pre_parser_code_pointer = room_410_pre_parser;
+	room_parser_code_pointer = room_410_parser;
+	room_daemon_code_pointer = room_410_daemon;
+
+	section_4_walker();
+	section_4_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

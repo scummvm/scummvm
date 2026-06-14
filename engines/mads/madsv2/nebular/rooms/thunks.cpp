@@ -88,7 +88,15 @@ Game::Object Game::Objects::operator[](int idx) {
 	return Game::Object(idx);
 }
 
-Game::Object::Object(int idx) : _roomNumber(object[idx].location) {
+Game::Object::Object(int idx) : _object_id(idx), _roomNumber(object[idx].location) {
+}
+
+int Game::Object::getQuality(int quality_id) {
+	return object_check_quality(_object_id, quality_id);
+}
+
+void Game::Object::setQuality(int quality_id, long quality_value) {
+	object_set_quality(_object_id, quality_id, quality_value);
 }
 
 void Game::VisitedScenes::add(int roomNum) {
@@ -152,12 +160,19 @@ void Game::Player::removePlayerSprites() {
 	kernel_dump_walker_only();
 }
 
+void Game::Player::selectSeries() {
+	player_select_series();
+}
+
 char *Resources::formatName(int my_room, char type, int num, int ext, const char *text) {
 	return kernel_full_name(my_room, type, num, text, ext);
 }
 
 char *Resources::formatAAName(int num) {
 	return kernel_interface_name(num);
+}
+
+Scene::Animation::Animation(int anim_id) : _id(anim_id), _currentFrame(kernel_anim[anim_id].frame) {
 }
 
 Scene::Animation &Scene::Animation::operator=(std::nullptr_t) {

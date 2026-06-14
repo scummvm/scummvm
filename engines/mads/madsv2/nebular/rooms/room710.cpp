@@ -32,7 +32,7 @@ void Scene710::setup() {
 	setAAName();
 }
 
-void Scene710::enter() {
+static void room_710_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 
 	if (_game._objects[OBJ_VASE]._roomNumber == 706) {
@@ -55,7 +55,7 @@ void Scene710::step() {
 	}
 }
 
-void Scene710::actions() {
+static void room_710_parser() {
 	if (_action.isAction(VERB_PUT_DOWN, NOUN_BINOCULARS)) {
 		_game._player._stepEnabled = false;
 

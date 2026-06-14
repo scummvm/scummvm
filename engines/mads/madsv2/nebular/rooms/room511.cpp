@@ -36,7 +36,7 @@ Scene511::Scene511(RexNebularEngine *vm) : Scene5xx(vm) {
 	_lineAnimationPosition = -1;
 }
 
-void Scene511::synchronize(Common::Serializer &s) {
+void room_511_synchronize(Common::Serializer &s) {
 	Scene5xx::synchronize(s);
 
 	s.syncAsByte(_handingLine);
@@ -55,7 +55,7 @@ void Scene511::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
-void Scene511::enter() {
+static void room_511_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 0));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_6");
 
@@ -184,7 +184,7 @@ void Scene511::step() {
 	}
 }
 
-void Scene511::preActions() {
+static void room_511_pre_parser() {
 	if (!_handingLine)
 		return;
 
@@ -209,7 +209,7 @@ void Scene511::preActions() {
 	}
 }
 
-void Scene511::actions() {
+static void room_511_parser() {
 	if (_action.isAction(VERB_WALK_INTO, NOUN_RESTAURANT))
 		_scene->_nextSceneId = 512;
 	else if (_action.isAction(VERB_GET_INTO, NOUN_CAR)) {

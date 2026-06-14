@@ -19,20 +19,20 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section4.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene405::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene405::enter() {
+static void room_405_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*ROXCL_8");
@@ -65,10 +65,10 @@ void Scene405::enter() {
 	}
 
 	_game.loadQuoteSet(0x24F, 0);
-	sceneEntrySound();
+	section_4_music();
 }
 
-void Scene405::step() {
+static void room_405_daemon() {
 	if (_game._trigger == 80) {
 		_scene->_sequences.addTimer(20, 81);
 		_game._player._priorTimer = _scene->_frameStartTime + _game._player._ticksAmount;
@@ -108,7 +108,7 @@ void Scene405::step() {
 	}
 }
 
-void Scene405::preActions() {
+static void room_405_pre_parser() {
 	if (_action.isAction(VERB_TAKE))
 		_game._player._needToWalk = false;
 
@@ -122,7 +122,7 @@ void Scene405::preActions() {
 		_game._player.walk(Common::Point(212, 113), FACING_NORTH);
 }
 
-void Scene405::actions() {
+static void room_405_parser() {
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOOR))
 		_scene->_nextSceneId = 413;
 	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_WIDE_DOOR) && _globals[kArmoryDoorOpen])
@@ -194,6 +194,21 @@ void Scene405::actions() {
 	_action._inProgress = false;
 }
 
+void room_405_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_405_preload() {
+	room_init_code_pointer = room_405_init;
+	room_pre_parser_code_pointer = room_405_pre_parser;
+	room_parser_code_pointer = room_405_parser;
+	room_daemon_code_pointer = room_405_daemon;
+
+	section_4_walker();
+	section_4_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

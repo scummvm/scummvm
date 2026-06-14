@@ -52,7 +52,7 @@ Scene611::Scene611(RexNebularEngine *vm) : Scene6xx(vm), _defaultDialogPos(0, 0)
 	_ratTimer = 0;
 }
 
-void Scene611::synchronize(Common::Serializer &s) {
+void room_611_synchronize(Common::Serializer &s) {
 	Scene6xx::synchronize(s);
 
 	s.syncAsByte(_seenRatFl);
@@ -928,7 +928,7 @@ void Scene611::displayHermitQuestions(int question) {
 	}
 }
 
-void Scene611::enter() {
+static void room_611_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('x', 1));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXMRC_9");
@@ -1355,7 +1355,7 @@ void Scene611::step() {
 	}
 }
 
-void Scene611::preActions() {
+static void room_611_pre_parser() {
 	if (_action.isAction(VERB_WALK_DOWN, NOUN_ALLEY))
 		_game._player._walkOffScreenSceneId = 609;
 
@@ -1363,7 +1363,7 @@ void Scene611::preActions() {
 		_scene->_kernelMessages.reset();
 }
 
-void Scene611::actions() {
+static void room_611_parser() {
 	if (_game._screenObjects._inputMode == kInputConversation)
 		handleDialog();
 	else if ((_action.isAction(VERB_GIVE, NOUN_PHONE_CELLS, NOUN_HERMIT)) || (_action.isAction(VERB_GIVE, NOUN_DURAFAIL_CELLS, NOUN_HERMIT))) {

@@ -41,7 +41,7 @@ Scene607::Scene607(RexNebularEngine *vm) : Scene6xx(vm) {
 	_counter = -1;
 }
 
-void Scene607::synchronize(Common::Serializer &s) {
+void room_607_synchronize(Common::Serializer &s) {
 	Scene6xx::synchronize(s);
 
 	s.syncAsUint32LE(_dogTimer);
@@ -64,7 +64,7 @@ void Scene607::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
-void Scene607::enter() {
+static void room_607_init() {
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXCD_3");
 
@@ -368,7 +368,7 @@ void Scene607::handleThrowingBone() {
 	}
 }
 
-void Scene607::preActions() {
+static void room_607_pre_parser() {
 	if (_action.isAction(VERB_TALKTO, NOUN_OBNOXIOUS_DOG))
 		_game._player._needToWalk = false;
 
@@ -384,7 +384,7 @@ void Scene607::preActions() {
 		_game._player.walk(Common::Point(201, 107), FACING_SOUTHEAST);
 }
 
-void Scene607::actions() {
+static void room_607_parser() {
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_SIDE_ENTRANCE))
 		_scene->_nextSceneId = 608;
 	else if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {

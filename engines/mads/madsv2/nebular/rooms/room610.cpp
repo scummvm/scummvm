@@ -37,7 +37,7 @@ Scene610::Scene610(RexNebularEngine *vm) : Scene6xx(vm) {
 	_lastFrameTimer = 0;
 }
 
-void Scene610::synchronize(Common::Serializer &s) {
+void room_610_synchronize(Common::Serializer &s) {
 	Scene6xx::synchronize(s);
 
 	s.syncAsSint16LE(_handsetHotspotId);
@@ -56,7 +56,7 @@ void Scene610::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
-void Scene610::enter() {
+static void room_610_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('p', -1));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRC_9");
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 0));
@@ -110,7 +110,7 @@ void Scene610::step() {
 	}
 }
 
-void Scene610::actions() {
+static void room_610_parser() {
 	if (_action.isAction(VERB_EXIT_FROM, NOUN_VIDEO_STORE))
 		_scene->_nextSceneId = 609;
 	else if (_action.isAction(VERB_TAKE, NOUN_PHONE_HANDSET)) {

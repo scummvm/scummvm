@@ -31,7 +31,7 @@ Scene503::Scene503(RexNebularEngine *vm) : Scene5xx(vm) {
 	_detonatorHotspotId = -1;
 }
 
-void Scene503::synchronize(Common::Serializer &s) {
+void room_503_synchronize(Common::Serializer &s) {
 	Scene5xx::synchronize(s);
 
 	s.syncAsSint16LE(_detonatorHotspotId);
@@ -44,7 +44,7 @@ void Scene503::setup() {
 	_scene->addActiveVocab(VERB_WALKTO);
 }
 
-void Scene503::enter() {
+static void room_503_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
 
 	if (_globals[kSexOfRex] == REX_MALE)
@@ -66,7 +66,7 @@ void Scene503::enter() {
 	sceneEntrySound();
 }
 
-void Scene503::actions() {
+static void room_503_parser() {
 	if (_action.isAction(VERB_WALK, NOUN_OUTSIDE))
 		_scene->_nextSceneId = 501;
 	else if (_action.isAction(VERB_TAKE, NOUN_DETONATORS)) {

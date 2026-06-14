@@ -33,7 +33,7 @@ void Scene502::setup() {
 	_game._aaName = Resources::formatAAName(5);
 }
 
-void Scene502::enter() {
+static void room_502_init() {
 	if (_globals[kSexOfRex] == REX_MALE)
 		_handSpriteId = _scene->_sprites.addSprites("*REXHAND");
 	else
@@ -54,7 +54,7 @@ void Scene502::step() {
 	teleporterStep();
 }
 
-void Scene502::actions() {
+static void room_502_parser() {
 	if (teleporterActions()) {
 		_action._inProgress = false;
 		return;
