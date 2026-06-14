@@ -41,6 +41,7 @@ const DebugChannelDef gDebugChannels[] = {
 	{ kDebugLevelGGraphics,  "ggraphics", "debug messages for global graphics" },
 	{ kDebugLevelGVideo,     "gvideo",    "debug messages for global video" },
 	{ kDebugLevelGAudio,     "gaudio",    "debug messages for global audio" },
+	{ kDebugImGui,           "imgui",     "Show ImGui debug window (if available)" },
 	DEBUG_CHANNEL_END
 };
 namespace Common {
