@@ -13,6 +13,9 @@ endif
 ifdef ENABLE_DARKSEED
 DIST_FILES_LIST += dists/engine-data/darkseed.dat
 endif
+ifdef ENABLE_EEM
+DIST_FILES_LIST += dists/engine-data/eem.dat
+endif
 ifdef ENABLE_DRASCULA
 DIST_FILES_LIST += dists/engine-data/drascula.dat
 endif
