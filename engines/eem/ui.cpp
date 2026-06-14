@@ -195,6 +195,18 @@ constexpr Common::Rect kSetupKid2Rect    (Common::Point( 99,  54),  49,  8);
 constexpr Common::Rect kSetupSoundOnRect (Common::Point(106,  86),  19,  8);
 constexpr Common::Rect kSetupSoundOffRect(Common::Point(106,  96),  19,  8);
 
+// EEM2/London setup highlights — `_SetupSettings @ 2046:0008` (_SwapColors,
+// key 0xFE). On/off label pairs for the 4 toggles (rects @ 2bca:13ec; drawn
+// in the DOS order ON-then-OFF). Partner reuses Jake/Jenny.
+constexpr Common::Rect kLonSetJake    (Common::Point( 99,  44), 49, 8); // 0x13ec
+constexpr Common::Rect kLonSetJenny   (Common::Point( 99,  54), 49, 8); // 0x13f4
+constexpr Common::Rect kLonSetVoiceOn (Common::Point(106,  68), 20, 8); // 0x13fc
+constexpr Common::Rect kLonSetVoiceOff(Common::Point(106,  68), 40, 8); // 0x1404
+constexpr Common::Rect kLonSetMusicOn (Common::Point(106,  84), 20, 8); // 0x141c
+constexpr Common::Rect kLonSetMusicOff(Common::Point(128,  85), 18, 7); // 0x1424
+constexpr Common::Rect kLonSetHiOn    (Common::Point(106, 110), 29, 8); // 0x1414
+constexpr Common::Rect kLonSetHiOff   (Common::Point(106, 100), 29, 8); // 0x140c
+
 // `_SwapColors @ 172b:1d2a` — replace pixels in r where value==from
 // with to. 0xFE = BG text-key; 0x15 = active palette index, 0x00 =
 // inactive (set by `_SetupSettings @ 1f78:000d`).
@@ -1772,6 +1784,188 @@ void EEMEngine::setupLeave() {
 			_nextScreen = kScreenMap;
 	}
 	saveProfile(_playerName);
+}
+
+void EEMEngine::setupDrawScreenLondon() {
+	// `_SetupSettings @ 2046:0008`: BG PIC 0x40 + _SwapColors highlights for the
+	// 4 toggles (key 0xFE, 0x15 active / 0x00 dim), drawn ON-then-OFF.
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+		Graphics::PixelFormat::createFormatCLUT8());
+	scratch.clear();
+	Picture bg;
+	if (_picsArchive.getPicture(0x40, bg))
+		scratch.simpleBlitFrom(bg.surface);
+
+	const byte kKey = 0xFE, kBright = 0x15, kDim = 0x00;
+	// Partner (DAT_3036_4bd4).
+	swapColors(scratch, kLonSetJake,  kKey, _partner == kPartnerJake  ? kBright : kDim);
+	swapColors(scratch, kLonSetJenny, kKey, _partner == kPartnerJenny ? kBright : kDim);
+	// Voice (DAT_3036_4c4e).
+	swapColors(scratch, kLonSetVoiceOn,  kKey, _voiceOn ? kBright : kDim);
+	swapColors(scratch, kLonSetVoiceOff, kKey, _voiceOn ? kDim : kBright);
+	// Music (DAT_3036_4cc0).
+	swapColors(scratch, kLonSetMusicOn,  kKey, _musicOn ? kBright : kDim);
+	swapColors(scratch, kLonSetMusicOff, kKey, _musicOn ? kDim : kBright);
+	// Highlight boxes (DAT_3036_4c4a; hide_highlight_boxes is the inverse).
+	const bool hiOn = !ConfMan.getBool("hide_highlight_boxes");
+	swapColors(scratch, kLonSetHiOn,  kKey, hiOn ? kBright : kDim);
+	swapColors(scratch, kLonSetHiOff, kKey, hiOn ? kDim : kBright);
+
+	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+							   0, 0, kScreenWidth, kScreenHeight);
+	g_system->updateScreen();
+}
+
+void EEMEngine::doSetupLondon() {
+	// `_DoSetup @ 2046:067b`. BG PIC 0x40; 13 click rects (`_SetupButtons @
+	// 2bca:12ce`); `HandleSetupButton @ 2046:01d9` dispatch (verified from the
+	// jumptable @ 2046:0661). EEM2 has FOUR toggles vs EEM1's two and a
+	// rearranged left column:
+	//   [0]( 20, 44) Partner    [1]( 20, 63) Voice    [2]( 20,101) Highlight boxes
+	//   [3]( 20,127) Profile(8) [12](20, 82) Music    [4](281, 43) ScrapBook +
+	//   [5](281, 62) ScrapBook- [6](281,108) Save     [7](281,127) New case(0xa)
+	//   [8]( 53,153) Done       [9](145,163) Quit      [10](212,153) Help
+	//   [11]( 81, 25) Credits (PIC 0x208).  _SavePlayerRecord on exit (setupLeave).
+	if (!_font.isLoaded()) {
+		_nextScreen = (ScreenId)_lastScreen;
+		return;
+	}
+	const Common::Rect kPartnerBtn ( 20,  44,  39,  61); // [0]
+	const Common::Rect kVoiceBtn   ( 20,  63,  39,  80); // [1]
+	const Common::Rect kHiBtn      ( 20, 101,  39, 118); // [2]
+	const Common::Rect kProfileBtn ( 20, 127,  39, 144); // [3]
+	const Common::Rect kScrapNext  (281,  43, 299,  60); // [4]
+	const Common::Rect kScrapPrev  (281,  62, 299,  79); // [5]
+	const Common::Rect kSaveBtn    (281, 108, 299, 125); // [6]
+	const Common::Rect kNewCaseBtn (281, 127, 299, 144); // [7]
+	const Common::Rect kDoneBtn    ( 53, 153, 108, 183); // [8]
+	const Common::Rect kQuitBtn    (145, 163, 174, 187); // [9]
+	const Common::Rect kHelpBtn    (212, 153, 266, 184); // [10]
+	const Common::Rect kCreditsBtn ( 81,  25, 238,  37); // [11]
+	const Common::Rect kMusicBtn   ( 20,  82,  38,  99); // [12]
+
+	setupDrawScreenLondon();
+	_nextScreen = kScreenSetup;  // sentinel — setupLeave picks the target
+	while (!shouldQuit()) {
+		Common::Event ev;
+		bool dirty = false;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				_nextScreen = kScreenInvalid;
+				return;
+			}
+			if (ev.type == Common::EVENT_KEYDOWN &&
+				(ev.kbd.keycode == Common::KEYCODE_ESCAPE ||
+				 ev.kbd.keycode == Common::KEYCODE_RETURN)) {
+				setupLeave();
+				return;
+			}
+			if (ev.type != Common::EVENT_LBUTTONDOWN)
+				continue;
+			const int mx = ev.mouse.x, my = ev.mouse.y;
+
+			// --- toggles (stay on screen, re-render) ---
+			if (kPartnerBtn.contains(mx, my)) {
+				_partner = (_partner == kPartnerJake) ? kPartnerJenny
+													  : kPartnerJake;
+				dirty = true;
+				continue;
+			}
+			if (kVoiceBtn.contains(mx, my)) {
+				_voiceOn = !_voiceOn;
+				if (_audio)
+					_audio->setVoiceEnabled(_voiceOn);
+				dirty = true;
+				continue;
+			}
+			if (kMusicBtn.contains(mx, my)) {
+				_musicOn = !_musicOn;
+				if (!_musicOn)
+					stopMusic();
+				dirty = true;
+				continue;
+			}
+			if (kHiBtn.contains(mx, my)) {
+				ConfMan.setBool("hide_highlight_boxes",
+								!ConfMan.getBool("hide_highlight_boxes"));
+				dirty = true;
+				continue;
+			}
+
+			// --- navigation (leave the screen) ---
+			if (kProfileBtn.contains(mx, my)) {
+				saveProfile(_playerName);
+				_nextScreen = kScreenProfile;
+				return;
+			}
+			if (kNewCaseBtn.contains(mx, my)) {
+				saveProfile(_playerName);
+				_nextScreen = kScreenChooseMystery;
+				return;
+			}
+			if (kDoneBtn.contains(mx, my)) {
+				setupLeave();
+				return;
+			}
+			if (kQuitBtn.contains(mx, my)) {
+				if (areYouSure()) {
+					_nextScreen = kScreenInvalid;
+					return;
+				}
+				dirty = true;  // restore BG under the prompt
+				continue;
+			}
+
+			// --- actions that stay on screen ---
+			if (kSaveBtn.contains(mx, my)) {
+				// `_SaveGame` is gated on a game being active ([0x1966]).
+				if (_mystery.isLoaded())
+					saveProfile(_playerName);
+				continue;
+			}
+			if (kHelpBtn.contains(mx, my)) {
+				// `_InterfaceHelp(0)`. Reuse the EEM1 help-card mechanism.
+				static const uint16 kHelpPics[] = { 0x0192, 0x01B1 };
+				CursorMan.showMouse(false);
+				for (uint i = 0; i < ARRAYSIZE(kHelpPics); i++) {
+					setupDrawScreenLondon();
+					if (setupShowFullscreenPic(kHelpPics[i], true) ==
+						Common::KEYCODE_ESCAPE)
+						break;
+				}
+				CursorMan.showMouse(true);
+				dirty = true;
+				continue;
+			}
+			if (kCreditsBtn.contains(mx, my)) {
+				CursorMan.showMouse(false);
+				setupShowFullscreenPic(0x208, /* transparent= */ false);
+				CursorMan.showMouse(true);
+				setSitePalette(0);
+				dirty = true;
+				continue;
+			}
+			// ScrapBook +/- — London has 2 books (stage 1 / 2). The DOS pages
+			// next/prev (FUN_2046_0874); map to the two available books.
+			if (kScrapNext.contains(mx, my)) {
+				doShowScrapbook(1);
+				setSitePalette(0);
+				dirty = true;
+				continue;
+			}
+			if (kScrapPrev.contains(mx, my) && _chainStage >= 2) {
+				doShowScrapbook(2);
+				setSitePalette(0);
+				dirty = true;
+				continue;
+			}
+		}
+		if (dirty)
+			setupDrawScreenLondon();
+		g_system->updateScreen();
+		g_system->delayMillis(15);
+	}
 }
 
 void EEMEngine::doActionScreen() {

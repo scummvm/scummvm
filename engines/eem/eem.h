@@ -512,6 +512,12 @@ private:
 	Common::KeyCode setupShowFullscreenPic(uint16 picId, bool transparent);
 	void setupLeave();
 
+	/// EEM2/London setup screen — `_DoSetup @ 2046:067b` (distinct from EEM1's
+	/// seg-1f78 screen): 4 toggles (partner / voice / music / highlight boxes),
+	/// rearranged 13-button layout, scrapbook paging. Reuses the shared helpers.
+	void doSetupLondon();
+	void setupDrawScreenLondon();
+
 	/// `_DoInitClues @ 1a35:0411` (minus live ANI sequence playback).
 	void doInitClues();
 
@@ -588,6 +594,12 @@ private:
 	/// every `_PlayVoice` / `_SpoolSound` call site (clue voices,
 	/// partner speech, intro VO).
 	bool _voiceOn = true;
+
+	/// EEM2/London music (MIDI) on/off — `DAT_3036_4cc0`, toggled by the music
+	/// button in `_DoSetup @ 2046:067b`. Separate from `_voiceOn` (EEM2 has both
+	/// a voice and a music toggle; EEM1 only had one sound toggle). Gates the
+	/// briefing / travel MIDI for London.
+	bool _musicOn = true;
 
 	/// Set by the profile/new-player screens. London uses it to decide whether
 	/// to start the training mystery or resume the loaded profile's menu/state.
