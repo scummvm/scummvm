@@ -571,6 +571,61 @@ int Mystery::selectedPoints() const {
 	return total;
 }
 
+bool Mystery::londonSolved() const {
+	// `_SolvedCheck @ 1ea1:0b1a`. Reuses the already-loaded hint chains
+	// (_aChain/_bChain/_cChain) as the three answer sets and the shared
+	// _noteSelected accuse-selection array — see londonSolved() doc in the
+	// header. EEM1/floppy keep the points model via solvedCheck().
+	for (uint chain = 0; chain < 3; chain++) {
+		int remaining = (int)kChainLen;
+		int wild = 0;
+		for (uint slot = 0; slot < kChainLen; slot++) {
+			const uint16 clue = hintChain(chain, slot);
+			if (clue == 0xFFFF) {
+				remaining--;
+				wild++;
+			} else if (clue < kCluesFoundCap && _noteSelected[clue]) {
+				remaining--;
+			}
+		}
+		if (wild == (int)kChainLen)
+			continue;            // all-wildcard set is unused
+		if (remaining == 0)
+			return true;         // every slot wildcard-or-selected
+	}
+	return false;
+}
+
+int Mystery::minCluesRemaining() const {
+	// `_GetMinRemaining @ 1ea1:1056`. Parallel to londonSolved() but tests the
+	// three answer sets against _cluesFound (discovered in the world). Tracks
+	// whether any non-wildcard answer clue has been found at all; if none, the
+	// player has nothing relevant yet (returns kChainLen).
+	int best = (int)kChainLen;
+	int foundReal = 0;
+	for (uint chain = 0; chain < 3; chain++) {
+		int remaining = (int)kChainLen;
+		int wild = 0;
+		for (uint slot = 0; slot < kChainLen; slot++) {
+			const uint16 clue = hintChain(chain, slot);
+			if (clue == 0xFFFF) {
+				remaining--;
+				wild++;
+			} else if (clue < kCluesFoundCap && _cluesFound[clue]) {
+				remaining--;
+				foundReal++;
+			}
+		}
+		if (wild == (int)kChainLen)
+			remaining = (int)kChainLen;   // unused set must not lower the min
+		if (remaining < best)
+			best = remaining;
+	}
+	if (foundReal == 0)
+		return (int)kChainLen;
+	return best;
+}
+
 int Mystery::foundPoints() const {
 	const byte *ni = noteIndex();
 	const uint16 cnt = noteIndexCount();

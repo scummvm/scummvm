@@ -4177,32 +4177,58 @@ void EEMEngine::doAccuse() {
 	const byte *entryKdIdx = _mystery.kdTextIndex();
 	if (!entryKdIdx)
 		return;
-	const int foundPoints = _mystery.foundPoints();
+	// Readiness tier (0 nothing yet .. 3 ready-to-accuse). EEM1 `_AccuseEntry
+	// @ 1df2:0ff8` tiers on the top-5 found-clue score; EEM2 `_AccuseEntry @
+	// 1ea1:115c` tiers on minCluesRemaining() (jumptable @ 1ea1:1333: 0 ->
+	// ready, 1 -> almost, 2..4 -> keep looking, 5 -> nothing yet — only the 0
+	// case sets the can-accuse flag). Both variants then pick the same four KD
+	// lines, so map onto one shared tier.
+	int readyTier;
+	if (isLondon()) {
+		const int minRem = _mystery.minCluesRemaining();
+		readyTier = (minRem >= (int)Mystery::kChainLen) ? 0
+				  : (minRem >= 2)                       ? 1
+				  : (minRem == 1)                       ? 2
+														: 3;
+	} else {
+		const int foundPoints = _mystery.foundPoints();
+		readyTier = (foundPoints == 0)    ? 0
+				  : (foundPoints < 0x32)  ? 1
+				  : (foundPoints < 0x65)  ? 2
+											: 3;
+	}
+
 	uint entryKDSpeak = 0;
 	uint16 entryTextOff = 0xFFFF;
 	uint16 entryVoiceOverride = 0xFFFF;
 	bool canAccuse = false;
 	Common::String entryText;
-	if (foundPoints == 0) {
+	switch (readyTier) {
+	case 0:
 		entryKDSpeak = 9;
 		entryText = "3We're not ready to solve this mystery yet.  "
 					"Let's keep investigating until we have some more solid "
 					"evidence to make our case!";
 		// Practice mystery M0 ships the matching ZeroText takes as the
 		// final two SDB entries, but its KD digital table points kdspeak 9
-		// at earlier hint clips. Use the otherwise unreferenced pair.
-		if (_mystery.number() == 0)
+		// at earlier hint clips. Use the otherwise unreferenced pair. EEM1
+		// SDB indices, so EEM1 only.
+		if (!isLondon() && _mystery.number() == 0)
 			entryVoiceOverride = (_partner == kPartnerJake) ? 105 : 104;
-	} else if (foundPoints < 0x32) {
+		break;
+	case 1:
 		entryKDSpeak = 0;
 		entryTextOff = READ_LE_UINT16(entryKdIdx + 0);
-	} else if (foundPoints < 0x65) {
+		break;
+	case 2:
 		entryKDSpeak = 1;
 		entryTextOff = READ_LE_UINT16(entryKdIdx + 2);
-	} else {
+		break;
+	default:
 		entryKDSpeak = 2;
 		entryTextOff = READ_LE_UINT16(entryKdIdx + 4);
 		canAccuse = true;
+		break;
 	}
 	if (entryText.empty() && entryTextOff != 0xFFFF) {
 		entryText = parseString(_mystery.textAt(entryTextOff),
@@ -4280,8 +4306,12 @@ void EEMEngine::doAccuse() {
 		return;
 	}
 
-	// `_DoAccuse @ 1df2:0c75` — `_SolvedCheck` gate.
-	if (!_mystery.solvedCheck()) {
+	// `_DoAccuse @ 1df2:0c75` (EEM1) / `1ea1:0c75` (EEM2) — `_SolvedCheck` gate.
+	// London matches the selected notes against the answer sets; EEM1/floppy
+	// sum clue points.
+	const bool accuseSolved =
+		isLondon() ? _mystery.londonSolved() : _mystery.solvedCheck();
+	if (!accuseSolved) {
 		const byte *kdIdx = _mystery.kdTextIndex();
 		const int16 hintOff = kdIdx
 			? (int16)READ_LE_UINT16(kdIdx + 6)
@@ -4297,7 +4327,12 @@ void EEMEngine::doAccuse() {
 				hint = "Necesitamos buscar pistas antes de resolver "
 					   "el misterio. Investiguemos un poco mas!";
 			} else {
-				hint = (_mystery.selectedPoints() == 0)
+				// "nothing yet" vs "almost": London has no points, so judge by
+				// whether any answer clue has been found (minCluesRemaining).
+				const bool nothingYet = isLondon()
+					? _mystery.minCluesRemaining() >= (int)Mystery::kChainLen
+					: _mystery.selectedPoints() == 0;
+				hint = nothingYet
 					? "We're not ready to solve this mystery yet. "
 					  "Let's keep investigating until we have some "
 					  "more solid evidence."
