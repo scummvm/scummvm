@@ -148,14 +148,18 @@ bool loadLondonApproachData(uint16 approachId, LondonApproachData &out) {
 	const uint16 pageCount = READ_LE_UINT16(data.data() + 14);
 	out.pages.clear();
 	uint32 pos = 16;
+	// `_DoApproach @ 1717:009b` reads the pages with `_fgets` into 255-byte
+	// slots, so each page is one NEWLINE-terminated record — NOT NUL-separated.
+	// (A*.BIN carries no NULs; splitting on '\0' lumps every page into page 0,
+	// which is why the Next/Prev arrows had nothing to page through.)
 	for (uint16 i = 0; i < pageCount && pos < size; i++) {
 		const uint32 start = pos;
-		while (pos < size && data[pos] != 0)
+		while (pos < size && data[pos] != '\n')
 			pos++;
 		out.pages.push_back(Common::String((const char *)data.data() + start,
 										   pos - start));
 		if (pos < size)
-			pos++;
+			pos++;  // skip the '\n' separator
 	}
 	return out.videoId != 0 && !out.pages.empty();
 }
@@ -3469,7 +3473,6 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 		const Common::Rect textRect =
 			data.textRect.findIntersectingRect(Common::Rect(kScreenWidth, kScreenHeight));
 		if (!textRect.isEmpty()) {
-			scratch.fillRect(textRect, 0);
 			if (page < data.pages.size()) {
 				Common::Array<Common::String> wrapped;
 				_font.wordWrapText(data.pages[page], MAX<int>(8, textRect.width()),
@@ -3477,9 +3480,15 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 				const int lineH = _font.getFontHeight();
 				const int maxLines = MAX<int>(1, textRect.height() / lineH);
 				for (uint i = 0; i < wrapped.size() && (int)i < maxLines; i++) {
+					// `_DoApproach @ 1717:029e`:
+					// `_WordWrap(x, y, w, page, fontColor=1, dropColor=-1)`.
+					// Font colour is palette index 1 (NOT 0x0F white), drawn
+					// straight onto the restored video-frame background — the
+					// DOS `vga_fvidvid` calls just restore the clean bg, they
+					// don't paint a panel, so don't fill the rect here either.
 					_font.drawString(&scratch, wrapped[i], textRect.left,
 									 textRect.top + (int)i * lineH,
-									 textRect.width(), 0x0f);
+									 textRect.width(), 1);
 				}
 			}
 		}
@@ -3562,6 +3571,10 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 	else
 		setSitePalette(0x3b);
 	bool done = false;
+	// `_DoApproach` idle loop (1717:02d4) shimmers palette 0xF3..0xF7 via
+	// `_ColorCycle(0xf3, 0xf7)` each frame-rate tick; mirror it on the video
+	// palette (the diff-animation ramp those entries belong to).
+	uint32 lastShimmer = g_system->getMillis();
 	while (!shouldQuit() && !done) {
 		Common::Event ev;
 		while (g_system->getEventManager()->pollEvent(ev)) {
@@ -3628,6 +3641,13 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 						drawScreen(page);
 					}
 				}
+			}
+		}
+		if (haveVideo) {
+			const uint32 now = g_system->getMillis();
+			if (now - lastShimmer >= 70) {
+				lastShimmer = now;
+				cyclePaletteRange(0xF3, 0xF7);
 			}
 		}
 		g_system->updateScreen();
