@@ -382,6 +382,27 @@ void EEMEngine::playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
 	const bool haveAnim =
 		_aniArchive.loadAnimation(introAni, anim) && !anim.empty();
 
+	// `_DoInitClues @ 1abf:03b3` registers a SECOND, fixed briefing character
+	// (e.g. Nigel) on the LEFT, gated on caseType (jumptable @ CS:0x720):
+	//   caseType 0 -> _GetAnimation(0x70) @ (0, 0x3e)
+	//   caseType 2 -> _GetAnimation(0x0e) @ (0, 0x36)
+	//   caseType 3 -> _GetAnimation(0x74) @ (0, 0x1a)
+	//   caseType 1 and >= 4 -> partner only (no second character).
+	// Both animate during the entrance and the last frame is left on screen, so
+	// the following `displayClue` snapshot keeps them through the briefing
+	// dialogue. Without this the NPC is never drawn (Nigel invisible in M2).
+	uint npcAni = 0;
+	int npcX = 0, npcY = 0;
+	switch (caseType) {
+	case 0: npcAni = 0x70; npcY = 0x3e; break;
+	case 2: npcAni = 0x0e; npcY = 0x36; break;
+	case 3: npcAni = 0x74; npcY = 0x1a; break;
+	default: break;
+	}
+	Animation npc;
+	const bool haveNpc = npcAni != 0 &&
+		_aniArchive.loadAnimation(npcAni, npc) && !npc.empty();
+
 	// _AllBlack(): blank the palette so the _FadeIn after frame 0 reveals the
 	// briefing (palette 0x39 — EEM2's 63-entry SITEPALS. shifts EEM1's UI set).
 	byte pal[kPalSize];
@@ -397,18 +418,26 @@ void EEMEngine::playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
 	// keeps this faithful if the cells/script ever diverge and matches the map/
 	// site partner rendering. One pass = one script cell per ~140 ms tick.
 	bool skip = false;
-	const uint frames = haveAnim ? (uint)anim.size() : 1;
+	uint frames = haveAnim ? (uint)anim.size() : 1;
+	if (haveNpc)
+		frames = MAX<uint>(frames, (uint)npc.size());
 	for (uint frame = 0; frame < frames && !shouldQuit() && !skip; frame++) {
 		if (haveBriefingBg)
 			blitAt(bg, 0, 0);
-		if (haveAnim) {
-			const uint cell =
-				partnerFrameAtTick(0x18, (uint)anim.size(), frame * 140);
-			Graphics::Surface *scr = g_system->lockScreen();
-			if (scr) {
+		Graphics::Surface *scr = g_system->lockScreen();
+		if (scr) {
+			if (haveAnim) {
+				const uint cell =
+					partnerFrameAtTick(0x18, (uint)anim.size(), frame * 140);
 				blitAnimFrameAnchored(scr, anim[cell], kAnchorX, kAnchorY);
-				g_system->unlockScreen();
 			}
+			if (haveNpc) {
+				// NPC frame script = 0x0e (the `_NewAnimation` animId arg).
+				const uint ncell =
+					partnerFrameAtTick(0x0e, (uint)npc.size(), frame * 140);
+				blitAnimFrameAnchored(scr, npc[ncell], npcX, npcY);
+			}
+			g_system->unlockScreen();
 		}
 		if (frame == 0 && havePal)
 			fadePaletteFromBlack(pal);  // _FadeIn @ 1abf:03b3
@@ -991,6 +1020,18 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			if (_picsArchive.getPicture(charPicId, charPic) &&
 				charX < kScreenWidth && charY < kScreenHeight) {
 				blitMaskedToScreen(charPic, charX, charY);
+				// `_DisplayClue` bakes the speaker portrait into the BACKGROUND
+				// via `_AddPicBackground`; the DOS never restores a clean BG
+				// mid-dialogue, so the portrait persists across the following
+				// clue entries. Bake it into the `bg` snapshot too — otherwise
+				// the per-entry full restore (top of this loop) wipes a fixed
+				// NPC portrait (e.g. London's Nigel) on every entry that carries
+				// no portrait of its own, leaving only the balloon ("rendered,
+				// then refreshed over").
+				const byte transp = (byte)(charPic.flags >> 8);
+				bg.transBlitFrom(charPic.surface,
+								 Common::Point((int)charX, (int)charY),
+								 (uint32)transp);
 			}
 		}
 
