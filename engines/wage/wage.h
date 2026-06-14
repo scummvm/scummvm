@@ -92,8 +92,7 @@ typedef Common::List<Chr *> ChrList;
 #define STORAGESCENE "STORAGE@"
 
 enum {
-	kDebugImGui = 1,
-	kDebugSound,
+	kDebugSound = 1,
 	kDebugLoading,
 };
 

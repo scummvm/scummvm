@@ -170,6 +170,7 @@ enum GlobalDebugLevels {
 	kDebugLevelGGraphics,
 	kDebugLevelGVideo,
 	kDebugLevelGAudio,
+	kDebugImGui,
 };
 
 /** @} */

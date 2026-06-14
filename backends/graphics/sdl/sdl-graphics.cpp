@@ -34,6 +34,10 @@
 #include "common/translation.h"
 #endif
 
+#if defined(USE_IMGUI) && defined(ENABLE_EVENTRECORDER)
+#include "gui/EventRecorder.h"
+#endif
+
 #ifdef EMSCRIPTEN
 #include "backends/platform/sdl/emscripten/emscripten.h"
 #endif
@@ -718,6 +722,9 @@ void SdlGraphicsManager::renderImGui() {
 
 	ImGui::NewFrame();
 	_imGuiCallbacks.render();
+#if defined(USE_IMGUI) && defined(ENABLE_EVENTRECORDER)
+	g_eventRec.showImGui();
+#endif
 	ImGui::Render();
 #ifdef USE_IMGUI_SDLRENDERER3
 	if (_imGuiSDLRenderer) {

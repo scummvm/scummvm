@@ -31,7 +31,6 @@ enum UltimaDebugChannels {
 	kDebugActor,
 	kDebugObject,
 	kDebugCollision,
-	kDebugImGui,
 };
 
 } // End of namespace Ultima

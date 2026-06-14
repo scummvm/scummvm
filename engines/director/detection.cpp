@@ -92,7 +92,6 @@ static const DebugChannelDef debugFlagList[] = {
 	{Director::kDebugText, "text", "Text rendering"},
 	{Director::kDebugXObj, "xobj", "XObjects"},
 	{Director::kDebugLingoThe, "lingothe", "Lingo \"the\" entities"},
-	{Director::kDebugImGui, "imgui", "Show ImGui debug window (if available)"},
 	{Director::kDebugPaused, "paused", "Pause first movie right after start"},
 	{Director::kDebugPauseOnLoad, "pauseonload", "Pause every movie right after loading"},
 	{Director::kDebugSaving, "saving", "Show Debug output while saving movies"},
