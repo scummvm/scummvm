@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-13 13:52+0000\n"
-"PO-Revision-Date: 2026-06-08 16:22+0000\n"
+"PO-Revision-Date: 2026-06-14 09:41+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -2377,28 +2377,21 @@ msgid "Disable fixed font scaling"
 msgstr "Désactiver le redimensionnement des polices fixes"
 
 #: gui/options.cpp:2667
-#, fuzzy
-#| msgid ""
-#| "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
-#| "resolution screens"
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens."
 msgstr ""
 "N'agrandit pas les polices de largeur fixe dans l'interface graphique. Cela "
-"permet de réduire les artefacts sur les écrans à faible résolution"
+"permet de réduire les artefacts sur les écrans à faible résolution."
 
 #: gui/options.cpp:2673
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable kinetic scrolling in lists"
-msgstr "Active le défilement fluide en marchant"
+msgstr "Activer le défilement cinétique dans les listes"
 
 #: gui/options.cpp:2674
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth, momentum-based scrolling in list widgets."
-msgstr "Active le défilement fluide en marchant"
+msgstr ""
+"Active le défilement fluide basé sur la vitesse dans les widgets de liste."
 
 #: gui/options.cpp:2680
 msgid "GUI language:"
@@ -10352,32 +10345,24 @@ msgid "Secondary shoot"
 msgstr "Tir secondaire"
 
 #: engines/hypno/metaengine.cpp:149
-#, fuzzy
-#| msgid "Map hide toolbar action"
 msgid "Rapid fire / secondary action"
-msgstr "Affecter l'action 'Cacher Barre d'Outils'"
+msgstr "Tir rapide / action secondaire"
 
 #: engines/hypno/metaengine.cpp:155
-#, fuzzy
-#| msgid "Slide left"
 msgid "Aim left"
-msgstr "Faire un pas vers la gauche"
+msgstr "Viser à gauche"
 
 #: engines/hypno/metaengine.cpp:160
-#, fuzzy
-#| msgid "Stick down"
 msgid "Aim down"
-msgstr "Manche bas"
+msgstr "Viser en bas"
 
 #: engines/hypno/metaengine.cpp:165
-#, fuzzy
-#| msgid "Up right"
 msgid "Aim right"
-msgstr "Haut droite"
+msgstr "Viser à droite"
 
 #: engines/hypno/metaengine.cpp:170
 msgid "Aim up"
-msgstr ""
+msgstr "Viser en haut"
 
 #: engines/hypno/metaengine.cpp:175 engines/scumm/metaengine.cpp:1202
 #: engines/scumm/metaengine.cpp:1279
@@ -10474,28 +10459,20 @@ msgid "Show credits"
 msgstr "Afficher les crédits"
 
 #: engines/hypno/metaengine.cpp:417
-#, fuzzy
-#| msgid "Move left"
 msgid "Menu left"
-msgstr "Se déplacer vers la gauche"
+msgstr "Menu gauche"
 
 #: engines/hypno/metaengine.cpp:425
-#, fuzzy
-#| msgid "Move down"
 msgid "Menu down"
-msgstr "Se déplacer vers le bas"
+msgstr "Menu bas"
 
 #: engines/hypno/metaengine.cpp:433
-#, fuzzy
-#| msgid "Move right"
 msgid "Menu right"
-msgstr "Se déplacer vers la droite"
+msgstr "Menu droite"
 
 #: engines/hypno/metaengine.cpp:441
-#, fuzzy
-#| msgid "Menu"
 msgid "Menu up"
-msgstr "Menu"
+msgstr "Menu haut"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
@@ -12225,11 +12202,13 @@ msgstr "Met en évidence les zones cliquables dans les scènes de décision."
 
 #: engines/private/metaengine.cpp:61
 msgid "Increased contrast for small print"
-msgstr ""
+msgstr "Contraste accru pour les petits imprimés"
 
 #: engines/private/metaengine.cpp:62
 msgid "Enhance small printed paper close-ups for improved readability."
 msgstr ""
+"Agrandit les gros plans sur les petits documents imprimés pour améliorer la "
+"lisibilité."
 
 #: engines/private/metaengine.cpp:147 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -13822,14 +13801,14 @@ msgid "Disable player damage"
 msgstr "Désactive les dégâts reçus par le joueur"
 
 #: engines/scumm/metaengine.cpp:909
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Yoda mode"
-msgstr "Mode rapide"
+msgstr "Mode Yoda"
 
 #: engines/scumm/metaengine.cpp:910
 msgid "Enable original Yoda mode shortcuts, including movie mode and auto play"
 msgstr ""
+"Active les raccourcis d'origine du mode Yoda, y compris les modes "
+"cinématique et jeu auto"
 
 #: engines/scumm/metaengine.cpp:1085
 msgid "Down left"
