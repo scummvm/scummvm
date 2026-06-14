@@ -612,6 +612,7 @@ struct ActionMenuView {
 	const char *const *pickLabel;
 	const bool *pickEnabled;
 	uint pick;
+	uint numPicks;  ///< Visible entries (London drops ScrapBook 3 → 4).
 };
 
 // `_DoChooseMystery @ 1a35:02b7` — opens BOOK%u.NME (CRLF strings, up
@@ -812,9 +813,10 @@ void drawActionMenuFrame(const ActionMenuView &v) {
 		const int kListY0 = 35;
 		const int kLineH  = 10;
 
-		// 11 rows: separator/item pairs (0=sep, 1=Choose A Mystery, ...,
-		// 9=See Scrapbook 3, 10=sep).
-		for (int r = 0; r < 11; r++) {
+		// Separator/item pairs (0=sep, 1=Choose A Mystery, ..., trailing sep):
+		// 11 rows for EEM1's five picks, 9 for London's four (no ScrapBook 3).
+		const int kRows = (int)(2 * v.numPicks + 1);
+		for (int r = 0; r < kRows; r++) {
 			const int y = kListY0 + r * kLineH;
 			if ((r & 1) == 0) {
 				v.vm->getFont().drawString(&scratch, v.separator,
@@ -1410,15 +1412,18 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 }
 
 void EEMEngine::doShowScrapbook(uint stage) {
-	// `_ShowScrapbook(stage, 0) @ 1f78:0642`. 24-entry tiers; ending
-	// viewer returns -1/0/+1 for prev/close/next. Current tier skips
-	// unsolved entries.
-	if (stage < 1 || stage > 3)
+	// EEM1 `_ShowScrapbook(stage, 0) @ 1f78:0642`; EEM2/London scrapbook
+	// `FUN_2046_09dd`. Ending viewer returns -1/0/+1 for prev/close/next;
+	// current tier skips unsolved entries. Tier sizes are variant-specific
+	// (EEM1: 24/24/6 cases over three books; London: 25/25 over two books,
+	// no BOOK3.NME) — `mysteryTierRange` returns false for London stage 3.
+	uint tierLo = 0, tierHi = 0;
+	if (stage < 1 || !mysteryTierRange(stage, tierLo, tierHi))
 		return;
 	const int solvedCount =
 		(int)(sizeof(_mysteriesSolved) / sizeof(_mysteriesSolved[0]));
-	const int lo = (int)(stage - 1) * 0x18 + 1;
-	const int hi = MIN<int>(lo + 0x18, solvedCount);
+	const int lo = (int)tierLo;
+	const int hi = MIN<int>((int)tierHi + 1, solvedCount);
 	if (lo >= hi)
 		return;
 	const bool currentTier = (stage == _chainStage);
@@ -1664,7 +1669,9 @@ void EEMEngine::doSetup() {
 				dirty = true;
 				continue;
 			}
-			if (kScrap3Btn.contains(mx, my) && _chainStage >= 3) {
+			// London has no third book (`mysteryTierRange` rejects stage 3).
+			if (kScrap3Btn.contains(mx, my) && !isLondon() &&
+				_chainStage >= 3) {
 				doShowScrapbook(3);
 				setSitePalette(0);
 				dirty = true;
@@ -1787,32 +1794,22 @@ void EEMEngine::doActionScreen() {
 		"         Ver Recortes  3"
 	};
 	const char * const *kPickLabel = isSpanish() ? kPickLabelES : kPickLabelEN;
-	// Gating @ 1c33:19d1-1a70 by chain stage + per-tier solves:
+	// London has no BOOK3.NME, so its action menu offers four entries
+	// (Choose / Practice / ScrapBook 1 / ScrapBook 2). EEM1 adds ScrapBook 3.
+	const uint numPicks = isLondon() ? (uint)kPickScrap3 : (uint)kNumPicks;
+
+	// Gating @ EEM1 1c33:19d1-1a70 by chain stage + per-tier solves:
 	//   stage 1: grey SB2/3; SB1 needs any tier-1 solve
 	//   stage 2: grey Practice + SB3; SB2 needs tier-2 solve
-	//   stage 3: grey Practice; SB3 needs tier-3 solve
+	//   stage 3: grey Practice; SB3 needs tier-3 solve (EEM1 only)
 	//   stage 4: grey Choose + Practice
-	bool anySolved1 = false;
-	for (uint i = 1; i <= 0x18 && i < sizeof(_mysteriesSolved); i++) {
-		if (_mysteriesSolved[i]) {
-			anySolved1 = true;
-			break;
-		}
-	}
-	bool anySolved2 = false;
-	for (uint i = 0x19; i <= 0x30 && i < sizeof(_mysteriesSolved); i++) {
-		if (_mysteriesSolved[i]) {
-			anySolved2 = true;
-			break;
-		}
-	}
-	bool anySolved3 = false;
-	for (uint i = 0x31; i <= 0x36 && i < sizeof(_mysteriesSolved); i++) {
-		if (_mysteriesSolved[i]) {
-			anySolved3 = true;
-			break;
-		}
-	}
+	uint loT = 0, hiT = 0;
+	const bool anySolved1 = mysteryTierRange(1, loT, hiT) &&
+							anyMysterySolved(loT, hiT);
+	const bool anySolved2 = mysteryTierRange(2, loT, hiT) &&
+							anyMysterySolved(loT, hiT);
+	const bool haveTier3 = mysteryTierRange(3, loT, hiT);
+	const bool anySolved3 = haveTier3 && anyMysterySolved(loT, hiT);
 
 	const bool chooseOn   = _chainStage < 4;
 	const bool practiceOn = _chainStage <= 1;
@@ -1821,13 +1818,13 @@ void EEMEngine::doActionScreen() {
 	const bool scrap2On =
 		_chainStage >= 3 || (_chainStage == 2 && anySolved2);
 	const bool scrap3On =
-		_chainStage >= 4 || (_chainStage == 3 && anySolved3);
+		haveTier3 && (_chainStage >= 4 || (_chainStage == 3 && anySolved3));
 	const bool kPickEnabled[kNumPicks] = {
 		chooseOn, practiceOn, scrap1On, scrap2On, scrap3On
 	};
 	// Seed selection on first enabled entry.
 	uint pick = 0;
-	for (uint i = 0; i < kNumPicks; i++) {
+	for (uint i = 0; i < numPicks; i++) {
 		if (kPickEnabled[i]) {
 			pick = i;
 			break;
@@ -1862,6 +1859,7 @@ void EEMEngine::doActionScreen() {
 	v.pickLabel = kPickLabel;
 	v.pickEnabled = kPickEnabled;
 	v.pick = pick;
+	v.numPicks = numPicks;
 
 	drawActionMenuFrame(v);
 	uint32 chooserLastTick = g_system->getMillis();
@@ -1895,7 +1893,7 @@ void EEMEngine::doActionScreen() {
 					const int row = (ev.mouse.y - kListRect.top) / kLineH;
 					if ((row & 1) == 1) {
 						const uint mp = (uint)(row >> 1);
-						if (mp < kNumPicks && kPickEnabled[mp]) {
+						if (mp < numPicks && kPickEnabled[mp]) {
 							pick = mp;
 							v.pick = pick;
 							drawActionMenuFrame(v);
@@ -1919,8 +1917,8 @@ void EEMEngine::doActionScreen() {
 			}
 			if (k == Common::KEYCODE_UP || k == Common::KEYCODE_LEFT) {
 				// `_DoChoose` arrow handlers @ 1c33:0514, bounded loop.
-				for (int i = 0; i < (int)kNumPicks; i++) {
-					pick = (pick == 0) ? (uint)(kNumPicks - 1) : pick - 1;
+				for (int i = 0; i < (int)numPicks; i++) {
+					pick = (pick == 0) ? (numPicks - 1) : pick - 1;
 					if (kPickEnabled[pick])
 						break;
 				}
@@ -1930,8 +1928,8 @@ void EEMEngine::doActionScreen() {
 			}
 			if (k == Common::KEYCODE_DOWN || k == Common::KEYCODE_RIGHT ||
 				k == Common::KEYCODE_TAB) {
-				for (int i = 0; i < (int)kNumPicks; i++) {
-					pick = (pick + 1) % kNumPicks;
+				for (int i = 0; i < (int)numPicks; i++) {
+					pick = (pick + 1) % numPicks;
 					if (kPickEnabled[pick])
 						break;
 				}
@@ -2022,34 +2020,20 @@ void EEMEngine::doCaseSelection() {
 	const int kKdAnimX = 0x112;
 	const int kKdAnimY = 0x50;
 
-	// EEM1: stage 1 (Junior, BOOK1.NME) = 1..24, stage 2 (Senior,
-	// BOOK2.NME) = 25..48, stage 3 (Master, BOOK3.NME) = 49..54.
-	// EEM2/London: only BOOK1.NME and BOOK2.NME ship, each with 25 cases.
-	uint stageLo = 1, stageHi = isLondon() ? 0x19 : 0x18;
-	uint book = 1;
+	// Tier → BOOK<n>.NME. EEM1 ships three books (Junior 1..24, Senior
+	// 25..48, Master 49..54); EEM2/London ships two (1..25 / 26..50). London
+	// has no BOOK3.NME, and its stage 3 is transient (`_DisplayCorrect @
+	// 1ea1:0619` collapses it to 4), so should it ever be reached here it
+	// reuses BOOK2.NME rather than opening a missing file. `mysteryTierRange`
+	// is the single source of truth for the per-tier mystery ranges.
+	uint book;
 	switch (_chainStage) {
-	case 2:
-		stageLo = isLondon() ? 0x1a : 0x19;
-		stageHi = isLondon() ? 0x32 : 0x30;
-		book = 2;
-		break;
-	case 3:
-		if (isLondon()) {
-			// London has no BOOK3.NME. Until the London progression path is
-			// fully split from EEM1, keep the picker on the second book rather
-			// than attempting to open missing data.
-			stageLo = 0x1a;
-			stageHi = 0x32;
-			book = 2;
-		} else {
-			stageLo = 0x31;
-			stageHi = 0x36;
-			book = 3;
-		}
-		break;
-	default:
-		break;
+	case 2:  book = 2; break;
+	case 3:  book = isLondon() ? 2 : 3; break;
+	default: book = 1; break;
 	}
+	uint stageLo = 0, stageHi = 0;
+	mysteryTierRange(book, stageLo, stageHi);
 	if (stageHi > kMaxMystery)
 		stageHi = kMaxMystery;
 
@@ -3889,10 +3873,11 @@ void EEMEngine::accuseDrawScreen(const AccuseNotesCtx &ctx) {
 }
 
 bool EEMEngine::doAccuseNotes() {
-	// `_DoAccuse @ 1df2:0bdd` head. BG PIC 0x1A7. `_AccuseNoteRect @
-	// 29be:1048` = (79, 27, 304, 159). Counter @ (209, 11) shows
-	// `6 - chainStage` (stage 1=5, 2=4, 3=3 clues). Unselected color 1
-	// (red), selected 0x3c. Click toggles selection; `_NoteButtons[4]`
+	// `_DoAccuse @ 1df2:0bdd` (EEM2 `@ 1ea1:0c03`) head. BG PIC 0x1A7.
+	// `_AccuseNoteRect @ 29be:1048` = (79, 27, 304, 159). Counter @ (209, 11)
+	// shows the required clue count (EEM1 `6 - chainStage` = 5/4/3 by tier;
+	// London a flat 5 — see `expected` below). Unselected color 1 (red),
+	// selected 0x3c. Click toggles selection; `_NoteButtons[4]`
 	// (180,174,201,190) SOLVE → `_HandleAccuseNoteButton` returns 2.
 	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return false;
@@ -3907,9 +3892,13 @@ bool EEMEngine::doAccuseNotes() {
 	// `FUN_1d40_0e07 @ 1d40:0e34` zeroes _NoteSelected_Floppy on entry.
 	memset(_mystery._noteSelected, 0, sizeof(_mystery._noteSelected));
 
-	const uint expected = (_chainStage >= 1 && _chainStage <= 3)
-		? (uint)(6 - _chainStage)
-		: 5;
+	// EEM1 `_DoAccuse @ 1df2:0bdd` scales the required clue count by tier
+	// (`6 - chainStage`: stage 1=5, 2=4, 3=3). London `_DoAccuse @ 1ea1:0c03`
+	// hardcodes 5 (`local_a = 5`) for both books.
+	const uint expected = isLondon()
+		? 5
+		: ((_chainStage >= 1 && _chainStage <= 3) ? (uint)(6 - _chainStage)
+												  : 5);
 
 	// `_DrawNotes(NULL, 100, ...)` walks `_CluesFound[]`.
 	Common::Array<uint> found;
@@ -4199,7 +4188,7 @@ void EEMEngine::doAccuse() {
 	}
 
 	// `_DoAccuse @ 1df2:0bdd` + `_DoAccuseGallery @ 1df2:0a31`:
-	//   1. Accuse-notes (PIC 0x1A7) — pick `6 - chainStage` clues.
+	//   1. Accuse-notes (PIC 0x1A7) — pick `6 - chainStage` clues (London: 5).
 	//      Pass `_SolvedCheck` → gallery; fail → hint + return.
 	//   2. KD intro balloon (`KDTextIndex[+8]` + `_SayKDDigital(4)`).
 	//   3. PIC 0x3f + `_DrawGallery` portraits at 5 slots (29be:0x116).
@@ -5083,7 +5072,8 @@ void EEMEngine::doAccuseFloppy() {
 	}
 
 	// Clue selection — `FUN_1d40_0e07 @ 1d40:0e07`. Pick `6 - chainStage`
-	// clues (1d40:0e34: `local_c = 6 - DAT_28da_3052`).
+	// clues (1d40:0e34: `local_c = 6 - DAT_28da_3052`); London a flat 5.
+	// Count handled inside `doAccuseNotes`.
 	if (!doAccuseNotes()) {
 		if (_nextScreen == kScreenAccuse) {
 			_nextScreen = _lastScreen != kScreenInvalid

@@ -240,8 +240,11 @@ void EEMEngine::applyStartupTestOverrides() {
 	if (!kDebugPopulateScrapbook1AtStartup)
 		return;
 
-	for (uint i = 1; i <= 0x18 && i < sizeof(_mysteriesSolved); i++)
-		_mysteriesSolved[i] = 1;
+	uint lo = 0, hi = 0;
+	if (mysteryTierRange(1, lo, hi)) {
+		for (uint i = lo; i <= hi && i < sizeof(_mysteriesSolved); i++)
+			_mysteriesSolved[i] = 1;
+	}
 
 	debugC(1, kDebugGeneral,
 		   "startup test override: populated ScrapBook 1 mystery flags");
@@ -257,39 +260,58 @@ bool EEMEngine::areMysteriesSolved(uint lo, uint hi) const {
 	return true;
 }
 
+bool EEMEngine::anyMysterySolved(uint lo, uint hi) const {
+	for (uint i = lo; i <= hi && i < sizeof(_mysteriesSolved); i++) {
+		if (_mysteriesSolved[i] != 0)
+			return true;
+	}
+	return false;
+}
+
+bool EEMEngine::mysteryTierRange(uint stage, uint &lo, uint &hi) const {
+	if (isLondon()) {
+		// EEM2/London: two 25-case books, no BOOK3.NME
+		// (`_DisplayCorrect @ 1ea1:0619`).
+		switch (stage) {
+		case 1: lo = 0x01; hi = 0x19; return true;  //  1..25
+		case 2: lo = 0x1a; hi = 0x32; return true;  // 26..50
+		default: return false;
+		}
+	}
+	// EEM1: Junior 1..24, Senior 25..48, Master 49..54
+	// (`_DisplayCorrect @ 1df2:073c`).
+	switch (stage) {
+	case 1: lo = 0x01; hi = 0x18; return true;  //  1..24
+	case 2: lo = 0x19; hi = 0x30; return true;  // 25..48
+	case 3: lo = 0x31; hi = 0x36; return true;  // 49..54
+	default: return false;
+	}
+}
+
 void EEMEngine::advanceChainStageAfterSolve(uint mysteryNum) {
 	if (mysteryNum == 0 || _chainStage >= 4)
 		return;
 
-	uint lo = 0;
-	uint hi = 0;
-	switch (_chainStage) {
-	case 1:
-		lo = 1;
-		hi = 0x18;
-		break;
-	case 2:
-		lo = 0x19;
-		hi = 0x30;
-		break;
-	case 3:
-		lo = 0x31;
-		hi = 0x36;
-		break;
-	default:
+	uint lo = 0, hi = 0;
+	if (!mysteryTierRange(_chainStage, lo, hi))
 		return;
-	}
-
 	if (!areMysteriesSolved(lo, hi))
 		return;
 
 	const uint oldStage = _chainStage;
-	// Book 2 repeats the Book 1 cases; this option keeps the original solve
-	// state but jumps the profile's active chain straight to Book 3.
-	if (_chainStage == 1 && ConfMan.getBool("skip_repeated_cases"))
+	// EEM1 only: Book 2 repeats the Book 1 cases, so this option keeps the
+	// original solve state but jumps the active chain straight to Book 3.
+	// London has 50 distinct cases and no Book 3, so the option does not apply.
+	if (!isLondon() && _chainStage == 1 &&
+		ConfMan.getBool("skip_repeated_cases"))
 		_chainStage = 3;
 	else
 		_chainStage++;
+
+	// London has only two books: `_DisplayCorrect @ 1ea1:0619` collapses
+	// chainStage 3 straight to 4 (every case solved — game complete).
+	if (isLondon() && _chainStage == 3)
+		_chainStage = 4;
 
 	debugC(1, kDebugMystery,
 		   "chainStage advanced from %u to %u after solving mystery %u",
@@ -297,7 +319,9 @@ void EEMEngine::advanceChainStageAfterSolve(uint mysteryNum) {
 }
 
 void EEMEngine::applySkipRepeatedCasesOption() {
-	if (!ConfMan.getBool("skip_repeated_cases"))
+	// EEM1 only — the option jumps past the repeated Book 2 to Book 3, which
+	// London does not have (see `advanceChainStageAfterSolve`).
+	if (isLondon() || !ConfMan.getBool("skip_repeated_cases"))
 		return;
 	if (_mystery.isLoaded())
 		return;
