@@ -551,6 +551,13 @@ private:
 
 	Common::String _playerName;  ///< Substituted into 0x80 placeholders.
 
+	/// London passport gender (EEM2 `_NewPlayer @ 1cd3:0f27` gender pick,
+	/// `DAT_3036_4c4c`: left/0 = male, right/1 = female). Drives the player
+	/// pronoun opcodes 0x86/0x87/0x88 in `parseString` (he·him·his / she·her·
+	/// her). EEM1 has no passport, so it stays false (male) — matching that
+	/// engine's never-written gender flag.
+	bool _playerFemale = false;
+
 	/// `_PlayerRecord.SolvedMysteries[55]`. 0=unsolved, 1=solved, 2=first-try.
 	uint8 _mysteriesSolved[55] = {};
 

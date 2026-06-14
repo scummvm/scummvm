@@ -729,22 +729,23 @@ void EEMEngine::doInitClues() {
 	}
 }
 
-// _ParseString @ 1b66:07c3 (jump table @ 1b66:0cbe). Each handler reads
-// _Partner (u16 @ 0x7918) and indexes the name table @ 29be:0c28
-// ({Jake, Jennifer, he, she, him, her, his} as far pointers).
+// _ParseString @ EEM1 1b66:07c3 / EEM2 1bff:07c4 (jump table @ EEM2
+// CS:0xd2f). Each handler indexes a name table of far pointers
+// ({Jake, Jennifer, he, she, him, her, his}).
 //   0x80 player name (auto-cap word starts, uses _PlayerRecord)
 //   0x81 _Partner == 0 ? "Jake"     : "Jennifer"  (chosen detective)
 //   0x82 _Partner == 0 ? "Jennifer" : "Jake"      (the OTHER one)
 //   0x83 _Partner == 0 ? "he"       : "she"
 //   0x84 _Partner == 0 ? "him"      : "her"
 //   0x85 _Partner == 0 ? "his"      : "her"
-//   0x86..0x88 mirror 0x83..0x85 but branch on a separate gender flag
-//     (DAT_29be_7985, handlers @ 1b66:0ad2/0b41/0bb0). That flag has no
-//     writers anywhere in EEMCD.EXE — only the three handlers read it —
-//     and no shipping mystery text (CD or floppy) contains the 0x86/0x87
-//     /0x88 bytes inside parseString-formatted strings. The opcodes are
-//     dead in the original engine and dead in our data, so we drop them
-//     silently (which matches the always-0 flag path in DOS: he/him/his).
+//   0x86..0x88 emit the same he/him/his vs she/her/her strings as 0x83..0x85
+//     but branch on a SEPARATE gender flag, not _Partner (EEM2 handlers
+//     @ 1bff:0ad3/0b42/0bb1 test [0x930c]; the partner handlers test
+//     [0x9294]). They are the PLAYER's pronouns: EEM2/London sets that flag
+//     from the passport gender pick (`_NewPlayer` DAT_3036_4c4c), and London
+//     dialogue uses them (e.g. M13/M50.BIN "You and <86>..."). EEM1 never
+//     writes the flag (DAT_29be_7985) and ships no text using these bytes, so
+//     its always-male path is reproduced by `_playerFemale` defaulting false.
 //   0x89 KD hint placeholder (caller handles).
 Common::String EEMEngine::parseString(const Common::String &raw,
 									  const Common::String &playerName,
@@ -773,11 +774,16 @@ Common::String EEMEngine::parseString(const Common::String &raw,
 			out += isJake ? "his" : "her";
 			break;
 		case 0x86:
+			// Player pronoun (passport gender), mirror of 0x83.
+			out += _playerFemale ? "she" : "he";
+			break;
 		case 0x87:
+			// Player pronoun (passport gender), mirror of 0x84.
+			out += _playerFemale ? "her" : "him";
+			break;
 		case 0x88:
-			// Stubbed suspect-gender pronouns; the DOS flag they branch
-			// on is never written and no mystery msg uses these bytes
-			// (see jumptable comment above).
+			// Player pronoun (passport gender), mirror of 0x85.
+			out += _playerFemale ? "her" : "his";
 			break;
 		case 0x89:
 			// KD hint placeholder (caller handles before this point).
