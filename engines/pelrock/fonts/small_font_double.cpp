@@ -18,8 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "pelrock/fonts/small_font_double.h"
+
 #include "common/debug.h"
+#include "graphics/surface.h"
+
+#include "pelrock/fonts/small_font_double.h"
 
 namespace Pelrock {
 

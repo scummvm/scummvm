@@ -1489,9 +1489,11 @@ void ScummEngine::setCurrentPalette(int palindex) {
 			// Might be glitchy, though...
 			const byte *p = getPalettePtr(_curPalIndex, _roomResource);
 			for (int i = 0; i < 256; ++i) {
-				byte col = egaFindBestMatch(p[0], p[1], p[2]);
-				_egaColorMap[0][i] = col & 0x0F;
-				_egaColorMap[1][i] = col >> 4;
+				if (_game.version < 6 || i == 15 || p[0] < 252 || p[1] < 252 || p[2] < 252) {
+					byte col = egaFindBestMatch(p[0], p[1], p[2]);
+					_egaColorMap[0][i] = col & 0x0F;
+					_egaColorMap[1][i] = col >> 4;
+				}
 				p += 3;
 			}
 		} else {

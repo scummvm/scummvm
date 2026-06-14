@@ -18,12 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "common/debug.h"
-#include "common/scummsys.h"
-
 #include "pelrock/pathfinding.h"
-#include "pelrock/types.h"
-#include "pelrock/util.h"
 
 namespace Pelrock {
 

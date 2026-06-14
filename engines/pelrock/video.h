@@ -22,11 +22,6 @@
 #ifndef PELROCK_VIDEO_H
 #define PELROCK_VIDEO_H
 
-#include "graphics/surface.h"
-
-#include "pelrock/events.h"
-#include "pelrock/fonts/large_font.h"
-
 namespace Pelrock {
 
 struct ChunkHeader {

@@ -1203,8 +1203,15 @@ Common::Path dumpFactoryName(const char *prefix, const char *name, const char *e
 	return Common::Path(Common::String::format("./dumps/%s-factory-%s.%s", prefix, name, ext), '/');
 }
 
-void RandomState::setSeed(int seed) {
-	init(32);
+void RandomState::setSeed(int seed, bool runInit) {
+	if (runInit)
+		init(32);
+
+	// If we a GUI override, use that instead of the provided seed
+	if (ConfMan.hasKey("random_seed")) {
+		debugC(1, kDebugLingoExec, "Random seed is requested to be set to %d, but overridden by config to %d", seed, ConfMan.getInt("random_seed"));
+		seed = ConfMan.getInt("random_seed");
+	}
 
 	_seed = seed ? seed : 1;
 }
@@ -1238,7 +1245,9 @@ void RandomState::init(int len) {
 		_len = (1 << len) - 1;
 	}
 
-	_seed = 1;
+	// The original is _always_ initalized with a seed of 1. It is hardcoded and is by design
+	// The developers were offered to use `set the randomSeed` Lingo
+	setSeed(1, false);
 	_mask = masks[len - 2];
 }
 

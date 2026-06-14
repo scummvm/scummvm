@@ -118,11 +118,11 @@ private:
 };
 
 static AudioStream *loadSND(File *file) {
-	// in V2 SND files are raw U8 PCM in mono 22100 encrypted with XOR
-	if (g_engine->isV2())
+	// only in V2.0 SND files are raw U8 PCM in mono 22100 encrypted with XOR
+	if (g_engine->isV20())
 		return makeRawStream(new XORReadStream(file, 0x55, DisposeAfterUse::YES), 22100, FLAG_UNSIGNED);
 
-	// in V1/V3 SND files are just WAV files with removed headers
+	// everywhere else SND files are just WAV files with removed headers
 	const uint32 endOfFormat = file->readUint32LE() + 2 * sizeof(uint32);
 	if (endOfFormat < 24)
 		error("Invalid SND format size");

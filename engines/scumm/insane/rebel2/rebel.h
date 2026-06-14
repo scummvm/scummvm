@@ -63,7 +63,7 @@ public:
 	// ---------------------------------------------------------------------------
 	// Menu System
 	// ---------------------------------------------------------------------------
-	// Main game states (emulates retail state machine from FUN_004142BD)
+	// Main game states (emulates original state machine from FUN_004142BD)
 	enum GameState {
 		kStateIntro = 0,        // Stage 0: Intro/Credits sequence
 		kStateMainMenu = 1,     // Stage 1: Main menu (FUN_004147B2)
@@ -79,19 +79,17 @@ public:
 
 	// Menu selection results (return values from FUN_004147B2)
 	enum MenuResult {
-		kMenuNewGame = 2,     // case 0: New Game
-		kMenuContinue = 4,    // case 1: Continue
-		kMenuOptions = 0,     // case 2: Options (stays in menu)
-		kMenuExit = 0,        // case 3: Exit to title
-		kMenuUnknown = 0,     // case 4: Unknown function
+		kMenuQuit = -1,       // case 6: Return to Launcher
+		kMenuResumeDemo = 0,  // case 3 / inactivity: Continue Intro
 		kMenuCredits = 1,     // case 5: Show credits
-		kMenuQuit = 0         // case 6: Quit game
+		kMenuNewGame = 2      // case 0: Start Game
 	};
 
 	GameState _gameState;           // Current game state
 	int _menuSelection;             // Current menu item (0-6), mirrors DAT_00459988
 	int _menuItemCount;             // Number of menu items (7 for main menu)
 	int _menuInactivityTimer;       // Timeout counter (300 frames = ~10 sec)
+	bool _menuInactivityTimedOut;   // Main menu should return to the intro/demo loop
 	int _lastMenuVariant;           // Last random menu video shown (DAT_00482400)
 	int _menuRepeatDelay;           // Delay for key repeat (DAT_00459ce0)
 	bool _menuSelectionConfirmed;   // True only when user explicitly confirmed a selection
@@ -219,9 +217,9 @@ public:
 	// ---------------------------------------------------------------------------
 	// TRS strings: 89 (title), 90-101 (toggle labels), 103 (volume), 107/109 (back)
 	// Original settings array at DAT_00482e20[0..4]:
-	//   [0]=auto control, [1]=music, [2]=voices, [3]=sound
-	// Additional flags: DAT_0047a7fe (text/indicators), DAT_0047a80a (rapid fire/arrows)
-	// Volume: DAT_0047a804 (0-127), SFX vol: DAT_0047a802 (127-768)
+	//   [0]=text, [1]=music, [2]=voices, [3]=sound, [4]=hidden abort flag
+	// Additional flags: DAT_0047a7fe (controls normal/flipped), DAT_0047a80a (rapid fire)
+	// Volume: DAT_0047a804 (0-127), brightness/gamma: DAT_0047a802 (127-768)
 
 	void showOptionsMenu();
 	void drawOptionsOverlay(byte *renderBitmap, int pitch, int width, int height);
@@ -341,7 +339,7 @@ public:
 	};
 
 	// Main game entry point — full game loop (intro, menu, pilot, chapter, levels)
-	// Emulates the retail game flow from FUN_004142BD
+	// Emulates the original game flow from FUN_004142BD
 	void runGame();
 
 	// Play the intro sequence (CREDITS/O_OPEN_C, O_OPEN_D, OPEN/O_OPEN_A, O_OPEN_B)
@@ -421,8 +419,8 @@ public:
 	WaveEndResult processWaveEnd(int16 mask, int16 *budget, int16 threshold, uint16 flags);
 
 	// Play a raw SAN segment from a scripted level handler.
-	// Retail reaches these call sites through different wrappers/direct paths; this
-	// only collapses ScummVM's shared dispatch step. Callers still choose the original
+	// The original reaches these call sites through different wrappers/direct paths; this
+	// only collapses the shared dispatch step. Callers still choose the original
 	// flags and when to call processWaveEnd(). recordFrame preserves the original
 	// split between gameplay/wave calls and transition/init-only segments.
 	bool playLevelSegment(const char *filename, uint16 flags, bool recordFrame = true);
@@ -437,6 +435,7 @@ public:
 	void resetLevelPhaseState(bool clearEnemies);
 	void clearEmbeddedHudFrames();
 	void resetLevelWaveState();
+	void resetExplosions();
 	void resetHandler7FlightState();
 
 	// Random number helper (emulates FUN_004233a0)
@@ -511,6 +510,7 @@ public:
 
 	int32 processMouse() override;
 	Common::Point getGameplayAimPoint();
+	Common::Point getRebelAutoPlayAimPoint();
 	// Per-frame: pan the gameplay reticle incrementally from the held directional controls
 	// (on-screen/physical gamepad dpad, keyboard arrows) instead of snapping it to a screen
 	// edge. Call once per frame; getGameplayAimPoint() stays a pure getter.
@@ -538,6 +538,8 @@ public:
 
 	// Get current handler ID (8, 25, 38 etc.) for SMUSH player to query
 	int getHandler() const { return _rebelHandler; }
+	int getHandler25GrdSpriteMode() const { return _grdSpriteMode; }
+	bool isHiRes() const;
 
 	void iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
@@ -589,9 +591,10 @@ public:
 	void renderGameplayPostFrame(byte *renderBitmap, int pitch, int width, int height,
 								 int videoWidth, int videoHeight, int statusBarY, int32 curFrame);
 	void updateGameplayDamageEffects(byte *renderBitmap, int pitch, int width, int height);
+	void updateGameplayDamageRecovery(int32 curFrame);
 	void checkGameplayPostRenderCollisions(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);
 
-	// Draw NUT-based HUD overlays for Handler 0x26/0x19 turret modes
+	// Draw NUT-based HUD overlays for Handler 0x26 turret modes
 	void renderTurretHudOverlays(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);
 
 	// Draw embedded SAN HUD overlays from IACT chunks
@@ -603,6 +606,9 @@ public:
 
 	// Draw Handler 7 ship sprite (third-person ship - FLY sprites)
 	void renderHandler7Ship(byte *renderBitmap, int pitch, int width, int height);
+	void renderHandler7FlySprite(byte *renderBitmap, int pitch, int width, int height,
+		bool renderHiRes, int renderScale, int nativeViewX, int nativeViewY,
+		int nativeX, int nativeY, NutRenderer *nut, int spriteIndex);
 
 	// Draw Handler 8 ship sprite (third-person on foot - POV sprites)
 	void renderHandler8Ship(byte *renderBitmap, int pitch, int width, int height);
@@ -642,7 +648,7 @@ public:
 	bool loadHandler7ShotTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4);
 
 	// Load turret HUD overlay NUT from ANIM data
-	bool loadTurretHudOverlay(byte *animData, int32 size, int16 par3);
+	bool loadTurretHudOverlay(byte *animData, int32 size, int16 selector);
 
 	// Load Handler 8 ship POV NUT sprites from ANIM data (par4 = sprite type: 1,3,6,7)
 	bool loadHandler8ShipSprites(byte *animData, int32 size, int16 par4);
@@ -651,7 +657,7 @@ public:
 	bool loadHandler25GrdSprites(byte *animData, int32 size, int16 par4);
 
 	// Parse Handler 25 shot-origin table text from opcode 8 (par4 = 8).
-	// Retail stores values into DAT_004578a6 / DAT_004578c6 (indices 5..19).
+	// FUN_0041CADB stores values into DAT_004578a6 / DAT_004578c6 (indices 5..19).
 	bool loadHandler25ShotOriginTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining);
 
 	// Load Level 2 background from embedded ANIM
@@ -834,7 +840,7 @@ public:
 		bool active;
 	};
 
-	// Two zone tables matching retail DAT_0043fb00 (primary) and DAT_0043f9c8 (secondary)
+	// Two zone tables matching DAT_0043fb00 (primary) and DAT_0043f9c8 (secondary)
 	static const int kMaxCollisionZones = 5;
 	CollisionZone _primaryZones[kMaxCollisionZones];    // Sub-opcode 0x0D zones
 	CollisionZone _secondaryZones[kMaxCollisionZones];  // Sub-opcode 0x0E zones
@@ -888,6 +894,9 @@ public:
 
 	int _viewX;
 	int _viewY;
+	int _hiResPresentationViewX;
+	int _hiResPresentationViewY;
+	int _gameplayPresentationClipBottom;
 
 	// ---------------------------------------------------------------------------
 	// Damage Visual Effect System
@@ -915,14 +924,16 @@ public:
 	int16 _damageHighFlashCounter;       // DAT_00482408 - high-damage red flash (0..16)
 	int16 _damageShakeCounter;           // DAT_0048240c - screen shake countdown (0..10)
 	byte _damageSavedPalette[0x300];     // DAT_00459990 - palette snapshot before flash
-	byte _damageRestorePalette[0x300];   // ScummVM boundary restore snapshot
+	byte _damageRestorePalette[0x300];   // Boundary restore snapshot
 	bool _damageRestorePaletteValid;
 
-	// Rebel per-level counters / flags mapped from retail globals
+	// Rebel per-level counters / flags mapped from original globals
 	bool _rebelOp6Initialized; // Guard: opcode 6 init block (clearBit/links/wave) runs once per video
 	int _rebelHitCounter;    // DAT_0047ab80 - hit counter / state tracker
 	int _rebelKillCounter;   // DAT_0047ab88 - enemies destroyed this phase
-	bool _rebelInvulnerable; // DAT_0047ab64 - toggles invulnerability / state
+	bool _rebelYodaMode;     // DAT_0047ab5a > 2 - unlocks Yoda-mode shortcuts
+	bool _rebelMovieMode;    // DAT_0047ab60 - Alt+M skips playable sections
+	bool _rebelAutoPlay;     // DAT_0047ab64 - Alt+P computer-controlled play
 
 	// Enemy wave/phase state tracking (FUN_004028c5 / FUN_00417b61)
 	// DAT_0047ab98: Per-wave enemy kill state. Bits set when enemy types are destroyed.
@@ -946,7 +957,7 @@ public:
 	int _rebelViewMode1;     // DAT_00482270
 	int _rebelViewMode2;     // DAT_00482274
 
-	// Retail counters mirrored from DAT_00443618 (values 100..109) and DAT_004436e0 (mask counters 1..9)
+	// Original counters mirrored from DAT_00443618 (values 100..109) and DAT_004436e0 (mask counters 1..9)
 	short _rebelValueCounters[10]; // Index 0 -> value 100, ... Index 9 -> 109
 	short _rebelMaskCounters[10];  // Index 1..9 used; index 0 unused
 	int _rebelLastCounter;         // Mirrors DAT_0047ab90 (last updated counter)
@@ -1045,7 +1056,8 @@ public:
 
 	// Handler-specific explosion rendering
 	void renderExplosionFrame(byte *renderBitmap, int pitch, int width, int height,
-	                          Explosion &explosion, int screenX, int screenY, ExplosionFrameAdvance advance);
+	                          Explosion &explosion, int screenX, int screenY, ExplosionFrameAdvance advance,
+	                          bool resolutionDependentScale);
 	void renderTurretExplosions(byte *renderBitmap, int pitch, int width, int height);     // FUN_409FBC (Handler 0x26)
 	void renderVehicleExplosions(byte *renderBitmap, int pitch, int width, int height);    // FUN_402696 (Handler 8)
 	void renderSpaceExplosions(byte *renderBitmap, int pitch, int width, int height);      // FUN_40F1C5 (Handler 7)
@@ -1188,6 +1200,7 @@ public:
 	// Based on FUN_0041cadb case 6 and FUN_0041db5e disassembly:
 	// - DAT_00482240: Primary ship sprite (GRD001, par4=1)
 	// - DAT_00482238: Secondary ship sprite (GRD002, par4=2)
+	// - DAT_00482258: Mode 3 overlay sprite (GRD005, par4=10)
 	// - DAT_00457900: Sprite mode (1,2,3,4) controls which sprite to draw
 	// - DAT_00457910: Ship X screen position
 	// - DAT_00457912: Ship Y screen position
@@ -1196,9 +1209,10 @@ public:
 
 	NutRenderer *_grd001Sprite;      // DAT_00482240 - GRD001 primary ship NUT
 	NutRenderer *_grd002Sprite;      // DAT_00482238 - GRD002 secondary ship NUT
+	NutRenderer *_grd005Sprite;      // DAT_00482258 - GRD005 mode 3 overlay NUT
 
 	// Handler 25 shot-origin lookup tables from opcode 8/par4=8 text payload.
-	// Indices 5..19 are filled by the retail "%hd %hd ..." parser (FUN_0041CADB case 6).
+	// Indices 5..19 are filled by the "%hd %hd ..." parser in FUN_0041CADB case 6.
 	// Uncovered Level 2 firing uses indices 5..14.
 	int16 _grdShotOriginX[30];       // DAT_004578a6 equivalent
 	int16 _grdShotOriginY[30];       // DAT_004578c6 equivalent
@@ -1311,6 +1325,9 @@ public:
 
 	// Terminate audio system
 	void terminateAudio();
+
+	// Reset streamed SAN audio at independent video boundaries.
+	void resetVideoAudio();
 
 	// Process audio dispatches - called from SmushPlayer when iMUSE is null
 	// This replaces the iMUSE audio path for RA2

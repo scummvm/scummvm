@@ -19,13 +19,19 @@
  *
  */
 
-#include "common/events.h"
-#include "graphics/paletteman.h"
+#include "common/file.h"
 
+#include "graphics/paletteman.h"
+#include "graphics/screen.h"
+
+#include "pelrock/pelrock.h"
+#include "pelrock/events.h"
 #include "pelrock/graphics.h"
 #include "pelrock/room.h"
+#include "pelrock/resources.h"
 #include "pelrock/spellbook.h"
 #include "pelrock/util.h"
+#include "pelrock/fonts/small_font.h"
 
 namespace Pelrock {
 

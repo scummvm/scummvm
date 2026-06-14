@@ -30,6 +30,7 @@ class SmushPlayerRebel2 : public SmushPlayer {
 public:
 	SmushPlayerRebel2(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insane *insane);
 	~SmushPlayerRebel2() override;
+	bool ra2PromoteCurrentFrameToHiRes(int scrollX, int scrollY);
 
 protected:
 	void initGamePlayerFields() override;
@@ -50,6 +51,7 @@ protected:
 	bool shouldRouteAllIACTs() const override { return true; }
 	bool handleGameFrameBufferSelect(int codec, int width, int height) override;
 	bool handleGameDimensionOverride(int codec, int width, int height) override;
+	int handleGameFrameObjectPitch(int pitch) override;
 	bool handleGameAdjustCoords(int codec, int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) override;
 	bool handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize, uint8 param = 0, uint16 parm2 = 0) override;
 	bool handleGameStoreFrame() override;
@@ -69,6 +71,11 @@ private:
 							   int width, int height, TextStyleFlags flg);
 	void ra2PrepareFrameObjectSurface(int left, int top, int width, int height);
 	bool ra2SelectFrameBuffer(int codec, int width, int height);
+	bool ra2EnsureLowResVideoBuffer();
+	void ra2ClearCurrentTarget();
+	bool ra2IsHighResMode() const;
+	bool ra2DecodePlacedDeltaCodec(int codec, const uint8 *src, int left, int top,
+								   int width, int height, int pitch, int dataSize);
 	bool ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
 						int width, int height, int pitch, int dataSize);
 	void ra2HandleDeltaPalette(int32 subSize, Common::SeekableReadStream &b);
@@ -76,6 +83,8 @@ private:
 						  int left, int top, int width, int height);
 	void ra2HandleGost(int32 subSize, Common::SeekableReadStream &b);
 	void ra2InitAudioTrackSizes();
+	void ra2HandleFrameAudioChunk(uint32 subType, int32 subSize, Common::SeekableReadStream &b);
+	void ra2FeedAudio(uint8 *srcBuf, int groupId, int volume, int pan, int16 flags);
 
 	// LOAD chunk streaming buffer (embedded resource data)
 	byte *_loadBuffer;
@@ -87,8 +96,17 @@ private:
 	int _ra2FrameSourceSkipX;
 	int _ra2FrameSourceSkipY;
 	int _ra2FrameObjectOriginalWidth;
+	int _ra2FrameObjectOriginalHeight;
 	int _ra2FrameObjectSurfaceWidth;
 	int _ra2FrameObjectSurfaceHeight;
+	int _ra2DeltaBlocksWidth;
+	int _ra2DeltaBlocksHeight;
+	int _ra2DeltaGlyphsWidth;
+	int _ra2DeltaGlyphsHeight;
+	byte *_ra2LowResVideoBuffer;
+	int _ra2LowResVideoBufferSize;
+	bool _ra2NativeFrameNeedsClear;
+	bool _ra2UsingGameplaySurface;
 	bool _ra2PendingAnimHeaderPalette;
 	byte _ra2Codec45Palette[0x300];
 	byte _ra2Codec45Lookup[0x8000];

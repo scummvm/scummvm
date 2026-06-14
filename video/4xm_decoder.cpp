@@ -108,8 +108,6 @@ class FourXMDecoder::FourXMVideoTrack : public FixedRateVideoTrack {
 
 public:
 	FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h, uint16 version) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _version(version) {
-		if (_version <= 1)
-			error("versions 0 and 1 are not supported");
 		_blockType[0].reset(new HuffmanType(HuffmanType::fromFrequencies({16, 8, 4, 2, 1, 1})));
 		_blockType[1].reset(new HuffmanType(HuffmanType::fromFrequencies({8, 0, 4, 2, 1, 1})));
 		_blockType[2].reset(new HuffmanType(HuffmanType::fromFrequencies({8, 4, 0, 2, 1, 1})));
@@ -418,7 +416,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(uint16 *dst, const uint1
 		}
 		return;
 	}
-	if (code == 3 && _version >= 2)
+	if (code == 3)
 		return;
 
 	if (code == 0) {

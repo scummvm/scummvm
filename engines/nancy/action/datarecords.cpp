@@ -387,14 +387,18 @@ void EventFlagsMultiHS::execute() {
 
 		break;
 	case kActionTrigger:
-		if (_hoverCursor != CursorManager::kCustom1 && _hoverCursor != CursorManager::kCustom2) {
+		// Swallow clicks if the cursor is in the puzzle-drag range
+		if (g_nancy->getGameType() <= kGameTypeNancy9 && (_hoverCursor == CursorManager::kCustom1 || _hoverCursor == CursorManager::kCustom2)) {
+			_state = kRun;
+		} else if (g_nancy->getGameType() >= kGameTypeNancy10 && (int)_hoverCursor >= 35) {
+			_state = kRun;
+		} else {
 			_hasHotspot = false;
 			EventFlags::execute();
 			finishExecution();
-			break;
-		} else {
-			_state = kRun;
 		}
+
+		break;
 	}
 }
 

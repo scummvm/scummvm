@@ -83,6 +83,7 @@ ListWidget::ListWidget(Dialog *boss, const Common::String &name, const Common::U
 
 	_scrollPos = 0.0f;
 	_fluidScroller = new FluidScroller();
+	_wasAnimating = false;
 	_isMouseDown = false;
 	_isDragging = false;
 	_dragStartY = _dragLastY = 0;
@@ -136,6 +137,7 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, con
 
 	_scrollPos = 0.0f;
 	_fluidScroller = new FluidScroller();
+	_wasAnimating = false;
 	_isMouseDown = false;
 	_isDragging = false;
 	_dragStartY = _dragLastY = 0;
@@ -383,6 +385,7 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	_isMouseDown = true;
 	_isDragging = false;
 	_dragLastY = 0;
+	_wasAnimating = _fluidScroller->isAnimating();
 	_fluidScroller->stopAnimation();
 
 	if (button == 1) {
@@ -399,7 +402,7 @@ void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 		if (_isMouseDown && button == 1 && _isDragging)
 			_fluidScroller->startFling();
 
-		if (_isMouseDown && !_isDragging) {
+		if (_isMouseDown && !_isDragging && !_wasAnimating) {
 			// Perform selection
 			int newSelectedItem = findItem(x, y);
 			if (newSelectedItem != -1) {
@@ -453,10 +456,11 @@ void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 
 	// If this was a double click and the mouse is still over
 	// the selected item, send the double click command
-	if (clickCount == 2 && (_selectedItem == findItem(x, y)) &&
+	if (!_wasAnimating && clickCount == 2 && (_selectedItem == findItem(x, y)) &&
 		_selectedItem >= 0) {
 		sendCommand(kListItemDoubleClickedCmd, _selectedItem);
 	}
+	_wasAnimating = false;
 }
 
 void ListWidget::handleMouseWheel(int x, int y, int direction) {
@@ -1132,6 +1136,7 @@ void ListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 	_scrollPos = 0.0f;
 	_fluidScroller->setPosition(_scrollPos);
 	_selectedItem = -1;
+	_lastSelectionStartItem = -1;
 
 	if (redraw) {
 		scrollBarRecalc();

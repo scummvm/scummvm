@@ -740,8 +740,16 @@ void ScummEngine::writeVar(uint var, int value) {
 			// value is likely to be bogus. See also bug #4008.
 			if (_currentRoom == 0 && ConfMan.hasKey("talkspeed", _targetName)) {
 				value = 9 - getTalkSpeed();
-			} else {
-				// Save the new talkspeed value to ConfMan
+			} else if (value >= 0 && value <= 9) {
+				// Save the new talkspeed value to ConfMan.
+				// UPDATE: Only do this if the value is in valid range
+				// (e. g. DOTT, right before showing the final credits,
+				// will repeatedly set a value of 255, which would get
+				// stored as -246 and thus corrupt the text display in
+				// the next game session). I don't know why we do this
+				// at all, in my understanding, the script should not
+				// really change the user setting? Also, readVar()
+				// does not have an equivalent counterpart for this.
 				setTalkSpeed(9 - value);
 			}
 		}

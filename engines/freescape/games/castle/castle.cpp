@@ -2211,6 +2211,7 @@ void CastleEngine::selectCharacterScreen() {
 	// lines[5] = prince, lines[6] = princess for 8-bit text menus.
 	// For DOS, use riddle text line positions.
 	Common::Rect princeSelector, princessSelector;
+	Common::Rect princeHitArea, princessHitArea;
 	if (isSpectrum() || isCPC() || isC64() || isAmiga()) {
 		int x = _viewArea.left + 3;
 		int lineHeight = 12; // Castle Master line spacing in drawStringsInSurface
@@ -2225,6 +2226,8 @@ void CastleEngine::selectCharacterScreen() {
 			princeSelector = Common::Rect(x, princeY, x + selectorWidth, princeY + lineHeight);
 			princessSelector = Common::Rect(x, princessY, x + selectorWidth, princessY + lineHeight);
 		}
+		princeHitArea = Common::Rect(_viewArea.left, princeY, _viewArea.right, princeY + lineHeight);
+		princessHitArea = Common::Rect(_viewArea.left, princessY, _viewArea.right, princessY + lineHeight);
 	} else {
 		// DOS: text comes from _riddleList[21], calculate from actual riddle line positions
 		Common::Array<RiddleText> selectMessage = _riddleList[21]._lines;
@@ -2237,6 +2240,9 @@ void CastleEngine::selectCharacterScreen() {
 			else if (i == int(selectMessage.size()) - 1)
 				princessSelector = _font.getBoundingBox(selectMessage[i]._text, x, y);
 		}
+		int splitX = _fullscreenViewArea.left + _fullscreenViewArea.width() / 2;
+		princeHitArea = Common::Rect(_fullscreenViewArea.left, _fullscreenViewArea.top, splitX, _fullscreenViewArea.bottom);
+		princessHitArea = Common::Rect(splitX, _fullscreenViewArea.top, _fullscreenViewArea.right, _fullscreenViewArea.bottom);
 	}
 
 	// On touchscreen, highlight the tap areas with red outlines (expand 1px for readability)
@@ -2263,13 +2269,12 @@ void CastleEngine::selectCharacterScreen() {
 			case Common::EVENT_LBUTTONDOWN:
 				// fallthrough
 			case Common::EVENT_RBUTTONDOWN:
-				mouse.x = _screenW * event.mouse.x / g_system->getWidth();
-				mouse.y = _screenH * event.mouse.y / g_system->getHeight();
+				mouse = getNormalizedPosition(event.mouse);
 
-				if (princeSelector.contains(mouse)) {
+				if (princeHitArea.contains(mouse) || princeSelector.contains(mouse)) {
 					selected = true;
 					_selectedPrincess = false;
-				} else if (princessSelector.contains(mouse)) {
+				} else if (princessHitArea.contains(mouse) || princessSelector.contains(mouse)) {
 					selected = true;
 					_selectedPrincess = true;
 				}

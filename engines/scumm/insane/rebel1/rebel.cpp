@@ -193,7 +193,7 @@ void InsaneRebel1::loadTuningForLevel(int level) {
 	_protectedTargetA = 0;
 	_protectedTargetB = 0;
 
-	debugC(DEBUG_INSANE, "RA1: Loaded tuning level=%d diff=%d: roll=%d lift=%d slide=%d drift=%d snap=%d "
+	debugC(DEBUG_INSANE, "Loaded tuning level=%d diff=%d: roll=%d lift=%d slide=%d drift=%d snap=%d "
 		"miss=%d wham=%d shot=%d kill=%d time=%d levelPts=%d bonus=%d flags=0x%x",
 		level, d, _tuning.roll, _tuning.lift, _tuning.slide, _tuning.drift, _tuning.snap,
 		_tuning.miss, _tuning.wham, _tuning.shot, _tuning.kill,
@@ -307,6 +307,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_hudDirtyFlag = 0;
 	_maxChapterUnlocked = 0;
 	_unlockAllLevels = ConfMan.getBool("rebel1_unlock_all");
+	_noDamage = ConfMan.getBool("rebel1_no_damage");
 	_interactiveVideoActive = false;
 	_preserveInteractiveRuntimeState = false;
 	_interactiveVideoCheatSkipped = false;
@@ -345,17 +346,18 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_levelSelectSel = 0;
 	_startLevel = 1;
 
-	// Options — read initial state from ScummVM mixer
+	// Options: read initial state from the mixer.
 	_optRookieOneFemale = false;
 	_optMusicEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
-	_optSfxEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType);
-	// Initialize the dialogue-text (subtitles) toggle from ScummVM's global setting so the
+	_optSfxEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType) &&
+		!_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSpeechSoundType);
+	// Initialize the dialogue-text (subtitles) toggle from the global setting so the
 	// game and the in-game DIALOGUE TEXT menu label reflect it. The menu toggle writes the
 	// same "subtitles" key, and ra1HandleText() gates rendering on it.
 	_optTextEnabled = ConfMan.getBool("subtitles");
 	_optControlsYFlip = false;
 	_optRapidFire = true;
-	_optVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) * 127 / Audio::Mixer::kMaxChannelVolume;
+	_optVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) * 127 / Audio::Mixer::kMaxChannelVolume;
 
 	// Default high scores — from DS:0x1D0/0x298/0x2C0
 	const struct { const char *name; int32 score; byte difficulty; } kDefaultScores[kHighScoreCount] = {

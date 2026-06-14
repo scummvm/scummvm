@@ -81,6 +81,7 @@ protected:
 
 	float			_scrollPos;
 	FluidScroller	*_fluidScroller;
+	bool			_wasAnimating;
 	bool			_isMouseDown;
 	bool			_isDragging;
 	int				_dragStartY;

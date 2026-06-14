@@ -42,6 +42,7 @@ class ScrollContainerWidget: public Widget, public CommandSender {
 	int _mouseDownStartY = 0;
 	bool _isMouseDown = false;
 	bool _isDragging = false;
+	bool _wasAnimating = false;
 	float _scrollPos = 0.0f;
 	FluidScroller *_fluidScroller = nullptr;
 	Widget *_childUnderMouse = nullptr;

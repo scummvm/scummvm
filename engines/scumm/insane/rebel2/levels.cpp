@@ -49,7 +49,7 @@ static void purgeRebel2GameplayInputEvents(Common::EventManager *eventMan) {
 // Level Loading System
 // ---------------------------------------------------------------------------
 // Emulates the level handler functions from FUN_00417E53 through FUN_0041BBE8.
-// Based on disassembly analysis of the retail Rebel Assault 2 executable.
+// Based on disassembly analysis of the Rebel Assault 2 executable.
 
 Common::String InsaneRebel2::getLevelDir(int levelId) {
 	return Common::String::format("LEV%02d", levelId);
@@ -81,10 +81,17 @@ void InsaneRebel2::runGame() {
 	while (!_vm->shouldQuit()) {
 		int menuResult = runMainMenu();
 
-		if (menuResult == 0 || _vm->shouldQuit())
+		if (menuResult == kMenuQuit || _vm->shouldQuit())
 			break;
 
-		if (menuResult == kMenuNewGame || menuResult == kMenuContinue) {
+		if (menuResult == kMenuResumeDemo) {
+			playIntroSequence();
+			if (!_vm->shouldQuit())
+				showTopPilots();
+			continue;
+		}
+
+		if (menuResult == kMenuNewGame) {
 			int pilotResult = runLevelSelect();
 
 			if (pilotResult == kLevelSelectQuit || _vm->shouldQuit())
@@ -101,7 +108,7 @@ void InsaneRebel2::runGame() {
 			if (chapterResult == kChapterSelectPlay) {
 				// _selectedChapter is 0-based, runLevel expects 1-based
 				int selectedLevel = _selectedChapter + 1;
-				debug("InsaneRebel2: Starting chapter %d (level %d)", _selectedChapter + 1, selectedLevel);
+				debugC(DEBUG_INSANE, "InsaneRebel2: Starting chapter %d (level %d)", _selectedChapter + 1, selectedLevel);
 
 				// Ending selected directly from chapter select (FUN_0041bbe8, case 0xf)
 				if (selectedLevel == 16) {
@@ -147,7 +154,7 @@ void InsaneRebel2::runGame() {
 // We skip the easter eggs and play both O_OPEN_A + O_OPEN_B unconditionally.
 //
 void InsaneRebel2::playIntroSequence() {
-	debug("Rebel2: Playing intro sequence");
+	debugC(DEBUG_INSANE, "Playing intro sequence");
 
 	_gameState = kStateIntro;
 	_menuInputActive = false;
@@ -156,7 +163,7 @@ void InsaneRebel2::playIntroSequence() {
 
 	// Play main intro (OPEN/O_OPEN_A.SAN)
 	// Original: FUN_0041f4d0("OPEN/O_OPEN_A.SAN", 0x28, 0xffff, 0xffff, 0)
-	debug("Rebel2: Playing main intro (O_OPEN_A.SAN)");
+	debugC(DEBUG_INSANE, "Playing main intro (O_OPEN_A.SAN)");
 	splayer->setCurVideoFlags(0x28);
 	splayer->play("OPEN/O_OPEN_A.SAN", 15);
 
@@ -166,7 +173,7 @@ void InsaneRebel2::playIntroSequence() {
 	// Play additional intro (OPEN/O_OPEN_B.SAN)
 	// Original: conditional on DAT_0047ab45 || DAT_0047ab47
 	// We play unconditionally (matches "Continue Intro" menu behavior)
-	debug("Rebel2: Playing additional intro (O_OPEN_B.SAN)");
+	debugC(DEBUG_INSANE, "Playing additional intro (O_OPEN_B.SAN)");
 	splayer->setCurVideoFlags(0x28);
 	splayer->play("OPEN/O_OPEN_B.SAN", 15);
 }
@@ -174,7 +181,7 @@ void InsaneRebel2::playIntroSequence() {
 // playMissionBriefing -- Mission briefing screen (FUN_00415CF8).
 void InsaneRebel2::playMissionBriefing() {
 
-	debug("Rebel2: Playing mission briefing");
+	debugC(DEBUG_INSANE, "Playing mission briefing");
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	splayer->setCurVideoFlags(0x08);  // Briefing mode flag
@@ -186,6 +193,7 @@ void InsaneRebel2::playMissionBriefing() {
 // All wrapper functions (FUN_00417168/4171c5/417ab2/417327) add | 8 before calling FUN_0041f4d0.
 void InsaneRebel2::playCinematic(const char *filename) {
 	restoreDamageFlashPalette();
+	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during cinematics
@@ -202,6 +210,7 @@ void InsaneRebel2::playVideoWithText(const char *filename, int textID, int textX
                                      int fadeInFrame, int fadeOutFrame) {
 
 	restoreDamageFlashPalette();
+	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;
@@ -259,7 +268,7 @@ void InsaneRebel2::playLevelBegin(int levelId) {
 	Common::String prefix = getLevelPrefix(levelId);
 	Common::String filename = Common::String::format("%s/%sBEG.SAN", dir.c_str(), prefix.c_str());
 
-	debug("Rebel2: Playing level %d beginning: %s", levelId, filename.c_str());
+	debugC(DEBUG_INSANE, "Playing level %d beginning: %s", levelId, filename.c_str());
 
 	if (levelId >= 1 && levelId <= 15 && levelTextParams[levelId].textID >= 0) {
 		const TextOverlayParams &p = levelTextParams[levelId];
@@ -274,6 +283,7 @@ void InsaneRebel2::playLevelBegin(int levelId) {
 void InsaneRebel2::playLevelEnd(int levelId) {
 
 	restoreDamageFlashPalette();
+	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during end cinematic
@@ -282,7 +292,7 @@ void InsaneRebel2::playLevelEnd(int levelId) {
 	Common::String prefix = getLevelPrefix(levelId);
 	Common::String filename = Common::String::format("%s/%sEND.SAN", dir.c_str(), prefix.c_str());
 
-	debug("Rebel2: Playing level %d end: %s", levelId, filename.c_str());
+	debugC(DEBUG_INSANE, "Playing level %d end: %s", levelId, filename.c_str());
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	// Original: FUN_00417327 adds | 8, so flags = 0x20 | 0x08 = 0x28
@@ -294,6 +304,7 @@ void InsaneRebel2::playLevelEnd(int levelId) {
 void InsaneRebel2::playLevelRetry(int levelId) {
 
 	restoreDamageFlashPalette();
+	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed
@@ -302,7 +313,7 @@ void InsaneRebel2::playLevelRetry(int levelId) {
 	Common::String prefix = getLevelPrefix(levelId);
 	Common::String filename = Common::String::format("%s/%sRETRY.SAN", dir.c_str(), prefix.c_str());
 
-	debug("Rebel2: Playing level %d retry: %s", levelId, filename.c_str());
+	debugC(DEBUG_INSANE, "Playing level %d retry: %s", levelId, filename.c_str());
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
@@ -314,6 +325,7 @@ void InsaneRebel2::playLevelRetry(int levelId) {
 void InsaneRebel2::playLevelGameOver(int levelId) {
 
 	restoreDamageFlashPalette();
+	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during game over cinematic
@@ -322,7 +334,7 @@ void InsaneRebel2::playLevelGameOver(int levelId) {
 	Common::String prefix = getLevelPrefix(levelId);
 	Common::String filename = Common::String::format("%s/%sOVER.SAN", dir.c_str(), prefix.c_str());
 
-	debug("Rebel2: Playing level %d game over: %s", levelId, filename.c_str());
+	debugC(DEBUG_INSANE, "Playing level %d game over: %s", levelId, filename.c_str());
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	// Original: FUN_00417ab2 adds | 8, so flags = 0x20 | 0x08 = 0x28
@@ -343,7 +355,7 @@ void InsaneRebel2::playLevelGameOver(int levelId) {
 //
 void InsaneRebel2::playEndingSequence() {
 
-	debug("Rebel2: Playing ending sequence (difficulty=%d)", _difficulty);
+	debugC(DEBUG_INSANE, "Playing ending sequence (difficulty=%d)", _difficulty);
 
 	// Switch to gameplay state to stop menu overlay rendering
 	_gameState = kStateGameplay;
@@ -380,7 +392,8 @@ void InsaneRebel2::playEndingSequence() {
 // This is the credits accessible from the main menu, NOT the ending credits.
 void InsaneRebel2::playCreditsSequence() {
 
-	debug("Rebel2: Playing menu credits");
+	debugC(DEBUG_INSANE, "Playing menu credits");
+	resetVideoAudio();
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	splayer->setCurVideoFlags(0x20);
@@ -399,7 +412,7 @@ void InsaneRebel2::centerGameplayAim() {
 	purgeRebel2GameplayInputEvents(eventMan);
 	_gameplayMouseSettleUntil = _vm->_system->getMillis() + kRebel2GameplayMouseSettleMs;
 
-	debugC(DEBUG_INSANE, "Rebel2 centerGameplayAim: mouse=(%d,%d) joystick=(%d,%d) gamepadAim=%d settleUntil=%u",
+	debugC(DEBUG_INSANE, "centerGameplayAim: mouse=(%d,%d) joystick=(%d,%d) gamepadAim=%d settleUntil=%u",
 		_vm->_mouse.x, _vm->_mouse.y,
 		_joystickAxisX, _joystickAxisY, _gamepadAimActive ? 1 : 0,
 		_gameplayMouseSettleUntil);
@@ -410,10 +423,14 @@ void InsaneRebel2::warpGameplayMouseNow(int x, int y) {
 	if (eventMan)
 		eventMan->purgeMouseEvents();
 
-	_vm->_mouse.x = x;
-	_vm->_mouse.y = y;
-	_vm->_system->warpMouse(_vm->_macScreen ? x * 2 : x,
-		_vm->_macScreen ? y * 2 + 2 * _vm->_macScreenDrawOffset : y);
+	const int scale = isHiRes() ? 2 : 1;
+	const int physicalX = x * scale;
+	const int physicalY = y * scale;
+
+	_vm->_mouse.x = physicalX;
+	_vm->_mouse.y = physicalY;
+	_vm->_system->warpMouse(_vm->_macScreen ? physicalX * 2 : physicalX,
+		_vm->_macScreen ? physicalY * 2 + 2 * _vm->_macScreenDrawOffset : physicalY);
 
 	if (eventMan)
 		eventMan->purgeMouseEvents();
@@ -422,7 +439,7 @@ void InsaneRebel2::warpGameplayMouseNow(int x, int y) {
 // runLevel -- Main level dispatcher, calls per-level handlers.
 int InsaneRebel2::runLevel(int levelId) {
 
-	debug("Rebel2: Starting level %d", levelId);
+	debugC(DEBUG_INSANE, "Starting level %d", levelId);
 
 	// Validate level ID
 	if (levelId < 1 || levelId > 15) {
@@ -455,7 +472,7 @@ int InsaneRebel2::runLevel(int levelId) {
 	// Lock the mouse to the game window during gameplay.
 	// The original hides the cursor (ShowCursor(0)) and relies on Windows confining
 	// the mouse to the game window. Without locking, the cursor can escape the
-	// ScummVM window making the ship uncontrollable.
+	// window making the ship uncontrollable.
 	_gameplaySectionActive = false;
 	CursorMan.showMouse(false);
 	g_system->lockMouse(true);
@@ -546,7 +563,7 @@ int InsaneRebel2::getRandomVariant(int max) {
 //
 // Returns variant suffix ("A", "B", "C", etc.) based on level, phase,
 // and the frame where the player died. Emulates the per-level frame
-// threshold tables in the retail level handlers.
+// threshold tables in the original level handlers.
 //
 Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int frame) {
 
@@ -721,6 +738,7 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 
 	restoreDamageFlashPalette();
+	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during death cinematic
@@ -737,7 +755,7 @@ void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 		filename = Common::String::format("%s/%sDIE_%s.SAN", dir.c_str(), prefix.c_str(), variant.c_str());
 	}
 
-	debug("Rebel2: Playing death video: %s (phase=%d, frame=%d)", filename.c_str(), phase, frame);
+	debugC(DEBUG_INSANE, "Playing death video: %s (phase=%d, frame=%d)", filename.c_str(), phase, frame);
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
@@ -749,6 +767,7 @@ void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 void InsaneRebel2::playLevelRetryVariant(int levelId, int phase) {
 
 	restoreDamageFlashPalette();
+	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed
@@ -765,7 +784,7 @@ void InsaneRebel2::playLevelRetryVariant(int levelId, int phase) {
 		filename = Common::String::format("%s/%sRETRY.SAN", dir.c_str(), prefix.c_str());
 	}
 
-	debug("Rebel2: Playing retry video: %s (phase=%d)", filename.c_str(), phase);
+	debugC(DEBUG_INSANE, "Playing retry video: %s (phase=%d)", filename.c_str(), phase);
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28

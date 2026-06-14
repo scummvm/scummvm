@@ -21,10 +21,6 @@
 #ifndef PELROCK_OFFSETS_H
 #define PELROCK_OFFSETS_H
 
-#include "common/scummsys.h"
-
-#include "pelrock/types.h"
-
 namespace Pelrock {
 
 // Indices to in game text responses in JUEGO.EXE

@@ -134,8 +134,25 @@ static const AccessGameDescription gameDescriptions[] = {
 		// Noctropolis Demo
 		{
 			"noctropolis",
-			"Demo",
-			AD_ENTRY1s("demo/scene01.ap", "3a154bf58e10cd7ace14cab1bf5adf4a", 145796),
+			"Demo/Sep 24",
+			AD_ENTRY2s("demo/scene01.ap", "3a154bf58e10cd7ace14cab1bf5adf4a", 145796,
+					   "demo/scene04.ap", "3ee5e24db63bf8029a6d0c91268f5e6e", 96268),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_TESTING | ADGF_DEMO,
+			GUIO1(GUIO_NONE)
+		},
+		kGameNoctropolis,
+		0
+	},
+
+	{
+		// Noctropolis Demo
+		{
+			"noctropolis",
+			"Demo/Sep 26",
+			AD_ENTRY2s("demo/scene01.ap", "3a154bf58e10cd7ace14cab1bf5adf4a", 145796,
+					   "demo/scene04.ap", "ee72734c5bdc62e1ef76841f5f451713", 96289),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_TESTING | ADGF_DEMO,
@@ -150,7 +167,24 @@ static const AccessGameDescription gameDescriptions[] = {
 		{
 			"noctropolis",
 			nullptr,
-			AD_ENTRY1s("dark/scene01.ap", "3a154bf58e10cd7ace14cab1bf5adf4a", 147954),
+			AD_ENTRY2s("dark/scene01.ap", "3a154bf58e10cd7ace14cab1bf5adf4a", 147954,
+					   "dark/scene13.ap", "0f02b3f1472beb7fb36e4293009baac0", 327959),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_TESTING,
+			GUIO1(GUIO_NONE)
+		},
+		kGameNoctropolis,
+		0
+	},
+
+	{
+		// Noctropolis - GOG/Steam version
+		{
+			"noctropolis",
+			"Rerelease",
+			AD_ENTRY2s("dark/scene01.ap", "3a154bf58e10cd7ace14cab1bf5adf4a", 147954,
+					   "dark/scene13.ap", "0d400713ed30e692d63af4d28ba42c5e", 327980),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_TESTING,

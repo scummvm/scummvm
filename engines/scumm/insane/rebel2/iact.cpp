@@ -49,7 +49,7 @@ static bool readLevel2BackgroundChunkHeader(Common::SeekableReadStream &stream, 
 
 	const int64 dataStart = stream.pos();
 	if ((int64)chunkSize > containerEnd - dataStart) {
-		debug("Rebel2 loadLevel2Background: Truncated %s chunk 0x%08X at %lld: size=%u, remaining=%lld",
+		debugC(DEBUG_INSANE, "loadLevel2Background: Truncated %s chunk 0x%08X at %lld: size=%u, remaining=%lld",
 			context, tag, headerPos, chunkSize, containerEnd - dataStart);
 		return false;
 	}
@@ -122,7 +122,10 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 	// offset on frame 0 doesn't affect the STOR/FTCH mechanism.
 	if (_gameState == kStateChapterSelect && _player) {
 		if (renderBitmap) {
-			memset(renderBitmap, 0, _vm->_screenWidth * _vm->_screenHeight);
+			const int clearWidth = (_player->_width > 0) ? _player->_width : _vm->_screenWidth;
+			const int clearHeight = (_player->_height > 0) ? _player->_height : _vm->_screenHeight;
+			if (clearWidth > 0 && clearHeight > 0)
+				memset(renderBitmap, 0, (size_t)clearWidth * clearHeight);
 		}
 		_player->_fobjOffsetX = _previewOffsetX;
 		_player->_fobjOffsetY = _previewOffsetY;
@@ -133,7 +136,7 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 void InsaneRebel2::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) {
-	debug("Rebel2 IACT: opcode=%d par2=%d par3=%d par4=%d gameState=%d sceneId=%d",
+	debugC(DEBUG_INSANE, "IACT: opcode=%d par2=%d par3=%d par4=%d gameState=%d sceneId=%d",
 		par1, par2, par3, par4, _gameState, _currSceneId);
 
 	if (_keyboardDisable)
@@ -143,12 +146,12 @@ void InsaneRebel2::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan
 	// Menu IACTs have par1=8 (code), par2=46 (flags), par4>=1000 (userId)
 	// The embedded ANIM contains the full menu frame
 	if (_gameState == kStateMainMenu && par1 == 8 && par4 >= 1000) {
-		debug("Rebel2 IACT: Menu mode - processing embedded ANIM (userId=%d)", par4);
+		debugC(DEBUG_INSANE, "IACT: Menu mode - processing embedded ANIM (userId=%d)", par4);
 
 		// Scan for embedded ANIM tag in the IACT data
 		int64 startPos = b.pos();
 		int64 totalSize = b.size();
-		debug("Rebel2 IACT: stream pos=%d, size=%d, remaining=%d",
+		debugC(DEBUG_INSANE, "IACT: stream pos=%d, size=%d, remaining=%d",
 			(int)startPos, (int)totalSize, (int)(totalSize - startPos));
 
 		if (totalSize > startPos) {
@@ -157,7 +160,7 @@ void InsaneRebel2::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan
 			byte *scanBuf = (byte *)malloc(scanSize);
 			if (scanBuf) {
 				int bytesRead = b.read(scanBuf, scanSize);
-				debug("Rebel2 IACT: Read %d bytes, first 16: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+				debugC(DEBUG_INSANE, "IACT: Read %d bytes, first 16: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
 					bytesRead, scanBuf[0], scanBuf[1], scanBuf[2], scanBuf[3],
 					scanBuf[4], scanBuf[5], scanBuf[6], scanBuf[7],
 					scanBuf[8], scanBuf[9], scanBuf[10], scanBuf[11],
@@ -169,7 +172,7 @@ void InsaneRebel2::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan
 						int64 animStreamPos = startPos + i;
 						uint32 animReportedSize = READ_BE_UINT32(scanBuf + i + 4);
 						int32 toCopy = (int)MIN<int64>((int64)animReportedSize + 8, totalSize - animStreamPos);
-						debug("Rebel2 IACT: Found embedded ANIM at offset %d, size %d", (int)i, (int)animReportedSize);
+						debugC(DEBUG_INSANE, "IACT: Found embedded ANIM at offset %d, size %d", (int)i, (int)animReportedSize);
 						if (toCopy > 0) {
 							byte *animData = (byte *)malloc(toCopy);
 							if (animData) {
@@ -186,7 +189,7 @@ void InsaneRebel2::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan
 					}
 				}
 
-				debug("Rebel2 IACT: No ANIM tag found in menu IACT data");
+				debugC(DEBUG_INSANE, "IACT: No ANIM tag found in menu IACT data");
 				b.seek(startPos);
 				free(scanBuf);
 			}
@@ -240,7 +243,7 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 		// Sub-opcode 0x0D (13) = Primary collision zones (obstacles)
 		// Sub-opcode 0x0E (14) = Secondary collision zones (boundaries)
 		// par2 is the sub-opcode that determines which zone table to use
-		debug("Rebel2 IACT Opcode 5: par2=%d par3=%d par4=%d", par2, par3, par4);
+		debugC(DEBUG_INSANE, "IACT Opcode 5: par2=%d par3=%d par4=%d", par2, par3, par4);
 
 		if (par2 == 0x0D || par2 == 0x0E) {
 			// Register the collision zone from the remaining IACT data
@@ -272,7 +275,7 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 			// DAT_00443b12 = horizontal wind, DAT_00443b14 = vertical wind
 			_windParamX = body0;
 			_windParamY = body1;
-			debug("Rebel2 Opcode 7 par4=0: wind=(%d,%d)", body0, body1);
+			debugC(DEBUG_INSANE, "Opcode 7 par4=0: wind=(%d,%d)", body0, body1);
 			break;
 		case 1:
 			// Set LEFT X boundary and TOP Y boundary
@@ -284,7 +287,7 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 			} else if (_flyControlMode == 0) {
 				_corridorLeftX += 20;
 			}
-			debug("Rebel2 Opcode 7 par4=1: corridor left=%d top=%d (adjusted left=%d)",
+			debugC(DEBUG_INSANE, "Opcode 7 par4=1: corridor left=%d top=%d (adjusted left=%d)",
 				body0, body1, _corridorLeftX);
 			break;
 		case 2:
@@ -297,16 +300,16 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 			} else if (_flyControlMode == 0) {
 				_corridorRightX -= 20;
 			}
-			debug("Rebel2 Opcode 7 par4=2: corridor right=%d bottom=%d (adjusted right=%d)",
+			debugC(DEBUG_INSANE, "Opcode 7 par4=2: corridor right=%d bottom=%d (adjusted right=%d)",
 				body0, body1, _corridorRightX);
 			break;
 		case 5:
 			// DAT_00443b52: repeats FLY002 ship overlay in FUN_40D836.
 			_flyOverlayRepeatCount = body0;
-			debug("Rebel2 Opcode 7 par4=5: flyOverlayRepeat=%d", _flyOverlayRepeatCount);
+			debugC(DEBUG_INSANE, "Opcode 7 par4=5: flyOverlayRepeat=%d", _flyOverlayRepeatCount);
 			break;
 		default:
-			debug("Rebel2 Opcode 7 par4=%d: body=(%d,%d) — unknown sub-opcode", par4, body0, body1);
+			debugC(DEBUG_INSANE, "Opcode 7 par4=%d: body=(%d,%d) — unknown sub-opcode", par4, body0, body1);
 			break;
 		}
 
@@ -321,9 +324,9 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 		iactRebel2Opcode9(renderBitmap, b, par2, par3, par4);
 	} else if (par1 == 0 || par1 == 1) {
 		// Low Opcodes seen in logs
-		debug("Rebel2 IACT: Low Opcode %d (par2=%d par3=%d par4=%d)", par1, par2, par3, par4);
+		debugC(DEBUG_INSANE, "IACT: Low Opcode %d (par2=%d par3=%d par4=%d)", par1, par2, par3, par4);
 	} else {
-		debug("Rebel2 IACT: Unknown Opcode %d (par2=%d par3=%d par4=%d)", par1, par2, par3, par4);
+		debugC(DEBUG_INSANE, "IACT: Unknown Opcode %d (par2=%d par3=%d par4=%d)", par1, par2, par3, par4);
 	}
 }
 
@@ -356,13 +359,13 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 			// while the parent is alive, and revealed when the parent is destroyed.
 			if (!isBitSet(parentId)) {
 				setBit(childId);
-				debug("Rebel2: Linked ID=%d to Parent=%d (Slot 0) - child DISABLED (parent alive)", childId, parentId);
+				debugC(DEBUG_INSANE, "Linked ID=%d to Parent=%d (Slot 0) - child DISABLED (parent alive)", childId, parentId);
 			} else {
 				clearBit(childId);
-				debug("Rebel2: Linked ID=%d to Parent=%d (Slot 0) - child ENABLED (parent dead)", childId, parentId);
+				debugC(DEBUG_INSANE, "Linked ID=%d to Parent=%d (Slot 0) - child ENABLED (parent dead)", childId, parentId);
 			}
 		} else {
-			debug("Rebel2: Skipping link with invalid IDs childId=%d parentId=%d", childId, parentId);
+			debugC(DEBUG_INSANE, "Skipping link with invalid IDs childId=%d parentId=%d", childId, parentId);
 		}
 		return;
 	} else if (par3 == 1) { // Probabilistic / counter cases: par3 == 1
@@ -382,13 +385,13 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 			if (value == 100) {
 				// par4==100: Force enable the target (original: FUN_00423a00)
 				clearBit(targetId);
-				debug("Rebel2 Opcode2 (H%d): Force ENABLE target=%d (par4=100)", _rebelHandler, targetId);
+				debugC(DEBUG_INSANE, "Opcode2 (H%d): Force ENABLE target=%d (par4=100)", _rebelHandler, targetId);
 			} else {
 				// Check wave state: if enemy type has been killed, disable target
 				int bitMask = 1 << (value & 0x1f);
 				if ((_rebelWaveState & bitMask) != 0) {
 					setBit(targetId);
-					debug("Rebel2 Opcode2 (H%d): Disable target=%d (type %d killed, wave=0x%x)", _rebelHandler, targetId, value, _rebelWaveState);
+					debugC(DEBUG_INSANE, "Opcode2 (H%d): Disable target=%d (type %d killed, wave=0x%x)", _rebelHandler, targetId, value, _rebelWaveState);
 				}
 			}
 			return;
@@ -397,19 +400,19 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 		if (value > 1 && value < 10) { // 1 < value < 10: random disable
 			if (_vm->_rnd.getRandomNumber(value) == 0) {
 				setBit(targetId);
-				debug("Rebel2 IACT Opcode2: Random DISABLE target=%d (value=%d)", targetId, value);
+				debugC(DEBUG_INSANE, "IACT Opcode2: Random DISABLE target=%d (value=%d)", targetId, value);
 			}
 		} else if (value > 10 && value < 20) { // 10 < value < 20: enable/disable with special value==11 = force enable
 			if (value == 11) {
 				clearBit(targetId);
-				debug("Rebel2 IACT Opcode2: FORCE ENABLE target=%d (value=11)", targetId);
+				debugC(DEBUG_INSANE, "IACT Opcode2: FORCE ENABLE target=%d (value=11)", targetId);
 			} else {
 				if (_vm->_rnd.getRandomNumber(value - 10) == 0) {
 					clearBit(targetId);
-					debug("Rebel2 IACT Opcode2: Random ENABLE target=%d (value=%d)", targetId, value);
+					debugC(DEBUG_INSANE, "IACT Opcode2: Random ENABLE target=%d (value=%d)", targetId, value);
 				} else {
 					setBit(targetId);
-					debug("Rebel2 IACT Opcode2: Random DISABLE target=%d (value=%d)", targetId, value);
+					debugC(DEBUG_INSANE, "IACT Opcode2: Random DISABLE target=%d (value=%d)", targetId, value);
 				}
 			}
 		} else if (value > 99 && value < 110) { // 99 < value < 110: increment value counter if target active
@@ -418,7 +421,7 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 				if (idx >= 0 && idx < 10) {
 					_rebelValueCounters[idx]++;
 					_rebelLastCounter = _rebelValueCounters[idx];
-					debug("Rebel2 IACT Opcode2: Increment VAL counter[%d] -> %d (target=%d)", value, _rebelValueCounters[idx], targetId);
+					debugC(DEBUG_INSANE, "IACT Opcode2: Increment VAL counter[%d] -> %d (target=%d)", value, _rebelValueCounters[idx], targetId);
 				}
 			}
 
@@ -428,14 +431,14 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 					if (!isBitSet(targetId)) {
 						_rebelMaskCounters[slot]++;
 						_rebelLastCounter = _rebelMaskCounters[slot];
-						debug("Rebel2 IACT Opcode2: Increment MASK counter[%d] -> %d (target=%d)", slot, _rebelMaskCounters[slot], targetId);
+						debugC(DEBUG_INSANE, "IACT Opcode2: Increment MASK counter[%d] -> %d (target=%d)", slot, _rebelMaskCounters[slot], targetId);
 					}
 				}
 			}
 		}
 
 		// Unknown sub-type: log and return
-		debug("Rebel2 IACT Opcode2: Unhandled par3=%d par4=%d", par3, par4);
+		debugC(DEBUG_INSANE, "IACT Opcode2: Unhandled par3=%d par4=%d", par3, par4);
 	}
 }
 
@@ -474,35 +477,35 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 
 		if (par3 == 5) {
 			// Probabilistic damage with cover check (lines 81-92)
-			debug("Rebel2 Opcode3: H25 par3=5 srcId=%d isBitSet=%d damageLevel=%d",
+			debugC(DEBUG_INSANE, "Opcode3: H25 par3=5 srcId=%d isBitSet=%d damageLevel=%d",
 				srcIdBody1, isBitSet(srcIdBody1), _rebelDamageLevel);
 
 			if (_rebelDamageLevel < 2 && !isBitSet(srcIdBody1)) {
 				LevelDifficultyParams params = getDifficultyParams();
 				int probability = (params.shotAccuracy >= 0) ? params.shotAccuracy : 0;
 				int roll = _vm->_rnd.getRandomNumber(99);
-				debug("Rebel2 Opcode3: probability=%d roll=%d (need roll < prob)", probability, roll);
+				debugC(DEBUG_INSANE, "Opcode3: probability=%d roll=%d (need roll < prob)", probability, roll);
 
 				if (roll < probability) {
 					int damageAmount = (params.shotDamage >= 0) ? params.shotDamage : 0;
 					if (applyPlayerDamage(damageAmount)) {
-						debug("Rebel2: H25 PROBABILISTIC damage from %d. Damage=%d total=%d",
+						debugC(DEBUG_INSANE, "H25 PROBABILISTIC damage from %d. Damage=%d total=%d",
 							srcIdBody1, damageAmount, _playerDamage);
 					}
 					if (!_noDamage)
 						initDamageFlash();
 				}
 			} else {
-				debug("Rebel2 Opcode3: H25 par3=5 BLOCKED (damageLevel=%d isBitSet=%d)",
+				debugC(DEBUG_INSANE, "Opcode3: H25 par3=5 BLOCKED (damageLevel=%d isBitSet=%d)",
 					_rebelDamageLevel, isBitSet(srcIdBody1));
 			}
 		} else if (par3 == 1 && !isBitSet(srcIdBody0) && par4 != 4) {
 			// Hit counter only — NO damage (lines 94-98)
 			_rebelHitCounter++;
-			debug("Rebel2: H25 hit counter++ -> %d (par3=1 par4=%d, no damage)",
+			debugC(DEBUG_INSANE, "H25 hit counter++ -> %d (par3=1 par4=%d, no damage)",
 				_rebelHitCounter, par4);
 		} else {
-			debug("Rebel2 Opcode3: H25 par3=%d par4=%d (no action)", par3, par4);
+			debugC(DEBUG_INSANE, "Opcode3: H25 par3=%d par4=%d (no action)", par3, par4);
 		}
 
 		// Direct damage: par4==100, separate from par3 branches (lines 99-111)
@@ -510,7 +513,7 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 			LevelDifficultyParams dparams = getDifficultyParams();
 			int directHitDamage = (dparams.missDamage >= 0) ? dparams.missDamage : 0;
 			if (applyPlayerDamage(directHitDamage)) {
-				debug("Rebel2: H25 DIRECT HIT par4=100 damage=%d total=%d",
+				debugC(DEBUG_INSANE, "H25 DIRECT HIT par4=100 damage=%d total=%d",
 					directHitDamage, _playerDamage);
 			}
 			if (!_noDamage)
@@ -520,12 +523,12 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 		// Non-Handler-25 direct hit path — FUN_4092D9 lines 209-227
 		int16 srcId = b.readSint16LE(); // body[0] (offset +8): source enemy ID
 
-		debug("Rebel2 Opcode3: par3=%d par4=%d srcId=%d isBitSet=%d",
+		debugC(DEBUG_INSANE, "Opcode3: par3=%d par4=%d srcId=%d isBitSet=%d",
 			par3, par4, srcId, isBitSet(srcId));
 
 		if (!isBitSet(srcId)) {
 			_rebelHitCounter++;
-			debug("Rebel2: Incremented hit counter -> %d", _rebelHitCounter);
+			debugC(DEBUG_INSANE, "Incremented hit counter -> %d", _rebelHitCounter);
 
 			LevelDifficultyParams dparams = getDifficultyParams();
 			int directHitDamage = (dparams.missDamage >= 0) ? dparams.missDamage : 0;
@@ -543,7 +546,7 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 
 				if (shouldDamage) {
 					if (applyPlayerDamage(directHitDamage)) {
-						debug("Rebel2: DIRECT HIT damage from enemy %d. par3=%d par4=%d damage=%d total=%d",
+						debugC(DEBUG_INSANE, "DIRECT HIT damage from enemy %d. par3=%d par4=%d damage=%d total=%d",
 							srcId, par3, par4, directHitDamage, _playerDamage);
 					}
 					if (!_noDamage)
@@ -556,19 +559,19 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 		b.skip(2); // Skip body[0]
 		int16 srcId = b.readSint16LE(); // body[1] (offset +10)
 
-		debug("Rebel2 Opcode3: par3=5 srcId=%d isBitSet=%d", srcId, isBitSet(srcId));
+		debugC(DEBUG_INSANE, "Opcode3: par3=5 srcId=%d isBitSet=%d", srcId, isBitSet(srcId));
 
 		if (!isBitSet(srcId)) {
 			LevelDifficultyParams params = getDifficultyParams();
 			int probability = (params.shotAccuracy >= 0) ? params.shotAccuracy : 0;
 
 			int roll = _vm->_rnd.getRandomNumber(99);
-			debug("Rebel2 Opcode3: probability=%d roll=%d (need roll < prob)", probability, roll);
+			debugC(DEBUG_INSANE, "Opcode3: probability=%d roll=%d (need roll < prob)", probability, roll);
 
 			if (roll < probability) {
 				int damageAmount = (params.shotDamage >= 0) ? params.shotDamage : 0;
 				if (applyPlayerDamage(damageAmount)) {
-					debug("Rebel2: PROBABILISTIC damage from enemy %d. Damage=%d total=%d",
+					debugC(DEBUG_INSANE, "PROBABILISTIC damage from enemy %d. Damage=%d total=%d",
 						srcId, damageAmount, _playerDamage);
 				}
 				if (!_noDamage) {
@@ -581,11 +584,11 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 			}
 		}
 	} else {
-		debug("Rebel2 Opcode3: UNHANDLED par3=%d par4=%d", par3, par4);
+		debugC(DEBUG_INSANE, "Opcode3: UNHANDLED par3=%d par4=%d", par3, par4);
 	}
 }
 
-// ScummVM refactor helper for opcode 6, not a separate retail function.
+// Helper split out of FUN_004033CF case 6; not a separate original function.
 void InsaneRebel2::updateOpcode6Handler(int16 par2) {
 	// Update handler type if par2 is a known handler value (from FUN_4033CF case 6).
 	if (par2 == 7 || par2 == 8 || par2 == 0x19 || par2 == 0x26) {
@@ -594,11 +597,11 @@ void InsaneRebel2::updateOpcode6Handler(int16 par2) {
 			_level2BackgroundLoaded = false;
 		}
 		_rebelHandler = par2;
-		debug("Rebel2 Opcode 6: Setting handler=%d", par2);
+		debugC(DEBUG_INSANE, "Opcode 6: Setting handler=%d", par2);
 	}
 }
 
-// ScummVM refactor helper for opcode 6 Handler 8, not a separate retail function.
+// Helper split out of FUN_00401234 case 4; not a separate original function.
 void InsaneRebel2::handleOpcode6Handler8(Common::SeekableReadStream &b, int16 par4) {
 	// Handler 8 specific logic (third-person on foot) - FUN_00401234 case 4.
 	// DAT_0043e000 = local_14[3], which maps to the IACT header's par4/userId.
@@ -631,7 +634,7 @@ void InsaneRebel2::handleOpcode6Handler8(Common::SeekableReadStream &b, int16 pa
 		}
 		_rebelWaveState = _rebelPhaseState;
 		_rebelOp6Initialized = true;
-		debug("Rebel2 Opcode 6 (Handler 8): Wave init, wave=0x%x", _rebelWaveState);
+		debugC(DEBUG_INSANE, "Opcode 6 (Handler 8): Wave init, wave=0x%x", _rebelWaveState);
 	}
 
 	// Skip position calculation for special modes 4 and 5
@@ -772,12 +775,12 @@ void InsaneRebel2::handleOpcode6Handler8(Common::SeekableReadStream &b, int16 pa
 			_vm->getActionState(kScummActionInsaneAttack);
 	}
 
-	debug("Rebel2 Opcode 6 (Handler 8): mode=%d bodyFlag=%d range=%d shipPos=(%d,%d) target=(%d,%d) firing=%d dir=(%d,%d,%d)",
+	debugC(DEBUG_INSANE, "Opcode 6 (Handler 8): mode=%d bodyFlag=%d range=%d shipPos=(%d,%d) target=(%d,%d) firing=%d dir=(%d,%d,%d)",
 		_shipLevelMode, bodyStatusFlag, _movementRangeLimit, _shipPosX, _shipPosY, _shipTargetX, _shipTargetY, _shipFiring,
 		_shipDirectionH, _shipDirectionV, _shipDirectionIndex);
 }
 
-// ScummVM refactor helper for opcode 6 Handler 7, not a separate retail function.
+// Helper split out of FUN_0040C3CC case 4; not a separate original function.
 void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 par4) {
 	// Handler 7 specific logic (third-person ship) - FUN_0040d836 / FUN_0040c3cc
 	// Used for Level 3 and similar space combat levels.
@@ -789,7 +792,7 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	//   Mode 2: Combat mode - shooting ENABLED, SECONDARY zones
 	//   Mode 3: Tunnel flight - PRIMARY zones, per-edge push-back (hMargin=0x0f)
 	_flyControlMode = par4;
-	debug("Rebel2 Opcode 6 (Handler 7): Control mode set to %d (shooting %s)",
+	debugC(DEBUG_INSANE, "Opcode 6 (Handler 7): Control mode set to %d (shooting %s)",
 		par4, (par4 == 2) ? "ENABLED" : "DISABLED");
 
 	// Status bar: param_5[4] == 1 in original (first body word, 5th IACT word)
@@ -806,7 +809,7 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 		if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
 			initLaserTexture(_smush_iconsNut, 5);
 		}
-		debug("Rebel2 Opcode 6 (Handler 7): Status bar enabled (body flag=%d)", bodyStatusFlag);
+		debugC(DEBUG_INSANE, "Opcode 6 (Handler 7): Status bar enabled (body flag=%d)", bodyStatusFlag);
 	}
 
 	// Ship position update - FUN_40C3CC case 4, lines 49-327.
@@ -827,8 +830,9 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	// Step 1: Raw mouse input as offset from screen center.
 	// DAT_0047a7e0 = mouseX - 160, DAT_0047a7e2 = mouseY - 100.
 	// Handler 7 applies DAT_0047a7fe to its local vertical input after clamping.
-	const int16 mouseX = _vm->_mouse.x;
-	const int16 mouseY = _vm->_mouse.y;
+	const Common::Point aimPos = getGameplayAimPoint();
+	const int16 mouseX = aimPos.x;
+	const int16 mouseY = aimPos.y;
 	int16 inputX = (int16)(mouseX - 160);  // DAT_0047a7e0
 	int16 inputY = (int16)(mouseY - 100);  // DAT_0047a7e2
 
@@ -847,16 +851,23 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	int16 scaledInputX = (int16)((inputX * 127) / 160);
 	int16 scaledInputY = _optControlsFlipped ? (int16)-inputY : inputY;  // local_14
 
-	// ScummVM direct mouse/touch/gamepad aiming can hold the cursor at an edge
+	// Direct mouse/touch/gamepad aiming can hold the cursor at an edge
 	// indefinitely. Keep this sensitivity concession local to Handler 7
-	// third-person ship steering.
-	scaledInputX = (int16)((scaledInputX * kRA2Handler7DirectInputNumerator) /
-		kRA2Handler7DirectInputDenominator);
-	scaledInputY = (int16)((scaledInputY * kRA2Handler7DirectInputNumerator) /
-		kRA2Handler7DirectInputDenominator);
-	const bool useMouseFlightTarget = !_gamepadAimActive;
+	// third-person ship steering. A held analog stick is already bounded by its
+	// physical range, so keep its full logical range for more responsive L10 flight.
+	if (!_gamepadAimActive) {
+		scaledInputX = (int16)((scaledInputX * kRA2Handler7DirectInputNumerator) /
+			kRA2Handler7DirectInputDenominator);
+		scaledInputY = (int16)((scaledInputY * kRA2Handler7DirectInputNumerator) /
+			kRA2Handler7DirectInputDenominator);
+	}
+	// Mouse/touch can hold an absolute cursor at an edge indefinitely, so they use
+	// bounded target steering. Gamepad input for Handler 7 now feeds the original
+	// center-relative flight axes and lets the assembly-derived velocity history,
+	// lift/slide tables, wind, and clamps produce the ship movement.
+	const bool useTargetSteering = !_gamepadAimActive;
 	int16 mouseFlightTargetX = _flyShipScreenX;
-	if (useMouseFlightTarget) {
+	if (useTargetSteering) {
 		mouseFlightTargetX = (int16)(0xd4 + (scaledInputX * kRA2Handler7MouseTargetRangeX) / 127);
 		mouseFlightTargetX = CLIP<int16>(mouseFlightTargetX, 0x14, 0x194);
 	}
@@ -920,12 +931,13 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	if (positionDeltaX > 11)
 		positionDeltaX = 12;
 
-	// Retail integrates relative flight axes. ScummVM's real mouse is an
+	// FUN_0040C3CC integrates relative flight axes. The real mouse is an
 	// absolute position, so steer toward a bounded position target instead of
 	// letting a held off-center cursor keep pushing the ship until it bounces.
-	if (useMouseFlightTarget) {
+	if (useTargetSteering) {
 		int targetDeltaX = mouseFlightTargetX - _flyShipScreenX;
-		positionDeltaX = (int16)CLIP<int>(targetDeltaX / 4, -12, 12);
+		const int targetSteeringDivisor = _gamepadAimActive ? 2 : 4;
+		positionDeltaX = (int16)CLIP<int>(targetDeltaX / targetSteeringDivisor, -12, 12);
 		if (positionDeltaX == 0 && targetDeltaX != 0)
 			positionDeltaX = (targetDeltaX < 0) ? -1 : 1;
 	}
@@ -1080,15 +1092,15 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 		((_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0) ||
 		 _vm->getActionState(kScummActionInsaneAttack));
 
-	debugC(DEBUG_INSANE, "Rebel2 H7: mouse=(%d,%d) raw=(%d,%d) scaled=(%d,%d) targetX=%d pos=(%d,%d) "
-		"vel=%d vIn=%d dx=%d dir=%d mode=%d mouseTarget=%d",
+	debugC(DEBUG_INSANE, "H7: mouse=(%d,%d) raw=(%d,%d) scaled=(%d,%d) targetX=%d pos=(%d,%d) "
+		"vel=%d vIn=%d dx=%d dir=%d mode=%d targetSteer=%d padAim=%d",
 		mouseX, mouseY, inputX, inputY, scaledInputX, scaledInputY,
 		mouseFlightTargetX, _flyShipScreenX, _flyShipScreenY, _smoothedVelocity,
 		_verticalInput, positionDeltaX, _shipDirectionIndex, _flyControlMode,
-		useMouseFlightTarget ? 1 : 0);
+		useTargetSteering ? 1 : 0, _gamepadAimActive ? 1 : 0);
 }
 
-// ScummVM refactor helper for opcode 6 Handler 25, not a separate retail function.
+// Helper split out of FUN_0041CADB case 4; not a separate original function.
 void InsaneRebel2::handleOpcode6Handler25(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
 	// Handler 25 (0x19) specific logic (mixed mode - speeder bike).
 	// Based on FUN_0041cadb case 4 (opcode 6) lines 113-229.
@@ -1121,45 +1133,45 @@ void InsaneRebel2::handleOpcode6Handler25(byte *renderBitmap, Common::SeekableRe
 			}
 			_rebelWaveState = _rebelPhaseState;
 			_rebelOp6Initialized = true;
-			debug("Rebel2 Opcode 6 (Handler 25): Wave init, wave=0x%x autopilot=%d damageLevel=%d",
+			debugC(DEBUG_INSANE, "Opcode 6 (Handler 25): Wave init, wave=0x%x autopilot=%d damageLevel=%d",
 				_rebelWaveState, _rebelAutopilot, _rebelDamageLevel);
 		}
 	}
 
 	// Set sprite mode (DAT_00457900 = local_14[3]) - controls which GRD sprite to render.
 	// From FUN_0041cadb line 122: DAT_00457900 = local_14[3].
-	// In ScummVM's IACT parsing: local_14[3] = offset 6-7 = par4.
+	// In this IACT parser: local_14[3] = offset 6-7 = par4.
 	// Mode 1: Uncovered, shooting position - sprite on left
 	// Mode 2: Covered, vertical shift
 	// Mode 3: Transition between covered/uncovered - sprite position depends on direction
 	// Mode 4: Alternative uncovered position - sprite on right
 	_grdSpriteMode = par4;  // local_14[3] maps to par4 (offset 6-7)
 
-	debug("Rebel2 Handler25 Opcode6: par2=%d par3=%d par4=%d(mode) par5=%d(reset) autopilot=%d damageLevel=%d controlMode=%d",
+	debugC(DEBUG_INSANE, "Handler25 Opcode6: par2=%d par3=%d par4=%d(mode) par5=%d(reset) autopilot=%d damageLevel=%d controlMode=%d",
 		par2, par3, par4, par5, _rebelAutopilot, _rebelDamageLevel, _rebelControlMode);
 
 	// Autopilot logic (lines 123-146).
 	// From original FUN_0041cadb - NO damageLevel check, toggle happens immediately.
 	// The damage level counter provides the smooth visual transition.
-	if (!_rebelInvulnerable) {
+	if (!_rebelAutoPlay) {
 		if (_rebelAutopilot == 0) {
 			// Uncovered: RIGHT button enters cover.
 			if ((_rebelControlMode & 2) != 0) {
 				_rebelAutopilot = 1;
-				debug("Rebel2 Handler25: Entering cover (right click), controlMode=%d", _rebelControlMode);
+				debugC(DEBUG_INSANE, "Handler25: Entering cover (right click), controlMode=%d", _rebelControlMode);
 			}
 		} else {
 			// Covered: ANY button exits cover.
 			if (_rebelControlMode != 0) {
 				_rebelAutopilot = 0;
-				debug("Rebel2 Handler25: Exiting cover (button click), controlMode=%d", _rebelControlMode);
+				debugC(DEBUG_INSANE, "Handler25: Exiting cover (button click), controlMode=%d", _rebelControlMode);
 			}
 		}
 
 		// Clear control mode after processing (sticky flags consumed).
 		_rebelControlMode = 0;
 	} else {
-		// Invulnerable mode: random autopilot changes.
+		// Auto play: random autopilot changes.
 		if (_rebelAutopilot == 0) {
 			if (_vm->_rnd.getRandomNumber(100) == 0) {
 				_rebelAutopilot = 1;
@@ -1187,7 +1199,7 @@ void InsaneRebel2::handleOpcode6Handler25(byte *renderBitmap, Common::SeekableRe
 		}
 	}
 	if (_rebelDamageLevel != prevDamageLevel) {
-		debug("Rebel2 Handler25: damageLevel transition %d -> %d (autopilot=%d)",
+		debugC(DEBUG_INSANE, "Handler25: damageLevel transition %d -> %d (autopilot=%d)",
 			prevDamageLevel, _rebelDamageLevel, _rebelAutopilot);
 	}
 
@@ -1259,10 +1271,10 @@ void InsaneRebel2::handleOpcode6Handler25(byte *renderBitmap, Common::SeekableRe
 		_rebelViewOffset2X = _rebelDamageLevel * -22;
 		_rebelViewOffsetY = 0;
 		_rebelViewOffset2Y = 0;
-		debug("Rebel2 Opcode 6 (Handler 25): Unknown mode %d, using Mode 1 fallback", _grdSpriteMode);
+		debugC(DEBUG_INSANE, "Opcode 6 (Handler 25): Unknown mode %d, using Mode 1 fallback", _grdSpriteMode);
 	}
 
-	debug("Rebel2 Opcode 6 (Handler 25): mode=%d damage=%d dir=%d autopilot=%d viewOff=(%d,%d) spritePos=(%d,%d)",
+	debugC(DEBUG_INSANE, "Opcode 6 (Handler 25): mode=%d damage=%d dir=%d autopilot=%d viewOff=(%d,%d) spritePos=(%d,%d)",
 		_grdSpriteMode, _rebelDamageLevel, _rebelFlightDir, _rebelAutopilot,
 		_rebelViewOffsetX, _rebelViewOffsetY, _rebelViewOffset2X, _rebelViewOffset2Y);
 
@@ -1278,7 +1290,7 @@ void InsaneRebel2::handleOpcode6Handler25(byte *renderBitmap, Common::SeekableRe
 	drawHandler25CorridorOverlay(renderBitmap);
 }
 
-// ScummVM refactor helper for opcode 6 Handler 0x26, not a separate retail function.
+// Helper split out of FUN_00407FCB case 4; not a separate original function.
 void InsaneRebel2::handleOpcode6Turret(Common::SeekableReadStream &b, int16 par4) {
 	// Handler 0x26: FUN_407FCB line 77-79 - set level type from par4, read par5 for init trigger.
 	// param_5[3] = par4 = levelType, param_5[4] = par5 = init flag.
@@ -1310,13 +1322,13 @@ void InsaneRebel2::handleOpcode6Turret(Common::SeekableReadStream &b, int16 par4
 			_rebelWaveState = _rebelPhaseState;
 			_rebelHitCounter = 0;
 			_rebelOp6Initialized = true;
-			debug("Rebel2 Opcode 6 (Handler 0x26): Wave init, levelType=%d waveState=0x%x",
+			debugC(DEBUG_INSANE, "Opcode 6 (Handler 0x26): Wave init, levelType=%d waveState=0x%x",
 				_rebelLevelType, _rebelWaveState);
 		}
 	}
 }
 
-// ScummVM refactor helper for opcode 6 generic init, not a separate retail function.
+// Helper split out of generic opcode 6 initialization; not a separate original function.
 void InsaneRebel2::handleOpcode6GenericInit(int16 par4) {
 	// Other handlers: par4 == 1 triggers init (NOT level type).
 	if (_rebelHandler != 0x26 && par4 == 1) {
@@ -1335,16 +1347,16 @@ void InsaneRebel2::handleOpcode6GenericInit(int16 par4) {
 			_rebelWaveState = _rebelPhaseState;
 			_rebelHitCounter = 0;
 			_rebelOp6Initialized = true;
-			debug("Rebel2 Opcode 6: Wave init - cleared bits/links, waveState=0x%x", _rebelWaveState);
+			debugC(DEBUG_INSANE, "Opcode 6: Wave init - cleared bits/links, waveState=0x%x", _rebelWaveState);
 		}
 	}
 }
 
-// ScummVM refactor helper for opcode 6 generic flight state, not a separate retail function.
+// Helper split out of generic opcode 6 flight state; not a separate original function.
 void InsaneRebel2::updateOpcode6GenericFlightState() {
 	// Step 3: Autopilot/control mode logic (lines 123-146)
 	// This determines whether the ship flies on autopilot or manual control.
-	if (!_rebelInvulnerable) {
+	if (!_rebelAutoPlay) {
 		// Normal mode: check control mode flags.
 		if (_rebelAutopilot == 0) {
 			if ((_rebelControlMode & 2) != 0) {
@@ -1356,7 +1368,7 @@ void InsaneRebel2::updateOpcode6GenericFlightState() {
 			}
 		}
 	} else {
-		// Invulnerable mode: random autopilot changes.
+		// Auto play: random autopilot changes.
 		if (_rebelAutopilot == 0) {
 			if (_vm->_rnd.getRandomNumber(100) == 0) {
 				_rebelAutopilot = 1;
@@ -1454,11 +1466,11 @@ void InsaneRebel2::updateOpcode6GenericFlightState() {
 		break;
 	}
 
-	debug("Rebel2 Opcode 6: levelType=%d autopilot=%d damageLevel=%d viewOffset=(%d,%d)",
+	debugC(DEBUG_INSANE, "Opcode 6: levelType=%d autopilot=%d damageLevel=%d viewOffset=(%d,%d)",
 		_rebelLevelType, _rebelAutopilot, _rebelDamageLevel, _rebelViewOffsetX, _rebelViewOffsetY);
 }
 
-// ScummVM refactor helper for opcode 6 embedded ANIM scan, not a separate retail function.
+// Helper split out of opcode 6 embedded ANIM scanning; not a separate original function.
 void InsaneRebel2::scanOpcode6EmbeddedAnim(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par4) {
 	// Detect and load embedded ANIM (SAN) within the remaining IACT payload.
 	// Note: chunkSize is the remaining IACT payload size after par1-par4 header.
@@ -1518,7 +1530,7 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 	// - Handler-specific status/reset word
 	// - Different view offset calculations
 
-	debug("Rebel2 IACT Opcode 6: par2=%d par3=%d par4=%d", par2, par3, par4);
+	debugC(DEBUG_INSANE, "IACT Opcode 6: par2=%d par3=%d par4=%d", par2, par3, par4);
 
 	updateOpcode6Handler(par2);
 
@@ -1555,10 +1567,10 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 // Handler-specific routing:
 //   Handler 7  (FLY):  FLY NUT sprites via par4 (1, 2, 3, 11)
 //   Handler 8  (POV):  POV NUT sprites via par3 (1, 3, 6, 7) or background via par4=5
-//   Handler 0x26 (turret): Turret HUD NUT via par3 (1-4)
-//   Handler 0x19: Mixed turret mode, similar to 0x26
+//   Handler 0x26 (turret): Turret HUD NUT via par3/par4 (1-4)
+//   Handler 0x19: Speeder bike GRD/HUD resources via par4
 //
-// ScummVM refactor helper for opcode 8 Handler 7 FLY loading, not a separate retail function.
+// Helper split out of FUN_0040C3CC case 6; not a separate original function.
 bool InsaneRebel2::loadOpcode8Handler7FlySprites(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
 	// Handler 7: FLY NUT Loading (Third-Person Ship)
 	// FUN_0040c3cc case 6: par4 determines FLY sprite slot.
@@ -1574,7 +1586,7 @@ bool InsaneRebel2::loadOpcode8Handler7FlySprites(Common::SeekableReadStream &b, 
 	return false;
 }
 
-// ScummVM refactor helper for opcode 8 Handler 7 shot table loading, not a separate retail function.
+// Helper split out of FUN_0040C3CC case 6 shot-table loading; not a separate original function.
 bool InsaneRebel2::loadOpcode8Handler7ShotTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
 	// FUN_0040c3cc case 6:
 	//   par4=12 -> FUN_0040fcfa(text, DAT_004437c2, DAT_00443808)
@@ -1591,14 +1603,14 @@ bool InsaneRebel2::loadOpcode8Handler7ShotTable(Common::SeekableReadStream &b, i
 	return false;
 }
 
-// ScummVM refactor helper for opcode 8 edge table loading, not a separate retail function.
+// Helper split out of FUN_00405663 edge-table loading; not a separate original function.
 bool InsaneRebel2::loadOpcode8EdgeTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
 	// Edge Blend Table Loading (par4 == 1000)
 	// FUN_405663: After all handler-specific opcode 8 processing, checks if par4==1000.
 	// If so, loads a per-level 256x256 color blend table from the IACT chunk data.
 	// This table controls the edge glow color of laser beams (e.g. red vs green).
 	// Data starts at byte offset 18 in the IACT chunk (in_stack_00000014 + 9 shorts).
-	// The stream is positioned after par1..par4 (8 bytes), so retail's +18 is startPos + 10.
+	// The stream is positioned after par1..par4 (8 bytes), so FUN_00405663's +18 is startPos + 10.
 	if (par4 == 1000 && remaining >= 10 + 8 + 32896) {
 		byte *edgeData = (byte *)malloc(8 + 32896);
 		if (edgeData) {
@@ -1606,7 +1618,7 @@ bool InsaneRebel2::loadOpcode8EdgeTable(Common::SeekableReadStream &b, int64 sta
 			b.read(edgeData, 8 + 32896);
 			initEdgeTable(edgeData);
 			free(edgeData);
-			debug("Rebel2 Opcode 8: Loaded per-level edge blend table (par4=1000)");
+			debugC(DEBUG_INSANE, "Opcode 8: Loaded per-level edge blend table (par4=1000)");
 		}
 		b.seek(startPos);
 		return true;
@@ -1615,7 +1627,7 @@ bool InsaneRebel2::loadOpcode8EdgeTable(Common::SeekableReadStream &b, int64 sta
 	return false;
 }
 
-// ScummVM refactor helper for opcode 8 aux SFX loading, not a separate retail function.
+// Helper split out of opcode 8 aux SFX loading; not a separate original function.
 bool InsaneRebel2::loadOpcode8AuxSfx(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
 	// Auxiliary Sound Buffer Loading (par4 20-47)
 	// FUN_401234 case 6 (handler 8): par4 0x14-0x1b (20-27) -> aux buffer 0
@@ -1647,11 +1659,11 @@ bool InsaneRebel2::loadOpcode8AuxSfx(Common::SeekableReadStream &b, int64 startP
 				b.read(soundData, dataSize);
 				loadAuxSfx(auxBuffer, soundData, dataSize);
 				free(soundData);
-				debug("Rebel2 Opcode 8: Loaded %u bytes into aux sound buffer %d (par4=%d)",
+				debugC(DEBUG_INSANE, "Opcode 8: Loaded %u bytes into aux sound buffer %d (par4=%d)",
 					dataSize, auxBuffer, par4);
 			}
 		} else {
-			debug("Rebel2 Opcode 8: Aux sound par4=%d dataSize=%u exceeds remaining=%lld",
+			debugC(DEBUG_INSANE, "Opcode 8: Aux sound par4=%d dataSize=%u exceeds remaining=%lld",
 				par4, dataSize, (long long)remaining);
 		}
 	}
@@ -1659,7 +1671,7 @@ bool InsaneRebel2::loadOpcode8AuxSfx(Common::SeekableReadStream &b, int64 startP
 	return true;
 }
 
-// ScummVM refactor helper for opcode 8 Handler 25 shot-origin loading, not a separate retail function.
+// Helper split out of FUN_0041CADB case 6 shot-origin loading; not a separate original function.
 bool InsaneRebel2::loadOpcode8ShotOriginTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
 	// Handler 25 (0x19): Shot-Origin Lookup Table (par4 == 8)
 	// FUN_0041CADB case 6 pushes 30 short pointers into sscanf with format at 0x482360:
@@ -1675,10 +1687,10 @@ bool InsaneRebel2::loadOpcode8ShotOriginTable(Common::SeekableReadStream &b, int
 	return false;
 }
 
-// ScummVM refactor helper for opcode 8 embedded ANIM scanning, not a separate retail function.
+// Helper split out of opcode 8 embedded ANIM scanning; not a separate original function.
 void InsaneRebel2::loadOpcode8EmbeddedAnim(byte *renderBitmap, Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par3, int16 par4) {
 	// Remaining handlers require finding ANIM tag in the stream.
-	debug("Rebel2 Opcode 8: Scanning for ANIM tag (startPos=%lld remaining=%lld)",
+	debugC(DEBUG_INSANE, "Opcode 8: Scanning for ANIM tag (startPos=%lld remaining=%lld)",
 		(long long)startPos, (long long)remaining);
 
 	if (remaining <= 0) {
@@ -1692,19 +1704,19 @@ void InsaneRebel2::loadOpcode8EmbeddedAnim(byte *renderBitmap, Common::SeekableR
 	}
 
 	int bytesRead = b.read(scanBuf, scanSize);
-	debug("Rebel2 Opcode 8: Read %d bytes for ANIM scan", bytesRead);
+	debugC(DEBUG_INSANE, "Opcode 8: Read %d bytes for ANIM scan", bytesRead);
 
 	int animOffset = -1;
 	for (int i = 0; i + 8 <= bytesRead; ++i) {
 		if (READ_BE_UINT32(scanBuf + i) == MKTAG('A','N','I','M')) {
 			animOffset = i;
-			debug("Rebel2 Opcode 8: Found ANIM at offset %d", i);
+			debugC(DEBUG_INSANE, "Opcode 8: Found ANIM at offset %d", i);
 			break;
 		}
 	}
 
 	if (animOffset < 0) {
-		debug("Rebel2 Opcode 8: No ANIM tag found");
+		debugC(DEBUG_INSANE, "Opcode 8: No ANIM tag found");
 		free(scanBuf);
 		b.seek(startPos);
 		return;
@@ -1734,15 +1746,18 @@ void InsaneRebel2::loadOpcode8EmbeddedAnim(byte *renderBitmap, Common::SeekableR
 	b.seek(startPos);
 }
 
-// ScummVM refactor helper for opcode 8 embedded ANIM routing, not a separate retail function.
+// Helper split out of opcode 8 embedded ANIM routing; not a separate original function.
 bool InsaneRebel2::handleOpcode8EmbeddedAnim(byte *renderBitmap, byte *animData, int32 animDataSize, int16 par3, int16 par4) {
 	bool handled = false;
 
-	// Handler 0x26/0x19: Turret HUD Overlays.
-	// FUN_00407fcb case 8: par3 1-4 for HUD NUT loading.
-	if (!handled && (_rebelHandler == 0x26 || _rebelHandler == 0x19)) {
-		if (par3 >= 1 && par3 <= 4) {
-			handled = loadTurretHudOverlay(animData, animDataSize, par3);
+	// Handler 0x26: Turret HUD Overlays.
+	// FUN_00407fcb case 8: handler 0x26 uses par4 1-4 for HUD NUT loading.
+	// Some chunks use par3 for the same low/high selector.
+	if (!handled && _rebelHandler == 0x26) {
+		int hudSelector = (par4 >= 1 && par4 <= 4) ? par4 : par3;
+
+		if (hudSelector >= 1 && hudSelector <= 4) {
+			handled = loadTurretHudOverlay(animData, animDataSize, hudSelector);
 		}
 	}
 
@@ -1765,13 +1780,14 @@ bool InsaneRebel2::handleOpcode8EmbeddedAnim(byte *renderBitmap, byte *animData,
 	//   par4=5: 320x200 background -> DAT_0048226c
 	//   par4=6: Overlay -> DAT_00482250, draws immediately
 	//   par4=7: Overlay -> DAT_00482248, draws immediately
+	//   par4=10: GRD005 - Mode 3 overlay -> DAT_00482258 / _grd005Sprite
 	if (!handled && _rebelHandler == 25) {
-		if (par4 == 1 || par4 == 2) {
+		if (par4 == 1 || par4 == 2 || par4 == 10) {
 			handled = loadHandler25GrdSprites(animData, animDataSize, par4);
 		} else if (par4 == 5) {
 			handled = loadLevel2Background(animData, animDataSize, renderBitmap);
 		} else if (par4 == 4 || par4 == 6 || par4 == 7) {
-			debug("Rebel2 Opcode 8: Handler 25 overlay par4=%d - drawing to screen", par4);
+			debugC(DEBUG_INSANE, "Opcode 8: Handler 25 overlay par4=%d - drawing to screen", par4);
 			loadEmbeddedSan(par4, animData, animDataSize, renderBitmap);
 			handled = true;
 		}
@@ -1780,9 +1796,13 @@ bool InsaneRebel2::handleOpcode8EmbeddedAnim(byte *renderBitmap, byte *animData,
 	// Fallback: Embedded SAN HUD overlays.
 	// For other cases, load as embedded SAN frame to HUD overlay slots.
 	if (!handled) {
-		// Skip high-res data (par3 == 2, 4).
-		if (par3 == 2 || par3 == 4) {
-			debug("Rebel2 Opcode 8: Skipping high-res HUD par3=%d", par3);
+		const bool highRes = isHiRes();
+		const bool highResHud = (par3 == 2 || par3 == 4);
+		const bool lowResHud = (par3 == 1 || par3 == 3);
+
+		if ((!highRes && highResHud) || (highRes && lowResHud)) {
+			debugC(DEBUG_INSANE, "Opcode 8: Skipping %s HUD par3=%d while running in %s mode",
+				highResHud ? "high-res" : "low-res", par3, highRes ? "high-res" : "low-res");
 			handled = true;
 		} else {
 			// Determine userId: Handler 0x19 uses par3, others use par4.
@@ -1795,7 +1815,7 @@ bool InsaneRebel2::handleOpcode8EmbeddedAnim(byte *renderBitmap, byte *animData,
 
 			// Skip audio tracks (userId >= 1000).
 			if (userId > 0 && userId < 1000) {
-				debug("Rebel2 Opcode 8: Loading embedded SAN HUD userId=%d (handler=%d par3=%d par4=%d)",
+				debugC(DEBUG_INSANE, "Opcode 8: Loading embedded SAN HUD userId=%d (handler=%d par3=%d par4=%d)",
 					userId, _rebelHandler, par3, par4);
 				loadEmbeddedSan(userId, animData, animDataSize, renderBitmap);
 				handled = true;
@@ -1804,14 +1824,14 @@ bool InsaneRebel2::handleOpcode8EmbeddedAnim(byte *renderBitmap, byte *animData,
 	}
 
 	if (!handled) {
-		debug("Rebel2 Opcode 8: Unhandled case - handler=%d par3=%d par4=%d", _rebelHandler, par3, par4);
+		debugC(DEBUG_INSANE, "Opcode 8: Unhandled case - handler=%d par3=%d par4=%d", _rebelHandler, par3, par4);
 	}
 
 	return handled;
 }
 
 void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4) {
-	debug("Rebel2 IACT Opcode 8: handler=%d par2=%d par3=%d par4=%d (gameState=%d)",
+	debugC(DEBUG_INSANE, "IACT Opcode 8: handler=%d par2=%d par3=%d par4=%d (gameState=%d)",
 		_rebelHandler, par2, par3, par4, _gameState);
 
 	int64 startPos = b.pos();
@@ -1839,7 +1859,7 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 bool InsaneRebel2::loadHandler25ShotOriginTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining) {
 	// IACT layout at this point:
 	// - stream is positioned after par1..par4 (8 bytes consumed by caller)
-	// - retail parser reads from offset +18 relative to IACT start -> startPos + 10
+	// - FUN_0041CADB reads from offset +18 relative to IACT start -> startPos + 10
 	// - payload size for this opcode family is at offset +14 -> startPos + 6
 	if (remaining < 12)
 		return false;
@@ -1902,11 +1922,11 @@ bool InsaneRebel2::loadHandler25ShotOriginTable(Common::SeekableReadStream &b, i
 	b.seek(savedPos);
 
 	if (count < 20) {
-		debug("Rebel2 Opcode 8: Handler25 par4=8 parse failed (count=%d, expected up to 30)", count);
+		debugC(DEBUG_INSANE, "Opcode 8: Handler25 par4=8 parse failed (count=%d, expected up to 30)", count);
 		return false;
 	}
 
-	// Retail mapping (from FUN_41CADB disassembly):
+	// FUN_0041CADB mapping:
 	// token1->0x4578b0 (X index 5), token2->0x4578d0 (Y index 5), ...
 	// token29->0x4578cc (X index 19), token30->0x4578ec (Y index 19).
 	for (int i = 0; i < 15; ++i) {
@@ -1918,14 +1938,14 @@ bool InsaneRebel2::loadHandler25ShotOriginTable(Common::SeekableReadStream &b, i
 	}
 	_grdShotOriginTableLoaded = true;
 
-	debug("Rebel2 Opcode 8: Loaded Handler25 shot-origin table (pairs=%d) idx5=(%d,%d) idx14=(%d,%d)",
+	debugC(DEBUG_INSANE, "Opcode 8: Loaded Handler25 shot-origin table (pairs=%d) idx5=(%d,%d) idx14=(%d,%d)",
 		count / 2, _grdShotOriginX[5], _grdShotOriginY[5], _grdShotOriginX[14], _grdShotOriginY[14]);
 	return true;
 }
 
 // loadHandler7ShotTable -- Parse handler 7 laser muzzle coordinate pairs from IACT payload.
 bool InsaneRebel2::loadHandler7ShotTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
-	// Retail FUN_0040fcfa parses 35 "%hd %hd" pairs from offset +18 in the IACT
+	// FUN_0040FCFA parses 35 "%hd %hd" pairs from offset +18 in the IACT
 	// chunk into two parallel 35-entry tables. These tables are BSS globals in
 	// the EXE, so their values only exist in the SAN/IACT stream.
 	if (remaining < 12)
@@ -1986,7 +2006,7 @@ bool InsaneRebel2::loadHandler7ShotTable(Common::SeekableReadStream &b, int64 st
 	b.seek(savedPos);
 
 	if (count < 70) {
-		debug("Rebel2 Opcode 8: Handler7 par4=%d shot table parse failed (count=%d)", par4, count);
+		debugC(DEBUG_INSANE, "Opcode 8: Handler7 par4=%d shot table parse failed (count=%d)", par4, count);
 		return false;
 	}
 
@@ -2002,7 +2022,7 @@ bool InsaneRebel2::loadHandler7ShotTable(Common::SeekableReadStream &b, int64 st
 	else
 		_flyRightGunTableLoaded = true;
 
-	debug("Rebel2 Opcode 8: Loaded Handler7 %s gun table idx0=(%d,%d) idx17=(%d,%d) idx34=(%d,%d)",
+	debugC(DEBUG_INSANE, "Opcode 8: Loaded Handler7 %s gun table idx0=(%d,%d) idx17=(%d,%d) idx34=(%d,%d)",
 		(par4 == 12) ? "left" : "right",
 		tableX[0], tableY[0], tableX[17], tableY[17], tableX[34], tableY[34]);
 	return true;
@@ -2012,7 +2032,7 @@ bool InsaneRebel2::loadHandler7ShotTable(Common::SeekableReadStream &b, int64 st
 // Opcode 8 Helper Functions
 // ---------------------------------------------------------------------------
 // Extracted from the original monolithic iactRebel2Opcode8 to match
-// the retail FUN_* function structure.
+// the original FUN_* function structure.
 
 // loadHandler7FlySprites -- Handler 7 FLY NUT loading (FUN_0040c3cc case 6).
 bool InsaneRebel2::loadHandler7FlySprites(Common::SeekableReadStream &b, int64 remaining, int16 par4) {
@@ -2038,13 +2058,13 @@ bool InsaneRebel2::loadHandler7FlySprites(Common::SeekableReadStream &b, int64 r
 		return false;
 	}
 
-	debug("Rebel2 loadHandler7FlySprites: header bytes: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+	debugC(DEBUG_INSANE, "loadHandler7FlySprites: header bytes: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
 		header[0], header[1], header[2], header[3], header[4],
 		header[5], header[6], header[7], header[8], header[9]);
 
 	// Size is at offset 14 from IACT start = bytes 6-9 of our header buffer
 	uint32 nutSize = READ_LE_UINT32(header + 6);
-	debug("Rebel2 loadHandler7FlySprites: par4=%d nutSize=%u remaining=%lld",
+	debugC(DEBUG_INSANE, "loadHandler7FlySprites: par4=%d nutSize=%u remaining=%lld",
 		par4, nutSize, (long long)remaining);
 
 	if (nutSize == 0 || nutSize > (uint32)(remaining - 10)) {
@@ -2057,7 +2077,7 @@ bool InsaneRebel2::loadHandler7FlySprites(Common::SeekableReadStream &b, int64 r
 	}
 
 	int bytesRead = b.read(nutData, nutSize);
-	debug("Rebel2 loadHandler7FlySprites: Read %d/%u bytes, first 16: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+	debugC(DEBUG_INSANE, "loadHandler7FlySprites: Read %d/%u bytes, first 16: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
 		bytesRead, nutSize,
 		bytesRead > 0 ? nutData[0] : 0, bytesRead > 1 ? nutData[1] : 0,
 		bytesRead > 2 ? nutData[2] : 0, bytesRead > 3 ? nutData[3] : 0,
@@ -2087,13 +2107,13 @@ bool InsaneRebel2::loadHandler7FlySprites(Common::SeekableReadStream &b, int64 r
 	// Load as a Rebel2 embedded sprite ANIM.
 	NutRenderer *newNut = makeRebel2SpriteFromData(_vm, nutData, bytesRead);
 	if (!newNut || newNut->getNumChars() <= 0) {
-		debug("Rebel2 loadHandler7FlySprites: NUT load failed for par4=%d", par4);
+		debugC(DEBUG_INSANE, "loadHandler7FlySprites: NUT load failed for par4=%d", par4);
 		delete newNut;
 		free(nutData);
 		return false;
 	}
 
-	debug("Rebel2 loadHandler7FlySprites: Loaded FLY NUT par4=%d with %d sprites",
+	debugC(DEBUG_INSANE, "loadHandler7FlySprites: Loaded FLY NUT par4=%d with %d sprites",
 		par4, newNut->getNumChars());
 
 	// Assign to appropriate slot based on par4 (matches FUN_0040c3cc case 6 switch)
@@ -2102,7 +2122,7 @@ bool InsaneRebel2::loadHandler7FlySprites(Common::SeekableReadStream &b, int64 r
 	case 1:  // FLY001 - Ship direction sprites (35 frames)
 		delete _flyShipSprite;
 		_flyShipSprite = newNut;
-		debug("Rebel2: _flyShipSprite set with %d sprites", newNut->getNumChars());
+		debugC(DEBUG_INSANE, "_flyShipSprite set with %d sprites", newNut->getNumChars());
 		break;
 	case 2:  // FLY003 - Targeting overlay
 		delete _flyTargetSprite;
@@ -2126,45 +2146,48 @@ bool InsaneRebel2::loadHandler7FlySprites(Common::SeekableReadStream &b, int64 r
 	return assigned;
 }
 
-// loadTurretHudOverlay -- Handler 0x26/0x19 turret HUD loading (FUN_00407fcb case 8).
-bool InsaneRebel2::loadTurretHudOverlay(byte *animData, int32 size, int16 par3) {
-	// Handler 0x26/0x19 turret HUD overlay loading - FUN_00407fcb case 8
+// loadTurretHudOverlay -- Handler 0x26 turret HUD loading (FUN_00407fcb case 8).
+bool InsaneRebel2::loadTurretHudOverlay(byte *animData, int32 size, int16 selector) {
+	// Handler 0x26 turret HUD overlay loading - FUN_00407fcb case 8
 	// Resolution-dependent loading:
-	//   par3 == 1: Low-res primary HUD (DAT_0047fe78 / _hudOverlayNut)
-	//   par3 == 2: High-res primary HUD (skip in 320x200 mode)
-	//   par3 == 3: Low-res secondary HUD (DAT_0047fe80 / _hudOverlay2Nut)
-	//   par3 == 4: High-res secondary HUD (skip in 320x200 mode)
+	//   selector == 1: Low-res primary HUD (DAT_0047fe78 / _hudOverlayNut)
+	//   selector == 2: High-res primary HUD (DAT_0047fe78 / _hudOverlayNut)
+	//   selector == 3: Low-res secondary HUD (DAT_0047fe80 / _hudOverlay2Nut)
+	//   selector == 4: High-res secondary HUD (DAT_0047fe80 / _hudOverlay2Nut)
 
 	if (!animData || size <= 0) {
 		return false;
 	}
 
-	// ScummVM runs at 320x200 (low-res), skip high-res data
-	if (par3 == 2 || par3 == 4) {
-		debug("Rebel2 loadTurretHudOverlay: Skipping high-res HUD par3=%d (running in low-res mode)", par3);
-		return true;  // Successfully "handled" by skipping
+	const bool highRes = isHiRes();
+	const int primarySlot = highRes ? 2 : 1;
+	const int secondarySlot = highRes ? 4 : 3;
+
+	if (selector >= 1 && selector <= 4 && selector != primarySlot && selector != secondarySlot) {
+		debugC(DEBUG_INSANE, "loadTurretHudOverlay: Skipping %s HUD selector=%d (running in %s mode)",
+			(selector == 2 || selector == 4) ? "high-res" : "low-res", selector,
+			highRes ? "high-res" : "low-res");
+		return true;
 	}
 
-	if (par3 != 1 && par3 != 3) {
+	if (selector != primarySlot && selector != secondarySlot) {
 		return false;  // Not a turret HUD slot
 	}
 
 	NutRenderer *newNut = makeRebel2SpriteFromData(_vm, animData, size);
 	if (!newNut || newNut->getNumChars() <= 0) {
-		debug("Rebel2 loadTurretHudOverlay: NUT load failed for par3=%d", par3);
+		debugC(DEBUG_INSANE, "loadTurretHudOverlay: NUT load failed for selector=%d", selector);
 		delete newNut;
 		return false;
 	}
 
-	debug("Rebel2 loadTurretHudOverlay: Loaded turret HUD NUT par3=%d with %d sprites",
-		par3, newNut->getNumChars());
+	debugC(DEBUG_INSANE, "loadTurretHudOverlay: Loaded turret HUD NUT selector=%d with %d sprites",
+		selector, newNut->getNumChars());
 
-	if (par3 == 1) {
-		// Low-res primary HUD overlay
+	if (selector == primarySlot) {
 		delete _hudOverlayNut;
 		_hudOverlayNut = newNut;
-	} else {  // par3 == 3
-		// Low-res secondary HUD overlay
+	} else {
 		delete _hudOverlay2Nut;
 		_hudOverlay2Nut = newNut;
 	}
@@ -2192,12 +2215,12 @@ bool InsaneRebel2::loadHandler8ShipSprites(byte *animData, int32 size, int16 par
 
 	NutRenderer *newNut = makeRebel2SpriteFromData(_vm, animData, size);
 	if (!newNut || newNut->getNumChars() <= 0) {
-		debug("Rebel2 loadHandler8ShipSprites: NUT load failed for par4=%d", par4);
+		debugC(DEBUG_INSANE, "loadHandler8ShipSprites: NUT load failed for par4=%d", par4);
 		delete newNut;
 		return false;
 	}
 
-	debug("Rebel2 loadHandler8ShipSprites: Loaded ship NUT par4=%d with %d sprites",
+	debugC(DEBUG_INSANE, "loadHandler8ShipSprites: Loaded ship NUT par4=%d with %d sprites",
 		par4, newNut->getNumChars());
 
 	switch (par4) {
@@ -2231,36 +2254,42 @@ bool InsaneRebel2::loadHandler25GrdSprites(byte *animData, int32 size, int16 par
 	// par4 values (from IACT data offset +6):
 	//   1: GRD001 - Primary ship sprite (DAT_00482240 / _grd001Sprite)
 	//   2: GRD002 - Secondary ship sprite (DAT_00482238 / _grd002Sprite)
+	//   10: GRD005 - Mode 3 overlay sprite (DAT_00482258 / _grd005Sprite)
 
 	if (!animData || size <= 0) {
 		return false;
 	}
 
 	// Only handle valid GRD sprite slots
-	if (par4 != 1 && par4 != 2) {
+	if (par4 != 1 && par4 != 2 && par4 != 10) {
 		return false;
 	}
 
 	NutRenderer *newNut = makeRebel2SpriteFromData(_vm, animData, size);
 	if (!newNut || newNut->getNumChars() <= 0) {
-		debug("Rebel2 loadHandler25GrdSprites: NUT load failed for par4=%d", par4);
+		debugC(DEBUG_INSANE, "loadHandler25GrdSprites: NUT load failed for par4=%d", par4);
 		delete newNut;
 		return false;
 	}
 
-	debug("Rebel2 loadHandler25GrdSprites: Loaded GRD NUT par4=%d with %d sprites",
+	debugC(DEBUG_INSANE, "loadHandler25GrdSprites: Loaded GRD NUT par4=%d with %d sprites",
 		par4, newNut->getNumChars());
 
 	switch (par4) {
 	case 1:  // GRD001 - Primary ship sprite
 		delete _grd001Sprite;
 		_grd001Sprite = newNut;
-		debug("Rebel2: _grd001Sprite set with %d sprites", newNut->getNumChars());
+		debugC(DEBUG_INSANE, "_grd001Sprite set with %d sprites", newNut->getNumChars());
 		break;
 	case 2:  // GRD002 - Secondary ship sprite
 		delete _grd002Sprite;
 		_grd002Sprite = newNut;
-		debug("Rebel2: _grd002Sprite set with %d sprites", newNut->getNumChars());
+		debugC(DEBUG_INSANE, "_grd002Sprite set with %d sprites", newNut->getNumChars());
+		break;
+	case 10: // GRD005 - Mode 3 overlay sprite
+		delete _grd005Sprite;
+		_grd005Sprite = newNut;
+		debugC(DEBUG_INSANE, "_grd005Sprite set with %d sprites", newNut->getNumChars());
 		break;
 	default:
 		delete newNut;
@@ -2280,7 +2309,7 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 		return false;
 	}
 
-	debug("Rebel2 loadLevel2Background: Loading Level 2 background (animSize=%d)", size);
+	debugC(DEBUG_INSANE, "loadLevel2Background: Loading Level 2 background (animSize=%d)", size);
 
 	// Allocate background buffer if needed (320x200 = 64000 bytes)
 	if (_level2Background == nullptr) {
@@ -2296,7 +2325,7 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 
 	uint32 animTag = stream.readUint32BE();
 	if (animTag != MKTAG('A','N','I','M')) {
-		debug("Rebel2 loadLevel2Background: Missing ANIM tag, got 0x%08X", animTag);
+		debugC(DEBUG_INSANE, "loadLevel2Background: Missing ANIM tag, got 0x%08X", animTag);
 		return false;
 	}
 
@@ -2305,10 +2334,10 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 	if ((int64)animSize <= streamEnd - 8) {
 		animEnd = 8 + (int64)animSize;
 	} else {
-		debug("Rebel2 loadLevel2Background: ANIM truncated: reported size=%u, actual=%lld",
+		debugC(DEBUG_INSANE, "loadLevel2Background: ANIM truncated: reported size=%u, actual=%lld",
 			animSize, streamEnd - 8);
 	}
-	debug("Rebel2 loadLevel2Background: Found ANIM tag, size=%u", animSize);
+	debugC(DEBUG_INSANE, "loadLevel2Background: Found ANIM tag, size=%u", animSize);
 
 	bool foundBackground = false;
 	while (!stream.eos() && stream.pos() + 8 <= animEnd && !foundBackground) {
@@ -2324,7 +2353,7 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 			continue;
 		}
 
-		debug("Rebel2 loadLevel2Background: Found FRME at %lld, size=%u", stream.pos() - 8, chunkSize);
+		debugC(DEBUG_INSANE, "loadLevel2Background: Found FRME at %lld, size=%u", stream.pos() - 8, chunkSize);
 
 		while (stream.pos() + 8 <= chunkDataEnd && !stream.eos() && !foundBackground) {
 			uint32 subTag;
@@ -2340,7 +2369,7 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 			}
 
 			if (subSize < 14) {
-				debug("Rebel2 loadLevel2Background: FOBJ too small: size=%u", subSize);
+				debugC(DEBUG_INSANE, "loadLevel2Background: FOBJ too small: size=%u", subSize);
 				stream.seek(nextSubPos);
 				continue;
 			}
@@ -2354,7 +2383,7 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 			stream.readUint16LE();  // unknown
 			stream.readUint16LE();  // unknown
 
-			debug("Rebel2 loadLevel2Background: Found FOBJ: codec=%d pos=(%d,%d) size=%dx%d",
+			debugC(DEBUG_INSANE, "loadLevel2Background: Found FOBJ: codec=%d pos=(%d,%d) size=%dx%d",
 				codec, fobjX, fobjY, fobjW, fobjH);
 
 			// Decode codec 3 (RLE) into the original 320x200 background buffer.
@@ -2368,12 +2397,12 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 				smushDecodeRLEOpaque(_level2Background, rleData, fobjX, fobjY, drawW, drawH, 320,
 					(int)(subDataEnd - stream.pos()));
 
-				debug("Rebel2 loadLevel2Background: Decoded Level 2 background (%dx%d at %d,%d, clipped to %dx%d)",
+				debugC(DEBUG_INSANE, "loadLevel2Background: Decoded Level 2 background (%dx%d at %d,%d, clipped to %dx%d)",
 					fobjW, fobjH, fobjX, fobjY, drawW, drawH);
 				_level2BackgroundLoaded = true;
 				foundBackground = true;
 
-				// Handler 25 uses this buffer as a lookup mask; the retail code does not
+				// Handler 25 uses this buffer as a lookup mask; FUN_0041CADB does not
 				// copy it to the live screen. Handler 8 still uses it as a restore source.
 				if (renderBitmap && _rebelHandler != 25) {
 					int bufferPitch = (_player && _player->_width > 0) ? _player->_width : 320;
@@ -2381,9 +2410,9 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 						for (int by = 0; by < 200; by++) {
 							memcpy(renderBitmap + by * 320, _level2Background + by * 320, 320);
 						}
-						debug("Rebel2 loadLevel2Background: Copied to renderBitmap (pitch=%d)", bufferPitch);
+						debugC(DEBUG_INSANE, "loadLevel2Background: Copied to renderBitmap (pitch=%d)", bufferPitch);
 					} else {
-						debug("Rebel2 loadLevel2Background: Skipping renderBitmap copy (pitch=%d != 320)", bufferPitch);
+						debugC(DEBUG_INSANE, "loadLevel2Background: Skipping renderBitmap copy (pitch=%d != 320)", bufferPitch);
 					}
 				}
 			}
@@ -2395,7 +2424,7 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 	}
 
 	if (!foundBackground) {
-		debug("Rebel2 loadLevel2Background: Failed to find/decode background FOBJ");
+		debugC(DEBUG_INSANE, "loadLevel2Background: Failed to find/decode background FOBJ");
 	}
 
 	return foundBackground;
@@ -2450,9 +2479,9 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 		// Try to get string from SMUSH player's string resource
 		if (_player && _player->getString(stringIndex)) {
 			textStr = _player->getString(stringIndex);
-			debug("Rebel2 Opcode 9: TRES string index=%d -> \"%s\"", stringIndex, textStr);
+			debugC(DEBUG_INSANE, "Opcode 9: TRES string index=%d -> \"%s\"", stringIndex, textStr);
 		} else {
-			debug("Rebel2 Opcode 9: TRES string index=%d not found", stringIndex);
+			debugC(DEBUG_INSANE, "Opcode 9: TRES string index=%d not found", stringIndex);
 			return;
 		}
 
@@ -2492,17 +2521,17 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 		textBuffer[textLen] = '\0';
 		textStr = textBuffer;
 
-		debug("Rebel2 Opcode 9: Inline text at (%d,%d) flags=0x%x -> \"%s\"", posX, posY, textFlags, textStr);
+		debugC(DEBUG_INSANE, "Opcode 9: Inline text at (%d,%d) flags=0x%x -> \"%s\"", posX, posY, textFlags, textStr);
 	}
 
 	if (!textStr || textStr[0] == '\0') {
-		debug("Rebel2 Opcode 9: Empty text string, skipping");
+		debugC(DEBUG_INSANE, "Opcode 9: Empty text string, skipping");
 		return;
 	}
 
 	// Check difficulty gate (flag bit 3 = 0x08)
 	// If set, only show text if difficulty check passes (we skip this check for simplicity)
-	// In retail: FUN_00425d30(0) is called
+	// FUN_00425D30(0) is called.
 
 	// Get render buffer dimensions
 	int width = (_player && _player->_width > 0) ? _player->_width : 320;
@@ -2521,7 +2550,7 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 
 	// Use the message font loaded during initialization (DIHIFONT.NUT)
 	if (!_rebelMsgFont) {
-		debug("Rebel2 Opcode 9: No message font loaded (_rebelMsgFont is null)");
+		debugC(DEBUG_INSANE, "Opcode 9: No message font loaded (_rebelMsgFont is null)");
 		return;
 	}
 
@@ -2617,7 +2646,7 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 	convertedText[dstIdx] = '\0';
 
 	// Draw the text string (with converted character indices), but only when subtitles are
-	// enabled — opcode 9 is a subtitle/message path, so it honors ScummVM's global
+	// enabled: opcode 9 is a subtitle/message path, so it honors the global
 	// "subtitles" setting and the in-game TEXT toggle (same ConfMan key). The chunk is
 	// still fully parsed above so stream consumption is unaffected.
 	if (ConfMan.getBool("subtitles")) {
@@ -2634,7 +2663,7 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 		}
 	}
 
-	debug("Rebel2 Opcode 9: Rendered subtitle at (%d,%d) flags=0x%x clip=(%d,%d,%d,%d)",
+	debugC(DEBUG_INSANE, "Opcode 9: Rendered subtitle at (%d,%d) flags=0x%x clip=(%d,%d,%d,%d)",
 		posX, posY, textFlags, clipX, clipY, clipW, clipH);
 }
 
@@ -2654,7 +2683,7 @@ void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b
 
 	// If disabled, stop processing this object
 	if (disabled) {
-		// debug("Rebel2: Skipping Opcode 4 for disabled enemy ID=%d", enemyId);
+		// debugC(DEBUG_INSANE, "Skipping Opcode 4 for disabled enemy ID=%d", enemyId);
 		return;
 	}
 
@@ -2670,7 +2699,7 @@ void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b
 	// In the original (FUN_004028C5/FUN_0041E7C2): sVar5/sVar2 = *(short *)(*local + 6)
 	// This maps to par4 (userId field). Used for DAT_0047ab98 wave state bitmask:
 	//   DAT_0047ab98 |= 1 << (type & 0x1f)
-	debug(5, "Rebel2 Opcode4: handler=%d enemyId=%d par2=%d par3=%d par4/type=%d pos=(%d,%d) size=(%d,%d)",
+	debugC(DEBUG_INSANE, "Opcode4: handler=%d enemyId=%d par2=%d par3=%d par4/type=%d pos=(%d,%d) size=(%d,%d)",
 		_rebelHandler, enemyId, par2, par3, par4, x, y, w, h);
 
 	bool found = false;

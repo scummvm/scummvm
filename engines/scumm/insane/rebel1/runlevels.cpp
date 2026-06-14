@@ -156,10 +156,11 @@ void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	_player = splayer;
 	restoreScreenFlashPalette();
 	// DOS PlayFrontendAnmAndWait keeps pumping until frontend audio clears.
-	// ScummVM's Rebel queues outlive SmushPlayer::play(), so clear stale
+	// Rebel queues outlive SmushPlayer::play(), so clear stale
 	// passive-cinematic audio before chaining the next ANM.
 	_audio.reset();
 	splayer->resetAudioTracks();
+	applyAudioOptions();
 	_interactiveVideoActive = false;
 	_vm->_smushVideoShouldFinish = false;
 	splayer->setCurVideoFlags(0x420);
@@ -576,7 +577,7 @@ bool InsaneRebel1::runLevel4() {
 			if (shieldGeneratorsDestroyed)
 				break;
 
-			debugC(DEBUG_INSANE, "RA1 L4 replaying shield-generator phase: hits=(%d,%d) protected=(%d,%d)",
+			debugC(DEBUG_INSANE, "L4 replaying shield-generator phase: hits=(%d,%d) protected=(%d,%d)",
 				(int)_shieldGenHitsA, (int)_shieldGenHitsB,
 				(int)_protectedTargetA, (int)_protectedTargetB);
 			replayingShieldGeneratorPhase = true;
@@ -794,7 +795,7 @@ bool InsaneRebel1::runLevel7() {
 			routeSourceFrame = _pendingRouteStartFrame;
 			routeVideoStartFrame = _pendingRouteVideoStartFrame;
 			// DOS does not seek the destination route ANM here. The ANM-local
-			// decision frame is used by the playback gate/cutoff; ScummVM
+			// decision frame is used by the playback gate/cutoff; this implementation
 			// starts at the already-advanced gate target after the cutover.
 			routeStartFrame = 0;
 		}
@@ -889,10 +890,10 @@ bool InsaneRebel1::runLevel8() {
 			}
 
 			// RunLevel8Flow keeps pumping the active route while the walker
-			// shield register is nonzero. ScummVM's blocking SMUSH play returns
+			// shield register is nonzero. Blocking SMUSH play returns
 			// when one route pass ends, so explicitly replay that route and
 			// preserve the accumulated walker damage.
-			debugC(DEBUG_INSANE, "RA1 L8 replaying route=%d walkerHealth=%d killCount=%d",
+			debugC(DEBUG_INSANE, "L8 replaying route=%d walkerHealth=%d killCount=%d",
 				route, (int)_walkerHealth, (int)_killCount);
 			routeStartFrame = 0;
 			_walkerTimer = 0;
@@ -926,7 +927,7 @@ bool InsaneRebel1::runLevel8() {
 bool InsaneRebel1::runLevel9() {
 	// DOS RunLevel9Flow calls RandScaleByte(2) three times before the intro.
 	// That helper advances a byte seed with seed = seed * 9 + 0x35 and returns
-	// (2 * seed) >> 8. Do not use ScummVM's session RNG here: it can turn the
+	// (2 * seed) >> 8. Do not use the session RNG here: it can turn the
 	// original right-side route into the capture/restart branch.
 	uint8 originalRouteSeed = 0;
 	auto getOriginalRouteBit = [&originalRouteSeed]() {
@@ -958,7 +959,7 @@ bool InsaneRebel1::runLevel9() {
 			if (_killCount > 0)
 				return (_shipPosX < kRA1CenterX) ? 0 : 1;
 
-			debugC(DEBUG_INSANE, "RA1 L9 selector '%s' ended without target hit; replaying", filename);
+			debugC(DEBUG_INSANE, "L9 selector '%s' ended without target hit; replaying", filename);
 		}
 		return -1;
 	};
@@ -1342,7 +1343,7 @@ bool InsaneRebel1::runLevel14() {
 			if (level14Phase1Complete)
 				break;
 
-			debugC(DEBUG_INSANE, "RA1 L14 replaying phase 1: successFrames=%d targetsDestroyed=%d",
+			debugC(DEBUG_INSANE, "L14 replaying phase 1: successFrames=%d targetsDestroyed=%d",
 				(int)_level14SuccessFrames, areLevel14Phase1TargetsDestroyed() ? 1 : 0);
 			replayingLevel14Phase1 = true;
 		}
@@ -1401,7 +1402,7 @@ bool InsaneRebel1::runLevel14() {
 				if (level14Phase2Complete)
 					break;
 
-				debugC(DEBUG_INSANE, "RA1 L14 replaying phase 2: video=%s successFrames=%d targetsDestroyed=%d",
+				debugC(DEBUG_INSANE, "L14 replaying phase 2: video=%s successFrames=%d targetsDestroyed=%d",
 					level14Phase2Video, (int)_level14SuccessFrames,
 					areLevel14Phase2TargetsDestroyed() ? 1 : 0);
 				replayingLevel14Phase2 = true;
@@ -1628,7 +1629,7 @@ void InsaneRebel1::runGame() {
 			break;
 		}
 		case 4: {
-			// Level Select — ScummVM-only start point. Continue through the
+			// Level Select: extra start point. Continue through the
 			// original successor flow so post-level cinematics still play.
 			int selectedLevel = runLevelSelectMenu();
 			if (selectedLevel >= 1 && selectedLevel <= numLevels)
@@ -1701,6 +1702,7 @@ void InsaneRebel1::setupInteractiveVideoState(int32 startFrame) {
 
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;
+	applyAudioOptions();
 	restoreScreenFlashPalette();
 	if (!preserveRuntimeState)
 		clearBit(0);
@@ -1729,36 +1731,36 @@ void InsaneRebel1::resolveSeek(const char *filename, int32 startFrame, int32 &vi
 
 	if (_currentLevel == 6 && level7RouteSplice) {
 		// DOS opens the route ANM from the beginning, then the armed frame gate
-		// suppresses until the adjusted target. With ScummVM's delayed cutover,
+		// suppresses until the adjusted target. With the delayed cutover,
 		// the destination must advance by the source tail already displayed.
 		videoStartFrame = (_pendingRouteVideoStartFrame > 0) ?
 			_pendingRouteVideoStartFrame : 1;
 		videoOffset = findAnimFrameChunkOffset(_vm, filename, videoStartFrame);
 		if (videoOffset < 0) {
-			debugC(DEBUG_INSANE, "RA1 L7 route switch: route=%d destinationFrame=%d offset lookup failed",
+			debugC(DEBUG_INSANE, "L7 route switch: route=%d destinationFrame=%d offset lookup failed",
 				_levelRouteIndex, (int)videoStartFrame);
 			videoStartFrame = 0;
 			videoOffset = 0;
 		} else {
-			debugC(DEBUG_INSANE, "RA1 L7 route switch: route=%d decisionLocalFrame=%d opens destination at localFrame=%d offset=0x%x",
+			debugC(DEBUG_INSANE, "L7 route switch: route=%d decisionLocalFrame=%d opens destination at localFrame=%d offset=0x%x",
 				_levelRouteIndex, (int)_pendingRouteStartFrame,
 				(int)videoStartFrame, (unsigned)videoOffset);
 		}
 	} else if (_currentLevel == 7 && resumingRoute) {
 		videoOffset = findAnimFrameChunkOffsetByGameCounter(_vm, filename, startFrame, videoStartFrame);
 		if (videoOffset < 0) {
-			debugC(DEBUG_INSANE, "RA1 L8 resume: route=%d timelineFrame=%d GAME counter lookup failed",
+			debugC(DEBUG_INSANE, "L8 resume: route=%d timelineFrame=%d GAME counter lookup failed",
 				_levelRouteIndex, (int)startFrame);
 			videoStartFrame = startFrame;
 			videoOffset = findAnimFrameChunkOffset(_vm, filename, videoStartFrame);
 		}
 		if (videoOffset < 0) {
-			debugC(DEBUG_INSANE, "RA1 L8 resume: route=%d timelineFrame=%d localFrame=%d offset lookup failed",
+			debugC(DEBUG_INSANE, "L8 resume: route=%d timelineFrame=%d localFrame=%d offset lookup failed",
 				_levelRouteIndex, (int)startFrame, (int)videoStartFrame);
 			videoStartFrame = 0;
 			videoOffset = 0;
 		} else {
-			debugC(DEBUG_INSANE, "RA1 L8 resume: route=%d timelineFrame=%d -> localFrame=%d offset=0x%x",
+			debugC(DEBUG_INSANE, "L8 resume: route=%d timelineFrame=%d -> localFrame=%d offset=0x%x",
 				_levelRouteIndex, (int)startFrame, (int)videoStartFrame, (unsigned)videoOffset);
 		}
 	} else if (_currentLevel == 13 && resumingRoute) {
@@ -1766,7 +1768,7 @@ void InsaneRebel1::resolveSeek(const char *filename, int32 startFrame, int32 &vi
 		// oldMaxFrame-0x0F, 1, -1). That frame number belongs to L14PLAY2's
 		// timeline; L14PLY2B is already the continuation clip and starts at its
 		// matching lead-in frame. Preserve the current state, but do not seek.
-		debugC(DEBUG_INSANE, "RA1 L14 splice: L14PLAY2 timelineFrame=%d -> L14PLY2B frame 0",
+		debugC(DEBUG_INSANE, "L14 splice: L14PLAY2 timelineFrame=%d -> L14PLY2B frame 0",
 			(int)startFrame);
 	}
 }
@@ -1796,7 +1798,7 @@ void InsaneRebel1::captureInteractiveVideoInput() {
 	if (!isTouchscreenActive())
 		g_system->lockMouse(true);
 
-	debugC(DEBUG_INSANE, "RA1 centerGameplayAim: mouse=(%d,%d) joystick=(%d,%d) gamepadAim=%d settleUntil=%u preserve=%d",
+	debugC(DEBUG_INSANE, "centerGameplayAim: mouse=(%d,%d) joystick=(%d,%d) gamepadAim=%d settleUntil=%u preserve=%d",
 		_vm->_mouse.x, _vm->_mouse.y, _joystickAxisX, _joystickAxisY,
 		_gamepadAimActive ? 1 : 0, _gameplayMouseSettleUntil,
 		preserveInputState ? 1 : 0);

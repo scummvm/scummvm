@@ -490,6 +490,8 @@ void VideoPlayer_v2::closeVideo() {
 	if (_audioStream) {
 		_audioStream->finish();
 		_vm->_mixer->stopHandle(_audioStreamHandle);
+		// stream is freed by the mixer.
+		_audioStream = nullptr;
 	}
 	delete _frame;
 	_frame = nullptr;

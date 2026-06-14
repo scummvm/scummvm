@@ -64,9 +64,11 @@ protected:
 		Common::Rect homeRect;    // Slot position in viewport coords
 		Common::Rect altSrcRect;  // If non-empty: used as source for sprite creation
 		Common::Rect cuSrcRect;   // Source in closeup image
+		Common::Rect placedDstRect; // Nancy 10: placement destination on screen
 		uint8 counterByte = 0;    // Non-zero: respawns on placement; doesn't count toward solve
-		uint8 mustPlace = 0;      // Must be placed for solution
-		uint8 mustNotPlace = 0;   // Placing this fails the solution check
+		uint8 mustPlace = 0;      // Required placement count (exact match for solve). 0/1 in Nancy 9; arbitrary in Nancy 10+ (e.g. cake mixing recipe quantities)
+		uint8 mustNotPlace = 0;   // Non-zero: placing this fails the solution check
+		uint8 placeCount = 0;     // Runtime: number of times this piece (or any clone of it) has been placed
 
 		Common::Rect gameRect;    // Current viewport-space rect
 		int curRotation = 0;
@@ -84,6 +86,14 @@ protected:
 	Common::Path _primaryImageName;
 	Common::Path _closeupImageName;
 	bool _hasCloseupImage = false;
+
+	// Nancy 10 additions
+	bool _retainState = false;      // TODO: state-persistence not yet wired up
+	Common::Path _animImageName;    // Completion animation sprite sheet
+	bool _hasAnimImage = false;
+	Common::Rect _animRect;
+	int16 _animLayout[4] = {};      // cols / framesPerStep / spacing / totalRows
+	SoundDescription _animSound;    // Sound played during the animation
 
 	uint16 _numPieces = 0;
 	uint16 _requiredPieces = 0;        // Minimum placed pieces (counterByte==0) for solve check
@@ -140,6 +150,10 @@ protected:
 
 	void checkIfSolved();
 	void checkIfSolvedOnExit();
+	// Updates the global cancel/solve event flags from the current placement
+	// state. Returns true on exact match (all placeCounts == mustPlace, no
+	// mustNotPlace pieces placed).
+	bool updateSolveFlags();
 	void updatePieceRender(int pieceIdx);
 	static void rotateSurface90CW(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dst);
 	// Clone an existing piece at the end of _pieces (counter-piece respawn).

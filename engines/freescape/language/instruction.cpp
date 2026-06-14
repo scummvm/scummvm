@@ -860,7 +860,7 @@ void FreescapeEngine::executeSwapJet(FCLInstruction &instruction) {
 
 	if (_flyMode) {
 		debugC(1, kFreescapeDebugCode, "Swaping to ship mode");
-		if (areaID == 27) {
+		if (areaID == 27 && !(isAmiga() || isAtariST())) {
 			traverseEntrance(26);
 			_lastPosition = _position;
 		}
@@ -877,7 +877,7 @@ void FreescapeEngine::executeSwapJet(FCLInstruction &instruction) {
 	} else {
 		debugC(1, kFreescapeDebugCode, "Swaping to tank mode");
 		_playerHeightNumber = 0;
-		if (areaID == 27) {
+		if (areaID == 27 && !(isAmiga() || isAtariST())) {
 			traverseEntrance(27);
 			_lastPosition = _position;
 		}

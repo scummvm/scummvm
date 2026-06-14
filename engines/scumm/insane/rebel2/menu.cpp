@@ -43,11 +43,19 @@ namespace Scumm {
 // ---------------------------------------------------------------------------
 // Menu System Implementation
 // ---------------------------------------------------------------------------
-// Emulates retail menu system from FUN_004147B2 and FUN_0041FDC8.
+// Emulates original menu system from FUN_004147B2 and FUN_0041FDC8.
+
+static void setRebel2MixerVolume(ScummEngine_v7 *vm, int volumeLevel) {
+	const int mixerVolume = CLIP<int>(volumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume);
+	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, mixerVolume);
+	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mixerVolume);
+	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mixerVolume);
+}
 
 void InsaneRebel2::resetMenu() {
 	_menuSelection = 0;
 	_menuInactivityTimer = 0;
+	_menuInactivityTimedOut = false;
 	_menuRepeatDelay = 0;
 	_menuSelectionConfirmed = false;
 	setVirtualKeyboardVisible(false);
@@ -83,7 +91,7 @@ void InsaneRebel2::updateMenuVirtualKeyboard() {
 
 // unlockAllChapters -- Debug mode unlock (FUN_00415CF8 lines 60-71, DAT_0047ab34=='d').
 void InsaneRebel2::unlockAllChapters() {
-	debug("Rebel2: Unlocking all chapters for testing");
+	debugC(DEBUG_INSANE, "Unlocking all chapters for testing");
 	for (int i = 0; i < 16; i++) {
 		_chapterUnlocked[i] = true;
 		_levelUnlocked[i] = true;
@@ -105,7 +113,7 @@ Common::String InsaneRebel2::getRandomMenuVideo() {
 
 	// Map 0-14 to A-O (case 0/default = A, 1 = B, etc.)
 	char letter = 'A' + variant;
-	debug("Rebel2: Selected menu variant %c", letter);
+	debugC(DEBUG_INSANE, "Selected menu variant %c", letter);
 	return Common::String::format("OPEN/O_MENU_%c.SAN", letter);
 }
 
@@ -115,19 +123,18 @@ Common::String InsaneRebel2::getRandomMenuVideo() {
 // Returns -1 (no action) or a 0-based selected menu item.
 // Events captured by notifyEvent() before ScummEngine consumes them.
 // Keyboard: Up=0x148, Down=0x150, Enter=0x0d.
-// Physical ESC is handled by notifyEvent() and opens the ScummVM menu.
+// Physical ESC is handled by notifyEvent() and opens the global menu.
 // Mouse mode (DAT_0047a806 == 1): Y position maps to selection.
 //
 int InsaneRebel2::processMenuInput() {
 
 	int result = -1;
 
-	// Menu item Y positions (low-res 320x200 mode):
-	// From FUN_0041f5ae: baseY = numItems * -5 + 0x68
-	// With 7 selectable items: 7 * -5 + 104 = 69
-	// Items at Y = 69, 79, 89, 99, 109, 119, 129 with spacing of 10
-	const int baseY = _menuItemCount * -5 + 0x68;
-	const int itemSpacing = 10;
+	const bool highRes = isHiRes();
+	const int baseY = highRes ? (_menuItemCount * -5 + 0x5a) * 2 + 0x1c : _menuItemCount * -5 + 0x68;
+	const int itemSpacing = highRes ? 20 : 10;
+	const int itemHitTop = highRes ? 2 : 1;
+	const int itemHitHeight = highRes ? 18 : 10;
 
 	// Process events from the queue (populated by notifyEvent)
 	while (!_menuEventQueue.empty()) {
@@ -145,7 +152,7 @@ int InsaneRebel2::processMenuInput() {
 				}
 				// Reset repeat delay counter (DAT_00459ce0)
 				_menuRepeatDelay = 3;
-				debug("Menu: Selection changed to %d (UP)", _menuSelection);
+				debugC(DEBUG_INSANE, "Menu: Selection changed to %d (UP)", _menuSelection);
 				break;
 
 			case Common::KEYCODE_DOWN:
@@ -155,7 +162,7 @@ int InsaneRebel2::processMenuInput() {
 					_menuSelection = 0;
 				}
 				_menuRepeatDelay = 3;
-				debug("Menu: Selection changed to %d (DOWN)", _menuSelection);
+				debugC(DEBUG_INSANE, "Menu: Selection changed to %d (DOWN)", _menuSelection);
 				break;
 
 			case Common::KEYCODE_RETURN:
@@ -163,14 +170,14 @@ int InsaneRebel2::processMenuInput() {
 				// Confirm selection - emulates key code 0x0d
 				if (_menuSelection >= 0 && _menuSelection < _menuItemCount) {
 					result = _menuSelection;
-					debug("Menu: Item %d selected (ENTER)", _menuSelection);
+					debugC(DEBUG_INSANE, "Menu: Item %d selected (ENTER)", _menuSelection);
 				}
 				break;
 
 			case Common::KEYCODE_ESCAPE:
 				// Synthetic custom back action - quit/back (last item)
 				result = _menuItemCount - 1;  // Select quit option
-				debug("Menu: Back action - selecting quit (item %d)", result);
+				debugC(DEBUG_INSANE, "Menu: Back action - selecting quit (item %d)", result);
 				break;
 
 			default:
@@ -184,10 +191,10 @@ int InsaneRebel2::processMenuInput() {
 			_vm->_mouse.y = event.mouse.y;
 			for (int i = 0; i < _menuItemCount; i++) {
 				int itemY = baseY + i * itemSpacing;
-				if (event.mouse.y >= itemY - 1 && event.mouse.y < itemY + 9) {
+				if (event.mouse.y >= itemY - itemHitTop && event.mouse.y < itemY - itemHitTop + itemHitHeight) {
 					_menuSelection = i;
 					result = _menuSelection;
-					debug("Menu: Item %d selected (mouse)", _menuSelection);
+					debugC(DEBUG_INSANE, "Menu: Item %d selected (mouse)", _menuSelection);
 					break;
 				}
 			}
@@ -198,10 +205,11 @@ int InsaneRebel2::processMenuInput() {
 				int mouseY = event.mouse.y;
 				for (int i = 0; i < _menuItemCount; i++) {
 					int itemY = baseY + i * itemSpacing;
-					if (mouseY >= itemY - 4 && mouseY < itemY + 6) {
+					if (mouseY >= itemY - itemHitTop - 3 * (highRes ? 2 : 1) &&
+							mouseY < itemY - itemHitTop + itemHitHeight - 3 * (highRes ? 2 : 1)) {
 						if (i != _menuSelection) {
 							_menuSelection = i;
-							debug(5, "Menu: Hover selection changed to %d (mouseY=%d)", _menuSelection, mouseY);
+							debugC(DEBUG_INSANE, "Menu: Hover selection changed to %d (mouseY=%d)", _menuSelection, mouseY);
 						}
 						break;
 					}
@@ -258,10 +266,13 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 	//   Item Y:      param_3 * -5 + i * 10 + 0x68
 	//   Box Y:       param_3 * -5 + i * 10 + 0x67  (1px above text)
 
-	const int centerX = width / 2;
-	const int titleY = numItems * -5 + (leftAligned ? 0x56 : 0x51);
-	const int itemBaseY = numItems * -5 + 0x68;
-	const int itemSpacing = 10;
+	const bool highRes = isHiRes();
+	const int centerX = highRes ? 0x140 : width / 2;
+	const int titleY = highRes ?
+		(numItems * -5 + 0x5a) * 2 + (leftAligned ? -8 : -0x12) :
+		numItems * -5 + (leftAligned ? 0x56 : 0x51);
+	const int itemBaseY = highRes ? (numItems * -5 + 0x5a) * 2 + 0x1c : numItems * -5 + 0x68;
+	const int itemSpacing = highRes ? 20 : 10;
 
 	NutRenderer *fonts[3] = { _smush_talkfontNut, _smush_smalfontNut, _smush_titlefontNut };
 	NutRenderer *defaultFont = fonts[0] ? fonts[0] : _smush_smalfontNut;
@@ -286,7 +297,7 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 	// -------------------------------------------------------------------
 	{
 		int titleWidth = getStringWidth(items[0]);
-		int titleX = leftAligned ? 40 : (centerX - titleWidth / 2);
+		int titleX = leftAligned ? (highRes ? 0x50 : 0x28) : (centerX - titleWidth / 2);
 		drawString(items[0], titleX, titleY);
 	}
 
@@ -300,25 +311,25 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 		const char *text = items[i + 1];
 
 		int textWidth = getStringWidth(text);
-		int textX = leftAligned ? 23 : (centerX - textWidth / 2);
+		int textX = leftAligned ? (highRes ? 0x2e : 0x17) : (centerX - textWidth / 2);
 		drawString(text, textX, itemY);
 
 		// Selection highlight box - FUN_004292d0
 		if (i == selection) {
 			// Width: textWidth + ((DAT_0047a808 < 2) - 1 & 6) + 6 = textWidth + 6
-			int bracketWidth = textWidth + 6;
+			int bracketWidth = textWidth + (highRes ? 12 : 6);
 			// Height: ((DAT_0047a808 < 2) - 1 & 10) + 10 = 10
-			int bracketHeight = 10;
+			int bracketHeight = highRes ? 20 : 10;
 
 			// Flash color: (-((DAT_0047a7e4 & 1) == 0) & 8U) - 0x10
 			// bit0==0: 8-16=248(0xF8), bit0==1: 0-16=240(0xF0)
 			byte highlightColor = ((_vm->_system->getMillis() / 133) & 1) ? 248 : 240;
 
 			// Box position: Y = itemY - 1 (0x67 vs 0x68)
-			int leftX = leftAligned ? 20 : (centerX - bracketWidth / 2);
+			int leftX = leftAligned ? (highRes ? 0x28 : 0x14) : (centerX - bracketWidth / 2);
 			int rightX = leftX + bracketWidth;
-			int topY = itemY - 1;
-			int bottomY = itemY + bracketHeight - 1;
+			int topY = highRes ? itemY - 2 : itemY - 1;
+			int bottomY = topY + bracketHeight - 1;
 
 			int screenW = _vm->_screenWidth;
 			int screenH = _vm->_screenHeight;
@@ -449,7 +460,7 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	if (!splayer) {
-		debug(1, "drawMenuOverlay: SmushPlayer not available for TRS strings!");
+		debugC(DEBUG_INSANE, "drawMenuOverlay: SmushPlayer not available for TRS strings!");
 		return;
 	}
 
@@ -458,7 +469,7 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 	for (int i = 0; i < 8; i++) {
 		menuItems[i] = splayer->getString(10 + i);
 		if (!menuItems[i] || !menuItems[i][0]) {
-			debug(1, "drawMenuOverlay: TRS string %d not found!", 10 + i);
+			debugC(DEBUG_INSANE, "drawMenuOverlay: TRS string %d not found!", 10 + i);
 			menuItems[i] = "";
 		}
 	}
@@ -588,10 +599,10 @@ void InsaneRebel2::showPauseOverlay() {
 }
 
 // runMainMenu -- Main menu loop (FUN_004147B2).
-// Returns kMenuNewGame, kMenuContinue, kMenuCredits, or 0 (quit).
+// Returns kMenuNewGame, kMenuResumeDemo, or kMenuQuit.
 int InsaneRebel2::runMainMenu() {
 
-	debug("Rebel2: Entering main menu");
+	debugC(DEBUG_INSANE, "Entering main menu");
 
 	resetMenu();
 	_gameState = kStateMainMenu;
@@ -613,7 +624,7 @@ int InsaneRebel2::runMainMenu() {
 
 		// Select and play a random menu video
 		Common::String menuVideo = getRandomMenuVideo();
-		debug("Rebel2: Playing menu video: %s", menuVideo.c_str());
+		debugC(DEBUG_INSANE, "Playing menu video: %s", menuVideo.c_str());
 
 		// Set video flags for menu (0x20 = intro/menu flag)
 		// This tells procPostRendering we're in menu mode
@@ -627,7 +638,14 @@ int InsaneRebel2::runMainMenu() {
 		// Check for quit
 		if (_vm->shouldQuit()) {
 			_menuInputActive = false;
-			return 0;
+			return kMenuQuit;
+		}
+
+		if (_menuInactivityTimedOut) {
+			debugC(DEBUG_INSANE, "Main menu inactivity - resuming intro/demo loop");
+			_menuInactivityTimedOut = false;
+			_menuInputActive = false;
+			return kMenuResumeDemo;
 		}
 
 		// Only process selection if user explicitly confirmed (ENTER/ESC),
@@ -641,59 +659,47 @@ int InsaneRebel2::runMainMenu() {
 		_menuSelectionConfirmed = false;
 
 		// A selection was made - process it
-		debug("Rebel2: Menu video ended with selection=%d", _menuSelection);
+		debugC(DEBUG_INSANE, "Menu video ended with selection=%d", _menuSelection);
 
 		// Process the menu result based on current selection
 		// Menu items matching GAME.TRS indices 11-17 (FUN_004147B2):
 		//   case 0 (TRS 11): Start Game -> pilot selection, returns 2
 		//   case 1 (TRS 12): Options -> FUN_00416787 options screen
 		//   case 2 (TRS 13): Calibrate Joystick -> FUN_00425820
-		//   case 3 (TRS 14): Continue Intro -> replay O_OPEN videos
+		//   case 3 (TRS 14): Continue Intro -> return to intro/demo loop
 		//   case 4 (TRS 15): Show Top Pilots -> FUN_00420116(-1)
 		//   case 5 (TRS 16): Show Credits -> play O_CREDIT.SAN, returns 1
 		//   case 6 (TRS 17): Return to Launcher -> quit, returns 0
 		switch (_menuSelection) {
 		case 0:  // Start Game -> go to pilot selection
-			debug("Rebel2: Start Game selected - going to pilot selection");
+			debugC(DEBUG_INSANE, "Start Game selected - going to pilot selection");
 			_gameState = kStatePilotSelect;
 			_menuInputActive = false;
 			return kMenuNewGame;  // Return 2 (kMenuNewGame)
 
 		case 1:  // Options -> show options menu (FUN_00416787)
-			debug("Rebel2: Options selected");
+			debugC(DEBUG_INSANE, "Options selected");
 			showOptionsMenu();
 			break;
 
 		case 2:  // Calibrate Joystick
-			debug("Rebel2: Calibrate Joystick selected - no-op for modern joystick support");
+			debugC(DEBUG_INSANE, "Calibrate Joystick selected - no-op for modern joystick support");
 			// Modern controller support uses live keymapper actions; no explicit
 			// joystick calibration flow is required here.
 			break;
 
-		case 3:  // Continue Intro -> replay intro videos
-			debug("Rebel2: Continue Intro selected - replaying intro");
-			// Temporarily switch to intro state to disable menu overlay
-			// This emulates FUN_004142BD case 0 behavior
-			_gameState = kStateIntro;
+		case 3:  // Continue Intro -> return to intro/demo loop
+			debugC(DEBUG_INSANE, "Continue Intro selected - resuming intro/demo loop");
 			_menuInputActive = false;
-			// Play intro sequence again (O_OPEN_A/B)
-			splayer->setCurVideoFlags(0x20);
-			splayer->play("OPEN/O_OPEN_A.SAN", 15);
-			if (!_vm->shouldQuit()) {
-				splayer->play("OPEN/O_OPEN_B.SAN", 15);
-			}
-			// Restore menu state
-			_gameState = kStateMainMenu;
-			_menuInputActive = true;
-			break;
+			return kMenuResumeDemo;
 
 		case 4:  // Show Top Pilots -> high score display (FUN_00420116(-1))
-			debug("Rebel2: Show Top Pilots selected");
+			debugC(DEBUG_INSANE, "Show Top Pilots selected");
 			showTopPilots();
 			break;
 
 		case 5:  // Show Credits -> play credits video
-			debug("Rebel2: Show Credits selected - playing O_CREDIT.SAN");
+			debugC(DEBUG_INSANE, "Show Credits selected - playing O_CREDIT.SAN");
 			_gameState = kStateCredits;
 			_menuInputActive = false;
 			splayer->setCurVideoFlags(0x20);
@@ -704,18 +710,18 @@ int InsaneRebel2::runMainMenu() {
 			break;
 
 		case 6:  // Return to Launcher -> quit game
-			debug("Rebel2: Return to Launcher selected");
+			debugC(DEBUG_INSANE, "Return to Launcher selected");
 			_menuInputActive = false;
-			return 0;  // Return 0 to exit
+			return kMenuQuit;
 
 		default:
-			debug("Rebel2: Unknown menu selection %d", _menuSelection);
+			debugC(DEBUG_INSANE, "Unknown menu selection %d", _menuSelection);
 			break;
 		}
 	}
 
 	_menuInputActive = false;
-	return 0;
+	return kMenuQuit;
 }
 
 // ---------------------------------------------------------------------------
@@ -726,7 +732,7 @@ int InsaneRebel2::runMainMenu() {
 // Returns kChapterSelectPlay, kChapterSelectBack, or kChapterSelectQuit.
 int InsaneRebel2::runChapterSelect() {
 
-	debug("Rebel2: Entering chapter selection (FUN_00415CF8)");
+	debugC(DEBUG_INSANE, "Entering chapter selection (FUN_00415CF8)");
 
 	// Enable menu input capture
 	_menuInputActive = true;
@@ -770,7 +776,7 @@ int InsaneRebel2::runChapterSelect() {
 	while (!_vm->shouldQuit()) {
 		_vm->_smushVideoShouldFinish = false;
 
-		debug("Rebel2: Playing chapter select background: OPEN/O_LEVEL.SAN");
+		debugC(DEBUG_INSANE, "Playing chapter select background: OPEN/O_LEVEL.SAN");
 
 		// Flags: 0x20 (overlay/menu rendering) | 0x08 (preserve buffer, suppress
 		// AHDR speed override). Matches original FUN_0041f4d0 parameter 8.
@@ -796,12 +802,12 @@ int InsaneRebel2::runChapterSelect() {
 		_vm->_smushVideoShouldFinish = false;
 		_menuSelectionConfirmed = false;
 
-		debug("Rebel2: Chapter selection made: %d", _chapterSelection);
+		debugC(DEBUG_INSANE, "Chapter selection made: %d", _chapterSelection);
 
 		// Process chapter selection (lines 134-236 of FUN_00415CF8)
 		if (_chapterSelection == 16) {
 			// BACK selected (index 16 = 17th item)
-			debug("Rebel2: BACK to main menu selected");
+			debugC(DEBUG_INSANE, "BACK to main menu selected");
 			setVirtualKeyboardVisible(false);
 			_menuInputActive = false;
 			return kChapterSelectBack;
@@ -811,7 +817,7 @@ int InsaneRebel2::runChapterSelect() {
 			if (_chapterUnlocked[_chapterSelection]) {
 				// Unlocked chapter — play it
 				_selectedChapter = _chapterSelection;
-				debug("Rebel2: Chapter %d selected (unlocked)", _selectedChapter + 1);
+				debugC(DEBUG_INSANE, "Chapter %d selected (unlocked)", _selectedChapter + 1);
 				setVirtualKeyboardVisible(false);
 				_menuInputActive = false;
 				return kChapterSelectPlay;
@@ -835,13 +841,13 @@ int InsaneRebel2::runChapterSelect() {
 					setBit(16 - _chapterSelection);
 					_passwordInput.clear();
 					updateMenuVirtualKeyboard();
-					debug("Rebel2: Chapter %d unlocked via password", _chapterSelection + 1);
+					debugC(DEBUG_INSANE, "Chapter %d unlocked via password", _chapterSelection + 1);
 					continue;  // Re-render with updated unlock state
 				}
 			}
 			// Wrong password or no password entered
 			_passwordInput.clear();
-			debug("Rebel2: Password rejected for chapter %d", _chapterSelection + 1);
+			debugC(DEBUG_INSANE, "Password rejected for chapter %d", _chapterSelection + 1);
 		}
 	}
 
@@ -874,7 +880,7 @@ int InsaneRebel2::processChapterSelectInput() {
 				// Update preview offset (FUN_00425170: Y = selected * -50 + 75)
 				_previewOffsetY = _chapterSelection * -50 + 75;
 				updateMenuVirtualKeyboard();
-				debug("ChapterSelect: Selection changed to %d (UP) offsetY=%d", _chapterSelection, _previewOffsetY);
+				debugC(DEBUG_INSANE, "ChapterSelect: Selection changed to %d (UP) offsetY=%d", _chapterSelection, _previewOffsetY);
 				break;
 
 			case Common::KEYCODE_DOWN:
@@ -887,14 +893,14 @@ int InsaneRebel2::processChapterSelectInput() {
 				// Update preview offset (FUN_00425170: Y = selected * -50 + 75)
 				_previewOffsetY = _chapterSelection * -50 + 75;
 				updateMenuVirtualKeyboard();
-				debug("ChapterSelect: Selection changed to %d (DOWN) offsetY=%d", _chapterSelection, _previewOffsetY);
+				debugC(DEBUG_INSANE, "ChapterSelect: Selection changed to %d (DOWN) offsetY=%d", _chapterSelection, _previewOffsetY);
 				break;
 
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
 				if (_chapterSelection >= 0 && _chapterSelection < _chapterItemCount) {
 					result = _chapterSelection;
-					debug("ChapterSelect: Item %d selected (ENTER)", _chapterSelection);
+					debugC(DEBUG_INSANE, "ChapterSelect: Item %d selected (ENTER)", _chapterSelection);
 				}
 				break;
 
@@ -902,14 +908,14 @@ int InsaneRebel2::processChapterSelectInput() {
 				// Synthetic custom back action (same as selecting BACK)
 				setVirtualKeyboardVisible(false);
 				result = 16;  // BACK index
-				debug("ChapterSelect: Back action - back to menu");
+				debugC(DEBUG_INSANE, "ChapterSelect: Back action - back to menu");
 				break;
 
 			case Common::KEYCODE_BACKSPACE:
 				// Backspace for password input (line 107-112 of FUN_00415CF8)
 				if (!_passwordInput.empty()) {
 					_passwordInput.deleteLastChar();
-					debug("ChapterSelect: Password backspace, now: %s", _passwordInput.c_str());
+					debugC(DEBUG_INSANE, "ChapterSelect: Password backspace, now: %s", _passwordInput.c_str());
 				}
 				break;
 
@@ -918,7 +924,7 @@ int InsaneRebel2::processChapterSelectInput() {
 				if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7E) {
 					if (_passwordInput.size() < 8) {
 						_passwordInput += (char)event.kbd.ascii;
-						debug("ChapterSelect: Password input: %s", _passwordInput.c_str());
+						debugC(DEBUG_INSANE, "ChapterSelect: Password input: %s", _passwordInput.c_str());
 					}
 				}
 				break;
@@ -929,15 +935,19 @@ int InsaneRebel2::processChapterSelectInput() {
 			_vm->_mouse.x = event.mouse.x;
 			_vm->_mouse.y = event.mouse.y;
 			{
-				int baseY = _chapterItemCount * -5 + 0x68;
+				const bool highRes = isHiRes();
+				const int baseY = highRes ? (_chapterItemCount * -5 + 0x5a) * 2 + 0x1c : _chapterItemCount * -5 + 0x68;
+				const int itemSpacing = highRes ? 20 : 10;
+				const int itemHitTop = highRes ? 2 : 1;
+				const int itemHitHeight = highRes ? 18 : 10;
 				for (int i = 0; i < _chapterItemCount; i++) {
-					int itemY = baseY + i * 10;
-					if (event.mouse.y >= itemY - 1 && event.mouse.y < itemY + 9) {
+					int itemY = baseY + i * itemSpacing;
+					if (event.mouse.y >= itemY - itemHitTop && event.mouse.y < itemY - itemHitTop + itemHitHeight) {
 						_chapterSelection = i;
 						_previewOffsetY = _chapterSelection * -50 + 75;
 						updateMenuVirtualKeyboard();
 						result = _chapterSelection;
-						debug("ChapterSelect: Item %d selected (mouse)", _chapterSelection);
+						debugC(DEBUG_INSANE, "ChapterSelect: Item %d selected (mouse)", _chapterSelection);
 						break;
 					}
 				}
@@ -948,17 +958,22 @@ int InsaneRebel2::processChapterSelectInput() {
 			{
 				// Mouse hover changes highlight (original FUN_0041f5ae mouse mode).
 				// Item Y = numItems * -5 + i * 10 + 0x68
-				int baseY = _chapterItemCount * -5 + 0x68;
+				const bool highRes = isHiRes();
+				const int baseY = highRes ? (_chapterItemCount * -5 + 0x5a) * 2 + 0x1c : _chapterItemCount * -5 + 0x68;
+				const int itemSpacing = highRes ? 20 : 10;
+				const int itemHitTop = highRes ? 2 : 1;
+				const int itemHitHeight = highRes ? 18 : 10;
 				int mouseY = event.mouse.y;
 
 				for (int i = 0; i < _chapterItemCount; i++) {
-					int itemY = baseY + i * 10;
-					if (mouseY >= itemY - 4 && mouseY < itemY + 6) {
+					int itemY = baseY + i * itemSpacing;
+					if (mouseY >= itemY - itemHitTop - 3 * (highRes ? 2 : 1) &&
+							mouseY < itemY - itemHitTop + itemHitHeight - 3 * (highRes ? 2 : 1)) {
 						if (i != _chapterSelection) {
 							_chapterSelection = i;
 							_previewOffsetY = _chapterSelection * -50 + 75;
 							updateMenuVirtualKeyboard();
-							debug(5, "ChapterSelect: Hover changed to %d", _chapterSelection);
+							debugC(DEBUG_INSANE, "ChapterSelect: Hover changed to %d", _chapterSelection);
 						}
 						break;
 					}
@@ -979,9 +994,12 @@ void InsaneRebel2::drawPreviewBox(byte *renderBitmap, int pitch, int width, int 
 	// Low-res (320x200) coordinates from FUN_00415CF8:
 	// Outer box: X=0xe4 (228), Y=0x49 (73), W=0x54 (84), H=0x36 (54), color=0xF8
 	// Inner box: X=0xe5 (229), Y=0x4a (74), W=0x52 (82), H=0x34 (52), color=4
+	// High-res uses the original DAT_0047a808 >= 2 formulas, doubling the
+	// low-res anchors and dimensions.
+	const int scale = isHiRes() ? 2 : 1;
 
 	// Outer border (bright)
-	int outerX = 228, outerY = 73, outerW = 84, outerH = 54;
+	int outerX = 228 * scale, outerY = 73 * scale, outerW = 84 * scale, outerH = 54 * scale;
 	byte outerColor = 0xF8;
 
 	// Draw outer box edges
@@ -1013,7 +1031,7 @@ void InsaneRebel2::drawPreviewBox(byte *renderBitmap, int pitch, int width, int 
 	}
 
 	// Inner border (dark)
-	int innerX = 229, innerY = 74, innerW = 82, innerH = 52;
+	int innerX = 229 * scale, innerY = 74 * scale, innerW = 82 * scale, innerH = 52 * scale;
 	byte innerColor = 4;
 
 	// Top edge
@@ -1107,6 +1125,8 @@ void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width,
 	if (!splayer)
 		return;
 
+	const int scale = isHiRes() ? 2 : 1;
+
 	if (_chapterUnlocked[_chapterSelection]) {
 		// Unlocked: show score info using TRS 80 at X=25 (0x19), Y=190 (0xbe)
 		// TRS 80 = "^f01^c248Pilots: %hd  Score: %ld  Rank: ^f00%s"
@@ -1129,7 +1149,7 @@ void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width,
 		Common::String displayStr = Common::String::format(fmtStr,
 			(short)pilotLives, (long)pilotScore, rankStr.c_str());
 
-		drawMenuString(renderBitmap, displayStr.c_str(), 25, 190);
+		drawMenuString(renderBitmap, displayStr.c_str(), 25 * scale, 190 * scale);
 	} else {
 		const char *lockStr = splayer->getString(81);
 		if (!lockStr || !lockStr[0])
@@ -1140,7 +1160,7 @@ void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width,
 		Common::String displayStr = Common::String::format("%s ^c005%s%c",
 			lockStr, _passwordInput.c_str(), cursor);
 
-		drawMenuString(renderBitmap, displayStr.c_str(), 30, 190);
+		drawMenuString(renderBitmap, displayStr.c_str(), 30 * scale, 190 * scale);
 	}
 }
 
@@ -1209,7 +1229,7 @@ void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int w
 // Returns kLevelSelectPlay, kLevelSelectBack, or kLevelSelectQuit.
 int InsaneRebel2::runLevelSelect() {
 
-	debug("Rebel2: Entering pilot selection (FUN_00414A41), %d pilots loaded", _numPilots);
+	debugC(DEBUG_INSANE, "Entering pilot selection (FUN_00414A41), %d pilots loaded", _numPilots);
 
 	_menuInputActive = true;
 	while (!_menuEventQueue.empty())
@@ -1290,7 +1310,7 @@ int InsaneRebel2::runLevelSelect() {
 					copyPilot(pilotIndex);
 					savePilots();
 					_levelSelection = pilotIndex;
-					debug("Rebel2: Copied pilot %d, now %d pilots", pilotIndex, _numPilots);
+					debugC(DEBUG_INSANE, "Copied pilot %d, now %d pilots", pilotIndex, _numPilots);
 				} else {
 					deletePilot(pilotIndex);
 					savePilots();
@@ -1299,7 +1319,7 @@ int InsaneRebel2::runLevelSelect() {
 					} else {
 						_levelSelection = 0;
 					}
-					debug("Rebel2: Deleted pilot %d, %d remaining", pilotIndex, _numPilots);
+					debugC(DEBUG_INSANE, "Deleted pilot %d, %d remaining", pilotIndex, _numPilots);
 				}
 			}
 			_pilotMenuMode = kPilotModeSelect;
@@ -1309,7 +1329,7 @@ int InsaneRebel2::runLevelSelect() {
 		}
 
 		// --- Normal pilot menu selection ---
-		debug("Rebel2: Pilot selection: %d (numPilots=%d)", _levelSelection, _numPilots);
+		debugC(DEBUG_INSANE, "Pilot selection: %d (numPilots=%d)", _levelSelection, _numPilots);
 
 		if (_levelSelection < _numPilots) {
 			// Existing pilot selected — activate and go to chapter select
@@ -1321,7 +1341,7 @@ int InsaneRebel2::runLevelSelect() {
 				_chapterUnlocked[i] = _debugUnlockAll || (_pilots[_activePilot].damage[i] < 0xFF);
 			}
 
-			debug("Rebel2: Pilot '%s' selected (slot %d, difficulty %d)",
+			debugC(DEBUG_INSANE, "Pilot '%s' selected (slot %d, difficulty %d)",
 			      _pilots[_activePilot].name, _activePilot, _difficulty);
 			setVirtualKeyboardVisible(false);
 			_menuInputActive = false;
@@ -1336,7 +1356,7 @@ int InsaneRebel2::runLevelSelect() {
 				_pilotMenuMode = kPilotModeNameInput;
 				_levelItemCount = _numPilots + 4;
 				updateMenuVirtualKeyboard();
-				debug("Rebel2: NEW PILOT - entering name for slot %d", newIdx);
+				debugC(DEBUG_INSANE, "NEW PILOT - entering name for slot %d", newIdx);
 			}
 			continue;
 
@@ -1346,7 +1366,7 @@ int InsaneRebel2::runLevelSelect() {
 				_pilotMenuMode = kPilotModeCopySelect;
 				_levelSelection = 0;
 				_levelItemCount = _numPilots;
-				debug("Rebel2: COPY PILOT - selecting source");
+				debugC(DEBUG_INSANE, "COPY PILOT - selecting source");
 			}
 			continue;
 
@@ -1356,7 +1376,7 @@ int InsaneRebel2::runLevelSelect() {
 				_pilotMenuMode = kPilotModeDeleteSelect;
 				_levelSelection = 0;
 				_levelItemCount = _numPilots;
-				debug("Rebel2: DELETE PILOT - selecting target");
+				debugC(DEBUG_INSANE, "DELETE PILOT - selecting target");
 			}
 			continue;
 
@@ -1393,7 +1413,7 @@ int InsaneRebel2::processLevelSelectInput() {
 						setVirtualKeyboardVisible(false);
 						_menuSelectionConfirmed = true;
 						_vm->_smushVideoShouldFinish = true;
-						debug("PilotName: confirmed '%s'", _pilotNameInput.c_str());
+						debugC(DEBUG_INSANE, "PilotName: confirmed '%s'", _pilotNameInput.c_str());
 					}
 				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					// Synthetic custom back action - cancel name entry
@@ -1403,7 +1423,7 @@ int InsaneRebel2::processLevelSelectInput() {
 					_pilotMenuMode = kPilotModeSelect;
 					_levelItemCount = _numPilots + 4;
 					updateMenuVirtualKeyboard();
-					debug("PilotName: cancelled");
+					debugC(DEBUG_INSANE, "PilotName: cancelled");
 				} else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
 					// Backspace — remove last character
 					if (_pilotNameInput.size() > 0) {
@@ -1442,8 +1462,11 @@ int InsaneRebel2::processLevelSelectInput() {
 	if (itemCount <= 0)
 		return -1;
 
-	const int itemBaseY = itemCount * -5 + 0x68;
-	const int itemSpacing = 10;
+	const bool highRes = isHiRes();
+	const int itemBaseY = highRes ? (itemCount * -5 + 0x5a) * 2 + 0x1c : itemCount * -5 + 0x68;
+	const int itemSpacing = highRes ? 20 : 10;
+	const int itemHitTop = highRes ? 2 : 1;
+	const int itemHitHeight = highRes ? 18 : 10;
 
 	while (!_menuEventQueue.empty()) {
 		Common::Event event = _menuEventQueue.pop();
@@ -1494,7 +1517,7 @@ int InsaneRebel2::processLevelSelectInput() {
 			_vm->_mouse.y = event.mouse.y;
 			for (int i = 0; i < itemCount; i++) {
 				int itemY = itemBaseY + i * itemSpacing;
-				if (event.mouse.y >= itemY - 1 && event.mouse.y < itemY + 9) {
+				if (event.mouse.y >= itemY - itemHitTop && event.mouse.y < itemY - itemHitTop + itemHitHeight) {
 					selection = i;
 					result = selection;
 					break;
@@ -1507,7 +1530,8 @@ int InsaneRebel2::processLevelSelectInput() {
 			_vm->_mouse.y = event.mouse.y;
 			for (int i = 0; i < itemCount; i++) {
 				int itemY = itemBaseY + i * itemSpacing;
-				if (event.mouse.y >= itemY - 4 && event.mouse.y < itemY + 6) {
+				if (event.mouse.y >= itemY - itemHitTop - 3 * (highRes ? 2 : 1) &&
+						event.mouse.y < itemY - itemHitTop + itemHitHeight - 3 * (highRes ? 2 : 1)) {
 					selection = i;
 					break;
 				}
@@ -1544,7 +1568,7 @@ void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int wid
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	if (!splayer) {
-		debug(1, "drawLevelSelectOverlay: SmushPlayer not available for TRS strings!");
+		debugC(DEBUG_INSANE, "drawLevelSelectOverlay: SmushPlayer not available for TRS strings!");
 		return;
 	}
 
@@ -1714,7 +1738,7 @@ void InsaneRebel2::insertRanking(const char *name, int32 score, int32 rating,
 }
 
 void InsaneRebel2::showTopPilots() {
-	debug("Rebel2: Showing Top Pilots screen (FUN_00420116)");
+	debugC(DEBUG_INSANE, "Showing Top Pilots screen (FUN_00420116)");
 
 	_menuInputActive = true;
 	while (!_menuEventQueue.empty())
@@ -1737,7 +1761,7 @@ void InsaneRebel2::showTopPilots() {
 	_gameState = kStateMainMenu;
 	_menuInputActive = true;
 
-	debug("Rebel2: Top Pilots screen finished");
+	debugC(DEBUG_INSANE, "Top Pilots screen finished");
 }
 
 void InsaneRebel2::drawTopPilotsOverlay(byte *renderBitmap, int pitch, int width, int height) {
@@ -1759,52 +1783,54 @@ void InsaneRebel2::drawTopPilotsOverlay(byte *renderBitmap, int pitch, int width
 	if (!splayer)
 		return;
 
+	const int scale = isHiRes() ? 2 : 1;
+
 	// Title centered at X=152, Y=10 (TITLFONT)
-	drawMenuStringCentered(renderBitmap, "^f02Top Pilots", 152, 10);
+	drawMenuStringCentered(renderBitmap, "^f02Top Pilots", 152 * scale, 10 * scale);
 
 	// Column headers at Y=30 (SMALFONT), positioned to match data columns
-	int headerY = 30;
+	int headerY = 30 * scale;
 	int headerColor = 5;
-	drawMenuStringCentered(renderBitmap, "^f01Rank", 43, headerY, headerColor);
-	drawMenuString(renderBitmap, "^f01Name", 88, headerY, headerColor);
-	drawMenuStringCentered(renderBitmap, "^f01Difficulty", 195, headerY, headerColor);
-	drawMenuStringCentered(renderBitmap, "^f01Chapter", 245, headerY, headerColor);
-	drawMenuStringRight(renderBitmap, "^f01Score", 295, headerY, headerColor);
+	drawMenuStringCentered(renderBitmap, "^f01Rank", 43 * scale, headerY, headerColor);
+	drawMenuString(renderBitmap, "^f01Name", 88 * scale, headerY, headerColor);
+	drawMenuStringCentered(renderBitmap, "^f01Difficulty", 195 * scale, headerY, headerColor);
+	drawMenuStringCentered(renderBitmap, "^f01Chapter", 245 * scale, headerY, headerColor);
+	drawMenuStringRight(renderBitmap, "^f01Score", 295 * scale, headerY, headerColor);
 
 	// Animated reveal: show up to _topPilotsFrameCount entries
 	int showCount = MIN(_topPilotsFrameCount, _numRankings);
 
 	for (int row = 0; row < showCount; row++) {
 		const RankingEntry &r = _rankings[row];
-		int rowY = row * 10 + 42;
+		int rowY = (row * 10 + 42) * scale;
 		int color = 244;  // 0xF4
 
 		// Column 1: Rank medals at X=43, centered (font 0 = TALKFONT)
 		Common::String rankStr = getRankString(r.rating);
 		if (!rankStr.empty()) {
 			Common::String rankFmt = Common::String::format("^f00%s", rankStr.c_str());
-			drawMenuStringCentered(renderBitmap, rankFmt.c_str(), 43, rowY, color);
+			drawMenuStringCentered(renderBitmap, rankFmt.c_str(), 43 * scale, rowY, color);
 		}
 
 		// Column 2: Pilot name at X=88, left-aligned (font 1 = SMALFONT)
 		Common::String nameFmt = Common::String::format("^f01%s", r.name);
-		drawMenuString(renderBitmap, nameFmt.c_str(), 88, rowY, color);
+		drawMenuString(renderBitmap, nameFmt.c_str(), 88 * scale, rowY, color);
 
 		// Column 3: Difficulty at X=195, centered - TRS (difficulty + 155)
 		int trsIdx = CLIP((int)r.difficulty, 0, 5) + 155;
 		const char *diffStr = splayer->getString(trsIdx);
 		if (diffStr && diffStr[0]) {
 			Common::String diffFmt = Common::String::format("^f01%s", diffStr);
-			drawMenuStringCentered(renderBitmap, diffFmt.c_str(), 195, rowY, color);
+			drawMenuStringCentered(renderBitmap, diffFmt.c_str(), 195 * scale, rowY, color);
 		}
 
 		// Column 4: Highest chapter at X=245, centered
 		Common::String chFmt = Common::String::format("^f01%d", (int)r.chapter);
-		drawMenuStringCentered(renderBitmap, chFmt.c_str(), 245, rowY, color);
+		drawMenuStringCentered(renderBitmap, chFmt.c_str(), 245 * scale, rowY, color);
 
 		// Column 5: Total score at X=295, right-aligned
 		Common::String scoreFmt = Common::String::format("^f01%ld", (long)r.score);
-		drawMenuStringRight(renderBitmap, scoreFmt.c_str(), 295, rowY, color);
+		drawMenuStringRight(renderBitmap, scoreFmt.c_str(), 295 * scale, rowY, color);
 	}
 
 	_topPilotsFrameCount++;
@@ -1819,7 +1845,7 @@ void InsaneRebel2::drawTopPilotsOverlay(byte *renderBitmap, int pitch, int width
 
 // showOptionsMenu -- Options menu loop (FUN_00416787).
 void InsaneRebel2::showOptionsMenu() {
-	debug("Rebel2: Showing Options menu (FUN_00416787)");
+	debugC(DEBUG_INSANE, "Showing Options menu (FUN_00416787)");
 
 	_menuInputActive = true;
 	while (!_menuEventQueue.empty())
@@ -1845,7 +1871,7 @@ void InsaneRebel2::showOptionsMenu() {
 	_gameState = kStateMainMenu;
 	_menuInputActive = true;
 
-	debug("Rebel2: Options menu finished");
+	debugC(DEBUG_INSANE, "Options menu finished");
 }
 
 int InsaneRebel2::processOptionsInput() {
@@ -1872,10 +1898,7 @@ int InsaneRebel2::processOptionsInput() {
 				// Volume slider: decrease by 4 (original step size)
 				if (_optionsSelection == 6) {
 					_optVolumeLevel = MAX(0, _optVolumeLevel - 4);
-					_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
-					    CLIP<int>(_optVolumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume));
-					_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
-					    CLIP<int>(_optVolumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume));
+					setRebel2MixerVolume(_vm, _optVolumeLevel);
 				}
 				return -1;
 
@@ -1883,10 +1906,7 @@ int InsaneRebel2::processOptionsInput() {
 				// Volume slider: increase by 4
 				if (_optionsSelection == 6) {
 					_optVolumeLevel = MIN(127, _optVolumeLevel + 4);
-					_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
-					    CLIP<int>(_optVolumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume));
-					_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
-					    CLIP<int>(_optVolumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume));
+					setRebel2MixerVolume(_vm, _optVolumeLevel);
 				}
 				return -1;
 
@@ -1938,10 +1958,14 @@ int InsaneRebel2::processOptionsInput() {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			// Mouse click on items — match drawMenuItems Y positions
 			int mouseY = event.mouse.y;
-			int baseY = _optionsItemCount * -5 + 0x68;
+			const bool highRes = isHiRes();
+			const int baseY = highRes ? (_optionsItemCount * -5 + 0x5a) * 2 + 0x1c : _optionsItemCount * -5 + 0x68;
+			const int itemSpacing = highRes ? 20 : 10;
+			const int itemHitTop = highRes ? 2 : 1;
+			const int itemHitHeight = highRes ? 18 : 10;
 			for (int i = 0; i < _optionsItemCount; i++) {
-				int itemY = baseY + i * 10;
-				if (mouseY >= itemY - 1 && mouseY < itemY + 9) {
+				int itemY = baseY + i * itemSpacing;
+				if (mouseY >= itemY - itemHitTop && mouseY < itemY - itemHitTop + itemHitHeight) {
 					_optionsSelection = i;
 					// Simulate enter for this item
 					Common::Event enterEvent;

@@ -22,11 +22,6 @@
 #ifndef PELROCK_SLIDINGPUZZLE_H
 #define PELROCK_SLIDINGPUZZLE_H
 
-#include "graphics/managed_surface.h"
-
-#include "pelrock/events.h"
-#include "pelrock/sound.h"
-
 namespace Pelrock {
 
 static const int kPuzzleScreenWidth = 640;

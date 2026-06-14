@@ -1083,8 +1083,12 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "zwergnase",			"Zwerg Nase: Ein interaktives Märchen" },
 
 	// Hebrew titles
-	{ "petel",				"מיץ פטל" },
 	{ "harating",			"בתככי הרייטינג" },  // BeTchachey HaRating - TV Ratings Intrigue
+	{ "petel",				"מיץ פטל" },
+	{ "piposh1",			"פיפוש" },  // aka Piposh: Hollywood
+	{ "piposh2",			"פיפוש 2" },
+	{ "piposh3d",			"3D פיפוש" },
+	{ "piposhdream",		"פיפוש בחלום שהתגשם" }, // Piposh in: A Dream Come True
 
 	// Italian titles
 	{ "brillo",				"Brillo: I Segreti del Bosco Antico" },
@@ -8407,9 +8411,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("catseyeview", "Vol. 7", "Cat'sEyeView7", "55d01cca925752c170ac1e9c01d1f87e", 1030462, 601),
 	WINGAME1t("catseyeview", "Vol. 7", "Cat'sEyeView7.exe", "1c8ec55a7a65ba13890697e0e92670a5", 6017657, 600),
 
+	// German title is "Hexentanz und Firlefanz", published by Tivola
 	// Bilingual English/German
 	MACGAME1("catshats", "", "Cats and Hats", "r:cc27aab06406e53f53bcf7efd154ac1c", 1033729, 602),
 	WINGAME1("catshats", "", "HEXEN32.EXE",	  "t:a6d98f124483409c0aa060fe0cfec013", 1661593, 602),
+	// Dutch title is "Speurtocht in Heksenstad", published by Lannoo
+	// Bilingual English/Dutch
+	MACGAME1("catshats", "", "Speurtocht in Heksenstad", "r:8efda43c2eac46f285b30638b366de4a",  115391, 602),
+	WINGAME1("catshats", "", "HEXEN32.EXE",				 "t:b15281937090355d004776b1a702f04e", 1660530, 602),
 
 	// Developed by Real World Multimedia, Wiltshire, England (1997)
 	// Distributed in Germany by Funware, Hamburg
@@ -8591,7 +8600,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("garygadget1", "",	  "Autos bauen mit Willy Werkel", "r:d251e21d690ba5ad35509e83d45dd0d0",  1032378, Common::DE_DEU, 602),
 	MACGAME2_l("garygadget1", "",	  "Program",					  "rt:02afd6d4d73e63517688ca8373df5d57", 1032442,
 									  "Movies/LBStart.dxr",			  "d:d3147a37ac1c86964755ab0e72d07d1d",  1075838, Common::NL_NLD, 602),
+	MACGAME1_l("garygadget1", "",	  "Bygg bilar med Mulle Meck",	  "r:04af7a8f667716cd9a364ae1b0c375b1",  1028937, Common::SV_SWE, 600),
 	WINGAME1_l("garygadget1", "",	  "DATA/Willy32.exe",			  "t:c55bbee037d85462b515712bfa88e7f0",  1518423, Common::DE_DEU, 650),
+	WINGAME1_l("garygadget1", "",	  "DATA/MULLE32.EXE",			  "t:a559c8b9d3bce8dd94d168d74509506d",  1512594, Common::SV_SWE, 600),
 	WINDEMO1_l("garygadget1", "Demo", "miel.exe",          "t:f8700f728df75744a96b6d7111e5725e", 1512519, Common::NL_NLD, 602),
 	MACDEMO1_l("garygadget1", "Demo", "Miel Monteur demo", "329aab81c0d74c5d3f31ddad26bcc639", 1029165, Common::NL_NLD, 600),
 
@@ -10369,6 +10380,19 @@ static const DirectorGameDescription gameDescriptions[] = {
 									"AAA_MOOV/dlia.mov", "f:23c8cfcda5128d9fcd3f9dd617d008e6", 1156049, Common::PL_POL, 800),
 	WINGAME2_l("peppi", "",			"PIPPI.EXE",		 "t:acf172e5effe2f5c15e50f3c781aef40", 1274514,
 									"AAA_MOOV/dlia.mov", "f:e6f6ef6ba73332210aee3f9d9cf408fd",  480186, Common::RU_RUS, 800),
+
+	// "Piposh" series developed by Guillotine, published by Hed Arzi Multimedia
+	WINGAME2_l("piposh1", "", "piposh.exe",			  "t:9d33c0d6a4cfb70c33f87f6e8a1f23fd", 5665996,
+							  "PIPDATA/AFTRUMB1.DXR", "f:04529141e3c6e027331bd2da8e328a7c", 886670, Common::HE_ISR, 850),
+
+	WINGAME2_l("piposh2", "", "piposh2.exe",	   "t:9d33c0d6a4cfb70c33f87f6e8a1f23fd", 5665996,
+							  "PIP2DATA/AIR1.DXR", "f:cc6c9bb1acf76a0697a30d626e89543c", 2119111, Common::HE_ISR, 850),
+
+	// Only launcher is Director. Actual game uses 3D GameStudio / A5 engine
+	WINGAME1_l("piposh3d", "Launcher", "piposh3d.exe", "t:4dfd8c52d8cff6d1b7a9435a966f4e78", 5427592, Common::HE_ISR, 850),
+
+	WINGAME2_l("piposhdream", "", "dream.exe",	   "t:786558a29a117ff446a2419df3fa6756", 5120988,
+								  "COMEIN.dxr",	   "f:cd6f2b3a7768a6c8052b2ed1868f8c48", 3298134, Common::HE_ISR, 850),
 
 	// Original name is "Syng, lær og leg"
 	MACGAME1_l("pixeline1", "", "xn--syng, lr og leg-3lb",		"a44511b8ff0e46b4f9c85dd1cb58d458", 157815, Common::DA_DNK, 851),

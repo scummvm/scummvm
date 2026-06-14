@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/util.h"
 
 #include "scumm/file.h"
 #include "scumm/scumm_v7.h"
@@ -46,6 +47,14 @@ void InsaneRebel2::initAudio(int sampleRate) {
 // terminateAudio -- Stop all tracks and release audio streams.
 void InsaneRebel2::terminateAudio() {
 	_audio.terminate();
+}
+
+void InsaneRebel2::resetVideoAudio() {
+	_audio.reset();
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	if (splayer)
+		splayer->resetAudioTracks();
 }
 
 // queueAudioData -- Queue raw PCM data for playback on a track.
@@ -88,7 +97,7 @@ void InsaneRebel2::loadSfx() {
 		ScummFile *file = _vm->instantiateScummFile();
 		_vm->openFile(*file, kRA2SfxFiles[i]);
 		if (!file->isOpen()) {
-			debug("InsaneRebel2::loadSfx: Could not open %s", kRA2SfxFiles[i]);
+			debugC(DEBUG_INSANE, "InsaneRebel2::loadSfx: Could not open %s", kRA2SfxFiles[i]);
 			delete file;
 			continue;
 		}
@@ -97,7 +106,7 @@ void InsaneRebel2::loadSfx() {
 		// We scan for the SDAT tag to find the PCM data.
 		uint32 fileSize = file->size();
 		if (fileSize < 38) {  // Minimum: 8 (SAUD) + 22 (STRK) + 8 (SDAT header)
-			debug("InsaneRebel2::loadSfx: %s too small (%d bytes)", kRA2SfxFiles[i], fileSize);
+			debugC(DEBUG_INSANE, "InsaneRebel2::loadSfx: %s too small (%d bytes)", kRA2SfxFiles[i], fileSize);
 			file->close();
 			delete file;
 			continue;
@@ -106,7 +115,7 @@ void InsaneRebel2::loadSfx() {
 		// Verify SAUD tag
 		uint32 tag = file->readUint32BE();
 		if (tag != MKTAG('S', 'A', 'U', 'D')) {
-			debug("InsaneRebel2::loadSfx: %s not a SAUD file (tag=0x%08x)", kRA2SfxFiles[i], tag);
+			debugC(DEBUG_INSANE, "InsaneRebel2::loadSfx: %s not a SAUD file (tag=0x%08x)", kRA2SfxFiles[i], tag);
 			file->close();
 			delete file;
 			continue;
@@ -126,7 +135,7 @@ void InsaneRebel2::loadSfx() {
 				if (_sfxData[i]) {
 					file->read(_sfxData[i], pcmSize);
 					_sfxSize[i] = pcmSize;
-					debug("InsaneRebel2::loadSfx: Loaded %s (%d bytes PCM)", kRA2SfxFiles[i], pcmSize);
+					debugC(DEBUG_INSANE, "InsaneRebel2::loadSfx: Loaded %s (%d bytes PCM)", kRA2SfxFiles[i], pcmSize);
 				}
 				foundSdat = true;
 				break;
@@ -137,7 +146,7 @@ void InsaneRebel2::loadSfx() {
 		}
 
 		if (!foundSdat) {
-			debug("InsaneRebel2::loadSfx: No SDAT chunk in %s", kRA2SfxFiles[i]);
+			debugC(DEBUG_INSANE, "InsaneRebel2::loadSfx: No SDAT chunk in %s", kRA2SfxFiles[i]);
 		}
 
 		file->close();
@@ -167,6 +176,8 @@ void InsaneRebel2::playSfx(int slot, int volume, int pan) {
 	if (slot < 0 || slot >= kRA2NumSfx || !_sfxData[slot] || _sfxSize[slot] == 0) {
 		return;
 	}
+	if (_player && !_player->isChanActive(CHN_OTHER))
+		return;
 
 	// Stop any previous instance of this SFX slot
 	_vm->_mixer->stopHandle(_sfxHandles[slot]);
@@ -182,13 +193,18 @@ void InsaneRebel2::playSfx(int slot, int volume, int pan) {
 	Audio::SeekableAudioStream *stream = Audio::makeRawStream(
 		pcmCopy, _sfxSize[slot], 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 
-	// Scale volume from 0-127 to ScummVM's 0-255 range
-	int scaledVolume = (volume * Audio::Mixer::kMaxChannelVolume) / 127;
+	int mixVolume = CLIP(volume, 0, 127);
+	if (_player) {
+		const int baseVolume = (_player->_smushTrackVols[1] * mixVolume) >> 7;
+		mixVolume = (baseVolume * _player->_smushTrackVols[0]) / 127;
+	}
+	const int scaledVolume = (mixVolume * Audio::Mixer::kMaxChannelVolume) / 127;
+	const int clampedPan = CLIP(pan, -127, 127);
 
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[slot],
-		stream, -1, scaledVolume, pan);
+		stream, -1, scaledVolume, clampedPan);
 
-	debug(5, "InsaneRebel2::playSfx: slot=%d vol=%d pan=%d size=%d", slot, volume, pan, _sfxSize[slot]);
+	debugC(DEBUG_INSANE, "InsaneRebel2::playSfx: slot=%d vol=%d pan=%d size=%d", slot, mixVolume, clampedPan, _sfxSize[slot]);
 }
 
 // loadAuxSfx -- Load sound data into auxiliary buffer (FUN_004118df).
@@ -197,7 +213,7 @@ void InsaneRebel2::loadAuxSfx(int buffer, const byte *data, uint32 size) {
 		return;
 	}
 	if ((int)size > kRA2AuxBufSize) {
-		debug("InsaneRebel2::loadAuxSfx: buffer %d size %d exceeds max %d, truncating",
+		debugC(DEBUG_INSANE, "InsaneRebel2::loadAuxSfx: buffer %d size %d exceeds max %d, truncating",
 			buffer, size, kRA2AuxBufSize);
 		size = kRA2AuxBufSize;
 	}
@@ -205,7 +221,7 @@ void InsaneRebel2::loadAuxSfx(int buffer, const byte *data, uint32 size) {
 	memcpy(_auxSfxData[buffer], data, size);
 	_auxSfxSize[buffer] = size;
 
-	debug(5, "InsaneRebel2::loadAuxSfx: buffer=%d size=%d", buffer, size);
+	debugC(DEBUG_INSANE, "InsaneRebel2::loadAuxSfx: buffer=%d size=%d", buffer, size);
 }
 
 // playAuxSfx -- Play from auxiliary buffer (FUN_00411931).
@@ -214,6 +230,8 @@ void InsaneRebel2::playAuxSfx(int buffer, int volume, int pan) {
 	if (buffer < 0 || buffer >= kRA2NumAuxSfx || !_auxSfxData[buffer] || _auxSfxSize[buffer] == 0) {
 		return;
 	}
+	if (_player && !_player->isChanActive(CHN_OTHER))
+		return;
 
 	_vm->_mixer->stopHandle(_auxSfxHandles[buffer]);
 
@@ -247,12 +265,18 @@ void InsaneRebel2::playAuxSfx(int buffer, int volume, int pan) {
 	Audio::SeekableAudioStream *stream = Audio::makeRawStream(
 		pcmCopy, pcmSize, 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 
-	int scaledVolume = (volume * Audio::Mixer::kMaxChannelVolume) / 127;
+	int mixVolume = CLIP(volume, 0, 127);
+	if (_player) {
+		const int baseVolume = (_player->_smushTrackVols[1] * mixVolume) >> 7;
+		mixVolume = (baseVolume * _player->_smushTrackVols[0]) / 127;
+	}
+	const int scaledVolume = (mixVolume * Audio::Mixer::kMaxChannelVolume) / 127;
+	const int clampedPan = CLIP(pan, -127, 127);
 
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_auxSfxHandles[buffer],
-		stream, -1, scaledVolume, pan);
+		stream, -1, scaledVolume, clampedPan);
 
-	debug(5, "InsaneRebel2::playAuxSfx: buffer=%d vol=%d pan=%d pcmSize=%d", buffer, volume, pan, pcmSize);
+	debugC(DEBUG_INSANE, "InsaneRebel2::playAuxSfx: buffer=%d vol=%d pan=%d pcmSize=%d", buffer, mixVolume, clampedPan, pcmSize);
 }
 
 } // End of namespace Scumm

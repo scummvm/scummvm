@@ -118,6 +118,7 @@ public:
 	inline EngineVersion version() const { return gameDescription().engineVersion; }
 	inline bool isV1() const { return gameDescription().isVersionBetween(10, 19); }
 	inline bool isV2() const { return gameDescription().isVersionBetween(20, 29); }
+	inline bool isV20() const { return gameDescription().isVersionBetween(20, 20); }
 	inline bool isV3() const { return gameDescription().isVersionBetween(30, 39); }
 
 	inline const AlcachofaGameDescription &gameDescription() const { return *_gameDescription; }

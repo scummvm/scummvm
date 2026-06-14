@@ -71,6 +71,7 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_isModal = false;
 	_skipFrameAdvance = false;
 	_resetScreen = false;
+	_playbackPaused = false;
 
 	// Owned by the window manager
 	_window = new Graphics::MacWindow(id, scrollable, resizable, editable, wm);
@@ -472,6 +473,10 @@ void Window::setVisible(bool visible, bool silent) {
 	// setting visible triggers movie load
 	if (!_currentMovie && !silent)
 		ensureMovieIsLoaded();
+
+	// If a modal window is not visible, release the locks it holds.
+	if (!visible && _isModal)
+		setModal(false);
 
 	_window->setVisible(visible);
 

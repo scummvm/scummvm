@@ -829,6 +829,11 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
+				<widget name = 'KineticScrolling'
+						type = 'Checkbox'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
 				<widget name = 'UseSystemDialogs'
 						type = 'Checkbox'
 				/>

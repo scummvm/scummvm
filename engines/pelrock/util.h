@@ -22,12 +22,8 @@
 #define PELROCK_UTIL_H
 
 #include "common/events.h"
-#include "common/stream.h"
-#include "common/types.h"
 
 #include "graphics/font.h"
-#include "graphics/managed_surface.h"
-#include "graphics/surface.h"
 
 namespace Pelrock {
 

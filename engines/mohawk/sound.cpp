@@ -47,8 +47,22 @@ namespace Mohawk {
  * @param stream The stream to look for samples.
  */
 void scanAndFixAudioPops(DataChunk &dataChunk, uint32 &dataSize, Common::SeekableReadStream *stream) {
+
+	// Some assets declare more DATA payload bytes than remain in the current stream.
+	// Clamp dataSize to the bytes physically available before probing the final samples.
+	if (stream->size() != -1) {
+		int64 availableBytes = stream->size() - stream->pos();
+		if (availableBytes >= 0 && dataSize > (uint32)availableBytes) {
+			debug(1, "MOHAWK: Clamping declared dataSize %u to actual available bytes %u", dataSize, (uint32)availableBytes);
+			dataSize = (uint32)availableBytes;
+		}
+	}
+
+	if (dataSize < 4)
+		return;
+
 	const int PCM8_U_SILENCE = 0x80;
-	const int SQUELCH = 32; // Threshold of discontinuity before removing. Lower values = increased sensitivity.
+	const int SQUELCH = 8; // Threshold of discontinuity before removing. Lower values = increased sensitivity.
 	bool is_safe = false;
 
 	// Peek at the last 4 samples without permanently moving the stream pointer.
@@ -62,7 +76,7 @@ void scanAndFixAudioPops(DataChunk &dataChunk, uint32 &dataSize, Common::Seekabl
 	// any minor fluctuation is inaudible and the sound is considered safe.
 	bool is_stable_and_quiet = true;
 	for (int i = 0; i < 4; i++) {
-		if (abs(s[i] - PCM8_U_SILENCE) > SQUELCH) {
+		if (abs(s[i] - PCM8_U_SILENCE) >= SQUELCH) {
 			is_stable_and_quiet = false;
 			break;
 		}
@@ -324,6 +338,14 @@ Audio::RewindableAudioStream *Sound::makeLivingBooksWaveStream_v1(Common::Seekab
 		size = stream->readUint32LE();
 	} else
 		error("Could not find Old Mohawk Sound header");
+
+	if (size >= 4 && ConfMan.getBool("fix_audio_pops")) {
+		DataChunk chunk;
+		memset(&chunk, 0, sizeof(DataChunk));
+		chunk.sampleCount = size;
+
+		scanAndFixAudioPops(chunk, size, stream);
+	}
 
 	Common::SeekableReadStream *dataStream = stream->readStream(size);
 	delete stream;

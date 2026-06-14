@@ -25477,6 +25477,47 @@ static const uint16 ramaDemoBrokenButtonsPatch[] = {
 	PATCH_END
 };
 
+// The Bangkok addition/subtraction puzzle has an incompatibility with ScummVM's
+//  SCI32 drawing algorithm, causing digits to float in the upper left corner.
+//  The script uses many View objects to display its question digits, but does
+//  not explicitly hide them when they are not in use. Instead it merely sets
+//  their coordinates to (0,0). This appears to be an oversight, as the answer
+//  digits are correctly hidden by setting their cels to a transparent image.
+//  As the question digits have no fixed priority, the interpreter sets their
+//  priority to their y value, leaving them with priority zero. This is the same
+//  as the background view. In SSCI this happened to work because its last-ditch
+//  sorting algorithm used each screen item's internal memory address.
+//
+// We fix this by setting unused digit coordinates to (-2,-2) instead of (0,0),
+//  causing their priority to be set to -2 and hidden below the background view.
+//  A priority of -1 would probably also work, but there are places in scripts
+//  where -1 is a sentinel value, so it is safer to use a different value.
+//
+// Applies to: All versions
+// Responsible methods: quesDigit1:init, quesDigit2:init, ...
+// Fixes bugs: #10261, #16837
+static const uint16 ramaDigitPriorityPcSignature[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00,                    // ldi 00
+	0x65, 0x1e,                    // aTop x
+	                               // line
+	                               // aTop y
+	SIG_END
+};
+
+static const uint16 ramaDigitPriorityMacSignature[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00,                    // ldi 00
+	0x65, 0x36,                    // aTop x
+	                               // aTop y
+	SIG_END
+};
+
+static const uint16 ramaDigitPriorityPatch[] = {
+	0x35, 0xfe,                   // ldi fe [ -2 ]
+	PATCH_END
+};
+
 static const SciScriptPatcherEntry ramaSignatures[] = {
 	{  true,     0, "disable video benchmarking",                     1, sci2BenchmarkSignature,          sci2BenchmarkReversePatch },
 	{  true,    12, "disable video benchmarking",                     1, sci2BenchmarkSignature,          sci2BenchmarkReversePatch },
@@ -25485,6 +25526,8 @@ static const SciScriptPatcherEntry ramaSignatures[] = {
 	{  true,    85, "fix SaveManager to use normal readWord calls",   1, ramaSerializeRegTSignature1,     ramaSerializeRegTPatch1 },
 	{  true,    90, "demo: remove broken button handlers",            1, ramaDemoBrokenButtonsSignature,  ramaDemoBrokenButtonsPatch },
 	{  true,   201, "fix crash restoring save games using NukeTimer", 1, ramaNukeTimerSignature,          ramaNukeTimerPatch },
+	{  true,  4008, "fix digit priority",                            17, ramaDigitPriorityPcSignature,    ramaDigitPriorityPatch },
+	{  true,  4008, "fix digit priority",                            17, ramaDigitPriorityMacSignature,   ramaDigitPriorityPatch },
 	{  true, 64928, "Narrator lockup fix",                            1, sciNarratorLockupSignature,      sciNarratorLockupPatch },
 	{  true, 64990, "disable change directory button",                1, ramaChangeDirSignature,          ramaChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR

@@ -327,7 +327,8 @@ void FreescapeEngine::shoot() {
 
 	Math::Vector3d direction = directionToVector(_pitch + angleOffsetY, _yaw - angleOffsetX, false);
 	Math::Ray ray(_position, direction);
-	Object *shot = _currentArea->checkCollisionRay(ray, 8192);
+	// Original shooting picks from rendered faces, so fully transparent geometry does not catch shots.
+	Object *shot = _currentArea->checkCollisionRay(ray, 8192, true);
 	if (shot) {
 		GeometricObject *gobj = (GeometricObject *)shot;
 		debugC(1, kFreescapeDebugMove, "Shot object %d with flags %x", gobj->getObjectID(), gobj->getObjectFlags());

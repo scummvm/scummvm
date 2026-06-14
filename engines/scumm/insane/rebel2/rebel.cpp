@@ -129,15 +129,14 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_smush_bencutNut = nullptr;
 	_smush_bensgoggNut = nullptr;
 
-	// Rebel Assault 2 specific initialization can go here
+	const bool highRes = isHiRes();
 
-	// Rebel Assault 2: Load cockpit sprites NUT which contains crosshairs, explosions, status bar
-	// CPITIMAG.NUT = low-res (320x200), CPITIMHI.NUT = high-res (640x480)
-	// The current renderer runs at 320x200, so use the low-res assets.
-	_smush_iconsNut = new NutRenderer(_vm, "SYSTM/CPITIMAG.NUT");
+	// Rebel Assault 2: Load cockpit sprites NUT which contains crosshairs,
+	// explosions, reticles, and warning cues.
+	_smush_iconsNut = new NutRenderer(_vm, highRes ? "SYSTM/CPITIMHI.NUT" : "SYSTM/CPITIMAG.NUT");
 	_smush_icons2Nut = nullptr;  // Not used for Rebel2
 
-	// Initialize laser texture buffer (DAT_0047fee4) from sprite 5 of CPITIMAG.NUT
+	// Initialize laser texture buffer (DAT_0047fee4) from sprite 5 of CPITIMAG/CPITIMHI.NUT
 	// This is done by FUN_0040BAB0/FUN_0040BB87 in the original with sprite index 5
 	// Sprite 5 is 136x13 pixels - a wide, thin texture perfect for laser beams
 	_laserTexture.pixels = nullptr;
@@ -154,9 +153,9 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// Set from param_10 of FUN_403BD0 (main game init). Values:
 	//   < 0: Edge highlights disabled (low-detail mode)
 	//   >= 0: Edge highlights enabled, >= 1: high-detail (secondary NUTs, widescreen)
-	// Always use high detail in ScummVM.
+	// Always use high detail.
 	_rebelDetailMode = 1;
-	_smush_cockpitNut = new NutRenderer(_vm, "SYSTM/DISPFONT.NUT");
+	_smush_cockpitNut = new NutRenderer(_vm, highRes ? "SYSTM/DIHIFONT.NUT" : "SYSTM/DISPFONT.NUT");
 
 	// Load DIHIFONT.NUT for in-video messages/subtitles (Opcode 9)
 	_rebelMsgFont = makeRebel2Font(_vm, "SYSTM/DIHIFONT.NUT");
@@ -167,10 +166,10 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	//   Font 1 (^f01): SMALFONT.NUT - Small font for format code switching
 	//   Font 2 (^f02): TITLFONT.NUT - Title font
 	//   Font 3 (^f03): POVFONT.NUT - POV font
-	_smush_talkfontNut = makeRebel2Font(_vm, "SYSTM/TALKFONT.NUT");
-	_smush_smalfontNut = makeRebel2Font(_vm, "SYSTM/SMALFONT.NUT");
-	_smush_titlefontNut = makeRebel2Font(_vm, "SYSTM/TITLFONT.NUT");
-	_smush_povfontNut = makeRebel2Font(_vm, "SYSTM/POVFONT.NUT");
+	_smush_talkfontNut = makeRebel2Font(_vm, highRes ? "SYSTM/TKHIFONT.NUT" : "SYSTM/TALKFONT.NUT");
+	_smush_smalfontNut = makeRebel2Font(_vm, highRes ? "SYSTM/SMHIFONT.NUT" : "SYSTM/SMALFONT.NUT");
+	_smush_titlefontNut = makeRebel2Font(_vm, highRes ? "SYSTM/TIHIFONT.NUT" : "SYSTM/TITLFONT.NUT");
+	_smush_povfontNut = makeRebel2Font(_vm, highRes ? "SYSTM/POHIFONT.NUT" : "SYSTM/POVFONT.NUT");
 
 	_pauseOverlayActive = false;
 	memset(_savedPausePalette, 0, sizeof(_savedPausePalette));
@@ -190,6 +189,9 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_noDamage = false;
 	_viewX = 0;
 	_viewY = 0;
+	_hiResPresentationViewX = 0;
+	_hiResPresentationViewY = 0;
+	_gameplayPresentationClipBottom = 179;
 
 	// Damage visual effect counters (FUN_420515/420562/420754/42073B)
 	_damageFlashCounter = 0;
@@ -207,11 +209,13 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_textOverlayFadeIn = 0;
 	_textOverlayFadeOut = 0;
 
-	// Retail globals mapped: hit counter, cooldown, invulnerability flag
+	// Original globals mapped: hit counter, cooldown, movie/auto-play flags.
 	_rebelOp6Initialized = false;
 	_rebelHitCounter = 0;
 	_rebelKillCounter = 0;
-	_rebelInvulnerable = false;
+	_rebelYodaMode = false;
+	_rebelMovieMode = false;
+	_rebelAutoPlay = false;
 	_rebelWaveState = 0;
 	_rebelPhaseState = 0;
 
@@ -228,7 +232,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_rebelViewMode1 = 0;
 	_rebelViewMode2 = 0;
 
-	// Initialize mirrored retail counters
+	// Initialize mirrored original counters.
 	for (int i = 0; i < 10; ++i) {
 		_rebelValueCounters[i] = 0;
 		_rebelMaskCounters[i] = 0;
@@ -439,6 +443,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// Initialize Handler 25 GRD ship system
 	_grd001Sprite = nullptr;     // DAT_00482240 - GRD001 primary ship
 	_grd002Sprite = nullptr;     // DAT_00482238 - GRD002 secondary ship
+	_grd005Sprite = nullptr;     // DAT_00482258 - GRD005 mode 3 overlay
 	_grdSpriteMode = 0;          // DAT_00457900 - sprite mode (1,2,3,4)
 	memset(_grdShotOriginX, 0, sizeof(_grdShotOriginX));
 	memset(_grdShotOriginY, 0, sizeof(_grdShotOriginY));
@@ -474,6 +479,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// FUN_0041f5ae uses the selectable item count for Y position calculation.
 	_menuItemCount = 7;
 	_menuInactivityTimer = 0;
+	_menuInactivityTimedOut = false;
 	_lastMenuVariant = -1;        // No previous menu video
 	_menuRepeatDelay = 0;
 	_menuSelectionConfirmed = false;
@@ -493,6 +499,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// Set to true to bypass normal unlock progression
 	_debugUnlockAll = ConfMan.getBool("rebel2_unlock_all");
 	_noDamage = ConfMan.getBool("rebel2_no_damage");
+	_rebelYodaMode = ConfMan.getBool("rebel2_yoda_mode");
 
 	for (i = 0; i < 16; i++) {
 		// If debug unlock is enabled, unlock all chapters
@@ -531,11 +538,11 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 	// Initialize options menu state (FUN_004167A6 defaults)
 	_optionsSelection = 0;
-	_optionsItemCount = 9;
+	_optionsItemCount = 8;
 	_optMusicEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
 	_optSfxEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType);
 	_optVoicesEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSpeechSoundType);
-	// Initialize the dialogue-text (subtitles) toggle from ScummVM's global setting so the
+	// Initialize the dialogue-text (subtitles) toggle from the global setting so the
 	// game and the in-game TEXT menu label reflect it. The menu toggle writes the same
 	// "subtitles" key, which the text-render paths gate on.
 	_optTextEnabled = ConfMan.getBool("subtitles");
@@ -603,6 +610,7 @@ InsaneRebel2::~InsaneRebel2() {
 	// Clean up Handler 25 GRD ship sprites
 	delete _grd001Sprite;
 	delete _grd002Sprite;
+	delete _grd005Sprite;
 
 	// Clean up Handler 0x26 turret HUD overlays
 	delete _hudOverlayNut;
@@ -616,6 +624,10 @@ InsaneRebel2::~InsaneRebel2() {
 		free(_rebelEmbeddedHud[i].pixels);
 		_rebelEmbeddedHud[i].pixels = nullptr;
 	}
+}
+
+bool InsaneRebel2::isHiRes() const {
+	return _vm->_screenWidth >= 640 && _vm->_screenHeight >= 400;
 }
 
 void InsaneRebel2::openGameplayMainMenu(SmushPlayer *splayer) {
@@ -664,39 +676,62 @@ void InsaneRebel2::restoreIOSGamepadController() {
 bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
-	// Global ScummVM dialogs pause the engine while their modal event loop runs.
+	// Global dialogs pause the engine while their modal event loop runs.
 	// Do not consume those events as RA2 input: a key seen here would otherwise
 	// trip RA2's "any key unpauses gameplay" path while the Smush player must
 	// remain paused for the dialog/focus interval.
 	if (_vm->isPaused())
 		return false;
 
+	if (_rebelYodaMode && event.type == Common::EVENT_KEYDOWN && !event.kbdRepeat && event.kbd.hasFlags(Common::KBD_ALT)) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_m:
+			// DAT_0047ab60: Yoda-mode Movie Mode skips playable
+			// sections and keeps the story/cutscene sequence moving.
+			_rebelMovieMode = !_rebelMovieMode;
+			debugC(DEBUG_INSANE, "Movie mode %s", _rebelMovieMode ? "enabled" : "disabled");
+			if (_rebelMovieMode && splayer && _gameState == kStateGameplay && _rebelHandler != 0)
+				_vm->_smushVideoShouldFinish = true;
+			return true;
+
+		case Common::KEYCODE_p:
+			// DAT_0047ab64: Yoda-mode Auto Play makes gameplay
+			// computer controlled.
+			_rebelAutoPlay = !_rebelAutoPlay;
+			debugC(DEBUG_INSANE, "Auto play %s", _rebelAutoPlay ? "enabled" : "disabled");
+			return true;
+
+		default:
+			break;
+		}
+	}
+
 	if (_gameState == kStateGameplay && _rebelHandler == 7 &&
 			event.type == Common::EVENT_MOUSEMOVE) {
 		if (_gameplayMouseSettleUntil != 0) {
 			const uint32 now = _vm->_system->getMillis();
 			if (now < _gameplayMouseSettleUntil) {
+				const int mouseScale = isHiRes() ? 2 : 1;
 				const int jumpX = event.mouse.x - _vm->_mouse.x;
 				const int jumpY = event.mouse.y - _vm->_mouse.y;
 				const bool largeAbsoluteJump =
-					ABS(jumpX) >= kRA2Handler7MouseSettleJumpThreshold ||
-					ABS(jumpY) >= kRA2Handler7MouseSettleJumpThreshold;
+					ABS(jumpX) >= kRA2Handler7MouseSettleJumpThreshold * mouseScale ||
+					ABS(jumpY) >= kRA2Handler7MouseSettleJumpThreshold * mouseScale;
 				const bool smallRelativeMove =
-					ABS((int)event.relMouse.x) < kRA2Handler7MouseSettleRelativeThreshold &&
-					ABS((int)event.relMouse.y) < kRA2Handler7MouseSettleRelativeThreshold;
+					ABS((int)event.relMouse.x) < kRA2Handler7MouseSettleRelativeThreshold * mouseScale &&
+					ABS((int)event.relMouse.y) < kRA2Handler7MouseSettleRelativeThreshold * mouseScale;
 				const bool nearWindowEdge =
-					event.mouse.x <= kRA2Handler7MouseSettleEdgeMargin ||
-					event.mouse.x >= kRA2GameplayMouseMaxX - kRA2Handler7MouseSettleEdgeMargin ||
-					event.mouse.y <= kRA2Handler7MouseSettleEdgeMargin ||
-					event.mouse.y >= kRA2GameplayMouseMaxY - kRA2Handler7MouseSettleEdgeMargin;
+					event.mouse.x <= kRA2Handler7MouseSettleEdgeMargin * mouseScale ||
+					event.mouse.x >= kRA2GameplayMouseMaxX * mouseScale - kRA2Handler7MouseSettleEdgeMargin * mouseScale ||
+					event.mouse.y <= kRA2Handler7MouseSettleEdgeMargin * mouseScale ||
+					event.mouse.y >= kRA2GameplayMouseMaxY * mouseScale - kRA2Handler7MouseSettleEdgeMargin * mouseScale;
 
 				if (largeAbsoluteJump && smallRelativeMove && nearWindowEdge) {
-					const int recenterX = _vm->_mouse.x;
-					const int recenterY = _vm->_mouse.y;
+					const Common::Point recenter = getGameplayAimPoint();
 					_gameplayMouseSettleUntil = now + kRA2Handler7MouseSettleExtendMs;
-					warpGameplayMouseNow(recenterX, recenterY);
+					warpGameplayMouseNow(recenter.x, recenter.y);
 
-					debugC(DEBUG_INSANE, "Rebel2 H7 mouse settle: suppress pos=(%d,%d) rel=(%d,%d) current=(%d,%d) until=%u",
+					debugC(DEBUG_INSANE, "H7 mouse settle: suppress pos=(%d,%d) rel=(%d,%d) current=(%d,%d) until=%u",
 						event.mouse.x, event.mouse.y, event.relMouse.x, event.relMouse.y,
 						_vm->_mouse.x, _vm->_mouse.y, _gameplayMouseSettleUntil);
 					return true;
@@ -706,7 +741,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			_gameplayMouseSettleUntil = 0;
 		}
 
-		debugC(DEBUG_INSANE, "Rebel2 H7 mouse event: pos=(%d,%d) rel=(%d,%d) gamepadAim=%d menuInput=%d",
+		debugC(DEBUG_INSANE, "H7 mouse event: pos=(%d,%d) rel=(%d,%d) gamepadAim=%d menuInput=%d",
 			event.mouse.x, event.mouse.y, event.relMouse.x, event.relMouse.y,
 			_gamepadAimActive ? 1 : 0, _menuInputActive ? 1 : 0);
 	}
@@ -866,11 +901,11 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			}
 
 			if (_gameState == kStateGameplay && _rebelHandler != 0) {
-				debug("Rebel2: Skip/back action ignored during gameplay");
+				debugC(DEBUG_INSANE, "Skip/back action ignored during gameplay");
 				return true;
 			}
 
-			debug("Rebel2: Skip/back action - skipping video");
+			debugC(DEBUG_INSANE, "Skip/back action - skipping video");
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		}
@@ -880,7 +915,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 				return true;
 
 			if (_menuInputActive && menuState) {
-				debug("Rebel2: Back/menu action in menu - opening ScummVM menu");
+				debugC(DEBUG_INSANE, "Back/menu action in menu - opening global menu");
 				openMenuMainMenu(splayer);
 				return true;
 			}
@@ -889,23 +924,23 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 				if (_lastGameplayMenuCloseTime != 0) {
 					const uint32 elapsedSinceMenuClose = _vm->_system->getMillis() - _lastGameplayMenuCloseTime;
 					if (elapsedSinceMenuClose < 500) {
-						debug("Rebel2: Ignoring repeated gameplay menu action (%u ms)", elapsedSinceMenuClose);
+						debugC(DEBUG_INSANE, "Ignoring repeated gameplay menu action (%u ms)", elapsedSinceMenuClose);
 						return true;
 					}
 				}
 
-				debug("Rebel2: Back/menu action during gameplay - opening ScummVM menu");
+				debugC(DEBUG_INSANE, "Back/menu action during gameplay - opening global menu");
 				openGameplayMainMenu(splayer);
 				return true;
 			}
 
-			debug("Rebel2: Back/menu action - skipping video");
+			debugC(DEBUG_INSANE, "Back/menu action - skipping video");
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		}
 
 		if (pressed && splayer && splayer->_paused && _gameState == kStateGameplay) {
-			debug("Rebel2: Joystick action while paused - unpausing");
+			debugC(DEBUG_INSANE, "Joystick action while paused - unpausing");
 			if (_pauseOverlayActive) {
 				_vm->_system->getPaletteManager()->setPalette(_savedPausePalette, 0, 256);
 				_pauseOverlayActive = false;
@@ -997,11 +1032,11 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			(event.type == Common::EVENT_MAINMENU ||
 			 (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE))) {
 		if (event.type == Common::EVENT_KEYDOWN && event.kbdRepeat) {
-			debug("Rebel2: Ignoring repeated ESC keydown in menu");
+			debugC(DEBUG_INSANE, "Ignoring repeated ESC keydown in menu");
 			return true;
 		}
 
-		debug("Rebel2: Opening ScummVM menu from menu state");
+		debugC(DEBUG_INSANE, "Opening global menu from menu state");
 		openMenuMainMenu(splayer);
 		return true;
 	}
@@ -1016,14 +1051,14 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	if (gameplayMenuTrigger && _gameState == kStateGameplay && _lastGameplayMenuCloseTime != 0) {
 		const uint32 elapsedSinceMenuClose = _vm->_system->getMillis() - _lastGameplayMenuCloseTime;
 		if (elapsedSinceMenuClose < 500) {
-			debug("Rebel2: Ignoring repeated gameplay menu trigger (%u ms)", elapsedSinceMenuClose);
+			debugC(DEBUG_INSANE, "Ignoring repeated gameplay menu trigger (%u ms)", elapsedSinceMenuClose);
 			return true;
 		}
 	}
 
 	if (event.type == Common::EVENT_MAINMENU && splayer &&
 			_gameState == kStateGameplay && _rebelHandler != 0) {
-		debug("Rebel2: Main menu action during gameplay - opening ScummVM menu");
+		debugC(DEBUG_INSANE, "Main menu action during gameplay - opening global menu");
 		openGameplayMainMenu(splayer);
 		return true;
 	}
@@ -1033,7 +1068,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 		// leaving the key repeat source to synthesize another ESC immediately after
 		// returning to gameplay. Treat repeats as part of the original press.
 		if (event.kbd.keycode == Common::KEYCODE_ESCAPE && event.kbdRepeat) {
-			debug("Rebel2: Ignoring repeated ESC keydown");
+			debugC(DEBUG_INSANE, "Ignoring repeated ESC keydown");
 			return true;
 		}
 		if (_menuInputActive && event.kbdRepeat &&
@@ -1041,14 +1076,14 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 				 event.kbd.keycode == Common::KEYCODE_DOWN ||
 				 event.kbd.keycode == Common::KEYCODE_LEFT ||
 				 event.kbd.keycode == Common::KEYCODE_RIGHT)) {
-			debug("Rebel2: Ignoring repeated menu direction keydown");
+			debugC(DEBUG_INSANE, "Ignoring repeated menu direction keydown");
 			return true;
 		}
 
 		// When paused during gameplay, ANY key unpauses (FUN_405A21 line 360-365).
-		// ESC additionally opens the ScummVM menu (original: quit key exits level).
+		// ESC additionally opens the global menu (original: quit key exits level).
 		if (splayer && splayer->_paused && _gameState == kStateGameplay) {
-			debug("Rebel2: Key pressed while paused - unpausing");
+			debugC(DEBUG_INSANE, "Key pressed while paused - unpausing");
 			// Restore the original palette saved by showPauseOverlay
 			if (_pauseOverlayActive) {
 				_vm->_system->getPaletteManager()->setPalette(_savedPausePalette, 0, 256);
@@ -1056,7 +1091,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			}
 			splayer->unpause();
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _rebelHandler != 0) {
-				debug("Rebel2: ESC during pause - opening ScummVM menu");
+				debugC(DEBUG_INSANE, "ESC during pause - opening global menu");
 				openGameplayMainMenu(splayer);
 			}
 			return true;
@@ -1065,17 +1100,17 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_ESCAPE:
 			// ESC handling depends on game state:
-			// - In menus: Open the ScummVM menu (handled above)
-			// - During gameplay: Pause and open ScummVM menu
+			// - In menus: Open the global menu (handled above)
+			// - During gameplay: Pause and open the global menu
 			// - During cutscenes/intros: Skip video
 			if (splayer) {
 				if (_gameState == kStateGameplay && _rebelHandler != 0) {
-					// During active gameplay (handler != 0): pause and open ScummVM menu.
-					debug("Rebel2: ESC pressed during gameplay - opening ScummVM menu");
+					// During active gameplay (handler != 0): pause and open the global menu.
+					debugC(DEBUG_INSANE, "ESC pressed during gameplay - opening global menu");
 					openGameplayMainMenu(splayer);
 				} else {
 					// During cutscenes/intros/mission briefings: skip video
-					debug("Rebel2: ESC pressed - skipping video");
+					debugC(DEBUG_INSANE, "ESC pressed - skipping video");
 					_vm->_smushVideoShouldFinish = true;
 				}
 				return true;  // Consume the event
@@ -1086,7 +1121,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			// SPACE pauses during gameplay (FUN_405A21).
 			// Unpausing is handled above (any key while paused).
 			if (splayer && _gameState == kStateGameplay && !splayer->_paused) {
-				debug("Rebel2: SPACE pressed - pausing");
+				debugC(DEBUG_INSANE, "SPACE pressed - pausing");
 				splayer->pause();
 				showPauseOverlay();
 				return true;
@@ -1100,7 +1135,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			    _rebelHandler != 0 &&
 			    event.kbd.hasFlags(Common::KBD_SHIFT)) {
 				_skipSectionRequested = true;
-				debug("Rebel2: Shift+S pressed - requesting gameplay section skip");
+				debugC(DEBUG_INSANE, "Shift+S pressed - requesting gameplay section skip");
 				_vm->_smushVideoShouldFinish = true;
 				return true;  // Consume the event
 			}
@@ -1115,10 +1150,10 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 				if (!_noDamage) {
 					_playerDamage = 255;
 					_playerShield = 0;
-					debug("Rebel2: Shift+D pressed - forcing player death");
+					debugC(DEBUG_INSANE, "Shift+D pressed - forcing player death");
 					_vm->_smushVideoShouldFinish = true;
 				} else {
-					debug("Rebel2: Shift+D pressed - no damage mode prevents forced death");
+					debugC(DEBUG_INSANE, "Shift+D pressed - no damage mode prevents forced death");
 				}
 				return true;  // Consume the event
 			}
@@ -1292,7 +1327,7 @@ InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams() const {
 	int diff = CLIP(_difficulty, 0, 5);
 	int lvIdx = 0;
 
-	// Retail uses DAT_0047a7f8 as the per-segment difficulty table index.
+	// DAT_0047a7f8 is the per-segment difficulty table index.
 	// This is NOT the same as handler 0x26's gun "levelType" from opcode 6.
 	//
 	// Index mapping reconstructed from level handlers:
@@ -1318,7 +1353,7 @@ InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams() const {
 }
 
 bool InsaneRebel2::applyPlayerDamage(int damage) {
-	if (_noDamage || _rebelInvulnerable || damage <= 0)
+	if (_noDamage || _rebelAutoPlay || damage <= 0)
 		return false;
 
 	_playerDamage += damage;
@@ -1350,13 +1385,13 @@ void InsaneRebel2::addScore(int points) {
 			// Award bonus life
 			_playerLives++;
 			// TODO: Play bonus life sound (FUN_0041189e(5, 0, 0x7f, 0, 0))
-			debug("Rebel2: BONUS LIFE! Score crossed %d threshold. Lives=%d", threshold, _playerLives);
+			debugC(DEBUG_INSANE, "BONUS LIFE! Score crossed %d threshold. Lives=%d", threshold, _playerLives);
 		}
 	}
 
 	// Add points to score
 	_playerScore += points;
-	debug("Rebel2: Score +%d = %d", points, _playerScore);
+	debugC(DEBUG_INSANE, "Score +%d = %d", points, _playerScore);
 }
 
 // Render score text to HUD (part of FUN_0041c012)
@@ -1371,11 +1406,12 @@ void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int 
 	char scoreStr[16];
 	Common::sprintf_s(scoreStr, "%07d", _playerScore);
 
-	// Score position from FUN_0041c012 assembly (low-res mode):
-	//   X = ((DAT_0047a808 < 2) - 1 & 0x101) + 0x101 = 0x101 = 257
-	//   Y = ((DAT_0047a808 < 2) - 1 & 4) + 4 = 4 (within status bar)
-	int scoreX = 257 + _viewX;
-	int scoreY = statusBarY + 4 + _viewY;
+	// Score position from FUN_0041c012 assembly:
+	//   X = 0x101 low-res, 0x202 high-res
+	//   Y = 4 low-res, 8 high-res (within status bar)
+	const int statusScale = isHiRes() ? 2 : 1;
+	int scoreX = 257 * statusScale + _viewX;
+	int scoreY = statusBarY + 4 * statusScale + _viewY;
 
 	// Render each digit as a NUT sprite (direct pixel blit with color 0 transparency).
 	// This matches the original's FUN_00434cb0 → FUN_004341a0 text rendering which
@@ -1399,7 +1435,7 @@ void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int 
 // ---------------------------------------------------------------------------
 // Pilot Data System
 // ---------------------------------------------------------------------------
-// Save/load pilot profiles using ScummVM's save file system.
+// Save/load pilot profiles using the save file system.
 // Original: FUN_00411980 (load) / FUN_00411A5D (save).
 
 const uint32 kPilotSaveMagic = MKTAG('R', 'A', '2', 'P');
@@ -1442,7 +1478,7 @@ bool InsaneRebel2::loadPilots() {
 		_numPilots = i + 1;
 	}
 
-	debug("Rebel2: Loaded %d pilot(s)", _numPilots);
+	debugC(DEBUG_INSANE, "Loaded %d pilot(s)", _numPilots);
 	return _numPilots > 0;
 }
 
@@ -1484,7 +1520,7 @@ bool InsaneRebel2::savePilots() {
 		_vm->_saveFileMan->removeSavefile(filename);
 	}
 
-	debug("Rebel2: Saved %d pilot(s)", _numPilots);
+	debugC(DEBUG_INSANE, "Saved %d pilot(s)", _numPilots);
 	return ok;
 }
 
@@ -1607,8 +1643,16 @@ int32 InsaneRebel2::processMouse() {
 	// Shot trigger behavior:
 	// - Handler 25 keeps edge-triggered clicks due cover-toggle/sticky input semantics.
 	// - Other gameplay handlers fire while button is held; slot counters still rate-limit.
-	bool triggerShot = (_rebelHandler == 25) ? (leftPressed && !leftWasPressed) : leftPressed;
 	bool canShoot = isShootingAllowed();
+	bool autoFire = _rebelAutoPlay && canShoot && _gameState == kStateGameplay && _rebelHandler != 0;
+	if (autoFire && _player) {
+		const int autoFirePeriod = (_rebelHandler == 8) ? 6 : 7;
+		autoFire = (_player->_frame % autoFirePeriod) == 0;
+	}
+	if (autoFire)
+		_rebelControlMode |= 1;
+
+	bool triggerShot = ((_rebelHandler == 25) ? (leftPressed && !leftWasPressed) : leftPressed) || autoFire;
 	if (_rebelHandler == 8) {
 		// FUN_00401CCF uses the same per-frame fire bit both to spawn shots and
 		// to choose the POV gun sprite. Keep the sprite driven by the event-manager
@@ -1617,7 +1661,9 @@ int32 InsaneRebel2::processMouse() {
 	}
 	if (triggerShot && canShoot) {
 		Common::Point mousePos;
-		if (_rebelHandler == 7) {
+		if (autoFire) {
+			mousePos = getRebelAutoPlayAimPoint();
+		} else if (_rebelHandler == 7) {
 			mousePos = getHandler7ShotTargetPoint();
 		} else if (_rebelHandler == 8) {
 			mousePos = getHandler8ShotTargetPoint();
@@ -1625,7 +1671,7 @@ int32 InsaneRebel2::processMouse() {
 			mousePos = getGameplayAimPoint();
 		}
 		Common::Point gameplayAim = getGameplayAimPoint();
-		debug("Rebel2 Click: Mouse=(%d,%d) Target=(%d,%d) Enemies=%d",
+		debugC(DEBUG_INSANE, "Click: Mouse=(%d,%d) Target=(%d,%d) Enemies=%d",
 			gameplayAim.x, gameplayAim.y, mousePos.x, mousePos.y, _enemies.size());
 
 		// Spawn visual shot immediately
@@ -1644,7 +1690,7 @@ int32 InsaneRebel2::processMouse() {
 		// Check for hit on any active enemy
 		Common::List<enemy>::iterator it;
 		for (it = _enemies.begin(); it != _enemies.end(); ++it) {
-			debug("  Enemy ID=%d active=%d destroyed=%d rect=(%d,%d)-(%d,%d) contains=%d",
+			debugC(DEBUG_INSANE, "  Enemy ID=%d active=%d destroyed=%d rect=(%d,%d)-(%d,%d) contains=%d",
 				it->id, it->active, it->destroyed,
 				it->rect.left, it->rect.top, it->rect.right, it->rect.bottom,
 				it->rect.contains(worldMousePos));
@@ -1653,11 +1699,11 @@ int32 InsaneRebel2::processMouse() {
 				// Enemy hit!
 				it->active = false;
 				it->destroyed = true;  // Mark as destroyed so IACT won't re-activate
-				debug("Rebel2: HIT enemy ID=%d type=%d at (%d,%d) - Rect: (%d,%d)-(%d,%d)",
+				debugC(DEBUG_INSANE, "HIT enemy ID=%d type=%d at (%d,%d) - Rect: (%d,%d)-(%d,%d)",
 					it->id, it->type, mousePos.x, mousePos.y,
 					it->rect.left, it->rect.top, it->rect.right, it->rect.bottom);
 
-				// Explosion scale is handler-specific in retail:
+				// Explosion scale is handler-specific in the original:
 				// - H8/H7/H26 use object half-width
 				// - H25 uses half-width + snapDistance (and type 100 doubles it)
 				int explosionHalfWidth = it->rect.width() / 2;
@@ -1703,7 +1749,7 @@ int32 InsaneRebel2::processMouse() {
 				// This tracks which enemy GROUPS have been killed in this wave
 				if (it->type > 0 && it->type < 32) {
 					_rebelWaveState |= (1 << it->type);
-					debug("Rebel2: Wave state updated: 0x%x (set bit %d)", _rebelWaveState, it->type);
+					debugC(DEBUG_INSANE, "Wave state updated: 0x%x (set bit %d)", _rebelWaveState, it->type);
 				}
 
 				// Increment kill counter (DAT_0047ab88)
@@ -1720,17 +1766,17 @@ int32 InsaneRebel2::processMouse() {
 					// Slot 2: Enable (Explosion?)
 					if (_rebelLinks[id][2] != 0) {
 						clearBit(_rebelLinks[id][2]);
-						debug("Rebel2: Enabled dependency Slot 2 (ID=%d) for Parent %d", _rebelLinks[id][2], id);
+						debugC(DEBUG_INSANE, "Enabled dependency Slot 2 (ID=%d) for Parent %d", _rebelLinks[id][2], id);
 					}
 					// Slot 1: Enable (Explosion?)
 					if (_rebelLinks[id][1] != 0) {
 						clearBit(_rebelLinks[id][1]);
-						debug("Rebel2: Enabled dependency Slot 1 (ID=%d) for Parent %d", _rebelLinks[id][1], id);
+						debugC(DEBUG_INSANE, "Enabled dependency Slot 1 (ID=%d) for Parent %d", _rebelLinks[id][1], id);
 					}
 					// Slot 0: Disable (Shots?)
 					if (_rebelLinks[id][0] != 0) {
 						setBit(_rebelLinks[id][0]);
-						debug("Rebel2: Disabled dependency Slot 0 (ID=%d) for Parent %d", _rebelLinks[id][0], id);
+						debugC(DEBUG_INSANE, "Disabled dependency Slot 0 (ID=%d) for Parent %d", _rebelLinks[id][0], id);
 					}
 				}
 
@@ -1768,16 +1814,60 @@ int32 InsaneRebel2::processMouse() {
 	return buttons;
 }
 
+Common::Point InsaneRebel2::getRebelAutoPlayAimPoint() {
+	Common::Point target(160, 100);
+	int bestDistance = 0x7fffffff;
+
+	for (Common::List<enemy>::iterator it = _enemies.begin(); it != _enemies.end(); ++it) {
+		if (!it->active || it->destroyed)
+			continue;
+
+		int x = (it->rect.left + it->rect.right) / 2;
+		int y = (it->rect.top + it->rect.bottom) / 2;
+		if (_rebelHandler == 8) {
+			x -= _shipPosX;
+			y -= _shipPosY;
+		} else if (_rebelHandler != 7) {
+			x -= _viewX;
+			y -= _viewY;
+		}
+
+		if (x < -32 || x > 351 || y < -32 || y > 231)
+			continue;
+
+		const int dx = x - 160;
+		const int dy = y - 100;
+		const int distance = dx * dx + dy * dy;
+		if (distance < bestDistance) {
+			bestDistance = distance;
+			target.x = CLIP<int>(x, 0, 319);
+			target.y = CLIP<int>(y, 0, 199);
+		}
+	}
+
+	return target;
+}
+
 Common::Point InsaneRebel2::getGameplayAimPoint() {
 	// Pure getter (queried many times per frame): the aim/reticle follows the virtual
 	// mouse position. Directional controls pan that position incrementally once per frame
 	// via updateGameplayAimFromGamepad(), rather than snapping the reticle to a screen edge.
+	if (_rebelAutoPlay && _gameState == kStateGameplay && !_menuInputActive)
+		return getRebelAutoPlayAimPoint();
+
+	int x = _vm->_mouse.x;
 	int y = _vm->_mouse.y;
+	if (isHiRes()) {
+		x /= 2;
+		y /= 2;
+	}
+	x = CLIP<int>(x, 0, 319);
+	y = CLIP<int>(y, 0, 199);
 	if (_optControlsFlipped) {
 		// Original DAT_0047a7fe reverses only the up/down gameplay axis.
 		y = CLIP<int>(200 - y, 0, 199);
 	}
-	return Common::Point(_vm->_mouse.x, y);
+	return Common::Point(x, y);
 }
 
 // Apply the user's configured analog deadzone so a resting stick reports no
@@ -1788,7 +1878,7 @@ int16 applyRebel2AnalogDeadzone(int16 axisValue) {
 }
 
 void InsaneRebel2::updateGameplayAimFromGamepad() {
-	if (_menuInputActive || _gameState != kStateGameplay)
+	if (_menuInputActive || _gameState != kStateGameplay || _rebelAutoPlay)
 		return;
 
 	const int dpadX = (_vm->getActionState(kScummActionInsaneRight) ? 1 : 0) -
@@ -1822,8 +1912,8 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 			activeGamepadAim = true;
 		}
 	} else if (_rebelHandler == 0x26) {
-		// Retail RA2 maps joystick axes into a small centered handler 0x26 reticle box.
-		// ScummVM deliberately exposes the full 320x200 mouse aim range for gamepads
+		// Original RA2 maps joystick axes into a small centered handler 0x26 reticle box.
+		// Gamepad aiming deliberately exposes the full 320x200 mouse aim range
 		// too, but preserves the original joystick feel: curved response for precise
 		// center aiming, and automatic return to screen center when the stick is released.
 		int axisX = 0;
@@ -1837,6 +1927,7 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 		}
 
 		if (axisX || axisY || _gamepadAimActive) {
+			const Common::Point aimPos = getGameplayAimPoint();
 			const int centerX = 160;
 			const int centerY = 100;
 			const int absAxisX = ABS(axisX);
@@ -1850,8 +1941,8 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 				centerY - curvedY * centerY / 127 :
 				centerY + curvedY * (199 - centerY) / 127;
 			const int maxStep = (axisX || axisY) ? 14 : 10;
-			const int distX = targetX - _vm->_mouse.x;
-			const int distY = targetY - _vm->_mouse.y;
+			const int distX = targetX - aimPos.x;
+			const int distY = targetY - aimPos.y;
 
 			if (distX || distY) {
 				deltaX = CLIP<int>(distX, -maxStep, maxStep);
@@ -1859,6 +1950,39 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 				activeGamepadAim = true;
 			} else {
 				_gamepadAimActive = (axisX || axisY);
+				return;
+			}
+		}
+	} else if (_rebelHandler == 7) {
+		int axisX = 0;
+		int axisY = 0;
+		if (dpadX || dpadY) {
+			axisX = dpadX * 127;
+			axisY = dpadY * 127;
+		} else {
+			axisX = velX;
+			axisY = velY;
+		}
+
+		if (axisX || axisY || _gamepadAimActive) {
+			const Common::Point aimPos = getGameplayAimPoint();
+			const int centerX = 160;
+			const int centerY = 100;
+			const int targetX = (axisX < 0) ?
+				centerX + axisX * centerX / 127 :
+				centerX + axisX * (319 - centerX) / 127;
+			const int targetY = (axisY < 0) ?
+				centerY + axisY * centerY / 127 :
+				centerY + axisY * (199 - centerY) / 127;
+			const int distX = targetX - aimPos.x;
+			const int distY = targetY - aimPos.y;
+
+			if (distX || distY) {
+				deltaX = distX;
+				deltaY = distY;
+				activeGamepadAim = true;
+			} else {
+				_gamepadAimActive = true;
 				return;
 			}
 		}
@@ -1882,8 +2006,10 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 	_gamepadAimActive = true;
 
 	// Integrate velocity into the reticle, clamped to the 320x200 play area.
-	_vm->_mouse.x = (int16)CLIP<int>(_vm->_mouse.x + deltaX, 0, 319);
-	_vm->_mouse.y = (int16)CLIP<int>(_vm->_mouse.y + deltaY, 0, 199);
+	Common::Point aimPos = getGameplayAimPoint();
+	const int scale = isHiRes() ? 2 : 1;
+	_vm->_mouse.x = (int16)(CLIP<int>(aimPos.x + deltaX, 0, 319) * scale);
+	_vm->_mouse.y = (int16)(CLIP<int>(aimPos.y + deltaY, 0, 199) * scale);
 }
 
 bool InsaneRebel2::isBitSet(int n) {
@@ -1968,7 +2094,7 @@ void InsaneRebel2::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 		if (bit1) {
 			_player->_skipNext = true;
 		}
-		debug("Rebel2 SKIP: single ID=%d bit=%d skip=%d frame=%d", par1, bit1 ? 1 : 0, _player->_skipNext ? 1 : 0, _player->_frame);
+		debugC(DEBUG_INSANE, "SKIP: single ID=%d bit=%d skip=%d frame=%d", par1, bit1 ? 1 : 0, _player->_skipNext ? 1 : 0, _player->_frame);
 	} else {
 		// Dual ID mode: skip if bits are different (XOR logic)
 		bool bit1 = isBitSet(par1);
@@ -1976,7 +2102,7 @@ void InsaneRebel2::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 		if (bit1 != bit2) {
 			_player->_skipNext = true;
 		}
-		debug("Rebel2 SKIP: dual ID1=%d(bit=%d) ID2=%d(bit=%d) skip=%d frame=%d", par1, bit1 ? 1 : 0, par2, bit2 ? 1 : 0, _player->_skipNext ? 1 : 0, _player->_frame);
+		debugC(DEBUG_INSANE, "SKIP: dual ID1=%d(bit=%d) ID2=%d(bit=%d) skip=%d frame=%d", par1, bit1 ? 1 : 0, par2, bit2 ? 1 : 0, _player->_skipNext ? 1 : 0, _player->_frame);
 	}
 }
 

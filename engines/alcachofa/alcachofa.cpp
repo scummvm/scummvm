@@ -320,7 +320,7 @@ void AlcachofaEngine::pauseEngineIntern(bool pause) {
 bool AlcachofaEngine::canLoadGameStateCurrently(U32String *msg) {
 	if (_menu == nullptr)
 		return false; // the autosave wants to trigger even during error() while starting the game
-	if (!isInSpecialGameLoop())
+	if (isInSpecialGameLoop())
 		return false;
 	return
 		(menu().isOpen() && menu().interactionSemaphore().isReleased()) ||

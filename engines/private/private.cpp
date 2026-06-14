@@ -42,6 +42,7 @@
 
 #include "private/decompiler.h"
 #include "private/grammar.h"
+#include "private/paper.h"
 #include "private/private.h"
 #include "private/savegame.h"
 #include "private/tokens.h"
@@ -59,6 +60,9 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	  _defaultCursor(nullptr),
 	  _screenW(640), _screenH(480) {
 	_highlightMasks = false;
+	_readingMaterialContrast = false;
+	_paperScanFilteringActive = false;
+	_paperScanPreviousFiltering = false;
 	_rnd = new Common::RandomSource("private");
 
 	// Global object for external reference
@@ -130,6 +134,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 }
 
 PrivateEngine::~PrivateEngine() {
+	setPaperScanFiltering(false);
 	destroyVideo();
 	destroySubtitles();
 
@@ -272,6 +277,9 @@ Common::Error PrivateEngine::run() {
 
 	if (!Common::parseBool(ConfMan.get("highlightMasks"), _shouldHighlightMasks))
 		warning("Failed to parse bool from highlightMasks options");
+
+	if (!Common::parseBool(ConfMan.get("readingMaterialContrast"), _readingMaterialContrast))
+		warning("Failed to parse bool from readingMaterialContrast options");
 
 	if (!_useSubtitles && _sfxSubtitles) {
 		warning("SFX subtitles are enabled, but no subtitles will be shown");
@@ -515,6 +523,8 @@ void PrivateEngine::initFuncs() {
 }
 
 void PrivateEngine::clearAreas() {
+	setPaperScanFiltering(false);
+
 	for (MaskList::const_iterator it = _masks.begin(); it != _masks.end(); ++it) {
 		const MaskInfo &m = *it;
 		if (m.surf != nullptr) {
@@ -2766,6 +2776,11 @@ Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name, byte *
 		swapImageColors(newImage, currentPalette, maskTransparentColor, _transparentColor);
 	}
 
+	if (_readingMaterialContrast && isPaperScanImage(path)) {
+		if (enhancePaperScanImage(newImage, currentPalette, _transparentColor))
+			setPaperScanFiltering(true);
+	}
+
 	return newImage;
 }
 
@@ -2851,6 +2866,31 @@ void PrivateEngine::swapImageColors(Graphics::Surface *image, byte *palette, uin
 				image->setPixel(x, y, a);
 			}
 		}
+	}
+}
+
+void PrivateEngine::setPaperScanFiltering(bool enabled) {
+	if (!_system->hasFeature(OSystem::kFeatureFilteringMode))
+		return;
+
+	if (enabled) {
+		if (_paperScanFilteringActive)
+			return;
+
+		_paperScanPreviousFiltering = _system->getFeatureState(OSystem::kFeatureFilteringMode);
+		if (!_paperScanPreviousFiltering) {
+			_system->beginGFXTransaction();
+			_system->setFeatureState(OSystem::kFeatureFilteringMode, true);
+			_system->endGFXTransaction();
+		}
+		_paperScanFilteringActive = true;
+	} else if (_paperScanFilteringActive) {
+		if (_system->getFeatureState(OSystem::kFeatureFilteringMode) != _paperScanPreviousFiltering) {
+			_system->beginGFXTransaction();
+			_system->setFeatureState(OSystem::kFeatureFilteringMode, _paperScanPreviousFiltering);
+			_system->endGFXTransaction();
+		}
+		_paperScanFilteringActive = false;
 	}
 }
 

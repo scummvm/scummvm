@@ -18,13 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "common/stream.h"
 
-#include "graphics/cursorman.h"
-#include "graphics/font.h"
+#include "graphics/screen.h"
 
 #include "pelrock/pelrock.h"
-#include "pelrock/types.h"
+#include "pelrock/chrono.h"
 #include "pelrock/util.h"
 
 namespace Pelrock {

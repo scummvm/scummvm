@@ -46,7 +46,7 @@ const int kRA1MenuFrameH = 0x0f;
 const int kRA1MenuRowH = 0x0f;
 const byte kRA1MenuFrameColor = 0xdf;
 // Highlight-frame geometry shared by the render*Overlay drawing and the mouse hit-testing
-// (clicking menu items is a ScummVM-exclusive feature, so the rects must stay in sync).
+// (clicking menu items is an extra feature, so the rects must stay in sync).
 const int kRA1MainMenuFrameYBase    = 0x2c;  // frame Y = (item + 1) * kRA1MenuRowH + this
 const int kRA1OptionsFrameYBase     = 0x1d;  // frame Y = (item + 1) * kRA1MenuRowH + this
 const int kRA1LevelSelectFrameYBase = 0x2c;  // frame Y = row * kRA1MenuRowH + this
@@ -76,8 +76,10 @@ static int getRebel1MenuAxisDirection(int16 axisValue) {
 
 static void setRebel1Volume(ScummEngine_v7 *vm, int &volume, int delta) {
 	volume = CLIP<int>(volume + delta, 0, 127);
-	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
-		(volume * Audio::Mixer::kMaxChannelVolume) / 127);
+	const int mixerVolume = (volume * Audio::Mixer::kMaxChannelVolume) / 127;
+	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, mixerVolume);
+	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, mixerVolume);
+	vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, mixerVolume);
 	ConfMan.setInt("music_volume", (volume * 256) / 127);
 	ConfMan.setInt("sfx_volume", (volume * 256) / 127);
 	ConfMan.setInt("speech_volume", (volume * 256) / 127);
@@ -502,12 +504,16 @@ bool InsaneRebel1::handleMenuCommand(RA1MenuCommand command) {
 			_optionsSel = (_optionsSel + 1) % kOptionsItemCount;
 			return true;
 		case kRA1MenuCommandLeft:
-			if (_optionsSel == 7)
+			if (_optionsSel == 7) {
 				setRebel1Volume(_vm, _optVolume, -5);
+				applyAudioOptions();
+			}
 			return true;
 		case kRA1MenuCommandRight:
-			if (_optionsSel == 7)
+			if (_optionsSel == 7) {
 				setRebel1Volume(_vm, _optVolume, 5);
+				applyAudioOptions();
+			}
 			return true;
 		case kRA1MenuCommandCancel:
 			_optionsSel = 0;
@@ -611,7 +617,7 @@ void InsaneRebel1::openGameplayMainMenu() {
 		_player->unpause();
 }
 
-// ScummVM-exclusive feature (not in the original game): let the player navigate and
+// Extra feature, not in the original game: let the player navigate and
 // activate the front-end menus with the mouse. Hovering highlights an item and a left
 // click activates it (same as pressing accept). The item hit-rectangles mirror the
 // highlight frames drawn by the render*Overlay() functions, so they share the
@@ -677,14 +683,14 @@ bool InsaneRebel1::handleMenuMouse(const Common::Event &event) {
 }
 
 bool InsaneRebel1::notifyEvent(const Common::Event &event) {
-	// Global ScummVM dialogs pause the engine while their modal event loop runs.
+	// Global dialogs pause the engine while their modal event loop runs.
 	// Do not consume those mouse/key events as RA1 gameplay/menu input, or the
 	// dialog buttons cannot receive clicks while an interactive video is active.
 	if (_vm->isPaused())
 		return false;
 
 	if (isTouchscreenActive() && !_interactiveVideoActive && !_menuActive &&
-			(event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)) {
+			event.type == Common::EVENT_LBUTTONDOWN) {
 		_vm->_smushVideoShouldFinish = true;
 		return true;
 	}
@@ -714,7 +720,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 				_gameplayMouseSettleUntil = now + kRA1GameplayMouseSettleExtendMs;
 				warpGameplayMouseNow(recenterX, recenterY);
 
-				debugC(DEBUG_INSANE, "RA1 mouse settle: suppress pos=(%d,%d) rel=(%d,%d) current=(%d,%d) until=%u opcode=0x%X",
+				debugC(DEBUG_INSANE, "mouse settle: suppress pos=(%d,%d) rel=(%d,%d) current=(%d,%d) until=%u opcode=0x%X",
 					event.mouse.x, event.mouse.y, event.relMouse.x, event.relMouse.y,
 					_vm->_mouse.x, _vm->_mouse.y, _gameplayMouseSettleUntil,
 					getEffectiveGameOpcode());
@@ -739,20 +745,20 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			event.type == Common::EVENT_LBUTTONDOWN)
 		_activeInputSource = kInputSourceMouse;
 
-	// ScummVM-exclusive feature: mouse navigation/clicking of the RA1 front-end menus.
+	// Extra feature: mouse navigation/clicking of the RA1 front-end menus.
 	if (handleMenuMouse(event))
 		return true;
 
 	if (event.type == Common::EVENT_JOYAXIS_MOTION) {
 		_lastJoystickAxisEventTime = _vm->_system->getMillis();
-		debugC(DEBUG_INSANE, "RA1 input raw-joy-axis: axis=%d pos=%d menu=%d gameplay=%d storedAxis=(%d,%d)",
+		debugC(DEBUG_INSANE, "input raw-joy-axis: axis=%d pos=%d menu=%d gameplay=%d storedAxis=(%d,%d)",
 			event.joystick.axis, event.joystick.position,
 			_menuActive, _interactiveVideoActive && !_menuActive,
 			_joystickAxisX, _joystickAxisY);
 	}
 
 	if (event.type == Common::EVENT_JOYBUTTON_DOWN || event.type == Common::EVENT_JOYBUTTON_UP) {
-		debugC(DEBUG_INSANE, "RA1 input raw-joy-button: button=%d pressed=%d menu=%d gameplay=%d storedAxis=(%d,%d)",
+		debugC(DEBUG_INSANE, "input raw-joy-button: button=%d pressed=%d menu=%d gameplay=%d storedAxis=(%d,%d)",
 			event.joystick.button, event.type == Common::EVENT_JOYBUTTON_DOWN,
 			_menuActive, _interactiveVideoActive && !_menuActive,
 			_joystickAxisX, _joystickAxisY);
@@ -768,12 +774,12 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		switch (event.customType) {
 		case kScummBackendActionRebel1AxisUp:
 			if (event.joystick.position == 0 && _joystickAxisY > 0) {
-				debugC(DEBUG_INSANE, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+				debugC(DEBUG_INSANE, "input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
 					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
 			}
 			_joystickAxisY = -axisPosition;
-			debugC(DEBUG_INSANE, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+			debugC(DEBUG_INSANE, "input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
 				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
 				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
 				_menuActive, _interactiveVideoActive && !_menuActive);
@@ -782,12 +788,12 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			return true;
 		case kScummBackendActionRebel1AxisDown:
 			if (event.joystick.position == 0 && _joystickAxisY < 0) {
-				debugC(DEBUG_INSANE, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+				debugC(DEBUG_INSANE, "input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
 					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
 			}
 			_joystickAxisY = axisPosition;
-			debugC(DEBUG_INSANE, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+			debugC(DEBUG_INSANE, "input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
 				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
 				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
 				_menuActive, _interactiveVideoActive && !_menuActive);
@@ -796,12 +802,12 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			return true;
 		case kScummBackendActionRebel1AxisLeft:
 			if (event.joystick.position == 0 && _joystickAxisX > 0) {
-				debugC(DEBUG_INSANE, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+				debugC(DEBUG_INSANE, "input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
 					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
 			}
 			_joystickAxisX = -axisPosition;
-			debugC(DEBUG_INSANE, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+			debugC(DEBUG_INSANE, "input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
 				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
 				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
 				_menuActive, _interactiveVideoActive && !_menuActive);
@@ -810,12 +816,12 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			return true;
 		case kScummBackendActionRebel1AxisRight:
 			if (event.joystick.position == 0 && _joystickAxisX < 0) {
-				debugC(DEBUG_INSANE, "RA1 input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
+				debugC(DEBUG_INSANE, "input mapped-axis ignored-reset: %s pos=0 current=(%d,%d)",
 					getRebel1BackendAxisName(event.customType), _joystickAxisX, _joystickAxisY);
 				return true;
 			}
 			_joystickAxisX = axisPosition;
-			debugC(DEBUG_INSANE, "RA1 input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
+			debugC(DEBUG_INSANE, "input mapped-axis: %s pos=%d rawPos=%d old=(%d,%d) new=(%d,%d) menu=%d gameplay=%d",
 				getRebel1BackendAxisName(event.customType), axisPosition, event.joystick.position,
 				oldAxisX, oldAxisY, _joystickAxisX, _joystickAxisY,
 				_menuActive, _interactiveVideoActive && !_menuActive);
@@ -831,7 +837,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
 		const bool pressed = (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START);
 
-		debugC(DEBUG_INSANE, "RA1 input mapped-action: action=%s custom=%u pressed=%d menu=%d gameplay=%d storedAxis=(%d,%d) actionState(L,R,U,D)=(%d,%d,%d,%d)",
+		debugC(DEBUG_INSANE, "input mapped-action: action=%s custom=%u pressed=%d menu=%d gameplay=%d storedAxis=(%d,%d) actionState(L,R,U,D)=(%d,%d,%d,%d)",
 			getRebel1ActionName(event.customType), event.customType, pressed,
 			_menuActive, _interactiveVideoActive && !_menuActive,
 			_joystickAxisX, _joystickAxisY,
@@ -873,9 +879,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		}
 
 		if (isTouchscreenActive() && !_interactiveVideoActive && !_menuActive && pressed &&
-				(event.customType == kScummActionInsaneAttack ||
-				 event.customType == kScummActionInsaneSwitch ||
-				 event.customType == kScummActionInsaneSkip)) {
+				event.customType == kScummActionInsaneSkip) {
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		}
@@ -947,10 +951,10 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		const uint32 elapsedSinceAxis = _lastJoystickAxisEventTime ? now - _lastJoystickAxisEventTime : 0xffffffffu;
 
 		if (_interactiveVideoActive && !_menuActive) {
-			debugC(DEBUG_INSANE, "RA1 input mainmenu-event: gameplay=1 elapsedSinceAxis=%u storedAxis=(%d,%d)",
+			debugC(DEBUG_INSANE, "input mainmenu-event: gameplay=1 elapsedSinceAxis=%u storedAxis=(%d,%d)",
 				elapsedSinceAxis, _joystickAxisX, _joystickAxisY);
 			if (elapsedSinceAxis <= kRA1JoystickAxisEscGuardMs) {
-				debugC(DEBUG_INSANE, "RA1 input ignored mainmenu event after recent joystick axis movement (%u ms)", elapsedSinceAxis);
+				debugC(DEBUG_INSANE, "input ignored mainmenu event after recent joystick axis movement (%u ms)", elapsedSinceAxis);
 				return true;
 			}
 
@@ -966,11 +970,11 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 			const uint32 now = _vm->_system->getMillis();
 			const uint32 elapsedSinceAxis = _lastJoystickAxisEventTime ? now - _lastJoystickAxisEventTime : 0xffffffffu;
-			debugC(DEBUG_INSANE, "RA1 input keydown-escape: gameplay=1 ascii=%d flags=0x%x repeat=%d elapsedSinceAxis=%u storedAxis=(%d,%d)",
+			debugC(DEBUG_INSANE, "input keydown-escape: gameplay=1 ascii=%d flags=0x%x repeat=%d elapsedSinceAxis=%u storedAxis=(%d,%d)",
 				event.kbd.ascii, event.kbd.flags, event.kbdRepeat,
 				elapsedSinceAxis, _joystickAxisX, _joystickAxisY);
 			if (elapsedSinceAxis <= kRA1JoystickAxisEscGuardMs) {
-				debugC(DEBUG_INSANE, "RA1 input ignored ESC after recent joystick axis movement (%u ms)", elapsedSinceAxis);
+				debugC(DEBUG_INSANE, "input ignored ESC after recent joystick axis movement (%u ms)", elapsedSinceAxis);
 				return true;
 			}
 
@@ -1037,6 +1041,7 @@ void InsaneRebel1::renderHighScoresOverlay(byte *dst, int pitch, int width, int 
 void InsaneRebel1::renderOptionsOverlay(byte *dst, int pitch, int width, int height) {
 	// --- Options submenu (matching original RunGameOptionsMenu) ---
 	_optTextEnabled = ConfMan.getBool("subtitles");
+	_optVolume = CLIP<int>(ConfMan.getInt("music_volume") / 2, 0, 127);
 
 	const char *kDiffNames[3] = { "EASY", "NORMAL", "HARD" };
 
@@ -1073,7 +1078,7 @@ void InsaneRebel1::renderOptionsOverlay(byte *dst, int pitch, int width, int hei
 }
 
 void InsaneRebel1::renderLevelSelectOverlay(byte *dst, int pitch, int width, int height) {
-	// --- ScummVM level select submenu, styled like the original frontend menus ---
+	// --- Extra level select submenu, styled like the original frontend menus ---
 	const int titleW = getFontBankStringWidth("LEVEL SELECT");
 	drawMenuTitleText(dst, pitch, width, height, getRebel1MenuCenteredX(titleW), 15, "LEVEL SELECT");
 
@@ -1165,7 +1170,7 @@ void InsaneRebel1::renderMainMenuItems(byte *dst, int pitch, int width, int heig
 void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int height) {
 	_menuFrameCounter++;
 
-	// ScummVM-exclusive feature: the menus are mouse-clickable, so keep the default
+	// The menus are mouse-clickable, so keep the default
 	// arrow cursor visible. SmushPlayer::play() hides the system cursor for the whole
 	// video (and re-hides it every video), so re-assert visibility each rendered frame
 	// while a menu overlay is on screen. The arrow bitmap/palette is set in
@@ -1231,7 +1236,7 @@ void InsaneRebel1::playMenuBackground() {
 	_menuActive = true;
 	_menuConfirmed = false;
 	_menuFrameCounter = 0;
-	// Show ScummVM's built-in arrow pointer for the (mouse-clickable) menus. Set it once
+	// Show the built-in arrow pointer for the mouse-clickable menus. Set it once
 	// here; renderMainMenuOverlay() re-asserts showMouse() each frame because the SMUSH
 	// player forces the cursor off while a video plays. disableCursorPalette(false) ensures
 	// the arrow's own CLUT palette is used rather than the game palette.
@@ -1282,7 +1287,7 @@ int InsaneRebel1::runPasscodeEntryDialog() {
 			_maxChapterUnlocked = MAX<int16>(_maxChapterUnlocked, i);
 			if (targetLevel <= kRA1NumLevels)
 				_startLevel = targetLevel;
-			debugC(DEBUG_INSANE, "RA1 passcode accepted: slot=%d password=%s difficulty=%d target=%d",
+			debugC(DEBUG_INSANE, "passcode accepted: slot=%d password=%s difficulty=%d target=%d",
 				i, password, _difficulty, targetLevel);
 			return targetLevel;
 		}
@@ -1298,13 +1303,13 @@ int InsaneRebel1::runPasscodeEntryDialog() {
 			_difficulty = getRebel1ThreeDOPasscodeDifficulty(i);
 			if (targetLevel <= kRA1NumLevels)
 				_startLevel = targetLevel;
-			debugC(DEBUG_INSANE, "RA1 3DO passcode accepted: slot=%d password=%s difficulty=%d target=%d",
+			debugC(DEBUG_INSANE, "3DO passcode accepted: slot=%d password=%s difficulty=%d target=%d",
 				i, password, _difficulty, targetLevel);
 			return targetLevel;
 		}
 	}
 
-	debugC(DEBUG_INSANE, "RA1 passcode rejected: '%s'", _textEntryBuffer);
+	debugC(DEBUG_INSANE, "passcode rejected: '%s'", _textEntryBuffer);
 	return 0;
 }
 
@@ -1331,7 +1336,7 @@ bool InsaneRebel1::runHighScoreNameEntry() {
 	Common::strlcpy(_highScores[slot].name, storedName.c_str(), sizeof(_highScores[slot].name));
 	_highScores[slot].difficulty = _difficulty;
 	_highScoreEntryIndex = -1;
-	debugC(DEBUG_INSANE, "RA1 high score inserted: slot=%d name=%s score=%ld difficulty=%d",
+	debugC(DEBUG_INSANE, "high score inserted: slot=%d name=%s score=%ld difficulty=%d",
 		slot, _highScores[slot].name, (long)_highScores[slot].score, _highScores[slot].difficulty);
 	return true;
 }
@@ -1357,12 +1362,11 @@ void InsaneRebel1::runOptionsMenu() {
 				break;
 			case 2: // Toggle music
 				_optMusicEnabled = !_optMusicEnabled;
-				_vm->_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, !_optMusicEnabled);
+				applyAudioOptions();
 				break;
 			case 3: // Toggle SFX + Voice
 				_optSfxEnabled = !_optSfxEnabled;
-				_vm->_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, !_optSfxEnabled);
-				_vm->_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, !_optSfxEnabled);
+				applyAudioOptions();
 				break;
 			case 4: // Toggle dialogue text
 				_optTextEnabled = !ConfMan.getBool("subtitles");

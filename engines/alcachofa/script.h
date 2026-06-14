@@ -128,7 +128,9 @@ enum class ScriptKernelTask {
 	FadeOut2,
 	LerpCamXYZ,
 	LerpCamToObjectKeepingZ,
-	Disguise
+	Disguise,
+	WaitForMouseClick, // only V2.1
+	ResetCharacter     // only V2.1
 };
 
 enum class ScriptFlags {

@@ -123,6 +123,8 @@ public:
 	void handleOtherEvent(const Common::Event &evt) override;
 	bool doGameDetection(const Common::Path &path);
 	Common::String getGameConfig(int item, Common::String key);
+	virtual const Common::Array<bool>& getSelectedItems() const = 0; // Get the selected items from the current view (list or grid)
+	const Common::StringArray& getDomains() const { return _domains; }
 protected:
 	EditTextWidget  *_searchWidget;
 #ifndef DISABLE_FANCY_THEMES
@@ -219,8 +221,6 @@ protected:
 	 */
 	bool hasAnySelection(const Common::Array<bool> &selectedItems) const;
 
-	// Get the selected items from the current view (list or grid).
-	virtual const Common::Array<bool>& getSelectedItems() const = 0;
 
 	/**
 	 * Handle "Edit game..." button.
@@ -323,6 +323,7 @@ protected:
 
 private:
 	GroupedListWidget *_list;
+	bool _listInitialized; // Whether the list has already been initialized
 };
 
 } // End of namespace GUI

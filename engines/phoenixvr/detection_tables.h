@@ -77,6 +77,16 @@ const ADGameDescription gameDescriptions[] = {
 
 	{"necrono",
 		nullptr,
+		AD_ENTRY2s("script.pak", "da42a18dd02fc01f116228d5c219b2fd", 215,
+				   "textes.txt", "ab8efb7f5e92d2b76863c181bf2dbd10", 4959),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"necrono",
+		nullptr,
 		AD_ENTRY2s("script.pak", "86294b9c445c3e06e24269c84036a207", 223,
 				   "textes.txt", "c3af2d55b4fa55d200b047b6ec0d9f73", 5507),
 		Common::DE_DEU,
@@ -114,6 +124,26 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)}
 	,
+
+	{"lochness",
+		nullptr,
+		AD_ENTRY2s("script.pak", "a7ee3aae653658f93bba7f237bcf06f3", 1904,
+				   "textes.txt", "d1546d04243ee63f9ff6c5fc551082e1", 1763),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_CD,
+		GUIO1(GUIO_NONE)}
+	,
+
+	{"lochness",
+		nullptr,
+		AD_ENTRY2s("script.pak", "a7ee3aae653658f93bba7f237bcf06f3", 1904,
+				   "textes.txt", "d1546d04243ee63f9ff6c5fc551082e1", 1763),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
 
 	{"lochness",
 		nullptr,

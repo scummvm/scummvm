@@ -39,6 +39,36 @@ namespace Freescape {
 
 FreescapeEngine *g_freescape;
 
+#ifdef IPHONE
+static const char *const kIOSGamepadControllerKey = "gamepad_controller";
+static const char *const kIOSGamepadControllerMinimalLayoutKey = "gamepad_controller_minimal_layout";
+static const char *const kIOSGamepadControllerDirectionalInputKey = "gamepad_controller_directional_input";
+static const int kIOSGamepadControllerDirectionalInputDpad = 1;
+
+static void clearIOSGamepadControllerSetting(FreescapeEngine::IOSGamepadControllerSetting &setting) {
+	setting.present = false;
+	setting.value.clear();
+}
+
+static void saveIOSGamepadControllerSetting(FreescapeEngine::IOSGamepadControllerSetting &setting,
+		const Common::ConfigManager::Domain *domain, const char *key) {
+	setting.present = domain && domain->contains(key);
+	setting.value = setting.present ? domain->getVal(key) : Common::String();
+}
+
+static void restoreIOSGamepadControllerSettingValue(const FreescapeEngine::IOSGamepadControllerSetting &setting,
+		const Common::String &domainName, const char *key) {
+	Common::ConfigManager::Domain *domain = ConfMan.getDomain(domainName);
+	if (!domain)
+		return;
+
+	if (setting.present)
+		ConfMan.set(key, setting.value, domainName);
+	else if (domain->contains(key))
+		ConfMan.removeKey(key, domainName);
+}
+#endif
+
 bool isEncodedCPCDirectColor(uint8 index) {
 	return index >= 64 && index < 96;
 }
@@ -285,13 +315,11 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_gameStateBits = 0;
 	_eventManager = new EventManagerWrapper(g_system->getEventManager());
 
-	// Workaround to make the game playable on iOS: remove when there
-	// is a better way to hint the best controls
 #ifdef IPHONE
-	const Common::String &gameDomain = ConfMan.getActiveDomainName();
-	ConfMan.setBool("gamepad_controller", true, gameDomain);
-	ConfMan.setBool("gamepad_controller_minimal_layout", true, gameDomain);
-	ConfMan.setInt("gamepad_controller_directional_input", 1 /* kDirectionalInputDpad */, gameDomain);
+	_iosGamepadControllerSettingsSaved = false;
+	clearIOSGamepadControllerSetting(_iosGamepadController);
+	clearIOSGamepadControllerSetting(_iosGamepadControllerMinimalLayout);
+	clearIOSGamepadControllerSetting(_iosGamepadControllerDirectionalInput);
 #endif
 	g_freescape = this;
 	g_debugger = new Debugger(g_freescape);
@@ -302,7 +330,55 @@ bool FreescapeEngine::isTouchscreenActive() const {
 	return _debugSimulateTouchscreen || g_system->hasFeature(OSystem::kFeatureTouchscreen);
 }
 
+void FreescapeEngine::setIOSGamepadControllerEnabled(bool enabled) {
+#ifdef IPHONE
+	if (!_iosGamepadControllerSettingsSaved) {
+		_iosGamepadControllerDomain = ConfMan.getActiveDomainName();
+		if (_iosGamepadControllerDomain.empty())
+			return;
+
+		const Common::ConfigManager::Domain *domain = ConfMan.getDomain(_iosGamepadControllerDomain);
+		saveIOSGamepadControllerSetting(_iosGamepadController, domain, kIOSGamepadControllerKey);
+		saveIOSGamepadControllerSetting(_iosGamepadControllerMinimalLayout, domain, kIOSGamepadControllerMinimalLayoutKey);
+		saveIOSGamepadControllerSetting(_iosGamepadControllerDirectionalInput, domain, kIOSGamepadControllerDirectionalInputKey);
+		_iosGamepadControllerSettingsSaved = true;
+	}
+
+	if (_iosGamepadControllerDomain.empty())
+		return;
+
+	ConfMan.setBool(kIOSGamepadControllerKey, enabled, _iosGamepadControllerDomain);
+	if (enabled) {
+		ConfMan.setBool(kIOSGamepadControllerMinimalLayoutKey, true, _iosGamepadControllerDomain);
+		ConfMan.setInt(kIOSGamepadControllerDirectionalInputKey, kIOSGamepadControllerDirectionalInputDpad, _iosGamepadControllerDomain);
+	}
+	g_system->applyBackendSettings();
+#else
+	(void)enabled;
+#endif
+}
+
+void FreescapeEngine::restoreIOSGamepadControllerSettings() {
+#ifdef IPHONE
+	if (!_iosGamepadControllerSettingsSaved)
+		return;
+
+	restoreIOSGamepadControllerSettingValue(_iosGamepadController, _iosGamepadControllerDomain, kIOSGamepadControllerKey);
+	restoreIOSGamepadControllerSettingValue(_iosGamepadControllerMinimalLayout, _iosGamepadControllerDomain, kIOSGamepadControllerMinimalLayoutKey);
+	restoreIOSGamepadControllerSettingValue(_iosGamepadControllerDirectionalInput, _iosGamepadControllerDomain, kIOSGamepadControllerDirectionalInputKey);
+	g_system->applyBackendSettings();
+
+	clearIOSGamepadControllerSetting(_iosGamepadController);
+	clearIOSGamepadControllerSetting(_iosGamepadControllerMinimalLayout);
+	clearIOSGamepadControllerSetting(_iosGamepadControllerDirectionalInput);
+	_iosGamepadControllerDomain.clear();
+	_iosGamepadControllerSettingsSaved = false;
+#endif
+}
+
 FreescapeEngine::~FreescapeEngine() {
+	restoreIOSGamepadControllerSettings();
+
 	removeTimers();
 	delete _rnd;
 
@@ -1082,6 +1158,7 @@ void FreescapeEngine::beforeStarting() {}
 
 Common::Error FreescapeEngine::run() {
 	_vsyncEnabled = g_system->getFeatureState(OSystem::kFeatureVSync);
+	setIOSGamepadControllerEnabled(false);
 	_frameLimiter = new Graphics::FrameLimiter(g_system, ConfMan.getInt("engine_speed"));
 	// Initialize graphics
 	//_screenW = g_system->getWidth();
@@ -1093,8 +1170,10 @@ Common::Error FreescapeEngine::run() {
 
 	// The following error code will force return to launcher
 	// but it will not force any other GUI message to be displayed
-	if (!_gfx)
+	if (!_gfx) {
+		restoreIOSGamepadControllerSettings();
 		return Common::kUserCanceled;
+	}
 
 	_gfx->init();
 
@@ -1136,6 +1215,7 @@ Common::Error FreescapeEngine::run() {
 			debugC(1, kFreescapeDebugMove, "Starting area %d", _currentArea->getAreaID());
 			beforeStarting();
 			_gameStateControl = kFreescapeGameStatePlaying;
+			setIOSGamepadControllerEnabled(true);
 		} else if (_gameStateControl == kFreescapeGameStateEnd)
 			endGame();
 
@@ -1174,6 +1254,7 @@ Common::Error FreescapeEngine::run() {
 	_eventManager->clearExitEvents();
 	CursorMan.showMouse(true);
 	g_system->lockMouse(false);
+	restoreIOSGamepadControllerSettings();
 	return Common::kNoError;
 }
 
@@ -1469,6 +1550,7 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 	}
 	assert(_playerHeight > 0);
 	_gameStateControl = kFreescapeGameStatePlaying;
+	setIOSGamepadControllerEnabled(true);
 	return loadGameStreamExtended(stream);
 }
 

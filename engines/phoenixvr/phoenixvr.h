@@ -27,6 +27,7 @@
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/keyboard.h"
+#include "common/ptr.h"
 #include "common/random.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
@@ -46,6 +47,10 @@
 
 namespace Graphics {
 class Font;
+}
+
+namespace Video {
+class Subtitles;
 }
 
 namespace PhoenixVR {
@@ -96,6 +101,7 @@ public:
 	bool hasFeature(EngineFeature f) const override {
 		return (f == kSupportsLoadingDuringRuntime) ||
 			   (f == kSupportsSavingDuringRuntime) ||
+			   (f == kSupportsSubtitleOptions) ||
 			   (f == kSupportsReturnToLauncher);
 	};
 
@@ -175,6 +181,7 @@ public:
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	void drawSlot(int idx, int face, int x, int y);
+	void drawSaveCard(int idx);
 	void captureContext();
 
 	void setContextLabel(const Common::String &contextLabel) {
@@ -185,6 +192,7 @@ public:
 
 	bool wasRestarted() const { return _restarted; }
 	bool wasLoaded() const { return _loaded; }
+	uint currentAmerzoneLevel() const;
 
 	void saveVariables();
 	void loadVariables();
@@ -215,6 +223,10 @@ private:
 	void renderFade(int color);
 	void resetState();
 	const Graphics::Font *getFont(int size, bool bold) const;
+	Common::Path getSubtitlePath(const Common::String &path) const;
+	Common::SharedPtr<Video::Subtitles> loadSubtitles(const Common::String &path) const;
+	void setupSubtitles(Video::Subtitles &subtitles) const;
+	void drawAudioSubtitles();
 
 private:
 	bool _hasFocus = true;
@@ -242,6 +254,7 @@ private:
 		float angle;
 		uint8 volume;
 		int loops;
+		Common::SharedPtr<Video::Subtitles> subtitles;
 	};
 	Common::HashMap<Common::String, Sound, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _sounds;
 	Common::ScopedPtr<Script> _script;
@@ -272,11 +285,11 @@ private:
 	Common::Array<byte> _capturedState;
 	Common::Array<byte> _loadedState;
 
-	Common::HashMap<int, Common::String> _textes;
+	Common::HashMap<int, Common::U32String> _textes;
 
-	Common::ScopedPtr<Graphics::Font> _font12;
-	Common::ScopedPtr<Graphics::Font> _font14;
-	Common::ScopedPtr<Graphics::Font> _font18;
+	static const int kFontSizeCount = 6;
+	Common::ScopedPtr<Graphics::Font> _regularFonts[kFontSizeCount];
+	Common::ScopedPtr<Graphics::Font> _boldFonts[kFontSizeCount];
 
 	Common::ScopedPtr<Graphics::ManagedSurface> _text;
 	Common::Rect _textRect;

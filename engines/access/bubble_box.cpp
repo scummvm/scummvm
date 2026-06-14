@@ -98,9 +98,11 @@ void BubbleBox::clearBubbles() {
 void BubbleBox::placeBubble(const Common::String &msg) {
 	switch (_vm->getGameID()) {
 		case kGameMartianMemorandum: 	_vm->_screen->_maxChars = 30; break;
+		case kGameCountdown:			_vm->_screen->_maxChars = 40; break;
 		case kGameAmazon: 				_vm->_screen->_maxChars = 27; break;
 		// All Noctropolis messages are pre-wrapped.
 		case kGameNoctropolis: 			_vm->_screen->_maxChars = 200; break;
+		default: error("Unsupported game type in BubbleBox::placeBubble()");
 	}
 	placeBubble1(msg);
 }

@@ -21,11 +21,6 @@
 #ifndef PELROCK_SMALLFONTDOUBLE_H
 #define PELROCK_SMALLFONTDOUBLE_H
 
-#include "common/file.h"
-#include "common/str.h"
-#include "graphics/font.h"
-#include "graphics/surface.h"
-
 #include "pelrock/fonts/small_font.h"
 
 namespace Pelrock {

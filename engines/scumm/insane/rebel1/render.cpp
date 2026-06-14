@@ -47,8 +47,8 @@ int ra1GameplayWindowOffsetX(const InsaneRebel1 *rebel1) {
 	if (!rebel1 || !rebel1->isInteractiveVideoActive())
 		return 0;
 
-	// Ship/cursor/shot coordinates are in DOS's 320x200 gameplay window. Under
-	// ScummVM's FUN_224FD crop emulation, shift them into the 384x242 source
+	// Ship/cursor/shot coordinates are in DOS's 320x200 gameplay window.
+	// FUN_224FD crop emulation shifts them into the 384x242 source
 	// buffer so the final source-window crop presents them at the same screen
 	// position DOS used for gameplay and collision.
 	switch (rebel1->getEffectiveGameOpcode()) {
@@ -453,7 +453,7 @@ void renderSpriteWithFlags(byte *dst, int pitch, int width, int height,
 	}
 }
 
-// ScummVM-side helper only: the original keeps this shot-sprite math inline in
+// Helper only: the original keeps this shot-sprite math inline in
 // several GAME handlers. It is collapsed here because the direction/lerp/render
 // sequence is identical for one-beam shot sprites.
 void renderAimedShotSprite(byte *dst, int pitch, int width, int height,
@@ -481,7 +481,7 @@ void renderAimedShotPair(byte *dst, int pitch, int width, int height,
 		start2X, start2Y, targetX, targetY, lerp);
 }
 
-// ScummVM-side helper for the 0x0B fallback edge-beam path. The original keeps
+// Helper for the 0x0B fallback edge-beam path. The original keeps
 // the bucket lookup inline with the renderer, but both left/right beams share it.
 void renderBucketedShotSprite(byte *dst, int pitch, int width, int height,
 		const RA1SpriteBank &laserBank, int startX, int startY, int targetX, int targetY,
@@ -672,7 +672,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			shotOverlayHandled = true;
 			if (_health >= 0) {
 				// HandleGameOp5A_ObjectOrSceneTrigger can snap g_shipPos to the
-				// target center before the shot overlay runs. The ScummVM player
+				// target center before the shot overlay runs. The player
 				// defers GAME 0x1A until after FOBJ dispatch, so preserve that
 				// snap instead of immediately replacing it with raw input again.
 				const bool preserveTargetSnap = (_targetProximity == 2 && _tuning.snap > 0);
@@ -834,7 +834,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	_fireCooldown = _playerFired ? 1 : 0;
 }
 
-// ScummVM helper that groups the common shot/lock overlay calls used by the
+// Helper that groups the common shot/lock overlay calls used by the
 // original GAME handlers. GAME 0x1A uses the same pipeline without the target
 // box draw; 0x09/0x0A/0x0B include DrawTargetIndicators first. GAME 0x0B
 // defers FUN_1CB22 targeting until post-render so FTCH can restore cockpit
@@ -907,6 +907,12 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 	const RA1SpriteBank &markerBank = (_techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank;
 	const int overlayX = ra1GameplayWindowOffsetX(this);
 	const int overlayY = ra1GameplayWindowOffsetY(this);
+
+	if (_targetProximity > 0 && _prevTargetProx == 0)
+		playSfx(kSfxLockOn, 127, 0);
+	else if (_targetProximity == 0 && _prevTargetProx != 0)
+		stopSfx(kSfxLockOn);
+
 	if (markerBank.numSprites > 0) {
 		// FUN_1CB22 can switch marker sets via DAT_75FF bit 1.
 		// Baseline RA1 targeting uses '^' and animation e..h.
@@ -953,7 +959,7 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 
 // handleLevel14Play2BSplice — RunLevel14Flow (0x1ACD1) queues L14PLY2B.ANM
 // from inside the L14PLAY2 loop when the current clip reaches maxFrame - 0x0F.
-// This helper is a ScummVM-side extraction; the original keeps the PlayAnmFile
+// This helper is an implementation extraction; the original keeps the PlayAnmFile
 // call inline and passes the old L14PLAY2 timeline frame to the ANM frame gate.
 void InsaneRebel1::handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame) {
 	if (_currentLevel != 13 || _levelGameplayPhase != 2 || _level14Play2BSpliced ||
@@ -1355,7 +1361,7 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 				const int start1Y = shipBaseY + emit.y1;
 				const int start2X = shipBaseX + emit.x2;
 				const int start2Y = shipBaseY + emit.y2;
-				debugC(DEBUG_INSANE, "RA1 op09 shotRender: frame=%d timer=%d shipBase=(%d,%d) target=(%d,%d) emit1=(%d,%d) emit2=(%d,%d) dir=%d variant=%d mode=%d",
+				debugC(DEBUG_INSANE, "op09 shotRender: frame=%d timer=%d shipBase=(%d,%d) target=(%d,%d) emit1=(%d,%d) emit2=(%d,%d) dir=%d variant=%d mode=%d",
 					_gameCounter, timer, shipBaseX, shipBaseY, targetX, targetY,
 					start1X, start1Y, start2X, start2Y, _shipDirIndex,
 					_shotSlots[i].variant, _flyControlMode);
@@ -1499,7 +1505,7 @@ void InsaneRebel1::beginChapterSummaryOverlay(int revealOffsetFromEnd, int stopO
 	}
 }
 
-// ScummVM keeps the passcodes in clear text. The DOS table is XOR-0xAA
+// Passcodes are kept in clear text. The DOS table is XOR-0xAA
 // encoded in 15 20-byte slots at DS:0x00A4.
 static const char *const kChapterCompletePasswords[] = {
 	"FALCON", "BIGGS", "ACKBAR", "ANOAT", "KAIBURR",
@@ -1515,7 +1521,7 @@ const char *InsaneRebel1::getChapterCompletePassword(int passwordIndex) const {
 }
 
 // drawChapterSummaryOverlay — RunChapterCompleteSummaryScreen (0x15E42), shared by
-// the RA1 runlevel flows that call it. This helper is a ScummVM-side extraction;
+// the RA1 runlevel flows that call it. This helper is an implementation extraction;
 // the original pumps frontend frames from the runlevel after queueing the END ANM.
 void InsaneRebel1::drawChapterSummaryOverlay(byte *dst, int pitch, int width, int height,
 		int32 curFrame, int32 maxFrame) {
@@ -1771,6 +1777,7 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 	// Extra life bonus: every 10,000 points (FUN_1BBCB lines 11-27)
 	if (_score / 10000 > _prevScore / 10000) {
 		_lives++;
+		playSfx(kSfxBonus, 127, 0);
 	}
 	_prevScore = _score;
 
@@ -1897,6 +1904,8 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 			// FUN_1BBCB pushes string pointers 0x671b ("<<[") or 0x671f ("<<\\") into FUN_221B7.
 			const char *warningStr = aboveCritical ? "<<[" : "<<\\";
 			drawFontBankString(dst, pitch, width, height, hudX + 0x49, hudY + 0x07, warningStr);
+			if (!aboveCritical && ((_frameCounter & 0x7) == 0))
+				playSfx(kSfxKlaxon, 127, 0);
 		}
 	}
 
@@ -2006,7 +2015,7 @@ void InsaneRebel1::updateLevel8WalkerState() {
 			_pendingRouteIndex = newRoute;
 			_pendingRouteCutoverFrame = _gameCounter + 7;
 			_pendingRouteStartFrame = _pendingRouteCutoverFrame;
-			debugC(DEBUG_INSANE, "RA1 L8 branch: route=%d -> %d at frame=%u shipX=%d resumeTimelineFrame=%d cutoverFrame=%d",
+			debugC(DEBUG_INSANE, "L8 branch: route=%d -> %d at frame=%u shipX=%d resumeTimelineFrame=%d cutoverFrame=%d",
 				route, newRoute, (unsigned)_gameCounter, _shipPosX,
 				(int)_pendingRouteStartFrame, (int)_pendingRouteCutoverFrame);
 		}

@@ -91,14 +91,18 @@ void SmushMultiFont::drawString(const char *str, byte *buffer, Common::Rect &cli
 }
 
 void SmushMultiFont::drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int16 col, TextStyleFlags flags) {
+	drawStringWrap(str, buffer, clipRect, x, y, _vm->_screenWidth, col, flags);
+}
+
+void SmushMultiFont::drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags) {
 	// Reset to default font before drawing
 	_currentFont = _defaultFont;
 	if (_vm->_game.id == GID_REBEL2) {
 		Rebel2FontSet fontSet = getRebel2FontSet();
-		drawRebel2StringWrap(fontSet, str, strlen(str), buffer, clipRect, x, y, _vm->_screenWidth, col, flags);
+		drawRebel2StringWrap(fontSet, str, strlen(str), buffer, clipRect, x, y, pitch, col, flags);
 		return;
 	}
-	_textRenderer->drawStringWrap(str, buffer, clipRect, x, y, _vm->_screenWidth, col, flags);
+	_textRenderer->drawStringWrap(str, buffer, clipRect, x, y, pitch, col, flags);
 }
 
 int SmushMultiFont::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) {

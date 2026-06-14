@@ -171,7 +171,8 @@ void GroupedListWidget::loadClosedGroups(const Common::U32String &groupName) {
 			// See if the hidden group is in our group headers still, if so, hide it
 			for (Common::U32StringArray::size_type i = 0; i < _groupHeaders.size(); ++i) {
 				if (_groupHeaders[i] == tok || (tok == "unnamed" && _groupHeaders[i].size() == 0)) {
-					_groupExpanded[i] = false;
+					uint groupID = _groupValueIndex[_groupHeaders[i]];
+					_groupExpanded[groupID] = false;
 					break;
 				}
 			}
@@ -184,7 +185,8 @@ void GroupedListWidget::saveClosedGroups(const Common::U32String &groupName) {
 	// Save the hidden groups to the config
 	Common::String hiddenGroups;
 	for (Common::U32StringArray::size_type i = 0; i < _groupHeaders.size(); ++i) {
-		if (!_groupExpanded[i]) {
+		uint groupID = _groupValueIndex[_groupHeaders[i]];
+		if (!_groupExpanded[groupID]) {
 			if (_groupHeaders[i].size()) {
 				hiddenGroups += _groupHeaders[i];
 			} else {
@@ -266,6 +268,7 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 	if (button == 1) {
 		_dragStartY = y;
 		_dragLastY = y;
+		_wasAnimating = _fluidScroller->isAnimating();
 		_fluidScroller->stopAnimation();
 	}
 
@@ -281,7 +284,7 @@ void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 		if (_isMouseDown && button == 1 && _isDragging)
 			_fluidScroller->startFling();
 
-		if (_isMouseDown && !_isDragging) {
+		if (_isMouseDown && !_isDragging && !_wasAnimating) {
 			int newSelectedItem = findItem(x, y);
 			if (newSelectedItem != -1) {
 				if (isGroupHeader(_listIndex[newSelectedItem])) {
@@ -347,12 +350,13 @@ void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 
 	// If this was a double click and the mouse is still over
 	// the selected item, send the double click command
-	if (clickCount == 2 && (_selectedItem == findItem(x, y))) {
+	if (!_wasAnimating && clickCount == 2 && (_selectedItem == findItem(x, y))) {
 		int selectID = getSelected();
 		if (selectID >= 0) {
 			sendCommand(kListItemDoubleClickedCmd, _selectedItem);
 		}
 	}
+	_wasAnimating = false;
 }
 
 void GroupedListWidget::handleMouseWheel(int x, int y, int direction) {
@@ -537,8 +541,6 @@ void GroupedListWidget::setFilter(const Common::U32String &filter, bool redraw) 
 	if (_filter == filt) // Filter was not changed
 		return;
 
-	int selectedItem = getSelected();
-
 	_filter = filt;
 
 	if (_filter.empty()) {
@@ -578,9 +580,7 @@ void GroupedListWidget::setFilter(const Common::U32String &filter, bool redraw) 
 	_scrollPos = 0.0f;
 	_fluidScroller->setPosition(_scrollPos);
 	_selectedItem = -1;
-	// Try to preserve the previous selection
-	if (selectedItem != -1)
-		setSelected(selectedItem);
+	_lastSelectionStartItem = -1;
 
 	if (redraw) {
 		scrollBarRecalc();

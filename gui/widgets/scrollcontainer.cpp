@@ -49,6 +49,7 @@ void ScrollContainerWidget::init() {
 	_scrollPos = 0.0f;
 	_limitH = 140;
 	_fluidScroller = new FluidScroller();
+	_wasAnimating = false;
 	recalc();
 }
 
@@ -62,7 +63,11 @@ void ScrollContainerWidget::handleMouseWheel(int x, int y, int direction) {
 void ScrollContainerWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	_mouseDownY = _mouseDownStartY = y;
 	_isMouseDown = true;
+	_wasAnimating = _fluidScroller->isAnimating();
 	_fluidScroller->stopAnimation();
+	if (_wasAnimating)
+		return;
+
 	Widget *child = _childUnderMouse;
 	if (child) {
 		int childX = x - (child->getAbsX() - getAbsX());
@@ -124,11 +129,12 @@ void ScrollContainerWidget::handleMouseUp(int x, int y, int button, int clickCou
 	_isDragging = false;
 	_childUnderMouse = nullptr;
 
-	if (!isDragging && child) {
+	if (!isDragging && child && !_wasAnimating) {
 		int childX = x - (child->getAbsX() - getAbsX());
 		int childY = y - (child->getAbsY() - getAbsY());
 		child->handleMouseUp(childX, childY, button, clickCount);
 	}
+	_wasAnimating = false;
 }
 
 void ScrollContainerWidget::recalc() {
@@ -251,6 +257,7 @@ void ScrollContainerWidget::markAsDirty() {
 void ScrollContainerWidget::lostFocusWidget() {
 	_isMouseDown = _isDragging = false;
 	_mouseDownY = _mouseDownStartY = 0;
+	_wasAnimating = false;
 }
 
 bool ScrollContainerWidget::containsWidget(Widget *w) const {

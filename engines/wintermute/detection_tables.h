@@ -4266,6 +4266,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("rhiannon", "",
 		WME_ENTRY1s("data.dcp", "38e104ce1ebaf73e81446ab4344e1ad7", 1025512723), Common::DE_DEU, ADGF_NO_FLAGS, WME_1_8_10),
 
+	// Rhiannon: Curse of the four Branches (Russian Logrus / 1C Company)
+	// TRAC report #16648
+	WME_WINENTRY("rhiannon", "",
+		WME_ENTRY1s("data.dcp", "c833d8e6b25ba0b44cc22ee2421eab68", 1024584340), Common::RU_RUS, ADGF_NO_FLAGS, WME_1_8_10),
+
 	// Rhiannon: Curse of the four Branches (English PC DVD)
 	WME_WINENTRY("rhiannon", "DVD",
 		WME_ENTRY1s("data.dcp", "6736bbc921bb6ce5161b3ad095a97bd4", 1053441028), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_8_6),

@@ -21,9 +21,6 @@
 #ifndef PELROCK_PATHFINDING_H
 #define PELROCK_PATHFINDING_H
 
-#include "common/scummsys.h"
-#include "graphics/screen.h"
-
 #include "pelrock/types.h"
 
 namespace Pelrock {

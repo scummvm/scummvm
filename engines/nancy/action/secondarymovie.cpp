@@ -56,7 +56,7 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	ser.syncAsUint16LE(_videoType, kGameTypeNancy7);
 	ser.skip(2, kGameTypeVampire, kGameTypeNancy9); // videoPlaySource
 	ser.syncAsUint16LE(_videoFormat);
-	if (g_nancy->getGameType() >= kGameTypeNancy11)
+	if (g_nancy->getGameType() >= kGameTypeNancy10)
 		_videoFormat = kLargeVideoFormat;
 	ser.skip(4, kGameTypeVampire, kGameTypeVampire); // paletteStart, paletteSize
 	ser.skip(2, kGameTypeVampire, kGameTypeNancy9);  // hasBitmapOverlaySurface
@@ -69,7 +69,12 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	ser.syncAsUint16LE(_lastFrame);
 
 	ser.syncAsSint16LE(_sceneChange.sceneID, kGameTypeNancy10);
-	ser.skip(5 * 2, kGameTypeNancy10);	// TODO
+	ser.skip(3 * 2, kGameTypeNancy10);	// TODO
+
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		ser.syncAsSint16LE(_videoStartFlag.label);
+		ser.syncAsUint16LE(_videoStartFlag.flag);
+	}
 
 	if (ser.getVersion() >= kGameTypeNancy1) {
 		uint size = 15;
@@ -169,6 +174,9 @@ void PlaySecondaryMovie::execute() {
 		}
 
 		NancySceneState.setActiveMovie(this);
+
+		if (g_nancy->getGameType() >= kGameTypeNancy10)
+			NancySceneState.setEventFlag(_videoStartFlag);
 
 		_state = kRun;
 

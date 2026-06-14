@@ -120,6 +120,12 @@ void SoundManager::playSound(int soundIndex, bool loop /* = false */) {
 		// Prevent duplicate copies of a sound from being queued
 		return;
 
+	if (soundIndex >= (int)_soundTable.size()) {
+		// Happens in Noctropolis demo 2
+		warning("Request to play sound with invalid index %d.", soundIndex);
+		return;
+	}
+
 	int priority = _soundTable[soundIndex]._priority;
 	playSound(_soundTable[soundIndex]._res, priority, loop, soundIndex);
 }
@@ -249,6 +255,11 @@ void SoundManager::loadSounds(const Common::Array<RoomInfo::SoundIdent> &sounds)
 
 int SoundManager::loadRawSound(const Common::Path &path, int priority) {
 	debugC(1, kDebugSound, "loadRawSound(%s)", path.toString().c_str());
+	if (!_vm->_files->existFile(path)) {
+		// In Noctropolis demo 2 intro sounds are not included
+		warning("Request to load missing sound file '%s'.", path.toString().c_str());
+		return -1;
+	}
 	Resource *soundRes = _vm->_files->loadRawFile(path);
 	_soundTable.push_back(SoundEntry(soundRes, priority));
 	return _soundTable.size() - 1;

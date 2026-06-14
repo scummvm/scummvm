@@ -136,23 +136,23 @@ static void global_menu_score() {
 	text_index[1] = 250;
 
 	if (score <= 25) {
-		text_index[2] = 1;          /* Stage sweeper */
+		text_index[2] = 1;          /* Dogsbody */
 	} else if (score <= 50) {
-		text_index[2] = 2;          /* Dresser */
+		text_index[2] = 2;          /* Varlet */
 	} else if (score <= 75) {
-		text_index[2] = 3;          /* Usher */
+		text_index[2] = 3;          /* Yeoman */
 	} else if (score <= 100) {
-		text_index[2] = 4;          /* Stagehand */
+		text_index[2] = 4;          /* Squire */
 	} else if (score <= 150) {
-		text_index[2] = 5;          /* Chorus Member */
+		text_index[2] = 5;          /* Knight */
 	} else if (score <= 200) {
-		text_index[2] = 6;          /* Supporting Player */
+		text_index[2] = 6;          /* Petty Noble */
 	} else if (score <= 249) {
-		text_index[2] = 7;          /* Star Player */
+		text_index[2] = 7;          /* Noble */
 	} else if (score <= 250) {
-		text_index[2] = 8;          /* Director */
+		text_index[2] = 8;          /* King */
 	} else {
-		text_index[2] = 9;          /* Bug Finder! */
+		text_index[2] = 9;          /* King+ */
 	}
 
 	text_show(99);

@@ -147,7 +147,7 @@ void Font::read(Common::SeekableReadStream &stream) {
 	}
 
 	if (g_nancy->getGameType() >= kGameTypeNancy6) {
-		_fontHeight = getCharWidth('o') * 2 - 1;
+		_fontHeight = (getCharWidth('o') - 1) * 2;
 	}
 
 	_textboxData = GetEngineData(TBOX);

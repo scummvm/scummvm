@@ -26,6 +26,7 @@
 
 #include "common/system.h"
 #include "common/util.h"
+#include "common/config-manager.h"
 #include "gui/animation/FluidScroll.h"
 
 namespace GUI {
@@ -66,7 +67,7 @@ float FluidScroller::VelocityTracker::calculateVelocity() const {
 	for (int i = 0; i < 4 && i < count - 1; ++i) {
 		int i1 = (index + kHistorySize - 1 - i) % kHistorySize; // current point
 		int i2 = (index + kHistorySize - 2 - i) % kHistorySize; // previous point
-		
+
 		uint32 dt = samples[i1].time - samples[i2].time;
 
 		if (dt > 0)
@@ -77,7 +78,7 @@ float FluidScroller::VelocityTracker::calculateVelocity() const {
 
 	if (validVelocities == 0)
 		return 0.0f;
-	
+
 	// Weighted average of historical velocities
 	float totalVelocity = 0.0f;
 	float totalWeight = 0.0f;
@@ -90,12 +91,12 @@ float FluidScroller::VelocityTracker::calculateVelocity() const {
 	return totalVelocity / totalWeight;
 }
 
-FluidScroller::FluidScroller() : 
-	_mode(kModeNone), 
-	_startTime(0), 
-	_scrollPosRaw(0.0f), 
-	_animationOffset(0.0f), 
-	_maxScroll(0.0f), 
+FluidScroller::FluidScroller() :
+	_mode(kModeNone),
+	_startTime(0),
+	_scrollPosRaw(0.0f),
+	_animationOffset(0.0f),
+	_maxScroll(0.0f),
 	_stepSize(1.0f),
 	_viewportHeight(0),
 	_lastWheelTime(0),
@@ -127,6 +128,10 @@ void FluidScroller::stopAnimation() {
 
 void FluidScroller::feedDrag(uint32 time, int deltaY) {
 	_scrollPosRaw += (float)deltaY;
+	if (!ConfMan.getBool("gui_kinetic_scrolling")) {
+		_scrollPosRaw = CLIP(_scrollPosRaw, 0.0f, _maxScroll);
+		return;
+	}
 	_velocityTracker.addPoint(time, _scrollPosRaw);
 }
 
@@ -142,7 +147,7 @@ void FluidScroller::startFling() {
 }
 
 void FluidScroller::startFling(float velocity) {
-	if (fabsf(velocity) < 0.1f) {
+	if (!ConfMan.getBool("gui_kinetic_scrolling") || fabsf(velocity) < 0.1f) {
 		checkBoundaries();
 		return;
 	}
@@ -160,7 +165,7 @@ void FluidScroller::feedWheel(uint32 time, float deltaY) {
 	/*
 	 * Cap the duration to prevent extreme high/low velocity
 	 * Otherwise use the actual interval
-	 */ 
+	 */
 	uint32 effectiveDt = dt;
 	if (dt > 200)
 		effectiveDt = 200;
@@ -183,13 +188,18 @@ void FluidScroller::handleMouseWheel(int direction, float multiplier) {
 	if (stepping == 0.0f)
 		return;
 
+	if (!ConfMan.getBool("gui_kinetic_scrolling")) {
+		_scrollPosRaw = CLIP(_scrollPosRaw + stepping, 0.0f, _maxScroll);
+		_mode = kModeNone;
+		return;
+	}
 	feedWheel(g_system->getMillis(), stepping);
 }
 
 void FluidScroller::absorb(float velocity, float distance) {
 	_mode = kModeSpringBack;
 	_startTime = g_system->getMillis();
-	
+
 	_lambda = 2.0f * (float)M_PI / kDefaultSpringResponse;
 	_stretchDistance = distance;
 
@@ -198,8 +208,15 @@ void FluidScroller::absorb(float velocity, float distance) {
 }
 
 bool FluidScroller::update(uint32 time, float &outVisualPos) {
+	if (!ConfMan.getBool("gui_kinetic_scrolling")) {
+		_mode = kModeNone;
+	}
 	if (_mode == kModeNone) {
-		outVisualPos = getVisualPosition();
+		float visualPos = getVisualPosition();
+		if (outVisualPos != visualPos) {
+			outVisualPos = visualPos;
+			return true;
+		}
 		return false;
 	}
 
@@ -248,17 +265,24 @@ bool FluidScroller::update(uint32 time, float &outVisualPos) {
 }
 
 float FluidScroller::getVisualPosition() const {
+	if (!ConfMan.getBool("gui_kinetic_scrolling"))
+		return CLIP(_scrollPosRaw, 0.0f, _maxScroll);
 	float rubberBandRange = (float)_viewportHeight * kRubberBandStretchFraction;
 
 	if (_scrollPosRaw < 0)
 		return -calculateRubberBandOffset(-_scrollPosRaw, rubberBandRange);
 	else if (_scrollPosRaw > _maxScroll)
 		return _maxScroll + calculateRubberBandOffset(_scrollPosRaw - _maxScroll, rubberBandRange);
-	
+
 	return _scrollPosRaw;
 }
 
 void FluidScroller::checkBoundaries() {
+	if (!ConfMan.getBool("gui_kinetic_scrolling")) {
+		_scrollPosRaw = CLIP(_scrollPosRaw, 0.0f, _maxScroll);
+		_mode = kModeNone;
+		return;
+	}
 	if (_scrollPosRaw < 0) {
 		absorb(0, _scrollPosRaw);
 		_animationOffset = 0;

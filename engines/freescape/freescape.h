@@ -369,6 +369,19 @@ public:
 	bool _useWASDControls;
 	bool _debugSimulateTouchscreen;
 	bool isTouchscreenActive() const;
+	void setIOSGamepadControllerEnabled(bool enabled);
+	void restoreIOSGamepadControllerSettings();
+#ifdef IPHONE
+	struct IOSGamepadControllerSetting {
+		bool present;
+		Common::String value;
+	};
+	bool _iosGamepadControllerSettingsSaved;
+	Common::String _iosGamepadControllerDomain;
+	IOSGamepadControllerSetting _iosGamepadController;
+	IOSGamepadControllerSetting _iosGamepadControllerMinimalLayout;
+	IOSGamepadControllerSetting _iosGamepadControllerDirectionalInput;
+#endif
 	// Player movement state
 	bool _moveForward;
 	bool _moveBackward;

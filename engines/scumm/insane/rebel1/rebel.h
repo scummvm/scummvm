@@ -291,6 +291,8 @@ private:
 	void loadSfx();
 	void freeSfx();
 	void playSfx(int slot, int volume, int pan);
+	void stopSfx(int slot);
+	void applyAudioOptions();
 	void queueAudioData(int trackIdx, uint8 *data, int32 size, int volume, int pan);
 public:
 	void drawFontBankString(byte *dst, int pitch, int width, int height, int x, int y, const char *text);
@@ -458,7 +460,7 @@ private:
 	int _difficulty;
 
 	// Per-difficulty tuning (from assault_data_3.bin, indexed: difficulty * 0x28B + level * 0x1F)
-	// Original game loads from C:\rebltune.txt; ScummVM uses hardcoded table.
+	// Original game loads from C:\rebltune.txt; use a hardcoded table.
 	// 21 sub-levels (1A,1B,2,3,4A,4B,5A,5B,6,7,8,9A,9B,10,11,12,13,14A,14B,15A,15B)
 	struct TuningParams {
 		int16 roll;      // +0x05: horizontal speed/sensitivity
@@ -501,7 +503,8 @@ private:
 	byte _hudRenderFlag;         // 0x7600: 0xFF when HUD should render (set by combat mode handlers)
 	byte _hudDirtyFlag;          // 0x7601: 0xFF after HUD redraw (set by renderHUD)
 	int16 _maxChapterUnlocked;   // 0x7730: highest unlocked passcode slot (0=none)
-	bool _unlockAllLevels;       // ScummVM option: expose level select without passcodes
+	bool _unlockAllLevels;       // Option: expose level select without passcodes
+	bool _noDamage;              // Option: suppress player damage
 
 	static const int16 kMaxHealth = 98;
 	static const int16 kDeathTimerInit = 30;
@@ -562,7 +565,7 @@ private:
 	bool handleMenuCommand(RA1MenuCommand command);
 	bool handleControllerMenuAction(ScummAction action);
 	bool handleControllerMenuAxis(int16 oldAxisX, int16 oldAxisY);
-	// ScummVM-exclusive feature: navigate/click the menus with the mouse.
+	// Extra feature: navigate/click the menus with the mouse.
 	bool handleMenuMouse(const Common::Event &event);
 	bool handleTextEntryAction(ScummAction action);
 	bool handleTextEntryKey(const Common::Event &event);
@@ -594,7 +597,7 @@ private:
 	bool _optSfxEnabled;      // DAT_22b8: sfx+voice on/off
 	bool _optTextEnabled;     // DAT_22b9: dialogue text on/off
 	bool _optControlsYFlip;   // DAT_22be: Y-axis inversion
-	bool _optRapidFire;       // ScummVM option: held fire keeps shooting
+	bool _optRapidFire;       // Option: held fire keeps shooting
 	int  _optVolume;          // DAT_22c1: master volume 0..127
 
 	// High scores / TOP PILOTS display — data at DS:0x1D0

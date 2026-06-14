@@ -23,7 +23,6 @@
 #define PELROCK_METAENGINE_H
 
 #include "engines/advancedDetector.h"
-#include "graphics/surface.h"
 
 class PelrockMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:

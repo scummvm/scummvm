@@ -134,25 +134,84 @@ Common::KeymapArray HypnoMetaEngine::initKeymaps(const char *target) const {
 	act = new Common::Action(kStandardActionLeftClick, _("Primary shoot"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
-	act->addDefaultInputMapping("JOY_A");
 	engineKeymap->addAction(act);
 
 	act = new Common::Action(kStandardActionRightClick, _("Secondary shoot"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("PRIMARYSHOOT", _("Primary shoot"));
+	act->setCustomEngineActionEvent(kActionPrimaryShoot);
+	act->addDefaultInputMapping("JOY_A");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("SECONDARYSHOOT", _("Rapid fire / secondary action"));
+	act->setCustomEngineActionEvent(kActionSecondaryShoot);
 	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("AIMLEFT", _("Aim left"));
+	act->setCustomEngineActionEvent(kActionAimLeft);
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("AIMDOWN", _("Aim down"));
+	act->setCustomEngineActionEvent(kActionAimDown);
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("AIMRIGHT", _("Aim right"));
+	act->setCustomEngineActionEvent(kActionAimRight);
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("AIMUP", _("Aim up"));
+	act->setCustomEngineActionEvent(kActionAimUp);
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("STICKLEFT", _("Stick left"));
+	act->setCustomBackendActionAxisEvent(kActionAimLeft);
+	act->addDefaultInputMapping("JOY_LEFT_STICK_X-");
+	act->addDefaultInputMapping("JOY_RIGHT_STICK_X-");
+	act->addDefaultInputMapping("JOY_HAT_X-");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("STICKDOWN", _("Stick down"));
+	act->setCustomBackendActionAxisEvent(kActionAimDown);
+	act->addDefaultInputMapping("JOY_LEFT_STICK_Y+");
+	act->addDefaultInputMapping("JOY_RIGHT_STICK_Y+");
+	act->addDefaultInputMapping("JOY_HAT_Y+");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("STICKRIGHT", _("Stick right"));
+	act->setCustomBackendActionAxisEvent(kActionAimRight);
+	act->addDefaultInputMapping("JOY_LEFT_STICK_X+");
+	act->addDefaultInputMapping("JOY_RIGHT_STICK_X+");
+	act->addDefaultInputMapping("JOY_HAT_X+");
+	engineKeymap->addAction(act);
+
+	act = new Common::Action("STICKUP", _("Stick up"));
+	act->setCustomBackendActionAxisEvent(kActionAimUp);
+	act->addDefaultInputMapping("JOY_LEFT_STICK_Y-");
+	act->addDefaultInputMapping("JOY_RIGHT_STICK_Y-");
+	act->addDefaultInputMapping("JOY_HAT_Y-");
 	engineKeymap->addAction(act);
 
 	act = new Common::Action("SKIPINTRO", _("Skip intro"));
 	act->setCustomEngineActionEvent(kActionSkipIntro);
 	act->addDefaultInputMapping("ESCAPE");
-	act->addDefaultInputMapping("JOY_Y");
+	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("JOY_START");
 	introKeymap->addAction(act);
 
 	act = new Common::Action("SKIPCUTSCENE", _("Skip cutscene"));
 	act->setCustomEngineActionEvent(kActionSkipCutscene);
 	act->addDefaultInputMapping("ESCAPE");
-	act->addDefaultInputMapping("JOY_Y");
+	act->addDefaultInputMapping("JOY_B");
+	act->addDefaultInputMapping("JOY_START");
 	cutsceneKeymap->addAction(act);
 
 	keymaps.push_back(engineKeymap);
@@ -172,7 +231,6 @@ Common::KeymapArray HypnoMetaEngine::initKeymaps(const char *target) const {
 			act = new Common::Action("SKIPLEVEL", _("Skip level (cheat)"));
 			act->setCustomEngineActionEvent(kActionSkipLevel);
 			act->addDefaultInputMapping("c");
-			act->addDefaultInputMapping("JOY_X");
 			gameKeymap->addAction(act);
 		}
 
@@ -180,13 +238,12 @@ Common::KeymapArray HypnoMetaEngine::initKeymaps(const char *target) const {
 		act = new Common::Action("KILLPLAYER", _("Kill player"));
 		act->setCustomEngineActionEvent(kActionKillPlayer);
 		act->addDefaultInputMapping("k");
-		act->addDefaultInputMapping("JOY_LEFT");
 		gameKeymap->addAction(act);
 
 		act = new Common::Action("PAUSE", _("Pause"));
 		act->setCustomEngineActionEvent(kActionPause);
 		act->addDefaultInputMapping("ESCAPE");
-		act->addDefaultInputMapping("JOY_UP");
+		act->addDefaultInputMapping("JOY_START");
 		gameKeymap->addAction(act);
 
 		act = new Common::Action("YES", _("Yes"));
@@ -270,7 +327,6 @@ Common::KeymapArray HypnoMetaEngine::initKeymaps(const char *target) const {
 			act = new Common::Action("SKIPLEVEL", _("Skip level (cheat)"));
 			act->setCustomEngineActionEvent(kActionSkipLevel);
 			act->addDefaultInputMapping("c");
-			act->addDefaultInputMapping("JOY_X");
 			gameKeymap->addAction(act);
 		}
 
@@ -278,7 +334,12 @@ Common::KeymapArray HypnoMetaEngine::initKeymaps(const char *target) const {
 		act = new Common::Action("KILLPLAYER", _("Kill player"));
 		act->setCustomEngineActionEvent(kActionKillPlayer);
 		act->addDefaultInputMapping("k");
-		act->addDefaultInputMapping("JOY_Y");
+		gameKeymap->addAction(act);
+
+		act = new Common::Action("PAUSE", _("Pause"));
+		act->setCustomEngineActionEvent(kActionPause);
+		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_START");
 		gameKeymap->addAction(act);
 
 		act = new Common::Action("LEFT", _("Move left"));
@@ -316,60 +377,86 @@ Common::KeymapArray HypnoMetaEngine::initKeymaps(const char *target) const {
 		act = new Common::Action("CREDITS", _("Show credits"));
 		act->setCustomEngineActionEvent(kActionCredits);
 		act->addDefaultInputMapping("c");
-		act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
 		gameKeymap->addAction(act);
 
 		act = new Common::Action("SKIPLEVEL", _("Skip level (cheat)"));
 		act->setCustomEngineActionEvent(kActionSkipLevel);
 		act->addDefaultInputMapping("s");
-		act->addDefaultInputMapping("JOY_X");
 		gameKeymap->addAction(act);
 
 		// I18N: (Game name: Wetlands) player refers to the users own character.
 		act = new Common::Action("KILLPLAYER", _("Kill player"));
 		act->setCustomEngineActionEvent(kActionKillPlayer);
 		act->addDefaultInputMapping("k");
-		act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
 		gameKeymap->addAction(act);
 
 		act = new Common::Action("LEFT", _("Move left"));
 		act->setCustomEngineActionEvent(kActionLeft);
 		act->allowKbdRepeats();
 		act->addDefaultInputMapping("LEFT");
-		act->addDefaultInputMapping("JOY_LEFT");
 		directionKeymap->addAction(act);
 
 		act = new Common::Action("DOWN", _("Move down"));
 		act->setCustomEngineActionEvent(kActionDown);
 		act->allowKbdRepeats();
 		act->addDefaultInputMapping("DOWN");
-		act->addDefaultInputMapping("JOY_DOWN");
 		directionKeymap->addAction(act);
 
 		act = new Common::Action("RIGHT", _("Move right"));
 		act->setCustomEngineActionEvent(kActionRight);
 		act->allowKbdRepeats();
 		act->addDefaultInputMapping("RIGHT");
-		act->addDefaultInputMapping("JOY_RIGHT");
 		directionKeymap->addAction(act);
 
 		act = new Common::Action("UP", _("Move up"));
 		act->setCustomEngineActionEvent(kActionUp);
 		act->allowKbdRepeats();
 		act->addDefaultInputMapping("UP");
-		act->addDefaultInputMapping("JOY_UP");
 		directionKeymap->addAction(act);
+
+		act = new Common::Action("MENULEFT", _("Menu left"));
+		act->setCustomEngineActionEvent(kActionLeft);
+		act->addDefaultInputMapping("LEFT");
+		act->addDefaultInputMapping("JOY_LEFT");
+		act->addDefaultInputMapping("JOY_LEFT_STICK_X-");
+		act->addDefaultInputMapping("JOY_HAT_X-");
+		menuKeymap->addAction(act);
+
+		act = new Common::Action("MENUDOWN", _("Menu down"));
+		act->setCustomEngineActionEvent(kActionDown);
+		act->addDefaultInputMapping("DOWN");
+		act->addDefaultInputMapping("JOY_DOWN");
+		act->addDefaultInputMapping("JOY_LEFT_STICK_Y+");
+		act->addDefaultInputMapping("JOY_HAT_Y+");
+		menuKeymap->addAction(act);
+
+		act = new Common::Action("MENURIGHT", _("Menu right"));
+		act->setCustomEngineActionEvent(kActionRight);
+		act->addDefaultInputMapping("RIGHT");
+		act->addDefaultInputMapping("JOY_RIGHT");
+		act->addDefaultInputMapping("JOY_LEFT_STICK_X+");
+		act->addDefaultInputMapping("JOY_HAT_X+");
+		menuKeymap->addAction(act);
+
+		act = new Common::Action("MENUUP", _("Menu up"));
+		act->setCustomEngineActionEvent(kActionUp);
+		act->addDefaultInputMapping("UP");
+		act->addDefaultInputMapping("JOY_UP");
+		act->addDefaultInputMapping("JOY_LEFT_STICK_Y-");
+		act->addDefaultInputMapping("JOY_HAT_Y-");
+		menuKeymap->addAction(act);
 
 		act = new Common::Action("SELECT", _("Select"));
 		act->setCustomEngineActionEvent(kActionSelect);
 		act->addDefaultInputMapping("RETURN");
+		act->addDefaultInputMapping("JOY_A");
 		act->addDefaultInputMapping("JOY_X");
 		menuKeymap->addAction(act);
 
 		act = new Common::Action("PAUSE", _("Pause"));
 		act->setCustomEngineActionEvent(kActionPause);
 		act->addDefaultInputMapping("ESCAPE");
-		act->addDefaultInputMapping("JOY_Y");
+		act->addDefaultInputMapping("JOY_START");
 		pauseKeymap->addAction(act);
 
 		keymaps.push_back(gameKeymap);
@@ -396,4 +483,3 @@ REGISTER_PLUGIN_DYNAMIC(HYPNO, PLUGIN_TYPE_ENGINE, HypnoMetaEngine);
 #else
 REGISTER_PLUGIN_STATIC(HYPNO, PLUGIN_TYPE_ENGINE, HypnoMetaEngine);
 #endif
-

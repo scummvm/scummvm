@@ -22,14 +22,10 @@
 #ifndef PELROCK_BACKGROUNDBOOK_H
 #define PELROCK_BACKGROUNDBOOK_H
 
-#include "common/array.h"
-#include "common/rect.h"
-#include "common/str.h"
-#include "graphics/managed_surface.h"
-
-#include "pelrock/pelrock.h"
-
 namespace Pelrock {
+class PelrockEventManager;
+class ResourceManager;
+class RoomManager;
 
 class BackgroundBook {
 

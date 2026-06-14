@@ -3,19 +3,31 @@
 #include "graphics/surface.h"
 
 namespace PhoenixVR {
+
+static Common::String readSaveText(Common::SeekableReadStream &stream) {
+	const uint32 size = stream.readUint32LE();
+	Common::String result;
+
+	for (uint32 i = 0; i < size; ++i) {
+		const byte c = stream.readByte();
+		if (c == 0) {
+			result += '\n';
+		} else {
+			result += static_cast<char>(c);
+		}
+	}
+
+	return result;
+}
+
 GameState GameState::load(Common::SeekableReadStream &stream) {
 	GameState state;
 
-	auto readString = [&]() {
-		auto size = stream.readUint32LE();
-		return stream.readString(0, size);
-	};
-
-	state.script = readString();
+	state.script = readSaveText(stream);
 	debug("save.script: %s", state.script.c_str());
-	state.game = readString();
+	state.game = readSaveText(stream);
 	debug("save.game: %s", state.game.c_str());
-	state.info = readString();
+	state.info = readSaveText(stream);
 	debug("save.datetime: %s", state.info.c_str());
 	uint dibHeaderSize = stream.readUint32LE();
 	stream.seek(-4, SEEK_CUR);

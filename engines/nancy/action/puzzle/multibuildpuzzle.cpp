@@ -33,6 +33,10 @@
 namespace Nancy {
 namespace Action {
 
+// Nancy 10 TODOs:
+//  - completion-animation playback (data read, never rendered)
+//  - _retainState save/restore via a PuzzleData entry
+//  - 4th cursor id, 7 × 33-byte string slots, per-piece reserved rect
 void MultiBuildPuzzle::init() {
 	g_nancy->_resource->loadImage(_primaryImageName, _primaryImage);
 	_primaryImage.setTransparentColor(_drawSurface.getTransparentColor());
@@ -86,12 +90,18 @@ void MultiBuildPuzzle::registerGraphics() {
 }
 
 void MultiBuildPuzzle::readData(Common::SeekableReadStream &stream) {
+	const bool isNancy10 = g_nancy->getGameType() >= kGameTypeNancy10;
+
 	readFilename(stream, _primaryImageName);
 
 	Common::String secName;
 	readFilename(stream, secName);
 	_closeupImageName = Common::Path(secName);
 	_hasCloseupImage = (secName != "NO_FILE" && !secName.empty());
+
+	if (isNancy10) {
+		_retainState = stream.readByte() != 0;	// TODO: state isn't saved yet
+	}
 
 	_numPieces = stream.readUint16LE();
 	_requiredPieces = stream.readUint16LE();
@@ -108,29 +118,60 @@ void MultiBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	_allowAltZoneSnap = stream.readByte() != 0;
 	_checkOverlapOnDrop = stream.readByte() != 0;
 
+	if (isNancy10) {
+		// Completion-animation block: image name + sprite-sheet rect + 4 layout
+		// shorts (cols, framesPerStep, spacing, totalRows). TODO: not wired up.
+		Common::String animName;
+		readFilename(stream, animName);
+		_animImageName = Common::Path(animName);
+		_hasAnimImage = (animName != "NO_FILE" && !animName.empty());
+		readRect(stream, _animRect);
+		for (uint i = 0; i < 4; ++i)
+			_animLayout[i] = stream.readSint16LE();
+	}
+
 	// Pieces: data file always has 20 × 67-byte slots; only _numPieces are used.
 	// Reserve up-front so counter-spawn push_back doesn't reallocate (pieces are
 	// RenderObjects already registered with the graphics manager).
+	// In Nancy 10, the pieces have been bumped up to 83.
 	_pieces.reserve(80);
 	_pieces.resize(_numPieces);
 	for (uint i = 0; i < 20; ++i) {
 		if (i < _numPieces) {
 			Piece &p = _pieces[i];
-			readRect(stream, p.srcRect);
-			readRect(stream, p.homeRect);
-			readRect(stream, p.altSrcRect);
-			readRect(stream, p.cuSrcRect);
-			p.counterByte  = stream.readByte();
-			p.mustPlace    = stream.readByte();
-			p.mustNotPlace = stream.readByte();
+			if (isNancy10) {
+				stream.skip(16); // TODO: leading reserved rect, empty in cake puzzle.
+				readRect(stream, p.srcRect);
+				readRect(stream, p.altSrcRect);
+				readRect(stream, p.cuSrcRect);
+				readRect(stream, p.placedDstRect);
+				p.counterByte  = stream.readByte();
+				p.mustPlace    = stream.readByte();
+				p.mustNotPlace = stream.readByte();
+				p.homeRect = p.srcRect;
+			} else {
+				readRect(stream, p.srcRect);
+				readRect(stream, p.homeRect);
+				readRect(stream, p.altSrcRect);
+				readRect(stream, p.cuSrcRect);
+				p.counterByte  = stream.readByte();
+				p.mustPlace    = stream.readByte();
+				p.mustNotPlace = stream.readByte();
+			}
 		} else {
-			stream.skip(67);
+			stream.skip(isNancy10 ? 83 : 67);
 		}
 	}
 
 	_rotationSound.readNormal(stream);
 	_pickupSound.readNormal(stream);
 	_dropSound.readNormal(stream);
+
+	if (isNancy10) {
+		_animSound.readNormal(stream);
+		stream.skip(7 * 33);	// TODO: 7 unknown strings
+		stream.skip(2); // TODO: 4th cursor id at the front of the block; role TBD.
+	}
 
 	_dragCursorID  = stream.readSint16LE();
 	_exitCursorID1 = stream.readSint16LE();
@@ -369,6 +410,14 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 	if (!viewData)
 		return;
 	Common::Rect vpScreen = viewData->screenPosition;
+
+	// Exit hotspots can sit below the viewport (cake mixing).
+	if (!_isDragging && _selectedPiece == -1 && !vpScreen.contains(input.mousePos)) {
+		if (!checkExitHotspot(_exitHotspot, _exitCursorID1, input))
+			checkExitHotspot(_exitHotspot2, _exitCursorID2, input);
+		return;
+	}
+
 	if (!vpScreen.contains(input.mousePos))
 		return;
 
@@ -411,19 +460,27 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 
 			if (validDrop) {
 				pp.isPlaced = true;
+				const bool isNancy10 = g_nancy->getGameType() >= kGameTypeNancy10;
+				if (isNancy10) {
+					// Clone placements bump the source piece's counter.
+					int srcIdx = (pp.typeIdx >= 0) ? pp.typeIdx : placedIdx;
+					if (_pieces[srcIdx].placeCount < 255)
+						_pieces[srcIdx].placeCount++;
+				}
 				g_nancy->_sound->playSound(_dropSound);
 
 				// Counter pieces respawn at home for unlimited supply.
 				if (pp.counterByte != 0)
 					spawnCounterPiece(placedIdx);
+
+				if (isNancy10)
+					updateSolveFlags();
 			} else {
 				pp.gameRect = pp.homeRect;
 			}
 
 			updatePieceRender(placedIdx);
 
-			// Solve check runs on drop for puzzles with _autoSolveOnDrop, and
-			// also once piece count grows past the original's auto-solve trigger.
 			if (_autoSolveOnDrop || _pieces.size() > 79)
 				checkIfSolved();
 
@@ -568,30 +625,66 @@ void MultiBuildPuzzle::checkIfSolvedOnExit() {
 	}
 }
 
+bool MultiBuildPuzzle::updateSolveFlags() {
+	uint16 total = 0;
+	for (uint i = 0; i < _numPieces; ++i) {
+		if (_pieces[i].counterByte == 0 || _allowAltZoneSnap)
+			total += _pieces[i].placeCount;
+	}
+	total += (uint16)(_pieces.size() - _numPieces);
+
+	if (total < _requiredPieces)
+		return false;
+
+	if (_cancelScene._flag.label != kFlagNoLabel)
+		NancySceneState.setEventFlag(_cancelScene._flag);
+
+	// Preemptively clear the solve flag; the exact-match check below re-sets it.
+	if (_solveScene._flag.label != kFlagNoLabel)
+		NancySceneState.setEventFlag(_solveScene._flag.label, _solveScene._flag.flag ? 0 : 1);
+
+	for (uint i = 0; i < _numPieces; ++i) {
+		if (_pieces[i].placeCount > 0 && _pieces[i].mustNotPlace > 0)
+			return false;
+		if (_pieces[i].placeCount != _pieces[i].mustPlace)
+			return false;
+	}
+
+	if (_solveScene._flag.label != kFlagNoLabel)
+		NancySceneState.setEventFlag(_solveScene._flag);
+
+	return true;
+}
+
 void MultiBuildPuzzle::checkIfSolved() {
-	// Count = placed pieces with counterByte == 0, plus the spawn delta
-	// (so counter-piece puzzles like sandwich count each placement).
-	uint16 count = 0;
-	for (uint i = 0; i < _numPieces; ++i) {
-		if (_pieces[i].isPlaced && _pieces[i].counterByte == 0)
-			++count;
-	}
-	count += (uint16)(_pieces.size() - _numPieces);
+	const bool isNancy10 = g_nancy->getGameType() >= kGameTypeNancy10;
 
-	if (count < _requiredPieces)
-		return;
-
-	// Bail without solving on any constraint failure.
-	for (uint i = 0; i < _numPieces; ++i) {
-		if (_pieces[i].isPlaced && _pieces[i].mustNotPlace)
+	if (isNancy10) {
+		// Exact-count match; solveScene == kNoScene means the dialog handles
+		// the transition via the solve flag set in updateSolveFlags.
+		bool exactMatch = updateSolveFlags();
+		if (!exactMatch || _solveScene._sceneChange.sceneID == kNoScene)
 			return;
-		if (!_pieces[i].isPlaced && _pieces[i].mustPlace)
+	} else {
+		// Nancy 9: bool placement semantics, no per-drop flag setting.
+		uint16 count = 0;
+		for (uint i = 0; i < _numPieces; ++i) {
+			if (_pieces[i].isPlaced && _pieces[i].counterByte == 0)
+				++count;
+		}
+		count += (uint16)(_pieces.size() - _numPieces);
+
+		if (count < _requiredPieces)
 			return;
+
+		for (uint i = 0; i < _numPieces; ++i) {
+			if (_pieces[i].isPlaced && _pieces[i].mustNotPlace)
+				return;
+			if (!_pieces[i].isPlaced && _pieces[i].mustPlace)
+				return;
+		}
 	}
 
-	// Play sound + caption inline (rather than parking in kPlaySolveSound for
-	// execute() to pick up) so the transition is deterministic regardless of
-	// action-record processing order.
 	_isSolved = true;
 	g_nancy->_sound->playSound(_solveSound);
 
@@ -621,6 +714,18 @@ void MultiBuildPuzzle::updatePieceRender(int pieceIdx) {
 	Piece &p = _pieces[pieceIdx];
 	bool isSelected = (!_isDragging && pieceIdx == _selectedPiece);
 	bool isDragging  = (_isDragging  && pieceIdx == _pickedUpPiece);
+
+	// Nancy 10: at-rest pieces are baked into the primary overlay; placed
+	// pieces hide too when the completion animation will cover them.
+	if (g_nancy->getGameType() >= kGameTypeNancy10 && !isDragging && !isSelected) {
+		if (!p.isPlaced || _hasAnimImage) {
+			p.setVisible(false);
+			p.moveTo(p.gameRect);
+			return;
+		}
+	}
+
+	p.setVisible(true);
 
 	if (p.isPlaced || isDragging) {
 		// Placed or being dragged: show rotation sprite.

@@ -364,7 +364,10 @@ Common::String detokenise8bitCondition(Common::Array<uint16> &tokenisedCondition
 			currentInstruction = FCLInstruction(Token::SWAPJET);
 			conditionalInstructions->push_back(currentInstruction);
 			currentInstruction = FCLInstruction(Token::UNKNOWN);
-			bytePointer++;
+			// The 16-bit Amiga/Atari token stream stores SWAPJET without a
+			// padding argument. The 8-bit data has one unused byte here.
+			if (!isAmigaAtari)
+				bytePointer++;
 			numberOfArguments = 0;
 			break;
 

@@ -22,7 +22,6 @@
 #define PELROCK_ACTIONS_H
 
 #include "pelrock/pelrock.h"
-#include "pelrock/types.h"
 
 namespace Pelrock {
 

@@ -157,7 +157,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 		_machineType = 9;	// Macintosh IIci
 	}
 
-	_playbackPaused = false;
 	_centerStage = true;
 
 	_surface = nullptr;
@@ -225,6 +224,7 @@ void DirectorEngine::forgetWindow(Window *window) {
 			return;
 	}
 	window->setVisible(false, true);
+	window->getSoundManager()->stopSound();
 	_windowsToForget.push_back(window);
 }
 

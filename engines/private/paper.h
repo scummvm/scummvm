@@ -18,38 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef PELROCK_EVENTS_H
-#define PELROCK_EVENTS_H
 
-#include "common/events.h"
+#ifndef PRIVATE_PAPER_H
+#define PRIVATE_PAPER_H
 
-namespace Pelrock {
-static const int kDoubleClickDelay = 300; // in milliseconds
-class PelrockEventManager {
-private:
-	Common::Event _event;
-	uint32 _clickTime = 0;
+#include "common/scummsys.h"
 
-public:
-	int16 _mouseX = 0;
-	int16 _mouseY = 0;
-	int16 _mouseClickX = 0;
-	int16 _mouseClickY = 0;
-	int16 _releaseX = 0;
-	int16 _releaseY = 0;
-	bool _leftMouseClicked = false;
-	bool _longClicked = false;
-	bool _rightMouseClicked = false;
-	bool _popupSelectionMode = false;
-	bool _leftMouseButton = false;
-	bool _rightMouseButton = false;
-	bool _isKeydown = false;
-	Common::KeyCode _lastKeyEvent = Common::KEYCODE_INVALID;
-	uint16 _lastKeyAscii = 0;
-	PelrockEventManager();
-	void pollEvent();
-	void waitForKey();
-};
+namespace Common {
+class Path;
+}
 
-} // End of namespace Pelrock
-#endif
+namespace Graphics {
+struct Surface;
+}
+
+namespace Private {
+
+bool isPaperScanImage(const Common::Path &path);
+bool enhancePaperScanImage(Graphics::Surface *image, const byte *palette, byte transparentColor);
+
+} // End of namespace Private
+
+#endif // PRIVATE_PAPER_H

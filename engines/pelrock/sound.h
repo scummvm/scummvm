@@ -23,9 +23,6 @@
 #define PELROCK_SOUND_H
 
 #include "audio/mixer.h"
-#include "common/file.h"
-#include "common/scummsys.h"
-#include "common/str.h"
 
 namespace Pelrock {
 

@@ -69,7 +69,7 @@ public:
 	void drawGroup(Renderer *gfx, Group *group, bool runAnimation);
 	void show();
 
-	Object *checkCollisionRay(const Math::Ray &ray, int raySize);
+	Object *checkCollisionRay(const Math::Ray &ray, int raySize, bool skipTransparent = false);
 	bool checkInSight(const Math::Ray &ray, float maxDistance);
 	Math::Vector3d separateFromWall(const Math::Vector3d &position);
 	ObjectArray checkCollisions(const Math::AABB &boundingBox);

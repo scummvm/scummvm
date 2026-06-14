@@ -21,15 +21,14 @@
 #ifndef PELROCK_MENU_H
 #define PELROCK_MENU_H
 
-#include "graphics/font.h"
-#include "graphics/managed_surface.h"
-#include "graphics/screen.h"
-
-#include "pelrock/events.h"
-#include "pelrock/resources.h"
-#include "pelrock/sound.h"
-
+namespace Graphics {
+class Screen;
+}
 namespace Pelrock {
+
+class PelrockEventManager;
+class ResourceManager;
+class SoundManager;
 
 enum MainMenuButton {
 	QUESTION_MARK_BUTTON,

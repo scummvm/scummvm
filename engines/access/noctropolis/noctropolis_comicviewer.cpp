@@ -72,7 +72,15 @@ void ComicViewer::run(const ComicResource *comic) {
 PageResult ComicViewer::runPage(const ComicPage *page) {
 	PageResult result = kPageResultNone;
 
-	_vm->_files->loadScreen(Common::Path(page->filename));
+	Common::Path pagePath(page->filename);
+
+	if (!_vm->_files->existFile(pagePath)) {
+		// Happens in Demo 2 - no comic files
+		warning("Request to load missing comic page '%s'.", pagePath.toString().c_str());
+		return kPageResultExit;
+	}
+
+	_vm->_files->loadScreen(pagePath);
 
 	Resource *bubbleData = _vm->_files->loadRawFile("COMDATA/comic.ap");
 	_bubbleSprites = new SpriteResource(_vm, bubbleData);

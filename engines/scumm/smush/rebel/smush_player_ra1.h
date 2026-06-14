@@ -65,7 +65,8 @@ private:
 	void ra1HandleFade(int32 subSize, Common::SeekableReadStream &b);
 	SmushFont *ra1GetFont(int font);
 	void ra1HandleText(int32 subSize, Common::SeekableReadStream &b);
-	void ra1HandleFrameAudioChunk(int32 subSize, Common::SeekableReadStream &b);
+	void ra1HandleFrameAudioChunk(uint32 subType, int32 subSize, Common::SeekableReadStream &b);
+	void ra1FeedAudio(uint32 subType, uint8 *srcBuf, int groupId, int volume, int pan, int16 flags);
 	void ra1HandleGameFrameChunk(int32 subSize, Common::SeekableReadStream &b, bool fastForwarding);
 	void ra1HandleObjOverlayFrameChunk(int32 objDataSize, Common::SeekableReadStream &b, bool fastForwarding);
 	bool ra1HandleUnknownFrameChunk(uint32 subType, int32 subSize);

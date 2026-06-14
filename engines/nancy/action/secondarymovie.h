@@ -83,6 +83,7 @@ public:
 	uint16 _lastFrame = 0;
 	Common::Array<FlagAtFrame> _frameFlags;
 	MultiEventFlagDescription _triggerFlags;
+	FlagDescription _videoStartFlag;
 
 	SoundDescription _sound;
 

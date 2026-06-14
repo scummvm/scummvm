@@ -633,7 +633,7 @@ void LB::b_integer(int nargs) {
 		//   put i & " = " & integer("12345" & numToChar(i))
 		// end repeat
 		if (endPtr && endPtr != src.c_str() && (
-			(*endPtr >= 0 && *endPtr < 45) ||
+			(*endPtr < 45) ||
 			(*endPtr == 47) ||
 			(*endPtr >= 58 && *endPtr < 65) ||
 			(*endPtr >= 91 && *endPtr < 95) ||
@@ -1954,7 +1954,7 @@ void LB::b_cancelIdleLoad(int nargs) {
 }
 
 void LB::b_continue(int nargs) {
-	g_director->_playbackPaused = false;
+	g_director->getCurrentWindow()->_playbackPaused = false;
 }
 
 void LB::b_dontPassEvent(int nargs) {
@@ -2087,7 +2087,7 @@ void LB::b_pass(int nargs) {
 }
 
 void LB::b_pause(int nargs) {
-	g_director->_playbackPaused = true;
+	g_director->getCurrentWindow()->_playbackPaused = true;
 }
 
 void LB::b_play(int nargs) {

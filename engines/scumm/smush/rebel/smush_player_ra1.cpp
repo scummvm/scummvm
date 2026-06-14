@@ -286,7 +286,7 @@ bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 					top += _ra1ViewportOffsetY;
 				} else {
 					ra1ApplyCenteredFetchPlacement(rebel1, _storedFobjWidth, _storedFobjHeight, left, top);
-					// ScummVM currently emulates the RA1 camera with a source-window crop
+					// RA1 camera emulation currently uses a source-window crop
 					// for interactive scenes. FTCH placement from the original executable
 					// is computed in fixed presentation space, so convert it back into the
 					// cropped buffer space used by the current renderer.
@@ -296,13 +296,13 @@ bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 			}
 		}
 
-		debugC(DEBUG_SMUSH, "RA1 FTCH: frame=%d id=0x%08x pos=(%d,%d) using stored FOBJ codec=%d size=%dx%d",
+		debugC(DEBUG_SMUSH, "FTCH: frame=%d id=0x%08x pos=(%d,%d) using stored FOBJ codec=%d size=%dx%d",
 			_frame, fetchId, left, top, storedCodec, _storedFobjWidth, _storedFobjHeight);
 		decodeFrameObject(storedCodec, _storedFobjData, left, top,
 			_storedFobjWidth, _storedFobjHeight, _storedFobjDataSize,
 			storedParam, _storedFobjParm2);
 	} else {
-		debugC(DEBUG_SMUSH, "RA1 FTCH: frame=%d id=0x%08x with no stored FOBJ data", _frame, fetchId);
+		debugC(DEBUG_SMUSH, "FTCH: frame=%d id=0x%08x with no stored FOBJ data", _frame, fetchId);
 	}
 
 	return true;
@@ -319,7 +319,7 @@ void SmushPlayerRebel1::ra1HandleGost(int32 subSize, Common::SeekableReadStream 
 	const int32 ghostY = b.readSint32BE();
 
 	if (!_hasFrameFobjForGost || _lastFobjData == nullptr || _lastFobjDataSize <= 0) {
-		debugC(DEBUG_SMUSH, "RA1 GOST: frame=%d ignored type=0x%08x pos=(%d,%d) (no current-frame FOBJ cached)",
+		debugC(DEBUG_SMUSH, "GOST: frame=%d ignored type=0x%08x pos=(%d,%d) (no current-frame FOBJ cached)",
 			_frame, ghostType, ghostX, ghostY);
 		return;
 	}
@@ -336,18 +336,18 @@ void SmushPlayerRebel1::ra1HandleGost(int32 subSize, Common::SeekableReadStream 
 		priorityFlags = 0x6000;
 		break;
 	default:
-		debugC(DEBUG_SMUSH, "RA1 GOST: frame=%d ignored unknown type=0x%08x pos=(%d,%d)",
+		debugC(DEBUG_SMUSH, "GOST: frame=%d ignored unknown type=0x%08x pos=(%d,%d)",
 			_frame, ghostType, ghostX, ghostY);
 		return;
 	}
 
-	debugC(DEBUG_SMUSH, "RA1 GOST: frame=%d type=0x%08x flags=0x%04x pos=(%d,%d) size=%dx%d codec=%d",
+	debugC(DEBUG_SMUSH, "GOST: frame=%d type=0x%08x flags=0x%04x pos=(%d,%d) size=%dx%d codec=%d",
 		_frame, ghostType, priorityFlags, ghostX, ghostY,
 		_lastFobjWidth, _lastFobjHeight, _lastFobjCodec);
 
 	// DOS reuses the most recent FOBJ payload for RA1 GOST and places it at the
 	// absolute BE32 coordinates stored in the chunk. Priority bits are identified
-	// here but not yet modeled in the generic ScummVM decode path.
+	// here but not yet modeled in the generic decode path.
 	decodeFrameObject(_lastFobjCodec, _lastFobjData, ghostX, ghostY,
 		_lastFobjWidth, _lastFobjHeight, _lastFobjDataSize);
 }
@@ -416,7 +416,7 @@ void SmushPlayerRebel1::ra1HandleDeltaPalette(int32 subSize, Common::SeekableRea
 			b.skip(remaining);
 
 		// Command 2 in the DOS dispatcher first restores the palette state before
-		// loading a new delta table. ScummVM keeps the active palette in _pal, so
+		// loading a new delta table. The active palette lives in _pal, so
 		// marking it dirty is the corresponding visible-side effect.
 		if (command == 2)
 			setDirtyColors(0, 255);
@@ -638,7 +638,7 @@ bool SmushPlayerRebel1::handleGameStoreFrame() {
 }
 
 void SmushPlayerRebel1::handleGameFrameObjectPre(int codec, int left, int top, int width, int height, int dataSize) {
-	debugC(DEBUG_SMUSH, "RA1 FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d",
+	debugC(DEBUG_SMUSH, "FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d",
 		_frame, codec, left, top, width, height, dataSize, _storeFrame);
 }
 
@@ -765,18 +765,83 @@ static bool ra1ScanFrameGameChunks(Common::SeekableReadStream &b, int32 frameSiz
 	return hasGameChunk;
 }
 
-void SmushPlayerRebel1::ra1HandleFrameAudioChunk(int32 subSize, Common::SeekableReadStream &b) {
+static int16 getRA1AudioChunkTypeFlags(uint32 subType) {
+	switch (subType) {
+	case MKTAG('P','V','O','C'):
+		return IS_SPEECH;
+	case MKTAG('P','S','A','D'):
+		return IS_BKG_MUSIC;
+	case MKTAG('P','S','D','2'):
+	case MKTAG('S','A','U','D'):
+	default:
+		return IS_SFX;
+	}
+}
+
+void SmushPlayerRebel1::ra1HandleFrameAudioChunk(uint32 subType, int32 subSize, Common::SeekableReadStream &b) {
 	if (_compressedFileMode || isFastForwardingCurrentFrame())
+		return;
+	if (subSize <= 0)
 		return;
 
 	uint8 *audioChunk = (uint8 *)malloc(subSize + 8);
 	if (audioChunk == nullptr)
 		return;
 
-	b.seek(-8, SEEK_CUR);
-	b.read(audioChunk, subSize + 8);
-	feedAudio(audioChunk, 0, 127, 0, 0);
+	WRITE_BE_UINT32(audioChunk, subType);
+	WRITE_BE_UINT32(audioChunk + 4, subSize);
+	b.read(audioChunk + 8, subSize);
+	ra1FeedAudio(subType, audioChunk, 0, 127, 0, 0);
 	free(audioChunk);
+}
+
+void SmushPlayerRebel1::ra1FeedAudio(uint32 subType, uint8 *srcBuf, int groupId, int volume, int pan, int16 flags) {
+	if (!_smushAudioInitialized)
+		return;
+
+	const uint32 chunkSize = READ_BE_UINT32(&srcBuf[4]);
+	const int16 typeFlags = getRA1AudioChunkTypeFlags(subType);
+
+	if (chunkSize >= 12 &&
+			srcBuf[8] == 0 && srcBuf[9] == 0 && srcBuf[12] == 0 &&
+			srcBuf[13] == 0 && srcBuf[16] == 0 && srcBuf[17] == 0) {
+		const uint16 trkId = READ_BE_INT16(&srcBuf[10]);
+		const uint16 index = READ_BE_INT16(&srcBuf[14]);
+		const int32 maxFrames = READ_BE_INT16(&srcBuf[18]);
+		flags = (flags & ~TRK_TYPE_MASK) | typeFlags;
+
+		handleSAUDChunk(
+			srcBuf + 20,
+			chunkSize - 12,
+			groupId,
+			volume,
+			pan,
+			flags,
+			trkId,
+			index,
+			maxFrames);
+	} else if (chunkSize >= 10) {
+		const uint16 trkId = READ_LE_INT16(&srcBuf[8]);
+		const uint16 index = READ_LE_INT16(&srcBuf[10]);
+		const int32 maxFrames = READ_LE_INT16(&srcBuf[12]);
+		flags |= READ_LE_INT16(&srcBuf[14]);
+		flags = (flags & ~TRK_TYPE_MASK) | typeFlags;
+		volume = (volume * srcBuf[16]) >> 7;
+
+		const int panDelta = (int8)srcBuf[17];
+		const int effPan = (panDelta == -128) ? 128 : pan + panDelta;
+
+		handleSAUDChunk(
+			srcBuf + 18,
+			chunkSize - 10,
+			groupId,
+			volume,
+			effPan,
+			flags,
+			trkId,
+			index,
+			maxFrames);
+	}
 }
 
 void SmushPlayerRebel1::ra1HandleGameFrameChunk(int32 subSize, Common::SeekableReadStream &b, bool fastForwarding) {
@@ -837,7 +902,7 @@ void SmushPlayerRebel1::ra1HandleObjOverlayFrameChunk(int32 objDataSize, Common:
 				if (audioBuf == nullptr)
 					break;
 				memcpy(audioBuf, objBuf + objPos, embSize + 8);
-				feedAudio(audioBuf, 0, 127, 0, 0);
+				ra1FeedAudio(embTag, audioBuf, 0, 127, 0, 0);
 				free(audioBuf);
 			}
 		}
@@ -856,7 +921,7 @@ bool SmushPlayerRebel1::ra1HandleUnknownFrameChunk(uint32 subType, int32 subSize
 	byte tb2 = (subType >> 8) & 0xFF, tb3 = subType & 0xFF;
 	if (tb0 > 0x40 && tb0 < 0x5B && tb1 > 0x40 && tb1 < 0x5B &&
 	    tb2 > 0x40 && tb2 < 0x5B && tb3 > 0x40 && tb3 < 0x5B) {
-		debug(5, "RA1: unknown uppercase tag %s at frame %d, stopping frame parse", tag2str(subType), _frame);
+		debugC(DEBUG_SMUSH, "unknown uppercase tag %s at frame %d, stopping frame parse", tag2str(subType), _frame);
 		return true;
 	}
 
@@ -878,11 +943,11 @@ bool SmushPlayerRebel1::ra1DispatchFrameChunk(uint32 subType, int32 subSize, int
 		break;
 	case MKTAG('P','S','A','D'):
 	case MKTAG('P','V','O','C'):
-		ra1HandleFrameAudioChunk(subSize, b);
+		ra1HandleFrameAudioChunk(subType, subSize, b);
 		break;
 	case MKTAG('P','S','D','2'):
 		if (_ra1LastFrameObjectVisible)
-			ra1HandleFrameAudioChunk(subSize, b);
+			ra1HandleFrameAudioChunk(subType, subSize, b);
 		break;
 	case MKTAG('T','R','E','S'):
 	case MKTAG('T','E','X','T'):
