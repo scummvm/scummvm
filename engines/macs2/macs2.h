@@ -388,9 +388,8 @@ public:
 	Common::Array<uint32> _sceneResourceOffsets;
 
 	void loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex, bool shouldMirror = false);
-	void loadSceneObjects(GameObject *obj);
+	void loadObjectData(GameObject *obj);
 
-	// TODO: Arguments
 	void loadSongFromSceneData(uint8 dataIndex);
 	Music *getAdlib() const { return _adlib; }
 	// Returns the Music volume (0-63) scaled by the user's music_volume setting

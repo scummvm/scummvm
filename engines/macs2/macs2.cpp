@@ -48,7 +48,6 @@ namespace Macs2 {
 Macs2Engine *g_engine;
 
 Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::MemoryReadStream *stream) {
-	// TODO: Should we pass the stream as pointer or reference?
 	stream->seek(offs);
 
 	Graphics::ManagedSurface result;
@@ -90,29 +89,6 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::MemoryRea
 	}
 
 	return result;
-}
-
-int previewNumFrames(int64 offs, Common::File &file) {
-	file.seek(offs);
-	int64 numBytes = file.readUint32LE();
-	// byte* data = new byte[numBytes];
-	// file.read(data, numBytes);
-	// TODO: Extract the frames
-	// Skip ahead to the start of the first frame
-	file.seek(20, SEEK_CUR);
-	numBytes -= 20;
-	int numFrames = 0;
-	while (numBytes > 0) {
-		file.seek(6, SEEK_CUR);
-		numBytes -= 6;
-		uint16 x = file.readUint16LE();
-		uint16 y = file.readUint16LE();
-		file.seek(x * y, SEEK_CUR);
-		numBytes -= 4 + 4 + x * y;
-		numFrames++;
-	}
-	file.seek(offs);
-	return numFrames;
 }
 
 void Macs2Engine::readResourceFile() {
@@ -239,7 +215,7 @@ void Macs2Engine::readResourceFile() {
 			}
 		}
 		// Per-object rendering flags (after all 21 animation slots):
-		// Binary loadSceneObjects reads these into runtime+0x184, +0x185, +0x186
+		// Binary loadObjectData reads these into runtime+0x184, +0x185, +0x186
 		_fileStream->readByte(); // runtime+0x184: hasInventoryIcon (container flag) - derived dynamically from _blobs[0x13] presence
 		gameObject->_hasShading = _fileStream->readByte() != 0; // runtime+0x185: shading enabled
 		gameObject->_hasScaling = _fileStream->readByte() != 0; // runtime+0x186: scaling enabled
@@ -250,13 +226,13 @@ void Macs2Engine::readResourceFile() {
 		_fileStream->seek(addressOffset, SEEK_SET);
 
 		objectOffset = _fileStream->readUint32LE();
-		// Binary loadSceneObjects checks both +0x17F4 and +0x17F6 (high word); zero means no data
+		// Binary loadObjectData checks both +0x17F4 and +0x17F6 (high word); zero means no data
 		if (objectOffset == 0) {
 			break;
 		}
 		_fileStream->seek(objectOffset, SEEK_SET);
 		// Resource offset table at +0x18D equivalent in file (128 bytes = 32 dword offsets).
-		// Binary loadSceneObjects reads this into runtime+0x18D.
+		// Binary loadObjectData reads this into runtime+0x18D.
 		for (int r = 0; r < 32; r++) {
 			gameObject->_resourceOffsets[r] = _fileStream->readUint32LE();
 		}
@@ -572,7 +548,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	_numHotspots = _fileStream->readUint16LE();
 
 	_hotspotColorTable.clear();
-	_hotspotColorTable.resize(0x20 / 2);
+	_hotspotColorTable.resize(0x20 / sizeof(uint16));
 	_fileStream->read(_hotspotColorTable.data(), 0x20);
 
 	// TODO: Remove the now superfluous one
@@ -644,12 +620,12 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		currentCharacter->_executeScriptOnFinishLerp = false;
 	}
 	currentView->_characters.clear();
-	// The original loads the actor via loadSceneObjects(g_wCurrentActorIndex).
+	// The original loads the actor via loadObjectData(g_wCurrentActorIndex).
 	// Only add to render list if actor belongs in this scene; scene init script
 	// (opcode 0x0B) will move the actor here with the correct position if needed.
 	GameObject *actorObject = GameObjects::getObjectByIndex(Scenes::instance()._currentActorIndex);
 	if (actorObject != nullptr && actorObject->_sceneIndex == newSceneIndex) {
-		loadSceneObjects(actorObject);
+		loadObjectData(actorObject);
 		Character *actorChar = new Character();
 		actorChar->_gameObject = actorObject;
 		currentView->_characters.push_back(actorChar);
@@ -658,7 +634,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		if (currentObject == nullptr)
 			continue;
 		if (currentObject->_sceneIndex == newSceneIndex && currentObject->_index != Scenes::instance()._currentActorIndex) {
-			loadSceneObjects(currentObject);
+			loadObjectData(currentObject);
 			Character *c = new Character();
 			c->_gameObject = currentObject;
 			currentView->_characters.push_back(c);
@@ -1457,11 +1433,11 @@ void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 	}
 }
 
-void Macs2Engine::loadSceneObjects(GameObject *obj) {
+void Macs2Engine::loadObjectData(GameObject *obj) {
 	if (obj == nullptr || obj->_dataOffset == 0)
 		return;
 
-	// Binary loadSceneObjects (1008:08ec): seeks to object data offset + 10 (past
+	// Binary loadObjectData (1008:08ec): seeks to object data offset + 10 (past
 	// position/scene/orientation/verticalOffset), then reads 21 animation slots.
 	_fileStream->seek(obj->_dataOffset + 10, SEEK_SET);
 
@@ -1509,7 +1485,6 @@ void Macs2Engine::loadSceneObjects(GameObject *obj) {
 }
 
 void Macs2Engine::loadSongFromSceneData(uint8 dataIndex) {
-
 	uint32 address = _sceneResourceOffsets[dataIndex - 1];
 	_fileStream->seek(address);
 	uint32 size = _fileStream->readUint32LE();
