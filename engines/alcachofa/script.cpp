@@ -662,14 +662,21 @@ private:
 
 	const Point kInvalidPoint = { INT16_MIN, INT16_MIN };
 	Point getCamLerpTargetArg(const char *action, uint argI) {
-		auto *pointObject = getObjectArg<PointObject>(argI);
+		auto *object = getObjectArg<ObjectBase>(argI);
+
+		auto *pointObject = dynamic_cast<PointObject *>(object);
 		if (pointObject != nullptr)
 			return pointObject->position();
 
 		// in V2 a main character (we can reduce to walking character) can be used instead
-		auto *character = getObjectArg<WalkingCharacter>(argI);
-		if (character != nullptr)
-			return character->position();
+		auto *walkingChar = dynamic_cast<WalkingCharacter *>(object);
+		if (walkingChar != nullptr)
+			return walkingChar->position();
+
+		// in corvino it might even be just a regular stationary character
+		auto stationaryChar = dynamic_cast<Character *>(object);
+		if (stationaryChar != nullptr)
+			return stationaryChar->interactionPoint();
 
 		pointObject = g_engine->game().unknownCamLerpTarget(action, getStringArg(argI));
 		return pointObject == nullptr ? kInvalidPoint : pointObject->position();
