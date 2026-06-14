@@ -346,16 +346,34 @@ void AudioPlayer::stopSpool() {
 		_mixer->stopHandle(_spoolHandle);
 }
 
-// _SayKDDigital @ 2404:0fbc.
-//   slot = kdspeak * 2 + (partner == Jake ? 1 : 0); sound = digital[slot+1] - 1
-// KDDigitalIndex = KDTextIndex + 0x12 (set by _ReadMystery @ 2404:0163-0167).
+// _SayKDDigital @ EEM1 2404:0fbc / EEM2 2542:1845. KDDigitalIndex =
+// KDTextIndex + 0x12. EEM1 reads index `kdspeak*2 + (Jake?1:0) + 1`; EEM2
+// drops the trailing +1 (`kdspeak*2 + (Jake?1:0)`) — a real per-variant
+// difference, so using EEM1's +1 for London shifts every KD line by one slot.
 void AudioPlayer::sayKDDigital(const byte *kdTextIndex, uint kdspeak,
 							   uint partner) {
 	if (!kdTextIndex || _currentMystery < 0)
 		return;
 	const byte *digital = kdTextIndex + 0x12;
-	const uint slot = (kdspeak * 2) + (partner == 0 ? 1u : 0u) + 1u;
+	const uint slot = (kdspeak * 2) + (partner == 0 ? 1u : 0u) +
+					  (_vm && _vm->isLondon() ? 0u : 1u);
 	const uint16 raw = READ_LE_UINT16(digital + slot * 2);
+	if (raw == 0 || raw == 0xFFFF)
+		return;
+	spoolSound((uint)(raw - 1));
+}
+
+// _SayKDHintDigital @ 2542:187e — EEM2/London partner chain-hint voice.
+// Identical to EEM2 `_SayKDDigital` but indexes the table 0x3a bytes after
+// KDTextIndex (vs 0x12); `slot` is the 0..4 hint-chain slot. EEM1 voices its
+// chain hints through `sayKDDigital(slot + 10)` instead.
+void AudioPlayer::sayKDHintDigital(const byte *kdTextIndex, uint slot,
+								   uint partner) {
+	if (!kdTextIndex || _currentMystery < 0)
+		return;
+	const byte *table = kdTextIndex + 0x3a;
+	const uint idx = (slot * 2) + (partner == 0 ? 1u : 0u);
+	const uint16 raw = READ_LE_UINT16(table + idx * 2);
 	if (raw == 0 || raw == 0xFFFF)
 		return;
 	spoolSound((uint)(raw - 1));

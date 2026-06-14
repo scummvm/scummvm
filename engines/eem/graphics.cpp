@@ -350,23 +350,38 @@ void EEMEngine::doHelp() {
 		return;
 
 	uint16 chosenText = 0xFFFF;
-	int    soundNum   = 0;
+	int    soundNum   = 0;       // _SayKDDigital line: EEM1 chain 10/11; fallback 7/8.
+	int    hintVoiceSlot = -1;   // London chain hint → _SayKDHintDigital(slot).
 	bool   anyHintDefined = false;
 
+	// Required-clue chain walk. EEM1 `_KDHelp @ 1560:010a` checks the first two
+	// entries of chain A. EEM2 `_DoKDHelp @ 15c1:020b` walks all THREE chains
+	// (A,B,C @ header words 16-20/21-25/26-30) × 5 slots, indexes the 15-entry
+	// hint-text table `hintBlock()[chain*5 + slot]`, and voices a chain hint
+	// with `_SayKDHintDigital(slot)` (table kdTextIndex()+0x3a) instead of
+	// EEM1's `_SayKDDigital(slot + 10)`. Gate is the same: clue not yet found.
+	const uint kChains = isLondon() ? 3u : 1u;
+	const uint kSlots  = isLondon() ? Mystery::kChainLen : 2u;
 	if (hb) {
-		for (uint i = 0; i < 2; i++) {
-			const uint16 chainClue = _mystery.aChain(i);
-			if (chainClue == 0xFFFF)
-				continue;
-			const uint16 hintOff = READ_LE_UINT16(hb + i * 2);
-			if (hintOff == 0xFFFF)
-				continue;
-			anyHintDefined = true;
-			if (chainClue < Mystery::kCluesFoundCap &&
-				_mystery._cluesFound[chainClue] == 0) {
-				chosenText = hintOff;
-				soundNum   = (int)i + 10;
-				break;
+		for (uint c = 0; c < kChains && chosenText == 0xFFFF; c++) {
+			for (uint slot = 0; slot < kSlots; slot++) {
+				const uint16 chainClue = _mystery.hintChain(c, slot);
+				if (chainClue == 0xFFFF)
+					continue;
+				const uint16 hintOff = READ_LE_UINT16(
+					hb + (c * Mystery::kChainLen + slot) * 2);
+				if (hintOff == 0xFFFF)
+					continue;
+				anyHintDefined = true;
+				if (chainClue < Mystery::kCluesFoundCap &&
+					_mystery._cluesFound[chainClue] == 0) {
+					chosenText = hintOff;
+					if (isLondon())
+						hintVoiceSlot = (int)slot;
+					else
+						soundNum = (int)slot + 10;
+					break;
+				}
 			}
 		}
 	}
@@ -463,9 +478,14 @@ void EEMEngine::doHelp() {
 	// partner-specific voice line keyed to which hint type fired:
 	//   10 = first chain hint, 11 = second chain hint,
 	//    7 = generic KD (first), 8 = generic KD (second).
-	if (_audio && _mystery.kdTextIndex() && soundNum > 0)
-		_audio->sayKDDigital(_mystery.kdTextIndex(), (uint)soundNum,
-							 _partner);
+	if (_audio && _mystery.kdTextIndex()) {
+		if (hintVoiceSlot >= 0)
+			_audio->sayKDHintDigital(_mystery.kdTextIndex(),
+									 (uint)hintVoiceSlot, _partner);
+		else if (soundNum > 0)
+			_audio->sayKDDigital(_mystery.kdTextIndex(), (uint)soundNum,
+								 _partner);
+	}
 
 	waitForInput(60000);
 }

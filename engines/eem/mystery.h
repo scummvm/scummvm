@@ -113,6 +113,20 @@ public:
 		return i < kChainLen ? _aChain[i] : 0xFFFF;
 	}
 
+	/// Entry @p slot of hint chain @p chainIdx (0 = A, 1 = B, 2 = C; header
+	/// words 16-20 / 21-25 / 26-30). EEM2 `_DoKDHelp @ 15c1:020b` walks all
+	/// three chains × 5 slots; EEM1 `_KDHelp` only chain A slots 0..1.
+	uint16 hintChain(uint chainIdx, uint slot) const {
+		if (slot >= kChainLen)
+			return 0xFFFF;
+		switch (chainIdx) {
+		case 0: return _aChain[slot];
+		case 1: return _bChain[slot];
+		case 2: return _cChain[slot];
+		default: return 0xFFFF;
+		}
+	}
+
 	/// MapData entry for siteNum: 14 bytes; first u16 = sitepic, +4..7 = (x, y).
 	const byte *mapEntry(uint siteNum) const;
 
