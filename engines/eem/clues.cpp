@@ -1130,6 +1130,26 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		}
 
 		applyClueSideEffects(c);
+
+		// EEM2 `_DisplayClue @ 2542:05bd`: a clue entry can gate the rest of
+		// the clue behind a "check the manual / a real map" puzzle (the id is
+		// entry+0x54 = c+0x50, a `P<id>.BIN`). Run it once per mystery
+		// (`_mystery._solvedPuzzle` = `DAT_3036_6d5c`); a wrong answer aborts
+		// the remaining entries and re-prompts on the next visit.
+		if (isLondon() && !_mystery._solvedPuzzle) {
+			const uint16 puzzleId = READ_LE_UINT16(c + 0x50);
+			if (puzzleId != 0xFFFF) {
+				// Restore the clean site BG (drop this clue's bubble) first —
+				// the DOS _Repaint before `_DoPuzzle` — so the puzzle (and its
+				// own hint) render on a clean background, not over the bubble.
+				g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0,
+										   kScreenWidth, kScreenHeight);
+				g_system->updateScreen();
+				_mystery._solvedPuzzle = doPuzzle(puzzleId);
+				if (!_mystery._solvedPuzzle)
+					break;  // gate: block the rest of this clue
+			}
+		}
 	}
 
 	// _StopTheVoice @ 1ff1:0283 effect (voice only, keep MIDI). Diverges
