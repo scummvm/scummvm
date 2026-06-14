@@ -333,7 +333,12 @@ void Context::initialize(ContextType contextType) {
 		glGetIntegerv(GL_MAX_SAMPLES, (GLint *)&multisampleMaxSamples);
 	}
 
-	const char *glslVersionString = glslVersion ? (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION) : "";
+	const char *glslVersionString =
+#if !USE_FORCED_GLES
+		glslVersion ? (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION) : "";
+#else
+		"";
+#endif
 
 	// Log features supported by GL context.
 	debug(5, "OpenGL version: %s", glGetString(GL_VERSION));
