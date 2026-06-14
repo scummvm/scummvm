@@ -661,9 +661,13 @@ screenLoop:
 			break;
 
 		case kScreenSetup:
-			// Handler 6 @ 1a35:0e48 -> _DoSetup @ 1f78:044e. Entered
-			// from BigMap setup button (_NextScreen=6 @ 20fe:0c33).
-			doSetup();
+			// Handler 6 @ 1a35:0e48 -> _DoSetup. EEM1 = seg-1f78 (`doSetup`);
+			// EEM2/London = seg-2046 (`doSetupLondon`, 4 toggles + own layout).
+			// Entered from BigMap setup button (_NextScreen=6 @ 20fe:0c33).
+			if (isLondon())
+				doSetupLondon();
+			else
+				doSetup();
 			break;
 
 		case kScreenProfile:
@@ -1578,7 +1582,8 @@ void EEMEngine::startTravelMusic() {
 	// doesn't write it; combined with `_DoSiteLoop @ 168d:06c0` calling
 	// `_StopMIDI()` before the interactive phase, travel music plays
 	// ONCE during the entrance animation only.
-	if (!_music || !_mystery.isLoaded() || !_voiceOn)
+	if (!_music || !_mystery.isLoaded() ||
+		(isLondon() ? !_musicOn : !_voiceOn))
 		return;
 	const uint num = _mystery._siteNumber % 5;
 	_music->playMus(num, /* loop= */ false);
@@ -1593,7 +1598,7 @@ void EEMEngine::startLondonTravelMusic(uint8 travelKind) {
 		{ 7, 23, 17 },
 		{ 10, 21, 24 },
 	};
-	if (!_music || !_voiceOn || travelKind == 0 ||
+	if (!_music || !_musicOn || travelKind == 0 ||
 		travelKind >= ARRAYSIZE(kLondonTravelMusic))
 		return;
 
@@ -1686,6 +1691,8 @@ Common::Error EEMEngine::saveGameStream(Common::WriteStream *stream,
 	s.syncAsByte(_partner);
 	s.syncAsByte(_chainStage);
 	s.syncAsByte(_voiceOn);
+	// EEM2/London music (MIDI) toggle — `DAT_3036_4cc0`, separate from voice.
+	s.syncAsByte(_musicOn);
 
 	// London passport gender (player pronouns 0x86-0x88).
 	byte playerFemale = _playerFemale ? 1 : 0;

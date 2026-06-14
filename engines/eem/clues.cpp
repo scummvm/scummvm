@@ -977,7 +977,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		// `stop()`). 0 = no cue; EEM1 clue entries have no such field. Gated on
 		// `_voiceOn` like `startTravelMusic` — the DOS gate is the separate
 		// music-on / MIDI-available flags (DAT_3036_4cc0 && DAT_2bca_146a).
-		if (isLondon() && _music && _voiceOn) {
+		if (isLondon() && _music && _musicOn) {
 			const uint16 clueMusic = READ_LE_UINT16(c + 0x1c);
 			if (clueMusic != 0)
 				_music->playMus(clueMusic, /* loop= */ false);
