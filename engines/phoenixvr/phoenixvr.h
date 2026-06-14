@@ -131,6 +131,7 @@ public:
 	void playMovie(const Common::String &movie);
 
 	void declareVariable(const Common::String &name);
+	bool hasVariable(const Common::String &name) const;
 	void setVariable(const Common::String &name, int value);
 	int getVariable(const Common::String &name) const;
 
