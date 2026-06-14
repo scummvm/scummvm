@@ -166,6 +166,8 @@ public:
 	uint16 _onSites[kVisitedSiteCap]     = {};
 	bool   _sawCOFFSITEs = false;
 	bool   _sawCONSITEs  = false;
+	uint8  _seenCOFFSITEs = 0;
+	uint8  _seenCONSITEs  = 0;
 	bool   _sawHelpHint  = false;
 	bool   _solvedPuzzle = false;
 	bool   _firstTry     = true;
