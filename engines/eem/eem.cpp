@@ -1484,6 +1484,10 @@ void EEMEngine::showLondonCharSelect() {
 	// record only when `_LoadPlayerRecord` failed, then immediately saves it.
 	_playerName = displayName.empty() ? "Detective" : displayName;
 	_chainStage = 1;
+	// `_NewPlayer @ 1cd3:0f27` stores the passport gender pick (`DAT_3036_4c4c`).
+	// Drives the player pronouns 0x86-0x88 in `parseString`. (Existing profiles
+	// take the gender from their save instead, via the load path above.)
+	_playerFemale = female;
 	_voiceOn = true;
 	if (_audio)
 		_audio->setVoiceEnabled(_voiceOn);
@@ -1666,6 +1670,10 @@ Common::Error EEMEngine::saveGameStream(Common::WriteStream *stream,
 	s.syncAsByte(_chainStage);
 	s.syncAsByte(_voiceOn);
 
+	// London passport gender (player pronouns 0x86-0x88).
+	byte playerFemale = _playerFemale ? 1 : 0;
+	s.syncAsByte(playerFemale);
+
 	// Mid-case resume: persist in-progress mystery (no equivalent in
 	// _LoadGame @ 2404:0dc7).
 	bool hasMystery = _mystery.isLoaded();
@@ -1705,6 +1713,11 @@ Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	s.syncAsByte(_voiceOn);
 	if (_audio)
 		_audio->setVoiceEnabled(_voiceOn);
+
+	// London passport gender (player pronouns 0x86-0x88).
+	byte playerFemale = 0;
+	s.syncAsByte(playerFemale);
+	_playerFemale = (playerFemale != 0);
 
 	bool hasMystery = false;
 	s.syncAsByte(hasMystery);
