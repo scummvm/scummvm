@@ -286,7 +286,7 @@ bool ScriptExecutor::loadIndexedResource(Common::Array<uint8> &outData, uint8 re
 			warning("Ignoring resource load for missing object %u resource %u", _executingScriptObjectId, resourceIndex);
 			return false;
 		}
-		// Binary reads from runtime+0x18D table (loaded during loadSceneObjects).
+		// Binary reads from runtime+0x18D table (loaded during loadObjectData).
 		// Table is 32 dword file offsets, indexed by (resourceIndex - 1).
 		if (resourceIndex - 1 >= 32) {
 			warning("Ignoring resource load for out-of-range index %u on object %u", resourceIndex, _executingScriptObjectId);
@@ -891,7 +891,7 @@ ExecutionResult Script::ScriptExecutor::scriptShowDialogue() {
 		   "Opcode 0D dialogue: speaker=%u rawPos=(%u,%u) side=%u textOffset=%u numLines=%u scriptObject=%u text=\"%s\"",
 		   objectID, x, y, side, offset, numLines, _executingScriptObjectId, joinDebugStrings(strings).c_str());
 
-	_activeDialogueSpeakerObjectID = objectID;
+	_dialogueSpeakerObjectID = objectID;
 	currentView->showSpeechAct(objectID, strings, Common::Point(x, y), side);
 	_isAwaitingCallback = true;
 	// NOTE: EndTimer prevents race conditions from overlapping waits
@@ -1397,7 +1397,7 @@ bool Script::ScriptExecutor::scriptSetDirection() {
 	// scriptSetDirection (1008:c858). Writes to runtime field +0x22D.
 	// When the character's orientation matches this value, the renderer
 	// uses animation slot 0x15 (overload animation) instead of the normal slot.
-	// Value 0x7FFF means "never match" (default from loadSceneObjects).
+	// Value 0x7FFF means "never match" (default from loadObjectData).
 	uint32 characterID = scriptReadValue32() - 0x400;
 	uint16 value = scriptReadValue16();
 	if (characterID < 1 || characterID > 0x200) {
@@ -1683,7 +1683,7 @@ void Script::ScriptExecutor::scriptResetToSceneScript() {
 	_executingScriptObjectId = 0;
 	_executingObjectIndex = Scenes::instance()._currentSceneIndex;
 	_scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
-	_activeDialogueSpeakerObjectID = 0;
+	_dialogueSpeakerObjectID = 0;
 	setCurrentSceneScriptAt(0);
 }
 

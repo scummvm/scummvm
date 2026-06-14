@@ -299,7 +299,7 @@ public:
 
 	// Scene data [di+53B7h] - TODO: Confirm that we use a script variable as well as this thing
 	int _chosenDialogueOption = 0;
-	uint16 _activeDialogueSpeakerObjectID = 0;
+	uint16 _dialogueSpeakerObjectID = 0;
 
 	// 0x2000 bytes / 4 bytes per var = 2048 variables max (indices 1-0x800).
 	// All zeroed on init by memsetBytes in loadResourceFile.
@@ -412,7 +412,7 @@ public:
 	uint32 getVariableValue(int index) const;
 
 	// Computes the read-only runtime value for a type 0xFF special
-	// (FF:value), matching scriptReadValuePair. For debugger display only.
+	// (FF:value), inlined in scriptReadValue in the original binary
 	uint32 getSpecialValue(uint16 value);
 
 	// Returns true if the save/load menu can be opened (no blocking state)
