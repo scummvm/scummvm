@@ -39,8 +39,8 @@
 
 #include "audio/audiostream.h"
 #include "macs2/events.h"
-#include "macs2/script/scriptexecutor.h"
-#include <common/memstream.h>
+#include "macs2/scriptexecutor.h"
+#include "common/memstream.h"
 
 namespace Macs2 {
 
