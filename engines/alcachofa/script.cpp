@@ -654,6 +654,8 @@ private:
 	template<class TObject = ObjectBase>
 	TObject *getObjectArg(uint argI) {
 		const char *const name = getStringArg(argI);
+		if (!*name)
+			return nullptr;
 		auto *object = g_engine->world().getObjectByName(process().character(), name);
 		return dynamic_cast<TObject *>(object);
 	}
