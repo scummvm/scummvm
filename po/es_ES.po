@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-13 13:52+0000\n"
-"PO-Revision-Date: 2026-06-13 11:38+0000\n"
+"PO-Revision-Date: 2026-06-14 09:53+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -2363,28 +2363,20 @@ msgid "Disable fixed font scaling"
 msgstr "Desactivar escalado de fuentes fijas"
 
 #: gui/options.cpp:2667
-#, fuzzy
-#| msgid ""
-#| "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
-#| "resolution screens"
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens."
 msgstr ""
 "No se escalarán las fuentes de ancho fijo dentro de la interfaz, lo que "
-"reducirá los artefactos en pantallas de baja resolución"
+"reducirá los artefactos en pantallas de baja resolución."
 
 #: gui/options.cpp:2673
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable kinetic scrolling in lists"
-msgstr "Activar el desplazamiento de pantalla suave al caminar"
+msgstr "Activar desplazamiento cinético en listas"
 
 #: gui/options.cpp:2674
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth, momentum-based scrolling in list widgets."
-msgstr "Activar el desplazamiento de pantalla suave al caminar"
+msgstr "Activa un desplazamiento suave y con impulso en los widgets de listas."
 
 #: gui/options.cpp:2680
 msgid "GUI language:"
