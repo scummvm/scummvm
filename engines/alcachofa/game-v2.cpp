@@ -107,7 +107,7 @@ static constexpr const ScriptKernelTask kScriptKernelTaskMap[] = {
 	ScriptKernelTask::AnimateTalking,
 	ScriptKernelTask::ClearInventory,
 	ScriptKernelTask::WaitForMouseClick,
-	ScriptKernelTask::ResetCharacter
+	ScriptKernelTask::KillProcesses
 };
 
 class GameWithVersion2 : public Game {
