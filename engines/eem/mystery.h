@@ -167,6 +167,23 @@ public:
 
 	bool solvedCheck() const { return selectedPoints() > 99; }
 
+	/// EEM2/London `_SolvedCheck @ 1ea1:0b1a`. London dropped EEM1's points
+	/// model for set matching: the three hint chains (_aChain/_bChain/_cChain,
+	/// = Ghidra g_dwSolveSet1..3, mystery header words 16/21/26) are the
+	/// accepted answer sets of up to 5 clue ids. A set is satisfied when every
+	/// slot is either 0xFFFF (wildcard / unused) or has its accuse-selected
+	/// flag (_noteSelected, = g_awSelectedClue) set; the accusation is solved
+	/// if ANY set is satisfied. An all-wildcard set is unused and never counts.
+	bool londonSolved() const;
+
+	/// EEM2/London `_GetMinRemaining @ 1ea1:1056`. Same three sets as
+	/// londonSolved() but tested against _cluesFound (clues discovered in the
+	/// world, = _CluesFound): returns the fewest clues still to find across the
+	/// usable sets — 0 means a full answer set has been discovered and the
+	/// accusation can begin. Returns 5 when no relevant clue has been found yet.
+	/// Drives the London accuse-readiness gate (`_AccuseEntry @ 1ea1:115c`).
+	int minCluesRemaining() const;
+
 	/// _WITCH @ 1df2:089f. GalleryData[i*0x46 + 0x02] == 0xFFFF marks the
 	/// guilty suspect; innocent suspects store their alibi TextBlock offset.
 	bool isGuilty(uint suspectIdx) const;
