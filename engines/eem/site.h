@@ -82,6 +82,12 @@ void cyclePaletteRange(uint8 start, uint8 end);
 /// where the cycle shifts END→START rather than START→END.
 void cyclePaletteRangeReverse(uint8 start, uint8 end);
 
+/// Load the 6-step yellow marching-ants ramp into palette 0xF9..0xFE
+/// (SITEPALS ships these as uniform yellow). Shared by site hotspots and the
+/// clue puzzle so both outline clickable areas in the same original colours;
+/// `cyclePaletteRange(0xF9, 0xFE)` then pulses them.
+void applyHotspotGlowPalette();
+
 /// One hotspot (search rectangle) within a site, 14 bytes on disk.
 struct Hotspot {
 	int16  x1, y1, x2, y2;     ///< rectangle in screen coordinates

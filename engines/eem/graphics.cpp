@@ -34,6 +34,7 @@
 #include "eem/audio.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
+#include "eem/site.h"
 
 namespace EEM {
 
@@ -332,8 +333,55 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 			const int16 cy2 = (int16)f.readUint16LE();
 			rects.push_back(Common::Rect(cx1, cy1, cx2, cy2));
 		}
+		// `_GetPuzzleChoice @ 2542:11a9`: the choice rects are the only
+		// clickable areas (no done/exit hotspot) and ESC = wrong; the Tab/arrow
+		// keys hit a global handler, not choice selection. Highlight the
+		// options two ways, both reusing the existing engine mechanisms:
+		//   * Boxes: outline each option in the marching-ants ramp — palette
+		//     0xF9..0xFE, the SAME original yellow as the site hotspots, not a
+		//     puzzle-specific colour. Gated like the DOS `_DrawRect`
+		//     (`DAT_3036_4c4a` → port `hide_highlight_boxes`).
+		//   * Cursor: recolor the default arrow over an option
+		//     (`setInteractiveMouseCursor`, the EEM1 red-pixel cursor for
+		//     "otherwise invisible" hotspots). These options carry no per-hotspot
+		//     cursor shape, so the default cursor is what's shown — exactly the
+		//     case that recolor is meant for.
+		applyHotspotGlowPalette();
+		const bool showBoxes = !ConfMan.getBool("hide_highlight_boxes");
 		int picked = -1;
+		uint32 lastPhase = (uint32)-1;
+		bool overOption = false;
 		while (picked == -1 && !shouldQuit()) {
+			if (showBoxes) {
+				const uint32 phase = g_system->getMillis() / 80;
+				if (phase != lastPhase) {
+					lastPhase = phase;
+					Graphics::ManagedSurface fr(kScreenWidth, kScreenHeight,
+						Graphics::PixelFormat::createFormatCLUT8());
+					fr.simpleBlitFrom(scratch);
+					for (uint i = 0; i < rects.size(); i++) {
+						const byte color =
+							(byte)(0xF9 + ((i + phase) & 0x07) % 6);
+						fr.frameRect(rects[i], color);
+					}
+					g_system->copyRectToScreen(fr.getPixels(), fr.pitch, 0, 0,
+											   kScreenWidth, kScreenHeight);
+				}
+			}
+			// Red default-cursor while hovering a clickable option; plain arrow
+			// off all of them (mirrors `updateHotspotCursor`).
+			const Common::Point mp = g_system->getEventManager()->getMousePos();
+			bool nowOver = false;
+			for (uint i = 0; i < rects.size(); i++) {
+				if (rects[i].contains(mp.x, mp.y)) {
+					nowOver = true;
+					break;
+				}
+			}
+			if (nowOver != overOption) {
+				overOption = nowOver;
+				setInteractiveMouseCursor(nowOver);
+			}
 			Common::Event ev;
 			while (g_system->getEventManager()->pollEvent(ev)) {
 				if (ev.type == Common::EVENT_QUIT ||
@@ -355,6 +403,8 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 			g_system->updateScreen();
 			g_system->delayMillis(15);
 		}
+		// Restore the plain arrow before leaving the puzzle.
+		setInteractiveMouseCursor(false);
 		correct = (picked == 0);
 	}
 	f.close();

@@ -179,6 +179,23 @@ void cyclePaletteRangeReverse(uint8 start, uint8 end) {
 	g_system->getPaletteManager()->setPalette(buf, start, count);
 }
 
+void applyHotspotGlowPalette() {
+	// SITEPALS ships palette 0xF9..0xFE as uniform yellow (3F 3E 00), so the
+	// original marching-ants was a placeholder. Override with a 6-step yellow
+	// ramp so `cyclePaletteRange(0xF9, 0xFE)` (and the per-index draw colour)
+	// produce a visible pulse. Shared by site hotspots and the clue puzzle so
+	// both highlight clickable areas with the same (original) colours.
+	static const byte kAntsGlow[6 * 3] = {
+		0x40, 0x40, 0x00, // F9 — dim
+		0x80, 0x80, 0x00, // FA
+		0xC0, 0xC0, 0x00, // FB
+		0xFF, 0xFF, 0x40, // FC — peak
+		0xC0, 0xC0, 0x00, // FD
+		0x80, 0x80, 0x00, // FE
+	};
+	g_system->getPaletteManager()->setPalette(kAntsGlow, 0xF9, 6);
+}
+
 // `_WaitAnims @ 29be:021c`. 12 bytes per entry, indexed by `siteData[+8]`:
 //   +0..1 anim Jake, +2..3 anim Jenny,
 //   +4..5 x    Jake, +6..7 x    Jenny,
@@ -994,21 +1011,9 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 	}
 	_vm->setSitePaletteForSite(sitepic);
 
-	// SITEPALS ships palette 0xF9..0xFE as uniform yellow (3F 3E 00),
-	// so original marching-ants was a placeholder. Override with a
-	// 6-step yellow ramp so `cyclePaletteRange(0xF9, 0xFE)` produces a
-	// visible pulse on unsearched hotspots.
-	{
-		static const byte kAntsGlow[6 * 3] = {
-			0x40, 0x40, 0x00, // F9 — dim
-			0x80, 0x80, 0x00, // FA
-			0xC0, 0xC0, 0x00, // FB
-			0xFF, 0xFF, 0x40, // FC — peak
-			0xC0, 0xC0, 0x00, // FD
-			0x80, 0x80, 0x00, // FE
-		};
-		g_system->getPaletteManager()->setPalette(kAntsGlow, 0xF9, 6);
-	}
+	// Override SITEPALS' uniform-yellow 0xF9..0xFE with the marching-ants
+	// glow ramp (shared with the clue puzzle).
+	applyHotspotGlowPalette();
 
 	renderBackground(siteNum);
 
