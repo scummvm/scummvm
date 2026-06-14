@@ -208,6 +208,15 @@ public:
 	/// count followed by 62-byte ClueEntries.
 	void displayClue(const byte *clueBlock);
 
+	/// EEM2/London `_DoPuzzle @ 2542:1482`. A clue entry can gate the rest of
+	/// itself behind a "check the manual / a real map" puzzle (the id is the
+	/// entry+0x54 field). Opens `P<id>.BIN` — a header + question, then either
+	/// a typed answer (type 0) or a click-a-region multiple choice (type 1).
+	/// Returns true when answered correctly (and true if the file is missing,
+	/// so the clue is never permanently blocked); a wrong answer replays the
+	/// partner's scolding hint, and the caller re-prompts on the next visit.
+	bool doPuzzle(uint puzzleId);
+
 	/// Floppy hotspot click. `FUN_22dc_0b80 + FUN_1652_00e6 + FUN_1652_006c`.
 	/// Locates dialog records in site_data[+6] and dispatches them.
 	void displayFloppyHotspotDialog(uint siteNum, uint hotIdx);

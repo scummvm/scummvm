@@ -170,6 +170,250 @@ bool EEMEngine::floppyHotspotSearched(uint siteIdx, uint hotspotIdx) const {
 		   _mystery._cluesFound[textIdx] != 0;
 }
 
+// fgets-style line read (until newline / NUL / EOF) from a puzzle file.
+static Common::String readPuzzleLine(Common::File &f) {
+	Common::String s;
+	while (!f.eos()) {
+		const byte c = f.readByte();
+		if (f.eos() || c == '\n' || c == 0)
+			break;
+		if (c != '\r')
+			s += (char)c;
+	}
+	return s;
+}
+
+bool EEMEngine::doPuzzle(uint puzzleId) {
+	// `_DoPuzzle @ 2542:1482`. File `P<id>.BIN` (LE u16 fields):
+	//   type(0=typed,1=choice); mainPic{id,x,y}; extraCount; extra{id,x,y}*;
+	//   qx; qy; qw; voiceAlt(Jenny); voiceMain(Jake); question line.
+	//   type 0: answerRect{x1,y1,x2,y2}; answer line (stored UPPERCASE).
+	//   type 1: choiceCount; rects{x1,y1,x2,y2}* — correct = rect 0.
+	Common::File f;
+	const Common::String fname = Common::String::format("P%u.BIN", puzzleId);
+	if (!f.open(Common::Path(fname))) {
+		// Fail open: never let a missing puzzle file permanently block a clue.
+		warning("doPuzzle: %s missing — leaving the clue ungated", fname.c_str());
+		return true;
+	}
+
+	const uint16 type = f.readUint16LE();
+
+	// The caller (displayClue) restored the clean site background, so the
+	// current screen has no clue bubbles. Keep that as `cleanBg` and build the
+	// puzzle on a copy; `cleanBg` is restored after the answer (DOS `_DoPuzzle`
+	// _Repaint) and after the wrong-answer hint (`_KDHelp` _Repaint) so neither
+	// the puzzle pics nor any bubble is left on the background.
+	Graphics::ManagedSurface cleanBg(kScreenWidth, kScreenHeight,
+		Graphics::PixelFormat::createFormatCLUT8());
+	cleanBg.clear();
+	{
+		Graphics::Surface *cur = g_system->lockScreen();
+		if (cur) {
+			cleanBg.simpleBlitFrom(*cur);
+			g_system->unlockScreen();
+		}
+	}
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+		Graphics::PixelFormat::createFormatCLUT8());
+	scratch.simpleBlitFrom(cleanBg);
+
+	// Main picture, then `extraCount` more — each {id, x, y}, masked blit.
+	for (int phase = 0; phase < 2; phase++) {
+		uint16 n = 1;
+		if (phase == 1)
+			n = f.readUint16LE();
+		for (uint16 i = 0; i < n; i++) {
+			const uint16 id = f.readUint16LE();
+			const int16 px = (int16)f.readUint16LE();
+			const int16 py = (int16)f.readUint16LE();
+			Picture pic;
+			if (_picsArchive.getPicture(id, pic) && !pic.surface.empty())
+				scratch.transBlitFrom(pic.surface, Common::Point(px, py),
+									  (uint32)(byte)(pic.flags >> 8));
+		}
+	}
+
+	const int16 qx = (int16)f.readUint16LE();
+	const int16 qy = (int16)f.readUint16LE();
+	const int16 qw = (int16)f.readUint16LE();
+	const uint16 voiceAlt  = f.readUint16LE();  // partner != Jake
+	const uint16 voiceMain = f.readUint16LE();  // partner == Jake
+	const Common::String question =
+		parseString(readPuzzleLine(f), _playerName, _partner);
+	if (_font.isLoaded() && !question.empty())
+		_font.drawWordWrapped(&scratch, qx, qy, MAX<int>(8, (int)qw),
+							  question, 0);
+	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+							   0, 0, kScreenWidth, kScreenHeight);
+	g_system->updateScreen();
+
+	// Partner reads the question (`_SpoolSound(id - 1)`, gated on audio).
+	if (_audio && _voiceOn) {
+		const uint16 v = (_partner == kPartnerJake) ? voiceMain : voiceAlt;
+		if (v != 0 && v != 0xFFFF)
+			_audio->spoolSound((uint)(v - 1));
+	}
+
+	bool correct = false;
+	CursorMan.showMouse(true);
+
+	if (type == 0) {
+		// Typed answer (`_CheckTypedAnswer` → `_GetNameString`, toupper+strcmp).
+		const int16 ax1 = (int16)f.readUint16LE();
+		const int16 ay1 = (int16)f.readUint16LE();
+		const int16 ax2 = (int16)f.readUint16LE();
+		const int16 ay2 = (int16)f.readUint16LE();
+		const Common::Rect rect(ax1, ay1, ax2, ay2);
+		Common::String answer = readPuzzleLine(f);  // stored uppercase
+		const uint maxLen = answer.size() + 2;
+
+		Common::String input;
+		bool done = false, blink = true;
+		uint32 blinkMs = g_system->getMillis();
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		while (!done && !shouldQuit()) {
+			Graphics::ManagedSurface fld(kScreenWidth, kScreenHeight,
+				Graphics::PixelFormat::createFormatCLUT8());
+			fld.simpleBlitFrom(scratch);
+			Common::String shown = input;
+			if (blink)
+				shown += "_";
+			if (_font.isLoaded())
+				_font.drawString(&fld, shown, rect.left + 2, rect.top + 1,
+								 MAX<int>(8, rect.width()), 0x0F);
+			g_system->copyRectToScreen(fld.getPixels(), fld.pitch, 0, 0,
+									   kScreenWidth, kScreenHeight);
+			g_system->updateScreen();
+
+			Common::Event ev;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_QUIT ||
+					ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+					input.clear();
+					done = true;
+					break;
+				}
+				if (ev.type != Common::EVENT_KEYDOWN)
+					continue;
+				const Common::KeyCode k = ev.kbd.keycode;
+				if (k == Common::KEYCODE_RETURN || k == Common::KEYCODE_KP_ENTER) {
+					if (!input.empty())
+						done = true;
+				} else if (k == Common::KEYCODE_ESCAPE) {
+					input.clear();  // cancel → empty → fails the compare
+					done = true;
+				} else if (k == Common::KEYCODE_BACKSPACE) {
+					if (!input.empty())
+						input.deleteLastChar();
+				} else if (ev.kbd.ascii >= ' ' && ev.kbd.ascii < 127 &&
+						   input.size() < maxLen) {
+					input += (char)ev.kbd.ascii;
+				}
+			}
+			const uint32 now = g_system->getMillis();
+			if (now - blinkMs >= 400) {
+				blink = !blink;
+				blinkMs = now;
+			}
+			g_system->delayMillis(15);
+		}
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+		input.toUppercase();
+		correct = input.equals(answer);
+	} else {
+		// Multiple choice: click a region; correct = the FIRST rect.
+		const uint16 count = f.readUint16LE();
+		Common::Array<Common::Rect> rects;
+		for (uint16 i = 0; i < count; i++) {
+			const int16 cx1 = (int16)f.readUint16LE();
+			const int16 cy1 = (int16)f.readUint16LE();
+			const int16 cx2 = (int16)f.readUint16LE();
+			const int16 cy2 = (int16)f.readUint16LE();
+			rects.push_back(Common::Rect(cx1, cy1, cx2, cy2));
+		}
+		int picked = -1;
+		while (picked == -1 && !shouldQuit()) {
+			Common::Event ev;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_QUIT ||
+					ev.type == Common::EVENT_RETURN_TO_LAUNCHER ||
+					(ev.type == Common::EVENT_KEYDOWN &&
+					 ev.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+					picked = -2;  // ESC / quit → wrong
+					break;
+				}
+				if (ev.type == Common::EVENT_LBUTTONDOWN) {
+					for (uint i = 0; i < rects.size(); i++) {
+						if (rects[i].contains(ev.mouse.x, ev.mouse.y)) {
+							picked = (int)i;
+							break;
+						}
+					}
+				}
+			}
+			g_system->updateScreen();
+			g_system->delayMillis(15);
+		}
+		correct = (picked == 0);
+	}
+	f.close();
+
+	// _Repaint after the answer: drop the puzzle pics back to the clean site.
+	g_system->copyRectToScreen(cleanBg.getPixels(), cleanBg.pitch, 0, 0,
+							   kScreenWidth, kScreenHeight);
+	g_system->updateScreen();
+
+	if (!correct && !shouldQuit()) {
+		// Wrong: partner scolds via the KD hint (`_MIDIPlay(0x28)` +
+		// `_KDHelp(TextBlock + KDTextIndex[+0xc], voice 6)`), drawn on the
+		// clean site (the puzzle has already been _Repaint-ed away).
+		const byte *kd = _mystery.kdTextIndex();
+		const uint16 hintOff = kd ? READ_LE_UINT16(kd + 0x0c) : 0xFFFF;
+		if (hintOff != 0xFFFF) {
+			Common::String hint =
+				parseString(_mystery.textAt(hintOff), _playerName, _partner);
+			Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
+				Graphics::PixelFormat::createFormatCLUT8());
+			ms.simpleBlitFrom(cleanBg);
+			const byte firstChar = hint.empty() ? (byte)0 : (byte)hint[0];
+			uint16 bubNum = getKDTextBalloon(firstChar);
+			if (firstChar >= '0' && firstChar <= '9')
+				hint.deleteChar(0);
+			bubNum = fitBalloonToText(bubNum, hint);
+			Picture balloon;
+			const bool haveBalloon = _balloonArchive.size() > (bubNum & 0x7F) &&
+				_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
+			const int balloonX = 0x21;
+			int balloonY = 1;
+			if (haveBalloon && balloon.surface.h < 0x4e)
+				balloonY = (0x50 - balloon.surface.h) / 2;
+			if (haveBalloon)
+				ms.transBlitFrom(balloon.surface,
+								 Common::Point(balloonX, balloonY),
+								 (uint32)(byte)(balloon.flags >> 8));
+			uint16 tx = 5, ty = 4, tw = 155;
+			getBalloonInsets(bubNum, tx, ty, tw);
+			if (_font.isLoaded())
+				_font.drawWordWrapped(&ms, balloonX + tx, balloonY + ty, tw,
+									  hint, haveBalloon ? 0 : 0xF);
+			g_system->copyRectToScreen(ms.getPixels(), ms.pitch, 0, 0,
+									   kScreenWidth, kScreenHeight);
+			g_system->updateScreen();
+			if (_audio && _voiceOn && kd)
+				_audio->sayKDDigital(kd, 6, _partner);
+			waitForInput(60000);
+
+			// `_KDHelp` ends with _Repaint: clear the hint balloon too.
+			g_system->copyRectToScreen(cleanBg.getPixels(), cleanBg.pitch,
+									   0, 0, kScreenWidth, kScreenHeight);
+			g_system->updateScreen();
+		}
+	}
+	setInteractiveMouseCursor(false);
+	return correct;
+}
+
 void EEMEngine::doHelp() {
 	// Floppy per-mystery H<n>.BIN hint files. Loader FUN_1503_0001 @ 1503:0001
 	// (format string "h%d.bin" @ 2608:0154), consumer FUN_1503_01a5 @ 1503:01a5.
