@@ -1019,19 +1019,13 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			Picture charPic;
 			if (_picsArchive.getPicture(charPicId, charPic) &&
 				charX < kScreenWidth && charY < kScreenHeight) {
+				// Draw over the per-entry clean BG (restored at the top of the
+				// loop), NOT into the persistent `bg` snapshot — baking it in
+				// makes successive speaker portraits stack instead of refresh
+				// (duplicate NPC portraits + labels). The briefing's fixed NPC
+				// persists via the entrance animation captured in the snapshot
+				// (playLondonInitCluesAnim), not via the per-entry portrait.
 				blitMaskedToScreen(charPic, charX, charY);
-				// `_DisplayClue` bakes the speaker portrait into the BACKGROUND
-				// via `_AddPicBackground`; the DOS never restores a clean BG
-				// mid-dialogue, so the portrait persists across the following
-				// clue entries. Bake it into the `bg` snapshot too — otherwise
-				// the per-entry full restore (top of this loop) wipes a fixed
-				// NPC portrait (e.g. London's Nigel) on every entry that carries
-				// no portrait of its own, leaving only the balloon ("rendered,
-				// then refreshed over").
-				const byte transp = (byte)(charPic.flags >> 8);
-				bg.transBlitFrom(charPic.surface,
-								 Common::Point((int)charX, (int)charY),
-								 (uint32)transp);
 			}
 		}
 
