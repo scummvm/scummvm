@@ -237,6 +237,8 @@ private:
 
 	// We use this to keep track of whether we have read all bytes we should have read
 	uint32 _expectedEndLocation;
+	uint8 _lastOpcode = 0;
+	uint32 _lastOpcodeStreamPos = 0;
 
 	// scriptSkipBlock: skips nested opcode blocks
 	void scriptSkipBlock();
