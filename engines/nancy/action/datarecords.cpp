@@ -216,11 +216,14 @@ static const byte kTestAllSingle			= 1;
 static const byte kTestSome					= 2;
 static const byte kTestActualValue			= 3;
 
-static const byte kTestEqualTo				= 0;
-static const byte kTestLessThan				= 1;
-static const byte kTestGreaterThan			= 2;
-static const byte kTestGreaterThanOrEqual	= 3;
-static const byte kTestLessThanOrEqual		= 4;
+static const byte kTestEqualTo                      = 0;
+static const byte kTestLessThan                     = 1;
+static const byte kTestGreaterThan                  = 2;
+static const byte kTestGreaterThanOrEqual           = 3;
+static const byte kTestLessThanOrEqual              = 4;
+static const byte kTestPercentEqualTo               = 5;
+static const byte kTestPercentGreaterThanOrEqual    = 6;
+static const byte kTestPercentLessThanOrEqual       = 7;
 
 void ValueTest::execute() {
 	TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
@@ -262,6 +265,7 @@ void ValueTest::execute() {
 	}
 
 	bool satisfied = false;
+
 	for (uint i = 0; i < testedIndices.size(); ++i) {
 		if (testedIndices[i] == kNoTableIndex) {
 			continue;
@@ -270,6 +274,8 @@ void ValueTest::execute() {
 		float otherValue = 0;
 		if (_testType == kTestActualValue) {
 			otherValue = testedIndices[i];
+			if (_condition >= kTestPercentEqualTo)
+				otherValue = ((float)_indicesToTest[0] * (float)_indicesToTest[1]) / 100.0f;
 		} else {
 			if (testedIndices[i] < numSingleValues) {
 				// Test against single value
@@ -286,34 +292,22 @@ void ValueTest::execute() {
 
 		switch (_condition) {
 		case kTestEqualTo:
-			if (testedValue == otherValue) {
-				satisfied = true;
-			}
-
+		case kTestPercentEqualTo:
+			satisfied = (testedValue == otherValue);
 			break;
 		case kTestLessThan:
-			if (testedValue < otherValue) {
-				satisfied = true;
-			}
-
+			satisfied = (testedValue < otherValue);
 			break;
 		case kTestGreaterThan:
-			if (testedValue > otherValue) {
-				satisfied = true;
-			}
-
+			satisfied = (testedValue > otherValue);
 			break;
 		case kTestGreaterThanOrEqual:
-			if (testedValue >= otherValue) {
-				satisfied = true;
-			}
-
+		case kTestPercentGreaterThanOrEqual:
+			satisfied = (testedValue >= otherValue);
 			break;
 		case kTestLessThanOrEqual:
-			if (testedValue <= otherValue) {
-				satisfied = true;
-			}
-
+		case kTestPercentLessThanOrEqual:
+			satisfied = (testedValue <= otherValue);
 			break;
 		}
 
