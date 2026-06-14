@@ -168,8 +168,10 @@ void Context::initialize(ContextType contextType) {
 		extString = "";
 	}
 
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
 	bool EXTFramebufferMultisample = false;
 	bool EXTFramebufferBlit = false;
+#endif
 
 	Common::StringTokenizer tokenizer(extString, " ");
 	while (!tokenizer.empty()) {
@@ -191,10 +193,12 @@ void Context::initialize(ContextType contextType) {
 			packedDepthStencilSupported = true;
 		} else if (token == "GL_EXT_unpack_subimage") {
 			unpackSubImageSupported = true;
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
 		} else if (token == "GL_EXT_framebuffer_multisample") {
 			EXTFramebufferMultisample = true;
 		} else if (token == "GL_EXT_framebuffer_blit") {
 			EXTFramebufferBlit = true;
+#endif
 		} else if (token == "GL_OES_depth24") {
 			OESDepth24 = true;
 		} else if (token == "GL_SGIS_texture_edge_clamp") {
@@ -210,6 +214,9 @@ void Context::initialize(ContextType contextType) {
 	}
 
 	if (type == kContextGLES2) {
+#if USE_FORCED_GL || USE_FORCED_GLES
+		error("Creating GLES2 context with non-GLES2 build");
+#else
 // OGLES2 on AmigaOS reports GLSL version as 0.9 but we do what is needed to make it work
 // so let's pretend it supports 1.00
 #if defined(__amigaos4__)
@@ -258,7 +265,11 @@ void Context::initialize(ContextType contextType) {
 		textureLookupPrecision = precision;
 
 		debug(5, "OpenGL: GLES2 context initialized");
+#endif
 	} else if (type == kContextGLES) {
+#if USE_FORCED_GL || USE_FORCED_GLES2
+		error("Creating GLES context with non-GLES build");
+#else
 		// GLES doesn't support shaders natively
 
 		// ScummVM does not support multisample FBOs with GLES for now
@@ -274,7 +285,11 @@ void Context::initialize(ContextType contextType) {
 		// Precision is irrelevant (shaders) in GLES
 
 		debug(5, "OpenGL: GLES context initialized");
+#endif
 	} else if (type == kContextGL) {
+#if USE_FORCED_GLES || USE_FORCED_GLES2
+		error("Creating GL context with non-GL build");
+#else
 		// Official support of shaders starts with version 110
 		// Older versions didn't support the #version directive and were only available through
 		// ARB extensions which we removed support for
@@ -309,6 +324,7 @@ void Context::initialize(ContextType contextType) {
 		textureLookupPrecision = UINT_MAX;
 
 		debug(5, "OpenGL: GL context initialized");
+#endif
 	} else {
 		warning("OpenGL: Unknown context initialized");
 	}
