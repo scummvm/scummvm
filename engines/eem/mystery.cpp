@@ -61,6 +61,7 @@ void Mystery::clear() {
 	memset(_visitedSite, 0, sizeof(_visitedSite));
 	memset(_onSites, 0, sizeof(_onSites));
 	_sawCOFFSITEs = _sawCONSITEs = _sawHelpHint = _solvedPuzzle = false;
+	_seenCOFFSITEs = _seenCONSITEs = 0;
 	_firstTry = true;
 	_searchLocationNumber = _siteNumber = 0xFFFF;
 	_lastSite = 0x1B;
@@ -154,6 +155,7 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 		memset(_visitedSite, 0, sizeof(_visitedSite));
 		memset(_onSites, 0, sizeof(_onSites));
 		_sawCOFFSITEs = _sawCONSITEs = _sawHelpHint = _solvedPuzzle = false;
+		_seenCOFFSITEs = _seenCONSITEs = 0;
 		_firstTry = true;
 		_searchLocationNumber = _siteNumber = 0xFFFF;
 		_lastSite = 0x1B;
@@ -216,6 +218,7 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 	memset(_visitedSite, 0, sizeof(_visitedSite));
 	memset(_onSites, 0, sizeof(_onSites));
 	_sawCOFFSITEs = _sawCONSITEs = _sawHelpHint = _solvedPuzzle = false;
+	_seenCOFFSITEs = _seenCONSITEs = 0;
 	_firstTry = true;
 	_searchLocationNumber = _siteNumber = 0xFFFF;
 	_lastSite = 0x1B; // _ReadMystery _LastSite sentinel.
@@ -622,6 +625,8 @@ void Mystery::syncState(Common::Serializer &s) {
 				Common::Serializer::Uint16LE);
 	if (_siteReturnDepth > kVisitedSiteCap)
 		_siteReturnDepth = 0;
+	s.syncAsByte(_seenCOFFSITEs);
+	s.syncAsByte(_seenCONSITEs);
 }
 
 } // End of namespace EEM

@@ -97,6 +97,35 @@ uint markClueBlockNotebookEntries(Mystery &mystery, const byte *clueBlock,
 	return marked;
 }
 
+void updateLondonClueSite(Mystery &mystery, uint16 rawSite, bool siteOn,
+						  uint slot) {
+	if (rawSite == 0xFFFF)
+		return;
+
+	const bool conditional = (rawSite & 0x8000) != 0;
+	const uint16 siteVal = rawSite & 0x7FFF;
+	if (!conditional) {
+		if (siteVal < Mystery::kVisitedSiteCap)
+			mystery._onSites[siteVal] = siteOn ? 1 : 0;
+		return;
+	}
+
+	uint8 &seen = siteOn ? mystery._seenCONSITEs : mystery._seenCOFFSITEs;
+	const uint8 total = siteOn ? mystery.numCONSITEs() : mystery.numCOFFSITEs();
+	if (siteOn)
+		mystery._sawCONSITEs = true;
+	else
+		mystery._sawCOFFSITEs = true;
+
+	if (slot != 0)
+		return;
+
+	if (seen != 0xFF)
+		seen++;
+	if (seen == total && siteVal < Mystery::kVisitedSiteCap)
+		mystery._onSites[siteVal] = siteOn ? 1 : 0;
+}
+
 // _DoHappiness @ 172b:27b5 — per-zone sequence scripts.
 // Jake seqs @ 29be:0337 (5 × 0x14 bytes), Jenny seqs @ 29be:039b. 9 frames each;
 // the anim cells contain 10 cells = pairs of (neutral, smile) at 5 intensities.
@@ -800,30 +829,26 @@ void EEMEngine::applyClueSideEffects(const byte *c) {
 		// EEM2 `_DisplayClue @ 2542:05bd` per-entry side effects. With the
 		// shared `c = entryBase + 4` convention the EEM2 fields land at:
 		//   onsite  entry+0x22 (= c+0x1e), 5 × u16, high bit = CONSITE flag
-		//   offsite entry+0x2c (= c+0x28), 5 × u16, clears the site
+		//   offsite entry+0x2c (= c+0x28), 5 × u16, high bit = COFFSITE flag
+		//   gallery entry+0x36 (= c+0x32), 5 × u16 -> _InGallery[_newOrder[idx]]
 		//   notebook entry+0x40 (= c+0x3c), 5 × u16 -> _AddNotebook
 		//   jump    entry+0x4a (= c+0x46), destination site for direct travel
-		// (EEM2 has no gallery list here — that region is the onsite array.)
 		for (uint j = 0; j < 5; j++) {
 			const uint16 note = READ_LE_UINT16(c + 0x3c + j * 2);
 			if (note != 0xFFFF && note < Mystery::kCluesFoundCap)
 				_mystery._cluesFound[note] = 1;
 
-			const uint16 onIdx = READ_LE_UINT16(c + 0x1e + j * 2);
-			if (onIdx != 0xFFFF) {
-				const uint16 siteVal = onIdx & 0x7FFF;
-				if (siteVal < Mystery::kVisitedSiteCap)
-					_mystery._onSites[siteVal] = 1;
-				if (onIdx & 0x8000)
-					_mystery._sawCONSITEs = true;
+			const uint16 galIdx = READ_LE_UINT16(c + 0x32 + j * 2);
+			if (galIdx != 0xFFFF && galIdx < Mystery::kGalleryCap) {
+				const uint8 phys = _mystery._newOrder[galIdx];
+				if (phys < Mystery::kGalleryCap)
+					_mystery._inGallery[phys] = 1;
 			}
 
-			const uint16 offIdx = READ_LE_UINT16(c + 0x28 + j * 2);
-			if (offIdx != 0xFFFF && (offIdx & 0x8000) == 0) {
-				const uint16 siteVal = offIdx & 0x7FFF;
-				if (siteVal < Mystery::kVisitedSiteCap)
-					_mystery._onSites[siteVal] = 0;
-			}
+			updateLondonClueSite(_mystery, READ_LE_UINT16(c + 0x1e + j * 2),
+								 true, j);
+			updateLondonClueSite(_mystery, READ_LE_UINT16(c + 0x28 + j * 2),
+								 false, j);
 		}
 		const uint16 jumpSite = READ_LE_UINT16(c + 0x46);
 		if (jumpSite != 0xFFFF)
