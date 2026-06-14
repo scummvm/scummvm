@@ -112,6 +112,11 @@ public:
 	/// header slot). Pass the mystery's kdTextIndex() pointer.
 	void sayKDDigital(const byte *kdTextIndex, uint kdspeak, uint partner);
 
+	/// `_SayKDHintDigital @ 2542:187e` — EEM2/London partner chain-hint voice.
+	/// Like `sayKDDigital` but indexes the table 0x3a after KDTextIndex (vs
+	/// 0x12) with no +1 bias. @p slot is the 0..4 hint-chain slot.
+	void sayKDHintDigital(const byte *kdTextIndex, uint slot, uint partner);
+
 	/// _QuitSounds @ 1ff1:03c5.
 	void stopAll();
 
