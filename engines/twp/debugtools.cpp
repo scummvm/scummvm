@@ -626,7 +626,7 @@ void onImGuiInit() {
 
 void onImGuiRender() {
 	ImGuiIO& io = ImGui::GetIO();
-	if (!debugChannelSet(-1, kDebugConsole)) {
+	if (!debugChannelSet(-1, kDebugImGui)) {
 		io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse;
 		io.MouseDrawCursor = false;
 		return;
