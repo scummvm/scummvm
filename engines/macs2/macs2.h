@@ -149,6 +149,76 @@ struct BackgroundAnimationBlob {
 	static void mirrorAnimBlob(Common::Array<uint8> &blob);
 };
 
+/**
+ * Read-only structured view over an animation blob's raw byte array.
+ *
+ * Blob binary layout (from advanceAnimFrame at 1010:1480):
+ *   Header (12 bytes):
+ *     +0x00: uint16 unknown (preserved across save/load)
+ *     +0x02: uint16 sequencePosition (1-based index into sequence table)
+ *     +0x04: uint16 repeatCounter
+ *     +0x06: uint16 loopStartPosition
+ *     +0x08: uint16 delayCounter
+ *     +0x0A: uint16 sequenceLengthMinusOne (actual length = value + 1)
+ *   Sequence table (sequenceLength - 1 bytes at offset 0x0C):
+ *     Commands: 1=repeat(N), 2=delay(N), 3=jump(pos), >=10: frame index (value-10)
+ *   Frame data (at offset 0x0B + sequenceLength):
+ *     uint16 frameCount
+ *     Per frame: int16 offsetX, int16 offsetY, uint16 unknown, uint16 width, uint16 height, byte[w*h] pixels
+ */
+struct AnimBlobView {
+	const Common::Array<uint8> &_blob;
+
+	explicit AnimBlobView(const Common::Array<uint8> &blob) : _blob(blob) {}
+
+	bool isValid() const { return _blob.size() >= 14; } // header(12) + at least 2 bytes frame count
+
+	// Header fields
+	uint16 sequencePosition() const { return READ_LE_UINT16(&_blob[0x02]); }
+	uint16 repeatCounter() const { return READ_LE_UINT16(&_blob[0x04]); }
+	uint16 loopStartPosition() const { return READ_LE_UINT16(&_blob[0x06]); }
+	uint16 delayCounter() const { return READ_LE_UINT16(&_blob[0x08]); }
+	uint16 sequenceLength() const { return READ_LE_UINT16(&_blob[0x0A]) + 1; }
+
+	// Derived offsets
+	uint32 frameDataOffset() const { return 0x0B + sequenceLength(); }
+	uint16 frameCount() const {
+		uint32 off = frameDataOffset();
+		if (off + 2 > _blob.size()) return 0;
+		return READ_LE_UINT16(&_blob[off]);
+	}
+
+	// Get frame info at index (0-based). Returns false if out of bounds.
+	struct FrameInfo {
+		int16 offsetX;
+		int16 offsetY;
+		uint16 unknown;
+		uint16 width;
+		uint16 height;
+		const byte *pixels; // pointer into blob data
+	};
+
+	bool getFrameInfo(uint16 index, FrameInfo &out) const {
+		uint32 pos = frameDataOffset() + 2; // skip frame count word
+		for (uint16 i = 0; i <= index; i++) {
+			if (pos + 10 > _blob.size()) return false;
+			int16 ox = (int16)READ_LE_UINT16(&_blob[pos]);
+			int16 oy = (int16)READ_LE_UINT16(&_blob[pos + 2]);
+			uint16 unk = READ_LE_UINT16(&_blob[pos + 4]);
+			uint16 w = READ_LE_UINT16(&_blob[pos + 6]);
+			uint16 h = READ_LE_UINT16(&_blob[pos + 8]);
+			pos += 10;
+			if (w == 0 || h == 0 || pos + (uint32)w * h > _blob.size()) return false;
+			if (i == index) {
+				out = {ox, oy, unk, w, h, &_blob[pos]};
+				return true;
+			}
+			pos += (uint32)w * h;
+		}
+		return false;
+	}
+};
+
 struct PathfindingPoint {
 	uint8 _index;
 	Common::Point _position;
