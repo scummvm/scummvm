@@ -1,17 +1,17 @@
 MODULE := engines/macs2
 
 MODULE_OBJS = \
-	macs2.o \
-	saveload.o \
+	adlib.o \
 	console.o \
 	dialogs.o \
 	events.o \
+	gameobjects.o \
+	macs2.o \
 	messages.o \
 	metaengine.o \
-	view1.o \
-	gameobjects.o \
-	adlib.o \
-	script/scriptexecutor.o
+	saveload.o \
+	script/scriptexecutor.o \
+	view1.o
 
 ifdef USE_IMGUI
 MODULE_OBJS += \
