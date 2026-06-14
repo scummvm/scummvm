@@ -347,10 +347,12 @@ void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 
 		// Parse frames for the legacy BackgroundAnimation struct
 		AnimBlobView blobView(currentBlob._blob);
-		current._numFrames = blobView.frameCount();
+		// Original uses sequence length (blob[0xA]+1) as numFrames for background animations
+		current._numFrames = blobView.sequenceLength();
 		current._frameIndex = 0;
 		current._frames = new AnimFrame[current._numFrames];
-		for (int j = 0; j < current._numFrames; j++) {
+		uint16 actualFrameCount = blobView.frameCount();
+		for (int j = 0; j < (int)actualFrameCount; j++) {
 			AnimBlobView::FrameInfo fi;
 			if (!blobView.getFrameInfo(j, fi))
 				break;
