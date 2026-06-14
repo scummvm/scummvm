@@ -19,44 +19,41 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene302::Scene302(RexNebularEngine *vm) : Scene3xx(vm) {
-	_oldFrame = 0;
-}
+struct Scratch {
+	int32 _oldFrame;
+};
 
-void Scene302::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsSint32LE(_oldFrame);
-}
 
-void Scene302::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene302::enter() {
+static void room_302_init() {
 	_game._player._stepEnabled = false;
 	_game._player._visible = false;
 
 	_scene->loadAnimation(formAnimName('a', -1), 71);
-	sceneEntrySound();
+	section_3_music();
 }
 
-void Scene302::step() {
+static void room_302_daemon() {
 	if (_game._trigger == 71)
 		_scene->_nextSceneId = 303;
 
-	if ((_scene->_animation[0] != nullptr) && (_scene->_animation[0]->getCurrentFrame() != _oldFrame)) {
-		_oldFrame = _scene->_animation[0]->getCurrentFrame();
-		if (_oldFrame == 147) {
+	if ((_scene->_animation[0] != nullptr) && (_scene->_animation[0]->getCurrentFrame() != local._oldFrame)) {
+		local._oldFrame = _scene->_animation[0]->getCurrentFrame();
+		if (local._oldFrame == 147) {
 			_game._objects.setRoom(OBJ_POISON_DARTS, 1);
 			_game._objects.setRoom(OBJ_BLOWGUN, 1);
 			_game._objects.setRoom(OBJ_REBREATHER, 1);
@@ -73,6 +70,19 @@ void Scene302::step() {
 	}
 }
 
+void room_302_synchronize(Common::Serializer &s) {
+	s.syncAsSint32LE(local._oldFrame);
+}
+
+void room_302_preload() {
+	room_init_code_pointer = room_302_init;
+	room_daemon_code_pointer = room_302_daemon;
+
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

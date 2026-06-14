@@ -298,6 +298,9 @@ extern void inter_set_active_inven(int inven_id);
  * @param this_	
  */
 extern void inter_give_to_player(int this_);
+
+extern void inter_take_from_player(int this_, int where_to);
+
 /*
  * inter_move_object()
  * Moves an object to a new location, taking into account any

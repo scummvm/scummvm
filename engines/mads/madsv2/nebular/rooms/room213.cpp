@@ -25,6 +25,7 @@
 #include "mads/madsv2/nebular/mads/inventory.h"
 #include "mads/madsv2/nebular/mads/words.h"
 #include "mads/madsv2/nebular/rooms/section2.h"
+#include "mads/madsv2/nebular/rooms/teleporter.h"
 #include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
@@ -47,7 +48,7 @@ static void room_213_init() {
 	else
 		local._handSpriteId = _scene->_sprites.addSprites("*ROXHAND");
 
-	teleporterEnter();
+	teleporter_init();
 
 	// The original is calling Scene2xx::section_2_music()
 	if (_vm->_musicFlag) {
@@ -61,11 +62,11 @@ static void room_213_init() {
 }
 
 static void room_213_daemon() {
-	teleporterStep();
+	teleporter_daemon();
 }
 
 static void room_213_parser() {
-	if (teleporterActions()) {
+	if (teleporter_parser()) {
 		_action._inProgress = false;
 		return;
 	}

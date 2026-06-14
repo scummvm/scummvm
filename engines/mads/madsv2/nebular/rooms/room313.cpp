@@ -19,21 +19,22 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/cycle.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/core/pal.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene313::setup() {
-	setPlayerSpritesPrefix();
-	_game._player._spritesPrefix = "RM313A";
-	setAAName();
-}
-
-void Scene313::enter() {
+static void room_313_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 
 	if ((_scene->_priorSceneId == 366) || (_scene->_priorSceneId == 316)) {
@@ -57,18 +58,18 @@ void Scene313::enter() {
 	}
 
 	if (_globals[kAfterHavoc]) {
-		for (uint16 i = 0; i < _scene->_paletteCycles.size(); i++) {
-			int palIdx = _scene->_paletteCycles[i]._firstColorIndex;
-			int size = _scene->_paletteCycles[i]._colorCount * 3;
-			memset(&_vm->_palette->_cyclingPalette[palIdx], 0, size);
-			memset(&_vm->_palette->_mainPalette[palIdx], 0, size);
+		for (uint16 i = 0; i < cycle_list.num_cycles; i++) {
+			int palIdx = cycle_list.table[i].first_list_color;
+			int size = cycle_list.table[i].num_colors * 3;
+			memset(&cycling_palette[palIdx], 0, size);
+			memset(&master_palette[palIdx], 0, size);
 		}
 	}
 
-	sceneEntrySound();
+	section_3_music();
 }
 
-void Scene313::actions() {
+static void room_313_parser() {
 	if (_action.isAction(VERB_CRAWL_TO, NOUN_FOURTH_CELL))
 		_scene->_nextSceneId = 387;
 	else if (_action.isAction(VERB_CRAWL_TO, NOUN_THIRD_CELL))
@@ -98,6 +99,19 @@ void Scene313::actions() {
 	_action._inProgress = false;
 }
 
+void room_313_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_313_preload() {
+	room_init_code_pointer = room_313_init;
+	room_pre_parser_code_pointer = room_313_parser;
+	section_3_walker();
+	Common::strcpy_s(player.series_name, "RM313A");
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

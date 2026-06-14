@@ -19,20 +19,32 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
+
+struct Scratch {
+
+};
+
+static Scratch local;
+
 
 void Scene357::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 }
 
-void Scene357::enter() {
+static void room_357_init() {
 	_globals[kAfterHavoc] = true;
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
 	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
@@ -46,10 +58,10 @@ void Scene357::enter() {
 	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(15, 148);
 
-	sceneEntrySound();
+	section_3_music();
 }
 
-void Scene357::preActions() {
+static void room_357_pre_parser() {
 	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST))
 		_game._player._walkOffScreenSceneId = 318;
 
@@ -57,7 +69,7 @@ void Scene357::preActions() {
 		_game._player._walkOffScreenSceneId = 358;
 }
 
-void Scene357::actions() {
+static void room_357_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35715);
 	else if (_action.isAction(VERB_LOOK, NOUN_AIR_VENT))
@@ -92,6 +104,21 @@ void Scene357::actions() {
 	_action._inProgress = false;
 }
 
+void room_357_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_357_preload() {
+	room_init_code_pointer = room_357_init;
+	room_pre_parser_code_pointer = room_357_pre_parser;
+	room_parser_code_pointer = room_357_parser;
+	room_daemon_code_pointer = room_357_daemon;
+
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

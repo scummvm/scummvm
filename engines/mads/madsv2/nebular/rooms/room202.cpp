@@ -173,6 +173,55 @@ static void setRandomKernelMessage() {
 	local._activeMsgFl = true;
 }
 
+static int subStep1(int randVal) {
+	if ((randVal <= 100) || local._toStationFl)
+		return 42;
+
+	if ((randVal <= 200) || local._toTeleportFl)
+		return 96;
+
+	if ((randVal <= 300) && (local._lastRoute != 1))
+		return 77;
+
+	return 76;
+}
+
+static int subStep2(int randVal) {
+	if ((randVal <= 150) && (local._stationCounter < 5))
+		return 51;
+
+	if ((randVal <= 300) || local._toTeleportFl)
+		return 74;
+
+	if (randVal <= 400)
+		return 64;
+
+	return 44;
+}
+
+static int subStep3(int randVal) {
+	if ((randVal <= 100) || local._toStationFl)
+		return 27;
+
+	if ((randVal <= 200) || local._toTeleportFl)
+		return 159;
+
+	if ((randVal <= 300) && (local._lastRoute != 2))
+		return 119;
+
+	return 110;
+}
+
+static int subStep4(int randVal) {
+	if ((randVal <= 100) || local._toTeleportFl)
+		return 176;
+
+	if (randVal <= 200)
+		return 19;
+
+	return 166;
+}
+
 static void room_202_daemon() {
 	if (!local._activeMsgFl && (_game._player._playerPos == Common::Point(77, 105)) && (_game._player._facing == FACING_NORTH) && (_vm->getRandomNumber(999) == 0)) {
 		_scene->_kernelMessages.reset();
@@ -369,66 +418,17 @@ static void room_202_daemon() {
 	}
 }
 
-static int subStep1(int randVal) {
-	if ((randVal <= 100) || local._toStationFl)
-		return 42;
-
-	if ((randVal <= 200) || local._toTeleportFl)
-		return 96;
-
-	if ((randVal <= 300) && (local._lastRoute != 1))
-		return 77;
-
-	return 76;
-}
-
-static int subStep2(int randVal) {
-	if ((randVal <= 150) && (local._stationCounter < 5))
-		return 51;
-
-	if ((randVal <= 300) || local._toTeleportFl)
-		return 74;
-
-	if (randVal <= 400)
-		return 64;
-
-	return 44;
-}
-
-static int subStep3(int randVal) {
-	if ((randVal <= 100) || local._toStationFl)
-		return 27;
-
-	if ((randVal <= 200) || local._toTeleportFl)
-		return 159;
-
-	if ((randVal <= 300) && (local._lastRoute != 2))
-		return 119;
-
-	return 110;
-}
-
-static int subStep4(int randVal) {
-	if ((randVal <= 100) || local._toTeleportFl)
-		return 176;
-
-	if (randVal <= 200)
-		return 19;
-
-	return 166;
-}
-
 static void room_202_pre_parser() {
-	auto &player = _vm->_game->_player;
+	auto &gplayer = _vm->_game->_player;
 
-	if (player._needToWalk)
+	if (gplayer._needToWalk)
 		_scene->_kernelMessages.reset();
 
-	if (local._ladderTopFl && (_action.isAction(VERB_CLIMB_DOWN, NOUN_LADDER) || player._needToWalk)) {
+	if (local._ladderTopFl && (_action.isAction(VERB_CLIMB_DOWN, NOUN_LADDER) || gplayer._needToWalk)) {
 		if (_game._trigger == 0) {
 			_vm->_sound->command(29);
-			player._readyToWalk = false;
-			player._stepEnabled = false;
+			gplayer._readyToWalk = false;
+			gplayer._stepEnabled = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[9]);
 			_globals._sequenceIndexes[8] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[8], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[8], 1);
@@ -436,21 +436,21 @@ static void room_202_pre_parser() {
 		} else if (_game._trigger == 1) {
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[8]);
 			_scene->_dynamicHotspots.remove(local._ladderHotspotId);
-			player._visible = true;
-			player._readyToWalk = true;
-			player._stepEnabled = true;
+			gplayer._visible = true;
+			gplayer._readyToWalk = true;
+			gplayer._stepEnabled = true;
 			local._ladderTopFl = false;
 		}
 	}
 
 	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS) && (_action._activeAction._indirectObjectId > 0)) {
-		if (!player._readyToWalk || local._ladderTopFl)
-			player._needToWalk = false;
+		if (!gplayer._readyToWalk || local._ladderTopFl)
+			gplayer._needToWalk = false;
 		else
-			player._needToWalk = true;
+			gplayer._needToWalk = true;
 
 		if (!local._ladderTopFl)
-			player.walk(Common::Point(171, 122), FACING_NORTH);
+			gplayer.walk(Common::Point(171, 122), FACING_NORTH);
 	}
 }
 

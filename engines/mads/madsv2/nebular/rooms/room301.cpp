@@ -19,20 +19,20 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene301::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene301::enter() {
+static void room_301_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
 
@@ -43,14 +43,27 @@ void Scene301::enter() {
 	_game._player._visible = false;
 	_scene->loadAnimation(formAnimName('a', -1), 60);
 
-	sceneEntrySound();
+	section_3_music();
 }
 
-void Scene301::step() {
+static void room_301_daemon() {
 	if (_game._trigger == 60)
 		_scene->_nextSceneId = 302;
 }
 
+void room_301_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_301_preload() {
+	room_init_code_pointer = room_301_init;
+	room_daemon_code_pointer = room_301_daemon;
+
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

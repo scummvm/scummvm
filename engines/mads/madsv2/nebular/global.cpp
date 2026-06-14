@@ -29,8 +29,6 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-Conversation _dialog1;
-
 // Section preloads
 extern void section_1_preload();
 extern void section_2_preload();

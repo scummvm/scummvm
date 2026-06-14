@@ -32,12 +32,7 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-void Scene216::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene216::enter() {
+void room_216_init() {
 	_game._player._stepEnabled = false;
 	_game._player._visible = false;
 
@@ -48,18 +43,18 @@ void Scene216::enter() {
 	section_2_music();
 }
 
-void Scene216::step() {
+void room_216_daemon() {
 	if (_game._trigger == 60)
 		_scene->_nextSceneId = 215;
 }
 
+void room_216_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
 void room_216_preload() {
 	room_init_code_pointer = room_216_init;
-	room_pre_parser_code_pointer = room_216_pre_parser;
-	room_parser_code_pointer = room_216_parser;
 	room_daemon_code_pointer = room_216_daemon;
-
-	anim_himem_preload(formAnimName('A', -1), 3);
 
 	section_2_walker();
 	section_2_interface();

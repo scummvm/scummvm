@@ -19,23 +19,20 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene361::setup() {
-	if (_scene->_currentSceneId == 391)
-		_globals[kSexOfRex] = REX_MALE;
-
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene361::handleRexAction() {
+static void handleRexAction() {
 	switch (_game._trigger) {
 	case 0:
 		_game._player._stepEnabled = false;
@@ -133,7 +130,7 @@ void Scene361::handleRexAction() {
 	}
 }
 
-void Scene361::handleRoxAction() {
+static void handleRoxAction() {
 	switch (_game._trigger) {
 	case 0:
 		_game._player._stepEnabled = false;
@@ -236,7 +233,7 @@ void Scene361::handleRoxAction() {
 	}
 }
 
-void Scene361::enter() {
+static void room_361_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
 
 	if (_globals[kSexOfRex] == REX_MALE) {
@@ -269,10 +266,10 @@ void Scene361::enter() {
 	if (_scene->_priorSceneId == 320)
 		_scene->_kernelMessages.setQuoted(_scene->_kernelMessages.addQuote(0xFB, 0, 0x78), 4, true);
 
-	sceneEntrySound();
+	section_3_music();
 }
 
-void Scene361::step() {
+static void room_361_daemon() {
 	if (_game._trigger >= 70) {
 		switch (_game._trigger) {
 		case 70:
@@ -374,7 +371,7 @@ void Scene361::step() {
 	}
 }
 
-void Scene361::preActions() {
+static void room_361_pre_parser() {
 	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST))
 		_game._player._walkOffScreenSceneId = 360;
 
@@ -382,7 +379,7 @@ void Scene361::preActions() {
 		_game._player._walkOffScreenSceneId = 354;
 }
 
-void Scene361::actions() {
+static void room_361_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(36119);
 	else if (_action.isAction(VERB_SIT_AT, NOUN_DESK)) {
@@ -419,6 +416,24 @@ void Scene361::actions() {
 	_action._inProgress = false;
 }
 
+void room_361_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_361_preload() {
+	room_init_code_pointer = room_361_init;
+	room_pre_parser_code_pointer = room_361_pre_parser;
+	room_parser_code_pointer = room_361_parser;
+	room_daemon_code_pointer = room_361_daemon;
+
+	if (_scene->_currentSceneId == 391)
+		_globals[kSexOfRex] = REX_MALE;
+
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

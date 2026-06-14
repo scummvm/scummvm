@@ -19,47 +19,47 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/teleporter.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene322::setup() {
-	_game._player._spritesPrefix = "";
-	// The original is calling scene3xx_setAAName()
-	_game._aaName = Resources::formatAAName(4);
-}
-
-void Scene322::enter() {
+static void room_322_init() {
 	if (_globals[kSexOfRex] == REX_MALE)
-		_handSpriteId = _scene->_sprites.addSprites("*REXHAND");
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*REXHAND");
 	else
-		_handSpriteId = _scene->_sprites.addSprites("*ROXHAND");
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*ROXHAND");
 
-	teleporterEnter();
+	teleporter_init();
 
-	// The original is using scene3xx_sceneEntrySound()
+	// The original is using scene3xx_section_3_music()
 	if (!_vm->_musicFlag)
 		_vm->_sound->command(2);
 	else
 		_vm->_sound->command(10);
 }
 
-void Scene322::step() {
-	teleporterStep();
+static void room_322_daemon() {
+	teleporter_daemon();
 }
 
-void Scene322::actions() {
+static void room_322_parser() {
 	if (_action._lookFlag) {
 		_vm->_dialogs->show(32214);
 		_action._inProgress = false;
 		return;
 	}
 
-	if (teleporterActions()) {
+	if (teleporter_parser()) {
 		_action._inProgress = false;
 		return;
 	}
@@ -86,6 +86,20 @@ void Scene322::actions() {
 	_action._inProgress = false;
 }
 
+void room_322_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_322_preload() {
+	room_init_code_pointer = room_322_init;
+	room_parser_code_pointer = room_322_parser;
+	room_daemon_code_pointer = room_322_daemon;
+
+	*player.series_name = '\0';
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

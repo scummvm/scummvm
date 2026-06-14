@@ -19,7 +19,10 @@
  *
  */
 
-#include "mads/madsv2/nebular/rooms/teleporter_room.h"
+#include "mads/madsv2/nebular/rooms/teleporter.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/global.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -53,13 +56,13 @@ void teleporter_init() {
 
 	_game._player._visible = false;
 	_game._player._stepEnabled = (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL);
-	_scene->_kernelMessages._talkFont = _vm->_font->getFont(FONT_TELE);
+	_scene->_kernelMessages._talkFont = font_tele;
 	_scene->_textSpacing = 0;
 	_curCode = 0;
 	_digitCount = 0;
 	_finishedCodeCounter = 0;
 	_curMessageId = -1;
-	_msgText = "_";
+	Common::strcpy_s(_msgText, "_");
 
 	if (_scene->_priorSceneId == RETURNING_FROM_DIALOG)
 		_scene->_priorSceneId = _globals[kTeleporterDestination];
@@ -170,10 +173,9 @@ Common::Point teleporter_compute_location() {
 
 void teleporter_handle_key() {
 	switch (_game._trigger) {
-	case 0:
-	{
+	case 0: {
 		_game._player._stepEnabled = false;
-		Common::Point msgPos = teleporterComputeLocation();
+		Common::Point msgPos = teleporter_compute_location();
 		_handSequenceId = _scene->_sequences.startPingPongCycle(_handSpriteId, false, 4, 2, 0, 0);
 		_scene->_sequences.setPosition(_handSequenceId, msgPos);
 		_scene->_sequences.setDepth(_handSequenceId, 2);
@@ -182,9 +184,8 @@ void teleporter_handle_key() {
 
 		if (_globals[kMeteorologistWatch] == METEOROLOGIST_NORMAL)
 			_vm->_events->hideCursor();
-
+		break;
 	}
-	break;
 
 	case 1:
 		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_SPRITE, 3, 3);
@@ -196,9 +197,9 @@ void teleporter_handle_key() {
 
 				Common::String format = "%01d";
 				format.setChar('0' + _digitCount, 2);
-				_msgText = Common::String::format(format.c_str(), _curCode);
+				Common::strcpy_s(_msgText, Common::String::format(format.c_str(), _curCode).c_str());
 				if (_digitCount < 4)
-					_msgText += "_";
+					Common::strcat_s(_msgText, "_");
 
 				if (_scene->_currentSceneId != 711)
 					_vm->_sound->command(32);
@@ -206,14 +207,14 @@ void teleporter_handle_key() {
 		} else if (_buttonTyped == 11) {
 			_digitCount = 0;
 			_curCode = 0;
-			_msgText = "_";
+			Common::strcpy_s(_msgText, "_");
 			if (_scene->_currentSceneId != 711)
 				_vm->_sound->command(33);
 		} else if (_digitCount == 4) {
 			if (_scene->_currentSceneId != 711)
 				_finishedCodeCounter = 1;
 
-			if (teleporterAddress(_curCode, true) > 0) {
+			if (teleporter_address(_curCode, true) > 0) {
 				_vm->_palette->setEntry(252, 0, 63, 0);
 				if (_scene->_currentSceneId != 711)
 					_vm->_sound->command(34);
@@ -239,7 +240,7 @@ void teleporter_handle_key() {
 				_scene->_nextSceneId = 202;
 			else {
 				_vm->_events->showCursor();
-				int destination = teleporterAddress(_curCode, true);
+				int destination = teleporter_address(_curCode, true);
 
 				if (destination > 0) {
 					_globals[kTeleporterCommand] = 2;
@@ -269,7 +270,7 @@ void teleporter_handle_key() {
 	}
 }
 
-bool teleeporter_parser() {
+bool teleporter_parser() {
 	bool retVal = false;
 
 	if (_action.isAction(VERB_PRESS) || _action.isAction(VERB_PUSH)) {
@@ -278,7 +279,7 @@ bool teleeporter_parser() {
 			if (_action._activeAction._objectNameId == _buttonList[i])
 				_buttonTyped = i;
 		}
-		teleporterHandleKey();
+		teleporter_handle_key();
 		retVal = true;
 	}
 
@@ -288,7 +289,7 @@ bool teleeporter_parser() {
 		retVal = true;
 	}
 
-	return (retVal);
+	return retVal;
 }
 
 void teleporter_daemon() {

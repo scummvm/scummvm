@@ -19,35 +19,33 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/forcefield.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene310::Scene310(RexNebularEngine *vm) : Scene3xx(vm) {
-	_forceField.init();
-}
+struct Scratch {
+	Forcefield _forcefield;
+};
 
-void Scene310::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
+static Scratch local;
 
-	_forceField.synchronize(s);
-}
 
-void Scene310::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene310::enter() {
+static void room_310_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*SC003x0");
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*SC003x1");
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*SC003x2");
 
-	initForceField(&_forceField, true);
+	init_forcefield(&local._forcefield, true);
 
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
 	_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
@@ -58,16 +56,30 @@ void Scene310::enter() {
 	_game._player._stepEnabled = false;
 	_scene->loadAnimation(formAnimName('a', -1), 70);
 
-	sceneEntrySound();
+	section_3_music();
 }
 
-void Scene310::step() {
-	handleForceField(&_forceField, &_globals._spriteIndexes[0]);
+static void room_310_daemon() {
+	handle_forcefield(&local._forcefield, &_globals._spriteIndexes[0]);
 
 	if (_game._trigger == 70)
 		_scene->_nextSceneId = 309;
 }
 
+void room_310_synchronize(Common::Serializer &s) {
+	local._forcefield.synchronize(s);
+}
+
+void room_310_preload() {
+	local._forcefield.init();
+
+	room_init_code_pointer = room_310_init;
+	room_daemon_code_pointer = room_310_daemon;
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

@@ -118,15 +118,15 @@ static void moveSpider() {
 }
 
 static void room_207_daemon() {
-	auto &player = _game._player;
+	auto &gplayer = _game._player;
 
 	if (local._vultureFl) {
-		if (((int32)player._priorTimer - local._vultureTime) > 1700)
+		if (((int32)gplayer._priorTimer - local._vultureTime) > 1700)
 			moveVulture();
 	}
 
 	if (local._spiderFl) {
-		if (((int32)player._priorTimer - local._spiderTime) > 800)
+		if (((int32)gplayer._priorTimer - local._spiderTime) > 800)
 			moveSpider();
 	}
 

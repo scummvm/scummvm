@@ -19,31 +19,27 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene359::Scene359(RexNebularEngine *vm) : Scene3xx(vm) {
-	_cardHotspotId = -1;
-}
+struct Scratch {
+	int32 _cardHotspotId;
+};
 
-void Scene359::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsSint32LE(_cardHotspotId);
-}
 
-void Scene359::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(VERB_WALKTO);
-}
-
-void Scene359::enter() {
+static void room_359_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', -1));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
 
@@ -58,8 +54,8 @@ void Scene359::enter() {
 
 	if (_game._objects.isInRoom(OBJ_SECURITY_CARD)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		_cardHotspotId = _scene->_dynamicHotspots.add(NOUN_SECURITY_CARD, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(_cardHotspotId, Common::Point(107, 107), FACING_SOUTH);
+		local._cardHotspotId = _scene->_dynamicHotspots.add(NOUN_SECURITY_CARD, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(local._cardHotspotId, Common::Point(107, 107), FACING_SOUTH);
 	}
 
 	if (_scene->_priorSceneId == 358)
@@ -67,10 +63,10 @@ void Scene359::enter() {
 	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(15, 148);
 
-	sceneEntrySound();
+	section_3_music();
 }
 
-void Scene359::preActions() {
+static void room_359_pre_parser() {
 	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST))
 		_game._player._walkOffScreenSceneId = 358;
 
@@ -78,7 +74,7 @@ void Scene359::preActions() {
 		_game._player._walkOffScreenSceneId = 360;
 }
 
-void Scene359::actions() {
+static void room_359_parser() {
 	if (_action._lookFlag) {
 		if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_SECURITY_CARD]._roomNumber == 359))
 			_vm->_dialogs->show(35914);
@@ -107,7 +103,7 @@ void Scene359::actions() {
 
 			case 1:
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-				_scene->_dynamicHotspots.remove(_cardHotspotId);
+				_scene->_dynamicHotspots.remove(local._cardHotspotId);
 				_vm->_sound->command(57);
 				_game._objects.addToInventory(OBJ_SECURITY_CARD);
 				_vm->_dialogs->showItem(OBJ_SECURITY_CARD, 0x330);
@@ -172,6 +168,21 @@ void Scene359::actions() {
 	_action._inProgress = false;
 }
 
+void room_359_synchronize(Common::Serializer &s) {
+	s.syncAsSint32LE(local._cardHotspotId);
+}
+
+void room_359_preload() {
+	room_init_code_pointer = room_359_init;
+	room_pre_parser_code_pointer = room_359_pre_parser;
+	room_parser_code_pointer = room_359_parser;
+
+	section_3_walker();
+	section_3_interface();
+	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

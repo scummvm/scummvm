@@ -327,6 +327,7 @@ enum {
 #define FONT_CONVERSATION "*FONTCONV.FF"
 #define FONT_INTERFACE "*FONTINTR.FF"
 
+#define INDEFINITE_TIMEOUT 9999999
 
 extern void global_section_constructor();
 extern void sync_room(Common::Serializer &s);

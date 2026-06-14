@@ -32,33 +32,9 @@ namespace Rooms {
 extern void section_3_walker();
 extern void section_3_interface();
 extern void section_3_music();
+extern void section_3_pre_parser();
 
 #if 0
-
-struct ForceField {
-	bool _flag;
-	int _vertical;
-	int _horizontal;
-	int _seqId[40];
-	uint32 _timer;
-
-	void init() {
-		_flag = false;
-		_vertical = _horizontal = -1;
-		_timer = 0;
-		for (int i = 0; i < 40; ++i)
-			_seqId[i] = -1;
-	}
-
-	void synchronize(Common::Serializer &s) {
-		s.syncAsByte(_flag);
-		s.syncAsSint32LE(_vertical);
-		s.syncAsSint32LE(_horizontal);
-		for (int i = 0; i < 40; ++i)
-			s.syncAsSint32LE(_seqId[i]);
-		s.syncAsUint32LE(_timer);
-	};
-};
 
 class Scene3xx : public NebularScene {
 protected:
@@ -74,9 +50,6 @@ protected:
 
 	void sceneEntrySound();
 
-	void initForceField(ForceField *force, bool flag);
-	void handleForceField(ForceField *force, int *sprites);
-	int computeScale(int low, int high, int id);
 
 public:
 	Scene3xx(RexNebularEngine *vm) : NebularScene(vm) {

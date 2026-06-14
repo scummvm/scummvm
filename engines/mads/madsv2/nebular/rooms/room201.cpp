@@ -23,7 +23,7 @@
 #include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
 #include "mads/madsv2/nebular/mads/inventory.h"
-#include "mads/madsv2/nebular/mads/words.h"	q	
+#include "mads/madsv2/nebular/mads/words.h"	
 #include "mads/madsv2/nebular/rooms/section2.h"
 #include "mads/madsv2/nebular/rooms/thunks.h"
 

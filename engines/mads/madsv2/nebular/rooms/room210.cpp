@@ -22,7 +22,7 @@
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/conversation.h"
+#include "mads/madsv2/nebular/rooms/conversation.h"
 #include "mads/madsv2/nebular/mads/inventory.h"
 #include "mads/madsv2/nebular/mads/words.h"
 #include "mads/madsv2/nebular/rooms/section2.h"
@@ -58,205 +58,40 @@ struct Scratch {
 static Scratch local;
 
 
-static void handleConversations() {
-	if (_game._trigger == 0) {
-		_scene->_kernelMessages.reset();
-		_game._player._stepEnabled = false;
-		Common::String curQuote = _game.getQuote(_action._activeAction._verbId);
-		if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
-			Common::String subQuote1, subQuote2;
-			_game.splitQuote(curQuote, subQuote1, subQuote2);
-			Common::strcpy_s(local._subQuote2, subQuote2.c_str());
-			_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 240, subQuote1);
-			_scene->_sequences.addTimer(60, 50);
-		} else {
-			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 120, curQuote);
-		}
-	} else if (_game._trigger == 50) {
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 240, local._subQuote2);
-		_scene->_sequences.addTimer(180, 1);
-	} else {
-		if (_game._trigger == 1)
-			_scene->_kernelMessages.reset();
-
-		switch (local._curDialogNode) {
-		case 1:
-			handleConversation1();
-			break;
-
-		case 2:
-			handleConversation2();
-			break;
-
-		case 3:
-			handleConversation3();
-			break;
-
-		case 5:
-			handleConversation5();
-			break;
-
-		case 6:
-			handleConversation6();
-			break;
-
-		case 7:
-			handleConversation7();
-			break;
-
-		case 8:
-			handleConversation8();
-			break;
-
-		default:
-			break;
-		}
-	}
+static void handleTwinklesSpeech(int quoteId, int shiftX, uint32 delay) {
+	_scene->_kernelMessages.add(Common::Point(10, 70 + (shiftX * 14)), 0xFDFC, 0, 0, (delay == 0) ? INDEFINITE_TIMEOUT : delay, _game.getQuote(quoteId));
 }
 
-static void handleConversation1() {
-	switch (_action._activeAction._verbId) {
-	case 180:
-		setDialogNode(2);
+static void newNode(int node) {
+	local._curDialogNode = node;
+
+	switch (local._curDialogNode) {
+	case 1:
+		local._conv1.start();
 		break;
 
-	case 181:
-		setDialogNode(6);
+	case 2:
+		local._conv2.start();
 		break;
 
-	case 182:
-		setDialogNode(4);
+	case 3:
+		local._conv3.start();
 		break;
 
-	case 183:
-		setDialogNode(9);
+	case 5:
+		local._conv5.start();
 		break;
 
-	case 184:
-		setDialogNode(0);
+	case 6:
+		local._conv6.start();
 		break;
 
-	default:
-		break;
-	}
-}
-
-static void handleConversation2() {
-	switch (_action._activeAction._verbId) {
-	case 187:
-		setDialogNode(3);
+	case 7:
+		local._conv7.start();
 		break;
 
-	case 188:
-		setDialogNode(4);
-		break;
-
-	case 189:
-		setDialogNode(0);
-		break;
-
-	default:
-		break;
-	}
-}
-
-static void handleConversation3() {
-	switch (_action._activeAction._verbId) {
-	case 193:
-		setDialogNode(6);
-		break;
-
-	case 194:
-		setDialogNode(5);
-		break;
-
-	case 195:
-		setDialogNode(4);
-		break;
-
-	case 196:
-		setDialogNode(0);
-		break;
-
-	default:
-		break;
-	}
-}
-
-static void handleConversation5() {
-	switch (_action._activeAction._verbId) {
-	case 204:
-		setDialogNode(6);
-		break;
-
-	case 205:
-	case 206:
-		setDialogNode(4);
-		break;
-
-	case 207:
-		setDialogNode(0);
-		break;
-
-	default:
-		break;
-	}
-}
-
-static void handleConversation6() {
-	switch (_action._activeAction._verbId) {
-	case 211:
-		setDialogNode(7);
-		break;
-
-	case 212:
-		setDialogNode(4);
-		break;
-
-	case 213:
-		setDialogNode(0);
-		break;
-
-	default:
-		break;
-	}
-}
-
-static void handleConversation7() {
-	switch (_action._activeAction._verbId) {
-	case 216:
-	case 217:
-	case 219:
-		setDialogNode(4);
-		break;
-
-	case 218:
-		setDialogNode(8);
-		break;
-
-	case 220:
-		setDialogNode(0);
-		break;
-
-	default:
-		break;
-	}
-}
-
-static void handleConversation8() {
-	switch (_action._activeAction._verbId) {
-	case 223:
-	case 224:
-		setDialogNode(4);
-		break;
-
-	case 225:
-	case 226:
-		setDialogNode(9);
-		break;
-
-	case 227:
-		setDialogNode(0);
+	case 8:
+		local._conv8.start();
 		break;
 
 	default:
@@ -560,44 +395,209 @@ static void setDialogNode(int node) {
 	}
 }
 
-static void handleTwinklesSpeech(int quoteId, int shiftX, uint32 delay) {
-	_scene->_kernelMessages.add(Common::Point(10, 70 + (shiftX * 14)), 0xFDFC, 0, 0, (delay == 0) ? INDEFINITE_TIMEOUT : delay, _game.getQuote(quoteId));
-}
-
-static void newNode(int node) {
-	local._curDialogNode = node;
-
-	switch (local._curDialogNode) {
-	case 1:
-		local._conv1.start();
+static void handleConversation1() {
+	switch (_action._activeAction._verbId) {
+	case 180:
+		setDialogNode(2);
 		break;
 
-	case 2:
-		local._conv2.start();
+	case 181:
+		setDialogNode(6);
 		break;
 
-	case 3:
-		local._conv3.start();
+	case 182:
+		setDialogNode(4);
 		break;
 
-	case 5:
-		local._conv5.start();
+	case 183:
+		setDialogNode(9);
 		break;
 
-	case 6:
-		local._conv6.start();
-		break;
-
-	case 7:
-		local._conv7.start();
-		break;
-
-	case 8:
-		local._conv8.start();
+	case 184:
+		setDialogNode(0);
 		break;
 
 	default:
 		break;
+	}
+}
+
+static void handleConversation2() {
+	switch (_action._activeAction._verbId) {
+	case 187:
+		setDialogNode(3);
+		break;
+
+	case 188:
+		setDialogNode(4);
+		break;
+
+	case 189:
+		setDialogNode(0);
+		break;
+
+	default:
+		break;
+	}
+}
+
+static void handleConversation3() {
+	switch (_action._activeAction._verbId) {
+	case 193:
+		setDialogNode(6);
+		break;
+
+	case 194:
+		setDialogNode(5);
+		break;
+
+	case 195:
+		setDialogNode(4);
+		break;
+
+	case 196:
+		setDialogNode(0);
+		break;
+
+	default:
+		break;
+	}
+}
+
+static void handleConversation5() {
+	switch (_action._activeAction._verbId) {
+	case 204:
+		setDialogNode(6);
+		break;
+
+	case 205:
+	case 206:
+		setDialogNode(4);
+		break;
+
+	case 207:
+		setDialogNode(0);
+		break;
+
+	default:
+		break;
+	}
+}
+
+static void handleConversation6() {
+	switch (_action._activeAction._verbId) {
+	case 211:
+		setDialogNode(7);
+		break;
+
+	case 212:
+		setDialogNode(4);
+		break;
+
+	case 213:
+		setDialogNode(0);
+		break;
+
+	default:
+		break;
+	}
+}
+
+static void handleConversation7() {
+	switch (_action._activeAction._verbId) {
+	case 216:
+	case 217:
+	case 219:
+		setDialogNode(4);
+		break;
+
+	case 218:
+		setDialogNode(8);
+		break;
+
+	case 220:
+		setDialogNode(0);
+		break;
+
+	default:
+		break;
+	}
+}
+
+static void handleConversation8() {
+	switch (_action._activeAction._verbId) {
+	case 223:
+	case 224:
+		setDialogNode(4);
+		break;
+
+	case 225:
+	case 226:
+		setDialogNode(9);
+		break;
+
+	case 227:
+		setDialogNode(0);
+		break;
+
+	default:
+		break;
+	}
+}
+
+static void handleConversations() {
+	if (_game._trigger == 0) {
+		_scene->_kernelMessages.reset();
+		_game._player._stepEnabled = false;
+		Common::String curQuote = _game.getQuote(_action._activeAction._verbId);
+		if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
+			Common::String subQuote1, subQuote2;
+			_game.splitQuote(curQuote, subQuote1, subQuote2);
+			Common::strcpy_s(local._subQuote2, subQuote2.c_str());
+			_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 240, subQuote1);
+			_scene->_sequences.addTimer(60, 50);
+		} else {
+			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 120, curQuote);
+		}
+	} else if (_game._trigger == 50) {
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 240, local._subQuote2);
+		_scene->_sequences.addTimer(180, 1);
+	} else {
+		if (_game._trigger == 1)
+			_scene->_kernelMessages.reset();
+
+		switch (local._curDialogNode) {
+		case 1:
+			handleConversation1();
+			break;
+
+		case 2:
+			handleConversation2();
+			break;
+
+		case 3:
+			handleConversation3();
+			break;
+
+		case 5:
+			handleConversation5();
+			break;
+
+		case 6:
+			handleConversation6();
+			break;
+
+		case 7:
+			handleConversation7();
+			break;
+
+		case 8:
+			handleConversation8();
+			break;
+
+		default:
+			break;
+		}
 	}
 }
 

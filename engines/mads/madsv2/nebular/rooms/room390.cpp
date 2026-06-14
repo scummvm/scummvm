@@ -19,27 +19,27 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene390::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene390::enter() {
+static void room_390_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 	_game._player._visible = false;
 
-	sceneEntrySound();
+	section_3_music();
 }
 
-void Scene390::actions() {
+static void room_390_parser() {
 	if (_action.isAction(VERB_RETURN_TO, NOUN_AIR_SHAFT))
 		_scene->_nextSceneId = 313;
 	else if (_action.isAction(VERB_LOOK_THROUGH, NOUN_GRATE))
@@ -52,6 +52,20 @@ void Scene390::actions() {
 	_action._inProgress = false;
 }
 
+void room_390_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_390_preload() {
+	room_init_code_pointer = room_390_init;
+	room_pre_parser_code_pointer = section_3_pre_parser;
+	room_parser_code_pointer = room_390_parser;
+
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

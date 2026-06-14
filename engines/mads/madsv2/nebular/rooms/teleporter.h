@@ -19,41 +19,26 @@
  *
  */
 
-#include "mads/madsv2/core/game.h"
-#include "mads/madsv2/nebular/global.h"
-#include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/mads/inventory.h"
-#include "mads/madsv2/nebular/mads/words.h"
-#include "mads/madsv2/nebular/rooms/section3.h"
-#include "mads/madsv2/nebular/rooms/thunks.h"
+#ifndef MADS_NEBULAR_ROOMS_TELEPORTER_H
+#define MADS_NEBULAR_ROOMS_TELEPORTER_H
+
+#include "common/rect.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-struct Scratch {
-
-};
-
-static Scratch local;
-
-
-void room_354_synchronize(Common::Serializer &s) {
-	// No implementation
-}
-
-void room_354_preload() {
-	room_init_code_pointer = room_354_init;
-	room_pre_parser_code_pointer = room_354_pre_parser;
-	room_parser_code_pointer = room_354_parser;
-	room_daemon_code_pointer = room_354_daemon;
-
-	section_3_walker();
-	section_3_interface();
-}
+extern void teleporter_init();
+extern int teleporter_address(int code, bool working);
+extern void teleporter_handle_key();
+extern Common::Point teleporter_compute_location();
+extern bool teleporter_parser();
+extern void teleporter_daemon();
 
 } // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS
+
+#endif

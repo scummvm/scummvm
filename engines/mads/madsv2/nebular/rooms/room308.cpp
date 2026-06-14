@@ -19,36 +19,33 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/forcefield.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene308::Scene308(RexNebularEngine *vm) : Scene3xx(vm) {
-	_forceField.init();
-}
+struct Scratch {
+	Forcefield _forcefield;
+};
 
-void Scene308::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
-
-	_forceField.synchronize(s);
-}
+static Scratch local;
 
 
-void Scene308::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene308::enter() {
+static void room_308_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*SC003x0");
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*SC003x1");
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*SC003x2");
 
-	initForceField(&_forceField, true);
+	init_forcefield(&local._forcefield, true);
 
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 0));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
@@ -67,12 +64,12 @@ void Scene308::enter() {
 	_game._player._stepEnabled = false;
 	_scene->loadAnimation(formAnimName('a', -1), 60);
 
-	sceneEntrySound();
+	section_3_music();
 	_game.loadQuoteSet(0xF4, 0xF5, 0xF6, 0);
 }
 
-void Scene308::step() {
-	handleForceField(&_forceField, &_globals._spriteIndexes[0]);
+static void room_308_daemon() {
+	handle_forcefield(&local._forcefield, &_globals._spriteIndexes[0]);
 
 	if (_game._trigger == 60)
 		_scene->_nextSceneId = 307;
@@ -165,6 +162,21 @@ void Scene308::step() {
 	}
 }
 
+void room_308_synchronize(Common::Serializer &s) {
+	local._forcefield.synchronize(s);
+}
+
+void room_308_preload() {
+	local._forcefield.init();
+
+	room_init_code_pointer = room_308_init;
+	room_daemon_code_pointer = room_308_daemon;
+
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

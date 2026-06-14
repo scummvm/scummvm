@@ -19,20 +19,20 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene321::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene321::enter() {
+static void room_321_init() {
 	_game._player._visible = false;
 	_game._player._stepEnabled = false;
 
@@ -49,10 +49,10 @@ void Scene321::enter() {
 	}
 
 	_scene->loadAnimation(formAnimName('g', suffixNum), 60);
-	sceneEntrySound();
+	section_3_music();
 }
 
-void Scene321::step() {
+static void room_321_daemon() {
 	if (_scene->_animation[0] != nullptr) {
 		if ((_scene->_animation[0]->getCurrentFrame() >= 260) && (_globals[kSexOfRex] == REX_MALE) && (_game._storyMode >= STORYMODE_NICE))
 			_scene->_nextSceneId = 316;
@@ -62,6 +62,19 @@ void Scene321::step() {
 		_scene->_nextSceneId = 316;
 }
 
+void room_321_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_321_preload() {
+	room_init_code_pointer = room_321_init;
+	room_daemon_code_pointer = room_321_daemon;
+
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

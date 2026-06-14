@@ -49,7 +49,7 @@ extern FontPtr font_main;               /* Font handle for main sentence   */
 extern FontPtr font_conv;               /* Font handle for conversations   */
 extern FontPtr font_menu;               /* Font handle for menu stuff      */
 extern FontPtr font_misc;               /* Font handle for symbols & icons */
-
+extern FontPtr font_tele;               /* Font handle for Rex teleporter  */
 
 extern FontPtr font_load(const char *name);
 extern int font_write(FontPtr font, Buffer *target, const char *out_string,

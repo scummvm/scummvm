@@ -19,176 +19,55 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
+#include "mads/madsv2/nebular/rooms/conversation.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene318::Scene318(RexNebularEngine *vm) : Scene3xx(vm) {
-	_dropTimer = 0;
+struct Scratch {
+	int32 _dropTimer;
+	int32 _lastFrame;
+	int32 _animMode;
+	int32 _internCounter;
+	int32 _counter;
+	bool _dialogFl;
+	bool _internTalkingFl;
+	bool _internWalkingFl;
+	bool _internVisibleFl;
+	bool _explosionFl;
+	int32 _lastFrameCounter = 0;
+	char _subQuote2[256];
+	Conversation _dialog1;
+};
 
-	_lastFrame = -1;
-	_animMode = -1;
-	_internCounter = -1;
-	_counter = -1;
+static Scratch local;
 
-	_dialogFl = false;
-	_internTalkingFl = false;
-	_internWalkingFl = false;
-	_internVisibleFl = false;
-	_explosionFl = false;
 
-	_lastFrameCounter = 0;
-
-	_subQuote2 = "";
-}
-
-void Scene318::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
-
-	s.syncAsUint32LE(_dropTimer);
-
-	s.syncAsSint32LE(_lastFrame);
-	s.syncAsSint32LE(_animMode);
-	s.syncAsSint32LE(_internCounter);
-	s.syncAsSint32LE(_counter);
-
-	s.syncAsByte(_dialogFl);
-	s.syncAsByte(_internTalkingFl);
-	s.syncAsByte(_internWalkingFl);
-	s.syncAsByte(_internVisibleFl);
-	s.syncAsByte(_explosionFl);
-
-	s.syncAsUint32LE(_lastFrameCounter);
-
-	s.syncString(_subQuote2);
-}
-
-void Scene318::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene318::handleDialog() {
-	if (!_game._trigger) {
-		_game._player._stepEnabled = false;
-		handleRexDialogs(_action._activeAction._verbId);
-	} else if (_game._trigger == 2) {
-		int synxIdx = _globals._sequenceIndexes[2];
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
-		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
-		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(142, 121));
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], synxIdx);
-		_vm->_sound->command(3);
-		_scene->_userInterface.setup(kInputBuildingSentences);
-		_game._player._stepEnabled = true;
-	} else {
-		if (_action._activeAction._verbId < 0x19C)
-			_dialog1.write(_action._activeAction._verbId, false);
-
-		switch (_action._activeAction._verbId) {
-		case 0x191:
-			handleInternDialog(0x19E, 2, INDEFINITE_TIMEOUT);
-			_dialog1.write(0x192, true);
-			break;
-
-		case 0x192:
-			handleInternDialog(0x1A0, 5, INDEFINITE_TIMEOUT);
-			_dialog1.write(0x193, true);
-			break;
-
-		case 0x193:
-			handleInternDialog(0x1A5, 4, INDEFINITE_TIMEOUT);
-			_dialog1.write(0x194, true);
-			break;
-
-		case 0x194:
-			handleInternDialog(0x1A9, 6, INDEFINITE_TIMEOUT);
-			_dialog1.write(0x195, true);
-			_dialog1.write(0x196, true);
-			_dialog1.write(0x19D, false);
-			break;
-
-		case 0x195:
-			handleInternDialog(0x1AF, 7, INDEFINITE_TIMEOUT);
-			if (!_dialog1.read(0x196))
-				_dialog1.write(0x197, true);
-			break;
-
-		case 0x196:
-			handleInternDialog(0x1B6, 5, INDEFINITE_TIMEOUT);
-			if (!_dialog1.read(0x195))
-				_dialog1.write(0x197, true);
-			break;
-
-		case 0x197:
-			handleInternDialog(0x1BB, 5, INDEFINITE_TIMEOUT);
-			break;
-
-		case 0x198:
-			handleInternDialog(0x1C0, 5, INDEFINITE_TIMEOUT);
-			_dialog1.write(0x19A, true);
-			break;
-
-		case 0x199:
-			handleInternDialog(0x1C5, 3, INDEFINITE_TIMEOUT);
-			break;
-
-		case 0x19A:
-			handleInternDialog(0x1C8, 5, INDEFINITE_TIMEOUT);
-			_dialog1.write(0x19B, true);
-			break;
-
-		case 0x19B:
-			handleInternDialog(0x1CD, 3, INDEFINITE_TIMEOUT);
-			break;
-
-		case 0x19C:
-		case 0x19D:
-			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-			_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
-			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(142, 121));
-			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 6, 8);
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
-
-			_dialogFl = false;
-			handleInternDialog(0x1D0, 1, 120);
-			if (_dialog1.read(0) || (_action._activeAction._verbId == 0x19D)) {
-				_explosionFl = true;
-				_internCounter = 3420;
-			}
-			break;
-
-		default:
-			break;
-		}
-
-		if (_action._activeAction._verbId < 0x19C) {
-			_dialog1.start();
-			_game._player._stepEnabled = true;
-		}
-
-	}
-}
-
-void Scene318::handleRexDialogs(int quote) {
+static void handleRexDialogs(int quote) {
 	_scene->_kernelMessages.reset();
 
 	Common::String curQuote = _game.getQuote(quote);
 	if (_vm->_font->getWidth(curQuote, _scene->_textSpacing) > 200) {
-		Common::String subQuote1;
-		_game.splitQuote(curQuote, subQuote1, _subQuote2);
+		Common::String subQuote1, subQuote2;
+		_game.splitQuote(curQuote, subQuote1, subQuote2);
+
+
 		_scene->_kernelMessages.add(Common::Point(138, 59), 0x1110, 32, 0, 240, subQuote1);
-		_scene->_kernelMessages.add(Common::Point(138, 73), 0x1110, 32, 1, 180, _subQuote2);
+		_scene->_kernelMessages.add(Common::Point(138, 73), 0x1110, 32, 1, 180, local._subQuote2);
 	} else
 		_scene->_kernelMessages.add(Common::Point(138, 73), 0x1110, 32, 1, 120, curQuote);
 }
 
-void Scene318::handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
+static void handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
 	int height = quoteNum * 14;
 	int posY;
 	if (height < 85)
@@ -208,7 +87,7 @@ void Scene318::handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
 	curQuoteId = quoteId;
 
 	_scene->_kernelMessages.reset();
-	_internTalkingFl = true;
+	local._internTalkingFl = true;
 
 	// WORKAROUND: In case the player launches multiple talk selections with the
 	// intern before previous ones have finished, take care of removing any
@@ -225,7 +104,110 @@ void Scene318::handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
 	}
 }
 
-void Scene318::enter() {
+static void handleDialog() {
+	if (!_game._trigger) {
+		_game._player._stepEnabled = false;
+		handleRexDialogs(_action._activeAction._verbId);
+	} else if (_game._trigger == 2) {
+		int synxIdx = _globals._sequenceIndexes[2];
+		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
+		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
+		_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(142, 121));
+		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], synxIdx);
+		_vm->_sound->command(3);
+		_scene->_userInterface.setup(kInputBuildingSentences);
+		_game._player._stepEnabled = true;
+	} else {
+		if (_action._activeAction._verbId < 0x19C)
+			local._dialog1.write(_action._activeAction._verbId, false);
+
+		switch (_action._activeAction._verbId) {
+		case 0x191:
+			handleInternDialog(0x19E, 2, INDEFINITE_TIMEOUT);
+			local._dialog1.write(0x192, true);
+			break;
+
+		case 0x192:
+			handleInternDialog(0x1A0, 5, INDEFINITE_TIMEOUT);
+			local._dialog1.write(0x193, true);
+			break;
+
+		case 0x193:
+			handleInternDialog(0x1A5, 4, INDEFINITE_TIMEOUT);
+			local._dialog1.write(0x194, true);
+			break;
+
+		case 0x194:
+			handleInternDialog(0x1A9, 6, INDEFINITE_TIMEOUT);
+			local._dialog1.write(0x195, true);
+			local._dialog1.write(0x196, true);
+			local._dialog1.write(0x19D, false);
+			break;
+
+		case 0x195:
+			handleInternDialog(0x1AF, 7, INDEFINITE_TIMEOUT);
+			if (!local._dialog1.read(0x196))
+				local._dialog1.write(0x197, true);
+			break;
+
+		case 0x196:
+			handleInternDialog(0x1B6, 5, INDEFINITE_TIMEOUT);
+			if (!local._dialog1.read(0x195))
+				local._dialog1.write(0x197, true);
+			break;
+
+		case 0x197:
+			handleInternDialog(0x1BB, 5, INDEFINITE_TIMEOUT);
+			break;
+
+		case 0x198:
+			handleInternDialog(0x1C0, 5, INDEFINITE_TIMEOUT);
+			local._dialog1.write(0x19A, true);
+			break;
+
+		case 0x199:
+			handleInternDialog(0x1C5, 3, INDEFINITE_TIMEOUT);
+			break;
+
+		case 0x19A:
+			handleInternDialog(0x1C8, 5, INDEFINITE_TIMEOUT);
+			local._dialog1.write(0x19B, true);
+			break;
+
+		case 0x19B:
+			handleInternDialog(0x1CD, 3, INDEFINITE_TIMEOUT);
+			break;
+
+		case 0x19C:
+		case 0x19D:
+			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
+			_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
+			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(142, 121));
+			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 6, 8);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+
+			local._dialogFl = false;
+			handleInternDialog(0x1D0, 1, 120);
+			if (local._dialog1.read(0) || (_action._activeAction._verbId == 0x19D)) {
+				local._explosionFl = true;
+				local._internCounter = 3420;
+			}
+			break;
+
+		default:
+			break;
+		}
+
+		if (_action._activeAction._verbId < 0x19C) {
+			local._dialog1.start();
+			_game._player._stepEnabled = true;
+		}
+
+	}
+}
+
+static void room_318_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('k', -1));
 
@@ -249,31 +231,31 @@ void Scene318::enter() {
 	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(214, 152);
 
-	_dialog1.setup(0x47, 0x191, 0x192, 0x193, 0x194, 0x195, 0x196, 0x197, 0x198, 0x199, 0x19A, 0x19B, 0x19C, 0x19D, 0);
+	local._dialog1.setup(0x47, 0x191, 0x192, 0x193, 0x194, 0x195, 0x196, 0x197, 0x198, 0x199, 0x19A, 0x19B, 0x19C, 0x19D, 0);
 
 	if (!_game._visitedScenes._sceneRevisited) {
-		_dialog1.set(0x191, 0x198, 0x199, 0x19C, 0);
+		local._dialog1.set(0x191, 0x198, 0x199, 0x19C, 0);
 		if (_game._widepipeCtr >= 2)
-			_dialog1.write(0x19D, true);
+			local._dialog1.write(0x19D, true);
 	}
 
 	if (_scene->_priorSceneId == 307) {
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
 		_scene->loadAnimation(formAnimName('a', -1), 60);
-		_animMode = 1;
+		local._animMode = 1;
 	}
 
-	_lastFrame = 0;
+	local._lastFrame = 0;
 	_scene->_hotspots.activate(NOUN_INTERN, false);
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_dialogFl = false;
-		_internWalkingFl = false;
-		_counter = 0;
-		_internCounter = 0;
-		_internVisibleFl = true;
-		_explosionFl = false;
+		local._dialogFl = false;
+		local._internWalkingFl = false;
+		local._counter = 0;
+		local._internCounter = 0;
+		local._internVisibleFl = true;
+		local._explosionFl = false;
 	}
 
 	_game.loadQuoteSet(0x18C, 0x18D, 0x18E, 0x18F, 0x191, 0x192, 0x193, 0x194, 0x195, 0x196,
@@ -289,18 +271,18 @@ void Scene318::enter() {
 		if (!_globals[kAfterHavoc]) {
 			_game._player._visible = false;
 			_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('g', -1));
-			_animMode = 2;
+			local._animMode = 2;
 
-			if (_game._visitedScenes.exists(319) || !_internVisibleFl) {
-				_internVisibleFl = false;
-				_dialogFl = false;
+			if (_game._visitedScenes.exists(319) || !local._internVisibleFl) {
+				local._internVisibleFl = false;
+				local._dialogFl = false;
 			} else {
 				_scene->loadAnimation(formAnimName('b', -1), 61);
 				_scene->_hotspots.activate(NOUN_INTERN, true);
 			}
 
-			if (_dialogFl) {
-				_dialog1.start();
+			if (local._dialogFl) {
+				local._dialog1.start();
 				_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 8);
 			} else
 				_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
@@ -313,7 +295,7 @@ void Scene318::enter() {
 	if (_scene->_priorSceneId == 319) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
-		_animMode = 4;
+		local._animMode = 4;
 		if (!_globals[kHasSeenProfPyro]) {
 			_scene->loadAnimation(formAnimName('d', -1), 64);
 			_globals[kHasSeenProfPyro] = true;
@@ -322,24 +304,24 @@ void Scene318::enter() {
 		}
 	}
 
-	_internTalkingFl = false;
+	local._internTalkingFl = false;
 	_vm->_palette->setEntry(252, 63, 63, 10);
 	_vm->_palette->setEntry(253, 45, 45, 05);
 
-	_dropTimer = _vm->_game->_scene._frameStartTime;
-	sceneEntrySound();
+	local._dropTimer = _vm->_game->_scene._frameStartTime;
+	section_3_music();
 
-	if (_dialogFl)
+	if (local._dialogFl)
 		_vm->_sound->command(15);
 }
 
-void Scene318::step() {
-	if ((_scene->_animation[0] != nullptr) && (_animMode == 2)) {
-		if (_lastFrame != _scene->_animation[0]->getCurrentFrame()) {
-			_lastFrame = _scene->_animation[0]->getCurrentFrame();
+static void room_318_daemon() {
+	if ((_scene->_animation[0] != nullptr) && (local._animMode == 2)) {
+		if (local._lastFrame != _scene->_animation[0]->getCurrentFrame()) {
+			local._lastFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextFrame = -1;
 
-			switch (_lastFrame) {
+			switch (local._lastFrame) {
 			case 20:
 			case 30:
 			case 40:
@@ -354,25 +336,25 @@ void Scene318::step() {
 			case 130:
 			case 140:
 			case 149:
-				if (_internWalkingFl) {
+				if (local._internWalkingFl) {
 					nextFrame = 149;
-				} else if (_internTalkingFl) {
+				} else if (local._internTalkingFl) {
 					nextFrame = 149;
-				} else if (_lastFrame == 149) {
+				} else if (local._lastFrame == 149) {
 					nextFrame = 4;
 				}
 				break;
 
 			case 151:
-				if (_internWalkingFl)
+				if (local._internWalkingFl)
 					nextFrame = 183;
 				break;
 
 			case 167:
 			case 184:
-				if (_internWalkingFl) {
+				if (local._internWalkingFl) {
 					nextFrame = 184;
-				} else if (!_internTalkingFl) {
+				} else if (!local._internTalkingFl) {
 					nextFrame = 0;
 				} else if (_vm->getRandomNumber(1, 100) <= 50) {
 					nextFrame = 151;
@@ -383,7 +365,7 @@ void Scene318::step() {
 				if (nextFrame == 184) {
 					handleInternDialog(0x1D1, 3, 240);
 					_scene->_hotspots.activate(NOUN_INTERN, false);
-					_internVisibleFl = false;
+					local._internVisibleFl = false;
 				}
 				break;
 
@@ -393,7 +375,7 @@ void Scene318::step() {
 
 			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
 				_scene->_animation[0]->setCurrentFrame(nextFrame);
-				_lastFrame = nextFrame;
+				local._lastFrame = nextFrame;
 			}
 		}
 	}
@@ -401,12 +383,12 @@ void Scene318::step() {
 	switch (_game._trigger) {
 	case 60:
 		_vm->_sound->command(3);
-		_animMode = 2;
+		local._animMode = 2;
 		_scene->_reloadSceneFlag = true;
 		break;
 
 	case 61:
-		_counter = 0;
+		local._counter = 0;
 		break;
 
 	case 62:
@@ -414,7 +396,7 @@ void Scene318::step() {
 		break;
 
 	case 63:
-		_internTalkingFl = false;
+		local._internTalkingFl = false;
 		break;
 
 	case 64:
@@ -427,46 +409,46 @@ void Scene318::step() {
 	}
 
 	uint32 tmpFrame = _vm->_events->getFrameCounter();
-	long diffFrame = tmpFrame - _lastFrameCounter;
-	_lastFrameCounter = tmpFrame;
+	long diffFrame = tmpFrame - local._lastFrameCounter;
+	local._lastFrameCounter = tmpFrame;
 
-	if ((_animMode == 2) && !_internVisibleFl && _game._player._stepEnabled) {
+	if ((local._animMode == 2) && !local._internVisibleFl && _game._player._stepEnabled) {
 		if ((diffFrame >= 0) && (diffFrame <= 4))
-			_counter += diffFrame;
+			local._counter += diffFrame;
 		else
-			_counter++;
+			local._counter++;
 
 		int extraCounter = _game._objects.isInInventory(OBJ_SCALPEL) ? 900 : 0;
 
-		if (_counter + extraCounter >= 1800) {
+		if (local._counter + extraCounter >= 1800) {
 			_scene->freeAnimation();
 			_game._player._stepEnabled = false;
 			_scene->loadAnimation(formAnimName('c', -1), 62);
-			_animMode = 3;
+			local._animMode = 3;
 		}
-	} else if ((_animMode == 2) && _explosionFl && _internVisibleFl && !_dialogFl
-		&& !_internWalkingFl && (_game._screenObjects._inputMode != kInputConversation)) {
+	} else if ((local._animMode == 2) && local._explosionFl && local._internVisibleFl && !local._dialogFl
+		&& !local._internWalkingFl && (_game._screenObjects._inputMode != kInputConversation)) {
 		if ((diffFrame >= 0) && (diffFrame <= 4))
-			_internCounter += diffFrame;
+			local._internCounter += diffFrame;
 		else
-			_internCounter++;
+			local._internCounter++;
 
-		if (_internCounter >= 3600) {
+		if (local._internCounter >= 3600) {
 			_vm->_sound->command(59);
 			_vm->_screen->_shakeCountdown = 20;
-			_internWalkingFl = true;
+			local._internWalkingFl = true;
 		}
 	}
 
-	if ((_vm->_game->_scene._frameStartTime - _dropTimer) > 600) {
+	if ((_vm->_game->_scene._frameStartTime - local._dropTimer) > 600) {
 		_vm->_sound->command(51);
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 14, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 10);
-		_dropTimer = _vm->_game->_scene._frameStartTime;
+		local._dropTimer = _vm->_game->_scene._frameStartTime;
 	}
 }
 
-void Scene318::preActions() {
+static void room_318_pre_parser() {
 	if (_game._player._needToWalk)
 		_game._player._needToWalk = _game._player._visible;
 
@@ -474,7 +456,7 @@ void Scene318::preActions() {
 		_game._player._walkOffScreenSceneId = 357;
 }
 
-void Scene318::actions() {
+static void room_318_parser() {
 	if (_game._screenObjects._inputMode == kInputConversation) {
 		handleDialog();
 		_action._inProgress = false;
@@ -485,7 +467,7 @@ void Scene318::actions() {
 		switch (_game._trigger) {
 		case 0:
 		{
-			_dialogFl = true;
+			local._dialogFl = true;
 			_vm->_sound->command(15);
 			_game._player._stepEnabled = false;
 			handleRexDialogs(_vm->getRandomNumber(0x18C, 0x18E));
@@ -502,7 +484,7 @@ void Scene318::actions() {
 		case 1:
 			_game._player._stepEnabled = true;
 			handleInternDialog(0x18F, 1, INDEFINITE_TIMEOUT);
-			_dialog1.start();
+			local._dialog1.start();
 			break;
 
 		case 2:
@@ -536,7 +518,7 @@ void Scene318::actions() {
 			break;
 
 		case 1:
-			if (_internVisibleFl)
+			if (local._internVisibleFl)
 				handleInternDialog(0x190, 1, 120);
 			else {
 				_game._objects.addToInventory(OBJ_SCALPEL);
@@ -661,7 +643,7 @@ void Scene318::actions() {
 	else if (_action._lookFlag) {
 		if (_game._player._visible || _game._objects.isInInventory(OBJ_SCALPEL))
 			_vm->_dialogs->show(31828);
-		else if (_internVisibleFl)
+		else if (local._internVisibleFl)
 			_vm->_dialogs->show(31826);
 		else
 			_vm->_dialogs->show(31827);
@@ -671,6 +653,37 @@ void Scene318::actions() {
 	_action._inProgress = false;
 }
 
+void room_318_synchronize(Common::Serializer &s) {
+	s.syncAsUint32LE(local._dropTimer);
+	s.syncAsSint32LE(local._lastFrame);
+	s.syncAsSint32LE(local._animMode);
+	s.syncAsSint32LE(local._internCounter);
+	s.syncAsSint32LE(local._counter);
+
+	s.syncAsByte(local._dialogFl);
+	s.syncAsByte(local._internTalkingFl);
+	s.syncAsByte(local._internWalkingFl);
+	s.syncAsByte(local._internVisibleFl);
+	s.syncAsByte(local._explosionFl);
+	s.syncAsUint32LE(local._lastFrameCounter);
+
+	Common::String subQuote2 = local._subQuote2;
+	s.syncString(subQuote2);
+	if (s.isLoading())
+		Common::strcpy_s(local._subQuote2, subQuote2.c_str());
+}
+
+void room_318_preload() {
+	room_init_code_pointer = room_318_init;
+	room_pre_parser_code_pointer = room_318_pre_parser;
+	room_parser_code_pointer = room_318_parser;
+	room_daemon_code_pointer = room_318_daemon;
+
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

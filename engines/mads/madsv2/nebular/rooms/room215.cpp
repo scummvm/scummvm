@@ -32,12 +32,7 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-void Scene215::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene215::enter() {
+static void room_215_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('e', 0));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 0));
 
@@ -66,7 +61,7 @@ void Scene215::enter() {
 	section_2_music();
 }
 
-void Scene215::step() {
+static void room_215_daemon() {
 	if (_game._trigger == 70) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
@@ -80,7 +75,7 @@ void Scene215::step() {
 	}
 }
 
-void Scene215::actions() {
+static void room_215_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(21509);
 	else if (_action.isAction(VERB_TAKE, NOUN_TWINKIFRUIT)) {
@@ -156,11 +151,8 @@ void Scene215::actions() {
 
 void room_215_preload() {
 	room_init_code_pointer = room_215_init;
-	room_pre_parser_code_pointer = room_215_pre_parser;
 	room_parser_code_pointer = room_215_parser;
 	room_daemon_code_pointer = room_215_daemon;
-
-	anim_himem_preload(formAnimName('A', -1), 3);
 
 	section_2_walker();
 	section_2_interface();

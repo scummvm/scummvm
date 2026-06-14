@@ -19,36 +19,27 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene311::Scene311(RexNebularEngine *vm) : Scene3xx(vm) {
-	_checkGuardFl = false;
-}
+struct Scratch {
+	bool _checkGuardFl;
+};
 
-void Scene311::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_checkGuardFl);
-}
 
-void Scene311::setup() {
-	if (_scene->_currentSceneId == 391)
-		_globals[kSexOfRex] = REX_MALE;
-
-	setPlayerSpritesPrefix();
-	setAAName();
-
-	if (_scene->_currentSceneId == 304)
-		_game._player._spritesPrefix = "";
-}
-
-void Scene311::enter() {
+static void room_311_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXCL_8");
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites("*RXCL_2");
@@ -57,7 +48,7 @@ void Scene311::enter() {
 	_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(165, 76));
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 15);
 
-	_checkGuardFl = false;
+	local._checkGuardFl = false;
 	_game.loadQuoteSet(0xFA, 0);
 
 	if (_scene->_priorSceneId == 391) {
@@ -78,10 +69,10 @@ void Scene311::enter() {
 		_scene->loadAnimation(formAnimName('a', -1), 70);
 	}
 
-	sceneEntrySound();
+	section_3_music();
 }
 
-void Scene311::step() {
+static void room_311_daemon() {
 	if (_game._trigger == 70)
 		_scene->_nextSceneId = 310;
 
@@ -192,17 +183,17 @@ void Scene311::step() {
 		if (x > 207)
 			x = 207;
 
-		_checkGuardFl = true;
+		local._checkGuardFl = true;
 		_game._player.startWalking(Common::Point(x, 122), FACING_SOUTH);
 		_scene->_rails.resetNext();
 	}
 }
 
-void Scene311::actions() {
+static void room_311_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(31119);
-	else if (_checkGuardFl) {
-		_checkGuardFl = false;
+	else if (local._checkGuardFl) {
+		local._checkGuardFl = false;
 		_scene->_kernelMessages.reset();
 		_scene->_kernelMessages.addQuote(250, 0, 240);
 	} else if (_action.isAction(VERB_SIT_AT, NOUN_DESK))
@@ -329,6 +320,26 @@ void Scene311::actions() {
 	_action._inProgress = false;
 }
 
+void room_311_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._checkGuardFl);
+}
+
+void room_311_preload() {
+	room_init_code_pointer = room_311_init;
+	room_parser_code_pointer = room_311_parser;
+	room_daemon_code_pointer = room_311_daemon;
+
+	if (room_id == 391)
+		global[kSexOfRex] = REX_MALE;
+
+	section_3_walker();
+	section_3_interface();
+
+	if (room_id == 304)
+		*player.series_name = '\0';
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

@@ -19,24 +19,20 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene351::setup() {
-	if (_scene->_currentSceneId == 391)
-		_globals[kSexOfRex] = REX_MALE;
-
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(VERB_WALKTO);
-}
-
-void Scene351::enter() {
+static void room_351_init() {
 	_globals[kAfterHavoc] = -1;
 	_globals[kTeleporterRoom + 1] = 351;
 
@@ -98,10 +94,10 @@ void Scene351::enter() {
 			_scene->loadAnimation(formAnimName(sepChar, suffixNum), trigger);
 	}
 
-	sceneEntrySound();
+	section_3_music();
 }
 
-void Scene351::step() {
+static void room_351_daemon() {
 	if (_game._trigger == 60) {
 		_game._player._stepEnabled = true;
 		_game._player._visible = true;
@@ -116,7 +112,7 @@ void Scene351::step() {
 	}
 }
 
-void Scene351::actions() {
+static void room_351_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35121);
 	else if (_action.isAction(VERB_STEP_INTO, NOUN_TELEPORTER))
@@ -189,6 +185,24 @@ void Scene351::actions() {
 	_action._inProgress = false;
 }
 
+void room_351_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_351_preload() {
+	room_init_code_pointer = room_351_init;
+	room_parser_code_pointer = room_351_parser;
+	room_daemon_code_pointer = room_351_daemon;
+
+	if (_scene->_currentSceneId == 391)
+		_globals[kSexOfRex] = REX_MALE;
+
+	section_3_walker();
+	section_3_interface();
+	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

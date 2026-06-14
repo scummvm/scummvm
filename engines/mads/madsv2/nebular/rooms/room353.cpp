@@ -19,20 +19,27 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene353::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
+struct Scratch {
 
-void Scene353::enter() {
+};
+
+static Scratch local;
+
+
+static void room_353_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(Resources::formatName(303, 'B', 0, EXT_SS, ""));
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 5, 0, 5, 0);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
@@ -42,10 +49,10 @@ void Scene353::enter() {
 	else
 		_game._player._playerPos = Common::Point(139, 155);
 
-	sceneEntrySound();
+	section_3_music();
 }
 
-void Scene353::actions() {
+static void room_353_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35315);
 	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY))
@@ -74,6 +81,19 @@ void Scene353::actions() {
 	_action._inProgress = false;
 }
 
+void room_353_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_353_preload() {
+	room_init_code_pointer = room_353_init;
+	room_parser_code_pointer = room_353_parser;
+
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

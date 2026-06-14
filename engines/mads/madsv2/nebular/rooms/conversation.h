@@ -19,17 +19,17 @@
  *
  */
 
-#ifndef MADS_NEBULAR_CONVERATION_H
-#define MADS_NEBULAR_CONVERATION_H
+#ifndef MADS_NEBULAR_ROOMS_CONVERATION_H
+#define MADS_NEBULAR_ROOMS_CONVERATION_H
 
 #include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
 #define MAX_CONV_MESSAGE 10
-#define INDEFINITE_TIMEOUT 9999999
 
 class Conversation {
 public:
@@ -64,6 +64,7 @@ public:
 	void start();
 };
 
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

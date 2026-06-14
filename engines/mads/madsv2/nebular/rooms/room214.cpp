@@ -32,33 +32,22 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-Scene214::Scene214(RexNebularEngine *vm) : Scene2xx(vm) {
-	_devilTime = 0;
-	_devilRunningFl = false;
-}
+struct Scratch {
+	int32 _devilTime;
+	bool _devilRunningFl;
+};
 
-void Scene214::synchronize(Common::Serializer &s) {
-	Scene2xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsUint32LE(_devilTime);
-	s.syncAsByte(_devilRunningFl);
-}
 
-void Scene214::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_CAPTIVE_CREATURE);
-	_scene->addActiveVocab(VERB_WALKTO);
-}
-
-void Scene214::enter() {
+static void room_214_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('e', 0));
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('e', 1));
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('t', -1));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXMRD_7");
 
-	_devilTime = _game._player._priorTimer;
-	_devilRunningFl = false;
+	local._devilTime = _game._player._priorTimer;
+	local._devilRunningFl = false;
 
 	if (_game._objects.isInRoom(OBJ_POISON_DARTS)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 0, 0, 0);
@@ -82,9 +71,9 @@ void Scene214::enter() {
 	section_2_music();
 }
 
-void Scene214::step() {
-	if ((_game._player._priorTimer - _devilTime > 800) && !_devilRunningFl) {
-		_devilRunningFl = true;
+static void room_214_daemon() {
+	if ((_game._player._priorTimer - local._devilTime > 800) && !local._devilRunningFl) {
+		local._devilRunningFl = true;
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 6, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
@@ -92,7 +81,7 @@ void Scene214::step() {
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 	}
 
-	if (_devilRunningFl) {
+	if (local._devilRunningFl) {
 		switch (_game._trigger) {
 		case 71:
 		{
@@ -114,8 +103,8 @@ void Scene214::step() {
 			_scene->_dynamicHotspots.add(451, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 9, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
-			_devilTime = _game._player._priorTimer;
-			_devilRunningFl = false;
+			local._devilTime = _game._player._priorTimer;
+			local._devilRunningFl = false;
 		}
 		break;
 
@@ -125,7 +114,7 @@ void Scene214::step() {
 	}
 }
 
-void Scene214::actions() {
+static void room_214_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(21427);
 	else if (_action.isAction(VERB_WALK_OUTSIDE, NOUN_HUT))
@@ -256,16 +245,20 @@ void Scene214::actions() {
 	_action._inProgress = false;
 }
 
+void room_214_synchronize(Common::Serializer &s) {
+	s.syncAsUint32LE(local._devilTime);
+	s.syncAsByte(local._devilRunningFl);
+}
+
 void room_214_preload() {
 	room_init_code_pointer = room_214_init;
-	room_pre_parser_code_pointer = room_214_pre_parser;
 	room_parser_code_pointer = room_214_parser;
 	room_daemon_code_pointer = room_214_daemon;
 
-	anim_himem_preload(formAnimName('A', -1), 3);
-
 	section_2_walker();
 	section_2_interface();
+	_scene->addActiveVocab(NOUN_CAPTIVE_CREATURE);
+	_scene->addActiveVocab(VERB_WALKTO);
 }
 
 } // namespace Rooms

@@ -513,6 +513,7 @@ extern int kernel_seq_trigger(int sequence_id, int trigger_type,
 	int trigger_sprite, int trigger_code);
 extern int kernel_timing_trigger(int ticks, int trigger_code);
 extern int kernel_seq_purge(int sequence_id);
+extern int kernel_seq_find_by_trigger(int trigger);
 extern void kernel_seq_full_update();
 extern void kernel_draw_to_background(int series_id, int sprite_id,
 	int x, int y, int depth, int scale);

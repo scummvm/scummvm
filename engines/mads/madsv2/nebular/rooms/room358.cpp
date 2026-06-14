@@ -19,20 +19,20 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene358::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene358::enter() {
+static void room_358_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
 	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 	_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(127, 78));
@@ -43,10 +43,10 @@ void Scene358::enter() {
 	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(12, 141);
 
-	sceneEntrySound();
+	section_3_music();
 }
 
-void Scene358::preActions() {
+static void room_358_pre_parser() {
 	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST))
 		_game._player._walkOffScreenSceneId = 357;
 
@@ -54,7 +54,7 @@ void Scene358::preActions() {
 		_game._player._walkOffScreenSceneId = 359;
 }
 
-void Scene358::actions() {
+static void room_358_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(35815);
 	else if (_action.isAction(VERB_LOOK, NOUN_CORRIDOR_TO_WEST))
@@ -77,6 +77,20 @@ void Scene358::actions() {
 	_action._inProgress = false;
 }
 
+void room_358_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_358_preload() {
+	room_init_code_pointer = room_358_init;
+	room_pre_parser_code_pointer = room_358_pre_parser;
+	room_parser_code_pointer = room_358_parser;
+
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

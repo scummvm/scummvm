@@ -386,10 +386,12 @@ int kernel_game_startup(int game_video_mode, int load_flag,
 		font_conv = font_load("*FONTCONV.FF");
 		font_menu = font_load("*FONTMENU.FF");
 		font_misc = font_load("*FONTMISC.FF");
+		font_tele = (g_engine->getGameID() != GType_RexNebular) ? nullptr :
+			font_load("*FONTTELE.FF");
 
-		if ((font_main == NULL) || (font_inter == NULL) ||
-			(font_conv == NULL) || (font_menu == NULL) ||
-			(font_misc == NULL)) {
+		if ((font_main == NULL) || (font_inter == NULL) || (font_conv == NULL) ||
+			(font_menu == NULL) || (font_misc == NULL) ||
+			(g_engine->getGameID() == GType_RexNebular && font_tele == NULL)) {
 #ifndef disable_error_check
 			error_code = ERROR_KERNEL_NO_FONTS;
 #endif
@@ -1102,6 +1104,21 @@ int kernel_seq_purge(int sequence_id) {
 	}
 
 	return purged_any;
+}
+
+int kernel_seq_find_by_trigger(int trigger) {
+	for (int idx = 0; idx < KERNEL_MAX_SEQUENCES; ++idx) {
+		const auto &seq = sequence_list[idx];
+
+		if (seq.active_flag) {
+			for (int subIdx = 0; subIdx < seq.num_triggers; ++subIdx) {
+				if (trigger == seq.trigger_code[subIdx])
+					return idx;
+			}
+		}
+	}
+
+	return -1;
 }
 
 void kernel_seq_full_update() {

@@ -19,23 +19,20 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene316::setup() {
-	if (_scene->_currentSceneId == 366)
-		_globals[kSexOfRex] = REX_MALE;
-
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene316::handleRexInGrate() {
+static void handleRexInGrate() {
 	switch (_game._trigger) {
 	case 0:
 		_game._player._stepEnabled = false;
@@ -157,7 +154,7 @@ void Scene316::handleRexInGrate() {
 	}
 }
 
-void Scene316::handleRoxInGrate() {
+static void handleRoxInGrate() {
 	int temp;
 	int temp1;
 
@@ -272,7 +269,7 @@ void Scene316::handleRoxInGrate() {
 	}
 }
 
-void Scene316::enter() {
+static void room_316_init() {
 	if (_globals[kSexOfRex] == REX_MALE) {
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('g', -1));
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCL_8");
@@ -305,11 +302,11 @@ void Scene316::enter() {
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(291, 126);
 
-	sceneEntrySound();
+	section_3_music();
 	_game.loadQuoteSet(0xFD, 0);
 }
 
-void Scene316::step() {
+static void room_316_daemon() {
 	if (_game._trigger == 60) {
 		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[1]);
 		_game._player._visible = true;
@@ -386,7 +383,7 @@ void Scene316::step() {
 	}
 }
 
-void Scene316::preActions() {
+static void room_316_pre_parser() {
 	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_EAST)) {
 		if (_globals[kAfterHavoc])
 			_game._player._walkOffScreenSceneId = 354;
@@ -395,7 +392,7 @@ void Scene316::preActions() {
 	}
 }
 
-void Scene316::actions() {
+static void room_316_parser() {
 	if (_action.isAction(VERB_CLIMB_INTO, NOUN_AIR_VENT)) {
 		if (_globals[kSexOfRex] == REX_FEMALE)
 			handleRoxInGrate();
@@ -491,6 +488,24 @@ void Scene316::actions() {
 	_action._inProgress = false;
 }
 
+void room_316_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_316_preload() {
+	room_init_code_pointer = room_316_init;
+	room_pre_parser_code_pointer = room_316_pre_parser;
+	room_parser_code_pointer = room_316_parser;
+	room_daemon_code_pointer = room_316_daemon;
+
+	if (room_id == 366)
+		global[kSexOfRex] = REX_MALE;
+
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

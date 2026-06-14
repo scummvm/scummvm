@@ -155,16 +155,16 @@ static void room_208_daemon() {
 }
 
 static void room_208_pre_parser() {
-	auto &player = _vm->_game->_player;
+	auto &gplayer = _vm->_game->_player;
 
-	if (_action.isAction(VERB_LOOK) && player._readyToWalk)
-		player._needToWalk = true;
+	if (_action.isAction(VERB_LOOK) && gplayer._readyToWalk)
+		gplayer._needToWalk = true;
 
 	if (_action.isAction(VERB_WALK_TOWARDS, NOUN_GRASSLAND_TO_EAST))
-		player._walkOffScreenSceneId = 209;
+		gplayer._walkOffScreenSceneId = 209;
 
 	if (_action.isAction(VERB_WALK_TOWARDS, NOUN_OPEN_AREA_TO_WEST))
-		player._walkOffScreenSceneId = 207;
+		gplayer._walkOffScreenSceneId = 207;
 }
 
 static void subAction(int mode) {

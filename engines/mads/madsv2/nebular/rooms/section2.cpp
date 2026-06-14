@@ -23,50 +23,52 @@
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/core/scene.h"
 #include "mads/nebular/nebular_scenes.h"
-#include "mads/nebular/nebular_scenes2.h"
+#include "mads/madsv2/nebular/rooms/section2.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
+namespace MADSV2 {
+namespace RexNebular {
+namespace Rooms {
 
-namespace Nebular {
-
-void Scene2xx::setAAName() {
-	int idx = (_scene->_nextSceneId == 216) ? 4 : 2;
-	_game._aaName = Resources::formatAAName(idx);
+void section_2_interface() {
+	int idx = (new_room == 216) ? 4 : 2;
+	Common::strcpy_s(kernel.interface, kernel_interface_name(idx));
 }
 
-void Scene2xx::setPlayerSpritesPrefix() {
+void section_2_walker() {
 	_vm->_sound->command(5);
 	Common::String oldName = _game._player._spritesPrefix;
 
-	switch(_scene->_nextSceneId) {
+	switch (new_room) {
 	case 213:
 	case 216:
-		_game._player._spritesPrefix = "";
+		Common::strcpy_s(player.series_name, "");
 		break;
 	default:
 		if (_globals[kSexOfRex] != SEX_MALE) {
-			_game._player._spritesPrefix = "ROX";
+			Common::strcpy_s(player.series_name, "ROX");
 		} else {
-			_game._player._spritesPrefix = "RXM";
+			Common::strcpy_s(player.series_name, "RXM");
 		}
 		break;
 	}
 
-	_game._player._scalingVelocity = (_scene->_nextSceneId <= 212);
+	player.scaling_velocity = (new_room <= 212);
 
 	if (oldName != _game._player._spritesPrefix)
 		_game._player._spritesChanged = true;
 
-	if ((_scene->_nextSceneId == 203 || _scene->_nextSceneId == 204) && _globals[kRhotundaStatus])
+	if ((new_room == 203 || new_room == 204) && _globals[kRhotundaStatus])
 		_game._player._loadsFirst = false;
 
 	_vm->_palette->setEntry(16, 10, 63, 63);
 	_vm->_palette->setEntry(17, 10, 45, 45);
 }
 
-void Scene2xx::sceneEntrySound() {
+void section_2_music() {
 	if (_vm->_musicFlag) {
-		switch (_scene->_nextSceneId) {
+		switch (new_room) {
 		case 201:
 			if ((_globals[kTeleporterCommand] == 2) || (_globals[kTeleporterCommand] == 4) || (_globals[kMeteorologistStatus] != 1))
 				_vm->_sound->command(9);
@@ -114,5 +116,7 @@ void Scene2xx::sceneEntrySound() {
 		_vm->_sound->command(2);
 }
 
-} // namespace Nebular
+} // namespace Rooms
+} // namespace RexNebular
+} // namespace MADSV2
 } // namespace MADS

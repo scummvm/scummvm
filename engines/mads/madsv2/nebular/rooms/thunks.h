@@ -26,6 +26,7 @@
 #include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/core/mcga.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/sprite.h"
 #include "mads/madsv2/core/text.h"
@@ -172,9 +173,11 @@ struct Scene {
 		explicit operator bool() const {
 			return _id != -1;
 		}
+		Animation &operator=(std::nullptr_t);
 
 		// TODO: Not sure what to map this to
 		bool _resetFlag;
+		int16 _spriteListIndexes[16];
 
 		int getCurrentFrame() const;
 		void setNextFrameTimer(long time);
@@ -185,7 +188,7 @@ struct Scene {
 
 	struct CustomDest {
 		int &x = inter_point_x;
-		int &y = inter_point.y;
+		int &y = inter_point_y;
 	};
 	CustomDest _customDest;
 
@@ -198,7 +201,7 @@ struct Scene {
 	struct DynamicHotspots {
 		int add(int vocab_id, int verb_id, int auto_sequence, const Common::Rect &r);
 		void remove(int dyn_id);
-		void setPosition(int id, const Common::Point &pt, int facing);
+		int setPosition(int id, const Common::Point &pt, int facing);
 		int setCursor(int index, int cursor);
 
 		DynamicHotspot operator[](int idx);
@@ -218,6 +221,7 @@ struct Scene {
 			const TalkFont *operator->() const {
 				return this;
 			}
+			TalkFont &operator=(FontPtr font);
 			int getWidth(const Common::String &message, int spacing) const;
 		};
 		TalkFont _talkFont;
@@ -250,6 +254,12 @@ struct Scene {
 	};
 	KernelMessages _kernelMessages;
 
+	struct PaletteCycles {
+		int size() const;
+
+	};
+	PaletteCycles _paletteCycles;
+
 	struct Rails {
 		int getNext() const;
 		void resetNext();
@@ -263,8 +273,9 @@ struct Scene {
 			SequencePosition(int &sx, int &sy) : x(sx), y(sy) {}
 		};
 		SequencePosition _position;
+		byte &_doneFlag;
 
-		SequenceProxy(SequencePtr seqPtr) : _position(seqPtr->x, seqPtr->y) {
+		SequenceProxy(SequencePtr seqPtr) : _position(seqPtr->x, seqPtr->y), _doneFlag(seqPtr->expired) {
 		}
 	};
 
@@ -289,6 +300,8 @@ struct Scene {
 		void updateTimeout(int old_sequence_id, int new_sequence_id);
 		void scan();
 		int startCycle(int srcSpriteIdx, bool flipped, int cycleIndex);
+		void setDone(int sequence_id);
+		int findByTrigger(int trigger);
 	};
 	Sequences _sequences;
 
@@ -332,8 +345,7 @@ struct Scene {
 	SpriteSlots _spriteSlots;
 
 	struct UserInterface {
-		int &_selectedInvIndex = active_inv;
-
+		int &_selectedInvIndex = active_inven;
 		void emptyConversationList();
 		void setup(int inputMode);
 		void selectObject(int item_id);
@@ -389,6 +401,7 @@ struct Game {
 		int getIdFromDesc(int desc_id) const;
 		void setRoom(int object_id, int roomNum);
 		void removeFromInventory(int objectId, int newScene);
+		int size() const;
 
 		Object operator[](int idx);
 	};
@@ -440,9 +453,10 @@ struct Game {
 		int &_prepareFacing = player.prepare_walk_facing;
 		bool &_visible = player.walker_visible;
 		bool &_stepEnabled = player.commands_allowed;
+		int &_turnToFacing = player.turn_to_facing;
 		char *const q = &player.series_name[0];
 		byte &_spritesChanged = player.walker_must_reload;
-		int &_beenVisible = player.walker_been_visible;
+		bool &_beenVisible = player.walker_been_visible;
 		byte &_loadsFirst = player.walker_loads_first;
 		int &_needToWalk = player.need_to_walk;
 		int &_readyToWalk = player.ready_to_walk;
@@ -548,18 +562,44 @@ struct VM {
 		}
 
 		void setCursor2(int cursorNum);
+		void showCursor();
+		void hideCursor();
+		int32 getFrameCounter();
 	};
 	Events _events;
 
+	Scene::KernelMessages::TalkFont &_font = _scene._kernelMessages._talkFont;
 	Game &_game = Rooms::_game;
 
-	struct Palette {
+	struct PaletteProxy {
+		PaletteProxy *operator->() {
+			return this;
+		}
+		const PaletteProxy *operator->() const {
+			return this;
+		}
+
 		void setEntry(int color, int r, int g, int b);
 		void refreshSceneColors();
 		void lock();
+		void setColorFlags(byte r, byte g, byte b);
+		void setColorValues(byte r, byte g, byte b);
+		void fadeOut(Palette palette, byte *paletteMap, int baseColor, int numColors,
+			int baseGrey, int numGreys, int tickDelay, int steps);
 	};
-	Palette _paletteInstance;
-	Palette *const _palette = &_paletteInstance;
+	PaletteProxy _palette;
+
+	struct Screen {
+		Screen *operator->() {
+			return this;
+		}
+		const Screen *operator->() const {
+			return this;
+		}
+
+		word &_shakeCountdown = mcga_shakes;
+	};
+	Screen _screen;
 
 	struct Sound {
 		Sound *operator->() {
@@ -573,7 +613,7 @@ struct VM {
 	};
 	Sound _sound;
 
-	bool &_musicFlag = config_file.music_flag;
+	int &_musicFlag = config_file.music_flag;
 
 	int getRandomNumber(int min, int max);
 	int getRandomNumber(int max);

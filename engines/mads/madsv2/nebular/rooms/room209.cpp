@@ -46,7 +46,7 @@ struct Scratch {
 	int32 _pauseMode;
 	bool _binocularsDroppedFl;
 	bool _startShootingInTimerFl;
-	bool _dialogAbortVal;
+	int32 _dialogAbortVal;
 	bool _playingDialogFl;
 	bool _shootMissedLastFl;
 	bool _removeMonkeyFl;

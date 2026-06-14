@@ -19,47 +19,36 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/forcefield.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene309::Scene309(RexNebularEngine *vm) : Scene3xx(vm) {
-	for (int i = 0; i < 3; i++) {
-		_characterSpriteIndexes[i] = -1;
-		_messagesIndexes[i] = -1;
-	}
+struct Scratch {
+	int16 _characterSpriteIndexes[3];
+	int16 _messagesIndexes[3];
+	int32 _lastFrame;
+	Forcefield _forcefield;
+};
 
-	_lastFrame = -1;
-	_forceField.init();
-}
+static Scratch local;
 
-void Scene309::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
 
-	_forceField.synchronize(s);
-
-	for (int i = 0; i < 3; ++i)
-		s.syncAsSint32LE(_characterSpriteIndexes[i]);
-	for (int i = 0; i < 3; ++i)
-		s.syncAsSint32LE(_messagesIndexes[i]);
-	s.syncAsSint32LE(_lastFrame);
-}
-
-void Scene309::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene309::enter() {
+static void room_309_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*SC003x0");
 	_globals._spriteIndexes[0] = _scene->_sprites.addSprites("*SC003x1");
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*SC003x2");
 
-	initForceField(&_forceField, true);
+	init_forcefield(&local._forcefield, true);
 
 	_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('x', 0));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
@@ -84,47 +73,50 @@ void Scene309::enter() {
 	_game._player._stepEnabled = false;
 	_scene->loadAnimation(formAnimName('a', -1), 60);
 
-	_characterSpriteIndexes[0] = _scene->_animation[0]->_spriteListIndexes[2];
-	_characterSpriteIndexes[1] = _scene->_animation[0]->_spriteListIndexes[2];
-	_characterSpriteIndexes[2] = _scene->_animation[0]->_spriteListIndexes[1];
+	local._characterSpriteIndexes[0] = _scene->_animation[0]->_spriteListIndexes[2];
+	local._characterSpriteIndexes[1] = _scene->_animation[0]->_spriteListIndexes[2];
+	local._characterSpriteIndexes[2] = _scene->_animation[0]->_spriteListIndexes[1];
 
-	_messagesIndexes[0] = -1;
-	_messagesIndexes[1] = -1;
-	_messagesIndexes[2] = -1;
+	local._messagesIndexes[0] = -1;
+	local._messagesIndexes[1] = -1;
+	local._messagesIndexes[2] = -1;
 
-	sceneEntrySound();
+	section_3_music();
 
 	_game.loadQuoteSet(0xF7, 0xF8, 0xF9, 0x15C, 0x15D, 0x15E, 0);
 }
 
-void Scene309::step() {
-	handleForceField(&_forceField, &_globals._spriteIndexes[0]);
+static void room_309_daemon() {
+	handle_forcefield(&local._forcefield, &_globals._spriteIndexes[0]);
 
 	if (_game._trigger == 61) {
-		_messagesIndexes[0] = -1;
-		_messagesIndexes[1] = -1;
+		local._messagesIndexes[0] = -1;
+		local._messagesIndexes[1] = -1;
 	}
 
 	if (_game._trigger == 62)
-		_messagesIndexes[2] = -1;
+		local._messagesIndexes[2] = -1;
 
 	if (_scene->_animation[0] != nullptr) {
-		if (_lastFrame != _scene->_animation[0]->getCurrentFrame()) {
-			_lastFrame = _scene->_animation[0]->getCurrentFrame();
-			if (_lastFrame == 39) {
-				_messagesIndexes[0] = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 32, 61, 210, _game.getQuote(348));
-				_messagesIndexes[1] = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 32, 0, 210, _game.getQuote(349));
+		if (local._lastFrame != _scene->_animation[0]->getCurrentFrame()) {
+			local._lastFrame = _scene->_animation[0]->getCurrentFrame();
+			if (local._lastFrame == 39) {
+				local._messagesIndexes[0] = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 32, 61, 210, _game.getQuote(348));
+				local._messagesIndexes[1] = _scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 32, 0, 210, _game.getQuote(349));
 			}
 
-			if (_lastFrame == 97)
-				_messagesIndexes[2] = _scene->_kernelMessages.add(Common::Point(0, 0), 0xFBFA, 32, 62, 180, _game.getQuote(350));
+			if (local._lastFrame == 97)
+				local._messagesIndexes[2] = _scene->_kernelMessages.add(Common::Point(0, 0), 0xFBFA, 32, 62, 180, _game.getQuote(350));
 
+#if 1
+			error("TODO: animation frame updates");
+#else
 			for (int charIdx = 0; charIdx < 3; charIdx++) {
-				if (_messagesIndexes[charIdx] >= 0) {
+				if (local._messagesIndexes[charIdx] >= 0) {
 					bool match = false;
 					int j = -1;
 					for (j = _scene->_animation[0]->_oldFrameEntry; j < _scene->_animation[0]->_header._frameEntriesCount; j++) {
-						if (_scene->_animation[0]->_frameEntries[j]._spriteSlot._spritesIndex == _characterSpriteIndexes[charIdx]) {
+						if (_scene->_animation[0]->_frameEntries[j]._spriteSlot._spritesIndex == local._characterSpriteIndexes[charIdx]) {
 							match = true;
 							break;
 						}
@@ -132,11 +124,12 @@ void Scene309::step() {
 
 					if (match) {
 						SpriteSlotSubset *curSpriteSlot = &_scene->_animation[0]->_frameEntries[j]._spriteSlot;
-						_scene->_kernelMessages._entries[_messagesIndexes[charIdx]]._position.x = curSpriteSlot->_position.x;
-						_scene->_kernelMessages._entries[_messagesIndexes[charIdx]]._position.y = curSpriteSlot->_position.y - (50 + (14 * ((charIdx == 0) ? 2 : 1)));
+						_scene->_kernelMessages._entries[local._messagesIndexes[charIdx]]._position.x = curSpriteSlot->_position.x;
+						_scene->_kernelMessages._entries[local._messagesIndexes[charIdx]]._position.y = curSpriteSlot->_position.y - (50 + (14 * ((charIdx == 0) ? 2 : 1)));
 					}
 				}
 			}
+#endif
 		}
 	}
 
@@ -243,6 +236,27 @@ void Scene309::step() {
 		_scene->_nextSceneId = 308;
 }
 
+void room_309_synchronize(Common::Serializer &s) {
+	local._forcefield.synchronize(s);
+
+	for (int i = 0; i < 3; ++i)
+		s.syncAsSint32LE(local._characterSpriteIndexes[i]);
+	for (int i = 0; i < 3; ++i)
+		s.syncAsSint32LE(local._messagesIndexes[i]);
+	s.syncAsSint32LE(local._lastFrame);
+}
+
+void room_309_preload() {
+	local._lastFrame = -1;
+	local._forcefield.init();
+
+	room_init_code_pointer = room_309_init;
+	room_daemon_code_pointer = room_309_daemon;
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

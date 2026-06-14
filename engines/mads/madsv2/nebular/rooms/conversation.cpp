@@ -23,11 +23,12 @@
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/quote.h"
-#include "mads/madsv2/nebular/conversation.h"
+#include "mads/madsv2/nebular/rooms/conversation.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
 void Conversation::setup(int globalId, ...) {
 	va_list va;
@@ -60,7 +61,7 @@ void Conversation::set(int quoteId, ...) {
 
 	// Loop through handling each quote
 	while (quoteId > 0) {
-		for (uint idx = 0; idx < _count; ++idx) {
+		for (int idx = 0; idx < _count; ++idx) {
 			if (_quotes[idx] == quoteId) {
 				// Found index, so set that bit in the global keeping track of conversation state
 				global[_globalId] |= 1 << idx;
@@ -78,7 +79,7 @@ int Conversation::read(int quoteId) {
 	uint16 flags = global[_globalId];
 	int count = 0;
 
-	for (uint idx = 0; idx < _count; ++idx) {
+	for (int idx = 0; idx < _count; ++idx) {
 		if (flags & (1 << idx))
 			++count;
 
@@ -91,7 +92,7 @@ int Conversation::read(int quoteId) {
 }
 
 void Conversation::write(int quoteId, bool flag) {
-	for (uint idx = 0; idx < _count; ++idx) {
+	for (int idx = 0; idx < _count; ++idx) {
 		if (_quotes[idx] == quoteId) {
 			// Found index, so set or clear the flag
 			if (flag) {
@@ -110,7 +111,7 @@ void Conversation::start() {
 	inter_reset_dialog();
 
 	// Loop through each of the quotes loaded into the conversation
-	for (uint idx = 0; idx < _count; ++idx) {
+	for (int idx = 0; idx < _count; ++idx) {
 		// Check whether the given quote is enabled or not
 		if (global[_globalId] & (1 << idx)) {
 			// Quote enabled, so add it to the list of talk selections
@@ -121,6 +122,7 @@ void Conversation::start() {
 	kernel_set_interface_mode(INTER_CONVERSATION);
 }
 
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

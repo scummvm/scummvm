@@ -19,30 +19,26 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene304::Scene304(RexNebularEngine *vm) : Scene3xx(vm) {
-	_explosionSpriteId = -1;
-}
+struct Scratch {
+	int32 _explosionSpriteId;
+};
 
-void Scene304::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsSint32LE(_explosionSpriteId);
-}
-
-void Scene304::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene304::enter() {
+static void room_304_init() {
 	if (_scene->_priorSceneId == 303) {
 		_game._player._visible = false;
 		_game._player._stepEnabled = false;
@@ -71,11 +67,11 @@ void Scene304::enter() {
 		_scene->_sequences.addTimer(48, 70);
 	}
 
-	sceneEntrySound();
+	section_3_music();
 	_game.loadQuoteSet(0xEB, 0xEC, 0);
 }
 
-void Scene304::step() {
+static void room_304_daemon() {
 	if (_game._trigger == 60)
 		_scene->_nextSceneId = 311;
 
@@ -89,11 +85,11 @@ void Scene304::step() {
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 2, 4);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 			if (_globals[kSexOfRex] == REX_MALE)
-				_explosionSpriteId = _globals._spriteIndexes[1];
+				local._explosionSpriteId = _globals._spriteIndexes[1];
 			else
-				_explosionSpriteId = _globals._spriteIndexes[4];
+				local._explosionSpriteId = _globals._spriteIndexes[4];
 
-			int sprIdx = _scene->_sequences.addSpriteCycle(_explosionSpriteId, false, 8, 1, 0, 0);
+			int sprIdx = _scene->_sequences.addSpriteCycle(local._explosionSpriteId, false, 8, 1, 0, 0);
 			_scene->_sequences.setAnimRange(sprIdx, -1, 4);
 			_scene->_sequences.setDepth(sprIdx, 1);
 			_scene->_sequences.addSubEntry(sprIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 71);
@@ -110,7 +106,7 @@ void Scene304::step() {
 		case 72:
 		{
 			_vm->_sound->command(43);
-			int sprIdx = _scene->_sequences.addSpriteCycle(_explosionSpriteId, false, 8, 1, 0, 0);
+			int sprIdx = _scene->_sequences.addSpriteCycle(local._explosionSpriteId, false, 8, 1, 0, 0);
 			_scene->_sequences.setAnimRange(sprIdx, 5, -2);
 			_scene->_sequences.setDepth(sprIdx, 1);
 			_scene->_sequences.addSubEntry(sprIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 73);
@@ -121,7 +117,7 @@ void Scene304::step() {
 
 		case 73:
 		{
-			int sprIdx = _scene->_sequences.addSpriteCycle(_explosionSpriteId, false, 8, 0, 0, 0);
+			int sprIdx = _scene->_sequences.addSpriteCycle(local._explosionSpriteId, false, 8, 0, 0, 0);
 			_scene->_sequences.setAnimRange(sprIdx, -2, -2);
 			_scene->_sequences.setDepth(sprIdx, 1);
 		}
@@ -164,6 +160,19 @@ void Scene304::step() {
 	}
 }
 
+void room_304_synchronize(Common::Serializer &s) {
+	s.syncAsSint32LE(local._explosionSpriteId);
+}
+
+void room_304_preload() {
+	room_init_code_pointer = room_304_init;
+	room_daemon_code_pointer = room_304_daemon;
+
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

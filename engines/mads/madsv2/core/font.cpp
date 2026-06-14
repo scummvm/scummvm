@@ -39,6 +39,7 @@ FontPtr font_main = NULL;              /* Interface & main font handles */
 FontPtr font_conv = NULL;
 FontPtr font_menu = NULL;
 FontPtr font_misc = NULL;
+FontPtr font_tele = NULL;
 
 byte font_colors[4] = { COLOR_TRANSPARENT, 15, 7, 8 };
 

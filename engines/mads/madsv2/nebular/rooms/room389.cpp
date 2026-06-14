@@ -19,35 +19,32 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene389::Scene389(RexNebularEngine *vm) : Scene300s(vm) {
-	_monsterTime = 0;
-	_circularQuoteId = -1;
-}
+struct Scratch {
+	int32 _monsterTime;
+	int32 _circularQuoteId;
 
-void Scene389::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
+};
 
-	s.syncAsUint32LE(_monsterTime);
-	s.syncAsSint32LE(_circularQuoteId);
-}
+static Scratch local;
 
-void Scene389::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
 
-void Scene389::enter() {
+static void room_389_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
-	_monsterTime = 0;
-	_circularQuoteId = 0x159;
+	local._monsterTime = 0;
+	local._circularQuoteId = 0x159;
 
 	if (_globals[kAfterHavoc])
 		_scene->_hotspots.activate(NOUN_MONSTER, false);
@@ -64,29 +61,29 @@ void Scene389::enter() {
 	_game._player._visible = false;
 	_game.loadQuoteSet(0xF7, 0xF8, 0xF9, 0x159, 0x15A, 0x15B, 0);
 
-	sceneEntrySound();
+	section_3_music();
 }
 
-void Scene389::step() {
+static void room_389_daemon() {
 	_scene->_kernelMessages.randomServer();
-	if (_scene->_frameStartTime >= _monsterTime) {
+	if (_scene->_frameStartTime >= local._monsterTime) {
 		int chanceMinor = _scene->_kernelMessages.checkRandom() * 4 + 1;
 		_scene->_kernelMessages.generateRandom(20, chanceMinor);
-		_monsterTime = _scene->_frameStartTime + 2;
+		local._monsterTime = _scene->_frameStartTime + 2;
 	}
 }
 
-void Scene389::actions() {
+static void room_389_parser() {
 	if (_action.isAction(VERB_RETURN_TO, NOUN_AIR_SHAFT))
 		_scene->_nextSceneId = 313;
 	else if (_action.isAction(VERB_TALKTO, NOUN_MONSTER)) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
-			_scene->_kernelMessages.add(Common::Point(160, 136), 0x1110, 32, 1, 120, _game.getQuote(_circularQuoteId));
-			_circularQuoteId++;
-			if (_circularQuoteId > 0x15B)
-				_circularQuoteId = 0x159;
+			_scene->_kernelMessages.add(Common::Point(160, 136), 0x1110, 32, 1, 120, _game.getQuote(local._circularQuoteId));
+			local._circularQuoteId++;
+			if (local._circularQuoteId > 0x15B)
+				local._circularQuoteId = 0x159;
 
 			break;
 
@@ -116,6 +113,22 @@ void Scene389::actions() {
 	_action._inProgress = false;
 }
 
+void room_389_synchronize(Common::Serializer &s) {
+	s.syncAsUint32LE(local._monsterTime);
+	s.syncAsSint32LE(local._circularQuoteId);
+}
+
+void room_389_preload() {
+	room_init_code_pointer = room_389_init;
+	room_pre_parser_code_pointer = section_3_pre_parser;
+	room_parser_code_pointer = room_389_parser;
+	room_daemon_code_pointer = room_389_daemon;
+
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

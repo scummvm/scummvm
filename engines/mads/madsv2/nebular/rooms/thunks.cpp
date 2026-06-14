@@ -22,6 +22,7 @@
 #include "common/textconsole.h"
 #include "mads/madsv2/core/global.h"
 #include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/core/magic.h"
 #include "mads/madsv2/core/matte.h"
 #include "mads/madsv2/core/mouse.h"
 #include "mads/madsv2/core/pal.h"
@@ -29,6 +30,7 @@
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/quote.h"
 #include "mads/madsv2/core/text.h"
+#include "mads/madsv2/core/timer.h"
 #include "mads/madsv2/nebular/rooms/thunks.h"
 #include "mads/madsv2/nebular/nebular.h"
 
@@ -75,7 +77,11 @@ void Game::Objects::setRoom(int object_id, int roomNum) {
 }
 
 void Game::Objects::removeFromInventory(int objectId, int newScene) {
+	inter_take_from_player(objectId, newScene);
+}
 
+int Game::Objects::size() const {
+	return num_objects;
 }
 
 Game::Object Game::Objects::operator[](int idx) {
@@ -154,6 +160,10 @@ char *Resources::formatAAName(int num) {
 	return kernel_interface_name(num);
 }
 
+Scene::Animation &Scene::Animation::operator=(std::nullptr_t) {
+	error("TODO: Animation operator=");
+}
+
 int Scene::Animation::getCurrentFrame() const {
 	error("TODO: Animation::getCurrentFrame");
 }
@@ -179,11 +189,12 @@ void Scene::DynamicHotspots::remove(int dyn_id) {
 	kernel_delete_dynamic(dyn_id);
 }
 
-void Scene::DynamicHotspots::setPosition(int id, const Common::Point &pt, int facing) {
+int Scene::DynamicHotspots::setPosition(int id, const Common::Point &pt, int facing) {
 	kernel_dynamic_walk(id, pt.x, pt.y, facing);
+	return id;
 }
 
-int Scene::DynamicHotspots::setCursor(int index, int cursor) {
+int Scene::DynamicHotspots::setCursor(int index, int cursorNum) {
 	error("TODO: DynamicHotspots::setCursor");
 }
 
@@ -196,6 +207,11 @@ Scene::DynamicHotspot::DynamicHotspot(int index) : _articleNumber(kernel_dynamic
 
 void Scene::Hotspots::activate(int hotspot, int active) {
 	kernel_flip_hotspot(hotspot, active);
+}
+
+Scene::KernelMessages::TalkFont &Scene::KernelMessages::TalkFont::operator=(FontPtr font) {
+	kernel_message_font = font;
+	return *this;
 }
 
 int Scene::KernelMessages::TalkFont::getWidth(const Common::String &message, int spacing) const {
@@ -361,6 +377,14 @@ int Scene::Sequences::startCycle(int srcSpriteIdx, bool flipped, int cycleIndex)
 	return kernel_seq_stamp(srcSpriteIdx, flipped, cycleIndex);
 }
 
+void Scene::Sequences::setDone(int sequence_id) {
+	kernel_player_expire(sequence_id);
+}
+
+int Scene::Sequences::findByTrigger(int trigger) {
+	return kernel_seq_find_by_trigger(trigger);
+}
+
 int Scene::loadAnimation(const char *name, int trigger_code) {
 	return kernel_run_animation(name, trigger_code);
 }
@@ -402,16 +426,42 @@ void VM::Events::setCursor2(int cursorNum) {
 	mouse_cursor_sprite(cursor, cursorNum);
 }
 
-void VM::Palette::setEntry(int color, int r, int g, int b) {
+void VM::Events::showCursor() {
+	mouse_show();
+}
+
+void VM::Events::hideCursor() {
+	mouse_hide();
+}
+
+int32 VM::Events::getFrameCounter() {
+	return timer_read();
+}
+
+void VM::PaletteProxy::setEntry(int color, int r, int g, int b) {
 	pal_change_color(color, r, g, b);
 }
 
-void VM::Palette::refreshSceneColors() {
+void VM::PaletteProxy::refreshSceneColors() {
 	kernel_new_palette();
 }
 
-void VM::Palette::lock() {
+void VM::PaletteProxy::lock() {
 	pal_lock();
+}
+
+void VM::PaletteProxy::setColorFlags(byte r, byte g, byte b) {
+	magic_set_color_flags(r, g, b);
+}
+
+void VM::PaletteProxy::setColorValues(byte r, byte g, byte b) {
+	magic_set_color_values(r, g, b);
+}
+
+void VM::PaletteProxy::fadeOut(Palette palette, byte *paletteMap,
+		int baseColor, int numColors, int baseGrey, int numGreys,
+		int tickDelay, int steps) {
+	magic_fade_to_grey(palette, paletteMap, baseColor, numColors, baseGrey, numGreys, tickDelay, steps);
 }
 
 void VM::Sound::command(int num, int distance) {

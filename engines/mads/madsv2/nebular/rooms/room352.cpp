@@ -19,53 +19,35 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene352::Scene352(RexNebularEngine *vm) : Scene3xx(vm) {
-	_vaultOpenFl = false;
-	_mustPutArmDownFl = false;
-	_leaveRoomFl = false;
+struct Scratch {
+	bool _vaultOpenFl;
+	bool _mustPutArmDownFl;
+	bool _leaveRoomFl;
+	int32 _tapePlayerHotspotIdx;
+	int32 _hotspot1Idx;
+	int32 _hotspot2Idx;
+	int32 _lampHostpotIdx;
+	int32 _commonSequenceIdx;
+	int32 _commonSpriteIndex;
+};
 
-	_tapePlayerHotspotIdx = -1;
-	_hotspot1Idx = -1;
-	_hotspot2Idx = -1;
-	_lampHostpotIdx = -1;
-	_commonSequenceIdx = -1;
-	_commonSpriteIndex = -1;
-}
+static Scratch local;
 
-void Scene352::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
 
-	s.syncAsByte(_vaultOpenFl);
-	s.syncAsByte(_mustPutArmDownFl);
-	s.syncAsByte(_leaveRoomFl);
-
-	s.syncAsSint32LE(_tapePlayerHotspotIdx);
-	s.syncAsSint32LE(_hotspot1Idx);
-	s.syncAsSint32LE(_hotspot2Idx);
-	s.syncAsSint32LE(_lampHostpotIdx);
-	s.syncAsSint32LE(_commonSequenceIdx);
-	s.syncAsSint32LE(_commonSpriteIndex);
-}
-
-void Scene352::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_YOUR_STUFF);
-	_scene->addActiveVocab(NOUN_OTHER_STUFF);
-	_scene->addActiveVocab(NOUN_LAMP);
-}
-
-void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
+static void putArmDown(bool corridorExit, bool doorwayExit) {
 	switch (_game._trigger) {
 	case 0:
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0xFF));
@@ -107,20 +89,20 @@ void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 		else if (doorwayExit)
 			_scene->_sequences.addTimer(48, 4);
 		else {
-			_mustPutArmDownFl = false;
+			local._mustPutArmDownFl = false;
 			_game._player._stepEnabled = true;
 		}
 		break;
 
 	case 4:
 		_game._player.walk(Common::Point(116, 107), FACING_NORTH);
-		_mustPutArmDownFl = false;
+		local._mustPutArmDownFl = false;
 		_scene->_sequences.addTimer(180, 5);
-		_leaveRoomFl = true;
+		local._leaveRoomFl = true;
 		break;
 
 	case 5:
-		if (_leaveRoomFl)
+		if (local._leaveRoomFl)
 			_scene->_nextSceneId = 351;
 
 		break;
@@ -128,13 +110,13 @@ void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 	case 6:
 		_game._player.walk(Common::Point(171, 152), FACING_SOUTH);
 		_game._player._stepEnabled = true;
-		_mustPutArmDownFl = false;
+		local._mustPutArmDownFl = false;
 		_scene->_sequences.addTimer(180, 7);
-		_leaveRoomFl = true;
+		local._leaveRoomFl = true;
 		break;
 
 	case 7:
-		if (_leaveRoomFl)
+		if (local._leaveRoomFl)
 			_scene->_nextSceneId = 353;
 
 		break;
@@ -144,7 +126,7 @@ void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 	}
 }
 
-void Scene352::enter() {
+static void room_352_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RM302x0");
 	_globals._spriteIndexes[13] = _scene->_sprites.addSprites("*RM302x2");
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites("*RM302x3");
@@ -166,19 +148,19 @@ void Scene352::enter() {
 		_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('a', 0));
 	}
 
-	_leaveRoomFl = false;
+	local._leaveRoomFl = false;
 
 	if (_game._objects.isInRoom(OBJ_TAPE_PLAYER)) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 12, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 5);
 		int idx = _scene->_dynamicHotspots.add(NOUN_TAPE_PLAYER, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
-		_tapePlayerHotspotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(84, 145), FACING_WEST);
+		local._tapePlayerHotspotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(84, 145), FACING_WEST);
 	}
 
-	_vaultOpenFl = false;
+	local._vaultOpenFl = false;
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
-		_mustPutArmDownFl = false;
+		local._mustPutArmDownFl = false;
 		if (!_game._visitedScenes._sceneRevisited)
 			_globals[kHaveYourStuff] = false;
 	}
@@ -188,52 +170,52 @@ void Scene352::enter() {
 		int idx = _scene->_dynamicHotspots.add(NOUN_GUARDS_ARM2, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(230, 117), FACING_NORTHWEST);
 	} else
-		_mustPutArmDownFl = true;
+		local._mustPutArmDownFl = true;
 
 	if (_scene->_priorSceneId == 353)
 		_game._player._playerPos = Common::Point(171, 155);
 	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(116, 107);
 
-	sceneEntrySound();
+	section_3_music();
 
 	_game.loadQuoteSet(0xFF, 0x100, 0x101, 0x102, 0x103, 0);
 }
 
-void Scene352::preActions() {
-	_leaveRoomFl = false;
+static void room_352_pre_parser() {
+	local._leaveRoomFl = false;
 
 	if (_action.isAction(VERB_OPEN, NOUN_VAULT))
 		_game._player.walk(Common::Point(266, 111), FACING_NORTHEAST);
 
-	if (_vaultOpenFl && !_action.isObject(NOUN_VAULT) && !_action.isObject(NOUN_LAMP) && !_action.isObject(NOUN_OTHER_STUFF) && !_action.isObject(NOUN_YOUR_STUFF)) {
+	if (local._vaultOpenFl && !_action.isObject(NOUN_VAULT) && !_action.isObject(NOUN_LAMP) && !_action.isObject(NOUN_OTHER_STUFF) && !_action.isObject(NOUN_YOUR_STUFF)) {
 		if (_globals[kHaveYourStuff]) {
-			_commonSpriteIndex = _globals._spriteIndexes[13];
-			_commonSequenceIdx = _globals._sequenceIndexes[13];
+			local._commonSpriteIndex = _globals._spriteIndexes[13];
+			local._commonSequenceIdx = _globals._sequenceIndexes[13];
 		} else {
-			_commonSpriteIndex = _globals._spriteIndexes[1];
-			_commonSequenceIdx = _globals._sequenceIndexes[1];
+			local._commonSpriteIndex = _globals._spriteIndexes[1];
+			local._commonSequenceIdx = _globals._sequenceIndexes[1];
 		}
 
 		switch (_game._trigger) {
 		case 0:
 			if (_game._player._needToWalk) {
 				_game._player._stepEnabled = false;
-				_scene->_sequences.remove(_commonSequenceIdx);
+				_scene->_sequences.remove(local._commonSequenceIdx);
 				_vm->_sound->command(20);
-				_commonSequenceIdx = _scene->_sequences.addReverseSpriteCycle(_commonSpriteIndex, false, 6, 1, 0, 0);
-				_scene->_sequences.addSubEntry(_commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
-				_scene->_sequences.setDepth(_commonSequenceIdx, 15);
+				local._commonSequenceIdx = _scene->_sequences.addReverseSpriteCycle(local._commonSpriteIndex, false, 6, 1, 0, 0);
+				_scene->_sequences.addSubEntry(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				_scene->_sequences.setDepth(local._commonSequenceIdx, 15);
 			}
 			break;
 
 		case 1:
 			if (!_globals[kHaveYourStuff])
-				_scene->_dynamicHotspots.remove(_hotspot2Idx);
+				_scene->_dynamicHotspots.remove(local._hotspot2Idx);
 
-			_scene->_dynamicHotspots.remove(_hotspot1Idx);
-			_scene->_dynamicHotspots.remove(_lampHostpotIdx);
-			_vaultOpenFl = false;
+			_scene->_dynamicHotspots.remove(local._hotspot1Idx);
+			_scene->_dynamicHotspots.remove(local._lampHostpotIdx);
+			local._vaultOpenFl = false;
 			_game._player._stepEnabled = true;
 			break;
 
@@ -255,7 +237,7 @@ void Scene352::preActions() {
 	}
 }
 
-void Scene352::actions() {
+static void room_352_parser() {
 	if (_action._lookFlag) {
 		_vm->_dialogs->show(35225);
 		_action._inProgress = false;
@@ -263,19 +245,19 @@ void Scene352::actions() {
 	}
 
 	if (_action.isAction(VERB_OPEN, NOUN_VAULT)) {
-		if (!_vaultOpenFl) {
+		if (!local._vaultOpenFl) {
 			switch (_game._trigger) {
 			case 0:
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				if (_globals[kSexOfRex] == REX_FEMALE)
-					_commonSpriteIndex = _globals._spriteIndexes[9];
+					local._commonSpriteIndex = _globals._spriteIndexes[9];
 				else
-					_commonSpriteIndex = _globals._spriteIndexes[8];
+					local._commonSpriteIndex = _globals._spriteIndexes[8];
 
-				_commonSequenceIdx = _scene->_sequences.addSpriteCycle(_commonSpriteIndex, false, 8, 1, 0, 0);
-				_scene->_sequences.updateTimeout(_commonSequenceIdx, -1);
-				_scene->_sequences.addSubEntry(_commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				local._commonSequenceIdx = _scene->_sequences.addSpriteCycle(local._commonSpriteIndex, false, 8, 1, 0, 0);
+				_scene->_sequences.updateTimeout(local._commonSequenceIdx, -1);
+				_scene->_sequences.addSubEntry(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1:
@@ -283,23 +265,23 @@ void Scene352::actions() {
 				_vm->_sound->command(21);
 				_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 7, 2, 20, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[12], FACING_NORTH);
-				int oldIdx = _commonSequenceIdx;
-				_commonSequenceIdx = _scene->_sequences.startCycle(_commonSpriteIndex, false, -2);
-				_scene->_sequences.updateTimeout(_commonSequenceIdx, oldIdx);
+				int oldIdx = local._commonSequenceIdx;
+				local._commonSequenceIdx = _scene->_sequences.startCycle(local._commonSpriteIndex, false, -2);
+				_scene->_sequences.updateTimeout(local._commonSequenceIdx, oldIdx);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
 
 			case 2:
 				_vm->_sound->command(22);
-				_scene->_sequences.remove(_commonSequenceIdx);
-				_commonSequenceIdx = _scene->_sequences.startPingPongCycle(_commonSpriteIndex, false, 8, 1, 0, 0);
-				_scene->_sequences.setAnimRange(_commonSequenceIdx, 1, 3);
-				_scene->_sequences.addSubEntry(_commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+				_scene->_sequences.remove(local._commonSequenceIdx);
+				local._commonSequenceIdx = _scene->_sequences.startPingPongCycle(local._commonSpriteIndex, false, 8, 1, 0, 0);
+				_scene->_sequences.setAnimRange(local._commonSequenceIdx, 1, 3);
+				_scene->_sequences.addSubEntry(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				break;
 
 			case 3:
-				_scene->_sequences.updateTimeout(-1, _commonSequenceIdx);
+				_scene->_sequences.updateTimeout(-1, local._commonSequenceIdx);
 				_game._player._visible = true;
 				_scene->_sequences.addTimer(60, 4);
 				break;
@@ -318,7 +300,7 @@ void Scene352::actions() {
 	}
 
 	if (_game._objects.isInInventory(OBJ_GUARDS_ARM)) {
-		_mustPutArmDownFl = true;
+		local._mustPutArmDownFl = true;
 	}
 
 	bool exit_corridor = false;
@@ -333,7 +315,7 @@ void Scene352::actions() {
 	}
 
 	if (_action.isAction(VERB_WALK_DOWN, NOUN_CORRIDOR_TO_SOUTH) || _action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY) || _action.isAction(VERB_PUT, NOUN_GUARDS_ARM2, NOUN_FLOOR)) {
-		if (_mustPutArmDownFl)
+		if (local._mustPutArmDownFl)
 			putArmDown(exit_corridor, exit_doorway);
 		else if (exit_corridor)
 			_scene->_nextSceneId = 353;
@@ -384,19 +366,19 @@ void Scene352::actions() {
 	}
 
 	if (_action.isAction(VERB_PUT, NOUN_GUARDS_ARM2, NOUN_SCANNER)) {
-		if (!_vaultOpenFl) {
+		if (!local._vaultOpenFl) {
 			switch (_game._trigger) {
 			case 0:
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				if (_globals[kSexOfRex] == REX_FEMALE)
-					_commonSpriteIndex = _globals._spriteIndexes[11];
+					local._commonSpriteIndex = _globals._spriteIndexes[11];
 				else
-					_commonSpriteIndex = _globals._spriteIndexes[10];
+					local._commonSpriteIndex = _globals._spriteIndexes[10];
 
-				_commonSequenceIdx = _scene->_sequences.addSpriteCycle(_commonSpriteIndex, false, 8, 1, 0, 0);
-				_scene->_sequences.updateTimeout(_commonSequenceIdx, -1);
-				_scene->_sequences.addSubEntry(_commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
+				local._commonSequenceIdx = _scene->_sequences.addSpriteCycle(local._commonSpriteIndex, false, 8, 1, 0, 0);
+				_scene->_sequences.updateTimeout(local._commonSequenceIdx, -1);
+				_scene->_sequences.addSubEntry(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				break;
 
 			case 1:
@@ -404,61 +386,61 @@ void Scene352::actions() {
 				_vm->_sound->command(21);
 				_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 7, 2, 20, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 8);
-				int oldIdx = _commonSequenceIdx;
-				_commonSequenceIdx = _scene->_sequences.startCycle(_commonSpriteIndex, false, -2);
-				_scene->_sequences.updateTimeout(_commonSequenceIdx, oldIdx);
+				int oldIdx = local._commonSequenceIdx;
+				local._commonSequenceIdx = _scene->_sequences.startCycle(local._commonSpriteIndex, false, -2);
+				_scene->_sequences.updateTimeout(local._commonSequenceIdx, oldIdx);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			}
 			break;
 
 			case 2:
 				_vm->_sound->command(23);
-				_scene->_sequences.remove(_commonSequenceIdx);
-				_commonSequenceIdx = _scene->_sequences.addReverseSpriteCycle(_commonSpriteIndex, false, 8, 1, 0, 0);
-				_scene->_sequences.setAnimRange(_commonSequenceIdx, 1, 4);
-				_scene->_sequences.addSubEntry(_commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+				_scene->_sequences.remove(local._commonSequenceIdx);
+				local._commonSequenceIdx = _scene->_sequences.addReverseSpriteCycle(local._commonSpriteIndex, false, 8, 1, 0, 0);
+				_scene->_sequences.setAnimRange(local._commonSequenceIdx, 1, 4);
+				_scene->_sequences.addSubEntry(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				break;
 
 
 			case 3:
-				_scene->_sequences.updateTimeout(-1, _commonSequenceIdx);
+				_scene->_sequences.updateTimeout(-1, local._commonSequenceIdx);
 				_game._player._visible = true;
 				if (_globals[kHaveYourStuff])
-					_commonSpriteIndex = _globals._spriteIndexes[13];
+					local._commonSpriteIndex = _globals._spriteIndexes[13];
 				else
-					_commonSpriteIndex = _globals._spriteIndexes[1];
+					local._commonSpriteIndex = _globals._spriteIndexes[1];
 
 				_vm->_sound->command(20);
-				_commonSequenceIdx = _scene->_sequences.addSpriteCycle(_commonSpriteIndex, false, 6, 1, 0, 0);
-				_scene->_sequences.setDepth(_commonSequenceIdx, 15);
-				_scene->_sequences.addSubEntry(_commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 4);
+				local._commonSequenceIdx = _scene->_sequences.addSpriteCycle(local._commonSpriteIndex, false, 6, 1, 0, 0);
+				_scene->_sequences.setDepth(local._commonSequenceIdx, 15);
+				_scene->_sequences.addSubEntry(local._commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 4);
 				break;
 
 			case 4:
-				_commonSequenceIdx = _scene->_sequences.addSpriteCycle(_commonSpriteIndex, false, 6, 0, 0, 0);
-				_scene->_sequences.setAnimRange(_commonSequenceIdx, -2, -2);
-				_scene->_sequences.setDepth(_commonSequenceIdx, 15);
+				local._commonSequenceIdx = _scene->_sequences.addSpriteCycle(local._commonSpriteIndex, false, 6, 0, 0, 0);
+				_scene->_sequences.setAnimRange(local._commonSequenceIdx, -2, -2);
+				_scene->_sequences.setDepth(local._commonSequenceIdx, 15);
 				_scene->_sequences.addTimer(60, 5);
 				break;
 
 			case 5:
 			{
-				_vaultOpenFl = true;
+				local._vaultOpenFl = true;
 				int idx;
 				if (!_globals[kHaveYourStuff]) {
 					idx = _scene->_dynamicHotspots.add(NOUN_YOUR_STUFF, VERB_WALKTO, -1, Common::Rect(282, 87, 282 + 13, 87 + 7));
-					_hotspot2Idx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(280, 111), FACING_NORTHEAST);
-					_globals._sequenceIndexes[1] = _commonSequenceIdx;
+					local._hotspot2Idx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(280, 111), FACING_NORTHEAST);
+					_globals._sequenceIndexes[1] = local._commonSequenceIdx;
 					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x102));
 				} else {
-					_globals._sequenceIndexes[13] = _commonSequenceIdx;
+					_globals._sequenceIndexes[13] = local._commonSequenceIdx;
 					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x103));
 				}
 
 				idx = _scene->_dynamicHotspots.add(NOUN_OTHER_STUFF, VERB_WALKTO, -1, Common::Rect(282, 48, 282 + 36, 48 + 27));
-				_hotspot1Idx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
+				local._hotspot1Idx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
 				idx = _scene->_dynamicHotspots.add(NOUN_LAMP, VERB_WALKTO, -1, Common::Rect(296, 76, 296 + 11, 76 + 17));
-				_lampHostpotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
+				local._lampHostpotIdx = _scene->_dynamicHotspots.setPosition(idx, Common::Point(287, 115), FACING_NORTHEAST);
 				_game._player._stepEnabled = true;
 			}
 			break;
@@ -488,7 +470,7 @@ void Scene352::actions() {
 			break;
 
 		case 1:
-			_scene->_dynamicHotspots.remove(_hotspot2Idx);
+			_scene->_dynamicHotspots.remove(local._hotspot2Idx);
 			_globals[kHaveYourStuff] = true;
 
 			for (uint16 i = 0; i < _game._objects.size(); i++) {
@@ -534,7 +516,7 @@ void Scene352::actions() {
 
 		case 1:
 			_scene->_sequences.remove(_globals._sequenceIndexes[5]);
-			_scene->_dynamicHotspots.remove(_tapePlayerHotspotIdx);
+			_scene->_dynamicHotspots.remove(local._tapePlayerHotspotIdx);
 			break;
 
 		case 2:
@@ -576,7 +558,7 @@ void Scene352::actions() {
 	else if (_action.isAction(VERB_LOOK, NOUN_GAUGE))
 		_vm->_dialogs->show(35220);
 	else if (_action.isAction(VERB_LOOK, NOUN_VAULT)) {
-		if (!_vaultOpenFl)
+		if (!local._vaultOpenFl)
 			_vm->_dialogs->show(35221);
 	} else if (_action.isAction(VERB_LOOK, NOUN_YOUR_STUFF))
 		_vm->_dialogs->show(35222);
@@ -606,6 +588,33 @@ void Scene352::actions() {
 	_action._inProgress = false;
 }
 
+void room_352_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._vaultOpenFl);
+	s.syncAsByte(local._mustPutArmDownFl);
+	s.syncAsByte(local._leaveRoomFl);
+
+	s.syncAsSint32LE(local._tapePlayerHotspotIdx);
+	s.syncAsSint32LE(local._hotspot1Idx);
+	s.syncAsSint32LE(local._hotspot2Idx);
+	s.syncAsSint32LE(local._lampHostpotIdx);
+	s.syncAsSint32LE(local._commonSequenceIdx);
+	s.syncAsSint32LE(local._commonSpriteIndex);
+}
+
+void room_352_preload() {
+	room_init_code_pointer = room_352_init;
+	room_pre_parser_code_pointer = room_352_pre_parser;
+	room_parser_code_pointer = room_352_parser;
+
+	section_3_walker();
+	section_3_interface();
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_YOUR_STUFF);
+	_scene->addActiveVocab(NOUN_OTHER_STUFF);
+	_scene->addActiveVocab(NOUN_LAMP);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

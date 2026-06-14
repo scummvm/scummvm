@@ -19,22 +19,43 @@
  *
  */
 
-#ifndef MADS_NEBULAR_ROOMS_TELEPORTER_ROOM_H
-#define MADS_NEBULAR_ROOMS_TELEPORTER_ROOM_H
+#ifndef MADS_NEBULAR_ROOMS_TELEPORTER_H
+#define MADS_NEBULAR_ROOMS_TELEPORTER_H
 
-#include "common/point.h"
+#include "common/serializer.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-extern void teleporter_init();
-extern int teleporter_address(int code, bool working);
-extern void teleporter_handleKey();
-extern Common::Point teleporter_compute_location();
-extern bool teleporter_parser();
-extern void teleporter_daemon();
+struct Forcefield {
+	bool _flag;
+	int _vertical;
+	int _horizontal;
+	int _seqId[40];
+	long _timer;
+
+	void init() {
+		_flag = false;
+		_vertical = _horizontal = -1;
+		_timer = 0;
+		for (int i = 0; i < 40; ++i)
+			_seqId[i] = -1;
+	}
+
+	void synchronize(Common::Serializer &s) {
+		s.syncAsByte(_flag);
+		s.syncAsSint32LE(_vertical);
+		s.syncAsSint32LE(_horizontal);
+		for (int i = 0; i < 40; ++i)
+			s.syncAsSint32LE(_seqId[i]);
+		s.syncAsUint32LE(_timer);
+	};
+};
+
+extern void init_forcefield(Forcefield *force, bool flag);
+extern void handle_forcefield(Forcefield *force, int16 *sprites);
 
 } // namespace Rooms
 } // namespace RexNebular

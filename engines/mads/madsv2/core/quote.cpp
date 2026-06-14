@@ -41,7 +41,7 @@ char *quote_load(int quote_id, ...) {
 	return result;
 }
 
-char *quote_load(int quote_id, va_list marker) {
+char *quote_vload(int quote_id, va_list marker) {
 	int quote_error = 0;
 	int id;
 	int mark;

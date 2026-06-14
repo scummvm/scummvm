@@ -19,45 +19,34 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene320::Scene320(RexNebularEngine *vm) : Scene300s(vm) {
-	_blinkFl = false;
-	_flippedFl = false;
+struct Scratch {
+	bool _blinkFl;
+	bool _flippedFl;
+	int32 _buttonId;
+	int32 _lastFrame;
+	int32 _leftItemId;
+	int32 _posX;
+	int32 _rightItemId;
+};
 
-	_buttonId = -1;
-	_lastFrame = -1;
-	_leftItemId = -1;
-	_posX = -1;
-	_rightItemId = -1;
-}
+static Scratch local;
 
-void Scene320::synchronize(Common::Serializer &s) {
-	Scene3xx::synchronize(s);
 
-	s.syncAsByte(_blinkFl);
-	s.syncAsByte(_flippedFl);
-
-	s.syncAsSint32LE(_buttonId);
-	s.syncAsSint32LE(_lastFrame);
-	s.syncAsSint32LE(_leftItemId);
-	s.syncAsSint32LE(_posX);
-	s.syncAsSint32LE(_rightItemId);
-}
-
-void Scene320::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
-void Scene320::setRightView(int view) {
-	if (_rightItemId < 8) _scene->_sequences.remove(_globals._sequenceIndexes[10]);
+static void setRightView(int view) {
+	if (local._rightItemId < 8) _scene->_sequences.remove(_globals._sequenceIndexes[10]);
 
 	int spriteNum;
 	switch (view) {
@@ -87,102 +76,102 @@ void Scene320::setRightView(int view) {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 0);
 	}
 
-	_globals[kRightView320] = _rightItemId = view;
+	_globals[kRightView320] = local._rightItemId = view;
 }
 
-void Scene320::setLeftView(int view) {
-	if (_leftItemId < 10)
+static void setLeftView(int view) {
+	if (local._leftItemId < 10)
 		_scene->_sequences.remove(_globals._sequenceIndexes[0]);
 
 	if (view != 10) {
 		_globals._sequenceIndexes[0] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[view], false, 6, 0, 0, 18);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 0);
-		if (!_blinkFl)
+		if (!local._blinkFl)
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], 2, 2);
 	}
 
-	_leftItemId = view;
+	local._leftItemId = view;
 }
 
-void Scene320::handleButtons() {
+static void handleButtons() {
 	switch (_action._activeAction._objectNameId) {
 	case 0x2DD:
-		_buttonId = 5;
+		local._buttonId = 5;
 		break;
 
 	case 0x2DE:
-		_buttonId = 4;
+		local._buttonId = 4;
 		break;
 
 	case 0x2E0:
-		_buttonId = 6;
+		local._buttonId = 6;
 		break;
 
 	case 0x2E1:
-		_buttonId = 7;
+		local._buttonId = 7;
 		break;
 
 	case 0x2E2:
-		_buttonId = 8;
+		local._buttonId = 8;
 		break;
 
 	case 0x2E3:
-		_buttonId = 9;
+		local._buttonId = 9;
 		break;
 
 	case 0x2E4:
-		_buttonId = 10;
+		local._buttonId = 10;
 		break;
 
 	case 0x2E5:
-		_buttonId = 11;
+		local._buttonId = 11;
 		break;
 
 	case 0x2E6:
-		_buttonId = 12;
+		local._buttonId = 12;
 		break;
 
 	case 0x2E7:
-		_buttonId = 13;
+		local._buttonId = 13;
 		break;
 
 	case 0x2E8:
-		_buttonId = 0;
+		local._buttonId = 0;
 		break;
 
 	case 0x2E9:
-		_buttonId = 1;
+		local._buttonId = 1;
 		break;
 
 	case 0x2EA:
-		_buttonId = 2;
+		local._buttonId = 2;
 		break;
 
 	case 0x2EB:
-		_buttonId = 3;
+		local._buttonId = 3;
 		break;
 
 	default:
 		break;
 	}
 
-	if (_buttonId <= 3) {
-		_posX = (8 * _buttonId) - 2;
-		_flippedFl = true;
-	} else if (_buttonId <= 5) {
-		_posX = (13 * _buttonId) - 14;
-		_flippedFl = true;
+	if (local._buttonId <= 3) {
+		local._posX = (8 * local._buttonId) - 2;
+		local._flippedFl = true;
+	} else if (local._buttonId <= 5) {
+		local._posX = (13 * local._buttonId) - 14;
+		local._flippedFl = true;
 	} else {
-		_posX = (8 * _buttonId) + 98;
-		_flippedFl = false;
+		local._posX = (8 * local._buttonId) + 98;
+		local._flippedFl = false;
 	}
 }
 
-void Scene320::enter() {
-	_blinkFl = true;
-	_rightItemId = 8;
-	_leftItemId = 10;
-	_lastFrame = 0;
+static void room_320_init() {
+	local._blinkFl = true;
+	local._rightItemId = 8;
+	local._leftItemId = 10;
+	local._lastFrame = 0;
 
 	for (int i = 0; i < 10; i++)
 		_globals._spriteIndexes[i] = _scene->_sprites.addSprites(formAnimName('M', i));
@@ -199,22 +188,22 @@ void Scene320::enter() {
 	_vm->_palette->setEntry(252, 63, 30, 20);
 	_vm->_palette->setEntry(253, 45, 15, 10);
 
-	sceneEntrySound();
+	section_3_music();
 }
 
-void Scene320::step() {
+static void room_320_daemon() {
 	if (_scene->_animation[0] != nullptr) {
-		if (_lastFrame != _scene->_animation[0]->getCurrentFrame()) {
-			_lastFrame = _scene->_animation[0]->getCurrentFrame();
-			switch (_lastFrame) {
+		if (local._lastFrame != _scene->_animation[0]->getCurrentFrame()) {
+			local._lastFrame = _scene->_animation[0]->getCurrentFrame();
+			switch (local._lastFrame) {
 			case 95:
-				_blinkFl = true;
+				local._blinkFl = true;
 				setLeftView(9);
 				_vm->_sound->command(41);
 				break;
 
 			case 139:
-				_blinkFl = false;
+				local._blinkFl = false;
 				setLeftView(9);
 				break;
 
@@ -229,7 +218,7 @@ void Scene320::step() {
 				break;
 
 			case 430:
-				_blinkFl = true;
+				local._blinkFl = true;
 				setLeftView(4);
 				break;
 
@@ -246,7 +235,7 @@ void Scene320::step() {
 	}
 }
 
-void Scene320::actions() {
+static void room_320_parser() {
 	if (_action._lookFlag)
 		_vm->_dialogs->show(32011);
 	else if ((_action.isAction(VERB_PRESS) || _action.isAction(VERB_PUSH)) &&
@@ -259,43 +248,43 @@ void Scene320::actions() {
 		case 0:
 			_game._player._stepEnabled = false;
 			handleButtons();
-			_globals._sequenceIndexes[18] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[18], _flippedFl, 4, 2, 0, 0);
+			_globals._sequenceIndexes[18] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[18], local._flippedFl, 4, 2, 0, 0);
 			_scene->_sequences.setScale(_globals._sequenceIndexes[18], 60);
-			_scene->_sequences.setPosition(_globals._sequenceIndexes[18], Common::Point(_posX, 170));
+			_scene->_sequences.setPosition(_globals._sequenceIndexes[18], Common::Point(local._posX, 170));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[18], 0);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[18], SEQUENCE_TRIGGER_LOOP, 0, 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[18], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			break;
 
 		case 1:
-			if (_buttonId >= 6) {
+			if (local._buttonId >= 6) {
 				_vm->_sound->command(60);
-				setRightView(_buttonId - 6);
+				setRightView(local._buttonId - 6);
 			}
-			if (_buttonId == 4) {
+			if (local._buttonId == 4) {
 				_vm->_sound->command(38);
-				if (_leftItemId == 3)
+				if (local._leftItemId == 3)
 					setLeftView(0);
 				else
 					setLeftView(3);
 			}
-			if (_buttonId == 5) {
+			if (local._buttonId == 5) {
 				_vm->_sound->command(38);
-				if (_leftItemId == 1)
+				if (local._leftItemId == 1)
 					setLeftView(2);
 				else
 					setLeftView(1);
 			}
-			if (_buttonId <= 3) {
+			if (local._buttonId <= 3) {
 				_vm->_sound->command(60);
-				setLeftView(_buttonId + 5);
+				setLeftView(local._buttonId + 5);
 			}
 			break;
 
 		case 2:
 			_game._player._stepEnabled = true;
-			if (_buttonId == 5) {
-				if (_leftItemId == 2) {
+			if (local._buttonId == 5) {
+				if (local._leftItemId == 2) {
 					_game._player._stepEnabled = false;
 					setRightView(8);
 					setLeftView(10);
@@ -304,7 +293,7 @@ void Scene320::actions() {
 					_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('m', 2));
 					_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('m', 4));
 					_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('m', 9));
-					_blinkFl = false;
+					local._blinkFl = false;
 					setLeftView(2);
 					_game.loadQuoteSet(0xFE, 0);
 					_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
@@ -357,6 +346,28 @@ void Scene320::actions() {
 	_action._inProgress = false;
 }
 
+void room_320_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._blinkFl);
+	s.syncAsByte(local._flippedFl);
+
+	s.syncAsSint32LE(local._buttonId);
+	s.syncAsSint32LE(local._lastFrame);
+	s.syncAsSint32LE(local._leftItemId);
+	s.syncAsSint32LE(local._posX);
+	s.syncAsSint32LE(local._rightItemId);
+}
+
+void room_320_preload() {
+	room_init_code_pointer = room_320_init;
+	room_pre_parser_code_pointer = section_3_pre_parser;
+	room_parser_code_pointer = room_320_parser;
+	room_daemon_code_pointer = room_320_daemon;
+
+	section_3_walker();
+	section_3_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

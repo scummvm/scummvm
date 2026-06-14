@@ -71,7 +71,6 @@ MODULE_OBJS += \
 	madsv2/core/window.o \
 	madsv2/core/xms.o \
 	madsv2/nebular/nebular.o \
-	madsv2/nebular/conversation.o \
 	madsv2/nebular/global.o \
 	madsv2/nebular/mads/mads.o \
 	madsv2/nebular/rooms/thunks.o \
@@ -101,9 +100,42 @@ MODULE_OBJS += \
 	madsv2/nebular/rooms/room214.o \
 	madsv2/nebular/rooms/room215.o \
 	madsv2/nebular/rooms/room216.o \
+	madsv2/nebular/rooms/room301.o \
+	madsv2/nebular/rooms/room302.o \
+	madsv2/nebular/rooms/room303.o \
+	madsv2/nebular/rooms/room304.o \
+	madsv2/nebular/rooms/room307.o \
+	madsv2/nebular/rooms/room308.o \
+	madsv2/nebular/rooms/room309.o \
+	madsv2/nebular/rooms/room310.o \
+	madsv2/nebular/rooms/room311.o \
+	madsv2/nebular/rooms/room313.o \
+	madsv2/nebular/rooms/room316.o \
+	madsv2/nebular/rooms/room318.o \
+	madsv2/nebular/rooms/room319.o \
+	madsv2/nebular/rooms/room320.o \
+	madsv2/nebular/rooms/room321.o \
+	madsv2/nebular/rooms/room322.o \
+	madsv2/nebular/rooms/room351.o \
+	madsv2/nebular/rooms/room352.o \
+	madsv2/nebular/rooms/room353.o \
+	madsv2/nebular/rooms/room358.o \
+	madsv2/nebular/rooms/room359.o \
+	madsv2/nebular/rooms/room360.o \
+	madsv2/nebular/rooms/room361.o \
+	madsv2/nebular/rooms/room366.o \
+	madsv2/nebular/rooms/room387.o \
+	madsv2/nebular/rooms/room388.o \
+	madsv2/nebular/rooms/room389.o \
+	madsv2/nebular/rooms/room390.o \
+	madsv2/nebular/rooms/room391.o \
+	madsv2/nebular/rooms/room399.o \
 	madsv2/nebular/rooms/section1.o \
 	madsv2/nebular/rooms/section2.o \
-	madsv2/nebular/rooms/teleporter_room.o \
+	madsv2/nebular/rooms/section3.o \
+	madsv2/nebular/rooms/conversation.o \
+	madsv2/nebular/rooms/forcefield.o \
+	madsv2/nebular/rooms/teleporter.o \
 	madsv2/phantom/mads/mads.o \
 	madsv2/phantom/rooms/section1.o \
 	madsv2/phantom/rooms/room101.o \
