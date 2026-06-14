@@ -271,6 +271,10 @@ constexpr Common::Rect kPdaAccuseRect(Common::Point(180, 174), 21, 16);
 constexpr Common::Rect kPdaPageNextRect(Common::Point(204, 174), 20, 16);
 constexpr Common::Rect kPdaPagePrevRect(Common::Point(226, 174), 21, 16);
 constexpr Common::Rect kPdaHelp2Rect(Common::Point(267, 174), 21, 16);
+// London-only: `_NoteButtons[9]` = (0,0,66,79) → site (EEM1's slot 9 is a
+// dead 0-rect). A secondary "close the PDA" hotspot over the device's
+// top-left corner. EEM2 `_HandleNoteButton` slot 9 → screen 3.
+constexpr Common::Rect kPdaLondonCloseRect(Common::Point(0, 0), 66, 79);
 
 constexpr uint16 kProfilePickerRevealPic = 0x105;
 constexpr int kProfilePickerRevealX = 0x3e;
@@ -2257,6 +2261,21 @@ void EEMEngine::doNotebook() {
 	//   [9] (  0,  0,  0,  0)  same exit as [8]
 	//   [10] (267,174,288,190) → `_InterfaceHelp(0)` again          (0x3f9)
 	// BG PIC 0x3f; partner ANI 1 (Jake) / 0xb (Jenny) at (5, 80).
+	//
+	// EEM2/London (`_DoNotebook @ 16a0:0517`, `_HandleNoteButton @ 16a0:03dd`,
+	// jumptable @ 16a0:0503) reuses the SAME button rect table (2bca:0151) and
+	// handler set, but reassigns two slots and revives slot 9 (verified by
+	// disassembly — `[0x9292]` is the next-screen code):
+	//   [1] ( 93,174,115,190) MAP  → screen 2  (EEM1: a 2nd InterfaceHelp).
+	//                         London's dedicated map button.
+	//   [7] (  7,177, 57,200) DOS EEM2 → SITE, but we keep it as MAP (→ 2) in
+	//                         both variants — the EEM1 partner-foot map shortcut
+	//                         (a player convenience alongside button [1]).
+	//   [9] (  0,  0, 66, 79) SITE → screen 3  (EEM1: dead 0-rect)
+	// Everything else (gallery, accuse, host hint, page next/prev, help [10],
+	// site [8]) is identical. The note rendering, pagination, partner ANI
+	// (same 1/0xb), and gizmo colour-cycle are shared as-is; only button [1]
+	// (London → map) and the extra close area [9] are gated on `isLondon()`.
 	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return;
 
@@ -2307,12 +2326,20 @@ void EEMEngine::doNotebook() {
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
 				// Earlier rects win on overlap (matches `_FindButton`).
-				if (kPdaSiteRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaSiteRect.contains(ev.mouse.x, ev.mouse.y) ||
+					(isLondon() &&
+					 kPdaLondonCloseRect.contains(ev.mouse.x, ev.mouse.y))) {
 					_nextScreen = kScreenSite;
 					exitFlag = true;
 					break;  // back to site
 				}
 				if (kPdaPartnerFootMapRect.contains(ev.mouse.x, ev.mouse.y)) {
+					// EEM1 `_NoteButtons[7]` → map (screen 2). DOS EEM2 reassigns
+					// this slot to SITE, but we intentionally keep the partner-
+					// foot hotspot as a map shortcut in BOTH variants for parity
+					// with EEM1. London also has its own dedicated map button
+					// (`kPdaHelpRect` below) and can still close the PDA via the
+					// site button (35,111) or the top-left corner (0,0,66,79).
 					_nextScreen = kScreenMapAlt;
 					exitFlag = true;
 					break;
@@ -2334,7 +2361,14 @@ void EEMEngine::doNotebook() {
 					break;
 				}
 				if (kPdaHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// rect 1 → `_InterfaceHelp(0)` (PICs 0x63 / 0x1ae).
+					// `_NoteButtons[1]`. EEM1: a 2nd `_InterfaceHelp(0)` button
+					// (PICs 0x63 / 0x1ae). London reassigns this slot to MAP
+					// (`_HandleNoteButton` slot 1 → screen 2).
+					if (isLondon()) {
+						_nextScreen = kScreenMapAlt;
+						exitFlag = true;
+						break;
+					}
 					setInteractiveMouseCursor(false);
 					doInterfaceHelp(0);
 					dirty = true;
@@ -2404,7 +2438,11 @@ Common::String EEMEngine::notebookNoteText(uint clueId, const byte *ni,
 		return parseString(Common::String(p, len),
 						   _playerName, _partner);
 	}
-	const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
+	// EEM1 CD: 4-byte entries (textOff at +0, points at +2). EEM2/London CD:
+	// 2-byte entries (textOff only) — `_DrawNotes @ 16a0:01de` reads
+	// `noteIndex[clueId*2]`.
+	const uint stride = isLondon() ? 2 : 4;
+	const uint16 textOff = READ_LE_UINT16(ni + clueId * stride);
 	return parseString(_mystery.textAt(textOff),
 					   _playerName, _partner);
 }
@@ -2428,13 +2466,24 @@ void EEMEngine::drawNotebookFrame(int &page) {
 
 	// `_DrawNotes` walks `_NoteIndex` for current page; word-wraps each
 	// found clue in `_NotebookRect`. Selected = color 0x3c.
+	// EEM2/London NoteIndex entries are 2 bytes (no points field), so its real
+	// clue count is the section size / 2. `noteIndexCount()` assumes the EEM1
+	// 4-byte stride (and stays that way for the accuse-scoring path, which is a
+	// separate London concern), so derive the London-correct count here — else
+	// high-id notes get dropped.
+	const uint16 londonCount = isLondon()
+		? (uint16)(_mystery.noteSectionSize() / 2) : 0;
 	Common::Array<uint> found;
 	for (uint i = 0; i < Mystery::kCluesFoundCap; i++) {
-		if (_mystery._cluesFound[i] && _mystery.noteHasNotebookText(i))
+		const bool hasText = isLondon()
+			? (i < londonCount)
+			: _mystery.noteHasNotebookText(i);
+		if (_mystery._cluesFound[i] && hasText)
 			found.push_back(i);
 	}
 	const byte *ni = _mystery.noteIndex();
-	const uint16 niCount = _mystery.noteIndexCount();
+	const uint16 niCount = isLondon()
+		? londonCount : _mystery.noteIndexCount();
 
 	const int kRectX = kNotebookRect.left;
 	const int kRectY = kNotebookRect.top;
@@ -2619,7 +2668,15 @@ void EEMEngine::doGallery() {
 					break;
 				}
 				if (kPdaHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// rect 1 → `_InterfaceHelp(0)` (158f:0625).
+					// EEM1 slot 1 → a 2nd `_InterfaceHelp(0)` (158f:0625).
+					// EEM2 gallery `_HandleGalleryButton @ 160e:05c7` slot 1 →
+					// MAP (`MOV [0x9292],2` @ 160e:05fe) — London's dedicated
+					// map button, same as the notebook/accuse PDA bar.
+					if (isLondon()) {
+						_nextScreen = kScreenMapAlt;
+						exitFlag = true;
+						break;
+					}
 					setInteractiveMouseCursor(false);
 					doInterfaceHelp(0);
 					lastDraw = 0;
@@ -2872,6 +2929,14 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 						break;
 					}
 					if (kPdaPartnerFootMapRect.contains(mx, my)) {
+						_nextScreen = kScreenMapAlt;
+						exitGallery = true;
+						back = true;
+						break;
+					}
+					if (isLondon() && kPdaHelpRect.contains(mx, my)) {
+						// EEM2 gallery slot 1 → MAP (dedicated map button);
+						// only kPdaHelp2Rect (267,174) stays help in London.
 						_nextScreen = kScreenMapAlt;
 						exitGallery = true;
 						back = true;
@@ -4009,6 +4074,13 @@ bool EEMEngine::doAccuseNotes() {
 				}
 				if (kPdaGalleryRect.contains(mx, my)) {
 					_nextScreen = kScreenGallery;
+					return false;
+				}
+				if (isLondon() && kPdaHelpRect.contains(mx, my)) {
+					// EEM2 accuse `_HandleAccuseNoteButton @ 1ea1:0873` slot 1
+					// → MAP (`MOV [0x9292],2` @ 1ea1:089b) — London's dedicated
+					// map button; only kPdaHelp2Rect (267,174) stays help.
+					_nextScreen = kScreenMapAlt;
 					return false;
 				}
 				if (kPdaHelpRect.contains(mx, my) ||
