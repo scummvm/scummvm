@@ -1448,6 +1448,14 @@ void EEMEngine::doShowScrapbook(uint stage) {
 		return;
 	const bool currentTier = (stage == _chainStage);
 
+	// `_ShowScrapbook @ 2046:0874` (EEM2) opens with the scrapbook/newspaper
+	// MIDI tune 0x5d (same one `_ShowOneScrap` plays after a correct accusation),
+	// gated on the voice flag + MIDI availability (DOS `DAT_3036_4c4e`/`146a` —
+	// the original gates this music on the *voice* toggle, not the music one).
+	// London only; EEM1's seg-1f78 scrapbook was not verified to play it.
+	if (isLondon() && _music && _voiceOn)
+		_music->playMus(0x5d, /* loop= */ false);
+
 	int mystery = lo;
 	if (currentTier) {
 		while (mystery < hi && _mysteriesSolved[mystery] == 0)
@@ -1485,6 +1493,9 @@ void EEMEngine::doShowScrapbook(uint stage) {
 			break;
 		}
 	}
+	// `_ShowScrapbook` / `_ShowOneScrap` stop the MIDI on the way out.
+	if (isLondon() && _music)
+		stopMusic();
 }
 
 void EEMEngine::doSetup() {
