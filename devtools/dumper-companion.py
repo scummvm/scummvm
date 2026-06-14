@@ -35,6 +35,7 @@ from io import BytesIO, IOBase, StringIO
 from pathlib import Path
 from struct import pack, unpack
 from typing import Any
+from pathlib import Path
 
 import machfs  # type: ignore
 import pycdlib  # type: ignore
@@ -92,7 +93,11 @@ decode_map = {
 SPECIAL_SYMBOLS = '/":*|\\?%<>\x7f'
 APPLE_PM_SIGNATURE = b"PM"
 SECTOR_SIZE = 512
-
+CCD_SECTOR_SIZE = 2352
+CCD_DATA_SIZE = 2048
+CCD_MODE_OFFSET = 15
+CCD_MODE1_DATA_OFFSET = 16
+CCD_MODE2_DATA_OFFSET = 24
 
 class FileSystem(Enum):
     hybrid = "hybrid"
@@ -438,32 +443,95 @@ def check_fs(iso: str) -> FileSystem:
         return FileSystem.hybrid
     return disk_formats[0]
 
+def convert_ccd_to_iso(img_path: Path, iso_path: Path) -> None:
+    """
+    Convert a CloneCD IMG image into an ISO image.
 
+    The converter strips CloneCD sector headers and writes
+    the 2048-byte sector payload expected by ISO9660 tools.
+    """
+    with open(img_path, "rb") as src, open(iso_path, "wb") as dst:
+        while chunk := src.read(CCD_SECTOR_SIZE):
+            if len(chunk) != CCD_SECTOR_SIZE:
+                raise ValueError("Incomplete CCD sector")
+            mode = chunk[CCD_MODE_OFFSET]
+
+            if mode == 1:
+                dst.write(
+                    chunk[
+                        CCD_MODE1_DATA_OFFSET:
+                        CCD_MODE1_DATA_OFFSET + CCD_DATA_SIZE
+                    ]
+                )
+            elif mode == 2:
+                dst.write(
+                    chunk[
+                        CCD_MODE2_DATA_OFFSET:
+                        CCD_MODE2_DATA_OFFSET + CCD_DATA_SIZE
+                    ]
+                )
+            elif mode == 0xE2:
+                raise ValueError(
+                    "Session marker found; only first session is supported"
+                )
+            else:
+                raise ValueError(
+                    f"Unsupported sector mode {mode}"
+                )
+            
 def extract_iso(args: argparse.Namespace) -> None:
-    loglevel: str = args.log
+    temp_iso = None
+    try:
+        # CloneCD metadata is stored in .ccd while sector data
+        # resides in the matching .img file.
+        if args.src.suffix.lower() == ".ccd":
+            img_path = args.src.with_suffix(".img")
 
-    numeric_level = getattr(logging, loglevel.upper(), None)
-    if not isinstance(numeric_level, int):
-        raise ValueError("Invalid log level: %s" % loglevel)
-    logging.basicConfig(format="%(levelname)s: %(message)s", level=numeric_level)
+            if not img_path.exists():
+                raise FileNotFoundError(
+                    f"Associated IMG file not found: {img_path}"
+                )
+            temp_iso = args.dir / f"{args.src.stem}.iso"
 
-    if not args.fs:
-        args.fs = check_fs(args.src)
-        print("Detected filesystem:", args.fs.value)
-    else:
-        args.fs = FileSystem(args.fs)
-    if args.fs in [FileSystem.hybrid, FileSystem.iso9660] and not args.extension:
-        args.extension = check_extension(args)
-        print("Detected extension:", args.extension.value)
-    elif args.extension:
-        args.extension = Extension(args.extension)
+            convert_ccd_to_iso(
+                img_path,
+                temp_iso
+            )
 
-    if args.fs == FileSystem.iso9660:
-        extract_volume_iso(args)
-    elif args.fs == FileSystem.hfs:
-        extract_volume_hfs(args)
-    else:
-        extract_volume_hybrid(args)
+            args.src = temp_iso
+  
+        loglevel: str = args.log
+
+        numeric_level = getattr(logging, loglevel.upper(), None)
+        if not isinstance(numeric_level, int):
+            raise ValueError("Invalid log level: %s" % loglevel)
+        logging.basicConfig(format="%(levelname)s: %(message)s", level=numeric_level)
+
+        if not args.fs:
+            args.fs = check_fs(args.src)
+            print("Detected filesystem:", args.fs.value)
+        else:
+            args.fs = FileSystem(args.fs)
+        if args.fs in [FileSystem.hybrid, FileSystem.iso9660] and not args.extension:
+            args.extension = check_extension(args)
+            print("Detected extension:", args.extension.value)
+        elif args.extension:
+            args.extension = Extension(args.extension)
+
+        if args.fs == FileSystem.iso9660:
+            extract_volume_iso(args)
+        elif args.fs == FileSystem.hfs:
+            extract_volume_hfs(args)
+        else:
+            extract_volume_hybrid(args)
+            
+    finally:
+        if (
+            temp_iso is not None
+            and not args.keep_files
+            and temp_iso.exists()
+        ):
+            temp_iso.unlink()
 
 
 def extract_volume_hfs(args: argparse.Namespace) -> None:
@@ -1120,6 +1188,11 @@ def generate_parser() -> argparse.ArgumentParser:
         choices=["iso9660", "hfs", "hybrid"],
         metavar="FILE_SYSTEM",
         help="Specify the file system of the ISO",
+    )
+    parser_iso.add_argument(
+        "--keep-files",
+        action="store_true",
+        help="Keep temporary files created during CCD to ISO convesrion",
     )
     parser_iso.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
