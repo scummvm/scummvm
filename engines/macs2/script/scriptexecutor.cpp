@@ -983,7 +983,9 @@ ExecutionResult Script::ScriptExecutor::scriptWaitForWalk() {
 	Character *c = currentView->getCharacterByIndex(objectID);
 	if (c == nullptr) {
 		// Original: error code 2 (no runtime data). Script execution stops.
-		warning("Opcode 0x11: no character for object %u (no runtime data)", objectID);
+		warning("Opcode 0x11: no character for object %u (no runtime data). Characters loaded: %u, isSceneInitRun: %d, executingObject: %u",
+				objectID, currentView ? (uint)currentView->_characters.size() : 0,
+				(int)_isSceneInitRun, _executingScriptObjectId);
 		endBuffering(_lastOpcodeTriggeredSkip);
 		return ExecutionResult::ScriptFinished;
 	}
@@ -2109,11 +2111,11 @@ ExecutionResult Script::ScriptExecutor::executeOpcodes() {
 		}
 
 		// Make sure we have read all the bytes we should have read
-		// TODO: Think about if we should also check this on exiting the function,
-		// maybe we miss some cases like this
 		if (_stream->pos() != _expectedEndLocation) {
-			warning("Macs2::ScriptExecutor::ExecuteScript resyncing stream from %u to %u",
-					(uint32)_expectedEndLocation, (uint32)_stream->pos());
+			warning("Macs2::ScriptExecutor::ExecuteScript resyncing stream: expected pos %u, actual %u (delta %d) after opcode 0x%02x (object %u, script size %u)",
+					(uint32)_expectedEndLocation, (uint32)_stream->pos(),
+					(int)((int64)_stream->pos() - (int64)_expectedEndLocation),
+					_lastOpcode, _executingScriptObjectId, (uint32)_stream->size());
 			_expectedEndLocation = _stream->pos();
 		}
 
@@ -2137,8 +2139,10 @@ ExecutionResult Script::ScriptExecutor::executeOpcodes() {
 		if (opcode1 != 0x5) {
 			opcodeInfo = identifyScriptOpcode(opcode1, 0);
 		}
-		debugC(kDebugScript, "- First block opcode: %.2x %s", opcode1, opcodeInfo.c_str());
+		debugC(kDebugScript, "- First block opcode: %.2x %s at pos %u (len expected end %u)", opcode1, opcodeInfo.c_str(), (uint32)(_stream->pos() - 1), (uint32)_expectedEndLocation);
 		byte length = readByte(); // [bp-2h]
+		_lastOpcode = opcode1;
+		_lastOpcodeStreamPos = _stream->pos() - 2;
 		_expectedEndLocation += length + 2;
 
 		// TODO: convert this into a function lookup table and extract all opcode handling into separate functions, this is just for easier reading
