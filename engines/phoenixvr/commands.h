@@ -943,7 +943,7 @@ struct IfAnd : public Script::Conditional {
 	void exec(Script::ExecutionContext &ctx) const override {
 		bool result = true;
 		for (auto &var : vars) {
-			if (var.empty())
+			if (var.empty() || !g_engine->hasVariable(var))
 				continue;
 			auto value = g_engine->getVariable(var);
 			debug("ifand, %s: %d", var.c_str(), value);
@@ -964,7 +964,7 @@ struct IfOr : public Script::Conditional {
 	void exec(Script::ExecutionContext &ctx) const override {
 		bool result = false;
 		for (auto &var : vars) {
-			if (var.empty())
+			if (var.empty() || !g_engine->hasVariable(var))
 				continue;
 			auto value = g_engine->getVariable(var);
 			debug("ifor, %s: %d", var.c_str(), value);

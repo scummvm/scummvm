@@ -781,15 +781,23 @@ void PhoenixVREngine::declareVariable(const Common::String &name) {
 		_variables.setVal(name, 0);
 }
 
+bool PhoenixVREngine::hasVariable(const Common::String &name) const {
+	return _variables.contains(name);
+}
+
 void PhoenixVREngine::setVariable(const Common::String &name, int value) {
+	if (!hasVariable(name)) {
+		debug("set %s %d - ignored, variable was not declared", name.c_str(), value);
+		return;
+	}
 	debug("set %s %d", name.c_str(), value);
 	_variables.setVal(name, value);
 }
 
 int PhoenixVREngine::getVariable(const Common::String &name) const {
-	if (gameIdMatches("lochness") && name == "tumuAccpet")
-		return _variables.getVal("tumuAccept");
-	return _variables.getVal(name);
+	if (!hasVariable(name))
+		warning("get %s - variable was not declared", name.c_str());
+	return _variables.getValOrDefault(name, 0);
 }
 
 void PhoenixVREngine::playSound(const Common::String &sound, Audio::Mixer::SoundType type, uint8 volume, int loops, bool spatial, float angle) {
