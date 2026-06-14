@@ -624,6 +624,11 @@ void View1::drawMainMenu(Graphics::ManagedSurface &s) {
 void View1::setStringBox(const Common::StringArray &sa) {
 	_drawnStringBox = sa;
 	_isShowingTextBox = true;
+	// Clear speaker so non-speech text boxes (look-at, etc.) don't show a portrait.
+	// The original binary uses a separate g_wIsShowingDialoguePanel flag that is only
+	// set in scriptShowDialogue (opcode 0x0D). showSpeechAct() re-sets the speaker
+	// after calling this method.
+	currentSpeechActData.speaker = nullptr;
 	_continueScriptAfterUI = true;
 
 	// Binary: if (g_wCursorMode == 0x1a) setCursorMode(0x16);
