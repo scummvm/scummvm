@@ -346,17 +346,18 @@ void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 		currentBlob._unknown0F = stream->readByte();      // +0x50F6: unknown byte
 
 		// Parse frames for the legacy BackgroundAnimation struct
-		current._numFrames = BackgroundAnimationBlob::getAnimFrameCount(currentBlob._blob);
+		AnimBlobView blobView(currentBlob._blob);
+		current._numFrames = blobView.frameCount();
 		current._frameIndex = 0;
 		current._frames = new AnimFrame[current._numFrames];
-		Common::MemoryReadStream blobStream(currentBlob._blob.data(), currentBlob._blob.size());
-		// Skip blob header to first frame
-		blobStream.seek(0xA);
-		uint16 headerSize = blobStream.readUint16LE();
-		blobStream.seek(headerSize + 0xE, SEEK_SET);
 		for (int j = 0; j < current._numFrames; j++) {
-			blobStream.seek(6, SEEK_CUR); // skip per-frame header (6 bytes before w/h/pixels)
-			current._frames[j].readFromStream(&blobStream);
+			AnimBlobView::FrameInfo fi;
+			if (!blobView.getFrameInfo(j, fi))
+				break;
+			current._frames[j]._width = fi.width;
+			current._frames[j]._height = fi.height;
+			current._frames[j]._data = new byte[fi.width * fi.height];
+			memcpy(current._frames[j]._data, fi.pixels, fi.width * fi.height);
 		}
 
 		// Initialize the blob frame pointer (original calls advanceAnimFrame with mode 0x64+numFrames)
@@ -1669,29 +1670,38 @@ Sprite AnimFrame::asSprite() {
 }
 
 AnimFrame BackgroundAnimationBlob::getFrame(uint32 index) {
-	AnimationReader animReader(_blob);
-	uint16 numAnimations = animReader.readNumAnimations();
+	AnimBlobView blobView(_blob);
+	uint16 numAnimations = blobView.frameCount();
 	debug("Number of animation frames for background object: %.4x", numAnimations);
 
-	// TODO: Check consistency between 0 and 1 based indexing
-	animReader.seekToAnimation((index - 1) % numAnimations);
-	// testReader.SeekToAnimation(0);
-	// Skip ahead to the width and height
-	animReader._readStream->seek(6, SEEK_CUR);
+	uint16 frameIdx = (index - 1) % numAnimations;
+	AnimBlobView::FrameInfo fi;
+	if (!blobView.getFrameInfo(frameIdx, fi)) {
+		AnimFrame result;
+		result._width = 0;
+		result._height = 0;
+		result._data = nullptr;
+		return result;
+	}
 
 	AnimFrame result;
-	result.readFromStream(animReader._readStream);
+	result._width = fi.width;
+	result._height = fi.height;
+	result._data = new byte[fi.width * fi.height];
+	memcpy(result._data, fi.pixels, fi.width * fi.height);
 	return result;
 }
 
 AnimFrame BackgroundAnimationBlob::getCurrentFrame() {
 	// Mode 0: get current frame without advancing (advancement happens in View1::tick)
 	uint16 offset = advanceAnimFrame(_blob, false, 0x0);
-	Common::MemoryReadStream *stream = new Common::MemoryReadStream(_blob.data(), _blob.size());
-	offset += 6;
-	stream->seek(offset);
+	// offset points to per-frame header: offsetX(2), offsetY(2), unknown(2), width(2), height(2), pixels
+	offset += 6; // skip offsetX, offsetY, unknown
 	AnimFrame result;
-	result.readFromStream(stream);
+	result._width = READ_LE_UINT16(&_blob[offset]);
+	result._height = READ_LE_UINT16(&_blob[offset + 2]);
+	result._data = new byte[result._width * result._height];
+	memcpy(result._data, &_blob[offset + 4], result._width * result._height);
 	return result;
 }
 
@@ -1821,19 +1831,14 @@ uint16 BackgroundAnimationBlob::advanceAnimFrame(Common::Array<uint8> &blob, boo
 void BackgroundAnimationBlob::mirrorAnimBlob(Common::Array<uint8> &blob) {
 	if (blob.size() < 14)
 		return;
-	Common::MemoryReadStream header(blob.data(), blob.size());
-	header.seek(0xA);
-	uint16 headerSize = header.readUint16LE();
-	uint32 countOffset = 0xC + headerSize;
-	if (countOffset + 2 > blob.size())
+	AnimBlobView blobView(blob);
+	if (!blobView.isValid())
 		return;
-	uint16 frameCount = READ_LE_UINT16(&blob[countOffset]);
-	// First frame starts at headerSize + 0xE from blob start
-	uint32 framePos = headerSize + 0xE;
+	uint16 frameCount = blobView.frameCount();
+	uint32 framePos = blobView.frameDataOffset() + 2; // skip frame count word
 	for (uint16 f = 0; f < frameCount; f++) {
 		if (framePos + 10 > blob.size())
 			break;
-		// Frame layout: +0(2) +2(2) +4(2unknown) +6(width,2) +8(height,2) +10(pixels)
 		uint16 width = READ_LE_UINT16(&blob[framePos + 6]);
 		uint16 height = READ_LE_UINT16(&blob[framePos + 8]);
 		uint32 pixelStart = framePos + 10;
@@ -1851,12 +1856,11 @@ void BackgroundAnimationBlob::mirrorAnimBlob(Common::Array<uint8> &blob) {
 }
 
 // Returns sequence length from blob header (matches getAnimFrameCount at 1010:168c).
-// Reads word at blob+10 and adds 1.
+// Note: this returns the sequence table length, NOT the actual frame count.
+// Use AnimBlobView::frameCount() for the actual number of pixel frames.
 uint16 BackgroundAnimationBlob::getAnimFrameCount(Common::Array<uint8> &blob) {
-	Common::MemoryReadStream stream(blob.data(), blob.size());
-	stream.seek(0xA);
-	uint16 count = stream.readUint16LE();
-	return count + 1;
+	AnimBlobView view(blob);
+	return view.sequenceLength();
 }
 
 int MacsAudioStream::readBuffer(int16 *buffer, const int numSamples) {

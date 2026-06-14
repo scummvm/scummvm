@@ -45,6 +45,9 @@ static bool _showSceneMaps = false;
 static bool _showImageResources = false;
 static bool _showDebugOutput = false;
 static bool _showSound = false;
+static bool _showAnimViewer = false;
+static uint16 _animViewerObjIndex = 0;
+static int _animViewerBlobIndex = 0;
 
 static const struct {
 	uint16 id;
@@ -950,10 +953,132 @@ static void showVariablesWindow() {
 	ImGui::End();
 }
 
+static void showAnimViewerWindow() {
+	if (!_showAnimViewer)
+		return;
+	ImGui::SetNextWindowSize(ImVec2(600, 400), ImGuiCond_FirstUseEver);
+	Common::String title = Common::String::format("Animation Viewer - obj 0x%x blob %d###AnimViewer", _animViewerObjIndex, _animViewerBlobIndex);
+	if (ImGui::Begin(title.c_str(), &_showAnimViewer)) {
+		GameObject *obj = nullptr;
+		for (auto o : GameObjects::instance()._objects) {
+			if (o && o->_index == _animViewerObjIndex) {
+				obj = o;
+				break;
+			}
+		}
+		bool hasBlob = obj && ((_animViewerBlobIndex == -1 && !obj->overloadAnimation.empty()) ||
+			(_animViewerBlobIndex >= 0 && _animViewerBlobIndex < (int)obj->_blobs.size() && !obj->_blobs[_animViewerBlobIndex].empty()));
+		if (hasBlob) {
+			// Blob selector
+			const char *currentLabel = _animViewerBlobIndex == -1 ? "Overload" : Common::String::format("%d", _animViewerBlobIndex).c_str();
+			if (ImGui::BeginCombo("Blob", currentLabel)) {
+				for (int b = 0; b < (int)obj->_blobs.size(); b++) {
+					if (obj->_blobs[b].empty())
+						continue;
+					bool selected = (b == _animViewerBlobIndex);
+					if (ImGui::Selectable(Common::String::format("%d", b).c_str(), selected))
+						_animViewerBlobIndex = b;
+				}
+				if (!obj->overloadAnimation.empty()) {
+					bool selected = (_animViewerBlobIndex == -1);
+					if (ImGui::Selectable("Overload", selected))
+						_animViewerBlobIndex = -1;
+				}
+				ImGui::EndCombo();
+			}
+			ImGui::Separator();
+
+			Common::Array<uint8> &blob = (_animViewerBlobIndex == -1) ? obj->overloadAnimation : obj->_blobs[_animViewerBlobIndex];
+			AnimBlobView blobView(blob);
+			if (blobView.isValid()) {
+				uint16 frameCount = blobView.frameCount();
+				ImGui::Text("Frames: %u  SeqLen: %u  Blob size: %u bytes", frameCount, blobView.sequenceLength(), (uint)blob.size());
+
+				static Graphics::ManagedSurface animViewSurface;
+				float availWidth = ImGui::GetContentRegionAvail().x;
+				float xCursor = 0;
+
+				for (uint16 f = 0; f < frameCount; f++) {
+					AnimBlobView::FrameInfo fi;
+					if (!blobView.getFrameInfo(f, fi))
+						break;
+
+					animViewSurface.create(fi.width, fi.height, Graphics::PixelFormat::createFormatCLUT8());
+					animViewSurface.fillRect(Common::Rect(fi.width, fi.height), 0);
+					for (uint16 row = 0; row < fi.height; row++) {
+						for (uint16 col = 0; col < fi.width; col++) {
+							byte pixel = fi.pixels[row * fi.width + col];
+							if (pixel != 0)
+								animViewSurface.setPixel(col, row, pixel);
+						}
+					}
+
+					ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*animViewSurface.surfacePtr(), g_engine->_pal, 256);
+					if (texId) {
+						float scale = MIN(128.0f / (float)fi.width, 128.0f / (float)fi.height);
+						if (scale > 3.0f) scale = 3.0f;
+						float imgW = fi.width * scale;
+						float imgH = fi.height * scale;
+
+						if (xCursor + imgW > availWidth && xCursor > 0) {
+							xCursor = 0;
+						} else if (xCursor > 0) {
+							ImGui::SameLine();
+						}
+
+						ImGui::BeginGroup();
+						ImGui::Image(texId, ImVec2(imgW, imgH));
+						ImGui::Text("%u (%d,%d)", f, fi.offsetX, fi.offsetY);
+						ImGui::EndGroup();
+
+						xCursor += imgW + 8;
+					}
+				}
+			}
+		} else {
+			ImGui::Text("Object 0x%x blob %d not available", _animViewerObjIndex, _animViewerBlobIndex);
+		}
+	}
+	ImGui::End();
+}
+
+// Bounding box overlay for hovered scene object
+static Common::Rect _hoveredObjectBounds;
+static bool _hasHoveredObjectBounds = false;
+
+static void drawHoveredObjectOverlay() {
+	if (!_hasHoveredObjectBounds)
+		return;
+	ImVec2 displaySize = ImGui::GetIO().DisplaySize;
+	// The game is 320x200 but may use aspect ratio correction (4:3 = 320x240 effective)
+	// ScummVM fits the game into the window preserving aspect ratio with letterboxing
+	int gameW = g_system->getWidth();   // 320
+	int gameH = g_system->getHeight();  // 200
+	// Effective display aspect: if aspect ratio correction is on, it's 4:3
+	float effectiveH = (float)gameH;
+	if (g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection))
+		effectiveH = (float)gameW * 3.0f / 4.0f; // 240 for 320-wide
+
+	float scaleX = displaySize.x / (float)gameW;
+	float scaleY = displaySize.y / effectiveH;
+	float scale = MIN(scaleX, scaleY);
+	float renderedW = (float)gameW * scale;
+	float renderedH = effectiveH * scale;
+	float offsetX = (displaySize.x - renderedW) * 0.5f;
+	float offsetY = (displaySize.y - renderedH) * 0.5f;
+	// Map game coords (0..319, 0..199) into the rendered area
+	float pixScaleX = renderedW / (float)gameW;
+	float pixScaleY = renderedH / (float)gameH;
+	ImVec2 tl(offsetX + _hoveredObjectBounds.left * pixScaleX, offsetY + _hoveredObjectBounds.top * pixScaleY);
+	ImVec2 br(offsetX + _hoveredObjectBounds.right * pixScaleX, offsetY + _hoveredObjectBounds.bottom * pixScaleY);
+	ImGui::GetBackgroundDrawList()->AddRect(tl, br, IM_COL32(0, 255, 0, 255), 0.0f, 0, 2.0f);
+}
+
 static void showCharactersWindow() {
+	_hasHoveredObjectBounds = false;
 	if (!_showCharacters)
 		return;
-	ImGui::SetNextWindowSize(ImVec2(550, 450), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(550, 550), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Scene Objects", &_showCharacters)) {
 		View1 *view = (View1 *)g_engine->findView("View1");
 		if (view) {
@@ -965,26 +1090,123 @@ static void showCharactersWindow() {
 						continue;
 				Common::Point pos = c->getPosition();
 				Common::String header = Common::String::format("[%u] obj=0x%x (%d,%d)###char%u", i, c->_gameObject->_index, pos.x, pos.y, i);
-				if (ImGui::CollapsingHeader(header.c_str())) {
-					ImGui::Text("Orient: %u  Anim: %u  VOffset: %u",
-								c->_gameObject->_orientation, c->_animationIndex, c->getVerticalOffset());
-					ImGui::Text("Visible: %s  Clickable: %s  Frozen: %s",
-								c->_gameObject->_isVisible ? "Y" : "N",
-								c->_gameObject->_isClickable ? "Y" : "N",
-								c->_gameObject->_hasBoundsAttachment ? "Y" : "N");
+				bool charOpen = ImGui::CollapsingHeader(header.c_str());
+				if (ImGui::IsItemHovered()) {
+					_hasHoveredObjectBounds = true;
+					_hoveredObjectBounds = Common::Rect(c->_lastDrawX, c->_lastDrawY,
+						c->_lastDrawX + c->_lastDrawWidth, c->_lastDrawY + c->_lastDrawHeight);
+				}
+				if (charOpen) {
+					ImGui::PushID(i);
 
-					// Pathfinding state
+					// --- Editable Position ---
+					int posXY[2] = {pos.x, pos.y};
+					if (ImGui::InputInt2("Position", posXY)) {
+						c->setPosition(Common::Point((int16)posXY[0], (int16)posXY[1]));
+					}
+
+					// --- Editable GameObject fields ---
+					int orient = (int)c->_gameObject->_orientation;
+					if (ImGui::InputInt("Orientation", &orient)) {
+						c->_gameObject->_orientation = (uint8)CLIP(orient, 0, 255);
+					}
+
+					int animIdx = (int)c->_animationIndex;
+					if (ImGui::InputInt("Animation Index", &animIdx)) {
+						c->_animationIndex = (uint8)CLIP(animIdx, 0, 255);
+					}
+
+					ImGui::Text("Vertical Offset: %u", c->getVerticalOffset());
+
+					bool isVisible = c->_gameObject->_isVisible;
+					if (ImGui::Checkbox("Visible", &isVisible))
+						c->_gameObject->_isVisible = isVisible;
+					ImGui::SameLine();
+					bool isClickable = c->_gameObject->_isClickable;
+					if (ImGui::Checkbox("Clickable", &isClickable))
+						c->_gameObject->_isClickable = isClickable;
+					ImGui::SameLine();
+					bool hasBounds = c->_gameObject->_hasBoundsAttachment;
+					if (ImGui::Checkbox("BoundsAttach", &hasBounds))
+						c->_gameObject->_hasBoundsAttachment = hasBounds;
+
+					// --- Motion fields ---
+					if (ImGui::TreeNode("Motion")) {
+						int motionTarget = (int)c->_motionTargetVerticalOffset;
+						if (ImGui::InputInt("Target VOffset", &motionTarget))
+							c->_motionTargetVerticalOffset = (uint16)CLIP(motionTarget, 0, 65535);
+						int motionDelta = (int)c->_motionVerticalOffsetDelta;
+						if (ImGui::InputInt("VOffset Delta", &motionDelta))
+							c->_motionVerticalOffsetDelta = (uint16)CLIP(motionDelta, 0, 65535);
+						int motionDist = (int)c->_motionDistanceUnits;
+						if (ImGui::InputInt("Distance Units", &motionDist))
+							c->_motionDistanceUnits = (uint16)CLIP(motionDist, 0, 65535);
+						int motionProg = (int)c->_motionProgress;
+						if (ImGui::InputInt("Progress", &motionProg))
+							c->_motionProgress = (uint16)CLIP(motionProg, 0, 65535);
+						int motionStart = (int)c->_motionStartVerticalOffset;
+						if (ImGui::InputInt("Start VOffset", &motionStart))
+							c->_motionStartVerticalOffset = (uint16)CLIP(motionStart, 0, 65535);
+						bool hasMotion = c->_hasMotionVerticalOffset;
+						if (ImGui::Checkbox("Has Motion VOffset", &hasMotion))
+							c->_hasMotionVerticalOffset = hasMotion;
+						bool shouldMirror = c->_shouldMirrorCurrentAnimation;
+						if (ImGui::Checkbox("Mirror Animation", &shouldMirror))
+							c->_shouldMirrorCurrentAnimation = shouldMirror;
+						ImGui::TreePop();
+					}
+
+					// --- Pickup fields ---
+					if (ImGui::TreeNode("Pickup")) {
+						int pickupFrame = (int)c->_pickupFrameCounter;
+						if (ImGui::InputInt("Frame Counter", &pickupFrame))
+							c->_pickupFrameCounter = (uint16)CLIP(pickupFrame, 0, 65535);
+						bool pickupTransferred = c->_pickupItemTransferred;
+						if (ImGui::Checkbox("Item Transferred", &pickupTransferred))
+							c->_pickupItemTransferred = pickupTransferred;
+						ImGui::Text("Previous Orientation: %u", c->_previousOrientation);
+						ImGui::TreePop();
+					}
+
+					// --- Dirty rect ---
+					if (ImGui::TreeNode("Dirty Rect")) {
+						ImGui::Text("Dirty: (%d,%d)-(%d,%d)", c->_dirtyLeft, c->_dirtyTop, c->_dirtyRight, c->_dirtyBottom);
+						ImGui::Text("LastDraw: (%d,%d) %ux%u", c->_lastDrawX, c->_lastDrawY, c->_lastDrawWidth, c->_lastDrawHeight);
+						ImGui::TreePop();
+					}
+
+					// --- Movement / Pathfinding ---
 					ImGui::Separator();
 					ImGui::TextUnformatted("Movement:");
-					ImGui::Text("  Lerping: %s  DirSet: %s  FollowPath: %s",
-								c->_isLerping ? "Y" : "N",
-								c->_stepDirectionSet ? "Y" : "N",
-								c->_isFollowingPath ? "Y" : "N");
+
+					bool isLerping = c->_isLerping;
+					if (ImGui::Checkbox("Lerping", &isLerping))
+						c->_isLerping = isLerping;
+					ImGui::SameLine();
+					bool dirSet = c->_stepDirectionSet;
+					if (ImGui::Checkbox("DirSet", &dirSet))
+						c->_stepDirectionSet = dirSet;
+					ImGui::SameLine();
+					bool followPath = c->_isFollowingPath;
+					if (ImGui::Checkbox("FollowPath", &followPath))
+						c->_isFollowingPath = followPath;
+
+					bool execOnFinish = c->_executeScriptOnFinishLerp;
+					if (ImGui::Checkbox("Exec Script On Finish", &execOnFinish))
+						c->_executeScriptOnFinishLerp = execOnFinish;
+
 					if (c->_isLerping) {
-						Common::Point end = c->_targetPosition;
-						ImGui::Text("  Target: (%d,%d)  Final: (%d,%d)",
-									end.x, end.y, c->_pathFinalDestination.x, c->_pathFinalDestination.y);
-						ImGui::Text("  Bresenham: dX=%d dY=%d err=%d",
+						int target[2] = {c->_targetPosition.x, c->_targetPosition.y};
+						if (ImGui::InputInt2("Target Pos", target)) {
+							c->_targetPosition.x = (int16)target[0];
+							c->_targetPosition.y = (int16)target[1];
+						}
+						int finalDest[2] = {c->_pathFinalDestination.x, c->_pathFinalDestination.y};
+						if (ImGui::InputInt2("Final Dest", finalDest)) {
+							c->_pathFinalDestination.x = (int16)finalDest[0];
+							c->_pathFinalDestination.y = (int16)finalDest[1];
+						}
+						ImGui::Text("Bresenham: dX=%d dY=%d err=%d",
 									c->_stepDeltaX, c->_stepDeltaY, c->_stepError);
 
 						// Walk speed calculation
@@ -992,20 +1214,20 @@ static void showCharactersWindow() {
 						if (pos.y >= (int)g_engine->_walkDepthThresholdY)
 							depth = ((int)pos.y - (int)g_engine->_walkDepthThresholdY) * (int)g_engine->_walkDepthScaleFactor / 100;
 						uint16 animSpd = 2;
-						uint8 orient = c->_gameObject->_orientation;
-						if (orient >= 1 && orient <= 0x15 && (uint)(orient - 1) < c->_gameObject->_blobSpeeds.size()) {
-							animSpd = c->_gameObject->_blobSpeeds[orient - 1];
+						uint8 curOrient = c->_gameObject->_orientation;
+						if (curOrient >= 1 && curOrient <= 0x15 && (uint)(curOrient - 1) < c->_gameObject->_blobSpeeds.size()) {
+							animSpd = c->_gameObject->_blobSpeeds[curOrient - 1];
 							if (animSpd == 0)
 								animSpd = 2;
 						}
 						int spd = (int)animSpd * ((int)g_engine->_walkBaseSpeedPct + depth) / 100;
 						if (spd < 1)
 							spd = 1;
-						ImGui::Text("  Speed: %d (anim=%u depth=%d w5201=%u)",
+						ImGui::Text("Speed: %d (anim=%u depth=%d base=%u)",
 									spd, animSpd, depth, g_engine->_walkBaseSpeedPct);
 					}
 					if (c->_isFollowingPath && !c->_path.empty()) {
-						ImGui::Text("  Path[%d/%u]: ", c->_currentPathIndex, (uint)c->_path.size());
+						ImGui::Text("Path[%d/%u]: ", c->_currentPathIndex, (uint)c->_path.size());
 						ImGui::SameLine();
 						for (uint p = 0; p < c->_path.size(); p++) {
 							if (p > 0)
@@ -1019,7 +1241,7 @@ static void showCharactersWindow() {
 
 					// Direction availability
 					if (c->_gameObject->_blobs.size() >= 8) {
-						ImGui::TextUnformatted("  DirAvail: ");
+						ImGui::TextUnformatted("DirAvail: ");
 						ImGui::SameLine();
 						const char *dirNames[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
 						for (int d = 0; d < 8; d++) {
@@ -1032,6 +1254,85 @@ static void showCharactersWindow() {
 								ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1), "%s", dirNames[d]);
 						}
 					}
+
+					// Animation frame preview - open in separate window
+					if (ImGui::TreeNode("Animations")) {
+						for (int blobIdx = 0; blobIdx < (int)c->_gameObject->_blobs.size(); blobIdx++) {
+							Common::Array<uint8> &blob = c->_gameObject->_blobs[blobIdx];
+							if (blob.empty())
+								continue;
+							AnimBlobView bv(blob);
+							ImGui::PushID(blobIdx);
+							Common::String btnLabel = Common::String::format("Blob %d (%u frames)", blobIdx, bv.frameCount());
+							if (ImGui::Button(btnLabel.c_str())) {
+								_animViewerObjIndex = c->_gameObject->_index;
+								_animViewerBlobIndex = blobIdx;
+								_showAnimViewer = true;
+							}
+							ImGui::PopID();
+							if ((blobIdx + 1) % 5 != 0)
+								ImGui::SameLine();
+						}
+						if (!c->_gameObject->overloadAnimation.empty()) {
+							ImGui::NewLine();
+							AnimBlobView ov(c->_gameObject->overloadAnimation);
+							Common::String ovLabel = Common::String::format("Overload (%u frames, trigger orient=%u)",
+								ov.frameCount(), c->_gameObject->overloadAnimTriggerDirection);
+							if (ImGui::Button(ovLabel.c_str())) {
+								_animViewerObjIndex = c->_gameObject->_index;
+								_animViewerBlobIndex = -1; // sentinel for overload
+								_showAnimViewer = true;
+							}
+						}
+						ImGui::NewLine();
+						ImGui::TreePop();
+					}
+
+					// Dump character state to JSON file
+					if (ImGui::Button("Dump JSON")) {
+						GameObject *go = c->_gameObject;
+						Common::String filename = Common::String::format("obj_%u_dump.json", go->_index);
+						Common::DumpFile df;
+						if (df.open(Common::Path(filename))) {
+							df.writeString("{\n");
+							df.writeString(Common::String::format("  \"index\": %u,\n", go->_index));
+							df.writeString(Common::String::format("  \"position\": [%d, %d],\n", go->_position.x, go->_position.y));
+							df.writeString(Common::String::format("  \"sceneIndex\": %u,\n", go->_sceneIndex));
+							df.writeString(Common::String::format("  \"orientation\": %u,\n", go->_orientation));
+							df.writeString(Common::String::format("  \"verticalOffsetScale\": %u,\n", go->_verticalOffsetScale));
+							df.writeString(Common::String::format("  \"isVisible\": %s,\n", go->_isVisible ? "true" : "false"));
+							df.writeString(Common::String::format("  \"isClickable\": %s,\n", go->_isClickable ? "true" : "false"));
+							df.writeString(Common::String::format("  \"hasScaling\": %s,\n", go->_hasScaling ? "true" : "false"));
+							df.writeString(Common::String::format("  \"hasShading\": %s,\n", go->_hasShading ? "true" : "false"));
+							df.writeString(Common::String::format("  \"hasBoundsAttachment\": %s,\n", go->_hasBoundsAttachment ? "true" : "false"));
+							df.writeString(Common::String::format("  \"boundsAttachmentObjectID\": %u,\n", go->_boundsAttachmentObjectID));
+							df.writeString(Common::String::format("  \"overloadAnimTriggerDirection\": %u,\n", go->overloadAnimTriggerDirection));
+							df.writeString(Common::String::format("  \"dataOffset\": %u,\n", go->_dataOffset));
+							df.writeString("  \"blobs\": [\n");
+							for (uint b = 0; b < go->_blobs.size(); b++) {
+								df.writeString(Common::String::format("    {\"slot\": %u, \"size\": %u, \"sourceKey\": %u, \"speed\": %u, \"mirror\": %s}%s\n",
+									b, (uint)go->_blobs[b].size(),
+									b < go->_blobSourceKeys.size() ? go->_blobSourceKeys[b] : 0,
+									b < go->_blobSpeeds.size() ? go->_blobSpeeds[b] : 0,
+									(b < go->_blobMirrorFlags.size() && go->_blobMirrorFlags[b]) ? "true" : "false",
+									b + 1 < go->_blobs.size() ? "," : ""));
+							}
+							df.writeString("  ],\n");
+							df.writeString(Common::String::format("  \"character\": {\n"));
+							df.writeString(Common::String::format("    \"positionX\": %d,\n", c->getPosition().x));
+							df.writeString(Common::String::format("    \"positionY\": %d,\n", c->getPosition().y));
+							df.writeString(Common::String::format("    \"isLerping\": %s,\n", c->_isLerping ? "true" : "false"));
+							df.writeString(Common::String::format("    \"isFollowingPath\": %s,\n", c->_isFollowingPath ? "true" : "false"));
+							df.writeString(Common::String::format("    \"shouldMirror\": %s,\n", c->_shouldMirrorCurrentAnimation ? "true" : "false"));
+							df.writeString(Common::String::format("    \"verticalOffset\": %u\n", c->getVerticalOffset()));
+							df.writeString("  }\n");
+							df.writeString("}\n");
+							df.close();
+							warning("Dumped character state to %s", filename.c_str());
+						}
+					}
+
+					ImGui::PopID();
 				}
 			}
 			} // end Active Characters header
@@ -1055,7 +1356,14 @@ static void showCharactersWindow() {
 					Common::String hdr = Common::String::format("obj=0x%x (%d,%d) vis=%s click=%s###scnobj%u",
 						obj->_index, obj->_position.x, obj->_position.y,
 						obj->_isVisible ? "Y" : "N", obj->_isClickable ? "Y" : "N", obj->_index);
-					if (ImGui::CollapsingHeader(hdr.c_str())) {
+					bool objOpen = ImGui::CollapsingHeader(hdr.c_str());
+					if (ImGui::IsItemHovered()) {
+						_hasHoveredObjectBounds = true;
+						// Scene objects don't have sprite bounds; show a small rect around position
+						_hoveredObjectBounds = Common::Rect(obj->_position.x - 8, obj->_position.y - 16,
+							obj->_position.x + 8, obj->_position.y + 2);
+					}
+					if (objOpen) {
 						ImGui::Text("Orient: %u  VOffsetScale: %u", obj->_orientation, obj->_verticalOffsetScale);
 						ImGui::Text("Blobs: %u  Script: %u bytes", (uint)obj->_blobs.size(), (uint)obj->_script.size());
 					}
@@ -1792,6 +2100,8 @@ void onImGuiRender() {
 	showBreakpointsWindow();
 	showVariablesWindow();
 	showCharactersWindow();
+	drawHoveredObjectOverlay();
+	showAnimViewerWindow();
 	showInventoryWindow();
 	showAnimationsWindow();
 	showSceneMapsWindow();

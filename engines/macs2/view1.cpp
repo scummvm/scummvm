@@ -274,14 +274,16 @@ AnimFrame *View1::getInventoryIcon(GameObject *gameObject) {
 		delete result;
 		return nullptr;
 	}
-	Common::MemoryReadStream stream(gameObject->_blobs[index].data(), gameObject->_blobs[index].size());
+	Common::Array<uint8> &blob = gameObject->_blobs[index];
 
 	// Original calls getAnimFrameWidth(1, ...) with mode=1 to reset to frame 1
-	uint16 offset = Macs2::BackgroundAnimationBlob::advanceAnimFrame(gameObject->_blobs[index], true, 1);
-	// Frame data: offsetX(2), offsetY(2), unknown(2), width(2), height(2), pixels
-	// Skip the 6-byte header to reach width/height/pixels for ReadFromStream
-	stream.seek(offset + 6, SEEK_SET);
-	result->readFromStream(&stream);
+	uint16 offset = Macs2::BackgroundAnimationBlob::advanceAnimFrame(blob, true, 1);
+	// offset points to per-frame: offsetX(2), offsetY(2), unknown(2), width(2), height(2), pixels
+	offset += 6;
+	result->_width = READ_LE_UINT16(&blob[offset]);
+	result->_height = READ_LE_UINT16(&blob[offset + 2]);
+	result->_data = new byte[result->_width * result->_height];
+	memcpy(result->_data, &blob[offset + 4], result->_width * result->_height);
 	// TODO: Think about proper memory management
 	return result;
 }
@@ -2908,12 +2910,13 @@ Macs2::AnimFrame *Character::getCurrentAnimationFrame() {
 		BackgroundAnimationBlob::advanceAnimFrame(blob, true, 2);
 	}
 	uint16 offset = BackgroundAnimationBlob::advanceAnimFrame(blob, false, 0x0);
-	// My remaining code expects to get dialed to the width and height directly - TODO make uniform
-	offset += 6;
+	// offset points to per-frame: offsetX(2), offsetY(2), unknown(2), width(2), height(2), pixels
+	offset += 6; // skip to width/height/pixels
 	AnimFrame *result = new AnimFrame();
-	Common::MemoryReadStream stream(blob.data(), blob.size());
-	stream.seek(offset);
-	result->readFromStream(&stream);
+	result->_width = READ_LE_UINT16(&blob[offset]);
+	result->_height = READ_LE_UINT16(&blob[offset + 2]);
+	result->_data = new byte[result->_width * result->_height];
+	memcpy(result->_data, &blob[offset + 4], result->_width * result->_height);
 	return result;
 }
 
@@ -2934,12 +2937,14 @@ Macs2::AnimFrame *Character::getCurrentPortrait(bool onRightSide, uint16 frameIn
 	}
 
 	uint16 offset = BackgroundAnimationBlob::advanceAnimFrame(_gameObject->_blobs[portraitBlobIndex], true, frameIndex);
-	// My remaining code expects to get dialed to the width and height directly - TODO make uniform
-	offset += 6;
+	// offset points to per-frame: offsetX(2), offsetY(2), unknown(2), width(2), height(2), pixels
+	offset += 6; // skip to width/height/pixels
+	Common::Array<uint8> &blob = _gameObject->_blobs[portraitBlobIndex];
 	AnimFrame *result = new AnimFrame();
-	Common::MemoryReadStream stream(_gameObject->_blobs[portraitBlobIndex].data(), _gameObject->_blobs[portraitBlobIndex].size());
-	stream.seek(offset);
-	result->readFromStream(&stream);
+	result->_width = READ_LE_UINT16(&blob[offset]);
+	result->_height = READ_LE_UINT16(&blob[offset + 2]);
+	result->_data = new byte[result->_width * result->_height];
+	memcpy(result->_data, &blob[offset + 4], result->_width * result->_height);
 	return result;
 }
 
