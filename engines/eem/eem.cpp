@@ -1285,7 +1285,10 @@ void EEMEngine::showLondonCharSelect() {
 	const Common::Rect kMaleBox(110, 116, 120, 122);
 	const Common::Rect kFemaleBox(190, 116, 200, 122);
 	const uint kMaxFirst = 12, kMaxLast = 20;
-	const uint8 kInkColor = 0x0F;     // typed-name ink
+	// `_GetNameString @ 1cd3:0ddc` draws both the typed name and the caret in
+	// colour 0x22 (the passport-field ink); the old 0x0F was a guess and the
+	// underscore caret in it was effectively invisible.
+	const uint8 kInkColor = 0x22;     // typed-name ink + caret
 
 	Picture bg;
 	const bool haveBg = _picsArchive.getPicture(0xc, bg) && !bg.surface.empty();
@@ -1334,18 +1337,27 @@ void EEMEngine::showLondonCharSelect() {
 			if (haveBg)
 				scratch.simpleBlitFrom(bg.surface);
 			if (getFont().isLoaded()) {
-				Common::String f = first;
-				if (field == kFieldFirst && blink)
-					f += "_";
-				Common::String l = last;
-				if (field == kFieldLast && blink)
-					l += "_";
-				getFont().drawString(&scratch, f, kFirstRect.left + 2,
+				getFont().drawString(&scratch, first, kFirstRect.left + 2,
 									 kFirstRect.top + 1, kFirstRect.width(),
 									 kInkColor);
-				getFont().drawString(&scratch, l, kLastRect.left + 2,
+				getFont().drawString(&scratch, last, kLastRect.left + 2,
 									 kLastRect.top + 1, kLastRect.width(),
 									 kInkColor);
+				// Caret = solid block `_FillRect(x+1, y, 6, 0xb, 0x22)` at the
+				// input point (`_GetNameString @ 1cd3:0ddc`), NOT an underscore.
+				if (blink && (field == kFieldFirst || field == kFieldLast)) {
+					const Common::Rect &fr =
+						(field == kFieldFirst) ? kFirstRect : kLastRect;
+					const Common::String &buf =
+						(field == kFieldFirst) ? first : last;
+					const int caretX =
+						fr.left + 2 + getFont().getStringWidth(buf);
+					Common::Rect caret(caretX, fr.top, caretX + 6,
+									   fr.top + 0xb);
+					caret.clip(Common::Rect(kScreenWidth, kScreenHeight));
+					if (!caret.isEmpty())
+						scratch.fillRect(caret, kInkColor);
+				}
 			}
 			if (field == kFieldGender) {
 				// DOS restores both boxes, then fills the active one with the
@@ -1440,6 +1452,11 @@ void EEMEngine::showLondonCharSelect() {
 			blink = !blink;
 			needRedraw = true;
 		}
+		// Flush every frame so the mouse cursor tracks smoothly. The scratch
+		// rebuild + copyRectToScreen above is gated on needRedraw (and mouse
+		// motion doesn't set it), but the cursor is only re-composited by
+		// updateScreen(), so without this it moved only on blink/keypress.
+		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
 	if (shouldQuit()) {
