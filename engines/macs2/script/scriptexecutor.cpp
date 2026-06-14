@@ -224,32 +224,30 @@ void ScriptExecutor::scriptSaveVariableHelper(uint32 value) {
 }
 
 void ScriptExecutor::scriptChangeAnimation() {
-	// bp-2h
-	uint32 id = scriptReadValue32();
-	id -= 0x1000;
-	// bp-4h
-	uint16 bp4 = scriptReadValue16();
-	if (id <= 0) {
-		// mov	word ptr [1028h],8h
+	// scriptChangeAnimation (1008:b6be). Changes a background animation's
+	// current frame by calling advanceAnimFrame with a target position.
+	uint32 backgroundAnimationIndex = scriptReadValue32() - 0x1000;
+	uint16 targetFrameIndex = scriptReadValue16();
+	if ((int32)backgroundAnimationIndex < 1) {
+		// g_wScriptErrorCode = 8
 		return;
 	}
-	// l0037_B6F1:
-	// TODO: Check if we try to access an invalid index
-
-	// l0037_B715:
-	// TODO: Load the data of the animation
-
-	// l0037_B73C:
-	// Use the function to extract some value
-	// Subtracting an additional 1 since mine are indexed from 0 and not 1 like the game does
-	id -= 1;
-
-	BackgroundAnimationBlob &blob = _engine->_backgroundAnimationsBlobs[id];
-	BackgroundAnimationBlob::getAnimFrameCount(blob._blob);
-	// TODO: We should be doing some checking on the result value
-
-	// TODO: Do some comparison with [bp-4h]
-	BackgroundAnimationBlob::advanceAnimFrame(blob._blob, true, bp4 + 0x64);
+	if (backgroundAnimationIndex > _engine->_backgroundAnimationsBlobs.size()) {
+		// g_wScriptErrorCode = 8
+		return;
+	}
+	// Binary is 1-indexed, C++ array is 0-indexed
+	BackgroundAnimationBlob &blob = _engine->_backgroundAnimationsBlobs[backgroundAnimationIndex - 1];
+	if (blob._blob.empty()) {
+		// g_wScriptErrorCode = 8
+		return;
+	}
+	uint16 sequenceLength = BackgroundAnimationBlob::getAnimFrameCount(blob._blob);
+	if (targetFrameIndex > sequenceLength) {
+		// g_wScriptErrorCode = 9
+		return;
+	}
+	BackgroundAnimationBlob::advanceAnimFrame(blob._blob, true, targetFrameIndex + 0x64);
 }
 
 uint16 ScriptExecutor::getAreaAtPoint(uint16 x, uint16 y) {
