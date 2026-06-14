@@ -36,7 +36,6 @@ MODULE_OBJS = \
 	squtil.o \
 	syslib.o \
 	thread.o \
-	time.o \
 	tsv.o \
 	twp.o \
 	util.o \
