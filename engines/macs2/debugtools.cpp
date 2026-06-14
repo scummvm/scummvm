@@ -24,12 +24,12 @@
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "common/str-enc.h"
-#include "common/ustr.h"
 #include "common/system.h"
-#include "macs2/adlib.h"
+#include "common/ustr.h"
 #include "macs2/detection.h"
 #include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
+#include "macs2/music.h"
 #include "macs2/view1.h"
 
 namespace Macs2 {
@@ -2118,8 +2118,8 @@ static void showSoundWindow() {
 		return;
 	}
 
-	Adlib *adlib = g_engine->getAdlib();
-	const Adlib::DebugState &ds = adlib->_debug;
+	Music *adlib = g_engine->getAdlib();
+	const Music::DebugState &ds = adlib->_debug;
 
 	ImGui::Text("Master Volume: %u/63", ds.masterVolume);
 	ImGui::Text("OPL Channels: %u  Status: 0x%02X  NextEvent: %u", ds.numOplChannels, ds.statusFlags, ds.nextEventTimer);
@@ -2149,21 +2149,21 @@ static void showSoundWindow() {
 	// Ring buffer waveform for selected voice
 	ImGui::TextUnformatted("Activity:");
 	int ringPos = ds.ringPos;
-	float plotData[Adlib::kDebugRingSize];
-	for (int i = 0; i < Adlib::kDebugRingSize; i++) {
-		plotData[i] = ds.regHistory[selectedVoice][(ringPos + i) % Adlib::kDebugRingSize];
+	float plotData[Music::kDebugRingSize];
+	for (int i = 0; i < Music::kDebugRingSize; i++) {
+		plotData[i] = ds.regHistory[selectedVoice][(ringPos + i) % Music::kDebugRingSize];
 	}
-	ImGui::PlotLines("##wave", plotData, Adlib::kDebugRingSize, 0, nullptr, 0.0f, 1.0f, ImVec2(0, 60));
+	ImGui::PlotLines("##wave", plotData, Music::kDebugRingSize, 0, nullptr, 0.0f, 1.0f, ImVec2(0, 60));
 
 	// All voices overview
 	ImGui::Separator();
 	ImGui::TextUnformatted("All Voices:");
 	for (int i = 0; i < 9; i++) {
-		float voiceData[Adlib::kDebugRingSize];
-		for (int j = 0; j < Adlib::kDebugRingSize; j++) {
-			voiceData[j] = ds.regHistory[i][(ringPos + j) % Adlib::kDebugRingSize];
+		float voiceData[Music::kDebugRingSize];
+		for (int j = 0; j < Music::kDebugRingSize; j++) {
+			voiceData[j] = ds.regHistory[i][(ringPos + j) % Music::kDebugRingSize];
 		}
-		ImGui::PlotLines(Common::String::format("V%d", i).c_str(), voiceData, Adlib::kDebugRingSize, 0, nullptr, 0.0f, 1.0f, ImVec2(0, 20));
+		ImGui::PlotLines(Common::String::format("V%d", i).c_str(), voiceData, Music::kDebugRingSize, 0, nullptr, 0.0f, 1.0f, ImVec2(0, 20));
 	}
 
 	ImGui::End();

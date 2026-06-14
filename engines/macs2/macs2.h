@@ -23,12 +23,14 @@
 #define MACS2_MACS2_H
 
 #include "advancedDetector.h"
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/array.h"
 #include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/hashmap.h"
+#include "common/memstream.h"
 #include "common/random.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
@@ -36,11 +38,8 @@
 #include "common/text-to-speech.h"
 #include "common/util.h"
 #include "engines/engine.h"
-
-#include "audio/audiostream.h"
 #include "macs2/events.h"
 #include "macs2/scriptexecutor.h"
-#include "common/memstream.h"
 
 namespace Macs2 {
 
@@ -94,7 +93,7 @@ public:
 struct Macs2GameDescription;
 
 // enum class CursorMode { Talk = 0, Look = 1, Touch = 2, Walk = 3};
-class Adlib;
+class Music;
 
 struct GlyphData {
 	byte *_data;
@@ -242,7 +241,7 @@ private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 
-	Adlib *_adlib;
+	Music *_adlib;
 
 protected:
 	// Engine APIs
@@ -393,8 +392,8 @@ public:
 
 	// TODO: Arguments
 	void loadSongFromSceneData(uint8 dataIndex);
-	Adlib *getAdlib() const { return _adlib; }
-	// Returns the Adlib volume (0-63) scaled by the user's music_volume setting
+	Music *getAdlib() const { return _adlib; }
+	// Returns the Music volume (0-63) scaled by the user's music_volume setting
 	uint16 scaledMusicVolume(uint16 gameAttenuation) const;
 	void setCurrentSoundData(const Common::Array<uint8> &data);
 	void clearCurrentSoundData();

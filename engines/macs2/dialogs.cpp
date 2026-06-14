@@ -19,12 +19,11 @@
  *
  */
 
-#include "common/translation.h"
+#include "macs2/dialogs.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 #include "engines/enhancements.h"
 #include "gui/widget.h"
-
-#include "macs2/dialogs.h"
 
 namespace Macs2 {
 

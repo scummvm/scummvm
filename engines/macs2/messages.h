@@ -22,9 +22,7 @@
 #ifndef MACS2_MESSAGES_H
 #define MACS2_MESSAGES_H
 
-#include "common/array.h"
 #include "common/events.h"
-#include "common/str.h"
 
 namespace Macs2 {
 

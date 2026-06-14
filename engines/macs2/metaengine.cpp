@@ -19,20 +19,16 @@
  *
  */
 
-#include "common/savefile.h"
-#include "common/translation.h"
-
+#include "macs2/metaengine.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
-
+#include "common/savefile.h"
+#include "common/translation.h"
 #include "engines/enhancements.h"
-
 #include "macs2/detection.h"
 #include "macs2/dialogs.h"
 #include "macs2/macs2.h"
-#include "macs2/metaengine.h"
-
 
 const char *Macs2MetaEngine::getName() const {
 	return "macs2";
