@@ -648,6 +648,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// (opcode 0x0B) will move the actor here with the correct position if needed.
 	GameObject *actorObject = GameObjects::getObjectByIndex(Scenes::instance()._currentActorIndex);
 	if (actorObject != nullptr && actorObject->_sceneIndex == newSceneIndex) {
+		loadSceneObjects(actorObject);
 		Character *actorChar = new Character();
 		actorChar->_gameObject = actorObject;
 		currentView->_characters.push_back(actorChar);
@@ -656,6 +657,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		if (currentObject == nullptr)
 			continue;
 		if (currentObject->_sceneIndex == newSceneIndex && currentObject->_index != Scenes::instance()._currentActorIndex) {
+			loadSceneObjects(currentObject);
 			Character *c = new Character();
 			c->_gameObject = currentObject;
 			currentView->_characters.push_back(c);
@@ -1443,6 +1445,57 @@ void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotInde
 	*targetBlob = data;
 	if (shouldMirror) {
 		BackgroundAnimationBlob::mirrorAnimBlob(*targetBlob);
+	}
+}
+
+void Macs2Engine::loadSceneObjects(GameObject *obj) {
+	if (obj == nullptr || obj->_dataOffset == 0)
+		return;
+
+	// Binary loadSceneObjects (1008:08ec): seeks to object data offset + 10 (past
+	// position/scene/orientation/verticalOffset), then reads 21 animation slots.
+	_fileStream->seek(obj->_dataOffset + 10, SEEK_SET);
+
+	for (int j = 0; j < 0x15; j++) {
+		_fileStream->readUint16LE(); // animID (editor metadata, unused at runtime)
+		uint16 blobSourceKey = _fileStream->readUint16LE();
+		uint32 dataSize = _fileStream->readUint32LE();
+
+		Common::Array<uint8> data;
+		if (dataSize > 0) {
+			data.resize(dataSize);
+			_fileStream->read(data.data(), dataSize);
+		}
+
+		if (j < (int)obj->_blobs.size()) {
+			obj->_blobs[j] = data;
+		} else {
+			obj->_blobs.push_back(data);
+		}
+		if (j < (int)obj->_blobSourceKeys.size()) {
+			obj->_blobSourceKeys[j] = blobSourceKey;
+		} else {
+			obj->_blobSourceKeys.push_back(blobSourceKey);
+		}
+
+		uint16 blobSpeed = _fileStream->readUint16LE();
+		if (j < (int)obj->_blobSpeeds.size()) {
+			obj->_blobSpeeds[j] = blobSpeed;
+		} else {
+			obj->_blobSpeeds.push_back(blobSpeed);
+		}
+
+		uint16 blobMirrorFlag = _fileStream->readByte();
+		_fileStream->readByte(); // discarded byte
+		if (j < (int)obj->_blobMirrorFlags.size()) {
+			obj->_blobMirrorFlags[j] = blobMirrorFlag != 0;
+		} else {
+			obj->_blobMirrorFlags.push_back(blobMirrorFlag != 0);
+		}
+
+		if (blobMirrorFlag != 0 && dataSize > 0 && j < (int)obj->_blobs.size()) {
+			BackgroundAnimationBlob::mirrorAnimBlob(obj->_blobs[j]);
+		}
 	}
 }
 

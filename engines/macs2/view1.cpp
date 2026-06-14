@@ -2133,6 +2133,15 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 		}
 
 		AnimFrame *frame = current->getCurrentAnimationFrame();
+		if (!frame) {
+			// Original (1008:90a2) sets g_wScriptErrorCode=10 and returns when the
+			// animation slot for the current orientation is not loaded. This happens
+			// for objects placed in the scene with an orientation whose blob data is
+			// not yet loaded (empty in resource file, awaiting script to populate).
+			debugC(kDebugGraphics, "drawCharacters: getCurrentAnimationFrame() returned null for object index %d (orientation %d, blobs size %u)",
+				current->_gameObject->_index, current->_gameObject->_orientation, (uint)current->_gameObject->_blobs.size());
+			continue;
+		}
 		bool mirror = current->_shouldMirrorCurrentAnimation;
 
 		uint8 depth = current->getPosition().y;
@@ -3028,6 +3037,14 @@ void Character::update() {
 		}
 
 		// Position polling in tick() handles walk-wait completion.
+		// Binary walkAlongPath (1008:1b8f): even when not actively moving,
+		// if orientation is still in walking range (< 9), the arrival check
+		// at the top of walkAlongPath detects pos==target==finalDest and
+		// transitions to standing. Mirror that here.
+		if (_gameObject->_orientation >= 1 && _gameObject->_orientation < 9) {
+			_gameObject->_orientation += 8;
+			g_engine->_movementFinishedFlag = true;
+		}
 		_executeScriptOnFinishLerp = false;
 		return;
 	}

@@ -633,10 +633,17 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		//   +0x0C: 2 bytes (source key), +0x0E: 2 bytes (speed),
 		//   +0x04: 2 bytes (data size), then data_size bytes of pixel data.
 		for (int blobIdx = 0; blobIdx < 0x15; blobIdx++) {
+			// Slot 0x15 (blobIdx 20) is the overload animation, stored separately
+			bool isOverloadSlot = (blobIdx == 20);
+
 			// Active flag (2 bytes, but only low byte matters)
 			uint16 blobActive = 0;
-			if (s.isSaving() && blobIdx < (int)obj->_blobs.size())
-				blobActive = obj->_blobs[blobIdx].empty() ? 0 : 1;
+			if (s.isSaving()) {
+				if (isOverloadSlot)
+					blobActive = obj->overloadAnimation.empty() ? 0 : 1;
+				else if (blobIdx < (int)obj->_blobs.size())
+					blobActive = obj->_blobs[blobIdx].empty() ? 0 : 1;
+			}
 			s.syncAsUint16LE(blobActive);
 
 			if (blobActive) {
@@ -648,37 +655,58 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 				s.syncAsUint16LE(field02);
 				// entry+0x0C: source resource key
 				uint16 blobSourceKey = 0;
-				if (s.isSaving() && blobIdx < (int)obj->_blobSourceKeys.size())
-					blobSourceKey = obj->_blobSourceKeys[blobIdx];
+				if (s.isSaving()) {
+					if (isOverloadSlot)
+						blobSourceKey = obj->overloadAnimationSourceKey;
+					else if (blobIdx < (int)obj->_blobSourceKeys.size())
+						blobSourceKey = obj->_blobSourceKeys[blobIdx];
+				}
 				s.syncAsUint16LE(blobSourceKey);
 				// entry+0x0E: speed/timing
 				uint16 blobSpeed = 0;
-				if (s.isSaving() && blobIdx < (int)obj->_blobSpeeds.size())
+				if (s.isSaving() && !isOverloadSlot && blobIdx < (int)obj->_blobSpeeds.size())
 					blobSpeed = obj->_blobSpeeds[blobIdx];
 				s.syncAsUint16LE(blobSpeed);
 				// entry+0x04: data size
 				uint16 blobSize = 0;
-				if (s.isSaving() && blobIdx < (int)obj->_blobs.size())
-					blobSize = (uint16)obj->_blobs[blobIdx].size();
+				if (s.isSaving()) {
+					if (isOverloadSlot)
+						blobSize = (uint16)obj->overloadAnimation.size();
+					else if (blobIdx < (int)obj->_blobs.size())
+						blobSize = (uint16)obj->_blobs[blobIdx].size();
+				}
 				s.syncAsUint16LE(blobSize);
 				// Pixel data (blobSize bytes)
 				if (s.isSaving()) {
-					if (blobIdx < (int)obj->_blobs.size() && blobSize > 0)
-						s.syncBytes(obj->_blobs[blobIdx].data(), blobSize);
+					if (blobSize > 0) {
+						if (isOverloadSlot)
+							s.syncBytes(obj->overloadAnimation.data(), blobSize);
+						else
+							s.syncBytes(obj->_blobs[blobIdx].data(), blobSize);
+					}
 				} else {
 					// Loading: allocate and read pixel data
 					if (blobSize > 0) {
-						if (blobIdx >= (int)obj->_blobs.size())
-							obj->_blobs.resize(blobIdx + 1);
-						obj->_blobs[blobIdx].resize(blobSize);
-						s.syncBytes(obj->_blobs[blobIdx].data(), blobSize);
+						if (isOverloadSlot) {
+							obj->overloadAnimation.resize(blobSize);
+							s.syncBytes(obj->overloadAnimation.data(), blobSize);
+						} else {
+							if (blobIdx >= (int)obj->_blobs.size())
+								obj->_blobs.resize(blobIdx + 1);
+							obj->_blobs[blobIdx].resize(blobSize);
+							s.syncBytes(obj->_blobs[blobIdx].data(), blobSize);
+						}
 					}
-					if (blobIdx >= (int)obj->_blobSourceKeys.size())
-						obj->_blobSourceKeys.resize(blobIdx + 1);
-					obj->_blobSourceKeys[blobIdx] = blobSourceKey;
-					if (blobIdx >= (int)obj->_blobSpeeds.size())
-						obj->_blobSpeeds.resize(blobIdx + 1);
-					obj->_blobSpeeds[blobIdx] = blobSpeed;
+					if (isOverloadSlot) {
+						obj->overloadAnimationSourceKey = blobSourceKey;
+					} else {
+						if (blobIdx >= (int)obj->_blobSourceKeys.size())
+							obj->_blobSourceKeys.resize(blobIdx + 1);
+						obj->_blobSourceKeys[blobIdx] = blobSourceKey;
+						if (blobIdx >= (int)obj->_blobSpeeds.size())
+							obj->_blobSpeeds.resize(blobIdx + 1);
+						obj->_blobSpeeds[blobIdx] = blobSpeed;
+					}
 				}
 			}
 		}
