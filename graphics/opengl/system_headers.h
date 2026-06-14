@@ -86,7 +86,9 @@
 
 #define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>
+#if !defined(MORPHOS)
 #include <GL/glext.h>
+#endif
 #undef GL_GLEXT_PROTOTYPES
 
 #endif
