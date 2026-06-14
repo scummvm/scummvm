@@ -10,7 +10,7 @@ MODULE_OBJS = \
 	messages.o \
 	metaengine.o \
 	saveload.o \
-	script/scriptexecutor.o \
+	scriptexecutor.o \
 	view1.o
 
 ifdef USE_IMGUI

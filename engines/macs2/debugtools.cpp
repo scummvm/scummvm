@@ -30,7 +30,6 @@
 #include "macs2/detection.h"
 #include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
-#include "macs2/script/scriptexecutor.h"
 #include "macs2/view1.h"
 
 namespace Macs2 {
