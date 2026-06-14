@@ -1092,7 +1092,15 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 }
 
 void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
-	debug("Cursor mode set to %i", (int)newMode);
+	debugC(kDebugInput, "Cursor mode set to %i (%s)", (int)newMode,
+		   newMode == Script::MouseMode::Talk ? "Talk" :
+		   newMode == Script::MouseMode::Look ? "Look" :
+		   newMode == Script::MouseMode::Use ? "Use" :
+		   newMode == Script::MouseMode::Walk ? "Walk" :
+		   newMode == Script::MouseMode::UseInventory ? "UseInventory" :
+		   newMode == Script::MouseMode::PanelUse ? "PanelUse" :
+		   newMode == Script::MouseMode::PanelCursor ? "PanelCursor" :
+		   newMode == Script::MouseMode::Disabled ? "Disabled" : "Unknown");
 	_scriptExecutor->_cursorMode = newMode;
 }
 
