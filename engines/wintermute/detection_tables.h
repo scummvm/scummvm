@@ -4460,397 +4460,397 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_sd.dcp", "aee08a5a713c1b45e67471134772f72f", 97833631,
-					"i18n_de_strings.dcp", "9cc009980d018476b177e2a4075f56b4", 43104), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_de_strings.dcp", "9cc009980d018476b177e2a4075f56b4", 43104), Common::DE_DEU, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jul 2014) (English)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_sd.dcp", "aee08a5a713c1b45e67471134772f72f", 97833631,
-					"i18n_en_strings.dcp", "40f8ea49a3e8d54a5202aa88c12fba80", 75108), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_en_strings.dcp", "40f8ea49a3e8d54a5202aa88c12fba80", 75108), Common::EN_ANY, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jul 2014) (Spanish)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_sd.dcp", "aee08a5a713c1b45e67471134772f72f", 97833631,
-					"i18n_es_strings.dcp", "6a8d5b434dfe758abb2ace1a75a4dab1", 40122), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_es_strings.dcp", "6a8d5b434dfe758abb2ace1a75a4dab1", 40122), Common::ES_ESP, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jul 2014) (French)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_sd.dcp", "aee08a5a713c1b45e67471134772f72f", 97833631,
-					"i18n_fr_strings.dcp", "b3fe8c720bb6a5378f6da2f593339c70", 40760), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_fr_strings.dcp", "b3fe8c720bb6a5378f6da2f593339c70", 40760), Common::FR_FRA, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jul 2014) (Italian)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_sd.dcp", "aee08a5a713c1b45e67471134772f72f", 97833631,
-					"i18n_it_strings.dcp", "5abaab4d57d7585b3c4b23f34f2d0dd8", 40468), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_it_strings.dcp", "5abaab4d57d7585b3c4b23f34f2d0dd8", 40468), Common::IT_ITA, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 12th 2015) (German)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_sd.dcp", "6842ddf537f2cd186df050aa8c05d363", 97835480,
-					"i18n_de_strings.dcp", "780b0d8d4f2b2b32e729090c1018df43", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_de_strings.dcp", "780b0d8d4f2b2b32e729090c1018df43", 43136), Common::DE_DEU, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 12th 2015) (English)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_sd.dcp", "6842ddf537f2cd186df050aa8c05d363", 97835480,
-					"i18n_en_strings.dcp", "636e32cf89f02fca30a6f4caa38dede1", 75126), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_en_strings.dcp", "636e32cf89f02fca30a6f4caa38dede1", 75126), Common::EN_ANY, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 12th 2015) (Spanish)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_sd.dcp", "6842ddf537f2cd186df050aa8c05d363", 97835480,
-					"i18n_es_strings.dcp", "c62f94e9cd543ecbdc0f02acc744cd29", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_es_strings.dcp", "c62f94e9cd543ecbdc0f02acc744cd29", 40153), Common::ES_ESP, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 12th 2015) (French)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_sd.dcp", "6842ddf537f2cd186df050aa8c05d363", 97835480,
-					"i18n_fr_strings.dcp", "548e88d67be123bb54f5b265226f051a", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_fr_strings.dcp", "548e88d67be123bb54f5b265226f051a", 40807), Common::FR_FRA, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 12th 2015) (Italian)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_sd.dcp", "6842ddf537f2cd186df050aa8c05d363", 97835480,
-					"i18n_it_strings.dcp", "c3d180dd634705cb16ccd650066e1da8", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_it_strings.dcp", "c3d180dd634705cb16ccd650066e1da8", 40502), Common::IT_ITA, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 12th 2015) (Polish)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_sd.dcp", "6842ddf537f2cd186df050aa8c05d363", 97835480,
-					"i18n_pl_strings.dcp", "8dac09efb73ae4a7a2b897de6f37e906", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_pl_strings.dcp", "8dac09efb73ae4a7a2b897de6f37e906", 40062), Common::PL_POL, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 12th 2015) (Russian)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_sd.dcp", "6842ddf537f2cd186df050aa8c05d363", 97835480,
-					"i18n_ru_strings.dcp", "88daa5c022c18535e2da86fa558db792", 45838), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_ru_strings.dcp", "88daa5c022c18535e2da86fa558db792", 45838), Common::RU_RUS, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 22th 2015) (German)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_sd.dcp", "6135b62bb28434c1af42de84ef8b96fe", 97808411,
-					"i18n_de_strings.dcp", "d245d247a282cda33b83ed6918b2e6d5", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_de_strings.dcp", "d245d247a282cda33b83ed6918b2e6d5", 43136), Common::DE_DEU, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 22th 2015) (English)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_sd.dcp", "6135b62bb28434c1af42de84ef8b96fe", 97808411,
-					"i18n_en_strings.dcp", "5e9cf5a8403b98f7d92de55efccc0d34", 75119), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_en_strings.dcp", "5e9cf5a8403b98f7d92de55efccc0d34", 75119), Common::EN_ANY, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 22th 2015) (Spanish)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_sd.dcp", "6135b62bb28434c1af42de84ef8b96fe", 97808411,
-					"i18n_es_strings.dcp", "edb19a0758243da8929844bac035d384", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_es_strings.dcp", "edb19a0758243da8929844bac035d384", 40153), Common::ES_ESP, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 22th 2015) (French)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_sd.dcp", "6135b62bb28434c1af42de84ef8b96fe", 97808411,
-					"i18n_fr_strings.dcp", "40dda8156fa93717cf962e75d76929b1", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_fr_strings.dcp", "40dda8156fa93717cf962e75d76929b1", 40807), Common::FR_FRA, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 22th 2015) (Italian)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_sd.dcp", "6135b62bb28434c1af42de84ef8b96fe", 97808411,
-					"i18n_it_strings.dcp", "0d1dac14379e55356794fb7cca8865b2", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_it_strings.dcp", "0d1dac14379e55356794fb7cca8865b2", 40502), Common::IT_ITA, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 22th 2015) (Polish)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_sd.dcp", "6135b62bb28434c1af42de84ef8b96fe", 97808411,
-					"i18n_pl_strings.dcp", "cdd0b203c591dfb411cb6fc89ac009c1", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_pl_strings.dcp", "cdd0b203c591dfb411cb6fc89ac009c1", 40062), Common::PL_POL, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 22th 2015) (Russian)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_sd.dcp", "6135b62bb28434c1af42de84ef8b96fe", 97808411,
-					"i18n_ru_strings.dcp", "77fc889bb25438bafe897d1566bd7e50", 45546), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_ru_strings.dcp", "77fc889bb25438bafe897d1566bd7e50", 45546), Common::RU_RUS, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Sep 2016) (German)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_sd.dcp", "8864e2e552bb7816916d8c6630e8f1a5", 97821007,
-					"i18n_de_strings.dcp", "94230807d77dacb420f446c34dd60072", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_de_strings.dcp", "94230807d77dacb420f446c34dd60072", 43136), Common::DE_DEU, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Sep 2016) (English)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_sd.dcp", "8864e2e552bb7816916d8c6630e8f1a5", 97821007,
-					"i18n_en_strings.dcp", "253e7f5e2bb4a33c7df52a04624d18c6", 75119), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_en_strings.dcp", "253e7f5e2bb4a33c7df52a04624d18c6", 75119), Common::EN_ANY, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Sep 2016) (Spanish)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_sd.dcp", "8864e2e552bb7816916d8c6630e8f1a5", 97821007,
-					"i18n_es_strings.dcp", "2227cee67309f564178e48d3eb30fc98", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_es_strings.dcp", "2227cee67309f564178e48d3eb30fc98", 40153), Common::ES_ESP, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Sep 2016) (French)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_sd.dcp", "8864e2e552bb7816916d8c6630e8f1a5", 97821007,
-					"i18n_fr_strings.dcp", "f50d251df43e5433b9664d5c2463fb08", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_fr_strings.dcp", "f50d251df43e5433b9664d5c2463fb08", 40807), Common::FR_FRA, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Sep 2016) (Italian)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_sd.dcp", "8864e2e552bb7816916d8c6630e8f1a5", 97821007,
-					"i18n_it_strings.dcp", "6ad0d7c0a0c450d6af334cd1b4dbe72e", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_it_strings.dcp", "6ad0d7c0a0c450d6af334cd1b4dbe72e", 40502), Common::IT_ITA, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Sep 2016) (Polish)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_sd.dcp", "8864e2e552bb7816916d8c6630e8f1a5", 97821007,
-					"i18n_pl_strings.dcp", "7c07fb021517dd21ba2e2a5739d0168e", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_pl_strings.dcp", "7c07fb021517dd21ba2e2a5739d0168e", 40062), Common::PL_POL, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Sep 2016) (Russian)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_sd.dcp", "8864e2e552bb7816916d8c6630e8f1a5", 97821007,
-					"i18n_ru_strings.dcp", "5cecc876ec1b364f22780d18a0821349", 45546), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_ru_strings.dcp", "5cecc876ec1b364f22780d18a0821349", 45546), Common::RU_RUS, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jun 2018) (German)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
-					"i18n_de_strings.dcp", "59d15bb3c32354b5104475df0ff6c50b", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_de_strings.dcp", "59d15bb3c32354b5104475df0ff6c50b", 43136), Common::DE_DEU, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jun 2018) (English)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
-					"i18n_en_strings.dcp", "733a53213ab5be27941c34dcef531e0e", 75119), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_en_strings.dcp", "733a53213ab5be27941c34dcef531e0e", 75119), Common::EN_ANY, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jun 2018) (Spanish)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
-					"i18n_es_strings.dcp", "18876a252741b8bda888805ca860f600", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_es_strings.dcp", "18876a252741b8bda888805ca860f600", 40153), Common::ES_ESP, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jun 2018) (French)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
-					"i18n_fr_strings.dcp", "850cce9217d83785e4b56028441b0d71", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_fr_strings.dcp", "850cce9217d83785e4b56028441b0d71", 40807), Common::FR_FRA, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jun 2018) (Italian)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
-					"i18n_it_strings.dcp", "de567598fba43589841c354306a80377", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_it_strings.dcp", "de567598fba43589841c354306a80377", 40502), Common::IT_ITA, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jun 2018) (Polish)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
-					"i18n_pl_strings.dcp", "daa4b251caec6c6e2c3b96aaf87ae33a", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_pl_strings.dcp", "daa4b251caec6c6e2c3b96aaf87ae33a", 40062), Common::PL_POL, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jun 2018) (Russian)
 	WME_WINENTRY("sotv1", "Legacy Version/Steam",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
-					"i18n_ru_strings.dcp", "ebf28ca1475b3be9754a323966807683", 45546), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
+					"i18n_ru_strings.dcp", "ebf28ca1475b3be9754a323966807683", 45546), Common::RU_RUS, GF_IGNORE_HD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jul 2014) (German)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_hd.dcp", "d8d903cbda2ff7001cc7ce949775897e", 197016744,
-					"i18n_de_strings.dcp", "9cc009980d018476b177e2a4075f56b4", 43104), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_de_strings.dcp", "9cc009980d018476b177e2a4075f56b4", 43104), Common::DE_DEU, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jul 2014) (English)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_hd.dcp", "d8d903cbda2ff7001cc7ce949775897e", 197016744,
-					"i18n_en_strings.dcp", "40f8ea49a3e8d54a5202aa88c12fba80", 75108), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_en_strings.dcp", "40f8ea49a3e8d54a5202aa88c12fba80", 75108), Common::EN_ANY, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jul 2014) (Spanish)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_hd.dcp", "d8d903cbda2ff7001cc7ce949775897e", 197016744,
-					"i18n_es_strings.dcp", "6a8d5b434dfe758abb2ace1a75a4dab1", 40122), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_es_strings.dcp", "6a8d5b434dfe758abb2ace1a75a4dab1", 40122), Common::ES_ESP, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jul 2014) (French)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_hd.dcp", "d8d903cbda2ff7001cc7ce949775897e", 197016744,
-					"i18n_fr_strings.dcp", "b3fe8c720bb6a5378f6da2f593339c70", 40760), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_fr_strings.dcp", "b3fe8c720bb6a5378f6da2f593339c70", 40760), Common::FR_FRA, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jul 2014) (Italian)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_hd.dcp", "d8d903cbda2ff7001cc7ce949775897e", 197016744,
-					"i18n_it_strings.dcp", "5abaab4d57d7585b3c4b23f34f2d0dd8", 40468), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_it_strings.dcp", "5abaab4d57d7585b3c4b23f34f2d0dd8", 40468), Common::IT_ITA, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 12th 2015) (German)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_hd.dcp", "1a077e884c659f34da61dd205591f83d", 197018612,
-					"i18n_de_strings.dcp", "780b0d8d4f2b2b32e729090c1018df43", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_de_strings.dcp", "780b0d8d4f2b2b32e729090c1018df43", 43136), Common::DE_DEU, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 12th 2015) (English)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_hd.dcp", "1a077e884c659f34da61dd205591f83d", 197018612,
-					"i18n_en_strings.dcp", "636e32cf89f02fca30a6f4caa38dede1", 75126), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_en_strings.dcp", "636e32cf89f02fca30a6f4caa38dede1", 75126), Common::EN_ANY, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 12th 2015) (Spanish)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_hd.dcp", "1a077e884c659f34da61dd205591f83d", 197018612,
-					"i18n_es_strings.dcp", "c62f94e9cd543ecbdc0f02acc744cd29", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_es_strings.dcp", "c62f94e9cd543ecbdc0f02acc744cd29", 40153), Common::ES_ESP, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 12th 2015) (French)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_hd.dcp", "1a077e884c659f34da61dd205591f83d", 197018612,
-					"i18n_fr_strings.dcp", "548e88d67be123bb54f5b265226f051a", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_fr_strings.dcp", "548e88d67be123bb54f5b265226f051a", 40807), Common::FR_FRA, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 12th 2015) (Italian)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_hd.dcp", "1a077e884c659f34da61dd205591f83d", 197018612,
-					"i18n_it_strings.dcp", "c3d180dd634705cb16ccd650066e1da8", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_it_strings.dcp", "c3d180dd634705cb16ccd650066e1da8", 40502), Common::IT_ITA, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 12th 2015) (Polish)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_hd.dcp", "1a077e884c659f34da61dd205591f83d", 197018612,
-					"i18n_pl_strings.dcp", "8dac09efb73ae4a7a2b897de6f37e906", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_pl_strings.dcp", "8dac09efb73ae4a7a2b897de6f37e906", 40062), Common::PL_POL, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 12th 2015) (Russian)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_hd.dcp", "1a077e884c659f34da61dd205591f83d", 197018612,
-					"i18n_ru_strings.dcp", "88daa5c022c18535e2da86fa558db792", 45838), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_ru_strings.dcp", "88daa5c022c18535e2da86fa558db792", 45838), Common::RU_RUS, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 22th 2015) (German)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_hd.dcp", "bfd3bc963c073af866e5405d6d5f1347", 197125364,
-					"i18n_de_strings.dcp", "d245d247a282cda33b83ed6918b2e6d5", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_de_strings.dcp", "d245d247a282cda33b83ed6918b2e6d5", 43136), Common::DE_DEU, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 22th 2015) (English)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_hd.dcp", "bfd3bc963c073af866e5405d6d5f1347", 197125364,
-					"i18n_en_strings.dcp", "5e9cf5a8403b98f7d92de55efccc0d34", 75119), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_en_strings.dcp", "5e9cf5a8403b98f7d92de55efccc0d34", 75119), Common::EN_ANY, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 22th 2015) (Spanish)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_hd.dcp", "bfd3bc963c073af866e5405d6d5f1347", 197125364,
-					"i18n_es_strings.dcp", "edb19a0758243da8929844bac035d384", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_es_strings.dcp", "edb19a0758243da8929844bac035d384", 40153), Common::ES_ESP, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 22th 2015) (French)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_hd.dcp", "bfd3bc963c073af866e5405d6d5f1347", 197125364,
-					"i18n_fr_strings.dcp", "40dda8156fa93717cf962e75d76929b1", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_fr_strings.dcp", "40dda8156fa93717cf962e75d76929b1", 40807), Common::FR_FRA, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 22th 2015) (Italian)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_hd.dcp", "bfd3bc963c073af866e5405d6d5f1347", 197125364,
-					"i18n_it_strings.dcp", "0d1dac14379e55356794fb7cca8865b2", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_it_strings.dcp", "0d1dac14379e55356794fb7cca8865b2", 40502), Common::IT_ITA, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 22th 2015) (Polish)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_hd.dcp", "bfd3bc963c073af866e5405d6d5f1347", 197125364,
-					"i18n_pl_strings.dcp", "cdd0b203c591dfb411cb6fc89ac009c1", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_pl_strings.dcp", "cdd0b203c591dfb411cb6fc89ac009c1", 40062), Common::PL_POL, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 22th 2015) (Russian)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_hd.dcp", "bfd3bc963c073af866e5405d6d5f1347", 197125364,
-					"i18n_ru_strings.dcp", "77fc889bb25438bafe897d1566bd7e50", 45546), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_ru_strings.dcp", "77fc889bb25438bafe897d1566bd7e50", 45546), Common::RU_RUS, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Sep 2016) (German)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_hd.dcp", "79a5c4ae560817a149506dce894274d0", 197155130,
-					"i18n_de_strings.dcp", "94230807d77dacb420f446c34dd60072", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_de_strings.dcp", "94230807d77dacb420f446c34dd60072", 43136), Common::DE_DEU, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Sep 2016) (English)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_hd.dcp", "79a5c4ae560817a149506dce894274d0", 197155130,
-					"i18n_en_strings.dcp", "253e7f5e2bb4a33c7df52a04624d18c6", 75119), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_en_strings.dcp", "253e7f5e2bb4a33c7df52a04624d18c6", 75119), Common::EN_ANY, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Sep 2016) (Spanish)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_hd.dcp", "79a5c4ae560817a149506dce894274d0", 197155130,
-					"i18n_es_strings.dcp", "2227cee67309f564178e48d3eb30fc98", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_es_strings.dcp", "2227cee67309f564178e48d3eb30fc98", 40153), Common::ES_ESP, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Sep 2016) (French)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_hd.dcp", "79a5c4ae560817a149506dce894274d0", 197155130,
-					"i18n_fr_strings.dcp", "f50d251df43e5433b9664d5c2463fb08", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_fr_strings.dcp", "f50d251df43e5433b9664d5c2463fb08", 40807), Common::FR_FRA, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Sep 2016) (Italian)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_hd.dcp", "79a5c4ae560817a149506dce894274d0", 197155130,
-					"i18n_it_strings.dcp", "6ad0d7c0a0c450d6af334cd1b4dbe72e", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_it_strings.dcp", "6ad0d7c0a0c450d6af334cd1b4dbe72e", 40502), Common::IT_ITA, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Sep 2016) (Polish)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_hd.dcp", "79a5c4ae560817a149506dce894274d0", 197155130,
-					"i18n_pl_strings.dcp", "7c07fb021517dd21ba2e2a5739d0168e", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_pl_strings.dcp", "7c07fb021517dd21ba2e2a5739d0168e", 40062), Common::PL_POL, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Sep 2016) (Russian)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_hd.dcp", "79a5c4ae560817a149506dce894274d0", 197155130,
-					"i18n_ru_strings.dcp", "5cecc876ec1b364f22780d18a0821349", 45546), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_ru_strings.dcp", "5cecc876ec1b364f22780d18a0821349", 45546), Common::RU_RUS, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jun 2018) (German)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
-					"i18n_de_strings.dcp", "59d15bb3c32354b5104475df0ff6c50b", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_de_strings.dcp", "59d15bb3c32354b5104475df0ff6c50b", 43136), Common::DE_DEU, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jun 2018) (English)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
-					"i18n_en_strings.dcp", "733a53213ab5be27941c34dcef531e0e", 75119), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_en_strings.dcp", "733a53213ab5be27941c34dcef531e0e", 75119), Common::EN_ANY, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jun 2018) (Spanish)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
-					"i18n_es_strings.dcp", "18876a252741b8bda888805ca860f600", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_es_strings.dcp", "18876a252741b8bda888805ca860f600", 40153), Common::ES_ESP, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jun 2018) (French)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
-					"i18n_fr_strings.dcp", "850cce9217d83785e4b56028441b0d71", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_fr_strings.dcp", "850cce9217d83785e4b56028441b0d71", 40807), Common::FR_FRA, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jun 2018) (Italian)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
-					"i18n_it_strings.dcp", "de567598fba43589841c354306a80377", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_it_strings.dcp", "de567598fba43589841c354306a80377", 40502), Common::IT_ITA, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jun 2018) (Polish)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
-					"i18n_pl_strings.dcp", "daa4b251caec6c6e2c3b96aaf87ae33a", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_pl_strings.dcp", "daa4b251caec6c6e2c3b96aaf87ae33a", 40062), Common::PL_POL, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jun 2018) (Russian)
 	WME_WINENTRY("sotv1", "Full HD Version/Steam",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
-					"i18n_ru_strings.dcp", "ebf28ca1475b3be9754a323966807683", 45546), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
+					"i18n_ru_strings.dcp", "ebf28ca1475b3be9754a323966807683", 45546), Common::RU_RUS, GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
 	// Shadows on the Vatican - Act I: Greed (Legacy Version) (NewTech) (Persian)
 	// NOTE: this game distribution contained unpacked game files instead of usual game.dcp package
