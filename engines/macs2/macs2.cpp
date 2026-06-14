@@ -20,14 +20,11 @@
  */
 
 #include "macs2/macs2.h"
-#include "adlib.h"
 #include "audio/fmopl.h"
 #include "audio/mixer.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
-#include "common/debug-channels.h"
 #include "common/debug.h"
-#include "common/events.h"
 #include "common/ptr.h"
 #include "common/savefile.h"
 #include "common/scummsys.h"
@@ -38,13 +35,13 @@
 #include "engines/util.h"
 #include "gameobjects.h"
 #include "graphics/cursorman.h"
-#include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "macs2/console.h"
 #include "macs2/debugtools.h"
 #include "macs2/detection.h"
-#include "view1.h"
+#include "macs2/music.h"
+#include "macs2/view1.h"
 
 namespace Macs2 {
 
@@ -394,7 +391,7 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	g_engine = this;
 	_scriptExecutor = new Script::ScriptExecutor();
 	_scriptExecutor->_engine = this;
-	_adlib = new Adlib();
+	_adlib = new Music();
 
 	// We have a fixed 0x10 number of entries
 	_hotspotOverrides.resize(0x11);

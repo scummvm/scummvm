@@ -26,15 +26,12 @@
 #include "common/debug.h"
 #include "common/system.h"
 #include "engines/enhancements.h"
-#include "graphics/palette.h"
+#include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
-#include "macs2/adlib.h"
 #include "macs2/detection.h"
 #include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
-#include <graphics/cursorman.h>
-#include <math/angle.h>
-#include <math/vector2d.h>
+#include "macs2/music.h"
 
 namespace Macs2 {
 namespace {

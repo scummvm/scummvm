@@ -20,12 +20,10 @@
  */
 
 #include "macs2/console.h"
-#include "macs2/adlib.h"
 #include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
+#include "macs2/music.h"
 #include "macs2/view1.h"
-
-#include <cstdlib>
 
 namespace Macs2 {
 

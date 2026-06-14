@@ -1,7 +1,8 @@
 MODULE := engines/macs2
 
 MODULE_OBJS = \
-	adlib.o \
+	midiparser_macs2.o \
+	music.o \
 	console.o \
 	dialogs.o \
 	events.o \
