@@ -431,6 +431,10 @@ void EEMEngine::playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
 					break;
 				}
 			}
+			// Re-composite the cursor every ~10 ms so the mouse stays smooth
+			// between the 140 ms animation frames (the frame-rebuild above is
+			// throttled, but the cursor is only flushed by updateScreen()).
+			g_system->updateScreen();
 			g_system->delayMillis(10);
 		}
 	}
@@ -514,6 +518,7 @@ void EEMEngine::playCdFloppyInitCluesAnim(uint16 caseType, bool floppy,
 						break;
 					}
 				}
+				g_system->updateScreen();  // keep the cursor smooth between frames
 				g_system->delayMillis(10);
 			}
 		}
@@ -648,6 +653,7 @@ void EEMEngine::playCdFloppyInitCluesAnim(uint16 caseType, bool floppy,
 							break;
 						}
 					}
+					g_system->updateScreen();  // keep the cursor smooth between frames
 					g_system->delayMillis(10);
 				}
 			}
