@@ -90,7 +90,6 @@ enum {
 	kDebugConsole,
 	kDebugXObj,
 	kDebugLingoThe,
-	kDebugImGui,
 	kDebugPaused,
 	kDebugPauseOnLoad,
 	kDebugSaving,

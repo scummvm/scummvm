@@ -811,7 +811,6 @@ enum kDebugLevels {
 	kDebugScriptsLife,
 	kDebugTimers,
 	kDebugResources,
-	kDebugImGui,
 	kDebugInput,
 	kDebugMovies,
 	kDebugPalette,

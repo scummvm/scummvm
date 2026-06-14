@@ -2800,7 +2800,7 @@ Common::Error ScummEngine::go() {
 #endif // ENABLE_HE
 
 #ifdef USE_IMGUI
-	if (debugChannelSet(-1, DEBUG_IMGUI)) {
+	if (debugChannelSet(-1, kDebugImGui)) {
 		ImGuiCallbacks callbacks;
 		callbacks.init = Editor::onImGuiInit;
 		callbacks.render = Editor::onImGuiRender;
