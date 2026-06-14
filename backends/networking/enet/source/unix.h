@@ -13,6 +13,10 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
+#if defined(MORPHOS)
+#undef send
+#endif
+
 #ifdef MSG_MAXIOVLEN
 #define ENET_BUFFER_MAXIMUM MSG_MAXIOVLEN
 #endif
