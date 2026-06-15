@@ -36,6 +36,10 @@ public:
 
 	void initBackend() override;
 	void logMessage(LogMessageType::Type type, const char *message) override;
+
+protected:
+	Common::Path getDefaultConfigFileName() override;
+
 };
 
 #endif
