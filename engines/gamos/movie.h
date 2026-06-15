@@ -32,6 +32,10 @@ class GamosEngine;
 class MoviePlayer {
 public:
 
+	MoviePlayer() {
+		memset(_hdrBytes, 0, sizeof(_hdrBytes));
+	};
+
 	bool playMovie(Common::File *file, uint32 offset, GamosEngine *gamos);
 
 
