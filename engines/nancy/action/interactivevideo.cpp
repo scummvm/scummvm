@@ -130,7 +130,7 @@ void InteractiveVideo::handleInput(NancyInput &input) {
 				if (NancySceneState.getViewport().convertViewportToScreen(hotspot.hotspot).contains(input.mousePos)) {
 					// Mouse is in a hotspot, change cursor and set flag if clicked
 					if (hotspot.cursorID >= 0 && _cursors[hotspot.cursorID] >= 0) {
-						g_nancy->_cursor->setCursorType((CursorManager::CursorType)_cursors[hotspot.cursorID]);
+						g_nancy->_cursor->setCursorType((CursorManager::CursorType)_cursors[hotspot.cursorID], true);
 					}
 
 					if (input.input & NancyInput::kLeftMouseButtonUp) {
@@ -144,7 +144,7 @@ void InteractiveVideo::handleInput(NancyInput &input) {
 			// Mouse is not in a hotspot for the frame, check if we have a default action
 			if (frame.triggerOnNoHotspot) {
 				if (frame.noHSCursorID >= 0 && _cursors[frame.noHSCursorID] >= 0) {
-					g_nancy->_cursor->setCursorType((CursorManager::CursorType)_cursors[frame.noHSCursorID]);
+					g_nancy->_cursor->setCursorType((CursorManager::CursorType)_cursors[frame.noHSCursorID], true);
 				}
 
 				if (input.input & NancyInput::kLeftMouseButtonUp) {

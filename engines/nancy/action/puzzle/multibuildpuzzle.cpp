@@ -493,7 +493,7 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (_selectedPiece != -1) {
-		g_nancy->_cursor->setCursorType(dragCursor);
+		g_nancy->_cursor->setCursorType(dragCursor, true);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			int sel = _selectedPiece;
@@ -563,7 +563,7 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (topmost != -1) {
-		g_nancy->_cursor->setCursorType(dragCursor);
+		g_nancy->_cursor->setCursorType(dragCursor, true);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			Piece &pp = _pieces[topmost];

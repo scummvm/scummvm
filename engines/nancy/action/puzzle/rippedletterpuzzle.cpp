@@ -439,7 +439,10 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 	if (_puzzleState->_pickedUpPieceID == -1) {
 		// No piece picked up, check the exit hotspot
 		if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-			g_nancy->_cursor->setCursorType(_customCursorID != -1 ? (CursorManager::CursorType)_customCursorID : g_nancy->_cursor->_puzzleExitCursor);
+			if (_customCursorID != -1)
+				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_customCursorID, true);
+			else
+				g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				// Player has clicked, exit

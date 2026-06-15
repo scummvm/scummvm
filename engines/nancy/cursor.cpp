@@ -123,7 +123,7 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 
 	g_nancy->_resource->loadImage(inventoryCursorsImageName, _invCursorsSurface);
 
-	setCursor(kNormalArrow, -1);
+	setCursor(kNormalArrow, -1, false);
 	showCursor(false);
 
 	_isInitialized = true;
@@ -133,7 +133,7 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	delete chunkStream;
 }
 
-uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID) {
+uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID, bool setFromScript) {
 	// Item-held variants. The Nancy 10+ chunk reserves `numItems × 2`
 	// slots after the two 37-entry system arrays (= _numCursorTypes * 2),
 	// each item getting one [idle, hotspot] pair. Held items only
@@ -146,6 +146,9 @@ uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID) {
 		const uint variant = (type == kHotspot) ? 1 : 0;
 		return itemsOffset + (uint)itemID * 2 + variant;
 	}
+
+	if (setFromScript)
+		return type;
 
 	// System cursors: translate the legacy CursorType to the matching
 	// kNew* idle slot. Each Nancy 10+ cursor type T occupies a pair
@@ -177,7 +180,7 @@ uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID) {
 	}
 }
 
-void CursorManager::setCursor(CursorType type, int16 itemID) {
+void CursorManager::setCursor(CursorType type, int16 itemID, bool setFromScript) {
 	if (!_isInitialized)
 		return;
 
@@ -191,7 +194,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	_hasItem = false;
 
 	if (gameType >= kGameTypeNancy10) {
-		_curCursorID = resolveNancy10CursorID(type, itemID);
+		_curCursorID = resolveNancy10CursorID(type, itemID, setFromScript);
 		return;
 	}
 
@@ -304,12 +307,12 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	_curCursorID = (uint)(itemID * _numCursorTypes) + itemsOffset + (uint)type;
 }
 
-void CursorManager::setCursorType(CursorType type) {
-	setCursor(type, _curItemID);
+void CursorManager::setCursorType(CursorType type, bool setFromScript) {
+	setCursor(type, _curItemID, setFromScript);
 }
 
 void CursorManager::setCursorItemID(int16 itemID) {
-	setCursor(_curCursorType, itemID);
+	setCursor(_curCursorType, itemID, false);
 }
 
 void CursorManager::warpCursor(const Common::Point &pos) {

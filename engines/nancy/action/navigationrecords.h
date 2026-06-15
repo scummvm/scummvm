@@ -52,6 +52,7 @@ public:
 	void execute() override;
 
 	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
+	bool cursorSetFromScript() const override { return true; }
 
 	HotspotDescription _sceneHotspot;
 
@@ -115,6 +116,7 @@ public:
 	void execute() override;
 
 	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
+	bool cursorSetFromScript() const override { return _dynamicCursor; }
 
 	HotspotDescription _hotspotDesc;
 	bool _isTerse = false;

@@ -511,9 +511,9 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_hotspots[i]).contains(input.mousePos)) {
 			// Set the custom cursor for nancy8+ PianoPuzzle
 			if (NancySceneState.getViewport().convertViewportToScreen(_specialCursor1Dest).contains(input.mousePos)) {
-				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_specialCursor1Id);
+				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_specialCursor1Id, true);
 			} else if (NancySceneState.getViewport().convertViewportToScreen(_specialCursor2Dest).contains(input.mousePos)) {
-				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_specialCursor2Id);
+				g_nancy->_cursor->setCursorType((CursorManager::CursorType)_specialCursor2Id, true);
 			} else {
 				g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 			}

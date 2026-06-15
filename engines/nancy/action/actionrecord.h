@@ -114,6 +114,7 @@ public:
 	virtual void onPause(bool pause) {}
 
 	virtual CursorManager::CursorType getHoverCursor() const { return CursorManager::kHotspot; }
+	virtual bool cursorSetFromScript() const { return false; }
 	virtual void handleInput(NancyInput &input) {}
 
 	// Used for debugging

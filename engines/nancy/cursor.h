@@ -95,8 +95,8 @@ public:
 	void init(Common::SeekableReadStream *chunkStream);
 
 	// Change the current cursor ID. Does not change the graphic
-	void setCursor(CursorType type, int16 itemID);
-	void setCursorType(CursorType type);
+	void setCursor(CursorType type, int16 itemID, bool setFromScript);
+	void setCursorType(CursorType type, bool setFromScript = false);
 	void setCursorItemID(int16 itemID);
 	void showCursor(bool shouldShow);
 
@@ -115,7 +115,7 @@ private:
 	void adjustCursorHotspot();
 
 	// Resolve a CursorType + held-item pair to a Nancy 10+ cursor ID.
-	uint resolveNancy10CursorID(CursorType type, int16 itemID);
+	uint resolveNancy10CursorID(CursorType type, int16 itemID, bool setFromScript);
 
 	struct Cursor {
 		Common::Rect bounds;

@@ -38,6 +38,7 @@ public:
 	void execute() override;
 
 	CursorManager::CursorType getHoverCursor() const override { return (CursorManager::CursorType)_cursorType; }
+	bool cursorSetFromScript() const override { return true; }
 
 protected:
 	Common::String getRecordTypeName() const override { return "TableIndexSetValueHS"; }
@@ -121,6 +122,7 @@ public:
 	void execute() override;
 
 	CursorManager::CursorType getHoverCursor() const override;
+	bool cursorSetFromScript() const override { return true; }
 
 	CursorManager::CursorType _hoverCursor = CursorManager::kHotspot;
 	Common::Array<HotspotDescription> _hotspots;
