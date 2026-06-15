@@ -19,13 +19,14 @@
  *
  */
 
-#ifdef DEPRECATED_MADS_SOUND_NEBULAR_H
-#define MADS_SOUND_NEBULAR_H
+#ifndef MADS_NEBULAR_SOUND_NEBULAR_H
+#define MADS_NEBULAR_SOUND_NEBULAR_H
 
-#include "mads/nebular/core/asound.h"
+#include "mads/madsv2/nebular/asound.h"
 
 namespace MADS {
-namespace Nebular {
+namespace MADSV2 {
+namespace RexNebular {
 
 class RexSoundManager : public SoundManager {
 protected:
@@ -51,7 +52,7 @@ public:
 
 class ASound1 : public RexASound {
 private:
-	typedef int (ASound1::*CommandPtr)();
+	typedef int (ASound1:: *CommandPtr)();
 	static const CommandPtr _commandList[42];
 	bool _cmd23Toggle;
 
@@ -101,7 +102,7 @@ class ASound2 : public RexASound {
 private:
 	byte _command12Param;
 private:
-	typedef int (ASound2::*CommandPtr)();
+	typedef int (ASound2:: *CommandPtr)();
 	static const CommandPtr _commandList[44];
 
 	int command0() override;
@@ -153,7 +154,7 @@ class ASound3 : public RexASound {
 private:
 	bool _command39Flag;
 
-	typedef int (ASound3::*CommandPtr)();
+	typedef int (ASound3:: *CommandPtr)();
 	static const CommandPtr _commandList[61];
 
 	int command9();
@@ -211,7 +212,7 @@ public:
 
 class ASound4 : public RexASound {
 private:
-	typedef int (ASound4::*CommandPtr)();
+	typedef int (ASound4:: *CommandPtr)();
 	static const CommandPtr _commandList[61];
 
 	int command10();
@@ -249,7 +250,7 @@ public:
 
 class ASound5 : public RexASound {
 private:
-	typedef int (ASound5::*CommandPtr)();
+	typedef int (ASound5:: *CommandPtr)();
 	static const CommandPtr _commandList[42];
 
 	int command9();
@@ -295,7 +296,7 @@ public:
 
 class ASound6 : public RexASound {
 private:
-	typedef int (ASound6::*CommandPtr)();
+	typedef int (ASound6:: *CommandPtr)();
 	static const CommandPtr _commandList[30];
 
 	int command9();
@@ -324,7 +325,7 @@ public:
 
 class ASound7 : public RexASound {
 private:
-	typedef int (ASound7::*CommandPtr)();
+	typedef int (ASound7:: *CommandPtr)();
 	static const CommandPtr _commandList[38];
 
 	int command9();
@@ -356,7 +357,7 @@ public:
 
 class ASound8 : public RexASound {
 private:
-	typedef int (ASound8::*CommandPtr)();
+	typedef int (ASound8:: *CommandPtr)();
 	static const CommandPtr _commandList[38];
 
 	int command9();
@@ -402,7 +403,7 @@ private:
 	int _v1, _v2;
 	byte *_soundPtr;
 
-	typedef int (ASound9::*CommandPtr)();
+	typedef int (ASound9:: *CommandPtr)();
 	static const CommandPtr _commandList[52];
 
 	int command9();
@@ -456,8 +457,8 @@ public:
 	int command(int commandId, int param) override;
 };
 
-} // namespace Nebular
-
+} // namespace RexNebular
+} // namespace MADSV2
 } // namespace MADS
 
-#endif /* MADS_SOUND_NEBULAR_H */
+#endif

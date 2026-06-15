@@ -21,10 +21,11 @@
 
 #include "audio/fmopl.h"
 #include "common/memstream.h"
-#include "mads/nebular/core/asound.h"
+#include "mads/madsv2/nebular/asound.h"
 
 namespace MADS {
-namespace Nebular {
+namespace MADSV2 {
+namespace RexNebular {
 
 bool AdlibChannel::_channelsEnabled;
 
@@ -155,7 +156,7 @@ AdlibSample::AdlibSample(Common::SeekableReadStream &s) {
 /*-----------------------------------------------------------------------*/
 
 ASound::ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::Path &filename,
-		int dataOffset, int dataSize) : SoundDriver(mixer, opl, filename, dataOffset, dataSize) {
+	int dataOffset, int dataSize) : SoundDriver(mixer, opl, filename, dataOffset, dataSize) {
 	// Initialize fields
 	_commandParam = 0;
 	_activeChannelPtr = nullptr;
@@ -734,5 +735,6 @@ int ASound::command8() {
 	return result;
 }
 
-} // namespace Nebular
+} // namespace RexNebular
+} // namespace MADSV2
 } // namespace MADS

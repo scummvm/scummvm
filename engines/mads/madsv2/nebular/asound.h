@@ -19,13 +19,14 @@
  *
  */
 
-#ifdef DEPRECATED_MADS_NEBULAR_CORE_ASOUND_H
-#define MADS_NEBULAR_CORE_ASOUND_H
+#ifndef MADS_NEBULAR_ASOUND_H
+#define MADS_NEBULAR_ASOUND_H
 
 #include "mads/core/sound_manager.h"
 
 namespace MADS {
-namespace Nebular {
+namespace MADSV2 {
+namespace RexNebular {
 
 class ASound;
 
@@ -379,7 +380,8 @@ public:
 	void setVolume(int volume) override;
 };
 
-} // namespace Nebular
+} // namespace RexNebular
+} // namespace MADSV2
 } // namespace MADS
 
 #endif

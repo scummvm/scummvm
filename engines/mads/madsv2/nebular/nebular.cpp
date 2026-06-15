@@ -37,6 +37,7 @@
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/sound_nebular.h"
 #include "mads/madsv2/nebular/rooms/section1.h"
 #include "mads/madsv2/nebular/rooms/section2.h"
 #include "mads/madsv2/nebular/rooms/section3.h"
@@ -66,8 +67,8 @@ Common::Error RexNebularEngine::run() {
 	}
 
 	// Set up sound manager
-	//_soundManager = new DragonSoundManager(_mixer, _soundFlag);
-	//_soundManager->validate();
+	_soundManager = new RexSoundManager(_mixer, _soundFlag);
+	_soundManager->validate();
 
 	// Run the game
 //	RexNebular::dragonsphere_main();

@@ -23,15 +23,15 @@
 #include "common/algorithm.h"
 #include "common/file.h"
 #include "common/md5.h"
-#include "mads/nebular/sound_nebular.h"
+#include "mads/madsv2/nebular/sound_nebular.h"
 
 namespace Audio {
 class Mixer;
 }
 
 namespace MADS {
-
-namespace Nebular {
+namespace MADSV2 {
+namespace RexNebular {
 
 void RexSoundManager::validate() {
 	Common::File f;
@@ -62,31 +62,31 @@ void RexSoundManager::validate() {
 void RexSoundManager::loadDriver(int sectionNumber) {
 	switch (sectionNumber) {
 	case 1:
-		_driver = new Nebular::ASound1(_mixer, _opl);
+		_driver = new RexNebular::ASound1(_mixer, _opl);
 		break;
 	case 2:
-		_driver = new Nebular::ASound2(_mixer, _opl);
+		_driver = new RexNebular::ASound2(_mixer, _opl);
 		break;
 	case 3:
-		_driver = new Nebular::ASound3(_mixer, _opl);
+		_driver = new RexNebular::ASound3(_mixer, _opl);
 		break;
 	case 4:
-		_driver = new Nebular::ASound4(_mixer, _opl);
+		_driver = new RexNebular::ASound4(_mixer, _opl);
 		break;
 	case 5:
-		_driver = new Nebular::ASound5(_mixer, _opl);
+		_driver = new RexNebular::ASound5(_mixer, _opl);
 		break;
 	case 6:
-		_driver = new Nebular::ASound6(_mixer, _opl);
+		_driver = new RexNebular::ASound6(_mixer, _opl);
 		break;
 	case 7:
-		_driver = new Nebular::ASound7(_mixer, _opl);
+		_driver = new RexNebular::ASound7(_mixer, _opl);
 		break;
 	case 8:
-		_driver = new Nebular::ASound8(_mixer, _opl);
+		_driver = new RexNebular::ASound8(_mixer, _opl);
 		break;
 	case 9:
-		_driver = new Nebular::ASound9(_mixer, _opl);
+		_driver = new RexNebular::ASound9(_mixer, _opl);
 		break;
 	default:
 		_driver = nullptr;
@@ -2767,6 +2767,6 @@ int ASound9::command51() {
 }
 
 
-} // namespace Nebular
-
+} // namespace RexNebular
+} // namespace MADSV2
 } // namespace MADS
