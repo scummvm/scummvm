@@ -1292,7 +1292,7 @@ uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Com
 	if (_enableInput == 0) {
 		act1 = ACT_NONE;
 		act2 = ACT_NONE;
-		_pressedKeyCode = ACT_NONE;
+		keyCode = ACT_NONE;
 	}
 
 	_pressedKeyCode = keyCode;
