@@ -32,18 +32,6 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-struct Scratch {
-
-};
-
-static Scratch local;
-
-
-void Scene357::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
-
 static void room_357_init() {
 	_globals[kAfterHavoc] = true;
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(Resources::formatName(307, 'X', 0, EXT_SS, ""));
@@ -112,7 +100,6 @@ void room_357_preload() {
 	room_init_code_pointer = room_357_init;
 	room_pre_parser_code_pointer = room_357_pre_parser;
 	room_parser_code_pointer = room_357_parser;
-	room_daemon_code_pointer = room_357_daemon;
 
 	section_3_walker();
 	section_3_interface();
