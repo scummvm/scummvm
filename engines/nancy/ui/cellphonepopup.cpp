@@ -143,9 +143,6 @@ void CellPhonePopup::registerGraphics() {
 }
 
 void CellPhonePopup::setNoSignal(bool noSignal) {
-	if (_noSignal == noSignal) {
-		return;
-	}
 	_noSignal = noSignal;
 	CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
 	if (cellData) {
@@ -157,9 +154,6 @@ void CellPhonePopup::setNoSignal(bool noSignal) {
 }
 
 void CellPhonePopup::setBatteryLow(bool low) {
-	if (_batteryLow == low) {
-		return;
-	}
 	_batteryLow = low;
 	CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
 	if (cellData) {
