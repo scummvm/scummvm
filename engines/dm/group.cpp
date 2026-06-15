@@ -1384,7 +1384,7 @@ void GroupMan::setGroupDirection(ActiveGroup *activeGroup, int16 dir, int16 crea
 		G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup = activeGroup;
 	}
 
-	activeGroup->_directions = (Direction)groupDirections;
+	activeGroup->_directions = groupDirections;
 }
 
 void GroupMan::addGroupEvent(TimelineEvent *event, uint32 time) {
@@ -1752,7 +1752,7 @@ void GroupMan::addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
 	activeGroup->_lastMoveTime = _vm->_gameTime - 127;
 	uint16 creatureIndex = curGroup->getCount();
 	do {
-		activeGroup->_directions = (Direction)getGroupValueUpdatedWithCreatureValue(activeGroup->_directions, creatureIndex, curGroup->getDir());
+		activeGroup->_directions = getGroupValueUpdatedWithCreatureValue(activeGroup->_directions, creatureIndex, curGroup->getDir());
 		activeGroup->_aspect[creatureIndex] = 0;
 	} while (creatureIndex--);
 	getCreatureAspectUpdateTime(activeGroup, kDMWholeCreatureGroup, false);
@@ -2118,7 +2118,7 @@ void GroupMan::loadActiveGroupPart(Common::InSaveFile *file) {
 	for (uint16 i = 0; i < _maxActiveGroupCount; ++i) {
 		ActiveGroup *group = &_activeGroups[i];
 		group->_groupThingIndex = file->readUint16BE();
-		group->_directions = (Direction)file->readUint16BE();
+		group->_directions = file->readUint16BE();
 		group->_cells = file->readByte();
 		group->_lastMoveTime = file->readByte();
 		group->_delayFleeingFromTarget = file->readByte();

@@ -111,7 +111,7 @@ enum aspectMask {
 class ActiveGroup {
 public:
 	int16 _groupThingIndex;
-	Direction _directions;
+	uint16 _directions;
 	byte _cells;
 	byte _lastMoveTime;
 	byte _delayFleeingFromTarget;
