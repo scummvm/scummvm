@@ -151,11 +151,12 @@ struct While : public Script::Command {
 
 struct StartTimer : public Script::Command {
 	float seconds;
+	bool showTimer;
 
-	StartTimer(const Common::Array<Common::String> &args) : seconds(atof(args[0].c_str())) {}
+	StartTimer(const Common::Array<Common::String> &args) : seconds(atof(args[0].c_str())), showTimer(args.size() < 2 || atoi(args[1].c_str()) != 0) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("starttimer %g", seconds);
-		g_engine->startTimer(seconds);
+		debug("starttimer %g %d", seconds, showTimer);
+		g_engine->startTimer(seconds, showTimer);
 	}
 };
 

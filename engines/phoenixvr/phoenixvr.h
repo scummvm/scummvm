@@ -145,7 +145,7 @@ public:
 
 	void resetLockKey();
 	void lockKey(int idx, const Common::String &warp);
-	void startTimer(float seconds);
+	void startTimer(float seconds, bool showTimer);
 	void pauseTimer(bool pause, bool deactivate);
 	void killTimer();
 	void playAnimation(const Common::String &name, const Common::String &var, int varValue, float speed);
@@ -287,6 +287,7 @@ private:
 	static constexpr byte kPaused = 2;
 	static constexpr byte kActive = 4;
 	byte _timerFlags = 0;
+	bool _showTimer = false;
 	float _timer = 0, _initialTimer = 0;
 
 	Common::String _contextScript;
