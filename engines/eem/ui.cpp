@@ -40,8 +40,6 @@
 
 namespace EEM {
 
-// Gallery slot positions @ 29be:0x116. Used by `_DrawGallery @ 158f:0046`
-// and the accuse portrait grid.
 struct GallerySlot { int x; int y; };
 const GallerySlot kGallerySlots[5] = {
 	{  83,  14 }, // 0
@@ -149,9 +147,7 @@ bool loadLondonApproachData(uint16 approachId, LondonApproachData &out) {
 	out.pages.clear();
 	uint32 pos = 16;
 	// `_DoApproach @ 1717:009b` reads the pages with `_fgets` into 255-byte
-	// slots, so each page is one NEWLINE-terminated record — NOT NUL-separated.
-	// (A*.BIN carries no NULs; splitting on '\0' lumps every page into page 0,
-	// which is why the Next/Prev arrows had nothing to page through.)
+	// slots, so each page is one NEWLINE-terminated record, NOT NUL-separated.
 	for (uint16 i = 0; i < pageCount && pos < size; i++) {
 		const uint32 start = pos;
 		while (pos < size && data[pos] != '\n')
@@ -188,16 +184,13 @@ bool decodeLondonApproachFirstFrame(uint16 videoId,
 	return true;
 }
 
-// Setup-screen highlight rects (referenced by both `doSetup` and the
-// helper `EEMEngine::setupDrawScreen`). `_SetupHighlights @ 29be:1320`.
+// Setup-screen highlight rects
 constexpr Common::Rect kSetupKid1Rect    (Common::Point( 99,  44),  49,  8);
 constexpr Common::Rect kSetupKid2Rect    (Common::Point( 99,  54),  49,  8);
 constexpr Common::Rect kSetupSoundOnRect (Common::Point(106,  86),  19,  8);
 constexpr Common::Rect kSetupSoundOffRect(Common::Point(106,  96),  19,  8);
 
-// EEM2/London setup highlights — `_SetupSettings @ 2046:0008` (_SwapColors,
-// key 0xFE). On/off label pairs for the 4 toggles (rects @ 2bca:13ec; drawn
-// in the DOS order ON-then-OFF). Partner reuses Jake/Jenny.
+// EEM2/London setup highlights
 constexpr Common::Rect kLonSetJake    (Common::Point( 99,  44), 49, 8); // 0x13ec
 constexpr Common::Rect kLonSetJenny   (Common::Point( 99,  54), 49, 8); // 0x13f4
 constexpr Common::Rect kLonSetVoiceOn (Common::Point(106,  68), 20, 8); // 0x13fc
@@ -207,9 +200,6 @@ constexpr Common::Rect kLonSetMusicOff(Common::Point(128,  85), 18, 7); // 0x142
 constexpr Common::Rect kLonSetHiOn    (Common::Point(106, 110), 29, 8); // 0x1414
 constexpr Common::Rect kLonSetHiOff   (Common::Point(106, 100), 29, 8); // 0x140c
 
-// `_SwapColors @ 172b:1d2a` — replace pixels in r where value==from
-// with to. 0xFE = BG text-key; 0x15 = active palette index, 0x00 =
-// inactive (set by `_SetupSettings @ 1f78:000d`).
 void swapColors(Graphics::ManagedSurface &dst,
 					   const Common::Rect &r, byte from, byte to) {
 	const int x1 = MAX<int>(0, r.left);
@@ -225,9 +215,7 @@ void swapColors(Graphics::ManagedSurface &dst,
 	}
 }
 
-// PDA-frame partner sprite specs. `(5, 0x50)` is the partner-at-desk anchor
-// shared by _DoNotebook (script 0x01, anim 1/0xb) and _DoGallery / _DoAccuse
-// / _MoreInfo (script 0x02, anim 2/0x10).
+// TODO: change Pda naming to TRAVIS
 struct PdaPartnerSpec {
 	uint16 scriptId;
 	uint16 animJake;
@@ -277,9 +265,6 @@ constexpr uint16 kFloppyEndingBackgroundPic = 0x8b;
 constexpr uint16 kFirstTryBadgePic = 0x205;
 constexpr Common::Point kFirstTryBadgePos(0x1e, 9);
 
-// kPdaSiteRect / kPdaPartnerFootMapRect / kPdaPartnerHeadHintRect live in
-// eem.h (shared with site.cpp). The button-row rects below are PDA-screen-
-// only (`_NoteButtons @ 29be:0147`).
 constexpr Common::Rect kPdaHelpRect(Common::Point(93, 174), 22, 16);
 constexpr Common::Rect kPdaNotebookRect(Common::Point(134, 174), 21, 16);
 constexpr Common::Rect kPdaGalleryRect(Common::Point(157, 174), 21, 16);
@@ -287,9 +272,6 @@ constexpr Common::Rect kPdaAccuseRect(Common::Point(180, 174), 21, 16);
 constexpr Common::Rect kPdaPageNextRect(Common::Point(204, 174), 20, 16);
 constexpr Common::Rect kPdaPagePrevRect(Common::Point(226, 174), 21, 16);
 constexpr Common::Rect kPdaHelp2Rect(Common::Point(267, 174), 21, 16);
-// London-only: `_NoteButtons[9]` = (0,0,66,79) → site (EEM1's slot 9 is a
-// dead 0-rect). A secondary "close the PDA" hotspot over the device's
-// top-left corner. EEM2 `_HandleNoteButton` slot 9 → screen 3.
 constexpr Common::Rect kPdaLondonCloseRect(Common::Point(0, 0), 66, 79);
 
 constexpr uint16 kProfilePickerRevealPic = 0x105;
@@ -404,8 +386,7 @@ const byte *advanceFloppyDialogRecords(const byte *rec, uint count,
 	return rec;
 }
 
-// Floppy gallery slot positions @ 2608:0x16c. Read by `_DrawGallery_Floppy
-// @ 154e:0045`'s [BX + 0x16c] (x) and [BX + 0x16e] (y) loads.
+// Floppy gallery slot positions @ 2608:0x16c.
 const GallerySlot kFloppyGallerySlots[5] = {
 	{ 0x53, 0x0e }, // 0
 	{ 0x9b, 0x0e }, // 1
@@ -414,9 +395,7 @@ const GallerySlot kFloppyGallerySlots[5] = {
 	{ 0xbf, 0x5a }  // 4
 };
 
-// `_GetKDTextBalloon @ 1df2:0105` digit-balloon table @ 29be:1064:
-//   '0'→0x15  '1'→0x16  '2'→0x17  '3'→0x18  '4'→0x19
-//   '5'→0x1a  '6'→0x20  '7'→0x21  '8'→0x22  '9'→0x1e
+// `_GetKDTextBalloon @ 1df2:0105` digit-balloon table @ 29be:1064
 const uint16 kDigitBalloons[10] = {
 	0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x20, 0x21, 0x22, 0x1e
 };
@@ -445,7 +424,6 @@ void copyToScreen(Graphics::ManagedSurface &scratch) {
 }
 
 void cycleChooserPalette() {
-	// `_DoChoose` / `_DoListPicker_Floppy` rotate 0x6f..0x73 per tick.
 	cyclePaletteRange(kChooserCycleStart, kChooserCycleEnd);
 }
 
@@ -632,12 +610,10 @@ struct ActionMenuView {
 	const char *const *pickLabel;
 	const bool *pickEnabled;
 	uint pick;
-	uint numPicks;  ///< Visible entries (London drops ScrapBook 3 → 4).
+	uint numPicks;
 };
 
-// `_DoChooseMystery @ 1a35:02b7` — opens BOOK%u.NME (CRLF strings, up
-// to 25 × 40 bytes, whitespace-line sentinel). `_DoChoose @ 1c33:0514`
-// walks until {0, 0}.
+// `_DoChooseMystery @ 1a35:02b7`
 Common::StringArray loadBookNames(uint book) {
 	Common::StringArray names;
 	const Common::String fname = Common::String::format("BOOK%u.NME", book);
@@ -672,8 +648,6 @@ void clampCaseTopRow(uint &topRow, uint listLen, uint visibleRows) {
 		topRow = maxTop;
 }
 
-// "Choose A Mystery" sub-chooser view. names = BOOK%d.NME entries
-// (mystery number = tierLo + index). solvedFlags marks greyed entries.
 struct CaseSubmenuView {
 	EEMEngine *vm;
 	const Picture *caseBg;
@@ -688,7 +662,7 @@ struct CaseSubmenuView {
 	const Common::Array<bool> *solvedFlags;
 	uint topRow;
 	uint selRow;
-	uint book;            ///< 1..3 — for the "Book N" / "Challenge Book" title
+	uint book;
 };
 
 void drawCaseGreeter(Graphics::ManagedSurface &scratch,
@@ -697,8 +671,6 @@ void drawCaseGreeter(Graphics::ManagedSurface &scratch,
 	if (!haveKdAnim || !kdAnim || kdAnim->empty())
 		return;
 
-	// `_CaseSelection` drives the partner ANI with script 0x15 regardless
-	// of partner.
 	const uint32 now = g_system->getMillis();
 	const uint frameIdx = partnerFrameAtTick(0x15, (uint)kdAnim->size(), now);
 	blitAnimFrameAnchored(scratch.surfacePtr(), (*kdAnim)[frameIdx],
@@ -755,9 +727,7 @@ bool animateCaseSelectionReveal(EEMEngine *vm, const Picture *caseBg,
 	return false;
 }
 
-// `_DoChoose`'s `DrawList @ 1c33:040d`. 12 rows × 10 px at (61, 35).
-// Original colours 0x13 sel / 0x1B greyed / 0x5C default approximated
-// here as 0xF / 0x8 / 0x7 from site palette 0.
+// `DrawList @ 1c33:040d`
 void drawCaseSubmenu(const CaseSubmenuView &v) {
 	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
@@ -792,7 +762,7 @@ void drawCaseSubmenu(const CaseSubmenuView &v) {
 			kListX, kListY0 + r * kLineH, kListW, color);
 	}
 
-	// Selection arrow (ScummVM-only — original uses colour change).
+	// Selection arrow.
 	if (v.selRow >= v.topRow && v.selRow < v.topRow + (uint)kVisible) {
 		const int r = (int)(v.selRow - v.topRow);
 		v.vm->getFont().drawString(&scratch, ">",
@@ -855,12 +825,8 @@ void drawActionMenuFrame(const ActionMenuView &v) {
 }
 
 void EEMEngine::doProfilePicker() {
-	// `screen8_handler @ 1c33:1012` — walks *.PLR (max 25), reads 12-byte
-	// player-name field, hands list to `_DoChoose`. No profiles or
-	// 0xfffe/0xffff sentinel enters `_NewPlayer`.
 	_profileCreatedThisSession = false;
 
-	// `screen8_handler` does `_FadeOut(); _GetPalette(0); _GetBackground(0x104)`.
 	setSitePalette(0);
 
 	const SaveStateList saves = listProfiles();
@@ -880,11 +846,6 @@ void EEMEngine::doProfilePicker() {
 		return;
 	}
 
-	// Existing profiles only — the original `screen8_handler @ 1c33:1012`
-	// passes the bare *.PLR list to `_DoChoose` with NO synthesized "new
-	// player" entry. _DoChoose returns 0xfffe / 0xffff for the bottom click
-	// rect @ 29be:0d08 / ESC, which routes to `_NewPlayer` (handled below
-	// via kChooserNewPlayerRect / KEYCODE_ESCAPE).
 	Common::Array<ProfilePickerEntry> entries;
 	for (const SaveStateDescriptor &s : saves) {
 		ProfilePickerEntry e;
@@ -903,8 +864,6 @@ void EEMEngine::doProfilePicker() {
 	const bool haveReveal =
 		_picsArchive.getPicture(kProfilePickerRevealPic, reveal);
 
-	// Geometry: list origin (61, 35), 10 px/row, 12 visible. PIC 0x105
-	// slides into lower strip via `screen8_handler` before `_DoChoose`.
 	ProfilePickerView view;
 	view.vm = this;
 	view.bg = &bg;
@@ -1000,7 +959,6 @@ void EEMEngine::doProfilePicker() {
 					break;
 				}
 				if (kChooserHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// `screen8_handler` sets Chelp=0 — button ignored.
 					break;
 				}
 				if (kChooserListRect.contains(ev.mouse.x, ev.mouse.y)) {
@@ -1047,7 +1005,6 @@ void EEMEngine::doProfilePicker() {
 		return;
 	}
 
-	// `_LoadPlayerRecord @ 1c33:1281`.
 	const ProfilePickerEntry &e = entries[sel];
 	if (loadProfile(e.label)) {
 		_profileCreatedThisSession = false;
@@ -1060,10 +1017,8 @@ void EEMEngine::doProfilePicker() {
 			doNewPlayer();
 	}
 }
-
+// `_NewPlayer @ 1c33:0dda`
 void EEMEngine::doNewPlayer() {
-	// `_NewPlayer @ 1c33:0dda` — BG 0x104 + peek pic 0x107, prompt for
-	// up to 12 chars.
 	_profileCreatedThisSession = false;
 	if (!_font.isLoaded()) {
 		_playerName = "Detective";
@@ -1106,8 +1061,6 @@ void EEMEngine::doNewPlayer() {
 			if (k == Common::KEYCODE_RETURN) {
 				if (name.empty())
 					name = "Detective";
-				// `_NewPlayer @ 1c33:0fa0+`: `_LoadPlayerRecord` → if
-				// missing, zero state and `_SavePlayerRecord`.
 				if (loadProfile(name)) {
 					_profileCreatedThisSession = false;
 				} else {
@@ -1115,7 +1068,6 @@ void EEMEngine::doNewPlayer() {
 					memset(_mysteriesSolved, 0, sizeof(_mysteriesSolved));
 					_mystery.clear();
 					_partner = kPartnerJake;
-					// `_NewPlayer @ 1c33:0fa3`: DAT_2d5d_3f99 = 1 (Junior).
 					_chainStage = 1;
 					saveProfile(name);
 					_profileCreatedThisSession = true;
@@ -1151,26 +1103,8 @@ void EEMEngine::doNewPlayer() {
 
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
-
+// `_DisplayEnding @ 1df2:0548` + `_DisplayEndingPage @ 1df2:044c`
 int EEMEngine::doShowEnding(uint num, bool firstPage) {
-	// `_DisplayEnding @ 1df2:0548` + `_DisplayEndingPage @ 1df2:044c`
-	// (CD); `FUN_1d40_05b7` + `FUN_1d40_031e` (floppy).
-	// CD E<num>.BIN format:
-	//   u16 pageCount
-	//   per page: u16 picNum
-	//             u16 x1, y1, x2, y2   (story rect — passed to WordWrap2)
-	//             char text[]          (null-terminated, ParseString opcodes)
-	// Floppy: small title header + shared newspaper BG (PIC 0x8b) +
-	//   per-page overlay pictures.
-	// Render: _FreeFont; _LoadFont("tiny.fnt") @ 1df2:055f; _GetPalette(0);
-	// per-page _GetBackground(picNum) + _WordWrap2(x1, y1, x2-x1, text,
-	// fontColor=0, dropColor=-1). fontColor=0 is the newspaper body-text
-	// colour (asm 1df2:04cf-04f4 — Ghidra mis-paired the trailing args).
-	// LEFT/RIGHT page nav (1df2:0689 / 06a0): boundary sets [BP-0x18] to
-	// -1 / +1 — that return value drives `_ShowScrapbook` walking forward/
-	// back through solved mysteries (1f78:0664-069c).
-	// firstPage=false opens at LAST page (used by doShowScrapbook after
-	// "previous mystery"; matches `local_8 = 0` @ 1f78:067e).
 	const Common::String fname = Common::String::format("E%u.BIN", num);
 	Common::File f;
 	if (!f.open(Common::Path(fname))) {
@@ -1189,18 +1123,16 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 		return 0;
 	}
 
-	// 1df2:0558-056a: TINY.FNT; restored at 1df2:0625.
 	EEMFont tinyFont;
 	const bool haveTinyFont = tinyFont.load(Common::Path("TINY.FNT"));
 	if (!haveTinyFont)
 		warning("doShowEnding: TINY.FNT failed to load — falling back");
 
-	// 1df2:055f `_GetPalette(0)` — newspaper CLUT (body text = idx 0).
 	setSitePalette(0);
 	CursorMan.showMouse(true);
 
 	const bool floppyEnding = isFloppy();
-	uint pageOffsets[8];   // ENDING_RANGE_MAX from `_DisplayEnding`
+	uint pageOffsets[8];
 	const uint pageOffsetCap =
 		(uint)(sizeof(pageOffsets) / sizeof(pageOffsets[0]));
 	uint validPages = 0;
@@ -1264,7 +1196,7 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 		_picsArchive.getPicture(kFirstTryBadgePic, firstTryBadge);
 
 	uint pageIdx = firstPage ? 0 : (validPages - 1);
-	int direction = 0;     // -1 / 0 / +1, see header doc.
+	int direction = 0;
 	bool exitLoop = false;
 	bool dirty = true;
 	const Common::Point mousePos = g_system->getEventManager()->getMousePos();
@@ -1334,10 +1266,8 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 									  kFirstTryBadgePos, transp);
 			}
 
-			// `_ParseString` placeholders (0x80=name, 0x82=partner first).
 			const Common::String text = parseString(raw, _playerName, _partner);
 
-			// TINY.FNT + color 0 (asm 1df2:04cf — not 0xF as Ghidra shows).
 			const EEMFont &renderFont = haveTinyFont ? tinyFont : _font;
 			if (renderFont.isLoaded() && x2 > x1) {
 				const int textW = MIN<int>((int)x2 - (int)x1, kScreenWidth - (int)x1);
@@ -1430,13 +1360,9 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 	setInteractiveMouseCursor(false);
 	return direction;
 }
-
+// EEM1 `_ShowScrapbook(stage, 0) @ 1f78:0642`; EEM2/London scrapbook `2046::09dd`.
 void EEMEngine::doShowScrapbook(uint stage) {
-	// EEM1 `_ShowScrapbook(stage, 0) @ 1f78:0642`; EEM2/London scrapbook
-	// `FUN_2046_09dd`. Ending viewer returns -1/0/+1 for prev/close/next;
-	// current tier skips unsolved entries. Tier sizes are variant-specific
-	// (EEM1: 24/24/6 cases over three books; London: 25/25 over two books,
-	// no BOOK3.NME) — `mysteryTierRange` returns false for London stage 3.
+
 	uint tierLo = 0, tierHi = 0;
 	if (stage < 1 || !mysteryTierRange(stage, tierLo, tierHi))
 		return;
@@ -1448,11 +1374,6 @@ void EEMEngine::doShowScrapbook(uint stage) {
 		return;
 	const bool currentTier = (stage == _chainStage);
 
-	// `_ShowScrapbook @ 2046:0874` (EEM2) opens with the scrapbook/newspaper
-	// MIDI tune 0x5d (same one `_ShowOneScrap` plays after a correct accusation),
-	// gated on the voice flag + MIDI availability (DOS `DAT_3036_4c4e`/`146a` —
-	// the original gates this music on the *voice* toggle, not the music one).
-	// London only; EEM1's seg-1f78 scrapbook was not verified to play it.
 	if (isLondon() && _music && _voiceOn)
 		_music->playMus(0x5d, /* loop= */ false);
 
@@ -1493,40 +1414,16 @@ void EEMEngine::doShowScrapbook(uint stage) {
 			break;
 		}
 	}
-	// `_ShowScrapbook` / `_ShowOneScrap` stop the MIDI on the way out.
 	if (isLondon() && _music)
 		stopMusic();
 }
-
+// `_DoSetup @ 1f78:044e` (CD) / `_DoSetup_Floppy @ 1ee2:0387`.
 void EEMEngine::doSetup() {
-	// `_DoSetup @ 1f78:044e` (CD) / `_DoSetup_Floppy @ 1ee2:0387`.
-	// PIC 0x40 BG with labels baked in palette key 0xFE; `_SetupSettings
-	// @ 1f78:000d` runs `_SwapColors @ 172b:1d2a` per label rect
-	// (0x15 active, 0x00 inactive — nothing drawn as text). 13× 8-byte
-	// click rects at `_SetupButtons @ 29be:1218` (CD) / 2608:0d8c (floppy);
-	// `HandleSetupButton @ 1f78:0158` dispatches via 12-entry jumptable
-	// at 1f78:0436. Rect map (x1, y1, x2, y2 — handler):
-	//   [0]  ( 20, 44, 39, 61)   Partner toggle (1f78:017a)
-	//   [1]  ( 20, 87, 39,104)   Voice toggle   (1f78:0196 → DAT_2d5d_3f97)
-	//   [2]  ( 20,127, 39,144)   back to profile (NextScreen=8)
-	//   [3]  (281, 43,299, 60)   ScrapBook 1   (_ShowScrapbook(0,1))
-	//   [4]  (281, 62,299, 79)   ScrapBook 2   gated chainStage>=2
-	//   [5]  (281, 81,299, 98)   ScrapBook 3   gated chainStage>=3
-	//   [6]  (281,108,299,125)   Save game     (_SaveGame @ 2404:0c87)
-	//   [7]  (281,127,299,144)   New Case      (NextScreen=0xa)
-	//   [8]  ( 53,153,108,183)   Done          (SI=1, exit)
-	//   [9]  (145,163,174,187)   Help          (_InterfaceHelp(1))
-	//   [10] (212,153,266,184)   Quit          (_AreYouSure → NextScreen=0xffff)
-	//   [11] ( 81, 25,238, 37)   Credits       (PIC 0x208 fullscreen)
-	//   [12] ( 11,  1,  3,  3)   debug placeholder
-	// Highlight rects (Kid1/Kid2/SoundOn/SoundOff @ 29be:1320..1338) drive
-	// `_SwapColors` only — not click targets in the original.
 	if (!_font.isLoaded()) {
 		_nextScreen = (ScreenId)_lastScreen;
 		return;
 	}
 
-	// Original button rects (`_SetupButtons` indices wired here).
 	const Common::Rect kPartnerBtn   ( 20,  44,  39,  61); // [0]
 	const Common::Rect kVoiceBtn     ( 20,  87,  39, 104); // [1]
 	const Common::Rect kProfileBtn   ( 20, 127,  39, 144); // [2]
@@ -1539,7 +1436,7 @@ void EEMEngine::doSetup() {
 	const Common::Rect kHelpBtn      (145, 163, 174, 187); // [9]
 	const Common::Rect kQuitBtn      (212, 153, 266, 184); // [10]
 	const Common::Rect kCreditsBtn   ( 81,  25, 238,  37); // [11]
-	// Highlight / fallback-click rects (file-scope copies in `kSetup*Rect`).
+
 	const Common::Rect &kKid1Rect     = kSetupKid1Rect;
 	const Common::Rect &kKid2Rect     = kSetupKid2Rect;
 	const Common::Rect &kSoundOnRect  = kSetupSoundOnRect;
@@ -1547,7 +1444,7 @@ void EEMEngine::doSetup() {
 
 	setupDrawScreen();
 
-	_nextScreen = kScreenSetup;  // sentinel — setupLeave picks target
+	_nextScreen = kScreenSetup;
 	while (!shouldQuit()) {
 		Common::Event ev;
 		bool dirty = false;
@@ -1569,8 +1466,6 @@ void EEMEngine::doSetup() {
 			const int mx = ev.mouse.x;
 			const int my = ev.mouse.y;
 
-			// Partner toggle [0]. Direct Jake/Jenny label clicks are a
-			// ScummVM-only fallback.
 			if (kPartnerBtn.contains(mx, my)) {
 				_partner = _partner == kPartnerJake ? kPartnerJenny : kPartnerJake;
 				dirty = true;
@@ -1591,7 +1486,6 @@ void EEMEngine::doSetup() {
 				continue;
 			}
 
-			// Voice toggle [1].
 			if (kVoiceBtn.contains(mx, my)) {
 				_voiceOn = !_voiceOn;
 				if (_audio)
@@ -1618,46 +1512,35 @@ void EEMEngine::doSetup() {
 				continue;
 			}
 
-			// New Case [7] @ 1f78:01ad → NextScreen=0xa (CHOOSE_MYSTERY).
 			if (kNewCaseBtn.contains(mx, my)) {
 				saveProfile(_playerName);
 				_nextScreen = kScreenChooseMystery;
 				return;
 			}
 
-			// Save [6] — `_SaveGame @ 2404:0c87`.
 			if (kSaveBtn.contains(mx, my)) {
 				saveProfile(_playerName);
 				continue;
 			}
 
-			// Done [8] — MOV SI,1; JMP exit (NextScreen stays = LastScreen).
 			if (kDoneBtn.contains(mx, my)) {
 				setupLeave();
 				return;
 			}
 
-			// Quit [10] — `_AreYouSure(0)` → NextScreen=0xffff.
 			if (kQuitBtn.contains(mx, my)) {
 				if (areYouSure()) {
 					_nextScreen = kScreenInvalid;
 					return;
 				}
-				dirty = true;  // restore the BG after the prompt
+				dirty = true;
 				continue;
 			}
 
-			// Help [9] — `_InterfaceHelp(1) @ 1560:0205`. Help-pic table
-			// @ 29be:00c8: each `num` slot = 5 bytes (count + two u16
-			// PIC IDs). num=1 → count=2, pics = {0x0192, 0x01B1}. Each
-			// pic blitted via `_Rect_Move_Mask` (transparent = pic
-			// `miscflags >> 8`, so setup BG shows through). Also hides
-			// cursor (1560:0216-021c). ESC breaks (1560:02b3).
 			if (kHelpBtn.contains(mx, my)) {
 				static const uint16 kHelp1Pics[] = { 0x0192, 0x01B1 };
 				CursorMan.showMouse(false);
 				for (uint i = 0; i < ARRAYSIZE(kHelp1Pics); i++) {
-					// Restore BG between cards (1560:02e5 `_vga_fvidvid(0)`).
 					setupDrawScreen();
 					const Common::KeyCode k =
 						setupShowFullscreenPic(kHelp1Pics[i], /* transparent= */ true);
@@ -1669,7 +1552,6 @@ void EEMEngine::doSetup() {
 				continue;
 			}
 
-			// Credits [11] @ 1f78:025a — PIC 0x208 fullscreen.
 			if (kCreditsBtn.contains(mx, my)) {
 				CursorMan.showMouse(false);
 				setupShowFullscreenPic(0x208, /* transparent= */ false);
@@ -1680,14 +1562,12 @@ void EEMEngine::doSetup() {
 				continue;
 			}
 
-			// Profile [2] — NextScreen=8.
 			if (kProfileBtn.contains(mx, my)) {
 				saveProfile(_playerName);
 				_nextScreen = kScreenProfile;
 				return;
 			}
 
-			// ScrapBook [3]/[4]/[5] — `_ShowScrapbook(stage, 0)`.
 			if (kScrap1Btn.contains(mx, my)) {
 				doShowScrapbook(1);
 				setSitePalette(0);
@@ -1700,7 +1580,7 @@ void EEMEngine::doSetup() {
 				dirty = true;
 				continue;
 			}
-			// London has no third book (`mysteryTierRange` rejects stage 3).
+
 			if (kScrap3Btn.contains(mx, my) && !isLondon() &&
 				_chainStage >= 3) {
 				doShowScrapbook(3);
@@ -1741,9 +1621,6 @@ void EEMEngine::setupDrawScreen() {
 	g_system->updateScreen();
 }
 
-// Render picId and block until input. transparent=true: overlay via
-// `_Rect_Move_Mask` (`_InterfaceHelp @ 1560:0205`). false: raw fullscreen
-// blit via `_vga_fbuffvid` (credits @ 1f78:0281).
 Common::KeyCode EEMEngine::setupShowFullscreenPic(uint16 picId, bool transparent) {
 	Picture pic;
 	if (!_picsArchive.getPicture(picId, pic)) {
@@ -1759,7 +1636,6 @@ Common::KeyCode EEMEngine::setupShowFullscreenPic(uint16 picId, bool transparent
 			g_system->unlockScreen();
 		}
 		const byte transp = (byte)(pic.flags >> 8);
-		// Explicit destPos — no-destPos overload stretches to dst.
 		scratch.transBlitFrom(pic.surface, Common::Point(0, 0),
 							  (uint32)transp);
 	} else {
@@ -1786,8 +1662,6 @@ Common::KeyCode EEMEngine::setupShowFullscreenPic(uint16 picId, bool transparent
 }
 
 void EEMEngine::setupLeave() {
-	// `_DoSetup` entry: _NextScreen = _LastScreen. Fall back to it
-	// unless a handler already overrode _nextScreen.
 	if (_nextScreen == kScreenSetup) {
 		_nextScreen = (ScreenId)_lastScreen;
 		if (_nextScreen == kScreenSetup ||
@@ -1796,10 +1670,8 @@ void EEMEngine::setupLeave() {
 	}
 	saveProfile(_playerName);
 }
-
+// `_SetupSettings @ 2046:0008`
 void EEMEngine::setupDrawScreenLondon() {
-	// `_SetupSettings @ 2046:0008`: BG PIC 0x40 + _SwapColors highlights for the
-	// 4 toggles (key 0xFE, 0x15 active / 0x00 dim), drawn ON-then-OFF.
 	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
@@ -1808,16 +1680,16 @@ void EEMEngine::setupDrawScreenLondon() {
 		scratch.simpleBlitFrom(bg.surface);
 
 	const byte kKey = 0xFE, kBright = 0x15, kDim = 0x00;
-	// Partner (DAT_3036_4bd4).
+
 	swapColors(scratch, kLonSetJake,  kKey, _partner == kPartnerJake  ? kBright : kDim);
 	swapColors(scratch, kLonSetJenny, kKey, _partner == kPartnerJenny ? kBright : kDim);
-	// Voice (DAT_3036_4c4e).
+
 	swapColors(scratch, kLonSetVoiceOn,  kKey, _voiceOn ? kBright : kDim);
 	swapColors(scratch, kLonSetVoiceOff, kKey, _voiceOn ? kDim : kBright);
-	// Music (DAT_3036_4cc0).
+
 	swapColors(scratch, kLonSetMusicOn,  kKey, _musicOn ? kBright : kDim);
 	swapColors(scratch, kLonSetMusicOff, kKey, _musicOn ? kDim : kBright);
-	// Highlight boxes (DAT_3036_4c4a; hide_highlight_boxes is the inverse).
+
 	const bool hiOn = !ConfMan.getBool("hide_highlight_boxes");
 	swapColors(scratch, kLonSetHiOn,  kKey, hiOn ? kBright : kDim);
 	swapColors(scratch, kLonSetHiOff, kKey, hiOn ? kDim : kBright);
@@ -1827,16 +1699,8 @@ void EEMEngine::setupDrawScreenLondon() {
 	g_system->updateScreen();
 }
 
+// `_DoSetup @ 2046:067b`
 void EEMEngine::doSetupLondon() {
-	// `_DoSetup @ 2046:067b`. BG PIC 0x40; 13 click rects (`_SetupButtons @
-	// 2bca:12ce`); `HandleSetupButton @ 2046:01d9` dispatch (verified from the
-	// jumptable @ 2046:0661). EEM2 has FOUR toggles vs EEM1's two and a
-	// rearranged left column:
-	//   [0]( 20, 44) Partner    [1]( 20, 63) Voice    [2]( 20,101) Highlight boxes
-	//   [3]( 20,127) Profile(8) [12](20, 82) Music    [4](281, 43) ScrapBook +
-	//   [5](281, 62) ScrapBook- [6](281,108) Save     [7](281,127) New case(0xa)
-	//   [8]( 53,153) Done       [9](145,163) Quit      [10](212,153) Help
-	//   [11]( 81, 25) Credits (PIC 0x208).  _SavePlayerRecord on exit (setupLeave).
 	if (!_font.isLoaded()) {
 		_nextScreen = (ScreenId)_lastScreen;
 		return;
@@ -1856,7 +1720,7 @@ void EEMEngine::doSetupLondon() {
 	const Common::Rect kMusicBtn   ( 20,  82,  38,  99); // [12]
 
 	setupDrawScreenLondon();
-	_nextScreen = kScreenSetup;  // sentinel — setupLeave picks the target
+	_nextScreen = kScreenSetup;
 	while (!shouldQuit()) {
 		Common::Event ev;
 		bool dirty = false;
@@ -1876,7 +1740,6 @@ void EEMEngine::doSetupLondon() {
 				continue;
 			const int mx = ev.mouse.x, my = ev.mouse.y;
 
-			// --- toggles (stay on screen, re-render) ---
 			if (kPartnerBtn.contains(mx, my)) {
 				_partner = (_partner == kPartnerJake) ? kPartnerJenny
 													  : kPartnerJake;
@@ -1904,7 +1767,6 @@ void EEMEngine::doSetupLondon() {
 				continue;
 			}
 
-			// --- navigation (leave the screen) ---
 			if (kProfileBtn.contains(mx, my)) {
 				saveProfile(_playerName);
 				_nextScreen = kScreenProfile;
@@ -1924,19 +1786,16 @@ void EEMEngine::doSetupLondon() {
 					_nextScreen = kScreenInvalid;
 					return;
 				}
-				dirty = true;  // restore BG under the prompt
+				dirty = true;
 				continue;
 			}
 
-			// --- actions that stay on screen ---
 			if (kSaveBtn.contains(mx, my)) {
-				// `_SaveGame` is gated on a game being active ([0x1966]).
 				if (_mystery.isLoaded())
 					saveProfile(_playerName);
 				continue;
 			}
 			if (kHelpBtn.contains(mx, my)) {
-				// `_InterfaceHelp(0)`. Reuse the EEM1 help-card mechanism.
 				static const uint16 kHelpPics[] = { 0x0192, 0x01B1 };
 				CursorMan.showMouse(false);
 				for (uint i = 0; i < ARRAYSIZE(kHelpPics); i++) {
@@ -1957,8 +1816,7 @@ void EEMEngine::doSetupLondon() {
 				dirty = true;
 				continue;
 			}
-			// ScrapBook +/- — London has 2 books (stage 1 / 2). The DOS pages
-			// next/prev (FUN_2046_0874); map to the two available books.
+
 			if (kScrapNext.contains(mx, my)) {
 				doShowScrapbook(1);
 				setSitePalette(0);
@@ -1978,11 +1836,8 @@ void EEMEngine::doSetupLondon() {
 		g_system->delayMillis(15);
 	}
 }
-
+// `_ActionScreen @ 1c33:195b`
 void EEMEngine::doActionScreen() {
-	// `_ActionScreen @ 1c33:195b` — BG PIC 0x104 + PIC 9 @ (10, 0x87),
-	// `_DoChoose` with ActionNames @ 29be:0d6a. 5 picks alternating with
-	// separators.
 	enum MenuPick {
 		kPickChoose = 0,
 		kPickPractice,
@@ -2008,14 +1863,8 @@ void EEMEngine::doActionScreen() {
 	};
 	const char * const *kPickLabel = isSpanish() ? kPickLabelES : kPickLabelEN;
 	// London has no BOOK3.NME, so its action menu offers four entries
-	// (Choose / Practice / ScrapBook 1 / ScrapBook 2). EEM1 adds ScrapBook 3.
 	const uint numPicks = isLondon() ? (uint)kPickScrap3 : (uint)kNumPicks;
 
-	// Gating @ EEM1 1c33:19d1-1a70 by chain stage + per-tier solves:
-	//   stage 1: grey SB2/3; SB1 needs any tier-1 solve
-	//   stage 2: grey Practice + SB3; SB2 needs tier-2 solve
-	//   stage 3: grey Practice; SB3 needs tier-3 solve (EEM1 only)
-	//   stage 4: grey Choose + Practice
 	uint loT = 0, hiT = 0;
 	const bool anySolved1 = mysteryTierRange(1, loT, hiT) &&
 							anyMysterySolved(loT, hiT);
@@ -2035,7 +1884,7 @@ void EEMEngine::doActionScreen() {
 	const bool kPickEnabled[kNumPicks] = {
 		chooseOn, practiceOn, scrap1On, scrap2On, scrap3On
 	};
-	// Seed selection on first enabled entry.
+
 	uint pick = 0;
 	for (uint i = 0; i < numPicks; i++) {
 		if (kPickEnabled[i]) {
@@ -2046,7 +1895,6 @@ void EEMEngine::doActionScreen() {
 
 	const char *kSeparator = "----------------------------------";
 
-	// `_DoChoose @ 1c33:0514` click rects (4×u16 {x1,y1,x2,y2} in seg 29be):
 	const Common::Rect kOkRect      ( 12,  63,  41,  87); // 29be:0cd8 confirm
 	const Common::Rect kHelpRect    ( 12, 100,  41, 124); // 29be:0ce0 help
 	const Common::Rect kExitRect    ( 12, 137,  41, 161); // 29be:0ce8 cancel
@@ -2054,7 +1902,6 @@ void EEMEngine::doActionScreen() {
 
 	CursorMan.showMouse(true);
 
-	// Launcher-resume path can enter from `_AllBlack` palette.
 	setSitePalette(0);
 
 	Picture bg;
@@ -2087,7 +1934,6 @@ void EEMEngine::doActionScreen() {
 				return;
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
 				if (kOkRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// Greyed entries ignored (`_DoChoose @ 1c33:0635`).
 					if (kPickEnabled[pick])
 						confirmed = true;
 					break;
@@ -2098,7 +1944,6 @@ void EEMEngine::doActionScreen() {
 					break;
 				}
 				if (kHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// `_ActionScreen` sets Chelp=0.
 					continue;
 				}
 				if (kListRect.contains(ev.mouse.x, ev.mouse.y)) {
@@ -2129,7 +1974,6 @@ void EEMEngine::doActionScreen() {
 				break;
 			}
 			if (k == Common::KEYCODE_UP || k == Common::KEYCODE_LEFT) {
-				// `_DoChoose` arrow handlers @ 1c33:0514, bounded loop.
 				for (int i = 0; i < (int)numPicks; i++) {
 					pick = (pick == 0) ? (numPicks - 1) : pick - 1;
 					if (kPickEnabled[pick])
@@ -2179,7 +2023,6 @@ void EEMEngine::doActionScreen() {
 		return;
 	}
 
-	// "Practice Mystery" is the tutorial → mystery 0.
 	if (pick == kPickPractice) {
 		if (!_mystery.load(0, &_rng)) {
 			warning("doActionScreen: failed to load practice mystery");
@@ -2194,8 +2037,6 @@ void EEMEngine::doActionScreen() {
 	}
 
 	if (pick == kPickScrap1 || pick == kPickScrap2 || pick == kPickScrap3) {
-		// `_ActionScreen` handlers @ 1c33:1B13 / 1B26 / 1B40 →
-		// `_ShowScrapbook(0, stage)`. Returns here afterwards.
 		const uint stage = (pick == kPickScrap1) ? 1
 						 : (pick == kPickScrap2) ? 2 : 3;
 		doShowScrapbook(stage);
@@ -2207,11 +2048,9 @@ void EEMEngine::doActionScreen() {
 
 	_nextScreen = kScreenChooseMystery;
 }
-
+// EEM1: `_DoChooseMystery @ 1a35:02b7` + `_CaseSelection @ 1c33:0a87`
+// EEM2:  1abf:022a + 1cd3:0a9d)
 void EEMEngine::doCaseSelection() {
-	// `_DoChooseMystery @ 1a35:02b7` + `_CaseSelection @ 1c33:0a87`
-	// (EEM2 @ 1abf:022a / 1cd3:0a9d): load BOOK<stage>.NME, draw PIC 0x41
-	// + centered "Book N" title, then read the chosen M*.BIN.
 	const uint kMaxMystery = isLondon() ? 50 : 54;
 
 	CursorMan.showMouse(true);
@@ -2225,7 +2064,6 @@ void EEMEngine::doCaseSelection() {
 	const bool haveRevealPic =
 		_picsArchive.getPicture(kCaseSelectionRevealPic, revealPic);
 
-	// `_CaseSelection @ 1c33:0a87` greeter ANI 0x15 (Jake) / 0x16 (Jenny).
 	const uint kKdAniId = (_partner == kPartnerJake) ? 0x15 : 0x16;
 	Animation kdAnim;
 	const bool haveKdAnim = _aniArchive.loadAnimation(kKdAniId, kdAnim)
@@ -2233,12 +2071,6 @@ void EEMEngine::doCaseSelection() {
 	const int kKdAnimX = 0x112;
 	const int kKdAnimY = 0x50;
 
-	// Tier → BOOK<n>.NME. EEM1 ships three books (Junior 1..24, Senior
-	// 25..48, Master 49..54); EEM2/London ships two (1..25 / 26..50). London
-	// has no BOOK3.NME, and its stage 3 is transient (`_DisplayCorrect @
-	// 1ea1:0619` collapses it to 4), so should it ever be reached here it
-	// reuses BOOK2.NME rather than opening a missing file. `mysteryTierRange`
-	// is the single source of truth for the per-tier mystery ranges.
 	uint book;
 	switch (_chainStage) {
 	case 2:  book = 2; break;
@@ -2257,7 +2089,6 @@ void EEMEngine::doCaseSelection() {
 	}
 	const uint listLen = MIN<uint>((uint)names.size(), stageHi - stageLo + 1);
 
-	// Solved-row gating @ `_DoChoose @ 1c33:0521`.
 	Common::Array<bool> solvedFlags;
 	solvedFlags.resize(listLen);
 	for (uint i = 0; i < listLen; i++) {
@@ -2321,8 +2152,6 @@ void EEMEngine::doCaseSelection() {
 					return;
 				}
 				if (kChooserHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// Original returns 0xfffe → `_ChooseSavedGame`. ScummVM
-					// stores in-progress cases per profile.
 					saveProfile(_playerName);
 					_mystery.clear();
 					_nextScreen = kScreenProfile;
@@ -2452,39 +2281,38 @@ void EEMEngine::doCaseSelection() {
 	debugC(1, kDebugMystery, "Mystery %u loaded; %u sites, %u suspects",
 		   mn, _mystery.numSites(), _mystery.numSuspects());
 }
+// `_DoNotebook @ 161e:0500` + `_DrawNotes @ 161e:01d0` +
+// `_HandleNoteButton @ 161e:03cb`. _NotebookRect = (78, 12, 288, 152).
+// _NoteButtons @ 29be:0147 — 11 rects × 8 bytes. Jumptable @ 161e:04ec
+// dispatches handler[i-1] (rect 0's i-1 underflows = decorative slot):
+//   [0] (134,174,155,190)  decorative — no handler
+//   [1] ( 93,174,115,190)  HELP → `_InterfaceHelp(0)`           (0x3f9)
+//   [2] (157,174,178,190)  GALLERY → `_NextScreen = 5`          (0x477)
+//   [3] (  5, 80, 44,110)  host hint → `_KDHelp`                (0x403)
+//   [4] (180,174,201,190)  SOLVE → `_SolvedCheck` → NextScreen=7 (0x436)
+//   [5] (204,174,224,190)  PAGE NEXT → `_EraseNotes` + redraw   (0x489)
+//   [6] (226,174,247,190)  PAGE PREV → CurrentPage-- + redraw   (0x4ab)
+//   [7] (  7,177, 57,200)  MAP → `_NextScreen = 2`              (0x480)
+//   [8] ( 35,111, 56,136)  SITE → `_NextScreen = 3`             (0x3ed)
+//   [9] (  0,  0,  0,  0)  same exit as [8]
+//   [10] (267,174,288,190) → `_InterfaceHelp(0)` again          (0x3f9)
+//
+// EEM2/London (`_DoNotebook @ 16a0:0517`, `_HandleNoteButton @ 16a0:03dd`,
+// jumptable @ 16a0:0503) reuses the SAME button rect table (2bca:0151) and
+// handler set, but reassigns two slots and revives slot 9 (verified by
+// disassembly — `[0x9292]` is the next-screen code):
+//   [1] ( 93,174,115,190) MAP  → screen 2  (EEM1: a 2nd InterfaceHelp).
+//                         London's dedicated map button.
+//   [7] (  7,177, 57,200) DOS EEM2 → SITE, but we keep it as MAP (→ 2) in
+//                         both variants — the EEM1 partner-foot map shortcut
+//                         (a player convenience alongside button [1]).
+//   [9] (  0,  0, 66, 79) SITE → screen 3  (EEM1: dead 0-rect)
+// Everything else (gallery, accuse, host hint, page next/prev, help [10],
+// site [8]) is identical. The note rendering, pagination, partner ANI
+// (same 1/0xb), and gizmo colour-cycle are shared as-is; only button [1]
+// (London → map) and the extra close area [9] are gated on `isLondon()`.
 
 void EEMEngine::doNotebook() {
-	// `_DoNotebook @ 161e:0500` + `_DrawNotes @ 161e:01d0` +
-	// `_HandleNoteButton @ 161e:03cb`. _NotebookRect = (78, 12, 288, 152).
-	// _NoteButtons @ 29be:0147 — 11 rects × 8 bytes. Jumptable @ 161e:04ec
-	// dispatches handler[i-1] (rect 0's i-1 underflows = decorative slot):
-	//   [0] (134,174,155,190)  decorative — no handler
-	//   [1] ( 93,174,115,190)  HELP → `_InterfaceHelp(0)`           (0x3f9)
-	//   [2] (157,174,178,190)  GALLERY → `_NextScreen = 5`          (0x477)
-	//   [3] (  5, 80, 44,110)  host hint → `_KDHelp`                (0x403)
-	//   [4] (180,174,201,190)  SOLVE → `_SolvedCheck` → NextScreen=7 (0x436)
-	//   [5] (204,174,224,190)  PAGE NEXT → `_EraseNotes` + redraw   (0x489)
-	//   [6] (226,174,247,190)  PAGE PREV → CurrentPage-- + redraw   (0x4ab)
-	//   [7] (  7,177, 57,200)  MAP → `_NextScreen = 2`              (0x480)
-	//   [8] ( 35,111, 56,136)  SITE → `_NextScreen = 3`             (0x3ed)
-	//   [9] (  0,  0,  0,  0)  same exit as [8]
-	//   [10] (267,174,288,190) → `_InterfaceHelp(0)` again          (0x3f9)
-	// BG PIC 0x3f; partner ANI 1 (Jake) / 0xb (Jenny) at (5, 80).
-	//
-	// EEM2/London (`_DoNotebook @ 16a0:0517`, `_HandleNoteButton @ 16a0:03dd`,
-	// jumptable @ 16a0:0503) reuses the SAME button rect table (2bca:0151) and
-	// handler set, but reassigns two slots and revives slot 9 (verified by
-	// disassembly — `[0x9292]` is the next-screen code):
-	//   [1] ( 93,174,115,190) MAP  → screen 2  (EEM1: a 2nd InterfaceHelp).
-	//                         London's dedicated map button.
-	//   [7] (  7,177, 57,200) DOS EEM2 → SITE, but we keep it as MAP (→ 2) in
-	//                         both variants — the EEM1 partner-foot map shortcut
-	//                         (a player convenience alongside button [1]).
-	//   [9] (  0,  0, 66, 79) SITE → screen 3  (EEM1: dead 0-rect)
-	// Everything else (gallery, accuse, host hint, page next/prev, help [10],
-	// site [8]) is identical. The note rendering, pagination, partner ANI
-	// (same 1/0xb), and gizmo colour-cycle are shared as-is; only button [1]
-	// (London → map) and the extra close area [9] are gated on `isLondon()`.
 	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return;
 
@@ -2534,7 +2362,6 @@ void EEMEngine::doNotebook() {
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				// Earlier rects win on overlap (matches `_FindButton`).
 				if (kPdaSiteRect.contains(ev.mouse.x, ev.mouse.y) ||
 					(isLondon() &&
 					 kPdaLondonCloseRect.contains(ev.mouse.x, ev.mouse.y))) {
@@ -2543,19 +2370,13 @@ void EEMEngine::doNotebook() {
 					break;  // back to site
 				}
 				if (kPdaPartnerFootMapRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// EEM1 `_NoteButtons[7]` → map (screen 2). DOS EEM2 reassigns
-					// this slot to SITE, but we intentionally keep the partner-
-					// foot hotspot as a map shortcut in BOTH variants for parity
-					// with EEM1. London also has its own dedicated map button
-					// (`kPdaHelpRect` below) and can still close the PDA via the
-					// site button (35,111) or the top-left corner (0,0,66,79).
 					_nextScreen = kScreenMapAlt;
 					exitFlag = true;
 					break;
 				}
 				if (kPdaPartnerHeadHintRect.contains(ev.mouse.x, ev.mouse.y)) {
 					setInteractiveMouseCursor(false);
-					doHelp();              // _KDHelp = host hint
+					doHelp();
 					dirty = true;
 					continue;
 				}
@@ -2570,9 +2391,6 @@ void EEMEngine::doNotebook() {
 					break;
 				}
 				if (kPdaHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// `_NoteButtons[1]`. EEM1: a 2nd `_InterfaceHelp(0)` button
-					// (PICs 0x63 / 0x1ae). London reassigns this slot to MAP
-					// (`_HandleNoteButton` slot 1 → screen 2).
 					if (isLondon()) {
 						_nextScreen = kScreenMapAlt;
 						exitFlag = true;
@@ -2595,31 +2413,23 @@ void EEMEngine::doNotebook() {
 					continue;
 				}
 				if (kPdaHelp2Rect.contains(ev.mouse.x, ev.mouse.y)) {
-					// _NoteButtons[10] → handler 0x03f9 = same as [1].
 					setInteractiveMouseCursor(false);
 					doInterfaceHelp(0);
 					dirty = true;
 					continue;
 				}
-				// The notebook screen is read-only in the original:
-				// `_DoNotebook @ 161e:0500` only checks clicks against
-				// `_NoteButtons` (11 rects). Clue toggling lives in the
-				// accuse screen.
 			}
 		}
 		if (exitFlag)
 			break;
 
 		const uint32 now = g_system->getMillis();
-		// Re-render every 100 ms for partner sprite cycle.
 		if (dirty || now - lastDraw >= 100) {
 			drawNotebookFrame(page);
 			lastDraw = now;
 			mouse = g_system->getEventManager()->getMousePos();
 			setInteractiveMouseCursor(notebookButtonAt(mouse.x, mouse.y));
 		}
-		// _GizmoColorCycle @ 1c33:0002 — `_DoNotebook` rotates 0x6f..0x73 each
-		// _CheckFrameRate tick (the PDA gizmo / LED indicator shimmer).
 		if (now - gizmoLastTick >= kChooserCycleMillis) {
 			gizmoLastTick = now;
 			cycleChooserPalette();
@@ -2647,9 +2457,6 @@ Common::String EEMEngine::notebookNoteText(uint clueId, const byte *ni,
 		return parseString(Common::String(p, len),
 						   _playerName, _partner);
 	}
-	// EEM1 CD: 4-byte entries (textOff at +0, points at +2). EEM2/London CD:
-	// 2-byte entries (textOff only) — `_DrawNotes @ 16a0:01de` reads
-	// `noteIndex[clueId*2]`.
 	const uint stride = isLondon() ? 2 : 4;
 	const uint16 textOff = READ_LE_UINT16(ni + clueId * stride);
 	return parseString(_mystery.textAt(textOff),
@@ -2657,8 +2464,6 @@ Common::String EEMEngine::notebookNoteText(uint clueId, const byte *ni,
 }
 
 void EEMEngine::drawNotebookFrame(int &page) {
-	// `_DrawNotes @ 161e:01d0` per-page layout + partner sprite at (5,80)
-	// from `_DoNotebook @ 161e:0500`.
 	const Common::Rect kNotebookRect(78, 12, 288, 152);
 
 	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
@@ -2669,7 +2474,6 @@ void EEMEngine::drawNotebookFrame(int &page) {
 	if (_picsArchive.getPicture(0x3f, frame))
 		scratch.simpleBlitFrom(frame.surface);
 
-	// Partner ANI 1/0xb (cells); script 0x01 (`_NewAnimation @ 161e:054c`).
 	blitPdaPartner(scratch, _aniArchive, _partner, kPdaNotebookPartner,
 				   g_system->getMillis());
 
@@ -2678,8 +2482,7 @@ void EEMEngine::drawNotebookFrame(int &page) {
 	// EEM2/London NoteIndex entries are 2 bytes (no points field), so its real
 	// clue count is the section size / 2. `noteIndexCount()` assumes the EEM1
 	// 4-byte stride (and stays that way for the accuse-scoring path, which is a
-	// separate London concern), so derive the London-correct count here — else
-	// high-id notes get dropped.
+	// separate London concern)
 	const uint16 londonCount = isLondon()
 		? (uint16)(_mystery.noteSectionSize() / 2) : 0;
 	Common::Array<uint> found;
@@ -2699,14 +2502,10 @@ void EEMEngine::drawNotebookFrame(int &page) {
 	const int kRectW = kNotebookRect.width();
 	const int kRectH = kNotebookRect.height();
 
-	// Walk forward to start clue of current page; fits as many as kRectH.
 	int clueCursor = 0;
 	Common::Array<int> pageStarts;
 	pageStarts.push_back(0);
-	// Floppy NoteIndex entry (7 bytes): +0 clueTextOff (absolute, what
-	// the notebook displays), +2 Jake spoken, +4 Jenny spoken, +6 score.
-	// `_DrawNotes_Floppy / FUN_15e0_01e8` reads only byte +0.
-	// CD entries are 4 bytes, offsets relative to TextBlock @ header[+0xc].
+
 	const bool floppyNb = isFloppy();
 	const byte *bufBase = _mystery.blobAt(0);
 	const uint32 mysSz  = _mystery.dataSize();
@@ -2735,10 +2534,6 @@ void EEMEngine::drawNotebookFrame(int &page) {
 			page = 0;
 	}
 
-	// `_DrawNotes @ 161e:01d0` is read-only on this screen — clue selection
-	// is driven exclusively from the accuse screen. The 0x3C / 0x5C colour
-	// choice still reflects `_NoteSelected[]` so picks made in accuse remain
-	// visible when the player flips back here.
 	const int startClue = (page < (int)pageStarts.size())
 							? pageStarts[page] : 0;
 	const int endClue   = (page + 1 < (int)pageStarts.size())
@@ -2764,8 +2559,6 @@ void EEMEngine::drawNotebookFrame(int &page) {
 		y += h + 7;
 	}
 
-	// `_DrawNotes @ 161e:01d0` appends a terminator line at the bottom of
-	// the last page once the clue list is exhausted — string @ 29be:01f4.
 	const bool isLastPage = (page + 1 >= (int)pageStarts.size());
 	if (isLastPage) {
 		const char *kEndMarker = isSpanish()
@@ -2780,11 +2573,6 @@ void EEMEngine::drawNotebookFrame(int &page) {
 }
 
 void EEMEngine::doGallery() {
-	// `_DoGallery @ 158f:065b` + `_DrawGallery @ 158f:0046`. BG PIC 0x3f.
-	// Partner ANI 2 (Jake) / 0x10 (Jenny) at (5, 0x50). 5 slot positions
-	// @ 29be:0x116. Per suspect i: picId = *(u16*)(_GalleryData + i*0x46);
-	// visible = _InGallery[_NewOrder[i]]; drawY = pos.y + (0x48 - pic.h)
-	// (bottom-aligned to baseline). Click → `_SearchSuspects` → moreInfo.
 	if (!_mystery.isLoaded())
 		return;
 
@@ -2796,16 +2584,13 @@ void EEMEngine::doGallery() {
 
 	CursorMan.showMouse(true);
 
-	// Pre-load PIC 0x3f for the MoreInfo backdrop blit further down.
-	// (`drawGalleryFrame` reloads it on its own per-call too.)
 	Picture galBg;
 	const bool haveBg = _picsArchive.getPicture(0x3f, galBg);
 
 	const uint8 num = _mystery.numSuspects();
 
-	// Cache slot rects for click hit-testing.
 	Common::Array<Common::Rect> slotRects;
-	Common::Array<int> slotSuspect; // logical suspect index in [0, num)
+	Common::Array<int> slotSuspect;
 	slotRects.resize(num);
 	slotSuspect.resize(num);
 	for (uint i = 0; i < num; i++) {
@@ -2877,10 +2662,6 @@ void EEMEngine::doGallery() {
 					break;
 				}
 				if (kPdaHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// EEM1 slot 1 → a 2nd `_InterfaceHelp(0)` (158f:0625).
-					// EEM2 gallery `_HandleGalleryButton @ 160e:05c7` slot 1 →
-					// MAP (`MOV [0x9292],2` @ 160e:05fe) — London's dedicated
-					// map button, same as the notebook/accuse PDA bar.
 					if (isLondon()) {
 						_nextScreen = kScreenMapAlt;
 						exitFlag = true;
@@ -2897,7 +2678,6 @@ void EEMEngine::doGallery() {
 					lastDraw = 0;
 					continue;
 				}
-				// `_SearchSuspects` — per-slot rect → suspect index.
 				bool clicked = false;
 				for (uint i = 0; i < slotRects.size(); i++) {
 					if (slotSuspect[i] < 0)
@@ -2934,7 +2714,6 @@ void EEMEngine::doGallery() {
 									  gallerySlotAt(slotRects, slotSuspect,
 													mouse.x, mouse.y));
 		}
-		// _GizmoColorCycle @ 1c33:0002 — `_DoGallery` rotates 0x6f..0x73 each tick.
 		if (now - gizmoLastTick >= kChooserCycleMillis) {
 			gizmoLastTick = now;
 			cycleChooserPalette();
@@ -2944,16 +2723,9 @@ void EEMEngine::doGallery() {
 	}
 	setInteractiveMouseCursor(false);
 }
-
+// `MoreInfo @ 158f:0419`
 bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 						  const Picture &galBg, bool haveBg) {
-	// `MoreInfo @ 158f:0419` — suspect detail. PIC = entry+0,
-	// _AddPicBackground at (0x94, 0xf), notes via _DrawGalleryNotes.
-	// CD layout (0x46-byte stride): +0 picId, +8 clueCount(u16), +0xa
-	// clue IDs(u16, 0xFFFF terminator, max 30).
-	// Floppy (`_MoreInfo_Floppy = 154e:042b` → `FUN_15e0_01e8`):
-	// variable stride. +0 picId, +2 alibi (0xFFFF = guilty), +4 count(u8),
-	// +5 clue IDs(u8).
 	const bool floppyMI = isFloppy();
 	const byte *suspect = floppyMI
 							  ? _mystery.floppySuspectEntry(suspectIdx)
@@ -2967,8 +2739,6 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 
 	setInteractiveMouseCursor(false);
 
-	// _GalleryNoteRect = (78, 93, 288, 152) @ 29be:0100.
-	// `_DrawGalleryNotes @ 158f:01f4`.
 	const int rx = 78, ry = 93;
 	const int rw = 288 - 78, rh = 152 - 93;
 	const int lineH = _font.getFontHeight();
@@ -2976,7 +2746,6 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 	const byte *ni = _mystery.noteIndex();
 	const uint16 niCount = _mystery.noteIndexCount();
 
-	// Pagination via `_NextClue` + `_PageBreaks[]` (case 6 @ 158f:03b8).
 	uint pageStart = 0;
 	Common::Array<uint> pageStack;
 	bool back = false;
@@ -2989,7 +2758,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 		ms.clear();
 		if (haveBg)
 			ms.simpleBlitFrom(galBg.surface);
-		// Partner sprite at (5, 0x50). Re-blitted per page.
+
 		blitPdaPartner(ms, _aniArchive, _partner, kPdaGalleryPartner,
 					   g_system->getMillis());
 		Picture detail;
@@ -3097,10 +2866,6 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 			}
 		}
 
-		// `_HandleMoreButton @ 158f:027d`:
-		//   [0] NOTEBOOK→4, [1] HELP→_InterfaceHelp, [2] GALLERY (close),
-		//   [3] _KDHelp, [4] ACCUSE→7, [5] PAGE_NEXT, [6] PAGE_PREV,
-		//   [7] MAP→2, [8] SITE noop, [10] HELP alt.
 		bool advance = false;
 		bool prev = false;
 		bool redraw = false;
@@ -3144,8 +2909,6 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 						break;
 					}
 					if (isLondon() && kPdaHelpRect.contains(mx, my)) {
-						// EEM2 gallery slot 1 → MAP (dedicated map button);
-						// only kPdaHelp2Rect (267,174) stays help in London.
 						_nextScreen = kScreenMapAlt;
 						exitGallery = true;
 						back = true;
@@ -3200,8 +2963,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 					break;
 				}
 			}
-			// _GizmoColorCycle @ 1c33:0002 — `MoreInfo` (158f:0480) rotates
-			// 0x6f..0x73 each tick.
+
 			const uint32 now = g_system->getMillis();
 			if (now - gizmoLastTick >= kChooserCycleMillis) {
 				gizmoLastTick = now;
@@ -3226,10 +2988,6 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 								  Common::Array<Common::Rect> &slotRects,
 								  Common::Array<int> &slotSuspect) {
-	// Gallery redraw — formerly the `drawFrame` lambda inside `doGallery`.
-	// Mirrors `_DrawGallery @ 158f:0046`: PIC 0x3f frame + partner sprite
-	// at (5, 0x50) + suspect portraits in their `_NewOrder` slots. Slot
-	// positions live in `kGallerySlots` in this file's anon namespace.
 	Picture galBg;
 	const bool haveBg = _picsArchive.getPicture(0x3f, galBg);
 
@@ -3240,21 +2998,9 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 	if (haveBg)
 		scratch.simpleBlitFrom(galBg.surface);
 
-	// Partner sprite frame @ (5, 0x50). `_DoGallery @ 158f:065b` registers
-	// _NewAnimation(..., CONCAT22(2, ...), ...) — script key 0x02 regardless
-	// of partner. Jake's 26-frame 0x02 script (brief wave + long hold +
-	// second wave) drives BOTH partners' cells (Jenny's own 0x10 anim is
-	// only 9 frames so it wouldn't cover the full cadence).
 	blitPdaPartner(scratch, _aniArchive, _partner, kPdaGalleryPartner,
 				   g_system->getMillis());
 
-	// Portraits — `_DrawGallery @ 158f:0046` (CD) /
-	// `_DrawGallery_Floppy @ 154e:0045` (floppy) walks suspects 0..N-1
-	// and only renders those flagged in `_InGallery[NewOrder[i]]`.
-	// Layout differs by variant:
-	//   * CD: fixed 0x46-byte stride, slot positions at `kGallerySlots`.
-	//   * Floppy: variable-stride entries (5 + entry[4] bytes per
-	//     suspect), slot positions at `kFloppyGallerySlots` (`2608:0x16c`).
 	const bool floppy = isFloppy();
 	const GallerySlot * const slots =
 		floppy ? kFloppyGallerySlots : kGallerySlots;
@@ -3317,16 +3063,16 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 	g_system->updateScreen();
 }
 
+// `_DoBigMap @ 20fe:09e7` two stage:
+//   Stage 1 (Overview): PIC 0x42 + site icons at MapData[+4/+6]
+//     (`_DrawBigMapButtons @ 20fe:0877`). Click in BigMapWindow
+//     returns scroll (mouseX*2 - 0x74, mouseY*2 - 0x55).
+//   Stage 2 (Detail): PIC 0x43 frame + 0xe9×0xab BIGMAP.PIC viewport
+//     at (2,2). Icons stamped at MapData[+8/+0xa] (`_StampButtons @
+//     20fe:0d2f`). Click icon = travel.
+// MapData entry (14 bytes): +0..3 ???, +4 BigMapX, +6 BigMapY,
+//   +8 SmallMapX, +0xa SmallMapY, +0xc crime-flag.
 void EEMEngine::doBigMap() {
-	// `_DoBigMap @ 20fe:09e7` two stage:
-	//   Stage 1 (Overview): PIC 0x42 + site icons at MapData[+4/+6]
-	//     (`_DrawBigMapButtons @ 20fe:0877`). Click in BigMapWindow
-	//     returns scroll (mouseX*2 - 0x74, mouseY*2 - 0x55).
-	//   Stage 2 (Detail): PIC 0x43 frame + 0xe9×0xab BIGMAP.PIC viewport
-	//     at (2,2). Icons stamped at MapData[+8/+0xa] (`_StampButtons @
-	//     20fe:0d2f`). Click icon = travel.
-	// MapData entry (14 bytes): +0..3 ???, +4 BigMapX, +6 BigMapY,
-	//   +8 SmallMapX, +0xa SmallMapY, +0xc crime-flag.
 
 	if (!_mystery.isLoaded())
 		return;
@@ -3341,18 +3087,12 @@ void EEMEngine::doBigMap() {
 
 	while (!shouldQuit()) {
 		setInteractiveMouseCursor(false);
-		// `_GetPalette(0x24)` @ EEM1 `_DoBigMap`; EEM2 `_DoBigMap`
-		// @ 2237:0a04 uses `_GetPalette(0x3b)` (shifted UI palettes).
 		setSitePalette(isLondon() ? 0x3b : 0x24);
 
-		// Stage 1: Overview. mapStartTick anchors partner timeline;
-		// `_NewAnimation` seeds frame to 0xffff so unfold plays once then
-		// loops the wait sequence.
 		const uint32 mapStartTick = g_system->getMillis();
 		drawBigMapOverview(0);
 		uint32 mapLastTick = mapStartTick;
 
-		// Rects @ CD 29be:1596 / floppy 2608:13fe (1 px diff on Setup).
 		const Common::Rect kBigMapWindow(0, 0, 247, 192);
 		const Common::Rect kSetupBtnRect = isFloppy()
 			? Common::Rect(251, 3, 315, 42)
@@ -3374,12 +3114,11 @@ void EEMEngine::doBigMap() {
 					continue;
 				}
 				if (ev.type == Common::EVENT_LBUTTONDOWN) {
-					// Setup → NextScreen=6 (`_DoBigMap @ 20fe:0c33`).
 					if (kSetupBtnRect.contains(ev.mouse.x, ev.mouse.y)) {
 						_nextScreen = kScreenSetup;
 						return;
 					}
-					// BigMapWindow click → zoom (sx=x*2-0x74, sy=y*2-0x55).
+
 					if (kBigMapWindow.contains(ev.mouse.x, ev.mouse.y)) {
 						int sx = ev.mouse.x * 2;
 						int sy = ev.mouse.y * 2;
@@ -3395,7 +3134,6 @@ void EEMEngine::doBigMap() {
 			if (wantZoom)
 				break;
 
-			// `_CheckFrameRate` cadence — 100 ms.
 			const uint32 now = g_system->getMillis();
 			if (now - mapLastTick >= 100) {
 				mapLastTick = now;
@@ -3415,7 +3153,6 @@ void EEMEngine::doBigMap() {
 		if (!wantZoom)
 			return;
 
-		// Stage 2: Detail. PIC 0x43 + BIGMAP.PIC viewport.
 		Common::File f;
 		if (!f.open(Common::Path("BIGMAP.PIC"))) {
 			warning("doBigMap: BIGMAP.PIC missing for detail view");
@@ -3439,13 +3176,11 @@ void EEMEngine::doBigMap() {
 		int scrollX = MAX<int>(0, MIN<int>(mapW - kMapWinW, zoomX));
 		int scrollY = MAX<int>(0, MIN<int>(mapH - kMapWinH, zoomY));
 
-		// Detail partner timeline (script 0x13 unfold, then wait seq).
 		const uint32 detailStartTick = g_system->getMillis();
 		drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH, 0);
 		uint32 detailLastTick = detailStartTick;
 		bool returnToOverview = false;
 
-		// `SmallMapButtons[4]` @ 20fe:156c — return to overview.
 		const Common::Rect kBigMapReturnRect(252, 43, kScreenWidth, kScreenHeight);
 		const Common::Rect kArrowYUp(237, 2, 247, 11);
 		const Common::Rect kArrowYDown(237, 163, 247, 172);
@@ -3512,7 +3247,6 @@ void EEMEngine::doBigMap() {
 						kBigMapReturnRect.contains(ev.mouse.x, ev.mouse.y) ||
 						kDetailSetupBtn.contains(ev.mouse.x, ev.mouse.y));
 					if (kDetailSetupBtn.contains(ev.mouse.x, ev.mouse.y)) {
-						// `_DoMapScreen @ 20fe:1560` — NextScreen=6.
 						_nextScreen = kScreenSetup;
 						setInteractiveMouseCursor(false);
 						return;
@@ -3572,8 +3306,6 @@ void EEMEngine::doBigMap() {
 							uint16 my;
 							uint16 buttonId;
 							if (fmap) {
-								// Floppy: rect +0/+2; BUTTON.DBD id at +4
-								// (`FUN_1fed_0c3e @ 1fed:0c3e`).
 								mx = READ_LE_UINT16(entry + 0x0);
 								my = READ_LE_UINT16(entry + 0x2);
 								buttonId = (uint16)entry[0x4];
@@ -3618,7 +3350,6 @@ void EEMEngine::doBigMap() {
 			if (returnToOverview)
 				break;
 
-			// 100 ms partner cycle.
 			const uint32 now = g_system->getMillis();
 			if (now - detailLastTick >= 100) {
 				detailLastTick = now;
@@ -3685,12 +3416,6 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 				const int lineH = _font.getFontHeight();
 				const int maxLines = MAX<int>(1, textRect.height() / lineH);
 				for (uint i = 0; i < wrapped.size() && (int)i < maxLines; i++) {
-					// `_DoApproach @ 1717:029e`:
-					// `_WordWrap(x, y, w, page, fontColor=1, dropColor=-1)`.
-					// Font colour is palette index 1 (NOT 0x0F white), drawn
-					// straight onto the restored video-frame background — the
-					// DOS `vga_fvidvid` calls just restore the clean bg, they
-					// don't paint a panel, so don't fill the rect here either.
 					_font.drawString(&scratch, wrapped[i], textRect.left,
 									 textRect.top + (int)i * lineH,
 									 textRect.width(), 1);
@@ -3776,9 +3501,6 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 	else
 		setSitePalette(0x3b);
 	bool done = false;
-	// `_DoApproach` idle loop (1717:02d4) shimmers palette 0xF3..0xF7 via
-	// `_ColorCycle(0xf3, 0xf7)` each frame-rate tick; mirror it on the video
-	// palette (the diff-animation ramp those entries belong to).
 	uint32 lastShimmer = g_system->getMillis();
 	while (!shouldQuit() && !done) {
 		Common::Event ev;
@@ -3866,9 +3588,6 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 }
 
 void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
-	// PIC 0x42 + per-site Done/Crime/Site marker (`_DrawBigMapButtons @
-	// 20fe:0877`) + partner idle at (0xfd, 0x50). Idle ANI: Jake=0x14,
-	// Jenny=0x12. elapsedMs anchors unfold→wait timeline.
 	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
@@ -3880,7 +3599,6 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 	// Marker PICs from `_main`:
 	//   EEM1 CD @ 1a35:0f59: Done=0x20d, Site=0xc5, Crime=0xc6.
 	//   EEM2 CD @ 1abf:11a6: Done=0x006, Site=0xc5, Crime=0xc6.
-	// In EEM2, 0x20d is a normal scene/character frame, not a map marker.
 	Picture done;
 	Picture normal;
 	Picture crimeM;
@@ -3894,13 +3612,7 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 		const byte *entry = _mystery.mapEntry(i);
 		if (!entry)
 			continue;
-		// CD entries are 14 bytes: X@+4, Y@+6, crime@+12.
-		// Floppy entries are 11 bytes: X@+6, Y@+8, recolor@+10.
-		// Floppy layout: `FUN_1fed_07ed` (BigMap iteration):
-		//   `*(int *)(pcVar2 + i*0xb + 7)` (= entry+6, X u16)
-		//   `*(int *)(pcVar2 + i*0xb + 9)` (= entry+8, Y u16)
-		//   `pcVar2[i*0xb + 0xb]` (= entry+10, recolor flag — non-zero
-		//   selects the crime-marker PIC over the regular site marker).
+
 		const bool floppy  = _mystery.isLoaded() && isFloppy();
 		const uint16 mx    = floppy ? READ_LE_UINT16(entry + 0x6)
 									: READ_LE_UINT16(entry + 0x4);
@@ -3933,14 +3645,12 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 		}
 	}
 
-	// Partner idle at (0xfd, 0x50). `_DoBigMap @ 20fe:0a47` always passes
-	// script 0x14 (count-up) to `_NewAnimation` regardless of partner.
 	const uint kMapAniId = (_partner == kPartnerJake) ? 0x14 : 0x12;
 	Animation mapAnim;
 	if (_aniArchive.loadAnimation(kMapAniId, mapAnim) && !mapAnim.empty()) {
 		const uint frameIdx = bigMapPartnerFrameAtTick((uint)mapAnim.size(),
 													   elapsedMs);
-		// BigMap walk-cycle miscflags = -2 (anchor shift left).
+
 		blitAnimFrameAnchored(scratch.surfacePtr(), mapAnim[frameIdx],
 							  0xfd, 0x50);
 	}
@@ -3954,9 +3664,7 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 								 const Common::Array<byte> &mapPixels,
 								 uint16 mapW, uint16 mapH,
 								 uint32 elapsedMs) {
-	// PIC 0x43 + 0xe9×0xab BIGMAP.PIC viewport at (2,2), stamped buttons,
-	// partner at (0x101, 0x50). `_DoMapScreen @ 20fe:120b` (ANI 0x13 Jake
-	// / 0x11 Jenny, seq 0x13). elapsedMs anchors unfold→wait.
+
 	const int kMapWinW = 0xe9;
 	const int kMapWinH = 0xab;
 	const int kMapWinX = 2;
@@ -3975,8 +3683,6 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 	scratch.copyRectToSurface(mapPixels.data() + scrollY * mapW + scrollX,
 							  mapW, kMapWinX, kMapWinY, copyW, copyH);
 
-	// `_StampButtons @ 20fe:0d2f` (CD): button=MapData[+0], dst=+8/+0xa.
-	// Floppy `FUN_1fed_0c3e @ 1fed:0c3e`: button.dbd id at +4, rect +0/+2.
 	const bool floppyMap = _mystery.isLoaded() && isFloppy();
 	for (uint i = 0; i < _mystery.numSites(); i++) {
 		if (!_mystery._onSites[i] && i != _mystery._siteNumber)
@@ -4015,7 +3721,6 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 		}
 	}
 
-	// Always script 0x13 (`_NewAnimation @ _DoBigMap 20fe:0a47`).
 	const uint kDetailAniId = (_partner == kPartnerJake) ? 0x13 : 0x11;
 	Animation detailAnim;
 	if (_aniArchive.loadAnimation(kDetailAniId, detailAnim) &&
@@ -4031,14 +3736,8 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 	g_system->updateScreen();
 }
 
+// `_GetKDTextBalloon @ 1df2:0105`
 uint16 EEMEngine::getKDTextBalloon(byte firstChar) const {
-	// `_GetKDTextBalloon @ 1df2:0105`:
-	//   if ((ctype[firstChar] & 2) == 0)  bub = *(u16*)29be:1068 = 0x17
-	//   else                              bub = *(u16*)(29be:0fe6+0x1e+c*2)
-	// `ctype` is Borland's `_ctype_` at 29be:2be1; bit 1 (0x02) is set
-	// only for '0'..'9'. Digit table @ 29be:1064 (see kDigitBalloons).
-	// `*(u16*)29be:1068` = entry for '2' = 0x17 — original reuses the
-	// digit-2 slot as the non-digit fallback constant.
 	if (firstChar < '0' || firstChar > '9')
 		return 0x17;
 	return kDigitBalloons[firstChar - '0'];
@@ -4095,12 +3794,9 @@ void EEMEngine::accuseDrawScreen(const AccuseNotesCtx &ctx) {
 	if (ctx.haveBg)
 		scratch.simpleBlitFrom(ctx.accuseBg->surface);
 
-	// Partner at (5, 0x50). `_DoAccuse @ 1df2:0c2c`: ANI 2/0x10,
-	// script 2, prior 1.
 	blitPdaPartner(scratch, _aniArchive, _partner, kPdaGalleryPartner,
 				   g_system->getMillis());
 
-	// Selected=0x3c, unselected=1 (`_NoteUnselectedColor` @ 1df2:0c25).
 	Common::Array<Common::Rect> &slotRects = *ctx.slotRects;
 	Common::Array<uint> &slotClues = *ctx.slotClues;
 	const Common::Array<uint> &found = *ctx.found;
@@ -4139,7 +3835,6 @@ void EEMEngine::accuseDrawScreen(const AccuseNotesCtx &ctx) {
 		y += h + 7;
 	}
 
-	// `_UpdateSelectionCount(remaining)` @ (0xd1, 0xb).
 	const uint remaining = (selectedCount < ctx.expected)
 		? ctx.expected - selectedCount
 		: 0;
@@ -4163,12 +3858,6 @@ void EEMEngine::accuseDrawScreen(const AccuseNotesCtx &ctx) {
 }
 
 bool EEMEngine::doAccuseNotes() {
-	// `_DoAccuse @ 1df2:0bdd` (EEM2 `@ 1ea1:0c03`) head. BG PIC 0x1A7.
-	// `_AccuseNoteRect @ 29be:1048` = (79, 27, 304, 159). Counter @ (209, 11)
-	// shows the required clue count (EEM1 `6 - chainStage` = 5/4/3 by tier;
-	// London a flat 5 — see `expected` below). Unselected color 1 (red),
-	// selected 0x3c. Click toggles selection; `_NoteButtons[4]`
-	// (180,174,201,190) SOLVE → `_HandleAccuseNoteButton` returns 2.
 	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return false;
 	const byte *ni = _mystery.noteIndex();
@@ -4179,18 +3868,13 @@ bool EEMEngine::doAccuseNotes() {
 	Picture accuseBg;
 	const bool haveBg = _picsArchive.getPicture(0x1a7, accuseBg);
 
-	// `FUN_1d40_0e07 @ 1d40:0e34` zeroes _NoteSelected_Floppy on entry.
 	memset(_mystery._noteSelected, 0, sizeof(_mystery._noteSelected));
 
-	// EEM1 `_DoAccuse @ 1df2:0bdd` scales the required clue count by tier
-	// (`6 - chainStage`: stage 1=5, 2=4, 3=3). London `_DoAccuse @ 1ea1:0c03`
-	// hardcodes 5 (`local_a = 5`) for both books.
 	const uint expected = isLondon()
 		? 5
 		: ((_chainStage >= 1 && _chainStage <= 3) ? (uint)(6 - _chainStage)
 												  : 5);
 
-	// `_DrawNotes(NULL, 100, ...)` walks `_CluesFound[]`.
 	Common::Array<uint> found;
 	for (uint i = 0; i < niCount && i < Mystery::kCluesFoundCap; i++) {
 		if (_mystery._cluesFound[i] && _mystery.noteHasNotebookText(i))
@@ -4202,8 +3886,6 @@ bool EEMEngine::doAccuseNotes() {
 	const int rectW = 304 - 79;
 	const int rectH = 159 - 27;
 
-	// `_NoteButtons` @ 29be:0147. `_HandleAccuseNoteButton @ 1df2:0990`
-	// returns DI=2 for i==4 (SOLVE).
 	const Common::Rect kBtnSolve   (180, 174, 201, 190); // [4]
 	const Common::Rect kBtnPageNext(204, 174, 224, 190); // [5]
 	const Common::Rect kBtnPagePrev(226, 174, 247, 190); // [6]
@@ -4218,9 +3900,6 @@ bool EEMEngine::doAccuseNotes() {
 	int numPages = 1;
 	pageBreaks[0] = 0;
 
-	// CD note: 4 bytes (u16 textOff rel TextBlock, u16 score).
-	// Floppy: 7 bytes (+0 abs textOff, +2 Jake, +4 Jenny, +6 score).
-	// Notebook always uses +0 (`FUN_15e0_01e8`).
 	const bool floppyNote = isFloppy();
 	const byte *bufBaseNotes = _mystery.blobAt(0);
 
@@ -4302,9 +3981,6 @@ bool EEMEngine::doAccuseNotes() {
 					return false;
 				}
 				if (isLondon() && kPdaHelpRect.contains(mx, my)) {
-					// EEM2 accuse `_HandleAccuseNoteButton @ 1ea1:0873` slot 1
-					// → MAP (`MOV [0x9292],2` @ 1ea1:089b) — London's dedicated
-					// map button; only kPdaHelp2Rect (267,174) stays help.
 					_nextScreen = kScreenMapAlt;
 					return false;
 				}
@@ -4315,7 +3991,6 @@ bool EEMEngine::doAccuseNotes() {
 					dirty = true;
 					continue;
 				}
-				// `_NoteButtons[5]/[6]` — page nav guards @ 1df2:09a8/099e.
 				if (kBtnPageNext.contains(mx, my)) {
 					if (page + 1 < numPages) {
 						page++;
@@ -4330,7 +4005,6 @@ bool EEMEngine::doAccuseNotes() {
 					}
 					continue;
 				}
-				// `_NoteButtons[3]` — ScummVM hint, original ignores.
 				if (kBtnPartner.contains(mx, my)) {
 					doHelp();
 					dirty = true;
@@ -4343,7 +4017,6 @@ bool EEMEngine::doAccuseNotes() {
 							selected++;
 					}
 					if (selected == expected) {
-						// `_DoAccuse` gate `uStack_8 == uStack_a`.
 						return true;
 					}
 					continue;
@@ -4371,7 +4044,6 @@ bool EEMEngine::doAccuseNotes() {
 		}
 		if (dirty)
 			accuseDrawScreen(ctx);
-		// 100 ms `_CheckFrameRate` cadence @ 1df2:0bfa.
 		static uint32 sLastTick = 0;
 		const uint32 now = g_system->getMillis();
 		if (now - sLastTick >= 100) {
@@ -4388,17 +4060,11 @@ void EEMEngine::doAccuse() {
 	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return;
 
-	// Floppy: variable-stride entries (5 + nameLen, not 0x46), top-5
-	// `_TextSeen` scoring (not `_NoteSelected`), header[+0x12] win-dialog.
-	// Handled by doAccuseFloppy (`FUN_1d40_11fd`, `FUN_1d40_0c79`,
-	// `_DisplayCorrect_Floppy`, `_DisplayAlibi_Floppy`).
 	if (isFloppy()) {
 		doAccuseFloppy();
 		return;
 	}
 
-	// `_AccuseEntry @ 1df2:0ff8` — gates picker on top-5 found clue
-	// score (≥0x65 required).
 	const byte *entryKdIdx = _mystery.kdTextIndex();
 	if (!entryKdIdx)
 		return;
@@ -4567,8 +4233,6 @@ void EEMEngine::doAccuse() {
 			}
 		}
 
-		// Balloon overlay (`_GetKDTextBalloon` + `_GetBalloon` +
-		// `_AddPicBackground` + `_WordWrap` @ 1df2:0c8d-0cd1).
 		Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		ms.clear();
@@ -4580,7 +4244,7 @@ void EEMEngine::doAccuse() {
 		const byte firstChar =
 			hint.empty() ? (byte)0 : (byte)hint[0];
 		uint16 bubNum = getKDTextBalloon(firstChar);
-		// Strip digit prefix (`_DisplayAlibi @ 1df2:0163` `str=pbVar7+1`).
+
 		if (firstChar >= '0' && firstChar <= '9')
 			hint.deleteChar(0);
 		bubNum = fitBalloonToText(bubNum, hint);
@@ -4609,12 +4273,11 @@ void EEMEngine::doAccuse() {
 								   0, 0, kScreenWidth, kScreenHeight);
 		g_system->updateScreen();
 
-		// `_SayKDDigital(3)` @ 1df2:0cd9.
+
 		if (_audio && kdIdx)
 			_audio->sayKDDigital(kdIdx, 3, _partner);
 
 		waitForInput(20000);
-		// `_DoAccuse @ 1df2:0ce5` — NextScreen = LastScreen.
 		_nextScreen = _lastScreen != kScreenInvalid
 						? (ScreenId)_lastScreen : kScreenSite;
 		return;
@@ -4632,9 +4295,6 @@ void EEMEngine::doAccuse() {
 
 	int highlighted = 0;
 
-	// KD hint balloon @ `_DoAccuseGallery @ 1df2:0a31` (0a4c-0afe).
-	// y = (h < 0x4e) ? (0x50-h)>>1 : 1. Inset table @ 29be:0875.
-	// `_SayKDDigital(4)`.
 	const byte *kdIdx = _mystery.kdTextIndex();
 	if (kdIdx) {
 		const int16 textOff = (int16)READ_LE_UINT16(kdIdx + 8);
@@ -4677,14 +4337,12 @@ void EEMEngine::doAccuse() {
 						ms.simpleBlitFrom(accuseBg.surface);
 					}
 				}
-				// `_Rect_Move_Mask` (1000:03fc) — transp = pic[0]>>8.
 				if (haveBalloon) {
 					const byte transp = (byte)(balloon.flags >> 8);
 					ms.transBlitFrom(balloon.surface,
 									 Common::Point(balloonX, balloonY),
 									 transp);
 				}
-				// Inset table @ 29be:0875.
 				uint16 tx = 5;
 				uint16 ty = 4;
 				uint16 tw = 155;
@@ -4710,20 +4368,6 @@ void EEMEngine::doAccuse() {
 
 	drawAccuseGallery(num, gd, highlighted, slotRects, slotSuspect);
 
-	// Wait-for-pick loop. Mirrors `_DoAccuseGallery` 1df2:0b26-1df2:0bc8:
-	//   * `_CheckFrameRate` + `_UpdateAnimations` per tick (1df2:0b2a-0b33)
-	//   * 5-entry input dispatch table @ 1df2:0bc9:
-	//       0x09 (TAB)   → handler 0x0b94 (cycle highlight)
-	//       0x0d (Enter) → handler 0x0b72 (pick = _SearchSuspects)
-	//       0x4b (LEFT)  → handler 0x0b94
-	//       0x4d (RIGHT) → handler 0x0b94
-	//       0xFFFF (mb)  → handler 0x0b72
-	//   * 0x0b94: `INC DI` + wraparound + `_PutMouseInRect(&Guys[DI])`,
-	//     i.e. advance highlight and warp cursor (1df2:0b94-0bb1).
-	//   * 0x0b72: `_SearchSuspects` (158f:0584) — mouse-rect hit-test;
-	//     if non-0xFFFF, pick that suspect.
-	// We don't warp the cursor (unfriendly under SDL); instead the
-	// highlight is drawn as a 1px outline and Enter picks it.
 	int picked = -1;
 	uint32 lastTick = g_system->getMillis();
 	bool dirty = false;
@@ -4745,9 +4389,6 @@ void EEMEngine::doAccuse() {
 					dirty = true;
 					break;
 				case Common::KEYCODE_LEFT:
-					// 1df2:0b94 increments DI for LEFT too — but a
-					// keyboard-driven UX is friendlier with separate
-					// directions, so we mirror Right=+1 / Left=-1.
 					highlighted = nextLiveSlot(slotRects, highlighted, -1);
 					dirty = true;
 					break;
@@ -4782,7 +4423,6 @@ void EEMEngine::doAccuse() {
 				}
 			}
 		}
-		// 100 ms `_CheckFrameRate` @ 1df2:0b33.
 		const uint32 now = g_system->getMillis();
 		if (dirty || now - lastTick >= 100) {
 			drawAccuseGallery(num, gd, highlighted, slotRects, slotSuspect);
@@ -4795,8 +4435,6 @@ void EEMEngine::doAccuse() {
 	if (picked < 0)
 		return;
 
-	// `_WITCH @ 1df2:089f` — guilty when gd[picked*0x46+0x02] == 0xFFFF;
-	// innocents store an alibi TextBlock offset there.
 	const int points          = _mystery.selectedPoints();
 	const bool pickedGuilty   = _mystery.isGuilty((uint)picked);
 	const bool guessedRight   = pickedGuilty;
@@ -4815,7 +4453,6 @@ void EEMEngine::doAccuse() {
 	//   4. Partner reaction balloon @ KDTextIndex[+10], `_SayKDDigital(5)`.
 	//   5. _FirstTry = 0; NextScreen = LastScreen (1df2:043f).
 	if (!guessedRight) {
-		// Balloon-shape table @ 29be:1050.
 		static const uint16 kAlibiBubbles[16] = {
 			0x002B, 0x002C, 0x002D, 0x002E,
 			0x00AB, 0x00AC, 0x00AD, 0x00AE,
@@ -4830,7 +4467,6 @@ void EEMEngine::doAccuse() {
 			if (raw)
 				alibi = parseString(raw, _playerName, _partner);
 		}
-		// `_DisplayAlibi @ 1df2:0163` — bindx = digit prefix, else 2.
 		uint bindx = 2;
 		const byte firstChar = alibi.empty() ? (byte)0 : (byte)alibi[0];
 		if (firstChar >= '0' && firstChar <= '9') {
@@ -4855,7 +4491,6 @@ void EEMEngine::doAccuse() {
 			_balloonArchive.size() > (bubNum & 0x7F) &&
 			_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
 
-		// Position math @ 1df2:01a4-0207.
 		int balloonX = 0x21;
 		int balloonY = 1;
 		int py = 0x5a;
@@ -4875,7 +4510,6 @@ void EEMEngine::doAccuse() {
 			balloonY = (bh < 0x4f) ? (0x50 - bh) / 2 : 1;
 		}
 
-		// `base` = BG + suspect + partner. Survives both balloon phases.
 		Graphics::ManagedSurface base(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		base.clear();
@@ -4887,10 +4521,7 @@ void EEMEngine::doAccuse() {
 							   Common::Point(0x82, py),
 							   (uint32)transp);
 		}
-		// Partner at (5, 0x50). ANI 2/0x10, script 0x02 (`_DoAccuse
-		// @ 1df2:0c30`). Drawn after suspect.
 
-		// scratch = base + alibi balloon/text + partner.
 		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.simpleBlitFrom(base);
@@ -4900,7 +4531,7 @@ void EEMEngine::doAccuse() {
 								  Common::Point(balloonX, balloonY),
 								  (uint32)transp);
 		}
-		// Inset table @ 29be:0875. Color 0 inside balloon (1df2:0240).
+
 		uint16 tx = 5, ty = 4, tw = 155;
 		getBalloonInsets(bubNum, tx, ty, tw);
 		if (_font.isLoaded() && !alibi.empty()) {
@@ -4911,7 +4542,6 @@ void EEMEngine::doAccuse() {
 		blitPdaPartner(scratch, _aniArchive, _partner, kPdaGalleryPartner,
 					   g_system->getMillis());
 
-		// MIDI 6 — blocks until done (or click/ESC aborts).
 		if (_music && _voiceOn) {
 			_music->playMus(6, /* loop= */ false);
 			const uint32 musStart = g_system->getMillis();
@@ -4930,7 +4560,6 @@ void EEMEngine::doAccuse() {
 						break;
 					}
 				}
-				// Hard cap if MIDI never reports finish.
 				if (g_system->getMillis() - musStart > 10000)
 					break;
 				g_system->updateScreen();
@@ -4939,8 +4568,6 @@ void EEMEngine::doAccuse() {
 			_music->stop();
 		}
 
-		// Suspect voice. talk = partner==0 ? gd[+0x6] : gd[+0x0] (1df2:0252).
-		// 1-based, so SpoolSound(talk-1).
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, kScreenWidth, kScreenHeight);
 		g_system->updateScreen();
@@ -4956,8 +4583,6 @@ void EEMEngine::doAccuse() {
 		}
 		waitForInput(60000);
 
-		// Partner reaction @ 1df2:026e-02b6. Rebuild from `base` so alibi
-		// balloon clears. `_SayKDDigital(5)` auto-cancels alibi voice.
 		const byte *reactIdx = _mystery.kdTextIndex();
 		if (reactIdx) {
 			const int16 reactOff = (int16)READ_LE_UINT16(reactIdx + 10);
@@ -5008,35 +4633,25 @@ void EEMEngine::doAccuse() {
 		waitForInput(60000);
 
 		_mystery._firstTry = false;
-		// `_DisplayAlibi @ 1df2:043f` — NextScreen = LastScreen.
 		_nextScreen = _lastScreen != kScreenInvalid
 						? (ScreenId)_lastScreen : kScreenSite;
 		return;
 	}
 
-	// Win — `_DisplayCorrect @ 1df2:073c`: mark solved, advance chain,
-	// MIDI 5, SCRAPBK.ANI, ending, save, NextScreen=0xc (1df2:0895).
 	{
 		const uint mn = _mystery.number();
 		if (mn < sizeof(_mysteriesSolved)) {
 			_mysteriesSolved[mn] = _mystery._firstTry ? 2 : 1;
 		}
 
-		// Chain advance @ 1df2:0824-0850. Skip mystery 0 (practice).
-		// stage 1: 1..0x18, stage 2: 0x19..0x30, stage 3: 0x31..0x36.
 		advanceChainStageAfterSolve(mn);
 
-		// `_DisplayCorrect @ 1df2:073c`:
-		//   _AllBlack; _BuildBackground(5, 0x42, 0x14); _FadeIn;
-		//   _MIDIPlay(5); _DisplayClue(MysteryIndex[+0x10]).
-		// `_BuildBackground @ 172b:13e2` = PIC 0x3D + SITES entry 5 at
-		// (0x42, 0x14), palette = sitenum+1 = 6.
 		Graphics::Surface *blk = g_system->lockScreen();
 		if (blk) {
 			memset(blk->getPixels(), 0, kScreenWidth * kScreenHeight);
 			g_system->unlockScreen();
 		}
-		setSitePalette(6); // sitenum + 1 (`_GetPalette`).
+		setSitePalette(6);
 		Picture frame, scene;
 		if (_picsArchive.loadEntry(0x3d, frame)) {
 			g_system->copyRectToScreen(frame.surface.getPixels(),
@@ -5054,7 +4669,6 @@ void EEMEngine::doAccuse() {
 										   sw, sh);
 		}
 
-		// Stamp partner at (5, 0x50); displayClue snapshots screen.
 		if (Graphics::Surface *screen = g_system->lockScreen()) {
 			blitPdaPartner(screen, _aniArchive, _partner,
 						   kPdaGalleryPartner, g_system->getMillis());
@@ -5065,39 +4679,29 @@ void EEMEngine::doAccuse() {
 		if (_music && _voiceOn)
 			_music->playMus(5, /* loop= */ false);
 
-		// Chain recap — partner enumerates required clues.
 		const byte *solved = _mystery.solvedClueBlock();
 		if (solved)
 			displayClue(solved);
 		if (_music && _voiceOn)
 			_music->stop();
 
-		// `_DifferenceAnimation("scrapbk.ani")` @ 1df2:0848.
 		playAnm(Common::Path("SCRAPBK.ANI"), 120,
 				/* holdLastFrame= */ false);
 
 		displayScrapbookExtra(mn);
 
-		// `_ShowOneScrap @ 1f78:0773` = `_DisplayEnding(num, 1)`.
 		doShowEnding(mn);
 
-		// `_SavePlayerRecord` @ 1df2:0857. Order: clear() before save
-		// so hasMystery=false (matches `_DeleteSavedGame` @ 1df2:0851).
 		_mystery.clear();
 		const Common::Error err = saveProfile(_playerName);
 		if (err.getCode() != Common::kNoError)
 			warning("saveProfile after solve failed: %s",
 					err.getDesc().c_str());
 
-		// `_DisplayCorrect @ 1df2:0895` — NextScreen = 0xc.
 		_nextScreen = kScreenAction;
 	}
 }
 
-// Render one KDTextIndex string as a centred KD balloon over the current
-// screen, mirroring `_DisplayHint_Floppy @ 1503:00ca` (= `FUN_1d40_11fd`'s
-// body). `kdSlot` is the index into KDTextIndex (0..N) — entries are u16
-// absolute text offsets.
 void EEMEngine::floppyKDHint(uint kdSlot, const byte *kdIdx,
 							 const byte *bufBase, uint32 mysSize) {
 	if ((uint)(kdSlot * 2) + 2 > (uint)(mysSize - (kdIdx - bufBase)))
@@ -5112,8 +4716,6 @@ void EEMEngine::floppyKDHint(uint kdSlot, const byte *kdIdx,
 	if (lineLen == 0)
 		return;
 	Common::String raw(p, lineLen);
-	// Digit → balloon variant (`_GetKDTextBalloon_Floppy @ 1d40:009f`
-	// + table @ 2608:0c14).
 	static const uint8 kDigitToBalloon[10] = {
 		0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1c, 0x1d, 0x1e, 0x0a
 	};
@@ -5153,7 +4755,7 @@ void EEMEngine::floppyKDHint(uint kdSlot, const byte *kdIdx,
 						  MAX<int>(8, (int)bw), text, 0);
 	g_system->copyRectToScreen(ms.getPixels(), ms.pitch, 0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
-	// Wait for click.
+
 	while (!shouldQuit()) {
 		Common::Event ev;
 		bool advance = false;
@@ -5347,7 +4949,6 @@ void EEMEngine::accuseDrawGallery(int highlighted,
 		if (!_picsArchive.getPicture(picId, portrait))
 			continue;
 		const GallerySlot &s = kFloppyGallerySlots[phys];
-		// Bottom-align to baseline 0x48 (`154e:00ed`).
 		const int placeX = s.x;
 		const int placeY = s.y + (0x48 - portrait.surface.h);
 		const byte transp = (byte)(portrait.flags >> 8);
@@ -5369,20 +4970,12 @@ void EEMEngine::accuseDrawGallery(int highlighted,
 }
 
 void EEMEngine::doAccuseFloppy() {
-	// Floppy accuse:
-	//   `_KDHelp_Floppy / FUN_1d40_11fd @ 1d40:11fd` — score gate.
-	//   `FUN_1d40_0e07` — clue selection (skipped; selectedPoints()
-	//     already takes top-5).
-	//   `FUN_1d40_0c79 @ 1d40:0c79` — gallery picker.
-	//   `_DisplayCorrect_Floppy @ 1d40:0894`.
-	//   `_DisplayAlibi_Floppy @ 1d40:00df`.
 	const byte *kdIdx     = _mystery.kdTextIndex();
 	const byte *bufBase   = _mystery.blobAt(0);
 	const uint32 mysSize  = _mystery.dataSize();
 	if (!kdIdx || !bufBase)
 		return;
 
-	// `FUN_1d40_11fd` — score gate, ready when score >= 100.
 	const int score = _mystery.selectedPoints();
 	uint kdSlot;
 	bool readyToSolve;
@@ -5403,9 +4996,6 @@ void EEMEngine::doAccuseFloppy() {
 		return;
 	}
 
-	// Clue selection — `FUN_1d40_0e07 @ 1d40:0e07`. Pick `6 - chainStage`
-	// clues (1d40:0e34: `local_c = 6 - DAT_28da_3052`); London a flat 5.
-	// Count handled inside `doAccuseNotes`.
 	if (!doAccuseNotes()) {
 		if (_nextScreen == kScreenAccuse) {
 			_nextScreen = _lastScreen != kScreenInvalid
@@ -5414,8 +5004,6 @@ void EEMEngine::doAccuseFloppy() {
 		return;
 	}
 
-	// 2nd score gate on USER-PICKED clues (1d40:0f3a, FUN_1d40_0c48 =
-	// sum of byte +6 across selected entries). <100 → slot 3 hint.
 	int userSelectedScore = 0;
 	{
 		const byte *ni2 = _mystery.noteIndex();
@@ -5436,10 +5024,7 @@ void EEMEngine::doAccuseFloppy() {
 		return;
 	}
 
-	// `FUN_1d40_0c79` — gallery picker. KDTextIndex slot 4 prompt.
 	floppyKDHint(4, kdIdx, bufBase, mysSize);
-
-	// Floppy gallery: byte0 = numSuspects, then variable-stride entries.
 	const uint8 num = _mystery.numSuspects();
 	if (num == 0) {
 		_nextScreen = _lastScreen != kScreenInvalid
@@ -5513,16 +5098,8 @@ void EEMEngine::doAccuseFloppy() {
 	const bool guilty = _mystery.isGuilty((uint)picked);
 
 	if (guilty) {
-		// `_DisplayCorrect_Floppy @ 1d40:0894`:
-		//   _BuildBackground_Floppy(5, 0x42, 0x14); _FadeIn;
-		//   _MIDIPlayFile("travel-2.xmi");
-		//   Walk solved chain, SCRAPBK.ANI when 3 records left.
-		//   Mark solved, tier-promote, SavePlayerRecord,
-		//   ShowOneScrap, NextScreen = 0xc.
 		const uint mn = _mystery.number();
 
-		// `_BuildBackground_Floppy @ 16e2:12fd` — PIC 0x3d + SITES entry 5
-		// at (0x42, 0x14), palette 6.
 		{
 			Graphics::Surface *blk = g_system->lockScreen();
 			if (blk) {
@@ -5547,8 +5124,6 @@ void EEMEngine::doAccuseFloppy() {
 						scene.surface.pitch, sx, sy, sw, sh);
 			}
 
-			// Stamp partner at (5, 0x50); displayFloppyDialogRecords
-			// snapshots screen. ANI 2/0x10, script 0x02.
 			if (Graphics::Surface *screen = g_system->lockScreen()) {
 				blitPdaPartner(screen, _aniArchive, _partner,
 							   kPdaGalleryPartner, g_system->getMillis());
@@ -5557,12 +5132,9 @@ void EEMEngine::doAccuseFloppy() {
 			g_system->updateScreen();
 		}
 
-		// TRAVEL-2.XMI @ 2608:0c84 (`_MIDIPlayFile` @ 1d40:08c0).
 		if (_music && _voiceOn)
 			_music->playFile(Common::Path("travel-2.xmi"), false);
 
-		// Walk solved chain (header[+0x12]: count byte + dialog records).
-		// SCRAPBK.ANI fires when 3 records remain (`_PlayTitleANM_Floppy(0)`).
 		const byte *chain = _mystery.solvedClueBlock();
 		if (chain) {
 			const uint count = chain[0];
@@ -5589,15 +5161,11 @@ void EEMEngine::doAccuseFloppy() {
 		if (_music && _voiceOn)
 			_music->stop();
 
-		// 1d40:0939 — solved[mn] = _firstTry ? 2 : 1.
 		if (mn < sizeof(_mysteriesSolved))
 			_mysteriesSolved[mn] = _mystery._firstTry ? 2 : 1;
 
-		// Tier promotion @ 1d40:0941..0978. Skip mystery 0 (practice).
 		advanceChainStageAfterSolve(mn);
 
-		// `MakeSolvedSound`. `FUN_1d40_05b7` maps E<num>.BIN byte 0 (0..2)
-		// via table @ 2608:0c5e to VOC slots 0x15/0x16/0x17.
 		if (_audio && _voiceOn) {
 			Common::File ending;
 			const Common::String fname =
@@ -5615,10 +5183,8 @@ void EEMEngine::doAccuseFloppy() {
 			}
 		}
 
-		// 1d40:0991 → FUN_1ee2_06ac (= FUN_1d40_05b7 + font cleanup).
 		doShowEnding(mn);
 
-		// 1d40:0982 _SavePlayerRecord. clear() before save.
 		_mystery._solvedPuzzle = true;
 		_mystery.clear();
 		(void)saveProfile(_playerName);
@@ -5626,12 +5192,6 @@ void EEMEngine::doAccuseFloppy() {
 		return;
 	}
 
-	// `_DisplayAlibi_Floppy @ 1d40:00df`:
-	//   BG 0x3e + suspect pic at (0x82, 0x5a); MIDI fanfare2.xmi.
-	//   Balloon table @ 2608:0c0a (default 0x2c). Centered:
-	//     bx = (0x140-w)/2, by = (0x5a-h)/2.
-	//   KD reaction @ KDTextIndex[+10] = slot 5; NextScreen = LastScreen;
-	//   _firstTry = 0.
 	const byte *susp = _mystery.floppySuspectEntry((uint)picked);
 	uint16 picId = 0;
 	uint16 alibiOff = 0xFFFF;
@@ -5640,7 +5200,6 @@ void EEMEngine::doAccuseFloppy() {
 		alibiOff = _mystery.alibiTextOffset((uint)picked);
 	}
 
-	// FANFARE2.XMI alibi sting (`_MIDIPlayFile` gated on _voiceOn).
 	if (_music && _voiceOn)
 		_music->playFile(Common::Path("fanfare2.xmi"), false);
 
@@ -5660,8 +5219,6 @@ void EEMEngine::doAccuseFloppy() {
 							_playerName, _partner);
 	}
 
-	// Alibi balloon table @ 2608:0c0a (NOT 0c14). Digits @ 2608:0c3a..0c43.
-	// Default 0x2c. High bit = mirror flag.
 	static const uint8 kFloppyAlibiBalloonByDigit[10] = {
 		0x2a, 0x2b, 0x2c, 0x2d, 0xaa, 0xab, 0xac, 0xad, 0x09, 0x0a
 	};
@@ -5689,7 +5246,6 @@ void EEMEngine::doAccuseFloppy() {
 	Picture balloon;
 	const bool haveBalloon = _balloonArchive.size() > balloonIdx &&
 		_balloonArchive.loadEntry(balloonIdx, balloon);
-	// Centered @ 1d40:01a0: x=(0x140-w)/2, y=(0x5a-h)/2.
 	int balloonX = 0x21;
 	int balloonY = 1;
 	if (haveBalloon) {
@@ -5717,9 +5273,6 @@ void EEMEngine::doAccuseFloppy() {
 	g_system->copyRectToScreen(scene.getPixels(), scene.pitch, 0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 
-	// No per-suspect VOC — alibi table @ 2608:0c5e is for post-win
-	// scrapbook (`FUN_1d40_05b7`), not alibi.
-
 	while (!shouldQuit()) {
 		Common::Event ev;
 		bool advance = false;
@@ -5738,7 +5291,6 @@ void EEMEngine::doAccuseFloppy() {
 		g_system->delayMillis(10);
 	}
 
-	// `_DisplayAlibi_Floppy @ 1d40:01ee` — KDTextIndex[+10] = slot 5.
 	floppyKDHint(5, kdIdx, bufBase, mysSize);
 	if (_music && _voiceOn)
 		_music->stop();
@@ -5747,13 +5299,11 @@ void EEMEngine::doAccuseFloppy() {
 	_nextScreen = _lastScreen != kScreenInvalid
 		? (ScreenId)_lastScreen : kScreenSite;
 }
-
+// _DoAccuseGallery @ 1df2:0a31.
 void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 								   int highlighted,
 								   Common::Array<Common::Rect> &slotRects,
 								   Common::Array<int> &slotSuspect) {
-	// `_DoAccuseGallery @ 1df2:0a31` portrait grid. PIC 0x3f + 5 slots.
-	// Partner (5, 0x50) ANI 2/0x10, script 0x02 (`_DoAccuse @ 1df2:0c30`).
 	Picture accuseBg;
 	const bool haveAccuseBg = _picsArchive.getPicture(0x3f, accuseBg);
 
@@ -5775,7 +5325,6 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 		const uint8 phys = _mystery._newOrder[i];
 		if (phys >= 5)
 			continue;
-		// `_DrawGallery @ 158f:00b9` skip on `_InGallery[phys]==0`.
 		if (_mystery._inGallery[phys] == 0)
 			continue;
 		const GallerySlot &s = kGallerySlots[phys];

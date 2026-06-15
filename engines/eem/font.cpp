@@ -95,8 +95,7 @@ bool EEMFont::load(const Common::Path &path) {
 			_maxWidth = g.widthBits;
 	}
 
-	// _LoadFont @ 1b03:0220 sets line stride to the first glyph's
-	// height (DAT_28da_30ca = DAT_28da_30ce, space glyph height).
+	// _LoadFont @ 1b03:0220 sets line stride to the first glyph's height
 	// Descenders ('g','j','p','q','y') intentionally overhang into
 	// the next row.
 	_lineHeight = !_glyphs.empty() ? _glyphs[0].height : _maxHeight;

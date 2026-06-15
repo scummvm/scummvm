@@ -48,12 +48,7 @@ MusicPlayer::MusicPlayer(bool isFloppy) : _isFloppy(isFloppy) {
 	case MT_ADLIB:
 		// _MIDIPlayFile @ 20a2:024c opens SAMPLE.AD (string at 29be:14d6)
 		// and installs every patch the sequence requests via
-		// `_AIL_install_timbre`. ScummVM's Miles AdLib driver does the
-		// same on-demand install from SAMPLE.AD, which is what makes
-		// the notes match the 1993 release; the generic AdLib fallback
-		// would use ScummVM's built-in timbres instead. SAMPLE.OPL would
-		// be the OPL3 variant — the game only ships SAMPLE.AD, so the
-		// empty second path falls back to OPL2.
+		// `_AIL_install_timbre`.
 		_milesAudioMode = true;
 		_driver = Audio::MidiDriver_Miles_AdLib_create(
 			Common::Path("SAMPLE.AD"), Common::Path());
@@ -94,11 +89,7 @@ MusicPlayer::MusicPlayer(bool isFloppy) : _isFloppy(isFloppy) {
 void MusicPlayer::send(uint32 b) {
 	// Miles drivers (both AdLib and MT-32) implement their own per-
 	// source-channel mixing and timbre installation, so forward the raw
-	// event. Going through `MidiPlayer::send` would re-wrap CC 7 against
-	// `_masterVolume` AND remap the source channel via
-	// `sendToChannel` / `allocateChannel`, both of which the Miles
-	// driver already handles internally (double-applying breaks the
-	// timbre selection).
+	// event.
 	if (_milesAudioMode) {
 		_driver->send(b);
 		return;
@@ -113,7 +104,7 @@ void MusicPlayer::playFile(const Common::Path &xmiPath, bool loop) {
 	Common::StackLock lock(_mutex);
 	stop();
 
-	// _MIDIPlayFile @ 20a2:024c-029e (_fopen + _fread).
+
 	Common::File f;
 	if (!f.open(xmiPath)) {
 		warning("MusicPlayer: %s missing", xmiPath.toString().c_str());
@@ -147,15 +138,10 @@ void MusicPlayer::playFile(const Common::Path &xmiPath, bool loop) {
 		return;
 	}
 
-	// _LoopMIDI = 0xFFFF in _DoOpeningAnims.
 	_isLooping = loop;
 	_parser->property(MidiParser::mpAutoLoop, loop ? 1 : 0);
 	_parser->setTrack(0);
 
-	// Pull the launcher's music_volume slider into `_masterVolume` so
-	// the non-Miles `Audio::MidiPlayer::send` path scales correctly.
-	// (Miles drivers handle volume themselves but also honour
-	// `MidiDriver::syncSoundSettings` via `Engine::syncSoundSettings`.)
 	syncVolume();
 	_isPlaying = true;
 	debugC(1, kDebugSound, "MusicPlayer: playing %s (%u bytes, loop=%d, miles=%d)",
@@ -168,7 +154,7 @@ void MusicPlayer::playMus(uint num, bool loop) {
 	//   0..4 → travel music. Table at 2608:1399-13cd holds 5 entries
 	//          (Travel-6, Travel-4, Travel-7, Travel-1, Travel-8) used by
 	//          `_StartTravelMusic` via `siteNumber % 5`.
-	//   5    → FANFARE2.XMI (winner). String at 2608:0c64.
+	//   5    → FANFARE2.XMI (winner).
 	//   6    → no equivalent on floppy (loser sting in `_DisplayAlibi`
 	//          is CD-only); skip.
 	if (_isFloppy) {

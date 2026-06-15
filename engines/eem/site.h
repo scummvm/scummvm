@@ -36,11 +36,10 @@ class EEMEngine;
 class Mystery;
 
 /// partnerFrameAtTick: frame index for `seqnum` at `tickMs`. Walks `kAnimScripts`
-/// at `kFramePeriodMs` (~140 ms = `_CheckFrameRate` cadence) per entry; wraps
+/// at `kFramePeriodMs` per entry; wraps
 /// on the script's 0x80 terminator. Falls back to flipbook (`tick % numFrames`)
 /// when no script is registered. `numFrames` is the ANI.DBD entry's cell count,
 /// used both for the fallback and to clamp script values past the asset.
-/// Mirrors the looping path of `_UpdateAnimations @ 172b:09c1`.
 uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs);
 
 /// Select the EEM2 ("London") animation-script table inside `findAnimScript`.
@@ -49,43 +48,25 @@ uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs);
 void setLondonAnimScripts(bool enabled);
 
 /// bigMapPartnerFrameAtTick: count-up 0..8 once, then loop `_BigMapWaitSeq`
-/// (9,9,9,9,10,9,9,9,9). Mirrors `_DoBigMap @ 20fe:09e7` two-phase swap from
-/// script 0x14 (count-up @ 29be:196a) to `_BigMapWaitSeq @ 29be:1574`.
 uint bigMapPartnerFrameAtTick(uint numFrames, uint32 elapsedMs);
 
 /// bigMapDetailPartnerFrameAtTick: zoomed-view partner frame. Same two-phase shape
-/// as `bigMapPartnerFrameAtTick`. `_DoMapScreen @ 20fe:120b` runs script 0x13
-/// (count-up 0..7 @ 29be:1992) then swaps to `_SmallMapWaitSeq @ 29be:1548`
-/// (`MOV [BX+0x789f],0x1548` at 20fe:1390).
+/// as `bigMapPartnerFrameAtTick`.
 uint bigMapDetailPartnerFrameAtTick(uint numFrames, uint32 elapsedMs);
 
 /// blitAnimFrameAnchored: mask-blit at (anchorX - frame.miscflags,
-/// anchorY - frame.rowoff). Mirrors per-frame anchor math in
-/// `_UpdateAnimations @ 172b:09c1`. Both anchors are SIGNED int16
-/// (e.g. anim 0x14 BigMap walk-cycle has miscflags = -2 per cell, so
-/// the sprite translates across the screen as it cycles). Use for any
-/// animation rendered through `_NewAnimation` in the original — partner
-/// sprites, animated drops, briefing animations. Transparency comes
-/// from `flags >> 8` (NOT miscflags).
+/// anchorY - frame.rowoff).
 void blitAnimFrameAnchored(Graphics::Surface *screen, const Picture &p,
 						   int anchorX, int anchorY);
 
 /// Rotate one VGA palette range by one slot (START→END direction).
-/// Mirrors `_ColorCycle`. Used by per-site Loop-1 ColorCycle entries,
-/// hotspot marching ants (0xF9..0xFE), and the BigMap marker shine.
 void cyclePaletteRange(uint8 start, uint8 end);
 
 /// Rotate one VGA palette range by one slot in the OPPOSITE direction
-/// (END→START): save END, shift every entry up by one (END-1 → END, ...),
-/// wrap saved END to START. Mirrors `_OpenColorCycle @ 2520:04f7` (CD) /
-/// `_ReverseColorCycle_Floppy`. Used by opening-anim logos (EA Kids, etc.)
-/// where the cycle shifts END→START rather than START→END.
+/// (END→START).
 void cyclePaletteRangeReverse(uint8 start, uint8 end);
 
 /// Load the 6-step yellow marching-ants ramp into palette 0xF9..0xFE
-/// (SITEPALS ships these as uniform yellow). Shared by site hotspots and the
-/// clue puzzle so both outline clickable areas in the same original colours;
-/// `cyclePaletteRange(0xF9, 0xFE)` then pulses them.
 void applyHotspotGlowPalette();
 
 /// One hotspot (search rectangle) within a site, 14 bytes on disk.
@@ -98,8 +79,7 @@ struct Hotspot {
 	Common::Rect rect() const { return Common::Rect(x1, y1, x2, y2); }
 };
 
-/// Site / scene controller. Mirrors `_DrawSearchButtons @ 2404:0a8f` /
-/// `_SearchButtons @ 2404:0bfb` site loop.
+/// Site / scene controller. 
 class SiteScreen : public Common::EventObserver {
 public:
 	SiteScreen(EEMEngine *vm, Mystery *mystery)
@@ -126,32 +106,17 @@ private:
 	void notePartnerActivity();
 	bool playLondonTravelAnimation(uint fromSite, uint toSite);
 
-	/// Partner site-arrival sequence (when `_LastSite != _SiteNumber`).
-	/// Mirrors `_EnterSiteAnim @ 1000:9b21`: anim 6/14 (Jake/Jenny) skateboards
-	/// in from right, then anim 7/15 slides KD in from left. Returns true if skipped.
+	/// Partner site-arrival sequence
 	bool enterSiteAnim();
 
-	/// renderPartner: persistent in-site partner sprite at `_WaitAnims @ 29be:021c`.
-	/// Mirrors `_GetAnimation` + `_NewAnimation` tail of `_DoSiteLoop @ 168d:03f4`.
+	/// renderPartner: persistent in-site partner sprite 
 	void renderPartner(uint siteNum, uint32 tickMs);
 
-	/// Floppy active speaker pose shown before `_HandleHotspotClick_Floppy`.
-	/// Uses `_SpeakerInfo_Floppy + 0x28/0x2d`, replacing the idle partner.
+	/// Floppy active speaker pose 
 	bool renderFloppyHotspotPartnerPose(uint siteNum);
 
-	/// renderStaticDrops: `_AddDrop` static decorations (Loop 2).
-	/// siteData[+0x4] count, siteData[+0xc] entries (6 bytes: {picId, x, y}).
 	void renderStaticDrops(uint siteNum);
-
-	/// renderFloppyDrops: floppy variant. `*site_data`→drops; drops[1]=count;
-	/// entries at drops+2 are 5 bytes ({u16 X, u16 Y, byte picID}); PIC loaded as picID-1.
-	/// Per `_DoSiteLoop_Floppy @ 1652:0418` and `FUN_16e2_18eb`.
 	void renderFloppyDrops(uint siteNum);
-
-	/// renderAnimatedDrops: per-site animated NPCs (Loop 1) at current tick.
-	/// `_DoSiteLoop` registers each via `_NewAnimation` (siteData[+0xa] count,
-	/// siteData[+0x48] entries: {animId (-1=ColorCycle), x, y}); frames advance via
-	/// `_UpdateAnimations @ 172b:09c1`.
 	void renderAnimatedDrops(uint siteNum, uint32 tickMs);
 
 	/// Snapshot the post-BG, post-static-drops screen so the per-tick
@@ -168,11 +133,10 @@ private:
 	void syncCompositedScreen();
 
 	/// scanColorCycles: scan Loop 1 for ColorCycle entries (animId == -1),
-	/// cache (start, end) palette ranges. Mirrors `_DoSiteLoop @ 168d:03f4` init scan.
+	/// cache (start, end) palette ranges.
 	void scanColorCycles(uint siteNum);
 
-	/// applyColorCycles: rotate cached ColorCycle ranges + 0xf9..0xfe (hotspot ants)
-	/// one step. Mirrors per-tick `_ColorCycle(start, end)` calls in `_DoSiteLoop`.
+	/// applyColorCycles: rotate cached ColorCycle ranges
 	void applyColorCycles();
 
 	EEMEngine *_vm;
@@ -188,10 +152,7 @@ private:
 	uint32 _impatientDeadlineMs = 0; ///< Test-shortened impatience deadline.
 	PartnerWaitMood _partnerWaitMood = kPartnerWaitDefault;
 
-	/// Wall-clock anchor for partner wait anim phase: rendered as
-	/// `partnerFrameAtTick(animId, ..., now - _waitPhaseAnchor)`.
-	/// Bumped on site entry (`_NewAnimation` writes 0xffff at `_DoSiteLoop @ 168d:0436`)
-	/// and on return from a one-shot kdAnim (`_PlayAnimation @ 172b:1f5d` state=4).
+	/// Wall-clock anchor for partner wait anim phase
 	uint32 _waitPhaseAnchor = 0;
 
 	/// Per-site cached ColorCycle ranges (up to 5, matching original 5-slot anim table).

@@ -48,8 +48,6 @@
 
 namespace EEM {
 
-const uint kNumSitePals = 40;  // SITEPALS: 40 * 768 = 30720
-
 // 1-based picture/palette IDs.
 const uint kPicEAKidsLogo      = 0x54;  // _ShowEAKids
 const uint kPicHighScoreLogo   = 0x20c; // _ShowHScoreLogo
@@ -89,8 +87,6 @@ Common::String makeLondonProfileDisplayName(const Common::String &first,
 
 Common::String makeLondonProfileKey(const Common::String &first,
 									 const Common::String &last) {
-	// EEM2 `_GenerateFilename @ 1cd3:02fe`: copy the first 7 bytes of
-	// FirstName, pad to 8 from LastName, then replace spaces/dots with '_'.
 	Common::String cleanFirst = first;
 	Common::String cleanLast = last;
 	cleanFirst.trim();
@@ -220,13 +216,9 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_variant = (gameDesc && gameDesc->extra &&
 				Common::String(gameDesc->extra).contains("Floppy"))
 				 ? kVariantFloppy : kVariantCD;
-	// EEM2 ("...in London") ships as a separate detection entry (gameId
-	// "eem2"); it reuses this engine with London-specific data.
 	if (gameDesc && gameDesc->gameId &&
 		Common::String(gameDesc->gameId) == "eem2")
 		_variant = kVariantLondonCD;
-	// EEM2 ships its own `_AnimationSequences` — many partner/KD scripts
-	// differ from EEM1's, so route `findAnimScript` to the EEM2 table.
 	setLondonAnimScripts(isLondon());
 	_language = gameDesc ? gameDesc->language : Common::EN_ANY;
 }
@@ -270,7 +262,7 @@ bool EEMEngine::anyMysterySolved(uint lo, uint hi) const {
 
 bool EEMEngine::mysteryTierRange(uint stage, uint &lo, uint &hi) const {
 	if (isLondon()) {
-		// EEM2/London: two 25-case books, no BOOK3.NME
+		// EEM2/London: two 25-case books
 		// (`_DisplayCorrect @ 1ea1:0619`).
 		switch (stage) {
 		case 1: lo = 0x01; hi = 0x19; return true;  //  1..25
@@ -299,17 +291,12 @@ void EEMEngine::advanceChainStageAfterSolve(uint mysteryNum) {
 		return;
 
 	const uint oldStage = _chainStage;
-	// EEM1 only: Book 2 repeats the Book 1 cases, so this option keeps the
-	// original solve state but jumps the active chain straight to Book 3.
-	// London has 50 distinct cases and no Book 3, so the option does not apply.
 	if (!isLondon() && _chainStage == 1 &&
 		ConfMan.getBool("skip_repeated_cases"))
 		_chainStage = 3;
 	else
 		_chainStage++;
 
-	// London has only two books: `_DisplayCorrect @ 1ea1:0619` collapses
-	// chainStage 3 straight to 4 (every case solved — game complete).
 	if (isLondon() && _chainStage == 3)
 		_chainStage = 4;
 
@@ -319,8 +306,6 @@ void EEMEngine::advanceChainStageAfterSolve(uint mysteryNum) {
 }
 
 void EEMEngine::applySkipRepeatedCasesOption() {
-	// EEM1 only — the option jumps past the repeated Book 2 to Book 3, which
-	// London does not have (see `advanceChainStageAfterSolve`).
 	if (isLondon() || !ConfMan.getBool("skip_repeated_cases"))
 		return;
 	if (_mystery.isLoaded())
@@ -335,7 +320,6 @@ void EEMEngine::applySkipRepeatedCasesOption() {
 }
 
 Common::Error EEMEngine::run() {
-	// _SetMode13X @ 1000:0358 — VGA mode 13h.
 	initGraphics(kScreenWidth, kScreenHeight);
 
 	if (!isFloppy() && ConfMan.getBool("restored_content")) {
@@ -367,13 +351,6 @@ Common::Error EEMEngine::run() {
 	_audio->setVoiceEnabled(_voiceOn);
 	syncSoundSettings();
 
-	// CD `_main @ 1a35:0f59` and floppy `_main_Floppy @ 19bb:1012` both
-	// load `_GetPicture(0x50)` as the active mouse pointer before
-	// `_InitMouse`. PIC 0x51 is present in both archives but has no
-	// executable xrefs and appears to be the wait cursor.
-	// CD's `_SwitchMouse` supports swapping to a hotspot cursor ID stored
-	// at search record +0x0c, but the shipped CD mystery data only uses
-	// cursor 0; floppy search records have no cursor-id field.
 	installMouseCursor(_picsArchive, false);
 	CursorMan.showMouse(false);
 
@@ -413,10 +390,6 @@ Common::Error EEMEngine::run() {
 	if (resumed)
 		goto screenLoop;
 
-	// EEM2 ("Eagle Eye Mysteries in London"): opening sequence, then screen
-	// 8 profile selection, screen 9 partner selection. A freshly-created
-	// detective starts the training case (M0) after choosing Jake/Jennifer;
-	// an existing profile resumes its saved menu/map state.
 	if (isLondon()) {
 		runLondonStartup();
 		if (!shouldQuit()) {
@@ -439,37 +412,8 @@ Common::Error EEMEngine::run() {
 		goto screenLoop;
 	}
 
-	// _DoOpeningAnims @ 2520:082a:
-	//   EA Kids logo (PIC) -> HighScore logo (PIC) -> Storm logo
-	//   (BOLT.ANM) -> [music starts] -> 20 character-intro anims
-	//   (ANIM01.A..ANIM20.A) -> [music restarts] -> TITLE.ANM. Click /
-	//   any key skips one clip; ESC raises _skipIntro so each step bails
-	//   out.
-	// Music timing (2520:0883 + 2520:0918):
-	//   - The three logos and `_InitMysterySounds(0x3c)` run BEFORE any
-	//     `_MIDIPlayFile` — those segments are voice-only.
-	//   - Theme starts with `_LoopMIDI = 0x7fff` right before the
-	//     ANIM01..ANIM20 loop (2520:0883).
-	//   - After the loop the original calls `_CleanMysterySounds` then
-	//     `_MIDIPlayFile("theme.xmi")` again with `_LoopMIDI = 0xffff`
-	//     (2520:0918) to restart for TITLE.ANM.
-	//   - `_StopMIDI()` runs on keypress at the title screen (2520:094c).
 	_skipIntro = false;
 	if (isFloppy()) {
-		// Floppy opening — `FUN_23d2_039c @ 23d2:039c`:
-		//   FUN_23d2_0170()  — clear palette
-		//   FUN_23d2_004b()  — set up timer
-		//   FUN_23d2_050c()  — PIC 0x54 (EA Kids, palette 0x25)
-		//   FUN_23d2_06c6()  — PIC 0x20c (High Score, palette 0x27)
-		//   FUN_23d2_0605()  — PIC 0x20b (Storm, palette 0x26) AND
-		//                      voice slot 25 = "thunder.voc" (via Jake
-		//                      voice table 2608:0f0e slot 25 →
-		//                      2608:11ac).
-		//   _MIDIPlayFile("theme.xmi", loop=1)
-		//   _PlayANM(0) — CHAT.ANM (filename table 2608:14fe[0] →
-		//                  "chat.anm" at 2608:150a)
-		//   _PlayANM(1) — MOVIE.ANM (table[1] → 2608:1513)
-		// TITLE.ANM is shown later by screen-0xb handler @ 19bb:0ebc.
 		if (!shouldQuit() && !_skipIntro)
 			showEAKidsLogo();
 		if (!shouldQuit() && !_skipIntro)
@@ -488,10 +432,6 @@ Common::Error EEMEngine::run() {
 		showEAKidsLogo();
 		if (!shouldQuit() && !_skipIntro)
 			showHighScoreLogo();
-		// Storm Software logo: voice + animation. `_ShowStormLogo @
-		// 2520:0707` calls `_LoadSoundName("thunder.voc")` (29be:177d)
-		// and passes the buffer to `OpenDifferenceAnimation_Sound` so
-		// the thunder roar plays alongside the lightning-bolt BOLT.ANM.
 		if (!shouldQuit() && !_skipIntro) {
 			if (_audio)
 				_audio->playVoc(Common::Path("THUNDER.VOC"));
@@ -502,7 +442,7 @@ Common::Error EEMEngine::run() {
 			if (_audio)
 				_audio->stopVoice();
 		}
-		// _InitMysterySounds(0x3c) @ 2520:086a — load M60.SDX/SDB.
+
 		if (!shouldQuit() && !_skipIntro && _audio)
 			_audio->initMysterySounds(60);
 		if (!shouldQuit() && !_skipIntro && _music)
@@ -514,17 +454,13 @@ Common::Error EEMEngine::run() {
 			Common::String name = Common::String::format("ANIM%02d.A", i);
 			playAnm(Common::Path(name), 120,
 					/* holdLastFrame= */ false, fadeIn);
-			// _SpoolSound(uVar3 - 1) @ 2520:08c2 — per-anim VO, skipped
-			// when uVar3 == 0x14 @ 2520:08a8.
 			if (!shouldQuit() && !_skipIntro && i != 20 && _audio) {
 				_audio->spoolSound((uint)(i - 1));
 				_audio->waitForSpoolDone();
 			}
 		}
-		// _CleanMysterySounds @ 2520:0903.
 		if (_audio)
 			_audio->cleanMysterySounds();
-		// _MIDIPlayFile("theme.xmi") @ 2520:0918.
 		if (!shouldQuit() && !_skipIntro && _music)
 			_music->playFile(Common::Path("THEME.XMI"), /* loop= */ true);
 		if (!shouldQuit() && !_skipIntro)
@@ -539,13 +475,11 @@ Common::Error EEMEngine::run() {
 		goto screenLoop;
 	}
 
-	// Title(B) -> screen 8 (profile) -> 9 (partner) -> C (action) ->
-	// A (case selection) -> site loop.
 	CursorMan.showMouse(true);
 
 	if (_music)
 		_music->stop();
-	// screen8_handler @ 1c33:1012.
+
 	if (!shouldQuit())
 		doProfilePicker();
 	if (!shouldQuit())
@@ -555,16 +489,6 @@ Common::Error EEMEngine::run() {
 	if (!shouldQuit())
 		doChoosePartner();
 
-	// Drop into the screen-driver state machine — same pattern as
-	// `_ScreenDriver @ 1a35:0dc1` + the per-screen handler table at
-	// 1a35:0e5e. Sentinel `kScreenInvalid` (0xFFFF) ends the loop.
-	// `_DoChoosePartner @ 1a35:099d` writes `_NextScreen = 0xc` (the
-	// original `_ActionScreen`, which is separate from handler 10's
-	// `_DoChooseMystery` / `_CaseSelection`).
-	// Mid-mystery resume: if the loaded save had `hasMystery` set,
-	// drop straight to MAP rather than the action menu so the player
-	// doesn't walk back through the case picker (which would
-	// `_mystery.load()` fresh and discard site / clue progress).
 	if (!shouldQuit() && !resumed)
 		_nextScreen = _mystery.isLoaded() ? kScreenMap : kScreenAction;
 screenLoop:
@@ -574,9 +498,6 @@ screenLoop:
 
 		switch (current) {
 		case kScreenTitle:
-			// Floppy handler 0xb _HandleScreen11_Title_Floppy ->
-			// _DoTitle_Floppy -> _PlayTitleANM_Floppy(1)=TITLE.ANM.
-			// Writes _NextScreen=8 (profile picker).
 			_nextScreen = kScreenProfile;
 			if (isFloppy()) {
 				CursorMan.showMouse(false);
@@ -588,10 +509,6 @@ screenLoop:
 			break;
 
 		case kScreenAction:
-			// Top-level post-profile / post-mystery menu. `_ActionScreen
-			// @ 1c33:195b` shows the 5-entry "Choose A Mystery /
-			// Practice / ScrapBook 1..3" picker; writes _NextScreen=0xa
-			// only when the player picks "Choose A Mystery".
 			_nextScreen = kScreenInvalid;
 			doActionScreen();
 			if (_nextScreen == kScreenInvalid && _mystery.isLoaded())
@@ -599,8 +516,6 @@ screenLoop:
 			break;
 
 		case kScreenChooseMystery:
-			// Handler 10 @ 1a35:0e0e -> _DoChooseMystery (presets
-			// _NextScreen=0 INIT_CLUES) -> _CaseSelection.
 			_nextScreen = kScreenInvalid;
 			doCaseSelection();
 			if (_nextScreen == kScreenInvalid && _mystery.isLoaded())
@@ -608,8 +523,6 @@ screenLoop:
 			break;
 
 		case kScreenInitClues:
-			// Handler 0 @ 1a35:0e14 -> _PreLoad + _DoInitClues, writes
-			// _NextScreen=1 (MAP).
 			doInitClues();
 			_nextScreen = _mystery.isLoaded() ? kScreenMap
 											  : kScreenAction;
@@ -617,11 +530,6 @@ screenLoop:
 
 		case kScreenMap:
 		case kScreenMapAlt:
-			// Handler 1/2 @ 1a35:0e25 -> `_DoMapScreen @ 20fe:120b`
-			// (floppy 19bb:0ef3 -> 1fed map code), which manages its
-			// own _NextScreen writes: 3 (site clicked), 6 (setup), or
-			// 0xffff (quit). After `doBigMap` returns the natural
-			// next state is SITE.
 			doBigMap();
 			if (!_mystery.isLoaded())
 				_nextScreen = kScreenAction;
@@ -630,9 +538,6 @@ screenLoop:
 			break;
 
 		case kScreenSite:
-			// Handler 3 @ 1a35:0e2c -> `_DoSiteLoop @ 168d:03f4`
-			// (floppy dispatches through 1652). Site writes _NextScreen
-			// for PDA / map rather than entering those as nested modals.
 			doSiteLoop();
 			if (!_mystery.isLoaded())
 				_nextScreen = kScreenAction;
@@ -641,8 +546,6 @@ screenLoop:
 			break;
 
 		case kScreenNotebook:
-			// Handler 4 — PDA notebook screen. Button handler writes
-			// 2 (map), 3 (site), 5 (gallery), or 7 (accuse).
 			doNotebook();
 			if (!_mystery.isLoaded() && _nextScreen != kScreenAction)
 				_nextScreen = kScreenAction;
@@ -651,8 +554,6 @@ screenLoop:
 			break;
 
 		case kScreenGallery:
-			// Handler 5 — suspect gallery. ESC and the site button
-			// write 3, the map button writes 2, the PDA button writes 4.
 			doGallery();
 			if (!_mystery.isLoaded() && _nextScreen != kScreenAction)
 				_nextScreen = kScreenAction;
@@ -661,9 +562,6 @@ screenLoop:
 			break;
 
 		case kScreenSetup:
-			// Handler 6 @ 1a35:0e48 -> _DoSetup. EEM1 = seg-1f78 (`doSetup`);
-			// EEM2/London = seg-2046 (`doSetupLondon`, 4 toggles + own layout).
-			// Entered from BigMap setup button (_NextScreen=6 @ 20fe:0c33).
 			if (isLondon())
 				doSetupLondon();
 			else
@@ -671,9 +569,6 @@ screenLoop:
 			break;
 
 		case kScreenProfile:
-			// Handler 8: CD screen8_handler @ 1c33:1012 ->
-			// _NewPlayer; floppy _HandleScreen8_NewPlayer_Floppy @
-			// 19bb:0ec2 writes screen 9.
 			_nextScreen = kScreenInvalid;
 			_mystery.clear();
 			doProfilePicker();
@@ -697,8 +592,6 @@ screenLoop:
 			break;
 
 		case kScreenAccuse:
-			// Handler 7 — accusation flow. Failed accusation returns to
-			// `_LastScreen`; a correct solution writes 0xc (ACTION).
 			doAccuse();
 			if (!_mystery.isLoaded() && _nextScreen != kScreenAction)
 				_nextScreen = kScreenAction;
@@ -727,9 +620,6 @@ void EEMEngine::setInteractiveMouseCursor(bool active) {
 }
 
 void EEMEngine::setHotspotMouseCursor(bool active) {
-	// EEM2 swaps the cursor SHAPE per hotspot (see setSiteHotspotCursorId), so
-	// the EEM1 red-outline recolor doesn't apply. The bool path only resets to
-	// the default arrow (cursor 0) when leaving a hotspot / the site loop.
 	if (isLondon()) {
 		if (!active)
 			setSiteHotspotCursorId(0);
@@ -741,7 +631,6 @@ void EEMEngine::setHotspotMouseCursor(bool active) {
 void EEMEngine::setSiteHotspotCursorId(int cursorId) {
 	if (!isLondon())
 		return;
-	// `_SwitchMouse @ 17ee:2c83`: cursor 4 (Jake hand) becomes 5 for Jenny.
 	if (cursorId == 4 && _partner == kPartnerJenny)
 		cursorId = 5;
 	if (cursorId < 0 || cursorId >= (int)ARRAYSIZE(kLondonCursorPics))
@@ -766,7 +655,6 @@ void EEMEngine::setSiteHotspotCursorId(int cursorId) {
 }
 
 bool EEMEngine::openArchives() {
-	// _InitGraphicsSystem @ 172b:0145.
 	if (!_picsArchive.open(Common::Path("PICS.DBD"), Common::Path("PICS.DBX"))) {
 		warning("PICS archive missing");
 		return false;
@@ -779,10 +667,6 @@ bool EEMEngine::openArchives() {
 		warning("SITES archive missing — site backgrounds disabled");
 	if (!_balloonArchive.open(Common::Path("BALLOON.DBD"), Common::Path("BALLOON.DBX")))
 		warning("BALLOON archive missing — clue text will lack balloons");
-	// `_GetButton @ 172b:199d` reads from this archive (see strings
-	// 'button.dbd' / 'Button.DBX' at 29be:06bf / 29be:04bb). Each
-	// per-site map marker (used by `_StampButtons @ 20fe:0d2f` and
-	// looked up via MapData[+0]) lives here.
 	if (!_buttonArchive.open(Common::Path("BUTTON.DBD"), Common::Path("BUTTON.DBX")))
 		warning("BUTTON archive missing — map markers will be unlabelled");
 	return true;
@@ -790,8 +674,6 @@ bool EEMEngine::openArchives() {
 
 bool EEMEngine::loadSitePalettes() {
 	Common::File f;
-	// EEM1 ships "SITEPALS" (40 palettes); EEM2/London ships "SITEPALS."
-	// with a trailing dot (63 palettes). _ReadPalettes @ 17ee:0cdb.
 	const char *palFile = isLondon() ? "SITEPALS." : "SITEPALS";
 	if (!f.open(Common::Path(palFile))) {
 		warning("%s missing", palFile);
@@ -808,12 +690,8 @@ bool EEMEngine::loadSitePalettes() {
 }
 
 bool EEMEngine::getSitePalette(uint num, byte *out) const {
-	// EEM1 SITEPALS has kNumSitePals (40) entries; EEM2/London SITEPALS.
-	// has 63. Validate against the actual loaded buffer so both work.
 	if (_sitePals.size() < (num + 1) * kPalSize)
 		return false;
-	// SITEPALS stores 6-bit VGA-DAC values (0..63); ScummVM expects
-	// 8-bit (0..255), so left-shift by 2 like the original VGA hardware.
 	const byte *src = _sitePals.data() + num * kPalSize;
 	for (uint i = 0; i < kPalSize; i++)
 		out[i] = (byte)(src[i] << 2);
@@ -848,13 +726,6 @@ bool EEMEngine::setAnmPalette(const Common::Path &anmPath) {
 }
 
 void EEMEngine::interruptAudio(bool stopMusicToo) {
-	// Mirrors `_CleanMysterySounds @ 202f:05a5` + `_StopMIDI @
-	// 20a2:0512` — both fire when the player aborts the opening-anim
-	// chain or dismisses the title (`_DoOpeningAnims` writes
-	// `_LoopMIDI = 0; _StopMIDI();` after the title-input loop).
-	// Conversation / clue-dialog skip paths pass `stopMusicToo = false`
-	// so the site / briefing MIDI keeps going across an ESC — only the
-	// per-line voice + spool need to stop.
 	if (_audio) {
 		_audio->stopVoice();
 		_audio->stopSpool();
@@ -902,8 +773,6 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
 		}
 		g_system->updateScreen();
 
-		// Original uses _CheckFrameRate / _kbhit; fixed delay here.
-		// ESC sets _skipIntro and interrupts audio.
 		const uint32 frameStart = g_system->getMillis();
 		bool aborted = false;
 		while (g_system->getMillis() - frameStart < frameDelayMs && !aborted) {
@@ -926,10 +795,6 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
 					break;
 				}
 			}
-			// Refresh cursor overlay every tick — otherwise
-			// the cursor only redraws when the next frame is blitted
-			// (~8 Hz at 120 ms), perceived as choppy during long
-			// animations like SCRAPBK.ANI.
 			g_system->updateScreen();
 			g_system->delayMillis(5);
 		}
@@ -938,7 +803,6 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
 	}
 
 	if (holdLastFrame && !shouldQuit() && !_skipIntro) {
-		// _DoOpeningAnims tail: while (!keyDataAvailable).
 		while (!shouldQuit()) {
 			Common::Event ev;
 			bool clicked = false;
@@ -965,14 +829,12 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
 			g_system->updateScreen();
 			g_system->delayMillis(20);
 		}
-		// _DoOpeningAnims @ 2520:0945: _LoopMIDI=0; _StopMIDI().
 		if (_music)
 			_music->stop();
 	}
 }
 
 void EEMEngine::blitAt(const Picture &pic, int x, int y) {
-	// Clip against the 320x200 frame buffer.
 	const int w = MIN<int>(pic.surface.w, kScreenWidth - x);
 	const int h = MIN<int>(pic.surface.h, kScreenHeight - y);
 	if (w <= 0 || h <= 0)
@@ -982,9 +844,6 @@ void EEMEngine::blitAt(const Picture &pic, int x, int y) {
 }
 
 void EEMEngine::waitForInput(uint32 maxMs) {
-	// ESC: _skipIntro + interruptAudio (matches _CleanMysterySounds +
-	// _StopMIDI around _DoOpeningAnims title wait).
-	// Only Return/KP-Enter/Space/Escape advance.
 	setInteractiveMouseCursor(false);
 	const uint32 startMs = g_system->getMillis();
 	while (!shouldQuit() && (g_system->getMillis() - startMs < maxMs)) {
@@ -1017,12 +876,7 @@ void EEMEngine::waitForInput(uint32 maxMs) {
 	}
 }
 
-// _OpenColorCycle @ 2520:04f7. Rotate `fpal[start..end]` by one slot:
-//   saved = fpal[end]
-//   for u = end..start+1: fpal[u] = fpal[u-1]
-//   fpal[start] = saved
-// If `show`, upload `end - start` entries (fpal[start..end-1]) — note that
-// fpal[end] is rotated in memory but intentionally not uploaded each tick.
+// _OpenColorCycle @ 2520:04f7. Rotate `fpal[start..end]` by one slot
 void openColorCycle(byte *fpal, uint8 start, uint8 end, bool show) {
 	if (end <= start)
 		return;
@@ -1042,32 +896,8 @@ void openColorCycle(byte *fpal, uint8 start, uint8 end, bool show) {
 												   end - start);
 	}
 }
-
+// _ShowEAKids @ 2520:05f0:
 void EEMEngine::showEAKidsLogo() {
-	// _ShowEAKids @ 2520:05f0:
-	//   _GetPicture(0x54) + memcpy to 0xa000 (VGA).
-	//   _GetPalette(0x25) loads pal 0x25 into _fpal (NOT uploaded to DAC).
-	//   FRAME_RATE = 0x19 (25 fps); _InitFrameReg.
-	//   for j in 0..1: show = j;
-	//     for u in 0..0x37 (= 55):
-	//       if (show) wait for next 25-fps tick (abort on key/click).
-	//       _OpenColorCycle(0x01, 0x6e, show)   // bg / outer ring shimmer
-	//       _OpenColorCycle(0x81, 0xee, show)   // inner gradient shimmer
-	//       if (--delay == 0) {
-	//         delay = 8;
-	//         _OpenColorCycle(0x70, 0x80, show) // mid band
-	//       }
-	//   if (!abort) {
-	//     for i in 0..5: _OpenColorCycle(0x70, 0x80, 1);
-	//     for i in 0..0x23: wait one frame;
-	//   }
-	//   _OpenFadeOut().
-	//
-	// Pass 1 (j=0, show=0) pre-rolls _fpal 55 frames in memory only — no
-	// DAC upload, no frame sync. Pass 2 (j=1, show=1) uploads each shift
-	// at 25 fps. Without the pre-roll, the logo first appears at the
-	// unrotated palette-0x25 phase instead of the intended "55-shifts-in"
-	// phase.
 	Picture pic;
 	if (!_picsArchive.getPicture(kPicEAKidsLogo, pic)) {
 		warning("EA Kids logo (%u) load failed", kPicEAKidsLogo);
@@ -1075,16 +905,13 @@ void EEMEngine::showEAKidsLogo() {
 	}
 	blitAt(pic, 0, 0);
 
-	// _GetPalette(0x25) — load into our shadow buffer; do not upload.
-	// The logo bitmap is on screen but invisible until the first
-	// _OpenColorCycle(..., show=1) upload in pass 2 lights it up.
 	byte fpal[kPalSize];
 	if (!getSitePalette(kPalEAKids, fpal)) {
 		warning("EA Kids palette (%u) load failed", kPalEAKids);
 		return;
 	}
 
-	const uint kFrameMs = 40;  // FRAME_RATE = 0x19 (25 fps).
+	const uint kFrameMs = 40;
 	bool aborted = false;
 
 	for (uint j = 0; j < 2 && !aborted && !shouldQuit(); j++) {
@@ -1138,13 +965,11 @@ void EEMEngine::showEAKidsLogo() {
 	g_system->updateScreen();
 	waitForInput(0x23 * kFrameMs);
 
-	// _OpenFadeOut @ 2520:0093 — 16 linear steps from current palette to black.
 	fadeCurrentPaletteToBlack();
 }
 
+// _ShowHScoreLogo @ 2520:0799: PIC 0x20c + palette 0x27;
 void EEMEngine::showHighScoreLogo() {
-	// _ShowHScoreLogo @ 2520:0799: PIC 0x20c + palette 0x27;
-	// _OpenFadeIn; 50-tick wait @ 25 fps; _OpenFadeOut.
 	Picture pic;
 	if (!_picsArchive.getPicture(kPicHighScoreLogo, pic)) {
 		warning("HighScore logo (%u) load failed", kPicHighScoreLogo);
@@ -1152,7 +977,6 @@ void EEMEngine::showHighScoreLogo() {
 	}
 	blitAt(pic, 0, 0);
 
-	// Force black before fade-in to avoid a 1-frame full-logo flash.
 	byte target[kPalSize];
 	if (!getSitePalette(kPalHighScore, target)) {
 		warning("HighScore palette (%u) load failed", kPalHighScore);
@@ -1163,17 +987,12 @@ void EEMEngine::showHighScoreLogo() {
 	g_system->updateScreen();
 	fadePaletteFromBlack(target);
 
-	// 50 ticks @ 25 fps.
 	waitForInput(2000);
 
 	fadeCurrentPaletteToBlack();
 }
 
 void EEMEngine::showLondonLogo(uint picId, uint palId, uint holdMs) {
-	// Parameterised twin of `showHighScoreLogo` for EEM2's opening logos
-	// (`_ShowEAKids` @ 2721:05e3 and `_ShowHScoreLogo` @ 2721:084d both do
-	// _GetPicture(pic) -> blit -> _GetPalette(pal) -> fade in -> hold ->
-	// fade out).
 	Picture pic;
 	if (!_picsArchive.getPicture(picId, pic) || pic.surface.empty()) {
 		warning("London logo PIC 0x%x load failed", picId);
@@ -1211,15 +1030,6 @@ bool EEMEngine::startLondonTrainingMystery() {
 }
 
 void EEMEngine::runLondonStartup() {
-	// Full opening sequence — EEM2 `_DoOpeningAnims` @ 2721:08e6:
-	//   _ShowEAKids   @ 2721:05e3 — PIC 0x54,  palette 0x3c
-	//   FUN_2721_07be @ 2721:07be — PIC 0x20c, palette 0x3e (publisher logo)
-	//   _ShowStormLogo@ 2721:0729 — anim 0 ("bolt.anm") + "thunder.voc"
-	//   _MIDIPlay(0x65)=MUS00101.XMI; anim 1 ("movie.anm")
-	//   _MIDIPlay(0x66)=MUS00102.XMI (loop); anim 2 ("wave.anm"), looped
-	//   _MIDIPlay(0x67)=MUS00103.XMI; fade out
-	// Anim names come from the table @ DS:1b54 -> {bolt,movie,wave}.anm;
-	// _MIDIPlay(n) maps to MUS%05d.XMI (n).
 	const uint32 kHoldForever = 0xFFFFFFFFu;
 	CursorMan.showMouse(false);
 	_skipIntro = false;
@@ -1273,15 +1083,8 @@ void EEMEngine::runLondonStartup() {
 	debugC(1, kDebugGeneral, "EEM2 (London): intro + profile selection done");
 }
 
+// `_NewPlayer` @ 1cd3:0f27 — character creation over background PIC 0xc
 void EEMEngine::showLondonCharSelect() {
-	// `_NewPlayer` @ 1cd3:0f27 — character creation over background PIC 0xc
-	// (palette 0). Two text fields then a male/female player-gender pick
-	// (left/right arrow 0x4b/0x4d -> DAT_4c4c, Enter confirms). The
-	// field/box rects are constants in EEM2's data segment (read at
-	// 2bca:0e3a); they map to the `pr` player record's FirstName[12] /
-	// LastName[20]:
-	//   first name : (54,75)-(151,85)    last name : (167,75)-(266,85)
-	//   male       : (110,116)-(120,122) female       : (190,116)-(200,122)
 	debugC(1, kDebugGeneral, "EEM2 (London): character creation");
 
 	const Common::Rect kFirstRect(54, 75, 151, 85);
@@ -1289,10 +1092,7 @@ void EEMEngine::showLondonCharSelect() {
 	const Common::Rect kMaleBox(110, 116, 120, 122);
 	const Common::Rect kFemaleBox(190, 116, 200, 122);
 	const uint kMaxFirst = 12, kMaxLast = 20;
-	// `_GetNameString @ 1cd3:0ddc` draws both the typed name and the caret in
-	// colour 0x22 (the passport-field ink); the old 0x0F was a guess and the
-	// underscore caret in it was effectively invisible.
-	const uint8 kInkColor = 0x22;     // typed-name ink + caret
+	const uint8 kInkColor = 0x22;
 
 	Picture bg;
 	const bool haveBg = _picsArchive.getPicture(0xc, bg) && !bg.surface.empty();
@@ -1347,8 +1147,6 @@ void EEMEngine::showLondonCharSelect() {
 				getFont().drawString(&scratch, last, kLastRect.left + 2,
 									 kLastRect.top + 1, kLastRect.width(),
 									 kInkColor);
-				// Caret = solid block `_FillRect(x+1, y, 6, 0xb, 0x22)` at the
-				// input point (`_GetNameString @ 1cd3:0ddc`), NOT an underscore.
 				if (blink && (field == kFieldFirst || field == kFieldLast)) {
 					const Common::Rect &fr =
 						(field == kFieldFirst) ? kFirstRect : kLastRect;
@@ -1364,8 +1162,6 @@ void EEMEngine::showLondonCharSelect() {
 				}
 			}
 			if (field == kFieldGender) {
-				// DOS restores both boxes, then fills the active one with the
-				// darker passport border color sampled at (109,115).
 				scratch.fillRect(kMaleBox, boxBlankColor);
 				scratch.fillRect(kFemaleBox, boxBlankColor);
 				scratch.fillRect(female ? kFemaleBox : kMaleBox,
@@ -1456,10 +1252,6 @@ void EEMEngine::showLondonCharSelect() {
 			blink = !blink;
 			needRedraw = true;
 		}
-		// Flush every frame so the mouse cursor tracks smoothly. The scratch
-		// rebuild + copyRectToScreen above is gated on needRedraw (and mouse
-		// motion doesn't set it), but the cursor is only re-composited by
-		// updateScreen(), so without this it moved only on blink/keypress.
 		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
@@ -1501,13 +1293,8 @@ void EEMEngine::showLondonCharSelect() {
 				s.getDescription().c_str(), s.getSaveSlot());
 	}
 
-	// New profile. EEM2 `_NewPlayer @ 1cd3:0f27` initializes the player
-	// record only when `_LoadPlayerRecord` failed, then immediately saves it.
 	_playerName = displayName.empty() ? "Detective" : displayName;
 	_chainStage = 1;
-	// `_NewPlayer @ 1cd3:0f27` stores the passport gender pick (`DAT_3036_4c4c`).
-	// Drives the player pronouns 0x86-0x88 in `parseString`. (Existing profiles
-	// take the gender from their save instead, via the load path above.)
 	_playerFemale = female;
 	_voiceOn = true;
 	if (_audio)
@@ -1525,14 +1312,8 @@ void EEMEngine::showLondonCharSelect() {
 		   _playerName.c_str(), profileKey.c_str(),
 		   female ? "female" : "male");
 }
-
+// Floppy storm-logo splash — `23d2:0605`:
 void EEMEngine::showFloppyStormLogo() {
-	// Floppy storm-logo splash — `FUN_23d2_0605 @ 23d2:0605`:
-	//   GetPicture(0x20b); BlitToVGA;
-	//   if (sound) { LoadVOC(slot 25 = "thunder.voc"); PlayVOC(...); }
-	//   GetPalette(0x26); FadeIn; wait 50 ticks; FadeOut.
-	// CD plays `BOLT.ANM` here with `THUNDER.VOC` overlaid; floppy uses
-	// a static still + the same VOC.
 	Picture pic;
 	if (!_picsArchive.getPicture(kPicStormLogo, pic)) {
 		warning("Storm logo (%u) load failed", kPicStormLogo);
@@ -1561,27 +1342,13 @@ void EEMEngine::showFloppyStormLogo() {
 }
 
 void EEMEngine::doSiteLoop() {
-	// Per-mystery site loop. SiteScreen::run() handles hotspot clicks
-	// plus M (map), N (notebook), G (gallery), A (accuse), Tab (next
-	// site), ESC (exit).
 	SiteScreen screen(this, &_mystery);
 	screen.run();
 	setHotspotMouseCursor(false);
 }
 
+// _StartTravelMusic @ 20a2:0595:
 void EEMEngine::startTravelMusic() {
-	// _StartTravelMusic @ 20a2:0595:
-	//   for (num = _SiteNumber; num > 4; num -= 5) {}
-	//   if (_MIDIAvailable && _MusicEnabled) {
-	//       if (_IsMIDIPlaying()) _StopMIDI();
-	//       _MIDIPlay(num);
-	//   }
-	// Five travel tracks (MUS00000.XMI..MUS00004.XMI), picked by
-	// `_SiteNumber % 5`. ONE-SHOT — `_DoOpeningAnims @ 2520:0945` resets
-	// `_LoopMIDI = 0` after the title-screen wait, and the function
-	// doesn't write it; combined with `_DoSiteLoop @ 168d:06c0` calling
-	// `_StopMIDI()` before the interactive phase, travel music plays
-	// ONCE during the entrance animation only.
 	if (!_music || !_mystery.isLoaded() ||
 		(isLondon() ? !_musicOn : !_voiceOn))
 		return;
@@ -1590,8 +1357,6 @@ void EEMEngine::startTravelMusic() {
 }
 
 void EEMEngine::startLondonTravelMusic(uint8 travelKind) {
-	// EEM2 `_DoTravel @ 1717:06ae`: travelKind * 6 indexes this table,
-	// then rand() picks one of three u16 MUS IDs.
 	static const uint16 kLondonTravelMusic[4][3] = {
 		{ 0,  0,  0 },
 		{ 3, 22, 25 },
@@ -1644,10 +1409,6 @@ void EEMEngine::syncSoundSettings() {
 }
 
 bool EEMEngine::hasFeature(EngineFeature f) const {
-	// We support saving any time but loading only at startup (via the
-	// `--save-slot=N` resume path or a slot picked from the launcher).
-	// Runtime loads would replace `_mystery._data` while pointers into
-	// it are alive on the stack inside `displayClue` etc.
 	return f == kSupportsSavingDuringRuntime ||
 		   f == kSupportsReturnToLauncher;
 }
@@ -1675,7 +1436,7 @@ Common::Error EEMEngine::saveGameStream(Common::WriteStream *stream,
 	//   +0x00..+0x0b : player name (12 chars, null-padded)
 	//   +0x0c..+0x1f : random ID bytes for `_GenerateFilename`
 	//                  (29be:0dbf "C:\EEMCDSAV\%s.PLR") — irrelevant to
-	//                  ScummVM saves which key on slot, not filename.
+	//                  us since saves which key on slot, not filename.
 	//   +0x20..+0x28 : derived 8-char .PLR basename — likewise unused.
 	//   +0x2d        : voice-enable flag (`DAT_2d5d_3f97`, default 1)
 	//   +0x2f        : chain stage (`DAT_2d5d_3f99`, 1=A, 2=B, 3=C;
@@ -1691,15 +1452,11 @@ Common::Error EEMEngine::saveGameStream(Common::WriteStream *stream,
 	s.syncAsByte(_partner);
 	s.syncAsByte(_chainStage);
 	s.syncAsByte(_voiceOn);
-	// EEM2/London music (MIDI) toggle — `DAT_3036_4cc0`, separate from voice.
 	s.syncAsByte(_musicOn);
 
-	// London passport gender (player pronouns 0x86-0x88).
 	byte playerFemale = _playerFemale ? 1 : 0;
 	s.syncAsByte(playerFemale);
 
-	// Mid-case resume: persist in-progress mystery (no equivalent in
-	// _LoadGame @ 2404:0dc7).
 	bool hasMystery = _mystery.isLoaded();
 	s.syncAsByte(hasMystery);
 	if (hasMystery) {
@@ -1738,7 +1495,6 @@ Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	if (_audio)
 		_audio->setVoiceEnabled(_voiceOn);
 
-	// London passport gender (player pronouns 0x86-0x88).
 	byte playerFemale = 0;
 	s.syncAsByte(playerFemale);
 	_playerFemale = (playerFemale != 0);
@@ -1753,13 +1509,6 @@ Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
 			resetSiteArrivalState();
 			return Common::kReadingFailed;
 		}
-		// `_ReadMystery @ 2404:008f` tail-calls `_InitMysterySounds`
-		// (2404:0298) so the SDB index is in place for clue and
-		// partner-speech spool sounds. Floppy ships individual
-		// `M-XXXX.VOC` files instead of the bundled SDB/SDX archive,
-		// so we skip the init there to avoid "missing" warnings;
-		// `spoolSound` then no-ops via its `_currentMystery < 0` guard
-		// until the per-voice VOC mapping is wired up.
 		if (_audio && !isFloppy())
 			_audio->initMysterySounds(mysteryNum);
 		_mystery.syncState(s);
@@ -1781,9 +1530,6 @@ Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
 }
 
 SaveStateList EEMEngine::listProfiles() const {
-	// _findfirst("*.PLR") in screen8_handler @ 1c33:1012.
-	// Filter out slot 0 (autosave) to match the original which
-	// has no autosave concept.
 	SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
 	for (uint i = 0; i < saves.size(); ) {
 		if (saves[i].getSaveSlot() == 0)
@@ -1813,8 +1559,7 @@ Common::Error EEMEngine::saveProfile(const Common::String &name) {
 		}
 	}
 
-	// New profile: pick lowest unused slot >=1 (slot 0 is autosave;
-	// DOS limit was 25 per screen8_handler local_8c[0x19][2]).
+	// New profile: pick lowest unused slot >=1 (slot 0 is autosave);
 	if (slot < 0) {
 		const int maxSlot = getMetaEngine()->getMaximumSaveSlot();
 		Common::Array<bool> used(maxSlot + 1);

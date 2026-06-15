@@ -84,9 +84,7 @@ public:
 	const byte *floppySuspectEntry(uint suspectIdx) const;
 
 	/// NoteIndex array. EEM1 CD: 4 bytes/entry (u16 textOff + u16 pts).
-	/// EEM2/London CD: 2 bytes/entry (u16 textOff only — no points field;
-	/// `_DrawNotes @ 16a0:01de` reads `noteIndex[clueId*2]`). Floppy: 7
-	/// bytes/entry.
+	/// Floppy: 7 bytes/entry. EEM2/London CD: 2 bytes/entry. 
 	const byte *noteIndex() const;
 
 	uint16 noteIndexCount() const;
@@ -181,7 +179,6 @@ public:
 	/// world, = _CluesFound): returns the fewest clues still to find across the
 	/// usable sets — 0 means a full answer set has been discovered and the
 	/// accusation can begin. Returns 5 when no relevant clue has been found yet.
-	/// Drives the London accuse-readiness gate (`_AccuseEntry @ 1ea1:115c`).
 	int minCluesRemaining() const;
 
 	/// _WITCH @ 1df2:089f. GalleryData[i*0x46 + 0x02] == 0xFFFF marks the
@@ -197,7 +194,7 @@ public:
 
 	/// Per-mystery runtime state, zeroed at load time.
 	uint8  _cluesFound[kCluesFoundCap]   = {};
-	uint8  _noteSelected[kCluesFoundCap] = {};  ///< _NoteSelected
+	uint8  _noteSelected[kCluesFoundCap] = {};
 	uint16 _hotSpotsSeen[kHotSpotsCap]   = {};
 	uint16 _inGallery[kGalleryCap]       = {};
 	uint8  _newOrder[kGalleryCap]        = {};
@@ -213,8 +210,8 @@ public:
 	uint16 _searchLocationNumber = 0xFFFF;
 	uint16 _siteNumber           = 0xFFFF;
 	uint16 _lastSite             = 0xFFFF;
-	uint16 _pendingSiteJump      = 0;      ///< EEM2 _DisplayClue destination site (DAT_2bca_0282).
-	uint16 _siteReturnDepth      = 0;      ///< EEM2 nested site return stack depth (DAT_2bca_0280).
+	uint16 _pendingSiteJump      = 0;
+	uint16 _siteReturnDepth      = 0;
 	uint16 _siteReturnStack[kVisitedSiteCap] = {};
 
 private:
@@ -240,7 +237,6 @@ private:
 	uint16 _bChain[kChainLen] = {};
 	uint16 _cChain[kChainLen] = {};
 
-	// Floppy variant — see Mystery::load. _ReadMystery_Floppy @ 22dc:0178.
 	bool   _isFloppy = false;
 	uint16 _floppySuspectsOff = 0;   ///< header[+4]    suspects
 	uint16 _floppyHintBlockOff = 0;  ///< header[+6]    hint -> clue table
