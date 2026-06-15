@@ -52,7 +52,6 @@ void AudioPlayer::stopAll() {
 }
 
 void AudioPlayer::playVoc(const Common::Path &vocPath) {
-	// `_voiceEnabled` mirrors DAT_2d5d_3f97 (setup-screen voice toggle).
 	if (!_voiceEnabled) {
 		debugC(2, kDebugSound, "AudioPlayer: voice disabled, skipping %s",
 			   vocPath.toString().c_str());
@@ -75,7 +74,6 @@ void AudioPlayer::playVoc(const Common::Path &vocPath) {
 		return;
 	}
 
-	// _PlayVoice @ 1ff1:023e — route through kSpeechSoundType for the launcher slider.
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_voiceHandle,
 					   stream, -1, Audio::Mixer::kMaxChannelVolume,
 					   0, DisposeAfterUse::YES);
@@ -87,9 +85,9 @@ bool AudioPlayer::isVoicePlaying() const {
 	return _mixer->isSoundHandleActive(_voiceHandle);
 }
 
+// _WaitForVoiceDone @ 1ff1:0221 — pumps events while the AIL voice channel
+// drains, so animations + abort-on-click keep working during the wait.
 void AudioPlayer::waitForVoiceDone(uint32 maxMs) {
-	// _WaitForVoiceDone @ 1ff1:0221 — pumps events while the AIL voice channel
-	// drains, so animations + abort-on-click keep working during the wait.
 	const uint32 startMs = g_system->getMillis();
 	while (isVoicePlaying() && !_vm->shouldQuit() &&
 		   g_system->getMillis() - startMs < maxMs) {

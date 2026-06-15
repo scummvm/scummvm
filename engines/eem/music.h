@@ -53,7 +53,6 @@ public:
 	explicit MusicPlayer(bool isFloppy = false);
 
 	/// _MIDIPlayFile @ 20a2:024c. loop=true mirrors
-	/// _LoopMIDI = 0xFFFF in _DoOpeningAnims.
 	void playFile(const Common::Path &xmiPath, bool loop = false);
 
 	/// _MIDIPlay(num) @ 20a2:047d. CD: "MUS%05u.XMI";

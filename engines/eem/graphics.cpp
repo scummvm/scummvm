@@ -38,12 +38,6 @@
 
 namespace EEM {
 
-// HelpData @ 29be:00c8, read by _InterfaceHelp @ 1560:0205. 5-byte entries:
-// u8 count, then up to 2 u16 picIds. Verified bytes:
-//   entry 0 (PDA / gallery HELP button): count=2, picIds = 0x0063, 0x01ae
-//   entry 1:                              count=2, picIds = 0x0192, 0x01b1
-// Only entry 0 is reachable from the PDA notebook (rect 1) and the gallery
-// (rect 1) — both call _InterfaceHelp(0).
 const uint16 kHelpPics[][2] = {
 	{ 0x0063, 0x01ae },
 	{ 0x0192, 0x01b1 },
@@ -114,8 +108,6 @@ bool findBalloonFamily(uint16 balloonId, uint16 &first, uint16 &last) {
 	return false;
 }
 
-// indDY is the artist-intended last text line, not just the indicator Y:
-// families 3, 4, 6 and singletons have shadow/tail decoration below indDY.
 uint getBalloonLineCapacity(uint16 balloonId, int lineH) {
 	const uint idx = balloonId & 0x7F;
 	if (idx >= ARRAYSIZE(kBalloonInsetTable) || lineH <= 0)
@@ -126,9 +118,6 @@ uint getBalloonLineCapacity(uint16 balloonId, int lineH) {
 }
 
 bool EEMEngine::floppyHotspotSearched(uint siteIdx, uint hotspotIdx) const {
-	// FUN_22dc_096c @ 22dc:096c: walks per-site dialog records at
-	// site_data[+6] to skip hotspotIdx hotspots, then returns _TextSeen for
-	// the selected hotspot's searched text index.
 	const byte *site = _mystery.siteData(siteIdx);
 	if (!site)
 		return false;
@@ -183,13 +172,8 @@ static Common::String readPuzzleLine(Common::File &f) {
 	}
 	return s;
 }
-
+// `_DoPuzzle @ 2542:1482`. 
 bool EEMEngine::doPuzzle(uint puzzleId) {
-	// `_DoPuzzle @ 2542:1482`. File `P<id>.BIN` (LE u16 fields):
-	//   type(0=typed,1=choice); mainPic{id,x,y}; extraCount; extra{id,x,y}*;
-	//   qx; qy; qw; voiceAlt(Jenny); voiceMain(Jake); question line.
-	//   type 0: answerRect{x1,y1,x2,y2}; answer line (stored UPPERCASE).
-	//   type 1: choiceCount; rects{x1,y1,x2,y2}* — correct = rect 0.
 	Common::File f;
 	const Common::String fname = Common::String::format("P%u.BIN", puzzleId);
 	if (!f.open(Common::Path(fname))) {
@@ -200,10 +184,6 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 
 	const uint16 type = f.readUint16LE();
 
-	// The caller (displayClue) restored the clean site background, so the
-	// current screen has no clue bubbles. Keep that as `cleanBg` and build the
-	// puzzle on a copy; `cleanBg` is restored after the answer (DOS `_DoPuzzle`
-	// _Repaint) and after the wrong-answer hint (`_KDHelp` _Repaint) so neither
 	// the puzzle pics nor any bubble is left on the background.
 	Graphics::ManagedSurface cleanBg(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
@@ -219,7 +199,6 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.simpleBlitFrom(cleanBg);
 
-	// Main picture, then `extraCount` more — each {id, x, y}, masked blit.
 	for (int phase = 0; phase < 2; phase++) {
 		uint16 n = 1;
 		if (phase == 1)
@@ -249,7 +228,6 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 							   0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 
-	// Partner reads the question (`_SpoolSound(id - 1)`, gated on audio).
 	if (_audio && _voiceOn) {
 		const uint16 v = (_partner == kPartnerJake) ? voiceMain : voiceAlt;
 		if (v != 0 && v != 0xFFFF)
@@ -260,13 +238,12 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 	CursorMan.showMouse(true);
 
 	if (type == 0) {
-		// Typed answer (`_CheckTypedAnswer` → `_GetNameString`, toupper+strcmp).
 		const int16 ax1 = (int16)f.readUint16LE();
 		const int16 ay1 = (int16)f.readUint16LE();
 		const int16 ax2 = (int16)f.readUint16LE();
 		const int16 ay2 = (int16)f.readUint16LE();
 		const Common::Rect rect(ax1, ay1, ax2, ay2);
-		Common::String answer = readPuzzleLine(f);  // stored uppercase
+		Common::String answer = readPuzzleLine(f);
 		const uint maxLen = answer.size() + 2;
 
 		Common::String input;
@@ -302,7 +279,7 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 					if (!input.empty())
 						done = true;
 				} else if (k == Common::KEYCODE_ESCAPE) {
-					input.clear();  // cancel → empty → fails the compare
+					input.clear();
 					done = true;
 				} else if (k == Common::KEYCODE_BACKSPACE) {
 					if (!input.empty())
@@ -333,19 +310,6 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 			const int16 cy2 = (int16)f.readUint16LE();
 			rects.push_back(Common::Rect(cx1, cy1, cx2, cy2));
 		}
-		// `_GetPuzzleChoice @ 2542:11a9`: the choice rects are the only
-		// clickable areas (no done/exit hotspot) and ESC = wrong; the Tab/arrow
-		// keys hit a global handler, not choice selection. Highlight the
-		// options two ways, both reusing the existing engine mechanisms:
-		//   * Boxes: outline each option in the marching-ants ramp — palette
-		//     0xF9..0xFE, the SAME original yellow as the site hotspots, not a
-		//     puzzle-specific colour. Gated like the DOS `_DrawRect`
-		//     (`DAT_3036_4c4a` → port `hide_highlight_boxes`).
-		//   * Cursor: recolor the default arrow over an option
-		//     (`setInteractiveMouseCursor`, the EEM1 red-pixel cursor for
-		//     "otherwise invisible" hotspots). These options carry no per-hotspot
-		//     cursor shape, so the default cursor is what's shown — exactly the
-		//     case that recolor is meant for.
 		applyHotspotGlowPalette();
 		const bool showBoxes = !ConfMan.getBool("hide_highlight_boxes");
 		int picked = -1;
@@ -368,8 +332,6 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 											   kScreenWidth, kScreenHeight);
 				}
 			}
-			// Red default-cursor while hovering a clickable option; plain arrow
-			// off all of them (mirrors `updateHotspotCursor`).
 			const Common::Point mp = g_system->getEventManager()->getMousePos();
 			bool nowOver = false;
 			for (uint i = 0; i < rects.size(); i++) {
@@ -409,15 +371,11 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 	}
 	f.close();
 
-	// _Repaint after the answer: drop the puzzle pics back to the clean site.
 	g_system->copyRectToScreen(cleanBg.getPixels(), cleanBg.pitch, 0, 0,
 							   kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 
 	if (!correct && !shouldQuit()) {
-		// Wrong: partner scolds via the KD hint (`_MIDIPlay(0x28)` +
-		// `_KDHelp(TextBlock + KDTextIndex[+0xc], voice 6)`), drawn on the
-		// clean site (the puzzle has already been _Repaint-ed away).
 		const byte *kd = _mystery.kdTextIndex();
 		const uint16 hintOff = kd ? READ_LE_UINT16(kd + 0x0c) : 0xFFFF;
 		if (hintOff != 0xFFFF) {
@@ -454,7 +412,6 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 				_audio->sayKDDigital(kd, 6, _partner);
 			waitForInput(60000);
 
-			// `_KDHelp` ends with _Repaint: clear the hint balloon too.
 			g_system->copyRectToScreen(cleanBg.getPixels(), cleanBg.pitch,
 									   0, 0, kScreenWidth, kScreenHeight);
 			g_system->updateScreen();
@@ -465,14 +422,6 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 }
 
 void EEMEngine::doHelp() {
-	// Floppy per-mystery H<n>.BIN hint files. Loader FUN_1503_0001 @ 1503:0001
-	// (format string "h%d.bin" @ 2608:0154), consumer FUN_1503_01a5 @ 1503:01a5.
-	// Format:
-	//   byte numChainHints; numChainHints × { byte siteIdx; byte hotspotIdx; }
-	//   byte numExtraHints; numExtraHints × { byte siteIdx; byte hotspotIdx; }
-	//   asciiz str1, str2, str3 (post-solve, score >= 100)
-	// Selection: any chain hotspot unsearched -> str1; else any extra
-	// unsearched -> str2; else selectedPoints() >= 100 -> str3.
 	if (isFloppy() && _mystery.isLoaded()) {
 		const Common::String filename = Common::String::format("H%u.BIN",
 															   _mystery.number());
@@ -545,9 +494,6 @@ void EEMEngine::doHelp() {
 		if (!chosen || *chosen == 0)
 			return;
 
-		// _GetKDTextBalloon @ 1df2:0105 (floppy FUN_1d40_009f) indexes the
-		// per-character table at 2608:0c14 by the literal byte. Bytes at
-		// 2608:0c44 (= 0xc14 + '0') give the '0'..'9' -> balloon-id mapping:
 		static const uint8 kFloppyDigitToBalloon[10] = {
 			0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1c, 0x1d, 0x1e, 0x0a
 		};
@@ -612,27 +558,7 @@ void EEMEngine::doHelp() {
 		return;
 	}
 
-	// Mirrors _KDHelp @ 1560:010a. Walks the first two _AChain entries
-	// (the puzzle's required-clue chain — the "spine" of evidence the
-	// player must collect):
-	//
-	//   for (i = 0; i < 2; i++) {
-	//       if (_AChain[i] != -1 && _HintBlock[i] != -1 &&
-	//           _CluesFound[_AChain[i]] == 0) {
-	//           _DisplayHint(TextBlock + _HintBlock[i], i + 10);
-	//           shown++; break;
-	//       }
-	//       if (_HintBlock[i] != -1) defined++;
-	//   }
-	//   if (!shown) {
-	//       // Generic KD hint: KDTextIndex[+0xe] (first time) /
-	//       // KDTextIndex[+0x10] (second time, toggled by _SawHelpHint).
-	//       // If no chain hint was ever defined, render the "no hints"
-	//       // sentinel instead.
-	//       _DisplayHint(...);
-	//   }
-	//
-	// SMART per-puzzle hint: partner points at whichever chain clue the
+	// per-puzzle hint: partner points at whichever chain clue the
 	// player hasn't found yet, only falling back to the generic line once
 	// every chain hint has been triggered.
 	if (!_mystery.isLoaded() || !_font.isLoaded())
@@ -644,16 +570,10 @@ void EEMEngine::doHelp() {
 		return;
 
 	uint16 chosenText = 0xFFFF;
-	int    soundNum   = 0;       // _SayKDDigital line: EEM1 chain 10/11; fallback 7/8.
-	int    hintVoiceSlot = -1;   // London chain hint → _SayKDHintDigital(slot).
+	int    soundNum   = 0;
+	int    hintVoiceSlot = -1;
 	bool   anyHintDefined = false;
 
-	// Required-clue chain walk. EEM1 `_KDHelp @ 1560:010a` checks the first two
-	// entries of chain A. EEM2 `_DoKDHelp @ 15c1:020b` walks all THREE chains
-	// (A,B,C @ header words 16-20/21-25/26-30) × 5 slots, indexes the 15-entry
-	// hint-text table `hintBlock()[chain*5 + slot]`, and voices a chain hint
-	// with `_SayKDHintDigital(slot)` (table kdTextIndex()+0x3a) instead of
-	// EEM1's `_SayKDDigital(slot + 10)`. Gate is the same: clue not yet found.
 	const uint kChains = isLondon() ? 3u : 1u;
 	const uint kSlots  = isLondon() ? Mystery::kChainLen : 2u;
 	if (hb) {
@@ -681,7 +601,6 @@ void EEMEngine::doHelp() {
 	}
 
 	if (chosenText == 0xFFFF) {
-		// Second arm of _KDHelp (1560:0152-019b): generic KD hint fallback.
 		if (anyHintDefined) {
 			const uint16 hintFirst  = READ_LE_UINT16(kd + 0x0e);
 			const uint16 hintSecond = READ_LE_UINT16(kd + 0x10);
@@ -704,20 +623,6 @@ void EEMEngine::doHelp() {
 
 	const Common::String raw  = _mystery.textAt(chosenText);
 	Common::String text = parseString(raw, _playerName, _partner);
-
-	// Render as a speech-balloon overlay, mirroring _DisplayHint @ 1560:0009:
-	//
-	//   _GetKDTextBalloon(text, &bub);             // first-char dispatch
-	//   _GetBalloon(bub);                          // load balloon pic
-	//   y = (h < 0x4e) ? (0x50 - h) >> 1 : 1;      // vertical centre
-	//   _AddPicBackground(balloon, 0x21, y);       // overlay on screen
-	//   _WordWrap(0x21+tbl[bub].x, y+tbl[bub].y,   // text inside balloon
-	//             tbl[bub].w, text, -1, color=0);
-	//   _SayKDDigital(snd);                        // partner voice
-	//   _Wait();
-	//
-	// BG is the caller's CURRENT screen (site / PDA / gallery), not a cleared
-	// scratch.
 	Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 	ms.clear();
@@ -729,13 +634,6 @@ void EEMEngine::doHelp() {
 		}
 	}
 
-	// Balloon shape dispatch via _GetKDTextBalloon @ 1df2:0105 — based on
-	// the first char of the parsed text. Digits select a specific balloon
-	// variant; non-digit defaults to 0x17. The digit, when present, is
-	// THEN consumed from the displayed text — mirrors _DisplayAlibi
-	// @ 1df2:0145's `str = pbVar7 + 1` advance after reading `*str` for
-	// bindx. _GetKDTextBalloon itself doesn't strip it (1df2:0105 just
-	// reads `*str`), so the caller has to.
 	const byte firstChar =
 		text.empty() ? (byte)0 : (byte)text[0];
 	uint16 bubNum = getKDTextBalloon(firstChar);
@@ -768,10 +666,6 @@ void EEMEngine::doHelp() {
 							   0, 0, kScreenWidth, kScreenHeight);
 	g_system->updateScreen();
 
-	// _DisplayHint @ 1560:0009 plays _SayKDDigital(soundnum) — a
-	// partner-specific voice line keyed to which hint type fired:
-	//   10 = first chain hint, 11 = second chain hint,
-	//    7 = generic KD (first), 8 = generic KD (second).
 	if (_audio && _mystery.kdTextIndex()) {
 		if (hintVoiceSlot >= 0)
 			_audio->sayKDHintDigital(_mystery.kdTextIndex(),
@@ -783,17 +677,8 @@ void EEMEngine::doHelp() {
 
 	waitForInput(60000);
 }
-
+// _InterfaceHelp(num) @ 1560:0205
 void EEMEngine::doInterfaceHelp(uint num) {
-	// Mirrors _InterfaceHelp(num) @ 1560:0205. The original walks
-	// HelpData @ 29be:00c8 (5-byte entries: u8 count, then up to 2 u16
-	// picIds), _GetPictures each one, blits via _Rect_Move_Mask(0, 0, ...)
-	// (a MASKED blit on top of the existing screen — transparent pixels
-	// show the caller's BG), and waits for click / key. ESC at 1560:02b3
-	// skips to the end. The function hides the cursor at the top
-	// (MOV [0x3a00], 0 @ 1560:0216 + _RemoveMouse @ 1000:542f at
-	// 1560:021c) and restores it at the tail (_DrawMouse @ 1000:5429
-	// at 1560:02e8). See kHelpPics comment for HelpData decoding.
 	if (num >= ARRAYSIZE(kHelpPics))
 		return;
 
@@ -824,8 +709,6 @@ void EEMEngine::doInterfaceHelp(uint num) {
 		debugC(1, kDebugScript, "doInterfaceHelp: pic 0x%x = %dx%d flags=0x%x",
 			   picId, pic.surface.w, pic.surface.h, pic.flags);
 
-		// transBlitFrom transp = pic.flags >> 8 matches _Rect_Move_Mask param_10
-		// @ 1000:03fc. Explicit (0,0) destPos: no-arg overload stretches to fill.
 		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.simpleBlitFrom(bg);
@@ -884,7 +767,7 @@ void EEMEngine::setPartnerEraseBg(const Graphics::ManagedSurface *bg) {
 
 uint16 EEMEngine::fitBalloonToText(uint16 bubNum,
 								   const Common::String &text) {
-	// Opt-in via "fit_dialog_balloons", CD only (floppy table unvalidated).
+	// Opt-in via "fit_dialog_balloons", CD only
 	if (isFloppy() || !ConfMan.getBool("fit_dialog_balloons"))
 		return bubNum;
 
@@ -969,12 +852,6 @@ bool EEMEngine::getBalloonIndicatorPos(uint16 bubNum, uint16 &dx,
 void EEMEngine::drawFloppyBubbleIndicator(Graphics::ManagedSurface &dst,
 										   uint16 bubNum, int ballX, int ballY,
 										   bool endIndicator) {
-	// Mirrors _DisplayHotspotClue_Floppy @ 22dc:08c0 (end-of-record) and
-	// @ 22dc:08aa (mid-pagination). Both grab a pre-loaded PIC:
-	//   DAT_28da_3034 = PIC 0xa0  "more pages" indicator
-	//   DAT_28da_3030 = PIC 0xa1  "end" indicator
-	// and stamp it at (ballX + insetTable[bubNum].indDX,
-	//                  ballY + insetTable[bubNum].indDY) via _AddPicBackground.
 	uint16 dx = 0;
 	uint16 dy = 0;
 	if (!getBalloonIndicatorPos(bubNum, dx, dy))

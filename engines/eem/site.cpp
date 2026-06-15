@@ -91,7 +91,6 @@ void blitFrame(Graphics::ManagedSurface &dst, const Picture &p,
 
 // Masked top-left blit onto a locked screen surface. Clips both src and
 // dst against the screen, then delegates to copyRectToSurfaceWithKey
-// (Graphics::Surface's transparent-key blit).
 void keyBlitToScreen(Graphics::Surface *screen, const Picture &p,
 							int x, int y) {
 	if (!screen || p.surface.empty())
@@ -107,21 +106,12 @@ void keyBlitToScreen(Graphics::Surface *screen, const Picture &p,
 									 src, (uint32)(byte)(p.flags >> 8));
 }
 
-// Top-left masked blit. `_AddDrop @ 172b:1a77` calls
-// `_Rect_Move_Mask(..., x, y, ...)` with the raw (x, y) and IGNORES
-// per-frame anchor offsets — so this is the correct path for static
-// drops and any non-animated overlay. Animations must route through
-// `blitAnimFrameAnchored` instead so per-frame anchor offsets
-// (miscflags = X, rowoff = Y) apply correctly.
 void blitMaskedSurface(Graphics::Surface *screen, const Picture &p,
 					   int x, int y) {
 	keyBlitToScreen(screen, p, x, y);
 }
 
-// `_UpdateAnimations @ 172b:09c1`: blit at
-//   (anchor_x - puVar5[4], anchor_y - puVar5[3])
-// where puVar5[3]/[4] are per-frame rowoff/miscflags (signed int16) from
-// the 16-byte PicData header. Transparency = flags >> 8.
+// `_UpdateAnimations @ 172b:09c1`
 void blitAnimFrameAnchored(Graphics::Surface *screen, const Picture &p,
 						   int anchorX, int anchorY) {
 	keyBlitToScreen(screen, p,
@@ -131,9 +121,7 @@ void blitAnimFrameAnchored(Graphics::Surface *screen, const Picture &p,
 
 // `_ColorCycle @ 172b:2015` — rotate `_fpal[start..end]` by one slot:
 // save [start], shift [start..end-1] = [start+1..end], restore saved at
-// [end], then re-upload via `_Set_Palette`. We do the same against
-// ScummVM's palette manager. Used by per-site Loop-1 ColorCycle entries
-// and the always-on hotspot marching-ants range 0xF9..0xFE.
+// [end], then re-upload via `_Set_Palette`. 
 void cyclePaletteRange(uint8 start, uint8 end) {
 	if (end <= start)
 		return;
@@ -153,12 +141,8 @@ void cyclePaletteRange(uint8 start, uint8 end) {
 	buf[(count - 1) * 3 + 2] = savedB;
 	g_system->getPaletteManager()->setPalette(buf, start, count);
 }
-
+// `_OpenColorCycle @ 2520:04f7`
 void cyclePaletteRangeReverse(uint8 start, uint8 end) {
-	// `_OpenColorCycle @ 2520:04f7`: save END, shift every entry up by
-	// one (END-1 → END, ...), wrap saved END to START. Visually colors
-	// march from start toward end — opposite direction from
-	// `cyclePaletteRange`. Used by the EA Kids / HighScore logo cycles.
 	if (end <= start)
 		return;
 	const uint count = (uint)end - (uint)start + 1;
@@ -180,11 +164,6 @@ void cyclePaletteRangeReverse(uint8 start, uint8 end) {
 }
 
 void applyHotspotGlowPalette() {
-	// SITEPALS ships palette 0xF9..0xFE as uniform yellow (3F 3E 00), so the
-	// original marching-ants was a placeholder. Override with a 6-step yellow
-	// ramp so `cyclePaletteRange(0xF9, 0xFE)` (and the per-index draw colour)
-	// produce a visible pulse. Shared by site hotspots and the clue puzzle so
-	// both highlight clickable areas with the same (original) colours.
 	static const byte kAntsGlow[6 * 3] = {
 		0x40, 0x40, 0x00, // F9 — dim
 		0x80, 0x80, 0x00, // FA
@@ -211,8 +190,6 @@ const uint16 kWaitAnims[7][6] = {
 	{ 0x06, 0x06, 0x06, 0x06, 0x50, 0x50 }, // 6
 };
 
-// `_DoKDAnim` table @ 29be:0228. 6 entries (kdAnimNum 0..5).
-// Layout: { animJake, animJenny, xJake, xJenny, yJake, yJenny }.
 const uint16 kKdAnimTable[6][6] = {
 	{ 0x03, 0x0c, 6, 6, 80, 80 }, // 0 — speaker idx 1 wait anim
 	{ 0x01, 0x0b, 6, 6, 80, 80 }, // 1 — same as PDA idle
@@ -222,11 +199,7 @@ const uint16 kKdAnimTable[6][6] = {
 	{ 0x06, 0x06, 6, 6, 80, 80 }, // 5 — same anim both partners
 };
 
-// EEM2 `_DoKDAnim @ 1717:05bf` table @ 2bca:0238 (read from EEM2CD.EXE).
-// Same { animJake, animJenny, xJake, xJenny, yJake, yJenny } layout. Positions
-// differ (x≈2, y≈78 vs EEM1's 6/80) and Jenny's reactions 4/5 use distinct
-// anims 0x55/0x2d (EEM1 reused 0x05/0x06 for both partners). Selected by
-// `playKdAnim` when the London variant is active.
+// EEM2 `_DoKDAnim @ 1717:05bf` table @ 2bca:0238 
 const uint16 kKdAnimTableLondon[6][6] = {
 	{ 0x03, 0x0c, 3, 2, 66, 65 }, // 0
 	{ 0x01, 0x0b, 2, 2, 78, 78 }, // 1
@@ -236,8 +209,7 @@ const uint16 kKdAnimTableLondon[6][6] = {
 	{ 0x06, 0x2d, 2, 2, 78, 78 }, // 5 — Jenny uses 0x2d
 };
 
-// EEM2 `_WaitAnims @ 2bca:022c`. Entry 0 precedes `_DoKDAnim`'s
-// table; entries 1..6 overlap `kKdAnimTableLondon`, same as EEM1.
+// EEM2 `_WaitAnims @ 2bca:022c`.
 const uint16 kWaitAnimsLondon[7][6] = {
 	{ 0x00, 0x0a, 2, 2, 78, 78 }, // 0
 	{ 0x03, 0x0c, 3, 2, 66, 65 }, // 1
@@ -248,13 +220,7 @@ const uint16 kWaitAnimsLondon[7][6] = {
 	{ 0x06, 0x2d, 2, 2, 78, 78 }, // 6
 };
 
-// Animation script table — mirrors `_AnimationSequences @ 29be:22d4`
-// (55-entry table of far ptrs, each pointing to a u16-frame-index
-// stream). `_NewAnimation @ 172b:06e1` reads the script via
-// `_AnimationSequences[anim_id]` and stores the pointer in
-// `DAT_2d5d_3eaf[i*0xb]`; `_UpdateAnimations @ 172b:09c1` then walks it
-// one entry per `_CheckFrameRate` tick (~140 ms).
-//
+// Animation script table (`_AnimationSequences @ 29be:22d4`)
 // Script byte format:
 //   0x80         = restart (loop back to index 0; terminator for one-shots)
 //   0x81 N       = jump to byte N (not used in partner subset)
@@ -353,8 +319,6 @@ const AnimScript kAnimScripts[] = {
 	{ 0x35, 11, { 0,1,2,3,4,5,6,7,8,9,10 } },
 };
 
-// Scripts longer than 28 frames (>fits-inline limit). `findAnimScript`
-// checks both this array and `kAnimScripts`. Longest is 0x22 (115 frames).
 struct AnimScriptLong {
 	uint16 seqnum;
 	uint16 len;
@@ -362,9 +326,7 @@ struct AnimScriptLong {
 };
 
 // Briefing animations — `_DoInitClues @ 1a35:0411` always uses anim ID
-// 0x17 (game) / 0x18 (book) / 0x19 (nancy) regardless of partner; the
-// per-partner ANI.DBD cells come from a separate entry (e.g. 0x3b for
-// Jenny's briefing).
+// 0x17 (game) / 0x18 (book) / 0x19 (nancy) regardless of partner
 const uint8 kScript17[] = {
 	0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
 	20,21,22,23,24,25,26,27,28,29
@@ -378,10 +340,7 @@ const uint8 kScript19[] = {
 	1,2,3,4,5,6,7,8,9,10,11,12
 };
 
-// Site / NPC drop scripts (29be:22d4 entries 0x1a..0x36). Repeated
-// frames are the original's frame-hold mechanism (one entry per tick).
-
-// 0x1a (29be:19a4) — count-up 0..7, idle hold, repeat 1..7, idle, mirror 7..0, idle.
+// Site / NPC drop scripts
 const uint8 kScript1a[] = {
 	0,1,2,3,4,5,6,7,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -390,7 +349,7 @@ const uint8 kScript1a[] = {
 	7,6,5,4,3,2,1,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
-// 0x1e (29be:1a40) — slow walk-stutter with idle tail (76 entries).
+
 const uint8 kScript1e[] = {
 	0,1,2,3,3,3,3,4,4,3,4,4,4,4,4,3,
 	5,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,
@@ -398,8 +357,7 @@ const uint8 kScript1e[] = {
 	7,8,7,7,7,7,7,8,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
-// 0x1f (29be:1ada) — 0..5, idle, 0..5, idle, 6..8 alternation,
-// idle (50 entries).
+
 const uint8 kScript1f[] = {
 	0,1,2,3,4,5,
 	0,0,0,0,
@@ -410,13 +368,12 @@ const uint8 kScript1f[] = {
 	6,
 	0,0,0,0,0
 };
-// 0x20 (29be:1b40) — count-up 0..33 (34 frames).
+
 const uint8 kScript20[] = {
 	0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
 	20,21,22,23,24,25,26,27,28,29,30,31,32,33
 };
-// 0x22 (29be:1ba4) — long held-frame walker 0..22 with idle tail
-// (115 entries; most frames held 4-7 ticks each).
+
 const uint8 kScript22[] = {
 	0,
 	1,1,1,1,1,
@@ -443,8 +400,7 @@ const uint8 kScript22[] = {
 	22,22,22,22,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
-// 0x23 (29be:1c8c) — 29 entries: 0, 6 holds of 1, count-up 2..4,
-// down-up gesture, 5 idle frames.
+
 const uint8 kScript23[] = {
 	0,1,1,1,1,1,1,
 	2,3,4,3,2,
@@ -452,39 +408,34 @@ const uint8 kScript23[] = {
 	2,3,4,3,3,3,3,3,
 	0,0,0,0,0,0
 };
-// 0x24 (29be:1cc8) — bell-curve hold (58 entries): 0,0, 1,1, 2,2,
-// 3 held for 26 ticks, mirror back, idle.
+
 const uint8 kScript24[] = {
 	0,0,1,1,2,2,
 	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
 	2,2,1,1,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
-// 0x28 (29be:1d7e) — gentle hold 0..3 with long hold on 3, mirror
-// back, idle (45 entries).
+
 const uint8 kScript28[] = {
 	0,1,1,2,2,
 	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
 	2,2,1,1,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
-// 0x29 (29be:1dda) — paired-step count-up 0..21 plus idle
-// (58 entries).
+
 const uint8 kScript29[] = {
 	0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,
 	11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19,
 	20,20,21,21,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
-// 0x2b (29be:1e5c) — count-up 0..11 with each frame held 4 ticks
-// (48 entries).
+
 const uint8 kScript2b[] = {
 	0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,
 	4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,
 	8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11
 };
-// 0x2c (29be:1ebe) — alternation walk 0..19 with idle tail
-// (54 entries).
+
 const uint8 kScript2c[] = {
 	0,1,2,3,4,5,
 	0,
@@ -495,8 +446,7 @@ const uint8 kScript2c[] = {
 	16,17,18,19,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
-// 0x2d (29be:1f2c) — count-up 0..11 with each frame held 8 ticks
-// (96 entries).
+
 const uint8 kScript2d[] = {
 	0,0,0,0,0,0,0,0,
 	1,1,1,1,1,1,1,1,
@@ -511,8 +461,7 @@ const uint8 kScript2d[] = {
 	10,10,10,10,10,10,10,10,
 	11,11,11,11,11,11,11,11
 };
-// 0x30 (29be:1fee) — 0,0, count-up 1..19, idle, mirror down, extra
-// idle (86 entries).
+
 const uint8 kScript30[] = {
 	0,0,
 	1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
@@ -521,7 +470,7 @@ const uint8 kScript30[] = {
 	5,4,4,3,3,2,2,1,1,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
-// 0x31 (29be:209c) — paired-step idle alternations (57 entries).
+
 const uint8 kScript31[] = {
 	0,0,0,1,1,1,
 	0,0,0,1,1,1,
@@ -535,8 +484,7 @@ const uint8 kScript31[] = {
 	0,0,0,
 	1,1,1
 };
-// 0x36 (29be:2110) — 0..8 forward, 1..8 forward, frame 1 held 20
-// ticks, 8..0 mirror, idle tail (60 entries).
+
 const uint8 kScript36[] = {
 	0,1,2,3,4,5,6,7,8,
 	1,2,3,4,5,6,7,8,
@@ -567,10 +515,9 @@ const AnimScriptLong kAnimScriptsLong[] = {
 };
 
 // `_PatientSequence` and `_ImpatientSequence` are standalone script
-// pointers, not entries in `_AnimationSequences`. CD has the data but
-// never calls the switchers; floppy calls them from `_DoSiteLoop_Floppy`
-// (via `_Switch2Patient` / `_Switch2Impatient`). We intentionally enable
-// the same switch for both builds.
+// pointers. CD has the data but never calls the switchers; floppy calls 
+// them from `_DoSiteLoop_Floppy` (via `_Switch2Patient` / `_Switch2Impatient`). 
+// We intentionally enable the same switch for both builds.
 const uint8 kPatientSequence[]   = { 0,0,0,0,0,0,0,0,0,2 };
 const uint8 kImpatientSequence[] = { 0,1,0,1,0,1,0,1,2,1 };
 
@@ -737,11 +684,6 @@ AnimScriptRef findAnimScript(uint16 seqnum) {
 }
 
 // Original frame period from `_InitFrameCounter @ 1a35:01ae`:
-//   LastFrame    = cs_within_hour + 0xe
-//   cs_within_hour = ((ti_min * 60) + ti_sec) * 100 + ti_hund
-// (Borland C `struct time` memory order is min, hour, hund, sec.)
-// `+ 0xe` is 14 centiseconds → ~140 ms per frame, matching
-// `_CheckFrameRate @ 1a35:0204`.
 const uint kFramePeriodMs = 140;
 
 uint frameFromScriptAtTick(const uint8 *frames, uint len,
@@ -753,109 +695,15 @@ uint frameFromScriptAtTick(const uint8 *frames, uint len,
 	return (numFrames > 0) ? MIN<uint>(frame, numFrames - 1) : 0;
 }
 
-void auditPartnerAnims(EEMEngine *vm) {
-	// Cross-check every script against the ANI.DBD entry it references;
-	// warn on out-of-range frame requests.
-	if (!vm)
-		return;
-	DBDArchive &ani = vm->getAni();
-
-	struct Walker {
-		static void check(DBDArchive &ani, uint16 id, const uint8 *frames, uint8 len) {
-			if (len == 0)
-				return;
-			Animation a;
-			if (!ani.loadAnimation(id, a) || a.empty()) {
-				debugC(1, kDebugSite,
-					   "auditPartnerAnims: anim 0x%02x failed to load", id);
-				return;
-			}
-			uint maxRequested = 0;
-			for (uint j = 0; j < len; j++)
-				if (frames[j] > maxRequested)
-					maxRequested = frames[j];
-			if (maxRequested >= a.size()) {
-				warning("anim 0x%02x: script wants frame %u but ANI.DBD has "
-						"only %u — frames will be clamped",
-						id, maxRequested, (uint)a.size());
-			} else {
-				debugC(2, kDebugSite,
-					   "anim 0x%02x: %u cells, script max=%u, len=%u",
-					   id, (uint)a.size(), maxRequested, len);
-			}
-		}
-	};
-
-	for (uint i = 0; i < ARRAYSIZE(kAnimScripts); i++)
-		Walker::check(ani, kAnimScripts[i].seqnum,
-					  kAnimScripts[i].frames, kAnimScripts[i].len);
-	for (uint i = 0; i < ARRAYSIZE(kAnimScriptsLong); i++)
-		Walker::check(ani, kAnimScriptsLong[i].seqnum,
-					  kAnimScriptsLong[i].frames, kAnimScriptsLong[i].len);
-
-	// Per-frame anchor-offset audit (`_UpdateAnimations @ 172b:09c1`
-	// applies (anchor_x - miscflags, anchor_y - rowoff)). Log non-zero
-	// anchors so we know which anims need `blitAnimFrameAnchored`.
-	const uint16 partnerIds[] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05,
-								   0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c,
-								   0x0d, 0x0f, 0x10, 0x11, 0x12, 0x13,
-								   0x14, 0x15, 0x16, 0x17, 0x18, 0x19 };
-	for (uint i = 0; i < ARRAYSIZE(partnerIds); i++) {
-		const uint16 id = partnerIds[i];
-		Animation a;
-		if (!ani.loadAnimation(id, a) || a.empty())
-			continue;
-		bool anyAnchor = false;
-		int rowMin = 0, rowMax = 0, miscMin = 0, miscMax = 0;
-		for (uint f = 0; f < a.size(); f++) {
-			const Picture &fr = a[f];
-			const int sRow  = (int)(int16)fr.rowoff;
-			const int sMisc = (int)(int16)fr.miscflags;
-			if (sRow != 0 || sMisc != 0) {
-				if (!anyAnchor) {
-					rowMin = rowMax = sRow;
-					miscMin = miscMax = sMisc;
-					anyAnchor = true;
-				} else {
-					rowMin = MIN(rowMin, sRow);
-					rowMax = MAX(rowMax, sRow);
-					miscMin = MIN(miscMin, sMisc);
-					miscMax = MAX(miscMax, sMisc);
-				}
-			}
-		}
-		if (anyAnchor) {
-			// Signed int16 (puVar5[3]/[4] in `_UpdateAnimations`).
-			debugC(1, kDebugSite,
-				   "anim 0x%02x: per-frame anchor (rowoff [%d..%d], "
-				   "miscflags [%d..%d]) — handled by "
-				   "`blitAnimFrameAnchored`",
-				   id, rowMin, rowMax, miscMin, miscMax);
-		}
-	}
-}
-
 // Looping path of `_UpdateAnimations`: walk the script one entry per
 // `_CheckFrameRate` tick (`kFramePeriodMs` ~= 140 ms), wrap on 0x80.
-// If `seqnum` has no registered script, falls back to flipbook
-// (`tick % numFrames`) so unknown anims still move. The script can in
-// theory request a frame past the asset's actual cell count (misencoded
-// script) — `frameFromScriptAtTick` clamps to `numFrames - 1` so the
-// caller doesn't read past `anim[]`. Exported (non-static) so BigMap,
-// CaseSelection greeter, Notebook, and Gallery render paths in
-// `ui.cpp` use the same cadence.
 uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs) {
 	const AnimScriptRef s = findAnimScript(seqnum);
 	return frameFromScriptAtTick(s.frames, s.len, numFrames, tickMs);
 }
 
 // Play `unfold` once, then loop `waitSeq` forever. Mirrors the
-// original's slot-script-swap idiom: the entrance script runs to its
-// 0x80 terminator, then the slot's script pointer is rewritten to a
-// looping wait sequence (e.g. `_BigMapWaitSeq @ 29be:1574`,
-// `_SmallMapWaitSeq @ 29be:1548`). `partnerFrameAtTick` can't model
-// that swap on its own (it always wraps on the same script), hence
-// this helper.
+// original's slot-script-swap idiom
 uint oneShotThenLoopFrameAtTick(const uint8 *unfold, uint unfoldLen,
 									   const uint8 *waitSeq, uint waitSeqLen,
 									   uint numFrames, uint32 elapsedMs) {
@@ -867,10 +715,6 @@ uint oneShotThenLoopFrameAtTick(const uint8 *unfold, uint unfoldLen,
 }
 
 uint bigMapPartnerFrameAtTick(uint numFrames, uint32 elapsedMs) {
-	// Slot starts on script 0x14 (count-up 0..8 @ 29be:196a). On 0x80
-	// terminator, `_DoBigMap` rewrites the slot's script pointer to
-	// `_BigMapWaitSeq @ 29be:1574` = (9,9,9,9,10,9,9,9,9, 0x80) — the
-	// open-map hold with a fidget.
 	static const uint8 kUnfold[]  = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
 	static const uint8 kWaitSeq[] = { 9, 9, 9, 9, 10, 9, 9, 9, 9 };
 	return oneShotThenLoopFrameAtTick(kUnfold, ARRAYSIZE(kUnfold),
@@ -879,10 +723,6 @@ uint bigMapPartnerFrameAtTick(uint numFrames, uint32 elapsedMs) {
 }
 
 uint bigMapDetailPartnerFrameAtTick(uint numFrames, uint32 elapsedMs) {
-	// Slot starts on script 0x13 (count-up 0..7 @ 29be:1992). On 0x80
-	// terminator, `_DoMapScreen @ 20fe:1390` rewrites the slot pointer
-	// (`MOV [BX+0x789f],0x1548`) to `_SmallMapWaitSeq @ 29be:1548` =
-	// 18 entries holding cell 7 with a single cell-10 fidget (~1.8 s).
 	static const uint8 kUnfold[]  = { 0, 1, 2, 3, 4, 5, 6, 7 };
 	static const uint8 kWaitSeq[] = {
 		7, 7, 7, 10, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7
@@ -929,8 +769,6 @@ bool SiteScreen::playLondonTravelAnimation(uint fromSite, uint toSite) {
 		return false;
 	}
 
-	// EEM2 `_DoTravel @ 1717:06ed`: kind 3 forces partner suffix 0,
-	// so the shipped set is TRAVEL00/01/10/11/20.ANM.
 	const uint partnerSuffix = (travelKind == 3) ? 0 : _vm->getPartnerIndex();
 	const Common::String name = Common::String::format("TRAVEL%u%u.ANM",
 		(uint)travelKind - 1, partnerSuffix);
@@ -958,16 +796,12 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 		return;
 	}
 
-	// `_DoSiteLoop @ 168d:0436`: `_NewAnimation` sets the new slot's
-	// frame index to 0xffff (-1) → starts at script[0].
 	_waitPhaseAnchor = g_system->getMillis();
 	if (resetPartnerMood) {
 		_partnerWaitMood = kPartnerWaitDefault;
 		initImpatienceCounter();
 	}
 
-	// `_DoSiteLoop @ 168d:03f4`:
-	//   if (_VisitedSite[_SiteNumber] == 0) _DisplayClue(...);
 	const bool firstVisit = (siteNum < Mystery::kVisitedSiteCap)
 							 && (_mystery->_visitedSite[siteNum] == 0);
 
@@ -980,8 +814,6 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 
 	if (playArrival) {
 		if (_vm->isLondon()) {
-			// EEM2 `HandleLondonSiteLoop @ 1717:083a` calls `_DoTravel`
-			// before `_BuildBackground` for the destination site.
 			bool showedApproach = false;
 			const uint16 approachId = sd ? READ_LE_UINT16(sd + 2) : 0xffff;
 			if (firstVisit && approachId != 0xffff)
@@ -989,15 +821,10 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 			if (!showedApproach)
 				playLondonTravelAnimation(_mystery->_lastSite, siteNum);
 		} else {
-			// `_DoTravel @ 168d:02da` calls `_StartTravelMusic`.
 			_vm->startTravelMusic();
 		}
 	}
 
-	// `_BuildBackground` calls `GetPalette(sitenum + 1)` — sitenum is the
-	// global SITES.DBD index (per-mystery `sitepic` field).
-	// Floppy (`_DoSiteLoop_Floppy @ 1652:03f4`): first u16 of site_data is
-	// an offset to a drops sub-struct whose byte 0 is the SITES.DBD picID.
 	uint16 sitepic = 0;
 	if (sd) {
 		if (_vm->isFloppy()) {
@@ -1011,17 +838,11 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 	}
 	_vm->setSitePaletteForSite(sitepic);
 
-	// Override SITEPALS' uniform-yellow 0xF9..0xFE with the marching-ants
-	// glow ramp (shared with the clue puzzle).
 	applyHotspotGlowPalette();
 
 	renderBackground(siteNum);
 
-	// `_DoSiteLoop @ 168d:03f4` plays `_EnterSiteAnim` when
-	// `_LastSite != _SiteNumber`. Guard lives on the engine so PDA/gallery
-	// re-entry doesn't replay arrival.
 	if (playArrival) {
-		// `_EnterSiteAnim` snapshots the screen, so populate the BG first.
 		if (_vm->isFloppy())
 			renderFloppyDrops(siteNum);
 		else
@@ -1038,7 +859,6 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 		renderBackground(siteNum);
 	}
 
-	// Loop 2 from `_DoSiteLoop`: static drops (baked into snapshot).
 	if (_vm->isFloppy())
 		renderFloppyDrops(siteNum);
 	else
@@ -1049,7 +869,6 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 
 	scanColorCycles(siteNum);
 
-	// Loop 1 (animated NPCs) + partner on top of the snapshot.
 	const uint32 now = g_system->getMillis();
 	renderAnimatedDrops(siteNum, now);
 	renderPartner(siteNum, now);
@@ -1110,8 +929,6 @@ bool SiteScreen::checkImpatienceCounter() {
 }
 
 void SiteScreen::notePartnerActivity() {
-	// `_Switch2Patient(WaitHandle)` + `_InitImpatientCounter()` from
-	// the floppy site loop. Triggered on clicks/keys only (not mouse-move).
 	const bool wasImpatient = _partnerWaitMood == kPartnerWaitImpatient;
 	_partnerWaitMood = kPartnerWaitPatient;
 	initImpatienceCounter();
@@ -1135,7 +952,6 @@ void SiteScreen::run() {
 	if (!_mystery || !_mystery->isLoaded())
 		return;
 
-	// Caller seeds `_siteNumber` (via map pick or save restore).
 	uint cur = _mystery->_siteNumber;
 	if (cur >= _mystery->numSites())
 		cur = 0;
@@ -1163,14 +979,6 @@ void SiteScreen::run() {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN: {
-				// `_DoSiteLoop @ 168d:03f4` calls
-				//   _FindButton(&SiteButtons, 2, MouseX, MouseY)
-				// `SiteButtons` @ 29be:0274 — two 8-byte rects:
-				//   Button 0: (35,111)-(56,136)  notebook (_NextScreen=4)
-				//   Button 1: (7,177)-(57,200)   map (CD=1, floppy=2)
-				// Partner-head click is port-only: `_KDHelp` shortcut
-				// mirroring `_HandleNoteButton[3]` (0x0403) /
-				// `_HandleGalleryButton[3]` (0x061e). Rect = (5,80,44,110).
 				if (kPdaSiteRect.contains(event.mouse.x, event.mouse.y)) {
 					notePartnerActivity();
 					_vm->setHotspotMouseCursor(false);
@@ -1259,8 +1067,6 @@ void SiteScreen::run() {
 
 			case Common::EVENT_KEYDOWN:
 				notePartnerActivity();
-				// `_DoSiteLoop @ 168d:07e1` routes ESC via `_ESCHit` →
-				// "Are you sure?" → MAP. Port reroutes to ScummVM menu.
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_vm->setHotspotMouseCursor(false);
 					_vm->openMainMenuDialog();
@@ -1275,15 +1081,11 @@ void SiteScreen::run() {
 			}
 		}
 
-		// Hotspot side effects can invalidate the mystery; exit before
-		// ticking another frame against stale snapshots.
 		if (!_mystery || !_mystery->isLoaded()) {
 			_vm->stopMusic();
 			return;
 		}
 
-		// Per-tick frame pump: `_CheckFrameRate` + `_UpdateAnimations`
-		// at the top of `_DoSiteLoop`'s main loop. 14 cs (~140 ms).
 		const uint32 now = g_system->getMillis();
 		if (_snapshotSite == (int)cur &&
 			now - _lastTickMs >= kFramePeriodMs) {
@@ -1295,7 +1097,6 @@ void SiteScreen::run() {
 			renderAnimatedDrops(cur, now);
 			renderPartner(cur, now);
 			renderHotspots(cur);
-			// `_ColorCycle(start, end)` per tick (`_DoSiteLoop @ 168d:03f4`).
 			applyColorCycles();
 			_lastTickMs = now;
 		}
@@ -1303,14 +1104,12 @@ void SiteScreen::run() {
 		g_system->delayMillis(10);
 	}
 }
-
+// `_EnterSiteAnim @ 1000:9b21`. Two phases (partner-dependent):
+//   Phase 1 — skateboard scroll: anim 6 (Jake) / 0xe (Jenny).
+//             Slides from (320-w, 199-h) leftward off-screen.
+//   Phase 2 — KD slide-in: anim 7 (Jake) / 0xf (Jenny).
+//             Slides from x=-w at y=0x8b/0x8e until x=0.
 bool SiteScreen::enterSiteAnim() {
-	// `_EnterSiteAnim @ 1000:9b21`. Two phases (partner-dependent):
-	//   Phase 1 — skateboard scroll: anim 6 (Jake) / 0xe (Jenny).
-	//             Slides from (320-w, 199-h) leftward off-screen.
-	//   Phase 2 — KD slide-in: anim 7 (Jake) / 0xf (Jenny).
-	//             Slides from x=-w at y=0x8b/0x8e until x=0.
-	// Frame rate uses `_MoveSkateBoardPixels` (runtime); we use 4 px/tick.
 	if (!_vm || !_mystery)
 		return false;
 	const uint8 partner = _vm->getPartnerIndex();
@@ -1327,9 +1126,6 @@ bool SiteScreen::enterSiteAnim() {
 	g_system->unlockScreen();
 
 	if (_vm->isLondon()) {
-		// EEM2 `_EnterSiteAnim @ 17ee:27a4`: no skateboard phase.
-		// It plays the partner-specific slide-in animation at anchor
-		// (0, 0x50/0x4e), using `_CheckFrameRate` between cells.
 		const uint animId = (partner == 0) ? 7 : 0xf;
 		const int anchorY = (partner == 0) ? 0x50 : 0x4e;
 		Animation anim;
@@ -1359,10 +1155,8 @@ bool SiteScreen::enterSiteAnim() {
 		return false;
 	}
 
-	// Phase 1 — skateboard scroll.
 	Animation skate;
 	if (_vm->getAni().loadAnimation(kSkateAni, skate) && !skate.empty()) {
-		// `iVar4 = 199 - sprite_h`, `uVar5 = kScreenWidth - sprite_w` (frame 0).
 		const int spriteH = skate[0].surface.h;
 		const int spriteW = skate[0].surface.w;
 		int x = (kScreenWidth - spriteW) & ~3;            // 4-px aligned (mode-X)
@@ -1400,11 +1194,6 @@ bool SiteScreen::enterSiteAnim() {
 		}
 	}
 
-	// Phase 2 — KD slide-in. `_EnterSiteAnim` per-frame:
-	//   destX = -frame.miscflags    (signed int16; byte 8 = anchor X)
-	//   destY = kKDY - frame.rowoff (signed int16; byte 6 = anchor Y)
-	// 16-bit negation: miscflags=-2 (0xFFFE) → destX=+2.
-	// ~80 ms per frame (~12 FPS, one `_CheckFrameRate` tick).
 	Animation kd;
 	if (_vm->getAni().loadAnimation(kKDAni, kd) && !kd.empty()) {
 		for (uint frameIdx = 0;
@@ -1437,10 +1226,6 @@ bool SiteScreen::enterSiteAnim() {
 }
 
 void SiteScreen::renderStaticDrops(uint siteNum) {
-	// Loop 2 from `_DoSiteLoop @ 168d:03f4`:
-	//   count @ siteData[+0x4], entries @ siteData[+0xc + i*6]: {picId, x, y}.
-	//   `_AddDrop @ 172b:1a77` loads PIC picId-1 from PICS.DBD,
-	//   blits with miscflags high-byte as transparency.
 	if (!_mystery)
 		return;
 	const byte *site = _mystery->siteData(siteNum);
@@ -1474,11 +1259,6 @@ void SiteScreen::renderStaticDrops(uint siteNum) {
 }
 
 void SiteScreen::renderFloppyDrops(uint siteNum) {
-	// Floppy drops: drops sub-struct pointed to by `*site_data` u16 offset.
-	// `_DoSiteLoop_Floppy @ 1652:0418` → `FUN_16e2_18eb @ 16e2:18eb`:
-	//   entry stride 5: u16 picID @ +0, u16 X @ +2, u8 Y @ +4.
-	//   picID-1 indexes PICS.DBX table @ 2608:4537.
-	// drops_struct[0] = BG picID (separate), drops_struct[1] = drop count.
 	if (!_mystery)
 		return;
 	const byte *site = _mystery->siteData(siteNum);
@@ -1501,7 +1281,6 @@ void SiteScreen::renderFloppyDrops(uint siteNum) {
 		const int16  y     = (int16)e[4];
 		if (picID == 0)
 			continue;
-		// `getPicture(num)` does `loadEntry(num - 1)` (resource.h:100).
 		Picture pic;
 		if (!_vm->getPics().getPicture((uint)picID, pic))
 			continue;
@@ -1511,20 +1290,10 @@ void SiteScreen::renderFloppyDrops(uint siteNum) {
 }
 
 void SiteScreen::renderAnimatedDrops(uint siteNum, uint32 tickMs) {
-	// Loop 1 from `_DoSiteLoop @ 168d:03f4`:
-	//   count @ siteData[+0xa], entries @ siteData[+0x48 + i*6]: {animId, x, y}.
-	//   animId == -1 → `_ColorCycle(x, y)` (palette rotation, separate path).
-	//   else → `_GetAnimation` + `_NewAnimation` + `_UpdateAnimations @ 172b:09c1`
-	//          walks a sequence script (0x80=loop, 0x81=jump).
 	if (!_mystery)
 		return;
 
 	if (_vm && _vm->isFloppy()) {
-		// Floppy site anims live in ANI.BIN (per-case block from
-		// `_GetSiteAnimData_Floppy`). Per-site:
-		//   u8 cycleCount, cycleCount × {u8 start, u8 end},
-		//   u8 animCount, animCount × {u8 animId, u16 x, u8 y}.
-		// `_DoSiteLoop_Floppy` caps at 4 slots.
 		const byte *siteAnim = _mystery->floppySiteAnimData(siteNum);
 		if (!siteAnim)
 			return;
@@ -1588,8 +1357,6 @@ void SiteScreen::renderAnimatedDrops(uint siteNum, uint32 tickMs) {
 }
 
 void SiteScreen::scanColorCycles(uint siteNum) {
-	// `_DoSiteLoop @ 168d:03f4`: Loop 1 entries with animId==-1 are
-	// ColorCycle palette ranges (start @ +2, end @ +4). Max 5 slots.
 	_colorCycles.clear();
 	if (!_mystery)
 		return;
@@ -1628,8 +1395,6 @@ void SiteScreen::scanColorCycles(uint siteNum) {
 }
 
 void SiteScreen::applyColorCycles() {
-	// `_ColorCycle @ 172b:2015` per range. Always rotate 0xF9..0xFE
-	// (hotspot marching ants — `_ColorCycle(0xf9, 0xfe)` in `_DoSiteLoop`).
 	for (uint i = 0; i < _colorCycles.size(); i++) {
 		cyclePaletteRange(_colorCycles[i].start, _colorCycles[i].end);
 	}
@@ -1655,11 +1420,6 @@ void SiteScreen::restoreBgSnapshot() {
 }
 
 void SiteScreen::syncCompositedScreen() {
-	// OpenGL screenshots read the current backbuffer. After a buffer swap,
-	// that backbuffer can contain an older site frame unless the engine keeps
-	// presenting the full composited screen, even while no animation tick
-	// fired. Copying the current game surface through copyRectToScreen keeps
-	// screenshots in sync without backend-specific changes.
 	Graphics::ManagedSurface snapshot(kScreenWidth, kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
 
@@ -1674,14 +1434,6 @@ void SiteScreen::syncCompositedScreen() {
 }
 
 void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
-	// `_DoSiteLoop @ 168d:03f4` reads `siteData[+8]` as the speaker
-	// table index, then for each (speaker x partner) loads:
-	//   anim = WaitAnims[speakerIdx].anim[partner]
-	//   x    = WaitAnims[speakerIdx].x[partner]
-	//   y    = WaitAnims[speakerIdx].y[partner]
-	// from `_WaitAnims @ 29be:021c` (see `kWaitAnims` at file scope for
-	// 12-byte / 6-u16 entry layout). Rendering caps at speaker < 7
-	// (entries past 6 are `_SiteButtons` rect data in the binary).
 	const byte *site = _mystery->siteData(siteNum);
 	if (!site)
 		return;
@@ -1690,10 +1442,6 @@ void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 	int    x;
 	int    y;
 	if (_vm->isFloppy()) {
-		// `_DoSiteLoop_Floppy @ 1652:042b`: site_data+8 is a u16 OFFSET
-		// to `_SpeakerInfo_Floppy`; the first 10 bytes are the idle pair:
-		//   +0..1 Jake anim, +2..3 Jake X, +4 Jake Y,
-		//   +5..6 Jenny anim, +7..8 Jenny X, +9 Jenny Y.
 		const uint16 spkOff = READ_LE_UINT16(site + 8);
 		const byte *spk = _mystery->blobAt(spkOff);
 		if (!spk)
@@ -1725,9 +1473,6 @@ void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 	if (!_vm->getAni().loadAnimation(animId, anim) || anim.empty())
 		return;
 
-	// Relative phase anchor (not raw tickMs) so wait anim resumes
-	// from script[0] after each kdAnim one-shot — matches
-	// `_PlayAnimation @ 172b:1f5d` reset to frame 0xffff.
 	const uint32 elapsed = (tickMs >= _waitPhaseAnchor)
 							? (tickMs - _waitPhaseAnchor)
 							: tickMs;
@@ -1760,8 +1505,6 @@ bool SiteScreen::renderFloppyHotspotPartnerPose(uint siteNum) {
 		return false;
 
 	const uint16 spkOff = READ_LE_UINT16(site + 8);
-	// `_OnSiteHotspotClicked_Floppy @ 1652:017a`: after restoring the site
-	// it loads the active pair from `_SpeakerInfo_Floppy + 0x28/0x2d`.
 	const uint poseOff = (_vm->getPartnerIndex() == kPartnerJake)
 		? 0x28 : 0x2d;
 	if ((uint32)spkOff + poseOff + 5 > _mystery->dataSize())
@@ -1790,12 +1533,6 @@ bool SiteScreen::renderFloppyHotspotPartnerPose(uint siteNum) {
 }
 
 void SiteScreen::renderBackground(uint siteNum) {
-	// `_BuildBackground(sitepic, 0x42, 0x14)` from `_DoSiteLoop @
-	// 168d:03f4` / `_DisplayCorrect`:
-	//   1. `_GetFromDB(_PicIndex, 0x3d)` — DBI entry 0x3d (0-based).
-	//   2. SITES.DBD entry `sitepic` (0-based, SiteData[+0..+1]).
-	//   3. `_Rect_Move(..., 0x42, 0x14, 48000, ...)` composes at (66, 20).
-	//   4. `_GetPalette(sitepic + 1)`.
 	Picture frame;
 	if (_vm->getPics().loadEntry(0x3d, frame)) {
 		g_system->copyRectToScreen(frame.surface.getPixels(),
@@ -1803,11 +1540,6 @@ void SiteScreen::renderBackground(uint siteNum) {
 								   0, 0, frame.surface.w, frame.surface.h);
 	}
 
-	// `_BuildBackground @ 172b:13e2` → `_GetFromDB(_siteFile,
-	// &_SiteDBIndex, sitenum)` uses SiteData[+0] as a 0-based SITES.DBD
-	// index (stride 10, asm `IMUL BX,BX,0xa` @ 172b:14c8; no -1 adjust).
-	// Floppy: site_data[0] is u16 offset to drops sub-struct; drops[0]
-	// byte is the SITES.DBD index (`FUN_16e2_12fd @ 16e2:12fd`).
 	const byte *site = _mystery->siteData(siteNum);
 	uint16 sitepic = 0;
 	if (site) {
@@ -1855,7 +1587,6 @@ byte currentWhitePaletteIndex(byte fallback) {
 }
 
 void SiteScreen::renderHotspots(uint siteNum) {
-	// `_DrawSearchButtons`. Port adds optional "hide hint" setting.
 	if (ConfMan.getBool("hide_highlight_boxes"))
 		return;
 
@@ -1868,21 +1599,6 @@ void SiteScreen::renderHotspots(uint siteNum) {
 	if (!screen)
 		return;
 
-	// `_DrawSearchButtons @ 2404:0a8f`:
-	//   for each hotspot:
-	//     if _Sawit(theSite, loc) == 0 (NOT seen yet):
-	//       _DrawRect(rect)       — outline in cycling colors
-	//                                0xF9..0xFE; `_ColorCycle(0xF9, 0xFE)`
-	//                                rotates them every tick → "marching
-	//                                ants" glow on unsearched spots.
-	//     else (seen):
-	//       _DrawSolidRect(rect)  — outline in solid colour 0xFF.
-	// (Branch order per asm `2404:0af6 OR AX,AX; 2404:0af8 JZ` — the
-	// C-level decompile mis-reordered the if/else.)
-	// Palette 0xF9..0xFE is already rotated by `applyColorCycles` each
-	// tick, so drawing a single colour from that range pulses on its
-	// own. Phase the start colour by hotspot index so adjacent spots
-	// don't glow in lock-step.
 	const uint32 tickMs = g_system->getMillis();
 
 	// CD hotspot row = 14 bytes:
@@ -1918,12 +1634,8 @@ void SiteScreen::renderHotspots(uint siteNum) {
 				   _mystery->_hotSpotsSeen[seenKey];
 		}
 		if (seen) {
-			// `_DrawSolidRect @ 172b:0506` — solid, non-cycling outline.
 			screen->frameRect(rect, searchedColor);
 		} else {
-			// `_DrawRect @ 172b:03e2` — walk all four edges incrementing
-			// the colour per pixel through palette indices 0xF9..0xFE,
-			// which `_ColorCycle(0xF9, 0xFE)` rotates every tick.
 			byte color = (byte)(0xF9 + ((i + (tickMs / 80)) & 0x07) % 6);
 			// Top edge
 			for (int x = rect.left; x < rect.right; x++) {
@@ -2069,12 +1781,10 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 			// Snapshot `_cluesFound` → detect new-clue 0→1 → autosave.
 			byte before[Mystery::kCluesFoundCap];
 			memcpy(before, _mystery->_cluesFound, sizeof(before));
-			// Partner-less BG for `_DoKDAnim` / `playKdAnim` to erase
-			// the resting idle (fires when ClueEntry +0x3a != -1).
 			_vm->setPartnerEraseBg(&_bgSnapshot);
 			_vm->displayClue(clueBlock);
 			_vm->setPartnerEraseBg(nullptr);
-			// Port-only autosave (original = manual `_SaveGame @ 2404:0c87`).
+			// New feature: autosave on new clue.
 			bool foundNewClue = false;
 			for (uint i = 0; i < Mystery::kCluesFoundCap; i++) {
 				if (!before[i] && _mystery->_cluesFound[i]) {
@@ -2092,24 +1802,16 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 		}
 	}
 }
-
+// `_DoKDAnim(num) @ 168d:028a` + `_PlayAnimation @ 172b:1f46`:
+//   _SuspendAnimation(WaitHandle);
+//   anim = kKdAnimTable[num].anim[partner]   (@ 29be:0228)
+//   x    = kKdAnimTable[num].x[partner]
+//   y    = kKdAnimTable[num].y[partner]
+//   _PlayAnimation(anim, x, y, WaitHandle)
+//     -> registers a state-4 (one-shot) animation slot and lets
+//        `_UpdateAnimations` walk the script until 0x80, then
+//        frees the slot and re-activates `WaitHandle`.
 void EEMEngine::playKdAnim(uint16 num) {
-	// Mirrors `_DoKDAnim(num) @ 168d:028a` + `_PlayAnimation @ 172b:1f46`:
-	//   _SuspendAnimation(WaitHandle);
-	//   anim = kKdAnimTable[num].anim[partner]   (@ 29be:0228)
-	//   x    = kKdAnimTable[num].x[partner]
-	//   y    = kKdAnimTable[num].y[partner]
-	//   _PlayAnimation(anim, x, y, WaitHandle)
-	//     -> registers a state-4 (one-shot) animation slot and lets
-	//        `_UpdateAnimations` walk the script until 0x80, then
-	//        frees the slot and re-activates `WaitHandle`.
-	// Port renders the partner's idle inline in each redraw rather
-	// than via a slot system, so we play the one-shot synchronously
-	// (blocking) and resume normal idle rendering when the caller
-	// returns — matches the visible effect (partner gesture finishes
-	// before the speaker portrait + speech balloon appear).
-	// `kKdAnimTable` and `kAnimScripts` live at file scope above. EEM2 ships a
-	// different table (positions + Jenny reactions) — use it for London.
 	if (num >= ARRAYSIZE(kKdAnimTable))
 		return;
 
@@ -2158,19 +1860,12 @@ void EEMEngine::playKdAnim(uint16 num) {
 		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.simpleBlitFrom(bg);
-		// Anchor-aware: kdAnim cells (0x03/0x04/0x0c/0x0d ...) have
-		// non-zero per-frame `miscflags`/`rowoff` (anim 0x03 has rowoff
-		// up to 9, anim 0x04 has miscflags = -2). Routes through
-		// `blitAnimFrameAnchored` so the gesture translates across
-		// cells instead of pinning to a fixed pixel.
 		(void)transp;  // anchored blitter recomputes from p.flags
 		blitAnimFrameAnchored(scratch.surfacePtr(), fr, px, py);
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, kScreenWidth, kScreenHeight);
 		g_system->updateScreen();
 
-		// 100 ms per frame (~10 fps). Pump updateScreen inside the wait
-		// so cursor overlay refreshes at 100 Hz.
 		const uint32 wakeup = g_system->getMillis() + 100;
 		while (g_system->getMillis() < wakeup && !shouldQuit()) {
 			Common::Event ev;

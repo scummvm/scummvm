@@ -175,7 +175,6 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 		return true;
 	}
 
-	// Header is 16-bit-word indexed (matches `int *piVar1 = __Mystery; piVar1[N]`).
 	_initOffset      = readU16(0  * 2);
 	_mapOffset       = readU16(2  * 2);
 	_siteIndexOffset = readU16(3  * 2);
@@ -191,10 +190,6 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 	_numCONSITEs = (uint8)readU16(14 * 2);
 	_numCOFFSITEs = (uint8)readU16(15 * 2);
 
-	// Defensive clamp: the floppy header layout differs (M0.BIN CD has
-	// numSites=readU16(0x14)=3; floppy has readU16(0x14)=0x1925, clearly
-	// not a count). Cap to `_onSites` / `_visitedSite` array capacity so
-	// downstream loops don't walk off the end on malformed/floppy files.
 	if (_numSites > kVisitedSiteCap)
 		_numSites = kVisitedSiteCap;
 
@@ -204,10 +199,6 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 		_cChain[i] = readU16((26 + i) * 2);
 	}
 
-	// Per-mystery runtime state — _ReadMystery zeroes these at load.
-	// _newOrder uses identity mapping; original randomly cycles gallery
-	// positions but requires matching changes in both clue side-effect
-	// and rendering paths.
 	memset(_cluesFound, 0, sizeof(_cluesFound));
 	memset(_noteSelected, 0, sizeof(_noteSelected));
 	memset(_hotSpotsSeen, 0, sizeof(_hotSpotsSeen));
@@ -326,9 +317,6 @@ void Mystery::loadFloppySiteAnimData() {
 
 const byte *Mystery::hotspots(uint siteNum) const {
 	if (_isFloppy) {
-		// Floppy hotspot table inside per-site sub-blob (FUN_22dc_0b80 @ 22dc:0b80).
-		// site_data[+4..5] = u16 file offset to count byte + N x 8-byte rects
-		// (x1, y1, x2, y2 as u16s).
 		const byte *site = siteData(siteNum);
 		if (!site || (size_t)(site - _data.data()) + 6 > _data.size())
 			return nullptr;
@@ -395,7 +383,6 @@ uint16 Mystery::noteIndexCount() const {
 	// NoteIndex runs from _noteOffset to start of GalleryData.
 	// CD entries: 4 bytes (u16 textOff; u16 points).
 	// Floppy entries: 7 bytes (u16 ?; u16 jakeOff; u16 jennyOff; u8 score)
-	// per FUN_22dc_05c8 @ 22dc:0843.
 	if (_galleryOffset <= _noteOffset)
 		return 0;
 	const uint stride = _isFloppy ? 7 : 4;
@@ -474,9 +461,6 @@ const byte *Mystery::floppySuspectEntry(uint suspectIdx) const {
 }
 
 bool Mystery::isGuilty(uint suspectIdx) const {
-	// _WITCH @ 1df2:089f (CD): GalleryData[i*0x46 + 0x02] == 0xFFFF marks
-	// guilty; innocent suspects store their alibi TextBlock offset there.
-	// Floppy uses same convention at suspect entry +2..3 (variable stride).
 	if (_isFloppy) {
 		const byte *e = floppySuspectEntry(suspectIdx);
 		return e && READ_LE_UINT16(e + 2) == 0xFFFF;
@@ -490,9 +474,6 @@ bool Mystery::isGuilty(uint suspectIdx) const {
 
 uint16 Mystery::alibiTextOffset(uint suspectIdx) const {
 	if (_isFloppy) {
-		// Floppy alibi (_DisplayAlibi_Floppy @ 1d40:0145): u16 at suspect +2..3.
-		// 0xFFFF = guilty; else high byte indexes the TEXT_BLOCK table at
-		// header[+0xc], each entry u16 = absolute alibi-text offset.
 		const byte *e = floppySuspectEntry(suspectIdx);
 		if (!e)
 			return 0xFFFF;
@@ -570,12 +551,11 @@ int Mystery::selectedPoints() const {
 	}
 	return total;
 }
-
+// `_SolvedCheck @ 1ea1:0b1a`. Reuses the already-loaded hint chains
+// (_aChain/_bChain/_cChain) as the three answer sets and the shared
+// _noteSelected accuse-selection array — see londonSolved() doc in the
+// header. EEM1/floppy keep the points model via solvedCheck().
 bool Mystery::londonSolved() const {
-	// `_SolvedCheck @ 1ea1:0b1a`. Reuses the already-loaded hint chains
-	// (_aChain/_bChain/_cChain) as the three answer sets and the shared
-	// _noteSelected accuse-selection array — see londonSolved() doc in the
-	// header. EEM1/floppy keep the points model via solvedCheck().
 	for (uint chain = 0; chain < 3; chain++) {
 		int remaining = (int)kChainLen;
 		int wild = 0;
@@ -595,12 +575,11 @@ bool Mystery::londonSolved() const {
 	}
 	return false;
 }
-
+// `_GetMinRemaining @ 1ea1:1056`. Parallel to londonSolved() but tests the
+// three answer sets against _cluesFound (discovered in the world). Tracks
+// whether any non-wildcard answer clue has been found at all; if none, the
+// player has nothing relevant yet (returns kChainLen).
 int Mystery::minCluesRemaining() const {
-	// `_GetMinRemaining @ 1ea1:1056`. Parallel to londonSolved() but tests the
-	// three answer sets against _cluesFound (discovered in the world). Tracks
-	// whether any non-wildcard answer clue has been found at all; if none, the
-	// player has nothing relevant yet (returns kChainLen).
 	int best = (int)kChainLen;
 	int foundReal = 0;
 	for (uint chain = 0; chain < 3; chain++) {

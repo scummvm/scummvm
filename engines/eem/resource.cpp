@@ -53,7 +53,6 @@ bool DBDArchive::open(const Common::Path &dbdName, const Common::Path &dbxName) 
 		return false;
 	}
 
-	// _InitGraphicsSystem @ 172b:0145: 10-byte entries until EOF.
 	const int32 dbxSize = dbx.size();
 	_index.reserve(dbxSize / 10);
 	while (dbx.pos() + 10 <= dbxSize) {
@@ -113,11 +112,7 @@ bool readFrame(Common::SeekableReadStream &stream, bool compressed, Picture &out
 
 bool DBDArchive::loadEntry(uint num, Picture &out) {
 	if (num >= _index.size()) {
-		// Out-of-range picture IDs are non-fatal — every caller already
-		// checks the return value (e.g. `haveDone` / `haveCrime` in
-		// `drawBigMapOverview`). Floppy PICS.DBD ships fewer entries than
-		// CD (e.g. BigMap done-marker 0x20D is CD-only), so this fires
-		// routinely on floppy and stays at debug level rather than warning.
+		// Out-of-range picture IDs are non-fatal
 		debugC(2, kDebugGfx,
 			   "DBDArchive::loadEntry: %u out of range (max %u)",
 			   num, (uint)_index.size());
@@ -130,7 +125,7 @@ bool DBDArchive::loadEntry(uint num, Picture &out) {
 		return false;
 	}
 
-	// _GetFromDB @ 172b:105d. Leading u16 = frame count (always 1 for pictures).
+	// Leading u16 = frame count (always 1 for pictures).
 	_dbd.skip(2);
 	return readFrame(_dbd, entry.compressed != 0, out);
 }
@@ -147,7 +142,6 @@ bool DBDArchive::loadAnimation(uint num, Animation &out) {
 		return false;
 	}
 
-	// _GetAnimation @ 172b:163a: u16 frame count, then N frames.
 	const uint16 frameCount = _dbd.readUint16LE();
 	if (frameCount == 0 || frameCount > 256) {
 		warning("DBDArchive::loadAnimation: %u has implausible frame count %u",

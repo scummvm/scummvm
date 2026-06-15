@@ -55,7 +55,6 @@ public:
 	bool load(const Common::Path &path);
 	bool isLoaded() const { return !_glyphs.empty(); }
 
-	// --- Graphics::Font overrides ---
 	int getFontHeight() const override {
 		return _lineHeight ? _lineHeight : _maxHeight;
 	}

@@ -31,7 +31,6 @@
 
 namespace EEM {
 
-/// dbi struct from _InitGraphicsSystem @ 172b:0145 (10 bytes per entry).
 struct DBEntry {
 	uint32 offset;     ///< Byte offset in the .DBD file.
 	uint16 compressed; ///< Non-zero = PKWARE DCL ("Implode") packed payload.

@@ -68,10 +68,7 @@ const ADGameDescription gameDescriptions[] = {
 		GUI_OPTIONS_EEM_FLOPPY
 	},
 	{
-		// Eagle Eye Mysteries in London (EEM2CD.EXE), the sequel.
-		// It reuses this engine's resource formats (DBD/DBX archives,
-		// SITEPALS palettes, FONT.FNT); reimplementation is in progress,
-		// so it stays flagged unstable until fully supported.
+		// Eagle Eye Mysteries in London 
 		"eem2",
 		"CD",
 		AD_ENTRY2s("EEM2CD.EXE", "211a376b23a1b6259d0c36cf46d26ed4", 172560,
