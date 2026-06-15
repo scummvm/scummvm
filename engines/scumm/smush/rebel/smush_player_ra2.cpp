@@ -841,9 +841,14 @@ void SmushPlayerRebel2::handleLoad(int32 subSize, Common::SeekableReadStream &b)
 void SmushPlayerRebel2::ra2HandleTextResource(const char *str, int fontId, int color,
 										int pos_x, int pos_y, int left, int top,
 										int width, int height, TextStyleFlags flg) {
+	// Promote the native 320x200 frame to the 640x400 screen before drawing, else 2x-scaled text lands off-buffer.
+	const bool hiRes = ra2IsHighResMode() && !isRebel2GameplayActive(_insane);
+	if (hiRes)
+		ra2PromoteCurrentFrameToHiRes(0, 0);
+
 	ensureMultiFont();
 	_multiFont->setDefaultFont(fontId);
-	const int scale = (_vm->_screenWidth >= 640 && _vm->_screenHeight >= 400) ? 2 : 1;
+	const int scale = hiRes ? 2 : 1;
 	pos_x *= scale;
 	pos_y *= scale;
 	left *= scale;
