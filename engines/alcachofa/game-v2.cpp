@@ -366,6 +366,13 @@ public:
 
 class GameWithVersion2_1 : public GameWithVersion2 {
 public:
+	void onLoadedGameFiles() override {
+		GameWithVersion2::onLoadedGameFiles();
+
+		auto &script = g_engine->script();
+		script.fixNestedMenuPop(25096); // Filemon using phone in PRIMER_PLANO_TELEFONO
+	}
+
 	Path getVideoPath(int32 videoId) override {
 		return Path(String::format("Data/DATA%02d.BIN", videoId));
 	}
@@ -382,6 +389,21 @@ public:
 		if (fileName == "VARITA.ANI") // this one seems bad, it is the inventory icon for I_RAMAS
 			return;
 		return GameWithVersion2::missingAnimation(fileName);
+	}
+
+	void missingSound(const Common::String &fileName) override {
+		// seems like in the last level, they didnt test anymore? Many missing sounds in the same area
+		if (fileName == "Sonidos/2147" ||
+			fileName == "Sonidos/2148" ||
+			fileName == "Sonidos/2149" ||
+			fileName == "Sonidos/2150" ||
+			fileName == "Sonidos/2151" ||
+			fileName == "Sonidos/2159" ||
+			fileName == "Sonidos/2160" ||
+			fileName == "Sonidos/2161" ||
+			fileName == "Sonidos/2162")
+			return;
+		GameWithVersion2::missingSound(fileName);
 	}
 
 	void unknownDropItem(const char *name) override {
@@ -404,6 +426,8 @@ public:
 class GameCorvino : public GameWithVersion2_1 {
 public:
 	void onLoadedGameFiles() override {
+		GameWithVersion2_1::onLoadedGameFiles();
+
 		g_engine->script().variable("EsJuegoCompleto") = 0;
 	}
 
@@ -424,6 +448,8 @@ public:
 	}
 
 	void onLoadedGameFiles() override {
+		GameWithVersion2_1::onLoadedGameFiles();
+
 		g_engine->script().variable("EsJuegoCompleto") = 1;
 	}
 
@@ -439,6 +465,8 @@ public:
 	}
 
 	void onLoadedGameFiles() override {
+		GameWithVersion2_1::onLoadedGameFiles();
+
 		g_engine->script().variable("EsJuegoCompleto") = 2;
 	}
 

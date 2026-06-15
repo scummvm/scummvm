@@ -1204,6 +1204,8 @@ void Script::fixNestedMenuPop(uint32 pc) {
 	 *   secta-win-es
 	 *   escarabajo-win-es
 	 *   moscu-win-es
+	 *   corvino-win-es
+	 *   mamelucos-win-es
 	 */
 	scumm_assert(pc < _instructions.size());
 	auto &instr = _instructions[pc];
