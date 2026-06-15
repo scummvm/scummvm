@@ -28,10 +28,9 @@
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
-int main(int argc, char *argv[]) {
+extern "C" { long __stack = 4 * 1024 * 1024; }
 
-	// Set a stack cookie to avoid crashes from a too low stack.
-	static const char *stack_cookie __attribute__((used)) = "$STACK: 4096000";
+int main(int argc, char *argv[]) {
 
 	// Create our OSystem instance.
 	g_system = new OSystem_MorphOS();
