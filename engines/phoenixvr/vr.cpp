@@ -72,6 +72,31 @@ uint32 YCbCr2RGB(const Graphics::PixelFormat &format, int16 y, int16 cb, int16 c
 	return format.RGBToColor(r, g, b);
 }
 
+uint32 debugRegionColor(const Graphics::PixelFormat &format, float phase) {
+	phase = fmodf(phase, 6.0f);
+	if (phase < 0.0f)
+		phase += 6.0f;
+
+	const int sector = static_cast<int>(phase);
+	const byte up = static_cast<byte>((phase - sector) * 255.0f);
+	const byte down = 255 - up;
+
+	switch (sector) {
+	case 0:
+		return format.RGBToColor(255, up, 0);
+	case 1:
+		return format.RGBToColor(down, 255, 0);
+	case 2:
+		return format.RGBToColor(0, 255, up);
+	case 3:
+		return format.RGBToColor(0, down, 255);
+	case 4:
+		return format.RGBToColor(up, 0, 255);
+	default:
+		return format.RGBToColor(255, 0, down);
+	}
+}
+
 struct Quantisation {
 	int quantY[64];
 	int quantCbCr[64];
@@ -480,7 +505,6 @@ void VR::renderVR(Graphics::Screen *screen, float ax, float ay, float fov, float
 			dst += y * dstPixelsPitchIncrement;
 		}
 		Vector3d ray = line;
-		int dx = regSet ? static_cast<int>(5 * cosf(hint + 100.0f * dstY / h)) : 0;
 
 		for (int dstX = 0; dstX != w; ++dstX, ray += incrementX, ++dst) {
 			auto cube = toCube(ray.x(), ray.y(), ray.z());
@@ -493,20 +517,21 @@ void VR::renderVR(Graphics::Screen *screen, float ax, float ay, float fov, float
 			srcY += (tileId << 8);
 			auto color = _pic->getPixel(srcX, srcY);
 			if (regSet) {
-				int x = 0;
 				regX += regDX;
 				if (regX >= kTau)
 					regX -= kTau;
+				const float regionY = kTau - regY;
 				for (auto &reg : regSet->getRegions()) {
-					if (reg.contains3D(regX, kTau - regY)) {
-						x += dx;
+					if (reg.contains3D(regX, regionY) &&
+						(!reg.contains3D(regX - regDX, regionY) ||
+						 !reg.contains3D(regX + regDX, regionY) ||
+						 !reg.contains3D(regX, regionY - regDY) ||
+						 !reg.contains3D(regX, regionY + regDY))) {
+						color = debugRegionColor(screen->format, hint + dstX * 0.015f + dstY * 0.025f);
+						break;
 					}
 				}
-				if (dstX + x < 0)
-					x = 0;
-				else if (dstX + x >= screen->w)
-					x = screen->w - 1 - dstX;
-				dst[x] = color;
+				*dst = color;
 			} else
 				*dst = color;
 		}
