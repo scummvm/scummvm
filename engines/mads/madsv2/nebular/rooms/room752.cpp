@@ -19,33 +19,25 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section7.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene752::Scene752(RexNebularEngine *vm) : Scene7xx(vm) {
-	_cardId = -1;
-}
+struct Scratch {
+	int16 _cardId;
+};
 
-void room_752_synchronize(Common::Serializer &s) {
-	Scene7xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsSint16LE(_cardId);
-}
-
-void Scene752::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-
-	_scene->addActiveVocab(NOUN_ID_CARD);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(VERB_LOOK_AT);
-	_scene->addActiveVocab(NOUN_LASER_BEAM);
-}
 
 static void room_752_init() {
 	_globals._spriteIndexes[14] = _scene->_sprites.addSprites(formAnimName('l', -1));
@@ -66,7 +58,7 @@ static void room_752_init() {
 		_globals._sequenceIndexes[13] = _scene->_sequences.startCycle(_globals._spriteIndexes[13], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 8);
 		int idx = _scene->_dynamicHotspots.add(NOUN_ID_CARD, VERB_WALKTO, _globals._sequenceIndexes[13], Common::Rect(0, 0, 0, 0));
-		_cardId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 135), FACING_NORTH);
+		local._cardId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 135), FACING_NORTH);
 	}
 
 	if (_game._globals[kLaserHoleIsThere]) {
@@ -91,16 +83,21 @@ static void room_752_init() {
 		_game._globals[kTeleporterCommand] = TELEPORTER_NONE;
 	}
 
-	if (_globals._timebombTimer > 0)
-		_globals._timebombTimer = 10800 - 600;
+	int32 timer = (global[kTimebombTimer + 1] << 16) | global[kTimebombTimer];
+	if (timer > 0) {
+		global[kTimebombTimer] = 10800 - 600;
+		global[kTimebombTimer + 1] = 0;
+	}
 
-	sceneEntrySound();
+	section_7_music();
 }
 
-void Scene752::step() {
-	if (_globals._timebombTimer >= 10800 && _game._globals[kTimebombStatus] == TIMEBOMB_ACTIVATED) {
-		_globals[kTimebombStatus] = TIMEBOMB_DEAD;
-		_globals._timebombTimer = 0;
+static void room_752_daemon() {
+	int32 timer = (global[kTimebombTimer + 1] << 16) | global[kTimebombTimer];
+
+	if (timer >= 10800 && _game._globals[kTimebombStatus] == TIMEBOMB_ACTIVATED) {
+		global[kTimebombStatus] = TIMEBOMB_DEAD;
+		global[kTimebombTimer] = global[kTimebombTimer + 1] = 0;
 		_globals[kCheckDaemonTimebomb] = false;
 		_scene->_nextSceneId = 620;
 	}
@@ -133,7 +130,7 @@ static void room_752_parser() {
 			_vm->_sound->command(15);
 			_scene->_sequences.remove(_globals._sequenceIndexes[13]);
 			_game._objects.addToInventory(OBJ_ID_CARD);
-			_scene->_dynamicHotspots.remove(_cardId);
+			_scene->_dynamicHotspots.remove(local._cardId);
 			_vm->_dialogs->showItem(OBJ_ID_CARD, 830);
 			break;
 		case 2:
@@ -200,6 +197,25 @@ static void room_752_parser() {
 	_action._inProgress = false;
 }
 
+void room_752_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._cardId);
+}
+
+void room_752_preload() {
+	room_init_code_pointer = room_752_init;
+	room_daemon_code_pointer = room_752_daemon;
+	room_pre_parser_code_pointer = room_752_pre_parser;
+	room_parser_code_pointer = room_752_parser;
+
+	section_7_walker();
+	section_7_interface();
+	_scene->addActiveVocab(NOUN_ID_CARD);
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(VERB_LOOK_AT);
+	_scene->addActiveVocab(NOUN_LASER_BEAM);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

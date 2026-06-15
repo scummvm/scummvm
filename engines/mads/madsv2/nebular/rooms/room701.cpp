@@ -19,33 +19,25 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section7.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene701::Scene701(RexNebularEngine *vm) : Scene7xx(vm) {
-	_fishingLineId = -1;
-}
+struct Scratch {
+	int16 _fishingLineId;
+};
 
-void room_701_synchronize(Common::Serializer &s) {
-	Scene7xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsSint16LE(_fishingLineId);
-}
-
-void Scene701::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-
-	_scene->addActiveVocab(NOUN_BOAT);
-	_scene->addActiveVocab(VERB_CLIMB_INTO);
-	_scene->addActiveVocab(NOUN_FISHING_LINE);
-	_scene->addActiveVocab(VERB_WALKTO);
-}
 
 static void room_701_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
@@ -112,7 +104,7 @@ static void room_701_init() {
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
 		int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
-		_fishingLineId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTHEAST);
+		local._fishingLineId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(234, 129), FACING_NORTHEAST);
 	}
 
 	if (_scene->_priorSceneId == 702) {
@@ -141,10 +133,10 @@ static void room_701_init() {
 	}
 
 	_game.loadQuoteSet(0x310, 0x30F, 0);
-	sceneEntrySound();
+	section_7_music();
 }
 
-void Scene701::step() {
+static void room_701_daemon() {
 	switch (_game._trigger) {
 	case 60:
 		_scene->_sequences.remove(_globals._sequenceIndexes[5]);
@@ -294,7 +286,7 @@ static void room_701_parser() {
 				_game._player._stepEnabled = false;
 				_scene->_sequences.remove(_globals._sequenceIndexes[4]);
 				_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-				_scene->_dynamicHotspots.remove(_fishingLineId);
+				_scene->_dynamicHotspots.remove(local._fishingLineId);
 				_scene->_hotspots.activate(NOUN_BOAT, false);
 				_game._player._visible = false;
 				_scene->loadAnimation(formAnimName('E', -1), 1);
@@ -390,6 +382,25 @@ static void room_701_parser() {
 	_action._inProgress = false;
 }
 
+void room_701_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._fishingLineId);
+}
+
+void room_701_preload() {
+	room_init_code_pointer = room_701_init;
+	room_daemon_code_pointer = room_701_daemon;
+	room_pre_parser_code_pointer = room_701_pre_parser;
+	room_parser_code_pointer = room_701_parser;
+
+	section_7_walker();
+	section_7_interface();
+	_scene->addActiveVocab(NOUN_BOAT);
+	_scene->addActiveVocab(VERB_CLIMB_INTO);
+	_scene->addActiveVocab(NOUN_FISHING_LINE);
+	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

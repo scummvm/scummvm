@@ -19,43 +19,30 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section7.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene706::Scene706(RexNebularEngine *vm) : Scene7xx(vm) {
-	_vaseHotspotId = -1;
-	_vaseMode = -1;
-	_animationMode = -1;
-	_animationFrame = -1;
+struct Scratch {
+	int16 _vaseHotspotId;
+	int16 _vaseMode;
+	int16 _animationMode;
+	int16 _animationFrame;
+	bool _emptyPedestral;
+};
 
-	_emptyPedestral = false;
-}
+static Scratch local;
 
-void room_706_synchronize(Common::Serializer &s) {
-	Scene7xx::synchronize(s);
-
-	s.syncAsSint16LE(_vaseHotspotId);
-	s.syncAsSint16LE(_vaseMode);
-	s.syncAsSint16LE(_animationMode);
-	s.syncAsSint16LE(_animationFrame);
-
-	s.syncAsByte(_emptyPedestral);
-}
-
-void Scene706::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_BOTTLE);
-	_scene->addActiveVocab(NOUN_VASE);
-	_scene->addActiveVocab(VERB_WALKTO);
-}
-
-void Scene706::handleRexDeath() {
+static void handleRexDeath() {
 	switch (_game._trigger) {
 	case 0:
 		_game._player._stepEnabled = false;
@@ -64,7 +51,7 @@ void Scene706::handleRexDeath() {
 		break;
 
 	case 2:
-		if (_animationMode == 1)
+		if (local._animationMode == 1)
 			_vm->_dialogs->show(70625);
 		else if (_globals[kBottleStatus] < 2)
 			_vm->_dialogs->show(70628);
@@ -72,10 +59,10 @@ void Scene706::handleRexDeath() {
 			_vm->_dialogs->show(70629);
 
 		_game._objects.setRoom(OBJ_VASE, _scene->_currentSceneId);
-		if (_animationMode == 2)
+		if (local._animationMode == 2)
 			_game._objects.setRoom(OBJ_BOTTLE, 2);
 
-		_animationMode = 0;
+		local._animationMode = 0;
 		_scene->_reloadSceneFlag = true;
 		break;
 
@@ -84,7 +71,7 @@ void Scene706::handleRexDeath() {
 	}
 }
 
-void Scene706::handleTakeVase() {
+static void handleTakeVase() {
 	switch (_game._trigger) {
 	case 0:
 		_game._player._stepEnabled = false;
@@ -98,9 +85,9 @@ void Scene706::handleTakeVase() {
 	case 1:
 		_vm->_sound->command(9);
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-		_scene->_dynamicHotspots.remove(_vaseHotspotId);
+		_scene->_dynamicHotspots.remove(local._vaseHotspotId);
 		_game._objects.addToInventory(OBJ_VASE);
-		if (_vaseMode == 1) {
+		if (local._vaseMode == 1) {
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(195, 99));
@@ -127,14 +114,14 @@ static void room_706_init() {
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('b', -1));
 
 	if (!_game._visitedScenes._sceneRevisited)
-		_emptyPedestral = false;
+		local._emptyPedestral = false;
 
 	if (_game._objects[OBJ_VASE]._roomNumber == _scene->_currentSceneId) {
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('v', -1));
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 4);
 		int idx = _scene->_dynamicHotspots.add(NOUN_VASE, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
-		_vaseHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
+		local._vaseHotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(175, 124), FACING_SOUTHEAST);
 	} else if (_game._objects.isInRoom(OBJ_BOTTLE)) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 4);
@@ -175,17 +162,17 @@ static void room_706_init() {
 		_globals[kTeleporterCommand] = 0;
 	}
 
-	_animationMode = 0;
+	local._animationMode = 0;
 
 	if (_scene->_roomChanged) {
 		_game._objects.addToInventory(OBJ_BOTTLE);
 		_globals[kBottleStatus] = 2;
 	}
 
-	sceneEntrySound();
+	section_7_music();
 }
 
-void Scene706::step() {
+static void room_706_daemon() {
 	if (_game._trigger == 75) {
 		_game._player._stepEnabled = true;
 		_game._player._visible = true;
@@ -200,14 +187,14 @@ void Scene706::step() {
 	}
 
 	if (_scene->_animation[0] != nullptr) {
-		if ((_animationMode != 0) && (_scene->_animation[0]->getCurrentFrame() != _animationFrame)) {
-			_animationFrame = _scene->_animation[0]->getCurrentFrame();
+		if ((local._animationMode != 0) && (_scene->_animation[0]->getCurrentFrame() != local._animationFrame)) {
+			local._animationFrame = _scene->_animation[0]->getCurrentFrame();
 
-			if (_animationFrame == 6) {
+			if (local._animationFrame == 6) {
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 				_game._objects.setRoom(OBJ_VASE, 2);
 
-				if (_animationMode == 2) {
+				if (local._animationMode == 2) {
 					_game._objects.setRoom(OBJ_BOTTLE, 1);
 
 					_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
@@ -243,11 +230,11 @@ static void room_706_parser() {
 
 	if (_action.isAction(VERB_TAKE, NOUN_VASE)) {
 		if (_game._difficulty != DIFFICULTY_EASY) {
-			_animationMode = 1;
+			local._animationMode = 1;
 			handleRexDeath();
 		} else if (_game._trigger || !_game._objects.isInInventory(OBJ_VASE)) {
 			handleTakeVase();
-			_emptyPedestral = true;
+			local._emptyPedestral = true;
 		}
 		_action._inProgress = false;
 		return;
@@ -257,13 +244,13 @@ static void room_706_parser() {
 		if ((_globals[kBottleStatus] == 2 && _game._difficulty == DIFFICULTY_HARD) ||
 			(_globals[kBottleStatus] != 0 && _game._difficulty != DIFFICULTY_HARD)) {
 			if (!_game._objects.isInInventory(OBJ_VASE) || _game._trigger) {
-				_vaseMode = 1;
+				local._vaseMode = 1;
 				handleTakeVase();
 				_action._inProgress = false;
 				return;
 			}
 		} else if (_game._objects.isInRoom(OBJ_VASE) || _game._trigger) {
-			_animationMode = 2;
+			local._animationMode = 2;
 			handleRexDeath();
 			_action._inProgress = false;
 			return;
@@ -318,6 +305,29 @@ static void room_706_parser() {
 	_action._inProgress = false;
 }
 
+void room_706_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._vaseHotspotId);
+	s.syncAsSint16LE(local._vaseMode);
+	s.syncAsSint16LE(local._animationMode);
+	s.syncAsSint16LE(local._animationFrame);
+
+	s.syncAsByte(local._emptyPedestral);
+}
+
+void room_706_preload() {
+	room_init_code_pointer = room_706_init;
+	room_daemon_code_pointer = room_706_daemon;
+	room_pre_parser_code_pointer = room_706_pre_parser;
+	room_parser_code_pointer = room_706_parser;
+
+	section_7_walker();
+	section_7_interface();
+	_scene->addActiveVocab(NOUN_BOTTLE);
+	_scene->addActiveVocab(NOUN_VASE);
+	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

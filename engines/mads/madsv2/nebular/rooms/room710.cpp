@@ -19,18 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section7.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
-
-void Scene710::setup() {
-	_game._player._spritesPrefix = "";
-	setAAName();
-}
+namespace Rooms {
 
 static void room_710_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
@@ -43,10 +43,10 @@ static void room_710_init() {
 	_game._player._visible = false;
 	_scene->_sequences.addTimer(600, 70);
 
-	sceneEntrySound();
+	section_7_music();
 }
 
-void Scene710::step() {
+static void room_710_daemon() {
 	if (_game._trigger == 70) {
 		if (_game._globals[kCityFlooded])
 			_scene->_nextSceneId = 701;
@@ -68,6 +68,20 @@ static void room_710_parser() {
 	}
 }
 
+void room_710_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_710_preload() {
+	room_init_code_pointer = room_710_init;
+	room_daemon_code_pointer = room_710_daemon;
+	room_parser_code_pointer = room_710_parser;
+
+	*player.series_name = '\0';
+	section_7_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

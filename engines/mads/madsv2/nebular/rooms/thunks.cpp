@@ -99,6 +99,10 @@ void Game::Object::setQuality(int quality_id, long quality_value) {
 	object_set_quality(_object_id, quality_id, quality_value);
 }
 
+bool Game::Object::hasQuality(int quality_id) {
+	return object_has_quality(_object_id, quality_id);
+}
+
 void Game::VisitedScenes::add(int roomNum) {
 	player_discover_room(roomNum);
 }
@@ -438,6 +442,10 @@ void Scene::addActiveVocab(int vocab_id) {
 
 void VM::Dialogs::show(int id) {
 	text_show(id);
+}
+
+void VM::Dialogs::show(int object_id, int id) {
+	object_examine(object_id, id, 0);
 }
 
 void VM::Dialogs::showItem(int object_id, int message, int speech) {

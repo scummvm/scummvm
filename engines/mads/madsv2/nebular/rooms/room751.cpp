@@ -19,30 +19,25 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section7.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene751::Scene751(RexNebularEngine *vm) : Scene7xx(vm) {
-	_rexHandingLine = false;
-}
+struct Scratch {
+	bool _rexHandingLine;
+};
 
-void room_751_synchronize(Common::Serializer &s) {
-	Scene7xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_rexHandingLine);
-}
-
-void Scene751::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_FISHING_LINE);
-	_scene->addActiveVocab(VERB_WALKTO);
-}
 
 static void room_751_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites("*RM701X0");
@@ -51,7 +46,7 @@ static void room_751_init() {
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RM202A1");
 
 	if (!_game._visitedScenes._sceneRevisited)
-		_rexHandingLine = false;
+		local._rexHandingLine = false;
 
 	if (_globals[kLineStatus] == 2 || _globals[kLineStatus] == 3) {
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -1);
@@ -80,7 +75,7 @@ static void room_751_init() {
 		_game._player._facing = FACING_EAST;
 		_game._player._stepEnabled = false;
 		_scene->_sequences.addTimer(60, 60);
-	} else if (_rexHandingLine) {
+	} else if (local._rexHandingLine) {
 		_game._player._visible = false;
 		_game._player._playerPos = Common::Point(268, 140);
 		_game._player._facing = FACING_NORTHWEST;
@@ -99,14 +94,14 @@ static void room_751_init() {
 		_game._objects.addToInventory(OBJ_BINOCULARS);
 	}
 
-	sceneEntrySound();
+	section_7_music();
 	_game.loadQuoteSet(0x30A, 0x30B, 0x30C, 0x30D, 0x30E, 0);
 
 	if (_globals[kTimebombTimer] > 0)
 		_globals[kTimebombTimer] = 10200;
 }
 
-void Scene751::step() {
+static void room_751_daemon() {
 	switch (_game._trigger) {
 	case 70:
 		_scene->_sequences.remove(_globals._sequenceIndexes[4]);
@@ -178,7 +173,7 @@ static void room_751_pre_parser() {
 	if (_action.isAction(VERB_WALKTO, NOUN_EAST_END_OF_PLATFORM))
 		_game._player._walkOffScreenSceneId = 752;
 
-	if (!_rexHandingLine)
+	if (!local._rexHandingLine)
 		return;
 
 	if (_action.isAction(VERB_LOOK) || _action.isObject(NOUN_FISHING_LINE) || _action.isAction(VERB_TALKTO))
@@ -199,7 +194,7 @@ static void room_751_pre_parser() {
 		case 1:
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[2]);
 			_game._player._visible = true;
-			_rexHandingLine = false;
+			local._rexHandingLine = false;
 			_game._player._stepEnabled = true;
 			_game._player._readyToWalk = true;
 			break;
@@ -304,7 +299,7 @@ static void room_751_parser() {
 			break;
 
 			case 2:
-				_rexHandingLine = true;
+				local._rexHandingLine = true;
 				_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 				_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 8, -2);
@@ -321,7 +316,7 @@ static void room_751_parser() {
 				_scene->_dynamicHotspots.setPosition(idx, Common::Point(268, 140), FACING_NORTHWEST);
 				_scene->_kernelMessages.reset();
 				_game._objects.setRoom(OBJ_FISHING_LINE, _scene->_currentSceneId);
-				_rexHandingLine = false;
+				local._rexHandingLine = false;
 				_globals[kLineStatus] = 2;
 				_game._player._stepEnabled = true;
 				_vm->_dialogs->show(75120);
@@ -363,6 +358,23 @@ static void room_751_parser() {
 	_action._inProgress = false;
 }
 
+void room_751_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._rexHandingLine);
+}
+
+void room_751_preload() {
+	room_init_code_pointer = room_751_init;
+	room_daemon_code_pointer = room_751_daemon;
+	room_pre_parser_code_pointer = room_751_pre_parser;
+	room_parser_code_pointer = room_751_parser;
+
+	section_7_walker();
+	section_7_interface();
+	_scene->addActiveVocab(NOUN_FISHING_LINE);
+	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

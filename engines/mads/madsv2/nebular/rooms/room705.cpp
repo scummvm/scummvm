@@ -19,55 +19,59 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section7.h"
+#include "mads/madsv2/nebular/rooms/conversation.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-void Scene705::setup() {
-	_game._player._spritesPrefix = "";
-	setAAName();
-}
+struct Scratch {
+	Conversation _dialog1;
+};
 
-void room_705_synchronize(Common::Serializer &s) {
-	Scene7xx::synchronize(s);
-}
+static Scratch local;
 
-void Scene705::handleBottleInterface() {
+
+static void handleBottleInterface() {
 	switch (_globals[kBottleStatus]) {
 	case 0:
-		_dialog1.write(0x311, true);
-		_dialog1.write(0x312, true);
-		_dialog1.write(0x313, true);
-		_dialog1.write(0x314, true);
-		_dialog1.write(0x315, true);
+		local._dialog1.write(0x311, true);
+		local._dialog1.write(0x312, true);
+		local._dialog1.write(0x313, true);
+		local._dialog1.write(0x314, true);
+		local._dialog1.write(0x315, true);
 		break;
 
 	case 1:
-		_dialog1.write(0x311, false);
-		_dialog1.write(0x312, true);
-		_dialog1.write(0x313, true);
-		_dialog1.write(0x314, true);
-		_dialog1.write(0x315, true);
+		local._dialog1.write(0x311, false);
+		local._dialog1.write(0x312, true);
+		local._dialog1.write(0x313, true);
+		local._dialog1.write(0x314, true);
+		local._dialog1.write(0x315, true);
 		break;
 
 	case 2:
-		_dialog1.write(0x311, false);
-		_dialog1.write(0x312, false);
-		_dialog1.write(0x313, true);
-		_dialog1.write(0x314, true);
-		_dialog1.write(0x315, true);
+		local._dialog1.write(0x311, false);
+		local._dialog1.write(0x312, false);
+		local._dialog1.write(0x313, true);
+		local._dialog1.write(0x314, true);
+		local._dialog1.write(0x315, true);
 		break;
 
 	case 3:
-		_dialog1.write(0x311, false);
-		_dialog1.write(0x312, false);
-		_dialog1.write(0x313, false);
-		_dialog1.write(0x314, true);
-		_dialog1.write(0x315, true);
+		local._dialog1.write(0x311, false);
+		local._dialog1.write(0x312, false);
+		local._dialog1.write(0x313, false);
+		local._dialog1.write(0x314, true);
+		local._dialog1.write(0x315, true);
 		break;
 
 	default:
@@ -75,7 +79,7 @@ void Scene705::handleBottleInterface() {
 	}
 }
 
-void Scene705::setBottleSequence() {
+static void setBottleSequence() {
 	_scene->_userInterface.setup(kInputBuildingSentences);
 	_game._player._stepEnabled = false;
 	_scene->_sequences.remove(_globals._sequenceIndexes[3]);
@@ -83,7 +87,7 @@ void Scene705::setBottleSequence() {
 	_scene->loadAnimation(formAnimName('F', -1), 90);
 }
 
-void Scene705::handleFillBottle(int quote) {
+static void handleFillBottle(int quote) {
 	switch (quote) {
 	case 0x311:
 		_globals[kBottleStatus] = 1;
@@ -137,11 +141,11 @@ static void room_705_init() {
 		_game._objects.addToInventory(OBJ_BOTTLE);
 
 	_game.loadQuoteSet(0x311, 0x312, 0x313, 0x314, 0x315, 0);
-	_dialog1.setup(0x98, 0x311, 0x312, 0x313, 0x314, 0x315, 0);
-	sceneEntrySound();
+	local._dialog1.setup(0x98, 0x311, 0x312, 0x313, 0x314, 0x315, 0);
+	section_7_music();
 }
 
-void Scene705::step() {
+static void room_705_daemon() {
 	switch (_game._trigger) {
 	case 70:
 		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
@@ -276,7 +280,7 @@ static void room_705_parser() {
 	} else if (_action.isAction(VERB_FILL, NOUN_BOTTLE, NOUN_WATER) || _action.isAction(VERB_PUT, NOUN_BOTTLE, NOUN_WATER)) {
 		if (_globals[kBottleStatus] != 4) {
 			handleBottleInterface();
-			_dialog1.start();
+			local._dialog1.start();
 		} else
 			_vm->_dialogs->show(70323);
 	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_WATER))
@@ -297,6 +301,20 @@ static void room_705_parser() {
 	_action._inProgress = false;
 }
 
+void room_705_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_705_preload() {
+	room_init_code_pointer = room_705_init;
+	room_daemon_code_pointer = room_705_daemon;
+	room_parser_code_pointer = room_705_parser;
+
+	*player.series_name = '\0';
+	section_7_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

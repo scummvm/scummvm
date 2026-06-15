@@ -391,6 +391,8 @@ struct Game {
 		return this;
 	}
 
+	Globals &_globals = Rooms::_globals;
+
 	struct Object {
 		int _object_id;
 		int16 &_roomNumber;
@@ -398,6 +400,7 @@ struct Game {
 		Object(int objectNum);
 		int getQuality(int quality_id);
 		void setQuality(int quality_id, long quality_value);
+		bool hasQuality(int quality_id);
 	};
 
 	struct Objects {
@@ -586,6 +589,7 @@ struct VM {
 		}
 
 		void show(int id);
+		void show(int object_id, int id);
 		void showItem(int object_id, int message, int speech = 0);
 	};
 	Dialogs _dialogs;

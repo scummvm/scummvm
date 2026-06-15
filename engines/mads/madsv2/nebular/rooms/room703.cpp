@@ -19,83 +19,72 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section7.h"
+#include "mads/madsv2/nebular/rooms/conversation.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene703::Scene703(RexNebularEngine *vm) : Scene7xx(vm) {
-	_monsterMode = -1;
-	_boatFrame = -1;
-	_curSequence = -1;
-	_boatDir = -1;
+struct Scratch {
+	int16 _monsterMode;
+	int16 _boatFrame;
+	int16 _curSequence;
+	int16 _boatDir;
 
-	_useBomb = false;
-	_startMonsterTimer = false;
-	_rexDeathFl = false;
-	_restartTrigger70Fl = false;
+	bool _useBomb;
+	bool _startMonsterTimer;
+	bool _rexDeathFl;
+	bool _restartTrigger70Fl;
 
-	_lastFrameTime = 0;
-	_monsterTime = 0;
-}
+	int32 _lastFrameTime;
+	int32 _monsterTime;
 
-void room_703_synchronize(Common::Serializer &s) {
-	Scene7xx::synchronize(s);
+	Conversation _dialog1;
+};
 
-	s.syncAsSint16LE(_monsterMode);
-	s.syncAsSint16LE(_boatFrame);
-	s.syncAsSint16LE(_curSequence);
-	s.syncAsSint16LE(_boatDir);
+static Scratch local;
 
-	s.syncAsByte(_useBomb);
-	s.syncAsByte(_startMonsterTimer);
-	s.syncAsByte(_rexDeathFl);
-	s.syncAsByte(_restartTrigger70Fl);
 
-	s.syncAsUint32LE(_lastFrameTime);
-	s.syncAsUint32LE(_monsterTime);
-}
-
-void Scene703::setup() {
-	_game._player._spritesPrefix = "";
-	setAAName();
-}
-
-void Scene703::handleBottleInterface() {
+static void handleBottleInterface() {
 	switch (_globals[kBottleStatus]) {
 	case 0:
-		_dialog1.write(0x311, true);
-		_dialog1.write(0x312, true);
-		_dialog1.write(0x313, true);
-		_dialog1.write(0x314, true);
-		_dialog1.write(0x315, true);
+		local._dialog1.write(0x311, true);
+		local._dialog1.write(0x312, true);
+		local._dialog1.write(0x313, true);
+		local._dialog1.write(0x314, true);
+		local._dialog1.write(0x315, true);
 		break;
 
 	case 1:
-		_dialog1.write(0x311, false);
-		_dialog1.write(0x312, true);
-		_dialog1.write(0x313, true);
-		_dialog1.write(0x314, true);
-		_dialog1.write(0x315, true);
+		local._dialog1.write(0x311, false);
+		local._dialog1.write(0x312, true);
+		local._dialog1.write(0x313, true);
+		local._dialog1.write(0x314, true);
+		local._dialog1.write(0x315, true);
 		break;
 
 	case 2:
-		_dialog1.write(0x311, false);
-		_dialog1.write(0x312, false);
-		_dialog1.write(0x313, true);
-		_dialog1.write(0x314, true);
-		_dialog1.write(0x315, true);
+		local._dialog1.write(0x311, false);
+		local._dialog1.write(0x312, false);
+		local._dialog1.write(0x313, true);
+		local._dialog1.write(0x314, true);
+		local._dialog1.write(0x315, true);
 		break;
 
 	case 3:
-		_dialog1.write(0x311, false);
-		_dialog1.write(0x312, false);
-		_dialog1.write(0x313, false);
-		_dialog1.write(0x314, true);
-		_dialog1.write(0x315, true);
+		local._dialog1.write(0x311, false);
+		local._dialog1.write(0x312, false);
+		local._dialog1.write(0x313, false);
+		local._dialog1.write(0x314, true);
+		local._dialog1.write(0x315, true);
 		break;
 
 	default:
@@ -103,16 +92,16 @@ void Scene703::handleBottleInterface() {
 	}
 }
 
-void Scene703::setBottleSequence() {
+static void setBottleSequence() {
 	_scene->_userInterface.setup(kInputBuildingSentences);
 	_game._player._stepEnabled = false;
-	if (_boatDir == 2)
-		_curSequence = 6;
+	if (local._boatDir == 2)
+		local._curSequence = 6;
 	else
-		_curSequence = 7;
+		local._curSequence = 7;
 }
 
-void Scene703::handleFillBottle(int quote) {
+static void handleFillBottle(int quote) {
 	switch (quote) {
 	case 0x311:
 		_globals[kBottleStatus] = 1;
@@ -153,49 +142,49 @@ static void room_703_init() {
 			_globals[kMonsterAlive] = true;
 	}
 
-	_startMonsterTimer = true;
-	_rexDeathFl = true;
-	_monsterTime = 0;
-	_restartTrigger70Fl = true;
-	_useBomb = false;
-	_boatFrame = -1;
+	local._startMonsterTimer = true;
+	local._rexDeathFl = true;
+	local._monsterTime = 0;
+	local._restartTrigger70Fl = true;
+	local._useBomb = false;
+	local._boatFrame = -1;
 
 	if (!_globals[kMonsterAlive])
 		_scene->_hotspots.activate(NOUN_SEA_MONSTER, false);
 
 	if (_scene->_priorSceneId == 704) {
 		_game._player._stepEnabled = false;
-		_curSequence = 2;
-		_boatDir = 2;
-		_monsterMode = 0;
+		local._curSequence = 2;
+		local._boatDir = 2;
+		local._monsterMode = 0;
 		_scene->loadAnimation(formAnimName('A', -1));
 		_scene->_animation[0]->setCurrentFrame(34);
 	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._stepEnabled = false;
-		_boatDir = 1;
+		local._boatDir = 1;
 		if (_globals[kMonsterAlive]) {
-			_monsterMode = 1;
-			_curSequence = 0;
+			local._monsterMode = 1;
+			local._curSequence = 0;
 			_scene->loadAnimation(formAnimName('B', -1));
 		} else {
-			_curSequence = 0;
-			_monsterMode = 0;
+			local._curSequence = 0;
+			local._monsterMode = 0;
 			_scene->loadAnimation(formAnimName('A', -1));
 		}
 	} else if (_globals[kMonsterAlive]) {
-		_curSequence = 0;
-		_boatDir = 1;
-		_monsterMode = 1;
+		local._curSequence = 0;
+		local._boatDir = 1;
+		local._monsterMode = 1;
 		_scene->loadAnimation(formAnimName('B', -1));
 		_scene->_animation[0]->setCurrentFrame(39);
-	} else if (_boatDir == 1) {
-		_curSequence = 0;
-		_monsterMode = 0;
+	} else if (local._boatDir == 1) {
+		local._curSequence = 0;
+		local._monsterMode = 0;
 		_scene->loadAnimation(formAnimName('A', -1));
 		_scene->_animation[0]->setCurrentFrame(9);
-	} else if (_boatDir == 2) {
-		_curSequence = 0;
-		_monsterMode = 0;
+	} else if (local._boatDir == 2) {
+		local._curSequence = 0;
+		local._monsterMode = 0;
 		_scene->loadAnimation(formAnimName('A', -1));
 		_scene->_animation[0]->setCurrentFrame(56);
 	}
@@ -208,53 +197,53 @@ static void room_703_init() {
 	}
 
 	_game.loadQuoteSet(0x311, 0x312, 0x313, 0x314, 0x315, 0);
-	_dialog1.setup(0x98, 0x311, 0x312, 0x313, 0x314, 0x315, 0);
-	sceneEntrySound();
+	local._dialog1.setup(0x98, 0x311, 0x312, 0x313, 0x314, 0x315, 0);
+	section_7_music();
 	_vm->_sound->command(28);
 }
 
-void Scene703::step() {
-	if (_startMonsterTimer) {
-		long diff = _scene->_frameStartTime - _lastFrameTime;
+static void room_703_daemon() {
+	if (local._startMonsterTimer) {
+		long diff = _scene->_frameStartTime - local._lastFrameTime;
 		if ((diff >= 0) && (diff <= 12))
-			_monsterTime += diff;
+			local._monsterTime += diff;
 		else
-			_monsterTime++;
+			local._monsterTime++;
 
-		_lastFrameTime = _scene->_frameStartTime;
+		local._lastFrameTime = _scene->_frameStartTime;
 	}
 
-	if ((_monsterTime >= 2400) && !_rexDeathFl && !_useBomb) {
-		_startMonsterTimer = false;
-		_rexDeathFl = true;
+	if ((local._monsterTime >= 2400) && !local._rexDeathFl && !local._useBomb) {
+		local._startMonsterTimer = false;
+		local._rexDeathFl = true;
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
-		_monsterMode = 3;
+		local._monsterMode = 3;
 		_scene->loadAnimation(formAnimName('D', -1));
-		_rexDeathFl = false;
-		_monsterTime = 0;
+		local._rexDeathFl = false;
+		local._monsterTime = 0;
 	}
 
 
 	if (_game._trigger == 70)
 		_scene->_reloadSceneFlag = true;
 
-	if ((_monsterMode == 3) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != _boatFrame) {
-			_boatFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._monsterMode == 3) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != local._boatFrame) {
+			local._boatFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextBoatFrame = -1;
 
-			if (_boatFrame == 62) {
+			if (local._boatFrame == 62) {
 				nextBoatFrame = 61;
-				if (_restartTrigger70Fl) {
-					_restartTrigger70Fl = false;
+				if (local._restartTrigger70Fl) {
+					local._restartTrigger70Fl = false;
 					_scene->_sequences.addTimer(15, 70);
 				}
 			}
 
 			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_animation[0]->getCurrentFrame())) {
 				_scene->_animation[0]->setCurrentFrame(nextBoatFrame);
-				_boatFrame = nextBoatFrame;
+				local._boatFrame = nextBoatFrame;
 			}
 		}
 	}
@@ -262,19 +251,19 @@ void Scene703::step() {
 	if (_game._trigger == 70)
 		_scene->_reloadSceneFlag = true;
 
-	if ((_monsterMode == 0) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != _boatFrame) {
-			_boatFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._monsterMode == 0) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != local._boatFrame) {
+			local._boatFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextBoatFrame = -1;
 
-			switch (_boatFrame) {
+			switch (local._boatFrame) {
 			case 11:
-				if (_curSequence == 7) {
-					_curSequence = 0;
+				if (local._curSequence == 7) {
+					local._curSequence = 0;
 					nextBoatFrame = 100;
-				} else if (_curSequence == 5)
+				} else if (local._curSequence == 5)
 					nextBoatFrame = 82;
-				else if (_curSequence == 1)
+				else if (local._curSequence == 1)
 					nextBoatFrame = 11;
 				else {
 					nextBoatFrame = 9;
@@ -284,17 +273,17 @@ void Scene703::step() {
 				break;
 
 			case 34:
-				if (_curSequence != 2)
+				if (local._curSequence != 2)
 					_scene->_nextSceneId = 704;
 				break;
 
 			case 57:
-				if (_curSequence == 6) {
-					_curSequence = 0;
+				if (local._curSequence == 6) {
+					local._curSequence = 0;
 					nextBoatFrame = 91;
-				} else if (_curSequence == 4)
+				} else if (local._curSequence == 4)
 					nextBoatFrame = 73;
-				else if (_curSequence == 3)
+				else if (local._curSequence == 3)
 					nextBoatFrame = 57;
 				else {
 					nextBoatFrame = 56;
@@ -337,7 +326,7 @@ void Scene703::step() {
 
 			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_animation[0]->getCurrentFrame())) {
 				_scene->_animation[0]->setCurrentFrame(nextBoatFrame);
-				_boatFrame = nextBoatFrame;
+				local._boatFrame = nextBoatFrame;
 			}
 		}
 	}
@@ -370,16 +359,16 @@ void Scene703::step() {
 	}
 
 
-	if ((_monsterMode == 1) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != _boatFrame) {
-			_boatFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._monsterMode == 1) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != local._boatFrame) {
+			local._boatFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextBoatFrame = -1;
 
-			switch (_boatFrame) {
+			switch (local._boatFrame) {
 			case 39:
 				_game._player._stepEnabled = true;
-				_startMonsterTimer = true;
-				_rexDeathFl = false;
+				local._startMonsterTimer = true;
+				local._rexDeathFl = false;
 				break;
 
 			case 40:
@@ -392,7 +381,7 @@ void Scene703::step() {
 			case 105:
 			case 114:
 			case 123:
-				if (_curSequence == 8)
+				if (local._curSequence == 8)
 					nextBoatFrame = 129;
 
 				break;
@@ -411,19 +400,19 @@ void Scene703::step() {
 
 			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_animation[0]->getCurrentFrame())) {
 				_scene->_animation[0]->setCurrentFrame(nextBoatFrame);
-				_boatFrame = nextBoatFrame;
+				local._boatFrame = nextBoatFrame;
 			}
 		}
 	}
 
-	if ((_monsterMode == 2) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != _boatFrame) {
-			_boatFrame = _scene->_animation[0]->getCurrentFrame();
+	if ((local._monsterMode == 2) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != local._boatFrame) {
+			local._boatFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextBoatFrame = -1;
 
-			switch (_boatFrame) {
+			switch (local._boatFrame) {
 			case 14:
-				if (!_useBomb) {
+				if (!local._useBomb) {
 					if (_game._difficulty == DIFFICULTY_HARD)
 						_game._objects.setRoom(OBJ_CHICKEN, 1);
 					else
@@ -445,7 +434,7 @@ void Scene703::step() {
 			case 53:
 				_game._objects.setRoom(OBJ_TWINKIFRUIT, 1);
 				nextBoatFrame = 80;
-				_curSequence = 9;
+				local._curSequence = 9;
 				break;
 
 			case 80:
@@ -456,16 +445,16 @@ void Scene703::step() {
 					_vm->_dialogs->show(70317);
 
 				_scene->freeAnimation();
-				_monsterMode = 1;
+				local._monsterMode = 1;
 				_scene->loadAnimation(formAnimName('B', -1));
 				_scene->_animation[0]->setCurrentFrame(39);
 				_game._player._stepEnabled = true;
 				break;
 
 			case 91:
-				if (!_useBomb) {
+				if (!local._useBomb) {
 					_scene->freeAnimation();
-					_monsterMode = 1;
+					local._monsterMode = 1;
 					_scene->loadAnimation(formAnimName('B', -1));
 					_scene->_animation[0]->setCurrentFrame(39);
 					_game._player._stepEnabled = true;
@@ -478,7 +467,7 @@ void Scene703::step() {
 				_scene->_hotspots.activate(NOUN_SEA_MONSTER, false);
 				_globals[kMonsterAlive] = false;
 				_scene->freeAnimation();
-				_monsterMode = 0;
+				local._monsterMode = 0;
 				_scene->loadAnimation(formAnimName('A', -1));
 				_scene->_animation[0]->setCurrentFrame(9);
 				_game._player._stepEnabled = true;
@@ -495,7 +484,7 @@ void Scene703::step() {
 
 			if ((nextBoatFrame >= 0) && (nextBoatFrame != _scene->_animation[0]->getCurrentFrame())) {
 				_scene->_animation[0]->setCurrentFrame(nextBoatFrame);
-				_boatFrame = nextBoatFrame;
+				local._boatFrame = nextBoatFrame;
 			}
 		}
 	}
@@ -507,57 +496,57 @@ static void room_703_parser() {
 	else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_DOCK_TO_SOUTH)) {
 		_game._player._stepEnabled = false;
 		if (_globals[kMonsterAlive])
-			_curSequence = 8;
-		else if (_boatDir == 1)
-			_curSequence = 5;
+			local._curSequence = 8;
+		else if (local._boatDir == 1)
+			local._curSequence = 5;
 		else
-			_curSequence = 3;
+			local._curSequence = 3;
 	} else if (_action.isAction(VERB_STEER_TOWARDS, NOUN_BUILDING_TO_NORTH)) {
 		_game._player._stepEnabled = false;
 		if (_globals[kMonsterAlive]) {
-			_startMonsterTimer = false;
-			_rexDeathFl = true;
-			_monsterTime = 0;
+			local._startMonsterTimer = false;
+			local._rexDeathFl = true;
+			local._monsterTime = 0;
 			_scene->freeAnimation();
-			_monsterMode = 3;
+			local._monsterMode = 3;
 			_scene->loadAnimation(formAnimName('D', -1));
-		} else if (_boatDir == 2)
-			_curSequence = 4;
+		} else if (local._boatDir == 2)
+			local._curSequence = 4;
 		else
-			_curSequence = 1;
+			local._curSequence = 1;
 	} else if (_action.isAction(VERB_THROW, NOUN_BONE, NOUN_SEA_MONSTER) || _action.isAction(VERB_THROW, NOUN_BONES, NOUN_SEA_MONSTER)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
-		_monsterMode = 2;
+		local._monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
 		_scene->_animation[0]->setCurrentFrame(19);
 	} else if (_action.isAction(VERB_THROW, NOUN_CHICKEN, NOUN_SEA_MONSTER)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
-		_monsterMode = 2;
+		local._monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
 	} else if (_action.isAction(VERB_THROW, NOUN_TWINKIFRUIT, NOUN_SEA_MONSTER)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
-		_monsterMode = 2;
+		local._monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
 		_scene->_animation[0]->setCurrentFrame(39);
 	} else if (_action.isAction(VERB_THROW, NOUN_BOMB, NOUN_SEA_MONSTER)) {
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
-		_monsterMode = 2;
+		local._monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
 		_scene->_animation[0]->setCurrentFrame(59);
 	} else if (_action.isAction(VERB_THROW, NOUN_CHICKEN_BOMB, NOUN_SEA_MONSTER)) {
-		_useBomb = true;
+		local._useBomb = true;
 		_game._player._stepEnabled = false;
 		_scene->freeAnimation();
-		_monsterMode = 2;
+		local._monsterMode = 2;
 		_scene->loadAnimation(formAnimName('C', -1));
 	} else if (_action.isAction(VERB_PUT, NOUN_BOTTLE, NOUN_WATER) || _action.isAction(VERB_FILL, NOUN_BOTTLE, NOUN_WATER)) {
 		if (_globals[kBottleStatus] != 4) {
 			handleBottleInterface();
-			_dialog1.start();
+			local._dialog1.start();
 		} else
 			_vm->_dialogs->show(70323);
 	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_SEA_MONSTER)) {
@@ -583,6 +572,31 @@ static void room_703_parser() {
 	_action._inProgress = false;
 }
 
+void room_703_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._monsterMode);
+	s.syncAsSint16LE(local._boatFrame);
+	s.syncAsSint16LE(local._curSequence);
+	s.syncAsSint16LE(local._boatDir);
+
+	s.syncAsByte(local._useBomb);
+	s.syncAsByte(local._startMonsterTimer);
+	s.syncAsByte(local._rexDeathFl);
+	s.syncAsByte(local._restartTrigger70Fl);
+
+	s.syncAsUint32LE(local._lastFrameTime);
+	s.syncAsUint32LE(local._monsterTime);
+}
+
+void room_703_preload() {
+	room_init_code_pointer = room_703_init;
+	room_daemon_code_pointer = room_703_daemon;
+	room_parser_code_pointer = room_703_parser;
+
+	*player.series_name = '\0';
+	section_7_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

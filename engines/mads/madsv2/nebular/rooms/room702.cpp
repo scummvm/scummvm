@@ -19,18 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section7.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
-
-void Scene702::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
+namespace Rooms {
 
 static void room_702_init() {
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites("*RXMBD_8");
@@ -60,7 +60,7 @@ static void room_702_init() {
 		_game._globals[kTeleporterCommand] = TELEPORTER_NONE;
 	}
 
-	sceneEntrySound();
+	section_7_music();
 }
 
 static void room_702_pre_parser() {
@@ -127,6 +127,20 @@ static void room_702_parser() {
 	_action._inProgress = false;
 }
 
+void room_702_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_702_preload() {
+	room_init_code_pointer = room_702_init;
+	room_pre_parser_code_pointer = room_702_pre_parser;
+	room_parser_code_pointer = room_702_parser;
+
+	section_7_walker();
+	section_7_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS
