@@ -392,6 +392,7 @@ void VR::stopAnimation(const Common::String &name) {
 	}
 	auto &animation = *it;
 	animation.active = false;
+	g_engine->setVariable(animation.variable, animation.variableValue);
 }
 
 void VR::Animation::renderNextFrame(Graphics::Surface &pic) {
