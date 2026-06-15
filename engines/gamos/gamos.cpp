@@ -2971,7 +2971,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 
 		char buffer[256];
 		int a = 0, b = 0, c = 0, d = 0;
-		if (sscanf(str.c_str(), "%s %d %d %d %d", buffer, &a, &b, &c, &d) > 0) {
+		if (sscanf(str.c_str(), "%255s %d %d %d %d", buffer, &a, &b, &c, &d) > 0) {
 			stopMidi();
 			stopSounds();
 
