@@ -651,8 +651,8 @@ void PhoenixVREngine::until(const Common::String &var, int value) {
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
-		_frameLimiter.delayBeforeSwap();
 		drawAudioSubtitles();
+		_frameLimiter.delayBeforeSwap();
 		_screen->update();
 		frameDuration = _frameLimiter.startFrame();
 	}
@@ -669,13 +669,6 @@ void PhoenixVREngine::wait(float seconds) {
 		renderVR(frameDuration / 1000.0f);
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN: {
-				if (event.kbd.ascii == ' ') {
-					waiting = false;
-				}
-				break;
-			}
-
 			default:
 				break;
 			}
@@ -683,8 +676,8 @@ void PhoenixVREngine::wait(float seconds) {
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
-		_frameLimiter.delayBeforeSwap();
 		drawAudioSubtitles();
+		_frameLimiter.delayBeforeSwap();
 		_screen->update();
 		frameDuration = _frameLimiter.startFrame();
 	}
@@ -994,7 +987,21 @@ void PhoenixVREngine::resetLockKey() {
 
 void PhoenixVREngine::showImageOverlay(const Common::String &image, int x, int y) {
 	debug("AfficheImage %s %d %d", image.c_str(), x, y);
-	_imageOverlay.reset(loadSurface(image));
+	_imageOverlay.reset();
+
+	const Graphics::Surface *surface = _arn ? _arn->get(image) : nullptr;
+	if (!surface && !image.contains('.'))
+		surface = _arn ? _arn->get(image + ".bmp") : nullptr;
+	if (!surface) {
+		warning("can't find image overlay %s", image.c_str());
+		return;
+	}
+
+	uint8 r, g, b;
+	surface->format.colorToRGB(surface->getPixel(surface->w - 1, surface->h - 1), r, g, b);
+	_imageOverlay.reset(surface->convertTo(Graphics::BlendBlit::getSupportedPixelFormat()));
+	if (_imageOverlay)
+		_imageOverlay->applyColorKey(r, g, b);
 	_imageOverlayPos = Common::Point(x, y);
 }
 
@@ -1083,8 +1090,10 @@ Graphics::Surface *PhoenixVREngine::loadCursor(const Common::String &path) {
 	if (it != _cursorCache.end())
 		return it->_value;
 	auto s = loadSurface(path);
-	if (!s)
-		error("can't load cursor from %s", path.c_str());
+	if (!s) {
+		warning("can't load cursor from %s", path.c_str());
+		return nullptr;
+	}
 	_cursorCache[path] = s;
 	return s;
 }
@@ -1626,7 +1635,11 @@ Common::Error PhoenixVREngine::run() {
 
 					if (_vr.isVR() ? region->contains3D(vrPos) : region->contains2D(event.mouse.x, event.mouse.y)) {
 						debug("click region %u", i);
-						executeTest(i);
+						if (auto clickTest = _warp->getLastTest(i)) {
+							Script::ExecutionContext ctx;
+							clickTest->scope.exec(ctx);
+						} else
+							warning("invalid test id %u", i);
 						break;
 					}
 				}
@@ -1648,8 +1661,8 @@ Common::Error PhoenixVREngine::run() {
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
-		_frameLimiter.delayBeforeSwap();
 		drawAudioSubtitles();
+		_frameLimiter.delayBeforeSwap();
 		_screen->update();
 		frameDuration = _frameLimiter.startFrame();
 	}
@@ -2035,8 +2048,8 @@ void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
 			textY = drawSaveTextBlock(dst, font, state.game, textX, textY, textW, color, textAlign, lineHeight, splitV, tileY);
 			drawSaveTextBlock(dst, font, state.info, textX, textY, textW, color, textAlign, lineHeight, splitV, tileY);
 		} else {
-			textY = drawSaveTextBlock(dst, font, state.game, textX, textY, textW, color, textAlign, lineHeight, splitV, tileY, true);
-			drawSaveTextBlock(dst, font, state.info, textX, textY, textW, color, textAlign, lineHeight, splitV, tileY);
+			drawSaveTextBlock(dst, font, state.game, textX, textY, textW, color, textAlign, lineHeight, splitV, tileY, true);
+			drawSaveTextBlock(dst, font, state.info, textX, textY + lineHeight, textW, color, textAlign, lineHeight, splitV, tileY);
 		}
 	}
 

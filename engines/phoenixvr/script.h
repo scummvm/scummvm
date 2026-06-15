@@ -105,6 +105,7 @@ public:
 
 		void parseLine(const Common::String &line, uint lineno);
 		TestPtr getTest(int idx) const;
+		TestPtr getLastTest(int idx) const;
 		TestPtr getDefaultTest() const {
 			return getTest(-1);
 		}

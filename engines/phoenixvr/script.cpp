@@ -192,9 +192,9 @@ public:
 			// or
 			// x, y, zoom, speed
 			return CommandPtr(a3 != 0 ? new InterpolAngle(a0, a1, a3, toRadian(a2)) : new InterpolAngle(a0, a1, a2, 0));
-		} else if (maybe("anglexmax=")) {
+		} else if (maybe("anglexmax=") || keyword("anglexmax")) {
 			return CommandPtr(new AngleXMax(toAngle(nextInt())));
-		} else if (maybe("angleymax=")) {
+		} else if (maybe("angleymax=") || keyword("angleymax")) {
 			auto y0 = toAngle(nextInt());
 			expect(',');
 			auto y1 = toAngle(nextInt());
@@ -300,6 +300,15 @@ void Script::Scope::exec(ExecutionContext &ctx, uint offset) const {
 Script::TestPtr Script::Warp::getTest(int idx) const {
 	auto it = Common::find_if(tests.begin(), tests.end(), [&](const TestPtr &test) { return test->idx == idx; });
 	return it != tests.end() ? *it : Script::TestPtr{};
+}
+
+Script::TestPtr Script::Warp::getLastTest(int idx) const {
+	for (uint i = tests.size(); i > 0; --i) {
+		if (tests[i - 1]->idx == idx)
+			return tests[i - 1];
+	}
+
+	return Script::TestPtr{};
 }
 
 Script::Script(Common::SeekableReadStream &s) {
