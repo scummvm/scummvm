@@ -33,20 +33,13 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-struct Scratch {
-	int16 _handSpriteId;
-};
-
-static Scratch local;
-
-
 static void room_213_init() {
 	if (_globals[kMeteorologistWatch] != METEOROLOGIST_NORMAL)
-		local._handSpriteId = _scene->_sprites.addSprites("*METHAND");
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*METHAND");
 	else if (_globals[kSexOfRex] == REX_MALE)
-		local._handSpriteId = _scene->_sprites.addSprites("*REXHAND");
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*REXHAND");
 	else
-		local._handSpriteId = _scene->_sprites.addSprites("*ROXHAND");
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*ROXHAND");
 
 	teleporter_init();
 
