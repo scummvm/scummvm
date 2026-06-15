@@ -144,13 +144,13 @@ typedef Common::Array<ImagePos> ImageSeq;
 struct Sprite {
 	uint32 index = 0;
 
-	byte field_0;
+	byte field_0 = 0;
 	union {
 		byte flags;
 		byte startChar; // if it's font
 	};
-	byte lastChar;
-	byte frameCount;
+	byte lastChar = 0;
+	byte frameCount = 0;
 
 	Common::Array<ImageSeq *> sequences;
 };

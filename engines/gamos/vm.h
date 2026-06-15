@@ -152,7 +152,9 @@ public:
 
     class Context {
     public:
-        Context(VM &vm): _vm(vm), _readAccess(vm), _writeAccess(vm) {};
+        Context(VM &vm): _vm(vm), _readAccess(vm), _writeAccess(vm) {
+			memset(_stack, 0, sizeof(_stack));
+		};
 
         Common::String getString(int memtype, uint32 offset, uint32 maxLen = 256);
         Common::String getString(const ValAddr &addr, uint32 maxLen = 256);

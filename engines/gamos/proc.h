@@ -38,7 +38,9 @@ enum ACT2 {
 
 class SystemProc {
 public:
-	SystemProc(KeyCodes *conv) : _codesConverter(conv) {};
+	SystemProc(KeyCodes *conv) : _codesConverter(conv) {
+		memset(_keyCodes, 0, sizeof(_keyCodes));
+	};
 
 	void processMessage(const Common::Event &ev);
 
