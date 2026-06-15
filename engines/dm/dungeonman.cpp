@@ -1553,7 +1553,7 @@ void DungeonMan::setGroupCells(Group *group, uint16 cells, uint16 mapIndex) {
 
 void DungeonMan::setGroupDirections(Group *group, int16 dir, uint16 mapIndex) {
 	if (mapIndex == _partyMapIndex)
-		_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()]._directions = (Direction)dir;
+		_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()]._directions = dir;
 	else
 		group->setDir(_vm->normalizeModulo4(dir));
 }
