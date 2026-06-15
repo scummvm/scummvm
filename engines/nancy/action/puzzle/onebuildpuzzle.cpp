@@ -424,6 +424,10 @@ void OneBuildPuzzle::updatePieceRender(int pieceIdx) {
 
 void OneBuildPuzzle::rotatePiece(int pieceIdx) {
 	Piece &p = _pieces[pieceIdx];
+
+	if (!_canRotateAll && !p.isPreRotated)
+		return;
+
 	int oldRot = p.curRotation;
 	int oldW = p.rotateSurfaces[oldRot].w;
 	int oldH = p.rotateSurfaces[oldRot].h;
