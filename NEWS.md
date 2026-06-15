@@ -65,6 +65,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed holomap model rendering.
    - Disable autosaves while driving a vehicle.
 
+Atari port:
+   - Added native CDDA support.
+   - Added plugin support (now ScummVM can run with as little as a few megs of RAM).
+   - Added native YM2149 support (currently usable for Elvira 1 and 2)
+
  PS3 port:
    - Added support for running ScummVM engines as separate modules/executables.
      This saves about 90 MB of RAM. It is enabled only for release packages.
