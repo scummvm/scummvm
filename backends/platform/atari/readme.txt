@@ -426,22 +426,9 @@ ScummVM has supported native audio cd playback for a long time. It is even
 enabled in the FireBee (SDL) build. However native support in the Atari builds
 has been added just recently. This feature can be used to free the audio mixer
 from loading, decoding and mixing game music with sound effects, leaving more
-CPU time for the engine itself. The following configurations have been tested:
+CPU time for the engine itself.
 
-- ExtenDOS 4.10
-	- its cd.bos has a bug preventing ScummVM loading a file from CD on
-	  Falcon030 in TOS4 (030) mode (works fine when executed from HDD)
-	- works perfectly on CT60
-- CD Tools 2.10
-	- based on MetaDOS 2.62, don't run CACHEON.PRG before METADOS.PRG on CT60
-	- otherwise works perfectly in both 030 and 060 mode
-- Spin! 0.34
-	- based on MetaDOS 2.74, disabled cache doesn't help on CT60!
-- BetaDOS 3.12
-	- don't run CACHEON.PRG before BETADOS.PRG on CT60
-	- otherwise works perfectly in both 030 and 060 mode
-
-The MetaDOS API allows mixing various components:
+MetaDOS API allows mixing various components:
 
 - extendos.prg / metados.prg / betados.prg
 - hs-cdrom.bos (CD Tools) / spin_sd.bos (Spin!)
@@ -449,10 +436,13 @@ The MetaDOS API allows mixing various components:
   unidrive.dos (ExtenDOS)
 - cd.bos from ExtenDOS strictly requires unidrive.dos
 
-So to mitigate the loading bug you can (in order of user friendliness):
+There is a bug in ExtenDOS 4.10's cd.bos: under very specific circumstances
+ScummVM seemingly freezes while seeking for a file on CD (black screen). I'm
+working with the author on fixing this problem, in the meantime you can:
 
 - Copy data files from CD to hard disk (makes sense also for speed reasons),
   and ignore the message box with advice about ripping tracks from CD.
+- Reconfigure ExtenDOS to use its own SCSI routines (disabled by default).
 - Edit extendos.cnf and replace cd.bos with e.g. spin_sd.bos.
 - Not use ExtenDOS.
 
@@ -490,6 +480,9 @@ So how do you know which frequency to set as "output_rate" ? This is where
 converters are being used and for what input/values. So you can easily verify
 whether the given game's demands match your setting.
 
+Btw, you can use the same command line parameter for showing what MIDI mode is
+being used (Roland GS, MT-32, General MIDI), sometimes it is not very obvious.
+
 Unfortunately, currently per-game "output_rate" / "output_channels" is not
 possible but this may change in the future.
 
@@ -509,8 +502,8 @@ Changes to upstream
 There are a few features that have been disabled or changed and are not
 possible / plausible to merge into upstream:
 
-- This port contains an experimental / pending optimisations to the SCUMM
-  engine and audio mixing. I'll try to get them merged in the next release.
+- This port contains an experimental / pending optimisations to audio mixing.
+  I'll try to get them merged in the next release.
 
 
 Known issues
