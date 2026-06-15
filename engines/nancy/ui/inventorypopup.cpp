@@ -314,13 +314,10 @@ void InventoryPopup::handleInput(NancyInput &input) {
 		input.mousePos.x - _screenPosition.left + _uiivData->header.normalDestRect.left,
 		input.mousePos.y - _screenPosition.top  + _uiivData->header.normalDestRect.top);
 
-	// Nancy 10+ only blends the held-item sprite onto kNormal / kHotspot
-	// cursors. Switch to kHotspot when holding so the item stays visible
-	// while hovering popup widgets.
-	const CursorManager::CursorType hoverCursor =
-		NancySceneState.getHeldItem() == -1
-			? CursorManager::kHotspotArrow
-			: CursorManager::kHotspot;
+	// kHotspot is the highlighted magnifier and also the cursor that
+	// blends a held-item sprite on Nancy 10+, so it works in both
+	// "empty hand" (plain magnifier) and "carrying" (magnifier + item) states.
+	const CursorManager::CursorType hoverCursor = CursorManager::kHotspot;
 
 	// Scrollbar interaction takes priority while dragging.
 	const UISliderRecord &slider = _uiivData->header.slider;
