@@ -44,6 +44,7 @@
 namespace Director {
 namespace DT {
 
+
 template<typename... Args>
 void showProperty(const Common::String &title,
 				  const ImVec4 *color,
@@ -448,9 +449,9 @@ void drawRichTextCMprops(RichTextCastMember *member) {
 				for (int i = 7; i >= 0; i--) {
 					bool bitSet = (member->_cropFlags & (1 << i)) != 0;
 					if (bitSet) {
-						ImGui::TextColored(ImVec4(0.4f, 1.0f, 0.4f, 1.0f), "1");
+						ImGui::TextColored(_state->theme->var_color, "1");
 					} else {
-						ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "0");
+						ImGui::TextDisabled("0");
 					}
 					if (i > 0) {
 						ImGui::SameLine();
@@ -521,8 +522,8 @@ void drawBaseCMprops(CastMember *member) {
 				if (info) {
 					showProperty("name", "%s", info->name.c_str());
 				} else {
-					ImVec4 grayColor = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-					showProperty("name", &grayColor, "No Info");
+					ImVec4 disabledColor = ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled);
+					showProperty("name", &disabledColor, "No Info");
 				}
 
 				showProperty("number", "%d", member->getID());
@@ -532,8 +533,8 @@ void drawBaseCMprops(CastMember *member) {
 				if (info && !info->fileName.empty()) {
 					showProperty("fileName", "%s", info->fileName.c_str());
 				} else {
-					ImVec4 grayColor = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-					showProperty("fileName", &grayColor, "...");
+					ImVec4 disabledColor = ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled);
+					showProperty("fileName", &disabledColor, "...");
 				}
 
 				showProperty("type", "#%s", castType2str(member->_type));
@@ -544,47 +545,73 @@ void drawBaseCMprops(CastMember *member) {
 				ImGui::TableSetColumnIndex(0);
 				ImGui::Text("scriptText");
 				ImGui::TableSetColumnIndex(1);
-				if (info && !info->script.empty()) {
+				{
 					CastMemberID scriptCastId(member->getID(), cast->_castLibID);
+					ScriptContext *scriptCtx = getScriptContext(scriptCastId);
+					bool hasScript = scriptCtx != nullptr || (info && !info->script.empty());
 					bool hasCastScript = g_director->getCurrentMovie()->getScriptContext(kCastScript, scriptCastId) != nullptr;
-					ImGui::TextColored(hasCastScript ? ImVec4(0.4f, 0.8f, 0.4f, 1.0f) : ImVec4(0.7f, 0.7f, 1.0f, 1.0f), "...");
-					if (ImGui::IsItemHovered()) {
-						ImGui::SetTooltip(hasCastScript ? "%s\n\n(click to open script)" : "%s", info->script.c_str());
-						if (hasCastScript)
+					if (hasScript) {
+						ImGui::TextColored(hasCastScript ? _state->theme->var_color : _state->theme->script_ref, "(hover)");
+						if (ImGui::IsItemHovered()) {
 							ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+							if (ImGui::BeginTooltip()) {
+								ImGui::PushTextWrapPos(400.0f);
+								if (info && !info->script.empty()) {
+									Common::String tip = info->script;
+									tip.replace('\r', '\n');
+									if (tip.size() > 500)
+										tip = tip.substr(0, 500) + "\n...";
+									ImGui::TextUnformatted(tip.c_str());
+									ImGui::Separator();
+								}
+								ImGui::TextDisabled("(click to open script)");
+								ImGui::PopTextWrapPos();
+								ImGui::EndTooltip();
+							}
+						}
+						if (ImGui::IsItemClicked(0)) {
+							if (scriptCtx) {
+								Common::String moviePath = g_director->getCurrentMovie()->getArchive()->getPathName().toString();
+								for (auto &handler : scriptCtx->_functionHandlers) {
+									ImGuiScript script = toImGuiScript(scriptCtx->_scriptType, scriptCastId, handler._key);
+									script.byteOffsets = scriptCtx->_functionByteOffsets[script.handlerId];
+									script.moviePath = moviePath;
+									script.handlerName = formatHandlerName(scriptCtx->_scriptId, scriptCastId.member, script.handlerId, scriptCtx->_scriptType, false);
+									addToOpenHandlers(script);
+								}
+							}
+						}
+					} else {
+						ImGui::TextDisabled("...");
 					}
-					if (hasCastScript && ImGui::IsItemClicked(0))
-						displayScriptRef(scriptCastId);
-				} else {
-					ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "...");
 				}
 
 				if (info && info->creationTime != 0) {
 					showProperty("creationDate", "%u", info->creationTime);
 				} else {
-					ImVec4 grayColor = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-					showProperty("creationDate", &grayColor, "...");
+					ImVec4 disabledColor = ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled);
+					showProperty("creationDate", &disabledColor, "N/A");
 				}
 
 				if (info && info->modifiedTime != 0) {
 					showProperty("modifiedDate", "%u", info->modifiedTime);
 				} else {
-					ImVec4 grayColor = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-					showProperty("modifiedDate", &grayColor, "...");
+					ImVec4 disabledColor = ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled);
+					showProperty("modifiedDate", &disabledColor, "N/A");
 				}
 
 				if (info && !info->modifiedBy.empty()) {
 					showProperty("modifiedBy", "%s", info->modifiedBy.c_str());
 				} else {
-					ImVec4 grayColor = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-					showProperty("modifiedBy", &grayColor, "...");
+					ImVec4 disabledColor = ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled);
+					showProperty("modifiedBy", &disabledColor, "N/A");
 				}
 
 				if (info && !info->comments.empty()) {
 					showProperty("comments", "%s", info->comments.c_str());
 				} else {
-					ImVec4 grayColor = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-					showProperty("comments", &grayColor, "...");
+					ImVec4 disabledColor = ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled);
+					showProperty("comments", &disabledColor, "N/A");
 				}
 
 				showProperty("purgePriority", "%d", member->_purgePriority);
@@ -604,8 +631,8 @@ void drawBaseCMprops(CastMember *member) {
 
 				ImGuiImage media = getImageID(member);
 
-				ImVec4 grayColor = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-				showProperty("media", &grayColor, "%s", media.id == 0 ? "empty" : "...");
+				ImVec4 disabledColor = ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled);
+				showProperty("media", &disabledColor, "%s", media.id == 0 ? "empty" : "...");
 
 				// Not using showProperty() here because we want to show a
 				// thumbnail of the media instead of text.
@@ -933,10 +960,10 @@ void drawSoundCMprops(SoundCastMember *member) {
 					showProperty("sampleSize", "%d bit", member->_audio->getSampleSize());
 					showProperty("channels", "%d", member->_audio->getChannelCount());
 				} else {
-					ImVec4 gray = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-					showProperty("sampleRate", &gray, "N/A");
-					showProperty("sampleSize", &gray, "N/A");
-					showProperty("channels", &gray, "N/A");
+					ImVec4 disabledColor = ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled);
+					showProperty("sampleRate", &disabledColor, "N/A");
+					showProperty("sampleSize", &disabledColor, "N/A");
+					showProperty("channels", &disabledColor, "N/A");
 				}
 				ImGui::EndTable();
 			}
