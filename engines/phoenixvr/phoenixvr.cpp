@@ -1104,10 +1104,11 @@ void PhoenixVREngine::executeTest(int idx) {
 		warning("invalid test id %d", idx);
 }
 
-void PhoenixVREngine::startTimer(float seconds) {
+void PhoenixVREngine::startTimer(float seconds, bool showTimer) {
 	_timer = seconds;
 	_initialTimer = seconds;
 	_timerFlags = 5;
+	_showTimer = showTimer;
 }
 
 void PhoenixVREngine::pauseTimer(bool pause, bool deactivate) {
@@ -1125,6 +1126,7 @@ void PhoenixVREngine::pauseTimer(bool pause, bool deactivate) {
 
 void PhoenixVREngine::killTimer() {
 	_timerFlags = 0;
+	_showTimer = false;
 }
 
 void PhoenixVREngine::tickTimer(float dt) {
@@ -1148,21 +1150,25 @@ void PhoenixVREngine::tickTimer(float dt) {
 }
 
 void PhoenixVREngine::renderTimer() {
-	if (_timerFlags == 0 || !_arn)
+	if (_timerFlags == 0 || !_showTimer || !_arn)
 		return;
 	auto timerBg = _arn->get("cadre.bmp");
 	auto timerFg = _arn->get("cadreB.bmp");
 	if (!timerBg || !timerFg)
 		return;
 
-	// Loch-Ness rectangle for now.
 	// Necronomicon has timer in scripts, but does not contain bitmaps for timers.
 	Common::Rect bgRect{320, 16, 632, 44};
 	Common::Rect fgRect{333, 23, 619, 38};
+	if (gameIdMatches("dracula2")) {
+		bgRect = Common::Rect(165, 15, 474, 48);
+		fgRect = Common::Rect(177, 15, 461, 48);
+	}
 	assert(_initialTimer > 0);
 	auto timeLeft = _timer / _initialTimer;
 	fgRect.right = fgRect.left + fgRect.width() * timeLeft;
-	Common::Rect fgSrcRect{static_cast<short>(timerFg->w * timeLeft), timerFg->h};
+	Common::Rect fgSrcRect(0, 0, timerFg->w, timerFg->h);
+	fgSrcRect.right = fgSrcRect.left + fgSrcRect.width() * timeLeft;
 	if (!fgRect.isValidRect() || !fgSrcRect.isValidRect())
 		return;
 	_screen->blitFrom(*timerBg, bgRect.origin());
