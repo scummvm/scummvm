@@ -47,11 +47,10 @@ enum CHAMBERActions {
 };
 
 class ChamberEngine : public Engine {
-private:
+public:
 	// We need random numbers
 	Common::RandomSource *_rnd;
 
-public:
 	ChamberEngine(OSystem *syst, const ADGameDescription *desc);
 	~ChamberEngine();
 

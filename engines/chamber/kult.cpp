@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/error.h"
 #include "common/system.h"
 #include "engines/advancedDetector.h"
@@ -113,11 +112,12 @@ uint16 benchmarkCpu(void) {
 
 void randomize(void) {
 	// Original read the low byte of the BIOS timer-tick count (int 0x1A) into
-	// rand_seed. Use the host millisecond timer as an equivalent entropy source.
-	if (ConfMan.hasKey("random_seed"))
-		rand_seed = (byte)ConfMan.getInt("random_seed");
-	else
-		rand_seed = (byte)(g_system->getMillis());
+	// rand_seed, the starting offset into the fixed aleat_data[] table that
+	// getRand() walks. Keep that table (it reproduces the DOS game's exact
+	// random distribution) but derive the offset from ScummVM's RandomSource:
+	// its constructor already honors the "random_seed" config key for
+	// reproducible runs and otherwise seeds from the time/date.
+	rand_seed = (byte)g_vm->_rnd->getRandomNumber(255);
 	getRand();
 }
 
