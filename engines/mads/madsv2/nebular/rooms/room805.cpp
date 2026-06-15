@@ -19,21 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section8.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
-
-void Scene805::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(VERB_REMOVE);
-	_scene->addActiveVocab(NOUN_TARGET_MODULE);
-	_scene->addActiveVocab(NOUN_SHIELD_MODULATOR);
-}
+namespace Rooms {
 
 static void room_805_init() {
 	_game._player._visible = false;
@@ -46,27 +43,27 @@ static void room_805_init() {
 		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, false);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 25);
 		int idx = _scene->_dynamicHotspots.add(NOUN_SHIELD_MODULATOR, VERB_REMOVE, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_DUMMY);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
 	}
 
 	if (_globals[kTargetModInstalled]) {
 		_scene->_hotspots.activate(OBJ_TARGET_MODULE, false);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 12);
 		int idx = _scene->_dynamicHotspots.add(NOUN_TARGET_MODULE, VERB_REMOVE, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_DUMMY);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
 	}
 
-	sceneEntrySound();
+	section_8_music();
 }
 
-void Scene805::step() {
-	UserInterface &userInterface = _vm->_game->_scene._userInterface;
+static void room_805_daemon() {
+	auto &userInterface = _vm->_game->_scene._userInterface;
 
 	if (_game._trigger == 70) {
 		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, false);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 25);
 		int idx = _scene->_dynamicHotspots.add(NOUN_SHIELD_MODULATOR, VERB_REMOVE, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_DUMMY);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
 		_globals[kShieldModInstalled] = true;
 		_game._objects.setRoom(OBJ_SHIELD_MODULATOR, NOWHERE);
 		userInterface._selectedInvIndex = -1;
@@ -78,7 +75,7 @@ void Scene805::step() {
 		_scene->_hotspots.activate(OBJ_TARGET_MODULE, false);
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 12);
 		int idx = _scene->_dynamicHotspots.add(NOUN_TARGET_MODULE, VERB_REMOVE, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_DUMMY);
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), 0);
 		_globals[kTargetModInstalled] = true;
 		_game._objects.setRoom(OBJ_TARGET_MODULE, NOWHERE);
 		userInterface._selectedInvIndex = -1;
@@ -146,6 +143,24 @@ static void room_805_parser() {
 	_action._inProgress = false;
 }
 
+void room_805_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_805_preload() {
+	room_init_code_pointer = room_805_init;
+	room_daemon_code_pointer = room_805_daemon;
+	room_pre_parser_code_pointer = room_805_pre_parser;
+	room_parser_code_pointer = room_805_parser;
+
+	section_8_walker();
+	section_8_interface();
+	_scene->addActiveVocab(VERB_REMOVE);
+	_scene->addActiveVocab(NOUN_TARGET_MODULE);
+	_scene->addActiveVocab(NOUN_SHIELD_MODULATOR);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

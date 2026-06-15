@@ -19,26 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section8.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
-
-void Scene803::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_GUTS);
-	_scene->addActiveVocab(VERB_WALKTO);
-
-	if ((!_globals[kFromCockpit] && _globals[kReturnFromCut] && !_globals[kBeamIsUp])
-		|| (_globals[kFromCockpit] && !_globals[kExitShip])) {
-		_game._player._spritesPrefix = "";
-		_game._player._spritesChanged = true;
-	}
-}
+namespace Rooms {
 
 static void room_803_init() {
 	_globals[kBetweenRooms] = false;
@@ -125,10 +117,10 @@ static void room_803_init() {
 		_scene->_sequences.addTimer(1, 150);
 	}
 
-	sceneEntrySound();
+	section_8_music();
 }
 
-void Scene803::step() {
+static void room_803_daemon() {
 	if (_game._trigger == 120) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, 19);
 		_scene->_nextSceneId = 804;
@@ -340,6 +332,30 @@ static void room_803_parser() {
 	_action._inProgress = false;
 }
 
+void room_803_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_803_preload() {
+	room_init_code_pointer = room_803_init;
+	room_daemon_code_pointer = room_803_daemon;
+	room_pre_parser_code_pointer = room_803_pre_parser;
+	room_parser_code_pointer = room_803_parser;
+
+	section_8_walker();
+	section_8_interface();
+
+	_scene->addActiveVocab(NOUN_GUTS);
+	_scene->addActiveVocab(VERB_WALKTO);
+
+	if ((!_globals[kFromCockpit] && _globals[kReturnFromCut] && !_globals[kBeamIsUp])
+		|| (_globals[kFromCockpit] && !_globals[kExitShip])) {
+		*player.series_name = '\0';
+		player.walker_must_reload = true;
+	}
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

@@ -19,21 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section8.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
-
-void Scene802::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_SHIELD_MODULATOR);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_REMOTE);
-}
+namespace Rooms {
 
 static void room_802_init() {
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites("*RXMRC_8");
@@ -46,7 +43,7 @@ static void room_802_init() {
 	if ((_globals[kCameFromCut]) && (_globals[kCutX] != 0)) {
 		_game._player._playerPos.x = _globals[kCutX];
 		_game._player._playerPos.y = _globals[kCutY];
-		_game._player._facing = (Facing)_globals[kCutFacing];
+		_game._player._facing = _globals[kCutFacing];
 		_globals[kCutX] = 0;
 		_globals[kCameFromCut] = false;
 		_globals[kReturnFromCut] = false;
@@ -88,10 +85,10 @@ static void room_802_init() {
 		int idx = _scene->_dynamicHotspots.add(NOUN_SHIELD_MODULATOR, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(93, 97), FACING_NORTH);
 	}
-	sceneEntrySound();
+	section_8_music();
 }
 
-void Scene802::step() {
+static void room_802_daemon() {
 	if (_game._trigger == 70) {
 		_game._player._stepEnabled = false;
 		_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 8, 1, 0, 0);
@@ -233,6 +230,24 @@ static void room_802_parser() {
 	_action._inProgress = false;
 }
 
+void room_802_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_802_preload() {
+	room_init_code_pointer = room_802_init;
+	room_daemon_code_pointer = room_802_daemon;
+	room_pre_parser_code_pointer = room_802_pre_parser;
+	room_parser_code_pointer = room_802_parser;
+
+	section_8_walker();
+	section_8_interface();
+	_scene->addActiveVocab(NOUN_SHIELD_MODULATOR);
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_REMOTE);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

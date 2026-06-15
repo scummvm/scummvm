@@ -19,38 +19,44 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "mads/nebular/nebular.h"
-#include "mads/nebular/core/scene.h"
-#include "mads/nebular/nebular_scenes.h"
-#include "mads/nebular/nebular_scenes8.h"
+#include "mads/madsv2/core/config.h"
+#include "mads/madsv2/core/global.h"
+#include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/core/pal.h"
+#include "mads/madsv2/core/player.h"
+#include "mads/madsv2/nebular/rooms/section6.h"
+#include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/global.h"
 
 namespace MADS {
+namespace MADSV2 {
+namespace RexNebular {
+namespace Rooms {
 
-namespace Nebular {
-
-void Scene8xx::setPlayerSpritesPrefix() {
-	_vm->_sound->command(5);
-	if ((_globals[kFromCockpit] && !_globals[kExitShip]) ||
-			_scene->_nextSceneId == 804 || _scene->_nextSceneId == 805 ||
-			_scene->_nextSceneId == 808 || _scene->_nextSceneId == 810) {
-		_game._player._spritesPrefix = "";
-	} else
-		_game._player._spritesPrefix = _globals[kSexOfRex] == SEX_FEMALE ? "ROX" : "RXM";
-
-	_vm->_palette->setEntry(16, 0x0A, 0x3F, 0x3F);
-	_vm->_palette->setEntry(17, 0x0A, 0x2D, 0x2D);
+void section_8_interface() {
+	Common::strcpy_s(kernel.interface, kernel_interface_name(5));
 }
 
-void Scene8xx::setAAName() {
-	_game._aaName = Resources::formatAAName(5);
+void section_8_walker() {
+	g_engine->_soundManager->command(5);
+
+	if ((global[kFromCockpit] && !global[kExitShip]) ||
+			new_room == 804 || new_room == 805 ||
+			new_room == 808 || new_room == 810) {
+		*player.series_name = '\0';
+	} else {
+		Common::strcpy_s(player.series_name, global[kSexOfRex] == SEX_FEMALE ? "ROX" : "RXM");
+	}
+
+	pal_change_color(16, 0x0A, 0x3F, 0x3F);
+	pal_change_color(17, 0x0A, 0x2D, 0x2D);
 }
 
-void Scene8xx::sceneEntrySound() {
-	if (!_vm->_musicFlag)
-		_vm->_sound->command(2);
+void section_8_music() {
+	if (!config_file.music_flag)
+		g_engine->_soundManager->command(2);
 	else {
-		switch (_scene->_nextSceneId) {
+		switch (new_room) {
 		case 801:
 		case 802:
 		case 803:
@@ -58,15 +64,15 @@ void Scene8xx::sceneEntrySound() {
 		case 806:
 		case 807:
 		case 808:
-			_vm->_sound->command(20);
+			g_engine->_soundManager->command(20);
 			break;
 
 		case 805:
-			_vm->_sound->command(23);
+			g_engine->_soundManager->command(23);
 			break;
 
 		case 810:
-			_vm->_sound->command(10);
+			g_engine->_soundManager->command(10);
 			break;
 
 		default:
@@ -75,5 +81,7 @@ void Scene8xx::sceneEntrySound() {
 	}
 }
 
-} // namespace Nebular
+} // namespace Rooms
+} // namespace RexNebular
+} // namespace MADSV2
 } // namespace MADS

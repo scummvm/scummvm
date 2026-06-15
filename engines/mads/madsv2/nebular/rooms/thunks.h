@@ -24,6 +24,7 @@
 
 #include "common/rect.h"
 #include "mads/madsv2/core/config.h"
+#include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/mcga.h"
@@ -541,6 +542,7 @@ struct Game {
 	int8 &_difficulty = game.difficulty;
 	byte &_widepipeCtr = kernel.cheating;
 	int8 _storyMode = 0;
+	int &_winStatus = win_status;
 
 	void loadQuoteSet(int quote1, ...);
 	char *getQuote(int quote_id);

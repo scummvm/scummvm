@@ -19,57 +19,43 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section8.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene804::Scene804(RexNebularEngine *vm) : Scene8xx(vm) {
-	_messWithThrottle = false;
-	_movingThrottle = false;
-	_throttleGone = false;
-	_dontPullThrottleAgain = false;
-	_pullThrottleReally = false;
-	_alreadyOrgan = false;
-	_alreadyPop = false;
+struct Scratch {
+	bool _messWithThrottle;
+	bool _movingThrottle;
+	bool _throttleGone;
+	bool _dontPullThrottleAgain;
+	bool _pullThrottleReally;
+	bool _alreadyOrgan;
+	bool _alreadyPop;
+	int16 _throttleCounter;
+	int16 _resetFrame;
+};
 
-	_throttleCounter = 0;
-	_resetFrame = -1;
-}
-
-void room_804_synchronize(Common::Serializer &s) {
-	Scene8xx::synchronize(s);
-
-	s.syncAsByte(_messWithThrottle);
-	s.syncAsByte(_movingThrottle);
-	s.syncAsByte(_throttleGone);
-	s.syncAsByte(_dontPullThrottleAgain);
-	s.syncAsByte(_pullThrottleReally);
-	s.syncAsByte(_alreadyOrgan);
-	s.syncAsByte(_alreadyPop);
-
-	s.syncAsSint16LE(_resetFrame);
-	s.syncAsUint32LE(_throttleCounter);
-}
-
-void Scene804::setup() {
-	Scene8xx::setPlayerSpritesPrefix();
-	Scene8xx::setAAName();
-}
+static Scratch local;
 
 static void room_804_init() {
-	_messWithThrottle = false;
-	_throttleCounter = 0;
-	_movingThrottle = false;
-	_throttleGone = false;
-	_dontPullThrottleAgain = false;
-	_resetFrame = -1;
-	_pullThrottleReally = false;
-	_alreadyOrgan = false;
-	_alreadyPop = false;
+	local._messWithThrottle = false;
+	local._throttleCounter = 0;
+	local._movingThrottle = false;
+	local._throttleGone = false;
+	local._dontPullThrottleAgain = false;
+	local._resetFrame = -1;
+	local._pullThrottleReally = false;
+	local._alreadyOrgan = false;
+	local._alreadyPop = false;
 
 
 	if (_globals[kCopyProtectFailed]) {
@@ -113,7 +99,7 @@ static void room_804_init() {
 
 	_scene->loadAnimation(Resources::formatName(804, 'r', 1, EXT_AA, ""));
 
-	Scene8xx::sceneEntrySound();
+	section_8_music();
 
 	if (_globals[kInSpace] && !_globals[kWindowFixed]) {
 		_scene->_userInterface.setup(kInputLimitedSentences);
@@ -121,24 +107,24 @@ static void room_804_init() {
 	}
 }
 
-void Scene804::step() {
-	if (!_messWithThrottle) {
+static void room_804_daemon() {
+	if (!local._messWithThrottle) {
 
-		if ((_throttleGone) && (_movingThrottle) && (_scene->_animation[0]->getCurrentFrame() == 39)) {
+		if ((local._throttleGone) && (local._movingThrottle) && (_scene->_animation[0]->getCurrentFrame() == 39)) {
 			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle
 			(_globals._spriteIndexes[1], false, 1);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[1], Common::Point(133, 139));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
-			_throttleGone = false;
+			local._throttleGone = false;
 		}
 
-		if ((_movingThrottle) && (_scene->_animation[0]->getCurrentFrame() == 42)) {
-			_resetFrame = 0;
-			_movingThrottle = false;
+		if ((local._movingThrottle) && (_scene->_animation[0]->getCurrentFrame() == 42)) {
+			local._resetFrame = 0;
+			local._movingThrottle = false;
 		}
 
 		if (_game._trigger == 70) {
-			_resetFrame = 42;
+			local._resetFrame = 42;
 		}
 
 		if (_scene->_animation[0]->getCurrentFrame() == 65)
@@ -148,7 +134,7 @@ void Scene804::step() {
 		case STORYMODE_NAUGHTY:
 		default:
 			if (_scene->_animation[0]->getCurrentFrame() == 81) {
-				_resetFrame = 80;
+				local._resetFrame = 80;
 				_globals[kInSpace] = false;
 				_globals[kBeamIsUp] = true;
 
@@ -160,7 +146,7 @@ void Scene804::step() {
 
 		case STORYMODE_NICE:
 			if (_scene->_animation[0]->getCurrentFrame() == 68) {
-				_resetFrame = 66;
+				local._resetFrame = 66;
 				_globals[kInSpace] = false;
 				_globals[kBeamIsUp] = true;
 
@@ -171,14 +157,14 @@ void Scene804::step() {
 		}
 
 		if (_scene->_animation[0]->getCurrentFrame() == 34) {
-			_resetFrame = 36;
+			local._resetFrame = 36;
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		}
 
 		if (_scene->_animation[0]->getCurrentFrame() == 37) {
-			_resetFrame = 36;
-			if (!_dontPullThrottleAgain) {
-				_dontPullThrottleAgain = true;
+			local._resetFrame = 36;
+			if (!local._dontPullThrottleAgain) {
+				local._dontPullThrottleAgain = true;
 				_scene->_sequences.addTimer(60, 80);
 			}
 		}
@@ -194,26 +180,26 @@ void Scene804::step() {
 		}
 
 		if (_scene->_animation[0]->getCurrentFrame() == 10) {
-			_resetFrame = 0;
+			local._resetFrame = 0;
 			_game._player._stepEnabled = true;
 			_game._objects.setRoom(OBJ_POLYCEMENT, NOWHERE);
 		}
 
 		// FIXME: Original doesn't have resetFrame check. Check why this has been needed
-		if (_resetFrame == -1 && _scene->_animation[0]->getCurrentFrame() == 1) {
+		if (local._resetFrame == -1 && _scene->_animation[0]->getCurrentFrame() == 1) {
 			int randomVal = _vm->getRandomNumber(29) + 1;
 			switch (randomVal) {
 			case 1:
-				_resetFrame = 25;
+				local._resetFrame = 25;
 				break;
 			case 2:
-				_resetFrame = 27;
+				local._resetFrame = 27;
 				break;
 			case 3:
-				_resetFrame = 29;
+				local._resetFrame = 29;
 				break;
 			default:
-				_resetFrame = 0;
+				local._resetFrame = 0;
 				break;
 			}
 		}
@@ -222,20 +208,20 @@ void Scene804::step() {
 		case 26:
 		case 28:
 		case 31:
-			_resetFrame = 0;
+			local._resetFrame = 0;
 			break;
 		default:
 			break;
 		}
 	} else {
-		if ((_scene->_animation[0]->getCurrentFrame() == 36) && (!_throttleGone)) {
+		if ((_scene->_animation[0]->getCurrentFrame() == 36) && (!local._throttleGone)) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-			_throttleGone = true;
+			local._throttleGone = true;
 		}
 
 		if (_scene->_animation[0]->getCurrentFrame() == 39) {
-			_movingThrottle = false;
-			switch (_throttleCounter) {
+			local._movingThrottle = false;
+			switch (local._throttleCounter) {
 			case 1:
 				break;
 			case 3:
@@ -246,14 +232,14 @@ void Scene804::step() {
 			}
 		}
 
-		if (!_movingThrottle) {
-			++_throttleCounter;
-			_movingThrottle = true;
-			if (_throttleCounter < 4) {
-				_resetFrame = 34;
+		if (!local._movingThrottle) {
+			++local._throttleCounter;
+			local._movingThrottle = true;
+			if (local._throttleCounter < 4) {
+				local._resetFrame = 34;
 			} else {
-				_messWithThrottle = false;
-				_throttleCounter = 0;
+				local._messWithThrottle = false;
+				local._throttleCounter = 0;
 				_game._player._stepEnabled = true;
 			}
 		}
@@ -267,15 +253,15 @@ void Scene804::step() {
 		_vm->_dialogs->show(80426);
 	}
 
-	if (_pullThrottleReally) {
-		_resetFrame = 32;
-		_pullThrottleReally = false;
+	if (local._pullThrottleReally) {
+		local._resetFrame = 32;
+		local._pullThrottleReally = false;
 	}
 
-	if (_resetFrame >= 0) {
-		if (_resetFrame != _scene->_animation[0]->getCurrentFrame()) {
-			_scene->_animation[0]->setCurrentFrame(_resetFrame);
-			_resetFrame = -1;
+	if (local._resetFrame >= 0) {
+		if (local._resetFrame != _scene->_animation[0]->getCurrentFrame()) {
+			_scene->_animation[0]->setCurrentFrame(local._resetFrame);
+			local._resetFrame = -1;
 		}
 	}
 
@@ -283,14 +269,14 @@ void Scene804::step() {
 		_scene->_nextSceneId = 803;
 	}
 
-	if ((_scene->_animation[0]->getCurrentFrame() == 72) && !_alreadyPop) {
+	if ((_scene->_animation[0]->getCurrentFrame() == 72) && !local._alreadyPop) {
 		_vm->_sound->command(21);
-		_alreadyPop = true;
+		local._alreadyPop = true;
 	}
 
-	if ((_scene->_animation[0]->getCurrentFrame() == 80) && !_alreadyOrgan) {
+	if ((_scene->_animation[0]->getCurrentFrame() == 80) && !local._alreadyOrgan) {
 		_vm->_sound->command(22);
-		_alreadyOrgan = true;
+		local._alreadyOrgan = true;
 	}
 }
 
@@ -323,17 +309,17 @@ static void room_804_parser() {
 				_action._inProgress = false;
 
 				_vm->_dialogs->show(80424);
-				_pullThrottleReally = true;
+				local._pullThrottleReally = true;
 				_scene->_kernelMessages.add(Common::Point(78, 75), 0x1110, 0, 0,
 					120, _game.getQuote(791));
 			}
 		} else {
-			_messWithThrottle = true;
+			local._messWithThrottle = true;
 		}
 	} else if (_action.isAction(VERB_APPLY, NOUN_POLYCEMENT, NOUN_CRACK) ||
 		_action.isAction(VERB_PUT, NOUN_POLYCEMENT, NOUN_CRACK)) {
 		if (!_globals[kWindowFixed]) {
-			_resetFrame = 2;
+			local._resetFrame = 2;
 			_game._player._stepEnabled = false;
 		}
 	} else if (_action.isAction(VERB_EXIT, NOUN_SHIP)) {
@@ -384,6 +370,29 @@ static void room_804_parser() {
 	_action._inProgress = false;
 }
 
+void room_804_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._messWithThrottle);
+	s.syncAsByte(local._movingThrottle);
+	s.syncAsByte(local._throttleGone);
+	s.syncAsByte(local._dontPullThrottleAgain);
+	s.syncAsByte(local._pullThrottleReally);
+	s.syncAsByte(local._alreadyOrgan);
+	s.syncAsByte(local._alreadyPop);
+
+	s.syncAsSint16LE(local._resetFrame);
+	s.syncAsUint32LE(local._throttleCounter);
+}
+
+void room_804_preload() {
+	room_init_code_pointer = room_804_init;
+	room_daemon_code_pointer = room_804_daemon;
+	room_parser_code_pointer = room_804_parser;
+
+	section_8_walker();
+	section_8_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

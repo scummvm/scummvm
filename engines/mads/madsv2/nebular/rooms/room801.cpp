@@ -19,28 +19,25 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section8.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene801::Scene801(RexNebularEngine *vm) : Scene8xx(vm) {
-	_walkThroughDoor = false;
-}
+struct Scratch {
+	bool _walkThroughDoor;
+};
 
-void room_801_synchronize(Common::Serializer &s) {
-	Scene8xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_walkThroughDoor);
-}
-
-void Scene801::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
 
 static void room_801_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 1));
@@ -56,7 +53,7 @@ static void room_801_init() {
 
 	if ((_globals[kCameFromCut]) && (_globals[kCutX] != 0)) {
 		_game._player._playerPos = Common::Point(_globals[kCutX], _globals[kCutY]);
-		_game._player._facing = (Facing)_globals[kCutFacing];
+		_game._player._facing = _globals[kCutFacing];
 		_globals[kCutX] = 0;
 		_globals[kCameFromCut] = false;
 		_globals[kReturnFromCut] = false;
@@ -115,10 +112,10 @@ static void room_801_init() {
 		_globals[kTeleporterCommand] = 0;
 	}
 
-	_walkThroughDoor = false;
+	local._walkThroughDoor = false;
 	if (_scene->_priorSceneId == 802) {
 		_game._player._stepEnabled = false;
-		_walkThroughDoor = true;
+		local._walkThroughDoor = true;
 	}
 
 	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 11, 0, 0, 0);
@@ -129,10 +126,10 @@ static void room_801_init() {
 	_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], -1, -2);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 14);
 
-	sceneEntrySound();
+	section_8_music();
 }
 
-void Scene801::step() {
+static void room_801_daemon() {
 	if (_game._trigger == 75) {
 		if (_globals[kSexOfRex] == REX_FEMALE) {
 			_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 8, 1, 0, 0);
@@ -164,12 +161,12 @@ void Scene801::step() {
 		_scene->_reloadSceneFlag = true;
 	}
 
-	if (_walkThroughDoor && (_game._player._playerPos == Common::Point(270, 118))) {
+	if (local._walkThroughDoor && (_game._player._playerPos == Common::Point(270, 118))) {
 		_game._player._stepEnabled = false;
 		_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 4, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 5);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 10);
-		_walkThroughDoor = false;
+		local._walkThroughDoor = false;
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 120);
 	}
 
@@ -259,6 +256,21 @@ static void room_801_parser() {
 	_action._inProgress = false;
 }
 
+void room_801_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._walkThroughDoor);
+}
+
+void room_801_preload() {
+	room_init_code_pointer = room_801_init;
+	room_daemon_code_pointer = room_801_daemon;
+	room_pre_parser_code_pointer = room_801_pre_parser;
+	room_parser_code_pointer = room_801_parser;
+
+	section_8_walker();
+	section_8_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

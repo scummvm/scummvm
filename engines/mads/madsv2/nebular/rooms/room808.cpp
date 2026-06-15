@@ -19,28 +19,25 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section8.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene808::Scene808(RexNebularEngine *vm) : Scene8xx(vm) {
-	_goingTo803 = false;
-}
+struct Scratch {
+	bool _goingTo803;
+};
 
-void room_808_synchronize(Common::Serializer &s) {
-	Scene8xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_goingTo803);
-}
-
-void Scene808::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
 
 static void room_808_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
@@ -55,7 +52,7 @@ static void room_808_init() {
 	else
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 
-	_goingTo803 = false;
+	local._goingTo803 = false;
 
 	if (_globals[kCameFromCut] && _globals[kCutX] != 0) {
 		_globals[kCutX] = 0;
@@ -80,7 +77,7 @@ static void room_808_init() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
 	}
 
-	sceneEntrySound();
+	section_8_music();
 }
 
 static void room_808_parser() {
@@ -98,7 +95,7 @@ static void room_808_parser() {
 			if (!_globals[kBeamIsUp] && !_globals[kTopButtonPushed]) {
 				_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
-				_goingTo803 = true;
+				local._goingTo803 = true;
 				_vm->_sound->command(20);
 				_vm->_sound->command(25);
 			}
@@ -110,8 +107,8 @@ static void room_808_parser() {
 
 		case 71:
 			_game._player._stepEnabled = true;
-			if (_goingTo803 && !_globals[kTopButtonPushed]) {
-				_goingTo803 = false;
+			if (local._goingTo803 && !_globals[kTopButtonPushed]) {
+				local._goingTo803 = false;
 				_globals[kReturnFromCut] = true;
 				_scene->_nextSceneId = 803;
 			}
@@ -241,6 +238,18 @@ static void room_808_parser() {
 	_action._inProgress = false;
 }
 
+void room_808_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._goingTo803);
+}
+
+void room_808_preload() {
+	room_init_code_pointer = room_808_init;
+
+	section_8_walker();
+	section_8_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

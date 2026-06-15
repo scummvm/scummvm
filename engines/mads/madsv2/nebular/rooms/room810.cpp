@@ -19,50 +19,60 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section8.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene810::Scene810(RexNebularEngine *vm) : Scene8xx(vm) {
-	_moveAllowed = false;
-}
+struct Scratch {
+	bool _moveAllowed;
+};
 
-void room_810_synchronize(Common::Serializer &s) {
-	Scene8xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsByte(_moveAllowed);
-}
-
-void Scene810::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
 
 static void room_810_init() {
 	_scene->_userInterface.setup(kInputLimitedSentences);
 	_game._player._visible = false;
 	_game._player._stepEnabled = false;
 	_scene->loadAnimation(Resources::formatName(810, 'a', -1, EXT_AA, ""));
-	_moveAllowed = true;
+	local._moveAllowed = true;
 
-	sceneEntrySound();
+	section_8_music();
 }
 
-void Scene810::step() {
+static void room_810_daemon() {
 	if (_scene->_animation[0] && (_scene->_animation[0]->getCurrentFrame() == 200)
-		&& _moveAllowed) {
+		&& local._moveAllowed) {
 		_scene->_sequences.addTimer(100, 70);
-		_moveAllowed = false;
+		local._moveAllowed = false;
 	}
 
 	if (_game._trigger == 70)
 		_scene->_nextSceneId = 804;
 }
 
+void room_810_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._moveAllowed);
+}
+
+void room_810_preload() {
+	room_init_code_pointer = room_810_init;
+	room_daemon_code_pointer = room_810_daemon;
+
+	section_8_walker();
+	section_8_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS
