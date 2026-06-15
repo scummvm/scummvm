@@ -3467,7 +3467,7 @@ void GamosEngine::addSubtitles(VM::Context *ctx, byte memtype, int32 offset, int
 Object *GamosEngine::addSubtitleImage(uint32 frame, int32 spr, int32 *pX, int32 y) {
 	Object *gfxObj = getFreeObject();
 	gfxObj->flags |= Object::FLAG_GRAPHIC | Object::FLAG_OVERLAY | Object::FLAG_FREECOORDS;
-	gfxObj->frame = 0;
+	//gfxObj->frame = 0;
 	gfxObj->frameMax = 1;
 	gfxObj->priority = _curObject->priority;
 	gfxObj->cell.x = -1;
