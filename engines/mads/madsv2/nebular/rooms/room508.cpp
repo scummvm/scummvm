@@ -19,31 +19,26 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section5.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene508::Scene508(RexNebularEngine *vm) : Scene5xx(vm) {
-	_chosenObject = -1;
-}
+struct Scratch {
+	int16 _chosenObject;
+};
 
-void room_508_synchronize(Common::Serializer &s) {
-	Scene5xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsSint16LE(_chosenObject);
-}
-
-void Scene508::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_SPINACH_PATCH_DOLL);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_LASER_BEAM);
-}
 
 static void room_508_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('a', 0));
@@ -56,7 +51,7 @@ static void room_508_init() {
 
 	if (!_game._visitedScenes._sceneRevisited) {
 		_globals[kLaserOn] = false;
-		_chosenObject = 0;
+		local._chosenObject = 0;
 	}
 
 	if (!_globals[kLaserOn]) {
@@ -95,7 +90,7 @@ static void room_508_init() {
 		_game._player._facing = FACING_WEST;
 	}
 
-	sceneEntrySound();
+	section_5_music();
 	_game.loadQuoteSet(0x273, 0);
 
 	if (_scene->_roomChanged) {
@@ -109,7 +104,7 @@ static void room_508_pre_parser() {
 		_game._player._walkOffScreenSceneId = 506;
 }
 
-void Scene508::handlePedestral() {
+static void handlePedestral() {
 	if (!_globals[kLaserOn])
 		_vm->_dialogs->show(50835);
 
@@ -129,7 +124,7 @@ void Scene508::handlePedestral() {
 			break;
 
 		case 1:
-			if (_chosenObject == 2)
+			if (local._chosenObject == 2)
 				_game._objects.removeFromInventory(OBJ_COMPACT_CASE, 1);
 			else
 				_game._objects.removeFromInventory(OBJ_REARVIEW_MIRROR, 1);
@@ -230,10 +225,10 @@ static void room_508_parser() {
 			_vm->_dialogs->show(50837);
 		}
 	} else if (_action.isAction(VERB_REFLECT, NOUN_REARVIEW_MIRROR, NOUN_LASER_BEAM) || _action.isAction(VERB_PUT, NOUN_REARVIEW_MIRROR, NOUN_PEDESTAL) || _action.isAction(VERB_PUT, NOUN_REARVIEW_MIRROR, NOUN_LASER_BEAM)) {
-		_chosenObject = 1;
+		local._chosenObject = 1;
 		handlePedestral();
 	} else if (_action.isAction(VERB_PUT, NOUN_COMPACT_CASE, NOUN_PEDESTAL) || _action.isAction(VERB_PUT, NOUN_COMPACT_CASE, NOUN_LASER_BEAM) || _action.isAction(VERB_REFLECT, NOUN_COMPACT_CASE, NOUN_LASER_BEAM)) {
-		_chosenObject = 2;
+		local._chosenObject = 2;
 		handlePedestral();
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(50822);
@@ -295,6 +290,23 @@ static void room_508_parser() {
 	_action._inProgress = false;
 }
 
+void room_508_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._chosenObject);
+}
+
+void room_508_preload() {
+	room_init_code_pointer = room_508_init;
+	room_pre_parser_code_pointer = room_508_pre_parser;
+	room_parser_code_pointer = room_508_parser;
+
+	section_5_walker();
+	section_5_interface();
+	_scene->addActiveVocab(NOUN_SPINACH_PATCH_DOLL);
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_LASER_BEAM);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

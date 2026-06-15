@@ -19,48 +19,37 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section5.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene511::Scene511(RexNebularEngine *vm) : Scene5xx(vm) {
-	_handingLine = false;
-	_lineMoving = false;
+struct Scratch {
+	bool _handingLine;
+	bool _lineMoving;
+	int16 _lineAnimationMode;
+	int16 _lineFrame;
+	int16 _lineAnimationPosition;
+};
 
-	_lineAnimationMode = -1;
-	_lineFrame = -1;
-	_lineAnimationPosition = -1;
-}
+static Scratch local;
 
-void room_511_synchronize(Common::Serializer &s) {
-	Scene5xx::synchronize(s);
-
-	s.syncAsByte(_handingLine);
-	s.syncAsByte(_lineMoving);
-
-	s.syncAsSint16LE(_lineAnimationMode);
-	s.syncAsSint16LE(_lineFrame);
-	s.syncAsSint16LE(_lineAnimationPosition);
-}
-
-void Scene511::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_BOAT);
-	_scene->addActiveVocab(NOUN_FISHING_LINE);
-	_scene->addActiveVocab(VERB_WALKTO);
-}
 
 static void room_511_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 0));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_6");
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-		_handingLine = false;
+		local._handingLine = false;
 
 	if (_globals[kBoatRaised]) {
 		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('b', 0));
@@ -105,8 +94,8 @@ static void room_511_init() {
 			_scene->changeVariant(2);
 	}
 
-	_lineFrame = -1;
-	_lineMoving = false;
+	local._lineFrame = -1;
+	local._lineMoving = false;
 
 	_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -2);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
@@ -123,38 +112,38 @@ static void room_511_init() {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 		_scene->loadAnimation(formAnimName('R', 1), 70);
-	} else if (_handingLine) {
+	} else if (local._handingLine) {
 		_game._player._visible = false;
-		_lineAnimationMode = 1;
-		_lineAnimationPosition = 1;
+		local._lineAnimationMode = 1;
+		local._lineAnimationPosition = 1;
 		_scene->loadAnimation(formAnimName('R', -1));
-		_lineFrame = 2;
+		local._lineFrame = 2;
 	}
-	sceneEntrySound();
+	section_5_music();
 }
 
-void Scene511::step() {
-	if ((_lineAnimationMode == 1) && _scene->_animation[0]) {
-		if (_lineFrame != _scene->_animation[0]->getCurrentFrame()) {
-			_lineFrame = _scene->_animation[0]->getCurrentFrame();
+static void room_511_daemon() {
+	if ((local._lineAnimationMode == 1) && _scene->_animation[0]) {
+		if (local._lineFrame != _scene->_animation[0]->getCurrentFrame()) {
+			local._lineFrame = _scene->_animation[0]->getCurrentFrame();
 			int resetFrame = -1;
 
-			if ((_lineAnimationPosition == 2) && (_lineFrame == 14))
-				_lineMoving = false;
+			if ((local._lineAnimationPosition == 2) && (local._lineFrame == 14))
+				local._lineMoving = false;
 
-			if (_lineAnimationPosition == 1) {
-				if (_lineFrame == 3) {
-					_lineMoving = false;
+			if (local._lineAnimationPosition == 1) {
+				if (local._lineFrame == 3) {
+					local._lineMoving = false;
 					resetFrame = 2;
 				}
 
-				if (_handingLine)
+				if (local._handingLine)
 					resetFrame = 2;
 			}
 
 			if ((resetFrame >= 0) && (resetFrame != _scene->_animation[0]->getCurrentFrame())) {
 				_scene->_animation[0]->setCurrentFrame(resetFrame);
-				_lineFrame = resetFrame;
+				local._lineFrame = resetFrame;
 			}
 		}
 	}
@@ -185,7 +174,7 @@ void Scene511::step() {
 }
 
 static void room_511_pre_parser() {
-	if (!_handingLine)
+	if (!local._handingLine)
 		return;
 
 	if (_action.isAction(VERB_LOOK) || _action.isObject(NOUN_FISHING_LINE) || _action.isAction(VERB_TALKTO))
@@ -196,13 +185,13 @@ static void room_511_pre_parser() {
 			_game._player._readyToWalk = false;
 			_game._player._stepEnabled = false;
 			_scene->freeAnimation();
-			_lineAnimationMode = 2;
+			local._lineAnimationMode = 2;
 			_scene->loadAnimation(formAnimName('R', 2), 1);
 		} else if (_game._trigger == 1) {
 			_game._player._visible = true;
 			_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 			_game._objects.setRoom(OBJ_FISHING_LINE, 1);
-			_handingLine = false;
+			local._handingLine = false;
 			_game._player._stepEnabled = true;
 			_game._player._readyToWalk = true;
 		}
@@ -260,18 +249,18 @@ static void room_511_parser() {
 						_game._player._stepEnabled = false;
 						_game._player._visible = false;
 						_game._player.update();
-						_lineAnimationMode = 1;
-						_lineAnimationPosition = 1;
-						_lineMoving = true;
+						local._lineAnimationMode = 1;
+						local._lineAnimationPosition = 1;
+						local._lineMoving = true;
 						_scene->loadAnimation(formAnimName('R', -1));
 						_scene->_sequences.addTimer(1, 1);
 					} else if (_game._trigger == 1) {
-						if (_lineMoving) {
+						if (local._lineMoving) {
 							_scene->_sequences.addTimer(1, 1);
 						} else {
 							_game._objects.addToInventory(OBJ_FISHING_LINE);
-							_lineMoving = true;
-							_handingLine = true;
+							local._lineMoving = true;
+							local._handingLine = true;
 							_game._player._stepEnabled = true;
 						}
 					}
@@ -288,16 +277,16 @@ static void room_511_parser() {
 			_vm->_dialogs->show(51131);
 		else if (_globals[kLineStatus] == 1)
 			_vm->_dialogs->show(51130);
-		else if (!_globals[kBoatRaised] && _handingLine) {
+		else if (!_globals[kBoatRaised] && local._handingLine) {
 			if (_globals[kLineStatus] != 3) {
 				if (_game._trigger == 0) {
 					_game._player._stepEnabled = false;
 					_scene->_sequences.remove(_globals._sequenceIndexes[7]);
-					_lineMoving = true;
-					_lineAnimationPosition = 2;
+					local._lineMoving = true;
+					local._lineAnimationPosition = 2;
 					_scene->_sequences.addTimer(1, 1);
 				} else if (_game._trigger == 1) {
-					if (_lineMoving)
+					if (local._lineMoving)
 						_scene->_sequences.addTimer(1, 1);
 					else {
 						_game._player._visible = true;
@@ -306,8 +295,8 @@ static void room_511_parser() {
 						int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
 						_scene->_dynamicHotspots.setPosition(idx, Common::Point(26, 153), FACING_NORTHEAST);
 						_game._objects.removeFromInventory(OBJ_FISHING_LINE, 1);
-						_handingLine = false;
-						_lineMoving = true;
+						local._handingLine = false;
+						local._lineMoving = true;
 						_globals[kLineStatus] = 3;
 						_game._player._stepEnabled = true;
 
@@ -373,6 +362,29 @@ static void room_511_parser() {
 	_action._inProgress = false;
 }
 
+void room_511_synchronize(Common::Serializer &s) {
+	s.syncAsByte(local._handingLine);
+	s.syncAsByte(local._lineMoving);
+
+	s.syncAsSint16LE(local._lineAnimationMode);
+	s.syncAsSint16LE(local._lineFrame);
+	s.syncAsSint16LE(local._lineAnimationPosition);
+}
+
+void room_511_preload() {
+	room_init_code_pointer = room_511_init;
+	room_daemon_code_pointer = room_511_daemon;
+	room_pre_parser_code_pointer = room_511_pre_parser;
+	room_parser_code_pointer = room_511_parser;
+
+	section_5_walker();
+	section_5_interface();
+	_scene->addActiveVocab(NOUN_BOAT);
+	_scene->addActiveVocab(NOUN_FISHING_LINE);
+	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

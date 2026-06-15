@@ -187,8 +187,10 @@ struct Scene {
 
 		int getCurrentFrame() const;
 		void setNextFrameTimer(long time);
+		long getNextFrameTimer();
 		void setCurrentFrame(int frameNum);
 		void resetSpriteSetsCount();
+		void eraseSprites();
 	};
 	struct Animations {
 		Animation operator[](int anim_id) {
@@ -503,6 +505,7 @@ struct Game {
 		int &_spritesStart = player.series_base;
 		int &_frameNumber = player.sprite;
 		int &_forceRefresh = player.sprite_changed;
+		int &_walkAnywhere = player.walk_anywhere;
 
 		void startWalking(const Common::Point &pt, int facing);
 		void walk(const Common::Point &pt, int facing);

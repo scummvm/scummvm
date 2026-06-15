@@ -19,29 +19,30 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section5.h"
+#include "mads/madsv2/nebular/rooms/teleporter.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
-
-void Scene502::setup() {
-	_game._player._spritesPrefix = "";
-	// The original is using Scene5xx_setAAName()
-	_game._aaName = Resources::formatAAName(5);
-}
+namespace Rooms {
 
 static void room_502_init() {
 	if (_globals[kSexOfRex] == REX_MALE)
-		_handSpriteId = _scene->_sprites.addSprites("*REXHAND");
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*REXHAND");
 	else
-		_handSpriteId = _scene->_sprites.addSprites("*ROXHAND");
+		_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*ROXHAND");
 
-	teleporterEnter();
+	teleporter_init();
 
-	// The original uses scene5xx_sceneEntrySound
+	// The original uses scene5xx_section_5_music
 	if (!_vm->_musicFlag)
 		_vm->_sound->command(2);
 	else if (_scene->_priorSceneId == 503)
@@ -50,12 +51,12 @@ static void room_502_init() {
 		_vm->_sound->command(29);
 }
 
-void Scene502::step() {
-	teleporterStep();
+static void room_502_daemon() {
+	teleporter_daemon();
 }
 
 static void room_502_parser() {
-	if (teleporterActions()) {
+	if (teleporter_parser()) {
 		_action._inProgress = false;
 		return;
 	}
@@ -82,6 +83,20 @@ static void room_502_parser() {
 	_action._inProgress = false;
 }
 
+void room_502_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_502_preload() {
+	room_init_code_pointer = room_502_init;
+	room_daemon_code_pointer = room_502_daemon;
+	room_parser_code_pointer = room_502_parser;
+
+	*player.series_name = '\0';
+	section_5_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

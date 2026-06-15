@@ -19,20 +19,19 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section5.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
-
-void Scene513::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_ELEVATOR_DOOR);
-	_scene->addActiveVocab(VERB_WALKTO);
-}
+namespace Rooms {
 
 static void room_513_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 0));
@@ -62,7 +61,7 @@ static void room_513_init() {
 		_scene->loadAnimation(formAnimName('R', 1), 70);
 	}
 
-	sceneEntrySound();
+	section_5_music();
 
 	if (_scene->_roomChanged)
 		_game._objects.addToInventory(OBJ_SECURITY_CARD);
@@ -70,7 +69,7 @@ static void room_513_init() {
 	_game.loadQuoteSet(0x278, 0);
 }
 
-void Scene513::step() {
+static void room_513_daemon() {
 	switch (_game._trigger) {
 	case 80:
 		_game._player._stepEnabled = false;
@@ -250,6 +249,22 @@ static void room_513_parser() {
 	_action._inProgress = false;
 }
 
+void room_513_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_513_preload() {
+	room_init_code_pointer = room_513_init;
+	room_daemon_code_pointer = room_513_daemon;
+	room_parser_code_pointer = room_513_parser;
+
+	section_5_walker();
+	section_5_interface();
+	_scene->addActiveVocab(NOUN_ELEVATOR_DOOR);
+	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

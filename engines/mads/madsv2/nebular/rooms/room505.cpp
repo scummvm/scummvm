@@ -19,42 +19,31 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section5.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene505::Scene505(RexNebularEngine *vm) : Scene5xx(vm) {
-	_frame = -1;
-	_nextButtonId = -1;
-	_homeSelectedId = -1;
-	_selectedId = -1;
-	_activeCars = -1;
+struct Scratch {
+	int16 _frame;
+	int16 _nextButtonId;
+	int16 _homeSelectedId;
+	int16 _selectedId;
+	int16 _activeCars;
+	int16 _carLocations[9];
+};
 
-	for (int i = 0; i < 9; i++)
-		_carLocations[i] = -1;
-}
+static Scratch local;
 
-void room_505_synchronize(Common::Serializer &s) {
-	Scene5xx::synchronize(s);
-
-	s.syncAsSint16LE(_frame);
-	s.syncAsSint16LE(_nextButtonId);
-	s.syncAsSint16LE(_homeSelectedId);
-	s.syncAsSint16LE(_selectedId);
-	s.syncAsSint16LE(_activeCars);
-
-	for (int i = 0; i < 9; i++)
-		s.syncAsSint16LE(_carLocations[i]);
-}
-
-void Scene505::setup() {
-	_game._player._spritesPrefix = "";
-	setAAName();
-}
 
 static void room_505_init() {
 	for (int i = 0; i < 9; i++)
@@ -73,53 +62,53 @@ static void room_505_init() {
 	_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
 	_scene->_sequences.addTimer(30, 62);
 
-	_carLocations[0] = 501;
-	_carLocations[1] = 506;
-	_carLocations[2] = 511;
-	_carLocations[3] = 513;
-	_carLocations[4] = 601;
-	_carLocations[5] = 604;
-	_carLocations[6] = 607;
-	_carLocations[7] = 609;
-	_carLocations[8] = 612;
+	local._carLocations[0] = 501;
+	local._carLocations[1] = 506;
+	local._carLocations[2] = 511;
+	local._carLocations[3] = 513;
+	local._carLocations[4] = 601;
+	local._carLocations[5] = 604;
+	local._carLocations[6] = 607;
+	local._carLocations[7] = 609;
+	local._carLocations[8] = 612;
 
-	_activeCars = false;
+	local._activeCars = false;
 
 	for (int i = 0; i < 9; i++) {
-		if (_globals[kHoverCarLocation] == _carLocations[i]) {
-			_homeSelectedId = i;
+		if (_globals[kHoverCarLocation] == local._carLocations[i]) {
+			local._homeSelectedId = i;
 			if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
-				_selectedId = i;
+				local._selectedId = i;
 		}
 	}
 
 	_game._player._visible = false;
 	_game._player._stepEnabled = false;
-	_frame = -1;
+	local._frame = -1;
 	_scene->loadAnimation(formAnimName('a', -1));
 	_scene->_animation[0]->setCurrentFrame(86);
 
-	sceneEntrySound();
+	section_5_music();
 	_vm->_sound->command(16);
 }
 
-void Scene505::step() {
-	if (_frame != _scene->_animation[0]->getCurrentFrame()) {
-		_frame = _scene->_animation[0]->getCurrentFrame();
+static void room_505_daemon() {
+	if (local._frame != _scene->_animation[0]->getCurrentFrame()) {
+		local._frame = _scene->_animation[0]->getCurrentFrame();
 		int resetFrame = -1;
 
-		switch (_frame) {
+		switch (local._frame) {
 		case 4:
 		case 24:
 		case 33:
 		case 53:
 		case 62:
 		case 82:
-			if (_nextButtonId == 0x38A)
+			if (local._nextButtonId == 0x38A)
 				resetFrame = 4;
-			else if (_nextButtonId == 0x38B)
+			else if (local._nextButtonId == 0x38B)
 				resetFrame = 33;
-			else if (_nextButtonId == 0x2DE)
+			else if (local._nextButtonId == 0x2DE)
 				resetFrame = 62;
 
 			break;
@@ -131,22 +120,22 @@ void Scene505::step() {
 			int this_button;
 			int old_select;
 			_vm->_sound->command(17);
-			old_select = _selectedId;
-			if (_frame == 15) {
+			old_select = local._selectedId;
+			if (local._frame == 15) {
 				this_button = 0x38A;
-				_selectedId = (_selectedId + 1) % 9;
-			} else if (_frame == 44) {
+				local._selectedId = (local._selectedId + 1) % 9;
+			} else if (local._frame == 44) {
 				this_button = 0x38B;
-				_selectedId--;
-				if (_selectedId < 0)
-					_selectedId = 8;
+				local._selectedId--;
+				if (local._selectedId < 0)
+					local._selectedId = 8;
 			} else {
 				this_button = 0x2DE;
-				if ((_globals[kTimebombStatus] == TIMEBOMB_ACTIVATED) && (_carLocations[_selectedId] == 501))
+				if ((_globals[kTimebombStatus] == TIMEBOMB_ACTIVATED) && (local._carLocations[local._selectedId] == 501))
 					_vm->_dialogs->show(431);
-				else if (_selectedId != _homeSelectedId) {
-					_nextButtonId = 0;
-					_activeCars = true;
+				else if (local._selectedId != local._homeSelectedId) {
+					local._nextButtonId = 0;
+					local._activeCars = true;
 					_game._player._stepEnabled = false;
 					_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 					_scene->_sequences.remove(_globals._sequenceIndexes[0]);
@@ -157,17 +146,17 @@ void Scene505::step() {
 				}
 			}
 
-			if (_nextButtonId == this_button)
-				_nextButtonId = 0;
+			if (local._nextButtonId == this_button)
+				local._nextButtonId = 0;
 
-			if (old_select != _selectedId) {
+			if (old_select != local._selectedId) {
 				_scene->_sequences.remove(_globals._sequenceIndexes[11]);
-				_globals._sequenceIndexes[11] = _scene->_sequences.startCycle(_globals._spriteIndexes[11], false, _selectedId + 1);
-				if (old_select != _homeSelectedId)
+				_globals._sequenceIndexes[11] = _scene->_sequences.startCycle(_globals._spriteIndexes[11], false, local._selectedId + 1);
+				if (old_select != local._homeSelectedId)
 					_scene->_sequences.remove(_globals._sequenceIndexes[0]);
 
-				if (_selectedId != _homeSelectedId) {
-					_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0 + _selectedId], false, 24, 0, 0, 0);
+				if (local._selectedId != local._homeSelectedId) {
+					_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0 + local._selectedId], false, 24, 0, 0, 0);
 					_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 1);
 				}
 			}
@@ -180,15 +169,15 @@ void Scene505::step() {
 		case 21:
 		case 22:
 		case 23:
-			if (_nextButtonId == 0x38A)
-				resetFrame = 29 - _frame;
+			if (local._nextButtonId == 0x38A)
+				resetFrame = 29 - local._frame;
 
 			break;
 
 		case 26:
 		case 55:
 		case 84:
-			if (_nextButtonId != 0)
+			if (local._nextButtonId != 0)
 				resetFrame = 3;
 
 			break;
@@ -196,7 +185,7 @@ void Scene505::step() {
 		case 27:
 		case 56:
 		case 85:
-			if (_nextButtonId != 0)
+			if (local._nextButtonId != 0)
 				resetFrame = 2;
 
 			break;
@@ -204,14 +193,14 @@ void Scene505::step() {
 		case 29:
 		case 58:
 		case 87:
-			if (_activeCars)
-				_globals[kHoverCarDestination] = _carLocations[_selectedId];
+			if (local._activeCars)
+				_globals[kHoverCarDestination] = local._carLocations[local._selectedId];
 
-			if (_nextButtonId == 0x38A)
+			if (local._nextButtonId == 0x38A)
 				resetFrame = 0;
-			else if (_nextButtonId == 0x38B)
+			else if (local._nextButtonId == 0x38B)
 				resetFrame = 29;
-			else if (_nextButtonId == 0x2DE)
+			else if (local._nextButtonId == 0x2DE)
 				resetFrame = 58;
 			else
 				resetFrame = 86;
@@ -223,8 +212,8 @@ void Scene505::step() {
 		case 50:
 		case 51:
 		case 52:
-			if (_nextButtonId == 0x38B)
-				resetFrame = 87 - _frame;
+			if (local._nextButtonId == 0x38B)
+				resetFrame = 87 - local._frame;
 
 			break;
 
@@ -234,8 +223,8 @@ void Scene505::step() {
 		case 79:
 		case 80:
 		case 81:
-			if (_nextButtonId == 0x2DE)
-				resetFrame = 145 - _frame;
+			if (local._nextButtonId == 0x2DE)
+				resetFrame = 145 - local._frame;
 
 			break;
 
@@ -245,7 +234,7 @@ void Scene505::step() {
 
 		if ((resetFrame >= 0) && (resetFrame != _scene->_animation[0]->getCurrentFrame())) {
 			_scene->_animation[0]->setCurrentFrame(resetFrame);
-			_frame = resetFrame;
+			local._frame = resetFrame;
 		}
 	}
 
@@ -257,12 +246,12 @@ void Scene505::step() {
 		_globals._sequenceIndexes[13] = _scene->_sequences.startCycle(_globals._spriteIndexes[13], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[13], 8);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[13], syncIdx);
-		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[_homeSelectedId], false, 1);
+		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[local._homeSelectedId], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
-		_globals._sequenceIndexes[11] = _scene->_sequences.startCycle(_globals._spriteIndexes[11], false, _selectedId + 1);
+		_globals._sequenceIndexes[11] = _scene->_sequences.startCycle(_globals._spriteIndexes[11], false, local._selectedId + 1);
 
-		if (_selectedId != _homeSelectedId) {
-			_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0 + _selectedId], false, 24, 0, 0, 0);
+		if (local._selectedId != local._homeSelectedId) {
+			_globals._sequenceIndexes[0] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[0 + local._selectedId], false, 24, 0, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 1);
 		}
 		break;
@@ -281,7 +270,7 @@ void Scene505::step() {
 		break;
 
 	case 63:
-		_globals[kHoverCarDestination] = _carLocations[_selectedId];
+		_globals[kHoverCarDestination] = local._carLocations[local._selectedId];
 		_scene->_nextSceneId = 504;
 		break;
 
@@ -292,7 +281,7 @@ void Scene505::step() {
 
 static void room_505_parser() {
 	if (_action.isAction(VERB_PRESS))
-		_nextButtonId = _action._activeAction._objectNameId;
+		local._nextButtonId = _action._activeAction._objectNameId;
 	else if (_action.isAction(VERB_RETURN_TO, NOUN_INSIDE_OF_CAR))
 		_scene->_nextSceneId = 504;
 	else if (_action.isAction(VERB_LOOK, NOUN_VIEW_SCREEN))
@@ -305,6 +294,28 @@ static void room_505_parser() {
 	_action._inProgress = false;
 }
 
+void room_505_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._frame);
+	s.syncAsSint16LE(local._nextButtonId);
+	s.syncAsSint16LE(local._homeSelectedId);
+	s.syncAsSint16LE(local._selectedId);
+	s.syncAsSint16LE(local._activeCars);
+
+	for (int i = 0; i < 9; i++)
+		s.syncAsSint16LE(local._carLocations[i]);
+}
+
+
+void room_505_preload() {
+	room_init_code_pointer = room_505_init;
+	room_daemon_code_pointer = room_505_daemon;
+	room_parser_code_pointer = room_505_parser;
+
+	*player.series_name = '\0';
+	section_5_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

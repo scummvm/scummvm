@@ -19,34 +19,48 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section5.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
-
-void Scene515::setup() {
-	_game._player._spritesPrefix = "";
-	setAAName();
-}
+namespace Rooms {
 
 static void room_515_init() {
 	_game._player._visible = false;
 	_game._player._stepEnabled = false;
 	_scene->_sequences.addTimer(30, 70);
 
-	sceneEntrySound();
+	section_5_music();
 }
 
-void Scene515::step() {
+static void room_515_daemon() {
 	if (_game._trigger == 70)
 		_scene->loadAnimation(formAnimName('A', -1), 71);
 	else if (_game._trigger == 71)
 		_scene->_nextSceneId = 508;
 }
 
+void room_515_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_515_preload() {
+	room_init_code_pointer = room_515_init;
+	room_daemon_code_pointer = room_515_daemon;
+
+	*player.series_name = '\0';
+	section_5_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

@@ -19,34 +19,27 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section5.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene512::Scene512(RexNebularEngine *vm) : Scene5xx(vm) {
-	_fishingRodHotspotId = -1;
-	_keyHotspotId = -1;
-}
+struct Scratch {
+	int16 _fishingRodHotspotId;
+	int16 _keyHotspotId;
+};
 
-void room_512_synchronize(Common::Serializer &s) {
-	Scene5xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsSint16LE(_fishingRodHotspotId);
-	s.syncAsSint16LE(_keyHotspotId);
-}
-
-void Scene512::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_FISHING_ROD);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_PADLOCK_KEY);
-	_scene->addActiveVocab(NOUN_REGISTER_DRAWER);
-}
 
 static void room_512_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('r', -1));
@@ -59,8 +52,8 @@ static void room_512_init() {
 
 	if (_game._objects[OBJ_FISHING_ROD]._roomNumber == _scene->_currentSceneId) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		_fishingRodHotspotId = _scene->_dynamicHotspots.add(NOUN_FISHING_ROD, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(_fishingRodHotspotId, Common::Point(199, 101), FACING_NORTHEAST);
+		local._fishingRodHotspotId = _scene->_dynamicHotspots.add(NOUN_FISHING_ROD, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(local._fishingRodHotspotId, Common::Point(199, 101), FACING_NORTHEAST);
 	}
 
 	if (!_game._visitedScenes._sceneRevisited)
@@ -71,8 +64,8 @@ static void room_512_init() {
 		if (_game._objects[OBJ_PADLOCK_KEY]._roomNumber == _scene->_currentSceneId) {
 			_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 10, 0, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 3);
-			_keyHotspotId = _scene->_dynamicHotspots.add(NOUN_PADLOCK_KEY, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(_keyHotspotId, Common::Point(218, 152), FACING_NORTHEAST);
+			local._keyHotspotId = _scene->_dynamicHotspots.add(NOUN_PADLOCK_KEY, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+			_scene->_dynamicHotspots.setPosition(local._keyHotspotId, Common::Point(218, 152), FACING_NORTHEAST);
 		}
 		if (_globals[kRegisterOpen]) {
 			_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
@@ -97,7 +90,7 @@ static void room_512_init() {
 		_game._player._facing = FACING_NORTHEAST;
 	}
 
-	sceneEntrySound();
+	section_5_music();
 }
 
 static void room_512_parser() {
@@ -118,7 +111,7 @@ static void room_512_parser() {
 			case 1:
 				_vm->_sound->command(9);
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-				_scene->_dynamicHotspots.remove(_fishingRodHotspotId);
+				_scene->_dynamicHotspots.remove(local._fishingRodHotspotId);
 				_game._objects.addToInventory(OBJ_FISHING_ROD);
 				_vm->_dialogs->showItem(OBJ_FISHING_ROD, 51217);
 				break;
@@ -253,7 +246,7 @@ static void room_512_parser() {
 			case 1:
 				if (_game._player._playerPos == Common::Point(218, 152)) {
 					_scene->_sequences.remove(_globals._sequenceIndexes[6]);
-					_scene->_dynamicHotspots.remove(_keyHotspotId);
+					_scene->_dynamicHotspots.remove(local._keyHotspotId);
 				} else {
 					_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 					_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
@@ -334,6 +327,24 @@ static void room_512_parser() {
 	_action._inProgress = false;
 }
 
+void room_512_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._fishingRodHotspotId);
+	s.syncAsSint16LE(local._keyHotspotId);
+}
+
+void room_512_preload() {
+	room_init_code_pointer = room_512_init;
+	room_parser_code_pointer = room_512_parser;
+
+	section_5_walker();
+	section_5_interface();
+	_scene->addActiveVocab(NOUN_FISHING_ROD);
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_PADLOCK_KEY);
+	_scene->addActiveVocab(NOUN_REGISTER_DRAWER);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

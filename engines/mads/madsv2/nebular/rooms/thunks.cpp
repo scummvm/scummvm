@@ -187,12 +187,20 @@ void Scene::Animation::setNextFrameTimer(long time) {
 	kernel_anim[_id].next_clock = time;
 }
 
+long Scene::Animation::getNextFrameTimer() {
+	return 	kernel_anim[_id].next_clock;
+}
+
 void Scene::Animation::setCurrentFrame(int frameNum) {
 	kernel_anim[_id].frame = frameNum;
 }
 
 void Scene::Animation::resetSpriteSetsCount() {
 	error("TODO: resetSpriteSetsCount");
+}
+
+void Scene::Animation::eraseSprites() {
+	error("TODO: eraseSprites");
 }
 
 int Scene::DynamicHotspots::add(int vocab_id, int verb_id, int auto_sequence, const Common::Rect &r) {

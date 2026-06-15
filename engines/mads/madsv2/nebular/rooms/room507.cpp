@@ -19,30 +19,26 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section5.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene507::Scene507(RexNebularEngine *vm) : Scene5xx(vm) {
-	_penlightHotspotId = -1;
-}
+struct Scratch {
+	int16 _penlightHotspotId;
+};
 
-void room_507_synchronize(Common::Serializer &s) {
-	Scene5xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsSint16LE(_penlightHotspotId);
-}
-
-void Scene507::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_PENLIGHT);
-	_scene->addActiveVocab(VERB_WALKTO);
-}
 
 static void room_507_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('p', -1));
@@ -50,8 +46,8 @@ static void room_507_init() {
 
 	if ((_game._difficulty != DIFFICULTY_EASY) && (_game._objects[OBJ_PENLIGHT]._roomNumber == _scene->_currentSceneId)) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		_penlightHotspotId = _scene->_dynamicHotspots.add(NOUN_PENLIGHT, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(_penlightHotspotId, Common::Point(233, 152), FACING_SOUTHEAST);
+		local._penlightHotspotId = _scene->_dynamicHotspots.add(NOUN_PENLIGHT, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(local._penlightHotspotId, Common::Point(233, 152), FACING_SOUTHEAST);
 	}
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
@@ -59,8 +55,9 @@ static void room_507_init() {
 		_game._player._facing = FACING_NORTH;
 	}
 
-	sceneEntrySound();
+	section_5_music();
 }
+
 static void room_507_parser() {
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_ENTRANCE))
 		_scene->_nextSceneId = 506;
@@ -79,7 +76,7 @@ static void room_507_parser() {
 
 			case 1:
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-				_scene->_dynamicHotspots.remove(_penlightHotspotId);
+				_scene->_dynamicHotspots.remove(local._penlightHotspotId);
 				_vm->_sound->command(27);
 				_game._objects.addToInventory(OBJ_PENLIGHT);
 				_vm->_dialogs->showItem(OBJ_PENLIGHT, 50730);
@@ -148,6 +145,21 @@ static void room_507_parser() {
 	_action._inProgress = false;
 }
 
+void room_507_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._penlightHotspotId);
+}
+
+void room_507_preload() {
+	room_init_code_pointer = room_507_init;
+	room_parser_code_pointer = room_507_parser;
+
+	section_5_walker();
+	section_5_interface();
+	_scene->addActiveVocab(NOUN_PENLIGHT);
+	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

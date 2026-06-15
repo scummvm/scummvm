@@ -19,30 +19,26 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section5.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene503::Scene503(RexNebularEngine *vm) : Scene5xx(vm) {
-	_detonatorHotspotId = -1;
-}
+struct Scratch {
+	int16 _detonatorHotspotId;
+};
 
-void room_503_synchronize(Common::Serializer &s) {
-	Scene5xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsSint16LE(_detonatorHotspotId);
-}
-
-void Scene503::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_DETONATORS);
-	_scene->addActiveVocab(VERB_WALKTO);
-}
 
 static void room_503_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
@@ -54,8 +50,8 @@ static void room_503_init() {
 
 	if (_game._objects[OBJ_DETONATORS]._roomNumber == _scene->_currentSceneId) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		_detonatorHotspotId = _scene->_dynamicHotspots.add(NOUN_DETONATORS, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(_detonatorHotspotId, Common::Point(254, 135), FACING_SOUTH);
+		local._detonatorHotspotId = _scene->_dynamicHotspots.add(NOUN_DETONATORS, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(local._detonatorHotspotId, Common::Point(254, 135), FACING_SOUTH);
 	}
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
@@ -63,7 +59,7 @@ static void room_503_init() {
 		_game._player._facing = FACING_NORTHWEST;
 	}
 
-	sceneEntrySound();
+	section_5_music();
 }
 
 static void room_503_parser() {
@@ -93,7 +89,7 @@ static void room_503_parser() {
 			case 1:
 				_vm->_sound->command(9);
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-				_scene->_dynamicHotspots.remove(_detonatorHotspotId);
+				_scene->_dynamicHotspots.remove(local._detonatorHotspotId);
 				_game._objects.addToInventory(OBJ_DETONATORS);
 				_vm->_dialogs->showItem(OBJ_DETONATORS, 50326);
 				break;
@@ -157,6 +153,21 @@ static void room_503_parser() {
 	_action._inProgress = false;
 }
 
+void room_503_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._detonatorHotspotId);
+}
+
+void room_503_preload() {
+	room_init_code_pointer = room_503_init;
+	room_parser_code_pointer = room_503_parser;
+
+	section_5_walker();
+	section_5_interface();
+	_scene->addActiveVocab(NOUN_DETONATORS);
+	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

@@ -19,60 +19,51 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section5.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene501::Scene501(RexNebularEngine *vm) : Scene5xx(vm) {
-	_mainSequenceId = -1;
-	_mainSpriteId = -1;
-	_doorHotspotid = -1;
+struct Scratch {
+	int32 _mainSequenceId;
+	int32 _mainSpriteId;
+	int32 _doorHotspotid;
+	bool _rexPunched;
+};
 
-	_rexPunched = false;
-}
+static Scratch local;
 
-void room_501_synchronize(Common::Serializer &s) {
-	Scene5xx::synchronize(s);
-
-	s.syncAsSint16LE(_mainSequenceId);
-	s.syncAsSint16LE(_mainSpriteId);
-	s.syncAsSint16LE(_doorHotspotid);
-	s.syncAsByte(_rexPunched);
-}
-
-void Scene501::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_DOOR);
-	_scene->addActiveVocab(VERB_WALK_THROUGH);
-}
-
-void Scene501::handleSlotActions() {
+static void handleSlotActions() {
 	switch (_game._trigger) {
 	case 0:
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		int numTicks, frameIndex;
 		if (_globals[kSexOfRex] == REX_MALE) {
-			_mainSpriteId = _globals._spriteIndexes[4];
+			local._mainSpriteId = _globals._spriteIndexes[4];
 			numTicks = 8;
 			frameIndex = 3;
 		} else {
-			_mainSpriteId = _globals._spriteIndexes[5];
+			local._mainSpriteId = _globals._spriteIndexes[5];
 			numTicks = 10;
 			frameIndex = 2;
 		}
 
-		_mainSequenceId = _scene->_sequences.startPingPongCycle(_mainSpriteId, false, numTicks, 1, 0, 0);
-		_scene->_sequences.setAnimRange(_mainSequenceId, 1, frameIndex);
-		_scene->_sequences.setMsgLayout(_mainSequenceId);
+		local._mainSequenceId = _scene->_sequences.startPingPongCycle(local._mainSpriteId, false, numTicks, 1, 0, 0);
+		_scene->_sequences.setAnimRange(local._mainSequenceId, 1, frameIndex);
+		_scene->_sequences.setMsgLayout(local._mainSequenceId);
 		_vm->_sound->command(10);
-		_scene->_sequences.addSubEntry(_mainSequenceId, SEQUENCE_TRIGGER_SPRITE, frameIndex, 1);
-		_scene->_sequences.addSubEntry(_mainSequenceId, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+		_scene->_sequences.addSubEntry(local._mainSequenceId, SEQUENCE_TRIGGER_SPRITE, frameIndex, 1);
+		_scene->_sequences.addSubEntry(local._mainSequenceId, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 		break;
 
 	case 1:
@@ -80,7 +71,7 @@ void Scene501::handleSlotActions() {
 		break;
 
 	case 2:
-		_scene->_sequences.updateTimeout(-1, _mainSequenceId);
+		_scene->_sequences.updateTimeout(-1, local._mainSequenceId);
 		_game._player._visible = true;
 		_scene->_sequences.addTimer(15, 3);
 		break;
@@ -110,12 +101,12 @@ static void room_501_init() {
 
 	_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 	int idx = _scene->_dynamicHotspots.add(NOUN_DOOR, VERB_WALK_THROUGH, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
-	_doorHotspotid = _scene->_dynamicHotspots.setPosition(idx, Common::Point(282, 110), FACING_NORTH);
-	_scene->_dynamicHotspots.setCursor(_doorHotspotid, CURSOR_GO_UP);
+	local._doorHotspotid = _scene->_dynamicHotspots.setPosition(idx, Common::Point(282, 110), FACING_NORTH);
+	_scene->_dynamicHotspots.setCursor(local._doorHotspotid, CURSOR_GO_UP);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
 	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
-	_rexPunched = true;
+	local._rexPunched = true;
 
 	if (_scene->_priorSceneId == 504) {
 		_game._player._stepEnabled = false;
@@ -143,14 +134,14 @@ static void room_501_init() {
 		_game._objects.addToInventory(OBJ_ID_CARD);
 	}
 
-	sceneEntrySound();
+	section_5_music();
 	_game.loadQuoteSet(0x275, 0x276, 0x277, 0);
 
 	if (!_game._visitedScenes._sceneRevisited)
 		_scene->_sequences.addTimer(2, 90);
 }
 
-void Scene501::step() {
+static void room_501_daemon() {
 	if (_game._trigger == 90)
 		_vm->_dialogs->show(50127);
 
@@ -167,7 +158,7 @@ void Scene501::step() {
 			break;
 
 		case 81:
-			_scene->_dynamicHotspots.remove(_doorHotspotid);
+			_scene->_dynamicHotspots.remove(local._doorHotspotid);
 			_game._player.walk(Common::Point(276, 110), FACING_SOUTHWEST);
 			_scene->_sequences.addTimer(120, 82);
 			break;
@@ -176,9 +167,9 @@ void Scene501::step() {
 			_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
 			_vm->_sound->command(12);
-			_doorHotspotid = _scene->_dynamicHotspots.add(NOUN_DOOR, VERB_WALK_THROUGH, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
+			local._doorHotspotid = _scene->_dynamicHotspots.add(NOUN_DOOR, VERB_WALK_THROUGH, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(_globals._sequenceIndexes[3], Common::Point(282, 110), FACING_NORTH);
-			_scene->_dynamicHotspots.setCursor(_doorHotspotid, CURSOR_GO_UP);
+			_scene->_dynamicHotspots.setCursor(local._doorHotspotid, CURSOR_GO_UP);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 83);
 			break;
 
@@ -254,21 +245,21 @@ static void room_501_parser() {
 		case 2:
 			_game._player._visible = false;
 			if (_globals[kSexOfRex] == REX_MALE)
-				_mainSpriteId = _globals._spriteIndexes[6];
+				local._mainSpriteId = _globals._spriteIndexes[6];
 			else
-				_mainSpriteId = _globals._spriteIndexes[7];
+				local._mainSpriteId = _globals._spriteIndexes[7];
 
-			_mainSequenceId = _scene->_sequences.addSpriteCycle(_mainSpriteId, false, 8, 1, 0, 0);
-			_scene->_sequences.setMsgLayout(_mainSequenceId);
-			_scene->_sequences.addSubEntry(_mainSequenceId, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
+			local._mainSequenceId = _scene->_sequences.addSpriteCycle(local._mainSpriteId, false, 8, 1, 0, 0);
+			_scene->_sequences.setMsgLayout(local._mainSequenceId);
+			_scene->_sequences.addSubEntry(local._mainSequenceId, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 			break;
 
 		case 3:
 		{
-			int syncIdx = _mainSequenceId;
-			_mainSequenceId = _scene->_sequences.startCycle(_mainSpriteId, false, -2);
-			_scene->_sequences.setMsgLayout(_mainSequenceId);
-			_scene->_sequences.updateTimeout(_mainSequenceId, syncIdx);
+			int syncIdx = local._mainSequenceId;
+			local._mainSequenceId = _scene->_sequences.startCycle(local._mainSpriteId, false, -2);
+			_scene->_sequences.setMsgLayout(local._mainSequenceId);
+			_scene->_sequences.updateTimeout(local._mainSequenceId, syncIdx);
 			_scene->_sequences.addTimer(30, 4);
 		}
 		break;
@@ -297,7 +288,7 @@ static void room_501_parser() {
 				_vm->_sound->command(13);
 				_scene->loadAnimation(formAnimName('G', 1), 5);
 			} else {
-				_rexPunched = false;
+				local._rexPunched = false;
 				_scene->_kernelMessages.reset();
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 6, 120, _game.getQuote(0x277));
 			}
@@ -311,10 +302,10 @@ static void room_501_parser() {
 
 		case 6:
 			if (_globals[kSexOfRex] == REX_MALE) {
-				if (_rexPunched) {
+				if (local._rexPunched) {
 					_scene->_kernelMessages.reset();
 					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x275));
-					_rexPunched = false;
+					local._rexPunched = false;
 				} else {
 					_scene->_kernelMessages.reset();
 					_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x276));
@@ -337,7 +328,7 @@ static void room_501_parser() {
 
 		case 4:
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-			_scene->_dynamicHotspots.remove(_doorHotspotid);
+			_scene->_dynamicHotspots.remove(local._doorHotspotid);
 			_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
 			_vm->_sound->command(11);
@@ -412,6 +403,26 @@ static void room_501_parser() {
 	_action._inProgress = false;
 }
 
+void room_501_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._mainSequenceId);
+	s.syncAsSint16LE(local._mainSpriteId);
+	s.syncAsSint16LE(local._doorHotspotid);
+	s.syncAsByte(local._rexPunched);
+}
+
+void room_501_preload() {
+	room_init_code_pointer = room_501_init;
+	room_daemon_code_pointer = room_501_daemon;
+	room_pre_parser_code_pointer = room_501_pre_parser;
+	room_parser_code_pointer = room_501_parser;
+
+	section_5_walker();
+	section_5_interface();
+	_scene->addActiveVocab(NOUN_DOOR);
+	_scene->addActiveVocab(VERB_WALK_THROUGH);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

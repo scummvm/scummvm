@@ -33,7 +33,6 @@ static int _buttonTyped;
 static int _curCode;
 static int _digitCount;
 static int _curMessageId;
-static int _handSpriteId;
 static int _handSequenceId;
 static int _finishedCodeCounter;
 static int _meteorologistNextPlace;
@@ -47,7 +46,6 @@ void teleporter_init() {
 	_curCode = -1;
 	_digitCount = -1;
 	_curMessageId = -1;
-	_handSpriteId = -1;
 	_handSequenceId = -1;
 	_finishedCodeCounter = -1;
 	_meteorologistNextPlace = -1;
@@ -176,7 +174,7 @@ void teleporter_handle_key() {
 	case 0: {
 		_game._player._stepEnabled = false;
 		Common::Point msgPos = teleporter_compute_location();
-		_handSequenceId = _scene->_sequences.startPingPongCycle(_handSpriteId, false, 4, 2, 0, 0);
+		_handSequenceId = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 4, 2, 0, 0);
 		_scene->_sequences.setPosition(_handSequenceId, msgPos);
 		_scene->_sequences.setDepth(_handSequenceId, 2);
 		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_LOOP, 0, 1);

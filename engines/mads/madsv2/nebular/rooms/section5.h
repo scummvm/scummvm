@@ -29,6 +29,10 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
+extern void section_5_walker();
+extern void section_5_interface();
+extern void section_5_music();
+
 #if 0
 class Scene5xx : public NebularScene {
 protected:

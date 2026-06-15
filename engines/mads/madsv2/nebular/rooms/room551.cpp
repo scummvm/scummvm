@@ -19,18 +19,19 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section5.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
-
-void Scene551::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
+namespace Rooms {
 
 static void room_551_init() {
 	if (_globals[kSexOfRex] == REX_MALE)
@@ -90,10 +91,10 @@ static void room_551_init() {
 		}
 	}
 
-	sceneEntrySound();
+	section_5_music();
 }
 
-void Scene551::step() {
+static void room_551_daemon() {
 	switch (_game._trigger) {
 	case 75:
 		_game._player._stepEnabled = true;
@@ -165,6 +166,21 @@ static void room_551_parser() {
 	_action._inProgress = false;
 }
 
+void room_551_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_551_preload() {
+	room_init_code_pointer = room_551_init;
+	room_daemon_code_pointer = room_551_daemon;
+	room_pre_parser_code_pointer = room_551_pre_parser;
+	room_parser_code_pointer = room_551_parser;
+
+	section_5_walker();
+	section_5_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

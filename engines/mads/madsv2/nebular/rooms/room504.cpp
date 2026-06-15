@@ -19,30 +19,27 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section5.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene504::Scene504(RexNebularEngine *vm) : Scene5xx(vm) {
-	_carAnimationMode = -1;
-	_carFrame = -1;
-}
+struct Scratch {
+	int32 _carAnimationMode;
+	int32 _carFrame;
+};
 
-void room_504_synchronize(Common::Serializer &s) {
-	Scene5xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsSint16LE(_carAnimationMode);
-	s.syncAsSint16LE(_carFrame);
-}
-
-void Scene504::setup() {
-	_game._player._spritesPrefix = "";
-	setAAName();
-}
 
 static void room_504_init() {
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 2));
@@ -60,17 +57,17 @@ static void room_504_init() {
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 0);
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 6, 0, 0, 0);
-	_carFrame = -1;
+	local._carFrame = -1;
 
 	if ((_scene->_priorSceneId == 505) && (_globals[kHoverCarDestination] != _globals[kHoverCarLocation])) {
-		_carAnimationMode = 1;
+		local._carAnimationMode = 1;
 		_scene->loadAnimation(formAnimName('A', -1));
 		_vm->_sound->command(14);
 		_scene->_sequences.addTimer(1, 70);
 		_game._player._stepEnabled = false;
 	} else {
 		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 3));
-		_carAnimationMode = 1;
+		local._carAnimationMode = 1;
 		_scene->loadAnimation(formAnimName('A', -1));
 		if ((_scene->_priorSceneId != RETURNING_FROM_DIALOG) && (_scene->_priorSceneId != 505))
 			_globals[kHoverCarLocation] = _scene->_priorSceneId;
@@ -81,23 +78,23 @@ static void room_504_init() {
 	if (_globals[kTimebombTimer] > 10500)
 		_globals[kTimebombTimer] = 10500;
 
-	sceneEntrySound();
+	section_5_music();
 }
 
-void Scene504::step() {
-	if ((_carAnimationMode == 1) && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != _carFrame) {
-			_carFrame = _scene->_animation[0]->getCurrentFrame();
+static void room_504_daemon() {
+	if ((local._carAnimationMode == 1) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != local._carFrame) {
+			local._carFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextFrame;
 
-			if (_carFrame == 1)
+			if (local._carFrame == 1)
 				nextFrame = 0;
 			else
 				nextFrame = -1;
 
 			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
 				_scene->_animation[0]->setCurrentFrame(nextFrame);
-				_carFrame = nextFrame;
+				local._carFrame = nextFrame;
 			}
 		}
 	}
@@ -109,7 +106,7 @@ void Scene504::step() {
 			if (_globals[kHoverCarDestination] != -1) {
 				_game._player._stepEnabled = false;
 				_scene->freeAnimation();
-				_carAnimationMode = 2;
+				local._carAnimationMode = 2;
 				if (((_globals[kHoverCarLocation] >= 500 && _globals[kHoverCarLocation] <= 599) &&
 					(_globals[kHoverCarDestination] >= 500 && _globals[kHoverCarDestination] <= 599)) ||
 					((_globals[kHoverCarLocation] >= 600 && _globals[kHoverCarLocation] <= 699) &&
@@ -235,6 +232,22 @@ static void room_504_parser() {
 	_action._inProgress = false;
 }
 
+void room_504_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._carAnimationMode);
+	s.syncAsSint16LE(local._carFrame);
+}
+
+void room_504_preload() {
+	room_init_code_pointer = room_504_init;
+	room_daemon_code_pointer = room_504_daemon;
+	room_pre_parser_code_pointer = room_504_pre_parser;
+	room_parser_code_pointer = room_504_parser;
+
+	*player.series_name = '\0';
+	section_5_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS
