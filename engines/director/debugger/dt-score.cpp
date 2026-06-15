@@ -959,12 +959,6 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 				case kChPalette: // open cast window focused on palette member
 					if (mc.palette.paletteId.member) {
 						_state->_w.cast = true;
-						// select it in the cast so showCast() highlights it
-						for (auto &scriptCast : _state->_scriptCasts) {
-							if (scriptCast == mc.palette.paletteId) {
-								break;
-							}
-						}
 					}
 					break;
 				case kChTransition:

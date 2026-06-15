@@ -36,69 +36,6 @@
 namespace Director {
 namespace DT {
 
-static void renderCastScript(Symbol &sym) {
-	if (sym.type != HANDLER)
-		return;
-
-	Director::Lingo *lingo = g_director->getLingo();
-	Common::String handlerName;
-
-	if (sym.ctx && sym.ctx->_id)
-		handlerName = Common::String::format("%d:", sym.ctx->_id);
-
-	handlerName += lingo->formatFunctionName(sym);
-
-	ImGui::Text("%s", handlerName.c_str());
-
-	ImDrawList *dl = ImGui::GetWindowDrawList();
-
-	ImVec4 color;
-
-	uint pc = 0;
-	while (pc < sym.u.defn->size()) {
-		ImVec2 pos = ImGui::GetCursorScreenPos();
-		const ImVec2 mid(pos.x + 7, pos.y + 7);
-		Common::String bpName = Common::String::format("%s-%d", handlerName.c_str(), pc);
-
-		color = _state->theme->bp_color_disabled;
-
-		Director::Breakpoint *bp = getBreakpoint(handlerName, sym.ctx->_id, pc);
-		if (bp)
-			color = _state->theme->bp_color_enabled;
-
-		ImGui::PushID(pc);
-		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
-		if (ImGui::IsItemClicked(0)) {
-			if (bp) {
-				g_lingo->delBreakpoint(bp->id);
-				color = _state->theme->bp_color_disabled;
-			} else {
-				Director::Breakpoint newBp;
-				newBp.type = kBreakpointFunction;
-				newBp.funcName = handlerName;
-				newBp.funcOffset = pc;
-				g_lingo->addBreakpoint(newBp);
-				color = _state->theme->bp_color_enabled;
-			}
-		}
-
-		if (color == _state->theme->bp_color_disabled && ImGui::IsItemHovered()) {
-			color = _state->theme->bp_color_hover;
-		}
-
-		dl->AddCircleFilled(mid, 4.0f, ImColor(color));
-		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), ImColor(_state->theme->line_color));
-
-		ImGui::SetItemTooltip("Click to add a breakpoint");
-
-		ImGui::SameLine();
-		ImGui::Text("[%5d] ", pc);
-		ImGui::SameLine();
-		ImGui::Text("%s", lingo->decodeInstruction(sym.u.defn, pc, &pc).c_str());
-		ImGui::PopID();
-	}
-}
-
 static void renderScript(ImGuiScript &script, bool showByteCode, bool scrollTo) {
 	if (script.oldAst) {
 		renderOldScriptAST(script, showByteCode, scrollTo);
@@ -176,55 +113,7 @@ static void renderCallStack(uint pc) {
 	}
 }
 
-static bool showScriptCast(CastMemberID &id) {
-	Common::String wName("Script ");
-	wName += id.asString();
-
-	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(240, 240), ImGuiCond_FirstUseEver);
-
-	bool closed = true;
-
-	if (ImGui::Begin(wName.c_str(), &closed)) {
-		Cast *cast = g_director->getCurrentMovie()->getCasts()->getValOrDefault(id.castLib, nullptr);
-		ScriptContext *ctx = g_director->getCurrentMovie()->getScriptContext(kScoreScript, id);
-
-		if (ctx) {
-			for (auto &handler : ctx->_functionHandlers)
-				renderCastScript(handler._value);
-		} else if (cast && cast->_lingoArchive->factoryContexts.contains(id.member)) {
-			for (auto &it : *cast->_lingoArchive->factoryContexts.getVal(id.member)) {
-				for (auto &handler : it._value->_functionHandlers)
-					renderCastScript(handler._value);
-			}
-		} else {
-			ImGui::Text("[Nothing]");
-		}
-	}
-	ImGui::End();
-
-	if (!closed)
-		return false;
-
-	return true;
-}
-
-/**
- * Display all open scripts
- */
-void showScriptCasts() {
-	if (_state->_scriptCasts.empty())
-		return;
-
-	for (Common::List<CastMemberID>::iterator scr = _state->_scriptCasts.begin(); scr != _state->_scriptCasts.end();) {
-		if (!showScriptCast(*scr))
-			scr = _state->_scriptCasts.erase(scr);
-		else
-			scr++;
-	}
-}
-
-static bool showHandler(ImGuiScript handler) {
+static bool showHandler(ImGuiScript &handler) {
 	ScriptContext *ctx = getScriptContext(handler.id);
 	Common::String wName;
 	if (ctx) {
@@ -237,27 +126,14 @@ static bool showHandler(ImGuiScript handler) {
 	bool closed = true;
 
 	if (ImGui::Begin(wName.c_str(), &closed)) {
-		ImGuiEx::toggleButton(ICON_MS_PACKAGE_2, &_state->_showCompleteScript, true); // Lingo
-		ImGui::SetItemTooltip("Show Handler");
+		ImGuiEx::toggleButton(ICON_MS_PACKAGE_2, &handler.showByteCode, true); // Lingo
+		ImGui::SetItemTooltip("Show Lingo");
 
 		ImGui::SameLine();
-		ImGuiEx::toggleButton(ICON_MS_STACKS, &_state->_showCompleteScript); // Bytecode
-		ImGui::SetItemTooltip("Show Script Context");
+		ImGuiEx::toggleButton(ICON_MS_STACKS, &handler.showByteCode); // Bytecode
+		ImGui::SetItemTooltip("Show Bytecode");
 
-		if (!ctx || ctx->_functionHandlers.size() <= 1 || !_state->_showCompleteScript) {
-			renderScript(handler, false, true);
-		} else {
-			for (auto &functionHandler : ctx->_functionHandlers) {
-				ImGuiScript script = toImGuiScript(ctx->_scriptType, handler.id, functionHandler._key);
-				script.byteOffsets = ctx->_functionByteOffsets[script.handlerId];
-
-				if (script == handler) {
-					_state->_dbg._goToDefinition = true;
-				}
-				renderScript(script, false, script == handler);
-				ImGui::NewLine();
-			}
-		}
+		renderScript(handler, handler.showByteCode, true);
 	}
 	ImGui::End();
 
@@ -276,7 +152,7 @@ void showHandlers() {
 	}
 
 	Common::Array<uint32> toClose;
-	for (auto handler : _state->_openHandlers) {
+	for (auto &handler : _state->_openHandlers) {
 		if (!showHandler(handler._value))
 			toClose.push_back(handler._value.id.member);
 	}

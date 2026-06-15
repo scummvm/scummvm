@@ -524,11 +524,6 @@ ImVec4 convertColor(uint32 color) {
 	return ImGui::ColorConvertU32ToFloat4(color);
 }
 
-static void addScriptCastToDisplay(CastMemberID &id) {
-	_state->_scriptCasts.remove(id);
-	_state->_scriptCasts.push_back(id);
-}
-
 void addToOpenHandlers(ImGuiScript handler) {
 	_state->_openHandlers.erase(handler.id.member);
 	_state->_openHandlers[handler.id.member] = handler;
@@ -553,8 +548,19 @@ void displayScriptRef(CastMemberID &scriptId) {
 
 		ImGui::SetItemTooltip(scriptId.asString().c_str());
 
-		if (ImGui::IsItemClicked(0))
-			addScriptCastToDisplay(scriptId);
+		if (ImGui::IsItemClicked(0)) {
+			ScriptContext *ctx = getScriptContext(scriptId);
+			if (ctx) {
+				Common::String moviePath = g_director->getCurrentMovie()->getArchive()->getPathName().toString();
+				for (auto &handler : ctx->_functionHandlers) {
+					ImGuiScript script = toImGuiScript(ctx->_scriptType, scriptId, handler._key);
+					script.byteOffsets = ctx->_functionByteOffsets[script.handlerId];
+					script.moviePath = moviePath;
+					script.handlerName = formatHandlerName(ctx->_scriptId, scriptId.member, script.handlerId, ctx->_scriptType, false);
+					addToOpenHandlers(script);
+				}
+			}
+		}
 	} else {
 		ImGui::Selectable("  ");
 	}
@@ -934,7 +940,6 @@ void onImGuiRender() {
 		ImGui::EndMainMenuBar();
 	}
 
-	showScriptCasts();
 	showExecutionContext();
 	showHandlers();
 
