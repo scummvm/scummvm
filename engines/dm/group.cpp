@@ -271,8 +271,10 @@ void GroupMan::dropCreatureFixedPossessions(CreatureType creatureType, int16 map
 	uint16 currFixedPossession = *fixedPossessions++;
 	bool weaponDropped = false;
 	while (currFixedPossession) {
-		if (getFlag(currFixedPossession, kDMMaskRandomDrop) && _vm->getRandomNumber(2))
+		if (getFlag(currFixedPossession, kDMMaskRandomDrop) && _vm->getRandomNumber(2)) {
+			currFixedPossession = *fixedPossessions++;
 			continue;
+		}
 
 		int16 currThingType;
 		if (clearFlag(currFixedPossession, kDMMaskRandomDrop) >= kDMObjectInfoIndexFirstJunk) {
@@ -288,8 +290,10 @@ void GroupMan::dropCreatureFixedPossessions(CreatureType creatureType, int16 map
 		}
 
 		Thing nextUnusedThing = dungeon.getUnusedThing(currThingType);
-		if ((nextUnusedThing) == _vm->_thingNone)
+		if ((nextUnusedThing) == _vm->_thingNone) {
+			currFixedPossession = *fixedPossessions++;
 			continue;
+		}
 
 		Weapon *currWeapon = (Weapon *)dungeon.getThingData(nextUnusedThing);
 		/* The same pointer type is used no matter the actual type k5_WeaponThingType, k6_ArmourThingType or k10_JunkThingType */
