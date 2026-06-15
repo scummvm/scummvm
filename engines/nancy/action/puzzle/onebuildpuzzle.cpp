@@ -496,8 +496,16 @@ void OneBuildPuzzle::clampRectToViewport(Common::Rect &rect) {
 
 void OneBuildPuzzle::checkAllPlaced() {
 	for (uint i = 0; i < _pieces.size(); ++i) {
-		if (!_pieces[i].placed)
-			return;
+		if (_pieces[i].placed)
+			continue;
+
+		// Nancy 10: pieces with an empty slotRect (top == 0 && bottom == 0)
+		// are filler — they don't need to be placed for the puzzle to solve.
+		const Common::Rect &slot = _pieces[i].slotRect;
+		if (slot.top == 0 && slot.bottom == 0)
+			continue;
+
+		return;
 	}
 	_isSolved = true;
 	_solveState = kTriggerCompletion;
