@@ -6,9 +6,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Neue Spiele:
    - Unterstützung für Nancy Drew: The Haunted Carousel hinzugefügt.
    - Unterstützung für Nancy Drew: Danger on Deception Island hinzugefügt.
+   - Unterstützung für Noctropolis hinzugefügt.
    - Unterstützung für Cartoon Carnival hinzugefügt.
    - Unterstützung für Alfred Pelrock: En Busca de un Sueño hinzugefügt.
-   - Unterstützung für Noctropolis hinzugefügt.
 
  Allgemein:
    - Klickbare Links in der Benutzeroberfläche werden jetzt durch einen veränderten Cursor hervorgehoben.
@@ -69,6 +69,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Falsche Skalierung des Plasma-Menüeffekts behoben.
    - Darstellung des Holomap-Modells korrigiert.
    - Automatische Speicherung beim Fahren eines Fahrzeugs deaktiviert.
+
+ Atari-Portierung:
+   - Native Unterstützung für CDDA hinzugefügt.
+   - Unterstützung für Plugins hinzugefügt. ScummVM kann jetzt schon mit wenigen MB RAM genutzt werden.
+   - Native Unterstützung für YM2149 hinzugefügt (aktuell verwendbar in Wlvira 1 und 2).
 
  PS3-Portierung:
    - ScummVM-Engines können jetzt als separate Module/Programmdateien ausgeführt werden.
