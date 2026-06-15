@@ -38,7 +38,6 @@ namespace Action {
 // Tiles within a color group share their board sprite (srcRow, srcCol); the
 // hidden `value` field disambiguates them, which is visible in the back of
 // each gem, when picking it up.
-// TODO: Use correct cursor type (hand instead of eyeglass) when picking up gems.
 static void packGrid(const SortPuzzle::Cell grid[][SortPuzzle::kMaxCols], uint16 rows, uint16 cols, Common::Array<int16> &out) {
 	out.clear();
 	out.push_back((int16)rows);
@@ -258,8 +257,10 @@ void SortPuzzle::execute() {
 }
 
 Common::Rect SortPuzzle::cellRect(int row, int col) const {
-	int x = (int)_originX + col * ((int)_spacingX + _cellWidth);
-	int y = (int)_originY + row * ((int)_spacingY + _cellHeight);
+	// Original uses inclusive-coordinate width (right_raw - left_raw) for the
+	// per-col / per-row step, which is cellWidth-1 in our exclusive convention.
+	int x = (int)_originX + col * ((int)_spacingX + _cellWidth  - 1);
+	int y = (int)_originY + row * ((int)_spacingY + _cellHeight - 1);
 	return Common::Rect(x, y, x + _cellWidth, y + _cellHeight);
 }
 
@@ -283,6 +284,20 @@ void SortPuzzle::handleInput(NancyInput &input) {
 	Common::Rect vpScreen = NancySceneState.getViewport().getScreenPosition();
 	Common::Point mouseVP = input.mousePos - Common::Point(vpScreen.left, vpScreen.top);
 
+	// Cheat: show the grid with the value of each gem in the console
+	if (!input.otherKbdInput.empty() && input.otherKbdInput[0].keycode == Common::KEYCODE_SPACE) {
+		debug("-----");
+		for (int r = 0; r < (int)_rows; ++r) {
+			Common::String line;
+			for (int c = 0; c < (int)_cols; ++c) {
+				const Cell &cur = _current[r][c];
+				line += Common::String::format("%d ", cur.value);
+			}
+			debug(line.c_str());
+		}
+		debug("-----");
+	}
+
 	if (_hasHeld && _heldDrawPos != mouseVP) {
 		_heldDrawPos = mouseVP;
 		redraw();
@@ -300,7 +315,7 @@ void SortPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	g_nancy->_cursor->setCursorType(_hasHeld ? CursorManager::kDragHand
+	g_nancy->_cursor->setCursorType(_hasHeld ? CursorManager::kDropHand
 	                                         : CursorManager::kHotspot);
 	if (!(input.input & NancyInput::kLeftMouseButtonUp))
 		return;

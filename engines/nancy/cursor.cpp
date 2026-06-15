@@ -159,6 +159,7 @@ uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID, bool s
 	case kHotspot:              return kNewHotspot;
 	case kHotspotTalk:          return kNewHotspotTalk;
 	case kDragHand:             return kNewDragHand;
+	case kDropHand:             return kNewDropHand;
 	case kNormalArrow:          return kNewNormalArrow;
 	case kHotspotArrow:         return kNewHotspotArrow;
 	case kExit:                 return kNewExit;

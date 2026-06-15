@@ -57,6 +57,7 @@ public:
 		kHotspotArrow			= 21,
 		kHotspotTalk			= 22,	// Speech-bubble hover cursor (Nancy 10+)
 		kDragHand				= 23,	// Hand cursor used when dragging an item (Nancy 10+)
+		kDropHand				= 24,	// Drop-hand cursor used while a piece is held over a target (Nancy 10+)
 
 		// Cursors in Nancy10 and newer games. The CURS chunk holds 37 system
 		// cursor types in pairs; type T's idle slot is (T*2) and its hotspot
