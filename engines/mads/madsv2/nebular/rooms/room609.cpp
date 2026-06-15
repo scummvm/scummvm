@@ -19,28 +19,25 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section6.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene609::Scene609(RexNebularEngine *vm) : Scene6xx(vm) {
-	_videoDoorMode = -1;
-}
+struct Scratch {
+	int16 _videoDoorMode;
+};
 
-void room_609_synchronize(Common::Serializer &s) {
-	Scene6xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsSint16LE(_videoDoorMode);
-}
-
-void Scene609::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-}
 
 static void room_609_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 0));
@@ -82,11 +79,11 @@ static void room_609_init() {
 			_game._objects.addToInventory(OBJ_PENLIGHT);
 	}
 
-	sceneEntrySound();
+	section_6_music();
 	_game.loadQuoteSet(0x305, 0x306, 0x307, 0x308, 0x309, 0);
 }
 
-void Scene609::step() {
+static void room_609_daemon() {
 	switch (_game._trigger) {
 	case 60:
 		_game._player._stepEnabled = false;
@@ -157,11 +154,11 @@ void Scene609::step() {
 	}
 }
 
-static void room_609_initStore() {
+static void enterStore() {
 	switch (_game._trigger) {
 	case 0:
 		_game._player._stepEnabled = false;
-		if (_videoDoorMode == 2)
+		if (local._videoDoorMode == 2)
 			_scene->_sequences.addTimer(1, 4);
 		else {
 			_scene->_kernelMessages.reset();
@@ -210,7 +207,7 @@ static void room_609_initStore() {
 
 	case 6:
 		_scene->_hotspots.activate(NOUN_VIDEO_STORE_DOOR, false);
-		if (_videoDoorMode == 1) {
+		if (local._videoDoorMode == 1) {
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 180, _game.getQuote(0x307));
 		}
@@ -285,11 +282,11 @@ static void room_609_parser() {
 				break;
 			}
 		} else {
-			_videoDoorMode = 2;
+			local._videoDoorMode = 2;
 			enterStore();
 		}
 	} else if (_action.isAction(VERB_UNLOCK, NOUN_DOOR_KEY, NOUN_VIDEO_STORE_DOOR)) {
-		_videoDoorMode = 1;
+		local._videoDoorMode = 1;
 		enterStore();
 	} else if (_action.isAction(VERB_GET_INSIDE, NOUN_CAR)) {
 		switch (_game._trigger) {
@@ -360,6 +357,21 @@ static void room_609_parser() {
 	_action._inProgress = false;
 }
 
+void room_609_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._videoDoorMode);
+}
+
+void room_609_preload() {
+	room_init_code_pointer = room_609_init;
+	room_daemon_code_pointer = room_609_daemon;
+	room_pre_parser_code_pointer = room_609_pre_parser;
+	room_parser_code_pointer = room_609_parser;
+
+	section_6_walker();
+	section_6_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

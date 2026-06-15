@@ -19,18 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section6.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
-
-void Scene620::setup() {
-	_game._player._spritesPrefix = "";
-	setAAName();
-}
+namespace Rooms {
 
 static void room_620_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('b', 0));
@@ -39,10 +39,10 @@ static void room_620_init() {
 	_game._player._visible = false;
 	_scene->_sequences.addTimer(30, 70);
 	_scene->_userInterface.setup(kInputLimitedSentences);
-	sceneEntrySound();
+	section_6_music();
 }
 
-void Scene620::step() {
+static void room_620_daemon() {
 	switch (_game._trigger) {
 	case 70:
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
@@ -77,6 +77,19 @@ void Scene620::step() {
 	}
 }
 
+void room_620_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_620_preload() {
+	room_init_code_pointer = room_620_init;
+	room_daemon_code_pointer = room_620_daemon;
+
+	*player.series_name = '\0';
+	section_6_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

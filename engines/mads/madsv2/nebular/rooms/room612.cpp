@@ -19,34 +19,28 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section6.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene612::Scene612(RexNebularEngine *vm) : Scene6xx(vm) {
-	_actionMode = -1;
-	_cycleIndex = -1;
-}
+struct Scratch {
+	int16 _actionMode;
+	int16 _cycleIndex;
+};
 
-void room_612_synchronize(Common::Serializer &s) {
-	Scene6xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsSint16LE(_actionMode);
-	s.syncAsSint16LE(_cycleIndex);
-}
 
-void Scene612::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_FISHING_LINE);
-	_scene->addActiveVocab(VERB_WALKTO);
-}
-
-void Scene612::handleWinchMovement() {
+static void handleWinchMovement() {
 	switch (_game._trigger) {
 	case 0:
 		_game._player._stepEnabled = false;
@@ -61,7 +55,7 @@ void Scene612::handleWinchMovement() {
 	case 1:
 		// CHECKME: Is the "else" block useful as action is always equal to 1 at this point?
 		// Or is it a missing bit of code we could fix?
-		if (_actionMode == 1) {
+		if (local._actionMode == 1) {
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 			_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 17, 7, 0, 0);
 			_vm->_sound->command(19);
@@ -84,7 +78,7 @@ void Scene612::handleWinchMovement() {
 	case 3:
 	{
 		int syncIdx = _globals._sequenceIndexes[2];
-		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, _cycleIndex);
+		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, local._cycleIndex);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[2], syncIdx);
 		_scene->_kernelMessages.reset();
@@ -115,11 +109,11 @@ static void room_612_init() {
 	}
 
 	if (_globals[kBoatRaised])
-		_cycleIndex = -2;
+		local._cycleIndex = -2;
 	else
-		_cycleIndex = -1;
+		local._cycleIndex = -1;
 
-	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, _cycleIndex);
+	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, local._cycleIndex);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
@@ -132,7 +126,7 @@ static void room_612_init() {
 		_scene->loadAnimation(formAnimName('R', 1), 70);
 	}
 
-	sceneEntrySound();
+	section_6_music();
 
 	if (_scene->_roomChanged)
 		_game._objects.addToInventory(OBJ_PADLOCK_KEY);
@@ -140,7 +134,7 @@ static void room_612_init() {
 	_game.loadQuoteSet(0x2F5, 0x2F4, 0);
 }
 
-void Scene612::step() {
+static void room_612_daemon() {
 	switch (_game._trigger) {
 	case 70:
 		_game._player._visible = true;
@@ -208,8 +202,8 @@ static void room_612_parser() {
 			break;
 		}
 	} else if (_action.isAction(VERB_UNLOCK, NOUN_PADLOCK_KEY, NOUN_CONTROL_BOX)) {
-		_cycleIndex = -2;
-		_actionMode = 1;
+		local._cycleIndex = -2;
+		local._actionMode = 1;
 		handleWinchMovement();
 	} else if (_action._lookFlag || _action.isAction(VERB_LOOK, NOUN_EXPRESSWAY))
 		_vm->_dialogs->show(61210);
@@ -249,6 +243,23 @@ static void room_612_parser() {
 	_action._inProgress = false;
 }
 
+void room_612_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._actionMode);
+	s.syncAsSint16LE(local._cycleIndex);
+}
+
+void room_612_preload() {
+	room_init_code_pointer = room_612_init;
+	room_daemon_code_pointer = room_612_daemon;
+	room_parser_code_pointer = room_612_parser;
+
+	section_6_walker();
+	section_6_interface();
+	_scene->addActiveVocab(NOUN_FISHING_LINE);
+	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

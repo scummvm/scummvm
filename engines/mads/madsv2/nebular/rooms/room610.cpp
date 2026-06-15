@@ -19,42 +19,29 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section6.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene610::Scene610(RexNebularEngine *vm) : Scene6xx(vm) {
-	_handsetHotspotId = -1;
-	_checkVal = -1;
+struct Scratch {
+	int16 _handsetHotspotId;
+	int16 _checkVal;
+	bool _cellCharging;
+	int32 _cellChargingTimer;
+	int32 _lastFrameTimer;
+};
 
-	_cellCharging = false;
+static Scratch local;
 
-	_cellChargingTimer = -1;
-	_lastFrameTimer = 0;
-}
-
-void room_610_synchronize(Common::Serializer &s) {
-	Scene6xx::synchronize(s);
-
-	s.syncAsSint16LE(_handsetHotspotId);
-	s.syncAsSint16LE(_checkVal);
-
-	s.syncAsByte(_cellCharging);
-
-	s.syncAsSint32LE(_cellChargingTimer);
-	s.syncAsUint32LE(_lastFrameTimer);
-}
-
-void Scene610::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_PHONE_HANDSET);
-	_scene->addActiveVocab(VERB_WALKTO);
-}
 
 static void room_610_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('p', -1));
@@ -68,12 +55,12 @@ static void room_610_init() {
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 9);
 
 	if (!_game._visitedScenes._sceneRevisited)
-		_cellCharging = false;
+		local._cellCharging = false;
 
 	if (_game._objects[OBJ_PHONE_HANDSET]._roomNumber == _scene->_currentSceneId) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-		_handsetHotspotId = _scene->_dynamicHotspots.add(NOUN_PHONE_HANDSET, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(_handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
+		local._handsetHotspotId = _scene->_dynamicHotspots.add(NOUN_PHONE_HANDSET, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(local._handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
 		if ((_globals[kHandsetCellStatus] == 2) && (_game._difficulty == DIFFICULTY_HARD) && !_globals[kDurafailRecharged])
 			_globals[kHandsetCellStatus] = 1;
 	}
@@ -86,27 +73,27 @@ static void room_610_init() {
 		_game._player._facing = FACING_NORTHWEST;
 	}
 
-	sceneEntrySound();
+	section_6_music();
 }
 
-void Scene610::step() {
-	if (_cellCharging) {
-		long diff = _scene->_frameStartTime - _lastFrameTimer;
+static void room_610_daemon() {
+	if (local._cellCharging) {
+		long diff = _scene->_frameStartTime - local._lastFrameTimer;
 		if ((diff >= 0) && (diff <= 60))
-			_cellChargingTimer += diff;
+			local._cellChargingTimer += diff;
 		else
-			_cellChargingTimer++;
+			local._cellChargingTimer++;
 
-		_lastFrameTimer = _scene->_frameStartTime;
+		local._lastFrameTimer = _scene->_frameStartTime;
 	}
 
-	// CHECKME: _checkVal is always false, could be removed
-	if ((_cellChargingTimer >= 60) && !_checkVal) {
-		_checkVal = true;
+	// CHECKME: local._checkVal is always false, could be removed
+	if ((local._cellChargingTimer >= 60) && !local._checkVal) {
+		local._checkVal = true;
 		_globals[kHandsetCellStatus] = 1;
-		_cellCharging = false;
-		_checkVal = false;
-		_cellChargingTimer = 0;
+		local._cellCharging = false;
+		local._checkVal = false;
+		local._cellChargingTimer = 0;
 	}
 }
 
@@ -129,7 +116,7 @@ static void room_610_parser() {
 			case 1:
 				_vm->_sound->command(9);
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-				_scene->_dynamicHotspots.remove(_handsetHotspotId);
+				_scene->_dynamicHotspots.remove(local._handsetHotspotId);
 				_game._objects.addToInventory(OBJ_PHONE_HANDSET);
 				_vm->_dialogs->showItem(OBJ_PHONE_HANDSET, 61017);
 				break;
@@ -158,8 +145,8 @@ static void room_610_parser() {
 
 		case 1:
 			_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 9, 0, 0, 0);
-			_handsetHotspotId = _scene->_dynamicHotspots.add(NOUN_PHONE_HANDSET, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
-			_scene->_dynamicHotspots.setPosition(_handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
+			local._handsetHotspotId = _scene->_dynamicHotspots.add(NOUN_PHONE_HANDSET, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+			_scene->_dynamicHotspots.setPosition(local._handsetHotspotId, Common::Point(132, 121), FACING_NORTHWEST);
 			_game._objects.setRoom(OBJ_PHONE_HANDSET, _scene->_currentSceneId);
 			break;
 
@@ -168,7 +155,7 @@ static void room_610_parser() {
 			_game._player._visible = true;
 			_game._player._stepEnabled = true;
 			if ((_globals[kHandsetCellStatus] == 2) && (_game._difficulty == DIFFICULTY_HARD) && !_globals[kDurafailRecharged])
-				_cellCharging = true;
+				local._cellCharging = true;
 
 			_vm->_dialogs->show(61032);
 			break;
@@ -230,6 +217,28 @@ static void room_610_parser() {
 	_action._inProgress = false;
 }
 
+void room_610_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._handsetHotspotId);
+	s.syncAsSint16LE(local._checkVal);
+
+	s.syncAsByte(local._cellCharging);
+
+	s.syncAsSint32LE(local._cellChargingTimer);
+	s.syncAsUint32LE(local._lastFrameTimer);
+}
+
+void room_610_preload() {
+	room_init_code_pointer = room_610_init;
+	room_daemon_code_pointer = room_610_daemon;
+	room_parser_code_pointer = room_610_parser;
+
+	section_6_walker();
+	section_6_interface();
+	_scene->addActiveVocab(NOUN_PHONE_HANDSET);
+	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

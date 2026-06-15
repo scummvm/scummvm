@@ -154,11 +154,24 @@ MODULE_OBJS += \
 	madsv2/nebular/rooms/room513.o \
 	madsv2/nebular/rooms/room515.o \
 	madsv2/nebular/rooms/room551.o \
+	madsv2/nebular/rooms/room601.o \
+	madsv2/nebular/rooms/room602.o \
+	madsv2/nebular/rooms/room603.o \
+	madsv2/nebular/rooms/room604.o \
+	madsv2/nebular/rooms/room605.o \
+	madsv2/nebular/rooms/room607.o \
+	madsv2/nebular/rooms/room608.o \
+	madsv2/nebular/rooms/room609.o \
+	madsv2/nebular/rooms/room610.o \
+	madsv2/nebular/rooms/room611.o \
+	madsv2/nebular/rooms/room612.o \
+	madsv2/nebular/rooms/room620.o \
 	madsv2/nebular/rooms/section1.o \
 	madsv2/nebular/rooms/section2.o \
 	madsv2/nebular/rooms/section3.o \
 	madsv2/nebular/rooms/section4.o \
 	madsv2/nebular/rooms/section5.o \
+	madsv2/nebular/rooms/section6.o \
 	madsv2/nebular/rooms/conversation.o \
 	madsv2/nebular/rooms/forcefield.o \
 	madsv2/nebular/rooms/teleporter.o \

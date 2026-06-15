@@ -19,50 +19,33 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section6.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene607::Scene607(RexNebularEngine *vm) : Scene6xx(vm) {
-	_dogTimer = 0;
-	_lastFrameTime = 0;
+struct Scratch {
+	int32 _dogTimer;
+	int32 _lastFrameTime;
+	bool _dogLoop;
+	bool _dogEatsRex;
+	bool _dogBarking;
+	bool _shopAvailable;
+	int16 _animationMode;
+	int16 _animationActive;
+	int16 _counter;
+};
 
-	_dogLoop = false;
-	_dogEatsRex = false;
-	_dogBarking = false;
-	_shopAvailable = false;
+static Scratch local;
 
-	_animationMode = -1;
-	_animationActive = -1;
-	_counter = -1;
-}
-
-void room_607_synchronize(Common::Serializer &s) {
-	Scene6xx::synchronize(s);
-
-	s.syncAsUint32LE(_dogTimer);
-	s.syncAsUint32LE(_lastFrameTime);
-
-	s.syncAsByte(_dogLoop);
-	s.syncAsByte(_dogEatsRex);
-	s.syncAsByte(_dogBarking);
-	s.syncAsByte(_shopAvailable);
-
-	s.syncAsSint16LE(_animationMode);
-	s.syncAsSint16LE(_animationActive);
-	s.syncAsSint16LE(_counter);
-}
-
-void Scene607::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_OBNOXIOUS_DOG);
-	_scene->addActiveVocab(VERB_WALKTO);
-}
 
 static void room_607_init() {
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 0));
@@ -74,7 +57,7 @@ static void room_607_init() {
 	if ((_scene->_priorSceneId == 608) && (_globals[kDogStatus] < DOG_GONE))
 		_globals[kDogStatus] = DOG_GONE;
 
-	_animationActive = 0;
+	local._animationActive = 0;
 
 	if ((_globals[kDogStatus] == DOG_PRESENT) && (_game._difficulty != DIFFICULTY_EASY)) {
 		_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('g', 3));
@@ -83,11 +66,11 @@ static void room_607_init() {
 
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
-		_dogBarking = false;
-		_dogLoop = false;
-		_shopAvailable = false;
-		_dogEatsRex = false;
-		_dogTimer = 0;
+		local._dogBarking = false;
+		local._dogLoop = false;
+		local._shopAvailable = false;
+		local._dogEatsRex = false;
+		local._dogTimer = 0;
 	} else
 		_scene->_hotspots.activate(NOUN_OBNOXIOUS_DOG, false);
 
@@ -112,7 +95,7 @@ static void room_607_init() {
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('g', 0));
 	}
 
-	sceneEntrySound();
+	section_6_music();
 
 	if (_scene->_roomChanged)
 		_game._objects.addToInventory(OBJ_BONES);
@@ -122,63 +105,63 @@ static void room_607_init() {
 	_game.loadQuoteSet(0x2F8, 0x2F7, 0x2F6, 0x2F9, 0x2FA, 0);
 }
 
-void Scene607::step() {
+static void room_607_daemon() {
 	if (_globals[kDogStatus] == DOG_LEFT) {
-		int32 diff = _scene->_frameStartTime - _lastFrameTime;
+		int32 diff = _scene->_frameStartTime - local._lastFrameTime;
 		if ((diff >= 0) && (diff <= 4))
-			_dogTimer += diff;
+			local._dogTimer += diff;
 		else
-			_dogTimer++;
+			local._dogTimer++;
 
-		_lastFrameTime = _scene->_frameStartTime;
+		local._lastFrameTime = _scene->_frameStartTime;
 	}
 
-	if ((_dogTimer >= 480) && !_dogLoop && !_shopAvailable && (_globals[kDogStatus] == DOG_LEFT) && !_game._player._special) {
+	if ((local._dogTimer >= 480) && !local._dogLoop && !local._shopAvailable && (_globals[kDogStatus] == DOG_LEFT) && !_game._player._special) {
 		_vm->_sound->command(14);
-		_dogLoop = true;
+		local._dogLoop = true;
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 10, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 1);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 91);
-		_dogLoop = false;
-		_dogTimer = 0;
+		local._dogLoop = false;
+		local._dogTimer = 0;
 	}
 
 	if (_game._trigger == 91) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
-		_dogBarking = false;
+		local._dogBarking = false;
 		_globals[kDogStatus] = DOG_PRESENT;
 		_scene->_hotspots.activate(NOUN_OBNOXIOUS_DOG, true);
 	}
 
-	if (!_dogEatsRex && (_game._difficulty != DIFFICULTY_EASY) && !_animationActive && (_globals[kDogStatus] == DOG_PRESENT)
-		&& !_dogBarking && (_vm->getRandomNumber(1, 50) == 10)) {
-		_dogBarking = true;
+	if (!local._dogEatsRex && (_game._difficulty != DIFFICULTY_EASY) && !local._animationActive && (_globals[kDogStatus] == DOG_PRESENT)
+		&& !local._dogBarking && (_vm->getRandomNumber(1, 50) == 10)) {
+		local._dogBarking = true;
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 5, 8, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
 		_scene->_kernelMessages.reset();
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_SPRITE, 2, 100);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 70);
-		_counter = 0;
+		local._counter = 0;
 	}
 
-	if ((_game._trigger == 70) && !_dogEatsRex && (_globals[kDogStatus] == DOG_PRESENT) && !_animationActive) {
+	if ((_game._trigger == 70) && !local._dogEatsRex && (_globals[kDogStatus] == DOG_PRESENT) && !local._animationActive) {
 		int syncIdx = _globals._sequenceIndexes[1];
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
 		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[1], syncIdx);
 		_scene->_kernelMessages.reset();
-		_dogBarking = false;
+		local._dogBarking = false;
 	}
 
 	if (_game._trigger == 100) {
-		_counter++;
+		local._counter++;
 		_vm->_sound->command(12);
 
-		if ((_counter >= 1) && (_counter <= 4)) {
+		if ((local._counter >= 1) && (local._counter <= 4)) {
 			Common::Point pos(0, 0);
-			switch (_counter) {
+			switch (local._counter) {
 			case 1:
 				pos = Common::Point(237, 5);
 				break;
@@ -202,7 +185,7 @@ void Scene607::step() {
 		}
 	}
 
-	if (_game._player._moving && (_game._difficulty != DIFFICULTY_EASY) && !_shopAvailable && (_globals[kDogStatus] == DOG_PRESENT) && (_scene->_rails.getNext() > 0)) {
+	if (_game._player._moving && (_game._difficulty != DIFFICULTY_EASY) && !local._shopAvailable && (_globals[kDogStatus] == DOG_PRESENT) && (_scene->_rails.getNext() > 0)) {
 		_game._player.cancelCommand();
 		_game._player.startWalking(Common::Point(268, 72), FACING_NORTHEAST);
 		_scene->_rails.resetNext();
@@ -212,12 +195,12 @@ void Scene607::step() {
 		_game._player._stepEnabled = false;
 
 	if ((_game._difficulty != DIFFICULTY_EASY) && (_globals[kDogStatus] == DOG_PRESENT) && (_game._player._playerPos == Common::Point(268, 72))
-		&& (_game._trigger || !_dogEatsRex)) {
-		_dogEatsRex = true;
+		&& (_game._trigger || !local._dogEatsRex)) {
+		local._dogEatsRex = true;
 		switch (_game._trigger) {
 		case 91:
 		case 0:
-			_animationActive = 1;
+			local._animationActive = 1;
 			_game._player._visible = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 			_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 10, 1, 0, 0);
@@ -254,7 +237,7 @@ void Scene607::step() {
 		case 62:
 		{
 			int syncIdx = _globals._sequenceIndexes[4];
-			_animationActive = 2;
+			local._animationActive = 2;
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, -2);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 1);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[4], syncIdx);
@@ -264,14 +247,14 @@ void Scene607::step() {
 
 		case 63:
 			_vm->_dialogs->show(60729);
-			_animationActive = 0;
-			_dogEatsRex = false;
+			local._animationActive = 0;
+			local._dogEatsRex = false;
 			_scene->_reloadSceneFlag = true;
 			_game._player._stepEnabled = true;
 			break;
 
 		case 64:
-			if (_dogEatsRex && (_animationActive == 1)) {
+			if (local._dogEatsRex && (local._animationActive == 1)) {
 				_vm->_sound->command(12);
 				_scene->_sequences.addTimer(10, 64);
 			}
@@ -307,31 +290,31 @@ void Scene607::step() {
 	}
 }
 
-void Scene607::handleThrowingBone() {
-	_animationActive = -1;
+static void handleThrowingBone() {
+	local._animationActive = -1;
 	switch (_game._trigger) {
 	case 0:
 		_game._player._stepEnabled = false;
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_game._player._visible = false;
-		_scene->loadAnimation(formAnimName('D', _animationMode), 1);
+		_scene->loadAnimation(formAnimName('D', local._animationMode), 1);
 		break;
 
 	case 1:
 		_game._player._visible = true;
 		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 
-		if (_animationMode != 1)
+		if (local._animationMode != 1)
 			_scene->_hotspots.activate(NOUN_OBNOXIOUS_DOG, false);
 		else {
 			_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 6);
 		}
 
-		_dogBarking = false;
+		local._dogBarking = false;
 		if (_game._objects.isInInventory(OBJ_BONE)) {
 			_game._objects.setRoom(OBJ_BONE, 1);
-			if (_animationMode == 1)
+			if (local._animationMode == 1)
 				_globals[kBone202Status] = 0;
 		} else {
 			_game._objects.setRoom(OBJ_BONES, 1);
@@ -344,12 +327,12 @@ void Scene607::handleThrowingBone() {
 	case 2:
 	{
 		int quoteId = 0x2F8;
-		if (_animationMode == 1)
+		if (local._animationMode == 1)
 			quoteId = 0x2F7;
 
-		if (_animationMode == 2) {
+		if (local._animationMode == 2) {
 			_globals[kDogStatus] = DOG_LEFT;
-			_dogTimer = 0;
+			local._dogTimer = 0;
 		}
 
 		_scene->_kernelMessages.reset();
@@ -360,7 +343,7 @@ void Scene607::handleThrowingBone() {
 
 	case 3:
 		_game._player._stepEnabled = true;
-		_animationActive = 0;
+		local._animationActive = 0;
 		break;
 
 	default:
@@ -373,8 +356,8 @@ static void room_607_pre_parser() {
 		_game._player._needToWalk = false;
 
 	if (_action.isAction(VERB_WALK_THROUGH, NOUN_SIDE_ENTRANCE) && (_globals[kDogStatus] == DOG_LEFT) && (_game._difficulty != DIFFICULTY_EASY)) {
-		_shopAvailable = true;
-		_dogTimer = 0;
+		local._shopAvailable = true;
+		local._dogTimer = 0;
 	}
 
 	if (_action.isAction(VERB_THROW, NOUN_BONES, NOUN_OBNOXIOUS_DOG) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_OBNOXIOUS_DOG))
@@ -428,7 +411,7 @@ static void room_607_parser() {
 		}
 	} else if (_action.isAction(VERB_THROW, NOUN_BONES, NOUN_OBNOXIOUS_DOG) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_OBNOXIOUS_DOG)) {
 		if (_game._difficulty != DIFFICULTY_EASY) {
-			_animationMode = 1;
+			local._animationMode = 1;
 			_scene->_kernelMessages.reset();
 			if (_game._trigger == 0)
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x2F6));
@@ -437,7 +420,7 @@ static void room_607_parser() {
 		}
 	} else if ((_action.isAction(VERB_THROW, NOUN_BONES, NOUN_FENCE) || _action.isAction(VERB_THROW, NOUN_BONE, NOUN_FENCE)) && (_game._difficulty != DIFFICULTY_EASY)
 		&& ((_globals[kDogStatus] == DOG_PRESENT) || _game._trigger)) {
-		_animationMode = 2;
+		local._animationMode = 2;
 		if (_game._trigger == 0) {
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x2F6));
@@ -494,6 +477,33 @@ static void room_607_parser() {
 	_action._inProgress = false;
 }
 
+void room_607_synchronize(Common::Serializer &s) {
+	s.syncAsUint32LE(local._dogTimer);
+	s.syncAsUint32LE(local._lastFrameTime);
+
+	s.syncAsByte(local._dogLoop);
+	s.syncAsByte(local._dogEatsRex);
+	s.syncAsByte(local._dogBarking);
+	s.syncAsByte(local._shopAvailable);
+
+	s.syncAsSint16LE(local._animationMode);
+	s.syncAsSint16LE(local._animationActive);
+	s.syncAsSint16LE(local._counter);
+}
+
+void room_607_preload() {
+	room_init_code_pointer = room_607_init;
+	room_daemon_code_pointer = room_607_daemon;
+	room_pre_parser_code_pointer = room_607_pre_parser;
+	room_parser_code_pointer = room_607_parser;
+
+	section_6_walker();
+	section_6_interface();
+	_scene->addActiveVocab(NOUN_OBNOXIOUS_DOG);
+	_scene->addActiveVocab(VERB_WALKTO);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

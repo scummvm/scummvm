@@ -19,37 +19,28 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section6.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene602::Scene602(RexNebularEngine *vm) : Scene6xx(vm) {
-	_lastSpriteIdx = -1;
-	_lastSequenceIdx = -1;
-	_cycleIndex = -1;
-	_safeMode = -1;
-}
+struct Scratch {
+	int16 _lastSpriteIdx;
+	int16 _lastSequenceIdx;
+	int16 _cycleIndex;
+	int16 _safeMode;
+};
 
-void room_602_synchronize(Common::Serializer &s) {
-	Scene6xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsSint16LE(_lastSpriteIdx);
-	s.syncAsSint16LE(_lastSequenceIdx);
-	s.syncAsSint16LE(_cycleIndex);
-	s.syncAsSint16LE(_safeMode);
-}
-
-void Scene602::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_SAFE);
-	_scene->addActiveVocab(NOUN_LASER_BEAM);
-}
 
 static void room_602_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('h', -1));
@@ -73,22 +64,22 @@ static void room_602_init() {
 		_scene->_hotspots.activate(NOUN_HOLE, false);
 
 	if (_globals[kSafeStatus] == 0) {
-		_lastSpriteIdx = _globals._spriteIndexes[2];
-		_cycleIndex = -1;
+		local._lastSpriteIdx = _globals._spriteIndexes[2];
+		local._cycleIndex = -1;
 	} else if (_globals[kSafeStatus] == 1) {
-		_lastSpriteIdx = _globals._spriteIndexes[2];
-		_cycleIndex = -2;
+		local._lastSpriteIdx = _globals._spriteIndexes[2];
+		local._cycleIndex = -2;
 	} else if (_globals[kSafeStatus] == 3) {
-		_lastSpriteIdx = _globals._spriteIndexes[3];
-		_cycleIndex = -2;
+		local._lastSpriteIdx = _globals._spriteIndexes[3];
+		local._cycleIndex = -2;
 	} else {
-		_lastSpriteIdx = _globals._spriteIndexes[3];
-		_cycleIndex = -1;
+		local._lastSpriteIdx = _globals._spriteIndexes[3];
+		local._cycleIndex = -1;
 	}
 
-	_lastSequenceIdx = _scene->_sequences.startCycle(_lastSpriteIdx, false, _cycleIndex);
-	_scene->_sequences.setDepth(_lastSequenceIdx, 14);
-	int idx = _scene->_dynamicHotspots.add(NOUN_SAFE, VERB_WALKTO, _lastSequenceIdx, Common::Rect(0, 0, 0, 0));
+	local._lastSequenceIdx = _scene->_sequences.startCycle(local._lastSpriteIdx, false, local._cycleIndex);
+	_scene->_sequences.setDepth(local._lastSequenceIdx, 14);
+	int idx = _scene->_dynamicHotspots.add(NOUN_SAFE, VERB_WALKTO, local._lastSequenceIdx, Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
 
 	if (_game._objects.isInRoom(OBJ_DOOR_KEY)) {
@@ -108,7 +99,7 @@ static void room_602_init() {
 		_game._player._facing = FACING_EAST;
 	}
 
-	sceneEntrySound();
+	section_6_music();
 	_game.loadQuoteSet(0x2F1, 0x2F2, 0x2F3, 0);
 
 	if (_scene->_roomChanged) {
@@ -118,7 +109,7 @@ static void room_602_init() {
 	}
 }
 
-void Scene602::handleSafeActions() {
+static void handleSafeActions() {
 	switch (_game._trigger) {
 	case 0:
 		_game._player._stepEnabled = false;
@@ -131,51 +122,51 @@ void Scene602::handleSafeActions() {
 		break;
 
 	case 1:
-		if (_safeMode == 1 || _safeMode == 3) {
-			if (_globals[kSafeStatus] == 0 && _safeMode == 1) {
+		if (local._safeMode == 1 || local._safeMode == 3) {
+			if (_globals[kSafeStatus] == 0 && local._safeMode == 1) {
 				_scene->_kernelMessages.reset();
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x2F1));
 				_scene->_sequences.addTimer(120, 4);
 			} else {
-				_scene->_sequences.remove(_lastSequenceIdx);
-				if (_safeMode == 3)
-					_lastSpriteIdx = _globals._spriteIndexes[2];
+				_scene->_sequences.remove(local._lastSequenceIdx);
+				if (local._safeMode == 3)
+					local._lastSpriteIdx = _globals._spriteIndexes[2];
 				else
-					_lastSpriteIdx = _globals._spriteIndexes[3];
+					local._lastSpriteIdx = _globals._spriteIndexes[3];
 
-				_lastSequenceIdx = _scene->_sequences.addSpriteCycle(_lastSpriteIdx, false, 12, 1, 0, 0);
-				_scene->_sequences.setDepth(_lastSequenceIdx, 14);
+				local._lastSequenceIdx = _scene->_sequences.addSpriteCycle(local._lastSpriteIdx, false, 12, 1, 0, 0);
+				_scene->_sequences.setDepth(local._lastSequenceIdx, 14);
 				if (_game._objects[OBJ_DOOR_KEY]._roomNumber == _scene->_currentSceneId)
 					_scene->_hotspots.activate(NOUN_DOOR_KEY, true);
 
-				_scene->_sequences.addSubEntry(_lastSequenceIdx,
+				_scene->_sequences.addSubEntry(local._lastSequenceIdx,
 					SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			}
 		} else {
-			_scene->_sequences.remove(_lastSequenceIdx);
+			_scene->_sequences.remove(local._lastSequenceIdx);
 			if (_globals[kSafeStatus] == 1)
-				_lastSpriteIdx = _globals._spriteIndexes[2];
+				local._lastSpriteIdx = _globals._spriteIndexes[2];
 			else
-				_lastSpriteIdx = _globals._spriteIndexes[3];
+				local._lastSpriteIdx = _globals._spriteIndexes[3];
 
-			_lastSequenceIdx = _scene->_sequences.startPingPongCycle(_lastSpriteIdx, false, 12, 1, 0, 0);
-			_scene->_sequences.setDepth(_lastSequenceIdx, 14);
+			local._lastSequenceIdx = _scene->_sequences.startPingPongCycle(local._lastSpriteIdx, false, 12, 1, 0, 0);
+			_scene->_sequences.setDepth(local._lastSequenceIdx, 14);
 			if (_game._objects[OBJ_DOOR_KEY]._roomNumber == _scene->_currentSceneId)
 				_scene->_hotspots.activate(NOUN_DOOR_KEY, false);
 
-			_scene->_sequences.addSubEntry(_lastSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
+			_scene->_sequences.addSubEntry(local._lastSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 		}
 		break;
 
 	case 2:
 	{
-		int synxIdx = _lastSequenceIdx;
-		_lastSequenceIdx = _scene->_sequences.startCycle(_lastSpriteIdx, false, _cycleIndex);
-		_scene->_sequences.setDepth(_lastSequenceIdx, 14);
-		_scene->_sequences.updateTimeout(_lastSequenceIdx, synxIdx);
-		int idx = _scene->_dynamicHotspots.add(NOUN_SAFE, VERB_WALKTO, _lastSequenceIdx, Common::Rect(0, 0, 0, 0));
+		int synxIdx = local._lastSequenceIdx;
+		local._lastSequenceIdx = _scene->_sequences.startCycle(local._lastSpriteIdx, false, local._cycleIndex);
+		_scene->_sequences.setDepth(local._lastSequenceIdx, 14);
+		_scene->_sequences.updateTimeout(local._lastSequenceIdx, synxIdx);
+		int idx = _scene->_dynamicHotspots.add(NOUN_SAFE, VERB_WALKTO, local._lastSequenceIdx, Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
-		if (_safeMode == 3) {
+		if (local._safeMode == 3) {
 			_scene->_kernelMessages.reset();
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0x2F3));
 			_scene->_sequences.addTimer(120, 4);
@@ -190,10 +181,10 @@ void Scene602::handleSafeActions() {
 		break;
 
 	case 4:
-		if (_safeMode == 1) {
+		if (local._safeMode == 1) {
 			if (_globals[kSafeStatus] == 2)
 				_globals[kSafeStatus] = 3;
-		} else if (_safeMode == 2) {
+		} else if (local._safeMode == 2) {
 			if (_globals[kSafeStatus] == 3)
 				_globals[kSafeStatus] = 2;
 			else
@@ -215,17 +206,17 @@ static void room_602_parser() {
 	else if (_action.isAction(VERB_WALK_THROUGH, NOUN_DOORWAY))
 		_scene->_nextSceneId = 603;
 	else if (_action.isAction(VERB_OPEN, NOUN_SAFE) && ((_globals[kSafeStatus] == 0) || (_globals[kSafeStatus] == 2))) {
-		_safeMode = 1;
-		_cycleIndex = -2;
+		local._safeMode = 1;
+		local._cycleIndex = -2;
 		handleSafeActions();
 	} else if (_action.isAction(VERB_CLOSE, NOUN_SAFE) && ((_globals[kSafeStatus] == 1) || (_globals[kSafeStatus] == 3))) {
-		_safeMode = 2;
-		_cycleIndex = -1;
+		local._safeMode = 2;
+		local._cycleIndex = -1;
 		handleSafeActions();
 	} else if (_action.isAction(VERB_UNLOCK, NOUN_COMBINATION, NOUN_SAFE)) {
 		if ((_globals[kSafeStatus] == 0) && (_game._difficulty != DIFFICULTY_HARD)) {
-			_safeMode = 3;
-			_cycleIndex = -2;
+			local._safeMode = 3;
+			local._cycleIndex = -2;
 			handleSafeActions();
 		}
 	} else if ((_action.isAction(VERB_PUT, NOUN_REARVIEW_MIRROR, NOUN_LASER_BEAM) || _action.isAction(VERB_PUT, NOUN_COMPACT_CASE, NOUN_LASER_BEAM)
@@ -236,7 +227,7 @@ static void room_602_parser() {
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[4]);
-			_scene->_sequences.remove(_lastSequenceIdx);
+			_scene->_sequences.remove(local._lastSequenceIdx);
 			_scene->loadAnimation(formAnimName('L', 1), 1);
 			break;
 
@@ -244,10 +235,10 @@ static void room_602_parser() {
 		{
 			_game._player._visible = true;
 			_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
-			_lastSpriteIdx = _globals._spriteIndexes[3];
-			_lastSequenceIdx = _scene->_sequences.startCycle(_lastSpriteIdx, false, -1);
-			_scene->_sequences.setDepth(_lastSequenceIdx, 14);
-			int idx = _scene->_dynamicHotspots.add(NOUN_SAFE, VERB_WALKTO, _lastSequenceIdx, Common::Rect(0, 0, 0, 0));
+			local._lastSpriteIdx = _globals._spriteIndexes[3];
+			local._lastSequenceIdx = _scene->_sequences.startCycle(local._lastSpriteIdx, false, -1);
+			_scene->_sequences.setDepth(local._lastSequenceIdx, 14);
+			int idx = _scene->_dynamicHotspots.add(NOUN_SAFE, VERB_WALKTO, local._lastSequenceIdx, Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(185, 113), FACING_NORTHWEST);
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 9);
@@ -356,6 +347,25 @@ static void room_602_parser() {
 	_action._inProgress = false;
 }
 
+void room_602_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._lastSpriteIdx);
+	s.syncAsSint16LE(local._lastSequenceIdx);
+	s.syncAsSint16LE(local._cycleIndex);
+	s.syncAsSint16LE(local._safeMode);
+}
+
+void room_602_preload() {
+	room_init_code_pointer = room_602_init;
+	room_parser_code_pointer = room_602_parser;
+
+	section_6_walker();
+	section_6_interface();
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_SAFE);
+	_scene->addActiveVocab(NOUN_LASER_BEAM);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

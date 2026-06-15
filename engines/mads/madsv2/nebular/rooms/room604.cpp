@@ -19,45 +19,30 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section6.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene604::Scene604(RexNebularEngine *vm) : Scene6xx(vm) {
-	_timebombHotspotId = -1;
-	_bombMode = -1;
-	_monsterFrame = -1;
+struct Scratch {
+	bool _monsterActive;
+	bool _animationActiveFl;
+	int16 _timebombHotspotId;
+	int16 _bombMode;
+	int16 _monsterFrame;
+	int32 _monsterTimer;
+};
 
-	_monsterTimer = 0;
+static Scratch local;
 
-	_monsterActive = false;
-	_animationActiveFl = false;
-}
-
-void room_604_synchronize(Common::Serializer &s) {
-	Scene6xx::synchronize(s);
-
-	s.syncAsSint16LE(_timebombHotspotId);
-	s.syncAsSint16LE(_bombMode);
-	s.syncAsSint16LE(_monsterFrame);
-
-	s.syncAsUint32LE(_monsterTimer);
-
-	s.syncAsByte(_monsterActive);
-	s.syncAsByte(_animationActiveFl);
-}
-
-void Scene604::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_SEA_MONSTER);
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_TIMEBOMB);
-}
 
 static void room_604_init() {
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('c', 0));
@@ -67,8 +52,8 @@ static void room_604_init() {
 
 	if (_globals[kTimebombStatus] == 1) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, -1);
-		_timebombHotspotId = _scene->_dynamicHotspots.add(NOUN_TIMEBOMB, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(_timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
+		local._timebombHotspotId = _scene->_dynamicHotspots.add(NOUN_TIMEBOMB, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(local._timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
 	}
 
 	if (_scene->_roomChanged)
@@ -76,7 +61,7 @@ static void room_604_init() {
 
 	_vm->_palette->setEntry(252, 63, 37, 26);
 	_vm->_palette->setEntry(253, 45, 24, 17);
-	_animationActiveFl = false;
+	local._animationActiveFl = false;
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(72, 149);
@@ -86,20 +71,20 @@ static void room_604_init() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 		_scene->loadAnimation(formAnimName('R', 1), 70);
-		_animationActiveFl = true;
+		local._animationActiveFl = true;
 	} else {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 	}
 
-	_monsterTimer = _scene->_frameStartTime;
-	_monsterActive = false;
+	local._monsterTimer = _scene->_frameStartTime;
+	local._monsterActive = false;
 
-	sceneEntrySound();
+	section_6_music();
 	_game.loadQuoteSet(0x2E7, 0x2E8, 0x2E9, 0x2EA, 0x2EB, 0x2EC, 0x2ED, 0x2EE, 0x2EF, 0x2F0, 0);
 }
 
-void Scene604::step() {
+static void room_604_daemon() {
 	switch (_game._trigger) {
 	case 70:
 		_game._player._visible = true;
@@ -118,19 +103,19 @@ void Scene604::step() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 		_game._player._stepEnabled = true;
-		_animationActiveFl = false;
+		local._animationActiveFl = false;
 		break;
 
 	default:
 		break;
 	}
 
-	if (_monsterActive && (_scene->_animation[0] != nullptr)) {
-		if (_scene->_animation[0]->getCurrentFrame() != _monsterFrame) {
-			_monsterFrame = _scene->_animation[0]->getCurrentFrame();
+	if (local._monsterActive && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != local._monsterFrame) {
+			local._monsterFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextMonsterFrame = -1;
 
-			switch (_monsterFrame) {
+			switch (local._monsterFrame) {
 			case 50:
 			case 137:
 			case 174:
@@ -165,24 +150,24 @@ void Scene604::step() {
 				break;
 			}
 
-			if ((nextMonsterFrame >= 0) && (nextMonsterFrame != _monsterFrame)) {
+			if ((nextMonsterFrame >= 0) && (nextMonsterFrame != local._monsterFrame)) {
 				_scene->_animation[0]->setCurrentFrame(nextMonsterFrame);
-				_monsterFrame = nextMonsterFrame;
+				local._monsterFrame = nextMonsterFrame;
 			}
 		}
 	}
 
-	if ((!_monsterActive && !_animationActiveFl) && (_scene->_frameStartTime > (_monsterTimer + 4))) {
-		_monsterTimer = _scene->_frameStartTime;
+	if ((!local._monsterActive && !local._animationActiveFl) && (_scene->_frameStartTime > (local._monsterTimer + 4))) {
+		local._monsterTimer = _scene->_frameStartTime;
 		if ((_vm->getRandomNumber(1, 1000) < 25) || !_game._visitedScenes._sceneRevisited) {
-			_monsterActive = true;
+			local._monsterActive = true;
 			_scene->freeAnimation();
 			_scene->loadAnimation(formAnimName('m', -1));
 		}
 	}
 }
 
-void Scene604::handleBombActions() {
+static void handleBombActions() {
 	switch (_game._trigger) {
 	case 0:
 		_game._player._stepEnabled = false;
@@ -190,7 +175,7 @@ void Scene604::handleBombActions() {
 		_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], false, 9, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 1, 3);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
-		if (_bombMode == 1)
+		if (local._bombMode == 1)
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_SPRITE, 3, 1);
 		else
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_SPRITE, 3, 2);
@@ -200,14 +185,14 @@ void Scene604::handleBombActions() {
 
 	case 1:
 		_globals._sequenceIndexes[6] = _scene->_sequences.startCycle(_globals._spriteIndexes[6], false, -1);
-		_timebombHotspotId = _scene->_dynamicHotspots.add(NOUN_TIMEBOMB, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(_timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
+		local._timebombHotspotId = _scene->_dynamicHotspots.add(NOUN_TIMEBOMB, VERB_WALKTO, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(local._timebombHotspotId, Common::Point(166, 118), FACING_NORTHEAST);
 		_game._objects.setRoom(OBJ_TIMEBOMB, _scene->_currentSceneId);
 		break;
 
 	case 2:
 		_scene->_sequences.remove(_globals._sequenceIndexes[6]);
-		_scene->_dynamicHotspots.remove(_timebombHotspotId);
+		_scene->_dynamicHotspots.remove(local._timebombHotspotId);
 		_game._objects.addToInventory(OBJ_TIMEBOMB);
 		break;
 
@@ -215,7 +200,7 @@ void Scene604::handleBombActions() {
 		_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[5]);
 		_game._player._visible = true;
 		_game._player._stepEnabled = true;
-		if (_bombMode == 1) {
+		if (local._bombMode == 1) {
 			_vm->_dialogs->show(60421);
 			_globals[kTimebombStatus] = TIMEBOMB_ACTIVATED;
 			_globals[kTimebombTimer] = 0;
@@ -276,7 +261,7 @@ static void room_604_parser() {
 		&& (_action.isObject(NOUN_BOMB) || _action.isObject(NOUN_BOMBS)))
 		_vm->_dialogs->show(60420);
 	else if (_action.isAction(VERB_PUT, NOUN_TIMEBOMB, NOUN_LEDGE) || _action.isAction(VERB_PUT, NOUN_TIMEBOMB, NOUN_VIEWPORT)) {
-		_bombMode = 1;
+		local._bombMode = 1;
 		if ((_game._difficulty == DIFFICULTY_HARD) || _globals[kWarnedFloodCity])
 			handleBombActions();
 		else if (
@@ -296,13 +281,13 @@ static void room_604_parser() {
 		}
 	} else if (_action.isAction(VERB_TAKE, NOUN_TIMEBOMB)) {
 		if (_game._trigger || !_game._objects.isInInventory(OBJ_TIMEBOMB)) {
-			_bombMode = 2;
+			local._bombMode = 2;
 			handleBombActions();
 		}
 	} else if (_action._lookFlag)
 		_vm->_dialogs->show(60411);
 	else if (_action.isAction(VERB_LOOK, NOUN_VIEWPORT)) {
-		if (_monsterActive) {
+		if (local._monsterActive) {
 			_vm->_dialogs->show(60413);
 		} else {
 			_vm->_dialogs->show(60412);
@@ -325,6 +310,29 @@ static void room_604_parser() {
 	_action._inProgress = false;
 }
 
+void room_604_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._timebombHotspotId);
+	s.syncAsSint16LE(local._bombMode);
+	s.syncAsSint16LE(local._monsterFrame);
+	s.syncAsUint32LE(local._monsterTimer);
+	s.syncAsByte(local._monsterActive);
+	s.syncAsByte(local._animationActiveFl);
+}
+
+
+void room_604_preload() {
+	room_init_code_pointer = room_604_init;
+	room_daemon_code_pointer = room_604_daemon;
+	room_parser_code_pointer = room_604_parser;
+
+	section_6_walker();
+	section_6_interface();
+	_scene->addActiveVocab(NOUN_SEA_MONSTER);
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_TIMEBOMB);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

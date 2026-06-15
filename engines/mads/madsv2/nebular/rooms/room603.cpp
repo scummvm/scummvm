@@ -19,33 +19,26 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section6.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
+namespace Rooms {
 
-Scene603::Scene603(RexNebularEngine *vm) : Scene6xx(vm) {
-	_compactCaseHotspotId = -1;
-	_noteHotspotId = -1;
-}
+struct Scratch {
+	int16 _compactCaseHotspotId;
+	int16 _noteHotspotId;
+};
 
-void room_603_synchronize(Common::Serializer &s) {
-	Scene6xx::synchronize(s);
+static Scratch local;
 
-	s.syncAsSint16LE(_compactCaseHotspotId);
-	s.syncAsSint16LE(_noteHotspotId);
-}
-
-void Scene603::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(VERB_WALKTO);
-	_scene->addActiveVocab(NOUN_COMPACT_CASE);
-	_scene->addActiveVocab(NOUN_NOTE);
-}
 
 static void room_603_init() {
 	if (_game._objects[OBJ_COMPACT_CASE]._roomNumber == _scene->_currentSceneId) {
@@ -53,8 +46,8 @@ static void room_603_init() {
 		_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', -1));
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
-		_compactCaseHotspotId = _scene->_dynamicHotspots.add(NOUN_COMPACT_CASE, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(_compactCaseHotspotId, Common::Point(250, 152), FACING_SOUTHEAST);
+		local._compactCaseHotspotId = _scene->_dynamicHotspots.add(NOUN_COMPACT_CASE, VERB_WALKTO, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(local._compactCaseHotspotId, Common::Point(250, 152), FACING_SOUTHEAST);
 	}
 
 	if ((_game._difficulty != DIFFICULTY_HARD) && (_game._objects[OBJ_NOTE]._roomNumber == _scene->_currentSceneId)) {
@@ -62,14 +55,14 @@ static void room_603_init() {
 		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('p', -1));
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 14);
-		_noteHotspotId = _scene->_dynamicHotspots.add(NOUN_NOTE, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
-		_scene->_dynamicHotspots.setPosition(_noteHotspotId, Common::Point(242, 118), FACING_NORTHEAST);
+		local._noteHotspotId = _scene->_dynamicHotspots.add(NOUN_NOTE, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		_scene->_dynamicHotspots.setPosition(local._noteHotspotId, Common::Point(242, 118), FACING_NORTHEAST);
 	}
 
 	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(113, 134);
 
-	sceneEntrySound();
+	section_6_music();
 }
 
 static void room_603_parser() {
@@ -91,7 +84,7 @@ static void room_603_parser() {
 			case 1:
 				_vm->_sound->command(9);
 				_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-				_scene->_dynamicHotspots.remove(_compactCaseHotspotId);
+				_scene->_dynamicHotspots.remove(local._compactCaseHotspotId);
 				_game._objects.addToInventory(OBJ_COMPACT_CASE);
 				_vm->_dialogs->showItem(OBJ_COMPACT_CASE, 60330);
 				break;
@@ -117,7 +110,7 @@ static void room_603_parser() {
 			} else if (_game._trigger == 1) {
 				_vm->_sound->command(9);
 				_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-				_scene->_dynamicHotspots.remove(_noteHotspotId);
+				_scene->_dynamicHotspots.remove(local._noteHotspotId);
 				_game._objects.addToInventory(OBJ_NOTE);
 				_scene->_sequences.remove(_globals._sequenceIndexes[3]);
 				_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
@@ -178,6 +171,23 @@ static void room_603_parser() {
 	_action._inProgress = false;
 }
 
+void room_603_synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(local._compactCaseHotspotId);
+	s.syncAsSint16LE(local._noteHotspotId);
+}
+
+void room_603_preload() {
+	room_init_code_pointer = room_603_init;
+	room_parser_code_pointer = room_603_parser;
+
+	section_6_walker();
+	section_6_interface();
+	_scene->addActiveVocab(VERB_WALKTO);
+	_scene->addActiveVocab(NOUN_COMPACT_CASE);
+	_scene->addActiveVocab(NOUN_NOTE);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

@@ -19,18 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section6.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
-
-void Scene605::setup() {
-	_game._player._spritesPrefix = "";
-	setAAName();
-}
+namespace Rooms {
 
 static void room_605_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('r', -1));
@@ -51,11 +51,11 @@ static void room_605_init() {
 	_game._player._stepEnabled = false;
 	_scene->_sequences.addTimer(600, 70);
 	_scene->_userInterface.setup(kInputLimitedSentences);
-	sceneEntrySound();
+	section_6_music();
 	_vm->_sound->command(22);
 }
 
-void Scene605::step() {
+static void room_605_daemon() {
 	if (_game._trigger == 70) {
 		_vm->_sound->command(23);
 		if (_globals[kResurrectRoom] >= 700)
@@ -67,10 +67,19 @@ void Scene605::step() {
 	}
 }
 
-static void room_605_parser() {
-	return;
+void room_605_synchronize(Common::Serializer &s) {
+	// No implementation
 }
 
+void room_605_preload() {
+	room_init_code_pointer = room_605_init;
+	room_daemon_code_pointer = room_605_daemon;
+
+	*player.series_name = '\0';
+	section_6_interface();
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS

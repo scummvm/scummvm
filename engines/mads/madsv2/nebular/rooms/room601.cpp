@@ -19,20 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "math/utils.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/mads/inventory.h"
+#include "mads/madsv2/nebular/mads/words.h"
+#include "mads/madsv2/nebular/rooms/section6.h"
+#include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
-
-void Scene601::setup() {
-	setPlayerSpritesPrefix();
-	setAAName();
-	_scene->addActiveVocab(NOUN_LASER_BEAM);
-	_scene->addActiveVocab(VERB_LOOK_AT);
-}
+namespace Rooms {
 
 static void room_601_init() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('x', 0));
@@ -61,10 +59,10 @@ static void room_601_init() {
 		_game._player._facing = FACING_SOUTHWEST;
 	}
 
-	sceneEntrySound();
+	section_6_music();
 }
 
-void Scene601::step() {
+static void room_601_daemon() {
 	switch (_game._trigger) {
 	case 70:
 		_game._player._visible = true;
@@ -161,6 +159,22 @@ static void room_601_parser() {
 	_action._inProgress = false;
 }
 
+void room_601_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
+void room_601_preload() {
+	room_init_code_pointer = room_601_init;
+	room_daemon_code_pointer = room_601_daemon;
+	room_parser_code_pointer = room_601_parser;
+
+	section_6_walker();
+	section_6_interface();
+	_scene->addActiveVocab(NOUN_LASER_BEAM);
+	_scene->addActiveVocab(VERB_LOOK_AT);
+}
+
+} // namespace Rooms
 } // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS
