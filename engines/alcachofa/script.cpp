@@ -745,6 +745,8 @@ private:
 			auto duration = g_engine->isV1() ? 60 : getNumberArg(0);
 			return TaskReturn::waitFor(new ScriptTimerTask(process(), duration));
 		}
+		case ScriptKernelTask::WaitForMouseClick:
+			return TaskReturn::waitFor(g_engine->input().waitForInput(process()));
 		case ScriptKernelTask::Fork:
 			g_engine->scheduler().createProcess<ScriptTask>(process().character(), *this);
 			return TaskReturn::finish(0); // 0 means this is the forking process

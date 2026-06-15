@@ -118,6 +118,10 @@ struct WaitForInputTask final : public Task {
 		do {
 			TASK_YIELD(1);
 		} while(!g_engine->input().wasAnyMousePressed());
+
+		// as script task this is run before room updates
+		// preventing the click to be reused in room interaction
+		g_engine->input().nextFrame();
 		TASK_END;
 	}
 
