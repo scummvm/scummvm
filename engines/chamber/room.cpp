@@ -1573,11 +1573,13 @@ byte *loadMursmSprite(byte index) {
 			byte sprIdx = *pinfo++;
 			uint16 flags = *pinfo++;
 			flags |= (*pinfo++) << 8;
-			uint16 cgaOfs = flags & 0x3FFF; /* offset in CGA flat buffer (pitch=20, 2 bytes/unit) */
+			uint16 cgaOfs = flags & 0x3FFF; /* byte offset into the CGA flat buffer (pitch = 20 bytes = 80 px) */
 
-			/* Convert CGA flat offset → EGA flat offset */
-			uint16 row   = cgaOfs / (20 * 2);       /* 20 CGA bytes × 2 bytes/unit = 40 bytes/row */
-			uint16 colCga = (cgaOfs % (20 * 2)) / 2; /* column in CGA bytes */
+			/* Convert CGA flat offset → EGA flat offset. Mirror the CGA path,
+			   which places the sub-sprite at byte cgaOfs in a 20-byte-pitch
+			   buffer: row = cgaOfs / 20, column = cgaOfs % 20 CGA bytes (× 4 px). */
+			uint16 row    = cgaOfs / 20;
+			uint16 colCga = cgaOfs % 20;
 			uint16 egaBufOfs = row * egaPitch + colCga * 4;
 
 			Graphics::Surface *surf = ega_puzzl_res->getSprite(sprIdx & 0x7F);
