@@ -44,8 +44,8 @@ namespace Gamos {
 
 GamosEngine::GamosEngine(OSystem *syst, const GamosGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc),
-	_messageProc(this),
 	_vm(this, callbackVMCallDispatcher),
+	_messageProc(this),
 	_txtInputVMAccess(_vm),
 	_randomSource("gamos") {
 	for(uint i = 0; i < 256; i++)

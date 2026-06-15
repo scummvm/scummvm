@@ -383,6 +383,8 @@ private:
 	Common::String _errMessage;
 
 	GameFile _gameFile;
+	
+	VM _vm;
 
 	byte _cmdByte = 0;
 
@@ -593,8 +595,6 @@ private:
 	uint32 _pathBottom = 0;
 
 	Common::Array<Common::Rect> _dirtyRects;
-
-	VM _vm;
 
 	bool _needReload = false;
 
