@@ -271,8 +271,8 @@ static void handleDialog() {
 		_scene->_userInterface.setup(kInputBuildingSentences);
 }
 
-static void giveToRex(int object) {
-	switch (object) {
+static void giveToRex(int object_id) {
+	switch (object_id) {
 	case 0:
 		_game._objects.addToInventory(OBJ_ALIEN_LIQUOR);
 		break;
