@@ -3649,7 +3649,7 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 	Animation mapAnim;
 	if (_aniArchive.loadAnimation(kMapAniId, mapAnim) && !mapAnim.empty()) {
 		const uint frameIdx = bigMapPartnerFrameAtTick((uint)mapAnim.size(),
-													   elapsedMs);
+													   elapsedMs, isLondon());
 
 		blitAnimFrameAnchored(scratch.surfacePtr(), mapAnim[frameIdx],
 							  0xfd, 0x50);

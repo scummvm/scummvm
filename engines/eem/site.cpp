@@ -714,7 +714,15 @@ uint oneShotThenLoopFrameAtTick(const uint8 *unfold, uint unfoldLen,
 	return (numFrames > 0) ? MIN<uint>(frame, numFrames - 1) : 0;
 }
 
-uint bigMapPartnerFrameAtTick(uint numFrames, uint32 elapsedMs) {
+uint bigMapPartnerFrameAtTick(uint numFrames, uint32 elapsedMs, bool london) {
+	if (london) {
+		static const uint8 kUnfoldL[]  = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+		static const uint8 kWaitSeqL[] = { 10, 11, 10, 10, 10, 10, 10, 10, 10 };
+		return oneShotThenLoopFrameAtTick(kUnfoldL, ARRAYSIZE(kUnfoldL),
+										  kWaitSeqL, ARRAYSIZE(kWaitSeqL),
+										  numFrames, elapsedMs);
+	}
+	// EEM1 (11-frame anim): entrance {0..8}, idle `_BigMapWaitSeq` {9,..,10,..}.
 	static const uint8 kUnfold[]  = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
 	static const uint8 kWaitSeq[] = { 9, 9, 9, 9, 10, 9, 9, 9, 9 };
 	return oneShotThenLoopFrameAtTick(kUnfold, ARRAYSIZE(kUnfold),

@@ -47,8 +47,10 @@ uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs);
 /// from EEM1's, so the engine must use the EEM2 sequences for that variant.
 void setLondonAnimScripts(bool enabled);
 
-/// bigMapPartnerFrameAtTick: count-up 0..8 once, then loop `_BigMapWaitSeq`
-uint bigMapPartnerFrameAtTick(uint numFrames, uint32 elapsedMs);
+/// bigMapPartnerFrameAtTick: overview-map partner walk. EEM1 (11-frame anim):
+/// count-up 0..8 once, then idle `_BigMapWaitSeq`. London's anim 0x14/0x12 has
+/// 12 frames, so it uses a longer entrance and an idle that reaches frame 11.
+uint bigMapPartnerFrameAtTick(uint numFrames, uint32 elapsedMs, bool london);
 
 /// bigMapDetailPartnerFrameAtTick: zoomed-view partner frame. Same two-phase shape
 /// as `bigMapPartnerFrameAtTick`.
