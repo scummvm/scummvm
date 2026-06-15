@@ -27,7 +27,7 @@
 #include "mads/madsv2/nebular/mads/inventory.h"
 #include "mads/madsv2/nebular/mads/words.h"
 #include "mads/madsv2/nebular/rooms/section3.h"
-#include "mads/madsv2/nebular/rooms/conversation.h"
+#include "mads/madsv2/nebular/rooms/dialog.h"
 #include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
@@ -47,9 +47,9 @@ struct Scratch {
 	bool _slacheReady;
 	bool _slacheInitFl;
 	char _subQuote2[256];
-	Conversation _dialog1;
-	Conversation _dialog2;
-	Conversation _dialog3;
+	Dialog _dialog1;
+	Dialog _dialog2;
+	Dialog _dialog3;
 };
 
 static Scratch local;
@@ -454,7 +454,7 @@ static void room_319_parser() {
 				if (local._nextAction1 != local._nextAction2) {
 					_scene->_sequences.addTimer(4, 2);
 				} else {
-					Conversation *curDialog;
+					Dialog *curDialog;
 					int nextDocQuote;
 					if ((_action._activeAction._verbId == 0x168) || (_action._activeAction._verbId == 0x167)) {
 						curDialog = &local._dialog1;
@@ -486,7 +486,7 @@ static void room_319_parser() {
 				if (local._nextAction1 != local._nextAction2) {
 					_scene->_sequences.addTimer(4, 2);
 				} else {
-					Conversation *curDialog;
+					Dialog *curDialog;
 					int nextDocQuote;
 					if ((_action._activeAction._verbId == 0x168) || (_action._activeAction._verbId == 0x169) || (_action._activeAction._verbId == 0x167)) {
 						curDialog = &local._dialog1;

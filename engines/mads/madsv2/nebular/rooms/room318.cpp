@@ -26,7 +26,7 @@
 #include "mads/madsv2/nebular/mads/words.h"
 #include "mads/madsv2/nebular/rooms/section3.h"
 #include "mads/madsv2/nebular/rooms/thunks.h"
-#include "mads/madsv2/nebular/rooms/conversation.h"
+#include "mads/madsv2/nebular/rooms/dialog.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -46,7 +46,7 @@ struct Scratch {
 	bool _explosionFl;
 	int32 _lastFrameCounter = 0;
 	char _subQuote2[256];
-	Conversation _dialog1;
+	Dialog _dialog1;
 };
 
 static Scratch local;

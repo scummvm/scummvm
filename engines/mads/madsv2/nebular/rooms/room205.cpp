@@ -22,7 +22,7 @@
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/conversation.h"
+#include "mads/madsv2/nebular/rooms/dialog.h"
 #include "mads/madsv2/nebular/mads/inventory.h"
 #include "mads/madsv2/nebular/mads/words.h"
 #include "mads/madsv2/nebular/rooms/section2.h"
@@ -38,7 +38,7 @@ struct Scratch {
 	long _chickenTime;
 	bool _beingKicked;
 	int16 _kernelMessage;
-	Conversation _dialog1;
+	Dialog _dialog1;
 };
 
 static Scratch local;

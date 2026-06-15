@@ -27,7 +27,7 @@
 #include "mads/madsv2/nebular/rooms/section3.h"
 #include "mads/madsv2/nebular/rooms/forcefield.h"
 #include "mads/madsv2/nebular/rooms/thunks.h"
-#include "mads/madsv2/nebular/rooms/conversation.h"
+#include "mads/madsv2/nebular/rooms/dialog.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -47,8 +47,8 @@ struct Scratch {
 	int32 _prisonerTimer;
 	char _subQuote2[256];
 
-	Conversation _dialog1;
-	Conversation _dialog2;
+	Dialog _dialog1;
+	Dialog _dialog2;
 	Forcefield _forcefield;
 };
 

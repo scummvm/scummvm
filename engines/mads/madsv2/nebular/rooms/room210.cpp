@@ -22,7 +22,7 @@
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/nebular.h"
-#include "mads/madsv2/nebular/rooms/conversation.h"
+#include "mads/madsv2/nebular/rooms/dialog.h"
 #include "mads/madsv2/nebular/mads/inventory.h"
 #include "mads/madsv2/nebular/mads/words.h"
 #include "mads/madsv2/nebular/rooms/section2.h"
@@ -46,13 +46,13 @@ struct Scratch {
 	bool _twinklesTalk2;
 	int32 _doorway;
 	char _subQuote2[256];
-	Conversation _conv1;
-	Conversation _conv2;
-	Conversation _conv3;
-	Conversation _conv5;
-	Conversation _conv6;
-	Conversation _conv7;
-	Conversation _conv8;
+	Dialog _conv1;
+	Dialog _conv2;
+	Dialog _conv3;
+	Dialog _conv5;
+	Dialog _conv6;
+	Dialog _conv7;
+	Dialog _conv8;
 };
 
 static Scratch local;

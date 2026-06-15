@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MADS_NEBULAR_ROOMS_CONVERATION_H
-#define MADS_NEBULAR_ROOMS_CONVERATION_H
+#ifndef MADS_NEBULAR_ROOMS_DIALOG_H
+#define MADS_NEBULAR_ROOMS_DIALOG_H
 
 #include "mads/madsv2/engine.h"
 
@@ -31,7 +31,7 @@ namespace Rooms {
 
 #define MAX_CONV_MESSAGE 10
 
-class Conversation {
+class Dialog {
 public:
 	int _globalId;
 	int _count;

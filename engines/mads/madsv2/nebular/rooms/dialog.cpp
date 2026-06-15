@@ -23,14 +23,14 @@
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/quote.h"
-#include "mads/madsv2/nebular/rooms/conversation.h"
+#include "mads/madsv2/nebular/rooms/dialog.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-void Conversation::setup(int globalId, ...) {
+void Dialog::setup(int globalId, ...) {
 	va_list va;
 	va_start(va, globalId);
 
@@ -53,7 +53,7 @@ void Conversation::setup(int globalId, ...) {
 	_globalId = globalId;
 }
 
-void Conversation::set(int quoteId, ...) {
+void Dialog::set(int quoteId, ...) {
 	global[_globalId] = 0;
 
 	va_list va;
@@ -75,7 +75,7 @@ void Conversation::set(int quoteId, ...) {
 	va_end(va);
 }
 
-int Conversation::read(int quoteId) {
+int Dialog::read(int quoteId) {
 	uint16 flags = global[_globalId];
 	int count = 0;
 
@@ -91,7 +91,7 @@ int Conversation::read(int quoteId) {
 	return count;
 }
 
-void Conversation::write(int quoteId, bool flag) {
+void Dialog::write(int quoteId, bool flag) {
 	for (int idx = 0; idx < _count; ++idx) {
 		if (_quotes[idx] == quoteId) {
 			// Found index, so set or clear the flag
@@ -107,7 +107,7 @@ void Conversation::write(int quoteId, bool flag) {
 	}
 }
 
-void Conversation::start() {
+void Dialog::start() {
 	inter_reset_dialog();
 
 	// Loop through each of the quotes loaded into the conversation

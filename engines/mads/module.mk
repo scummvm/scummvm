@@ -193,7 +193,7 @@ MODULE_OBJS += \
 	madsv2/nebular/rooms/section6.o \
 	madsv2/nebular/rooms/section7.o \
 	madsv2/nebular/rooms/section8.o \
-	madsv2/nebular/rooms/conversation.o \
+	madsv2/nebular/rooms/dialog.o \
 	madsv2/nebular/rooms/forcefield.o \
 	madsv2/nebular/rooms/teleporter.o \
 	madsv2/phantom/mads/mads.o \

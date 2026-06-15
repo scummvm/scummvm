@@ -25,7 +25,7 @@
 #include "mads/madsv2/nebular/mads/inventory.h"
 #include "mads/madsv2/nebular/mads/words.h"
 #include "mads/madsv2/nebular/rooms/section6.h"
-#include "mads/madsv2/nebular/rooms/conversation.h"
+#include "mads/madsv2/nebular/rooms/dialog.h"
 #include "mads/madsv2/nebular/rooms/thunks.h"
 
 namespace MADS {
@@ -56,8 +56,8 @@ struct Scratch {
 	int16 _defaultDialogPos_x;
 	int16 _defaultDialogPos_y;
 	int32 _ratTimer;
-	Conversation _dialog1;
-	Conversation _dialog2;
+	Dialog _dialog1;
+	Dialog _dialog2;
 };
 
 static Scratch local;
