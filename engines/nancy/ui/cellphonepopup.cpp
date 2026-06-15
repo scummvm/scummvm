@@ -252,6 +252,8 @@ void CellPhonePopup::open() {
 	_directoryScroll = 0;
 	_directorySelection = 0;
 	_closeButtonHovered = false;
+	_scrollUpHovered = false;
+	_scrollDownHovered = false;
 
 	drawChrome();
 	drawScreenContent();
@@ -1002,20 +1004,31 @@ const UICL::ThreeRectWidget &CellPhonePopup::scrollDownButton() const {
 
 void CellPhonePopup::drawDirectoryArrows() {
 	// Up/down scroll arrows are not in the chrome image; blit on every redraw.
+	// The pressed (lit) sprite is used while the cursor is over the arrow.
 	const UICL::ThreeRectWidget &up = scrollUpButton();
 	const UICL::ThreeRectWidget &down = scrollDownButton();
 
 	const Common::Point chunkOrigin(_screenPosition.left, _screenPosition.top);
 
-	if (!up.srcRectIdle.isEmpty() && !up.destRect.isEmpty()) {
-		_drawSurface.blitFrom(_spritesImage, up.srcRectIdle,
-								Common::Point(up.destRect.left - chunkOrigin.x,
-												up.destRect.top - chunkOrigin.y));
+	if (!up.destRect.isEmpty()) {
+		const Common::Rect &upSrc = (_scrollUpHovered && !up.srcRectPressed.isEmpty())
+			? up.srcRectPressed
+			: up.srcRectIdle;
+		if (!upSrc.isEmpty()) {
+			_drawSurface.blitFrom(_spritesImage, upSrc,
+									Common::Point(up.destRect.left - chunkOrigin.x,
+													up.destRect.top - chunkOrigin.y));
+		}
 	}
-	if (!down.srcRectIdle.isEmpty() && !down.destRect.isEmpty()) {
-		_drawSurface.blitFrom(_spritesImage, down.srcRectIdle,
-								Common::Point(down.destRect.left - chunkOrigin.x,
-												down.destRect.top - chunkOrigin.y));
+	if (!down.destRect.isEmpty()) {
+		const Common::Rect &downSrc = (_scrollDownHovered && !down.srcRectPressed.isEmpty())
+			? down.srcRectPressed
+			: down.srcRectIdle;
+		if (!downSrc.isEmpty()) {
+			_drawSurface.blitFrom(_spritesImage, downSrc,
+									Common::Point(down.destRect.left - chunkOrigin.x,
+													down.destRect.top - chunkOrigin.y));
+		}
 	}
 
 	// Selection indicator (dirArrowSrc sprite) at the dirCursorSrc column,
@@ -1174,7 +1187,12 @@ bool CellPhonePopup::consumeReturnScene(SceneChangeDescription &out) {
 // --------------------------------------------------------------------
 
 int CellPhonePopup::rowPitch() const {
-	// Original (FUN_004d8476): pitch = dirCursorSrc.height + 8.
+	// Email rows are sized by the unread/selected icon so they don't
+	// overlap; directory and search lists use the compact arrow-cursor
+	// pitch.
+	if (_screenState == kEmailList && !_uiclData->emailIconUnread.isEmpty()) {
+		return _uiclData->emailIconUnread.height() + 1;
+	}
 	const Common::Rect &cursor = _uiclData->dirCursorSrc;
 	if (!cursor.isEmpty()) {
 		return cursor.height() + 8;
@@ -1183,7 +1201,11 @@ int CellPhonePopup::rowPitch() const {
 }
 
 int CellPhonePopup::rowTopScreen() const {
-	// First row's Y (screen). Original anchors on dirCursorSrc.top - 5.
+	// Email list anchors on the zoomed-chrome list container; everything
+	// else stacks under the arrow-cursor row.
+	if (_screenState == kEmailList && !_uiclData->emailListContainer.isEmpty()) {
+		return _uiclData->emailListContainer.top;
+	}
 	const Common::Rect &cursor = _uiclData->dirCursorSrc;
 	if (!cursor.isEmpty()) {
 		return cursor.top - 5;
@@ -1196,7 +1218,9 @@ uint CellPhonePopup::maxDirectoryRows() const {
 	if (pitch <= 0) {
 		return 0;
 	}
-	const int yLimit = _uiclData->welcomeScreen.destRect.bottom;
+	const int yLimit = (_screenState == kEmailList && !_uiclData->emailListContainer.isEmpty())
+		? _uiclData->emailListContainer.bottom
+		: _uiclData->welcomeScreen.destRect.bottom;
 	int y = rowTopScreen();
 	uint count = 0;
 	while (y + pitch < yLimit) {
@@ -1472,6 +1496,19 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 	}
 
 	const Common::Point chunkMouse = mouseToChunkCoords(input.mousePos);
+
+	// Light the up/down arrows on hover in any state that uses them.
+	const bool arrowsActive = _screenState == kDirectory || isLinkListMode() ||
+								_screenState == kContentView;
+	const bool overUp = arrowsActive &&
+			scrollUpButton().destRect.contains(chunkMouse);
+	const bool overDown = arrowsActive && !overUp &&
+			scrollDownButton().destRect.contains(chunkMouse);
+	if (overUp != _scrollUpHovered || overDown != _scrollDownHovered) {
+		_scrollUpHovered = overUp;
+		_scrollDownHovered = overDown;
+		drawScreenContent();
+	}
 
 	// Help "?" button: opens the help page in the content view. Reachable
 	// from any interactive state (except when already showing it).

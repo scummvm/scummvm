@@ -193,6 +193,8 @@ private:
 	Graphics::ManagedSurface _spritesImage;
 
 	bool _closeButtonHovered = false;
+	bool _scrollUpHovered = false;
+	bool _scrollDownHovered = false;
 
 	ScreenState _screenState = kWelcome;
 
