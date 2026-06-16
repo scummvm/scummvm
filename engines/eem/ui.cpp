@@ -3160,11 +3160,11 @@ void EEMEngine::doBigMap() {
 				mapLastTick = now;
 				drawBigMapOverview(now - mapStartTick);
 				if (isLondon()) {
-					cyclePaletteRange(0xf4, 0xf9);
-					cyclePaletteRange(0xfa, 0xff);
+					cyclePaletteRangeReverse(0xf4, 0xf9);
+					cyclePaletteRangeReverse(0xfa, 0xff);
 				} else {
-					cyclePaletteRange(0xf7, 0xfa);
-					cyclePaletteRange(0xfb, 0xfe);
+					cyclePaletteRangeReverse(0xf7, 0xfa);
+					cyclePaletteRangeReverse(0xfb, 0xfe);
 				}
 			}
 			g_system->updateScreen();
@@ -3196,6 +3196,8 @@ void EEMEngine::doBigMap() {
 
 		int scrollX = MAX<int>(0, MIN<int>(mapW - kMapWinW, zoomX));
 		int scrollY = MAX<int>(0, MIN<int>(mapH - kMapWinH, zoomY));
+
+		setSitePalette(isLondon() ? 0x3a : 0x23);
 
 		const uint32 detailStartTick = g_system->getMillis();
 		drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH, 0);
@@ -3381,8 +3383,8 @@ void EEMEngine::doBigMap() {
 				drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH,
 					now - detailStartTick);
 			if (frameTick && isLondon()) {
-				cyclePaletteRange(0xee, 0xf2);
-				cyclePaletteRange(0xea, 0xed);
+				cyclePaletteRangeReverse(0xee, 0xf2);
+				cyclePaletteRangeReverse(0xea, 0xed);
 			}
 			g_system->updateScreen();
 			g_system->delayMillis(10);
