@@ -72,12 +72,14 @@
 #include "director/lingo/xlibs/f/flushxobj.h"
 #include "director/lingo/xlibs/f/fplayxobj.h"
 #include "director/lingo/xlibs/f/fsutil.h"
+#include "director/lingo/xlibs/f/flushmousexfcn.h"
 #include "director/lingo/xlibs/g/genutils.h"
 #include "director/lingo/xlibs/g/getscreenrectsxfcn.h"
 #include "director/lingo/xlibs/g/getscreensizexfcn.h"
 #include "director/lingo/xlibs/g/getsoundinlevel.h"
 #include "director/lingo/xlibs/g/gpid.h"
 #include "director/lingo/xlibs/g/getuinfo.h"
+#include "director/lingo/xlibs/g/getsoundxfcn.h"
 #include "director/lingo/xlibs/h/henry.h"
 #include "director/lingo/xlibs/h/hitmap.h"
 #include "director/lingo/xlibs/i/inixobj.h"
@@ -298,6 +300,7 @@ static const struct XLibProto {
 	XLIBDEF(FindSys,			kXObj,			400),	// D4
 	XLIBDEF(FindWin,			kXObj,			400),	// D4
 	XLIBDEF(FinderEventsXCMD,	kXObj,			400),	// D4
+	XLIBDEF(FlushMouseXFCN,			kXObj,					300),	// D3
 	XLIBDEF(FlushXObj,			kXObj,			300),	// D3
 	XLIBDEF(FPlayXObj,			kXObj,			200),	// D2
 	XLIBDEF(GenUtilsXObj,		kXObj,			400),	// D4
@@ -305,6 +308,7 @@ static const struct XLibProto {
 	XLIBDEF(GetScreenRectsXFCN,	kXObj,			300),	// D3
 	XLIBDEF(GetScreenSizeXFCN,	kXObj,			300),	// D3
 	XLIBDEF(GetSoundInLevelXObj,kXObj,			400),	// D4
+	XLIBDEF(GetSoundXFCN,			kXObj,					300),	// D3
 	XLIBDEF(GetUInfoXObj,			kXObj,					400),	// D4
 	XLIBDEF(GpidXObj,			kXObj,			400),	// D4
 	XLIBDEF(HenryXObj,			kXObj,			400),	// D4
@@ -358,7 +362,7 @@ static const struct XLibProto {
 	XLIBDEF(QTVR,				kXObj,			400),	// D4
 	XLIBDEF(QtvrxtraXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(Quicktime,			kXObj,			300),	// D3
-	XLIBDEF(RearWindowXObj,		kXObj,			400),	// D4
+	XLIBDEF(RearWindowXObj,		kXObj,			300),	// D3
 	XLIBDEF(RegisterComponent,	kXObj,			400),	// D4
 	XLIBDEF(RegistryReaderXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(RemixXCMD,			kXObj,			300),	// D3

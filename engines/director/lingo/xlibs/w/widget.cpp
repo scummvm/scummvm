@@ -30,7 +30,8 @@
 /**************************************************
  *
  * USED IN:
- * [insert game here]
+ * Alice: An Interactive Museum
+ * Yellow Brick Road
  *
  **************************************************/
 
