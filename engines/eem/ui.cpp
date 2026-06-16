@@ -4719,7 +4719,7 @@ void EEMEngine::doAccuse() {
 		if (_music && _voiceOn)
 			_music->stop();
 
-		playAnm(Common::Path("SCRAPBK.ANI"), 120,
+		playAnm(Common::Path(isLondon() ? "SCRAP.ANM" : "SCRAPBK.ANI"), 120,
 				/* holdLastFrame= */ false);
 
 		displayScrapbookExtra(mn);
