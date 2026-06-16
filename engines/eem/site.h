@@ -103,6 +103,10 @@ private:
 	int  hotspotCursorId(uint siteNum, int idx) const;
 	void updateHotspotCursor(uint siteNum, int x, int y);
 	void onHotspotClicked(uint siteNum, uint hotIdx);
+	/// Show a site clue, then autosave the profile if @p forceSave is set (e.g.
+	/// a hotspot was newly marked seen) or it revealed a new notebook clue
+	/// (`_cluesFound` 0->1). Matches EEM1's per-clue persistence.
+	void displayClueAndAutosave(const byte *clueBlock, bool forceSave = false);
 	void initImpatienceCounter();
 	bool checkImpatienceCounter();
 	void notePartnerActivity();

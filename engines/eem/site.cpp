@@ -896,12 +896,8 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 			const uint16 clueOff = READ_LE_UINT16(idx + 2);
 			if (clueOff != 0xFFFF) {
 				const byte *clueBlock = _mystery->blobAt(clueOff);
-				if (clueBlock) {
-					// Partner-less BG so KD-anim doesn't ghost over the idle.
-					_vm->setPartnerEraseBg(&_bgSnapshot);
-					_vm->displayClue(clueBlock);
-					_vm->setPartnerEraseBg(nullptr);
-				}
+				if (clueBlock)
+					displayClueAndAutosave(clueBlock);
 			}
 		}
 		if (siteNum < Mystery::kVisitedSiteCap)
@@ -1721,6 +1717,26 @@ void SiteScreen::updateHotspotCursor(uint siteNum, int x, int y) {
 	_vm->setHotspotMouseCursor(siteControl || idx >= 0);
 }
 
+void SiteScreen::displayClueAndAutosave(const byte *clueBlock, bool forceSave) {
+	byte before[Mystery::kCluesFoundCap];
+	memcpy(before, _mystery->_cluesFound, sizeof(before));
+
+	_vm->setPartnerEraseBg(&_bgSnapshot);
+	_vm->displayClue(clueBlock);
+	_vm->setPartnerEraseBg(nullptr);
+
+	bool save = forceSave;
+	for (uint i = 0; !save && i < Mystery::kCluesFoundCap; i++)
+		save = !before[i] && _mystery->_cluesFound[i];
+
+	if (save) {
+		const Common::Error err = _vm->saveProfile(_vm->playerName());
+		if (err.getCode() != Common::kNoError)
+			warning("auto-save after clue failed: %s",
+					err.getDesc().c_str());
+	}
+}
+
 void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 	debugC(1, kDebugSite, "Site %u: hotspot %u clicked", siteNum, hotIdx);
 
@@ -1773,8 +1789,11 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 	if (spots) {
 		hotOrdinal = READ_LE_UINT16(spots + hotIdx * 14 + 0xa);
 	}
-	if (hotOrdinal < Mystery::kHotSpotsCap)
+	bool newlySeen = false;
+	if (hotOrdinal < Mystery::kHotSpotsCap) {
+		newlySeen = _mystery->_hotSpotsSeen[hotOrdinal] == 0;
 		_mystery->_hotSpotsSeen[hotOrdinal] = 1;
+	}
 	_mystery->_searchLocationNumber = (uint16)hotIdx;
 
 	// Bytes 8..9 of each 14-byte hotspot rect = byte offset to ClueBlock.
@@ -1785,29 +1804,8 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 		debugC(2, kDebugSite, "  hotspot %u -> clue offset 0x%04x",
 			   hotIdx, clueOff);
 		const byte *clueBlock = _mystery->blobAt(clueOff);
-		if (clueBlock) {
-			// Snapshot `_cluesFound` → detect new-clue 0→1 → autosave.
-			byte before[Mystery::kCluesFoundCap];
-			memcpy(before, _mystery->_cluesFound, sizeof(before));
-			_vm->setPartnerEraseBg(&_bgSnapshot);
-			_vm->displayClue(clueBlock);
-			_vm->setPartnerEraseBg(nullptr);
-			// New feature: autosave on new clue.
-			bool foundNewClue = false;
-			for (uint i = 0; i < Mystery::kCluesFoundCap; i++) {
-				if (!before[i] && _mystery->_cluesFound[i]) {
-					foundNewClue = true;
-					break;
-				}
-			}
-			if (foundNewClue) {
-				const Common::Error err =
-					_vm->saveProfile(_vm->playerName());
-				if (err.getCode() != Common::kNoError)
-					warning("auto-save after clue failed: %s",
-							err.getDesc().c_str());
-			}
-		}
+		if (clueBlock)
+			displayClueAndAutosave(clueBlock, /* forceSave= */ newlySeen);
 	}
 }
 // `_DoKDAnim(num) @ 168d:028a` + `_PlayAnimation @ 172b:1f46`:
