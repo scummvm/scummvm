@@ -752,13 +752,13 @@ void DisplayMan::initializeGraphicData() {
 
 			for (int16 projectileScaleIndex = 0; projectileScaleIndex < 6; projectileScaleIndex++) {
 				int16 bitmapByteCount = getScaledBitmapByteCount(projectileAspect->_byteWidth, projectileAspect->_height, _projectileScales[projectileScaleIndex]);
-				_derivedBitmapByteCount[derivedBitmapIndex] = bitmapByteCount;
+				_derivedBitmapByteCount[derivedBitmapIndex + projectileScaleIndex] = bitmapByteCount;
 
 				if (getFlag(projectileAspect->_graphicInfo, k0x0003_ProjectileAspectTypeMask) != k3_ProjectileAspectHasNone) {
-					_derivedBitmapByteCount[derivedBitmapIndex + 6] = bitmapByteCount;
+					_derivedBitmapByteCount[derivedBitmapIndex + 6 + projectileScaleIndex] = bitmapByteCount;
 
 					if (getFlag(projectileAspect->_graphicInfo, k0x0003_ProjectileAspectTypeMask) != k2_ProjectileAspectHasRotation)
-						_derivedBitmapByteCount[derivedBitmapIndex + 12] = bitmapByteCount;
+						_derivedBitmapByteCount[derivedBitmapIndex + 12 + projectileScaleIndex] = bitmapByteCount;
 				}
 			}
 		}
