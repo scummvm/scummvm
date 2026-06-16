@@ -41,6 +41,9 @@ struct MADSSavegameHeader {
 };
 
 class RexNebularEngine : public MADSV2Engine {
+private:
+	void showRecipe();
+
 public:
 	RexNebularEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 		MADSV2Engine(syst, gameDesc) {}
@@ -53,10 +56,10 @@ public:
 	void section_music(int section_num) override;
 	void global_section_constructor() override;
 	void global_daemon_code() override;
-	void global_pre_parser_code() override;
+	void global_pre_parser_code() override {}
 	void global_parser_code() override;
 	void global_error_code() override;
-	void global_room_init() override;
+	void global_room_init() override {}
 	void global_sound_driver() override;
 	void player_keep_walking() override;
 };

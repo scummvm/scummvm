@@ -111,7 +111,7 @@ extern void object_set_quality(int object_id, int quality_id, long quality_value
  * Called when the player examines an object from his inventory;
  * greys out main area, then loads & displays object sprite.
  */
-extern int object_examine(int number, long message, int speech);
+extern int object_examine(int number, long message, int speech = 0);
 
 extern void init_object();
 

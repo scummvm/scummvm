@@ -329,6 +329,9 @@ enum {
 
 #define INDEFINITE_TIMEOUT 9999999
 
+#define READGLOBAL32(INDEX) ((int32)global[INDEX] | ((int32)global[INDEX + 1] << 16))
+#define WRITEGLOBAL32(INDEX, VALUE) { uint32 v = VALUE; global[INDEX] = v & 0xffff; global[INDEX+1] = v >> 16; } while(0)
+
 extern void global_init_code();
 extern void global_section_constructor();
 extern void sync_room(Common::Serializer &s);
