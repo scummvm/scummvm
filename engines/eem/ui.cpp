@@ -2765,7 +2765,9 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 	const int lineH = _font.getFontHeight();
 	const uint clueMax = floppyMI ? clueCount : 30u;
 	const byte *ni = _mystery.noteIndex();
-	const uint16 niCount = _mystery.noteIndexCount();
+	const uint16 niCount = isLondon()
+		? (uint16)(_mystery.noteSectionSize() / 2)
+		: _mystery.noteIndexCount();
 
 	uint pageStart = 0;
 	Common::Array<uint> pageStack;
@@ -2808,26 +2810,11 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 				continue;
 			if (!ni || clueId >= niCount)
 				continue;
-			// Floppy: 7-byte entry (+0 text, +2 Jake, +4 Jenny, +6 score).
-			// CD: 4-byte entry (u16 textOff + u16 score).
-			Common::String txt;
-			if (floppyMI) {
-				const uint16 textOff = READ_LE_UINT16(ni + clueId * 7);
-				const byte *bb = _mystery.blobAt(0);
-				const uint32 dsz = _mystery.dataSize();
-				if (bb && textOff != 0 && textOff < dsz) {
-					const char *p = (const char *)(bb + textOff);
-					uint32 len = 0;
-					while (textOff + len < dsz && p[len] != 0)
-						len++;
-					txt = parseString(Common::String(p, len),
-									  _playerName, _partner);
-				}
-			} else {
-				const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
-				txt = parseString(_mystery.textAt(textOff),
-								  _playerName, _partner);
-			}
+			// Shared notebook lookup: honours London's 2-byte NoteIndex stride
+			// (this path previously hardcoded the EEM1 4-byte stride).
+			Common::String txt = notebookNoteText(clueId, ni, niCount, floppyMI,
+												  _mystery.blobAt(0),
+												  _mystery.dataSize());
 			if (txt.empty())
 				continue;
 
