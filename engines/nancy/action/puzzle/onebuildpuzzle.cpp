@@ -317,23 +317,29 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 
 			Common::Rect slot = piece.slotRect;
 
-			// Correct placement: bounding-box must fit within slot +- tolerance
-			// (piece is rotation 0, same size as slot)
+			// Bounding-box must fit within slot +- tolerance. The original
+			// engine doesn't check rotation separately; a rotated piece's
+			// dimensions are reflected in gameRect, so a non-fitting rotation
+			// is rejected by the rect inequalities below.
 			bool nearSlot = (piece.gameRect.left >= slot.left - _slotTolerance &&
 							 piece.gameRect.top  >= slot.top  - _slotTolerance &&
 							 piece.gameRect.right  <= slot.right  + _slotTolerance &&
 							 piece.gameRect.bottom <= slot.bottom + _slotTolerance);
 
-			bool correctRotation = (piece.curRotation == 0);
 			bool orderOk = !_orderedPlacement ||
 				(_piecesPlaced < (uint16)_placementOrder.size() &&
 				 _placementOrder[_piecesPlaced] == (int16)(_pickedUpPiece + 1));
 
-			if (nearSlot && correctRotation && orderOk) {
+			if (nearSlot && orderOk) {
 				piece.gameRect = piece.slotRect;
 				piece.placed = true;
 				_correctlyPlaced = true;
 				++_piecesPlaced;
+
+				// Skip pre-placed pieces
+				if (_piecesPlaced < _placementOrder.size() && _placementOrder[_piecesPlaced] - 1 < _pieces.size())
+					if (_pieces[_placementOrder[_piecesPlaced] - 1].isPreRotated)
+						++_piecesPlaced;
 			} else {
 				_correctlyPlaced = false;
 				if (!_freePlacement) {
