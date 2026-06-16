@@ -2498,9 +2498,9 @@ void EEMEngine::drawNotebookFrame(int &page) {
 	// `_DrawNotes` walks `_NoteIndex` for current page; word-wraps each
 	// found clue in `_NotebookRect`. Selected = color 0x3c.
 	// EEM2/London NoteIndex entries are 2 bytes (no points field), so its real
-	// clue count is the section size / 2. `noteIndexCount()` assumes the EEM1
-	// 4-byte stride (and stays that way for the accuse-scoring path, which is a
-	// separate London concern)
+	// clue count is the section size / 2; `noteIndexCount()` assumes the EEM1
+	// 4-byte stride and undercounts by half. The notebook, gallery, and accuse
+	// note lists all use the London count so no found clue is dropped.
 	const uint16 londonCount = isLondon()
 		? (uint16)(_mystery.noteSectionSize() / 2) : 0;
 	Common::Array<uint> found;
@@ -3768,7 +3768,8 @@ Common::String EEMEngine::accuseNoteText(uint clueId,
 			(const char *)(ctx.bufBaseNotes + textOff),
 			_playerName, _partner);
 	}
-	const uint16 textOff = READ_LE_UINT16(ctx.ni + clueId * 4);
+	const uint stride = isLondon() ? 2 : 4;
+	const uint16 textOff = READ_LE_UINT16(ctx.ni + clueId * stride);
 	return parseString(_mystery.textAt(textOff),
 					   _playerName, _partner);
 }
@@ -3875,7 +3876,13 @@ bool EEMEngine::doAccuseNotes() {
 	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return false;
 	const byte *ni = _mystery.noteIndex();
-	const uint16 niCount = _mystery.noteIndexCount();
+	// London's NoteIndex is 2-byte entries, so its real clue count is
+	// section size / 2; noteIndexCount() assumes EEM1's 4-byte stride and
+	// undercounts by half, which would drop the upper clues (e.g. answer
+	// clues 13/16 in the training case) from the selectable accuse list.
+	const uint16 niCount = isLondon()
+		? (uint16)(_mystery.noteSectionSize() / 2)
+		: _mystery.noteIndexCount();
 	if (!ni)
 		return false;
 
@@ -3891,7 +3898,10 @@ bool EEMEngine::doAccuseNotes() {
 
 	Common::Array<uint> found;
 	for (uint i = 0; i < niCount && i < Mystery::kCluesFoundCap; i++) {
-		if (_mystery._cluesFound[i] && _mystery.noteHasNotebookText(i))
+		const bool hasText = isLondon()
+			? (i < niCount)
+			: _mystery.noteHasNotebookText(i);
+		if (_mystery._cluesFound[i] && hasText)
 			found.push_back(i);
 	}
 
@@ -4671,15 +4681,19 @@ void EEMEngine::doAccuse() {
 			memset(blk->getPixels(), 0, kScreenWidth * kScreenHeight);
 			g_system->unlockScreen();
 		}
-		setSitePalette(6);
+		// `_DisplayCorrect` win background = `_BuildBackground(scene, 0x42, 0x14)`
+		// (frame PIC 0x3d + scene at 0x42,0x14, palette scene+1). EEM1 CD uses
+		// scene 5; EEM2/London uses scene 0x1b.
+		const uint winScene = isLondon() ? 0x1b : 5;
+		setSitePalette(winScene + 1);
 		Picture frame, scene;
 		if (_picsArchive.loadEntry(0x3d, frame)) {
 			g_system->copyRectToScreen(frame.surface.getPixels(),
 									   frame.surface.pitch, 0, 0,
 									   frame.surface.w, frame.surface.h);
 		}
-		if (5 < _sitesArchive.size() &&
-			_sitesArchive.loadEntry(5, scene)) {
+		if (winScene < _sitesArchive.size() &&
+			_sitesArchive.loadEntry(winScene, scene)) {
 			const int sx = 0x42, sy = 0x14;
 			const int sw = MIN<int>(scene.surface.w, kScreenWidth - sx);
 			const int sh = MIN<int>(scene.surface.h, kScreenHeight - sy);
