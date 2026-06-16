@@ -37,15 +37,8 @@
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/main.h"
 #include "mads/madsv2/nebular/sound_nebular.h"
-#include "mads/madsv2/nebular/rooms/section1.h"
-#include "mads/madsv2/nebular/rooms/section2.h"
-#include "mads/madsv2/nebular/rooms/section3.h"
-#include "mads/madsv2/nebular/rooms/section4.h"
-#include "mads/madsv2/nebular/rooms/section5.h"
-#include "mads/madsv2/nebular/rooms/section6.h"
-#include "mads/madsv2/nebular/rooms/section7.h"
-#include "mads/madsv2/nebular/rooms/section8.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -71,7 +64,7 @@ Common::Error RexNebularEngine::run() {
 	_soundManager->validate();
 
 	// Run the game
-//	RexNebular::dragonsphere_main();
+		RexNebular::nebular_main();
 
 	return Common::kNoError;
 }

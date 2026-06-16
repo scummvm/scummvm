@@ -72,6 +72,8 @@ MODULE_OBJS += \
 	madsv2/core/xms.o \
 	madsv2/nebular/nebular.o \
 	madsv2/nebular/global.o \
+	madsv2/nebular/main.o \
+	madsv2/nebular/main_menu.o \
 	madsv2/nebular/asound.o \
 	madsv2/nebular/sound_nebular.o \
 	madsv2/nebular/mads/mads.o \
