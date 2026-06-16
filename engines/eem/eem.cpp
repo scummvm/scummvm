@@ -1502,6 +1502,7 @@ Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	s.syncAsByte(_voiceOn);
 	if (_audio)
 		_audio->setVoiceEnabled(_voiceOn);
+	s.syncAsByte(_musicOn);
 
 	byte playerFemale = 0;
 	s.syncAsByte(playerFemale);
