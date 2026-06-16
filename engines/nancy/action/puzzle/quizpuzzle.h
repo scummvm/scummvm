@@ -47,7 +47,7 @@ protected:
 	Common::String getRecordTypeName() const override { return "QuizPuzzle"; }
 
 private:
-	static const int kMaxBoxes = 8;
+	static const int kMaxBoxes = 13;
 
 	// Format-specific read/execute implementations
 	void readDataOld(Common::SeekableReadStream &stream); // Nancy 8
@@ -75,7 +75,7 @@ private:
 	// Per-box answer data: up to 3 valid answers (case-insensitive match), plus
 	// an optional event flag to set when that box is answered correctly.
 	Common::String _answers[kMaxBoxes][3];
-	int16 _answerFlags[kMaxBoxes] = { -1, -1, -1, -1, -1, -1, -1, -1 };
+	int16 _answerFlags[kMaxBoxes] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
 	SoundDescription _correctSound;  // Nancy 8: global correct sound
 	Common::String _correctText;
@@ -87,6 +87,7 @@ private:
 
 	SceneChangeWithFlag _solveScene;   // scene to go to when all boxes are solved
 	SceneChangeWithFlag _cancelScene;  // scene to go to on cancel
+	Common::Rect _exitHotspot;         // Nancy 9+: viewport-relative cancel hotspot
 
 	// ---- Data (Nancy 9+) ----
 	char _cursorChar = '-';              // cursor character (configurable in Nancy 9)

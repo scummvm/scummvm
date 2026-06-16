@@ -138,7 +138,7 @@ void QuizPuzzle::readDataOld(Common::SeekableReadStream &stream) {
 // 0x32  49  doneSound (readNormal)
 // 0x63  30  done subtitle (skip)
 // 0x81  25  cancelScene
-// 0x9A  16  unknown (skip)
+// 0x9A  16  exitHotspot rect (4×sint32)
 // 0xAA  2   correctSoundChannel
 // 0xAC  2   wrongSoundChannel
 // 0xAE  1   skipEmptyOnEnter flag
@@ -172,7 +172,7 @@ void QuizPuzzle::readDataNew(Common::SeekableReadStream &stream) {
 	_doneText = readSubtitle(stream);
 
 	_cancelScene.readData(stream);
-	stream.skip(16); // unknown
+	readRect(stream, _exitHotspot);
 
 	_correctSoundChannel = stream.readUint16LE();
 	_wrongSoundChannel   = stream.readUint16LE();
@@ -585,6 +585,19 @@ void QuizPuzzle::handleInput(NancyInput &input) {
 		return;
 
 	char cursorChar = (g_nancy->getGameType() == kGameTypeNancy8) ? '-' : _cursorChar;
+
+	// Nancy 9+: exit hotspot at chunk +0x9A. Click cancels the puzzle.
+	if (g_nancy->getGameType() != kGameTypeNancy8 && !_exitHotspot.isEmpty()) {
+		Common::Rect exitScreen = NancySceneState.getViewport().convertViewportToScreen(_exitHotspot);
+		if (exitScreen.contains(input.mousePos)) {
+			g_nancy->_cursor->setCursorType(g_nancy->_cursor->_puzzleExitCursor);
+			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				_cancelled = true;
+				_state = kActionTrigger;
+			}
+			return;
+		}
+	}
 
 	// Hover over an unsolved text box: show the hotspot cursor and, on click,
 	// move the typing focus to that box.
