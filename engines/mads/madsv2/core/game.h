@@ -190,6 +190,7 @@ extern char config_file_name[20];
 extern char save_game_key[8];
 extern char restart_game_key[40];
 extern char save_game_buf[20];
+extern int last_keypressed;
 
 extern void (*game_menu_routine)();   /* Game Menu routines      */
 extern void (*game_menu_init)();
