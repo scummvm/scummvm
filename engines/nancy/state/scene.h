@@ -136,7 +136,10 @@ public:
 	void setNoHeldItem();
 	byte hasItem(int16 id) const;
 	byte getItemDisabledState(int16 id) const { return _flags.disabledItems[id]; }
-	void setItemDisabledState(int16 id, byte state) { _flags.disabledItems[id] = state; }
+	void setItemDisabledState(int16 id, byte state) {
+		if (id < _flags.disabledItems.size())
+			_flags.disabledItems[id] = state;
+	}
 
 	void installInventorySoundOverride(byte command, const SoundDescription &sound, const Common::String &caption, uint16 itemID);
 	void playItemCantSound(int16 itemID = -1, bool notHoldingSound = false);
