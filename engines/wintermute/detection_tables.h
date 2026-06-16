@@ -1464,6 +1464,21 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("goldencalf", "",
 		WME_ENTRY1s("data.dcp", "2e7bae5c1d0fd18f269147b834be2bc8", 1174553), Common::FR_FRA, ADGF_UNSTABLE, WME_1_8_11),
 
+	// The Golden Calf (Russian + English fanmade translation)
+	WME_WINENTRY("goldencalf", "Fanmade",
+		WME_ENTRY2s("data.dcp", "c70536681d839f9b4357938891402af3", 488532641,
+					"string.tab", "be536da5e13f23d8ceab3839a7bf4340", 133687), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
+
+	// The Golden Calf (German + English fanmade translation)
+	WME_WINENTRY("goldencalf", "Fanmade",
+		WME_ENTRY2s("data.dcp", "c611503c2c10137d1195878080cee2d1", 1174552,
+					"string.tab", "be536da5e13f23d8ceab3839a7bf4340", 133687), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
+
+	// The Golden Calf (French + English fanmade translation)
+	WME_WINENTRY("goldencalf", "Fanmade",
+		WME_ENTRY2s("data.dcp", "2e7bae5c1d0fd18f269147b834be2bc8", 1174553,
+					"string.tab", "be536da5e13f23d8ceab3839a7bf4340", 133687), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
+
 	// The Golden Calf (Spanish fanmade)
 	WME_WINENTRY("goldencalf", "Fanmade",
 		WME_ENTRY2s("data.dcp", "2e7bae5c1d0fd18f269147b834be2bc8", 1174553,
