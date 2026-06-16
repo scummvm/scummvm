@@ -123,6 +123,7 @@ MODULE_OBJS += \
 	madsv2/nebular/rooms/room351.o \
 	madsv2/nebular/rooms/room352.o \
 	madsv2/nebular/rooms/room353.o \
+	madsv2/nebular/rooms/room354.o \
 	madsv2/nebular/rooms/room357.o \
 	madsv2/nebular/rooms/room358.o \
 	madsv2/nebular/rooms/room359.o \

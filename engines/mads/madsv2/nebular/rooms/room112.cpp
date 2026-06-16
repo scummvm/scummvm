@@ -74,18 +74,12 @@ static void room_112_daemon() {
 	}
 }
 
-static void room_112_pre_parser() {
-	// No implementation
-}
-
-static void room_112_parser() {
+void room_112_synchronize(Common::Serializer &s) {
 	// No implementation
 }
 
 void room_112_preload() {
 	room_init_code_pointer = room_112_init;
-	room_pre_parser_code_pointer = room_112_pre_parser;
-	room_parser_code_pointer = room_112_parser;
 	room_daemon_code_pointer = room_112_daemon;
 
 	section_1_walker();

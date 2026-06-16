@@ -20,6 +20,7 @@
  */
 
 #include "mads/madsv2/core/config.h"
+#include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/global.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/pal.h"
@@ -33,9 +34,17 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-void section_7_interface() {
-	Common::strcpy_s(kernel.interface, kernel_interface_name(5));
-}
+extern void room_701_preload();
+extern void room_702_preload();
+extern void room_703_preload();
+extern void room_704_preload();
+extern void room_705_preload();
+extern void room_706_preload();
+extern void room_707_preload();
+extern void room_710_preload();
+extern void room_711_preload();
+extern void room_751_preload();
+extern void room_752_preload();
 
 void section_7_walker() {
 	g_engine->_soundManager->command(5);
@@ -57,6 +66,40 @@ void section_7_walker() {
 
 	pal_change_color(16, 10, 63, 63);
 	pal_change_color(17, 10, 45, 45);
+}
+
+void section_7_interface() {
+	Common::strcpy_s(kernel.interface, kernel_interface_name(5));
+}
+
+void section_7_init() {
+	player.scaling_velocity = true;
+}
+
+void section_7_constructor() {
+	room_preload_code_pointer = NULL;
+	room_init_code_pointer = NULL;
+	room_daemon_code_pointer = NULL;
+	room_pre_parser_code_pointer = NULL;
+	room_parser_code_pointer = NULL;
+	room_error_code_pointer = NULL;
+	room_shutdown_code_pointer = NULL;
+
+	switch (new_room) {
+	case 701: room_preload_code_pointer = room_701_preload; break;
+	case 702: room_preload_code_pointer = room_702_preload; break;
+	case 703: room_preload_code_pointer = room_703_preload; break;
+	case 704: room_preload_code_pointer = room_704_preload; break;
+	case 705: room_preload_code_pointer = room_705_preload; break;
+	case 706: room_preload_code_pointer = room_706_preload; break;
+	case 707: room_preload_code_pointer = room_707_preload; break;
+	case 710: room_preload_code_pointer = room_710_preload; break;
+	case 711: room_preload_code_pointer = room_711_preload; break;
+	case 751: room_preload_code_pointer = room_751_preload; break;
+	case 752: room_preload_code_pointer = room_752_preload; break;
+	}
+
+	room_himem_preload(new_room, SECTION);
 }
 
 void section_7_music() {
@@ -88,6 +131,14 @@ void section_7_music() {
 	default:
 		break;
 	}
+}
+
+void section_7_preload() {
+	section_init_code_pointer = section_7_init;
+	section_room_constructor = section_7_constructor;
+	section_music_reset_pointer = section_7_music;
+	section_daemon_code_pointer = NULL;
+	section_parser_code_pointer = NULL;
 }
 
 } // namespace Rooms

@@ -40,8 +40,9 @@ namespace RexNebular {
 namespace Rooms {
 
 Action _action;
-Scene _scene;
+Game _game;
 Globals _globals;
+Scene _scene;
 VM _vm;
 
 bool Action::isAction(int word1) const {
@@ -393,7 +394,7 @@ void Scene::Sequences::setMotion(int sequence_id, int flags,
 }
 
 void Scene::Sequences::updateTimeout(int old_sequence_id, int new_sequence_id) {
-	kernel_seq_copy_timeout(old_sequence_id, new_sequence_id);
+	kernel_seq_timeout(old_sequence_id, new_sequence_id);
 }
 
 void Scene::Sequences::scan() {

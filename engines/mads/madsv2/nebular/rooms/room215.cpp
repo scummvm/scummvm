@@ -149,6 +149,10 @@ static void room_215_parser() {
 	_action._inProgress = false;
 }
 
+void room_215_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
 void room_215_preload() {
 	room_init_code_pointer = room_215_init;
 	room_parser_code_pointer = room_215_parser;

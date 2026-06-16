@@ -20,6 +20,7 @@
  */
 
 #include "mads/madsv2/core/config.h"
+#include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/global.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/pal.h"
@@ -33,9 +34,14 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-void section_8_interface() {
-	Common::strcpy_s(kernel.interface, kernel_interface_name(5));
-}
+extern void room_801_preload();
+extern void room_802_preload();
+extern void room_803_preload();
+extern void room_804_preload();
+extern void room_805_preload();
+extern void room_807_preload();
+extern void room_808_preload();
+extern void room_810_preload();
 
 void section_8_walker() {
 	g_engine->_soundManager->command(5);
@@ -50,6 +56,37 @@ void section_8_walker() {
 
 	pal_change_color(16, 0x0A, 0x3F, 0x3F);
 	pal_change_color(17, 0x0A, 0x2D, 0x2D);
+}
+
+void section_8_interface() {
+	Common::strcpy_s(kernel.interface, kernel_interface_name(5));
+}
+
+void section_8_init() {
+	player.scaling_velocity = true;
+}
+
+void section_8_constructor() {
+	room_preload_code_pointer = NULL;
+	room_init_code_pointer = NULL;
+	room_daemon_code_pointer = NULL;
+	room_pre_parser_code_pointer = NULL;
+	room_parser_code_pointer = NULL;
+	room_error_code_pointer = NULL;
+	room_shutdown_code_pointer = NULL;
+
+	switch (new_room) {
+	case 801: room_preload_code_pointer = room_801_preload; break;
+	case 802: room_preload_code_pointer = room_802_preload; break;
+	case 803: room_preload_code_pointer = room_803_preload; break;
+	case 804: room_preload_code_pointer = room_804_preload; break;
+	case 805: room_preload_code_pointer = room_805_preload; break;
+	case 807: room_preload_code_pointer = room_807_preload; break;
+	case 808: room_preload_code_pointer = room_808_preload; break;
+	case 810: room_preload_code_pointer = room_810_preload; break;
+	}
+
+	room_himem_preload(new_room, SECTION);
 }
 
 void section_8_music() {
@@ -79,6 +116,14 @@ void section_8_music() {
 			break;
 		}
 	}
+}
+
+void section_8_preload() {
+	section_init_code_pointer = section_8_init;
+	section_room_constructor = section_8_constructor;
+	section_music_reset_pointer = section_8_music;
+	section_daemon_code_pointer = NULL;
+	section_parser_code_pointer = NULL;
 }
 
 } // namespace Rooms

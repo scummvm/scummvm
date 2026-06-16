@@ -88,6 +88,10 @@ static void room_213_parser() {
 	_action._inProgress = false;
 }
 
+void room_213_synchronize(Common::Serializer &s) {
+	// No implementation
+}
+
 void room_213_preload() {
 	room_init_code_pointer = room_213_init;
 	room_parser_code_pointer = room_213_parser;

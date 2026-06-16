@@ -37,8 +37,17 @@
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/main.h"
 #include "mads/madsv2/nebular/sound_nebular.h"
+#include "mads/madsv2/nebular/rooms/section1.h"
+#include "mads/madsv2/nebular/rooms/section2.h"
+#include "mads/madsv2/nebular/rooms/section3.h"
+#include "mads/madsv2/nebular/rooms/section4.h"
+#include "mads/madsv2/nebular/rooms/section5.h"
+#include "mads/madsv2/nebular/rooms/section6.h"
+#include "mads/madsv2/nebular/rooms/section7.h"
+#include "mads/madsv2/nebular/rooms/section8.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -70,22 +79,28 @@ Common::Error RexNebularEngine::run() {
 }
 
 void RexNebularEngine::global_init_code() {
-	int count;
-
-	for (count = 0; count < GLOBAL_LIST_SIZE; count++)
-		global[count] = 0;
+	RexNebular::global_init_code();
 }
 
 void RexNebularEngine::section_music(int section_num) {
-	
+	switch (section_num) {
+	case 1: Rooms::section_1_music(); break;
+	case 2: Rooms::section_2_music(); break;
+	case 3: Rooms::section_3_music(); break;
+	case 4: Rooms::section_4_music(); break;
+	case 5: Rooms::section_5_music(); break;
+	case 6: Rooms::section_6_music(); break;
+	case 7: Rooms::section_7_music(); break;
+	case 8: Rooms::section_8_music(); break;
+	}
 }
 
 void RexNebularEngine::global_section_constructor() {
-	
+	RexNebular::global_section_constructor();
 }
 
 void RexNebularEngine::syncRoom(Common::Serializer &s) {
-	
+	RexNebular::sync_room(s);
 }
 
 void RexNebularEngine::global_daemon_code() {

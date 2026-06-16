@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "mads/nebular/nebular.h"
 #include "mads/nebular/core/scene.h"
 #include "mads/nebular/nebular_scenes.h"
@@ -31,10 +30,20 @@ namespace MADSV2 {
 namespace RexNebular {
 namespace Rooms {
 
-void section_2_interface() {
-	int idx = (new_room == 216) ? 4 : 2;
-	Common::strcpy_s(kernel.interface, kernel_interface_name(idx));
-}
+extern void room_201_preload();
+extern void room_202_preload();
+extern void room_203_preload();
+extern void room_205_preload();
+extern void room_207_preload();
+extern void room_208_preload();
+extern void room_209_preload();
+extern void room_210_preload();
+extern void room_211_preload();
+extern void room_212_preload();
+extern void room_213_preload();
+extern void room_214_preload();
+extern void room_215_preload();
+extern void room_216_preload();
 
 void section_2_walker() {
 	_vm->_sound->command(5);
@@ -64,6 +73,72 @@ void section_2_walker() {
 
 	_vm->_palette->setEntry(16, 10, 63, 63);
 	_vm->_palette->setEntry(17, 10, 45, 45);
+}
+
+void section_2_interface() {
+	int idx = (new_room == 216) ? 4 : 2;
+	Common::strcpy_s(kernel.interface, kernel_interface_name(idx));
+}
+
+void section_2_init() {
+	player.scaling_velocity = true;
+}
+
+void section_2_constructor() {
+	room_preload_code_pointer = NULL;
+	room_init_code_pointer = NULL;
+	room_daemon_code_pointer = NULL;
+	room_pre_parser_code_pointer = NULL;
+	room_parser_code_pointer = NULL;
+	room_error_code_pointer = NULL;
+	room_shutdown_code_pointer = NULL;
+
+	switch (new_room) {
+	case 201:
+		room_preload_code_pointer = room_201_preload;
+		break;
+	case 202:
+		room_preload_code_pointer = room_202_preload;
+		break;
+	case 203:
+		room_preload_code_pointer = room_203_preload;
+		break;
+	case 205:
+		room_preload_code_pointer = room_205_preload;
+		break;
+	case 207:
+		room_preload_code_pointer = room_207_preload;
+		break;
+	case 208:
+		room_preload_code_pointer = room_208_preload;
+		break;
+	case 209:
+		room_preload_code_pointer = room_209_preload;
+		break;
+	case 210:
+		room_preload_code_pointer = room_210_preload;
+		break;
+	case 211:
+		room_preload_code_pointer = room_211_preload;
+		break;
+	case 212:
+		room_preload_code_pointer = room_212_preload;
+		break;
+	case 213:
+		room_preload_code_pointer = room_213_preload;
+		break;
+	case 214:
+		room_preload_code_pointer = room_214_preload;
+		break;
+	case 215:
+		room_preload_code_pointer = room_215_preload;
+		break;
+	case 216:
+		room_preload_code_pointer = room_216_preload;
+		break;
+	}
+
+	room_himem_preload(new_room, SECTION);
 }
 
 void section_2_music() {
@@ -114,6 +189,14 @@ void section_2_music() {
 		}
 	} else
 		_vm->_sound->command(2);
+}
+
+void section_2_preload() {
+	section_init_code_pointer = section_2_init;
+	section_room_constructor = section_2_constructor;
+	section_music_reset_pointer = section_2_music;
+	section_daemon_code_pointer = NULL;
+	section_parser_code_pointer = NULL;
 }
 
 } // namespace Rooms
