@@ -350,7 +350,8 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 				return;
 
 			if (_vm->getVersion() >= 600) {
-				if (_score->_scriptChannelScriptInstance.type == OBJECT) {
+				if (_score->_scriptChannelScriptInstance.type == OBJECT &&
+						_score->_scriptChannelScriptInstance.u.obj->getMethod(_lingo->_eventHandlerTypes[event.event]).type != VOIDSYM) {
 					event.scriptType = kScoreScript;
 					event.scriptId = CastMemberID(); // No ID for the script channel script
 					event.scriptInstance = _score->_scriptChannelScriptInstance.u.obj;
