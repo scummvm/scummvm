@@ -23,6 +23,7 @@
  *
  * USED IN:
  * Alice: An Interactive Museum
+ * Yellow Brick Road
  *
  *************************************/
 
@@ -233,16 +234,16 @@ X mDispose -- closes the RearWindow, releases its data, and the XObject itself f
 */
 
 static const MethodProto xlibMethods[] = {
-	{ "new",				RearWindowXObj::m_new,					1,	1,	400 },	// D4
-	{ "getappname",			RearWindowXObj::m_getAppName,			0,	0,	400 },	// D4
-	{ "GetMemoryNeeded",	RearWindowXObj::m_getMemoryNeeded,		0,	0,	400 },	// D4
-	{ "GetScreenBottom",	RearWindowXObj::m_getScreenBottom,		0,	0,	400 },	// D4
-	{ "GetScreenLeft",		RearWindowXObj::m_getScreenLeft,		0,	0,	400 },	// D4
-	{ "GetScreenRight",		RearWindowXObj::m_getScreenRight,		0,	0,	400 },	// D4
-	{ "GetScreenTop",		RearWindowXObj::m_getScreenTop,			0,	0,	400 },	// D4
-	{ "IndexColorToWindow",	RearWindowXObj::m_indexColorToWindow,	1,	1,	400 },	// D4
-	{ "PatToWindow",		RearWindowXObj::m_patToWindow,			1,	1,	400 },	// D4
-	{ "RGBColorToWindow",	RearWindowXObj::m_rgbColorToWindow,		3,	3,	400 },	// D4
+	{ "new",				RearWindowXObj::m_new,					1,	1,	300 },	// D3
+	{ "getappname",			RearWindowXObj::m_getAppName,			0,	0,	300 },	// D3
+	{ "GetMemoryNeeded",	RearWindowXObj::m_getMemoryNeeded,		0,	0,	300 },	// D3
+	{ "GetScreenBottom",	RearWindowXObj::m_getScreenBottom,		0,	0,	300 },	// D3
+	{ "GetScreenLeft",		RearWindowXObj::m_getScreenLeft,		0,	0,	300 },	// D3
+	{ "GetScreenRight",		RearWindowXObj::m_getScreenRight,		0,	0,	300 },	// D3
+	{ "GetScreenTop",		RearWindowXObj::m_getScreenTop,			0,	0,	300 },	// D3
+	{ "IndexColorToWindow",	RearWindowXObj::m_indexColorToWindow,	1,	1,	300 },	// D3
+	{ "PatToWindow",		RearWindowXObj::m_patToWindow,			1,	1,	300 },	// D3
+	{ "RGBColorToWindow",	RearWindowXObj::m_rgbColorToWindow,		3,	3,	300 },	// D3
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 

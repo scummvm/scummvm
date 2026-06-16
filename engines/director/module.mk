@@ -137,6 +137,8 @@ MODULE_OBJS = \
 	lingo/xlibs/m/mazexobj.o \
 	lingo/xlibs/m/myfolder.o \
 	lingo/xlibs/g/getuinfo.o \
+	lingo/xlibs/g/getsoundxfcn.o \
+	lingo/xlibs/f/flushmousexfcn.o \
 	lingo/xlibs/o/openbleedwindowxcmd.o \
 	lingo/xlibs/s/stagectl.o \
  	lingo/xlibs/p/playsoundmoviexobj.o \
