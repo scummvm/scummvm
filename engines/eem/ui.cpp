@@ -3296,8 +3296,8 @@ void EEMEngine::doBigMap() {
 						};
 						Common::Array<DetailMapHit> hits;
 						for (uint i = 0; i < _mystery.numSites(); i++) {
-							if (!_mystery._onSites[i] &&
-								i != _mystery._siteNumber)
+							// On-map flag alone, matching `_SearchMapButtons`.
+							if (!_mystery._onSites[i])
 								continue;
 							const byte *entry = _mystery.mapEntry(i);
 							if (!entry)
@@ -3607,7 +3607,9 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 	const bool haveCrime  = _picsArchive.getPicture(0xc6,  crimeM);
 
 	for (uint i = 0; i < _mystery.numSites(); i++) {
-		if (!_mystery._onSites[i] && i != _mystery._siteNumber)
+		// `_DrawBigMapButtons` gates markers on the on-map flag alone, never the
+		// current site: a sublocation (in-site jump, never flagged) must not draw.
+		if (!_mystery._onSites[i])
 			continue;
 		const byte *entry = _mystery.mapEntry(i);
 		if (!entry)
@@ -3685,7 +3687,9 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 
 	const bool floppyMap = _mystery.isLoaded() && isFloppy();
 	for (uint i = 0; i < _mystery.numSites(); i++) {
-		if (!_mystery._onSites[i] && i != _mystery._siteNumber)
+		// `_DrawBigMapButtons` gates markers on the on-map flag alone, never the
+		// current site: a sublocation (in-site jump, never flagged) must not draw.
+		if (!_mystery._onSites[i])
 			continue;
 		const byte *entry = _mystery.mapEntry(i);
 		if (!entry)
