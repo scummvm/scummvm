@@ -518,6 +518,8 @@ screenLoop:
 		case kScreenChooseMystery:
 			_nextScreen = kScreenInvalid;
 			doCaseSelection();
+			if (isLondon())
+				stopMusic();
 			if (_nextScreen == kScreenInvalid && _mystery.isLoaded())
 				_nextScreen = kScreenInitClues;
 			break;
@@ -547,6 +549,8 @@ screenLoop:
 
 		case kScreenNotebook:
 			doNotebook();
+			if (isLondon())
+				stopMusic();
 			if (!_mystery.isLoaded() && _nextScreen != kScreenAction)
 				_nextScreen = kScreenAction;
 			else if (_nextScreen == current)
@@ -555,6 +559,8 @@ screenLoop:
 
 		case kScreenGallery:
 			doGallery();
+			if (isLondon())
+				stopMusic();
 			if (!_mystery.isLoaded() && _nextScreen != kScreenAction)
 				_nextScreen = kScreenAction;
 			else if (_nextScreen == current)
@@ -593,6 +599,8 @@ screenLoop:
 
 		case kScreenAccuse:
 			doAccuse();
+			if (isLondon())
+				stopMusic();
 			if (!_mystery.isLoaded() && _nextScreen != kScreenAction)
 				_nextScreen = kScreenAction;
 			else if (_nextScreen == current)

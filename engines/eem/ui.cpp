@@ -1375,7 +1375,7 @@ void EEMEngine::doShowScrapbook(uint stage) {
 	const bool currentTier = (stage == _chainStage);
 
 	if (isLondon() && _music && _voiceOn)
-		_music->playMus(0x5d, /* loop= */ false);
+		_music->playMus(0x5d, /* loop= */ true);
 
 	int mystery = lo;
 	if (currentTier) {
@@ -2087,6 +2087,10 @@ void EEMEngine::doCaseSelection() {
 		warning("doCaseSelection: BOOK%u.NME failed to load", book);
 		return;
 	}
+
+	if (isLondon() && _music && _voiceOn)
+		_music->playMus(2, /* loop= */ true);
+
 	const uint listLen = MIN<uint>((uint)names.size(), stageHi - stageLo + 1);
 
 	Common::Array<bool> solvedFlags;
@@ -2322,9 +2326,23 @@ void EEMEngine::doNotebook() {
 	int hoveredNoteSlot = -1;
 	(void)hoveredNoteSlot;
 
+	const bool notebookFromSite = isLondon() && _lastScreen == kScreenSite;
+	if (_music && _voiceOn && notebookFromSite)
+		_music->playMus(30, /* loop= */ false);
+
 	drawNotebookFrame(page);
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
 	setInteractiveMouseCursor(notebookButtonAt(mouse.x, mouse.y));
+
+	if (isLondon() && _music && _voiceOn) {
+		while (notebookFromSite && _music->isPlaying() && !shouldQuit()) {
+			Common::Event drain;
+			while (g_system->getEventManager()->pollEvent(drain)) {}
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		}
+		_music->playMus(5, /* loop= */ true);
+	}
 
 	uint32 lastDraw = g_system->getMillis();
 	uint32 gizmoLastTick = lastDraw;
@@ -2586,6 +2604,9 @@ void EEMEngine::doGallery() {
 
 	Picture galBg;
 	const bool haveBg = _picsArchive.getPicture(0x3f, galBg);
+
+	if (isLondon() && _music && _voiceOn)
+		_music->playMus(5, /* loop= */ true);
 
 	const uint8 num = _mystery.numSuspects();
 
@@ -3492,7 +3513,7 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 	CursorMan.showMouse(true);
 	setSiteHotspotCursorId(6);
 	if (_music && _voiceOn)
-		_music->playMus(0x27, /* loop= */ false);
+		_music->playMus(0x27, /* loop= */ true);
 
 	uint page = 0;
 	drawScreen(page);
@@ -4192,6 +4213,9 @@ void EEMEngine::doAccuse() {
 
 	const byte *gd = _mystery.galleryData();
 
+	if (isLondon() && _music && _voiceOn)
+		_music->playMus(4, /* loop= */ true);
+
 	// `_DoAccuse @ 1df2:0c11` outer loop; ESC → NextScreen=3.
 	if (!doAccuseNotes()) {
 		if (_nextScreen == kScreenAccuse) {
@@ -4365,6 +4389,9 @@ void EEMEngine::doAccuse() {
 			}
 		}
 	}
+
+	if (isLondon() && _music && _voiceOn)
+		_music->playMus(33, /* loop= */ true);
 
 	// Wrap past empty slots (matches original DI advance).
 	if (slotRects[highlighted].isEmpty())

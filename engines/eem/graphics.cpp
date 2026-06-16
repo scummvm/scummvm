@@ -34,6 +34,7 @@
 #include "eem/audio.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
+#include "eem/music.h"
 #include "eem/site.h"
 
 namespace EEM {
@@ -379,6 +380,8 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 		const byte *kd = _mystery.kdTextIndex();
 		const uint16 hintOff = kd ? READ_LE_UINT16(kd + 0x0c) : 0xFFFF;
 		if (hintOff != 0xFFFF) {
+			if (_music && _voiceOn)
+				_music->playMus(40, /* loop= */ false);
 			Common::String hint =
 				parseString(_mystery.textAt(hintOff), _playerName, _partner);
 			Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
@@ -411,6 +414,7 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 			if (_audio && _voiceOn && kd)
 				_audio->sayKDDigital(kd, 6, _partner);
 			waitForInput(60000);
+			stopMusic();
 
 			g_system->copyRectToScreen(cleanBg.getPixels(), cleanBg.pitch,
 									   0, 0, kScreenWidth, kScreenHeight);
