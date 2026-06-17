@@ -78,8 +78,14 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 	// Reset opcode 6 init flag at the start of each new video.
 	// This ensures the per-wave init (clearBit, link table reset, wave state)
 	// fires exactly once per wave video, not every frame.
+	//
+	// Exception: seamless continuation segments (flag 0x40, e.g. the looping 06PLAY1B attack
+	// run) keep the init flag set, otherwise the wave init's clearBit(0) would resurrect
+	// shield targets the player already destroyed, resetting the shield on every loop.
 	if (_player && _player->_frame == 0) {
-		_rebelOp6Initialized = false;
+		const bool shieldContinuation = _rebelShieldGateActive && (_player->_curVideoFlags & 0x40) != 0;
+		if (!shieldContinuation)
+			_rebelOp6Initialized = false;
 	}
 
 	// For Level 2 handler 8 gameplay, restore the background BEFORE FOBJ decoding.
@@ -421,6 +427,10 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 				if (idx >= 0 && idx < 10) {
 					_rebelValueCounters[idx]++;
 					_rebelLastCounter = _rebelValueCounters[idx];
+					// Track that this target feeds value-counter[idx] so destroying it
+					// decrements the shield gauge. Only while a shield gate is active.
+					if (_rebelShieldGateActive && targetId >= 0 && targetId < 512)
+						_rebelGaugeSlot[targetId] = (int8)idx;
 					debugC(DEBUG_INSANE, "IACT Opcode2: Increment VAL counter[%d] -> %d (target=%d)", value, _rebelValueCounters[idx], targetId);
 				}
 			}
@@ -431,6 +441,8 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 					if (!isBitSet(targetId)) {
 						_rebelMaskCounters[slot]++;
 						_rebelLastCounter = _rebelMaskCounters[slot];
+						if (_rebelShieldGateActive && targetId >= 0 && targetId < 512)
+							_rebelGaugeSlot[targetId] = (int8)(10 + slot);
 						debugC(DEBUG_INSANE, "IACT Opcode2: Increment MASK counter[%d] -> %d (target=%d)", slot, _rebelMaskCounters[slot], targetId);
 					}
 				}

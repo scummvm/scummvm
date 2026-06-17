@@ -962,6 +962,13 @@ public:
 	short _rebelMaskCounters[10];  // Index 1..9 used; index 0 unused
 	int _rebelLastCounter;         // Mirrors DAT_0047ab90 (last updated counter)
 
+	// Shield hit-point gauge: opcode-2 sets up a per-target counter; destroying a tracked
+	// target decrements it, and the looping attack run ends when it reaches 0.
+	int8 _rebelGaugeSlot[512];     // per target ID: -1 none; 0..9 value-counter; 10+slot mask-counter
+	bool _rebelShieldGateActive;   // true while a shield-gated looping segment is playing
+	bool _rebelShieldDestroyed;    // set when a tracked gauge counter reaches 0 during the gate
+	void resetShieldGauge();
+
 
 	// ---------------------------------------------------------------------------
 	// Handler 0x26 Turret Shot System

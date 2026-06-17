@@ -332,6 +332,18 @@ void InsaneRebel2::resetLevelWaveState() {
 	_rebelWaveState = 0;
 }
 
+// resetShieldGauge -- Clear the shield hit-point gauge before a looping attack-run segment.
+void InsaneRebel2::resetShieldGauge() {
+	for (int i = 0; i < 10; ++i) {
+		_rebelValueCounters[i] = 0;
+		_rebelMaskCounters[i] = 0;
+	}
+	for (int i = 0; i < 512; ++i)
+		_rebelGaugeSlot[i] = -1;
+	_rebelLastCounter = -1;        // non-zero sentinel: gauge not yet depleted
+	_rebelShieldDestroyed = false;
+}
+
 void InsaneRebel2::resetExplosions() {
 	for (uint i = 0; i < ARRAYSIZE(_explosions); ++i) {
 		_explosions[i].active = false;
@@ -933,15 +945,29 @@ int InsaneRebel2::runLevel6() {
 		// DAT_0047ab9c = 0xffffffff — init phase state
 		_rebelPhaseState = 0xffffffff;
 
-		// ----- PHASE 1 -----
+		// ----- PHASE 1: shield attack run -----
+		// Play 06PLAY1 (approach), then loop the 06PLAY1B continuation until the player
+		// destroys the shield (its hit gauge reaches 0) or dies.
 		_rebelLevelType = 5;  // DAT_0047a7f8 = 5
 		_currentPhase = 1;
 
-		debugC(DEBUG_INSANE, "Level 6 Phase 1");
-		if (!playLevelSegment("LEV06/06PLAY1.SAN", 0x28))
+		debugC(DEBUG_INSANE, "Level 6 Phase 1 (shield attack run)");
+		resetShieldGauge();
+		_rebelShieldGateActive = true;
+
+		if (!playLevelSegment("LEV06/06PLAY1.SAN", 0x28)) {
+			_rebelShieldGateActive = false;
 			return kLevelQuit;
-		// TODO: Mid-level switch at frame 0x2a8 to 06PLAY1B.SAN (flags 0x468)
-		// + score checkpoint (FUN_00407f55) — needs per-frame callback
+		}
+
+		while (_playerShield > 0 && !_rebelShieldDestroyed && !_vm->shouldQuit()) {
+			resetShieldGauge();
+			if (!playLevelSegment("LEV06/06PLAY1B.SAN", 0x468)) {
+				_rebelShieldGateActive = false;
+				return kLevelQuit;
+			}
+		}
+		_rebelShieldGateActive = false;
 
 		if (_playerShield <= 0) {
 			// Died in phase 1

@@ -239,6 +239,11 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	}
 	_rebelLastCounter = 0;
 
+	for (int i = 0; i < 512; ++i)
+		_rebelGaugeSlot[i] = -1;
+	_rebelShieldGateActive = false;
+	_rebelShieldDestroyed = false;
+
 	_difficulty = 1; // Default to Medium.
 	_targetLockTimer = 0;  // DAT_00443676 equivalent
 
@@ -1743,6 +1748,23 @@ int32 InsaneRebel2::processMouse() {
 
 				// Disable self (prevents sprite from rendering via SKIP chunks)
 				setBit(it->id);
+
+				// Shield hit-point gauge: if this target feeds a gauge counter, destroying it
+				// decrements that counter; the shield is destroyed when it reaches 0.
+				if (_rebelShieldGateActive && it->id >= 0 && it->id < 512 && _rebelGaugeSlot[it->id] >= 0) {
+					int slot = _rebelGaugeSlot[it->id];
+					short *counter = (slot < 10) ? &_rebelValueCounters[slot]
+					                             : &_rebelMaskCounters[slot - 10];
+					if (*counter > 0) {
+						(*counter)--;
+						_rebelLastCounter = *counter;
+						if (*counter == 0) {
+							_rebelShieldDestroyed = true;
+							debugC(DEBUG_INSANE, "Shield destroyed (gauge slot %d depleted by target %d)", slot, it->id);
+						}
+					}
+					_rebelGaugeSlot[it->id] = -1; // consume: avoid double-counting
+				}
 
 				// Set enemy type bit in wave state (FUN_004028c5 line 74)
 				// DAT_0047ab98 |= 1 << (enemyType & 0x1f)

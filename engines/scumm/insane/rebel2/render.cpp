@@ -2780,6 +2780,10 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	updatePostRenderScroll(width, height);
 	updatePostRenderDeath();
 
+	// End the looping attack-run segment once the shield's hit-point gauge is depleted.
+	if (_rebelShieldGateActive && _rebelShieldDestroyed)
+		_vm->_smushVideoShouldFinish = true;
+
 	// Use video content coordinates, NOT oversized low-res gameplay-buffer coordinates.
 	const int hudScale = isHiRes() ? 2 : getRebel2IndicatorScale(width, height);
 	const int videoWidth = 320 * hudScale;
