@@ -239,7 +239,6 @@ struct PathfindingAreaOverride {
 class Macs2Engine : public Engine, public Events {
 private:
 	const ADGameDescription *_gameDescription;
-	Common::RandomSource _randomSource;
 
 	Music *_adlib;
 
@@ -485,13 +484,6 @@ public:
 	 * Returns the game Id
 	 */
 	Common::String getGameId() const;
-
-	/**
-	 * Gets a random number
-	 */
-	uint32 getRandomNumber(uint maxNum) {
-		return _randomSource.getRandomNumber(maxNum);
-	}
 
 	bool hasFeature(EngineFeature f) const override {
 		return (f == kSupportsLoadingDuringRuntime) ||

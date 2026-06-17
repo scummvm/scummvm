@@ -350,14 +350,6 @@ Graphics::ManagedSurface UIElement::getSurface() const {
 	return Graphics::ManagedSurface(*g_events->getScreen(), _bounds);
 }
 
-int UIElement::getRandomNumber(int minNumber, int maxNumber) {
-	return g_engine->getRandomNumber(maxNumber - minNumber + 1) + minNumber;
-}
-
-int UIElement::getRandomNumber(int maxNumber) {
-	return g_engine->getRandomNumber(maxNumber);
-}
-
 void UIElement::delaySeconds(uint seconds) {
 	_timeoutCtr = seconds * (1000 / FRAME_DELAY);
 }

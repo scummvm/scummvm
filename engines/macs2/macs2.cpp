@@ -363,7 +363,7 @@ void Macs2Engine::readImageResources(Common::MemoryReadStream *stream) {
 }
 
 Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-																			 _gameDescription(gameDesc), _randomSource("Macs2") {
+																			 _gameDescription(gameDesc) {
 	g_engine = this;
 	_scriptExecutor = new Script::ScriptExecutor();
 	_scriptExecutor->_engine = this;
