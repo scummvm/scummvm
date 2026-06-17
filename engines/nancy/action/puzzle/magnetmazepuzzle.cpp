@@ -221,7 +221,14 @@ bool MagnetMazePuzzle::collidesAt(const Common::Rect &r) const {
 	if (r.left < 0 || r.top < 0 || r.right > mazeW || r.bottom > mazeH)
 		return true;
 
-	const uint32 wall = _mazeImage.format.RGBToColor(_wallColorR, _wallColorG, _wallColorB);
+	// The chunk stores each wall channel as a 5-bit value (the original engine
+	// masks with 0x1f and packs directly into a 16-bit display-format word).
+	// Scale to 8-bit before RGBToColor so the resulting packed value matches
+	// the actual maze-image pixels for the current pixel format.
+	const byte r8 = (byte)((_wallColorR & 0x1f) << 3);
+	const byte g8 = (byte)((_wallColorG & 0x1f) << 3);
+	const byte b8 = (byte)((_wallColorB & 0x1f) << 3);
+	const uint32 wall = _mazeImage.format.RGBToColor(r8, g8, b8);
 	for (int y = y0; y < y1; ++y) {
 		for (int x = x0; x < x1; ++x) {
 			if (_mazeImage.getPixel(x, y) == wall)
