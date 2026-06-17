@@ -1725,15 +1725,22 @@ void SiteScreen::updateHotspotCursor(uint siteNum, int x, int y) {
 	if (!_vm)
 		return;
 	const int idx = hotspotAtPoint(siteNum, x, y);
-	if (_vm->isLondon()) {
-		// EEM2 (`_DoSiteLoop` @ FUN_1717_07ab) swaps the cursor shape to the
-		// hovered hotspot's own cursor id; off any hotspot it is the arrow (0).
-		_vm->setSiteHotspotCursorId(idx >= 0 ? hotspotCursorId(siteNum, idx) : 0);
-		return;
-	}
 	const bool siteControl = kPdaSiteRect.contains(x, y) ||
 							 kPdaPartnerFootMapRect.contains(x, y) ||
 							 kPdaPartnerHeadHintRect.contains(x, y);
+	if (_vm->isLondon()) {
+		// EEM2 gives some hotspots their own cursor shape; every other
+		// interactive zone (the site/foot/head controls, or a hotspot with no
+		// custom cursor) falls back to the red-outline highlight.
+		const int cursorId = idx >= 0 ? hotspotCursorId(siteNum, idx) : 0;
+		if (cursorId > 0)
+			_vm->setSiteHotspotCursorId(cursorId);
+		else if (idx >= 0 || siteControl)
+			_vm->setInteractiveMouseCursor(true);
+		else
+			_vm->setSiteHotspotCursorId(0);
+		return;
+	}
 	_vm->setHotspotMouseCursor(siteControl || idx >= 0);
 }
 
