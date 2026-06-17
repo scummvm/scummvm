@@ -130,7 +130,6 @@ struct BackgroundAnimationBlob {
 	uint16 _unknown0C = 0; // +0x50F3: purpose unknown (word, read from file, not used at runtime)
 	uint8 _unknown0E = 0;  // +0x50F5: purpose unknown (byte, read from file, not used at runtime)
 	uint8 _unknown0F = 0;  // +0x50F6: purpose unknown (byte, read from file, not used at runtime)
-	AnimFrame getFrame(uint32 index);
 	AnimFrame getCurrentFrame();
 	static uint16 advanceAnimFrame(Common::Array<uint8> &blob, bool bpp6, uint16 bpp8);
 	static uint16 getAnimFrameCount(Common::Array<uint8> &blob);
