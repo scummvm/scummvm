@@ -88,6 +88,7 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::MemoryRea
 		}
 	}
 
+	delete[] data;
 	return result;
 }
 
