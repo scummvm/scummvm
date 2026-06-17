@@ -429,8 +429,11 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 					_rebelLastCounter = _rebelValueCounters[idx];
 					// Track that this target feeds value-counter[idx] so destroying it
 					// decrements the shield gauge. Only while a shield gate is active.
-					if (_rebelShieldGateActive && targetId >= 0 && targetId < 512)
+					if (_rebelShieldGateActive && targetId >= 0 && targetId < 512) {
 						_rebelGaugeSlot[targetId] = (int8)idx;
+						_rebelGaugeArmed = true;
+						_rebelLastArmedSlot = idx;
+					}
 					debugC(DEBUG_INSANE, "IACT Opcode2: Increment VAL counter[%d] -> %d (target=%d)", value, _rebelValueCounters[idx], targetId);
 				}
 			}
@@ -441,8 +444,11 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 					if (!isBitSet(targetId)) {
 						_rebelMaskCounters[slot]++;
 						_rebelLastCounter = _rebelMaskCounters[slot];
-						if (_rebelShieldGateActive && targetId >= 0 && targetId < 512)
+						if (_rebelShieldGateActive && targetId >= 0 && targetId < 512) {
 							_rebelGaugeSlot[targetId] = (int8)(10 + slot);
+							_rebelGaugeArmed = true;
+							_rebelLastArmedSlot = 10 + slot;
+						}
 						debugC(DEBUG_INSANE, "IACT Opcode2: Increment MASK counter[%d] -> %d (target=%d)", slot, _rebelMaskCounters[slot], targetId);
 					}
 				}

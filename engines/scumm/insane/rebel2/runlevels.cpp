@@ -342,6 +342,8 @@ void InsaneRebel2::resetShieldGauge() {
 		_rebelGaugeSlot[i] = -1;
 	_rebelLastCounter = -1;        // non-zero sentinel: gauge not yet depleted
 	_rebelShieldDestroyed = false;
+	_rebelGaugeArmed = false;
+	_rebelLastArmedSlot = -1;
 }
 
 void InsaneRebel2::resetExplosions() {
@@ -1937,25 +1939,31 @@ int InsaneRebel2::runLevel13() {
 
 		clearBit(0);
 
-		// Phase A: Main escape flight (13PLAY_A.SAN)
-		// Original: FUN_0041f4d0("13PLAY_A.SAN", 0x28, -1, -1, 0)
-		// First inner loop runs until frame reaches maxFrame-10
-		// Then Phase B (13PLAY_B.SAN, flags 0x468) plays at that exact frame
-		// The 0x468 flags indicate seamless mid-video transition.
-		if (!playLevelSegment("LEV13/13PLAY_A.SAN", 0x28))
+		// Phase A: full approach flight; the reactor gauge is tracked but A plays to the end.
+		resetShieldGauge();
+		_rebelShieldGateActive = true;
+		_rebelReactorMode = true;
+		if (!playLevelSegment("LEV13/13PLAY_A.SAN", 0x28)) {
+			_rebelShieldGateActive = false;
+			_rebelReactorMode = false;
 			return kLevelQuit;
-
-		// If alive after Phase A, play Phase B (reactor destruction loop)
-		// Original: at frame == maxFrame-10, play 13PLAY_B.SAN (0x468)
-		// Then loop while (DAT_0047ab90 != 0 || DAT_0047ab7c != 0)
-		// Play B as a sequential video. The IACT callbacks manage the reactor
-		// target state through opcode interactions.
-		if (_playerShield > 0) {
-			if (!playLevelSegment("LEV13/13PLAY_B.SAN", 0x468))
-				return kLevelQuit;
 		}
 
-		if (_playerShield > 0) {
+		// Reactor finale: loop 13PLAY_B until the reactor is destroyed or the player dies.
+		// The gauge persists from A (no reset) so hits carry over; finaleGuard caps the loop.
+		int finaleGuard = 0;
+		while (_playerShield > 0 && !_rebelShieldDestroyed && !_vm->shouldQuit() && finaleGuard < 60) {
+			++finaleGuard;
+			if (!playLevelSegment("LEV13/13PLAY_B.SAN", 0x468)) {
+				_rebelShieldGateActive = false;
+				_rebelReactorMode = false;
+				return kLevelQuit;
+			}
+		}
+		_rebelShieldGateActive = false;
+		_rebelReactorMode = false;
+
+		if (_playerShield > 0 && _rebelShieldDestroyed) {
 			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debugC(DEBUG_INSANE, "Level 13 completed! accuracy=%d%%", accuracy);
 			playLevelEnd(13);

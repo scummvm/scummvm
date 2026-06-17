@@ -966,7 +966,10 @@ public:
 	// target decrements it, and the looping attack run ends when it reaches 0.
 	int8 _rebelGaugeSlot[512];     // per target ID: -1 none; 0..9 value-counter; 10+slot mask-counter
 	bool _rebelShieldGateActive;   // true while a shield-gated looping segment is playing
-	bool _rebelShieldDestroyed;    // set when a tracked gauge counter reaches 0 during the gate
+	bool _rebelShieldDestroyed;    // set when the shield/reactor is destroyed during the gate
+	bool _rebelReactorMode;        // Level 13: finale ends when the last armed group is cleared
+	bool _rebelGaugeArmed;         // at least one gauge group has been set up this attempt
+	int _rebelLastArmedSlot;       // counter slot of the most recently armed group (-1 = none)
 	void resetShieldGauge();
 
 

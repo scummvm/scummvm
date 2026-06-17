@@ -243,6 +243,9 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_rebelGaugeSlot[i] = -1;
 	_rebelShieldGateActive = false;
 	_rebelShieldDestroyed = false;
+	_rebelReactorMode = false;
+	_rebelGaugeArmed = false;
+	_rebelLastArmedSlot = -1;
 
 	_difficulty = 1; // Default to Medium.
 	_targetLockTimer = 0;  // DAT_00443676 equivalent
@@ -1758,7 +1761,9 @@ int32 InsaneRebel2::processMouse() {
 					if (*counter > 0) {
 						(*counter)--;
 						_rebelLastCounter = *counter;
-						if (*counter == 0) {
+						// Level 6 ends on any group emptying; Level 13's reactor is gated in
+						// procPostRendering instead, so early obstacle groups don't complete it.
+						if (*counter == 0 && !_rebelReactorMode) {
 							_rebelShieldDestroyed = true;
 							debugC(DEBUG_INSANE, "Shield destroyed (gauge slot %d depleted by target %d)", slot, it->id);
 						}

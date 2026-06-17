@@ -2780,9 +2780,21 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	updatePostRenderScroll(width, height);
 	updatePostRenderDeath();
 
-	// End the looping attack-run segment once the shield's hit-point gauge is depleted.
-	if (_rebelShieldGateActive && _rebelShieldDestroyed)
-		_vm->_smushVideoShouldFinish = true;
+	// End the looping attack-run segment once the shield/reactor is destroyed.
+	if (_rebelShieldGateActive) {
+		// Level 13: the finale (continuation segment, flag 0x40) ends when the last armed
+		// group (the reactor) is depleted; the approach segment plays fully.
+		if (_rebelReactorMode && _rebelGaugeArmed && _rebelLastArmedSlot >= 0 &&
+		    (_player->_curVideoFlags & 0x40) != 0) {
+			const int slot = _rebelLastArmedSlot;
+			const short remaining = (slot < 10) ? _rebelValueCounters[slot]
+			                                    : _rebelMaskCounters[slot - 10];
+			if (remaining <= 0)
+				_rebelShieldDestroyed = true;
+		}
+		if (_rebelShieldDestroyed)
+			_vm->_smushVideoShouldFinish = true;
+	}
 
 	// Use video content coordinates, NOT oversized low-res gameplay-buffer coordinates.
 	const int hudScale = isHiRes() ? 2 : getRebel2IndicatorScale(width, height);
