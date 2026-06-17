@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-14 22:15+0000\n"
-"PO-Revision-Date: 2024-11-16 02:13+0000\n"
+"PO-Revision-Date: 2026-06-17 22:10+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.15.1\n"
 "X-Poedit-Language: Portuguese\n"
 "X-Poedit-Country: BRAZIL\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
@@ -886,7 +886,7 @@ msgstr "Executar Cliente de E-mail"
 
 #: gui/integrity-dialog.cpp:152
 msgid "This game includes add-ons, pick the part you want to be checked:"
-msgstr ""
+msgstr "Este jogo inclui complementos, escolha a parte que deseja verificar:"
 
 #: gui/integrity-dialog.cpp:258
 msgid "Calculation complete"
@@ -1716,7 +1716,7 @@ msgstr "Opç. de Jo~g~o..."
 
 #: gui/launcher.cpp:1265
 msgid "Add-on"
-msgstr ""
+msgstr "Complemento"
 
 #. I18N: List grouping when no engine is specified
 #: gui/launcher.cpp:1335 gui/launcher.cpp:1580
@@ -2885,7 +2885,7 @@ msgstr "*  Abc"
 
 #: gui/printing-dialog.cpp:54
 msgid "Print"
-msgstr ""
+msgstr "Imprimir"
 
 #: gui/printing-dialog.cpp:56
 #, fuzzy
@@ -3933,6 +3933,10 @@ msgid ""
 "testing mode.\n"
 "If you encounter any bugs or oddities, please report them to our bugtracker."
 msgstr ""
+"AVISO: O jogo que você está prestes a iniciar tem suporte recente e está em "
+"modo de testes.\n"
+"Se encontrar quaisquer erros ou anomalias, por favor reporte-os ao nosso "
+"rastreador de erros."
 
 #: engines/engine.cpp:861
 #, c-format
@@ -3941,6 +3945,10 @@ msgid ""
 "run independently. Please copy the add-on contents into a subdirectory of "
 "the base game, and start the base game itself."
 msgstr ""
+"O jogo \"%s\" que você está tentando adicionar é um complemento de \"%s\" "
+"que não pode ser executado de forma independente. Por favor, copie o "
+"conteúdo do complemento para um subdiretório do jogo base e inicie o próprio "
+"jogo base."
 
 #: engines/engine.cpp:878
 msgid "This game is not supported."
@@ -3968,11 +3976,14 @@ msgid ""
 "The directory '%s' looks like an add-on for the game '%s', but ScummVM could "
 "not find any matching add-on in it."
 msgstr ""
+"O diretório '%s' parece ser um complemento do jogo '%s', mas o ScummVM não "
+"encontrou nenhum complemento correspondente nele."
 
 #: engines/engine.cpp:1250
 #, c-format
 msgid "Directory '%s' matches several add-ons, please pick one."
 msgstr ""
+"O diretório '%s' corresponde a vários complementos, por favor escolha um."
 
 #: engines/game.cpp:199
 #, c-format
@@ -4488,7 +4499,7 @@ msgstr "Habilitar captura do mouse"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:503
 msgid "Toggle resizable window"
-msgstr ""
+msgstr "Alternar janela redimensionável"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:508 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
@@ -5530,7 +5541,7 @@ msgstr "Mostrar controle na tela"
 
 #: backends/platform/android/options.cpp:138
 msgid "Ignore safe areas in-game"
-msgstr ""
+msgstr "Ignorar áreas seguras no jogo"
 
 #: backends/platform/android/options.cpp:139
 #: backends/platform/ios7/ios7_options.mm:112
@@ -5613,19 +5624,19 @@ msgstr "Nos jogos"
 
 #: backends/platform/android/options.cpp:195
 msgid "Export backup"
-msgstr ""
+msgstr "Exportar backup"
 
 #: backends/platform/android/options.cpp:195
 msgid "Export a backup of the configuration and save files"
-msgstr ""
+msgstr "Exportar um backup das configurações e dos arquivos de salvamento"
 
 #: backends/platform/android/options.cpp:196
 msgid "Import backup"
-msgstr ""
+msgstr "Importar backup"
 
 #: backends/platform/android/options.cpp:196
 msgid "Import a previously exported backup file"
-msgstr ""
+msgstr "Importar um arquivo de backup exportado anteriormente"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:199
@@ -5640,11 +5651,11 @@ msgstr "Selecionar orientação:"
 
 #: backends/platform/android/options.cpp:280
 msgid "The backup has been saved successfully."
-msgstr ""
+msgstr "O backup foi salvo com sucesso."
 
 #: backends/platform/android/options.cpp:282
 msgid "The backup has been saved successfully to the Downloads folder."
-msgstr ""
+msgstr "O backup foi salvo com sucesso na pasta Downloads."
 
 #: backends/platform/android/options.cpp:284
 #: backends/platform/android/options.cpp:317
@@ -5664,6 +5675,8 @@ msgid ""
 "Restoring a backup will erase the current configuration and overwrite "
 "existing saves. Do you want to proceed?"
 msgstr ""
+"Restaurar um backup apagará a configuração atual e substituirá os "
+"salvamentos existentes. Deseja continuar?"
 
 #: backends/platform/android/options.cpp:298
 #, fuzzy
@@ -5673,7 +5686,7 @@ msgstr "Selecione um Tema"
 
 #: backends/platform/android/options.cpp:315
 msgid "The backup has been restored successfully."
-msgstr ""
+msgstr "O backup foi restaurado com sucesso."
 
 #: backends/platform/android/options.cpp:319
 #, fuzzy
@@ -6740,7 +6753,7 @@ msgstr "Usar"
 
 #: engines/access/metaengine.cpp:313
 msgid "Goto"
-msgstr ""
+msgstr "Ir para"
 
 #: engines/access/metaengine.cpp:318 engines/access/metaengine.cpp:349
 #: engines/bbvs/metaengine.cpp:130 engines/drascula/metaengine.cpp:250
@@ -6786,7 +6799,7 @@ msgstr "Inventário"
 
 #: engines/access/metaengine.cpp:344 engines/ultima/ultima4/metaengine.cpp:51
 msgid "Climb"
-msgstr ""
+msgstr "Escalar"
 
 #: engines/access/metaengine.cpp:354 engines/bbvs/metaengine.cpp:142
 #: engines/freescape/games/castle/castle.cpp:511
@@ -7034,7 +7047,7 @@ msgstr ""
 
 #: engines/agi/metaengine.cpp:207
 msgid "Use PCjr's sound chip in 16-bit shift mode"
-msgstr ""
+msgstr "Usar o chip de som do PCjr no modo de deslocamento de 16 bits"
 
 #: engines/agi/metaengine.cpp:208
 msgid ""
@@ -7043,6 +7056,10 @@ msgid ""
 "especially in fanmade games, but original Sierra music designed strictly for "
 "PCjr may sound wrong."
 msgstr ""
+"No modo de som PCjr, emula um chip de som SN76496 não padrão, semelhante aos "
+"chips encontrados nos consoles SEGA Master System. Permite certos efeitos "
+"musicais, especialmente em jogos feitos por fãs, mas a música original da "
+"Sierra projetada estritamente para PCjr pode soar incorreta."
 
 #: engines/agi/metaengine.cpp:447 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
@@ -7113,7 +7130,7 @@ msgstr "Utilizar telas de salvar/carregar originais"
 
 #: engines/agos/dialogs.cpp:94
 msgid "Toggle between the system cursor and the default cursor."
-msgstr ""
+msgstr "Alternar entre o cursor do sistema e o cursor padrão."
 
 #: engines/agos/dialogs.cpp:107 engines/sci/detection_options.h:261
 msgid "MIDI mode:"
@@ -7489,7 +7506,7 @@ msgstr ""
 
 #: engines/alcachofa/graphics-opengl.cpp:108
 msgid "Old OpenGL detected, some graphical errors will occur."
-msgstr ""
+msgstr "OpenGL antigo detectado, alguns erros gráficos ocorrerão."
 
 #: engines/alcachofa/metaengine.cpp:40
 #, fuzzy
@@ -7505,11 +7522,11 @@ msgstr "Ligar/desligar efeito sonoro"
 
 #: engines/alcachofa/metaengine.cpp:51
 msgid "32 Bits"
-msgstr ""
+msgstr "32 bits"
 
 #: engines/alcachofa/metaengine.cpp:52
 msgid "Whether to render the game in 16-bit color"
-msgstr ""
+msgstr "Define se o jogo deve ser renderizado em cores de 16 bits"
 
 #: engines/alcachofa/metaengine.cpp:62
 #, fuzzy
@@ -7519,7 +7536,7 @@ msgstr "Gráficos com filtro"
 
 #: engines/alcachofa/metaengine.cpp:63
 msgid "Whether textures should be linearly filtered"
-msgstr ""
+msgstr "Define se as texturas devem ser filtradas linearmente"
 
 #: engines/alcachofa/metaengine.cpp:98 engines/cine/metaengine.cpp:347
 #: engines/freescape/games/castle/castle.cpp:528
@@ -7541,13 +7558,15 @@ msgstr "Ativar/desativar legendas"
 
 #: engines/alg/metaengine.cpp:34
 msgid "Use lower quality single speed CD-ROM video"
-msgstr ""
+msgstr "Usar vídeo de CD-ROM de velocidade simples e qualidade inferior"
 
 #: engines/alg/metaengine.cpp:35
 msgid ""
 "These videos are of lower quality, the default version uses double speed CD-"
 "ROM videos which are of better quality"
 msgstr ""
+"Estes vídeos são de qualidade inferior; a versão padrão usa vídeos de CD-ROM "
+"de velocidade dupla, que são de melhor qualidade"
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
@@ -7638,7 +7657,7 @@ msgstr "Carregar mesmo assim"
 
 #: engines/awe/metaengine.cpp:35
 msgid "Enable title and copy protection screens (if present)"
-msgstr ""
+msgstr "Ativar telas de título e de proteção contra cópia (se presentes)"
 
 #: engines/awe/metaengine.cpp:36
 #, fuzzy
@@ -7663,7 +7682,7 @@ msgstr "Pular"
 
 #: engines/awe/metaengine.cpp:63
 msgid "Enter level code"
-msgstr ""
+msgstr "Inserir código de fase"
 
 #: engines/awe/metaengine.cpp:88 engines/dgds/metaengine.cpp:87
 #: engines/got/metaengine.cpp:105
@@ -7712,7 +7731,7 @@ msgstr "Tecla anti-chefe"
 
 #: engines/bagel/metaengine.cpp:73
 msgid "End"
-msgstr ""
+msgstr "Fim"
 
 #: engines/bagel/metaengine.cpp:180
 msgid "General Keys"
@@ -8113,6 +8132,8 @@ msgid ""
 "This option allows the game to play at a slightly extended resolution. This "
 "is what the Mac and CDi versions are supposed to play like."
 msgstr ""
+"Esta opção permite que o jogo seja executado em uma resolução ligeiramente "
+"estendida. É assim que as versões Mac e CDi deveriam ser exibidas."
 
 #: engines/buried/buried.cpp:598
 msgid "Are you sure you want to quit?"
@@ -8212,27 +8233,27 @@ msgstr "Mover para frente"
 #. I18N: AI is Artificial Intelligence
 #: engines/buried/metaengine.cpp:230
 msgid "Replay last AI comment"
-msgstr ""
+msgstr "Repetir o último comentário da IA"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the Artificial Intelligence biochip.
 #: engines/buried/metaengine.cpp:237
 msgid "Biochip AI"
-msgstr ""
+msgstr "Biochip IA"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the blank biochip.
 #: engines/buried/metaengine.cpp:243
 msgid "Biochip blank"
-msgstr ""
+msgstr "Biochip em branco"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the cloak biochip.
 #: engines/buried/metaengine.cpp:249
 msgid "Biochip cloak"
-msgstr ""
+msgstr "Biochip de camuflagem"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the evidence biochip.
 #: engines/buried/metaengine.cpp:255
 msgid "Biochip evidence"
-msgstr ""
+msgstr "Biochip de evidências"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the files biochip.
 #: engines/buried/metaengine.cpp:261
@@ -8244,17 +8265,17 @@ msgstr "Exibir arquivos ocultos"
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the interface biochip.
 #: engines/buried/metaengine.cpp:267
 msgid "Biochip interface"
-msgstr ""
+msgstr "Biochip de interface"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the jump biochip.
 #: engines/buried/metaengine.cpp:273
 msgid "Biochip jump"
-msgstr ""
+msgstr "Biochip de salto"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the translate biochip.
 #: engines/buried/metaengine.cpp:279
 msgid "Biochip translate"
-msgstr ""
+msgstr "Biochip de tradução"
 
 #. I18N: Shows a summary of collected points in the game.
 #: engines/buried/metaengine.cpp:285
@@ -8647,11 +8668,11 @@ msgstr "Próxima ação"
 
 #: engines/colony/savegame.cpp:291
 msgid "Saving is only available in first-person view."
-msgstr ""
+msgstr "Salvar só está disponível na visão em primeira pessoa."
 
 #: engines/colony/savegame.cpp:300
 msgid "Loading is only available in first-person view."
-msgstr ""
+msgstr "Carregar só está disponível na visão em primeira pessoa."
 
 #: engines/crab/input/input.cpp:119
 #, fuzzy
@@ -8789,6 +8810,8 @@ msgid ""
 "Use the music from the floppy version. The floppy version's music files must "
 "be copied to the SOUND directory."
 msgstr ""
+"Usar a música da versão em disquete. Os arquivos de música da versão em "
+"disquete devem ser copiados para o diretório SOUND."
 
 #: engines/darkseed/dialogs.cpp:121
 #, fuzzy
@@ -8802,18 +8825,22 @@ msgid ""
 "additional floppy SFX, or floppy SFX only. Floppy SFX are only available if "
 "floppy music is used."
 msgstr ""
+"Determina se o jogo deve usar apenas os efeitos sonoros da versão em CD, os "
+"efeitos sonoros do CD com efeitos adicionais da versão em disquete, ou "
+"apenas os efeitos sonoros da versão em disquete. Os efeitos sonoros do "
+"disquete só estão disponíveis se a música do disquete for usada."
 
 #: engines/darkseed/dialogs.cpp:127
 msgid "CD version SFX only"
-msgstr ""
+msgstr "Apenas efeitos sonoros da versão em CD"
 
 #: engines/darkseed/dialogs.cpp:131
 msgid "CD + extra floppy SFX"
-msgstr ""
+msgstr "CD + efeitos sonoros extras do disquete"
 
 #: engines/darkseed/dialogs.cpp:135
 msgid "Floppy version SFX only"
-msgstr ""
+msgstr "Apenas efeitos sonoros da versão em disquete"
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:42 engines/dragons/metaengine.cpp:135
@@ -8883,11 +8910,11 @@ msgstr "Correção de proporção habilitada"
 
 #: engines/director/metaengine.cpp:71
 msgid "Brighten the graphics to simulate a Macintosh monitor"
-msgstr ""
+msgstr "Clarear os gráficos para simular um monitor Macintosh"
 
 #: engines/director/metaengine.cpp:81
 msgid "Force true color (32bpp) mode"
-msgstr ""
+msgstr "Forçar o modo de cores reais (32bpp)"
 
 #: engines/director/metaengine.cpp:82
 #, fuzzy
@@ -8914,7 +8941,7 @@ msgstr "Alternar exibição do Inventário/Pontos de QI"
 #. I18N: (Game name: Dungeon Master) The game has multi-choice dialogs. If there is only one choice, then this action can be used to select it.
 #: engines/dm/metaengine.cpp:144
 msgid "Select dialog choice (only works if there is a single choice)"
-msgstr ""
+msgstr "Selecionar a opção de diálogo (só funciona se houver uma única opção)"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
 #: engines/dm/metaengine.cpp:151
@@ -8958,7 +8985,7 @@ msgstr "Mover para trás"
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. The champions can be put to sleep. This action wakes up the sleeping champion.
 #: engines/dm/metaengine.cpp:247
 msgid "Wake up champion"
-msgstr ""
+msgstr "Acordar o campeão"
 
 #: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:64
 #, fuzzy
@@ -9341,7 +9368,7 @@ msgstr "Soltar"
 
 #: engines/efh/metaengine.cpp:437
 msgid "Equip"
-msgstr ""
+msgstr "Equipar"
 
 #: engines/efh/metaengine.cpp:442 engines/queen/metaengine.cpp:274
 #: engines/saga/metaengine.cpp:384 engines/scumm/help.cpp:124
@@ -9361,11 +9388,11 @@ msgstr "Menu de Informação"
 
 #: engines/efh/metaengine.cpp:452
 msgid "Passive skills"
-msgstr ""
+msgstr "Habilidades passivas"
 
 #: engines/efh/metaengine.cpp:457
 msgid "Trade"
-msgstr ""
+msgstr "Negociar"
 
 #: engines/efh/metaengine.cpp:467
 #, fuzzy
@@ -9381,7 +9408,7 @@ msgstr "Sair do jogo"
 
 #: engines/efh/metaengine.cpp:493
 msgid "Leave"
-msgstr ""
+msgstr "Sair"
 
 #: engines/efh/metaengine.cpp:500 engines/efh/metaengine.cpp:536
 #, fuzzy
@@ -9391,7 +9418,7 @@ msgstr "Status:"
 
 #: engines/efh/metaengine.cpp:518
 msgid "Defend"
-msgstr ""
+msgstr "Defender"
 
 #. I18N: Run is a movement type
 #. I18N: Action in In Cold Blood
@@ -9509,7 +9536,7 @@ msgstr "Reproduzir nota 1: A"
 
 #: engines/efh/metaengine.cpp:657
 msgid "Play sound type 9"
-msgstr ""
+msgstr "Reproduzir som tipo 9"
 
 #: engines/efh/metaengine.cpp:662
 #, fuzzy
@@ -9593,11 +9620,11 @@ msgstr "Habilita viagem utilizando lançamento de pedra desde o início"
 
 #: engines/freescape/metaengine.cpp:140
 msgid "Smoother movement"
-msgstr ""
+msgstr "Movimento mais suave"
 
 #: engines/freescape/metaengine.cpp:141
 msgid "Use smoother movements instead of discrete steps"
-msgstr ""
+msgstr "Usar movimentos mais suaves em vez de passos discretos"
 
 #. I18N: Use modern FPS-style controls: WASD for movement, Shift to run
 #: engines/freescape/metaengine.cpp:152
@@ -9608,26 +9635,27 @@ msgstr "Controles de Toque"
 
 #: engines/freescape/metaengine.cpp:153
 msgid "Use WASD keys for movement and Shift to run"
-msgstr ""
+msgstr "Usar as teclas WASD para se mover e Shift para correr"
 
 #. I18N: Enable background music using AdLib/OPL2 FM synthesis
 #: engines/freescape/metaengine.cpp:164
 msgid "Backported music from C64 releases (AdLib)"
-msgstr ""
+msgstr "Música adaptada das versões do C64 (AdLib)"
 
 #: engines/freescape/metaengine.cpp:165
 msgid ""
 "Enable background music ported from the C64 version using AdLib FM synthesis"
 msgstr ""
+"Ativar a música de fundo adaptada da versão do C64 usando síntese FM AdLib"
 
 #. I18N: Enable background music using AY chip emulation
 #: engines/freescape/metaengine.cpp:176
 msgid "Backported music from C64 releases"
-msgstr ""
+msgstr "Música adaptada das versões do C64"
 
 #: engines/freescape/metaengine.cpp:177
 msgid "Enable background music ported from the C64 version"
-msgstr ""
+msgstr "Ativar a música de fundo adaptada da versão do C64"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:69 engines/mm/mm1/metaengine.cpp:84
@@ -9692,7 +9720,7 @@ msgstr "Rastejar"
 
 #: engines/freescape/games/castle/castle.cpp:534
 msgid "Run (hold)"
-msgstr ""
+msgstr "Correr (segurar)"
 
 #: engines/freescape/games/dark/dark.cpp:262
 #: engines/freescape/games/driller/driller.cpp:182
@@ -9787,7 +9815,7 @@ msgstr "Mudar Tamanho do Passo"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:376
 msgid "Sprint (hold)"
-msgstr ""
+msgstr "Disparada (segurar)"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:384
 #, fuzzy
@@ -9876,11 +9904,11 @@ msgstr "Janela de imagem alternada\n"
 
 #: engines/glk/dialogs.cpp:141
 msgid "white"
-msgstr ""
+msgstr "branco"
 
 #: engines/glk/dialogs.cpp:142
 msgid "green"
-msgstr ""
+msgstr "verde"
 
 #: engines/glk/dialogs.cpp:143
 #, fuzzy
@@ -9890,47 +9918,47 @@ msgstr "Prosseguir"
 
 #: engines/glk/dialogs.cpp:144
 msgid "blue"
-msgstr ""
+msgstr "azul"
 
 #: engines/glk/dialogs.cpp:145
 msgid "black"
-msgstr ""
+msgstr "preto"
 
 #: engines/glk/dialogs.cpp:146
 msgid "grey"
-msgstr ""
+msgstr "cinza"
 
 #: engines/glk/dialogs.cpp:195
 msgid "Monospace Regular"
-msgstr ""
+msgstr "Monoespaçada Regular"
 
 #: engines/glk/dialogs.cpp:196
 msgid "Monospace Bold"
-msgstr ""
+msgstr "Monoespaçada Negrito"
 
 #: engines/glk/dialogs.cpp:197
 msgid "Monospace Italic"
-msgstr ""
+msgstr "Monoespaçada Itálico"
 
 #: engines/glk/dialogs.cpp:198
 msgid "Monospace Bold Italic"
-msgstr ""
+msgstr "Monoespaçada Negrito Itálico"
 
 #: engines/glk/dialogs.cpp:199
 msgid "Proportional Regular"
-msgstr ""
+msgstr "Proporcional Regular"
 
 #: engines/glk/dialogs.cpp:200
 msgid "Proportional Bold"
-msgstr ""
+msgstr "Proporcional Negrito"
 
 #: engines/glk/dialogs.cpp:201
 msgid "Proportional Italic"
-msgstr ""
+msgstr "Proporcional Itálico"
 
 #: engines/glk/dialogs.cpp:202
 msgid "Proportional Bold Italic"
-msgstr ""
+msgstr "Proporcional Negrito Itálico"
 
 #: engines/glk/dialogs.cpp:210
 #, fuzzy
@@ -9940,23 +9968,24 @@ msgstr "SoundFont:"
 
 #: engines/glk/dialogs.cpp:212 engines/glk/dialogs.cpp:222
 msgid "Text:"
-msgstr ""
+msgstr "Texto:"
 
 #: engines/glk/dialogs.cpp:212
 msgid "Font for the text"
-msgstr ""
+msgstr "Fonte para o texto"
 
 #: engines/glk/dialogs.cpp:216 engines/glk/dialogs.cpp:227
 msgid "Grid:"
-msgstr ""
+msgstr "Grade:"
 
 #: engines/glk/dialogs.cpp:216
 msgid "Font for drawn graphics like maps, diagrams, puzzles, etc"
 msgstr ""
+"Fonte para gráficos desenhados como mapas, diagramas, quebra-cabeças, etc."
 
 #: engines/glk/dialogs.cpp:220
 msgid "Color"
-msgstr ""
+msgstr "Cor"
 
 #: engines/glk/dialogs.cpp:222
 #, fuzzy
@@ -9969,11 +9998,12 @@ msgstr "Ir para próximo objeto"
 #: engines/glk/dialogs.cpp:254 engines/glk/dialogs.cpp:260
 #: engines/glk/dialogs.cpp:269
 msgid "<custom>"
-msgstr ""
+msgstr "<personalizado>"
 
 #: engines/glk/dialogs.cpp:227
 msgid "Color for drawn graphics such as maps, diagrams, puzzles, etc"
 msgstr ""
+"Cor para gráficos desenhados como mapas, diagramas, quebra-cabeças, etc."
 
 #: engines/glk/dialogs.cpp:232
 #, fuzzy
@@ -10034,7 +10064,7 @@ msgstr "Sub-escaneamento vertical:"
 
 #: engines/glk/dialogs.cpp:250
 msgid "Caret:"
-msgstr ""
+msgstr "Cursor:"
 
 #: engines/glk/dialogs.cpp:250
 #, fuzzy
@@ -10044,20 +10074,20 @@ msgstr "Cursor normal"
 
 #: engines/glk/dialogs.cpp:256
 msgid "Link:"
-msgstr ""
+msgstr "Link:"
 
 #: engines/glk/dialogs.cpp:256
 msgid "Color for URLs if they appear in-game"
-msgstr ""
+msgstr "Cor para URLs caso apareçam no jogo"
 
 #. I18N: "More..." is a prompt in text windows, which appears when the text exceeds the window size
 #: engines/glk/dialogs.cpp:264
 msgid "More:"
-msgstr ""
+msgstr "Mais:"
 
 #: engines/glk/dialogs.cpp:265
 msgid "Color for the \"More...\" markers in the text"
-msgstr ""
+msgstr "Cor para os marcadores \"Mais...\" no texto"
 
 #: engines/glk/dialogs.cpp:272
 #, fuzzy
@@ -10067,11 +10097,11 @@ msgstr "Modo gráfico:"
 
 #: engines/glk/dialogs.cpp:274
 msgid "Link style:"
-msgstr ""
+msgstr "Estilo do link:"
 
 #: engines/glk/dialogs.cpp:274
 msgid "Style for URLs if they appear in-game"
-msgstr ""
+msgstr "Estilo para URLs caso apareçam no jogo"
 
 #: engines/glk/dialogs.cpp:279
 #, fuzzy
@@ -10096,6 +10126,8 @@ msgid ""
 "Custom marker in place of the \"More...\" marker for eg. \"continue\". Leave "
 "it blank to use the game's default"
 msgstr ""
+"Marcador personalizado no lugar do marcador \"Mais...\", por exemplo "
+"\"continuar\". Deixe em branco para usar o padrão do jogo"
 
 #: engines/glk/dialogs.cpp:288
 #, fuzzy
@@ -10105,7 +10137,7 @@ msgstr "Ocultar dicas"
 
 #: engines/glk/dialogs.cpp:288
 msgid "Let the game suggest text styling options"
-msgstr ""
+msgstr "Permitir que o jogo sugira opções de estilo de texto"
 
 #: engines/glk/dialogs.cpp:289
 #, fuzzy
@@ -10115,7 +10147,7 @@ msgstr "Clique esquerdo"
 
 #: engines/glk/dialogs.cpp:289
 msgid "Safely apply clicks while input is pending"
-msgstr ""
+msgstr "Aplicar cliques com segurança enquanto há entrada pendente"
 
 #. I18N: This is setting for number of text columns
 #: engines/glk/dialogs.cpp:292
@@ -10126,24 +10158,24 @@ msgstr "Controles de Toque"
 
 #: engines/glk/dialogs.cpp:292
 msgid "Number of columns"
-msgstr ""
+msgstr "Número de colunas"
 
 #. I18N: This is setting for number of text rows
 #: engines/glk/dialogs.cpp:294
 msgid "Rows count:"
-msgstr ""
+msgstr "Número de linhas:"
 
 #: engines/glk/dialogs.cpp:294
 msgid "Number of rows"
-msgstr ""
+msgstr "Número de linhas"
 
 #: engines/glk/dialogs.cpp:296
 msgid "Lock columns:"
-msgstr ""
+msgstr "Travar colunas:"
 
 #: engines/glk/dialogs.cpp:296
 msgid "Check it to manually change the column count"
-msgstr ""
+msgstr "Marque para alterar manualmente o número de colunas"
 
 #: engines/glk/dialogs.cpp:297
 #, fuzzy
@@ -10153,12 +10185,12 @@ msgstr "Defender embaixo"
 
 #: engines/glk/dialogs.cpp:297
 msgid "Check it to manually change the row count"
-msgstr ""
+msgstr "Marque para alterar manualmente o número de linhas"
 
 #. I18N: This is a setting for enabling text justification
 #: engines/glk/dialogs.cpp:301
 msgid "Justify:"
-msgstr ""
+msgstr "Justificar:"
 
 #: engines/glk/dialogs.cpp:302
 #, fuzzy
@@ -10182,7 +10214,7 @@ msgstr "Gráficos coloridos"
 #: engines/glk/dialogs.cpp:307
 msgctxt "quotes"
 msgid "Off"
-msgstr ""
+msgstr "Desativado"
 
 #. I18N: This is a setting for using normal typographic quotes, which are like in most books, with the opening quote higher than the closing one
 #: engines/glk/dialogs.cpp:309
@@ -10196,40 +10228,40 @@ msgstr "Normal"
 #: engines/glk/dialogs.cpp:311
 msgctxt "quotes"
 msgid "Rabid"
-msgstr ""
+msgstr "Raivosas"
 
 #. I18N: This is a setting for forcing all input to be in uppercase
 #: engines/glk/dialogs.cpp:314
 msgid "Caps:"
-msgstr ""
+msgstr "Maiúsculas:"
 
 #: engines/glk/dialogs.cpp:314
 msgid "Force uppercase input"
-msgstr ""
+msgstr "Forçar entrada em maiúsculas"
 
 #. I18N: This is a setting for type of text dash symbols
 #: engines/glk/dialogs.cpp:317
 msgid "Dashes:"
-msgstr ""
+msgstr "Travessões:"
 
 #. I18N: This is a setting for type of text dash symbols
 #: engines/glk/dialogs.cpp:319
 msgid "Types of dashes"
-msgstr ""
+msgstr "Tipos de travessões"
 
 #: engines/glk/dialogs.cpp:320 engines/glk/dialogs.cpp:332
 msgid "Off"
-msgstr ""
+msgstr "Desativado"
 
 #. I18N: This is a setting for using normal typographic dashes, which are like in most books, with the em dash being the longest and the en dash being half of it
 #: engines/glk/dialogs.cpp:322
 msgid "Em dashes"
-msgstr ""
+msgstr "Travessões longos (em)"
 
 #. I18N: This is a setting for using "en+em" dashes, which are like normal typographic dashes but with the en dash being the same length as the em dash, like in some comic books
 #: engines/glk/dialogs.cpp:324
 msgid "En+Em dashes"
-msgstr ""
+msgstr "Travessões en+em"
 
 #: engines/glk/dialogs.cpp:326
 #, fuzzy
@@ -10247,17 +10279,17 @@ msgstr "Espaço"
 #. I18N: This is a setting for type of spaces in the text
 #: engines/glk/dialogs.cpp:331
 msgid "Types of spaces"
-msgstr ""
+msgstr "Tipos de espaços"
 
 #. I18N: This is a setting for compressing double spaces into single ones in text
 #: engines/glk/dialogs.cpp:334
 msgid "Compress double spaces"
-msgstr ""
+msgstr "Comprimir espaços duplos"
 
 #. I18N: This is a setting for expanding single spaces into double ones in text
 #: engines/glk/dialogs.cpp:336
 msgid "Expand single spaces"
-msgstr ""
+msgstr "Expandir espaços simples"
 
 #: engines/glk/dialogs.cpp:338
 #, fuzzy
@@ -10267,7 +10299,7 @@ msgstr "Gráficos"
 
 #: engines/glk/dialogs.cpp:338
 msgid "Turn graphics on/off"
-msgstr ""
+msgstr "Ativar/desativar gráficos"
 
 #: engines/glk/dialogs.cpp:340
 #, fuzzy
@@ -10277,11 +10309,11 @@ msgstr "Janela"
 
 #: engines/glk/dialogs.cpp:341
 msgid "Horizontal margin for window"
-msgstr ""
+msgstr "Margem horizontal da janela"
 
 #: engines/glk/dialogs.cpp:342
 msgid "Vertical margin for window"
-msgstr ""
+msgstr "Margem vertical da janela"
 
 #: engines/glk/dialogs.cpp:344
 #, fuzzy
@@ -10291,11 +10323,11 @@ msgstr "Janela"
 
 #: engines/glk/dialogs.cpp:345
 msgid "Horizontal padding for window"
-msgstr ""
+msgstr "Preenchimento horizontal da janela"
 
 #: engines/glk/dialogs.cpp:346
 msgid "Vertical padding for window"
-msgstr ""
+msgstr "Preenchimento vertical da janela"
 
 #: engines/glk/dialogs.cpp:348
 #, fuzzy
@@ -10305,11 +10337,11 @@ msgstr "Próxima ação"
 
 #: engines/glk/dialogs.cpp:349
 msgid "Horizontal margin for text"
-msgstr ""
+msgstr "Margem horizontal do texto"
 
 #: engines/glk/dialogs.cpp:350
 msgid "Vertical margin for text"
-msgstr ""
+msgstr "Margem vertical do texto"
 
 #. I18N: This is a setting for leading, which is the vertical distance between text rows
 #: engines/glk/dialogs.cpp:353
@@ -10320,49 +10352,53 @@ msgstr "Carregando jogo..."
 #: engines/glk/dialogs.cpp:354
 msgid "Vertical distance between text rows. Valid inputs - 12, 16, 22 etc."
 msgstr ""
+"Distância vertical entre as linhas de texto. Valores válidos - 12, 16, 22, "
+"etc."
 
 #. I18N: This is a setting for baseline, which is the invisible horizontal line on which text sits
 #: engines/glk/dialogs.cpp:356
 msgid "Baseline:"
-msgstr ""
+msgstr "Linha de base:"
 
 #: engines/glk/dialogs.cpp:357
 msgid ""
 "Invisible horizontal line on which text sits. Valid inputs - 8, 16 etc. as "
 "per your font size"
 msgstr ""
+"Linha horizontal invisível sobre a qual o texto se apoia. Valores válidos - "
+"8, 16, etc., de acordo com o tamanho da sua fonte"
 
 #. I18N: Font size scaling for the monospace text font
 #: engines/glk/dialogs.cpp:360
 msgid "Monosize:"
-msgstr ""
+msgstr "Tamanho mono:"
 
 #: engines/glk/dialogs.cpp:361
 msgid "Font size scaling for the monospace text font"
-msgstr ""
+msgstr "Escala do tamanho da fonte para o texto monoespaçado"
 
 #. I18N: Font size scaling for the proportional text font
 #: engines/glk/dialogs.cpp:363
 msgid "Propsize:"
-msgstr ""
+msgstr "Tamanho prop:"
 
 #: engines/glk/dialogs.cpp:364
 msgid "Font size scaling for the proportional text font"
-msgstr ""
+msgstr "Escala do tamanho da fonte para o texto proporcional"
 
 #. I18N: This is a section for settings related to the "More..." prompt in text windows
 #: engines/glk/dialogs.cpp:367
 msgid "More"
-msgstr ""
+msgstr "Mais"
 
 #. I18N: This is a setting for alignment of the "More..." prompt in text windows
 #: engines/glk/dialogs.cpp:369
 msgid "Align:"
-msgstr ""
+msgstr "Alinhamento:"
 
 #: engines/glk/dialogs.cpp:370
 msgid "Alignment of the \"More...\" marker on the window"
-msgstr ""
+msgstr "Alinhamento do marcador \"Mais...\" na janela"
 
 #: engines/glk/dialogs.cpp:375
 #, fuzzy
@@ -10372,7 +10408,7 @@ msgstr "SoundFont:"
 
 #: engines/glk/dialogs.cpp:375
 msgid "Font for the \"More...\" marker"
-msgstr ""
+msgstr "Fonte para o marcador \"Mais...\""
 
 #: engines/glk/glulx/glulx.cpp:81
 msgid "This is too short to be a valid Glulx file."
@@ -10432,11 +10468,11 @@ msgstr "Disparar"
 
 #: engines/got/metaengine.cpp:75
 msgid "Magic"
-msgstr ""
+msgstr "Magia"
 
 #: engines/got/metaengine.cpp:79
 msgid "Thor dies"
-msgstr ""
+msgstr "Thor morre"
 
 #: engines/got/got.cpp:196 engines/got/got.cpp:206
 #, fuzzy
@@ -10804,7 +10840,7 @@ msgstr "Interface fácil do mouse"
 
 #: engines/hugo/metaengine.cpp:46
 msgid "Use mouse and toolbar from Windows version"
-msgstr ""
+msgstr "Usar o mouse e a barra de ferramentas da versão Windows"
 
 #: engines/hugo/metaengine.cpp:148
 msgid "User help"
@@ -10933,7 +10969,7 @@ msgstr "Mapeamentos de teclas de índice"
 
 #: engines/hypno/metaengine.cpp:134 engines/hypno/metaengine.cpp:144
 msgid "Primary shoot"
-msgstr ""
+msgstr "Disparo primário"
 
 #: engines/hypno/metaengine.cpp:139
 #, fuzzy
@@ -10967,7 +11003,7 @@ msgstr "Para Cima à Direita"
 
 #: engines/hypno/metaengine.cpp:170
 msgid "Aim up"
-msgstr ""
+msgstr "Mirar para cima"
 
 #: engines/hypno/metaengine.cpp:175 engines/scumm/metaengine.cpp:1202
 #: engines/scumm/metaengine.cpp:1279
@@ -11035,22 +11071,22 @@ msgstr "Pular fala"
 #: engines/hypno/metaengine.cpp:238 engines/hypno/metaengine.cpp:334
 #: engines/hypno/metaengine.cpp:388
 msgid "Kill player"
-msgstr ""
+msgstr "Matar o jogador"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Chump is the easy mode.
 #: engines/hypno/metaengine.cpp:262
 msgid "Chump"
-msgstr ""
+msgstr "Chump"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Punk is the medium mode.
 #: engines/hypno/metaengine.cpp:269
 msgid "Punk"
-msgstr ""
+msgstr "Punk"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Badass is the hard mode.
 #: engines/hypno/metaengine.cpp:276
 msgid "Badass"
-msgstr ""
+msgstr "Badass"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart from the last checkpoint.
 #: engines/hypno/metaengine.cpp:289
@@ -11068,7 +11104,7 @@ msgstr "Reiniciar animação"
 
 #: engines/hypno/metaengine.cpp:302
 msgid "Begin new mission"
-msgstr ""
+msgstr "Iniciar nova missão"
 
 #: engines/hypno/metaengine.cpp:374
 #, fuzzy
@@ -11270,24 +11306,31 @@ msgid ""
 "- Correct projectile weapon damage (per AD&D 2nd Edition rules)\n"
 "- Elves get +1 to hit with swords and bows (per official game manual)"
 msgstr ""
+"- Eliminar erros de arredondamento no ganho de HP\n"
+"- Corrigir o dano de armas de projétil (conforme as regras da 2ª Edição de "
+"AD&D)\n"
+"- Elfos recebem +1 de acerto com espadas e arcos (conforme o manual oficial "
+"do jogo)"
 
 #: engines/kyra/metaengine.cpp:175
 msgid "Fix Ileria and Beohram NPCs"
-msgstr ""
+msgstr "Corrigir os NPCs Ileria e Beohram"
 
 #: engines/kyra/metaengine.cpp:176
 msgid "Make Ileria a female and Beohram a paladin"
-msgstr ""
+msgstr "Tornar Ileria uma mulher e Beohram um paladino"
 
 #: engines/kyra/metaengine.cpp:187
 msgid "Enhanced thrown weapon reload"
-msgstr ""
+msgstr "Recarga aprimorada de armas de arremesso"
 
 #: engines/kyra/metaengine.cpp:188
 msgid ""
 "Thrown weapons (daggers, darts, spears...) get replaced from belt and "
 "backpack inventory slots, with thrown weapons only"
 msgstr ""
+"Armas de arremesso (adagas, dardos, lanças...) são repostas a partir dos "
+"espaços de inventário do cinto e da mochila, apenas com armas de arremesso"
 
 #: engines/kyra/metaengine.cpp:275
 msgid "Lands of Lore support is not compiled in"
@@ -11558,11 +11601,11 @@ msgstr "Habilita o som do jogo"
 
 #: engines/lab/metaengine.cpp:185
 msgid "Lower the sound volume"
-msgstr ""
+msgstr "Diminuir o volume do som"
 
 #: engines/lab/metaengine.cpp:216
 msgid "Interact with object with chosen action"
-msgstr ""
+msgstr "Interagir com o objeto usando a ação escolhida"
 
 #: engines/lab/metaengine.cpp:221
 #, fuzzy
@@ -11584,11 +11627,11 @@ msgstr "Abrir Holomapa"
 
 #: engines/lab/metaengine.cpp:239
 msgid "Close door or object"
-msgstr ""
+msgstr "Fechar porta ou objeto"
 
 #: engines/lab/metaengine.cpp:245
 msgid "Look at object close-up"
-msgstr ""
+msgstr "Examinar o objeto de perto"
 
 #: engines/lab/metaengine.cpp:251
 #, fuzzy
@@ -11604,15 +11647,15 @@ msgstr "Ir para próximo objeto"
 
 #: engines/lab/metaengine.cpp:292 engines/lab/metaengine.cpp:352
 msgid "Start dropping virtual bread crumbs"
-msgstr ""
+msgstr "Começar a deixar migalhas de pão virtuais"
 
 #: engines/lab/metaengine.cpp:298 engines/lab/metaengine.cpp:359
 msgid "Follow virtual bread crumbs"
-msgstr ""
+msgstr "Seguir as migalhas de pão virtuais"
 
 #: engines/lab/metaengine.cpp:304 engines/lab/metaengine.cpp:366
 msgid "Run while following virtual bread crumbs"
-msgstr ""
+msgstr "Correr enquanto segue as migalhas de pão virtuais"
 
 #: engines/lab/metaengine.cpp:311
 #, fuzzy
@@ -11646,7 +11689,7 @@ msgstr "Inventário de itens animado"
 
 #: engines/lab/metaengine.cpp:373
 msgid "Exit map display"
-msgstr ""
+msgstr "Sair da exibição do mapa"
 
 #: engines/lab/metaengine.cpp:379
 #, fuzzy
@@ -11771,6 +11814,9 @@ msgid ""
 "original .exe file. Otherwise, it will use lower resolution cursors from the "
 "data files."
 msgstr ""
+"Se selecionado, o jogo usará os cursores de mouse do Windows incluídos no "
+"arquivo .exe original. Caso contrário, usará cursores de resolução inferior "
+"dos arquivos de dados."
 
 #: engines/made/metaengine.cpp:158
 msgid "Cursor up"
@@ -12184,12 +12230,14 @@ msgstr "Melhor"
 
 #: engines/mohawk/dialogs.cpp:456
 msgid "Fix audio pops/clicks"
-msgstr ""
+msgstr "Corrigir estalos/cliques no áudio"
 
 #: engines/mohawk/dialogs.cpp:457
 msgid ""
 "Reduces audible pops at the end of some sound effects (Non Myst/Riven only)."
 msgstr ""
+"Reduz os estalos audíveis no final de alguns efeitos sonoros (apenas para "
+"jogos que não sejam Myst/Riven)."
 
 #: engines/mohawk/metaengine.cpp:291
 msgid "Myst ME support not compiled in"
@@ -12636,7 +12684,7 @@ msgstr "Pular cena"
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips the entire scene.
 #: engines/neverhood/metaengine.cpp:221
 msgid "Skip entire scene (works only in some scenes)"
-msgstr ""
+msgstr "Pular a cena inteira (funciona apenas em algumas cenas)"
 
 #. I18N: (Game name: The Neverhood) This action confirms the selected save or entered new save name in the save file management menus.
 #: engines/neverhood/metaengine.cpp:228
@@ -12807,6 +12855,8 @@ msgid ""
 "Use ScummVM's alternate animation timing instead of the original game's "
 "slower walking and talking speed"
 msgstr ""
+"Usar a temporização de animação alternativa do ScummVM em vez da velocidade "
+"mais lenta de caminhada e fala do jogo original"
 
 #: engines/pelrock/metaengine.cpp:57
 #, fuzzy
@@ -12819,6 +12869,8 @@ msgid ""
 "Play the game's intro sequence. Plays automatically the first time the game "
 "is launched."
 msgstr ""
+"Reproduzir a sequência de introdução do jogo. É reproduzida automaticamente "
+"na primeira vez que o jogo é iniciado."
 
 #: engines/pelrock/metaengine.cpp:68
 #, fuzzy
@@ -12829,6 +12881,8 @@ msgstr "Desabilitar sensores"
 #: engines/pelrock/metaengine.cpp:69
 msgid "Disable original screensaver slider mini-game every 60 seconds."
 msgstr ""
+"Desativar o minijogo deslizante de proteção de tela original que aparece a "
+"cada 60 segundos."
 
 #: engines/petka/metaengine.cpp:117
 #, fuzzy
@@ -12918,7 +12972,7 @@ msgstr "Pular diálogo"
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and also prevents the interaction, instead instantly placing the player next to the target.
 #: engines/pink/metaengine.cpp:151
 msgid "Skip walk and cancel interaction"
-msgstr ""
+msgstr "Pular a caminhada e cancelar a interação"
 
 #. I18N: (Game Name: Pink Panther) This action fully skips the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:158
@@ -12981,15 +13035,16 @@ msgstr "Destacar próximo diálogo"
 
 #: engines/private/metaengine.cpp:51
 msgid "Highlight clickable areas in decision scenes."
-msgstr ""
+msgstr "Destacar áreas clicáveis nas cenas de decisão."
 
 #: engines/private/metaengine.cpp:61
 msgid "Increased contrast for small print"
-msgstr ""
+msgstr "Contraste aumentado para textos pequenos"
 
 #: engines/private/metaengine.cpp:62
 msgid "Enhance small printed paper close-ups for improved readability."
 msgstr ""
+"Aprimorar os close-ups de papéis com texto pequeno para melhor legibilidade."
 
 #: engines/private/metaengine.cpp:147 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -13003,7 +13058,7 @@ msgstr "Habilita modo de depuração"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable this if backend does not support 32bpp and/or to debug graphics"
-msgstr ""
+msgstr "Ative isto se o backend não suportar 32bpp e/ou para depurar gráficos"
 
 #: engines/queen/metaengine.cpp:41
 msgid "Alternative intro"
@@ -13023,7 +13078,7 @@ msgstr "Utiliza uma fonte personalizada mais fácil de ler"
 
 #: engines/queen/metaengine.cpp:186
 msgid "Move / Skip / Use default action with inventory item"
-msgstr ""
+msgstr "Mover / Pular / Usar ação padrão com item do inventário"
 
 #: engines/queen/metaengine.cpp:198 engines/twp/metaengine.cpp:175
 #, fuzzy
@@ -13394,6 +13449,8 @@ msgid ""
 "Detect and attempt to repair overflows in DPCM8 audio, which cause "
 "noticeable pops and crackles."
 msgstr ""
+"Detectar e tentar reparar estouros no áudio DPCM8, que causam estalos e "
+"crepitações perceptíveis."
 
 #: engines/sci/detection_options.h:271
 msgid "Roland D-110 / D-10 / D-20"
@@ -13737,11 +13794,11 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1213 engines/scumm/metaengine.cpp:793
 msgid "Brighten the graphics to simulate a Macintosh monitor."
-msgstr ""
+msgstr "Clarear os gráficos para simular um monitor Macintosh."
 
 #: engines/scumm/dialogs.cpp:1219
 msgid "Simulate Sega colors"
-msgstr ""
+msgstr "Simular as cores do Sega"
 
 #: engines/scumm/dialogs.cpp:1220
 msgid ""
@@ -13749,15 +13806,20 @@ msgid ""
 "actual Sega hardware. These are significantly darker, though it's unclear if "
 "that was intended or not."
 msgstr ""
+"Em vez de usar as cores definidas no jogo, simula as cores usadas no "
+"hardware real do Sega. Elas são significativamente mais escuras, embora não "
+"esteja claro se isso era intencional ou não."
 
 #: engines/scumm/dialogs.cpp:1226
 msgid "Show wait cursor when paused"
-msgstr ""
+msgstr "Mostrar o cursor de espera quando pausado"
 
 #: engines/scumm/dialogs.cpp:1227
 msgid ""
 "When paused, show the animated wait cursor from the original Sega CD version."
 msgstr ""
+"Quando pausado, mostra o cursor de espera animado da versão original do Sega "
+"CD."
 
 #: engines/scumm/dialogs.cpp:1364
 msgid "Overture Timing:"
@@ -14402,6 +14464,9 @@ msgid ""
 "This fan-made translation is not supported, because it is known to contain\n"
 "corrupted resources that might make it crash or seriously misbehave."
 msgstr ""
+"Esta tradução feita por fãs não é suportada, pois sabe-se que contém\n"
+"recursos corrompidos que podem fazê-la travar ou apresentar mau "
+"funcionamento grave."
 
 #: engines/scumm/metaengine.cpp:404
 msgid ""
@@ -14545,6 +14610,8 @@ msgid ""
 "Disable the scripted part of the demo (dangerous!). This makes it "
 "interactive, but as this was never intended, expect frequent crashes!"
 msgstr ""
+"Desativar a parte programada da demonstração (perigoso!). Isso a torna "
+"interativa, mas como isso nunca foi planejado, espere travamentos frequentes!"
 
 #: engines/scumm/metaengine.cpp:848
 #, fuzzy
@@ -14554,7 +14621,7 @@ msgstr "Utilizar áudio de CD"
 
 #: engines/scumm/metaengine.cpp:849
 msgid "Use the remastered speech and sound effects."
-msgstr ""
+msgstr "Usar a fala e os efeitos sonoros remasterizados."
 
 #: engines/scumm/metaengine.cpp:861
 #, fuzzy
@@ -14577,7 +14644,7 @@ msgstr "Alta resolução ativada"
 
 #: engines/scumm/metaengine.cpp:883
 msgid "Run the game in 640x400 high resolution mode instead of 320x200"
-msgstr ""
+msgstr "Executar o jogo no modo de alta resolução 640x400 em vez de 320x200"
 
 #: engines/scumm/metaengine.cpp:892 engines/scumm/metaengine.cpp:919
 #, fuzzy
@@ -14606,6 +14673,8 @@ msgstr "Modo rápido"
 #: engines/scumm/metaengine.cpp:910
 msgid "Enable original Yoda mode shortcuts, including movie mode and auto play"
 msgstr ""
+"Ativar os atalhos originais do modo Yoda, incluindo o modo filme e a "
+"reprodução automática"
 
 #: engines/scumm/metaengine.cpp:1085
 #, fuzzy
@@ -14642,23 +14711,23 @@ msgstr "Trapaça para vencer a briga de motos"
 
 #: engines/scumm/metaengine.cpp:1166
 msgid "Rebel Assault controls"
-msgstr ""
+msgstr "Controles de Rebel Assault"
 
 #: engines/scumm/metaengine.cpp:1168 engines/scumm/metaengine.cpp:1245
 msgid "Aim up / menu up"
-msgstr ""
+msgstr "Mirar para cima / menu para cima"
 
 #: engines/scumm/metaengine.cpp:1173 engines/scumm/metaengine.cpp:1250
 msgid "Aim down / menu down"
-msgstr ""
+msgstr "Mirar para baixo / menu para baixo"
 
 #: engines/scumm/metaengine.cpp:1178 engines/scumm/metaengine.cpp:1255
 msgid "Aim left / menu left"
-msgstr ""
+msgstr "Mirar para a esquerda / menu para a esquerda"
 
 #: engines/scumm/metaengine.cpp:1183 engines/scumm/metaengine.cpp:1260
 msgid "Aim right / menu right"
-msgstr ""
+msgstr "Mirar para a direita / menu para a direita"
 
 #: engines/scumm/metaengine.cpp:1216 engines/scumm/metaengine.cpp:1293
 #, fuzzy
@@ -14680,7 +14749,7 @@ msgstr "Omitir menu principal"
 
 #: engines/scumm/metaengine.cpp:1243
 msgid "Rebel Assault II controls"
-msgstr ""
+msgstr "Controles de Rebel Assault II"
 
 #: engines/scumm/metaengine.cpp:1298
 #, fuzzy
@@ -14770,11 +14839,11 @@ msgstr ""
 
 #: engines/scumm/scumm.cpp:1379
 msgid "The Mac GUI"
-msgstr ""
+msgstr "A interface gráfica do Mac"
 
 #: engines/scumm/scumm.cpp:1379
 msgid "The music and the Mac GUI"
-msgstr ""
+msgstr "A música e a interface gráfica do Mac"
 
 #: engines/scumm/scumm.cpp:1408
 #, c-format
@@ -14796,6 +14865,10 @@ msgid ""
 "dialog definitions. Look for a 'The Dig f' folder on your CD. Any one from "
 "its sub-folders should be what you need."
 msgstr ""
+"'%s' parece ser o executável errado de The Dig. Pode ser o inicializador "
+"encontrado na raiz do CD, que não contém nenhuma das definições de menu e "
+"diálogo necessárias. Procure por uma pasta 'The Dig f' no seu CD. Qualquer "
+"um de suas subpastas deve ser o que você precisa."
 
 #: engines/scumm/scumm.cpp:1584
 msgid ""
@@ -14804,6 +14877,11 @@ msgid ""
 "Since the One-Stop Fun Shop series makes extensive use of TTF fonts,\n"
 "some of the graphics on screen will be missing."
 msgstr ""
+"Parece que a sua versão do ScummVM não foi compilada com suporte a fontes "
+"TrueType.\n"
+"\n"
+"Como a série One-Stop Fun Shop faz uso extensivo de fontes TTF,\n"
+"alguns dos gráficos na tela estarão faltando."
 
 #: engines/scumm/scumm.cpp:1918
 msgid ""
@@ -15118,7 +15196,7 @@ msgstr "Conjunto de peças"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:501 engines/sherlock/metaengine.cpp:910
 msgid "Go back 10 pages"
-msgstr ""
+msgstr "Voltar 10 páginas"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go forward 10 pages in the journal
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 10 pages in the journal
@@ -15192,7 +15270,7 @@ msgstr "Habilitar trapaças"
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade by pixel"
 #: engines/sherlock/metaengine.cpp:726
 msgid "Fade by pixel"
-msgstr ""
+msgstr "Desvanecer por pixel"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade directly"
 #: engines/sherlock/metaengine.cpp:732
@@ -15287,11 +15365,11 @@ msgstr "Ajustar à janela"
 
 #: engines/sherlock/metaengine.cpp:882 engines/sherlock/metaengine.cpp:949
 msgid "Change selected option to the left"
-msgstr ""
+msgstr "Mudar a opção selecionada para a esquerda"
 
 #: engines/sherlock/metaengine.cpp:888 engines/sherlock/metaengine.cpp:955
 msgid "Change selected option to the right"
-msgstr ""
+msgstr "Mudar a opção selecionada para a direita"
 
 #: engines/sherlock/metaengine.cpp:972
 #, fuzzy
@@ -15363,6 +15441,7 @@ msgstr "Fechar caixa de diálogo"
 #: engines/sherlock/metaengine.cpp:1177
 msgid "Exit inventory / Close verb menu / Cancel item use action"
 msgstr ""
+"Sair do inventário / Fechar menu de verbos / Cancelar ação de uso de item"
 
 #: engines/sherlock/metaengine.cpp:1239
 #, fuzzy
@@ -15457,12 +15536,12 @@ msgstr "Salvamento automático sem título"
 #: engines/sludge/keymapper_tables.h:200 engines/sludge/keymapper_tables.h:435
 #: engines/sludge/keymapper_tables.h:552
 msgid "DEBUG: Show floor"
-msgstr ""
+msgstr "DEPURAÇÃO: Mostrar o chão"
 
 #: engines/sludge/keymapper_tables.h:205 engines/sludge/keymapper_tables.h:440
 #: engines/sludge/keymapper_tables.h:547
 msgid "DEBUG: Show boxes"
-msgstr ""
+msgstr "DEPURAÇÃO: Mostrar as caixas"
 
 #: engines/sludge/keymapper_tables.h:237
 #, fuzzy
@@ -15485,11 +15564,11 @@ msgstr "Pular cena"
 
 #: engines/sludge/keymapper_tables.h:328
 msgid "Smell"
-msgstr ""
+msgstr "Cheirar"
 
 #: engines/sludge/keymapper_tables.h:338
 msgid "Consume"
-msgstr ""
+msgstr "Consumir"
 
 #: engines/sludge/keymapper_tables.h:361
 #, fuzzy
@@ -15776,15 +15855,15 @@ msgstr "Abrir gerenciador de Arquivos"
 
 #: engines/supernova/metaengine.cpp:385
 msgid "Phone"
-msgstr ""
+msgstr "Telefone"
 
 #: engines/supernova/metaengine.cpp:391
 msgid "ProText"
-msgstr ""
+msgstr "ProText"
 
 #: engines/supernova/metaengine.cpp:397
 msgid "Calculata"
-msgstr ""
+msgstr "Calculata"
 
 #: engines/sword1/animation.cpp:566 engines/sword2/animation.cpp:459
 msgid ""
@@ -15922,7 +16001,7 @@ msgstr ""
 
 #: engines/sword25/metaengine.cpp:130
 msgid "Reveal all interactive hotspots (hold the key)"
-msgstr ""
+msgstr "Revelar todos os pontos interativos (segure a tecla)"
 
 #: engines/teenagent/metaengine.cpp:201
 #, fuzzy
@@ -16001,7 +16080,7 @@ msgstr "Ir para o fim do menu de salvar/carregar"
 
 #: engines/tinsel/tinsel.cpp:1061
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
-msgstr ""
+msgstr "Discworld Noir requer o ScummVM com o TinyGL ativado"
 
 #: engines/titanic/metaengine.cpp:173
 #, fuzzy
@@ -16077,7 +16156,7 @@ msgstr "Sala:"
 
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
-msgstr ""
+msgstr "Vida real"
 
 #: engines/titanic/metaengine.cpp:278
 #, fuzzy
@@ -16099,19 +16178,19 @@ msgstr "Transições:"
 
 #: engines/titanic/metaengine.cpp:307
 msgid "Toggle between Star Map and photo of your home"
-msgstr ""
+msgstr "Alternar entre o Mapa Estelar e a foto da sua casa"
 
 #: engines/titanic/metaengine.cpp:350
 msgid "Stop moving"
-msgstr ""
+msgstr "Parar de se mover"
 
 #: engines/titanic/metaengine.cpp:356
 msgid "Lock coordinate"
-msgstr ""
+msgstr "Travar coordenada"
 
 #: engines/titanic/metaengine.cpp:362
 msgid "Unlock coordinate"
-msgstr ""
+msgstr "Destravar coordenada"
 
 #: engines/titanic/metaengine.cpp:368
 #, fuzzy
@@ -16121,7 +16200,7 @@ msgstr "Sair da conversa"
 
 #: engines/titanic/metaengine.cpp:373
 msgid "View boundaries"
-msgstr ""
+msgstr "Ver os limites"
 
 #: engines/toltecs/metaengine.cpp:216
 #, fuzzy
@@ -16131,7 +16210,7 @@ msgstr "Mover para esquerda"
 
 #: engines/toltecs/metaengine.cpp:222
 msgid "Move / Perform default action"
-msgstr ""
+msgstr "Mover / Executar ação padrão"
 
 #: engines/toltecs/metaengine.cpp:258
 #, fuzzy
@@ -16204,7 +16283,7 @@ msgstr "Transições de cena quadriculadas"
 
 #: engines/tot/metaengine.cpp:48
 msgid "Disable original transition effects between scenes"
-msgstr ""
+msgstr "Desativar os efeitos de transição originais entre cenas"
 
 #: engines/tot/metaengine.cpp:58
 #, fuzzy
@@ -16724,6 +16803,8 @@ msgid ""
 "This game requires OpenGL Framebuffer Objects, which are not supported on "
 "your system"
 msgstr ""
+"Este jogo requer Objetos de Framebuffer do OpenGL, que não são suportados "
+"pelo seu sistema"
 
 #: engines/ultima/metaengine.cpp:67
 msgid "Enable frame skipping"
@@ -16802,35 +16883,35 @@ msgstr "Não foi possível encontrar o arquivo de dados ultima.dat correto"
 
 #: engines/ultima/ultima0/metaengine.cpp:49
 msgid "Swing"
-msgstr ""
+msgstr "Balançar"
 
 #: engines/ultima/ultima0/metaengine.cpp:50
 msgid "Throw"
-msgstr ""
+msgstr "Arremessar"
 
 #: engines/ultima/ultima0/metaengine.cpp:51
 msgid "Food"
-msgstr ""
+msgstr "Comida"
 
 #: engines/ultima/ultima0/metaengine.cpp:52
 msgid "Rapier"
-msgstr ""
+msgstr "Rapieira"
 
 #: engines/ultima/ultima0/metaengine.cpp:53
 msgid "Axe"
-msgstr ""
+msgstr "Machado"
 
 #: engines/ultima/ultima0/metaengine.cpp:54
 msgid "Shield"
-msgstr ""
+msgstr "Escudo"
 
 #: engines/ultima/ultima0/metaengine.cpp:55
 msgid "Bow & arrow"
-msgstr ""
+msgstr "Arco e flecha"
 
 #: engines/ultima/ultima0/metaengine.cpp:56
 msgid "Magic amulet"
-msgstr ""
+msgstr "Amuleto mágico"
 
 #: engines/ultima/ultima0/metaengine.cpp:57
 #, fuzzy
@@ -16930,7 +17011,7 @@ msgstr "Teclas Gerais"
 #: engines/ultima/ultima0/metaengine.cpp:101
 #: engines/ultima/ultima0/metaengine.cpp:124
 msgid "Dungeon keys"
-msgstr ""
+msgstr "Chaves da masmorra"
 
 #: engines/ultima/ultima4/metaengine.cpp:43
 #: engines/ultima/ultima4/metaengine.cpp:133
@@ -16950,7 +17031,7 @@ msgstr "Teclado"
 #: engines/ultima/ultima4/metaengine.cpp:52
 #: engines/ultima/ultima8/metaengine.cpp:107
 msgid "Descend"
-msgstr ""
+msgstr "Descer"
 
 #: engines/ultima/ultima4/metaengine.cpp:56
 #, fuzzy
@@ -16960,16 +17041,16 @@ msgstr "Trapaça de luta"
 
 #: engines/ultima/ultima4/metaengine.cpp:57
 msgid "Hole up & camp"
-msgstr ""
+msgstr "Abrigar-se e acampar"
 
 #. I18N: Jimmy is used to open locked doors
 #: engines/ultima/ultima4/metaengine.cpp:59
 msgid "Jimmy"
-msgstr ""
+msgstr "Forçar fechadura"
 
 #: engines/ultima/ultima4/metaengine.cpp:60
 msgid "Ignite"
-msgstr ""
+msgstr "Acender"
 
 #: engines/ultima/ultima4/metaengine.cpp:61
 #, fuzzy
@@ -16979,7 +17060,7 @@ msgstr "Olhar para"
 
 #: engines/ultima/ultima4/metaengine.cpp:62
 msgid "Mix reagents"
-msgstr ""
+msgstr "Misturar reagentes"
 
 #: engines/ultima/ultima4/metaengine.cpp:63
 #, fuzzy
@@ -17003,7 +17084,7 @@ msgstr "Senha:"
 #. I18N: Peer is used to look through keyholes or other small openings
 #: engines/ultima/ultima4/metaengine.cpp:68
 msgid "Peer"
-msgstr ""
+msgstr "Espiar"
 
 #: engines/ultima/ultima4/metaengine.cpp:69
 #, fuzzy
@@ -17025,11 +17106,11 @@ msgstr "Status:"
 
 #: engines/ultima/ultima4/metaengine.cpp:75
 msgid "Wear armor"
-msgstr ""
+msgstr "Vestir armadura"
 
 #: engines/ultima/ultima4/metaengine.cpp:76
 msgid "Yell"
-msgstr ""
+msgstr "Gritar"
 
 #: engines/ultima/ultima4/metaengine.cpp:82
 #, fuzzy
@@ -17051,7 +17132,7 @@ msgstr "Somente Fala"
 
 #: engines/ultima/ultima4/metaengine.cpp:85
 msgid "Combat speed up"
-msgstr ""
+msgstr "Acelerar combate"
 
 #: engines/ultima/ultima4/metaengine.cpp:86
 #, fuzzy
@@ -17061,11 +17142,11 @@ msgstr "Girar para baixo"
 
 #: engines/ultima/ultima4/metaengine.cpp:87
 msgid "Combat speed normal"
-msgstr ""
+msgstr "Velocidade de combate normal"
 
 #: engines/ultima/ultima4/metaengine.cpp:93
 msgid "Party - None"
-msgstr ""
+msgstr "Grupo - Nenhum"
 
 #: engines/ultima/ultima4/metaengine.cpp:94
 #, fuzzy
@@ -17117,7 +17198,7 @@ msgstr "Transferir Personagem"
 
 #: engines/ultima/ultima4/metaengine.cpp:107
 msgid "Destroy all creatures"
-msgstr ""
+msgstr "Destruir todas as criaturas"
 
 #: engines/ultima/ultima4/metaengine.cpp:108
 #, fuzzy
@@ -17134,7 +17215,7 @@ msgstr "Próximo objeto"
 
 #: engines/ultima/ultima4/metaengine.cpp:110
 msgid "Full equipment"
-msgstr ""
+msgstr "Equipamento completo"
 
 #: engines/ultima/ultima4/metaengine.cpp:111
 #, fuzzy
@@ -17144,15 +17225,15 @@ msgstr "Alternar Modo de Combate"
 
 #: engines/ultima/ultima4/metaengine.cpp:113
 msgid "Help - Teleport to Lord British"
-msgstr ""
+msgstr "Ajuda - Teleportar para Lord British"
 
 #: engines/ultima/ultima4/metaengine.cpp:114
 msgid "Give items"
-msgstr ""
+msgstr "Dar itens"
 
 #: engines/ultima/ultima4/metaengine.cpp:115
 msgid "List karma"
-msgstr ""
+msgstr "Listar karma"
 
 #: engines/ultima/ultima4/metaengine.cpp:116
 #, fuzzy
@@ -17162,11 +17243,11 @@ msgstr "Local seguinte"
 
 #: engines/ultima/ultima4/metaengine.cpp:117
 msgid "Give mixtures"
-msgstr ""
+msgstr "Dar misturas"
 
 #: engines/ultima/ultima4/metaengine.cpp:118
 msgid "Combat encounters"
-msgstr ""
+msgstr "Encontros de combate"
 
 #: engines/ultima/ultima4/metaengine.cpp:119
 #, fuzzy
@@ -17176,15 +17257,15 @@ msgstr "Alternar Modo de Arrastar"
 
 #: engines/ultima/ultima4/metaengine.cpp:120
 msgid "Full party"
-msgstr ""
+msgstr "Grupo completo"
 
 #: engines/ultima/ultima4/metaengine.cpp:121
 msgid "Give reagents"
-msgstr ""
+msgstr "Dar reagentes"
 
 #: engines/ultima/ultima4/metaengine.cpp:122
 msgid "Full stats"
-msgstr ""
+msgstr "Atributos completos"
 
 #: engines/ultima/ultima4/metaengine.cpp:123
 #, fuzzy
@@ -17206,7 +17287,7 @@ msgstr "Nível de Depuração:"
 
 #: engines/ultima/ultima4/metaengine.cpp:126
 msgid "Grant virtue"
-msgstr ""
+msgstr "Conceder virtude"
 
 #: engines/ultima/ultima4/metaengine.cpp:127
 #, fuzzy
@@ -17254,23 +17335,23 @@ msgstr "Andar até"
 
 #: engines/ultima/nuvie/metaengine.cpp:63
 msgid "Walk north-east"
-msgstr ""
+msgstr "Caminhar para nordeste"
 
 #: engines/ultima/nuvie/metaengine.cpp:64
 msgid "Walk south-east"
-msgstr ""
+msgstr "Caminhar para sudeste"
 
 #: engines/ultima/nuvie/metaengine.cpp:65
 msgid "Walk north-west"
-msgstr ""
+msgstr "Caminhar para noroeste"
 
 #: engines/ultima/nuvie/metaengine.cpp:66
 msgid "Walk south-west"
-msgstr ""
+msgstr "Caminhar para sudoeste"
 
 #: engines/ultima/nuvie/metaengine.cpp:75
 msgid "Multi-use"
-msgstr ""
+msgstr "Uso múltiplo"
 
 #. I18N: command bar is the bar of commands at the bottom of the screen
 #: engines/ultima/nuvie/metaengine.cpp:77
@@ -17313,7 +17394,7 @@ msgstr "Tecla anti-chefe"
 
 #: engines/ultima/nuvie/metaengine.cpp:85
 msgid "End key"
-msgstr ""
+msgstr "Tecla End"
 
 #: engines/ultima/nuvie/metaengine.cpp:86
 #, fuzzy
@@ -17347,7 +17428,7 @@ msgstr "Salvamento automático sem título"
 
 #: engines/ultima/nuvie/metaengine.cpp:95
 msgid "Show game menu; Cancel action if in middle of action"
-msgstr ""
+msgstr "Mostrar o menu do jogo; cancelar a ação se estiver no meio de uma ação"
 
 #: engines/ultima/nuvie/metaengine.cpp:97
 #, fuzzy
@@ -17382,7 +17463,7 @@ msgstr "Alternar som"
 #. I18N: command bar is the bar of commands at the bottom of the screen
 #: engines/ultima/nuvie/metaengine.cpp:104
 msgid "Toggle original style command bar"
-msgstr ""
+msgstr "Alternar a barra de comandos no estilo original"
 
 #: engines/ultima/nuvie/metaengine.cpp:105
 #, fuzzy
@@ -17435,51 +17516,51 @@ msgstr "Fechar caixa de diálogo"
 
 #: engines/ultima/nuvie/metaengine.cpp:115
 msgid "Enter ALT code (hold)"
-msgstr ""
+msgstr "Inserir código ALT (segurar)"
 
 #: engines/ultima/nuvie/metaengine.cpp:116
 msgid "ALT code 0"
-msgstr ""
+msgstr "Código ALT 0"
 
 #: engines/ultima/nuvie/metaengine.cpp:117
 msgid "ALT code 1"
-msgstr ""
+msgstr "Código ALT 1"
 
 #: engines/ultima/nuvie/metaengine.cpp:118
 msgid "ALT code 2"
-msgstr ""
+msgstr "Código ALT 2"
 
 #: engines/ultima/nuvie/metaengine.cpp:119
 msgid "ALT code 3"
-msgstr ""
+msgstr "Código ALT 3"
 
 #: engines/ultima/nuvie/metaengine.cpp:120
 msgid "ALT code 4"
-msgstr ""
+msgstr "Código ALT 4"
 
 #: engines/ultima/nuvie/metaengine.cpp:121
 msgid "ALT code 5"
-msgstr ""
+msgstr "Código ALT 5"
 
 #: engines/ultima/nuvie/metaengine.cpp:122
 msgid "ALT code 6"
-msgstr ""
+msgstr "Código ALT 6"
 
 #: engines/ultima/nuvie/metaengine.cpp:123
 msgid "ALT code 7"
-msgstr ""
+msgstr "Código ALT 7"
 
 #: engines/ultima/nuvie/metaengine.cpp:124
 msgid "ALT code 8"
-msgstr ""
+msgstr "Código ALT 8"
 
 #: engines/ultima/nuvie/metaengine.cpp:125
 msgid "ALT code 9"
-msgstr ""
+msgstr "Código ALT 9"
 
 #: engines/ultima/nuvie/metaengine.cpp:129
 msgid "Open the asset viewer"
-msgstr ""
+msgstr "Abrir o visualizador de recursos"
 
 #. I18N: Eggs are in-game hatchable objects that are normally invisible
 #: engines/ultima/nuvie/metaengine.cpp:131
@@ -17533,7 +17614,7 @@ msgstr "Alternar modo rápido"
 
 #: engines/ultima/nuvie/metaengine.cpp:140
 msgid "Heal party"
-msgstr ""
+msgstr "Curar o grupo"
 
 #: engines/ultima/nuvie/metaengine.cpp:141
 #, fuzzy
@@ -17549,7 +17630,7 @@ msgstr "Habilitar trapaças"
 
 #: engines/ultima/nuvie/metaengine.cpp:146
 msgid "Solo mode as Avatar"
-msgstr ""
+msgstr "Modo solo como o Avatar"
 
 #: engines/ultima/nuvie/metaengine.cpp:147
 #, fuzzy
@@ -17583,51 +17664,51 @@ msgstr "Ver Integrante 6"
 
 #: engines/ultima/nuvie/metaengine.cpp:152
 msgid "Solo mode as party member 7"
-msgstr ""
+msgstr "Modo solo como o membro do grupo 7"
 
 #: engines/ultima/nuvie/metaengine.cpp:153
 msgid "Solo mode as party member 8"
-msgstr ""
+msgstr "Modo solo como o membro do grupo 8"
 
 #: engines/ultima/nuvie/metaengine.cpp:154
 msgid "Solo mode as party member 9"
-msgstr ""
+msgstr "Modo solo como o membro do grupo 9"
 
 #: engines/ultima/nuvie/metaengine.cpp:155
 msgid "Show stats for Avatar"
-msgstr ""
+msgstr "Mostrar atributos do Avatar"
 
 #: engines/ultima/nuvie/metaengine.cpp:156
 msgid "Show stats for party member 2"
-msgstr ""
+msgstr "Mostrar atributos do membro do grupo 2"
 
 #: engines/ultima/nuvie/metaengine.cpp:157
 msgid "Show stats for party member 3"
-msgstr ""
+msgstr "Mostrar atributos do membro do grupo 3"
 
 #: engines/ultima/nuvie/metaengine.cpp:158
 msgid "Show stats for party member 4"
-msgstr ""
+msgstr "Mostrar atributos do membro do grupo 4"
 
 #: engines/ultima/nuvie/metaengine.cpp:159
 msgid "Show stats for party member 5"
-msgstr ""
+msgstr "Mostrar atributos do membro do grupo 5"
 
 #: engines/ultima/nuvie/metaengine.cpp:160
 msgid "Show stats for party member 6"
-msgstr ""
+msgstr "Mostrar atributos do membro do grupo 6"
 
 #: engines/ultima/nuvie/metaengine.cpp:161
 msgid "Show stats for party member 7"
-msgstr ""
+msgstr "Mostrar atributos do membro do grupo 7"
 
 #: engines/ultima/nuvie/metaengine.cpp:162
 msgid "Show stats for party member 8"
-msgstr ""
+msgstr "Mostrar atributos do membro do grupo 8"
 
 #: engines/ultima/nuvie/metaengine.cpp:163
 msgid "Show stats for party member 9"
-msgstr ""
+msgstr "Mostrar atributos do membro do grupo 9"
 
 #: engines/ultima/nuvie/metaengine.cpp:164
 #, fuzzy
@@ -17637,80 +17718,80 @@ msgstr "Exibir inventário"
 
 #: engines/ultima/nuvie/metaengine.cpp:165
 msgid "Show inventory for party member 2"
-msgstr ""
+msgstr "Mostrar inventário do membro do grupo 2"
 
 #: engines/ultima/nuvie/metaengine.cpp:166
 msgid "Show inventory for party member 3"
-msgstr ""
+msgstr "Mostrar inventário do membro do grupo 3"
 
 #: engines/ultima/nuvie/metaengine.cpp:167
 msgid "Show inventory for party member 4"
-msgstr ""
+msgstr "Mostrar inventário do membro do grupo 4"
 
 #: engines/ultima/nuvie/metaengine.cpp:168
 msgid "Show inventory for party member 5"
-msgstr ""
+msgstr "Mostrar inventário do membro do grupo 5"
 
 #: engines/ultima/nuvie/metaengine.cpp:169
 msgid "Show inventory for party member 6"
-msgstr ""
+msgstr "Mostrar inventário do membro do grupo 6"
 
 #: engines/ultima/nuvie/metaengine.cpp:170
 msgid "Show inventory for party member 7"
-msgstr ""
+msgstr "Mostrar inventário do membro do grupo 7"
 
 #: engines/ultima/nuvie/metaengine.cpp:171
 msgid "Show inventory for party member 8"
-msgstr ""
+msgstr "Mostrar inventário do membro do grupo 8"
 
 #: engines/ultima/nuvie/metaengine.cpp:172
 msgid "Show inventory for party member 9"
-msgstr ""
+msgstr "Mostrar inventário do membro do grupo 9"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:174
 msgid "Show doll gump for Avatar"
-msgstr ""
+msgstr "Mostrar o boneco (gump) do Avatar"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:176
 msgid "Show doll gump for party member 2"
-msgstr ""
+msgstr "Mostrar o boneco (gump) do membro do grupo 2"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:178
 msgid "Show doll gump for party member 3"
-msgstr ""
+msgstr "Mostrar o boneco (gump) do membro do grupo 3"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:180
 msgid "Show doll gump for party member 4"
-msgstr ""
+msgstr "Mostrar o boneco (gump) do membro do grupo 4"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:182
 msgid "Show doll gump for party member 5"
-msgstr ""
+msgstr "Mostrar o boneco (gump) do membro do grupo 5"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:184
 msgid "Show doll gump for party member 6"
-msgstr ""
+msgstr "Mostrar o boneco (gump) do membro do grupo 6"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:186
 msgid "Show doll gump for party member 7"
-msgstr ""
+msgstr "Mostrar o boneco (gump) do membro do grupo 7"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:188
 msgid "Show doll gump for party member 8"
-msgstr ""
+msgstr "Mostrar o boneco (gump) do membro do grupo 8"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:190
 msgid "Show doll gump for party member 9"
-msgstr ""
+msgstr "Mostrar o boneco (gump) do membro do grupo 9"
 
 #: engines/ultima/nuvie/metaengine.cpp:196
 #: engines/ultima/nuvie/metaengine.cpp:201
@@ -17737,7 +17818,7 @@ msgstr "Transferir Personagem"
 
 #: engines/ultima/ultima8/metaengine.cpp:46
 msgid "Draw weapon / Combat"
-msgstr ""
+msgstr "Sacar arma / Combate"
 
 #: engines/ultima/ultima8/metaengine.cpp:51
 #, fuzzy
@@ -17753,7 +17834,7 @@ msgstr "Destacar próximo diálogo"
 
 #: engines/ultima/ultima8/metaengine.cpp:63
 msgid "Use bedroll"
-msgstr ""
+msgstr "Usar saco de dormir"
 
 #: engines/ultima/ultima8/metaengine.cpp:64
 #, fuzzy
@@ -17775,7 +17856,7 @@ msgstr "Abrir mapa"
 
 #: engines/ultima/ultima8/metaengine.cpp:67
 msgid "Use recall"
-msgstr ""
+msgstr "Usar Recall"
 
 #: engines/ultima/ultima8/metaengine.cpp:68
 #, fuzzy
@@ -17786,15 +17867,15 @@ msgstr "Abrir inventário"
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:70
 msgid "Close all displays"
-msgstr ""
+msgstr "Fechar todas as exibições"
 
 #: engines/ultima/ultima8/metaengine.cpp:71
 msgid "Jump (fake both-button-click)"
-msgstr ""
+msgstr "Saltar (simular clique de ambos os botões)"
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Careful step"
-msgstr ""
+msgstr "Passo cuidadoso"
 
 #: engines/ultima/ultima8/metaengine.cpp:78
 #, fuzzy
@@ -17816,7 +17897,7 @@ msgstr "Inventário"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
 msgid "Use medikit"
-msgstr ""
+msgstr "Usar kit médico"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
 #, fuzzy
@@ -17826,7 +17907,7 @@ msgstr "Inventário"
 
 #: engines/ultima/ultima8/metaengine.cpp:83
 msgid "Detonate bomb"
-msgstr ""
+msgstr "Detonar bomba"
 
 #: engines/ultima/ultima8/metaengine.cpp:85
 #, fuzzy
@@ -17848,7 +17929,7 @@ msgstr "Próxima ação"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
 msgid "Grab items"
-msgstr ""
+msgstr "Pegar itens"
 
 #: engines/ultima/ultima8/metaengine.cpp:90
 #, fuzzy
@@ -17858,7 +17939,7 @@ msgstr "Câmera acompanha Jogador"
 
 #: engines/ultima/ultima8/metaengine.cpp:91
 msgid "Jump / Roll / Crouch"
-msgstr ""
+msgstr "Saltar / Rolar / Agachar"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
 #, fuzzy
@@ -17892,7 +17973,7 @@ msgstr "Alternar Relógio"
 
 #: engines/ultima/ultima8/metaengine.cpp:100
 msgid "Side step / Advance / Retreat"
-msgstr ""
+msgstr "Passo lateral / Avançar / Recuar"
 
 #: engines/ultima/ultima8/metaengine.cpp:105
 #, fuzzy
@@ -17902,7 +17983,7 @@ msgstr "Alternar Relógio"
 
 #: engines/ultima/ultima8/metaengine.cpp:106
 msgid "Ascend"
-msgstr ""
+msgstr "Subir"
 
 #: engines/ultima/ultima8/metaengine.cpp:114
 #, fuzzy
@@ -17918,11 +17999,11 @@ msgstr "Exibir citações"
 
 #: engines/ultima/ultima8/metaengine.cpp:116
 msgid "Decrement map sort order"
-msgstr ""
+msgstr "Diminuir a ordem de classificação do mapa"
 
 #: engines/ultima/ultima8/metaengine.cpp:117
 msgid "Increment map sort order"
-msgstr ""
+msgstr "Aumentar a ordem de classificação do mapa"
 
 #: engines/ultima/ultima8/metaengine.cpp:118
 #, fuzzy
@@ -17932,11 +18013,11 @@ msgstr "Alternar estilo do painel"
 
 #: engines/ultima/ultima8/metaengine.cpp:119
 msgid "Advance frame"
-msgstr ""
+msgstr "Avançar quadro"
 
 #: engines/ultima/ultima8/metaengine.cpp:120
 msgid "Toggle Avatar in stasis"
-msgstr ""
+msgstr "Alternar o Avatar em estase"
 
 #: engines/ultima/ultima8/metaengine.cpp:121
 #, fuzzy
@@ -18129,11 +18210,11 @@ msgstr "Pular cena"
 
 #: engines/voyeur/metaengine.cpp:211
 msgid "View evidence"
-msgstr ""
+msgstr "Ver evidências"
 
 #: engines/voyeur/metaengine.cpp:217
 msgid "Exit / Put away evidence"
-msgstr ""
+msgstr "Sair / Guardar evidências"
 
 #: engines/voyeur/metaengine.cpp:223
 #, fuzzy
@@ -18175,15 +18256,15 @@ msgstr "Utilizar fala em Inglês"
 
 #: engines/wintermute/metaengine.cpp:95
 msgid "Use Italian dubbing instead of the default English one"
-msgstr ""
+msgstr "Usar a dublagem italiana em vez da inglesa padrão"
 
 #: engines/wintermute/metaengine.cpp:106
 msgid "Run SD version (1280x800)"
-msgstr ""
+msgstr "Executar a versão SD (1280x800)"
 
 #: engines/wintermute/metaengine.cpp:107
 msgid "Run the legacy SD version, which is better for small screens"
-msgstr ""
+msgstr "Executar a versão SD legada, que é melhor para telas pequenas"
 
 #: engines/wintermute/metaengine.cpp:148
 msgid "FoxTail support is not compiled in"
@@ -18721,6 +18802,8 @@ msgid ""
 "Rearrange placement of menus & subtitles so as to make better use of modern "
 "wide aspect ratio displays"
 msgstr ""
+"Reorganizar a disposição de menus e legendas para aproveitar melhor as telas "
+"modernas de proporção ampla"
 
 #: engines/zvision/metaengine.cpp:114
 #, fuzzy
@@ -18790,6 +18873,11 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+"A reprodução de MIDI não está disponível, ou está configurada "
+"incorretamente. Zork Nemesis contém vários quebra-cabeças musicais que "
+"exigem áudio MIDI para serem resolvidos.  Esses quebra-cabeças podem, "
+"alternativamente, ser resolvidos usando legendas, se houver suporte. "
+"Continuar iniciando o jogo?"
 
 #, fuzzy
 #~| msgid "Move Back"
