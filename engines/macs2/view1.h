@@ -195,7 +195,6 @@ struct ScalingValues {
 };
 
 class View1 : public UIElement {
-	// TODO: Clean up private and public
 private:
 	// The definitive version that can do everything
 	void drawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &sprite, uint16 scaling, bool mirrored, bool useDepth, uint8 depth, Graphics::ManagedSurface &s, uint8 shadowIntensity = 0);
@@ -208,33 +207,6 @@ private:
 	uint32 _bgAnimTickCounter = 0;
 	uint32 _flagFrameIndex = 0;
 	uint32 _guyFrameIndex = 0;
-
-public:
-	ScalingValues _scalingValues;
-
-	ViewMode _currentMode = ViewMode::VM_GAME;
-
-	AnimFrame *getInventoryIcon(GameObject *gameObject);
-
-	// TODO: use Graphics::Palette
-	byte _pal[256 * 3] = {0};
-	bool _paletteDirty = true;
-
-	// Background animation timing from gameTick (1008:e556).
-	// The original game increments a tick counter each frame (~70Hz DOS timer)
-	// and advances background animations when the counter exceeds a threshold:
-	// Background animation timing from gameTick (1008:e556).
-	// g_wBgAnimTickCounter is incremented once per game frame (~20fps).
-	// Background animation tick counter (mode 2: threshold 0x27, mode 3: threshold 1)
-	static constexpr uint32 kGameFrameRate = 20;
-
-	// TODO: Probably the start of a mode enum
-	bool _isShowingTextBox = false;
-	Common::StringArray _drawnStringBox;
-	bool _continueScriptAfterUI = false;
-	bool _reopenInventoryAfterText = false;
-	uint16 _dialogueChoiceCount = 0;
-	Common::Array<uint16> _dialogueChoiceLineCounts;
 
 	// Save/Load panel from handleSaveLoadPanelClick (1008:86a4).
 	// Opened by right-click during script execution or action bar button 8.
@@ -274,35 +246,14 @@ public:
 	void handleOriginalSaveLoadClick(const Common::Point &pos);
 	void closeOriginalSaveLoadPanel();
 
-	SpeechActData currentSpeechActData;
-
-	Graphics::ManagedSurface _backgroundSurface;
-
-	void drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height);
-
-	void drawBackgroundAnimations(Graphics::ManagedSurface &s);
-	void drawCurrentSpeaker(Graphics::ManagedSurface &s);
-
-	void renderString(uint16 x, uint16 y, Common::String s);
-	void renderString(const Common::Point pos, const Common::String &s);
-	void renderStringWithFont(uint16 x, uint16 y, const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs);
-	int measureStringWithFont(const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs);
-
-	void showStringBox(const Common::StringArray &sa);
-
-	void drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Graphics::ManagedSurface &s);
-
-	void drawPathfindingPoints(Graphics::ManagedSurface &s);
-
-	void drawDebugOutput(Graphics::ManagedSurface &s);
-
-	void drawPath(Graphics::ManagedSurface &s);
-
 	int _currentFadeValue = -1;
-	int _fadeDelta = 4;
 	FadeMode _fadeMode = FadeMode::None;
 	bool _cursorSuppressedForFade = false;
 	bool _cursorWasVisibleBeforeFade = false;
+
+	void drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height);
+	void drawBackgroundAnimations(Graphics::ManagedSurface &s);
+	void drawCurrentSpeaker(Graphics::ManagedSurface &s);
 
 	void beginFadeCursorSuppression();
 	void endFadeCursorSuppression(const byte *palette);
@@ -343,32 +294,58 @@ public:
 	bool handleInput(const MouseDownMessage &msg);
 	bool handleHelpClick(const MouseDownMessage &msg);
 
+	void showStringBox(const Common::StringArray &sa);
+
+	void renderString(uint16 x, uint16 y, Common::String s);
+	void renderString(const Common::Point pos, const Common::String &s);
+	void renderStringWithFont(uint16 x, uint16 y, const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs);
+	int measureStringWithFont(const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs);
+
+	Common::Array<Common::Rect> _mainMenuButtonLocations;
+	Common::Rect _mainMenuRect;
+	Common::Point _inventoryGridUpperLeft;
+	Common::Point _inventorySlotSize;
+	Common::Array<Common::Rect> _inventoryButtonLocations;
+	uint16 _inventoryScrollOffset = 0;
 public:
 	View1();
 	virtual ~View1();
 
-	bool _started = false;
+	ScalingValues _scalingValues;
 
+	ViewMode _currentMode = ViewMode::VM_GAME;
+
+	AnimFrame *getInventoryIcon(GameObject *gameObject);
+
+	// TODO: use Graphics::Palette
+	byte _pal[256 * 3] = {0};
+	bool _paletteDirty = true;
+
+	// Background animation timing from gameTick (1008:e556).
+	// The original game increments a tick counter each frame (~70Hz DOS timer)
+	// and advances background animations when the counter exceeds a threshold:
+	// Background animation timing from gameTick (1008:e556).
+	// g_wBgAnimTickCounter is incremented once per game frame (~20fps).
+	// Background animation tick counter (mode 2: threshold 0x27, mode 3: threshold 1)
+	static constexpr uint32 kGameFrameRate = 20;
+
+	// TODO: Probably the start of a mode enum
+	bool _isShowingTextBox = false;
+	Common::StringArray _drawnStringBox;
+	bool _continueScriptAfterUI = false;
+	uint16 _dialogueChoiceCount = 0;
+	Common::Array<uint16> _dialogueChoiceLineCounts;
+	SpeechActData currentSpeechActData;
+	Graphics::ManagedSurface _backgroundSurface;
+
+	bool _started = false;
 	// As long as this debug bool is active, apply any click possible whenever it makes sense
 	bool _autoclickActive = false;
 
 	Common::Array<Character *> _characters;
-
-	// Sets the source for the to-be-opened inventory and updats the array of inventory objects
-	void setInventorySource(GameObject *newInventorySource);
-	void openInventory(GameObject *newInventorySource);
-	// Binary handleInput (1008:e8bf) close path for the inventory panels.
-	void closeInventory();
-
-	bool isInventorySourceProtagonist() const;
-
 	// If this is the protagonist, we have our normal inventory
 	// If this is another object, it is the inventory of a storage container
 	GameObject *_inventorySource = nullptr;
-
-	void transferInventoryItem(GameObject *item, GameObject *targetContainer);
-
-	int findInventoryItem(GameObject *item);
 
 	// TODO: Find a better place for those
 	// The inventory items for the currently opened inventory
@@ -377,37 +354,7 @@ public:
 	// If this is not null, we are using this object
 	GameObject *_activeInventoryItem = nullptr;
 
-	Character *getCharacterByIndex(uint16 index);
-
-	int getCharacterArrayIndex(const Character *c) const;
-
-	// Updates the cursor from the mode set in the engine - TODO: Clean up, this should not
-	// be so separated
-	void updateCursor(const byte *palette = nullptr);
-	bool isCursorSuppressedForFade() const { return _cursorSuppressedForFade; }
-
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgAction(const ActionMessage &msg) override;
-
-	// Debug: last hovered area/hotspot (updated every mouse move for ImGui)
-	uint16 _hoverAreaId = 0;
-	uint16 _hoverHotspotId = 0;
-
-	bool msgMouseDown(const MouseDownMessage &msg) override;
-	bool msgMouseMove(const MouseMoveMessage &msg) override;
-	void draw() override;
-	bool tick() override;
-
-	void drawInventory(Graphics::ManagedSurface &s);
-	GameObject *getClickedInventoryItem(const Common::Point &p);
-
-	Common::Point _inventoryGridUpperLeft;
-	Common::Point _inventorySlotSize;
-
 	Common::Point _stringBoxPosition;
-
-	Common::Rect _mainMenuRect;
 
 	// Binary g_wUiPanelState: 0=none, 1=action bar, 2=protagonist inv, 3=container inv, 4=save/load
 	enum UiPanelState : uint16 {
@@ -436,6 +383,73 @@ public:
 
 	// Binary g_wSavedCursorMode [scene+0xFEA]: saved before opening action bar panel
 	Script::MouseMode _savedCursorMode = Script::MouseMode::Walk;
+
+	enum class InventoryButtonIndex {
+		Look = 0,
+		Hand = 1,
+		Up = 2,
+		Down = 3,
+		Drop = 4,
+		Close = 5
+	};
+
+	// Action bar button layout from handleActionBarClick (1008:42dc).
+	// The action bar is a 3x3 grid of buttons, centered on the right-click
+	// position. Each button is sized to fit the largest cursor icon + 6px padding.
+	// The panel is clamped to screen bounds (320x200).
+	enum class MainMenuButtonIndex {
+		Talk = 0,         // Sets cursor mode to 0x13 (Talk)
+		Look = 1,         // Sets cursor mode to 0x14 (Look)
+		Use = 2,          // Sets cursor mode to 0x15 (Use)
+		Walk = 3,         // Sets cursor mode to 0x16 (Walk)
+		Inventory = 4,    // Opens inventory panel (g_wHasSavedUiBackground=1)
+		InventoryUse = 5, // Uses selected inventory item (cursor 0x17), only if item selected
+		Map = 6,          // Opens help/info screen (sets scene+0x61db=1 for map panel mode)
+		SaveLoad = 7,     // Opens dialogue/save panel (g_wHasSavedUiBackground=3)
+		Close = 8         // Implicit close (clicking outside any button)
+	};
+
+	// Debug: last hovered area/hotspot (updated every mouse move for ImGui)
+	uint16 _hoverAreaId = 0;
+	uint16 _hoverHotspotId = 0;
+
+	// debug tools
+	void drawPathfindingPoints(Graphics::ManagedSurface &s);
+	void drawDebugOutput(Graphics::ManagedSurface &s);
+	void drawPath(Graphics::ManagedSurface &s);
+
+	// Sets the source for the to-be-opened inventory and updats the array of inventory objects
+	void setInventorySource(GameObject *newInventorySource);
+	void openInventory(GameObject *newInventorySource);
+	// Binary handleInput (1008:e8bf) close path for the inventory panels.
+	void closeInventory();
+
+	bool isInventorySourceProtagonist() const;
+
+	void transferInventoryItem(GameObject *item, GameObject *targetContainer);
+
+	int findInventoryItem(GameObject *item);
+
+	Character *getCharacterByIndex(uint16 index);
+
+	int getCharacterArrayIndex(const Character *c) const;
+
+	// Updates the cursor from the mode set in the engine - TODO: Clean up, this should not
+	// be so separated
+	void updateCursor(const byte *palette = nullptr);
+	bool isCursorSuppressedForFade() const { return _cursorSuppressedForFade; }
+
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+
+	bool msgMouseDown(const MouseDownMessage &msg) override;
+	bool msgMouseMove(const MouseMoveMessage &msg) override;
+	void draw() override;
+	bool tick() override;
+
+	void drawInventory(Graphics::ManagedSurface &s);
+	GameObject *getClickedInventoryItem(const Common::Point &p);
 
 	void openMainMenu(Common::Point clickedPosition);
 
@@ -506,37 +520,6 @@ public:
 	uint16 calculateCharacterScaling(uint16 characterY, bool updateDebugValues = false);
 
 	uint16 getHitObjectID(const Common::Point &pos) const;
-
-	Common::Array<Common::Rect> _inventoryButtonLocations;
-
-	enum class InventoryButtonIndex {
-		Look = 0,
-		Hand = 1,
-		Up = 2,
-		Down = 3,
-		Drop = 4,
-		Close = 5
-	};
-
-	// Action bar button layout from handleActionBarClick (1008:42dc).
-	// The action bar is a 3x3 grid of buttons, centered on the right-click
-	// position. Each button is sized to fit the largest cursor icon + 6px padding.
-	// The panel is clamped to screen bounds (320x200).
-	enum class MainMenuButtonIndex {
-		Talk = 0,         // Sets cursor mode to 0x13 (Talk)
-		Look = 1,         // Sets cursor mode to 0x14 (Look)
-		Use = 2,          // Sets cursor mode to 0x15 (Use)
-		Walk = 3,         // Sets cursor mode to 0x16 (Walk)
-		Inventory = 4,    // Opens inventory panel (g_wHasSavedUiBackground=1)
-		InventoryUse = 5, // Uses selected inventory item (cursor 0x17), only if item selected
-		Map = 6,          // Opens help/info screen (sets scene+0x61db=1 for map panel mode)
-		SaveLoad = 7,     // Opens dialogue/save panel (g_wHasSavedUiBackground=3)
-		Close = 8         // Implicit close (clicking outside any button)
-	};
-
-	Common::Array<Common::Rect> _mainMenuButtonLocations;
-
-	uint16 _inventoryScrollOffset = 0;
 };
 
 } // namespace Macs2
