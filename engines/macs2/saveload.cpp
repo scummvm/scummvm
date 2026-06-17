@@ -713,6 +713,8 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 	// --- Post-load: rebuild view state ---
 	if (s.isLoading()) {
+		for (auto c : view1->_characters)
+			delete c;
 		view1->_characters.clear();
 		const uint16 currentScene = (uint16)Scenes::instance()._currentSceneIndex;
 		const uint16 actorIdx = (uint16)Scenes::instance()._currentActorIndex;
