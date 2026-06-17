@@ -19,6 +19,8 @@
  *
  */
 
+#include "graphics/cursorman.h"
+
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/cga.h"
@@ -197,6 +199,11 @@ void printStringCentered(byte *str, byte *target) {
 void cga_DrawTextBox(byte *msg, byte *target) {
 	uint16 x, y, w, i;
 	uint16 ww, nw;
+
+	// Hide the mouse pointer before the text box is drawn, so it is gone from
+	// the moment the box appears (not only once promptWait() begins). The game
+	// loop's selectCursor() re-shows it when interactive play resumes.
+	CursorMan.showMouse(false);
 
 	char_xlat_table = chars_color_bonc;
 

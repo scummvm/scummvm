@@ -52,6 +52,7 @@ void updateCursor(void);
 void drawCursor(byte *target);
 void undrawCursor(byte *target);
 void updateUndrawCursor(byte *target);
+void hideMouseCursor(void);
 
 } // End of namespace Chamber
 
