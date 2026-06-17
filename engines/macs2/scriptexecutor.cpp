@@ -332,13 +332,18 @@ bool ScriptExecutor::loadMusicResource(Common::Array<uint8> &outData, uint8 reso
 }
 
 void ScriptExecutor::scriptPrintString(bool alignRight) {
-	// TODO: Labels above not handled yet
-	// TODO: Lots of details not handled
-	// l0037_A94E:
+	// scriptPrintString (1008:A94E)
+	// Panel restore: if a panel request is pending and background needs restoring,
+	// redraw the scene to erase the inventory/dialogue panel before showing text.
+	View1 *currentView = (View1 *)_engine->findView("View1");
+	if (currentView && currentView->_pendingPanelRequest != View1::kPanelRequestNone &&
+		currentView->_uiBackgroundRestorePending) {
+		currentView->redraw();
+		currentView->_uiBackgroundRestorePending = false;
+	}
 
 	uint16 x = scriptReadValue16();
 	uint16 y = scriptReadValue16();
-	// TODO: Several globals writes around this code
 	uint16 bp2 = readUint16();
 	uint16 bp4 = readUint16();
 
@@ -357,9 +362,15 @@ void ScriptExecutor::scriptPrintString(bool alignRight) {
 		x -= g_engine->measureStrings(strings) + 0x12;
 	}
 
-	// TODO: Look for good pattern for the view, this feels like it is not intended this way
-	View1 *currentView = (View1 *)_engine->findView("View1");
-	currentView->setStringBoxAt(strings, Common::Point(x, y));
+	if (currentView)
+		currentView->setStringBoxAt(strings, Common::Point(x, y));
+
+	// Binary: if cursor was Disabled (0x1A), restore to Walk (0x16)
+	if (_cursorMode == MouseMode::Disabled) {
+		_engine->setCursorMode(MouseMode::Walk);
+		if (currentView)
+			currentView->updateCursor();
+	}
 }
 
 void ScriptExecutor::beginBuffering() {
