@@ -2699,6 +2699,18 @@ void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b
 	int16 w = b.readSint16LE();        // Offset +14 (0x0E) - Width
 	int16 h = b.readSint16LE();        // Offset +16 (0x10) - Height
 
+	// par3==2 (turret handler) marks a translucent surface / force field (FUN_40A2E0 local_8==2):
+	// never a direct hit target — it is destroyed by clearing the gauge group (par4) it depends
+	// on. Show it while that group still has elements, hide it once the group is cleared.
+	if (par3 == 2 && _rebelHandler == 0x26) {
+		const int surfaceIdx = (par4 >= 100 && par4 < 110) ? (par4 - 100) : -1;
+		if (surfaceIdx >= 0 && _rebelGaugeCleared[surfaceIdx])
+			setBit(enemyId);
+		else
+			clearBit(enemyId);
+		return; // surfaces are not added to the hittable enemy list
+	}
+
 	// If disabled, stop processing this object
 	if (disabled) {
 		// debugC(DEBUG_INSANE, "Skipping Opcode 4 for disabled enemy ID=%d", enemyId);

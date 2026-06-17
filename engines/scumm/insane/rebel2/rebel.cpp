@@ -246,6 +246,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_rebelReactorMode = false;
 	_rebelGaugeArmed = false;
 	_rebelLastArmedSlot = -1;
+	for (int i = 0; i < 10; ++i)
+		_rebelGaugeCleared[i] = false;
 
 	_difficulty = 1; // Default to Medium.
 	_targetLockTimer = 0;  // DAT_00443676 equivalent
@@ -1761,11 +1763,15 @@ int32 InsaneRebel2::processMouse() {
 					if (*counter > 0) {
 						(*counter)--;
 						_rebelLastCounter = *counter;
-						// Level 6 ends on any group emptying; Level 13's reactor is gated in
-						// procPostRendering instead, so early obstacle groups don't complete it.
-						if (*counter == 0 && !_rebelReactorMode) {
-							_rebelShieldDestroyed = true;
-							debugC(DEBUG_INSANE, "Shield destroyed (gauge slot %d depleted by target %d)", slot, it->id);
+						if (*counter == 0) {
+							if (slot < 10)
+								_rebelGaugeCleared[slot] = true; // group emptied → its par3==2 surface can drop
+							// Level 6 ends on any group emptying; Level 13's reactor is gated in
+							// procPostRendering instead, so early obstacle groups don't complete it.
+							if (!_rebelReactorMode) {
+								_rebelShieldDestroyed = true;
+								debugC(DEBUG_INSANE, "Shield destroyed (gauge slot %d depleted by target %d)", slot, it->id);
+							}
 						}
 					}
 					_rebelGaugeSlot[it->id] = -1; // consume: avoid double-counting

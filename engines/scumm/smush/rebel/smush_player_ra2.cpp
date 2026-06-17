@@ -189,6 +189,8 @@ void SmushPlayerRebel2::initGamePlayerFields() {
 	_ra2PendingAnimHeaderPalette = false;
 	memset(_ra2Codec45Palette, 0, sizeof(_ra2Codec45Palette));
 	memset(_ra2Codec45Lookup, 0, sizeof(_ra2Codec45Lookup));
+	memset(_ra2SkipRemapTable, 0, sizeof(_ra2SkipRemapTable));
+	_ra2SkipRemapValid = false;
 	_scrollX = 0;
 	_scrollY = 0;
 }
@@ -1440,9 +1442,51 @@ bool SmushPlayerRebel2::handleGameCodecDecode(int codec, const uint8 *src, int l
 	if (isRebel2FullFrameDeltaCodec(codec))
 		return ra2DecodePlacedDeltaCodec(codec, src, left, top, width, height, pitch, dataSize);
 
+	// Codec 23 translucent surfaces: parm2 0x100 prefixes a fresh 256-byte remap table, >=0x100
+	// reuses the last one. (Font glyphs call smushDecodeSkipRLE directly and are unaffected.)
+	if (codec == SMUSH_CODEC_SKIP_RLE && parm2 >= 0x100) {
+		if (parm2 == 0x100 && dataSize >= 256) {
+			memcpy(_ra2SkipRemapTable, src, 256);
+			_ra2SkipRemapValid = true;
+			src += 256;
+			dataSize -= 256;
+		}
+		const byte *remap = _ra2SkipRemapValid ? _ra2SkipRemapTable : nullptr;
+		smushDecodeRA2SkipRemap(_dst, src, left, top, width, height, pitch, dataSize, remap, (byte)parm2);
+		return true;
+	}
+
 	// Handle RA2-specific codecs (21, 23, 44, 45); return false for standard
 	// codecs (RLE) so the base class decodes them.
 	return ra2DecodeCodec(codec, src, left, top, width, height, pitch, dataSize);
+}
+
+// Mirrors SmushPlayer::handleFrameObject but forwards the FOBJ parm2 word (base discards it).
+void SmushPlayerRebel2::handleFrameObject(int32 subSize, Common::SeekableReadStream &b) {
+	assert(subSize >= 14);
+	if (_skipNext) {
+		_skipNext = false;
+		return;
+	}
+
+	int codec = b.readUint16LE();
+	int left = (int)b.readSint16LE();
+	int top = (int)b.readSint16LE();
+	int width = b.readUint16LE();
+	int height = b.readUint16LE();
+	b.readUint16LE();                     // objectId
+	uint16 parm2 = b.readUint16LE();
+
+	const int32 chunkSize = subSize - 14;
+	handleGameFrameObjectPre(codec, left, top, width, height, chunkSize);
+
+	byte *chunkBuffer = (byte *)malloc(chunkSize);
+	assert(chunkBuffer);
+	b.read(chunkBuffer, chunkSize);
+
+	handleGameFrameObjectPost(codec, chunkBuffer, chunkSize, left, top, width, height);
+	decodeFrameObject(codec, chunkBuffer, left, top, width, height, chunkSize, 0, parm2);
+	free(chunkBuffer);
 }
 
 bool SmushPlayerRebel2::handleGameStoreFrame() {

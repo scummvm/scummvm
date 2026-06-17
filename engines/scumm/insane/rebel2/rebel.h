@@ -970,6 +970,7 @@ public:
 	bool _rebelReactorMode;        // Level 13: finale ends when the last armed group is cleared
 	bool _rebelGaugeArmed;         // at least one gauge group has been set up this attempt
 	int _rebelLastArmedSlot;       // counter slot of the most recently armed group (-1 = none)
+	bool _rebelGaugeCleared[10];   // value-counter slot fully destroyed (drives par3==2 surfaces)
 	void resetShieldGauge();
 
 

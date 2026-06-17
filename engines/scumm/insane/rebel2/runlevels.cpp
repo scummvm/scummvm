@@ -349,6 +349,8 @@ void InsaneRebel2::resetShieldGauge() {
 	_rebelShieldDestroyed = false;
 	_rebelGaugeArmed = false;
 	_rebelLastArmedSlot = -1;
+	for (int i = 0; i < 10; ++i)
+		_rebelGaugeCleared[i] = false;
 }
 
 void InsaneRebel2::resetExplosions() {

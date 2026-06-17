@@ -225,6 +225,44 @@ void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width
 	}
 }
 
+// Codec 23: a skip/run RLE that tints the background in place (no pixel data). Per line,
+// lineDataSize(2) then [skip(1), run(1)] pairs; each run pixel becomes remap[background]
+// (translucency) or background+addColor.
+void smushDecodeRA2SkipRemap(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize, const byte *remap, byte addColor) {
+	dst += top * pitch + left;
+	const byte *srcEnd = src + dataSize;
+
+	for (int row = 0; row < height; row++) {
+		if (src + 2 > srcEnd)
+			break;
+		int lineDataSize = READ_LE_UINT16(src);
+		src += 2;
+		const byte *lineStart = src;
+		const byte *lineEnd = (lineStart + lineDataSize <= srcEnd) ? lineStart + lineDataSize : srcEnd;
+		byte *lineDst = dst;
+		int x = 0;
+
+		while (x < width && src < lineEnd) {
+			x += *src++;                 // skip (preserve background)
+			if (x >= width || src >= lineEnd)
+				break;
+			int run = *src++;
+			if (run > width - x)
+				run = width - x;
+			if (remap) {
+				for (int i = 0; i < run; i++, x++)
+					lineDst[x] = remap[lineDst[x]];
+			} else {
+				for (int i = 0; i < run; i++, x++)
+					lineDst[x] = (byte)(lineDst[x] + addColor);
+			}
+		}
+
+		src = lineStart + lineDataSize;
+		dst += pitch;
+	}
+}
+
 bool smushPrepareRA2BlurData(const byte *src, int dataSize, byte *palette, byte *lookup, const byte *&maskData, int &maskSize) {
 	maskData = nullptr;
 	maskSize = 0;

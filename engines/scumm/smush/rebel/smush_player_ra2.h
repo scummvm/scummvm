@@ -38,6 +38,8 @@ protected:
 	void initGameVideoState() override;
 	void releaseGameVideoState() override;
 	bool shouldPreserveFrameBuffer() const override { return true; }
+	// Override to keep the FOBJ parm2 field (codec 23 marker) the base reader discards.
+	void handleFrameObject(int32 subSize, Common::SeekableReadStream &b) override;
 	bool handleGameFetch(int32 subSize, Common::SeekableReadStream &b) override;
 	bool handleGameTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &b) override;
 	bool handleGameTextRendering(const char *str, int fontId, int color, int pos_x, int pos_y, int left, int top, int width, int height, TextStyleFlags flg) override;
@@ -110,6 +112,8 @@ private:
 	bool _ra2PendingAnimHeaderPalette;
 	byte _ra2Codec45Palette[0x300];
 	byte _ra2Codec45Lookup[0x8000];
+	byte _ra2SkipRemapTable[256]; // codec 23 translucency remap table
+	bool _ra2SkipRemapValid;
 };
 
 } // End of namespace Scumm
