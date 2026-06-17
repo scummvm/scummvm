@@ -581,7 +581,8 @@ void View1::drawMainMenu(Graphics::ManagedSurface &s) {
 	// Original openActionBarAtPosition (1008:3fba) calls:
 	// 1. drawBorderSide(height, width, y, x) — tiles border texture over ENTIRE panel
 	// 2. drawBorderOuterHighlights(height, width, y, x) — draws edge highlights
-	drawNinePatchBorder(Common::Point(_mainMenuRect.left, _mainMenuRect.top), Common::Point(_mainMenuRect.width(), _mainMenuRect.height()), kBorderRaised, false, true, s);
+	drawBorderSide(Common::Point(_mainMenuRect.left, _mainMenuRect.top), Common::Point(_mainMenuRect.width(), _mainMenuRect.height()), s);
+	drawNinePatchBorder(Common::Point(_mainMenuRect.left, _mainMenuRect.top), Common::Point(_mainMenuRect.width(), _mainMenuRect.height()), kBorderRaised, false, false, s);
 
 	// 3x3 grid layout matching openActionBarAtPosition (1008:3fba)
 	// Each button is sized to the largest icon + 6px padding, centered in cell
@@ -1900,6 +1901,7 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 				drawSprite(slotW / 2 + itemX - icon->_width / 2,
 						   slotH / 2 + itemY - icon->_height / 2,
 						   *icon, s, false);
+				delete icon;
 			}
 			itemIndex++;
 			itemX += slotW + 4;
