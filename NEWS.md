@@ -9,6 +9,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Noctropolis.
    - Added support for Cartoon Carnival.
    - Added support for Alfred Pelrock: En Busca de un Sueño.
+   - Added support for Pilot Brothers: On the Track of Striped Elephant,
+     Pilot Brothers: The Case of Serial Maniac, and five minor
+     games built on the Gamos engine.
 
  General:
    - Highlight clickable links in the GUI with a cursor change.
