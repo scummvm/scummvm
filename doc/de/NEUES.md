@@ -74,6 +74,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Native Unterstützung für CDDA hinzugefügt.
    - Unterstützung für Plugins hinzugefügt. ScummVM kann jetzt schon mit wenigen MB RAM genutzt werden.
    - Native Unterstützung für YM2149 hinzugefügt (aktuell verwendbar in Wlvira 1 und 2).
+   - Audio-Mixer überarbeitet, was auch Audio-Probleme in Secret of Monkey Island behebt.
+   - Autosave ist jetzt standardmäßig deaktiviert, da die Funktion zu hörbaren Audio-Problemen
+     während des Spiels führt.
 
  PS3-Portierung:
    - ScummVM-Engines können jetzt als separate Module/Programmdateien ausgeführt werden.
