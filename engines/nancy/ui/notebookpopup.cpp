@@ -442,12 +442,12 @@ void NotebookPopup::buildTextLines() {
 
 	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
 
-	// Senior-detective Tasks page: hide the to-do list and show the
-	// AUTOTEXT placeholder body instead.
-	if (surfaceID == kNotebookTabTasks && NancySceneState.getDifficulty() == 2) {
-		// TODO: This is specific for Nancy10, adapt it for others, too
-		if (autotext->texts.contains("SHAT70")) {
-			addTextLine(autotext->texts["SHAT70"]);
+	// Senior-detective Tasks: chunk supplies a CVTX placeholder.
+	if (surfaceID == kNotebookTabTasks && NancySceneState.getDifficulty() != 0 &&
+			_uinbData->useFilenameTextFlag != 0 && autotext) {
+		Common::String key = _uinbData->conditionalTextFilename.toString();
+		if (!key.empty() && autotext->texts.contains(key)) {
+			addTextLine(autotext->texts[key]);
 		}
 		return;
 	}
@@ -460,11 +460,16 @@ void NotebookPopup::buildTextLines() {
 		Common::String stringID = entries[i].stringID;
 		Common::String body = getTextFromCaseInsensitiveKey(autotext->texts, stringID);
 
-		// Tasks are prefixed with a checkbox showing completion state.
-		// mark % 10 == 8 means "complete".
-		if (surfaceID == kNotebookTabTasks) {
-			const uint16 markStatus = entries[i].mark % 10;
-			body = Common::String(markStatus == 8 ? "<2>" : "<1>") + body;
+		// Task rows get a `<N>` prefix that turns into a MARK sprite;
+		// the "complete" sentinel (8) maps to secondaryFontAttr.
+		if (surfaceID == kNotebookTabTasks && entries[i].mark != 0) {
+			uint16 markValue = entries[i].mark;
+			if (markValue == 8) {
+				markValue = _uinbData->secondaryFontAttr;
+			}
+			if (markValue >= 1 && markValue <= 5) {
+				body = Common::String::format("<%u>", markValue) + body;
+			}
 		}
 
 		addTextLine(body);
