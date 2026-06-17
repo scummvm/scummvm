@@ -19,6 +19,19 @@
  *
  */
 
-#include "mads/madsv2/nebular/mads/inventory.h"
-#include "mads/madsv2/nebular/mads/quotes.h"
-#include "mads/madsv2/nebular/mads/words.h"
+#ifndef MADS_NEBULAR_MENUS_H
+#define MADS_NEBULAR_MENUS_H
+
+#include "common/scummsys.h"
+
+namespace MADS {
+namespace MADSV2 {
+namespace RexNebular {
+
+extern void game_menu();
+
+} // namespace RexNebular
+} // namespace MADSV2
+} // namespace MADS
+
+#endif

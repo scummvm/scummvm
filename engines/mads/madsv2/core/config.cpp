@@ -69,6 +69,7 @@ void read_config_file() {
 
 	config_file.show_speech_boxes = ConfMan.getBool("show_speech_boxes");
 	config_file.original_save_load = ConfMan.getBool("original_menus");
+	config_file.naughtiness = ConfMan.hasKey("naughtiness") ? ConfMan.getInt("naughtiness") : 1;
 
 	if (ConfMan.hasKey("difficulty") && !g_engine->isDemo())
 		game.difficulty = ConfMan.getInt("difficulty");
@@ -88,6 +89,9 @@ void write_config_file() {
 	ConfMan.setBool("panning_speed", config_file.panning_speed);
 
 	ConfMan.setBool("show_speech_boxes", config_file.show_speech_boxes);
+	if (g_engine->getGameID() == GType_RexNebular)
+	ConfMan.setInt("naughtiness", config_file.naughtiness);
+
 	ConfMan.flushToDisk();
 }
 

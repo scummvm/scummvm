@@ -208,7 +208,9 @@ enum StoryMode {
 };
 
 enum Difficulty {
-	DIFFICULTY_HARD = 1, DIFFICULTY_MEDIUM = 2, DIFFICULTY_EASY = 3
+	DIFFICULTY_HARD = 1,
+	DIFFICULTY_MEDIUM = 2,
+	DIFFICULTY_EASY = 3
 };
 
 enum {

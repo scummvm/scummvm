@@ -541,7 +541,7 @@ struct Game {
 	char *const _aaName = kernel.interface;
 	int8 &_difficulty = game.difficulty;
 	byte &_widepipeCtr = kernel.cheating;
-	int8 _storyMode = 0;
+	int &_storyMode = config_file.naughtiness;
 	int &_winStatus = win_status;
 
 	void loadQuoteSet(int quote1, ...);

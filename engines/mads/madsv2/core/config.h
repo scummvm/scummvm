@@ -75,7 +75,7 @@ struct ConfigFile {
 
 	int inventory_mode;           /* Spinning / Still          */
 	int animated_interface;       /* On / Off                  */
-
+	int naughtiness;              /* NAUGHTY / NICE            */
 	int quotes_enabled;           /* Quotes option enabled     */
 
 	int high_memory_mode;         /* High memory mode          */
