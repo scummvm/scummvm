@@ -341,6 +341,7 @@ void ScriptExecutor::scriptPrintString(bool alignRight) {
 	} else {
 		Common::MemoryReadStream *s = GameObjects::readGameObjectStrings(_executingScriptObjectId, g_engine->_fileStream);
 		strings = g_engine->decodeStrings(s, bp2, bp4, 0, _executingScriptObjectId);
+		delete s;
 	}
 
 	if (alignRight) {
@@ -893,6 +894,7 @@ ExecutionResult Script::ScriptExecutor::scriptShowDialogue() {
 	} else {
 		Common::MemoryReadStream *s = GameObjects::readGameObjectStrings(_executingScriptObjectId, g_engine->_fileStream);
 		strings = g_engine->decodeStrings(s, offset, numLines, 0, _executingScriptObjectId);
+		delete s;
 	}
 
 	debugC(kDebugScript,
@@ -1055,6 +1057,7 @@ void Script::ScriptExecutor::scriptAddDialogueChoice() {
 	} else {
 		Common::MemoryReadStream *stringsStream = GameObjects::readGameObjectStrings(_executingScriptObjectId, g_engine->_fileStream);
 		lines = _engine->decodeStrings(stringsStream, offset, numLines, 0, _executingScriptObjectId);
+		delete stringsStream;
 	}
 	debugC(kDebugScript,
 		   "Opcode 16 choice text: index=%u textOffset=%u numLines=%u scriptObject=%u text=\"%s\"",
@@ -1743,6 +1746,7 @@ Script::ScriptExecutor::OpcodeControlFlow Script::ScriptExecutor::scriptAddOverl
 	} else {
 		Common::MemoryReadStream *stringsStream = GameObjects::readGameObjectStrings(_executingScriptObjectId, g_engine->_fileStream);
 		strings = _engine->decodeStrings(stringsStream, stringOffset, 1, 0, _executingScriptObjectId);
+		delete stringsStream;
 	}
 	if (strings.empty()) {
 		warning("Ignoring empty overlay text entry at offset %u", stringOffset);
@@ -2432,6 +2436,9 @@ void ScriptExecutor::run(bool firstRun) {
 }
 
 void ScriptExecutor::setScript(Common::MemoryReadStream *stream) {
+	if (_stream && _stream != stream && _stream != Scenes::instance()._currentSceneScript) {
+		delete _stream;
+	}
 	_stream = stream;
 }
 

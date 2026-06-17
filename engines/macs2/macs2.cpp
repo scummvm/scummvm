@@ -100,10 +100,10 @@ void Macs2Engine::readResourceFile() {
 			error("readResourceFile(): Error reading MCS file");
 
 		int64 size = file.size();
-		byte *fileData = new byte[size];
+		byte *fileData = (byte *)malloc(size);
 		file.read(fileData, size);
 
-		_fileStream = new Common::MemoryReadStream(fileData, size);
+		_fileStream = new Common::MemoryReadStream(fileData, size, DisposeAfterUse::YES);
 	}
 
 	// Full implementation here
