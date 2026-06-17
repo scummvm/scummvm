@@ -238,6 +238,9 @@ private:
 	void run();
 	void handleInput();
 
+	// Rect of the open Nancy 10+ taskbar popup, or empty if none.
+	Common::Rect activePopupConfinement() const;
+
 	void initStaticData();
 
 	void clearSceneData();

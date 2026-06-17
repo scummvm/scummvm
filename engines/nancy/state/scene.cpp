@@ -1133,6 +1133,17 @@ void Scene::run() {
 	}
 }
 
+Common::Rect Scene::activePopupConfinement() const {
+	// Pick the first visible Nancy 10+ popup; if more than one is open
+	// (shouldn't normally happen) the priority order matches the input
+	// order — conversation, inventory, notebook, cellphone.
+	if (_conversationPopup.isVisible()) return _conversationPopup.getScreenPosition();
+	if (_inventoryPopup.isVisible())    return _inventoryPopup.getScreenPosition();
+	if (_notebookPopup.isVisible())     return _notebookPopup.getScreenPosition();
+	if (_cellPhonePopup.isVisible())    return _cellPhonePopup.getScreenPosition();
+	return Common::Rect();
+}
+
 void Scene::handleInput() {
 	NancyInput input = g_nancy->_input->getInput();
 
@@ -1170,6 +1181,16 @@ void Scene::handleInput() {
 	// the popup that overlapped the textbox area could accidentally pick
 	// a conversation response.
 	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		// Confine the cursor to whichever popup is open so the player
+		// can't drag it into the underlying scene UI.
+		const Common::Rect confine = activePopupConfinement();
+		if (!confine.isEmpty() && !confine.contains(input.mousePos)) {
+			input.mousePos.x = CLIP<int16>(input.mousePos.x,
+											confine.left, confine.right - 1);
+			input.mousePos.y = CLIP<int16>(input.mousePos.y,
+											confine.top, confine.bottom - 1);
+			g_nancy->_cursor->warpCursor(input.mousePos);
+		}
 		_conversationPopup.handleInput(input);
 		_inventoryPopup.handleInput(input);
 		_notebookPopup.handleInput(input);
