@@ -750,9 +750,11 @@ void Scene::synchronize(Common::Serializer &ser) {
 
 	ser.syncArray(_flags.eventFlags.data(), g_nancy->getStaticData().numEventFlags, Common::Serializer::Byte);
 
-	// Clear generic flags
-	for (uint16 id : g_nancy->getStaticData().genericEventFlags) {
-		_flags.eventFlags[id] = g_nancy->_false;
+	if (!ser.isSaving()) {
+		// Clear generic flags
+		for (uint16 id : g_nancy->getStaticData().genericEventFlags) {
+			_flags.eventFlags[id] = g_nancy->_false;
+		}
 	}
 
 	// Skip empty sceneCount array
