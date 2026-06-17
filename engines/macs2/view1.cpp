@@ -71,27 +71,55 @@ void buildFadedPalette(byte *colors, const byte *sourcePalette, int fadeValue) {
 	}
 }
 
-void setViewPaletteSafely(View1 *view, const byte *colors) {
-	const bool shouldTouchCursor = view != nullptr && !view->isCursorSuppressedForFade();
+} // namespace
+
+const View1::BorderStyle View1::kBorderRaised = {0x1010, 0x1012, 0x1011};
+const View1::BorderStyle View1::kBorderPressed = {0x1010, 0x1011, 0x1012};
+
+View1::View1() : UIElement("View1") {
+	_backgroundSurface.copyFrom(g_engine->_sceneBackground);
+	currentSpeechActData.onRightSide = false;
+	updateCursor();
+	setViewPaletteSafely(g_engine->_pal);
+	_paletteDirty = false;
+	CursorMan.showMouse(true);
+
+	// TODO: Check if this works like this
+	Character *protagonist = new Character();
+	// TODO: Need to properly handle the offset
+	// TODO: Remember that the game starts enumerating objects at 1 and not at 0
+	protagonist->_gameObject = GameObjects::instance()._objects[0x0];
+	_characters.push_back(protagonist);
+	_inventorySource = protagonist->_gameObject;
+	_inventoryButtonLocations.resize(6);
+}
+
+View1::~View1() {
+	for (Character *c : _characters) {
+		delete c;
+	}
+}
+
+void View1::applyPaletteWithFade(const byte *sourcePalette, int fadeValue) {
+	byte colors[256 * 3];
+	buildFadedPalette(colors, sourcePalette, fadeValue);
+	setViewPaletteSafely(colors);
+}
+
+void View1::setViewPaletteSafely(const byte *colors) {
+	const bool shouldTouchCursor = _cursorSuppressedForFade;
 	const bool cursorWasVisible = shouldTouchCursor && CursorMan.isVisible();
 	if (cursorWasVisible)
 		CursorMan.showMouse(false);
 
 	if (shouldTouchCursor)
-		view->updateCursor(colors);
+		updateCursor(colors);
 
 	g_system->getPaletteManager()->setPalette(colors, 0, 256);
 
 	if (cursorWasVisible)
 		CursorMan.showMouse(true);
 }
-
-void applyPaletteWithFade(View1 *view, const byte *sourcePalette, int fadeValue) {
-	byte colors[256 * 3];
-	buildFadedPalette(colors, sourcePalette, fadeValue);
-	setViewPaletteSafely(view, colors);
-}
-} // namespace
 
 void View1::openInventory(GameObject *newInventorySource) {
 	if (newInventorySource == nullptr) {
@@ -177,10 +205,10 @@ void View1::transferInventoryItem(GameObject *item, GameObject *targetContainer)
 	item->_sceneIndex = targetContainer->_index + 0x400;
 }
 
-int View1::findInventoryItem(GameObject *item) {
+int View1::findInventoryItem(const GameObject *item) {
 	for (uint i = 0; i != _inventoryItems.size(); i++) {
 		if (_inventoryItems[i] == item) {
-			return i;
+			return (int)i;
 		}
 	}
 	return -1;
@@ -239,36 +267,6 @@ void View1::updateCursor(const byte *palette) {
 	// triggering blitCursor() which can corrupt the RLE-accelerated surface.
 	byte dummyPalette[256 * 3] = {};
 	CursorMan.replaceCursorPalette(dummyPalette, 0, 256);
-}
-
-const View1::BorderStyle View1::kBorderRaised = {0x1010, 0x1012, 0x1011};
-const View1::BorderStyle View1::kBorderPressed = {0x1010, 0x1011, 0x1012};
-
-View1::View1() : UIElement("View1") {
-	_backgroundSurface.copyFrom(g_engine->_sceneBackground);
-	currentSpeechActData.onRightSide = false;
-	updateCursor();
-	setViewPaletteSafely(this, g_engine->_pal);
-	_paletteDirty = false;
-	CursorMan.showMouse(true);
-
-	// TODO: Check if this works like this
-	Character *protagonist = new Character();
-	// TODO: Need to properly handle the offset
-	// TODO: Remember that the game starts enumerating objects at 1 and not at 0
-	protagonist->_gameObject = GameObjects::instance()._objects[0x0];
-	_characters.push_back(protagonist);
-	_inventorySource = protagonist->_gameObject;
-
-	// inventoryItems.push_back(GameObjects::instance().Objects[0x8 - 1]);
-
-	_inventoryButtonLocations.resize(6);
-}
-
-View1::~View1() {
-	for (Character *c : _characters) {
-		delete c;
-	}
 }
 
 AnimFrame *View1::getInventoryIcon(GameObject *gameObject) {
@@ -680,7 +678,7 @@ int View1::getCharacterArrayIndex(const Character *c) const {
 	// TODO: Check if there is a find function somewhere
 	for (uint i = 0; i < _characters.size(); i++) {
 		if (_characters[i] == c) {
-			return i;
+			return (int)i;
 		}
 	}
 	return -1;
@@ -707,7 +705,7 @@ void View1::startFadeToBlack(uint16 speed) {
 	while (fadeValue <= 0x40 && !g_system->getEventManager()->shouldQuit()) {
 		uint32 frameStart = g_system->getMillis();
 
-		applyPaletteWithFade(this, g_engine->_palVanilla, fadeValue);
+		applyPaletteWithFade(g_engine->_palVanilla, fadeValue);
 		g_system->copyRectToScreen((const byte *)g_events->getScreen()->getPixels(),
 								   g_events->getScreen()->pitch, 0, 0, g_events->getScreen()->w, g_events->getScreen()->h);
 		g_system->updateScreen();
@@ -729,7 +727,7 @@ void View1::startFadeToBlack(uint16 speed) {
 	// Final: set all black
 	byte colors[256 * 3];
 	memset(colors, 0, sizeof(colors));
-	setViewPaletteSafely(this, colors);
+	setViewPaletteSafely(colors);
 	g_system->updateScreen();
 
 	_currentFadeValue = 0x40;
@@ -770,7 +768,7 @@ void View1::startFadingWithSpeed(uint16 speed) {
 	while (!g_system->getEventManager()->shouldQuit()) {
 		uint32 frameStart = g_system->getMillis();
 
-		applyPaletteWithFade(this, g_engine->_palVanilla, fadeValue);
+		applyPaletteWithFade(g_engine->_palVanilla, fadeValue);
 		// Re-copy pixels so the backend redraws with the new palette
 		g_system->copyRectToScreen((const byte *)g_events->getScreen()->getPixels(),
 								   g_events->getScreen()->pitch, 0, 0, g_events->getScreen()->w, g_events->getScreen()->h);
@@ -797,7 +795,7 @@ void View1::startFadingWithSpeed(uint16 speed) {
 	}
 
 	// Final: write the full target palette (matches original's exit path)
-	setViewPaletteSafely(this, g_engine->_pal);
+	setViewPaletteSafely(g_engine->_pal);
 	g_system->updateScreen();
 
 	_currentFadeValue = -1;
@@ -1479,7 +1477,7 @@ bool View1::msgKeypress(const KeypressMessage &msg) {
 
 void View1::draw() {
 	if (_paletteDirty && _currentFadeValue < 0) {
-		setViewPaletteSafely(this, g_engine->_pal);
+		setViewPaletteSafely(g_engine->_pal);
 		_paletteDirty = false;
 	}
 
