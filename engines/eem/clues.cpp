@@ -968,7 +968,10 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			if (copyRows > 0) {
 				g_system->copyRectToScreen(scratch.getBasePtr(0, copyY),
 					scratch.pitch, 0, copyY, kScreenWidth, copyRows);
-				g_system->updateScreen();
+				// Gesture entry: let the wait loop present, so the partner-less
+				// base isn't flashed before the gesture's first frame.
+				if (!haveKd)
+					g_system->updateScreen();
 			}
 		}
 
@@ -1002,6 +1005,23 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 					haveKdBase = true;
 				}
 			}
+			// Play the gesture one-shot, then loop the partner idle over the
+			// same partner-less base (the original resumes idle when it ends).
+			const uint32 kdDurationMs = haveKd
+				? oneShotDurationMs(kdAnimId, (uint)kdAnim.size()) : 0;
+			Animation idleAnim;
+			int idleX = 0;
+			int idleY = 0;
+			bool haveIdle = false;
+			if (haveKdBase && _hasPartnerIdle &&
+				getAni().loadAnimation(_partnerIdleAnimId, idleAnim) &&
+				!idleAnim.empty()) {
+				haveIdle = true;
+				idleX = _partnerIdleX;
+				idleY = _partnerIdleY;
+			}
+			bool kdInIdle = false;
+			uint kdLastIdleFrame = (uint)-1;
 			while (!advance && !shouldQuit()) {
 				Common::Event ev;
 				while (g_system->getEventManager()->pollEvent(ev)) {
@@ -1033,18 +1053,40 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 						break;
 					}
 				}
+				if (skipAll)
+					break;
 				if (haveKdBase) {
-					const uint kdFrame = oneShotFrameAtTick(kdAnimId,
-						(uint)kdAnim.size(), g_system->getMillis() - kdStartMs);
-					if (kdFrame != kdLastFrame && kdFrame < kdAnim.size()) {
-						kdLastFrame = kdFrame;
-						Graphics::ManagedSurface comp(kScreenWidth, kScreenHeight,
-							Graphics::PixelFormat::createFormatCLUT8());
-						comp.simpleBlitFrom(kdBase);
-						blitAnimFrameAnchored(comp.surfacePtr(),
-							kdAnim[kdFrame], kdPx, kdPy);
-						g_system->copyRectToScreen(comp.getPixels(), comp.pitch,
-							0, 0, kScreenWidth, kScreenHeight);
+					const uint32 kdElapsed = g_system->getMillis() - kdStartMs;
+					if (haveIdle && kdElapsed >= kdDurationMs) {
+						// Resume the looping idle wait-anim.
+						const uint f = partnerFrameAtTick(_partnerIdleAnimId,
+							(uint)idleAnim.size(), kdElapsed - kdDurationMs);
+						if ((!kdInIdle || f != kdLastIdleFrame) &&
+							f < idleAnim.size()) {
+							kdInIdle = true;
+							kdLastIdleFrame = f;
+							Graphics::ManagedSurface comp(kScreenWidth, kScreenHeight,
+								Graphics::PixelFormat::createFormatCLUT8());
+							comp.simpleBlitFrom(kdBase);
+							blitAnimFrameAnchored(comp.surfacePtr(),
+								idleAnim[f], idleX, idleY);
+							g_system->copyRectToScreen(comp.getPixels(), comp.pitch,
+								0, 0, kScreenWidth, kScreenHeight);
+						}
+					} else {
+						// Gesture one-shot.
+						const uint f = oneShotFrameAtTick(kdAnimId,
+							(uint)kdAnim.size(), kdElapsed);
+						if (f != kdLastFrame && f < kdAnim.size()) {
+							kdLastFrame = f;
+							Graphics::ManagedSurface comp(kScreenWidth, kScreenHeight,
+								Graphics::PixelFormat::createFormatCLUT8());
+							comp.simpleBlitFrom(kdBase);
+							blitAnimFrameAnchored(comp.surfacePtr(),
+								kdAnim[f], kdPx, kdPy);
+							g_system->copyRectToScreen(comp.getPixels(), comp.pitch,
+								0, 0, kScreenWidth, kScreenHeight);
+						}
 					}
 				}
 				g_system->updateScreen();

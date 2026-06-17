@@ -228,6 +228,15 @@ public:
 
 	void setPartnerEraseBg(const Graphics::ManagedSurface *bg);
 
+	/// Partner idle wait-anim that `displayClue` loops once a clue gesture's
+	/// one-shot ends. Set around `displayClue` by the site loop.
+	void setPartnerIdleAnim(bool has, uint16 animId, int x, int y) {
+		_hasPartnerIdle = has;
+		_partnerIdleAnimId = animId;
+		_partnerIdleX = x;
+		_partnerIdleY = y;
+	}
+
 	/// Balloon-text-inset metadata. 52-entry table @ 29be:0875 (CD) /
 	/// 2608:05f9 (floppy), indexed by `(bubNum & 0x7F)`. 10 bytes per
 	/// entry: the first 3 fields (x inset, y inset, text width) are used
@@ -501,9 +510,14 @@ private:
 	/// ESC during intro: skip remaining opening-anim chain.
 	bool _skipIntro = false;
 
-	/// Clean BG (no partner/NPC) used by `playKdAnim` between camera-anim
-	/// cells. 
+	/// Partner-less scene that `displayClue` composites the gesture/idle over.
 	Graphics::ManagedSurface _partnerEraseBg;
+
+	/// Idle wait-anim to resume after a clue gesture (see setPartnerIdleAnim).
+	bool   _hasPartnerIdle = false;
+	uint16 _partnerIdleAnimId = 0;
+	int    _partnerIdleX = 0;
+	int    _partnerIdleY = 0;
 
 	bool _interactiveMouseCursor = false;
 	/// Active EEM2 cursor shape (index into `kLondonCursorPics`). -1 forces a

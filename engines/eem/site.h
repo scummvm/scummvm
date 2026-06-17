@@ -45,6 +45,9 @@ uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs);
 /// Like partnerFrameAtTick but plays the script ONCE and holds the final frame.
 uint oneShotFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs);
 
+/// Total time for one full play of a one-shot gesture (frame count * period).
+uint32 oneShotDurationMs(uint16 seqnum, uint numFrames);
+
 /// Select the EEM2 ("London") animation-script table inside `findAnimScript`.
 /// EEM2 ships its own `_AnimationSequences`; many partner/KD scripts differ
 /// from EEM1's, so the engine must use the EEM2 sequences for that variant.
@@ -118,8 +121,13 @@ private:
 	/// Partner site-arrival sequence
 	bool enterSiteAnim();
 
-	/// renderPartner: persistent in-site partner sprite 
+	/// renderPartner: persistent in-site partner sprite
 	void renderPartner(uint siteNum, uint32 tickMs);
+
+	/// Resolve the partner idle wait-anim (animId + screen anchor) for a site.
+	/// Shared by renderPartner and the clue gesture's idle-resume. Returns
+	/// false when the site has no usable speaker/partner entry.
+	bool partnerIdleAnimParams(uint siteNum, uint16 &animId, int &x, int &y);
 
 	/// Floppy active speaker pose 
 	bool renderFloppyHotspotPartnerPose(uint siteNum);
