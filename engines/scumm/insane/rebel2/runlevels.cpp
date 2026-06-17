@@ -312,6 +312,11 @@ void InsaneRebel2::resetLevelPhaseState(bool clearEnemies) {
 
 	if (clearEnemies)
 		_enemies.clear();
+
+	if (_selectedChapter == 1 || _selectedChapter == 10) {
+		_rebelAutopilot = 1;
+		_rebelDamageLevel = 5;
+	}
 }
 
 void InsaneRebel2::clearEmbeddedHudFrames() {
