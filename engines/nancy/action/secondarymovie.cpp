@@ -28,6 +28,7 @@
 #include "engines/nancy/action/secondarymovie.h"
 #include "engines/nancy/state/scene.h"
 
+#include "common/random.h"
 #include "common/serializer.h"
 
 #include "video/bink_decoder.h"
@@ -45,9 +46,84 @@ PlaySecondaryMovie::~PlaySecondaryMovie() {
 	}
 }
 
+void PlaySecondaryMovie::readRandomSequence(Common::Serializer &ser, RandomSequence &seq) {
+	readFilename(ser, seq.name);
+	ser.syncAsUint16LE(seq.startFrame);
+	ser.syncAsUint16LE(seq.unknown_0x23);
+	ser.syncAsSint32LE(seq.minPauseMs);
+	ser.syncAsSint32LE(seq.maxPauseMs);
+	ser.syncAsUint16LE(seq.unknown_0x2D);
+
+	uint16 nextCount = 0;
+	ser.syncAsUint16LE(nextCount);
+
+	seq.nextSequences.resize(nextCount);
+	for (uint i = 0; i < nextCount; ++i) {
+		readFilename(ser, seq.nextSequences[i].name);
+		ser.syncAsUint16LE(seq.nextSequences[i].unknown);
+	}
+}
+
+void PlaySecondaryMovie::readRandomMovieData(Common::Serializer &ser, Common::SeekableReadStream &stream) {
+	readFilename(ser, _startingSequenceName);
+	ser.syncAsUint16LE(_randomPlayerCursorAllowed);
+
+	uint16 sequenceCount = 0, hotspotCount = 0;
+	ser.syncAsUint16LE(sequenceCount);
+	ser.syncAsUint16LE(hotspotCount);
+
+	_sequences.resize(sequenceCount);
+	for (uint i = 0; i < sequenceCount; ++i) {
+		readRandomSequence(ser, _sequences[i]);
+	}
+
+	_videoDescs.resize(hotspotCount);
+	for (uint i = 0; i < hotspotCount; ++i) {
+		_videoDescs[i].readData(stream);
+	}
+
+	// "RandomMovie" picks any sequence; otherwise look up by name.
+	// Only the first sequence is played; chained playback is TODO.
+	if (!_sequences.empty()) {
+		int startIdx = -1;
+		if (_startingSequenceName == "RandomMovie") {
+			startIdx = g_nancy->_randomSource->getRandomNumber(_sequences.size() - 1);
+		} else {
+			for (uint i = 0; i < _sequences.size(); ++i) {
+				if (_sequences[i].name.toString() == _startingSequenceName) {
+					startIdx = (int)i;
+					break;
+				}
+			}
+			if (startIdx < 0) {
+				warning("PlayRandomMovie: starting sequence \"%s\" is not part of this AR",
+					_startingSequenceName.c_str());
+			}
+		}
+
+		if (startIdx >= 0) {
+			const RandomSequence &src = _sequences[startIdx];
+			_videoName = src.name;
+			_firstFrame = src.startFrame;
+			_videoType = kVideoPlaytypeBink;
+			_videoFormat = kLargeVideoFormat;
+			_videoSceneChange = kMovieNoSceneChange;
+			_playerCursorAllowed = (byte)_randomPlayerCursorAllowed;
+			_playDirection = kPlayMovieForward;
+		}
+	}
+
+	_sound.name = "NO SOUND";
+}
+
 void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	Common::Serializer ser(&stream, nullptr);
 	ser.setVersion(g_nancy->getGameType());
+
+	if (_isRandom) {
+		readRandomMovieData(ser, stream);
+		return;
+	}
 
 	readFilename(ser, _videoName);
 	readFilename(ser, _paletteName, kGameTypeVampire, kGameTypeVampire);
@@ -213,6 +289,10 @@ void PlaySecondaryMovie::execute() {
 			if (activeFrame != -1) {
 				_screenPosition = _videoDescs[activeFrame].destRect;
 				setVisible(true);
+			} else if (_isRandom && _videoDescs.empty()) {
+				// No hotspots: play full-viewport instead of gating on a frame match.
+				_screenPosition = NancySceneState.getViewport().getBounds();
+				setVisible(true);
 			} else {
 				setVisible(false);
 			}
@@ -291,6 +371,26 @@ void PlaySecondaryMovie::execute() {
 
 		break;
 	}
+}
+
+// --- PlayRandomMovieControl --------------------------------------------
+
+void PlayRandomMovieControl::readData(Common::SeekableReadStream &stream) {
+	_targetA = stream.readUint32LE();
+	_targetB = stream.readUint32LE();
+	_targetC = stream.readUint32LE();
+	_flagsOrIndex = stream.readUint16LE();
+	_trailing = stream.readByte();
+}
+
+void PlayRandomMovieControl::execute() {
+	// Original binary debug string:
+	//   "STOP AT_PLAY_RANDOM_MOVIE AR %d in Scene %d"
+	// so two of the chunk fields identify the target AR / scene.
+	// Until the exact identification scheme is known, this stub just
+	// warns and completes.
+	warning("PlayRandomMovieControl is not yet fully implemented");
+	finishExecution();
 }
 
 } // End of namespace Action

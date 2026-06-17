@@ -187,12 +187,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 32:
 		// Nancy 10+
 		return new UIPopupPrepScene();
-	case 45:	// Nancy11
-		warning("PlayRandomMovie");	// TODO
-		return nullptr;
+	case 45:	// Nancy11 - random-movie variant of PlaySecondaryMovie
+		return new PlaySecondaryMovie(true);
 	case 46:	// Nancy11
-		warning("PlayRandomMovieControl");	// TODO
-		return nullptr;
+		return new PlayRandomMovieControl();
 	case 40:
 		if (g_nancy->getGameType() <= kGameTypeNancy1)
 			return new LightningOn();	// Only used in TVD
