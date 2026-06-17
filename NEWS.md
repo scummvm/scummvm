@@ -70,6 +70,8 @@ Atari port:
    - Added native CDDA support.
    - Added plugin support (now ScummVM can run with as little as a few megs of RAM).
    - Added native YM2149 support (currently usable for Elvira 1 and 2).
+   - Reworked audio mixer (this fixes the barking poodles in SOMI).
+   - Autosave is disabled by default as it leads to audible artefacts during gameplay.
 
  PS3 port:
    - Added support for running ScummVM engines as separate modules/executables.
