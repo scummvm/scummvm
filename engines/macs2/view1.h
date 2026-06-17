@@ -398,6 +398,9 @@ public:
 	};
 	PendingPanelRequest _pendingPanelRequest = kPanelRequestNone;
 
+	// Binary g_wUiBackgroundRestorePending: set when panel was open and background needs redraw
+	bool _uiBackgroundRestorePending = false;
+
 	// Binary g_wSavedCursorMode [scene+0xFEA]: saved before opening action bar panel
 	Script::MouseMode _savedCursorMode = Script::MouseMode::Walk;
 

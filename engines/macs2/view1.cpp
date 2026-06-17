@@ -943,6 +943,7 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 	if (clickedObject != nullptr && g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Look) {
 		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
 		g_engine->_scriptExecutor->_interactedInventoryItemId = 0;
+		_uiBackgroundRestorePending = true;
 		g_engine->runScriptExecutor(false);
 		return true;
 	}
@@ -969,6 +970,7 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 		// Panel state stays at 2 (inventory) — draw cycle hides panel when text shows.
 		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
 		g_engine->_scriptExecutor->_interactedInventoryItemId = 0x400 + clickedObject->_index;
+		_uiBackgroundRestorePending = true;
 		g_engine->runScriptExecutor(false);
 	}
 
@@ -1044,6 +1046,7 @@ bool View1::handleContainerInventoryClick(const MouseDownMessage &msg) {
 		// (g_wPendingPanelRequest = 1 path in original)
 		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
 		g_engine->_scriptExecutor->_interactedInventoryItemId = 0;
+		_uiBackgroundRestorePending = true;
 		g_engine->runScriptExecutor(false);
 		return true;
 	}
@@ -1384,6 +1387,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 			openMainMenu(msg._pos);
 		} else {
 			_uiPanelState = kUiPanelNone;
+			_uiBackgroundRestorePending = false;
 			g_engine->setCursorMode(_savedCursorMode);
 		}
 		updateCursor();
@@ -3323,6 +3327,7 @@ void View1::openOriginalSaveLoadPanel() {
 	// Exact translation of initSaveLoadPanel (1008:6184)
 	_pendingPanelRequest = kPanelRequestNone;  // Binary: g_wPendingPanelRequest = 0
 	_uiPanelState = kUiPanelSaveLoad;          // Binary: g_wUiPanelState = 4
+	_uiBackgroundRestorePending = true;         // Binary: g_wUiBackgroundRestorePending = 1
 
 	g_engine->setCursorMode(Script::MouseMode::PanelCursor);
 
