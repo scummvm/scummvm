@@ -52,6 +52,10 @@ constexpr byte LINE_COLOR = 2;
 char *quotes;
 
 static void main_menu_main() {
+	// TODO
+	selected_item = 0;
+	return;
+
 	auto &screen = *g_engine->getScreen();
 	Palette palette;
 

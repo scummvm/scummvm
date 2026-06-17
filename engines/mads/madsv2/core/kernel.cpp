@@ -465,7 +465,7 @@ int kernel_game_startup(int game_video_mode, int load_flag,
 		vocab_load_active();
 	}
 
-	if (load_flag & KERNEL_STARTUP_POPUP) {
+	if (load_flag & KERNEL_STARTUP_POPUP && g_engine->getGameID() != GType_RexNebular) {
 		if (popup_box_load()) {
 			error_code = ERROR_KERNEL_NO_POPUP;
 			goto done;
