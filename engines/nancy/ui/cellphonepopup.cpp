@@ -763,8 +763,13 @@ void CellPhonePopup::drawLinkList() {
 			rowText.erase(rowText.find("<n>"), 3);
 		}
 
+		// Original anchors row text on the row's bottom (baseline-up
+		// rendering); mirror that so the glyphs sit at the bottom of
+		// the row instead of glued to the top.
+		const int textY = MAX<int16>(rowRect.top,
+								rowRect.bottom - font->getFontHeight());
 		font->drawString(&_drawSurface, rowText,
-							textX, rowRect.top,
+							textX, textY,
 							rowRect.right - textX, 0);
 	}
 }
@@ -952,8 +957,10 @@ void CellPhonePopup::drawDirectoryList() {
 		++visited;
 
 		const Common::Rect rowRect = directoryRowRect(visibleRow);
+		const int textY = MAX<int16>(rowRect.top,
+								rowRect.bottom - font->getFontHeight());
 		font->drawString(&_drawSurface, c.name,
-							rowRect.left, rowRect.top,
+							rowRect.left, textY,
 							rowRect.width(), 0);
 		++visibleRow;
 	}
@@ -1026,10 +1033,10 @@ void CellPhonePopup::drawDirectoryArrows() {
 	}
 
 	// Selection indicator (dirArrowSrc sprite) at the dirCursorSrc column,
-	// stepped down by the active entry's layout row — only meaningful in
-	// directory mode; list and content modes have their own arrow logic
-	// (or none at all) and a stray cursor sprite paints over their LCD.
-	if (_screenState != kDirectory) {
+	// stepped down by the active entry's layout row. Drawn for directory
+	// and the search-topic list; the email list signals the current row
+	// by swapping its per-row icon, so no separate arrow there.
+	if (_screenState != kDirectory && _screenState != kWebList) {
 		return;
 	}
 	const Common::Rect &arrowSrc = _uiclData->dirArrowSrc;
