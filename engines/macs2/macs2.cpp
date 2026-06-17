@@ -1650,26 +1650,6 @@ Common::Point AnimFrame::getBottomMiddleOffset(uint16 scale) const {
 		_height * scale / 100);
 }
 
-AnimFrame BackgroundAnimationBlob::getFrame(uint32 index) {
-	AnimBlobView blobView(_blob);
-	uint16 numAnimations = blobView.frameCount();
-	debug("Number of animation frames for background object: %.4x", numAnimations);
-
-	uint16 frameIdx = (index - 1) % numAnimations;
-	AnimBlobView::FrameInfo fi;
-	if (!blobView.getFrameInfo(frameIdx, fi)) {
-		AnimFrame result;
-		return result;
-	}
-
-	AnimFrame result;
-	result._width = fi.width;
-	result._height = fi.height;
-	result._data.resize(fi.width * fi.height);
-	memcpy(result._data.data(), fi.pixels, fi.width * fi.height);
-	return result;
-}
-
 AnimFrame BackgroundAnimationBlob::getCurrentFrame() {
 	// Mode 0: get current frame without advancing (advancement happens in View1::tick)
 	uint16 offset = advanceAnimFrame(_blob, false, 0x0);
