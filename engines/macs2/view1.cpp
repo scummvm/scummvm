@@ -954,6 +954,7 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 			// so the cursor shows the picked-up item
 			int cursorSlot = (int)Script::MouseMode::UseInventory - 1;
 			g_engine->_imageResources[cursorSlot] = *icon;
+			delete icon;
 		}
 		g_engine->setCursorMode(Script::MouseMode::UseInventory);
 		updateCursor();
@@ -1053,6 +1054,7 @@ bool View1::handleContainerInventoryClick(const MouseDownMessage &msg) {
 		if (icon != nullptr) {
 			int cursorSlot = (int)Script::MouseMode::UseInventory - 1;
 			g_engine->_imageResources[cursorSlot] = *icon;
+			delete icon;
 		}
 		g_engine->setCursorMode(Script::MouseMode::UseInventory);
 		updateCursor();
@@ -1811,6 +1813,7 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 		if (icon->_height > 0 && icon->_height < 250) {
 			maxHeightInventoryIcon = MAX(maxHeightInventoryIcon, icon->_height);
 		}
+		delete icon;
 	}
 
 	// Original adds +6 to button dimensions before using them (g_wActionBarButtonWidth += 6)
