@@ -499,11 +499,9 @@ distributed with repackaged theme files with compression level zero.
 Changes to upstream
 -------------------
 
-There are a few features that have been disabled or changed and are not
-possible / plausible to merge into upstream:
-
-- This port contains an experimental / pending optimisations to audio mixing.
-  I'll try to get them merged in the next release.
+- This port contains experimental / pending optimisations to audio mixing
+  (https://github.com/scummvm/scummvm/pull/7385). I'll try to get them merged
+  in the next release.
 
 
 Known issues
