@@ -322,9 +322,9 @@ void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 		// Parse frames for the legacy BackgroundAnimation struct
 		AnimBlobView blobView(currentBlob._blob);
 		// Original uses sequence length (blob[0xA]+1) as numFrames for background animations
-		current._numFrames = blobView.sequenceLength();
+		uint16 numFrames = blobView.sequenceLength();
 		current._frameIndex = 0;
-		current._frames = new AnimFrame[current._numFrames];
+		current._frames.resize(numFrames);
 		uint16 actualFrameCount = blobView.frameCount();
 		for (int j = 0; j < (int)actualFrameCount; j++) {
 			AnimBlobView::FrameInfo fi;
@@ -332,12 +332,12 @@ void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 				break;
 			current._frames[j]._width = fi.width;
 			current._frames[j]._height = fi.height;
-			current._frames[j]._data = new byte[fi.width * fi.height];
-			memcpy(current._frames[j]._data, fi.pixels, fi.width * fi.height);
+			current._frames[j]._data.resize(fi.width * fi.height);
+			memcpy(current._frames[j]._data.data(), fi.pixels, fi.width * fi.height);
 		}
 
 		// Initialize the blob frame pointer (original calls advanceAnimFrame with mode 0x64+numFrames)
-		BackgroundAnimationBlob::advanceAnimFrame(currentBlob._blob, true, 0x64 + current._numFrames);
+		BackgroundAnimationBlob::advanceAnimFrame(currentBlob._blob, true, 0x64 + numFrames);
 	}
 }
 
@@ -348,9 +348,6 @@ void Macs2Engine::readImageResources(Common::MemoryReadStream *stream) {
 		uint32 length = stream->readUint32LE();
 		if (length == 0) {
 			AnimFrame empty;
-			empty._data = nullptr;
-			empty._width = 0;
-			empty._height = 0;
 			_imageResources.push_back(empty);
 			continue;
 		}
@@ -384,6 +381,8 @@ Macs2Engine::~Macs2Engine() {
 	stopInputRecording();
 	clearCurrentSoundData();
 	_adlib->deinit();
+	delete _adlib;
+	delete _scriptExecutor;
 }
 
 void Macs2Engine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) const {
@@ -423,9 +422,6 @@ uint16 Macs2Engine::scaledMusicVolume(uint16 gameAttenuation) const {
 
 void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Release old scene resources
-	for (uint i = 0; i < _backgroundAnimations.size(); i++) {
-		delete[] _backgroundAnimations[i]._frames;
-	}
 	_backgroundAnimations.clear();
 	_backgroundAnimationsBlobs.clear();
 	memset(_areaOverrides, 0, sizeof(_areaOverrides));
@@ -1600,30 +1596,30 @@ void GlyphData::readFromeFile(Common::File &file) {
 	_ascii = file.readByte();
 	_width = file.readUint16LE();
 	_height = file.readUint16LE();
-	_data = new byte[_width * _height];
-	file.read(_data, _width * _height);
+	_data.resize(_width * _height);
+	file.read(_data.data(), _width * _height);
 }
 
 void GlyphData::readFromMemory(Common::MemoryReadStream *stream) {
 	_ascii = stream->readByte();
 	_width = stream->readUint16LE();
 	_height = stream->readUint16LE();
-	_data = new byte[_width * _height];
-	stream->read(_data, _width * _height);
+	_data.resize(_width * _height);
+	stream->read(_data.data(), _width * _height);
 }
 
 void AnimFrame::readFromeFile(Common::File &file) {
 	_width = file.readUint16LE();
 	_height = file.readUint16LE();
-	_data = new byte[_width * _height];
-	file.read(_data, _width * _height);
+	_data.resize(_width * _height);
+	file.read(_data.data(), _width * _height);
 }
 
 void AnimFrame::readFromStream(Common::MemoryReadStream *stream) {
 	_width = stream->readUint16LE();
 	_height = stream->readUint16LE();
-	_data = new byte[_width * _height];
-	stream->read(_data, _width * _height);
+	_data.resize(_width * _height);
+	stream->read(_data.data(), _width * _height);
 }
 
 bool AnimFrame::pixelHit(const Common::Point &point) const {
@@ -1642,16 +1638,6 @@ Common::Point AnimFrame::getBottomMiddleOffset(uint16 scale) const {
 		_height * scale / 100);
 }
 
-Sprite AnimFrame::asSprite() {
-	// TODO: Shows that the separation makes little sense
-	Sprite result;
-	result._data.resize(_width * _height);
-	result._data.assign(_data, _data + _width * _height);
-	result._width = _width;
-	result._height = _height;
-	return result;
-}
-
 AnimFrame BackgroundAnimationBlob::getFrame(uint32 index) {
 	AnimBlobView blobView(_blob);
 	uint16 numAnimations = blobView.frameCount();
@@ -1661,17 +1647,14 @@ AnimFrame BackgroundAnimationBlob::getFrame(uint32 index) {
 	AnimBlobView::FrameInfo fi;
 	if (!blobView.getFrameInfo(frameIdx, fi)) {
 		AnimFrame result;
-		result._width = 0;
-		result._height = 0;
-		result._data = nullptr;
 		return result;
 	}
 
 	AnimFrame result;
 	result._width = fi.width;
 	result._height = fi.height;
-	result._data = new byte[fi.width * fi.height];
-	memcpy(result._data, fi.pixels, fi.width * fi.height);
+	result._data.resize(fi.width * fi.height);
+	memcpy(result._data.data(), fi.pixels, fi.width * fi.height);
 	return result;
 }
 
@@ -1683,8 +1666,8 @@ AnimFrame BackgroundAnimationBlob::getCurrentFrame() {
 	AnimFrame result;
 	result._width = READ_LE_UINT16(&_blob[offset]);
 	result._height = READ_LE_UINT16(&_blob[offset + 2]);
-	result._data = new byte[result._width * result._height];
-	memcpy(result._data, &_blob[offset + 4], result._width * result._height);
+	result._data.resize(result._width * result._height);
+	memcpy(result._data.data(), &_blob[offset + 4], result._width * result._height);
 	return result;
 }
 

@@ -742,12 +742,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			AnimFrame *icon = view1->getInventoryIcon(view1->_activeInventoryItem);
 			if (icon != nullptr) {
 				int cursorSlot = (int)Script::MouseMode::UseInventory - 1;
-				uint32 pixelSize = icon->_width * icon->_height;
-				delete[] _imageResources[cursorSlot]._data;
-				_imageResources[cursorSlot]._data = new byte[pixelSize];
-				memcpy(_imageResources[cursorSlot]._data, icon->_data, pixelSize);
-				_imageResources[cursorSlot]._width = icon->_width;
-				_imageResources[cursorSlot]._height = icon->_height;
+				_imageResources[cursorSlot] = *icon;
 			}
 		}
 
