@@ -2436,9 +2436,6 @@ void ScriptExecutor::run(bool firstRun) {
 }
 
 void ScriptExecutor::setScript(Common::MemoryReadStream *stream) {
-	if (_stream && _stream != stream && _stream != Scenes::instance()._currentSceneScript) {
-		delete _stream;
-	}
 	_stream = stream;
 }
 
