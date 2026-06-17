@@ -230,6 +230,7 @@ void ScriptExecutor::scriptChangeAnimation() {
 	// current frame by calling advanceAnimFrame with a target position.
 	uint32 backgroundAnimationIndex = scriptReadValue32() - 0x1000;
 	uint16 targetFrameIndex = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::changeAnimation(bgAnim=%u, targetFrame=%u)", backgroundAnimationIndex, targetFrameIndex);
 	if ((int32)backgroundAnimationIndex < 1) {
 		// g_wScriptErrorCode = 8
 		warning("changeAnimation: invalid index %d", (int32)backgroundAnimationIndex);
