@@ -709,6 +709,7 @@ bool Script::ScriptExecutor::scriptMoveObject() {
 				int idx = currentView->getCharacterArrayIndex(c);
 				if (idx >= 0)
 					currentView->_characters.remove_at(idx);
+				delete c;
 			}
 		}
 	}
@@ -755,6 +756,7 @@ bool Script::ScriptExecutor::scriptMoveObject() {
 			int idx = currentView->getCharacterArrayIndex(c);
 			if (idx >= 0)
 				currentView->_characters.remove_at(idx);
+			delete c;
 		}
 	}
 
@@ -1488,6 +1490,7 @@ bool Script::ScriptExecutor::scriptCheckObjectData() {
 	if (object->_sceneIndex != Scenes::instance()._currentSceneIndex) {
 		if (currentIndex >= 0) {
 			currentView->_characters.remove_at(currentIndex);
+			delete character;
 		}
 		return false;
 	}

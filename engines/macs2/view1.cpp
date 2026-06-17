@@ -3004,6 +3004,7 @@ void Character::update() {
 					if (index >= 0) {
 						currentView->_characters.remove_at(index);
 					}
+					delete pickedUpCharacter;
 				}
 				_pickedUpObject->_sceneIndex = _gameObject->_index + 0x400;
 				if (currentView->_inventorySource != nullptr && currentView->_inventorySource->_index == _gameObject->_index) {

@@ -617,6 +617,9 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	for (auto currentCharacter : currentView->_characters) {
 		currentCharacter->_executeScriptOnFinishLerp = false;
 	}
+	for (auto currentCharacter : currentView->_characters) {
+		delete currentCharacter;
+	}
 	currentView->_characters.clear();
 	// The original loads the actor via loadObjectData(g_wCurrentActorIndex).
 	// Only add to render list if actor belongs in this scene; scene init script
@@ -642,6 +645,8 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	// Load the script and execute it
 	Scenes::instance()._lastSceneIndex = Scenes::instance()._currentSceneIndex;
 	Scenes::instance()._currentSceneIndex = newSceneIndex;
+	delete Scenes::instance()._currentSceneScript;
+	delete Scenes::instance()._currentSceneStrings;
 	Scenes::instance()._currentSceneScript = Scenes::instance().readSceneScript(newSceneIndex, _fileStream);
 	Scenes::instance()._currentSceneStrings = Scenes::instance().readSceneStrings(newSceneIndex, _fileStream);
 	Scenes::instance()._currentSceneSpecialAnimOffsets = Scenes::instance().readSpecialAnimsOffsets(newSceneIndex, _fileStream);
