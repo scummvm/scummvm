@@ -492,16 +492,74 @@ void EGARenderer::traceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *so
 	  flushing the whole screen here turned each line into an updateScreen.*/
 }
 
-void EGARenderer::zoomImage(byte *pixels, byte w, byte h, byte /*nw*/, byte /*nh*/, byte *target, uint16 ofs) {
-	blitAndWait(pixels, w, w, h, target, ofs);
+// Nearest-neighbour scale an 8-bpp source (srcW x srcH pixels) into a
+// dstW x dstH pixel rect at (dstX, dstY). This is the 8-bpp equivalent of the
+// CGA cga_ZoomInplace math; the CGA partial-pixel/xbase packing logic collapses
+// to a plain sample-and-copy here since every EGA pixel is one byte. Every write
+// is clipped to the 320x200 screen so the saucer animation can never bleed past
+// the framebuffer bounds.
+static void ega_scaleImage(const byte *pixels, uint16 srcW, uint16 srcH,
+                           int16 dstX, int16 dstY, uint16 dstW, uint16 dstH, byte *target) {
+	if (dstW == 0 || dstH == 0 || srcW == 0 || srcH == 0)
+		return;
+
+	// 8.8 fixed-point source advance per target pixel. Use srcW/dstW (not
+	// (srcW-1)/dstW): at a 1:1 ratio that yields the identity map so the final
+	// source column/row is preserved -- the -1 form dropped it, which clipped the
+	// last pixel column (visible as the missing stroke of the "D" in THE END).
+	uint32 xstep = ((uint32)srcW << 8) / dstW;
+	uint32 ystep = ((uint32)srcH << 8) / dstH;
+
+	uint32 yval = 0;
+	for (uint16 ty = 0; ty < dstH; ty++, yval += ystep) {
+		int16 py = dstY + ty;
+		if (py < 0 || py >= EGA_HEIGHT)
+			continue;
+		uint16 sy = yval >> 8;
+		if (sy >= srcH)
+			sy = srcH - 1;
+		const byte *srcRow = pixels + sy * srcW;
+		byte *dstRow = target + py * EGA_BYTES_PER_LINE;
+		uint32 xval = 0;
+		for (uint16 tx = 0; tx < dstW; tx++, xval += xstep) {
+			int16 px = dstX + tx;
+			if (px < 0 || px >= EGA_WIDTH)
+				continue;
+			uint16 sx = xval >> 8;
+			if (sx >= srcW)
+				sx = srcW - 1;
+			dstRow[px] = srcRow[sx];
+		}
+	}
+
+	if (target == SCREENBUFFER) {
+		// flush the clipped destination rect
+		int16 x0 = dstX < 0 ? 0 : dstX;
+		int16 y0 = dstY < 0 ? 0 : dstY;
+		int16 x1 = dstX + (int16)dstW;
+		int16 y1 = dstY + (int16)dstH;
+		if (x1 > EGA_WIDTH)  x1 = EGA_WIDTH;
+		if (y1 > EGA_HEIGHT) y1 = EGA_HEIGHT;
+		if (x1 > x0 && y1 > y0)
+			g_vm->_renderer->blitToScreen(x0, y0, x1 - x0, y1 - y0);
+	}
+}
+
+void EGARenderer::zoomImage(byte *pixels, byte w, byte h, byte nw, byte nh, byte *target, uint16 ofs) {
+	// nw is the target width in 4-pixel bytes, nh the height in rows (see CGA zoomImage).
+	ega_scaleImage(pixels, w * 4, h, ofs % EGA_BYTES_PER_LINE, ofs / EGA_BYTES_PER_LINE, nw * 4, nh, target);
 }
 
 void EGARenderer::animZoomIn(byte *pixels, byte w, byte h, byte *target, uint16 ofs) {
 	blitAndWait(pixels, w, w, h, target, ofs);
 }
 
-void EGARenderer::zoomInplaceXY(byte *pixels, byte w, byte h, byte /*nw*/, byte /*nh*/, uint16 x, uint16 y, byte *target) {
-	blit(pixels, w, w, h, target, calcXY_p(x, y));
+void EGARenderer::zoomInplaceXY(byte *pixels, byte w, byte h, byte nw, byte nh, uint16 x, uint16 y, byte *target) {
+	// AnimSaucer's only caller passes the saucer path data from SOUCO.BIN, whose
+	// x/y/nw/nh are raw pixel coordinates (0..319), not 4-pixel-byte columns. So x
+	// is already a pixel column here -- pass it straight through (no *4), otherwise
+	// every frame after the first lands far off-screen to the right.
+	ega_scaleImage(pixels, w * 4, h, x, y, nw, nh, target);
 }
 
 void EGARenderer::drawSprite(byte *sprite, byte *screen, uint16 ofs) {

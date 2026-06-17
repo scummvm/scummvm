@@ -70,7 +70,8 @@ persframe_t pers_frames[] = {
 	{47, 13, 0xFF,    0, 0xC0,    3},
 	{65, 18, 0xFF, 0xAA, 0xEA, 0xAB},
 	{38, 11, 0xFF,    0, 0xC0,    3},
-	{27, 34,    0,    0,    0,    0}
+	{27, 34,    0,    0,    0,    0},
+	{ 9, 11,    0,    0,    0,    0}   /*end-screen logo frame (icon 167); missing entry caused a divide-by-zero in EGA*/
 };
 
 void makePortraitFrame(byte index, byte *target) {
@@ -205,6 +206,8 @@ static byte *ega_loadPortrait(byte **pinfo, byte *end) {
 		int16 spitch = surf->pitch;
 
 		uint16 cga_ofs = flags & 0x3FFF;
+		if (cur_frame_width == 0) /*degenerate frame: avoid the divide below*/
+			continue;
 		uint16 row = cga_ofs / cur_frame_width;
 		uint16 col_cga = cga_ofs % cur_frame_width;
 		byte *dst = sprit_load_buffer + 2 + 2 + row * frame_pw + col_cga * 4;

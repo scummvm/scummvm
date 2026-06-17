@@ -2875,7 +2875,17 @@ static void AnimSaucer(void) {
 	uint16 delay;
 	byte scroll_done = 0;
 
-	memset(backbuffer, 0, sizeof(backbuffer) - 2);  /*TODO: original bug?*/
+	/*Clear the whole buffer: the original's "- 2" left the bottom-right two
+	  bytes (row 199, x=318..319) holding stale pixels. In EGA those are visible
+	  and the scroll-reveal lifts them up the screen as a red dot rising with the
+	  saucer, so clear all of it.*/
+	memset(backbuffer, 0, sizeof(backbuffer));
+	/*EGA: also blank the front buffer. The saucer animation only paints the
+	  saucer region, so leftover sprites from the final game frame (player,
+	  HUD pixels) would otherwise survive on the black backdrop right through to
+	  THE END screen.*/
+	if (g_vm->_videoMode == Common::kRenderEGA)
+		memset(frontbuffer, 0, sizeof(SCREENBUFFER));
 	g_vm->_renderer->backBufferToRealFull();
 	g_vm->_renderer->colorSelect(0x30);
 
