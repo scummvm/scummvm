@@ -54,6 +54,9 @@ ScriptExecutor::ScriptExecutor() {
 	}
 }
 
+ScriptExecutor::~ScriptExecutor() {
+}
+
 Common::String ScriptExecutor::identifyScriptOpcode(uint8 opcode, uint8 opcode2) {
 	if (opcode == 0x5)
 		return Common::String::format("(%.2x)", opcode);
