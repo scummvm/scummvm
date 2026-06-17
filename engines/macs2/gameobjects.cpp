@@ -51,10 +51,9 @@ Common::MemoryReadStream *Macs2::Scenes::readSceneScript(uint16 sceneIndex, Comm
 		// Return a valid but empty stream
 		return new Common::MemoryReadStream(nullptr, 0);
 	}
-	uint8 *scriptData = new uint8[scriptSize];
+	byte *scriptData = (byte *)malloc(scriptSize);
 	fileStream->read(scriptData, scriptSize);
-	// TODO: Consider using the endian version for all the memoryReadStreams
-	return new Common::MemoryReadStream(scriptData, scriptSize);
+	return new Common::MemoryReadStream(scriptData, scriptSize, DisposeAfterUse::YES);
 }
 
 Common::Array<uint32> Macs2::Scenes::readSpecialAnimsOffsets(uint16 sceneIndex, Common::MemoryReadStream *fileStream) {
@@ -99,10 +98,9 @@ Common::MemoryReadStream *Macs2::Scenes::readSceneStrings(uint16 sceneIndex, Com
 	uint16 size = fileStream->readUint16LE();
 
 	// Stringdata lives in the pointer [0F80h]
-	uint8 *stringData = new uint8[size];
+	byte *stringData = (byte *)malloc(size);
 	fileStream->read(stringData, size);
-	// TODO: Consider using the endian version for all the memoryReadStreams
-	return new Common::MemoryReadStream(stringData, size);
+	return new Common::MemoryReadStream(stringData, size, DisposeAfterUse::YES);
 	// Note: We save the current scene number to [0F86h] - maybe "scene we have strings loaded for"?
 }
 
@@ -353,10 +351,9 @@ Common::MemoryReadStream *Macs2::GameObjects::readGameObjectStrings(uint16 index
 	uint16 size = fileStream->readUint16LE();
 
 	// Stringdata lives in the pointer [0F80h]
-	uint8 *stringData = new uint8[size];
+	byte *stringData = (byte *)malloc(size);
 	fileStream->read(stringData, size);
-	// TODO: Consider using the endian version for all the memoryReadStreams
-	return new Common::MemoryReadStream(stringData, size);
+	return new Common::MemoryReadStream(stringData, size, DisposeAfterUse::YES);
 	// Note: We save the current scene number to [0F86h] - maybe "scene we have strings loaded for"?
 }
 
