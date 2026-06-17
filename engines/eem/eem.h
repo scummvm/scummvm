@@ -425,6 +425,9 @@ private:
 
 	void doSetupLondon();
 	void setupDrawScreenLondon();
+	/// London "profile saved" confirmation: PIC 0x203 centred over the setup
+	/// screen, dismissed by any click/key (caller redraws the setup screen).
+	void setupShowSavedConfirm();
 
 	/// `_DoInitClues @ 1a35:0411` (minus live ANI sequence playback).
 	void doInitClues();

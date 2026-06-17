@@ -1699,6 +1699,37 @@ void EEMEngine::setupDrawScreenLondon() {
 	g_system->updateScreen();
 }
 
+void EEMEngine::setupShowSavedConfirm() {
+	Picture pic;
+	if (!_picsArchive.getPicture(0x203, pic) || pic.surface.empty())
+		return;
+	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+		Graphics::PixelFormat::createFormatCLUT8());
+	Graphics::Surface *cur = g_system->lockScreen();
+	if (cur) {
+		scratch.simpleBlitFrom(*cur);
+		g_system->unlockScreen();
+	}
+	const int sx = MAX<int>(0, (kScreenWidth  - pic.surface.w) / 2);
+	const int sy = MAX<int>(0, (kScreenHeight - pic.surface.h) / 2);
+	scratch.transBlitFrom(pic.surface, Common::Point(sx, sy),
+						  (uint32)(byte)(pic.flags >> 8));
+	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+							   0, 0, kScreenWidth, kScreenHeight);
+	g_system->updateScreen();
+	while (!shouldQuit()) {
+		Common::Event ev;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER ||
+				ev.type == Common::EVENT_KEYDOWN ||
+				ev.type == Common::EVENT_LBUTTONDOWN)
+				return;
+		}
+		g_system->delayMillis(15);
+	}
+}
+
 // `_DoSetup @ 2046:067b`
 void EEMEngine::doSetupLondon() {
 	if (!_font.isLoaded()) {
@@ -1714,8 +1745,8 @@ void EEMEngine::doSetupLondon() {
 	const Common::Rect kSaveBtn    (281, 108, 299, 125); // [6]
 	const Common::Rect kNewCaseBtn (281, 127, 299, 144); // [7]
 	const Common::Rect kDoneBtn    ( 53, 153, 108, 183); // [8]
-	const Common::Rect kQuitBtn    (145, 163, 174, 187); // [9]
-	const Common::Rect kHelpBtn    (212, 153, 266, 184); // [10]
+	const Common::Rect kHelpBtn    (145, 163, 174, 187); // [9]
+	const Common::Rect kQuitBtn    (212, 153, 266, 184); // [10]
 	const Common::Rect kCreditsBtn ( 81,  25, 238,  37); // [11]
 	const Common::Rect kMusicBtn   ( 20,  82,  38,  99); // [12]
 
@@ -1791,8 +1822,11 @@ void EEMEngine::doSetupLondon() {
 			}
 
 			if (kSaveBtn.contains(mx, my)) {
-				if (_mystery.isLoaded())
+				if (_mystery.isLoaded()) {
 					saveProfile(_playerName);
+					setupShowSavedConfirm();
+					dirty = true;
+				}
 				continue;
 			}
 			if (kHelpBtn.contains(mx, my)) {
