@@ -147,8 +147,13 @@ uint CursorManager::resolveNancy10CursorID(CursorType type, int16 itemID, bool s
 		return itemsOffset + (uint)itemID * 2 + variant;
 	}
 
-	if (setFromScript)
-		return type;
+	if (setFromScript) {
+		// Scripts store a raw cursor type number T, while the chunk lays
+		// each type out as a [idle, hotspot] pair (slots T*2 and T*2+1).
+		// Script cursors are only ever applied while hovering a hotspot,
+		// so we always pick the hotspot variant.
+		return (uint)type * 2 + 1;
+	}
 
 	// System cursors: translate the legacy CursorType to the matching
 	// kNew* idle slot. Each Nancy 10+ cursor type T occupies a pair
