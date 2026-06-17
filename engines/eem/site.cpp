@@ -712,6 +712,12 @@ uint oneShotFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs) {
 	return numFrames > 0 ? MIN<uint>(frame, numFrames - 1) : 0;
 }
 
+uint32 oneShotDurationMs(uint16 seqnum, uint numFrames) {
+	const AnimScriptRef s = findAnimScript(seqnum);
+	const uint count = (s.frames && s.len) ? (uint)s.len : numFrames;
+	return (uint32)count * kFramePeriodMs;
+}
+
 // Play `unfold` once, then loop `waitSeq` forever. Mirrors the
 // original's slot-script-swap idiom
 uint oneShotThenLoopFrameAtTick(const uint8 *unfold, uint unfoldLen,
@@ -1447,19 +1453,17 @@ void SiteScreen::syncCompositedScreen() {
 							   0, 0, kScreenWidth, kScreenHeight);
 }
 
-void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
+bool SiteScreen::partnerIdleAnimParams(uint siteNum, uint16 &animId,
+									   int &x, int &y) {
 	const byte *site = _mystery->siteData(siteNum);
 	if (!site)
-		return;
+		return false;
 	const uint8 partner = _vm->getPartnerIndex();
-	uint   animId;
-	int    x;
-	int    y;
 	if (_vm->isFloppy()) {
 		const uint16 spkOff = READ_LE_UINT16(site + 8);
 		const byte *spk = _mystery->blobAt(spkOff);
 		if (!spk)
-			return;
+			return false;
 		if (partner == 0) {
 			animId = READ_LE_UINT16(spk + 0);
 			x      = (int)READ_LE_UINT16(spk + 2);
@@ -1473,15 +1477,21 @@ void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 		const uint16 speaker = READ_LE_UINT16(site + 8);
 		const uint16 (*waitTable)[6] = _vm->isLondon()
 			? kWaitAnimsLondon : kWaitAnims;
-		if (speaker >= ARRAYSIZE(kWaitAnims)) {
-			warning("renderPartner: site %u has speakerIdx=%u out of range",
-					siteNum, speaker);
-			return;
-		}
+		if (speaker >= ARRAYSIZE(kWaitAnims))
+			return false;
 		animId = waitTable[speaker][0 + partner];
 		x      = (int)(int16)waitTable[speaker][2 + partner];
 		y      = (int)(int16)waitTable[speaker][4 + partner];
 	}
+	return true;
+}
+
+void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
+	uint16 animId;
+	int    x;
+	int    y;
+	if (!partnerIdleAnimParams(siteNum, animId, x, y))
+		return;
 
 	Animation anim;
 	if (!_vm->getAni().loadAnimation(animId, anim) || anim.empty())
@@ -1731,8 +1741,16 @@ void SiteScreen::displayClueAndAutosave(const byte *clueBlock, bool forceSave) {
 	byte before[Mystery::kCluesFoundCap];
 	memcpy(before, _mystery->_cluesFound, sizeof(before));
 
+	// Idle wait-anim for `displayClue` to resume after a gesture's one-shot.
+	uint16 idleId = 0;
+	int idleX = 0, idleY = 0;
+	const bool hasIdle =
+		partnerIdleAnimParams(_mystery->_siteNumber, idleId, idleX, idleY);
+
 	_vm->setPartnerEraseBg(&_bgSnapshot);
+	_vm->setPartnerIdleAnim(hasIdle, idleId, idleX, idleY);
 	_vm->displayClue(clueBlock);
+	_vm->setPartnerIdleAnim(false, 0, 0, 0);
 	_vm->setPartnerEraseBg(nullptr);
 
 	bool save = forceSave;
