@@ -42,6 +42,9 @@ class Mystery;
 /// used both for the fallback and to clamp script values past the asset.
 uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs);
 
+/// Like partnerFrameAtTick but plays the script ONCE and holds the final frame.
+uint oneShotFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs);
+
 /// Select the EEM2 ("London") animation-script table inside `findAnimScript`.
 /// EEM2 ships its own `_AnimationSequences`; many partner/KD scripts differ
 /// from EEM1's, so the engine must use the EEM2 sequences for that variant.

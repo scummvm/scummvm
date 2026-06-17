@@ -858,10 +858,21 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		}
 
 		const int16 kdAnimNum = (int16)READ_LE_UINT16(c + (isLondon() ? 0x4e : 0x3a));
-		if (kdAnimNum != -1) {
-			playKdAnim((uint16)kdAnimNum);
-			g_system->copyRectToScreen(bg.getPixels(), bg.pitch,
-									   0, 0, kScreenWidth, kScreenHeight);
+		// Load the partner gesture; it animates concurrently with the balloon
+		// and voice in the wait loop below.
+		Animation kdAnim;
+		int kdPx = 0;
+		int kdPy = 0;
+		uint16 kdAnimId = 0;
+		const bool haveKd = kdAnimNum != -1 &&
+			loadKdAnim((uint16)kdAnimNum, kdAnim, kdPx, kdPy, kdAnimId);
+
+		// Animate the gesture over the partner-less scene so it doesn't ghost
+		// the static partner.
+		if (haveKd && _partnerEraseBg.w == kScreenWidth &&
+			_partnerEraseBg.h == kScreenHeight) {
+			g_system->copyRectToScreen(_partnerEraseBg.getPixels(),
+				_partnerEraseBg.pitch, 0, 0, kScreenWidth, kScreenHeight);
 		}
 
 		const bool useP1 = (_partner == kPartnerJenny) &&
@@ -978,6 +989,19 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			setInteractiveMouseCursor(false);
 			bool advance = false;
 			bool skipAll = false;
+			Graphics::ManagedSurface kdBase(kScreenWidth, kScreenHeight,
+				Graphics::PixelFormat::createFormatCLUT8());
+			bool haveKdBase = false;
+			uint kdLastFrame = (uint)-1;
+			const uint32 kdStartMs = g_system->getMillis();
+			if (haveKd) {
+				Graphics::Surface *kdScr = g_system->lockScreen();
+				if (kdScr) {
+					kdBase.simpleBlitFrom(*kdScr);
+					g_system->unlockScreen();
+					haveKdBase = true;
+				}
+			}
 			while (!advance && !shouldQuit()) {
 				Common::Event ev;
 				while (g_system->getEventManager()->pollEvent(ev)) {
@@ -1007,6 +1031,20 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 						 ev.kbd.keycode == Common::KEYCODE_SPACE)) {
 						advance = true;
 						break;
+					}
+				}
+				if (haveKdBase) {
+					const uint kdFrame = oneShotFrameAtTick(kdAnimId,
+						(uint)kdAnim.size(), g_system->getMillis() - kdStartMs);
+					if (kdFrame != kdLastFrame && kdFrame < kdAnim.size()) {
+						kdLastFrame = kdFrame;
+						Graphics::ManagedSurface comp(kScreenWidth, kScreenHeight,
+							Graphics::PixelFormat::createFormatCLUT8());
+						comp.simpleBlitFrom(kdBase);
+						blitAnimFrameAnchored(comp.surfacePtr(),
+							kdAnim[kdFrame], kdPx, kdPy);
+						g_system->copyRectToScreen(comp.getPixels(), comp.pitch,
+							0, 0, kScreenWidth, kScreenHeight);
 					}
 				}
 				g_system->updateScreen();

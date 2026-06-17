@@ -702,6 +702,16 @@ uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs) {
 	return frameFromScriptAtTick(s.frames, s.len, numFrames, tickMs);
 }
 
+uint oneShotFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs) {
+	const AnimScriptRef s = findAnimScript(seqnum);
+	const uint tick = (uint)(tickMs / kFramePeriodMs);
+	if (!s.frames || s.len == 0)
+		return numFrames > 0 ? MIN<uint>(tick, numFrames - 1) : 0;
+	const uint scriptIdx = MIN<uint>(tick, (uint)s.len - 1);
+	const uint frame = s.frames[scriptIdx];
+	return numFrames > 0 ? MIN<uint>(frame, numFrames - 1) : 0;
+}
+
 // Play `unfold` once, then loop `waitSeq` forever. Mirrors the
 // original's slot-script-swap idiom
 uint oneShotThenLoopFrameAtTick(const uint8 *unfold, uint unfoldLen,
@@ -1817,76 +1827,21 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 //     -> registers a state-4 (one-shot) animation slot and lets
 //        `_UpdateAnimations` walk the script until 0x80, then
 //        frees the slot and re-activates `WaitHandle`.
-void EEMEngine::playKdAnim(uint16 num) {
+bool EEMEngine::loadKdAnim(uint16 num, Animation &anim, int &px, int &py,
+						   uint16 &animId) {
 	if (num >= ARRAYSIZE(kKdAnimTable))
-		return;
+		return false;
 
 	const uint16 (*kdTable)[6] = isLondon() ? kKdAnimTableLondon : kKdAnimTable;
 	const uint partner = (_partner == kPartnerJake) ? 0 : 1;
-	const uint16 animId = kdTable[num][partner];
-	const int    px     = (int)kdTable[num][2 + partner];
-	const int    py     = (int)kdTable[num][4 + partner];
+	animId = kdTable[num][partner];
+	px     = (int)kdTable[num][2 + partner];
+	py     = (int)kdTable[num][4 + partner];
 
-	Animation anim;
 	if (!_aniArchive.loadAnimation(animId, anim) || anim.empty()) {
-		warning("playKdAnim(%u): anim %u failed to load", num, animId);
-		return;
+		warning("loadKdAnim(%u): anim %u failed to load", num, animId);
+		return false;
 	}
-
-	// State-4 one-shot walks the same (looping) script through once.
-	const AnimScriptRef s = findAnimScript(animId);
-	const uint8 *frames = s.frames;
-	uint frameCount     = s.len;
-	if (frameCount == 0) {
-		// Fallback: linear playback through anim cells.
-		frameCount = (uint)anim.size();
-	}
-
-	// Erase-source: caller-stashed partner-less BG (via `setPartnerEraseBg`)
-	// or fall back to current screen (works for full-screen contexts).
-	Graphics::ManagedSurface bg(kScreenWidth, kScreenHeight,
-		Graphics::PixelFormat::createFormatCLUT8());
-	if (_partnerEraseBg.w == kScreenWidth && _partnerEraseBg.h == kScreenHeight) {
-		bg.simpleBlitFrom(_partnerEraseBg);
-	} else {
-		Graphics::Surface *screen = g_system->lockScreen();
-		if (!screen)
-			return;
-		bg.simpleBlitFrom(*screen);
-		g_system->unlockScreen();
-	}
-
-	for (uint i = 0; i < frameCount && !shouldQuit(); i++) {
-		const uint frameIdx = frames ? (uint)frames[i] : i;
-		if (frameIdx >= anim.size())
-			continue;
-		const Picture &fr = anim[frameIdx];
-		const byte transp = (byte)(fr.flags >> 8);
-
-		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
-			Graphics::PixelFormat::createFormatCLUT8());
-		scratch.simpleBlitFrom(bg);
-		(void)transp;  // anchored blitter recomputes from p.flags
-		blitAnimFrameAnchored(scratch.surfacePtr(), fr, px, py);
-		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, kScreenWidth, kScreenHeight);
-		g_system->updateScreen();
-
-		const uint32 wakeup = g_system->getMillis() + 100;
-		while (g_system->getMillis() < wakeup && !shouldQuit()) {
-			Common::Event ev;
-			while (g_system->getEventManager()->pollEvent(ev)) {
-				// Drain events; don't skip mid-anim (would eat upcoming clue).
-				if (ev.type == Common::EVENT_QUIT ||
-					ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
-					return;
-			}
-			g_system->updateScreen();
-			g_system->delayMillis(10);
-		}
-	}
-
-	g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, kScreenWidth, kScreenHeight);
-	g_system->updateScreen();
+	return true;
 }
 } // End of namespace EEM

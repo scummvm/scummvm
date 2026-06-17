@@ -221,8 +221,10 @@ public:
 							   const Common::String &playerName,
 							   uint partner) const;
 
-	/// `_DoKDAnim @ 168d:028a` + `_PlayAnimation @ 172b:1f46`.
-	void playKdAnim(uint16 num);
+	/// Load the partner gesture (animId + anchor) for concurrent playback with
+	/// the clue balloon/voice. false if out of range.
+	bool loadKdAnim(uint16 num, Animation &anim, int &px, int &py,
+					uint16 &animId);
 
 	void setPartnerEraseBg(const Graphics::ManagedSurface *bg);
 
