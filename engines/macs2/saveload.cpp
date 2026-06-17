@@ -78,6 +78,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	// g_wScriptIsExecuting [0xf88]: 1 byte
 	uint8 scriptIsExecuting = _scriptExecutor->isExecuting() ? 1 : 0;
 	s.syncAsByte(scriptIsExecuting);
+	if (s.isLoading()) {
+		if (scriptIsExecuting == 0)
+			_scriptExecutor->setIdle();
+	}
 
 	// g_wScriptPosition [0xf8a]: 2 bytes
 	uint16 scriptPosition = (uint16)_scriptExecutor->getScriptPosition();

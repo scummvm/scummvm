@@ -193,7 +193,7 @@ private:
 	ExecutorState _state = ExecutorState::Idle;
 
 	// Currently executed script
-	Common::MemoryReadStream *_stream;
+	Common::MemoryReadStream *_stream = nullptr;
 
 	// [1014h] global - current assumption is that this is set when we run
 	// the script for the scene initialization and reset when we run when the
@@ -205,7 +205,7 @@ private:
 	// that runs after scene init to process object scripts
 	bool _repeatRunFlag = false;
 
-	uint16 _executingObjectIndex;
+	uint16 _executingObjectIndex = 0;
 
 	ScriptExecutionState _scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 
@@ -223,7 +223,7 @@ private:
 	bool loadNextScript();
 
 	bool _isTimerActive = false;
-	uint32 _timerEndMillis;
+	uint32 _timerEndMillis = 0;
 	bool _isFrameWaitActive = false;
 	uint16 _frameWaitTicksRemaining = 0;
 
@@ -236,7 +236,7 @@ private:
 	uint16 readUint16();
 
 	// We use this to keep track of whether we have read all bytes we should have read
-	uint32 _expectedEndLocation;
+	uint32 _expectedEndLocation = 0;
 	uint8 _lastOpcode = 0;
 	uint32 _lastOpcodeStreamPos = 0;
 
@@ -273,19 +273,20 @@ private:
 	// object iteration in run() is exhausted (or a script terminated the run,
 	// e.g. opcode 0x29). The binary drives the whole script-selection flow off
 	// this single value; there is no separate scene-vs-object state flag.
-	uint16 _executingScriptObjectId;
+	uint16 _executingScriptObjectId = 0;
 
 public:
 	ScriptExecutor();
 
 	void setWaitingForCallback() { _state = ExecutorState::WaitingForCallback; }
+	void setIdle() { _state = ExecutorState::Idle; }
 
 	Common::Array<uint16> _dialogueChoiceScriptIndices;
 	Common::Array<Common::StringArray> _dialogueChoices;
 
 	// This is where a secondary inventory was last opened,
 	// when it is closed, we need to execute from here
-	uint32 _secondaryInventoryLocation;
+	uint32 _secondaryInventoryLocation = 0;
 	bool _hasPendingExternalInventoryResume = false;
 	uint16 _externalInventorySourceObjectID = 0;
 	MouseMode _savedExternalInventoryMouseMode = MouseMode::Use;
@@ -362,7 +363,7 @@ public:
 	// Mutex indicating if the A3D2 function is active
 	bool _isSkipping = false;
 
-	Macs2::Macs2Engine *_engine;
+	Macs2::Macs2Engine *_engine = nullptr;
 
 	// Button 8 skip from handleInput (1008:e8bf)
 	bool skipToEndOfSkippableSection();
