@@ -210,11 +210,11 @@ void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
 		_videoDescs[i].readData(stream);
 	}
 
-	// Nancy 10+ tail: 16 trailing bytes after the video descs. Purpose
-	// not yet identified.
-	if (g_nancy->getGameType() >= kGameTypeNancy10) {
-		stream.skip(16);
-	}
+	// Nancy 10+ stores the record's dependency block right after the video
+	// descs (one 16-byte entry per dependency). We deliberately leave it in
+	// the stream so the generic dependency parser in ActionManager picks it
+	// up; characters whose availability is gated by an event flag carry a
+	// kEvent dependency here.
 }
 
 void PlaySecondaryVideo::execute() {
@@ -239,18 +239,6 @@ void PlaySecondaryVideo::execute() {
 				}
 
 				_currentViewportFrame = -1;
-			}
-
-			// HACK: Checks for character availability in Nancy10. These are
-			// currently not handled correctly, so we hardcode them here at the moment.
-			// TODO: Find out why these are not handled correctly and implement a
-			// proper solution for them.
-			if (g_nancy->getGameType() == kGameTypeNancy10) {
-				uint16 sceneId = NancySceneState.getSceneInfo().sceneID;
-				if ((sceneId == 2307 && NancySceneState.getEventFlag(556, g_nancy->_false)) || // EV_ST_Available
-					(sceneId == 2605 && NancySceneState.getEventFlag(588, g_nancy->_false)) || // EV_TB_Available
-					(sceneId == 2915 && NancySceneState.getEventFlag(156, g_nancy->_false))) // EV_DG_Available
-					_currentViewportFrame = -1;
 			}
 
 			if (_currentViewportFrame != -1) {
