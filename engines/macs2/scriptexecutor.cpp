@@ -477,6 +477,9 @@ bool ScriptExecutor::loadNextScript() {
 
 		if (candidateObject && isRelevantObject(candidateObject)) {
 			if (candidateObject->_script.size() != 0) {
+				if (_stream && _stream != Scenes::instance()._currentSceneScript) {
+					delete _stream;
+				}
 				_stream = candidateObject->getScriptStream();
 				_executingScriptObjectId = candidateObject->_index;
 				debugC(kDebugScript, "----- Switching execution to script for object: %.4x", candidateObject->_index);
@@ -493,6 +496,9 @@ bool ScriptExecutor::loadNextScript() {
 		_isSceneInitRun = false;
 		_repeatRunFlag = true;
 		_executingObjectIndex = Scenes::instance()._currentSceneIndex;
+		if (_stream && _stream != Scenes::instance()._currentSceneScript) {
+			delete _stream;
+		}
 		_stream = Scenes::instance()._currentSceneScript;
 		if (!_stream || _stream->size() == 0) {
 			return false;
