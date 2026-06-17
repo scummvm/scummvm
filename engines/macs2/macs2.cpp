@@ -384,6 +384,11 @@ Macs2Engine::~Macs2Engine() {
 	clearCurrentSoundData();
 	_adlib->deinit();
 	delete _adlib;
+	delete _fileStream;
+	delete Scenes::instance()._currentSceneScript;
+	delete Scenes::instance()._currentSceneStrings;
+	Scenes::instance()._currentSceneScript = nullptr;
+	Scenes::instance()._currentSceneStrings = nullptr;
 	delete _scriptExecutor;
 }
 

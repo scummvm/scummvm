@@ -277,6 +277,7 @@ private:
 
 public:
 	ScriptExecutor();
+	~ScriptExecutor();
 
 	void setWaitingForCallback() { _state = ExecutorState::WaitingForCallback; }
 	void setIdle() { _state = ExecutorState::Idle; }
