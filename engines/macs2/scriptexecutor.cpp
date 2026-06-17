@@ -232,21 +232,25 @@ void ScriptExecutor::scriptChangeAnimation() {
 	uint16 targetFrameIndex = scriptReadValue16();
 	if ((int32)backgroundAnimationIndex < 1) {
 		// g_wScriptErrorCode = 8
+		warning("changeAnimation: invalid index %d", (int32)backgroundAnimationIndex);
 		return;
 	}
 	if (backgroundAnimationIndex > _engine->_backgroundAnimationsBlobs.size()) {
 		// g_wScriptErrorCode = 8
+		warning("changeAnimation: index %u exceeds blob count %u", backgroundAnimationIndex, (uint)_engine->_backgroundAnimationsBlobs.size());
 		return;
 	}
 	// Binary is 1-indexed, C++ array is 0-indexed
 	BackgroundAnimationBlob &blob = _engine->_backgroundAnimationsBlobs[backgroundAnimationIndex - 1];
 	if (blob._blob.empty()) {
 		// g_wScriptErrorCode = 8
+		warning("changeAnimation: blob %u is empty", backgroundAnimationIndex);
 		return;
 	}
 	uint16 sequenceLength = BackgroundAnimationBlob::getAnimFrameCount(blob._blob);
 	if (targetFrameIndex > sequenceLength) {
 		// g_wScriptErrorCode = 9
+		warning("changeAnimation: targetFrame %u exceeds sequence length %u for blob %u", targetFrameIndex, sequenceLength, backgroundAnimationIndex);
 		return;
 	}
 	BackgroundAnimationBlob::advanceAnimFrame(blob._blob, true, targetFrameIndex + 0x64);
