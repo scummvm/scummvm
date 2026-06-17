@@ -330,11 +330,11 @@ void View1::drawCurrentSpeaker(Graphics::ManagedSurface &s) {
 	// Select portrait blob: primary (Blobs[17]) during countdown, alternate (Blobs[18]) after
 	// Mode 0: render current frame without advancing (advance happens in tick())
 	AnimFrame *frame = currentSpeechActData.speaker->getCurrentPortrait(useAlternateBlob, 0);
-	AnimFrame *leftPortrait = currentSpeechActData.speaker->getCurrentPortrait(false, 0);
-	AnimFrame *rightPortrait = currentSpeechActData.speaker->getCurrentPortrait(true, 0);
 	if (frame == nullptr) {
 		return;
 	}
+	AnimFrame *leftPortrait = currentSpeechActData.speaker->getCurrentPortrait(false, 0);
+	AnimFrame *rightPortrait = currentSpeechActData.speaker->getCurrentPortrait(true, 0);
 
 	// See l0037_B462: for the calculations below
 	// Draw the border
@@ -346,6 +346,9 @@ void View1::drawCurrentSpeaker(Graphics::ManagedSurface &s) {
 	// Draw the portrait over the border
 	Common::Point pos = currentSpeechActData.position + Common::Point(7, 7);
 	drawSprite(pos, frame->_width, frame->_height, frame->_data.data(), s, false);
+	delete frame;
+	delete leftPortrait;
+	delete rightPortrait;
 }
 
 void View1::renderString(uint16 x, uint16 y, Common::String s) {
@@ -2281,6 +2284,8 @@ void View1::showSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 				stringBoxX = position.x + portraitWidth + 0x12;
 			}
 		}
+		delete leftPortrait;
+		delete rightPortrait;
 	}
 
 	currentSpeechActData.position = portraitBoxPosition;
