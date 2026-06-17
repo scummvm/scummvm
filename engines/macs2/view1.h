@@ -29,7 +29,6 @@ namespace Macs2 {
 
 class GameObject;
 
-// TODO: Implement the different view modes
 enum class ViewMode {
 	VM_GAME,
 	VM_HELP
@@ -73,8 +72,8 @@ public:
 	bool _pickupItemTransferred = false;
 
 	uint8 _previousOrientation;
-private:
 
+private:
 	// Handle when the character has moved into a non-walkable area, push them out if
 	// they did and return true, return false otherwise
 	bool HandleWalkability(Character *c);
@@ -86,12 +85,12 @@ public:
 	Character();
 
 	// Walk state from walkAlongPath (1008:1b8f) - runtime offsets +0x00..+0x0A, +0x18, +0x33
-	Common::Point _targetPosition;      // runtime[+0x00, +0x02]: next waypoint
-	int16 _stepDeltaX = 0;              // runtime[+0x04]: abs(endX - startX)
-	int16 _stepDeltaY = 0;              // runtime[+0x06]: abs(endY - startY)
-	int16 _stepError = 0;               // runtime[+0x18]: Bresenham error accumulator
-	bool _isLerping = false;            // walking active
-	bool _stepDirectionSet = false;     // runtime[+0x33]: direction has been calculated
+	Common::Point _targetPosition;  // runtime[+0x00, +0x02]: next waypoint
+	int16 _stepDeltaX = 0;          // runtime[+0x04]: abs(endX - startX)
+	int16 _stepDeltaY = 0;          // runtime[+0x06]: abs(endY - startY)
+	int16 _stepError = 0;           // runtime[+0x18]: Bresenham error accumulator
+	bool _isLerping = false;        // walking active
+	bool _stepDirectionSet = false; // runtime[+0x33]: direction has been calculated
 
 	Common::Array<uint16> _path;
 	int16 _currentPathIndex;
@@ -197,20 +196,28 @@ struct ScalingValues {
 
 class View1 : public UIElement {
 	// TODO: Clean up private and public
+private:
+	// The definitive version that can do everything
+	void drawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &sprite, uint16 scaling, bool mirrored, bool useDepth, uint8 depth, Graphics::ManagedSurface &s, uint8 shadowIntensity = 0);
+
+	// Saved scene visuals for help screen restore (avoids changeScene on exit)
+	byte _savedPalVanilla[256 * 3] = {0};
+	Graphics::ManagedSurface _savedDepthMap;
+	int _offset = 0; // TODO: palette cycling?
+
+	uint32 _bgAnimTickCounter = 0;
+	uint32 _flagFrameIndex = 0;
+	uint32 _guyFrameIndex = 0;
+
 public:
 	ScalingValues _scalingValues;
 
 	ViewMode _currentMode = ViewMode::VM_GAME;
 
-	// Saved scene visuals for help screen restore (avoids changeScene on exit)
-	byte _savedPalVanilla[256 * 3] = {0};
-	Graphics::ManagedSurface _savedDepthMap;
-
 	AnimFrame *getInventoryIcon(GameObject *gameObject);
 
 	// TODO: use Graphics::Palette
 	byte _pal[256 * 3] = {0};
-	int _offset = 0;
 	bool _paletteDirty = true;
 
 	// Background animation timing from gameTick (1008:e556).
@@ -221,12 +228,6 @@ public:
 	// Background animation tick counter (mode 2: threshold 0x27, mode 3: threshold 1)
 	static constexpr uint32 kGameFrameRate = 20;
 
-	uint32 _bgAnimTickCounter = 0;
-
-	uint32 _flagFrameIndex = 0;
-
-	uint32 _guyFrameIndex = 0;
-
 	// TODO: Probably the start of a mode enum
 	bool _isShowingTextBox = false;
 	Common::StringArray _drawnStringBox;
@@ -234,7 +235,6 @@ public:
 	bool _reopenInventoryAfterText = false;
 	uint16 _dialogueChoiceCount = 0;
 	Common::Array<uint16> _dialogueChoiceLineCounts;
-
 
 	// Save/Load panel from handleSaveLoadPanelClick (1008:86a4).
 	// Opened by right-click during script execution or action bar button 8.
@@ -259,15 +259,15 @@ public:
 	uint16 _saveLoadPageIndex = 0;
 	bool _saveConfirmArmed = false;
 	bool _loadConfirmArmed = false;
-	bool _helpButtonDisabled = false;     // g_wMapDisabledFlag (1020:23b4): disables action bar help button AND save/load panel buttons 1-2
-	uint16 _clickedButtonIndex = 0;       // g_wClickedButtonIndex: last clicked button (0=none)
+	bool _helpButtonDisabled = false;  // g_wMapDisabledFlag (1020:23b4): disables action bar help button AND save/load panel buttons 1-2
+	uint16 _clickedButtonIndex = 0;    // g_wClickedButtonIndex: last clicked button (0=none)
 	Common::String _saveSlotNames[30]; // 3 pages x 10 slots
 
 	// Save/Load panel geometry (binary globals: g_wUiPanelX/Y/Width/Height, g_wActionBarButtonWidth/Height)
 	Common::Rect _saveLoadPanelRect;
 	Common::Rect _saveLoadButtonRects[7];
-	uint16 _saveLoadButtonWidth = 0;      // g_wActionBarButtonWidth (after +6)
-	uint16 _saveLoadButtonHeight = 0;     // g_wActionBarButtonHeight (after +6)
+	uint16 _saveLoadButtonWidth = 0;  // g_wActionBarButtonWidth (after +6)
+	uint16 _saveLoadButtonHeight = 0; // g_wActionBarButtonHeight (after +6)
 
 	void openOriginalSaveLoadPanel();
 	void drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s);
@@ -430,7 +430,7 @@ public:
 		kPanelRequestInventory = 1,
 		kPanelRequestContainerInventory = 2,
 		kPanelRequestSaveLoad = 3,
-		kPanelRequestSaveLoadActive = 4   // Set by handleSaveLoadPanelClick to keep panel alive
+		kPanelRequestSaveLoadActive = 4 // Set by handleSaveLoadPanelClick to keep panel alive
 	};
 	PendingPanelRequest _pendingPanelRequest = kPanelRequestNone;
 
@@ -459,19 +459,24 @@ public:
 	void drawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, const byte *data, Graphics::ManagedSurface &s);
 	void drawSpriteAdvanced(const Common::Point &pos, uint16 width, uint16 height, uint16 scaling, const Sprite &sprite, Graphics::ManagedSurface &s);
 
-	// The definitive version that can do everything
-	void drawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &sprite, uint16 scaling, bool mirrored, bool useDepth, uint8 depth, Graphics::ManagedSurface &s, uint8 shadowIntensity = 0);
-
 	void drawCharacters(Graphics::ManagedSurface &s);
 	void drawAllCharacters();
 
 	void showSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide = false);
+
+	struct BorderStyle {
+		uint32 outerEdge;   // sprite for outer frame (0x1010 = black)
+		uint32 topLeft;     // sprite for top/left edge
+		uint32 bottomRight; // sprite for bottom/right edge
+	};
+	static const BorderStyle kBorderRaised;
+	static const BorderStyle kBorderPressed;
+
+	void drawNinePatchBorder(const Common::Point &pos, const Common::Point &size,
+							 const BorderStyle &style, bool fillCenter, bool fillSides,
+							 Graphics::ManagedSurface &s);
 	void drawBorder(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
 	void drawBorderSide(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
-	// fn0037_3AD4 proc
-	void drawBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
-	// ;; fn0037_3CDE: 0037:3CDE
-	void drawPressedBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s);
 
 	Macs2::AnimFrame *getUISprite(uint32 offset);
 
