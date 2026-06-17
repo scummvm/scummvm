@@ -43,6 +43,9 @@ static bool _showAnimations = false;
 static bool _showSceneMaps = false;
 static bool _showImageResources = false;
 static bool _showDebugOutput = false;
+static bool _showPathfindingOverlay = false;
+static bool _showDebugOutputOverlay = false;
+static bool _showPathOverlay = false;
 static bool _showSound = false;
 static bool _showAnimViewer = false;
 static uint16 _animViewerObjIndex = 0;
@@ -2004,6 +2007,18 @@ static void showObjectScriptsWindow() {
 
 static void showSoundWindow();
 
+bool shouldDrawPathfindingOverlay() {
+	return _showPathfindingOverlay;
+}
+
+bool shouldDrawDebugOutputOverlay() {
+	return _showDebugOutputOverlay;
+}
+
+bool shouldDrawPathOverlay() {
+	return _showPathOverlay;
+}
+
 void onImGuiInit() {
 	ImGui::GetIO().Fonts->AddFontDefault();
 }
@@ -2027,6 +2042,9 @@ void onImGuiRender() {
 			ImGui::MenuItem("Scene Maps", NULL, &_showSceneMaps);
 			ImGui::MenuItem("Image Resources", NULL, &_showImageResources);
 			ImGui::MenuItem("Debug Output", NULL, &_showDebugOutput);
+			ImGui::MenuItem("Pathfinding Overlay", NULL, &_showPathfindingOverlay);
+			ImGui::MenuItem("Debug Output Overlay", NULL, &_showDebugOutputOverlay);
+			ImGui::MenuItem("Path Overlay", NULL, &_showPathOverlay);
 			ImGui::MenuItem("Sound/Music", NULL, &_showSound);
 			ImGui::MenuItem("Text Log", NULL, &_showTextLog);
 			ImGui::EndMenu();

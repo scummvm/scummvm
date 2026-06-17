@@ -28,6 +28,7 @@
 #include "engines/enhancements.h"
 #include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
+#include "macs2/debugtools.h"
 #include "macs2/detection.h"
 #include "macs2/gameobjects.h"
 #include "macs2/macs2.h"
@@ -1496,6 +1497,15 @@ void View1::draw() {
 	drawBackgroundAnimations(s);
 	drawCharacters(s);
 	drawOverlayTextEntries();
+	if (shouldDrawPathfindingOverlay()) {
+		drawPathfindingPoints(s);
+	}
+	if (shouldDrawPathOverlay()) {
+		drawPath(s);
+	}
+	if (shouldDrawDebugOutputOverlay()) {
+		drawDebugOutput(s);
+	}
 
 	// Get mouse position
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
