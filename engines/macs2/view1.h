@@ -307,6 +307,23 @@ private:
 	Common::Point _inventorySlotSize;
 	Common::Array<Common::Rect> _inventoryButtonLocations;
 	uint16 _inventoryScrollOffset = 0;
+
+	void drawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
+	void drawSprite(int16 x, int16 y, const Sprite &sprite, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
+	void drawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
+
+	void drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s);
+	void drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s);
+	void drawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, const byte *data, Graphics::ManagedSurface &s);
+	void drawSpriteAdvanced(const Common::Point &pos, uint16 width, uint16 height, uint16 scaling, const Sprite &sprite, Graphics::ManagedSurface &s);
+
+	void drawCharacters(Graphics::ManagedSurface &s);
+	void drawAllCharacters();
+
+	int findInventoryItem(const GameObject *item);
+	void setViewPaletteSafely(const byte *colors);
+	void applyPaletteWithFade(const byte *sourcePalette, int fadeValue);
+
 public:
 	View1();
 	virtual ~View1();
@@ -428,8 +445,6 @@ public:
 
 	void transferInventoryItem(GameObject *item, GameObject *targetContainer);
 
-	int findInventoryItem(GameObject *item);
-
 	Character *getCharacterByIndex(uint16 index);
 
 	int getCharacterArrayIndex(const Character *c) const;
@@ -437,7 +452,6 @@ public:
 	// Updates the cursor from the mode set in the engine - TODO: Clean up, this should not
 	// be so separated
 	void updateCursor(const byte *palette = nullptr);
-	bool isCursorSuppressedForFade() const { return _cursorSuppressedForFade; }
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
@@ -464,17 +478,6 @@ public:
 	void startFading(uint16 speed = 4);
 	void startFadeToBlack(uint16 speed = 4);
 	void startFadingWithSpeed(uint16 speed);
-
-	void drawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
-	void drawSprite(int16 x, int16 y, const Sprite &sprite, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
-	void drawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
-	void drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s);
-	void drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s);
-	void drawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, const byte *data, Graphics::ManagedSurface &s);
-	void drawSpriteAdvanced(const Common::Point &pos, uint16 width, uint16 height, uint16 scaling, const Sprite &sprite, Graphics::ManagedSurface &s);
-
-	void drawCharacters(Graphics::ManagedSurface &s);
-	void drawAllCharacters();
 
 	void showSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide = false);
 
