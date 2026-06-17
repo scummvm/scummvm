@@ -2239,6 +2239,7 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 				s.setPixel(current->getPosition().x, current->getPosition().y, 0xFF);
 			}
 		}
+		delete frame;
 	}
 }
 
@@ -2528,9 +2529,11 @@ uint16 View1::getHitObjectID(const Common::Point &pos) const {
 		Common::Point localPoint = pos - (currentCharacter->getPosition() - animFrame->getBottomMiddleOffset());
 		if (localPoint.x < 0 || localPoint.x >= animFrame->_width ||
 			localPoint.y < 0 || localPoint.y >= animFrame->_height) {
+			delete animFrame;
 			continue;
 		}
 		if (animFrame->_data[localPoint.y * animFrame->_width + localPoint.x] == 0) {
+			delete animFrame;
 			continue;
 		}
 
@@ -2539,12 +2542,14 @@ uint16 View1::getHitObjectID(const Common::Point &pos) const {
 		if (pos.x >= 0 && pos.x < 320 && pos.y >= 0 && pos.y < 200) {
 			uint8 bgDepth = g_engine->_depthMap.getPixel(pos.x, pos.y);
 			if (bgDepth >= characterDepth) {
+				delete animFrame;
 				continue;
 			}
 		}
 
 		// Back-to-front: last hit wins (frontmost character)
 		hitResult = 0x0400 + currentCharacter->_gameObject->_index;
+		delete animFrame;
 	}
 	return hitResult;
 }
