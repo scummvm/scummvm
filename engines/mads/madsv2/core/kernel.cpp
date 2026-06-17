@@ -245,8 +245,10 @@ void kernel_game_shutdown() {
 	if (font_conv != NULL) mem_free(font_conv);
 	if (font_inter != NULL) mem_free(font_inter);
 	if (font_main != NULL) mem_free(font_main);
+	if (font_tele != NULL) mem_free(font_tele);
 
-	font_main = font_conv = font_inter = NULL;
+	font_misc = font_menu = font_conv = nullptr;
+	font_inter = font_main = font_tele = NULL;
 
 	// Deallocate main screen buffer
 	if (work_screen_ems_handle < 0)
@@ -384,13 +386,16 @@ int kernel_game_startup(int game_video_mode, int load_flag,
 		font_main = font_load("*FONTMAIN.FF");
 		font_inter = font_load("*FONTINTR.FF");
 		font_conv = font_load("*FONTCONV.FF");
-		font_menu = font_load("*FONTMENU.FF");
 		font_misc = font_load("*FONTMISC.FF");
-		font_tele = (g_engine->getGameID() != GType_RexNebular) ? nullptr :
-			font_load("*FONTTELE.FF");
 
-		if ((font_main == NULL) || (font_inter == NULL) || (font_conv == NULL) ||
-			(font_menu == NULL) || (font_misc == NULL) ||
+		font_menu = font_tele = nullptr;
+		if (g_engine->getGameID() == GType_RexNebular)
+			font_tele = font_load("*FONTTELE.FF");
+		else
+			font_menu = font_load("*FONTMENU.FF");
+
+		if ((font_main == NULL) || (font_inter == NULL) || (font_conv == NULL) || (font_misc == NULL) ||
+			(g_engine->getGameID() != GType_RexNebular && font_menu == NULL) ||
 			(g_engine->getGameID() == GType_RexNebular && font_tele == NULL)) {
 #ifndef disable_error_check
 			error_code = ERROR_KERNEL_NO_FONTS;
