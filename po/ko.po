@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-14 22:15+0000\n"
+"POT-Creation-Date: 2026-06-17 23:07+0000\n"
 "PO-Revision-Date: 2026-05-19 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3362,7 +3362,8 @@ msgstr "그래픽 고급 게임 엔진"
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
-#: engines/chamber/metaengine.cpp:84 engines/drascula/metaengine.cpp:304
+#: engines/chamber/metaengine.cpp:84 engines/colony/intro.cpp:156
+#: engines/colony/intro.cpp:1243 engines/drascula/metaengine.cpp:304
 #: engines/hdb/metaengine.cpp:275 engines/hypno/metaengine.cpp:308
 #: engines/lab/metaengine.cpp:172 engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
@@ -8037,6 +8038,22 @@ msgstr ""
 "경고: 불러오기 중인 저장 게임은 일시적으로 잘못된 포맷을 사용하고 있습니다. "
 "모든 부분이 잘못 동작할 것입니다. 새 저장 게임을 사용하여 처음부터 Operation "
 "Stealth를 시작하는 것을 고려해 보세요."
+
+#: engines/colony/intro.cpp:154 engines/colony/intro.cpp:1244
+#, fuzzy
+#| msgid "New game"
+msgid "New Game"
+msgstr "새 게임"
+
+#: engines/colony/intro.cpp:155 engines/colony/intro.cpp:1242
+msgid "Load Game"
+msgstr "게임 불러오기"
+
+#: engines/colony/intro.cpp:1219 engines/colony/intro.cpp:1244
+#, fuzzy
+#| msgid "You have stored "
+msgid "You have been terminated."
+msgstr "당신은 저장 되었습니다 "
 
 #: engines/colony/metaengine.cpp:45 engines/myst3/metaengine.cpp:40
 msgid "Widescreen mod"
@@ -17378,9 +17395,6 @@ msgstr ""
 #~ msgid "Save Game"
 #~ msgstr "게임 저장"
 
-#~ msgid "Load Game"
-#~ msgstr "게임 불러오기"
-
 #~ msgid "Quit Game"
 #~ msgstr "게임 종료"
 
@@ -17995,9 +18009,6 @@ msgstr ""
 
 #~ msgid "The game is now over.\n"
 #~ msgstr "게임 오버 되었습니다.\n"
-
-#~ msgid "You have stored "
-#~ msgstr "당신은 저장 되었습니다 "
 
 #~ msgid "I've stored "
 #~ msgstr "저는 저장되었습니다 "

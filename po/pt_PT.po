@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-14 22:15+0000\n"
+"POT-Creation-Date: 2026-06-17 23:07+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -3373,7 +3373,8 @@ msgstr ""
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
-#: engines/chamber/metaengine.cpp:84 engines/drascula/metaengine.cpp:304
+#: engines/chamber/metaengine.cpp:84 engines/colony/intro.cpp:156
+#: engines/colony/intro.cpp:1243 engines/drascula/metaengine.cpp:304
 #: engines/hdb/metaengine.cpp:275 engines/hypno/metaengine.cpp:308
 #: engines/lab/metaengine.cpp:172 engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
@@ -7966,6 +7967,22 @@ msgid ""
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
 msgstr ""
+
+#: engines/colony/intro.cpp:154 engines/colony/intro.cpp:1244
+#, fuzzy
+#| msgid "New game"
+msgid "New Game"
+msgstr "Novo jogo"
+
+#: engines/colony/intro.cpp:155 engines/colony/intro.cpp:1242
+msgid "Load Game"
+msgstr "Carregar Jogo"
+
+#: engines/colony/intro.cpp:1219 engines/colony/intro.cpp:1244
+#, fuzzy
+#| msgid "You have stored "
+msgid "You have been terminated."
+msgstr "Guardaste "
 
 #: engines/colony/metaengine.cpp:45 engines/myst3/metaengine.cpp:40
 #, fuzzy
@@ -18277,9 +18294,6 @@ msgstr ""
 #~ msgid "Save Game"
 #~ msgstr "Guardar Jogo"
 
-#~ msgid "Load Game"
-#~ msgstr "Carregar Jogo"
-
 #~ msgid "Quit Game"
 #~ msgstr "Sair do Jogo"
 
@@ -18734,9 +18748,6 @@ msgstr ""
 
 #~ msgid "The game is now over.\n"
 #~ msgstr "O jogo acabou.\n"
-
-#~ msgid "You have stored "
-#~ msgstr "Guardaste "
 
 #~ msgid "I've stored "
 #~ msgstr "Guardei "

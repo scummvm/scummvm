@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-14 22:15+0000\n"
+"POT-Creation-Date: 2026-06-17 23:07+0000\n"
 "PO-Revision-Date: 2026-04-23 00:22+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -3491,7 +3491,8 @@ msgstr "Μηχανή παιχνιδιών περιπέτειας"
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
-#: engines/chamber/metaengine.cpp:84 engines/drascula/metaengine.cpp:304
+#: engines/chamber/metaengine.cpp:84 engines/colony/intro.cpp:156
+#: engines/colony/intro.cpp:1243 engines/drascula/metaengine.cpp:304
 #: engines/hdb/metaengine.cpp:275 engines/hypno/metaengine.cpp:308
 #: engines/lab/metaengine.cpp:172 engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
@@ -8354,6 +8355,22 @@ msgstr ""
 "την ώρα μορφοποίηση. Αυτό μπορεί να οδηγήσει σε απρόβλεπτη συμπεριφορά. "
 "Παρακαλώ, προτιμήστε να ξεκινήσετε το Operation Stealth από την αρχή και να "
 "αποθηκεύσετε εκ νέου το παιχνίδι σας."
+
+#: engines/colony/intro.cpp:154 engines/colony/intro.cpp:1244
+#, fuzzy
+#| msgid "New game"
+msgid "New Game"
+msgstr "Νέο παιχνίδι"
+
+#: engines/colony/intro.cpp:155 engines/colony/intro.cpp:1242
+msgid "Load Game"
+msgstr "Φόρτωση Παιχνιδιού"
+
+#: engines/colony/intro.cpp:1219 engines/colony/intro.cpp:1244
+#, fuzzy
+#| msgid "You have stored "
+msgid "You have been terminated."
+msgstr "Έχεις συγκεντρώσει "
 
 #: engines/colony/metaengine.cpp:45 engines/myst3/metaengine.cpp:40
 msgid "Widescreen mod"
@@ -18167,9 +18184,6 @@ msgstr ""
 #~ msgid "Save Game"
 #~ msgstr "Αποθήκευση παιχνιδιού"
 
-#~ msgid "Load Game"
-#~ msgstr "Φόρτωση Παιχνιδιού"
-
 #~ msgid "Quit Game"
 #~ msgstr "Έξοδος από το παιχνίδι"
 
@@ -19175,9 +19189,6 @@ msgstr ""
 
 #~ msgid "The game is now over.\n"
 #~ msgstr "Το παιχνίδι έχει τελειώσει τώρα.\n"
-
-#~ msgid "You have stored "
-#~ msgstr "Έχεις συγκεντρώσει "
 
 #~ msgid "I've stored "
 #~ msgstr "Έχω συγκεντρώσει "

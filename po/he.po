@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-14 22:15+0000\n"
+"POT-Creation-Date: 2026-06-17 23:07+0000\n"
 "PO-Revision-Date: 2025-04-09 20:18+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -3311,7 +3311,8 @@ msgstr "מנוע משחק הרפתקה גרפי"
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
-#: engines/chamber/metaengine.cpp:84 engines/drascula/metaengine.cpp:304
+#: engines/chamber/metaengine.cpp:84 engines/colony/intro.cpp:156
+#: engines/colony/intro.cpp:1243 engines/drascula/metaengine.cpp:304
 #: engines/hdb/metaengine.cpp:275 engines/hypno/metaengine.cpp:308
 #: engines/lab/metaengine.cpp:172 engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
@@ -7988,6 +7989,22 @@ msgid ""
 msgstr ""
 "אזהרה: המשחק השמור שנטען משתמש בפורמט זמני שבור. דברים ישברו. יש לשקול "
 "להתחיל את Operation Stealth מההתחלה ושימוש בשמירות חדשות."
+
+#: engines/colony/intro.cpp:154 engines/colony/intro.cpp:1244
+#, fuzzy
+#| msgid "New game"
+msgid "New Game"
+msgstr "משחק חדש"
+
+#: engines/colony/intro.cpp:155 engines/colony/intro.cpp:1242
+msgid "Load Game"
+msgstr "טעינת משחק"
+
+#: engines/colony/intro.cpp:1219 engines/colony/intro.cpp:1244
+#, fuzzy
+#| msgid "You have stored "
+msgid "You have been terminated."
+msgstr "שמרת "
 
 #: engines/colony/metaengine.cpp:45 engines/myst3/metaengine.cpp:40
 msgid "Widescreen mod"
@@ -18648,9 +18665,6 @@ msgstr ""
 #~ msgid "Save Game"
 #~ msgstr "שמירת משחק"
 
-#~ msgid "Load Game"
-#~ msgstr "טעינת משחק"
-
 #~ msgid "Quit Game"
 #~ msgstr "יציאה מהמשחק"
 
@@ -19311,9 +19325,6 @@ msgstr ""
 
 #~ msgid "The game is now over.\n"
 #~ msgstr "המשחק נגמר.\n"
-
-#~ msgid "You have stored "
-#~ msgstr "שמרת "
 
 #~ msgid "I've stored "
 #~ msgstr "אחסתי "

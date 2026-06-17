@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-14 22:15+0000\n"
+"POT-Creation-Date: 2026-06-17 23:07+0000\n"
 "PO-Revision-Date: 2026-02-11 14:23+0000\n"
 "Last-Translator: SecularSteve <fairfull.playing@gmail.com>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -3403,7 +3403,8 @@ msgstr "Grafische avonturen spel engine"
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
-#: engines/chamber/metaengine.cpp:84 engines/drascula/metaengine.cpp:304
+#: engines/chamber/metaengine.cpp:84 engines/colony/intro.cpp:156
+#: engines/colony/intro.cpp:1243 engines/drascula/metaengine.cpp:304
 #: engines/hdb/metaengine.cpp:275 engines/hypno/metaengine.cpp:308
 #: engines/lab/metaengine.cpp:172 engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
@@ -8166,6 +8167,22 @@ msgstr ""
 "LET OP: Het opgeslagen spel dat u gaat laden gebruikt een tijdelijk "
 "onvolledig formaat. Er zullen zaken fout gaan. Overweeg a.u.b. om Operation "
 "Stealth opnieuw te beginnen met nieuwe opgeslagen spellen."
+
+#: engines/colony/intro.cpp:154 engines/colony/intro.cpp:1244
+#, fuzzy
+#| msgid "New game"
+msgid "New Game"
+msgstr "Nieuw spel"
+
+#: engines/colony/intro.cpp:155 engines/colony/intro.cpp:1242
+msgid "Load Game"
+msgstr "Laad Spel"
+
+#: engines/colony/intro.cpp:1219 engines/colony/intro.cpp:1244
+#, fuzzy
+#| msgid "You have stored "
+msgid "You have been terminated."
+msgstr "U heeft opgeslagen "
 
 #: engines/colony/metaengine.cpp:45 engines/myst3/metaengine.cpp:40
 msgid "Widescreen mod"
@@ -17880,9 +17897,6 @@ msgstr ""
 #~ msgid "Save Game"
 #~ msgstr "Spel Opslaan"
 
-#~ msgid "Load Game"
-#~ msgstr "Laad Spel"
-
 #~ msgid "Quit Game"
 #~ msgstr "Spel Verlaten"
 
@@ -18572,9 +18586,6 @@ msgstr ""
 
 #~ msgid "The game is now over.\n"
 #~ msgstr "Het spel is nu over.\n"
-
-#~ msgid "You have stored "
-#~ msgstr "U heeft opgeslagen "
 
 #~ msgid "I've stored "
 #~ msgstr "Ik heb opgeslagen "

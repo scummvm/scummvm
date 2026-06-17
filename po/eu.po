@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-14 22:15+0000\n"
+"POT-Creation-Date: 2026-06-17 23:07+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -3420,7 +3420,8 @@ msgstr "Abendura grafikoen motorea"
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
-#: engines/chamber/metaengine.cpp:84 engines/drascula/metaengine.cpp:304
+#: engines/chamber/metaengine.cpp:84 engines/colony/intro.cpp:156
+#: engines/colony/intro.cpp:1243 engines/drascula/metaengine.cpp:304
 #: engines/hdb/metaengine.cpp:275 engines/hypno/metaengine.cpp:308
 #: engines/lab/metaengine.cpp:172 engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
@@ -8064,6 +8065,21 @@ msgid ""
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
 msgstr ""
+
+#: engines/colony/intro.cpp:154 engines/colony/intro.cpp:1244
+#, fuzzy
+msgid "New Game"
+msgstr "Gorde"
+
+#: engines/colony/intro.cpp:155 engines/colony/intro.cpp:1242
+#, fuzzy
+msgid "Load Game"
+msgstr "Jokoa kargatu:"
+
+#: engines/colony/intro.cpp:1219 engines/colony/intro.cpp:1244
+#, fuzzy
+msgid "You have been terminated."
+msgstr "Kargatu"
 
 #: engines/colony/metaengine.cpp:45 engines/myst3/metaengine.cpp:40
 #, fuzzy
@@ -18267,10 +18283,6 @@ msgstr ""
 #~ msgstr "Gorde jokoa:"
 
 #, fuzzy
-#~ msgid "Load Game"
-#~ msgstr "Jokoa kargatu:"
-
-#, fuzzy
 #~ msgid "Quit Game"
 #~ msgstr " (Jokoa)"
 
@@ -18704,10 +18716,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "The game is now over.\n"
 #~ msgstr "Jokoa EZ da kargatu"
-
-#, fuzzy
-#~ msgid "You have stored "
-#~ msgstr "Kargatu"
 
 #, fuzzy
 #~ msgid "I've stored "

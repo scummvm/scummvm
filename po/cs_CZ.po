@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-14 22:15+0000\n"
+"POT-Creation-Date: 2026-06-17 23:07+0000\n"
 "PO-Revision-Date: 2026-02-09 20:22+0000\n"
 "Last-Translator: AsciiWolf <mail@asciiwolf.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -3365,7 +3365,8 @@ msgstr "Grafický engine pro hry žánru adventur"
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
-#: engines/chamber/metaengine.cpp:84 engines/drascula/metaengine.cpp:304
+#: engines/chamber/metaengine.cpp:84 engines/colony/intro.cpp:156
+#: engines/colony/intro.cpp:1243 engines/drascula/metaengine.cpp:304
 #: engines/hdb/metaengine.cpp:275 engines/hypno/metaengine.cpp:308
 #: engines/lab/metaengine.cpp:172 engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
@@ -7987,6 +7988,20 @@ msgid ""
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
 msgstr ""
+
+#: engines/colony/intro.cpp:154 engines/colony/intro.cpp:1244
+#, fuzzy
+msgid "New Game"
+msgstr "Nová uložená pozice"
+
+#: engines/colony/intro.cpp:155 engines/colony/intro.cpp:1242
+msgid "Load Game"
+msgstr "Nahrát hru"
+
+#: engines/colony/intro.cpp:1219 engines/colony/intro.cpp:1244
+#, fuzzy
+msgid "You have been terminated."
+msgstr "Obnovit"
 
 #: engines/colony/metaengine.cpp:45 engines/myst3/metaengine.cpp:40
 #, fuzzy
@@ -18163,9 +18178,6 @@ msgstr ""
 #~ msgid "Save Game"
 #~ msgstr "Uložit hru"
 
-#~ msgid "Load Game"
-#~ msgstr "Nahrát hru"
-
 #, fuzzy
 #~ msgid "Quit Game"
 #~ msgstr " (Hra)"
@@ -18650,10 +18662,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "The game is now over.\n"
 #~ msgstr "Hra NEBYLA načtena"
-
-#, fuzzy
-#~ msgid "You have stored "
-#~ msgstr "Obnovit"
 
 #, fuzzy
 #~ msgid "I've stored "

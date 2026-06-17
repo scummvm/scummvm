@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-14 22:15+0000\n"
+"POT-Creation-Date: 2026-06-17 23:07+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -3208,7 +3208,8 @@ msgstr ""
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
-#: engines/chamber/metaengine.cpp:84 engines/drascula/metaengine.cpp:304
+#: engines/chamber/metaengine.cpp:84 engines/colony/intro.cpp:156
+#: engines/colony/intro.cpp:1243 engines/drascula/metaengine.cpp:304
 #: engines/hdb/metaengine.cpp:275 engines/hypno/metaengine.cpp:308
 #: engines/lab/metaengine.cpp:172 engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
@@ -7578,6 +7579,22 @@ msgid ""
 "WARNING: The savegame you are loading is using a temporary broken format. "
 "Things will be broken. Please consider starting Operation Stealth from "
 "beginning using new savegames."
+msgstr ""
+
+#: engines/colony/intro.cpp:154 engines/colony/intro.cpp:1244
+#, fuzzy
+#| msgid "Save Game"
+msgid "New Game"
+msgstr "儲存遊戲"
+
+#: engines/colony/intro.cpp:155 engines/colony/intro.cpp:1242
+#, fuzzy
+#| msgid "Load game:"
+msgid "Load Game"
+msgstr "载入游戏："
+
+#: engines/colony/intro.cpp:1219 engines/colony/intro.cpp:1244
+msgid "You have been terminated."
 msgstr ""
 
 #: engines/colony/metaengine.cpp:45 engines/myst3/metaengine.cpp:40
@@ -17084,9 +17101,6 @@ msgstr ""
 #~ msgid "N"
 #~ msgstr "否"
 
-#~ msgid "Load game:"
-#~ msgstr "载入游戏："
-
 #, fuzzy
 #~| msgid "Backend"
 #~ msgid "Move Forward"
@@ -17296,11 +17310,6 @@ msgstr ""
 #~| msgid "Backend"
 #~ msgid "Move Backwards"
 #~ msgstr "后端"
-
-#, fuzzy
-#~| msgid "Save Game"
-#~ msgid "Pause Game"
-#~ msgstr "儲存遊戲"
 
 #, fuzzy
 #~| msgid "Show hidden files"

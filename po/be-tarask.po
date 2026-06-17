@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-14 22:15+0000\n"
+"POT-Creation-Date: 2026-06-17 23:07+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -3366,7 +3366,8 @@ msgstr ""
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
-#: engines/chamber/metaengine.cpp:84 engines/drascula/metaengine.cpp:304
+#: engines/chamber/metaengine.cpp:84 engines/colony/intro.cpp:156
+#: engines/colony/intro.cpp:1243 engines/drascula/metaengine.cpp:304
 #: engines/hdb/metaengine.cpp:275 engines/hypno/metaengine.cpp:308
 #: engines/lab/metaengine.cpp:172 engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
@@ -8073,6 +8074,22 @@ msgstr ""
 "УВАГА: Захаваная гульня, якую вы ладуеце, выкарыстоўвае няпэўны часовы "
 "фармат. Гульня будзе зламаная. Калі ласка, абмяркуйце гуляньне ў Operation "
 "Stealth адпачатку з новымі захаваньнямі."
+
+#: engines/colony/intro.cpp:154 engines/colony/intro.cpp:1244
+#, fuzzy
+#| msgid "New game"
+msgid "New Game"
+msgstr "Новая гульня"
+
+#: engines/colony/intro.cpp:155 engines/colony/intro.cpp:1242
+msgid "Load Game"
+msgstr "Заладаваць гульню"
+
+#: engines/colony/intro.cpp:1219 engines/colony/intro.cpp:1244
+#, fuzzy
+#| msgid "You have stored "
+msgid "You have been terminated."
+msgstr "Вы нажылі "
 
 #: engines/colony/metaengine.cpp:45 engines/myst3/metaengine.cpp:40
 msgid "Widescreen mod"
@@ -18775,9 +18792,6 @@ msgstr ""
 #~ msgid "Save Game"
 #~ msgstr "Захаваць гульню"
 
-#~ msgid "Load Game"
-#~ msgstr "Заладаваць гульню"
-
 #~ msgid "Quit Game"
 #~ msgstr "Выйсьці з гульні"
 
@@ -19416,9 +19430,6 @@ msgstr ""
 
 #~ msgid "The game is now over.\n"
 #~ msgstr "Гульня скончаная.\n"
-
-#~ msgid "You have stored "
-#~ msgstr "Вы нажылі "
 
 #~ msgid "I've stored "
 #~ msgstr "Я нажыў "
