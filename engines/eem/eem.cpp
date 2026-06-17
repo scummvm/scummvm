@@ -625,6 +625,9 @@ void EEMEngine::setInteractiveMouseCursor(bool active) {
 
 	_interactiveMouseCursor = active;
 	installMouseCursor(_picsArchive, active);
+	// The red-outline highlight replaced any London cursor shape; force the
+	// next setSiteHotspotCursorId to reinstall.
+	_siteCursorId = -1;
 }
 
 void EEMEngine::setHotspotMouseCursor(bool active) {
@@ -660,6 +663,8 @@ void EEMEngine::setSiteHotspotCursorId(int cursorId) {
 	CursorMan.replaceCursor(cursor.surface.rawSurface(), 0, 0, transparent);
 	CursorMan.replaceCursorPalette(nullptr, 0, 0);
 	_siteCursorId = cursorId;
+	// This London cursor replaced the red-outline highlight, if it was active.
+	_interactiveMouseCursor = false;
 }
 
 bool EEMEngine::openArchives() {
