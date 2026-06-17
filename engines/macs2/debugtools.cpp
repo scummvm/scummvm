@@ -1450,7 +1450,7 @@ static void showAnimationsWindow() {
 		ImGui::Text("BG Anims: %u", (uint)g_engine->_backgroundAnimations.size());
 		for (int i = 0; i < (int)g_engine->_backgroundAnimations.size(); i++) {
 			BackgroundAnimation &a = g_engine->_backgroundAnimations[i];
-			ImGui::Text("  [%d] pos=(%u,%u) frames=%u cur=%u", i, a._x, a._y, a._numFrames, a._frameIndex);
+			ImGui::Text("  [%d] pos=(%u,%u) frames=%u cur=%u", i, a._x, a._y, (uint)a._frames.size(), a._frameIndex);
 		}
 	}
 	ImGui::End();

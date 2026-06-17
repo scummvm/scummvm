@@ -206,14 +206,14 @@ void View1::updateCursor(const byte *palette) {
 		mode = (int)Script::MouseMode::Walk - 1;
 	}
 
-	if (mode >= (int)g_engine->_imageResources.size() || g_engine->_imageResources[mode]._data == nullptr || g_engine->_imageResources[mode]._width == 0) {
+	if (mode >= (int)g_engine->_imageResources.size() || g_engine->_imageResources[mode]._data.empty() || g_engine->_imageResources[mode]._width == 0) {
 		warning("Cursor data for mode %d is invalid", mode);
 		return;
 	}
 
 	const uint16 width = g_engine->_imageResources[mode]._width;
 	const uint16 height = g_engine->_imageResources[mode]._height;
-	const byte *cursorData = g_engine->_imageResources[mode]._data;
+	const byte *cursorData = g_engine->_imageResources[mode]._data.data();
 	const Graphics::PixelFormat rgbaCursorFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	Common::Array<uint32> rgbaCursor;
 	rgbaCursor.resize(width * height);
@@ -261,6 +261,12 @@ View1::View1() : UIElement("View1") {
 	_inventoryButtonLocations.resize(6);
 }
 
+View1::~View1() {
+	for (Character *c : _characters) {
+		delete c;
+	}
+}
+
 AnimFrame *View1::getInventoryIcon(GameObject *gameObject) {
 	AnimFrame *result = new AnimFrame();
 	// Inventory icon is always in blob slot 0x14 (zero-based index 0x13)
@@ -279,8 +285,8 @@ AnimFrame *View1::getInventoryIcon(GameObject *gameObject) {
 	offset += 6;
 	result->_width = READ_LE_UINT16(&blob[offset]);
 	result->_height = READ_LE_UINT16(&blob[offset + 2]);
-	result->_data = new byte[result->_width * result->_height];
-	memcpy(result->_data, &blob[offset + 4], result->_width * result->_height);
+	result->_data.resize(result->_width * result->_height);
+	memcpy(result->_data.data(), &blob[offset + 4], result->_width * result->_height);
 	// TODO: Think about proper memory management
 	return result;
 }
@@ -304,7 +310,7 @@ void View1::drawBackgroundAnimations(Graphics::ManagedSurface &s) {
 		BackgroundAnimation &current = g_engine->_backgroundAnimations[i];
 		BackgroundAnimationBlob &currentBlob = g_engine->_backgroundAnimationsBlobs[i];
 		AnimFrame currentFrame = currentBlob.getCurrentFrame();
-		drawSprite(current._x, current._y, currentFrame._width, currentFrame._height, currentFrame._data, s, false);
+		drawSprite(current._x, current._y, currentFrame, s, false);
 	}
 }
 
@@ -337,7 +343,7 @@ void View1::drawCurrentSpeaker(Graphics::ManagedSurface &s) {
 
 	// Draw the portrait over the border
 	Common::Point pos = currentSpeechActData.position + Common::Point(7, 7);
-	drawSprite(pos, frame->_width, frame->_height, frame->_data, s, false);
+	drawSprite(pos, frame->_width, frame->_height, frame->_data.data(), s, false);
 }
 
 void View1::renderString(uint16 x, uint16 y, Common::String s) {
@@ -359,7 +365,7 @@ void View1::renderString(uint16 x, uint16 y, Common::String s) {
 		GlyphData data;
 		bool found = g_engine->findGlyph(*iter, data);
 		if (found) {
-			drawSprite(currentX, currentY, data._width, data._height, data._data, surf, false);
+			drawSprite(currentX, currentY, data, surf, false);
 			currentX += data._width + 1;
 		} else {
 			if ((byte)*iter != ' ') {
@@ -406,7 +412,7 @@ void View1::renderStringWithFont(uint16 x, uint16 y, const Common::String &s, co
 		bool found = false;
 		for (uint i = 0; i < numGlyphs; i++) {
 			if (glyphs[i]._ascii == *iter) {
-				drawSprite(currentX, y, glyphs[i]._width, glyphs[i]._height, glyphs[i]._data, surf, false);
+				drawSprite(currentX, y, glyphs[i], surf, false);
 				currentX += glyphs[i]._width + 1;
 				found = true;
 				break;
@@ -483,7 +489,7 @@ void View1::drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Gr
 			currentY += currentData._height;
 			currentX = x;
 		}
-		drawSprite(currentX, currentY, currentData._width, currentData._height, currentData._data, s, false);
+		drawSprite(currentX, currentY, currentData, s, false);
 		currentX += currentData._width;
 	}
 }
@@ -613,7 +619,7 @@ void View1::drawMainMenu(Graphics::ManagedSurface &s) {
 		// Center icon within cell
 		uint16 iconX = cellX + (btnW - frame._width) / 2;
 		uint16 iconY = cellY + (btnH - frame._height) / 2;
-		drawSprite(iconX, iconY, frame._width, frame._height, frame._data, s, false);
+		drawSprite(iconX, iconY, frame, s, false);
 		_mainMenuButtonLocations[i] = Common::Rect(cellX, cellY, cellX + btnW, cellY + btnH);
 	}
 }
@@ -957,12 +963,7 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 			// Original copies item icon frame into cursor array slot 0x17 (UseInventory)
 			// so the cursor shows the picked-up item
 			int cursorSlot = (int)Script::MouseMode::UseInventory - 1;
-			uint32 pixelSize = icon->_width * icon->_height;
-			delete[] g_engine->_imageResources[cursorSlot]._data;
-			g_engine->_imageResources[cursorSlot]._data = new byte[pixelSize];
-			memcpy(g_engine->_imageResources[cursorSlot]._data, icon->_data, pixelSize);
-			g_engine->_imageResources[cursorSlot]._width = icon->_width;
-			g_engine->_imageResources[cursorSlot]._height = icon->_height;
+			g_engine->_imageResources[cursorSlot] = *icon;
 		}
 		g_engine->setCursorMode(Script::MouseMode::UseInventory);
 		updateCursor();
@@ -1061,12 +1062,7 @@ bool View1::handleContainerInventoryClick(const MouseDownMessage &msg) {
 		AnimFrame *icon = getInventoryIcon(_activeInventoryItem);
 		if (icon != nullptr) {
 			int cursorSlot = (int)Script::MouseMode::UseInventory - 1;
-			uint32 pixelSize = icon->_width * icon->_height;
-			delete[] g_engine->_imageResources[cursorSlot]._data;
-			g_engine->_imageResources[cursorSlot]._data = new byte[pixelSize];
-			memcpy(g_engine->_imageResources[cursorSlot]._data, icon->_data, pixelSize);
-			g_engine->_imageResources[cursorSlot]._width = icon->_width;
-			g_engine->_imageResources[cursorSlot]._height = icon->_height;
+			g_engine->_imageResources[cursorSlot] = *icon;
 		}
 		g_engine->setCursorMode(Script::MouseMode::UseInventory);
 		updateCursor();
@@ -1855,7 +1851,7 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 		uint16 iconX = (buttonW / 2 + buttonX) - currentFrame._width / 2;
 		uint16 iconY = (buttonH / 2 + buttonY) - currentFrame._height / 2;
 		_inventoryButtonLocations[i] = Common::Rect(Common::Point(buttonX, buttonY), buttonW, buttonH);
-		drawSprite(iconX, iconY, currentFrame._width, currentFrame._height, currentFrame._data, s, false);
+		drawSprite(iconX, iconY, currentFrame, s, false);
 		buttonX += buttonW + 4;
 	}
 	Common::Rect sourceRect(Common::Point((s.w / 2) - ((slotW + 4) * 5 + 4) / 2 + 1, y + 5),
@@ -1901,7 +1897,7 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 				// Original: (slotWidth/2 + local_e) - (frameWidth/2)
 				drawSprite(slotW / 2 + itemX - icon->_width / 2,
 						   slotH / 2 + itemY - icon->_height / 2,
-						   icon->_width, icon->_height, icon->_data, s, false);
+						   *icon, s, false);
 			}
 			itemIndex++;
 			itemX += slotW + 4;
@@ -1956,6 +1952,10 @@ void View1::drawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data
 
 void View1::drawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth, uint8 depth) {
 	drawSprite(pos.x, pos.y, width, height, data, s, mirrored, useDepth, depth);
+}
+
+void View1::drawSprite(int16 x, int16 y, const Sprite &sprite, Graphics::ManagedSurface &s, bool mirrored, bool useDepth, uint8 depth) {
+	drawSprite(x, y, sprite._width, sprite._height, const_cast<byte *>(sprite._data.data()), s, mirrored, useDepth, depth);
 }
 
 void View1::drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s) {
@@ -2175,31 +2175,31 @@ void View1::drawCharacters(Graphics::ManagedSurface &s) {
 		uint16 frameWidth, frameHeight;
 		Common::Point drawPos;
 		if (current->_gameObject->_hasScaling) {
-			frameWidth = (frame->asSprite()._width * scalingFactor) / 100;
-			frameHeight = (frame->asSprite()._height * scalingFactor) / 100;
+			frameWidth = (frame->_width * scalingFactor) / 100;
+			frameHeight = (frame->_height * scalingFactor) / 100;
 			drawPos = actualPosition - frame->getBottomMiddleOffset(scalingFactor);
 #if 0
-			drawSpriteSuperAdvanced(drawPos, frame->asSprite(), scalingFactor, mirror, true, depth, s, shadowIntensity);
+			drawSpriteSuperAdvanced(drawPos, *frame, scalingFactor, mirror, true, depth, s, shadowIntensity);
 #else
-			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(scalingFactor), frame->asSprite(), scalingFactor, mirror, true, depth, s, shadowIntensity);
+			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(scalingFactor), *frame, scalingFactor, mirror, true, depth, s, shadowIntensity);
 #endif
 		} else if (current->_gameObject->_hasShading) {
-			frameWidth = frame->asSprite()._width;
-			frameHeight = frame->asSprite()._height;
+			frameWidth = frame->_width;
+			frameHeight = frame->_height;
 			drawPos = actualPosition - frame->getBottomMiddleOffset(100);
 #if 0
-			drawSpriteSuperAdvanced(drawPos, frame->asSprite(), 100, mirror, true, depth, s, shadowIntensity);
+			drawSpriteSuperAdvanced(drawPos, *frame, 100, mirror, true, depth, s, shadowIntensity);
 #else
-			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(100), frame->asSprite(), 100, mirror, true, depth, s, shadowIntensity);
+			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(100), *frame, 100, mirror, true, depth, s, shadowIntensity);
 #endif
 		} else {
-			frameWidth = frame->asSprite()._width;
-			frameHeight = frame->asSprite()._height;
+			frameWidth = frame->_width;
+			frameHeight = frame->_height;
 			drawPos = actualPosition - frame->getBottomMiddleOffset(100);
 #if 0
-			drawSpriteSuperAdvanced(drawPos, frame->asSprite(), 100, mirror, false, depth, s, 0);
+			drawSpriteSuperAdvanced(drawPos, *frame, 100, mirror, false, depth, s, 0);
 #else
-			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(100), frame->asSprite(), 100, mirror, false, depth, s, 0);
+			drawSpriteSuperAdvanced(actualPosition - frame->getBottomMiddleOffset(100), *frame, 100, mirror, false, depth, s, 0);
 #endif
 		}
 
@@ -2364,7 +2364,7 @@ void View1::drawBorderSide(const Common::Point &pos, const Common::Point &size, 
 
 	while (currentY < clippingRect.bottom) {
 		while (currentX < clippingRect.right) {
-			drawSpriteClipped(currentX, currentY, clippingRect, sprite._width, sprite._height, sprite._data, s);
+			drawSpriteClipped(currentX, currentY, clippingRect, sprite._width, sprite._height, sprite._data.data(), s);
 			currentX += sprite._width;
 		}
 		currentX = clippingRect.left;
@@ -2419,7 +2419,7 @@ void View1::drawHorizontalBorderHighlight(const Common::Point &pos, int16 width,
 		return;
 	}
 	while (currentX < clippingRect.right) {
-		drawSpriteClipped(currentX, currentY, clippingRect, sprite->_width, sprite->_height, sprite->_data, s);
+		drawSpriteClipped(currentX, currentY, clippingRect, sprite->_width, sprite->_height, sprite->_data.data(), s);
 		currentX += sprite->_width;
 	}
 }
@@ -2437,7 +2437,7 @@ void View1::drawVerticalBorderHighlight(const Common::Point &pos, int16 height, 
 	}
 
 	while (currentY < clippingRect.bottom) {
-		drawSpriteClipped(currentX, currentY, clippingRect, sprite->_width, sprite->_height, sprite->_data, s);
+		drawSpriteClipped(currentX, currentY, clippingRect, sprite->_width, sprite->_height, sprite->_data.data(), s);
 		currentY += sprite->_height;
 	}
 }
@@ -2452,7 +2452,7 @@ void View1::drawImageResources(Graphics::ManagedSurface &s) {
 			x = 0;
 			currentMaxHeight = 0;
 		}
-		drawSprite(Common::Point(x, y), current._width, current._height, current._data, s, false);
+		drawSprite(Common::Point(x, y), current._width, current._height, current._data.data(), s, false);
 		x += current._width;
 		currentMaxHeight = MAX(current._height, currentMaxHeight);
 	}
@@ -2917,8 +2917,8 @@ Macs2::AnimFrame *Character::getCurrentAnimationFrame() {
 	AnimFrame *result = new AnimFrame();
 	result->_width = READ_LE_UINT16(&blob[offset]);
 	result->_height = READ_LE_UINT16(&blob[offset + 2]);
-	result->_data = new byte[result->_width * result->_height];
-	memcpy(result->_data, &blob[offset + 4], result->_width * result->_height);
+	result->_data.resize(result->_width * result->_height);
+	memcpy(result->_data.data(), &blob[offset + 4], result->_width * result->_height);
 	return result;
 }
 
@@ -2945,8 +2945,8 @@ Macs2::AnimFrame *Character::getCurrentPortrait(bool onRightSide, uint16 frameIn
 	AnimFrame *result = new AnimFrame();
 	result->_width = READ_LE_UINT16(&blob[offset]);
 	result->_height = READ_LE_UINT16(&blob[offset + 2]);
-	result->_data = new byte[result->_width * result->_height];
-	memcpy(result->_data, &blob[offset + 4], result->_width * result->_height);
+	result->_data.resize(result->_width * result->_height);
+	memcpy(result->_data.data(), &blob[offset + 4], result->_width * result->_height);
 	return result;
 }
 
@@ -3350,7 +3350,7 @@ void View1::openOriginalSaveLoadPanel() {
 		if (imgIdx < 0 || imgIdx >= (int)g_engine->_imageResources.size())
 			continue;
 		AnimFrame &frame = g_engine->_imageResources[imgIdx];
-		if (frame._data == nullptr && frame._width == 0) {
+		if (frame._data.empty() && frame._width == 0) {
 			// Binary: if no data, sets width/height fields to 0
 			continue;
 		}
@@ -3462,7 +3462,7 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 		if (imgIdx < 0 || imgIdx >= (int)g_engine->_imageResources.size())
 			continue;
 		AnimFrame &frame = g_engine->_imageResources[imgIdx];
-		if (frame._data == nullptr || frame._width == 0)
+		if (frame._data.empty() || frame._width == 0)
 			continue;
 
 		// Determine which icon to draw
@@ -3472,7 +3472,7 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 		if (i == 3 && !g_engine->_scriptExecutor->_soundSystemActive) {
 			if (kAltMusicIconIdx < (int)g_engine->_imageResources.size()) {
 				AnimFrame &altFrame = g_engine->_imageResources[kAltMusicIconIdx];
-				if (altFrame._data != nullptr && altFrame._width > 0) {
+				if (!altFrame._data.empty() && altFrame._width > 0) {
 					iconFrame = &altFrame;
 				}
 			}
@@ -3490,7 +3490,7 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 			iconY++;
 		}
 
-		drawSprite(iconX, iconY, iconFrame->_width, iconFrame->_height, iconFrame->_data, s, false);
+		drawSprite(iconX, iconY, *iconFrame, s, false);
 	}
 
 	// if (g_wMapPanelPageIndex == 1) drawSaveLoadScrollArrows()
@@ -3600,7 +3600,7 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 		bool hasData = false;
 		if (imgIdx >= 0 && imgIdx < (int)g_engine->_imageResources.size()) {
 			AnimFrame &frame = g_engine->_imageResources[imgIdx];
-			hasData = (frame._data != nullptr && frame._width > 0);
+			hasData = (!frame._data.empty() && frame._width > 0);
 		}
 
 		bool isHit = (btnPos.x < clickX && btnPos.y < clickY &&

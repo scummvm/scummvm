@@ -345,7 +345,7 @@ public:
 
 public:
 	View1();
-	virtual ~View1() {}
+	virtual ~View1();
 
 	bool _started = false;
 
@@ -364,7 +364,7 @@ public:
 
 	// If this is the protagonist, we have our normal inventory
 	// If this is another object, it is the inventory of a storage container
-	GameObject *_inventorySource;
+	GameObject *_inventorySource = nullptr;
 
 	void transferInventoryItem(GameObject *item, GameObject *targetContainer);
 
@@ -452,6 +452,7 @@ public:
 	void startFadingWithSpeed(uint16 speed);
 
 	void drawSprite(int16 x, int16 y, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
+	void drawSprite(int16 x, int16 y, const Sprite &sprite, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
 	void drawSprite(const Common::Point &pos, uint16 width, uint16 height, byte *data, Graphics::ManagedSurface &s, bool mirrored, bool useDepth = false, uint8 depth = 0);
 	void drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s);
 	void drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s);

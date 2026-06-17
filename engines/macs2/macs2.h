@@ -95,39 +95,30 @@ struct Macs2GameDescription;
 // enum class CursorMode { Talk = 0, Look = 1, Touch = 2, Walk = 3};
 class Music;
 
-struct GlyphData {
-	byte *_data;
-	char _ascii;
-	uint16 _width;
-	uint16 _height;
+struct Sprite {
+	uint16 _width = 0;
+	uint16 _height = 0;
+	Common::Array<uint8> _data;
+};
+
+struct GlyphData : public Sprite {
+	char _ascii = 0;
 
 	void readFromeFile(Common::File &file);
 	void readFromMemory(Common::MemoryReadStream *stream);
 };
 
-struct Sprite {
-	uint16 _width;
-	uint16 _height;
-	Common::Array<uint8> _data;
-};
-
-struct AnimFrame {
-	byte *_data;
-	uint16 _width;
-	uint16 _height;
-
+struct AnimFrame : public Sprite {
 	void readFromeFile(Common::File &file);
 	void readFromStream(Common::MemoryReadStream *stream);
 	bool pixelHit(const Common::Point &point) const;
 	Common::Point getBottomMiddleOffset(uint16 scale = 100) const;
-	Sprite asSprite();
 };
 
 struct BackgroundAnimation {
-	uint16 _numFrames;
 	uint16 _x;
 	uint16 _y;
-	AnimFrame *_frames;
+	Common::Array<AnimFrame> _frames;
 	uint32 _frameIndex;
 };
 
@@ -200,14 +191,16 @@ struct AnimBlobView {
 	bool getFrameInfo(uint16 index, FrameInfo &out) const {
 		uint32 pos = frameDataOffset() + 2; // skip frame count word
 		for (uint16 i = 0; i <= index; i++) {
-			if (pos + 10 > _blob.size()) return false;
+			if (pos + 10 > _blob.size())
+				return false;
 			int16 ox = (int16)READ_LE_UINT16(&_blob[pos]);
 			int16 oy = (int16)READ_LE_UINT16(&_blob[pos + 2]);
 			uint16 unk = READ_LE_UINT16(&_blob[pos + 4]);
 			uint16 w = READ_LE_UINT16(&_blob[pos + 6]);
 			uint16 h = READ_LE_UINT16(&_blob[pos + 8]);
 			pos += 10;
-			if (w == 0 || h == 0 || pos + (uint32)w * h > _blob.size()) return false;
+			if (w == 0 || h == 0 || pos + (uint32)w * h > _blob.size())
+				return false;
 			if (i == index) {
 				out = {ox, oy, unk, w, h, &_blob[pos]};
 				return true;
@@ -240,7 +233,7 @@ class Macs2Engine : public Engine, public Events {
 private:
 	const ADGameDescription *_gameDescription;
 
-	Music *_adlib;
+	Music *_adlib = nullptr;
 
 protected:
 	// Engine APIs
@@ -274,7 +267,7 @@ public:
 
 	void changeScene(uint32 newSceneIndex, bool executeScript = true);
 
-	Script::ScriptExecutor *_scriptExecutor;
+	Script::ScriptExecutor *_scriptExecutor = nullptr;
 	Graphics::ManagedSurface _sceneBackground;
 	Graphics::ManagedSurface _hotspotMap;
 
