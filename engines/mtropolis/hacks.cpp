@@ -1140,7 +1140,7 @@ void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
 }
 
 void addTDTWBQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
-	//The default code path would cause a nullptr segfault
+	// The default code path would cause a nullptr segfault
 	hacks.alternativeDefaultSharedSceneSearch = true;
 }
 
