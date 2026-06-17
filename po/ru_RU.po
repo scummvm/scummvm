@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-14 22:15+0000\n"
-"PO-Revision-Date: 2026-05-06 08:54+0000\n"
+"PO-Revision-Date: 2026-06-17 23:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -2351,28 +2351,20 @@ msgid "Disable fixed font scaling"
 msgstr "Выключить масшатибрование некоторых шрифтов"
 
 #: gui/options.cpp:2667
-#, fuzzy
-#| msgid ""
-#| "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
-#| "resolution screens"
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens."
 msgstr ""
 "Не увеличивать масштаб шрифтов фиксированного размера в GUI. Это уменьшает "
-"количество артефактов на экранах с низким разрешением"
+"количество артефактов на экранах с низким разрешением."
 
 #: gui/options.cpp:2673
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable kinetic scrolling in lists"
-msgstr "Включить плавную прокрутку во время ходьбы"
+msgstr "Включить плавную прокрутку в списках"
 
 #: gui/options.cpp:2674
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth, momentum-based scrolling in list widgets."
-msgstr "Включить плавную прокрутку во время ходьбы"
+msgstr "Включает плавную прокрутку с использованием инерции в виджетах списков."
 
 #: gui/options.cpp:2680
 msgid "GUI language:"
@@ -3841,6 +3833,10 @@ msgid ""
 "testing mode.\n"
 "If you encounter any bugs or oddities, please report them to our bugtracker."
 msgstr ""
+"ВНИМАНИЕ: Игра, которую вы собираетесь запустить, только недавно получила "
+"новую поддержку и находится в режиме тестирования.\n"
+"Если вы обнаружите какие-либо ошибки или странности, пожалуйста, сообщите о "
+"них в нашу систему отслеживания ошибок."
 
 #: engines/engine.cpp:861
 #, c-format
@@ -9085,10 +9081,8 @@ msgstr "Инфо-меню"
 
 #. I18N: Toggles the red/blue stereoscopic 3D effect (anaglyph glasses).
 #: engines/freescape/movement.cpp:119
-#, fuzzy
-#| msgid "Toggle resizable window"
 msgid "Toggle red/blue 3D"
-msgstr "Переключить изменение размеров окна"
+msgstr "Переключить красный/синий 3D"
 
 #: engines/freescape/games/castle/castle.cpp:463
 msgid "Select prince"
@@ -10244,60 +10238,44 @@ msgid "Secondary shoot"
 msgstr "Вторичный выстрел"
 
 #: engines/hypno/metaengine.cpp:149
-#, fuzzy
-#| msgid "Map hide toolbar action"
 msgid "Rapid fire / secondary action"
-msgstr "Назначить действие \"Спрятать панель инструментов\""
+msgstr "Скорострельность / вторичное действие"
 
 #: engines/hypno/metaengine.cpp:155
-#, fuzzy
-#| msgid "Slide left"
 msgid "Aim left"
-msgstr "Скользить влево"
+msgstr "Целиться влево"
 
 #: engines/hypno/metaengine.cpp:160
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Aim down"
-msgstr "Прокрутить вниз"
+msgstr "Целиться вниз"
 
 #: engines/hypno/metaengine.cpp:165
-#, fuzzy
-#| msgid "Up right"
 msgid "Aim right"
-msgstr "Вверх-вправо"
+msgstr "Целиться вправо"
 
 #: engines/hypno/metaengine.cpp:170
 msgid "Aim up"
-msgstr ""
+msgstr "Целиться вверх"
 
 #: engines/hypno/metaengine.cpp:175 engines/scumm/metaengine.cpp:1202
 #: engines/scumm/metaengine.cpp:1279
-#, fuzzy
-#| msgid "Slide left"
 msgid "Stick left"
-msgstr "Скользить влево"
+msgstr "Стик влево"
 
 #: engines/hypno/metaengine.cpp:182 engines/scumm/metaengine.cpp:1195
 #: engines/scumm/metaengine.cpp:1272
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Stick down"
-msgstr "Прокрутить вниз"
+msgstr "Стик вниз"
 
 #: engines/hypno/metaengine.cpp:189 engines/scumm/metaengine.cpp:1209
 #: engines/scumm/metaengine.cpp:1286
-#, fuzzy
-#| msgid "Slide right"
 msgid "Stick right"
-msgstr "Скользить вправо"
+msgstr "Стик вправо"
 
 #: engines/hypno/metaengine.cpp:196 engines/scumm/metaengine.cpp:1188
 #: engines/scumm/metaengine.cpp:1265
-#, fuzzy
-#| msgid "Pick up"
 msgid "Stick up"
-msgstr "Поднять"
+msgstr "Стик вверх"
 
 #: engines/hypno/metaengine.cpp:203 engines/lab/metaengine.cpp:209
 #: engines/ngi/metaengine.cpp:168 engines/sherlock/metaengine.cpp:872
@@ -10374,28 +10352,20 @@ msgid "Show credits"
 msgstr "Показать авторов"
 
 #: engines/hypno/metaengine.cpp:417
-#, fuzzy
-#| msgid "Move left"
 msgid "Menu left"
-msgstr "Идти влево"
+msgstr "Меню влево"
 
 #: engines/hypno/metaengine.cpp:425
-#, fuzzy
-#| msgid "Move down"
 msgid "Menu down"
-msgstr "Идти вниз"
+msgstr "Меню вниз"
 
 #: engines/hypno/metaengine.cpp:433
-#, fuzzy
-#| msgid "Move right"
 msgid "Menu right"
-msgstr "Идти вправо"
+msgstr "Меню вправо"
 
 #: engines/hypno/metaengine.cpp:441
-#, fuzzy
-#| msgid "Menu"
 msgid "Menu up"
-msgstr "Меню"
+msgstr "Меню вверх"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
@@ -12093,11 +12063,13 @@ msgstr "Выделить области, на которые можно нажа
 
 #: engines/private/metaengine.cpp:61
 msgid "Increased contrast for small print"
-msgstr ""
+msgstr "Повышенная контрастность для мелкого шрифта"
 
 #: engines/private/metaengine.cpp:62
 msgid "Enhance small printed paper close-ups for improved readability."
 msgstr ""
+"Улучшить качество крупных планов небольших печатных страниц для повышения "
+"читаемости."
 
 #: engines/private/metaengine.cpp:147 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -13646,43 +13618,34 @@ msgid "Enable ambience sounds."
 msgstr "Включить звуки фона."
 
 #: engines/scumm/metaengine.cpp:882
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "High resolution on"
 msgid "High resolution mode"
-msgstr "Высокое разрешение включено"
+msgstr "Режим высокого разрешения"
 
 #: engines/scumm/metaengine.cpp:883
 msgid "Run the game in 640x400 high resolution mode instead of 320x200"
-msgstr ""
+msgstr "Запустить игру в режиме высокого разрешения 640x400 вместо 320x200"
 
 #: engines/scumm/metaengine.cpp:892 engines/scumm/metaengine.cpp:919
-#, fuzzy
-#| msgid "All levels will be available to play."
 msgid "All levels will be available without requiring passwords"
-msgstr "Все уровни будут доступны для игры."
+msgstr "Все уровни будут доступны без паролей"
 
 #: engines/scumm/metaengine.cpp:900 engines/scumm/metaengine.cpp:927
-#, fuzzy
-#| msgid "No date saved"
 msgid "No damage"
-msgstr "Дата не записана"
+msgstr "Без повреждений"
 
 #: engines/scumm/metaengine.cpp:901 engines/scumm/metaengine.cpp:928
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable player damage"
-msgstr "Запретить меню сохранения"
+msgstr "Отключить урон, наносимый игроку"
 
 #: engines/scumm/metaengine.cpp:909
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Yoda mode"
-msgstr "Быстрый режим"
+msgstr "Режим Йоды"
 
 #: engines/scumm/metaengine.cpp:910
 msgid "Enable original Yoda mode shortcuts, including movie mode and auto play"
 msgstr ""
+"Включить оригинальные комбинации клавиши режима Йоды, включая режим "
+"просмотра фильмов и автоматическое воспроизведение"
 
 #: engines/scumm/metaengine.cpp:1085
 msgid "Down left"
@@ -13711,63 +13674,51 @@ msgstr "Чит для выигрыша боёв на байках"
 
 #: engines/scumm/metaengine.cpp:1166
 msgid "Rebel Assault controls"
-msgstr ""
+msgstr "Управление Rebel Assault"
 
 #: engines/scumm/metaengine.cpp:1168 engines/scumm/metaengine.cpp:1245
 msgid "Aim up / menu up"
-msgstr ""
+msgstr "Целиться вверх / меню вверх"
 
 #: engines/scumm/metaengine.cpp:1173 engines/scumm/metaengine.cpp:1250
 msgid "Aim down / menu down"
-msgstr ""
+msgstr "Целиться вниз / меню вниз"
 
 #: engines/scumm/metaengine.cpp:1178 engines/scumm/metaengine.cpp:1255
 msgid "Aim left / menu left"
-msgstr ""
+msgstr "Целиться влево / меню влево"
 
 #: engines/scumm/metaengine.cpp:1183 engines/scumm/metaengine.cpp:1260
 msgid "Aim right / menu right"
-msgstr ""
+msgstr "Целиться вправо / меню вправо"
 
 #: engines/scumm/metaengine.cpp:1216 engines/scumm/metaengine.cpp:1293
-#, fuzzy
-#| msgid "Move / Select"
 msgid "Fire / select"
-msgstr "Идти / Выбрать"
+msgstr "Стрелять / Выбрать"
 
 #: engines/scumm/metaengine.cpp:1222
-#, fuzzy
-#| msgid "Skip main menu"
 msgid "Walk / menu back"
-msgstr "Пропустить главное меню"
+msgstr "Идти / меню назад"
 
 #: engines/scumm/metaengine.cpp:1227
-#, fuzzy
-#| msgid "Skip main menu"
 msgid "Skip / menu back"
-msgstr "Пропустить главное меню"
+msgstr "Пропустить / меню назад"
 
 #: engines/scumm/metaengine.cpp:1243
 msgid "Rebel Assault II controls"
-msgstr ""
+msgstr "Управление Rebel Assault II"
 
 #: engines/scumm/metaengine.cpp:1298
-#, fuzzy
-#| msgid "Move back"
 msgid "Cover / back"
-msgstr "Идти назад"
+msgstr "Прикрыть / назад"
 
 #: engines/scumm/metaengine.cpp:1304
-#, fuzzy
-#| msgid "Skip walk"
 msgid "Skip / back"
-msgstr "Пропустить ходьбу"
+msgstr "Пропустить / назад"
 
 #: engines/scumm/metaengine.cpp:1311
-#, fuzzy
-#| msgid "Skip main menu"
 msgid "Skip / menu"
-msgstr "Пропустить главное меню"
+msgstr "Пропустить / меню"
 
 #: engines/scumm/saveload.cpp:1990
 #, c-format
