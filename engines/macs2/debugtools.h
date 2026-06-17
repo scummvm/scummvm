@@ -26,6 +26,9 @@ namespace Macs2 {
 void onImGuiInit();
 void onImGuiRender();
 void onImGuiCleanup();
+bool shouldDrawPathfindingOverlay();
+bool shouldDrawDebugOutputOverlay();
+bool shouldDrawPathOverlay();
 // Returns true if the script debugger wants the executor to pause before the next opcode
 bool scriptDebuggerShouldPause();
 // Direct access to debugger state for tick() resume logic
