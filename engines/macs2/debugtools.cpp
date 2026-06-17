@@ -2049,6 +2049,27 @@ void onImGuiRender() {
 			ImGui::MenuItem("Text Log", NULL, &_showTextLog);
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("Log Channels")) {
+			static const struct { int flag; const char *name; } channels[] = {
+				{kDebugGraphics, "Graphics"},
+				{kDebugPath, "Path"},
+				{kDebugScan, "Scan"},
+				{kDebugFilePath, "FilePath"},
+				{kDebugInput, "Input"},
+				{kDebugImGui, "ImGui"},
+				{kDebugScript, "Script"},
+			};
+			for (const auto &ch : channels) {
+				bool enabled = debugChannelSet(-1, ch.flag);
+				if (ImGui::MenuItem(ch.name, NULL, enabled)) {
+					if (enabled)
+						DebugMan.disableDebugChannel(ch.flag);
+					else
+						DebugMan.enableDebugChannel(ch.flag);
+				}
+			}
+			ImGui::EndMenu();
+		}
 		if (ImGui::BeginMenu("Speed")) {
 			if (ImGui::MenuItem("Normal", NULL, g_engine->_gameSpeedMode == 0))
 				g_engine->_gameSpeedMode = 0;

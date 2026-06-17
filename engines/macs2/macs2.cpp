@@ -338,8 +338,8 @@ void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 			memcpy(current._frames[j]._data.data(), fi.pixels, fi.width * fi.height);
 		}
 
-		// Initialize the blob frame pointer (original calls advanceAnimFrame with mode 0x64+numFrames)
-		BackgroundAnimationBlob::advanceAnimFrame(currentBlob._blob, true, 0x64 + numFrames);
+		// The blob's internal frame pointer is stored in the resource file data.
+		// Do NOT reinitialize it — the original binary just reads the raw data.
 	}
 }
 
