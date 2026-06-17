@@ -154,6 +154,13 @@ void undrawCursor(byte *target) {
 }
 
 /*
+Hide the system mouse pointer (used during non-interactive room transitions)
+*/
+void hideMouseCursor(void) {
+	CursorMan.showMouse(false);
+}
+
+/*
 Restore pixels under cursor and update cursor sprite
 */
 void updateUndrawCursor(byte *target) {

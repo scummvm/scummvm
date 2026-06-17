@@ -1040,6 +1040,11 @@ void drawZoneSpots(void) {
 }
 
 void refreshZone(void) {
+	// Hide the mouse pointer while the new room is drawn and its entry
+	// animation plays. The game loop's selectCursor() re-shows it once it is
+	// waiting for player input again.
+	hideMouseCursor();
+
 	popDirtyRects(DirtyRectSprite);
 	popDirtyRects(DirtyRectBubble);
 	popDirtyRects(DirtyRectText);
