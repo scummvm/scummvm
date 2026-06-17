@@ -240,6 +240,9 @@ void View1::updateCursor(const byte *palette) {
 	CursorMan.replaceCursorPalette(dummyPalette, 0, 256);
 }
 
+const View1::BorderStyle View1::kBorderRaised = {0x1010, 0x1012, 0x1011};
+const View1::BorderStyle View1::kBorderPressed = {0x1010, 0x1011, 0x1012};
+
 View1::View1() : UIElement("View1") {
 	_backgroundSurface.copyFrom(g_engine->_sceneBackground);
 	currentSpeechActData.onRightSide = false;
@@ -590,8 +593,7 @@ void View1::drawMainMenu(Graphics::ManagedSurface &s) {
 	// Original openActionBarAtPosition (1008:3fba) calls:
 	// 1. drawBorderSide(height, width, y, x) — tiles border texture over ENTIRE panel
 	// 2. drawBorderOuterHighlights(height, width, y, x) — draws edge highlights
-	drawBorderSide(Common::Point(_mainMenuRect.left, _mainMenuRect.top), Common::Point(_mainMenuRect.width(), _mainMenuRect.height()), s);
-	drawBorderOuterHighlights(Common::Point(_mainMenuRect.left, _mainMenuRect.top), Common::Point(_mainMenuRect.width(), _mainMenuRect.height()), s);
+	drawNinePatchBorder(Common::Point(_mainMenuRect.left, _mainMenuRect.top), Common::Point(_mainMenuRect.width(), _mainMenuRect.height()), kBorderRaised, false, true, s);
 
 	// 3x3 grid layout matching openActionBarAtPosition (1008:3fba)
 	// Each button is sized to the largest icon + 6px padding, centered in cell
@@ -613,7 +615,7 @@ void View1::drawMainMenu(Graphics::ManagedSurface &s) {
 		uint16 cellY = _mainMenuRect.top + 8 + row * btnH;
 
 		// Original draws drawBorderOuterHighlights per button cell
-		drawBorderOuterHighlights(Common::Point(cellX, cellY), Common::Point(btnW, btnH), s);
+		drawNinePatchBorder(Common::Point(cellX, cellY), Common::Point(btnW, btnH), kBorderRaised, false, false, s);
 
 		AnimFrame &frame = g_engine->_imageResources[i];
 		// Center icon within cell
@@ -1838,7 +1840,7 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 	buffer->rawBlitFrom(s, Common::Rect(0, 0, s.w, s.h), Common::Point(0, 0));
 
 	drawBorderSide(Common::Point(x, y), Common::Point(width, height), s);
-	drawBorderOuterHighlights(Common::Point(x, y), Common::Point(width, height), s);
+	drawNinePatchBorder(Common::Point(x, y), Common::Point(width, height), kBorderRaised, false, false, s);
 
 	uint16 buttonX = (s.w / 2) - (buttonW + 4) * 3 + 2;
 	uint16 buttonY = y + height - 4 - buttonH;
@@ -1847,7 +1849,7 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 	for (int i = 0; i < 6; i++) {
 		uint16 index = iconIndices[i];
 		AnimFrame &currentFrame = g_engine->_imageResources[index - 1];
-		drawBorderOuterHighlights(Common::Point(buttonX, buttonY), Common::Point(buttonW, buttonH), s);
+		drawNinePatchBorder(Common::Point(buttonX, buttonY), Common::Point(buttonW, buttonH), kBorderRaised, false, false, s);
 		uint16 iconX = (buttonW / 2 + buttonX) - currentFrame._width / 2;
 		uint16 iconY = (buttonH / 2 + buttonY) - currentFrame._height / 2;
 		_inventoryButtonLocations[i] = Common::Rect(Common::Point(buttonX, buttonY), buttonW, buttonH);
@@ -1864,13 +1866,13 @@ void View1::drawInventory(Graphics::ManagedSurface &s) {
 		}
 	}
 
-	drawPressedBorderOuterHighlights(Common::Point(
+	drawNinePatchBorder(Common::Point(
 								  (s.w / 2) - ((slotW + 4) * 5 + 4) / 2,
 								  y + 4),
 							  Common::Point(
 								  (slotW + 4) * 5 + 4,
 								  (slotH + 4) * 2 + 4),
-							  s);
+							  kBorderPressed, false, false, s);
 
 	// Original: slotWidth = maxWidth + 6, slotHeight = maxHeight + 6 (already added above for hit testing)
 	// Original X start: centered on screen based on slot grid, NOT panel-relative
@@ -2307,50 +2309,59 @@ void View1::showSpeechAct(uint16 characterIndex, const Common::Array<Common::Str
 	}
 }
 
+void View1::drawNinePatchBorder(const Common::Point &pos, const Common::Point &size,
+								const BorderStyle &style, bool fillCenter, bool fillSides,
+								Graphics::ManagedSurface &s) {
+	constexpr uint16 border = 6;
+
+	if (fillCenter) {
+		drawDarkRectangle(pos.x + 1, pos.y + 1, size.x - 1, size.y - 1);
+	}
+
+	if (fillSides) {
+		drawBorderSide(pos, Common::Point(border, size.y), s);
+		drawBorderSide(pos + Common::Point(size.x - border, 0), Common::Point(border, size.y), s);
+		drawBorderSide(pos, Common::Point(size.x, border), s);
+		drawBorderSide(pos + Common::Point(0, size.y - border), Common::Point(size.x, border), s);
+	}
+
+	// Outer edge
+	drawHorizontalBorderHighlight(pos, size.x + 1, style.outerEdge, s);
+	drawVerticalBorderHighlight(pos, size.y + 1, style.outerEdge, s);
+	drawHorizontalBorderHighlight(pos + Common::Point(0, size.y), size.x + 1, style.outerEdge, s);
+	drawVerticalBorderHighlight(pos + Common::Point(size.x, 0), size.y + 1, style.outerEdge, s);
+
+	// Inner highlights (1px inset)
+	drawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, style.topLeft, s);
+	drawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, style.topLeft, s);
+	drawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, style.bottomRight, s);
+	drawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, style.bottomRight, s);
+}
+
 void View1::drawBorder(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
 	// fn0037_A65D proc
-	constexpr uint16 width = 6;
+	constexpr uint16 border = 6;
 	debugC(kDebugScript, "Render border: pos=(%d,%d) size=(%d,%d)", pos.x, pos.y, size.x, size.y);
 
-	// g_wMapPanelPageIndex == 1: draw shaded background + 4 border sides
-	// g_wMapPanelPageIndex != 1: fill entire area with border texture (not implemented)
-	// Currently always using mode 1 path.
 	drawDarkRectangle(pos.x + 1, pos.y + 1, size.x - 1, size.y - 1);
 
-	// Left side
-	drawBorderSide(pos, Common::Point(width, size.y), s);
+	// Four textured border sides
+	drawBorderSide(pos, Common::Point(border, size.y), s);
+	drawBorderSide(pos + Common::Point(size.x - border, 0), Common::Point(border, size.y), s);
+	drawBorderSide(pos, Common::Point(size.x, border), s);
+	drawBorderSide(pos + Common::Point(0, size.y - border), Common::Point(size.x, border), s);
 
-	// Right side (verified: drawBorderSide(6, height, x+width-6, y) in disassembly)
-	drawBorderSide(pos + Common::Point(size.x - width, 0), Common::Point(width, size.y), s);
-
-	// Top side
-	drawBorderSide(pos, Common::Point(size.x, width), s);
-
-	// Bottom side
-	drawBorderSide(pos + Common::Point(0, size.y - width), Common::Point(size.x, width), s);
-
-	// Add the function for filling a side of the border
-	// Algorithm
-	// Set up clipping rect on one side
-	// Draw the texture enough times in x and y to fill the clipping rect
-
-	// Highlights and shadows (outer edge, inner edge, inner border)
-	// Top highlight
+	// Outer bevel (raised: highlight top-left, shadow bottom-right)
 	drawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1012, s);
-	// Left highlight
 	drawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x1012, s);
-	// Bottom shadow
 	drawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1011, s);
-	// Right shadow
 	drawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
-	// Inner top shadow
-	drawHorizontalBorderHighlight(pos + Common::Point(6, 6), size.x - 0xB, 0x1011, s);
-	// Inner left shadow
-	drawVerticalBorderHighlight(pos + Common::Point(6, 6), size.y - 0xB, 0x1011, s);
-	// Inner bottom highlight
-	drawHorizontalBorderHighlight(pos + Common::Point(6, size.y - width), size.x - 0xB, 0x1012, s);
-	// Inner right highlight
-	drawVerticalBorderHighlight(pos + Common::Point(size.x - width, width), size.y - 0xB, 0x1012, s);
+
+	// Inner bevel at border/content boundary (inverted: shadow inside top-left, highlight inside bottom-right)
+	drawHorizontalBorderHighlight(pos + Common::Point(border, border), size.x - 0xB, 0x1011, s);
+	drawVerticalBorderHighlight(pos + Common::Point(border, border), size.y - 0xB, 0x1011, s);
+	drawHorizontalBorderHighlight(pos + Common::Point(border, size.y - border), size.x - 0xB, 0x1012, s);
+	drawVerticalBorderHighlight(pos + Common::Point(size.x - border, border), size.y - 0xB, 0x1012, s);
 }
 
 // drawBorderSide (1008:39b5)
@@ -2372,27 +2383,6 @@ void View1::drawBorderSide(const Common::Point &pos, const Common::Point &size, 
 	}
 }
 
-void View1::drawBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
-	drawHorizontalBorderHighlight(pos, size.x + 1, 0x1010, s);
-	drawVerticalBorderHighlight(pos, size.y + 1, 0x1010, s);
-	drawHorizontalBorderHighlight(pos + Common::Point(0, size.y), size.x + 1, 0x1010, s);
-	drawVerticalBorderHighlight(pos + Common::Point(size.x, 0), size.y + 1, 0x1010, s);
-	drawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1012, s);
-	drawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x1012, s);
-	drawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1011, s);
-	drawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1011, s);
-}
-
-void View1::drawPressedBorderOuterHighlights(const Common::Point &pos, const Common::Point &size, Graphics::ManagedSurface &s) {
-	drawHorizontalBorderHighlight(pos, size.x + 1, 0x1010, s);
-	drawVerticalBorderHighlight(pos, size.y + 1, 0x1010, s);
-	drawHorizontalBorderHighlight(pos + Common::Point(0, size.y), size.x + 1, 0x1010, s);
-	drawVerticalBorderHighlight(pos + Common::Point(size.x, 0), size.y + 1, 0x1010, s);
-	drawHorizontalBorderHighlight(pos + Common::Point(1, 1), size.x - 1, 0x1011, s);
-	drawVerticalBorderHighlight(pos + Common::Point(1, 1), size.y - 1, 0x1011, s);
-	drawHorizontalBorderHighlight(pos + Common::Point(1, size.y - 1), size.x - 1, 0x1012, s);
-	drawVerticalBorderHighlight(pos + Common::Point(size.x - 1, 1), size.y - 1, 0x1012, s);
-}
 
 Macs2::AnimFrame *View1::getUISprite(uint32 offset) {
 	if (offset == 0x1011) {
@@ -3435,7 +3425,7 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 
 	// drawBorderSide + drawBorderOuterHighlights for panel
 	drawBorderSide(Common::Point(panelX, panelY), Common::Point(panelW, _saveLoadPanelRect.height()), s);
-	drawBorderOuterHighlights(Common::Point(panelX, panelY), Common::Point(panelW, _saveLoadPanelRect.height()), s);
+	drawNinePatchBorder(Common::Point(panelX, panelY), Common::Point(panelW, _saveLoadPanelRect.height()), kBorderRaised, false, false, s);
 
 	// Button loop: local_4 = 1..7
 	// Lookup table at 0x26 (1-indexed): {_, 15, 14, 27, 29, 16, 17, 9}
@@ -3449,21 +3439,19 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 		int imgIdx = kLookupTable[i] - 1; // 0-based
 		Common::Point btnPos(_saveLoadButtonRects[i - 1].left, _saveLoadButtonRects[i - 1].top);
 
-		// Binary: if (local_4 < 0 || local_4 != g_wSaveLoadSubMode) → normal border
-		// else → pressed border
-		bool pressed = (i >= 0 && (uint16)i == subMode);
-		if (!pressed) {
-			drawBorderOuterHighlights(btnPos, Common::Point(btnW, btnH), s);
-		} else {
-			drawPressedBorderOuterHighlights(btnPos, Common::Point(btnW, btnH), s);
-		}
+		// Binary: if (local_4 < 0 || local_4 != g_wSaveLoadSubMode) -> normal border
+		// else -> pressed border
+		const bool pressed = (i >= 0 && (uint16)i == subMode);
+		drawNinePatchBorder(btnPos, Common::Point(btnW, btnH), pressed ? kBorderPressed : kBorderRaised, false, false, s);
 
 		// Check if image has valid data (binary: check size fields > 0)
-		if (imgIdx < 0 || imgIdx >= (int)g_engine->_imageResources.size())
+		if (imgIdx < 0 || imgIdx >= (int)g_engine->_imageResources.size()) {
 			continue;
+		}
 		AnimFrame &frame = g_engine->_imageResources[imgIdx];
-		if (frame._data.empty() || frame._width == 0)
+		if (frame._data.empty() || frame._width == 0) {
 			continue;
+		}
 
 		// Determine which icon to draw
 		AnimFrame *iconFrame = &frame;
@@ -3505,7 +3493,7 @@ void View1::drawOriginalSaveLoadPanel(Graphics::ManagedSurface &s) {
 		int slotY = panelY + 4 + slot * 0xc;
 		int slotW = panelW - 8;
 		int slotH = 0xc;
-		drawPressedBorderOuterHighlights(Common::Point(slotX, slotY), Common::Point(slotW, slotH), s);
+		drawNinePatchBorder(Common::Point(slotX, slotY), Common::Point(slotW, slotH), kBorderPressed, false, false, s);
 
 		// drawText at (g_wUiPanelX + 6, g_wUiPanelY + 6 + slot * 0xc)
 		int idx = _saveLoadPageIndex * 10 + slot;
@@ -3529,8 +3517,9 @@ void View1::handleOriginalSaveLoadClick(const Common::Point &pos) {
 	int clickY = pos.y;
 
 	// if (g_wClickedButtonIndex == 0) { ... entire function body }
-	if (_clickedButtonIndex != 0)
+	if (_clickedButtonIndex != 0) {
 		return;
+	}
 
 	const int panelX = _saveLoadPanelRect.left;
 	const int panelY = _saveLoadPanelRect.top;
