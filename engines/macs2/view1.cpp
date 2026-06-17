@@ -483,20 +483,6 @@ void View1::showStringBox(const Common::StringArray &sa) {
 	}
 }
 
-void View1::drawGlyphs(Macs2::GlyphData *data, int count, uint16 x, uint16 y, Graphics::ManagedSurface &s) {
-	uint16 currentX = x;
-	uint16 currentY = y;
-	for (int i = 0; i < count; i++) {
-		const Macs2::GlyphData &currentData = data[i];
-		if (currentX + currentData._width > s.w) {
-			currentY += currentData._height;
-			currentX = x;
-		}
-		drawSprite(currentX, currentY, currentData, s, false);
-		currentX += currentData._width;
-	}
-}
-
 void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
 	GlyphData xData;
 	g_engine->findGlyph('x', xData);
