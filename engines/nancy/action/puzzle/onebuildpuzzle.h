@@ -54,20 +54,24 @@ protected:
 		Piece() : RenderObject(0) {}
 
 		// File data
-		Common::Rect srcRect;       // Source rect in source image
-		Common::Rect slotRect;      // Correct placement rect (viewport coords)
-		Common::Rect homeRect;      // Starting position (viewport coords)
-		uint8 defaultRotation = 0;  // Rotation index that fits the slot
-		bool isPreRotated = false;  // Piece starts already in place (slotRect position)
+		Common::Rect srcRect;
+		Common::Rect altSrcRect;    // At-home art, shown until first pickup
+		Common::Rect slotRect;
+		Common::Rect homeRect;
+		uint8 defaultRotation = 0;
+		bool isPreRotated = false;
 
 		// Runtime
 		Common::Rect gameRect;      // Current viewport-space rect
 		int curRotation = 0;
 		bool placed = false;
 
-		// Up to 4 rotation surfaces (rotation 1-3 only exist if canRotateAll or isPreRotated)
+		// Rotations 1-3 only built when canRotateAll or isPreRotated
 		Graphics::ManagedSurface rotateSurfaces[4];
 		bool hasSurface[4] = {};
+
+		Graphics::ManagedSurface altSurface;
+		bool useAltSurface = false;
 
 		void setZ(uint16 z) { _z = z; _needsRedraw = true; }
 

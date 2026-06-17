@@ -60,6 +60,16 @@ void OneBuildPuzzle::init() {
 			}
 		}
 
+		p.useAltSurface = false;
+		if (!p.altSrcRect.isEmpty() && !p.isPreRotated) {
+			int aw = p.altSrcRect.width();
+			int ah = p.altSrcRect.height();
+			p.altSurface.create(aw, ah, _image.format);
+			p.altSurface.setTransparentColor(_drawSurface.getTransparentColor());
+			p.altSurface.blitFrom(_image, p.altSrcRect, Common::Point(0, 0));
+			p.useAltSurface = true;
+		}
+
 		// Initial position and rotation
 		if (p.isPreRotated) {
 			// Pre-rotated pieces start at their slot and are already placed
@@ -127,12 +137,15 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 
 		Piece &p = _pieces[i];
 		if (isNancy10) {
-			// Fall back to the alt rect when the primary one is empty.
+			// Two rects: altSrc = at-home art, srcRect = active art
 			Common::Rect altSrc;
 			readRect(stream, altSrc);
 			readRect(stream, p.srcRect);
-			if (p.srcRect.isEmpty())
+			if (p.srcRect.isEmpty()) {
 				p.srcRect = altSrc;
+			} else if (!altSrc.isEmpty()) {
+				p.altSrcRect = altSrc;
+			}
 		} else {
 			readRect(stream, p.srcRect);
 		}
@@ -350,6 +363,12 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 				}
 			}
 
+			// Re-arm at-home art when the piece lands back on homeRect
+			if (!piece.altSurface.empty() && !piece.placed &&
+					piece.gameRect == piece.homeRect) {
+				piece.useAltSurface = true;
+			}
+
 			updatePieceRender(_pickedUpPiece);
 			_isDragging = false;
 			_pickedUpPiece = -1;
@@ -389,10 +408,12 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 		if ((leftClick || rightClick) && topmostUnplaced != -1) {
 			_pickedUpPiece = topmostUnplaced;
 
+			Piece &pp = _pieces[_pickedUpPiece];
+			pp.useAltSurface = false;
+
 			if (rightClick)
 				rotatePiece(_pickedUpPiece);
 
-			Piece &pp = _pieces[_pickedUpPiece];
 			_isDragging = true;
 			_pickedUpWidth  = pp.rotateSurfaces[pp.curRotation].w;
 			_pickedUpHeight = pp.rotateSurfaces[pp.curRotation].h;
@@ -418,12 +439,16 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 
 void OneBuildPuzzle::updatePieceRender(int pieceIdx) {
 	Piece &p = _pieces[pieceIdx];
-	int rot = p.curRotation;
-	if (!p.hasSurface[rot])
-		rot = 0;
-	if (!p.hasSurface[rot])
-		return;
-	p._drawSurface.create(p.rotateSurfaces[rot], p.rotateSurfaces[rot].getBounds());
+	if (p.useAltSurface && !p.altSurface.empty()) {
+		p._drawSurface.create(p.altSurface, p.altSurface.getBounds());
+	} else {
+		int rot = p.curRotation;
+		if (!p.hasSurface[rot])
+			rot = 0;
+		if (!p.hasSurface[rot])
+			return;
+		p._drawSurface.create(p.rotateSurfaces[rot], p.rotateSurfaces[rot].getBounds());
+	}
 	p.setTransparent(true);
 	p.moveTo(p.gameRect);
 }
