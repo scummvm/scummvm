@@ -222,6 +222,7 @@ void ScriptExecutor::scriptSaveVariableHelper(uint32 value) {
 	}
 
 	uint16 variableID = readUint16();
+	debugC(kDebugScript, "SCRIPT::saveVariable(subOpcode=0x%02x, variableID=%u, value=%u)", subOpcode, variableID, value);
 	setVariableValue(variableID, value);
 }
 
@@ -341,7 +342,7 @@ void ScriptExecutor::scriptPrintString(bool alignRight) {
 	uint16 bp2 = readUint16();
 	uint16 bp4 = readUint16();
 
-	// TODO: Implement naive string printing here, refine later
+	debugC(kDebugScript, "SCRIPT::printString(x=%u, y=%u, strOffset=%u, numLines=%u, alignRight=%d)", x, y, bp2, bp4, alignRight);
 
 	Common::StringArray strings;
 	if (_executingScriptObjectId == 0) {
@@ -380,6 +381,7 @@ void ScriptExecutor::setVariableValue(uint16 index, uint16 a, uint16 b) {
 void ScriptExecutor::setVariableValue(uint16 index, uint32 value) {
 	uint16 a = static_cast<uint16>(value >> 16);    // High 16 bits
 	uint16 b = static_cast<uint16>(value & 0xFFFF); // Low 16 bits
+	debugC(kDebugScript, "SCRIPT::setVariableValue(index=%u, value=%u (a=%u, b=%u))", index, value, a, b);
 	setVariableValue(index, b, a);
 }
 
@@ -543,6 +545,7 @@ void Script::ScriptExecutor::scriptSetVar() {
 	uint16 variableIndex = readUint16();
 	ScriptVariable var;
 	scriptReadValuePair(var.a, var.b);
+	debugC(kDebugScript, "SCRIPT::setVar(variableIndex=%u, value1=%u, value2=%u)", variableIndex, var.a, var.b);
 	_variables[variableIndex] = var;
 }
 
@@ -559,6 +562,7 @@ void Script::ScriptExecutor::scriptSetVarOr() {
 	scriptReadValuePair(value2, value3);
 	value2 |= value1;
 	value3 |= 0x00;
+	debugC(kDebugScript, "SCRIPT::setVarOr(variableIndex=%u, value1=%u, value2=%u, value3=%u)", variableIndex, value1, value2, value3);
 	setVariableValue(variableIndex, value2, value3);
 }
 
@@ -566,6 +570,7 @@ void Script::ScriptExecutor::scriptIfTrue() {
 	uint16 res1;
 	uint16 res2;
 	scriptReadValuePair(res1, res2);
+	debugC(kDebugScript, "SCRIPT::ifTrue(result1=%u, result2=%u)", res1, res2);
 	_expectedEndLocation = _stream->pos();
 	if ((res1 | res2) == 0) {
 		scriptSkipBlock();
@@ -577,6 +582,7 @@ void Script::ScriptExecutor::scriptIfFalse() {
 	uint16 result1;
 	uint16 result2;
 	scriptReadValuePair(result1, result2);
+	debugC(kDebugScript, "SCRIPT::ifFalse(result1=%u, result2=%u)", result1, result2);
 	_expectedEndLocation = _stream->pos();
 	if (result1 | result2) {
 		scriptSkipBlock();
@@ -603,6 +609,8 @@ bool Script::ScriptExecutor::scriptCompare() {
 	bool conditionMet = false;
 	const int32 val1 = (int32)((uint32)v2 << 16 | (uint32)v1);
 	const int32 val2 = (int32)((uint32)v4 << 16 | (uint32)v3);
+
+	debugC(kDebugScript, "SCRIPT::compare(val1=%d, val2=%d)", val1, val2);
 
 	if (opcode2 == 0x01) {
 		// Equal
@@ -644,6 +652,8 @@ void Script::ScriptExecutor::scriptIfInteraction() {
 	scriptReadValuePair(interacted1, interacted2);
 	uint16 object1 = scriptReadValue16();
 	uint16 object2 = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::ifInteraction(subOpcode=0x%02x, interacted1=%u, interacted2=%u, object1=%u, object2=%u)",
+		   subOpcode, interacted1, interacted2, object1, object2);
 	const bool match1 = (interacted1 == object1) && (interacted2 == object2);
 	const bool match2 = (interacted1 == object2) && (interacted2 == object1);
 	bool matched = match1 || match2;
@@ -658,19 +668,23 @@ void Script::ScriptExecutor::scriptIfInteraction() {
 void Script::ScriptExecutor::scriptEndIf() {
 	// Opcode 0x07: no-op (confirmed: no handler in disassembly, falls through to loop).
 	// It has no specific case handling code in the original.
+	debugC(kDebugScript, "SCRIPT::endIf()");
 }
 
 void Script::ScriptExecutor::scriptElse() {
 	// This is some kind of skipping as well.
 	scriptSkipAlternate();
+	debugC(kDebugScript, "SCRIPT::else()");
 }
 
 void Script::ScriptExecutor::scriptNop09() {
 	// ExecuteScript does not currently have a dedicated opcode 0x09 dispatch branch.
+	debugC(kDebugScript, "SCRIPT::nop09()");
 }
 
 void Script::ScriptExecutor::scriptPrintStringLeft() {
 	// l0037_DDE8:
+	debugC(kDebugScript, "SCRIPT::printStringLeft()");
 	scriptPrintString();
 	// Ends execution (confirmed: jumps to e3bd in disassembly).
 	endBuffering(_lastOpcodeTriggeredSkip);
@@ -683,6 +697,7 @@ bool Script::ScriptExecutor::scriptMoveObject() {
 	uint16 sceneID = scriptReadValue16();
 	int16 x = (int16)scriptReadValue16();
 	int16 y = (int16)scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::moveObject(objectID=%u, sceneID=%u, x=%d, y=%d)", objectID, sceneID, x, y);
 
 	if (objectID < 1 || objectID > 0x200) {
 		warning("Opcode 0x0B: invalid object %u", objectID);
@@ -855,6 +870,8 @@ ExecutionResult Script::ScriptExecutor::scriptChangeScene() {
 	uint32 newSceneID = scriptReadValue32();
 	const uint16 transitionMode = scriptReadValue16();
 	const uint16 transitionSpeed = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::changeScene(newSceneID=%u, transitionMode=%u, transitionSpeed=%u)", newSceneID, transitionMode, transitionSpeed);
+
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	// Binary: mode 0 fades old palette to black BEFORE loading new scene
 	if (currentView != nullptr && transitionMode == 0 && transitionSpeed != 0) {
@@ -893,6 +910,7 @@ ExecutionResult Script::ScriptExecutor::scriptShowDialogue() {
 	uint16 side = scriptReadValue16();
 	uint32 offset = readUint16();
 	uint32 numLines = readUint16();
+	debugC(kDebugScript, "SCRIPT::showDialogue(objectID=%u, x=%u, y=%u, side=%u, textOffset=%u, numLines=%u)", objectID, x, y, side, offset, numLines);
 
 	View1 *currentView = (View1 *)_engine->findView("View1");
 
@@ -927,6 +945,7 @@ bool Script::ScriptExecutor::scriptWalkToPosition() {
 	uint32 objectID = scriptReadValue32() - 0x400;
 	int16 x = (int16)scriptReadValue16();
 	int16 y = (int16)scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::walkToPosition(objectID=%u, x=%d, y=%d)", objectID, x, y);
 
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	Character *c = currentView ? currentView->getCharacterByIndex(objectID) : nullptr;
@@ -979,6 +998,7 @@ ExecutionResult Script::ScriptExecutor::scriptWaitForWalk() {
 	// sets g_wWalkTargetObjectIndex, hides cursor, returns to gameTick.
 	// gameTick checks walk completion each frame.
 	uint32 objectID = scriptReadValue32() - 0x400;
+	debugC(kDebugScript, "SCRIPT::waitForWalk(objectID=%u)", objectID);
 	if (objectID < 1 || objectID > 0x200) {
 		warning("Opcode 0x11: invalid object %u", objectID);
 		endBuffering(_lastOpcodeTriggeredSkip);
@@ -1017,6 +1037,7 @@ ExecutionResult Script::ScriptExecutor::scriptWaitForWalk() {
 
 void Script::ScriptExecutor::scriptSkipUntil14() {
 	uint16 tag = readUint16();
+	debugC(kDebugScript, "SCRIPT::skipUntil14(tag=%.4x)", tag);
 	_stream->seek(0, SEEK_SET);
 	while (_stream->pos() < _stream->size()) {
 		uint8 opcode = readByte();
@@ -1036,12 +1057,14 @@ void Script::ScriptExecutor::scriptSkipUntil14() {
 void Script::ScriptExecutor::scriptSkipWord() {
 	// If we reach opcode 14 regularly, just discard the payload and continue.
 	readUint16();
+	debugC(kDebugScript, "SCRIPT::skipWord()");
 }
 
 void Script::ScriptExecutor::scriptClearDialogueChoices() {
 	// Mark that we are gathering strings for setting up a dialogue choice.
 	_dialogueChoices.clear();
 	_dialogueChoiceScriptIndices.clear();
+	debugC(kDebugScript, "SCRIPT::clearDialogueChoices()");
 }
 
 void Script::ScriptExecutor::scriptAddDialogueChoice() {
@@ -1059,6 +1082,7 @@ void Script::ScriptExecutor::scriptAddDialogueChoice() {
 	// assert(index - 1 == DialogueChoices.size());
 	uint16 offset = readUint16();
 	uint16 numLines = readUint16();
+	debugC(kDebugScript, "SCRIPT::addDialogueChoice: index=%u textOffset=%u numLines=%u scriptObject=%u", index, offset, numLines, _executingScriptObjectId);
 	Common::StringArray lines;
 	if (_executingScriptObjectId == 0) {
 		lines = _engine->decodeStrings(Scenes::instance()._currentSceneStrings, offset, numLines, Scenes::instance()._currentSceneIndex, 0);
@@ -1079,6 +1103,7 @@ ExecutionResult Script::ScriptExecutor::scriptShowDialogueChoice() {
 	uint32 x = scriptReadValue32();
 	uint32 y = scriptReadValue32();
 	uint16 side = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::showDialogueChoice: walkTarget=%d isLerping check needed", _walkTargetObjectIndex);
 	const uint16 speakerObjectID = Scenes::instance()._currentActorIndex;
 	debugC(kDebugScript,
 		   "Opcode 17 choice box: speaker=%u rawPos=(%u,%u) side=%u choiceCount=%u",
@@ -1104,6 +1129,7 @@ bool Script::ScriptExecutor::scriptWalkToAndPickup() {
 	// Walk to and pick up an object.
 	uint32 actorIndex = scriptReadValue32() - 0x400;
 	uint32 objectIndex = scriptReadValue32() - 0x400;
+	debugC(kDebugScript, "SCRIPT::walkToAndPickup(actor=%u, object=%u)", actorIndex, objectIndex);
 
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	Character *actor = currentView->getCharacterByIndex(actorIndex);
@@ -1150,6 +1176,7 @@ bool Script::ScriptExecutor::scriptSetPickupFrames() {
 	int32 objectID = (int32)scriptReadValue32() - 0x400;
 	uint16 value217 = scriptReadValue16();
 	uint16 value219 = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setPickupFrames(objectID=%d, value217=%u, value219=%u)", objectID, value217, value219);
 	if (objectID < 1 || objectID > 0x200) {
 		warning("Ignoring object runtime setup for invalid object %d", objectID);
 		return false;
@@ -1170,6 +1197,7 @@ bool Script::ScriptExecutor::scriptSetupObject() {
 	int32 objectID = (int32)scriptReadValue32() - 0x400;
 	uint16 slotID = scriptReadValue16();
 	uint16 value = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setupObject(objectID=%d, slotID=%u, value=%u)", objectID, slotID, value);
 	if (objectID < 1 || objectID > 0x200) {
 		warning("Ignoring object slot setup for invalid object %d", objectID);
 		return false;
@@ -1197,11 +1225,13 @@ bool Script::ScriptExecutor::scriptSetupObject() {
 void Script::ScriptExecutor::scriptSetSkippable() {
 	// Sets g_wScriptSkippable [102Ah] = 1.
 	_scriptSkippable = true;
+	debugC(kDebugScript, "SCRIPT::setSkippable()");
 }
 
 void Script::ScriptExecutor::scriptClearSkippable() {
 	// Sets g_wScriptSkippable [102Ah] = 0.
 	_scriptSkippable = false;
+	debugC(kDebugScript, "SCRIPT::clearSkippable()");
 }
 
 bool Script::ScriptExecutor::scriptPlayAnimation() {
@@ -1209,6 +1239,7 @@ bool Script::ScriptExecutor::scriptPlayAnimation() {
 	uint32 objectID = scriptReadValue32() - 0x400;
 	uint32 slotID = scriptReadValue16();
 	uint32 frameOffset = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::playAnimation(objectID=%d, slotID=%u, frameOffset=%u)", objectID, slotID, frameOffset);
 
 	if (objectID < 1 || objectID > 0x200) {
 		warning("Opcode 0x1E: invalid object %u", objectID);
@@ -1244,6 +1275,7 @@ void Script::ScriptExecutor::scriptTestPathfinding() {
 	uint32 objectID = scriptReadValue32() - 0x400;
 	uint32 x = scriptReadValue32();
 	uint32 y = scriptReadValue32();
+	debugC(kDebugScript, "SCRIPT::testPathfinding(objectID=%d, target=(%u,%u))", objectID, x, y);
 	GameObject *object = GameObjects::getObjectByIndex(objectID);
 	_pathWalkableResult = false;
 	if (object == nullptr) {
@@ -1258,6 +1290,7 @@ bool Script::ScriptExecutor::scriptSetYOffset() {
 	// AND mirrors it into runtime field +0x21D (motion target).
 	int32 objectID = (int32)scriptReadValue32() - 0x400;
 	uint16 offset = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setYOffset(objectID=%d, offset=%u)", objectID, offset);
 	if (objectID < 1 || objectID > 0x200) {
 		warning("Ignoring vertical offset set for invalid object %d", objectID);
 		return false;
@@ -1286,6 +1319,8 @@ bool Script::ScriptExecutor::scriptSetMotion() {
 	uint16 targetVerticalOffset = scriptReadValue16();
 	uint16 verticalOffsetDelta = scriptReadValue16();
 	uint16 motionDistance = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setMotion(objectID=%d, targetVerticalOffset=%u, verticalOffsetDelta=%u, motionDistance=%u)",
+		   objectID, targetVerticalOffset, verticalOffsetDelta, motionDistance);
 	if (objectID < 1 || objectID > 0x200) {
 		warning("Ignoring motion setup for invalid object %d", objectID);
 		return false;
@@ -1311,6 +1346,7 @@ bool Script::ScriptExecutor::scriptSetMotion() {
 bool Script::ScriptExecutor::scriptSetOrientation() {
 	int32 objectID = (int32)scriptReadValue32() - 0x400;
 	uint16 animIndex = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setOrientation(objectID=%d, animIndex=%u)", objectID, animIndex);
 	if (objectID < 1 || objectID > 0x200) {
 		warning("Ignoring orientation set for invalid object %d", objectID);
 		return false;
@@ -1336,6 +1372,7 @@ bool Script::ScriptExecutor::scriptMoveToPosition() {
 	uint32 x = scriptReadValue32();
 	uint32 y = scriptReadValue32();
 	uint16 targetVerticalOffset = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::moveToPosition(objectID=%d, target=(%u,%u), targetVerticalOffset=%u)", objectID, x, y, targetVerticalOffset);
 	if (objectID < 1 || objectID > 0x200) {
 		warning("Ignoring move-to-position for invalid object %d", objectID);
 		return false;
@@ -1372,6 +1409,7 @@ void Script::ScriptExecutor::scriptAddValues() {
 	// ;; fn0037_C7E6: 0037:C7E6
 	uint32 a = scriptReadValue32();
 	uint32 b = scriptReadValue32();
+	debugC(kDebugScript, "SCRIPT::addValues(a=%u, b=%u)", a, b);
 
 	uint32 result = a + b;
 	// Go back to the first value being pointed to.
@@ -1388,6 +1426,7 @@ void Script::ScriptExecutor::scriptSubValues() {
 	// ;; fn0037_C82E: 0037:C82E
 	uint32 a = scriptReadValue32();
 	uint32 b = scriptReadValue32();
+	debugC(kDebugScript, "SCRIPT::subValues(a=%u, b=%u)", a, b);
 
 	uint32 result = a - b;
 	_stream->seek(-6, SEEK_CUR);
@@ -1403,6 +1442,7 @@ void Script::ScriptExecutor::scriptLoadSpecialAnim() {
 	// The loaded flag (+0x183) is always set to 1.
 	uint16 shouldMirror = scriptReadValue16();
 	uint8 animationID = readByte();
+	debugC(kDebugScript, "SCRIPT::loadSpecialAnim(objectID=%u, animationID=%u, shouldMirror=%u)", id, animationID, shouldMirror);
 	Common::Array<uint8> blob = Scenes::instance().readSpecialAnimBlob(animationID, g_engine->_fileStream);
 	GameObject *object = GameObjects::getObjectByIndex(id);
 	object->overloadAnimation = blob;
@@ -1419,6 +1459,7 @@ bool Script::ScriptExecutor::scriptSetDirection() {
 	// Value 0x7FFF means "never match" (default from loadObjectData).
 	uint32 characterID = scriptReadValue32() - 0x400;
 	uint16 value = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setDirection(characterID=%u, value=%u)", characterID, value);
 	if (characterID < 1 || characterID > 0x200) {
 		warning("Ignoring set direction for invalid object %u", characterID);
 		return false;
@@ -1439,6 +1480,7 @@ void Script::ScriptExecutor::scriptStopAnimation() {
 	//   3. Free overload animation blob if loaded (runtime +0x183 flag)
 	//   4. Clear overload flag
 	uint32 characterID = scriptReadValue32() - 0x400;
+	debugC(kDebugScript, "SCRIPT::stopAnimation(characterID=%u)", characterID);
 	GameObject *obj = GameObjects::getObjectByIndex(characterID);
 	if (obj == nullptr) {
 		warning("Ignoring stop animation for missing object %u", characterID);
@@ -1450,8 +1492,8 @@ void Script::ScriptExecutor::scriptStopAnimation() {
 }
 
 bool Script::ScriptExecutor::scriptOpenInventory() {
-	uint32 objectID = scriptReadValue32();
-	objectID -= 0x400;
+	uint32 objectID = scriptReadValue32() - 0x400;
+	debugC(kDebugScript, "SCRIPT::openInventory(objectID=%u)", objectID);
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	GameObject *inventorySource = GameObjects::getObjectByIndex(objectID);
 	if (inventorySource == nullptr) {
@@ -1477,11 +1519,13 @@ void Script::ScriptExecutor::scriptLoadObjectAnim() {
 	const bool shouldMirror = scriptReadValue16() != 0;
 	uint8 arrayIndex = readByte();
 
+	debugC(kDebugScript, "SCRIPT::loadObjectAnim(objectID=%u, slotID=%u, arrayIndex=%u, shouldMirror=%u)", objectID, slotID, arrayIndex, shouldMirror);
 	g_engine->loadAnimationFromSceneData(objectID, slotID, arrayIndex, shouldMirror);
 }
 
 bool Script::ScriptExecutor::scriptCheckObjectData() {
 	const uint16 objectID = scriptReadValue16() - 0x400;
+	debugC(kDebugScript, "SCRIPT::checkObjectData(objectID=%u)", objectID);
 	GameObject *object = GameObjects::getObjectByIndex(objectID);
 	if (object == nullptr) {
 		warning("Ignoring object refresh for invalid object %u", objectID);
@@ -1520,6 +1564,7 @@ bool Script::ScriptExecutor::scriptCheckObjectData() {
 bool Script::ScriptExecutor::scriptCheckInventory() {
 	uint16 objectID = scriptReadValue16() - 0x400;
 	uint16 parentID = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::checkInventory(objectID=%u, parentID=%u)", objectID, parentID);
 	const GameObject *object = GameObjects::getObjectByIndex(objectID);
 	if (object == nullptr) {
 		warning("Ignoring inventory check for invalid object %u", objectID);
@@ -1532,6 +1577,7 @@ bool Script::ScriptExecutor::scriptCheckInventory() {
 bool Script::ScriptExecutor::scriptSetSnapToTarget() {
 	const uint16 objectID = scriptReadValue16() - 0x400;
 	const bool enabled = scriptReadValue16() != 0;
+	debugC(kDebugScript, "SCRIPT::setSnapToTarget(objectID=%u, enabled=%u)", objectID, enabled);
 	GameObject *object = GameObjects::getObjectByIndex(objectID);
 	if (object == nullptr) {
 		warning("Ignoring object runtime flag for invalid object %u", objectID);
@@ -1549,6 +1595,7 @@ bool Script::ScriptExecutor::scriptTestObjectAnimFrame() {
 	uint16 slotID = scriptReadValue16();
 	uint16 minFrame = scriptReadValue16();
 	uint16 maxFrame = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::testObjectAnimFrame(objectID=%u, slotID=%u, minFrame=%u, maxFrame=%u)", objectID, slotID, minFrame, maxFrame);
 	_animBlobRangeTestResult = false;
 	GameObject *object = GameObjects::getObjectByIndex(objectID);
 	if (object == nullptr) {
@@ -1579,6 +1626,7 @@ bool Script::ScriptExecutor::scriptTestObjectAnimFrame() {
 void Script::ScriptExecutor::scriptPrintStringRight() {
 	// Opcode 0x30: scriptPrintString with flag=1 (vs opcode 0x0A with flag=0)
 	// which changes behaviour in the function.
+	debugC(kDebugScript, "SCRIPT::printStringRight()");
 	scriptPrintString(true);
 	endBuffering(_lastOpcodeTriggeredSkip);
 }
@@ -1587,6 +1635,7 @@ void Script::ScriptExecutor::scriptSetPaletteDarkness() {
 	// Binary (1008:ce0b): clamps value to 0..100, writes to sceneData+0x5205
 	// (darkenPercent), then calls applyPaletteInterpolation to update displayed palette.
 	int16 darkenPercent = (int16)scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setPaletteDarkness(darkenPercent=%d)", darkenPercent);
 	if (darkenPercent < 0)
 		darkenPercent = 0;
 	if (darkenPercent > 100)
@@ -1601,6 +1650,7 @@ void Script::ScriptExecutor::scriptSetPaletteDarkness() {
 bool Script::ScriptExecutor::scriptSetObjectClickable() {
 	uint16 objectID = scriptReadValue16() - 0x0400;
 	const uint16 clickable = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setObjectClickable(objectID=%u, clickable=%u)", objectID, clickable);
 	GameObject *object = GameObjects::getObjectByIndex(objectID);
 	if (object == nullptr) {
 		warning("Ignoring clickable toggle for invalid object %u", objectID);
@@ -1613,6 +1663,7 @@ bool Script::ScriptExecutor::scriptSetObjectClickable() {
 bool Script::ScriptExecutor::scriptSetObjectVisible() {
 	uint16 objectID = scriptReadValue16() - 0x0400;
 	const uint16 visible = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setObjectVisible(objectID=%u, visible=%u)", objectID, visible);
 	GameObject *object = GameObjects::getObjectByIndex(objectID);
 	if (object == nullptr) {
 		warning("Ignoring visibility toggle for invalid object %u", objectID);
@@ -1626,6 +1677,7 @@ bool Script::ScriptExecutor::scriptSetHotspotOverride() {
 	// Sets an entry in the [5BD1] list for hotspot lookup.
 	const uint16 v1 = scriptReadValue16() - 0x800;
 	const uint16 v2 = scriptReadValue16() - 0x800;
+	debugC(kDebugScript, "SCRIPT::setHotspotOverride(hotspot=%u, override=%u)", v1, v2);
 
 	if (v1 < 0x1 || v1 > 0x10 || v2 < 0x1 || v2 > 0x10) {
 		warning("Ignoring hotspot override %.4x -> %.4x outside valid range", v1 + 0x800, v2 + 0x800);
@@ -1645,6 +1697,7 @@ bool Script::ScriptExecutor::scriptSetObjectBounds() {
 	const uint16 value1 = scriptReadValue16();
 	const uint16 value2 = scriptReadValue16();
 	const uint16 value3 = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setObjectBounds(objectID=%u, otherObjectID=%u, value1=%u, value2=%u, value3=%u)", objectID, otherObjectID, value1, value2, value3);
 	GameObject *object = GameObjects::getObjectByIndex(objectID);
 	GameObject *otherObject = GameObjects::getObjectByIndex(otherObjectID);
 	if (object == nullptr || otherObject == nullptr) {
@@ -1671,6 +1724,7 @@ bool Script::ScriptExecutor::scriptSetObjectBounds() {
 void Script::ScriptExecutor::scriptDismissAllPanels() {
 	// scriptDismissPanel (1008:d6dd). Restores background if a UI panel
 	// was pending, clears panel state, redraws scene, clears timer flag.
+	debugC(kDebugScript, "SCRIPT::dismissAllPanels()");
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	if (currentView != nullptr) {
 		// Binary: g_wPendingPanelRequest = 0
@@ -1700,6 +1754,7 @@ void Script::ScriptExecutor::scriptDismissAllPanels() {
 void Script::ScriptExecutor::scriptResetToSceneScript() {
 	// scriptResetToSceneScript (1008:ad3e). Resets script execution
 	// context back to the current scene script at position 0.
+	debugC(kDebugScript, "SCRIPT::resetToSceneScript()");
 	_executingScriptObjectId = 0;
 	_executingObjectIndex = Scenes::instance()._currentSceneIndex;
 	_scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
@@ -1711,6 +1766,7 @@ void Script::ScriptExecutor::scriptLoadOverlayFont() {
 	// scriptLoadOverlayFont (1008:d749). Loads a font resource for
 	// overlay text into the overlay font buffer.
 	uint8 resourceIndex = readByte();
+	debugC(kDebugScript, "SCRIPT::loadOverlayFont(resourceIndex=%u)", resourceIndex);
 	_overlayTextStageActive = true;
 	if (!_engine->loadOverlayFont(resourceIndex, _executingScriptObjectId)) {
 		warning("Opcode 0x38: failed to load overlay font resource %u", resourceIndex);
@@ -1719,21 +1775,13 @@ void Script::ScriptExecutor::scriptLoadOverlayFont() {
 
 Script::ScriptExecutor::OpcodeControlFlow Script::ScriptExecutor::scriptAddOverlayTextEntry() {
 	View1 *currentView = (View1 *)_engine->findView("View1");
-	if (currentView == nullptr) {
-		warning("Ignoring overlay text entry without an active View1");
-		scriptReadValue16();
-		scriptReadValue16();
-		scriptReadValue16();
-		readUint16();
-		readUint16();
-		return OpcodeControlFlow::Continue;
-	}
-
+	assert(currentView != nullptr);
 	const uint16 x = scriptReadValue16();
 	const uint16 y = scriptReadValue16();
 	const uint8 alignment = scriptReadValue16();
 	const uint16 stringOffset = readUint16();
 	const uint16 entryType = readUint16();
+	debugC(kDebugScript, "SCRIPT::addOverlayTextEntry(x=%u, y=%u, align=%u, stringOffset=%u, entryType=%u)", x, y, alignment, stringOffset, entryType);
 	if (!_overlayTextStageActive) {
 		warning("Opcode 0x3A: overlay text entry at %u,%u without active stage (error 0x21)", x, y);
 		endBuffering(_lastOpcodeTriggeredSkip);
@@ -1776,6 +1824,7 @@ Script::ScriptExecutor::OpcodeControlFlow Script::ScriptExecutor::scriptAddOverl
 }
 
 void Script::ScriptExecutor::scriptClearOverlayText() {
+	debugC(kDebugScript, "SCRIPT::clearOverlayText()");
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	if (currentView != nullptr) {
 		currentView->clearOverlayTextEntries();
@@ -1784,6 +1833,7 @@ void Script::ScriptExecutor::scriptClearOverlayText() {
 
 void Script::ScriptExecutor::scriptFadeToBlack() {
 	const uint16 fadeSpeed = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::fadeToBlack(speed=%u)", fadeSpeed);
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	if (currentView != nullptr && fadeSpeed != 0) {
 		currentView->startFadeToBlack(fadeSpeed);
@@ -1794,6 +1844,7 @@ void Script::ScriptExecutor::scriptFrameWait() {
 	// The original interpreter stores a frame countdown that is decremented
 	// once per game tick, rather than using a wall-clock timer.
 	uint16 duration = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::frameWait(duration=%u)", duration);
 	_requestCallback = false;
 	startFrameWait(duration);
 	_isAwaitingCallback = true;
@@ -1807,6 +1858,7 @@ void Script::ScriptExecutor::scriptSetPathfinding() {
 	uint16 areaID = scriptReadValue16();
 	uint16 active = scriptReadValue16();
 	uint16 overrideValue = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setPathfinding(areaID=%u, active=%u, overrideValue=%u)", areaID, active, overrideValue);
 	if (active) {
 		g_engine->setPathfindingOverride(areaID, overrideValue);
 	} else {
@@ -1823,6 +1875,7 @@ void Script::ScriptExecutor::scriptTestSceneAnimFrame() {
 	uint32 sceneAnimIndex = scriptReadValue32() - 0x1000;
 	uint32 minFrame = scriptReadValue32();
 	uint32 maxFrame = scriptReadValue32();
+	debugC(kDebugScript, "SCRIPT::testSceneAnimFrame(sceneAnimIndex=%u, minFrame=%u, maxFrame=%u)", sceneAnimIndex, minFrame, maxFrame);
 	_animBlobRangeTestResult = false;
 	if (sceneAnimIndex == 0 || sceneAnimIndex > Scenes::instance()._currentSceneSpecialAnimOffsets.size()) {
 		warning("Ignoring scene animation range test for invalid index %u", sceneAnimIndex);
@@ -1833,6 +1886,7 @@ void Script::ScriptExecutor::scriptTestSceneAnimFrame() {
 }
 
 void Script::ScriptExecutor::scriptEndOverlayText() {
+	debugC(kDebugScript, "SCRIPT::endOverlayText()");
 	if (_overlayTextStageActive) {
 		_overlayTextStageActive = false;
 	}
@@ -1840,6 +1894,7 @@ void Script::ScriptExecutor::scriptEndOverlayText() {
 
 void Script::ScriptExecutor::scriptFadeFromBlack() {
 	const uint16 fadeSpeed = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::fadeFromBlack(speed = %u)", fadeSpeed);
 	View1 *currentView = (View1 *)_engine->findView("View1");
 	if (currentView != nullptr && fadeSpeed != 0) {
 		currentView->startFading(fadeSpeed);
@@ -2103,6 +2158,7 @@ bool Script::ScriptExecutor::scriptWaitForAdlib() {
 }
 
 void Script::ScriptExecutor::scriptFreePcmSound() {
+	debugC(kDebugScript, "SCRIPT::freePcmSound()");
 	if (_soundEnabled)
 		_engine->stopCurrentSound();
 	_engine->clearCurrentSoundData();
@@ -2185,6 +2241,8 @@ ExecutionResult Script::ScriptExecutor::executeOpcodes() {
 			scriptEndIf();
 		} else if (opcode1 == 0x08) {
 			scriptElse();
+		} else if (opcode1 == 0x09) {
+			scriptNop09();
 		} else if (opcode1 == 0x10) {
 			if (!scriptWalkToPosition()) {
 				continue;
