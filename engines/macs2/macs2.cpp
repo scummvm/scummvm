@@ -193,6 +193,7 @@ void Macs2Engine::readResourceFile() {
 			uint8 *data = new uint8[dataSize];
 			_fileStream->read(data, dataSize);
 			gameObject->_blobs.push_back(Common::Array<uint8>(data, dataSize));
+			delete[] data;
 			gameObject->_blobSourceKeys.push_back(blobSourceKey);
 			// Per-animation walk speed (+0x30 in runtime)
 			uint16 blobSpeed = _fileStream->readUint16LE();
@@ -267,7 +268,7 @@ void Macs2Engine::readExecutable() {
 			error("readExecutable(): Error reading executable file");
 
 		int64 size = file.size();
-		byte *fileData = new byte[size];
+		byte *fileData = (byte *)malloc(size);
 		file.read(fileData, size);
 
 		exeFileStream.reset(new Common::MemoryReadStream(fileData, size, DisposeAfterUse::YES));
