@@ -1477,9 +1477,11 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		movie->_timeOutKeyDown = d.asInt();
 		break;
 	case kTheTimeoutLapsed:
-		// timeOutLapsed can be set in D4, but can't in D3. see D3.1 interactivity manual p312 and D4 dictionary p296.
-		if (g_director->getVersion() >= 400 && (d.type == INT || d.type == FLOAT)) {
-			g_director->_tickBaseline = (int)g_director->getMacTicks() - d.asInt();
+		// The D3.1 interactivity interactivity manual p312 says timeoutLapsed can't be set,
+		// but it is lying. D2 and D3 Mac will let you set it, and games like ybr1 use it.
+		// See D4 dictionary p296.
+		if ((d.type == INT || d.type == FLOAT)) {
+			movie->_lastTimeOut = (int)g_director->getMacTicks() - d.asInt();
 		}
 		if (d.type != INT) {
 			warning("Lingo::setTheEntity() : Wrong DatumType %d for setting of Lingo Property timeOutLapsed", d.type);
