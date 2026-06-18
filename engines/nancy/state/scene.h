@@ -137,7 +137,7 @@ public:
 	byte hasItem(int16 id) const;
 	byte getItemDisabledState(int16 id) const { return _flags.disabledItems[id]; }
 	void setItemDisabledState(int16 id, byte state) {
-		if (id < _flags.disabledItems.size())
+		if ((uint16)id < _flags.disabledItems.size())
 			_flags.disabledItems[id] = state;
 	}
 
