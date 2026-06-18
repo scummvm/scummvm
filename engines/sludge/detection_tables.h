@@ -43,6 +43,8 @@ static const PlainGameDescriptor sludgeGames[] = {
 	{ "otto",			"Otto Experiment" },
 	{ "samnmaxfl",		"Sam and Max Flintlocked" },
 	{ "fullmoon",		"Full Moon" },
+	{ "shapeshift",     "Shape-Shift Escape" },
+
 	{ 0, 0 }
 };
 
@@ -174,6 +176,15 @@ static const SludgeGameDescription gameDescriptions[] = {
 
 	GAME2("fullmoon", "", "gamedata",    "66e0ee55b517970807b794f34feb500a", 95645674,
 					      "Full Moon.exe", "34cc90e376acc77870882bdc70488d81", 83968),
+
+	GAME1l("shapeshift", "", "youarethemonster.slg", "b37d2d06edf9e1e3b3a3920586dd7cb8", 1013848, Common::EN_ANY, Common::kPlatformLinux, 0),
+	GAME2l("shapeshift", "", "youarethemonster.slg", "b37d2d06edf9e1e3b3a3920586dd7cb8", 1013848,
+							 "SLUDGE Engine.exe",	 "3e617407e17f9b44ef648c9db13e5a4c", 1397760,
+							 Common::EN_ANY, Common::kPlatformWindows, 0),
+
+	GAME1l("shapeshift", "post-comp", "youarethemonster.slg", "67871a9eb15f6f3d2de7f1861a5cf86a", 1023908, Common::EN_ANY, Common::kPlatformLinux, 0),
+	GAME1l("shapeshift", "post-comp", "GameData.slg", "67871a9eb15f6f3d2de7f1861a5cf86a", 1023908, Common::EN_ANY, Common::kPlatformWindows, 0),
+
 
 	{ AD_TABLE_END_MARKER, 0 }
 };
