@@ -1185,9 +1185,9 @@ bool Script::ScriptExecutor::scriptWalkToAndPickup() {
 
 bool Script::ScriptExecutor::scriptSetPickupFrames() {
 	int32 objectID = (int32)scriptReadValue32() - 0x400;
-	uint16 value217 = scriptReadValue16();
-	uint16 value219 = scriptReadValue16();
-	debugC(kDebugScript, "SCRIPT::setPickupFrames(objectID=%d, value217=%u, value219=%u)", objectID, value217, value219);
+	uint16 frameStart = scriptReadValue16();
+	uint16 frameEnd = scriptReadValue16();
+	debugC(kDebugScript, "SCRIPT::setPickupFrames(objectID=%d, frameStart=%u, frameEnd=%u)", objectID, frameStart, frameEnd);
 	if (objectID < 1 || objectID > 0x200) {
 		warning("Ignoring object runtime setup for invalid object %d", objectID);
 		return false;
@@ -1199,8 +1199,8 @@ bool Script::ScriptExecutor::scriptSetPickupFrames() {
 		return false;
 	}
 
-	object->_pickupFrameStart = value217;
-	object->_pickupFrameEnd = value219;
+	object->_pickupFrameStart = frameStart;
+	object->_pickupFrameEnd = frameEnd;
 	return true;
 }
 
