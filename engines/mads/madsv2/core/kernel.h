@@ -314,24 +314,6 @@ struct KernelGame {
 	void synchronize(Common::Serializer &s);
 };
 
-
-#ifdef old_animation
-#define kernel_animation                kernel_anim[0].anim
-#define kernel_animation_cycled         kernel_anim[0].cycled
-#define kernel_repeat_animation         kernel_anim[0].repeat
-#define kernel_animation_sprite_loaded  kernel_anim[0].sprite_loaded
-#define kernel_animation_buffer_id      kernel_anim[0].buffer_id
-#define kernel_animation_buffer         kernel_anim[0].buffer
-#define kernel_animation_frame          kernel_anim[0].frame
-#define kernel_animation_image          kernel_anim[0].image
-#define kernel_animation_doomed         kernel_anim[0].doomed
-#define kernel_animation_trigger_code   kernel_anim[0].trigger_code
-#define kernel_animation_trigger_mode   kernel_anim[0].trigger_mode
-#define kernel_animation_trigger_words  kernel_anim[0].trigger_words
-#define kernel_animation_next_clock     kernel_anim[0].next_clock
-#endif
-
-
 #define kernel_init_dialog() inter_reset_dialog()
 #define kernel_dialog(q)     inter_add_dialog(quote_string(kernel.quotes, q), q)
 

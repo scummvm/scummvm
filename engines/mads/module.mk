@@ -71,6 +71,7 @@ MODULE_OBJS += \
 	madsv2/core/window.o \
 	madsv2/core/xms.o \
 	madsv2/nebular/nebular.o \
+	madsv2/nebular/extra.o \
 	madsv2/nebular/global.o \
 	madsv2/nebular/main.o \
 	madsv2/nebular/main_menu.o \

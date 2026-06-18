@@ -41,6 +41,8 @@
 #include "mads/madsv2/core/mcga.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/inter.h"
+#include "mads/madsv2/nebular/extra.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -77,6 +79,12 @@ void HotSpot::load(Common::SeekableReadStream *src) {
 		facing, prep, active, cursor_number, syntax);
 	src->skip(1);
 	src->readMultipleLE(vocab, verb);
+}
+
+void RoomArt::load(Common::SeekableReadStream *src) {
+	src->readMultipleLE(xs, ys);
+	color_list.load(src);
+	cycle_list.load(src);
 }
 
 //====================================================================
@@ -156,8 +164,12 @@ RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
 
 	// Initialize structures
 	mem_last_alloc_loader = MODULE_ROOM_LOADER;
-
 	load_handle.open = false;
+
+	if (g_engine->getGameID() == GType_RexNebular) {
+		return RexNebular::room_load_rex(id, variant, base_path, picture, depth, walk, special, picMap, depthMap, picResource,
+			depthResource, picture_ems_handle, depth_ems_handle, load_flags);
+	}
 
 	// Open the room data file
 	room_resolve_base(base, temp_buf, id, base_path);

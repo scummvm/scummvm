@@ -165,7 +165,7 @@ done:
 	return false;
 }
 
-void pal_compact(word master_handle, int num_slaves, word *slave) {
+void pal_compact(int16 master_handle, int num_slaves, int16 *slave) {
 	dword mask_test;
 	dword mask_out;
 	dword mask_in;

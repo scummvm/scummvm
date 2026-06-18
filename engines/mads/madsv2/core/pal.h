@@ -137,7 +137,7 @@ extern int  pal_deallocate(int use_flag);
  * Compresses a list of handles to a single handle (designed for use
  * by room loader so that background sprites don't take up lots of handles)
  */
-extern void pal_compact(word master_handle, int num_slaves, word *slave);
+extern void pal_compact(int16 master_handle, int num_slaves, int16 *slave);
 
 /**
  * Computes the sum of squared differences between the two colors

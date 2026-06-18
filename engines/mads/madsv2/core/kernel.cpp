@@ -58,6 +58,7 @@
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/forest/digi.h"
+#include "mads/madsv2/nebular/extra.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -2549,19 +2550,25 @@ int kernel_load_sound_driver(const char *name, char sound_card_, int sound_board
 void kernel_load_variant(int variant) {
 	room_variant = variant;
 
-	if (room_load_variant(room_id, room_variant, NULL, room,
-		&scr_depth,
-		&scr_walk,
-		&scr_special,
-		&depth_map,
-		&depth_resource,
-		-1)) {
-		error_report(ERROR_VARIANT_LOAD_FAILURE, WARNING, MODULE_KERNEL, room_load_error, (room_id * 10) + room_variant);
+	if (g_engine->getGameID() == GType_RexNebular) {
+		RexNebular::room_load_depth(nullptr, &scr_depth, room, variant);
+		matte_refresh_work();
+
+	} else {
+		if (room_load_variant(room_id, room_variant, NULL, room,
+			&scr_depth,
+			&scr_walk,
+			&scr_special,
+			&depth_map,
+			&depth_resource,
+			-1)) {
+			error_report(ERROR_VARIANT_LOAD_FAILURE, WARNING, MODULE_KERNEL, room_load_error, (room_id * 10) + room_variant);
+		}
+
+		rail_connect_all_nodes();
+
+		camera_jump_to(picture_view_x, picture_view_y);
 	}
-
-	rail_connect_all_nodes();
-
-	camera_jump_to(picture_view_x, picture_view_y);
 }
 
 void kernel_new_palette() {

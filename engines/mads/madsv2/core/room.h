@@ -131,6 +131,9 @@ struct RoomArt {
 	int ys;                             /* ...structure in the .ART file)   */
 	ColorList color_list;               /* List of colors used in picture   */
 	CycleList cycle_list;               /* List of color cycling ranges     */
+
+	static constexpr int SIZE = 2 + 2 + ColorList::SIZE + CycleList::SIZE;
+	void load(Common::SeekableReadStream *src);
 };
 typedef RoomArt *RoomArtPtr;
 
@@ -165,7 +168,6 @@ typedef RoomPict RoomPictPtr;
 /* Room definition structure (.DEF files) */
 
 struct RoomDef {
-
 	char picture_base[80];      /* Picture base                         */
 
 	int misc[10];               /* Room padding                         */
@@ -184,9 +186,6 @@ struct RoomDef {
 	ShadowList shadow;          /* Shadow list                          */
 };
 
-
-
-/* Loadable Room definition (.DAT files) */
 struct RoomFile {
 	char picture_base[80];           /* Picture base name             */
 	uint16 misc[10];                 /* Padding for future updates    */
@@ -210,9 +209,7 @@ struct RoomFile {
 /* Run-time room definition structure (in memory) */
 
 struct Room {
-	/* int       id;                       Room number                   */
-	/* int       picture_id;               Room whose ART file is needed */
-	/* int       format;                   Room format (panning/normal)  */
+	int16		room_id;				  /* Room id (only in Rex Nebular) */
 	int16       xs, ys;                   /* X and Y size of room picture  */
 
 	uint16      misc[10];                /* Padding for future updates    */
