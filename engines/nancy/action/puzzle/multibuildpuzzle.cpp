@@ -46,6 +46,21 @@ void MultiBuildPuzzle::init() {
 		_closeupImage.setTransparentColor(_drawSurface.getTransparentColor());
 	}
 
+	if (_hasAnimImage) {
+		_animRender._drawSurface.create(_animRect.width(), _animRect.height(),
+				g_nancy->_graphics->getInputPixelFormat());
+		_animRender.setTransparent(true);
+		_animRender._drawSurface.clear(g_nancy->_graphics->getTransColor());
+		_animRender.moveTo(_animRect);
+		_animRender.setZOrder((uint16)(_z + 80 + 10));
+		_animRender.setVisible(true);
+
+		g_nancy->_resource->loadImage(_animImageName, _animImage);
+		_animImage.setTransparentColor(g_nancy->_graphics->getTransColor());
+
+		_animSurfaceReady = true;
+	}
+
 	for (uint i = 0; i < _pieces.size(); ++i) {
 		Piece &p = _pieces[i];
 
@@ -85,6 +100,9 @@ void MultiBuildPuzzle::registerGraphics() {
 	if (!_isInitialized)
 		return;
 
+	if (_animSurfaceReady)
+		_animRender.registerGraphics();
+
 	for (uint i = 0; i < _pieces.size(); ++i)
 		_pieces[i].registerGraphics();
 }
@@ -119,8 +137,7 @@ void MultiBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 	_checkOverlapOnDrop = stream.readByte() != 0;
 
 	if (isNancy10) {
-		// Completion-animation block: image name + sprite-sheet rect + 4 layout
-		// shorts (cols, framesPerStep, spacing, totalRows). TODO: not wired up.
+		// Anim block: name + rect + 4 layout shorts (cols/framesPerStep/spacing/totalRows)
 		Common::String animName;
 		readFilename(stream, animName);
 		_animImageName = Common::Path(animName);
@@ -224,6 +241,56 @@ void MultiBuildPuzzle::execute() {
 				g_nancy->_sound->stopSound(_solveSound);
 				_state = kActionTrigger;
 			}
+			break;
+
+		case kAnimStep: {
+			if (!_hasAnimImage) {
+				if (g_system->getMillis() >= _timerEnd)
+					_solveState = kIdle;
+				break;
+			}
+
+			_animActive = true;
+
+			if (_dropSound.name != "NO SOUND" &&
+					!g_nancy->_sound->isSoundPlaying(_dropSound)) {
+				g_nancy->_sound->playSound(_dropSound);
+			}
+
+			if (_animLayout[1] > 0 &&
+					_animFrameCounter / _animLayout[1] >= _animLayout[0]) {
+				_animFrameCounter = 0;
+				_animRowCounter++;
+			}
+
+			if (_animRowCounter < _animLayout[3] && _animLayout[1] > 0) {
+				// pdW/pdH match the raw inclusive `right - left` (our exclusive width - 1)
+				int pdW = _animRect.width()  - 1;
+				int pdH = _animRect.height() - 1;
+				int spacing = _animLayout[2];
+				int col = _animFrameCounter % _animLayout[1];
+				int row = _animFrameCounter / _animLayout[1];
+				int srcL = (pdW + spacing) * col + 1;
+				int srcT = (pdH + spacing) * row + 1;
+				_animSrcRect = Common::Rect(srcL, srcT, srcL + pdW, srcT + pdH);
+				_animFrameCounter++;
+				renderAnimFrame();
+				_animFrameWaitEnd = g_system->getMillis() + 100;
+				_solveState = kAnimWaitFrame;
+			} else {
+				_animRowCounter = 0;
+				_animFrameCounter = 0;
+				_animEnded = true;
+				_animActive = false;
+				clearAnimFrame();
+				_solveState = kIdle;
+			}
+			break;
+		}
+
+		case kAnimWaitFrame:
+			if (g_system->getMillis() >= _animFrameWaitEnd)
+				_solveState = kAnimStep;
 			break;
 		}
 		break;
@@ -484,7 +551,14 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 			if (_autoSolveOnDrop || _pieces.size() > 79)
 				checkIfSolved();
 
-			if (_solveState == kIdle) {
+			if (validDrop && _hasAnimImage && _solveState != kAnimStep &&
+					_solveState != kAnimWaitFrame) {
+				_animFrameCounter = 0;
+				_animRowCounter = 0;
+				_animActive = true;
+				_animEnded = false;
+				_solveState = kAnimStep;
+			} else if (_solveState == kIdle) {
 				_solveState = kWaitTimer;
 				_timerEnd = g_system->getMillis() + 300;
 			}
@@ -636,13 +710,6 @@ bool MultiBuildPuzzle::updateSolveFlags() {
 	if (total < _requiredPieces)
 		return false;
 
-	if (_cancelScene._flag.label != kFlagNoLabel)
-		NancySceneState.setEventFlag(_cancelScene._flag);
-
-	// Preemptively clear the solve flag; the exact-match check below re-sets it.
-	if (_solveScene._flag.label != kFlagNoLabel)
-		NancySceneState.setEventFlag(_solveScene._flag.label, _solveScene._flag.flag ? 0 : 1);
-
 	for (uint i = 0; i < _numPieces; ++i) {
 		if (_pieces[i].placeCount > 0 && _pieces[i].mustNotPlace > 0)
 			return false;
@@ -650,8 +717,8 @@ bool MultiBuildPuzzle::updateSolveFlags() {
 			return false;
 	}
 
-	if (_solveScene._flag.label != kFlagNoLabel)
-		NancySceneState.setEventFlag(_solveScene._flag);
+	// Cancel flag is owned by kActionTrigger so it doesn't retrigger per drop
+	NancySceneState.setEventFlag(_solveScene._flag);
 
 	return true;
 }
@@ -708,6 +775,22 @@ void MultiBuildPuzzle::checkIfSolved() {
 	}
 
 	_solveState = kWaitSolveSound;
+}
+
+void MultiBuildPuzzle::renderAnimFrame() {
+	if (!_animSurfaceReady || _animImage.empty())
+		return;
+
+	_animRender._drawSurface.clear(g_nancy->_graphics->getTransColor());
+	_animRender._drawSurface.blitFrom(_animImage, _animSrcRect, Common::Point(0, 0));
+	_animRender.setNeedsRedraw(true);
+}
+
+void MultiBuildPuzzle::clearAnimFrame() {
+	if (!_animSurfaceReady)
+		return;
+	_animRender._drawSurface.clear(g_nancy->_graphics->getTransColor());
+	_animRender.setNeedsRedraw(true);
 }
 
 void MultiBuildPuzzle::updatePieceRender(int pieceIdx) {

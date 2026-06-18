@@ -138,10 +138,30 @@ protected:
 		kIdle           = 0,
 		kWaitTimer      = 1,
 		kWaitSolveSound = 4,
-		kPlaySolveSound = 5
+		kPlaySolveSound = 5,
+		kAnimStep       = 6, // Blit current frame, advance counters
+		kAnimWaitFrame  = 7  // ~100 ms hold between frames
 	};
 	SolveState _solveState = kIdle;
 	uint32 _timerEnd = 0;
+
+	// Nancy 10 mixing animation
+	struct AnimRender : RenderObject {
+		AnimRender() : RenderObject(0) {}
+		bool isViewportRelative() const override { return true; }
+	};
+
+	Graphics::ManagedSurface _animImage;
+	AnimRender _animRender;
+	uint16 _animFrameCounter = 0;
+	uint16 _animRowCounter = 0;
+	uint32 _animFrameWaitEnd = 0;
+	Common::Rect _animSrcRect;
+	bool _animActive = false;
+	bool _animEnded = false;
+	bool _animSurfaceReady = false;
+	void renderAnimFrame();
+	void clearAnimFrame();
 
 	int16 _pickedUpWidth = 0;
 	int16 _pickedUpHeight = 0;
