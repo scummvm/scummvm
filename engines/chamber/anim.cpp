@@ -116,6 +116,36 @@ void clipSprite(byte *x, byte *y, byte *sprw, byte *sprh, byte **sprite, int8 dx
 
 void copyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte height, byte *target) {
 	if (g_vm->_videoMode == Common::kRenderEGA) {
+		/* EGA: linear 1 byte/pixel. Reveal the block in the same scattered
+		   ("dot dissolve") order as the CGA path, blitting periodically so the
+		   transition is animated instead of an instant copy. */
+		uint16 xx = x * 4;
+		uint16 ww = width * 4;
+		uint32 end = (uint32)ww * height;
+		uint16 step = dot_effect_step ? dot_effect_step : 17;
+		uint32 offs = 0;
+		uint32 guard = 0;
+
+		if (target == SCREENBUFFER) {
+			do {
+				uint16 px = xx + offs % ww;
+				uint16 py = y + offs / ww;
+				uint16 ofs = py * EGA_BYTES_PER_LINE + px;
+				target[ofs] = source[ofs];
+
+				offs += step;
+				if (offs > end)
+					offs -= end;
+
+				/* blit roughly once per block-row's worth of dots */
+				if ((++guard % ww) == 0) {
+					g_vm->_renderer->blitToScreen(xx, y, ww, height);
+					waitVBlank();
+				}
+			} while (offs != 0 && guard <= end);
+		}
+
+		/* ensure the block is fully copied (the scatter may skip pixels) */
 		g_vm->_renderer->copyScreenBlock(source, width, height, target, g_vm->_renderer->calcXY_p(x, y));
 		return;
 	}

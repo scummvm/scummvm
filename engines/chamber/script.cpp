@@ -1109,7 +1109,13 @@ uint16 SCR_1B_HidePortraitLiftUp(void) {
 	}
 
 	if (g_vm->_videoMode == Common::kRenderEGA) {
-		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
+		offs = g_vm->_renderer->calcXY_p(x, y + 1);
+		while (--height)
+			g_vm->_renderer->hideScreenBlockLiftToUp(1, SCREENBUFFER, backbuffer, width, height, SCREENBUFFER, offs);
+		/*hide topmost line*/
+		offs -= EGA_BYTES_PER_LINE;
+		memcpy(SCREENBUFFER + offs, backbuffer + offs, width * 4);
+		g_vm->_renderer->blitToScreen(offs % EGA_BYTES_PER_LINE, offs / EGA_BYTES_PER_LINE, width * 4, 1);
 		return 0;
 	}
 
@@ -1150,7 +1156,13 @@ uint16 SCR_1C_HidePortraitLiftDown(void) {
 	}
 
 	if (g_vm->_videoMode == Common::kRenderEGA) {
-		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
+		offs = g_vm->_renderer->calcXY_p(x, y + height - 2);
+		while (--height)
+			g_vm->_renderer->hideScreenBlockLiftToDown(1, SCREENBUFFER, backbuffer, width, height, SCREENBUFFER, offs);
+		/*hide bottommost line*/
+		offs += EGA_BYTES_PER_LINE;
+		memcpy(SCREENBUFFER + offs, backbuffer + offs, width * 4);
+		g_vm->_renderer->blitToScreen(offs % EGA_BYTES_PER_LINE, offs / EGA_BYTES_PER_LINE, width * 4, 1);
 		return 0;
 	}
 
@@ -1612,6 +1624,8 @@ Draw new zone
 */
 uint16 SCR_43_RefreshZone(void) {
 	script_ptr++;
+	// A standalone refresh (not a zone change) should just redraw instantly.
+	skip_zone_transition = 1;
 	refreshZone();
 	return 0;
 }

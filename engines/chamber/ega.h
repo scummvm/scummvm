@@ -50,6 +50,10 @@ Graphics::Surface *ega_loadFond(const char *filename);
 extern byte ega_fond_clean[EGA_SCREEN_SIZE];
 void ega_drawBackground(byte *target);
 
+// --- zone-change transition ---
+// Reveal the new room (backbuffer) over the screen with a serpentine line wipe.
+void ega_zoneRevealWipe(void);
+
 } // End of namespace Chamber
 
 #endif // CHAMBER_EGA_H
