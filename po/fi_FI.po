@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-17 23:07+0000\n"
+"POT-Creation-Date: 2026-06-18 09:25+0000\n"
 "PO-Revision-Date: 2026-02-07 15:22+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -84,7 +84,7 @@ msgstr "Sulje"
 #. I18N: Opens the help screen.
 #: gui/browser.cpp:64 gui/launcher.cpp:277 gui/launcher.cpp:959
 #: backends/platform/sdl/macosx/appmenu_osx.mm:319
-#: engines/access/metaengine.cpp:360 engines/bladerunner/metaengine.cpp:321
+#: engines/access/metaengine.cpp:381 engines/bladerunner/metaengine.cpp:321
 #: engines/ngi/metaengine.cpp:162 engines/supernova/metaengine.cpp:238
 #: engines/tucker/metaengine.cpp:215 engines/zvision/metaengine.cpp:246
 msgid "Help"
@@ -2743,7 +2743,7 @@ msgstr ""
 "Ja lisää..."
 
 #: gui/options.cpp:2975 engines/engine.cpp:647
-#: engines/access/metaengine.cpp:298 engines/drascula/metaengine.cpp:255
+#: engines/access/metaengine.cpp:319 engines/drascula/metaengine.cpp:255
 #: engines/queen/metaengine.cpp:269 engines/sherlock/metaengine.cpp:410
 #: engines/ultima/nuvie/metaengine.cpp:71
 msgid "Move"
@@ -4058,7 +4058,7 @@ msgstr "Pelivalikko"
 
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
-#: engines/metaengine.cpp:112 engines/access/metaengine.cpp:225
+#: engines/metaengine.cpp:112 engines/access/metaengine.cpp:246
 #: engines/composer/metaengine.cpp:126 engines/drascula/metaengine.cpp:224
 #: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:93
 #: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
@@ -6472,7 +6472,15 @@ msgstr "Pelivalitsin"
 msgid "Check for Updates..."
 msgstr "Tarkista päivitykset..."
 
-#: engines/access/metaengine.cpp:215 engines/alcachofa/metaengine.cpp:94
+#: engines/access/metaengine.cpp:82
+msgid "Use 'high definition' OGG music"
+msgstr ""
+
+#: engines/access/metaengine.cpp:83
+msgid "Use the OGG audio from the re-release instead of original MIDI tracks"
+msgstr ""
+
+#: engines/access/metaengine.cpp:236 engines/alcachofa/metaengine.cpp:94
 #: engines/bbvs/metaengine.cpp:92 engines/buried/metaengine.cpp:133
 #: engines/chamber/metaengine.cpp:59 engines/cine/metaengine.cpp:270
 #: engines/cruise/metaengine.cpp:168 engines/dm/metaengine.cpp:124
@@ -6496,16 +6504,16 @@ msgstr "Tarkista päivitykset..."
 msgid "Default keymappings"
 msgstr "Näppäinten oletuskartoitukset"
 
-#: engines/access/metaengine.cpp:219
+#: engines/access/metaengine.cpp:240
 msgid "Move / Interact / Skip"
 msgstr "Liiku / Käytä / Ohita"
 
-#: engines/access/metaengine.cpp:231 engines/sherlock/metaengine.cpp:483
+#: engines/access/metaengine.cpp:252 engines/sherlock/metaengine.cpp:483
 msgid "Skip movie"
 msgstr "Ohita video"
 
 #. I18N: Move Actor to upwards direction
-#: engines/access/metaengine.cpp:237 engines/asylum/metaengine.cpp:171
+#: engines/access/metaengine.cpp:258 engines/asylum/metaengine.cpp:171
 #: engines/asylum/metaengine.cpp:198 engines/cine/metaengine.cpp:377
 #: engines/efh/metaengine.cpp:286 engines/hdb/metaengine.cpp:213
 #: engines/hypno/metaengine.cpp:363 engines/hypno/metaengine.cpp:411
@@ -6515,7 +6523,7 @@ msgid "Move up"
 msgstr "Liiku ylöspäin"
 
 #. I18N: Move Actor to downwards direction
-#: engines/access/metaengine.cpp:244 engines/asylum/metaengine.cpp:177
+#: engines/access/metaengine.cpp:265 engines/asylum/metaengine.cpp:177
 #: engines/asylum/metaengine.cpp:205 engines/cine/metaengine.cpp:384
 #: engines/efh/metaengine.cpp:293 engines/hdb/metaengine.cpp:219
 #: engines/hypno/metaengine.cpp:351 engines/hypno/metaengine.cpp:399
@@ -6526,7 +6534,7 @@ msgstr "Liiku alaspäin"
 
 #. I18N: Move Actor to left direction
 #. I18N: Move actor left during fight
-#: engines/access/metaengine.cpp:251 engines/asylum/metaengine.cpp:183
+#: engines/access/metaengine.cpp:272 engines/asylum/metaengine.cpp:183
 #: engines/asylum/metaengine.cpp:212 engines/cine/metaengine.cpp:391
 #: engines/efh/metaengine.cpp:300 engines/hdb/metaengine.cpp:225
 #: engines/hypno/metaengine.cpp:345 engines/hypno/metaengine.cpp:393
@@ -6539,7 +6547,7 @@ msgstr "Liiku vasemmalle"
 
 #. I18N: Move Actor to right direction
 #. I18N: Move actor right during fight
-#: engines/access/metaengine.cpp:258 engines/asylum/metaengine.cpp:189
+#: engines/access/metaengine.cpp:279 engines/asylum/metaengine.cpp:189
 #: engines/asylum/metaengine.cpp:219 engines/cine/metaengine.cpp:398
 #: engines/efh/metaengine.cpp:307 engines/hdb/metaengine.cpp:231
 #: engines/hypno/metaengine.cpp:357 engines/hypno/metaengine.cpp:405
@@ -6551,31 +6559,31 @@ msgid "Move right"
 msgstr "Liiku oikealle"
 
 #. I18N: Move Actor to top-left direction
-#: engines/access/metaengine.cpp:265 engines/cine/metaengine.cpp:405
+#: engines/access/metaengine.cpp:286 engines/cine/metaengine.cpp:405
 #: engines/efh/metaengine.cpp:314
 msgid "Move up-left"
 msgstr "Liiku vasemmalle ylös"
 
 #. I18N: Move Actor to top-right direction
-#: engines/access/metaengine.cpp:270 engines/cine/metaengine.cpp:411
+#: engines/access/metaengine.cpp:291 engines/cine/metaengine.cpp:411
 #: engines/efh/metaengine.cpp:320
 msgid "Move up-right"
 msgstr "Liiku oikealle ylös"
 
 #. I18N: Move Actor to bottom-left direction
-#: engines/access/metaengine.cpp:275 engines/cine/metaengine.cpp:417
+#: engines/access/metaengine.cpp:296 engines/cine/metaengine.cpp:417
 #: engines/efh/metaengine.cpp:326
 msgid "Move down-left"
 msgstr "Liiku alas vasemmalle"
 
 #. I18N: Move Actor to bottom-right direction
-#: engines/access/metaengine.cpp:280 engines/cine/metaengine.cpp:423
+#: engines/access/metaengine.cpp:301 engines/cine/metaengine.cpp:423
 #: engines/efh/metaengine.cpp:332
 msgid "Move down-right"
 msgstr "Liiku alas oikealle"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to look at an object or npc in the game
-#: engines/access/metaengine.cpp:285 engines/bbvs/metaengine.cpp:124
+#: engines/access/metaengine.cpp:306 engines/bbvs/metaengine.cpp:124
 #: engines/dgds/metaengine.cpp:83 engines/drascula/metaengine.cpp:230
 #: engines/petka/metaengine.cpp:130 engines/scumm/help.cpp:167
 #: engines/scumm/help.cpp:231 engines/sherlock/metaengine.cpp:405
@@ -6586,7 +6594,7 @@ msgstr "Liiku alas oikealle"
 msgid "Look"
 msgstr "Katso"
 
-#: engines/access/metaengine.cpp:293 engines/drascula/metaengine.cpp:240
+#: engines/access/metaengine.cpp:314 engines/drascula/metaengine.cpp:240
 #: engines/queen/metaengine.cpp:259 engines/saga/metaengine.cpp:369
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:193
@@ -6596,13 +6604,13 @@ msgstr "Katso"
 msgid "Open"
 msgstr "Avaa"
 
-#: engines/access/metaengine.cpp:303 engines/scumm/help.cpp:128
+#: engines/access/metaengine.cpp:324 engines/scumm/help.cpp:128
 #: engines/ultima/nuvie/metaengine.cpp:70
 msgid "Get"
 msgstr "Ota"
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/access/metaengine.cpp:308 engines/access/metaengine.cpp:329
+#: engines/access/metaengine.cpp:329 engines/access/metaengine.cpp:350
 #: engines/bbvs/metaengine.cpp:136 engines/cine/metaengine.cpp:342
 #: engines/efh/metaengine.cpp:462 engines/hdb/metaengine.cpp:237
 #: engines/lab/metaengine.cpp:323 engines/mm/mm1/metaengine.cpp:86
@@ -6622,11 +6630,11 @@ msgstr "Ota"
 msgid "Use"
 msgstr "Käytä"
 
-#: engines/access/metaengine.cpp:313
+#: engines/access/metaengine.cpp:334
 msgid "Goto"
 msgstr "Mene"
 
-#: engines/access/metaengine.cpp:318 engines/access/metaengine.cpp:349
+#: engines/access/metaengine.cpp:339 engines/access/metaengine.cpp:370
 #: engines/bbvs/metaengine.cpp:130 engines/drascula/metaengine.cpp:250
 #: engines/efh/metaengine.cpp:506 engines/petka/metaengine.cpp:158
 #: engines/scumm/help.cpp:174 engines/scumm/help.cpp:226
@@ -6637,18 +6645,18 @@ msgstr "Mene"
 msgid "Talk"
 msgstr "Puhu"
 
-#: engines/access/metaengine.cpp:323 engines/scumm/help.cpp:175
+#: engines/access/metaengine.cpp:344 engines/scumm/help.cpp:175
 msgid "Travel"
 msgstr "Matkusta"
 
-#: engines/access/metaengine.cpp:334 engines/cine/metaengine.cpp:332
+#: engines/access/metaengine.cpp:355 engines/cine/metaengine.cpp:332
 #: engines/petka/metaengine.cpp:144 engines/saga/metaengine.cpp:394
 #: engines/supernova/metaengine.cpp:331
 msgid "Take"
 msgstr "Ota"
 
 #. I18N: Action in In Cold Blood
-#: engines/access/metaengine.cpp:339 engines/alcachofa/metaengine.cpp:116
+#: engines/access/metaengine.cpp:360 engines/alcachofa/metaengine.cpp:116
 #: engines/cine/metaengine.cpp:337 engines/crab/input/input.cpp:251
 #: engines/cruise/metaengine.cpp:192 engines/draci/metaengine.cpp:237
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
@@ -6668,18 +6676,18 @@ msgstr "Ota"
 msgid "Inventory"
 msgstr "Tavarat"
 
-#: engines/access/metaengine.cpp:344 engines/ultima/ultima4/metaengine.cpp:51
+#: engines/access/metaengine.cpp:365 engines/ultima/ultima4/metaengine.cpp:51
 msgid "Climb"
 msgstr "Kiipeä"
 
-#: engines/access/metaengine.cpp:354 engines/bbvs/metaengine.cpp:142
+#: engines/access/metaengine.cpp:375 engines/bbvs/metaengine.cpp:142
 #: engines/freescape/games/castle/castle.cpp:511
 #: engines/petka/metaengine.cpp:137 engines/scumm/help.cpp:225
 #: engines/tsage/metaengine.cpp:201
 msgid "Walk"
 msgstr "Kävele"
 
-#: engines/access/metaengine.cpp:365
+#: engines/access/metaengine.cpp:386
 msgid "Open save/load menu"
 msgstr "Avaa tallennus / lataus valikko"
 
