@@ -9,6 +9,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Noctropolis hinzugefügt.
    - Unterstützung für Cartoon Carnival hinzugefügt.
    - Unterstützung für Alfred Pelrock: En Busca de un Sueño hinzugefügt.
+   - Unterstützung für Pilot Brothers: On the Track of Striped Elephant,
+     Pilot Brothers: The Case of Serial Maniac, und 5 kleinere Spiele,
+     die die Gamos-Engine nutzen, hinzugefügt.
 
  Allgemein:
    - Klickbare Links in der Benutzeroberfläche werden jetzt durch einen veränderten Cursor hervorgehoben.
