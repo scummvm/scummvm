@@ -898,13 +898,15 @@ void Scripts::cmdSetVideo_v3() {
 	if (cellIndex > 0x3f)
 		error("Invalid room video number %d", cellIndex);
 
-	bool flag;
 	const int roomNum = _vm->_player->_roomNumber;
+#if 0
+	bool flag;
 
 	if ((roomNum == 0x1e && cellIndex == 0) || roomNum == 0x21 || (roomNum == 0x36 && cellIndex < 32))
 		flag = true;
 	else
 		flag = false;
+#endif
 
 	if (roomNum == 0x1b || roomNum == 0x1e)
 		pt.x = rawx + -5;

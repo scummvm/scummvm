@@ -119,6 +119,8 @@ void NoctropolisFont::load(const uint16 *offsets, const byte *data) {
 	pal[3] = pal[4] = pal[5] = 0xff;
 	dumpfile.open(Common::Path(Common::String::format("/tmp/font-%d.png", dumpno++)));
 	Image::writePNG(dumpfile, dump, pal);
+#else
+	(void)totalw;
 #endif
 }
 
