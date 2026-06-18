@@ -342,6 +342,7 @@ void HolomapV2::holoMap() {
 	_flagPal = true;
 	_flagHoloEnd = false;
 	_numObjectif = -1;
+	_oldObjectif = -1;
 
 	_engine->_input->enableKeyMap(holomapKeyMapId);
 
