@@ -1349,44 +1349,33 @@ static void conv_generate_message(Conv *convIn, ConvData *convData,
 	if (msgListSize == 0)
 		goto done;
 
-	// TODO: Hook this up to ScummVM subtitles - original disabled reply boxes if in voice only mode
-	//if (speech_system_active && speech_on && speechCount > 0 && !show_subtitles) showBox = false;
-
 	if (showBox) {
-		if (msgListSize != 0) {
-			personSpeaking = conv_control.person_speaking;
-			if (!popup_create(popup_estimate_pieces(conv_control.width[personSpeaking]),
-				conv_control.x[personSpeaking], conv_control.y[personSpeaking])) {
-				if (conv_control.speaker_series[personSpeaking] >= 0) {
-					popup_add_icon(series_list[conv_control.speaker_series[personSpeaking]],
-						conv_control.speaker_frame[personSpeaking], 0);
-				}
+		// Create the popup
+		personSpeaking = conv_control.person_speaking;
+		if (popup_create(popup_estimate_pieces(conv_control.width[personSpeaking]),
+			conv_control.x[personSpeaking], conv_control.y[personSpeaking]))
+			goto done;
 
-				for (int msgIndex = 0; msgIndex < msgListSize; ++msgIndex) {
-					messageId = msgList[msgIndex];
-					lineStart = convIn->messages[messageId].lineStart;
-					lineCount = convIn->messages[messageId].lineCount;
+		if (conv_control.speaker_series[personSpeaking] >= 0) {
+			popup_add_icon(series_list[conv_control.speaker_series[personSpeaking]],
+				conv_control.speaker_frame[personSpeaking], 0);
+		}
 
-					for (int lineCtr = 0; lineCtr < lineCount; ++lineCtr) {
-						Common::strcpy_s(tempString, conv_string(convIn, lineStart + lineCtr));
-						string_trim(tempString);
-						popup_write_string(tempString);
-					}
-				}
+		for (int msgIndex = 0; msgIndex < msgListSize; ++msgIndex) {
+			messageId = msgList[msgIndex];
+			lineStart = convIn->messages[messageId].lineStart;
+			lineCount = convIn->messages[messageId].lineCount;
 
-				popup_next_line();
-				if (!popup_draw(-1, -1)) {
-					conv_control.popup_is_up = -1;
-					conv_control.popup_clock = kernel.clock + conv_control.popup_duration;
-
-					if (speech_system_active && speech_on) {
-						if (voiceListSize != 0) {
-							speech_play(convIn->speech_file, *voiceList);
-						}
-					}
-				}
+			for (int lineCtr = 0; lineCtr < lineCount; ++lineCtr) {
+				Common::strcpy_s(tempString, conv_string(convIn, lineStart + lineCtr));
+				string_trim(tempString);
+				popup_write_string(tempString);
 			}
 		}
+
+		popup_next_line();
+		if (popup_draw(-1, -1))
+			goto done;
 	}
 
 	// Record that a conversation popup is live.
