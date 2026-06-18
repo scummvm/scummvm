@@ -138,6 +138,14 @@ private:
 				_screenState == kContentView;
 	}
 
+	// True for screens that hide the status icons and "?" button so the
+	// top bar shows only the section heading and the up arrow.
+	bool isSubScreenState() const {
+		return _screenState == kDirectory ||
+				_screenState == kOnlineHub ||
+				isZoomedChromeState();
+	}
+
 	void resetDialPad();
 	void enterScreenState(ScreenState newState);
 	void appendDigit(byte slotIndex);

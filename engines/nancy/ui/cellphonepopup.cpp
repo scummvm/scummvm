@@ -410,14 +410,16 @@ void CellPhonePopup::drawChrome() {
 			: _uiclData->header.normalSrcRect;
 	_drawSurface.blitFrom(_overlayImage, chromeSrc, Common::Point(0, 0));
 	drawCloseButton(_closeButtonHovered ? 1 : 0);
-	drawHelpButton(0);
+	if (!isSubScreenState()) {
+		drawHelpButton(0);
+	}
 	_needsRedraw = true;
 }
 
 void CellPhonePopup::drawScreenContent() {
 	drawChrome();
 
-	if (_screenState != kConnected) {
+	if (_screenState != kConnected && !isSubScreenState()) {
 		drawStatusIcons();
 	}
 
@@ -1511,9 +1513,10 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		drawScreenContent();
 	}
 
-	// Help "?" button: opens the help page in the content view. Reachable
-	// from any interactive state (except when already showing it).
-	if (!_uiclData->helpButton.destRect.isEmpty() && !_uiclData->helpTextKey.empty() &&
+	// Help "?" button: opens the help page in the content view. Hidden
+	// (and unclickable) on sub-screens that already show their own heading.
+	if (!isSubScreenState() &&
+			!_uiclData->helpButton.destRect.isEmpty() && !_uiclData->helpTextKey.empty() &&
 			!(_screenState == kContentView && _contentKey == _uiclData->helpTextKey) &&
 			_uiclData->helpButton.destRect.contains(chunkMouse)) {
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
