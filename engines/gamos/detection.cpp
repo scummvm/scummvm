@@ -33,6 +33,7 @@ class GamosMetaEngineDetection : public AdvancedMetaEngineDetection<Gamos::Gamos
 public:
 	GamosMetaEngineDetection(): AdvancedMetaEngineDetection(
 		    Gamos::gameDescriptions, Gamos::gamosGames) {
+			_flags = kADFlagMatchFullPaths;
 	}
 	~GamosMetaEngineDetection() override {}
 
