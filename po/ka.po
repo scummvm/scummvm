@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-18 09:25+0000\n"
+"POT-Creation-Date: 2026-06-18 09:40+0000\n"
 "PO-Revision-Date: 2026-06-05 10:22+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -10314,29 +10314,33 @@ msgstr "Bash"
 msgid "Unlock"
 msgstr "განბლოკვა"
 
-#: engines/mm/mm1/metaengine.cpp:127 engines/ultima/ultima4/metaengine.cpp:112
+#: engines/mm/mm1/metaengine.cpp:128 engines/ultima/ultima4/metaengine.cpp:112
 msgid "Goto location"
 msgstr "მდებარეობაზე გადასვლა"
 
-#: engines/mm/mm1/metaengine.cpp:152
+#: engines/mm/mm1/metaengine.cpp:154
 msgid "Might and Magic 1 - Menus"
 msgstr "Might and Magic 1 - მენიუები"
 
-#: engines/mm/mm1/metaengine.cpp:153
+#: engines/mm/mm1/metaengine.cpp:155
 msgid "Might and Magic 1 - Minimal Keys"
 msgstr "Might and Magic 1 - მინიმალური ღილაკები"
 
-#: engines/mm/mm1/metaengine.cpp:154
+#: engines/mm/mm1/metaengine.cpp:156
 msgid "Might and Magic 1 - Main"
 msgstr "Might and Magic 1 - მთავარი"
 
-#: engines/mm/mm1/metaengine.cpp:155
+#: engines/mm/mm1/metaengine.cpp:157
 msgid "Might and Magic 1 - Party"
 msgstr "Might and Magic 1 - გუნდი"
 
-#: engines/mm/mm1/metaengine.cpp:156
+#: engines/mm/mm1/metaengine.cpp:158
 msgid "Might and Magic 1 - Combat"
 msgstr "Might and Magic 1 - ბრძოლა"
+
+#: engines/mm/mm1/metaengine.cpp:160
+msgid "Might and Magic 1 - Cheats"
+msgstr "Might and Magic 1 - თაღლითობა"
 
 #: engines/mm/mm1/mm1.cpp:57
 msgid ""
@@ -16048,9 +16052,6 @@ msgstr ""
 #~| msgid "No"
 #~ msgid "N"
 #~ msgstr "არა"
-
-#~ msgid "Might and Magic 1 - Cheats"
-#~ msgstr "Might and Magic 1 - თაღლითობა"
 
 #~ msgid "Load game:"
 #~ msgstr "თამაშის ჩატვირთვა:"

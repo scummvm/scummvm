@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-18 09:25+0000\n"
+"POT-Creation-Date: 2026-06-18 09:40+0000\n"
 "PO-Revision-Date: 2026-05-19 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -11075,29 +11075,33 @@ msgstr "강타"
 msgid "Unlock"
 msgstr "잠금 해제"
 
-#: engines/mm/mm1/metaengine.cpp:127 engines/ultima/ultima4/metaengine.cpp:112
+#: engines/mm/mm1/metaengine.cpp:128 engines/ultima/ultima4/metaengine.cpp:112
 msgid "Goto location"
 msgstr "위치로 이동"
 
-#: engines/mm/mm1/metaengine.cpp:152
+#: engines/mm/mm1/metaengine.cpp:154
 msgid "Might and Magic 1 - Menus"
 msgstr "마이트 앤 매직 1 - 메뉴"
 
-#: engines/mm/mm1/metaengine.cpp:153
+#: engines/mm/mm1/metaengine.cpp:155
 msgid "Might and Magic 1 - Minimal Keys"
 msgstr "마이트 앤 매직 1 - 최소한의 키"
 
-#: engines/mm/mm1/metaengine.cpp:154
+#: engines/mm/mm1/metaengine.cpp:156
 msgid "Might and Magic 1 - Main"
 msgstr "마이트 앤 매직 1 - 메인"
 
-#: engines/mm/mm1/metaengine.cpp:155
+#: engines/mm/mm1/metaengine.cpp:157
 msgid "Might and Magic 1 - Party"
 msgstr "마이트 앤 매직 1 - 파티"
 
-#: engines/mm/mm1/metaengine.cpp:156
+#: engines/mm/mm1/metaengine.cpp:158
 msgid "Might and Magic 1 - Combat"
 msgstr "마이트 앤 매직 1 - 전투"
+
+#: engines/mm/mm1/metaengine.cpp:160
+msgid "Might and Magic 1 - Cheats"
+msgstr "마이트 앤 매직 - 치트"
 
 #: engines/mm/mm1/mm1.cpp:57
 msgid ""
@@ -17103,9 +17107,6 @@ msgstr ""
 #~| msgid "No"
 #~ msgid "N"
 #~ msgstr "아니오"
-
-#~ msgid "Might and Magic 1 - Cheats"
-#~ msgstr "마이트 앤 매직 - 치트"
 
 #~ msgid "3DO Plumbers requires RGB support."
 #~ msgstr "3DO Plumbers에는 RGB 지원이 필요합니다."
