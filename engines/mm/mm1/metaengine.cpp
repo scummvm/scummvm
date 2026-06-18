@@ -123,10 +123,12 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
+#if 0
 static const KeybindingRecord CHEAT_KEYS[] = {
 	{ KEYBIND_CHEAT_GOTO, "CHEAT-GOTO", _s("Goto location"), "A+g", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
+#endif
 
 static const char *const kMenuKeymapId = "mm1_menu";
 static const char *const kMinimalKeymapId = "mm1_minimal";
@@ -154,7 +156,9 @@ static const KeysRecord ALL_RECORDS[] = {
 	{ kNormalKeymapId,  _s("Might and Magic 1 - Main"), NORMAL_KEYS },
 	{ kPartyKeymapId,   _s("Might and Magic 1 - Party"), PARTY_KEYS },
 	{ kCombatKeymapId,  _s("Might and Magic 1 - Combat"), COMBAT_KEYS },
-//	{ kCheatsKeymapId,  _s("Might and Magic 1 - Cheats"), CHEAT_KEYS },
+#if 0
+	{ kCheatsKeymapId,  _s("Might and Magic 1 - Cheats"), CHEAT_KEYS },
+#endif
 	{ nullptr, nullptr, nullptr }
 };
 

@@ -74,7 +74,6 @@ static void loadSuggestedNames() {
 		return;
 	}
 
-	int invalidLines = 0;
 	while (!f.eos()) {
 		Common::String line = f.readLine();
 		line.trim();
@@ -84,10 +83,8 @@ static void loadSuggestedNames() {
 		size_t p1 = line.findFirstOf('\t');
 		size_t p2 = p1 == Common::String::npos ? Common::String::npos :
 			line.findFirstOf('\t', p1 + 1);
-		if (p1 == Common::String::npos || p2 == Common::String::npos) {
-			++invalidLines;
+		if (p1 == Common::String::npos || p2 == Common::String::npos)
 			continue;
-		}
 
 		int classId = atoi(Common::String(line.c_str(), line.c_str() + p1).c_str());
 		int sexId = atoi(Common::String(line.c_str() + p1 + 1, line.c_str() + p2).c_str());
