@@ -20,6 +20,7 @@
  */
 
 #include "common/macresman.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 #include "director/director.h"
@@ -174,8 +175,105 @@ void WidgetXObj::m_lipSync(int nargs) {
 	g_lingo->push(result);
 }
 
-XOBJSTUB(WidgetXObj::m_loadData, 0)
-XOBJSTUB(WidgetXObj::m_saveData, 0)
+void WidgetXObj::m_loadData(int nargs) {
+	uint32 result = 0;
+	if (Common::String("ybr1").equals(g_director->getGameId())) {
+		// I have no idea why they decided to write this in C instead of use Lingo
+		ARGNUMCHECK(0);
+		Common::SaveFileManager *saves = g_system->getSavefileManager();
+		Common::SeekableReadStream *stream = saves->openForLoading(savePrefix() + Common::String("YBR.INI"));
+		if (stream) {
+			Common::String line1 = stream->readLine();
+			Common::String line2 = stream->readLine();
+			if (line1.equals("[YBRDAT]") && line2.hasPrefix("Dat=")) {
+				Datum value(line2.substr(4, Common::String::npos));
+				result = value.asInt();
+
+				Datum batIsu("BatIsu");
+				batIsu.type = GLOBALREF;
+				g_lingo->varAssign(batIsu, result & 0x8000 ? 1 : 0);
+
+				Datum kKey("K_Key");
+				kKey.type = GLOBALREF;
+				g_lingo->varAssign(kKey, result & 0x4000 ? 1 : 0);
+
+				Datum bedSui("BedSui");
+				bedSui.type = GLOBALREF;
+				g_lingo->varAssign(bedSui, result & 0x2000 ? 1 : 0);
+
+				Datum warp("Warp");
+				warp.type = GLOBALREF;
+				g_lingo->varAssign(warp, result & 0x1000 ? 1 : 0);
+
+				Datum bat4("Bat4");
+				bat4.type = GLOBALREF;
+				g_lingo->varAssign(bat4, result & 0x800 ? 1 : 0);
+
+				result &= 0x7ff;
+			}
+		}
+
+	}
+	g_lingo->push((int)result);
+}
+
+void WidgetXObj::m_saveData(int nargs) {
+	if (Common::String("ybr1").equals(g_director->getGameId())) {
+		// I have no idea why they decided to write this in C instead of use Lingo
+		ARGNUMCHECK(1);
+		Datum place = g_lingo->pop();
+		TYPECHECK(place, INT);
+		uint32 flags = place.asInt();
+
+		Datum batIsu("BatIsu");
+		batIsu.type = GLOBALREF;
+		batIsu = g_lingo->varFetch(batIsu);
+		if (batIsu.asInt() > 0) {
+			flags |= 0x8000;
+		}
+
+		Datum kKey("K_Key");
+		kKey.type = GLOBALREF;
+		kKey = g_lingo->varFetch(kKey);
+		if (kKey.asInt() > 0) {
+			flags |= 0x4000;
+		}
+
+		Datum bedSui("BedSui");
+		bedSui.type = GLOBALREF;
+		bedSui = g_lingo->varFetch(bedSui);
+		if (bedSui.asInt() > 0) {
+			flags |= 0x2000;
+		}
+
+		Datum warp("Warp");
+		warp.type = GLOBALREF;
+		warp = g_lingo->varFetch(warp);
+		if (warp.asInt() > 0) {
+			flags |= 0x1000;
+		}
+
+		Datum bat4("Bat4");
+		bat4.type = GLOBALREF;
+		bat4 = g_lingo->varFetch(bat4);
+		if (bat4.asInt() > 0) {
+			flags |= 0x800;
+		}
+
+		Common::SaveFileManager *saves = g_system->getSavefileManager();
+		Common::SeekableWriteStream *stream = saves->openForSaving(savePrefix() + Common::String("YBR.INI"), false);
+		if (stream) {
+			Common::String buffer = Common::String::format("[YBRDAT]\r\nDat=%d", flags);
+			stream->writeString(buffer);
+			stream->finalize();
+			delete stream;
+		} else {
+			warning("WidgetXObj::m_saveData: unable to open YBR.INI for writing");
+		}
+	}
+	g_lingo->push(0);
+}
+
 XOBJSTUB(WidgetXObj::m_hideCursor, 0)
 XOBJSTUB(WidgetXObj::m_showCursor, 0)
 XOBJSTUB(WidgetXObj::m_mul, 0)
