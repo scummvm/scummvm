@@ -3432,9 +3432,10 @@ EOF
 			_zlib=no
 		fi
 		;;
-	freebsd* | dragonfly*)
+	freebsd* | dragonfly* | openbsd*)
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-I/usr/local/include"
+		_seq_midi=no
 		;;
 	gamecube)
 		_optimization_level=-Os
@@ -3521,11 +3522,6 @@ EOF
 		_detection_features_full=no
 		_nuked_opl=no
 		_sid_audio=no
-		;;
-	openbsd*)
-		append_var LDFLAGS "-L/usr/local/lib"
-		append_var CXXFLAGS "-I/usr/local/include"
-		_seq_midi=no
 		;;
 	ps3)
 		# Force use of SDL and freetype from the ps3 toolchain
