@@ -113,8 +113,6 @@ void QuizPuzzle::readDataOld(Common::SeekableReadStream &stream) {
 		_answerFlags[i] = stream.readSint16LE();
 	}
 
-	char textBuf[30];
-
 	_correctSound.readNormal(stream);
 	_correctText = readSubtitle(stream);
 
