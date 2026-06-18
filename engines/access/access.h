@@ -148,6 +148,11 @@ private:
 	SpriteResource *_icons;
 
 	/**
+	 * Lang to use for resources.
+	 */
+	Common::Language _lang;
+
+	/**
 	 * Handles basic initialization
 	 */
 	void initialize();
@@ -200,6 +205,11 @@ protected:
 	 * Set up the game game-specific objects, called just before playGame.
 	 */
 	virtual void setupGame() = 0;
+
+	/**
+	 * Get the path to the icons file
+	 */
+	virtual Common::Path getIconPath() const { return Common::Path("ICONS.LZ"); }
 
 public:
 	AnimationManager *_animation;

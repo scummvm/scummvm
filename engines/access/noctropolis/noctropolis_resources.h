@@ -74,6 +74,8 @@ public:
 	const ComicResource *getLastComicResource() const;
 	const ComicResource *getSpecialComicResource() const;
 
+	Common::Path translatePath(const char *rawPath) const;
+
 	int menuAt(int16 x, int16 y) const;
 
 private:

@@ -21,6 +21,8 @@
 
 namespace Access {
 
+static const uint FEATURE_NOCT_MULTI_LANG = 1;
+
 static const AccessGameDescription gameDescriptions[] = {
 	{
 		// Amazon Guardians of Eden - Floppy English
@@ -163,7 +165,7 @@ static const AccessGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Noctropolis - sum of this file is the same in all known verisons
+		// Noctropolis - original release
 		{
 			"noctropolis",
 			nullptr,
@@ -179,19 +181,35 @@ static const AccessGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Noctropolis - GOG/Steam version
+		// Noctropolis - original release, German
 		{
 			"noctropolis",
-			"Rerelease",
+			nullptr,
 			AD_ENTRY2s("dark/scene01.ap", "3a154bf58e10cd7ace14cab1bf5adf4a", 147954,
-					   "dark/scene13.ap", "0d400713ed30e692d63af4d28ba42c5e", 327980),
-			Common::EN_ANY,
+					   "dark/scene13.ap", "261c65ea702c6088ab3ed6e39e217d64", 328430),
+			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_TESTING,
 			GUIO1(GUIO_NONE)
 		},
 		kGameNoctropolis,
 		0
+	},
+
+	{
+		// Noctropolis - GOG/Steam version (multi-language support)
+		{
+			"noctropolis",
+			"Rerelease",
+			AD_ENTRY2s("dark/scene01.ap", "3a154bf58e10cd7ace14cab1bf5adf4a", 147954,
+					   "dark/scene13.ap", "0d400713ed30e692d63af4d28ba42c5e", 327980),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_TESTING,
+			GUIO1(GUIO_GAMEOPTIONS1)
+		},
+		kGameNoctropolis,
+		FEATURE_NOCT_MULTI_LANG
 	},
 
 	{ AD_TABLE_END_MARKER, 0, 0 }

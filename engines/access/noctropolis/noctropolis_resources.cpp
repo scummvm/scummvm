@@ -1866,19 +1866,15 @@ static int _langOffset(Common::Language lang) {
 
 void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	// Note: *don't* call the base class here. Noctropolis doesn't have data in access.dat.
-
-	// TODO: For non-EN variants we want to use something other than DARK/ as the path.
 	for (int i = 0; i < ARRAYSIZE(NOCT_FILES_1); i++) {
-		Common::Path filename = Common::Path(NOCT_FILES_1[i]).getLastComponent();
-		FILENAMES.push_back(filename);
+		FILENAMES.push_back(translatePath(NOCT_FILES_1[i]));
 	}
 	// TODO: These last few files are maybe only ever used from hard-coded points,
 	// so maybe we can just hard-code the names in those places and avoid this hack?
 	while (FILENAMES.size() < 256 - ARRAYSIZE(NOCT_FILES_2))
 		FILENAMES.push_back(Common::Path());
 	for (int i = 0; i < ARRAYSIZE(NOCT_FILES_2); i++) {
-		Common::Path filename = Common::Path(NOCT_FILES_2[i]).getLastComponent();
-		FILENAMES.push_back(filename);
+		FILENAMES.push_back(translatePath(NOCT_FILES_2[i]));
 	}
 
 	_fontChaleteu = new NoctropolisFont(0x66, 11, 1, 0xe2, CHALETEU_OFFSETS, CHALETEU_DATA);
@@ -2021,6 +2017,26 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 		memset(INVENTORY[i]._combo, 0, sizeof(INVENTORY[i]._combo));
 	}
 }
+
+Common::Path NoctropolisResources::translatePath(const char *rawPath) const {
+	Common::String path_prefix;
+	switch (_vm->getLanguage()) {
+	case Common::FR_FRA: path_prefix = "FR/"; break;
+	case Common::DE_DEU: path_prefix = "DE/"; break;
+	case Common::ES_ESP: path_prefix = "ES/"; break;
+	default: break;
+	}
+
+	Common::String path = path_prefix + rawPath;
+	if (_vm->isDemo())
+		path.replace(0, 4, "DEMO");  // replace DARK with DEMO.
+
+	if (!path_prefix.empty() && !SearchMan.hasFile(Common::Path(path)))
+		path = path.substr(path_prefix.size());
+
+	return Common::Path(path);
+}
+
 
 int NoctropolisResources::menuAt(int16 x, int16 y) const {
 	for (int i = 0; i < (int)_menus.size(); i++) {

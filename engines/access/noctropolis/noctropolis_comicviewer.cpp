@@ -20,6 +20,7 @@
  */
 
 #include "access/noctropolis/noctropolis_comicviewer.h"
+#include "access/noctropolis/noctropolis_resources.h"
 
 namespace Access {
 
@@ -72,7 +73,7 @@ void ComicViewer::run(const ComicResource *comic) {
 PageResult ComicViewer::runPage(const ComicPage *page) {
 	PageResult result = kPageResultNone;
 
-	Common::Path pagePath(page->filename);
+	Common::Path pagePath = ((NoctropolisResources *)_vm->_res)->translatePath(page->filename);
 
 	if (!_vm->_files->existFile(pagePath)) {
 		// Happens in Demo 2 - no comic files
@@ -82,7 +83,8 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 
 	_vm->_files->loadScreen(pagePath);
 
-	Resource *bubbleData = _vm->_files->loadRawFile("COMDATA/comic.ap");
+	Common::Path bubbleDataPath = ((NoctropolisResources *)_vm->_res)->translatePath("DARK/COMDATA/comic.ap");
+	Resource *bubbleData = _vm->_files->loadRawFile(bubbleDataPath);
 	_bubbleSprites = new SpriteResource(_vm, bubbleData);
 	delete bubbleData;
 

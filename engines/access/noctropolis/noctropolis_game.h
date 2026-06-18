@@ -106,6 +106,11 @@ protected:
 	*/
 	Common::Error synchronize(Common::Serializer &s) override;
 
+	/**
+	 * Get the path to the icons file
+	 */
+	Common::Path getIconPath() const override;
+
 private:
 	void doIntro();
 	void doFlashLogo();

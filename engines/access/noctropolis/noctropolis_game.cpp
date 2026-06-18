@@ -72,6 +72,11 @@ void NoctropolisEngine::initObjects() {
 	}
 }
 
+Common::Path NoctropolisEngine::getIconPath() const {
+	return ((NoctropolisResources *)_res)->translatePath("DARK/ICONS.AP");
+}
+
+
 void NoctropolisEngine::setupGame() {
 	_timers.clear();
 	for (int i = 0; i < 32; ++i) {

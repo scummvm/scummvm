@@ -122,6 +122,8 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_stilScaleOff = 0;
 
 	ARRAYCLEAR(_countTbl);
+
+	_lang = Common::UNK_LANG;
 }
 
 AccessEngine::~AccessEngine() {
@@ -212,8 +214,7 @@ void AccessEngine::initialize() {
 
 const SpriteResource *AccessEngine::getIcons() {
 	if (!_icons) {
-		const char *fname = (getGameID() == kGameNoctropolis) ? "ICONS.AP" : "ICONS.LZ";
-		Resource *iconData = _files->loadRawFile(fname);
+		Resource *iconData = _files->loadRawFile(getIconPath());
 		_icons = new SpriteResource(this, iconData);
 		delete iconData;
 	}
@@ -221,6 +222,11 @@ const SpriteResource *AccessEngine::getIcons() {
 }
 
 Common::Error AccessEngine::run() {
+	if (ConfMan.hasKey("language"))
+		_lang = Common::parseLanguage(ConfMan.get("language"));
+	else
+		_lang = getLanguage();
+
 	_res = Resources::init(this);
 	Common::U32String errorMessage;
 	if (!_res->load(errorMessage)) {

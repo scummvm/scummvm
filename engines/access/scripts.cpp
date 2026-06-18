@@ -1532,7 +1532,8 @@ void Scripts::cmdDispAbout_v3() {
 	int selectedItem = -2;
 	bool needRedraw = true;
 
-	Resource *spriteData = _vm->_files->loadRawFile("ASK.AP");
+	Common::Path path = ((Noctropolis::NoctropolisResources *)_vm->_res)->translatePath("DARK/ASK.AP");
+	Resource *spriteData = _vm->_files->loadRawFile(path);
 	SpriteResource *askSprites = new SpriteResource(_vm, spriteData);
 	delete spriteData;
 
