@@ -27,6 +27,8 @@ namespace Director {
 class WidgetXObject : public Object<WidgetXObject> {
 public:
 	WidgetXObject(ObjectType objType);
+
+	Common::HashMap<Common::String, Common::Array<byte>> _lipSyncData;
 };
 
 namespace WidgetXObj {
