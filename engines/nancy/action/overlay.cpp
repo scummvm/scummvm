@@ -360,7 +360,14 @@ void Overlay::execute() {
 		break;
 	}
 	case kActionTrigger:
-		setVisible(false);
+		if (g_nancy->getGameType() <= kGameTypeNancy9) {
+			// This isn't done by the original engine, but it's here
+			// to fix Nancy1's safe lock light not turning off. Removing
+			// it for Nancy 10, to fix the animated label showing correctly,
+			// when using the ring at the slot machine.
+			setVisible(false);
+		}
+
 		g_nancy->_sound->stopSound(_sound);
 
 		_flagsOnTrigger.execute();
