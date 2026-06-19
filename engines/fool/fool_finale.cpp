@@ -756,7 +756,7 @@ void FoolPrologue::finaleRun() {
 		}
 		_toolbox->MoveTo(0, j);
 		_toolbox->LineTo(var_i16_3e6, j);
-		if ((var_i16_192 % 4) == 0) {
+		if ((j % 4) == 0) {
 			delayFromMarker(0);
 		}
 		// 131:2414
@@ -848,6 +848,251 @@ void FoolPrologue::finaleRun() {
 		delayFromMarker(1);
 	}
 	// 131:28c2
+	sub_128_50a(0xb, 0, SCREEN_WIDTH, 1);
+	arr_i32_41296[5]->copyFrom(*arr_i32_41296[11]);
+	setPortBitsToPage(5);
+	_zbasic->picture(0x16, 0xde, arr_i32_0[0x4b]);
+	// 131:2926
+	for (int16 i = 6; i <= 7; i++) {
+		arr_i32_41296[i]->copyFrom(*arr_i32_41296[5]);
+	}
+	setPortBitsToPage(6);
+	_zbasic->picture(0x10, 0x54, arr_i32_0[0x4c]);
+	setPortBitsToPage(7);
+	_zbasic->picture(0x10, 0x54, arr_i32_0[0x4c]);
+	_zbasic->picture(0x2, 0x50, arr_i32_0[0x52]);
+	_toolbox->SetPortBits(var_i32_32);
+	delay(0x1e);
+	sub_128_50a(0x6, 0, SCREEN_WIDTH, 1);
+	delay(0x1e);
+	blitPageToScreen(7);
+	delay(0x48);
+	blitPageToScreen(6);
+	delay(0x1e);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+	// 131:2a22
+	// now what have I gotten myself into?
+	var_str_76 = Common::U32String::format("\"%s", _zbasic->str(39).encode().c_str());
+	drawText(0x3c, 0x2d);
+	var_str_76 = Common::U32String::format("%s\"", _zbasic->str(40).encode().c_str());
+	drawText(0x46, 0x3e);
+	var_i32_2 = _toolbox->TickCount();
+	for (int16 i = 6; i <= 0xa; i++) {
+		arr_i32_41296[i]->copyFrom(*arr_i32_41296[5]);
+	}
+	setPortBitsToPage(6);
+	_zbasic->picture(0x15, 0x55, arr_i32_0[0x4d]);
+	setPortBitsToPage(7);
+	_zbasic->picture(0x1c, 0x57, arr_i32_0[0x4e]);
+	setPortBitsToPage(8);
+	_zbasic->picture(0x1c, 0x57, arr_i32_0[0x4f]);
+	setPortBitsToPage(9);
+	_zbasic->picture(0x1d, 0x58, arr_i32_0[0x50]);
+	setPortBitsToPage(0xa);
+	_zbasic->picture(0x1d, 0x58, arr_i32_0[0x51]);
+	// 131:2b7c
+	for (int16 i = 1; i <= 0xe; i++) {
+		arr_i16_1e8[i] = _zbasic->readDataInt();
+		arr_i16_1e8[i + 0xfb] = _zbasic->readDataInt();
+		arr_i16_1e8[i + 0x1f6] = _zbasic->readDataInt();
+		arr_i16_1e8[i + 0x2f1] = _zbasic->readDataInt();
+	}
+	// 131:2c02
+	_zbasic->text(kPrologueFontSmall, 0x9, 0, kSrcOr);
+	for (int16 i = 1; i <= 0xe; i++) {
+		// THEBOOKOFTHOTH
+		var_str_76 = _zbasic->midStr(_zbasic->str(41), i, 1);
+		drawText(arr_i16_1e8[i], arr_i16_1e8[i + 0xfb]);
+	}
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+	// that's it! the answer is the book of thoth
+	var_str_76 = Common::U32String::format("\"%s", _zbasic->str(42).encode().c_str());
+	drawText(0x32, 0x2d);
+	var_str_76 = Common::U32String::format("%s\"", _zbasic->str(43).encode().c_str());
+	drawText(0x3c, 0x3e);
+	// 131:2cf6
+	_toolbox->SetPortBits(var_i32_32);
+	delayFromMarker(0xd2);
+	sub_128_e1c();
+	sub_128_e58();
+	sub_128_e1c();
+	blitPageToScreen(6);
+	delay(3);
+	blitPageToScreen(7);
+	delay(3);
+	blitPageToScreen(8);
+	var_i32_2 = _toolbox->TickCount();
+	// 131:2d3a
+	for (int16 i = 0x30; i <= 0x36; i++) {
+		_toolbox->ReleaseResource(arr_i32_0[i]);
+	}
+	_toolbox->ReleaseResource(arr_i32_0[0x38]);
+	for (int16 i = 0x4b; i <= 0x52; i++) {
+		_toolbox->ReleaseResource(arr_i32_0[i]);
+	}
+	for (int16 i = 0x29; i <= 0x2a; i++) {
+		arr_i32_0[i] = _toolbox->GetPicture(i);
+	}
+	for (int16 i = 0x53; i <= 0x5b; i++) {
+		arr_i32_0[i] = _toolbox->GetPicture(i);
+	}
+	delayFromMarker(0x96);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+	// 131:2e1a
+	// wait, what's this?
+	var_str_76 = Common::U32String::format("\"%s\"", _zbasic->str(44).encode().c_str());
+	_toolbox->MoveTo(0x46, 0x3e);
+	_toolbox->DrawString(var_str_76);
+	delay(0x96);
+	blitPageToScreen(0x9);
+	// 131:2e58
+	for (int16 i = 1; i <= 0xe; i++) {
+		var_str_76 = _zbasic->midStr(_zbasic->str(45), i, 1);
+		for (int16 l = 0; l <= 1; l++) {
+			var_i16_18e = 0x21;
+			for (int16 j = 0; j <= 1; j++) {
+				arr_f64_41bbe[j] = arr_i16_1e8[j*0xfb + i];
+				arr_f64_41bbe[j + 2] = (arr_i16_1e8[(j+2)*0xfb + i] - arr_i16_1e8[j*0xfb + i]) / var_i16_18e;
+			}
+			// 131:2f66
+			if (l == 0) {
+				_zbasic->text(kPrologueFontSmall, 9, 0, kSrcOr);
+				drawText(arr_i16_1e8[i], arr_i16_1e8[i + 0xfb]);
+			}
+			// 131:2fc4
+			_zbasic->text(kPrologueFontSmall, 0x9, 0, kSrcXor);
+			for (int16 k = 1; k <= var_i16_18e-1; k++) {
+				arr_f64_41bbe[0] += arr_f64_41bbe[0 + 2];
+				int16 x = (int16)arr_f64_41bbe[0];
+				arr_f64_41bbe[1] += arr_f64_41bbe[1 + 2];
+				int16 y = (int16)arr_f64_41bbe[1];
+				// 131:3078
+				drawText(x, y);
+			}
+			_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+			drawText(arr_i16_1e8[0x1f6 + i], arr_i16_1e8[0x2f1 + i]);
+			delay(1);
+		}
+	}
+	// 131:3130
+	delay(0x1e);
+	blitPageToScreen(0xa);
+	var_i32_2 = _toolbox->TickCount();
+	copyScreenToPage(0xa);
+	setPortBitsToPage(0xa);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
+	// that's it! the answer is the book of thoth
+	var_str_76 = Common::U32String::format("\"%s", _zbasic->str(46).encode().c_str());
+	drawText(0x32, 0x2d);
+	var_str_76 = Common::U32String::format("%s\"", _zbasic->str(47).encode().c_str());
+	drawText(0x3c, 0x3e);
+	arr_i32_41296[0xb]->copyFrom(*arr_i32_41296[0xa]);
+	setPortBitsToPage(0xb);
+	arr_i16_41af4.top = 0xa;
+	arr_i16_41af4.left = 0xb4;
+	arr_i16_41af4.bottom = 0x14c;
+	arr_i16_41af4.right = 0x1f6;
+	_toolbox->InvertOval(arr_i16_41af4);
+	for (int16 i = 5; i <= 0x9; i++) {
+		arr_i32_41296[i]->copyFrom(*arr_i32_41296[4]);
+	}
+	// 131:327e
+	setPortBitsToPage(4);
+	_toolbox->SetRect(arr_i16_1bc, 0, 0, SCREEN_WIDTH, 0xdf);
+	_toolbox->InvertRect(arr_i16_1bc);
+	_zbasic->picture(0xd, 0xf0, arr_i32_0[0x58]);
+	_zbasic->picture(0x186, 0xc, arr_i32_0[0x59]);
+	setPortBitsToPage(5);
+	_zbasic->picture(0xf, 0x68, arr_i32_0[0x53]);
+	setPortBitsToPage(6);
+	_zbasic->picture(0x11, 0x8a, arr_i32_0[0x54]);
+	setPortBitsToPage(7);
+	_zbasic->picture(0x13, 0xa9, arr_i32_0[0x55]);
+	setPortBitsToPage(8);
+	_zbasic->picture(0x11, 0xcd, arr_i32_0[0x56]);
+	setPortBitsToPage(9);
+	_zbasic->picture(0xf, 0xf3, arr_i32_0[0x57]);
+	// 131:339c
+	_toolbox->SetPortBits(var_i32_32);
+	delayFromMarker(0x96);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
+	// that's it! the answer is the book of thoth
+	var_str_76 = Common::U32String::format("\"%s", _zbasic->str(48).encode().c_str());
+	drawText(0x32, 0x2d);
+	var_str_76 = Common::U32String::format("%s\"", _zbasic->str(49).encode().c_str());
+	drawText(0x3c, 0x3e);
+	// 131:341c
+	sub_128_50a(0xb, 0xb0, 0x1f6, 0);
+	sub_128_50a(0x5, 0xb0, 0x1f6, 0);
+	delay(0xa);
+	for (int16 i = 5; i <= 9; i++) {
+		blitPageToScreen(i);
+		delay(3);
+	}
+	_zbasic->picture(0xd, 0xf0, arr_i32_0[0x58]);
+	_toolbox->SetRect(arr_i16_1bc, 0, 0, SCREEN_WIDTH, 0xdf);
+	// lightning flash in sky
+	for (int16 i = 0x1b; i >= 0; i--) {
+		_toolbox->InvertRect(arr_i16_1bc);
+		// this is fudged considerably
+		// 131:34c4
+		_toolbox->Delay(i/4);
+	}
+	// 131:34dc
+	blitPageToScreen(4);
+	var_i32_2 = _toolbox->TickCount();
+	var_i16_3ec = 0x8c;
+	var_i16_3ee = 0x3c;
+	setPortBitsToPage(9);
+	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0);
+	_zbasic->picture(var_i16_3ec, var_i16_3ee, arr_i32_0[0x29]);
+	setPortBitsToPage(0xa);
+	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0);
+	_zbasic->picture(var_i16_3ec, var_i16_3ee, arr_i32_0[0x2a]);
+	_toolbox->SetPortBits(var_i32_32);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+	// the book of thoth?
+	var_str_76 = Common::U32String::format("\"%s\"", _zbasic->str(50).encode().c_str());
+	drawTextRightAlign(0x1a4, 0x2d);
+	var_i32_2 = _toolbox->TickCount();
+	arr_i32_41296[5]->copyFrom(*arr_i32_41296[4]);
+	setPortBitsToPage(5);
+	_zbasic->picture(0x171, 0xb, arr_i32_0[0x5b]);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+	// here is the book of thoth
+	var_str_76 = Common::U32String::format("\"%s", _zbasic->str(51).encode().c_str());
+	drawTextRightAlign(0x1a4, 0x2d);
+	var_i16_5c.top = var_i16_3ee;
+	var_i16_5c.left = var_i16_3ec;
+
+	// 131:366e
+	var_i16_5c.bottom = var_i16_3ee + 100;
+	var_i16_5c.right = var_i16_3ec + 200;
+	var_i32_4e->copyFrom(*arr_i32_41296[4]);
+	var_i32_40 = arr_i32_41296[9];
+	_toolbox->CopyBits(var_i32_40, var_i32_4e, var_i16_5c, var_i16_5c, kSrcBic, 0);
+	var_i32_40 = arr_i32_41296[0xa];
+	_toolbox->CopyBits(var_i32_40, var_i32_4e, var_i16_5c, var_i16_5c, kSrcOr, 0);
+	for (int16 i = 6; i <= 8; i++) {
+		arr_i32_41296[i]->copyFrom(*var_i32_4e);
+	}
+	setPortBitsToPage(6);
+	_zbasic->picture(0x171, 0xb, arr_i32_0[0x5b]);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+
+	// here is the book of thoth
+	var_str_76 = Common::U32String::format("\"%s", _zbasic->str(52).encode().c_str());
+	drawTextRightAlign(0x1a4, 0x2d);
+	setPortBitsToPage(7);
+	_zbasic->picture(0x181, 0xf, arr_i32_0[0x5a]);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+	// and your answer is incorrect
+	var_str_76 = Common::U32String::format("%s\"", _zbasic->str(53).encode().c_str());
+	drawTextRightAlign(0x1a4, 0x2d);
+	setPortBitsToPage(8);
+
+	// 131:3806
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
 
 }
 

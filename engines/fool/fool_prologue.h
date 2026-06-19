@@ -174,6 +174,9 @@ private:
 	int16 var_i16_3e2;
 	int16 var_i16_3e6;
 
+	int16 var_i16_3ec;
+	int16 var_i16_3ee;
+
 	int16 var_i16_3fc;
 
 	// picture resource handles
