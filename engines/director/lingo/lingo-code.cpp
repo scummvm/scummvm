@@ -47,6 +47,7 @@
 
 #include "director/director.h"
 #include "director/debugger.h"
+#include "director/cast.h"
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"
@@ -258,6 +259,18 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 		_state->context->incRefCount();
 	}
 
+	// Run the handler in the window that owns its script (MIAW scoping); mirrors c_tell().
+	fp->retWindow = nullptr;
+	if (funcSym.ctx && funcSym.ctx->_cast && funcSym.ctx->_cast->getMovie()) {
+		Window *targetWindow = funcSym.ctx->_cast->getMovie()->getWindow();
+		Window *currentWindow = _vm->getCurrentWindow();
+		if (targetWindow && targetWindow != currentWindow) {
+			fp->retWindow = currentWindow;
+			currentWindow->moveLingoState(targetWindow);
+			_vm->setCurrentWindow(targetWindow);
+		}
+	}
+
 	DatumHash *localvars = new DatumHash;
 	if (funcSym.anonymous && _state->localVars) {
 		// Execute anonymous functions within the current var frame.
@@ -364,7 +377,15 @@ void Lingo::popContext(bool aborting) {
 		printCallStack(_state->pc);
 	}
 
+	// Undo the pushContext window switch.
+	Window *retWindow = fp->retWindow;
+
 	delete fp;
+
+	if (retWindow && _vm->getCurrentWindow() != retWindow) {
+		_vm->getCurrentWindow()->moveLingoState(retWindow);
+		_vm->setCurrentWindow(retWindow);
+	}
 
 	g_debugger->popContextHook();
 }
