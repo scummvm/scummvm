@@ -270,7 +270,6 @@ MODULE_OBJS += \
 	madsv2/forest/main.o \
 	madsv2/forest/main_menu.o \
 	madsv2/forest/menus.o \
-	madsv2/forest/sound_forest.o \
 	madsv2/forest/mads/mads.o \
 	madsv2/forest/rooms/room101.o \
 	madsv2/forest/rooms/room103.o \

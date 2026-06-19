@@ -38,7 +38,6 @@
 #include "mads/madsv2/forest/forest.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/main.h"
-#include "mads/madsv2/forest/sound_forest.h"
 #include "mads/madsv2/forest/rooms/section1.h"
 #include "mads/madsv2/forest/rooms/section2.h"
 #include "mads/madsv2/forest/rooms/section3.h"
@@ -68,10 +67,6 @@ Common::Error ForestEngine::run() {
 		if (arch)
 			SearchMan.add("mpslabs", arch);
 	}
-
-	// Set up sound manager
-	_soundManager = new ForestSoundManager(_mixer, _soundFlag);
-	_soundManager->validate();
 
 	// Run the game
 	Forest::forest_main();
