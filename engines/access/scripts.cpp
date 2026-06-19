@@ -795,10 +795,11 @@ void Scripts::cmdSetAbout() {
 		error("Invalid index %d in cmdSetAbout", idx);
 
 	debugC(1, kDebugScripts, "cmdSetAbout(idx=%d, val=%d)", idx, val);
+	bool isChange = _vm->_ask[idx] != val;
 	_vm->_ask[idx] = val;
 
-	// Reset location of about items, except in Noctropolis
-	if (_vm->getGameID() != kGameNoctropolis)
+	// Reset top of list, only if it's a change in Noctropolis.
+	if (_vm->getGameID() != kGameNoctropolis || isChange)
 		_vm->_startAboutBox = _vm->_startAboutItem = 0;
 }
 

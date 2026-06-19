@@ -121,6 +121,8 @@ void NoctropolisEngine::initVariables() {
 		entry._value = ITEM_NOT_FOUND;
 	}
 
+	_startAboutBox = _startAboutItem = 0;
+
 	// This is Noct_InitTravel in the original
 	_travScrollRow = 15;
 	_travScrollCol = 0;
