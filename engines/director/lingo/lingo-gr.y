@@ -78,6 +78,20 @@ extern int yylex();
 
 using namespace Director;
 
+// if we have the trim garbage flag on, and we encounter
+// an unwelcome surprise in an expression, use everything up until
+// the first failing token.
+#define TRIM_GARBAGE(src, target) \
+	if (g_lingo->_compiler->_trimGarbage) { \
+		warning("Trimming garbage and continuing.");	\
+		src = target;	\
+		yyerrok; \
+	} else { \
+		src = nullptr; \
+		YYABORT; \
+	}	\
+
+
 static void yyerror(const char *s) {
 	LingoCompiler *compiler = g_lingo->_compiler;
 	compiler->_hadError = true;
@@ -257,13 +271,19 @@ scriptpart:	'\n'						{ $$ = nullptr; }
 // See also:
 //   on keyword
 
-macro: tMACRO ID idlist '\n' stmtlist	{ $$ = new HandlerNode($ID, $idlist, $stmtlist); } ;
+macro: tMACRO ID idlist '\n' stmtlist	{ $$ = new HandlerNode($ID, $idlist, $stmtlist); }
+	| tMACRO ID idlist error '\n' stmtlist	{ TRIM_GARBAGE($$, new HandlerNode($ID, $idlist, $stmtlist)); }
+	;
 
 // FACTORY
 
-factory: tFACTORY ID '\n' methodlist	{ $$ = new FactoryNode($ID, $methodlist); } ;
+factory: tFACTORY ID '\n' methodlist	{ $$ = new FactoryNode($ID, $methodlist); }
+	| tFACTORY ID error '\n' methodlist	{ TRIM_GARBAGE($$, new FactoryNode($ID, $methodlist)); }
+	;
 
-method: tMETHOD ID idlist '\n' stmtlist	{ $$ = new HandlerNode($ID, $idlist, $stmtlist); } ;
+method: tMETHOD ID idlist '\n' stmtlist	{ $$ = new HandlerNode($ID, $idlist, $stmtlist); }
+	|  tMETHOD ID idlist error '\n' stmtlist	{ TRIM_GARBAGE($$, new HandlerNode($ID, $idlist, $stmtlist)); }
+	;
 
 methodlist: /* empty */				{ $$ = new NodeList; }
 	| nonemptymethodlist
@@ -293,8 +313,14 @@ handler: tON ID idlist '\n' stmtlist tENDCLAUSE endargdef '\n' {	// D3
 		$$ = new HandlerNode($ID, $idlist, $stmtlist);
 		checkEnd($tENDCLAUSE, $ID, false);
 		delete $tENDCLAUSE; }
+	| tON ID idlist error '\n' stmtlist tENDCLAUSE endargdef '\n' {	// D3
+		TRIM_GARBAGE($$, new HandlerNode($ID, $idlist, $stmtlist));
+		checkEnd($tENDCLAUSE, $ID, false);
+		delete $tENDCLAUSE; }
 	| tON ID idlist '\n' stmtlist {	// D4. No 'end' clause
 		$$ = new HandlerNode($ID, $idlist, $stmtlist); }
+	| tON ID idlist error '\n' stmtlist {	// D4. No 'end' clause
+		TRIM_GARBAGE($$, new HandlerNode($ID, $idlist, $stmtlist)); }
 	;
 
 endargdef:	/* nothing */
@@ -416,24 +442,38 @@ stmtoneliner: proc
 	;
 
 proc: CMDID cmdargs '\n'				{ $$ = new CmdNode($CMDID, $cmdargs, g_lingo->_compiler->_linenumber - 1); }
+	| CMDID cmdargs error '\n'			{ TRIM_GARBAGE($$, new CmdNode($CMDID, $cmdargs, g_lingo->_compiler->_linenumber - 1)); }
 	| tPUT cmdargs '\n'					{ $$ = new CmdNode(new Common::String("put"), $cmdargs, g_lingo->_compiler->_linenumber - 1); }
+	| tPUT cmdargs error '\n'					{ TRIM_GARBAGE($$, new CmdNode(new Common::String("put"), $cmdargs, g_lingo->_compiler->_linenumber - 1)); }
 	| tGO cmdargs '\n'					{ $$ = new CmdNode(new Common::String("go"), $cmdargs, g_lingo->_compiler->_linenumber - 1); }
+	| tGO cmdargs error '\n'					{ TRIM_GARBAGE($$, new CmdNode(new Common::String("go"), $cmdargs, g_lingo->_compiler->_linenumber - 1)); }
 	| tGO frameargs '\n'				{ $$ = new CmdNode(new Common::String("go"), $frameargs, g_lingo->_compiler->_linenumber - 1); }
+	| tGO frameargs error '\n'				{ TRIM_GARBAGE($$, new CmdNode(new Common::String("go"), $frameargs, g_lingo->_compiler->_linenumber - 1)); }
 	| tPLAY cmdargs '\n'				{ $$ = new CmdNode(new Common::String("play"), $cmdargs, g_lingo->_compiler->_linenumber - 1); }
+	| tPLAY cmdargs error '\n'				{ TRIM_GARBAGE($$, new CmdNode(new Common::String("play"), $cmdargs, g_lingo->_compiler->_linenumber - 1)); }
 	| tPLAY frameargs '\n'				{ $$ = new CmdNode(new Common::String("play"), $frameargs, g_lingo->_compiler->_linenumber - 1); }
+	| tPLAY frameargs error '\n'				{ TRIM_GARBAGE($$, new CmdNode(new Common::String("play"), $frameargs, g_lingo->_compiler->_linenumber - 1)); }
 	| tOPEN cmdargs '\n'				{ $$ = new CmdNode(new Common::String("open"), $cmdargs, g_lingo->_compiler->_linenumber - 1); }
+	| tOPEN cmdargs error '\n'				{ TRIM_GARBAGE($$, new CmdNode(new Common::String("open"), $cmdargs, g_lingo->_compiler->_linenumber - 1)); }
 	| tOPEN expr[arg1] tWITH expr[arg2] '\n' {
 		NodeList *args = new NodeList;
 		args->push_back($arg1);
 		args->push_back($arg2);
 		$$ = new CmdNode(new Common::String("open"), args, g_lingo->_compiler->_linenumber - 1); }
 	| tNEXT tREPEAT '\n'				{ $$ = new NextRepeatNode(); }
+	| tNEXT tREPEAT error '\n'				{ TRIM_GARBAGE($$, new NextRepeatNode()); }
 	| tEXIT tREPEAT '\n'				{ $$ = new ExitRepeatNode(); }
+	| tEXIT tREPEAT error '\n'				{ TRIM_GARBAGE($$, new ExitRepeatNode()); }
 	| tEXIT '\n'						{ $$ = new ExitNode(); }
+	| tEXIT error '\n'						{ TRIM_GARBAGE($$, new ExitNode()); }
 	| tRETURN '\n'						{ $$ = new ReturnNode(nullptr); }
+	| tRETURN error '\n'						{ TRIM_GARBAGE($$, new ReturnNode(nullptr)); }
 	| tRETURN expr '\n'					{ $$ = new ReturnNode($expr); }
+	| tRETURN expr error '\n'					{ TRIM_GARBAGE($$, new ReturnNode($expr)); }
 	| tDELETE chunk '\n'				{ $$ = new DeleteNode($chunk); }
+	| tDELETE chunk error '\n'				{ TRIM_GARBAGE($$, new DeleteNode($chunk)); }
 	| tHILITE chunk '\n'				{ $$ = new HiliteNode($chunk); }
+	| tHILITE chunk error '\n'				{ TRIM_GARBAGE($$, new HiliteNode($chunk)); }
 	| tASSERTERROR stmtoneliner			{ $$ = new AssertErrorNode($stmtoneliner); }
 	;
 
@@ -523,16 +563,23 @@ frameargs:
 	;
 
 asgn: tPUT expr tINTO varorchunk '\n'	{ $$ = new PutIntoNode($expr, $varorchunk); }
+	| tPUT expr tINTO varorchunk error '\n'	{ TRIM_GARBAGE($$, new PutIntoNode($expr, $varorchunk)); }
 	| tPUT expr tAFTER varorchunk '\n'	{ $$ = new PutAfterNode($expr, $varorchunk); }
+	| tPUT expr tAFTER varorchunk error '\n'	{ TRIM_GARBAGE($$, new PutAfterNode($expr, $varorchunk)); }
 	| tPUT expr tBEFORE varorchunk '\n'	{ $$ = new PutBeforeNode($expr, $varorchunk); }
+	| tPUT expr tBEFORE varorchunk error '\n'	{ TRIM_GARBAGE($$, new PutBeforeNode($expr, $varorchunk)); }
 	| tSET varorthe to expr '\n'		{ $$ = new SetNode($varorthe, $expr); }
+	| tSET varorthe to expr error '\n'	{ TRIM_GARBAGE($$, new SetNode($varorthe, $expr)); }
 	;
 
 to: tTO | tEQ ;
 
 definevars: tGLOBAL idlist '\n'			{ $$ = new GlobalNode($idlist); }
+	| tGLOBAL idlist error '\n'			{ TRIM_GARBAGE($$, new GlobalNode($idlist)); }
 	| tPROPERTY idlist '\n'				{ $$ = new PropertyNode($idlist); }
+	| tPROPERTY idlist error '\n'				{ TRIM_GARBAGE($$, new PropertyNode($idlist)); }
 	| tINSTANCE idlist '\n'				{ $$ = new InstanceNode($idlist); }
+	| tINSTANCE idlist error '\n'				{ TRIM_GARBAGE($$, new InstanceNode($idlist)); }
 	;
 
 ifstmt: tIF expr tTHEN stmt {
@@ -541,6 +588,8 @@ ifstmt: tIF expr tTHEN stmt {
 		$$ = new IfStmtNode($expr, stmtlist); }
 	| tIF expr tTHEN '\n' stmtlist_insideif endif {
 		$$ = new IfStmtNode($expr, $stmtlist_insideif); }
+	| tIF expr tTHEN error '\n' stmtlist_insideif endif {
+		TRIM_GARBAGE($$, new IfStmtNode($expr, $stmtlist_insideif)); }
 	;
 
 ifelsestmt: tIF expr tTHEN stmt[stmt1] tELSE stmt[stmt2] {
@@ -572,12 +621,20 @@ endif: /* empty */	{
 
 loop: tREPEAT tWHILE expr '\n' stmtlist tENDREPEAT '\n' {
 		$$ = new RepeatWhileNode($expr, $stmtlist); }
+	| tREPEAT tWHILE expr error '\n' stmtlist tENDREPEAT '\n' {
+		TRIM_GARBAGE($$, new RepeatWhileNode($expr, $stmtlist)); }
 	| tREPEAT tWITH ID tEQ expr[start] tTO expr[end] '\n' stmtlist tENDREPEAT '\n' {
 		$$ = new RepeatWithToNode($ID, $start, false, $end, $stmtlist); }
+	| tREPEAT tWITH ID tEQ expr[start] tTO expr[end] error '\n' stmtlist tENDREPEAT '\n' {
+		TRIM_GARBAGE($$, new RepeatWithToNode($ID, $start, false, $end, $stmtlist)); }
 	| tREPEAT tWITH ID tEQ expr[start] tDOWN tTO expr[end] '\n' stmtlist tENDREPEAT '\n' {
 		$$ = new RepeatWithToNode($ID, $start, true, $end, $stmtlist); }
+	| tREPEAT tWITH ID tEQ expr[start] tDOWN tTO expr[end] error '\n' stmtlist tENDREPEAT '\n' {
+		TRIM_GARBAGE($$, new RepeatWithToNode($ID, $start, true, $end, $stmtlist)); }
 	| tREPEAT tWITH ID tIN expr '\n' stmtlist tENDREPEAT '\n' {
 		$$ = new RepeatWithInNode($ID, $expr, $stmtlist); }
+	| tREPEAT tWITH ID tIN expr error '\n' stmtlist tENDREPEAT '\n' {
+		TRIM_GARBAGE($$, new RepeatWithInNode($ID, $expr, $stmtlist)); }
 	;
 
 tell: tTELL expr tTO stmtoneliner				{
@@ -586,6 +643,8 @@ tell: tTELL expr tTO stmtoneliner				{
 		$$ = new TellNode($expr, stmtlist); }
 	| tTELL expr '\n' stmtlist tENDTELL '\n'	{
 		$$ = new TellNode($expr, $stmtlist); }
+	| tTELL expr error '\n' stmtlist tENDTELL '\n'	{
+		TRIM_GARBAGE($$, new TellNode($expr, $stmtlist)); }
 	;
 
 when: tWHEN '\n'					{ $$ = new WhenNode($tWHEN.eventName, $tWHEN.stmt); } ;

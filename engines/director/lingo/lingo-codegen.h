@@ -58,6 +58,7 @@ public:
 	Common::SharedPtr<Node> _assemblyAST;
 	int32 _assemblyId;
 	ScriptData *_currentAssembly;
+	bool _trimGarbage;
 	bool _indef;
 	uint _linenumber;
 	uint _colnumber;
