@@ -19,7 +19,7 @@
  *
  */
 
-#include "mads/madsv2/core/conv.h"
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/digi.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
@@ -255,7 +255,7 @@ static void room_106_anim1() {
 
 	if (kernel.trigger != 7 && kernel.trigger != 28)
 		return;
-	if (digi_val1 != 0)
+	if (config_file.forest1 != 0)
 		kernel_timing_trigger(1, 109);
 	if (scratch._ae == 114) { scratch._ae = -1; return; }
 	if (scratch._ae > 114)  return;

@@ -19,7 +19,7 @@
  *
  */
 
-#include "mads/madsv2/core/conv.h"
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/core/inter.h"
@@ -107,7 +107,7 @@ static void room_401_anim_state(int16 state) {
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 		player.commands_allowed = -1;
 		player.walker_visible = -1;
-		if (digi_val1) {
+		if (config_file.forest1) {
 			digi_stop(1);
 			kernel_timing_trigger(1, 106);
 		}
@@ -230,7 +230,7 @@ static void room_401_anim2() {
 					} else if (frame == 32) {
 						result = 29;
 					} else if (frame == 35) {
-						if (digi_val1)
+						if (config_file.forest1)
 							kernel_timing_trigger(1, 106);
 					}
 				}
@@ -472,7 +472,7 @@ static void room_401_daemon() {
 		global[walker_converse_state] = 0;
 		close_journal(3);
 		player.commands_allowed = -1;
-		if (digi_val1)
+		if (config_file.forest1)
 			kernel_timing_trigger(1, 106);
 		break;
 

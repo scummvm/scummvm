@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/digi.h"
 #include "mads/madsv2/core/font.h"
 #include "mads/madsv2/core/game.h"
@@ -174,7 +175,7 @@ static void room_510_anim2() {
 			digi_play_build(510, 'e', 1, 1);
 			scratch._8e = 63;
 		} else if (aa_frame == 131) {
-			if (digi_val1)
+			if (config_file.forest1)
 				digi_stop(1);
 			scratch._90 = 133;
 			digi_play_build(510, '_', 3, 2);

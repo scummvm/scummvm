@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/digi.h"
 #include "mads/madsv2/forest/extra.h"
 #include "mads/madsv2/forest/journal.h"
@@ -178,7 +179,7 @@ static void room_308_anim4() {
 
 	bool in_e72 = (cur == 1 || cur == 5) ||
 	              (cur >= 10 && cur <= 58 && cur % 4 == 2);
-	if (in_e72 && (digi_val1 == 0 || (cur != 10 && cur != 14))) {
+	if (in_e72 && (config_file.forest1 == 0 || (cur != 10 && cur != 14))) {
 		digi_initial_volume(60);
 		digi_play_build(308, '_', 1, 2);
 	}

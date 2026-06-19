@@ -19,7 +19,7 @@
  *
  */
 
-#include "mads/madsv2/core/conv.h"
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/digi.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
@@ -281,7 +281,7 @@ static void room_405_daemon() {
 			global[walker_converse_state] = 0;
 			close_journal(3);
 			player.commands_allowed = -1;
-			if (digi_val1)
+			if (config_file.forest1)
 				kernel_timing_trigger(1, 106);
 		}
 		break;
@@ -341,7 +341,7 @@ static void room_405_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
 		player.commands_allowed = -1;
-		if (digi_val1)
+		if (config_file.forest1)
 			kernel_timing_trigger(1, 106);
 		break;
 
@@ -366,7 +366,7 @@ static void room_405_daemon() {
 			global[g143] = 0;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			player.commands_allowed = -1;
-			if (digi_val1)
+			if (config_file.forest1)
 				kernel_timing_trigger(1, 106);
 		}
 		break;
@@ -378,7 +378,7 @@ static void room_405_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
 		global[g143] = 0;
 		player.commands_allowed = -1;
-		if (digi_val1)
+		if (config_file.forest1)
 			kernel_timing_trigger(1, 106);
 		break;
 
@@ -389,7 +389,7 @@ static void room_405_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
 		player.commands_allowed = -1;
-		if (digi_val1)
+		if (config_file.forest1)
 			kernel_timing_trigger(1, 106);
 		break;
 
@@ -407,7 +407,7 @@ static void room_405_daemon() {
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			global[g082] = 1;
 			player.commands_allowed = -1;
-			if (digi_val1)
+			if (config_file.forest1)
 				kernel_timing_trigger(1, 106);
 		}
 		break;

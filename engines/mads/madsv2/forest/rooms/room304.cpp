@@ -19,7 +19,7 @@
  *
  */
 
-#include "mads/madsv2/core/conv.h"
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/digi.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
@@ -133,7 +133,7 @@ static void room_304_init() {
 
 static void room_304_finish() {
 	player.commands_allowed = -1;
-	if (digi_val1)
+	if (config_file.forest1)
 		kernel_timing_trigger(1, 107);
 }
 

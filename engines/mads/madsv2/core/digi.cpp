@@ -20,18 +20,18 @@
  */
 
 #include "mads/madsv2/core/digi.h"
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
 
-int digi_val1;
 int digi_val2;
 int digi_timing_index;
 bool digi_flag1, digi_flag2;
 
 void digi_install() {
-	digi_val1 = 0;
+	config_file.forest1 = 0;
 	digi_val2 = 0;
 	digi_timing_index = 0;
 }

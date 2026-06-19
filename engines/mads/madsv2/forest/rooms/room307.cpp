@@ -19,7 +19,7 @@
  *
  */
 
-#include "mads/madsv2/core/conv.h"
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/digi.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
@@ -321,7 +321,7 @@ static void room_307_anim5() {
 		scratch._aa++;
 		global[g156] = 2;
 		digi_play_build(307, 'E', 2, 1);
-		if (digi_val1 == 0)
+		if (config_file.forest1 == 0)
 			digi_play_build(307, '_', 1, 2);
 		break;
 	case 20:

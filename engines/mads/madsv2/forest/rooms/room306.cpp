@@ -19,7 +19,7 @@
  *
  */
 
-#include "mads/madsv2/core/conv.h"
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/core/inter.h"
@@ -687,7 +687,7 @@ static void room_306_daemon() {
 			global[walker_converse_state] = 0;
 			close_journal(3);
 			player.commands_allowed = -1;
-			if (digi_val1 != 0) {
+			if (config_file.forest1 != 0) {
 				if (global[g066] == 3) {
 					kernel_timing_trigger(1, 118);
 				} else {
@@ -710,7 +710,7 @@ static void room_306_daemon() {
 				kernel_synch(KERNEL_ANIM, scratch.x9a, KERNEL_NOW, 0);
 				global[g133] = 0;
 				player.commands_allowed = -1;
-				if (digi_val1 != 0) {
+				if (config_file.forest1 != 0) {
 					if (global[g066] == 3) {
 						kernel_timing_trigger(1, 118);
 					} else {
@@ -734,7 +734,7 @@ static void room_306_daemon() {
 				scratch.xa2 = 0;
 				scratch.x9e = -1;
 				player.commands_allowed = -1;
-				if (digi_val1 != 0) {
+				if (config_file.forest1 != 0) {
 					if (global[g066] == 3) {
 						kernel_timing_trigger(1, 118);
 					} else {
@@ -792,7 +792,7 @@ static void room_306_daemon() {
 	case 100:
 		kernel_abort_animation(aa[0]);
 		aainfo[0]._active = 0;
-		if (digi_val1 != 0) {
+		if (config_file.forest1 != 0) {
 			if (global[g066] == 3) {
 				kernel_timing_trigger(1, 118);
 			} else {
@@ -820,7 +820,7 @@ static void room_306_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch.x9c, KERNEL_NOW, 0);
 		global[g143] = 0;
 		player.commands_allowed = -1;
-		if (digi_val1 != 0) {
+		if (config_file.forest1 != 0) {
 			if (global[g066] == 3) {
 				kernel_timing_trigger(1, 118);
 			} else {
@@ -975,7 +975,7 @@ static void room_306_parser() {
 		digi_play_build(306, 'b', 1, 1);
 		scratch.x9e = 2500;
 		scratch.xa2 = -1;
-		if (digi_val1 == 0) {
+		if (config_file.forest1 == 0) {
 			kernel.trigger_setup_mode = 1;
 			kernel_timing_trigger(1, 117);
 		}

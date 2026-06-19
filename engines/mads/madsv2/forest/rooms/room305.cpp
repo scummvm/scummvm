@@ -19,6 +19,7 @@
  *
  */
 
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/digi.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
@@ -747,7 +748,7 @@ static void room_305_anim10() {
 			kernel_abort_animation(aa[9]);
 			aainfo[9]._active = 0;
 			player.commands_allowed = -1;
-			if (digi_val1 != 0)
+			if (config_file.forest1 != 0)
 				kernel_timing_trigger(1, 109);
 			global[g131] = -1;
 			kernel_reset_animation(scratch._9a, 1);
@@ -780,7 +781,7 @@ static void room_305_daemon() {
 			global[walker_converse_state] = 0;
 			close_journal(3);
 			player.commands_allowed = -1;
-			if (digi_val1 != 0)
+			if (config_file.forest1 != 0)
 				kernel_timing_trigger(1, 109);
 		} else {
 			if (scratch._a4 == 300) {
@@ -876,7 +877,7 @@ static void room_305_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
 		player.commands_allowed = -1;
-		if (digi_val1 != 0)
+		if (config_file.forest1 != 0)
 			kernel_timing_trigger(1, 109);
 		break;
 
@@ -899,7 +900,7 @@ static void room_305_daemon() {
 			global[g143] = 0;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			player.commands_allowed = -1;
-			if (digi_val1 != 0)
+			if (config_file.forest1 != 0)
 				kernel_timing_trigger(1, 109);
 		}
 		break;
@@ -912,7 +913,7 @@ static void room_305_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
 		global[g143] = 0;
 		player.commands_allowed = -1;
-		if (digi_val1 != 0)
+		if (config_file.forest1 != 0)
 			kernel_timing_trigger(1, 109);
 		break;
 	}
@@ -938,7 +939,7 @@ static void room_305_daemon() {
 			global[g069] = -1;
 			global[player_score] = -1;
 			player.commands_allowed = -1;
-			if (digi_val1 != 0)
+			if (config_file.forest1 != 0)
 				kernel_timing_trigger(1, 109);
 		}
 		break;
@@ -988,7 +989,7 @@ static void room_305_daemon() {
 		global[g143] = 0;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 		player.commands_allowed = -1;
-		if (digi_val1 != 0)
+		if (config_file.forest1 != 0)
 			kernel_timing_trigger(1, 109);
 		break;
 
@@ -1000,7 +1001,7 @@ static void room_305_daemon() {
 		global[g133] = 0;
 		global[player_score] = -1;
 		player.commands_allowed = -1;
-		if (digi_val1 != 0)
+		if (config_file.forest1 != 0)
 			kernel_timing_trigger(1, 109);
 		break;
 

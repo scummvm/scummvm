@@ -19,7 +19,7 @@
  *
  */
 
-#include "mads/madsv2/core/conv.h"
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/digi.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
@@ -463,7 +463,7 @@ static void room_403_daemon() {
 			global[walker_converse_state] = 0;
 			close_journal(3);
 			player.commands_allowed = -1;
-			if (digi_val1 != 0)
+			if (config_file.forest1 != 0)
 				kernel_timing_trigger(1, 105);
 		} else if (scratch._a4 == 300) {
 			kernel_abort_animation(scratch._9e);
@@ -567,7 +567,7 @@ static void room_403_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
 		player.commands_allowed = -1;
-		if (digi_val1 != 0)
+		if (config_file.forest1 != 0)
 			kernel_timing_trigger(1, 105);
 		break;
 
@@ -585,7 +585,7 @@ static void room_403_daemon() {
 		global[g143] = 0;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 		player.commands_allowed = -1;
-		if (digi_val1 != 0)
+		if (config_file.forest1 != 0)
 			kernel_timing_trigger(1, 105);
 		break;
 
@@ -596,7 +596,7 @@ static void room_403_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
 		global[g143] = 0;
 		player.commands_allowed = -1;
-		if (digi_val1 != 0)
+		if (config_file.forest1 != 0)
 			kernel_timing_trigger(1, 105);
 		break;
 
@@ -607,7 +607,7 @@ static void room_403_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
 		player.commands_allowed = -1;
-		if (digi_val1 != 0)
+		if (config_file.forest1 != 0)
 			kernel_timing_trigger(1, 105);
 		break;
 
@@ -625,7 +625,7 @@ static void room_403_daemon() {
 			inter_move_object(13, 2);
 			display_interface();
 			player.commands_allowed = -1;
-			if (digi_val1 != 0)
+			if (config_file.forest1 != 0)
 				kernel_timing_trigger(1, 105);
 		} else if (scratch._a2 == 2) {
 			kernel_abort_animation(aa[5]);
@@ -640,7 +640,7 @@ static void room_403_daemon() {
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			kernel_flip_hotspot(95, 0);
 			player.commands_allowed = -1;
-			if (digi_val1 != 0)
+			if (config_file.forest1 != 0)
 				kernel_timing_trigger(1, 105);
 		}
 		break;

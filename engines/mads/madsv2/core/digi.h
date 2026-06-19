@@ -27,7 +27,7 @@
 namespace MADS {
 namespace MADSV2 {
 
-extern int digi_val1;
+//extern int config_file.forest1;
 extern int digi_val2;
 extern int digi_timing_index;
 extern bool digi_flag1, digi_flag2;

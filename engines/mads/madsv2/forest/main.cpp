@@ -52,6 +52,7 @@ constexpr byte LINE_COLOR = 2;
 char *quotes;
 
 static void main_menu_main() {
+#ifdef TODO
 	auto &screen = *g_engine->getScreen();
 	Palette palette;
 
@@ -113,6 +114,9 @@ static void main_menu_main() {
 	}
 
 	mcga_reset();
+#else
+	selected_item = 0;
+#endif
 }
 
 static void main_cold_data_init() {
