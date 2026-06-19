@@ -2376,6 +2376,15 @@ void FoolGame::menuPrologue() {
 	// this is brand new
 	this->copyScreen(0, this->arr_bmp_138bc);
 	FoolPrologue fp;
+	fp.run(false);
+	this->copyScreen(1, this->arr_bmp_138bc);
+	_toolbox->DrawMenuBar();
+}
+
+void FoolGame::menuFinale() {
+	// this is brand new
+	this->copyScreen(0, this->arr_bmp_138bc);
+	FoolPrologue fp;
 	fp.run(true);
 	this->copyScreen(1, this->arr_bmp_138bc);
 	_toolbox->DrawMenuBar();
@@ -2432,6 +2441,8 @@ void FoolGame::sub_128_5c20() {
 			this->menuAbout();
 		} else if (_selectedMenuItem == 3) {
 			this->menuPrologue();
+		} else if (_selectedMenuItem == 4) {
+			this->menuFinale();
 		}
 	}
 	if (_selectedMenuID == 2) { // File menu
@@ -3083,7 +3094,8 @@ void FoolGame::sub_129_068() {
 	_zbasic->menu(1, 2, 1, Common::U32String("/FAbout Fool's Errand"));
 	// this is brand new
 	_zbasic->menu(1, 3, 1, Common::U32String("Show Prologue"));
-	_zbasic->menu(1, 4, 0, Common::U32String("-"));
+	_zbasic->menu(1, 4, 1, Common::U32String("Show Finale"));
+	_zbasic->menu(1, 5, 0, Common::U32String("-"));
 
 	// File menu
 	_zbasic->menu(2, 0, 1, Common::U32String("File"));

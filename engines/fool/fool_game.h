@@ -166,6 +166,7 @@ public:
 	void sub_128_4472();
 	void menuAbout(); // sub_128_4a92
 	void menuPrologue();
+	void menuFinale();
 
 	// fool_threeships.cpp
 	void shipsRun(); // sub_128_5140
