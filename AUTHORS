@@ -2,10 +2,8 @@ ScummVM Team
 ************
   Project Leaders
   ---------------
-     Pawel Kolodziejski
-     Eugene Sandulenko
-     Einar Johan T. Somaaen
-     Lothar Serra Mari
+     Eugene Sandulenko              - Project Leader
+     Lothar Serra Mari              - Project Co-Leader and Admin
 
   PR Office
   ---------
@@ -1217,6 +1215,10 @@ Other contributions
 
   ResidualVM Contributors
   -----------------------
+    Project Leaders:
+       Pawel Kolodziejski
+       Einar Johan T. Somaaen
+
     Grim:
        Thomas Allen                   - Various engine code fixes and
                                         improvements

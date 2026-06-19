@@ -14,14 +14,10 @@ Project Leaders
 .. list-table::
    :widths: 35 65
 
-   * - Paweł Kołodziejski
-     -
    * - Eugene Sandulenko
-     -
-   * - Einar Johan T. Sømåen
-     -
+     - Project Leader
    * - Lothar Serra Mari
-     -
+     - Project Co-Leader and Admin
 
 PR Office
 *********
@@ -2938,6 +2934,17 @@ Special thanks to Bob Heitman and Corey Cole for their support of FreeSCI.
 
 ResidualVM Contributors
 ***********************
+
+Project Leaders
+^^^^^^^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Paweł Kołodziejski
+     -
+   * - Einar Johan T. Sømåen
+     -
 
 Grim
 ^^^^
