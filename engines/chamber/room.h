@@ -90,7 +90,7 @@ typedef struct turkeyanims_t {
 	animdesc_t field_4;
 } turkeyanims_t;
 
-extern byte scratch_mem1[14400];
+extern byte scratch_mem1[];
 extern byte *scratch_mem2;
 
 extern rect_t room_bounds_rect;

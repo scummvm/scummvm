@@ -40,13 +40,21 @@
 
 namespace Chamber {
 
-// 1500-byte spot-backup region, then the lutin/anim scratch (scratch_mem2).
+// Spot-backup region, then the lutin/anim scratch (scratch_mem2).
+// backupSpotsImages() fills the spot-backup region from scratch_mem1 upward.
+// The original CGA budget for it is 1500 bytes, but EGA stores each backup as
+// CLUT8 (4 bytes per CGA byte), so it needs up to 4*1500 = 6000 bytes. With the
+// old 1500-byte gap the EGA backups spilled past scratch_mem2 and were then
+// clobbered by the next lutin load, corrupting the backup headers (garbage
+// stamped into the backbuffer's top rows). Use the EGA worst case for the gap.
+//
 // The scratch holds up to four simultaneous lutin slots (see getScratchBuffer).
-// CGA needs 4*1600 = 6400 there; EGA decodes lutins to CLUT8 (4 bytes per CGA
-// byte) so it needs 4*3200 = 12800. Sized for the EGA worst case so a big lutin
-// can't overrun into the adjacent sprites_list[].
-byte scratch_mem1[14400];
-byte *scratch_mem2 = scratch_mem1 + 1500;
+// CGA needs 4*1600 = 6400 there; EGA decodes lutins to CLUT8 so it needs
+// 4*3200 = 12800. Size scratch_mem1 for gap + EGA lutin worst case so neither a
+// big backup nor a big lutin can overrun into the adjacent sprites_list[].
+#define SCRATCH_SPOT_GAP 6000
+byte scratch_mem1[SCRATCH_SPOT_GAP + 12800];
+byte *scratch_mem2 = scratch_mem1 + SCRATCH_SPOT_GAP;
 
 rect_t room_bounds_rect = {0, 0, 0, 0};
 byte last_object_hint = 0;
