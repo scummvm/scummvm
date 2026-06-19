@@ -376,10 +376,10 @@ void BubbleBox::doBox_v3(int item, int box) {
 
 	_vm->_screen->saveBlock(_bounds);
 
-	screen.fillRect(Common::Rect(boxX + 5, boxY + 5, boxX + 5 + boxWidth * 16 + 15, boxY + 5 + boxHeight * 16 + 8), 246);
+	screen.fillRect(Common::Rect(boxX + 5, boxY + 5, boxX + 5 + boxWidth * 16 + 16, boxY + 5 + boxHeight * 16 + 9), 246);
 
 	if (_type & kTextBoxNoctCaption) {
-		screen.fillRect(Common::Rect(boxX + 5, boxY + 5, boxX + 5 + boxWidth * 16 + 15, boxY + 5 + fontHeight), 236);
+		screen.fillRect(Common::Rect(boxX + 5, boxY + 5, boxX + 5 + boxWidth * 16 + 16, boxY + 6 + fontHeight), 236);
 		screen.hLine(boxX + 5, boxY + 5 + fontHeight, boxX + 5 + boxWidth * 16 + 15, 237);
 	}
 
