@@ -1976,7 +1976,10 @@ void LB::b_do(int nargs) {
 	if (code.empty())
 		return;
 
-	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code);
+	uint32 flags = 0;
+	flags |= g_director->getVersion() < 400 ? kLPPTrimGarbage : 0;
+
+	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code, flags);
 	if (!sc) {
 		warning("b_do(): compilation failed, ignoring");
 
