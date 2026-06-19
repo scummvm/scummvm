@@ -263,6 +263,8 @@ extern void sync_room(Common::Serializer &s);
 extern void global_section_walker();
 extern void global_section_interface();
 
+extern void global_room_init();
+extern void global_error_code();
 extern void global_anim1(int arg_0, int arg_2, int arg_4, int16 *arg_6);
 extern void global_anim2(int arg_0, int arg_2, int arg_4, int16 *arg_6);
 extern void global_anim3(int handle, int16 *frame);

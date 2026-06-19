@@ -114,18 +114,21 @@ void ForestEngine::global_daemon_code() {
 }
 
 void ForestEngine::global_pre_parser_code() {
+	if (player_said_1(look) || player_said_1(throw)) {
+		player.need_to_walk = false;
+	}
 }
 
 void ForestEngine::global_parser_code() {
-}
-
-void ForestEngine::global_object_examine() {
+	// No implementation
 }
 
 void ForestEngine::global_error_code() {
+	Forest::global_error_code();
 }
 
 void ForestEngine::global_room_init() {
+	Forest::global_room_init();
 }
 
 void ForestEngine::global_sound_driver() {

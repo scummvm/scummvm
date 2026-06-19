@@ -30,6 +30,7 @@ namespace MADSV2 {
 extern int digi_val1;
 extern int digi_val2;
 extern int digi_timing_index;
+extern bool digi_flag1, digi_flag2;
 
 extern void digi_install();
 extern void digi_play(const char *name, int slot);

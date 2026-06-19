@@ -29,9 +29,6 @@ namespace MADSV2 {
 namespace Forest {
 
 class ForestEngine : public MADSV2Engine {
-private:
-	static void global_object_examine();
-
 public:
 	ForestEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 		MADSV2Engine(syst, gameDesc) {}

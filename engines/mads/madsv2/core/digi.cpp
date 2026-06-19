@@ -28,6 +28,7 @@ namespace MADSV2 {
 int digi_val1;
 int digi_val2;
 int digi_timing_index;
+bool digi_flag1, digi_flag2;
 
 void digi_install() {
 	digi_val1 = 0;
