@@ -71,6 +71,8 @@ Common::Path dumpFactoryName(const char *prefix, const char *name, const char *e
 
 bool isButtonSprite(SpriteType spriteType);
 
+uint32 macTimeSeed();
+
 class RandomState {
 public:
 	uint32 _seed;
@@ -81,7 +83,7 @@ public:
 		_seed = _mask = _len = 0;
 	}
 
-	void setSeed(int seed, bool runInit = true);
+	void setSeed(uint32 seed, bool runInit = true);
 	uint32 getSeed() { return _seed; }
 	int32 getRandom(int32 range);
 

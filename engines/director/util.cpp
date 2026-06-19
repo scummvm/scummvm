@@ -25,7 +25,9 @@
 #include "common/memstream.h"
 #include "common/punycode.h"
 #include "common/str-array.h"
+#include "common/system.h"
 #include "common/tokenizer.h"
+#include "common/util.h"
 #include "common/xpfloat.h"
 #include "common/compression/deflate.h"
 
@@ -1203,7 +1205,19 @@ Common::Path dumpFactoryName(const char *prefix, const char *name, const char *e
 	return Common::Path(Common::String::format("./dumps/%s-factory-%s.%s", prefix, name, ext), '/');
 }
 
-void RandomState::setSeed(int seed, bool runInit) {
+// Seconds between the classic Mac OS epoch and the Unix epoch.
+static const uint32 kMacEpochOffset = 2082844800U;
+
+uint32 macTimeSeed() {
+	// Director seeds its RNG with the local wall-clock time in seconds since
+	// the classic Mac OS epoch.
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+
+	return (uint32)(Common::DateTime::dateTimeToInt64(td) + kMacEpochOffset);
+}
+
+void RandomState::setSeed(uint32 seed, bool runInit) {
 	if (runInit)
 		init(32);
 
@@ -1245,9 +1259,7 @@ void RandomState::init(int len) {
 		_len = (1 << len) - 1;
 	}
 
-	// The original is _always_ initalized with a seed of 1. It is hardcoded and is by design
-	// The developers were offered to use `set the randomSeed` Lingo
-	setSeed(1, false);
+	setSeed(macTimeSeed(), false);
 	_mask = masks[len - 2];
 }
 
