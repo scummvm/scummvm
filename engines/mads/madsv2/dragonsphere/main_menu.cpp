@@ -312,7 +312,7 @@ void menu_control() {
 	start_series();
 	start_hotspots();
 
-	anim = kernel_run_animation("*RM902A.AA", 0);
+	anim = kernel_run_animation("*RM920A.AA", 0);
 
 	mouse_init_cycle();
 
