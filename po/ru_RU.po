@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-18 09:40+0000\n"
-"PO-Revision-Date: 2026-06-17 23:04+0000\n"
+"PO-Revision-Date: 2026-06-20 14:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -6317,11 +6317,13 @@ msgstr "Проверить обновления..."
 
 #: engines/access/metaengine.cpp:82
 msgid "Use 'high definition' OGG music"
-msgstr ""
+msgstr "Использовать музыку OGG «высокого разрешения»"
 
 #: engines/access/metaengine.cpp:83
 msgid "Use the OGG audio from the re-release instead of original MIDI tracks"
 msgstr ""
+"Вместо оригинальных MIDI-треков использовать аудиофайлы в формате OGG из "
+"переиздания"
 
 #: engines/access/metaengine.cpp:236 engines/alcachofa/metaengine.cpp:94
 #: engines/bbvs/metaengine.cpp:92 engines/buried/metaengine.cpp:133
@@ -8168,10 +8170,8 @@ msgstr ""
 "самого начала, с новыми сохранениями."
 
 #: engines/colony/intro.cpp:154 engines/colony/intro.cpp:1244
-#, fuzzy
-#| msgid "New game"
 msgid "New Game"
-msgstr "Новое сохранение"
+msgstr "Новая Игра"
 
 #: engines/colony/intro.cpp:155 engines/colony/intro.cpp:1242
 msgid "Load Game"
