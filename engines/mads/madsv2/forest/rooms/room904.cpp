@@ -39,18 +39,18 @@ namespace Forest {
 namespace Rooms {
 
 struct Scratch {
-	int16 sprite[10];        /* ss[] — series handles for maint0-5 and main0-3 */
-	int16 sequence[10];      /* seq[] — sequence handles                        */
-	int16 animation[7];      /* aa[]  — pressed-state sequence handles          */
+	int16 sprite[10];
+	int16 sequence[10];
+	int16 animation[7];
 	AnimationInfo animation_info[2];
 };
 
-static Scratch scratch;
+static Scratch local;
 
-#define local (&scratch)
-#define ss    local->sprite
-#define seq   local->sequence
-#define aa    local->animation
+#define ss    local.sprite
+#define seq   local.sequence
+#define aa    local.animation
+#define aainfo local.animation_info
 
 /* Triggers */
 #define TRIGGER1        101
@@ -89,11 +89,11 @@ static void room_904_seen_intro() {
 static void room_904_init() {
 	last_keypressed = -1;
 	global_digi_play(3);
-	scratch.animation_info[1]._active = 0;
-	scratch.animation_info[1]._frame = 0;
+	aainfo[1]._active = 0;
+	aainfo[1]._frame = 0;
 	global[g009] = -1;
 	viewing_at_y = 22;
-	scratch.animation_info[1]._val3 = 0;
+	aainfo[1]._val3 = 0;
 	global[player_score] = 0;
 
 	ss[6] = kernel_load_series("*main0", 0);
@@ -128,7 +128,7 @@ static void room_904_daemon() {
 	if (mouse_hidden)
 		mouse_show();
 
-	/* Hit-test the 6 menu button regions */
+	// Hit-test the 6 menu button regions
 	if (mouse_x >= 42 && mouse_x <= 71 && mouse_y >= 30 && mouse_y <= 52)
 		selection = 1;
 	if (mouse_x >= 41 && mouse_x <= 71 && mouse_y >= 146 && mouse_y <= 170)
@@ -142,45 +142,45 @@ static void room_904_daemon() {
 	if (mouse_x >= 72 && mouse_x <= 247 && mouse_y >= 55 && mouse_y <= 144)
 		selection = 6;
 
-	/* Hover: stamp highlight when first entering a button area */
-	if (scratch.animation_info[1]._active == 0) {
+	// Hover: stamp highlight when first entering a button area
+	if (aainfo[1]._active == 0) {
 		switch (selection) {
 		case 1:
 			seq[5] = kernel_seq_stamp(ss[0], false, 1);
 			kernel_seq_depth(seq[5], 1);
-			scratch.animation_info[1]._active = 1;
+			aainfo[1]._active = 1;
 			break;
 		case 2:
 			seq[7] = kernel_seq_stamp(ss[2], false, 1);
 			kernel_seq_depth(seq[7], 1);
-			scratch.animation_info[1]._active = 2;
+			aainfo[1]._active = 2;
 			break;
 		case 3:
 			seq[8] = kernel_seq_stamp(ss[3], false, 1);
 			kernel_seq_depth(seq[8], 1);
-			scratch.animation_info[1]._active = 3;
+			aainfo[1]._active = 3;
 			break;
 		case 4:
 			seq[6] = kernel_seq_stamp(ss[1], false, 1);
 			kernel_seq_depth(seq[6], 1);
-			scratch.animation_info[1]._active = 4;
+			aainfo[1]._active = 4;
 			break;
 		case 5:
 			aa[0] = kernel_seq_stamp(ss[5], false, 1);
 			kernel_seq_depth(aa[0], 1);
-			scratch.animation_info[1]._active = 5;
+			aainfo[1]._active = 5;
 			break;
 		case 6:
 			seq[9] = kernel_seq_stamp(ss[4], false, 1);
 			kernel_seq_depth(seq[9], 1);
-			scratch.animation_info[1]._active = 6;
+			aainfo[1]._active = 6;
 			break;
 		}
 	}
 
-	/* Hover: delete old highlight when leaving a button area or switching buttons */
-	if (selection == 0 || scratch.animation_info[1]._active != selection) {
-		switch (scratch.animation_info[1]._active) {
+	// Hover: delete old highlight when leaving a button area or switching buttons
+	if (selection == 0 || aainfo[1]._active != selection) {
+		switch (aainfo[1]._active) {
 		case 1: kernel_seq_delete(seq[5]); break;
 		case 2: kernel_seq_delete(seq[7]); break;
 		case 3: kernel_seq_delete(seq[8]); break;
@@ -188,50 +188,50 @@ static void room_904_daemon() {
 		case 5: kernel_seq_delete(aa[0]);  break;
 		case 6: kernel_seq_delete(seq[9]); break;
 		}
-		scratch.animation_info[1]._active = 0;
+		aainfo[1]._active = 0;
 	}
 
-	/* Click: stamp pressed state when button first clicked */
+	// Click: stamp pressed state when button first clicked
 	if (mouse_stroke_going &&
-	    scratch.animation_info[1]._val3 == 0 &&
-	    scratch.animation_info[1]._frame == 0) {
+	    aainfo[1]._val3 == 0 &&
+	    aainfo[1]._frame == 0) {
 		switch (selection) {
 		case 1:
 			aa[1] = kernel_seq_stamp(ss[6], false, 2);
 			kernel_seq_depth(aa[1], 1);
-			scratch.animation_info[1]._frame = 1;
+			aainfo[1]._frame = 1;
 			break;
 		case 2:
 			aa[3] = kernel_seq_stamp(ss[8], false, 2);
 			kernel_seq_depth(aa[3], 1);
-			scratch.animation_info[1]._frame = 2;
+			aainfo[1]._frame = 2;
 			break;
 		case 3:
 			aa[4] = kernel_seq_stamp(ss[9], false, 2);
 			kernel_seq_depth(aa[4], 1);
-			scratch.animation_info[1]._frame = 3;
+			aainfo[1]._frame = 3;
 			break;
 		case 4:
 			aa[2] = kernel_seq_stamp(ss[7], false, 2);
 			kernel_seq_depth(aa[2], 1);
-			scratch.animation_info[1]._frame = 4;
+			aainfo[1]._frame = 4;
 			break;
 		case 5:
 			aa[6] = kernel_seq_stamp(seq[1], false, 2);
 			kernel_seq_depth(aa[6], 1);
-			scratch.animation_info[1]._frame = 5;
+			aainfo[1]._frame = 5;
 			break;
 		case 6:
-			scratch.animation_info[1]._frame = 6;
+			aainfo[1]._frame = 6;
 			break;
 		}
 	}
 
-	/* Cancel: delete pressed stamp when mouse moves off a button while held */
-	if (scratch.animation_info[1]._frame != 0 &&
-	    scratch.animation_info[1]._val3 == 0 &&
+	// Cancel: delete pressed stamp when mouse moves off a button while held
+	if (aainfo[1]._frame != 0 &&
+	    aainfo[1]._val3 == 0 &&
 	    selection == 0) {
-		switch (scratch.animation_info[1]._frame) {
+		switch (aainfo[1]._frame) {
 		case 1: kernel_seq_delete(aa[1]); break;
 		case 2: kernel_seq_delete(aa[3]); break;
 		case 3: kernel_seq_delete(aa[4]); break;
@@ -239,12 +239,12 @@ static void room_904_daemon() {
 		case 5: kernel_seq_delete(aa[6]); break;
 		default: break;
 		}
-		scratch.animation_info[1]._frame = 0;
+		aainfo[1]._frame = 0;
 	}
 
-	/* Release: delete pressed stamp on mouse release and schedule the action */
-	if (!mouse_stroke_going && scratch.animation_info[1]._val3 == 0) {
-		switch (scratch.animation_info[1]._frame) {
+	// Release: delete pressed stamp on mouse release and schedule the action
+	if (!mouse_stroke_going && aainfo[1]._val3 == 0) {
+		switch (aainfo[1]._frame) {
 		case 1: kernel_seq_delete(aa[1]); break;
 		case 2: kernel_seq_delete(aa[3]); break;
 		case 3: kernel_seq_delete(aa[4]); break;
@@ -252,16 +252,17 @@ static void room_904_daemon() {
 		case 5: kernel_seq_delete(aa[6]); break;
 		default: break;
 		}
-		if (scratch.animation_info[1]._frame != 0) {
+		if (aainfo[1]._frame != 0) {
 			kernel_timing_trigger(1, TRIGGER_ACTION);
-			scratch.animation_info[1]._val3 = -1;
+			aainfo[1]._val3 = -1;
 		}
 	}
 
-	/* Action: execute the chosen menu option when the delay trigger fires */
+	// Action: execute the chosen menu option when the delay trigger fires
 	if (kernel.trigger == TRIGGER_ACTION) {
-		switch (scratch.animation_info[1]._frame) {
+		switch (aainfo[1]._frame) {
 		case 1:
+			// Credits
 			midi_stop();
 			global[player_score] = 0;
 			global[g016] = -1;
@@ -269,18 +270,27 @@ static void room_904_daemon() {
 			new_room = 510;
 			break;
 
-		case 2:
-			midi_stop();
-			if (g_engine->loadGameState(0).getCode() != Common::kNoError)
-				new_room = 101;
+		case 2: {
+			// Resume Game
+			auto saves = g_engine->listSaves();
+			if (!saves.empty()) {
+				int savegameSlot = saves.back().getSaveSlot();
+
+				midi_stop();
+				if (g_engine->loadGameState(savegameSlot).getCode() != Common::kNoError)
+					new_room = 101;
+			}
 			break;
+		}
 
 		case 3:
+			// Restore game
 			midi_stop();
-			kernel.activate_menu = 3;
+			kernel.activate_menu = GAME_RESTORE_MENU;
 			break;
 
 		case 4:
+			// Play Intro
 			room_904_setup_objects();
 			global[player_score] = 0;
 			midi_stop();
@@ -291,10 +301,12 @@ static void room_904_daemon() {
 			break;
 
 		case 5:
+			// Exit
 			game.going = 0;
 			break;
 
 		case 6:
+			// Start Game
 			new_room = 101;
 			midi_stop();
 			room_904_setup_objects();
@@ -306,32 +318,32 @@ static void room_904_daemon() {
 			break;
 		}
 
-		scratch.animation_info[1]._val3 = 0;
-		scratch.animation_info[1]._frame = 0;
+		aainfo[1]._val3 = 0;
+		aainfo[1]._frame = 0;
 	}
 
-	/* Escape key: trigger quit */
+	// Escape key: trigger quit
 	if (last_keypressed == 27) {
 		kernel_timing_trigger(1, TRIGGER_ACTION);
-		scratch.animation_info[1]._val3 = -1;
-		scratch.animation_info[1]._frame = 5;
+		aainfo[1]._val3 = -1;
+		aainfo[1]._frame = 5;
 		last_keypressed = -1;
 	}
 
-	/* Enter key: trigger play/continue */
+	// Enter key: trigger play/continue
 	if (last_keypressed == 13) {
 		kernel_timing_trigger(1, TRIGGER_ACTION);
-		scratch.animation_info[1]._val3 = -1;
-		scratch.animation_info[1]._frame = 6;
+		aainfo[1]._val3 = -1;
+		aainfo[1]._frame = 6;
 		last_keypressed = -1;
 	}
 }
 
 void room_904_synchronize(Common::Serializer &s) {
-	for (int16 &v : scratch.sprite)    s.syncAsSint16LE(v);
-	for (int16 &v : scratch.sequence)  s.syncAsSint16LE(v);
-	for (int16 &v : scratch.animation) s.syncAsSint16LE(v);
-	for (auto &ai : scratch.animation_info) ai.synchronize(s);
+	for (int16 &v : ss)     s.syncAsSint16LE(v);
+	for (int16 &v : seq)    s.syncAsSint16LE(v);
+	for (int16 &v : aa)     s.syncAsSint16LE(v);
+	for (auto &ai : aainfo) ai.synchronize(s);
 }
 
 void room_904_preload() {
@@ -339,7 +351,7 @@ void room_904_preload() {
 	room_daemon_code_pointer = room_904_daemon;
 
 	global[g016] = true;
-	kernel.activate_menu = false;
+	kernel.activate_menu = GAME_NO_MENU;
 	section_9_walker();
 	section_9_interface();
 }
