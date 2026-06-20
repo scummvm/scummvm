@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-18 09:40+0000\n"
-"PO-Revision-Date: 2026-06-14 09:41+0000\n"
+"PO-Revision-Date: 2026-06-20 14:56+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -6351,11 +6351,13 @@ msgstr "Cerca aggiornamenti..."
 
 #: engines/access/metaengine.cpp:82
 msgid "Use 'high definition' OGG music"
-msgstr ""
+msgstr "Usa musica OGG ad \"alta qualità\""
 
 #: engines/access/metaengine.cpp:83
 msgid "Use the OGG audio from the re-release instead of original MIDI tracks"
 msgstr ""
+"Usa l'audio della riedizione, in formato OGG, anzichè le tracce MIDI "
+"originali"
 
 #: engines/access/metaengine.cpp:236 engines/alcachofa/metaengine.cpp:94
 #: engines/bbvs/metaengine.cpp:92 engines/buried/metaengine.cpp:133
@@ -8221,20 +8223,16 @@ msgstr ""
 "dall'inizio e crea dei nuovi salvataggi."
 
 #: engines/colony/intro.cpp:154 engines/colony/intro.cpp:1244
-#, fuzzy
-#| msgid "New game"
 msgid "New Game"
-msgstr "Nuova partita"
+msgstr "Nuova Partita"
 
 #: engines/colony/intro.cpp:155 engines/colony/intro.cpp:1242
 msgid "Load Game"
 msgstr "Carica Partita"
 
 #: engines/colony/intro.cpp:1219 engines/colony/intro.cpp:1244
-#, fuzzy
-#| msgid "You have stored "
 msgid "You have been terminated."
-msgstr "Hai messo nell'inventario "
+msgstr "Sei morto."
 
 #: engines/colony/metaengine.cpp:45 engines/myst3/metaengine.cpp:40
 msgid "Widescreen mod"
