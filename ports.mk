@@ -715,13 +715,11 @@ ifeq ($(VER_DIRTY), -dirty)
 	$(error You have uncommitted changes)
 endif
 	@echo Creating Code::Blocks project files...
-	@cd $(srcdir)/dists/codeblocks && $(PWD)/devtools/create_project/create_project ../.. --codeblocks >/dev/null && git add -f engines/*.h *.workspace *.cbp
+	@cd $(srcdir)/dists/codeblocks && $(PWD)/devtools/create_project/create_project ../.. --codeblocks >/dev/null
 	@echo Creating MSVC project files...
-	@cd $(srcdir)/dists/msvc && $(PWD)/devtools/create_project/create_project ../.. --msvc-version 18 --msvc >/dev/null && git add -f engines/*.h *.sln *.vcxproj *.vcxproj.filters *.props
+	@cd $(srcdir)/dists/msvc && $(PWD)/devtools/create_project/create_project ../.. --msvc-version 18 --msvc >/dev/null
 	@echo
 	@echo All is done.
-	@echo Now run
-	@echo -e "\tgit commit -m 'DISTS: Generated Code::Blocks and MSVC project files'"
 
 release-checks:
 	devtools/release-checks.sh
