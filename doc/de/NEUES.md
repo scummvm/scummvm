@@ -17,6 +17,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Klickbare Links in der Benutzeroberfläche werden jetzt durch einen veränderten Cursor hervorgehoben.
    - Die Fenstergröße wird jetzt korrekt wiederhergestellt, wenn in 3D-Engines von Vollbild zurück zum Fenster-Modus gewechselt wird.
    - NULL OPL-Treiber für schwächere Systeme implementiert.
+   - Flüssiges Scrollen in Listen innerhalb der Benutzeroberfläche implementiert.
 
  ACCESS:
    - Mehrere Skript-Fehler in Martian Memorandum behoben.
