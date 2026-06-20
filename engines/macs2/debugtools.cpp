@@ -645,23 +645,41 @@ static Common::Array<DecompiledLine> decompileScript(Common::MemoryReadStream *s
 	return lines;
 }
 
-static Common::Array<DecompiledLine> _cachedDecompile;
-static int _cachedSceneIndex = -1;
-bool _scriptDebugPaused = false;
-bool _scriptDebugStepRequested = false;
-static bool _scriptFollowPC = true;
-static Common::Array<uint32> _collapsedBlocks; // offsets of collapsed if/else blocks
+static Common::Array<DecompiledLine> &cachedDecompile() {
+	static Common::Array<DecompiledLine> *arr = nullptr;
+	if (!arr)
+		arr = new Common::Array<DecompiledLine>();
+	return *arr;
+}
+
+static Common::Array<uint32> &collapsedBlocks() {
+	static Common::Array<uint32> *arr = nullptr;
+	if (!arr)
+		arr = new Common::Array<uint32>();
+	return *arr;
+}
 
 struct Breakpoint {
 	uint32 offset;
 	bool enabled;
 };
-static Common::Array<Breakpoint> _breakpoints;
+
+static Common::Array<Breakpoint> &breakpoints() {
+	static Common::Array<Breakpoint> *arr = nullptr;
+	if (!arr)
+		arr = new Common::Array<Breakpoint>();
+	return *arr;
+}
+
+static int _cachedSceneIndex = -1;
+bool _scriptDebugPaused = false;
+bool _scriptDebugStepRequested = false;
+static bool _scriptFollowPC = true;
 static bool _showBreakpoints = false;
 
 static int findBreakpoint(uint32 offset) {
-	for (uint i = 0; i < _breakpoints.size(); i++)
-		if (_breakpoints[i].offset == offset)
+	for (uint i = 0; i < breakpoints().size(); i++)
+		if (breakpoints()[i].offset == offset)
 			return (int)i;
 	return -1;
 }
@@ -669,33 +687,33 @@ static int findBreakpoint(uint32 offset) {
 static void toggleBreakpoint(uint32 offset) {
 	int idx = findBreakpoint(offset);
 	if (idx >= 0)
-		_breakpoints.remove_at(idx);
+		breakpoints().remove_at(idx);
 	else
-		_breakpoints.push_back({offset, true});
+		breakpoints().push_back({offset, true});
 }
 
 static bool hasEnabledBreakpoint(uint32 offset) {
-	for (uint i = 0; i < _breakpoints.size(); i++)
-		if (_breakpoints[i].offset == offset && _breakpoints[i].enabled)
+	for (uint i = 0; i < breakpoints().size(); i++)
+		if (breakpoints()[i].offset == offset && breakpoints()[i].enabled)
 			return true;
 	return false;
 }
 
 static bool isBlockCollapsed(uint32 offset) {
-	for (uint i = 0; i < _collapsedBlocks.size(); i++)
-		if (_collapsedBlocks[i] == offset)
+	for (uint i = 0; i < collapsedBlocks().size(); i++)
+		if (collapsedBlocks()[i] == offset)
 			return true;
 	return false;
 }
 
 static void toggleBlockCollapse(uint32 offset) {
-	for (uint i = 0; i < _collapsedBlocks.size(); i++) {
-		if (_collapsedBlocks[i] == offset) {
-			_collapsedBlocks.remove_at(i);
+	for (uint i = 0; i < collapsedBlocks().size(); i++) {
+		if (collapsedBlocks()[i] == offset) {
+			collapsedBlocks().remove_at(i);
 			return;
 		}
 	}
-	_collapsedBlocks.push_back(offset);
+	collapsedBlocks().push_back(offset);
 }
 
 // Called from ScriptExecutor before executing each opcode
@@ -752,8 +770,8 @@ static void showScriptWindow() {
 		ImGui::SameLine();
 		if (ImGui::Button("Copy")) {
 			Common::String full;
-			for (uint i = 0; i < _cachedDecompile.size(); i++) {
-				const DecompiledLine &l = _cachedDecompile[i];
+			for (uint i = 0; i < cachedDecompile().size(); i++) {
+				const DecompiledLine &l = cachedDecompile()[i];
 				for (int j = 0; j < l.indent; j++)
 					full += "  ";
 				full += Common::String::format("%04x: %s\n", l.offset, l.text.c_str());
@@ -771,16 +789,16 @@ static void showScriptWindow() {
 		if (script) {
 			if (_cachedSceneIndex != currentScene) {
 				_decompileStringStream = Scenes::instance()._currentSceneStrings;
-				_cachedDecompile = decompileScript(script);
+				cachedDecompile() = decompileScript(script);
 				_decompileStringStream = nullptr;
 				_cachedSceneIndex = currentScene;
-				_collapsedBlocks.clear();
+				collapsedBlocks().clear();
 			}
 			uint32 currentPos = exec->getDebugOpcodePosition();
 			if (ImGui::BeginChild("ScriptView", ImVec2(0, 0), ImGuiChildFlags_Borders)) {
 				int skipUntilIndent = -1; // for collapsed block skipping
-				for (uint i = 0; i < _cachedDecompile.size(); i++) {
-					const DecompiledLine &l = _cachedDecompile[i];
+				for (uint i = 0; i < cachedDecompile().size(); i++) {
+					const DecompiledLine &l = cachedDecompile()[i];
 
 					// Skip lines inside collapsed blocks
 					if (skipUntilIndent >= 0) {
@@ -789,7 +807,7 @@ static void showScriptWindow() {
 						skipUntilIndent = -1;
 					}
 
-					uint32 nextOff = (i + 1 < _cachedDecompile.size()) ? _cachedDecompile[i + 1].offset : exec->getScriptEndPosition();
+					uint32 nextOff = (i + 1 < cachedDecompile().size()) ? cachedDecompile()[i + 1].offset : exec->getScriptEndPosition();
 					bool isCurrent = (currentPos >= l.offset && currentPos < nextOff);
 
 					// Check if this is a collapsible block header (if/else/compare/ifInteraction)
@@ -816,7 +834,7 @@ static void showScriptWindow() {
 					// Draw the red dot (re-check after possible toggle)
 					bpIdx = findBreakpoint(l.offset);
 					if (bpIdx >= 0) {
-						ImU32 col = _breakpoints[bpIdx].enabled ? IM_COL32(255, 0, 0, 255) : IM_COL32(128, 64, 64, 200);
+						ImU32 col = breakpoints()[bpIdx].enabled ? IM_COL32(255, 0, 0, 255) : IM_COL32(128, 64, 64, 200);
 						ImGui::GetWindowDrawList()->AddCircleFilled(dotCenter, 5.0f, col);
 					}
 					ImGui::SameLine();
@@ -860,27 +878,27 @@ static void showBreakpointsWindow() {
 	ImGui::SetNextWindowSize(ImVec2(350, 250), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Breakpoints", &_showBreakpoints)) {
 		if (ImGui::Button("Clear All"))
-			_breakpoints.clear();
+			breakpoints().clear();
 		ImGui::SameLine();
-		ImGui::Text("(%u breakpoints)", (uint)_breakpoints.size());
+		ImGui::Text("(%u breakpoints)", (uint)breakpoints().size());
 		ImGui::Separator();
-		for (int i = 0; i < (int)_breakpoints.size(); i++) {
+		for (int i = 0; i < (int)breakpoints().size(); i++) {
 			ImGui::PushID(i);
-			ImGui::Checkbox("##en", &_breakpoints[i].enabled);
+			ImGui::Checkbox("##en", &breakpoints()[i].enabled);
 			ImGui::SameLine();
-			ImGui::Text("0x%04x", _breakpoints[i].offset);
+			ImGui::Text("0x%04x", breakpoints()[i].offset);
 			// Find opcode name for this offset
-			for (uint j = 0; j < _cachedDecompile.size(); j++) {
-				if (_cachedDecompile[j].offset == _breakpoints[i].offset) {
+			for (uint j = 0; j < cachedDecompile().size(); j++) {
+				if (cachedDecompile()[j].offset == breakpoints()[i].offset) {
 					ImGui::SameLine();
-					ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "%s", _cachedDecompile[j].text.c_str());
+					ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "%s", cachedDecompile()[j].text.c_str());
 					break;
 				}
 			}
 			ImGui::SameLine(ImGui::GetWindowWidth() - 30);
 			if (ImGui::SmallButton("X")) {
 				ImGui::PopID();
-				_breakpoints.remove_at(i);
+				breakpoints().remove_at(i);
 				i--;
 				continue;
 			}
