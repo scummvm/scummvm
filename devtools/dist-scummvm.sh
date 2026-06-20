@@ -49,6 +49,7 @@ if [ -z "$tag" ]; then
   tag="v$version"
 fi
 fullname="$module-$version"
+repodir=`pwd`
 
 # Check modules
 case $module in
@@ -63,6 +64,11 @@ scummvm-tools)
     exit 1
 esac
 
+if [ ! -f "$repodir/dists/codeblocks/scummvm.cbp" ]; then
+  echo "Code::Blocks project file scummvm.cbp not found in dists/codeblocks"
+  echo "Please run 'make ideprojects' first to generate the project files."
+  exit 1
+fi
 
 echo "packaging $module release $version, GIT tag $tag"
 
@@ -110,6 +116,10 @@ cd $tmpdir
 
 echo "Cleaning up .git temporary bundle directories..."
 rm -rf $fullname/.git
+
+echo "Copying ideprojects files..."
+cp -rp $repodir/dists/codeblocks/engines $repodir/dists/codeblocks/*.workspace $repodir/dists/codeblocks/*.cbp $fullname/dists/codeblocks/
+cp -rp $repodir/dists/msvc/engines $repodir/dists/msvc/*.sln $repodir/dists/msvc/*.vcxproj $repodir/dists/msvc/*.vcxproj.filters $repodir/dists/msvc/*.props $fullname/dists/msvc/
 
 ### roll the tarball
 
