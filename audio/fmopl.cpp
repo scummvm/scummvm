@@ -91,8 +91,9 @@ enum OplEmulator {
 	kNfmOPL3LPT = 13,
 	kNfmCeOPL2AudioBoard = 14,
 	kNfmCeOPL3Duo = 15,
-	kNfmNatfeatsNull = 16,
-	kNfmNukedOpl3 = 17
+	kNfmStBusIsaVmeSb = 16,
+	kNfmNatfeatsNull = 17,
+	kNfmNukedOpl3 = 18
 #endif
 };
 
@@ -136,6 +137,7 @@ const Config::EmulatorDescription Config::_drivers[] = {
 	{"nfm_opl3lpt", _s("[nFM] Serdaco OPL3LPT (OPL3)"), kNfmOPL3LPT, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
 	{"nfm_ce_opl2ab", _s("[nFM] Cheerful Electronics OPL2 Audio Board (OPL2)"), kNfmCeOPL2AudioBoard, kFlagOpl2 },
 	{"nfm_ce_opl3duo", _s("[nFM] Cheerful Electronics OPL3 Duo! (2xOPL3)"), kNfmCeOPL3Duo, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
+	{"nfm_ce_stbus_isa_vme", _s("[nFM] ST Bus ISA / VME SoundBlaster"), kNfmStBusIsaVmeSb, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
 	{"nfm_natfeats_null", _s("[nFM] NatFeats / NULL"), kNfmNatfeatsNull, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
 	{"nfm_nuked_opl3", _s("[nFM] Nuked-OPL3 softsynth (OPL3)"), kNfmNukedOpl3, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
 #endif
@@ -320,6 +322,8 @@ OPL *Config::create(DriverId driver, OplType type) {
 
 	case kNfmCeOPL3Duo:
 		return NfmOPL::RealChip::create(type, NfmOPL::dtOPL3Duo);
+	case kNfmStBusIsaVmeSb:
+		return NfmOPL::RealChip::create(type, NfmOPL::dtStBusIsaVmeSb);
 	case kNfmNatfeatsNull:
 		return NfmOPL::RealChip::create(type, NfmOPL::dtNatfeatsOpl);
 	case kNfmNukedOpl3:

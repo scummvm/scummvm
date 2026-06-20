@@ -50,6 +50,7 @@ enum OplDevice : int16_t {
 	dtOPL3LPT,
 	dtOPL2AudioBoard,
 	dtOPL3Duo,
+	dtStBusIsaVmeSb,
 	dtNatfeatsOpl,
 	dtNukedOpl3,
 	dtNumDevices
