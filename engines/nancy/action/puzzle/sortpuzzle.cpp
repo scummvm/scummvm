@@ -293,7 +293,7 @@ void SortPuzzle::handleInput(NancyInput &input) {
 				const Cell &cur = _current[r][c];
 				line += Common::String::format("%d ", cur.value);
 			}
-			debug(line.c_str());
+			debug("%s", line.c_str());
 		}
 		debug("-----");
 	}
