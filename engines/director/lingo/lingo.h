@@ -46,7 +46,6 @@ class Cast;
 class ScriptContext;
 class DirectorEngine;
 class Frame;
-class Window;
 class LingoCompiler;
 struct Breakpoint;
 
@@ -263,7 +262,6 @@ struct CFrame {	/* proc/func call stack frame */
 	Datum			defaultRetVal;		/* default return value */
 	int				paramCount;			/* original number of arguments submitted */
 	Common::Array<Datum> paramList;		/* original argument list */
-	Window			*retWindow;			/* window to restore on return */
 };
 
 struct LingoEvent {

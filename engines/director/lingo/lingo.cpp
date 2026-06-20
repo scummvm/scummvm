@@ -401,7 +401,6 @@ void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint1
 
 	ScriptContext *sc = g_lingo->_compiler->compileLingo(code, this, type, CastMemberID(id, cast->_castLibID), contextName, false, preprocFlags);
 	if (sc) {
-		sc->_cast = cast;
 		scriptContexts[type][id] = sc;
 		sc->incRefCount();
 	}

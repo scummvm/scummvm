@@ -577,7 +577,6 @@ ScriptContext::ScriptContext(const ScriptContext &sc) : Object<ScriptContext>(sc
 
 	_id = sc._id;
 	_castLibHint = sc._castLibHint;
-	_cast = sc._cast;
 }
 
 ScriptContext::~ScriptContext() {

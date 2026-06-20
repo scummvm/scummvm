@@ -1806,7 +1806,6 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 				if (_lingoArchive->getScriptContext(script->_scriptType, script->_id)) {
 					error("Cast::loadLingoContext: Script already defined for type %s, id %d", scriptType2str(script->_scriptType), script->_id);
 				}
-				script->_cast = this;
 				_lingoArchive->scriptContexts[script->_scriptType][script->_id] = script;
 				_lingoArchive->patchScriptHandler(script->_scriptType, CastMemberID(script->_id, _castLibID));
 			} else {

@@ -217,7 +217,6 @@ public:
 	int _scriptId;
 	uint16 _parentNumber;
 	uint16 _castLibHint;
-	Cast *_cast = nullptr;	// owning cast (MIAW scoping)
 	Common::Array<Common::String> _functionNames; // used by cb_localcall
 	Common::HashMap<Common::String, Common::Array<uint32>> _functionByteOffsets;
 	SymbolHash _functionHandlers;

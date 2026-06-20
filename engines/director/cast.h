@@ -92,7 +92,6 @@ public:
 	void loadArchive();
 	void setArchive(Common::SharedPtr<Archive> archive);
 	Common::SharedPtr<Archive> getArchive() const { return _castArchive; };
-	Movie *getMovie() const { return _movie; }
 	Common::String getMacName() const { return _macName; }
 	Common::String getCastName() const { return _castName; }
 	void setCastName(const Common::String &name) { _castName = name; }
