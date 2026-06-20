@@ -213,7 +213,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "b51691a530ec7398bed8c0c094885225", 85245),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -223,7 +223,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "b51691a530ec7398bed8c0c094885225", 85245),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -233,7 +233,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "5d7d770a74d6035957c7deffc4865e12", 106762),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -243,7 +243,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "47099471f31f794be8a7e5a3c382bf62", 104304),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -253,7 +253,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Compiler.dat", "ff30c7ea065af1e86182b428e1f2cc7b", 42650),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 
