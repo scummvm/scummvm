@@ -210,8 +210,38 @@ const ADGameDescription gameDescriptions[] = {
 	{"dracula1",
 		nullptr,
 		AD_ENTRY2s("script.lst", "78060b78cf403ddb7e22903ba7b269d6", 548,
-				   "Compiler.dat", "0f330d5d674bf01a1bc8512e4c5321cc", 58688),
+				   "Interface.vr", "b51691a530ec7398bed8c0c094885225", 85245),
 		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"dracula1",
+		nullptr,
+		AD_ENTRY2s("script.pak", "6998262fcce9cb5d3cc8a555f8ee024a", 265,
+				   "Interface.vr", "b51691a530ec7398bed8c0c094885225", 85245),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"dracula1",
+		nullptr,
+		AD_ENTRY2s("script.pak", "6998262fcce9cb5d3cc8a555f8ee024a", 265,
+				   "Interface.vr", "5d7d770a74d6035957c7deffc4865e12", 106762),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"dracula1",
+		nullptr,
+		AD_ENTRY2s("script.pak", "6998262fcce9cb5d3cc8a555f8ee024a", 265,
+				   "Interface.vr", "47099471f31f794be8a7e5a3c382bf62", 104304),
+		Common::IT_ITA,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
