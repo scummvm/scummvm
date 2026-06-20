@@ -1221,6 +1221,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "discoflow", "DISCO FLOW" },
 	{ "disgust", "Disgust" },
 	{ "dislocation", "Dislocation" },
+	{ "disparu", "Disparu: A Dream Cat Mystery" },
 	{ "disquiet", "Disquiet" },
 	{ "distancenoobject", "Distance no object" },
 	{ "djdeceased", "D. Jones: Deceased" },
@@ -4828,6 +4829,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell4", "deception.ags", "1023007c2a9d8148566f56c74013c650", 216635035, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Steamdeck
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell4", "deception.ags", "d6c30d736edb75d94c7e63eeac1573be", 216641780, GAMEFLAG_PLUGINS_AGSTEAM_WADJETEYE), // Steamdeck
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell5", "epiphany.exe", "c1cddd6fcdbcd030beda9f10d4e4270a", 281849897, 0),
+	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell5", "epiphany.exe", "c1cddd6fcdbcd030beda9f10d4e4270a", 281846103, 0),  //v2.0.0.2
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell5", "epiphany.exe", "c3f7a995bbea7ce4ba7a2a97995c677e", 283092455, 0),  //v2.2
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell5", "epiphany.exe", "c3f7a995bbea7ce4ba7a2a97995c677e", 283092983, 0),  //v2.3
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell5", "epiphany.exe", "ee9f05e549e1890a66fa29f174514d83", 247075915, 0),  //v3.0
@@ -4936,6 +4938,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("englishhaunting", "An English Haunting.exe", "de2b4205a56fce1b199a692a8b65e161", 987491517, 0),
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("englishhaunting", "An English Haunting.exe", "de2b4205a56fce1b199a692a8b65e161", 987492292, 0),
 	DETECTION_ENTRY_GUIO("excavationhb", "TEOHB.exe", "f176b46bc89e227f745dae9878171676", 566323169, Common::EN_ANY, "Steam", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, 0), // Win
+	DETECTION_ENTRY_GUIO("excavationhb", "TEOHB.exe", "58e50b15d39bd15dc6eaf3dfff3936ab", 431438957, Common::EN_ANY, "Steam", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, 0), // Win
 	DETECTION_ENTRY_GUIO("excavationhb", "ac2game.dat", "e5553f7c45d26d5fbc8b376a859bb87c", 563281442, Common::EN_ANY, "Steam", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, GAMEFLAG_PLUGINS_AGSSPRITEFONT_CLIFFTOP), // Mac
 	DETECTION_ENTRY_GUIO("excavationhb", "ac2game.dat", "e5553f7c45d26d5fbc8b376a859bb87c", 563283917, Common::EN_ANY, "Steam", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, GAMEFLAG_PLUGINS_AGSSPRITEFONT_CLIFFTOP), // Mac
 	DETECTION_ENTRY_GUIO("excavationhb", "TEOHB.exe", "f176b46bc89e227f745dae9878171676", 566320586, Common::EN_ANY, "GOG.com", GUIO3(GUIO_NOLANG, GUIO_NOLAUNCHLOAD, GAMEOPTION_NO_AUTOSAVE), ADGF_NO_FLAGS, GAMEFLAG_PLUGINS_AGSSPRITEFONT_CLIFFTOP),
@@ -7267,6 +7270,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("dislocation", "dislocation.exe", "aecd482222ff54206e43a029b5f0b170", 168869859),
 	GAME_ENTRY_EN_PLATFORM("dislocation", "dislocation.exe", "b5c41e08919834b549ca350a28f18f87", 108929984, "OROW"),
 	GAME_ENTRY_EN_PLATFORM("dislocation", "dislocation.ags", "235b356963f58570445e10d1306a690c", 106668464, "OROW"),
+	GAME_ENTRY_LANG("disparu", "disparu.exe", "503641148592679ccfcc1d6053dd4b29", 10493231, Common::DE_DEU),
 	GAME_ENTRY_EN("disquiet", "Disquiet.exe", "f90f5f612ed5879addfdd8634d093333", 9624101),
 	GAME_ENTRY_EN("distancenoobject", "Distance no object.exe", "5cca0f8af961d2bc1c6e475437d3b23b", 98011325),  // Windows
 	GAME_ENTRY_EN("distancenoobject", "Distance no object.ags", "60b1978b591c4ffcb63e81e69d425343", 94977705),  // Linux
@@ -8284,6 +8288,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("lutherinhood", "afroTest4.exe", "2ca80bd50763378b72cd1e1cf25afac3", 26440699),
 	GAME_ENTRY_EN("lydia", "Kill The Lights.exe", "9b54ea3557373188d8388ec4d1ae5eed", 20416736),
 	GAME_ENTRY_EN("lydianellreno", "LydiaW.exe", "615e73fc1874e92d60a1996c2330ea36", 33971307),
+	GAME_ENTRY_EN("lydianellreno", "LydiaW.exe", "615e73fc1874e92d60a1996c2330ea36", 33971358),
 	GAME_ENTRY_EN("lygophilous", "Lygophilous.exe", "0564de07d3fd5c16e6947a647061913c", 38762137),
 	GAME_ENTRY_EN("machinesdreams", "Machines Have Lucid Dreams v0.91.exe", "784c7fae35c6501eaa3673ea29391a7b", 653366138),
 	GAME_ENTRY_EN_PLATFORM("madjack", "MadJackBrakeShake.ags", "25e4e7303bce8c521dcfc8056afeaa6e", 26312912, "MAGS"),
