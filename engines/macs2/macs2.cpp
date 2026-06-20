@@ -380,6 +380,9 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 }
 
 Macs2Engine::~Macs2Engine() {
+#ifdef USE_IMGUI
+	_system->setImGuiCallbacks(ImGuiCallbacks());
+#endif
 	stopInputRecording();
 	clearCurrentSoundData();
 	_adlib->deinit();
