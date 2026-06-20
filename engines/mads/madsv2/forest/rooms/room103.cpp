@@ -333,7 +333,7 @@ static void room_103_anim4() {
 		} else if (frame < 50) {
 			switch (frame) {
 			case 16:
-				global_digi_play(8);
+				global_midi_play(8);
 				aainfo[3]._val3 = 15;
 				digi_play_build(103, 'c', 1, 1);
 				scratch._90 = 16;

@@ -53,7 +53,7 @@ static void room_903_init() {
 
 static void room_903_daemon() {
 	if (kernel.trigger == TRIGGER1)
-		global_digi_play(14);
+		global_midi_play(14);
 
 	if (mouse_any_stroke || g_engine->hasPendingKey() || kernel.trigger == TRIGGER0) {
 		g_engine->flushKeys();

@@ -89,7 +89,7 @@ static void room_305_init1() {
 	if (previous_room == 301) {
 		aa[1] = kernel_run_animation(kernel_name('t', 1), 104);
 		aainfo[1]._active = -1;
-		global_digi_play(14);
+		global_midi_play(14);
 		return;
 	}
 
@@ -243,7 +243,7 @@ static void room_305_init() {
 
 	global[g009] = -1;
 	if (global[g066] == 1)
-		global_digi_play(8);
+		global_midi_play(8);
 }
 
 static void room_305_anim1() {
@@ -484,7 +484,7 @@ static void room_305_anim6() {
 		kernel_timing_trigger(45, 105);
 		scratch._a4++;
 		global[g009] = -1;
-		global_digi_play(6);
+		global_midi_play(6);
 		break;
 	case 15:
 		if (global[g065] != 0) {

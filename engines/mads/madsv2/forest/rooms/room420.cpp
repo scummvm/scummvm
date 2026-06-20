@@ -113,7 +113,7 @@ static void room_420_anim2() {
 					scratch._8e = 34;
 					scratch.animation_info[1]._val3 = 10;
 					digi_play_build(420, 'b', 1, 1);
-					global_digi_play(3);
+					global_midi_play(3);
 				} else if (cur == 39) {
 					if (scratch.animation_info[1]._val3 == 10) {
 						scratch.animation_info[1]._frame = 34;

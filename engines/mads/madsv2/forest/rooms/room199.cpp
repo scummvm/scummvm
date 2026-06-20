@@ -102,7 +102,7 @@ static void room_199_init1() {
 static void room_199_init() {
 	global[player_score] = 0;
 	global[g009] = -1;
-	global_digi_play(7);
+	global_midi_play(7);
 
 	aainfo[2]._val3 = -1;
 	aainfo[2]._val4 = 0;

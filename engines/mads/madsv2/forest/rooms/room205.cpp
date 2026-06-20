@@ -253,7 +253,7 @@ static void room_205_anim5() {
 
 	if (aainfo[6]._frame == 135) {
 		global[g009] = 0;
-		global_digi_play(9);
+		global_midi_play(9);
 		kernel_timing_trigger(180, 105);
 	} else if (aainfo[6]._frame == 138) {
 		aainfo[6]._frame = 137;

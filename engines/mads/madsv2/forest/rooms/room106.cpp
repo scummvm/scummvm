@@ -363,7 +363,7 @@ static void room_106_anim4() {
 		return;
 	case 105:
 		global[g009] = 0;
-		global_digi_play(4);
+		global_midi_play(4);
 		global[g154] = 0;
 		aainfo[7]._val3 = 13;
 		aainfo[7]._frame = 20;

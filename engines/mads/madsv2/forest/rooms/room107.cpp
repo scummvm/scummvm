@@ -120,7 +120,7 @@ static void room_107_anim1() {
 		if (scratch._8e == 21) {
 			aainfo[0]._val3 = 2;
 			scratch._8e = -1;
-			global_digi_play(4);
+			global_midi_play(4);
 			aainfo[0]._frame = 26;
 			kernel_reset_animation(aa[0], 26);
 		}

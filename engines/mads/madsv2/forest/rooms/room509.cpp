@@ -63,7 +63,7 @@ static void room_509_init() {
 	mouse_hide();
 	global[player_score] = 0;
 	global[g009] = -1;
-	global_digi_play(15);
+	global_midi_play(15);
 	global[g009] = -1;
 	viewing_at_y = 22;
 	global[player_score] = 0;

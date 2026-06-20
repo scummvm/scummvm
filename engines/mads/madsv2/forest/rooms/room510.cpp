@@ -226,7 +226,7 @@ static void room_510_anim3() {
 			digi_play_build(510, '_', 1, 2);
 			scratch._90 = 1;
 			midi_stop();
-			global_digi_play(4);
+			global_midi_play(4);
 		} else if (aa_frame == 40) {
 			midi_stop();
 			new_room = 107;
@@ -288,7 +288,7 @@ static void room_510_daemon() {
 		if (scratch._8e == 668) {
 			scratch._8e = -1;
 			global[g009] = 0;
-			global_digi_play(14);
+			global_midi_play(14);
 			kernel_timing_trigger(2100, 104);
 		}
 		break;
@@ -314,7 +314,7 @@ static void room_510_daemon() {
 		break;
 	case 104:
 		global[g009] = -1;
-		global_digi_play(11);
+		global_midi_play(11);
 		break;
 	case 106:
 		scratch._96 = -1;

@@ -108,7 +108,7 @@ static void room_308_anim1() {
 		break;
 	case 70:
 		global[g009] = 0;
-		global_digi_play(9);
+		global_midi_play(9);
 		break;
 	case 88:
 		digi_initial_volume(60);
@@ -794,7 +794,7 @@ static void room_308_anim20() {
 	int16 result = -1;
 	if (cur == 6) {
 		global[g009] = 0;
-		global_digi_play(5);
+		global_midi_play(5);
 		digi_play_build(308, 't', 5, 1);
 		scratch._94 = 3;
 		scratch._b4 = 3;
@@ -923,7 +923,7 @@ static void room_308_anim24() {
 			result = imath_random(20, 25);
 	} else if (cur == 29) {
 		global[g009] = 0;
-		global_digi_play(5);
+		global_midi_play(5);
 	}
 
 	if (result >= 0) {
@@ -1055,7 +1055,7 @@ static void room_308_init() {
 			aainfo[1]._frame = -1;
 			kernel_synch(KERNEL_ANIM, ss[7], KERNEL_NOW, 0);
 			global[g009] = -1;
-			global_digi_play(15);
+			global_midi_play(15);
 			player.commands_allowed = 0;
 			return;
 		}
@@ -1070,7 +1070,7 @@ static void room_308_init() {
 			aainfo[1]._val4 = -1;
 			kernel_synch(KERNEL_ANIM, ss[8], KERNEL_NOW, 0);
 			global[g009] = -1;
-			global_digi_play(15);
+			global_midi_play(15);
 			return;
 		}
 		if (player_has(15)) {
@@ -1083,7 +1083,7 @@ static void room_308_init() {
 		aainfo[1]._val4 = -1;
 		kernel_synch(KERNEL_ANIM, ss[8], KERNEL_NOW, 0);
 		global[g009] = -1;
-		global_digi_play(15);
+		global_midi_play(15);
 		return;
 	}
 
@@ -1114,7 +1114,7 @@ static void room_308_init() {
 
 	if (global[g073] == 0) {
 		global[g009] = -1;
-		global_digi_play(15);
+		global_midi_play(15);
 		return;
 	}
 
@@ -1125,7 +1125,7 @@ static void room_308_init() {
 	aainfo[8]._frame = 0;
 	scratch._c2 = 100;
 	global[g009] = -1;
-	global_digi_play(15);
+	global_midi_play(15);
 }
 
 static void room_308_daemon() {
@@ -1176,7 +1176,7 @@ static void room_308_daemon() {
 		aainfo[0]._val4 = -1;
 		kernel_synch(KERNEL_ANIM, ss[6], KERNEL_NOW, 0);
 		global[g009] = -1;
-		global_digi_play(15);
+		global_midi_play(15);
 		break;
 
 	case 102:

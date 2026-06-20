@@ -985,9 +985,16 @@ void global_error_code() {
 		text_show(text_id);
 }
 
-void global_digi_play(int num) {
-	// TODO
-	warning("TODO: global_digi_play");
+void global_midi_play(int num) {
+	static const char *NAMES[14] = {
+		"adven2", "foolarnd", "homeag", "humorus1", "humorus2", "pianogtr", "raindrop",
+		"xad", "xcarey", "xuspens1", "travels1", "birdsong", "adventur", "action1"
+	};
+
+	assert(num >= 1 && num <= 14);
+	Common::String name = Common::String::format("*%s.hmi", NAMES[num - 1]);
+
+	midi_play(name.c_str());
 }
 
 void global_daemon_code() {

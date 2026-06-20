@@ -151,7 +151,7 @@ static void room_104_init() {
 static void room_104_init1() {
 	global[player_score] = 0;
 	global[g009] = -1;
-	global_digi_play(8);
+	global_midi_play(8);
 	viewing_at_y = 22;
 	player.walker_visible = 0;
 	player.commands_allowed = 0;
@@ -186,7 +186,7 @@ static void room_104_init2() {
 
 static void room_104_init3() {
 	global[g009] = -1;
-	global_digi_play(8);
+	global_midi_play(8);
 	global[g131] = 0;
 	global[g141] = 0;
 
@@ -593,7 +593,7 @@ static void room_104_anim3() {
 			aainfo[8]._val3 = 8;
 			digi_play_build(104, 'e', 3, 1);
 			scratch._a2 = 84;
-			global_digi_play(14);
+			global_midi_play(14);
 			break;
 		case 89:
 			if (aainfo[8]._val3 == 8) {

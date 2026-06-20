@@ -144,7 +144,7 @@ static void room_503_init1() {
 
 	if (previous_room == 199) {
 		if (global[g100] != 0) {
-			global_digi_play(14);
+			global_midi_play(14);
 			viewing_at_y = 22;
 			scratch._ba = 2;
 			aainfo[0]._active = kernel_run_animation(kernel_name('N', 2), 106);
@@ -182,7 +182,7 @@ static void room_503_init1() {
 			scratch._b8 = 1;
 		}
 
-		global_digi_play(6);
+		global_midi_play(6);
 		aa[0] = kernel_run_animation(kernel_name('y', 2), 100);
 		aainfo[0]._val3 = -1;
 		scratch._a6 = 52;
@@ -207,7 +207,7 @@ static void room_503_init3() {
 
 	if (previous_room == 199) {
 		if (global[g100] != 0) {
-			global_digi_play(14);
+			global_midi_play(14);
 			viewing_at_y = 22;
 			scratch._ba = 2;
 			aainfo[0]._active = kernel_run_animation(kernel_name('N', 2), 106);

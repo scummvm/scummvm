@@ -438,7 +438,7 @@ static void room_403_anim6() {
 			aainfo[5]._frame = 12;
 			kernel_reset_animation(aa[5], 12);
 			scratch._a4 = -1;
-			global_digi_play(14);
+			global_midi_play(14);
 			kernel_seq_delete(seq[1]);
 			global[g080] = -1;
 		} else if (a4 == 89) {

@@ -168,7 +168,7 @@ static void room_402_init1() {
 	}
 
 	global[player_score] = 0;
-	global_digi_play(15);
+	global_midi_play(15);
 }
 
 static void room_402_init() {
@@ -356,7 +356,7 @@ static void room_402_anim_state() {
 		kernel_flip_hotspot(187, 0);
 		break;
 	case 17:
-		global_digi_play(5);
+		global_midi_play(5);
 		global[g009] = 0;
 		aa[1] = kernel_run_animation(kernel_name('L', 13), 103);
 		aainfo[1]._active = -1;
@@ -584,7 +584,7 @@ static void room_402_anim2() {
 	case 20: {
 		int16 frame = aainfo[1]._frame;
 		if (frame == 2) {
-			global_digi_play(15);
+			global_midi_play(15);
 			player.commands_allowed = -1;
 			global[g083] = 0;
 			room_402_anim6();
@@ -612,7 +612,7 @@ static void room_402_anim2() {
 	case 2: {
 		int16 frame = aainfo[1]._frame;
 		if (frame == 57) {
-			global_digi_play(10);
+			global_midi_play(10);
 			global[player_score] = 0;
 		} else if (frame < 57) {
 			if (frame == 37) {

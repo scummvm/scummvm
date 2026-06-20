@@ -130,7 +130,7 @@ static void room_520_daemon() {
 		scratch._8c = 66;
 		break;
 	case 101:
-		global_digi_play(14);
+		global_midi_play(14);
 		break;
 	}
 

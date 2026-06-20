@@ -125,7 +125,7 @@ static void room_203_init1() {
 		aainfo[0]._active = -1;
 		scratch._9a = 11;
 		scratch._92 = 74;
-		global_digi_play(11);
+		global_midi_play(11);
 		scratch._a6 = 5;
 		return;
 	}
@@ -143,7 +143,7 @@ static void room_203_init1() {
 	global[g143] = 0;
 
 	if (global[g046] == 0) {
-		global_digi_play(15);
+		global_midi_play(15);
 		scratch._a6 = 2;
 		aa[4] = kernel_run_animation(kernel_name('w', 4), 105);
 		aainfo[4]._active = -1;
@@ -171,7 +171,7 @@ static void room_203_init1() {
 		kernel_flip_hotspot(119, global[g047] == 0 ? 1 : 0);
 		kernel_flip_hotspot(27, global[g047]);
 	} else {
-		global_digi_play(11);
+		global_midi_play(11);
 		scratch._a6 = 5;
 	}
 }
@@ -256,7 +256,7 @@ static void room_203_anim1() {
 			} else if (frame < 50) {
 				if (frame == 22) {
 					if (local->_a6 != 1) {
-						global_digi_play(10);
+						global_midi_play(10);
 						local->_a6 = 1;
 					}
 					aainfo[4]._frame = 3;
@@ -270,7 +270,7 @@ static void room_203_anim1() {
 
 		if (aainfo[0]._frame == 1) {
 			if (global[g046] == 0 && flags[8] > 1 && local->_a6 != 1) {
-				global_digi_play(10);
+				global_midi_play(10);
 				local->_a6 = 1;
 			}
 		}
@@ -917,12 +917,12 @@ static void room_203_anim5() {
 			result = 27;
 		} else if (frame < 29) {
 			if (frame == 1) {
-				global_digi_play(12);
+				global_midi_play(12);
 				local->_a6 = 4;
 			} else if (frame == 19) {
 				digi_play_build(103, '_', 3, 2);
 				if (local->_a6 != 2) {
-					global_digi_play(15);
+					global_midi_play(15);
 					local->_a6 = 2;
 				}
 			} else if (frame == 22) {
@@ -957,7 +957,7 @@ static void room_203_anim5() {
 			local->_a6 = 0;
 		} else if (frame < 25) {
 			if (frame == 1) {
-				global_digi_play(5);
+				global_midi_play(5);
 				local->_a6 = 3;
 			} else if (frame == 18) {
 				if (!local->_ac && local->_98 == 33) {
@@ -1297,7 +1297,7 @@ static void room_203_daemon() {
 				player.commands_allowed = true;
 			} else {
 				if (local->_a6 != 1) {
-					global_digi_play(10);
+					global_midi_play(10);
 					local->_a6 = 1;
 				}
 

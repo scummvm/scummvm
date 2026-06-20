@@ -356,7 +356,7 @@ static void room_501_anim5() {
 			digi_play_build(501, 'e', 1, 1);
 			scratch._a4 = 3;
 		} else if (scratch._a4 == 3) {
-			global_digi_play(14);
+			global_midi_play(14);
 			global[g156] = 0;
 			aainfo[1]._val3 = 23;
 			aainfo[1]._frame = 105;

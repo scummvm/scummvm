@@ -155,9 +155,9 @@ static void room_321_init() {
 		kernel_seq_loc(seq[4], 230, 105);
 		kernel_seq_scale(seq[4], 83);
 		kernel_flip_hotspot(177, 0);
-		global_digi_play(13);
+		global_midi_play(13);
 	} else {
-		global_digi_play(3);
+		global_midi_play(3);
 	}
 
 	global[g009] = -1;

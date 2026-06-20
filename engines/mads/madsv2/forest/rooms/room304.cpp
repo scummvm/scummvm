@@ -273,7 +273,7 @@ static void room_304_anim4() {
 			digi_play_build(304, '_', 3, 2);
 			scratch._a0 = 3;
 			global[g009] = 0;
-			global_digi_play(14);
+			global_midi_play(14);
 		} else if (frame == 11) {
 			digi_stop(2);
 		}

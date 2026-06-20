@@ -339,7 +339,7 @@ static void room_322_anim8() {
 		digi_play_build(322, '_', 1, 2);
 	} else if (cur == 27) {
 		global[g009] = 0;
-		global_digi_play(4);
+		global_midi_play(4);
 	}
 
 	if (result >= 0) {

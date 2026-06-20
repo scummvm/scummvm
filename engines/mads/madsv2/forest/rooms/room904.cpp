@@ -88,7 +88,7 @@ static void room_904_seen_intro() {
 
 static void room_904_init() {
 	last_keypressed = -1;
-	global_digi_play(3);
+	global_midi_play(3);
 	aainfo[1]._active = 0;
 	aainfo[1]._frame = 0;
 	global[g009] = -1;
