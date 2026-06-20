@@ -543,7 +543,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "afriendindeed", "A Friend Indeed ..." },
 	{ "afrojones", "Afro Jones" },
 	{ "afterashadow", "After a Shadow" },
-	{ "aftergold", "After the Golden Age" },
 	{ "agentbee", "Agent Bee" },
 	{ "agenthudson", "Agent Hudson" },
 	{ "agenttrinityepisode0theultimatum", "Agent Trinity - Episode 0 - The Ultimatum" },
@@ -2846,6 +2845,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "ripperjack", "Ripper Jack" },
 	{ "rnbquest", "R'n'B Quest" },
 	{ "roadbrollywood", "Road to Brollywood" },
+	{ "roadnowhere", "Road to Nowhere" },
 	{ "roadofdestiny", "Road of Destiny" },
 	{ "roadracer", "Road Racer" },
 	{ "roastmothergoose", "Roast Mother Goose" },
@@ -3665,6 +3665,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "wasted", "Wasted" },
 	{ "waterquest", "Water Quest" },
 	{ "watchafight", "Watch A Fight During Your Break" },
+	{ "watchtowerags", "The Watchtower" },
 	{ "wduprodigal", "World of Darkness Unbound - Prodigal" },
 	{ "wearevectors", "We Are Vectors" },
 	{ "weathered", "Weathered" },
@@ -3795,6 +3796,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 
 
 	// AGS 3.6.2/3 games. not currently supported
+	{ "aftergold", "After the Golden Age" },
 	{ "agent11", "Agent 11 - The Missing Knight" },
 	{ "badcoral", "Bad to the Coral" },
 	{ "beachbelly", "Beach Belly Bloodbath" },
@@ -3823,6 +3825,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "schooled", "School'd" },
 	{ "sequencebreak", "Sequence Break" },
 	{ "sinkholesy", "Sinkhole Sy" },
+	{ "smokeymike", "Smokey Mike" },
 	{ "snarl", "Snarl" },
 	{ "startrekxeno", "Star Trek - Xenomorph Alert" },
 	{ "thedissident", "The Dissident" },
@@ -4443,6 +4446,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY_EN("sequencebreak", "Sequence Break.ags", "1a80f829b0739c6db5ac4141eb880b82", 28319904),  // PoC Win/Linux v2
 	UNSUPPORTED_GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "dafcc09ca5a4f4d4ba721f905dc9f366", 79014256),  // v1.3
 	UNSUPPORTED_GAME_ENTRY_EN("sinkholesy", "Sinkhole Sy.ags", "e450236f4a67a6191ce669d815975bdc", 2228303),
+	UNSUPPORTED_DEMO_ENTRY_EN("smokeymike", "Smokey.ags", "aa1d62e8ee2b0f8927a0e2a00b3aaf64", 112633325),
 	UNSUPPORTED_GAME_ENTRY_EN("snarl", "Snarl.exe", "7b206bbaec47b9e30d7c41212e3f9a31", 75839830),  // v1.0.2
 	UNSUPPORTED_GAME_ENTRY_EN("snarl", "Snarl.exe", "7b206bbaec47b9e30d7c41212e3f9a31", 75841814),  // TRAC #16236
 	UNSUPPORTED_GAME_ENTRY_EN("snarl", "Snarl.exe", "7b206bbaec47b9e30d7c41212e3f9a31", 75845392),  // v1.0.3
@@ -6290,6 +6294,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("vorezkor", "The VOREZKOR Hack.exe", "f3c6c85fd477033f539b95515fdf8520", 184231232),  // v0.83
 	DEMO_ENTRY_EN("wallyweasel", "wallydemo.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 12579444),
 	DEMO_ENTRY_EN("waitingfortheloop", "WaitingForTheLoopDemo.exe", "0241777c2537fc5d077c05cde10bfa9f", 48581712),
+	DEMO_ENTRY_EN("watchtowerags", "TheWatchtowerDemo.ags", "1532182f1932253072f2ee1d19a96e42", 18703355),
 	DEMO_ENTRY_EN("welcometodarklake", "mystery.exe", "18b284c22010850f79bc5c20054a70c4", 5438912),
 	DEMO_ENTRY_EN("whattimeisit", "Wtii-demo.exe", "13a143130096b8d6baae1a7ccca52ac4", 4044338),  // 2002-09-09
 	DEMO_ENTRY_EN("whiskeyweather", "sword-denz-wjam2013.exe", "19467230b9a39aea9f711e83ccf4c984", 14336391),
@@ -7060,6 +7065,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_PLATFORM("colonelcarver", "Colonel Carver.exe", "7ddb9e776648faed5a51170d087074e9", 7002643, "MAGS"),
 	GAME_ENTRY_EN("colonelcarver", "Colonel Carver.exe", "7ddb9e776648faed5a51170d087074e9", 9297683),
 	GAME_ENTRY_LANG_PLATFORM("colonization", "bowsette-meiers.exe", "63f8a60cc094996bd070e68cb3c4722c", 43615607, Common::ES_ESP, "Prototype"),
+	GAME_ENTRY_LANG_PLATFORM("colonization", "Bowsette Meiers.exe", "63f8a60cc094996bd070e68cb3c4722c", 100947181, Common::ES_ESP, "Prototype Enhanced"),
 	GAME_ENTRY_EN("colourclash", "colourclash.exe", "0241777c2537fc5d077c05cde10bfa9f", 2803703),
 	GAME_ENTRY_EN("colourwise", "colourwise.exe", "473f0e2fd72b747cef62d91090ab74c7", 24461117),
 	GAME_ENTRY_EN("colourwiseleveleditor", "colourwise - Level Editor.exe", "3e09048ec0763a90ffa4eaeeb8f96df5", 3365519),
@@ -9253,6 +9259,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("ripperjack", "ripper_jack_v0.1.exe", "c3b72132686c4a102b3365d380c8ae3a", 2580361),
 	GAME_ENTRY_LANG("rnbquest", "R`n`B Quest.exe", "465f972675db2da6040518221af5b0ba", 119895894, Common::RU_RUS),
 	GAME_ENTRY_EN("roadbrollywood", "brollywood.exe", "615e73fc1874e92d60a1996c2330ea36", 3118294),
+	GAME_ENTRY_EN("roadnowhere", "Road to Nowhere.ags", "7582c4dd270a67f635be13b55c1809d6", 213910321),
 	GAME_ENTRY_EN("roadofdestiny", "ROD.exe", "618d7dce9631229b4579340b964c6810", 30127308),
 	GAME_ENTRY_EN("roadracer", "TR_Bryvis.exe", "cebb3ac5c3d2df939e7f0ec8f2975b64", 25080647),
 	GAME_ENTRY_EN("roastmothergoose", "RMG.exe", "00328f4f1e7729144483107b96b11df8", 46474982),
