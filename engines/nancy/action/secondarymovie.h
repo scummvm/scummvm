@@ -137,14 +137,8 @@ protected:
 };
 
 // Companion AR for the random-movie variant of PlaySecondaryMovie. When
-// executed it locates the matching PlaySecondaryMovie(isRandom=true)
-// instance (by sequence/AR name) and stops it. First seen in Nancy 11
-// (AR 46, AT_PLAY_RANDOM_MOVIE_CONTROL).
-//
-// Chunk layout: fixed 15 bytes (3 × uint32 + uint16 + uint8). The exact
-// meaning of each field is not yet reverse-engineered; the runtime debug
-// string is "STOP AT_PLAY_RANDOM_MOVIE AR %d in Scene %d", so at least two
-// of these fields identify the target AR.
+// executed it stops the currently-active random PlaySecondaryMovie and
+// optionally performs a scene change / event-flag set.
 class PlayRandomMovieControl : public ActionRecord {
 public:
 	PlayRandomMovieControl() {}
@@ -152,14 +146,17 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
+	enum RandomMovieControlMode : byte {
+		kStopNow = 0,
+		kStopAfterSequence = 1,
+		kResume = 2
+	};
+
 protected:
 	Common::String getRecordTypeName() const override { return "PlayRandomMovieControl"; }
 
-	uint32 _targetA = 0;
-	uint32 _targetB = 0;
-	uint32 _targetC = 0;
-	uint16 _flagsOrIndex = 0;
-	byte _trailing = 0;
+	byte _mode = kStopNow;
+	SceneChangeWithFlag _sceneChange;
 };
 
 } // End of namespace Action

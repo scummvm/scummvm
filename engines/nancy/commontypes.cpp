@@ -50,7 +50,7 @@ void SceneChangeDescription::readData(Common::SeekableReadStream &stream, bool l
 	}
 }
 
-void SceneChangeWithFlag::readData(Common::SeekableReadStream &stream, bool reverseFormat) {
+void SceneChangeWithFlag::readData(Common::SeekableReadStream &stream, bool reverseFormat, bool terse) {
 	_sceneChange.sceneID = stream.readUint16LE();
 	_sceneChange.frameID = stream.readUint16LE();
 	_sceneChange.verticalOffset = stream.readUint16LE();
@@ -61,23 +61,29 @@ void SceneChangeWithFlag::readData(Common::SeekableReadStream &stream, bool reve
 		_flag.label = stream.readSint16LE();
 		_flag.flag = stream.readByte();
 
+		if (terse) {
+			stream.skip(1);	// unknown
+			stream.skip(2);	// shouldStopRendering
+		}
+
 		if (g_nancy->getGameType() >= kGameTypeNancy3) {
-			int32 x = stream.readSint32LE();
-			int32 y = stream.readSint32LE();
-			int32 z = stream.readSint32LE();
+			int32 x = terse ? 0 : stream.readSint32LE();
+			int32 y = terse ? 0 : stream.readSint32LE();
+			int32 z = terse ? 1 : stream.readSint32LE();
 			_sceneChange.listenerFrontVector.set(x, y, z);
 			_sceneChange.frontVectorFrameID = _sceneChange.frameID;
 		}
 	} else {
 		if (g_nancy->getGameType() >= kGameTypeNancy3) {
-			int32 x = stream.readSint32LE();
-			int32 y = stream.readSint32LE();
-			int32 z = stream.readSint32LE();
+			int32 x = terse ? 0 : stream.readSint32LE();
+			int32 y = terse ? 0 : stream.readSint32LE();
+			int32 z = terse ? 1 : stream.readSint32LE();
 			_sceneChange.listenerFrontVector.set(x, y, z);
 			_sceneChange.frontVectorFrameID = _sceneChange.frameID;
 		}
 
 		stream.skip(2); // shouldStopRendering
+
 		_flag.label = stream.readSint16LE();
 		_flag.flag = stream.readByte();
 	}

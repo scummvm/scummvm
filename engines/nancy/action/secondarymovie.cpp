@@ -376,20 +376,17 @@ void PlaySecondaryMovie::execute() {
 // --- PlayRandomMovieControl --------------------------------------------
 
 void PlayRandomMovieControl::readData(Common::SeekableReadStream &stream) {
-	_targetA = stream.readUint32LE();
-	_targetB = stream.readUint32LE();
-	_targetC = stream.readUint32LE();
-	_flagsOrIndex = stream.readUint16LE();
-	_trailing = stream.readByte();
+	_mode = stream.readByte();
+	_sceneChange.readData(stream, true, true);
 }
 
 void PlayRandomMovieControl::execute() {
-	// Original binary debug string:
-	//   "STOP AT_PLAY_RANDOM_MOVIE AR %d in Scene %d"
-	// so two of the chunk fields identify the target AR / scene.
-	// Until the exact identification scheme is known, this stub just
-	// warns and completes.
-	warning("PlayRandomMovieControl is not yet fully implemented");
+	//PlaySecondaryMovie *target = NancySceneState.getActiveMovie();
+	//if (target && target->_isRandom) {
+	//	target->stopRandom();
+	//}
+
+	_sceneChange.execute();
 	finishExecution();
 }
 
