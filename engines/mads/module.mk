@@ -268,7 +268,6 @@ MODULE_OBJS += \
 	madsv2/forest/global.o \
 	madsv2/forest/journal.o \
 	madsv2/forest/main.o \
-	madsv2/forest/main_menu.o \
 	madsv2/forest/menus.o \
 	madsv2/forest/mads/mads.o \
 	madsv2/forest/rooms/room101.o \

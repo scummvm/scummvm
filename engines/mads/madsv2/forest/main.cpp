@@ -38,7 +38,6 @@
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/quote.h"
 #include "mads/madsv2/core/speech.h"
-#include "mads/madsv2/forest/main_menu.h"
 #include "mads/madsv2/forest/menus.h"
 #include "mads/madsv2/engine.h"
 
@@ -50,74 +49,6 @@ constexpr bool SHOW_LINES = true;
 constexpr byte LINE_COLOR = 2;
 
 char *quotes;
-
-static void main_menu_main() {
-#ifdef TODO
-	auto &screen = *g_engine->getScreen();
-	Palette palette;
-
-	if (!kernel_game_startup(19, KERNEL_STARTUP_CURSOR | KERNEL_STARTUP_INTERRUPT | KERNEL_STARTUP_FONT,
-		nullptr, nullptr)) {
-		matte_init(0xFFFF);
-		bool valid = !kernel_room_startup(920, 0, nullptr, true, true);
-
-		// Setup scr_work to use the full surface of scr_main (i.e. 320x200).
-		// Because of this, viewing_at_y is actually == 0
-		scr_work.y = picture_map.viewport_y;
-		viewing_at_y = (200 - scr_work.y) >> 1;
-
-		mouse_cursor_sprite(cursor, 7);
-		mouse_show();
-		mouse_force(280, 126);
-		mouse_hide();
-
-		mouse_cursor_sprite(cursor, 1);
-		kernel_seq_init();
-		kernel_message_init();
-		kernel_animation_init();
-		kernel_init_dynamic();
-
-		picture_view_x = 0;
-		picture_view_y = 0;
-		new_background = true;
-
-		if (valid) {
-			memset(&palette, 0, sizeof(palette));
-			mcga_setpal(&palette);
-			mouse_cursor_sprite(cursor, 1);
-
-			if (SHOW_LINES && viewing_at_y != 0) {
-				screen.hLine(0, viewing_at_y - 2, 319, LINE_COLOR);
-				screen.hLine(0, scr_work.y + viewing_at_y + 1, 319, LINE_COLOR);
-			}
-
-			kernel_load_sound_driver("*#SOUND.DR9", 'N', 544, 0, 49);
-
-			menu_control();
-
-			if (selected_item >= 0) {
-				// Zero out the first 3 entries of both magic color arrays
-				for (int i = 0; i < 3; i++) {
-					magic_color_values[i] = 0;
-					magic_color_flags[i] = 0;
-				}
-
-				mcga_getpal(&palette);
-
-				magic_fade_to_grey(palette, 0, 0x10, 1, 1, 0, 0, 0);
-			}
-		}
-
-		free(quotes);
-		kernel_unload_sound_driver();
-		kernel_game_shutdown();
-	}
-
-	mcga_reset();
-#else
-	selected_item = 0;
-#endif
-}
 
 static void main_cold_data_init() {
 	debugger_reset = game_debugger_reset;
@@ -222,59 +153,7 @@ void forest_main() {
 	if (!env_verify())
 		env_search_mode = ENV_SEARCH_CONCAT_FILES;
 
-	if (ConfMan.getBool("start_game") || ConfMan.hasKey("save_slot"))
-		selected_item = 0;
-	else if (ConfMan.getBool("start_intro"))
-		selected_item = 3;
-	else
-		selected_item = -1;
-
-	while (!g_engine->shouldQuit()) {
-		g_engine->getScreen()->clear();
-
-		switch (selected_item) {
-		case -1:
-			main_menu_main();
-			break;
-
-		case 0:
-			game_main(2, CMD_LINE);
-			return;
-
-		case 1: {
-			// Resume savegame
-			// Get a list of saves and choose the last one
-			auto saves = g_engine->listSaves();
-			if (!saves.empty())
-				savegame_slot = saves.back().getSaveSlot();
-
-			// Start the game, which will also load the selected savegame
-			game_main(2, CMD_LINE);
-			return;
-		}
-
-		case 2:
-			// Restore savegame
-			game_restore_flag = 2;
-			game_main(2, CMD_LINE);
-			return;
-
-		case 3:
-			AnimView::animview_main("@forest");
-			selected_item = -1;
-			break;
-
-		case 4:
-			// Exit
-			return;
-
-		default:
-			// Credits
-			TextView::textview_main("credits");
-			selected_item = -1;
-			break;
-		}
-	}
+	game_main(2, CMD_LINE);
 }
 
 } // namespace Foreste
