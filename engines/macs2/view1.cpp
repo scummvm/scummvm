@@ -1958,8 +1958,7 @@ void View1::draw() {
 			if (_saveLoadButtonRects[i].contains(mousePos)) {
 				static const char *const buttonNames[] = {
 					"Laden", "Speichern", "Musik an/aus",
-					"Textur Men\x81 \x84ndern", "Zur\x81"
-												"ck zum Spielbeginn",
+					"Textur Men\x81 \x84ndern", ("Zur\x81" "ck zum Spielbeginn"),
 					"Exit to DOS", "Schliessen"};
 				renderString(mousePos.x + 20, mousePos.y + 20, buttonNames[i]);
 				break;
