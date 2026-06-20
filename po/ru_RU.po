@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-18 09:40+0000\n"
-"PO-Revision-Date: 2026-06-20 14:56+0000\n"
+"PO-Revision-Date: 2026-06-20 15:03+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -8178,10 +8178,8 @@ msgid "Load Game"
 msgstr "Загрузить игру"
 
 #: engines/colony/intro.cpp:1219 engines/colony/intro.cpp:1244
-#, fuzzy
-#| msgid "You have stored "
 msgid "You have been terminated."
-msgstr "Вы собрали "
+msgstr "Вы уничтожены."
 
 #: engines/colony/metaengine.cpp:45 engines/myst3/metaengine.cpp:40
 msgid "Widescreen mod"
