@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-20 15:33+0000\n"
-"PO-Revision-Date: 2026-06-20 15:09+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2026-06-20 15:53+0000\n"
+"Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -8246,7 +8246,7 @@ msgstr ""
 
 #: engines/colony/intro.cpp:154 engines/colony/intro.cpp:1244
 msgid "New Game"
-msgstr "Nueva Partida"
+msgstr "Nueva partida"
 
 #: engines/colony/intro.cpp:155 engines/colony/intro.cpp:1242
 msgid "Load Game"
