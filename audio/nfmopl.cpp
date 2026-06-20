@@ -27,11 +27,11 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/scummsys.h"
+#include "common/debug.h"
+
 #include "audio/mixer.h"
 #include "audio/fmopl.h"
 #include "audio/nfmopl.h"
-
-#include "backends/platform/atari/atari-debug.h"
 
 extern "C"
 {
@@ -69,35 +69,35 @@ extern "C"
 
 	static void *nfmAlloc(size_t amount, const eMemoryFlag flag, void* userData, const char* functionName, char* fileName, uint32_t lineNo) {
 #if NFM_ENABLE_LOGS
-		atari_debug("nfmAlloc()");
+		debug("nfmAlloc()");
 #endif
 		return mspace_malloc(s_mNfmSpace, amount);
 	}
 
 	static void *nfmAlignedAlloc(size_t alignment, size_t amount, const eMemoryFlag flag, void* userData, const int8_t* functionName, int8_t* fileName, uint32_t lineNo) {
 #if NFM_ENABLE_LOGS
-		atari_debug("nfmAlignedAlloc()");
+		debug("nfmAlignedAlloc()");
 #endif
 		return mspace_memalign(s_mNfmSpace, alignment, amount);
 	}
 
 	static void *nfmRealloc(void* pOriginal, size_t size, void* userData) {
 #if NFM_ENABLE_LOGS
-		atari_debug("nfmRealloc()");
+		debug("nfmRealloc()");
 #endif
 		return mspace_realloc(s_mNfmSpace, pOriginal, size);
 	}
 
 	static void nfmFree(void* ptr, void* userData) {
 #if NFM_ENABLE_LOGS
-		atari_debug("nfmFree()");
+		debug("nfmFree()");
 #endif
 		mspace_free(s_mNfmSpace, ptr);
 	}
 
 	static void nfmOutOfMemoryCb(void* userData) {
 #if NFM_ENABLE_LOGS
-		atari_debug("nfmOutOfMemoryCb() out of memory!");
+		debug("nfmOutOfMemoryCb() out of memory!");
 #endif
 	}
 
@@ -113,6 +113,7 @@ static const char *s_DebugConfigMsgStrs[NfmOPL::dtNumDevices] = {
 	"Configuring Serdaco OPL3LPT",
 	"Configuring CE OPL2 Audio Board",
 	"Configuring CE OPL3 Duo!",
+	"Configuring ST Bus ISA / VME SoundBlaster",
 	"Configuring NatFeats / NULL",
 	"Configuring Nuked-OPL3",
 };
@@ -125,6 +126,7 @@ static const char *s_DebugOplWriteStrs[NfmOPL::dtNumDevices] = {
 	"NfmOPL OPL3LPT writeReg",
 	"NfmOPL OPL2AudioBoard writeReg",
 	"NfmOPL OPL3Duo writeReg",
+	"NfmOPL ST Bus ISA / VME SoundBlaster writeReg",
 	"NfmOPL NatFeats / NULL writeReg",
 	"NfmOPL Nuked-OPL3 writeReg",
 };
@@ -133,8 +135,8 @@ namespace RealChip {
 // hardware opl
 OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _deviceType(deviceType), _activeReg(0), _initialized(false), _useBuffer(NFM_ENABLE_BUFFERED_OUTPUT), _incapableDevice(false) {
 #if NFM_ENABLE_LOGS
-	atari_debug("NfmOPL::RealChip create");
-	atari_debug("Requesting hardware info");
+	debug("NfmOPL::RealChip create");
+	debug("Requesting hardware info");
 #endif
 	Supexec(updateHardwareInfo);
 
@@ -162,7 +164,7 @@ OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _dev
 
 #if NFM_ENABLE_LOGS
 	if (deviceType < dtNumDevices) {
-		atari_debug(s_DebugConfigMsgStrs[deviceType]);
+		debug(s_DebugConfigMsgStrs[deviceType]);
 	}
 #endif
 
@@ -235,6 +237,17 @@ OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _dev
 		_ifaceCfg.setup = CC_SINGLE;
 	}
 	break;
+	case dtStBusIsaVmeSb: {
+		// TODO: handle additional VME / ISA parameters if needed
+		_params.uParam.outputPort = OPT_ISA;
+		_params.uParam.param = 0;
+
+		_ifaceCfg.deviceType = eFmDriverType::FMD_ISA_SB;
+		_ifaceCfg.soundchip = CM_OPL3;
+		_ifaceCfg.operationMode = CO_OPL2,
+		_ifaceCfg.setup = CC_SINGLE;
+	}
+	break;
 	case dtNatfeatsOpl: {
 		_params.uParam.outputPort = OPT_INTERNAL;
 		_ifaceCfg.deviceType = eFmDriverType::FMD_NULL;
@@ -252,12 +265,12 @@ OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _dev
 OPL::~OPL() {
 	if (_initialized == true) {
 #if NFM_ENABLE_LOGS
-		atari_debug("NfmOPL destroy");
+		debug("NfmOPL destroy");
 #endif
 		if (_useBuffer) {
 			// flush
 #if NFM_ENABLE_LOGS
-			atari_debug("OPL flush");
+			debug("OPL flush");
 #endif
 			_oplFlush();
 		}
@@ -285,11 +298,11 @@ OPL::~OPL() {
 
 bool OPL::init() {
 #if NFM_ENABLE_LOGS
-	atari_debug("NfmOPL::RealChip init");
+	debug("NfmOPL::RealChip init");
 #endif
 	if (_incapableDevice) {
 #if NFM_ENABLE_LOGS
-		atari_debug("NfmOPL::RealChip OPL2 device cannot emulate requested dual OPL2 / OPL3!");
+	debug("NfmOPL::RealChip OPL2 device cannot emulate requested dual OPL2 / OPL3!");
 #endif
 		return false;
 	}
@@ -305,7 +318,7 @@ bool OPL::init() {
 
 		if (s_mNfmSpace == 0) {
 #if NFM_ENABLE_LOGS
-			atari_debug("NfmOPL::RealChip create_mspace failed!");
+			debug("NfmOPL::RealChip create_mspace failed!");
 #endif
 			return false;
 		}
@@ -320,7 +333,7 @@ bool OPL::init() {
 		setUserMemoryCallbacks(&s_MemCallbacks);
 	} else {
 #if NFM_ENABLE_LOGS
-		atari_debug("NfmOPL::RealChip Out of system memory!");
+		debug("NfmOPL::RealChip Out of system memory!");
 #endif
 		return false;
 	}
@@ -342,21 +355,21 @@ bool OPL::init() {
 			_initialized = true;
 
 #if NFM_ENABLE_LOGS
-			atari_debug("NfmOPL::RealChip init OK");
+			debug("NfmOPL::RealChip init OK");
 #endif
 			return true;
 		}
 	}
 
 #if NFM_ENABLE_LOGS
-	atari_debug("NfmOPL::RealChip init failed!");
+	debug("NfmOPL::RealChip init failed!");
 #endif
 	return false;
 }
 
 void OPL::reset() {
 #if NFM_ENABLE_LOGS
-	atari_debug("NfmOPL::RealChip reset");
+	debug("NfmOPL::RealChip reset");
 #endif
 	for (int16_t i = 0; i < 256; i ++) {
 		writeReg((int)i, 0);
@@ -393,7 +406,7 @@ void OPL::write(int portAddress, int value) {
 
 void OPL::writeReg(int reg, int value) {
 #if NFM_ENABLE_LOGS
-	atari_debug(s_DebugOplWriteStrs[_deviceType]);
+	debug(s_DebugOplWriteStrs[_deviceType]);
 #endif
 
 	if (_type == Config::kOpl3 || _type == Config::kDualOpl2) {
@@ -426,7 +439,7 @@ void OPL::onTimer() {
 		if (_initialized) {
 #if NFM_ENABLE_LOGS
 			// flush
-			atari_debug("NfmOPL::RealChip flush");
+			debug("NfmOPL::RealChip flush");
 #endif
 			_oplFlush();
 		}
@@ -443,8 +456,8 @@ OPL *create(Config::OplType type, OplDevice device) {
 namespace EmulatedChip {
 OPL::OPL(Config::OplType type, enum NfmOPL::OplDevice deviceType): _type(type), _rate(0), _deviceType(deviceType), _activeReg(0), _initialized(false), _useBuffer(NFM_ENABLE_BUFFERED_OUTPUT), _incapableDevice(false) {
 #if NFM_ENABLE_LOGS
-	atari_debug("NfmOPL::EmulatedChip create");
-	atari_debug("Requesting hardware info");
+	debug("NfmOPL::EmulatedChip create");
+	debug("Requesting hardware info");
 #endif
 	Supexec(updateHardwareInfo);
 
@@ -473,7 +486,7 @@ OPL::OPL(Config::OplType type, enum NfmOPL::OplDevice deviceType): _type(type), 
 
 #if NFM_ENABLE_LOGS
 	if (deviceType < dtNumDevices) {
-		atari_debug(s_DebugConfigMsgStrs[deviceType]);
+		debug(s_DebugConfigMsgStrs[deviceType]);
 	}
 #endif
 	switch (deviceType) {
@@ -502,14 +515,14 @@ OPL::~OPL() {
 
 	if (_initialized == true) {
 #if NFM_ENABLE_LOGS
-		atari_debug("NfmOPL::EmulatedChip destroy");
+		debug("NfmOPL::EmulatedChip destroy");
 #endif
 		stop();
 
 		if (_useBuffer) {
 #if NFM_ENABLE_LOGS
 			// flush
-			atari_debug("NfmOPL::EmulatedChip OPL flush");
+			debug("NfmOPL::EmulatedChip OPL flush");
 #endif
 			_oplFlush();
 		}
@@ -539,11 +552,11 @@ OPL::~OPL() {
 
 bool OPL::init() {
 #if NFM_ENABLE_LOGS
-	atari_debug("NfmOPL::EmulatedChip init");
+	debug("NfmOPL::EmulatedChip init");
 #endif
 	if (_incapableDevice) {
 #if NFM_ENABLE_LOGS
-		atari_debug("NfmOPL::EmulatedChip device isn't soft synth type!");
+		debug("NfmOPL::EmulatedChip device isn't soft synth type!");
 #endif
 		return false;
 	}
@@ -559,7 +572,7 @@ bool OPL::init() {
 
 		if (s_mNfmSpace == 0) {
 #if NFM_ENABLE_LOGS
-			atari_debug("NfmOPL::EmulatedChip create_mspace failed!");
+			debug("NfmOPL::EmulatedChip create_mspace failed!");
 #endif
 			return false;
 		}
@@ -574,7 +587,7 @@ bool OPL::init() {
 		setUserMemoryCallbacks(&s_MemCallbacks);
 	} else {
 #if NFM_ENABLE_LOGS
-		atari_debug("NfmOPL::EmulatedChip Out of system memory!");
+		debug("NfmOPL::EmulatedChip Out of system memory!");
 #endif
 		return false;
 	}
@@ -600,14 +613,14 @@ bool OPL::init() {
 			_initialized = true;
 
 #if NFM_ENABLE_LOGS
-			atari_debug("NfmOPL::RealChip init OK");
+			debug("NfmOPL::RealChip init OK");
 #endif
 			return true;
 		}
 	}
 
 #if NFM_ENABLE_LOGS
-	atari_debug("NfmOPL::RealChip init failed!");
+	debug("NfmOPL::RealChip init failed!");
 #endif
 	return false;
 }
@@ -651,7 +664,7 @@ void OPL::write(int portAddress, int value) {
 
 void OPL::writeReg(int reg, int value) {
 #if NFM_ENABLE_LOGS
-	atari_debug(s_DebugOplWriteStrs[_deviceType]);
+	debug(s_DebugOplWriteStrs[_deviceType]);
 #endif
 
 	if (_type == Config::kOpl3 || _type == Config::kDualOpl2) {

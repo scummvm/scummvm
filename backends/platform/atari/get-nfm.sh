@@ -4,9 +4,10 @@
 # -x: Display expanded script commands
 
 # downloads and unpacks in ./deps folder precompiled nFM library release for m68k Atari TOS / mintelf gcc stdlib
-NFM_VERSION=0.2.1
+NFM_VERSION=0.2.2
+COMMIT_SHORT_SHA=4d077f4b
 
-curl -o ./backends/platform/atari/nfm.zip https://nokturnal.pl/downloads/atari/nokturnfm/nfmplay/builds/releases/0.2.1/ataritos-mintelf-gcc-stdlib-m68k-0.2.1-5c688e1a.zip
+curl -o ./backends/platform/atari/nfm.zip https://nokturnal.pl/downloads/atari/nokturnfm/nfmplay/builds/releases/${NFM_VERSION}/ataritos-mintelf-gcc-stdlib-m68k-${NFM_VERSION}-${COMMIT_SHORT_SHA}.zip
 rm -rf ./backends/platform/atari/deps/nfm
 
 unzip ./backends/platform/atari/nfm.zip "nFM_${NFM_VERSION}/*" -d ./backends/platform/atari/deps/
