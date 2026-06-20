@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2026.3.0 (2026-06-XX)
+#### 2026.3.0 "Carousels & Killer Whales" (2026-06-20)
 
  New games:
    - Added support for Nancy Drew: The Haunted Carousel.
