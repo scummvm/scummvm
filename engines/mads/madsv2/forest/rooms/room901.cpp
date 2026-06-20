@@ -47,9 +47,6 @@ static void room_901_init() {
 	if (ConfMan.getBool("seen_intro")) {
 		new_room = 904;
 	} else {
-		ConfMan.setBool("seen_intro", true);
-		ConfMan.flushToDisk();
-
 		kernel_timing_trigger(300, START_INTRO);
 	}
 }
