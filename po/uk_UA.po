@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-18 09:40+0000\n"
-"PO-Revision-Date: 2026-06-17 23:04+0000\n"
+"PO-Revision-Date: 2026-06-20 14:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -6302,11 +6302,12 @@ msgstr "Перевірити оновлення..."
 
 #: engines/access/metaengine.cpp:82
 msgid "Use 'high definition' OGG music"
-msgstr ""
+msgstr "Використовувати музику OGG «високої чіткості»"
 
 #: engines/access/metaengine.cpp:83
 msgid "Use the OGG audio from the re-release instead of original MIDI tracks"
 msgstr ""
+"Використовувати аудіофайли OGG з перевидання замість оригінальних MIDI-треків"
 
 #: engines/access/metaengine.cpp:236 engines/alcachofa/metaengine.cpp:94
 #: engines/bbvs/metaengine.cpp:92 engines/buried/metaengine.cpp:133
@@ -8148,20 +8149,16 @@ msgstr ""
 "Stealth з самого початку, використовуючи нові збережені ігри."
 
 #: engines/colony/intro.cpp:154 engines/colony/intro.cpp:1244
-#, fuzzy
-#| msgid "New game"
 msgid "New Game"
-msgstr "Нова гра"
+msgstr "Нова Гра"
 
 #: engines/colony/intro.cpp:155 engines/colony/intro.cpp:1242
 msgid "Load Game"
 msgstr "Завантажити збережену гру"
 
 #: engines/colony/intro.cpp:1219 engines/colony/intro.cpp:1244
-#, fuzzy
-#| msgid "You have stored "
 msgid "You have been terminated."
-msgstr "Ви зібрали "
+msgstr "Вас було прибрано."
 
 #: engines/colony/metaengine.cpp:45 engines/myst3/metaengine.cpp:40
 msgid "Widescreen mod"
