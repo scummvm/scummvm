@@ -31,15 +31,17 @@ int sound_play(int soundNum) {
 }
 
 int sound_queue(int soundNum, int /*distance*/) {
-	return g_engine->_soundManager->command(soundNum);
+	return (g_engine->_soundManager) ? g_engine->_soundManager->command(soundNum) : 0;
 }
 
 void sound_queue_hold() {
-	g_engine->_soundManager->pauseNewCommands();
+	if (g_engine->_soundManager)
+		g_engine->_soundManager->pauseNewCommands();
 }
 
 void sound_queue_flush() {
-	g_engine->_soundManager->startQueuedCommands();
+	if (g_engine->_soundManager)
+		g_engine->_soundManager->startQueuedCommands();
 }
 
 } // namespace MADSV2

@@ -688,7 +688,7 @@ int kernel_room_startup(int newRoom, int initial_variant, const char *interface,
 
 	pal_activate_shadow(&kernel_shadow_inter);
 
-	if (g_engine->getGameID() == GType_Dragonsphere) {
+	if (g_engine->getGameID() == GType_Dragonsphere || g_engine->getGameID() == GType_Forest) {
 		inter_anim = nullptr;
 
 	} else {
@@ -2555,12 +2555,14 @@ void kernel_unload_sound_driver() {
 }
 
 int kernel_load_sound_driver(const char *name, char sound_card_, int sound_board_address_, int sound_board_type_, int sound_board_irq_) {
-	// Get the section number from the end of the driver filename, and use it to initialize
-	// the sound system; we provide our own implementation of the drivers
-	int sectionNum = *(name + strlen(name) - 1) - '0';
-	assert(sectionNum >= 1 && sectionNum <= 9);
+	if (g_engine->_soundManager != nullptr) {
+		// Get the section number from the end of the driver filename, and use it to initialize
+		// the sound system; we provide our own implementation of the drivers
+		int sectionNum = *(name + strlen(name) - 1) - '0';
+		assert(sectionNum >= 1 && sectionNum <= 9);
 
-	g_engine->_soundManager->init(sectionNum);
+		g_engine->_soundManager->init(sectionNum);
+	}
 
 	return 0;
 }
