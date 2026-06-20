@@ -487,12 +487,12 @@ void NancyEngine::bootGameEngine() {
 	LOAD_BOOT(TASK)	// Task bar (main UI)
 	LOAD_BOOT(UIIV)	// Inventory UI
 	LOAD_BOOT(UICO)	// Conversation UI
-	LOAD_BOOT(UICL) // Cell phone UI
-	LOAD_BOOT(UIBW) // Web browser UI
-	LOAD_BOOT(UINB) // Notebook UI
+	LOAD_BOOT(UICL)	// Cell phone UI
+	LOAD_BOOT(UIBW)	// Web browser UI
+	LOAD_BOOT(UINB)	// Notebook UI
 
 	// Nancy 11+
-	LOAD_BOOT(SCTB)	// Scheduled talk (?) UI
+	LOAD_BOOT(SCTB)	// Scrollable text box UI
 
 	// Nancy 12+
 	// HINT chunk has been removed
@@ -503,7 +503,7 @@ void NancyEngine::bootGameEngine() {
 	// RCPR and RCLB chunks have been removed
 	// LOAD_BOOT(MMIX)
 
-	// Nancy 14+
+	// Nancy 14
 	// LOAD_BOOT(UICM)
 
 	// Nancy 15+

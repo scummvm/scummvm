@@ -253,9 +253,10 @@ TBOX::TBOX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	scrollbarDefaultPos.y = chunkStream->readUint16LE();
 	scrollbarMaxScroll = chunkStream->readUint16LE();
 
-	upOffset = chunkStream->readUint16LE() + 1;
+	uint16 legacyOffsetAdjust = g_nancy->getGameType() < kGameTypeNancy10 ? 1 : 0;
+	upOffset = chunkStream->readUint16LE() + legacyOffsetAdjust;
 	downOffset = chunkStream->readUint16LE();
-	leftOffset = chunkStream->readUint16LE() - 1;
+	leftOffset = chunkStream->readUint16LE() - legacyOffsetAdjust;
 	rightOffset = chunkStream->readUint16LE();
 
 	if (g_nancy->getGameType() <= kGameTypeNancy9) {
@@ -872,8 +873,8 @@ MARK::MARK(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 }
 
 SCTB::SCTB(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	readFilename(*chunkStream, imageName);
-	// TODO
+	readUIPopupHeader(*chunkStream, header);
+	readRect(*chunkStream, restoreSrcRect);
 }
 
 SHUI::SHUI(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
@@ -994,6 +995,13 @@ UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRect(*chunkStream, connectingSpriteSrc);
 	readRect(*chunkStream, connectingSpriteSrcAlt);
 	readRect(*chunkStream, connectingSpriteDest);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy11) {
+		// TODO: Looks to be a new coordinate - values (548, 50)
+		chunkStream->skip(4);
+		chunkStream->skip(4);
+	}
+
 	readRect(*chunkStream, onlineHeading.srcRect);
 	readRect(*chunkStream, onlineHeading.destRect);
 	readRect(*chunkStream, fullEmptyScreenSrc);

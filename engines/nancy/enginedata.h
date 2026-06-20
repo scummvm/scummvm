@@ -506,13 +506,13 @@ struct SHUI : public EngineData {
 	Common::Array<Common::Rect> _sliderRects;	// Slider rects
 };
 
-// ScrollTextBox - introduced in Nancy 11. Configuration for the scrollable
-// text-box UI used for long textbox content (e.g. journal / scheduled-talk
-// panels) that needs to scroll within a fixed frame.
+// ScrollTextBox - introduced in Nancy 11. Standard UI popup header,
+// followed by the rect to restore when the text box is closed.
 struct SCTB : public EngineData {
 	SCTB(Common::SeekableReadStream *chunkStream);
 
-	Common::Path imageName;
+	UIPopupHeader header;
+	Common::Rect restoreSrcRect;
 };
 
 enum TaskButton {
