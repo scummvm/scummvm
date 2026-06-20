@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-18 09:40+0000\n"
-"PO-Revision-Date: 2026-06-20 14:56+0000\n"
-"Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
+"PO-Revision-Date: 2026-06-20 15:07+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
 "Language: it_IT\n"
@@ -2373,7 +2373,7 @@ msgstr "Abilita scorrimento cinetico nelle liste"
 
 #: gui/options.cpp:2674
 msgid "Enable smooth, momentum-based scrolling in list widgets."
-msgstr "Attiva lo scorrimento fluido (con momento) dei widget a lista"
+msgstr "Attiva lo scorrimento fluido (con momento) dei widget a lista."
 
 #: gui/options.cpp:2680
 msgid "GUI language:"
@@ -3786,7 +3786,7 @@ msgid ""
 "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."
 msgstr ""
 "ATTENZIONE: La posizione dedicata al salvataggio automatico è occupata da un "
-"salvataggio denominato %S, e un salvataggio automatico è stato avviato.\n"
+"salvataggio denominato %s, e un salvataggio automatico è stato avviato.\n"
 "Puoi spostare il salvataggio esistente in una posizione libera o eliminarlo "
 "se non più necessario.\n"
 "In alternativa puoi posticipare la decisione (verrà chiesto nuovamente tra 5 "
@@ -5199,7 +5199,6 @@ msgstr ""
 "schermo\n"
 "\n"
 "### Tocco a due dita\n"
-"\n"
 "Per effettuare un tocco a due dita, mantieni un dito sullo schermo e quindi "
 "tocca con un secondo dito.\n"
 "\n"
@@ -7453,11 +7452,11 @@ msgstr "Escape"
 
 #: engines/bagel/metaengine.cpp:70
 msgid "Page Up"
-msgstr "Pagina prec."
+msgstr "Pagina prec"
 
 #: engines/bagel/metaengine.cpp:71
 msgid "Page Down"
-msgstr "Pagina succ."
+msgstr "Pagina succ"
 
 #: engines/bagel/metaengine.cpp:72
 msgid "Home"
@@ -12173,7 +12172,7 @@ msgstr "Mostra sottotitoli effetti sonori"
 #: engines/private/metaengine.cpp:40
 msgid "Use SFX subtitles (if subtitles are enabled)."
 msgstr ""
-"Mostra sottotitoli per gli effetti sonori (se i sottotitoli sono abilitati),"
+"Mostra sottotitoli per gli effetti sonori (se i sottotitoli sono abilitati)."
 
 #: engines/private/metaengine.cpp:50
 msgid "Highlight decision areas"
