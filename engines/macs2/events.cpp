@@ -22,6 +22,7 @@
 #include "macs2/events.h"
 #include "common/config-manager.h"
 #include "graphics/screen.h"
+#include "macs2/detection.h"
 #include "macs2/macs2.h"
 #include "macs2/view1.h"
 
@@ -115,6 +116,19 @@ void Events::processEvent(Common::Event &ev) {
 		break;
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		msgAction(ActionMessage(ev.customType));
+		break;
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		// Gamepad buttons map to custom actions; mouse uses raw EVENT_*BUTTON* below.
+		switch (ev.customType) {
+		case kMacs2ActionInteract:
+			msgMouseUp(MouseUpMessage(MouseUpMessage::MB_LEFT, ev.mouse));
+			break;
+		case kMacs2ActionCursorMode:
+			msgMouseUp(MouseUpMessage(MouseUpMessage::MB_RIGHT, ev.mouse));
+			break;
+		default:
+			break;
+		}
 		break;
 	case Common::EVENT_LBUTTONDOWN:
 		msgMouseDown(MouseDownMessage(MouseDownMessage::MB_LEFT, ev.mouse));

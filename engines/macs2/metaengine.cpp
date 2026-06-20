@@ -44,13 +44,13 @@ Common::KeymapArray Macs2MetaEngine::initKeymaps(const char *target) const {
 
 	act = new Action(kStandardActionLeftClick, _("Interact"));
 	act->setCustomEngineActionEvent(kMacs2ActionInteract);
-	act->addDefaultInputMapping("MOUSE_LEFT");
+	// Mouse buttons are handled via raw EVENT_LBUTTON* in Events::processEvent so
+	// press/release pairs work (panel close on release). Gamepad only here.
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionRightClick, _("Change cursor mode"));
 	act->setCustomEngineActionEvent(kMacs2ActionCursorMode);
-	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 

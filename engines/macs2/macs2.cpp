@@ -35,6 +35,7 @@
 #include "engines/util.h"
 #include "gameobjects.h"
 #include "graphics/cursorman.h"
+#include "graphics/paletteman.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "gui/debugger.h"
@@ -44,6 +45,20 @@
 #include "macs2/view1.h"
 
 namespace Macs2 {
+
+void resetCharacterWalkPath(Character *character) {
+	if (character == nullptr || character->_gameObject == nullptr)
+		return;
+	const Common::Point pos = character->_gameObject->_position;
+	character->_path.clear();
+	character->_currentPathIndex = 0;
+	character->_targetPosition = pos;
+	character->_pathFinalDestination = pos;
+	character->_stepDeltaX = 0;
+	character->_stepDeltaY = 0;
+	character->_stepError = 0;
+	character->_stepDirectionSet = false;
+}
 
 Macs2Engine *g_engine;
 
@@ -113,12 +128,15 @@ void Macs2Engine::readResourceFile() {
 	//   0x0C: 2 bytes actor index + 2 bytes initial scene index (loaded below)
 	//   0x10: 0x3000 bytes scene table (512 entries * 12 bytes, accessed via seek per scene)
 	//   0x3010: 0x300 bytes vanilla palette (global default, overwritten per-scene by changeScene)
-	//   0x3310: 0x800 bytes shading table -> sceneData+0x53D3 (global, 256-entry * 8-byte lookup)
+	//   0x3310: 0x800 bytes shading table -> sceneData+0x53D3 (64 palette entries x 32 levels)
 	//   0x3B10: 33 cursor/icon image entries (4-byte size + blob data each)
 	//   Then: Font 1 (4-byte size + glyph data)
 	//   Then: Font 2 (4-byte size + glyph data)
 	//   Then: 0x400 bytes map scene offsets -> sceneData+0x5DDB
 	// We skip to the cursor images; palette/shading are loaded per-scene in changeScene.
+	_fileStream->seek(0xC + 0x4 + 0x3000 + 0x300);
+	_shadingTable.resize(0x800);
+	_fileStream->read(_shadingTable.data(), 0x800);
 	_fileStream->seek(0xC + 0x4 + 0x3000 + 0x300 + 0x800);
 	readImageResources(_fileStream);
 	// Font 1 follows immediately after the 33 image resource entries.
@@ -196,9 +214,9 @@ void Macs2Engine::readResourceFile() {
 			gameObject->_blobs.push_back(Common::Array<uint8>(data, dataSize));
 			delete[] data;
 			gameObject->_blobSourceKeys.push_back(blobSourceKey);
-			// Per-animation walk speed (+0x30 in runtime)
+			// Per-slot wAnimSpeed (slot+0x0C in runtime, walk speed used by walkAlongPath)
 			uint16 blobSpeed = _fileStream->readUint16LE();
-			gameObject->_blobSpeeds.push_back(blobSpeed);
+			gameObject->_blobWalkSpeeds.push_back(blobSpeed);
 			// Mirror flag (+0x32 in runtime)
 			uint16 blobMirrorFlag = _fileStream->readByte();
 			_fileStream->readByte(); // slot loaded flag (runtime-only, discarded from file)
@@ -218,7 +236,7 @@ void Macs2Engine::readResourceFile() {
 		}
 		// Per-object rendering flags (after all 21 animation slots):
 		// Binary loadObjectData reads these into runtime+0x184, +0x185, +0x186
-		_fileStream->readByte(); // runtime+0x184: hasInventoryIcon (container flag) - derived dynamically from _blobs[0x13] presence
+		_fileStream->readByte();                                // runtime+0x184: hasInventoryIcon (container flag) - derived dynamically from _blobs[0x13] presence
 		gameObject->_hasShading = _fileStream->readByte() != 0; // runtime+0x185: shading enabled
 		gameObject->_hasScaling = _fileStream->readByte() != 0; // runtime+0x186: scaling enabled
 
@@ -228,9 +246,17 @@ void Macs2Engine::readResourceFile() {
 		_fileStream->seek(addressOffset, SEEK_SET);
 
 		objectOffset = _fileStream->readUint32LE();
-		// Binary loadObjectData checks both +0x17F4 and +0x17F6 (high word); zero means no data
+		// Binary loadResourceFile prunes an object slot ONLY when its DATA offset
+		// (scene table +0x17F4) is zero (handled by the `continue` above). A zero
+		// SCRIPT offset (+0x17F8) does NOT remove the object - it simply has no
+		// script/resource table. The original keeps the slot non-null so that the
+		// object set (used implicitly by save/load record ordering) stays correct.
+		// Previously this did `break`, which leaked this object, left it null, and
+		// aborted loading every higher-index object - corrupting the object set
+		// and shifting the save-file object section.
 		if (objectOffset == 0) {
-			break;
+			GameObjects::instance()._objects[i - 1] = gameObject;
+			continue;
 		}
 		_fileStream->seek(objectOffset, SEEK_SET);
 		// Resource offset table at +0x18D equivalent in file (128 bytes = 32 dword offsets).
@@ -256,7 +282,6 @@ void Macs2Engine::readResourceFile() {
 	_pathfindingMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	_shadowMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	_hotspotMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-	_shadingTable.resize(256);
 	changeScene(Scenes::instance()._currentSceneIndex);
 }
 
@@ -317,9 +342,9 @@ void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 		currentBlob._blob.resize(numBytes);
 		stream->read(currentBlob._blob.data(), numBytes);
 		// Trailing per-animation fields (stored but not read at runtime by binary)
-		currentBlob._unknown0C = stream->readUint16LE();  // +0x50F3: unknown word
-		currentBlob._unknown0E = stream->readByte();      // +0x50F5: unknown byte
-		currentBlob._unknown0F = stream->readByte();      // +0x50F6: unknown byte
+		currentBlob._unknown0C = stream->readUint16LE(); // +0x50F3: unknown word
+		currentBlob._unknown0E = stream->readByte();     // +0x50F5: unknown byte
+		currentBlob._unknown0F = stream->readByte();     // +0x50F6: unknown byte
 
 		// Parse frames for the legacy BackgroundAnimation struct
 		AnimBlobView blobView(currentBlob._blob);
@@ -339,7 +364,7 @@ void Macs2Engine::readBackgroundAnimations(Common::MemoryReadStream *stream) {
 		}
 
 		// The blob's internal frame pointer is stored in the resource file data.
-		// Do NOT reinitialize it — the original binary just reads the raw data.
+		// Do NOT reinitialize it - the original binary just reads the raw data.
 	}
 }
 
@@ -373,10 +398,6 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	for (uint i = 0; i < _hotspotOverrides.size(); i++) {
 		_hotspotOverrides[i] = 0xFFFF;
 	}
-	_pathfindingValueRemaps.resize(0x100);
-	for (uint i = 0; i < _pathfindingValueRemaps.size(); i++) {
-		_pathfindingValueRemaps[i] = 0;
-	}
 }
 
 Macs2Engine::~Macs2Engine() {
@@ -388,11 +409,15 @@ Macs2Engine::~Macs2Engine() {
 	_adlib->deinit();
 	delete _adlib;
 	delete _fileStream;
+	delete _scriptExecutor;
+	for (uint i = 0; i < GameObjects::instance()._objects.size(); i++) {
+		delete GameObjects::instance()._objects[i];
+	}
+	GameObjects::instance()._objects.clear();
 	delete Scenes::instance()._currentSceneScript;
 	delete Scenes::instance()._currentSceneStrings;
 	Scenes::instance()._currentSceneScript = nullptr;
 	Scenes::instance()._currentSceneStrings = nullptr;
-	delete _scriptExecutor;
 }
 
 void Macs2Engine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) const {
@@ -412,7 +437,7 @@ void Macs2Engine::syncSoundSettings() {
 		// OPL emulator is registered as kPlainSoundType; mute it at mixer level
 		// when user sets music volume to 0 (OPL attenuation 0x3F is not true silence).
 		_mixer->muteSoundType(Audio::Mixer::kPlainSoundType,
-			(musicVolume == 0) || (ConfMan.hasKey("mute") && ConfMan.getBool("mute")));
+							  (musicVolume == 0) || (ConfMan.hasKey("mute") && ConfMan.getBool("mute")));
 		_adlib->setVolume(scaledMusicVolume(_scriptExecutor->_musicControlVolume));
 	}
 }
@@ -510,7 +535,10 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		_pal[i] = (_pal[i] * 259 + 33) >> 6;
 	}
 
-	_fileStream->read(_shadingTable.data(), 0x100);
+	// changeScene @ 1008:2574: 0x100-byte panel remap table (scene+0x1006 area, NOT shading table)
+	if (_panelRemapTable.size() != 0x100)
+		_panelRemapTable.resize(0x100);
+	_fileStream->read(_panelRemapTable.data(), 0x100);
 
 	_fileStream->readByte(); // unknownByte1
 	_fileStream->readByte(); // unknownByte2
@@ -608,7 +636,11 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 
 	// Refresh the surface
 	currentView->_backgroundSurface.copyFrom(_sceneBackground);
-	currentView->_paletteDirty = true;
+	// scriptChangeScene (1008:ad6e) manages palette via fade/instant-cut paths when
+	// executeScript==false; avoid pushing _pal via draw() before fadePaletteToBlack.
+	if (executeScript) {
+		currentView->_paletteDirty = true;
+	}
 	currentView->handleTextBoxInput();
 	currentView->_drawnStringBox.clear();
 	currentView->_continueScriptAfterUI = false;
@@ -621,38 +653,46 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	_scriptExecutor->_inventoryActionFlag = false;
 	_scriptExecutor->_inventoryCombineFlag = false;
 
-	// Stop all characters from sending leftover events
 	for (auto currentCharacter : currentView->_characters) {
-		currentCharacter->_executeScriptOnFinishLerp = false;
-	}
-	for (auto currentCharacter : currentView->_characters) {
+		if (currentCharacter->_gameObject != nullptr)
+			_scriptExecutor->saveWalkRuntime(currentCharacter, currentCharacter->_gameObject);
 		delete currentCharacter;
 	}
 	currentView->_characters.clear();
-	// The original loads the actor via loadObjectData(g_wCurrentActorIndex).
-	// Only add to render list if actor belongs in this scene; scene init script
-	// (opcode 0x0B) will move the actor here with the correct position if needed.
+	currentView->flushPendingCharacterDeletes();
+	// Binary changeScene (1008:2574): loadObjectData for scene objects except current actor.
 	GameObject *actorObject = GameObjects::getObjectByIndex(Scenes::instance()._currentActorIndex);
 	if (actorObject != nullptr && actorObject->_sceneIndex == newSceneIndex) {
-		loadObjectData(actorObject);
 		Character *actorChar = new Character();
 		actorChar->_gameObject = actorObject;
 		currentView->_characters.push_back(actorChar);
+		_scriptExecutor->restoreWalkRuntime(actorChar, actorObject);
+		resetCharacterWalkPath(actorChar);
+		_scriptExecutor->saveWalkRuntime(actorChar, actorObject);
 	}
 	for (auto currentObject : GameObjects::instance()._objects) {
 		if (currentObject == nullptr)
 			continue;
-		if (currentObject->_sceneIndex == newSceneIndex && currentObject->_index != Scenes::instance()._currentActorIndex) {
-			loadObjectData(currentObject);
+		if (currentObject->_sceneIndex == newSceneIndex &&
+			currentObject->_index != Scenes::instance()._currentActorIndex &&
+			currentObject->_dataOffset != 0 &&
+			loadObjectData(currentObject)) {
 			Character *c = new Character();
 			c->_gameObject = currentObject;
 			currentView->_characters.push_back(c);
+			_scriptExecutor->restoreWalkRuntime(c, currentObject);
+			resetCharacterWalkPath(c);
+			_scriptExecutor->saveWalkRuntime(c, currentObject);
 		}
 	}
+
+	currentView->rebuildCharacterLookupTable();
 
 	// Load the script and execute it
 	Scenes::instance()._lastSceneIndex = Scenes::instance()._currentSceneIndex;
 	Scenes::instance()._currentSceneIndex = newSceneIndex;
+	// Free any object-specific stream before deleting the scene script
+	_scriptExecutor->releaseObjectStream();
 	delete Scenes::instance()._currentSceneScript;
 	delete Scenes::instance()._currentSceneStrings;
 	Scenes::instance()._currentSceneScript = Scenes::instance().readSceneScript(newSceneIndex, _fileStream);
@@ -671,8 +711,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	saveAutosaveIfEnabled();
 
 	if (executeScript) {
-		// Start the execution
-		_scriptExecutor->run(true);
+		_scriptExecutor->runSceneEntryScriptPasses();
 	}
 }
 
@@ -737,8 +776,8 @@ bool Macs2Engine::findGlyph(char c, GlyphData &out) const {
 
 // getWalkabilityAt (1008:0e8c)
 // Params: (param_1=y, param_2=x)
-// Bounds: x<0 || x>=320 || y<0 || y>=200 → return 0
-// Lookup: scene[y*4 + 0x2017] → row pointer, then byte at [rowPtr + x]
+// Bounds: x<0 || x>=320 || y<0 || y>=200 -> return 0
+// Lookup: scene[y*4 + 0x2017] -> row pointer, then byte at [rowPtr + x]
 // Values 0xC8..0xEF: override range - checks scene[value*5 + 0x4EA5]:
 //   If override disabled (flag==0): returns 0xFF
 //   If override enabled (flag!=0): returns scene[value*5 + 0x4EA6]
@@ -1045,7 +1084,8 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 	if (adjCount > 0) {
 		for (int i = 0; i < adjCount; i++) {
 			int adj = pt._adjacentPoints[i];
-			if (adj == prevNode) continue;
+			if (adj == prevNode)
+				continue;
 
 			// Check visited stack
 			bool alreadyVisited = false;
@@ -1055,7 +1095,8 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 					break;
 				}
 			}
-			if (alreadyVisited) continue;
+			if (alreadyVisited)
+				continue;
 
 			// Recursive call
 			int cost = computeMinCostToReachable(adj, nodeIndex, actorIndex, reachable, nodeCount, finalDest);
@@ -1079,22 +1120,61 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 }
 
 void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
-	debugC(kDebugInput, "Cursor mode set to %i (%s)", (int)newMode,
-		   newMode == Script::MouseMode::Talk ? "Talk" :
-		   newMode == Script::MouseMode::Look ? "Look" :
-		   newMode == Script::MouseMode::Use ? "Use" :
-		   newMode == Script::MouseMode::Walk ? "Walk" :
-		   newMode == Script::MouseMode::UseInventory ? "UseInventory" :
-		   newMode == Script::MouseMode::PanelUse ? "PanelUse" :
-		   newMode == Script::MouseMode::PanelCursor ? "PanelCursor" :
-		   newMode == Script::MouseMode::Disabled ? "Disabled" : "Unknown");
+	// setCursorMode (1008:3ea5): when the cursor image changes, keep the hotspot
+	// fixed on screen by compensating for the old/new image half-extents, clamp,
+	// refresh the cursor graphic, and flag the clip rect dirty.
+	const Script::MouseMode oldMode = _scriptExecutor->_cursorMode;
+	const bool cursorVisible = CursorMan.isVisible();
+
+	auto cursorHalfSize = [this](Script::MouseMode mode, uint16 &halfW, uint16 &halfH) {
+		halfW = halfH = 0;
+		const int index = (int)mode - 1;
+		if (index < 0 || index >= (int)_imageResources.size())
+			return;
+		halfW = _imageResources[index]._width / 2;
+		halfH = _imageResources[index]._height / 2;
+	};
+
+	uint16 oldHalfW = 0, oldHalfH = 0, newHalfW = 0, newHalfH = 0;
+	cursorHalfSize(oldMode, oldHalfW, oldHalfH);
+
+	Common::Point mouse = g_system->getEventManager()->getMousePos();
+	mouse.x += oldHalfW;
+	mouse.y += oldHalfH;
+
 	_scriptExecutor->_cursorMode = newMode;
+
+	cursorHalfSize(newMode, newHalfW, newHalfH);
+	mouse.x -= newHalfW;
+	mouse.y -= newHalfH;
+
+	mouse.x = CLIP<int>(mouse.x, (int)newHalfW, 319 - (int)newHalfW);
+	mouse.y = CLIP<int>(mouse.y, (int)newHalfH, 199 - (int)newHalfH);
+	g_system->warpMouse(mouse.x, mouse.y);
+
+	_clipRectDirty = true;
+
+	if (View1 *view = (View1 *)findView("View1"))
+		view->updateCursor();
+
+	if (cursorVisible)
+		_needsRedraw = true;
+
+	debugC(kDebugInput, "Cursor mode set to %i (%s)", (int)newMode,
+		   newMode == Script::MouseMode::Talk ? "Talk" : newMode == Script::MouseMode::Look       ? "Look"
+													 : newMode == Script::MouseMode::Use          ? "Use"
+													 : newMode == Script::MouseMode::Walk         ? "Walk"
+													 : newMode == Script::MouseMode::UseInventory ? "UseInventory"
+													 : newMode == Script::MouseMode::PanelUse     ? "PanelUse"
+													 : newMode == Script::MouseMode::PanelCursor  ? "PanelCursor"
+													 : newMode == Script::MouseMode::Disabled     ? "Disabled"
+																								  : "Unknown");
 }
 
 uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) {
 	uint16 result = 0;
 	// TODO: Abstract the screen sizes
-	if (p.x < 0 || p.x > 320 || p.y < 0 || p.y > 200 || _hotspotMap.w == 0) {
+	if (p.x < 0 || p.x >= 320 || p.y < 0 || p.y >= 200 || _hotspotMap.w == 0) {
 		return result;
 	}
 
@@ -1202,21 +1282,7 @@ bool Macs2Engine::readInputFrame(uint16 &mouseX, uint16 &mouseY, uint16 &buttons
 }
 
 uint16 Macs2Engine::getWalkabilityAt(const Common::Point &p) {
-	// Bounds check: returns 0 if out of screen (verified: getWalkabilityAt at 1008:0e8c)
-	if (p.x < 0 || p.x >= 320 || p.y < 0 || p.y >= 200) {
-		return 0;
-	}
-	uint8 value = _pathfindingMap.getPixel(p.x, p.y);
-	if (value < 0xC8 || value > 0xEF) {
-		return value;
-	}
-
-	if (value >= _pathfindingValueRemaps.size()) {
-		return 0xFF;
-	}
-
-	const uint16 remappedValue = _pathfindingValueRemaps[value];
-	return remappedValue != 0 ? remappedValue : 0xFF;
+	return getWalkabilityAt((int16)p.y, (int16)p.x);
 }
 
 int Macs2Engine::measureString(const Common::String &s) {
@@ -1395,72 +1461,174 @@ uint32 Macs2Engine::getFeatures() const {
 	return _gameDescription->flags;
 }
 
-void Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex, bool shouldMirror) {
-	if (arrayIndex == 0 || arrayIndex > _sceneResourceOffsets.size()) {
-		warning("Invalid animation array index %u for object %u slot %u", arrayIndex, objectIndex, slotIndex);
-		return;
-	}
-
+bool Macs2Engine::loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex, bool shouldMirror, uint16 executingScriptObjectId) {
 	GameObject *go = GameObjects::instance().getObjectByIndex(objectIndex);
 	if (go == nullptr) {
-		warning("Tried to load animation for invalid object %u", objectIndex);
-		return;
+		_scriptExecutor->setScriptError(0x19);
+		return false;
 	}
 
-	if (slotIndex == 0 || slotIndex > 0x15) {
-		warning("Invalid animation slot %u for object %u", slotIndex, objectIndex);
-		return;
+	uint32 address = 0;
+	if (executingScriptObjectId == 0) {
+		if (arrayIndex == 0 || arrayIndex > _sceneResourceOffsets.size()) {
+			_scriptExecutor->setScriptError(1);
+			return false;
+		}
+		address = _sceneResourceOffsets[arrayIndex - 1];
+	} else {
+		GameObject *execObj = GameObjects::getObjectByIndex(executingScriptObjectId);
+		if (execObj == nullptr || arrayIndex == 0 || arrayIndex > 32) {
+			_scriptExecutor->setScriptError(1);
+			return false;
+		}
+		address = execObj->_resourceOffsets[arrayIndex - 1];
+	}
+	if (address == 0) {
+		_scriptExecutor->setScriptError(1);
+		return false;
 	}
 
-	// We need to account for the game starting indices at 1
-	uint32 address = _sceneResourceOffsets[arrayIndex - 1];
 	_fileStream->seek(address);
 	uint32 size = _fileStream->readUint32LE();
-	_fileStream->seek(address + 0x4 + 0xC);
+	_fileStream->seek(address + 0x10);
 	Common::Array<uint8> data;
 	data.resize(size);
 	_fileStream->read(data.data(), size);
+
+	while (go->_blobs.size() < 0x15)
+		go->_blobs.push_back(Common::Array<uint8>());
+	while (go->_blobSourceKeys.size() < 0x15)
+		go->_blobSourceKeys.push_back(0);
+	while (go->_blobMirrorFlags.size() < 0x15)
+		go->_blobMirrorFlags.push_back(false);
+
 	Common::Array<uint8> *targetBlob = nullptr;
 	if (slotIndex == 0x15) {
-		targetBlob = &go->overloadAnimation;
-		go->overloadAnimationSourceKey = static_cast<uint16>(address >> 16);
-		go->overloadAnimationMirrored = shouldMirror;
-	} else if ((uint)(slotIndex - 1) < go->_blobs.size()) {
+		while (go->_blobs.size() <= 20)
+			go->_blobs.push_back(Common::Array<uint8>());
+		targetBlob = &go->_blobs[20];
+		go->_overloadAnimationSourceKey = static_cast<uint16>(address >> 16);
+		go->_overloadAnimationMirrored = shouldMirror;
+	} else {
 		targetBlob = &go->_blobs[slotIndex - 1];
-		if ((uint)(slotIndex - 1) < go->_blobSourceKeys.size())
-			go->_blobSourceKeys[slotIndex - 1] = static_cast<uint16>(address >> 16);
-		if ((uint)(slotIndex - 1) < go->_blobMirrorFlags.size())
-			go->_blobMirrorFlags[slotIndex - 1] = shouldMirror;
+		// Binary scriptLoadObjectAnim (1008:cb45) does NOT modify slot+0x0C (wAnimSpeed).
+		go->_blobSourceKeys[slotIndex - 1] = static_cast<uint16>(address >> 16);
+		go->_blobMirrorFlags[slotIndex - 1] = shouldMirror;
 	}
 
 	if (targetBlob == nullptr) {
-		warning("Object %u has no storage for animation slot %u", objectIndex, slotIndex);
-		return;
+		_scriptExecutor->setScriptError(1);
+		return false;
 	}
 
+	// Binary: memFree old blob if bSlotLoaded, then alloc + read; sets slot+0x33 = 1.
 	*targetBlob = data;
+	if (slotIndex == 0x15)
+		go->_overloadAnimation = data;
 	if (shouldMirror) {
 		BackgroundAnimationBlob::mirrorAnimBlob(*targetBlob);
 	}
+	return true;
 }
 
-void Macs2Engine::loadObjectData(GameObject *obj) {
+void Macs2Engine::sortObjectsByDepth(uint16 objectIndex) {
+	if (objectIndex < 1 || objectIndex > 0x200)
+		return;
+
+	GameObject *obj = GameObjects::getObjectByIndex(objectIndex);
 	if (obj == nullptr || obj->_dataOffset == 0)
 		return;
 
-	// Binary loadObjectData (1008:08ec): seeks to object data offset + 10 (past
-	// position/scene/orientation/verticalOffset), then reads 21 animation slots.
-	_fileStream->seek(obj->_dataOffset + 10, SEEK_SET);
+	View1 *currentView = (View1 *)findView("View1");
+	if (currentView != nullptr && currentView->_activeInventoryItem != nullptr &&
+		currentView->_activeInventoryItem->_index == objectIndex) {
+		currentView->_activeInventoryItem = nullptr;
+		if (currentView->_savedCursorMode == Script::MouseMode::UseInventory) {
+			currentView->_savedCursorMode = Script::MouseMode::Use;
+		}
+		if (_scriptExecutor->_cursorModeBeforeWait == Script::MouseMode::UseInventory) {
+			_scriptExecutor->_cursorModeBeforeWait = Script::MouseMode::Use;
+		}
+		if (_scriptExecutor->_cursorMode == Script::MouseMode::UseInventory) {
+			setCursorMode(Script::MouseMode::Use);
+			currentView->updateCursor();
+		}
+	}
+
+	clearObjectRuntime(obj);
+}
+
+void Macs2Engine::clearObjectRuntime(GameObject *obj) {
+	if (obj == nullptr)
+		return;
+
+	obj->_blobs.clear();
+	obj->_blobSourceKeys.clear();
+	obj->_blobWalkSpeeds.clear();
+	obj->_blobMirrorFlags.clear();
+	obj->_script.clear();
+	memset(obj->_resourceOffsets, 0, sizeof(obj->_resourceOffsets));
+	obj->_overloadAnimation.clear();
+	obj->_useOverloadAnimation = false;
+	obj->_overloadAnimationMirrored = false;
+	obj->_storedWalkRuntime = GameObject::StoredWalkRuntime();
+	obj->resetDrawBounds();
+}
+
+bool Macs2Engine::loadObjectData(GameObject *obj) {
+	if (obj == nullptr) {
+		_scriptExecutor->setScriptError(0x19);
+		return false;
+	}
+	if (obj->_dataOffset == 0) {
+		_scriptExecutor->setScriptError(0x19);
+		return false;
+	}
+	if (_fileStream == nullptr) {
+		_scriptExecutor->setScriptError(0x19);
+		return false;
+	}
+	if (!_fileStream->seek(obj->_dataOffset + 10, SEEK_SET)) {
+		_scriptExecutor->setScriptError(0x19);
+		return false;
+	}
+
+	const Common::Array<Common::Array<uint8>> blobsBackup = obj->_blobs;
+	const Common::Array<uint16> keysBackup = obj->_blobSourceKeys;
+	const Common::Array<uint16> speedsBackup = obj->_blobWalkSpeeds;
+	const Common::Array<bool> mirrorsBackup = obj->_blobMirrorFlags;
+	const auto rollbackPartialLoad = [&]() {
+		obj->_blobs = blobsBackup;
+		obj->_blobSourceKeys = keysBackup;
+		obj->_blobWalkSpeeds = speedsBackup;
+		obj->_blobMirrorFlags = mirrorsBackup;
+	};
 
 	for (int j = 0; j < 0x15; j++) {
 		_fileStream->readUint16LE(); // animID (editor metadata, unused at runtime)
 		uint16 blobSourceKey = _fileStream->readUint16LE();
 		uint32 dataSize = _fileStream->readUint32LE();
 
+		if (_fileStream->eos() && dataSize != 0) {
+			rollbackPartialLoad();
+			_scriptExecutor->setScriptError(1);
+			return false;
+		}
+
 		Common::Array<uint8> data;
 		if (dataSize > 0) {
+			if (dataSize > 0x1000000) {
+				rollbackPartialLoad();
+				_scriptExecutor->setScriptError(1);
+				return false;
+			}
 			data.resize(dataSize);
-			_fileStream->read(data.data(), dataSize);
+			const uint32 bytesRead = _fileStream->read(data.data(), dataSize);
+			if (bytesRead != dataSize) {
+				rollbackPartialLoad();
+				_scriptExecutor->setScriptError(1);
+				return false;
+			}
 		}
 
 		if (j < (int)obj->_blobs.size()) {
@@ -1475,10 +1643,10 @@ void Macs2Engine::loadObjectData(GameObject *obj) {
 		}
 
 		uint16 blobSpeed = _fileStream->readUint16LE();
-		if (j < (int)obj->_blobSpeeds.size()) {
-			obj->_blobSpeeds[j] = blobSpeed;
+		if (j < (int)obj->_blobWalkSpeeds.size()) {
+			obj->_blobWalkSpeeds[j] = blobSpeed;
 		} else {
-			obj->_blobSpeeds.push_back(blobSpeed);
+			obj->_blobWalkSpeeds.push_back(blobSpeed);
 		}
 
 		uint16 blobMirrorFlag = _fileStream->readByte();
@@ -1493,6 +1661,48 @@ void Macs2Engine::loadObjectData(GameObject *obj) {
 			BackgroundAnimationBlob::mirrorAnimBlob(obj->_blobs[j]);
 		}
 	}
+
+	// Binary loadObjectData (1008:08ec): flags, runtime reset, then script/resource table.
+	_fileStream->readByte(); // runtime+0x184 hasInventoryIcon (derived from slot 0x13 in C++)
+	obj->_hasShading = _fileStream->readByte() != 0;
+	obj->_hasScaling = _fileStream->readByte() != 0;
+
+	if (obj->_blobs.size() > 0x11 && !obj->_blobs[0x11].empty()) {
+		const uint16 frameCount = BackgroundAnimationBlob::getAnimFrameCount(obj->_blobs[0x11]);
+		obj->_pickupFrameStart = (frameCount >> 1) + 1;
+		obj->_pickupFrameEnd = frameCount + 1;
+	} else {
+		obj->_pickupFrameStart = 1;
+		obj->_pickupFrameEnd = 2;
+	}
+
+	obj->_overloadAnimTriggerDirection = 0x7FFF;
+	obj->_useOverloadAnimation = false;
+	obj->_overloadAnimation.clear();
+	obj->_snapToTarget = false;
+	obj->_hasBoundsAttachment = false;
+	obj->_boundsAttachmentObjectID = 0;
+	obj->_boundsAttachmentValue1 = 0;
+	obj->_boundsAttachmentValue2 = 0;
+	obj->_boundsAttachmentValue3 = 0;
+	// Binary loadObjectData (1008:08ec): runtime+0x21D = object vertical offset.
+	obj->_storedWalkRuntime.motionTargetVerticalOffset = obj->_verticalOffsetScale;
+
+	const uint32 scriptTableOffset = 0x17F8 + (0xC + 0x04) + obj->_index * 0xC;
+	_fileStream->seek(scriptTableOffset, SEEK_SET);
+	const uint32 scriptOffset = _fileStream->readUint32LE();
+	if (scriptOffset != 0) {
+		_fileStream->seek(scriptOffset, SEEK_SET);
+		for (int r = 0; r < 32; r++) {
+			obj->_resourceOffsets[r] = _fileStream->readUint32LE();
+		}
+		const uint16 scriptLength = _fileStream->readUint16LE();
+		obj->_script.resize(scriptLength);
+		if (scriptLength > 0) {
+			_fileStream->read(obj->_script.data(), scriptLength);
+		}
+	}
+	return true;
 }
 
 void Macs2Engine::loadSongFromSceneData(uint8 dataIndex) {
@@ -1595,6 +1805,23 @@ Common::Error Macs2Engine::loadGameState(int slot) {
 	return Engine::loadGameState(slot);
 }
 
+Common::Error Macs2Engine::saveOriginalGameState(int dosSlot) {
+	if (dosSlot < 0 || dosSlot > 9)
+		return Common::kWritingFailed;
+
+	// Original DOS filename, uppercase first (matches loadGameState lookup order).
+	Common::String name = Common::String::format("SAVEGAME.%d", dosSlot);
+	Common::OutSaveFile *f = g_system->getSavefileManager()->openForSaving(name, false /*no compression*/);
+	if (!f)
+		return Common::kWritingFailed;
+
+	Common::Serializer s(nullptr, f);
+	Common::Error err = syncGame(s);
+	f->finalize();
+	delete f;
+	return err;
+}
+
 bool Macs2Engine::tick() {
 	_scriptExecutor->tick();
 	if (_runScheduled) {
@@ -1654,7 +1881,7 @@ Common::Point AnimFrame::getBottomMiddleOffset(uint16 scale) const {
 }
 
 AnimFrame BackgroundAnimationBlob::getCurrentFrame() {
-	// Mode 0: get current frame without advancing (advancement happens in View1::tick)
+	// Mode 0: read current frame without advancing (draw path uses mode 2 in drawBackgroundAnimations)
 	uint16 offset = advanceAnimFrame(_blob, false, 0x0);
 	// offset points to per-frame header: offsetX(2), offsetY(2), unknown(2), width(2), height(2), pixels
 	offset += 6; // skip offsetX, offsetY, unknown
@@ -1687,11 +1914,11 @@ AnimFrame BackgroundAnimationBlob::getCurrentFrame() {
 uint16 BackgroundAnimationBlob::advanceAnimFrame(Common::Array<uint8> &blob, bool bpp6, uint16 bpp8) {
 	Common::MemorySeekableReadWriteStream stream(blob.data(), blob.size());
 
-	uint16 bp22 = stream.readUint16LE(); // +0: unknown (preserved on save)
-	uint16 bp6 = stream.readUint16LE();  // +2: current sequence position
-	uint16 bp8 = stream.readUint16LE();  // +4: repeat counter
-	uint16 bp0A = stream.readUint16LE(); // +6: loop start position
-	uint16 bp10 = stream.readUint16LE(); // +8: delay counter
+	uint16 bp22 = stream.readUint16LE();     // +0: unknown (preserved on save)
+	uint16 bp6 = stream.readUint16LE();      // +2: current sequence position
+	uint16 bp8 = stream.readUint16LE();      // +4: repeat counter
+	uint16 bp0A = stream.readUint16LE();     // +6: loop start position
+	uint16 bp10 = stream.readUint16LE();     // +8: delay counter
 	uint16 bp0E = stream.readUint16LE() + 1; // +10: sequence length (stored as len-1)
 
 	if (bpp8 == 0x1) {
@@ -1830,7 +2057,7 @@ int MacsAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 		if (_pos >= _data.size()) {
 			return numSamplesRead;
 		}
-		buffer[i] = static_cast<int16>((static_cast<int>(_data[_pos]) - 128) << 8);
+		buffer[i] = static_cast<int16>((_data[_pos] - 128) * 256);
 		numSamplesRead++;
 		_pos++;
 	}
@@ -1878,5 +2105,147 @@ void Macs2Engine::applyPaletteDarkening() {
 	}
 }
 
-} // End of namespace Macs2
+void Macs2Engine::applyScenePaletteEffect() {
+	// applyScenePaletteEffect (1000:103e): reduce scene colors to 16 rarest indices
+	// (0..0xBF) plus fixed UI palette 0xC0..0xFF, then nearest-color remap.
+	uint32 histogram[256] = {};
+	for (int y = 0; y < _sceneBackground.h; y++) {
+		for (int x = 0; x < _sceneBackground.w; x++) {
+			histogram[_sceneBackground.getPixel(x, y)]++;
+		}
+	}
 
+	bool selected[256] = {};
+	for (int pick = 0; pick < 16; pick++) {
+		uint32 minCount = 0xFFFFFFFF;
+		int minIndex = 0;
+		for (int i = 0; i <= 0xBF; i++) {
+			if (histogram[i] != 0xFFFFFFFF && histogram[i] < minCount) {
+				minCount = histogram[i];
+				minIndex = i;
+			}
+		}
+		histogram[minIndex] = 0xFFFFFFFF;
+		selected[minIndex] = true;
+	}
+
+	byte refPalette[256 * 3];
+	memset(refPalette, 0, sizeof(refPalette));
+	int refSlot = 0x10;
+	for (int i = 0; i <= 0xBF; i++) {
+		if (selected[i]) {
+			refPalette[refSlot * 3 + 0] = _palVanilla[i * 3 + 0];
+			refPalette[refSlot * 3 + 1] = _palVanilla[i * 3 + 1];
+			refPalette[refSlot * 3 + 2] = _palVanilla[i * 3 + 2];
+			refSlot++;
+		}
+	}
+	for (int i = 0xC0; i <= 0xFF; i++) {
+		refPalette[i * 3 + 0] = _palVanilla[i * 3 + 0];
+		refPalette[i * 3 + 1] = _palVanilla[i * 3 + 1];
+		refPalette[i * 3 + 2] = _palVanilla[i * 3 + 2];
+	}
+
+	uint8 remap[256];
+	for (int paletteIndex = 0; paletteIndex < 256; paletteIndex++) {
+		const byte *srcRgb = &_palVanilla[paletteIndex * 3];
+		uint32 bestDistance = 0x7FFF;
+		uint8 bestIndex = 0x10;
+		for (int candidate = 0x10; candidate <= 0xFF; candidate++) {
+			const byte *candidateRgb = &refPalette[candidate * 3];
+			uint32 distance = 0;
+			for (int channel = 0; channel < 3; channel++) {
+				int diff = (int)srcRgb[channel] - (int)candidateRgb[channel];
+				if (diff < 0)
+					diff = -diff;
+				distance += (uint32)diff;
+			}
+			if (distance < bestDistance) {
+				bestDistance = distance;
+				bestIndex = (uint8)candidate;
+			}
+		}
+		remap[paletteIndex] = bestIndex;
+	}
+
+	auto remapIndex = [&](uint8 index) -> uint8 {
+		return remap[index];
+	};
+
+	for (int y = 0; y < _sceneBackground.h; y++) {
+		for (int x = 0; x < _sceneBackground.w; x++) {
+			_sceneBackground.setPixel(x, y, remapIndex(_sceneBackground.getPixel(x, y)));
+		}
+	}
+
+	for (auto &blobEntry : _backgroundAnimationsBlobs) {
+		Common::Array<uint8> &blob = blobEntry._blob;
+		AnimBlobView blobView(blob);
+		if (!blobView.isValid())
+			continue;
+		const uint16 frameCount = blobView.frameCount();
+		for (uint16 frame = 0; frame < frameCount; frame++) {
+			AnimBlobView::FrameInfo frameInfo;
+			if (!blobView.getFrameInfo(frame, frameInfo))
+				break;
+			const uint32 pixelCount = (uint32)frameInfo.width * frameInfo.height;
+			byte *pixels = const_cast<byte *>(frameInfo.pixels);
+			for (uint32 p = 0; p < pixelCount; p++) {
+				pixels[p] = remapIndex(pixels[p]);
+			}
+		}
+	}
+
+	byte remappedVanilla[256 * 3];
+	for (int i = 0; i < 256; i++) {
+		const int src = remap[i];
+		remappedVanilla[i * 3 + 0] = refPalette[src * 3 + 0];
+		remappedVanilla[i * 3 + 1] = refPalette[src * 3 + 1];
+		remappedVanilla[i * 3 + 2] = refPalette[src * 3 + 2];
+	}
+	memcpy(_palVanilla, remappedVanilla, 256 * 3);
+	applyPaletteDarkening();
+
+	View1 *view = (View1 *)findView("View1");
+	if (view != nullptr) {
+		view->_backgroundSurface.copyFrom(_sceneBackground);
+		view->_paletteDirty = true;
+	}
+}
+
+// Gradual palette brighten for _scenePaletteMode == 2, matching the binary
+// updateBackgroundAnimations (1008:2c05).
+//
+// The binary decrements sceneData+0x5205 (the darken percent) by 1 each call
+// while it is above 60 (0x3C), then recomputes the display palette via the
+// standard darkening formula and pushes it. The pushed range depends on the
+// map/help-disabled flag (1020:23B4):
+//   flag != 0 (map active): update palette entries 16..255 only, preserving
+//             the UI palette entries 0..15 used by the map/help overlay
+//             (setPaletteRange(0xF0, 0x10, dest+0x30)).
+//   flag == 0:              update all 256 entries (setPaletteRange(0x100, 0, dest)).
+//
+// Only mode 2 acts here. Mode 3 calls this in the binary too, but its body is
+// a no-op for mode 3 (its darkening is static), so we guard on mode 2.
+void Macs2Engine::updateBackgroundAnimationPalette() {
+	if (_scenePaletteMode != 2)
+		return;
+
+	if (_paletteDarkenPercent > 60)
+		_paletteDarkenPercent--;
+
+	// Recompute the 8-bit display palette from the vanilla source.
+	applyPaletteDarkening();
+
+	View1 *view = (View1 *)findView("View1");
+	const bool mapActive = view && view->isHelpButtonDisabled();
+
+	if (mapActive) {
+		// Preserve entries 0..15 (UI), update 16..255.
+		g_system->getPaletteManager()->setPalette(_pal + 16 * 3, 16, 240);
+	} else {
+		g_system->getPaletteManager()->setPalette(_pal, 0, 256);
+	}
+}
+
+} // End of namespace Macs2

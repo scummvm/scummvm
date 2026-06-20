@@ -31,7 +31,7 @@
 namespace Macs2 {
 
 Music::Music() : _opl(nullptr), _parser(nullptr), _playing(false),
-	_masterVolume(0), _numOplChannels(9), _instrumentDataOffset(0) {
+				 _masterVolume(0), _numOplChannels(9), _instrumentDataOffset(0) {
 	memset(_regShadow, 0, sizeof(_regShadow));
 	memset(_voiceAge, 1, sizeof(_voiceAge));
 	memset(_voiceMidiChannel, 0xFF, sizeof(_voiceMidiChannel));
@@ -61,8 +61,15 @@ void Music::deinit() {
 }
 
 void Music::onTimer() {
-	if (_parser)
+	if (_parser) {
+		// Binary adlibISRHandler (1000:1a9f): g_bAdlibPlaybackReady is set when the
+		// song stream loops back to the start (0xF0/0x2F meta or timer expiry), not on
+		// the first timer tick after playMusicSlot clears the flag.
+		const uint32 tickBefore = _parser->getTick();
 		_parser->onTimer();
+		if (_playing && !_adlibPlaybackReady && _parser->getTick() < tickBefore)
+			_adlibPlaybackReady = true;
+	}
 	updateDebugState();
 }
 
@@ -119,10 +126,12 @@ void Music::playSongData(const Common::Array<uint8> &data) {
 	}
 
 	_playing = true;
+	_adlibPlaybackReady = false;
 }
 
 void Music::stopMusic() {
 	_playing = false;
+	_adlibPlaybackReady = true;
 	if (_parser) {
 		_parser->unloadMusic();
 		delete _parser;
@@ -167,8 +176,11 @@ void Music::send(uint32 b) {
 }
 
 void Music::metaEvent(byte type, const byte *data, uint16 length) {
-	if (type == 0x2F) {
-		// End of track - parser handles looping via _autoLoop
+	(void)data;
+	(void)length;
+	if (type == 0x2F && _playing) {
+		// End-of-track meta (binary adlibISRHandler 0xF0/0x2F path).
+		_adlibPlaybackReady = true;
 	}
 }
 
@@ -228,8 +240,10 @@ void Music::noteOn(byte channel, byte note, byte velocity) {
 
 		uint8 vol2 = op2Base + (uint8)((uint16)(velAtten * (0x3F - op2Base)) / 0x3F) + _masterVolume;
 		uint8 vol1 = op1Base + (uint8)((uint16)(velAtten * (0x3F - op1Base)) / 0x3F) + _masterVolume;
-		if (vol1 > 0x3F) vol1 = 0x3F;
-		if (vol2 > 0x3F) vol2 = 0x3F;
+		if (vol1 > 0x3F)
+			vol1 = 0x3F;
+		if (vol2 > 0x3F)
+			vol2 = 0x3F;
 
 		// Key off, set volumes, then key on
 		writeReg(voice + 0xB0, 0);
@@ -270,7 +284,8 @@ void Music::noteOn(byte channel, byte note, byte velocity) {
 			if (volIdx < _percVolTable.size())
 				vol = _percVolTable[volIdx] + _masterVolume;
 		}
-		if (vol > 0x3F) vol = 0x3F;
+		if (vol > 0x3F)
+			vol = 0x3F;
 
 		uint8 freqChan = _percFreqChannel[percIdx];
 		writeReg(freqChan + 0xB0, 0);

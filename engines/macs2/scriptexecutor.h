@@ -33,6 +33,7 @@ class MemoryReadStream;
 
 namespace Macs2 {
 class Macs2Engine;
+class Character;
 class GameObject;
 
 namespace Script {
@@ -97,13 +98,9 @@ enum class ScriptExecutionState {
  */
 class ScriptExecutor {
 private:
-	enum class OpcodeControlFlow : uint8 {
-		Fallthrough,
-		Continue,
-		ScriptFinished,
-		WaitingForCallback
-	};
-
+#ifdef DEMACS2
+public:
+#endif
 	void scriptSetVar();
 	void scriptSetVarOr();
 	void scriptIfTrue();
@@ -114,65 +111,65 @@ private:
 	void scriptElse();
 	void scriptNop09();
 	void scriptPrintStringLeft();
-	bool scriptMoveObject();
+	void scriptMoveObject();
 	ExecutionResult scriptChangeScene();
 	ExecutionResult scriptShowDialogue();
-	bool scriptWalkToPosition();
+	void scriptWalkToPosition();
 	ExecutionResult scriptWaitForWalk();
 	void scriptSkipWord();
 	void scriptClearDialogueChoices();
 	void scriptAddDialogueChoice();
 	ExecutionResult scriptShowDialogueChoice();
 	ExecutionResult scriptDismissPanel();
-	bool scriptWalkToAndPickup();
+	void scriptWalkToAndPickup();
 	bool scriptSetPickupFrames();
-	bool scriptSetupObject();
+	void scriptSetupObject();
 	void scriptSetSkippable();
 	void scriptClearSkippable();
-	bool scriptPlayAnimation();
+	void scriptPlayAnimation();
 	void scriptTestPathfinding();
-	bool scriptSetYOffset();
-	bool scriptSetMotion();
+	void scriptSetYOffset();
+	void scriptSetMotion();
 	bool scriptSetOrientation();
-	bool scriptMoveToPosition();
+	void scriptMoveToPosition();
 	void scriptAddValues();
 	void scriptSubValues();
 	void scriptLoadSpecialAnim();
-	bool scriptSetDirection();
+	void scriptSetDirection();
 	void scriptStopAnimation();
-	bool scriptOpenInventory();
+	void scriptOpenInventory();
 	void scriptLoadObjectAnim();
-	bool scriptCheckObjectData();
-	bool scriptCheckInventory();
-	bool scriptSetSnapToTarget();
-	bool scriptTestObjectAnimFrame();
+	void scriptCheckObjectData();
+	void scriptCheckInventory();
+	void scriptSetSnapToTarget();
+	void scriptTestObjectAnimFrame();
 	void scriptPrintStringRight();
 	void scriptSetPaletteDarkness();
-	bool scriptSetObjectClickable();
-	bool scriptSetObjectVisible();
-	bool scriptSetHotspotOverride();
-	bool scriptSetObjectBounds();
+	void scriptSetObjectShading();
+	void scriptSetObjectScaling();
+	void scriptSetHotspotOverride();
+	void scriptSetObjectBounds();
 	void scriptDismissAllPanels();
 	void scriptResetToSceneScript();
 	void scriptLoadOverlayFont();
-	OpcodeControlFlow scriptAddOverlayTextEntry();
+	void scriptAddOverlayTextEntry();
 	void scriptClearOverlayText();
 	void scriptFadeToBlack();
-	bool scriptLoadPcmSound();
-	bool scriptPlayPcmSound();
+	void scriptLoadPcmSound();
+	void scriptPlayPcmSound();
 	bool scriptWaitForSound();
 	void scriptStopPcmSound();
-	bool scriptLoadMusicSlot();
-	bool scriptPlayMusicSlot();
-	bool scriptStopMusicSlot();
+	void scriptLoadMusicSlot();
+	void scriptPlayMusicSlot();
+	void scriptStopMusicSlot();
 	bool scriptWaitForMusic();
-	bool scriptFreeMusicSlot();
-	bool scriptGetObjectX();
-	bool scriptGetObjectY();
-	bool scriptGetObjectField8();
-	bool scriptGetObjectOrientation();
+	void scriptFreeMusicSlot();
+	void scriptGetObjectX();
+	void scriptGetObjectY();
+	void scriptGetObjectField8();
+	void scriptGetObjectOrientation();
 	void scriptClearActorInventory();
-	bool scriptSetPathfindingRemap();
+	void scriptSetPathfindingRemap();
 	bool scriptWaitForAdlib();
 	void scriptSkipUntil14();
 	void scriptChangeAnimation();
@@ -186,6 +183,9 @@ private:
 	inline void scriptUnimplementedOpcode(const char *source, uint16 opcode) {
 		debug("Unimplemented opcode (%s): %.2x.", source, opcode);
 	}
+#ifdef DEMACS2
+private:
+#endif
 
 	// State variables from here
 
@@ -204,6 +204,13 @@ private:
 	// [1012h] g_wRepeatRunFlag - set during the repeat script pass
 	// that runs after scene init to process object scripts
 	bool _repeatRunFlag = false;
+
+	// Binary runs init and repeat as separate runScriptExecutor calls inside
+	// scriptChangeScene. Init pass = scene script (isSceneInit) + object scripts.
+	// Repeat pass = second call with RepeatRunFlag=1 only.
+	bool _initPassComplete = false;
+	bool _deferredRepeatAfterInit = false;
+	bool _terminateOuterScriptBeforeRepeat = false;
 
 	uint16 _executingObjectIndex = 0;
 
@@ -279,14 +286,17 @@ public:
 	ScriptExecutor();
 	~ScriptExecutor();
 
-	void setWaitingForCallback() { _state = ExecutorState::WaitingForCallback; }
 	void setIdle() { _state = ExecutorState::Idle; }
 
 	Common::Array<uint16> _dialogueChoiceScriptIndices;
 	Common::Array<Common::StringArray> _dialogueChoices;
 
-	// This is where a secondary inventory was last opened,
-	// when it is closed, we need to execute from here
+	// Binary scriptOpenInventory (1008:c3e6) / handleInput panel-3 close (1008:e8bf):
+	// saved script stream state restored when container inventory closes.
+	uint32 _savedOpenInventoryScriptPos = 0;
+	uint32 _savedOpenInventoryScriptEndPos = 0;
+	uint16 _savedOpenInventoryExecutingObjectId = 0;
+	// Legacy alias used by saveload; kept in sync with _savedOpenInventoryScriptPos.
 	uint32 _secondaryInventoryLocation = 0;
 	bool _hasPendingExternalInventoryResume = false;
 	uint16 _externalInventorySourceObjectID = 0;
@@ -310,6 +320,9 @@ public:
 	// g_wCursorMode (1020:0fe6): the active cursor mode (0x13..0x1A).
 	MouseMode _cursorMode = MouseMode::Walk;
 	MouseMode _cursorModeBeforeWait = MouseMode::Walk;
+	// Set by opcodes 0x0A/0x0D/0x17 while waiting for the player to dismiss text UI.
+	// Binary keeps a clickable cursor for those waits; step() must not force hourglass.
+	bool _waitingForUiClick = false;
 
 	uint16 _interactedObjectID = 0;
 	// g_wInteractedInventoryItemId [1026h]: inventory item involved in a
@@ -357,10 +370,7 @@ public:
 	uint16 _pickupActorObjectID = 0;
 	uint16 _pickupTargetObjectID = 0;
 
-	// Legacy flag for script callback scheduling. Marked for removal.
-	bool _requestCallback = false;
 	bool _isRunningScript = false;
-	bool _isAwaitingCallback = false;
 	// Mutex indicating if the A3D2 function is active
 	bool _isSkipping = false;
 
@@ -387,6 +397,7 @@ public:
 	void run(bool firstRun = false);
 
 	void setScript(Common::MemoryReadStream *stream);
+	void releaseObjectStream();
 
 	void setCurrentSceneScriptAt(uint32 offset);
 
@@ -397,18 +408,27 @@ public:
 	void startFrameWait(uint16 duration);
 	void endFrameWait();
 
+	// True when script execution is paused on any wait opcode (frame, walk, dialogue, etc.).
+	bool isScriptWaitDeferred() const {
+		return _state == ExecutorState::WaitingForCallback ||
+			   _frameWaitTicksRemaining != 0 || _walkTargetObjectIndex != 0 ||
+			   _waitForPcmSound || _waitForMusicControl || _waitForAdlibReady;
+	}
+
 	bool isExecuting() const {
-		// TODO: Implement mutexes correctly
-		// return _isRunningScript || _isAwaitingCallback;
 		return _state != ExecutorState::Idle;
 	}
 
 	uint32 getScriptPosition() const;
+	// Returns the position of the last executed/executing opcode (for debugger highlight)
+	uint32 getDebugOpcodePosition() const;
+	bool isWaitingForCallback() const { return _state == ExecutorState::WaitingForCallback; }
 	uint32 getScriptEndPosition() const;
 	uint16 getExecutingObjectId() const { return _executingObjectIndex; }
 	void setExecutingObjectId(uint16 id) { _executingObjectIndex = id; }
 	uint16 getFrameWaitCounter() const { return _frameWaitTicksRemaining; }
 	void setFrameWaitCounter(uint16 val) { _frameWaitTicksRemaining = val; }
+	bool isFrameWaitActive() const { return _isFrameWaitActive; }
 	bool getRepeatRunFlag() const { return _repeatRunFlag; }
 	void setRepeatRunFlag(bool val) { _repeatRunFlag = val; }
 	uint32 getVariableValue(int index) const;
@@ -421,6 +441,36 @@ public:
 	bool canOpenSaveMenu() const {
 		return !_isSceneInitRun && !_isFrameWaitActive && !_isTimerActive;
 	}
+
+	// g_wScriptErrorCode (1020:0f86): non-zero halts opcode dispatch (1008:db56).
+	uint16 _scriptErrorCode = 0;
+	Character *getOrCreateCharacter(uint16 objectID);
+	void saveWalkRuntime(const Character *c, GameObject *o);
+	void restoreWalkRuntime(Character *c, const GameObject *o);
+	void clearStoredWalkRuntime(GameObject *o);
+	void seedMoveToPositionState(GameObject *object, Character *c, const Common::Point &target, uint16 targetVerticalOffset);
+	void seedMotionState(GameObject *object, Character *c, uint16 targetVerticalOffset, uint16 verticalOffsetDelta, uint16 motionDistance);
+	void saveOpenInventoryScriptContext();
+	void restoreOpenInventoryScriptContext();
+	void setScriptError(uint16 code);
+	bool hasScriptError() const { return _scriptErrorCode != 0; }
+	void clearScriptError() { _scriptErrorCode = 0; }
+	uint16 getScriptErrorCode() const { return _scriptErrorCode; }
+
+	// Debug globals PTR_LOOP_1020_06c2 / PTR_LOOP_1020_06c4 (saved on script halt).
+	uint32 _errorScriptPosition = 0;
+	uint16 _errorScriptContext = 0;
+	void recordScriptErrorPosition();
+
+	// Binary scriptChangeScene (1008:ad6e) synchronous init/repeat script passes.
+	void beginSceneEntryInitPass();
+	void finishSceneEntryRepeatPass(bool terminateOuterScript);
+	void runSceneEntryScriptPasses();
+	void runSceneScriptPass(bool initRun, bool repeatRun);
+
+	// Binary executeOpcodes (1008:db56): blocking waits save cursor then set 0x1A.
+	void enterBlockingWaitCursor();
+	void clearScriptUiWaitState();
 
 	// Resets the script to the beginning.
 	// Confirmed: runScriptExecutor (1008:e3e7) sets position=0 on fresh runs

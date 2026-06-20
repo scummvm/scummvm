@@ -88,14 +88,14 @@ public:
 	uint16 _index;
 	uint32 _dataOffset = 0;
 
-	Common::Array<uint8> overloadAnimation;
-	uint16 overloadAnimationSourceKey = 0;
-	bool overloadAnimationMirrored = false;
-	bool useOverloadAnimation = false;
+	Common::Array<uint8> _overloadAnimation;
+	uint16 _overloadAnimationSourceKey = 0;
+	bool _overloadAnimationMirrored = false;
+	bool _useOverloadAnimation = false;
 	// Runtime field +0x22D: when the character's orientation matches this value,
 	// the renderer uses animation slot 0x15 (overload) instead of the normal slot.
 	// Initialized to 0x7FFF (never match). Set by opcode 0x27.
-	uint16 overloadAnimTriggerDirection = 0x7FFF;
+	uint16 _overloadAnimTriggerDirection = 0x7FFF;
 
 	// These are the values read by the code around l0037_082D:
 	Common::Point _position;
@@ -127,9 +127,7 @@ public:
 	uint16 _pickupFrameEnd = 0;
 	// Runtime +0x22F: when set, snap character position to exact target on walk arrival
 	bool _snapToTarget = false;
-	bool _isClickable = true;
-	bool _isVisible = true;
-	// Runtime +0x185: per-object flag loaded from file. When set, character sprites
+	// Runtime +0x185 (bHasShading): per-object flag loaded from file. When set, character sprites
 	// are drawn through the shading table using the shadow map intensity.
 	bool _hasShading = false;
 	// Runtime +0x186: per-object flag loaded from file. When set, character sprites
@@ -145,12 +143,33 @@ public:
 	uint16 _boundsAttachmentValue2 = 0;   // +0x236
 	uint16 _boundsAttachmentValue3 = 0;   // +0x238
 
+	// Runtime[+0x20D..+0x213] dirty rect; [+0x225..+0x22B] last sprite draw bounds.
+	int16 _dirtyLeft = 0;
+	int16 _dirtyTop = 0;
+	int16 _dirtyRight = 0;
+	int16 _dirtyBottom = 0;
+	int16 _lastDrawX = 0;
+	int16 _lastDrawY = 0;
+	uint16 _lastDrawWidth = 0;
+	uint16 _lastDrawHeight = 0;
+
+	void resetDrawBounds() {
+		_lastDrawX = 0;
+		_lastDrawY = 0;
+		_lastDrawWidth = 0;
+		_lastDrawHeight = 0;
+		_dirtyLeft = 0;
+		_dirtyTop = 0;
+		_dirtyRight = 0;
+		_dirtyBottom = 0;
+	}
+
 	// Each object can have up to 15h blocks of data that are loaded, which can
 	// include the animations, the dialogue images, the inventory icons etc.
 	Common::Array<Common::Array<uint8>> _blobs;
-	Common::Array<uint16> _blobSourceKeys;
+	Common::Array<uint16> _blobSourceKeys; // Per-slot wSourceKey2 from resource file (slot+0x02, editor metadata)
 	Common::Array<bool> _blobMirrorFlags;
-	Common::Array<uint16> _blobSpeeds; // Per-animation walk speed (runtime+slot*16+0x30)
+	Common::Array<uint16> _blobWalkSpeeds; // Per-slot wAnimSpeed (slot+0x0C, walk speed 2-8 px/frame, used by walkAlongPath)
 
 	// The object-specific script
 	Common::Array<uint8> _script;
@@ -160,7 +179,34 @@ public:
 	// to look up animation resource file addresses for this object.
 	uint32 _resourceOffsets[32] = {0};
 
+	// Stashed walk/motion runtime when no Character exists (binary heap runtime
+	// survives scene change / off-scene script opcodes). Restored on Character create.
+	struct StoredWalkRuntime {
+		bool valid = false;
+		Common::Point targetPosition;
+		Common::Point pathFinalDestination;
+		int16 stepDeltaX = 0;
+		int16 stepDeltaY = 0;
+		int16 stepError = 0;
+		bool stepDirectionSet = false;
+		int16 currentPathIndex = 0;
+		Common::Array<uint16> path;
+		uint16 motionTargetVerticalOffset = 0;
+		uint16 motionVerticalOffsetDelta = 0;
+		uint16 motionDistanceUnits = 0;
+		uint16 motionProgress = 0;
+	};
+	StoredWalkRuntime _storedWalkRuntime;
+
 	Common::MemoryReadStream *getScriptStream();
+
+	// Binary pAnimSlots[1..0x15] at runtime+slot*0x10. Slot 0x15 may be in _blobs[20]
+	// (loadObjectData) or overloadAnimation (script load / savegame).
+	Common::Array<uint8> *getAnimSlotBlob(uint16 slot);
+	const Common::Array<uint8> *getAnimSlotBlob(uint16 slot) const;
+
+	// Binary bSlotLoaded (runtime+orient*0x10+0x33): blob present or walk-speed high byte set.
+	bool isAnimSlotLoaded(uint16 orient) const;
 };
 
 class GameObjects : public Common::Singleton<GameObjects> {

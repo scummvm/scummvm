@@ -19,8 +19,8 @@
  *
  */
 
-#include "macs2/macs2.h"
 #include "macs2/gameobjects.h"
+#include "macs2/macs2.h"
 #include "macs2/view1.h"
 
 namespace Macs2 {
@@ -30,7 +30,7 @@ namespace Macs2 {
 // Save files are interchangeable between ScummVM and the original game.
 
 Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
-	const byte SAVE_MAGIC[12] = {'A','H','F','F','M','S','G','M','0','1','0','0'};
+	const byte SAVE_MAGIC[12] = {'A', 'H', 'F', 'F', 'M', 'S', 'G', 'M', '0', '1', '0', '0'};
 	View1 *view1 = (View1 *)findView("View1");
 
 	// --- Header: 12-byte magic ---
@@ -45,8 +45,20 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			return Common::kReadingFailed;
 	}
 
-	// --- 21-byte slot name (Pascal string, we just zero-fill on save) ---
+	// --- 21-byte slot name (Pascal string: [len][chars], zero-padded to 21) ---
+	// The original save/load menu (initSaveLoadPanel 1008:6184) reads these 21
+	// bytes and renders them with drawText as a length-prefixed string. A zero
+	// length byte makes the slot appear empty in the original, so write a real
+	// name when producing an original-format save.
 	byte slotName[21] = {0};
+	if (s.isSaving()) {
+		const char *defName = "SCUMMVM";
+		uint8 len = (uint8)strlen(defName);
+		if (len > 20)
+			len = 20;
+		slotName[0] = len;
+		memcpy(slotName + 1, defName, len);
+	}
 	s.syncBytes(slotName, 21);
 
 	// --- Core indices: actor (2 bytes) + scene (2 bytes) ---
@@ -60,12 +72,30 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		Scenes::instance()._currentSceneIndex = sceneIndex;
 		view1->_started = true;
 		changeScene(sceneIndex, false);
+
+		// Clear any Characters created by changeScene. The per-object loop below
+		// recreates them on demand, AFTER reading each object's saved scene index,
+		// and populates their runtime walk/draw/dirty state. (changeScene uses the
+		// RESOURCE.MCS scene indices, which can differ from the saved ones, so we
+		// must not rely on its Character set here.)
+		for (auto c : view1->_characters)
+			delete c;
+		view1->_characters.clear();
+		view1->flushPendingCharacterDeletes();
 	}
 
-	// --- Script variables: 0x2000 bytes (2048 vars x 2 uint16) ---
-	for (uint i = 0; i < _scriptExecutor->_variables.size(); i++) {
-		s.syncAsUint16LE(_scriptExecutor->_variables[i].a);
-		s.syncAsUint16LE(_scriptExecutor->_variables[i].b);
+	// --- Script variables: exactly 0x2000 bytes (0x800 vars x {uint16 a, b}) ---
+	// Must always be 0x800 entries to match the binary's fixed-size block; do not
+	// key off _variables.size() in case it ever differs.
+	for (uint i = 0; i < 0x800; i++) {
+		uint16 a = (i < _scriptExecutor->_variables.size()) ? _scriptExecutor->_variables[i].a : 0;
+		uint16 b = (i < _scriptExecutor->_variables.size()) ? _scriptExecutor->_variables[i].b : 0;
+		s.syncAsUint16LE(a);
+		s.syncAsUint16LE(b);
+		if (s.isLoading() && i < _scriptExecutor->_variables.size()) {
+			_scriptExecutor->_variables[i].a = a;
+			_scriptExecutor->_variables[i].b = b;
+		}
 	}
 
 	// --- g_wSoundSystemActive: 2 bytes [0x1f4c] ---
@@ -96,11 +126,30 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	s.syncAsUint16LE(executingObjectId);
 
 	if (s.isLoading()) {
-		// Restore script execution state - set the stream position
-		if (scriptIsExecuting && executingObjectId == 0) {
-			_scriptExecutor->setCurrentSceneScriptAt(scriptPosition);
+		// Restore script execution state matching binary loadGameFromFile (1008:747e).
+		// The original sets g_wScriptDataPtrLow/High based on executingObjectId:
+		//   objectId == 0: use scene script (sceneData+0x5207/0x5209)
+		//   objectId != 0: use object's runtime script (runtime+0x187/0x189)
+		// Then g_wScriptPosition is used by the executor to seek within that script.
+		if (scriptIsExecuting) {
+			if (executingObjectId == 0) {
+				// Scene script
+				_scriptExecutor->setCurrentSceneScriptAt(scriptPosition);
+			} else {
+				// Object script: find the object and set its script stream
+				GameObject *execObj = GameObjects::getObjectByIndex(executingObjectId);
+				if (execObj && !execObj->_script.empty()) {
+					Common::MemoryReadStream *objStream = execObj->getScriptStream();
+					_scriptExecutor->setScript(objStream);
+					if (objStream && scriptPosition < objStream->size())
+						objStream->seek(scriptPosition, SEEK_SET);
+				}
+			}
+			_scriptExecutor->setExecutingObjectId(executingObjectId);
+		} else {
+			_scriptExecutor->setIdle();
+			_scriptExecutor->setExecutingObjectId(executingObjectId);
 		}
-		_scriptExecutor->setExecutingObjectId(executingObjectId);
 	}
 
 	// g_wScriptClickFlag [0xf94]: 2 bytes
@@ -172,8 +221,14 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	// PTR_LOOP_1020_1018 [0x1018]: 2 bytes - mouse mode
 	uint16 mouseMode = (uint16)_scriptExecutor->_cursorMode;
 	s.syncAsUint16LE(mouseMode);
-	if (s.isLoading())
+	if (s.isLoading()) {
+		// Mode 0 means "no cursor" / disabled in the original - the binary never
+		// calls setCursorMode(0) explicitly; it's a pre-init default. After load
+		// the original redraws and accepts input in Walk mode, so map 0 to Walk.
+		if (mouseMode == 0)
+			mouseMode = (uint16)Script::MouseMode::Walk;
 		setCursorMode((Script::MouseMode)mouseMode);
+	}
 
 	// 0x101a: 2 bytes - reserved/unused
 	uint16 reserved101a = 0;
@@ -322,15 +377,41 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		s.syncAsUint32LE(_sceneTimerParams[i]);
 	}
 
-	// --- Animation blob offsets (variable length) ---
-	// Original: for each special anim (1..count), save 2-byte offset from getAnimBlobOffset
+	// --- Animation blob sequence positions (one uint16 per background anim) ---
+	//
+	// Binary save (1008:6859): for each bg anim (1..count) writes
+	//   getAnimBlobSequencePos(blob) = blob[+2] = the blob header's current sequence
+	//   position word.
+	// Binary load (1008:747e): reads the value V, then calls
+	//   advanceAnimFrame(save=1, mode=V+100, blob), i.e. jumps the blob to
+	//   sequence position V (mode 100+N). This both restores the saved position
+	//   AND re-parses the sequence so the blob header is fully consistent -
+	//   exactly what scriptChangeAnimation does.
+	//
+	// The count is iStack_199 = sceneData+0x50F5, which equals
+	// _backgroundAnimationsBlobs.size() after changeScene() above.
 	uint16 numSpecialAnims = (uint16)_backgroundAnimationsBlobs.size();
 	for (uint16 i = 0; i < numSpecialAnims; i++) {
-		uint16 animOffset = (i < _backgroundAnimationsBlobs.size()) ?
-		                    (uint16)_backgroundAnimationsBlobs[i]._frameIndex : 0;
-		s.syncAsUint16LE(animOffset);
-		if (s.isLoading() && i < _backgroundAnimationsBlobs.size())
-			_backgroundAnimationsBlobs[i]._frameIndex = animOffset;
+		BackgroundAnimationBlob &blob = _backgroundAnimationsBlobs[i];
+		uint16 seqPos = 0;
+		if (s.isSaving() && blob._blob.size() >= 4)
+			seqPos = READ_LE_UINT16(&blob._blob[2]); // header word at +2 = sequence position
+		s.syncAsUint16LE(seqPos);
+		if (s.isLoading()) {
+			// advanceAnimFrame(1, V + 100, blob): jump to sequence position V.
+			// This re-parses the sequence so repeat/delay/loop header fields are
+			// consistent (matches the binary loadGameFromFile behavior).
+			if (!blob._blob.empty()) {
+				BackgroundAnimationBlob::advanceAnimFrame(blob._blob, true, seqPos + 0x64);
+				// The jump's parse loop may settle the stored sequence position
+				// (blob[+2]) on a different value than V (e.g. when V lands on a
+				// command byte). Force it back to exactly V so the field round-trips
+				// losslessly and byte-matches what the original wrote (the original
+				// stores its live running position, not a re-derived one).
+				if (blob._blob.size() >= 4)
+					WRITE_LE_UINT16(&blob._blob[2], seqPos);
+			}
+		}
 	}
 
 	// --- PCM sound: size (2 bytes) + data (variable) ---
@@ -363,23 +444,23 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 	}
 
 	// --- All 512 objects (1..0x200) ---
-	// Original iterates 1..512 inclusive. ScummVM may have fewer objects.
+	// Binary saveGameToFile/loadGameFromFile iterate the 1..0x200 object pointer
+	// table at DS:0x77C and process an entry ONLY when its far pointer is
+	// non-null (the object exists / was loaded from RESOURCE.MCS). Null slots are
+	// SKIPPED entirely - no bytes are written or read for them. The non-null set
+	// is identical at save and load time because changeScene() (called above on
+	// load) rebuilds the same object table, so this remains symmetric.
+	//
+	// Earlier this padded 10 zero bytes per null slot, which corrupted the
+	// stream relative to the original game (the original never emits those
+	// bytes), making the file unreadable by the DOS executable.
 	uint16 numObjects = (uint16)GameObjects::instance()._objects.size();
 	for (uint16 objIdx = 0; objIdx < 512; objIdx++) {
-		if (objIdx >= numObjects) {
-			// Pad with empty object data for binary compatibility
-			uint16 zero16 = 0;
-			for (int i = 0; i < 5; i++)
-				s.syncAsUint16LE(zero16);
+		if (objIdx >= numObjects)
 			continue;
-		}
 		GameObject *obj = GameObjects::instance()._objects[objIdx];
-		if (obj == nullptr) {
-			uint16 zero16 = 0;
-			for (int i = 0; i < 5; i++)
-				s.syncAsUint16LE(zero16);
+		if (obj == nullptr)
 			continue;
-		}
 		// Base fields: pos.x(2), pos.y(2), scene(2), orientation(2), verticalOffsetScale(2)
 		uint16 posX = (uint16)obj->_position.x;
 		uint16 posY = (uint16)obj->_position.y;
@@ -403,11 +484,19 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			continue;
 
 		// --- Runtime state (0x23A bytes structure in original) ---
-		// HasBoundsAttachment [+0x231]: 2 bytes (word, but bool)
-		uint16 hasBounds = obj->_hasBoundsAttachment ? 1 : 0;
-		s.syncAsUint16LE(hasBounds);
+		// HasBoundsAttachment [+0x231]: 2 bytes written from memory.
+		// OVERLAP: binary writes 2 bytes from +0x231 then 2 bytes from +0x232.
+		// The high byte of the first write (mem[0x232]) gets overwritten on load by
+		// the low byte of the second write. Only the LOW BYTE is hasBoundsAttachment;
+		// the high byte is garbage (first byte of boundsAttachmentObjectID, discarded).
+		// On save: pack low = hasBoundsAttachment, high = objectID low byte (mimic overlap).
+		// On load: only the low byte matters for the boolean.
+		uint16 hasBoundsWord = 0;
+		if (s.isSaving())
+			hasBoundsWord = (obj->_hasBoundsAttachment ? 1 : 0) | ((obj->_boundsAttachmentObjectID & 0xFF) << 8);
+		s.syncAsUint16LE(hasBoundsWord);
 		if (s.isLoading())
-			obj->_hasBoundsAttachment = hasBounds != 0;
+			obj->_hasBoundsAttachment = (hasBoundsWord & 0xFF) != 0;
 
 		// BoundsAttachmentObjectID [+0x232]: 2 bytes
 		s.syncAsUint16LE(obj->_boundsAttachmentObjectID);
@@ -427,6 +516,16 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 					chr = view1->_characters[ci];
 					break;
 				}
+			}
+			// On load, create the Character on demand if none exists yet. We are
+			// inside the `hasExtendedData` branch (object is in-scene / actor /
+			// inventory per its just-read saved scene), which is exactly when the
+			// binary allocates the object's runtime struct. Creating it here lets
+			// the runtime walk/draw/dirty fields below round-trip losslessly.
+			if (chr == nullptr && s.isLoading()) {
+				chr = new Character();
+				chr->_gameObject = obj;
+				view1->_characters.push_back(chr);
 			}
 		}
 		uint16 targetX = chr ? (uint16)chr->_targetPosition.x : 0;
@@ -450,12 +549,11 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			chr->_pathFinalDestination.y = (int16)finalY;
 		}
 
-		// [+0x0C]: 0x20 bytes (path node index list)
+		// [+0x0C]: 0x20 bytes - raw runtime path block (opaque per-waypoint data
+		// in the original). Preserved verbatim for byte-exact DOS save round-trip.
 		byte pathBlock[32] = {0};
-		if (s.isSaving() && chr) {
-			for (uint pi = 0; pi < chr->_path.size() && pi < 32; pi++)
-				pathBlock[pi] = (byte)chr->_path[pi];
-		}
+		if (s.isSaving() && chr)
+			memcpy(pathBlock, chr->_pathBlockRaw, 32);
 		s.syncBytes(pathBlock, 32);
 
 		// [+0x2C]: 2 bytes - path current index
@@ -467,11 +565,11 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		s.syncAsUint16LE(pathLength);
 
 		if (s.isLoading() && chr) {
+			memcpy(chr->_pathBlockRaw, pathBlock, 32);
 			chr->_path.clear();
 			for (uint16 pi = 0; pi < pathLength && pi < 32; pi++)
 				chr->_path.push_back(pathBlock[pi]);
 			chr->_currentPathIndex = (int)pathIndex;
-			chr->_isFollowingPath = pathLength > 0;
 		}
 
 		// [+0x30]: 2 bytes - step accumulator (Bresenham error)
@@ -480,11 +578,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		if (s.isLoading() && chr)
 			chr->_stepError = (int16)stepAccum;
 
-		// [+0x32]: 1 byte - walk step flag (isLerping)
-		uint8 walkStepFlag = chr ? (chr->_isLerping ? 1 : 0) : 0;
+		// [+0x32]: 1 byte - walk step flag (legacy, no binary equivalent)
+		uint8 walkStepFlag = 0;
 		s.syncAsByte(walkStepFlag);
-		if (s.isLoading() && chr)
-			chr->_isLerping = walkStepFlag != 0;
+		// Not used - binary has no _isLerping flag
 
 		// [+0x33]: 1 byte - direction set flag (_stepDirectionSet)
 		uint8 directionSet = chr ? (chr->_stepDirectionSet ? 1 : 0) : 0;
@@ -492,58 +589,58 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		if (s.isLoading() && chr)
 			chr->_stepDirectionSet = directionSet != 0;
 
-		// [+0x20D..+0x213]: 4 x uint16 - per-character dirty rect (inclusive coords)
-		uint16 clipLeft = chr ? (uint16)chr->_dirtyLeft : 0;
-		uint16 clipTop = chr ? (uint16)chr->_dirtyTop : 0;
-		uint16 clipRight = chr ? (uint16)chr->_dirtyRight : 0;
-		uint16 clipBottom = chr ? (uint16)chr->_dirtyBottom : 0;
+		// [+0x20D..+0x213]: 4 x uint16 - per-object dirty rect (inclusive coords)
+		uint16 clipLeft = (uint16)obj->_dirtyLeft;
+		uint16 clipTop = (uint16)obj->_dirtyTop;
+		uint16 clipRight = (uint16)obj->_dirtyRight;
+		uint16 clipBottom = (uint16)obj->_dirtyBottom;
 		s.syncAsUint16LE(clipLeft);
 		s.syncAsUint16LE(clipTop);
 		s.syncAsUint16LE(clipRight);
 		s.syncAsUint16LE(clipBottom);
-		if (s.isLoading() && chr) {
-			chr->_dirtyLeft = (int16)clipLeft;
-			chr->_dirtyTop = (int16)clipTop;
-			chr->_dirtyRight = (int16)clipRight;
-			chr->_dirtyBottom = (int16)clipBottom;
+		if (s.isLoading()) {
+			obj->_dirtyLeft = (int16)clipLeft;
+			obj->_dirtyTop = (int16)clipTop;
+			obj->_dirtyRight = (int16)clipRight;
+			obj->_dirtyBottom = (int16)clipBottom;
 		}
 
 		// [+0x21D..+0x22B]: 8 x uint16 - motion vertical offset state + sprite draw bounds
-		// +0x21D: motion target vertical offset
-		// +0x21F: motion accumulator (unused in ScummVM currently)
-		// +0x221: motion threshold (unused in ScummVM currently)
-		// +0x223: motion step delta (unused in ScummVM currently)
+		// +0x21D: motion target vertical offset (scriptSetMotion param 1)
+		// +0x21F: vOffset accumulator (Bresenham error, runtime running total)
+		// +0x221: vOffset threshold (scriptSetMotion param 3: motionDistance)
+		// +0x223: vOffset step delta (scriptSetMotion param 2: verticalOffsetDelta)
 		// +0x225..+0x22B: transient sprite draw bounds (recalculated each frame)
 		uint16 motionTarget = chr ? chr->_motionTargetVerticalOffset : 0;
 		s.syncAsUint16LE(motionTarget);
 		if (s.isLoading() && chr)
 			chr->_motionTargetVerticalOffset = motionTarget;
-		uint16 motionDelta = chr ? chr->_motionVerticalOffsetDelta : 0;
-		s.syncAsUint16LE(motionDelta);
+		uint16 motionAccum = chr ? chr->_motionProgress : 0;
+		s.syncAsUint16LE(motionAccum);
 		if (s.isLoading() && chr)
-			chr->_motionVerticalOffsetDelta = motionDelta;
-		uint16 motionDist = chr ? chr->_motionDistanceUnits : 0;
-		s.syncAsUint16LE(motionDist);
+			chr->_motionProgress = motionAccum;
+		uint16 motionThreshold = chr ? chr->_motionDistanceUnits : 0;
+		s.syncAsUint16LE(motionThreshold);
 		if (s.isLoading() && chr)
-			chr->_motionDistanceUnits = motionDist;
-		uint16 motionProgress = chr ? chr->_motionProgress : 0;
-		s.syncAsUint16LE(motionProgress);
+			chr->_motionDistanceUnits = motionThreshold;
+		uint16 motionStep = chr ? chr->_motionVerticalOffsetDelta : 0;
+		s.syncAsUint16LE(motionStep);
 		if (s.isLoading() && chr)
-			chr->_motionProgress = motionProgress;
+			chr->_motionVerticalOffsetDelta = motionStep;
 		// +0x225..+0x22B: sprite draw bounds from previous frame
-		uint16 lastDrawX = chr ? (uint16)chr->_lastDrawX : 0;
-		uint16 lastDrawY = chr ? (uint16)chr->_lastDrawY : 0;
-		uint16 lastDrawW = chr ? chr->_lastDrawWidth : 0;
-		uint16 lastDrawH = chr ? chr->_lastDrawHeight : 0;
+		uint16 lastDrawX = (uint16)obj->_lastDrawX;
+		uint16 lastDrawY = (uint16)obj->_lastDrawY;
+		uint16 lastDrawW = obj->_lastDrawWidth;
+		uint16 lastDrawH = obj->_lastDrawHeight;
 		s.syncAsUint16LE(lastDrawX);
 		s.syncAsUint16LE(lastDrawY);
 		s.syncAsUint16LE(lastDrawW);
 		s.syncAsUint16LE(lastDrawH);
-		if (s.isLoading() && chr) {
-			chr->_lastDrawX = (int16)lastDrawX;
-			chr->_lastDrawY = (int16)lastDrawY;
-			chr->_lastDrawWidth = lastDrawW;
-			chr->_lastDrawHeight = lastDrawH;
+		if (s.isLoading()) {
+			obj->_lastDrawX = (int16)lastDrawX;
+			obj->_lastDrawY = (int16)lastDrawY;
+			obj->_lastDrawWidth = lastDrawW;
+			obj->_lastDrawHeight = lastDrawH;
 		}
 
 		// [+0x215]: 2 bytes - pickup frame counter
@@ -562,7 +659,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			chr->_previousOrientation = (uint8)prevOrientation;
 
 		// overloadAnimTriggerDirection [+0x22D]: 2 bytes
-		s.syncAsUint16LE(obj->overloadAnimTriggerDirection);
+		s.syncAsUint16LE(obj->_overloadAnimTriggerDirection);
 
 		// _snapToTarget [+0x22F]: 1 byte
 		uint8 snapToTarget = obj->_snapToTarget ? 1 : 0;
@@ -571,10 +668,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			obj->_snapToTarget = snapToTarget != 0;
 
 		// useOverloadAnimation [+0x230]: 1 byte
-		uint8 useOverload = obj->useOverloadAnimation ? 1 : 0;
+		uint8 useOverload = obj->_useOverloadAnimation ? 1 : 0;
 		s.syncAsByte(useOverload);
 		if (s.isLoading())
-			obj->useOverloadAnimation = useOverload != 0;
+			obj->_useOverloadAnimation = useOverload != 0;
 
 		// [+0x184]: 1 byte - hasInventoryIcon (loaded from re_runtimeSlotValuessource file)
 		// Indicates presence of inventory icon blob (slot 0x14 = index 0x13)
@@ -593,16 +690,11 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		if (s.isLoading())
 			obj->_hasScaling = hasScaling != 0;
 
-		// IsClickable and IsVisible (set by script opcodes 0x32/0x33)
-		uint8 isClickable = obj->_isClickable ? 1 : 0;
-		s.syncAsByte(isClickable);
-		if (s.isLoading())
-			obj->_isClickable = isClickable != 0;
-
-		uint8 isVisible = obj->_isVisible ? 1 : 0;
-		s.syncAsByte(isVisible);
-		if (s.isLoading())
-			obj->_isVisible = isVisible != 0;
+		// NOTE: the binary save record has NO isClickable/isVisible fields here.
+		// loadGameFromFile/saveGameToFile go directly from +0x186 (hasScaling) to
+		// +0x18B (scriptSize). These flags are not persisted by the original (they
+		// are re-established by script execution), so we must not serialize them
+		// or the object record length diverges from the original file.
 
 		// Script size [+0x18B]: 2 bytes
 		uint16 scriptSize = (uint16)obj->_script.size();
@@ -642,12 +734,28 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 			// Active flag (2 bytes, but only low byte matters)
 			uint16 blobActive = 0;
 			if (s.isSaving()) {
-				if (isOverloadSlot)
-					blobActive = obj->overloadAnimation.empty() ? 0 : 1;
-				else if (blobIdx < (int)obj->_blobs.size())
+				if (isOverloadSlot) {
+					if (obj->_blobs.size() > 20 && !obj->_blobs[20].empty())
+						blobActive = 1;
+					else
+						blobActive = obj->_overloadAnimation.empty() ? 0 : 1;
+				} else if (blobIdx < (int)obj->_blobs.size())
 					blobActive = obj->_blobs[blobIdx].empty() ? 0 : 1;
 			}
 			s.syncAsUint16LE(blobActive);
+
+			if (!blobActive && s.isLoading()) {
+				// Slot not active in the save file - clear any data that
+				// changeScene() pre-loaded from RESOURCE.MCS so it doesn't
+				// get re-saved (which would desync the file stream vs original).
+				if (isOverloadSlot) {
+					obj->_overloadAnimation.clear();
+					if (obj->_blobs.size() > 20)
+						obj->_blobs[20].clear();
+				} else if (blobIdx < (int)obj->_blobs.size()) {
+					obj->_blobs[blobIdx].clear();
+				}
+			}
 
 			if (blobActive) {
 				// entry+0x00: frame cursor/offset X (not tracked in ScummVM, save 0)
@@ -659,40 +767,52 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 				// entry+0x0C: source resource key
 				uint16 blobSourceKey = 0;
 				if (s.isSaving()) {
-					if (isOverloadSlot)
-						blobSourceKey = obj->overloadAnimationSourceKey;
-					else if (blobIdx < (int)obj->_blobSourceKeys.size())
+					if (isOverloadSlot) {
+						if (obj->_blobs.size() > 20 && !obj->_blobs[20].empty())
+							blobSourceKey = (obj->_blobSourceKeys.size() > 20) ? obj->_blobSourceKeys[20] : 0;
+						else
+							blobSourceKey = obj->_overloadAnimationSourceKey;
+					} else if (blobIdx < (int)obj->_blobSourceKeys.size())
 						blobSourceKey = obj->_blobSourceKeys[blobIdx];
 				}
 				s.syncAsUint16LE(blobSourceKey);
 				// entry+0x0E: speed/timing
 				uint16 blobSpeed = 0;
-				if (s.isSaving() && !isOverloadSlot && blobIdx < (int)obj->_blobSpeeds.size())
-					blobSpeed = obj->_blobSpeeds[blobIdx];
+				if (s.isSaving() && !isOverloadSlot && blobIdx < (int)obj->_blobWalkSpeeds.size())
+					blobSpeed = obj->_blobWalkSpeeds[blobIdx];
 				s.syncAsUint16LE(blobSpeed);
 				// entry+0x04: data size
 				uint16 blobSize = 0;
 				if (s.isSaving()) {
-					if (isOverloadSlot)
-						blobSize = (uint16)obj->overloadAnimation.size();
-					else if (blobIdx < (int)obj->_blobs.size())
+					if (isOverloadSlot) {
+						if (obj->_blobs.size() > 20 && !obj->_blobs[20].empty())
+							blobSize = (uint16)obj->_blobs[20].size();
+						else
+							blobSize = (uint16)obj->_overloadAnimation.size();
+					} else if (blobIdx < (int)obj->_blobs.size())
 						blobSize = (uint16)obj->_blobs[blobIdx].size();
 				}
 				s.syncAsUint16LE(blobSize);
 				// Pixel data (blobSize bytes)
 				if (s.isSaving()) {
 					if (blobSize > 0) {
-						if (isOverloadSlot)
-							s.syncBytes(obj->overloadAnimation.data(), blobSize);
-						else
+						if (isOverloadSlot) {
+							if (obj->_blobs.size() > 20 && !obj->_blobs[20].empty())
+								s.syncBytes(obj->_blobs[20].data(), blobSize);
+							else
+								s.syncBytes(obj->_overloadAnimation.data(), blobSize);
+						} else
 							s.syncBytes(obj->_blobs[blobIdx].data(), blobSize);
 					}
 				} else {
 					// Loading: allocate and read pixel data
 					if (blobSize > 0) {
 						if (isOverloadSlot) {
-							obj->overloadAnimation.resize(blobSize);
-							s.syncBytes(obj->overloadAnimation.data(), blobSize);
+							if (blobIdx >= (int)obj->_blobs.size())
+								obj->_blobs.resize(blobIdx + 1);
+							obj->_blobs[blobIdx].resize(blobSize);
+							s.syncBytes(obj->_blobs[blobIdx].data(), blobSize);
+							obj->_overloadAnimation = obj->_blobs[blobIdx];
 						} else {
 							if (blobIdx >= (int)obj->_blobs.size())
 								obj->_blobs.resize(blobIdx + 1);
@@ -701,14 +821,14 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 						}
 					}
 					if (isOverloadSlot) {
-						obj->overloadAnimationSourceKey = blobSourceKey;
+						obj->_overloadAnimationSourceKey = blobSourceKey;
 					} else {
 						if (blobIdx >= (int)obj->_blobSourceKeys.size())
 							obj->_blobSourceKeys.resize(blobIdx + 1);
 						obj->_blobSourceKeys[blobIdx] = blobSourceKey;
-						if (blobIdx >= (int)obj->_blobSpeeds.size())
-							obj->_blobSpeeds.resize(blobIdx + 1);
-						obj->_blobSpeeds[blobIdx] = blobSpeed;
+						if (blobIdx >= (int)obj->_blobWalkSpeeds.size())
+							obj->_blobWalkSpeeds.resize(blobIdx + 1);
+						obj->_blobWalkSpeeds[blobIdx] = blobSpeed;
 					}
 				}
 			}
@@ -717,28 +837,10 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 
 	// --- Post-load: rebuild view state ---
 	if (s.isLoading()) {
-		for (auto c : view1->_characters)
-			delete c;
-		view1->_characters.clear();
-		const uint16 currentScene = (uint16)Scenes::instance()._currentSceneIndex;
-		const uint16 actorIdx = (uint16)Scenes::instance()._currentActorIndex;
-		for (uint objIdx = 0; objIdx < GameObjects::instance()._objects.size(); objIdx++) {
-			GameObject *obj = GameObjects::instance()._objects[objIdx];
-			if (obj == nullptr)
-				continue;
-			// Original (loadGameFromFile) creates runtime data for objects matching:
-			// 1) sceneIndex == currentScene, OR
-			// 2) sceneIndex == actorIndex + 0x400 (in protagonist inventory), OR
-			// 3) objectIndex == actorIndex (IS the protagonist)
-			bool inCurrentScene = (obj->_sceneIndex == currentScene);
-			bool isActorAttached = (obj->_sceneIndex == actorIdx + 0x400);
-			bool isActor = (obj->_index == actorIdx);
-			if (inCurrentScene || isActorAttached || isActor) {
-				Character *c = new Character();
-				c->_gameObject = obj;
-				view1->_characters.push_back(c);
-			}
-		}
+		// NOTE: Characters were already created right after changeScene (above) so
+		// the per-object loop could populate their runtime walk/draw/dirty state.
+		// Do NOT recreate them here - that would discard the loaded fields.
+		view1->rebuildCharacterLookupTable();
 		view1->setInventorySource(GameObjects::instance().getProtagonistObject());
 
 		// Restore UseInventory cursor image after load.
@@ -755,17 +857,13 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		view1->updateCursor();
 		view1->_paletteDirty = true;
 
-		// Reconstruct walk-wait callback state from _walkTargetObjectIndex.
-		// In the original, gameTick polls this each frame to detect walk arrival.
-		// In ScummVM, we use WaitingForCallback + _executeScriptOnFinishLerp.
-		if (_scriptExecutor->_walkTargetObjectIndex != 0) {
-			Character *walkChar = view1->getCharacterByIndex(_scriptExecutor->_walkTargetObjectIndex);
-			if (walkChar) {
-				walkChar->registerWaitForMovementFinishedEvent();
-				_scriptExecutor->_requestCallback = false;
-				_scriptExecutor->_isAwaitingCallback = true;
-				_scriptExecutor->setWaitingForCallback();
-			}
+		// Binary loadGameFromFile (1008:82a7): help-disabled path uses
+		// applyScenePaletteEffect + partial UI palette; else fade from black.
+		if (view1->isHelpButtonDisabled()) {
+			applyScenePaletteEffect();
+			view1->restoreUiPaletteEntries();
+		} else {
+			view1->startFadingWithSpeed(8);
 		}
 	}
 

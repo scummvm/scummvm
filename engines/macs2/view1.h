@@ -70,8 +70,9 @@ private:
 public:
 	uint16 _pickupFrameCounter = 0;
 	bool _pickupItemTransferred = false;
+	bool _markedForDeletion = false;
 
-	uint8 _previousOrientation;
+	uint8 _previousOrientation = 0;
 
 private:
 	// Handle when the character has moved into a non-walkable area, push them out if
@@ -89,13 +90,16 @@ public:
 	int16 _stepDeltaX = 0;          // runtime[+0x04]: abs(endX - startX)
 	int16 _stepDeltaY = 0;          // runtime[+0x06]: abs(endY - startY)
 	int16 _stepError = 0;           // runtime[+0x18]: Bresenham error accumulator
-	bool _isLerping = false;        // walking active
 	bool _stepDirectionSet = false; // runtime[+0x33]: direction has been calculated
 
 	Common::Array<uint16> _path;
-	int16 _currentPathIndex;
+	int16 _currentPathIndex = 0;
+	// Raw 32-byte runtime path block at object runtime +0x0C. The original game
+	// stores opaque per-waypoint data here (not just node indices). We preserve
+	// it verbatim across save/load so DOS saves round-trip byte-for-byte; our own
+	// pathfinding uses _path. Saved/restored by syncGame.
+	uint8 _pathBlockRaw[32] = {0};
 	Common::Point _pathFinalDestination;
-	bool _isFollowingPath = false;
 	Common::Array<uint8> _pathfindingOverlay;
 
 	bool isWalkable(const Common::Point &p) const;
@@ -113,24 +117,6 @@ public:
 
 	uint16 getVerticalOffset() const;
 
-	// Set by opcode 11h
-	bool _executeScriptOnFinishLerp = false;
-
-	// Runtime[+0x20D..+0x213]: per-character dirty rectangle for partial redraws.
-	// Tracks the screen region covered by the character's sprite (old + new position union).
-	// Uses inclusive coordinates matching the original binary's convention.
-	int16 _dirtyLeft = 0;
-	int16 _dirtyTop = 0;
-	int16 _dirtyRight = 0;
-	int16 _dirtyBottom = 0;
-
-	// Runtime[+0x225..+0x22B]: last frame's sprite draw bounds (x, y, width, height).
-	// Used at frame start to initialize _dirtyRect before erasing.
-	int16 _lastDrawX = 0;
-	int16 _lastDrawY = 0;
-	uint16 _lastDrawWidth = 0;
-	uint16 _lastDrawHeight = 0;
-
 	// TODO: Handle properly
 	uint8 _animationIndex = 1;
 	uint16 _motionTargetVerticalOffset = 0;
@@ -138,22 +124,28 @@ public:
 	uint16 _motionDistanceUnits = 0;
 	uint16 _motionProgress = 0;
 	uint16 _motionStartVerticalOffset = 0;
-	bool _hasMotionVerticalOffset = false;
 	bool _shouldMirrorCurrentAnimation = false;
+
+	// Binary walkAlongPath (1008:1b8f): no separate motion flag; active when
+	// runtime+0x21D >= 0 and differs from object vertical offset (+0x08).
+	bool hasPendingVerticalMotion() const;
+	bool shouldStepVerticalMotion() const;
 
 	bool isAnimationMirrored() const;
 	uint8 getMirroredAnimation(uint8 original) const;
 
 	// TODO: Will need time handling
-	Macs2::AnimFrame *getCurrentAnimationFrame();
+	// advanceMode matches drawAnimFrame/advanceAnimFrame (1010:16e7): 0=current frame,
+	// 2=advance sequence after returning current frame. Hit testing uses 0; drawing uses 2.
+	bool fillCurrentAnimationFrame(uint16 advanceMode, Macs2::AnimFrame &out);
+	Macs2::AnimFrame *getCurrentAnimationFrame(uint16 advanceMode);
 	Macs2::AnimFrame *getCurrentPortrait(bool onRightSide = false, uint16 frameIndex = 2);
 
-	// Handles setting this character up to send an event to the script executor when finished
-	// and will send the event right away in case the last movement is already done
-	// TODO: Check if the code also handles it this way
-	void registerWaitForMovementFinishedEvent();
 	void update();
 };
+
+// Binary scriptMoveObject (1008:aa83): copies object x/y into runtime position and target.
+void resetCharacterWalkPath(Character *character);
 
 // cf https://stackoverflow.com/a/51497820
 template<typename T, T V>
@@ -196,17 +188,27 @@ struct ScalingValues {
 
 class View1 : public UIElement {
 private:
-	// The definitive version that can do everything
-	void drawSpriteSuperAdvanced(const Common::Point &pos, const Sprite &sprite, uint16 scaling, bool mirrored, bool useDepth, uint8 depth, Graphics::ManagedSurface &s, uint8 shadowIntensity = 0);
+	// drawSpriteTransparent @ 1010:0ed1 (drawAnimFrameDepth @ 1010:172c)
+	void drawSpriteTransparent(int shadingTableOffset, uint8 depthThreshold, uint16 scalingFactor,
+							   int16 drawX, int16 drawY, uint16 srcWidth, uint16 srcHeight,
+							   const byte *srcPixels, Graphics::ManagedSurface &s);
+	// drawSpriteScaled @ 1010:102b (drawAnimFrameShaded @ 1010:1785)
+	void drawSpriteScaled(int shadingTableOffset, uint8 depthThreshold, int16 drawX, int16 drawY,
+						  uint16 srcWidth, uint16 srcHeight, const byte *srcPixels,
+						  Graphics::ManagedSurface &s);
+
+	// Set by action bar map button on press; enterMapMode() runs on panel release.
+	bool _pendingMapOpen = false;
 
 	// Saved scene visuals for help screen restore (avoids changeScene on exit)
 	byte _savedPalVanilla[256 * 3] = {0};
 	Graphics::ManagedSurface _savedDepthMap;
 	int _offset = 0; // TODO: palette cycling?
 
+	// Tick counter gating the mode-dependent palette brighten effect
+	// (updateBackgroundAnimationPalette). Matches g_wBgAnimTickCounter in the
+	// binary gameTick (1008:e556).
 	uint32 _bgAnimTickCounter = 0;
-	uint32 _flagFrameIndex = 0;
-	uint32 _guyFrameIndex = 0;
 
 	// Save/Load panel from handleSaveLoadPanelClick (1008:86a4).
 	// Opened by right-click during script execution or action bar button 8.
@@ -292,6 +294,9 @@ private:
 	//   6 = close inventory/dialogue panels
 	//   7 = close map panel
 	bool handleInput(const MouseDownMessage &msg);
+	// Binary handleInput (1008:e8bf): panel close on mouse release when
+	// g_wClickedButtonIndex != 0 and buttonFlags != 1.
+	bool handlePanelRelease(const MouseUpMessage &msg);
 	bool handleHelpClick(const MouseDownMessage &msg);
 
 	void showStringBox(const Common::StringArray &sa);
@@ -314,11 +319,19 @@ private:
 
 	void drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s);
 	void drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s);
-	void drawSpriteAdvanced(uint16 x, uint16 y, uint16 width, uint16 height, uint16 scaling, const byte *data, Graphics::ManagedSurface &s);
-	void drawSpriteAdvanced(const Common::Point &pos, uint16 width, uint16 height, uint16 scaling, const Sprite &sprite, Graphics::ManagedSurface &s);
 
-	void drawCharacters(Graphics::ManagedSurface &s);
-	void drawAllCharacters();
+	// Binary sortObjectListByY (1008:8cf2) + buildSortedObjectList (1008:8c5a):
+	// scan 512 objects, collect current-scene indices at 0xFAC, quicksort by Y.
+	// Table is 1-indexed: slots 1..g_wSortedObjectCount hold object indices.
+	static const uint16 kMaxSceneObjects = 0x200;
+	void sortObjectListByY() const;
+	void buildSortedObjectList(int low, int high) const;
+	mutable uint16 _sortedObjectCount = 0;
+	mutable uint16 _sortedObjectIndices[kMaxSceneObjects + 1];
+	mutable Character *_characterByObjectIndex[kMaxSceneObjects + 1] = {};
+
+	// drawAllCharacters @ 1008:90a2 - param_1: 0=draw only, 1=walk+draw (fullUpdate).
+	void drawAllCharacters(Graphics::ManagedSurface *surface = nullptr, bool fullUpdate = true);
 
 	int findInventoryItem(const GameObject *item);
 	void setViewPaletteSafely(const byte *colors);
@@ -327,6 +340,15 @@ private:
 public:
 	View1();
 	virtual ~View1();
+
+	// g_wHelpButtonDisabled (1020:23B4): when non-zero, help/map button is disabled
+	// and script scene changes use applyScenePaletteEffect instead of palette fades.
+	// Map overlay mode is scene+0x61db (_currentMode == VM_HELP), not this flag.
+	bool isHelpButtonDisabled() const { return _helpButtonDisabled; }
+
+	void restoreUiPaletteEntries();
+
+	void clearClickedButtonIndex() { _clickedButtonIndex = 0; }
 
 	ScalingValues _scalingValues;
 
@@ -346,8 +368,10 @@ public:
 	// Background animation tick counter (mode 2: threshold 0x27, mode 3: threshold 1)
 	static constexpr uint32 kGameFrameRate = 20;
 
-	// TODO: Probably the start of a mode enum
+	// Binary g_wIsShowingTextBox (1020:0ff6): set by scriptPrintString, cleared by handleTextBoxInput
 	bool _isShowingTextBox = false;
+	// Binary g_wIsShowingDialoguePanel (1020:1008): set by scriptShowDialogue, cleared by dismissDialoguePanel
+	bool _isShowingDialoguePanel = false;
 	Common::StringArray _drawnStringBox;
 	bool _continueScriptAfterUI = false;
 	uint16 _dialogueChoiceCount = 0;
@@ -360,6 +384,10 @@ public:
 	bool _autoclickActive = false;
 
 	Common::Array<Character *> _characters;
+	Common::Array<Character *> _pendingCharacterDeletes;
+	void flushPendingCharacterDeletes();
+	// Binary drawAllCharacters (1008:90a2) pickup frame: sceneIndex + inventory sync.
+	void transferPickupTarget(GameObject *targetObject);
 	// If this is the protagonist, we have our normal inventory
 	// If this is another object, it is the inventory of a storage container
 	GameObject *_inventorySource = nullptr;
@@ -383,8 +411,10 @@ public:
 	};
 	UiPanelState _uiPanelState = kUiPanelNone;
 
-	// Binary g_wIsShowingDialoguePanel (1020:1008)
-	bool _isShowingDialogueChoicePanel = false;
+	void finishPanelCloseAfterRelease(UiPanelState closedFromState);
+
+	// Binary scene+0x53B9: dialogue choice input mode active (waiting for player to pick an answer)
+	bool _isDialogueChoiceInputActive = false;
 
 	// Binary g_wPendingPanelRequest (1020:1034): deferred panel open request.
 	// Set while action bar is active; processed by gameTick when _uiPanelState returns to kUiPanelNone.
@@ -449,6 +479,7 @@ public:
 	void transferInventoryItem(GameObject *item, GameObject *targetContainer);
 
 	Character *getCharacterByIndex(uint16 index);
+	void rebuildCharacterLookupTable() const;
 
 	int getCharacterArrayIndex(const Character *c) const;
 
@@ -461,6 +492,7 @@ public:
 	bool msgAction(const ActionMessage &msg) override;
 
 	bool msgMouseDown(const MouseDownMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 	bool msgMouseMove(const MouseMoveMessage &msg) override;
 	void draw() override;
 	bool tick() override;
@@ -469,18 +501,25 @@ public:
 	GameObject *getClickedInventoryItem(const Common::Point &p);
 
 	void openMainMenu(Common::Point clickedPosition);
+	void enterMapMode();
 
+	// Binary openActionBarAtPosition (1008:3fba): stores button hit rects at panel+4+col*(btnW+4).
+	void layoutActionBarButtons();
 	void drawMainMenu(Graphics::ManagedSurface &s);
+	void drawSceneUpdate();
 
-	void setStringBox(const Common::StringArray &sa);
-	void setStringBoxAt(const Common::StringArray &sa, const Common::Point &pos);
 	void handleTextBoxInput();
 	void dismissDialoguePanel();
 	bool handleDialogueChoiceClick(int clickY, int clickX);
 
 	void startFading(uint16 speed = 4);
+	void fadePaletteToBlack(uint16 speed, const byte *sourcePalette);
 	void startFadeToBlack(uint16 speed = 4);
 	void startFadingWithSpeed(uint16 speed);
+	// Mode-1 scene transition: clearScreen + full palette (1008:ad6e local_6==1).
+	void instantSceneCut();
+	// Draw the current scene and push pixels to the physical screen immediately.
+	void presentFrame();
 
 	void showSpeechAct(uint16 characterIndex, const Common::Array<Common::String> &strings, const Common::Point &position, bool onRightSide = false);
 
@@ -522,8 +561,6 @@ public:
 	void drawOverlayTextEntries();
 
 	Common::Array<OverlayTextEntry> _overlayTextEntries;
-
-	uint16 calculateCharacterScaling(uint16 characterY, bool updateDebugValues = false);
 
 	uint16 getHitObjectID(const Common::Point &pos) const;
 };
