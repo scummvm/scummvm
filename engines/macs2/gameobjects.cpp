@@ -150,7 +150,8 @@ void Macs2::GameObjects::init() {
 		_objectNames[0x53] = "Blasebalg";
 		_objectNames[0x54] = "Brennholz";
 		_objectNames[0x56] = "Brotmesser";
-		_objectNames[0x58] = "B\x81""cher"; // adventure books
+		_objectNames[0x58] = "B\x81"
+							 "cher"; // adventure books
 		_objectNames[0x59] = "Clownpuppe";
 		_objectNames[0x5A] = "Blechdose";     // green, with sulphur
 		_objectNames[0x5B] = "Blechdose";     // empty
@@ -207,18 +208,22 @@ void Macs2::GameObjects::init() {
 		_objectNames[0x2F] = "Lederg\x81rtel";  // leather belt
 		_objectNames[0x30] = "Sch\x81rhaken";   // poker
 		_objectNames[0x34] = "Brett";           // board, solid
-		_objectNames[0x36] = "Vogelk\x84""fig"; // birdcage, with bird
-		_objectNames[0x37] = "Vogelk\x84""fig"; // birdcage, broken
-		_objectNames[0x38] = "Vogelk\x84""fig"; // birdcage, empty
-		_objectNames[0x39] = "Vogelk\x84""fig";            // birdcage, with bird
-		_objectNames[0x3A] = "Landkarte";      // map
-		_objectNames[0x3B] = "Kerze";          // candle
-		_objectNames[0x3C] = "Kieselsteine";   // pebbles
-		_objectNames[0x3D] = "Koffer";         // suitcase, full of dynamite
-		_objectNames[0x3E] = "Geldscheine";    // banknotes, freshly printed
-		_objectNames[0x3F] = "Lederbeutel";    // leather pouch, empty
-		_objectNames[0x40] = "Steinschleuder"; // slingshot
-		_objectNames[0x41] = "Knallfr\x94sche";            // firecrackers
+		_objectNames[0x36] = "Vogelk\x84"
+							 "fig"; // birdcage, with bird
+		_objectNames[0x37] = "Vogelk\x84"
+							 "fig"; // birdcage, broken
+		_objectNames[0x38] = "Vogelk\x84"
+							 "fig"; // birdcage, empty
+		_objectNames[0x39] = "Vogelk\x84"
+							 "fig";             // birdcage, with bird
+		_objectNames[0x3A] = "Landkarte";       // map
+		_objectNames[0x3B] = "Kerze";           // candle
+		_objectNames[0x3C] = "Kieselsteine";    // pebbles
+		_objectNames[0x3D] = "Koffer";          // suitcase, full of dynamite
+		_objectNames[0x3E] = "Geldscheine";     // banknotes, freshly printed
+		_objectNames[0x3F] = "Lederbeutel";     // leather pouch, empty
+		_objectNames[0x40] = "Steinschleuder";  // slingshot
+		_objectNames[0x41] = "Knallfr\x94sche"; // firecrackers
 		_objectNames[0x42] = "Koffer";          // suitcase, open
 		_objectNames[0x43] = "Koffer";          // suitcase, closed
 		_objectNames[0x44] = "Papier";          // paper, crumpled
@@ -237,7 +242,8 @@ void Macs2::GameObjects::init() {
 		_objectNames[0x55] = "Laib Brot";   // loaf of bread, sliced
 		_objectNames[0x56] = "Brotmesser";  // bread knife
 		_objectNames[0x57] = "Laib Brot";   // loaf of bread, with key
-		_objectNames[0x58] = "B\x81""cher";                // books
+		_objectNames[0x58] = "B\x81"
+							 "cher";                // books
 		_objectNames[0x59] = "Clownpuppe";          // clown doll
 		_objectNames[0x5A] = "Blechdose";           // tin can, green with sulphur
 		_objectNames[0x5B] = "Blechdose";           // tin can, empty
@@ -355,6 +361,46 @@ Common::MemoryReadStream *Macs2::GameObjects::readGameObjectStrings(uint16 index
 	fileStream->read(stringData, size);
 	return new Common::MemoryReadStream(stringData, size, DisposeAfterUse::YES);
 	// Note: We save the current scene number to [0F86h] - maybe "scene we have strings loaded for"?
+}
+
+Common::Array<uint8> *Macs2::GameObject::getAnimSlotBlob(uint16 slot) {
+	if (slot < 1 || slot > 0x15)
+		return nullptr;
+	if (slot == 0x15) {
+		if (_blobs.size() > 20 && !_blobs[20].empty())
+			return &_blobs[20];
+		return &_overloadAnimation;
+	}
+	const uint index = slot - 1;
+	if (index >= _blobs.size())
+		return nullptr;
+	return &_blobs[index];
+}
+
+const Common::Array<uint8> *Macs2::GameObject::getAnimSlotBlob(uint16 slot) const {
+	return const_cast<GameObject *>(this)->getAnimSlotBlob(slot);
+}
+
+bool Macs2::GameObject::isAnimSlotLoaded(uint16 orient) const {
+	if (_overloadAnimTriggerDirection != 0x7FFF &&
+		(int16)_overloadAnimTriggerDirection >= 0 &&
+		_overloadAnimTriggerDirection == orient) {
+		const Common::Array<uint8> *blob = getAnimSlotBlob(0x15);
+		return blob != nullptr && !blob->empty();
+	}
+	if (orient == 0x15) {
+		const Common::Array<uint8> *blob = getAnimSlotBlob(0x15);
+		return blob != nullptr && !blob->empty();
+	}
+	if (orient < 1 || orient > 0x14)
+		return false;
+	const uint slot = orient - 1;
+	if (slot < _blobs.size() && !_blobs[slot].empty())
+		return true;
+	// Binary drawAllCharacters (1008:90a2): bSlotLoaded at slot+0x33; file speeds often 0x010x.
+	if (slot < _blobWalkSpeeds.size() && (_blobWalkSpeeds[slot] & 0xFF00) != 0)
+		return true;
+	return false;
 }
 
 Common::MemoryReadStream *Macs2::GameObject::getScriptStream() {

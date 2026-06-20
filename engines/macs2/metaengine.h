@@ -22,8 +22,8 @@
 #ifndef MACS2_METAENGINE_H
 #define MACS2_METAENGINE_H
 
-#include "engines/advancedDetector.h"
 #include "backends/keymapper/keymap.h"
+#include "engines/advancedDetector.h"
 
 class Macs2MetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:

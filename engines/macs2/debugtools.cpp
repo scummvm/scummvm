@@ -187,9 +187,9 @@ static const char *getOpcodeName(uint8 opcode) {
 	case 0x31:
 		return "setPaletteDarkness";
 	case 0x32:
-		return "setObjectClickable";
+		return "setObjectShading";
 	case 0x33:
-		return "setObjectVisible";
+		return "setObjectScaling";
 	case 0x34:
 		return "setHotspotOverride";
 	case 0x35:
@@ -683,7 +683,8 @@ static bool hasEnabledBreakpoint(uint32 offset) {
 
 static bool isBlockCollapsed(uint32 offset) {
 	for (uint i = 0; i < _collapsedBlocks.size(); i++)
-		if (_collapsedBlocks[i] == offset) return true;
+		if (_collapsedBlocks[i] == offset)
+			return true;
 	return false;
 }
 
@@ -731,8 +732,15 @@ static void showScriptWindow() {
 				_scriptDebugPaused = false;
 			ImGui::PopStyleColor();
 			ImGui::SameLine();
-			if (ImGui::Button("Step"))
-				_scriptDebugStepRequested = true;
+			bool isWaiting = exec->isWaitingForCallback() && !exec->_debugPaused;
+			if (isWaiting) {
+				ImGui::BeginDisabled();
+				ImGui::Button("Step (waiting)");
+				ImGui::EndDisabled();
+			} else {
+				if (ImGui::Button("Step"))
+					_scriptDebugStepRequested = true;
+			}
 		} else {
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.6f, 0.2f, 0.2f, 1.0f));
 			if (ImGui::Button("Pause"))
@@ -754,8 +762,8 @@ static void showScriptWindow() {
 		}
 		ImGui::SameLine();
 		ImGui::Text("| Scene: %d | Pos: %u/%u | %s | Obj: 0x%x",
-					currentScene, exec->getScriptPosition(), exec->getScriptEndPosition(),
-					exec->isExecuting() ? (_scriptDebugPaused ? "PAUSED" : "RUNNING") : "Idle",
+					currentScene, exec->getDebugOpcodePosition(), exec->getScriptEndPosition(),
+					exec->isExecuting() ? (_scriptDebugPaused ? "PAUSED" : (exec->isWaitingForCallback() ? "WAITING" : "RUNNING")) : "Idle",
 					exec->getExecutingObjectId());
 		ImGui::Separator();
 
@@ -768,7 +776,7 @@ static void showScriptWindow() {
 				_cachedSceneIndex = currentScene;
 				_collapsedBlocks.clear();
 			}
-			uint32 currentPos = exec->getScriptPosition();
+			uint32 currentPos = exec->getDebugOpcodePosition();
 			if (ImGui::BeginChild("ScriptView", ImVec2(0, 0), ImGuiChildFlags_Borders)) {
 				int skipUntilIndent = -1; // for collapsed block skipping
 				for (uint i = 0; i < _cachedDecompile.size(); i++) {
@@ -786,8 +794,8 @@ static void showScriptWindow() {
 
 					// Check if this is a collapsible block header (if/else/compare/ifInteraction)
 					bool isBlockHeader = (l.text.hasPrefix("ifTrue") || l.text.hasPrefix("ifFalse") ||
-					                      l.text.hasPrefix("compare") || l.text.hasPrefix("ifInteraction") ||
-					                      l.text.hasPrefix("else"));
+										  l.text.hasPrefix("compare") || l.text.hasPrefix("ifInteraction") ||
+										  l.text.hasPrefix("else"));
 					bool isCollapsed = isBlockCollapsed(l.offset);
 
 					// Breakpoint red dot gutter
@@ -896,7 +904,23 @@ static void showVariablesWindow() {
 			ImGui::Text("Inventory Action/Combine: %s/%s", exec->_inventoryActionFlag ? "Y" : "N", exec->_inventoryCombineFlag ? "Y" : "N");
 			ImGui::Text("Path Walkable Result: %s", exec->_pathWalkableResult ? "Y" : "N");
 			ImGui::Text("Pickup In Progress: %s", exec->_pickupInProgress ? "Y" : "N");
-			ImGui::Text("Is Repeat Run: %s", exec->_isRepeatRun ? "Y" : "N");
+			ImGui::Text("Repeat Run Flag (0x0B isRepeatRun): %s", exec->getRepeatRunFlag() ? "Y" : "N");
+			ImGui::Text("Scene Init Run (0x26): %s", exec->getSpecialValue(0x26) ? "Y" : "N");
+			ImGui::Text("Movement Repeat (0x27 areaRepeatRun): %s", exec->_isRepeatRun ? "Y" : "N");
+			ImGui::Text("Walk Target Object: %u", exec->_walkTargetObjectIndex);
+			if (exec->_walkTargetObjectIndex > 0) {
+				View1 *wView = (View1 *)g_engine->findView("View1");
+				Character *wChar = wView ? wView->getCharacterByIndex(exec->_walkTargetObjectIndex) : nullptr;
+				if (wChar) {
+					Common::Point wPos = wChar->getPosition();
+					ImGui::Text("  Position: (%d, %d)", wPos.x, wPos.y);
+					ImGui::Text("  Final Dest: (%d, %d)", wChar->_pathFinalDestination.x, wChar->_pathFinalDestination.y);
+					ImGui::Text("  HasMotionVOffset: %s  TargetVOffset: %u  VOffsetScale: %u",
+								wChar->hasPendingVerticalMotion() ? "Y" : "N",
+								wChar->_motionTargetVerticalOffset,
+								wChar->_gameObject->_verticalOffsetScale);
+				}
+			}
 		}
 		if (ImGui::CollapsingHeader("Runtime Specials (FF, read-only)", ImGuiTreeNodeFlags_DefaultOpen)) {
 			for (const auto &s : kSpecialNames) {
@@ -913,7 +937,7 @@ static void showVariablesWindow() {
 		}
 		if (ImGui::CollapsingHeader("Dialogue Choices", ImGuiTreeNodeFlags_DefaultOpen)) {
 			View1 *view = (View1 *)g_engine->findView("View1");
-			if (view && view->_isShowingDialogueChoicePanel) {
+			if (view && view->_isDialogueChoiceInputActive) {
 				ImGui::Text("Showing: Y | Count: %u", view->_dialogueChoiceCount);
 				ImGui::Text("BoxPos: (%d,%d)", view->_stringBoxPosition.x, view->_stringBoxPosition.y);
 				Common::Point mousePos = g_system->getEventManager()->getMousePos();
@@ -936,7 +960,8 @@ static void showVariablesWindow() {
 				ImGui::Text("LineHeight: %d | FirstLineY: %d", lineHeight, firstLineY);
 				for (uint i = 0; i < view->_dialogueChoiceLineCounts.size(); i++) {
 					uint16 scriptIdx = (i < g_engine->_scriptExecutor->_dialogueChoiceScriptIndices.size())
-						? g_engine->_scriptExecutor->_dialogueChoiceScriptIndices[i] : 0;
+										   ? g_engine->_scriptExecutor->_dialogueChoiceScriptIndices[i]
+										   : 0;
 					ImGui::Text("  Choice %u: %u lines, scriptIndex=%u", i + 1, view->_dialogueChoiceLineCounts[i], scriptIdx);
 				}
 				ImGui::Separator();
@@ -968,8 +993,8 @@ static void showAnimViewerWindow() {
 				break;
 			}
 		}
-		bool hasBlob = obj && ((_animViewerBlobIndex == -1 && !obj->overloadAnimation.empty()) ||
-			(_animViewerBlobIndex >= 0 && _animViewerBlobIndex < (int)obj->_blobs.size() && !obj->_blobs[_animViewerBlobIndex].empty()));
+		bool hasBlob = obj && ((_animViewerBlobIndex == -1 && !obj->_overloadAnimation.empty()) ||
+							   (_animViewerBlobIndex >= 0 && _animViewerBlobIndex < (int)obj->_blobs.size() && !obj->_blobs[_animViewerBlobIndex].empty()));
 		if (hasBlob) {
 			// Blob selector
 			const char *currentLabel = _animViewerBlobIndex == -1 ? "Overload" : Common::String::format("%d", _animViewerBlobIndex).c_str();
@@ -981,7 +1006,7 @@ static void showAnimViewerWindow() {
 					if (ImGui::Selectable(Common::String::format("%d", b).c_str(), selected))
 						_animViewerBlobIndex = b;
 				}
-				if (!obj->overloadAnimation.empty()) {
+				if (!obj->_overloadAnimation.empty()) {
 					bool selected = (_animViewerBlobIndex == -1);
 					if (ImGui::Selectable("Overload", selected))
 						_animViewerBlobIndex = -1;
@@ -990,7 +1015,7 @@ static void showAnimViewerWindow() {
 			}
 			ImGui::Separator();
 
-			Common::Array<uint8> &blob = (_animViewerBlobIndex == -1) ? obj->overloadAnimation : obj->_blobs[_animViewerBlobIndex];
+			Common::Array<uint8> &blob = (_animViewerBlobIndex == -1) ? obj->_overloadAnimation : obj->_blobs[_animViewerBlobIndex];
 			AnimBlobView blobView(blob);
 			if (blobView.isValid()) {
 				uint16 frameCount = blobView.frameCount();
@@ -1018,7 +1043,8 @@ static void showAnimViewerWindow() {
 					ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*animViewSurface.surfacePtr(), g_engine->_pal, 256);
 					if (texId) {
 						float scale = MIN(128.0f / (float)fi.width, 128.0f / (float)fi.height);
-						if (scale > 3.0f) scale = 3.0f;
+						if (scale > 3.0f)
+							scale = 3.0f;
 						float imgW = fi.width * scale;
 						float imgH = fi.height * scale;
 
@@ -1054,8 +1080,8 @@ static void drawHoveredObjectOverlay() {
 	ImVec2 displaySize = ImGui::GetIO().DisplaySize;
 	// The game is 320x200 but may use aspect ratio correction (4:3 = 320x240 effective)
 	// ScummVM fits the game into the window preserving aspect ratio with letterboxing
-	int gameW = g_system->getWidth();   // 320
-	int gameH = g_system->getHeight();  // 200
+	int gameW = g_system->getWidth();  // 320
+	int gameH = g_system->getHeight(); // 200
 	// Effective display aspect: if aspect ratio correction is on, it's 4:3
 	float effectiveH = (float)gameH;
 	if (g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection))
@@ -1090,253 +1116,192 @@ static void showCharactersWindow() {
 					Character *c = view->_characters[i];
 					if (!c || !c->_gameObject)
 						continue;
-				Common::Point pos = c->getPosition();
-				Common::String header = Common::String::format("[%u] obj=0x%x (%d,%d)###char%u", i, c->_gameObject->_index, pos.x, pos.y, i);
-				bool charOpen = ImGui::CollapsingHeader(header.c_str());
-				if (ImGui::IsItemHovered()) {
-					_hasHoveredObjectBounds = true;
-					_hoveredObjectBounds = Common::Rect(c->_lastDrawX, c->_lastDrawY,
-						c->_lastDrawX + c->_lastDrawWidth, c->_lastDrawY + c->_lastDrawHeight);
-				}
-				if (charOpen) {
-					ImGui::PushID(i);
-
-					// --- Editable Position ---
-					int posXY[2] = {pos.x, pos.y};
-					if (ImGui::InputInt2("Position", posXY)) {
-						c->setPosition(Common::Point((int16)posXY[0], (int16)posXY[1]));
+					Common::Point pos = c->getPosition();
+					Common::String header = Common::String::format("[%u] obj=0x%x (%d,%d)###char%u", i, c->_gameObject->_index, pos.x, pos.y, i);
+					bool charOpen = ImGui::CollapsingHeader(header.c_str());
+					if (ImGui::IsItemHovered()) {
+						_hasHoveredObjectBounds = true;
+						_hoveredObjectBounds = Common::Rect(c->_gameObject->_lastDrawX, c->_gameObject->_lastDrawY,
+															c->_gameObject->_lastDrawX + c->_gameObject->_lastDrawWidth,
+															c->_gameObject->_lastDrawY + c->_gameObject->_lastDrawHeight);
 					}
+					if (charOpen) {
+						ImGui::PushID(i);
 
-					// --- Editable GameObject fields ---
-					int orient = (int)c->_gameObject->_orientation;
-					if (ImGui::InputInt("Orientation", &orient)) {
-						c->_gameObject->_orientation = (uint8)CLIP(orient, 0, 255);
-					}
-
-					int animIdx = (int)c->_animationIndex;
-					if (ImGui::InputInt("Animation Index", &animIdx)) {
-						c->_animationIndex = (uint8)CLIP(animIdx, 0, 255);
-					}
-
-					ImGui::Text("Vertical Offset: %u", c->getVerticalOffset());
-
-					bool isVisible = c->_gameObject->_isVisible;
-					if (ImGui::Checkbox("Visible", &isVisible))
-						c->_gameObject->_isVisible = isVisible;
-					ImGui::SameLine();
-					bool isClickable = c->_gameObject->_isClickable;
-					if (ImGui::Checkbox("Clickable", &isClickable))
-						c->_gameObject->_isClickable = isClickable;
-					ImGui::SameLine();
-					bool hasBounds = c->_gameObject->_hasBoundsAttachment;
-					if (ImGui::Checkbox("BoundsAttach", &hasBounds))
-						c->_gameObject->_hasBoundsAttachment = hasBounds;
-
-					// --- Motion fields ---
-					if (ImGui::TreeNode("Motion")) {
-						int motionTarget = (int)c->_motionTargetVerticalOffset;
-						if (ImGui::InputInt("Target VOffset", &motionTarget))
-							c->_motionTargetVerticalOffset = (uint16)CLIP(motionTarget, 0, 65535);
-						int motionDelta = (int)c->_motionVerticalOffsetDelta;
-						if (ImGui::InputInt("VOffset Delta", &motionDelta))
-							c->_motionVerticalOffsetDelta = (uint16)CLIP(motionDelta, 0, 65535);
-						int motionDist = (int)c->_motionDistanceUnits;
-						if (ImGui::InputInt("Distance Units", &motionDist))
-							c->_motionDistanceUnits = (uint16)CLIP(motionDist, 0, 65535);
-						int motionProg = (int)c->_motionProgress;
-						if (ImGui::InputInt("Progress", &motionProg))
-							c->_motionProgress = (uint16)CLIP(motionProg, 0, 65535);
-						int motionStart = (int)c->_motionStartVerticalOffset;
-						if (ImGui::InputInt("Start VOffset", &motionStart))
-							c->_motionStartVerticalOffset = (uint16)CLIP(motionStart, 0, 65535);
-						bool hasMotion = c->_hasMotionVerticalOffset;
-						if (ImGui::Checkbox("Has Motion VOffset", &hasMotion))
-							c->_hasMotionVerticalOffset = hasMotion;
-						bool shouldMirror = c->_shouldMirrorCurrentAnimation;
-						if (ImGui::Checkbox("Mirror Animation", &shouldMirror))
-							c->_shouldMirrorCurrentAnimation = shouldMirror;
-						ImGui::TreePop();
-					}
-
-					// --- Pickup fields ---
-					if (ImGui::TreeNode("Pickup")) {
-						int pickupFrame = (int)c->_pickupFrameCounter;
-						if (ImGui::InputInt("Frame Counter", &pickupFrame))
-							c->_pickupFrameCounter = (uint16)CLIP(pickupFrame, 0, 65535);
-						bool pickupTransferred = c->_pickupItemTransferred;
-						if (ImGui::Checkbox("Item Transferred", &pickupTransferred))
-							c->_pickupItemTransferred = pickupTransferred;
-						ImGui::Text("Previous Orientation: %u", c->_previousOrientation);
-						ImGui::TreePop();
-					}
-
-					// --- Dirty rect ---
-					if (ImGui::TreeNode("Dirty Rect")) {
-						ImGui::Text("Dirty: (%d,%d)-(%d,%d)", c->_dirtyLeft, c->_dirtyTop, c->_dirtyRight, c->_dirtyBottom);
-						ImGui::Text("LastDraw: (%d,%d) %ux%u", c->_lastDrawX, c->_lastDrawY, c->_lastDrawWidth, c->_lastDrawHeight);
-						ImGui::TreePop();
-					}
-
-					// --- Movement / Pathfinding ---
-					ImGui::Separator();
-					ImGui::TextUnformatted("Movement:");
-
-					bool isLerping = c->_isLerping;
-					if (ImGui::Checkbox("Lerping", &isLerping))
-						c->_isLerping = isLerping;
-					ImGui::SameLine();
-					bool dirSet = c->_stepDirectionSet;
-					if (ImGui::Checkbox("DirSet", &dirSet))
-						c->_stepDirectionSet = dirSet;
-					ImGui::SameLine();
-					bool followPath = c->_isFollowingPath;
-					if (ImGui::Checkbox("FollowPath", &followPath))
-						c->_isFollowingPath = followPath;
-
-					bool execOnFinish = c->_executeScriptOnFinishLerp;
-					if (ImGui::Checkbox("Exec Script On Finish", &execOnFinish))
-						c->_executeScriptOnFinishLerp = execOnFinish;
-
-					if (c->_isLerping) {
-						int target[2] = {c->_targetPosition.x, c->_targetPosition.y};
-						if (ImGui::InputInt2("Target Pos", target)) {
-							c->_targetPosition.x = (int16)target[0];
-							c->_targetPosition.y = (int16)target[1];
+						// --- Editable Position ---
+						int posXY[2] = {pos.x, pos.y};
+						if (ImGui::InputInt2("Position", posXY)) {
+							c->setPosition(Common::Point((int16)posXY[0], (int16)posXY[1]));
 						}
-						int finalDest[2] = {c->_pathFinalDestination.x, c->_pathFinalDestination.y};
-						if (ImGui::InputInt2("Final Dest", finalDest)) {
-							c->_pathFinalDestination.x = (int16)finalDest[0];
-							c->_pathFinalDestination.y = (int16)finalDest[1];
-						}
-						ImGui::Text("Bresenham: dX=%d dY=%d err=%d",
-									c->_stepDeltaX, c->_stepDeltaY, c->_stepError);
 
-						// Walk speed calculation
-						int depth = 0;
-						if (pos.y >= (int)g_engine->_walkDepthThresholdY)
-							depth = ((int)pos.y - (int)g_engine->_walkDepthThresholdY) * (int)g_engine->_walkDepthScaleFactor / 100;
-						uint16 animSpd = 2;
-						uint8 curOrient = c->_gameObject->_orientation;
-						if (curOrient >= 1 && curOrient <= 0x15 && (uint)(curOrient - 1) < c->_gameObject->_blobSpeeds.size()) {
-							animSpd = c->_gameObject->_blobSpeeds[curOrient - 1];
-							if (animSpd == 0)
-								animSpd = 2;
+						// --- Editable GameObject fields ---
+						int orient = (int)c->_gameObject->_orientation;
+						if (ImGui::InputInt("Orientation", &orient)) {
+							c->_gameObject->_orientation = (uint8)CLIP(orient, 0, 255);
 						}
-						int spd = (int)animSpd * ((int)g_engine->_walkBaseSpeedPct + depth) / 100;
-						if (spd < 1)
-							spd = 1;
-						ImGui::Text("Speed: %d (anim=%u depth=%d base=%u)",
-									spd, animSpd, depth, g_engine->_walkBaseSpeedPct);
-					}
-					if (c->_isFollowingPath && !c->_path.empty()) {
-						ImGui::Text("Path[%d/%u]: ", c->_currentPathIndex, (uint)c->_path.size());
+
+						int animIdx = (int)c->_animationIndex;
+						if (ImGui::InputInt("Animation Index", &animIdx)) {
+							c->_animationIndex = (uint8)CLIP(animIdx, 0, 255);
+						}
+
+						ImGui::Text("Vertical Offset: %u", c->getVerticalOffset());
+
+						bool hasShading = c->_gameObject->_hasShading;
+						if (ImGui::Checkbox("HasShading", &hasShading))
+							c->_gameObject->_hasShading = hasShading;
 						ImGui::SameLine();
-						for (uint p = 0; p < c->_path.size(); p++) {
-							if (p > 0)
-								ImGui::SameLine(0, 2);
-							if ((int)p == c->_currentPathIndex)
-								ImGui::TextColored(ImVec4(0, 1, 0, 1), "%u", c->_path[p]);
-							else
-								ImGui::Text("%u", c->_path[p]);
-						}
-					}
-
-					// Direction availability
-					if (c->_gameObject->_blobs.size() >= 8) {
-						ImGui::TextUnformatted("DirAvail: ");
+						bool hasScaling = c->_gameObject->_hasScaling;
+						if (ImGui::Checkbox("HasScaling", &hasScaling))
+							c->_gameObject->_hasScaling = hasScaling;
 						ImGui::SameLine();
-						const char *dirNames[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
-						for (int d = 0; d < 8; d++) {
-							if (d > 0)
-								ImGui::SameLine(0, 4);
-							bool avail = d < (int)c->_gameObject->_blobs.size() && !c->_gameObject->_blobs[d].empty();
-							if (avail)
-								ImGui::TextColored(ImVec4(0, 1, 0, 1), "%s", dirNames[d]);
-							else
-								ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1), "%s", dirNames[d]);
-						}
-					}
+						bool hasBounds = c->_gameObject->_hasBoundsAttachment;
+						if (ImGui::Checkbox("BoundsAttach", &hasBounds))
+							c->_gameObject->_hasBoundsAttachment = hasBounds;
 
-					// Animation frame preview - open in separate window
-					if (ImGui::TreeNode("Animations")) {
-						for (int blobIdx = 0; blobIdx < (int)c->_gameObject->_blobs.size(); blobIdx++) {
-							Common::Array<uint8> &blob = c->_gameObject->_blobs[blobIdx];
-							if (blob.empty())
-								continue;
-							AnimBlobView bv(blob);
-							ImGui::PushID(blobIdx);
-							Common::String btnLabel = Common::String::format("Blob %d (%u frames)", blobIdx, bv.frameCount());
-							if (ImGui::Button(btnLabel.c_str())) {
-								_animViewerObjIndex = c->_gameObject->_index;
-								_animViewerBlobIndex = blobIdx;
-								_showAnimViewer = true;
+						// --- Motion fields ---
+						if (ImGui::TreeNode("Motion")) {
+							int motionTarget = (int)c->_motionTargetVerticalOffset;
+							if (ImGui::InputInt("Target VOffset", &motionTarget))
+								c->_motionTargetVerticalOffset = (uint16)CLIP(motionTarget, 0, 65535);
+							int motionDelta = (int)c->_motionVerticalOffsetDelta;
+							if (ImGui::InputInt("VOffset Delta", &motionDelta))
+								c->_motionVerticalOffsetDelta = (uint16)CLIP(motionDelta, 0, 65535);
+							int motionDist = (int)c->_motionDistanceUnits;
+							if (ImGui::InputInt("Distance Units", &motionDist))
+								c->_motionDistanceUnits = (uint16)CLIP(motionDist, 0, 65535);
+							int motionProg = (int)c->_motionProgress;
+							if (ImGui::InputInt("Progress", &motionProg))
+								c->_motionProgress = (uint16)CLIP(motionProg, 0, 65535);
+							ImGui::Text("Pending VOffset Motion: %s", c->hasPendingVerticalMotion() ? "Y" : "N");
+							bool shouldMirror = c->_shouldMirrorCurrentAnimation;
+							if (ImGui::Checkbox("Mirror Animation", &shouldMirror))
+								c->_shouldMirrorCurrentAnimation = shouldMirror;
+							ImGui::TreePop();
+						}
+
+						// --- Pickup fields ---
+						if (ImGui::TreeNode("Pickup")) {
+							int pickupFrame = (int)c->_pickupFrameCounter;
+							if (ImGui::InputInt("Frame Counter", &pickupFrame))
+								c->_pickupFrameCounter = (uint16)CLIP(pickupFrame, 0, 65535);
+							bool pickupTransferred = c->_pickupItemTransferred;
+							if (ImGui::Checkbox("Item Transferred", &pickupTransferred))
+								c->_pickupItemTransferred = pickupTransferred;
+							ImGui::Text("Previous Orientation: %u", c->_previousOrientation);
+							ImGui::TreePop();
+						}
+
+						// --- Dirty rect ---
+						if (ImGui::TreeNode("Dirty Rect")) {
+							ImGui::Text("Dirty: (%d,%d)-(%d,%d)", c->_gameObject->_dirtyLeft, c->_gameObject->_dirtyTop,
+										c->_gameObject->_dirtyRight, c->_gameObject->_dirtyBottom);
+							ImGui::Text("LastDraw: (%d,%d) %ux%u", c->_gameObject->_lastDrawX, c->_gameObject->_lastDrawY,
+										c->_gameObject->_lastDrawWidth, c->_gameObject->_lastDrawHeight);
+							ImGui::TreePop();
+						}
+
+						// --- Movement / Pathfinding ---
+						ImGui::Separator();
+						ImGui::TextUnformatted("Movement:");
+
+						bool dirSet = c->_stepDirectionSet;
+						if (ImGui::Checkbox("DirSet", &dirSet))
+							c->_stepDirectionSet = dirSet;
+						ImGui::SameLine();
+
+						// Direction availability
+						if (c->_gameObject->_blobs.size() >= 8) {
+							ImGui::TextUnformatted("DirAvail: ");
+							ImGui::SameLine();
+							const char *dirNames[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
+							for (int d = 0; d < 8; d++) {
+								if (d > 0)
+									ImGui::SameLine(0, 4);
+								bool avail = d < (int)c->_gameObject->_blobs.size() && !c->_gameObject->_blobs[d].empty();
+								if (avail)
+									ImGui::TextColored(ImVec4(0, 1, 0, 1), "%s", dirNames[d]);
+								else
+									ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1), "%s", dirNames[d]);
 							}
-							ImGui::PopID();
-							if ((blobIdx + 1) % 5 != 0)
-								ImGui::SameLine();
 						}
-						if (!c->_gameObject->overloadAnimation.empty()) {
+
+						// Animation frame preview - open in separate window
+						if (ImGui::TreeNode("Animations")) {
+							for (int blobIdx = 0; blobIdx < (int)c->_gameObject->_blobs.size(); blobIdx++) {
+								Common::Array<uint8> &blob = c->_gameObject->_blobs[blobIdx];
+								if (blob.empty())
+									continue;
+								AnimBlobView bv(blob);
+								ImGui::PushID(blobIdx);
+								Common::String btnLabel = Common::String::format("Blob %d (%u frames)", blobIdx, bv.frameCount());
+								if (ImGui::Button(btnLabel.c_str())) {
+									_animViewerObjIndex = c->_gameObject->_index;
+									_animViewerBlobIndex = blobIdx;
+									_showAnimViewer = true;
+								}
+								ImGui::PopID();
+								if ((blobIdx + 1) % 5 != 0)
+									ImGui::SameLine();
+							}
+							if (!c->_gameObject->_overloadAnimation.empty()) {
+								ImGui::NewLine();
+								AnimBlobView ov(c->_gameObject->_overloadAnimation);
+								Common::String ovLabel = Common::String::format("Overload (%u frames, trigger orient=%u)",
+																				ov.frameCount(), c->_gameObject->_overloadAnimTriggerDirection);
+								if (ImGui::Button(ovLabel.c_str())) {
+									_animViewerObjIndex = c->_gameObject->_index;
+									_animViewerBlobIndex = -1; // sentinel for overload
+									_showAnimViewer = true;
+								}
+							}
 							ImGui::NewLine();
-							AnimBlobView ov(c->_gameObject->overloadAnimation);
-							Common::String ovLabel = Common::String::format("Overload (%u frames, trigger orient=%u)",
-								ov.frameCount(), c->_gameObject->overloadAnimTriggerDirection);
-							if (ImGui::Button(ovLabel.c_str())) {
-								_animViewerObjIndex = c->_gameObject->_index;
-								_animViewerBlobIndex = -1; // sentinel for overload
-								_showAnimViewer = true;
+							ImGui::TreePop();
+						}
+
+						// Dump character state to JSON file
+						if (ImGui::Button("Dump JSON")) {
+							GameObject *go = c->_gameObject;
+							Common::String filename = Common::String::format("obj_%u_dump.json", go->_index);
+							Common::DumpFile df;
+							if (df.open(Common::Path(filename))) {
+								df.writeString("{\n");
+								df.writeString(Common::String::format("  \"index\": %u,\n", go->_index));
+								df.writeString(Common::String::format("  \"position\": [%d, %d],\n", go->_position.x, go->_position.y));
+								df.writeString(Common::String::format("  \"sceneIndex\": %u,\n", go->_sceneIndex));
+								df.writeString(Common::String::format("  \"orientation\": %u,\n", go->_orientation));
+								df.writeString(Common::String::format("  \"verticalOffsetScale\": %u,\n", go->_verticalOffsetScale));
+								df.writeString(Common::String::format("  \"hasScaling\": %s,\n", go->_hasScaling ? "true" : "false"));
+								df.writeString(Common::String::format("  \"hasShading\": %s,\n", go->_hasShading ? "true" : "false"));
+								df.writeString(Common::String::format("  \"hasBoundsAttachment\": %s,\n", go->_hasBoundsAttachment ? "true" : "false"));
+								df.writeString(Common::String::format("  \"boundsAttachmentObjectID\": %u,\n", go->_boundsAttachmentObjectID));
+								df.writeString(Common::String::format("  \"overloadAnimTriggerDirection\": %u,\n", go->_overloadAnimTriggerDirection));
+								df.writeString(Common::String::format("  \"dataOffset\": %u,\n", go->_dataOffset));
+								df.writeString("  \"blobs\": [\n");
+								for (uint b = 0; b < go->_blobs.size(); b++) {
+									df.writeString(Common::String::format("    {\"slot\": %u, \"size\": %u, \"sourceKey\": %u, \"walkSpeed\": %u, \"mirror\": %s}%s\n",
+																		  b, (uint)go->_blobs[b].size(),
+																		  b < go->_blobSourceKeys.size() ? go->_blobSourceKeys[b] : 0,
+																		  b < go->_blobWalkSpeeds.size() ? go->_blobWalkSpeeds[b] : 0,
+																		  (b < go->_blobMirrorFlags.size() && go->_blobMirrorFlags[b]) ? "true" : "false",
+																		  b + 1 < go->_blobs.size() ? "," : ""));
+								}
+								df.writeString("  ],\n");
+								df.writeString(Common::String::format("  \"character\": {\n"));
+								df.writeString(Common::String::format("    \"positionX\": %d,\n", c->getPosition().x));
+								df.writeString(Common::String::format("    \"positionY\": %d,\n", c->getPosition().y));
+								df.writeString(Common::String::format("    \"shouldMirror\": %s,\n", c->_shouldMirrorCurrentAnimation ? "true" : "false"));
+								df.writeString(Common::String::format("    \"verticalOffset\": %u\n", c->getVerticalOffset()));
+								df.writeString("  }\n");
+								df.writeString("}\n");
+								df.close();
+								warning("Dumped character state to %s", filename.c_str());
 							}
 						}
-						ImGui::NewLine();
-						ImGui::TreePop();
-					}
 
-					// Dump character state to JSON file
-					if (ImGui::Button("Dump JSON")) {
-						GameObject *go = c->_gameObject;
-						Common::String filename = Common::String::format("obj_%u_dump.json", go->_index);
-						Common::DumpFile df;
-						if (df.open(Common::Path(filename))) {
-							df.writeString("{\n");
-							df.writeString(Common::String::format("  \"index\": %u,\n", go->_index));
-							df.writeString(Common::String::format("  \"position\": [%d, %d],\n", go->_position.x, go->_position.y));
-							df.writeString(Common::String::format("  \"sceneIndex\": %u,\n", go->_sceneIndex));
-							df.writeString(Common::String::format("  \"orientation\": %u,\n", go->_orientation));
-							df.writeString(Common::String::format("  \"verticalOffsetScale\": %u,\n", go->_verticalOffsetScale));
-							df.writeString(Common::String::format("  \"isVisible\": %s,\n", go->_isVisible ? "true" : "false"));
-							df.writeString(Common::String::format("  \"isClickable\": %s,\n", go->_isClickable ? "true" : "false"));
-							df.writeString(Common::String::format("  \"hasScaling\": %s,\n", go->_hasScaling ? "true" : "false"));
-							df.writeString(Common::String::format("  \"hasShading\": %s,\n", go->_hasShading ? "true" : "false"));
-							df.writeString(Common::String::format("  \"hasBoundsAttachment\": %s,\n", go->_hasBoundsAttachment ? "true" : "false"));
-							df.writeString(Common::String::format("  \"boundsAttachmentObjectID\": %u,\n", go->_boundsAttachmentObjectID));
-							df.writeString(Common::String::format("  \"overloadAnimTriggerDirection\": %u,\n", go->overloadAnimTriggerDirection));
-							df.writeString(Common::String::format("  \"dataOffset\": %u,\n", go->_dataOffset));
-							df.writeString("  \"blobs\": [\n");
-							for (uint b = 0; b < go->_blobs.size(); b++) {
-								df.writeString(Common::String::format("    {\"slot\": %u, \"size\": %u, \"sourceKey\": %u, \"speed\": %u, \"mirror\": %s}%s\n",
-									b, (uint)go->_blobs[b].size(),
-									b < go->_blobSourceKeys.size() ? go->_blobSourceKeys[b] : 0,
-									b < go->_blobSpeeds.size() ? go->_blobSpeeds[b] : 0,
-									(b < go->_blobMirrorFlags.size() && go->_blobMirrorFlags[b]) ? "true" : "false",
-									b + 1 < go->_blobs.size() ? "," : ""));
-							}
-							df.writeString("  ],\n");
-							df.writeString(Common::String::format("  \"character\": {\n"));
-							df.writeString(Common::String::format("    \"positionX\": %d,\n", c->getPosition().x));
-							df.writeString(Common::String::format("    \"positionY\": %d,\n", c->getPosition().y));
-							df.writeString(Common::String::format("    \"isLerping\": %s,\n", c->_isLerping ? "true" : "false"));
-							df.writeString(Common::String::format("    \"isFollowingPath\": %s,\n", c->_isFollowingPath ? "true" : "false"));
-							df.writeString(Common::String::format("    \"shouldMirror\": %s,\n", c->_shouldMirrorCurrentAnimation ? "true" : "false"));
-							df.writeString(Common::String::format("    \"verticalOffset\": %u\n", c->getVerticalOffset()));
-							df.writeString("  }\n");
-							df.writeString("}\n");
-							df.close();
-							warning("Dumped character state to %s", filename.c_str());
-						}
+						ImGui::PopID();
 					}
-
-					ImGui::PopID();
 				}
-			}
 			} // end Active Characters header
 
 			// All other objects in this scene (not active characters)
@@ -1355,15 +1320,15 @@ static void showCharactersWindow() {
 					}
 					if (isActive)
 						continue;
-					Common::String hdr = Common::String::format("obj=0x%x (%d,%d) vis=%s click=%s###scnobj%u",
-						obj->_index, obj->_position.x, obj->_position.y,
-						obj->_isVisible ? "Y" : "N", obj->_isClickable ? "Y" : "N", obj->_index);
+					Common::String hdr = Common::String::format("obj=0x%x (%d,%d) shade=%s scale=%s###scnobj%u",
+																obj->_index, obj->_position.x, obj->_position.y,
+																obj->_hasShading ? "Y" : "N", obj->_hasScaling ? "Y" : "N", obj->_index);
 					bool objOpen = ImGui::CollapsingHeader(hdr.c_str());
 					if (ImGui::IsItemHovered()) {
 						_hasHoveredObjectBounds = true;
 						// Scene objects don't have sprite bounds; show a small rect around position
 						_hoveredObjectBounds = Common::Rect(obj->_position.x - 8, obj->_position.y - 16,
-							obj->_position.x + 8, obj->_position.y + 2);
+															obj->_position.x + 8, obj->_position.y + 2);
 					}
 					if (objOpen) {
 						ImGui::Text("Orient: %u  VOffsetScale: %u", obj->_orientation, obj->_verticalOffsetScale);
@@ -1393,8 +1358,8 @@ static void showInventoryWindow() {
 				for (uint i = 0; i < view->_inventoryItems.size(); i++) {
 					GameObject *obj = view->_inventoryItems[i];
 					const Common::String &name = (obj->_index < GameObjects::instance()._objectNames.size() && !GameObjects::instance()._objectNames[obj->_index].empty())
-						? GameObjects::instance()._objectNames[obj->_index]
-						: "???";
+													 ? GameObjects::instance()._objectNames[obj->_index]
+													 : "???";
 					Common::String utf8Name = Common::U32String(name.c_str(), Common::kDos850).encode(Common::kUtf8);
 					ImGui::PushID(obj->_index);
 					if (ImGui::Button("Remove")) {
@@ -1417,8 +1382,8 @@ static void showInventoryWindow() {
 					if (obj->_blobs.size() <= 0x13 || obj->_blobs[0x13].empty())
 						continue;
 					const Common::String &name = (obj->_index < GameObjects::instance()._objectNames.size() && !GameObjects::instance()._objectNames[obj->_index].empty())
-						? GameObjects::instance()._objectNames[obj->_index]
-						: "???";
+													 ? GameObjects::instance()._objectNames[obj->_index]
+													 : "???";
 					Common::String utf8Name = Common::U32String(name.c_str(), Common::kDos850).encode(Common::kUtf8);
 					if (filterBuf[0] != '\0' && !utf8Name.contains(filterBuf))
 						continue;
@@ -1569,7 +1534,7 @@ static void showSceneMapsWindow() {
 			if (view) {
 				for (uint i = 0; i < view->_characters.size(); i++) {
 					Character *c = view->_characters[i];
-					if (!c || !c->_gameObject || !c->_gameObject->_isClickable)
+					if (!c || !c->_gameObject)
 						continue;
 					Common::Point pos = c->getPosition();
 					if (pos.x >= 3 && pos.x < 317 && pos.y >= 3 && pos.y < 197) {
@@ -1622,12 +1587,12 @@ static void showSceneMapsWindow() {
 						float sy = pos.y * scale;
 						ImVec2 center(imgOrigin.x + sx, imgOrigin.y + sy);
 						uint32 col;
-						if (!obj->_isVisible)
-							col = IM_COL32(128, 128, 128, 200);
-						else if (obj->_isClickable)
+						if (obj->_hasScaling)
 							col = IM_COL32(0, 255, 0, 255);
-						else
+						else if (obj->_hasShading)
 							col = IM_COL32(255, 255, 0, 255);
+						else
+							col = IM_COL32(200, 200, 200, 200);
 						dl->AddCircleFilled(center, MAX(4.0f * scale, 3.0f), col);
 						char buf[8];
 						snprintf(buf, sizeof(buf), "%x", obj->_index);
@@ -1665,8 +1630,8 @@ static void showSceneMapsWindow() {
 								ImGui::Separator();
 								ImGui::Text("Object 0x%x  Scene:%u  Pos:(%d,%d)  Orient:%u",
 											obj->_index, obj->_sceneIndex, obj->_position.x, obj->_position.y, obj->_orientation);
-								ImGui::Text("Visible:%s  Clickable:%s",
-											obj->_isVisible ? "Y" : "N", obj->_isClickable ? "Y" : "N");
+								ImGui::Text("HasShading:%s  HasScaling:%s",
+											obj->_hasShading ? "Y" : "N", obj->_hasScaling ? "Y" : "N");
 								ImGui::Text("Blobs: %u  Script: %u bytes",
 											(uint)obj->_blobs.size(), (uint)obj->_script.size());
 								break;
@@ -1773,9 +1738,8 @@ static void showSceneMapsWindow() {
 					ImGui::SameLine(0, 0);
 				}
 				ImGui::NewLine();
-				ImGui::Text("PathIdx: %d/%u  Following: %s  Dest: (%d,%d)",
+				ImGui::Text("PathIdx: %d/%u Dest: (%d,%d)",
 							protagonist->_currentPathIndex, (uint)protagonist->_path.size(),
-							protagonist->_isFollowingPath ? "Y" : "N",
 							protagonist->_pathFinalDestination.x, protagonist->_pathFinalDestination.y);
 			}
 		}
@@ -1904,7 +1868,7 @@ static void showObjectScriptsWindow() {
 					}
 					bool isExecuting = exec->isExecuting() && exec->getExecutingObjectId() == obj->_index;
 					Common::String label = Common::String::format("%s0x%x (%u bytes)###obj%d",
-						isExecuting ? "> " : "", obj->_index, (uint)obj->_script.size(), idx);
+																  isExecuting ? "> " : "", obj->_index, (uint)obj->_script.size(), idx);
 					if (isExecuting)
 						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 1, 0, 1));
 					if (ImGui::Selectable(label.c_str(), selectedObj == idx))
@@ -1925,7 +1889,7 @@ static void showObjectScriptsWindow() {
 					}
 					bool isExecuting = exec->isExecuting() && exec->getExecutingObjectId() == obj->_index;
 					Common::String label = Common::String::format("%s0x%x (%u bytes)###obj%d",
-						isExecuting ? "> " : "", obj->_index, (uint)obj->_script.size(), idx);
+																  isExecuting ? "> " : "", obj->_index, (uint)obj->_script.size(), idx);
 					if (isExecuting)
 						ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 1, 0, 1));
 					if (ImGui::Selectable(label.c_str(), selectedObj == idx))
@@ -1969,14 +1933,14 @@ static void showObjectScriptsWindow() {
 				}
 				ImGui::SameLine();
 				ImGui::Text("Object 0x%x%s | %u bytes | %u opcodes",
-					selObj->_index,
-					selObj->_sceneIndex == 0 ? " [inventory]" : "",
-					(uint)selObj->_script.size(), (uint)objDecompile.size());
+							selObj->_index,
+							selObj->_sceneIndex == 0 ? " [inventory]" : "",
+							(uint)selObj->_script.size(), (uint)objDecompile.size());
 				ImGui::Separator();
 
 				uint32 currentPos = 0xFFFFFFFF;
 				if (exec->isExecuting() && exec->getExecutingObjectId() == selObj->_index)
-					currentPos = exec->getScriptPosition();
+					currentPos = exec->getDebugOpcodePosition();
 
 				for (uint i = 0; i < objDecompile.size(); i++) {
 					const DecompiledLine &l = objDecompile[i];
@@ -2050,7 +2014,10 @@ void onImGuiRender() {
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Log Channels")) {
-			static const struct { int flag; const char *name; } channels[] = {
+			static const struct {
+				int flag;
+				const char *name;
+			} channels[] = {
 				{kDebugGraphics, "Graphics"},
 				{kDebugPath, "Path"},
 				{kDebugScan, "Scan"},
@@ -2099,6 +2066,37 @@ void onImGuiRender() {
 			ImGui::Separator();
 			if (ImGui::MenuItem("Run Script Executor"))
 				g_engine->runScriptExecutor(true);
+			static int dosSaveSlot = 0;
+			ImGui::SetNextItemWidth(60);
+			ImGui::InputInt("##dosslot", &dosSaveSlot, 1, 1);
+			if (dosSaveSlot < 0)
+				dosSaveSlot = 0;
+			if (dosSaveSlot > 9)
+				dosSaveSlot = 9;
+			ImGui::SameLine();
+			if (ImGui::MenuItem("Save to original DOS slot (SAVEGAME.N)")) {
+				Common::Error err = g_engine->saveOriginalGameState(dosSaveSlot);
+				if (err.getCode() != Common::kNoError)
+					warning("Failed to write original DOS save SAVEGAME.%d", dosSaveSlot);
+				else
+					debug("Wrote original DOS save SAVEGAME.%d", dosSaveSlot);
+			}
+			static int dosLoadSlot = 0;
+			ImGui::SetNextItemWidth(60);
+			ImGui::InputInt("##dosloadslot", &dosLoadSlot, 1, 1);
+			if (dosLoadSlot < 0)
+				dosLoadSlot = 0;
+			if (dosLoadSlot > 9)
+				dosLoadSlot = 9;
+			ImGui::SameLine();
+			if (ImGui::MenuItem("Load original DOS slot (SAVEGAME.N)")) {
+				// loadGameState slots 100..109 map to original DOS SAVEGAME.0..9
+				Common::Error err = g_engine->loadGameState(100 + dosLoadSlot);
+				if (err.getCode() != Common::kNoError)
+					warning("Failed to load original DOS save SAVEGAME.%d", dosLoadSlot);
+				else
+					debug("Loaded original DOS save SAVEGAME.%d", dosLoadSlot);
+			}
 			if (ImGui::MenuItem("Reset Background + Fade")) {
 				View1 *view = (View1 *)g_engine->findView("View1");
 				if (view) {
@@ -2175,8 +2173,8 @@ static void showSoundWindow() {
 		for (int i = 0; i < 9; i++) {
 			bool selected = (selectedVoice == i);
 			const char *label = ds.voices[i].active
-				? Common::String::format("Voice %d [CH%d N%02X]", i, ds.voices[i].channel, ds.voices[i].note).c_str()
-				: Common::String::format("Voice %d (idle)", i).c_str();
+									? Common::String::format("Voice %d [CH%d N%02X]", i, ds.voices[i].channel, ds.voices[i].note).c_str()
+									: Common::String::format("Voice %d (idle)", i).c_str();
 			if (ImGui::Selectable(label, selected))
 				selectedVoice = i;
 			if (selected)
@@ -2188,7 +2186,7 @@ static void showSoundWindow() {
 	// Voice detail
 	const auto &v = ds.voices[selectedVoice];
 	ImGui::Text("Note: 0x%02X  MIDI Ch: %u  Vol: %u  Active: %s",
-		v.note, v.channel, v.volume, v.active ? "YES" : "no");
+				v.note, v.channel, v.volume, v.active ? "YES" : "no");
 
 	// Ring buffer waveform for selected voice
 	ImGui::TextUnformatted("Activity:");

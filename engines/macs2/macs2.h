@@ -109,6 +109,9 @@ struct GlyphData : public Sprite {
 };
 
 struct AnimFrame : public Sprite {
+	int16 _offsetX = 0;
+	int16 _offsetY = 0;
+
 	void readFromeFile(Common::File &file);
 	void readFromStream(Common::MemoryReadStream *stream);
 	bool pixelHit(const Common::Point &point) const;
@@ -126,7 +129,6 @@ struct BackgroundAnimationBlob {
 	uint16 _x;
 	uint16 _y;
 	Common::Array<uint8> _blob;
-	uint32 _frameIndex;
 	uint16 _unknown0C = 0; // +0x50F3: purpose unknown (word, read from file, not used at runtime)
 	uint8 _unknown0E = 0;  // +0x50F5: purpose unknown (byte, read from file, not used at runtime)
 	uint8 _unknown0F = 0;  // +0x50F6: purpose unknown (byte, read from file, not used at runtime)
@@ -173,7 +175,8 @@ struct AnimBlobView {
 	uint32 frameDataOffset() const { return 0x0B + sequenceLength(); }
 	uint16 frameCount() const {
 		uint32 off = frameDataOffset();
-		if (off + 2 > _blob.size()) return 0;
+		if (off + 2 > _blob.size())
+			return 0;
 		return READ_LE_UINT16(&_blob[off]);
 	}
 
@@ -313,7 +316,7 @@ public:
 	uint16 getWalkabilityAt(int16 y, int16 x);
 	bool isPathWalkable(int16 y1, int16 x1, int16 y2, int16 x2);
 	void snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16 charY, int16 charX);
-	int getPathfindingNodeCount() const { return (int)pathfindingPoints.size(); }
+	int getPathfindingNodeCount() const { return (int)_numPathfindingPoints; }
 	int euclideanDistance(const Common::Point &a, const Common::Point &b);
 	int walkableDistance(int nodeA, int nodeB);
 	int computeMinCostToReachable(int nodeIndex, int prevNode, uint16 actorIndex, const bool *reachable, int nodeCount, const Common::Point &finalDest);
@@ -324,7 +327,7 @@ public:
 	Common::Array<Macs2::AnimFrame> _imageResources;
 
 	GlyphData _glyphs[256];
-	GlyphData _panelGlyphs[256];   // Font 2: clean sans-serif font used by save/load panel
+	GlyphData _panelGlyphs[256]; // Font 2: clean sans-serif font used by save/load panel
 	GlyphData _overlayGlyphs[256];
 	uint16 numOverlayGlyphs = 0;
 	uint16 maxOverlayGlyphHeight = 0;
@@ -340,7 +343,11 @@ public:
 
 	bool findGlyph(char c, GlyphData &out) const;
 
+	// Character shading remap (loadResourceFile @ 1008:2e8d -> scene+0x53D3).
+	// Indexed as (color - 0xC0) * 0x20 + shadowIntensity (drawSpriteTransparent @ 1010:0ed1).
 	Common::Array<byte> _shadingTable;
+	// Per-scene 256-byte UI pixel remap (changeScene @ 1008:2574, drawAnimFrameScaled @ 1010:1399).
+	Common::Array<byte> _panelRemapTable;
 
 	// Map scene offsets from resource file (scene+0x5DDB, 256 entries x 4 bytes).
 	// Each entry is a file offset to a scene preview image for map mode.
@@ -354,7 +361,6 @@ public:
 	void setCursorMode(Script::MouseMode newMode);
 
 	Common::Array<uint16> _hotspotColorTable;
-	Common::Array<uint16> _pathfindingValueRemaps;
 
 	uint16 _numPathfindingPoints;
 	uint16 _walkDepthThresholdY;
@@ -371,6 +377,17 @@ public:
 	uint16 _paletteDarkenPercent;
 
 	void applyPaletteDarkening();
+	// Palette quantization for g_wHelpButtonDisabled path (1000:103e).
+	// Histograms scene pixels, keeps 16 rarest colors (0..0xBF) plus UI range
+	// 0xC0..0xFF, remaps background + bg-anim blobs + palette via Manhattan RGB.
+	void applyScenePaletteEffect();
+
+	// Gradual palette brighten effect for _scenePaletteMode == 2, matching the
+	// binary updateBackgroundAnimations (1008:2c05). Called from the game tick at
+	// the mode-gated rate. Despite the name it does NOT advance animation frames
+	// (that happens in the per-frame render); it decrements the darken percent
+	// toward 60 and reapplies the palette darkening.
+	void updateBackgroundAnimationPalette();
 
 	// Binary g_bMovementFinishedFlag [1020:0000]: set by walkAlongPath on final arrival
 	// (orientation < 9), checked after all characters processed in drawAllCharacters.
@@ -378,8 +395,11 @@ public:
 
 	Common::Array<uint32> _sceneResourceOffsets;
 
-	void loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex, bool shouldMirror = false);
-	void loadObjectData(GameObject *obj);
+	bool loadAnimationFromSceneData(uint16 objectIndex, uint16 slotIndex, uint8 arrayIndex, bool shouldMirror = false, uint16 executingScriptObjectId = 0);
+	bool loadObjectData(GameObject *obj);
+	void clearObjectRuntime(GameObject *obj);
+	// sortObjectsByDepth @ 1008:0d79 - inventory cursor reset + free object runtime blobs.
+	void sortObjectsByDepth(uint16 objectIndex);
 
 	void loadSongFromSceneData(uint8 dataIndex);
 	Music *getAdlib() const { return _adlib; }
@@ -510,6 +530,12 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+
+	// Write a raw original-DOS-format save file ("SAVEGAME.N", N=0..9) with no
+	// ScummVM wrapper, so it can be loaded by the original game executable.
+	// The byte layout is produced directly by syncGame (binary-compatible with
+	// saveGameToFile at 1008:6859). Mirrors loadGameState(slot 100..109).
+	Common::Error saveOriginalGameState(int dosSlot);
 
 	bool tick() override;
 

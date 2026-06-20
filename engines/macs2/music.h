@@ -56,7 +56,7 @@ public:
 	void playSongData(const Common::Array<uint8> &data);
 	void stopMusic();
 	void setVolume(uint16 volume);
-	bool isPlaybackReady() const { return !_playing; }
+	bool isPlaybackReady() const { return _adlibPlaybackReady; }
 
 	void readDataFromExecutable(Common::MemoryReadStream *fileStream);
 
@@ -102,6 +102,7 @@ private:
 	OPL::OPL *_opl;
 	MidiParser *_parser;
 	bool _playing;
+	bool _adlibPlaybackReady = true;
 
 	// OPL state
 	byte _regShadow[256];
