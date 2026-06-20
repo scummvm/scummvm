@@ -19,7 +19,7 @@
  *
  */
 
-#include "mads/madsv2/core/digi.h"
+#include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/global.h"
 #include "mads/madsv2/core/kernel.h"

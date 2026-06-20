@@ -19,13 +19,13 @@
  *
  */
 
-#include "mads/madsv2/core/digi.h"
+#include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/matte.h"
-#include "mads/madsv2/core/midi.h"
+#include "mads/madsv2/forest/midi.h"
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/sprite.h"
 #include "mads/madsv2/core/text.h"

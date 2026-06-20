@@ -19,18 +19,21 @@
  *
  */
 
-#ifndef MADS_CORE_MIDI_H
-#define MADS_CORE_MIDI_H
+#ifndef MADS_FOREST_MIDI_H
+#define MADS_FOREST_MIDI_H
 
 #include "common/scummsys.h"
 
 namespace MADS {
 namespace MADSV2 {
+namespace Forest {
 
 extern void midi_play(const char *name);
 extern void midi_stop();
-inline void midi_loop() {}
+inline void midi_loop() {
+}
 
+} // namespace Forest
 } // namespace MADSV2
 } // namespace MADS
 

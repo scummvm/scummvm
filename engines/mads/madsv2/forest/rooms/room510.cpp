@@ -20,12 +20,12 @@
  */
 
 #include "mads/madsv2/core/config.h"
-#include "mads/madsv2/core/digi.h"
+#include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/core/font.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/matte.h"
-#include "mads/madsv2/core/midi.h"
+#include "mads/madsv2/forest/midi.h"
 #include "mads/madsv2/core/mouse.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/quote.h"

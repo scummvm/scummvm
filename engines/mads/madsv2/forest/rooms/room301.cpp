@@ -20,11 +20,11 @@
  */
 
 #include "mads/madsv2/forest/journal.h"
-#include "mads/madsv2/core/digi.h"
+#include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
-#include "mads/madsv2/core/midi.h"
+#include "mads/madsv2/forest/midi.h"
 #include "mads/madsv2/core/object.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/forest/global.h"

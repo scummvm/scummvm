@@ -24,7 +24,7 @@
 #include "mads/madsv2/core/global.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/matte.h"
-#include "mads/madsv2/core/midi.h"
+#include "mads/madsv2/forest/midi.h"
 #include "mads/madsv2/core/mouse.h"
 #include "mads/madsv2/core/object.h"
 #include "mads/madsv2/core/player.h"
