@@ -2388,6 +2388,7 @@ void Script::ScriptExecutor::scriptDismissAllPanels() {
 	currentView->_uiPanelState = View1::kUiPanelNone;
 	currentView->_pendingPanelRequest = View1::kPanelRequestNone;
 	currentView->_isDialogueChoiceInputActive = false;
+	currentView->_activeInventoryItem = nullptr;
 	currentView->clearClickedButtonIndex();
 }
 
@@ -2399,6 +2400,7 @@ void Script::ScriptExecutor::scriptResetToSceneScript() {
 	_executingObjectIndex = Scenes::instance()._currentSceneIndex;
 	_scriptExecutionState = ScriptExecutionState::ExecutingSceneScript;
 	setCurrentSceneScriptAt(0);
+	_expectedEndLocation = 0;
 }
 
 void Script::ScriptExecutor::scriptLoadOverlayFont() {

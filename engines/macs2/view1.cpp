@@ -1086,6 +1086,21 @@ bool View1::msgFocus(const FocusMessage &msg) {
 	return true;
 }
 
+void View1::runInventoryPanelScriptIfPending(bool excludeCloseButton) {
+	if (_pendingPanelRequest != kPanelRequestNone) {
+		_uiBackgroundRestorePending = true;
+	}
+	redraw();
+	if (_pendingPanelRequest == kPanelRequestNone) {
+		return;
+	}
+	if (excludeCloseButton && _clickedButtonIndex == 6) {
+		return;
+	}
+	g_engine->runScriptExecutor(false);
+	_pendingPanelRequest = kPanelRequestNone;
+}
+
 bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 	// Binary handleInventoryClick (1008:4d07): only when g_wClickedButtonIndex == 0.
 	if (_clickedButtonIndex != 0) {
@@ -1195,8 +1210,8 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
 		g_engine->_scriptExecutor->_interactedInventoryItemId = 0;
 		_clickedButtonIndex = 5;
-		_uiBackgroundRestorePending = true;
-		g_engine->runScriptExecutor(false);
+		_pendingPanelRequest = kPanelRequestInventory;
+		runInventoryPanelScriptIfPending(true);
 		return true;
 	}
 	if (clickedObject != nullptr && g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Use) {
@@ -1217,14 +1232,13 @@ bool View1::handleInventoryClick(const MouseDownMessage &msg) {
 	if (_activeInventoryItem != nullptr && clickedObject != nullptr) {
 		// Use item on item (combine): from handleInventoryClick grid hit-test, mode 0x17.
 		// Binary sets interactedObjectId (source) + interactedInventoryItemId (target),
-		// then triggers runScriptExecutor via g_wHasSavedUiBackground. Does NOT set
-		// g_wInventoryCombineFlag here (that's only in the Drop button path).
-		// Panel state stays at 2 (inventory) - draw cycle hides panel when text shows.
+		// g_wPendingPanelRequest=1, then epilogue runScriptExecutor (clears pending after return).
+		// Does NOT set g_wInventoryCombineFlag here (that's only in the Drop button path).
 		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + _activeInventoryItem->_index;
 		g_engine->_scriptExecutor->_interactedInventoryItemId = 0x400 + clickedObject->_index;
 		_clickedButtonIndex = 5;
-		_uiBackgroundRestorePending = true;
-		g_engine->runScriptExecutor(false);
+		_pendingPanelRequest = kPanelRequestInventory;
+		runInventoryPanelScriptIfPending(true);
 	}
 
 	return true;
@@ -1302,13 +1316,11 @@ bool View1::handleContainerInventoryClick(const MouseDownMessage &msg) {
 	GameObject *clickedObject = getClickedInventoryItem(msg._pos);
 
 	if (clickedObject != nullptr && g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Look) {
-		// Binary: Look on container item triggers runScriptExecutor immediately
-		// (g_wPendingPanelRequest = 1 path in original)
 		g_engine->_scriptExecutor->_interactedObjectID = 0x400 + clickedObject->_index;
 		g_engine->_scriptExecutor->_interactedInventoryItemId = 0;
 		_clickedButtonIndex = 5;
-		_uiBackgroundRestorePending = true;
-		g_engine->runScriptExecutor(false);
+		_pendingPanelRequest = kPanelRequestInventory;
+		runInventoryPanelScriptIfPending(false);
 		return true;
 	}
 	if (clickedObject != nullptr && g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Use) {
