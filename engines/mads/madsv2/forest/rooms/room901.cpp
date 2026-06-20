@@ -67,10 +67,11 @@ static void room_901_pre_parser() {
 }
 
 static void room_901_parser() {
+	// No implementation
 }
 
 void room_901_synchronize(Common::Serializer &s) {
-	// Room has no scratch area
+	// No implementation
 }
 
 void room_901_preload() {

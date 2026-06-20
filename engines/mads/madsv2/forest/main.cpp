@@ -127,17 +127,17 @@ static void main_cold_data_init() {
 	game_menu_exit = global_menu_system_shutdown;
 	game_emergency_save = global_emergency_save;
 
-	Common::strcpy_s(config_file_name, "config.dra");
-	Common::strcpy_s(save_game_key, "drag");
-	Common::strcpy_s(restart_game_key, "dragon");
+	Common::strcpy_s(config_file_name, "config.for");
+	Common::strcpy_s(save_game_key, "oauf");
+	Common::strcpy_s(restart_game_key, "oauf");
 
-	Common::strcpy_s(player.series_name, "RAL");
+	Common::strcpy_s(player.series_name, "B");
 	player.walker_must_reload = true;
 	player.walker_loads_first = false;
 	player.walker_visible = true;
 	player.scaling_velocity = true;
 
-	Common::strcpy_s(kernel_cheating_password, "WIDECHEW");
+	Common::strcpy_s(kernel_cheating_password, "LLAMA");
 	kernel_cheating_allowed = strlen(kernel_cheating_password);
 
 	kernel.cheating = gDebugLevel == 9 ? kernel_cheating_allowed : 0;
@@ -152,8 +152,8 @@ static void game_main(int argc, const char **argv) {
 
 	mads_mode = env_verify();
 
-	new_section = 1;
-	new_room = 101;
+	new_section = 9;
+	new_room = 901;
 	player.x = 160;
 	player.y = 78;
 

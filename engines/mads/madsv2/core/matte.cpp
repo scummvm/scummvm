@@ -610,8 +610,6 @@ static void matte_special_effect(int special_effect, int full_screen) {
 		work_screen = &scr_work;
 	}
 
-	mouse_hide();
-
 	if (!timer_low_semaphore) {
 		if ((special_effect == MATTE_FX_FADE_FROM_BLACK) ||
 			(special_effect == MATTE_FX_FADE_THRU_BLACK)) {
@@ -708,8 +706,6 @@ static void matte_special_effect(int special_effect, int full_screen) {
 			work_screen->x, work_screen->y);
 		break;
 	}
-
-	mouse_show();
 }
 
 void matte_frame(int special_effect, int full_screen) {
