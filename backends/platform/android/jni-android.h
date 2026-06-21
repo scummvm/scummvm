@@ -100,6 +100,7 @@ public:
 	static Common::String getScummVMLogPath();
 	static jint getAndroidSDKVersionId();
 	static void setCurrentGame(const Common::String &target);
+	static void notifyHTTPService(int localPort, bool minimal);
 
 	static inline bool haveSurface();
 	static inline bool swapBuffers();
@@ -155,6 +156,7 @@ private:
 	static jmethodID _MID_getScummVMConfigPath;
 	static jmethodID _MID_getScummVMLogPath;
 	static jmethodID _MID_setCurrentGame;
+	static jmethodID _MID_notifyHTTPService;
 	static jmethodID _MID_getSysArchives;
 	static jmethodID _MID_getAllStorageLocations;
 	static jmethodID _MID_initSurface;
