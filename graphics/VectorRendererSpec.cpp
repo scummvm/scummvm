@@ -803,7 +803,12 @@ blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &
 		np = p;
 	}
 
-	_activeSurface->simpleBlitFrom(*source, drawRect, np, Graphics::FLIP_NONE, alphaType != Graphics::ALPHA_OPAQUE);
+	if (_activeSurface->format.bytesPerPixel == 1 && alphaType != Graphics::ALPHA_OPAQUE) {
+		// simpleBlitFrom doesn't currently support alpha blending to an RGB332 surface.
+		_activeSurface->transBlitFrom(*source, drawRect, np);
+	} else {
+		_activeSurface->simpleBlitFrom(*source, drawRect, np, Graphics::FLIP_NONE, alphaType != Graphics::ALPHA_OPAQUE);
+	}
 }
 
 template<typename PixelType>
