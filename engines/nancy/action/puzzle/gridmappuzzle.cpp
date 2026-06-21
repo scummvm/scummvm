@@ -34,13 +34,6 @@ namespace Nancy {
 namespace Action {
 
 void GridMapPuzzle::readData(Common::SeekableReadStream &stream) {
-	uint pos = stream.pos();
-	Common::DumpFile d;
-	d.open("nancy10_gridmappuzzle.dat");
-	d.writeStream(&stream, stream.size());
-	d.close();
-	stream.seek(pos);
-
 	readFilename(stream, _boardImageName);
 	readFilename(stream, _cursorImageName);
 
