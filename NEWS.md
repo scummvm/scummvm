@@ -1,6 +1,14 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2026.4.0 "Carousels & Killer Whales" (2026-10-XX)
+ General:
+   - Optimised mixing and rate converters, for better performance.
+
+ Atari port:
+   - Added integration with nFM library.
+
+
 #### 2026.3.0 "Carousels & Killer Whales" (2026-06-20)
 
  New games:
@@ -69,7 +77,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed holomap model rendering.
    - Disable autosaves while driving a vehicle.
 
-Atari port:
+ Atari port:
    - Added native CDDA support.
    - Added plugin support (now ScummVM can run with as little as a few megs of RAM).
    - Added native YM2149 support (currently usable for Elvira 1 and 2).
