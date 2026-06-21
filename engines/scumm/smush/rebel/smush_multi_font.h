@@ -32,18 +32,7 @@ namespace Scumm {
 
 class SmushPlayer;
 
-/**
- * SmushMultiFont - Multi-font renderer for SMUSH videos
- *
- * This class implements the GlyphRenderer_v7 interface and supports
- * switching between multiple fonts during text rendering via the ^fXX
- * escape sequence.
- *
- * The original Rebel Assault 2 (and other SCUMM v7 games) used a linked
- * list of font structures that could be traversed when ^f escape codes
- * were encountered. This class provides equivalent functionality by
- * holding an array of NutRenderer pointers and switching between them.
- */
+// Multi-font renderer for SMUSH text with ^fXX font switching.
 class SmushMultiFont : public GlyphRenderer_v7 {
 public:
 	static const int MAX_FONTS = 5;
@@ -51,13 +40,11 @@ public:
 	SmushMultiFont(ScummEngine *vm, SmushPlayer *player, bool useOriginalColors);
 	~SmushMultiFont() override;
 
-	// String drawing methods
 	void drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int16 col, TextStyleFlags flags);
 	void drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags);
 	void drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int16 col, TextStyleFlags flags);
 	void drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags);
 
-	// GlyphRenderer_v7 interface
 	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) override;
 	int drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) override;
 	int getCharWidth(uint16 chr) const override;
@@ -66,7 +53,6 @@ public:
 	int setFont(int id) override;
 	bool newStyleWrapping() const override { return true; }
 
-	// Set the initial/default font
 	void setDefaultFont(int id) { _defaultFont = id; _currentFont = id; }
 
 private:

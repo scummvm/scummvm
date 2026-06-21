@@ -19,8 +19,6 @@
  *
  */
 
-// Rebel Assault 2 SMUSH video codecs
-
 #include "scumm/smush/rebel/codec_ra2.h"
 
 #include "common/endian.h"
@@ -77,14 +75,7 @@ const byte *smushSkipRLELines(const byte *src, int &dataSize, int lines) {
 	return src;
 }
 
-/**
- * Codec 3 RLE decoder that writes ALL colors including color 0 (black).
- * Use this for background images where color 0 should NOT be treated as transparent.
- * The standard smushDecodeRLE() treats color 0 as transparent, which is correct
- * for overlay sprites but wrong for background images.
- *
- * Used by: Rebel Assault 2 Level 2 background loading (IACT opcode 8, par4=5)
- */
+// RLE decoder for opaque backgrounds, including color 0.
 void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize) {
 	if (dataSize <= 0)
 		return;
@@ -105,13 +96,7 @@ void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int wid
 	}
 }
 
-/**
- * Codec 21/44: Line Update codec
- * Used for fonts (NUT files) and some embedded HUD frames.
- * Format: Each line has a 2-byte size header, then 2-byte skip, 2-byte count pairs with literal pixels.
- * The count value needs +1 to get the actual number of pixels to copy.
- * Note: Skip regions preserve previous frame content (delta compression).
- */
+// Codec 21/44 line update.
 void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize) {
 	if (dataSize <= 0)
 		return;
@@ -130,7 +115,6 @@ void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int wi
 		byte *lineDst = dst;
 
 		while (len > 0 && lineEnd - src >= 2) {
-			// Read 2-byte LE skip value
 			int skip = READ_LE_UINT16(src);
 			src += 2;
 			if (skip >= len)
@@ -138,7 +122,6 @@ void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int wi
 			lineDst += skip;
 			len -= skip;
 
-			// Read 2-byte LE copy count (+1 for actual count)
 			if (lineEnd - src < 2)
 				break;
 			int count = READ_LE_UINT16(src) + 1;
@@ -146,7 +129,6 @@ void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int wi
 			if (count > len)
 				count = len;
 
-			// Copy literal pixels
 			int toCopy = count;
 			if (toCopy > (int)(lineEnd - src))
 				toCopy = (int)(lineEnd - src);
@@ -162,12 +144,7 @@ void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int wi
 	}
 }
 
-/**
- * Codec 23: Skip/Copy with embedded RLE
- * Used for video frames with skip regions.
- * Format: Each line has 2-byte size, then (skip, runSize, RLE_data) triplets.
- * Note: Skip regions preserve previous frame content (delta compression).
- */
+// Codec 23 skip/copy with embedded RLE.
 void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize) {
 	dst += top * pitch + left;
 	const byte *srcEnd = src + dataSize;
@@ -196,7 +173,6 @@ void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width
 			if (runEnd > lineEnd)
 				runEnd = lineEnd;
 
-			// Decode RLE within this run - write ALL colors including 0
 			while (src < runEnd && x < width) {
 				byte code = *src++;
 				int num = (code >> 1) + 1;
@@ -204,12 +180,10 @@ void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width
 					num = width - x;
 
 				if (code & 1) {
-					// RLE run - repeat color
 					byte color = (src < runEnd) ? *src++ : 0;
 					memset(lineDst + x, color, num);
 					x += num;
 				} else {
-					// Literal run - copy bytes
 					int toCopy = num;
 					if (toCopy > (int)(runEnd - src))
 						toCopy = (int)(runEnd - src);
@@ -225,9 +199,7 @@ void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width
 	}
 }
 
-// Codec 23: a skip/run RLE that tints the background in place (no pixel data). Per line,
-// lineDataSize(2) then [skip(1), run(1)] pairs; each run pixel becomes remap[background]
-// (translucency) or background+addColor.
+// Codec 23 skip/run remap that tints the background in place.
 void smushDecodeRA2SkipRemap(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize, const byte *remap, byte addColor) {
 	dst += top * pitch + left;
 	const byte *srcEnd = src + dataSize;
@@ -270,7 +242,7 @@ bool smushPrepareRA2BlurData(const byte *src, int dataSize, byte *palette, byte 
 	if (src == nullptr || dataSize < 6 || palette == nullptr || lookup == nullptr)
 		return false;
 
-	// FUN_0042B530 only processes this codec body when byte +4 is 1.
+	// Byte 4 gates whether this codec body is valid.
 	if (src[4] != 1)
 		return false;
 
@@ -307,10 +279,7 @@ bool smushPrepareRA2BlurData(const byte *src, int dataSize, byte *palette, byte 
 	return maskSize > 3;
 }
 
-/**
- * Codec 45: RA2 blur/wipe mask.
- * Original path: FUN_0042B460 -> FUN_0042B530 -> FUN_0042DDF0.
- */
+// Codec 45 blur/wipe mask.
 void smushDecodeRA2Blur(byte *dst, const byte *src, int left, int top, int dstWidth, int dstHeight, int pitch, int dataSize, byte *palette, byte *lookup) {
 	const byte *maskData = nullptr;
 	int maskSize = 0;

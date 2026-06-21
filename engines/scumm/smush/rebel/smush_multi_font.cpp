@@ -39,19 +39,15 @@ SmushMultiFont::~SmushMultiFont() {
 }
 
 NutRenderer *SmushMultiFont::getFont(int id) {
-	// Delegate to SmushPlayer to get the font
-	// SmushPlayer::getFont() handles font loading and caching
 	return _player->getFont(id);
 }
 
 NutRenderer *SmushMultiFont::getCurrentFont() const {
-	// We need a const version that doesn't trigger loading
-	// For const access, use _player's cached fonts directly
 	return const_cast<SmushMultiFont*>(this)->getFont(_currentFont);
 }
 
 Rebel2FontSet SmushMultiFont::getRebel2FontSet() {
-	// High-res mode uses dedicated larger-glyph font assets, not scaled low-res ones (matches getGameFont()).
+	// High-res mode uses dedicated larger-glyph font assets.
 	static const char *ra2FontsLo[] = {
 		"SYSTM/TALKFONT.NUT",
 		"SYSTM/SMALFONT.NUT",
@@ -82,7 +78,6 @@ Rebel2FontSet SmushMultiFont::getRebel2FontSet() {
 }
 
 void SmushMultiFont::drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int16 col, TextStyleFlags flags) {
-	// Reset to default font before drawing
 	_currentFont = _defaultFont;
 	if (_vm->_game.id == GID_REBEL2) {
 		Rebel2FontSet fontSet = getRebel2FontSet();
@@ -107,7 +102,6 @@ void SmushMultiFont::drawStringWrap(const char *str, byte *buffer, Common::Rect 
 }
 
 void SmushMultiFont::drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags) {
-	// Reset to default font before drawing
 	_currentFont = _defaultFont;
 	if (_vm->_game.id == GID_REBEL2) {
 		Rebel2FontSet fontSet = getRebel2FontSet();
@@ -122,7 +116,6 @@ int SmushMultiFont::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y
 	if (!font)
 		return 0;
 
-	// Adjust color for CMI compatibility
 	int16 adjCol = col;
 	if (_vm->_game.id == GID_CMI)
 		adjCol = 255;

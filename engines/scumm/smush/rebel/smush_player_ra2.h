@@ -38,7 +38,6 @@ protected:
 	void initGameVideoState() override;
 	void releaseGameVideoState() override;
 	bool shouldPreserveFrameBuffer() const override { return true; }
-	// Override to keep the FOBJ parm2 field (codec 23 marker) the base reader discards.
 	void handleFrameObject(int32 subSize, Common::SeekableReadStream &b) override;
 	bool handleGameFetch(int32 subSize, Common::SeekableReadStream &b) override;
 	bool handleGameTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &b) override;
@@ -88,7 +87,6 @@ private:
 	void ra2HandleFrameAudioChunk(uint32 subType, int32 subSize, Common::SeekableReadStream &b);
 	void ra2FeedAudio(uint8 *srcBuf, int groupId, int volume, int pan, int16 flags);
 
-	// LOAD chunk streaming buffer (embedded resource data)
 	byte *_loadBuffer;
 	int32 _loadBufferSize;
 	int32 _loadBufferOffset;
@@ -112,7 +110,7 @@ private:
 	bool _ra2PendingAnimHeaderPalette;
 	byte _ra2Codec45Palette[0x300];
 	byte _ra2Codec45Lookup[0x8000];
-	byte _ra2SkipRemapTable[256]; // codec 23 translucency remap table
+	byte _ra2SkipRemapTable[256];
 	bool _ra2SkipRemapValid;
 };
 

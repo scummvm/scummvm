@@ -19,11 +19,6 @@
  *
  */
 
-// SmushPlayerRebel2 — RA2-specific SmushPlayer subclass
-//
-// Overrides the virtual hooks defined in SmushPlayer to provide
-// Rebel Assault 2 specific video, font, text and codec handling.
-
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/rect.h"
@@ -45,7 +40,6 @@
 
 namespace Scumm {
 
-// FUN_00423880 is initialized at startup with a 400000-byte preload buffer.
 constexpr int kRebel2LoadBufferSize = 400000;
 constexpr int kRebel2GameplaySurfaceWidth = 0x1a8;
 constexpr int kRebel2GameplaySurfaceHeight = 0x104;
@@ -126,10 +120,6 @@ void smushDecodeRA2Uncompressed(byte *dst, const byte *src, int left, int top,
 	}
 }
 
-// ---------------------------------------------------------------------------
-// SmushPlayerRebel2 — construction / destruction
-// ---------------------------------------------------------------------------
-
 SmushPlayerRebel2::SmushPlayerRebel2(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insane *insane)
 	: SmushPlayer(scumm, imuseDigital, insane) {
 	initGamePlayerFields();
@@ -139,10 +129,6 @@ SmushPlayerRebel2::SmushPlayerRebel2(ScummEngine_v7 *scumm, IMuseDigital *imuseD
 SmushPlayerRebel2::~SmushPlayerRebel2() {
 	destroyGamePlayerFields();
 }
-
-// ---------------------------------------------------------------------------
-// Virtual hook overrides
-// ---------------------------------------------------------------------------
 
 void SmushPlayerRebel2::initGamePlayerFields() {
 	_multiFont = nullptr;
@@ -169,7 +155,7 @@ void SmushPlayerRebel2::initGamePlayerFields() {
 	_loadBuffer = nullptr;
 	_loadBufferSize = 0;
 	_loadBufferOffset = 0;
-	_loadReadOffset = 8;  // Original starts reading at offset 8 (skips header)
+	_loadReadOffset = 8;
 	_lastLoadChunkIdx = -1;
 	_loadStreamId = 0;
 	_ra2FrameSourceSkipX = 0;
@@ -226,11 +212,6 @@ void SmushPlayerRebel2::ra2InitAudioTrackSizes() {
 	memset(_smushTracks[musicTrack].blockPtr, 127, _smushTracks[musicTrack].blockSize);
 }
 
-/**
- * RA2-specific initialization in SmushPlayer::init().
- * Re-pushes the SMUSH palette for videos that inherit it from the previous video,
- * and initializes the screen target state before AHDR/FOBJ selects dimensions.
- */
 void SmushPlayerRebel2::initGameVideoState() {
 	_ra2PendingAnimHeaderPalette = false;
 	_ra2UsingGameplaySurface = false;
@@ -246,10 +227,7 @@ void SmushPlayerRebel2::initGameVideoState() {
 	_width = _vm->_screenWidth;
 	_height = _vm->_screenHeight;
 
-	// Keep the virtual screen consistent with FUN_00424d70: bit 0x20
-	// controls per-frame clearing. Videos that clear every frame can also start
-	// from a cleared target; videos with bit 0x20 set preserve until their first
-	// decoded frame overwrites or composes over it.
+	// Playback flag bit 0x20 controls per-frame clearing.
 	if (_dst != nullptr) {
 		VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
 		if ((_curVideoFlags & 0x20) == 0) {
@@ -258,19 +236,13 @@ void SmushPlayerRebel2::initGameVideoState() {
 	}
 }
 
-/**
- * RA2-specific cleanup in SmushPlayer::release().
- * Preserves the stored FOBJ and _frameBuffer across videos.
- */
 void SmushPlayerRebel2::releaseGameVideoState() {
 	free(_lastFobjData);
 	_lastFobjData = nullptr;
 	_lastFobjDataSize = 0;
 	_hasFrameFobjForGost = false;
 	_ra2NativeFrameNeedsClear = false;
-	// FUN_00423880 allocates the STOR overlay buffer once for the SMUSH subsystem,
-	// and FUN_004246d0 replays the last stored FOBJ even after a new SAN starts.
-	// Level 12 wave segments depend on this when 12P01_B.SAN starts with FTCH.
+	// Keep the stored FOBJ across videos; Level 12 wave segments start with FTCH.
 }
 
 bool SmushPlayerRebel2::ra2IsHighResMode() const {
@@ -342,11 +314,6 @@ bool SmushPlayerRebel2::ra2PromoteCurrentFrameToHiRes(int scrollX, int scrollY) 
 	return true;
 }
 
-/**
- * RA2-specific FTCH handling.
- * For Handler 25, skips FTCH to preserve overlays.
- * For other handlers, re-decodes stored FOBJ with current offsets.
- */
 bool SmushPlayerRebel2::handleGameFetch(int32 subSize, Common::SeekableReadStream &b) {
 	int16 ftchUnknown = b.readSint16LE();
 	int16 ftchX = b.readSint16LE();
@@ -367,7 +334,7 @@ bool SmushPlayerRebel2::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 		}
 	}
 
-	// Re-decode stored FOBJ data with current offsets (matching original FUN_004246d0).
+	// Re-decode stored FOBJ data with current offsets.
 	if (_storedFobjData != nullptr) {
 		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleGameFetch FTCH: Re-decoding stored FOBJ codec=%d pos=(%d,%d) size=%dx%d dataSize=%d",
 			_storedFobjCodec, _storedFobjLeft, _storedFobjTop,
@@ -461,9 +428,6 @@ bool SmushPlayerRebel2::handleGameTextResource(uint32 subType, int32 subSize, Co
 	return true;
 }
 
-/**
- * RA2-specific text rendering using SmushMultiFont for inline font switching.
- */
 bool SmushPlayerRebel2::handleGameTextRendering(const char *str, int fontId, int color,
 												int pos_x, int pos_y, int left, int top,
 												int width, int height, TextStyleFlags flg) {
@@ -477,11 +441,7 @@ bool SmushPlayerRebel2::handleGameTextRendering(const char *str, int fontId, int
 }
 
 SmushFont *SmushPlayerRebel2::getGameFont(int font) {
-	// Original exe uses pointer arithmetic to select hi/lo font pairs.
-	// Font 0: TALKFONT (TKHIFONT hi-res)
-	// Font 1: SMALFONT (SMHIFONT hi-res)
-	// Font 2: TITLFONT (TIHIFONT hi-res)
-	// Font 3: POVFONT  (POHIFONT hi-res)
+	// Font ids map to low/high-res font assets.
 	const char *ra2FontsLo[] = {
 		"SYSTM/TALKFONT.NUT",
 		"SYSTM/SMALFONT.NUT",
@@ -506,15 +466,7 @@ SmushFont *SmushPlayerRebel2::getGameFont(int font) {
 	return _sf[font];
 }
 
-// ---------------------------------------------------------------------------
-// RA2 string resource loading — separate from shared StringResource
-// ---------------------------------------------------------------------------
-
-// RA2 TRS format differences from standard SCUMM:
-//   - Up to ~658 entries (standard only supports 200)
-//   - Entries can be empty (no content between header and next #)
-//   - Content lines prefixed with //
-//   - Multi-line entries preserve newlines (credits, cast lists)
+// RA2 TRS supports many entries, empty entries, and //-prefixed multiline content.
 
 static const int RA2_MAX_STRINGS = 800;
 static const int RA2_ETRS_HEADER_LENGTH = 16;
@@ -660,10 +612,6 @@ bool SmushPlayerRebel2::handleGameSetupStrings() {
 	return true;
 }
 
-/**
- * Reset XPAL delta palette from the current base palette.
- * Prevents stale delta values from a previous video corrupting the palette.
- */
 void SmushPlayerRebel2::adjustGamePalette() {
 	for (int j = 0; j < 768; ++j) {
 		_shiftedDeltaPal[j] = _pal[j] << 7;
@@ -672,8 +620,7 @@ void SmushPlayerRebel2::adjustGamePalette() {
 }
 
 bool SmushPlayerRebel2::shouldLoadAnimHeaderPalette() const {
-	// RA2 copies the AHDR palette in handleGameAnimHeader() so it can match
-	// FUN_00424640/FUN_00424540 timing without changing the generic player.
+	// AHDR palette changes are applied after frame processing.
 	return false;
 }
 
@@ -722,19 +669,15 @@ void SmushPlayerRebel2::ra2HandleDeltaPalette(int32 subSize, Common::SeekableRea
 	setDirtyColors(0, 255);
 }
 
-// RA2-specific AHDR handling. AHDR metadata can describe the original SMUSH
-// backing bitmap, but active low-res gameplay dimensions are selected later by
-// IACT/FOBJ state; keep the virtual-screen pitch safe until then.
+// AHDR metadata can describe a backing bitmap, but active low-res gameplay
+// dimensions are selected later by IACT/FOBJ state.
 bool SmushPlayerRebel2::handleGameAnimHeader(byte *headerContent) {
 	if (!_skipPalette && (_curVideoFlags & 0x400) == 0) {
 		memcpy(_pal, headerContent + 6, sizeof(_pal));
 		adjustGamePalette();
 
-		// initGameVideoState() marks the previous palette dirty for videos that
-		// inherit it. AHDR replaces _pal before the first FRME, so clear that
-		// inherited dirty range and delay the new AHDR palette until frame start.
-		// Original RA2 marks it dirty from FUN_00424640, then applies it from
-		// FUN_00424540 after FUN_00424d70 has processed a frame.
+		// AHDR replaces _pal before the first FRME, so delay the dirty range
+		// until frame start.
 		_palDirtyMin = 256;
 		_palDirtyMax = -1;
 		_ra2PendingAnimHeaderPalette = true;
@@ -748,12 +691,8 @@ bool SmushPlayerRebel2::handleGameAnimHeader(byte *headerContent) {
 		_height = _vm->_screenHeight;
 		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleGameAnimHeader: RA2 AHDR has 0x0 dims - using screen size %dx%d", _width, _height);
 	} else if (width != _vm->_screenWidth || height != _vm->_screenHeight) {
-		// FUN_00407FCB/FUN_0040C3CC update the active frame descriptor from
-		// IACT opcode 6. In the low-res path the descriptor remains
-		// 320x200 and perspective is applied through FUN_00424510-equivalent
-		// FOBJ offsets. Do not let AHDR alone change pitch while _dst still
-		// points at the virtual screen; FOBJ selection will allocate a larger
-		// surface when an actual oversized frame object is decoded.
+		// Do not let AHDR alone change pitch while _dst still points at the
+		// virtual screen; FOBJ selection allocates larger surfaces when needed.
 		_width = _vm->_screenWidth;
 		_height = _vm->_screenHeight;
 		debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleGameAnimHeader: RA2 AHDR %dx%d - using screen size until FOBJ selects a surface",
@@ -766,20 +705,11 @@ bool SmushPlayerRebel2::handleGameAnimHeader(byte *headerContent) {
 	return true;
 }
 
-// ---------------------------------------------------------------------------
-// RA2 helper methods used by the base SmushPlayer pipeline.
-// ---------------------------------------------------------------------------
-
 void SmushPlayerRebel2::handleGameLoad(int32 subSize, Common::SeekableReadStream &b) {
 	handleLoad(subSize, b);
 }
 
-/**
- * Handle LOAD chunk for Rebel Assault 2.
- *
- * LOAD chunks stream embedded resource data across multiple frames.
- * FUN_00424450 treats word 0 as the stream id and word 1 as the chunk index.
- */
+// LOAD chunks stream embedded resource data across multiple frames.
 void SmushPlayerRebel2::handleLoad(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleLoad()");
 
@@ -837,13 +767,10 @@ void SmushPlayerRebel2::handleLoad(int32 subSize, Common::SeekableReadStream &b)
 	debugC(DEBUG_SMUSH, "SmushPlayerRebel2::handleLoad: Accumulated %d bytes total", _loadBufferOffset);
 }
 
-/**
- * RA2-specific text rendering using SmushMultiFont for inline font switching.
- */
 void SmushPlayerRebel2::ra2HandleTextResource(const char *str, int fontId, int color,
 										int pos_x, int pos_y, int left, int top,
 										int width, int height, TextStyleFlags flg) {
-	// Promote the native 320x200 frame to the 640x400 screen before drawing, else 2x-scaled text lands off-buffer.
+	// Promote native frames before drawing 2x-scaled high-res text.
 	const bool hiRes = ra2IsHighResMode() && !isRebel2GameplayActive(_insane);
 	if (hiRes)
 		ra2PromoteCurrentFrameToHiRes(0, 0);
@@ -870,10 +797,6 @@ void SmushPlayerRebel2::ra2HandleTextResource(const char *str, int fontId, int c
 	}
 }
 
-/**
- * RA2-specific buffer selection for non-standard FOBJ dimensions.
- * Returns true when the dimensions are valid and updates _dst, _width, _height as needed.
- */
 void SmushPlayerRebel2::ra2PrepareFrameObjectSurface(int left, int top, int width, int height) {
 	_ra2FrameObjectOriginalWidth = width;
 	_ra2FrameObjectOriginalHeight = height;
@@ -929,9 +852,8 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
 		return true;
 	}
 
-	// Rebel2 allocates the low-res gameplay target as 424x260 (FUN_00424730).
-	// High-res presentation still decodes video into native 320x200/424x260
-	// surfaces, then promotes the selected viewport to the 640x400 screen.
+	// Low-res gameplay uses a 424x260 target, then promotes the selected
+	// viewport to the 640x400 screen in high-res mode.
 	const int screenSize = _vm->_screenWidth * _vm->_screenHeight;
 	const int nativeScreenSize = 320 * 200;
 	const int64 fobjSize64 = (int64)width * height;
@@ -1039,7 +961,6 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
 	const int bufSize = (int)bufSize64;
 	const bool needsSpecialBuffer = useGameplaySurface || oversizedNative || bufSize > screenSize;
 	if (needsSpecialBuffer) {
-		// Frame is larger than the native target - need special buffer.
 		if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
 			byte *oldDst = _dst;
 			const int oldWidth = _width;
@@ -1094,7 +1015,6 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
 			debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Reset _dst to virtual screen for FOBJ %dx%d at (%d,%d)",
 				width, height, 0, 0);
 		} else {
-			// Large frame was in this video, use _specialBuffer for compositing
 			_dst = _specialBuffer;
 			debugC(DEBUG_SMUSH, "SmushPlayerRebel2::ra2SelectFrameBuffer: Using _specialBuffer for small FOBJ %dx%d (compositing with large frame)",
 				width, height);
@@ -1104,10 +1024,6 @@ bool SmushPlayerRebel2::ra2SelectFrameBuffer(int codec, int width, int height) {
 	return true;
 }
 
-/**
- * Decode RA2 full-frame delta FOBJ streams into a tight/padded scratch frame,
- * then place the visible rectangle at the FOBJ coordinates.
- */
 bool SmushPlayerRebel2::ra2DecodePlacedDeltaCodec(int codec, const uint8 *src, int left, int top,
 									 int width, int height, int pitch, int dataSize) {
 	if (!src || !_dst || width <= 0 || height <= 0 || pitch <= 0 || dataSize <= 0)
@@ -1220,21 +1136,15 @@ bool SmushPlayerRebel2::ra2DecodePlacedDeltaCodec(int codec, const uint8 *src, i
 	return true;
 }
 
-/**
- * Dispatch to RA2-specific codec functions.
- * Returns true if the codec was handled, false for standard codecs.
- */
 bool SmushPlayerRebel2::ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
 									 int width, int height, int pitch, int dataSize) {
 	switch (codec) {
 	case SMUSH_CODEC_RLE_ALT:
-		// RA2 codec 3 dispatches directly to FUN_0042CAA0, the opaque RLE path.
 		smushDecodeRLEOpaque(_dst, src, left, top, width, height, pitch, dataSize);
 		return true;
 	case SMUSH_CODEC_RLE:
 		if ((_curVideoFlags & 0x100) != 0) {
-			// Original RA2 RLE dispatch selects the opaque renderer only when
-			// render flag 0x100 is set. Cinematic wipe masks use transparent 0.
+			// Render flag 0x100 selects the opaque renderer.
 			smushDecodeRLEOpaque(_dst, src, left, top, width, height, pitch, dataSize);
 			return true;
 		}
@@ -1266,9 +1176,6 @@ bool SmushPlayerRebel2::ra2DecodeCodec(int codec, const uint8 *src, int left, in
 	}
 }
 
-/**
- * Save raw FOBJ data when STOR is pending (for later re-decoding by FTCH).
- */
 void SmushPlayerRebel2::ra2StoreFobjData(int codec, const byte *data, int32 dataSize,
 								   int left, int top, int width, int height) {
 	free(_storedFobjData);
@@ -1284,10 +1191,6 @@ void SmushPlayerRebel2::ra2StoreFobjData(int codec, const byte *data, int32 data
 	_storeFrame = false;
 }
 
-/**
- * RA2 GOST chunk handler.
- * Re-renders the most recent frame FOBJ at the supplied ghost position.
- */
 void SmushPlayerRebel2::ra2HandleGost(int32 subSize, Common::SeekableReadStream &b) {
 	if (subSize < 6) {
 		warning("SmushPlayerRebel2::ra2HandleGost: chunk too small (%d bytes)", subSize);
@@ -1312,8 +1215,7 @@ void SmushPlayerRebel2::ra2HandleGost(int32 subSize, Common::SeekableReadStream 
 		priorityFlags = 0x6000;
 	}
 
-	// Match FUN_0042cba0 default behavior (flags bit 0 clear): GOST coordinates
-	// are relative to the cached FOBJ header position.
+	// GOST coordinates are relative to the cached FOBJ header position.
 	int left = _lastFobjLeft + ghostX;
 	int top = _lastFobjTop + ghostY;
 
@@ -1322,26 +1224,17 @@ void SmushPlayerRebel2::ra2HandleGost(int32 subSize, Common::SeekableReadStream 
 		_lastFobjLeft, _lastFobjTop, left, top,
 		_lastFobjWidth, _lastFobjHeight, _lastFobjCodec);
 
-	// Priority bits (0x2000/0x4000/0x6000) are currently not modeled in
-	// the SMUSH decoders. Coordinate-correct re-decode restores expected
-	// RA2 chapter preview behavior.
+	// Priority bits are not modeled in the SMUSH decoders.
 	ra2PrepareFrameObjectSurface(left, top, _lastFobjWidth, _lastFobjHeight);
 	decodeFrameObject(_lastFobjCodec, _lastFobjData, left, top,
 		_lastFobjWidth, _lastFobjHeight, _lastFobjDataSize);
 }
 
-/**
- * RA2 per-frame audio processing.
- */
 void SmushPlayerRebel2::handleGameParseNextFrame() {
 	// Call processDispatches directly since RA2 has no iMUSE.
 	// This is the mixer cadence; SAUD opcodes provide per-block source rates.
 	processDispatches(_smushAudioSampleRate / 12);
 }
-
-// ---------------------------------------------------------------------------
-// Frame decode pipeline overrides
-// ---------------------------------------------------------------------------
 
 bool SmushPlayerRebel2::handleGameFrameBufferSelect(int codec, int width, int height) {
 	if ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)) {
@@ -1425,10 +1318,8 @@ bool SmushPlayerRebel2::handleGameAdjustCoords(int codec, int &left, int &top, i
 		if (srcSkipY)
 			*srcSkipY = 0;
 	} else if (isRebel2FullFrameDeltaCodec(codec)) {
-		// Codec 37/47 streams are full-frame delta streams, not row-prefixed
-		// RLE data. The original FOBJ dispatcher applies FUN_00424510 offsets
-		// to the destination coordinates passed to FUN_0042cba0; it does not
-		// advance the compressed source by clipped scanlines.
+		// Delta streams are full-frame data, so keep clipped scanlines in the
+		// destination offset instead of advancing the compressed source.
 		_ra2FrameSourceSkipY = sourceSkipY;
 		if (srcSkipY)
 			*srcSkipY = 0;
@@ -1442,8 +1333,8 @@ bool SmushPlayerRebel2::handleGameCodecDecode(int codec, const uint8 *src, int l
 	if (isRebel2FullFrameDeltaCodec(codec))
 		return ra2DecodePlacedDeltaCodec(codec, src, left, top, width, height, pitch, dataSize);
 
-	// Codec 23 translucent surfaces: parm2 0x100 prefixes a fresh 256-byte remap table, >=0x100
-	// reuses the last one. (Font glyphs call smushDecodeSkipRLE directly and are unaffected.)
+	// Codec 23 translucent surfaces: parm2 0x100 prefixes a remap table;
+	// larger values reuse the last one.
 	if (codec == SMUSH_CODEC_SKIP_RLE && parm2 >= 0x100) {
 		if (parm2 == 0x100 && dataSize >= 256) {
 			memcpy(_ra2SkipRemapTable, src, 256);
@@ -1456,12 +1347,10 @@ bool SmushPlayerRebel2::handleGameCodecDecode(int codec, const uint8 *src, int l
 		return true;
 	}
 
-	// Handle RA2-specific codecs (21, 23, 44, 45); return false for standard
-	// codecs (RLE) so the base class decodes them.
 	return ra2DecodeCodec(codec, src, left, top, width, height, pitch, dataSize);
 }
 
-// Mirrors SmushPlayer::handleFrameObject but forwards the FOBJ parm2 word (base discards it).
+// Forward the FOBJ parm2 word kept by RA2 codec 23.
 void SmushPlayerRebel2::handleFrameObject(int32 subSize, Common::SeekableReadStream &b) {
 	assert(subSize >= 14);
 	if (_skipNext) {
@@ -1490,7 +1379,6 @@ void SmushPlayerRebel2::handleFrameObject(int32 subSize, Common::SeekableReadStr
 }
 
 bool SmushPlayerRebel2::handleGameStoreFrame() {
-	// RA2 handles STOR via ra2StoreFobjData in handleGameFrameObjectPost
 	return true;
 }
 
@@ -1537,8 +1425,8 @@ void SmushPlayerRebel2::handleGameFrameStart() {
 		}
 	}
 
-	// FUN_00424d70 clears the target buffer before decoding a frame
-	// unless playback flags contain 0x20. Codec 21 frames in levels like
+	// Clear the target before decoding unless playback flags contain 0x20.
+	// Codec 21 frames in levels like
 	// LEV05/05PLAY.SAN only contain non-zero literals, so stale skipped pixels
 	// must not survive from the previous frame.
 	if ((_curVideoFlags & 0x20) == 0 && _dst != nullptr) {
