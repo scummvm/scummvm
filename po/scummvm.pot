@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-20 16:13+0000\n"
+"POT-Creation-Date: 2026-06-21 13:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2270,7 +2270,7 @@ msgid "Debug level:"
 msgstr ""
 
 #. I18N: Debug level -1, no messages
-#: gui/options.cpp:2758 gui/options.cpp:2895 audio/fmopl.cpp:83
+#: gui/options.cpp:2758 gui/options.cpp:2895 audio/fmopl.cpp:112
 msgid "None"
 msgstr ""
 
@@ -3747,32 +3747,72 @@ msgstr ""
 msgid "AdLib emulator"
 msgstr ""
 
-#: audio/fmopl.cpp:85
+#: audio/fmopl.cpp:114
 msgid "MAME OPL emulator"
 msgstr ""
 
-#: audio/fmopl.cpp:88
+#: audio/fmopl.cpp:117
 msgid "DOSBox OPL emulator"
 msgstr ""
 
-#: audio/fmopl.cpp:91
+#: audio/fmopl.cpp:120
 msgid "Nuked OPL emulator"
 msgstr ""
 
-#: audio/fmopl.cpp:94
+#: audio/fmopl.cpp:123
 msgid "ALSA Direct FM"
 msgstr ""
 
-#: audio/fmopl.cpp:97
+#: audio/fmopl.cpp:126
 msgid "OPL2LPT"
 msgstr ""
 
-#: audio/fmopl.cpp:98
+#: audio/fmopl.cpp:127
 msgid "OPL3LPT"
 msgstr ""
 
-#: audio/fmopl.cpp:101
+#: audio/fmopl.cpp:130
 msgid "RetroWave OPL3"
+msgstr ""
+
+#: audio/fmopl.cpp:133
+msgid "[nFM] NokturnFM2 (OPL2)"
+msgstr ""
+
+#: audio/fmopl.cpp:134
+msgid "[nFM] NokturnFM3 (OPL3)"
+msgstr ""
+
+#: audio/fmopl.cpp:135
+msgid "[nFM] RetroWave USB OPL3 Express (OPL3)"
+msgstr ""
+
+#: audio/fmopl.cpp:136
+msgid "[nFM] Serdaco OPL2LPT (OPL2)"
+msgstr ""
+
+#: audio/fmopl.cpp:137
+msgid "[nFM] Serdaco OPL3LPT (OPL3)"
+msgstr ""
+
+#: audio/fmopl.cpp:138
+msgid "[nFM] Cheerful Electronics OPL2 Audio Board (OPL2)"
+msgstr ""
+
+#: audio/fmopl.cpp:139
+msgid "[nFM] Cheerful Electronics OPL3 Duo! (2xOPL3)"
+msgstr ""
+
+#: audio/fmopl.cpp:140
+msgid "[nFM] ST Bus ISA / VME SoundBlaster"
+msgstr ""
+
+#: audio/fmopl.cpp:141
+msgid "[nFM] NatFeats / NULL"
+msgstr ""
+
+#: audio/fmopl.cpp:142
+msgid "[nFM] Nuked-OPL3 softsynth (OPL3)"
 msgstr ""
 
 #: audio/mididrv.cpp:232
