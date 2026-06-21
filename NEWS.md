@@ -4,6 +4,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 #### 2026.4.0 "Carousels & Killer Whales" (2026-10-XX)
  General:
    - Optimised mixing and rate converters, for better performance.
+   - Implemented ImGui-based interface for the Event Recorder.
+   - Fixed bug with inability to specify game overrides for MIDI and MT-32
+     devices.
 
  Atari port:
    - Added integration with nFM library.
