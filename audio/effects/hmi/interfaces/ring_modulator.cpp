@@ -33,15 +33,15 @@ HMIRingModulator::HMIRingModulator()
 				   kRingModulatorParams, kRingModulatorMin, kRingModulatorMax,
 				   kRingModulatorDefault, "Ring Modulator", 2900, 5) {}
 
-int HMIRingModulator::init(HMIPreset *, HMIEffectNode *) {
+int HMIRingModulator::init(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIRingModulator::uninit(HMIPreset *, HMIEffectNode *) {
+int HMIRingModulator::uninit(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIRingModulator::initEffect(HMIPreset *, HMIEffectNode *base) {
+int HMIRingModulator::initEffect(HMIPreset *preset, HMIEffectNode *base) {
 	((HMIRingModulatorNode *)base)->phase = 0.0f;
 	return 0;
 }
@@ -75,23 +75,23 @@ int HMIRingModulator::processBlock(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIRingModulator::getEffectParam(HMIEffectNode *base, int p, float *v, int *type) {
+int HMIRingModulator::getEffectParam(HMIEffectNode *base, int param, float *value, int *type) {
 	HMIRingModulatorNode *n = (HMIRingModulatorNode *)base;
 
-	if (p == 0) {
-		*v = n->frequency;
+	if (param == 0) {
+		*value = n->frequency;
 		*type = 1;
-	} else if (p == 1) {
-		*v = n->modulatorType;
+	} else if (param == 1) {
+		*value = n->modulatorType;
 		*type = 3;
-	} else if (p == 2) {
-		*v = n->modulateOutOfPhase;
+	} else if (param == 2) {
+		*value = n->modulateOutOfPhase;
 		*type = 3;
-	} else if (p == 3) {
-		*v = n->dryOut;
+	} else if (param == 3) {
+		*value = n->dryOut;
 		*type = 2;
-	} else if (p == 4) {
-		*v = n->wetOut;
+	} else if (param == 4) {
+		*value = n->wetOut;
 		*type = 2;
 	} else {
 		return 11;
@@ -100,19 +100,19 @@ int HMIRingModulator::getEffectParam(HMIEffectNode *base, int p, float *v, int *
 	return 0;
 }
 
-int HMIRingModulator::setEffectParam(HMIEffectNode *base, int p, float v) {
+int HMIRingModulator::setEffectParam(HMIEffectNode *base, int param, float value) {
 	HMIRingModulatorNode *n = (HMIRingModulatorNode *)base;
 
-	if (p == 0) {
-		n->frequency = v;
-	} else if (p == 1) {
-		n->modulatorType = v;
-	} else if (p == 2) {
-		n->modulateOutOfPhase = v;
-	} else if (p == 3) {
-		n->dryOut = v;
-	} else if (p == 4) {
-		n->wetOut = v;
+	if (param == 0) {
+		n->frequency = value;
+	} else if (param == 1) {
+		n->modulatorType = value;
+	} else if (param == 2) {
+		n->modulateOutOfPhase = value;
+	} else if (param == 3) {
+		n->dryOut = value;
+	} else if (param == 4) {
+		n->wetOut = value;
 	} else {
 		return 11;
 	}

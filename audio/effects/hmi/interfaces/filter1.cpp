@@ -33,11 +33,11 @@ HMIFilter1::HMIFilter1()
 				   kFilter1Params, kFilter1Min, kFilter1Max, kFilter1Default,
 				   "Filter 1", 2300, 4) {}
 
-int HMIFilter1::init(HMIPreset *, HMIEffectNode *) {
+int HMIFilter1::init(HMIPreset *preset, HMIEffectNode *base) {
 	return 0; 
 }
 
-int HMIFilter1::uninit(HMIPreset *, HMIEffectNode *) {
+int HMIFilter1::uninit(HMIPreset *preset, HMIEffectNode *base) {
 	return 0; 
 }
 
@@ -114,21 +114,21 @@ int HMIFilter1::processBlock(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIFilter1::getEffectParam(HMIEffectNode *base, int p, float *v, int *type) {
+int HMIFilter1::getEffectParam(HMIEffectNode *base, int param, float *value, int *type) {
 	HMIFilter1Node *n = (HMIFilter1Node *)base;
 	
-	if (p == 0) {
-		*v = (float)(uint32)n->filterType;
+	if (param == 0) {
+		*value = (float)(uint32)n->filterType;
 		*type = 3;
 		return 0;
 	}
 
-	if (p == 1) {
-		*v = n->cutoffFrequency;
-	} else if (p == 2) {
-		*v = n->centerFrequency;
-	} else if (p == 3) {
-		*v = n->bandWidth;
+	if (param == 1) {
+		*value = n->cutoffFrequency;
+	} else if (param == 2) {
+		*value = n->centerFrequency;
+	} else if (param == 3) {
+		*value = n->bandWidth;
 	} else {
 		return 11;
 	}
@@ -137,17 +137,17 @@ int HMIFilter1::getEffectParam(HMIEffectNode *base, int p, float *v, int *type) 
 	return 0;
 }
 
-int HMIFilter1::setEffectParam(HMIEffectNode *base, int p, float v) {
+int HMIFilter1::setEffectParam(HMIEffectNode *base, int param, float value) {
 	HMIFilter1Node *n = (HMIFilter1Node *)base;
 
-	if (p == 0) {
-		n->filterType = (int)(v);
-	} else if (p == 1) {
-		n->cutoffFrequency = v;
-	} else if (p == 2) {
-		n->centerFrequency = v;
-	} else if (p == 3) {
-		n->bandWidth = v;
+	if (param == 0) {
+		n->filterType = (int)(value);
+	} else if (param == 1) {
+		n->cutoffFrequency = value;
+	} else if (param == 2) {
+		n->centerFrequency = value;
+	} else if (param == 3) {
+		n->bandWidth = value;
 	} else {
 		return 11;
 	}

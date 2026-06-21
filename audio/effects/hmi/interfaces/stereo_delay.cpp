@@ -55,7 +55,7 @@ int HMIStereoDelay::init(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIStereoDelay::uninit(HMIPreset *, HMIEffectNode *base) {
+int HMIStereoDelay::uninit(HMIPreset *preset, HMIEffectNode *base) {
 	HMIStereoDelayNode *n = (HMIStereoDelayNode *)base;
 
 	free(n->delayBufL);
@@ -63,7 +63,7 @@ int HMIStereoDelay::uninit(HMIPreset *, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIStereoDelay::initEffect(HMIPreset *, HMIEffectNode *base) {
+int HMIStereoDelay::initEffect(HMIPreset *preset, HMIEffectNode *base) {
 	HMIStereoDelayNode *n = (HMIStereoDelayNode *)base;
 
 	n->writeIndexL = n->writeIndexR = 0;
@@ -110,26 +110,26 @@ int HMIStereoDelay::processBlock(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIStereoDelay::getEffectParam(HMIEffectNode *base, int p, float *v, int *type) {
+int HMIStereoDelay::getEffectParam(HMIEffectNode *base, int param, float *value, int *type) {
 	HMIStereoDelayNode *n = (HMIStereoDelayNode *)base;
 
-	if (p == 0) {
-		*v = n->maxDelayTime;
+	if (param == 0) {
+		*value = n->maxDelayTime;
 		*type = 0;
-	} else if (p == 1) {
-		*v = n->delayTimeL;
+	} else if (param == 1) {
+		*value = n->delayTimeL;
 		*type = 0;
-	} else if (p == 2) {
-		*v = n->delayTimeR;
+	} else if (param == 2) {
+		*value = n->delayTimeR;
 		*type = 0;
-	} else if (p == 3) {
-		*v = n->feedback;
+	} else if (param == 3) {
+		*value = n->feedback;
 		*type = 2;
-	} else if (p == 4) {
-		*v = n->dryOut;
+	} else if (param == 4) {
+		*value = n->dryOut;
 		*type = 2;
-	} else if (p == 5) {
-		*v = n->wetOut;
+	} else if (param == 5) {
+		*value = n->wetOut;
 		*type = 2;
 	} else {
 		return 11;
@@ -138,21 +138,21 @@ int HMIStereoDelay::getEffectParam(HMIEffectNode *base, int p, float *v, int *ty
 	return 0;
 }
 
-int HMIStereoDelay::setEffectParam(HMIEffectNode *base, int p, float v) {
+int HMIStereoDelay::setEffectParam(HMIEffectNode *base, int param, float value) {
 	HMIStereoDelayNode *n = (HMIStereoDelayNode *)base;
 
-	if (p == 0) {
-		n->maxDelayTime = v;
-	} else if (p == 1) {
-		n->delayTimeL = v;
-	} else if (p == 2) {
-		n->delayTimeR = v;
-	} else if (p == 3) {
-		n->feedback = v;
-	} else if (p == 4) {
-		n->dryOut = v;
-	} else if (p == 5) {
-		n->wetOut = v;
+	if (param == 0) {
+		n->maxDelayTime = value;
+	} else if (param == 1) {
+		n->delayTimeL = value;
+	} else if (param == 2) {
+		n->delayTimeR = value;
+	} else if (param == 3) {
+		n->feedback = value;
+	} else if (param == 4) {
+		n->dryOut = value;
+	} else if (param == 5) {
+		n->wetOut = value;
 	} else {
 		return 11;
 	}

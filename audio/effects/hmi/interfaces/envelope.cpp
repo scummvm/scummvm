@@ -33,15 +33,15 @@ HMIEnvelope::HMIEnvelope()
 				   kEnvelopeParams, kEnvelopeMin, kEnvelopeMax, kEnvelopeDefault,
 				   "Envelope", 2910, 18) {}
 
-int HMIEnvelope::init(HMIPreset *, HMIEffectNode *) {
+int HMIEnvelope::init(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIEnvelope::uninit(HMIPreset *, HMIEffectNode *) {
+int HMIEnvelope::uninit(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIEnvelope::initEffect(HMIPreset *, HMIEffectNode *base) {
+int HMIEnvelope::initEffect(HMIPreset *preset, HMIEffectNode *base) {
 	HMIEnvelopeNode *n = (HMIEnvelopeNode *)base;
 
 	if (n->initGuard == 0.0f) {
@@ -89,17 +89,17 @@ int HMIEnvelope::processBlock(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIEnvelope::getEffectParam(HMIEffectNode *base, int p, float *v, int *type) {
+int HMIEnvelope::getEffectParam(HMIEffectNode *base, int param, float *value, int *type) {
 	HMIEnvelopeNode *n = (HMIEnvelopeNode *)base;
-	if (p == 0) {
-		*v = n->envPoints;
-	} else if (p == 1) {
-		*v = n->initGuard;
+	if (param == 0) {
+		*value = n->envPoints;
+	} else if (param == 1) {
+		*value = n->initGuard;
 		*type = 0;
 		return 0;
-	} else if (p >= 2 && p <= 17) {
-		int index = (p - 2) >> 1;
-		*v = (p & 1) ? n->pointAmp[index] : n->pointTime[index];
+	} else if (param >= 2 && param <= 17) {
+		int index = (param - 2) >> 1;
+		*value = (param & 1) ? n->pointAmp[index] : n->pointTime[index];
 	} else {
 		return 11;
 	}
@@ -108,19 +108,19 @@ int HMIEnvelope::getEffectParam(HMIEffectNode *base, int p, float *v, int *type)
 	return 0;
 }
 
-int HMIEnvelope::setEffectParam(HMIEffectNode *base, int p, float v) {
+int HMIEnvelope::setEffectParam(HMIEffectNode *base, int param, float value) {
 	HMIEnvelopeNode *n = (HMIEnvelopeNode *)base;
-	if (p == 0) {
-		n->envPoints = v;
-	} else if (p == 1) {
-		n->initGuard = v;
-	} else if (p >= 2 && p <= 17) {
-		int index = (p - 2) >> 1;
+	if (param == 0) {
+		n->envPoints = value;
+	} else if (param == 1) {
+		n->initGuard = value;
+	} else if (param >= 2 && param <= 17) {
+		int index = (param - 2) >> 1;
 
-		if (p & 1) {
-			n->pointAmp[index] = v;
+		if (param & 1) {
+			n->pointAmp[index] = value;
 		} else {
-			n->pointTime[index] = v;
+			n->pointTime[index] = value;
 		}
 	} else {
 		return 11;

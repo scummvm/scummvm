@@ -55,7 +55,7 @@ int HMIReverb1::init(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIReverb1::uninit(HMIPreset *, HMIEffectNode *base) {
+int HMIReverb1::uninit(HMIPreset *preset, HMIEffectNode *base) {
 	HMIReverb1Node *n = (HMIReverb1Node *)base;
 
 	for (int i = 0; i != 4; ++i) {
@@ -180,21 +180,21 @@ int HMIReverb1::processBlock(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIReverb1::getEffectParam(HMIEffectNode *base, int p, float *v, int *type) {
+int HMIReverb1::getEffectParam(HMIEffectNode *base, int param, float *value, int *type) {
 	HMIReverb1Node *n = (HMIReverb1Node *)base;
 
-	if (p == 0) {
-		*v = n->reverbMax;
-	} else if (p == 1) {
-		*v = n->preDelay;
-	} else if (p == 2) {
-		*v = n->reverbTime;
-	} else if (p == 3) {
-		*v = n->dryOut;
+	if (param == 0) {
+		*value = n->reverbMax;
+	} else if (param == 1) {
+		*value = n->preDelay;
+	} else if (param == 2) {
+		*value = n->reverbTime;
+	} else if (param == 3) {
+		*value = n->dryOut;
 		*type = 2;
 		return 0;
-	} else if (p == 4) {
-		*v = n->wetOut;
+	} else if (param == 4) {
+		*value = n->wetOut;
 		*type = 2;
 		return 0;
 	} else {
@@ -205,19 +205,19 @@ int HMIReverb1::getEffectParam(HMIEffectNode *base, int p, float *v, int *type) 
 	return 0;
 }
 
-int HMIReverb1::setEffectParam(HMIEffectNode *base, int p, float v) {
+int HMIReverb1::setEffectParam(HMIEffectNode *base, int param, float value) {
 	HMIReverb1Node *n = (HMIReverb1Node *)base;
 
-	if (p == 0) {
-		n->reverbMax = v;
-	} else if (p == 1) {
-		n->preDelay = v;
-	} else if (p == 2) {
-		n->reverbTime = v;
-	} else if (p == 3) {
-		n->dryOut = v;
-	} else if (p == 4) {
-		n->wetOut = v;
+	if (param == 0) {
+		n->reverbMax = value;
+	} else if (param == 1) {
+		n->preDelay = value;
+	} else if (param == 2) {
+		n->reverbTime = value;
+	} else if (param == 3) {
+		n->dryOut = value;
+	} else if (param == 4) {
+		n->wetOut = value;
 	} else {
 		return 11;
 	}

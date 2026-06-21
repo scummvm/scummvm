@@ -103,7 +103,6 @@ struct HMIPreset {
 	uint32 chunkSize;
 	int lockLevel;
 	int allocatedHeapSize;
-	uint8 reserved[980];
 	HMIEffectNode *effectChain;
 	HMIFormat *outputFmt;
 	HMIFormat *inputFmt;
@@ -111,12 +110,8 @@ struct HMIPreset {
 };
 
 struct HMIInitData {
-	uint32 *a;
-	uint32 *b;
 	int heapSize;
 	void *heapPtr;
-	void *(*mallocFunc)(size_t);
-	void (*freeFunc)(void *);
 };
 
 struct HMILibrary {

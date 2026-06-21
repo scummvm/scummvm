@@ -34,11 +34,11 @@ HMIPhasor::HMIPhasor()
 				   kPhasorParams, kPhasorMin, kPhasorMax, kPhasorDefault,
 				   "Phasor", 2375, 6) {}
 
-int HMIPhasor::init(HMIPreset *, HMIEffectNode *) {
+int HMIPhasor::init(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIPhasor::uninit(HMIPreset *, HMIEffectNode *) {
+int HMIPhasor::uninit(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
@@ -100,21 +100,21 @@ int HMIPhasor::processBlock(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIPhasor::getEffectParam(HMIEffectNode *base, int p, float *v, int *type) {
+int HMIPhasor::getEffectParam(HMIEffectNode *base, int param, float *value, int *type) {
 	HMIPhasorNode *n = (HMIPhasorNode *)base;
 
-	if (p == 0) {
-		*v = n->rate;
-	} else if (p == 1) {
-		*v = n->depth;
-	} else if (p == 2) {
-		*v = n->centerFrequency;
-	} else if (p == 3) {
-		*v = n->feedback;
-	} else if (p == 4) {
-		*v = n->dryOut;
-	} else if (p == 5) {
-		*v = n->wetOut;
+	if (param == 0) {
+		*value = n->rate;
+	} else if (param == 1) {
+		*value = n->depth;
+	} else if (param == 2) {
+		*value = n->centerFrequency;
+	} else if (param == 3) {
+		*value = n->feedback;
+	} else if (param == 4) {
+		*value = n->dryOut;
+	} else if (param == 5) {
+		*value = n->wetOut;
 	} else {
 		return 11;
 	}
@@ -123,21 +123,21 @@ int HMIPhasor::getEffectParam(HMIEffectNode *base, int p, float *v, int *type) {
 	return 0;
 }
 
-int HMIPhasor::setEffectParam(HMIEffectNode *base, int p, float v) {
+int HMIPhasor::setEffectParam(HMIEffectNode *base, int param, float value) {
 	HMIPhasorNode *n = (HMIPhasorNode *)base;
 
-	if (p == 0) {
-		n->rate = v;
-	} else if (p == 1) {
-		n->depth = v;
-	} else if (p == 2) {
-		n->centerFrequency = v;
-	} else if (p == 3) {
-		n->feedback = v;
-	} else if (p == 4) {
-		n->dryOut = v;
-	} else if (p == 5) {
-		n->wetOut = v;
+	if (param == 0) {
+		n->rate = value;
+	} else if (param == 1) {
+		n->depth = value;
+	} else if (param == 2) {
+		n->centerFrequency = value;
+	} else if (param == 3) {
+		n->feedback = value;
+	} else if (param == 4) {
+		n->dryOut = value;
+	} else if (param == 5) {
+		n->wetOut = value;
 	} else {
 		return 11;
 	}
