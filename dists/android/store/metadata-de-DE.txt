@@ -24,7 +24,7 @@ https://forums.scummvm.org/viewforum.php?f=17 ist unser Forum, wo du dich mit an
 2026.2.0
 
 *** Release notes:
-– Ein Absturz beim schnellen Neustart der App wurde behoben.
-– Ein Cloud-bezogener Absturz wurde behoben.
+- Das Soundsystem wurde überarbeitet und verwendet nun die Obon-Audiobibliothek.
+- Ein Absturz im Zusammenhang mit der Cloud-Speicherung auf OneDrive wurde behoben.
 
-Vollständige Versionshinweise: https://scummvm.org/frs/scummvm/2026.2.0/ReleaseNotes.html
+Vollständige Versionshinweise: https://scummvm.org/frs/scummvm/2026.3.0/ReleaseNotes.html
