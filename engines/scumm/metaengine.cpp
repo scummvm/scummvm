@@ -1295,7 +1295,7 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_A");
 		rebel2Keymap->addAction(act);
 
-		act = new Action("RA2COVER", _("Cover / back"));
+		act = new Action("RA2COVER", _("Cover"));
 		act->setCustomEngineActionEvent(kScummActionInsaneSwitch);
 		act->addDefaultInputMapping("JOY_X");
 		act->addDefaultInputMapping("JOY_Y");

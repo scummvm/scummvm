@@ -1054,9 +1054,6 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 				case kScummActionInsaneAttack:
 					keycode = Common::KEYCODE_RETURN;
 					break;
-				case kScummActionInsaneSwitch:
-					keycode = Common::KEYCODE_ESCAPE;
-					break;
 				case kScummActionInsaneBack:
 					keycode = Common::KEYCODE_ESCAPE;
 					break;
@@ -1071,8 +1068,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			case kStateTopPilots:
 				if (event.customType == kScummActionInsaneAttack)
 					keycode = Common::KEYCODE_RETURN;
-				else if (event.customType == kScummActionInsaneSwitch ||
-				         event.customType == kScummActionInsaneBack ||
+				else if (event.customType == kScummActionInsaneBack ||
 				         event.customType == kScummActionInsaneSkip)
 					keycode = Common::KEYCODE_ESCAPE;
 				break;
