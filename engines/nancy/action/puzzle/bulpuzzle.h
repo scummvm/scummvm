@@ -48,6 +48,10 @@ protected:
 	void movePiece(bool player);
 	void reset(bool capture);
 
+	// Nancy 11: pick (and optionally play) a random clip from one of the per-player voice tables
+	Common::String pickVoiceLine(int player, int table);
+	void playVoiceLine(int player, int table);
+
 	Common::String getRecordTypeName() const override { return "BulPuzzle"; }
 
 	Common::Path _imageName;
@@ -110,7 +114,16 @@ protected:
 	SceneChangeWithFlag _exitScene; // also when losing
 	uint16 _loseSoundDelay = 0;
 	SoundDescription _loseSound;
+	FlagDescription _loseFlag2; // nancy11: event flag set when the player gives up rather than loses
 	Common::Rect _exitHotspot;
+
+	// Nancy 11 voice clips: two players, seven tables each (entry counts 1,1,4,4,4,4,4).
+	// Table 0 = opening line, 2 = turn line, 5 = end-of-game line.
+	Common::Array<Common::String> _voiceLines[2][7];
+	uint16 _voiceChannel[2] = {};
+	SoundDescription _voiceSound;
+	int _prevSide = -1;
+	bool _gaveUp = false;
 
 	Graphics::ManagedSurface _image;
 
