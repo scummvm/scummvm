@@ -169,8 +169,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_smush_iconsNut = new NutRenderer(_vm, highRes ? "SYSTM/CPITIMHI.NUT" : "SYSTM/CPITIMAG.NUT");
 	_smush_icons2Nut = nullptr;  // Not used for Rebel2
 
-	// Initialize laser texture buffer (DAT_0047fee4) from sprite 5 of CPITIMAG/CPITIMHI.NUT
-	// This is done by FUN_0040BAB0/FUN_0040BB87 in the original with sprite index 5
 	// Sprite 5 is 136x13 pixels - a wide, thin texture perfect for laser beams
 	_laserTexture.pixels = nullptr;
 	_laserTexture.width = 0;
@@ -179,11 +177,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		initLaserTexture(_smush_iconsNut, 5);
 	}
 
-	// Initialize edge blend table with default identity table (FUN_404BCE -> FUN_410510(NULL))
 	// Per-level tables are loaded later via IACT opcode 8 par4=1000
 	initEdgeTable(nullptr);
-	// DAT_0047a7fc: Controls edge highlight rendering and widescreen features.
-	// Set from param_10 of FUN_403BD0 (main game init). Values:
 	//   < 0: Edge highlights disabled (low-detail mode)
 	//   >= 0: Edge highlights enabled, >= 1: high-detail (secondary NUTs, widescreen)
 	// Always use high detail.
@@ -193,9 +188,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// Load DIHIFONT.NUT for in-video messages/subtitles (Opcode 9)
 	_rebelMsgFont = makeRebel2Font(_vm, "SYSTM/DIHIFONT.NUT");
 
-	// Load menu system fonts (from info.md - FUN_403BD0 lines 302-348)
 	// In low resolution mode, fonts are loaded as a linked list:
-	//   Font 0 (^f00): TALKFONT.NUT - Default menu font (DAT_00485058)
 	//   Font 1 (^f01): SMALFONT.NUT - Small font for format code switching
 	//   Font 2 (^f02): TITLFONT.NUT - Title font
 	//   Font 3 (^f03): POVFONT.NUT - POV font
@@ -226,7 +219,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_hiResPresentationViewY = 0;
 	_gameplayPresentationClipBottom = 179;
 
-	// Damage visual effect counters (FUN_420515/420562/420754/42073B)
 	_damageFlashCounter = 0;
 	_damageHighFlashCounter = 0;
 	_damageShakeCounter = 0;
@@ -234,7 +226,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	memset(_damageRestorePalette, 0, sizeof(_damageRestorePalette));
 	_damageRestorePaletteValid = false;
 
-	// Text overlay state (FUN_004171c5 chapter title rendering)
 	_textOverlayActive = false;
 	_textOverlayID = 0;
 	_textOverlayX = 0;
@@ -242,7 +233,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_textOverlayFadeIn = 0;
 	_textOverlayFadeOut = 0;
 
-	// Original globals mapped: hit counter, cooldown, movie/auto-play flags.
 	_rebelOp6Initialized = false;
 	_rebelHitCounter = 0;
 	_rebelKillCounter = 0;
@@ -265,7 +255,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_rebelViewMode1 = 0;
 	_rebelViewMode2 = 0;
 
-	// Initialize mirrored original counters.
 	for (int i = 0; i < 10; ++i) {
 		_rebelValueCounters[i] = 0;
 		_rebelMaskCounters[i] = 0;
@@ -283,7 +272,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_rebelGaugeCleared[i] = false;
 
 	_difficulty = 1; // Default to Medium.
-	_targetLockTimer = 0;  // DAT_00443676 equivalent
+	_targetLockTimer = 0;
 
 	_speed = 12;
 	_insaneIsRunning = false;
@@ -381,15 +370,12 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_primaryZones[i].active = false;
 		_secondaryZones[i].active = false;
 	}
-	// Corridor boundaries in game coordinate space (FUN_40C040 lines 21-24)
-	// DAT_00443b0a=0, DAT_00443b0c=0, DAT_00443b0e=0x1a8(424), DAT_00443b10=0x104(260)
 	_corridorLeftX = 0;
 	_corridorTopY = 0;
 	_corridorRightX = 0x1A8;   // 424 — full game buffer width
 	_corridorBottomY = 0x104;  // 260 — full game buffer height
 	_hitCooldown = 0;
 
-	// Initialize Handler 0x26 Turret shot system (FUN_40AD63)
 	for (i = 0; i < 2; i++) {
 		_turretShots[i].counter = 0;
 		_turretShots[i].targetX = 0;
@@ -400,7 +386,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	}
 	_turretShotSeqCounter = 0;
 
-	// Initialize Handler 8 Vehicle shot system (FUN_402ED0)
 	for (i = 0; i < 2; i++) {
 		_vehicleShots[i].counter = 0;
 		_vehicleShots[i].targetX = 0;
@@ -414,7 +399,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	}
 	_vehicleShotImpactIndex = 0;
 
-	// Initialize Handler 7 Space shot system (FUN_40FADF)
 	for (i = 0; i < 2; i++) {
 		_spaceShots[i].counter = 0;
 		_spaceShots[i].targetX = 0;
@@ -454,8 +438,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_shipTargetX = 0xa0;
 	_shipTargetY = 0x28;
 	_shipLevelMode = 0;
-	_movementRangeLimit = 127;  // DAT_0047e034 - Start at full range (shooting state)
-	_flyControlMode = 0;   // DAT_004437c0 - Start in flight-only mode (no shooting)
+	_movementRangeLimit = 127;
+	_flyControlMode = 0;
 	_shipFiring = false;
 	_prevMouseButtons = 0; // For edge detection in mouse button handling
 	_shipDirectionH = 2;   // Start centered horizontally (0-4 range)
@@ -467,34 +451,34 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_flyLaserSprite = nullptr;   // FLY002 - effect sprites (danger/overlay cues)
 	_flyTargetSprite = nullptr;  // FLY003 - targeting overlay
 	_flyHiResSprite = nullptr;   // FLY004 - high-res alternative
-	_flyEffectAnimCounter = 0;   // DAT_0047ff1c
-	_flyOverlayRepeatCount = 0;  // DAT_00443b52
-	_flyShipScreenX = 0xd4;      // Start at center (212) - matches DAT_00443708 default
-	_flyShipScreenY = 0x82;      // Start at center (130) - matches DAT_0044370a default
-	_smoothedVelocity = 0;       // DAT_0044370c
-	_verticalInput = 0;          // DAT_0044370e
-	memset(_velocityHistory, 0, sizeof(_velocityHistory));  // DAT_00443716
-	memset(_windHistoryX, 0, sizeof(_windHistoryX));         // DAT_00443b16
-	memset(_windHistoryY, 0, sizeof(_windHistoryY));         // DAT_00443b34
-	_windParamX = 0;             // DAT_00443b12
-	_windParamY = 0;             // DAT_00443b14
-	_perspectiveX = 0;           // DAT_00443712
-	_perspectiveY = 0;           // DAT_00443714
-	_viewShift = 0;              // DAT_00443710
-	_facingRight = false;        // DAT_0047ab8c
+	_flyEffectAnimCounter = 0;
+	_flyOverlayRepeatCount = 0;
+	_flyShipScreenX = 0xd4;
+	_flyShipScreenY = 0x82;
+	_smoothedVelocity = 0;
+	_verticalInput = 0;
+	memset(_velocityHistory, 0, sizeof(_velocityHistory));
+	memset(_windHistoryX, 0, sizeof(_windHistoryX));
+	memset(_windHistoryY, 0, sizeof(_windHistoryY));
+	_windParamX = 0;
+	_windParamY = 0;
+	_perspectiveX = 0;
+	_perspectiveY = 0;
+	_viewShift = 0;
+	_facingRight = false;
 
 	// Initialize Handler 25 GRD ship system
-	_grd001Sprite = nullptr;     // DAT_00482240 - GRD001 primary ship
-	_grd002Sprite = nullptr;     // DAT_00482238 - GRD002 secondary ship
-	_grd005Sprite = nullptr;     // DAT_00482258 - GRD005 mode 3 overlay
-	_grdSpriteMode = 0;          // DAT_00457900 - sprite mode (1,2,3,4)
+	_grd001Sprite = nullptr;
+	_grd002Sprite = nullptr;
+	_grd005Sprite = nullptr;
+	_grdSpriteMode = 0;
 	memset(_grdShotOriginX, 0, sizeof(_grdShotOriginX));
 	memset(_grdShotOriginY, 0, sizeof(_grdShotOriginY));
 	_grdShotOriginTableLoaded = false;
 
 	// Initialize Handler 0x26 turret HUD overlay system
-	_hudOverlayNut = nullptr;    // DAT_0047fe78 - Primary HUD overlay (GRD files, animated)
-	_hudOverlay2Nut = nullptr;   // DAT_0047fe80 - Secondary HUD overlay
+	_hudOverlayNut = nullptr;
+	_hudOverlay2Nut = nullptr;
 
 	// Initialize audio system for RA2 (since we don't use iMUSE).
 	// Individual SMUSH audio blocks carry their own source rate.
@@ -519,7 +503,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// Main menu has 7 selectable items (0-6) matching GAME.TRS indices 11-17:
 	//   0: Start Game, 1: Options, 2: Calibrate Joystick, 3: Continue Intro,
 	//   4: Show Top Pilots, 5: Show Credits, 6: Return to Launcher
-	// FUN_0041f5ae uses the selectable item count for Y position calculation.
 	_menuItemCount = 7;
 	_menuInactivityTimer = 0;
 	_menuInactivityTimedOut = false;
@@ -530,7 +513,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_levelUnlocked[i] = (i == 0);  // Only level 1 unlocked initially
 	}
 
-	// Initialize chapter selection system (FUN_00415CF8)
 	// 17 items: 16 chapters + BACK option
 	_chapterSelection = 0;        // First chapter selected
 	_chapterItemCount = 17;       // 16 chapters + BACK
@@ -538,7 +520,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_passwordInput = "";          // No password input
 
 	// Debug flag to unlock all chapters for testing
-	// Based on original debug mode (DAT_0047ab34 == 'd') from FUN_00415CF8
 	// Set to true to bypass normal unlock progression
 	_debugUnlockAll = ConfMan.getBool("rebel2_unlock_all");
 	_noDamage = ConfMan.getBool("rebel2_no_damage");
@@ -547,11 +528,9 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	for (i = 0; i < 16; i++) {
 		// If debug unlock is enabled, unlock all chapters
 		// Otherwise only chapter 1 (index 0) is unlocked initially
-		// Original: pilotData->scores[chapter] < 0xFF means unlocked
 		_chapterUnlocked[i] = _debugUnlockAll || (i == 0);
 	}
 
-	// Initialize preview offset for chapter selection (FUN_00425170)
 	// X offset: -90 (0xffa6), Y offset: selection * -50 + 75
 	_previewOffsetX = -90;
 	_previewOffsetY = 75;  // Chapter 0: 0 * -50 + 75 = 75
@@ -564,22 +543,19 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	}
 	loadPilots(); // Load saved pilots from disk
 
-	// Initialize pilot selection system (FUN_00414A41)
 	// Menu structure: [saved pilots] + 4 fixed options (NEW/DUPE/DELETE/MAIN MENU)
 	_levelSelection = 0;          // First item selected
 	_levelItemCount = _numPilots + 4; // N saved pilots + 4 fixed options
 	_selectedLevel = 1;           // Default selected level
-	_difficultySelection = 2;     // Default to 3rd difficulty (matching original init param_3=2)
+	_difficultySelection = 2;
 	_pilotMenuMode = kPilotModeSelect;
 	_pilotNameInput = "";
 	_pilotEditIndex = -1;
 
-	// Initialize top pilots display state and ranking table (FUN_0040FF00)
 	_topPilotsFrameCount = 0;
 	_topPilotsMaxFrames = 120;
 	initDefaultRankings();
 
-	// Initialize options menu state (FUN_004167A6 defaults)
 	_optionsSelection = 0;
 	_optionsItemCount = 8;
 	_optMusicEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
@@ -664,7 +640,6 @@ InsaneRebel2::~InsaneRebel2() {
 	delete _hudOverlayNut;
 	delete _hudOverlay2Nut;
 
-	// Clean up laser texture buffer (DAT_0047fee4)
 	freeLaserTexture();
 
 	// Clean up embedded HUD overlays
@@ -819,7 +794,6 @@ bool InsaneRebel2::handleMenuRawJoystickAxisEvent(const Common::Event &event) {
 
 // notifyEvent -- EventObserver callback for global input dispatch.
 // Handles ESC (skip) and SPACE (pause) regardless of menu state.
-// Pause behavior matches original FUN_405A21: SPACE pauses, ANY key unpauses.
 bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
@@ -833,7 +807,6 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	if (_rebelYodaMode && event.type == Common::EVENT_KEYDOWN && !event.kbdRepeat && event.kbd.hasFlags(Common::KBD_ALT)) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_m:
-			// DAT_0047ab60: Yoda-mode Movie Mode skips playable
 			// sections and keeps the story/cutscene sequence moving.
 			_rebelMovieMode = !_rebelMovieMode;
 			debugC(DEBUG_INSANE, "Movie mode %s", _rebelMovieMode ? "enabled" : "disabled");
@@ -842,7 +815,6 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			return true;
 
 		case Common::KEYCODE_p:
-			// DAT_0047ab64: Yoda-mode Auto Play makes gameplay
 			// computer controlled.
 			_rebelAutoPlay = !_rebelAutoPlay;
 			debugC(DEBUG_INSANE, "Auto play %s", _rebelAutoPlay ? "enabled" : "disabled");
@@ -1142,7 +1114,6 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	if (event.type == Common::EVENT_KEYDOWN) {
 		// Gamepad buttons mapped to ESC can lose their key-up while the GMM is open,
 		// leaving the key repeat source to synthesize another ESC immediately after
-		// returning to gameplay. Treat repeats as part of the original press.
 		if (event.kbd.keycode == Common::KEYCODE_ESCAPE && event.kbdRepeat) {
 			debugC(DEBUG_INSANE, "Ignoring repeated ESC keydown");
 			return true;
@@ -1156,11 +1127,8 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			return true;
 		}
 
-		// When paused during gameplay, ANY key unpauses (FUN_405A21 line 360-365).
-		// ESC additionally opens the global menu (original: quit key exits level).
 		if (splayer && splayer->_paused && _gameState == kStateGameplay) {
 			debugC(DEBUG_INSANE, "Key pressed while paused - unpausing");
-			// Restore the original palette saved by showPauseOverlay
 			if (_pauseOverlayActive) {
 				_vm->_system->getPaletteManager()->setPalette(_savedPausePalette, 0, 256);
 				_pauseOverlayActive = false;
@@ -1194,7 +1162,6 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			break;
 
 		case Common::KEYCODE_SPACE:
-			// SPACE pauses during gameplay (FUN_405A21).
 			// Unpausing is handled above (any key while paused).
 			if (splayer && _gameState == kStateGameplay && !splayer->_paused) {
 				debugC(DEBUG_INSANE, "SPACE pressed - pausing");
@@ -1268,8 +1235,6 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	return false;
 }
 
-// Per-level difficulty parameters extracted from RA2WIN95.EXE at VA 0x47e0f0
-// Original: 2D table indexed by DAT_0047a7fa (difficulty) * 0x242 + DAT_0047a7f8 (levelType) * 0x22
 // 17 fields per entry (34 bytes), 17 entries per difficulty, 6 difficulties
 // Field names from official Difficulty Editor: {laserDelay, snapDistance, missDamage, dodgeDamage,
 //   shotDamage, specialDamage, shotAccuracy, hitPoints, dodgePoints, timePoints,
@@ -1356,7 +1321,6 @@ const InsaneRebel2::LevelDifficultyParams InsaneRebel2::kDifficultyTable[6][17] 
 		{   5,    4,   -1,   -1,   10,   -1,   79,  100,   -1,    8, 2000,   -1,    4,   -1,   -1,   -1,   -1}, // Lv15A
 		{   5,    4,  255,   45,    8,    5,   80,  100,  200,    8, 2000, 1000,    4,   -1,   -1,   -1,   -1}, // Lv15B
 	},
-	// Difficulty 4 (Custom1) — identical to difficulty 2 (Standard) in original data
 	{
 		{   7,    0,   35,   -1,    5,   -1,   75,   75,   -1,    6, 1500,  750,    0,    7,    7,    8,   -1}, // Lv1
 		{   4,    1,   -1,   -1,    6,   -1,   40,   75,   -1,    0, 1500,  750,    0,  110,  110,  150,   35}, // Lv2
@@ -1403,9 +1367,7 @@ InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams() const {
 	int diff = CLIP(_difficulty, 0, 5);
 	int lvIdx = 0;
 
-	// DAT_0047a7f8 is the per-segment difficulty table index.
 	// This is NOT the same as handler 0x26's gun "levelType" from opcode 6.
-	//
 	// Index mapping reconstructed from level handlers:
 	//   Lv1->0, Lv2->1, Lv3->2, Lv4->3, Lv5->4,
 	//   Lv6A->5, Lv6B->6, Lv7->7 ... Lv14->14, Lv15A->15, Lv15B->16.
@@ -1439,10 +1401,7 @@ bool InsaneRebel2::applyPlayerDamage(int damage) {
 	return true;
 }
 
-// addScore -- Score system with bonus life awards (FUN_0041bf8d).
 void InsaneRebel2::addScore(int points) {
-	// Calculate bonus life threshold based on difficulty (DAT_0047a7fa)
-	// From FUN_0041bf8d:
 	//   if (difficulty < 4) threshold = (difficulty * 5 + 5) * 1000
 	//   else threshold = 15000
 	int threshold;
@@ -1460,7 +1419,6 @@ void InsaneRebel2::addScore(int points) {
 		if (oldMilestone < newMilestone) {
 			// Award bonus life
 			_playerLives++;
-			// TODO: Play bonus life sound (FUN_0041189e(5, 0, 0x7f, 0, 0))
 			debugC(DEBUG_INSANE, "BONUS LIFE! Score crossed %d threshold. Lives=%d", threshold, _playerLives);
 		}
 	}
@@ -1470,9 +1428,6 @@ void InsaneRebel2::addScore(int points) {
 	debugC(DEBUG_INSANE, "Score +%d = %d", points, _playerScore);
 }
 
-// Render score text to HUD (part of FUN_0041c012)
-// FUN_0041c012 lines 133-137: calls FUN_00434cb0 with format "%07ld"
-// using DAT_00482200 (DISPFONT in low-res mode).
 void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int height, int statusBarY) {
 	// In low-res mode, score text shares the same NUT as the status bar sprites.
 	NutRenderer *statusFont = _smush_cockpitNut;
@@ -1482,7 +1437,6 @@ void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int 
 	char scoreStr[16];
 	Common::sprintf_s(scoreStr, "%07d", _playerScore);
 
-	// Score position from FUN_0041c012 assembly:
 	//   X = 0x101 low-res, 0x202 high-res
 	//   Y = 4 low-res, 8 high-res (within status bar)
 	const int statusScale = isHiRes() ? 2 : 1;
@@ -1490,12 +1444,8 @@ void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int 
 	int scoreY = statusBarY + 4 * statusScale + _viewY;
 
 	// Render each digit as a NUT sprite (direct pixel blit with color 0 transparency).
-	// This matches the original's FUN_00434cb0 → FUN_004341a0 text rendering which
 	// uses the NUT font's embedded palette colors (1=white, 3=gray, 4=black outline).
 	// Render each character applying xoffs/yoffs from NUT frame headers,
-	// matching FUN_0042cba0 lines 13-14:
-	//   param_3 = *(short *)(param_6 + 2) + param_3;  // X += xoffs
-	//   param_4 = *(short *)(param_6 + 4) + param_4;  // Y += yoffs
 	int x = scoreX;
 	for (int i = 0; scoreStr[i] != '\0'; i++) {
 		byte ch = (byte)scoreStr[i];
@@ -1508,16 +1458,12 @@ void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int 
 	}
 }
 
-// ---------------------------------------------------------------------------
 // Pilot Data System
-// ---------------------------------------------------------------------------
 // Save/load pilot profiles using the save file system.
-// Original: FUN_00411980 (load) / FUN_00411A5D (save).
 
 const uint32 kPilotSaveMagic = MKTAG('R', 'A', '2', 'P');
 const uint16 kPilotSaveVersion = 2;
 
-// loadPilots -- Load all pilot profiles from save files (FUN_00411980).
 bool InsaneRebel2::loadPilots() {
 	_numPilots = 0;
 
@@ -1558,7 +1504,6 @@ bool InsaneRebel2::loadPilots() {
 	return _numPilots > 0;
 }
 
-// savePilots -- Save all pilot profiles to save files (FUN_00411A5D).
 bool InsaneRebel2::savePilots() {
 	bool ok = true;
 
@@ -1601,7 +1546,6 @@ bool InsaneRebel2::savePilots() {
 }
 
 int InsaneRebel2::createNewPilot() {
-	// FUN_00411B9A: Create new pilot slot
 	if (_numPilots >= kMaxPilots)
 		return -1;
 
@@ -1612,7 +1556,6 @@ int InsaneRebel2::createNewPilot() {
 }
 
 void InsaneRebel2::deletePilot(int index) {
-	// FUN_00411D29: Delete pilot and shift remaining down
 	if (index < 0 || index >= _numPilots)
 		return;
 
@@ -1691,10 +1634,8 @@ int32 InsaneRebel2::processMouse() {
 	// Store current state for next frame's edge detection
 	_prevMouseButtons = currentButtons;
 
-	// Update _rebelControlMode (DAT_0047a7e4) for Handler 25 covered/uncovered toggle:
 	// Use "sticky" flags - set on button press, cleared by IACT handler after consumption.
 	// This ensures button presses aren't missed due to timing.
-	//
 	// For Handler 25: use edge detection with sticky flags
 	if (_rebelHandler == 25) {
 		// Only SET flags on button press (edge), don't clear them here
@@ -1730,7 +1671,6 @@ int32 InsaneRebel2::processMouse() {
 
 	bool triggerShot = ((_rebelHandler == 25) ? (leftPressed && !leftWasPressed) : leftPressed) || autoFire;
 	if (_rebelHandler == 8) {
-		// FUN_00401CCF uses the same per-frame fire bit both to spawn shots and
 		// to choose the POV gun sprite. Keep the sprite driven by the event-manager
 		// input that processMouse() uses during SMUSH playback.
 		_shipFiring = triggerShot && canShoot;
@@ -1779,7 +1719,6 @@ int32 InsaneRebel2::processMouse() {
 					it->id, it->type, mousePos.x, mousePos.y,
 					it->rect.left, it->rect.top, it->rect.right, it->rect.bottom);
 
-				// Explosion scale is handler-specific in the original:
 				// - H8/H7/H26 use object half-width
 				// - H25 uses half-width + snapDistance (and type 100 doubles it)
 				int explosionHalfWidth = it->rect.width() / 2;
@@ -1790,15 +1729,8 @@ int32 InsaneRebel2::processMouse() {
 						explosionHalfWidth *= 2;
 				}
 
-				// Spawn visual explosion based on handler, enemy type, and flags.
-				//
-				// Rendering functions (FUN_409FBC, FUN_402696, FUN_40F1C5,
-				// FUN_41F29A) check DAT_0047e108 flags & 1 - when set,
 				// explosion NUT sprites are suppressed. This is checked
 				// during rendering in renderExplosions().
-				//
-				// Handler 8 (FUN_4028C5): Only type 0 spawns explosion.
-				// Handler 25 (FUN_41E7C2): Types > 3 set counter but
 				// rendering suppressed by flags bit 0.
 				// Handlers 0x26, 7: All types get visual explosions.
 				if (_rebelHandler != 8 && _rebelHandler != 25) {
@@ -1843,19 +1775,15 @@ int32 InsaneRebel2::processMouse() {
 					_rebelGaugeSlot[it->id] = -1; // consume: avoid double-counting
 				}
 
-				// Set enemy type bit in wave state (FUN_004028c5 line 74)
-				// DAT_0047ab98 |= 1 << (enemyType & 0x1f)
 				// This tracks which enemy GROUPS have been killed in this wave
 				if (it->type > 0 && it->type < 32) {
 					_rebelWaveState |= (1 << it->type);
 					debugC(DEBUG_INSANE, "Wave state updated: 0x%x (set bit %d)", _rebelWaveState, it->type);
 				}
 
-				// Increment kill counter (DAT_0047ab88)
 				_rebelKillCounter++;
 
 				// Handle dependencies.
-				// Handler 25 (FUN_41E7C2) has two kill paths:
 				// - type <= 3: process dependency tables
 				// - type > 3 (and 100): skip dependency handling
 				// Other handlers always use link-table side effects.
@@ -1880,24 +1808,19 @@ int32 InsaneRebel2::processMouse() {
 				}
 
 				// Play enemy death sound.
-				// Pan based on enemy center X position: (screenX - 160) mapped to [-127,127]
 				{
 					int cameraX = (_rebelHandler == 8) ? _shipPosX : _viewX;
 					int enemyCenterX = (it->rect.left + it->rect.right) / 2 - cameraX;
 					int sfxPan = CLIP((enemyCenterX - 160) * 127 / 160, -127, 127);
 					if (_rebelHandler == 8 && it->type >= 1 && it->type <= 4) {
 						// Handler 8 soldier types 1-4: play from auxiliary buffer 0
-						// Original: FUN_00411931(0, slot+3, 0x7f, pan, 0)
 						playAuxSfx(0, 127, sfxPan);
 					} else {
 						// All other enemies: EXPLODE.SAD
-						// Original: FUN_0041189e(2, slot+3, 0x7f, pan, 0)
 						playSfx(2, 127, sfxPan);
 					}
 				}
 
-				// Award score for destroying enemy (FUN_0041bf8d called from FUN_40A2E0)
-				// Score value comes from DAT_0047e0fe indexed by difficulty*level
 				{
 					LevelDifficultyParams dparams = getDifficultyParams();
 					if (dparams.hitPoints > 0) {
@@ -1963,7 +1886,6 @@ Common::Point InsaneRebel2::getGameplayAimPoint() {
 	x = CLIP<int>(x, 0, 319);
 	y = CLIP<int>(y, 0, 199);
 	if (_optControlsFlipped) {
-		// Original DAT_0047a7fe reverses only the up/down gameplay axis.
 		y = CLIP<int>(200 - y, 0, 199);
 	}
 	return Common::Point(x, y);
@@ -2088,7 +2010,6 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 }
 
 bool InsaneRebel2::isBitSet(int n) {
-	// FUN_00423970: When param_1 < 1 (0 or negative), the bounds check fails and returns false.
 	// This means ID 0 or negative IDs are always treated as "enabled" (not skipped).
 	if (n < 1) {
 		return false;
@@ -2099,7 +2020,6 @@ bool InsaneRebel2::isBitSet(int n) {
 }
 
 void InsaneRebel2::setBit(int n) {
-	// FUN_004239b0: When n < 1 (i.e., n == 0 or negative), set ALL bits to 1 (disable all objects)
 	// This is used to disable all enemies/objects at once
 	if (n < 1) {
 		for (int i = 0; i < 0x401; i++)
@@ -2111,8 +2031,6 @@ void InsaneRebel2::setBit(int n) {
 }
 
 void InsaneRebel2::clearBit(int n) {
-	// FUN_00423a00: When n < 1 (i.e., n == 0 or negative), clear ALL bits to 0 (enable all objects)
-	// This is called by FUN_00423880 at the start of video playback to reset the bit table,
 	// ensuring all enemies are visible when a new level/segment starts.
 	if (n < 1) {
 		for (int i = 0; i < 0x401; i++)
@@ -2127,21 +2045,17 @@ void InsaneRebel2::clearBit(int n) {
 // Handler 7: only mode 2. Handler 8: not mode 4/5. Handler 25: not damaged.
 bool InsaneRebel2::isShootingAllowed() {
 	// Handler 7 (Third-Person Ship): Only mode 2 allows shooting
-	// FUN_0040d836 line 141: if (DAT_004437c0 == 2) { /* spawn shots, draw crosshair */ }
 	if (_rebelHandler == 7) {
 		return (_flyControlMode == 2);
 	}
 
 	// Handler 8 (Third-Person On Foot): Modes 4/5 disable shooting
-	// FUN_00401CCF line 82-84: if (DAT_0043e000 == 4) { param_5 = 0; }
 	// Mode 5: Ship not rendered (cutscene)
 	if (_rebelHandler == 8) {
 		return (_shipLevelMode != 4 && _shipLevelMode != 5);
 	}
 
 	// Handler 25 (0x19): Only allow shooting when fully uncovered
-	// FUN_41DB5E lines 170-171: if (((param_5 & 1) != 0) && (DAT_0045790a == 0))
-	// _rebelDamageLevel = DAT_0045790a (cover transition counter, 0 = uncovered, 5 = covered)
 	if (_rebelHandler == 25) {
 		return (_rebelDamageLevel == 0);
 	}
@@ -2150,7 +2064,6 @@ bool InsaneRebel2::isShootingAllowed() {
 	return (_rebelHandler != 0);
 }
 
-// procSKIP -- Conditional FOBJ/PSAD skip via bit table (FUN_00423A50).
 // Same mechanism as Full Throttle, but RA2 uses it for enemy objects:
 // when setBit(enemy_id) is called on destruction, SKIP chunks containing
 // that ID cause the next FOBJ (enemy sprite) to be skipped.
