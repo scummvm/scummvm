@@ -184,13 +184,19 @@ void gameLoop(byte *target) {
 				goto process;
 			}
 
-			if (Swap16(next_vorts_ticks) < script_word_vars.timer_ticks2) { /*TODO: is this ok? ticks2 is BE, ticks3 is LE*/
+			// next_vorts_ticks is a plain numeric value (always set as
+			// Swap16(timer_ticks2) + 5), but timer_ticks2 is stored big-endian.
+			// Byteswap the timer side so both operands are numeric; the old
+			// Swap16(next_vorts_ticks) compared two BE representations, so the
+			// vort command fired at the wrong times (vorts popping in/out of
+			// rooms and leaving artifacts from the interrupted walk anim).
+			if (next_vorts_ticks < Swap16(script_word_vars.timer_ticks2)) {
 				the_command = next_vorts_cmd;
 				if (the_command)
 					goto process;
 			}
 
-			if (Swap16(next_turkey_ticks) < script_word_vars.timer_ticks2) { /*TODO: is this ok? ticks2 is BE, ticks4 is LE*/
+			if (next_turkey_ticks < Swap16(script_word_vars.timer_ticks2)) {
 				the_command = next_turkey_cmd;
 				if (the_command)
 					goto process;
