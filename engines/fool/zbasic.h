@@ -213,6 +213,8 @@ private:
 	Graphics::MacWindow *_window;
 	Graphics::MacMenu *_menu;
 
+	GrafPtr _defaultPort;
+
 	Common::HashMap<int16, Common::SharedPtr<Common::SeekableReadStream>> _fileStreams;
 	Common::HashMap<int16, Common::SharedPtr<Common::SeekableWriteStream>> _fileWriteStreams;
 	Common::HashMap<int16, uint32> _fileLineSize;
