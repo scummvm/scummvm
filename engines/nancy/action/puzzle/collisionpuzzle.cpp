@@ -187,9 +187,15 @@ void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
 	uint16 numPieces = 0;
 
-	// Nancy 10+ TileMove stores rows then cols (was width then height for square grids)
+	// Nancy 11 raised the Collision piece limit from 5 to 10 and added a leading flag
+	const bool collisionNancy11 = (_puzzleType == kCollision && g_nancy->getGameType() >= kGameTypeNancy11);
+	if (collisionNancy11) {
+		stream.skip(1); // pieces are randomized when this is 0
+	}
+
+	// Nancy 10+ TileMove (and Nancy 11+ Collision) store rows then cols (was width then height for square grids)
 	uint16 width, height;
-	if (_puzzleType == kTileMove && g_nancy->getGameType() >= kGameTypeNancy10) {
+	if ((_puzzleType == kTileMove && g_nancy->getGameType() >= kGameTypeNancy10) || collisionNancy11) {
 		height = stream.readUint16LE();
 		width = stream.readUint16LE();
 	} else {
@@ -217,16 +223,29 @@ void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 	}
 	stream.skip((maxGridSize - height) * maxGridSize * 2);
 
+	// Earlier Collision puzzles store wall/block markers as 6-10, which Nancy 11 reuses for
+	// home IDs. Shift them up to the internal 16-20 range.
+	if (_puzzleType == kCollision && g_nancy->getGameType() < kGameTypeNancy11) {
+		for (uint y = 0; y < height; ++y) {
+			for (uint x = 0; x < width; ++x) {
+				if (_grid[y][x] >= 6 && _grid[y][x] <= 10)
+					_grid[y][x] += 10;
+			}
+		}
+	}
+
 	if (_puzzleType == kCollision) {
+		const uint maxPieces = collisionNancy11 ? 10 : 5;
+
 		_startLocations.resize(numPieces);
 		for (uint i = 0; i < numPieces; ++i) {
 			_startLocations[i].x = stream.readUint16LE();
 			_startLocations[i].y = stream.readUint16LE();
 		}
-		stream.skip((5 - numPieces) * 4);
+		stream.skip((maxPieces - numPieces) * 4);
 
-		readRectArray(stream, _pieceSrcs, numPieces, 5);
-		readRectArray(stream, _homeSrcs, numPieces, 5);
+		readRectArray(stream, _pieceSrcs, numPieces, maxPieces);
+		readRectArray(stream, _homeSrcs, numPieces, maxPieces);
 
 		readRect(stream, _verticalWallSrc);
 		readRect(stream, _horizontalWallSrc);

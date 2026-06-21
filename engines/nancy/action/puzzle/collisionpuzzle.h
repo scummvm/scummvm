@@ -52,8 +52,9 @@ public:
 	bool isViewportRelative() const override { return true; }
 
 protected:
-	// numbers 1-5 are home IDs, 0 is empty cell
-	enum WallType { kWallLeft = 6, kWallUp = 7, kWallDown = 8, kWallRight = 9, kBlock = 10 };
+	// 0 is an empty cell, positive numbers are home IDs. Wall/block markers use Nancy 11's
+	// values (16-20); earlier games store 6-10 and are remapped to these on load.
+	enum WallType { kWallLeft = 16, kWallUp = 17, kWallDown = 18, kWallRight = 19, kBlock = 20 };
 
 	class Piece : public RenderObject {
 	public:
