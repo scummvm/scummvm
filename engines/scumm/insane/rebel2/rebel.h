@@ -420,7 +420,6 @@ public:
 					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) override;
 
-	// Rendering helpers.
 	void renderStatusBarBackground(byte *renderBitmap, int pitch, int width, int height,
 								   int videoWidth, int videoHeight, int statusBarY);
 

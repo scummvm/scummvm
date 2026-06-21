@@ -163,8 +163,6 @@ int SmushMultiFont::getFontHeight() const {
 }
 
 int SmushMultiFont::setFont(int id) {
-	// This is called by TextRenderer_v7 when it encounters ^fXX escape codes
-	// Actually switch the current font
 	int oldFont = _currentFont;
 
 	if (id >= 0 && id < MAX_FONTS) {

@@ -47,7 +47,6 @@ int ra1GameplayWindowOffsetX(const InsaneRebel1 *rebel1) {
 	if (!rebel1 || !rebel1->isInteractiveVideoActive())
 		return 0;
 
-	// Draw gameplay overlays into the cropped buffer's coordinate space.
 	switch (rebel1->getEffectiveGameOpcode()) {
 	case 0x07:
 	case 0x08:
@@ -626,7 +625,6 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		shotOverlayHandled = _gameOp0BOverlayRenderedThisFrame;
 		drawGameOp0BTargetingAfterFetch = _gameOp0BOverlayRenderedThisFrame;
 	} else if (onFootMode) {
-		// On-foot handler — opcodes 0x19/0x1A (Level 9 Stormtroopers)
 		if (_currentLevel == 8 && onFootAimMode && !onFootSequenceMode && _killCount > 0) {
 			_fireCooldown = _playerFired ? 1 : 0;
 			_vm->_smushVideoShouldFinish = true;
@@ -642,7 +640,6 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		if (onFootAimMode) {
 			shotOverlayHandled = true;
 			if (_health >= 0) {
-				// Preserve target snap until deferred 0x1A input runs.
 				const bool preserveTargetSnap = (_targetProximity == 2 && _tuning.snap > 0);
 				const int16 snappedTargetX = _shipPosX;
 				const int16 snappedTargetY = _shipPosY;
@@ -656,7 +653,6 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			}
 		}
 
-		// Draw character sprite at on-foot position (DrawFobjGlyph with flag 0x80).
 		// GAME 0x1A-only selector clips reuse the targeting handler but do not
 		// draw the walking character.
 		if (onFootSequenceMode && _shipBank.numSprites > 0 && _shipDirIndex >= 0 &&
@@ -742,7 +738,6 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			updateFlightVariantCursor();
 		}
 	} else if (!shotOverlayHandled) {
-		// Keep lock/target accumulators quiescent outside targeting handlers.
 		_targetProximity = 0;
 		_prevTargetProx = 0;
 		_targetCount = 0;
@@ -779,8 +774,6 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	if (_currentLevel == 10)
 		renderLevelHitsOverlay(renderBitmap, pitch, width, height, 0x16, true);
 
-	// Level 8 (Imperial Walkers) — walker-specific state update + UI overlay.
-	// game loop. We call it from procPostRendering when _currentLevel == 7.
 	if (_currentLevel == 7) {
 		updateLevel8WalkerState();
 		const int viewportX = _player ? ra1Player()->_ra1ViewportOffsetX : 0;
@@ -793,9 +786,6 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	_fireCooldown = _playerFired ? 1 : 0;
 }
 
-// Helper that groups the common shot/lock overlay calls used by the
-// box draw; 0x09/0x0A/0x0B include DrawTargetIndicators first. GAME 0x0B
-// pixels over shots/boxes while the lock/fire indicator remains visible.
 void InsaneRebel1::renderShotOverlayPipeline(byte *dst, int pitch, int width, int height,
 		bool drawTargetBoxes, bool drawTargeting) {
 	if (drawTargetBoxes) {
@@ -898,14 +888,11 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 		}
 	}
 
-	// Save previous proximity for next frame
 	_prevTargetProx = _targetProximity;
 	_targetProximity = 0;
 	_lastHitTarget = 0;
 }
 
-// from inside the L14PLAY2 loop when the current clip reaches maxFrame - 0x0F.
-// call inline and passes the old L14PLAY2 timeline frame to the ANM frame gate.
 void InsaneRebel1::handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame) {
 	if (_currentLevel != 13 || _levelGameplayPhase != 2 || _level14Play2BSpliced ||
 			_level14Play2BSplicePending || maxFrame < 0x0F)
@@ -918,17 +905,14 @@ void InsaneRebel1::handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame) {
 	_level14Play2BSplicePending = true;
 	_level14Play2BSpliceFrame = curFrame;
 
-	// Keep video state live across the L14PLAY2 -> L14PLY2B jump.
 	if (_player)
 		_player->setPreserveGameVideoStateOnRelease(true);
 
-	// Clear carried target flags before switching clips.
 	clearFrameObjectPrimaryBits(1, 0x05);
 	clearFrameObjectPrimaryBits(2, 0x40);
 	_vm->_smushVideoShouldFinish = true;
 }
 
-// Maps kill score to tech-font glyph and draws it rising upward from the kill position.
 void InsaneRebel1::renderGostScorePopup(byte *dst, int pitch, int width, int height,
 										int16 centerX, int16 centerY, int16 frame) {
 	char glyphChar = '\0';
@@ -943,13 +927,11 @@ void InsaneRebel1::renderGostScorePopup(byte *dst, int pitch, int width, int hei
 	if (glyphChar == '\0')
 		return;
 
-	// "<<{glyph}" string selects tech font layer via the << markup
 	char scoreText[4] = { '<', '<', glyphChar, '\0' };
 	drawFontBankString(dst, pitch, width, height,
 					   centerX - 4, centerY - frame, scoreText);
 }
 
-// Renders explosion sprites from bangBank + per-kill score popup glyphs.
 void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) {
 	if ((_gameplayFlags75fe & 0x10) != 0)
 		return;
@@ -1211,14 +1193,11 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 			const int targetY = CLIP<int>(overlayY + getGameplayCursorY(), 0, height - 1);
 
 			if (onFootMode) {
-				// HandleGameOp1A_OnFootVariant: single beam from character to crosshair.
-				// Gun barrel offset on first frame (timer==5, dirIndex in aiming range).
 				if (timer == 5 && _shipDirIndex > 10 && _shipDirIndex < 20) {
 					_shotSlots[i].centerX += kOnFootGunBarrelX[_shipDirIndex];
 					_shotSlots[i].centerY += kOnFootGunBarrelY[_shipDirIndex];
 				}
 
-				// Skip visible rendering when flags indicate invisible shots (auto-fire).
 				if ((_gameplayFlags75fe & 8) != 0)
 					continue;
 
@@ -1305,7 +1284,6 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 				continue;
 			}
 
-			// Fallback for non-turret handlers that still run shot overlays.
 			int leftStartY = overlayY + 0x96;
 			int rightStartY = overlayY + 0x96;
 			uint32 leftFlags = 0x83;
@@ -1577,7 +1555,6 @@ int InsaneRebel1::getFontBankLineAdvance(const char *text) {
 }
 
 void InsaneRebel1::renderShip(byte *dst, int pitch, int width, int height) {
-	// Hidden during last 20 frames of death sequence (deathTimer 20→0)
 	if (_health < 0 && _deathTimer <= 20)
 		return;
 
@@ -1627,13 +1604,11 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 		shipScreenY = overlayY + centerY;
 	}
 
-	// When dead and deathTimer > 10: random explosion sprites scatter around ship
 	if (_health < 0 && _deathTimer > 10) {
-		int intensity = _deathTimer - 10;  // 20→1 as timer goes 30→11
+		int intensity = _deathTimer - 10;
 		if (intensity > 10)
-			intensity = 20 - intensity;     // Triangle: 0→10→0
+			intensity = 20 - intensity;
 
-		// di = intensity * 4 + 1 (vertical scatter range)
 		int rangeY = intensity * 4 + 1;
 		int rangeX = -20 + intensity * 4;
 		if (rangeX < 1) rangeX = 1;
@@ -1641,7 +1616,6 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 		for (int i = 0; i < intensity; i++) {
 			int sprIdx = _vm->_rnd.getRandomNumber(_bangBank.numSprites - 1);
 
-			// Random position around ship.
 			int randX = (int)_vm->_rnd.getRandomNumber(rangeX * 2) - rangeX;
 			int randY = (int)_vm->_rnd.getRandomNumber(rangeY * 2) - rangeY;
 
@@ -1655,9 +1629,7 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 		return;
 	}
 
-	// When alive, in cooldown, and bang bank loaded
 	if (_health >= 0 && _damageCooldown > 0) {
-		// Sprite index = 10 - damageCooldown (frames 0→9 as cooldown 10→1)
 		int sprIdx = _bangBank.numSprites - _damageCooldown;
 		if (sprIdx < 0 || sprIdx >= _bangBank.numSprites)
 			return;
@@ -1732,8 +1704,6 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 		}
 	}
 
-	// fill rect at (0x92-health, 8), width=health, height=5, color=0.
-	// This is a black "remaining health" fill over the HUD template.
 	{
 		int barMaxW = kMaxHealth;
 		int barH = 5;
@@ -1802,8 +1772,6 @@ const int16 InsaneRebel1::kWalkerAttackWindow1[3] = { 2588, 2323, 877 };
 const int16 InsaneRebel1::kWalkerAttackWindow2[3] = { 1709, 1444, -2 };
 const int16 InsaneRebel1::kWalkerAttackWindow3[3] = { 262, -2, -2 };
 
-// updateLevel8WalkerState — Per-frame walker health + attack window logic.
-// Called from procPostRendering when _currentLevel == 7.
 void InsaneRebel1::updateLevel8WalkerState() {
 	if (_walkerHealth >= 11) {
 		_walkerHealth = (int16)(100 - (_killCount + (_killCount >> 2)));
@@ -1816,9 +1784,6 @@ void InsaneRebel1::updateLevel8WalkerState() {
 		return;
 	}
 
-	// contact hazards hit the player. The port synthesizes that damage flag in updateGameOp0BPhysics(),
-	// where the 0x0B damage flags are consumed. This is unrelated to _walkerHealth,
-	// which is the boss health displayed by the Level 8 overlay.
 	int route = CLIP(_levelRouteIndex, 0, 2);
 	uint16 fc = (uint16)_gameCounter;
 
@@ -1829,7 +1794,6 @@ void InsaneRebel1::updateLevel8WalkerState() {
 	};
 	int16 frameNum = (int16)fc;
 
-	// Check if we're inside any attack window (window-100 < frame <= window)
 	bool inWindow = false;
 	for (int w = 0; w < 3; w++) {
 		int16 windowEnd = *windows[w];
@@ -1837,7 +1801,6 @@ void InsaneRebel1::updateLevel8WalkerState() {
 		if (frameNum > windowEnd - 100 && frameNum <= windowEnd) {
 			inWindow = true;
 
-			// Reset timer at window start (first frame of window)
 			if (frameNum == windowEnd - 99)
 				_walkerTimer = 100;
 			break;
@@ -1847,7 +1810,6 @@ void InsaneRebel1::updateLevel8WalkerState() {
 	if (inWindow && _walkerBranchChoice == 0) {
 		_walkerTimer--;
 
-		// Check if we're in the directional phase (last 50 frames)
 		bool inDirectionalPhase = false;
 		for (int w = 0; w < 3; w++) {
 			int16 windowEnd = *windows[w];
@@ -1859,12 +1821,10 @@ void InsaneRebel1::updateLevel8WalkerState() {
 		}
 
 		if (inDirectionalPhase) {
-			// Player can choose direction during last 50 frames
 			if (_playerFired && _inputAxisDeltaX == 0) {
 				_walkerBranchChoice = (_shipPosX < 0xA0) ? 1 : 2;
 			}
 		} else {
-			// Torpedo sound every 8 frames during targeting phase
 			if ((_gameCounter & 7) == 0)
 				playSfx(kSfxLockOn, 127, 0);
 		}
@@ -1880,11 +1840,9 @@ void InsaneRebel1::updateLevel8WalkerState() {
 					  (_shipPosX < 0xA0 && _walkerBranchChoice != 2);
 
 		if (goLeft) {
-			// Left: branch to route 1 unless at window3 (w==2)
 			if (w != 2)
 				newRoute = 1;
 		} else {
-			// Right: branch to route 2 unless at window2 (w==1)
 			if (w != 1)
 				newRoute = 2;
 		}
@@ -1902,16 +1860,11 @@ void InsaneRebel1::updateLevel8WalkerState() {
 	}
 }
 
-// Draws walker health %, attack timer, directional arrows, and target reticle.
-// 1/4 parallax compensation. We draw into the 384x242 SMUSH buffer, so add the
-// coordinates before the final RA1 crop.
 void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int height,
 		int viewportX, int viewportY) {
 	if (_currentLevel != 7)
 		return;
 
-	// Walker health display — "<<WALKER %d%%" at projected cockpit panel point (0x61, 0x8D).
-	// Blinks when health < 16: only drawn when (GAME counter & 2) != 0.
 	if (_walkerHealth > 0 && (_walkerHealth >= 16 || (_gameCounter & 2) != 0)) {
 		int16 projX = 0x61, projY = 0x8D;
 		projectGameplayPoint(projX, projY);
@@ -1924,7 +1877,6 @@ void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int heig
 			viewportX + projX, viewportY + projY, walkerStr);
 	}
 
-	// Attack window overlay (timer + arrows/reticle)
 	int route = CLIP(_levelRouteIndex, 0, 2);
 	const int16 *windows[3] = {
 		&kWalkerAttackWindow1[route],
@@ -1949,7 +1901,6 @@ void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int heig
 	if (!inWindow || _walkerBranchChoice != 0)
 		return;
 
-	// Timer countdown — "<<TIME %d" at projected cockpit panel point (0x62, 0x9C).
 	{
 		int16 projX = 0x62, projY = 0x9C;
 		projectGameplayPoint(projX, projY);
@@ -1963,25 +1914,19 @@ void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int heig
 	}
 
 	if (inDirectionalPhase) {
-		// Directional arrows — DrawStringEx(..., flags=0x81) at:
-		// left:  (0xA6 - projX / 4, 0x92 - projY / 4)
-		// right: (0xA8 - projX / 4, 0x93 - projY / 4)
 		int16 projX = 0, projY = 0;
 		projectGameplayPoint(projX, projY);
 		const int16 parallaxX = (int16)(projX >> 2);
 		const int16 parallaxY = (int16)(projY >> 2);
 
 		if (_shipPosX < 0xA0) {
-			// Left arrow "<<v"
 			drawFontBankString(dst, pitch, width, height,
 				viewportX + 0xA6 - parallaxX, viewportY + 0x92 - parallaxY, "<<v");
 		} else {
-			// Right arrow "<<u"
 			drawFontBankString(dst, pitch, width, height,
 				viewportX + 0xA8 - parallaxX, viewportY + 0x93 - parallaxY, "<<u");
 		}
 	} else {
-		// Target reticle — "<<w" at projected (0xA9, 0x9A), blinks on (frame & 4)
 		if ((_gameCounter & 4) == 0) {
 			int16 projX = 0, projY = 0;
 			projectGameplayPoint(projX, projY);

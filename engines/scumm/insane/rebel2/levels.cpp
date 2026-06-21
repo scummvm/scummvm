@@ -45,8 +45,6 @@ static void purgeRebel2GameplayInputEvents(Common::EventManager *eventMan) {
 	eventMan->purgeKeyboardEvents();
 }
 
-// Level Loading System
-
 Common::String InsaneRebel2::getLevelDir(int levelId) {
 	return Common::String::format("LEV%02d", levelId);
 }
@@ -55,21 +53,16 @@ Common::String InsaneRebel2::getLevelPrefix(int levelId) {
 	return Common::String::format("%02d", levelId);
 }
 
-// Full game loop: intro, main menu, pilot select, chapter select, level
-// progression. Called from ScummEngine::go().
 void InsaneRebel2::runGame() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
-	// Demo: just play the demo video and return
 	if (_vm->_game.features & GF_DEMO) {
 		splayer->play("OPEN/O_DEMO.SAN", 15);
 		return;
 	}
 
-	// Case 0: Play intro sequence (Fox logo, LucasArts logo, O_OPEN_A, O_OPEN_B)
 	playIntroSequence();
 
-	// Cases 1-4: Main menu -> pilot select -> chapter select -> gameplay loop
 	while (!_vm->shouldQuit()) {
 		int menuResult = runMainMenu();
 
@@ -98,7 +91,6 @@ void InsaneRebel2::runGame() {
 				break;
 
 			if (chapterResult == kChapterSelectPlay) {
-				// _selectedChapter is 0-based, runLevel expects 1-based
 				int selectedLevel = _selectedChapter + 1;
 				debugC(DEBUG_INSANE, "InsaneRebel2: Starting chapter %d (level %d)", _selectedChapter + 1, selectedLevel);
 
@@ -106,7 +98,6 @@ void InsaneRebel2::runGame() {
 					playEndingSequence();
 				}
 
-				// Level progression loop: on success, advance to next level
 				while (!_vm->shouldQuit() && selectedLevel >= 1 && selectedLevel <= 15) {
 					int result = runLevel(selectedLevel);
 
@@ -128,15 +119,10 @@ void InsaneRebel2::runGame() {
 				if (_vm->shouldQuit())
 					break;
 			}
-			// If kChapterSelectBack, loop back to main menu
 		}
 	}
 }
 
-//   - If 'f','o','x' keys all held: play CREDITS/O_OPEN_C.SAN (Fox logo easter egg)
-//   - If 'b','o','t' keys all held: play CREDITS/O_OPEN_D.SAN (LucasArts logo)
-//   - Else: play OPEN/O_OPEN_A.SAN (main intro)
-// We skip the easter eggs and play both O_OPEN_A + O_OPEN_B unconditionally.
 void InsaneRebel2::playIntroSequence() {
 	debugC(DEBUG_INSANE, "Playing intro sequence");
 
@@ -145,7 +131,6 @@ void InsaneRebel2::playIntroSequence() {
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
-	// Play main intro (OPEN/O_OPEN_A.SAN)
 	debugC(DEBUG_INSANE, "Playing main intro (O_OPEN_A.SAN)");
 	splayer->setCurVideoFlags(0x28);
 	splayer->play("OPEN/O_OPEN_A.SAN", 15);
@@ -153,8 +138,6 @@ void InsaneRebel2::playIntroSequence() {
 	if (_vm->shouldQuit())
 		return;
 
-	// Play additional intro (OPEN/O_OPEN_B.SAN)
-	// We play unconditionally (matches "Continue Intro" menu behavior)
 	debugC(DEBUG_INSANE, "Playing additional intro (O_OPEN_B.SAN)");
 	splayer->setCurVideoFlags(0x28);
 	splayer->play("OPEN/O_OPEN_B.SAN", 15);
@@ -169,21 +152,18 @@ void InsaneRebel2::playMissionBriefing() {
 	splayer->play("OPEN/O_LEVEL.SAN", 15);
 }
 
-// playCinematic -- Play a cinematic/cutscene video.
-// Resets handler to 0 (no HUD) and sets flags to 0x28 (cinematic + buffer preserve).
 void InsaneRebel2::playCinematic(const char *filename) {
 	restoreDamageFlashPalette();
 	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
-	_rebelStatusBarSprite = 0;  // No status bar during cinematics
+	_rebelStatusBarSprite = 0;
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	splayer->setCurVideoFlags(0x28);  // Cinematic mode + buffer preserve (0x20 | 0x08)
+	splayer->setCurVideoFlags(0x28);
 	splayer->play(filename, 15);
 }
 
-// displayLength = currentFrame + 10 - fadeInFrame, capped at 0xBE (190) chars.
 void InsaneRebel2::playVideoWithText(const char *filename, int textID, int textX, int textY,
                                      int fadeInFrame, int fadeOutFrame) {
 
@@ -193,7 +173,6 @@ void InsaneRebel2::playVideoWithText(const char *filename, int textID, int textX
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;
 
-	// Set up text overlay state — procPostRendering reads these each frame
 	_textOverlayActive = true;
 	_textOverlayID = textID;
 	_textOverlayX = textX;
@@ -208,7 +187,6 @@ void InsaneRebel2::playVideoWithText(const char *filename, int textID, int textX
 	_textOverlayActive = false;
 }
 
-// playLevelBegin -- Level beginning cinematic (LEVXX/XXBEG.SAN).
 void InsaneRebel2::playLevelBegin(int levelId) {
 
 	struct TextOverlayParams {
@@ -219,7 +197,6 @@ void InsaneRebel2::playLevelBegin(int levelId) {
 		int fadeOutFrame;
 	};
 
-	// Table of per-level text overlay parameters
 	// Text IDs are sequential: 0xAA (level 1) through 0xB8 (level 15)
 	const TextOverlayParams levelTextParams[16] = {
 		{ -1,   0,  0,   0,    0},    // Level 0 (unused)
@@ -280,7 +257,7 @@ void InsaneRebel2::playLevelRetry(int levelId) {
 	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
-	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed
+	_rebelStatusBarSprite = 0;
 
 	Common::String dir = getLevelDir(levelId);
 	Common::String prefix = getLevelPrefix(levelId);
@@ -299,7 +276,7 @@ void InsaneRebel2::playLevelGameOver(int levelId) {
 	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
-	_rebelStatusBarSprite = 0;  // No status bar during game over cinematic
+	_rebelStatusBarSprite = 0;
 
 	Common::String dir = getLevelDir(levelId);
 	Common::String prefix = getLevelPrefix(levelId);
@@ -312,27 +289,17 @@ void InsaneRebel2::playLevelGameOver(int levelId) {
 	splayer->play(filename.c_str(), 15);
 }
 
-//   1. Play difficulty-dependent finale video:
-//      - Difficulty 2: FINAL/F_FIN_B.SAN
-//      - Difficulty 3: FINAL/F_FIN_C.SAN
-//      - Default:      FINAL/F_FIN_A.SAN
-//   2. Play credits: FINAL/F_CREDIT.SAN
-//   3. Play epilogue: FINAL/F_EPILOG.SAN
-//   4. Return to main menu
 void InsaneRebel2::playEndingSequence() {
 
 	debugC(DEBUG_INSANE, "Playing ending sequence (difficulty=%d)", _difficulty);
 
-	// Switch to gameplay state to stop menu overlay rendering
 	_gameState = kStateGameplay;
 	_menuInputActive = false;
 
-	// Clear the screen to remove any leftover menu pixels
 	VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
 	memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
 	_vm->markRectAsDirty(kMainVirtScreen, 0, vs->w, 0, vs->h);
 
-	// Difficulty-dependent finale video
 	if (_difficulty == 2) {
 		playCinematic("FINAL/F_FIN_B.SAN");
 	} else if (_difficulty == 3) {
@@ -344,18 +311,14 @@ void InsaneRebel2::playEndingSequence() {
 	if (_vm->shouldQuit())
 		return;
 
-	// Credits
 	playCinematic("FINAL/F_CREDIT.SAN");
 
 	if (_vm->shouldQuit())
 		return;
 
-	// Epilogue
 	playCinematic("FINAL/F_EPILOG.SAN");
 }
 
-// playCreditsSequence -- Main menu credits (OPEN/O_CREDIT.SAN).
-// This is the credits accessible from the main menu, NOT the ending credits.
 void InsaneRebel2::playCreditsSequence() {
 
 	debugC(DEBUG_INSANE, "Playing menu credits");
@@ -402,27 +365,22 @@ void InsaneRebel2::warpGameplayMouseNow(int x, int y) {
 		eventMan->purgeMouseEvents();
 }
 
-// runLevel -- Main level dispatcher, calls per-level handlers.
 int InsaneRebel2::runLevel(int levelId) {
 
 	debugC(DEBUG_INSANE, "Starting level %d", levelId);
 
-	// Validate level ID
 	if (levelId < 1 || levelId > 15) {
 		warning("Rebel2: Invalid level ID %d", levelId);
 		return kLevelReturnToMenu;
 	}
 
-	// Switch to gameplay state to stop menu overlay rendering
 	_gameState = kStateGameplay;
 	_menuInputActive = false;
 
-	// Clear the screen to remove any leftover menu pixels
 	VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
 	memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
 	_vm->markRectAsDirty(kMainVirtScreen, 0, vs->w, 0, vs->h);
 
-	// Set the current level
 	_selectedLevel = levelId;
 
 	// Levels 1-6 use types 0-5, but Level 6 also uses type 6 mid-level.
@@ -433,14 +391,10 @@ int InsaneRebel2::runLevel(int levelId) {
 	};
 	_rebelLevelType = kLevelTypeMap[levelId];
 
-	// Lock the mouse to the game window during gameplay.
-	// the mouse to the game window. Without locking, the cursor can escape the
-	// window making the ship uncontrollable.
 	_gameplaySectionActive = false;
 	CursorMan.showMouse(false);
 	g_system->lockMouse(true);
 
-	// Initialize common player state
 	_playerLives = 3;
 	_playerShield = 255;
 	_playerScore = 0;
@@ -451,7 +405,6 @@ int InsaneRebel2::runLevel(int levelId) {
 	_currentPhase = 1;
 	_skipSectionRequested = false;
 
-	// Dispatch to per-level handler
 	int result;
 	switch (levelId) {
 	case 1:
@@ -504,7 +457,6 @@ int InsaneRebel2::runLevel(int levelId) {
 		break;
 	}
 
-	// Unlock the mouse when returning to menu
 	restoreIOSGamepadController();
 	g_system->lockMouse(false);
 	CursorMan.showMouse(true);
@@ -512,22 +464,17 @@ int InsaneRebel2::runLevel(int levelId) {
 	return result;
 }
 
-// Helper Functions
-
 int InsaneRebel2::getRandomVariant(int max) {
 	return _vm->_rnd.getRandomNumber(max - 1);
 }
 
-// selectDeathVideoVariant -- Frame-based death video selection
 Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int frame) {
 
 	switch (levelId) {
 	case 1:
-		// Level 1: Random between A and B
 		return (getRandomVariant(2) == 0) ? "B" : "A";
 
 	case 2:
-		// Level 2: Just "DIE" (no variants)
 		return "";
 
 	case 3:
@@ -559,7 +506,6 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 		return "A";
 
 	case 5:
-		// Level 5: Random between A and B
 		return (getRandomVariant(2) == 0) ? "B" : "A";
 
 	case 6:
@@ -610,7 +556,6 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 		}
 
 	case 7:
-		// We use phase as a proxy (phase 2 = reached fork)
 		return (phase >= 2) ? "B" : "A";
 
 	case 8:
@@ -623,7 +568,6 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 		return "";
 
 	case 11:
-		// Phase 1 → DIE_A, Phase 2 → DIE_B, Phase 3 → DIE_C
 		if (phase <= 1)
 			return "A";
 		if (phase == 2)
@@ -667,14 +611,13 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 	}
 }
 
-// playLevelDeathVariant -- Death video with variant selection.
 void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 
 	restoreDamageFlashPalette();
 	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
-	_rebelStatusBarSprite = 0;  // No status bar during death cinematic
+	_rebelStatusBarSprite = 0;
 
 	Common::String dir = getLevelDir(levelId);
 	Common::String prefix = getLevelPrefix(levelId);
@@ -682,7 +625,6 @@ void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 	Common::String filename;
 
 	if (variant.empty()) {
-		// No variant suffix.
 		filename = Common::String::format("%s/%sDIE.SAN", dir.c_str(), prefix.c_str());
 	} else {
 		filename = Common::String::format("%s/%sDIE_%s.SAN", dir.c_str(), prefix.c_str(), variant.c_str());
@@ -695,24 +637,21 @@ void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 	splayer->play(filename.c_str(), 15);
 }
 
-// playLevelRetryVariant -- Phase-specific retry video.
 void InsaneRebel2::playLevelRetryVariant(int levelId, int phase) {
 
 	restoreDamageFlashPalette();
 	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
-	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed
+	_rebelStatusBarSprite = 0;
 
 	Common::String dir = getLevelDir(levelId);
 	Common::String prefix = getLevelPrefix(levelId);
 	Common::String filename;
 
 	if ((levelId == 3 || levelId == 6) && phase == 2) {
-		// Level 3/6 phase 2 has its own retry video: xxRETRYB.SAN
 		filename = Common::String::format("%s/%sRETRYB.SAN", dir.c_str(), prefix.c_str());
 	} else {
-		// Standard retry video
 		filename = Common::String::format("%s/%sRETRY.SAN", dir.c_str(), prefix.c_str());
 	}
 

@@ -163,7 +163,7 @@ void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width
 		while (src + 2 <= lineEnd && x < width) {
 			int skip = READ_LE_UINT16(src);
 			src += 2;
-			x += skip;  // Skip preserves previous frame content
+			x += skip;
 			if (src + 2 > lineEnd || x >= width)
 				break;
 

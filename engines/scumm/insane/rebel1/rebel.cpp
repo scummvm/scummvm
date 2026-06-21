@@ -343,14 +343,10 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_levelSelectSel = 0;
 	_startLevel = 1;
 
-	// Options: read initial state from the mixer.
 	_optRookieOneFemale = false;
 	_optMusicEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
 	_optSfxEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType) &&
 		!_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSpeechSoundType);
-	// Initialize the dialogue-text (subtitles) toggle from the global setting so the
-	// game and the in-game DIALOGUE TEXT menu label reflect it. The menu toggle writes the
-	// same "subtitles" key, and ra1HandleText() gates rendering on it.
 	_optTextEnabled = ConfMan.getBool("subtitles");
 	_optControlsYFlip = false;
 	_optRapidFire = true;
@@ -379,7 +375,6 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_highScoreEntryIndex = -1;
 	memset(_textEntryBuffer, 0, sizeof(_textEntryBuffer));
 
-	// Shooting/targeting state
 	_playerFired = false;
 	_playerSecondaryHeld = false;
 	_fireCooldown = 0;
@@ -430,7 +425,6 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 		warning("InsaneRebel1::InsaneRebel1(): failed to load title font bank (TITLFONT/TALKFONT)");
 	}
 
-	// Keep a dedicated TECH font bank for targeting markers/lock indicators.
 	if (loadRA1Nut("SYS/TECHFONT.NUT", _techFontBank)) {
 		debugC(DEBUG_INSANE, "InsaneRebel1::InsaneRebel1(): targeting glyph font loaded from SYS/TECHFONT.NUT (%d chars)", _techFontBank.numSprites);
 	} else if (loadRA1Nut("SYS/TALKFONT.NUT", _techFontBank)) {
@@ -439,13 +433,11 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 		warning("InsaneRebel1::InsaneRebel1(): failed to load targeting font bank (TECHFONT/TALKFONT)");
 	}
 
-	// Audio
 	initAudio(11025);
 	memset(_sfxData, 0, sizeof(_sfxData));
 	memset(_sfxSize, 0, sizeof(_sfxSize));
 	loadSfx();
 
-	// Null out Insane base class pointers that the default constructor doesn't initialize
 	_smush_roadrashRip = nullptr;
 	_smush_roadrsh2Rip = nullptr;
 	_smush_roadrsh3Rip = nullptr;

@@ -85,7 +85,6 @@ InsaneRebel2::WaveEndResult InsaneRebel2::processWaveEnd(int16 mask, int16 *budg
 		return result;
 	}
 
-	// Debug shortcut path: force-end current section when requested via Shift+S.
 	if (_skipSectionRequested) {
 		_skipSectionRequested = false;
 		_rebelPhaseState = mask;
@@ -95,10 +94,6 @@ InsaneRebel2::WaveEndResult InsaneRebel2::processWaveEnd(int16 mask, int16 *budg
 		result.skipped = true;
 		return result;
 	}
-
-	// Threshold-based early exit needs per-frame callbacks; current playback
-	// waits for the full wave and accumulates the resulting kill state.
-	// TODO: Implement per-frame early exit callback for threshold-based wave termination.
 
 	_rebelPhaseState = _rebelWaveState;
 	debugC(DEBUG_INSANE, "processWaveEnd: waveState=0x%x -> phaseState=0x%x mask=0x%x budget=%d threshold=%d flags=%d",
@@ -362,19 +357,8 @@ void InsaneRebel2::resetHandler7FlightState() {
 	}
 }
 
-// Multiple parts with P1/P2/P3 subdirectories
-// Random animation variants for each part
-
 int InsaneRebel2::runLevel2() {
-	// Three phases, each with looping enemy waves until all enemy types killed.
-	// Phase completion: (_rebelPhaseState & mask) == mask
-	// Phase 1 mask: 0x06 (enemy types 1,2)
-	// Phase 2 mask: 0x0e (enemy types 1,2,3)
-	// Phase 3 mask: 0x0e (enemy types 1,2,3)
-	// Each phase gets a budget = tableBase + random(3). processWaveEnd() uses
-	// this budget to randomly redistribute kill credits, creating non-deterministic
-	// wave progression. Using calibrated defaults until exact table values extracted.
-	const int16 kLevel2BudgetBase[3] = { 3, 3, 3 };  // Phase 1, 2, 3
+	const int16 kLevel2BudgetBase[3] = { 3, 3, 3 };
 
 	int bonusCount = 0;
 	int totalKills = 0;
@@ -405,10 +389,8 @@ int InsaneRebel2::runLevel2() {
 		if (!playLevelSegment("LEV02/P1/02P01_A.SAN", 0x28))
 			return kLevelQuit;
 
-		// processWaveEnd after A.SAN (threshold=0, no early exit for background loader)
 		processWaveEnd(0x36, &budget, 0, 0);
 
-		// Phase 1 wave loop: random B/C/D until all type 1,2 enemies killed
 		while (_playerDamage < 255 && (_rebelPhaseState & 0x06) != 0x06) {
 			if (_vm->shouldQuit())
 				return kLevelQuit;
@@ -423,7 +405,6 @@ int InsaneRebel2::runLevel2() {
 			if (!playLevelSegment(variants[variant], 0x428))
 				return kLevelQuit;
 
-			// processWaveEnd with threshold=0x14 (20) — enables early exit when enemies killed
 			processWaveEnd(0x36, &budget, 0x14, 0);
 			debugC(DEBUG_INSANE, "Phase 1 wave done - state=0x%x (need 0x06) budget=%d", _rebelPhaseState, budget);
 		}
@@ -440,7 +421,6 @@ int InsaneRebel2::runLevel2() {
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
-		// Reset handler to 0 so procPostRendering skips HUD/sprite drawing during cinematic
 		_rebelHandler = 0;
 		_rebelStatusBarSprite = 0;
 		if (!playLevelSegment("LEV02/02PST1.SAN", 0x28, false))
@@ -454,7 +434,6 @@ int InsaneRebel2::runLevel2() {
 
 		budget = kLevel2BudgetBase[1] + _vm->_rnd.getRandomNumber(2);
 
-		// Restore handler for gameplay — will be confirmed by IACT opcode 6
 		_rebelHandler = 8;
 
 		debugC(DEBUG_INSANE, "Level 2 Phase 2 - playing 02P02_A.SAN (background) budget=%d", budget);
@@ -507,7 +486,6 @@ int InsaneRebel2::runLevel2() {
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
-		// Reset handler to 0 so procPostRendering skips HUD/sprite drawing during cinematic
 		_rebelHandler = 0;
 		_rebelStatusBarSprite = 0;
 		if (!playLevelSegment("LEV02/02PST2.SAN", 0x28, false))
@@ -522,14 +500,12 @@ int InsaneRebel2::runLevel2() {
 
 		budget = kLevel2BudgetBase[2] + _vm->_rnd.getRandomNumber(2);
 
-		// Restore handler for gameplay — will be confirmed by IACT opcode 6
 		_rebelHandler = 8;
 
 		debugC(DEBUG_INSANE, "Level 2 Phase 3 - playing 02P03_A.SAN (background) budget=%d", budget);
 		if (!playLevelSegment("LEV02/P3/02P03_A.SAN", 0x28))
 			return kLevelQuit;
 
-		// Phase 3: processWaveEnd at BOTTOM (like Phase 1), waveSelect carried across iterations
 		{
 			WaveEndResult waveEnd = processWaveEnd(0x3e, &budget, 0, 0);
 
@@ -539,7 +515,6 @@ int InsaneRebel2::runLevel2() {
 
 				uint16 waveSelect = waveEnd.creditedBits;
 
-				// If previous wave state bit 0 was clear AND random(8)==0, set bit 0
 				if (((prevWaveState & 1) == 0) && (_vm->_rnd.getRandomNumber(7) == 0)) {
 					waveSelect |= 1;
 				}
@@ -571,7 +546,6 @@ int InsaneRebel2::runLevel2() {
 				if (!playLevelSegment(filename, 0x428))
 					return kLevelQuit;
 
-				// processWaveEnd at BOTTOM with threshold=0x14
 				waveEnd = processWaveEnd(0x3e, &budget, 0x14, 0);
 				debugC(DEBUG_INSANE, "Phase 3 wave done - state=0x%x (need 0x0e) budget=%d", _rebelPhaseState, budget);
 			}
@@ -590,7 +564,6 @@ int InsaneRebel2::runLevel2() {
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
-		// Score presentation remains to be implemented.
 		{
 			totalMisses += _rebelHitCounter;
 			int accuracy = calculateAccuracy(totalKills, totalMisses);
@@ -599,18 +572,15 @@ int InsaneRebel2::runLevel2() {
 		}
 
 		playLevelEnd(2);
-		_levelUnlocked[2] = true;  // Unlock level 3
+		_levelUnlocked[2] = true;
 		return kLevelNextLevel;
 	}
 
 	return kLevelQuit;
 }
 
-// Two phases with per-phase retry handling
-// Phase 1: 03PLAY1.SAN, Phase 2: 03PLAY2.SAN
-
 int InsaneRebel2::runLevel3() {
-	int phase1Score = 0;  // Score preserved across phase 2 retries
+	int phase1Score = 0;
 
 	playLevelBegin(3);
 	if (_vm->shouldQuit())
@@ -655,7 +625,6 @@ int InsaneRebel2::runLevel3() {
 	if (_vm->shouldQuit())
 		return kLevelQuit;
 
-	// Reset handler to 0 so procPostRendering skips HUD/sprite drawing during cinematic
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;
 	if (!playLevelSegment("LEV03/03POST1.SAN", 0x28, false))
@@ -681,7 +650,7 @@ int InsaneRebel2::runLevel3() {
 		if (_playerShield > 0) {
 			debugC(DEBUG_INSANE, "Level 3 completed!");
 			playLevelEnd(3);
-			_levelUnlocked[3] = true;  // Unlock level 4
+			_levelUnlocked[3] = true;
 			return kLevelNextLevel;
 		}
 
@@ -692,7 +661,6 @@ int InsaneRebel2::runLevel3() {
 
 		_playerLives--;
 		if (_playerLives <= 0) {
-			// Use phase 2 specific game over (03OVER.SAN, same file but at different point)
 			playLevelGameOver(3);
 			return kLevelGameOver;
 		}
@@ -704,9 +672,6 @@ int InsaneRebel2::runLevel3() {
 
 	return kLevelQuit;
 }
-
-// Level 4 Handler
-// Cutscene + single gameplay phase
 
 int InsaneRebel2::runLevel4() {
 	if (!playLevelSegment("LEV04/04CUT.SAN", 0x28, false))
@@ -754,9 +719,6 @@ int InsaneRebel2::runLevel4() {
 	return kLevelQuit;
 }
 
-// Single gameplay phase (05PLAY.SAN)
-// Random A/B death video like Level 1
-
 int InsaneRebel2::runLevel5() {
 	playLevelBegin(5);
 	if (_vm->shouldQuit())
@@ -800,29 +762,19 @@ int InsaneRebel2::runLevel5() {
 	return kLevelQuit;
 }
 
-// Two phases with per-phase retry (like Level 3)
-// Phase 1: 06PLAY1.SAN, Phase 2: 06PLAY2.SAN
-
 int InsaneRebel2::runLevel6() {
-	// Phase 1 (levelId=5): 06PLAY1.SAN, mid-switch to 06PLAY1B.SAN at frame 0x2a8
-	// Phase 2 (levelId=6): 06PLAY2.SAN, play until near-end
-	// phase 2 retries + death handling. Phase 1 death breaks inner → RETRY at outer bottom.
-	// Phase 2 death → RETRYB → re-enters phase 2 within inner loop.
 	int phase1Score = 0;
 
 	playLevelBegin(6);
 	if (_vm->shouldQuit())
 		return kLevelQuit;
 
-
-	// Outer retry loop — restarts phase 1 on phase 1 death
 	while (!_vm->shouldQuit()) {
 		clearBit(0);
 		resetExplosions();
 
 		_rebelPhaseState = 0xffffffff;
 
-		// destroys the shield (its hit gauge reaches 0) or dies.
 		_rebelLevelType = 5;
 		_currentPhase = 1;
 
@@ -909,9 +861,6 @@ int InsaneRebel2::runLevel6() {
 	return kLevelQuit;
 }
 
-// "TIE Training" - Canyon flight with fork at frame 1592
-// Single gameplay phase (07PLAY.SAN), optional second segment (07PLAYB.SAN)
-
 int InsaneRebel2::runLevel7() {
 	bool reachedFork = false;
 
@@ -934,9 +883,6 @@ int InsaneRebel2::runLevel7() {
 
 		clearBit(0);
 
-		// TODO: Mid-level fork at frame 1592 requires per-frame callback.
-		// The fork video (07PLAYB) should be triggered by IACT callbacks setting
-		// a state flag during gameplay.
 		if (!playLevelSegment("LEV07/07PLAY.SAN", 0x28))
 			return kLevelQuit;
 
@@ -969,8 +915,6 @@ int InsaneRebel2::runLevel7() {
 
 	return kLevelQuit;
 }
-
-// "Flight to Imdaar" - Y-Wing space battle (single phase)
 
 int InsaneRebel2::runLevel8() {
 	playLevelBegin(8);
@@ -1017,8 +961,6 @@ int InsaneRebel2::runLevel8() {
 	return kLevelQuit;
 }
 
-// "The Mine Field" - Navigate through force fields (single phase)
-
 int InsaneRebel2::runLevel9() {
 	playLevelBegin(9);
 	if (_vm->shouldQuit())
@@ -1036,7 +978,6 @@ int InsaneRebel2::runLevel9() {
 
 		_rebelPhaseState = 0xfffffffe;
 
-		// These are handled implicitly — the IACT callbacks manage scoring.
 		if (!playLevelSegment("LEV09/09PLAY.SAN", 0x28))
 			return kLevelQuit;
 
@@ -1066,9 +1007,6 @@ int InsaneRebel2::runLevel9() {
 
 	return kLevelQuit;
 }
-
-// "Speeder Bikes" - Forest speeder chase (single phase)
-// Has cutscene. Single death video (10DIE.SAN, no variants).
 
 int InsaneRebel2::runLevel10() {
 	playCinematic("LEV10/10CUT.SAN");
@@ -1118,14 +1056,6 @@ int InsaneRebel2::runLevel10() {
 	return kLevelQuit;
 }
 
-// "Inside the Terror" - Three phases + bridge puzzle (Handler 8, on-foot)
-// Phase 1: P1/11P01_X (A,B,C,D) - behind barrels, mask 0x0e
-// Phase 2: P2/11P02_X (A,B,C,D) - walls on right, mask 0x0e, flags=3
-// Phase 3 first half: P3/11P03_X (A-F) - bridge puzzle, mask 0x7e
-//   Exit when (phaseState & 0x70) == 0x70
-// POST3/POST3B/POST3C bridge cinematics
-// Phase 3 second half: P3/11P03_X (G-L) - after bridge, mask 0x0e
-
 int InsaneRebel2::runLevel11() {
 	int totalKills = 0;
 	int totalMisses = 0;
@@ -1160,15 +1090,12 @@ int InsaneRebel2::runLevel11() {
 		{
 			WaveEndResult waveEnd = processWaveEnd(0x0e, &budget, 0, 0);
 
-			// Phase 1 wave loop: random(2) | (waveSelect & 8) → variants
-			// 0→D, 1→C, 8→B, 9→A
 			while (!waveEnd.shouldStop()) {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
 
 				uint16 waveSelect = waveEnd.creditedBits;
 
-				// Bonus sound check
 				if ((_rebelPhaseState & 0x10) != 0 && (prevPhaseState & 0x10) == 0) {
 				}
 				prevPhaseState = _rebelPhaseState;
@@ -1218,10 +1145,8 @@ int InsaneRebel2::runLevel11() {
 			return kLevelQuit;
 
 		{
-			// Phase 2: flags=3 (maxCredits=2, redistribution ON)
 			WaveEndResult waveEnd = processWaveEnd(0x0e, &budget, 0, 3);
 
-			// Random(4) for variant selection: A, B, C, D
 			while (!waveEnd.shouldStop()) {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
@@ -1260,7 +1185,6 @@ int InsaneRebel2::runLevel11() {
 		totalKills += _rebelKillCounter;
 		totalMisses += _rebelHitCounter;
 
-		// Bridge puzzle — exit when (phaseState & 0x70) == 0x70
 		_currentPhase = 3;
 		resetLevelPhaseState(true);
 		prevPhaseState = 0;
@@ -1276,21 +1200,18 @@ int InsaneRebel2::runLevel11() {
 			WaveEndResult waveEnd = processWaveEnd(0x7e, &budget, 0, 0);
 			int variantIdx = 0;  // Tracks variant for randomization threshold
 
-			// Loop until (phaseState & 0x70) == 0x70 (bridge targets destroyed)
 			while (!waveEnd.shouldStop() && (_rebelPhaseState & 0x70) != 0x70) {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
 
-				// Bonus sound: (phaseState & 0xe) == 0xe and previous wasn't
 				if ((_rebelPhaseState & 0x0e) == 0x0e && (prevPhaseState & 0x0e) != 0x0e) {
 				}
 				prevPhaseState = _rebelPhaseState;
 
-				// Randomization: wider range for first few waves
 				if (variantIdx < 3) {
-					variantIdx = _vm->_rnd.getRandomNumber(7);  // 0-7
+					variantIdx = _vm->_rnd.getRandomNumber(7);
 				} else {
-					variantIdx = _vm->_rnd.getRandomNumber(2);  // 0-2
+					variantIdx = _vm->_rnd.getRandomNumber(2);
 				}
 
 				const char *filename;
@@ -1302,7 +1223,7 @@ int InsaneRebel2::runLevel11() {
 				case 4:  filename = "LEV11/P3/11P03_E.SAN"; break;
 				case 5:  filename = "LEV11/P3/11P03_F.SAN"; break;
 				case 6:  filename = "LEV11/P3/11P03_F.SAN"; break;  // duplicate F
-				default: filename = "LEV11/P3/11P03_E.SAN"; break;  // duplicate E
+				default: filename = "LEV11/P3/11P03_E.SAN"; break;
 				}
 
 				debugC(DEBUG_INSANE, "Level 11 Phase 3a wave - %s (state=0x%x variantIdx=%d)", filename, _rebelPhaseState, variantIdx);
@@ -1326,10 +1247,8 @@ int InsaneRebel2::runLevel11() {
 		{
 			bool allBasicKilled = (_rebelPhaseState & 0x0e) >= 0x0e;
 			if (!allBasicKilled) {
-				// Normal bridge drop cinematic
 				playCinematic("LEV11/11POST3.SAN");
 			} else {
-				// All enemy types killed — bridge dropped successfully
 				playCinematic("LEV11/11POST3B.SAN");
 			}
 		}
@@ -1351,7 +1270,6 @@ int InsaneRebel2::runLevel11() {
 		if (!playLevelSegment("LEV11/P3/11P03_G.SAN", 0x28))
 			return kLevelQuit;
 
-		// Only enter wave loop if not all basic types killed already
 		if ((_rebelPhaseState & 0x0e) < 0x0e) {
 			int variantIdx = 0;
 			WaveEndResult waveEnd = processWaveEnd(0x0e, &budget, 0, 0);
@@ -1360,11 +1278,10 @@ int InsaneRebel2::runLevel11() {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
 
-				// Wider randomization for first few waves
 				if (variantIdx < 4) {
-					variantIdx = _vm->_rnd.getRandomNumber(8);  // 0-8
+					variantIdx = _vm->_rnd.getRandomNumber(8);
 				} else {
-					variantIdx = _vm->_rnd.getRandomNumber(2);  // 0-2
+					variantIdx = _vm->_rnd.getRandomNumber(2);
 				}
 
 				const char *filename;
@@ -1372,9 +1289,9 @@ int InsaneRebel2::runLevel11() {
 				case 0:  filename = "LEV11/P3/11P03_G.SAN"; break;
 				case 1:  filename = "LEV11/P3/11P03_H.SAN"; break;
 				case 2:  filename = "LEV11/P3/11P03_I.SAN"; break;
-				case 3:  filename = "LEV11/P3/11P03_G.SAN"; break;  // G again
-				case 4:  filename = "LEV11/P3/11P03_H.SAN"; break;  // H again
-				case 5:  filename = "LEV11/P3/11P03_I.SAN"; break;  // I again
+				case 3:  filename = "LEV11/P3/11P03_G.SAN"; break;
+				case 4:  filename = "LEV11/P3/11P03_H.SAN"; break;
+				case 5:  filename = "LEV11/P3/11P03_I.SAN"; break;
 				case 6:  filename = "LEV11/P3/11P03_J.SAN"; break;
 				case 7:  filename = "LEV11/P3/11P03_K.SAN"; break;
 				default: filename = "LEV11/P3/11P03_L.SAN"; break;
@@ -1408,23 +1325,14 @@ int InsaneRebel2::runLevel11() {
 		}
 
 		playLevelEnd(11);
-		_levelUnlocked[11] = true;  // Unlock level 12
+		_levelUnlocked[11] = true;
 		return kLevelNextLevel;
 	}
 
 	return kLevelQuit;
 }
 
-// "Sewers" - Four phases FPS corridor shooting (Handler 25)
-// Each phase: init video (P05/P06/P07/P08) → first wave → wave loop
-// Phase 1: P1/12P01_X (A,B,C,D) mask=6
-// Phase 2: P2/12P02_X (A,B,C,D,E,F) mask=6
-// Phase 3: P3/12P03_X (A,B,C,D,F) mask=6
-// Phase 4: P4/12P04_X (A,B,C,D,E,F) mask=0xe
-// Closing: 12P09.SAN
-
 int InsaneRebel2::runLevel12() {
-	// Kill credit budget bases per phase
 	const int16 kLevel12BudgetBase[4] = { 3, 4, 4, 4 };
 
 	playCinematic("LEV12/12CUT.SAN");
@@ -1455,7 +1363,6 @@ int InsaneRebel2::runLevel12() {
 		{
 			WaveEndResult waveEnd = processWaveEnd(6, &budget, 0x14, 0);
 
-			// Wave loop: random(2) | (waveSelect & 2) → 0:C, 1:D, 2:A, 3:B
 			while (!waveEnd.shouldStop()) {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
@@ -1509,12 +1416,11 @@ int InsaneRebel2::runLevel12() {
 
 				uint16 waveSelect = waveEnd.creditedBits;
 
-				// Variant selection: (waveSelect & 2) controls which set
 				int variantIdx;
 				if ((waveSelect & 2) == 0) {
-					variantIdx = _vm->_rnd.getRandomNumber(2) + 3;  // 3, 4, or 5
+					variantIdx = _vm->_rnd.getRandomNumber(2) + 3;
 				} else {
-					variantIdx = _vm->_rnd.getRandomNumber(2);      // 0, 1, or 2
+					variantIdx = _vm->_rnd.getRandomNumber(2);
 				}
 
 				const char *filename;
@@ -1531,7 +1437,6 @@ int InsaneRebel2::runLevel12() {
 				if (!playLevelSegment(filename, 0x428))
 					return kLevelQuit;
 
-				// Variants E(2) and F(5) reset threshold to 0
 				int16 threshold = (variantIdx == 2 || variantIdx == 5) ? 0 : 0x14;
 				waveEnd = processWaveEnd(6, &budget, threshold, 0);
 			}
@@ -1567,11 +1472,10 @@ int InsaneRebel2::runLevel12() {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
 
-				// Wider randomization for first few waves
 				if (variantIdx < 4) {
-					variantIdx = _vm->_rnd.getRandomNumber(5);  // 0-5
+					variantIdx = _vm->_rnd.getRandomNumber(5);
 				} else {
-					variantIdx = _vm->_rnd.getRandomNumber(3);  // 0-3
+					variantIdx = _vm->_rnd.getRandomNumber(3);
 				}
 
 				const char *filename;
@@ -1665,20 +1569,13 @@ int InsaneRebel2::runLevel12() {
 				_rebelKillCounter, _rebelHitCounter, accuracy);
 		}
 
-		// If all three bonuses found, play special ending (12END_Z.SAN)
-		// Deferred until bonus tracking is implemented
-
 		playLevelEnd(12);
-		_levelUnlocked[12] = true;  // Unlock level 13
+		_levelUnlocked[12] = true;
 		return kLevelNextLevel;
 	}
 
 	return kLevelQuit;
 }
-
-// "Escaping the Star Destroyer" - Two-phase flight/escape
-// Phase A: 13PLAY_A.SAN (main flight), transitions to Phase B at maxFrame-10
-// Phase B: 13PLAY_B.SAN (reactor loop, flags 0x468) — plays until
 
 int InsaneRebel2::runLevel13() {
 	playLevelBegin(13);
@@ -1695,7 +1592,6 @@ int InsaneRebel2::runLevel13() {
 
 		clearBit(0);
 
-		// Phase A: full approach flight; the reactor gauge is tracked but A plays to the end.
 		resetShieldGauge();
 		_rebelShieldGateActive = true;
 		_rebelReactorMode = true;
@@ -1746,8 +1642,6 @@ int InsaneRebel2::runLevel13() {
 	return kLevelQuit;
 }
 
-// "TIE Attack" - Final space battle (single phase)
-
 int InsaneRebel2::runLevel14() {
 	playLevelBegin(14);
 	if (_vm->shouldQuit())
@@ -1793,9 +1687,6 @@ int InsaneRebel2::runLevel14() {
 	return kLevelQuit;
 }
 
-// "Imdaar Alpha" - Final mission (single long phase with level ID switch)
-// This represents a transition from the tunnel section to the core section.
-
 int InsaneRebel2::runLevel15() {
 	playCinematic("LEV15/15CUT.SAN");
 	if (_vm->shouldQuit())
@@ -1817,8 +1708,6 @@ int InsaneRebel2::runLevel15() {
 
 		clearBit(0);
 
-		// At frame 0x21e (542): switches to 0x10 (affects difficulty lookup mid-level)
-		// The frame-based switch is handled by IACT opcode 6 in the video data.
 		_rebelLevelType = 0xf;
 
 		if (!playLevelSegment("LEV15/15PLAY.SAN", 0x28))

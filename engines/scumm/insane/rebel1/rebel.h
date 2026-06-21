@@ -513,14 +513,12 @@ private:
 	bool _level14Play2BSpliced;
 	int32 _level14Play2BSpliceFrame;
 
-	// Main menu and options state.
 	void runOptionsMenu();
 	int runPasscodeEntryDialog();
 	bool runHighScoreNameEntry();
 	bool handleMenuCommand(RA1MenuCommand command);
 	bool handleControllerMenuAction(ScummAction action);
 	bool handleControllerMenuAxis(int16 oldAxisX, int16 oldAxisY);
-	// Extra feature: navigate/click the menus with the mouse.
 	bool handleMenuMouse(const Common::Event &event);
 	bool handleTextEntryAction(ScummAction action);
 	bool handleTextEntryKey(const Common::Event &event);

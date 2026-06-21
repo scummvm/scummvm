@@ -142,8 +142,6 @@ static int calculateThresholdBonus(int kills, int perfectThreshold, int perKillT
 }
 
 
-// Play a passive cinematic (no game callback, skippable).
-// startFrame > 0: fast-forward (decode without display/audio) to that frame.
 void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	debugC(DEBUG_INSANE, "InsaneRebel1::playCinematic('%s', startFrame=%d)", filename, startFrame);
 	if (shouldAbortGameFlow())
@@ -152,7 +150,6 @@ void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;
 	restoreScreenFlashPalette();
-	// Clear passive-cinematic audio before chaining the next ANM.
 	_audio.reset();
 	splayer->resetAudioTracks();
 	applyAudioOptions();
@@ -163,13 +160,9 @@ void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	splayer->setFastForwardToFrame(startFrame > 0 ? startFrame : 0);
 	splayer->play(filename, 15);
 
-	// Level-title text is only meant for the intro cinematic that armed it.
-	// Clear it even when the movie ended through ESC, so it cannot leak into
-	// the next cutscene or gameplay segment.
 	_introTextActive = false;
 }
 
-// Queue the END ANM, draw the summary while the frontend pumps, then award points/unlock.
 void InsaneRebel1::playChapterCompleteCinematic(const char *filename, int16 unlockedChapter,
 		int revealOffsetFromEnd, int stopOffsetFromEnd,
 		const char *bonusLabel1, const char *detailText1, int bonusValue1,
@@ -510,7 +503,6 @@ bool InsaneRebel1::runLevel4() {
 		_killCount = 0;
 		_levelGameplayPhase = 0;
 
-		// Phase 1: destroy two shield generators that can be hit repeatedly.
 		_protectedTargetA = 0x39;
 		_protectedTargetB = 0x3A;
 		_shieldGenHitsA = 0;
@@ -545,7 +537,6 @@ bool InsaneRebel1::runLevel4() {
 			return false;
 
 		if (_health >= 0 && shieldGeneratorsDestroyed) {
-			// Phase 2: torpedo run.
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
@@ -559,7 +550,6 @@ bool InsaneRebel1::runLevel4() {
 		}
 
 		if (_health >= 0 && shieldGeneratorsDestroyed) {
-			// L4END1 = torpedo hit, L4END2 = torpedo missed
 			const bool torpedoHit = (_killCount != 0);
 			playChapterCompleteCinematic(torpedoHit ? "LVL4/L4END1.ANM" : "LVL4/L4END2.ANM",
 				4, 0x69, 5, " ", torpedoHit ? "Torpedo Hit" : "Torpedo Missed",
@@ -867,7 +857,6 @@ bool InsaneRebel1::runLevel8() {
 }
 
 bool InsaneRebel1::runLevel9() {
-	// Preserve the game's deterministic three-bit route selection.
 	uint8 originalRouteSeed = 0;
 	auto getOriginalRouteBit = [&originalRouteSeed]() {
 		originalRouteSeed = (uint8)(originalRouteSeed * 9 + 0x35);
@@ -878,8 +867,6 @@ bool InsaneRebel1::runLevel9() {
 	const int randPath3 = getOriginalRouteBit();
 	auto playLevel9PathSelector = [&](const char *filename) {
 		while (!shouldAbortGameFlow()) {
-			// Keep the selector cursor centered instead of inheriting the last
-			// walking offset from the previous stormtrooper segment.
 			_onFootCharX = 0;
 			_onFootCharY = 0;
 			_shipPosX = kRA1CenterX;
@@ -1087,7 +1074,6 @@ bool InsaneRebel1::runLevel10() {
 	return false;
 }
 
-// Turret-style level. Single interactive phase with kill-count retry.
 bool InsaneRebel1::runLevel11() {
 	_currentLevel = 10;
 	loadLevelSprites(11);
@@ -1115,7 +1101,6 @@ bool InsaneRebel1::runLevel11() {
 			if (_killCount > 4 || _interactiveVideoCheatSkipped)
 				break;
 
-			// Not enough kills — retry
 			playCinematic("LVL11/L11RETRY.ANM");
 			if (shouldAbortGameFlow())
 				return false;
@@ -1138,7 +1123,6 @@ bool InsaneRebel1::runLevel11() {
 	return false;
 }
 
-// Single interactive phase with mid-level retry mechanism.
 bool InsaneRebel1::runLevel12() {
 	_currentLevel = 11;
 	loadLevelSprites(12);
@@ -1232,8 +1216,6 @@ bool InsaneRebel1::runLevel13() {
 	return false;
 }
 
-// Two interactive phases: L14PLAY (targeting cannons) + L14PLAY2 (exhaust port approach).
-//   → L14END/L14NEW/L14DEATH
 bool InsaneRebel1::runLevel14() {
 	_currentLevel = 13;
 	loadLevelSprites(14);
@@ -1249,7 +1231,6 @@ bool InsaneRebel1::runLevel14() {
 		resetLevelAttemptState(1, 1);
 		_level14SuccessFrames = 0;
 
-		// Phase 1: targeting surface cannons
 		bool level14Phase1Complete = false;
 		bool replayingLevel14Phase1 = false;
 		while (!shouldAbortGameFlow()) {
@@ -1275,7 +1256,6 @@ bool InsaneRebel1::runLevel14() {
 
 		bool level14Phase2Complete = false;
 		if (_health >= 0 && level14Phase1Complete) {
-			// Phase 2: exhaust port approach
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
@@ -1310,7 +1290,6 @@ bool InsaneRebel1::runLevel14() {
 					_level14Play2BSplicePending = false;
 					level14Phase2Video = "LVL14/L14PLY2B.ANM";
 
-					// Preserve gameplay/video state across the continuation clip splice.
 					playInteractiveVideo(level14Phase2Video, spliceFrame);
 					if (shouldAbortGameFlow())
 						return false;
@@ -1346,8 +1325,6 @@ bool InsaneRebel1::runLevel14() {
 	return false;
 }
 
-// Two interactive phases with mid-level cutscene.
-//   → L15PLAY2 (final approach + torpedo) → L15END1/L15NEW/L15DEATH
 bool InsaneRebel1::runLevel15() {
 	_currentLevel = 14;
 	loadLevelSprites(15);
@@ -1362,19 +1339,16 @@ bool InsaneRebel1::runLevel15() {
 		loadTuningForLevel(0x13);
 		resetLevelAttemptState(1, 0);
 
-		// Phase 1: trench run
 		_levelGameplayPhase = 1;
 		playInteractiveVideo("LVL15/L15PLAY1.ANM");
 		if (shouldAbortGameFlow())
 			return false;
 
 		if (_health >= 0) {
-			// Torpedo lock cutscene
 			playCinematic("LVL15/L15INTR2.ANM");
 			if (shouldAbortGameFlow())
 				return false;
 
-			// Phase 2: final approach and torpedo shot.
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
@@ -1418,7 +1392,6 @@ bool InsaneRebel1::runLevel15() {
 	return false;
 }
 
-// Main game entry point — called from ScummEngine::go().
 void InsaneRebel1::runGame() {
 	typedef bool (InsaneRebel1::*RunLevelMethod)();
 	const RunLevelMethod kLevelRunners[] = {
@@ -1498,13 +1471,11 @@ void InsaneRebel1::runGame() {
 	}
 
 	if (!loadedStartupSave) {
-		// Play intro sequence (logo + opening)
 		playIntroSequence();
 		if (shouldAbortGameFlow())
 			return;
 	}
 
-	// Main menu → gameplay loop
 	while (!_vm->shouldQuit()) {
 		int menuResult = runMainMenu();
 		if (_loadRequested) {
@@ -1516,16 +1487,13 @@ void InsaneRebel1::runGame() {
 
 		switch (menuResult) {
 		case 1: {
-			// START NEW GAME — sequential play from _startLevel
 			runLevelsFrom(_startLevel, true);
 			break;
 		}
 		case 2:
-			// Game Options
 			runOptionsMenu();
 			break;
 		case 3: {
-			// game from the decoded chapter when a valid passcode is entered.
 			const int passcodeLevel = runPasscodeEntryDialog();
 			if (passcodeLevel >= 1 && passcodeLevel <= numLevels)
 				runLevelsFrom(passcodeLevel, true);
@@ -1542,20 +1510,17 @@ void InsaneRebel1::runGame() {
 			break;
 		}
 		case 4: {
-			// Level Select: extra start point. Continue through the
 			int selectedLevel = runLevelSelectMenu();
 			if (selectedLevel >= 1 && selectedLevel <= numLevels)
 				runLevelsFrom(selectedLevel, true);
 			break;
 		}
 		case 5:
-			// CONTINUE DEMO — attract mode.
 			showHighScores();
 			if (!shouldAbortGameFlow())
 				playCinematic("OPEN/O1OPEN.ANM");
 			break;
 		case 6:
-			// Exit
 			return;
 		default:
 			break;
@@ -1619,13 +1584,11 @@ void InsaneRebel1::setupInteractiveVideoState(int32 startFrame) {
 		clearBit(0);
 	_interactiveVideoActive = true;
 	if (!preserveRuntimeState) {
-		_onFootInitialized = false;  // Reset so each segment triggers counter==0 init
+		_onFootInitialized = false;
 		resetFrameObjectState();
 		resetGamepadReticleAim();
 	}
 	_vm->_smushVideoShouldFinish = false;
-	// Preserve the previous video/runtime state, but keep the destination clip
-	// fully interactive from its first visible frame.
 	splayer->setPreserveVideoStateOnNextPlay(preserveVideoState);
 	splayer->setCurVideoFlags(0x28);
 	splayer->setFastForwardFromFrame(0);
@@ -1718,7 +1681,6 @@ void InsaneRebel1::playInteractiveVideoFile(const char *filename, int32 videoOff
 	_interactiveVideoActive = false;
 }
 
-// Play interactive gameplay video (with ship physics + HUD).
 void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) {
 	debugC(DEBUG_INSANE, "InsaneRebel1::playInteractiveVideo('%s', startFrame=%d)", filename, startFrame);
 	if (shouldAbortGameFlow()) {

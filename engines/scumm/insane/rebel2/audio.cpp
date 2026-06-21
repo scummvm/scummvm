@@ -34,15 +34,10 @@
 
 namespace Scumm {
 
-// Audio Handling
-// RA2 doesn't use iMUSE -- audio is handled directly through the mixer.
-
-// initAudio -- Initialize audio system for RA2.
 void InsaneRebel2::initAudio(int sampleRate) {
 	_audio.init(_vm, sampleRate);
 }
 
-// terminateAudio -- Stop all tracks and release audio streams.
 void InsaneRebel2::terminateAudio() {
 	_audio.terminate();
 }
@@ -55,22 +50,13 @@ void InsaneRebel2::resetVideoAudio() {
 		splayer->resetAudioTracks();
 }
 
-// queueAudioData -- Queue raw PCM data for playback on a track.
-// Creates the queuing stream on first use. RA2 audio is 8-bit unsigned mono.
 void InsaneRebel2::queueAudioData(int trackIdx, uint8 *data, int32 size, int volume, int pan) {
 	_audio.queueData(trackIdx, data, size, volume, pan);
 }
 
-// processAudioFrame -- Per-frame audio dispatch (replaces iMUSE path)
-// Iterates SmushPlayer audio tracks, handles FADING->PLAYING transitions,
-// and feeds PCM data through queueAudioData. Called from SmushPlayer when
-// iMUSE is null.
 void InsaneRebel2::processAudioFrame(int16 feedSize) {
 	_audio.processFrame(_player, feedSize);
 }
-
-// Sound Effects (SAD files)
-// Standalone SAUD files from SYSTM/ loaded at init for one-shot SFX.
 
 const char *const kRA2SfxFiles[InsaneRebel2::kRA2NumSfx] = {
 	"SYSTM/BLAST.SAD",    // 0 - Player laser fire
@@ -93,8 +79,6 @@ void InsaneRebel2::loadSfx() {
 			continue;
 		}
 
-		// SAUD file structure: SAUD header (8) + STRK sub-chunk + SDAT sub-chunk
-		// We scan for the SDAT tag to find the PCM data.
 		uint32 fileSize = file->size();
 		if (fileSize < 38) {  // Minimum: 8 (SAUD) + 22 (STRK) + 8 (SDAT header)
 			debugC(DEBUG_INSANE, "InsaneRebel2::loadSfx: %s too small (%d bytes)", kRA2SfxFiles[i], fileSize);
@@ -103,7 +87,6 @@ void InsaneRebel2::loadSfx() {
 			continue;
 		}
 
-		// Verify SAUD tag
 		uint32 tag = file->readUint32BE();
 		if (tag != MKTAG('S', 'A', 'U', 'D')) {
 			debugC(DEBUG_INSANE, "InsaneRebel2::loadSfx: %s not a SAUD file (tag=0x%08x)", kRA2SfxFiles[i], tag);
@@ -111,16 +94,14 @@ void InsaneRebel2::loadSfx() {
 			delete file;
 			continue;
 		}
-		file->readUint32BE();  // Skip SAUD size
+		file->readUint32BE();
 
-		// Scan for SDAT chunk (skip STRK and any other sub-chunks)
 		bool foundSdat = false;
 		while (file->pos() + 8 <= (int64)fileSize) {
 			uint32 chunkTag = file->readUint32BE();
 			uint32 chunkSize = file->readUint32BE();
 
 			if (chunkTag == MKTAG('S', 'D', 'A', 'T')) {
-				// Found PCM data
 				uint32 pcmSize = MIN(chunkSize, fileSize - (uint32)file->pos());
 				_sfxData[i] = (byte *)malloc(pcmSize);
 				if (_sfxData[i]) {
@@ -131,7 +112,6 @@ void InsaneRebel2::loadSfx() {
 				foundSdat = true;
 				break;
 			} else {
-				// Skip this sub-chunk
 				file->seek(chunkSize, SEEK_CUR);
 			}
 		}
@@ -145,10 +125,8 @@ void InsaneRebel2::loadSfx() {
 	}
 }
 
-// freeSfx -- Free all loaded SFX data and auxiliary buffers.
 void InsaneRebel2::freeSfx() {
 	for (int i = 0; i < kRA2NumSfx; i++) {
-		// Stop any playing SFX on this slot
 		_vm->_mixer->stopHandle(_sfxHandles[i]);
 		free(_sfxData[i]);
 		_sfxData[i] = nullptr;
@@ -162,7 +140,6 @@ void InsaneRebel2::freeSfx() {
 	}
 }
 
-// playSfx -- Play a one-shot sound effect (8-bit unsigned mono, 11025 Hz).
 void InsaneRebel2::playSfx(int slot, int volume, int pan) {
 	if (slot < 0 || slot >= kRA2NumSfx || !_sfxData[slot] || _sfxSize[slot] == 0) {
 		return;
@@ -170,17 +147,14 @@ void InsaneRebel2::playSfx(int slot, int volume, int pan) {
 	if (_player && !_player->isChanActive(CHN_OTHER))
 		return;
 
-	// Stop any previous instance of this SFX slot
 	_vm->_mixer->stopHandle(_sfxHandles[slot]);
 
-	// Make a copy of the PCM data (makeRawStream with DisposeAfterUse::YES will free it)
 	byte *pcmCopy = (byte *)malloc(_sfxSize[slot]);
 	if (!pcmCopy) {
 		return;
 	}
 	memcpy(pcmCopy, _sfxData[slot], _sfxSize[slot]);
 
-	// Create a one-shot raw audio stream: 8-bit unsigned mono at 11025 Hz
 	Audio::SeekableAudioStream *stream = Audio::makeRawStream(
 		pcmCopy, _sfxSize[slot], 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 
@@ -214,7 +188,6 @@ void InsaneRebel2::loadAuxSfx(int buffer, const byte *data, uint32 size) {
 	debugC(DEBUG_INSANE, "InsaneRebel2::loadAuxSfx: buffer=%d size=%d", buffer, size);
 }
 
-// Handles both raw PCM and SAUD-wrapped data.
 void InsaneRebel2::playAuxSfx(int buffer, int volume, int pan) {
 	if (buffer < 0 || buffer >= kRA2NumAuxSfx || !_auxSfxData[buffer] || _auxSfxSize[buffer] == 0) {
 		return;
@@ -224,14 +197,11 @@ void InsaneRebel2::playAuxSfx(int buffer, int volume, int pan) {
 
 	_vm->_mixer->stopHandle(_auxSfxHandles[buffer]);
 
-	// Check if data has SAUD header; if so, extract PCM from SDAT chunk.
-	// Otherwise treat as raw 8-bit unsigned PCM at 11025 Hz.
 	const byte *pcmStart = _auxSfxData[buffer];
 	uint32 pcmSize = _auxSfxSize[buffer];
 
 	if (pcmSize > 8 && READ_BE_UINT32(pcmStart) == MKTAG('S', 'A', 'U', 'D')) {
-		// Parse SAUD container to find SDAT chunk
-		uint32 pos = 8; // Skip SAUD tag + size
+		uint32 pos = 8;
 		while (pos + 8 <= pcmSize) {
 			uint32 chunkTag = READ_BE_UINT32(pcmStart + pos);
 			uint32 chunkSize = READ_BE_UINT32(pcmStart + pos + 4);

@@ -44,8 +44,6 @@ const char *const kRA1SfxFiles[8] = {
 	"SYS/BLAST.SAD"
 };
 
-// Audio
-
 void InsaneRebel1::initAudio(int sampleRate) {
 	_audio.init(_vm, sampleRate);
 }

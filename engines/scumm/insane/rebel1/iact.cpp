@@ -54,7 +54,6 @@ inline int16 stepRebel1Op0BReticleAxis(int axisValue) {
 	if (axisValue >= 0)
 		return (int16)(axisValue >> 4);
 
-	// Preserve arithmetic-shift rounding for negative movement.
 	return (int16)-((-axisValue + 15) >> 4);
 }
 
@@ -623,7 +622,6 @@ bool InsaneRebel1::handleFrameObjectTarget(int16 objectId, int16 left, int16 top
 	if (objectId >= 0x280 && _frameObjectHitRevealPending) {
 		// DispatchSmushFrameChunks keeps a one-object latch after a target hit.
 		// The following high-id FOBJ clears its hidden bit and becomes the
-		// replacement/death frame. This is used heavily by Level 9 troopers.
 		_frameObjectState[byteIndex] &= ~bit;
 		_frameObjectHitRevealPending = false;
 		debugC(DEBUG_INSANE, "FOBJ reveal: object=%d frameObjectByte=%d bit=0x%02x",
@@ -699,9 +697,6 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 		if (!_vm->_smushVideoShouldFinish &&
 			_pendingRouteCutoverFrame >= 0 &&
 			routeFrame >= (uint32)_pendingRouteCutoverFrame) {
-			// Level 7 route switches open the destination ANM as a fresh file.
-			// Keep Rebel runtime state, but do not carry SMUSH decoder state
-			// from the previous route into the new file.
 			if (_player && _currentLevel != 6)
 				_player->setPreserveGameVideoStateOnRelease(true);
 			_vm->_smushVideoShouldFinish = true;
@@ -723,9 +718,6 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 		if (curFrame < 0)
 			return;
 		const uint32 routeFrame = (uint32)curFrame;
-			// GAME 0x09 publishes a separate branch-tested cursor position.
-			// Keep the drawn ship center and the 0x09 aim cursor split,
-		// so compare the effective gameplay cursor here.
 		const int16 branchX = getGameplayCursorX();
 		const int route = CLIP<int>(_levelRouteIndex, 0, 5);
 		for (int nextRoute = 1; nextRoute < 6; ++nextRoute) {
@@ -844,7 +836,6 @@ void InsaneRebel1::updateFlightVariantCursor() {
 	if (_rollAccum > 0)
 		xScale = -xScale;
 
-	// Keep the flight sprite center and aim cursor separate.
 	const int16 shipBaseX = _shipPosX;
 	const int16 shipBaseY = _shipPosY;
 	const int32 liftTerm = (int32)_liftSmooth - 0x0F;
@@ -1038,7 +1029,6 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 void InsaneRebel1::updateShipPhysics() {
 	_frameCounter++;
 
-	// Reset ship accumulators and camera when a 0x07 stream starts.
 	if (_gameCounter == 0) {
 		_posAccumX = 0;
 		_posAccumY = 0;
@@ -1076,9 +1066,7 @@ void InsaneRebel1::updateShipPhysics() {
 	else if (_activeInputSource == kInputSourceJoystickDigital)
 		inputSourceName = "joystick-dpad";
 
-	// Normal mode: accumulate. For absolute mouse input in flight handlers,
-	// steer toward a bounded roll target so holding the cursor off center does
-	// not continue accelerating the ship until it clamps.
+	// Mouse flight input steers toward a bounded roll target instead of accumulating.
 	if ((effectiveOpcode == 0x07 || effectiveOpcode == 0x09) &&
 			_activeInputSource == kInputSourceMouse && !usedJoystick) {
 		const int32 targetRoll = (int32)inputX * kRA1MouseFlightRollTargetScale;
@@ -1119,11 +1107,9 @@ void InsaneRebel1::updateShipPhysics() {
 	_posAccumY += deltaY;
 	_posAccumY = CLIP<int32>(_posAccumY, -0x3200, 0x4600);
 
-	// Ship position = base + offset
 	_shipPosX = kRA1CenterX + (int16)(_posAccumX >> 8);
 	_shipPosY = kRA1CenterY + (int16)(_posAccumY >> 8);
 
-	// Clamp to screen bounds.
 	_shipPosX = CLIP<int16>(_shipPosX, kRA1MinX, kRA1MaxX);
 	_shipPosY = CLIP<int16>(_shipPosY, kRA1MinY, kRA1MaxY);
 
@@ -1220,12 +1206,9 @@ void InsaneRebel1::updateShipPhysics() {
 		_screenShakeEnabled = (_screenFlash > 0);
 	}
 
-	// Clear per-frame damage flags
 	_damageFlags = 0;
 
 	// After this point, drift goes strongly negative (pushing ship left for the hard path).
-	// If ship is right of center, player chose the hard branch → switch to L1PLAY1R.
-	// Keep this as a one-shot decision: once threshold is reached, lock path.
 	if (_pathBranchEnabled && _gameCounter >= kPathBranchCounter) {
 		if (_shipPosX > kRA1CenterX) {
 			_rightPathSelected = true;
@@ -1247,7 +1230,6 @@ void InsaneRebel1::updateShipPhysics() {
 		_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
 }
 
-// Update turret sprite direction from the current frame's movement.
 void InsaneRebel1::updateTurretShipDirection(int16 offsetY) {
 	int dir = 0;
 	if (_flyControlMode == 2) {
@@ -1408,7 +1390,6 @@ void InsaneRebel1::updateTurretPhysics() {
 	_perspectiveX = CLIP<int16>((int16)(offsetX + 0x20), 0, 0x40);
 	_perspectiveY = CLIP<int16>((int16)(offsetY + 0x17), 0, 0x2E);
 
-	// Keep projection bending tied to turret roll.
 	rebuildProjectionTable((int16)((-_rollAccum) >> 9), 0x0D);
 
 	if ((_frameCounter & 0x1F) == 0) {
@@ -1464,7 +1445,6 @@ void InsaneRebel1::updateScreenFlashPalette() {
 // Ship position = averaged input + center offset.
 // Viewport = second history buffer for smooth camera scrolling.
 void InsaneRebel1::updateGameOp0BPhysics() {
-	// Keep smoothing short for responsiveness.
 	const int gameOp0BSmoothWindow = 2;
 
 	const bool level15Phase1 = (_currentLevel == 14 && _levelGameplayPhase == 1);
@@ -1522,7 +1502,6 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		_health++;
 	}
 
-	// No cooldown — all three damage types can stack each frame
 	if (!_noDamage && _damageFlags != 0 && _health >= 0 && _deathTimer < 1) {
 		const int16 oldHealth = _health;
 		const byte appliedDamageFlags = _damageFlags;
@@ -1534,7 +1513,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		if (_damageFlags & 0x20)
 			_health -= _tuning.wham;
 		if (_health < 0) {
-			_deathTimer = 15;  // 0x0F — shorter than Level 1's 30
+			_deathTimer = 15;
 			if (_damageFlags & 0x80)
 				_deathCauseIndicator = 2;
 			else
@@ -1559,12 +1538,10 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	_gameLatch5D = 0;
 	_gameLatch5F = 0;
 
-	// Death fade countdown
 	if (_deathTimer > 1 && _health < 0) {
 		_deathTimer--;
 	}
 
-	// Screen flash countdown — screen shake follows flash
 	if (_screenFlash > 0) {
 		_screenFlash--;
 		_screenShakeEnabled = (_screenFlash > 0);
@@ -1773,7 +1750,6 @@ bool InsaneRebel1::isTorpedoModeActive() const {
 	if ((_gameplayFlags75ff & 0x2) == 0)
 		return false;
 
-	// Torpedo rendering is valid only during torpedo-run phases.
 	return (_currentLevel == 3 && _levelGameplayPhase == 2) ||
 		(_currentLevel == 14 && _levelGameplayPhase == 2);
 }
@@ -1791,7 +1767,6 @@ void InsaneRebel1::initOnFootSequence() {
 		_prevDamageFlags = 0;
 		_damageCooldown = 0;
 
-		// SetCameraOffset(0,0) — no viewport crop for on-foot levels
 		_perspectiveX = 0;
 		_perspectiveY = 0;
 		resetProjectionTable();
@@ -1870,15 +1845,12 @@ void InsaneRebel1::preprocessOnFootAim(int16 &inputX, int16 &inputY, bool *usedJ
 void InsaneRebel1::updateOnFootSequence() {
 	initOnFootSequence();
 
-	// Track fire button for animation
 	if (!_playerFired)
 		_onFootAnimCounter = 0;
 	else
 		_onFootAnimCounter++;
 
-	// Walk direction state machine (from HandleGameOp19)
 	if (_shipDirIndex == 0) {
-		// Left edge: snap to center, step character left
 		_shipDirIndex = 15;
 		_onFootCharX -= 0x3A;
 	} else if (_shipDirIndex < 5) {
@@ -1886,7 +1858,6 @@ void InsaneRebel1::updateOnFootSequence() {
 	} else if (_shipDirIndex < 10) {
 		_shipDirIndex++;
 	} else if (_shipDirIndex == 10) {
-		// Right edge: snap to center, step character right
 		_shipDirIndex = 15;
 		_onFootCharX += 0x3A;
 	} else if (_onFootAnimCounter < 5 && !_playerSecondaryHeld) {
@@ -1976,7 +1947,6 @@ void InsaneRebel1::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 }
 
 void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
-	// This is not a pure control-mode assignment.
 	if (_frameDispatchFlags & 0x40) {
 		debugC(DEBUG_INSANE, "GAME 0x5E: reset suppressed by dispatch flags=0x%02x",
 			_frameDispatchFlags);
@@ -2084,11 +2054,9 @@ void InsaneRebel1::handleGameOpcode5FRandomHitLatch(uint32 param1) {
 void InsaneRebel1::handleGameOpcode07ShipFlight(int32 subSize, Common::SeekableReadStream &b, uint32 param1) {
 	_activeGameOpcode = 0x07;
 	_frameGameOpcodeMask |= (1u << 0x07);
-	// Per-frame corridor data: f1=frame counter, f2=max frames, f3=drift bias, f4=unused
-	// f3 is the drift/wind parameter combined with tuning table
 	_gameCounter = param1;
 	if (subSize >= 20) {
-		b.readUint32BE(); // f2 (max frames, unused in physics)
+		b.readUint32BE();
 		_driftParam = (int16)(int32)b.readUint32BE();
 		b.readUint32BE();
 		debugC(DEBUG_INSANE, "GAME 0x07: counter=%d driftParam=%d", _gameCounter, _driftParam);
@@ -2280,7 +2248,6 @@ void InsaneRebel1::handleGameCounterOpcode(uint32 opcode, int32 subSize, Common:
 	}
 }
 
-// Reads 7x32-bit BE integers from GAME chunk, routes to per-opcode handlers.
 void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b,
 		byte *renderBitmap, int width, int height) {
 	if (subSize < 8)
@@ -2452,11 +2419,10 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 
 	_targetCount++;
 
-	// Check proximity: cursor within target + snap + 5 margin
 	if (curX > left - snap - 5 && curX < right + snap + 5 &&
 		curY > top - snap - 5 && curY < bottom + snap + 5) {
 		if (_targetProximity == 0)
-			_targetProximity = 1;  // Near
+			_targetProximity = 1;
 		if (slot < kMaxTargetBoxes)
 			_targetBoxVariant[slot] = CLIP<int16>((int16)(_targetBoxVariant[slot] + 3), 0, 5);
 
@@ -2465,10 +2431,9 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 			screenCursorX, screenCursorY, curX, curY, snap, _targetProximity,
 			_perspectiveX, _perspectiveY);
 
-		// Check tight lock: cursor within target + snap (no extra margin)
 		if (curX > left - snap && curX < right + snap &&
 			curY > top - snap && curY < bottom + snap) {
-			_targetProximity = 2;  // On-target
+			_targetProximity = 2;
 			if (snap > 0) {
 				int16 snappedX = (left + right) / 2;
 				int16 snappedY = (top + bottom) / 2;
@@ -2477,10 +2442,9 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 				setGameplayCursor(effectiveOpcode, snappedX, snappedY);
 			}
 
-			// Only one overlapping target may consume the shot each frame.
 			if (_lastHitTarget == 0) {
 				for (int i = 0; i < kMaxShotSlots; i++) {
-					if (_shotSlots[i].timer == 1) {  // Shot in final frame = impact
+					if (_shotSlots[i].timer == 1) {
 						int gi = _gostSlotIdx;
 						_gostSlots[gi].targetId = targetIdx + 1;
 						_gostSlots[gi].frame = 0;

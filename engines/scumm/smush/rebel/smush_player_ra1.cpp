@@ -525,7 +525,6 @@ bool SmushPlayerRebel1::handleGameFrameBufferSelect(int codec, int width, int he
 
 bool SmushPlayerRebel1::handleGameDimensionOverride(int codec, int width, int height) {
 	if (_dst == _specialBuffer) {
-		// Keep sub-fullscreen FOBJs inside the fixed RA1 buffer.
 		_width = kRA1DecodeWidth;
 		_height = kRA1DecodeHeight;
 		return true;

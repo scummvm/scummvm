@@ -1132,12 +1132,10 @@ void InsaneRebel1::renderMainMenuItems(byte *dst, int pitch, int width, int heig
 	const char *const *menuItems = _unlockAllLevels ? kMenuItems : kMenuItemsLocked;
 	const int mainMenuItemCount = getMainMenuItemCount();
 
-	// Center title
 	const int titleW = getFontBankStringWidth("MAIN MENU");
 	const int titleX = getRebel1MenuCenteredX(titleW);
 	drawMenuTitleText(dst, pitch, width, height, titleX, 30, "MAIN MENU");
 
-	// Draw menu items centered horizontally
 	for (int i = 0; i < mainMenuItemCount; i++) {
 		const int textW = getMenuTalkTextWidth(menuItems[i]);
 		const int textX = getRebel1MenuCenteredX(textW);
@@ -1356,15 +1354,15 @@ void InsaneRebel1::runOptionsMenu() {
 				_optTextEnabled = !ConfMan.getBool("subtitles");
 				ConfMan.setBool("subtitles", _optTextEnabled);
 				break;
-			case 5: // Toggle Y-flip controls
+			case 5:
 				_optControlsYFlip = !_optControlsYFlip;
 				break;
-			case 6: // Toggle held-fire shooting
+			case 6:
 				_optRapidFire = !_optRapidFire;
 				break;
-			case 7: // Volume — adjusted via left/right in notifyEvent
+			case 7:
 				break;
-			case 8: // Cycle difficulty
+			case 8:
 				_difficulty = (_difficulty + 1) % 3;
 				loadTuningForLevel(0);
 				break;
