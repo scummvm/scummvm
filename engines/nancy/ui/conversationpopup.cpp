@@ -124,15 +124,9 @@ void ConversationPopup::drawContent() {
 	_fullSurface.fillRect(Common::Rect(0, 0, _fullSurface.w, _fullSurface.h), 0);
 	_textHighlightSurface.fillRect(Common::Rect(0, 0, _textHighlightSurface.w, _textHighlightSurface.h), 0);
 
-	// TODO: Padding doesn't match the original game. leftOffset returns an
-	// unexpected value for Nancy 10+, so upOffset is used as a fallback for
-	// both axes until the TBOX layout for Nancy 10+ is better understood.
-
-	// TODO: Line spacing is tighter than the original game.
-	
 	Common::Rect textBounds(0, 0, _fullSurface.w, _fullSurface.h);
-	textBounds.top += _tboxData->upOffset;
-	textBounds.left += _tboxData->upOffset;
+	textBounds.top  += _tboxData->scrollbarDefaultPos.y;
+	textBounds.left += _tboxData->scrollbarDefaultPos.x;
 
 	drawAllText(textBounds, 0, _tboxData->conversationFontID, _tboxData->highlightConversationFontID);
 
@@ -156,7 +150,7 @@ void ConversationPopup::drawContent() {
 }
 
 uint16 ConversationPopup::getInnerHeight() const {
-	return _drawnTextHeight + _tboxData->upOffset;
+	return _drawnTextHeight + _tboxData->scrollbarDefaultPos.y;
 }
 
 Common::Rect ConversationPopup::toPopupLocal(const Common::Rect &chunkRect, bool useGameFrame) const {
