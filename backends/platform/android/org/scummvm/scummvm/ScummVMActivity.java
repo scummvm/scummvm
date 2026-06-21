@@ -216,7 +216,13 @@ public class ScummVMActivity extends Activity {
 
 							// This is deprecated and we show the keyboard just below
 							//_inputManager.toggleSoftInputFromWindow(_main_surface.getWindowToken(), InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
-							_inputManager.showSoftInput(_main_surface, InputMethodManager.SHOW_IMPLICIT);
+							int flags = 0;
+							if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) {
+								@SuppressWarnings("deprecation")
+								final int flag = InputMethodManager.SHOW_IMPLICIT;
+								flags = flag;
+							}
+							_inputManager.showSoftInput(_main_surface, flags);
 							getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 						} else {
 							if (_screenKeyboard != null) {
@@ -539,7 +545,13 @@ public class ScummVMActivity extends Activity {
 						getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 						// TODO do we need this instead?
 						// _inputManager.hideSoftInputFromWindow(_main_surface.getWindowToken(), 0);
-						_inputManager.hideSoftInputFromWindow(_main_surface.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+						int flags = 0;
+						if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) {
+							@SuppressWarnings("deprecation")
+							final int flag = InputMethodManager.HIDE_IMPLICIT_ONLY;
+							flags = flag;
+						}
+						_inputManager.hideSoftInputFromWindow(_main_surface.getWindowToken(), flags);
 
 						CompatHelpers.HideSystemStatusBar.hide(getWindow());
 						//Log.d(ScummVM.LOG_TAG, "showScreenKeyboardWithoutTextInputField - captureMouse(true)");
