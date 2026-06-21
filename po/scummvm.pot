@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 13:20+0000\n"
+"POT-Creation-Date: 2026-06-21 16:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12610,7 +12610,7 @@ msgid "Rebel Assault II controls"
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:1298
-msgid "Cover / back"
+msgid "Cover"
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:1304
