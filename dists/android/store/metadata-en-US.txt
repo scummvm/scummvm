@@ -14,7 +14,7 @@ ScummVM provides a way to play many classic graphical point-and-click adventure 
 
 You can find more information, demos, and some free-to-download adventure games on our website. See also an up-to-date list here: https://wiki.scummvm.org/index.php/Where_to_get_the_games
 
-A quick-start guide is available on our website at https://docs.scummvm.org/en/v2026.2.0/other_platforms/android.html which provides some more information, explaining how to configure Android-specific options and where you can find further help.
+A quick-start guide is available on our website at https://docs.scummvm.org/en/v2026.3.0/other_platforms/android.html which provides some more information, explaining how to configure Android-specific options and where you can find further help.
 
 https://forums.scummvm.org/viewforum.php?f=17 is our web forum where you can discuss the Android version.
 
@@ -22,10 +22,10 @@ ScummVM is open source software available under the term of the GPL v3.0 license
 The source code is available from https://github.com/scummvm/scummvm.
 
 *** Current release:
-2026.2.0
+2026.3.0
 
 *** Release notes (limit is 500 characters):
-- Fixed a crash when restarting the app quickly
-- Fixed a Cloud-related crash
+- Reworked the sound subsystem to use the Oboe audio library
+- Fixed a crash related to Cloud storage on OneDrive
 
-Full release notes: https://scummvm.org/frs/scummvm/2026.2.0/ReleaseNotes.html
+Full release notes: https://scummvm.org/frs/scummvm/2026.3.0/ReleaseNotes.html
