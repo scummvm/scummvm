@@ -141,9 +141,6 @@ static int calculateThresholdBonus(int kills, int perfectThreshold, int perKillT
 	return bonus;
 }
 
-// ---------------------------------------------------------------------------
-// Game flow (matching original at 0x15597)
-// ---------------------------------------------------------------------------
 
 // Play a passive cinematic (no game callback, skippable).
 // startFrame > 0: fast-forward (decode without display/audio) to that frame.
@@ -155,9 +152,7 @@ void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;
 	restoreScreenFlashPalette();
-	// DOS PlayFrontendAnmAndWait keeps pumping until frontend audio clears.
-	// Rebel queues outlive SmushPlayer::play(), so clear stale
-	// passive-cinematic audio before chaining the next ANM.
+	// Clear passive-cinematic audio before chaining the next ANM.
 	_audio.reset();
 	splayer->resetAudioTracks();
 	applyAudioOptions();
@@ -174,8 +169,7 @@ void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	_introTextActive = false;
 }
 
-// The original runlevel flows repeat this pattern around RunChapterCompleteSummaryScreen:
-// queue the END ANM, draw the summary while the frontend pumps, then award points/unlock.
+// Queue the END ANM, draw the summary while the frontend pumps, then award points/unlock.
 void InsaneRebel1::playChapterCompleteCinematic(const char *filename, int16 unlockedChapter,
 		int revealOffsetFromEnd, int stopOffsetFromEnd,
 		const char *bonusLabel1, const char *detailText1, int bonusValue1,
@@ -273,9 +267,7 @@ void InsaneRebel1::resetLevelAttemptState(int16 flyControlMode, int16 gameplayPh
 void InsaneRebel1::playLevelTransitionCutscene(int level) {
 	switch (level) {
 	case 4:
-		// Original successor path 0x6d7d, reached after chapter 3 and by the
-		// FALCON/BIGGS/WEDGE passcode group. This is separate from RunLevel4Flow
-		// (0x6ee4), which starts with LVL4/L4INTRO.ANM.
+		// FALCON/BIGGS/WEDGE passcode group.
 		playCinematic("CUT1/C1BLOCK.ANM");
 		if (shouldAbortGameFlow())
 			break;
@@ -288,13 +280,9 @@ void InsaneRebel1::playLevelTransitionCutscene(int level) {
 		playCinematic("CUT1/C1DARTH2.ANM");
 		break;
 	case 7:
-		// Original successor path 0x7d52, reached after chapter 6 and by the
-		// chapter-6 passcode group, before RunLevel7Flow (0x7dcc).
 		playCinematic("CUT2/C2CUT2.ANM");
 		break;
 	case 11:
-		// Original successor path 0x9f3a, reached after chapter 10 and by the
-		// chapter-10 passcode group, before RunLevel11Flow (0x9f9f).
 		playCinematic("CUT3/C3BOOM.ANM");
 		break;
 	default:
@@ -321,37 +309,13 @@ void InsaneRebel1::clearVideoBuffer() {
 	free(clearBuffer);
 }
 
-// Intro sequence (0x155ef-0x158f8):
-//   1. O1LOGO.ANM — LucasArts logo
-//   2. O1OPEN.ANM — Star Wars opening crawl
 void InsaneRebel1::playIntroSequence() {
-	// LucasArts logo (original: PUSH 0x57cc, CALL FUN_1BA32 with flags 0x0420)
 	playCinematic("OPEN/O1LOGO.ANM");
 	if (shouldAbortGameFlow())
 		return;
 
-	// Star Wars opening crawl (original: PUSH 0x5800, CALL FUN_1BA32)
 	playCinematic("OPEN/O1OPEN.ANM");
 }
-
-// Main menu on O1OPTION.ANM background (0x15968).
-// Original renders text overlay with 5 menu items via FUN_21F7A.
-// For now, we play the menu video as a passive cinematic (non-interactive)
-// and return "Start New Game" immediately.
-
-// Level 1 flow (0x16100-0x167A2, from disassembly):
-//   1. Load NUTs (L1BANK1, L1BANK2, L1EXPLD, L1BANG, L1LASER)
-//   2. L1HANGAR.ANM — Full hangar departure cutscene (782 frames, flags 0x0420)
-//   3. L1CU1.ANM — Pre-flight cutscene (flags 0x0400)
-//   4. L1PLAY1L.ANM — Stage 1 flight, hard/left path (788 frames)
-//      At frame 394, if player steers right → L1PLAY1R (hard path, 396 frames)
-//   5. L1CU2.ANM — Mid-level cutscene
-//   6. L1PLAY2.ANM — Stage 2 turret
-//      If score < 5 (0x75D0): L1RETRY → retry Stage 2
-//   7. L1END.ANM — Level complete
-//   Death (health<0): L1CRASHA/B → lives check:
-//     lives>0: L1NEW → jump back to Stage 1 (skip L1HANGAR/L1CU1)
-//     lives==0: L1DEATH → return to menu
 
 bool InsaneRebel1::runLevel1() {
 	_currentLevel = 0;
@@ -398,9 +362,7 @@ bool InsaneRebel1::runLevel1() {
 				return false;
 
 			while (!shouldAbortGameFlow()) {
-				// RunLevel1Flow calls L1PLAY2 with gameplay selector 1. This is
-				// the "1B" tuning row: snap/kill values are enabled and the
-				// lock/fire text overlay is suppressed.
+				// Stage 2 uses the 1B tuning row.
 				loadTuningForLevel(1);
 				_flyControlMode = 2;
 				_turretEmitterLeftX = 10;
@@ -455,7 +417,6 @@ bool InsaneRebel1::runLevel1() {
 bool InsaneRebel1::runLevel2() {
 	_currentLevel = 1;
 	loadLevelSprites(2);
-	// DOS RunLevel2Flow launches L2PLAY.ANM with gameplay selector 2.
 	loadTuningForLevel(2);
 
 	beginLevelTitleOverlay(1);
@@ -494,7 +455,6 @@ bool InsaneRebel1::runLevel2() {
 bool InsaneRebel1::runLevel3() {
 	_currentLevel = 2;
 	loadLevelSprites(3);
-	// DOS RunLevel3Flow launches L3PLAY.ANM with gameplay selector 3.
 	loadTuningForLevel(3);
 
 	beginLevelTitleOverlay(2);
@@ -533,7 +493,6 @@ bool InsaneRebel1::runLevel3() {
 bool InsaneRebel1::runLevel4() {
 	_currentLevel = 3;
 	loadLevelSprites(4);
-	// DOS RunLevel4Flow launches L4PLAY1.ANM with selector 4 and L4PLAY2.ANM with selector 5.
 	loadTuningForLevel(4);
 
 	beginLevelTitleOverlay(3);
@@ -551,9 +510,7 @@ bool InsaneRebel1::runLevel4() {
 		_killCount = 0;
 		_levelGameplayPhase = 0;
 
-		// Phase 1: Destroy two shield generators.
-		// Original sets DAT_00007732=0x39, DAT_00007734=0x3A — protected target IDs
-		// that can be hit repeatedly without event mask toggle.
+		// Phase 1: destroy two shield generators that can be hit repeatedly.
 		_protectedTargetA = 0x39;
 		_protectedTargetB = 0x3A;
 		_shieldGenHitsA = 0;
@@ -588,8 +545,7 @@ bool InsaneRebel1::runLevel4() {
 			return false;
 
 		if (_health >= 0 && shieldGeneratorsDestroyed) {
-			// Phase 2: torpedo run. The DOS loop enables torpedo mode at
-			// frontend/movie frame 0x3E and exits early as soon as killCount becomes nonzero.
+			// Phase 2: torpedo run.
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
@@ -623,7 +579,6 @@ bool InsaneRebel1::runLevel4() {
 bool InsaneRebel1::runLevel5() {
 	_currentLevel = 4;
 	loadLevelSprites(5);
-	// DOS RunLevel5Flow passes segment 6 for L5PLAY and segment 7 for L5PLAY2.
 	loadTuningForLevel(6);
 
 	beginLevelTitleOverlay(4);
@@ -703,8 +658,7 @@ bool InsaneRebel1::runLevel5() {
 bool InsaneRebel1::runLevel6() {
 	_currentLevel = 5;
 	loadLevelSprites(6);
-	// DOS RunLevel6Flow starts L6PLAY with PlayAnmFile(..., 8), so chapter 6
-	// uses tuning slot 8 ("6"), not the chapter-4B slot 5.
+	// Chapter 6 uses tuning slot 8, not the chapter-4B slot 5.
 	loadTuningForLevel(8);
 
 	beginLevelTitleOverlay(5);
@@ -756,7 +710,6 @@ bool InsaneRebel1::runLevel7() {
 	_currentLevel = 6;
 	loadLevelSprites(7);
 	loadRA1Nut("LVL7/L7LASER2.NUT", _enemyLaserBank);
-	// DOS RunLevel7Flow starts L7PLAY1.ANM with initLevelFlag=9.
 	loadTuningForLevel(9);
 
 	beginLevelTitleOverlay(6);
@@ -794,9 +747,7 @@ bool InsaneRebel1::runLevel7() {
 			route = _pendingRouteIndex;
 			routeSourceFrame = _pendingRouteStartFrame;
 			routeVideoStartFrame = _pendingRouteVideoStartFrame;
-			// DOS does not seek the destination route ANM here. The ANM-local
-			// decision frame is used by the playback gate/cutoff; this implementation
-			// starts at the already-advanced gate target after the cutover.
+			// The ANM-local decision frame gates the route cutover.
 			routeStartFrame = 0;
 		}
 
@@ -834,9 +785,7 @@ bool InsaneRebel1::runLevel8() {
 
 	_currentLevel = 7;
 	loadLevelSprites(8);
-	// RunLevel8Flow starts L8PLAY.ANM with initLevelFlag=10, so the walker
-	// chapter uses the original "8" tuning row while still keeping chapter
-	// index 7 for assets and Level 8-specific runtime logic.
+	// The walker uses tuning slot 10.
 	loadTuningForLevel(10);
 
 	beginLevelTitleOverlay(7);
@@ -847,7 +796,6 @@ bool InsaneRebel1::runLevel8() {
 	while (!shouldAbortGameFlow()) {
 		resetLevelAttemptState(3, 0, 17, true);
 
-		// Walker-specific state — RunLevel8Flow (0x18546)
 		_walkerHealth = 100;
 		_walkerTimer = 0;
 		_walkerBranchChoice = 0;
@@ -879,20 +827,14 @@ bool InsaneRebel1::runLevel8() {
 				break;
 
 			if (_pendingRouteIndex >= 0 && _pendingRouteIndex != route) {
-				// RunLevel8Flow uses PlayAnmFile(..., g_frameCounter, 1, -1)
-				// when it branches from one walker route to another. That wrapper
-				// keeps the current ANM alive for seven more gameplay frames, then
-				// opens the destination route while preserving the active state.
+				// Branch to the next walker route while preserving active state.
 				routeStartFrame = _pendingRouteStartFrame;
 				route = _pendingRouteIndex;
 				replayingRound = false;
 				continue;
 			}
 
-			// RunLevel8Flow keeps pumping the active route while the walker
-			// shield register is nonzero. Blocking SMUSH play returns
-			// when one route pass ends, so explicitly replay that route and
-			// preserve the accumulated walker damage.
+			// Replay the current route while preserving accumulated walker damage.
 			debugC(DEBUG_INSANE, "L8 replaying route=%d walkerHealth=%d killCount=%d",
 				route, (int)_walkerHealth, (int)_killCount);
 			routeStartFrame = 0;
@@ -925,10 +867,7 @@ bool InsaneRebel1::runLevel8() {
 }
 
 bool InsaneRebel1::runLevel9() {
-	// DOS RunLevel9Flow calls RandScaleByte(2) three times before the intro.
-	// That helper advances a byte seed with seed = seed * 9 + 0x35 and returns
-	// (2 * seed) >> 8. Do not use the session RNG here: it can turn the
-	// original right-side route into the capture/restart branch.
+	// Preserve the game's deterministic three-bit route selection.
 	uint8 originalRouteSeed = 0;
 	auto getOriginalRouteBit = [&originalRouteSeed]() {
 		originalRouteSeed = (uint8)(originalRouteSeed * 9 + 0x35);
@@ -939,7 +878,6 @@ bool InsaneRebel1::runLevel9() {
 	const int randPath3 = getOriginalRouteBit();
 	auto playLevel9PathSelector = [&](const char *filename) {
 		while (!shouldAbortGameFlow()) {
-			// DOS zeros g_shipOffsetX around the 0x1A-only selector clips.
 			// Keep the selector cursor centered instead of inheriting the last
 			// walking offset from the previous stormtrooper segment.
 			_onFootCharX = 0;
@@ -966,7 +904,7 @@ bool InsaneRebel1::runLevel9() {
 
 	_currentLevel = 8;
 	loadLevelSprites(9);
-	// DOS RunLevel9Flow alternates selectors 0x0B and 0x0C across its playable routes.
+	// Playable routes alternate tuning selectors 0x0B and 0x0C.
 	loadTuningForLevel(0x0B);
 
 	beginLevelTitleOverlay(8);
@@ -1117,7 +1055,6 @@ bool InsaneRebel1::runLevel9() {
 bool InsaneRebel1::runLevel10() {
 	_currentLevel = 9;
 	loadLevelSprites(10);
-	// DOS RunLevel10Flow starts L10PLAY.ANM with initLevelFlag=0x0D.
 	loadTuningForLevel(0x0D);
 
 	beginLevelTitleOverlay(9);
@@ -1150,14 +1087,11 @@ bool InsaneRebel1::runLevel10() {
 	return false;
 }
 
-// Level 11 flow (RunLevel11Flow, 0x19F67): Yavin Training
 // Turret-style level. Single interactive phase with kill-count retry.
-// Original: L11INTRO → L11PLAY (turret, killCount>4 to pass) → L11RETRY → retry/L11END
 bool InsaneRebel1::runLevel11() {
 	_currentLevel = 10;
 	loadLevelSprites(11);
-	// DOS RunLevel11Flow starts L11PLAY.ANM with initLevelFlag=0x0E.
-	// Row 10 has zero roll/slide tuning, which prevents horizontal aiming.
+	// This tuning row has zero roll/slide, which prevents horizontal aiming.
 	loadTuningForLevel(0x0E);
 
 	beginLevelTitleOverlay(10);
@@ -1178,7 +1112,6 @@ bool InsaneRebel1::runLevel11() {
 			if (_health < 0)
 				break;
 
-			// Original: killCount > 4 means pass
 			if (_killCount > 4 || _interactiveVideoCheatSkipped)
 				break;
 
@@ -1205,13 +1138,10 @@ bool InsaneRebel1::runLevel11() {
 	return false;
 }
 
-// Level 12 flow (RunLevel12Flow, 0x1A2DD): TIE Attack
 // Single interactive phase with mid-level retry mechanism.
-// Original: L12INTRO → L12PLAY → (retry at specific frame) → L12END
 bool InsaneRebel1::runLevel12() {
 	_currentLevel = 11;
 	loadLevelSprites(12);
-	// DOS RunLevel12Flow starts L12PLAY.ANM with initLevelFlag=0x0F.
 	loadTuningForLevel(0x0F);
 
 	beginLevelTitleOverlay(11);
@@ -1266,14 +1196,10 @@ bool InsaneRebel1::runLevel12() {
 	return false;
 }
 
-// Level 13 flow (RunLevel13Flow, 0x1A6E3): Death Star Surface
-// Flight level with enemy projectile system (original has 5-slot projectile tracking).
-// Original: L13INTRO → L13PLAY → L13END/L13NEW/L13DEATH
 bool InsaneRebel1::runLevel13() {
 	_currentLevel = 12;
 	loadLevelSprites(13);
 	loadRA1Nut("LVL13/L13LASR2.NUT", _enemyLaserBank);
-	// DOS RunLevel13Flow starts L13PLAY.ANM with initLevelFlag=0x10.
 	loadTuningForLevel(0x10);
 
 	beginLevelTitleOverlay(12);
@@ -1306,14 +1232,11 @@ bool InsaneRebel1::runLevel13() {
 	return false;
 }
 
-// Level 14 flow (RunLevel14Flow, 0x1ACB0): Surface Cannon
 // Two interactive phases: L14PLAY (targeting cannons) + L14PLAY2 (exhaust port approach).
-// Original: L14INTRO → L14PLAY → L14PLAY2 → optional L14PLY2B splice
 //   → L14END/L14NEW/L14DEATH
 bool InsaneRebel1::runLevel14() {
 	_currentLevel = 13;
 	loadLevelSprites(14);
-	// DOS RunLevel14Flow uses selector 0x11 for L14PLAY and 0x12 for L14PLAY2.
 	loadTuningForLevel(0x11);
 
 	beginLevelTitleOverlay(13);
@@ -1387,10 +1310,7 @@ bool InsaneRebel1::runLevel14() {
 					_level14Play2BSplicePending = false;
 					level14Phase2Video = "LVL14/L14PLY2B.ANM";
 
-					// DOS queues L14PLY2B from the L14PLAY2 loop with startFrame
-					// equal to L14PLAY2's old timeline frame. L14PLY2B itself is the
-					// continuation clip, so the port starts it from frame 0 but uses
-					// the non-zero frame argument to preserve gameplay/video state.
+					// Preserve gameplay/video state across the continuation clip splice.
 					playInteractiveVideo(level14Phase2Video, spliceFrame);
 					if (shouldAbortGameFlow())
 						return false;
@@ -1426,14 +1346,11 @@ bool InsaneRebel1::runLevel14() {
 	return false;
 }
 
-// Level 15 flow (RunLevel1GameLoop, 0x1B283): Death Star Trench
 // Two interactive phases with mid-level cutscene.
-// Original: L15INTRO → L15PLAY1 (trench run) → L15INTR2 (torpedo lock cutscene)
 //   → L15PLAY2 (final approach + torpedo) → L15END1/L15NEW/L15DEATH
 bool InsaneRebel1::runLevel15() {
 	_currentLevel = 14;
 	loadLevelSprites(15);
-	// DOS RunLevel1GameLoop uses selector 0x13 for L15PLAY1 and 0x14 for L15PLAY2.
 	loadTuningForLevel(0x13);
 
 	beginLevelTitleOverlay(14);
@@ -1457,9 +1374,7 @@ bool InsaneRebel1::runLevel15() {
 			if (shouldAbortGameFlow())
 				return false;
 
-			// Phase 2: final approach and torpedo shot. The DOS flow enables
-			// torpedo mode at frontend/movie frame 0x18A and completes only after object-state
-			// bit 0x7602 & 2 is set by the exhaust-port hit.
+			// Phase 2: final approach and torpedo shot.
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
@@ -1504,7 +1419,6 @@ bool InsaneRebel1::runLevel15() {
 }
 
 // Main game entry point — called from ScummEngine::go().
-// Matches original flow at 0x15597: intro → menu → level.
 void InsaneRebel1::runGame() {
 	typedef bool (InsaneRebel1::*RunLevelMethod)();
 	const RunLevelMethod kLevelRunners[] = {
@@ -1611,7 +1525,6 @@ void InsaneRebel1::runGame() {
 			runOptionsMenu();
 			break;
 		case 3: {
-			// Enter Passcode — original RunPasscodeEntryDialog starts the
 			// game from the decoded chapter when a valid passcode is entered.
 			const int passcodeLevel = runPasscodeEntryDialog();
 			if (passcodeLevel >= 1 && passcodeLevel <= numLevels)
@@ -1630,7 +1543,6 @@ void InsaneRebel1::runGame() {
 		}
 		case 4: {
 			// Level Select: extra start point. Continue through the
-			// original successor flow so post-level cinematics still play.
 			int selectedLevel = runLevelSelectMenu();
 			if (selectedLevel >= 1 && selectedLevel <= numLevels)
 				runLevelsFrom(selectedLevel, true);
@@ -1638,7 +1550,6 @@ void InsaneRebel1::runGame() {
 		}
 		case 5:
 			// CONTINUE DEMO — attract mode.
-			// Original shows TOP PILOTS (O1SCORE.ANM) then loops O1OPEN.ANM.
 			showHighScores();
 			if (!shouldAbortGameFlow())
 				playCinematic("OPEN/O1OPEN.ANM");
@@ -1713,7 +1624,6 @@ void InsaneRebel1::setupInteractiveVideoState(int32 startFrame) {
 		resetGamepadReticleAim();
 	}
 	_vm->_smushVideoShouldFinish = false;
-	// Route resumes stay in the same gameplay flow in the original executable.
 	// Preserve the previous video/runtime state, but keep the destination clip
 	// fully interactive from its first visible frame.
 	splayer->setPreserveVideoStateOnNextPlay(preserveVideoState);
@@ -1730,9 +1640,7 @@ void InsaneRebel1::resolveSeek(const char *filename, int32 startFrame, int32 &vi
 	videoOffset = 0;
 
 	if (_currentLevel == 6 && level7RouteSplice) {
-		// DOS opens the route ANM from the beginning, then the armed frame gate
-		// suppresses until the adjusted target. With the delayed cutover,
-		// the destination must advance by the source tail already displayed.
+		// Advance the destination route by the previous clip tail already displayed.
 		videoStartFrame = (_pendingRouteVideoStartFrame > 0) ?
 			_pendingRouteVideoStartFrame : 1;
 		videoOffset = findAnimFrameChunkOffset(_vm, filename, videoStartFrame);
@@ -1764,10 +1672,7 @@ void InsaneRebel1::resolveSeek(const char *filename, int32 startFrame, int32 &vi
 				_levelRouteIndex, (int)startFrame, (int)videoStartFrame, (unsigned)videoOffset);
 		}
 	} else if (_currentLevel == 13 && resumingRoute) {
-		// RunLevel14Flow calls PlayAnmFile("LVL14/L14PLY2B.ANM", 0x860,
-		// oldMaxFrame-0x0F, 1, -1). That frame number belongs to L14PLAY2's
-		// timeline; L14PLY2B is already the continuation clip and starts at its
-		// matching lead-in frame. Preserve the current state, but do not seek.
+		// L14PLY2B is already the continuation clip. Preserve state, but do not seek.
 		debugC(DEBUG_INSANE, "L14 splice: L14PLAY2 timelineFrame=%d -> L14PLY2B frame 0",
 			(int)startFrame);
 	}
@@ -1779,14 +1684,10 @@ void InsaneRebel1::captureInteractiveVideoInput() {
 
 	enableIOSGamepadController();
 
-	// Center mouse, hide system cursor (we draw our own), lock mouse to window.
-	// Some replays happen inside one original gameplay loop, so keep the current
-	// input state instead of recentering between route clips.
+	// Center mouse, hide system cursor, and lock mouse to window.
 	if (!preserveInputState) {
 		_gameplayMouseSettleUntil = 0;
-		// On touchscreen devices the DOS recenter-the-cursor aiming model does not apply;
-		// warping/locking the system mouse there injects spurious motion that drifts
-		// direct touch aiming and on-screen controls.
+		// Touch input uses absolute aiming, so avoid synthetic mouse motion there.
 		if (!isTouchscreenActive()) {
 			warpGameplayMouseNow(kRA1CenterX, kRA1CenterY);
 			_gameplayMouseSettleUntil = _vm->_system->getMillis() + kRA1GameplayMouseSettleMs;

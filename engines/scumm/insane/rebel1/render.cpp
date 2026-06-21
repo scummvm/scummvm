@@ -47,10 +47,7 @@ int ra1GameplayWindowOffsetX(const InsaneRebel1 *rebel1) {
 	if (!rebel1 || !rebel1->isInteractiveVideoActive())
 		return 0;
 
-	// Ship/cursor/shot coordinates are in DOS's 320x200 gameplay window.
-	// FUN_224FD crop emulation shifts them into the 384x242 source
-	// buffer so the final source-window crop presents them at the same screen
-	// position DOS used for gameplay and collision.
+	// Draw gameplay overlays into the cropped buffer's coordinate space.
 	switch (rebel1->getEffectiveGameOpcode()) {
 	case 0x07:
 	case 0x08:
@@ -159,7 +156,6 @@ const RA1Sprite *lookupBankGlyph(const RA1SpriteBank &bank, char ch) {
 	return &glyph;
 }
 
-// Glyph markers in FUN_1C940/FUN_1CB22 go through DrawStringEx(..., flags=3),
 // which centers the glyph and ignores the NUT x/y offsets. Use the same anchor
 // rules here instead of the generic left-anchored text path.
 void drawCenteredBankGlyph(const RA1SpriteBank &bank, byte *dst, int pitch, int width, int height,
@@ -202,8 +198,6 @@ int getBankStringWidth(const RA1SpriteBank &bank, const char *text) {
 	return w;
 }
 
-// Approximate FUN_221B7/FUN_20BD3 space-advance behavior from available NUT glyphs.
-// The original reads per-font space width from metadata tables and caps it to 8.
 int getBankSpaceAdvance(const RA1SpriteBank &bank) {
 	const int exclWidth = getBankStringWidth(bank, "!");
 	if (exclWidth <= 0)
@@ -247,7 +241,6 @@ void drawCenteredRebel1String(InsaneRebel1 *rebel1, byte *dst, int pitch, int wi
 }
 
 int getBankSpaceHeight(const RA1SpriteBank &bank) {
-	// In FUN_221B7 line advance is derived from the layer's space-glyph height (+4).
 	// With current NUT decoding we approximate that using the '!' glyph (index 0).
 	if (bank.numSprites > 0) {
 		const RA1Sprite &glyph = bank.sprites[0];
@@ -257,7 +250,6 @@ int getBankSpaceHeight(const RA1SpriteBank &bank) {
 	return 8;
 }
 
-// FUN_1C794: direction bucket in range -4..4 from two points.
 int ra1ShotDirection(int16 x1, int16 y1, int16 x2, int16 y2) {
 	int dx = x2 - x1;
 	int dy = y1 - y2;
@@ -290,7 +282,6 @@ int ra1ShotDirection(int16 x1, int16 y1, int16 x2, int16 y2) {
 	return -4;
 }
 
-// FUN_1CDA7 maps abs(FUN_1C794) to sprite base index: <=1 -> 0, ==2 -> 5, else -> 10.
 int ra1ShotDirectionBucket(int dir) {
 	const int absDir = ABS(dir);
 	if (absDir <= 1)
@@ -300,8 +291,7 @@ int ra1ShotDirectionBucket(int dir) {
 	return 10;
 }
 
-// QuantizeDirectionWithAxisFlags from RunLevel13Flow: returns one of nine
-// direction sprites and publishes DrawFobjGlyph flip flags.
+// Return one of nine direction sprites and publish glyph flip flags.
 int ra1ProjectileDirectionWithFlags(int16 srcX, int16 srcY, int16 dstX, int16 dstY, uint16 &flags) {
 	int dx = srcX - dstX;
 	int dy = dstY - srcY;
@@ -342,7 +332,6 @@ struct RA1ShotEmitterPair {
 	int16 y2;
 };
 
-// DAT_244A and DAT_251A in ASSAULT.EXE data section, used by FUN_1D79C.
 const RA1ShotEmitterPair kRA1ShotEmitters244A[27] = {
 	{ 11, -11, -11, 0 }, { 16, -9, -16, -1 }, { 20, -6, -19, -3 }, { 20, -5, -21, -4 }, { -20, -6, 20, -5 },
 	{ -18, -9, 16, -1 }, { -13, -11, 13, 0 }, { -7, -13, 8, 2 }, { 1, -10, 3, 2 }, { 11, -16, -11, 4 },
@@ -361,7 +350,6 @@ const RA1ShotEmitterPair kRA1ShotEmitters251A[27] = {
 	{ -15, -14, 16, 5 }, { 0, -38, -14, 37 }
 };
 
-// DAT_25EC/DAT_25F0 and DAT_28BC in ASSAULT.EXE. GAME opcode 0x09 uses these
 // emitter offsets instead of the generic edge-beam fallback.
 const RA1ShotEmitterPair kRA1FlightShotEmitters25EC[45] = {
 	{ -38, -14, 37, 6 }, { 37, -14, 37, 7 }, { 42, -11, -40, 11 }, { -37, -6, 38, 14 }, { -37, -5, 38, 15 },
@@ -399,7 +387,6 @@ const RA1ShotEmitterPair kRA1FlightShotEmitters28BC[45] = {
 	{ -18, 3, 5, -13 }, { -17, 3, 7, -14 }, { -18, 3, 8, -15 }, { -19, 3, 9, -11 }, { -16, 5, 11, -11 }
 };
 
-// Small subset of FUN_20D43 draw flags used by RA1 shot sprites.
 void renderSpriteWithFlags(byte *dst, int pitch, int width, int height,
 	int x, int y, const RA1Sprite &spr, uint32 flags) {
 	if (!spr.data || spr.width <= 0 || spr.height <= 0)
@@ -453,7 +440,6 @@ void renderSpriteWithFlags(byte *dst, int pitch, int width, int height,
 	}
 }
 
-// Helper only: the original keeps this shot-sprite math inline in
 // several GAME handlers. It is collapsed here because the direction/lerp/render
 // sequence is identical for one-beam shot sprites.
 void renderAimedShotSprite(byte *dst, int pitch, int width, int height,
@@ -481,8 +467,7 @@ void renderAimedShotPair(byte *dst, int pitch, int width, int height,
 		start2X, start2Y, targetX, targetY, lerp);
 }
 
-// Helper for the 0x0B fallback edge-beam path. The original keeps
-// the bucket lookup inline with the renderer, but both left/right beams share it.
+// Beam emitters share the same bucketed shot sprite lookup.
 void renderBucketedShotSprite(byte *dst, int pitch, int width, int height,
 		const RA1SpriteBank &laserBank, int startX, int startY, int targetX, int targetY,
 		int lerp, int frame, uint32 flags) {
@@ -502,10 +487,7 @@ void renderBucketedShotSprite(byte *dst, int pitch, int width, int height,
 }
 
 void InsaneRebel1::getTurretShipCenter(int16 &x, int16 &y) const {
-	// Port helper: original FUN_1E6A7 keeps g_perspectiveX/Y at screen center
-	// and draws the ship at g_perspective + g_shipOffset. In this port
-	// _perspectiveX/Y stores the clamped camera offset passed to SetCameraOffset(),
-	// so recover the ship center from the movement accumulators instead.
+	// Recover the ship center from the movement accumulators.
 	if (_turretFrameShipCenterValid) {
 		x = _turretFrameShipCenterX;
 		y = _turretFrameShipCenterY;
@@ -516,8 +498,6 @@ void InsaneRebel1::getTurretShipCenter(int16 &x, int16 &y) const {
 	y = (int16)(kRA1CenterY + (int16)(_posAccumY >> 8));
 }
 
-// procPreRendering — Sets viewport window offset (FUN_224FD at 0x224FD).
-// RA1 decodes FOBJs at chunk coordinates, then displays a scrolled 320x200
 // window inside the 384x242 framebuffer.
 void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 	_frameGameOpcodeMask = 0;
@@ -534,8 +514,6 @@ void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 			(_activeGameOpcode == 0x07 || _activeGameOpcode == 0x08 ||
 			 _activeGameOpcode == 0x09 || _activeGameOpcode == 0x0A ||
 			 _activeGameOpcode == 0x0B);
-		// Only gameplay handlers that actually execute FUN_224FD own the scrolling
-		// 320x200 window inside the 384x242 buffer. Interactive movies with no
 		// GAME stream (for example LVL4/L4PLAY2.ANM) keep a static camera.
 		if (usePerspectiveViewport) {
 			ra1Player()->_ra1ViewportOffsetX = _perspectiveX;
@@ -563,9 +541,7 @@ void InsaneRebel1::syncViewportOffset(bool usePerspectiveViewport) {
 	ra1Player()->_ra1ViewportOffsetX = _perspectiveX;
 	ra1Player()->_ra1ViewportOffsetY = _perspectiveY;
 
-	// SetCameraOffset() applies random shake to the camera value used by the
-	// visible source-window origin. Store it once so FTCH restore, overlays, and
-	// the final crop share one viewport origin for this frontend frame.
+	// Store shake-adjusted viewport once so overlays and crop share one origin.
 	if (_screenFlash > 0) {
 		ra1Player()->_ra1ViewportOffsetX += (int16)(_vm->_rnd.getRandomNumber(4) - 2);
 		ra1Player()->_ra1ViewportOffsetY += (int16)(_vm->_rnd.getRandomNumber(4) - 2);
@@ -583,7 +559,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		renderMainMenuOverlay(renderBitmap, pitch, width, height);
 	}
 
-	// Intro title overlay (RunTwoLineTextSplash) — drawn during intro cinematics
+	// Intro title overlay.
 	if (_introTextActive && renderBitmap) {
 		int w = _player ? _player->_width : _screenWidth;
 		int h = _player ? _player->_height : _screenHeight;
@@ -634,17 +610,13 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	bool drawShipAfterGameplayOverlays = false;
 	bool drawGameOp0BTargetingAfterFetch = false;
 	if (gameOp0BMode) {
-		// GAME 0x0B scrolling cockpit/surface handler — FUN_1CDA7.
 		if (!_gameOp0BPhysicsUpdatedThisFrame) {
 			updateGameOp0BPhysics();
 			_gameOp0BPhysicsUpdatedThisFrame = true;
 			syncViewportOffset(true);
 		}
 
-		// DOS 0x0B loops test health after each frontend frame and leave the
-		// interactive movie as soon as it drops below zero. Mirror that here so
-		// GAME 0x0B chapters transition to their retry/death clips like
-		// the other gameplay families do.
+		// 0x0B chapters transition to retry/death clips as soon as health drops.
 		if (_health < 0) {
 			_fireCooldown = _playerFired ? 1 : 0;
 			_vm->_smushVideoShouldFinish = true;
@@ -664,17 +636,13 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		if (onFootSequenceMode)
 			initOnFootSequence();
 
-		// Original LVL9 frames dispatch GAME 0x1A before 0x19. That means the
 		// shot overlay uses the current crosshair/pose and is then covered by the
 		// character DrawFobjGlyph from 0x19; the 0x19 pose update is for the next
 		// frame. Keep that ordering explicit here.
 		if (onFootAimMode) {
 			shotOverlayHandled = true;
 			if (_health >= 0) {
-				// HandleGameOp5A_ObjectOrSceneTrigger can snap g_shipPos to the
-				// target center before the shot overlay runs. The player
-				// defers GAME 0x1A until after FOBJ dispatch, so preserve that
-				// snap instead of immediately replacing it with raw input again.
+				// Preserve target snap until deferred 0x1A input runs.
 				const bool preserveTargetSnap = (_targetProximity == 2 && _tuning.snap > 0);
 				const int16 snappedTargetX = _shipPosX;
 				const int16 snappedTargetY = _shipPosY;
@@ -710,7 +678,6 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		}
 	} else {
 		// Dispatch movement path by GAME handler family:
-		//   0x08/0x0A -> FUN_1E6A7/FUN_1D79C (turret/cockpit)
 		//   0x07/0x09 -> flight-family handlers
 		if (turretMode) {
 			updateTurretPhysics();
@@ -732,10 +699,8 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		drawShipAfterGameplayOverlays = (flightMode || turretMode);
 	}
 
-	// GAME handlers in the original update FUN_224FD during the same frame that
-	// the new control state is computed. Sync the current frame's viewport window
-	// before HUD/screen copy so overlays and final crop observe the same camera.
-	// On-foot mode uses SetCameraOffset(0,0) — no viewport crop.
+		// Sync viewport before HUD/screen copy so overlays and crop share the camera.
+		// On-foot mode uses no viewport crop.
 	if (_player) {
 		if (onFootMode || (!gameOp0BMode && !turretMode && !flightMode)) {
 			syncViewportOffset(false);
@@ -744,9 +709,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		}
 	}
 
-	// Assembly dispatch (FUN_1BE1B) only runs the targeting/shot overlay pipeline
-	// in handlers 0x09/0x0A/0x0B/0x1A. LVL1 stage-2 works because the stream emits
-	// both 0x0A and 0x08 in the same frame, not because 0x08 owns the overlay path.
+	// Targeting overlay is owned by handlers 0x09/0x0A/0x0B/0x1A.
 	const bool hasTargetingPipeline =
 		!shotOverlayHandled &&
 		(hasFrameGameOpcode(0x09) || hasFrameGameOpcode(0x0A) ||
@@ -763,12 +726,11 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			(allowImplicitGameplayMode && _activeGameOpcode == 0x0A);
 		renderShotOverlayPipeline(renderBitmap, pitch, width, height, true);
 
-		// FUN_1D79C (GAME 0x0A) owns the cursor center in turret/combat mode.
-		// The preceding overlay/shot pass uses the previous frame's cursor; the
-		// handler then publishes the next cursor position from the current
-		// pre-physics ship offset. The following 0x08 handler updates the camera
-		// afterward, so source-space anchors and the final viewport crop
-		// intentionally observe different moments in the frame.
+			// The preceding overlay/shot pass uses the previous frame's cursor; the
+			// handler then publishes the next cursor position from the current
+			// pre-physics ship offset. The following 0x08 handler updates the camera
+			// afterward, so overlay anchors and the viewport crop intentionally
+			// observe different moments in the frame.
 		if (turretTargetingMode) {
 			const int16 shipOffsetX = _turretFrameShipCenterValid ?
 				_turretFrameShipOffsetX : (int16)(_posAccumX >> 8);
@@ -780,8 +742,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			updateFlightVariantCursor();
 		}
 	} else if (!shotOverlayHandled) {
-		// Keep lock/target accumulators quiescent when current handler doesn't
-		// execute FUN_1C940/FUN_1CCA0/FUN_1C9CD/FUN_1CB22.
+		// Keep lock/target accumulators quiescent outside targeting handlers.
 		_targetProximity = 0;
 		_prevTargetProx = 0;
 		_targetCount = 0;
@@ -789,8 +750,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		_lastHitTarget = 0;
 	}
 
-	// RunLevel7Flow tests route branches after PumpFrontendFrame, using the
-	// decoded logical route timeline and updated GAME 0x09 cursor state.
+	// Route branches use the decoded timeline and updated 0x09 cursor state.
 	if (_currentLevel == 6)
 		checkDynamicLevelBranch(curFrame);
 
@@ -820,7 +780,6 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		renderLevelHitsOverlay(renderBitmap, pitch, width, height, 0x16, true);
 
 	// Level 8 (Imperial Walkers) — walker-specific state update + UI overlay.
-	// In the original, RunLevel8Flow runs the walker logic inline in the per-frame
 	// game loop. We call it from procPostRendering when _currentLevel == 7.
 	if (_currentLevel == 7) {
 		updateLevel8WalkerState();
@@ -835,9 +794,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 }
 
 // Helper that groups the common shot/lock overlay calls used by the
-// original GAME handlers. GAME 0x1A uses the same pipeline without the target
 // box draw; 0x09/0x0A/0x0B include DrawTargetIndicators first. GAME 0x0B
-// defers FUN_1CB22 targeting until post-render so FTCH can restore cockpit
 // pixels over shots/boxes while the lock/fire indicator remains visible.
 void InsaneRebel1::renderShotOverlayPipeline(byte *dst, int pitch, int width, int height,
 		bool drawTargetBoxes, bool drawTargeting) {
@@ -850,7 +807,6 @@ void InsaneRebel1::renderShotOverlayPipeline(byte *dst, int pitch, int width, in
 
 	processShot();
 	renderLaserShots(dst, pitch, width, height);
-	// Timer decrement AFTER rendering (original decrements inside the render loop).
 	// This ensures timer==5 first frame is rendered with gun barrel offset and lerp=1.
 	for (int i = 0; i < kMaxShotSlots; i++) {
 		if (_shotSlots[i].timer > 0)
@@ -869,8 +825,6 @@ void InsaneRebel1::renderGameOp0BOverlayDuringChunk(byte *dst, int pitch, int wi
 	_gameOp0BOverlayRenderedThisFrame = true;
 }
 
-// renderTargetBoxes — FUN_1C940 (0x1C940). Per-target green box overlays.
-// Original gates on g_hudDisableFlags (0x75FE) bit 1: skip when set (Hard difficulty).
 void InsaneRebel1::renderTargetBoxes(byte *dst, int pitch, int width, int height) {
 	if (_gameplayFlags75fe & 2) {
 		_prevTargetCount = _targetCount;
@@ -899,8 +853,6 @@ void InsaneRebel1::renderTargetBoxes(byte *dst, int pitch, int width, int height
 	_targetCount = 0;
 }
 
-// renderTargeting — FUN_1CB22 (0x1CB22). Targeting/lock-on indicator.
-// The original does not draw a hardcoded pixel cross; it renders glyph markers
 // whose state depends on _targetProximity.
 void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) {
 	const char kRA1TorpedoIndicator[] = "<<d";
@@ -914,14 +866,11 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 		stopSfx(kSfxLockOn);
 
 	if (markerBank.numSprites > 0) {
-		// FUN_1CB22 can switch marker sets via DAT_75FF bit 1.
 		// Baseline RA1 targeting uses '^' and animation e..h.
 		const bool altMarkerSet = isTorpedoModeActive();
 
-		// DAT_75FF bit 2 suppresses the fixed lock/readiness overlay.
 		if ((_gameplayFlags75ff & 0x4) == 0) {
 			// Lock indicator at fixed center positions:
-			// FUN_1CB22 draws marker strings at (0xA0,0x78) and (0xA0,0x7E).
 			if (_targetProximity > 0) {
 				drawCenteredBankGlyph(markerBank, dst, pitch, width, height, overlayX + 0xA0, overlayY + 0x78, ']');
 				if (_targetProximity > 1)
@@ -929,9 +878,7 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 			}
 		}
 
-		// DAT_75FE bit 2 suppresses the cursor glyph entirely.
 		if ((_gameplayFlags75fe & 0x4) == 0) {
-			// Pointer glyph at current aim position. Original uses two variants:
 			// default marker ('^' or 'x') and animated lock marker (e..h or y..|).
 			char marker[2] = { (char)(altMarkerSet ? 'x' : '^'), '\0' };
 			if (_targetProximity > 1) {
@@ -957,9 +904,7 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 	_lastHitTarget = 0;
 }
 
-// handleLevel14Play2BSplice — RunLevel14Flow (0x1ACD1) queues L14PLY2B.ANM
 // from inside the L14PLAY2 loop when the current clip reaches maxFrame - 0x0F.
-// This helper is an implementation extraction; the original keeps the PlayAnmFile
 // call inline and passes the old L14PLAY2 timeline frame to the ANM frame gate.
 void InsaneRebel1::handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame) {
 	if (_currentLevel != 13 || _levelGameplayPhase != 2 || _level14Play2BSpliced ||
@@ -973,26 +918,19 @@ void InsaneRebel1::handleLevel14Play2BSplice(int32 curFrame, int32 maxFrame) {
 	_level14Play2BSplicePending = true;
 	_level14Play2BSpliceFrame = curFrame;
 
-	// DOS queues the continuation from inside the active playback loop, so the
-	// STOR/FTCH video state remains live across the L14PLAY2 -> L14PLY2B jump.
+	// Keep video state live across the L14PLAY2 -> L14PLY2B jump.
 	if (_player)
 		_player->setPreserveGameVideoStateOnRelease(true);
 
-	// Original after PlayAnmFile("LVL14/L14PLY2B.ANM", 0x860, maxFrame-0x0F, 1, -1):
-	//   g_extendedPhaseFlags &= 0xFA;
-	//   DAT_7604 &= 0xBF;
-	// g_extendedPhaseFlags is primary byte 1 because g_gameplayPhaseFlags starts
-	// at byte 0 of the original frame-object state array.
+	// Clear carried target flags before switching clips.
 	clearFrameObjectPrimaryBits(1, 0x05);
 	clearFrameObjectPrimaryBits(2, 0x40);
 	_vm->_smushVideoShouldFinish = true;
 }
 
-// renderGostScorePopup — Per-kill score glyph from RenderGostOverlaySlots (0x1C9CD).
 // Maps kill score to tech-font glyph and draws it rising upward from the kill position.
 void InsaneRebel1::renderGostScorePopup(byte *dst, int pitch, int width, int height,
 										int16 centerX, int16 centerY, int16 frame) {
-	// Score-to-glyph mapping from original (0x1CA5D-0x1CACB)
 	char glyphChar = '\0';
 	uint16 scoreValue = (uint16)_tuning.kill;
 	if (scoreValue == 10)       glyphChar = 0x72;  // 'r'
@@ -1005,14 +943,12 @@ void InsaneRebel1::renderGostScorePopup(byte *dst, int pitch, int width, int hei
 	if (glyphChar == '\0')
 		return;
 
-	// Original: DrawStringEx(buf, colorMap, centerX-4, centerY-frame, 1, 100, 3, scoreText)
 	// "<<{glyph}" string selects tech font layer via the << markup
 	char scoreText[4] = { '<', '<', glyphChar, '\0' };
 	drawFontBankString(dst, pitch, width, height,
 					   centerX - 4, centerY - frame, scoreText);
 }
 
-// renderGostSlots — FUN_1C9CD (0x1C9CD). Hit explosion animations at target positions.
 // Renders explosion sprites from bangBank + per-kill score popup glyphs.
 void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) {
 	if ((_gameplayFlags75fe & 0x10) != 0)
@@ -1038,8 +974,6 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 				renderSprite(dst, pitch, width, height, drawX, drawY, spr);
 			}
 
-			// Per-kill score popup glyph — RenderGostOverlaySlots (0x1CA35)
-			// Suppressed when DAT_75FF bit 3 is set.
 			if ((_gameplayFlags75ff & 8) == 0) {
 				renderGostScorePopup(dst, pitch, width, height,
 									overlayX + centerX, centerY, _gostSlots[i].frame);
@@ -1050,8 +984,6 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 	}
 }
 
-// renderLevelHitsOverlay — RunLevel1Flow (0x16421-0x16438) and RunLevel11Flow
-// (0x1A07A-0x1A090) call FormatAndDrawText with "<<HITS %02d" at x=0x119.
 void InsaneRebel1::renderLevelHitsOverlay(byte *dst, int pitch, int width, int height, int y,
 		bool screenSpace) {
 	if (_hudFontBank.numSprites <= 0 && _techFontBank.numSprites <= 0)
@@ -1069,7 +1001,6 @@ void InsaneRebel1::renderLevelHitsOverlay(byte *dst, int pitch, int width, int h
 	drawFontBankString(dst, pitch, width, height, drawX, drawY, hitsStr);
 }
 
-// renderLevel5Part2Overlay — RunLevel5Flow (0x176D0-0x1777E) draws the
 // part-2 instruction reveal, then switches to the live target count.
 void InsaneRebel1::renderLevel5Part2Overlay(byte *dst, int pitch, int width, int height, int32 curFrame) {
 	if (_hudFontBank.numSprites <= 0 && _techFontBank.numSprites <= 0)
@@ -1102,7 +1033,6 @@ void InsaneRebel1::resetEnemyShotSlots() {
 	memset(_enemyShotSlots, 0, sizeof(_enemyShotSlots));
 }
 
-// Port helper for Level 7 RunLevel7Flow. The original keeps this warning and
 // single incoming projectile slot inline in the L7PLAY frontend loop.
 void InsaneRebel1::renderLevel7RouteOverlays(byte *dst, int pitch, int width, int height) {
 	if (_currentLevel != 6 || !_interactiveVideoActive || _health < 0)
@@ -1166,7 +1096,6 @@ void InsaneRebel1::renderLevel7RouteOverlays(byte *dst, int pitch, int width, in
 	}
 }
 
-// Port helper for Level 13 RunLevel13Flow. The original stores this state in
 // five local stack arrays around the L13PLAY frontend loop, not in a named function.
 void InsaneRebel1::renderLevel13EnemyShots(byte *dst, int pitch, int width, int height) {
 	if (_currentLevel != 12 || !_interactiveVideoActive || _health < 0)
@@ -1236,7 +1165,6 @@ void InsaneRebel1::renderLevel13EnemyShots(byte *dst, int pitch, int width, int 
 	}
 }
 
-// renderLaserShots — FUN_1CDA7/FUN_1D79C/HandleGameOp1A shot visual path.
 void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height) {
 	const char kRA1TorpedoTrailLeft[] = "<<&";
 	const char kRA1TorpedoTrailRight[] = "<<'";
@@ -1245,18 +1173,14 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 	if (_laserBank.numSprites <= 0 && !torpedoMode)
 		return;
 
-	// DAT_2407 lookup used by FUN_1CDA7/FUN_1D79C for timer 1..5 interpolation.
 	// Entry 0 unused.
 	const int kShotLerpByTimer[6] = { 0, 8, 7, 6, 4, 0 };
-	// DAT_2413: on-foot lerp table (timer 5 = 1, not 0 like flight mode).
 	const int kOnFootShotLerp[6] = { 0, 8, 7, 6, 4, 1 };
-	// DAT_240e: gun barrel X offset indexed by shipDirIndex (for timer==5 first frame).
 	// Indices 11..19 are the active firing poses from L9PILOT.NUT.
 	const int16 kOnFootGunBarrelX[20] = {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, -56, -47, -23, -13, 0, 13, 30, 54, 59
 	};
-	// DAT_2420: gun barrel Y offset indexed by shipDirIndex (for timer==5 first frame).
 	const int16 kOnFootGunBarrelY[20] = {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, -3, -19, -24, -30, -28, -30, -29, -20, -5
@@ -1312,9 +1236,6 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 			const int lerp = kShotLerpByTimer[timer];
 
 			if (turretMode) {
-				// FUN_1D79C chooses emitters in two ways:
-				// - DAT_75E4 == 2: use DAT_75DC..DAT_75E2 fixed offsets
-				// - otherwise: table path DAT_244A/DAT_251A keyed by DAT_74D2
 				int start1X = 0;
 				int start1Y = 0;
 				int start2X = 0;
@@ -1414,8 +1335,6 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 	}
 }
 
-// Level intro title data (from RunTwoLineTextSplash calls in original binary).
-// titleText is drawn at y=10, subtitleText at y=25 (matching original DrawUiString positions).
 // revealStartFrame/revealEndFrame control the frame range during which text is visible.
 const struct {
 	const char *titleText;      // Top line (chapter number)
@@ -1423,7 +1342,7 @@ const struct {
 	int16 revealStartFrame;     // Frame at which text begins appearing
 	int16 revealEndFrame;       // Frame after which text stops
 } kLevelTitles[] = {
-	{ "Chapter 1",  "Flight Training",        -80, -30 },  // Original computes totalFrames-0x50..totalFrames-0x1e
+	{ "Chapter 1",  "Flight Training",        -80, -30 },
 	{ "Chapter 2",  "Asteroid Field Training",  40, 100 },
 	{ "Chapter 3",  "Planet Kolaador",           0,  50 },
 	{ "Chapter 4",  "Star Destroyer Attack",     5,  50 },
@@ -1471,12 +1390,10 @@ void InsaneRebel1::drawLevelTitleOverlay(byte *dst, int pitch, int width, int he
 	const char *title = kLevelTitles[_introTextLevel].titleText;
 	const char *subtitle = kLevelTitles[_introTextLevel].subtitleText;
 
-	// Center horizontally (matching original DrawUiString x_center=0xA0=160)
 	int titleW = getFontBankStringWidth(title);
 	int subtitleW = getFontBankStringWidth(subtitle);
 	int centerX = width / 2;
 
-	// Original positions: title at y=10, subtitle at y=25 (0x19)
 	drawFontBankString(dst, pitch, width, height, centerX - titleW / 2, 10, title);
 	drawFontBankString(dst, pitch, width, height, centerX - subtitleW / 2, 25, subtitle);
 }
@@ -1505,8 +1422,7 @@ void InsaneRebel1::beginChapterSummaryOverlay(int revealOffsetFromEnd, int stopO
 	}
 }
 
-// Passcodes are kept in clear text. The DOS table is XOR-0xAA
-// encoded in 15 20-byte slots at DS:0x00A4.
+// Passcodes are stored in clear text.
 static const char *const kChapterCompletePasswords[] = {
 	"FALCON", "BIGGS", "ACKBAR", "ANOAT", "KAIBURR",
 	"FORNAX", "YUZZEM", "MYNOCK", "BESPIN", "BRIGIA",
@@ -1520,9 +1436,6 @@ const char *InsaneRebel1::getChapterCompletePassword(int passwordIndex) const {
 	return kChapterCompletePasswords[passwordIndex - 1];
 }
 
-// drawChapterSummaryOverlay — RunChapterCompleteSummaryScreen (0x15E42), shared by
-// the RA1 runlevel flows that call it. This helper is an implementation extraction;
-// the original pumps frontend frames from the runlevel after queueing the END ANM.
 void InsaneRebel1::drawChapterSummaryOverlay(byte *dst, int pitch, int width, int height,
 		int32 curFrame, int32 maxFrame) {
 	if (!_chapterSummary.active || !dst || maxFrame <= 0)
@@ -1573,13 +1486,11 @@ void InsaneRebel1::drawChapterSummaryOverlay(byte *dst, int pitch, int width, in
 	}
 }
 
-// drawFontBankString — FUN_221B7 (0x221B7), partial parity:
 // supports '<'/'>' layer markup and layer-2 space handling used by RA1 HUD/targeting strings.
 void InsaneRebel1::drawFontBankString(byte *dst, int pitch, int width, int height, int x, int y, const char *text) {
 	if (!text || !dst)
 		return;
 
-	// Original FUN_221B7 layer mapping is table-driven at DAT_2D56 (0x406-byte entries).
 	// Current RA1 integration maps subtitle/HUD-relevant layers as:
 	//   layer 0   -> TITLE font bank
 	//   layer 1   -> TALK/HUD font bank
@@ -1601,7 +1512,6 @@ void InsaneRebel1::drawFontBankString(byte *dst, int pitch, int width, int heigh
 		if (bank.numSprites <= 0)
 			return;
 
-		// FUN_221B7 special-case: when layer==2 and char is space, remap to '!'.
 		if (ch == ' ') {
 			if (techLayer) {
 				drawBankString(bank, dst, pitch, width, height, x, y, "!");
@@ -1618,7 +1528,6 @@ void InsaneRebel1::drawFontBankString(byte *dst, int pitch, int width, int heigh
 	}
 }
 
-// getFontBankStringWidth — Width pre-pass from FUN_221B7 (0x221B7), including '<'/'>' markup.
 int InsaneRebel1::getFontBankStringWidth(const char *text) {
 	if (!text)
 		return 0;
@@ -1667,10 +1576,7 @@ int InsaneRebel1::getFontBankLineAdvance(const char *text) {
 	return getBankSpaceHeight(bank) + 4;
 }
 
-// renderShip — Ship sprite rendering from FUN_1DEB5 (0x1DEB5) at LAB_1e2b2.
-// Also used by FUN_1E6A7 (0x1E6A7) turret handler via FUN_20BD3.
 void InsaneRebel1::renderShip(byte *dst, int pitch, int width, int height) {
-	// From FUN_1DEB5 LAB_1e2b2: ship drawn when health >= 0 OR deathTimer > 20
 	// Hidden during last 20 frames of death sequence (deathTimer 20→0)
 	if (_health < 0 && _deathTimer <= 20)
 		return;
@@ -1702,8 +1608,6 @@ void InsaneRebel1::renderShip(byte *dst, int pitch, int width, int height) {
 	renderSprite(dst, pitch, width, height, drawX, drawY, spr);
 }
 
-// renderExplosions — Explosion sprites from FUN_1DEB5 (0x1DEB5) LAB_1e185 (damage hit)
-// and LAB_1e0e3 (death shake). See also FUN_1CCA0 (0x1CCA0) explosion spawner.
 void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height) {
 	if (_bangBank.numSprites <= 0)
 		return;
@@ -1723,7 +1627,6 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 		shipScreenY = overlayY + centerY;
 	}
 
-	// --- Death shake explosions (FUN_1DEB5 LAB_1e0e3) ---
 	// When dead and deathTimer > 10: random explosion sprites scatter around ship
 	if (_health < 0 && _deathTimer > 10) {
 		int intensity = _deathTimer - 10;  // 20→1 as timer goes 30→11
@@ -1731,16 +1634,14 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 			intensity = 20 - intensity;     // Triangle: 0→10→0
 
 		// di = intensity * 4 + 1 (vertical scatter range)
-		// si = -20 + intensity * 4 (horizontal scatter range, DAT_75d8 is 0)
 		int rangeY = intensity * 4 + 1;
 		int rangeX = -20 + intensity * 4;
 		if (rangeX < 1) rangeX = 1;
 
 		for (int i = 0; i < intensity; i++) {
-			// Random sprite from bang bank (FUN_21db0(10))
 			int sprIdx = _vm->_rnd.getRandomNumber(_bangBank.numSprites - 1);
 
-			// Random position around ship (matching assembly random scatter)
+			// Random position around ship.
 			int randX = (int)_vm->_rnd.getRandomNumber(rangeX * 2) - rangeX;
 			int randY = (int)_vm->_rnd.getRandomNumber(rangeY * 2) - rangeY;
 
@@ -1754,7 +1655,6 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 		return;
 	}
 
-	// --- Damage hit explosion (FUN_1DEB5 LAB_1e185) ---
 	// When alive, in cooldown, and bang bank loaded
 	if (_health >= 0 && _damageCooldown > 0) {
 		// Sprite index = 10 - damageCooldown (frames 0→9 as cooldown 10→1)
@@ -1762,7 +1662,6 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 		if (sprIdx < 0 || sprIdx >= _bangBank.numSprites)
 			return;
 
-		// Position at ship center (DAT_75d8 is always 0 in RA1)
 		int drawX = shipScreenX;
 		int drawY = shipScreenY;
 
@@ -1772,9 +1671,7 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 	}
 }
 
-// renderHUD — FUN_1BBCB (0x1BBCB). Status bar from DISPLAY.NUT with health/lives/score overlays.
 void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
-	// Extra life bonus: every 10,000 points (FUN_1BBCB lines 11-27)
 	if (_score / 10000 > _prevScore / 10000) {
 		_lives++;
 		playSfx(kSfxBonus, 127, 0);
@@ -1786,11 +1683,7 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 
 	const RA1Sprite &bar = _displayBank.sprites[0];
 
-	// DISPLAY.NUT sprite is 320×19 at xoffs=0, yoffs=176 in the original game.
-	// FUN_224FD (0x224FD) sets the 320x200 window origin inside the 384x242 buffer.
-	// FUN_1BBCB (0x1BBCB) HUD coordinates are screen-space, so when we emulate
-	// perspective via source-window cropping, anchor HUD at window origin to keep
-	// it fixed on-screen.
+	// Anchor HUD at the window origin so perspective cropping does not move it.
 	int hudOriginX = 0;
 	int hudOriginY = 0;
 	if (_interactiveVideoActive && _player) {
@@ -1800,12 +1693,10 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 
 	const int hudX = hudOriginX + bar.xoffs;
 	const int hudY = hudOriginY + bar.yoffs;
-	// FUN_1BBCB draws DISPLAY.NUT at x=5 with a 4..315 clip rect. The HUD
 	// masks/text below use the unshifted screen-space coordinate origin.
 	const int hudPlateX = hudX + 5;
 	const int hudPlateY = hudY;
 
-	// DOS RA1 draws the HUD plate through DrawFobjGlyph(..., flags=0x181),
 	// which selects the opaque blit path. Keep zero-valued pixels black instead
 	// of treating them as transparent.
 	if (bar.data && bar.width > 0 && bar.height > 0) {
@@ -1841,7 +1732,6 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 		}
 	}
 
-	// Draw health bar from FUN_1BBCB (0x1BBCB) + FUN_21D66 (0x21D66):
 	// fill rect at (0x92-health, 8), width=health, height=5, color=0.
 	// This is a black "remaining health" fill over the HUD template.
 	{
@@ -1861,7 +1751,6 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 	}
 
 	// Lives: black out excess pilot icons embedded in DISPLAY.NUT background.
-	// Original FUN_1BBCB: FUN_21D66(buf, lives*10+186, 6, 51-lives*10, 9, 0, 320)
 	// Icons are 5 slots at x=186..236, each ~10px wide. Cover unused slots with black.
 	if (_lives >= 0 && _lives < 5) {
 		int coverX = hudX + _lives * 10 + 186;
@@ -1878,15 +1767,12 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 		}
 	}
 
-	// Score: FUN_1BBCB (0x1BBCB) -> FUN_21FAF (0x21FAF) with format at 0x6713: "<<%06ld".
-	// Keep the leading "<<" markup so FUN_221B7-equivalent path selects TECH font layer.
 	if (_hudFontBank.numSprites > 0 || _techFontBank.numSprites > 0) {
 		char scoreStr[24];
 		Common::sprintf_s(scoreStr, "<<%06d", MAX<int>(_score, 0));
 		drawFontBankString(dst, pitch, width, height, hudX + 273, hudY + 5, scoreStr);
 	}
 
-	// Low-health indicator from FUN_1BBCB (0x1BBCB):
 	// if (health < miss*2 || health < wham*2 || health < shot*2) and (frame & 8),
 	// draw warning glyph at (0x49, 0x07). Two variants:
 	//   "<<[" when above critical thresholds, "<<\\" when critical.
@@ -1901,7 +1787,6 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 				(_health > _tuning.miss) &&
 				(_health > _tuning.wham) &&
 				(_health > _tuning.shot);
-			// FUN_1BBCB pushes string pointers 0x671b ("<<[") or 0x671f ("<<\\") into FUN_221B7.
 			const char *warningStr = aboveCritical ? "<<[" : "<<\\";
 			drawFontBankString(dst, pitch, width, height, hudX + 0x49, hudY + 0x07, warningStr);
 			if (!aboveCritical && ((_frameCounter & 0x7) == 0))
@@ -1909,10 +1794,9 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 		}
 	}
 
-	_hudDirtyFlag = 0xFF;  // Mark HUD as freshly drawn (0x7601)
+	_hudDirtyFlag = 0xFF;
 }
 
-// Attack window frame tables — RunLevel8Flow (0x18546), data at 0x236D/0x2373/0x2379.
 // Each route has up to 3 attack windows. -2 means disabled.
 const int16 InsaneRebel1::kWalkerAttackWindow1[3] = { 2588, 2323, 877 };
 const int16 InsaneRebel1::kWalkerAttackWindow2[3] = { 1709, 1444, -2 };
@@ -1921,27 +1805,23 @@ const int16 InsaneRebel1::kWalkerAttackWindow3[3] = { 262, -2, -2 };
 // updateLevel8WalkerState — Per-frame walker health + attack window logic.
 // Called from procPostRendering when _currentLevel == 7.
 void InsaneRebel1::updateLevel8WalkerState() {
-	// Walker health computation — RunLevel8Flow (0x18634-0x18655)
 	if (_walkerHealth >= 11) {
 		_walkerHealth = (int16)(100 - (_killCount + (_killCount >> 2)));
 	} else if (_walkerHealth > 0 && (_gameCounter & 3) == 0) {
 		_walkerHealth--;
 	}
 
-	// Walker destroyed — exit interactive video (original loop: `while (sVar6 != 0)`)
 	if (_walkerHealth <= 0) {
 		_vm->_smushVideoShouldFinish = true;
 		return;
 	}
 
-	// FUN_12FE1/FUN_130C9/FUN_13195 test whether the route-specific walker
 	// contact hazards hit the player. The port synthesizes that damage flag in updateGameOp0BPhysics(),
 	// where the 0x0B damage flags are consumed. This is unrelated to _walkerHealth,
 	// which is the boss health displayed by the Level 8 overlay.
 	int route = CLIP(_levelRouteIndex, 0, 2);
 	uint16 fc = (uint16)_gameCounter;
 
-	// Attack window logic — RunLevel8Flow (0x18778-0x18B4A)
 	const int16 *windows[3] = {
 		&kWalkerAttackWindow1[route],
 		&kWalkerAttackWindow2[route],
@@ -1990,8 +1870,6 @@ void InsaneRebel1::updateLevel8WalkerState() {
 		}
 	}
 
-	// At window boundary: decide route branch — RunLevel8Flow (0x18A7F-0x18B4A)
-	// Original: left branches unless at window3, right branches unless at window2.
 	for (int w = 0; w < 3; w++) {
 		int16 windowEnd = *windows[w];
 		if (windowEnd < 0) continue;
@@ -2024,11 +1902,8 @@ void InsaneRebel1::updateLevel8WalkerState() {
 	}
 }
 
-// renderLevel8Overlay — Walker-specific UI from RunLevel8Flow (0x18660-0x18A7E).
 // Draws walker health %, attack timer, directional arrows, and target reticle.
-// Original RunLevel8Flow projects these fixed cockpit-panel points and then uses
 // 1/4 parallax compensation. We draw into the 384x242 SMUSH buffer, so add the
-// viewport offset to convert the original screen-space result back to buffer
 // coordinates before the final RA1 crop.
 void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int height,
 		int viewportX, int viewportY) {
@@ -2118,8 +1993,6 @@ void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int heig
 	}
 }
 
-// renderSprite — Simplified version of FUN_20BD3 (0x20BD3) glyph/sprite renderer.
-// Original dispatches through full codec pipeline; this does flat pixel blit with transparency.
 void InsaneRebel1::renderSprite(byte *dst, int pitch, int width, int height,
 								int x, int y, const RA1Sprite &spr) {
 	if (!spr.data || spr.width <= 0 || spr.height <= 0)

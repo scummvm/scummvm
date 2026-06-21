@@ -60,8 +60,6 @@ const int kRA1GameplayMouseSettleEdgeMargin = 16;
 const int kRA1GameplayMouseMaxX = 319;
 const int kRA1GameplayMouseMaxY = 199;
 const uint32 kRA1GameplayMouseSettleExtendMs = 1000;
-// Original picker traversal uses fixed max indices, not strlen(): passcodes
-// stop at 0x1d and high-score names stop at 0x37.
 const char kRA1TextEntryPickerChars[] = "^`_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const int kRA1PasscodePickerCount = 0x1d + 1;
 const int kRA1NamePickerCount = 0x37 + 1;
@@ -146,7 +144,6 @@ static int getRebel1PasscodeDifficulty(int passwordIndex) {
 }
 
 static int getRebel1PasscodeStartLevel(int passwordIndex) {
-	// Original main-menu control flow groups passcodes by difficulty:
 	// 1-3 resume after chapter 3, 4-6 after chapter 6, 7-9 after chapter 10,
 	// 10-12 after chapter 14, and 13-15 jump to the final ending sequence.
 	switch ((passwordIndex - 1) / 3) {
@@ -165,9 +162,6 @@ static int getRebel1PasscodeStartLevel(int passwordIndex) {
 	}
 }
 
-// 3DO Launchme_ARMv4 FUN_000092c4 compares the entered passcode against 45
-// XOR-0xAA encoded 20-byte slots at 0x262FC. The caller's Ghidra disassembly at
-// 0x12A58 maps those slots in three-code difficulty groups to the next chapter.
 const char *const kRebel1ThreeDOPasswords[] = {
 	"BOSSK", "BOTHAN", "BORDOK",
 	"ENGRET", "HERGLIC", "SKYNX",
@@ -331,9 +325,9 @@ void InsaneRebel1::beginTextEntry(bool passcodeMode) {
 	_textEntryPasscodeMode = passcodeMode;
 	_textEntryDone = false;
 	_textEntryCanceled = false;
-	_textEntryPickerIndex = 3; // First letter in the original picker string.
+	_textEntryPickerIndex = 3;
 	_textEntryPickerOffsetX = 0;
-	// The DOS buffers include a leading '<' font marker and cap strlen() at 8.
+	// Text buffers include a leading '<' font marker and cap strlen() at 8.
 	_textEntryMaxChars = 8;
 	_textEntryBuffer[0] = '\0';
 
@@ -584,8 +578,6 @@ bool InsaneRebel1::handleControllerMenuAxis(int16 oldAxisX, int16 oldAxisY) {
 
 	// RA1 maps stick axes to backend axis events for analog gameplay.
 	// Menus still need edge-triggered digital navigation from those same axes.
-	// Match the original raw-input convention: positive Y is stick-down in
-	// menus, and the Y-flip option reverses that interpretation.
 	const int oldX = getRebel1MenuAxisDirection(oldAxisX);
 	const int oldY = getRebel1MenuAxisDirection(oldAxisY);
 	const int newX = getRebel1MenuAxisDirection(_joystickAxisX);
@@ -617,7 +609,6 @@ void InsaneRebel1::openGameplayMainMenu() {
 		_player->unpause();
 }
 
-// Extra feature, not in the original game: let the player navigate and
 // activate the front-end menus with the mouse. Hovering highlights an item and a left
 // click activates it (same as pressing accept). The item hit-rectangles mirror the
 // highlight frames drawn by the render*Overlay() functions, so they share the
@@ -915,7 +906,6 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		handleMenuCommand(getRebel1MenuCommandFromKey(event.kbd)))
 		return true;
 
-	// Shooting: mouse button during interactive gameplay — FUN_1CCA0 (0x1CCA0)
 	if (_interactiveVideoActive && !_menuActive) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
 			_vm->_mouse.x = event.mouse.x;
@@ -1018,8 +1008,6 @@ void InsaneRebel1::drawMenuTitleText(byte *dst, int pitch, int width, int height
 }
 
 void InsaneRebel1::renderHighScoresOverlay(byte *dst, int pitch, int width, int height) {
-	// --- TOP PILOTS high score display ---
-	// Original renders over O1SCORE.ANM. Title appears after frame 20,
 	// entries fade in one per frame. We show all immediately.
 	const int titleW = getMenuTalkTextWidth("TOP PILOTS");
 	drawMenuTalkText(dst, pitch, width, height, getRebel1MenuCenteredX(titleW), 10, "TOP PILOTS");
@@ -1028,7 +1016,6 @@ void InsaneRebel1::renderHighScoresOverlay(byte *dst, int pitch, int width, int 
 		const int y = 25 + i * 14;
 		// Name (left side)
 		drawFontBankString(dst, pitch, width, height, 40, y, _highScores[i].name);
-		// Score + difficulty glyph (right side) — original format "<%ld %c"
 		// Difficulty byte 0/1/2 + 0x7B = '{','|','}' tech font glyphs (easy/normal/hard)
 		char scoreLine[32];
 		Common::sprintf_s(scoreLine, "<%ld %c",
@@ -1039,7 +1026,6 @@ void InsaneRebel1::renderHighScoresOverlay(byte *dst, int pitch, int width, int 
 }
 
 void InsaneRebel1::renderOptionsOverlay(byte *dst, int pitch, int width, int height) {
-	// --- Options submenu (matching original RunGameOptionsMenu) ---
 	_optTextEnabled = ConfMan.getBool("subtitles");
 	_optVolume = CLIP<int>(ConfMan.getInt("music_volume") / 2, 0, 127);
 
@@ -1078,7 +1064,6 @@ void InsaneRebel1::renderOptionsOverlay(byte *dst, int pitch, int width, int hei
 }
 
 void InsaneRebel1::renderLevelSelectOverlay(byte *dst, int pitch, int width, int height) {
-	// --- Extra level select submenu, styled like the original frontend menus ---
 	const int titleW = getFontBankStringWidth("LEVEL SELECT");
 	drawMenuTitleText(dst, pitch, width, height, getRebel1MenuCenteredX(titleW), 15, "LEVEL SELECT");
 
@@ -1129,7 +1114,6 @@ void InsaneRebel1::renderLevelSelectOverlay(byte *dst, int pitch, int width, int
 }
 
 void InsaneRebel1::renderMainMenuItems(byte *dst, int pitch, int width, int height) {
-	// --- Main menu ---
 	const char *const kMenuItems[kRA1MainMenuItemCount] = {
 		"START NEW GAME",
 		"GAME OPTIONS",
@@ -1418,7 +1402,6 @@ int InsaneRebel1::runLevelSelectMenu() {
 }
 
 void InsaneRebel1::showHighScores() {
-	// Original plays O1SCORE.ANM with TOP PILOTS overlay, dismissable by any key.
 	_highScoresActive = true;
 	_menuActive = true;
 	_menuFrameCounter = 0;

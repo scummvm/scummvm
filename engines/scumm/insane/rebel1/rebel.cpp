@@ -187,8 +187,6 @@ void InsaneRebel1::loadTuningForLevel(int level) {
 	_tuning.levelPts = kTuningTable[l][d][10];
 	_tuning.bonus    = kTuningTable[l][d][11];
 	_tuning.flags    = kTuningTable[l][d][12];
-	// initLevelFromTuning (0x13E7B) writes the 16-bit tuning flags word across
-	// 0x75FE/0x75FF, so we must preserve both bytes.
 	resetGameplayFlagsFromTuning();
 	_protectedTargetA = 0;
 	_protectedTargetB = 0;
@@ -238,7 +236,6 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_turretFrameShipCenterValid = false;
 	_driftParam = 0;
 
-	// Start new games on the least punishing original tuning by default.
 	_difficulty = 0;
 	loadTuningForLevel(0);
 
@@ -359,7 +356,6 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_optRapidFire = true;
 	_optVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) * 127 / Audio::Mixer::kMaxChannelVolume;
 
-	// Default high scores — from DS:0x1D0/0x298/0x2C0
 	const struct { const char *name; int32 score; byte difficulty; } kDefaultScores[kHighScoreCount] = {
 		{"Vince",   10000, 2}, {"Tamlynn",  9000, 2}, {"Chip",    8000, 2},
 		{"Brett",    7000, 1}, {"Casey",    6000, 1}, {"Justin",  5000, 1},
@@ -434,7 +430,6 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 		warning("InsaneRebel1::InsaneRebel1(): failed to load title font bank (TITLFONT/TALKFONT)");
 	}
 
-	// FUN_1CB22 uses "<<" layer markers that resolve to TECHFONT in the original.
 	// Keep a dedicated TECH font bank for targeting markers/lock indicators.
 	if (loadRA1Nut("SYS/TECHFONT.NUT", _techFontBank)) {
 		debugC(DEBUG_INSANE, "InsaneRebel1::InsaneRebel1(): targeting glyph font loaded from SYS/TECHFONT.NUT (%d chars)", _techFontBank.numSprites);

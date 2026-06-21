@@ -54,7 +54,7 @@ inline int16 stepRebel1Op0BReticleAxis(int axisValue) {
 	if (axisValue >= 0)
 		return (int16)(axisValue >> 4);
 
-	// The 3DO ARM code integrates the standard control-pad path with ASR #4.
+	// Preserve arithmetic-shift rounding for negative movement.
 	return (int16)-((-axisValue + 15) >> 4);
 }
 
@@ -89,8 +89,8 @@ const int kRA1EnhancedFlightDirectMaxX = 64;
 const int kRA1EnhancedFlightDirectMaxY = 40;
 const int kRA1MouseFlightRollTargetScale = 16;
 const int kRA1ControlPadAxisStep = 0x1E;
-const int16 kOnFootCenterX = 0xA3;  // g_perspectiveX in HandleGameOp19
-const int16 kOnFootCenterY = 0x82;  // g_perspectiveY in HandleGameOp19
+const int16 kOnFootCenterX = 0xA3;
+const int16 kOnFootCenterY = 0x82;
 const int16 kOnFootCursorBaseY = kOnFootCenterY - 0x32;
 const int16 kOnFootGamepadStep = 7;
 const int16 kOnFootCursorMinX = 0;
@@ -101,9 +101,7 @@ const int16 kRA1Level12TargetA = 195;
 const int16 kRA1Level12TargetB = 197;
 const int16 kRA1Level12TargetC = 199;
 
-// Level 15 final approach 0x5D damage/event codes consumed by
-// RunLevel1GameLoop. The latch stores the raw GAME parameter; no translation is
-// performed by HandleGameOp5D_SegmentLinkLatch.
+// Level 15 final approach 0x5D damage/event codes.
 inline bool isLevel15FinalDamageLatch(uint16 code) {
 	switch (code) {
 	case 0x0049:
@@ -197,7 +195,6 @@ inline bool isLevel2DamageLatch(uint16 code) {
 	}
 }
 
-// Level 2 asteroid-contact helper from FUN_00012d70. RunLevel2Flow calls it
 // once per frontend frame and raises damage flag 0x20 when the current asteroid
 // pass intersects the camera position.
 inline bool hasLevel2AsteroidImpact(uint16 frameCounter, int16 perspectiveX, int16 perspectiveY) {
@@ -397,9 +394,7 @@ inline bool isLevel10DamageLatch(uint16 code) {
 }
 
 inline bool isLevel12DamageLatch(uint16 code) {
-	// RunLevel12Flow treats these 0x5D latch values as safe; every other value
-	// raises damage flag 0x40. This helper is intentionally the inverse of the
-	// original branch shape so the update path reads as "is damage".
+	// These 0x5D latch values are safe; every other value raises damage flag 0x40.
 	switch (code) {
 	case 0x0000:
 	case 0x0037:
@@ -465,8 +460,6 @@ inline bool hasLevel6PerspectiveHazard(uint16 frame, int16 perspectiveX, int16 p
 	}
 }
 
-// Named translations of the original Level 8 route collision helpers
-// FUN_12FE1/FUN_130C9/FUN_13195. The names are new to the port.
 inline bool hasLevel8WalkerHazardRoute0(uint16 frame, int16 viewX, int16 viewY) {
 	switch (frame) {
 	case 0x00CD:
@@ -551,9 +544,7 @@ void InsaneRebel1::applyFrameObjectHitState(int16 targetIdx) {
 	if (targetIdx < 0)
 		return;
 
-	// Protected targets (shield generators in Level 4, etc.) can be hit
-	// repeatedly — skip event mask toggle. Original: DAT_00007732/7734 check
-	// in HandleGameOp5A.
+	// Protected targets use separate hit counters.
 	if (targetIdx + 1 == _protectedTargetA || targetIdx + 1 == _protectedTargetB)
 		return;
 
@@ -599,17 +590,13 @@ void InsaneRebel1::clearFrameObjectPrimaryBits(int byteIndex, byte mask) {
 	_frameObjectState[byteIndex] &= ~mask;
 }
 
-// Port helpers for RunLevel14Flow. The original checks DAT_7614..7616 and
-// DAT_7605..7606 inline, then increments a local 60-frame completion counter.
 bool InsaneRebel1::areLevel14Phase1TargetsDestroyed() const {
-	// g_gameplayPhaseFlags starts at primary byte 0; DAT_7614 is byte 0x12.
 	return areFrameObjectPrimaryBitsSet(0x12, 0x01) &&
 		areFrameObjectPrimaryBitsSet(0x13, 0xFF) &&
 		areFrameObjectPrimaryBitsSet(0x14, 0xFE);
 }
 
 bool InsaneRebel1::areLevel14Phase2TargetsDestroyed() const {
-	// Phase 2 checks DAT_7605 low nibble and all of DAT_7606.
 	return areFrameObjectPrimaryBitsSet(0x03, 0x0F) &&
 		areFrameObjectPrimaryBitsSet(0x04, 0xFF);
 }
@@ -732,14 +719,12 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 		return;
 
 	if (_currentLevel == 6) {
-		// RunLevel7Flow compares the branch table against g_frameCounter. The
-		// playback callback writes that value from the ANM-local frame index,
-		// not from the decoded GAME counter embedded in these non-linear files.
+		// Route branches use the ANM-local frame index, not the decoded GAME counter.
 		if (curFrame < 0)
 			return;
 		const uint32 routeFrame = (uint32)curFrame;
-		// GAME 0x09 publishes its branch-tested position in g_shipPosX.
-		// Keep the drawn ship center and the 0x09 aim cursor split,
+			// GAME 0x09 publishes a separate branch-tested cursor position.
+			// Keep the drawn ship center and the 0x09 aim cursor split,
 		// so compare the effective gameplay cursor here.
 		const int16 branchX = getGameplayCursorX();
 		const int route = CLIP<int>(_levelRouteIndex, 0, 5);
@@ -782,7 +767,6 @@ void InsaneRebel1::checkDynamicLevelBranch(int32 curFrame) {
 	}
 
 	// Level 8 owns its branch choice in updateLevel8WalkerState(), where the
-	// original RunLevel8Flow also draws the timer/arrows and updates the local
 	// choice variable. This function only performs the delayed route cutover.
 }
 
@@ -860,10 +844,7 @@ void InsaneRebel1::updateFlightVariantCursor() {
 	if (_rollAccum > 0)
 		xScale = -xScale;
 
-	// Assembly-verified 0x09 layout:
-	//   ship sprite center = (_74B6 + _74BA, _74B8 + _74BC)
-	//   cursor center      = (_74BE, _74C0)
-	// The flight sprite center already lives in _shipPos.
+	// Keep the flight sprite center and aim cursor separate.
 	const int16 shipBaseX = _shipPosX;
 	const int16 shipBaseY = _shipPosY;
 	const int32 liftTerm = (int32)_liftSmooth - 0x0F;
@@ -876,11 +857,7 @@ void InsaneRebel1::updateFlightVariantCursor() {
 		_rollAccum, _liftSmooth, bucket, _shipDirIndex, _perspectiveX, _perspectiveY);
 }
 
-// preprocessMouseAxes — FUN_231BE (0x231BE) centered-axis output law, adapted to
-// the absolute 320x200 mouse space. The old DOS virtual-mouse/recenter
-// control path is intentionally not used. For opcode 0x0B, gamepad input uses
-// the 3DO standard-pad reticle model: axis samples move the reticle, and
-// releasing the pad holds the last reticle position.
+// Opcode 0x0B gamepad input moves the reticle and holds position on release.
 bool InsaneRebel1::isOp0BReticleControlLevel() const {
 	switch (_currentLevel) {
 	case 1:  // Level 2
@@ -1057,16 +1034,11 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		inputY = -inputY;
 }
 
-// updateShipPhysics — FUN_1DEB5 (0x1DEB5). Accumulator-based position system.
-// Roll accumulator (_74CA) driven by input, position accumulators (_74C2/_74C6)
-// driven by roll + drift + cross-coupling. Ship position = base + accum >> 8.
+// Roll input drives position accumulators. Ship position = base + (accum >> 8).
 void InsaneRebel1::updateShipPhysics() {
 	_frameCounter++;
 
-	// HandleGameOp07_ShipFlight resets the ship accumulators and camera when
-	// the GAME 0x07 frame counter enters at 0. Level 1 happened to work because
-	// its runlevel code pre-initialized the same state, but later 0x07-driven
-	// stages like L3 rely on the handler to do this reset itself.
+	// Reset ship accumulators and camera when a 0x07 stream starts.
 	if (_gameCounter == 0) {
 		_posAccumX = 0;
 		_posAccumY = 0;
@@ -1088,8 +1060,6 @@ void InsaneRebel1::updateShipPhysics() {
 	if (_damageCooldown > 0)
 		_damageCooldown--;
 
-	// --- Step 1: Gameplay axes from FUN_231BE ---
-	// HandleGameOp07_ShipFlight consumes the preprocessed axes in DAT_756C/756E,
 	// not raw mouse coordinates. Reuse the same centered-axis law here.
 	const uint16 effectiveOpcode = getEffectiveGameOpcode();
 	int16 inputX = 0;
@@ -1106,7 +1076,6 @@ void InsaneRebel1::updateShipPhysics() {
 	else if (_activeInputSource == kInputSourceJoystickDigital)
 		inputSourceName = "joystick-dpad";
 
-	// --- Step 2: Roll accumulator (_74CA) ---
 	// Normal mode: accumulate. For absolute mouse input in flight handlers,
 	// steer toward a bounded roll target so holding the cursor off center does
 	// not continue accelerating the ship until it clamps.
@@ -1119,12 +1088,10 @@ void InsaneRebel1::updateShipPhysics() {
 	}
 	_rollAccum = CLIP<int32>(_rollAccum, -0x47F, 0x47F);
 
-	// --- Step 3: Vertical smoothing (_74CE) ---
 	// Exponential decay toward -inputY
 	_liftSmooth += (-_liftSmooth - (int32)inputY) >> 1;
 	_liftSmooth = CLIP<int32>(_liftSmooth, -0x20, 0x20);
 
-	// --- Step 4: Position accumulator deltas ---
 	// X delta: drift + slide coupling - cross-coupling
 	int32 rng = 100;  // RandScaleByte(200), centered at 100
 	int32 crossTermX;
@@ -1147,42 +1114,30 @@ void InsaneRebel1::updateShipPhysics() {
 
 	int32 deltaY = (absRoll >> 1) + crossTermY;
 
-	// --- Step 5: Update position accumulators ---
 	_posAccumX += deltaX;
 	_posAccumX = CLIP<int32>(_posAccumX, -0x8200, 0x8200);
 	_posAccumY += deltaY;
 	_posAccumY = CLIP<int32>(_posAccumY, -0x3200, 0x4600);
 
-	// --- Step 6: Derive pixel position from accumulators ---
-	// Original: _74BA = _74C2 >> 8, _74BC = _74C6 >> 8
 	// Ship position = base + offset
 	_shipPosX = kRA1CenterX + (int16)(_posAccumX >> 8);
 	_shipPosY = kRA1CenterY + (int16)(_posAccumY >> 8);
 
-	// Clamp to screen bounds
+	// Clamp to screen bounds.
 	_shipPosX = CLIP<int16>(_shipPosX, kRA1MinX, kRA1MaxX);
 	_shipPosY = CLIP<int16>(_shipPosY, kRA1MinY, kRA1MaxY);
 
-	// --- Step 7: Perspective offsets (SetCameraOffset) ---
-	// FUN_1DEB5 computes these linearly from ship offsets:
-	//   viewX = clamp((_74BA + 0x20), 0, 0x40)
-	//   viewY = clamp((_74BC + 0x17), 0, 0x2E)
 	_perspectiveX = CLIP<int16>((int16)(_shipPosX - kRA1CenterX + 0x20), 0, 0x40);
 	_perspectiveY = CLIP<int16>((int16)(_shipPosY - kRA1CenterY + 0x17), 0, 0x2E);
-	// Screen shake: when enabled, add random ±2 jitter (original SetCameraOffset at 0x22514)
 	if (_screenShakeEnabled) {
 		_perspectiveX = CLIP<int16>((int16)(_perspectiveX + (_vm->_rnd.getRandomNumber(4) - 2)), 0, 0x40);
 		_perspectiveY = CLIP<int16>((int16)(_perspectiveY + (_vm->_rnd.getRandomNumber(4) - 2)), 0, 0x2E);
 	}
 
-	// FUN_1DEB5 updates the curve table via FUN_22549 after SetCameraOffset.
-	// The full DOS path blends a few roll-history terms; use the current roll
-	// accumulator so side-looking still bends the gameplay projection. DOS
-	// negates before the arithmetic shift.
+	// Side-looking bends the gameplay projection from the current roll.
 	rebuildProjectionTable((int16)CLIP<int32>((-_rollAccum) >> 7, -0x1A, 0x1A), 0x1A);
 
-	// --- Step 8: Direction sprite index (FUN_1DEB5 LAB_1e23e) ---
-	// Horizontal component from _74CA (rollAccum):
+	// Horizontal component from the roll accumulator:
 	//   |rollAccum| <= 0x80: center (0)
 	//   rollAccum > 0x80:  ((rollAccum - 0x80) >> 8) * 5 + 5   (right: 5,10,15,20)
 	//   rollAccum < -0x80: ((abs(rollAccum) - 0x80) >> 8) * 5 + 25 (left: 25,30,35,40)
@@ -1195,8 +1150,7 @@ void InsaneRebel1::updateShipPhysics() {
 		hComponent = 0;
 	}
 
-	// Vertical component from _74CE (liftSmooth):
-	//   (_74CE + 0x20) * 5 / 0x41  → 0..4  (5 rows)
+	// Vertical component from lift smoothing.
 	int vComponent = (_liftSmooth + 0x20) * 5 / 0x41;
 
 	if (_shipBank.numSprites > 0)
@@ -1215,16 +1169,12 @@ void InsaneRebel1::updateShipPhysics() {
 		_shipPosX, _shipPosY, _perspectiveX, _perspectiveY, _shipDirIndex,
 		_currentLevel, _flyControlMode, _activeGameOpcode);
 
-	// --- Step 9: Damage/event bit synthesis + damage processing ---
-	// RA1 FUN_1B297-style latches from GAME opcodes:
-	//   0x5D latch 0xFFFF -> bit 0x40 (obstacle/contact)
 	//   0x5F non-zero + RNG -> bit 0x80 (projectile-like hit)
 	if (_gameLatch5D == 0xFFFF)
 		_damageFlags |= 0x40;
 	if (_gameLatch5F != 0 && _vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)
 		_damageFlags |= 0x80;
 
-	// Damage guard/mask from FUN_1DEB5: (_damageFlags & 0x96) != 0
 	// damageFlags & 0x96 = bits 1,2,4,7 = wall collisions (0x16) + projectile hit (0x80)
 	if (!_noDamage && (_damageFlags & 0x96) != 0 && _damageCooldown == 0 &&
 		_health >= 0 && _deathTimer <= 0) {
@@ -1237,7 +1187,6 @@ void InsaneRebel1::updateShipPhysics() {
 
 		if (_health < 0) {
 			_deathTimer = kDeathTimerInit;
-			// g_deathCauseIndicator (0x772E) — set based on damage source
 			if (_damageFlags & 0x80)
 				_deathCauseIndicator = 2;  // Projectile hit death
 			else
@@ -1246,12 +1195,11 @@ void InsaneRebel1::updateShipPhysics() {
 
 		_prevDamageFlags = _damageFlags;
 		_damageCooldown = kDamageCooldownInit;
-		// HandleGameOp07_ShipFlight dispatches g_sfxDamageHit here.
+		// Damage hit sound.
 		playSfx(kSfxBoom, 127, 0);
 		_screenFlash = 3;
 	}
 
-	// Latches are per-frame event inputs in the original pipeline.
 	_gameLatch5D = 0;
 	_gameLatch5F = 0;
 
@@ -1267,7 +1215,6 @@ void InsaneRebel1::updateShipPhysics() {
 			_score += _tuning.time;
 	}
 
-	// Screen flash decay — screen shake follows flash (EnableScreenShake/DisableScreenShake at 0x224ED)
 	if (_screenFlash > 0) {
 		_screenFlash--;
 		_screenShakeEnabled = (_screenFlash > 0);
@@ -1276,8 +1223,6 @@ void InsaneRebel1::updateShipPhysics() {
 	// Clear per-frame damage flags
 	_damageFlags = 0;
 
-	// --- Path branching detection ---
-	// Original (FUN_1B297): at GAME counter 394 (0x18A), sets nextSceneA=0x67/nextSceneB=0x69.
 	// After this point, drift goes strongly negative (pushing ship left for the hard path).
 	// If ship is right of center, player chose the hard branch → switch to L1PLAY1R.
 	// Keep this as a one-shot decision: once threshold is reached, lock path.
@@ -1302,8 +1247,7 @@ void InsaneRebel1::updateShipPhysics() {
 		_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
 }
 
-// Port helper: FUN_1E6A7 computes this direction bucket inline before applying
-// the current frame's movement update.
+// Update turret sprite direction from the current frame's movement.
 void InsaneRebel1::updateTurretShipDirection(int16 offsetY) {
 	int dir = 0;
 	if (_flyControlMode == 2) {
@@ -1341,13 +1285,8 @@ void InsaneRebel1::updateTurretShipDirection(int16 offsetY) {
 }
 
 void InsaneRebel1::getCollisionShipCenter(int16 &x, int16 &y) const {
-	// Original 0x0D/0x0E collision compares script zones transformed by
-	// FUN_223FE against the gameplay-window ship center (base center +
-	// g_shipOffset). This is DOS screen space; render overlays add the viewport
-	// offset separately when drawing into the larger source buffer.
-	//
-	// In Level 1 part 2, HandleGameOp0A_TurretVariant reuses _shipPos for the
-	// targeting cursor, so collision must read the movement accumulator instead.
+	// Level 1 part 2 reuses _shipPos for the targeting cursor, so collision
+	// must read the movement accumulator instead.
 	if (_currentLevel == 0 && _flyControlMode == 2) {
 		x = (int16)(kRA1CenterX + (int16)(_posAccumX >> 8));
 		y = (int16)(kRA1CenterY + (int16)(_posAccumY >> 8));
@@ -1357,12 +1296,9 @@ void InsaneRebel1::getCollisionShipCenter(int16 &x, int16 &y) const {
 	}
 }
 
-// updateTurretPhysics — FUN_1E6A7 (0x1E6A7), opcode 0x08 path.
-// Stage-2 cockpit mode uses different smoothing/clamps than FUN_1DEB5.
 void InsaneRebel1::updateTurretPhysics() {
 	_frameCounter++;
 
-	// FUN_1E6A7 consumes GAME field1 as frame counter (arg6 in dispatcher call).
 	// The 0x10/0x40 gates come from dispatcher arg4 (callback control bits),
 	// not from GAME payload fields.
 	const int32 counter = _gameCounter;
@@ -1383,7 +1319,6 @@ void InsaneRebel1::updateTurretPhysics() {
 		_damageCooldown = 0;
 	}
 
-	// GAME 0x0A appears before 0x08 in turret/combat ANMs. The original
 	// draws shots/targeting and the ship from this pre-physics center, then
 	// updates the camera offset at the end of 0x08 for the final viewport copy.
 	const int16 preMoveOffsetX = (int16)(_posAccumX >> 8);
@@ -1394,7 +1329,6 @@ void InsaneRebel1::updateTurretPhysics() {
 	_turretFrameShipCenterY = (int16)(kRA1CenterY + preMoveOffsetY);
 	_turretFrameShipCenterValid = true;
 
-	// Damage gate from FUN_1E6A7.
 	if (!_noDamage && _damageFlags != 0 && _damageCooldown == 0 && _health >= 0 && _deathTimer <= 0) {
 		if (_damageFlags == 0x80)
 			_health -= _tuning.shot;
@@ -1411,7 +1345,7 @@ void InsaneRebel1::updateTurretPhysics() {
 
 		_prevDamageFlags = _damageFlags;
 		_damageCooldown = kDamageCooldownInit;
-		// HandleGameOp08_TurretFlight dispatches g_sfxDamageHit here.
+		// Damage hit sound.
 		playSfx(kSfxBoom, 127, 0);
 		_screenFlash = 3;
 	}
@@ -1424,9 +1358,7 @@ void InsaneRebel1::updateTurretPhysics() {
 
 	updateTurretShipDirection(preMoveOffsetY);
 
-	// FUN_1E6A7 movement gate: counter > 8 or flags bit 0x40.
 	if (counter > 8 || (modeFlags & 0x40)) {
-		// FUN_1E6A7 consumes DAT_756C/DAT_756E from the shared input bridge,
 		// not raw mouse coordinates.
 		int16 inputX = 0;
 		int16 inputY = 0;
@@ -1438,7 +1370,6 @@ void InsaneRebel1::updateTurretPhysics() {
 		const int16 rawInputY = inputY;
 
 		if (usedJoystick && _flyControlMode == 2) {
-			// Extra concession for Level 1 part 2. The original 0x08 handler
 			// uses raw axes directly; do not damp Level 13's surface controls.
 			inputX /= 2;
 			inputY /= 2;
@@ -1477,12 +1408,9 @@ void InsaneRebel1::updateTurretPhysics() {
 	_perspectiveX = CLIP<int16>((int16)(offsetX + 0x20), 0, 0x40);
 	_perspectiveY = CLIP<int16>((int16)(offsetY + 0x17), 0, 0x2E);
 
-	// FUN_1E6A7 rebuilds the side-look curve with a shallower table than the
-	// main flight handler, derived directly from roll.
-	// DOS negates before the arithmetic shift.
+	// Keep projection bending tied to turret roll.
 	rebuildProjectionTable((int16)((-_rollAccum) >> 9), 0x0D);
 
-	// Regeneration + survival bonus via FUN_1BB0E call in this path.
 	if ((_frameCounter & 0x1F) == 0) {
 		if (_health >= 0 && _health < kMaxHealth)
 			_health++;
@@ -1500,7 +1428,6 @@ void InsaneRebel1::updateTurretPhysics() {
 	_damageFlags = 0;
 }
 
-// New port helpers for the palette-flash block that is inline in FUN_1CDA7.
 void InsaneRebel1::restoreScreenFlashPalette() {
 	if (!_screenFlashBasePaletteValid)
 		return;
@@ -1533,18 +1460,13 @@ void InsaneRebel1::updateScreenFlashPalette() {
 	_player->setPalette(flashPalette);
 }
 
-// updateGameOp0BPhysics — FUN_1CDA7 (0x1CDA7). GAME opcode 0x0B handler.
 // Uses 10-frame input history averaging instead of accumulators.
 // Ship position = averaged input + center offset.
 // Viewport = second history buffer for smooth camera scrolling.
 void InsaneRebel1::updateGameOp0BPhysics() {
-	// Enhanced controls keep the original 0x0B pipeline but average fewer
-	// samples for responsiveness.
+	// Keep smoothing short for responsiveness.
 	const int gameOp0BSmoothWindow = 2;
 
-	// RA1 FUN_1B297-style per-frame latches for 0x0B sections:
-	//   0x5D latch 0xFFFF -> bit 0x40 (scripted obstacle/contact)
-	//   0x5F non-zero + RNG -> bit 0x80 (scripted random hit)
 	const bool level15Phase1 = (_currentLevel == 14 && _levelGameplayPhase == 1);
 	const bool level15FinalPhase = (_currentLevel == 14 && _levelGameplayPhase == 2);
 	const bool level14Phase1 = (_currentLevel == 13 && _levelGameplayPhase == 1);
@@ -1562,7 +1484,6 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		_damageFlags |= 0x40;
 	if (_gameLatch5F != 0 && !level14Phase2) {
 		bool randomProjectileHit = false;
-		// Original level loops spell these fixed-probability cases separately.
 		// The shared 0x0B path collapses them into one branch.
 		if (level14Phase1)
 			randomProjectileHit = (_vm->_rnd.getRandomNumber(3) == 0);
@@ -1592,19 +1513,15 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		const uint16 walkerFrame = (uint16)_gameCounter;
 		level8WalkerPlayerHit = hasLevel8WalkerPlayerHit(_levelRouteIndex, walkerFrame,
 			_perspectiveX, _perspectiveY);
-		// RunLevel8Flow sets damage flag 0x20 when the AT-AT route contact
-		// helper hits the player; boss damage uses _walkerHealth separately.
+		// Player collision and boss damage are tracked separately.
 		if (level8WalkerPlayerHit)
 			_damageFlags |= 0x20;
 	}
 
-	// Health regeneration (FUN_1BB0E): +1 every 32 frames when alive
 	if (_health >= 0 && _health < kMaxHealth && (_frameCounter & 0x1F) == 0) {
 		_health++;
 	}
 
-	// Damage application (FUN_1CDA7 lines 20-41)
-	// Original 0x0B mapping: 0x80 -> +0x13, 0x40 -> +0x0F, 0x20 -> +0x11.
 	// No cooldown — all three damage types can stack each frame
 	if (!_noDamage && _damageFlags != 0 && _health >= 0 && _deathTimer < 1) {
 		const int16 oldHealth = _health;
@@ -1623,7 +1540,6 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 			else
 				_deathCauseIndicator = 1;
 		}
-		// FUN_1CDA7 dispatches g_sfxDamageHit, initialized from SYS/BOOM.SAD.
 		playSfx(kSfxBoom, 127, 0);
 		if (_currentLevel == 1) {
 			debugC(DEBUG_INSANE, "L2 player hit: frame=%u view=(%d,%d) latch=%u asteroid=%d flags=0x%02x health=%d->%d",
@@ -1640,7 +1556,6 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		_damageFlags = 0;
 	}
 
-	// Latches are frame-local event inputs in the original pipeline.
 	_gameLatch5D = 0;
 	_gameLatch5F = 0;
 
@@ -1656,8 +1571,6 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	}
 	updateScreenFlashPalette();
 
-	// --- Cursor and perspective smoothing (FUN_1CDA7) ---
-	// _inputHistory* maps to 0x7580/0x7594, _viewHistory* to 0x75A8/0x75BC.
 	int16 inputX = 0;
 	int16 inputY = 0;
 	bool usedJoystick = false;
@@ -1766,10 +1679,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	_frameCounter++;
 
 	if (_currentLevel == 11) {
-		// RunLevel12Flow checks the three attackers around frame 0x550. The
 		// event-mask bits map to L12PLAY's one-based FOBJ IDs 195, 197, and 199
-		// in the port's frame-object helper. On failure the original keeps
-		// pumping L12PLAY until frame 0x564, plays L12RETRY, then restarts
 		// L12PLAY without resetting health.
 		if (_levelGameplayPhase == 0 && _frameCounter == 0x550) {
 			const bool targetADestroyed = isFrameObjectPrimarySet(kRA1Level12TargetA);
@@ -1797,8 +1707,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 			_vm->_smushVideoShouldFinish = true;
 	}
 
-	// Level 4 Phase 2: enable torpedo mode at frontend/movie frame 0x3E and
-	// finish as soon as the torpedo registers a hit. The DOS loop exits on killCount.
+	// Level 4 Phase 2: enable torpedo mode and finish on hit.
 	if (_currentLevel == 3 && _levelGameplayPhase == 2) {
 		if (_currentSmushFrame == 0x3E)
 			_gameplayFlags75ff |= 2;
@@ -1807,7 +1716,6 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 	}
 
 	// Level 4 Phase 1: track shield generator hits per frame.
-	// Original (RunLevel4Flow): g_recentKillObjectIdPlus1 checked every frame.
 	// When enough hits accumulated (>0x30), generator is "destroyed" (clear protectedTarget).
 	// When both destroyed for 60 frames, phase ends.
 	if (_currentLevel == 3 && _levelGameplayPhase == 1) {
@@ -1830,9 +1738,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		}
 	}
 
-	// Level 5 Phase 1: DOS RunLevel5Flow exits L5PLAY only after killCount stays
-	// above 2 for 20 frontend frames. That countdown is carried by the runlevel,
-	// not by opcode 0x07 itself.
+	// Level 5 Phase 1: require sustained kill count before ending the phase.
 	if (_currentLevel == 4 && _levelGameplayPhase == 1 &&
 		_level5SuccessFramesRemaining > 0 && _killCount > 2 && !_vm->_smushVideoShouldFinish) {
 		_level5SuccessFramesRemaining--;
@@ -1840,12 +1746,9 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 			_vm->_smushVideoShouldFinish = true;
 	}
 
-	// Level 15 Phase 2: enable torpedo at frontend/movie frame 0x18A, expose
-	// the protected target IDs used by the original flow, and finish when
-	// g_gameplayPhaseFlags & 2 becomes set.
+	// Final torpedo phase.
 	if (_currentLevel == 14 && _levelGameplayPhase == 2) {
 		if (_currentSmushFrame == 0x18A) {
-			// Original writes the 16-bit flags word: g_hudDisableFlags |= 0x210.
 			// Low byte bit 0x10 suppresses normal hit feedback in the torpedo phase;
 			// high byte bit 0x02 switches targeting/shot rendering to torpedoes.
 			_gameplayFlags75fe |= 0x10;
@@ -1870,28 +1773,14 @@ bool InsaneRebel1::isTorpedoModeActive() const {
 	if ((_gameplayFlags75ff & 0x2) == 0)
 		return false;
 
-	// The original high-byte flag is only intentionally armed by the level 4
-	// torpedo run and the level 15 exhaust-port run. Gate the port's rendering
-	// and shot behavior to those phases so stale route/retry state cannot turn
-	// ordinary laser sections into torpedo mode.
+	// Torpedo rendering is valid only during torpedo-run phases.
 	return (_currentLevel == 3 && _levelGameplayPhase == 2) ||
 		(_currentLevel == 14 && _levelGameplayPhase == 2);
 }
 
 
-// Helper splits for the original on-foot GAME handlers:
-// HandleGameOp19_OnFootSequence (0x19) and HandleGameOp1A_OnFootVariant (0x1A).
-// On-foot handler for Level 9 (Stormtroopers). Character walks left/right, crosshair tracks mouse.
-//
-// Original has TWO separate variable pairs:
-//   DAT_000041a0/41a2 = camera offset (SetCameraOffset, ProjectPointToScreen)
-//   g_perspectiveX/Y  = crosshair center (on-foot targeting)
-// Our _perspectiveX/_perspectiveY maps to the camera offset (DAT_000041a0/41a2).
-// The crosshair center (0xA3, 0x82) is a separate constant for on-foot mode.
-// Port split matching HandleGameOp19_OnFootSequence. The helper name is new to
-// this implementation; the original code dispatches the opcode handler directly.
+// On-foot handler for Level 9.
 void InsaneRebel1::initOnFootSequence() {
-	// --- First-frame initialization (0x19 counter==0) ---
 	if (!_onFootInitialized) {
 		_onFootInitialized = true;
 		_shipDirIndex = 15;       // Center facing
@@ -1978,11 +1867,9 @@ void InsaneRebel1::preprocessOnFootAim(int16 &inputX, int16 &inputY, bool *usedJ
 }
 
 // Port split matching HandleGameOp19_OnFootSequence. The helper name is new to
-// this implementation; the original code dispatches the opcode handler directly.
 void InsaneRebel1::updateOnFootSequence() {
 	initOnFootSequence();
 
-	// --- 0x19: Post-draw character walk animation + damage ---
 	// Track fire button for animation
 	if (!_playerFired)
 		_onFootAnimCounter = 0;
@@ -2003,18 +1890,14 @@ void InsaneRebel1::updateOnFootSequence() {
 		_shipDirIndex = 15;
 		_onFootCharX += 0x3A;
 	} else if (_onFootAnimCounter < 5 && !_playerSecondaryHeld) {
-		// Original calls QuantizeDirection8Way with the cursor and character
-		// center, but the DOS on-foot axis is mirrored relative to the screen
-		// coordinates used by this port. Use the visual screen-space vector so
-		// L9PILOT.NUT poses 11..14 aim left and 16..19 aim right.
+		// Use the visual screen-space vector so aim poses face the right way.
 		const int16 centerX = _onFootCharX + kOnFootCenterX;
 		const int16 centerY = _onFootCharY + kOnFootCenterY;
 		const int16 aimDir = CLIP<int16>(
 			(int16)ra1ShotDirection(centerX, centerY, _shipPosX, _shipPosY), -4, 4);
 		_shipDirIndex = aimDir + 15;
 	} else {
-		// Walking based on input direction. The 3DO second held button skips the
-		// early aim-pose branch above and reaches these walk tests immediately.
+		// The secondary held button skips the early aim-pose branch above.
 		int16 inputX = (int16)(_shipPosX - kOnFootCenterX);
 		int16 inputY = (int16)(_shipPosY - kOnFootCursorBaseY);
 		if (!hasFrameGameOpcode(0x1A))
@@ -2025,19 +1908,14 @@ void InsaneRebel1::updateOnFootSequence() {
 			_shipDirIndex = 4;  // Walk left
 	}
 
-	// --- Scripted damage latches → damageFlags ---
-	// L9 on-foot trooper shots use ordinary 0x5D event ids, gated by the
-	// 0x5D object bitmask handler, then consumed by FUN_1ED95 through 0x74D4.
-	// The ship loops keep narrower level-specific 0x5D damage rules.
+	// L9 on-foot trooper shots use ordinary 0x5D event ids.
 	if (_gameLatch5D != 0)
 		_damageFlags |= 0x40;
 	if (_gameLatch5F != 0 &&
 		_vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)
 		_damageFlags |= 0x80;
 
-	// --- Damage handling (from HandleGameOp19_OnFootSequence) ---
-	// On-foot damage uses the same heavy-damage tuning byte as ship shot/collision
-	// damage in the original, not the miss penalty.
+	// On-foot damage uses the same heavy-damage tuning byte as ship shot/collision.
 	if (!_noDamage && _damageFlags != 0 && _damageCooldown == 0 && _health >= 0 && _deathTimer < 1) {
 		const int16 oldHealth = _health;
 		_health -= _tuning.shot;
@@ -2054,13 +1932,8 @@ void InsaneRebel1::updateOnFootSequence() {
 	}
 }
 
-// Port split matching HandleGameOp1A_OnFootVariant. The helper name is new to
-// this implementation; the original code dispatches the opcode handler directly.
 void InsaneRebel1::updateOnFootAimVariant() {
-	// --- 0x1A: Crosshair positioning (HandleGameOp1A_OnFootVariant) ---
-	// DOS used virtual-mouse axes relative to the character offset. The
-	// mouse and gamepad reticle are screen-space controls so the cursor remains
-	// able to cross the whole playfield while Luke is standing at either side.
+	// Screen-space controls let the cursor cross the playfield from either side.
 	int16 inputX = 0, inputY = 0;
 	preprocessOnFootAim(inputX, inputY);
 	_shipPosX = CLIP<int16>((int16)(inputX + kOnFootCenterX), kOnFootCursorMinX, kOnFootCursorMaxX);
@@ -2103,7 +1976,6 @@ void InsaneRebel1::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 }
 
 void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
-	// RA1 dispatcher inline reset/init path (FUN_1BE1B case 0x5E).
 	// This is not a pure control-mode assignment.
 	if (_frameDispatchFlags & 0x40) {
 		debugC(DEBUG_INSANE, "GAME 0x5E: reset suppressed by dispatch flags=0x%02x",
@@ -2159,7 +2031,6 @@ void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
 	if (_walkerRoundReplay && _currentLevel == 7)
 		_killCount = walkerReplayKillCount;
 
-	// Field1 == 0 corresponds to baseline recenter behavior in the original.
 	if ((int32)param1 == 0) {
 		_perspectiveX = 0x20;
 		_perspectiveY = 0x17;
@@ -2174,7 +2045,6 @@ void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
 	if ((int32)param1 == 0)
 		syncViewportOffset(true);
 
-	// Original RunLevel8Flow initializes its separate g_level8HitboxBuffer
 	// after the first L8PLAY runtime reset. We fold that mask into the
 	// secondary half of _frameObjectState; route resumes preserve it.
 	if (_currentLevel == 7)
@@ -2215,21 +2085,18 @@ void InsaneRebel1::handleGameOpcode07ShipFlight(int32 subSize, Common::SeekableR
 	_activeGameOpcode = 0x07;
 	_frameGameOpcodeMask |= (1u << 0x07);
 	// Per-frame corridor data: f1=frame counter, f2=max frames, f3=drift bias, f4=unused
-	// f1 is the original's _DAT_7740 (game frame counter)
 	// f3 is the drift/wind parameter combined with tuning table
 	_gameCounter = param1;
 	if (subSize >= 20) {
 		b.readUint32BE(); // f2 (max frames, unused in physics)
 		_driftParam = (int16)(int32)b.readUint32BE();
-		b.readUint32BE(); // f4 (unused in original assembly)
+		b.readUint32BE();
 		debugC(DEBUG_INSANE, "GAME 0x07: counter=%d driftParam=%d", _gameCounter, _driftParam);
 	}
 }
 
 void InsaneRebel1::handleGameOpcode0DCorridor(int32 subSize, Common::SeekableReadStream &b, uint32 param1) {
 	// Corridor boundaries: per-frame flight corridor
-	// Original params: left, top, WIDTH, HEIGHT (not right/bottom!)
-	// FUN_1C54D computes center = (left+width/2, top+height/2), transforms, then checks edges.
 	if (subSize < 20)
 		return;
 
@@ -2240,7 +2107,6 @@ void InsaneRebel1::handleGameOpcode0DCorridor(int32 subSize, Common::SeekableRea
 
 	int16 centerX = corridorLeft + corridorWidth / 2;
 	int16 centerY = corridorTop + corridorHeight / 2;
-	// DOS FUN_1C54D calls FUN_223FE here, which projects the scripted
 	// rectangle center into gameplay-window space before testing it against the
 	// ship center.
 	projectGameplayPoint(centerX, centerY);
@@ -2301,8 +2167,6 @@ void InsaneRebel1::handleGameOpcode0DCorridor(int32 subSize, Common::SeekableRea
 }
 
 void InsaneRebel1::handleGameOpcode0EZone(int32 subSize, Common::SeekableReadStream &b, uint32 param1) {
-	// Secondary collision zone (FUN_1C6E9): AABB test, sets damageFlags bit 4 (0x10)
-	// Original params: left, top, WIDTH, HEIGHT (same as 0x0D)
 	if (subSize < 20)
 		return;
 
@@ -2315,7 +2179,6 @@ void InsaneRebel1::handleGameOpcode0EZone(int32 subSize, Common::SeekableReadStr
 
 	int16 centerX = zoneLeft + zoneWidth / 2;
 	int16 centerY = zoneTop + zoneHeight / 2;
-	// Same gameplay-window FUN_223FE transform as opcode 0x0D/FUN_1C54D.
 	projectGameplayPoint(centerX, centerY);
 
 	zoneLeft = centerX - zoneWidth / 2;
@@ -2343,13 +2206,11 @@ void InsaneRebel1::handleGameOpcode0EZone(int32 subSize, Common::SeekableReadStr
 void InsaneRebel1::handleGameOpcode0BFirstPerson(int32 subSize, Common::SeekableReadStream &b, uint32 param1) {
 	_activeGameOpcode = 0x0B;
 	_frameGameOpcodeMask |= (1u << 0x0B);
-	// GAME 0x0B per-frame handler (FUN_1CDA7).
-	// field1 = frame counter, field2 = max frames
 	_gameCounter = param1;
 	if (subSize >= 20) {
-		uint32 maxFrames = b.readUint32BE(); // field2 (max frames)
-		b.readUint32BE(); // field3
-		b.readUint32BE(); // field4
+		uint32 maxFrames = b.readUint32BE();
+		b.readUint32BE();
+		b.readUint32BE();
 
 		// RA1 scripts drive progression with GAME counters. Finish 0x0B-driven
 		// interactive videos once the script counter reaches the terminal frame.
@@ -2368,8 +2229,6 @@ void InsaneRebel1::handleGameOpcode0BFirstPerson(int32 subSize, Common::Seekable
 }
 
 void InsaneRebel1::handleGameOpcode5ATarget(int32 subSize, Common::SeekableReadStream &b, uint32 param1) {
-	// Target detection — HandleGameOp5A (0x1C0EF). AABB from video stream.
-	// Original checks event mask: if target already killed, skip to GOST update.
 	if (subSize < 24)
 		return;
 
@@ -2421,7 +2280,6 @@ void InsaneRebel1::handleGameCounterOpcode(uint32 opcode, int32 subSize, Common:
 	}
 }
 
-// handleGameChunk — FUN_1BE1B (0x1BE1B). Central GAME opcode dispatcher.
 // Reads 7x32-bit BE integers from GAME chunk, routes to per-opcode handlers.
 void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b,
 		byte *renderBitmap, int width, int height) {
@@ -2432,9 +2290,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b,
 	uint32 param1 = b.readUint32BE();
 	_frameHasGameChunk = true;
 
-	// FUN_1BE1B applies two global gates before the opcode switch. Bit 0 of
-	// g_combatModeFlags skips gameplay dispatch entirely; bit 5 of g_hudDisableFlags
-	// suppresses the handlers while still requesting HUD refresh for a few opcodes.
+	// Combat-mode flags can suppress handlers while still requesting HUD refresh.
 	if (_gameplayFlags75ff & 1) {
 		debugC(DEBUG_INSANE, "GAME 0x%02x: skipped by combat mode flags=0x%02x",
 			opcode, _gameplayFlags75ff);
@@ -2496,11 +2352,9 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b,
 	}
 }
 
-// processShot — FUN_1CCA0 (0x1CCA0). Spawns shot into explosion slot when fired.
 // Called once per frame during interactive rendering.
 void InsaneRebel1::processShot() {
 	if (_optRapidFire) {
-		// 3DO FUN_0000c3a4 advances this before testing fire state; a fresh press
 		// fires immediately, while held repeats are gated to phase 0.
 		_rapidFirePhase++;
 		if (_rapidFirePhase > 2)
@@ -2516,7 +2370,6 @@ void InsaneRebel1::processShot() {
 	}
 
 	// On-foot mode: only spawn when in aiming stance (dirIndex 11-19) or flags force it.
-	// Original: if (((10 < g_shipDirIndex) && (g_shipDirIndex < 0x14)) || ((DAT_000075fe & 8) != 0))
 	const uint16 effectiveOpcode = getEffectiveGameOpcode();
 	const bool onFootMode = (effectiveOpcode == 0x19 || effectiveOpcode == 0x1A);
 	if (onFootMode) {
@@ -2524,7 +2377,6 @@ void InsaneRebel1::processShot() {
 			return;
 	}
 
-	// Find first available slot (timer < 1 or > 5), matching FUN_1CCA0.
 	int slot = -1;
 	for (int i = 0; i < kMaxShotSlots; i++) {
 		if (_shotSlots[i].timer <= 0 || _shotSlots[i].timer > 5) {
@@ -2536,10 +2388,7 @@ void InsaneRebel1::processShot() {
 		return;
 	}
 
-	// Shot origin depends on game mode:
-	// On-foot: character position (g_shipOffsetX + g_perspectiveX)
-	// Turret: ship center
-	// Flight: cursor position
+	// Shot origin depends on game mode.
 	const bool turretMode = (effectiveOpcode == 0x08 || effectiveOpcode == 0x0A);
 	int16 originX, originY;
 	if (onFootMode) {
@@ -2574,8 +2423,6 @@ void InsaneRebel1::processShot() {
 	}
 }
 
-// checkTargetHit — FUN_1C0EF (0x1C0EF). AABB target detection with snap tolerance.
-// The original compares raw FOBJ bounds against the cursor after
 // UnprojectScreenPoint(). Keep that separate from 0x0D/0x0E collision, which projects
 // zones into gameplay-window screen space before comparing against the ship center.
 void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom) {
@@ -2630,13 +2477,10 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 				setGameplayCursor(effectiveOpcode, snappedX, snappedY);
 			}
 
-			// DOS uses g_recentKillObjectIdPlus1 as a frame-wide latch. Once one
-			// target is hit this frame, overlapping FOBJ layers must not consume the
-			// same shot again.
+			// Only one overlapping target may consume the shot each frame.
 			if (_lastHitTarget == 0) {
 				for (int i = 0; i < kMaxShotSlots; i++) {
 					if (_shotSlots[i].timer == 1) {  // Shot in final frame = impact
-						// Hit! Record in GOST slot for explosion animation
 						int gi = _gostSlotIdx;
 						_gostSlots[gi].targetId = targetIdx + 1;
 						_gostSlots[gi].frame = 0;
