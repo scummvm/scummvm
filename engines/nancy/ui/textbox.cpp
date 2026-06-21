@@ -196,6 +196,9 @@ void Textbox::setFullMode(bool open, uint32 timeoutMs) {
 }
 
 void Textbox::handleInput(NancyInput &input) {
+	if (!isVisible())
+		return;
+
 	if (_scrollbar)
 		_scrollbar->handleInput(input);
 
