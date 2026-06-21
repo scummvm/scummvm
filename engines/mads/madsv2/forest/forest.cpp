@@ -53,6 +53,17 @@ namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
+ForestEngine *g_engine;
+
+ForestEngine::ForestEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
+		MADSV2Engine(syst, gameDesc) {
+	g_engine = this;
+}
+
+ForestEngine::~ForestEngine() {
+	g_engine = nullptr;
+}
+
 Common::Error ForestEngine::run() {
 	initGraphics(320, 200);
 	_screen = new Graphics::Screen();

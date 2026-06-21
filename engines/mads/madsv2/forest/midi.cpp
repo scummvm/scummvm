@@ -20,25 +20,55 @@
  */
 
 #include "common/textconsole.h"
+#include "audio/midiparser_smf.h"
 #include "mads/madsv2/forest/midi.h"
 #include "mads/madsv2/core/env.h"
-#include "mads/madsv2/engine.h"
+#include "mads/madsv2/forest/forest.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
+void MidiPlayer::send(uint32 b) {
+	//_driver->send(b);
+	Audio::MidiPlayer::send(b);
+}
+
+void MidiPlayer::play(const char *name) {
+	// Open up the MIDI file
+	Common::SeekableReadStream *f = env_open(name);
+	if (!f) {
+		warning("MIDI not found - %s", name);
+		return;
+	}
+
+#if 0
+	// Read in the file contents
+	size_t size = f->size();
+	byte *buf = (byte *)malloc(size);
+	f->read(buf, size);
+	delete f;
+
+	// Set up the parser
+	_parser = new MidiParser_SMF();
+	if (!_parser->loadMusic(buf, size))
+		error("midiPlay() couldn't load music resource");
+
+	_parser->setTrack(0);
+	_parser->setMidiDriver(this);
+	_parser->setTimerRate(_driver->getBaseTempo());
+#else
+	warning("TODO: Support hmi midi playback");
+	delete f;
+#endif
+}
+
 void midi_play(const char *name) {
-	assert(env_exist(name));
-
-	// TODO
-	warning("TODO: global_midi_play");
-
-	// TODO
+	g_engine->_midiPlayer.play(name);
 }
 
 void midi_stop() {
-	// TODO
+	g_engine->_midiPlayer.stop();
 }
 
 } // namespace Forest
