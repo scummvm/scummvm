@@ -74,16 +74,16 @@ private:
 		Common::SeekableReadStream &b, bool fastForwarding);
 	void ra1InitAudioTrackSizes();
 
-	// RA1 clean frame buffer for delta source restoration
+	// Clean frame buffer used as the next delta source.
 	byte *_ra1CleanFrame;
 	int32 _ra1CleanFrameSize;
 	bool _ra1HasCleanFrame;
 
-	// RA1 interactive movies present a 312x192 viewport inside a black 320x200 frame.
+	// Interactive movies present a 312x192 viewport inside a black frame.
 	byte *_ra1PresentationBuffer;
 	int32 _ra1PresentationBufferSize;
 
-	// RA1 OBJ overlay FOBJ — cockpit drawn once frame 0, re-rendered every frame
+	// OBJ cockpit overlay decoded once and replayed each frame.
 	byte *_ra1ObjOverlayData;
 	int32 _ra1ObjOverlayDataSize;
 	int _ra1ObjOverlayCodec;
@@ -92,14 +92,13 @@ private:
 	int _ra1ObjOverlayWidth;
 	int _ra1ObjOverlayHeight;
 
-	// RA1 viewport scroll offset for interactive gameplay
+	// Interactive viewport scroll offset.
 	int _ra1ViewportOffsetX;
 	int _ra1ViewportOffsetY;
 	int _ra1FrameSourceSkipY;
 	bool _ra1LastFrameObjectVisible;
 
-	// RA1 FADE chunks update the visible 320x200 screen through a sparse
-	// copy mask, separate from the decoded frame buffer.
+	// FADE chunks update the visible screen through a sparse copy mask.
 	byte *_ra1FadeFrame;
 	int32 _ra1FadeFrameSize;
 	int _ra1FadeFrameWidth;
