@@ -62,24 +62,28 @@ public:
 		FlagDescription flagDesc;
 	};
 
-	// Name of the next sequence to chain to once the current one finishes.
+	// Name of the next sequence to chain to once the current one finishes,
+	// plus its selection weight in the weighted random pick.
 	struct NextSequenceRef {
 		Common::Path name;
-		uint16 unknown = 0;
+		uint16 weight = 0;
 	};
 
 	// `name` is both the sequence id and the movie filename.
 	struct RandomSequence {
 		Common::Path name;
 		uint16 startFrame = 0;
-		uint16 unknown_0x23 = 0;
+		uint16 lastFrame = 0;
 		int32 minPauseMs = 0;
 		int32 maxPauseMs = 0;
-		uint16 unknown_0x2D = 0;
+		// Weight assigned to "stay on this sequence" in the weighted random
+		// pick. A roll inside [0, stayWeight) means "don't transition";
+		// instead pause for [minPauseMs, maxPauseMs] and re-roll.
+		uint16 stayWeight = 0;
 		Common::Array<NextSequenceRef> nextSequences;
 	};
 
-	PlaySecondaryMovie(bool isRandom = false) : RenderActionRecord(8), _isRandom(isRandom) {}
+	PlaySecondaryMovie(bool isRandom = false);
 	virtual ~PlaySecondaryMovie();
 
 	void init() override;
@@ -119,7 +123,26 @@ public:
 	uint16 _randomPlayerCursorAllowed = kPlayerCursorAllowed;
 	Common::Array<RandomSequence> _sequences;
 
+	// Chain state. After a sequence's movie finishes the engine rolls a
+	// weighted pick: "stay" -> enter pause for a random duration and
+	// re-roll; valid next-sequence -> swap to that sequence's movie.
+	enum RandomChainState { kRandomPlaying, kRandomPaused };
+	int _activeSequenceIndex = -1;
+	RandomChainState _randomChainState = kRandomPlaying;
+	uint32 _randomPauseEndTime = 0;
+	bool _randomStopRequested = false;
+
+	// Called by PlayRandomMovieControl::execute() to wind down the AR.
+	void stopRandom() { _randomStopRequested = true; }
+
+	// Pick & start a fresh random sequence. No-op when not a random AR.
+	void playRandomSequence();
+
 	bool isViewportRelative() const override { return true; }
+
+	bool isPersistentAcrossScenes() const override {
+		return _isRandom && !_isDone && !_randomStopRequested;
+	}
 
 protected:
 	Common::String getRecordTypeName() const override {
@@ -130,6 +153,18 @@ protected:
 	// needed for SecondaryVideoDescription::readData.
 	void readRandomMovieData(Common::Serializer &ser, Common::SeekableReadStream &stream);
 	void readRandomSequence(Common::Serializer &ser, RandomSequence &seq);
+
+	// (Re)create _decoder as an AVFDecoder or BinkDecoder matching _videoType.
+	void resetDecoder();
+
+	// Apply a RandomSequence's playback config to the PSM flat fields
+	// and reload the decoder. Returns true on success.
+	bool activateRandomSequence(int index);
+
+	// Pick the next sequence (or "stay") per the weighted random rules.
+	// Returns -1 if "stay" was picked (and sets up the pause state),
+	// or the chosen sequence index otherwise.
+	int rollNextSequence();
 
 	Graphics::ManagedSurface _fullFrame;
 	int _curViewportFrame = -1;

@@ -30,11 +30,27 @@
 
 #include "common/random.h"
 #include "common/serializer.h"
+#include "common/system.h"
 
 #include "video/bink_decoder.h"
 
 namespace Nancy {
 namespace Action {
+
+PlaySecondaryMovie::PlaySecondaryMovie(bool isRandom)
+		: RenderActionRecord(8), _isRandom(isRandom) {
+	if (_isRandom) {
+		NancySceneState.notifyRandomMovieARLoaded();
+	}
+}
+
+void PlaySecondaryMovie::resetDecoder() {
+	if (_videoType == kVideoPlaytypeAVF) {
+		_decoder.reset(new AVFDecoder());
+	} else {
+		_decoder.reset(new Video::BinkDecoder());
+	}
+}
 
 PlaySecondaryMovie::~PlaySecondaryMovie() {
 	if (NancySceneState.getActiveMovie() == this) {
@@ -49,10 +65,10 @@ PlaySecondaryMovie::~PlaySecondaryMovie() {
 void PlaySecondaryMovie::readRandomSequence(Common::Serializer &ser, RandomSequence &seq) {
 	readFilename(ser, seq.name);
 	ser.syncAsUint16LE(seq.startFrame);
-	ser.syncAsUint16LE(seq.unknown_0x23);
+	ser.syncAsUint16LE(seq.lastFrame);
 	ser.syncAsSint32LE(seq.minPauseMs);
 	ser.syncAsSint32LE(seq.maxPauseMs);
-	ser.syncAsUint16LE(seq.unknown_0x2D);
+	ser.syncAsUint16LE(seq.stayWeight);
 
 	uint16 nextCount = 0;
 	ser.syncAsUint16LE(nextCount);
@@ -60,7 +76,7 @@ void PlaySecondaryMovie::readRandomSequence(Common::Serializer &ser, RandomSeque
 	seq.nextSequences.resize(nextCount);
 	for (uint i = 0; i < nextCount; ++i) {
 		readFilename(ser, seq.nextSequences[i].name);
-		ser.syncAsUint16LE(seq.nextSequences[i].unknown);
+		ser.syncAsUint16LE(seq.nextSequences[i].weight);
 	}
 }
 
@@ -103,8 +119,10 @@ void PlaySecondaryMovie::readRandomMovieData(Common::Serializer &ser, Common::Se
 
 		if (startIdx >= 0) {
 			const RandomSequence &src = _sequences[startIdx];
+			_activeSequenceIndex = startIdx;
 			_videoName = src.name;
 			_firstFrame = src.startFrame;
+			_lastFrame = src.lastFrame;
 			_videoType = kVideoPlaytypeBink;
 			_videoFormat = kLargeVideoFormat;
 			_videoSceneChange = kMovieNoSceneChange;
@@ -114,6 +132,102 @@ void PlaySecondaryMovie::readRandomMovieData(Common::Serializer &ser, Common::Se
 	}
 
 	_sound.name = "NO SOUND";
+}
+
+bool PlaySecondaryMovie::activateRandomSequence(int index) {
+	if (index < 0 || index >= (int)_sequences.size()) {
+		return false;
+	}
+
+	const RandomSequence &src = _sequences[index];
+	_activeSequenceIndex = index;
+	_videoName = src.name;
+	_firstFrame = src.startFrame;
+	_lastFrame = src.lastFrame;
+
+	// Reload the decoder with the new movie. The original engine
+	// auto-detects AVF vs Bink from disk; we honour the existing
+	// _videoType but fall back to the other if needed.
+	resetDecoder();
+
+	Common::Path withExt = _videoName.append(_videoType == kVideoPlaytypeAVF ? ".avf" : ".bik");
+	if (!_decoder->loadFile(withExt)) {
+		_videoType = _videoType == kVideoPlaytypeAVF ? kVideoPlaytypeBink : kVideoPlaytypeAVF;
+		resetDecoder();
+		withExt = _videoName.append(_videoType == kVideoPlaytypeAVF ? ".avf" : ".bik");
+		if (!_decoder->loadFile(withExt)) {
+			warning("PlayRandomMovie: couldn't load %s", _videoName.toString().c_str());
+			return false;
+		}
+	}
+
+	_isFinished = false;
+	_curViewportFrame = -1;	// force visibility re-evaluation next tick
+	return true;
+}
+
+void PlaySecondaryMovie::playRandomSequence() {
+	if (!_isRandom || _sequences.empty()) {
+		return;
+	}
+	int picked = g_nancy->_randomSource->getRandomNumber(_sequences.size() - 1);
+	_randomChainState = kRandomPlaying;
+	_randomStopRequested = false;
+	activateRandomSequence(picked);
+}
+
+int PlaySecondaryMovie::rollNextSequence() {
+	if (_activeSequenceIndex < 0 || _activeSequenceIndex >= (int)_sequences.size()) {
+		return -1;
+	}
+
+	const RandomSequence &seq = _sequences[_activeSequenceIndex];
+
+	uint32 totalWeight = seq.stayWeight;
+	for (const NextSequenceRef &ns : seq.nextSequences) {
+		totalWeight += ns.weight;
+	}
+
+	if (totalWeight == 0) {
+		// No weights at all: stay indefinitely without a pause.
+		_randomChainState = kRandomPaused;
+		_randomPauseEndTime = g_system->getMillis() + 1000;	// re-check in 1s
+		return -1;
+	}
+
+	uint32 roll = g_nancy->_randomSource->getRandomNumber(totalWeight - 1);
+
+	if (roll < seq.stayWeight) {
+		int32 pauseMs = seq.minPauseMs;
+		if (seq.maxPauseMs > seq.minPauseMs) {
+			pauseMs += g_nancy->_randomSource->getRandomNumber(seq.maxPauseMs - seq.minPauseMs - 1);
+		}
+		_randomPauseEndTime = g_system->getMillis() + (uint32)MAX<int32>(0, pauseMs);
+		_randomChainState = kRandomPaused;
+		setVisible(false);
+		if (_decoder) {
+			_decoder->pauseVideo(true);
+		}
+		return -1;
+	}
+
+	uint32 cumulative = seq.stayWeight;
+	for (uint i = 0; i < seq.nextSequences.size(); ++i) {
+		cumulative += seq.nextSequences[i].weight;
+		if (roll < cumulative) {
+			// Look up the named sequence in _sequences[].
+			for (uint j = 0; j < _sequences.size(); ++j) {
+				if (_sequences[j].name == seq.nextSequences[i].name) {
+					return (int)j;
+				}
+			}
+			warning("PlayRandomMovie: next-sequence \"%s\" not part of this AR",
+				seq.nextSequences[i].name.toString().c_str());
+			return -1;
+		}
+	}
+
+	return -1;
 }
 
 void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
@@ -187,10 +301,7 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 
 void PlaySecondaryMovie::init() {
 	if (!_decoder) {
-		if (_videoType == kVideoPlaytypeAVF)
-			_decoder.reset(new AVFDecoder());
-		else
-			_decoder.reset(new Video::BinkDecoder());
+		resetDecoder();
 	}
 
 	if (!_decoder->isVideoLoaded()) {
@@ -220,10 +331,7 @@ void PlaySecondaryMovie::init() {
 
 void PlaySecondaryMovie::onPause(bool pause) {
 	if (!_decoder) {
-		if (_videoType == kVideoPlaytypeAVF)
-			_decoder.reset(new AVFDecoder());
-		else
-			_decoder.reset(new Video::BinkDecoder());
+		resetDecoder();
 	}
 
 	_decoder->pauseVideo(pause);
@@ -274,6 +382,26 @@ void PlaySecondaryMovie::execute() {
 
 		// fall through
 	case kRun: {
+		// Random-movie chain: while paused, wait for the pause to expire
+		// then re-roll. The roll itself may set up another pause, swap to
+		// the next sequence, or finish the AR if stop was requested.
+		if (_isRandom && _randomChainState == kRandomPaused) {
+			if (_randomStopRequested) {
+				_state = kActionTrigger;
+				break;
+			}
+			if (g_system->getMillis() < _randomPauseEndTime) {
+				break;
+			}
+			_randomChainState = kRandomPlaying;
+			int picked = rollNextSequence();
+			if (picked >= 0) {
+				activateRandomSequence(picked);
+			}
+			// If picked < 0, rollNextSequence() set up another pause.
+			break;
+		}
+
 		int newFrame = NancySceneState.getSceneInfo().frameID;
 
 		if (newFrame != _curViewportFrame) {
@@ -289,8 +417,9 @@ void PlaySecondaryMovie::execute() {
 			if (activeFrame != -1) {
 				_screenPosition = _videoDescs[activeFrame].destRect;
 				setVisible(true);
-			} else if (_isRandom && _videoDescs.empty()) {
-				// No hotspots: play full-viewport instead of gating on a frame match.
+			} else if (_isRandom) {
+				// Random movies aren't gated on hotspot/viewport-frame
+				// matches the way regular PSMs are: play full viewport.
 				_screenPosition = NancySceneState.getViewport().getBounds();
 				setVisible(true);
 			} else {
@@ -340,12 +469,25 @@ void PlaySecondaryMovie::execute() {
 			(_decoder->getCurFrame() == _firstFrame && _playDirection == kPlayMovieReverse) ||
 			_decoder->endOfVideo()) {
 
-			// Stop the video and block it from starting again, but also wait for
-			// sound to end before changing state
 			_decoder->pauseVideo(true);
 			_isFinished = true;
 
-			if (!g_nancy->_sound->isSoundPlaying(_sound)) {
+			if (_isRandom) {
+				// Sequence finished: roll for next. If stop was requested
+				// by a PlayRandomMovieControl, wind the AR down normally.
+				if (_randomStopRequested) {
+					_state = kActionTrigger;
+				} else {
+					int picked = rollNextSequence();
+					if (picked >= 0) {
+						activateRandomSequence(picked);
+					}
+					// Otherwise the chain entered the paused state; no
+					// state-trigger transition.
+				}
+			} else if (!g_nancy->_sound->isSoundPlaying(_sound)) {
+				// Stop the video and block it from starting again, but also wait for
+				// sound to end before changing state
 				g_nancy->_sound->stopSound(_sound);
 				_state = kActionTrigger;
 			}
@@ -381,10 +523,10 @@ void PlayRandomMovieControl::readData(Common::SeekableReadStream &stream) {
 }
 
 void PlayRandomMovieControl::execute() {
-	//PlaySecondaryMovie *target = NancySceneState.getActiveMovie();
-	//if (target && target->_isRandom) {
-	//	target->stopRandom();
-	//}
+	PlaySecondaryMovie *target = NancySceneState.getActiveMovie();
+	if (target && target->_isRandom) {
+		target->stopRandom();
+	}
 
 	_sceneChange.execute();
 	finishExecution();

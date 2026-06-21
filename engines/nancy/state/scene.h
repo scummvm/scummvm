@@ -193,6 +193,9 @@ public:
 
 	void setActiveMovie(Action::PlaySecondaryMovie *activeMovie);
 	Action::PlaySecondaryMovie *getActiveMovie();
+
+	// Called when a PSM(isRandom) AR is loaded — drives stale-chain cleanup.
+	void notifyRandomMovieARLoaded() { _hadRandomMovieARThisScene = true; }
 	void setActiveConversation(Action::ConversationSound *activeConversation);
 	Action::ConversationSound *getActiveConversation();
 
@@ -319,6 +322,10 @@ private:
 	Action::ActionManager _actionManager;
 	Action::PlaySecondaryMovie *_activeMovie;
 	Action::ConversationSound *_activeConversation;
+
+	// Set by notifyRandomMovieARLoaded; checked in clearSceneData to wind
+	// down a persistent random-movie whose scene chain is over.
+	bool _hadRandomMovieARThisScene = false;
 
 	// Contains a screenshot of the Scene state from the last time it was exited
 	Graphics::ManagedSurface _lastScreenshot;

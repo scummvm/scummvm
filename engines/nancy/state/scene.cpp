@@ -36,6 +36,8 @@
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/state/map.h"
 
+#include "engines/nancy/action/secondarymovie.h"
+
 #include "engines/nancy/ui/button.h"
 #include "engines/nancy/ui/ornaments.h"
 #include "engines/nancy/ui/clock.h"
@@ -1398,6 +1400,16 @@ void Scene::clearSceneData() {
 	}
 
 	clearLogicConditions();
+
+	// Stop a leftover random movie if the outgoing scene didn't include
+	// its own PSM(isRandom) AR (so it doesn't bleed into the next scene).
+	if (_activeMovie && _activeMovie->isPersistentAcrossScenes() && !_hadRandomMovieARThisScene) {
+		_activeMovie->stopRandom();
+	}
+	_hadRandomMovieARThisScene = false;
+
+	bool clearActiveMovie = _activeMovie && !_activeMovie->isPersistentAcrossScenes();
+
 	_actionManager.clearActionRecords();
 
 	if (_lightning) {
@@ -1413,7 +1425,10 @@ void Scene::clearSceneData() {
 	}
 
 	_activeConversation = nullptr;
-	_activeMovie = nullptr;
+
+	if (clearActiveMovie) {
+		_activeMovie = nullptr;
+	}
 }
 
 void Scene::clearPuzzleData() {

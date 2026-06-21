@@ -568,10 +568,14 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 }
 
 void ActionManager::clearActionRecords() {
-	for (auto &r : _records) {
-		delete r;
+	for (auto it = _records.begin(); it != _records.end(); ) {
+		if ((*it)->isPersistentAcrossScenes()) {
+			++it;
+			continue;
+		}
+		delete *it;
+		it = _records.erase(it);
 	}
-	_records.clear();
 	_activatedRecordsThisFrame.clear();
 	_previousRecordWasExecuted = false;
 }

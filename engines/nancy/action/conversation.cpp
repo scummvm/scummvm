@@ -32,6 +32,7 @@
 #include "engines/nancy/resource.h"
 
 #include "engines/nancy/action/conversation.h"
+#include "engines/nancy/action/secondarymovie.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -381,6 +382,13 @@ void ConversationSound::execute() {
 
 					if (!ConfMan.getBool("speech_mute") && ConfMan.getBool("player_speech")) {
 						g_nancy->_sound->playSound(_responseGenericSound);
+					}
+
+					// Nancy 11+: play a fresh random sequence as the character's response anim.
+					if (PlaySecondaryMovie *active = NancySceneState.getActiveMovie()) {
+						if (active->_isRandom) {
+							active->playRandomSequence();
+						}
 					}
 
 					_state = kActionTrigger;

@@ -123,6 +123,9 @@ public:
 	// Used for handling kCursorType dependency
 	virtual bool canHaveHotspot() const { return false; }
 
+	// Records returning true survive Scene::clearSceneData / ActionManager::clearActionRecords.
+	virtual bool isPersistentAcrossScenes() const { return false; }
+
 protected:
 	void finishExecution();
 
