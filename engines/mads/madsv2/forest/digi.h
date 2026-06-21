@@ -22,13 +22,25 @@
 #ifndef MADS_FOREST_DIGI_H
 #define MADS_FOREST_DIGI_H
 
-#include "common/scummsys.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
-//extern int config_file.forest1;
+class DigiPlayer {
+private:
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _slots[8];
+public:
+	DigiPlayer(Audio::Mixer *mixer) : _mixer(mixer) {
+	}
+
+	void play(const char *name, int slot);
+	void stop(int slot);
+};
+
 extern int digi_val2;
 extern int digi_timing_index;
 extern bool digi_flag1, digi_flag2;
@@ -39,9 +51,9 @@ extern void digi_play_build(int room, char thing, int num, int slot);
 extern void digi_play_build_ii(char thing, int num, int slot);
 extern void digi_stop(int which_one);
 extern void digi_uninstall();
-extern void digi_read_another_chunk();
 extern void digi_initial_volume(int vol);
 extern void digi_set_volume(int vol, int slot);
+inline void digi_read_another_chunk() {}
 
 } // namespace Forest
 } // namespace MADSV2

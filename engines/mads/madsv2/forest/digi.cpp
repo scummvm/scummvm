@@ -19,9 +19,10 @@
  *
  */
 
+#include "audio/decoders/adpcm.h"
 #include "mads/madsv2/forest/digi.h"
-#include "mads/madsv2/core/config.h"
-#include "mads/madsv2/engine.h"
+#include "mads/madsv2/forest/forest.h"
+#include "mads/madsv2/core/env.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -31,8 +32,35 @@ int digi_val2;
 int digi_timing_index;
 bool digi_flag1, digi_flag2;
 
+void DigiPlayer::play(const char *name, int slot) {
+	assert(slot >= 0 && slot < 8);
+	_mixer->stopHandle(_slots[slot]);
+
+	Common::SeekableReadStream *src;
+	src = env_open(Common::String::format("*%s.rac", name).c_str());
+	if (!src)
+		src = env_open(Common::String::format("*%s.raw", name).c_str());
+
+	if (!src) {
+		warning("Could not open digi sound - %s", name);
+		return;
+	}
+
+	// Skip past the HMI header
+	src->seek(0x20);
+
+	Audio::AudioStream *audioStream = Audio::makeADPCMStream(src, DisposeAfterUse::YES,
+		src->size() - 0x20, Audio::kADPCMDVI, 11025, 1);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_slots[slot], audioStream);
+}
+
+void DigiPlayer::stop(int slot) {
+	assert(slot >= 0 && slot < 8);
+	_mixer->stopHandle(_slots[slot]);
+}
+
+
 void digi_install() {
-	config_file.forest1 = 0;
 	digi_val2 = 0;
 	digi_timing_index = 0;
 }
@@ -41,29 +69,28 @@ void digi_uninstall() {
 }
 
 void digi_play_build_ii(char thing, int num, int slot) {
-	Common::String name;
-	name += (thing == '_') ? 's' : 'd';
-	name += "0ii";
-	name += Common::String::format("%.3d", num);
+	Common::String name = Common::String::format("%c0ii%c%03d",
+		(thing == '_') ? 's' : 'd', thing, num);
 	digi_play(name.c_str(), slot);
 }
 
 void digi_play_build(int room, char thing, int num, int slot) {
-	Common::String name;
-	name += (thing == '_') ? 's' : 'd';
-	name += Common::String::format("%d", room);
-	name += Common::String::format("%.3d", num);
+	Common::String name = Common::String::format("%c%d%c%03d",
+		(thing == '_') ? 's' : 'd', room, thing, num);
 	digi_play(name.c_str(), slot);
 }
 
 void digi_play(const char *name, int slot) {
+	g_engine->_digiPlayer.play(name, slot);
 }
+
 void digi_stop(int which_one) {
+	g_engine->_digiPlayer.stop(which_one);
 }
-void digi_read_another_chunk() {
-}
+
 void digi_initial_volume(int vol) {
 }
+
 void digi_set_volume(int vol, int slot) {
 }
 

@@ -32,6 +32,7 @@ namespace Forest {
 
 class ForestEngine : public MADSV2Engine {
 public:
+	DigiPlayer _digiPlayer = DigiPlayer(_mixer);
 	MidiPlayer _midiPlayer;
 
 public:
