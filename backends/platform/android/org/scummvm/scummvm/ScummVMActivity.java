@@ -914,7 +914,6 @@ public class ScummVMActivity extends Activity {
 			return new String[0]; // an array of zero length
 		}
 
-		@Override
 		protected String[] getAllStorageLocationsNoPermissionRequest() {
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M
 				|| checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED

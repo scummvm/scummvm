@@ -707,7 +707,6 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
         }                                                                   \
     } while (0)
 
-	FIND_METHOD(, setWindowCaption, "(Ljava/lang/String;)V");
 	FIND_METHOD(, getDPI, "([F)V");
 	FIND_METHOD(, displayMessageOnOSD, "(Ljava/lang/String;)V");
 	FIND_METHOD(, openUrl, "(Ljava/lang/String;)V");
@@ -715,6 +714,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, getTextFromClipboard, "()Ljava/lang/String;");
 	FIND_METHOD(, setTextInClipboard, "(Ljava/lang/String;)Z");
 	FIND_METHOD(, isConnectionLimited, "()Z");
+	FIND_METHOD(, setWindowCaption, "(Ljava/lang/String;)V");
 	FIND_METHOD(, showVirtualKeyboard, "(Z)V");
 	FIND_METHOD(, showOnScreenControls, "(I)V");
 	FIND_METHOD(, setTouchMode, "(I)V");

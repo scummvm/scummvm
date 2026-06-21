@@ -23,6 +23,8 @@ package org.scummvm.scummvm.net;
 
 import android.util.Log;
 
+import androidx.annotation.Keep;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +45,9 @@ import java.util.Locale;
 
 import javax.net.ssl.SSLSocketFactory;
 
-/** @noinspection unused*/
+/** @noinspection unused
+ * Used from JNI
+ */
 public class SSocket {
 	final static String LOG_TAG = "ScummVM";
 
@@ -51,6 +55,10 @@ public class SSocket {
 
 	protected int _buffer = -2;
 
+	/** @noinspection unused
+	 * Called from JNI
+	 */
+	@Keep
 	public SSocket(String url_) {
 		final URL url;
 		try {
@@ -199,6 +207,10 @@ public class SSocket {
 		}
 	}
 
+	/** @noinspection unused
+	 * Called from JNI
+	 */
+	@Keep
 	public int ready() {
 		if (_buffer != -2) {
 			// We have at least one byte or an EOF
@@ -219,6 +231,10 @@ public class SSocket {
 		}
 	}
 
+	/** @noinspection unused
+	 * Called from JNI
+	 */
+	@Keep
 	public int send(byte[] data) {
 		try {
 			// Setup unlimited read timeout to allow for SSL exchanges to work
@@ -232,6 +248,10 @@ public class SSocket {
 		}
 	}
 
+	/** @noinspection unused
+	 * Called from JNI
+	 */
+	@Keep
 	public int recv(byte[] data) {
 		if (data.length == 0) {
 			return 0;
@@ -277,6 +297,10 @@ public class SSocket {
 		}
 	}
 
+	/** @noinspection unused
+	 * Called from JNI
+	 */
+	@Keep
 	public void close() {
 		try {
 			_socket.close();

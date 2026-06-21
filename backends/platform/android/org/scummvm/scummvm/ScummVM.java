@@ -26,6 +26,7 @@ import android.graphics.PixelFormat;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
 import java.util.LinkedHashMap;
@@ -90,30 +91,53 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 	final public native void systemInsetsUpdated(int[] gestureInsets, int[] systemInsets, int[] cutoutInsets);
 
 	// Callbacks from C++ peer instance
+	/** @noinspection unused */ @Keep
 	abstract protected void getDPI(float[] values);
+	/** @noinspection unused */ @Keep
 	abstract protected void displayMessageOnOSD(String msg);
+	/** @noinspection unused */ @Keep
 	abstract protected void openUrl(String url);
+	/** @noinspection unused */ @Keep
 	abstract protected boolean hasTextInClipboard();
+	/** @noinspection unused */ @Keep
 	abstract protected String getTextFromClipboard();
+	/** @noinspection unused */ @Keep
 	abstract protected boolean setTextInClipboard(String text);
+	/** @noinspection unused */ @Keep
 	abstract protected boolean isConnectionLimited();
+	/** @noinspection unused */ @Keep
 	abstract protected void setWindowCaption(String caption);
+	/** @noinspection unused */ @Keep
 	abstract protected void showVirtualKeyboard(boolean enable);
+	/** @noinspection unused */ @Keep
 	abstract protected void showOnScreenControls(int enableMask);
+	/** @noinspection unused */ @Keep
 	abstract protected void setTouchMode(int touchMode);
+	/** @noinspection unused */ @Keep
 	abstract protected int getTouchMode();
+	/** @noinspection unused */ @Keep
 	abstract protected void setOrientation(int orientation);
+	/** @noinspection unused */ @Keep
 	abstract protected String getScummVMBasePath();
+	/** @noinspection unused */ @Keep
 	abstract protected String getScummVMConfigPath();
+	/** @noinspection unused */ @Keep
 	abstract protected String getScummVMLogPath();
+	/** @noinspection unused */ @Keep
 	abstract protected void setCurrentGame(String target);
+	/** @noinspection unused */ @Keep
 	abstract protected String[] getSysArchives();
+	/** @noinspection unused */ @Keep
 	abstract protected String[] getAllStorageLocations();
-	abstract protected String[] getAllStorageLocationsNoPermissionRequest();
+	/** @noinspection unused */ @Keep
 	abstract protected SAFFSTree getNewSAFTree(boolean write, String initialURI, String prompt);
+	/** @noinspection unused */ @Keep
 	abstract protected SAFFSTree[] getSAFTrees();
+	/** @noinspection unused */ @Keep
 	abstract protected SAFFSTree findSAFTree(String name);
+	/** @noinspection unused */ @Keep
 	abstract protected int exportBackup(String prompt);
+	/** @noinspection unused */ @Keep
 	abstract protected int importBackup(String prompt, String path);
 
 	public ScummVM(AssetManager asset_manager, SurfaceHolder holder, final MyScummVMDestroyedCallback scummVMDestroyedCallback) {
@@ -245,7 +269,10 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 												_egl.eglGetError()));
 	}
 
-	// Callback from C++ peer instance
+	/** @noinspection unused
+	 * Callback from C++ peer instance
+	 */
+	@Keep
 	final protected EGLSurface initSurface() throws Exception {
 		_egl_surface = _egl.eglCreateWindowSurface(_egl_display, _egl_config,
 													_surface_holder, null);
@@ -269,7 +296,10 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 		return _egl_surface;
 	}
 
-	// Callback from C++ peer instance
+	/** @noinspection unused
+	 * Callback from C++ peer instance
+	 */
+	@Keep
 	final protected void deinitSurface() {
 		if (_egl_display != EGL10.EGL_NO_DISPLAY) {
 			_egl.eglMakeCurrent(_egl_display, EGL10.EGL_NO_SURFACE,
@@ -282,7 +312,10 @@ public abstract class ScummVM implements SurfaceHolder.Callback,
 		_egl_surface = EGL10.EGL_NO_SURFACE;
 	}
 
-	// Callback from C++ peer instance
+	/** @noinspection unused
+	 * Callback from C++ peer instance
+	 */
+	@Keep
 	final protected int eglVersion() {
 		String version = _egl.eglQueryString(_egl_display, EGL10.EGL_VERSION);
 		if (version == null) {

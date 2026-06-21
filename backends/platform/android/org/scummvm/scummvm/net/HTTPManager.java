@@ -21,6 +21,8 @@
 
 package org.scummvm.scummvm.net;
 
+import androidx.annotation.Keep;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,11 +30,16 @@ import java.util.concurrent.Executors;
 public class HTTPManager {
 	protected ExecutorService _executor;
 	protected ArrayBlockingQueue<Runnable> _queue;
+	/** @noinspection unused
+	 * Read from JNI (timer ScummVM thread)
+	 */
+	@Keep
 	protected boolean _empty;
 
 	/** @noinspection unused
 	 * Called from JNI (main ScummVM thread)
 	 */
+	@Keep
 	public HTTPManager() {
 		TLSSocketFactory.init();
 
@@ -45,6 +52,7 @@ public class HTTPManager {
 	/** @noinspection unused
 	 * Called from JNI (main ScummVM thread)
 	 */
+	@Keep
 	public void startRequest(HTTPRequest request) {
 		request._manager = this;
 		_executor.execute(request);
@@ -53,6 +61,7 @@ public class HTTPManager {
 	/** @noinspection unused
 	 * Called from JNI (main ScummVM thread)
 	 */
+	@Keep
 	public void poll() {
 		Runnable r;
 		while((r = _queue.poll()) != null) {
