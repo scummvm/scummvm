@@ -511,6 +511,11 @@ public:
 	int32 processMouse() override;
 	Common::Point getGameplayAimPoint();
 	Common::Point getRebelAutoPlayAimPoint();
+	void resetMenuGamepadAxis();
+	bool handleMenuGamepadAxisEvent(const Common::Event &event);
+	bool handleMenuRawJoystickAxisEvent(const Common::Event &event);
+	void updateMenuGamepadAxisKey(int16 oldAxisX, int16 oldAxisY);
+	void queueMenuGamepadAxisKey(Common::KeyCode keycode);
 	// Per-frame: pan the gameplay reticle incrementally from the held directional controls
 	// (on-screen/physical gamepad dpad, keyboard arrows) instead of snapping it to a screen
 	// edge. Call once per frame; getGameplayAimPoint() stays a pure getter.
@@ -531,6 +536,12 @@ public:
 	uint32 _gameplayMouseSettleUntil;
 	uint32 _lastGameplayMenuCloseTime;
 	uint32 _lastMenuGamepadNavigationTime;
+	// Menu-only axis state. Gameplay aiming continues to use _joystickAxisX/Y.
+	int16 _menuGamepadAxisX;
+	int16 _menuGamepadAxisY;
+	int _menuGamepadRawAxis;
+	int16 _menuGamepadRawAxisX;
+	int16 _menuGamepadRawAxisY;
 	void openGameplayMainMenu(SmushPlayer *splayer);
 	void openMenuMainMenu(SmushPlayer *splayer);
 	bool isBitSet(int n) override;

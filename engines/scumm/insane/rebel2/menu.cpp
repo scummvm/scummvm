@@ -57,6 +57,7 @@ void InsaneRebel2::resetMenu() {
 	_menuInactivityTimer = 0;
 	_menuInactivityTimedOut = false;
 	_menuRepeatDelay = 0;
+	resetMenuGamepadAxis();
 	_menuSelectionConfirmed = false;
 	setVirtualKeyboardVisible(false);
 }
@@ -706,6 +707,7 @@ int InsaneRebel2::runMainMenu() {
 			splayer->play("OPEN/O_CREDIT.SAN", 15);
 			_gameState = kStateMainMenu;
 			_menuInputActive = true;
+			resetMenuGamepadAxis();
 			// Returns 1 in original -> stays at stage 1 (main menu)
 			break;
 
@@ -738,6 +740,7 @@ int InsaneRebel2::runChapterSelect() {
 	_menuInputActive = true;
 	while (!_menuEventQueue.empty())
 		_menuEventQueue.pop();
+	resetMenuGamepadAxis();
 
 	// Initialize chapter selection state
 	// Original (lines 51-54): local_10 = 0xf; while (local_10 > 0 && locked) local_10--;
@@ -1234,6 +1237,7 @@ int InsaneRebel2::runLevelSelect() {
 	_menuInputActive = true;
 	while (!_menuEventQueue.empty())
 		_menuEventQueue.pop();
+	resetMenuGamepadAxis();
 
 	_levelSelection = 0;
 	_levelItemCount = _numPilots + 4;  // N pilots + NEW/COPY/DELETE/MAIN MENU
@@ -1284,6 +1288,7 @@ int InsaneRebel2::runLevelSelect() {
 			_pilotMenuMode = kPilotModeSelect;
 			_levelItemCount = _numPilots + 4;
 			_gameState = kStatePilotSelect;
+			resetMenuGamepadAxis();
 			_menuInputActive = false;
 			return kLevelSelectPlay;
 		}
@@ -1299,6 +1304,7 @@ int InsaneRebel2::runLevelSelect() {
 			_pilotMenuMode = kPilotModeDifficulty;
 			_gameState = kStateDifficultySelect;
 			_difficultySelection = 2;
+			resetMenuGamepadAxis();
 			continue;
 		}
 
@@ -1325,6 +1331,7 @@ int InsaneRebel2::runLevelSelect() {
 			_pilotMenuMode = kPilotModeSelect;
 			_levelItemCount = _numPilots + 4;
 			_gameState = kStatePilotSelect;
+			resetMenuGamepadAxis();
 			continue;
 		}
 
@@ -1355,6 +1362,7 @@ int InsaneRebel2::runLevelSelect() {
 				_pilotNameInput = "";
 				_pilotMenuMode = kPilotModeNameInput;
 				_levelItemCount = _numPilots + 4;
+				resetMenuGamepadAxis();
 				updateMenuVirtualKeyboard();
 				debugC(DEBUG_INSANE, "NEW PILOT - entering name for slot %d", newIdx);
 			}
@@ -1366,6 +1374,7 @@ int InsaneRebel2::runLevelSelect() {
 				_pilotMenuMode = kPilotModeCopySelect;
 				_levelSelection = 0;
 				_levelItemCount = _numPilots;
+				resetMenuGamepadAxis();
 				debugC(DEBUG_INSANE, "COPY PILOT - selecting source");
 			}
 			continue;
@@ -1376,6 +1385,7 @@ int InsaneRebel2::runLevelSelect() {
 				_pilotMenuMode = kPilotModeDeleteSelect;
 				_levelSelection = 0;
 				_levelItemCount = _numPilots;
+				resetMenuGamepadAxis();
 				debugC(DEBUG_INSANE, "DELETE PILOT - selecting target");
 			}
 			continue;
@@ -1422,6 +1432,7 @@ int InsaneRebel2::processLevelSelectInput() {
 					}
 					_pilotMenuMode = kPilotModeSelect;
 					_levelItemCount = _numPilots + 4;
+					resetMenuGamepadAxis();
 					updateMenuVirtualKeyboard();
 					debugC(DEBUG_INSANE, "PilotName: cancelled");
 				} else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
@@ -1447,6 +1458,7 @@ int InsaneRebel2::processLevelSelectInput() {
 				}
 				_pilotMenuMode = kPilotModeSelect;
 				_levelItemCount = _numPilots + 4;
+				resetMenuGamepadAxis();
 				updateMenuVirtualKeyboard();
 			}
 		}
@@ -1497,11 +1509,13 @@ int InsaneRebel2::processLevelSelectInput() {
 			case Common::KEYCODE_ESCAPE:
 				if (isDifficultyMode) {
 					_gameState = kStatePilotSelect;
+					resetMenuGamepadAxis();
 				} else if (isPilotOperationMode) {
 					bool wasCopyMode = (_pilotMenuMode == kPilotModeCopySelect);
 					_pilotMenuMode = kPilotModeSelect;
 					_levelItemCount = _numPilots + 4;
 					_levelSelection = _numPilots + (wasCopyMode ? 1 : 2);
+					resetMenuGamepadAxis();
 				} else {
 					result = _levelItemCount - 1;  // Last item = MAIN MENU
 				}
@@ -1542,10 +1556,12 @@ int InsaneRebel2::processLevelSelectInput() {
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			if (isDifficultyMode) {
 				_gameState = kStatePilotSelect;
+				resetMenuGamepadAxis();
 			} else if (isPilotOperationMode) {
 				_pilotMenuMode = kPilotModeSelect;
 				_levelItemCount = _numPilots + 4;
 				_levelSelection = _levelItemCount - 1;
+				resetMenuGamepadAxis();
 				result = _levelSelection;
 			} else {
 				result = _levelItemCount - 1;
@@ -1743,6 +1759,7 @@ void InsaneRebel2::showTopPilots() {
 	_menuInputActive = true;
 	while (!_menuEventQueue.empty())
 		_menuEventQueue.pop();
+	resetMenuGamepadAxis();
 
 	// param_1 = -1 from main menu: maxFrames = 120 (0x78)
 	_topPilotsMaxFrames = 120;
@@ -1760,6 +1777,7 @@ void InsaneRebel2::showTopPilots() {
 
 	_gameState = kStateMainMenu;
 	_menuInputActive = true;
+	resetMenuGamepadAxis();
 
 	debugC(DEBUG_INSANE, "Top Pilots screen finished");
 }
@@ -1850,6 +1868,7 @@ void InsaneRebel2::showOptionsMenu() {
 	_menuInputActive = true;
 	while (!_menuEventQueue.empty())
 		_menuEventQueue.pop();
+	resetMenuGamepadAxis();
 
 	_optionsSelection = 0;
 	_optionsItemCount = 8;
@@ -1870,6 +1889,7 @@ void InsaneRebel2::showOptionsMenu() {
 
 	_gameState = kStateMainMenu;
 	_menuInputActive = true;
+	resetMenuGamepadAxis();
 
 	debugC(DEBUG_INSANE, "Options menu finished");
 }

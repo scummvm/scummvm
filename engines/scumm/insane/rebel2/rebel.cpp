@@ -51,9 +51,11 @@
 
 namespace Scumm {
 
-const int kRA2MenuAxisThreshold = Common::JOYAXIS_MAX / 5;
+const int kRA2MenuAxisThreshold = Common::JOYAXIS_MAX / 2;
 const uint32 kRA2MenuGamepadNavigationDebounceMs = 250;
 const uint32 kRA2MenuGamepadMouseSuppressMs = 250;
+const int kRA2MenuKeyLikeFirstAxis = 8;
+const int kRA2MenuKeyLikeAxisTolerance = Common::JOYAXIS_MAX / 14;
 const int kRA2Handler7MouseSettleJumpThreshold = 40;
 const int kRA2Handler7MouseSettleRelativeThreshold = 40;
 const int kRA2Handler7MouseSettleEdgeMargin = 16;
@@ -65,35 +67,70 @@ bool rebel2UsesRelativeGamepadAim(int selectedLevel) {
 	return selectedLevel == 1 || selectedLevel == 5 || selectedLevel == 14;
 }
 
-bool isRebel2RawMenuAxis(int axis) {
-	return axis == Common::JOYSTICK_AXIS_LEFT_STICK_X ||
-	       axis == Common::JOYSTICK_AXIS_LEFT_STICK_Y ||
-	       axis == Common::JOYSTICK_AXIS_RIGHT_STICK_X ||
-	       axis == Common::JOYSTICK_AXIS_RIGHT_STICK_Y ||
-	       axis == Common::JOYSTICK_AXIS_HAT_X ||
-	       axis == Common::JOYSTICK_AXIS_HAT_Y ||
-	       axis >= 8;
+int16 normalizeRebel2AxisMagnitude(int16 position) {
+	return position == Common::JOYAXIS_MIN ? Common::JOYAXIS_MAX : ABS((int)position);
 }
 
-Common::KeyCode getRebel2RawMenuAxisKey(int axis, int16 position) {
-	const bool horizontalAxis = axis == Common::JOYSTICK_AXIS_LEFT_STICK_X ||
-	                            axis == Common::JOYSTICK_AXIS_RIGHT_STICK_X ||
-	                            axis == Common::JOYSTICK_AXIS_HAT_X ||
-	                            (axis >= 8 && (axis % 2) == 0);
-	const bool verticalAxis = axis == Common::JOYSTICK_AXIS_LEFT_STICK_Y ||
-	                          axis == Common::JOYSTICK_AXIS_RIGHT_STICK_Y ||
-	                          axis == Common::JOYSTICK_AXIS_HAT_Y ||
-	                          (axis >= 8 && (axis % 2) != 0);
+int16 combineRebel2MenuAxis(int16 mappedAxis, int16 rawAxis) {
+	return ABS((int)rawAxis) > ABS((int)mappedAxis) ? rawAxis : mappedAxis;
+}
 
-	if (!horizontalAxis && !verticalAxis)
-		return Common::KEYCODE_INVALID;
+int getRebel2MenuAxisDirection(int16 axisValue) {
+	if (axisValue >= kRA2MenuAxisThreshold)
+		return 1;
+	if (axisValue <= -kRA2MenuAxisThreshold)
+		return -1;
+	return 0;
+}
 
-	if (position >= kRA2MenuAxisThreshold)
-		return horizontalAxis ? Common::KEYCODE_RIGHT : Common::KEYCODE_DOWN;
-	if (position <= -kRA2MenuAxisThreshold)
-		return horizontalAxis ? Common::KEYCODE_LEFT : Common::KEYCODE_UP;
+bool decodeRebel2MenuKeyLikeAxis(int axis, int16 position, int16 &axisX, int16 &axisY) {
+	if (axis < kRA2MenuKeyLikeFirstAxis)
+		return false;
 
-	return Common::KEYCODE_INVALID;
+	axisX = 0;
+	axisY = 0;
+
+	// Some backends expose a key-like POV as a single extra axis whose neutral
+	// value is beyond the normal range and arrives clamped to JOYAXIS_MAX.
+	if (position == 0 || position >= Common::JOYAXIS_MAX - kRA2MenuKeyLikeAxisTolerance)
+		return true;
+
+	static const int16 povValues[] = {
+		-Common::JOYAXIS_MAX,
+		-(Common::JOYAXIS_MAX * 5) / 7,
+		-(Common::JOYAXIS_MAX * 3) / 7,
+		-Common::JOYAXIS_MAX / 7,
+		Common::JOYAXIS_MAX / 7,
+		(Common::JOYAXIS_MAX * 3) / 7,
+		(Common::JOYAXIS_MAX * 5) / 7
+	};
+	static const int16 povDirections[][2] = {
+		{ 0, -Common::JOYAXIS_MAX },
+		{ Common::JOYAXIS_MAX, -Common::JOYAXIS_MAX },
+		{ Common::JOYAXIS_MAX, 0 },
+		{ Common::JOYAXIS_MAX, Common::JOYAXIS_MAX },
+		{ 0, Common::JOYAXIS_MAX },
+		{ -Common::JOYAXIS_MAX, Common::JOYAXIS_MAX },
+		{ -Common::JOYAXIS_MAX, 0 }
+	};
+
+	int bestIndex = -1;
+	int bestDistance = Common::JOYAXIS_MAX;
+	for (uint i = 0; i < ARRAYSIZE(povValues); i++) {
+		const int distance = ABS((int)position - povValues[i]);
+		if (distance < bestDistance) {
+			bestDistance = distance;
+			bestIndex = i;
+		}
+	}
+
+	if (bestIndex >= 0 && bestDistance <= kRA2MenuKeyLikeAxisTolerance) {
+		axisX = povDirections[bestIndex][0];
+		axisY = povDirections[bestIndex][1];
+		return true;
+	}
+
+	return false;
 }
 
 bool isRebel2MenuDirectionKey(Common::KeyCode keycode) {
@@ -574,6 +611,11 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_gameplayMouseSettleUntil = 0;
 	_lastGameplayMenuCloseTime = 0;
 	_lastMenuGamepadNavigationTime = 0;
+	_menuGamepadAxisX = 0;
+	_menuGamepadAxisY = 0;
+	_menuGamepadRawAxis = -1;
+	_menuGamepadRawAxisX = 0;
+	_menuGamepadRawAxisY = 0;
 	_handler8HudGlyph = '#';
 	_handler8HudMessageTimer = 0;
 	_handler8HudMessageIndex = 0;
@@ -678,6 +720,105 @@ void InsaneRebel2::enableIOSGamepadController() {
 
 void InsaneRebel2::restoreIOSGamepadController() {
 	_iosGamepadControllerState.restore();
+}
+
+void InsaneRebel2::resetMenuGamepadAxis() {
+	_menuGamepadAxisX = 0;
+	_menuGamepadAxisY = 0;
+	_menuGamepadRawAxis = -1;
+	_menuGamepadRawAxisX = 0;
+	_menuGamepadRawAxisY = 0;
+}
+
+void InsaneRebel2::queueMenuGamepadAxisKey(Common::KeyCode keycode) {
+	Common::Event syntheticEvent = Common::Event();
+	syntheticEvent.type = Common::EVENT_KEYDOWN;
+	syntheticEvent.kbd.keycode = keycode;
+	_menuEventQueue.push(syntheticEvent);
+
+	_lastMenuGamepadNavigationTime = _vm->_system->getMillis();
+}
+
+void InsaneRebel2::updateMenuGamepadAxisKey(int16 oldAxisX, int16 oldAxisY) {
+	const int16 axisX = combineRebel2MenuAxis(_menuGamepadAxisX, _menuGamepadRawAxisX);
+	const int16 axisY = combineRebel2MenuAxis(_menuGamepadAxisY, _menuGamepadRawAxisY);
+	const int oldX = getRebel2MenuAxisDirection(oldAxisX);
+	const int oldY = getRebel2MenuAxisDirection(oldAxisY);
+	const int newX = getRebel2MenuAxisDirection(axisX);
+	const int newY = getRebel2MenuAxisDirection(axisY);
+
+	if (newY != oldY && newY != 0)
+		queueMenuGamepadAxisKey(newY > 0 ? Common::KEYCODE_DOWN : Common::KEYCODE_UP);
+	else if (newX != oldX && newX != 0)
+		queueMenuGamepadAxisKey(newX > 0 ? Common::KEYCODE_RIGHT : Common::KEYCODE_LEFT);
+}
+
+bool InsaneRebel2::handleMenuGamepadAxisEvent(const Common::Event &event) {
+	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_AXIS)
+		return false;
+
+	const int16 oldAxisX = combineRebel2MenuAxis(_menuGamepadAxisX, _menuGamepadRawAxisX);
+	const int16 oldAxisY = combineRebel2MenuAxis(_menuGamepadAxisY, _menuGamepadRawAxisY);
+	const int16 axisPosition = normalizeRebel2AxisMagnitude(event.joystick.position);
+	const bool pressed = axisPosition >= kRA2MenuAxisThreshold;
+
+	switch (event.customType) {
+	case kScummBackendActionRebel2AxisUp:
+		if (pressed)
+			_menuGamepadAxisY = -axisPosition;
+		else
+			_menuGamepadAxisY = 0;
+		break;
+
+	case kScummBackendActionRebel2AxisDown:
+		if (pressed)
+			_menuGamepadAxisY = axisPosition;
+		else
+			_menuGamepadAxisY = 0;
+		break;
+
+	case kScummBackendActionRebel2AxisLeft:
+		if (pressed)
+			_menuGamepadAxisX = -axisPosition;
+		else
+			_menuGamepadAxisX = 0;
+		break;
+
+	case kScummBackendActionRebel2AxisRight:
+		if (pressed)
+			_menuGamepadAxisX = axisPosition;
+		else
+			_menuGamepadAxisX = 0;
+		break;
+
+	default:
+		return false;
+	}
+
+	updateMenuGamepadAxisKey(oldAxisX, oldAxisY);
+	return true;
+}
+
+bool InsaneRebel2::handleMenuRawJoystickAxisEvent(const Common::Event &event) {
+	if (event.type != Common::EVENT_JOYAXIS_MOTION)
+		return false;
+
+	int16 axisX = 0;
+	int16 axisY = 0;
+	if (!decodeRebel2MenuKeyLikeAxis(event.joystick.axis, event.joystick.position, axisX, axisY))
+		return false;
+
+	const bool active = axisX != 0 || axisY != 0;
+	if (!active && _menuGamepadRawAxis != event.joystick.axis && _menuGamepadRawAxis != -1)
+		return false;
+
+	const int16 oldAxisX = combineRebel2MenuAxis(_menuGamepadAxisX, _menuGamepadRawAxisX);
+	const int16 oldAxisY = combineRebel2MenuAxis(_menuGamepadAxisY, _menuGamepadRawAxisY);
+	_menuGamepadRawAxis = active ? event.joystick.axis : -1;
+	_menuGamepadRawAxisX = axisX;
+	_menuGamepadRawAxisY = axisY;
+	updateMenuGamepadAxisKey(oldAxisX, oldAxisY);
+	return true;
 }
 
 // notifyEvent -- EventObserver callback for global input dispatch.
@@ -788,26 +929,8 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	}
 
 	if (_menuInputActive && event.type == Common::EVENT_JOYAXIS_MOTION) {
-		const int axis = event.joystick.axis;
-
-		if (!isRebel2RawMenuAxis(axis))
-			return false;
-
-		const Common::KeyCode keycode = getRebel2RawMenuAxisKey(axis, event.joystick.position);
-		if (keycode == Common::KEYCODE_INVALID)
+		if (handleMenuRawJoystickAxisEvent(event))
 			return true;
-
-		const uint32 now = _vm->_system->getMillis();
-		if (_lastMenuGamepadNavigationTime != 0 &&
-				now - _lastMenuGamepadNavigationTime < kRA2MenuGamepadNavigationDebounceMs)
-			return true;
-
-		_lastMenuGamepadNavigationTime = now;
-		Common::Event syntheticEvent = Common::Event();
-		syntheticEvent.type = Common::EVENT_KEYDOWN;
-		syntheticEvent.kbd.keycode = keycode;
-		_menuEventQueue.push(syntheticEvent);
-		return true;
 	}
 
 	// Analog stick → reticle velocity (mirrors RA1's analog model). The mapped
@@ -815,53 +938,8 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	// We ignore a recentre that would fight the opposite direction so a quick
 	// flick doesn't get cancelled by the trailing zero of the other axis half.
 	if (event.type == Common::EVENT_CUSTOM_BACKEND_ACTION_AXIS) {
-		if (_menuInputActive) {
-			if (event.joystick.position == 0) {
-				switch (event.customType) {
-				case kScummBackendActionRebel2AxisUp:
-				case kScummBackendActionRebel2AxisDown:
-					return true;
-				case kScummBackendActionRebel2AxisLeft:
-				case kScummBackendActionRebel2AxisRight:
-					return true;
-				default:
-					break;
-				}
-				return true;
-			}
-
-			Common::KeyCode keycode = Common::KEYCODE_INVALID;
-			switch (event.customType) {
-			case kScummBackendActionRebel2AxisUp:
-				keycode = Common::KEYCODE_UP;
-				break;
-			case kScummBackendActionRebel2AxisDown:
-				keycode = Common::KEYCODE_DOWN;
-				break;
-			case kScummBackendActionRebel2AxisLeft:
-				keycode = Common::KEYCODE_LEFT;
-				break;
-			case kScummBackendActionRebel2AxisRight:
-				keycode = Common::KEYCODE_RIGHT;
-				break;
-			default:
-				break;
-			}
-
-			if (keycode != Common::KEYCODE_INVALID) {
-				const uint32 now = _vm->_system->getMillis();
-				if (_lastMenuGamepadNavigationTime != 0 &&
-						now - _lastMenuGamepadNavigationTime < kRA2MenuGamepadNavigationDebounceMs)
-					return true;
-
-				_lastMenuGamepadNavigationTime = now;
-				Common::Event syntheticEvent = Common::Event();
-				syntheticEvent.type = Common::EVENT_KEYDOWN;
-				syntheticEvent.kbd.keycode = keycode;
-				_menuEventQueue.push(syntheticEvent);
-				return true;
-			}
-		}
+		if (_menuInputActive && handleMenuGamepadAxisEvent(event))
+			return true;
 
 		const int16 axisPosition = (event.joystick.position == Common::JOYAXIS_MIN)
 			? Common::JOYAXIS_MAX : event.joystick.position;
