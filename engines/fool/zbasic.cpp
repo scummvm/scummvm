@@ -67,9 +67,9 @@ ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
 		_toolbox->_defaultMenu = _menu;
 		// we don't get the surface for directly manipulating the menu, but so far we don't need it
 	}
-	GrafPtr port(new GrafPort);
-	_toolbox->OpenPort(port);
-	_toolbox->SetPort(port);
+	_defaultPort = new GrafPort;
+	_toolbox->OpenPort(_defaultPort);
+	_toolbox->SetPort(_defaultPort);
 
 }
 
@@ -77,6 +77,15 @@ ZBasic::~ZBasic() {
 	g_engine->_wm.removeWindow(_window);
 	_window = nullptr;
 	_toolbox->_defaultWindow = nullptr;
+
+	GrafPtr test;
+	_toolbox->GetPort(test);
+	if (test == _defaultPort) {
+		_toolbox->SetPort(nullptr);
+	}
+	delete _defaultPort;
+	_defaultPort = nullptr;
+
 	delete _memPool;
 	_memPool = nullptr;
 }
