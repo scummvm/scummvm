@@ -57,6 +57,7 @@ MODULE_OBJS = \
   action/puzzle/towerpuzzle.o \
   action/puzzle/turningpuzzle.o \
   action/puzzle/twodialpuzzle.o \
+  action/puzzle/typingquizpuzzle.o \
   action/puzzle/whalesurvivorpuzzle.o \
   ui/fullscreenimage.o \
   ui/animatedbutton.o \

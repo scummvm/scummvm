@@ -74,6 +74,7 @@
 #include "engines/nancy/action/puzzle/towerpuzzle.h"
 #include "engines/nancy/action/puzzle/turningpuzzle.h"
 #include "engines/nancy/action/puzzle/twodialpuzzle.h"
+#include "engines/nancy/action/puzzle/typingquizpuzzle.h"
 #include "engines/nancy/action/puzzle/whalesurvivorpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
@@ -502,11 +503,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 244:
 		return new GridMapPuzzle();
 	// -- Nancy 11 and up --
-	case 245:	// Nancy11
-		warning("TypingQuizPuzzle");	// TODO
-		return nullptr;
-	case 246:	// Nancy11
-		warning("MatchPuzzle246");	// TODO
+	case 245:
+		return new TypingQuizPuzzle();
+	case 246:
+		warning("CardGamePuzzle");	// TODO
 		return nullptr;
 	default:
 		warning("Unknown action record type %d", type);
