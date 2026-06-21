@@ -73,12 +73,21 @@ protected:
 	Common::Array<Common::Rect> _hotspots;
 	Common::Array<uint16> _correctSequence;
 
+	// Nancy 11 multi-stage keypad: a series of codes that must be entered in turn. Stage 0 is
+	// _correctSequence above; the rest are stored here. The puzzle stays in one scene across all
+	// stages, so the same record instance tracks the current stage.
+	uint16 _numStages = 0;
+	Common::Array<Common::Array<uint16> > _stageSequences;
+	Common::Array<bool> _stageCheckOrder;
+	int _currentStage = 0;
+
 	uint16 _specialCursor1Id = CursorManager::kHotspot;
 	Common::Rect _specialCursor1Dest;
 	uint16 _specialCursor2Id = CursorManager::kHotspot;
 	Common::Rect _specialCursor2Dest;
 
 	Common::Array<Common::String> _pianoSoundNames; // nancy8 and up
+	Common::Array<Common::String> _pianoReleaseSoundNames; // nancy11 and up (second, interleaved, sound name per key)
 
 	uint16 _state2InvItem = 0;
 	Common::Array<Common::Rect> _overlaySrcs;

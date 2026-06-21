@@ -174,8 +174,20 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 		readRectArray(ser, _overlaySrcs, numOverlays);
 		readRectArray(ser, _overlayDests, numOverlays);
 	} else if (isPiano && g_nancy->getGameType() >= kGameTypeNancy8) {
-		readFilenameArray(stream, _pianoSoundNames, numElements);
-		stream.skip((maxNumElements - numElements) * 33);
+		if (g_nancy->getGameType() >= kGameTypeNancy11) {
+			// Nancy 11 stores two interleaved sound names per key (e.g. a press and
+			// a release sound), padded to maxNumElements pairs
+			_pianoSoundNames.resize(numElements);
+			_pianoReleaseSoundNames.resize(numElements);
+			for (uint i = 0; i < numElements; ++i) {
+				readFilename(stream, _pianoSoundNames[i]);
+				readFilename(stream, _pianoReleaseSoundNames[i]);
+			}
+			stream.skip((maxNumElements - numElements) * 2 * 33);
+		} else {
+			readFilenameArray(stream, _pianoSoundNames, numElements);
+			stream.skip((maxNumElements - numElements) * 33);
+		}
 	}
 
 	if (ser.getVersion() > kGameTypeVampire) {
@@ -212,18 +224,60 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	if (isKeypad && g_nancy->getGameType() >= kGameTypeNancy7) {
 		if (_puzzleType == kKeypad) {
+			if (g_nancy->getGameType() >= kGameTypeNancy11) {
+				// Nancy 11 multi-stage keypad: a stage count, per-stage display rects, the codes
+				// for stages 1+, a final code matrix and an alternate scene, then the button rects.
+				_numStages = stream.readUint16LE();
+				stream.skip(20 * 16 + 1); // per-stage display rects + blink flag
+
+				_stageSequences.resize(4);
+				_stageCheckOrder.resize(4);
+				for (uint s = 0; s < 4; ++s) {
+					uint16 len = stream.readUint16LE();
+					_stageCheckOrder[s] = (stream.readByte() != 0);
+					len = MIN<uint16>(len, 30);
+					_stageSequences[s].resize(len);
+					for (uint16 k = 0; k < len; ++k)
+						_stageSequences[s][k] = stream.readByte();
+					stream.skip(30 - len);
+				}
+
+				stream.skip(25 + 25); // final code matrix + alternate scene (unused by the sequential model)
+			}
 			readRectArray(ser, _down1Rects, numElements, maxNumElements);
 			readRectArray(ser, _destRects, numElements, maxNumElements);
 		} else if (_puzzleType == kKeypadTerse) {
-			_down1Rects.resize(numElements);
-			_destRects.resize(numElements);
-
 			// Terse elements are the same size & placed on a grid (in the source image AND on screen)
 			uint16 columns = stream.readUint16LE();
-			stream.skip(2); // rows
+
+			// The Nancy 11 multi-stage terse keypad chains scenes: each scene holds one stage and
+			// the grid is preceded by the scene to advance to once this stage's code is entered.
+			// Standalone/final keypads omit it. A grid column count can never exceed maxNumElements,
+			// so a larger leading value is that scene id - it overrides the solve scene's target
+			// (the rest of the solve scene change is reused), then the real column count follows.
+			if (g_nancy->getGameType() >= kGameTypeNancy11 && columns > maxNumElements) {
+				_solveExitScene._sceneChange.sceneID = columns;
+				columns = stream.readUint16LE();
+			}
+
+			uint16 rows = stream.readUint16LE();
 
 			uint16 width = stream.readUint16LE();
 			uint16 height = stream.readUint16LE();
+
+			// Nancy 11 stores the element count as 0 and derives it from the grid dimensions
+			if (g_nancy->getGameType() >= kGameTypeNancy11) {
+				numElements = columns * rows;
+			}
+
+			// Guard against malformed dimensions (columns is a divisor below)
+			if (columns == 0) {
+				columns = 1;
+			}
+			numElements = MIN<uint16>(numElements, maxNumElements);
+
+			_down1Rects.resize(numElements);
+			_destRects.resize(numElements);
 
 			Common::Point srcStartPos, srcDist, destStartPos, destDist;
 
@@ -387,7 +441,36 @@ void OrderingPuzzle::execute() {
 				}
 			}
 
-			if (_puzzleType == kKeypad && _needButtonToCheckSuccess) {
+			if (_puzzleType == kKeypad && _numStages > 1) {
+				// Nancy 11 multi-stage keypad: every stage's code must be entered in turn.
+				// The check button confirms the current code; a wrong code resets the stage.
+				if (!_checkButtonPressed) {
+					return;
+				}
+
+				if (g_nancy->_sound->isSoundPlaying(_pushDownSound)) {
+					return;
+				}
+
+				_checkButtonPressed = false;
+
+				if (!solved) {
+					clearAllElements();
+					return;
+				}
+
+				if (_currentStage + 1 < (int)_numStages) {
+					++_currentStage;
+					_correctSequence = _stageSequences[_currentStage - 1];
+					_checkOrder = _stageCheckOrder[_currentStage - 1];
+					clearAllElements();
+					return;
+				}
+
+				// Final stage solved
+				NancySceneState.setEventFlag(_solveExitScene._flag);
+				_currentStage = 0;
+			} else if (_puzzleType == kKeypad && _needButtonToCheckSuccess) {
 				// KeypadPuzzle moves to the "success" scene regardless whether the puzzle was solved or not,
 				// provided the check button is pressed.
 				if (_checkButtonPressed) {
