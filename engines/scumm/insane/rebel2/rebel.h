@@ -642,6 +642,7 @@ public:
 	void renderHandler8MonitorEffect(byte *renderBitmap, int pitch, int width, int height);
 	void renderHandler8PovOverlay(byte *renderBitmap, int pitch, int width, int height);
 	Common::Point getHandler7ShipDrawPoint();
+	Common::Point getHandler7ProjectedPointFor(int16 x, int16 y);
 	Common::Point getHandler7ProjectedPoint();
 	Common::Point getHandler7ShotTargetPoint();
 	Common::Point getHandler8ShotTargetPoint();

@@ -630,16 +630,20 @@ Common::Point InsaneRebel2::getHandler7ShipDrawPoint() {
 	                     projected.y - 0x82 + _flyShipSprite->getCharYOffset(spriteIndex));
 }
 
-Common::Point InsaneRebel2::getHandler7ProjectedPoint() {
+Common::Point InsaneRebel2::getHandler7ProjectedPointFor(int16 x, int16 y) {
 	int viewTilt = (_viewShift * 5) / 128;
 	int xSkew = (viewTilt * 9) / 4;
 	int ySkew = viewTilt * 5;
-	int relX = _flyShipScreenX - (_perspectiveX + 0xd4);
-	int relY = _flyShipScreenY - (_perspectiveY + 0x82);
+	int relX = x - (_perspectiveX + 0xd4);
+	int relY = y - (_perspectiveY + 0x82);
 	int projectedX = (xSkew * relY) / 0x55 + relX + 0xa0 + _viewX;
 	int projectedY = relY + 0x55 - (ySkew * relX) / 0xa0 + _viewY;
 
 	return Common::Point(projectedX, projectedY);
+}
+
+Common::Point InsaneRebel2::getHandler7ProjectedPoint() {
+	return getHandler7ProjectedPointFor(_flyShipScreenX, _flyShipScreenY);
 }
 
 Common::Point InsaneRebel2::getHandler7ShotTargetPoint() {
@@ -2370,6 +2374,19 @@ void InsaneRebel2::updatePostRenderScroll(int width, int height) {
 	if (maxScrollY < 0)
 		maxScrollY = 0;
 
+	if (_rebelHandler == 7) {
+		// High-detail Handler 7 follows FUN_0041C5C0: the oversized 424x260
+		// flight buffer is presented through a perspective-derived 320x170
+		// gameplay window at source offset (0x34,0x2d) + DAT_00443712/14.
+		// Keep the final crop in that same space so rendered ship/cues and
+		// raw collision zones describe the same tunnel position.
+		const int handler7MaxScrollY = isHiRes() ? MAX<int>(0, height - 170) : maxScrollY;
+		_viewX = CLIP<int>(0x34 + _perspectiveX, 0, maxScrollX);
+		_viewY = CLIP<int>(0x2d + _perspectiveY, 0, handler7MaxScrollY);
+		_player->setScrollOffset(_viewX, _viewY);
+		return;
+	}
+
 	// Simple linear mapping: Center of screen corresponds to center of buffer.
 	Common::Point aimPos = getGameplayAimPoint();
 	_viewX = (aimPos.x * maxScrollX) / viewportWidth;
@@ -2640,9 +2657,11 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 	// Original: FUN_00403240 only runs handlers when DAT_0047a814 == 0.
 	processMouse();
 
-	_gameplayPresentationClipBottom = statusBarY - 1;
-	if (isHiRes() && _rebelHandler == 7 && curFrame != 0)
-		_gameplayPresentationClipBottom = MIN(_gameplayPresentationClipBottom, 170 * 2 - 1);
+	// Handler 7's high-detail flight view uses a 320x170 gameplay area after
+	// the first frame; the remaining RA2 gameplay handlers keep the 180px split.
+	const int statusScale = (statusBarY >= 360) ? 2 : 1;
+	const int gameplayStatusBarY = (_rebelHandler == 7 && curFrame != 0) ? 170 * statusScale : statusBarY;
+	_gameplayPresentationClipBottom = gameplayStatusBarY - 1;
 
 	_hiResPresentationViewX = 0;
 	_hiResPresentationViewY = 0;
@@ -2690,7 +2709,7 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 	// We draw directly to screen at Y=180.
 
 	// STEP 0: Fill status bar background (FUN_004288c0).
-	renderStatusBarBackground(renderBitmap, pitch, width, height, videoWidth, videoHeight, statusBarY);
+	renderStatusBarBackground(renderBitmap, pitch, width, height, videoWidth, videoHeight, gameplayStatusBarY);
 
 	// Ship rendering. Handler 7 is drawn later, after its lasers, matching
 	// FUN_0040d836's order so the ship covers the muzzle end of the beams.
@@ -2731,7 +2750,7 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 	renderEmbeddedHudOverlays(renderBitmap, pitch, width, height);
 
 	// STEP 2: Draw DISPFONT.NUT status bar sprites (FUN_0041c012).
-	renderStatusBarSprites(renderBitmap, pitch, width, height, statusBarY, curFrame);
+	renderStatusBarSprites(renderBitmap, pitch, width, height, gameplayStatusBarY, curFrame);
 
 	updateGameplayDamageEffects(renderBitmap, pitch, width, height);
 	checkGameplayPostRenderCollisions(renderBitmap, pitch, width, height, curFrame);
@@ -2747,7 +2766,7 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 	renderHandler8PovOverlay(renderBitmap, pitch, width, height);
 
 	// HUD score/lives rendering (FUN_0041c012).
-	renderScoreHUD(renderBitmap, pitch, width, height, statusBarY);
+	renderScoreHUD(renderBitmap, pitch, width, height, gameplayStatusBarY);
 
 	// Reset FOBJ position offsets (FUN_00424510(0,0) in original FUN_0041DB5E line 271).
 	if (_player) {
@@ -3524,9 +3543,13 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 			}
 		} else {
 			int16 bottomDist = _corridorBottomY - _flyShipScreenY;
-			int bottomX = shipCenterX;
-			int bottomY = (_corridorBottomY - 0x82) + _perspectiveY + 100 +
-				(renderHiRes ? nativeViewY : _viewY);
+			Common::Point bottomProjected = getHandler7ProjectedPointFor(_flyShipScreenX, _corridorBottomY);
+			if (renderHiRes) {
+				bottomProjected.x += nativeViewX;
+				bottomProjected.y += nativeViewY;
+			}
+			int bottomX = bottomProjected.x;
+			int bottomY = bottomProjected.y;
 
 			if (bottomDist < 0x19) {
 				_flyEffectAnimCounter++;
@@ -3580,8 +3603,9 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 			shipDraw.x, shipDraw.y, _flyTargetSprite, spriteIndex);
 	}
 
-	debugC(DEBUG_INSANE, "Handler7Ship: draw=(%d,%d) sprite=%d/%d shipPos=(%d,%d) persp=(%d,%d) smoothVel=%d vertIn=%d fxCtr=%d fxRep=%d",
+	debugC(DEBUG_INSANE, "Handler7Ship: draw=(%d,%d) sprite=%d/%d shipPos=(%d,%d) view=(%d,%d) persp=(%d,%d) smoothVel=%d vertIn=%d fxCtr=%d fxRep=%d",
 		drawX, drawY, spriteIndex, numSprites, _flyShipScreenX, _flyShipScreenY,
+		renderHiRes ? nativeViewX : _viewX, renderHiRes ? nativeViewY : _viewY,
 		_perspectiveX, _perspectiveY, _smoothedVelocity, _verticalInput, _flyEffectAnimCounter, _flyOverlayRepeatCount);
 }
 
@@ -4269,9 +4293,11 @@ void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int widt
 		const int nativeViewY = renderHiRes ? _hiResPresentationViewY : _viewY;
 
 		if (spriteIndex >= 0 && spriteIndex < numChars) {
-			// Compute ship screen position (simplified FUN_0041c720 transform)
-			int shipDrawX = (_flyShipScreenX - 0xd4) + _perspectiveX + 160 + nativeViewX;
-			int shipDrawY = (_flyShipScreenY - 0x82) + _perspectiveY + 100 + nativeViewY;
+			Common::Point shipProjected = getHandler7ProjectedPoint();
+			if (renderHiRes) {
+				shipProjected.x += nativeViewX;
+				shipProjected.y += nativeViewY;
+			}
 
 			// Per-direction offset from ship center.
 			// Original uses lookup tables (DAT_004438da etc.) indexed by
@@ -4295,8 +4321,8 @@ void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int widt
 				break;
 			}
 
-			int drawX = shipDrawX + offsetX;
-			int drawY = shipDrawY + offsetY;
+			int drawX = shipProjected.x + offsetX;
+			int drawY = shipProjected.y + offsetY;
 			if (renderHiRes) {
 				drawX = (drawX - nativeViewX) * 2;
 				drawY = (drawY - nativeViewY) * 2;

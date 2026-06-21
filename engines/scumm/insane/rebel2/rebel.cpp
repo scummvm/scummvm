@@ -2010,7 +2010,8 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 		}
 
 		const bool useDirectHandler7Gamepad = _selectedLevel == 10;
-		if (!useDirectHandler7Gamepad && !axisX && !axisY)
+		const bool useCenteredHandler7Gamepad = (_selectedLevel == 3 && _flyControlMode == 1);
+		if (!useDirectHandler7Gamepad && !useCenteredHandler7Gamepad && !axisX && !axisY)
 			return;
 
 		if (axisX || axisY || _gamepadAimActive) {
@@ -2029,22 +2030,23 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 			} else {
 				// The wider Level 10 mapping makes other Handler 7 stages swing the
 				// camera too hard. Keep their gamepad cursor in the older bounded
-				// range and move it there gradually.
+				// range and move it there gradually. Level 3 mode 1 is wall-collision
+				// tunnel flight, so neutral stick axes must feed zero input instead of
+				// leaving stale off-center mouse coordinates to keep pushing the ship.
 				const int kHandler7HorizontalRange = 120;
+				const int kHandler7VerticalRange = 80;
 				targetX = axisX ?
 					CLIP<int>(centerX + axisX * kHandler7HorizontalRange / 127, 0, 319) :
-					aimPos.x;
+					(useCenteredHandler7Gamepad ? centerX : aimPos.x);
 				targetY = axisY ?
-					((axisY < 0) ?
-						centerY + axisY * centerY / 127 :
-						centerY + axisY * (199 - centerY) / 127) :
-					aimPos.y;
+					CLIP<int>(centerY + axisY * kHandler7VerticalRange / 127, 0, 199) :
+					(useCenteredHandler7Gamepad ? centerY : aimPos.y);
 			}
 			const int distX = targetX - aimPos.x;
 			const int distY = targetY - aimPos.y;
 
 			if (distX || distY) {
-				if (useDirectHandler7Gamepad) {
+				if (useDirectHandler7Gamepad || useCenteredHandler7Gamepad) {
 					deltaX = distX;
 					deltaY = distY;
 				} else {
