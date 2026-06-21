@@ -217,7 +217,7 @@ public:
 	void deletePilot(int index);
 	void copyPilot(int srcIndex);
 
-	void updatePilotProgress(int levelIndex, int32 score, int32 lives, int32 damage);
+	void updatePilotProgress(int levelIndex, int32 score, int32 lives, int32 damage, int32 rating);
 
 	enum LevelSelectResult {
 		kLevelSelectBack = 0,
@@ -260,6 +260,7 @@ public:
 	int runLevel(int levelId);
 	void playLevelBegin(int levelId);
 	void playLevelEnd(int levelId);
+	void playLevelEnd(int levelId, int accuracy, int flightErrors, bool skillBonus);
 	void playLevelRetry(int levelId);
 	void playLevelGameOver(int levelId);
 	void playEndingSequence();
@@ -330,6 +331,29 @@ public:
 	int _textOverlayFadeOut;
 
 	void renderTextOverlay(byte *renderBitmap, int pitch, int width, int height, int curFrame);
+	void renderLevelEndStatsOverlay(byte *renderBitmap, int pitch, int width, int height, int32 curFrame, int32 maxFrame);
+	void drawLevelEndTextBlock(byte *renderBitmap, const char *text, int centerX, int y);
+	void prepareLevelEndStats(int levelId, int accuracy, int flightErrors, bool skillBonus);
+	int calculateLevelEndRating(int accuracy, int accLow, int accHigh, int flightErrors, int errLow, int errHigh, bool skillBonus) const;
+
+	struct LevelEndStatsOverlay {
+		bool active;
+		int levelId;
+		int textX;
+		int textY;
+		int titleStartBeforeEnd;
+		int titleEndBeforeEnd;
+		bool hasAccuracy;
+		bool hasFlightErrors;
+		bool skillBonus;
+		int accuracy;
+		int flightErrors;
+		int bonus;
+		int finalScore;
+		int oldRating;
+		int newRating;
+	};
+	LevelEndStatsOverlay _levelEndStats;
 	void playLevelDeathVariant(int levelId, int phase, int frame);
 	void playLevelRetryVariant(int levelId, int phase);
 
@@ -427,7 +451,7 @@ public:
 	void updatePostRenderDeath();
 	void renderPostRenderMenuCursor(byte *renderBitmap, int pitch, int width, int height);
 	bool handlePostRenderMenuModes(byte *renderBitmap, int pitch, int width, int height, bool introPlaying);
-	bool handlePostRenderIntro(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);
+	bool handlePostRenderIntro(byte *renderBitmap, int pitch, int width, int height, int32 curFrame, int32 maxFrame);
 	void renderGameplayPostFrame(byte *renderBitmap, int pitch, int width, int height,
 								 int videoWidth, int videoHeight, int statusBarY, int32 curFrame);
 	void updateGameplayDamageEffects(byte *renderBitmap, int pitch, int width, int height);
@@ -620,6 +644,7 @@ public:
 	int16 _playerShield;
 	int16 _playerLives;
 	int32 _playerScore;
+	int32 _playerRating;
 
 	int _viewX;
 	int _viewY;

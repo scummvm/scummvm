@@ -198,6 +198,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_playerShield = 255;
 	_playerLives = 3;
 	_playerScore = 0;
+	_playerRating = 0;
 	_noDamage = false;
 	_viewX = 0;
 	_viewY = 0;
@@ -218,6 +219,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_textOverlayY = 0;
 	_textOverlayFadeIn = 0;
 	_textOverlayFadeOut = 0;
+	memset(&_levelEndStats, 0, sizeof(_levelEndStats));
 
 	_rebelOp6Initialized = false;
 	_rebelHitCounter = 0;
@@ -1481,7 +1483,7 @@ void InsaneRebel2::copyPilot(int srcIndex) {
 	_numPilots++;
 }
 
-void InsaneRebel2::updatePilotProgress(int levelIndex, int32 score, int32 lives, int32 damage) {
+void InsaneRebel2::updatePilotProgress(int levelIndex, int32 score, int32 lives, int32 damage, int32 rating) {
 	if (_activePilot < 0 || _activePilot >= _numPilots)
 		return;
 	if (levelIndex < 0 || levelIndex >= kNumLevels)
@@ -1491,14 +1493,7 @@ void InsaneRebel2::updatePilotProgress(int levelIndex, int32 score, int32 lives,
 	pilot.score[levelIndex] = score;
 	pilot.lives[levelIndex] = lives;
 	pilot.damage[levelIndex] = damage;
-
-	if (damage < 0xFF && levelIndex + 1 < kNumLevels) {
-		if (pilot.damage[levelIndex + 1] == 0xFF) {
-			pilot.score[levelIndex + 1] = 0;
-			pilot.lives[levelIndex + 1] = 4;
-			pilot.damage[levelIndex + 1] = 0;
-		}
-	}
+	pilot.rating[levelIndex] = rating;
 
 	savePilots();
 }

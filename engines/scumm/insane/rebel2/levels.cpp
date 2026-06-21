@@ -21,6 +21,7 @@
 
 #include "common/events.h"
 #include "common/system.h"
+#include "common/util.h"
 
 #include "graphics/cursorman.h"
 
@@ -35,6 +36,34 @@ namespace Scumm {
 static const int kRebel2GameplayAimCenterX = 160;
 static const int kRebel2GameplayAimCenterY = 100;
 static const uint32 kRebel2GameplayMouseSettleMs = 1000;
+
+struct Rebel2LevelEndParams {
+	int titleStartBeforeEnd;
+	int titleEndBeforeEnd;
+	int accLow;
+	int accHigh;
+	int errLow;
+	int errHigh;
+};
+
+static const Rebel2LevelEndParams kRebel2LevelEndParams[16] = {
+	{ 0,   0,  -1,  -1, -1, -1 },
+	{ 120, 10,  96, 100, -1, -1 },
+	{ 120, 10,  80,  94, -1, -1 },
+	{  90,  5,  56,  72,  1,  3 },
+	{ 120, 10,  42,  48,  2,  4 },
+	{ 120, 10,  96, 100, -1, -1 },
+	{ 545,435,  60,  76,  1,  4 },
+	{ 115, 10,  -1,  -1,  1,  3 },
+	{ 120, 10,  90,  96, -1, -1 },
+	{ 100,  1,  36,  48,  2,  4 },
+	{ 100, 10,  28,  36,  1,  3 },
+	{ 100, 10,  70,  78, -1, -1 },
+	{ 120, 10,  28,  36, -1, -1 },
+	{ 150, 10,  86,  90,  3,  5 },
+	{  75, 10,  96, 100, -1, -1 },
+	{ 100, 10,  60,  68,  1,  3 }
+};
 
 static void purgeRebel2GameplayInputEvents(Common::EventManager *eventMan) {
 	if (!eventMan)
@@ -102,8 +131,8 @@ void InsaneRebel2::runGame() {
 					int result = runLevel(selectedLevel);
 
 					if (result == kLevelNextLevel) {
-						updatePilotProgress(selectedLevel - 1,
-							_playerScore, _playerLives, _playerDamage);
+						updatePilotProgress(selectedLevel,
+							_playerScore, _playerLives, 0, _playerRating);
 						selectedLevel++;
 						if (selectedLevel > 15) {
 							playEndingSequence();
@@ -232,13 +261,106 @@ void InsaneRebel2::playLevelBegin(int levelId) {
 	}
 }
 
+int InsaneRebel2::calculateLevelEndRating(int accuracy, int accLow, int accHigh,
+		int flightErrors, int errLow, int errHigh, bool skillBonus) const {
+	int accuracyGrade = -1;
+	if (accuracy >= 0) {
+		if (accuracy < accHigh) {
+			if (accuracy < (accLow + accHigh) / 2)
+				accuracyGrade = (accuracy < accLow) ? 0 : 1;
+			else
+				accuracyGrade = 2;
+		} else {
+			accuracyGrade = 3;
+		}
+	}
+
+	int errorGrade = -1;
+	if (flightErrors >= 0) {
+		if (errHigh < flightErrors) {
+			if ((errLow + errHigh) / 2 < flightErrors)
+				errorGrade = (flightErrors <= errLow) ? 1 : 0;
+			else
+				errorGrade = 2;
+		} else {
+			errorGrade = 3;
+		}
+	}
+
+	int rating = 0;
+	if (accuracy >= 0 && flightErrors >= 0) {
+		rating = (accuracyGrade + errorGrade + 1) / 2;
+	} else if (accuracy >= 0) {
+		rating = accuracyGrade;
+	} else if (flightErrors >= 0) {
+		rating = errorGrade;
+	}
+
+	if (skillBonus)
+		rating++;
+
+	return MAX(0, rating);
+}
+
+void InsaneRebel2::prepareLevelEndStats(int levelId, int accuracy, int flightErrors, bool skillBonus) {
+	if (levelId < 1 || levelId > 15) {
+		_levelEndStats.active = false;
+		return;
+	}
+
+	const Rebel2LevelEndParams &p = kRebel2LevelEndParams[levelId];
+	const bool hasAccuracy = (accuracy >= 0 && p.accLow >= 0 && p.accHigh >= 0);
+	const bool hasFlightErrors = (flightErrors >= 0 && p.errLow >= 0 && p.errHigh >= 0);
+	const int ratingAward = calculateLevelEndRating(
+		hasAccuracy ? accuracy : -1, p.accLow, p.accHigh,
+		hasFlightErrors ? flightErrors : -1, p.errLow, p.errHigh,
+		skillBonus);
+
+	LevelDifficultyParams difficultyParams = getDifficultyParams();
+	if (levelId == 15)
+		difficultyParams = kDifficultyTable[CLIP(_difficulty, 0, 5)][16];
+
+	const int bonus = (difficultyParams.specialPoints > 0) ?
+		difficultyParams.specialPoints * ratingAward : 0;
+	const int levelPoints = MAX(0, (int)difficultyParams.levelPoints);
+
+	_levelEndStats.active = true;
+	_levelEndStats.levelId = levelId;
+	_levelEndStats.textX = 0xa0;
+	_levelEndStats.textY = (levelId == 7) ? 0xb : 10;
+	_levelEndStats.titleStartBeforeEnd = p.titleStartBeforeEnd;
+	_levelEndStats.titleEndBeforeEnd = p.titleEndBeforeEnd;
+	_levelEndStats.hasAccuracy = hasAccuracy;
+	_levelEndStats.hasFlightErrors = hasFlightErrors;
+	_levelEndStats.skillBonus = skillBonus;
+	_levelEndStats.accuracy = hasAccuracy ? accuracy : -1;
+	_levelEndStats.flightErrors = hasFlightErrors ? flightErrors : -1;
+	_levelEndStats.bonus = bonus;
+	_levelEndStats.oldRating = _playerRating;
+
+	addScore(bonus);
+	addScore(levelPoints);
+	_playerRating += ratingAward;
+
+	_levelEndStats.finalScore = _playerScore;
+	_levelEndStats.newRating = _playerRating;
+
+	if (_activePilot >= 0 && _activePilot < _numPilots)
+		insertRanking(_pilots[_activePilot].name, _playerScore, _playerRating, _difficulty, levelId);
+}
+
 void InsaneRebel2::playLevelEnd(int levelId) {
+	playLevelEnd(levelId, -1, -1, false);
+}
+
+void InsaneRebel2::playLevelEnd(int levelId, int accuracy, int flightErrors, bool skillBonus) {
 
 	restoreDamageFlashPalette();
 	resetVideoAudio();
 	_gameplaySectionActive = false;
 	_rebelHandler = 0;
-	_rebelStatusBarSprite = 0;  // No status bar during end cinematic
+	_rebelStatusBarSprite = 0;
+	prepareLevelEndStats(levelId, accuracy, flightErrors, skillBonus);
 
 	Common::String dir = getLevelDir(levelId);
 	Common::String prefix = getLevelPrefix(levelId);
@@ -249,6 +371,8 @@ void InsaneRebel2::playLevelEnd(int levelId) {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	splayer->setCurVideoFlags(0x28);
 	splayer->play(filename.c_str(), 15);
+
+	_levelEndStats.active = false;
 }
 
 void InsaneRebel2::playLevelRetry(int levelId) {
@@ -395,9 +519,16 @@ int InsaneRebel2::runLevel(int levelId) {
 	CursorMan.showMouse(false);
 	g_system->lockMouse(true);
 
-	_playerLives = 3;
+	if (_activePilot >= 0 && _activePilot < _numPilots && _pilots[_activePilot].damage[levelId - 1] < 0xFF) {
+		_playerLives = _pilots[_activePilot].lives[levelId - 1];
+		_playerScore = _pilots[_activePilot].score[levelId - 1];
+		_playerRating = _pilots[_activePilot].rating[levelId - 1];
+	} else {
+		_playerLives = 3;
+		_playerScore = 0;
+		_playerRating = 0;
+	}
 	_playerShield = 255;
-	_playerScore = 0;
 	_playerDamage = 0;
 	resetDamageFlash();
 	_damageHighFlashCounter = 0;

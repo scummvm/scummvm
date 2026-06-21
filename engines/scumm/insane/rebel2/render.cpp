@@ -72,6 +72,57 @@ bool parseRebel2TextOverlayFormat(const char *&str, NutRenderer *&curFont, int &
 	return fontId == -2;
 }
 
+static Common::String getRebel2VisibleTextPrefix(const char *text, int visibleChars) {
+	Common::String out;
+	if (!text || visibleChars <= 0)
+		return out;
+
+	int visible = 0;
+	const char *s = text;
+	while (*s && visible < visibleChars) {
+		if (*s == '^' && (s[1] == 'f' || s[1] == 'c')) {
+			out += *s++;
+			out += *s++;
+			while (*s >= '0' && *s <= '9')
+				out += *s++;
+			continue;
+		}
+		if (*s == '^' && s[1] == 'l') {
+			out += *s++;
+			out += *s++;
+			continue;
+		}
+
+		out += *s;
+		if (*s != '\n' && *s != '\r')
+			visible++;
+		s++;
+	}
+
+	return out;
+}
+
+static const char *getRebel2LevelEndFallbackString(int id) {
+	switch (id) {
+	case 190:
+		return "^f02^c244Chapter Complete\n^f01^c244Password: %s";
+	case 191:
+		return "^f01^c001Target Accuracy %hd%%\nBonus %ld\n\nScore %ld\n^f00%s";
+	case 192:
+		return "^f01^c001Flight Errors %hd\nBonus %ld\n\nScore %ld\n^f00%s";
+	case 193:
+		return "^f01^c001Flight Errors %hd\n^f01^c001Target Accuracy %hd%%\nTotal Bonus %ld\n\nScore %ld\n^f00%s";
+	case 194:
+		return "^f01^c001Target Accuracy %hd%%\nSkill Bonus Awarded\nTotal Bonus %ld\n\nScore %ld\n^f00%s";
+	case 195:
+		return "^f01^c001Flight Errors %hd\nSkill Bonus Awarded\nTotal Bonus %ld\n\nScore %ld\n^f00%s";
+	case 196:
+		return "^f01^c001Flight Errors %hd\n^f01^c001Target Accuracy %hd%%\nSkill Bonus Awarded\nTotal Bonus %ld\n\nScore %ld\n^f00%s";
+	default:
+		return "";
+	}
+}
+
 const char *getHandler8PovOverlayString(int id) {
 	switch (id) {
 	case 200:
@@ -2182,7 +2233,7 @@ bool InsaneRebel2::handlePostRenderMenuModes(byte *renderBitmap, int pitch, int 
 	return false;
 }
 
-bool InsaneRebel2::handlePostRenderIntro(byte *renderBitmap, int pitch, int width, int height, int32 curFrame) {
+bool InsaneRebel2::handlePostRenderIntro(byte *renderBitmap, int pitch, int width, int height, int32 curFrame, int32 maxFrame) {
 	if (_rebelHandler == 0) {
 		CursorMan.showMouse(false);
 
@@ -2194,6 +2245,8 @@ bool InsaneRebel2::handlePostRenderIntro(byte *renderBitmap, int pitch, int widt
 
 		if (_textOverlayActive)
 			renderTextOverlay(renderBitmap, pitch, width, height, curFrame);
+		if (_levelEndStats.active)
+			renderLevelEndStatsOverlay(renderBitmap, pitch, width, height, curFrame, maxFrame);
 
 		return true;
 	}
@@ -2363,7 +2416,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	if (handlePostRenderMenuModes(renderBitmap, pitch, width, height, introPlaying))
 		return;
 
-	if (handlePostRenderIntro(renderBitmap, pitch, width, height, curFrame))
+	if (handlePostRenderIntro(renderBitmap, pitch, width, height, curFrame, maxFrame))
 		return;
 	renderGameplayPostFrame(renderBitmap, pitch, width, height, videoWidth, videoHeight, statusBarY, curFrame);
 }
@@ -2484,6 +2537,116 @@ void InsaneRebel2::updateDamageEffect(byte *renderBitmap, int pitch, int width, 
 	}
 
 	updateDamageFlashPalette();
+}
+
+void InsaneRebel2::drawLevelEndTextBlock(byte *renderBitmap, const char *text, int centerX, int y) {
+	if (!renderBitmap || !text)
+		return;
+
+	const int lineStep = isHiRes() ? 20 : 10;
+	Common::String line;
+	const char *s = text;
+	while (true) {
+		if (*s == '\0' || *s == '\n' || *s == '\r') {
+			if (!line.empty())
+				drawMenuStringCentered(renderBitmap, line.c_str(), centerX, y);
+			y += lineStep;
+			line.clear();
+			if (*s == '\0')
+				break;
+			if (*s == '\r' && s[1] == '\n')
+				s++;
+			s++;
+			continue;
+		}
+
+		line += *s++;
+	}
+}
+
+void InsaneRebel2::renderLevelEndStatsOverlay(byte *renderBitmap, int pitch, int width, int height,
+		int32 curFrame, int32 maxFrame) {
+	(void)pitch;
+	(void)width;
+	(void)height;
+
+	if (!_levelEndStats.active)
+		return;
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	if (!splayer)
+		return;
+
+	int32 titleStart = 0;
+	int32 titleEnd = 0x7fffffff;
+	if (maxFrame > 0) {
+		titleStart = maxFrame - _levelEndStats.titleStartBeforeEnd;
+		titleEnd = maxFrame - _levelEndStats.titleEndBeforeEnd;
+	}
+
+	if (curFrame < titleStart || curFrame >= titleEnd)
+		return;
+
+	const int scale = isHiRes() ? 2 : 1;
+	const int centerX = _levelEndStats.textX * scale;
+	const int titleY = _levelEndStats.textY * scale;
+
+	const char *titleFmt = splayer->getString(190);
+	if (!titleFmt || !titleFmt[0])
+		titleFmt = getRebel2LevelEndFallbackString(190);
+
+	Common::String password = getChapterPassword(_levelEndStats.levelId, _difficulty);
+	Common::String titleText = Common::String::format(titleFmt, password.c_str());
+	int visibleChars = curFrame + 10 - titleStart;
+	if (visibleChars > 0xbe)
+		visibleChars = 0xbe;
+	Common::String visibleTitle = getRebel2VisibleTextPrefix(titleText.c_str(), visibleChars);
+	drawLevelEndTextBlock(renderBitmap, visibleTitle.c_str(), centerX, titleY);
+
+	if (curFrame <= titleEnd - 0x32)
+		return;
+
+	int displayBonus = _levelEndStats.bonus;
+	for (int32 frame = titleEnd - 0x23 + 1; frame <= curFrame && displayBonus > 0; frame++) {
+		const int reduced = displayBonus - 0xaf;
+		const int halved = displayBonus >> 1;
+		displayBonus = (reduced <= halved) ? halved : reduced;
+	}
+
+	const int displayScore = _levelEndStats.finalScore - displayBonus;
+	const int rank = (curFrame >= titleEnd - 0x19) ? _levelEndStats.newRating : _levelEndStats.oldRating;
+	Common::String rankStr = getRankString(rank);
+
+	int stringId;
+	if (_levelEndStats.hasAccuracy && _levelEndStats.hasFlightErrors)
+		stringId = _levelEndStats.skillBonus ? 196 : 193;
+	else if (_levelEndStats.hasAccuracy)
+		stringId = _levelEndStats.skillBonus ? 194 : 191;
+	else if (_levelEndStats.hasFlightErrors)
+		stringId = _levelEndStats.skillBonus ? 195 : 192;
+	else
+		return;
+
+	const char *statsFmt = splayer->getString(stringId);
+	if (!statsFmt || !statsFmt[0])
+		statsFmt = getRebel2LevelEndFallbackString(stringId);
+
+	Common::String statsText;
+	if (_levelEndStats.hasAccuracy && _levelEndStats.hasFlightErrors) {
+		statsText = Common::String::format(statsFmt,
+			(short)_levelEndStats.flightErrors, (short)_levelEndStats.accuracy,
+			(long)displayBonus, (long)displayScore, rankStr.c_str());
+	} else if (_levelEndStats.hasAccuracy) {
+		statsText = Common::String::format(statsFmt,
+			(short)_levelEndStats.accuracy, (long)displayBonus,
+			(long)displayScore, rankStr.c_str());
+	} else {
+		statsText = Common::String::format(statsFmt,
+			(short)_levelEndStats.flightErrors, (long)displayBonus,
+			(long)displayScore, rankStr.c_str());
+	}
+
+	drawLevelEndTextBlock(renderBitmap, statsText.c_str(), centerX, titleY + 0x21 * scale);
 }
 
 void InsaneRebel2::renderTextOverlay(byte *renderBitmap, int pitch, int width, int height, int curFrame) {

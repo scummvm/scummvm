@@ -41,13 +41,16 @@ int InsaneRebel2::runLevel1() {
 		resetExplosions();
 
 		clearBit(0);
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
 
 		if (!playLevelSegment("LEV01/01P01.SAN", 0x28))
 			return kLevelQuit;
 
 		if (_playerShield > 0) {
+			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debugC(DEBUG_INSANE, "Level 1 completed!");
-			playLevelEnd(1);
+			playLevelEnd(1, accuracy, -1, false);
 			_levelUnlocked[1] = true;
 			return kLevelNextLevel;
 		}
@@ -569,9 +572,9 @@ int InsaneRebel2::runLevel2() {
 			int accuracy = calculateAccuracy(totalKills, totalMisses);
 			debugC(DEBUG_INSANE, "Level 2 completed! kills=%d misses=%d accuracy=%d%% bonus=%d",
 				totalKills, totalMisses, accuracy, bonusCount);
+			playLevelEnd(2, accuracy, -1, bonusCount > 2);
 		}
 
-		playLevelEnd(2);
 		_levelUnlocked[2] = true;
 		return kLevelNextLevel;
 	}
@@ -581,6 +584,7 @@ int InsaneRebel2::runLevel2() {
 
 int InsaneRebel2::runLevel3() {
 	int phase1Score = 0;
+	int phase1FlightErrors = 0;
 
 	playLevelBegin(3);
 	if (_vm->shouldQuit())
@@ -596,6 +600,8 @@ int InsaneRebel2::runLevel3() {
 
 		clearBit(0);
 		resetHandler7FlightState();
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
 
 		debugC(DEBUG_INSANE, "Level 3 Phase 1");
 		if (!playLevelSegment("LEV03/03PLAY1.SAN", 0x28))
@@ -603,6 +609,7 @@ int InsaneRebel2::runLevel3() {
 
 		if (_playerShield > 0) {
 			phase1Score = _playerScore;
+			phase1FlightErrors = _rebelHitCounter;
 			break;
 		}
 
@@ -642,14 +649,18 @@ int InsaneRebel2::runLevel3() {
 
 		clearBit(0);
 		resetHandler7FlightState();
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
 
 		debugC(DEBUG_INSANE, "Level 3 Phase 2");
 		if (!playLevelSegment("LEV03/03PLAY2.SAN", 0x28))
 			return kLevelQuit;
 
 		if (_playerShield > 0) {
+			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
+			int flightErrors = phase1FlightErrors + _rebelHitCounter;
 			debugC(DEBUG_INSANE, "Level 3 completed!");
-			playLevelEnd(3);
+			playLevelEnd(3, accuracy, flightErrors, false);
 			_levelUnlocked[3] = true;
 			return kLevelNextLevel;
 		}
@@ -688,14 +699,17 @@ int InsaneRebel2::runLevel4() {
 		resetExplosions();
 
 		clearBit(0);
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
 
 		debugC(DEBUG_INSANE, "Level 4 gameplay");
 		if (!playLevelSegment("LEV04/04PLAY.SAN", 0x28))
 			return kLevelQuit;
 
 		if (_playerShield > 0) {
+			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debugC(DEBUG_INSANE, "Level 4 completed!");
-			playLevelEnd(4);
+			playLevelEnd(4, accuracy, _rebelHitCounter, false);
 			_levelUnlocked[4] = true;  // Unlock level 5
 			return kLevelNextLevel;
 		}
@@ -731,14 +745,17 @@ int InsaneRebel2::runLevel5() {
 		resetExplosions();
 
 		clearBit(0);
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
 
 		debugC(DEBUG_INSANE, "Level 5 gameplay");
 		if (!playLevelSegment("LEV05/05PLAY.SAN", 0x08))
 			return kLevelQuit;
 
 		if (_playerShield > 0) {
+			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debugC(DEBUG_INSANE, "Level 5 completed!");
-			playLevelEnd(5);
+			playLevelEnd(5, accuracy, -1, false);
 			_levelUnlocked[5] = true;  // Unlock level 6
 			return kLevelNextLevel;
 		}
@@ -764,6 +781,7 @@ int InsaneRebel2::runLevel5() {
 
 int InsaneRebel2::runLevel6() {
 	int phase1Score = 0;
+	int phase1FlightErrors = 0;
 
 	playLevelBegin(6);
 	if (_vm->shouldQuit())
@@ -777,6 +795,8 @@ int InsaneRebel2::runLevel6() {
 
 		_rebelLevelType = 5;
 		_currentPhase = 1;
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
 
 		debugC(DEBUG_INSANE, "Level 6 Phase 1 (shield attack run)");
 		resetShieldGauge();
@@ -815,6 +835,7 @@ int InsaneRebel2::runLevel6() {
 		}
 
 		phase1Score = _playerScore;
+		phase1FlightErrors = _rebelHitCounter;
 
 		_rebelHandler = 0;
 		_rebelStatusBarSprite = 0;
@@ -827,14 +848,18 @@ int InsaneRebel2::runLevel6() {
 			_playerScore = phase1Score;
 			clearBit(0);
 			resetExplosions();
+			_rebelKillCounter = 0;
+			_rebelHitCounter = 0;
 
 			debugC(DEBUG_INSANE, "Level 6 Phase 2");
 			if (!playLevelSegment("LEV06/06PLAY2.SAN", 0x28))
 				return kLevelQuit;
 
 			if (_playerShield > 0) {
+				int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
+				int flightErrors = phase1FlightErrors + _rebelHitCounter;
 				debugC(DEBUG_INSANE, "Level 6 completed!");
-				playLevelEnd(6);
+				playLevelEnd(6, accuracy, flightErrors, false);
 				_levelUnlocked[6] = true;
 				return kLevelNextLevel;
 			}
@@ -882,13 +907,15 @@ int InsaneRebel2::runLevel7() {
 		resetExplosions();
 
 		clearBit(0);
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
 
 		if (!playLevelSegment("LEV07/07PLAY.SAN", 0x28))
 			return kLevelQuit;
 
 		if (_playerShield > 0) {
 			debugC(DEBUG_INSANE, "Level 7 completed!");
-			playLevelEnd(7);
+			playLevelEnd(7, -1, _rebelHitCounter, !reachedFork);
 			_levelUnlocked[7] = true;
 			return kLevelNextLevel;
 		}
@@ -930,6 +957,8 @@ int InsaneRebel2::runLevel8() {
 		resetExplosions();
 
 		clearBit(0);
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
 
 		if (!playLevelSegment("LEV08/08PLAY.SAN", 0x08))
 			return kLevelQuit;
@@ -937,7 +966,7 @@ int InsaneRebel2::runLevel8() {
 		if (_playerShield > 0) {
 			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debugC(DEBUG_INSANE, "Level 8 completed! accuracy=%d%%", accuracy);
-			playLevelEnd(8);
+			playLevelEnd(8, accuracy, -1, false);
 			_levelUnlocked[8] = true;
 			return kLevelNextLevel;
 		}
@@ -975,6 +1004,8 @@ int InsaneRebel2::runLevel9() {
 		resetExplosions();
 
 		clearBit(0);
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
 
 		_rebelPhaseState = 0xfffffffe;
 
@@ -984,7 +1015,7 @@ int InsaneRebel2::runLevel9() {
 		if (_playerShield > 0) {
 			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debugC(DEBUG_INSANE, "Level 9 completed! accuracy=%d%%", accuracy);
-			playLevelEnd(9);
+			playLevelEnd(9, accuracy, _rebelHitCounter, false);
 			_levelUnlocked[9] = true;
 			return kLevelNextLevel;
 		}
@@ -1026,6 +1057,8 @@ int InsaneRebel2::runLevel10() {
 		resetExplosions();
 
 		clearBit(0);
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
 
 		if (!playLevelSegment("LEV10/10PLAY.SAN", 0x28))
 			return kLevelQuit;
@@ -1033,7 +1066,7 @@ int InsaneRebel2::runLevel10() {
 		if (_playerShield > 0) {
 			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debugC(DEBUG_INSANE, "Level 10 completed! accuracy=%d%%", accuracy);
-			playLevelEnd(10);
+			playLevelEnd(10, accuracy, _rebelHitCounter, false);
 			_levelUnlocked[10] = true;
 			return kLevelNextLevel;
 		}
@@ -1322,9 +1355,9 @@ int InsaneRebel2::runLevel11() {
 			int accuracy = calculateAccuracy(totalKills, totalMisses);
 			debugC(DEBUG_INSANE, "Level 11 completed! kills=%d misses=%d accuracy=%d%%",
 				totalKills, totalMisses, accuracy);
+			playLevelEnd(11, accuracy, -1, false);
 		}
 
-		playLevelEnd(11);
 		_levelUnlocked[11] = true;
 		return kLevelNextLevel;
 	}
@@ -1567,9 +1600,9 @@ int InsaneRebel2::runLevel12() {
 			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debugC(DEBUG_INSANE, "Level 12 completed! kills=%d misses=%d accuracy=%d%%",
 				_rebelKillCounter, _rebelHitCounter, accuracy);
+			playLevelEnd(12, accuracy, -1, false);
 		}
 
-		playLevelEnd(12);
 		_levelUnlocked[12] = true;
 		return kLevelNextLevel;
 	}
@@ -1591,6 +1624,8 @@ int InsaneRebel2::runLevel13() {
 		resetExplosions();
 
 		clearBit(0);
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
 
 		resetShieldGauge();
 		_rebelShieldGateActive = true;
@@ -1618,7 +1653,7 @@ int InsaneRebel2::runLevel13() {
 		if (_playerShield > 0 && _rebelShieldDestroyed) {
 			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debugC(DEBUG_INSANE, "Level 13 completed! accuracy=%d%%", accuracy);
-			playLevelEnd(13);
+			playLevelEnd(13, accuracy, _rebelHitCounter, false);
 			_levelUnlocked[13] = true;
 			return kLevelNextLevel;
 		}
@@ -1656,6 +1691,8 @@ int InsaneRebel2::runLevel14() {
 		resetExplosions();
 
 		clearBit(0);
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
 
 		if (!playLevelSegment("LEV14/14PLAY.SAN", 0x28))
 			return kLevelQuit;
@@ -1663,7 +1700,7 @@ int InsaneRebel2::runLevel14() {
 		if (_playerShield > 0) {
 			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debugC(DEBUG_INSANE, "Level 14 completed! accuracy=%d%%", accuracy);
-			playLevelEnd(14);
+			playLevelEnd(14, accuracy, -1, false);
 			_levelUnlocked[14] = true;
 			return kLevelNextLevel;
 		}
@@ -1707,6 +1744,8 @@ int InsaneRebel2::runLevel15() {
 		resetExplosions();
 
 		clearBit(0);
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
 
 		_rebelLevelType = 0xf;
 
@@ -1716,7 +1755,9 @@ int InsaneRebel2::runLevel15() {
 		if (_playerShield > 0) {
 			int accuracy = calculateAccuracy(_rebelKillCounter, _rebelHitCounter);
 			debugC(DEBUG_INSANE, "Level 15 completed! accuracy=%d%%", accuracy);
-			playLevelEnd(15);
+			_currentPhase = 2;
+			_rebelLevelType = 0x10;
+			playLevelEnd(15, accuracy, _rebelHitCounter, false);
 			_levelUnlocked[15] = true;
 			return kLevelNextLevel;
 		}
