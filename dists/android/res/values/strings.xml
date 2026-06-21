@@ -62,6 +62,7 @@
 	<string name="preference_saf_tree_key" translatable="false">pref_key__saf_tree_uri</string>
 
 	<string name="local_net_permission_denied">Local network access permission was denied: Web server won\'t be reachable</string>
+	<string name="http_service_description">ScummVM Web server</string>
 
 	<string name="ini_parsing_error">Configuration file could not be parsed</string>
 	<string name="shortcut_creator_title">Run a game</string>
