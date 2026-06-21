@@ -52,6 +52,7 @@ static Common::U32String customkeyboardview_keycode_enter = _("Enter");
 static Common::U32String customkeyboardview_popup_close = _("Close popup");
 static Common::U32String saf_request_prompt = _("Please select the *root* of your external (physical) SD card. This is required for ScummVM to access this path: ");
 static Common::U32String saf_revoke_done = _("Storage Access Framework Permissions for ScummVM were revoked!");
+static Common::U32String local_net_permission_denied = _("Local network access permission was denied: Web server won\'t be reachable");
 static Common::U32String ini_parsing_error = _("Configuration file could not be parsed");
 static Common::U32String shortcut_creator_title = _("Run a game");
 static Common::U32String shortcut_creator_search_game = _("Search a game");

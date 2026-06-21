@@ -161,6 +161,8 @@ public class ScummVMActivity extends Activity {
 
 	private PluginBroadcastReceiver _pluginBroadcastReceiver = null;
 
+	private static final int MY_PERMISSION_LOCAL_NETWORK = 200;
+
 	// Set to true in onDestroy
 	// This avoids that when C++ terminates we call finish() a second time
 	// This second finish causes termination when we are launched again
@@ -899,6 +901,29 @@ public class ScummVMActivity extends Activity {
 		}
 
 		@Override
+		protected void notifyHTTPService(int localPort, boolean minimal) {
+			if (localPort < 0) {
+				return;
+			}
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CINNAMON_BUN &&
+				checkPermission(Manifest.permission.ACCESS_LOCAL_NETWORK, Process.myPid(), Process.myUid()) != PackageManager.PERMISSION_GRANTED) {
+				Log.d(ScummVM.LOG_TAG, "Requesting local network permission");
+				final String[] PERMISSIONS = {
+					Manifest.permission.ACCESS_LOCAL_NETWORK,
+				};
+				// Delay the request to allow for proper GUI refresh of the server state
+				// Else, there is an interference with the tooltip code
+				new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						requestPermissions(PERMISSIONS, MY_PERMISSION_LOCAL_NETWORK);
+					}
+				}, 100);
+			}
+		}
+
+		@Override
 		protected String[] getSysArchives() {
 			File assetsDir = new File(_actualScummVMDataDir, "assets");
 			Log.d(ScummVM.LOG_TAG, "Adding to Search Archive: " + assetsDir.getPath());
@@ -1360,6 +1385,20 @@ public class ScummVMActivity extends Activity {
 				// permission denied! We won't be able to make use of functionality depending on this permission.
 				Toast.makeText(this, "Until permission is granted, it might be impossible to write to some locations!", Toast.LENGTH_SHORT)
 					.show();
+			}
+		} else if (requestCode == MY_PERMISSION_LOCAL_NETWORK) {
+			boolean result = grantResults.length > 0;
+			for (int grantResult : grantResults) {
+				if (grantResult != PackageManager.PERMISSION_GRANTED) {
+					result = false;
+					break;
+				}
+			}
+			if (!result) {
+				Log.i(ScummVM.LOG_TAG, "Local network permission denied");
+				Toast.makeText(ScummVMActivity.this, getResources().getString(R.string.local_net_permission_denied), Toast.LENGTH_LONG).show();
+			} else {
+				Log.i(ScummVM.LOG_TAG, "Local network permission granted");
 			}
 		}
 	}
