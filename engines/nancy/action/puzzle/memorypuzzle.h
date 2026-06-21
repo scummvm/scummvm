@@ -40,6 +40,7 @@ public:
 	void init() override;
 
 	void readData(Common::SeekableReadStream &stream) override;
+	void readDataNancy11(Common::SeekableReadStream &stream);
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
@@ -67,6 +68,11 @@ protected:
 	uint32 _numPairs      = 12;    // pairs in the shuffled layout (clamped [4..36])
 	uint32 _requiredPairs = 12;    // pairs needed to win (clamped [2..36])
 	uint32 _flipDelay     = 1500;  // ms before non-matching cards flip back
+
+	// Counts are fixed in the Nancy 9 layout but configurable from Nancy 11 onwards
+	int _numTabs      = kNumTabs;
+	int _cardsPerTab  = kCardsPerTab;
+	int _numTypes     = kMaxTypes;
 
 	bool _shuffleGlobal = false;  // false = pairs stay within same tab; true = can cross tabs
 

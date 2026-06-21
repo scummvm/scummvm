@@ -34,26 +34,12 @@
 namespace Nancy {
 namespace Action {
 
-// Binary layout (offsets from stream start, all LE):
-//   0x000  33  image filename
-//   0x021 576  36 x face src rect (int32 l/t/r/b x 4) [types 0..35]
-//   0x261  48  3 x tab indicator src rect (one per tab)
-//   0x291 384  24 x card screen rect (viewport-relative, int32 x 4)
-//   0x411  16  tab rect (screen rect where the active-tab graphic is drawn)
-//   0x421 144  3 x 3 x 16 tab hotspot rects [currentTab][targetTab]
-//   0x4b1   4  flipDelay (uint32, milliseconds)
-//   0x4b5   4  numPairs (uint32; clamped [4..36] in init)
-//   0x4b9   4  requiredPairs (uint32; clamped [2..36] in init)
-//   0x4bd   1  cursor flag (byte; skip in ScummVM)
-//   0x4be   1  shuffle flag (0 = pairs stay within tab, nonzero = global)
-//   0x4bf  49  match sound (played when a matching pair is found)
-//   0x4f0  49  card flip sound (played when flipping a card face-up)
-//   0x521  25  win SceneChangeWithFlag
-//   0x53a   1  unknown (skip)
-//   0x53b  49  win sound
-//   0x56c  16  exit hotspot rect
-//   [total: 0x57c = 1404 bytes]
 void MemoryPuzzle::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy11) {
+		readDataNancy11(stream);
+		return;
+	}
+
 	// 0x000: image filename (33 bytes)
 	readFilename(stream, _imageName);
 
@@ -104,13 +90,71 @@ void MemoryPuzzle::readData(Common::SeekableReadStream &stream) {
 	readRect(stream, _exitHotspot);
 }
 
+// Nancy 11 reworked the layout: fewer (12) face rects, a configurable grid/page count,
+// per-card-type voice clips in 27 fixed-size (0xb6) blocks, and two outcome scenes.
+void MemoryPuzzle::readDataNancy11(Common::SeekableReadStream &stream) {
+	readFilename(stream, _imageName); // 0x000
+
+	for (int i = 0; i < 12; ++i)            // 0x021 face src rects
+		readRect(stream, _faceSrcRects[i]);
+	for (int i = 0; i < kNumTabs; ++i)      // 0x0e1 page-tab indicator src rects
+		readRect(stream, _tabSrcRects[i]);
+	for (int i = 0; i < kCardsPerTab; ++i)  // 0x111 card position / back src rects
+		readRect(stream, _cardRects[i]);
+
+	readRect(stream, _tabRect);             // 0x291 tab indicator dest
+
+	for (int tab = 0; tab < kNumTabs; ++tab) // 0x2a1 tab hotspots
+		for (int slot = 0; slot < 3; ++slot)
+			readRect(stream, _tabHotspots[tab][slot]);
+
+	_flipDelay = stream.readUint32LE();     // 0x331
+	stream.skip(4);                         // 0x335 (second timing value, unused)
+	int32 requirePercent = stream.readSint32LE(); // 0x339 (-1 = use the fixed count below)
+	int32 requireCount   = stream.readSint32LE(); // 0x33d
+	stream.skip(4);                         // 0x341 (unused)
+
+	_shuffleGlobal = (stream.readByte() != 0); // 0x345
+	stream.skip(1);                         // 0x346 (flag, unused)
+
+	int32 pages      = stream.readSint32LE(); // 0x347
+	int32 gridsWide  = stream.readSint32LE(); // 0x34b
+	int32 gridsTall  = stream.readSint32LE(); // 0x34f
+	int32 srcWide    = stream.readSint32LE(); // 0x353
+	int32 srcTall    = stream.readSint32LE(); // 0x357
+	stream.skip(1);                         // 0x35b (tabs flag)
+
+	_numTabs     = CLIP<int>(pages, 1, kNumTabs);
+	_cardsPerTab = CLIP<int>(gridsWide * gridsTall, 1, kCardsPerTab);
+	_numTypes    = CLIP<int>(srcWide * srcTall, 1, kMaxTypes);
+	_numPairs    = _numTypes;
+	_requiredPairs = (requirePercent < 0) ? (uint32)requireCount
+	                                       : (uint32)(_numPairs * requirePercent / 100);
+
+	// 27 fixed 0xb6-byte voice-clip blocks: [0] is the card-flip sound, [17] starts the
+	// per-card match sounds (used here as a single match sound; per-type audio is a TODO).
+	_cardFlipSound.readNormal(stream);             // block 0 @ 0x35c
+	stream.skip(17 * 0xb6 - 0x31);                 // advance to block 17 @ 0xf72
+	_matchSound.readNormal(stream);                // block 17
+	stream.skip((27 - 17) * 0xb6 - 0x31);          // advance to the scenes @ 0x168e
+	_winSound.name = "NO SOUND";
+
+	// Solve scene (0x168e), then an alternate-outcome scene (0x16a8, unused). The event flags
+	// store a 16-bit value rather than a simple on/off.
+	_winScene._sceneChange.readData(stream);
+	_winScene._sceneChange.continueSceneSound = stream.readUint16LE();
+	_winScene._flag.label = stream.readSint16LE();
+	_winScene._flag.flag = stream.readSint16LE() ? g_nancy->_true : g_nancy->_false;
+	stream.skip(26); // alternate scene
+}
+
 // Shuffles type IDs (0..numPairs-1) into the 72-card array so that every type
 // appears exactly twice. numPairs is clamped to [4, 36]; cards beyond numPairs
 // remain typeId -1 (unassigned, unselectable). requiredPairs is clamped to [2, totalCards/2].
 void MemoryPuzzle::initCards() {
-	_numPairs = CLIP<uint32>(_numPairs, 4, (uint32)kMaxTypes);
+	_numPairs = CLIP<uint32>(_numPairs, 4, (uint32)_numTypes);
 
-	const int totalCards = kNumTabs * kCardsPerTab;
+	const int totalCards = _numTabs * _cardsPerTab;
 	const uint32 maxRequire = (uint32)(totalCards / 2);
 	_requiredPairs = CLIP<uint32>(_requiredPairs, 2, maxRequire);
 
@@ -129,9 +173,9 @@ void MemoryPuzzle::initCards() {
 
 	if (!_shuffleGlobal) {
 		// By-tab: pairs are always within the same tab.
-		for (int tab = 0; tab < kNumTabs; ++tab) {
-			int base = tab * kCardsPerTab;
-			for (int i = 0; i < kCardsPerTab; ++i) {
+		for (int tab = 0; tab < _numTabs; ++tab) {
+			int base = tab * _cardsPerTab;
+			for (int i = 0; i < _cardsPerTab; ++i) {
 				if (_cards[base + i].typeId != -1)
 					continue;
 				if (static_cast<uint32>(nextType) >= _numPairs)
@@ -142,7 +186,7 @@ void MemoryPuzzle::initCards() {
 				// Find a random unassigned slot in the same tab for the pair
 				int partner;
 				do {
-					partner = g_nancy->_randomSource->getRandomNumber(kCardsPerTab - 1);
+					partner = g_nancy->_randomSource->getRandomNumber(_cardsPerTab - 1);
 				} while (_cards[base + partner].typeId != -1);
 				_cards[base + partner].typeId = nextType;
 
@@ -256,7 +300,7 @@ void MemoryPuzzle::handleInput(NancyInput &input) {
 	}
 
 	// Tab switching: _tabHotspots[currentTab][slot] where slot is the target tab
-	for (int slot = 0; slot < kNumTabs; ++slot) {
+	for (int slot = 0; slot < _numTabs; ++slot) {
 		if (_tabHotspots[_currentTab][slot].contains(mouseVP)) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
 			if ((input.input & NancyInput::kLeftMouseButtonUp) && slot != _currentTab) {
@@ -281,8 +325,8 @@ void MemoryPuzzle::handleInput(NancyInput &input) {
 	if (_flipTimerActive)
 		return;
 
-	int base = _currentTab * kCardsPerTab;
-	for (int i = 0; i < kCardsPerTab; ++i) {
+	int base = _currentTab * _cardsPerTab;
+	for (int i = 0; i < _cardsPerTab; ++i) {
 		if (!_cardRects[i].contains(mouseVP))
 			continue;
 
@@ -356,21 +400,21 @@ void MemoryPuzzle::redrawCards() {
 
 	// Draw the active tab indicator over the corresponding tab button.
 	// The scene background shows inactive tab visuals; the overlay only marks the active one.
-	if (_currentTab < kNumTabs && !_tabSrcRects[_currentTab].isEmpty())
+	if (_currentTab < _numTabs && !_tabSrcRects[_currentTab].isEmpty())
 		_drawSurface.blitFrom(_image, _tabSrcRects[_currentTab],
 			Common::Point(_tabRect.left, _tabRect.top));
 
-	// Draw face-up and matched cards. Face-down cards are left transparent so
-	// the scene background (which carries the card-back visual) shows through.
-	int base = _currentTab * kCardsPerTab;
-	for (int i = 0; i < kCardsPerTab; ++i) {
+	// Draw face-up and matched cards. Face-down cards are left transparent so the scene
+	// background (which carries the card-back visual) shows through.
+	int base = _currentTab * _cardsPerTab;
+	for (int i = 0; i < _cardsPerTab; ++i) {
 		int idx = base + i;
 		const CardState &card = _cards[idx];
 		const Common::Rect &dest = _cardRects[i];
 
 		if (card.matchState != 0 || card.flipState != 0) {
 			int t = card.typeId;
-			if (t >= 0 && t < kMaxTypes && !_faceSrcRects[t].isEmpty())
+			if (t >= 0 && t < _numTypes && !_faceSrcRects[t].isEmpty())
 				_drawSurface.blitFrom(_image, _faceSrcRects[t],
 					Common::Point(dest.left, dest.top));
 		}
