@@ -27,7 +27,6 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/scummsys.h"
-#include "common/debug.h"
 
 #include "audio/mixer.h"
 #include "audio/fmopl.h"
@@ -41,6 +40,7 @@ extern "C"
 }
 
 #ifndef RELEASE_BUILD
+	#include "common/debug.h"
 	#define NFM_ENABLE_LOGS 1
 #endif
 
