@@ -46,6 +46,8 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.net.nsd.NsdManager;
+import android.net.nsd.NsdServiceInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -162,6 +164,7 @@ public class ScummVMActivity extends Activity {
 	private PluginBroadcastReceiver _pluginBroadcastReceiver = null;
 
 	private static final int MY_PERMISSION_LOCAL_NETWORK = 200;
+	private NsdManager.RegistrationListener nsdRegistrationListener = null;
 
 	// Set to true in onDestroy
 	// This avoids that when C++ terminates we call finish() a second time
@@ -902,6 +905,13 @@ public class ScummVMActivity extends Activity {
 
 		@Override
 		protected void notifyHTTPService(int localPort, boolean minimal) {
+			final NsdManager nsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
+
+			if (nsdRegistrationListener != null) {
+				nsdManager.unregisterService(nsdRegistrationListener);
+				nsdRegistrationListener = null;
+			}
+
 			if (localPort < 0) {
 				return;
 			}
@@ -920,6 +930,43 @@ public class ScummVMActivity extends Activity {
 						requestPermissions(PERMISSIONS, MY_PERMISSION_LOCAL_NETWORK);
 					}
 				}, 100);
+			}
+
+			if (!minimal) {
+				// Don't publish our service if we are running in minimal mode (OAuth stuff)
+				nsdRegistrationListener = new NsdManager.RegistrationListener() {
+					@Override
+					public void onRegistrationFailed(NsdServiceInfo nsdServiceInfo, int i) {
+						Log.d(ScummVM.LOG_TAG, "HTTP service registration failed: " + i);
+					}
+
+					@Override
+					public void onServiceRegistered(NsdServiceInfo nsdServiceInfo) {
+						Log.d(ScummVM.LOG_TAG, "HTTP service registered");
+					}
+
+					@Override
+					public void onServiceUnregistered(NsdServiceInfo nsdServiceInfo) {
+						Log.d(ScummVM.LOG_TAG, "HTTP service unregistered");
+					}
+
+					@Override
+					public void onUnregistrationFailed(NsdServiceInfo nsdServiceInfo, int i) {
+						Log.d(ScummVM.LOG_TAG, "HTTP service unregistration failed: " + i);
+					}
+				};
+
+				final String serviceName = getResources().getString(R.string.http_service_description);
+
+				final NsdServiceInfo serviceInfo = new NsdServiceInfo();
+				serviceInfo.setServiceName(serviceName);
+				serviceInfo.setServiceType("_http._tcp.");
+				serviceInfo.setPort(localPort);
+
+				nsdManager.registerService(
+					serviceInfo,
+					NsdManager.PROTOCOL_DNS_SD,
+					nsdRegistrationListener);
 			}
 		}
 
