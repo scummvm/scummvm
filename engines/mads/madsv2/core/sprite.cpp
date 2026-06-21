@@ -65,6 +65,11 @@ void sprite_draw(SeriesPtr series, int id, Buffer *buf, int target_x, int target
 #undef translate
 #undef interface
 
+void sprite_draw_clipped(SeriesPtr series, int id, int clip_x, Buffer *buf, int target_x, int target_y) {
+	// TODO: implement clipped/partial draw; for now delegate to full draw
+	sprite_draw(series, id, buf, target_x, target_y);
+}
+
 //=== sprite_draw_scaled =====================================
 #define three_d         false           /* depth coding  OFF */
 #define bresenham       true            /* bresenham     ON  */

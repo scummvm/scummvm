@@ -300,6 +300,7 @@ extern int sprite_error;
 
 
 void sprite_draw(SeriesPtr series, int id, Buffer *buf, int target_x, int target_y);
+void sprite_draw_clipped(SeriesPtr series, int id, int clip_x, Buffer *buf, int target_x, int target_y);
 void sprite_draw_scaled(SeriesPtr series, int id, Buffer *buf,
 	int target_x, int target_y, int scale_factor);
 void sprite_draw_3d_scaled(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
