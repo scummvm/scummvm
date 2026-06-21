@@ -18,7 +18,7 @@ android {
 
     //targetSdkVersion defaults to compileSdk
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
     ndkVersion = "23.2.8568313"
     enableKotlin = false
