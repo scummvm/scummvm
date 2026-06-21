@@ -265,7 +265,7 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::downsampleConvert(Au
 		}
 
 		// Process as many samples as we can from the current buffer
-		const int count = MIN(
+		const int count = MIN<int>(
 			_bufferSize / (inStereo ? 2 : 1) / outPos_inc,
 			(int)(outEnd - outBuffer) / (outStereo ? 2 : 1));
 		_bufferSize -= count * outPos_inc * (inStereo ? 2 : 1);
