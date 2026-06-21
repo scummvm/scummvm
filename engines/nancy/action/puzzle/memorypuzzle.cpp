@@ -137,7 +137,7 @@ void MemoryPuzzle::readDataNancy11(Common::SeekableReadStream &stream) {
 	stream.skip(17 * 0xb6 - 0x31);                 // advance to block 17 @ 0xf72
 	_matchSound.readNormal(stream);                // block 17
 	stream.skip((27 - 17) * 0xb6 - 0x31);          // advance to the scenes @ 0x168e
-	_winSound.name = "NO SOUND";
+	// Nancy 11 has no win sound; _winSound keeps its default "NO SOUND".
 
 	// Solve scene (0x168e), then an alternate-outcome scene (0x16a8, unused). The event flags
 	// store a 16-bit value rather than a simple on/off.
