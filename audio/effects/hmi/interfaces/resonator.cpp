@@ -33,11 +33,11 @@ HMIResonator::HMIResonator()
 				   kResonatorParams, kResonatorMin, kResonatorMax, kResonatorDefault,
 				   "Resonator", 2350, 2) {}
 
-int HMIResonator::init(HMIPreset *, HMIEffectNode *) {
+int HMIResonator::init(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIResonator::uninit(HMIPreset *, HMIEffectNode *) {
+int HMIResonator::uninit(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
@@ -72,13 +72,13 @@ int HMIResonator::processBlock(HMIPreset *preset, HMIEffectNode *base) {
 	return 0;
 }
 
-int HMIResonator::getEffectParam(HMIEffectNode *base, int p, float *v, int *type) {
+int HMIResonator::getEffectParam(HMIEffectNode *base, int param, float *value, int *type) {
 	HMIResonatorNode *n = (HMIResonatorNode *)base;
 
-	if (p == 0) {
-		*v = n->cutoffFrequency;
-	} else if (p == 1) {
-		*v = n->bandWidth;
+	if (param == 0) {
+		*value = n->cutoffFrequency;
+	} else if (param == 1) {
+		*value = n->bandWidth;
 	} else {
 		return 11;
 	}
@@ -87,13 +87,13 @@ int HMIResonator::getEffectParam(HMIEffectNode *base, int p, float *v, int *type
 	return 0;
 }
 
-int HMIResonator::setEffectParam(HMIEffectNode *base, int p, float v) {
+int HMIResonator::setEffectParam(HMIEffectNode *base, int param, float value) {
 	HMIResonatorNode *n = (HMIResonatorNode *)base;
 
-	if (p == 0) {
-		n->cutoffFrequency = v;
-	} else if (p == 1) {
-		n->bandWidth = v;
+	if (param == 0) {
+		n->cutoffFrequency = value;
+	} else if (param == 1) {
+		n->bandWidth = value;
 	} else {
 		return 11;
 	}

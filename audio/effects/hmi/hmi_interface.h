@@ -32,13 +32,13 @@ class HMIInterface {
 public:
 	virtual ~HMIInterface() {}
 
-	virtual int init(HMIPreset *, HMIEffectNode *) = 0;
-	virtual int uninit(HMIPreset *, HMIEffectNode *) = 0;
-	virtual int getMinDuration(HMIEffectNode *, uint32 *);
-	virtual int processBlock(HMIPreset *, HMIEffectNode *) = 0;
-	virtual int initEffect(HMIPreset *, HMIEffectNode *) = 0;
-	virtual int getEffectParam(HMIEffectNode *, int, float *, int *) = 0;
-	virtual int setEffectParam(HMIEffectNode *, int, float) = 0;
+	virtual int init(HMIPreset *preset, HMIEffectNode *base) = 0;
+	virtual int uninit(HMIPreset *preset, HMIEffectNode *base) = 0;
+	virtual int getMinDuration(HMIEffectNode *n, uint32 *out);
+	virtual int processBlock(HMIPreset *preset, HMIEffectNode *base) = 0;
+	virtual int initEffect(HMIPreset *preset, HMIEffectNode *base) = 0;
+	virtual int getEffectParam(HMIEffectNode *base, int param, float *value, int *type) = 0;
+	virtual int setEffectParam(HMIEffectNode *base, int param, float value) = 0;
 
 	int effectStructSize() const { return _effectStructSize; }
 	int outChannels() const { return _outChannels; }
@@ -62,16 +62,16 @@ protected:
 				 int paramCount);
 
 private:
-	int _effectStructSize;
-	int _outChannels;
-	const char *_interfaceName;
-	HMIParamNames _effectParams;
-	const float *_paramMinValues;
-	const float *_paramMaxValues;
-	const float *_paramDefaultValues;
-	char _presetName[64];
-	int _presetId;
-	int _paramCount;
+	int _effectStructSize = 0;
+	int _outChannels = 0;
+	const char *_interfaceName = nullptr;
+	HMIParamNames _effectParams = nullptr;
+	const float *_paramMinValues = nullptr;
+	const float *_paramMaxValues = nullptr;
+	const float *_paramDefaultValues = nullptr;
+	char _presetName[64] = {0};
+	int _presetId = 0;
+	int _paramCount = 0;
 };
 
 } // End of namespace Audio

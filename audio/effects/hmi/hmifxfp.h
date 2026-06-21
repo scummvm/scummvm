@@ -51,7 +51,7 @@ private:
 	HMIResonator _resonator;
 	HMIPhasor _phasor;
 	HMIReverb2 _reverb2;
-	HMIInterface *_interfaceList[10];
+	HMIInterface *_interfaceList[10] = {nullptr};
 };
 
 } // End of namespace Audio

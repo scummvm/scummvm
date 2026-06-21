@@ -61,11 +61,13 @@ static int16 hmiFistp16(float value) {
 }
 
 HMIFxLib::HMIFxLib()
-	: _numLoadedInterfaces(0), _curInterfaceIndex(0), _systemHeap(0),
-	  _heapCursor(0), _heapEnd(0), _mallocFunc(malloc), _freeFunc(free) {
+	: _numLoadedInterfaces(0), _curInterfaceIndex(0), _systemHeap(nullptr), _heapCursor(nullptr), _heapEnd(nullptr) {
 	memset(_loadedInterfaces, 0, sizeof(_loadedInterfaces));
+
+	_fxFp = new HMIFxFp();
+	
 	HMIInterface **list = nullptr;
-	_fxFp.hmiFXGetInterfaceList(&list);
+	_fxFp->hmiFXGetInterfaceList(&list);
 
 	while (_numLoadedInterfaces != 1024 && list[_numLoadedInterfaces]) {
 		_loadedInterfaces[_numLoadedInterfaces] = list[_numLoadedInterfaces];
@@ -76,22 +78,16 @@ HMIFxLib::HMIFxLib()
 		_loadedInterfaces[_numLoadedInterfaces] = nullptr;
 }
 
-HMIFxLib::~HMIFxLib() {}
+HMIFxLib::~HMIFxLib() {
+	delete _fxFp;
+}
 
 HMIFxFp *HMIFxLib::effects() {
-	return &_fxFp;
+	return _fxFp;
 }
 
 int HMIFxLib::hmiFXInitSystem(HMIInitData *initData) {
-	if (initData->mallocFunc && initData->freeFunc) {
-		_mallocFunc = initData->mallocFunc;
-		_freeFunc = initData->freeFunc;
-	} else {
-		_mallocFunc = malloc;
-		_freeFunc = free;
-	}
-
-	initData->heapPtr = hmiFXMalloc((size_t)initData->heapSize);
+	initData->heapPtr = malloc((size_t)initData->heapSize);
 	if (!initData->heapPtr)
 		return 1;
 
@@ -101,7 +97,7 @@ int HMIFxLib::hmiFXInitSystem(HMIInitData *initData) {
 
 int HMIFxLib::hmiFXUnInitSystem(HMIInitData *initData) {
 	if (initData->heapPtr)
-		hmiFXFree(initData->heapPtr);
+		free(initData->heapPtr);
 
 	initData->heapPtr = nullptr;
 	_systemHeap = _heapCursor = _heapEnd = nullptr;
@@ -156,6 +152,7 @@ void *HMIFxLib::hmiFXHeapAlloc(int size) {
 	uint8 *result = _heapCursor;
 	if (!result || result + size > _heapEnd)
 		return nullptr;
+
 	_heapCursor += size;
 	return result;
 }
@@ -172,14 +169,6 @@ int HMIFxLib::hmiFXHeapInit(HMIInitData *data) {
 void *HMIFxLib::hmiFXHeapReset() {
 	_heapCursor = _systemHeap;
 	return _systemHeap;
-}
-
-void *HMIFxLib::hmiFXMalloc(size_t size) {
-	return _mallocFunc(size);
-}
-
-void HMIFxLib::hmiFXFree(void *ptr) {
-	_freeFunc(ptr);
 }
 
 int HMIFxLib::convertPCMToFloat(HMIPreset *preset, const uint8 *buffer, int samples) {
@@ -275,7 +264,7 @@ int HMIFxLib::hmiFXPresetCreate(HMIPreset *preset) {
 	uint32 samples = preset->inputFmt->sampleRate * preset->chunkSizeInMs / 1000U;
 	int segmentBytes = 4 * (int)samples + 1024;
 	preset->chunkSizeInSamples = samples;
-	float *block = (float *)((preset->flags & HMI_PRESET_FLAG_USE_MALLOC) ? hmiFXMalloc(4 * segmentBytes)
+	float *block = (float *)((preset->flags & HMI_PRESET_FLAG_USE_MALLOC) ? malloc(4 * segmentBytes)
 																		  : hmiFXHeapAlloc(4 * segmentBytes));
 	if (!block)
 		return 1;
@@ -303,7 +292,7 @@ int HMIFxLib::hmiFXPresetDestroy(HMIPreset *preset) {
 		node->interface->uninit(preset, node);
 
 	if (preset->flags & HMI_PRESET_FLAG_USE_MALLOC)
-		hmiFXFree(preset->floatBufLeft0);
+		free(preset->floatBufLeft0);
 
 	return 0;
 }
@@ -416,7 +405,7 @@ int HMIFxLib::hmiFXPresetCreateInstance(HMIPreset *source, HMIPreset **outInstan
 	if (!source)
 		return 15;
 
-	HMIPreset *copy = (HMIPreset *)hmiFXMalloc(sizeof(HMIPreset));
+	HMIPreset *copy = (HMIPreset *)malloc(sizeof(HMIPreset));
 	if (!copy) {
 		*outInstance = nullptr;
 		return 1;
@@ -428,7 +417,7 @@ int HMIFxLib::hmiFXPresetCreateInstance(HMIPreset *source, HMIPreset **outInstan
 
 	HMIEffectNode *previous = nullptr;
 	for (HMIEffectNode *src = source->effectChain; src; src = src->next) {
-		HMIEffectNode *node = (HMIEffectNode *)hmiFXMalloc(src->interface->effectStructSize());
+		HMIEffectNode *node = (HMIEffectNode *)malloc(src->interface->effectStructSize());
 		if (!node) {
 			hmiFXPresetDestroyInstance(copy);
 			*outInstance = nullptr;
@@ -460,11 +449,11 @@ int HMIFxLib::hmiFXPresetDestroyInstance(HMIPreset *preset) {
 	while (node) {
 		node->interface->uninit(preset, node);
 		HMIEffectNode *next = node->next;
-		hmiFXFree(node);
+		free(node);
 		node = next;
 	}
 
-	hmiFXFree(preset);
+	free(preset);
 	return 0;
 }
 
@@ -538,7 +527,7 @@ int HMIFxLib::processPreset(HMIPreset *preset, HMIProcessRequest *req) {
 	}
 
 	if (req->flags & HMI_PROCESS_ALLOCATE_OUTPUT) {
-		req->dstBuf = (uint8 *)hmiFXMalloc(outputBytes);
+		req->dstBuf = (uint8 *)malloc(outputBytes);
 		if (!req->dstBuf)
 			return 1;
 
@@ -819,7 +808,7 @@ int HMIFxLib::hmiFXPresetLoadLibrary(HMILibrary **outLib, Common::SeekableReadSt
 	if (!readFile(&d, stream))
 		return 10;
 
-	HMILibrary *library = (HMILibrary *)hmiFXMalloc(sizeof(HMILibrary));
+	HMILibrary *library = (HMILibrary *)malloc(sizeof(HMILibrary));
 	if (!library) {
 		flushFile(&d);
 		return 1;
@@ -863,7 +852,7 @@ int HMIFxLib::hmiFXPresetLoadLibrary(HMILibrary **outLib, Common::SeekableReadSt
 		if (!findSection(&d, query))
 			break;
 
-		HMIPreset *preset = (HMIPreset *)hmiFXMalloc(sizeof(HMIPreset));
+		HMIPreset *preset = (HMIPreset *)malloc(sizeof(HMIPreset));
 		if (!preset) {
 			flushFile(&d);
 			return 1;
@@ -897,7 +886,7 @@ int HMIFxLib::hmiFXPresetLoadLibrary(HMILibrary **outLib, Common::SeekableReadSt
 				return 7;
 			}
 
-			HMIEffectNode *node = (HMIEffectNode *)hmiFXMalloc(interface->effectStructSize());
+			HMIEffectNode *node = (HMIEffectNode *)malloc(interface->effectStructSize());
 			if (!node) {
 				flushFile(&d);
 				return 1;
@@ -940,19 +929,19 @@ int HMIFxLib::hmiFXPresetFreeLibrary(HMILibrary *library) {
 		while (node) {
 			node->interface->uninit(preset, node);
 			HMIEffectNode *next = node->next;
-			hmiFXFree(node);
+			free(node);
 			node = next;
 		}
 
 		if (preset->flags & HMI_PRESET_FLAG_USE_MALLOC)
-			hmiFXFree(preset->floatBufLeft0);
+			free(preset->floatBufLeft0);
 
 		HMIPreset *next = preset->next;
-		hmiFXFree(preset);
+		free(preset);
 		preset = next;
 	}
 
-	hmiFXFree(library);
+	free(library);
 	return 0;
 }
 

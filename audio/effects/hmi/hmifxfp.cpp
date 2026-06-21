@@ -50,15 +50,16 @@ HMIInterface::HMIInterface(int size, int channels,
 	copyName(_presetName, name);
 }
 
-int HMIInterface::getMinDuration(HMIEffectNode *, uint32 *duration) {
+int HMIInterface::getMinDuration(HMIEffectNode *n, uint32 *duration) {
 	*duration = 0;
 	return 0;
 }
 
-HMIFxFp::HMIFxFp() { initializeInterfaces(); }
+HMIFxFp::HMIFxFp() { 
+	initializeInterfaces();
+}
 
 void HMIFxFp::initializeInterfaces() {
-	/* Original interface-list order at 0x10012A70. */
 	_interfaceList[0] = &_monoDelay;
 	_interfaceList[1] = &_stereoDelay;
 	_interfaceList[2] = &_reverb1;

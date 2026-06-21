@@ -64,8 +64,6 @@ public:
 	void hmiFXHeapFree(void *ptr);
 	int hmiFXHeapInit(HMIInitData *initData);
 	void *hmiFXHeapReset();
-	void *hmiFXMalloc(size_t size);
-	void hmiFXFree(void *ptr);
 
 private:
 	int convertPCMToFloat(HMIPreset *preset, const uint8 *buffer, int samples);
@@ -83,16 +81,14 @@ private:
 	int readSectionInt(HMIFileDescriptor *desc, const char *key, int *value);
 	int readSectionString(HMIFileDescriptor *desc, const char *key, char *value, int size);
 
-	HMIFxFp _fxFp;
+	HMIFxFp *_fxFp = nullptr;
 	HMIInterface *_loadedInterfaces[1024];
-	unsigned int _numLoadedInterfaces;
-	unsigned int _curInterfaceIndex;
+	unsigned int _numLoadedInterfaces = 0;
+	unsigned int _curInterfaceIndex = 0;
 
-	uint8 *_systemHeap;
-	uint8 *_heapCursor;
-	uint8 *_heapEnd;
-	void *(*_mallocFunc)(size_t);
-	void (*_freeFunc)(void *);
+	uint8 *_systemHeap = nullptr;
+	uint8 *_heapCursor = nullptr;
+	uint8 *_heapEnd = nullptr;
 };
 
 } // End of namespace Audio

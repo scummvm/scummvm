@@ -29,12 +29,12 @@ namespace Audio {
 class HMIPhasor : public HMIInterface {
 public:
 	HMIPhasor();
-	int init(HMIPreset *, HMIEffectNode *) override;
-	int uninit(HMIPreset *, HMIEffectNode *) override;
-	int processBlock(HMIPreset *, HMIEffectNode *) override;
-	int initEffect(HMIPreset *, HMIEffectNode *) override;
-	int getEffectParam(HMIEffectNode *, int, float *, int *) override;
-	int setEffectParam(HMIEffectNode *, int, float) override;
+	int init(HMIPreset *preset, HMIEffectNode *base) override;
+	int uninit(HMIPreset *preset, HMIEffectNode *base) override;
+	int processBlock(HMIPreset *preset, HMIEffectNode *base) override;
+	int initEffect(HMIPreset *preset, HMIEffectNode *base) override;
+	int getEffectParam(HMIEffectNode *base, int param, float *value, int *type) override;
+	int setEffectParam(HMIEffectNode *base, int param, float value) override;
 
 private:
 	static const char *const kPhasorParams[];
