@@ -869,21 +869,23 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	int16 scaledInputX = (int16)((inputX * 127) / 160);
 	int16 scaledInputY = _optControlsFlipped ? (int16)-inputY : inputY;  // local_14
 
-	// Direct mouse/touch/gamepad aiming can hold the cursor at an edge
-	// indefinitely. Keep this sensitivity concession local to Handler 7
-	// third-person ship steering. A held analog stick is already bounded by its
-	// physical range, so keep its full logical range for more responsive L10 flight.
-	if (!_gamepadAimActive) {
+	const bool useDirectGamepadFlight = _gamepadAimActive && _selectedLevel == 10;
+
+	// Direct mouse/touch aiming can hold the cursor at an edge indefinitely.
+	// Keep this sensitivity concession for mouse-like Handler 7 steering.
+	// Level 10 is the only Handler 7 stage that needs direct full-range
+	// gamepad axes; other Handler 7 stages use bounded target steering to avoid
+	// harsh perspective shifts from a held stick.
+	if (!useDirectGamepadFlight) {
 		scaledInputX = (int16)((scaledInputX * kRA2Handler7DirectInputNumerator) /
 			kRA2Handler7DirectInputDenominator);
 		scaledInputY = (int16)((scaledInputY * kRA2Handler7DirectInputNumerator) /
 			kRA2Handler7DirectInputDenominator);
 	}
-	// Mouse/touch can hold an absolute cursor at an edge indefinitely, so they use
-	// bounded target steering. Gamepad input for Handler 7 now feeds the original
-	// center-relative flight axes and lets the assembly-derived velocity history,
-	// lift/slide tables, wind, and clamps produce the ship movement.
-	const bool useTargetSteering = !_gamepadAimActive;
+	// Mouse/touch and most Handler 7 gamepad stages use bounded target
+	// steering. Level 10 keeps direct center-relative gamepad axes for its
+	// speeder flight.
+	const bool useTargetSteering = !useDirectGamepadFlight;
 	int16 mouseFlightTargetX = _flyShipScreenX;
 	if (useTargetSteering) {
 		mouseFlightTargetX = (int16)(0xd4 + (scaledInputX * kRA2Handler7MouseTargetRangeX) / 127);
@@ -954,7 +956,7 @@ void InsaneRebel2::handleOpcode6Handler7(Common::SeekableReadStream &b, int16 pa
 	// letting a held off-center cursor keep pushing the ship until it bounces.
 	if (useTargetSteering) {
 		int targetDeltaX = mouseFlightTargetX - _flyShipScreenX;
-		const int targetSteeringDivisor = _gamepadAimActive ? 2 : 4;
+		const int targetSteeringDivisor = 4;
 		positionDeltaX = (int16)CLIP<int>(targetDeltaX / targetSteeringDivisor, -12, 12);
 		if (positionDeltaX == 0 && targetDeltaX != 0)
 			positionDeltaX = (targetDeltaX < 0) ? -1 : 1;

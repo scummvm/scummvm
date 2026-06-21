@@ -2009,22 +2009,50 @@ void InsaneRebel2::updateGameplayAimFromGamepad() {
 			axisY = velY;
 		}
 
+		const bool useDirectHandler7Gamepad = _selectedLevel == 10;
+		if (!useDirectHandler7Gamepad && !axisX && !axisY)
+			return;
+
 		if (axisX || axisY || _gamepadAimActive) {
 			const Common::Point aimPos = getGameplayAimPoint();
 			const int centerX = 160;
 			const int centerY = 100;
-			const int targetX = (axisX < 0) ?
-				centerX + axisX * centerX / 127 :
-				centerX + axisX * (319 - centerX) / 127;
-			const int targetY = (axisY < 0) ?
-				centerY + axisY * centerY / 127 :
-				centerY + axisY * (199 - centerY) / 127;
+			int targetX;
+			int targetY;
+			if (useDirectHandler7Gamepad) {
+				targetX = (axisX < 0) ?
+					centerX + axisX * centerX / 127 :
+					centerX + axisX * (319 - centerX) / 127;
+				targetY = (axisY < 0) ?
+					centerY + axisY * centerY / 127 :
+					centerY + axisY * (199 - centerY) / 127;
+			} else {
+				// The wider Level 10 mapping makes other Handler 7 stages swing the
+				// camera too hard. Keep their gamepad cursor in the older bounded
+				// range and move it there gradually.
+				const int kHandler7HorizontalRange = 120;
+				targetX = axisX ?
+					CLIP<int>(centerX + axisX * kHandler7HorizontalRange / 127, 0, 319) :
+					aimPos.x;
+				targetY = axisY ?
+					((axisY < 0) ?
+						centerY + axisY * centerY / 127 :
+						centerY + axisY * (199 - centerY) / 127) :
+					aimPos.y;
+			}
 			const int distX = targetX - aimPos.x;
 			const int distY = targetY - aimPos.y;
 
 			if (distX || distY) {
-				deltaX = distX;
-				deltaY = distY;
+				if (useDirectHandler7Gamepad) {
+					deltaX = distX;
+					deltaY = distY;
+				} else {
+					const int kHandler7HorizontalMaxStep = 24;
+					const int kHandler7VerticalMaxStep = 32;
+					deltaX = CLIP<int>(distX, -kHandler7HorizontalMaxStep, kHandler7HorizontalMaxStep);
+					deltaY = CLIP<int>(distY, -kHandler7VerticalMaxStep, kHandler7VerticalMaxStep);
+				}
 				activeGamepadAim = true;
 			} else {
 				_gamepadAimActive = true;
