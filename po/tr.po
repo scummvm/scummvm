@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 22:22+0000\n"
+"POT-Creation-Date: 2026-06-21 22:35+0000\n"
 "PO-Revision-Date: 2024-10-10 12:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -599,7 +599,7 @@ msgstr "GFX"
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2075 gui/options.cpp:2256
 #: backends/graphics/atari/atari-graphics.cpp:1056
-#: backends/graphics/sdl/sdl-graphics.cpp:487
+#: backends/graphics/sdl/sdl-graphics.cpp:491
 msgid "Graphics"
 msgstr "Grafik Ayarları"
 
@@ -1886,7 +1886,7 @@ msgstr "Oyun dosyalarını indir"
 msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr ""
 
-#: gui/options.cpp:1700 backends/graphics/sdl/sdl-graphics.cpp:478
+#: gui/options.cpp:1700 backends/graphics/sdl/sdl-graphics.cpp:482
 msgid "Fullscreen mode"
 msgstr "Tam ekran modu"
 
@@ -4273,7 +4273,7 @@ msgid "Choose a new folder"
 msgstr "Yükleme için dosyayı seçin"
 
 #: backends/graphics/atari/atari-graphics.cpp:1060
-#: backends/graphics/sdl/sdl-graphics.cpp:514 engines/scumm/help.cpp:103
+#: backends/graphics/sdl/sdl-graphics.cpp:518 engines/scumm/help.cpp:103
 #, fuzzy
 msgid "Toggle aspect ratio correction"
 msgstr "Görüntü oranı düzeltme"
@@ -4350,36 +4350,36 @@ msgstr ""
 msgid "SDL Surface (forced 8bpp mode)"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:420
+#: backends/graphics/sdl/sdl-graphics.cpp:424
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:435
+#: backends/graphics/sdl/sdl-graphics.cpp:439
 #, fuzzy
 msgid "Could not save screenshot"
 msgstr "Tam ekran ayarı uygulanamadı."
 
-#: backends/graphics/sdl/sdl-graphics.cpp:480
+#: backends/graphics/sdl/sdl-graphics.cpp:484
 #, fuzzy
 msgid "Windowed mode"
 msgstr "Render modu:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:491 engines/colony/metaengine.cpp:173
+#: backends/graphics/sdl/sdl-graphics.cpp:495 engines/colony/metaengine.cpp:173
 #: engines/scumm/help.cpp:88
 msgid "Toggle fullscreen"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:498 engines/scumm/help.cpp:100
+#: backends/graphics/sdl/sdl-graphics.cpp:502 engines/scumm/help.cpp:100
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:503
+#: backends/graphics/sdl/sdl-graphics.cpp:507
 msgid "Toggle resizable window"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:508 engines/stark/metaengine.cpp:240
+#: backends/graphics/sdl/sdl-graphics.cpp:512 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -4392,29 +4392,29 @@ msgstr ""
 msgid "Save screenshot"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:521
+#: backends/graphics/sdl/sdl-graphics.cpp:525
 #, fuzzy
 msgid "Toggle linear filtered scaling"
 msgstr "Grafik orantılama yapılırken doğrusal filtreleme"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:528
+#: backends/graphics/sdl/sdl-graphics.cpp:532
 msgid "Cycle through stretch modes"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:534
+#: backends/graphics/sdl/sdl-graphics.cpp:538
 msgid "Increase the scale factor"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:540
+#: backends/graphics/sdl/sdl-graphics.cpp:544
 msgid "Decrease the scale factor"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:547
+#: backends/graphics/sdl/sdl-graphics.cpp:551
 #, fuzzy
 msgid "Switch to the next scaler"
 msgstr "Oyunu seç"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:552
+#: backends/graphics/sdl/sdl-graphics.cpp:556
 msgid "Switch to the previous scaler"
 msgstr ""
 
@@ -15035,7 +15035,7 @@ msgstr "Altyazılar"
 msgid "Toggle text speech"
 msgstr "Konuşma için metin kullan"
 
-#: engines/twine/detection.cpp:188
+#: engines/twine/detection.cpp:187
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr ""
 

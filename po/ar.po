@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 22:22+0000\n"
+"POT-Creation-Date: 2026-06-21 22:35+0000\n"
 "PO-Revision-Date: 2026-02-24 22:26+0000\n"
 "Last-Translator: Mohamed Shaaban <mohmedbashamedo@hotmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -612,7 +612,7 @@ msgstr "GFX"
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2075 gui/options.cpp:2256
 #: backends/graphics/atari/atari-graphics.cpp:1056
-#: backends/graphics/sdl/sdl-graphics.cpp:487
+#: backends/graphics/sdl/sdl-graphics.cpp:491
 msgid "Graphics"
 msgstr "الرسومات"
 
@@ -1882,7 +1882,7 @@ msgstr "تحميل ملفات اللعبة"
 msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "تحقق من وجود تحديثات لحزمة للتظليل"
 
-#: gui/options.cpp:1700 backends/graphics/sdl/sdl-graphics.cpp:478
+#: gui/options.cpp:1700 backends/graphics/sdl/sdl-graphics.cpp:482
 msgid "Fullscreen mode"
 msgstr "وضع ملء الشاشة"
 
@@ -4361,7 +4361,7 @@ msgid "Choose a new folder"
 msgstr "اختر مجلدًا جديدًا"
 
 #: backends/graphics/atari/atari-graphics.cpp:1060
-#: backends/graphics/sdl/sdl-graphics.cpp:514 engines/scumm/help.cpp:103
+#: backends/graphics/sdl/sdl-graphics.cpp:518 engines/scumm/help.cpp:103
 msgid "Toggle aspect ratio correction"
 msgstr "تبديل تصحيح نسبة العرض إلى الارتفاع"
 
@@ -4433,34 +4433,34 @@ msgstr "سطح SDL"
 msgid "SDL Surface (forced 8bpp mode)"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:420
+#: backends/graphics/sdl/sdl-graphics.cpp:424
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr "لقطة شاشة محفوظة '%s'"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:435
+#: backends/graphics/sdl/sdl-graphics.cpp:439
 msgid "Could not save screenshot"
 msgstr "تعذر حفظ لقطة الشاشة"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:480
+#: backends/graphics/sdl/sdl-graphics.cpp:484
 msgid "Windowed mode"
 msgstr "وضع إطارات"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:491 engines/colony/metaengine.cpp:173
+#: backends/graphics/sdl/sdl-graphics.cpp:495 engines/colony/metaengine.cpp:173
 #: engines/scumm/help.cpp:88
 msgid "Toggle fullscreen"
 msgstr "تبديل ملء الشاشة"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:498 engines/scumm/help.cpp:100
+#: backends/graphics/sdl/sdl-graphics.cpp:502 engines/scumm/help.cpp:100
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr "تبديل التقاط الفأرة"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:503
+#: backends/graphics/sdl/sdl-graphics.cpp:507
 msgid "Toggle resizable window"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:508 engines/stark/metaengine.cpp:240
+#: backends/graphics/sdl/sdl-graphics.cpp:512 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -4473,27 +4473,27 @@ msgstr ""
 msgid "Save screenshot"
 msgstr "حفظ لقطة شاشة"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:521
+#: backends/graphics/sdl/sdl-graphics.cpp:525
 msgid "Toggle linear filtered scaling"
 msgstr "تبديل المقياس الخطي المفلتر"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:528
+#: backends/graphics/sdl/sdl-graphics.cpp:532
 msgid "Cycle through stretch modes"
 msgstr "التنقل بين أوضاع التمدد"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:534
+#: backends/graphics/sdl/sdl-graphics.cpp:538
 msgid "Increase the scale factor"
 msgstr "زيادة معامل القياس"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:540
+#: backends/graphics/sdl/sdl-graphics.cpp:544
 msgid "Decrease the scale factor"
 msgstr "إنقاص عامل القياس"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:547
+#: backends/graphics/sdl/sdl-graphics.cpp:551
 msgid "Switch to the next scaler"
 msgstr "قم بالتبديل إلى القشارة التالية"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:552
+#: backends/graphics/sdl/sdl-graphics.cpp:556
 msgid "Switch to the previous scaler"
 msgstr "قم بالتبديل إلى القشارة السابقة"
 
@@ -16147,7 +16147,7 @@ msgstr "تبديل الوضع السريع"
 msgid "Toggle text speech"
 msgstr "استخدم تحويل النص إلى كلام"
 
-#: engines/twine/detection.cpp:188
+#: engines/twine/detection.cpp:187
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr "يتطلب هذا الإصدار ملف Giflib الذي لم يتم تجميعه في ScummVM"
 

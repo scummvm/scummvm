@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 22:22+0000\n"
+"POT-Creation-Date: 2026-06-21 22:35+0000\n"
 "PO-Revision-Date: 2026-04-19 13:22+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -592,7 +592,7 @@ msgstr "GFX"
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2075 gui/options.cpp:2256
 #: backends/graphics/atari/atari-graphics.cpp:1056
-#: backends/graphics/sdl/sdl-graphics.cpp:487
+#: backends/graphics/sdl/sdl-graphics.cpp:491
 msgid "Graphics"
 msgstr "Grafik"
 
@@ -1933,7 +1933,7 @@ msgstr "Hämta shaders"
 msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "Leta på webbplatsen scummvm.org efter uppdateringar av shader-paket"
 
-#: gui/options.cpp:1700 backends/graphics/sdl/sdl-graphics.cpp:478
+#: gui/options.cpp:1700 backends/graphics/sdl/sdl-graphics.cpp:482
 msgid "Fullscreen mode"
 msgstr "Helskärmsläge"
 
@@ -4335,7 +4335,7 @@ msgid "Choose a new folder"
 msgstr "Välj en ny mapp"
 
 #: backends/graphics/atari/atari-graphics.cpp:1060
-#: backends/graphics/sdl/sdl-graphics.cpp:514 engines/scumm/help.cpp:103
+#: backends/graphics/sdl/sdl-graphics.cpp:518 engines/scumm/help.cpp:103
 msgid "Toggle aspect ratio correction"
 msgstr "Växla korrigering av bildförhållande"
 
@@ -4407,34 +4407,34 @@ msgstr "SDL Surface"
 msgid "SDL Surface (forced 8bpp mode)"
 msgstr "SDL Surface (tvingat 8bpp-läge)"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:420
+#: backends/graphics/sdl/sdl-graphics.cpp:424
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr "Sparade skärmbilden '%s'"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:435
+#: backends/graphics/sdl/sdl-graphics.cpp:439
 msgid "Could not save screenshot"
 msgstr "Kunde inte spara skärmbild"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:480
+#: backends/graphics/sdl/sdl-graphics.cpp:484
 msgid "Windowed mode"
 msgstr "Fönsterläge"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:491 engines/colony/metaengine.cpp:173
+#: backends/graphics/sdl/sdl-graphics.cpp:495 engines/colony/metaengine.cpp:173
 #: engines/scumm/help.cpp:88
 msgid "Toggle fullscreen"
 msgstr "Växla helskärmsläge"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:498 engines/scumm/help.cpp:100
+#: backends/graphics/sdl/sdl-graphics.cpp:502 engines/scumm/help.cpp:100
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr "Växla musfångst"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:503
+#: backends/graphics/sdl/sdl-graphics.cpp:507
 msgid "Toggle resizable window"
 msgstr "Växla storleksändringsbart fönster"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:508 engines/stark/metaengine.cpp:240
+#: backends/graphics/sdl/sdl-graphics.cpp:512 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -4447,27 +4447,27 @@ msgstr "Växla storleksändringsbart fönster"
 msgid "Save screenshot"
 msgstr "Spara skärmbild"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:521
+#: backends/graphics/sdl/sdl-graphics.cpp:525
 msgid "Toggle linear filtered scaling"
 msgstr "Växla linjärt filtrerad skalning"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:528
+#: backends/graphics/sdl/sdl-graphics.cpp:532
 msgid "Cycle through stretch modes"
 msgstr "Byt till nästa utsträckningsläge"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:534
+#: backends/graphics/sdl/sdl-graphics.cpp:538
 msgid "Increase the scale factor"
 msgstr "Öka skalningsfaktorn"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:540
+#: backends/graphics/sdl/sdl-graphics.cpp:544
 msgid "Decrease the scale factor"
 msgstr "Minska skalningsfaktorn"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:547
+#: backends/graphics/sdl/sdl-graphics.cpp:551
 msgid "Switch to the next scaler"
 msgstr "Byt till nästa skalare"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:552
+#: backends/graphics/sdl/sdl-graphics.cpp:556
 msgid "Switch to the previous scaler"
 msgstr "Byt till föregående skalare"
 
@@ -15323,7 +15323,7 @@ msgstr "Växla panelstil"
 msgid "Toggle text speech"
 msgstr "Växla texttal"
 
-#: engines/twine/detection.cpp:188
+#: engines/twine/detection.cpp:187
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr "Denna version kräver Giflib vilket inte kompilerats in i ScummVM"
 
