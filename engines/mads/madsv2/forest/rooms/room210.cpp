@@ -19,21 +19,20 @@
  *
  */
 
-#include "mads/madsv2/core/config.h"
-#include "mads/madsv2/forest/digi.h"
-#include "mads/madsv2/core/game.h"
-#include "mads/madsv2/core/imath.h"
-#include "mads/madsv2/core/kernel.h"
-#include "mads/madsv2/forest/midi.h"
-#include "mads/madsv2/core/player.h"
-#include "mads/madsv2/core/speech.h"
+#include "mads/madsv2/forest/rooms/section1.h"
 #include "mads/madsv2/forest/mads/inventory.h"
 #include "mads/madsv2/forest/mads/sounds.h"
 #include "mads/madsv2/forest/mads/words.h"
+#include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/journal.h"
-#include "mads/madsv2/forest/rooms/section1.h"
-#include "mads/madsv2/forest/rooms/room210.h"
+#include "mads/madsv2/forest/midi.h"
+#include "mads/madsv2/core/config.h"
+#include "mads/madsv2/core/game.h"
+#include "mads/madsv2/core/imath.h"
+#include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/core/player.h"
+#include "mads/madsv2/core/speech.h"
 
 namespace MADS {
 namespace MADSV2 {

@@ -20,14 +20,13 @@
  */
 
 #include "common/config-manager.h"
+#include "mads/madsv2/forest/rooms/section9.h"
+#include "mads/madsv2/forest/forest.h"
+#include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/matte.h"
 #include "mads/madsv2/core/mouse.h"
-#include "mads/madsv2/forest/rooms/section9.h"
-#include "mads/madsv2/forest/rooms/room901.h"
-#include "mads/madsv2/forest/global.h"
-#include "mads/madsv2/forest/forest.h"
 
 namespace MADS {
 namespace MADSV2 {
