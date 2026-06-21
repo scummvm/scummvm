@@ -61,6 +61,8 @@
 	<string name="saf_revoke_done">Storage Access Framework Permissions for ScummVM were revoked!</string>
 	<string name="preference_saf_tree_key" translatable="false">pref_key__saf_tree_uri</string>
 
+	<string name="local_net_permission_denied">Local network access permission was denied: Web server won\'t be reachable</string>
+
 	<string name="ini_parsing_error">Configuration file could not be parsed</string>
 	<string name="shortcut_creator_title">Run a game</string>
 	<string name="shortcut_creator_search_game">Search a game</string>

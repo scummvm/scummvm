@@ -52,6 +52,10 @@
 #define LSSDP_BUFFER_LEN 2048
 #endif // POSIX
 
+#ifdef ANDROID_BACKEND
+#include "backends/platform/android/jni-android.h"
+#endif
+
 #ifdef PLAYSTATION3
 #include <net/netctl.h>
 #endif
@@ -146,9 +150,17 @@ void LocalWebserver::start(bool useMinimalMode) {
 		g_system->taskStarted(OSystem::kLocalServer);
 
 	_handleMutex.unlock();
+
+#ifdef ANDROID_BACKEND
+	JNI::notifyHTTPService(_serverPort, _minimalMode);
+#endif
 }
 
 void LocalWebserver::stop() {
+#ifdef ANDROID_BACKEND
+	JNI::notifyHTTPService(-1, _minimalMode);
+#endif
+
 	_handleMutex.lock();
 	if (_timerStarted) {
 		stopTimer();
