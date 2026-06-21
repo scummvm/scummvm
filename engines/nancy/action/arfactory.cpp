@@ -373,8 +373,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 140:
 		return new SetVolume();
 	case 147:	// Nancy11
-		warning("FadeSoundToSilence");	// TODO
-		return nullptr;
+		return new FadeSoundToSilence();
 	case 148:
 		// MakeScreenFile - seems to save a cropped image of the screen in a bitmap file?
 		// TODO: Used in Nancy 9, sand castle puzzle

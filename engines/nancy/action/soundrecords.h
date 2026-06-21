@@ -40,6 +40,24 @@ protected:
 	Common::String getRecordTypeName() const override { return "SetVolume"; }
 };
 
+// Nancy 11+ AR 147. Linearly ramps a channel's volume down to 0 over
+// the given time, then stops execution.
+class FadeSoundToSilence : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	uint16 channel = 0;
+	uint32 fadeTimeMs = 0;
+
+protected:
+	Common::String getRecordTypeName() const override { return "FadeSoundToSilence"; }
+
+private:
+	uint32 _startTime = 0;
+	uint16 _startVolume = 0;
+};
+
 // Used for sound effects. From nancy3 up it includes 3D sound data, which lets
 // the sound move in 3D space as the player rotates/changes scenes. Also supports
 // changing the scene and/or setting a flag

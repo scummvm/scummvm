@@ -21,6 +21,7 @@
 
 #include "common/random.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
@@ -41,6 +42,36 @@ void SetVolume::readData(Common::SeekableReadStream &stream) {
 void SetVolume::execute() {
 	g_nancy->_sound->setVolume(channel, volume);
 	_isDone = true;
+}
+
+void FadeSoundToSilence::readData(Common::SeekableReadStream &stream) {
+	channel = stream.readUint16LE();
+	stream.skip(2); // pad / flag
+	fadeTimeMs = stream.readUint32LE();
+}
+
+void FadeSoundToSilence::execute() {
+	switch (_state) {
+	case kBegin:
+		_startVolume = g_nancy->_sound->getVolume(channel);
+		_startTime = g_system->getMillis();
+		_state = kRun;
+		break;
+	case kRun: {
+		const uint32 elapsed = g_system->getMillis() - _startTime;
+		if (fadeTimeMs == 0 || elapsed >= fadeTimeMs) {
+			g_nancy->_sound->setVolume(channel, 0);
+			_state = kActionTrigger;
+			break;
+		}
+		const uint16 v = (uint16)((uint32)_startVolume * (fadeTimeMs - elapsed) / fadeTimeMs);
+		g_nancy->_sound->setVolume(channel, v);
+		break;
+	}
+	case kActionTrigger:
+		finishExecution();
+		break;
+	}
 }
 
 void PlaySound::readData(Common::SeekableReadStream &stream) {
