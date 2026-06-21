@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 16:24+0000\n"
+"POT-Creation-Date: 2026-06-21 22:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -7910,6 +7910,42 @@ msgstr ""
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 
+#: engines/eem/metaengine.cpp:38
+msgid "Hide the highlight boxes"
+msgstr ""
+
+#: engines/eem/metaengine.cpp:39
+msgid "Hide the boxes that highlight searchable clue locations."
+msgstr ""
+
+#: engines/eem/metaengine.cpp:49
+msgid "Better fit for dialog balloons"
+msgstr ""
+
+#: engines/eem/metaengine.cpp:50
+msgid ""
+"Pick a smaller speech-bubble graphic when the wrapped text doesn't need the "
+"original size."
+msgstr ""
+
+#: engines/eem/metaengine.cpp:61
+msgid "Skip repeated cases"
+msgstr ""
+
+#: engines/eem/metaengine.cpp:62
+msgid "Skip all Book 2 cases and jump to Book 3 once Book 1 is complete."
+msgstr ""
+
+#: engines/eem/metaengine.cpp:72 engines/hypno/metaengine.cpp:81
+msgid "Enable restored content"
+msgstr ""
+
+#: engines/eem/metaengine.cpp:73
+msgid ""
+"Restore floppy release extras in the CD version, including pre-scrapbook "
+"conversations and first-try badges."
+msgstr ""
+
 #: engines/efh/metaengine.cpp:235
 msgid "Select option 1"
 msgstr ""
@@ -9405,10 +9441,6 @@ msgstr ""
 
 #: engines/hypno/metaengine.cpp:71
 msgid "All levels will be available to play."
-msgstr ""
-
-#: engines/hypno/metaengine.cpp:81
-msgid "Enable restored content"
 msgstr ""
 
 #: engines/hypno/metaengine.cpp:82

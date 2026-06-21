@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 16:24+0000\n"
+"POT-Creation-Date: 2026-06-21 22:22+0000\n"
 "PO-Revision-Date: 2026-06-20 15:03+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -8732,6 +8732,46 @@ msgstr "Рисует графику с использованием яркой �
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "Включить озвучку текста для объектов, опций и цитаты из Библии"
 
+#: engines/eem/metaengine.cpp:38
+#, fuzzy
+#| msgid "Highlight items"
+msgid "Hide the highlight boxes"
+msgstr "Подсветить элеиенты"
+
+#: engines/eem/metaengine.cpp:39
+msgid "Hide the boxes that highlight searchable clue locations."
+msgstr ""
+
+#: engines/eem/metaengine.cpp:49
+msgid "Better fit for dialog balloons"
+msgstr ""
+
+#: engines/eem/metaengine.cpp:50
+msgid ""
+"Pick a smaller speech-bubble graphic when the wrapped text doesn't need the "
+"original size."
+msgstr ""
+
+#: engines/eem/metaengine.cpp:61
+#, fuzzy
+#| msgid "Skip speech"
+msgid "Skip repeated cases"
+msgstr "Пропустить речь"
+
+#: engines/eem/metaengine.cpp:62
+msgid "Skip all Book 2 cases and jump to Book 3 once Book 1 is complete."
+msgstr ""
+
+#: engines/eem/metaengine.cpp:72 engines/hypno/metaengine.cpp:81
+msgid "Enable restored content"
+msgstr "Включить восстановленный контент"
+
+#: engines/eem/metaengine.cpp:73
+msgid ""
+"Restore floppy release extras in the CD version, including pre-scrapbook "
+"conversations and first-try badges."
+msgstr ""
+
 #: engines/efh/metaengine.cpp:235
 msgid "Select option 1"
 msgstr "Выбрать вариант 1"
@@ -10279,10 +10319,6 @@ msgstr "Разблокировать все уровни"
 #: engines/hypno/metaengine.cpp:71
 msgid "All levels will be available to play."
 msgstr "Все уровни будут доступны для игры."
-
-#: engines/hypno/metaengine.cpp:81
-msgid "Enable restored content"
-msgstr "Включить восстановленный контент"
 
 #: engines/hypno/metaengine.cpp:82
 msgid "Add additional content that is not enabled the original implementation."

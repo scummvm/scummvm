@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 16:24+0000\n"
+"POT-Creation-Date: 2026-06-21 22:22+0000\n"
 "PO-Revision-Date: 2026-05-19 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -8610,6 +8610,46 @@ msgstr "게임 그래픽을 밝은 팔레트로 표시"
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "개체, 옵션, 성경 인용문에 대해 TTS를 활성화"
 
+#: engines/eem/metaengine.cpp:38
+#, fuzzy
+#| msgid "Highlight items"
+msgid "Hide the highlight boxes"
+msgstr "아이템 강조 표시"
+
+#: engines/eem/metaengine.cpp:39
+msgid "Hide the boxes that highlight searchable clue locations."
+msgstr ""
+
+#: engines/eem/metaengine.cpp:49
+msgid "Better fit for dialog balloons"
+msgstr ""
+
+#: engines/eem/metaengine.cpp:50
+msgid ""
+"Pick a smaller speech-bubble graphic when the wrapped text doesn't need the "
+"original size."
+msgstr ""
+
+#: engines/eem/metaengine.cpp:61
+#, fuzzy
+#| msgid "Skip speech"
+msgid "Skip repeated cases"
+msgstr "말 건너뛰기"
+
+#: engines/eem/metaengine.cpp:62
+msgid "Skip all Book 2 cases and jump to Book 3 once Book 1 is complete."
+msgstr ""
+
+#: engines/eem/metaengine.cpp:72 engines/hypno/metaengine.cpp:81
+msgid "Enable restored content"
+msgstr "복원된 컨텐츠 활성화"
+
+#: engines/eem/metaengine.cpp:73
+msgid ""
+"Restore floppy release extras in the CD version, including pre-scrapbook "
+"conversations and first-try badges."
+msgstr ""
+
 #: engines/efh/metaengine.cpp:235
 msgid "Select option 1"
 msgstr "옵션 1 선택"
@@ -10145,10 +10185,6 @@ msgstr "모든 레벨 잠금 해제"
 #: engines/hypno/metaengine.cpp:71
 msgid "All levels will be available to play."
 msgstr "모든 레벨에서 플레이할 수 있습니다."
-
-#: engines/hypno/metaengine.cpp:81
-msgid "Enable restored content"
-msgstr "복원된 컨텐츠 활성화"
 
 #: engines/hypno/metaengine.cpp:82
 msgid "Add additional content that is not enabled the original implementation."

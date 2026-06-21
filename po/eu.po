@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 16:24+0000\n"
+"POT-Creation-Date: 2026-06-21 22:22+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -8709,6 +8709,47 @@ msgstr "Erakutsi grafikoak jokoaren paleta argia erabilita"
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 
+#: engines/eem/metaengine.cpp:38
+#, fuzzy
+#| msgid "Highlight next dialogue"
+msgid "Hide the highlight boxes"
+msgstr "Hurrengo elkarrizketa aukeratu"
+
+#: engines/eem/metaengine.cpp:39
+msgid "Hide the boxes that highlight searchable clue locations."
+msgstr ""
+
+#: engines/eem/metaengine.cpp:49
+msgid "Better fit for dialog balloons"
+msgstr ""
+
+#: engines/eem/metaengine.cpp:50
+msgid ""
+"Pick a smaller speech-bubble graphic when the wrapped text doesn't need the "
+"original size."
+msgstr ""
+
+#: engines/eem/metaengine.cpp:61
+#, fuzzy
+#| msgid "Speech"
+msgid "Skip repeated cases"
+msgstr "Ahotsa"
+
+#: engines/eem/metaengine.cpp:62
+msgid "Skip all Book 2 cases and jump to Book 3 once Book 1 is complete."
+msgstr ""
+
+#: engines/eem/metaengine.cpp:72 engines/hypno/metaengine.cpp:81
+#, fuzzy
+msgid "Enable restored content"
+msgstr "Gaitu kurtsore flotatzaileak"
+
+#: engines/eem/metaengine.cpp:73
+msgid ""
+"Restore floppy release extras in the CD version, including pre-scrapbook "
+"conversations and first-try badges."
+msgstr ""
+
 #: engines/efh/metaengine.cpp:235
 #, fuzzy
 #| msgid "Select Group by"
@@ -10462,11 +10503,6 @@ msgstr ""
 #: engines/hypno/metaengine.cpp:71
 msgid "All levels will be available to play."
 msgstr ""
-
-#: engines/hypno/metaengine.cpp:81
-#, fuzzy
-msgid "Enable restored content"
-msgstr "Gaitu kurtsore flotatzaileak"
 
 #: engines/hypno/metaengine.cpp:82
 msgid "Add additional content that is not enabled the original implementation."

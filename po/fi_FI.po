@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 16:24+0000\n"
+"POT-Creation-Date: 2026-06-21 22:22+0000\n"
 "PO-Revision-Date: 2026-02-07 15:22+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -8941,6 +8941,46 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 "Tekstistä puheeksi -toiminto esineille, asetuksille ja raamattulainaukselle"
 
+#: engines/eem/metaengine.cpp:38
+#, fuzzy
+#| msgid "Highlight items"
+msgid "Hide the highlight boxes"
+msgstr "Korosta esineitä"
+
+#: engines/eem/metaengine.cpp:39
+msgid "Hide the boxes that highlight searchable clue locations."
+msgstr ""
+
+#: engines/eem/metaengine.cpp:49
+msgid "Better fit for dialog balloons"
+msgstr ""
+
+#: engines/eem/metaengine.cpp:50
+msgid ""
+"Pick a smaller speech-bubble graphic when the wrapped text doesn't need the "
+"original size."
+msgstr ""
+
+#: engines/eem/metaengine.cpp:61
+#, fuzzy
+#| msgid "Skip speech"
+msgid "Skip repeated cases"
+msgstr "Ohita puhe"
+
+#: engines/eem/metaengine.cpp:62
+msgid "Skip all Book 2 cases and jump to Book 3 once Book 1 is complete."
+msgstr ""
+
+#: engines/eem/metaengine.cpp:72 engines/hypno/metaengine.cpp:81
+msgid "Enable restored content"
+msgstr "Käytä palautettua sisältöä"
+
+#: engines/eem/metaengine.cpp:73
+msgid ""
+"Restore floppy release extras in the CD version, including pre-scrapbook "
+"conversations and first-try badges."
+msgstr ""
+
 #: engines/efh/metaengine.cpp:235
 msgid "Select option 1"
 msgstr "Valitse vaihtoehto 1"
@@ -10587,10 +10627,6 @@ msgstr "Avaa kaikki tasot"
 #: engines/hypno/metaengine.cpp:71
 msgid "All levels will be available to play."
 msgstr "Kaikki tasot ovat pelattavissa."
-
-#: engines/hypno/metaengine.cpp:81
-msgid "Enable restored content"
-msgstr "Käytä palautettua sisältöä"
 
 #: engines/hypno/metaengine.cpp:82
 msgid "Add additional content that is not enabled the original implementation."
