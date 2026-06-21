@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 13:20+0000\n"
+"POT-Creation-Date: 2026-06-21 16:24+0000\n"
 "PO-Revision-Date: 2026-04-17 00:22+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -14151,10 +14151,8 @@ msgid "Rebel Assault II controls"
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:1298
-#, fuzzy
-#| msgid "Move back"
-msgid "Cover / back"
-msgstr "Ruch do tyłu"
+msgid "Cover"
+msgstr ""
 
 #: engines/scumm/metaengine.cpp:1304
 #, fuzzy
@@ -17838,6 +17836,11 @@ msgstr ""
 "Nemesis zawiera kilka łamigłówek muzycznych, które wymagają dźwięku MIDI do "
 "rozwiązania. Te łamigłówki można również rozwiązać za pomocą napisów, jeśli "
 "są obsługiwane. Kontynuować uruchamianie gry?"
+
+#, fuzzy
+#~| msgid "Move back"
+#~ msgid "Cover / back"
+#~ msgstr "Ruch do tyłu"
 
 #, fuzzy
 #~| msgid "Move back"

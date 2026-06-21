@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 13:20+0000\n"
+"POT-Creation-Date: 2026-06-21 16:24+0000\n"
 "PO-Revision-Date: 2026-06-20 15:07+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -13882,8 +13882,8 @@ msgid "Rebel Assault II controls"
 msgstr "Controlli di Rebel Assault II"
 
 #: engines/scumm/metaengine.cpp:1298
-msgid "Cover / back"
-msgstr "Copertura / indietro"
+msgid "Cover"
+msgstr ""
 
 #: engines/scumm/metaengine.cpp:1304
 msgid "Skip / back"
@@ -17471,6 +17471,9 @@ msgstr ""
 "Zork Nemesis contiene alcuni puzzle musicali the richiedono l'audio MIDI per "
 "poterli risolvere. In alternativa, i puzzle possono essere risolti usando i "
 "sottotitoli, se supportati. Desideri continuare ad avviare il gioco?"
+
+#~ msgid "Cover / back"
+#~ msgstr "Copertura / indietro"
 
 #~ msgid "Menu back"
 #~ msgstr "Indietro (menù)"

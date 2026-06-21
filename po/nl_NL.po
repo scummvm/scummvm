@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 13:20+0000\n"
+"POT-Creation-Date: 2026-06-21 16:24+0000\n"
 "PO-Revision-Date: 2026-02-11 14:23+0000\n"
 "Last-Translator: SecularSteve <fairfull.playing@gmail.com>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -13973,10 +13973,8 @@ msgid "Rebel Assault II controls"
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:1298
-#, fuzzy
-#| msgid "Move back"
-msgid "Cover / back"
-msgstr "Teruggaan"
+msgid "Cover"
+msgstr ""
 
 #: engines/scumm/metaengine.cpp:1304
 #, fuzzy
@@ -17584,6 +17582,11 @@ msgstr ""
 "opgelost te kunnen worden. Deze puzzels kunnen ook worden opgelost met "
 "behulp van ondertitels, indien ondersteund. Doorgaan met het starten van het "
 "spel?"
+
+#, fuzzy
+#~| msgid "Move back"
+#~ msgid "Cover / back"
+#~ msgstr "Teruggaan"
 
 #, fuzzy
 #~| msgid "Move back"

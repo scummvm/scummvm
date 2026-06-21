@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 13:20+0000\n"
+"POT-Creation-Date: 2026-06-21 16:24+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -14176,10 +14176,8 @@ msgid "Rebel Assault II controls"
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:1298
-#, fuzzy
-#| msgid "Move Back"
-msgid "Cover / back"
-msgstr "Ісці назад"
+msgid "Cover"
+msgstr ""
 
 #: engines/scumm/metaengine.cpp:1304
 #, fuzzy
@@ -18178,6 +18176,11 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Move Back"
+#~ msgid "Cover / back"
+#~ msgstr "Ісці назад"
 
 #, fuzzy
 #~| msgid "Move Back"

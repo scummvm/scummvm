@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 13:20+0000\n"
+"POT-Creation-Date: 2026-06-21 16:24+0000\n"
 "PO-Revision-Date: 2026-06-20 14:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -13734,8 +13734,8 @@ msgid "Rebel Assault II controls"
 msgstr "Керування Rebel Assault II"
 
 #: engines/scumm/metaengine.cpp:1298
-msgid "Cover / back"
-msgstr "Прикрити / назад"
+msgid "Cover"
+msgstr ""
 
 #: engines/scumm/metaengine.cpp:1304
 msgid "Skip / back"
@@ -17271,6 +17271,9 @@ msgstr ""
 "містить кілька музичних головоломок, для розв'язання яких потрібне MIDI-"
 "аудіо. Ці головоломки також можна розв'язати за допомогою субтитрів, якщо "
 "вони підтримуються. Продовжити запуск гри?"
+
+#~ msgid "Cover / back"
+#~ msgstr "Прикрити / назад"
 
 #, fuzzy
 #~| msgid "Move back"

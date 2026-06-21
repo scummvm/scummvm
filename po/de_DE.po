@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 13:20+0000\n"
+"POT-Creation-Date: 2026-06-21 16:24+0000\n"
 "PO-Revision-Date: 2026-05-05 16:31+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -13982,10 +13982,8 @@ msgid "Rebel Assault II controls"
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:1298
-#, fuzzy
-#| msgid "Move back"
-msgid "Cover / back"
-msgstr "Zurückgehen"
+msgid "Cover"
+msgstr ""
 
 #: engines/scumm/metaengine.cpp:1304
 #, fuzzy
@@ -17588,6 +17586,11 @@ msgstr ""
 "erforderlich ist. Diese Rätsel können alternativ auch mithilfe von "
 "Untertiteln gelöst werden, sofern diese unterstützt werden. Möchten Sie das "
 "Spiel trotzdem starten?"
+
+#, fuzzy
+#~| msgid "Move back"
+#~ msgid "Cover / back"
+#~ msgstr "Zurückgehen"
 
 #, fuzzy
 #~| msgid "Move back"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 13:20+0000\n"
+"POT-Creation-Date: 2026-06-21 16:24+0000\n"
 "PO-Revision-Date: 2026-06-14 09:41+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -13941,8 +13941,8 @@ msgid "Rebel Assault II controls"
 msgstr "Contrôles de Rebel Assault II"
 
 #: engines/scumm/metaengine.cpp:1298
-msgid "Cover / back"
-msgstr "Couverture / retour"
+msgid "Cover"
+msgstr ""
 
 #: engines/scumm/metaengine.cpp:1304
 msgid "Skip / back"
@@ -17547,6 +17547,9 @@ msgstr ""
 "contient plusieurs énigmes musicales qui nécessitent l'audio MIDI pour être "
 "résolues.  Ces puzzles peuvent également être résolus à l'aide de sous-"
 "titres, s'ils sont pris en charge. Continuer à lancer le jeu ?"
+
+#~ msgid "Cover / back"
+#~ msgstr "Couverture / retour"
 
 #~ msgid "Menu back"
 #~ msgstr "Menu retour"

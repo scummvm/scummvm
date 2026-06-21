@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-21 13:20+0000\n"
+"POT-Creation-Date: 2026-06-21 16:24+0000\n"
 "PO-Revision-Date: 2026-04-23 00:22+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -14137,10 +14137,8 @@ msgid "Rebel Assault II controls"
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:1298
-#, fuzzy
-#| msgid "Move Back"
-msgid "Cover / back"
-msgstr "Προχώρησε Πίσω"
+msgid "Cover"
+msgstr ""
 
 #: engines/scumm/metaengine.cpp:1304
 #, fuzzy
@@ -17876,6 +17874,11 @@ msgstr ""
 "απαιτούν ήχο MIDI για την επίλυσή τους.  Αυτοί οι γρίφοι εναλλακτικά μπορεί "
 "να επιλυθούν με χρήση υπότιτλων , αν υποστηρίζονται. Θα συνεχίσετε την "
 "εκκίνηση του παιχνιδιού;"
+
+#, fuzzy
+#~| msgid "Move Back"
+#~ msgid "Cover / back"
+#~ msgstr "Προχώρησε Πίσω"
 
 #, fuzzy
 #~| msgid "Move Back"
