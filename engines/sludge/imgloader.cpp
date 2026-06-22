@@ -22,7 +22,7 @@
 #include "common/debug.h"
 
 #include "image/png.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 
 #include "sludge/fileset.h"
 #include "sludge/hsi.h"
@@ -31,7 +31,7 @@
 
 namespace Sludge {
 
-bool ImgLoader::loadImage(int num, const char *fname, Common::SeekableReadStream *stream, Graphics::Surface *dest, int reserve) {
+bool ImgLoader::loadImage(int num, const char *fname, Common::SeekableReadStream *stream, Graphics::ManagedSurface *dest, int reserve) {
 	debugC(3, kSludgeDebugGraphics, "Loading image at position: %d", (int)stream->pos());
 
 	bool dumpPng = false;
@@ -74,7 +74,7 @@ bool ImgLoader::loadImage(int num, const char *fname, Common::SeekableReadStream
 	return true;
 }
 
-bool ImgLoader::loadPNGImage(Common::SeekableReadStream *stream, Graphics::Surface *dest, bool checkSig) {
+bool ImgLoader::loadPNGImage(Common::SeekableReadStream *stream, Graphics::ManagedSurface *dest, bool checkSig) {
 	::Image::PNGDecoder png;
 
 	// set skip signature
@@ -98,7 +98,7 @@ bool ImgLoader::loadPNGImage(Common::SeekableReadStream *stream, Graphics::Surfa
 	return true;
 }
 
-bool ImgLoader::loadHSIImage(Common::SeekableReadStream *stream, Graphics::Surface *dest, int reserve) {
+bool ImgLoader::loadHSIImage(Common::SeekableReadStream *stream, Graphics::ManagedSurface *dest, int reserve) {
 	HSIDecoder hsiDecoder;
 	hsiDecoder.setReserve(reserve);
 	if (!hsiDecoder.loadStream(*stream)) {
