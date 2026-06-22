@@ -889,9 +889,12 @@ void matte_frame(int special_effect, int full_screen) {
 	// Now, run through our depth list, and for each entry, draw the
 	// indicated sprite into the work buffer.
 	for (id = 0; id < depth_size; id++) {
-
 		// Get the index for the series for this depth list entry
 		id2 = depth_list_id[id];
+
+		// WORKAROUND: Invalid series_id
+		if (image_list[id2].series_id == (byte)-1)
+			continue;
 
 		// Draw the sprite into the work buffer at the appropriate depth
 		if (image_list[id2].scale >= 100) {
