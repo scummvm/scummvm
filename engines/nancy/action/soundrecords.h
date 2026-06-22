@@ -58,6 +58,26 @@ private:
 	uint16 _startVolume = 0;
 };
 
+// Nancy 11+ AR 156. Adjusts a playing 3D sound's position and/or its
+// min/max audible distance. A field set to kNoChange is left untouched.
+class Update3DSound : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	static const int32 kNoChange = 10000;
+
+	uint16 _channelID = 0;
+	int32 _posX = 0;
+	int32 _posY = 0;
+	int32 _posZ = 0;
+	int32 _minDistance = 0;
+	int32 _maxDistance = 0;
+
+protected:
+	Common::String getRecordTypeName() const override { return "Update3DSound"; }
+};
+
 // Used for sound effects. From nancy3 up it includes 3D sound data, which lets
 // the sound move in 3D space as the player rotates/changes scenes. Also supports
 // changing the scene and/or setting a flag

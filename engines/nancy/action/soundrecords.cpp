@@ -74,6 +74,31 @@ void FadeSoundToSilence::execute() {
 	}
 }
 
+void Update3DSound::readData(Common::SeekableReadStream &stream) {
+	_channelID = stream.readUint16LE();
+	_posX = stream.readSint32LE();
+	_posY = stream.readSint32LE();
+	_posZ = stream.readSint32LE();
+	_minDistance = stream.readSint32LE();
+	_maxDistance = stream.readSint32LE();
+}
+
+void Update3DSound::execute() {
+	if (_posX != kNoChange && _posY != kNoChange && _posZ != kNoChange) {
+		g_nancy->_sound->update3DSoundPosition(_channelID, _posX, _posY, _posZ);
+	}
+
+	if (_minDistance != kNoChange) {
+		g_nancy->_sound->update3DSoundMinDistance(_channelID, _minDistance);
+	}
+
+	if (_maxDistance != kNoChange) {
+		g_nancy->_sound->update3DSoundMaxDistance(_channelID, _maxDistance);
+	}
+
+	_isDone = true;
+}
+
 void PlaySound::readData(Common::SeekableReadStream &stream) {
 	_sound.readDIGI(stream);
 

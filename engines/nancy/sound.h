@@ -94,6 +94,12 @@ public:
 	void setVolume(const SoundDescription &description, uint16 volume);
 	void setVolume(const Common::String &chunkName, uint16 volume);
 
+	// Nancy 11+ Update3DSound (AR 156). Adjusts a playing fixed-position
+	// 3D sound's position and/or its min/max audible distance.
+	void update3DSoundPosition(uint16 channelID, int32 x, int32 y, int32 z);
+	void update3DSoundMinDistance(uint16 channelID, uint32 minDistance);
+	void update3DSoundMaxDistance(uint16 channelID, uint32 maxDistance);
+
 	uint32 getRate(uint16 channelID);
 	uint32 getRate(const SoundDescription &description);
 	uint32 getRate(const Common::String &chunkName);

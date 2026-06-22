@@ -400,8 +400,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 155:
 		return new StopSound(); // StopAndUnloadSound, but we always unload
 	case 156:	// Nancy11
-		warning("Update3DSound");	// TODO
-		return nullptr;
+		return new Update3DSound();
 	case 157:
 		return new PlaySoundCC();
 	case 158:

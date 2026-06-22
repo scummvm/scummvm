@@ -532,6 +532,48 @@ void SoundManager::setVolume(const Common::String &chunkName, uint16 volume) {
 	setVolume(_commonSounds[chunkName], volume);
 }
 
+void SoundManager::update3DSoundPosition(uint16 channelID, int32 x, int32 y, int32 z) {
+	if (channelID >= _channels.size())
+		return;
+
+	Channel &chan = _channels[channelID];
+
+	// The original only repositions sounds that play at a fixed point in 3D space
+	if (!chan.effectData || chan.playCommands != kPlaySequentialPosition)
+		return;
+
+	chan.effectData->fixedPosX = x;
+	chan.effectData->fixedPosY = y;
+	chan.effectData->fixedPosZ = z;
+	chan.position.set(x, y, z);
+
+	_shouldRecalculate = true;
+}
+
+void SoundManager::update3DSoundMinDistance(uint16 channelID, uint32 minDistance) {
+	if (channelID >= _channels.size())
+		return;
+
+	Channel &chan = _channels[channelID];
+	if (!chan.effectData)
+		return;
+
+	chan.effectData->minDistance = minDistance;
+	_shouldRecalculate = true;
+}
+
+void SoundManager::update3DSoundMaxDistance(uint16 channelID, uint32 maxDistance) {
+	if (channelID >= _channels.size())
+		return;
+
+	Channel &chan = _channels[channelID];
+	if (!chan.effectData)
+		return;
+
+	chan.effectData->maxDistance = maxDistance;
+	_shouldRecalculate = true;
+}
+
 uint32 SoundManager::getRate(uint16 channelID) {
 	if (channelID >= _channels.size())
 		return 0;
