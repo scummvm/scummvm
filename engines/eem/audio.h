@@ -128,6 +128,8 @@ private:
 	};
 
 	bool readSdxIndex(const Common::Path &sdxPath);
+	void playMacSnd(uint16 resourceId, Audio::SoundHandle &handle,
+					Audio::Mixer::SoundType type);
 	void playPcmBuffer(byte *pcm, uint32 size, uint sampleRate,
 					   Audio::SoundHandle &handle,
 					   Audio::Mixer::SoundType type);
@@ -141,6 +143,7 @@ private:
 	Common::Path _sdbPath;
 	int _currentMystery = -1;
 	bool _voiceEnabled = true;
+	bool _isMacintosh = false;
 };
 
 } // End of namespace EEM

@@ -20,6 +20,7 @@
  */
 
 #include "audio/decoders/raw.h"
+#include "audio/decoders/mac_snd.h"
 #include "audio/decoders/voc.h"
 
 #include "common/compression/dcl.h"
@@ -34,11 +35,57 @@
 #include "eem/audio.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
+#include "eem/resource.h"
 
 namespace EEM {
 
 AudioPlayer::AudioPlayer(EEMEngine *vm) :
-	_vm(vm), _mixer(g_system->getMixer()) {
+	_vm(vm), _mixer(g_system->getMixer()),
+	_isMacintosh(vm && vm->isMacintosh()) {
+}
+
+struct MacSndResource {
+	const char *name;
+	uint16 id;
+};
+
+const MacSndResource kMacSndResources[] = {
+	{ "B-0003SL", 7022 }, { "B-0004SL", 7023 }, { "B-0006SL", 7021 },
+	{ "DING",     7000 }, { "F-0013SL", 8018 }, { "F-0016SL", 8017 },
+	{ "F-0061SL", 8015 }, { "F-0067SL", 8016 }, { "F-0140SL", 8020 },
+	{ "F-0159SL", 8014 }, { "F-0161SL", 8013 }, { "F-0165SL", 8024 },
+	{ "F-0166SL", 8011 }, { "F-0168SL", 8010 }, { "F-0170SL", 8009 },
+	{ "F-0177SL", 8008 }, { "F-0181SL", 8006 }, { "F-0184SL", 8005 },
+	{ "F-0187SL", 8004 }, { "F-0191SL", 8002 }, { "F-0194SL", 8001 },
+	{ "M-0012SL", 7018 }, { "M-0014SL", 7017 }, { "M-0054SL", 7016 },
+	{ "M-0075SL", 7015 }, { "M-0083SL", 7001 }, { "M-0085SL", 7002 },
+	{ "M-0089SL", 7004 }, { "M-0091SL", 7005 }, { "M-0092SL", 7006 },
+	{ "M-0096SL", 7008 }, { "M-0102SL", 7009 }, { "M-0104SL", 7010 },
+	{ "M-0107SL", 7011 }, { "M-0113SL", 7013 }, { "M-0115SL", 7014 },
+	{ "M-0163SL", 7024 }, { "NEWSCAN",  7003 }, { "NEWSSHRT", 7007 },
+	{ "PHONESL",  7012 }, { "SQUAK2SL", 7019 }, { "THUNDER",  7025 },
+};
+
+Common::String macSndNameFromPath(const Common::Path &path) {
+	Common::String name = path.baseName();
+	const size_t dot = name.findLastOf('.');
+	if (dot != Common::String::npos)
+		name = name.substr(0, dot);
+	name.toUppercase();
+
+	if (name == "PHONE")
+		name = "PHONESL";
+
+	return name;
+}
+
+uint16 macSndResourceIdForPath(const Common::Path &path) {
+	const Common::String name = macSndNameFromPath(path);
+	for (uint i = 0; i < ARRAYSIZE(kMacSndResources); i++) {
+		if (name.equalsIgnoreCase(kMacSndResources[i].name))
+			return kMacSndResources[i].id;
+	}
+	return 0;
 }
 
 AudioPlayer::~AudioPlayer() {
@@ -58,6 +105,17 @@ void AudioPlayer::playVoc(const Common::Path &vocPath) {
 		return;
 	}
 	stopVoice();
+
+	if (_isMacintosh) {
+		const uint16 resourceId = macSndResourceIdForPath(vocPath);
+		if (resourceId == 0) {
+			warning("AudioPlayer: Mac snd resource for %s missing",
+					vocPath.toString().c_str());
+			return;
+		}
+		playMacSnd(resourceId, _voiceHandle, Audio::Mixer::kSpeechSoundType);
+		return;
+	}
 
 	Common::File *f = new Common::File();
 	if (!f->open(vocPath)) {
@@ -144,6 +202,13 @@ bool AudioPlayer::initMysterySounds(uint mysteryNum) {
 
 	cleanMysterySounds();
 
+	if (_isMacintosh) {
+		debugC(2, kDebugSound,
+			   "AudioPlayer: Mac release has no SDB/SDX bundle for mystery %u",
+			   mysteryNum);
+		return true;
+	}
+
 	if (!readSdxIndex(sdxPath)) {
 		_sdxIndex.clear();
 		return false;
@@ -160,6 +225,30 @@ void AudioPlayer::cleanMysterySounds() {
 	_sdxIndex.clear();
 	_sdbPath = Common::Path();
 	_currentMystery = -1;
+}
+
+void AudioPlayer::playMacSnd(uint16 resourceId, Audio::SoundHandle &handle,
+							 Audio::Mixer::SoundType type) {
+	Common::SeekableReadStream *stream =
+		openMacResource(Common::Path("EEM Sound&Music"),
+						MKTAG('s', 'n', 'd', ' '), resourceId);
+	if (!stream) {
+		warning("AudioPlayer: Mac snd resource %u missing", resourceId);
+		return;
+	}
+
+	Audio::SeekableAudioStream *audioStream =
+		Audio::makeMacSndStream(stream, DisposeAfterUse::YES);
+	if (!audioStream) {
+		delete stream;
+		warning("AudioPlayer: Mac snd resource %u is not playable", resourceId);
+		return;
+	}
+
+	_mixer->playStream(type, &handle, audioStream, -1,
+					   Audio::Mixer::kMaxChannelVolume, 0,
+					   DisposeAfterUse::YES);
+	debugC(1, kDebugSound, "AudioPlayer: playMacSnd(%u)", resourceId);
 }
 
 // pcm must be allocated with malloc(): Audio::makeRawStream takes ownership

@@ -22,8 +22,6 @@
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
-#include "common/macresman.h"
-#include "common/memstream.h"
 #include "common/textconsole.h"
 
 #include "graphics/fonts/macfont.h"
@@ -31,6 +29,7 @@
 
 #include "eem/detection.h"
 #include "eem/font.h"
+#include "eem/resource.h"
 
 namespace EEM {
 
@@ -62,97 +61,6 @@ const byte kCharToGlyph[128] = {
 
 inline byte mapChar(uint32 c) {
 	return c < 128 ? kCharToGlyph[c] : 0;
-}
-
-uint32 readUint24BE(Common::SeekableReadStream &stream) {
-	const uint32 hi = stream.readByte();
-	const uint32 mid = stream.readByte();
-	const uint32 lo = stream.readByte();
-	return (hi << 16) | (mid << 8) | lo;
-}
-
-Common::SeekableReadStream *getRawMacResource(const Common::Path &path,
-											  uint32 typeId, uint16 resourceId) {
-	Common::File f;
-	if (!f.open(path))
-		return nullptr;
-
-	const uint32 fileSize = (uint32)f.size();
-	if (fileSize < 16)
-		return nullptr;
-
-	const uint32 dataOffset = f.readUint32BE();
-	const uint32 mapOffset = f.readUint32BE();
-	const uint32 dataLength = f.readUint32BE();
-	const uint32 mapLength = f.readUint32BE();
-	if (dataOffset > fileSize || mapOffset > fileSize ||
-		dataLength > fileSize - dataOffset ||
-		mapLength > fileSize - mapOffset || mapLength < 28)
-		return nullptr;
-
-	f.seek(mapOffset + 24);
-	const uint16 typeListOffset = f.readUint16BE();
-	const uint32 typeListBase = mapOffset + typeListOffset;
-	const uint32 mapEnd = mapOffset + mapLength;
-	if (typeListBase + 2 > mapEnd)
-		return nullptr;
-
-	f.seek(typeListBase);
-	const uint16 typeCount = f.readUint16BE() + 1;
-	for (uint typeIndex = 0; typeIndex < typeCount; typeIndex++) {
-		const uint32 typeEntry = typeListBase + 2 + typeIndex * 8;
-		if (typeEntry + 8 > mapEnd)
-			return nullptr;
-
-		f.seek(typeEntry);
-		const uint32 curType = f.readUint32BE();
-		const uint16 resourceCount = f.readUint16BE() + 1;
-		const uint16 refListOffset = f.readUint16BE();
-		if (curType != typeId)
-			continue;
-
-		const uint32 refListBase = typeListBase + refListOffset;
-		if (refListBase > mapEnd)
-			return nullptr;
-
-		for (uint resIndex = 0; resIndex < resourceCount; resIndex++) {
-			const uint32 refEntry = refListBase + resIndex * 12;
-			if (refEntry + 12 > mapEnd)
-				return nullptr;
-
-			f.seek(refEntry);
-			const uint16 curId = f.readUint16BE();
-			f.skip(2); // resource name offset
-			f.skip(1); // attributes
-			const uint32 resourceDataOffset = readUint24BE(f);
-			f.skip(4); // handle
-
-			if (curId != resourceId)
-				continue;
-
-			const uint32 resourceData = dataOffset + resourceDataOffset;
-			if (resourceData + 4 > dataOffset + dataLength)
-				return nullptr;
-
-			f.seek(resourceData);
-			const uint32 resourceLength = f.readUint32BE();
-			if (resourceLength > dataOffset + dataLength - resourceData - 4)
-				return nullptr;
-
-			byte *data = (byte *)malloc(resourceLength);
-			if (!data)
-				return nullptr;
-			if (f.read(data, resourceLength) != resourceLength) {
-				free(data);
-				return nullptr;
-			}
-
-			return new Common::MemoryReadStream(data, resourceLength,
-											   DisposeAfterUse::YES);
-		}
-	}
-
-	return nullptr;
 }
 
 EEMFont::~EEMFont() {
@@ -219,12 +127,8 @@ bool EEMFont::loadMacResource(const Common::Path &path, uint16 resourceId,
 							  int size) {
 	clear();
 
-	Common::MacResManager res;
-	Common::SeekableReadStream *stream = nullptr;
-	if (res.open(path) && res.hasResFork())
-		stream = res.getResource(MKTAG('F', 'O', 'N', 'T'), resourceId);
-	if (!stream)
-		stream = getRawMacResource(path, MKTAG('F', 'O', 'N', 'T'), resourceId);
+	Common::SeekableReadStream *stream =
+		openMacResource(path, MKTAG('F', 'O', 'N', 'T'), resourceId);
 	if (!stream)
 		return false;
 

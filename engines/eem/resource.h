@@ -29,6 +29,10 @@
 
 #include "graphics/managed_surface.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace EEM {
 
 struct DBEntry {
@@ -78,6 +82,10 @@ private:
 	Common::Array<DBEntry> _index;
 	bool _bigEndian = false;
 };
+
+Common::SeekableReadStream *openMacResource(const Common::Path &path,
+											uint32 typeId,
+											uint16 resourceId);
 
 } // End of namespace EEM
 

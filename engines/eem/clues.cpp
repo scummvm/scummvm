@@ -333,8 +333,8 @@ void EEMEngine::doChoosePartner() {
 		g_system->delayMillis(20);
 	}
 
-	if (_audio && !isDemo() && !isMacintosh()) {
-		if (isFloppy()) {
+	if (_audio && !isDemo()) {
+		if (isFloppy() || isMacintosh()) {
 			// Floppy _DoChoosePartner_Floppy @ 19bb:0a8e 
 			_audio->playFloppyVoiceSlot(0x14, _partner);
 		} else {

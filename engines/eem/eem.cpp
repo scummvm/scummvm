@@ -386,9 +386,10 @@ Common::Error EEMEngine::run() {
 	else if (!isMacintosh() && !_font.load(Common::Path("FONT.FNT")))
 		warning("FONT.FNT failed to load; text will not render");
 
-	// _InitMIDI @ 20a2:013a. The demo and Mac release do not ship DOS XMIDI data.
-	if (!isDemo() && !isMacintosh())
-		_music = new MusicPlayer(isFloppy());
+	// _InitMIDI @ 20a2:013a. The demo ships no music. The Mac release stores
+	// SMF MIDI resources in EEM Sound&Music instead of loose DOS XMIDI files.
+	if (!isDemo())
+		_music = new MusicPlayer(isFloppy(), isMacintosh());
 
 	// _InitDrivers @ 1ff1:0368 (SBDIG.ADV / PASDIG.ADV).
 	_audio = new AudioPlayer(this);
