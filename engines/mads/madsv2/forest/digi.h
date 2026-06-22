@@ -29,31 +29,52 @@ namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
+#define MAX_DIGI_CHANNELS 3
+
 class DigiPlayer {
+	struct DigiChannel {
+		Audio::SoundHandle _soundHandle;
+		bool _isPlaying = false;
+		int _triggerId;
+		bool _endTrigger = true;
+	};
 private:
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _slots[8];
-public:
-	DigiPlayer(Audio::Mixer *mixer) : _mixer(mixer) {
-	}
+	DigiChannel _channels[MAX_DIGI_CHANNELS];
 
+public:
+	DigiPlayer(Audio::Mixer *mixer);
+
+	/**
+	 * Play a digital sound
+	 * @param name	Resource name
+	 * @param slot	Channel to play it in
+	*/
 	void play(const char *name, int slot);
+
+	/**
+	 * Stop any playing digital sound in a particular channel
+	 * @param slot	Channel to stop
+	 */
 	void stop(int slot);
+
+	/**
+	 * Polls for any playing sounds that are finished
+	 */
+	void poll();
 };
 
 extern int digi_val2;
 extern int digi_timing_index;
 extern bool digi_flag1, digi_flag2;
 
-extern void digi_install();
 extern void digi_play(const char *name, int slot);
-extern void digi_play_build(int room, char thing, int num, int slot);
+extern void digi_play_build(int roomNum, char thing, int num, int slot);
 extern void digi_play_build_ii(char thing, int num, int slot);
 extern void digi_stop(int which_one);
-extern void digi_uninstall();
 extern void digi_initial_volume(int vol);
 extern void digi_set_volume(int vol, int slot);
-inline void digi_read_another_chunk() {}
+extern void digi_read_another_chunk();
 
 } // namespace Forest
 } // namespace MADSV2

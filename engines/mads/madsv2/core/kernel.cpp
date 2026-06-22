@@ -59,6 +59,7 @@
 #include "mads/madsv2/core/quote.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
+#include "mads/madsv2/forest/digi.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -124,8 +125,6 @@ Kernel     kernel;                      /* Kernel data            */
 KernelGame game;                        /* Kernel level game data */
 
 Sequence sequence_list[KERNEL_MAX_SEQUENCES];
-
-int stop_speech_on_run_anim = true;
 
 KernelMessage kernel_message[KERNEL_MAX_MESSAGES];
 FontPtr kernel_message_font;
@@ -1456,15 +1455,13 @@ int kernel_run_animation(const char *name, int trigger_code) {
 	int count;
 	int load_flags;
 	int id;
-	long largest_block;
+	int largest_block;
 
-#if 0
-	if (stop_speech_on_run_anim) {
-		digi_stop(1);
-		digi_stop(2);
-		digi_stop(3);
+	if (g_engine->getGameID() == GType_Forest && stop_speech_on_run_animation) {
+		Forest::digi_stop(1);
+		Forest::digi_stop(2);
+		Forest::digi_stop(3);
 	}
-#endif
 
 	anim_error = -2;
 
@@ -1492,7 +1489,7 @@ int kernel_run_animation(const char *name, int trigger_code) {
 	if (kernel_anim[found].anim->misc_any_packed) {
 		kernel_anim[found].buffer_id = -1;
 		id = kernel_anim[found].anim->series_id[kernel_anim[found].anim->misc_packed_series];
-		memcpy(&largest_block, &series_list[id]->misc_largest_block, sizeof(long));
+		memcpy(&largest_block, &series_list[id]->misc_largest_block, sizeof(int));
 		if (mem_get_avail() - 128 >= largest_block) {
 			mem_free(series_list[id]->arena);
 			series_list[id]->arena = (byte *)mem_get_name(largest_block * 2, "$arena$");
@@ -2960,7 +2957,7 @@ void init_kernel() {
 	memset(&kernel, 0, sizeof(Kernel));
 	memset(&game, 0, sizeof(KernelGame));
 	memset(sequence_list, 0, sizeof(sequence_list));
-	stop_speech_on_run_anim = true;
+	stop_speech_on_run_animation = true;
 	memset(kernel_message, 0, sizeof(kernel_message));
 	kernel_message_font = NULL;
 	kernel_message_spacing = 0;
@@ -2979,7 +2976,6 @@ void init_kernel() {
 	random_message_color = 0;
 	random_message_duration = 0;
 	memset(kernel_interface_loaded, 0, sizeof(kernel_interface_loaded));
-	stop_speech_on_run_animation = false;
 }
 
 void kernel_random_frame(int handle, int16 *frame, int mode) {

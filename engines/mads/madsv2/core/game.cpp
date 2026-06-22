@@ -66,6 +66,7 @@
 #include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/core/screen.h"
 #include "mads/madsv2/forest/extra.h"
+#include "mads/madsv2/forest/digi.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -2300,11 +2301,13 @@ static void game_control_loop() {
 			}
 		}
 	}
-#if 0
-	digi_stop(1);
-	digi_stop(2);
-	digi_stop(3);
-#endif
+
+	if (g_engine->getGameID() == GType_Forest) {
+		Forest::digi_stop(1);
+		Forest::digi_stop(2);
+		Forest::digi_stop(3);
+	}
+
 	if (debugger) game_exec_function(debugger_reset);
 }
 
