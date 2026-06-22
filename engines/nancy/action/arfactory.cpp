@@ -39,6 +39,7 @@
 #include "engines/nancy/action/puzzle/beadpuzzle.h"
 #include "engines/nancy/action/puzzle/bulpuzzle.h"
 #include "engines/nancy/action/puzzle/bombpuzzle.h"
+#include "engines/nancy/action/puzzle/cardgamepuzzle.h"
 #include "engines/nancy/action/puzzle/collisionpuzzle.h"
 #include "engines/nancy/action/puzzle/cubepuzzle.h"
 #include "engines/nancy/action/puzzle/cuttingpuzzle.h"
@@ -505,8 +506,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 245:
 		return new TypingQuizPuzzle();
 	case 246:
-		warning("CardGamePuzzle");	// TODO
-		return nullptr;
+		return new CardGamePuzzle();
 	default:
 		warning("Unknown action record type %d", type);
 		return nullptr;
