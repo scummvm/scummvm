@@ -83,20 +83,6 @@ struct SpriteBank {
 	bool isFont;
 };
 
-// Sprite display informations
-struct SpriteDisplay {
-	int x, y;
-	int width, height;
-	bool freeAfterUse;
-	Graphics::FLIP_FLAGS flip;
-	Graphics::ManagedSurface *surface;
-	byte transparency;
-
-	SpriteDisplay(int xpos, int ypos, Graphics::FLIP_FLAGS f, Graphics::ManagedSurface *ptr, int w = -1, int h = 1, bool free = false, byte trans = 255) :
-			x(xpos), y(ypos), flip(f), surface(ptr), width(w), height(h), freeAfterUse(free), transparency(trans) {
-	}
-};
-
 } // End of namespace Sludge
 
 #endif
