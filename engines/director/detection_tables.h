@@ -4566,7 +4566,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("gusmuse", "", "MUSEUM.EXE", "t:a94c1f2c2bb45335edaed96cb99243f7", 697019,
 			"CONTENT/INTRO.DIR", "t:40fb23b25fd6e873338e9f52d10983f7", 217402, Common::NL_NLD, 404),
 
-	MACDEMO1("gusolis", "Demo", "Cyberopolis DEMO", "r:77f4098988d5386794d1530065f514cd", 303961, 404),
+	MACDEMO1("gusolis", "Demo", "Cyberopolis DEMO",			"r:77f4098988d5386794d1530065f514cd", 303961, 404),
+	MACGAME2("gusolis", "",		"Gus Goes to Cyberopolis",	"r:68ed73866232194a9a5609040dc1f242", 291988,
+								"MMVLogo.Dxr",				"d:8971eb558c342d539aef41bf0b6e1268", 81586, 404),
+	WINGAME2("gusolis", "",		"CYBEROP.EXE",              "t:f5d3263ba73e2d069de2bc50e56f8f99", 686707,
+								"MMVLOGO.DXR",				"d:8971eb558c342d539aef41bf0b6e1268", 81586, 404),
 
 	MACGAME1("guspark", "",		"Gus goes to CyberStone Park", "r:ccfbfc1a0ac231db40a250babaa6ad7c", 285282, 404),
 	MACGAME1("guspark", "",		"Gus goes to CyberStone Park", "tr:6cb8084d74e94d6f04f619ee9b423a06", 288490, 404),
