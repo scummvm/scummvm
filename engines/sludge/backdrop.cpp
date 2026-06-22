@@ -299,7 +299,7 @@ void GraphicsManager::hardScroll(int distance) {
 	if (!distance)
 		return;
 
-	Graphics::Surface tmp;
+	Graphics::ManagedSurface tmp;
 	tmp.copyFrom(_backdropSurface);
 
 	// copy part of the backdrop to it
@@ -362,7 +362,7 @@ bool GraphicsManager::loadLightMap(int v) {
 
 	Graphics::ManagedSurface tmp;
 
-	if (!ImgLoader::loadImage(v, "lightmap", g_sludge->_resMan->getData(), tmp.surfacePtr()))
+	if (!ImgLoader::loadImage(v, "lightmap", g_sludge->_resMan->getData(), &tmp))
 		return false;
 
 	if (tmp.w != (int16)_sceneWidth || tmp.h != (int16)_sceneHeight) {
@@ -416,7 +416,7 @@ bool GraphicsManager::loadHSI(int num, Common::SeekableReadStream *stream, int x
 		killAllBackDrop(); // kill all
 	}
 
-	Graphics::Surface tmp;
+	Graphics::ManagedSurface tmp;
 
 	if (!ImgLoader::loadImage(num, "hsi", stream, &tmp, (int)reserve))
 		return false;
@@ -459,7 +459,7 @@ bool GraphicsManager::loadHSI(int num, Common::SeekableReadStream *stream, int x
 
 bool GraphicsManager::mixHSI(int num, Common::SeekableReadStream *stream, int x, int y) {
 	debugC(1, kSludgeDebugGraphics, "Load mixHSI");
-	Graphics::Surface mixSurface;
+	Graphics::ManagedSurface mixSurface;
 	if (!ImgLoader::loadImage(num, "mixhsi", stream, &mixSurface, 0))
 		return false;
 

@@ -31,7 +31,7 @@ struct ZBufferData {
 	int originalNum;
 
 	uint8 *tex;
-	Graphics::Surface *sprites;
+	Graphics::ManagedSurface *sprites;
 };
 
 } // End of namespace Sludges

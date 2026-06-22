@@ -340,21 +340,21 @@ void GraphicsManager::flipFontSprite(int x, int y, Sprite &single, const SpriteP
 	fontSprite(true, x, y, single, fontPal);
 }
 
-Graphics::Surface *GraphicsManager::duplicateSurface(Graphics::Surface *surface) {
-	Graphics::Surface *res = new Graphics::Surface();
+Graphics::ManagedSurface *GraphicsManager::duplicateSurface(Graphics::ManagedSurface *surface) {
+	Graphics::ManagedSurface *res = new Graphics::ManagedSurface();
 	res->copyFrom(*surface);
 	return res;
 }
 
-void GraphicsManager::blendColor(Graphics::Surface *blitted, uint32 color, Graphics::TSpriteBlendMode mode) {
+void GraphicsManager::blendColor(Graphics::ManagedSurface *blitted, uint32 color, Graphics::TSpriteBlendMode mode) {
 	Graphics::ManagedSurface tmp(blitted->w, blitted->h, blitted->format);
 	tmp.fillRect(Common::Rect(0, 0, tmp.w, tmp.h), color);
 	tmp.blendBlitTo(*blitted, 0, 0, Graphics::FLIP_NONE, nullptr, MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), (int)blitted->w, (int)blitted->h, mode);
 	tmp.free();
 }
 
-Graphics::Surface *GraphicsManager::applyLightmapToSprite(Graphics::Surface *&blitted, OnScreenPerson *thisPerson, bool mirror, int x, int y, int x1, int y1, int diffX, int diffY) {
-	Graphics::Surface * toDetele = nullptr;
+Graphics::ManagedSurface *GraphicsManager::applyLightmapToSprite(Graphics::ManagedSurface *&blitted, OnScreenPerson *thisPerson, bool mirror, int x, int y, int x1, int y1, int diffX, int diffY) {
+	Graphics::ManagedSurface * toDelete = nullptr;
 
 	// if light map is used
 	bool light = !(thisPerson->extra & EXTRA_NOLITE);
@@ -376,7 +376,7 @@ Graphics::Surface *GraphicsManager::applyLightmapToSprite(Graphics::Surface *&bl
 		} else if (_lightMapMode == LIGHTMAPMODE_PIXEL) {
 			curLight[0] = curLight[1] = curLight[2] = 255;
 
-			toDetele = blitted = duplicateSurface(blitted);
+			toDelete = blitted = duplicateSurface(blitted);
 
 			// apply light map texture
 			Graphics::ManagedSurface tmp;
@@ -414,20 +414,20 @@ Graphics::Surface *GraphicsManager::applyLightmapToSprite(Graphics::Surface *&bl
 
 	// apply primary color
 	if (primaryColor != (uint32)MS_ARGB(255, 255, 255, 255)) {
-		if (!toDetele) {
-			toDetele = blitted = duplicateSurface(blitted);
+		if (!toDelete) {
+			toDelete = blitted = duplicateSurface(blitted);
 			blendColor(blitted, primaryColor, Graphics::BLEND_MULTIPLY);
 		}
 	}
 
 	// apply secondary light map color
 	if (secondaryColor != 0x0) {
-		if (!toDetele) {
-			toDetele = blitted = duplicateSurface(blitted);
+		if (!toDelete) {
+			toDelete = blitted = duplicateSurface(blitted);
 		}
 		blendColor(blitted, secondaryColor, Graphics::BLEND_ADDITIVE);
 	}
-	return toDetele;
+	return toDelete;
 }
 
 bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, OnScreenPerson *thisPerson, bool mirror) {
@@ -482,8 +482,8 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 		z = 0xFF;
 	}
 
-	Graphics::Surface *blitted = &single.surface;
-	Graphics::Surface *toDelete = applyLightmapToSprite(blitted, thisPerson, mirror, x, y, x1, y1, diffX, diffY);
+	Graphics::ManagedSurface *blitted = &single.surface;
+	Graphics::ManagedSurface *toDelete = applyLightmapToSprite(blitted, thisPerson, mirror, x, y, x1, y1, diffX, diffY);
 
 	// Use Managed surface to scale and blit
 	if (!_zBuffer->numPanels) {
@@ -499,7 +499,7 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 		tmp.copyFrom(*blitted);
 		tmp.blendBlitTo(scaled, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB(255 - thisPerson->transparency, 255, 255, 255), diffX, diffY);
 
-		drawSpriteToZBuffer(0, 0, z, scaled.rawSurface());
+		drawSpriteToZBuffer(0, 0, z, scaled);
 	}
 
 	if (toDelete) {
@@ -559,8 +559,8 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 		z = 0xFF;
 	}
 
-	Graphics::Surface *blitted = &single.surface;
-	Graphics::Surface *toDelete = applyLightmapToSprite(blitted, thisPerson, mirror, x, y, x1, y1, diffX, diffY);
+	Graphics::ManagedSurface *blitted = &single.surface;
+	Graphics::ManagedSurface *toDelete = applyLightmapToSprite(blitted, thisPerson, mirror, x, y, x1, y1, diffX, diffY);
 
 	// draw backdrop
 	drawBackDrop();
@@ -583,7 +583,7 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 		tmp.copyFrom(*blitted);
 		tmp.blendBlitTo(scaled, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB(255 - thisPerson->transparency, 255, 255, 255), diffX, diffY);
 
-		drawSpriteToZBuffer(0, 0, z, scaled.rawSurface());
+		drawSpriteToZBuffer(0, 0, z, scaled);
 	}
 
 	if (toDelete) {

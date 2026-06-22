@@ -161,7 +161,7 @@ void GraphicsManager::fillZBuffer(uint8 d) {
 	memset(_zBufferSurface, d, _winHeight * _winWidth);
 }
 
-void GraphicsManager::drawSpriteToZBuffer(int x, int y, uint8 depth, const Graphics::Surface &surface) {
+void GraphicsManager::drawSpriteToZBuffer(int x, int y, uint8 depth, const Graphics::ManagedSurface &surface) {
 
 	for (uint y1 = 0; y1 < (uint)surface.h; y1++) {
 		for (uint x1 = 0; x1 < (uint)surface.w; x1++) {

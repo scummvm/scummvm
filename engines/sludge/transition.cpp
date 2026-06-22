@@ -62,7 +62,7 @@ void GraphicsManager::transitionSnapshotBox() {
 	uint32 xScale = (255 - _brightnessLevel) * _winWidth / 255;
 	uint32 yScale = (255 - _brightnessLevel) * _winHeight / 255;
 
-	Graphics::Surface *surf = _snapshotSurface.scale(xScale, yScale);
+	Graphics::ManagedSurface *surf = _snapshotSurface.scale(xScale, yScale);
 
 	_renderSurface.copyRectToSurface(surf->getPixels(), surf->pitch, (_winWidth - xScale) / 2, (_winHeight - yScale) / 2, xScale, yScale);
 

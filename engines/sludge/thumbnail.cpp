@@ -95,7 +95,7 @@ void GraphicsManager::showThumbnail(const Common::String &filename, int atX, int
 		int fileHeight = fp->readUint32LE();
 
 		Graphics::ManagedSurface thumbnail;
-		if (!ImgLoader::loadPNGImage(fp, thumbnail.surfacePtr()))
+		if (!ImgLoader::loadPNGImage(fp, &thumbnail))
 			return;
 
 		delete fp;
@@ -125,7 +125,7 @@ bool GraphicsManager::skipThumbnail(Common::SeekableReadStream *stream) {
 	_thumbHeight = stream->readUint32LE();
 
 	// Load image
-	Graphics::Surface tmp;
+	Graphics::ManagedSurface tmp;
 	if (_thumbWidth && _thumbHeight) {
 		if (!ImgLoader::loadPNGImage(stream, &tmp))
 			return false;

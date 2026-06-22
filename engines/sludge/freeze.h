@@ -41,8 +41,8 @@ class Parallax;
 struct FrozenStuffStruct {
 	OnScreenPersonList *allPeople;
 	ScreenRegionList *allScreenRegions;
-	Graphics::Surface backdropSurface;
-	Graphics::Surface lightMapSurface;
+	Graphics::ManagedSurface backdropSurface;
+	Graphics::ManagedSurface lightMapSurface;
 	uint8 *zBufferTex;
 	int zPanels;
 	ParallaxLayers *parallaxLayers;
