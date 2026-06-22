@@ -1464,13 +1464,24 @@ Datum LC::eqDataStrict(Datum d1, Datum d2) {
 	if (d1.type == STRING && d2.type == STRING) {
 		return Datum(*d1.u.s == *d2.u.s ? 1 : 0);
 	}
-	// ARRAYs and PARRAYs will do a pointer check,
-	// not a contents check
-	if (d1.isArray() && d2.isArray()) {
-		return Datum(d1.u.farr == d2.u.farr ? 1 : 0);
-	}
-	if (d1.type == PARRAY && d2.type == PARRAY) {
-		return Datum(d1.u.parr == d2.u.parr ? 1 : 0);
+	if (g_director->getVersion() >= 600) {
+		// Recurse with eqDataStrict so nested string elements stay case-sensitive.
+		if (d1.isArray() && d2.isArray()) {
+			if (d1.u.farr->arr.size() != d2.u.farr->arr.size())
+				return Datum(0);
+			return LC::compareArrays(LC::eqDataStrict, d1, d2, false, true);
+		}
+		if (d1.type == PARRAY && d2.type == PARRAY) {
+			if (d1.u.parr->arr.size() != d2.u.parr->arr.size())
+				return Datum(0);
+			return LC::compareArrays(LC::eqDataStrict, d1, d2, false, true);
+		}
+	} else {
+		// D5 and earlier: object-identity comparison for ARRAY/PARRAY.
+		if (d1.isArray() && d2.isArray())
+			return Datum(d1.u.farr == d2.u.farr ? 1 : 0);
+		if (d1.type == PARRAY && d2.type == PARRAY)
+			return Datum(d1.u.parr == d2.u.parr ? 1 : 0);
 	}
 	return LC::eqData(d1, d2);
 }

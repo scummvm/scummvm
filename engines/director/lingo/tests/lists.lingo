@@ -82,6 +82,20 @@ scummvmAssertEqual(gA, 100)
 setAt rct, 2, 20
 scummvmAssertEqual(getAt(rct, 2), 20)
 
+-- intersect() / union() return rects (not booleans)
+scummvmAssertEqual(string(intersect(rect(0, 0, 100, 100), rect(50, 50, 150, 150))), "rect(50, 50, 100, 100)")
+scummvmAssertEqual(string(intersect(rect(0, 0, 10, 10), rect(20, 20, 30, 30))), "rect(0, 0, 0, 0)")
+set ir to intersect(rect(0, 0, 100, 100), rect(50, 50, 150, 150))
+scummvmAssertEqual(the width of ir, 50)
+scummvmAssertEqual(the height of ir, 50)
+set ir to intersect(rect(0, 0, 10, 10), rect(20, 20, 30, 30))
+scummvmAssertEqual(the width of ir, 0)
+scummvmAssertEqual(string(union(rect(0, 0, 10, 10), rect(20, 20, 30, 30))), "rect(0, 0, 30, 30)")
+
+-- the width / the height resolve directly on a rect literal too
+scummvmAssertEqual(the width of rect(10, 20, 40, 60), 30)
+scummvmAssertEqual(the height of rect(10, 20, 40, 60), 40)
+
 -- array conversions
 set a to point(11, 12)
 set b to rect(21, 22, 23, 24)
@@ -320,9 +334,31 @@ scummvmAssertEqual(getOne(testList, "urgh"), 2)
 set testlist to [5, "URGH", 3, 1, "urgh"]
 scummvmAssertEqual(getOne(testList, "urgh"), 5)
 
--- for finding ARRAY/PARRAY, check the pointer, not the contents
+-- ARRAY/PARRAY matching in getOne/getPos is VERSION-DEPENDENT (verified against
+-- real Director 5/6/7): D5 and earlier match by object IDENTITY, so a freshly
+-- built value-equal list does NOT match; from D6 on they match by CONTENTS.
+-- The test target reports D4, so toggle the version to exercise both branches.
+set savedVer to the scummvmVersion
+
+-- D5 and earlier: identity comparison -> a freshly built list never matches
+set the scummvmVersion to 500
 set testList to [#a, #b, [1, 2, 3]]
 scummvmAssertEqual(getOne(testList, [1, 2, 3]), 0)
+set coordList to [[13, 14], [20, 5], [7, 7]]
+scummvmAssertEqual(getPos(coordList, [20, 5]), 0)
+
+-- D6 and later: contents comparison (TKKG5 Sokoban getOne(mZielListe, [x,y]))
+set the scummvmVersion to 600
+set testList to [#a, #b, [1, 2, 3]]
+scummvmAssertEqual(getOne(testList, [1, 2, 3]), 3)
+scummvmAssertEqual(getOne(testList, [1, 2, 4]), 0)
+set coordList to [[13, 14], [20, 5], [7, 7]]
+scummvmAssertEqual(getPos(coordList, [20, 5]), 2)
+scummvmAssertEqual(getPos(coordList, [99, 99]), 0)
+
+set the scummvmVersion to savedVer
+
+-- A same-object reference matches in every version (identity == contents here)
 set subItem to [1, 2, 3]
 set testList to [#a, #b, subItem]
 scummvmAssertEqual(getOne(testList, subItem), 3)
