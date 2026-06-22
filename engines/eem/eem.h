@@ -126,8 +126,11 @@ public:
 	const char *getGameId() const;
 	Common::Platform getPlatform() const;
 	Variant getVariant() const { return _variant; }
-	bool isFloppy() const { return _variant == kVariantFloppy; }
+	bool isFloppy() const { return _variant == kVariantFloppy || isDemo(); }
 	bool isLondon() const { return _variant == kVariantLondonCD; }
+	bool isDemo() const {
+		return _gameDescription && (_gameDescription->flags & ADGF_DEMO);
+	}
 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;

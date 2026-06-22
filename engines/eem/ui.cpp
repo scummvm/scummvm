@@ -1514,7 +1514,18 @@ void EEMEngine::doSetup() {
 
 			if (kNewCaseBtn.contains(mx, my)) {
 				saveProfile(_playerName);
-				_nextScreen = kScreenChooseMystery;
+				if (isDemo()) {
+					if (_mystery.load(0, &_rng)) {
+						resetSiteArrivalState();
+						_nextScreen = kScreenInitClues;
+					} else {
+						warning("doSetup: failed to restart demo practice mystery");
+						_mystery.clear();
+						_nextScreen = kScreenAction;
+					}
+				} else {
+					_nextScreen = kScreenChooseMystery;
+				}
 				return;
 			}
 
@@ -1896,8 +1907,9 @@ void EEMEngine::doActionScreen() {
 		"         Ver Recortes  3"
 	};
 	const char * const *kPickLabel = isSpanish() ? kPickLabelES : kPickLabelEN;
-	// London has no BOOK3.NME, so its action menu offers four entries
-	const uint numPicks = isLondon() ? (uint)kPickScrap3 : (uint)kNumPicks;
+	// London has no BOOK3.NME, and the demo ships only the practice case.
+	const uint numPicks = isDemo() ? (uint)kPickScrap1
+						: isLondon() ? (uint)kPickScrap3 : (uint)kNumPicks;
 
 	uint loT = 0, hiT = 0;
 	const bool anySolved1 = mysteryTierRange(1, loT, hiT) &&
@@ -1907,8 +1919,8 @@ void EEMEngine::doActionScreen() {
 	const bool haveTier3 = mysteryTierRange(3, loT, hiT);
 	const bool anySolved3 = haveTier3 && anyMysterySolved(loT, hiT);
 
-	const bool chooseOn   = _chainStage < 4;
-	const bool practiceOn = _chainStage <= 1;
+	const bool chooseOn   = !isDemo() && _chainStage < 4;
+	const bool practiceOn = isDemo() || _chainStage <= 1;
 	const bool scrap1On =
 		_chainStage >= 2 || (_chainStage == 1 && anySolved1);
 	const bool scrap2On =

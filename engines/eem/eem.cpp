@@ -306,7 +306,7 @@ void EEMEngine::advanceChainStageAfterSolve(uint mysteryNum) {
 }
 
 void EEMEngine::applySkipRepeatedCasesOption() {
-	if (isLondon() || !ConfMan.getBool("skip_repeated_cases"))
+	if (isLondon() || isDemo() || !ConfMan.getBool("skip_repeated_cases"))
 		return;
 	if (_mystery.isLoaded())
 		return;
@@ -343,8 +343,9 @@ Common::Error EEMEngine::run() {
 	if (!_font.load(Common::Path("FONT.FNT")))
 		warning("FONT.FNT failed to load; text will not render");
 
-	// _InitMIDI @ 20a2:013a.
-	_music = new MusicPlayer(isFloppy());
+	// _InitMIDI @ 20a2:013a. The demo does not ship SAMPLE.AD or XMIDI data.
+	if (!isDemo())
+		_music = new MusicPlayer(isFloppy());
 
 	// _InitDrivers @ 1ff1:0368 (SBDIG.ADV / PASDIG.ADV).
 	_audio = new AudioPlayer(this);
@@ -420,12 +421,12 @@ Common::Error EEMEngine::run() {
 			showHighScoreLogo();
 		if (!shouldQuit() && !_skipIntro)
 			showFloppyStormLogo();
-		if (!shouldQuit() && !_skipIntro && _music)
+		if (!shouldQuit() && !_skipIntro && !isDemo() && _music)
 			_music->playFile(Common::Path("THEME.XMI"), /* loop= */ true);
-		if (!shouldQuit() && !_skipIntro)
+		if (!shouldQuit() && !_skipIntro && !isDemo())
 			playAnm(Common::Path("CHAT.ANM"), 120,
 					/* holdLastFrame= */ false);
-		if (!shouldQuit() && !_skipIntro)
+		if (!shouldQuit() && !_skipIntro && !isDemo())
 			playAnm(Common::Path("MOVIE.ANM"), 120,
 					/* holdLastFrame= */ false);
 	} else {
@@ -499,7 +500,20 @@ screenLoop:
 		switch (current) {
 		case kScreenTitle:
 			_nextScreen = kScreenProfile;
-			if (isFloppy()) {
+			if (isDemo()) {
+				Picture title;
+				CursorMan.showMouse(false);
+				setSitePalette(0);
+				if (_picsArchive.getPicture(1, title) && !title.surface.empty()) {
+					blitAt(title, 0, 0);
+					g_system->updateScreen();
+					waitForInput(0xFFFFFFFFu);
+				} else {
+					warning("EEM demo title PIC 1 failed to load");
+				}
+				_skipIntro = false;
+				CursorMan.showMouse(true);
+			} else if (isFloppy()) {
 				CursorMan.showMouse(false);
 				playAnm(Common::Path("TITLE.ANM"), 120,
 						/* holdLastFrame= */ true, /* fadeIn= */ true);
@@ -1343,14 +1357,14 @@ void EEMEngine::showFloppyStormLogo() {
 	g_system->getPaletteManager()->setPalette(black, 0, 256);
 	g_system->updateScreen();
 
-	if (_audio)
+	if (_audio && !isDemo())
 		_audio->playVoc(Common::Path("THUNDER.VOC"));
 
 	fadePaletteFromBlack(target);
 	waitForInput(2000);
 	fadeCurrentPaletteToBlack();
 
-	if (_audio)
+	if (_audio && !isDemo())
 		_audio->stopVoice();
 }
 

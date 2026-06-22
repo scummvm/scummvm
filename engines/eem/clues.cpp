@@ -333,7 +333,7 @@ void EEMEngine::doChoosePartner() {
 		g_system->delayMillis(20);
 	}
 
-	if (_audio) {
+	if (_audio && !isDemo()) {
 		if (isFloppy()) {
 			// Floppy _DoChoosePartner_Floppy @ 19bb:0a8e 
 			_audio->playFloppyVoiceSlot(0x14, _partner);
@@ -639,15 +639,28 @@ void EEMEngine::doInitClues() {
 		_mystery._lastSite = 0;
 	}
 
-	setSitePalette(isLondon() ? 0x39 : 0x22);
+	const bool demo = isDemo();
+	byte demoPalette[kPalSize];
+	const bool haveDemoPalette = demo && getSitePalette(0x22, demoPalette);
+	if (demo && haveDemoPalette) {
+		byte black[kPalSize] = {};
+		g_system->getPaletteManager()->setPalette(black, 0, 256);
+	} else {
+		setSitePalette(isLondon() ? 0x39 : 0x22);
+	}
+
 	Picture bg;
-	const bool haveBriefingBg = _picsArchive.getPicture(0x52, bg);
+	const uint16 bgPic = demo ? (_partner == kPartnerJake ? 3 : 2) : 0x52;
+	const bool haveBriefingBg = _picsArchive.getPicture(bgPic, bg);
 	if (haveBriefingBg)
 		blitAt(bg, 0, 0);
 
+	if (demo && haveDemoPalette)
+		fadePaletteFromBlack(demoPalette);
+
 	if (isLondon())
 		playLondonInitCluesAnim(caseType, bg, haveBriefingBg);
-	else
+	else if (!demo)
 		playCdFloppyInitCluesAnim(caseType, floppy, bg, haveBriefingBg);
 
 	// Briefing dialogue. CD: clue block @ ib+4 (after caseType,startSite).
