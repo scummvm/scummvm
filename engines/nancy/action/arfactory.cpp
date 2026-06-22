@@ -290,8 +290,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		//warning("AutotextTextBoxWrite");	// TODO
 		return nullptr;
 	case 96:	// Nancy11
-		warning("UnknownAR96");	// TODO
-		return nullptr;
+		return new RandomizeEventFlags();
 	case 97:
 		return new EventFlags(true);
 	case 98:

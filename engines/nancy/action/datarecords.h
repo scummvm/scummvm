@@ -135,6 +135,18 @@ protected:
 	Common::String getRecordTypeName() const override { return _isCursor ? (_isTerse ? "EventFlagsHSTerse" : "EventFlagsCursorHS") : "EventFlagsMultiHS"; }
 };
 
+// Nancy 11+ AR 96. Sets each of a list of event flags to a random boolean value.
+class RandomizeEventFlags : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	Common::Array<int16> _flagLabels;
+
+protected:
+	Common::String getRecordTypeName() const override { return "RandomizeEventFlags"; }
+};
+
 // Sets the difficulty level for the current save. Only appears at the start of the game.
 // First appears in nancy1. Nancy1 and nancy2 have three difficulty values, while later games
 // only have two: 0 and 2.
