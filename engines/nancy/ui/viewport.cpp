@@ -185,6 +185,11 @@ void Viewport::handleInput(NancyInput &input) {
 		}
 	}
 
+	// Nancy 11+ StopPlayerScrolling/StartPlayerScrolling can disable viewport movement entirely
+	if (!NancySceneState.getPlayerScrolling()) {
+		direction = 0;
+	}
+
 	// Perform the movement
 	if (direction) {
 		Time movementDelta = NancySceneState.getMovementTimeDelta(direction & kMoveFast);

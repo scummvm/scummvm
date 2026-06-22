@@ -822,6 +822,8 @@ void Scene::synchronize(Common::Serializer &ser) {
 		}
 	}
 
+	ser.syncAsByte(_playerScrollingEnabled, kGameTypeNancy11);
+
 	_isRunningAd = false;
 	ConfMan.removeKey("restore_after_ad", Common::ConfigManager::kTransientDomain);
 
@@ -1314,6 +1316,9 @@ void Scene::handleInput() {
 void Scene::initStaticData() {
 	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
+
+	// Nancy 11+ AR 30/31. Player scrolling defaults to enabled at game start.
+	_playerScrollingEnabled = true;
 
 	Common::Path imageName = "FRAME";
 

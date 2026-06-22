@@ -181,11 +181,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		// Nancy 10+
 		return new ControlUIItems();
 	case 30:	// Nancy11
-		warning("StopPlayerScrolling");	// TODO
-		return nullptr;
+		return new StopPlayerScrolling();
 	case 31:	// Nancy11
-		warning("StartPlayerScrolling");	// TODO
-		return nullptr;
+		return new StartPlayerScrolling();
 	case 32:
 		// Nancy 10+
 		return new UIPopupPrepScene();

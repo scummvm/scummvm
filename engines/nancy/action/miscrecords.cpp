@@ -413,6 +413,24 @@ void StopTimer::execute() {
 	_isDone = true;
 }
 
+void StopPlayerScrolling::readData(Common::SeekableReadStream &stream) {
+	stream.skip(1);
+}
+
+void StopPlayerScrolling::execute() {
+	NancySceneState.setPlayerScrolling(false);
+	_isDone = true;
+}
+
+void StartPlayerScrolling::readData(Common::SeekableReadStream &stream) {
+	stream.skip(1);
+}
+
+void StartPlayerScrolling::execute() {
+	NancySceneState.setPlayerScrolling(true);
+	_isDone = true;
+}
+
 void GotoMenu::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
 }

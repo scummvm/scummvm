@@ -293,6 +293,27 @@ protected:
 	Common::String getRecordTypeName() const override { return "StopTimer"; }
 };
 
+// Nancy 11+ AR 30. Disables the player's ability to scroll/pan the viewport
+// (both mouse-edge and keyboard movement). State persists across scene changes.
+class StopPlayerScrolling : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "StopPlayerScrolling"; }
+};
+
+// Nancy 11+ AR 31. Re-enables the player's ability to scroll/pan the viewport.
+class StartPlayerScrolling : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "StartPlayerScrolling"; }
+};
+
 // Returns the player back to the main menu
 class GotoMenu : public ActionRecord {
 public:
