@@ -44,10 +44,9 @@ NotebookPopup::NotebookPopup() :
 		_uinbData(nullptr),
 		_activeTab(0) {}
 
-// Cap on how tall HypertextParser's working surface can grow. Notebook
-// journals on Nancy 10+ rarely exceed a few hundred wrapped lines; this
-// gives plenty of headroom while keeping the allocation bounded.
-static const uint16 kHypertextSurfaceHeight = 4096;
+// Working-surface height for HypertextParser. Matches the original
+// engine's allocation so long journals don't get clipped.
+static const uint16 kHypertextSurfaceHeight = 16000;
 
 void NotebookPopup::init() {
 	_uinbData = GetEngineData(UINB);
@@ -74,15 +73,14 @@ void NotebookPopup::init() {
 	bounds.moveTo(0, 0);
 	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphics->getInputPixelFormat());
 
-	// Set up HypertextParser's scratch surfaces. Width matches the
-	// chunk's text rect; height is generously oversized so journal
-	// content for any plausible save state fits without truncation
-	// (overflow is handled by scrolling, not by growing the surface).
-	// Background color is irrelevant — paintPaperIntoFullSurface()
-	// re-tiles the popup's paper texture after every clear() so the
-	// text always sits on real notebook paper.
+	// Transparent-keyed scratch surfaces so text blits over the paper
+	// painted by drawBackground() — paper stays stationary while text
+	// scrolls. Color 0 would clip real font pixels in Nancy fonts.
+	const uint32 trans = g_nancy->_graphics->getTransColor();
 	initSurfaces(_uinbData->textRect.width(), kHypertextSurfaceHeight,
-		g_nancy->_graphics->getInputPixelFormat(), 0, 0);
+		g_nancy->_graphics->getInputPixelFormat(), trans, trans);
+	_fullSurface.setTransparentColor(trans);
+	_textHighlightSurface.setTransparentColor(trans);
 
 	// Pick the first enabled tab as the initially active one
 	_activeTab = 0;
@@ -401,31 +399,6 @@ void NotebookPopup::refreshContent() {
 	drawForeground();
 }
 
-void NotebookPopup::paintPaperIntoFullSurface() {
-	const Common::Rect &normSrc = _uinbData->header.normalSrcRect;
-	const Common::Rect &normDest = _uinbData->header.normalDestRect;
-	const Common::Rect &chunkTextRect = _uinbData->textRect;
-
-	const int16 paperLeft = normSrc.left + (chunkTextRect.left - normDest.left);
-	const int16 paperTop  = normSrc.top  + (chunkTextRect.top  - normDest.top);
-	const Common::Rect paperSrc(paperLeft, paperTop,
-								paperLeft + chunkTextRect.width(),
-								paperTop  + chunkTextRect.height());
-
-	const int stripH = paperSrc.height();
-	if (stripH <= 0)
-		return;
-
-	int y = 0;
-	while (y < (int)_fullSurface.h) {
-		const int rowH = MIN<int>(stripH, (int)_fullSurface.h - y);
-		Common::Rect src = paperSrc;
-		src.bottom = src.top + rowH;
-		_fullSurface.blitFrom(_overlayImage, src, Common::Point(0, y));
-		y += rowH;
-	}
-}
-
 void NotebookPopup::buildTextLines() {
 	if (!_uinbData)
 		return;
@@ -434,7 +407,8 @@ void NotebookPopup::buildTextLines() {
 	if (!tab.enabled)
 		return;
 
-	const uint16 surfaceID = (uint16)tab.id + 2;
+	// tab.id 1 (top/book) → Journal; tab.id 2 (bottom/clipboard) → Tasks.
+	const uint16 surfaceID = (tab.id == 1) ? kNotebookTabJournal : kNotebookTabTasks;
 
 	JournalData *journalData = (JournalData *)NancySceneState.getPuzzleData(JournalData::getTag());
 	if (!journalData)
@@ -455,24 +429,36 @@ void NotebookPopup::buildTextLines() {
 	if (!journalData->journalEntries.contains(surfaceID))
 		return;
 
+	// Newest-first. All entries go into one addTextLine — separate
+	// calls would put every mark on its own "first line" and stack
+	// them at the textbox top.
 	const Common::Array<JournalData::Entry> &entries = journalData->journalEntries[surfaceID];
-	for (uint i = 0; i < entries.size(); ++i) {
+	Common::String combined;
+	for (int i = (int)entries.size() - 1; i >= 0; --i) {
 		Common::String stringID = entries[i].stringID;
 		Common::String body = getTextFromCaseInsensitiveKey(autotext->texts, stringID);
 
-		// Task rows get a `<N>` prefix that turns into a MARK sprite;
-		// the "complete" sentinel (8) maps to secondaryFontAttr.
 		if (surfaceID == kNotebookTabTasks && entries[i].mark != 0) {
 			uint16 markValue = entries[i].mark;
 			if (markValue == 8) {
 				markValue = _uinbData->secondaryFontAttr;
+			} else if (markValue == 7) {
+				// Engine maps <7> -> sprite index 0, same as <1>.
+				markValue = 1;
 			}
 			if (markValue >= 1 && markValue <= 5) {
 				body = Common::String::format("<%u>", markValue) + body;
 			}
 		}
 
-		addTextLine(body);
+		if (i > 0) {
+			body += "<n>";
+		}
+		combined += body;
+	}
+
+	if (!combined.empty()) {
+		addTextLine(combined);
 	}
 }
 
@@ -487,23 +473,29 @@ void NotebookPopup::drawContent() {
 	localTextRect.translate(-_uinbData->header.normalDestRect.left,
 							-_uinbData->header.normalDestRect.top);
 
-	// Reset HypertextParser state, repaint the paper background under
-	// the text layer, then route content through the shared pipeline.
 	HypertextParser::clear();
-	paintPaperIntoFullSurface();
 	buildTextLines();
 
+	// Chunk's textRect already provides top padding from the chrome.
+	// A small left inset gives breathing room; the bottom strip is
+	// reserved so the last line clears the inner bevel.
 	const uint16 fontID = _uinbData->primaryFontID;
-	Common::Rect hypertextBounds(0, 0, _fullSurface.w, _fullSurface.h);
+	const Font *font = g_nancy->_graphics->getFont(fontID);
+	const int oW = font ? font->getCharWidth('o') : 0;
+	const int leftInset   = oW;
+	const int bottomInset = oW;
+
+	Common::Rect hypertextBounds(leftInset, 0, _fullSurface.w, _fullSurface.h);
 	drawAllText(hypertextBounds, 0, fontID, fontID);
 
-	// Blit the scrolled vertical slice of the rendered hypertext onto
-	// the popup surface. _drawnTextHeight is the inclusive height of
-	// the rendered content; anything past localTextRect.height() is
-	// reachable via the slider.
-	const int visibleH = localTextRect.height();
+	const int visibleH = MAX<int>(0, localTextRect.height() - bottomInset);
 	const int maxScroll = MAX<int>(0, (int)_drawnTextHeight - visibleH);
-	const int scrollY = (int)(_scrollPos * maxScroll);
+	const int safeMax = MAX<int>(0, (int)_fullSurface.h - visibleH);
+	int scrollY = (int)(_scrollPos * maxScroll);
+	if (scrollY > safeMax) {
+		scrollY = safeMax;
+	}
+
 	Common::Rect srcSlice(0, scrollY,
 							_fullSurface.w, scrollY + visibleH);
 	_drawSurface.blitFrom(_fullSurface, srcSlice,

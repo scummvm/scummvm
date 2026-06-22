@@ -84,8 +84,6 @@ private:
 	// entries.
 	void buildTextLines();
 
-	void paintPaperIntoFullSurface();
-
 	const UINB *_uinbData;
 
 	Graphics::ManagedSurface _overlayImage;     // popup background image
@@ -101,9 +99,11 @@ private:
 	bool _scrollbarHovered = false;
 	int _scrollbarGrabOffset = 0;
 
+	// journalEntries HashMap keys: _surfaceID = 3 holds task entries,
+	// _surfaceID = 4 holds journal entries.
 	enum NotebookTab {
-		kNotebookTabJournal = 3,
-		kNotebookTabTasks = 4
+		kNotebookTabTasks   = 3,
+		kNotebookTabJournal = 4
 	};
 };
 

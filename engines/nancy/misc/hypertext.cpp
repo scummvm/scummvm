@@ -323,7 +323,9 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 						auto *mark = GetEngineData(MARK);
 						assert(mark);
 
-						if (lineNumber == 0) {
+						const bool useLineAlignedMark = g_nancy->getGameType() >= kGameTypeNancy10;
+
+						if (!useLineAlignedMark && lineNumber == 0) {
 							// A mark on the first line pushes up all text
 							if (textBounds.top - _imageVerticalOffset > 3) {
 								_imageVerticalOffset -= 3;
@@ -334,10 +336,17 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 
 						Common::Rect markSrc = mark->_markSrcs[change.index];
 						Common::Rect markDest = markSrc;
-						markDest.moveTo(textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline) + 1,
-							lineNumber == 0 ?
-								textBounds.top - ((font->getFontHeight() + 1) / 2) + _imageVerticalOffset + 4 :
-								textBounds.top + _numDrawnLines * lineStep(font) + _imageVerticalOffset - 4);
+						if (useLineAlignedMark) {
+							// Nancy 10+: align the mark with the current
+							// line top, matching the original engine.
+							markDest.moveTo(textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline) + 1,
+								textBounds.top + _numDrawnLines * lineStep(font) + _imageVerticalOffset);
+						} else {
+							markDest.moveTo(textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline) + 1,
+								lineNumber == 0 ?
+									textBounds.top - ((font->getFontHeight() + 1) / 2) + _imageVerticalOffset + 4 :
+									textBounds.top + _numDrawnLines * lineStep(font) + _imageVerticalOffset - 4);
+						}
 
 						// For now we do not check if we need to go to new line; neither does the original
 						_fullSurface.blitFrom(g_nancy->_graphics->_object0, markSrc, markDest);
