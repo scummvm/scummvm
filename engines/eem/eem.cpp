@@ -213,9 +213,12 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	ConfMan.registerDefault("skip_repeated_cases", false);
 	ConfMan.registerDefault("restored_content", false);
 
-	_variant = (gameDesc && gameDesc->extra &&
-				Common::String(gameDesc->extra).contains("Floppy"))
-				 ? kVariantFloppy : kVariantCD;
+	_variant = kVariantCD;
+	if (gameDesc && gameDesc->extra &&
+		Common::String(gameDesc->extra).contains("Floppy"))
+		_variant = kVariantFloppy;
+	if (gameDesc && gameDesc->platform == Common::kPlatformMacintosh)
+		_variant = kVariantMac;
 	if (gameDesc && gameDesc->gameId &&
 		Common::String(gameDesc->gameId) == "eem2")
 		_variant = kVariantLondonCD;
@@ -320,7 +323,7 @@ void EEMEngine::applySkipRepeatedCasesOption() {
 }
 
 Common::Error EEMEngine::run() {
-	initGraphics(kScreenWidth, kScreenHeight);
+	initGraphics(screenWidth(), screenHeight());
 
 	if (!isFloppy() && ConfMan.getBool("restored_content")) {
 		Common::U32String engineDataError;
@@ -343,8 +346,8 @@ Common::Error EEMEngine::run() {
 	if (!_font.load(Common::Path("FONT.FNT")))
 		warning("FONT.FNT failed to load; text will not render");
 
-	// _InitMIDI @ 20a2:013a. The demo does not ship SAMPLE.AD or XMIDI data.
-	if (!isDemo())
+	// _InitMIDI @ 20a2:013a. The demo and Mac release do not ship DOS XMIDI data.
+	if (!isDemo() && !isMacintosh())
 		_music = new MusicPlayer(isFloppy());
 
 	// _InitDrivers @ 1ff1:0368 (SBDIG.ADV / PASDIG.ADV).
@@ -410,6 +413,19 @@ Common::Error EEMEngine::run() {
 				}
 			}
 		}
+		goto screenLoop;
+	}
+
+	if (isMacintosh()) {
+		CursorMan.showMouse(true);
+		if (!shouldQuit())
+			doProfilePicker();
+		if (!shouldQuit())
+			applyStartupTestOverrides();
+		if (!shouldQuit())
+			doChoosePartner();
+		if (!shouldQuit())
+			_nextScreen = _mystery.isLoaded() ? kScreenMap : kScreenAction;
 		goto screenLoop;
 	}
 
@@ -682,19 +698,21 @@ void EEMEngine::setSiteHotspotCursorId(int cursorId) {
 }
 
 bool EEMEngine::openArchives() {
-	if (!_picsArchive.open(Common::Path("PICS.DBD"), Common::Path("PICS.DBX"))) {
+	const bool mac = isMacintosh();
+
+	if (!_picsArchive.open(Common::Path("PICS.DBD"), Common::Path("PICS.DBX"), mac)) {
 		warning("PICS archive missing");
 		return false;
 	}
-	if (!_aniArchive.open(Common::Path("ANI.DBD"), Common::Path("ANI.DBX"))) {
+	if (!_aniArchive.open(Common::Path("ANI.DBD"), Common::Path("ANI.DBX"), mac)) {
 		warning("ANI archive missing");
 		return false;
 	}
-	if (!_sitesArchive.open(Common::Path("SITES.DBD"), Common::Path("SITES.DBX")))
+	if (!_sitesArchive.open(Common::Path("SITES.DBD"), Common::Path("SITES.DBX"), mac))
 		warning("SITES archive missing — site backgrounds disabled");
-	if (!_balloonArchive.open(Common::Path("BALLOON.DBD"), Common::Path("BALLOON.DBX")))
+	if (!_balloonArchive.open(Common::Path("BALLOON.DBD"), Common::Path("BALLOON.DBX"), mac))
 		warning("BALLOON archive missing — clue text will lack balloons");
-	if (!_buttonArchive.open(Common::Path("BUTTON.DBD"), Common::Path("BUTTON.DBX")))
+	if (!_buttonArchive.open(Common::Path("BUTTON.DBD"), Common::Path("BUTTON.DBX"), mac))
 		warning("BUTTON archive missing — map markers will be unlabelled");
 	return true;
 }
@@ -711,12 +729,31 @@ bool EEMEngine::loadSitePalettes() {
 		warning("SITEPALS short read");
 		return false;
 	}
+	if (isMacintosh()) {
+		debugC(1, kDebugGfx, "Loaded %u Mac SITEPALS ColorTables",
+			   (uint)(_sitePals.size() / (8 + 256 * 8)));
+		return true;
+	}
 	debugC(1, kDebugGfx, "Loaded %u SITEPALS palettes",
 		   (uint)(_sitePals.size() / kPalSize));
 	return true;
 }
 
 bool EEMEngine::getSitePalette(uint num, byte *out) const {
+	if (isMacintosh()) {
+		const uint kMacColorTableSize = 8 + 256 * 8;
+		if (_sitePals.size() < (num + 1) * kMacColorTableSize)
+			return false;
+		const byte *src = _sitePals.data() + num * kMacColorTableSize + 8;
+		for (uint i = 0; i < 256; i++) {
+			const byte *entry = src + i * 8;
+			out[i * 3 + 0] = entry[2];
+			out[i * 3 + 1] = entry[4];
+			out[i * 3 + 2] = entry[6];
+		}
+		return true;
+	}
+
 	if (_sitePals.size() < (num + 1) * kPalSize)
 		return false;
 	const byte *src = _sitePals.data() + num * kPalSize;
@@ -862,8 +899,10 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
 }
 
 void EEMEngine::blitAt(const Picture &pic, int x, int y) {
-	const int w = MIN<int>(pic.surface.w, kScreenWidth - x);
-	const int h = MIN<int>(pic.surface.h, kScreenHeight - y);
+	x = scaleX(x);
+	y = scaleY(y);
+	const int w = MIN<int>(pic.surface.w, screenWidth() - x);
+	const int h = MIN<int>(pic.surface.h, screenHeight() - y);
 	if (w <= 0 || h <= 0)
 		return;
 	g_system->copyRectToScreen(pic.surface.getPixels(), pic.surface.pitch,

@@ -100,6 +100,7 @@ enum Variant {
 	kVariantCD       = 0,
 	kVariantFloppy   = 1,
 	kVariantLondonCD = 2,
+	kVariantMac      = 3,
 };
 
 /// `_Partner @ 29be:7918`. Selected at the partner-pick screen
@@ -111,6 +112,8 @@ enum Partner {
 
 constexpr int kScreenWidth  = 320;
 constexpr int kScreenHeight = 200;
+constexpr int kMacScreenWidth  = 512;
+constexpr int kMacScreenHeight = 384;
 
 constexpr Common::Rect kPdaSiteRect             (Common::Point(35, 111), 21, 25);
 constexpr Common::Rect kPdaPartnerFootMapRect   (Common::Point( 7, 177), 50, 23);
@@ -128,8 +131,30 @@ public:
 	Variant getVariant() const { return _variant; }
 	bool isFloppy() const { return _variant == kVariantFloppy || isDemo(); }
 	bool isLondon() const { return _variant == kVariantLondonCD; }
+	bool isMacintosh() const { return _variant == kVariantMac; }
 	bool isDemo() const {
 		return _gameDescription && (_gameDescription->flags & ADGF_DEMO);
+	}
+	int screenWidth() const { return isMacintosh() ? kMacScreenWidth : kScreenWidth; }
+	int screenHeight() const { return isMacintosh() ? kMacScreenHeight : kScreenHeight; }
+	int scaleX(int x) const {
+		return isMacintosh() ? scaleCoord(x, kMacScreenWidth, kScreenWidth) : x;
+	}
+	int scaleY(int y) const {
+		return isMacintosh() ? scaleCoord(y, kMacScreenHeight, kScreenHeight) : y;
+	}
+	int unscaleX(int x) const {
+		return isMacintosh() ? scaleCoord(x, kScreenWidth, kMacScreenWidth) : x;
+	}
+	int unscaleY(int y) const {
+		return isMacintosh() ? scaleCoord(y, kScreenHeight, kMacScreenHeight) : y;
+	}
+	Common::Point scalePoint(int x, int y) const {
+		return Common::Point(scaleX(x), scaleY(y));
+	}
+	Common::Rect scaleRect(const Common::Rect &r) const {
+		return Common::Rect(scaleX(r.left), scaleY(r.top),
+							scaleX(r.right), scaleY(r.bottom));
 	}
 
 	bool hasFeature(EngineFeature f) const override;
@@ -477,6 +502,12 @@ public:
 	/// (1..3) chooses one of three short one-shot MUS tracks at random.
 	void startLondonTravelMusic(uint8 travelKind);
 private:
+	static int scaleCoord(int value, int target, int source) {
+		const bool negative = value < 0;
+		const int magnitude = negative ? -value : value;
+		const int scaled = (magnitude * target + source / 2) / source;
+		return negative ? -scaled : scaled;
+	}
 
 	Common::String _playerName;  ///< Substituted into 0x80 placeholders.
 

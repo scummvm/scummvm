@@ -204,8 +204,8 @@ void swapColors(Graphics::ManagedSurface &dst,
 					   const Common::Rect &r, byte from, byte to) {
 	const int x1 = MAX<int>(0, r.left);
 	const int y1 = MAX<int>(0, r.top);
-	const int x2 = MIN<int>(kScreenWidth, r.right);
-	const int y2 = MIN<int>(kScreenHeight, r.bottom);
+	const int x2 = MIN<int>(dst.w, r.right);
+	const int y2 = MIN<int>(dst.h, r.bottom);
 	for (int y = y1; y < y2; y++) {
 		byte *row = (byte *)dst.getBasePtr(0, y);
 		for (int x = x1; x < x2; x++) {
@@ -419,7 +419,7 @@ int nextLiveSlot(const Common::Array<Common::Rect> &slotRects,
 
 void copyToScreen(Graphics::ManagedSurface &scratch) {
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
+							   0, 0, scratch.w, scratch.h);
 	g_system->updateScreen();
 }
 
@@ -483,21 +483,25 @@ void drawCaseBookTitle(Graphics::ManagedSurface &scratch, const EEMEngine *vm,
 		: Common::String::format(spanish ? "Lib. %u" : "Book %u", book);
 	const int titleW = vm->getFont().getStringWidth(title);
 	const int titleX = (0xba - titleW) / 2 + 0x3c;
-	vm->getFont().drawString(&scratch, title, titleX, 12, kScreenWidth, 0xF);
+	vm->getFont().drawString(&scratch, title, vm->scaleX(titleX),
+							 vm->scaleY(12), vm->scaleX(kScreenWidth), 0xF);
 }
 
 void drawNameEntryFrame(EEMEngine *vm, const Picture *bg, bool haveBG,
 						const Picture *peek, const Common::String &name,
 						const char *prompt) {
-	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface scratch(vm->screenWidth(), vm->screenHeight(),
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 	if (haveBG)
 		scratch.simpleBlitFrom(bg->surface);
 	if (peek)
-		blitMaskedPic(scratch, *peek, kNameEntryPeekX, kNameEntryPeekY);
-	vm->getFont().drawString(&scratch, prompt, 80, 40, 240, 0xF);
-	vm->getFont().drawString(&scratch, name + "_", 80, 80, 240, 0xF);
+		blitMaskedPic(scratch, *peek, vm->scaleX(kNameEntryPeekX),
+					   vm->scaleY(kNameEntryPeekY));
+	vm->getFont().drawString(&scratch, prompt, vm->scaleX(80),
+							 vm->scaleY(40), vm->scaleX(240), 0xF);
+	vm->getFont().drawString(&scratch, name + "_", vm->scaleX(80),
+							 vm->scaleY(80), vm->scaleX(240), 0xF);
 	copyToScreen(scratch);
 }
 
@@ -509,13 +513,14 @@ bool animateNameEntryPeek(EEMEngine *vm, const Picture *bg, bool haveBG,
 	for (int w = 1; w <= peek->surface.w; w++) {
 		if (pumpQuitEvents(vm))
 			return true;
-		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+		Graphics::ManagedSurface scratch(vm->screenWidth(), vm->screenHeight(),
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.clear();
 		if (haveBG)
 			scratch.simpleBlitFrom(bg->surface);
 		blitMaskedPicRightReveal(scratch, *peek,
-								  kNameEntryPeekX, kNameEntryPeekY, w);
+								  vm->scaleX(kNameEntryPeekX),
+								  vm->scaleY(kNameEntryPeekY), w);
 		copyToScreen(scratch);
 		g_system->delayMillis(10);
 	}
@@ -530,14 +535,14 @@ bool animateProfilePickerReveal(EEMEngine *vm, const Picture *bg,
 	for (int h = 1; h <= reveal->surface.h; h++) {
 		if (pumpQuitEvents(vm))
 			return true;
-		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+		Graphics::ManagedSurface scratch(vm->screenWidth(), vm->screenHeight(),
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.clear();
 		if (haveBG)
 			scratch.simpleBlitFrom(bg->surface);
 		blitMaskedPicBottomReveal(scratch, *reveal,
-								   kProfilePickerRevealX,
-								   kProfilePickerRevealY, h);
+								   vm->scaleX(kProfilePickerRevealX),
+								   vm->scaleY(kProfilePickerRevealY), h);
 		copyToScreen(scratch);
 		g_system->delayMillis(10);
 	}
@@ -577,14 +582,15 @@ void clampProfileScroll(int &selected, int &start, int count) {
 }
 
 void drawProfilePickerFrame(const ProfilePickerView &v) {
-	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface scratch(v.vm->screenWidth(), v.vm->screenHeight(),
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 	if (v.haveBG)
 		scratch.simpleBlitFrom(v.bg->surface);
 	if (v.haveReveal)
 		blitMaskedPic(scratch, *v.reveal,
-					   kProfilePickerRevealX, kProfilePickerRevealY);
+					   v.vm->scaleX(kProfilePickerRevealX),
+					   v.vm->scaleY(kProfilePickerRevealY));
 
 	const int count = v.entries ? (int)v.entries->size() : 0;
 	for (int row = 0; row < kProfileVisibleRows; row++) {
@@ -593,9 +599,9 @@ void drawProfilePickerFrame(const ProfilePickerView &v) {
 			break;
 		const byte color = idx == v.selected ? 0xF : 0x8;
 		v.vm->getFont().drawString(&scratch, (*v.entries)[idx].label,
-									kProfileListX,
-									kProfileListY + row * kProfileLineH,
-									kProfileListW, color);
+									v.vm->scaleX(kProfileListX),
+									v.vm->scaleY(kProfileListY + row * kProfileLineH),
+									v.vm->scaleX(kProfileListW), color);
 	}
 	copyToScreen(scratch);
 }
@@ -687,9 +693,11 @@ void drawCaseBase(Graphics::ManagedSurface &scratch, EEMEngine *vm,
 		scratch.simpleBlitFrom(caseBg->surface);
 	if (haveRevealPic && revealPic)
 		blitMaskedPic(scratch, *revealPic,
-					   kCaseSelectionRevealX, kCaseSelectionRevealY);
+					   vm->scaleX(kCaseSelectionRevealX),
+					   vm->scaleY(kCaseSelectionRevealY));
 	drawCaseBookTitle(scratch, vm, book);
-	drawCaseGreeter(scratch, kdAnim, haveKdAnim, kdAnimX, kdAnimY);
+	drawCaseGreeter(scratch, kdAnim, haveKdAnim,
+					vm->scaleX(kdAnimX), vm->scaleY(kdAnimY));
 }
 
 bool animateCaseSelectionReveal(EEMEngine *vm, const Picture *caseBg,
@@ -705,22 +713,23 @@ bool animateCaseSelectionReveal(EEMEngine *vm, const Picture *caseBg,
 	for (int i = 1; i <= steps; i++) {
 		if (pumpQuitEvents(vm))
 			return true;
-		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+		Graphics::ManagedSurface scratch(vm->screenWidth(), vm->screenHeight(),
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.clear();
 		if (haveCaseBg && caseBg)
 			scratch.simpleBlitFrom(caseBg->surface);
 		if (vm && vm->isFloppy()) {
 			blitMaskedPicRightReveal(scratch, *revealPic,
-									  kCaseSelectionRevealX,
-									  kCaseSelectionRevealY, i);
+									  vm->scaleX(kCaseSelectionRevealX),
+									  vm->scaleY(kCaseSelectionRevealY), i);
 		} else {
 			blitMaskedPicBottomReveal(scratch, *revealPic,
-									   kCaseSelectionRevealX,
-									   kCaseSelectionRevealY, i);
+									   vm->scaleX(kCaseSelectionRevealX),
+									   vm->scaleY(kCaseSelectionRevealY), i);
 		}
 		drawCaseBookTitle(scratch, vm, book);
-		drawCaseGreeter(scratch, kdAnim, haveKdAnim, kdAnimX, kdAnimY);
+		drawCaseGreeter(scratch, kdAnim, haveKdAnim,
+						vm->scaleX(kdAnimX), vm->scaleY(kdAnimY));
 		copyToScreen(scratch);
 		g_system->delayMillis(8);
 	}
@@ -729,7 +738,7 @@ bool animateCaseSelectionReveal(EEMEngine *vm, const Picture *caseBg,
 
 // `DrawList @ 1c33:040d`
 void drawCaseSubmenu(const CaseSubmenuView &v) {
-	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface scratch(v.vm->screenWidth(), v.vm->screenHeight(),
 		Graphics::PixelFormat::createFormatCLUT8());
 	drawCaseBase(scratch, v.vm, v.caseBg, v.haveCaseBg,
 				 v.revealPic, v.haveRevealPic,
@@ -759,14 +768,16 @@ void drawCaseSubmenu(const CaseSubmenuView &v) {
 			color = 0x7;   // normal
 		}
 		v.vm->getFont().drawString(&scratch, name,
-			kListX, kListY0 + r * kLineH, kListW, color);
+			v.vm->scaleX(kListX), v.vm->scaleY(kListY0 + r * kLineH),
+			v.vm->scaleX(kListW), color);
 	}
 
 	// Selection arrow.
 	if (v.selRow >= v.topRow && v.selRow < v.topRow + (uint)kVisible) {
 		const int r = (int)(v.selRow - v.topRow);
 		v.vm->getFont().drawString(&scratch, ">",
-			kListX - 6, kListY0 + r * kLineH, 6, 0xF);
+			v.vm->scaleX(kListX - 6), v.vm->scaleY(kListY0 + r * kLineH),
+			v.vm->scaleX(6), 0xF);
 	}
 
 	// Scrollbar thumb at (240, 45..146), proportional to scroll position.
@@ -779,22 +790,23 @@ void drawCaseSubmenu(const CaseSubmenuView &v) {
 						MAX<int>(1, (int)count - kVisible);
 		const Common::Rect thumb(240, trackY0 + pos,
 								  250, trackY0 + pos + thumbH);
-		scratch.fillRect(thumb, 0x8);
-		scratch.frameRect(thumb, 0xF);
+		scratch.fillRect(v.vm->scaleRect(thumb), 0x8);
+		scratch.frameRect(v.vm->scaleRect(thumb), 0xF);
 	}
 
 	copyToScreen(scratch);
 }
 
 void drawActionMenuFrame(const ActionMenuView &v) {
-	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface scratch(v.vm->screenWidth(), v.vm->screenHeight(),
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 	if (v.haveBg && v.bg)
 		scratch.simpleBlitFrom(v.bg->surface);
 	if (v.haveDecor && v.decor)
 		blitMaskedPic(scratch, *v.decor,
-					   kActionScreenDecorX, kActionScreenDecorY);
+					   v.vm->scaleX(kActionScreenDecorX),
+					   v.vm->scaleY(kActionScreenDecorY));
 
 	if (v.vm->getFont().isLoaded()) {
 		// `DrawList @ 1c33:040d`. _TextBox @ 29be:0d00 = {58, 35, 238, 158}.
@@ -810,7 +822,8 @@ void drawActionMenuFrame(const ActionMenuView &v) {
 			const int y = kListY0 + r * kLineH;
 			if ((r & 1) == 0) {
 				v.vm->getFont().drawString(&scratch, v.separator,
-										   kListX, y, kListW, 0x7);
+										   v.vm->scaleX(kListX), v.vm->scaleY(y),
+										   v.vm->scaleX(kListW), 0x7);
 				continue;
 			}
 			const uint mp = (uint)(r >> 1);
@@ -818,7 +831,8 @@ void drawActionMenuFrame(const ActionMenuView &v) {
 			const byte color  = isSel             ? 0xF :
 								v.pickEnabled[mp] ? 0x7 : 0x8;
 			v.vm->getFont().drawString(&scratch, v.pickLabel[mp],
-									   kListX, y, kListW, color);
+									   v.vm->scaleX(kListX), v.vm->scaleY(y),
+									   v.vm->scaleX(kListW), color);
 		}
 	}
 	copyToScreen(scratch);
@@ -926,17 +940,19 @@ void EEMEngine::doProfilePicker() {
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				if (kChooserOkRect.contains(ev.mouse.x, ev.mouse.y)) {
+				const Common::Point mouse(unscaleX(ev.mouse.x),
+										  unscaleY(ev.mouse.y));
+				if (kChooserOkRect.contains(mouse.x, mouse.y)) {
 					committed = true;
 					break;
 				}
-				if (kChooserExitRect.contains(ev.mouse.x, ev.mouse.y) ||
-					kChooserNewPlayerRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kChooserExitRect.contains(mouse.x, mouse.y) ||
+					kChooserNewPlayerRect.contains(mouse.x, mouse.y)) {
 					createNew = true;
 					committed = true;
 					break;
 				}
-				if (kChooserUpArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kChooserUpArrowRect.contains(mouse.x, mouse.y)) {
 					if (start > 0) {
 						start--;
 						if (sel >= start + kProfileVisibleRows)
@@ -946,7 +962,7 @@ void EEMEngine::doProfilePicker() {
 					}
 					break;
 				}
-				if (kChooserDnArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kChooserDnArrowRect.contains(mouse.x, mouse.y)) {
 					const int maxStart = MAX<int>(0,
 						(int)entries.size() - kProfileVisibleRows);
 					if (start < maxStart) {
@@ -958,11 +974,11 @@ void EEMEngine::doProfilePicker() {
 					}
 					break;
 				}
-				if (kChooserHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kChooserHelpRect.contains(mouse.x, mouse.y)) {
 					break;
 				}
-				if (kChooserListRect.contains(ev.mouse.x, ev.mouse.y)) {
-					const int hit = (ev.mouse.y - kProfileListY) /
+				if (kChooserListRect.contains(mouse.x, mouse.y)) {
+					const int hit = (mouse.y - kProfileListY) /
 									kProfileLineH;
 					const int idx = start + hit;
 					if (hit >= 0 && hit < kProfileVisibleRows &&
@@ -1463,8 +1479,10 @@ void EEMEngine::doSetup() {
 			}
 			if (ev.type != Common::EVENT_LBUTTONDOWN)
 				continue;
-			const int mx = ev.mouse.x;
-			const int my = ev.mouse.y;
+			const Common::Point mouse(unscaleX(ev.mouse.x),
+									  unscaleY(ev.mouse.y));
+			const int mx = mouse.x;
+			const int my = mouse.y;
 
 			if (kPartnerBtn.contains(mx, my)) {
 				_partner = _partner == kPartnerJake ? kPartnerJenny : kPartnerJake;
@@ -1608,7 +1626,7 @@ void EEMEngine::doSetup() {
 }
 
 void EEMEngine::setupDrawScreen() {
-	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface scratch(screenWidth(), screenHeight(),
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 	Picture bg;
@@ -1618,17 +1636,17 @@ void EEMEngine::setupDrawScreen() {
 	const byte kKey    = 0xFE;
 	const byte kBright = 0x15;
 	const byte kDim    = 0x00;
-	swapColors(scratch, kSetupKid1Rect, kKey,
+	swapColors(scratch, scaleRect(kSetupKid1Rect), kKey,
 			   _partner == kPartnerJake ? kBright : kDim);
-	swapColors(scratch, kSetupKid2Rect, kKey,
+	swapColors(scratch, scaleRect(kSetupKid2Rect), kKey,
 			   _partner == kPartnerJenny ? kBright : kDim);
-	swapColors(scratch, kSetupSoundOnRect,  kKey,
+	swapColors(scratch, scaleRect(kSetupSoundOnRect),  kKey,
 			   _voiceOn ? kBright : kDim);
-	swapColors(scratch, kSetupSoundOffRect, kKey,
+	swapColors(scratch, scaleRect(kSetupSoundOffRect), kKey,
 			   _voiceOn ? kDim : kBright);
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
+							   0, 0, scratch.w, scratch.h);
 	g_system->updateScreen();
 }
 
@@ -1638,7 +1656,7 @@ Common::KeyCode EEMEngine::setupShowFullscreenPic(uint16 picId, bool transparent
 		warning("doSetup: PIC %u missing", (uint)picId);
 		return Common::KEYCODE_INVALID;
 	}
-	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface scratch(screenWidth(), screenHeight(),
 		Graphics::PixelFormat::createFormatCLUT8());
 	if (transparent) {
 		Graphics::Surface *cur = g_system->lockScreen();
@@ -1654,7 +1672,7 @@ Common::KeyCode EEMEngine::setupShowFullscreenPic(uint16 picId, bool transparent
 		scratch.simpleBlitFrom(pic.surface);
 	}
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
+							   0, 0, scratch.w, scratch.h);
 	g_system->updateScreen();
 	while (!shouldQuit()) {
 		Common::Event ev;
@@ -1979,22 +1997,24 @@ void EEMEngine::doActionScreen() {
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
 				return;
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				if (kOkRect.contains(ev.mouse.x, ev.mouse.y)) {
+				const Common::Point mouse(unscaleX(ev.mouse.x),
+										  unscaleY(ev.mouse.y));
+				if (kOkRect.contains(mouse.x, mouse.y)) {
 					if (kPickEnabled[pick])
 						confirmed = true;
 					break;
 				}
-				if (kExitRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kExitRect.contains(mouse.x, mouse.y)) {
 					exitChosen = true;
 					confirmed = true;
 					break;
 				}
-				if (kHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kHelpRect.contains(mouse.x, mouse.y)) {
 					continue;
 				}
-				if (kListRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kListRect.contains(mouse.x, mouse.y)) {
 					const int kLineH = 10;
-					const int row = (ev.mouse.y - kListRect.top) / kLineH;
+					const int row = (mouse.y - kListRect.top) / kLineH;
 					if ((row & 1) == 1) {
 						const uint mp = (uint)(row >> 1);
 						if (mp < numPicks && kPickEnabled[mp]) {
@@ -2192,37 +2212,39 @@ void EEMEngine::doCaseSelection() {
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
 				return;
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				if (kChooserOkRect.contains(ev.mouse.x, ev.mouse.y)) {
+				const Common::Point mouse(unscaleX(ev.mouse.x),
+										  unscaleY(ev.mouse.y));
+				if (kChooserOkRect.contains(mouse.x, mouse.y)) {
 					if (selRow < listLen && !solvedFlags[selRow])
 						confirmed = true;
 					break;
 				}
-				if (kChooserExitRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kChooserExitRect.contains(mouse.x, mouse.y)) {
 					_mystery.clear();
 					return;
 				}
-				if (kChooserHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kChooserHelpRect.contains(mouse.x, mouse.y)) {
 					saveProfile(_playerName);
 					_mystery.clear();
 					_nextScreen = kScreenProfile;
 					return;
 				}
-				if (kChooserUpArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kChooserUpArrowRect.contains(mouse.x, mouse.y)) {
 					if (topRow > 0) {
 						topRow--;
 						dirty = true;
 					}
 					continue;
 				}
-				if (kChooserDnArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kChooserDnArrowRect.contains(mouse.x, mouse.y)) {
 					topRow++;
 					clampCaseTopRow(topRow, listLen, kVisible);
 					dirty = true;
 					continue;
 				}
-				if (kChooserListRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kChooserListRect.contains(mouse.x, mouse.y)) {
 					const int kLineH = 10;
-					const int row = (ev.mouse.y - kChooserListRect.top) / kLineH;
+					const int row = (mouse.y - kChooserListRect.top) / kLineH;
 					if (row < 0 || row >= (int)kVisible)
 						continue;
 					const uint idx = topRow + (uint)row;

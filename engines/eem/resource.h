@@ -43,7 +43,7 @@ struct Picture {
 	uint16 flags     = 0; ///< +0  high byte: sub-mode
 	uint16 rowoff    = 0; ///< +6  row offset (clipped sprites)
 	uint16 miscflags = 0; ///< +8  high byte: transparent-mask flag
-	uint16 compsize  = 0; ///< +10 packed payload size on disk
+	uint32 compsize  = 0; ///< Packed payload size on disk.
 	Graphics::ManagedSurface surface;
 };
 
@@ -57,7 +57,7 @@ public:
 	~DBDArchive();
 
 	/// Open both halves; returns false if either file is missing/malformed.
-	bool open(const Common::Path &dbdName, const Common::Path &dbxName);
+	bool open(const Common::Path &dbdName, const Common::Path &dbxName, bool bigEndian = false);
 	void close();
 
 	uint32 size() const { return _index.size(); }
@@ -76,6 +76,7 @@ public:
 private:
 	Common::File _dbd;
 	Common::Array<DBEntry> _index;
+	bool _bigEndian = false;
 };
 
 } // End of namespace EEM

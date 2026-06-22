@@ -1584,10 +1584,10 @@ void SiteScreen::renderBackground(uint siteNum) {
 		haveScene = _vm->getPics().getPicture(sitepic + 1, scene);
 	if (haveScene) {
 		// `_Rect_Move(0, 0, h, ..., 0x42, 0x14, 48000, h, w)`.
-		const int x = 0x42;
-		const int y = 0x14;
-		const int w = MIN<int>(scene.surface.w, kScreenWidth - x);
-		const int h = MIN<int>(scene.surface.h, kScreenHeight - y);
+		const int x = _vm->scaleX(0x42);
+		const int y = _vm->scaleY(0x14);
+		const int w = MIN<int>(scene.surface.w, _vm->screenWidth() - x);
+		const int h = MIN<int>(scene.surface.h, _vm->screenHeight() - y);
 		if (w > 0 && h > 0)
 			g_system->copyRectToScreen(scene.surface.getPixels(),
 									   scene.surface.pitch, x, y, w, h);

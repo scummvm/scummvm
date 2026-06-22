@@ -289,7 +289,7 @@ void EEMEngine::doChoosePartner() {
 				break;
 			}
 			if (ev.type == Common::EVENT_MOUSEMOVE) {
-				curMouseX = ev.mouse.x;
+				curMouseX = unscaleX(ev.mouse.x);
 				const uint newLevel = happinessLevel(curMouseX, isLondon());
 				if (newLevel != level) {
 					level = newLevel;
@@ -303,7 +303,7 @@ void EEMEngine::doChoosePartner() {
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				const bool leftHalf = ev.mouse.x < 160;
+				const bool leftHalf = unscaleX(ev.mouse.x) < 160;
 				_partner = isLondon()
 					? (leftHalf ? kPartnerJake : kPartnerJenny)
 					: (leftHalf ? kPartnerJenny : kPartnerJake);
@@ -333,7 +333,7 @@ void EEMEngine::doChoosePartner() {
 		g_system->delayMillis(20);
 	}
 
-	if (_audio && !isDemo()) {
+	if (_audio && !isDemo() && !isMacintosh()) {
 		if (isFloppy()) {
 			// Floppy _DoChoosePartner_Floppy @ 19bb:0a8e 
 			_audio->playFloppyVoiceSlot(0x14, _partner);
