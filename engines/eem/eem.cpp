@@ -24,7 +24,9 @@
 #include "common/engine_data.h"
 #include "common/error.h"
 #include "common/events.h"
+#include "common/archive.h"
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/path.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -56,6 +58,8 @@ const uint kPalEAKids          = 0x25;
 const uint kPalHighScore       = 0x27;
 const uint kPalStormLogo       = 0x26;  // Floppy FUN_23d2_0605
 const uint kPicMousePointer    = 0x50;  // 0x51 is the wait cursor
+const uint16 kMacFontResource  = 3214;  // 'Eagle Eye 14' FONT resource
+const uint16 kMacSmallFontResource = 3209; // 'Eagle Eye 9' fallback
 
 // EEM2 cursor table — `_main @ 1abf:0faf` loads seven cursor PICs into
 // `_AnimationObjects`-adjacent slots and `_SwitchMouse @ 17ee:2c83` activates
@@ -322,6 +326,39 @@ void EEMEngine::applySkipRepeatedCasesOption() {
 	}
 }
 
+static void addMacResourceSearchPaths() {
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	if (!gameDataDir.exists() || !gameDataDir.isDirectory())
+		return;
+
+	const Common::FSNode childRsrcDir = gameDataDir.getChild("rsrc");
+	if (childRsrcDir.exists() && childRsrcDir.isDirectory())
+		SearchMan.addDirectory("eem-mac-rsrc-child", childRsrcDir);
+
+	const Common::FSNode siblingRsrcDir =
+		gameDataDir.getParent().getChild("rsrc");
+	if (siblingRsrcDir.exists() && siblingRsrcDir.isDirectory())
+		SearchMan.addDirectory("eem-mac-rsrc-sibling", siblingRsrcDir);
+}
+
+static bool loadMacFont(EEMFont &font) {
+	addMacResourceSearchPaths();
+
+	const Common::Path appResourceFork("Eagle Eye Mysteries");
+	if (font.loadMacResource(appResourceFork, kMacFontResource, 14))
+		return true;
+	if (font.loadMacResource(appResourceFork, kMacSmallFontResource, 9))
+		return true;
+
+	const Common::Path nestedAppResourceFork("rsrc/Eagle Eye Mysteries");
+	if (font.loadMacResource(nestedAppResourceFork, kMacFontResource, 14))
+		return true;
+	if (font.loadMacResource(nestedAppResourceFork, kMacSmallFontResource, 9))
+		return true;
+
+	return false;
+}
+
 Common::Error EEMEngine::run() {
 	initGraphics(screenWidth(), screenHeight());
 
@@ -342,8 +379,11 @@ Common::Error EEMEngine::run() {
 	if (!loadSitePalettes())
 		return Common::Error(Common::kReadingFailed, "SITEPALS load failed");
 
-	// _LoadFont @ 1b66:023c.
-	if (!_font.load(Common::Path("FONT.FNT")))
+	// _LoadFont @ 1b66:023c. The Mac release stores its Eagle Eye fonts in
+	// the application resource fork instead of a DOS FONT.FNT file.
+	if (isMacintosh() && !loadMacFont(_font))
+		warning("Mac FONT resource failed to load; text will not render");
+	else if (!isMacintosh() && !_font.load(Common::Path("FONT.FNT")))
 		warning("FONT.FNT failed to load; text will not render");
 
 	// _InitMIDI @ 20a2:013a. The demo and Mac release do not ship DOS XMIDI data.

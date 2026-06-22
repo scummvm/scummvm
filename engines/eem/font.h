@@ -29,6 +29,10 @@
 
 #include "graphics/font.h"
 
+namespace Graphics {
+class MacFONTFont;
+}
+
 namespace EEM {
 
 /// One bitmap glyph, 1 bit per pixel, MSB first.
@@ -51,14 +55,14 @@ struct FontGlyph {
 class EEMFont : public Graphics::Font {
 public:
 	EEMFont() = default;
+	~EEMFont() override;
 
 	bool load(const Common::Path &path);
-	bool isLoaded() const { return !_glyphs.empty(); }
+	bool loadMacResource(const Common::Path &path, uint16 resourceId, int size);
+	bool isLoaded() const { return _macFont || !_glyphs.empty(); }
 
-	int getFontHeight() const override {
-		return _lineHeight ? _lineHeight : _maxHeight;
-	}
-	int getMaxCharWidth() const override { return _maxWidth; }
+	int getFontHeight() const override;
+	int getMaxCharWidth() const override;
 	int getCharWidth(uint32 chr) const override;
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y,
 				  uint32 color) const override;
@@ -70,7 +74,10 @@ public:
 						int width, const Common::String &s, uint32 color) const;
 
 private:
+	void clear();
+
 	Common::Array<FontGlyph> _glyphs;
+	Graphics::MacFONTFont *_macFont = nullptr;
 	uint16 _maxHeight  = 0;
 	uint16 _maxWidth   = 0;
 	uint16 _lineHeight = 0;  ///< First glyph height (original line stride)
