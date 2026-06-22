@@ -351,7 +351,6 @@ bool GraphicsManager::loadLightMap(int v) {
 
 	killLightMap();
 	_lightMapNumber = v;
-	_lightMap.create(_sceneWidth, _sceneWidth, *_vm->getScreenPixelFormat());
 
 	Graphics::ManagedSurface tmp;
 
@@ -362,15 +361,15 @@ bool GraphicsManager::loadLightMap(int v) {
 		if (_lightMapMode == LIGHTMAPMODE_HOTSPOT) {
 			return fatal("Light map width and height don't match scene width and height. That is required for lightmaps in HOTSPOT mode.");
 		} else if (_lightMapMode == LIGHTMAPMODE_PIXEL) {
+			_lightMap.create(_sceneWidth, _sceneWidth, *_vm->getScreenPixelFormat());
 			_lightMap.blendBlitFrom(tmp, tmp.getBounds(), Common::Rect(_sceneWidth, _sceneHeight));
 		} else {
-			_lightMap.copyFrom(tmp);
+			_lightMap = Common::move(tmp);
 		}
 	} else {
-		_lightMap.copyFrom(tmp);
+		_lightMap = Common::move(tmp);
 	}
 
-	tmp.free();
 	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
 
@@ -440,8 +439,6 @@ bool GraphicsManager::loadHSI(int num, Common::SeekableReadStream *stream, int x
 
 	// copy surface loaded to backdrop
 	_backdropSurface.blendBlitFrom(tmp, Common::Point(x, y));
-
-	_origBackdropSurface.copyFrom(_backdropSurface);
 	_backdropExists = true;
 
 	return true;

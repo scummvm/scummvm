@@ -229,7 +229,6 @@ private:
 
 	// Back drop
 	Graphics::ManagedSurface _backdropSurface;
-	Graphics::ManagedSurface _origBackdropSurface;
 	bool _backdropExists;
 	bool reserveBackdrop();
 
