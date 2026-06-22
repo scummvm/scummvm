@@ -537,6 +537,7 @@ private:
 	DBDArchive _buttonArchive;   ///< BUTTON.DBD/.DBX (`_GetButton`)
 	Mystery    _mystery;         ///< M<n>.BIN
 	EEMFont    _font;            ///< FONT.FNT (8 px)
+	EEMFont    _dialogFont;      ///< Mac small FONT used inside speech balloons.
 
 	Common::Array<byte> _sitePals; ///< 40 × 768 bytes, 6-bit VGA.
 

@@ -772,7 +772,7 @@ void EEMEngine::setPartnerEraseBg(const Graphics::ManagedSurface *bg) {
 uint16 EEMEngine::fitBalloonToText(uint16 bubNum,
 								   const Common::String &text) {
 	// Opt-in via "fit_dialog_balloons", CD only
-	if (isFloppy() || !ConfMan.getBool("fit_dialog_balloons"))
+	if (isFloppy() || isMacintosh() || !ConfMan.getBool("fit_dialog_balloons"))
 		return bubNum;
 
 	const uint16 originalId = bubNum & 0x7F;
@@ -837,9 +837,15 @@ bool EEMEngine::getBalloonInsets(uint16 bubNum, uint16 &xInset,
 	const uint idx = bubNum & 0x7F;
 	if (idx >= ARRAYSIZE(kBalloonInsetTable))
 		return false;
-	xInset = kBalloonInsetTable[idx].x;
-	yInset = kBalloonInsetTable[idx].y;
-	textW  = kBalloonInsetTable[idx].w;
+	if (isMacintosh()) {
+		xInset = (uint16)scaleX(kBalloonInsetTable[idx].x);
+		yInset = (uint16)scaleY(kBalloonInsetTable[idx].y);
+		textW  = (uint16)scaleX(kBalloonInsetTable[idx].w);
+	} else {
+		xInset = kBalloonInsetTable[idx].x;
+		yInset = kBalloonInsetTable[idx].y;
+		textW  = kBalloonInsetTable[idx].w;
+	}
 	return true;
 }
 
@@ -848,8 +854,13 @@ bool EEMEngine::getBalloonIndicatorPos(uint16 bubNum, uint16 &dx,
 	const uint idx = bubNum & 0x7F;
 	if (idx >= ARRAYSIZE(kBalloonInsetTable))
 		return false;
-	dx = kBalloonInsetTable[idx].indDX;
-	dy = kBalloonInsetTable[idx].indDY;
+	if (isMacintosh()) {
+		dx = (uint16)scaleX(kBalloonInsetTable[idx].indDX);
+		dy = (uint16)scaleY(kBalloonInsetTable[idx].indDY);
+	} else {
+		dx = kBalloonInsetTable[idx].indDX;
+		dy = kBalloonInsetTable[idx].indDY;
+	}
 	return true;
 }
 

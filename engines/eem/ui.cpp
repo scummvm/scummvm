@@ -113,6 +113,76 @@ void blitBigMapMarker(Graphics::ManagedSurface &dstSurface, const Picture &marke
 	}
 }
 
+struct BigMapEntryInfo {
+	uint16 overviewX = 0;
+	uint16 overviewY = 0;
+	uint16 detailX = 0;
+	uint16 detailY = 0;
+	uint16 buttonId = 0;
+	uint16 crime = 0;
+};
+
+bool readBigMapEntryInfo(const byte *entry, bool floppy, bool macintosh,
+						 BigMapEntryInfo &out) {
+	if (!entry)
+		return false;
+
+	if (macintosh) {
+		out.detailX   = READ_LE_UINT16(entry + 0x0);
+		out.detailY   = READ_LE_UINT16(entry + 0x2);
+		out.buttonId  = entry[0x4];
+		out.overviewX = READ_LE_UINT16(entry + 0x6);
+		out.overviewY = READ_LE_UINT16(entry + 0x8);
+		out.crime     = READ_LE_UINT16(entry + 0xa);
+		return true;
+	}
+
+	if (floppy) {
+		out.detailX   = READ_LE_UINT16(entry + 0x0);
+		out.detailY   = READ_LE_UINT16(entry + 0x2);
+		out.buttonId  = entry[0x4];
+		out.overviewX = READ_LE_UINT16(entry + 0x6);
+		out.overviewY = READ_LE_UINT16(entry + 0x8);
+		out.crime     = entry[0xa];
+		return true;
+	}
+
+	out.buttonId  = READ_LE_UINT16(entry + 0x0);
+	out.overviewX = READ_LE_UINT16(entry + 0x4);
+	out.overviewY = READ_LE_UINT16(entry + 0x6);
+	out.detailX   = READ_LE_UINT16(entry + 0x8);
+	out.detailY   = READ_LE_UINT16(entry + 0xa);
+	out.crime     = READ_LE_UINT16(entry + 0xc);
+	return true;
+}
+
+bool loadMacBigMapPixels(Common::Array<byte> &mapPixels,
+						 uint16 &mapW, uint16 &mapH) {
+	DBDArchive bigMapArchive;
+	if (!bigMapArchive.open(Common::Path("BIGMAP.DBD"),
+							Common::Path("BIGMAP.DBX"), true)) {
+		warning("doBigMap: BIGMAP archive missing");
+		return false;
+	}
+
+	Picture mapPic;
+	if (!bigMapArchive.loadEntry(0, mapPic) || mapPic.surface.empty()) {
+		warning("doBigMap: BIGMAP.DBD entry 0 failed to load");
+		return false;
+	}
+	if (mapPic.surface.w <= 0 || mapPic.surface.h <= 0)
+		return false;
+
+	mapW = (uint16)mapPic.surface.w;
+	mapH = (uint16)mapPic.surface.h;
+	mapPixels.resize((uint32)mapW * mapH);
+	for (uint y = 0; y < mapH; y++) {
+		const byte *src = (const byte *)mapPic.surface.getBasePtr(0, y);
+		memcpy(mapPixels.data() + y * mapW, src, mapW);
+	}
+	return true;
+}
+
 bool loadLondonApproachData(uint16 approachId, LondonApproachData &out) {
 	Common::File f;
 	const Common::String name = Common::String::format("A%u.BIN", approachId);
@@ -1533,7 +1603,7 @@ void EEMEngine::doSetup() {
 			if (kNewCaseBtn.contains(mx, my)) {
 				saveProfile(_playerName);
 				if (isDemo()) {
-					if (_mystery.load(0, &_rng)) {
+					if (_mystery.load(0, &_rng, isMacintosh())) {
 						resetSiteArrivalState();
 						_nextScreen = kScreenInitClues;
 					} else {
@@ -2090,7 +2160,7 @@ void EEMEngine::doActionScreen() {
 	}
 
 	if (pick == kPickPractice) {
-		if (!_mystery.load(0, &_rng)) {
+		if (!_mystery.load(0, &_rng, isMacintosh())) {
 			warning("doActionScreen: failed to load practice mystery");
 			_mystery.clear();
 			resetSiteArrivalState();
@@ -2342,7 +2412,7 @@ void EEMEngine::doCaseSelection() {
 		return;
 
 	const uint mn = stageLo + selRow;
-	if (!_mystery.load(mn, &_rng)) {
+	if (!_mystery.load(mn, &_rng, isMacintosh())) {
 		warning("doCaseSelection: failed to load mystery %u", mn);
 		_mystery.clear();
 		return;
@@ -3169,11 +3239,16 @@ void EEMEngine::doBigMap() {
 		drawBigMapOverview(0);
 		uint32 mapLastTick = mapStartTick;
 
-		const Common::Rect kBigMapWindow(0, 0, 247, 192);
-		const Common::Rect kSetupBtnRect = isFloppy()
+		const bool mac = isMacintosh();
+		const Common::Rect bigMapWindowBase(0, 0, 247, 192);
+		const Common::Rect kBigMapWindow =
+			mac ? scaleRect(bigMapWindowBase) : bigMapWindowBase;
+		const Common::Rect setupBtnBase = isFloppy()
 			? Common::Rect(251, 3, 315, 42)
 			: (isLondon() ? Common::Rect(252, 1, 315, 42)
 						  : Common::Rect(252, 4, 315, 42));
+		const Common::Rect kSetupBtnRect =
+			mac ? scaleRect(setupBtnBase) : setupBtnBase;
 
 		bool wantZoom = false;
 		int zoomX = 0;
@@ -3196,12 +3271,17 @@ void EEMEngine::doBigMap() {
 					}
 
 					if (kBigMapWindow.contains(ev.mouse.x, ev.mouse.y)) {
-						int sx = ev.mouse.x * 2;
-						int sy = ev.mouse.y * 2;
-						sx = (sx < 0x75) ? 0 : sx - 0x74;
-						sy = (sy < 0x56) ? 0 : sy - 0x55;
-						zoomX = sx;
-						zoomY = sy;
+						if (mac) {
+							zoomX = ev.mouse.x - kBigMapWindow.left;
+							zoomY = ev.mouse.y - kBigMapWindow.top;
+						} else {
+							int sx = ev.mouse.x * 2;
+							int sy = ev.mouse.y * 2;
+							sx = (sx < 0x75) ? 0 : sx - 0x74;
+							sy = (sy < 0x56) ? 0 : sy - 0x55;
+							zoomX = sx;
+							zoomY = sy;
+						}
 						wantZoom = true;
 						break;
 					}
@@ -3229,28 +3309,49 @@ void EEMEngine::doBigMap() {
 		if (!wantZoom)
 			return;
 
-		Common::File f;
-		if (!f.open(Common::Path("BIGMAP.PIC"))) {
-			warning("doBigMap: BIGMAP.PIC missing for detail view");
-			return;
-		}
-		const uint16 mapH = f.readUint16LE();
-		const uint16 mapW = f.readUint16LE();
-		if (mapW == 0 || mapH == 0)
-			return;
-		Common::Array<byte> mapPixels((uint32)mapW * mapH);
-		if (f.read(mapPixels.data(), mapPixels.size()) != mapPixels.size()) {
-			warning("doBigMap: short read on BIGMAP.PIC for detail view");
-			return;
+		uint16 mapW = 0;
+		uint16 mapH = 0;
+		Common::Array<byte> mapPixels;
+		if (mac) {
+			if (!loadMacBigMapPixels(mapPixels, mapW, mapH))
+				return;
+		} else {
+			Common::File f;
+			if (!f.open(Common::Path("BIGMAP.PIC"))) {
+				warning("doBigMap: BIGMAP.PIC missing for detail view");
+				return;
+			}
+			mapH = f.readUint16LE();
+			mapW = f.readUint16LE();
+			if (mapW == 0 || mapH == 0)
+				return;
+			mapPixels.resize((uint32)mapW * mapH);
+			if (f.read(mapPixels.data(), mapPixels.size()) != mapPixels.size()) {
+				warning("doBigMap: short read on BIGMAP.PIC for detail view");
+				return;
+			}
 		}
 
-		const int kMapWinW = 0xe9; // 233
-		const int kMapWinH = 0xab; // 171
-		const int kMapWinX = 2;
-		const int kMapWinY = 2;
+		const int kMapWinW = mac ? scaleX(0xe9) : 0xe9; // 233
+		const int kMapWinH = mac ? scaleY(0xab) : 0xab; // 171
+		const int kMapWinX = mac ? scaleX(2) : 2;
+		const int kMapWinY = mac ? scaleY(2) : 2;
 
-		int scrollX = MAX<int>(0, MIN<int>(mapW - kMapWinW, zoomX));
-		int scrollY = MAX<int>(0, MIN<int>(mapH - kMapWinH, zoomY));
+		const int maxScrollX = MAX<int>(0, (int)mapW - kMapWinW);
+		const int maxScrollY = MAX<int>(0, (int)mapH - kMapWinH);
+		int scrollX;
+		int scrollY;
+		if (mac) {
+			scrollX = zoomX * (int)mapW /
+				MAX<int>(1, kBigMapWindow.width()) - kMapWinW / 2;
+			scrollY = zoomY * (int)mapH /
+				MAX<int>(1, kBigMapWindow.height()) - kMapWinH / 2;
+		} else {
+			scrollX = zoomX;
+			scrollY = zoomY;
+		}
+		scrollX = MAX<int>(0, MIN<int>(maxScrollX, scrollX));
+		scrollY = MAX<int>(0, MIN<int>(maxScrollY, scrollY));
 
 		setSitePalette(isLondon() ? 0x3a : 0x23);
 
@@ -3259,24 +3360,42 @@ void EEMEngine::doBigMap() {
 		uint32 detailLastTick = detailStartTick;
 		bool returnToOverview = false;
 
-		const Common::Rect kBigMapReturnRect(252, 43, kScreenWidth, kScreenHeight);
-		const Common::Rect kArrowYUp(237, 2, 247, 11);
-		const Common::Rect kArrowYDown(237, 163, 247, 172);
-		const Common::Rect kArrowXLeft(2, 175, 12, 185);
-		const Common::Rect kArrowXRight(224, 175, 234, 185);
-		const Common::Rect kXSlider = isLondon()
+		const Common::Rect returnBase(252, 43, kScreenWidth, kScreenHeight);
+		const Common::Rect kBigMapReturnRect =
+			mac ? scaleRect(returnBase) : returnBase;
+		const Common::Rect kArrowYUp =
+			mac ? scaleRect(Common::Rect(237, 2, 247, 11))
+				: Common::Rect(237, 2, 247, 11);
+		const Common::Rect kArrowYDown =
+			mac ? scaleRect(Common::Rect(237, 163, 247, 172))
+				: Common::Rect(237, 163, 247, 172);
+		const Common::Rect kArrowXLeft =
+			mac ? scaleRect(Common::Rect(2, 175, 12, 185))
+				: Common::Rect(2, 175, 12, 185);
+		const Common::Rect kArrowXRight =
+			mac ? scaleRect(Common::Rect(224, 175, 234, 185))
+				: Common::Rect(224, 175, 234, 185);
+		const Common::Rect xSliderBase = isLondon()
 			? Common::Rect(15, 176, 220, 184)
 			: Common::Rect(15, 175, 221, 185);
-		const Common::Rect kYSlider = isLondon()
+		const Common::Rect ySliderBase = isLondon()
 			? Common::Rect(238, 16, 246, 158)
 			: Common::Rect(237, 14, 247, 160);
-		const Common::Rect kDetailSetupBtn = isFloppy()
+		const Common::Rect kXSlider =
+			mac ? scaleRect(xSliderBase) : xSliderBase;
+		const Common::Rect kYSlider =
+			mac ? scaleRect(ySliderBase) : ySliderBase;
+		const Common::Rect detailSetupBase = isFloppy()
 			? Common::Rect(251, 3, 315, 42)
 			: (isLondon() ? Common::Rect(251, 3, 315, 42)
 						  : Common::Rect(252, 4, 315, 42));
-		const int kArrowStep = isLondon() ? 8 : 16;
-		const int kSliderRange = mapW - kMapWinW;
-		const int kSliderRangeY = mapH - kMapWinH;
+		const Common::Rect kDetailSetupBtn =
+			mac ? scaleRect(detailSetupBase) : detailSetupBase;
+		const int baseArrowStep = isLondon() ? 8 : 16;
+		const int kArrowStepX = mac ? scaleX(baseArrowStep) : baseArrowStep;
+		const int kArrowStepY = mac ? scaleY(baseArrowStep) : baseArrowStep;
+		const int kSliderRange = maxScrollX;
+		const int kSliderRangeY = maxScrollY;
 		const Common::Point detailMouse =
 			g_system->getEventManager()->getMousePos();
 		setInteractiveMouseCursor(
@@ -3299,20 +3418,17 @@ void EEMEngine::doBigMap() {
 						dirty = true;
 						continue;
 					}
-					const int kStep = isLondon() ? 8 : 16;
 					if (ev.kbd.keycode == Common::KEYCODE_LEFT) {
-						scrollX = MAX<int>(0, scrollX - kStep);
+						scrollX = MAX<int>(0, scrollX - kArrowStepX);
 						dirty = true;
 					} else if (ev.kbd.keycode == Common::KEYCODE_RIGHT) {
-						scrollX = MIN<int>(MAX<int>(0, mapW - kMapWinW),
-							scrollX + kStep);
+						scrollX = MIN<int>(maxScrollX, scrollX + kArrowStepX);
 						dirty = true;
 					} else if (ev.kbd.keycode == Common::KEYCODE_UP) {
-						scrollY = MAX<int>(0, scrollY - kStep);
+						scrollY = MAX<int>(0, scrollY - kArrowStepY);
 						dirty = true;
 					} else if (ev.kbd.keycode == Common::KEYCODE_DOWN) {
-						scrollY = MIN<int>(MAX<int>(0, mapH - kMapWinH),
-							scrollY + kStep);
+						scrollY = MIN<int>(maxScrollY, scrollY + kArrowStepY);
 						dirty = true;
 					}
 				}
@@ -3333,18 +3449,18 @@ void EEMEngine::doBigMap() {
 						returnToOverview = true;
 						break;
 					} else if (kArrowYUp.contains(ev.mouse.x, ev.mouse.y)) {
-						scrollY = MAX<int>(0, scrollY - kArrowStep);
+						scrollY = MAX<int>(0, scrollY - kArrowStepY);
 						dirty = true;
 					} else if (kArrowYDown.contains(ev.mouse.x, ev.mouse.y)) {
 						scrollY = MIN<int>(MAX<int>(0, kSliderRangeY),
-							scrollY + kArrowStep);
+							scrollY + kArrowStepY);
 						dirty = true;
 					} else if (kArrowXLeft.contains(ev.mouse.x, ev.mouse.y)) {
-						scrollX = MAX<int>(0, scrollX - kArrowStep);
+						scrollX = MAX<int>(0, scrollX - kArrowStepX);
 						dirty = true;
 					} else if (kArrowXRight.contains(ev.mouse.x, ev.mouse.y)) {
 						scrollX = MIN<int>(MAX<int>(0, kSliderRange),
-							scrollX + kArrowStep);
+							scrollX + kArrowStepX);
 						dirty = true;
 					} else if (kXSlider.contains(ev.mouse.x, ev.mouse.y)) {
 						if (kSliderRange > 0) {
@@ -3380,27 +3496,18 @@ void EEMEngine::doBigMap() {
 							const byte *entry = _mystery.mapEntry(i);
 							if (!entry)
 								continue;
-							uint16 mx;
-							uint16 my;
-							uint16 buttonId;
-							if (fmap) {
-								mx = READ_LE_UINT16(entry + 0x0);
-								my = READ_LE_UINT16(entry + 0x2);
-								buttonId = (uint16)entry[0x4];
-							} else {
-								buttonId = READ_LE_UINT16(entry + 0x0);
-								mx       = READ_LE_UINT16(entry + 0x8);
-								my       = READ_LE_UINT16(entry + 0xa);
-							}
+							BigMapEntryInfo info;
+							if (!readBigMapEntryInfo(entry, fmap, mac, info))
+								continue;
 							Picture button;
 							int bw = 16;
 							int bh = 16;
-							if (_buttonArchive.loadEntry(buttonId, button)) {
+							if (_buttonArchive.loadEntry(info.buttonId, button)) {
 								bw = button.surface.w;
 								bh = button.surface.h;
 							}
-							const int sx = (int)mx - scrollX + kMapWinX;
-							const int sy = (int)my - scrollY + kMapWinY;
+							const int sx = (int)info.detailX - scrollX + kMapWinX;
+							const int sy = (int)info.detailY - scrollY + kMapWinY;
 							const Common::Rect r(sx, sy, sx + bw, sy + bh);
 							if (r.intersects(Common::Rect(kMapWinX, kMapWinY,
 									kMapWinX + kMapWinW, kMapWinY + kMapWinH))) {
@@ -3666,7 +3773,10 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 }
 
 void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
-	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+	const bool mac = isMacintosh();
+	const int sw = screenWidth();
+	const int sh = screenHeight();
+	Graphics::ManagedSurface scratch(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 
@@ -3680,9 +3790,12 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 	Picture done;
 	Picture normal;
 	Picture crimeM;
-	const bool haveDone   = _picsArchive.getPicture(isLondon() ? 0x006 : 0x20d, done);
-	const bool haveNormal = _picsArchive.getPicture(0xc5,  normal);
-	const bool haveCrime  = _picsArchive.getPicture(0xc6,  crimeM);
+	const bool haveDone = _picsArchive.getPicture(isLondon() ? 0x006 : 0x20d, done) &&
+		done.surface.w < 64 && done.surface.h < 64;
+	const bool haveNormal = _picsArchive.getPicture(0xc5, normal) &&
+		normal.surface.w < 64 && normal.surface.h < 64;
+	const bool haveCrime = _picsArchive.getPicture(0xc6, crimeM) &&
+		crimeM.surface.w < 64 && crimeM.surface.h < 64;
 
 	for (uint i = 0; i < _mystery.numSites(); i++) {
 		// `_DrawBigMapButtons` gates markers on the on-map flag alone, never the
@@ -3694,12 +3807,9 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 			continue;
 
 		const bool floppy  = _mystery.isLoaded() && isFloppy();
-		const uint16 mx    = floppy ? READ_LE_UINT16(entry + 0x6)
-									: READ_LE_UINT16(entry + 0x4);
-		const uint16 my    = floppy ? READ_LE_UINT16(entry + 0x8)
-									: READ_LE_UINT16(entry + 0x6);
-		const uint16 crime = floppy ? (uint16)entry[0xa]
-									: READ_LE_UINT16(entry + 0xc);
+		BigMapEntryInfo info;
+		if (!readBigMapEntryInfo(entry, floppy, mac, info))
+			continue;
 		const bool isDone = (i < Mystery::kVisitedSiteCap)
 							 && _mystery._visitedSite[i];
 
@@ -3710,16 +3820,19 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 		} else if (isDone && haveNormal) {
 			m = &normal;
 			useVisitedColors = true;
-		} else if (crime != 0 && haveCrime) {
+		} else if (info.crime != 0 && haveCrime) {
 			m = &crimeM;
 		} else if (haveNormal) {
 			m = &normal;
 		}
 
 		if (m) {
-			blitBigMapMarker(scratch, *m, (int)mx, (int)my,
+			blitBigMapMarker(scratch, *m, (int)info.overviewX,
+							  (int)info.overviewY,
 							  useVisitedColors);
 		} else {
+			const int mx = (int)info.overviewX;
+			const int my = (int)info.overviewY;
 			const Common::Rect mark(mx - 3, my - 3, mx + 4, my + 4);
 			scratch.fillRect(mark, 0x0F);
 		}
@@ -3732,11 +3845,12 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 													   elapsedMs, isLondon());
 
 		blitAnimFrameAnchored(scratch.surfacePtr(), mapAnim[frameIdx],
-							  0xfd, 0x50);
+							  mac ? scaleX(0xfd) : 0xfd,
+							  mac ? scaleY(0x50) : 0x50);
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
+							   0, 0, sw, sh);
 	g_system->updateScreen();
 }
 
@@ -3745,12 +3859,15 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 								 uint16 mapW, uint16 mapH,
 								 uint32 elapsedMs) {
 
-	const int kMapWinW = 0xe9;
-	const int kMapWinH = 0xab;
-	const int kMapWinX = 2;
-	const int kMapWinY = 2;
+	const bool mac = isMacintosh();
+	const int sw = screenWidth();
+	const int sh = screenHeight();
+	const int kMapWinW = mac ? scaleX(0xe9) : 0xe9;
+	const int kMapWinH = mac ? scaleY(0xab) : 0xab;
+	const int kMapWinX = mac ? scaleX(2) : 2;
+	const int kMapWinY = mac ? scaleY(2) : 2;
 
-	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface scratch(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 
@@ -3772,24 +3889,14 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 		const byte *entry = _mystery.mapEntry(i);
 		if (!entry)
 			continue;
-		uint16 mx;
-		uint16 my;
+		BigMapEntryInfo info;
+		if (!readBigMapEntryInfo(entry, floppyMap, mac, info))
+			continue;
 		Picture button;
-		if (floppyMap) {
-			mx = READ_LE_UINT16(entry + 0x0);
-			my = READ_LE_UINT16(entry + 0x2);
-			const uint16 buttonId = (uint16)entry[0x4];
-			if (!_buttonArchive.loadEntry(buttonId, button))
-				continue;
-		} else {
-			const uint16 buttonId = READ_LE_UINT16(entry + 0x0);
-			mx                    = READ_LE_UINT16(entry + 0x8);
-			my                    = READ_LE_UINT16(entry + 0xa);
-			if (!_buttonArchive.loadEntry(buttonId, button))
-				continue;
-		}
-		const int sx = (int)mx - scrollX + kMapWinX;
-		const int sy = (int)my - scrollY + kMapWinY;
+		if (!_buttonArchive.loadEntry(info.buttonId, button))
+			continue;
+		const int sx = (int)info.detailX - scrollX + kMapWinX;
+		const int sy = (int)info.detailY - scrollY + kMapWinY;
 		// Crop the button blit against the viewport.
 		const int x0 = MAX<int>(sx, kMapWinX);
 		const int y0 = MAX<int>(sy, kMapWinY);
@@ -3810,11 +3917,13 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 		const uint frameIdx = bigMapDetailPartnerFrameAtTick(
 				(uint)detailAnim.size(), elapsedMs);
 		blitAnimFrameAnchored(scratch.surfacePtr(),
-							  detailAnim[frameIdx], 0x101, 0x50);
+							  detailAnim[frameIdx],
+							  mac ? scaleX(0x101) : 0x101,
+							  mac ? scaleY(0x50) : 0x50);
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
+							   0, 0, sw, sh);
 	g_system->updateScreen();
 }
 

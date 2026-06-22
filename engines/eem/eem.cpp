@@ -59,7 +59,7 @@ const uint kPalHighScore       = 0x27;
 const uint kPalStormLogo       = 0x26;  // Floppy FUN_23d2_0605
 const uint kPicMousePointer    = 0x50;  // 0x51 is the wait cursor
 const uint16 kMacFontResource  = 3214;  // 'Eagle Eye 14' FONT resource
-const uint16 kMacSmallFontResource = 3209; // 'Eagle Eye 9' fallback
+const uint16 kMacSmallFontResource = 3209; // Smaller speech/dialog FONT.
 
 // EEM2 cursor table — `_main @ 1abf:0faf` loads seven cursor PICs into
 // `_AnimationObjects`-adjacent slots and `_SwitchMouse @ 17ee:2c83` activates
@@ -341,22 +341,28 @@ static void addMacResourceSearchPaths() {
 		SearchMan.addDirectory("eem-mac-rsrc-sibling", siblingRsrcDir);
 }
 
-static bool loadMacFont(EEMFont &font) {
+static bool loadMacFontResource(EEMFont &font, uint16 resourceId, int size) {
 	addMacResourceSearchPaths();
 
 	const Common::Path appResourceFork("Eagle Eye Mysteries");
-	if (font.loadMacResource(appResourceFork, kMacFontResource, 14))
-		return true;
-	if (font.loadMacResource(appResourceFork, kMacSmallFontResource, 9))
+	if (font.loadMacResource(appResourceFork, resourceId, size))
 		return true;
 
 	const Common::Path nestedAppResourceFork("rsrc/Eagle Eye Mysteries");
-	if (font.loadMacResource(nestedAppResourceFork, kMacFontResource, 14))
-		return true;
-	if (font.loadMacResource(nestedAppResourceFork, kMacSmallFontResource, 9))
+	if (font.loadMacResource(nestedAppResourceFork, resourceId, size))
 		return true;
 
 	return false;
+}
+
+static bool loadMacFont(EEMFont &font) {
+	return loadMacFontResource(font, kMacFontResource, 14) ||
+		   loadMacFontResource(font, kMacSmallFontResource, 9);
+}
+
+static bool loadMacDialogFont(EEMFont &font) {
+	return loadMacFontResource(font, kMacSmallFontResource, 9) ||
+		   loadMacFontResource(font, kMacFontResource, 14);
 }
 
 Common::Error EEMEngine::run() {
@@ -381,10 +387,14 @@ Common::Error EEMEngine::run() {
 
 	// _LoadFont @ 1b66:023c. The Mac release stores its Eagle Eye fonts in
 	// the application resource fork instead of a DOS FONT.FNT file.
-	if (isMacintosh() && !loadMacFont(_font))
-		warning("Mac FONT resource failed to load; text will not render");
-	else if (!isMacintosh() && !_font.load(Common::Path("FONT.FNT")))
+	if (isMacintosh()) {
+		if (!loadMacFont(_font))
+			warning("Mac FONT resource failed to load; text will not render");
+		if (!loadMacDialogFont(_dialogFont))
+			warning("Mac dialog FONT resource failed to load");
+	} else if (!_font.load(Common::Path("FONT.FNT"))) {
 		warning("FONT.FNT failed to load; text will not render");
+	}
 
 	// _InitMIDI @ 20a2:013a. The demo ships no music. The Mac release stores
 	// SMF MIDI resources in EEM Sound&Music instead of loose DOS XMIDI files.
@@ -1122,7 +1132,7 @@ void EEMEngine::showLondonLogo(uint picId, uint palId, uint holdMs) {
 }
 
 bool EEMEngine::startLondonTrainingMystery() {
-	if (_mystery.load(0, &_rng)) {
+	if (_mystery.load(0, &_rng, isMacintosh())) {
 		resetSiteArrivalState();
 		if (_audio)
 			_audio->initMysterySounds(0);
@@ -1612,7 +1622,7 @@ Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	if (hasMystery) {
 		uint16 mysteryNum = 0;
 		s.syncAsUint16LE(mysteryNum);
-		if (!_mystery.load(mysteryNum, &_rng)) {
+		if (!_mystery.load(mysteryNum, &_rng, isMacintosh())) {
 			_mystery.clear();
 			resetSiteArrivalState();
 			return Common::kReadingFailed;
