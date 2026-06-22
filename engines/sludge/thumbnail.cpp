@@ -115,7 +115,7 @@ void GraphicsManager::showThumbnail(const Common::String &filename, int atX, int
 		if (fileHeight + atY > (int)_sceneHeight)
 			fileHeight = _sceneHeight - atY;
 
-		thumbnail.blendBlitTo(_backdropSurface, atX, atY, Graphics::FLIP_NONE, nullptr, MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), fileWidth, fileHeight);
+		_backdropSurface.blendBlitFrom(thumbnail, thumbnail.getBounds(), Common::Rect(atX, atY, atX + fileWidth, atY + fileHeight));
 		thumbnail.free();
 	}
 }
