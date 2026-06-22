@@ -441,6 +441,7 @@ void CellPhonePopup::drawScreenContent() {
 		drawDialLabel();
 		drawTypeMessage();
 		drawDialedNumber();
+		drawHeading(_uiclData->dialHilite);
 		break;
 
 	case kWaitPickup:
@@ -458,6 +459,7 @@ void CellPhonePopup::drawScreenContent() {
 		drawHeading(_uiclData->dirHeading);
 		drawDirectoryList();
 		drawDirectoryArrows();
+		drawHeading(_uiclData->dialHilite);
 		break;
 
 	case kOnlineHub: {
