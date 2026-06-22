@@ -35,7 +35,7 @@ namespace Action {
 // Otherwise it returns to its previous position (or home in free placement mode).
 class OneBuildPuzzle : public RenderActionRecord {
 public:
-	OneBuildPuzzle() : RenderActionRecord(7) {}
+	OneBuildPuzzle() : RenderActionRecord(7), _finalAnimOverlay(99) {}
 	virtual ~OneBuildPuzzle() {}
 
 	void init() override;
@@ -97,12 +97,16 @@ protected:
 	// Filename only (no SoundDescription metadata).
 	Common::String _extraSoundName;
 
-	// Completion sprite-sheet animation; TODO: not wired up.
+	// Post-placement sprite-sheet animation. _animRectA is the on-screen
+	// rect where the animation plays AND the click hotspot the user must
+	// activate after placing all pieces (e.g. the music-box crank in scene
+	// 3637; could be any handle/lever/switch in other puzzles).
 	Common::Rect _animRectA;
 	Common::Rect _animRectB;
 	int16 _animLayout[6] = {}; // cols, framesPerStep, baseX, baseY, spacing, totalRows
 	SoundDescription _animSound1;
 	SoundDescription _animSound2;
+	bool _hasFinalAnim = false;   // true when _animRectA is non-empty
 
 	Common::Array<Piece> _pieces;
 
@@ -142,13 +146,26 @@ protected:
 		kWaitTimer        = 1, // 300ms delay after pickup/drop before evaluating outcome
 		kWaitPlaceSound   = 2, // waiting for good/bad placement sound (or 1s timer) to finish
 		kWaitCompletion   = 3, // waiting for completion sound to finish before scene change
-		kTriggerCompletion = 4  // play completion sound/text, then transition to kWaitCompletion
+		kTriggerCompletion = 4, // play completion sound/text, then transition to kWaitCompletion
+		kAnimateFinal      = 5  // step the post-placement animation, then trigger completion
 	};
 	SolveState _solveState = kIdle;
 	bool _isDropSound = false;       // True if last sound played was a drop sound
 	bool _correctlyPlaced = false;   // True if the last drop was correctly placed
 	uint16 _piecesPlaced = 0;    // Number of pieces correctly placed so far
 	uint32 _timerEnd = 0;        // Millisecond timestamp when the current timer expires
+
+	// Final-animation gating: after all pieces are placed on a puzzle that
+	// has _animRectA defined, _waitingForFinalAnim is set and the puzzle
+	// stalls in kIdle until the user clicks _animRectA.
+	bool _waitingForFinalAnim = false;
+	bool _finalAnimDone = false;
+
+	// Final-animation runtime state (matches original `+0xc35`/`+0xc33` per-tick counters).
+	Graphics::ManagedSurface _animImage; // Source atlas loaded from _extraSoundName.
+	RenderObject _finalAnimOverlay;      // Single-frame overlay rendered at _animRectA, z above pieces.
+	int16 _animFrameCounter = 0;         // 0..framesPerStep-1, the X index within the current row.
+	int16 _animRowCounter = 0;           // 0..totalRows-1, how many cycles have completed.
 
 	// Previous drag position (for freePlacement restore on wrong drop)
 	Common::Rect _prevDragGameRect;
@@ -180,6 +197,10 @@ protected:
 	static void rotateSurface90CW(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dst);
 	// Clamp rect to viewport bounds while preserving dimensions - FUN_004713b8
 	void clampRectToViewport(Common::Rect &rect);
+
+	// Final-animation helpers.
+	void startFinalAnimation();
+	void stepFinalAnimation();
 };
 
 } // End of namespace Action

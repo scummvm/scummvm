@@ -40,6 +40,28 @@ void OneBuildPuzzle::init() {
 	g_nancy->_resource->loadImage(_imageName, _image);
 	_image.setTransparentColor(_drawSurface.getTransparentColor());
 
+	// Post-placement animation atlas (e.g. music-box handle "GHO_SlnMBoxHandle_OVL"
+	// in scene 3637). Loaded only when the puzzle defines _animRectA;
+	// positioning of the overlay is deferred to startFinalAnimation() so the
+	// viewport offset is known.
+	if (_hasFinalAnim && !_extraSoundName.empty() && _extraSoundName != "NO_FILE") {
+		g_nancy->_resource->loadImage(Common::Path(_extraSoundName), _animImage);
+
+		// Use the engine's canonical transparent color so blitFrom and the
+		// renderer agree on which pixels are see-through. (The puzzle's own
+		// _drawSurface is never explicitly made transparent in init().)
+		const uint32 transColor = g_nancy->_graphics->getTransColor();
+		_animImage.setTransparentColor(transColor);
+
+		const int w = _animRectA.width();
+		const int h = _animRectA.height();
+		_finalAnimOverlay._drawSurface.create(w, h, _animImage.format);
+		_finalAnimOverlay._drawSurface.setTransparentColor(transColor);
+		_finalAnimOverlay._drawSurface.clear(transColor);
+		_finalAnimOverlay.setTransparent(true);
+		_finalAnimOverlay.setVisible(false);
+	}
+
 	for (uint i = 0; i < _pieces.size(); ++i) {
 		Piece &p = _pieces[i];
 		int w = p.srcRect.width();
@@ -98,6 +120,9 @@ void OneBuildPuzzle::registerGraphics() {
 
 	for (uint i = 0; i < _pieces.size(); ++i)
 		_pieces[i].registerGraphics();
+
+	if (_hasFinalAnim)
+		_finalAnimOverlay.registerGraphics();
 }
 
 void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
@@ -164,6 +189,7 @@ void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 			_animLayout[i] = stream.readSint16LE();
 		_animSound1.readNormal(stream);
 		_animSound2.readNormal(stream);
+		_hasFinalAnim = !_animRectA.isEmpty();
 	}
 
 	_pickupSound.readNormal(stream);
@@ -279,6 +305,11 @@ void OneBuildPuzzle::execute() {
 			}
 			_solveState = kWaitCompletion;
 			break;
+		case kAnimateFinal:
+			// 100ms per frame, matches original case 3/4 tick rate
+			if (g_system->getMillis() >= _timerEnd)
+				stepFinalAnimation();
+			break;
 		}
 		break;
 	case kActionTrigger:
@@ -305,6 +336,19 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 
 	Common::Point mouseVP(input.mousePos.x - vpScreen.left,
 						  input.mousePos.y - vpScreen.top);
+
+	// Post-placement final-animation stage: once all pieces are placed on a
+	// puzzle that defines _animRectA, the puzzle waits here until the user
+	// clicks the hotspot (e.g. winding a music-box crank, throwing a lever).
+	if (_waitingForFinalAnim && _solveState == kIdle) {
+		if (_animRectA.contains(mouseVP)) {
+			g_nancy->_cursor->setCursorType(CursorManager::kPuzzleArrow);
+			if (input.input & NancyInput::kLeftMouseButtonUp)
+				startFinalAnimation();
+			return;
+		}
+		// Fall through so the exit hotspot still works while waiting.
+	}
 
 	if (_isDragging) {
 		// Always update drag position while carrying a piece
@@ -350,7 +394,7 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 				++_piecesPlaced;
 
 				// Skip pre-placed pieces
-				if (_piecesPlaced < _placementOrder.size() && _placementOrder[_piecesPlaced] - 1 < _pieces.size())
+				if (_piecesPlaced < _placementOrder.size() && (uint)(_placementOrder[_piecesPlaced] - 1) < _pieces.size())
 					if (_pieces[_placementOrder[_piecesPlaced] - 1].isPreRotated)
 						++_piecesPlaced;
 			} else {
@@ -542,6 +586,16 @@ void OneBuildPuzzle::checkAllPlaced() {
 
 		return;
 	}
+
+	// Puzzles with a post-placement animation (e.g. scene 3637's music-box
+	// crank) require the player to click _animRectA before the puzzle solves;
+	// the original signals this in state 1 by skipping FUN_0047fadd when
+	// +0xc27 (anim B non-empty) is set.
+	if (_hasFinalAnim && !_finalAnimDone) {
+		_waitingForFinalAnim = true;
+		return;
+	}
+
 	_isSolved = true;
 	_solveState = kTriggerCompletion;
 }
@@ -613,6 +667,83 @@ void OneBuildPuzzle::playBadPlacementSound() {
 	}
 	_solveState = kWaitPlaceSound;
 	_timerEnd = g_system->getMillis() + 1000;
+}
+
+void OneBuildPuzzle::startFinalAnimation() {
+	_finalAnimDone = true;       // one-shot guard
+	_waitingForFinalAnim = false;
+	_animFrameCounter = 0;
+	_animRowCounter = 0;
+
+	// Without an animation image to step through, fall straight into completion.
+	if (_animImage.w == 0) {
+		if (_animSound1.name != "NO SOUND" && !_animSound1.name.empty()) {
+			g_nancy->_sound->loadSound(_animSound1);
+			g_nancy->_sound->playSound(_animSound1);
+		}
+		_isSolved = true;
+		_solveState = kTriggerCompletion;
+		return;
+	}
+
+	// Position the overlay at _animRectA, translated into screen coords.
+	const VIEW *viewData = GetEngineData(VIEW);
+	Common::Rect dst = _animRectA;
+	if (viewData)
+		dst.translate(viewData->screenPosition.left, viewData->screenPosition.top);
+	_finalAnimOverlay.moveTo(dst);
+	_finalAnimOverlay.setVisible(true);
+
+	if (_animSound1.name != "NO SOUND" && !_animSound1.name.empty()) {
+		g_nancy->_sound->loadSound(_animSound1);
+		g_nancy->_sound->playSound(_animSound1);
+	}
+
+	_solveState = kAnimateFinal;
+	_timerEnd = g_system->getMillis();   // fire immediately on first tick
+}
+
+void OneBuildPuzzle::stepFinalAnimation() {
+	// animLayout = {cols, framesPerStep, baseX, baseY, spacing, totalRows}.
+	// Matches `case 3` in OneBuildPuzzle @ 0x0047fb75: counter wraps to next
+	// row when (counter / framesPerStep) >= cols.
+	const int16 cols          = _animLayout[0];
+	const int16 framesPerStep = _animLayout[1] ? _animLayout[1] : 1;
+	const int16 baseX         = _animLayout[2];
+	const int16 baseY         = _animLayout[3];
+	const int16 spacing       = _animLayout[4];
+	const int16 totalRows     = _animLayout[5];
+
+	if (_animFrameCounter / framesPerStep >= cols) {
+		_animFrameCounter = 0;
+		++_animRowCounter;
+	}
+
+	if (_animRowCounter < totalRows) {
+		// Source rect on the atlas. Original engine uses inclusive width/height
+		// (right_raw - left_raw), so width()-1 / height()-1 in our convention.
+		const int cellW = _animRectA.width()  - 1;
+		const int cellH = _animRectA.height() - 1;
+		const int srcLeft = baseX + (cellW + spacing) * (_animFrameCounter % framesPerStep);
+		const int srcTop  = baseY + (cellH + spacing) * (_animFrameCounter / framesPerStep);
+		Common::Rect src(srcLeft, srcTop, srcLeft + _animRectA.width(), srcTop + _animRectA.height());
+
+		// Clear to transparent first so any pixels not covered by the source
+		// (or skipped by source-transparency) stay see-through, not garbage.
+		_finalAnimOverlay._drawSurface.clear(g_nancy->_graphics->getTransColor());
+		_finalAnimOverlay._drawSurface.blitFrom(_animImage, src, Common::Point(0, 0));
+		_finalAnimOverlay.setVisible(true);
+		_finalAnimOverlay.setNeedsRedraw(true);
+
+		++_animFrameCounter;
+		_timerEnd = g_system->getMillis() + 100;
+		return;
+	}
+
+	// Animation finished: hide overlay and run the standard completion flow.
+	_finalAnimOverlay.setVisible(false);
+	_isSolved = true;
+	_solveState = kTriggerCompletion;
 }
 
 // static
