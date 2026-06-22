@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2026.4.0 "Carousels & Killer Whales" (2026-10-XX)
+#### 2026.4.0 "TBD" (2026-10-XX)
  General:
    - Optimised mixing and rate converters, for better performance.
    - Implemented ImGui-based interface for the Event Recorder.
@@ -17,6 +17,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix stale view close handling causing crash.
    - Fix M&M1 spelling mistakes
    - Improved M&M1 Enhanced mouse support, character generation, and general in-game UI
+
+NANCY:
+   - Generic flags are no longer cleared when saving or auto-saving. Clearing
+     them introduced issues when auto-saving was done in some scenes.
+   - Loading from the GMM is now possible before starting a new scene.
 
 #### 2026.3.0 "Carousels & Killer Whales" (2026-06-20)
 
