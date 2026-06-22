@@ -11,6 +11,12 @@ For a more comprehensive changelog of the latest experimental code, see:
  Atari port:
    - Added integration with nFM library.
 
+ MM:
+   - Fix multiple M&M1 classic combat crashes
+   - Implement M&M1 classic PC speaker sound
+   - Fix stale view close handling causing crash.
+   - Fix M&M1 spelling mistakes
+   - Improved M&M1 Enhanced mouse support, character generation, and general in-game UI
 
 #### 2026.3.0 "Carousels & Killer Whales" (2026-06-20)
 
