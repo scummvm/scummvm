@@ -30,17 +30,6 @@ MODULE_OBJS := \
 	sid.o \
 	ym2149.o \
 	timestamp.o \
-	effects/hmi/interfaces/envelope.o \
-	effects/hmi/interfaces/filter1.o \
-	effects/hmi/hmifxfp.o \
-	effects/hmi/hmifxlib.o \
-	effects/hmi/interfaces/mono_delay.o \
-	effects/hmi/interfaces/phasor.o \
-	effects/hmi/interfaces/resonator.o \
-	effects/hmi/interfaces/reverb1.o \
-	effects/hmi/interfaces/reverb2.o \
-	effects/hmi/interfaces/ring_modulator.o \
-	effects/hmi/interfaces/stereo_delay.o \
 	decoders/3do.o \
 	decoders/aac.o \
 	decoders/adpcm.o \
@@ -82,6 +71,21 @@ MODULE_OBJS := \
 	softsynth/eas.o \
 	softsynth/pcspk.o \
 	softsynth/ay8912.o
+
+ifdef USE_HMI_AUDIO
+MODULE_OBJS += \
+	effects/hmi/interfaces/envelope.o \
+	effects/hmi/interfaces/filter1.o \
+	effects/hmi/hmifxfp.o \
+	effects/hmi/hmifxlib.o \
+	effects/hmi/interfaces/mono_delay.o \
+	effects/hmi/interfaces/phasor.o \
+	effects/hmi/interfaces/resonator.o \
+	effects/hmi/interfaces/reverb1.o \
+	effects/hmi/interfaces/reverb2.o \
+	effects/hmi/interfaces/ring_modulator.o \
+	effects/hmi/interfaces/stereo_delay.o
+endif
 
 ifndef DISABLE_NUKED_OPL
 MODULE_OBJS += \

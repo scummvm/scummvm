@@ -304,6 +304,7 @@ _imgui=yes
 _cdtoons=auto
 _indeo3=auto
 _indeo45=auto
+_hmi_audio=auto
 _hnm=auto
 _jyv1=auto
 _qdm2=auto
@@ -341,6 +342,7 @@ add_component cdtoons "CDTOONS" "_cdtoons" "USE_CDTOONS"
 add_component enet "ENet" "_enet" "USE_ENET"
 add_component fmtowns_pc98_audio "FM-TOWNS/PC98 audio" "_fmtowns_pc98_audio" "USE_FMTOWNS_PC98_AUDIO"
 add_component gif "GIF" "_gif" "USE_GIF"
+add_component hmi_audio "HMI Infinite Audio" "_hmi_audio" "USE_HMI_AUDIO"
 add_component hnm "HNM" "_hnm" "USE_HNM"
 add_component imgui "Dear ImGui based debugger" "_imgui" "USE_IMGUI"
 add_component indeo3 "Indeo 3" "_indeo3" "USE_INDEO3"
