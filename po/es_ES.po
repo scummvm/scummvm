@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-21 22:35+0000\n"
-"PO-Revision-Date: 2026-06-20 15:53+0000\n"
+"PO-Revision-Date: 2026-06-22 10:29+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -4120,43 +4120,43 @@ msgstr "RetroWave OPL3"
 
 #: audio/fmopl.cpp:133
 msgid "[nFM] NokturnFM2 (OPL2)"
-msgstr ""
+msgstr "[nFM] NokturnFM2 (OPL2)"
 
 #: audio/fmopl.cpp:134
 msgid "[nFM] NokturnFM3 (OPL3)"
-msgstr ""
+msgstr "[nFM] NokturnFM3 (OPL3)"
 
 #: audio/fmopl.cpp:135
 msgid "[nFM] RetroWave USB OPL3 Express (OPL3)"
-msgstr ""
+msgstr "[nFM] RetroWave USB OPL3 Express (OPL3)"
 
 #: audio/fmopl.cpp:136
 msgid "[nFM] Serdaco OPL2LPT (OPL2)"
-msgstr ""
+msgstr "[nFM] Serdaco OPL2LPT (OPL2)"
 
 #: audio/fmopl.cpp:137
 msgid "[nFM] Serdaco OPL3LPT (OPL3)"
-msgstr ""
+msgstr "[nFM] Serdaco OPL3LPT (OPL3)"
 
 #: audio/fmopl.cpp:138
 msgid "[nFM] Cheerful Electronics OPL2 Audio Board (OPL2)"
-msgstr ""
+msgstr "[nFM] OPL2 Audio Board de Cheerful Electronics (OPL2)"
 
 #: audio/fmopl.cpp:139
 msgid "[nFM] Cheerful Electronics OPL3 Duo! (2xOPL3)"
-msgstr ""
+msgstr "[nFM] OPL3 Duo! de Cheerful Electronics (2xOPL3)"
 
 #: audio/fmopl.cpp:140
 msgid "[nFM] ST Bus ISA / VME SoundBlaster"
-msgstr ""
+msgstr "[nFM] ST Bus ISA/VME SoundBlaster"
 
 #: audio/fmopl.cpp:141
 msgid "[nFM] NatFeats / NULL"
-msgstr ""
+msgstr "[nFM] NatFeats/NULL"
 
 #: audio/fmopl.cpp:142
 msgid "[nFM] Nuked-OPL3 softsynth (OPL3)"
-msgstr ""
+msgstr "[nFM] Nuked-OPL3 softsynth (OPL3)"
 
 #: audio/mididrv.cpp:232
 #, c-format
@@ -8814,34 +8814,34 @@ msgstr ""
 "Biblia"
 
 #: engines/eem/metaengine.cpp:38
-#, fuzzy
-#| msgid "Highlight items"
 msgid "Hide the highlight boxes"
-msgstr "Resaltar objetos"
+msgstr "Ocultar resaltados"
 
 #: engines/eem/metaengine.cpp:39
 msgid "Hide the boxes that highlight searchable clue locations."
-msgstr ""
+msgstr "Oculta las cajas que indican los lugares donde se pueden buscar pistas."
 
 #: engines/eem/metaengine.cpp:49
 msgid "Better fit for dialog balloons"
-msgstr ""
+msgstr "Mejorar ajuste de bocadillos de diálogos"
 
 #: engines/eem/metaengine.cpp:50
 msgid ""
 "Pick a smaller speech-bubble graphic when the wrapped text doesn't need the "
 "original size."
 msgstr ""
+"Selecciona un bocadillo más pequeño cuando el texto no ocupe la totalidad "
+"del tamaño del bocadillo original."
 
 #: engines/eem/metaengine.cpp:61
-#, fuzzy
-#| msgid "Skip speech"
 msgid "Skip repeated cases"
-msgstr "Omitir diálogo"
+msgstr "Omitir casos repetidos"
 
 #: engines/eem/metaengine.cpp:62
 msgid "Skip all Book 2 cases and jump to Book 3 once Book 1 is complete."
 msgstr ""
+"Omite todos los casos del Libro 2 y salta al 3 cuando hayas terminado el "
+"Libro 1."
 
 #: engines/eem/metaengine.cpp:72 engines/hypno/metaengine.cpp:81
 msgid "Enable restored content"
@@ -8852,6 +8852,9 @@ msgid ""
 "Restore floppy release extras in the CD version, including pre-scrapbook "
 "conversations and first-try badges."
 msgstr ""
+"Restaura los extras de la versión para disquetes en la versión para CD, "
+"incluyendo conversaciones previas al álbum de recortes y medallas por "
+"primeros intentos."
 
 #: engines/efh/metaengine.cpp:235
 msgid "Select option 1"
@@ -13949,7 +13952,7 @@ msgstr "Controles de Rebel Assault II"
 
 #: engines/scumm/metaengine.cpp:1298
 msgid "Cover"
-msgstr ""
+msgstr "Cubrirse"
 
 #: engines/scumm/metaengine.cpp:1304
 msgid "Skip / back"
