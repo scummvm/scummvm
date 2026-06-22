@@ -53,6 +53,7 @@
 #include "mads/madsv2/core/timer.h"
 #include "mads/madsv2/core/vocab.h"
 #include "mads/madsv2/phantom/main.h"
+#include "mads/madsv2/forest/extra.h"
 #include "mads/core/sound_manager.h"
 
 namespace MADS {
@@ -114,6 +115,7 @@ void MADSV2Engine::initGlobals() {
 	init_sprite();
 	init_timer();
 	init_vocab();
+	Forest::init_extra();
 }
 
 void MADSV2Engine::readConfigFile() {

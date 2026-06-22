@@ -1002,10 +1002,11 @@ void global_daemon_code() {
 
 	digi_read_another_chunk();
 
-	if (global[9]) midi_loop();  // please loop the damn music
+	if (global[9])
+		midi_loop();
 
 	if (section_id != 9) {
-		do_interface_for_ouaf();
+		do_interface();
 	}
 }
 

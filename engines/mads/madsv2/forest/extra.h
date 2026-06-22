@@ -28,6 +28,16 @@ namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
+// Interface sprites
+enum {
+	fx_int_journal          = 0,
+	fx_int_backpack         = 1,
+	fx_int_candle           = 2,
+	fx_int_exit             = 3,
+	fx_int_dooropen         = 4,
+	fx_int_candle_on        = 5
+};
+
 #define JOURNAL_FLY            1 
 #define BP_FLY                 2
 #define CANDLE_FLY             3
@@ -45,6 +55,10 @@ namespace Forest {
 #define DOOR_X                 264   /* X for top left corner of DOOR    */
 #define DOOR_Y                 2     /* Y for top left corner of DOOR    */
 
+extern int int_sprite[6];
+
+extern void init_extra();
+
 extern void fly_on_screen(int flying_object);
 extern void fly_off_screen(int flying_object);
 
@@ -53,7 +67,10 @@ extern void display_inventory(void);
 extern void solve_me_selected(void);
 extern void door_selected(void);
 
-extern void do_interface_for_ouaf();
+extern void load_interface();
+extern void unload_interface();
+extern void draw_interface();
+extern void do_interface();
 
 extern void extra_spinning_object(void);
 extern void extra_inven_preserve_palette(void);

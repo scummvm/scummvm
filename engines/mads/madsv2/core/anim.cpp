@@ -78,7 +78,11 @@ void Speech::load(Common::SeekableReadStream *src) {
 }
 
 void ImageInter::load(Common::SeekableReadStream *src) {
-	src->readMultipleLE(flags, segment_id, series_id, sprite_id, x, y);
+	src->readMultipleLE(flags, segment_id, series_id, sprite_id);
+	src->skip(1);
+	x = src->readSint16LE();
+	y = src->readByte();
+	src->skip(1);
 }
 
 void Frame::load(Common::SeekableReadStream *src) {

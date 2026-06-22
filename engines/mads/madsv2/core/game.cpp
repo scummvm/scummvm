@@ -109,7 +109,6 @@ int debugger_memory_all = false;    /* Not showing ALL memory  */
 int debugger_memory_keywait = false;    /* Not waiting for memory  */
 void (*debugger_reset)() = NULL;     /* Debugger reset routine  */
 void (*debugger_update)() = NULL;     /* Debugger update routine */
-int int_sprite[6];
 int selected_intro = false;
 long correction_clock;
 
@@ -1286,7 +1285,8 @@ void game_control() {
 	}
 
 	// Game level control loop
-	int_sprite[fx_int_journal] = -1;
+	if (g_engine->getGameID() == GType_Forest)
+		Forest::int_sprite[Forest::fx_int_journal] = -1;
 
 	while (game.going) {
 
@@ -1371,32 +1371,21 @@ void game_control() {
 				if (player.walker_is_loaded) {
 					player_dump_walker();
 				}
-#if 0
-				if (int_sprite[fx_int_journal] != -1 && room_id != KERNEL_RESTORING_GAME) {
-					matte_deallocate_series(int_sprite[fx_int_candle_on], true);
-					matte_deallocate_series(int_sprite[fx_int_dooropen], true);
-					matte_deallocate_series(int_sprite[fx_int_exit], true);
-					matte_deallocate_series(int_sprite[fx_int_candle], true);
-					matte_deallocate_series(int_sprite[fx_int_backpack], true);
-					matte_deallocate_series(int_sprite[fx_int_journal], true);
-					int_sprite[fx_int_journal] = -1;
+
+				if (g_engine->getGameID() == GType_Forest) {
+					if (room_id != KERNEL_RESTORING_GAME)
+						Forest::unload_interface();
+
+					g_engine->section_music(section_id);
 				}
 
-				g_engine->section_music(section_id);
-#endif
 				pal_init(KERNEL_RESERVED_LOW_COLORS, KERNEL_RESERVED_HIGH_COLORS);
 
 				matte_init(true);
-#if 0
-				if (!player.walker_is_loaded) {
-					int_sprite[fx_int_journal] = kernel_load_series("*journal", false);
-					int_sprite[fx_int_backpack] = kernel_load_series("*backpack", false);
-					int_sprite[fx_int_candle] = kernel_load_series("*candle", false);
-					int_sprite[fx_int_exit] = kernel_load_series("*door", false);
-					int_sprite[fx_int_dooropen] = kernel_load_series("*dooropen", false);
-					int_sprite[fx_int_candle_on] = kernel_load_series("*candleon", false);
-				}
-#endif
+
+				if (!player.walker_is_loaded && g_engine->getGameID() == GType_Forest)
+					Forest::load_interface();
+
 			} else {
 				player_preserve_palette();
 #if 0
@@ -1492,20 +1481,10 @@ void game_control() {
 				kernel_set_interface_mode(INTER_LIMITED_SENTENCES);
 
 			game_exec_function(room_init_code_pointer);
-#if 0
-			// paul - oh no! magic numbers!
-			stamp_sprite_to_interface(BP_X, BP_Y, 1, int_sprite[fx_int_backpack]);
-			if (global[5]) {  // candle_is_on
-				stamp_sprite_to_interface(CANDLE_X, CANDLE_Y, 1, int_sprite[fx_int_candle_on]);
-			} else {
-				stamp_sprite_to_interface(CANDLE_X, CANDLE_Y, 1, int_sprite[fx_int_candle]);
-			}
-			stamp_sprite_to_interface(DOOR_X, DOOR_Y, 1, int_sprite[fx_int_exit]);
 
-			if (room_id != 199) {  // Taranjeet, if this is not journal room
-				stamp_sprite_to_interface(JOURNAL_X, JOURNAL_Y, 1, int_sprite[fx_int_journal]);
-			}
-#endif
+			if (g_engine->getGameID() == GType_Forest)
+				Forest::draw_interface();
+
 			scr_work.data = buffer_pointer(&scr_main, 0, viewing_at_y);
 			if (viewing_at_y) {
 				buffer_rect_fill(scr_main, 0, 0, video_x, viewing_at_y, 0);
@@ -1612,17 +1591,8 @@ emergency:
 			kernel_unload_all_series();
 		}
 
-		if (room_id != KERNEL_RESTORING_GAME && g_engine->getGameID() == GType_Forest) {
-			if (int_sprite[fx_int_journal] != -1) {
-				matte_deallocate_series(int_sprite[fx_int_candle_on], true);
-				matte_deallocate_series(int_sprite[fx_int_dooropen], true);
-				matte_deallocate_series(int_sprite[fx_int_exit], true);
-				matte_deallocate_series(int_sprite[fx_int_candle], true);
-				matte_deallocate_series(int_sprite[fx_int_backpack], true);
-				matte_deallocate_series(int_sprite[fx_int_journal], true);
-				int_sprite[fx_int_journal] = -1;
-			}
-		}
+		if (room_id != KERNEL_RESTORING_GAME && g_engine->getGameID() == GType_Forest)
+			Forest::unload_interface();
 
 		pal_unlock();
 
@@ -3004,7 +2974,6 @@ void init_game() {
 	debugger_memory_keywait = false;
 	debugger_reset = NULL;
 	debugger_update = NULL;
-	memset(int_sprite, 0, sizeof(int_sprite));
 	selected_intro = false;
 	correction_clock = 0;
 	memset(save_game_key, 0, sizeof(save_game_key));

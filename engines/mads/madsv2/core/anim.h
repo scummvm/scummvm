@@ -237,10 +237,12 @@ struct ImageInter {
 	byte segment_id;
 	byte series_id;
 	byte sprite_id;
+	// byte padding
 	int16 x;
 	byte y;
+	// byte padding
 
-	static constexpr int SIZE = 2 + 1 + 1 + 1 + 2 + 1;
+	static constexpr int SIZE = 2 + 1 + 1 + 1 + 1 + 2 + 1 + 1;
 	void load(Common::SeekableReadStream *src);
 };
 typedef ImageInter *ImageInterPtr;
