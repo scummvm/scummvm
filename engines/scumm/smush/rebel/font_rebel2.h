@@ -47,6 +47,10 @@ struct Rebel2FontSet {
 
 NutRenderer *makeRebel2Font(ScummEngine *vm, const char *filename);
 NutRenderer *makeRebel2SpriteFromData(ScummEngine *vm, const byte *data, int32 dataSize);
+bool drawRebel2Codec23Sprite(NutRenderer *sprite, byte *buffer, int pitch, int width, int height,
+		const Common::Rect &clipRect, int x, int y, int spriteIdx, int scale);
+bool drawRebel2Codec45Sprite(NutRenderer *sprite, byte *buffer, int pitch, int width, int height,
+		const Common::Rect &clipRect, int x, int y, int spriteIdx, int scale);
 int drawRebel2Char(NutRenderer *font, byte *buffer, Common::Rect &clipRect, int x, int y,
 		int pitch, int16 col, byte chr);
 int getRebel2StringWidth(const Rebel2FontSet &fontSet, const char *str, uint len);

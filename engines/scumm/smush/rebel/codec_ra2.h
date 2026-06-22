@@ -31,6 +31,12 @@ void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int wi
 void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
 void smushDecodeRA2SkipRemap(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize, const byte *remap, byte addColor);
 void smushDecodeRA2Blur(byte *dst, const byte *src, int left, int top, int dstWidth, int dstHeight, int pitch, int dataSize, byte *palette, byte *lookup);
+void smushDecodeRA2BlurClip(byte *dst, const byte *src, int left, int top,
+		int clipLeft, int clipTop, int clipRight, int clipBottom,
+		int dstWidth, int dstHeight, int pitch, int dataSize, byte *palette, byte *lookup);
+void copyRA2Handler7PerspectiveViewport(byte *dst, int dstPitch, int dstWidth, int dstHeight,
+		const byte *src, int srcPitch, int srcWidth, int srcHeight,
+		int perspectiveX, int perspectiveY, int viewShift);
 const byte *smushSkipRLELines(const byte *src, int &dataSize, int lines);
 
 } // End of namespace Scumm

@@ -1223,7 +1223,13 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 }
 
 bool InsaneRebel2::loadOpcode8Handler7FlySprites(Common::SeekableReadStream &b, int64 startPos, int64 remaining, int16 par4) {
-	bool isHandler7FLY = (_rebelHandler == 7 && (par4 == 1 || par4 == 2 || par4 == 3 || par4 == 11));
+	const bool fly004ForResolution = (!isHiRes() && par4 == 10) || (isHiRes() && par4 == 11);
+	if (_rebelHandler == 7 && (par4 == 10 || par4 == 11) && !fly004ForResolution) {
+		b.seek(startPos);
+		return true;
+	}
+
+	bool isHandler7FLY = (_rebelHandler == 7 && (par4 == 1 || par4 == 2 || par4 == 3 || fly004ForResolution));
 	if (isHandler7FLY && remaining >= 14) {
 		if (loadHandler7FlySprites(b, remaining, par4)) {
 			b.seek(startPos);
@@ -1701,7 +1707,8 @@ bool InsaneRebel2::loadHandler7FlySprites(Common::SeekableReadStream &b, int64 r
 		delete _flyLaserSprite;
 		_flyLaserSprite = newNut;
 		break;
-	case 11: // FLY004 - High-res alternative
+	case 10:
+	case 11:
 		delete _flyHiResSprite;
 		_flyHiResSprite = newNut;
 		break;

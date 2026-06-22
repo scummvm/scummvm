@@ -31,6 +31,7 @@ public:
 	SmushPlayerRebel2(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insane *insane);
 	~SmushPlayerRebel2() override;
 	bool ra2PromoteCurrentFrameToHiRes(int scrollX, int scrollY);
+	bool ra2PromoteHandler7PerspectiveToHiRes(int perspectiveX, int perspectiveY, int viewShift);
 
 protected:
 	void initGamePlayerFields() override;

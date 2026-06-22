@@ -452,6 +452,7 @@ public:
 	void renderPostRenderMenuCursor(byte *renderBitmap, int pitch, int width, int height);
 	bool handlePostRenderMenuModes(byte *renderBitmap, int pitch, int width, int height, bool introPlaying);
 	bool handlePostRenderIntro(byte *renderBitmap, int pitch, int width, int height, int32 curFrame, int32 maxFrame);
+	void prepareHandler7Viewport(byte *renderBitmap, int pitch, int width, int height);
 	void renderGameplayPostFrame(byte *renderBitmap, int pitch, int width, int height,
 								 int videoWidth, int videoHeight, int statusBarY, int32 curFrame);
 	void updateGameplayDamageEffects(byte *renderBitmap, int pitch, int width, int height);
@@ -478,7 +479,6 @@ public:
 	void renderCrosshair(byte *renderBitmap, int pitch, int width, int height);
 	void renderHandler8MonitorEffect(byte *renderBitmap, int pitch, int width, int height);
 	void renderHandler8PovOverlay(byte *renderBitmap, int pitch, int width, int height);
-	Common::Point getHandler7ShipDrawPoint();
 	Common::Point getHandler7ProjectedPointFor(int16 x, int16 y);
 	Common::Point getHandler7ProjectedPoint();
 	Common::Point getHandler7ShotTargetPoint();

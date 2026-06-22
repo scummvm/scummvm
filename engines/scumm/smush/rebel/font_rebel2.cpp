@@ -38,13 +38,14 @@ enum {
 };
 
 struct Rebel2NutFrameInfo {
-	Rebel2NutFrameInfo() : codec(0), xoffs(0), yoffs(0), width(0), height(0), data(nullptr), dataSize(0) {}
+	Rebel2NutFrameInfo() : codec(0), xoffs(0), yoffs(0), width(0), height(0), effect(0), data(nullptr), dataSize(0) {}
 
 	int codec;
 	int16 xoffs;
 	int16 yoffs;
 	uint16 width;
 	uint16 height;
+	uint16 effect;
 	const byte *data;
 	int32 dataSize;
 };
@@ -56,22 +57,237 @@ static void decodeRebel2RawSprite(byte *dst, const byte *src, int width, int hei
 		memcpy(dst, src, copySize);
 }
 
+static void applyRebel2Codec23Effect(byte *buffer, int pitch, int width, int height,
+		const Common::Rect &clipRect, int x, int y, int spriteWidth, int spriteHeight,
+		const byte *src, int32 srcSize, byte effect, const byte *lookup, int scale) {
+	if (!buffer || !src || srcSize <= 0 || spriteWidth <= 0 || spriteHeight <= 0)
+		return;
+
+	if (scale < 1)
+		scale = 1;
+
+	Common::Rect clipped = clipRect;
+	clipped.clip(Common::Rect(0, 0, MIN(width, pitch), height));
+	if (clipped.isEmpty())
+		return;
+
+	const byte *srcEnd = src + srcSize;
+	for (int row = 0; row < spriteHeight && src + 2 <= srcEnd; ++row) {
+		const int rowSize = READ_LE_UINT16(src);
+		src += 2;
+		if (src + rowSize > srcEnd)
+			break;
+
+		const int scaledTop = y + row * scale;
+		const int scaledBottom = scaledTop + scale;
+		if (scaledBottom > clipped.top && scaledTop < clipped.bottom) {
+			const byte *rowPtr = src;
+			const byte *rowEnd = src + rowSize;
+			int dstX = x;
+
+			while (rowPtr + 2 <= rowEnd) {
+				dstX += *rowPtr++ * scale;
+
+				int run = *rowPtr++;
+				int scaledRun = run * scale;
+				int drawLeft = MAX<int>(dstX, clipped.left);
+				int drawRight = MIN<int>(dstX + scaledRun, clipped.right);
+				if (drawLeft < drawRight) {
+					for (int dstY = MAX<int>(scaledTop, clipped.top); dstY < MIN<int>(scaledBottom, clipped.bottom); ++dstY) {
+						byte *pixel = buffer + dstY * pitch + drawLeft;
+						if (lookup) {
+							for (int column = drawLeft; column < drawRight; ++column, ++pixel)
+								*pixel = lookup[*pixel];
+						} else {
+							for (int column = drawLeft; column < drawRight; ++column, ++pixel)
+								*pixel = (byte)(*pixel + effect);
+						}
+					}
+				}
+
+				dstX += scaledRun;
+				if (dstX >= x + spriteWidth * scale)
+					break;
+			}
+		}
+
+		src += rowSize;
+	}
+}
+
 class Rebel2NutRenderer : public NutRenderer {
 public:
-	Rebel2NutRenderer(ScummEngine *vm, const char *filename) : NutRenderer(vm, nullptr) {
+	Rebel2NutRenderer(ScummEngine *vm, const char *filename) :
+			NutRenderer(vm, nullptr), _spriteData(nullptr), _spriteFrameCount(0) {
+		clearCodec23Table();
+		clearCodec45Tables();
 		loadRebel2Font(filename);
 	}
 
-	Rebel2NutRenderer(ScummEngine *vm, const byte *data, int32 dataSize) : NutRenderer(vm, nullptr) {
+	Rebel2NutRenderer(ScummEngine *vm, const byte *data, int32 dataSize) :
+			NutRenderer(vm, nullptr), _spriteData(nullptr), _spriteFrameCount(0) {
+		clearCodec23Table();
+		clearCodec45Tables();
 		loadRebel2SpriteFromData(data, dataSize);
 	}
+
+	~Rebel2NutRenderer() override {
+		delete[] _spriteData;
+	}
+
+	bool drawCodec45Sprite(byte *buffer, int pitch, int width, int height,
+			const Common::Rect &clipRect, int x, int y, int spriteIdx, int scale);
+	bool drawCodec23Sprite(byte *buffer, int pitch, int width, int height,
+			const Common::Rect &clipRect, int x, int y, int spriteIdx, int scale);
 
 private:
 	void codec44(byte *dst, const byte *src, int width, int height, int pitch);
 	void loadRebel2Font(const char *filename);
 	void loadRebel2SpriteFromData(const byte *data, int32 dataSize);
 	void decodeRebel2Frame(byte *dst, const Rebel2NutFrameInfo &frame, byte *codec45Palette, byte *codec45Lookup);
+	void clearSpriteData();
+	void clearCodec23Table();
+	void clearCodec45Tables();
+
+	byte *_spriteData;
+	int _spriteFrameCount;
+	Rebel2NutFrameInfo _spriteFrames[256];
+	byte _codec23Lookup[256];
+	byte _codec45Palette[0x300];
+	byte _codec45Lookup[0x8000];
 };
+
+void Rebel2NutRenderer::clearSpriteData() {
+	delete[] _spriteData;
+	_spriteData = nullptr;
+	_spriteFrameCount = 0;
+	for (int i = 0; i < ARRAYSIZE(_spriteFrames); ++i)
+		_spriteFrames[i] = Rebel2NutFrameInfo();
+}
+
+void Rebel2NutRenderer::clearCodec23Table() {
+	for (int i = 0; i < ARRAYSIZE(_codec23Lookup); ++i)
+		_codec23Lookup[i] = (byte)i;
+}
+
+void Rebel2NutRenderer::clearCodec45Tables() {
+	memset(_codec45Palette, 0, sizeof(_codec45Palette));
+	memset(_codec45Lookup, 0, sizeof(_codec45Lookup));
+}
+
+static int rebel2FloorDiv(int value, int divisor) {
+	if (value >= 0)
+		return value / divisor;
+	return -((-value + divisor - 1) / divisor);
+}
+
+bool Rebel2NutRenderer::drawCodec45Sprite(byte *buffer, int pitch, int width, int height,
+		const Common::Rect &clipRect, int x, int y, int spriteIdx, int scale) {
+	if (!buffer || spriteIdx < 0 || spriteIdx >= _spriteFrameCount)
+		return false;
+
+	const Rebel2NutFrameInfo &frame = _spriteFrames[spriteIdx];
+	if (frame.codec != 45 || !frame.data || frame.dataSize <= 0)
+		return false;
+
+	if (scale < 1)
+		scale = 1;
+
+	const int dstWidth = MIN(width, pitch);
+	if (dstWidth <= 2 || height <= 2)
+		return true;
+
+	Common::Rect clipped = clipRect;
+	clipped.clip(Common::Rect(0, 0, dstWidth, height));
+	if (clipped.isEmpty())
+		return true;
+
+	if (scale == 1) {
+		smushDecodeRA2BlurClip(buffer, frame.data, x, y,
+			clipped.left, clipped.top, clipped.right, clipped.bottom,
+			dstWidth, height, pitch, frame.dataSize,
+			_codec45Palette, _codec45Lookup);
+		return true;
+	}
+
+	const int nativeWidth = (dstWidth + scale - 1) / scale;
+	const int nativeHeight = (height + scale - 1) / scale;
+	if (nativeWidth <= 2 || nativeHeight <= 2)
+		return true;
+
+	const size_t nativeSize = (size_t)nativeWidth * nativeHeight;
+	byte *nativeBuffer = new byte[nativeSize];
+	for (int ny = 0; ny < nativeHeight; ++ny) {
+		const int srcY = MIN(ny * scale, height - 1);
+		for (int nx = 0; nx < nativeWidth; ++nx) {
+			const int srcX = MIN(nx * scale, dstWidth - 1);
+			nativeBuffer[ny * nativeWidth + nx] = buffer[srcY * pitch + srcX];
+		}
+	}
+
+	const int nativeX = rebel2FloorDiv(x, scale);
+	const int nativeY = rebel2FloorDiv(y, scale);
+	const int nativeClipLeft = rebel2FloorDiv(clipped.left, scale);
+	const int nativeClipTop = rebel2FloorDiv(clipped.top, scale);
+	const int nativeClipRight = (clipped.right + scale - 1) / scale;
+	const int nativeClipBottom = (clipped.bottom + scale - 1) / scale;
+	smushDecodeRA2BlurClip(nativeBuffer, frame.data, nativeX, nativeY,
+		nativeClipLeft, nativeClipTop, nativeClipRight, nativeClipBottom,
+		nativeWidth, nativeHeight, nativeWidth, frame.dataSize, _codec45Palette, _codec45Lookup);
+
+	const int copyLeft = CLIP<int>(nativeX - 1, 0, nativeWidth);
+	const int copyTop = CLIP<int>(nativeY - 1, 0, nativeHeight);
+	const int copyRight = CLIP<int>(nativeX + frame.width + 1, 0, nativeWidth);
+	const int copyBottom = CLIP<int>(nativeY + frame.height + 1, 0, nativeHeight);
+	for (int ny = copyTop; ny < copyBottom; ++ny) {
+		for (int sy = 0; sy < scale; ++sy) {
+			const int dstY = ny * scale + sy;
+			if (dstY < clipped.top || dstY >= clipped.bottom)
+				continue;
+
+			byte *dstRow = buffer + dstY * pitch;
+			const byte *srcRow = nativeBuffer + ny * nativeWidth;
+			for (int nx = copyLeft; nx < copyRight; ++nx) {
+				for (int sx = 0; sx < scale; ++sx) {
+					const int dstX = nx * scale + sx;
+					if (dstX >= clipped.left && dstX < clipped.right)
+						dstRow[dstX] = srcRow[nx];
+				}
+			}
+		}
+	}
+
+	delete[] nativeBuffer;
+	return true;
+}
+
+bool Rebel2NutRenderer::drawCodec23Sprite(byte *buffer, int pitch, int width, int height,
+		const Common::Rect &clipRect, int x, int y, int spriteIdx, int scale) {
+	if (!buffer || spriteIdx < 0 || spriteIdx >= _spriteFrameCount)
+		return false;
+
+	const Rebel2NutFrameInfo &frame = _spriteFrames[spriteIdx];
+	if (frame.codec != 23 || !frame.data || frame.dataSize <= 0)
+		return false;
+
+	const byte *src = frame.data;
+	int32 srcSize = frame.dataSize;
+	const byte *lookup = nullptr;
+
+	if (frame.effect == 0x100) {
+		if (srcSize < 256)
+			return true;
+		lookup = src;
+		src += 256;
+		srcSize -= 256;
+	} else if (frame.effect > 0xff) {
+		lookup = _codec23Lookup;
+	}
+
+	applyRebel2Codec23Effect(buffer, pitch, width, height, clipRect, x, y,
+		frame.width, frame.height, src, srcSize, (byte)frame.effect, lookup, scale);
+	return true;
+}
 
 void Rebel2NutRenderer::codec44(byte *dst, const byte *src, int width, int height, int pitch) {
 	while (height--) {
@@ -102,6 +318,10 @@ void Rebel2NutRenderer::codec44(byte *dst, const byte *src, int width, int heigh
 }
 
 void Rebel2NutRenderer::loadRebel2Font(const char *filename) {
+	clearSpriteData();
+	clearCodec23Table();
+	clearCodec45Tables();
+
 	ScummFile *file = _vm->instantiateScummFile();
 
 	_vm->openFile(*file, filename);
@@ -230,7 +450,6 @@ void Rebel2NutRenderer::decodeRebel2Frame(byte *dst, const Rebel2NutFrameInfo &f
 		smushDecodeLineUpdate(dst, frame.data, 0, 0, frame.width, frame.height, frame.width, frame.dataSize);
 		break;
 	case 23:
-		smushDecodeSkipRLE(dst, frame.data, 0, 0, frame.width, frame.height, frame.width, frame.dataSize);
 		break;
 	case 44:
 		codec44(dst, frame.data, frame.width, frame.height, frame.width);
@@ -246,6 +465,10 @@ void Rebel2NutRenderer::decodeRebel2Frame(byte *dst, const Rebel2NutFrameInfo &f
 }
 
 void Rebel2NutRenderer::loadRebel2SpriteFromData(const byte *data, int32 dataSize) {
+	clearSpriteData();
+	clearCodec23Table();
+	clearCodec45Tables();
+
 	if (!data || dataSize < 16) {
 		warning("Rebel2NutRenderer::loadRebel2SpriteFromData: data too small (%d bytes)", dataSize);
 		return;
@@ -273,6 +496,10 @@ void Rebel2NutRenderer::loadRebel2SpriteFromData(const byte *data, int32 dataSiz
 		warning("Rebel2NutRenderer::loadRebel2SpriteFromData: numChars (%d) exceeds max, clamping", declaredChars);
 		declaredChars = ARRAYSIZE(_chars);
 	}
+
+	_spriteData = new byte[dataSize];
+	memcpy(_spriteData, data, dataSize);
+	data = _spriteData;
 
 	Rebel2NutFrameInfo frames[ARRAYSIZE(_chars)];
 	uint64 decodedLength = 0;
@@ -306,8 +533,13 @@ void Rebel2NutRenderer::loadRebel2SpriteFromData(const byte *data, int32 dataSiz
 					frame.yoffs = READ_LE_INT16(data + fobjDataStart + 4);
 					frame.width = READ_LE_UINT16(data + fobjDataStart + 6);
 					frame.height = READ_LE_UINT16(data + fobjDataStart + 8);
+					frame.effect = READ_LE_UINT16(data + fobjDataStart + 12);
 					frame.data = data + fobjDataStart + 14;
 					frame.dataSize = fobjSize - 14;
+
+					if (frame.codec == 23 && frame.effect == 0x100 && frame.dataSize >= 256) {
+						memcpy(_codec23Lookup, frame.data, sizeof(_codec23Lookup));
+					}
 
 					const uint64 pixels = (uint64)frame.width * frame.height;
 					if (pixels == 0) {
@@ -334,10 +566,14 @@ void Rebel2NutRenderer::loadRebel2SpriteFromData(const byte *data, int32 dataSiz
 	}
 
 	_numChars = frameCount;
+	_spriteFrameCount = frameCount;
 	if (_numChars <= 0) {
 		warning("Rebel2NutRenderer::loadRebel2SpriteFromData: no decodable frames");
 		return;
 	}
+
+	for (int i = 0; i < _spriteFrameCount; ++i)
+		_spriteFrames[i] = frames[i];
 
 	delete[] _decodedData;
 	_decodedData = decodedLength ? new byte[(uint32)decodedLength] : nullptr;
@@ -345,10 +581,6 @@ void Rebel2NutRenderer::loadRebel2SpriteFromData(const byte *data, int32 dataSiz
 	_fontHeight = 0;
 
 	byte *decodedPtr = _decodedData;
-	byte codec45Palette[0x300];
-	byte codec45Lookup[0x8000];
-	memset(codec45Palette, 0, sizeof(codec45Palette));
-	memset(codec45Lookup, 0, sizeof(codec45Lookup));
 
 	for (int i = 0; i < _numChars; i++) {
 		const Rebel2NutFrameInfo &frame = frames[i];
@@ -367,7 +599,7 @@ void Rebel2NutRenderer::loadRebel2SpriteFromData(const byte *data, int32 dataSiz
 		_fontHeight = MAX<int>(_fontHeight, frame.height);
 
 		memset(_chars[i].src, kDefaultTransparentColor, pixels);
-		decodeRebel2Frame(_chars[i].src, frame, codec45Palette, codec45Lookup);
+		decodeRebel2Frame(_chars[i].src, frame, _codec45Palette, _codec45Lookup);
 	}
 
 	debugC(DEBUG_SMUSH, "Rebel2NutRenderer::loadRebel2SpriteFromData() - numChars=%d decodedLength=%u", _numChars, (uint32)decodedLength);
@@ -385,6 +617,18 @@ NutRenderer *makeRebel2SpriteFromData(ScummEngine *vm, const byte *data, int32 d
 	}
 
 	return renderer;
+}
+
+bool drawRebel2Codec45Sprite(NutRenderer *sprite, byte *buffer, int pitch, int width, int height,
+		const Common::Rect &clipRect, int x, int y, int spriteIdx, int scale) {
+	Rebel2NutRenderer *renderer = dynamic_cast<Rebel2NutRenderer *>(sprite);
+	return renderer && renderer->drawCodec45Sprite(buffer, pitch, width, height, clipRect, x, y, spriteIdx, scale);
+}
+
+bool drawRebel2Codec23Sprite(NutRenderer *sprite, byte *buffer, int pitch, int width, int height,
+		const Common::Rect &clipRect, int x, int y, int spriteIdx, int scale) {
+	Rebel2NutRenderer *renderer = dynamic_cast<Rebel2NutRenderer *>(sprite);
+	return renderer && renderer->drawCodec23Sprite(buffer, pitch, width, height, clipRect, x, y, spriteIdx, scale);
 }
 
 Rebel2FontSet::Rebel2FontSet() : numFonts(0), defaultFont(0) {

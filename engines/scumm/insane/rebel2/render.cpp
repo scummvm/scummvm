@@ -595,17 +595,6 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 	}
 }
 
-Common::Point InsaneRebel2::getHandler7ShipDrawPoint() {
-	Common::Point projected = getHandler7ProjectedPoint();
-
-	if (!_flyShipSprite || _flyShipSprite->getNumChars() <= 0)
-		return Common::Point(projected.x - 0xd4, projected.y - 0x82);
-
-	int spriteIndex = CLIP<int>(_shipDirectionIndex, 0, _flyShipSprite->getNumChars() - 1);
-	return Common::Point(projected.x - 0xd4 + _flyShipSprite->getCharXOffset(spriteIndex),
-	                     projected.y - 0x82 + _flyShipSprite->getCharYOffset(spriteIndex));
-}
-
 Common::Point InsaneRebel2::getHandler7ProjectedPointFor(int16 x, int16 y) {
 	int viewTilt = (_viewShift * 5) / 128;
 	int xSkew = (viewTilt * 9) / 4;
@@ -2290,6 +2279,17 @@ void InsaneRebel2::checkGameplayPostRenderCollisions(byte *renderBitmap, int pit
 	}
 }
 
+void InsaneRebel2::prepareHandler7Viewport(byte *renderBitmap, int pitch, int width, int height) {
+	if (_rebelHandler != 7 || _rebelDetailMode < 1 || isHiRes() || !renderBitmap || pitch <= 0 || width <= 0 || height <= 0)
+		return;
+
+	copyRA2Handler7PerspectiveViewport(renderBitmap, pitch, width, height,
+		renderBitmap, pitch, MIN(width, pitch), height, _perspectiveX, _perspectiveY, _viewShift);
+	_viewX = 0;
+	_viewY = 0;
+	_player->setScrollOffset(0, 0);
+}
+
 void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int width, int height,
 										   int videoWidth, int videoHeight, int statusBarY, int32 curFrame) {
 	processMouse();
@@ -2306,7 +2306,17 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 		SmushPlayerRebel2 *ra2Player = static_cast<SmushPlayerRebel2 *>(_player);
 		int nativeViewX = _viewX;
 		int nativeViewY = _viewY;
-		if (ra2Player && ra2Player->ra2PromoteCurrentFrameToHiRes(_viewX, _viewY)) {
+		bool promoted = false;
+		if (ra2Player) {
+			if (_rebelHandler == 7 && _rebelDetailMode >= 1) {
+				promoted = ra2Player->ra2PromoteHandler7PerspectiveToHiRes(_perspectiveX, _perspectiveY, _viewShift);
+				nativeViewX = 0;
+				nativeViewY = 0;
+			} else {
+				promoted = ra2Player->ra2PromoteCurrentFrameToHiRes(_viewX, _viewY);
+			}
+		}
+		if (promoted) {
 			renderBitmap = _player->_dst;
 			width = _player->_width;
 			height = _player->_height;
@@ -2317,6 +2327,7 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 			_viewY = 0;
 		}
 	}
+	prepareHandler7Viewport(renderBitmap, pitch, width, height);
 
 	renderStatusBarBackground(renderBitmap, pitch, width, height, videoWidth, videoHeight, gameplayStatusBarY);
 
@@ -3051,11 +3062,48 @@ void InsaneRebel2::renderHandler7FlySprite(byte *renderBitmap, int pitch, int wi
 
 	if (renderHiRes) {
 		const int clipBottom = MIN(height, _gameplayPresentationClipBottom + 1);
+		if (drawRebel2Codec23Sprite(nut, renderBitmap, pitch, width, height,
+				Common::Rect(0, 0, width, clipBottom), dstX, dstY, spriteIndex, renderScale))
+			return;
+
+		if (drawRebel2Codec45Sprite(nut, renderBitmap, pitch, width, height,
+				Common::Rect(0, 0, width, clipBottom), dstX, dstY, spriteIndex, renderScale))
+			return;
+
 		renderNutSpriteScaledClipped(renderBitmap, pitch, width, height,
 			0, 0, width, clipBottom, dstX, dstY, nut, spriteIndex, false, renderScale, true);
 	} else {
-		renderNutSprite(renderBitmap, pitch, width, height, dstX, dstY, nut, spriteIndex);
+		Common::Rect clipRect(0, 0, width, height);
+		if (_rebelHandler == 7) {
+			clipRect = Common::Rect(_viewX, _viewY,
+				MIN(width, _viewX + 320),
+				MIN(height, _viewY + 170));
+		}
+		if (drawRebel2Codec23Sprite(nut, renderBitmap, pitch, width, height,
+				clipRect, dstX, dstY, spriteIndex, renderScale))
+			return;
+
+		if (drawRebel2Codec45Sprite(nut, renderBitmap, pitch, width, height,
+				clipRect, dstX, dstY, spriteIndex, renderScale))
+			return;
+
+		if (_rebelHandler == 7) {
+			renderNutSpriteClipped(renderBitmap, pitch, height,
+				clipRect.left, clipRect.top, clipRect.right, clipRect.bottom,
+				dstX, dstY, nut, spriteIndex);
+		} else {
+			renderNutSprite(renderBitmap, pitch, width, height, dstX, dstY, nut, spriteIndex);
+		}
 	}
+}
+
+static Common::Point getHandler7SpriteDrawPoint(const Common::Point &base, NutRenderer *nut, int spriteIndex) {
+	Common::Point point = base;
+	if (nut && spriteIndex >= 0 && spriteIndex < nut->getNumChars()) {
+		point.x += nut->getCharXOffset(spriteIndex);
+		point.y += nut->getCharYOffset(spriteIndex);
+	}
+	return point;
 }
 
 void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, int height) {
@@ -3075,12 +3123,9 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 	const int nativeViewY = renderHiRes ? _hiResPresentationViewY : 0;
 
 	Common::Point projected = getHandler7ProjectedPoint();
-	Common::Point shipDraw = getHandler7ShipDrawPoint();
 	if (renderHiRes) {
 		projected.x += nativeViewX;
 		projected.y += nativeViewY;
-		shipDraw.x += nativeViewX;
-		shipDraw.y += nativeViewY;
 	}
 	int shipCenterX = projected.x;
 	int shipCenterY = projected.y;
@@ -3146,6 +3191,9 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 		}
 	}
 
+	Common::Point shipBase(projected.x - 0xd4, projected.y - 0x82);
+	Common::Point shipDraw = getHandler7SpriteDrawPoint(shipBase, _flyShipSprite, spriteIndex);
+
 	int drawX = renderHiRes ? (shipDraw.x - nativeViewX) * renderScale : shipDraw.x;
 	int drawY = renderHiRes ? (shipDraw.y - nativeViewY) * renderScale : shipDraw.y;
 
@@ -3156,19 +3204,21 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 	if (_flyLaserSprite && _flyOverlayRepeatCount > 0) {
 		int overlayIndex = spriteIndex + 0x14;
 		if (overlayIndex >= 0 && overlayIndex < _flyLaserSprite->getNumChars()) {
+			Common::Point overlayDraw = getHandler7SpriteDrawPoint(shipBase, _flyLaserSprite, overlayIndex);
 			for (int i = 0; i < _flyOverlayRepeatCount; i++) {
 				renderHandler7FlySprite(renderBitmap, pitch, width, height,
 					renderHiRes, renderScale, nativeViewX, nativeViewY,
-					shipDraw.x, shipDraw.y, _flyLaserSprite, overlayIndex);
+					overlayDraw.x, overlayDraw.y, _flyLaserSprite, overlayIndex);
 			}
 		}
 	}
 
 	if (_flyTargetSprite && _rebelDetailMode >= 0 &&
 		spriteIndex >= 0 && spriteIndex < _flyTargetSprite->getNumChars()) {
+		Common::Point targetDraw = getHandler7SpriteDrawPoint(shipBase, _flyTargetSprite, spriteIndex);
 		renderHandler7FlySprite(renderBitmap, pitch, width, height,
 			renderHiRes, renderScale, nativeViewX, nativeViewY,
-			shipDraw.x, shipDraw.y, _flyTargetSprite, spriteIndex);
+			targetDraw.x, targetDraw.y, _flyTargetSprite, spriteIndex);
 	}
 
 	debugC(DEBUG_INSANE, "Handler7Ship: draw=(%d,%d) sprite=%d/%d shipPos=(%d,%d) view=(%d,%d) persp=(%d,%d) smoothVel=%d vertIn=%d fxCtr=%d fxRep=%d",

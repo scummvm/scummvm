@@ -308,6 +308,37 @@ bool SmushPlayerRebel2::ra2PromoteCurrentFrameToHiRes(int scrollX, int scrollY) 
 	return true;
 }
 
+bool SmushPlayerRebel2::ra2PromoteHandler7PerspectiveToHiRes(int perspectiveX, int perspectiveY, int viewShift) {
+	if (!ra2IsHighResMode() || !_dst || _width <= 0 || _height <= 0)
+		return false;
+
+	VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
+	byte *screen = vs->getPixels(0, 0);
+	if (_dst == screen && _width == _vm->_screenWidth && _height == _vm->_screenHeight)
+		return false;
+
+	if (!ra2EnsureLowResVideoBuffer())
+		return false;
+
+	const byte *src = _dst;
+	const int srcPitch = _width;
+	const int srcWidth = _width;
+	const int srcHeight = _height;
+
+	memset(_ra2LowResVideoBuffer, 0, _ra2LowResVideoBufferSize);
+	copyRA2Handler7PerspectiveViewport(_ra2LowResVideoBuffer, 320, 320, 200,
+		src, srcPitch, srcWidth, srcHeight, perspectiveX, perspectiveY, viewShift);
+
+	scaleNativeViewportToHiRes(screen, _vm->_screenWidth, _vm->_screenWidth, _vm->_screenHeight,
+		_ra2LowResVideoBuffer, 320, 320, 200, 0, 0);
+
+	_dst = screen;
+	_width = _vm->_screenWidth;
+	_height = _vm->_screenHeight;
+	setScrollOffset(0, 0);
+	return true;
+}
+
 bool SmushPlayerRebel2::handleGameFetch(int32 subSize, Common::SeekableReadStream &b) {
 	int16 ftchUnknown = b.readSint16LE();
 	int16 ftchX = b.readSint16LE();
