@@ -5,6 +5,18 @@ Prerequisites
 The page https://wiki.scummvm.org/index.php/Where_to_get_the_games references some places where those games can be bought. Demonstration versions for most of the supported games are downloadable on https://scummvm.org/demos/
 - An USB drive.
 
+Note before installing
+======================
+
+There are currently two PS3 packages available.
+The newer package on the `ScummVM Downloads page <https://www.scummvm.org/downloads/>`_ is described as *multi-engine modules version*.
+This version reduces memory usage by approximately 90 MB.
+
+However, games running through multi-engine modules do not currently expose engine-specific **Game Options** on the PS3 platform.
+Only the standard ScummVM settings are available when launching these games.
+
+This is a known limitation of the PS3 multi-engine module build and does not affect game compatibility, functionality, or savegame support.
+
 Installing
 ==========
 From a computer, download the installable package of the PS3 port from ScummVM's main site. It should be a .pkg file. Copy it to an USB drive.
