@@ -52,7 +52,7 @@ void init_inventory() {
 }
 
 static Series *object_icon(int num) {
-	Common::String name = Common::String::format("*obj%3di", num);
+	Common::String name = Common::String::format("*ob%03di", num);
 	return sprite_series_load(name.c_str(), 0);
 }
 
@@ -155,7 +155,7 @@ void display_inventory() {
 		return;
 
 	inter_turn_off_object();
-	buffer_rect_copy_2(scr_live, scr_inter_orig, 42, 55, 0, 156, 138, 138);
+	buffer_rect_copy_2(scr_inter_orig, scr_live, 138, 0, 138, 156, 55, 42);
 	inter_update_series(int_sprite[fx_int_journal]);
 	inter_update_series(int_sprite[fx_int_backpack]);
 	inter_update_series(int_sprite[fx_int_candle]);
