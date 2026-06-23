@@ -36,6 +36,7 @@
 namespace EEM {
 
 const int kMidiDriverFlags = MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32;
+const int kMacMidiDriverFlags = MDT_MIDI | MDT_PREFER_GM;
 const uint16 kInvalidMacMidiResource = 0xffff;
 
 Common::String musicNameFromPath(const Common::Path &path) {
@@ -87,14 +88,16 @@ MusicPlayer::MusicPlayer(bool isFloppy, bool isMacintosh) :
 	// ADLIB.ADV / SBFM.ADV / MT32MPU.ADV. We honour the launcher's
 	// "Music driver" setting and prefer MT-32 when unset.
 	const MidiDriver::DeviceHandle dev =
-		MidiDriver::detectDevice(kMidiDriverFlags);
+		MidiDriver::detectDevice(_isMacintosh ? kMacMidiDriverFlags
+											  : kMidiDriverFlags);
 	MusicType musicType = MidiDriver::getMusicType(dev);
-	if (musicType == MT_GM && ConfMan.getBool("native_mt32"))
+	if (!_isMacintosh && musicType == MT_GM &&
+		ConfMan.getBool("native_mt32"))
 		musicType = MT_MT32;
 
 	if (_isMacintosh) {
 		_milesAudioMode = false;
-		createDriver(kMidiDriverFlags);
+		createDriver(kMacMidiDriverFlags);
 	} else {
 		switch (musicType) {
 		case MT_ADLIB:
@@ -126,7 +129,9 @@ MusicPlayer::MusicPlayer(bool isFloppy, bool isMacintosh) :
 			_driver = nullptr;
 		} else {
 			// Miles AdLib handles its own reset.
-			if (_isMacintosh || musicType != MT_ADLIB) {
+			if (_isMacintosh) {
+				_driver->sendGMReset();
+			} else if (musicType != MT_ADLIB) {
 				if (musicType == MT_MT32 || _nativeMT32)
 					_driver->sendMT32Reset();
 				else

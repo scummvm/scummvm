@@ -119,6 +119,32 @@ void blitAnimFrameAnchored(Graphics::Surface *screen, const Picture &p,
 					anchorY - (int)(int16)p.rowoff);
 }
 
+bool readHotspotRect(const byte *r, bool mac, Common::Rect &rect) {
+	if (mac) {
+		const int16 top = (int16)READ_LE_UINT16(r + 0);
+		const int16 left = (int16)READ_LE_UINT16(r + 2);
+		const int16 bottom = (int16)READ_LE_UINT16(r + 4);
+		const int16 right = (int16)READ_LE_UINT16(r + 6);
+		if (right <= left || bottom <= top)
+			return false;
+		rect = Common::Rect(left, top, right, bottom);
+		return true;
+	}
+
+	const int16 x1 = (int16)READ_LE_UINT16(r + 0);
+	const int16 y1 = (int16)READ_LE_UINT16(r + 2);
+	const int16 x2 = (int16)READ_LE_UINT16(r + 4);
+	const int16 y2 = (int16)READ_LE_UINT16(r + 6);
+	if (x2 <= x1 || y2 <= y1)
+		return false;
+	rect = Common::Rect(x1, y1, x2, y2);
+	return true;
+}
+
+Common::Rect siteControlRect(const EEMEngine *vm, const Common::Rect &rect) {
+	return (vm && vm->isMacintosh()) ? vm->scaleRect(rect) : rect;
+}
+
 // `_ColorCycle @ 172b:2015` — rotate `_fpal[start..end]` by one slot:
 // save [start], shift [start..end-1] = [start+1..end], restore saved at
 // [end], then re-upload via `_Set_Palette`. 
@@ -980,6 +1006,12 @@ void SiteScreen::run() {
 	if (_mystery->_siteReturnDepth > Mystery::kVisitedSiteCap)
 		_mystery->_siteReturnDepth = 0;
 	_snapshotSite = -1;
+	const Common::Rect pdaSiteRect =
+		siteControlRect(_vm, kPdaSiteRect);
+	const Common::Rect pdaPartnerFootMapRect =
+		siteControlRect(_vm, kPdaPartnerFootMapRect);
+	const Common::Rect pdaPartnerHeadHintRect =
+		siteControlRect(_vm, kPdaPartnerHeadHintRect);
 	SiteBackendActionObserverRegistration backendActionRegistration(this);
 	enter(cur);
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
@@ -1000,14 +1032,15 @@ void SiteScreen::run() {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN: {
-				if (kPdaSiteRect.contains(event.mouse.x, event.mouse.y)) {
+				if (pdaSiteRect.contains(event.mouse.x, event.mouse.y)) {
 					notePartnerActivity();
 					_vm->setHotspotMouseCursor(false);
 					_vm->setNextScreen(kScreenNotebook);
 					_vm->stopMusic();
 					return;
 				}
-				if (kPdaPartnerFootMapRect.contains(event.mouse.x, event.mouse.y)) {
+				if (pdaPartnerFootMapRect.contains(event.mouse.x,
+												   event.mouse.y)) {
 					notePartnerActivity();
 					_vm->setHotspotMouseCursor(false);
 					if (_vm->isLondon() && _mystery->_siteReturnDepth != 0) {
@@ -1035,7 +1068,8 @@ void SiteScreen::run() {
 					_vm->stopMusic();
 					return;
 				}
-				if (kPdaPartnerHeadHintRect.contains(event.mouse.x, event.mouse.y)) {
+				if (pdaPartnerHeadHintRect.contains(event.mouse.x,
+													event.mouse.y)) {
 					_vm->setHotspotMouseCursor(false);
 					_vm->doHelp();
 					notePartnerActivity();
@@ -1136,12 +1170,15 @@ bool SiteScreen::enterSiteAnim() {
 	const uint8 partner = _vm->getPartnerIndex();
 	const uint kSkateAni = (partner == 0) ? 6  : 0xe;
 	const uint kKDAni    = (partner == 0) ? 7  : 0xf;
-	const int  kKDY      = (partner == 0) ? 0x8b : 0x8e;
+	const int baseKDY = (partner == 0) ? 0x8b : 0x8e;
+	const int kKDY = _vm->isMacintosh() ? _vm->scaleY(baseKDY) : baseKDY;
+	const int sw = _vm->screenWidth();
+	const int sh = _vm->screenHeight();
 
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen)
 		return false;
-	Graphics::ManagedSurface bg(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface bg(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
 	bg.simpleBlitFrom(*screen);
 	g_system->unlockScreen();
@@ -1155,13 +1192,13 @@ bool SiteScreen::enterSiteAnim() {
 		for (uint frameIdx = 0;
 			 frameIdx < anim.size() && !_vm->shouldQuit();
 			 frameIdx++) {
-			Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+			Graphics::ManagedSurface scratch(sw, sh,
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.simpleBlitFrom(bg);
 			blitAnimFrameAnchored(scratch.surfacePtr(), anim[frameIdx],
 								  0, anchorY);
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-									   0, 0, kScreenWidth, kScreenHeight);
+									   0, 0, sw, sh);
 			g_system->updateScreen();
 
 			Common::Event ev;
@@ -1180,21 +1217,21 @@ bool SiteScreen::enterSiteAnim() {
 	if (_vm->getAni().loadAnimation(kSkateAni, skate) && !skate.empty()) {
 		const int spriteH = skate[0].surface.h;
 		const int spriteW = skate[0].surface.w;
-		int x = (kScreenWidth - spriteW) & ~3;            // 4-px aligned (mode-X)
-		const int y = 199 - spriteH;
+		int x = (sw - spriteW) & ~3;            // 4-px aligned (mode-X)
+		const int y = (_vm->isMacintosh() ? sh : 199) - spriteH;
 		const byte transp = (byte)(skate[0].flags >> 8);
 		uint frameIdx = 0;
 		int distSinceTick = 0;
-		const int kStep = 4;            // _MoveSkateBoardPixels analogue
-		const int kFrameTicks = 0xc;    // original switches frame at 12 px
+		const int kStep = _vm->isMacintosh() ? _vm->scaleX(4) : 4;
+		const int kFrameTicks = _vm->isMacintosh() ? _vm->scaleX(0xc) : 0xc;
 
 		while (x + spriteW > 0 && !_vm->shouldQuit()) {
-			Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+			Graphics::ManagedSurface scratch(sw, sh,
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.simpleBlitFrom(bg);
 			blitFrame(scratch, skate[frameIdx], x, y, transp);
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-									   0, 0, kScreenWidth, kScreenHeight);
+									   0, 0, sw, sh);
 			g_system->updateScreen();
 
 			Common::Event ev;
@@ -1225,12 +1262,12 @@ bool SiteScreen::enterSiteAnim() {
 			const int destX = -(int)(int16)fr.miscflags;
 			const int destY = kKDY - (int)(int16)fr.rowoff;
 
-			Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+			Graphics::ManagedSurface scratch(sw, sh,
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.simpleBlitFrom(bg);
 			blitFrame(scratch, fr, destX, destY, transp);
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-									   0, 0, kScreenWidth, kScreenHeight);
+									   0, 0, sw, sh);
 			g_system->updateScreen();
 
 			Common::Event ev;
@@ -1662,6 +1699,7 @@ void SiteScreen::renderHotspots(uint siteNum) {
 	// walking the dialog record list, like `_HotspotSearched_Floppy`.
 	const bool compact = _vm && (_vm->isFloppy() || _vm->isMacintosh());
 	const bool floppy = _vm && _vm->isFloppy();
+	const bool mac = _vm && _vm->isMacintosh();
 	const uint stride = compact ? 8 : 14;
 	// The floppy SITEPALS has at least one searchable site where 0xFF is
 	// yellow. The CD corrected that palette data; for floppy, draw with an
@@ -1669,17 +1707,12 @@ void SiteScreen::renderHotspots(uint siteNum) {
 	const byte searchedColor = floppy ? currentWhitePaletteIndex(0xFF) : 0xFF;
 	for (uint i = 0; i < count; i++) {
 		const byte *r = spots + i * stride;
-		const int16 x1 = (int16)READ_LE_UINT16(r + 0);
-		const int16 y1 = (int16)READ_LE_UINT16(r + 2);
-		const int16 x2 = (int16)READ_LE_UINT16(r + 4);
-		const int16 y2 = (int16)READ_LE_UINT16(r + 6);
-		const int left = MAX<int>(0, x1);
-		const int top = MAX<int>(0, y1);
-		const int right = MIN<int>(screen->w, x2);
-		const int bottom = MIN<int>(screen->h, y2);
-		if (right <= left || bottom <= top)
+		Common::Rect rect;
+		if (!readHotspotRect(r, mac, rect))
 			continue;
-		const Common::Rect rect(left, top, right, bottom);
+		rect = rect.findIntersectingRect(Common::Rect(screen->w, screen->h));
+		if (rect.isEmpty())
+			continue;
 		bool seen = false;
 		if (compact) {
 			seen = _vm->floppyHotspotSearched(siteNum, i);
@@ -1729,13 +1762,11 @@ int SiteScreen::hotspotAtPoint(uint siteNum, int x, int y) const {
 		return -1;
 
 	const uint stride = _vm && (_vm->isFloppy() || _vm->isMacintosh()) ? 8 : 14;
+	const bool mac = _vm && _vm->isMacintosh();
 	for (uint i = 0; i < count; i++) {
 		const byte *r = spots + i * stride;
-		const int16 x1 = (int16)READ_LE_UINT16(r + 0);
-		const int16 y1 = (int16)READ_LE_UINT16(r + 2);
-		const int16 x2 = (int16)READ_LE_UINT16(r + 4);
-		const int16 y2 = (int16)READ_LE_UINT16(r + 6);
-		if (x >= x1 && x < x2 && y >= y1 && y < y2)
+		Common::Rect rect;
+		if (readHotspotRect(r, mac, rect) && rect.contains(x, y))
 			return (int)i;
 	}
 	return -1;
@@ -1756,9 +1787,9 @@ void SiteScreen::updateHotspotCursor(uint siteNum, int x, int y) {
 	if (!_vm)
 		return;
 	const int idx = hotspotAtPoint(siteNum, x, y);
-	const bool siteControl = kPdaSiteRect.contains(x, y) ||
-							 kPdaPartnerFootMapRect.contains(x, y) ||
-							 kPdaPartnerHeadHintRect.contains(x, y);
+	const bool siteControl = siteControlRect(_vm, kPdaSiteRect).contains(x, y) ||
+							 siteControlRect(_vm, kPdaPartnerFootMapRect).contains(x, y) ||
+							 siteControlRect(_vm, kPdaPartnerHeadHintRect).contains(x, y);
 	if (_vm->isLondon()) {
 		// EEM2 gives some hotspots their own cursor shape; every other
 		// interactive zone (the site/foot/head controls, or a hotspot with no
