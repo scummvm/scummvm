@@ -376,10 +376,10 @@ void FoolPrologue::finaleRun() {
 	_zbasic->picture(0x8a, 0x24, this->arr_i32_0[0x28]);
 	this->setPortBitsToPage(0x6);
 	this->fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0);
-	_zbasic->picture(0x118, 0x19, this->arr_i32_0[0x29]);
+	_zbasic->picture(0x118, 0x19, this->arr_i32_0[0x29]); // wadjet eye mask
 	this->setPortBitsToPage(0x7);
 	this->fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0);
-	_zbasic->picture(0x118, 0x19, this->arr_i32_0[0x2a]);
+	_zbasic->picture(0x118, 0x19, this->arr_i32_0[0x2a]); // wadjet eye
 	//_zbasic->blockMove(this->arr_i32_41296[5], this->arr_i32_41296[8], 0x5580);
 	this->arr_i32_41296[8]->copyFrom(*this->arr_i32_41296[5]);
 	this->setPortBitsToPage(0x8);
@@ -429,7 +429,7 @@ void FoolPrologue::finaleRun() {
 	this->copyScreenToPage(0x5);
 	this->setPortBitsToPage(0x5);
 	this->fillRect(0xc8, 0x145, 0xd7, SCREEN_WIDTH, 2);
-	_zbasic->picture(0x18f, 0xc0, this->arr_i32_0[0x2b]);
+	_zbasic->picture(0x18f, 0xc0, this->arr_i32_0[0x2b]); // fool card
 	_toolbox->SetPortBits(this->var_i32_32);
 	_toolbox->PenNormal();
 	_toolbox->PenMode(kPatXor);
@@ -609,13 +609,13 @@ void FoolPrologue::finaleRun() {
 	drawTextRightAlign(0x181, 0x5e);
 	var_str_76 = _zbasic->str(32) + _zbasic->chr(0x22); // have been able to find them so easily
 	drawTextRightAlign(0x181, 0x6f);
-	arr_i16_41af4.top = 6;
-	arr_i16_41af4.left = 0xd0;
-	arr_i16_41af4.bottom = 0x6c;
-	arr_i16_41af4.right = 0x133;
+	arr_rect_41af4.top = 6;
+	arr_rect_41af4.left = 0xd0;
+	arr_rect_41af4.bottom = 0x6c;
+	arr_rect_41af4.right = 0x133;
 	arr_i16_41afc.top = 0xa;
 	arr_i16_41afc.left = 0xb4;
-	arr_i16_41afc.bottom = 0x1fc;
+	arr_i16_41afc.bottom = 0x14c;
 	arr_i16_41afc.right = 0x1f6;
 	arr_i16_41b04[0] = 2;
 	arr_i16_41b04[1] = 0xa;
@@ -623,23 +623,24 @@ void FoolPrologue::finaleRun() {
 
 	// 131:1b6e
 	// unroll loops
-	arr_f64_41bbe[0] = (float)arr_i16_41af4.top;
-	arr_f64_41bbe[0+4] = (float)(arr_i16_41afc.top - arr_i16_41af4.top) / arr_i16_41b04[2];
-	arr_f64_41bbe[1] = (float)arr_i16_41af4.left;
-	arr_f64_41bbe[1+4] = (float)(arr_i16_41afc.left - arr_i16_41af4.left) / arr_i16_41b04[2];
-	arr_f64_41bbe[2] = (float)arr_i16_41af4.bottom;
-	arr_f64_41bbe[2+4] = (float)(arr_i16_41afc.bottom - arr_i16_41af4.bottom) / arr_i16_41b04[2];
-	arr_f64_41bbe[3] = (float)arr_i16_41af4.right;
-	arr_f64_41bbe[3+4] = (float)(arr_i16_41afc.right - arr_i16_41af4.right) / arr_i16_41b04[2];
+	arr_f64_41bbe[0] = (float)arr_rect_41af4.top;
+	arr_f64_41bbe[0+4] = (float)(arr_i16_41afc.top - arr_rect_41af4.top) / arr_i16_41b04[2];
+	arr_f64_41bbe[1] = (float)arr_rect_41af4.left;
+	arr_f64_41bbe[1+4] = (float)(arr_i16_41afc.left - arr_rect_41af4.left) / arr_i16_41b04[2];
+	arr_f64_41bbe[2] = (float)arr_rect_41af4.bottom;
+	arr_f64_41bbe[2+4] = (float)(arr_i16_41afc.bottom - arr_rect_41af4.bottom) / arr_i16_41b04[2];
+	arr_f64_41bbe[3] = (float)arr_rect_41af4.right;
+	arr_f64_41bbe[3+4] = (float)(arr_i16_41afc.right - arr_rect_41af4.right) / arr_i16_41b04[2];
 	// 131:1c24
 	_toolbox->PenPat(arr_pat_194[1]);
 	_toolbox->PenMode(kPatXor);
+	// pre-draw the puzzle circles coming off the high priestess' head
 	for (int16 j = 6; j <= 9; j++) {
 		arr_i32_41296[j]->copyFrom(*arr_i32_41296[j - 1]);
 		// 131:1c7a
 		setPortBitsToPage(j);
 		if (j == 6) {
-			_toolbox->PaintOval(arr_i16_41af4);
+			_toolbox->PaintOval(arr_rect_41af4);
 		}
 		// 131:1c9c
 		for (int16 i = 0; i <= 2; i++) {
@@ -988,11 +989,11 @@ void FoolPrologue::finaleRun() {
 	drawText(0x3c, 0x3e);
 	arr_i32_41296[0xb]->copyFrom(*arr_i32_41296[0xa]);
 	setPortBitsToPage(0xb);
-	arr_i16_41af4.top = 0xa;
-	arr_i16_41af4.left = 0xb4;
-	arr_i16_41af4.bottom = 0x14c;
-	arr_i16_41af4.right = 0x1f6;
-	_toolbox->InvertOval(arr_i16_41af4);
+	arr_rect_41af4.top = 0xa;
+	arr_rect_41af4.left = 0xb4;
+	arr_rect_41af4.bottom = 0x14c;
+	arr_rect_41af4.right = 0x1f6;
+	_toolbox->InvertOval(arr_rect_41af4);
 	for (int16 i = 5; i <= 0x9; i++) {
 		arr_i32_41296[i]->copyFrom(*arr_i32_41296[4]);
 	}
@@ -1045,10 +1046,10 @@ void FoolPrologue::finaleRun() {
 	var_i16_3ee = 0x3c;
 	setPortBitsToPage(9);
 	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0);
-	_zbasic->picture(var_i16_3ec, var_i16_3ee, arr_i32_0[0x29]);
+	_zbasic->picture(var_i16_3ec, var_i16_3ee, arr_i32_0[0x29]); // wadjet eye mask
 	setPortBitsToPage(0xa);
 	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0);
-	_zbasic->picture(var_i16_3ec, var_i16_3ee, arr_i32_0[0x2a]);
+	_zbasic->picture(var_i16_3ec, var_i16_3ee, arr_i32_0[0x2a]); // wadjet eye
 	_toolbox->SetPortBits(var_i32_32);
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
 	// the book of thoth?
@@ -1093,13 +1094,426 @@ void FoolPrologue::finaleRun() {
 
 	// 131:3806
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+	var_str_76 = Common::U32String::format("\"%s\"", _zbasic->str(54).encode().c_str()); // destroy him
+	drawTextRightAlign(0x1a4, 0x2d);
+	_toolbox->SetPortBits(var_i32_32);
+	delayFromMarker(0xb4);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
 
+	var_str_76 = Common::U32String::format("\"%s\"", _zbasic->str(55).encode(Common::kMacRoman).c_str()); // the book of thoth?
+	drawTextRightAlign(0x1a4, 0x2d);
+	delay(0xf);
+	blitPageToScreen(0x5);
+	var_i16_5c.left = var_i16_3ec;
+	var_i16_5c.right = var_i16_3ec + 0xc8;
+	var_i16_64.left = var_i16_3ec;
+	var_i16_64.right = var_i16_3ec + 0xc8;
+	var_i16_5c.top = 0x19;
+	var_i16_64.bottom = 0xdf;
+
+	// 131:38f4
+	// wadjet eye rises over horizon
+	for (int16 i = 0xdc; i >= 0x19; i -= 5) {
+		var_i32_2 = _toolbox->TickCount();
+		var_i32_4e->copyFrom(*arr_i32_41296[5]);
+		var_i16_64.top = i;
+		var_i16_5c.bottom = 0x19 + 0xdf - i;
+
+		var_i32_40 = arr_i32_41296[9];
+		_toolbox->CopyBits(var_i32_40, var_i32_4e, var_i16_5c, var_i16_64, kSrcBic, 0);
+
+		var_i32_40 = arr_i32_41296[10];
+		_toolbox->CopyBits(var_i32_40, var_i32_4e, var_i16_5c, var_i16_64, kSrcOr, 0);
+		delayFromMarker(2);
+
+		_toolbox->CopyBits(var_i32_4e, var_i32_32, var_i16_64, var_i16_64, kSrcCopy, 0);
+	}
+	// 131:39ba
+
+	var_i32_2 = _toolbox->TickCount();
+	_toolbox->ReleaseResource(arr_i32_0[0x29]);
+	_toolbox->ReleaseResource(arr_i32_0[0x2a]);
+
+	// 131:39e8
+	for (int16 i = 0x53; i <= 0x59; i++) {
+		_toolbox->ReleaseResource(arr_i32_0[i]);
+	}
+	_toolbox->ReleaseResource(arr_i32_0[0x5b]);
+
+	// 131:3a20
+	arr_i32_41296[10]->copyFrom(*arr_i32_41296[8]);
+	delayFromMarker(0x3c);
+
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+	var_str_76 = Common::U32String::format("\"%s", _zbasic->str(56).encode(Common::kMacRoman).c_str()); // here is the book of thoth
+	drawTextRightAlign(0x1a4, 0x2d);
+
+	delay(0xf);
+	blitPageToScreen(0x7);
+	var_i32_2 = _toolbox->TickCount();
+
+	for (int16 i = 0x39; i <= 0x45; i++) {
+		arr_i32_0[i] = _toolbox->GetPicture(i);
+	}
+
+	arr_i32_0[0x47] = _toolbox->GetPicture(0x47);
+	delayFromMarker(0xc8);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+	var_str_76 = Common::U32String::format("%s\"", _zbasic->str(57).encode(Common::kMacRoman).c_str()); // and your answer is incorrect
+	drawTextRightAlign(0x1a4, 0x2d);
+	delay(0xf);
+
+	blitPageToScreen(0xa);
+	var_i32_2 = _toolbox->TickCount();
+	setPortBitsToPage(0x7);
+	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0);
+	_zbasic->picture(0, 0xaa, arr_i32_0[0x39]); // treasure pile
+	// 131:3b8a
+	fillRect(0x124, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
+	arr_i32_41296[8]->copyFrom(*arr_i32_41296[7]);
+	arr_i32_41296[9]->copyFrom(*arr_i32_41296[8]);
+	_toolbox->InvertRect(var_i16_38);
+	setPortBitsToPage(0x9);
+	_zbasic->picture(0x5d, 0x22, arr_i32_0[0x3a]); // priestess card
+	_zbasic->picture(0x1b3, 0xb5, arr_i32_0[0x3b]); // fool head
+	_toolbox->SetPortBits(var_i32_32);
+	delayFromMarker(0x5a);
+	for (int16 k = 0; k <= 8; k++) {
+		for (int16 j = 1; j <= 8; j++) {
+			_toolbox->SetRect(arr_i16_1bc, 0xe9, 0x58, 0xe9, 0x58);
+			var_i32_2 = _toolbox->TickCount();
+			for (int16 i = 1; i <= j; i++) {
+				_toolbox->InsetRect(arr_i16_1bc, -1, -1);
+				_toolbox->InvertOval(arr_i16_1bc);
+			}
+			// 131:3cbe
+			for (int16 i = 1; i <= j; i++) {
+				_toolbox->InsetRect(arr_i16_1bc, 1, 1);
+				_toolbox->InvertOval(arr_i16_1bc);
+			}
+			delayFromMarker(1);
+		}
+		// 131:3d0c
+		if (k == 7) {
+			_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+			var_str_76 = Common::U32String::format("\"%s\"", _zbasic->str(58).encode(Common::kMacRoman).c_str()); // destroy him
+			drawTextRightAlign(0x1a4, 0x2d);
+			_zbasic->picture(0x181, 0xf, arr_i32_0[0x5a]); // angry priestess
+			var_str_76 = Common::U32String::format("\"%s\"", _zbasic->str(59).encode(Common::kMacRoman).c_str()); // destroy him!!!
+			drawTextRightAlign(0x1a4, 0x2d);
+		}
+		// 131:3db8
+		if (k < 8) {
+			for (int16 j = 8; j >= 1; j--) {
+				var_i32_2 = _toolbox->TickCount();
+				for (int16 i = 1; i <= j; i++) {
+					_toolbox->InsetRect(arr_i16_1bc, -1, -1);
+					_toolbox->InvertOval(arr_i16_1bc);
+				}
+				for (int16 i = 1; i <= j; i++) {
+					_toolbox->InsetRect(arr_i16_1bc, 1, 1);
+					_toolbox->InvertOval(arr_i16_1bc);
+				}
+				delayFromMarker(1);
+			}
+		}
+		// 131:3e5e
+	}
+	// 131:3e6c
+	_toolbox->PenPat(arr_pat_194[2]);
+	_toolbox->PenSize(5, 5);
+	_toolbox->PenMode(kPatXor);
+	var_i16_176 = 0xe5;
+	var_i16_180 = 0x58;
+	for (int16 i = 1; i <= 0x13; i++) {
+		var_i32_2 = _toolbox->TickCount();
+		var_i16_176 -= i;
+		var_i16_180 += (int16)(i*0.9f);
+		_toolbox->MoveTo(0xe5, 0x58);
+		_toolbox->LineTo(var_i16_176, var_i16_180);
+		delayFromMarker(0);
+		_toolbox->MoveTo(0xe5, 0x58);
+		_toolbox->LineTo(var_i16_176, var_i16_180);
+	}
+	_toolbox->MoveTo(0xe5, 0x58);
+	_toolbox->LineTo(0x34, 0xf2);
+	var_i16_176 = 0x34;
+	var_i16_180 = 0xf2;
+	for (int16 i = 5; i <= 0x1c; i++) {
+		// 131:3f4c
+		var_i32_2 = _toolbox->TickCount();
+		var_i16_176 += i;
+		var_i16_180 -= (int16)(i*0.5f);
+		_toolbox->MoveTo(0x34, 0xf2);
+		_toolbox->LineTo(var_i16_176, var_i16_180);
+		delayFromMarker(0);
+		_toolbox->MoveTo(0x34, 0xf2);
+		_toolbox->LineTo(var_i16_176, var_i16_180);
+	}
+	// 131:3fd8
+	_toolbox->MoveTo(0x34, 0xf2);
+	_toolbox->LineTo(var_i16_176, var_i16_180);
+	arr_rect_41af4.top = 0;
+	arr_rect_41af4.left = 0;
+	arr_rect_41af4.bottom = SCREEN_HEIGHT;
+	arr_rect_41af4.right = SCREEN_WIDTH;
+	for (int16 i = 0x1e; i >= 0xa; i -= 5) {
+		sub_128_800(var_i16_180 - 3, var_i16_176 - 3, var_i16_180 + 3, var_i16_176 + 3, 0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, i);
+	}
+
+	for (int16 k = 7; k <= 8; k++) {
+		// 131:4088
+		int16 segs = (k == 7) ? 0x19 : 0x23;
+
+		// 131:40a2
+		var_i32_40 = arr_i32_41296[k];
+		arr_rect_41af4.top = var_i16_180 - 3;
+		arr_rect_41af4.left = var_i16_176 - 3;
+		arr_rect_41af4.bottom = var_i16_180 + 3;
+		arr_rect_41af4.right = var_i16_176 + 3;
+		arr_i16_41afc.top = 0;
+		arr_i16_41afc.left = 0;
+		arr_i16_41afc.bottom = SCREEN_HEIGHT;
+		arr_i16_41afc.right = SCREEN_WIDTH;
+		// unroll loop
+		arr_f64_41bbe[0] = (double)arr_rect_41af4.top;
+		arr_f64_41bbe[0+4] = (double)(arr_i16_41afc.top - arr_rect_41af4.top)/segs;
+		arr_f64_41bbe[1] = (double)arr_rect_41af4.left;
+		arr_f64_41bbe[1+4] = (double)(arr_i16_41afc.left - arr_rect_41af4.left)/segs;
+		arr_f64_41bbe[2] = (double)arr_rect_41af4.bottom;
+		arr_f64_41bbe[2+4] = (double)(arr_i16_41afc.bottom - arr_rect_41af4.bottom)/segs;
+		arr_f64_41bbe[3] = (double)arr_rect_41af4.right;
+		arr_f64_41bbe[3+4] = (double)(arr_i16_41afc.right - arr_rect_41af4.right)/segs;
+
+		// 131:420a
+		var_i16_5c = arr_rect_41af4;
+
+		// 131:425a
+		_toolbox->CopyBits(var_i32_40, var_i32_32, var_i16_5c, var_i16_5c, kSrcCopy, 0);
+
+		for (int16 j = 1; j <= segs - 1; j++) {
+			var_i32_2 = _toolbox->TickCount();
+			for (int16 i = 0; i <= 3; i++) {
+				arr_f64_41bbe[i] += arr_f64_41bbe[i+4];
+			}
+			// 131:42e6
+			var_i16_5c.top = (int16)arr_f64_41bbe[0];
+			var_i16_5c.left = (int16)arr_f64_41bbe[1];
+			var_i16_5c.bottom = (int16)arr_f64_41bbe[2];
+			var_i16_5c.right = (int16)arr_f64_41bbe[3];
+			_toolbox->CopyBits(var_i32_40, var_i32_32, var_i16_5c, var_i16_5c, kSrcCopy, 0);
+			delayFromMarker(0);
+			// 131:4362
+		}
+		// 131:4376
+		_toolbox->CopyBits(var_i32_40, var_i32_32, var_i16_38, var_i16_38, kSrcCopy, 0);
+
+	}
+	// 131:439a
+	_zbasic->picture(0x1b3, 0xb5, arr_i32_0[0x3b]);
+	arr_i16_41af4[0] = 0;
+	arr_i16_41af4[1] = 0;
+	arr_i16_41af4[2] = 0x200;
+	arr_i16_41af4[3] = 0;
+	arr_i16_41af4[4] = 0x200;
+	arr_i16_41af4[5] = 0x156;
+	arr_i16_41af4[6] = 0;
+	arr_i16_41af4[7] = 0x156;
+	arr_i16_41af4[8] = 0xb5;
+	arr_i16_41af4[9] = 0x22;
+	arr_i16_41af4[10] = 0xb5;
+	arr_i16_41af4[11] = 0xb5;
+	arr_i16_41af4[12] = 0x5d;
+	arr_i16_41af4[13] = 0xb5;
+	arr_i16_41af4[14] = 0x5d;
+	arr_i16_41af4[15] = 0x22;
+
+	finaleCardRotate();
+	finaleCardRotate();
+
+	// 131:44b8
+	sub_128_50a(0x9, 0, SCREEN_WIDTH, 0);
+	copyScreenToPage(0);
+	setPortBitsToPage(0);
+	_zbasic->picture(0x1b5, 0xba, arr_i32_0[0x3c]);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+	var_str_76 = _zbasic->str(60); // but the fool had gained the gift of wisdom
+	drawText(0xd2, 0x61);
+	var_str_76 = _zbasic->str(61); // and was able to trick the high priestess
+	drawText(0xd2, 0x72);
+	sub_128_e1c();
+	_toolbox->SetPortBits(var_i32_32);
+	blitPageToScreen(0);
+	setPortBitsToPage(0);
+	_zbasic->picture(0x1b8, 0xb3, arr_i32_0[0x3d]);
+	fillRect(0, 0xc8, 0xa5, SCREEN_WIDTH, 0);
+
+	// 131:45a4
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+	var_str_76 = _zbasic->str(62); // he had remembered well the words
+	drawText(0xd2, 0x3f);
+	var_str_76 = _zbasic->str(63); // of the magician
+	drawText(0xd2, 0x50);
+	var_str_76 = Common::U32String::format("\"%s", _zbasic->str(64).encode().c_str()); // the high priestess may have learned how
+	drawText(0xd7, 0x6d);
+	var_str_76 = _zbasic->str(65); // to command the sacred book of thoth
+	drawText(0xde, 0x7e);
+	var_str_76 = _zbasic->str(66); // but even she cannot force it to do
+	drawText(0xde, 0x8f);
+	var_str_76 = Common::U32String::format("%s\"", _zbasic->str(67).encode().c_str()); // anything inherently evil
+	drawText(0xde, 0xa0);
+	// 131:46aa
+	_toolbox->SetPortBits(var_i32_32);
+	sub_128_e58();
+	blitPageToScreen(0);
+	copyScreenToPage(0);
+	setPortBitsToPage(0);
+	_zbasic->picture(0x1c4, 0xb3, arr_i32_0[0x3e]);
+	fillRect(0, 0xc8, 0xa5, SCREEN_WIDTH, 0);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+
+	var_str_76 = _zbasic->str(68); // some say that the story of the fool and his
+	drawText(0xd2, 0x5c);
+	var_str_76 = _zbasic->str(69); // adventures inspired the creation of the
+	drawText(0xd2, 0x6d);
+	var_str_76 = _zbasic->str(70); // modern day tarot deck
+	drawText(0xd2, 0x7e);
+
+	// 131:4780
+	_toolbox->SetPortBits(var_i32_32);
+	sub_128_e58();
+	blitPageToScreen(0);
+	copyScreenToPage(0);
+	setPortBitsToPage(0);
+	_zbasic->picture(0x1be, 0xb4, arr_i32_0[0x3f]);
+	fillRect(0, 0xc8, 0x96, SCREEN_WIDTH, 0);
+	fillRect(0x12c, 0x12c, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+	var_str_76 = Common::U32String::format("\"%s\"", _zbasic->str(71).encode().c_str()); // but I doubt it
+	drawText(0x184, 0xb1);
+	// 131:4848
+	_toolbox->SetPortBits(var_i32_32);
+	sub_128_e58();
+	blitPageToScreen(0);
+	var_i32_2 = _toolbox->TickCount();
+	setPortBitsToPage(0);
+	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
+	_toolbox->SetPortBits(var_i32_32);
+	delayFromMarker(0x78);
+
+	_toolbox->PenNormal();
+	_toolbox->PenPat(arr_pat_194[1]);
+	_toolbox->PenSize(4, 3);
+	_toolbox->SetRect(arr_i16_1bc, 0, 0, 0x201, 0x156);
+	for (int16 i = 0; i <= 0x200; i++) {
+		if ((i % 4) == 0) {
+			var_i32_2 = _toolbox->TickCount();
+		}
+		// 131:48ea
+		if ((i % 2) == 0) {
+			arr_i16_1bc.top = (int16)(i/2.5);
+		}
+		// 131:4936
+		arr_i16_1bc.left = i;
+		if ((i % 10) == 0) {
+			arr_i16_1bc.bottom = SCREEN_HEIGHT - (i/10);
+		}
+		// 131:498a
+		if (i > 0x1bd) {
+			arr_i16_1bc.right -= 1;
+		}
+		// 131:49b6
+		_toolbox->FrameRect(arr_i16_1bc);
+		if ((i % 4) == 3) {
+			delayFromMarker(0);
+		}
+		// 131:49e2
+	}
+	// 131:49f0
+	fillRect(0, 0, 0x3e8, 0x3e8, 1);
+	sub_128_50a(0, 0, SCREEN_WIDTH, 2);
+	delay(0x28);
+	// var_i16_3f2 = 0x10a;
+	int16 yPic = 0x5a;
+	for (int16 j = 0x40; j <= 0x45; j++) {
+		var_i32_2 = _toolbox->TickCount();
+		var_i32_40 = arr_i32_41296[0];
+		_toolbox->SetPortBits(var_i32_40);
+		fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
+		_zbasic->picture(0x78, yPic, arr_i32_0[j]);
+		int16 textCount = _zbasic->readDataInt();
+		int16 textWidth = _zbasic->readDataInt();
+		int16 yOffset = 0x41 - (textWidth / 2);
+		for (int16 i = 1; i <= textCount; i++) {
+			int16 textSize = _zbasic->readDataInt();
+			var_str_76 = _zbasic->readDataStr();
+			_zbasic->text(kPrologueFontFool, textSize, 0, kSrcBic);
+			if (textSize == 0xc) {
+				yOffset += 0x19;
+			} else {
+				// 131:4afa
+				yOffset += 0x20;
+			}
+			// 131:4b00
+			drawText(0xe6, yOffset + yPic);
+		}
+		// 131:4b2a
+		delayFromMarker(0x14);
+		_toolbox->SetPortBits(var_i32_32);
+		blitPageToScreen(0);
+		if (j == 0x40) {
+			delay(0xd2);
+		} else {
+			// 131:4b54
+			delay(0xb4);
+		}
+		// 131:4b5e
+		fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
+	}
+	// 131:4b86
+	var_i32_2 = _toolbox->TickCount();
+	var_i32_40 = arr_i32_41296[0];
+	_toolbox->SetPortBits(var_i32_40);
+	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
+	_zbasic->text(kPrologueFontSmall, 9, 0, kSrcBic);
+	var_str_76 = _zbasic->str(72); // the fool's errand
+	drawTextCenterAlign(0x100, 0x19 + yPic + 0x19);
+	var_str_76 = _zbasic->str(73); // (c) 1987 by cliff johnson. all rights reserved
+	drawTextCenterAlign(0x100, 0x32 + yPic + 0x19);
+	var_str_76 = _zbasic->str(74); // portions of this code are copyrighted 1985 zedcor inc
+	drawTextCenterAlign(0x100, 0x4b + yPic + 0x19);
+	var_str_76 = _zbasic->str(75); // the fool's errand is a registered trademark of cliff johnson
+	drawTextCenterAlign(0x100, 0x64 + yPic + 0x19);
+	// 131:4c94
+	delayFromMarker(0x14);
+	_toolbox->SetPortBits(var_i32_32);
+	blitPageToScreen(0);
+	delay(0xb4);
+	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
+	var_i32_2 = _toolbox->TickCount();
+	var_i32_40 = arr_i32_41296[0];
+	_toolbox->SetPortBits(var_i32_40);
+	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
+
+	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
+	var_str_76 = _zbasic->str(76); // and yes, the fool will return in
+	drawTextCenterAlign(0x100, 0xa0);
+	_zbasic->text(kPrologueFontFool, 0x18, 0, kSrcBic);
+	var_str_76 = _zbasic->str(77); // the fool and his money
+	drawTextCenterAlign(0x100, 0xc8);
+	delayFromMarker(0x14);
+	_toolbox->SetPortBits(var_i32_32);
+	blitPageToScreen(0);
+	delay(0xd2);
+	for (int16 i = 0x40; i <= 0x47; i++) {
+		_toolbox->ReleaseResource(arr_i32_0[i]);
+	}
 }
 
 void FoolPrologue::finaleDrawLoadingMsg() {
+	// 131:4dc0
 	// FIXME: we don't share the menu surface here yet
 	return;
-	// 131:4dc0
 	_toolbox->SetPort(this->var_i32_c);
 	_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	// Loading Finale
@@ -1160,5 +1574,44 @@ void FoolPrologue::sub_131_4f96(int16 offset) {
 	);
 }
 
+void FoolPrologue::finaleCardRotate() {
+	// 131:5038
+	_toolbox->PenNormal();
+	_toolbox->PenPat(arr_pat_194[1]);
+	_toolbox->PenMode(kPatXor);
+	var_i16_18e = 0x21;
+	for (int16 i = 0; i <= 7; i++) {
+		arr_f64_41bbe[i] = (double)arr_i16_41af4[i];
+		arr_f64_41bbe[i+8] = (double)(arr_i16_41af4[i+8] - arr_i16_41af4[i])/var_i16_18e;
+	}
+	// 131:5106
+	_toolbox->MoveTo(arr_i16_41af4[0], arr_i16_41af4[1]);
+	_toolbox->LineTo(arr_i16_41af4[2], arr_i16_41af4[3]);
+	_toolbox->LineTo(arr_i16_41af4[4], arr_i16_41af4[5]);
+	_toolbox->LineTo(arr_i16_41af4[6], arr_i16_41af4[7]);
+	_toolbox->LineTo(arr_i16_41af4[0], arr_i16_41af4[1]);
+
+	for (int16 i = 1; i <= var_i16_18e - 1; i++) {
+		// 131:51ca
+		var_i32_2 = _toolbox->TickCount();
+		for (int16 j = 0; j <= 7; j++) {
+			arr_f64_41bbe[j] += arr_f64_41bbe[j+8];
+			arr_i16_41af4[j + 0x10] = (int16)arr_f64_41bbe[j];
+		}
+		// 131:5276
+		_toolbox->MoveTo(arr_i16_41af4[0x10], arr_i16_41af4[0x11]);
+		_toolbox->LineTo(arr_i16_41af4[0x12], arr_i16_41af4[0x13]);
+		_toolbox->LineTo(arr_i16_41af4[0x14], arr_i16_41af4[0x15]);
+		_toolbox->LineTo(arr_i16_41af4[0x16], arr_i16_41af4[0x17]);
+		_toolbox->LineTo(arr_i16_41af4[0x10], arr_i16_41af4[0x11]);
+		delayFromMarker(1);
+	}
+	// 131:534e
+	_toolbox->MoveTo(arr_i16_41af4[0x8], arr_i16_41af4[0x9]);
+	_toolbox->LineTo(arr_i16_41af4[0xa], arr_i16_41af4[0xb]);
+	_toolbox->LineTo(arr_i16_41af4[0xc], arr_i16_41af4[0xd]);
+	_toolbox->LineTo(arr_i16_41af4[0xe], arr_i16_41af4[0xf]);
+	_toolbox->LineTo(arr_i16_41af4[0x8], arr_i16_41af4[0x9]);
+}
 
 } // End of namespace Fool
