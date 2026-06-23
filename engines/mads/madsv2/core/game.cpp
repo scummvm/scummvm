@@ -1388,9 +1388,6 @@ void game_control() {
 
 			} else {
 				player_preserve_palette();
-#if 0
-				extra_inven_preserve_palette();
-#endif
 			}
 
 			pal_activate_shadow(&kernel_shadow_main);

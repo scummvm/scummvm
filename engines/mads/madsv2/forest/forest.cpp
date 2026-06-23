@@ -36,7 +36,9 @@
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/forest/forest.h"
+#include "mads/madsv2/forest/extra.h"
 #include "mads/madsv2/forest/global.h"
+#include "mads/madsv2/forest/inventory.h"
 #include "mads/madsv2/forest/main.h"
 #include "mads/madsv2/forest/rooms/section1.h"
 #include "mads/madsv2/forest/rooms/section2.h"
@@ -58,6 +60,8 @@ ForestEngine *g_engine;
 ForestEngine::ForestEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 		MADSV2Engine(syst, gameDesc) {
 	g_engine = this;
+	init_extra();
+	init_inventory();
 }
 
 ForestEngine::~ForestEngine() {

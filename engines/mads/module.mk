@@ -264,6 +264,7 @@ MODULE_OBJS += \
 	madsv2/forest/digi.o \
 	madsv2/forest/extra.o \
 	madsv2/forest/global.o \
+	madsv2/forest/inventory.o \
 	madsv2/forest/journal.o \
 	madsv2/forest/main.o \
 	madsv2/forest/menus.o \

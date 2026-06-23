@@ -36,18 +36,19 @@ namespace MADSV2 {
 namespace Forest {
 
 int int_sprite[6];
+bool knuthole_flag;
+int paul_object_showing;
 
 void init_extra() {
 	Common::fill(int_sprite, int_sprite + 6, 0);
+	knuthole_flag = false;
+	paul_object_showing = -1;
 }
 
 void display_interface() {
 	error("TODO: display_interface");
 }
 
-void display_inventory(void) {
-	error("TODO: display_inventory");
-}
 
 void solve_me_selected(void) {
 	global[walker_converse_state] = -1;
@@ -58,10 +59,6 @@ void solve_me_selected(void) {
 void door_selected(void) {
 	open_journal(4);
 	kernel.activate_menu = GAME_MAIN_MENU;
-}
-
-void extra_spinning_object(void) {
-	error("TODO: extra_spinning_object");
 }
 
 void stamp_sprite_to_interface(int x, int y, int sprite, int series) {
@@ -85,10 +82,6 @@ void extra_change_animation(int handle, int x, int y, byte scale, byte depth) {
 
 void extra_shift_animation(int handle, int x, int y, byte scale) {
 	error("TODO: extra_shift_animation");
-}
-
-void extra_blank_knothole(void) {
-	error("TODO: extra_blank_knothole");
 }
 
 void load_interface() {
@@ -156,6 +149,17 @@ void do_interface() {
 
 	if (kernel.trigger == 40) {
 		display_inventory();
+	}
+}
+
+void inter_update_series(int series_id) {
+	for (int count = 0; count < (int)image_inter_marker; count++) {
+		ImageInter &ii = image_inter_list[count];
+
+		if (ii.series_id == series_id)
+			ii.flags = IMAGE_ERASE;
+		else if (ii.series_id != IMAGE_ERASE)
+			ii.flags = IMAGE_UPDATE;
 	}
 }
 
