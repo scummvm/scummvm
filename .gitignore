@@ -180,6 +180,7 @@ project.xcworkspace
 
 /snapshots
 
+*.lnk
 #Ignore thumbnails created by Windows
 Thumbs.db
 #Ignore files build by Visual Studio
