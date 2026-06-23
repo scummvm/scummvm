@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-23 14:17+0000\n"
+"POT-Creation-Date: 2026-06-23 18:29+0000\n"
 "PO-Revision-Date: 2026-04-19 13:22+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -7448,15 +7448,15 @@ msgstr "Escape-kortkommandon"
 msgid "Open inventory"
 msgstr "Öppna översikt"
 
-#: engines/bladerunner/bladerunner.cpp:396
+#: engines/bladerunner/bladerunner.cpp:406
 msgid "Failed to initialize resources"
 msgstr "Misslyckades med att initiera resurser"
 
-#: engines/bladerunner/bladerunner.cpp:1167
+#: engines/bladerunner/bladerunner.cpp:1177
 msgid "A required game resource was not found"
 msgstr "En nödvändig spelresurs hittades inte"
 
-#: engines/bladerunner/bladerunner.cpp:2754
+#: engines/bladerunner/bladerunner.cpp:2763
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -7466,7 +7466,7 @@ msgstr ""
 "i läget Original Content. Läget kommer att justeras till Restored Cut "
 "Content för den här sessionen tills du avslutar spelet helt och hållet."
 
-#: engines/bladerunner/bladerunner.cpp:2756
+#: engines/bladerunner/bladerunner.cpp:2765
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -7476,7 +7476,7 @@ msgstr ""
 "läget Restored Cut Content. Läget kommer att justeras till Original Content-"
 "läget för den här sessionen tills du avslutar spelet helt och hållet."
 
-#: engines/bladerunner/bladerunner.cpp:2758
+#: engines/bladerunner/bladerunner.cpp:2767
 msgid "Continue"
 msgstr "Fortsätt"
 

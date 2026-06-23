@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-23 14:17+0000\n"
+"POT-Creation-Date: 2026-06-23 18:29+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -7308,15 +7308,15 @@ msgstr "~Н~алады гульні"
 msgid "Open inventory"
 msgstr "Адкрыць/закрыць рыштунак"
 
-#: engines/bladerunner/bladerunner.cpp:396
+#: engines/bladerunner/bladerunner.cpp:406
 msgid "Failed to initialize resources"
 msgstr "Ня выйшла прадвызначыць рэсурсы"
 
-#: engines/bladerunner/bladerunner.cpp:1167
+#: engines/bladerunner/bladerunner.cpp:1177
 msgid "A required game resource was not found"
 msgstr "Патрэбны рэсурс гульні ня знойдзены"
 
-#: engines/bladerunner/bladerunner.cpp:2754
+#: engines/bladerunner/bladerunner.cpp:2763
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -7326,7 +7326,7 @@ msgstr ""
 "гуляеце ў рэжыме арыґінальнага зьместу. Для гэтай сэсіі будзе пастаўлены "
 "рэжым адноўленага выдаленага зьместу да поўнага выйсьця з Гульні."
 
-#: engines/bladerunner/bladerunner.cpp:2756
+#: engines/bladerunner/bladerunner.cpp:2765
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -7336,7 +7336,7 @@ msgstr ""
 "рэжыме адноўленага выдаленага зьместу. Для гэтай сэсіі будзе пастаўлены "
 "рэжым арыґінальнага зьместу да поўнага выйсьця з Гульні."
 
-#: engines/bladerunner/bladerunner.cpp:2758
+#: engines/bladerunner/bladerunner.cpp:2767
 msgid "Continue"
 msgstr "Працягнуць"
 
