@@ -62,7 +62,7 @@ void DigiPlayer::play(const char *name, int slot) {
 
 	Audio::AudioStream *audioStream = Audio::makeADPCMStream(src, DisposeAfterUse::YES,
 		src->size() - 0x20, Audio::kADPCMApple, 11025, 1);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &c._soundHandle, audioStream);
+	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &c._soundHandle, audioStream);
 	c._isPlaying = true;
 }
 
