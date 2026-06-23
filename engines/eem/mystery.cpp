@@ -189,7 +189,10 @@ static void normalizeMacMystery(Common::Array<byte> &data) {
 	swapU16Range(data, section[4], section[7]); // notebook index
 	normalizeMacGalleryData(data, section[5], section[6]);
 	swapU16Range(data, section[8], MIN<uint>(section[8] + 12, section[9]));
-	swapU16Range(data, section[9], data.size()); // solved clue block
+
+	// Solved outro block: u8 count followed by Mac-native dialog records.
+	// Keep it byte-exact; displayFloppyDialogRecords() parses widened fields
+	// as big-endian for Mac.
 }
 
 uint16 Mystery::readU16(uint offset) const {
