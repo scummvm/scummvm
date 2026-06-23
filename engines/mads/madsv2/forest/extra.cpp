@@ -20,6 +20,7 @@
  */
 
 #include "common/textconsole.h"
+#include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/global.h"
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
@@ -44,24 +45,19 @@ void display_interface() {
 	error("TODO: display_interface");
 }
 
-void fly_on_screen(int flying_object) {
-	error("TODO: fly_on_screen");
-}
-
-void fly_off_screen(int flying_object) {
-	error("TODO: fly_off_screen");
-}
-
 void display_inventory(void) {
 	error("TODO: display_inventory");
 }
 
 void solve_me_selected(void) {
-	error("TODO: solve_me_selected");
+	global[walker_converse_state] = -1;
+	open_journal(3);
+	game_exec_function(room_parser_code_pointer);
 }
 
 void door_selected(void) {
-	error("TODO: door_selected");
+	open_journal(4);
+	kernel.activate_menu = GAME_MAIN_MENU;
 }
 
 void extra_spinning_object(void) {

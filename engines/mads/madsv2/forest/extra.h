@@ -59,9 +59,6 @@ extern int int_sprite[6];
 
 extern void init_extra();
 
-extern void fly_on_screen(int flying_object);
-extern void fly_off_screen(int flying_object);
-
 extern void display_interface();
 extern void display_inventory(void);
 extern void solve_me_selected(void);
