@@ -34,7 +34,7 @@ namespace Fool {
 void FoolGame::humbugRun() {
 	// 142:0004
 	if (_activePuzzleStatus < 0x63) {
-		this->humbugTrail();
+		this->humbugPlayTrail();
 		if (!_activePuzzleSolved) {
 			return;
 		}
@@ -54,7 +54,7 @@ void FoolGame::humbugRun() {
 		this->sub_142_630();
 	}
 	if (_activePuzzleStatus >= 0x64) {
-		this->humbugTrail();
+		this->humbugPlayTrail();
 		if (_activePuzzleSolved) {
 			this->humbugSuccess();
 		}
@@ -63,7 +63,7 @@ void FoolGame::humbugRun() {
 	return;
 }
 
-void FoolGame::humbugTrail() {
+void FoolGame::humbugPlayTrail() {
 	// 142:00e6
 	if (_puzzleCompletionStatus[0x34] < 3) {
 		_zbasic->menu(8, 3, 1, _zbasic->str(OFF(1))); // A secret is undone
@@ -75,17 +75,17 @@ void FoolGame::humbugTrail() {
 	}
 	// 142:0166
 	this->fetchPuzzleData();
-	this->sub_128_4da(0);
+	this->toggleMouseCursor(false);
 	_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
 	this->drawPuzzleButton(_zbasic->str(OFF(5))); // ~
 	// eye button
 	_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_b3ec);
 	for (int16 i = 1; i <= 0xa42; i++) {
-		this->arr_i16_9894[i] = puzzlesReadShort();
-		this->arr_i16_ac1c[i] = puzzlesReadShort();
+		_humbugTrail[i].x = puzzlesReadShort();
+		_humbugTrail[i].y = puzzlesReadShort();
 		_zbasic->put(
-			this->arr_i16_9894[i],
-			this->arr_i16_ac1c[i],
+			_humbugTrail[i].x,
+			_humbugTrail[i].y,
 			this->arr_bmp_b3ec,
 			kSrcCopy
 		);
@@ -94,14 +94,14 @@ void FoolGame::humbugTrail() {
 			_toolbox->Delay(0);
 	}
 	// 142:026e
-	this->sub_128_4da(1);
+	this->toggleMouseCursor(true);
 	_zbasic->put(
-		this->arr_i16_9894[this->var_i16_233c],
-		this->arr_i16_ac1c[this->var_i16_233c],
+		_humbugTrail[this->_humbugTrailIndex].x,
+		_humbugTrail[this->_humbugTrailIndex].y,
 		this->arr_bmp_b3ec,
 		kSrcCopy
 	);
-	this->var_i16_233c = 1;
+	this->_humbugTrailIndex = 1;
 	_stateFlags = kStateNull;
 	_activePuzzleSolved = false;
 	this->var_i16_1ab6 = 0;
@@ -113,7 +113,7 @@ void FoolGame::humbugTrail() {
 		if (!((this->var_i16_1ab6 == _event.where.x) && (this->var_i16_1ab8 == _event.where.y))) {
 			this->sub_142_370();
 		}
-		if (this->var_i16_233c >= 0xa42) {
+		if (this->_humbugTrailIndex >= 0xa42) {
 			_activePuzzleSolved = true;
 		}
 		if (_stateFlags == kStateSaveGame) {
@@ -125,19 +125,19 @@ void FoolGame::humbugTrail() {
 
 void FoolGame::sub_142_370() {
 	// 142:0370
-	this->var_i16_7e4 = this->var_i16_233c + 0x19;
-	if (this->var_i16_7e4 > 0xa42) {
-		this->var_i16_7e4 = 0xa42;
+	int16 trailMax = this->_humbugTrailIndex + 0x19;
+	if (trailMax > 0xa42) {
+		trailMax = 0xa42;
 	}
-	this->var_i16_9f2 = this->var_i16_233c - 0x19;
-	if (this->var_i16_9f2 < 1) {
-		this->var_i16_9f2 = 1;
+	int16 trailMin = this->_humbugTrailIndex - 0x19;
+	if (trailMin < 1) {
+		trailMin = 1;
 	}
 	this->var_i16_1a9c = 0;
-	for (int16 i = this->var_i16_7e4; i >= this->var_i16_9f2; i--) {
-		this->var_i16_1a96 = _event.where.x - this->arr_i16_9894[i];
-		this->var_i16_1a98 = _event.where.y - this->arr_i16_ac1c[i];
-		if ((this->var_i16_1a96 >= -5) && (this->var_i16_1a96 <= 0x1e) && (this->var_i16_1a98 >= -5) && (this->var_i16_1a98 <= 0x19)) {
+	for (int16 i = trailMax; i >= trailMin; i--) {
+		int16 dx = _event.where.x - _humbugTrail[i].x;
+		int16 dy = _event.where.y - _humbugTrail[i].y;
+		if ((dx >= -5) && (dx <= 0x1e) && (dy >= -5) && (dy <= 0x19)) {
 			this->var_i16_1a9c = i + 0xa;
 		}
 		// 142:0470
@@ -147,42 +147,38 @@ void FoolGame::sub_142_370() {
 		this->var_i16_1a9c = 0xa42;
 	}
 	if (this->var_i16_1a9c != 0) {
-		if (this->var_i16_233c < this->var_i16_1a9c) {
-			this->var_i16_484 = 1;
-		} else {
-			this->var_i16_484 = -1;
-		}
-		this->var_i16_7a8 = this->var_i16_233c;
+		int16 incr = (this->_humbugTrailIndex < this->var_i16_1a9c) ? 1 : -1;
+		int16 index = this->_humbugTrailIndex;
 		do {
 			_zbasic->put(
-				this->arr_i16_9894[this->var_i16_7a8],
-				this->arr_i16_ac1c[this->var_i16_7a8],
+				_humbugTrail[index].x,
+				_humbugTrail[index].y,
 				this->arr_bmp_b3ec,
 				kSrcCopy
 			);
 			// 142:051c
-		} while (_zbasic->incrAndCheck(this->var_i16_7a8, this->var_i16_1a9c, this->var_i16_484));
-		this->var_i16_233c = this->var_i16_1a9c;
+		} while (_zbasic->incrAndCheck(index, this->var_i16_1a9c, incr));
+		this->_humbugTrailIndex = this->var_i16_1a9c;
 		this->var_i16_1ab6 = _event.where.x;
 		this->var_i16_1ab8 = _event.where.y;
 	} else {
 		// 142:054a
-		this->var_i16_7e4 = this->var_i16_233c - 0xa;
-		if (this->var_i16_7e4 < 1) {
-			this->var_i16_7e4 = 1;
+		int16 rewindTo = this->_humbugTrailIndex - 0xa;
+		if (rewindTo < 1) {
+			rewindTo = 1;
 		}
-		for (int16 i = this->var_i16_233c; i >= this->var_i16_7e4; i--) {
+		for (int16 i = this->_humbugTrailIndex; i >= rewindTo; i--) {
 			_zbasic->put(
-				this->arr_i16_9894[i],
-				this->arr_i16_ac1c[i],
+				_humbugTrail[i].x,
+				_humbugTrail[i].y,
 				this->arr_bmp_b3ec,
 				kSrcCopy
 			);
 			// 142:05c8
 		}
-		this->var_i16_233c -= 0xa;
-		if (this->var_i16_233c < 1) {
-			this->var_i16_233c = 1;
+		this->_humbugTrailIndex -= 0xa;
+		if (this->_humbugTrailIndex < 1) {
+			this->_humbugTrailIndex = 1;
 		}
 	}
 	// 142:05f0
@@ -210,38 +206,38 @@ void FoolGame::sub_142_630() {
 			temp.right = this->arr_i16_2f38[i*32+3];
 			_toolbox->FillRect(temp, _patterns[2]);
 			_toolbox->FrameRect(temp);
-			this->var_str_384 = Common::U32String::format(" %d ", i);
-			this->var_i16_7e4 = _toolbox->StringWidth(this->var_str_384);
-			this->var_i16_9f2 = (this->arr_i16_2f38[i*32+3] - this->arr_i16_2f38[i*32+1])/2;
+			Common::U32String idStr = Common::U32String::format(" %d ", i);
+			int16 width = _toolbox->StringWidth(idStr);
+			int16 xOffset = (this->arr_i16_2f38[i*32+3] - this->arr_i16_2f38[i*32+1])/2;
 			// 142:0756
 			_toolbox->MoveTo(
-				this->arr_i16_2f38[i*32+1] + this->var_i16_9f2 - (this->var_i16_7e4 / 2),
+				this->arr_i16_2f38[i*32+1] + xOffset - (width / 2),
 				this->arr_i16_2f38[i*32 + 2] - 0x1e
 			);
-			_toolbox->DrawString(this->var_str_384);
+			_toolbox->DrawString(idStr);
 		}
 		// 142:07ca
 		_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
 		this->waitForMouseUp();
 		this->menuClickMessage();
-		this->var_i16_484 = 0;
-		this->var_i16_7e4 = 0;
-		this->var_i16_9f2 = 0;
+
+		int16 tickCounter = 0;
+		int16 idCounter = 0;
 		while (_event.modifiers & kModMouseButtonUp) {
 			// 142:07f8
 			this->getNextEvent(-1); // was: 0
-			this->var_i16_7e4++;
-			if (this->var_i16_7e4 == 0x64) {
-				this->var_i16_7e4 = 0;
-				this->var_i16_9f2++;
-				if (this->var_i16_9f2 > 4) {
-					this->var_i16_9f2 = 1;
+			tickCounter++;
+			if (tickCounter == 0x64) {
+				tickCounter = 0;
+				idCounter++;
+				if (idCounter > 4) {
+					idCounter = 1;
 				}
 				Common::Rect temp;
-				temp.top = this->arr_i16_2f38[this->var_i16_9f2*32];
-				temp.left = this->arr_i16_2f38[this->var_i16_9f2*32+1];
-				temp.bottom = this->arr_i16_2f38[this->var_i16_9f2*32+2];
-				temp.right = this->arr_i16_2f38[this->var_i16_9f2*32+3];
+				temp.top = this->arr_i16_2f38[idCounter*32];
+				temp.left = this->arr_i16_2f38[idCounter*32+1];
+				temp.bottom = this->arr_i16_2f38[idCounter*32+2];
+				temp.right = this->arr_i16_2f38[idCounter*32+3];
 				_toolbox->InvertRect(temp);
 			}
 		}

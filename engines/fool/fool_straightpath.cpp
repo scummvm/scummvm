@@ -99,11 +99,8 @@ void FoolGame::straightPathRun() {
 	// 143:04cc
 	var_i16_1574 = 0;
 	_stateFlags = kStateNull;
-	if (var_str_1272 == _activePuzzleBuffer) {
-		_activePuzzleSolved = true;
-	} else {
-		_activePuzzleSolved = false;
-	}
+	_activePuzzleSolved = (var_str_1272 == _activePuzzleBuffer);
+
 	// JMP 0x582
 	while (((_stateFlags & kStateReturn) == 0) && (!_activePuzzleSolved)) {
 		// 143:0500
@@ -172,7 +169,7 @@ void FoolGame::straightPathReset() {
 	for (int16 i = 0; i <= 0x14; i++) {
 		var_i16_1574 = _zbasic->rndInt(arr_i16_1eb8[0] * arr_i16_1eb8[1]);
 		_toolbox->InvertRect(_screenGrid[var_i16_1574]);
-		playTone(_zbasic->rndInt(0x2328) + 0xf, 0x28, 0x1);
+		playTone(_zbasic->rndInt(0x2328) + 0xf, 0x28, true);
 		// 143:0812
 		_toolbox->InvertRect(_screenGrid[var_i16_1574]);
 	}
@@ -187,8 +184,7 @@ void FoolGame::straightPathDrawText() {
 	// 143:0864
 	straightPathClearText();
 	_zbasic->text(kFontLarge, 0x18, 0x18, kSrcBic);
-	var_i16_7a2 = 0x148;
-	sub_128_918(_activePuzzleBuffer);
+	drawStringCenter(_activePuzzleBuffer, 0x148);
 }
 
 void FoolGame::straightPathClearText() {

@@ -41,29 +41,28 @@ void FoolGame::sentenceRun() {
 	this->arr_i16_3738[4] = 0xbf;
 	this->arr_i16_3738[5] = 0;
 	this->arr_i16_3738[6] = 0xe1;
-	this->arr_i16_3738[7] = 0x200;
+	this->arr_i16_3738[7] = SCREEN_WIDTH;
 	this->arr_i16_3738[8] = 0xf2;
-	this->arr_i16_3738[0xa] = 0x156;
-	this->arr_i16_3738[0xc] = 0x14;
+	this->arr_i16_3738[0xa] = SCREEN_HEIGHT;
+	this->arr_i16_3738[0xc] = MENU_HEIGHT;
 	this->arr_i16_3738[0xd] = 0;
-	this->arr_i16_3738[0xe] = 0x156;
-	this->arr_i16_3738[0xf] = 0x200;
+	this->arr_i16_3738[0xe] = SCREEN_HEIGHT;
+	this->arr_i16_3738[0xf] = SCREEN_WIDTH;
 
 	// 135:00ce
-	this->var_i16_1066 = puzzlesReadShort();
-	this->arr_i32_192c0[0] = _toolbox->GetPicture(this->var_i16_1066);
+	this->arr_i32_192c0[0] = _toolbox->GetPicture(puzzlesReadShort());
 	this->arr_i16_1eb8[0] = puzzlesReadShort();
 	_zbasic->indexRawSet(puzzlesReadString(), 1, 0);
 	_sentenceGoal = puzzlesReadString().decode(Common::kMacRoman);
-	this->var_str_384 = puzzlesReadString().decode(Common::kMacRoman);
-	this->var_str_384 = _zbasic->str(OFF(0)) + this->var_str_384 + _zbasic->str(OFF(1)); // to reveal XXXXX
+	Common::U32String menuStr = puzzlesReadString().decode(Common::kMacRoman);
+	menuStr = _zbasic->str(OFF(0)) + menuStr + _zbasic->str(OFF(1)); // to reveal XXXXX
 	// 135:0152
-	_zbasic->menu(8, 7, 1, this->var_str_384);
+	_zbasic->menu(8, 7, 1, menuStr);
 	this->arr_i16_1eb8[1] = 0x1c2 / this->arr_i16_1eb8[0];
-	this->arr_i16_1eb8[2] = 0x100 - ((this->arr_i16_1eb8[0] * this->arr_i16_1eb8[1]) / 2);
+	this->arr_i16_1eb8[2] = (SCREEN_WIDTH/2) - ((this->arr_i16_1eb8[0] * this->arr_i16_1eb8[1]) / 2);
 
 	// 135:01e2
-	this->var_i16_7e4 = this->arr_i16_1eb8[2];
+	int16 buttonGridX = this->arr_i16_1eb8[2];
 	for (int16 i = 1; i <= this->arr_i16_1eb8[0]; i++) {
 		this->arr_i16_4338[i] = 0;
 		this->arr_i16_4338[i + this->arr_i16_1eb8[0]] = puzzlesReadByte();
@@ -71,31 +70,31 @@ void FoolGame::sentenceRun() {
 		// 135:0254
 		_zbasic->indexRawSet(puzzlesReadString(), 1, i + this->arr_i16_1eb8[0]);
 		_screenGrid[i].top = 0xf2;
-		_screenGrid[i].left = this->var_i16_7e4;
-		_screenGrid[i].bottom = 0x156;
-		_screenGrid[i].right = this->var_i16_7e4 + this->arr_i16_1eb8[1];
+		_screenGrid[i].left = buttonGridX;
+		_screenGrid[i].bottom = SCREEN_HEIGHT;
+		_screenGrid[i].right = buttonGridX + this->arr_i16_1eb8[1];
 		// 135:030c
-		this->var_i16_7e4 += this->arr_i16_1eb8[1];
+		buttonGridX += this->arr_i16_1eb8[1];
 	}
 	// 135:0348
-	_zbasic->picture(0, 0x14, this->arr_i32_192c0[0]);
+	_zbasic->picture(0, MENU_HEIGHT, this->arr_i32_192c0[0]);
 	_toolbox->ReleaseResource(this->arr_i32_192c0[0]);
 	Common::Rect temp(this->arr_i16_3738[5], this->arr_i16_3738[4], this->arr_i16_3738[7], this->arr_i16_3738[6]);
 	_toolbox->FillRect(temp, _patterns[2]);
 	this->arr_i16_1eb8[4] = 0;
-	for (this->var_i16_68a = 1; this->var_i16_68a <= this->arr_i16_1eb8[0]; this->var_i16_68a++) {
+	for (int16 i = 1; i <= this->arr_i16_1eb8[0]; i++) {
 		// 135:03a4
 		if (_activePuzzleBuffer.empty()) { // was: str(OFF(2))
-			this->arr_i16_4338[this->var_i16_68a] = 1;
+			this->arr_i16_4338[i] = 1;
 		} else {
 			// 135:03d4
-			this->arr_i16_4338[this->var_i16_68a] = _zbasic->castInt(_zbasic->midStr(_activePuzzleBuffer, this->var_i16_68a, 1));
+			this->arr_i16_4338[i] = _zbasic->castInt(_zbasic->midStr(_activePuzzleBuffer, i, 1));
 
 		}
 		// 135:0408
-		if (this->arr_i16_4338[this->var_i16_68a] == 1) {
-			this->playTone(_zbasic->rndInt(1000) + 0x19, 0x28, 1);
-			this->sentenceDrawButton();
+		if (this->arr_i16_4338[i] == 1) {
+			this->playTone(_zbasic->rndInt(1000) + 0x19, 0x28, true);
+			this->sentenceDrawButton(i);
 		}
 		// 135:044a
 	}
@@ -146,27 +145,28 @@ void FoolGame::sentenceOnClick() {
 	this->var_i16_1abc = 0;
 	if ((_event.where.x < this->arr_i16_1eb8[2]) || (_event.where.y < 0xf2))
 		return;
+
 	// determine which button was clicked on
-	this->var_i16_103a = ((_event.where.x - this->arr_i16_1eb8[2]) / this->arr_i16_1eb8[1]) + 1;
+	int16 index = ((_event.where.x - this->arr_i16_1eb8[2]) / this->arr_i16_1eb8[1]) + 1;
 	// 135:0632
-	if ((this->var_i16_103a > this->arr_i16_1eb8[0]) || (this->arr_i16_4338[this->var_i16_103a] == 0))
+	if ((index > this->arr_i16_1eb8[0]) || (this->arr_i16_4338[index] == 0))
 		return;
 	// 135:0676
-	this->arr_i16_4338[this->var_i16_103a] = 0;
-	_toolbox->FillOval(_screenGrid[this->var_i16_103a], _patterns[2]);
+	this->arr_i16_4338[index] = 0;
+	_toolbox->FillOval(_screenGrid[index], _patterns[2]);
 	// 135:06aa
-	switch (this->arr_i16_4338[this->var_i16_103a + this->arr_i16_1eb8[0]]-1) {
+	switch (this->arr_i16_4338[index + this->arr_i16_1eb8[0]]-1) {
 	case 0:
-		sentenceAddLeft();
+		sentenceAddLeft(index);
 		break;
 	case 1:
-		sentenceAddRight();
+		sentenceAddRight(index);
 		break;
 	case 2:
-		sentenceAddLeftRight();
+		sentenceAddLeftRight(index);
 		break;
 	case 3:
-		sentenceReplace();
+		sentenceReplace(index);
 		break;
 	case 4:
 		sentenceReverse();
@@ -181,19 +181,18 @@ void FoolGame::sentenceOnClick() {
 		return;
 	}
 	// 135:0714
-	this->var_i16_484 = 0;
+	bool buttonsRemaining = false;
 	for (int16 i = 1; i <= this->arr_i16_1eb8[0]; i++) {
 		if (this->arr_i16_4338[i] != 0) {
-			this->var_i16_484 = 1;
+			buttonsRemaining = true;
 		}
 	}
 	// 135:0758
-	if (this->var_i16_484 != 0) {
+	if (buttonsRemaining) {
 		return;
 	}
 	_zbasic->text(_fontChicago, 0xc, 0, kSrcBic);
-	this->var_i16_7a2 = 0x124;
-	this->sub_128_918(_zbasic->str(OFF(4))); // click mouse to reset puzzle
+	drawStringCenter(_zbasic->str(OFF(4)), 0x124); // click mouse to reset puzzle
 
 	this->waitForMouseUp();
 	this->var_i16_1abc = 1;
@@ -208,47 +207,46 @@ void FoolGame::sentenceOnClick() {
 	}
 }
 
-void FoolGame::sentenceAddLeft() {
+void FoolGame::sentenceAddLeft(int16 index) {
 	// 135:07d6
-	_sentenceBuffer = _zbasic->index(1, this->var_i16_103a) + _sentenceBuffer;
+	_sentenceBuffer = _zbasic->index(1, index) + _sentenceBuffer;
 }
 
-void FoolGame::sentenceAddRight() {
+void FoolGame::sentenceAddRight(int16 index) {
 	// 135:07fa
-	_sentenceBuffer += _zbasic->index(1, this->var_i16_103a);
+	_sentenceBuffer += _zbasic->index(1, index);
 }
 
-void FoolGame::sentenceAddLeftRight() {
+void FoolGame::sentenceAddLeftRight(int16 index) {
 	// 135:0813
-	_sentenceBuffer = _zbasic->index(1, this->var_i16_103a)
+	_sentenceBuffer = _zbasic->index(1, index)
 		+ _sentenceBuffer
-		+ _zbasic->index(1, this->var_i16_103a + this->arr_i16_1eb8[0]);
+		+ _zbasic->index(1, index + this->arr_i16_1eb8[0]);
 }
 
-void FoolGame::sentenceReplace() {
+void FoolGame::sentenceReplace(int16 index) {
 	// 135:086a
-	this->var_i16_9f2 = _zbasic->index(1, this->var_i16_103a).size();
+	this->var_i16_9f2 = _zbasic->index(1, index).size();
 	while (true) {
 		// 135:0884
-		this->var_i16_484 = _sentenceBuffer.size();
-		this->var_i16_1abe = _zbasic->instr(1, _sentenceBuffer, _zbasic->index(1, this->var_i16_103a));
+		int16 length = _sentenceBuffer.size();
+		this->var_i16_1abe = _zbasic->instr(1, _sentenceBuffer, _zbasic->index(1, index));
 		if (this->var_i16_1abe == 0)
 			return;
 		// 135:08bc
-		if ((this->var_i16_484 - this->var_i16_1abe + 1 - this->var_i16_9f2) < 0)
+		if ((length - this->var_i16_1abe + 1 - this->var_i16_9f2) < 0)
 			return;
 		_sentenceBuffer = _zbasic->leftStr(_sentenceBuffer, this->var_i16_1abe - 1)
-			+ _zbasic->index(1, this->var_i16_103a + this->arr_i16_1eb8[0])
-			+ _zbasic->rightStr(_sentenceBuffer, this->var_i16_484 - this->var_i16_1abe + 1 - this->var_i16_9f2);
+			+ _zbasic->index(1, index + this->arr_i16_1eb8[0])
+			+ _zbasic->rightStr(_sentenceBuffer, length - this->var_i16_1abe + 1 - this->var_i16_9f2);
 	}
 	// should never reach here
 }
 
 void FoolGame::sentenceReverse() {
 	// 135:094c
-	this->var_i16_484 = _sentenceBuffer.size();
 	Common::U32String buffer; // was: str(OFF(5))
-	for (int16 i = this->var_i16_484; i >= 1; i--) {
+	for (int16 i = (int16)_sentenceBuffer.size(); i >= 1; i--) {
 		buffer += _zbasic->midStr(_sentenceBuffer, i, 1);
 	}
 	_sentenceBuffer = buffer;
@@ -259,40 +257,40 @@ void FoolGame::sentenceUndo() {
 	this->arr_i16_1eb8[4] = 0;
 	Common::Rect temp(this->arr_i16_3738[5], this->arr_i16_3738[4], this->arr_i16_3738[7], this->arr_i16_3738[6]);
 	_toolbox->FillRect(temp, _patterns[2]);
-	for (this->var_i16_68a = 1; this->var_i16_68a <= this->arr_i16_1eb8[0]; this->var_i16_68a++) {
-		this->arr_i16_4338[this->var_i16_68a] = 1;
-		this->sentenceDrawButton();
+	for (int16 i = 1; i <= this->arr_i16_1eb8[0]; i++) {
+		this->arr_i16_4338[i] = 1;
+		this->sentenceDrawButton(i);
 	}
 	_sentenceBuffer = _zbasic->index(1, 0);
 	this->sentenceDrawBuffer();
 }
 
-void FoolGame::sentenceDrawButton() {
+void FoolGame::sentenceDrawButton(int16 gridIndex) {
 	// 135:0a34
 	_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
-	this->var_str_384 = Common::U32String::format("%d", this->var_i16_68a) + _zbasic->str(OFF(6)); // ' '
-	this->var_i16_7e4 = _toolbox->StringWidth(this->var_str_384);
-	_toolbox->FillOval(_screenGrid[this->var_i16_68a], _patterns[0]);
-	_toolbox->FrameOval(_screenGrid[this->var_i16_68a]);
-	_toolbox->MoveTo(_screenGrid[this->var_i16_68a].left + (this->arr_i16_1eb8[1] / 2) - (this->var_i16_7e4 / 2), 0x129);
-	_toolbox->DrawString(this->var_str_384);
+	Common::U32String buf = Common::U32String::format("%d", gridIndex) + _zbasic->str(OFF(6)); // ' '
+	int16 width = _toolbox->StringWidth(buf);
+	_toolbox->FillOval(_screenGrid[gridIndex], _patterns[0]);
+	_toolbox->FrameOval(_screenGrid[gridIndex]);
+	_toolbox->MoveTo(_screenGrid[gridIndex].left + (this->arr_i16_1eb8[1] / 2) - (width / 2), 0x129);
+	_toolbox->DrawString(buf);
 }
 
 void FoolGame::sentenceDrawBuffer() {
 	// 135:0b16
 	_zbasic->text(kFontLarge, 0x18, 0, kSrcOr);
-	this->var_i16_484 = _toolbox->StringWidth(_sentenceBuffer);
-	if (this->var_i16_484 < this->arr_i16_1eb8[4]) {
-		this->var_i16_484 = this->arr_i16_1eb8[4];
+	int16 width = _toolbox->StringWidth(_sentenceBuffer);
+	if (width < this->arr_i16_1eb8[4]) {
+		width = this->arr_i16_1eb8[4];
 	} else {
-		this->arr_i16_1eb8[4] = this->var_i16_484;
+		this->arr_i16_1eb8[4] = width;
 	}
 	// 135:0b80
-	this->arr_i16_3738[1] = 0xf6 - (this->var_i16_484 / 2);
-	this->arr_i16_3738[3] = 0x109 + (this->var_i16_484 / 2);
+	this->arr_i16_3738[1] = 0xf6 - (width / 2);
+	this->arr_i16_3738[3] = 0x109 + (width / 2);
 	Common::Rect temp(this->arr_i16_3738[1], this->arr_i16_3738[0], this->arr_i16_3738[3], this->arr_i16_3738[2]);
 	_toolbox->FillRect(temp, _patterns[0]);
-	_toolbox->MoveTo(0x100 - (this->var_i16_484 / 2), 0xd9);
+	_toolbox->MoveTo(0x100 - (width / 2), 0xd9);
 	_toolbox->DrawString(_sentenceBuffer);
 }
 
@@ -305,9 +303,9 @@ void FoolGame::sentenceStoreState() {
 	}
 	// 135:0c44
 	for (int16 i = 1; i <= this->arr_i16_1eb8[0]; i++) {
-		this->var_str_384 = Common::U32String::format("%d", this->arr_i16_4338[i]);
-		this->var_str_384 = _zbasic->rightStr(this->var_str_384, 1);
-		_activePuzzleBuffer += this->var_str_384;
+		Common::U32String buf = Common::U32String::format("%d", this->arr_i16_4338[i]);
+		buf = _zbasic->rightStr(buf, 1);
+		_activePuzzleBuffer += buf;
 	}
 	// 135:0cba
 	Common::String temp = _sentenceBuffer.encode(Common::kMacRoman);
@@ -320,7 +318,7 @@ void FoolGame::sentenceSuccess() {
 	if (_activePuzzleStatus < 0x64) {
 		_activePuzzleStatus = 0x64;
 		for (int16 i = 1; i <= this->arr_i16_1eb8[0]; i++) {
-			this->playTone(_zbasic->rndInt(1000) + 0x19, 0x28, 0);
+			this->playTone(_zbasic->rndInt(1000) + 0x19, 0x28, false);
 		}
 	}
 	// 135:0d40

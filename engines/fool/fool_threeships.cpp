@@ -239,7 +239,7 @@ void FoolGame::sub_128_5a6c() {
 	//this->arr_bmp_bbbc->rawSurface().debugPrint(5, 0, 0,0, 0, -1, 160, fakePal);
 	_toolbox->EraseRoundRect(this->arr_rect_1910c, 8, 7);
 	_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_b3ec, kSrcXor);
-	this->sub_128_406(0);
+	this->delayFromMarker(0);
 }
 
 }

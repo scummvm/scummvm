@@ -39,6 +39,7 @@
 
 #define SCREEN_WIDTH 0x200
 #define SCREEN_HEIGHT 0x156
+#define MENU_HEIGHT 0x14
 #define SCREEN_PAGE_SIZE (SCREEN_WIDTH*SCREEN_HEIGHT/8) // 0x5580
 
 namespace Fool {

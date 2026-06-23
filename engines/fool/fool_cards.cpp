@@ -187,16 +187,13 @@ void FoolGame::cardsDrawTable() {
 	this->drawTarotCard(2, 5, 0);
 	this->drawTarotCard(3, 6, 0);
 	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
-	this->var_i16_7a2 = 0xc3;
 	// 139:061a
-	this->sub_128_918(_zbasic->str(OFF(0))); // Select a card above
-	this->var_i16_7a2 = 0xd4;
-	this->sub_128_918(_zbasic->str(OFF(1))); // or
+	this->drawStringCenter(_zbasic->str(OFF(0)), 0xc3); // Select a card above
+	this->drawStringCenter(_zbasic->str(OFF(1)), 0xd4); // or
 	_toolbox->FillRoundRect(this->arr_rect_4338, 0xa, 0xa, _patterns[0]);
 	_toolbox->FrameRoundRect(this->arr_rect_4338, 0xa, 0xa);
 	_zbasic->text(_fontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
-	this->var_i16_7a2 = 0xe9;
-	this->sub_128_918(_zbasic->str(OFF(2))); // Yield
+	this->drawStringCenter(_zbasic->str(OFF(2)), 0xe9); // Yield
 	this->var_i16_2016 = 1;
 	this->var_i16_2010 = 1;
 	this->waitForMouseUp();
@@ -260,15 +257,16 @@ void FoolGame::cardsOnClick() {
 		this->sub_139_19da();
 		this->sub_139_191c();
 		this->sub_139_a22();
+		int16 strY = 0;
 		if (this->var_i16_2018 == 0) {
 			// 139:0920
 			this->cardsRevealHands();
-			this->var_i16_7a2 = 0xc3;
+			strY = 0xc3;
 
 		} else {
 			// 139:092e
 			this->cardsOpponentYields();
-			this->var_i16_7a2 = 0xd7;
+			strY = 0xd7;
 		}
 		// 139:0938
 		this->var_i16_2010 = 0;
@@ -281,7 +279,7 @@ void FoolGame::cardsOnClick() {
 		// original code has the font ID as 1... maybe there's a fallback?
 		// this was intended to be Small
 		_zbasic->text(kFontSmall, 9, Graphics::kMacFontRegular, kSrcBic);
-		this->sub_128_918(_zbasic->str(OFF(3))); // (click mouse to continue)
+		this->drawStringCenter(_zbasic->str(OFF(3)), strY); // (click mouse to continue)
 		this->var_i16_2014 = 0;
 		_stateFlags = 0;
 		while ((_stateFlags == 0) && (this->var_i16_2014 == 0)) {
@@ -391,8 +389,7 @@ void FoolGame::cardsOpponentYields() {
 	this->var_i16_2012 = -CARDS_YIELD_PENALTY;
 	this->cardsDrawScores();
 	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
-	this->var_i16_7a2 = 0xc4;
-	this->sub_128_918(_zbasic->str(OFF(4))); // The Old Man yields
+	this->drawStringCenter(_zbasic->str(OFF(4)), 0xc4); // The Old Man yields
 }
 
 void FoolGame::cardsRevealHands() {
@@ -518,14 +515,10 @@ void FoolGame::cardsRevealHands() {
 	this->var_i16_2322 = (this->var_i16_2322 / 2) + 0x14;
 	this->fillRect(0x2e, 0x100 - this->var_i16_2322, 0x9a, 0x100 + this->var_i16_2322, 2);
 	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
-	this->var_i16_7a2 = 0x46;
-	this->sub_128_918(this->var_str_384);
-	this->var_i16_7a2 = 0x64;
-	this->sub_128_918(this->var_str_167c);
-	this->var_i16_7a2 = 0x78;
-	this->sub_128_918(_zbasic->str(OFF(16))); // beats
-	this->var_i16_7a2 = 0x8c;
-	this->sub_128_918(this->var_str_2222);
+	this->drawStringCenter(this->var_str_384, 0x46);
+	this->drawStringCenter(this->var_str_167c, 0x64);
+	this->drawStringCenter(_zbasic->str(OFF(16)), 0x78); // beats
+	this->drawStringCenter(this->var_str_2222, 0x8c);
 	if (this->arr_i16_1eb8[1] != 0) {
 		this->var_i16_68a = this->arr_i16_1eb8[1];
 		if (this->var_i16_68a > 8) {
