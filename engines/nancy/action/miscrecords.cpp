@@ -102,11 +102,14 @@ void LightningOn::execute() {
 	_isDone = true;
 }
 
-void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
-	int16 size = stream.readSint16LE();
+// Reads a textbox caption: an int16 length, then either a CVTX (AUTOTEXT) key
+// to resolve (length == -1) or that many bytes of inline text. Shared by the
+// textbox-writing action records.
+static void readTextboxText(Common::SeekableReadStream &stream, Common::String &out) {
+	const int16 size = stream.readSint16LE();
 
 	if (size > 10000) {
-		error("Action Record atTextboxWrite has too many text box chars: %d", size);
+		error("Textbox write action record has too many text box chars: %d", size);
 	}
 
 	if (size == -1) {
@@ -116,24 +119,84 @@ void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
 		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
 		assert(autotext);
 
-		_text = getTextFromCaseInsensitiveKey(autotext->texts, stringID);
-	} else {
+		out = getTextFromCaseInsensitiveKey(autotext->texts, stringID);
+	} else if (size > 0) {
 		char *buf = new char[size];
 		stream.read(buf, size);
 		buf[size - 1] = '\0';
 
-		assembleTextLine(buf, _text, size);
+		assembleTextLine(buf, out, size);
 
 		delete[] buf;
 	}
 }
 
+void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
+	if (_isAutotext) {
+		// AR 81 prefixes the body with a wait header (runtime state at 0x00 is
+		// always 0 in the data, so skip it)
+		stream.skip(2);
+		_waitMode = stream.readSint16LE();
+		_soundChannel = stream.readUint16LE();
+		_waitTimeMs = stream.readUint32LE();
+	}
+
+	readTextboxText(stream, _text);
+
+	if (_isAutotext) {
+		// The original terminates the body with the "<e>" end-of-line hypertext tag
+		_text += "<e>";
+	}
+}
+
 void TextBoxWrite::execute() {
-	auto &tb = NancySceneState.getTextbox();
-	tb.clear();
-	tb.addTextLine(_text);
-	tb.setVisible(true);
-	finishExecution();
+	if (_state == kBegin) {
+		auto &tb = NancySceneState.getTextbox();
+		tb.clear();
+		if (!_text.empty()) {
+			tb.addTextLine(_text);
+		}
+		tb.setVisible(true);
+
+		if (!_isAutotext) {
+			// Plain TextBoxWrite completes immediately
+			finishExecution();
+			return;
+		}
+
+		if (_waitMode == kWaitForTimer) {
+			_endTime = g_nancy->getTotalPlayTime() + _waitTimeMs;
+		}
+
+		_state = kRun;
+		return;
+	}
+
+	// Nancy 11+ AR 81 waits for a sound or a timer before completing
+	switch (_state) {
+	case kRun:
+		switch (_waitMode) {
+		case kWaitForSound:
+			if (!g_nancy->_sound->isSoundPlaying(_soundChannel)) {
+				_state = kActionTrigger;
+			}
+			break;
+		case kWaitForTimer:
+			if (g_nancy->getTotalPlayTime() >= _endTime) {
+				_state = kActionTrigger;
+			}
+			break;
+		default:
+			_state = kActionTrigger;
+			break;
+		}
+		break;
+	case kActionTrigger:
+		finishExecution();
+		break;
+	default:
+		break;
+	}
 }
 
 void TextboxClear::readData(Common::SeekableReadStream &stream) {
@@ -146,29 +209,7 @@ void TextboxClear::execute() {
 }
 
 void FrameTextBox::readData(Common::SeekableReadStream &stream) {
-	const int16 size = stream.readSint16LE();
-
-	if (size > 10000)
-		error("FrameTextBox: too many text characters: %d", size);
-
-	if (size == -1) {
-		// CVTX-keyed lookup, same as the Nancy 6+ TextBoxWrite path.
-		Common::String stringID;
-		readFilename(stream, stringID);
-
-		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
-		assert(autotext);
-
-		_text = getTextFromCaseInsensitiveKey(autotext->texts, stringID);
-	} else if (size > 0) {
-		char *buf = new char[size];
-		stream.read(buf, size);
-		buf[size - 1] = '\0';
-
-		assembleTextLine(buf, _text, size);
-
-		delete[] buf;
-	}
+	readTextboxText(stream, _text);
 
 	// Trailing two int16 fields: meaning differs slightly between the
 	// three opcodes that reuse this layout, but are safe to capture as a
@@ -188,9 +229,8 @@ void FrameTextBox::execute() {
 	// textbox overlay that covers the taskbar buttons; the original arms a
 	// 15-second timer (DAT_005a7a7d = GetTickCount + 15000) that drops it
 	// back to the closed strip. Variant 75 (case 0x4b) is the legacy
-	// closed/strip path. Variant 81 first appears in Nancy 11; tentatively
-	// route it like 74 until its real semantics are confirmed.
-	if (_variant == kVariant74 || _variant == kVariant81) {
+	// closed/strip path.
+	if (_variant == kVariant74) {
 		tb.setFullMode(true);
 	} else {
 		tb.setFullMode(false);

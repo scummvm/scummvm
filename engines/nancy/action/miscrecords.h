@@ -88,16 +88,32 @@ protected:
 	Common::String getRecordTypeName() const override { return "SpecialEffect"; }
 };
 
-// Adds a caption to the textbox.
+// Adds a caption to the textbox. The Nancy 11+ "autotext" variant (AR 81),
+// carries an extra header that makes the record wait for a sound to finish
+// or a timer to elapse before it completes; in both variants the body is
+// either inline text or resolved from an AUTOTEXT key.
 class TextBoxWrite : public ActionRecord {
 public:
+	enum WaitMode { kWaitNone = 0, kWaitForSound = 1, kWaitForTimer = 2 };
+
+	TextBoxWrite(bool isAutotext = false) : _isAutotext(isAutotext) {}
+
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
 	Common::String _text;
 
+	// Nancy 11+ AR 81 only
+	bool _isAutotext;
+	int16 _waitMode = 0;
+	uint16 _soundChannel = 0;
+	uint32 _waitTimeMs = 0;
+
 protected:
-	Common::String getRecordTypeName() const override { return "TextBoxWrite"; }
+	Common::String getRecordTypeName() const override { return _isAutotext ? "AutotextTextBoxWrite" : "TextBoxWrite"; }
+
+private:
+	uint32 _endTime = 0;
 };
 
 // Clears the textbox. Used very rarely.
@@ -116,8 +132,7 @@ class FrameTextBox : public ActionRecord {
 public:
 	enum Variant {
 		kVariant74 = 74,
-		kVariant75 = 75,
-		kVariant81 = 81
+		kVariant75 = 75
 	};
 
 	FrameTextBox(Variant variant) : _variant(variant), _flags(0), _slot(0) {}

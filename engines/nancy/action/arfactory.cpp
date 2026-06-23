@@ -285,8 +285,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 79:
 		return new ValueTest();
 	case 81:	// Nancy11
-		//warning("AutotextTextBoxWrite");	// TODO
-		return nullptr;
+		return new TextBoxWrite(true);
 	case 96:	// Nancy11
 		return new RandomizeEventFlags();
 	case 97:
