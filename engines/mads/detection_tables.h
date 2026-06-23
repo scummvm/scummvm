@@ -262,7 +262,7 @@ static const MADSGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO1(GAMEOPTION_EASY_MOUSE)
+			GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 		GType_Forest,
 		0

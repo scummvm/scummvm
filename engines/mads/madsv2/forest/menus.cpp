@@ -27,30 +27,16 @@
 #include "mads/madsv2/core/keys.h"
 #include "mads/madsv2/core/matte.h"
 #include "mads/madsv2/core/mem.h"
-#include "mads/madsv2/core/speech.h"
 #include "mads/madsv2/core/quote.h"
 #include "mads/madsv2/core/text.h"
-#include "mads/madsv2/forest/menus.h"
 #include "mads/madsv2/forest/global.h"
+#include "mads/madsv2/forest/mads/quotes.h"
+#include "mads/madsv2/forest/menus.h"
+#include "mads/madsv2/forest/midi.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace Forest {
-
-#define SAVE_MENU_PIXEL_WIDTH           200
-#define MAX_SAVES_ON_SCREEN             10
-
-#define SPACE_BETWEEN                   -1
-
-#define MAIN_MENU_ITEM_WIDTH            140
-#define MAIN_MENU_FORCE_WIDTH           160
-
-#define DIFFICULTY_MENU_FORCE_WIDTH     140
-
-#define OPTIONS_MENU_ITEM_WIDTH         160
-#define OPTIONS_MENU_FORCE_WIDTH        170
-#define OPTIONS_MENU_OFF_CENTER         10
-
 
 #define SAVE_SUCCESSFUL                 1
 #define RESTORE_SUCCESSFUL              2
@@ -91,6 +77,9 @@ static int global_restore(int id) {
 }
 
 void global_menu_system_init() {
+	menu_quotes = quote_load(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 17, 18, 14, 16, 19, 20,
+		21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+		41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 0);
 }
 
 void global_menu_system_shutdown() {
@@ -111,91 +100,64 @@ void global_emergency_save() {
 }
 
 static void global_alert(int status) {
-}
+	int quote_id;
+	switch (status) {
+	case SAVE_SUCCESSFUL:    quote_id = quote_alert_save_ok;      break;
+	case RESTORE_SUCCESSFUL: quote_id = quote_alert_restore_ok;   break;
+	case SAVE_FAILED:        quote_id = quote_alert_save_fail;    break;
+	case RESTORE_FAILED:     quote_id = quote_alert_restore_fail; break;
+	default: return;
+	}
 
-static void global_menu_score() {
+	popup_dialog_create(game_menu_popup, 0x1000, 20);
+	popup_message(menu_quote(quote_id), 0x8000, -1);
+
+	if (status == SAVE_SUCCESSFUL) {
+		mads_strlwr(save_game_buf);
+		popup_message(save_game_buf, 0x8000, -1);
+	}
+
+	popup_button(menu_quote(quote_menu_ok), 0x8000);
+	popup_execute();
+	popup_dialog_destroy();
 }
 
 static void global_menu_save_restore(int save) {
-#if 0
 	int status = -1;
-	int selection;
-	char *save_game_name;
 	PopupItem *save_list;
 	PopupItem *go_button;
-	PopupItem *clear_button;
 	PopupItem *cancel_button;
 	PopupItem *result;
 
-	popup_dialog_create(game_menu_popup, GAME_DIALOG_HEAP, 20);
+	popup_dialog_create(game_menu_popup, 0x1000, 20);
 
-	if (save) {
-		popup_message(menu_quote(quote_save_title), POPUP_CENTER, POPUP_FILL);
-	} else {
-		popup_message(menu_quote(quote_restore_title), POPUP_CENTER, POPUP_FILL);
-	}
+	popup_message(menu_quote(save ? quote_save_title : quote_restore_title), 0x8000, -1);
 	popup_blank(4);
 
 	save_list = popup_savelist(game_save_directory, menu_quote(quote_menu_empty),
-		GAME_MAX_SAVE_SLOTS,
-		GAME_MAX_SAVE_LENGTH + 1,
-		GAME_MAX_SAVE_LENGTH,
-		SAVE_MENU_PIXEL_WIDTH,
-		MAX_SAVES_ON_SCREEN,
-		save, game.last_save);
+		99, 64, 63, 200, 10, save, game.last_save);
 
 	if (save) {
-		go_button = popup_button(menu_quote(quote_menu_save), POPUP_BUTTON_LEFT);
-		clear_button = popup_button(menu_quote(quote_menu_clear), POPUP_CENTER);
-		game_menu_popup->clear_item = clear_button;
+		go_button = popup_button(menu_quote(quote_menu_save), 0x400);
+		game_menu_popup->clear_item = popup_button(menu_quote(quote_menu_clear), 0x8000);
 	} else {
-		go_button = popup_button(menu_quote(quote_menu_restore), POPUP_BUTTON_LEFT);
+		go_button = popup_button(menu_quote(quote_menu_restore), 0x400);
 	}
 	cancel_button = popup_cancel_button(menu_quote(quote_menu_cancel));
 
 	result = popup_execute();
 
 	if (result == cancel_button) {
-		switch (game_menu_popup->key) {
-		case alt_x_key:
-		case ctrl_x_key:
-		case alt_q_key:
-		case ctrl_q_key:
+		int key = game_menu_popup->key;
+		if (key == 301 || key == 17 || key == 24 || key == 272) {
 			game.going = false;
 			kernel.activate_menu = GAME_NO_MENU;
-			break;
-
-		case f1_key:
+		} else if (key == 316) {
+			kernel.activate_menu = (section_id != 9 && !save) ? GAME_SAVE_MENU : GAME_MAIN_MENU;
+		} else if (key == 317) {
+			kernel.activate_menu = save ? GAME_RESTORE_MENU : GAME_MAIN_MENU;
+		} else {
 			kernel.activate_menu = GAME_MAIN_MENU;
-			break;
-
-		case f2_key:
-			if (save) {
-				kernel.activate_menu = GAME_MAIN_MENU;
-			} else {
-				kernel.activate_menu = GAME_SAVE_MENU;
-			}
-			break;
-
-		case f3_key:
-			if (!save) {
-				kernel.activate_menu = GAME_MAIN_MENU;
-			} else {
-				kernel.activate_menu = GAME_RESTORE_MENU;
-			}
-			break;
-
-		case f4_key:
-			kernel.activate_menu = GAME_SCORE_MENU;
-			break;
-
-		case f5_key:
-			kernel.activate_menu = GAME_OPTIONS_MENU;
-			break;
-
-		default:
-			kernel.activate_menu = GAME_MAIN_MENU;
-			break;
 		}
 	} else {
 		kernel.activate_menu = GAME_NO_MENU;
@@ -204,300 +166,112 @@ static void global_menu_save_restore(int save) {
 	popup_dialog_destroy();
 
 	if (result == go_button) {
-		selection = save_list->list->picked_element;
+		int selection = save_list->list->picked_element;
 		game.last_save = selection;
-		if (save) {
-			save_game_name = game_save_directory + ((GAME_MAX_SAVE_LENGTH + 1) * selection);
-			if (!strlen(save_game_name)) {
-				Common::strcpy_s(save_game_name, GAME_MAX_SAVE_LENGTH, menu_quote(quote_menu_unnamed));
-			}
-			status = global_save(selection, save_game_name);
 
+		if (save) {
+			char *save_game_name = game_save_directory + selection * 64;
+			if (!strlen(save_game_name))
+				Common::strcpy_s(save_game_name, 64, menu_quote(quote_menu_unnamed));
+			status = global_save(selection, save_game_name);
 		} else {
 			status = global_restore(selection);
 		}
-
-		if (status > 0)
-			// Dummy name to signal save/load went ok
-			Common::strcpy_s(save_game_buf, "OK");
 	}
 
-	if (status >= 0) {
+	if (status >= 0)
 		global_alert(status);
-	}
-#endif
 }
 
 static void global_menu_options() {
-#if 0
-	int initial_1, initial_2, initial_3;
-	int initial_4, initial_5, initial_6;
-	int former_music;
-	int former_sound;
 	PopupItem *music_item;
-	PopupItem *sound_item;
-	PopupItem *interface_item;
 	PopupItem *fade_item;
-	PopupItem *panning_item;
-	PopupItem *speech_item;
 	PopupItem *done_button;
 	PopupItem *cancel_button;
 	PopupItem *result;
 
 	global_unload_config_parameters();
+	box_param.menu_text_y_offset = 3;
+	box_param.menu_text_x_bonus = 0;
 
-	popup_dialog_create(game_menu_popup, GAME_DIALOG_HEAP, 20);
+	popup_dialog_create(game_menu_popup, 0x1000, 20);
 
-	popup_sprite(box_param.logo, 1, POPUP_CENTER, POPUP_FILL);
+	popup_blank(1);
 	popup_blank(2);
 
-	former_music = config_file.music_flag;
-	former_sound = config_file.sound_flag;
+	int initial_music = config_file.music_flag ? 0 : 1;
+	int former_screen_fade = config_file.screen_fade;
 
-	initial_1 = config_file.music_flag ? 0 : 1;
-	initial_2 = config_file.sound_flag ? 0 : 1;
-	initial_6 = config_file.speech_flag ? 0 : 1;
-	initial_3 = config_file.interface_hotspots;
-	initial_4 = config_file.screen_fade;
-	initial_5 = config_file.panning_speed;
+	music_item = popup_menu(menu_quote(quote_options_music), 0x8000, -1, 160, 10, 2, 40, initial_music);
+	popup_menu_option(music_item, menu_quote(quote_options_music_on));
+	popup_menu_option(music_item, menu_quote(quote_options_music_off));
 
-	music_item = popup_menu(menu_quote(quote_options_item1),
-		POPUP_CENTER, POPUP_FILL, OPTIONS_MENU_ITEM_WIDTH,
-		OPTIONS_MENU_OFF_CENTER,
-		2, 40, initial_1);
-	popup_menu_option(music_item, menu_quote(quote_options_item1a));
-	popup_menu_option(music_item, menu_quote(quote_options_item1b));
+	popup_blank(1);
 
-	popup_blank(SPACE_BETWEEN);
+	fade_item = popup_menu(menu_quote(quote_options_fade), 0x8000, -1, 160, 10, 3, 40, former_screen_fade);
+	popup_menu_option(fade_item, menu_quote(quote_options_fade_1));
+	popup_menu_option(fade_item, menu_quote(quote_options_fade_2));
+	popup_menu_option(fade_item, menu_quote(quote_options_fade_3));
 
-
-	sound_item = popup_menu(menu_quote(quote_options_item2),
-		POPUP_CENTER, POPUP_FILL, OPTIONS_MENU_ITEM_WIDTH,
-		OPTIONS_MENU_OFF_CENTER,
-		2, 40, initial_2);
-	popup_menu_option(sound_item, menu_quote(quote_options_item2a));
-	popup_menu_option(sound_item, menu_quote(quote_options_item2b));
-
-	popup_blank(SPACE_BETWEEN);
-
-
-	speech_item = popup_menu(menu_quote(quote_options_item6),
-		POPUP_CENTER, POPUP_FILL, OPTIONS_MENU_ITEM_WIDTH,
-		OPTIONS_MENU_OFF_CENTER,
-		2, 40, initial_6);
-	popup_menu_option(speech_item, menu_quote(quote_options_item6a));
-	popup_menu_option(speech_item, menu_quote(quote_options_item6b));
-
-	popup_blank(SPACE_BETWEEN);
-
-
-	interface_item = popup_menu(menu_quote(quote_options_item3),
-		POPUP_CENTER, POPUP_FILL, OPTIONS_MENU_ITEM_WIDTH,
-		OPTIONS_MENU_OFF_CENTER,
-		2, 40, initial_3);
-	popup_menu_option(interface_item, menu_quote(quote_options_item3a));
-	popup_menu_option(interface_item, menu_quote(quote_options_item3b));
-
-	popup_blank(SPACE_BETWEEN);
-
-
-	fade_item = popup_menu(menu_quote(quote_options_item4),
-		POPUP_CENTER, POPUP_FILL, OPTIONS_MENU_ITEM_WIDTH,
-		OPTIONS_MENU_OFF_CENTER,
-		3, 40, initial_4);
-	popup_menu_option(fade_item, menu_quote(quote_options_item4a));
-	popup_menu_option(fade_item, menu_quote(quote_options_item4b));
-	popup_menu_option(fade_item, menu_quote(quote_options_item4c));
-
-	popup_blank(SPACE_BETWEEN);
-
-
-	panning_item = popup_menu(menu_quote(quote_options_item5),
-		POPUP_CENTER, POPUP_FILL, OPTIONS_MENU_ITEM_WIDTH,
-		OPTIONS_MENU_OFF_CENTER,
-		3, 40, initial_5);
-	popup_menu_option(panning_item, menu_quote(quote_options_item5a));
-	popup_menu_option(panning_item, menu_quote(quote_options_item5b));
-	popup_menu_option(panning_item, menu_quote(quote_options_item5c));
-
-
-
-	done_button = popup_button(menu_quote(quote_menu_done), POPUP_LEFT);
+	done_button   = popup_button(menu_quote(quote_menu_done), 5);
 	cancel_button = popup_cancel_button(menu_quote(quote_menu_cancel));
 
-	popup_width_force(OPTIONS_MENU_FORCE_WIDTH);
+	popup_width_force(170);
 
 	result = popup_execute();
 
 	kernel.activate_menu = GAME_MAIN_MENU;
 
 	if (result == cancel_button) {
-		switch (game_menu_popup->key) {
-		case alt_x_key:
-		case ctrl_x_key:
-		case alt_q_key:
-		case ctrl_q_key:
+		int key = game_menu_popup->key;
+		if (key == 17 || key == 24 || key == 272 || key == 301) {
 			game.going = false;
 			kernel.activate_menu = GAME_NO_MENU;
-			break;
-
-		case f1_key:
-			kernel.activate_menu = GAME_MAIN_MENU;
-			break;
-
-		case f2_key:
+		} else if (key == 316) {
 			kernel.activate_menu = GAME_SAVE_MENU;
-			break;
-
-		case f3_key:
+		} else if (key == 317) {
 			kernel.activate_menu = GAME_RESTORE_MENU;
-			break;
-
-		case f4_key:
-			kernel.activate_menu = GAME_SCORE_MENU;
-			break;
-
-		case f5_key:
-			kernel.activate_menu = GAME_MAIN_MENU;
-			break;
-
-		default:
-			kernel.activate_menu = GAME_MAIN_MENU;
-			break;
+		} else if (key == 320) {
+			kernel.activate_menu = 8;
 		}
 	}
 
 	if (result == done_button) {
-		config_file.music_flag = !music_item->list->picked_element;
-		config_file.sound_flag = !sound_item->list->picked_element;
-		config_file.speech_flag = !speech_item->list->picked_element;
-		config_file.interface_hotspots = interface_item->list->picked_element;
-		config_file.screen_fade = fade_item->list->picked_element;
-		config_file.panning_speed = panning_item->list->picked_element;
-
-		global_write_config_file();
+		config_file.music_flag    = (music_item->list->picked_element == 0) ? 1 : 0;
+		config_file.screen_fade   = fade_item->list->picked_element;
+		write_config_file();
 		global_load_config_parameters();
-
 		kernel.activate_menu = GAME_NO_MENU;
 	}
 
-	if ((former_music != config_file.music_flag) ||
-		(former_sound != config_file.sound_flag)) {
-		game_exec_function(section_music_reset_pointer);
-	}
-
-	if (!config_file.speech_flag) {
-		if (speech_system_active)
-			speech_all_off();
-	}
-
 	popup_dialog_destroy();
-#endif
-}
-
-static void global_menu_difficulty() {
-#if 0
-	PopupItem *easy_item;
-	PopupItem *result;
-
-	popup_dialog_create(game_menu_popup, GAME_DIALOG_HEAP, 20);
-
-	popup_message(menu_quote(quote_difficulty_title), POPUP_CENTER, POPUP_FILL);
-	popup_blank(6);
-
-	easy_item = popup_menu(menu_quote(quote_difficulty_item1),
-		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0,
-		0, 0, 0);
-
-	popup_blank(SPACE_BETWEEN);
-
-	(void)popup_menu(menu_quote(quote_difficulty_item2),
-		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0,
-		0, 0, 0);
-
-
-	popup_width_force(DIFFICULTY_MENU_FORCE_WIDTH);
-
-	game_menu_popup->cancel_item = NULL;
-
-	result = popup_execute();
-
-	kernel.activate_menu = GAME_NO_MENU;
-
-	if (result == easy_item) {
-		game.difficulty = EASY_MODE;
-	} else {
-		game.difficulty = HARD_MODE;
-	}
-
-	if (result == NULL) {
-		game.going = false;
-	}
-
-	switch (game_menu_popup->key) {
-	case alt_x_key:
-	case ctrl_x_key:
-	case alt_q_key:
-	case ctrl_q_key:
-	case esc_key:
-		game.going = false;
-		break;
-	}
-
-	popup_dialog_destroy();
-#endif
 }
 
 static void global_menu_main() {
-#if 0
 	PopupItem *save_item;
 	PopupItem *restore_item;
-	PopupItem *score_item;
-	PopupItem *options_item;
 	PopupItem *resume_item;
-	PopupItem *quit_item;
+	PopupItem *exit_item;
 	PopupItem *result;
+	Buffer scr_live = { video_y, video_x, mcga_video };
 
-	popup_dialog_create(game_menu_popup, GAME_DIALOG_HEAP, 20);
+	box_param.menu_text_y_offset = 3;
+	box_param.menu_text_x_bonus = 0;
 
-	popup_sprite(box_param.logo, 1, POPUP_CENTER, POPUP_FILL);
-	popup_blank(6);
+	popup_dialog_create(game_menu_popup, 0x1000, 20);
 
-	save_item = popup_menu(menu_quote(quote_main_item1),
-		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0,
-		0, 0, 0);
+	popup_blank(1);
+	popup_blank(2);
 
-	popup_blank(SPACE_BETWEEN);
+	save_item    = popup_menu(menu_quote(quote_main_save),    0x8000, -1, 140, 0, 0, 0, 0);
+	popup_blank(1);
+	restore_item = popup_menu(menu_quote(quote_main_restore), 0x8000, -1, 140, 0, 0, 0, 0);
+	popup_blank(1);
+	resume_item  = popup_menu(menu_quote(quote_main_resume),  0x8000, -1, 140, 0, 0, 0, 0);
+	popup_blank(1);
+	exit_item    = popup_menu(menu_quote(quote_main_exit),    0x8000, -1, 140, 0, 0, 0, 0);
 
-	restore_item = popup_menu(menu_quote(quote_main_item2),
-		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0,
-		0, 0, 0);
-
-	popup_blank(SPACE_BETWEEN);
-
-	score_item = popup_menu(menu_quote(quote_main_item6),
-		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0,
-		0, 0, 0);
-
-	popup_blank(SPACE_BETWEEN);
-
-	options_item = popup_menu(menu_quote(quote_main_item3),
-		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0,
-		0, 0, 0);
-
-	popup_blank(SPACE_BETWEEN);
-
-	resume_item = popup_menu(menu_quote(quote_main_item4),
-		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0,
-		0, 0, 0);
-
-	popup_blank(SPACE_BETWEEN);
-
-	quit_item = popup_menu(menu_quote(quote_main_item5),
-		POPUP_CENTER, POPUP_FILL, MAIN_MENU_ITEM_WIDTH, 0,
-		0, 0, 0);
-
-	popup_width_force(MAIN_MENU_FORCE_WIDTH);
+	popup_width_force(160);
 	game_menu_popup->cancel_item = resume_item;
 
 	result = popup_execute();
@@ -506,49 +280,37 @@ static void global_menu_main() {
 		kernel.activate_menu = GAME_SAVE_MENU;
 	} else if (result == restore_item) {
 		kernel.activate_menu = GAME_RESTORE_MENU;
-	} else if (result == options_item) {
-		kernel.activate_menu = GAME_OPTIONS_MENU;
-	} else if (result == score_item) {
-		kernel.activate_menu = GAME_SCORE_MENU;
 	} else {
 		kernel.activate_menu = GAME_NO_MENU;
 	}
 
-	if (result == quit_item)
-		game.going = false;
+	if (result == exit_item) {
+		g_engine->saveAutosaveIfEnabled();
+		new_room = 904;
+	}
 
-	switch (game_menu_popup->key) {
-	case alt_q_key:
-	case alt_x_key:
-	case ctrl_q_key:
+	int key = game_menu_popup->key;
+	if (key == 301 || key == 17 || key == 24 || key == 272) {
 		game.going = false;
 		kernel.activate_menu = GAME_NO_MENU;
-		break;
-
-	case f5_key:
-		kernel.activate_menu = GAME_SAVE_MENU;
-		break;
-
-	case f7_key:
+	} else if (key == 27 || key == 315) {
+		if (section_id != 9)
+			kernel.activate_menu = GAME_NO_MENU;
+	} else if (key == 316) {
+		if (section_id != 9)
+			kernel.activate_menu = GAME_SAVE_MENU;
+	} else if (key == 317) {
 		kernel.activate_menu = GAME_RESTORE_MENU;
-		break;
-
-	case f8_key:
-		kernel.activate_menu = GAME_SCORE_MENU;
-		break;
-
-	case f10_key:
-		kernel.activate_menu = GAME_OPTIONS_MENU;
-		break;
-
-	default:
-		break;
 	}
-#endif
+
+	popup_dialog_destroy();
+	sprite_draw(series_list[6], 2, &scr_inter, 1, 264);
+	buffer_rect_copy_2(scr_inter, scr_live, 168, 0, 168, 156, 152, 44);
 }
 
 void global_game_menu() {
 	bool loaded = false;
+	bool music = true;
 
 	if (box_param.series == NULL) {
 		Common::strcpy_s(box_param.name, "*BOX");
@@ -584,13 +346,8 @@ void global_game_menu() {
 			}
 			break;
 		case GAME_OPTIONS_MENU:
-			global_menu_options();
-			break;
-		case GAME_DIFFICULTY_MENU:
-			global_menu_difficulty();
-			break;
-		case GAME_SCORE_MENU:
-			global_menu_score();
+			if (section_id != 9)
+				global_menu_options();
 			break;
 		default:
 			kernel.activate_menu = GAME_NO_MENU;
@@ -607,7 +364,12 @@ void global_game_menu() {
 	}
 
 done:
-	;
+	if (!music) {
+		config_file.music_flag = true;
+		midi_stop();
+		config_file.music_flag = false;
+		midi_playing = false;
+	}
 }
 
 } // namespace Forest

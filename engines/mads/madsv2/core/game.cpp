@@ -1036,7 +1036,7 @@ int game_parse_keystroke(int mykey) {
 		break;
 
 	case f4_key:
-		// kernel.activate_menu = GAME_SCORE_MENU;
+		kernel.activate_menu = GAME_OPTIONS_MENU;
 		break;
 
 	case f5_key:

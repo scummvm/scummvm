@@ -28,7 +28,33 @@ namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
-//enum {};
+enum {
+	quote_menu_done          = 1,
+	quote_menu_cancel        = 2,
+	quote_menu_save          = 3,
+	quote_menu_restore       = 4,
+	quote_menu_clear         = 5,
+	quote_menu_ok            = 8,
+	quote_menu_empty         = 9,
+	quote_menu_unnamed       = 10,
+	quote_main_save          = 12,
+	quote_main_restore       = 13,
+	quote_main_resume        = 17,
+	quote_main_exit          = 18,
+	quote_options_music      = 20,
+	quote_options_fade       = 23,
+	quote_options_music_on   = 26,
+	quote_options_music_off  = 27,
+	quote_options_fade_1     = 32,
+	quote_options_fade_2     = 33,
+	quote_options_fade_3     = 34,
+	quote_save_title         = 47,
+	quote_restore_title      = 48,
+	quote_alert_save_ok      = 52,
+	quote_alert_restore_ok   = 53,
+	quote_alert_save_fail    = 54,
+	quote_alert_restore_fail = 55
+};
 
 } // namespace Forest
 } // namespace MADSV2

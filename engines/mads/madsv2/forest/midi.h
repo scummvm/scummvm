@@ -28,6 +28,8 @@ namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
+extern bool midi_playing;
+
 class MidiPlayer : public Audio::MidiPlayer {
 private:
 	// MidiDriver_BASE interface implementation

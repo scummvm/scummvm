@@ -29,6 +29,8 @@ namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
+bool midi_playing;
+
 void MidiPlayer::send(uint32 b) {
 	//_driver->send(b);
 	Audio::MidiPlayer::send(b);
@@ -65,10 +67,12 @@ void MidiPlayer::play(const char *name) {
 
 void midi_play(const char *name) {
 	g_engine->_midiPlayer.play(name);
+	midi_playing = true;
 }
 
 void midi_stop() {
 	g_engine->_midiPlayer.stop();
+	midi_playing = false;
 }
 
 } // namespace Forest
