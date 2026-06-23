@@ -2096,7 +2096,8 @@ void inter_main_loop(int allow_input) {
 			matte_clear_message(inter_sentence_handle);
 			inter_sentence_handle = -1;
 		}
-		if ((strlen(inter_sentence) > 0) && ((inter_input_mode == INTER_BUILDING_SENTENCES) || (inter_input_mode == INTER_LIMITED_SENTENCES))) {
+		if (g_engine->getGameID() != GType_Forest && (strlen(inter_sentence) > 0) &&
+				((inter_input_mode == INTER_BUILDING_SENTENCES) || (inter_input_mode == INTER_LIMITED_SENTENCES))) {
 			use_font = font_main;
 			use_spacing = -1;
 			width = font_string_width(use_font, inter_sentence, use_spacing);
