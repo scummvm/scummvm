@@ -111,6 +111,11 @@ void ForestEngine::global_section_constructor() {
 	Forest::global_section_constructor();
 }
 
+bool ForestEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	return game.going && !win_status && !kernel.activate_menu &&
+		inter_input_mode == INTER_LIMITED_SENTENCES && section_id != 9;
+}
+
 void ForestEngine::syncRoom(Common::Serializer &s) {
 	Forest::sync_room(s);
 }

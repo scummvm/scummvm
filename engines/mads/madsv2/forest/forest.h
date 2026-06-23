@@ -40,6 +40,7 @@ public:
 	~ForestEngine() override;
 
 	Common::Error run() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg) override;
 	void syncRoom(Common::Serializer &s) override;
 
 	void global_init_code() override;
