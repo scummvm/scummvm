@@ -122,6 +122,7 @@ bool EEMEngine::floppyHotspotSearched(uint siteIdx, uint hotspotIdx) const {
 	const byte *site = _mystery.siteData(siteIdx);
 	if (!site)
 		return false;
+	const bool mac = isMacintosh();
 	const uint16 dlgListOff = READ_LE_UINT16(site + 6);
 	const byte *bufBase = _mystery.blobAt(0);
 	const uint32 dsz = _mystery.dataSize();
@@ -129,34 +130,44 @@ bool EEMEngine::floppyHotspotSearched(uint siteIdx, uint hotspotIdx) const {
 		return false;
 	uint32 off = dlgListOff;
 	for (uint h = 0; h < hotspotIdx; h++) {
-		if (off + 10 >= dsz)
+		const uint textCountOff = mac ? off + 13 : off + 10;
+		if (textCountOff >= dsz)
 			return false;
-		const uint32 mainLen = 11u + (uint)bufBase[off + 10];
+		const uint32 mainLen = (mac ? 14u : 11u) +
+			(uint)bufBase[textCountOff];
 		off += mainLen;
 		if (off >= dsz)
 			return false;
 		const uint contCount = (uint)(bufBase[off] & 0x7F);
 		off += 1;
 		for (uint c = 0; c < contCount; c++) {
-			if (off + 10 >= dsz)
+			const uint contTextCountOff = mac ? off + 13 : off + 10;
+			if (contTextCountOff >= dsz)
 				return false;
-			off += 11u + (uint)bufBase[off + 10];
+			off += (mac ? 14u : 11u) +
+				(uint)bufBase[contTextCountOff];
 			if (off >= dsz)
 				return false;
 		}
 	}
-	if (off + 10 >= dsz)
+	const uint textCountOff = mac ? off + 13 : off + 10;
+	if (textCountOff >= dsz)
 		return false;
-	const uint32 mainLen = 11u + (uint)bufBase[off + 10];
+	const uint32 mainLen = (mac ? 14u : 11u) + (uint)bufBase[textCountOff];
 	const uint32 contFlagsOff = off + mainLen;
 	if (contFlagsOff >= dsz)
 		return false;
 	uint32 searchedRecOff = off;
 	if ((bufBase[contFlagsOff] & 0x7F) != 0)
 		searchedRecOff = contFlagsOff + 1;
-	if (searchedRecOff + 11 >= dsz || bufBase[searchedRecOff + 10] == 0)
+	const uint searchedTextCountOff = mac ? searchedRecOff + 13
+										  : searchedRecOff + 10;
+	const uint searchedTextIdxOff = mac ? searchedRecOff + 14
+										: searchedRecOff + 11;
+	if (searchedTextIdxOff >= dsz || searchedTextCountOff >= dsz ||
+		bufBase[searchedTextCountOff] == 0)
 		return false;
-	const uint8 textIdx = bufBase[searchedRecOff + 11] & 0x7F;
+	const uint8 textIdx = bufBase[searchedTextIdxOff] & 0x7F;
 	return textIdx < EEM::Mystery::kCluesFoundCap &&
 		   _mystery._cluesFound[textIdx] != 0;
 }

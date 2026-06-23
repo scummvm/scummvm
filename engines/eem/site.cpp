@@ -849,9 +849,10 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 		}
 	}
 
+	const bool compactSite = _vm->isFloppy() || _vm->isMacintosh();
 	uint16 sitepic = 0;
 	if (sd) {
-		if (_vm->isFloppy()) {
+		if (compactSite) {
 			const uint16 dropsOff = READ_LE_UINT16(sd);
 			const byte *drops = _mystery->blobAt(dropsOff);
 			if (drops)
@@ -867,7 +868,7 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 	renderBackground(siteNum);
 
 	if (playArrival) {
-		if (_vm->isFloppy())
+		if (compactSite)
 			renderFloppyDrops(siteNum);
 		else
 			renderStaticDrops(siteNum);
@@ -883,7 +884,7 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 		renderBackground(siteNum);
 	}
 
-	if (_vm->isFloppy())
+	if (compactSite)
 		renderFloppyDrops(siteNum);
 	else
 		renderStaticDrops(siteNum);
@@ -906,7 +907,7 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 	//       _VisitedSite[_SiteNumber] = 1;
 	//   }
 	// SiteIndex[+2..+3] = byte offset of entry-clue ClueBlock.
-	if (firstVisit) {
+	if (firstVisit && !_vm->isMacintosh()) {
 		const byte *idx = _mystery->siteIndexEntry(siteNum);
 		if (idx) {
 			const uint16 clueOff = READ_LE_UINT16(idx + 2);
@@ -920,7 +921,7 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 			_mystery->_visitedSite[siteNum] = 1;
 		// Dialog overlay leaves portrait/balloon residue; refresh & re-snapshot.
 		renderBackground(siteNum);
-		if (_vm->isFloppy())
+		if (compactSite)
 			renderFloppyDrops(siteNum);
 		else
 			renderStaticDrops(siteNum);
@@ -1284,6 +1285,7 @@ void SiteScreen::renderFloppyDrops(uint siteNum) {
 	const byte *site = _mystery->siteData(siteNum);
 	if (!site)
 		return;
+	const bool mac = _vm && _vm->isMacintosh();
 	const uint16 dropsOff = READ_LE_UINT16(site);
 	const byte *drops = _mystery->blobAt(dropsOff);
 	if (!drops)
@@ -1295,10 +1297,11 @@ void SiteScreen::renderFloppyDrops(uint siteNum) {
 		return;
 
 	for (uint i = 0; i < count; i++) {
-		const byte *e = drops + 2 + i * 5;
+		const byte *e = drops + 2 + i * (mac ? 6 : 5);
 		const uint16 picID = READ_LE_UINT16(e + 0);
 		const int16  x     = (int16)READ_LE_UINT16(e + 2);
-		const int16  y     = (int16)e[4];
+		const int16  y     = mac ? (int16)READ_LE_UINT16(e + 4)
+								  : (int16)e[4];
 		if (picID == 0)
 			continue;
 		Picture pic;
@@ -1311,6 +1314,9 @@ void SiteScreen::renderFloppyDrops(uint siteNum) {
 
 void SiteScreen::renderAnimatedDrops(uint siteNum, uint32 tickMs) {
 	if (!_mystery)
+		return;
+
+	if (_vm && _vm->isMacintosh())
 		return;
 
 	if (_vm && _vm->isFloppy()) {
@@ -1381,6 +1387,9 @@ void SiteScreen::scanColorCycles(uint siteNum) {
 	if (!_mystery)
 		return;
 
+	if (_vm && _vm->isMacintosh())
+		return;
+
 	if (_vm && _vm->isFloppy()) {
 		const byte *siteAnim = _mystery->floppySiteAnimData(siteNum);
 		if (!siteAnim)
@@ -1422,7 +1431,9 @@ void SiteScreen::applyColorCycles() {
 }
 
 void SiteScreen::captureBgSnapshot() {
-	_bgSnapshot.create(kScreenWidth, kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
+	const int sw = _vm ? _vm->screenWidth() : kScreenWidth;
+	const int sh = _vm ? _vm->screenHeight() : kScreenHeight;
+	_bgSnapshot.create(sw, sh, Graphics::PixelFormat::createFormatCLUT8());
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen) {
 		_snapshotSite = -1;
@@ -1433,14 +1444,18 @@ void SiteScreen::captureBgSnapshot() {
 }
 
 void SiteScreen::restoreBgSnapshot() {
-	if (_bgSnapshot.w != kScreenWidth || _bgSnapshot.h != kScreenHeight)
+	const int sw = _vm ? _vm->screenWidth() : kScreenWidth;
+	const int sh = _vm ? _vm->screenHeight() : kScreenHeight;
+	if (_bgSnapshot.w != sw || _bgSnapshot.h != sh)
 		return;
 	g_system->copyRectToScreen(_bgSnapshot.getPixels(), _bgSnapshot.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
+							   0, 0, sw, sh);
 }
 
 void SiteScreen::syncCompositedScreen() {
-	Graphics::ManagedSurface snapshot(kScreenWidth, kScreenHeight,
+	const int sw = _vm ? _vm->screenWidth() : kScreenWidth;
+	const int sh = _vm ? _vm->screenHeight() : kScreenHeight;
+	Graphics::ManagedSurface snapshot(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
 
 	Graphics::Surface *screen = g_system->lockScreen();
@@ -1450,7 +1465,7 @@ void SiteScreen::syncCompositedScreen() {
 	g_system->unlockScreen();
 
 	g_system->copyRectToScreen(snapshot.getPixels(), snapshot.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
+							   0, 0, sw, sh);
 }
 
 bool SiteScreen::partnerIdleAnimParams(uint siteNum, uint16 &animId,
@@ -1459,7 +1474,16 @@ bool SiteScreen::partnerIdleAnimParams(uint siteNum, uint16 &animId,
 	if (!site)
 		return false;
 	const uint8 partner = _vm->getPartnerIndex();
-	if (_vm->isFloppy()) {
+	if (_vm->isMacintosh()) {
+		const uint16 spkOff = READ_LE_UINT16(site + 8);
+		const byte *spk = _mystery->blobAt(spkOff);
+		if (!spk)
+			return false;
+		const uint poseOff = partner == 0 ? 0 : 6;
+		animId = READ_LE_UINT16(spk + poseOff + 0);
+		x      = (int)READ_LE_UINT16(spk + poseOff + 2);
+		y      = (int)READ_LE_UINT16(spk + poseOff + 4);
+	} else if (_vm->isFloppy()) {
 		const uint16 spkOff = READ_LE_UINT16(site + 8);
 		const byte *spk = _mystery->blobAt(spkOff);
 		if (!spk)
@@ -1521,7 +1545,7 @@ void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 }
 
 bool SiteScreen::renderFloppyHotspotPartnerPose(uint siteNum) {
-	if (!_vm || !_vm->isFloppy() || !_mystery)
+	if (!_vm || (!_vm->isFloppy() && !_vm->isMacintosh()) || !_mystery)
 		return false;
 
 	const byte *site = _mystery->siteData(siteNum);
@@ -1529,9 +1553,11 @@ bool SiteScreen::renderFloppyHotspotPartnerPose(uint siteNum) {
 		return false;
 
 	const uint16 spkOff = READ_LE_UINT16(site + 8);
+	const bool mac = _vm->isMacintosh();
 	const uint poseOff = (_vm->getPartnerIndex() == kPartnerJake)
-		? 0x28 : 0x2d;
-	if ((uint32)spkOff + poseOff + 5 > _mystery->dataSize())
+		? (mac ? 0x30 : 0x28) : (mac ? 0x36 : 0x2d);
+	const uint poseSize = mac ? 6 : 5;
+	if ((uint32)spkOff + poseOff + poseSize > _mystery->dataSize())
 		return false;
 
 	const byte *pose = _mystery->blobAt((uint32)spkOff + poseOff);
@@ -1540,7 +1566,7 @@ bool SiteScreen::renderFloppyHotspotPartnerPose(uint siteNum) {
 
 	const uint16 animId = READ_LE_UINT16(pose + 0);
 	const int x = (int)READ_LE_UINT16(pose + 2);
-	const int y = (int)pose[4];
+	const int y = mac ? (int)READ_LE_UINT16(pose + 4) : (int)pose[4];
 
 	Animation anim;
 	if (!_vm->getAni().loadAnimation(animId, anim) || anim.empty())
@@ -1567,7 +1593,7 @@ void SiteScreen::renderBackground(uint siteNum) {
 	const byte *site = _mystery->siteData(siteNum);
 	uint16 sitepic = 0;
 	if (site) {
-		if (_vm->isFloppy()) {
+		if (_vm->isFloppy() || _vm->isMacintosh()) {
 			const uint16 dropsOff = READ_LE_UINT16(site);
 			const byte *drops = _mystery->blobAt(dropsOff);
 			if (drops)
@@ -1634,8 +1660,9 @@ void SiteScreen::renderHotspots(uint siteNum) {
 	// don't inherit the first site's seen state after travel/reload).
 	// Floppy = 8-byte plain rect only; searched state is derived by
 	// walking the dialog record list, like `_HotspotSearched_Floppy`.
+	const bool compact = _vm && (_vm->isFloppy() || _vm->isMacintosh());
 	const bool floppy = _vm && _vm->isFloppy();
-	const uint stride = floppy ? 8 : 14;
+	const uint stride = compact ? 8 : 14;
 	// The floppy SITEPALS has at least one searchable site where 0xFF is
 	// yellow. The CD corrected that palette data; for floppy, draw with an
 	// existing white entry from the current palette instead of changing it.
@@ -1646,11 +1673,15 @@ void SiteScreen::renderHotspots(uint siteNum) {
 		const int16 y1 = (int16)READ_LE_UINT16(r + 2);
 		const int16 x2 = (int16)READ_LE_UINT16(r + 4);
 		const int16 y2 = (int16)READ_LE_UINT16(r + 6);
-		const Common::Rect rect(MAX<int>(0, x1), MAX<int>(0, y1),
-								MIN<int>(screen->w, x2),
-								MIN<int>(screen->h, y2));
+		const int left = MAX<int>(0, x1);
+		const int top = MAX<int>(0, y1);
+		const int right = MIN<int>(screen->w, x2);
+		const int bottom = MIN<int>(screen->h, y2);
+		if (right <= left || bottom <= top)
+			continue;
+		const Common::Rect rect(left, top, right, bottom);
 		bool seen = false;
-		if (floppy) {
+		if (compact) {
 			seen = _vm->floppyHotspotSearched(siteNum, i);
 		} else {
 			const uint seenKey = READ_LE_UINT16(r + 0xa);
@@ -1697,7 +1728,7 @@ int SiteScreen::hotspotAtPoint(uint siteNum, int x, int y) const {
 	if (!spots)
 		return -1;
 
-	const uint stride = _vm && _vm->isFloppy() ? 8 : 14;
+	const uint stride = _vm && (_vm->isFloppy() || _vm->isMacintosh()) ? 8 : 14;
 	for (uint i = 0; i < count; i++) {
 		const byte *r = spots + i * stride;
 		const int16 x1 = (int16)READ_LE_UINT16(r + 0);
@@ -1713,7 +1744,7 @@ int SiteScreen::hotspotAtPoint(uint siteNum, int x, int y) const {
 // CD hotspot row +0xc..d: cursor id for `_SwitchMouse` (EEM1 ships 0; EEM2
 // uses 2/3 examine, etc.). Floppy rows are 8-byte rects with no cursor field.
 int SiteScreen::hotspotCursorId(uint siteNum, int idx) const {
-	if (idx < 0 || (_vm && _vm->isFloppy()))
+	if (idx < 0 || (_vm && (_vm->isFloppy() || _vm->isMacintosh())))
 		return 0;
 	const byte *spots = _mystery->hotspots(siteNum);
 	if (!spots || (uint)idx >= _mystery->hotspotCount(siteNum))
@@ -1777,7 +1808,7 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 
 	// Floppy: 8-byte rects only (no clue metadata @ +0xa/+8). Dialog
 	// records live in a separate list @ `site_data[+6]`.
-	if (_vm->isFloppy()) {
+	if (_vm->isFloppy() || _vm->isMacintosh()) {
 		if (hotIdx < Mystery::kHotSpotsCap)
 			_mystery->_hotSpotsSeen[hotIdx] = 1;
 		_mystery->_searchLocationNumber = (uint16)hotIdx;

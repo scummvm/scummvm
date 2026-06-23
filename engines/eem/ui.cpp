@@ -130,7 +130,7 @@ bool readBigMapEntryInfo(const byte *entry, bool floppy, bool macintosh,
 	if (macintosh) {
 		out.detailX   = READ_LE_UINT16(entry + 0x0);
 		out.detailY   = READ_LE_UINT16(entry + 0x2);
-		out.buttonId  = entry[0x4];
+		out.buttonId  = entry[0x5];
 		out.overviewX = READ_LE_UINT16(entry + 0x6);
 		out.overviewY = READ_LE_UINT16(entry + 0x8);
 		out.crime     = READ_LE_UINT16(entry + 0xa);
@@ -178,7 +178,11 @@ bool loadMacBigMapPixels(Common::Array<byte> &mapPixels,
 	mapPixels.resize((uint32)mapW * mapH);
 	for (uint y = 0; y < mapH; y++) {
 		const byte *src = (const byte *)mapPic.surface.getBasePtr(0, y);
-		memcpy(mapPixels.data() + y * mapW, src, mapW);
+		byte *dst = mapPixels.data() + y * mapW;
+		// BIGMAP.DBD uses 0xff for dark coast/detail pixels, but the Mac
+		// detail-map palette keeps 0xff white for the UI frame/buttons.
+		for (uint x = 0; x < mapW; x++)
+			dst[x] = src[x] == 0xff ? 0x00 : src[x];
 	}
 	return true;
 }
@@ -3222,6 +3226,12 @@ void EEMEngine::doBigMap() {
 
 	if (!_mystery.isLoaded())
 		return;
+
+	if (isMacintosh()) {
+		for (uint i = 0; i < _mystery.numSites() &&
+						 i < Mystery::kVisitedSiteCap; i++)
+			_mystery._onSites[i] = 1;
+	}
 
 	if (isLondon()) {
 		_mystery._pendingSiteJump = 0;

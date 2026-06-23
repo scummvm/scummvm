@@ -645,6 +645,11 @@ void EEMEngine::doInitClues() {
 	if (!floppy) {
 		const uint16 startSite = isMacintosh() ? (uint16)ib[1]
 											   : READ_LE_UINT16(ib + 2);
+		if (isMacintosh()) {
+			const uint sites = _mystery.numSites();
+			for (uint s = 0; s < sites && s < Mystery::kVisitedSiteCap; s++)
+				_mystery._onSites[s] = 1;
+		}
 		if (startSite < Mystery::kVisitedSiteCap)
 			_mystery._onSites[startSite] = 1;
 		_mystery._siteNumber = startSite;
@@ -1471,7 +1476,8 @@ void EEMEngine::displayFloppyBriefing(const byte *initBlock) {
 }
 
 void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
-	if (!_mystery.isLoaded() || !isFloppy())
+	const bool mac = isMacintosh();
+	if (!_mystery.isLoaded() || (!isFloppy() && !mac))
 		return;
 	const byte *site = _mystery.siteData(siteNum);
 	if (!site)
@@ -1483,18 +1489,20 @@ void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
 	uint32 off = dlgListOff;
 	for (uint h = 0; h < hotIdx; h++) {
 		const byte *rec = bufBase + off;
-		off += 11 + rec[10];
+		off += (mac ? 14 : 11) + rec[mac ? 13 : 10];
 		const uint contCount = bufBase[off] & 0x7F;
 		off += 1;
 		for (uint c = 0; c < contCount; c++) {
 			const byte *cr = bufBase + off;
-			off += 11 + cr[10];
+			off += (mac ? 14 : 11) + cr[mac ? 13 : 10];
 		}
 	}
 	if (off >= _mystery.dataSize())
 		return;
 
-	Graphics::ManagedSurface siteBG(kScreenWidth, kScreenHeight,
+	const int sw = screenWidth();
+	const int sh = screenHeight();
+	Graphics::ManagedSurface siteBG(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
 	{
 		Graphics::Surface *screen = g_system->lockScreen();
@@ -1504,7 +1512,7 @@ void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
 		}
 	}
 	const byte *mainRec = bufBase + off;
-	const uint mainLen = 11u + (uint)mainRec[10];
+	const uint mainLen = (mac ? 14u : 11u) + (uint)mainRec[mac ? 13 : 10];
 	uint contCount = 0;
 	uint contFlagsByte = 0;
 	if (off + mainLen < _mystery.dataSize()) {
@@ -1524,7 +1532,7 @@ void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
 		return;
 
 	g_system->copyRectToScreen(siteBG.getPixels(), siteBG.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
+							   0, 0, sw, sh);
 	g_system->updateScreen();
 	displayFloppyDialogRecords(bufBase + contOff, contCount, 0);
 }

@@ -87,6 +87,58 @@ static uint16 readBE16(const Common::Array<byte> &data, uint offset) {
 	return READ_BE_UINT16(data.data() + offset);
 }
 
+static void normalizeMacSiteData(Common::Array<byte> &data,
+								 const uint16 *section) {
+	if (section[2] >= data.size() || section[3] >= data.size())
+		return;
+
+	const uint numSites = MIN<uint>((uint)data[section[2]],
+									Mystery::kVisitedSiteCap);
+	Common::Array<uint16> siteOffsets;
+	siteOffsets.resize(numSites);
+	for (uint i = 0; i < numSites; i++)
+		siteOffsets[i] = readBE16(data, section[3] + i * 2);
+
+	// The site index itself is a table of big-endian offsets.
+	swapU16Range(data, section[3], section[3] + numSites * 2);
+
+	for (uint i = 0; i < numSites; i++) {
+		const uint16 siteOff = siteOffsets[i];
+		if (siteOff + 12 > data.size())
+			continue;
+
+		const uint16 dropsOff = readBE16(data, siteOff + 0);
+		const uint16 hotspotOff = readBE16(data, siteOff + 4);
+		const uint16 speakerOff = readBE16(data, siteOff + 8);
+		const uint16 nextSiteOff = readBE16(data, siteOff + 10);
+
+		// Compact site records are six offset words.
+		swapU16Range(data, siteOff, siteOff + 12);
+
+		// Drop blocks keep byte[0]=sitepic and byte[1]=count, then Mac uses
+		// count x {u16 pic, u16 x, u16 y}.
+		if (dropsOff + 2 <= data.size()) {
+			const uint count = data[dropsOff + 1];
+			swapU16Range(data, dropsOff + 2,
+						 dropsOff + 2 + count * 6);
+		}
+
+		// Hotspot blocks keep byte[0]=count, then count x {u16 x1, y1, x2, y2}.
+		if (hotspotOff + 1 <= data.size()) {
+			const uint count = data[hotspotOff];
+			swapU16Range(data, hotspotOff + 1,
+						 hotspotOff + 1 + count * 8);
+		}
+
+		// Speaker/pose blocks are word triples. They run until the next site
+		// data record (or the next major section for the final site).
+		uint speakerEnd = nextSiteOff;
+		if (speakerEnd <= speakerOff || speakerEnd > data.size())
+			speakerEnd = section[4];
+		swapU16Range(data, speakerOff, speakerEnd);
+	}
+}
+
 static void normalizeMacMystery(Common::Array<byte> &data) {
 	if (data.size() <= 20)
 		return;
@@ -108,7 +160,7 @@ static void normalizeMacMystery(Common::Array<byte> &data) {
 	// section[7] are raw strings and must stay byte-exact.
 	swapU16Range(data, section[1], section[2]); // clue/site chain table
 	swapU16Range(data, section[2] + 1, section[3]); // counted map entries
-	swapU16Range(data, section[3], section[4]); // site index + site data
+	normalizeMacSiteData(data, section);
 	swapU16Range(data, section[4], section[7]); // notebook index
 	swapU16Range(data, section[5] + 1, section[6]); // compact gallery metadata
 	swapU16Range(data, section[8], MIN<uint>(section[8] + 12, section[9]));
