@@ -411,6 +411,13 @@ private:
 	void showHighScoreLogo();
 	void showFloppyStormLogo();
 
+	bool waitIntroDelay(uint32 maxMs);
+	void runMacStartup();
+	void showMacEAKidsLogo();
+	void showMacStillLogo(uint picId, uint palId, uint holdMs,
+						  bool playThunder);
+	void showMacTitleIntro();
+
 	void runLondonStartup();
 	/// Start London mystery 0 after a freshly-created detective chooses a partner.
 	bool startLondonTrainingMystery();
