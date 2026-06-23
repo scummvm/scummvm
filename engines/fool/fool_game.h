@@ -98,21 +98,21 @@ public:
 	void sub_128_1e4(const Common::U32String &unk1);
 	void sub_128_2be(int16 unk2, int16 unk1);
 	void sub_128_342(int16 unk2, int16 unk1);
-	void delay(int16 ticks); // sub_128_3da
-	void sub_128_406(int16 unk1);
+	void delay(int16 numTicks); // sub_128_3da
+	void delayFromMarker(int16 numTicks); // sub_128_406
 	int16 puzzlesReadByte(); // sub_128_428
 	int16 puzzlesReadShort(); // sub_128_446
 	int32 puzzlesReadLong(); // sub_128_462
 	Common::String puzzlesReadString(); // sub_128_49a
-	void sub_128_4da(int16 unk1);
-	void playTone(int16 freq, int16 duration, int16 wait);
+	void toggleMouseCursor(bool visible); // sub_128_4da
+	void playTone(int16 freq, int16 duration, bool wait);
 	void drawPuzzleButton(const Common::U32String &symbol); // sub_128_55c
 	int16 sub_128_5fe();
 	OSErr sub_128_64c(int16 unk1);
 	void fillRect(int16 patternID, PatternMode mode, int16 top, int16 left, int16 bottom, int16 right); // sub_128_69c
 	void drawTarotCard(int16 rectID, int16 deckPos, int16 type); // sub_128_712
 	void fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID); // sub_128_8b4
-	void sub_128_918(const Common::U32String &unk1);
+	void drawStringCenter(const Common::U32String &str, int16 yPos); // sub_128_918
 	void zoomRect(int16 startTop, int16 startLeft, int16 startBottom, int16 startRight, int16 endTop, int16 endLeft, int16 endBottom, int16 endRight, int16 patternID, PatternMode mode, int16 steps); // sub_128_962
 	void sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 	void getNextEvent(uint32 mask); // sub_128_c6a
@@ -270,13 +270,13 @@ public:
 	// fool_sentence.cpp
 	void sentenceRun(); // sub_135_004
 	void sentenceOnClick(); // sub_135_5b6
-	void sentenceAddLeft(); // sub_135_7d6
-	void sentenceAddRight(); // sub_135_7fa
-	void sentenceAddLeftRight(); // sub_135_81e
-	void sentenceReplace(); // sub_135_86a
+	void sentenceAddLeft(int16 index); // sub_135_7d6
+	void sentenceAddRight(int16 index); // sub_135_7fa
+	void sentenceAddLeftRight(int16 index); // sub_135_81e
+	void sentenceReplace(int16 index); // sub_135_86a
 	void sentenceReverse(); // sub_135_94c
 	void sentenceUndo(); // sub_135_9ba
-	void sentenceDrawButton(); // sub_135_a34
+	void sentenceDrawButton(int16 gridIndex); // sub_135_a34
 	void sentenceDrawBuffer(); // sub_135_b16
 	void sentenceStoreState(); // sub_135_c1c
 	void sentenceSuccess(); // sub_135_cee
@@ -419,7 +419,7 @@ public:
 
 	// fool_humbug.cpp
 	void humbugRun(); // sub_142_004
-	void humbugTrail(); // sub_142_0e6
+	void humbugPlayTrail(); // sub_142_0e6
 	void sub_142_370();
 	void humbugSuccess(); // sub_142_5f2
 	void sub_142_630();
@@ -489,7 +489,6 @@ private:
 	int16 var_i16_688;
 	int16 var_i16_68a;
 	int16 var_i16_68c;
-	uint32 var_i32_68e;
 	uint32 var_i32_692;
 	// this is normally a raw pointer to some memory,
 	// instead we track it as a handle + offset
@@ -497,8 +496,7 @@ private:
 	Handle _puzzleDataBuffer; // var_bytes_696
 	int16 var_i16_78a;
 	int16 var_i16_79e;
-	int16 var_i16_7a0;
-	int16 var_i16_7a2;
+	bool _mouseVisible; // var_i16_7a0
 	int16 var_i16_7a8;
 	int16 var_i16_7aa;
 	int16 var_i16_7b0;
@@ -584,7 +582,6 @@ private:
 	int16 var_i16_1060;
 	int16 _polyominoPosX; // var_i16_1062
 	int16 _polyominoPosY; // var_i16_1064
-	int16 var_i16_1066;
 	int16 _jumbleGameType; // var_i16_1068
 	int16 var_i16_106a;
 	SourceMode var_i16_106c;
@@ -733,7 +730,7 @@ private:
 	int16 var_i16_2338;
 	bool _deathWhiteEyeNeedsDraw; // var_i16_233a
 	int16 var_i16_233e;
-	int16 var_i16_233c;
+	int16 _humbugTrailIndex; // var_i16_233c
 
 	int16 var_i16_2340;
 	int16 var_i16_2342;
@@ -778,8 +775,7 @@ private:
 	float arr_bcd_5dbc[8];
 	BitMap arr_bmp_5dfc; // 22000, close to a screen page
 	BitMap _jigsawPieces[128];
-	int16 arr_i16_9894[0xa43];					// inside 5dfc, used for humbug
-	int16 arr_i16_ac1c[0xa43];					// inside 5dfc, used for humbug
+	Common::Point _humbugTrail[0xa43];
 	BitMap arr_bmp_b3ec;
 	BitMap arr_bmp_bbbc; // used by death
 	BitMap arr_bmp_c38c; // used by death

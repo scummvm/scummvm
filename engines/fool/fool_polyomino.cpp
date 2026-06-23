@@ -313,7 +313,7 @@ void FoolGame::polyominoOnClick() {
 	_zbasic->picture(this->_polyominoPosX, this->_polyominoPosY, this->_polyominoPics[this->var_i16_7cc*4 + 2]);
 	// 133:0b1c
 	this->polyominoDrawFrame();
-	this->sub_128_4da(0);
+	this->toggleMouseCursor(false);
 	this->var_i16_1ab6 = this->_polyominoPosX;
 	this->var_i16_1ab8 = this->_polyominoPosY;
 	_zbasic->picture(this->_polyominoPosX, this->_polyominoPosY, this->_polyominoPics[this->var_i16_7cc*4]);
@@ -388,7 +388,7 @@ void FoolGame::polyominoOnClick() {
 	// 133:0ea2
 	this->polyominoDrawFrame();
 	this->polyominoCheckIfSolved();
-	this->sub_128_4da(1);
+	this->toggleMouseCursor(true);
 }
 
 void FoolGame::polyominoCancelMove() {

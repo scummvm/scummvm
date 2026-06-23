@@ -33,7 +33,7 @@ namespace Fool {
 void FoolGame::mazeRun() {
 	// 136:0004
 	fetchPuzzleData();
-	sub_128_4da(0);
+	toggleMouseCursor(false);
 	for (int16 i = 0; i <= 0x17; i++) {
 		arr_i16_1eb8[i] = puzzlesReadShort();
 	}
@@ -146,7 +146,7 @@ void FoolGame::mazeRun() {
 	mazeSetupMenu();
 	sub_136_ade();
 	_stateFlags = kStateNull;
-	sub_128_4da(1);
+	toggleMouseCursor(true);
 	if (_mazePlayerX == 0x19) {
 		_activePuzzleSolved = true;
 	} else {
@@ -502,8 +502,7 @@ void FoolGame::mazePrintMessage() {
 		_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
 		int16 width = _toolbox->StringWidth(var_str_1ce2);
 		fillRect(0x13b, 0xf1 - (width / 2), 0x14f, 0x10f + (width / 2), 2);
-		var_i16_7a2 = 0x149;
-		sub_128_918(var_str_1ce2.decode(Common::kMacRoman));
+		drawStringCenter(var_str_1ce2.decode(Common::kMacRoman), 0x149);
 	}
 	// 136:0e3a
 	var_str_1578 = var_str_1ce2.decode(Common::kMacRoman);
@@ -1040,7 +1039,7 @@ void FoolGame::mazeMovementTrail() {
 			if (var_i16_1dec == 2) {
 				_toolbox->InvertOval(temp);
 			}
-			sub_128_406(0);
+			delayFromMarker(0);
 		}
 	}
 }
@@ -1059,7 +1058,7 @@ void FoolGame::mazeLoadTone(int16 offset) {
 
 void FoolGame::mazePlayTone() {
 	// 136:2538
-	playTone(mazeToneFreq, var_i16_1372, 0);
+	playTone(mazeToneFreq, var_i16_1372, false);
 	if ((mazeToneFreq > 0xe) && (mazeToneFreq < 0x7d00)) {
 		mazeToneFreq += mazeToneFreqStep;
 	}
@@ -1516,7 +1515,7 @@ void FoolGame::sub_136_3a30() {
 	}
 	if (var_i16_1de6 == 0) {
 		var_i16_1f08 = _zbasic->decodeInt(_zbasic->midStr(_activePuzzleBuffer, var_i16_1f0a, 2));
-		debugC(5, kDebugLoading, "sub_136_3a80: mask[%d] %04x", var_i16_1f0a, var_i16_1f08);
+		debugC(5, kDebugLoading, "sub_136_3a30: mask[%d] %04x", var_i16_1f0a, var_i16_1f08);
 		var_i16_1f0a += 2;
 	}
 	// 136:3a6e
