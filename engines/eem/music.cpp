@@ -38,6 +38,8 @@ namespace EEM {
 const int kMidiDriverFlags = MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32;
 const int kMacMidiDriverFlags = MDT_MIDI | MDT_PREFER_GM;
 const uint16 kInvalidMacMidiResource = 0xffff;
+const uint16 kInvalidMacSongResource = 0xffff;
+const byte kNoMacInstrument = 0xff;
 
 Common::String musicNameFromPath(const Common::Path &path) {
 	Common::String name = path.baseName();
@@ -48,42 +50,60 @@ Common::String musicNameFromPath(const Common::Path &path) {
 	return name;
 }
 
-uint16 macMidiResourceIdForFile(const Common::Path &path) {
-	const Common::String name = musicNameFromPath(path);
-	if (name == "THEME" || name == "THEME SONG")
-		return 0;
-	if (name == "WIN1" || name == "FANFARE2")
-		return 1;
-	if (name == "TRAVEL-1")
-		return 2;
-	if (name == "TRAVEL-4")
-		return 3;
-	if (name == "TRAVEL-6")
-		return 4;
-	if (name == "TRAVEL-7")
-		return 5;
-	if (name == "TRAVEL-8")
-		return 6;
-	if (name == "WRONG2")
-		return 7;
-	return kInvalidMacMidiResource;
+Common::SeekableReadStream *openMacMidiResource(uint16 resourceId) {
+	Common::SeekableReadStream *stream =
+		openMacResource(Common::Path("EEM Sound&Music"),
+						MKTAG('c', 'm', 'i', 'd'), resourceId);
+	if (stream)
+		return stream;
+
+	stream = openMacResource(Common::Path("EEM Sound&Music"),
+							 MKTAG('M', 'I', 'D', 'I'), resourceId);
+	if (stream)
+		return stream;
+
+	return openMacResource(Common::Path("EEM Sound&Music"),
+						   MKTAG('M', 'i', 'd', 'i'), resourceId);
 }
 
-uint16 macMidiResourceIdForMus(uint num) {
+uint16 macSongResourceIdForFile(const Common::Path &path) {
+	const Common::String name = musicNameFromPath(path);
+	if (name == "THEME" || name == "THEME SONG")
+		return 1000;
+	if (name == "WIN1" || name == "FANFARE2")
+		return 1001;
+	if (name == "TRAVEL-1")
+		return 1006;
+	if (name == "TRAVEL-4")
+		return 1002;
+	if (name == "TRAVEL-6")
+		return 1004;
+	if (name == "TRAVEL-7")
+		return 1003;
+	if (name == "TRAVEL-8")
+		return 1005;
+	if (name == "WRONG2")
+		return 1007;
+	return kInvalidMacSongResource;
+}
+
+uint16 macSongResourceIdForMus(uint num) {
 	static const uint16 kTravelTracks[5] = {
-		4, 3, 5, 2, 6  // Travel-6, Travel-4, Travel-7, Travel-1, Travel-8
+		1004, 1002, 1003, 1006, 1005 // Travel-6/4/7/1/8
 	};
 	if (num < ARRAYSIZE(kTravelTracks))
 		return kTravelTracks[num];
 	if (num == 5)
-		return 1; // WIN1.MID
+		return 1001; // Win1
 	if (num == 6)
-		return 7; // WRONG2.MID
-	return kInvalidMacMidiResource;
+		return 1007; // Wrong2
+	return kInvalidMacSongResource;
 }
 
 MusicPlayer::MusicPlayer(bool isFloppy, bool isMacintosh) :
 	_isFloppy(isFloppy), _isMacintosh(isMacintosh) {
+	clearMacInstrumentMap();
+
 	// _InitMIDI @ 20a2:013a — `_AIL_register_driver` against
 	// ADLIB.ADV / SBFM.ADV / MT32MPU.ADV. We honour the launcher's
 	// "Music driver" setting and prefer MT-32 when unset.
@@ -145,6 +165,15 @@ MusicPlayer::MusicPlayer(bool isFloppy, bool isMacintosh) :
 }
 
 void MusicPlayer::send(uint32 b) {
+	if (_isMacintosh && (b & 0xF0) == 0xC0) {
+		const byte channel = (byte)(b & 0x0F);
+		const byte rawProgram = (byte)((b >> 8) & 0x7F);
+		const byte inst = _macChannelInstrument[channel] != kNoMacInstrument
+			? _macChannelInstrument[channel] : rawProgram;
+		const byte gmProgram = mapMacInstrumentToGM(inst, channel);
+		b = (b & 0xFFFF00FF) | ((uint32)gmProgram << 8);
+	}
+
 	// Miles drivers (both AdLib and MT-32) implement their own per-
 	// source-channel mixing and timbre installation, so forward the raw
 	// event.
@@ -184,13 +213,95 @@ void MusicPlayer::startLoadedMusic(const Common::String &name, bool loop,
 		   name.c_str(), _xmiData.size(), loop, _milesAudioMode, smf);
 }
 
+void MusicPlayer::clearMacInstrumentMap() {
+	memset(_macChannelInstrument, kNoMacInstrument,
+		   sizeof(_macChannelInstrument));
+}
+
+byte MusicPlayer::mapMacInstrumentToGM(byte inst, byte channel) const {
+	if (channel == 9)
+		return 0;
+
+	switch (inst) {
+	case 2:
+	case 3:
+		return 0;   // Piano
+	case 11:
+		return 16;  // Organ
+	case 60:
+		return 24;  // Guitar
+	case 64:
+	case 65:
+		return 33;  // Bass
+	case 73:
+	case 74:
+	case 75:
+		return 73;  // Flute
+	case 83:
+	case 84:
+		return 71;  // Clarinet
+	default:
+		return inst < 128 ? inst : 0;
+	}
+}
+
+bool MusicPlayer::loadMacSong(uint16 resourceId, uint16 &midiId) {
+	midiId = kInvalidMacMidiResource;
+	clearMacInstrumentMap();
+
+	Common::SeekableReadStream *stream =
+		openMacResource(Common::Path("EEM Sound&Music"),
+						MKTAG('S', 'O', 'N', 'G'), resourceId);
+	if (!stream) {
+		warning("MusicPlayer: Mac SONG resource %u missing", resourceId);
+		return false;
+	}
+
+	const uint32 size = (uint32)stream->size();
+	if (size < 18) {
+		delete stream;
+		warning("MusicPlayer: Mac SONG resource %u too short", resourceId);
+		return false;
+	}
+
+	Common::Array<byte> song;
+	song.resize(size);
+	if (stream->read(song.data(), size) != size) {
+		delete stream;
+		warning("MusicPlayer: short read on Mac SONG resource %u", resourceId);
+		return false;
+	}
+	delete stream;
+
+	midiId = READ_BE_UINT16(song.data());
+	const uint16 instCount = READ_BE_UINT16(song.data() + 16);
+	uint32 pos = 18;
+	for (uint i = 0; i < instCount && pos + 4 <= size; i++, pos += 4) {
+		const uint16 channel = READ_BE_UINT16(song.data() + pos);
+		const uint16 inst = READ_BE_UINT16(song.data() + pos + 2);
+		if (channel < ARRAYSIZE(_macChannelInstrument) && inst < 128)
+			_macChannelInstrument[channel] = (byte)inst;
+	}
+
+	return true;
+}
+
+void MusicPlayer::playMacSongResource(uint16 resourceId, bool loop) {
+	if (resourceId == kInvalidMacSongResource)
+		return;
+
+	uint16 midiId = kInvalidMacMidiResource;
+	if (!loadMacSong(resourceId, midiId))
+		return;
+
+	playMacMidiResource(midiId, loop);
+}
+
 void MusicPlayer::playMacMidiResource(uint16 resourceId, bool loop) {
 	if (resourceId == kInvalidMacMidiResource)
 		return;
 
-	Common::SeekableReadStream *stream =
-		openMacResource(Common::Path("EEM Sound&Music"),
-						MKTAG('M', 'i', 'd', 'i'), resourceId);
+	Common::SeekableReadStream *stream = openMacMidiResource(resourceId);
 	if (!stream) {
 		warning("MusicPlayer: Mac Midi resource %u missing", resourceId);
 		return;
@@ -223,13 +334,13 @@ void MusicPlayer::playFile(const Common::Path &xmiPath, bool loop) {
 	stop();
 
 	if (_isMacintosh) {
-		const uint16 resourceId = macMidiResourceIdForFile(xmiPath);
-		if (resourceId == kInvalidMacMidiResource) {
-			warning("MusicPlayer: no Mac Midi mapping for %s",
+		const uint16 resourceId = macSongResourceIdForFile(xmiPath);
+		if (resourceId == kInvalidMacSongResource) {
+			warning("MusicPlayer: no Mac SONG mapping for %s",
 					xmiPath.toString().c_str());
 			return;
 		}
-		playMacMidiResource(resourceId, loop);
+		playMacSongResource(resourceId, loop);
 		return;
 	}
 
@@ -258,7 +369,7 @@ void MusicPlayer::playMus(uint num, bool loop) {
 	if (_isMacintosh) {
 		Common::StackLock lock(_mutex);
 		stop();
-		playMacMidiResource(macMidiResourceIdForMus(num), loop);
+		playMacSongResource(macSongResourceIdForMus(num), loop);
 		return;
 	}
 
