@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-23 18:29+0000\n"
-"PO-Revision-Date: 2026-05-26 04:22+0000\n"
+"PO-Revision-Date: 2026-06-23 23:22+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -2270,28 +2270,20 @@ msgid "Disable fixed font scaling"
 msgstr "Desactiva l'escalat de tipus de lletra fixa"
 
 #: gui/options.cpp:2667
-#, fuzzy
-#| msgid ""
-#| "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
-#| "resolution screens"
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens."
 msgstr ""
-"No escalar tipus de lletra de mida fixa a la IGU. Això redueix els "
-"artefactes en pantalles de baixa resolució"
+"No s'escala els tipus de lletra de mida fixa a la IGU. Això redueix els "
+"artefactes en pantalles de baixa resolució."
 
 #: gui/options.cpp:2673
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable kinetic scrolling in lists"
-msgstr "Activa el desplaçament suau al caminar"
+msgstr "Habilita el desplaçament cinètic a les llistes"
 
 #: gui/options.cpp:2674
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth, momentum-based scrolling in list widgets."
-msgstr "Activa el desplaçament suau al caminar"
+msgstr "Habilita el desplaçament suau i basat en moments als ginys de llistes."
 
 #: gui/options.cpp:2680
 msgid "GUI language:"
@@ -7791,20 +7783,16 @@ msgstr ""
 "l'Operation Stealth des del començament utilitzant noves partides desades."
 
 #: engines/colony/intro.cpp:154 engines/colony/intro.cpp:1244
-#, fuzzy
-#| msgid "New game"
 msgid "New Game"
-msgstr "Nova partida"
+msgstr "Nova Partida"
 
 #: engines/colony/intro.cpp:155 engines/colony/intro.cpp:1242
 msgid "Load Game"
 msgstr "Carrega la partida"
 
 #: engines/colony/intro.cpp:1219 engines/colony/intro.cpp:1244
-#, fuzzy
-#| msgid "You have stored "
 msgid "You have been terminated."
-msgstr "Heu emmagatzemat "
+msgstr "T'han mort."
 
 #: engines/colony/metaengine.cpp:45 engines/myst3/metaengine.cpp:40
 msgid "Widescreen mod"
@@ -8322,10 +8310,8 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "Activa el text a veu per a objectes, opcions i la cita de la Bíblia"
 
 #: engines/eem/metaengine.cpp:38
-#, fuzzy
-#| msgid "Highlight items"
 msgid "Hide the highlight boxes"
-msgstr "Ressalta els objectes"
+msgstr "Amaga els quadres de ressaltat"
 
 #: engines/eem/metaengine.cpp:39
 msgid "Hide the boxes that highlight searchable clue locations."
@@ -8342,10 +8328,8 @@ msgid ""
 msgstr ""
 
 #: engines/eem/metaengine.cpp:61
-#, fuzzy
-#| msgid "Skip speech"
 msgid "Skip repeated cases"
-msgstr "Omet les veus"
+msgstr "Omet els casos repetits"
 
 #: engines/eem/metaengine.cpp:62
 msgid "Skip all Book 2 cases and jump to Book 3 once Book 1 is complete."
@@ -13192,10 +13176,8 @@ msgid "Run the game in 640x400 high resolution mode instead of 320x200"
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:892 engines/scumm/metaengine.cpp:919
-#, fuzzy
-#| msgid "All levels will be available to play."
 msgid "All levels will be available without requiring passwords"
-msgstr "Tots els nivells estaran disponibles per jugar."
+msgstr "Tots els nivells estaran disponibles sense necessitat de contrasenyes"
 
 #: engines/scumm/metaengine.cpp:900 engines/scumm/metaengine.cpp:927
 #, fuzzy
