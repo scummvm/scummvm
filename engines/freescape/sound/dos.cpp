@@ -56,6 +56,7 @@ public:
 	}
 
 	void stopSound(Type type) override {
+		_speaker->stop(); // flush the queue too, or isPlayingSound() hangs waitForSounds()
 		_mixer->stopHandle(_soundFxHandle);
 	}
 
