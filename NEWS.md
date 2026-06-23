@@ -1,13 +1,20 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2026.4.0 "TBD" (2026-10-XX)
+#### 2026.4.0 (2026-10-XX)
 
  General:
    - Optimised mixing and rate converters, for better performance.
    - Implemented ImGui-based interface for the Event Recorder.
    - Fixed bug with inability to specify game overrides for MIDI and MT-32
      devices.
+
+ GLK:
+   - Fixed saved font selections not being applied correctly in some games.
+   - Added support for loading ZX Spectrum games directly from TAP/TZX tape images.
+
+ Freescape:
+   - Added support for loading ZX Spectrum games directly from TAP/TZX tape images.
 
  MM:
    - Fix multiple M&M1 classic combat crashes.
