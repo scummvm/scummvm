@@ -163,22 +163,22 @@ void FoolPrologue::delayFromMarker(int16 numTicks) {
 
 void FoolPrologue::drawTextRightAlign(int16 x, int16 y) {
 	// 128:026c
-	this->var_i32_182 = _toolbox->StringWidth(this->var_str_76);
-	_toolbox->MoveTo(x - this->var_i32_182, y);
+	int16 width = _toolbox->StringWidth(this->var_str_76);
+	_toolbox->MoveTo(x - width, y);
 	_toolbox->DrawString(this->var_str_76);
 }
 
 void FoolPrologue::drawTextCenterAlign(int16 x, int16 y) {
 	// 128:02a6
-	this->var_i32_182 = _toolbox->StringWidth(this->var_str_76);
-	_toolbox->MoveTo(x - (this->var_i32_182 / 2), y);
+	int16 width = _toolbox->StringWidth(this->var_str_76);
+	_toolbox->MoveTo(x - (width / 2), y);
 	_toolbox->DrawString(this->var_str_76);
 }
 
 void FoolPrologue::fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID) {
 	// 128:02f0
-	_toolbox->SetRect(this->arr_i16_41af4, left, top, right, bottom);
-	_toolbox->FillRect(this->arr_i16_41af4, this->arr_pat_194[patternID]);
+	_toolbox->SetRect(this->arr_rect_41af4, left, top, right, bottom);
+	_toolbox->FillRect(this->arr_rect_41af4, this->arr_pat_194[patternID]);
 }
 
 void FoolPrologue::zoomClose(int16 patternID, PatternMode mode) {
@@ -295,10 +295,10 @@ void FoolPrologue::zoomTransition(int16 screenPage) {
 
 void FoolPrologue::sub_128_800(int16_t unk1, int16_t unk2, int16_t unk3, int16_t unk4, int16_t unk5, int16_t unk6, int16_t unk7, int16_t unk8, int16_t unk9) {
 	// 128:0800
-	this->arr_i16_41af4.top = unk1;
-	this->arr_i16_41af4.left = unk2;
-	this->arr_i16_41af4.bottom = unk3;
-	this->arr_i16_41af4.right = unk4;
+	this->arr_rect_41af4.top = unk1;
+	this->arr_rect_41af4.left = unk2;
+	this->arr_rect_41af4.bottom = unk3;
+	this->arr_rect_41af4.right = unk4;
 	this->arr_i16_41afc.top = unk5;
 	this->arr_i16_41afc.left = unk6;
 	this->arr_i16_41afc.bottom = unk7;
@@ -307,17 +307,17 @@ void FoolPrologue::sub_128_800(int16_t unk1, int16_t unk2, int16_t unk3, int16_t
 	_toolbox->PenMode(kPatXor);
 
 	// 128:08bc
-	this->arr_f64_41bbe[0] = (double)this->arr_i16_41af4.top;
-	this->arr_f64_41bbe[1] = (double)this->arr_i16_41af4.left;
-	this->arr_f64_41bbe[2] = (double)this->arr_i16_41af4.bottom;
-	this->arr_f64_41bbe[3] = (double)this->arr_i16_41af4.right;
-	this->arr_f64_41bbe[4] = (double)(this->arr_i16_41afc.top - this->arr_i16_41af4.top)/(double)(unk9);
-	this->arr_f64_41bbe[5] = (double)(this->arr_i16_41afc.left - this->arr_i16_41af4.left)/(double)(unk9);
-	this->arr_f64_41bbe[6] = (double)(this->arr_i16_41afc.bottom - this->arr_i16_41af4.bottom)/(double)(unk9);
-	this->arr_f64_41bbe[7] = (double)(this->arr_i16_41afc.right - this->arr_i16_41af4.right)/(double)(unk9);
+	this->arr_f64_41bbe[0] = (double)this->arr_rect_41af4.top;
+	this->arr_f64_41bbe[1] = (double)this->arr_rect_41af4.left;
+	this->arr_f64_41bbe[2] = (double)this->arr_rect_41af4.bottom;
+	this->arr_f64_41bbe[3] = (double)this->arr_rect_41af4.right;
+	this->arr_f64_41bbe[4] = (double)(this->arr_i16_41afc.top - this->arr_rect_41af4.top)/(double)(unk9);
+	this->arr_f64_41bbe[5] = (double)(this->arr_i16_41afc.left - this->arr_rect_41af4.left)/(double)(unk9);
+	this->arr_f64_41bbe[6] = (double)(this->arr_i16_41afc.bottom - this->arr_rect_41af4.bottom)/(double)(unk9);
+	this->arr_f64_41bbe[7] = (double)(this->arr_i16_41afc.right - this->arr_rect_41af4.right)/(double)(unk9);
 
 	// 128:096e
-	_toolbox->PaintRect(this->arr_i16_41af4);
+	_toolbox->PaintRect(this->arr_rect_41af4);
 	for (int i = 1; i <= (unk9 - 1); i++) {
 		this->var_i32_2 = _toolbox->TickCount();
 

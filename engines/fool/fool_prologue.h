@@ -92,6 +92,8 @@ public:
 	void finaleStartText(); // sub_131_4e98
 	void sub_131_4f96(int16 offset);
 
+	void finaleCardRotate(); // sub_131_5038
+
 private:
 	Toolbox *_toolbox;
 	ZBasic *_zbasic;
@@ -135,7 +137,6 @@ private:
 
 	int16 var_i16_176;
 	int16 var_i16_180;
-	int32 var_i32_182;
 	int16 var_i16_18c;
 	int16 var_i16_18e;
 
@@ -205,12 +206,13 @@ private:
 	int16 arr_i16_41598[SCREEN_HEIGHT] = { 0 };
 	int16 arr_i16_41846[SCREEN_HEIGHT] = { 0 };
 
-	Common::Rect arr_i16_41af4;
+	int16 arr_i16_41af4[32];
+	Common::Rect arr_rect_41af4;
 	Common::Rect arr_i16_41afc;
 	int16 arr_i16_41b04[3];
 	Common::Rect arr_i16_41b0a;
 
-	double arr_f64_41bbe[8] = { 0 };
+	double arr_f64_41bbe[16] = { 0 };
 
 	PicHandle glob_i32_2ce;
 

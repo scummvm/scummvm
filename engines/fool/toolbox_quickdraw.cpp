@@ -530,9 +530,6 @@ void Toolbox::InsetRect(Common::Rect &r, int16 dh, int16 dv) {
 	r.right -= dh;
 	r.top += dv;
 	r.bottom -= dv;
-	if ((r.width() < 1) || (r.height() < 1)) {
-		r = { 0, 0, 0, 0 };
-	}
 }
 
 void Toolbox::InvertOval(const Common::Rect &r) {
