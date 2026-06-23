@@ -638,48 +638,7 @@ void EEMEngine::doHelp() {
 
 	const Common::String raw  = _mystery.textAt(chosenText);
 	Common::String text = parseString(raw, _playerName, _partner);
-	Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
-		Graphics::PixelFormat::createFormatCLUT8());
-	ms.clear();
-	{
-		Graphics::Surface *cur = g_system->lockScreen();
-		if (cur) {
-			ms.simpleBlitFrom(*cur);
-			g_system->unlockScreen();
-		}
-	}
-
-	const byte firstChar =
-		text.empty() ? (byte)0 : (byte)text[0];
-	uint16 bubNum = getKDTextBalloon(firstChar);
-	if (firstChar >= '0' && firstChar <= '9')
-		text.deleteChar(0);
-	bubNum = fitBalloonToText(bubNum, text);
-	Picture balloon;
-	const bool haveBalloon =
-		_balloonArchive.size() > (bubNum & 0x7F) &&
-		_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
-
-	const int balloonX = 0x21;
-	int balloonY = 1;
-	if (haveBalloon && balloon.surface.h < 0x4e)
-		balloonY = (0x50 - balloon.surface.h) / 2;
-
-	if (haveBalloon) {
-		const byte transp = (byte)(balloon.flags >> 8);
-		ms.transBlitFrom(balloon.surface,
-						 Common::Point(balloonX, balloonY),
-						 (uint32)transp);
-	}
-
-	uint16 tx = 5, ty = 4, tw = 155;
-	getBalloonInsets(bubNum, tx, ty, tw);
-	_font.drawWordWrapped(&ms, balloonX + tx, balloonY + ty, tw, text,
-						  haveBalloon ? 0 : 0xF);
-
-	g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
-	g_system->updateScreen();
+	drawKDBalloonOverCurrentScreen(text);
 
 	if (_audio && _mystery.kdTextIndex()) {
 		if (hintVoiceSlot >= 0)

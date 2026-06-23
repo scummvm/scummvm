@@ -49,6 +49,14 @@ const GallerySlot kGallerySlots[5] = {
 	{ 191,  90 }  // 4
 };
 
+const GallerySlot kMacGallerySlots[5] = {
+	{ 133,  27 }, // 0
+	{ 248,  27 }, // 1
+	{ 363,  27 }, // 2
+	{ 190, 173 }, // 3
+	{ 306, 173 }  // 4
+};
+
 struct LondonApproachData {
 	uint16 videoId = 0;
 	uint16 videoX = 0;
@@ -346,23 +354,49 @@ const Picture *partnerFrameFor(DBDArchive &aniArchive, uint8 partner,
 	return &outAni[frameIdx];
 }
 
+int scalePdaAnchor(int value, int target, int source) {
+	const bool negative = value < 0;
+	const int magnitude = negative ? -value : value;
+	const int scaled = (magnitude * target + source / 2) / source;
+	return negative ? -scaled : scaled;
+}
+
 void blitPdaPartner(Graphics::ManagedSurface &dst, DBDArchive &aniArchive,
 					uint8 partner, const PdaPartnerSpec &spec,
-					uint32 tickMs) {
+					uint32 tickMs, bool mac = false) {
 	Animation ani;
 	if (const Picture *fr = partnerFrameFor(aniArchive, partner, spec,
-											tickMs, ani))
-		blitAnimFrameAnchored(dst.surfacePtr(), *fr, spec.anchorX,
-							  spec.anchorY);
+											tickMs, ani)) {
+		if (mac) {
+			const int anchorX =
+				scalePdaAnchor(spec.anchorX, kMacScreenWidth, kScreenWidth);
+			const int anchorY =
+				scalePdaAnchor(spec.anchorY, kMacScreenHeight, kScreenHeight);
+			blitMacAnimFrameAnchored(dst.surfacePtr(), *fr, anchorX,
+									 anchorY);
+		} else {
+			blitAnimFrameAnchored(dst.surfacePtr(), *fr, spec.anchorX,
+								  spec.anchorY);
+		}
+	}
 }
 
 void blitPdaPartner(Graphics::Surface *screen, DBDArchive &aniArchive,
 					uint8 partner, const PdaPartnerSpec &spec,
-					uint32 tickMs) {
+					uint32 tickMs, bool mac = false) {
 	Animation ani;
 	if (const Picture *fr = partnerFrameFor(aniArchive, partner, spec,
-											tickMs, ani))
-		blitAnimFrameAnchored(screen, *fr, spec.anchorX, spec.anchorY);
+											tickMs, ani)) {
+		if (mac) {
+			const int anchorX =
+				scalePdaAnchor(spec.anchorX, kMacScreenWidth, kScreenWidth);
+			const int anchorY =
+				scalePdaAnchor(spec.anchorY, kMacScreenHeight, kScreenHeight);
+			blitMacAnimFrameAnchored(screen, *fr, anchorX, anchorY);
+		} else {
+			blitAnimFrameAnchored(screen, *fr, spec.anchorX, spec.anchorY);
+		}
+	}
 }
 
 constexpr Common::Rect kEndingPrevPageRect(Common::Point(0, 0), 28, kScreenHeight);
@@ -379,6 +413,21 @@ constexpr Common::Rect kPdaPageNextRect(Common::Point(204, 174), 20, 16);
 constexpr Common::Rect kPdaPagePrevRect(Common::Point(226, 174), 21, 16);
 constexpr Common::Rect kPdaHelp2Rect(Common::Point(267, 174), 21, 16);
 constexpr Common::Rect kPdaLondonCloseRect(Common::Point(0, 0), 66, 79);
+
+// Mac _NotebookRect and _NoteButtons table at 0x177e. The coordinates are
+// native QuickDraw rects; keep them exact instead of deriving them from the
+// rounded DOS scaler.
+constexpr Common::Rect kMacNotebookTextRect(Common::Point(125, 23), 336, 269);
+constexpr Common::Rect kMacPdaNotebookRect(Common::Point(214, 334), 34, 30);
+constexpr Common::Rect kMacPdaHelpRect(Common::Point(149, 334), 35, 30);
+constexpr Common::Rect kMacPdaGalleryRect(Common::Point(251, 334), 34, 30);
+constexpr Common::Rect kMacPdaPartnerHeadHintRect(Common::Point(13, 154), 57, 57);
+constexpr Common::Rect kMacPdaAccuseRect(Common::Point(288, 334), 33, 30);
+constexpr Common::Rect kMacPdaPageNextRect(Common::Point(325, 334), 33, 30);
+constexpr Common::Rect kMacPdaPagePrevRect(Common::Point(362, 334), 33, 30);
+constexpr Common::Rect kMacPdaPartnerFootMapRect(Common::Point(11, 340), 80, 44);
+constexpr Common::Rect kMacPdaSiteRect(Common::Point(56, 213), 34, 48);
+constexpr Common::Rect kMacPdaHelp2Rect(Common::Point(427, 334), 33, 30);
 
 constexpr uint16 kProfilePickerRevealPic = 0x105;
 constexpr int kProfilePickerRevealX = 0x3e;
@@ -421,16 +470,46 @@ constexpr uint16 kScrapbookExtraMaxRecords = 16;
 constexpr uint kRestoredContentFirstMystery = 1;
 constexpr uint kRestoredContentLastMystery = 0x18;
 
+Common::Rect pdaControlRect(const EEMEngine *vm, const Common::Rect &rect) {
+	if (!vm || !vm->isMacintosh())
+		return rect;
+	if (rect == kPdaNotebookRect)
+		return kMacPdaNotebookRect;
+	if (rect == kPdaHelpRect)
+		return kMacPdaHelpRect;
+	if (rect == kPdaGalleryRect)
+		return kMacPdaGalleryRect;
+	if (rect == kPdaPartnerHeadHintRect)
+		return kMacPdaPartnerHeadHintRect;
+	if (rect == kPdaAccuseRect)
+		return kMacPdaAccuseRect;
+	if (rect == kPdaPageNextRect)
+		return kMacPdaPageNextRect;
+	if (rect == kPdaPagePrevRect)
+		return kMacPdaPagePrevRect;
+	if (rect == kPdaPartnerFootMapRect)
+		return kMacPdaPartnerFootMapRect;
+	if (rect == kPdaSiteRect)
+		return kMacPdaSiteRect;
+	if (rect == kPdaHelp2Rect)
+		return kMacPdaHelp2Rect;
+	return vm->scaleRect(rect);
+}
+
+bool notebookButtonAt(const EEMEngine *vm, int x, int y) {
+	return pdaControlRect(vm, kPdaHelpRect).contains(x, y) ||
+		   pdaControlRect(vm, kPdaGalleryRect).contains(x, y) ||
+		   pdaControlRect(vm, kPdaPartnerHeadHintRect).contains(x, y) ||
+		   pdaControlRect(vm, kPdaAccuseRect).contains(x, y) ||
+		   pdaControlRect(vm, kPdaPageNextRect).contains(x, y) ||
+		   pdaControlRect(vm, kPdaPagePrevRect).contains(x, y) ||
+		   pdaControlRect(vm, kPdaHelp2Rect).contains(x, y) ||
+		   pdaControlRect(vm, kPdaPartnerFootMapRect).contains(x, y) ||
+		   pdaControlRect(vm, kPdaSiteRect).contains(x, y);
+}
+
 bool notebookButtonAt(int x, int y) {
-	return kPdaHelpRect.contains(x, y) ||
-		   kPdaGalleryRect.contains(x, y) ||
-		   kPdaPartnerHeadHintRect.contains(x, y) ||
-		   kPdaAccuseRect.contains(x, y) ||
-		   kPdaPageNextRect.contains(x, y) ||
-		   kPdaPagePrevRect.contains(x, y) ||
-		   kPdaHelp2Rect.contains(x, y) ||
-		   kPdaPartnerFootMapRect.contains(x, y) ||
-		   kPdaSiteRect.contains(x, y);
+	return notebookButtonAt(nullptr, x, y);
 }
 
 bool galleryButtonAt(int x, int y) {
@@ -440,6 +519,15 @@ bool galleryButtonAt(int x, int y) {
 		   kPdaNotebookRect.contains(x, y) ||
 		   kPdaHelpRect.contains(x, y) ||
 		   kPdaPartnerHeadHintRect.contains(x, y);
+}
+
+bool galleryButtonAt(const EEMEngine *vm, int x, int y) {
+	return pdaControlRect(vm, kPdaSiteRect).contains(x, y) ||
+		   pdaControlRect(vm, kPdaPartnerFootMapRect).contains(x, y) ||
+		   pdaControlRect(vm, kPdaAccuseRect).contains(x, y) ||
+		   pdaControlRect(vm, kPdaNotebookRect).contains(x, y) ||
+		   pdaControlRect(vm, kPdaHelpRect).contains(x, y) ||
+		   pdaControlRect(vm, kPdaPartnerHeadHintRect).contains(x, y);
 }
 
 bool rectListContains(const Common::Array<Common::Rect> &rects, int x, int y) {
@@ -2596,9 +2684,11 @@ void EEMEngine::doNotebook() {
 	if (_music && _voiceOn && notebookFromSite)
 		_music->playMus(30, /* loop= */ false);
 
+	if (isMacintosh())
+		setSitePalette(0);
 	drawNotebookFrame(page);
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
-	setInteractiveMouseCursor(notebookButtonAt(mouse.x, mouse.y));
+	setInteractiveMouseCursor(notebookButtonAt(this, mouse.x, mouse.y));
 
 	if (isLondon() && _music && _voiceOn) {
 		while (notebookFromSite && _music->isPlaying() && !shouldQuit()) {
@@ -2625,7 +2715,7 @@ void EEMEngine::doNotebook() {
 				break;
 			}
 			if (ev.type == Common::EVENT_MOUSEMOVE) {
-				setInteractiveMouseCursor(notebookButtonAt(ev.mouse.x,
+				setInteractiveMouseCursor(notebookButtonAt(this, ev.mouse.x,
 														   ev.mouse.y));
 			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
@@ -2646,35 +2736,43 @@ void EEMEngine::doNotebook() {
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				if (kPdaSiteRect.contains(ev.mouse.x, ev.mouse.y) ||
+				if (pdaControlRect(this, kPdaSiteRect).contains(ev.mouse.x,
+																ev.mouse.y) ||
 					(isLondon() &&
 					 kPdaLondonCloseRect.contains(ev.mouse.x, ev.mouse.y))) {
 					_nextScreen = kScreenSite;
 					exitFlag = true;
 					break;  // back to site
 				}
-				if (kPdaPartnerFootMapRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (pdaControlRect(this, kPdaPartnerFootMapRect)
+						.contains(ev.mouse.x, ev.mouse.y)) {
 					_nextScreen = kScreenMapAlt;
 					exitFlag = true;
 					break;
 				}
-				if (kPdaPartnerHeadHintRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (pdaControlRect(this, kPdaPartnerHeadHintRect)
+						.contains(ev.mouse.x, ev.mouse.y)) {
 					setInteractiveMouseCursor(false);
 					doHelp();
+					if (isMacintosh())
+						setSitePalette(0);
 					dirty = true;
 					continue;
 				}
-				if (kPdaAccuseRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (pdaControlRect(this, kPdaAccuseRect).contains(ev.mouse.x,
+																  ev.mouse.y)) {
 					_nextScreen = kScreenAccuse;
 					exitFlag = true;
 					break;
 				}
-				if (kPdaGalleryRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (pdaControlRect(this, kPdaGalleryRect).contains(ev.mouse.x,
+																   ev.mouse.y)) {
 					_nextScreen = kScreenGallery;
 					exitFlag = true;
 					break;
 				}
-				if (kPdaHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (pdaControlRect(this, kPdaHelpRect).contains(ev.mouse.x,
+																ev.mouse.y)) {
 					if (isLondon()) {
 						_nextScreen = kScreenMapAlt;
 						exitFlag = true;
@@ -2682,23 +2780,30 @@ void EEMEngine::doNotebook() {
 					}
 					setInteractiveMouseCursor(false);
 					doInterfaceHelp(0);
+					if (isMacintosh())
+						setSitePalette(0);
 					dirty = true;
 					continue;
 				}
-				if (kPdaPagePrevRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (pdaControlRect(this, kPdaPagePrevRect)
+						.contains(ev.mouse.x, ev.mouse.y)) {
 					if (page > 0)
 						page--;
 					dirty = true;
 					continue;
 				}
-				if (kPdaPageNextRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (pdaControlRect(this, kPdaPageNextRect)
+						.contains(ev.mouse.x, ev.mouse.y)) {
 					page++;
 					dirty = true;
 					continue;
 				}
-				if (kPdaHelp2Rect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (pdaControlRect(this, kPdaHelp2Rect).contains(ev.mouse.x,
+																 ev.mouse.y)) {
 					setInteractiveMouseCursor(false);
 					doInterfaceHelp(0);
+					if (isMacintosh())
+						setSitePalette(0);
 					dirty = true;
 					continue;
 				}
@@ -2712,7 +2817,8 @@ void EEMEngine::doNotebook() {
 			drawNotebookFrame(page);
 			lastDraw = now;
 			mouse = g_system->getEventManager()->getMousePos();
-			setInteractiveMouseCursor(notebookButtonAt(mouse.x, mouse.y));
+			setInteractiveMouseCursor(notebookButtonAt(this, mouse.x,
+													   mouse.y));
 		}
 		if (now - gizmoLastTick >= kChooserCycleMillis) {
 			gizmoLastTick = now;
@@ -2760,8 +2866,12 @@ Common::String EEMEngine::notebookNoteText(uint clueId, const byte *ni,
 
 void EEMEngine::drawNotebookFrame(int &page) {
 	const Common::Rect kNotebookRect(78, 12, 288, 152);
+	const Common::Rect notebookRect =
+		isMacintosh() ? kMacNotebookTextRect : kNotebookRect;
+	const int sw = screenWidth();
+	const int sh = screenHeight();
 
-	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface scratch(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 
@@ -2770,7 +2880,7 @@ void EEMEngine::drawNotebookFrame(int &page) {
 		scratch.simpleBlitFrom(frame.surface);
 
 	blitPdaPartner(scratch, _aniArchive, _partner, kPdaNotebookPartner,
-				   g_system->getMillis());
+				   g_system->getMillis(), isMacintosh());
 
 	// `_DrawNotes` walks `_NoteIndex` for current page; word-wraps each
 	// found clue in `_NotebookRect`. Selected = color 0x3c.
@@ -2792,10 +2902,10 @@ void EEMEngine::drawNotebookFrame(int &page) {
 	const uint16 niCount = isLondon()
 		? londonCount : _mystery.noteIndexCount();
 
-	const int kRectX = kNotebookRect.left;
-	const int kRectY = kNotebookRect.top;
-	const int kRectW = kNotebookRect.width();
-	const int kRectH = kNotebookRect.height();
+	const int kRectX = notebookRect.left;
+	const int kRectY = notebookRect.top;
+	const int kRectW = notebookRect.width();
+	const int kRectH = notebookRect.height();
 
 	int clueCursor = 0;
 	Common::Array<int> pageStarts;
@@ -2863,7 +2973,7 @@ void EEMEngine::drawNotebookFrame(int &page) {
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
+							   0, 0, sw, sh);
 	g_system->updateScreen();
 }
 
@@ -2878,6 +2988,8 @@ void EEMEngine::doGallery() {
 	}
 
 	CursorMan.showMouse(true);
+	if (isMacintosh())
+		setSitePalette(0);
 
 	Picture galBg;
 	const bool haveBg = _picsArchive.getPicture(0x3f, galBg);
@@ -2897,7 +3009,7 @@ void EEMEngine::doGallery() {
 
 	drawGalleryFrame(gd, num, slotRects, slotSuspect);
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
-	setInteractiveMouseCursor(galleryButtonAt(mouse.x, mouse.y) ||
+	setInteractiveMouseCursor(galleryButtonAt(this, mouse.x, mouse.y) ||
 							  gallerySlotAt(slotRects, slotSuspect,
 											mouse.x, mouse.y));
 	uint32 lastDraw = g_system->getMillis();
@@ -2914,7 +3026,7 @@ void EEMEngine::doGallery() {
 				return;
 			}
 			if (ev.type == Common::EVENT_MOUSEMOVE) {
-				setInteractiveMouseCursor(galleryButtonAt(ev.mouse.x,
+				setInteractiveMouseCursor(galleryButtonAt(this, ev.mouse.x,
 														  ev.mouse.y) ||
 										  gallerySlotAt(slotRects,
 														slotSuspect,
@@ -2939,27 +3051,32 @@ void EEMEngine::doGallery() {
 				//   [6] (226,247) → generic exit              (0x638)
 				//   [7] (  7,177) → MAP = NextScreen=2        (0x5f7)
 				//   [8] ( 35,111) → SITE = NextScreen=3       (0x5e4)
-				if (kPdaSiteRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (pdaControlRect(this, kPdaSiteRect).contains(ev.mouse.x,
+																ev.mouse.y)) {
 					_nextScreen = kScreenSite;
 					exitFlag = true;
 					break;
 				}
-				if (kPdaPartnerFootMapRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (pdaControlRect(this, kPdaPartnerFootMapRect)
+						.contains(ev.mouse.x, ev.mouse.y)) {
 					_nextScreen = kScreenMapAlt;
 					exitFlag = true;
 					break;
 				}
-				if (kPdaAccuseRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (pdaControlRect(this, kPdaAccuseRect).contains(ev.mouse.x,
+																  ev.mouse.y)) {
 					_nextScreen = kScreenAccuse;
 					exitFlag = true;
 					break;
 				}
-				if (kPdaNotebookRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (pdaControlRect(this, kPdaNotebookRect).contains(ev.mouse.x,
+																	ev.mouse.y)) {
 					_nextScreen = kScreenNotebook;
 					exitFlag = true;
 					break;
 				}
-				if (kPdaHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (pdaControlRect(this, kPdaHelpRect).contains(ev.mouse.x,
+																ev.mouse.y)) {
 					if (isLondon()) {
 						_nextScreen = kScreenMapAlt;
 						exitFlag = true;
@@ -2967,12 +3084,17 @@ void EEMEngine::doGallery() {
 					}
 					setInteractiveMouseCursor(false);
 					doInterfaceHelp(0);
+					if (isMacintosh())
+						setSitePalette(0);
 					lastDraw = 0;
 					continue;
 				}
-				if (kPdaPartnerHeadHintRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (pdaControlRect(this, kPdaPartnerHeadHintRect)
+						.contains(ev.mouse.x, ev.mouse.y)) {
 					setInteractiveMouseCursor(false);
 					doHelp();
+					if (isMacintosh())
+						setSitePalette(0);
 					lastDraw = 0;
 					continue;
 				}
@@ -2987,7 +3109,7 @@ void EEMEngine::doGallery() {
 						drawGalleryFrame(gd, num, slotRects, slotSuspect);
 						lastDraw = g_system->getMillis();
 						mouse = g_system->getEventManager()->getMousePos();
-						setInteractiveMouseCursor(galleryButtonAt(mouse.x,
+						setInteractiveMouseCursor(galleryButtonAt(this, mouse.x,
 																  mouse.y) ||
 												  gallerySlotAt(slotRects,
 																slotSuspect,
@@ -3008,7 +3130,7 @@ void EEMEngine::doGallery() {
 			drawGalleryFrame(gd, num, slotRects, slotSuspect);
 			lastDraw = now;
 			mouse = g_system->getEventManager()->getMousePos();
-			setInteractiveMouseCursor(galleryButtonAt(mouse.x, mouse.y) ||
+			setInteractiveMouseCursor(galleryButtonAt(this, mouse.x, mouse.y) ||
 									  gallerySlotAt(slotRects, slotSuspect,
 													mouse.x, mouse.y));
 		}
@@ -3025,7 +3147,8 @@ void EEMEngine::doGallery() {
 bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 						  const Picture &galBg, bool haveBg) {
 	const bool floppyMI = isFloppy();
-	const bool compactMI = floppyMI || isMacintosh();
+	const bool mac = isMacintosh();
+	const bool compactMI = floppyMI || mac;
 	const byte *suspect = compactMI
 							  ? _mystery.floppySuspectEntry(suspectIdx)
 							  : gd + suspectIdx * 0x46;
@@ -3038,8 +3161,14 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 
 	setInteractiveMouseCursor(false);
 
-	const int rx = 78, ry = 93;
-	const int rw = 288 - 78, rh = 152 - 93;
+	const Common::Rect noteRectBase(78, 93, 288, 152);
+	const Common::Rect noteRect = mac ? scaleRect(noteRectBase) : noteRectBase;
+	const int rx = noteRect.left;
+	const int ry = noteRect.top;
+	const int rw = noteRect.width();
+	const int rh = noteRect.height();
+	const int sw = screenWidth();
+	const int sh = screenHeight();
 	const int lineH = _font.getFontHeight();
 	const uint clueMax = compactMI ? clueCount : 30u;
 	const byte *ni = _mystery.noteIndex();
@@ -3054,19 +3183,24 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 	bool isFirstShow = true;
 
 	while (!back && !shouldQuit()) {
-		Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
+		Graphics::ManagedSurface ms(sw, sh,
 			Graphics::PixelFormat::createFormatCLUT8());
 		ms.clear();
 		if (haveBg)
 			ms.simpleBlitFrom(galBg.surface);
 
 		blitPdaPartner(ms, _aniArchive, _partner, kPdaGalleryPartner,
-					   g_system->getMillis());
+					   g_system->getMillis(), mac);
 		Picture detail;
 		if (_picsArchive.getPicture(detailPic, detail)) {
-			const byte transp = (byte)(detail.flags >> 8);
-			ms.transBlitFrom(detail.surface,
-							 Common::Point(0x94, 0x0f), transp);
+			const Common::Point detailPos =
+				mac ? scalePoint(0x94, 0x0f) : Common::Point(0x94, 0x0f);
+			if (mac)
+				blitMacMaskedSurface(ms.surfacePtr(), detail,
+									 detailPos.x, detailPos.y);
+			else
+				ms.transBlitFrom(detail.surface, detailPos,
+								 (uint32)(byte)(detail.flags >> 8));
 		}
 
 		// Walk clues from pageStart; defer overflow to next page unless
@@ -3135,7 +3269,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 				rx, ry + rh + 2, MAX<int>(8, rw), 0x3C);
 		}
 		g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
-			0, 0, kScreenWidth, kScreenHeight);
+			0, 0, sw, sh);
 		g_system->updateScreen();
 
 		// Drain the LBUTTONDOWN that opened MoreInfo (first page only).
@@ -3176,56 +3310,61 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 					debugC(2, kDebugGfx,
 						"MoreInfo click (%d,%d) hasMore=%d hasPrev=%d",
 						mx, my, (int)hasMore, (int)hasPrev);
-					if (kPdaNotebookRect.contains(mx, my)) {
+					if (pdaControlRect(this, kPdaNotebookRect).contains(mx, my)) {
 						_nextScreen = kScreenNotebook;
 						exitGallery = true;
 						back = true;
 						break;
 					}
-					if (kPdaAccuseRect.contains(mx, my)) {
+					if (pdaControlRect(this, kPdaAccuseRect).contains(mx, my)) {
 						_nextScreen = kScreenAccuse;
 						exitGallery = true;
 						back = true;
 						break;
 					}
-					if (kPdaPartnerFootMapRect.contains(mx, my)) {
+					if (pdaControlRect(this, kPdaPartnerFootMapRect).contains(mx, my)) {
 						_nextScreen = kScreenMapAlt;
 						exitGallery = true;
 						back = true;
 						break;
 					}
-					if (isLondon() && kPdaHelpRect.contains(mx, my)) {
+					if (isLondon() &&
+						pdaControlRect(this, kPdaHelpRect).contains(mx, my)) {
 						_nextScreen = kScreenMapAlt;
 						exitGallery = true;
 						back = true;
 						break;
 					}
-					if (kPdaHelpRect.contains(mx, my) ||
-						kPdaHelp2Rect.contains(mx, my)) {
+					if (pdaControlRect(this, kPdaHelpRect).contains(mx, my) ||
+						pdaControlRect(this, kPdaHelp2Rect).contains(mx, my)) {
 						setInteractiveMouseCursor(false);
 						doInterfaceHelp(0);
+						if (mac)
+							setSitePalette(0);
 						redraw = true;
 						break;
 					}
-					if (kPdaGalleryRect.contains(mx, my)) {
+					if (pdaControlRect(this, kPdaGalleryRect).contains(mx, my)) {
 						// Case 2: close MoreInfo.
 						back = true;
 						break;
 					}
-					if (kPdaPageNextRect.contains(mx, my)) {
+					if (pdaControlRect(this, kPdaPageNextRect).contains(mx, my)) {
 						if (hasMore)
 							advance = true;
 						break;
 					}
-					if (kPdaPagePrevRect.contains(mx, my)) {
+					if (pdaControlRect(this, kPdaPagePrevRect).contains(mx, my)) {
 						if (hasPrev)
 							prev = true;
 						break;
 					}
-					if (kPdaPartnerHeadHintRect.contains(mx, my)) {
+					if (pdaControlRect(this, kPdaPartnerHeadHintRect).contains(mx, my)) {
 						// Case 3: _KDHelp.
 						setInteractiveMouseCursor(false);
 						doHelp();
+						if (mac)
+							setSitePalette(0);
 						redraw = true;
 						break;
 					}
@@ -3276,8 +3415,11 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 								  Common::Array<int> &slotSuspect) {
 	Picture galBg;
 	const bool haveBg = _picsArchive.getPicture(0x3f, galBg);
+	const bool mac = isMacintosh();
+	const int sw = screenWidth();
+	const int sh = screenHeight();
 
-	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface scratch(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 
@@ -3285,12 +3427,12 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 		scratch.simpleBlitFrom(galBg.surface);
 
 	blitPdaPartner(scratch, _aniArchive, _partner, kPdaGalleryPartner,
-				   g_system->getMillis());
+				   g_system->getMillis(), mac);
 
 	const bool floppy = isFloppy();
 	const bool compactGallery = floppy || isMacintosh();
 	const GallerySlot * const slots =
-		floppy ? kFloppyGallerySlots : kGallerySlots;
+		mac ? kMacGallerySlots : (floppy ? kFloppyGallerySlots : kGallerySlots);
 	for (uint i = 0; i < numSuspects && i < Mystery::kGalleryCap; i++) {
 		slotRects[i] = Common::Rect();
 		slotSuspect[i] = -1;
@@ -3314,24 +3456,28 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 				continue;
 
 			const int placeX = s.x;
-			const int placeY = s.y + (0x48 - portrait.surface.h);
-			const int w = MIN<int>(portrait.surface.w, kScreenWidth - placeX);
-			const int h = MIN<int>(portrait.surface.h, kScreenHeight - placeY);
+			const int placeY = mac ? s.y : s.y + (0x48 - portrait.surface.h);
+			const int w = MIN<int>(portrait.surface.w, sw - placeX);
+			const int h = MIN<int>(portrait.surface.h, sh - placeY);
 			if (w <= 0 || h <= 0)
 				continue;
-			scratch.transBlitFrom(portrait.surface,
-								  Common::Point(placeX, placeY),
-								  (uint32)(byte)(portrait.flags >> 8));
+			if (mac)
+				blitMacMaskedSurface(scratch.surfacePtr(), portrait,
+									 placeX, placeY);
+			else
+				scratch.transBlitFrom(portrait.surface,
+									  Common::Point(placeX, placeY),
+									  (uint32)(byte)(portrait.flags >> 8));
 			slotRects[i] = Common::Rect(placeX, placeY,
 										 placeX + w, placeY + h);
 			slotSuspect[i] = (int)i;
 		} else {
 			// Undiscovered placeholder — small framed "?" box.
-			const int phW = 0x40;
-			const int phH = 0x48;
+			const int phW = mac ? 0x72 : 0x40;
+			const int phH = mac ? 0x90 : 0x48;
 			const int phX = s.x;
 			const int phY = s.y;
-			if (phX + phW <= kScreenWidth && phY + phH <= kScreenHeight) {
+			if (phX + phW <= sw && phY + phH <= sh) {
 				scratch.fillRect(Common::Rect(phX, phY,
 					phX + phW, phY + phH), 0x20);
 				scratch.frameRect(Common::Rect(phX, phY,
@@ -3346,7 +3492,7 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
+							   0, 0, sw, sh);
 	g_system->updateScreen();
 }
 
@@ -4140,14 +4286,18 @@ void EEMEngine::accuseRebuildPagination(const AccuseNotesCtx &ctx) {
 }
 
 void EEMEngine::accuseDrawScreen(const AccuseNotesCtx &ctx) {
-	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+	const bool mac = isMacintosh();
+	const int sw = screenWidth();
+	const int sh = screenHeight();
+
+	Graphics::ManagedSurface scratch(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 	if (ctx.haveBg)
 		scratch.simpleBlitFrom(ctx.accuseBg->surface);
 
 	blitPdaPartner(scratch, _aniArchive, _partner, kPdaGalleryPartner,
-				   g_system->getMillis());
+				   g_system->getMillis(), mac);
 
 	Common::Array<Common::Rect> &slotRects = *ctx.slotRects;
 	Common::Array<uint> &slotClues = *ctx.slotClues;
@@ -4196,16 +4346,17 @@ void EEMEngine::accuseDrawScreen(const AccuseNotesCtx &ctx) {
 		: (remaining == 1 ? "clue" : "clues");
 	const Common::String counter =
 		Common::String::format("%u %s", remaining, clueWord);
-	_font.drawString(&scratch, counter, 209, 11, 100, 0x0F);
+	_font.drawString(&scratch, counter, scaleX(209), scaleY(11),
+					 scaleX(100), 0x0F);
 
 	if (*ctx.numPages > 1) {
 		_font.drawString(&scratch,
 			Common::String::format("p%d/%d", *ctx.page + 1, *ctx.numPages),
-			ctx.rectX, 11, 60, 0x0F);
+			ctx.rectX, scaleY(11), scaleX(60), 0x0F);
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
+							   0, 0, sw, sh);
 	g_system->updateScreen();
 }
 
@@ -4242,15 +4393,22 @@ bool EEMEngine::doAccuseNotes() {
 			found.push_back(i);
 	}
 
-	const int rectX = 79;
-	const int rectY = 27;
-	const int rectW = 304 - 79;
-	const int rectH = 159 - 27;
+	const Common::Rect noteRectBase(79, 27, 304, 159);
+	const Common::Rect noteRect =
+		isMacintosh() ? scaleRect(noteRectBase) : noteRectBase;
+	const int rectX = noteRect.left;
+	const int rectY = noteRect.top;
+	const int rectW = noteRect.width();
+	const int rectH = noteRect.height();
 
-	const Common::Rect kBtnSolve   (180, 174, 201, 190); // [4]
-	const Common::Rect kBtnPageNext(204, 174, 224, 190); // [5]
-	const Common::Rect kBtnPagePrev(226, 174, 247, 190); // [6]
-	const Common::Rect kBtnPartner (  5,  80,  44, 110); // [3]
+	const Common::Rect btnSolve =
+		pdaControlRect(this, kPdaAccuseRect); // [4]
+	const Common::Rect btnPageNext =
+		pdaControlRect(this, kPdaPageNextRect); // [5]
+	const Common::Rect btnPagePrev =
+		pdaControlRect(this, kPdaPagePrevRect); // [6]
+	const Common::Rect btnPartner =
+		pdaControlRect(this, kPdaPartnerHeadHintRect); // [3]
 
 	// Per-page slot rects + their clue IDs (for click hit-testing).
 	Common::Array<Common::Rect> slotRects;
@@ -4287,8 +4445,9 @@ bool EEMEngine::doAccuseNotes() {
 	accuseRebuildPagination(ctx);
 	accuseDrawScreen(ctx);
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
-	setInteractiveMouseCursor(notebookButtonAt(mouse.x, mouse.y) ||
-							  kPdaNotebookRect.contains(mouse.x, mouse.y) ||
+	setInteractiveMouseCursor(notebookButtonAt(this, mouse.x, mouse.y) ||
+							  pdaControlRect(this, kPdaNotebookRect)
+								  .contains(mouse.x, mouse.y) ||
 							  rectListContains(slotRects, mouse.x, mouse.y));
 
 	while (!shouldQuit()) {
@@ -4302,8 +4461,9 @@ bool EEMEngine::doAccuseNotes() {
 			}
 			if (ev.type == Common::EVENT_MOUSEMOVE) {
 				setInteractiveMouseCursor(
-					notebookButtonAt(ev.mouse.x, ev.mouse.y) ||
-					kPdaNotebookRect.contains(ev.mouse.x, ev.mouse.y) ||
+					notebookButtonAt(this, ev.mouse.x, ev.mouse.y) ||
+					pdaControlRect(this, kPdaNotebookRect)
+						.contains(ev.mouse.x, ev.mouse.y) ||
 					rectListContains(slotRects, ev.mouse.x, ev.mouse.y));
 			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
@@ -4325,53 +4485,59 @@ bool EEMEngine::doAccuseNotes() {
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
 				const int mx = ev.mouse.x;
 				const int my = ev.mouse.y;
-				if (kPdaSiteRect.contains(mx, my)) {
+				if (pdaControlRect(this, kPdaSiteRect).contains(mx, my)) {
 					_nextScreen = kScreenSite;
 					return false;
 				}
-				if (kPdaPartnerFootMapRect.contains(mx, my)) {
+				if (pdaControlRect(this, kPdaPartnerFootMapRect)
+						.contains(mx, my)) {
 					_nextScreen = kScreenMapAlt;
 					return false;
 				}
-				if (kPdaNotebookRect.contains(mx, my)) {
+				if (pdaControlRect(this, kPdaNotebookRect).contains(mx, my)) {
 					_nextScreen = kScreenNotebook;
 					return false;
 				}
-				if (kPdaGalleryRect.contains(mx, my)) {
+				if (pdaControlRect(this, kPdaGalleryRect).contains(mx, my)) {
 					_nextScreen = kScreenGallery;
 					return false;
 				}
-				if (isLondon() && kPdaHelpRect.contains(mx, my)) {
+				if (isLondon() &&
+					pdaControlRect(this, kPdaHelpRect).contains(mx, my)) {
 					_nextScreen = kScreenMapAlt;
 					return false;
 				}
-				if (kPdaHelpRect.contains(mx, my) ||
-					kPdaHelp2Rect.contains(mx, my)) {
+				if (pdaControlRect(this, kPdaHelpRect).contains(mx, my) ||
+					pdaControlRect(this, kPdaHelp2Rect).contains(mx, my)) {
 					setInteractiveMouseCursor(false);
 					doInterfaceHelp(0);
+					if (isMacintosh())
+						setSitePalette(0);
 					dirty = true;
 					continue;
 				}
-				if (kBtnPageNext.contains(mx, my)) {
+				if (btnPageNext.contains(mx, my)) {
 					if (page + 1 < numPages) {
 						page++;
 						dirty = true;
 					}
 					continue;
 				}
-				if (kBtnPagePrev.contains(mx, my)) {
+				if (btnPagePrev.contains(mx, my)) {
 					if (page > 0) {
 						page--;
 						dirty = true;
 					}
 					continue;
 				}
-				if (kBtnPartner.contains(mx, my)) {
+				if (btnPartner.contains(mx, my)) {
 					doHelp();
+					if (isMacintosh())
+						setSitePalette(0);
 					dirty = true;
 					continue;
 				}
-				if (kBtnSolve.contains(mx, my)) {
+				if (btnSolve.contains(mx, my)) {
 					uint selected = 0;
 					for (uint i = 0; i < found.size(); i++) {
 						if (_mystery._noteSelected[found[i]])
@@ -4415,6 +4581,67 @@ bool EEMEngine::doAccuseNotes() {
 		g_system->delayMillis(15);
 	}
 	return false;
+}
+
+void EEMEngine::drawKDBalloonOverCurrentScreen(Common::String text) {
+	const bool mac = isMacintosh();
+	const int sw = screenWidth();
+	const int sh = screenHeight();
+
+	Graphics::ManagedSurface ms(sw, sh,
+		Graphics::PixelFormat::createFormatCLUT8());
+	ms.clear();
+	Graphics::Surface *cur = g_system->lockScreen();
+	if (cur) {
+		ms.simpleBlitFrom(*cur);
+		g_system->unlockScreen();
+	}
+
+	const byte firstChar = text.empty() ? (byte)0 : (byte)text[0];
+	uint16 bubNum = getKDTextBalloon(firstChar);
+	if (firstChar >= '0' && firstChar <= '9')
+		text.deleteChar(0);
+	bubNum = fitBalloonToText(bubNum, text);
+
+	Picture balloon;
+	const bool haveBalloon =
+		_balloonArchive.size() > (bubNum & 0x7F) &&
+		_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
+
+	const int balloonX = mac ? scaleX(0x21) : 0x21;
+	const int topBandH = mac ? scaleY(0x50) : 0x50;
+	const int centeredMaxH = mac ? scaleY(0x4e) : 0x4e;
+	int balloonY = mac ? scaleY(1) : 1;
+	if (haveBalloon && balloon.surface.h < centeredMaxH)
+		balloonY = (topBandH - balloon.surface.h) / 2;
+
+	MacSpritePaletteMap macPaletteMap = {0x00, 0xFF};
+	if (mac)
+		macPaletteMap = getMacSpritePaletteMap();
+
+	if (haveBalloon) {
+		if (mac) {
+			blitMacMaskedSurface(ms.surfacePtr(), balloon, balloonX,
+								 balloonY, false, macPaletteMap);
+		} else {
+			ms.transBlitFrom(balloon.surface,
+							 Common::Point(balloonX, balloonY),
+							 (uint32)(byte)(balloon.flags >> 8));
+		}
+	}
+
+	uint16 tx = 5, ty = 4, tw = 155;
+	getBalloonInsets(bubNum, tx, ty, tw);
+	const EEMFont &dialogFont =
+		(mac && _dialogFont.isLoaded()) ? _dialogFont : _font;
+	if (dialogFont.isLoaded()) {
+		const byte textColor =
+			mac ? macPaletteMap.black : (haveBalloon ? 0 : 0xF);
+		dialogFont.drawWordWrapped(&ms, balloonX + tx, balloonY + ty,
+								   tw, text, textColor);
+	}
+
+	copyToScreen(ms);
 }
 
 void EEMEngine::doAccuse() {
@@ -4487,42 +4714,7 @@ void EEMEngine::doAccuse() {
 								_playerName, _partner);
 	}
 	if (!entryText.empty()) {
-		Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
-			Graphics::PixelFormat::createFormatCLUT8());
-		ms.clear();
-		Graphics::Surface *cur = g_system->lockScreen();
-		if (cur) {
-			ms.simpleBlitFrom(*cur);
-			g_system->unlockScreen();
-		}
-		const byte firstChar = (byte)entryText[0];
-		uint16 bubNum = getKDTextBalloon(firstChar);
-		if (firstChar >= '0' && firstChar <= '9')
-			entryText.deleteChar(0);
-		bubNum = fitBalloonToText(bubNum, entryText);
-		Picture balloon;
-		const bool haveBalloon =
-			_balloonArchive.size() > (bubNum & 0x7F) &&
-			_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
-		const int balloonX = 0x21;
-		int balloonY = 1;
-		if (haveBalloon && balloon.surface.h < 0x4e)
-			balloonY = (0x50 - balloon.surface.h) / 2;
-		if (haveBalloon) {
-			const byte transp = (byte)(balloon.flags >> 8);
-			ms.transBlitFrom(balloon.surface,
-							 Common::Point(balloonX, balloonY),
-							 (uint32)transp);
-		}
-		uint16 tx = 5, ty = 4, tw = 155;
-		getBalloonInsets(bubNum, tx, ty, tw);
-		if (_font.isLoaded()) {
-			_font.drawWordWrapped(&ms, balloonX + tx, balloonY + ty,
-								  tw, entryText, haveBalloon ? 0 : 0xF);
-		}
-		g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
-								   0, 0, kScreenWidth, kScreenHeight);
-		g_system->updateScreen();
+		drawKDBalloonOverCurrentScreen(entryText);
 		if (_audio) {
 			if (entryVoiceOverride != 0xFFFF)
 				_audio->spoolSound(entryVoiceOverride);
@@ -4597,46 +4789,7 @@ void EEMEngine::doAccuse() {
 			}
 		}
 
-		Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
-			Graphics::PixelFormat::createFormatCLUT8());
-		ms.clear();
-		Graphics::Surface *cur = g_system->lockScreen();
-		if (cur) {
-			ms.simpleBlitFrom(*cur);
-			g_system->unlockScreen();
-		}
-		const byte firstChar =
-			hint.empty() ? (byte)0 : (byte)hint[0];
-		uint16 bubNum = getKDTextBalloon(firstChar);
-
-		if (firstChar >= '0' && firstChar <= '9')
-			hint.deleteChar(0);
-		bubNum = fitBalloonToText(bubNum, hint);
-		Picture balloon;
-		const bool haveBalloon =
-			_balloonArchive.size() > (bubNum & 0x7F) &&
-			_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
-		const int balloonX = 0x21;
-		int balloonY = 1;
-		if (haveBalloon && balloon.surface.h < 0x4e)
-			balloonY = (0x50 - balloon.surface.h) / 2;
-		if (haveBalloon) {
-			const byte transp = (byte)(balloon.flags >> 8);
-			ms.transBlitFrom(balloon.surface,
-							 Common::Point(balloonX, balloonY),
-							 (uint32)transp);
-		}
-		uint16 tx = 5, ty = 4, tw = 155;
-		getBalloonInsets(bubNum, tx, ty, tw);
-		if (_font.isLoaded()) {
-			_font.drawWordWrapped(&ms, balloonX + tx,
-								  balloonY + ty, tw, hint,
-								  haveBalloon ? 0 : 0xF);
-		}
-		g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
-								   0, 0, kScreenWidth, kScreenHeight);
-		g_system->updateScreen();
-
+		drawKDBalloonOverCurrentScreen(hint);
 
 		if (_audio && kdIdx)
 			_audio->sayKDDigital(kdIdx, 3, _partner);
@@ -4646,9 +4799,6 @@ void EEMEngine::doAccuse() {
 						? (ScreenId)_lastScreen : kScreenSite;
 		return;
 	}
-
-	Picture accuseBg;
-	const bool haveAccuseBg = _picsArchive.getPicture(0x3f, accuseBg);
 
 	Common::Array<Common::Rect> slotRects;
 	Common::Array<int> slotSuspect;
@@ -4667,58 +4817,10 @@ void EEMEngine::doAccuse() {
 			Common::String hint =
 				parseString(raw ? raw : "", _playerName, _partner);
 			if (!hint.empty()) {
-				const byte firstChar =
-					hint.empty() ? (byte)0 : (byte)hint[0];
-				uint16 bubNum = getKDTextBalloon(firstChar);
-				// Strip digit prefix (`_DisplayAlibi @ 1df2:0163`).
-				if (firstChar >= '0' && firstChar <= '9')
-					hint.deleteChar(0);
-				bubNum = fitBalloonToText(bubNum, hint);
-				Picture balloon;
-				const bool haveBalloon =
-					_balloonArchive.size() > (bubNum & 0x7F) &&
-					_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
-
-				const int balloonX = 0x21;
-				int balloonY = 1;
-				if (haveBalloon && balloon.surface.h < 0x4e)
-					balloonY = (0x50 - balloon.surface.h) / 2;
-
 				// Render gallery first so the snapshot includes partner.
 				drawAccuseGallery(num, gd, /* highlighted= */ -1,
 								  slotRects, slotSuspect);
-
-				Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
-					Graphics::PixelFormat::createFormatCLUT8());
-				ms.clear();
-				{
-					Graphics::Surface *cur = g_system->lockScreen();
-					if (cur) {
-						ms.simpleBlitFrom(*cur);
-						g_system->unlockScreen();
-					} else if (haveAccuseBg) {
-						// Fallback if lockScreen failed.
-						ms.simpleBlitFrom(accuseBg.surface);
-					}
-				}
-				if (haveBalloon) {
-					const byte transp = (byte)(balloon.flags >> 8);
-					ms.transBlitFrom(balloon.surface,
-									 Common::Point(balloonX, balloonY),
-									 transp);
-				}
-				uint16 tx = 5;
-				uint16 ty = 4;
-				uint16 tw = 155;
-				getBalloonInsets(bubNum, tx, ty, tw);
-				if (_font.isLoaded()) {
-					_font.drawWordWrapped(&ms, balloonX + tx,
-										  balloonY + ty, tw, hint,
-										  haveBalloon ? 0 : 0xF);
-				}
-				g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
-					0, 0, kScreenWidth, kScreenHeight);
-				g_system->updateScreen();
+				drawKDBalloonOverCurrentScreen(hint);
 				if (_audio)
 					_audio->sayKDDigital(kdIdx, 4, _partner);
 				waitForInput(8000);
@@ -5678,8 +5780,11 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 								   Common::Array<int> &slotSuspect) {
 	Picture accuseBg;
 	const bool haveAccuseBg = _picsArchive.getPicture(0x3f, accuseBg);
+	const bool mac = isMacintosh();
+	const int sw = screenWidth();
+	const int sh = screenHeight();
 
-	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface scratch(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 	if (haveAccuseBg)
@@ -5687,7 +5792,8 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 
 	// Partner drawn first; defensive (no slot overlap).
 	blitPdaPartner(scratch, _aniArchive, _partner, kPdaGalleryPartner,
-				   g_system->getMillis());
+				   g_system->getMillis(), mac);
+	const GallerySlot * const slots = mac ? kMacGallerySlots : kGallerySlots;
 
 	for (uint i = 0; i < numSuspects && i < Mystery::kGalleryCap; i++) {
 		slotRects[i] = Common::Rect();
@@ -5699,7 +5805,7 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 			continue;
 		if (_mystery._inGallery[phys] == 0)
 			continue;
-		const GallerySlot &s = kGallerySlots[phys];
+		const GallerySlot &s = slots[phys];
 
 		const byte *entry = isMacintosh()
 			? _mystery.floppySuspectEntry(i)
@@ -5714,14 +5820,18 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 			continue;
 
 		const int placeX = s.x;
-		const int placeY = s.y + (0x48 - portrait.surface.h);
-		const int w = MIN<int>(portrait.surface.w, kScreenWidth - placeX);
-		const int h = MIN<int>(portrait.surface.h, kScreenHeight - placeY);
+		const int placeY = mac ? s.y : s.y + (0x48 - portrait.surface.h);
+		const int w = MIN<int>(portrait.surface.w, sw - placeX);
+		const int h = MIN<int>(portrait.surface.h, sh - placeY);
 		if (w <= 0 || h <= 0)
 			continue;
-		scratch.transBlitFrom(portrait.surface,
-							  Common::Point(placeX, placeY),
-							  (uint32)(byte)(portrait.flags >> 8));
+		if (mac)
+			blitMacMaskedSurface(scratch.surfacePtr(), portrait,
+								 placeX, placeY);
+		else
+			scratch.transBlitFrom(portrait.surface,
+								  Common::Point(placeX, placeY),
+								  (uint32)(byte)(portrait.flags >> 8));
 		slotRects[i] = Common::Rect(placeX, placeY,
 									 placeX + w, placeY + h);
 		slotSuspect[i] = (int)i;
@@ -5736,7 +5846,7 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
+							   0, 0, sw, sh);
 	g_system->updateScreen();
 }
 

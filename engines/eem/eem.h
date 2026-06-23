@@ -232,6 +232,8 @@ public:
 	/// Returns true if the player committed (SOLVE clicked), false on ESC.
 	bool doAccuseNotes();
 
+	void drawKDBalloonOverCurrentScreen(Common::String text);
+
 	/// `_KDHelp @ 1560:010a` + `_DisplayHint @ 1560:0009`. 
 	void doHelp();
 
