@@ -148,8 +148,13 @@ uint16 SoundDOS::playSoundDOSSpeaker(uint16 frequencyStart, soundSpeakerFx *spea
 	uint8 frequencyDuration = speakerFxInfo->frequencyDuration;
 
 	int16 freq = frequencyStart;
-	int waveDurationMultipler = 1800;
-	int waveDuration = waveDurationMultipler * (frequencyDuration + 1);
+	// The DOS build advances the speaker sequencer from its timer IRQ, which
+	// the executable reprograms to ~300 Hz (PIT channel 0 reload = 3977, i.e.
+	// 1193182/3977). Each step holds its frequency for frequencyDuration timer
+	// ticks; the original 8-bit counter makes a duration of 0 wrap to 256 ticks.
+	const int kTimerHz = 300;
+	int durationTicks = frequencyDuration ? frequencyDuration : 256;
+	int waveDuration = (1000000 / kTimerHz) * durationTicks; // microseconds
 
 	while (true) {
 		if (freq > 0) {
