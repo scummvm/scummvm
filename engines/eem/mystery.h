@@ -77,12 +77,13 @@ public:
 	/// InitBlock (case briefing) at mystery + word[0].
 	const byte *initBlock() const;
 
-	/// GalleryData: 0x46-byte entry per suspect; first u16 = PIC picture ID.
+	/// GalleryData. DOS CD uses 0x46-byte entries; floppy/Mac use compact
+	/// variable-stride entries accessed through floppySuspectEntry().
 	const byte *galleryData() const;
 
-	/// Floppy variable-stride suspect record. Returns nullptr on CD or
-	/// out-of-range. Layout: u16 picID, u16 alibiMarker (0xFFFF=guilty),
-	/// u8 nameLen, nameLen bytes of name.
+	/// Compact variable-stride suspect record for floppy/Mac. Returns nullptr
+	/// on CD or out-of-range. Layout: u16 picID, u16 alibiMarker
+	/// (0xFFFF=guilty), u8 count, count bytes of name/clue data.
 	const byte *floppySuspectEntry(uint suspectIdx) const;
 
 	/// NoteIndex array. EEM1 CD: 4 bytes/entry (u16 textOff + u16 pts).

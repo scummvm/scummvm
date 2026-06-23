@@ -139,6 +139,31 @@ static void normalizeMacSiteData(Common::Array<byte> &data,
 	}
 }
 
+static void normalizeMacGalleryData(Common::Array<byte> &data,
+									uint16 start, uint16 end) {
+	if (start >= data.size() || end > data.size() || start >= end)
+		return;
+
+	const byte *bufEnd = data.data() + end;
+	byte *p = data.data() + start + 1;
+	const uint count = data[start];
+	for (uint i = 0; i < count; i++) {
+		if (p + 5 > bufEnd)
+			return;
+		byte tmp = p[0];
+		p[0] = p[1];
+		p[1] = tmp; // pic id
+		tmp = p[2];
+		p[2] = p[3];
+		p[3] = tmp; // alibi text offset
+		const uint clueCount = p[4];
+		p += 5;
+		if (p + clueCount > bufEnd)
+			return;
+		p += clueCount;
+	}
+}
+
 static void normalizeMacMystery(Common::Array<byte> &data) {
 	if (data.size() <= 20)
 		return;
@@ -162,7 +187,7 @@ static void normalizeMacMystery(Common::Array<byte> &data) {
 	swapU16Range(data, section[2] + 1, section[3]); // counted map entries
 	normalizeMacSiteData(data, section);
 	swapU16Range(data, section[4], section[7]); // notebook index
-	swapU16Range(data, section[5] + 1, section[6]); // compact gallery metadata
+	normalizeMacGalleryData(data, section[5], section[6]);
 	swapU16Range(data, section[8], MIN<uint>(section[8] + 12, section[9]));
 	swapU16Range(data, section[9], data.size()); // solved clue block
 }
@@ -597,6 +622,9 @@ bool Mystery::noteHasNotebookText(uint clueId) const {
 	if (!ni || clueId >= cnt)
 		return false;
 
+	if (_isMacintosh)
+		return READ_LE_UINT16(ni + clueId * 8) != 0;
+
 	if (!_isFloppy)
 		return true;
 
@@ -637,13 +665,13 @@ const byte *Mystery::mapEntry(uint siteNum) const {
 }
 
 const byte *Mystery::floppySuspectEntry(uint suspectIdx) const {
-	// Floppy gallery section (_DrawGallery_Floppy @ 154e:00b6).
-	// byte[0]=numSuspects, then per suspect a `5 + nameLen` record:
-	//   u16 +0 picID (BUTTON.DBD entry)
-	//   u16 +2 alibi marker (0xFFFF=guilty; else hi byte indexes TEXT_BLOCK)
-	//   u8  +4 nameLen
-	//   u8  +5.. name string
-	if (!_isFloppy || !isLoaded())
+	// Floppy gallery section (_DrawGallery_Floppy @ 154e:00b6) and Mac
+	// compact gallery section:
+	//   u16 +0 picID
+	//   u16 +2 alibi marker/text offset (0xFFFF = guilty)
+	//   u8  +4 clue/name count
+	//   u8  +5.. clue ids (Mac) or name bytes (floppy)
+	if ((!_isFloppy && !_isMacintosh) || !isLoaded())
 		return nullptr;
 	const byte *gd = _data.data() + _galleryOffset;
 	if (gd + 1 > _data.data() + _data.size())
@@ -664,7 +692,7 @@ const byte *Mystery::floppySuspectEntry(uint suspectIdx) const {
 }
 
 bool Mystery::isGuilty(uint suspectIdx) const {
-	if (_isFloppy) {
+	if (_isFloppy || _isMacintosh) {
 		const byte *e = floppySuspectEntry(suspectIdx);
 		return e && READ_LE_UINT16(e + 2) == 0xFFFF;
 	}
@@ -676,6 +704,12 @@ bool Mystery::isGuilty(uint suspectIdx) const {
 }
 
 uint16 Mystery::alibiTextOffset(uint suspectIdx) const {
+	if (_isMacintosh) {
+		const byte *e = floppySuspectEntry(suspectIdx);
+		if (!e)
+			return 0xFFFF;
+		return READ_LE_UINT16(e + 2);
+	}
 	if (_isFloppy) {
 		const byte *e = floppySuspectEntry(suspectIdx);
 		if (!e)
@@ -749,7 +783,9 @@ int Mystery::selectedPoints() const {
 		if (!_noteSelected[i])
 			continue;
 		// CD NoteIndex entry: 4 bytes = u16 textOff + u16 points (at +2).
-		const uint16 pts = READ_LE_UINT16(ni + i * 4 + 2);
+		// Mac rows are 8 bytes: notebook text, Jake text, Jenny text, points.
+		const uint16 pts = _isMacintosh ? READ_LE_UINT16(ni + i * 8 + 6)
+										: READ_LE_UINT16(ni + i * 4 + 2);
 		total += (int)(int16)pts;
 	}
 	return total;
@@ -820,8 +856,10 @@ int Mystery::foundPoints() const {
 	for (uint i = 0; i < maxIdx; i++) {
 		if (_cluesFound[i] == 0)
 			continue;
-		const uint16 pts = _isFloppy ? ni[i * 7 + 6]
-									 : READ_LE_UINT16(ni + i * 4 + 2);
+		const uint16 pts = _isFloppy
+			? ni[i * 7 + 6]
+			: (_isMacintosh ? READ_LE_UINT16(ni + i * 8 + 6)
+							: READ_LE_UINT16(ni + i * 4 + 2));
 		scores[scoreCount++] = pts;
 	}
 

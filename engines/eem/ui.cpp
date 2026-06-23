@@ -113,6 +113,38 @@ void blitBigMapMarker(Graphics::ManagedSurface &dstSurface, const Picture &marke
 	}
 }
 
+void blitMacBigMapPartnerFrame(Graphics::ManagedSurface &dstSurface,
+							   const Picture &frame, int anchorX,
+							   int anchorY) {
+	const byte transp = (byte)(frame.flags >> 8);
+	const int x = anchorX - (int)(int16)frame.miscflags;
+	const int y = anchorY - (int)(int16)frame.rowoff;
+	for (int row = 0; row < frame.surface.h; row++) {
+		const int dstY = y + row;
+		if (dstY < 0 || dstY >= dstSurface.h)
+			continue;
+		const byte *src = (const byte *)frame.surface.getBasePtr(0, row);
+		byte *dst = (byte *)dstSurface.getBasePtr(0, dstY);
+		for (int col = 0; col < frame.surface.w; col++) {
+			const int dstX = x + col;
+			if (dstX < 0 || dstX >= dstSurface.w)
+				continue;
+			const byte color = src[col];
+			if (color != transp) {
+				// The map partner frames are authored against the overview
+				// ColorTable: 0 is white and 0xff is black. The detail-map
+				// ColorTable swaps those endpoints.
+				if (color == 0x00)
+					dst[dstX] = 0xff;
+				else if (color == 0xff)
+					dst[dstX] = 0x00;
+				else
+					dst[dstX] = color;
+			}
+		}
+	}
+}
+
 struct BigMapEntryInfo {
 	uint16 overviewX = 0;
 	uint16 overviewY = 0;
@@ -693,8 +725,100 @@ struct ActionMenuView {
 	uint numPicks;
 };
 
+Common::StringArray loadMacBookNames(uint book) {
+	// The Mac release embeds the chooser strings in the application resource
+	// data instead of shipping BOOK*.NME files.
+	static const char *const kMacBook1Names[] = {
+		"Case of the Stolen Skateboard",
+		"Case of the Roundabout Robber",
+		"Case of the Runaway Reptile",
+		"Case of the Mysterious Monster",
+		"Case of the Rock Ripoff",
+		"Case of the Pilfered Pop",
+		"Case of the Creepy Cinema",
+		"Case of the Angry Arsonist",
+		"Case of the Crazy Compass",
+		"Case of the Midnight Masquerade",
+		"Case of the Missing Mink",
+		"Case of the Basketball Blooper",
+		"Case of the Reappearing Recipe",
+		"Case of the Attacking Aliens",
+		"Case of the Dangling Diamond",
+		"Case of the Buried Booty",
+		"Case of the Questionable Quiz",
+		"Case of the Cryptic Cavern",
+		"Case of the International Idol",
+		"Case of the Counterfeit Card",
+		"Case of the Puzzling Pooches",
+		"Case of the Baffling Bones",
+		"Case of the Vanishing Violin",
+		"Case of the Antique Autograph",
+	};
+	static const char *const kMacBook2Names[] = {
+		"Case of the Stolen Skateboard",
+		"Case of the Angry Arsonist",
+		"Case of the Roundabout Robber",
+		"Case of the Cryptic Cavern",
+		"Case of the Missing Mink",
+		"Case of the International Idol",
+		"Case of the Runaway Reptile",
+		"Case of the Buried Booty",
+		"Case of the Midnight Masquerade",
+		"Case of the Pilfered Pop",
+		"Case of the Rock Ripoff",
+		"Case of the Basketball Blooper",
+		"Case of the Questionable Quiz",
+		"Case of the Baffling Bones",
+		"Case of the Vanishing Violin",
+		"Case of the Dangling Diamond",
+		"Case of the Puzzling Pooches",
+		"Case of the Mysterious Monster",
+		"Case of the Attacking Aliens",
+		"Case of the Antique Autograph",
+		"Case of the Reappearing Recipe",
+		"Case of the Creepy Cinema",
+		"Case of the Crazy Compass",
+		"Case of the Counterfeit Card",
+	};
+	static const char *const kMacBook3Names[] = {
+		"Case of the Midnight Masquerade",
+		"Case of the Puzzled Pooches",
+		"Case of the Buried Booty",
+		"Case of the International Idol",
+		"Case of the Antique Autograph",
+		"Case of the Attacking Aliens",
+	};
+
+	const char *const *src = nullptr;
+	uint count = 0;
+	switch (book) {
+	case 1:
+		src = kMacBook1Names;
+		count = ARRAYSIZE(kMacBook1Names);
+		break;
+	case 2:
+		src = kMacBook2Names;
+		count = ARRAYSIZE(kMacBook2Names);
+		break;
+	case 3:
+		src = kMacBook3Names;
+		count = ARRAYSIZE(kMacBook3Names);
+		break;
+	default:
+		break;
+	}
+
+	Common::StringArray names;
+	for (uint i = 0; i < count; i++)
+		names.push_back(src[i]);
+	return names;
+}
+
 // `_DoChooseMystery @ 1a35:02b7`
-Common::StringArray loadBookNames(uint book) {
+Common::StringArray loadBookNames(uint book, bool macintosh) {
+	if (macintosh)
+		return loadMacBookNames(book);
+
 	Common::StringArray names;
 	const Common::String fname = Common::String::format("BOOK%u.NME", book);
 	Common::File f;
@@ -2222,7 +2346,7 @@ void EEMEngine::doCaseSelection() {
 	if (stageHi > kMaxMystery)
 		stageHi = kMaxMystery;
 
-	const Common::StringArray names = loadBookNames(book);
+	const Common::StringArray names = loadBookNames(book, isMacintosh());
 	if (names.empty()) {
 		warning("doCaseSelection: BOOK%u.NME failed to load", book);
 		return;
@@ -2617,6 +2741,17 @@ Common::String EEMEngine::notebookNoteText(uint clueId, const byte *ni,
 		return parseString(Common::String(p, len),
 						   _playerName, _partner);
 	}
+	if (isMacintosh() && bufBase) {
+		const uint16 textOff = READ_LE_UINT16(ni + clueId * 8);
+		if (textOff == 0 || textOff >= mysSz)
+			return Common::String();
+		const char *p = (const char *)(bufBase + textOff);
+		uint32 len = 0;
+		while (textOff + len < mysSz && p[len] != 0)
+			len++;
+		return parseString(Common::String(p, len),
+						   _playerName, _partner);
+	}
 	const uint stride = isLondon() ? 2 : 4;
 	const uint16 textOff = READ_LE_UINT16(ni + clueId * stride);
 	return parseString(_mystery.textAt(textOff),
@@ -2890,13 +3025,14 @@ void EEMEngine::doGallery() {
 bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 						  const Picture &galBg, bool haveBg) {
 	const bool floppyMI = isFloppy();
-	const byte *suspect = floppyMI
+	const bool compactMI = floppyMI || isMacintosh();
+	const byte *suspect = compactMI
 							  ? _mystery.floppySuspectEntry(suspectIdx)
 							  : gd + suspectIdx * 0x46;
 	if (!suspect)
 		return false;
 	const uint16 detailPic = READ_LE_UINT16(suspect + 0);
-	const uint clueCount = floppyMI
+	const uint clueCount = compactMI
 							   ? (uint)suspect[4]
 							   : READ_LE_UINT16(suspect + 8);
 
@@ -2905,7 +3041,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 	const int rx = 78, ry = 93;
 	const int rw = 288 - 78, rh = 152 - 93;
 	const int lineH = _font.getFontHeight();
-	const uint clueMax = floppyMI ? clueCount : 30u;
+	const uint clueMax = compactMI ? clueCount : 30u;
 	const byte *ni = _mystery.noteIndex();
 	const uint16 niCount = isLondon()
 		? (uint16)(_mystery.noteSectionSize() / 2)
@@ -2940,10 +3076,10 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 		uint k = pageStart;
 		bool reachedEnd = false;
 		for (; k < clueCount && k < clueMax; k++) {
-			const uint16 clueId = floppyMI
+			const uint16 clueId = compactMI
 				? (uint16)suspect[5 + k]
 				: READ_LE_UINT16(suspect + 0xa + k * 2);
-			if (!floppyMI && clueId == 0xFFFF) {
+			if (!compactMI && clueId == 0xFFFF) {
 				reachedEnd = true;
 				break;
 			}
@@ -3152,6 +3288,7 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 				   g_system->getMillis());
 
 	const bool floppy = isFloppy();
+	const bool compactGallery = floppy || isMacintosh();
 	const GallerySlot * const slots =
 		floppy ? kFloppyGallerySlots : kGallerySlots;
 	for (uint i = 0; i < numSuspects && i < Mystery::kGalleryCap; i++) {
@@ -3165,7 +3302,7 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 
 		const bool discovered = _mystery._inGallery[phys] != 0;
 		if (discovered) {
-			const byte *entry = floppy
+			const byte *entry = compactGallery
 				? _mystery.floppySuspectEntry(i)
 				: gd + i * 0x46;
 			if (!entry)
@@ -3926,10 +4063,15 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 		!detailAnim.empty()) {
 		const uint frameIdx = bigMapDetailPartnerFrameAtTick(
 				(uint)detailAnim.size(), elapsedMs);
-		blitAnimFrameAnchored(scratch.surfacePtr(),
-							  detailAnim[frameIdx],
-							  mac ? scaleX(0x101) : 0x101,
-							  mac ? scaleY(0x50) : 0x50);
+		const int anchorX = mac ? scaleX(0x101) : 0x101;
+		const int anchorY = mac ? scaleY(0x50) : 0x50;
+		if (mac)
+			blitMacBigMapPartnerFrame(scratch, detailAnim[frameIdx],
+									  anchorX, anchorY);
+		else
+			blitAnimFrameAnchored(scratch.surfacePtr(),
+								  detailAnim[frameIdx],
+								  anchorX, anchorY);
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
@@ -3950,6 +4092,14 @@ Common::String EEMEngine::accuseNoteText(uint clueId,
 		const uint16 textOff = READ_LE_UINT16(ctx.ni + clueId * 7);
 		if (textOff == 0 || textOff >= _mystery.dataSize() ||
 			!ctx.bufBaseNotes)
+			return Common::String();
+		return parseString(
+			(const char *)(ctx.bufBaseNotes + textOff),
+			_playerName, _partner);
+	}
+	if (isMacintosh() && ctx.bufBaseNotes) {
+		const uint16 textOff = READ_LE_UINT16(ctx.ni + clueId * 8);
+		if (textOff == 0 || textOff >= _mystery.dataSize())
 			return Common::String();
 		return parseString(
 			(const char *)(ctx.bufBaseNotes + textOff),
@@ -4698,9 +4848,10 @@ void EEMEngine::doAccuse() {
 		Picture alibiBg;
 		const bool haveAlibiBg = _picsArchive.getPicture(0x3e, alibiBg);
 		Picture suspect;
-		const uint16 picId = gd
-			? READ_LE_UINT16(gd + (uint)picked * 0x46)
-			: 0;
+		const byte *pickedSuspect = isMacintosh()
+			? _mystery.floppySuspectEntry((uint)picked)
+			: (gd ? gd + (uint)picked * 0x46 : nullptr);
+		const uint16 picId = pickedSuspect ? READ_LE_UINT16(pickedSuspect) : 0;
 		const bool haveSuspect = picId != 0 &&
 			_picsArchive.getPicture(picId, suspect);
 		Picture balloon;
@@ -4788,7 +4939,7 @@ void EEMEngine::doAccuse() {
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, kScreenWidth, kScreenHeight);
 		g_system->updateScreen();
-		if (_audio && gd) {
+		if (_audio && gd && !isMacintosh()) {
 			const uint16 alibiVoice =
 				READ_LE_UINT16(gd + (uint)picked * 0x46 + 0x00);
 			const uint16 jakeVoice =
@@ -5550,7 +5701,12 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 			continue;
 		const GallerySlot &s = kGallerySlots[phys];
 
-		const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
+		const byte *entry = isMacintosh()
+			? _mystery.floppySuspectEntry(i)
+			: gd + i * 0x46;
+		if (!entry)
+			continue;
+		const uint16 picId = READ_LE_UINT16(entry);
 		if (picId == 0)
 			continue;
 		Picture portrait;

@@ -332,12 +332,14 @@ static void addMacResourceSearchPaths() {
 		return;
 
 	const Common::FSNode childRsrcDir = gameDataDir.getChild("rsrc");
-	if (childRsrcDir.exists() && childRsrcDir.isDirectory())
+	if (childRsrcDir.exists() && childRsrcDir.isDirectory() &&
+		!SearchMan.hasArchive("eem-mac-rsrc-child"))
 		SearchMan.addDirectory("eem-mac-rsrc-child", childRsrcDir);
 
 	const Common::FSNode siblingRsrcDir =
 		gameDataDir.getParent().getChild("rsrc");
-	if (siblingRsrcDir.exists() && siblingRsrcDir.isDirectory())
+	if (siblingRsrcDir.exists() && siblingRsrcDir.isDirectory() &&
+		!SearchMan.hasArchive("eem-mac-rsrc-sibling"))
 		SearchMan.addDirectory("eem-mac-rsrc-sibling", siblingRsrcDir);
 }
 
