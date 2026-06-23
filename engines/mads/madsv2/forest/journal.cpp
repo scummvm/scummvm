@@ -75,9 +75,9 @@ void open_journal(int mode) {
 
 		if (mode == 1) {
 			if (count != 23) {
-				int id = count * 2 + 46;
+				int x = count * 2 + 46;
 				int clip_x = 100 - count * 9;
-				sprite_draw_clipped(series_list[0], id, clip_x, &scr_inter, 1, 30);
+				sprite_draw_clipped(series_list[0], 1, clip_x, &scr_inter, x, 30);
 			}
 		} else {
 			sprite_draw(series_list[0], 3, &scr_inter, 1, 8);
@@ -85,9 +85,9 @@ void open_journal(int mode) {
 
 		if (mode == 2) {
 			if (count != 23) {
-				int id = count * 2 + 40;
+				int x = count * 2 + 40;
 				int clip_x = 100 - count * 9;
-				sprite_draw_clipped(series_list[1], id, clip_x, &scr_inter, 1, 96);
+				sprite_draw_clipped(series_list[1], 1, clip_x, &scr_inter, x, 96);
 			}
 		} else {
 			sprite_draw(series_list[1], 1, &scr_inter, 1, 68);
@@ -136,9 +136,9 @@ void close_journal(int mode) {
 
 		if (mode == 1) {
 			if (count != 0) {
-				int id = count * 2 + 43;
+				int x = count * 2 + 43;
 				int clip_x = 100 - count * 9;
-				sprite_draw_clipped(series_list[0], id, clip_x, &scr_inter, 1, 30);
+				sprite_draw_clipped(series_list[0], 1, clip_x, &scr_inter, x, 30);
 			} else {
 				sprite_draw(series_list[0], 3, &scr_inter, 1, 8);
 			}
@@ -148,9 +148,9 @@ void close_journal(int mode) {
 
 		if (mode == 2) {
 			if (count != 0) {
-				int id = count * 2 + 37;
+				int x = count * 2 + 37;
 				int clip_x = 100 - count * 9;
-				sprite_draw_clipped(series_list[1], id, clip_x, &scr_inter, 1, 96);
+				sprite_draw_clipped(series_list[1], 1, clip_x, &scr_inter, x, 96);
 			} else {
 				sprite_draw(series_list[1], 1, &scr_inter, 1, 68);
 			}
