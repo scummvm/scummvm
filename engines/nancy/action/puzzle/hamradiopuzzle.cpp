@@ -160,9 +160,13 @@ void HamRadioPuzzle::setFrequency(const Common::Array<uint16> &freq) {
 }
 
 void HamRadioPuzzle::CCSound::readData(Common::SeekableReadStream &stream) {
-	char buf[100];
-	stream.read(buf, 100);
-	assembleTextLine(buf, text, 100);
+	// One line, "Voice: Mensaje recibido.<n>..." fills all bytes, no NUL!
+	// Guarantee NUL-terminated buf, even up to `size` chars.
+	const uint size = 100;
+	char buf[size + 1];
+	stream.read(buf, size);
+	buf[size] = 0;
+	assembleTextLine(buf, text, size);
 	sound.readNormal(stream);
 }
 
