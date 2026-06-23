@@ -64,6 +64,10 @@ public:
 		return !_speaker->endOfStream();
 	}
 
+	bool isSoundAvailable(int index) const override {
+		return _soundsSpeakerFx.getValOrDefault(index) != nullptr;
+	}
+
 private:
 	Common::HashMap<uint16, soundSpeakerFx *> _soundsSpeakerFx;
 

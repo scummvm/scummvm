@@ -389,10 +389,19 @@ void FreescapeEngine::executeExecute(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeSound(FCLInstruction &instruction) {
-	stopAllSounds(Sound::kTypeMovement);
-	_firstSound = false;
 	uint16 index = instruction._source;
 	bool sync = instruction._additional;
+	// An undefined sound index is a no-op in the original engines (e.g.
+	// start_speaker_sound returns early when the DOS table index is 0xFF) and
+	// must NOT disturb the sound that is already playing. Otherwise the
+	// stopAllSounds() below cuts the previous sound and then plays nothing
+	// (e.g. SOUND 15; SOUND 16 where sound 16 is undefined in the data).
+	if (_sound && !_sound->isSoundAvailable(index)) {
+		debugC(1, kFreescapeDebugCode, "Sound %d not available, keeping current sound", index);
+		return;
+	}
+	stopAllSounds(Sound::kTypeMovement);
+	_firstSound = false;
 	debugC(1, kFreescapeDebugCode, "Playing sound %d", index);
 	playSound(index, sync);
 }

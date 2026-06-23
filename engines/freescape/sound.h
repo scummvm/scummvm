@@ -44,6 +44,11 @@ public:
 	virtual void playSound(int index, Type type) = 0;
 	virtual void stopSound(Type type) = 0;
 	virtual bool isPlayingSound(Type type) const = 0;
+
+	// Whether the given sound index actually exists. Used to skip undefined
+	// sounds without disturbing the sound currently playing, matching the
+	// original engines where an unknown index leaves the active sound untouched.
+	virtual bool isSoundAvailable(int index) const { return true; }
 };
 
 } // End of namespace Freescape
