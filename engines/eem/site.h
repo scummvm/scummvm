@@ -67,6 +67,26 @@ uint bigMapDetailPartnerFrameAtTick(uint numFrames, uint32 elapsedMs);
 void blitAnimFrameAnchored(Graphics::Surface *screen, const Picture &p,
 						   int anchorX, int anchorY);
 
+struct MacSpritePaletteMap {
+	byte white;
+	byte black;
+};
+
+/// Mac UI/sprite art is authored with color 0 = white and 0xff = black,
+/// but several site ColorTables swap those endpoint slots.
+MacSpritePaletteMap getMacSpritePaletteMap();
+byte mapMacSpriteColor(byte color, const MacSpritePaletteMap &paletteMap);
+void blitMacMaskedSurface(Graphics::Surface *dst, const Picture &p,
+						  int x, int y, bool flipX = false);
+void blitMacMaskedSurface(Graphics::Surface *dst, const Picture &p,
+						  int x, int y, bool flipX,
+						  const MacSpritePaletteMap &paletteMap);
+void blitMacAnimFrameAnchored(Graphics::Surface *dst, const Picture &p,
+							  int anchorX, int anchorY);
+void blitMacAnimFrameAnchored(Graphics::Surface *dst, const Picture &p,
+							  int anchorX, int anchorY,
+							  const MacSpritePaletteMap &paletteMap);
+
 /// Rotate one VGA palette range by one slot (START→END direction).
 void cyclePaletteRange(uint8 start, uint8 end);
 

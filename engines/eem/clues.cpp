@@ -1338,7 +1338,10 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 			getBalloonInsets(balloonId, textXIns, textYIns, textWidth);
 		const int textX = ballX + textXIns;
 		const int lineH = dialogFont.getFontHeight();
-		const byte textColor = mac ? 0xff : 0;
+		MacSpritePaletteMap macPaletteMap = {0x00, 0xFF};
+		if (mac)
+			macPaletteMap = getMacSpritePaletteMap();
+		const byte textColor = mac ? macPaletteMap.black : 0;
 
 		bool firstPage  = true;
 		int  cursorY    = ballY + textYIns;
@@ -1374,16 +1377,26 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 				if (picID != 0 && picID != 0xFFFF) {
 					Picture pic;
 					if (_picsArchive.getPicture(picID, pic)) {
-						scratch.transBlitFrom(pic.surface,
-											  Common::Point(picX, picY),
-											  (uint32)(byte)(pic.flags >> 8));
+						if (mac)
+							blitMacMaskedSurface(scratch.surfacePtr(), pic,
+												 picX, picY, false,
+												 macPaletteMap);
+						else
+							scratch.transBlitFrom(pic.surface,
+												  Common::Point(picX, picY),
+												  (uint32)(byte)(pic.flags >> 8));
 					}
 				}
 				if (haveBalloon) {
 					const byte transp = (byte)(balloon.flags >> 8);
-					scratch.transBlitFrom(balloon.surface,
-										  Common::Point(ballX, ballY),
-										  transp, flipBall);
+					if (mac)
+						blitMacMaskedSurface(scratch.surfacePtr(), balloon,
+											 ballX, ballY, flipBall,
+											 macPaletteMap);
+					else
+						scratch.transBlitFrom(balloon.surface,
+											  Common::Point(ballX, ballY),
+											  transp, flipBall);
 				}
 				cursorY = ballY + textYIns;
 			}

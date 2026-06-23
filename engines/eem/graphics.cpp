@@ -888,8 +888,11 @@ void EEMEngine::drawFloppyBubbleIndicator(Graphics::ManagedSurface &dst,
 		return;
 	const int x = ballX + (int)dx;
 	const int y = ballY + (int)dy;
-	dst.transBlitFrom(pic.surface, Common::Point(x, y),
-					  (uint32)(byte)(pic.flags >> 8));
+	if (isMacintosh())
+		blitMacMaskedSurface(dst.surfacePtr(), pic, x, y);
+	else
+		dst.transBlitFrom(pic.surface, Common::Point(x, y),
+						  (uint32)(byte)(pic.flags >> 8));
 }
 
 } // End of namespace EEM

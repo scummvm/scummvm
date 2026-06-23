@@ -83,6 +83,48 @@ bool londonTravelSitePic(const Mystery *mystery, uint siteNum, uint16 &sitePic) 
 	return false;
 }
 
+static bool paletteEntryIsWhite(const byte *rgb) {
+	return rgb[0] >= 0xFC && rgb[1] >= 0xFC && rgb[2] >= 0xFC;
+}
+
+static bool paletteEntryIsBlack(const byte *rgb) {
+	return rgb[0] <= 0x03 && rgb[1] <= 0x03 && rgb[2] <= 0x03;
+}
+
+static byte findPaletteEndpoint(const byte *palette, bool wantWhite,
+								byte preferred, byte alternate,
+								byte fallback) {
+	bool (*matches)(const byte *) = wantWhite ? paletteEntryIsWhite
+											  : paletteEntryIsBlack;
+	if (matches(palette + preferred * 3))
+		return preferred;
+	if (matches(palette + alternate * 3))
+		return alternate;
+	for (uint i = 0; i < 256; i++) {
+		if (matches(palette + i * 3))
+			return (byte)i;
+	}
+	return fallback;
+}
+
+MacSpritePaletteMap getMacSpritePaletteMap() {
+	byte palette[256 * 3];
+	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+
+	MacSpritePaletteMap map;
+	map.white = findPaletteEndpoint(palette, true, 0x00, 0xFF, 0x00);
+	map.black = findPaletteEndpoint(palette, false, 0xFF, 0x00, 0xFF);
+	return map;
+}
+
+byte mapMacSpriteColor(byte color, const MacSpritePaletteMap &paletteMap) {
+	if (color == 0x00)
+		return paletteMap.white;
+	if (color == 0xFF)
+		return paletteMap.black;
+	return color;
+}
+
 // Masked blit using `transp` = high byte of `pic.flags` (`_Rect_Move_Mask @ 1000:03fc`).
 void blitFrame(Graphics::ManagedSurface &dst, const Picture &p,
 			   int x, int y, byte transp) {
@@ -111,12 +153,60 @@ void blitMaskedSurface(Graphics::Surface *screen, const Picture &p,
 	keyBlitToScreen(screen, p, x, y);
 }
 
+void blitMacMaskedSurface(Graphics::Surface *dst, const Picture &p,
+						  int x, int y, bool flipX,
+						  const MacSpritePaletteMap &paletteMap) {
+	if (!dst || p.surface.empty())
+		return;
+
+	const Common::Rect dstRect =
+		Common::Rect(x, y, x + p.surface.w, y + p.surface.h)
+			.findIntersectingRect(Common::Rect(dst->w, dst->h));
+	if (dstRect.isEmpty())
+		return;
+
+	const byte transp = (byte)(p.flags >> 8);
+	for (int row = dstRect.top; row < dstRect.bottom; row++) {
+		const int srcY = row - y;
+		const byte *src = (const byte *)p.surface.getBasePtr(0, srcY);
+		byte *out = (byte *)dst->getBasePtr(dstRect.left, row);
+		for (int col = dstRect.left; col < dstRect.right; col++, out++) {
+			const int relX = col - x;
+			const int srcX = flipX ? (p.surface.w - 1 - relX) : relX;
+			const byte color = src[srcX];
+			if (color != transp)
+				*out = mapMacSpriteColor(color, paletteMap);
+		}
+	}
+}
+
+void blitMacMaskedSurface(Graphics::Surface *dst, const Picture &p,
+						  int x, int y, bool flipX) {
+	const MacSpritePaletteMap paletteMap = getMacSpritePaletteMap();
+	blitMacMaskedSurface(dst, p, x, y, flipX, paletteMap);
+}
+
 // `_UpdateAnimations @ 172b:09c1`
 void blitAnimFrameAnchored(Graphics::Surface *screen, const Picture &p,
 						   int anchorX, int anchorY) {
 	keyBlitToScreen(screen, p,
 					anchorX - (int)(int16)p.miscflags,
 					anchorY - (int)(int16)p.rowoff);
+}
+
+void blitMacAnimFrameAnchored(Graphics::Surface *dst, const Picture &p,
+							  int anchorX, int anchorY,
+							  const MacSpritePaletteMap &paletteMap) {
+	blitMacMaskedSurface(dst, p,
+						 anchorX - (int)(int16)p.miscflags,
+						 anchorY - (int)(int16)p.rowoff,
+						 false, paletteMap);
+}
+
+void blitMacAnimFrameAnchored(Graphics::Surface *dst, const Picture &p,
+							  int anchorX, int anchorY) {
+	const MacSpritePaletteMap paletteMap = getMacSpritePaletteMap();
+	blitMacAnimFrameAnchored(dst, p, anchorX, anchorY, paletteMap);
 }
 
 bool readHotspotRect(const byte *r, bool mac, Common::Rect &rect) {
@@ -1182,6 +1272,10 @@ bool SiteScreen::enterSiteAnim() {
 		Graphics::PixelFormat::createFormatCLUT8());
 	bg.simpleBlitFrom(*screen);
 	g_system->unlockScreen();
+	const bool mac = _vm->isMacintosh();
+	MacSpritePaletteMap macPaletteMap = {0x00, 0xFF};
+	if (mac)
+		macPaletteMap = getMacSpritePaletteMap();
 
 	if (_vm->isLondon()) {
 		const uint animId = (partner == 0) ? 7 : 0xf;
@@ -1229,7 +1323,11 @@ bool SiteScreen::enterSiteAnim() {
 			Graphics::ManagedSurface scratch(sw, sh,
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.simpleBlitFrom(bg);
-			blitFrame(scratch, skate[frameIdx], x, y, transp);
+			if (mac)
+				blitMacMaskedSurface(scratch.surfacePtr(), skate[frameIdx],
+									 x, y, false, macPaletteMap);
+			else
+				blitFrame(scratch, skate[frameIdx], x, y, transp);
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 									   0, 0, sw, sh);
 			g_system->updateScreen();
@@ -1265,7 +1363,11 @@ bool SiteScreen::enterSiteAnim() {
 			Graphics::ManagedSurface scratch(sw, sh,
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.simpleBlitFrom(bg);
-			blitFrame(scratch, fr, destX, destY, transp);
+			if (mac)
+				blitMacMaskedSurface(scratch.surfacePtr(), fr, destX, destY,
+									 false, macPaletteMap);
+			else
+				blitFrame(scratch, fr, destX, destY, transp);
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 									   0, 0, sw, sh);
 			g_system->updateScreen();
@@ -1333,6 +1435,9 @@ void SiteScreen::renderFloppyDrops(uint siteNum) {
 	if (!screen)
 		return;
 
+	MacSpritePaletteMap macPaletteMap = {0x00, 0xFF};
+	if (mac)
+		macPaletteMap = getMacSpritePaletteMap();
 	for (uint i = 0; i < count; i++) {
 		const byte *e = drops + 2 + i * (mac ? 6 : 5);
 		const uint16 picID = READ_LE_UINT16(e + 0);
@@ -1344,7 +1449,10 @@ void SiteScreen::renderFloppyDrops(uint siteNum) {
 		Picture pic;
 		if (!_vm->getPics().getPicture((uint)picID, pic))
 			continue;
-		blitMaskedSurface(screen, pic, x, y);
+		if (mac)
+			blitMacMaskedSurface(screen, pic, x, y, false, macPaletteMap);
+		else
+			blitMaskedSurface(screen, pic, x, y);
 	}
 	g_system->unlockScreen();
 }
@@ -1577,7 +1685,10 @@ void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen)
 		return;
-	blitAnimFrameAnchored(screen, anim[frameIdx], x, y);
+	if (_vm->isMacintosh())
+		blitMacAnimFrameAnchored(screen, anim[frameIdx], x, y);
+	else
+		blitAnimFrameAnchored(screen, anim[frameIdx], x, y);
 	g_system->unlockScreen();
 }
 
@@ -1614,7 +1725,10 @@ bool SiteScreen::renderFloppyHotspotPartnerPose(uint siteNum) {
 		return false;
 
 	const uint frameIdx = partnerFrameAtTick(animId, (uint)anim.size(), 0);
-	blitAnimFrameAnchored(screen, anim[frameIdx], x, y);
+	if (mac)
+		blitMacAnimFrameAnchored(screen, anim[frameIdx], x, y);
+	else
+		blitAnimFrameAnchored(screen, anim[frameIdx], x, y);
 	g_system->unlockScreen();
 	return true;
 }
