@@ -1,6 +1,30 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2026.4.0 "TBD" (XX.10.2026)
+
+ Allgemein:
+   - Zur Verbesserung der Perforamcen wurden die Audio-Mixer und -Konverter optimiert.
+   - ImGui-basierte Oberfläche für den Event-Recorder implementiert.
+   - Fehler korrigiert, durch den MIDI- und MT-32-Geräte in den Spiel-Optionen
+     nicht überschrieben werden konnten.
+
+ MM:
+   - Mehrere Abstürze in Kämpfen in M&M1 korrigiert.
+   - Unterstützung für PC-Speaker in M&M1 implementiert.
+   - Fehler korrigiert, der einen Absturz beim Schließen veralteter Ansichten auslöst.
+   - Schreibfehler in M&M1 korrigiert.
+   - Verbesserung des erweiterten Maus-Modus, der Charakter-Erzeugung und der Spiel-Oberfläche
+     in M&M1.
+
+ NANCY:
+   - Allgemeine Flags werden nicht mehr gelöscht, wenn das Spiel (automatisch) gespeichert
+     wird. Das Löschen der Flags hat in einigen Szenen zu Problemen geführt.
+   - Spielstände können jetzt über den GMM geladen werden, bevor eine neue Szene gestartet wird.
+
+ Atari-Portierung:
+   - Unterstützung für die nFM-Bibliothek hinzugefügt.
+
 #### 2026.3.0 "Carousels & Killer Whales" (20.06.2026)
 
  Neue Spiele:
