@@ -140,7 +140,7 @@ void FoolGame::highPriestessRun() {
 		for (int16 i = 0; i <= 0x22; i++) {
 			this->var_i32_692 = _toolbox->TickCount();
 			_toolbox->InvertRect(area);
-			this->sub_128_406(1);
+			this->delayFromMarker(1);
 		}
 		// 140:037e
 		this->var_i16_484 = 0x96;
@@ -160,12 +160,9 @@ void FoolGame::highPriestessRun() {
 		}
 		// 140:03f0
 		_zbasic->text(kFontLarge, 0x18, 0x10, kSrcBic);
-		this->var_i16_7a2 = 0x96;
-		this->sub_128_918(_zbasic->str(OFF(3))); // you cannot claim
-		this->var_i16_7a2 = 0xb9;
-		this->sub_128_918(_zbasic->str(OFF(4))); // the book of thoth
-		this->var_i16_7a2 = 0xdc;
-		this->sub_128_918(_zbasic->str(OFF(5))); // so easily
+		this->drawStringCenter(_zbasic->str(OFF(3)), 0x96); // you cannot claim
+		this->drawStringCenter(_zbasic->str(OFF(4)), 0xb9); // the book of thoth
+		this->drawStringCenter(_zbasic->str(OFF(5)), 0xdc); // so easily
 		_toolbox->SetPort(this->var_i32_0);
 		this->waitForClick();
 	}
@@ -177,7 +174,7 @@ void FoolGame::highPriestessRun() {
 
 void FoolGame::thoth99Enchantments() {
 	// 140:0458
-	this->sub_128_4da(0);
+	this->toggleMouseCursor(false);
 	if (_activePuzzleBuffer.empty()) { // was: str(OFF(6))
 		this->arr_i16_1eb8[0] = 0x63;
 	} else {
@@ -189,10 +186,8 @@ void FoolGame::thoth99Enchantments() {
 	}
 	if (this->arr_i16_1eb8[0] == 0x63) {
 		_zbasic->text(kFontLarge, 0x18, 0x10, kSrcBic);
-		this->var_i16_7a2 = 0xaf;
-		this->sub_128_918(_zbasic->str(OFF(7))); // you dare to challenge
-		this->var_i16_7a2 = 0xd2;
-		this->sub_128_918(_zbasic->str(OFF(8))); // the high priestess
+		this->drawStringCenter(_zbasic->str(OFF(7)), 0xaf); // you dare to challenge
+		this->drawStringCenter(_zbasic->str(OFF(8)), 0xd2); // the high priestess
 		this->delay(0xb4);
 	}
 	// 140:0532
@@ -228,7 +223,7 @@ void FoolGame::thoth99Enchantments() {
 	this->arr_i16_4758[7] = SCREEN_WIDTH;
 	this->arr_i16_1eb8[1] = 0;
 	_zbasic->unk_20();
-	this->sub_128_4da(1);
+	this->toggleMouseCursor(true);
 	_stateFlags = kStateNull;
 	_activePuzzleSolved = false;
 	this->var_i16_2326 = 0;
@@ -236,6 +231,8 @@ void FoolGame::thoth99Enchantments() {
 
 	// new value: number of updates before a screen flash
 	this->arr_i16_1eb8[3] = 0;
+
+	uint32 phase2Timer = _toolbox->TickCount();
 
 	while (((_stateFlags & kStateReturn) == 0) && !_activePuzzleSolved) {
 		// 140:0752
@@ -274,11 +271,11 @@ void FoolGame::thoth99Enchantments() {
 			// 140:0852
 			this->arr_i16_1eb8[2] = this->arr_i16_1eb8[0] - this->arr_i16_1eb8[1];
 			if (this->arr_i16_1eb8[2] == this->arr_i16_1eb8[0]) {
-				if ((this->var_i16_2328 == 1) && (_toolbox->TickCount() > (this->var_i32_68e + 0x28))) {
+				if ((this->var_i16_2328 == 1) && (_toolbox->TickCount() > (phase2Timer + 0x28))) {
 					this->var_i16_2328 = 0;
 				}
 				if (this->var_i16_2328 == 0) {
-					this->var_i32_68e = _toolbox->TickCount();
+					phase2Timer = _toolbox->TickCount();
 					this->var_i16_2328 = 1;
 					this->thothMoveEnchantment();
 				}
@@ -299,7 +296,7 @@ void FoolGame::thoth99Enchantments() {
 			}
 		} while (_event.what != 0);
 		// 140:094a
-		this->sub_128_406(1);
+		this->delayFromMarker(1);
 	}
 	// 140:097a
 	if (_activePuzzleSolved) {
@@ -1043,7 +1040,7 @@ void FoolGame::hermitScreenFlash() {
 
 void FoolGame::hermitScreenZoom() {
 	// 140:26ca
-	this->sub_128_4da(0);
+	this->toggleMouseCursor(false);
 	_toolbox->PenSize(0xa, 0x7);
 
 	for (int16 j = 0; j <= 2; j++) {
@@ -1069,7 +1066,7 @@ void FoolGame::hermitScreenZoom() {
 	_toolbox->PenNormal();
 	_toolbox->PenPat(_patterns[1]);
 	this->var_i16_1de6 = 0;
-	this->sub_128_4da(1);
+	this->toggleMouseCursor(true);
 }
 
 void FoolGame::hermitScreenBehold() {
@@ -1289,7 +1286,7 @@ void FoolGame::sub_140_3296() {
 
 void FoolGame::sub_140_32ac() {
 	// 140:33ac
-	this->sub_128_4da(0);
+	this->toggleMouseCursor(false);
 	_toolbox->PenNormal();
 	for (int16 j = 0; j <= 0x22; j++) {
 		for (int16 i = -5; i <= 0x159; i += 0xa) {
@@ -1302,11 +1299,11 @@ void FoolGame::sub_140_32ac() {
 	for (int16 i = 1; i <= 0xd; i++) {
 		this->var_i32_692 = _toolbox->TickCount();
 		_toolbox->InvertRect(area);
-		this->sub_128_406(1);
+		this->delayFromMarker(1);
 	}
 	// 140:334a
 	_toolbox->FillRect(area, _patterns[2]);
-	this->sub_128_4da(1);
+	this->toggleMouseCursor(true);
 	_toolbox->SetPort(this->var_i32_0);
 }
 

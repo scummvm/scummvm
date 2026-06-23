@@ -205,9 +205,9 @@ void FoolGame::deathDrawWhiteEye() {
 void FoolGame::deathCaught() {
 	// 141:08b8
 	this->deathDrawWhiteEye();
-	this->sub_128_4da(0);
+	this->toggleMouseCursor(false);
 	this->zoomRect(_deathBlackEye.top, _deathBlackEye.left, _deathBlackEye.bottom, _deathBlackEye.right, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x19);
-	this->sub_128_4da(1);
+	this->toggleMouseCursor(true);
 }
 
 void FoolGame::deathDrawZoom() {
