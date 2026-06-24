@@ -64,7 +64,7 @@ static void room_220_init() {
 	global[g009] = -1;
 	global_midi_play(10);
 	viewing_at_y = 22;
-	player.walker_visible = 0;
+	player.walker_visible = false;
 	player.commands_allowed = 0;
 
 	for (int i = 0; i < 10; i++) {

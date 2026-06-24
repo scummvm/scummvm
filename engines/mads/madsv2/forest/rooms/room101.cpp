@@ -60,7 +60,7 @@ struct Scratch {
 	int16 _a6;
 	int16 _a8;
 	int16 _aa;
-	int16 _ac;
+	int16 _startCutsceneCtr;
 	int16 _ae;
 	int16 _b0;
 	int16 _b2;
@@ -126,7 +126,7 @@ static void room_101_init2() {
 	aa[6] = kernel_run_animation(kernel_name('b', 1), 104);
 	aainfo[6]._active = -1;
 	scratch._9c = 1;
-	scratch._ac = 1;	
+	scratch._startCutsceneCtr = 1;	
 }
 
 static void room_101_init3() {
@@ -182,7 +182,7 @@ static void room_101_init3() {
 		global[g143] = 0;
 		restore_player();
 		player.commands_allowed = -1;
-		player.walker_visible = -1;
+		player.walker_visible = true;
 		return;
 	}
 
@@ -194,7 +194,7 @@ static void room_101_init3() {
 		global[g133] = 0;
 		global[g143] = 0;
 		player.commands_allowed = 0;
-		player.walker_visible = 0;
+		player.walker_visible = false;
 		global[g009] = 0;
 		aainfo[5]._active = -1;
 		aa[5] = kernel_run_animation(kernel_name('b', 8), 111);
@@ -209,7 +209,7 @@ static void room_101_init3() {
 	global[g133] = 0;
 	global[g143] = 0;
 	player.commands_allowed = -1;
-	player.walker_visible = -1;
+	player.walker_visible = true;
 }
 
 static void room_101_init() {
@@ -285,7 +285,7 @@ static void room_101_anim1() {
 		return;
 	aainfo[6]._frame = frame;
 
-	switch (scratch._ac) {
+	switch (scratch._startCutsceneCtr) {
 	case 2:
 		if (frame == 1) {
 			aainfo[6]._val3 = 10;
@@ -476,7 +476,7 @@ static void room_101_anim7() {
 		player.x = 96;
 		player.y = 140;
 		player.facing = 3;
-		player.walker_visible = -1;
+		player.walker_visible = true;
 		player.commands_allowed = -1;
 		mouse_show();
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
@@ -694,7 +694,7 @@ static void room_101_daemon() {
 		case 69:
 			global[g154] = 0;
 			kernel_abort_animation(scratch._a8);
-			player.walker_visible = -1;
+			player.walker_visible = true;
 			scratch._b2 = 0;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			kernel_timing_trigger(45, 109);
@@ -720,7 +720,7 @@ static void room_101_daemon() {
 			scratch._aa = 49;
 			global[g154] = 2;
 			player.commands_allowed = 0;
-			player.walker_visible = 0;
+			player.walker_visible = false;
 			scratch._a8 = kernel_run_animation_talk('b', 6, 0);
 			kernel_position_anim(scratch._a8, player.x, player.y, player.scale, player.depth);
 			scratch._b2 = -1;
@@ -731,7 +731,7 @@ static void room_101_daemon() {
 		case 13:
 			scratch._aa = 69;
 			player.commands_allowed = 0;
-			player.walker_visible = 0;
+			player.walker_visible = false;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			global[g154] = 2;
 			scratch._a8 = kernel_run_animation_talk('b', 4, 0);
@@ -769,27 +769,28 @@ static void room_101_daemon() {
 		break;
 
 	case 104:
-		switch (scratch._ac) {
+		// First cutscene at start of game
+		switch (scratch._startCutsceneCtr) {
 		case 1:
 			kernel_abort_animation(aa[6]);
 			aa[6] = kernel_run_animation(kernel_name('b', 2), 104);
 			aainfo[6]._active = -1;
 			scratch._9c = 1;
-			scratch._ac++;
+			scratch._startCutsceneCtr++;
 			break;
 		case 2:
 			kernel_abort_animation(aa[6]);
 			aa[6] = kernel_run_animation(kernel_name('b', 3), 104);
 			aainfo[6]._active = -1;
 			scratch._9c = 1;
-			scratch._ac++;
+			scratch._startCutsceneCtr++;
 			break;
 		case 3:
 			kernel_abort_animation(aa[6]);
 			aa[6] = kernel_run_animation(kernel_name('r', 1), 104);
 			aainfo[6]._active = -1;
 			scratch._9c = 1;
-			scratch._ac++;
+			scratch._startCutsceneCtr++;
 			break;
 		case 4:
 			kernel_abort_animation(aa[6]);
@@ -800,7 +801,7 @@ static void room_101_daemon() {
 			aa[6] = kernel_run_animation(kernel_name('e', 1), 104);
 			aainfo[6]._active = -1;
 			scratch._9c = 1;
-			scratch._ac++;
+			scratch._startCutsceneCtr++;
 			break;
 		case 5:
 			kernel_seq_delete(seq[3]);
@@ -809,7 +810,7 @@ static void room_101_daemon() {
 			aa[6] = kernel_run_animation(kernel_name('e', 2), 104);
 			aainfo[6]._active = -1;
 			scratch._9c = 1;
-			scratch._ac++;
+			scratch._startCutsceneCtr++;
 			break;
 		case 6:
 			kernel_abort_animation(aa[6]);
@@ -820,32 +821,32 @@ static void room_101_daemon() {
 			aa[6] = kernel_run_animation(kernel_name('b', 4), 104);
 			aainfo[6]._active = -1;
 			scratch._9c = 1;
-			scratch._ac++;
+			scratch._startCutsceneCtr++;
 			break;
 		case 7:
 			kernel_abort_animation(aa[6]);
 			aa[6] = kernel_run_animation(kernel_name('b', 5), 104);
 			aainfo[6]._active = -1;
 			scratch._9c = 1;
-			scratch._ac++;
+			scratch._startCutsceneCtr++;
 			break;
 		case 8:
 			kernel_abort_animation(aa[6]);
 			aa[6] = kernel_run_animation(kernel_name('b', 6), 104);
 			aainfo[6]._active = -1;
 			scratch._9c = 1;
-			scratch._ac++;
+			scratch._startCutsceneCtr++;
 			break;
 		case 9:
 			kernel_abort_animation(aa[6]);
 			aa[6] = kernel_run_animation(kernel_name('b', 9), 104);
 			aainfo[6]._active = -1;
 			scratch._9c = 1;
-			scratch._ac++;
+			scratch._startCutsceneCtr++;
 			break;
 		case 10:
 			aainfo[7]._val3 = 8;
-			player.walker_visible = -1;
+			player.walker_visible = true;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			flags[0] = 2;
 			flags[1] = 0;
@@ -866,7 +867,7 @@ static void room_101_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._a4, KERNEL_NOW, 0);
 		kernel_reset_animation(scratch._a6, 1);
 		kernel_synch(KERNEL_ANIM, scratch._a6, KERNEL_NOW, 0);
-		player.walker_visible = -1;
+		player.walker_visible = true;
 		global[g133] = 0;
 		global[g143] = 0;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
@@ -954,7 +955,7 @@ static void room_101_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._a4, KERNEL_NOW, 0);
 		kernel_reset_animation(scratch._a6, 1);
 		kernel_synch(KERNEL_ANIM, scratch._a6, KERNEL_NOW, 0);
-		player.walker_visible = -1;
+		player.walker_visible = true;
 		global[g133] = 0;
 		global[g143] = 0;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
@@ -1070,7 +1071,7 @@ static void room_101_parser() {
 
 	if (player_parse(13, 149, 0)) {
 		player.commands_allowed = 0;
-		player.walker_visible = 0;
+		player.walker_visible = false;
 		kernel.trigger_setup_mode = 1;
 		aainfo[5]._active = -1;
 		aa[5] = kernel_run_animation(kernel_name('b', 5), 111);
@@ -1101,7 +1102,7 @@ void room_101_synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(scratch._a6);
 	s.syncAsSint16LE(scratch._a8);
 	s.syncAsSint16LE(scratch._aa);
-	s.syncAsSint16LE(scratch._ac);
+	s.syncAsSint16LE(scratch._startCutsceneCtr);
 	s.syncAsSint16LE(scratch._ae);
 	s.syncAsSint16LE(scratch._b0);
 	s.syncAsSint16LE(scratch._b2);

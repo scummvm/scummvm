@@ -88,7 +88,7 @@ static void room_210_init1() {
 	}
 
 	if (previous_room != 199) {
-		player.walker_visible = 0;
+		player.walker_visible = false;
 		player.commands_allowed = 0;
 	}
 
@@ -148,7 +148,7 @@ static void room_210_init1() {
 		restore_player();
 
 	player.commands_allowed = -1;
-	player.walker_visible = -1;
+	player.walker_visible = true;
 }
 
 static void room_210_init() {
@@ -450,7 +450,7 @@ static void room_210_daemon() {
 			kernel_synch(KERNEL_ANIM, scratch._a2, KERNEL_NOW, 0);
 			kernel_reset_animation(scratch._a4, 1);
 			kernel_synch(KERNEL_ANIM, scratch._a4, KERNEL_NOW, 0);
-			player.walker_visible = -1;
+			player.walker_visible = true;
 			global[g133] = 0; global[g143] = 0;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			player.commands_allowed = -1;
@@ -543,7 +543,7 @@ static void room_210_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._a2, KERNEL_NOW, 0);
 		kernel_reset_animation(scratch._a4, 1);
 		kernel_synch(KERNEL_ANIM, scratch._a4, KERNEL_NOW, 0);
-		player.walker_visible = -1;
+		player.walker_visible = true;
 		global[g133] = 0; global[g143] = 0;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 		player.commands_allowed = -1;
@@ -560,7 +560,7 @@ static void room_210_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._a2, KERNEL_NOW, 0);
 		kernel_reset_animation(scratch._a4, 1);
 		kernel_synch(KERNEL_ANIM, scratch._a4, KERNEL_NOW, 0);
-		player.walker_visible = -1;
+		player.walker_visible = true;
 		global[g133] = 0;
 		global[g143] = 0;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
@@ -606,7 +606,7 @@ static void room_210_parser() {
 
 	if (player_parse(78, 85, 0)) {
 		player.commands_allowed = 0;
-		player.walker_visible = 0;
+		player.walker_visible = false;
 		global[g150] = -1;
 		scratch._90 = 1;
 		player.command_ready = false;
@@ -615,7 +615,7 @@ static void room_210_parser() {
 
 	if (player_parse(78, 86, 0)) {
 		player.commands_allowed = 0;
-		player.walker_visible = 0;
+		player.walker_visible = false;
 		global[g150] = -1;
 		scratch._90 = 2;
 		player.command_ready = false;
@@ -624,7 +624,7 @@ static void room_210_parser() {
 
 	if (player_parse(78, 87, 0)) {
 		player.commands_allowed = 0;
-		player.walker_visible = 0;
+		player.walker_visible = false;
 		global[g150] = -1;
 		scratch._90 = 3;
 		player.command_ready = false;
@@ -633,7 +633,7 @@ static void room_210_parser() {
 
 	if (player_parse(78, 88, 0)) {
 		player.commands_allowed = 0;
-		player.walker_visible = 0;
+		player.walker_visible = false;
 		global[g150] = -1;
 		scratch._90 = 4;
 		player.command_ready = false;
@@ -642,7 +642,7 @@ static void room_210_parser() {
 
 	if (player_parse(78, 89, 0)) {
 		player.commands_allowed = 0;
-		player.walker_visible = 0;
+		player.walker_visible = false;
 		global[g150] = -1;
 		scratch._90 = 5;
 		player.command_ready = false;

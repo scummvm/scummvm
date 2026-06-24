@@ -77,7 +77,7 @@ static void room_107_init() {
 	viewing_at_y = 22;
 	global[player_score] = 0;
 	global[g009] = 0;
-	player.walker_visible = 0;
+	player.walker_visible = false;
 	player.commands_allowed = 0;
 	mouse_hide();
 

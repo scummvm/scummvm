@@ -67,7 +67,7 @@ static void room_509_init() {
 	global[g009] = -1;
 	viewing_at_y = 22;
 	global[player_score] = 0;
-	player.walker_visible = 0;
+	player.walker_visible = false;
 	player.commands_allowed = 0;
 
 	for (int count = 0; count < 10; count++) {

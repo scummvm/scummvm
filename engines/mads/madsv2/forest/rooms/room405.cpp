@@ -99,7 +99,7 @@ static void room_405_init1() {
 		global[g143] = 0;
 		restore_player();
 		player.commands_allowed = -1;
-		player.walker_visible = -1;
+		player.walker_visible = true;
 	} else if (previous_room == 404) {
 		global[g009] = -1;
 		aa[0] = kernel_run_animation(kernel_name('y', 1), 100);
@@ -118,7 +118,7 @@ static void room_405_init1() {
 		global[g133] = 0;
 		global[g143] = 0;
 		player.commands_allowed = -1;
-		player.walker_visible = -1;
+		player.walker_visible = true;
 	}
 }
 
@@ -135,7 +135,7 @@ static void room_405_init() {
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		if (previous_room != 199) {
-			player.walker_visible = 0;
+			player.walker_visible = false;
 			player.commands_allowed = 0;
 		}
 
@@ -327,7 +327,7 @@ static void room_405_daemon() {
 			global[g143] = 1;
 			scratch._a0 = 1;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-			player.walker_visible = 0;
+			player.walker_visible = false;
 			kernel_timing_trigger(1, 106);
 		}
 		break;
@@ -360,7 +360,7 @@ static void room_405_daemon() {
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			kernel_reset_animation(scratch._9c, 1);
 			kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
-			player.walker_visible = -1;
+			player.walker_visible = true;
 			global[g133] = 0;
 			global[g143] = 0;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
@@ -401,7 +401,7 @@ static void room_405_daemon() {
 			global[g143] = 0;
 			kernel_reset_animation(scratch._9a, 1);
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
-			player.walker_visible = -1;
+			player.walker_visible = true;
 			global[g133] = 0;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			global[g082] = 1;
@@ -417,7 +417,7 @@ static void room_405_daemon() {
 		global[g141] = -1;
 		kernel_reset_animation(scratch._9c, 1);
 		kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
-		player.walker_visible = -1;
+		player.walker_visible = true;
 		global[g143] = 0;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 		scratch._9e = kernel_run_animation_write(0);

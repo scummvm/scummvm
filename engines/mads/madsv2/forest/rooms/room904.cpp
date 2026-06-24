@@ -115,7 +115,7 @@ static void room_904_init() {
 	ss[4] = kernel_load_series("*maint5", 0);
 
 	kernel_timing_trigger(10, TRIGGER1);
-	player.walker_visible = 0;
+	player.walker_visible = false;
 }
 
 static void room_904_daemon() {

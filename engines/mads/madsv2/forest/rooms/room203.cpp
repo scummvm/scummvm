@@ -148,7 +148,7 @@ static void room_203_init1() {
 		aainfo[4]._active = -1;
 		aainfo[4]._frame = 0;
 		scratch._9c = 63;
-		player.walker_visible = -1;
+		player.walker_visible = true;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 		player.commands_allowed = -1;
 		kernel_flip_hotspot(168, -1);
@@ -162,7 +162,7 @@ static void room_203_init1() {
 			aainfo[3]._frame = 25;
 			kernel_reset_animation(aa[3], 25);
 			global[g049] = -1;
-			player.walker_visible = 0;
+			player.walker_visible = false;
 			player.commands_allowed = 0;
 			kernel_synch(KERNEL_ANIM, aa[3], KERNEL_NOW, 0);
 		}
@@ -214,7 +214,7 @@ static void room_203_init() {
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		if (previous_room != 199) {
-			player.walker_visible = 0;
+			player.walker_visible = false;
 			player.commands_allowed = 0;
 		}
 
@@ -704,7 +704,7 @@ static void room_203_anim4() {
 			kernel_flip_hotspot(168, -1);
 			kernel_flip_hotspot(170, -1);
 			kernel_flip_hotspot(169, -1);
-			player.walker_visible = -1;
+			player.walker_visible = true;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			player.commands_allowed = -1;
 			if (local->_ae) {
@@ -1723,7 +1723,7 @@ static void room_203_parser() {
 					aainfo[3]._active = -1;
 					aainfo[3]._frame = 0;
 					scratch._98 = 31;
-					player.walker_visible = 0;
+					player.walker_visible = false;
 					kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 				}
 			}
@@ -1738,7 +1738,7 @@ static void room_203_parser() {
 			scratch._90 = 15;
 		} else {
 			global[g154] = 2;
-			player.walker_visible = 0;
+			player.walker_visible = false;
 			scratch._a2 = kernel_run_animation_talk('b', 7, 0);
 			kernel_position_anim(scratch._a2, player.x, player.y, player.scale, player.depth);
 			scratch._b4 = -1;
@@ -1757,7 +1757,7 @@ static void room_203_parser() {
 			aainfo[3]._active = -1;
 			global[g049] = -1;
 			aainfo[3]._frame = 0;
-			player.walker_visible = 0;
+			player.walker_visible = false;
 			player.commands_allowed = 0;
 			kernel_synch(KERNEL_ANIM, aa[3], KERNEL_NOW, 0);
 		} else if (player_has(8)) {
@@ -1766,7 +1766,7 @@ static void room_203_parser() {
 			aainfo[3]._active = -1;
 			aainfo[3]._frame = 0;
 			scratch._98 = 31;
-			player.walker_visible = 0;
+			player.walker_visible = false;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			player.commands_allowed = 0;
 		} else {

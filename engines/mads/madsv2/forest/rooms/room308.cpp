@@ -977,7 +977,7 @@ static void room_308_init() {
 		kernel_flip_hotspot(170, 0);
 	}
 
-	player.walker_visible = 0;
+	player.walker_visible = false;
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		aa[9] = 0;

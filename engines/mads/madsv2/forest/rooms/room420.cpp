@@ -195,7 +195,7 @@ static void room_420_init() {
     midi_stop();
     global[player_score] = -1;
     global[g009] = 0;
-    player.walker_visible = 0;
+    player.walker_visible = false;
     player.commands_allowed = 0;
 
     for (int16 count = 0; count < 10; count++) {

@@ -166,7 +166,7 @@ static void room_101_init() {
 
 	if (!player.been_here_before || !conv_restore_running) {
 		scratch.king_action = 1;
-		player.walker_visible = 0;
+		player.walker_visible = false;
 		player.commands_allowed = 0;
 		scratch.pending_king_action = 0;
 		scratch.king_anim_mode = 3;
@@ -212,7 +212,7 @@ static void room_101_init() {
 		kernel_seq_depth(seq[fx_door], 12);
 
 		if (scratch.king_action == 1) {
-			player.walker_visible = 0;
+			player.walker_visible = false;
 			aa[1] = kernel_run_animation(kernel_name('C', -1), 0);
 		}
 	}
@@ -541,7 +541,7 @@ static void room_101_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = 0;
-			player.walker_visible = 0;
+			player.walker_visible = false;
 			seq[fx_open_door] = kernel_seq_pingpong(ss[fx_open_door], false, 7, 0, 0, 2);
 			kernel_seq_player(seq[fx_open_door], -1);
 			kernel_seq_trigger(seq[fx_open_door], 2, 2, 1);
@@ -561,7 +561,7 @@ static void room_101_parser() {
 			kernel_synch(1, seq[fx_door], 1, scratch.prev_door_seq);
 			goto handled;
 		case 3:
-			player.walker_visible = -1;
+			player.walker_visible = true;
 			kernel_synch(2, 0, 1, seq[fx_open_door]);
 			player_walk(319, 129, 6);
 			player.walk_off_edge_to_room = 102;
@@ -581,12 +581,12 @@ static void room_101_parser() {
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = 0;
-			player.walker_visible = 0;
+			player.walker_visible = false;
 			scratch.queen_anim_mode = 1;
 			aa[0] = kernel_run_animation(kernel_name(97, -1), 1);
 			goto handled;
 		case 1:
-			player.walker_visible = -1;
+			player.walker_visible = true;
 			kernel_synch(2, 0, 3, aa[0]);
 			if (!(global[player_score_flags] & 2)) {
 				global[player_score_flags] |= 2;

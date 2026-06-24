@@ -72,7 +72,7 @@ static Scratch scratch;
 
 static void room_909_init() {
 	player.commands_allowed = 0;
-	player.walker_visible = 0;
+	player.walker_visible = false;
 	viewing_at_y = 22;
 	kernel_init_dialog();
 	kernel_set_interface_mode(2);

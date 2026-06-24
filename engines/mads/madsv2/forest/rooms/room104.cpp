@@ -96,7 +96,7 @@ static void room_104_init() {
 	}
 
 	if (previous_room != -2 && previous_room != 199) {
-		player.walker_visible = 0;
+		player.walker_visible = false;
 		player.commands_allowed = 0;
 		if (flags[4] != 3)
 			flags[4]++;
@@ -153,7 +153,7 @@ static void room_104_init1() {
 	global[g009] = -1;
 	global_midi_play(8);
 	viewing_at_y = 22;
-	player.walker_visible = 0;
+	player.walker_visible = false;
 	player.commands_allowed = 0;
 	mouse_hide();
 
@@ -171,7 +171,7 @@ static void room_104_init2() {
 	global[g009] = 0;
 	midi_stop();
 	viewing_at_y = 22;
-	player.walker_visible = 0;
+	player.walker_visible = false;
 	player.commands_allowed = 0;
 	mouse_hide();
 
@@ -230,7 +230,7 @@ static void room_104_init3() {
 		global[g143] = 0;
 		restore_player();
 		player.commands_allowed = -1;
-		player.walker_visible = -1;
+		player.walker_visible = true;
 	} else {
 		if (global[g101] != 0) return;
 		global[g131] = -1;
@@ -240,7 +240,7 @@ static void room_104_init3() {
 		global[g133] = 0;
 		global[g143] = 0;
 		player.commands_allowed = -1;
-		player.walker_visible = -1;
+		player.walker_visible = true;
 	}
 }
 
@@ -856,7 +856,7 @@ static void room_104_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		kernel_reset_animation(scratch._9c, 1);
 		kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
-		player.walker_visible = -1;
+		player.walker_visible = true;
 		global[g133] = 0;
 		global[g143] = 0;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
