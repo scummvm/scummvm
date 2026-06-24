@@ -573,6 +573,26 @@ bool Scene::getEventFlag(FlagDescription eventFlag) const {
 	return getEventFlag(eventFlag.label, eventFlag.flag);
 }
 
+// Nancy 11+ AR 30/31 store the "player scrolling disabled" state in event flag
+// 1033 (eventData[0x21] in the original; nancy3+ event-flag labels start at
+// 1000, so this is index 33). It persists across scenes and is saved/restored
+// together with the rest of the event flags.
+static const int16 kPlayerScrollingDisabledFlag = 1033;
+
+void Scene::setPlayerScrolling(bool enabled) {
+	setEventFlag(kPlayerScrollingDisabledFlag, enabled ? g_nancy->_false : g_nancy->_true);
+}
+
+bool Scene::getPlayerScrolling() const {
+	// Player-scrolling control only exists from Nancy 11; older games must not
+	// consult this flag, since they may use that event-flag index for something else
+	if (g_nancy->getGameType() < kGameTypeNancy11) {
+		return true;
+	}
+
+	return !getEventFlag(kPlayerScrollingDisabledFlag, g_nancy->_true);
+}
+
 void Scene::setLogicCondition(int16 label, byte flag) {
 	if (label > kEvNoEvent) {
 		if (label >= 2000) {
@@ -785,6 +805,9 @@ void Scene::synchronize(Common::Serializer &ser) {
 	ser.syncAsUint16LE(_difficulty);
 	ser.syncArray<uint16>(_hintsRemaining.data(), _hintsRemaining.size(), Common::Serializer::Uint16LE);
 
+	// NOTE: These two variables are only used by the hint system in
+	// Nancy 1, so they can be freely repurposed by newer games to
+	// store new data, if needed, to avoid bumping the save version.
 	ser.syncAsSint16LE(_lastHintCharacter);
 	ser.syncAsSint16LE(_lastHintID);
 
@@ -821,8 +844,6 @@ void Scene::synchronize(Common::Serializer &ser) {
 			}
 		}
 	}
-
-	ser.syncAsByte(_playerScrollingEnabled, kGameTypeNancy11);
 
 	_isRunningAd = false;
 	ConfMan.removeKey("restore_after_ad", Common::ConfigManager::kTransientDomain);
@@ -1316,9 +1337,6 @@ void Scene::handleInput() {
 void Scene::initStaticData() {
 	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
-
-	// Nancy 11+ AR 30/31. Player scrolling defaults to enabled at game start.
-	_playerScrollingEnabled = true;
 
 	Common::Path imageName = "FRAME";
 

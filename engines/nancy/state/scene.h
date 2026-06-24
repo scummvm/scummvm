@@ -171,9 +171,10 @@ public:
 	Time getMovementTimeDelta(bool fast) const { return fast ? _sceneState.summary.fastMoveTimeDelta : _sceneState.summary.slowMoveTimeDelta; }
 
 	// Nancy 11+ AR 30/31. Toggles whether the player may scroll/pan the viewport.
-	// Persists across scene changes until changed by another StartPlayerScrolling/StopPlayerScrolling.
-	void setPlayerScrolling(bool enabled) { _playerScrollingEnabled = enabled; }
-	bool getPlayerScrolling() const { return _playerScrollingEnabled; }
+	// Backed by a reserved event flag (so it persists across scene changes and
+	// is saved/restored with the rest of the event flags).
+	void setPlayerScrolling(bool enabled);
+	bool getPlayerScrolling() const;
 
 	void registerGraphics();
 
@@ -337,9 +338,6 @@ private:
 
 	bool _destroyOnExit;
 	bool _isRunningAd;
-
-	// Nancy 11+ AR 30/31. Whether the player is currently allowed to scroll the viewport.
-	bool _playerScrollingEnabled = true;
 
 	State _state;
 };
