@@ -439,6 +439,9 @@ static void global_menu_difficulty() {
 	PopupItem *easy_item;
 	PopupItem *result;
 
+	box_param.menu_text_y_offset = 3;
+	box_param.menu_text_x_bonus = 0;
+
 	popup_dialog_create(game_menu_popup, GAME_DIALOG_HEAP, 20);
 
 	popup_message(menu_quote(quote_difficulty_title), POPUP_CENTER, POPUP_FILL);
