@@ -495,9 +495,9 @@ void NancyEngine::bootGameEngine() {
 	LOAD_BOOT(SCTB)	// Scrollable text box UI
 
 	// Nancy 12+
-	// HINT chunk has been removed
-	// LOAD_BOOT(EVNT)
-	// LOAD_BOOT(UIRC)
+	// HINT chunk has been removed (the hint system and its action record were dropped in Nancy12)
+	LOAD_BOOT(EVNT)	// Named-event table (empty in Nancy 12)
+	LOAD_BOOT(UIRC)	// UI overlay element table
 
 	// Nancy 13+
 	// RCPR and RCLB chunks have been removed

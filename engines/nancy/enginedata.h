@@ -733,6 +733,46 @@ struct UINB : public EngineData {
 	Common::Array<Common::Rect> tabCaptionSrcRects;             // 2 entries
 	Common::Rect tabCaptionDestRect;                            // on-screen target
 };
+
+// Named-event table. Introduced in Nancy 12. Empty in Secret of the Old Clock
+// (the engine registers several built-in event categories at runtime on top of
+// whatever this chunk provides). Each record is a name followed by an id.
+struct EVNT : public EngineData {
+	struct EventRecord {
+		Common::String name;
+		int16 id = 0;
+	};
+
+	EVNT(Common::SeekableReadStream *chunkStream);
+
+	static const uint kEventRecordSize = 35;
+
+	Common::Array<EventRecord> events;
+};
+
+// UI overlay element table. Introduced in Nancy 12. Each record describes one UI
+// element: the shared overlay image it belongs to, its on-screen rect and up to
+// six associated sound cues. Unused slots use the name "NO_UI_ITEM", and slots
+// without a given sound use "NO SOUND".
+struct UIRC : public EngineData {
+	struct ItemRecord {
+		uint16 id = 0;
+		Common::Path overlayName;
+		Common::Rect rect;
+		int16 unknown1 = 0;
+		int16 unknown2 = 0;
+		int16 soundChannel = 0;
+		int16 soundVolume = 0;
+		Common::String soundNames[6];
+	};
+
+	UIRC(Common::SeekableReadStream *chunkStream);
+
+	static const uint kNumSounds = 6;
+	static const uint kItemRecordSize = 257;
+
+	Common::Array<ItemRecord> items;
+};
 } // End of namespace Nancy
 
 #endif // NANCY_ENGINEDATA_H
