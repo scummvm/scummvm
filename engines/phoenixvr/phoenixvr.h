@@ -300,8 +300,11 @@ private:
 	Common::ScopedPtr<Graphics::Font> _regularFonts[kFontSizeCount];
 	Common::ScopedPtr<Graphics::Font> _boldFonts[kFontSizeCount];
 
-	Common::ScopedPtr<Graphics::ManagedSurface> _text;
+	int _textId = -1;
 	Common::Rect _textRect;
+	int _textSize = 0;
+	bool _textBold = false;
+	uint16 _textColor = 0;
 	Common::ScopedPtr<Graphics::ManagedSurface> _imageOverlay;
 	Common::Point _imageOverlayPos;
 	bool _cibleActive = false;
