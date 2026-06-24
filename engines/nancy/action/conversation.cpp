@@ -853,8 +853,9 @@ void ConversationCel::readXSheet(Common::SeekableReadStream &stream, const Commo
 	// Read the xsheet and load all images into the arrays
 	// Completely unoptimized, the original engine uses a buffer
 	xsheet->seek(0);
-	Common::String signature = xsheet->readString('\0', 18);
-	if (signature != "XSHEET WayneSikes") {
+	const uint16 sigLength = g_nancy->getGameType() <= kGameTypeNancy11 ? 18 : 22;
+	Common::String signature = xsheet->readString('\0', sigLength);
+	if (signature != "XSHEET WayneSikes" && signature != "XSHEET HerInteractive") {
 		warning("XSHEET signature doesn't match!");
 		return;
 	}
