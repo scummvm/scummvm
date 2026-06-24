@@ -84,6 +84,11 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 	_vm->_files->loadScreen(pagePath);
 
 	Common::Path bubbleDataPath = ((NoctropolisResources *)_vm->_res)->translatePath("DARK/COMDATA/comic.ap");
+
+	// Original does not have DARK or DEMO etc, try without.
+	if (!_vm->_files->existFile(bubbleDataPath))
+		bubbleDataPath = Common::Path("COMDATA/comic.ap");
+
 	Resource *bubbleData = _vm->_files->loadRawFile(bubbleDataPath);
 	_bubbleSprites = new SpriteResource(_vm, bubbleData);
 	delete bubbleData;
