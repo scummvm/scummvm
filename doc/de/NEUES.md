@@ -9,6 +9,13 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehler korrigiert, durch den MIDI- und MT-32-Geräte in den Spiel-Optionen
      nicht überschrieben werden konnten.
 
+ GLK:
+   - Fehler korrigiert, durch den ausgewählte Schriftarten nicht korrekt angewendet wurden.
+   - Unterstützung für das Laden von ZX Spectrum-Spielen von TAP/TZX-Tape-Images hinzugefügt.
+
+ Freescape:
+   - Unterstützung für das Laden von ZX Spectrum-Spielen von TAP/TZX-Tape-Images hinzugefügt.
+
  MM:
    - Mehrere Abstürze in Kämpfen in M&M1 korrigiert.
    - Unterstützung für PC-Speaker in M&M1 implementiert.
