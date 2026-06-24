@@ -72,9 +72,9 @@ const DrillerOPLBasePatch kDrillerOPLBasePatches[] = {
 	{ 0x22, 0x21, 0x18, 0x00, 0xF4, 0xF2, 0x55, 0x36, 0x00, 0x00, 0x08 }  // default lead
 };
 
-const byte kDrillerMusicAttenuation = 12;
+const byte kDrillerMusicAttenuation = 4;
 const byte kDrillerNoiseAttenuation = 0;
-const byte kDrillerNarrowPulseAttenuation = 6;
+const byte kDrillerNarrowPulseAttenuation = 2;
 const uint16 kDrillerNarrowPulseEdgeDistance = 0x0300;
 const byte kDrillerPulseBrightnessBoostMax = 24;
 const int kDrillerArpeggioSize = 3;
@@ -115,6 +115,44 @@ byte getDrillerInstrumentControl(const uint8_t *instA0, const uint8_t *instA1, b
 	if (instA1[2] & 0xF0)
 		return instA1[2];
 	return instA0[1];
+}
+
+// SID sustain level (0-15, linear) -> OPL2 sustain-level nibble (attenuation).
+const byte kDrillerSidSustainToOPL[16] = {
+	15, 8, 6, 5, 4, 3, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0
+};
+
+// SID rate (0=fast..15=slow) -> OPL rate (15=fast..0=never), inverted and
+// compressed into [5,15] so even the slowest SID rate stays audible.
+byte sidRateToOPL(byte sidRate) {
+	return 15 - (sidRate * 10) / 15;
+}
+
+// Convert a SID instrument's AD/SR bytes to OPL2 carrier envelope registers.
+void deriveDrillerOPLEnvelope(byte sidAD, byte sidSR, byte &oplAD, byte &oplSR, bool &sustaining) {
+	byte sidAttack = sidAD >> 4;
+	byte sidSustain = sidSR >> 4;
+	byte attack = sidRateToOPL(sidAttack);
+	byte decay = sidRateToOPL(sidAD & 0x0F);
+	byte release = sidRateToOPL(sidSR & 0x0F);
+
+	byte sustainLevel;
+	if (sidSustain != 0) {
+		sustaining = true;
+		sustainLevel = kDrillerSidSustainToOPL[sidSustain];
+	} else if (sidAttack >= 10) {
+		// Slow-attack swell, no SID sustain: hold it so the note does not
+		// collapse into a short puff (instruments 1, 2, 14).
+		sustaining = true;
+		sustainLevel = 0;
+	} else {
+		// Fast attack, no sustain: plucked voice that decays away.
+		sustaining = false;
+		sustainLevel = 15;
+	}
+
+	oplAD = (attack << 4) | decay;
+	oplSR = (sustainLevel << 4) | release;
 }
 
 void DrillerOPLMusicPlayer::VoiceState::reset() {
@@ -650,12 +688,22 @@ void DrillerOPLMusicPlayer::setOPLInstrument(int channel, VoiceState &v) {
 	byte mod = kOPLModOffset[channel];
 	byte car = kOPLCarOffset[channel];
 
+	// Give the carrier the instrument's own envelope (from its SID AD/SR) so the
+	// 22 instruments stay distinct and sustained voices hold instead of fading.
+	int instBase = v.instrumentIndex;
+	if (instBase < 0 || instBase >= NUM_INSTRUMENTS * 8)
+		instBase = 0;
+	byte carAD, carSR;
+	bool sustaining;
+	deriveDrillerOPLEnvelope(instrumentDataA0[instBase + 2], instrumentDataA0[instBase + 3], carAD, carSR, sustaining);
+	byte carChar = (patch.carChar & ~0x20) | (sustaining ? 0x20 : 0x00);
+
 	_opl->writeReg(0x20 + mod, patch.modChar);
-	_opl->writeReg(0x20 + car, patch.carChar);
+	_opl->writeReg(0x20 + car, carChar);
 	_opl->writeReg(0x60 + mod, patch.modAD);
-	_opl->writeReg(0x60 + car, patch.carAD);
+	_opl->writeReg(0x60 + car, carAD);
 	_opl->writeReg(0x80 + mod, patch.modSR);
-	_opl->writeReg(0x80 + car, patch.carSR);
+	_opl->writeReg(0x80 + car, carSR);
 	_opl->writeReg(0xE0 + mod, patch.modWave);
 	_opl->writeReg(0xE0 + car, patch.carWave);
 	_opl->writeReg(0xC0 + channel, patch.feedbackConnection);
@@ -681,7 +729,8 @@ void DrillerOPLMusicPlayer::applyPulseWidth(int channel, const VoiceState &v) {
 		modLevel = patch.modLevel > brightnessBoost ? patch.modLevel - brightnessBoost : 0;
 
 		byte feedback = (patch.feedbackConnection >> 1) & 0x07;
-		feedback = MIN<byte>(7, feedback + (centerDistance >> 8));
+		// Only a little feedback; near the max (7) the FM tone turns to noise.
+		feedback = MIN<byte>(4, feedback + (centerDistance >> 9));
 		feedbackConnection = (patch.feedbackConnection & 0x01) | (feedback << 1);
 		if (edgeDistance <= kDrillerNarrowPulseEdgeDistance)
 			attenuation = kDrillerNarrowPulseAttenuation;
