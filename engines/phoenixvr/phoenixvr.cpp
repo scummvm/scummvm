@@ -998,7 +998,7 @@ void PhoenixVREngine::showImageOverlay(const Common::String &image, int x, int y
 
 	_imageOverlay.reset(new Graphics::ManagedSurface());
 	_imageOverlay->convertFrom(*surface, _pixelFormat);
-	_imageOverlay->setTransparentColor(surface->getPixel(surface->w - 1, surface->h - 1));
+	_imageOverlay->setTransparentColor(_imageOverlay->getPixel(_imageOverlay->w - 1, _imageOverlay->h - 1));
 	_imageOverlayPos = Common::Point(x, y);
 }
 
@@ -1184,10 +1184,27 @@ void PhoenixVREngine::renderTimer() {
 
 void PhoenixVREngine::renderVR(float dt) {
 	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov, dt, _showRegions ? _regSet.get() : nullptr);
-	if (_text) {
-		int16 x = _textRect.left + (_textRect.width() - _text->w) / 2;
-		int16 y = _textRect.top + (_textRect.height() - _text->h) / 2;
-		_screen->simpleBlitFrom(*_text, {x, y}, Graphics::FLIP_NONE, true);
+	if (_textId >= 0 && _textes.contains(_textId)) {
+		const Graphics::Font *font = getFont(_textSize, _textBold);
+		if (font) {
+			Common::Array<Common::U32String> lines;
+			font->wordWrapText(_textes.getVal(_textId), _textRect.width(), lines, Graphics::kWordWrapDefault);
+
+			const int fontH = font->getFontHeight();
+			int textW = 0;
+			for (const Common::U32String &line : lines)
+				textW = MAX(textW, font->getStringWidth(line));
+
+			byte r, g, b;
+			_rgb565.colorToRGB(_textColor, r, g, b);
+			const uint32 textColor = _screen->format.RGBToColor(r, g, b);
+			const int16 textX = _textRect.left + (_textRect.width() - textW) / 2;
+			const int16 textY = _textRect.top + (_textRect.height() - fontH * lines.size()) / 2;
+			for (uint i = 0; i < lines.size(); ++i) {
+				const int16 lineX = textX + (textW - font->getStringWidth(lines[i])) / 2;
+				font->drawString(_screen, lines[i], lineX, textY + i * fontH, _textRect.right - lineX, textColor, Graphics::kTextAlignLeft);
+			}
+		}
 	}
 	renderImageOverlay();
 	renderTimer();
@@ -1279,43 +1296,22 @@ void PhoenixVREngine::rollover(int textId, RolloverType type) {
 	}
 
 	auto *font = getFont(size, bold);
-
 	if (!font)
 		return;
 
 	if (!_textes.contains(textId)) {
-		debug("rollover reset");
-		_text.reset();
+		debug("text cleared");
+		_textId = -1;
 		return;
 	}
 	auto &text = _textes.getVal(textId);
 	debug("rollover %s, %s font size: %d, bold: %d, color: %02x", dstRect.toString().c_str(), text.encode(Common::kUtf8).c_str(), size, bold, color);
 
-	Common::Array<Common::U32String> lines;
-	font->wordWrapText(text, dstRect.width(), lines, Graphics::kWordWrapDefault);
-
-	auto fontH = font->getFontHeight();
-	int textW = 0;
-	Common::Array<int> widths(lines.size());
-	for (uint i = 0, n = lines.size(); i != n; ++i) {
-		auto w = font->getStringWidth(lines[i]);
-		widths[i] = w;
-		textW = MAX(textW, w);
-	}
-
-	auto numLines = static_cast<int>(lines.size());
-	auto textH = fontH * numLines;
-	debug("text %dx%d", textW, textH);
-	_text.reset(new Graphics::ManagedSurface(textW, textH, Graphics::PixelFormat::createFormatRGBA32()));
-	_text->clear();
-	byte r, g, b;
-	_rgb565.colorToRGB(color, r, g, b);
-	auto textColor = _text->format.RGBToColor(r, g, b);
-	for (int i = 0; i != numLines; ++i) {
-		int dw = (textW - widths[i]) / 2;
-		font->drawAlphaString(_text.get(), lines[i], dw, i * fontH, textW, textColor, Graphics::kTextAlignLeft);
-	}
+	_textId = textId;
 	_textRect = dstRect;
+	_textSize = size;
+	_textBold = bold;
+	_textColor = color;
 }
 
 void PhoenixVREngine::tick(float dt) {
@@ -1361,7 +1357,7 @@ void PhoenixVREngine::tick(float dt) {
 		goToWarp(_script->getInitScript()->vrFile);
 	}
 	if (_nextWarp >= 0) {
-		_text.reset();
+		_textId = -1;
 		_warpIdx = _nextWarp;
 		_warp = _script->getWarp(_nextWarp);
 		debug("warp %d -> %s %s", _nextWarp, _warp->vrFile.c_str(), _warp->testFile.c_str());
@@ -1372,7 +1368,9 @@ void PhoenixVREngine::tick(float dt) {
 			Common::ScopedPtr<Common::SeekableReadStream> stream(open(_warp->vrFile, &origName));
 			bool isVr = origName.empty() || origName.hasSuffixIgnoreCase(".vr");
 			if (stream && isVr) {
-				_vr = VR::loadStatic(_pixelFormat, *stream);
+				_vr = VR::loadStatic(_rgb565, *stream);
+				if (_pixelFormat != _rgb565)
+					_vr.getSurface().convertToInPlace(_pixelFormat);
 				if (_vr.isVR()) {
 					_mousePos = _screenCenter;
 					_mouseRel = {};
@@ -1419,6 +1417,7 @@ void PhoenixVREngine::tick(float dt) {
 
 		if (_vr.isVR() ? region->contains3D(currentVRPos()) : region->contains2D(_mousePos.x, _mousePos.y)) {
 			anyMatched = true;
+
 			auto test = _warp->getTest(i);
 			if (test && test->hover == 1 && _hoverIndex < 0) {
 				debug("executing hover test %d", i);
@@ -1439,6 +1438,7 @@ void PhoenixVREngine::tick(float dt) {
 			_hoverIndex = -1;
 		}
 	}
+
 	if (!cursor)
 		cursor = loadCursor(anyMatched ? _defaultCursor[1] : _defaultCursor[0]);
 	if (cursor) {
@@ -1458,7 +1458,9 @@ void PhoenixVREngine::drawAudioSubtitles() {
 }
 
 Common::Error PhoenixVREngine::run() {
-	initGraphics(640, 480, nullptr);
+	Common::List<Graphics::PixelFormat> formats;
+	formats.push_back(_rgb565);
+	initGraphics(640, 480, formats);
 
 	_pixelFormat = g_system->getScreenFormat();
 	if (_pixelFormat.isCLUT8())
