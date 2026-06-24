@@ -78,15 +78,12 @@ AVFDecoder::~AVFDecoder() {
 bool AVFDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
-	char id[15];
-	stream->read(id, 15);
-	id[14] = 0;
-	Common::String idString = id;
-
+	Common::String idString = stream->readString('\0', 16);
+	
 	bool earlyHeaderFormat = false;
 
-	if (idString == "AVF WayneSikes") {
-		stream->skip(1); // Unknown
+	if (idString == "AVF WayneSikes" || idString == "AVF HerInter") {
+		// Normal header format
 	} else if (idString.hasPrefix("ALG")) {
 		earlyHeaderFormat = true;
 		stream->seek(10, SEEK_SET);
