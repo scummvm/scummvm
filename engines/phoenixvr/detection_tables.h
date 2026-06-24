@@ -215,7 +215,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "textes.txt", "23f577d1201bc3024ca49cb11f9f7347", 5261),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_UNSUPPORTED,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 

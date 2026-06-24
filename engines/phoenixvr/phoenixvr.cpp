@@ -719,6 +719,7 @@ bool PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 		_nextWarp = _script->getWarp(warp);
 
 	_hoverIndex = -1;
+	_messengerInventoryHover = -1;
 	if (savePrev) {
 		assert(_warpIdx >= 0);
 		_prevWarp = _warpIdx;
@@ -804,6 +805,11 @@ int PhoenixVREngine::getVariable(const Common::String &name) const {
 	return _variables.getValOrDefault(name, 0);
 }
 
+static int8 panToBalance(int pan) {
+	pan = CLIP(pan, 0, 255);
+	return static_cast<int8>((pan * 254 + 127) / 255 - 127);
+}
+
 void PhoenixVREngine::playSound(const Common::String &sound, Audio::Mixer::SoundType type, uint8 volume, int loops, bool spatial, float angle) {
 	const bool music = type == Audio::Mixer::kMusicSoundType;
 	debug("play sound %s %d %d, music: %d, 3d: %d, angle: %g", sound.c_str(), volume, loops, music, spatial, angle);
@@ -825,7 +831,7 @@ void PhoenixVREngine::playSound(const Common::String &sound, Audio::Mixer::Sound
 		_currentMusicVolume = volume;
 	}
 
-	_mixer->playStream(type, &h, Audio::makeWAVStream(stream.release(), DisposeAfterUse::YES), -1, volume);
+	_mixer->playStream(type, &h, Audio::makeWAVStream(stream.release(), DisposeAfterUse::YES), -1, volume, spatial ? 0 : panToBalance(_globalPan));
 	if (loops < 0 || music)
 		_mixer->loopChannel(h);
 	Common::SharedPtr<Video::Subtitles> subtitles;
@@ -995,6 +1001,50 @@ void PhoenixVREngine::stopAnimation(const Common::String &name) {
 void PhoenixVREngine::resetLockKey() {
 	debug("resetlockkey");
 	_prevWarp = -1; // original game does only this o_O
+}
+
+void PhoenixVREngine::drawArchiveImage(const Common::String &image, int x, int y) {
+	const Graphics::Surface *surface = _arn ? _arn->get(image) : nullptr;
+	if (!surface && !image.contains('.'))
+		surface = _arn ? _arn->get(image + ".bmp") : nullptr;
+	if (!surface) {
+		warning("can't find archive image %s", image.c_str());
+		return;
+	}
+
+	_screen->simpleBlitFrom(*surface, Common::Point(x, y));
+
+	Common::Point pos(x, y);
+	for (ArchiveImage &archiveImage : _archiveImages) {
+		if (archiveImage.pos == pos) {
+			archiveImage.image = image;
+			return;
+		}
+	}
+
+	_archiveImages.push_back({image, pos});
+}
+
+void PhoenixVREngine::drawArchiveText(int textId, const Common::Rect &dstRect, int size, bool bold, uint16 color) {
+	for (TextState &archiveText : _archiveTexts) {
+		if (archiveText.rect == dstRect) {
+			archiveText = {textId, dstRect, size, bold, color};
+			paintText(archiveText);
+			return;
+		}
+	}
+
+	_archiveTexts.push_back({textId, dstRect, size, bold, color});
+	paintText(_archiveTexts.back());
+}
+
+void PhoenixVREngine::clearArchiveText(const Common::Rect &dstRect) {
+	for (uint i = 0; i < _archiveTexts.size(); ++i) {
+		if (_archiveTexts[i].rect == dstRect) {
+			_archiveTexts.remove_at(i);
+			return;
+		}
+	}
 }
 
 void PhoenixVREngine::showImageOverlay(const Common::String &image, int x, int y) {
@@ -1197,30 +1247,55 @@ void PhoenixVREngine::renderTimer() {
 
 void PhoenixVREngine::renderVR(float dt) {
 	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov, dt, _showRegions ? _regSet.get() : nullptr);
-	if (_textId >= 0 && _textes.contains(_textId)) {
-		const Graphics::Font *font = getFont(_textSize, _textBold);
-		if (font) {
-			Common::Array<Common::U32String> lines;
-			font->wordWrapText(_textes.getVal(_textId), _textRect.width(), lines, Graphics::kWordWrapDefault);
-
-			const int fontH = font->getFontHeight();
-			int textW = 0;
-			for (const Common::U32String &line : lines)
-				textW = MAX(textW, font->getStringWidth(line));
-
-			byte r, g, b;
-			_rgb565.colorToRGB(_textColor, r, g, b);
-			const uint32 textColor = _screen->format.RGBToColor(r, g, b);
-			const int16 textX = _textRect.left + (_textRect.width() - textW) / 2;
-			const int16 textY = _textRect.top + (_textRect.height() - fontH * lines.size()) / 2;
-			for (uint i = 0; i < lines.size(); ++i) {
-				const int16 lineX = textX + (textW - font->getStringWidth(lines[i])) / 2;
-				font->drawString(_screen, lines[i], lineX, textY + i * fontH, _textRect.right - lineX, textColor, Graphics::kTextAlignLeft);
-			}
-		}
-	}
+	paintText(_rolloverText);
+	renderArchiveImages();
+	renderArchiveTexts();
 	renderImageOverlay();
 	renderTimer();
+}
+
+void PhoenixVREngine::renderArchiveImages() {
+	for (const ArchiveImage &archiveImage : _archiveImages) {
+		const Graphics::Surface *surface = _arn ? _arn->get(archiveImage.image) : nullptr;
+		if (!surface && !archiveImage.image.contains('.'))
+			surface = _arn ? _arn->get(archiveImage.image + ".bmp") : nullptr;
+		if (!surface)
+			continue;
+
+		_screen->simpleBlitFrom(*surface, archiveImage.pos);
+	}
+}
+
+void PhoenixVREngine::renderArchiveTexts() {
+	for (const TextState &archiveText : _archiveTexts)
+		paintText(archiveText);
+}
+
+void PhoenixVREngine::paintText(const TextState &textState) {
+	auto *font = getFont(textState.size, textState.bold);
+	if (!font || !_textes.contains(textState.textId))
+		return;
+
+	Common::Array<Common::U32String> lines;
+	font->wordWrapText(_textes.getVal(textState.textId), textState.rect.width(), lines, Graphics::kWordWrapDefault);
+	if (lines.empty())
+		return;
+
+	int fontH = font->getFontHeight();
+	int textW = 0;
+	for (uint i = 0; i < lines.size(); ++i) {
+		textW = MAX(textW, font->getStringWidth(lines[i]));
+	}
+
+	byte r, g, b;
+	_rgb565.colorToRGB(textState.color, r, g, b);
+	uint32 textColor = _screen->format.RGBToColor(r, g, b);
+	int16 dstX = textState.rect.left + (textState.rect.width() - textW) / 2;
+	int16 dstY = textState.rect.top + (textState.rect.height() - fontH * lines.size()) / 2;
+	for (uint i = 0; i < lines.size(); ++i) {
+		int x = (textW - font->getStringWidth(lines[i])) / 2;
+		font->drawString(_screen, lines[i], dstX + x, dstY + i * fontH, textW, textColor, Graphics::kTextAlignLeft);
+	}
 }
 
 void PhoenixVREngine::renderImageOverlay() {
@@ -1314,17 +1389,17 @@ void PhoenixVREngine::rollover(int textId, RolloverType type) {
 
 	if (!_textes.contains(textId)) {
 		debug("text cleared");
-		_textId = -1;
+		_rolloverText = TextState();
 		return;
 	}
 	auto &text = _textes.getVal(textId);
 	debug("rollover %s, %s font size: %d, bold: %d, color: %02x", dstRect.toString().c_str(), text.encode(Common::kUtf8).c_str(), size, bold, color);
 
-	_textId = textId;
-	_textRect = dstRect;
-	_textSize = size;
-	_textBold = bold;
-	_textColor = color;
+	_rolloverText = TextState(textId, dstRect, size, bold, color);
+}
+
+void PhoenixVREngine::clearText() {
+	_rolloverText = TextState();
 }
 
 void PhoenixVREngine::tick(float dt) {
@@ -1370,7 +1445,9 @@ void PhoenixVREngine::tick(float dt) {
 		goToWarp(_script->getInitScript()->vrFile);
 	}
 	if (_nextWarp >= 0) {
-		_textId = -1;
+		_rolloverText = TextState();
+		_archiveImages.clear();
+		_archiveTexts.clear();
 		_warpIdx = _nextWarp;
 		_warp = _script->getWarp(_nextWarp);
 		debug("warp %d -> %s %s", _nextWarp, _warp->vrFile.c_str(), _warp->testFile.c_str());
@@ -1423,6 +1500,7 @@ void PhoenixVREngine::tick(float dt) {
 	Graphics::ManagedSurface *cursor = nullptr;
 	auto &cursors = _cursors[_warpIdx];
 	bool anyMatched = false;
+	int messengerInventoryHover = -1;
 	for (int i = 0, n = cursors.size(); i != n; ++i) {
 		auto *region = getRegion(i);
 		if (!region)
@@ -1430,6 +1508,8 @@ void PhoenixVREngine::tick(float dt) {
 
 		if (_vr.isVR() ? region->contains3D(currentVRPos()) : region->contains2D(_mousePos.x, _mousePos.y)) {
 			anyMatched = true;
+			if (gameIdMatches("messenger") && _warp && _warp->vrFile.equalsIgnoreCase("portef.vr") && i >= 0 && i < 12)
+				messengerInventoryHover = i;
 
 			auto test = _warp->getTest(i);
 			if (test && test->hover == 1 && _hoverIndex < 0) {
@@ -1449,6 +1529,29 @@ void PhoenixVREngine::tick(float dt) {
 				executeTest(i + 1);
 			}
 			_hoverIndex = -1;
+		}
+	}
+
+	if (messengerInventoryHover != _messengerInventoryHover) {
+		_messengerInventoryHover = messengerInventoryHover;
+		if (gameIdMatches("messenger") && _warp && _warp->vrFile.equalsIgnoreCase("portef.vr")) {
+			const Common::Rect textRect(62, 402, 354, 466);
+			drawArchiveImage("EffaceText.bmp", textRect.left, textRect.top);
+			clearArchiveText(textRect);
+
+			int textId = 0;
+			if (_messengerInventoryHover >= 0)
+				textId = getVariable(Common::String::format("Pos%d", _messengerInventoryHover + 1));
+			else {
+				int selection = getVariable("Selection");
+				if (selection > 100)
+					selection -= 100;
+				if (selection >= 1 && selection <= 12)
+					textId = getVariable(Common::String::format("Pos%d", selection));
+			}
+
+			if (textId != 0)
+				drawArchiveText(textId, textRect, 14, true, 1987);
 		}
 	}
 
@@ -2084,6 +2187,16 @@ void PhoenixVREngine::setGlobalVolume(int volume) {
 	ConfMan.setInt("music_volume", volume);
 	ConfMan.setInt("sfx_volume", volume);
 	syncSoundSettings();
+}
+
+void PhoenixVREngine::setGlobalPan(int pan) {
+	_globalPan = CLIP(pan, 0, 255);
+	int8 balance = panToBalance(_globalPan);
+
+	for (auto &kv : _sounds) {
+		if (!kv._value.spatial && _mixer->isSoundHandleActive(kv._value.handle))
+			_mixer->setChannelBalance(kv._value.handle, balance);
+	}
 }
 
 void PhoenixVREngine::syncSoundSettings() {

@@ -24,6 +24,7 @@
 
 #include "common/debug.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "phoenixvr/phoenixvr.h"
 #include "phoenixvr/script.h"
@@ -31,6 +32,430 @@
 namespace PhoenixVR {
 
 namespace {
+constexpr int kMessengerInventorySlots = 12;
+constexpr int kMessengerDisplayedInventorySlots = 8;
+constexpr int kLouvreChestSize = 128;
+
+struct LouvrePluginState {
+	int objectChest[kLouvreChestSize];
+	int monde4;
+	uint32 rolloverBlockedUntil;
+	bool initialized;
+};
+
+LouvrePluginState g_louvrePluginState;
+
+void initLouvrePluginState() {
+	if (g_louvrePluginState.initialized)
+		return;
+
+	for (int i = 0; i < kLouvreChestSize; ++i)
+		g_louvrePluginState.objectChest[i] = 0;
+	g_louvrePluginState.monde4 = 0;
+	g_louvrePluginState.rolloverBlockedUntil = 0;
+	g_louvrePluginState.initialized = true;
+}
+
+Common::String messengerInventorySlotName(int slot) {
+	return Common::String::format("Pos%d", slot);
+}
+
+int messengerInventorySlot(int slot) {
+	if (slot < 1 || slot > kMessengerInventorySlots)
+		return 0;
+
+	return g_engine->getVariable(messengerInventorySlotName(slot));
+}
+
+void setMessengerInventorySlot(int slot, int objectId) {
+	if (slot >= 1 && slot <= kMessengerInventorySlots)
+		g_engine->setVariable(messengerInventorySlotName(slot), objectId);
+}
+
+int messengerSpecialObjectSlot(int objectId) {
+	switch (objectId) {
+	case 100:
+		return 10;
+	case 200:
+		return 11;
+	case 300:
+		return 9;
+	case 400:
+		return 12;
+	default:
+		return 0;
+	}
+}
+
+Common::String louvreObjectImage(int objectId, int suffix) {
+	return Common::String::format("Obj%02d%02d.bmp", objectId / 100, suffix);
+}
+
+void drawLouvreImage(const Common::String &image, int x, int y) {
+	g_engine->drawArchiveImage(image, x, y);
+}
+
+void drawLouvreText(int textId, uint16 color = 1987) {
+	static const Common::Rect kTextRect(62, 402, 354, 466);
+	drawLouvreImage("EffaceText.bmp", kTextRect.left, kTextRect.top);
+	g_engine->clearArchiveText(kTextRect);
+	g_engine->drawArchiveText(textId, kTextRect, 14, true, color);
+}
+
+void clearLouvreText() {
+	static const Common::Rect kTextRect(62, 402, 354, 466);
+	drawLouvreImage("EffaceText.bmp", kTextRect.left, kTextRect.top);
+	g_engine->clearArchiveText(kTextRect);
+}
+
+bool louvreTextBlocked() {
+	return g_louvrePluginState.rolloverBlockedUntil > g_system->getMillis();
+}
+
+bool louvreObjectCanView(int objectId) {
+	static const int kViewableObjects[] = {
+		3000, 3100, 4200, 4300, 5500, 5900, 7600, 7700, 7800, 8500, 8600, 8800};
+
+	for (int viewableObject : kViewableObjects)
+		if (viewableObject == objectId)
+			return true;
+	return false;
+}
+
+int louvreCombineObjects(int selectedObjectId, int objectId) {
+	struct CombineEntry {
+		int left;
+		int right;
+		int result;
+	};
+	static const CombineEntry kCombineTable[] = {
+		{500, 1200, 1300},
+		{500, 600, 1400},
+		{500, 700, 9600},
+		{9600, 600, 1500},
+		{1400, 700, 1500},
+		{3000, 2900, 3100},
+		{2300, 2200, 3500},
+		{2100, 2200, 3500},
+		{2100, 2300, 3500},
+		{3500, 2100, 3600},
+		{3500, 2200, 3600},
+		{3500, 2300, 3600},
+		{1800, 2600, 3700},
+		{1800, 1700, 3700},
+		{2600, 1700, 3700},
+		{3700, 1800, 3800},
+		{3700, 2600, 3800},
+		{3700, 1700, 3800},
+		{4200, 3400, 4300},
+		{4400, 6100, 6200},
+		{4400, 6000, 6300},
+		{6200, 6000, 6400},
+		{6300, 6100, 6400},
+		{7700, 3400, 7800},
+		{6900, 8200, 9800},
+		{9300, 7000, 9900}};
+
+	for (const CombineEntry &entry : kCombineTable) {
+		if ((entry.left == selectedObjectId && entry.right == objectId) ||
+			(entry.left == objectId && entry.right == selectedObjectId)) {
+			if (entry.result == 3500) {
+				g_engine->setVariable("RedPastryA", selectedObjectId);
+				g_engine->setVariable("RedPastryB", objectId);
+			} else if (entry.result == 3700) {
+				g_engine->setVariable("YellowSeedA", selectedObjectId);
+				g_engine->setVariable("YellowSeedB", objectId);
+			}
+			return entry.result;
+		}
+	}
+
+	return 0;
+}
+
+int louvreSeparateObject(int objectId, int *parts) {
+	struct SeparateEntry {
+		int object;
+		int parts[3];
+	};
+	static const SeparateEntry kSeparateTable[] = {
+		{1300, {500, 1200, 0}},
+		{1400, {500, 600, 0}},
+		{1500, {1400, 700, 0}},
+		{3100, {3000, 2900, 0}},
+		{3600, {3500, 2100, 0}},
+		{3800, {3700, 1800, 0}},
+		{4300, {4200, 3400, 0}},
+		{6200, {4400, 6100, 0}},
+		{6300, {4400, 6000, 0}},
+		{6400, {6200, 6000, 0}},
+		{7800, {7700, 3400, 0}},
+		{9600, {500, 700, 0}},
+		{9800, {6900, 8200, 0}},
+		{9900, {9300, 7000, 0}},
+	};
+
+	for (const SeparateEntry &entry : kSeparateTable) {
+		if (entry.object == objectId) {
+			Common::copy(entry.parts, entry.parts + ARRAYSIZE(entry.parts), parts);
+			return entry.parts[2] != 0 ? 3 : 2;
+		}
+	}
+
+	return 0;
+}
+
+bool louvreObjectCanCombine(int objectId) {
+	static const int kCombinableObjects[] = {
+		500, 600, 700, 1200, 1300, 1400, 1500, 1700, 1800, 2100, 2200, 2300, 2600, 2900,
+		3000, 3100, 3400, 3500, 3600, 3700, 3800, 4200, 4300, 4400, 6000, 6100, 6200,
+		6300, 6400, 6900, 7000, 7700, 7800, 8200, 9300, 9600, 9800, 9900};
+
+	for (int combinableObject : kCombinableObjects)
+		if (combinableObject == objectId)
+			return true;
+	return false;
+}
+
+int louvreObjectActionMask(int objectId) {
+	if (objectId == 0)
+		return 0;
+	if (messengerSpecialObjectSlot(objectId) != 0)
+		return 1;
+
+	int mask = 1;
+	if (louvreObjectCanView(objectId))
+		mask |= 2;
+	if (louvreObjectCanCombine(objectId))
+		mask |= 4;
+	return mask;
+}
+
+int louvreSelectedObjectActionMask() {
+	int selection = g_engine->getVariable("Selection");
+	if (selection > 100)
+		selection -= 100;
+	return louvreObjectActionMask(messengerInventorySlot(selection));
+}
+
+void drawLouvreActionButtons() {
+	static const int kActionButtonX[] = {21, 22, 25, 24};
+	static const int kActionButtonY[] = {145, 191, 270, 318};
+	static const int kActionValues[] = {1, 2, 4, 8};
+
+	int mask = louvreSelectedObjectActionMask();
+	int currentAction = g_engine->getVariable("CurrentAction");
+	for (uint i = 0; i < ARRAYSIZE(kActionValues); ++i) {
+		int button = i + 1;
+		if ((mask & kActionValues[i]) != 0)
+			button += 10;
+		if (currentAction == kActionValues[i])
+			button += 20;
+		drawLouvreImage(Common::String::format("Bout%04d.bmp", button), kActionButtonX[i], kActionButtonY[i]);
+	}
+}
+
+void drawLouvreSelectionMarker(int slot, int imageNumber, bool selected) {
+	static const Common::Point kSlotSelectedPos[kMessengerInventorySlots + 1] = {
+		Common::Point(273, 15),
+		Common::Point(389, 82),
+		Common::Point(482, 83),
+		Common::Point(574, 84),
+		Common::Point(456, 170),
+		Common::Point(556, 178),
+		Common::Point(476, 258),
+		Common::Point(567, 268),
+		Common::Point(552, 352),
+		Common::Point(8, 32),
+		Common::Point(93, 32),
+		Common::Point(182, 27),
+		Common::Point(264, 28)};
+
+	if (slot >= 1 && slot <= kMessengerInventorySlots && imageNumber > 0)
+		drawLouvreImage(Common::String::format(selected ? "Sel%04d.bmp" : "DSel%04d.bmp", imageNumber), kSlotSelectedPos[slot].x, kSlotSelectedPos[slot].y);
+}
+
+void drawLouvreSelectedObject(int objectSlot) {
+	static const int kSelectedObjectX = 103;
+	static const int kSelectedObjectY = 123;
+
+	initLouvrePluginState();
+	if (objectSlot > 100)
+		objectSlot -= 100;
+	if (objectSlot < 1 || objectSlot > kMessengerInventorySlots)
+		return;
+
+	int objectId = messengerInventorySlot(objectSlot);
+	if (objectId == 0)
+		return;
+
+	drawLouvreImage(louvreObjectImage(objectId, 0), kSelectedObjectX, kSelectedObjectY);
+	clearLouvreText();
+	drawLouvreActionButtons();
+	drawLouvreSelectionMarker(objectSlot, objectSlot, true);
+}
+
+void clearLouvreSelection() {
+	int selection = g_engine->getVariable("Selection");
+	int slot = selection > 100 ? selection - 100 : selection;
+
+	g_engine->setVariable("Selection", 0);
+	drawLouvreImage(louvreObjectImage(0, 0), 103, 123);
+	clearLouvreText();
+	drawLouvreActionButtons();
+	drawLouvreSelectionMarker(slot, selection, false);
+}
+
+void setLouvreSelectedSlot(int slot, int flags) {
+	int previousSelection = g_engine->getVariable("Selection");
+	int previousSlot = previousSelection > 100 ? previousSelection - 100 : previousSelection;
+	int targetSlot = slot > 100 ? slot - 100 : slot;
+
+	if (previousSelection == slot && (flags & 2) == 0) {
+		clearLouvreSelection();
+		return;
+	}
+
+	g_engine->setVariable("Selection", slot);
+	drawLouvreSelectionMarker(previousSlot, previousSelection, false);
+	drawLouvreSelectionMarker(targetSlot, slot, true);
+
+	if ((slot < 100 || (flags & 2) != 0) && (flags & 5) == 0)
+		drawLouvreSelectedObject(slot);
+}
+
+Common::String louvreNumberedImageName(const char *prefix, int value) {
+	return Common::String::format("%s%04d", prefix, value);
+}
+
+int louvreChestLastUsedIndex() {
+	for (int i = kLouvreChestSize - 1; i >= 0; --i)
+		if (g_louvrePluginState.objectChest[i] != 0)
+			return i + 1;
+	return 0;
+}
+
+void drawLouvreChestScrollButtons() {
+	static const Common::Point kUpButtonPos(191, 17);
+	static const Common::Point kDownButtonPos(198, 375);
+
+	int offset = g_engine->getVariable("CoffreOffset");
+	int count = louvreChestLastUsedIndex();
+	drawLouvreImage(offset <= 0 ? "CBou0001" : "CBou0011", kUpButtonPos.x, kUpButtonPos.y);
+	drawLouvreImage(offset >= count - 1 || offset >= 124 ? "CBou0002" : "CBou0012", kDownButtonPos.x, kDownButtonPos.y);
+}
+
+void drawLouvreChestSlot(int slot) {
+	static const Common::Point kChestImagePos[] = {
+		Common::Point(80, 82), Common::Point(80, 145), Common::Point(80, 210), Common::Point(80, 273)};
+	static const Common::Rect kChestTextRect[] = {
+		Common::Rect(138, 80, 324, 134),
+		Common::Rect(138, 145, 324, 199),
+		Common::Rect(138, 208, 324, 262),
+		Common::Rect(138, 272, 324, 326)};
+
+	int index = g_engine->getVariable("CoffreOffset") + slot - 1;
+	int objectId = (index >= 0 && index < kLouvreChestSize) ? g_louvrePluginState.objectChest[index] : 0;
+	drawLouvreImage(louvreNumberedImageName("Cof", objectId + 1), kChestImagePos[slot - 1].x, kChestImagePos[slot - 1].y);
+	drawLouvreImage(louvreNumberedImageName("CText", slot), kChestTextRect[slot - 1].left, kChestTextRect[slot - 1].top);
+	g_engine->clearArchiveText(kChestTextRect[slot - 1]);
+	if (objectId != 0)
+		g_engine->drawArchiveText(objectId, kChestTextRect[slot - 1], 8, false, 1987);
+}
+
+void drawLouvreChest() {
+	for (int slot = 1; slot < 5; ++slot)
+		drawLouvreChestSlot(slot);
+}
+
+void drawLouvreChestSelection(int slot) {
+	static const Common::Point kChestSelectionPos[] = {
+		Common::Point(69, 70), Common::Point(70, 134), Common::Point(70, 199), Common::Point(70, 262)};
+
+	int current = g_engine->getVariable("CoffreSelect");
+	if (current != 0 && current <= 4) {
+		drawLouvreImage(louvreNumberedImageName("CDel", current), kChestSelectionPos[current - 1].x, kChestSelectionPos[current - 1].y);
+		drawLouvreImage(louvreNumberedImageName("CDel", current + 1), kChestSelectionPos[current].x, kChestSelectionPos[current].y);
+	}
+
+	if (slot == 0 || current == slot) {
+		g_engine->setVariable("CoffreSelect", 0);
+		return;
+	}
+
+	drawLouvreImage(louvreNumberedImageName("Cel", slot), kChestSelectionPos[slot - 1].x, kChestSelectionPos[slot - 1].y);
+	drawLouvreImage(louvreNumberedImageName("Cel", slot + 1), kChestSelectionPos[slot].x, kChestSelectionPos[slot].y);
+	g_engine->setVariable("CoffreSelect", slot);
+}
+
+void drawLouvreInventorySlotObject(int slot, int objectId) {
+	static const Common::Point kInventoryObjectPos[] = {
+		Common::Point(381, 28),
+		Common::Point(477, 28),
+		Common::Point(565, 28),
+		Common::Point(452, 116),
+		Common::Point(549, 123),
+		Common::Point(468, 204),
+		Common::Point(558, 212),
+		Common::Point(548, 300),
+		Common::Point(18, 13),
+		Common::Point(104, 20),
+		Common::Point(193, 12),
+		Common::Point(273, 15)};
+
+	if (slot >= 1 && slot <= kMessengerInventorySlots && (slot <= kMessengerDisplayedInventorySlots || objectId != 0))
+		drawLouvreImage(louvreNumberedImageName("Obj", objectId + 1), kInventoryObjectPos[slot - 1].x, kInventoryObjectPos[slot - 1].y);
+}
+
+void drawLouvreInventoryObjects(bool includeSpecialSlots) {
+	for (int slot = 1; slot < (includeSpecialSlots ? 13 : 9); ++slot)
+		drawLouvreInventorySlotObject(slot, messengerInventorySlot(slot));
+}
+
+void updateLouvreChestScroll(int direction) {
+	int offset = g_engine->getVariable("CoffreOffset");
+	int count = louvreChestLastUsedIndex();
+	if (direction == 1)
+		offset -= 3;
+	else if (direction == 2)
+		offset += 3;
+
+	offset = CLIP(offset, 0, MIN(124, MAX(0, count - 1)));
+	if (offset != g_engine->getVariable("CoffreOffset")) {
+		g_engine->setVariable("CoffreOffset", offset);
+		drawLouvreChest();
+	}
+	drawLouvreChestScrollButtons();
+}
+
+void exchangeLouvreChestObject(int chestSlot, int inventorySlot) {
+	if (chestSlot == 0)
+		chestSlot = g_engine->getVariable("CoffreSelect");
+	if (inventorySlot == 0)
+		inventorySlot = g_engine->getVariable("Selection");
+	if (inventorySlot > 100)
+		inventorySlot -= 100;
+
+	if (chestSlot < 1 || chestSlot > 4 || inventorySlot < 1 || inventorySlot > kMessengerInventorySlots)
+		return;
+
+	int chestIndex = g_engine->getVariable("CoffreOffset") + chestSlot - 1;
+	if (chestIndex < 0 || chestIndex >= kLouvreChestSize)
+		return;
+	if (louvreChestLastUsedIndex() == 0)
+		g_engine->setVariable("CoffreOffset", 0);
+
+	int inventoryObject = messengerInventorySlot(inventorySlot);
+	int chestObject = g_louvrePluginState.objectChest[chestIndex];
+	g_louvrePluginState.objectChest[chestIndex] = inventoryObject;
+	setMessengerInventorySlot(inventorySlot, chestObject);
+	drawLouvreInventorySlotObject(inventorySlot, chestObject);
+	drawLouvreChestSlot(chestSlot);
+	drawLouvreChestSelection(0);
+	g_engine->setVariable("Selection", 0);
+	updateLouvreChestScroll(0);
+}
+
 struct MultiCD_Use_Install_Path : public Script::Command {
 	Common::String path;
 
@@ -242,9 +667,9 @@ struct GetMonde4 : public Script::Command {
 
 	GetMonde4(const Common::Array<Common::String> &args) : var(args[0]), negativeVar(args[1]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("GetMonde4 %s %s", var.c_str(), negativeVar.c_str());
-		g_engine->setVariable(var, 0);
-		g_engine->setVariable(negativeVar, 1);
+		initLouvrePluginState();
+		g_engine->setVariable(var, g_louvrePluginState.monde4);
+		g_engine->setVariable(negativeVar, g_louvrePluginState.monde4 == 0);
 	}
 };
 
@@ -253,7 +678,8 @@ struct SetMonde4 : public Script::Command {
 
 	SetMonde4(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("SetMonde4 %d", value);
+		initLouvrePluginState();
+		g_louvrePluginState.monde4 = value;
 	}
 };
 
@@ -264,7 +690,31 @@ struct AddObject : public Script::Command {
 
 	AddObject(const Common::Array<Common::String> &args) : object(atoi(args[0].c_str())), var(args[1]), negativeVar(args[2]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("AddObject %d %s %s", object, var.c_str(), negativeVar.c_str());
+		initLouvrePluginState();
+
+		g_engine->setVariable(var, 1);
+		g_engine->setVariable(negativeVar, 0);
+		g_engine->setVariable("AddObjectOk", 0);
+
+		int slot = messengerSpecialObjectSlot(object);
+		if (slot != 0) {
+			setMessengerInventorySlot(slot, object);
+			g_engine->setVariable("Selection", slot);
+			return;
+		}
+
+		for (slot = 1; slot < 9; ++slot) {
+			if (messengerInventorySlot(slot) == 0) {
+				setMessengerInventorySlot(slot, object);
+				g_engine->setVariable("Selection", slot);
+				return;
+			}
+		}
+
+		g_engine->setVariable("Selection", 0);
+		g_engine->setVariable("AddObjectOk", 1);
+		g_engine->setVariable(var, 0);
+		g_engine->setVariable(negativeVar, 1);
 	}
 };
 
@@ -273,7 +723,13 @@ struct AddCoffreObject : public Script::Command {
 
 	AddCoffreObject(const Common::Array<Common::String> &args) : object(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("AddCoffreObject %d", object);
+		initLouvrePluginState();
+		for (int i = 0; i < kLouvreChestSize; ++i) {
+			if (g_louvrePluginState.objectChest[i] == 0) {
+				g_louvrePluginState.objectChest[i] = object;
+				return;
+			}
+		}
 	}
 };
 
@@ -284,16 +740,29 @@ struct IsPresent : public Script::Command {
 
 	IsPresent(const Common::Array<Common::String> &args) : object(atoi(args[0].c_str())), var(args[1]), negativeVar(args[2]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("IsPresent %d %s %s", object, var.c_str(), negativeVar.c_str());
+		initLouvrePluginState();
+		bool found = false;
+		for (int i = 1; i <= kMessengerInventorySlots; ++i) {
+			if (messengerInventorySlot(i) == object) {
+				found = true;
+				break;
+			}
+		}
+		g_engine->setVariable(var, found);
+		g_engine->setVariable(negativeVar, !found);
 	}
 };
 
 struct RemoveObject : public Script::Command {
-	int object;
+	Common::String object;
 
-	RemoveObject(const Common::Array<Common::String> &args) : object(atoi(args[0].c_str())) {}
+	RemoveObject(const Common::Array<Common::String> &args) : object(args[0]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("RemoveObject %d", object);
+		initLouvrePluginState();
+		int objectId = Script::Command::valueOf(object);
+		for (int i = 1; i <= kMessengerInventorySlots; ++i)
+			if (messengerInventorySlot(i) == objectId)
+				setMessengerInventorySlot(i, 0);
 	}
 };
 
@@ -347,7 +816,32 @@ struct Select : public Script::Command {
 	Select(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())), arg0(args[1]), arg1(args[2]) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("Select %d %s %s", value, arg0.c_str(), arg1.c_str());
+		initLouvrePluginState();
+		g_engine->setVariable(arg1, 0);
+
+		int objectId = messengerInventorySlot(value);
+		if (objectId == 0)
+			return;
+
+		if (g_engine->getVariable("CurrentAction") == 4) {
+			g_engine->setVariable(arg0, 1);
+			g_engine->setVariable(arg1, 0);
+
+			int selectedSlot = g_engine->getVariable("Selection") - 100;
+			int selectedObjectId = messengerInventorySlot(selectedSlot);
+			int combinedObjectId = louvreCombineObjects(selectedObjectId, objectId);
+			if (combinedObjectId != 0) {
+				g_engine->setVariable(arg1, 1);
+				g_engine->setVariable("CurrentAction", 0);
+				setMessengerInventorySlot(selectedSlot, combinedObjectId);
+				setMessengerInventorySlot(value, 0);
+				drawLouvreActionButtons();
+				setLouvreSelectedSlot(selectedSlot, 0);
+			}
+			return;
+		}
+
+		setLouvreSelectedSlot(value, 0);
 	}
 };
 
@@ -358,35 +852,98 @@ struct DoAction : public Script::Command {
 	DoAction(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())), arg(args[1]) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("DoAction %d %s", value, arg.c_str());
+		initLouvrePluginState();
+		g_engine->setVariable(arg, 0);
+
+		int selection = g_engine->getVariable("Selection");
+		if (selection > 100)
+			selection -= 100;
+		if (selection == 0)
+			return;
+
+		int objectId = messengerInventorySlot(selection);
+		int actionMask = louvreSelectedObjectActionMask();
+
+		int currentAction = g_engine->getVariable("CurrentAction");
+		if (!((currentAction == value || currentAction == 0) && (actionMask & value) != 0))
+			return;
+
+		if (currentAction != 0) {
+			setLouvreSelectedSlot(selection, 4);
+			g_engine->setVariable("CurrentAction", 0);
+			drawLouvreActionButtons();
+			return;
+		}
+
+		g_engine->setVariable(arg, 1);
+		switch (value) {
+		case 1:
+			g_engine->setVariable("Inventaire", objectId);
+			break;
+		case 2:
+			if (louvreObjectCanView(objectId))
+				g_engine->setVariable(arg, objectId);
+			break;
+		case 4:
+			g_engine->setVariable("CurrentAction", value);
+			setLouvreSelectedSlot(selection + 100, 0);
+			break;
+		case 8:
+			g_engine->setVariable("CurrentAction", value);
+			drawLouvreActionButtons();
+			break;
+		default:
+			break;
+		}
 	}
 };
 
 struct IsHere : public Script::Command {
 	IsHere(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("IsHere");
+		int comefrom = g_engine->getVariable("comefrom");
+		if (comefrom > 10000000)
+			comefrom -= 10000000;
+
+		Common::String value = Common::String::format("%d", comefrom);
+		if (value.size() >= 3) {
+			Common::String name = Common::String::format("P0%cS%c%c", value[0], value[1], value[2]);
+			g_engine->playAnimation(name, "y", 20, 20);
+		}
 	}
 };
 
 struct InitCoffre : public Script::Command {
 	InitCoffre(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("InitCoffre");
+		initLouvrePluginState();
+		int compacted[kLouvreChestSize];
+		Common::fill(compacted, compacted + kLouvreChestSize, 0);
+
+		int dst = 0;
+		for (int i = 0; i < kLouvreChestSize; ++i)
+			if (g_louvrePluginState.objectChest[i] != 0)
+				compacted[dst++] = g_louvrePluginState.objectChest[i];
+
+		Common::copy(compacted, compacted + kLouvreChestSize, g_louvrePluginState.objectChest);
 	}
 };
 
 struct LoadCoffre : public Script::Command {
 	LoadCoffre(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("LoadCoffre");
+		initLouvrePluginState();
+		for (int i = 0; i < kLouvreChestSize; ++i)
+			g_louvrePluginState.objectChest[i] = g_engine->getVariable(Common::String::format("coffre%d", i + 1));
 	}
 };
 
 struct SaveCoffre : public Script::Command {
 	SaveCoffre(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("SaveCoffre");
+		initLouvrePluginState();
+		for (int i = 0; i < kLouvreChestSize; ++i)
+			g_engine->setVariable(Common::String::format("coffre%d", i + 1), g_louvrePluginState.objectChest[i]);
 	}
 };
 
@@ -459,14 +1016,20 @@ struct TestCible : public Script::Command {
 struct AfficheCoffre : public Script::Command {
 	AfficheCoffre(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("AfficheCoffre");
+		initLouvrePluginState();
+		drawLouvreChest();
 	}
 };
 
 struct AfficheSelection : public Script::Command {
 	AfficheSelection(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("AfficheSelection");
+		initLouvrePluginState();
+		int selection = g_engine->getVariable("Selection");
+		if (selection > 100)
+			selection -= 100;
+		if (selection != 0)
+			drawLouvreSelectedObject(selection);
 	}
 };
 
@@ -474,7 +1037,8 @@ struct AffichePorteF : public Script::Command {
 	int value;
 	AffichePorteF(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("AffichePorteF %d", value);
+		initLouvrePluginState();
+		drawLouvreInventoryObjects(true);
 	}
 };
 
@@ -483,7 +1047,14 @@ struct SelectPorteF : public Script::Command {
 	Common::String var;
 	SelectPorteF(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())), var(args[1]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("SelectPorteF %d %s", value, var.c_str());
+		initLouvrePluginState();
+		g_engine->setVariable(var, 0);
+		if (g_engine->getVariable("CoffreSelect") != 0) {
+			exchangeLouvreChestObject(0, value);
+		} else if (messengerInventorySlot(value) != 0) {
+			setLouvreSelectedSlot(value, 1);
+		}
+		g_engine->setVariable(var, g_engine->getVariable("Selection") != 0);
 	}
 };
 
@@ -492,7 +1063,16 @@ struct SelectCoffre : public Script::Command {
 	Common::String var;
 	SelectCoffre(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())), var(args[1]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("SelectCoffre %d %s", value, var.c_str());
+		initLouvrePluginState();
+		g_engine->setVariable(var, 0);
+		if (g_engine->getVariable("Selection") != 0) {
+			exchangeLouvreChestObject(value, 0);
+		} else {
+			int index = g_engine->getVariable("CoffreOffset") + value - 1;
+			if (index >= 0 && index < kLouvreChestSize && g_louvrePluginState.objectChest[index] != 0)
+				drawLouvreChestSelection(value);
+		}
+		g_engine->setVariable(var, g_engine->getVariable("CoffreSelect") != 0);
 	}
 };
 
@@ -565,7 +1145,8 @@ struct Set_Global_Pan : public Script::Command {
 	Set_Global_Pan(const Common::Array<Common::String> &args) : arg(args[0]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		auto value = valueOf(arg);
-		warning("set_global_pan %s -> %d", arg.c_str(), value);
+		debug("set_global_pan %s -> %d", arg.c_str(), value);
+		g_engine->setGlobalPan(value);
 	}
 };
 
@@ -750,16 +1331,70 @@ struct LoadSave_Set_Context_Label : public Script::Command {
 };
 
 struct Discocier : public Script::Command {
-	Discocier(const Common::Array<Common::String> &args) {}
+	Common::String var;
+	Discocier(const Common::Array<Common::String> &args) : var(args[0]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("Discocier");
+		initLouvrePluginState();
+		g_engine->setVariable(var, 0);
+
+		int selection = g_engine->getVariable("Selection");
+		int slot = selection > 100 ? selection - 100 : selection;
+		int objectId = messengerInventorySlot(slot);
+
+		int parts[3] = {0, 0, 0};
+		int partCount = 0;
+		if (objectId == 3500) {
+			partCount = 2;
+			parts[0] = g_engine->getVariable("RedPastryA");
+			parts[1] = g_engine->getVariable("RedPastryB");
+		} else if (objectId == 3700) {
+			partCount = 2;
+			parts[0] = g_engine->getVariable("YellowSeedA");
+			parts[1] = g_engine->getVariable("YellowSeedB");
+		} else {
+			partCount = louvreSeparateObject(objectId, parts);
+		}
+
+		g_engine->setVariable("CurrentAction", 0);
+		int emptySlots = 0;
+		for (int i = 1; i < 9; ++i)
+			if (messengerInventorySlot(i) == 0)
+				++emptySlots;
+
+		if (partCount > emptySlots + 1) {
+			drawLouvreActionButtons();
+			drawLouvreText(28, 63687);
+			g_louvrePluginState.rolloverBlockedUntil = g_system->getMillis() + 5000;
+			return;
+		}
+
+		if (partCount == 0)
+			return;
+
+		setMessengerInventorySlot(slot, 0);
+		for (int i = partCount - 1; i >= 0; --i) {
+			for (int dstSlot = 1; dstSlot < 9; ++dstSlot) {
+				if (messengerInventorySlot(dstSlot) == 0) {
+					setMessengerInventorySlot(dstSlot, parts[i]);
+					break;
+				}
+			}
+		}
+
+		setLouvreSelectedSlot(g_engine->getVariable("Selection"), 2);
+		drawLouvreInventoryObjects(true);
+		g_engine->setVariable(var, 1);
 	}
 };
 
 struct Reset : public Script::Command {
 	Reset(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("Reset");
+		initLouvrePluginState();
+		for (int i = 0; i < kLouvreChestSize; ++i)
+			g_louvrePluginState.objectChest[i] = 0;
+		for (int i = 1; i <= kMessengerInventorySlots; ++i)
+			setMessengerInventorySlot(i, 0);
 	}
 };
 
@@ -773,14 +1408,28 @@ struct Restart : public Script::Command {
 struct MemoryRelease : public Script::Command {
 	MemoryRelease(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("MemoryRelease");
+		debug("MemoryRelease");
 	}
 };
 
 struct DrawTextSelection : public Script::Command {
 	DrawTextSelection(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("DrawTextSelection");
+		initLouvrePluginState();
+		if (louvreTextBlocked())
+			return;
+
+		static const Common::Rect kTextRect(62, 402, 354, 466);
+		clearLouvreText();
+
+		int selection = g_engine->getVariable("Selection");
+		if (selection > 100)
+			selection -= 100;
+		if (selection != 0) {
+			int objectId = messengerInventorySlot(selection);
+			if (objectId != 0)
+				g_engine->drawArchiveText(objectId, kTextRect, 14, true, 1987);
+		}
 	}
 };
 
@@ -789,7 +1438,15 @@ struct CarteDestination : public Script::Command {
 	Common::String varY;
 	CarteDestination(const Common::Array<Common::String> &args) : varX(args[0]), varY(args[1]) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("CarteDestination %s %s", varX.c_str(), varY.c_str());
+		int comefrom = g_engine->getVariable("comefrom");
+		if (comefrom > 10000000)
+			comefrom -= 10000000;
+
+		Common::String value = Common::String::format("%d", comefrom);
+		if (value.size() >= 3) {
+			g_engine->setVariable(varX, value[0] - '0');
+			g_engine->setVariable(varY, atoi(value.c_str() + 1));
+		}
 	}
 };
 
@@ -797,7 +1454,8 @@ struct Scroll : public Script::Command {
 	int value;
 	Scroll(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("Scroll");
+		initLouvrePluginState();
+		updateLouvreChestScroll(value);
 	}
 };
 
@@ -831,7 +1489,16 @@ struct PorteFRollover : public Script::Command {
 
 	PorteFRollover(const Common::Array<Common::String> &args) : arg(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("PorteFRollover %d", arg);
+		initLouvrePluginState();
+		if (louvreTextBlocked())
+			return;
+
+		if (arg == 28) {
+			drawLouvreText(arg, 63687);
+			g_louvrePluginState.rolloverBlockedUntil = g_system->getMillis() + 5000;
+		} else {
+			drawLouvreText(arg);
+		}
 	}
 };
 
@@ -846,6 +1513,24 @@ struct LoadVariable : public Script::Command {
 	LoadVariable(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		g_engine->loadVariables();
+	}
+};
+
+struct Init2 : public Script::Command {
+	Common::String var;
+	Init2(const Common::Array<Common::String> &args) : var(args[0]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		g_engine->setVariable(var, 0);
+	}
+};
+
+struct Init : public Script::Command {
+	int value;
+	Common::String var;
+	Init(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())), var(args[1]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		initLouvrePluginState();
+		g_engine->setVariable(var, value == 2 ? 1 : 0);
 	}
 };
 
@@ -875,6 +1560,8 @@ struct End : public Script::Command {
 	E(ExeDemo)                       \
 	E(GetMonde4)                     \
 	E(SetMonde4)                     \
+	E(Init)                          \
+	E(Init2)                         \
 	E(IsPresent)                     \
 	E(KillTimer)                     \
 	E(InitCoffre)                    \
@@ -1170,7 +1857,8 @@ struct PlayRandomSound : public PlaySound {
 	PlayRandomSound(Common::String s, int v, int u, int l) : PlaySound(Common::move(s), v, l), unk(u) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("PlayRandomSound %s %d %d %d", sound.c_str(), volume, unk, loops);
+		debug("PlayRandomSound %s %d %d %d", sound.c_str(), volume, unk, loops);
+		PlaySound::exec(ctx);
 	}
 };
 
