@@ -352,6 +352,30 @@ void CellPhoneData::syncLinkArray(Common::Serializer &ser, Common::Array<LinkEnt
 	}
 }
 
+void TimerData::synchronize(Common::Serializer &ser) {
+	for (uint i = 0; i < kNumTimers; ++i) {
+		Timer &t = timers[i];
+		ser.syncAsSint32LE(t.state);
+		ser.syncAsUint32LE(t.currentTimeMs);
+		ser.syncAsUint32LE(t.durationMs);
+		ser.syncAsByte(t.hasFired);
+
+		ser.syncString(t.sound.name);
+		ser.syncAsUint16LE(t.sound.channelID);
+		ser.syncAsUint16LE(t.sound.playCommands);
+		ser.syncAsUint16LE(t.sound.numLoops);
+		ser.syncAsUint16LE(t.sound.volume);
+
+		ser.syncString(t.autotextKey);
+		ser.syncString(t.caption);
+
+		for (uint j = 0; j < ARRAYSIZE(t.flags); ++j) {
+			ser.syncAsSint16LE(t.flags[j].label);
+			ser.syncAsByte(t.flags[j].flag);
+		}
+	}
+}
+
 PuzzleData *makePuzzleData(const uint32 tag) {
 	switch(tag) {
 	case SliderPuzzleData::getTag():
@@ -382,6 +406,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new TableData();
 	case CellPhoneData::getTag():
 		return new CellPhoneData();
+	case TimerData::getTag():
+		return new TimerData();
 	default:
 		return nullptr;
 	}

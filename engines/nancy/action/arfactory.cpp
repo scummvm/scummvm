@@ -259,8 +259,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 68:
 		return new TextScroll(false);
 	case 69:	// Nancy11
-		warning("TimerControl");	// TODO
-		return nullptr;
+		return new TimerControl();
 	case 70:
 		return new TextScroll(true); // AutotextEntryList
 	case 71:

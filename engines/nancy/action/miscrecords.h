@@ -288,11 +288,14 @@ protected:
 };
 
 // Starts the timer. Used in combination with Dependency types that check for
-// how much time has passed since the timer was started.
+// how much time has passed since the timer was started. From Nancy 11 onwards
+// the record also carries a software-timer slot index (see TimerControl).
 class ResetAndStartTimer : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
+
+	byte _timerIndex = 0; // Nancy 11+ software-timer slot
 
 protected:
 	Common::String getRecordTypeName() const override { return "ResetAndStartTimer"; }
@@ -304,8 +307,45 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
+	byte _timerIndex = 0; // Nancy 11+ software-timer slot
+
 protected:
 	Common::String getRecordTypeName() const override { return "StopTimer"; }
+};
+
+// Nancy 11+ AR 69 (AT_TIMER_CONTROL). Issues a command to one of the 10
+// software-timer slots (see TimerData::Timer). The fixed-size chunk
+// (0xc4 header + count*4 flag entries) carries a slot index, a command, a
+// target duration, an optional sound + caption, and the event flags to fire
+// when the timer expires.
+class TimerControl : public ActionRecord {
+public:
+	enum Command {
+		kReset       = 0, // Clear the slot back to idle
+		kStart       = 1, // Begin counting, with no target
+		kPause       = 2, // Suspend counting
+		kAddTime     = 3, // Add the duration to the elapsed time
+		kSubtractTime = 4, // Subtract the duration from the elapsed time
+		kConfigOneShot   = 5, // Set target/payload; fire once, then reset
+		kConfigRepeating = 6  // Set target/payload; fire once, then keep running
+	};
+
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	int16 _timerIndex = 0;
+	int16 _command = 0;
+	int16 _hours = 0;
+	int16 _minutes = 0;
+	int16 _seconds = 0;
+
+	SoundDescription _sound;
+	Common::String _autotextKey;
+	Common::String _caption;
+	Common::Array<FlagDescription> _flags;
+
+protected:
+	Common::String getRecordTypeName() const override { return "TimerControl"; }
 };
 
 // Nancy 11+ AR 30. Disables the player's ability to scroll/pan the viewport

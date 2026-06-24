@@ -435,21 +435,150 @@ void TurnOnMainRendering::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
 }
 
+// Returns the Nancy 11+ software-timer slot at the given index, lazily creating
+// the TimerData puzzle-data chunk. nullptr if the index is out of range.
+static TimerData::Timer *getSoftwareTimer(int16 index) {
+	if (index < 0 || (uint)index >= TimerData::kNumTimers) {
+		return nullptr;
+	}
+
+	TimerData *timerData = (TimerData *)NancySceneState.getPuzzleData(TimerData::getTag());
+	return timerData ? &timerData->timers[index] : nullptr;
+}
+
 void ResetAndStartTimer::readData(Common::SeekableReadStream &stream) {
-	stream.skip(1);
+	_timerIndex = stream.readByte();
 }
 
 void ResetAndStartTimer::execute() {
 	NancySceneState.resetAndStartTimer();
+
+	// Nancy 11 also resets and starts one of the software-timer slots
+	if (g_nancy->getGameType() >= kGameTypeNancy11) {
+		TimerData::Timer *timer = getSoftwareTimer(_timerIndex);
+		if (timer) {
+			timer->reset();
+			timer->state = TimerData::Timer::kRunning;
+		}
+	}
+
 	_isDone = true;
 }
 
 void StopTimer::readData(Common::SeekableReadStream &stream) {
-	stream.skip(1);
+	_timerIndex = stream.readByte();
 }
 
 void StopTimer::execute() {
 	NancySceneState.stopTimer();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy11) {
+		TimerData::Timer *timer = getSoftwareTimer(_timerIndex);
+		if (timer) {
+			timer->reset();
+		}
+	}
+
+	_isDone = true;
+}
+
+// Reads exactly size bytes from the stream, returning the text up to the first
+// null byte. Used for the fixed-size string fields inside a TimerControl chunk.
+static Common::String readFixedSizeString(Common::SeekableReadStream &stream, uint size) {
+	Common::String result;
+	bool ended = false;
+	for (uint i = 0; i < size; ++i) {
+		byte b = stream.readByte();
+		if (b == 0) {
+			ended = true;
+		}
+		if (!ended) {
+			result += (char)b;
+		}
+	}
+
+	return result;
+}
+
+void TimerControl::readData(Common::SeekableReadStream &stream) {
+	const int64 startPos = stream.pos();
+
+	_timerIndex = stream.readSint16LE();    // 0x00
+	_command = stream.readSint16LE();       // 0x02
+	_hours = stream.readSint16LE();         // 0x04
+	_minutes = stream.readSint16LE();       // 0x06
+	_seconds = stream.readSint16LE();       // 0x08
+	stream.skip(2);                         // 0x0a, unused
+
+	// Sound to play on expiry (0x0c)
+	_sound.readDIGI(stream);
+
+	// Autotext key for the caption (0x3d, 33 bytes)
+	stream.skip((startPos + 0x3d) - stream.pos());
+	_autotextKey = readFixedSizeString(stream, 0x21);
+
+	// Inline caption text (0x5e, 100 bytes)
+	_caption = readFixedSizeString(stream, 0x64);
+
+	// Event flags to fire on expiry (count at 0xc2, then count*4 bytes)
+	uint16 numFlags = stream.readUint16LE();
+	_flags.resize(numFlags);
+	for (uint i = 0; i < numFlags; ++i) {
+		_flags[i].label = stream.readSint16LE();
+		_flags[i].flag = (byte)stream.readSint16LE();
+	}
+}
+
+void TimerControl::execute() {
+	TimerData::Timer *timer = getSoftwareTimer(_timerIndex);
+	if (!timer) {
+		_isDone = true;
+		return;
+	}
+
+	const uint32 durationMs = ((uint32)_hours * 3600 + (uint32)_minutes * 60 + (uint32)_seconds) * 1000;
+
+	switch (_command) {
+	case kReset:
+		timer->reset();
+		break;
+	case kStart:
+		timer->state = TimerData::Timer::kRunning;
+		break;
+	case kPause:
+		timer->state = TimerData::Timer::kPaused;
+		break;
+	case kAddTime:
+		if (timer->state != TimerData::Timer::kIdle) {
+			timer->currentTimeMs += durationMs;
+		}
+		break;
+	case kSubtractTime:
+		if (timer->state != TimerData::Timer::kIdle) {
+			timer->currentTimeMs = timer->currentTimeMs > durationMs ? timer->currentTimeMs - durationMs : 0;
+		}
+		break;
+	case kConfigOneShot:
+	case kConfigRepeating:
+		// A timer can only be configured once it has been started
+		if (timer->state == TimerData::Timer::kRunning) {
+			timer->durationMs = durationMs;
+			timer->hasFired = false;
+			timer->sound = _sound;
+			timer->autotextKey = _autotextKey;
+			timer->caption = _caption;
+
+			for (uint i = 0; i < ARRAYSIZE(timer->flags); ++i) {
+				timer->flags[i] = i < _flags.size() ? _flags[i] : FlagDescription();
+			}
+
+			timer->state = _command;
+		}
+		break;
+	default:
+		break;
+	}
+
 	_isDone = true;
 }
 

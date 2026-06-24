@@ -247,6 +247,11 @@ private:
 	void run();
 	void handleInput();
 
+	// Nancy 11+ AR 69. Advances all running software timers (stored as TimerData
+	// puzzle data) and fires any whose configured duration has just elapsed.
+	void tickSoftwareTimers(uint32 deltaMs);
+	void fireSoftwareTimer(TimerData::Timer &timer);
+
 	// Rect of the open Nancy 10+ taskbar popup, or empty if none.
 	Common::Rect activePopupConfinement() const;
 
