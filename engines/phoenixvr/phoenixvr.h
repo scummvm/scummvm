@@ -213,13 +213,25 @@ public:
 	void testCible(const Common::String &insideVar, const Common::String &outsideVar);
 
 private:
+	struct TextState {
+		TextState() : textId(-1), size(0), bold(false), color(0) {}
+		TextState(int textId_, const Common::Rect &rect_, int size_, bool bold_, uint16 color_) : textId(textId_), rect(rect_), size(size_), bold(bold_), color(color_) {}
+
+		int textId;
+		Common::Rect rect;
+		int size;
+		bool bold;
+		uint16 color;
+	};
+
 	static Common::String removeDrive(const Common::String &path);
 	Common::SeekableReadStream *open(const Common::String &name, Common::String *origName = nullptr);
 	Common::SeekableReadStream *tryOpen(const Common::Path &name, Common::String *origName);
 
 	Graphics::Surface *loadSurface(const Common::String &path);
 	Graphics::Surface *loadCursor(const Common::String &path);
-	void paint(Graphics::Surface &src, Common::Point dst);
+	void paint(const Graphics::Surface &src, Common::Point dst, int32 transparentColor = -1);
+	void paintText(const TextState &textState);
 	PointF currentVRPos() const {
 		return RectF::transform(_angleX.angle(), _angleY.angle(), _fov);
 	}
@@ -301,10 +313,10 @@ private:
 	Common::ScopedPtr<Graphics::Font> _regularFonts[kFontSizeCount];
 	Common::ScopedPtr<Graphics::Font> _boldFonts[kFontSizeCount];
 
-	Common::ScopedPtr<Graphics::ManagedSurface> _text;
-	Common::Rect _textRect;
+	TextState _text;
 	Common::ScopedPtr<Graphics::Surface> _imageOverlay;
 	Common::Point _imageOverlayPos;
+	uint32 _imageOverlayKey = 0;
 	bool _cibleActive = false;
 	uint32 _cibleStartMillis = 0;
 	int _ciblePeriodSeconds = 0;
