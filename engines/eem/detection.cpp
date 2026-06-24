@@ -90,12 +90,13 @@ const ADGameDescription gameDescriptions[] = {
 		GUI_OPTIONS_EEM_MAC
 	},
 	{
-		// Macintosh floppy release played straight from its installer files
-		// ("Eagle Eye Installer" + "EEM Install Data 2".."6"); the engine
-		// decompresses them on the fly (see installer.cpp).
+		// Macintosh release played straight from its installer files
+		// ("Eagle Eye Installer" + "EEM Install Data 2".."6"); decompressed on
+		// the fly (see installer.cpp). "d:" hashes the data fork so this matches
+		// both the raw-fork (CD/floppy) and MacBinary-wrapped captures.
 		"eem",
 		"",
-		AD_ENTRY2s("Eagle Eye Installer", "08440dbf0cb47fb57e522f050159ffaa", 1391577,
+		AD_ENTRY2s("Eagle Eye Installer", "d:08440dbf0cb47fb57e522f050159ffaa", 1391577,
 				   "EEM Install Data 2",  "aebccc677e149b37285f291f6ac72f57", 1446428),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,

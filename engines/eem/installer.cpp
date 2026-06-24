@@ -26,6 +26,7 @@
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/fs.h"
+#include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/str.h"
 #include "common/stream.h"
@@ -400,16 +401,26 @@ bool InstallerArchive::load(const Common::FSNode &dir) {
 			// only entries that reference them will fail to load.
 			break;
 		}
-		Common::ScopedPtr<Common::SeekableReadStream> stream(node.createReadStream());
-		if (!stream) {
+		Common::ScopedPtr<Common::SeekableReadStream> file(node.createReadStream());
+		if (!file) {
 			warning("EEM installer: cannot read %s", names[i].c_str());
 			return i != 0;
 		}
+
+		// "Eagle Eye Installer" may be a raw data fork (CD/floppy) or
+		// MacBinary-wrapped; read just its data fork so both yield the same
+		// stream. The continuation segments are always raw.
+		Common::ScopedPtr<Common::SeekableReadStream> dataFork;
+		if (i == 0)
+			dataFork.reset(Common::MacResManager::openDataForkFromMacBinary(file.get()));
+		Common::SeekableReadStream *src = dataFork ? dataFork.get() : file.get();
+		src->seek(0);
+
 		const uint32 oldSize = _archive.size();
-		const uint32 addSize = (uint32)stream->size();
+		const uint32 addSize = (uint32)src->size();
 		_diskBase[i + 1] = oldSize; // disk numbers are 1-based
 		_archive.resize(oldSize + addSize);
-		if (stream->read(_archive.data() + oldSize, addSize) != addSize) {
+		if (src->read(_archive.data() + oldSize, addSize) != addSize) {
 			warning("EEM installer: short read on %s", names[i].c_str());
 			return false;
 		}
