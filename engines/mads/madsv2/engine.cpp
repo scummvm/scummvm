@@ -54,6 +54,7 @@
 #include "mads/madsv2/core/vocab.h"
 #include "mads/madsv2/phantom/main.h"
 #include "mads/madsv2/forest/extra.h"
+#include "mads/madsv2/forest/global.h"
 #include "mads/core/sound_manager.h"
 
 namespace MADS {
@@ -226,6 +227,9 @@ void MADSV2Engine::syncGame(Common::Serializer &s) {
 		s.syncAsSint16LE(camera_old_x_target);
 		s.syncAsSint16LE(camera_old_y_target);
 	}
+
+	if (getGameID() == GType_Forest)
+		s.syncMultipleLE(Forest::flags);
 
 	for (int i = 0; i < OMR; ++i)
 		s.syncAsSint16LE(room_state[i]);
