@@ -390,9 +390,12 @@ static bool loadMacFont(EEMFont &font) {
 		   loadMacFontResource(font, kMacSmallFontResource, 9);
 }
 
+// Speech balloons use the 14pt Eagle Eye font: the bubble art and the
+// fit-to-text metrics are both sized for it, so it is most likely the size the
+// original shipped (the 9pt FONT left the text undersized with blank space).
 static bool loadMacDialogFont(EEMFont &font) {
-	return loadMacFontResource(font, kMacSmallFontResource, 9) ||
-		   loadMacFontResource(font, kMacFontResource, 14);
+	return loadMacFontResource(font, kMacFontResource, 14) ||
+		   loadMacFontResource(font, kMacSmallFontResource, 9);
 }
 
 Common::Error EEMEngine::run() {

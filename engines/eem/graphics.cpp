@@ -109,13 +109,16 @@ bool findBalloonFamily(uint16 balloonId, uint16 &first, uint16 &last) {
 	return false;
 }
 
-uint getBalloonLineCapacity(uint16 balloonId, int lineH) {
+uint EEMEngine::getBalloonLineCapacity(uint16 balloonId, int lineH) const {
 	const uint idx = balloonId & 0x7F;
 	if (idx >= ARRAYSIZE(kBalloonInsetTable) || lineH <= 0)
 		return 0;
 
 	const BalloonInsets &insets = kBalloonInsetTable[idx];
-	return MAX<uint>(1, ((int)insets.indDY - (int)insets.y) / lineH + 1);
+	int textHeight = (int)insets.indDY - (int)insets.y;
+	if (isMacintosh())
+		textHeight = scaleY(textHeight); // table is in DOS coords; Mac renders scaled
+	return MAX<uint>(1, textHeight / lineH + 1);
 }
 
 bool EEMEngine::floppyHotspotSearched(uint siteIdx, uint hotspotIdx) const {
@@ -741,8 +744,9 @@ void EEMEngine::setPartnerEraseBg(const Graphics::ManagedSurface *bg) {
 
 uint16 EEMEngine::fitBalloonToText(uint16 bubNum,
 								   const Common::String &text) {
-	// Opt-in via "fit_dialog_balloons", CD only
-	if (isFloppy() || isMacintosh() || !ConfMan.getBool("fit_dialog_balloons"))
+	// Opt-in via "fit_dialog_balloons" (CD and Mac; the DOS floppy balloon
+	// layout has no smaller siblings to fall back to).
+	if (isFloppy() || !ConfMan.getBool("fit_dialog_balloons"))
 		return bubNum;
 
 	const uint16 originalId = bubNum & 0x7F;
@@ -757,7 +761,9 @@ uint16 EEMEngine::fitBalloonToText(uint16 bubNum,
 		return bubNum;
 
 	Common::Array<Common::String> lines;
-	_font.wordWrapText(text, MAX<int>(8, (int)originalInsets.w), lines);
+	const int wrapW = isMacintosh() ? scaleX((int)originalInsets.w)
+									: (int)originalInsets.w;
+	_font.wordWrapText(text, MAX<int>(8, wrapW), lines);
 	if (lines.empty())
 		return bubNum;
 

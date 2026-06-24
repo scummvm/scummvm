@@ -246,6 +246,10 @@ public:
 	/// Pick a shorter balloon sibling when wrapped text leaves empty lines.
 	uint16 fitBalloonToText(uint16 bubNum, const Common::String &text);
 
+	/// How many `lineH`-tall text lines fit in balloon `balloonId` (the balloon
+	/// height is scaled to native coordinates on Mac).
+	uint getBalloonLineCapacity(uint16 balloonId, int lineH) const;
+
 	/// `_ParseString @ 1b66:07c3`. 
 	Common::String parseString(const Common::String &raw,
 							   const Common::String &playerName,
@@ -546,7 +550,7 @@ private:
 	DBDArchive _buttonArchive;   ///< BUTTON.DBD/.DBX (`_GetButton`)
 	Mystery    _mystery;         ///< M<n>.BIN
 	EEMFont    _font;            ///< FONT.FNT (8 px)
-	EEMFont    _dialogFont;      ///< Mac small FONT used inside speech balloons.
+	EEMFont    _dialogFont;      ///< Mac 14pt FONT used inside speech balloons.
 
 	Common::Array<byte> _sitePals; ///< 40 × 768 bytes, 6-bit VGA.
 
