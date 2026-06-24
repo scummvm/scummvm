@@ -53,7 +53,7 @@ EM_JS(void, toggleFullscreen, (bool enable), {
 });
 
 EM_JS(void, downloadFile, (const char *filenamePtr, char *dataPtr, int dataSize), {
-	const view = new Uint8Array(Module.HEAPU8.buffer, dataPtr, dataSize);
+	const view = new Uint8Array(HEAPU8.buffer, dataPtr, dataSize);
 	const blob = new Blob([view], {
 			type:
 				'octet/stream'
