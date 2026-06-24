@@ -27,6 +27,7 @@
 #include "mads/madsv2/core/mouse.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/sprite.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -80,8 +81,7 @@ static void room_509_init() {
 
 static void room_509_daemon() {
 	if (global[player_hyperwalked] == -1) {
-		game_save_name(0);
-		kernel_save_game(save_game_buf);
+		g_engine->saveAutosaveIfEnabled();
 		new_room = 904;
 	}
 

@@ -36,6 +36,7 @@
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/text.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -1056,8 +1057,7 @@ static void room_503_anim12() {
 
 static void room_503_daemon() {
 	if (global[g101] != 0 && global[player_hyperwalked] == -1) {
-		game_save_name(0);
-		kernel_save_game(save_game_buf);
+		g_engine->saveAutosaveIfEnabled();
 		new_room = 904;
 	}
 
