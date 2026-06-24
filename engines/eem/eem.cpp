@@ -59,7 +59,7 @@ const uint kPalEAKids          = 0x25;
 const uint kPalHighScore       = 0x27;
 const uint kPalStormLogo       = 0x26;  // Floppy FUN_23d2_0605
 const uint kMacPicEAKidsLogo   = 0x213; // FUN_000092be
-const uint kMacPicTitleRoom    = 0x20d; // FUN_000096fa title room
+// PIC 0x20d is the clubhouse scene; the title sequence (FUN_000096fa) omits it.
 const uint kMacPicTitleDark    = 0x20e;
 const uint kMacPicTitleFinal   = 0x20f;
 const uint kMacPicTitleIn0     = 0x210;
@@ -1288,9 +1288,10 @@ void EEMEngine::showMacTitleIntro() {
 		return;
 	}
 
-	Picture room, titleDark, titleFinal;
-	if (!_picsArchive.getPicture(kMacPicTitleRoom, room) ||
-		!_picsArchive.getPicture(kMacPicTitleDark, titleDark) ||
+	// FUN_000096fa uses only the dark-eye (0x20e) and lit-eye (0x20f) frames; the
+	// eye "powers up" from one to the other (PIC 0x20d, the clubhouse, isn't used).
+	Picture titleDark, titleFinal;
+	if (!_picsArchive.getPicture(kMacPicTitleDark, titleDark) ||
 		!_picsArchive.getPicture(kMacPicTitleFinal, titleFinal)) {
 		warning("Mac title base pictures failed to load");
 		return;
@@ -1317,7 +1318,7 @@ void EEMEngine::showMacTitleIntro() {
 
 	Graphics::ManagedSurface frame(kMacScreenWidth, kMacScreenHeight,
 								   Graphics::PixelFormat::createFormatCLUT8());
-	frame.blitFrom(room.surface, Common::Point(0, 0));
+	frame.blitFrom(titleDark.surface, Common::Point(0, 0));
 	copyNativeSurfaceToScreen(frame);
 
 	byte black[kPalSize] = {};
@@ -1326,11 +1327,11 @@ void EEMEngine::showMacTitleIntro() {
 	fadePaletteFromBlack(target);
 
 	for (int i = 0; i < 0x2c && !shouldQuit() && !_skipIntro; i++) {
-		frame.blitFrom(room.surface, Common::Point(0, 0));
+		frame.blitFrom(titleDark.surface, Common::Point(0, 0));
 		const int revealW = (i + 1) * kMacScreenWidth / 0x2c;
 		if (revealW > 0) {
 			const Common::Rect src(0, 0, revealW, kMacScreenHeight);
-			frame.blitFrom(titleDark.surface, src, Common::Point(0, 0));
+			frame.blitFrom(titleFinal.surface, src, Common::Point(0, 0));
 		}
 
 		switch (i) {
