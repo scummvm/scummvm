@@ -787,11 +787,30 @@ void EEMEngine::setSiteHotspotCursorId(int cursorId) {
 bool EEMEngine::openArchives() {
 	const bool mac = isMacintosh();
 
-	// The Mac release can be played straight from its floppy installer. When
-	// those files are present, mount a virtual archive that decompresses the
-	// game data (PICS.DBD, MysteryData, fonts, ...) on demand, so the opens
-	// below and the Mac resource-fork lookups resolve transparently.
-	if (mac && !SearchMan.hasArchive("eem-installer")) {
+	// EEM2 (London) Mac is played straight from the CD, whose data lives in
+	// subfolders ("Data Files", "Mac Scripts") with the Mac app in "EEM London
+	// CD". Register them so the bare-name opens below -- and the later script,
+	// mystery and palette loaders -- resolve whether the user points ScummVM at
+	// the disc root or at the "EEM2 CD" folder.
+	if (mac && isLondon()) {
+		const Common::FSNode gameDir(ConfMan.getPath("path"));
+		// Disc-root layout (recommended -- this also reaches the "EEM London
+		// CD" app that holds the Mac fonts/sound). The "/"-separated names
+		// descend two levels (see Common::addSubDirectoryMatching).
+		SearchMan.addSubDirectoryMatching(gameDir, "EEM2 CD/Data Files");
+		SearchMan.addSubDirectoryMatching(gameDir, "EEM2 CD/Mac Scripts");
+		SearchMan.addSubDirectoryMatching(gameDir, "EEM London CD");
+		// ...or the user pointed ScummVM straight at the "EEM2 CD" folder.
+		SearchMan.addSubDirectoryMatching(gameDir, "Data Files");
+		SearchMan.addSubDirectoryMatching(gameDir, "Mac Scripts");
+	}
+
+	// The EEM1 Mac release can be played straight from its floppy installer.
+	// When those files are present, mount a virtual archive that decompresses
+	// the game data (PICS.DBD, MysteryData, fonts, ...) on demand, so the opens
+	// below and the Mac resource-fork lookups resolve transparently. (EEM2 Mac
+	// ships loose on the CD and has no such installer.)
+	if (mac && !isLondon() && !SearchMan.hasArchive("eem-installer")) {
 		const Common::FSNode gameDir(ConfMan.getPath("path"));
 		if (Common::Archive *installer = createInstallerArchive(gameDir)) {
 			SearchMan.add("eem-installer", installer);
@@ -820,7 +839,8 @@ bool EEMEngine::openArchives() {
 
 bool EEMEngine::loadSitePalettes() {
 	Common::File f;
-	const char *palFile = isLondon() ? "SITEPALS." : "SITEPALS";
+	// EEM2 DOS uses "SITEPALS." (8.3); EEM1 and both Mac releases use "SITEPALS".
+	const char *palFile = (isLondon() && !isMacintosh()) ? "SITEPALS." : "SITEPALS";
 	if (!f.open(Common::Path(palFile))) {
 		warning("%s missing", palFile);
 		return false;

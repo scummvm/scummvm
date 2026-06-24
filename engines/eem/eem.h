@@ -131,7 +131,11 @@ public:
 	Variant getVariant() const { return _variant; }
 	bool isFloppy() const { return _variant == kVariantFloppy || isDemo(); }
 	bool isLondon() const { return _variant == kVariantLondonCD; }
-	bool isMacintosh() const { return _variant == kVariantMac; }
+	// London (game) and Macintosh (platform) are orthogonal -- the London CD
+	// shipped for both DOS and Mac -- so derive Mac-ness from the platform
+	// rather than the single-valued `_variant` (which can only hold one of
+	// them at a time). This lets EEM2 Mac be both London and Macintosh.
+	bool isMacintosh() const { return getPlatform() == Common::kPlatformMacintosh; }
 	bool isDemo() const {
 		return _gameDescription && (_gameDescription->flags & ADGF_DEMO);
 	}

@@ -32,6 +32,17 @@ const PlainGameDescriptor eemGames[] = {
 	{ nullptr, nullptr }
 };
 
+// The EEM2 (London) Macintosh CD keeps its data in subfolders ("EEM2 CD" with
+// "Data Files"/"Mac Scripts", and the app in "EEM London CD"). Let the detector
+// descend into them; the DOS releases have no such folders and are unaffected.
+static const char *const directoryGlobs[] = {
+	"EEM2 CD",
+	"Data Files",
+	"Mac Scripts",
+	"EEM London CD",
+	nullptr
+};
+
 #define GUI_OPTIONS_EEM_FLOPPY GUIO4(GAMEOPTION_HIDE_HIGHLIGHT_BOXES, GAMEOPTION_SKIP_REPEATED_CASES, GUIO_MIDIADLIB, GUIO_MIDIMT32)
 #define GUI_OPTIONS_EEM_CD     GUIO6(GAMEOPTION_HIDE_HIGHLIGHT_BOXES, GAMEOPTION_FIT_DIALOG_BALLOONS, GAMEOPTION_SKIP_REPEATED_CASES, GAMEOPTION_RESTORED_CONTENT, GUIO_MIDIADLIB, GUIO_MIDIMT32)
 #define GUI_OPTIONS_EEM_DEMO   GUIO2(GAMEOPTION_HIDE_HIGHLIGHT_BOXES, GUIO_NOMIDI)
@@ -104,7 +115,7 @@ const ADGameDescription gameDescriptions[] = {
 		GUI_OPTIONS_EEM_MAC
 	},
 	{
-		// Eagle Eye Mysteries in London 
+		// Eagle Eye Mysteries in London
 		"eem2",
 		"CD",
 		AD_ENTRY2s("EEM2CD.EXE", "211a376b23a1b6259d0c36cf46d26ed4", 172560,
@@ -113,6 +124,20 @@ const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
 		GUIO3(GAMEOPTION_FIT_DIALOG_BALLOONS, GUIO_MIDIADLIB, GUIO_MIDIMT32)
+	},
+	{
+		// Eagle Eye Mysteries in London, Macintosh CD. Played straight from the
+		// disc: shared data in "EEM2 CD/Data Files", mystery scripts (loose
+		// m<n>.bin) in "EEM2 CD/Mac Scripts", Mac assets (PICT/FONT/snd/Midi) in
+		// the "EEM London CD" app resource fork. Big-endian like EEM1 Mac.
+		"eem2",
+		"CD",
+		AD_ENTRY2s("pics.dbd", "6ba1085cb6f8fedad7d8ee5ef5f461cd", 10250928,
+				   "m0.bin",   "a0b943bb520c349259fa13308d2d368e", 37971),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUI_OPTIONS_EEM_MAC
 	},
 
 	AD_TABLE_END_MARKER
@@ -133,6 +158,9 @@ const DebugChannelDef debugFlagList[] = {
 class EEMMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
 	EEMMetaEngineDetection() : AdvancedMetaEngineDetection(EEM::gameDescriptions, EEM::eemGames) {
+		// Reach the EEM2 Mac data nested under "EEM2 CD/Data Files" etc.
+		_maxScanDepth = 3;
+		_directoryGlobs = EEM::directoryGlobs;
 	}
 
 	const char *getName() const override {
