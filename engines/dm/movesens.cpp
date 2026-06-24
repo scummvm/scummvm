@@ -70,8 +70,8 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 
 		thingBeingProcessed = dungeon.getNextThing(thingBeingProcessed);
 	}
-	for (thingBeingProcessed = squareFirstThing; thingBeingProcessed != _vm->_thingEndOfList; thingBeingProcessed = dungeon.getNextThing(thingBeingProcessed)) {
-		Thing lastProcessedThing = thingBeingProcessed;
+	Thing lastProcessedThing = squareFirstThing;
+	for (thingBeingProcessed = squareFirstThing; thingBeingProcessed != _vm->_thingEndOfList; lastProcessedThing = thingBeingProcessed, thingBeingProcessed = dungeon.getNextThing(thingBeingProcessed)) {
 		uint16 ProcessedThingType = thingBeingProcessed.getType();
 		if (ProcessedThingType == kDMThingTypeSensor) {
 			int16 cellIdx = thingBeingProcessed.getCell();
