@@ -268,6 +268,7 @@ Object *GeometricObject::duplicate() {
 	);
 
 	copy->_cyclingColors = _cyclingColors;
+	copy->_loadIndex = _loadIndex;
 	return copy;
 }
 
