@@ -377,8 +377,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		// Nancy 10+
 		return new AddSearchLink();
 	case 132:
-		// TODO: Nancy 12 - new action record (256-byte data block with an embedded string).
-		// Not yet identified or implemented.
+		// ResourceUse ("UIResource Adjust") - adjusts a UI overlay resource (see the UIRC
+		// boot chunk) at runtime. Added in Nancy12.
+		// TODO: not implemented
 		return nullptr;
 	case 140:
 		if (g_nancy->getGameType() >= kGameTypeNancy12)
@@ -456,8 +457,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		// TODO: Nancy12 MindPuzzle (new), not implemented
 		return nullptr;
 	case 166:
-		// TODO: Nancy12 - new puzzle (unidentified, ~21KB data block), not implemented
-		return nullptr;
+		// OneBuildPuzzle, moved here from 234 in Nancy12.
+		// TODO: verify the Nancy12 data layout against OneBuildPuzzle::readData
+		return new OneBuildPuzzle();
 	case 167:
 		// TODO: Nancy12 ChasePuzzle (new), not implemented
 		return nullptr;
@@ -536,6 +538,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 233:
 		return new SoundMatchPuzzle();
 	case 234:
+		// Moved to 166 in Nancy12
 		return new OneBuildPuzzle();
 	case 235:
 		return new MultiBuildPuzzle();
