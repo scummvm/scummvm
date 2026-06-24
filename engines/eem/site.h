@@ -87,6 +87,13 @@ void blitMacAnimFrameAnchored(Graphics::Surface *dst, const Picture &p,
 							  int anchorX, int anchorY,
 							  const MacSpritePaletteMap &paletteMap);
 
+/// Remap a whole Mac surface's white/black endpoint indices (0x00 / 0xFF) to the
+/// active ColorTable's real white/black slots. Backgrounds are copied straight
+/// to the screen, so without this their white areas turn black on the many site
+/// ColorTables that store the endpoints swapped.
+void remapMacSurfaceEndpoints(Graphics::ManagedSurface &surface,
+							  const MacSpritePaletteMap &paletteMap);
+
 /// Rotate one VGA palette range by one slot (START→END direction).
 void cyclePaletteRange(uint8 start, uint8 end);
 

@@ -186,6 +186,15 @@ void blitMacMaskedSurface(Graphics::Surface *dst, const Picture &p,
 	blitMacMaskedSurface(dst, p, x, y, flipX, paletteMap);
 }
 
+void remapMacSurfaceEndpoints(Graphics::ManagedSurface &surface,
+							  const MacSpritePaletteMap &paletteMap) {
+	for (int y = 0; y < surface.h; y++) {
+		byte *row = (byte *)surface.getBasePtr(0, y);
+		for (int x = 0; x < surface.w; x++)
+			row[x] = mapMacSpriteColor(row[x], paletteMap);
+	}
+}
+
 // `_UpdateAnimations @ 172b:09c1`
 void blitAnimFrameAnchored(Graphics::Surface *screen, const Picture &p,
 						   int anchorX, int anchorY) {
@@ -1734,8 +1743,18 @@ bool SiteScreen::renderFloppyHotspotPartnerPose(uint siteNum) {
 }
 
 void SiteScreen::renderBackground(uint siteNum) {
+	// Mac art uses index 0 = white / 0xFF = black, but most site ColorTables
+	// store those endpoints swapped. Backgrounds are copied straight to the
+	// screen, so normalize their endpoints to the active palette first (sprites
+	// already do this through blitMacMaskedSurface).
+	const bool mac = _vm->isMacintosh();
+	const MacSpritePaletteMap macMap =
+		mac ? getMacSpritePaletteMap() : MacSpritePaletteMap();
+
 	Picture frame;
 	if (_vm->getPics().loadEntry(0x3d, frame)) {
+		if (mac)
+			remapMacSurfaceEndpoints(frame.surface, macMap);
 		g_system->copyRectToScreen(frame.surface.getPixels(),
 								   frame.surface.pitch,
 								   0, 0, frame.surface.w, frame.surface.h);
@@ -1765,9 +1784,12 @@ void SiteScreen::renderBackground(uint siteNum) {
 		const int y = _vm->scaleY(0x14);
 		const int w = MIN<int>(scene.surface.w, _vm->screenWidth() - x);
 		const int h = MIN<int>(scene.surface.h, _vm->screenHeight() - y);
-		if (w > 0 && h > 0)
+		if (w > 0 && h > 0) {
+			if (mac)
+				remapMacSurfaceEndpoints(scene.surface, macMap);
 			g_system->copyRectToScreen(scene.surface.getPixels(),
 									   scene.surface.pitch, x, y, w, h);
+		}
 	}
 }
 

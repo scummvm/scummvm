@@ -211,17 +211,29 @@ void setInteractiveCursorPalette(const Picture &cursor, byte transparent) {
 	CursorMan.replaceCursorPalette(palette, 0, 256);
 }
 
-void installMouseCursor(DBDArchive &pics, bool interactive) {
+void installMouseCursor(DBDArchive &pics, bool interactive, bool mac) {
 	Picture cursor;
 	if (!pics.getPicture(kPicMousePointer, cursor) || cursor.surface.empty())
 		error("EEM: mouse cursor PIC 0x%x missing", kPicMousePointer);
 
 	const byte transparent = (byte)(cursor.flags >> 8);
 	CursorMan.replaceCursor(cursor.surface.rawSurface(), 0, 0, transparent);
-	if (interactive)
+	if (interactive) {
 		setInteractiveCursorPalette(cursor, transparent);
-	else
+	} else if (mac) {
+		// Mac sprite art is authored with palette index 0 = white and
+		// 0xFF = black, but ~2/3 of the site ColorTables store those endpoints
+		// swapped (the original relied on QuickDraw CopyBits colour-matching to
+		// reconcile that). Pin white/black in a dedicated cursor palette so the
+		// pointer's body stays white instead of turning black on those sites.
+		byte pal[kPalSize];
+		g_system->getPaletteManager()->grabPalette(pal, 0, 256);
+		pal[0] = pal[1] = pal[2] = 0xFF;
+		pal[0xFF * 3 + 0] = pal[0xFF * 3 + 1] = pal[0xFF * 3 + 2] = 0x00;
+		CursorMan.replaceCursorPalette(pal, 0, 256);
+	} else {
 		CursorMan.replaceCursorPalette(nullptr, 0, 0);
+	}
 }
 
 EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
@@ -424,7 +436,7 @@ Common::Error EEMEngine::run() {
 	_audio->setVoiceEnabled(_voiceOn);
 	syncSoundSettings();
 
-	installMouseCursor(_picsArchive, false);
+	installMouseCursor(_picsArchive, false, isMacintosh());
 	CursorMan.showMouse(false);
 
 	// _AllBlack @ 172b:0d4b.
@@ -726,7 +738,7 @@ void EEMEngine::setInteractiveMouseCursor(bool active) {
 		return;
 
 	_interactiveMouseCursor = active;
-	installMouseCursor(_picsArchive, active);
+	installMouseCursor(_picsArchive, active, isMacintosh());
 	// The red-outline highlight replaced any London cursor shape; force the
 	// next setSiteHotspotCursorId to reinstall.
 	_siteCursorId = -1;
