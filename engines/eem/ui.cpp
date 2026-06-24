@@ -2049,6 +2049,12 @@ void EEMEngine::doSetup() {
 }
 
 void EEMEngine::setupDrawScreen() {
+	// The setup screen shares the map overview's ColorTable. Set it explicitly
+	// so the screen is correct no matter where it was entered from: the zoomed
+	// detail map leaves its own palette (0x23) active, which would otherwise
+	// bleed through here.
+	setSitePalette(0x24);
+
 	Graphics::ManagedSurface scratch(screenWidth(), screenHeight(),
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
@@ -4302,8 +4308,14 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 	scratch.clear();
 
 	Picture frame;
-	if (_picsArchive.getPicture(0x43, frame))
+	if (_picsArchive.getPicture(0x43, frame)) {
+		// The frame and its buttons use the normal 0x00=white / 0xFF=black
+		// convention, but the detail-map ColorTable (0x23) swaps those endpoints,
+		// so normalize them or the SETUP button's black border renders white.
+		if (mac)
+			remapMacSurfaceEndpoints(frame.surface, getMacSpritePaletteMap());
 		scratch.simpleBlitFrom(frame.surface);
+	}
 
 	const int copyW = MIN<int>(mapW - scrollX, kMapWinW);
 	const int copyH = MIN<int>(mapH - scrollY, kMapWinH);
