@@ -257,11 +257,8 @@ static float aabbMinProjection(const Math::AABB &aabb, const Math::Vector3d &axi
 	return support.dotProduct(axis);
 }
 
-static bool aabbIntersectsHalfSpace(const Math::AABB &aabb, const Math::Vector3d &camera, const Math::Vector3d &normal, float padding) {
-	return aabbMaxProjection(aabb, normal) - camera.dotProduct(normal) >= -padding;
-}
-
 static bool aabbIntersectsViewVolume(const Math::AABB &aabb, const Math::Vector3d &camera, const Math::Vector3d &direction, float fov, float aspectRatio, float nearClipPlane, float farClipPlane) {
+	(void)aspectRatio;
 	if (!aabb.isValid())
 		return false;
 
@@ -269,17 +266,7 @@ static bool aabbIntersectsViewVolume(const Math::AABB &aabb, const Math::Vector3
 	if (front.getSquareMagnitude() == 0.0f)
 		return true;
 
-	const Math::Vector3d worldUp(0.0f, 1.0f, 0.0f);
-	Math::Vector3d right = Math::Vector3d::crossProduct(front, worldUp);
-	if (right.getSquareMagnitude() < 0.0001f)
-		right = Math::Vector3d(1.0f, 0.0f, 0.0f);
-	else
-		right.normalize();
-	Math::Vector3d up = Math::Vector3d::crossProduct(right, front).getNormalized();
-
 	const float padding = 32.0f;
-	const float horizontalScale = tan(Math::deg2rad(fov) / 2.0f) * 1.25f;
-	const float verticalScale = MAX(horizontalScale / MAX(aspectRatio, 0.001f), horizontalScale);
 	const float minDepth = aabbMinProjection(aabb, front) - camera.dotProduct(front);
 	const float maxDepth = aabbMaxProjection(aabb, front) - camera.dotProduct(front);
 
@@ -288,14 +275,22 @@ static bool aabbIntersectsViewVolume(const Math::AABB &aabb, const Math::Vector3
 	if (minDepth > farClipPlane + padding)
 		return false;
 
-	if (!aabbIntersectsHalfSpace(aabb, camera, front * horizontalScale + right, padding))
-		return false;
-	if (!aabbIntersectsHalfSpace(aabb, camera, front * horizontalScale - right, padding))
-		return false;
-	if (!aabbIntersectsHalfSpace(aabb, camera, front * verticalScale + up, padding))
-		return false;
-	if (!aabbIntersectsHalfSpace(aabb, camera, front * verticalScale - up, padding))
-		return false;
+	// Coarse view-octant cull matching the original (compute_view_clip_bounds):
+	// keep every object in the world octant(s) the frustum spans rather than a tight
+	// cone, and on axes the frustum straddles (its component within the fov
+	// half-angle) keep both sides. The kept set must match the original because the
+	// painter's bubble sort below is non-transitive: a tighter cone drops
+	// straddle-axis side objects and reorders the visible ones.
+	const float threshold = (float)sin(Math::deg2rad(fov) / 2.0f);
+	const Math::Vector3d mn = aabb.getMin();
+	const Math::Vector3d mx = aabb.getMax();
+	for (int i = 0; i < 3; i++) {
+		const float comp = front.getValue(i);
+		if (comp > threshold && mx.getValue(i) < camera.getValue(i))
+			return false;
+		if (comp < -threshold && mn.getValue(i) > camera.getValue(i))
+			return false;
+	}
 
 	return true;
 }
@@ -465,16 +460,14 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 	// It is only applied to the vertices during the projection phase (L850f/L9177).
 	int n = _sortedObjects.size();
 	if (n > 1 && sort) {
-		// Pre-sort by distance from camera (furthest first) to provide a stable initial
-		// ordering for the non-transitive bubble sort below. The original game achieves
-		// this by culling off-screen objects via a rendering volume check (L8bb7/L845b)
-		// before sorting, which prevents distant off-screen objects from interfering with
-		// the depth ordering of visible objects through non-transitive comparisons.
+		// Seed the non-transitive bubble sort below in object load (file) order --
+		// the same order the original game's renderer iterates its object list.
+		// That data order is what makes the Newell pairwise sort resolve
+		// correctly; any depth heuristic (center distance, nearest depth) is only
+		// an approximation and mis-orders some scenes, the file order does not.
 		Common::sort(_sortedObjects.begin(), _sortedObjects.end(),
-			[&camera](Object *a, Object *b) {
-				Math::Vector3d centerA = (a->_occlusionBox.getMin() + a->_occlusionBox.getMax()) * 0.5f;
-				Math::Vector3d centerB = (b->_occlusionBox.getMin() + b->_occlusionBox.getMax()) * 0.5f;
-				return (centerA - camera).getSquareMagnitude() > (centerB - camera).getSquareMagnitude();
+			[](Object *a, Object *b) {
+				return a->_loadIndex < b->_loadIndex;
 			});
 		for (int i = 0; i < n; i++) { // L9c31_whole_object_pass_loop
 			bool changed = false;
@@ -652,16 +645,10 @@ void Area::drawDepthLayer(Freescape::Renderer *gfx, uint32 animationTicks, Math:
 	// It is only applied to the vertices during the projection phase (L850f/L9177).
 	int n = _depthLayerSortedObjects.size();
 	if (n > 1 && sort) {
-		// Pre-sort by distance from camera (furthest first) to provide a stable initial
-		// ordering for the non-transitive bubble sort below. The original game achieves
-		// this by culling off-screen objects via a rendering volume check (L8bb7/L845b)
-		// before sorting, which prevents distant off-screen objects from interfering with
-		// the depth ordering of visible objects through non-transitive comparisons.
+		// Seed in object load (file) order, matching the original (see Area::draw).
 		Common::sort(_depthLayerSortedObjects.begin(), _depthLayerSortedObjects.end(),
-			[&camera](Object *a, Object *b) {
-				Math::Vector3d centerA = (a->_occlusionBox.getMin() + a->_occlusionBox.getMax()) * 0.5f;
-				Math::Vector3d centerB = (b->_occlusionBox.getMin() + b->_occlusionBox.getMax()) * 0.5f;
-				return (centerA - camera).getSquareMagnitude() > (centerB - camera).getSquareMagnitude();
+			[](Object *a, Object *b) {
+				return a->_loadIndex < b->_loadIndex;
 			});
 		for (int i = 0; i < n; i++) { // L9c31_whole_object_pass_loop
 			bool changed = false;

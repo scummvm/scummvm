@@ -785,6 +785,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 
 		if (newObject) {
 			newObject->scale(scale);
+			newObject->_loadIndex = object;
 			if (newObject->getType() == kEntranceType) {
 				if (entrancesByID->contains(newObject->getObjectID() & 0x7fff))
 					error("WARNING: replacing object id %d (%d)", newObject->getObjectID(), newObject->getObjectID() & 0x7fff);
@@ -1154,6 +1155,7 @@ void FreescapeEngine::loadGlobalObjects(Common::SeekableReadStream *file, int of
 	for (int i = 0; i < size; i++) {
 		Object *gobj = load8bitObject(file);
 		assert(gobj);
+		gobj->_loadIndex = 0x4000 + i; // after area objects, in global load order
 		assert(!globalObjectsByID->contains(gobj->getObjectID()));
 		debugC(1, kFreescapeDebugParser, "Adding global object: %d", gobj->getObjectID());
 		(*globalObjectsByID)[gobj->getObjectID()] = gobj;
