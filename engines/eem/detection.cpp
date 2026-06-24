@@ -81,9 +81,22 @@ const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"eem",
-		"Mac",
+		"",
 		AD_ENTRY2s("MysteryData", "d94c087c27e68cc299d7c5e737e458f9", 941029,
 				   "PICS.DBD",    "8905041070ff1352666d98cd78d5501c", 3800445),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUI_OPTIONS_EEM_MAC
+	},
+	{
+		// Macintosh floppy release played straight from its installer files
+		// ("Eagle Eye Installer" + "EEM Install Data 2".."6"); the engine
+		// decompresses them on the fly (see installer.cpp).
+		"eem",
+		"",
+		AD_ENTRY2s("Eagle Eye Installer", "08440dbf0cb47fb57e522f050159ffaa", 1391577,
+				   "EEM Install Data 2",  "aebccc677e149b37285f291f6ac72f57", 1446428),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,

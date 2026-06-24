@@ -39,6 +39,7 @@
 #include "eem/audio.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
+#include "eem/installer.h"
 #include "eem/music.h"
 #include "eem/site.h"
 
@@ -770,6 +771,20 @@ void EEMEngine::setSiteHotspotCursorId(int cursorId) {
 
 bool EEMEngine::openArchives() {
 	const bool mac = isMacintosh();
+
+	// The Mac release can be played straight from its floppy installer. When
+	// those files are present, mount a virtual archive that decompresses the
+	// game data (PICS.DBD, MysteryData, fonts, ...) on demand, so the opens
+	// below and the Mac resource-fork lookups resolve transparently.
+	if (mac && !SearchMan.hasArchive("eem-installer")) {
+		const Common::FSNode gameDir(ConfMan.getPath("path"));
+		if (Common::Archive *installer = createInstallerArchive(gameDir)) {
+			SearchMan.add("eem-installer", installer);
+			debugC(1, kDebugGeneral, "Mounted Eagle Eye Mysteries Mac installer archive");
+		} else {
+			warning("EEMTEST: createInstallerArchive returned null");
+		}
+	}
 
 	if (!_picsArchive.open(Common::Path("PICS.DBD"), Common::Path("PICS.DBX"), mac)) {
 		warning("PICS archive missing");
