@@ -254,12 +254,15 @@ void EEMEngine::doChoosePartner() {
 	int curMouseX = 0xa0;
 	uint level = happinessLevel(curMouseX, isLondon());
 	uint seqIdx = 0;
+	// EEM2 (London) Mac stores the partner heads at half resolution and
+	// pixel-doubles them to fill the hi-res passport-photo boxes.
+	const int faceScale = (isMacintosh() && isLondon()) ? 2 : 1;
 
 	blitAt(background, 0, 0);
-	blitAt(jennyAnim[jennySeqs[level][seqIdx % 9] % jennyAnim.size()],
-		   jennyX, jennyY);
-	blitAt(jakeAnim [jakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
-		   jakeX, jakeY);
+	blitAtScaled(jennyAnim[jennySeqs[level][seqIdx % 9] % jennyAnim.size()],
+		   jennyX, jennyY, faceScale);
+	blitAtScaled(jakeAnim [jakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
+		   jakeX, jakeY, faceScale);
 	g_system->updateScreen();
 
 	debugC(1, kDebugGeneral, "ChoosePartner: %u Jake frames at (%d,%d), "
@@ -273,10 +276,10 @@ void EEMEngine::doChoosePartner() {
 			lastTick = g_system->getMillis();
 			seqIdx = (seqIdx + 1) % 9;
 			blitAt(background, 0, 0);
-			blitAt(jennyAnim[jennySeqs[level][seqIdx % 9] % jennyAnim.size()],
-				   jennyX, jennyY);
-			blitAt(jakeAnim [jakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
-				   jakeX, jakeY);
+			blitAtScaled(jennyAnim[jennySeqs[level][seqIdx % 9] % jennyAnim.size()],
+				   jennyX, jennyY, faceScale);
+			blitAtScaled(jakeAnim [jakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
+				   jakeX, jakeY, faceScale);
 			g_system->updateScreen();
 		}
 
@@ -295,10 +298,10 @@ void EEMEngine::doChoosePartner() {
 					level = newLevel;
 					seqIdx = 0; // restart cycle so the gesture pops
 					blitAt(background, 0, 0);
-					blitAt(jennyAnim[jennySeqs[level][seqIdx % 9] % jennyAnim.size()],
-						   jennyX, jennyY);
-					blitAt(jakeAnim [jakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
-						   jakeX, jakeY);
+					blitAtScaled(jennyAnim[jennySeqs[level][seqIdx % 9] % jennyAnim.size()],
+						   jennyX, jennyY, faceScale);
+					blitAtScaled(jakeAnim [jakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
+						   jakeX, jakeY, faceScale);
 					g_system->updateScreen();
 				}
 			}

@@ -401,6 +401,12 @@ private:
 
 	void blitAt(const Picture &pic, int x, int y);
 
+	/// Like blitAt, but pixel-doubles the sprite by an integer @p scale. The
+	/// Mac CD authors some sprites (e.g. the choose-partner heads) at half
+	/// resolution and draws them scaled to fill the hi-res art. @p scale == 1
+	/// is identical to blitAt.
+	void blitAtScaled(const Picture &pic, int x, int y, int scale);
+
 public:
 	void waitForInput(uint32 maxMs);
 
@@ -418,7 +424,8 @@ public:
 	/// letterbox. The Mac CD ships its intro as a Flic (KDCDINTR.FLC) where
 	/// the DOS release uses .ANM movies. A click/key/Esc ends it (Esc also
 	/// sets `_skipIntro`).
-	void playFlc(const Common::Path &path, bool fadeIn = false);
+	void playFlc(const Common::Path &path, bool fadeIn = false,
+				 bool holdLastFrame = false);
 
 private:
 	void interruptAudio(bool stopMusicToo = true);
@@ -437,7 +444,9 @@ private:
 	void runLondonStartup();
 	/// Start London mystery 0 after a freshly-created detective chooses a partner.
 	bool startLondonTrainingMystery();
-	void showLondonLogo(uint picId, uint palId, uint holdMs);
+	void showLondonEAKidsLogo();
+	void showLondonLogo(uint picId, uint palId, uint holdMs,
+						bool playThunder = false);
 	void showLondonCharSelect();
 	void playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
 								 bool haveBriefingBg);

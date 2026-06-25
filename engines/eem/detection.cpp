@@ -139,6 +139,17 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUI_OPTIONS_EEM_MAC
 	},
+	{
+		// Alternate Macintosh CD mastering found in the local EEM_London image.
+		"eem2",
+		"CD",
+		AD_ENTRY2s("pics.dbd", "4ace2ae4fbe5877678c973066d025b4f", 10250928,
+				   "m0.bin",   "d38210ee60c478b14dc59a0a8ed7bb39", 37971),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUI_OPTIONS_EEM_MAC
+	},
 
 	AD_TABLE_END_MARKER
 };

@@ -51,19 +51,29 @@ Common::String musicNameFromPath(const Common::Path &path) {
 }
 
 Common::SeekableReadStream *openMacMidiResource(uint16 resourceId) {
-	Common::SeekableReadStream *stream =
-		openMacResource(Common::Path("EEM Sound&Music"),
-						MKTAG('c', 'm', 'i', 'd'), resourceId);
-	if (stream)
-		return stream;
+	static const char *const kMacMusicForks[] = {
+		"EEM Sound&Music",
+		"rsrc/EEM Sound&Music",
+		"EEM London CD",
+		"rsrc/EEM London CD",
+	};
+	static const uint32 kMacMidiTypes[] = {
+		MKTAG('c', 'm', 'i', 'd'),
+		MKTAG('M', 'I', 'D', 'I'),
+		MKTAG('M', 'i', 'd', 'i'),
+	};
 
-	stream = openMacResource(Common::Path("EEM Sound&Music"),
-							 MKTAG('M', 'I', 'D', 'I'), resourceId);
-	if (stream)
-		return stream;
+	for (uint i = 0; i < ARRAYSIZE(kMacMusicForks); i++) {
+		for (uint j = 0; j < ARRAYSIZE(kMacMidiTypes); j++) {
+			Common::SeekableReadStream *stream =
+				openMacResource(Common::Path(kMacMusicForks[i]),
+								kMacMidiTypes[j], resourceId);
+			if (stream)
+				return stream;
+		}
+	}
 
-	return openMacResource(Common::Path("EEM Sound&Music"),
-						   MKTAG('M', 'i', 'd', 'i'), resourceId);
+	return nullptr;
 }
 
 uint16 macSongResourceIdForFile(const Common::Path &path) {
@@ -84,6 +94,12 @@ uint16 macSongResourceIdForFile(const Common::Path &path) {
 		return 1005;
 	if (name == "WRONG2")
 		return 1007;
+	if (name == "MUS00101")
+		return 1101;
+	if (name == "MUS00102")
+		return 1102;
+	if (name == "MUS00103")
+		return 1103;
 	return kInvalidMacSongResource;
 }
 
@@ -249,9 +265,18 @@ bool MusicPlayer::loadMacSong(uint16 resourceId, uint16 &midiId) {
 	midiId = kInvalidMacMidiResource;
 	clearMacInstrumentMap();
 
-	Common::SeekableReadStream *stream =
-		openMacResource(Common::Path("EEM Sound&Music"),
-						MKTAG('S', 'O', 'N', 'G'), resourceId);
+	static const char *const kMacMusicForks[] = {
+		"EEM Sound&Music",
+		"rsrc/EEM Sound&Music",
+		"EEM London CD",
+		"rsrc/EEM London CD",
+	};
+
+	Common::SeekableReadStream *stream = nullptr;
+	for (uint i = 0; i < ARRAYSIZE(kMacMusicForks) && !stream; i++) {
+		stream = openMacResource(Common::Path(kMacMusicForks[i]),
+								 MKTAG('S', 'O', 'N', 'G'), resourceId);
+	}
 	if (!stream) {
 		warning("MusicPlayer: Mac SONG resource %u missing", resourceId);
 		return false;

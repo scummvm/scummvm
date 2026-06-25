@@ -34,6 +34,7 @@
 #include "engines/util.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/maccursor.h"
 #include "graphics/paletteman.h"
 
 #include "video/flic_decoder.h"
@@ -214,6 +215,22 @@ void setInteractiveCursorPalette(const Picture &cursor, byte transparent) {
 }
 
 void installMouseCursor(DBDArchive &pics, bool interactive, bool mac) {
+	if (mac && !interactive) {
+		// EEM2 (London) Mac keeps its pointers as 'crsr' colour cursors in the
+		// "EEM London CD" application fork; PIC 0x50 is only a 1x1 stub there.
+		// EEM1 Mac has no such file, so it falls through to the PIC path below.
+		Common::ScopedPtr<Common::SeekableReadStream> crsrStream(openMacResource(
+			Common::Path("EEM London CD"), MKTAG('c', 'r', 's', 'r'), 128));
+		if (crsrStream) {
+			Graphics::MacCursor macCursor;
+			if (macCursor.readFromStream(*crsrStream)) {
+				CursorMan.replaceCursor(&macCursor);
+				CursorMan.replaceCursorPalette(macCursor.getPalette(), 0, 256);
+				return;
+			}
+		}
+	}
+
 	Picture cursor;
 	if (!pics.getPicture(kPicMousePointer, cursor) || cursor.surface.empty())
 		error("EEM: mouse cursor PIC 0x%x missing", kPicMousePointer);
@@ -928,7 +945,8 @@ void EEMEngine::interruptAudio(bool stopMusicToo) {
 		_music->stop();
 }
 
-void EEMEngine::playFlc(const Common::Path &path, bool fadeIn) {
+void EEMEngine::playFlc(const Common::Path &path, bool fadeIn,
+						bool holdLastFrame) {
 	Video::FlicDecoder flic;
 	if (!flic.loadFile(path)) {
 		warning("playFlc: %s missing", path.toString().c_str());
@@ -952,6 +970,7 @@ void EEMEngine::playFlc(const Common::Path &path, bool fadeIn) {
 
 	flic.start();
 	bool paletteApplied = false;
+	bool aborted = false;
 	while (!flic.endOfVideo() && !shouldQuit() && !_skipIntro) {
 		if (flic.needsUpdate()) {
 			const Graphics::Surface *frame = flic.decodeNextFrame();
@@ -974,16 +993,22 @@ void EEMEngine::playFlc(const Common::Path &path, bool fadeIn) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			if (event.type == Common::EVENT_QUIT ||
 				event.type == Common::EVENT_RETURN_TO_LAUNCHER ||
-				event.type == Common::EVENT_LBUTTONDOWN)
+				event.type == Common::EVENT_LBUTTONDOWN) {
+				aborted = true;
 				return;
+			}
 			if (event.type == Common::EVENT_KEYDOWN) {
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					_skipIntro = true;
+				aborted = true;
 				return;
 			}
 		}
 		g_system->delayMillis(10);
 	}
+
+	if (holdLastFrame && !aborted && !shouldQuit() && !_skipIntro)
+		waitForInput(0xFFFFFFFFu);
 }
 
 void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
@@ -1095,6 +1120,35 @@ void EEMEngine::blitAt(const Picture &pic, int x, int y) {
 		return;
 	g_system->copyRectToScreen(pic.surface.getPixels(), pic.surface.pitch,
 							   x, y, w, h);
+}
+
+void EEMEngine::blitAtScaled(const Picture &pic, int x, int y, int scale) {
+	x = scaleX(x);
+	y = scaleY(y);
+	const int dstW = pic.surface.w * scale;
+	const int dstH = pic.surface.h * scale;
+	const int w = MIN<int>(dstW, screenWidth() - x);
+	const int h = MIN<int>(dstH, screenHeight() - y);
+	if (w <= 0 || h <= 0)
+		return;
+	if (scale <= 1) {
+		g_system->copyRectToScreen(pic.surface.getPixels(), pic.surface.pitch,
+								   x, y, w, h);
+		return;
+	}
+	// Nearest-neighbour pixel-double into a scratch, then present (opaque, to
+	// match blitAt: the sprite's surround index already matches the backdrop).
+	Graphics::ManagedSurface scaled(dstW, dstH,
+		Graphics::PixelFormat::createFormatCLUT8());
+	const byte *src = (const byte *)pic.surface.getPixels();
+	const int srcPitch = pic.surface.pitch;
+	for (int yy = 0; yy < dstH; yy++) {
+		byte *dst = (byte *)scaled.getBasePtr(0, yy);
+		const byte *srow = src + (yy / scale) * srcPitch;
+		for (int xx = 0; xx < dstW; xx++)
+			dst[xx] = srow[xx / scale];
+	}
+	g_system->copyRectToScreen(scaled.getPixels(), scaled.pitch, x, y, w, h);
 }
 
 void EEMEngine::waitForInput(uint32 maxMs) {
@@ -1509,7 +1563,55 @@ void EEMEngine::runMacStartup() {
 	_skipIntro = false;
 }
 
-void EEMEngine::showLondonLogo(uint picId, uint palId, uint holdMs) {
+void EEMEngine::showLondonEAKidsLogo() {
+	Picture pic;
+	if (!_picsArchive.getPicture(0x54, pic)) {
+		warning("London EA Kids logo PIC 0x54 load failed");
+		return;
+	}
+	blitAt(pic, 0, 0);
+
+	byte fpal[kPalSize];
+	if (!getSitePalette(0x3c, fpal)) {
+		warning("London EA Kids palette 0x3c load failed");
+		return;
+	}
+
+	bool aborted = false;
+	int delayCount = 9;
+
+	for (uint pass = 0; pass < 2 && !aborted && !shouldQuit(); pass++) {
+		const bool show = (pass != 0);
+		for (uint frame = 0; frame < 0x37 && !aborted && !shouldQuit();
+			 frame++) {
+			if (show && waitIntroDelay(40)) {
+				aborted = true;
+				break;
+			}
+
+			openColorCycle(fpal, 0x01, 0x6e, show);
+			openColorCycle(fpal, 0x81, 0xee, show);
+			if (--delayCount == 0) {
+				delayCount = 9;
+				openColorCycle(fpal, 0x70, 0x80, show);
+			}
+			if (show)
+				g_system->updateScreen();
+		}
+	}
+
+	if (!aborted && !shouldQuit()) {
+		for (uint i = 0; i < 5; i++)
+			openColorCycle(fpal, 0x70, 0x80, true);
+		g_system->updateScreen();
+		waitIntroDelay(0x5a * 40);
+	}
+
+	fadeCurrentPaletteToBlack();
+}
+
+void EEMEngine::showLondonLogo(uint picId, uint palId, uint holdMs,
+							   bool playThunder) {
 	Picture pic;
 	if (!_picsArchive.getPicture(picId, pic) || pic.surface.empty()) {
 		warning("London logo PIC 0x%x load failed", picId);
@@ -1527,7 +1629,12 @@ void EEMEngine::showLondonLogo(uint picId, uint palId, uint holdMs) {
 	g_system->updateScreen();
 	fadePaletteFromBlack(target);
 
+	if (playThunder && _audio && !isMacintosh())
+		_audio->playVoc(Common::Path("THUNDER.VOC"));
+
 	waitForInput(holdMs);
+	if (_audio)
+		_audio->stopVoice();
 	fadeCurrentPaletteToBlack();
 }
 
@@ -1552,17 +1659,26 @@ void EEMEngine::runLondonStartup() {
 	_skipIntro = false;
 	debugC(1, kDebugGeneral, "EEM2 (London): opening sequence");
 
-	// Two still logos.
+	// Opening logos. Mac London mirrors FUN_00009256: EA Kids colour-cycle,
+	// publisher still, Storm still, then the FLC intro/title pair.
 	if (!shouldQuit() && !_skipIntro)
-		showLondonLogo(0x54, 0x3c, 2500);   // EA Kids
+		showLondonEAKidsLogo();
 	if (!shouldQuit() && !_skipIntro)
-		showLondonLogo(0x20c, 0x3e, 2500);  // publisher logo (FUN_2721_07be)
+		showLondonLogo(0x20c, 0x3e, 3000);  // publisher logo (FUN_00009074)
+	if (!shouldQuit() && !_skipIntro)
+		showLondonLogo(0x20b, 0x3d, 3000, /* playThunder= */ true);
 
 	if (isMacintosh()) {
-		// The Mac CD ships the post-logo intro as a single Flic movie
-		// (KDCDINTR.FLC) instead of the DOS bolt/movie/wave .ANM sequence.
+		// The Mac CD ships the post-logo intro as Flic movies where DOS uses
+		// bolt/movie/wave .ANM. KDCDINTR is the centered intro; BOOK54 is the
+		// full-screen animated title, held for the profile click/key.
 		if (!shouldQuit() && !_skipIntro)
 			playFlc(Common::Path("KDCDINTR.FLC"), /* fadeIn= */ true);
+		if (!shouldQuit() && !_skipIntro && _music)
+			_music->playFile(Common::Path("MUS00102.XMI"), /* loop= */ true);
+		if (!shouldQuit() && !_skipIntro)
+			playFlc(Common::Path("BOOK54.FLC"), /* fadeIn= */ true,
+					/* holdLastFrame= */ true);
 	} else {
 		// Storm Software — bolt.anm with the thunder roar.
 		if (!shouldQuit() && !_skipIntro) {
