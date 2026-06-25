@@ -987,12 +987,12 @@ void global_error_code() {
 }
 
 void global_midi_play(int num) {
-	static const char *NAMES[14] = {
+	static const char *NAMES[15] = {
 		"adven2", "foolarnd", "homeag", "humorus1", "humorus2", "pianogtr", "raindrop",
-		"xad", "xcarey", "xuspens1", "travels1", "birdsong", "adventur", "action1"
+		"xad", "xcarey", "xuspens1", "travels1", "xcarey2", "birdsong", "adventur", "action1"
 	};
 
-	assert(num >= 1 && num <= 14);
+	assert(num >= 1 && num <= 15);
 	Common::String name = Common::String::format("*%s.hmi", NAMES[num - 1]);
 
 	midi_play(name.c_str());
