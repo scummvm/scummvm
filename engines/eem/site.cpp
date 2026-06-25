@@ -345,6 +345,19 @@ const uint16 kWaitAnimsLondon[7][6] = {
 	{ 0x06, 0x2d, 2, 2, 78, 78 }, // 6
 };
 
+// EEM2 Mac site loop uses its own `_WaitAnims` A5 table
+// (`lea (-0x2040,A5)` in FUN_0000d042; data @ 0x153e). These are native
+// Mac 512x384 anchors, not a scale transform of the DOS table.
+const uint16 kMacWaitAnimsLondon[7][6] = {
+	{ 0x00, 0x0a,  0, 3, 150, 150 }, // 0
+	{ 0x03, 0x0c,  1, 3, 120, 128 }, // 1
+	{ 0x01, 0x0b, 13, 5, 151, 151 }, // 2
+	{ 0x04, 0x0d,  2, 5, 148, 152 }, // 3
+	{ 0x02, 0x10, 20, 7, 146, 152 }, // 4
+	{ 0x05, 0x1b, (uint16)-3, 4, 151, 154 }, // 5
+	{ 0x06, 0x1a,  5, 5, 149, 152 }, // 6
+};
+
 // Animation script table (`_AnimationSequences @ 29be:22d4`)
 // Script byte format:
 //   0x80         = restart (loop back to index 0; terminator for one-shots)
@@ -1289,18 +1302,51 @@ bool SiteScreen::enterSiteAnim() {
 
 	if (_vm->isLondon()) {
 		const uint animId = (partner == 0) ? 7 : 0xf;
-		const int anchorY = (partner == 0) ? 0x50 : 0x4e;
+		int anchorX = mac ? (int)(int16)kMacWaitAnimsLondon[0][2 + partner] : 0;
+		int anchorY = mac ? (int)(int16)kMacWaitAnimsLondon[0][4 + partner]
+						  : ((partner == 0) ? 0x50 : 0x4e);
+		bool alignToIdleBottom = false;
+		int idleBottom = 0;
 		Animation anim;
 		if (!_vm->getAni().loadAnimation(animId, anim) || anim.empty())
 			return false;
+		if (mac) {
+			uint16 idleAnimId = 0;
+			int idleX = 0;
+			int idleY = 0;
+			Animation idleAnim;
+			if (partnerIdleAnimParams(_mystery->_siteNumber, idleAnimId,
+									  idleX, idleY) &&
+				_vm->getAni().loadAnimation(idleAnimId, idleAnim) &&
+				!idleAnim.empty()) {
+				const uint idleFrame =
+					partnerFrameAtTick(idleAnimId, (uint)idleAnim.size(), 0);
+				if (idleFrame < idleAnim.size()) {
+					const Picture &idle = idleAnim[idleFrame];
+					anchorX = idleX;
+					anchorY = idleY;
+					idleBottom = idleY - (int)(int16)idle.rowoff +
+								 idle.surface.h;
+					alignToIdleBottom = true;
+				}
+			}
+		}
 		for (uint frameIdx = 0;
 			 frameIdx < anim.size() && !_vm->shouldQuit();
 			 frameIdx++) {
+			const Picture &frame = anim[frameIdx];
+			const int frameY = alignToIdleBottom
+				? idleBottom - frame.surface.h + (int)(int16)frame.rowoff
+				: anchorY;
 			Graphics::ManagedSurface scratch(sw, sh,
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.simpleBlitFrom(bg);
-			blitAnimFrameAnchored(scratch.surfacePtr(), anim[frameIdx],
-								  0, anchorY);
+			if (mac)
+				blitMacAnimFrameAnchored(scratch.surfacePtr(), frame,
+										 anchorX, frameY, macPaletteMap);
+			else
+				blitAnimFrameAnchored(scratch.surfacePtr(), frame,
+									  anchorX, frameY);
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 									   0, 0, sw, sh);
 			g_system->updateScreen();
@@ -1654,8 +1700,10 @@ bool SiteScreen::partnerIdleAnimParams(uint siteNum, uint16 &animId,
 		}
 	} else {
 		const uint16 speaker = READ_LE_UINT16(site + 8);
-		const uint16 (*waitTable)[6] = _vm->isLondon()
-			? kWaitAnimsLondon : kWaitAnims;
+		const uint16 (*waitTable)[6] = kWaitAnims;
+		if (_vm->isLondon())
+			waitTable = _vm->isMacintosh()
+				? kMacWaitAnimsLondon : kWaitAnimsLondon;
 		if (speaker >= ARRAYSIZE(kWaitAnims))
 			return false;
 		animId = waitTable[speaker][0 + partner];
@@ -2061,7 +2109,14 @@ bool EEMEngine::loadKdAnim(uint16 num, Animation &anim, int &px, int &py,
 	if (num >= ARRAYSIZE(kKdAnimTable))
 		return false;
 
-	const uint16 (*kdTable)[6] = isLondon() ? kKdAnimTableLondon : kKdAnimTable;
+	const uint16 (*kdTable)[6] = kKdAnimTable;
+	if (isLondon()) {
+		// EEM2 Mac FUN_0000ce6e indexes `_WaitAnims + 1`
+		// (`lea (-0x2034,A5)`), so KD gestures share the Mac idle anchors
+		// for speaker rows 1..6.
+		kdTable = isMacintosh()
+			? kMacWaitAnimsLondon + 1 : kKdAnimTableLondon;
+	}
 	const uint partner = (_partner == kPartnerJake) ? 0 : 1;
 	animId = kdTable[num][partner];
 	px     = (int)kdTable[num][2 + partner];

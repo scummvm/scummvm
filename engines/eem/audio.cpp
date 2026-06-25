@@ -88,6 +88,93 @@ uint16 macSndResourceIdForPath(const Common::Path &path) {
 	return 0;
 }
 
+Audio::SeekableAudioStream *makeMacCsndStream(Common::SeekableReadStream *stream,
+											  DisposeAfterUse::Flag disposeAfterUse) {
+	if (!stream)
+		return nullptr;
+
+	if (stream->size() < 4) {
+		if (disposeAfterUse == DisposeAfterUse::YES)
+			delete stream;
+		warning("makeMacCsndStream: resource too short");
+		return nullptr;
+	}
+
+	const uint32 decodedSize = stream->readUint32BE();
+	const uint32 packedSize = (uint32)(stream->size() - stream->pos());
+	Common::Array<byte> packed;
+	packed.resize(packedSize);
+	if (stream->read(packed.data(), packedSize) != packedSize) {
+		if (disposeAfterUse == DisposeAfterUse::YES)
+			delete stream;
+		warning("makeMacCsndStream: short packed read (%u bytes)", packedSize);
+		return nullptr;
+	}
+	if (disposeAfterUse == DisposeAfterUse::YES)
+		delete stream;
+
+	byte *decoded = (byte *)malloc(decodedSize);
+	if (!decoded) {
+		warning("makeMacCsndStream: oom (%u bytes)", decodedSize);
+		return nullptr;
+	}
+
+	uint32 src = 0;
+	uint32 dst = 0;
+	bool ok = true;
+	while (ok && dst < decodedSize && src < packedSize) {
+		byte flags = packed[src++];
+		for (uint bit = 0; bit < 8 && dst < decodedSize; bit++, flags >>= 1) {
+			if (flags & 1) {
+				if (src >= packedSize) {
+					ok = false;
+					break;
+				}
+				decoded[dst++] = packed[src++];
+			} else {
+				if (src + 1 >= packedSize) {
+					ok = false;
+					break;
+				}
+				const uint16 token = ((uint16)packed[src] << 8) | packed[src + 1];
+				src += 2;
+				int32 copyPos = (int32)dst + (int32)(token & 0x0fff) - 0x1000;
+				uint count = ((token >> 12) & 0x0f) + 3;
+				while (count-- && dst < decodedSize) {
+					if (copyPos < 0 || (uint32)copyPos >= dst) {
+						ok = false;
+						break;
+					}
+					decoded[dst++] = decoded[copyPos++];
+				}
+			}
+		}
+	}
+
+	if (!ok || dst != decodedSize) {
+		warning("makeMacCsndStream: decoded %u of %u bytes", dst, decodedSize);
+		free(decoded);
+		return nullptr;
+	}
+
+	if (decodedSize != 0) {
+		byte acc = decoded[0];
+		for (uint32 i = 1; i < decodedSize; i++) {
+			acc = (byte)(acc + decoded[i]);
+			decoded[i] = acc;
+		}
+	}
+
+	Common::MemoryReadStream *sndStream =
+		new Common::MemoryReadStream(decoded, decodedSize,
+									 DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *audioStream =
+		Audio::makeMacSndStream(sndStream, DisposeAfterUse::YES);
+	if (!audioStream)
+		delete sndStream;
+	return audioStream;
+}
+
 AudioPlayer::~AudioPlayer() {
 	stopAll();
 }
@@ -202,12 +289,8 @@ bool AudioPlayer::initMysterySounds(uint mysteryNum) {
 
 	cleanMysterySounds();
 
-	if (_isMacintosh) {
-		debugC(2, kDebugSound,
-			   "AudioPlayer: Mac release has no SDB/SDX bundle for mystery %u",
-			   mysteryNum);
-		return true;
-	}
+	if (_isMacintosh)
+		return initMacMysterySounds(mysteryNum);
 
 	if (!readSdxIndex(sdxPath)) {
 		_sdxIndex.clear();
@@ -224,7 +307,39 @@ void AudioPlayer::cleanMysterySounds() {
 	stopSpool();
 	_sdxIndex.clear();
 	_sdbPath = Common::Path();
+	_macMysterySoundPath = Common::Path();
 	_currentMystery = -1;
+}
+
+bool AudioPlayer::initMacMysterySounds(uint mysteryNum) {
+	const uint16 firstResourceId = 1001;
+	const Common::Path candidates[2] = {
+		Common::Path(Common::String::format("M%02u.DBD", mysteryNum)),
+		Common::Path(Common::String::format("M%02u.CPD", mysteryNum))
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(candidates); i++) {
+		Common::SeekableReadStream *stream =
+			openMacResource(candidates[i], MKTAG('c', 's', 'n', 'd'),
+							firstResourceId);
+		if (!stream) {
+			stream = openMacResource(candidates[i], MKTAG('s', 'n', 'd', ' '),
+									 firstResourceId);
+		}
+		if (!stream)
+			continue;
+
+		delete stream;
+		_macMysterySoundPath = candidates[i];
+		_currentMystery = (int)mysteryNum;
+		debugC(1, kDebugSound, "AudioPlayer: Mac mystery %u sounds from %s",
+			   mysteryNum, _macMysterySoundPath.toString().c_str());
+		return true;
+	}
+
+	warning("AudioPlayer: Mac mystery sound file for mystery %u missing",
+			mysteryNum);
+	return false;
 }
 
 void AudioPlayer::playMacSnd(uint16 resourceId, Audio::SoundHandle &handle,
@@ -311,6 +426,10 @@ void AudioPlayer::spoolSound(uint num) {
 		// No SDB/SDX bundle loaded (floppy install or pre-mystery state).
 		debugC(2, kDebugSound,
 			   "AudioPlayer: spoolSound(%u) skipped (no mystery sounds)", num);
+		return;
+	}
+	if (_isMacintosh) {
+		playMacMysterySound(num);
 		return;
 	}
 	if (num >= _sdxIndex.size()) {
@@ -403,6 +522,47 @@ void AudioPlayer::spoolSound(uint num) {
 	// _AIL_start_digital_playback @ 202f:040c. Spool clips are gameplay SFX.
 	playPcmBuffer(pcm, audioSize, sampleRate, _spoolHandle,
 				  Audio::Mixer::kSFXSoundType);
+}
+
+bool AudioPlayer::playMacMysterySound(uint num) {
+	if (_macMysterySoundPath.empty())
+		return false;
+
+	const uint16 resourceId = (uint16)(1001 + num);
+	bool compressed = true;
+	Common::SeekableReadStream *stream =
+		openMacResource(_macMysterySoundPath, MKTAG('c', 's', 'n', 'd'),
+						resourceId);
+	if (!stream) {
+		compressed = false;
+		stream = openMacResource(_macMysterySoundPath,
+								 MKTAG('s', 'n', 'd', ' '), resourceId);
+	}
+	if (!stream) {
+		warning("AudioPlayer: Mac mystery sound resource %u missing in %s",
+				resourceId, _macMysterySoundPath.toString().c_str());
+		return false;
+	}
+
+	stopSpool();
+
+	Audio::SeekableAudioStream *audioStream = compressed
+		? makeMacCsndStream(stream, DisposeAfterUse::YES)
+		: Audio::makeMacSndStream(stream, DisposeAfterUse::YES);
+	if (!audioStream) {
+		if (!compressed)
+			delete stream;
+		warning("AudioPlayer: Mac mystery sound resource %u is not playable",
+				resourceId);
+		return false;
+	}
+
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_spoolHandle,
+					   audioStream, -1, Audio::Mixer::kMaxChannelVolume,
+					   0, DisposeAfterUse::YES);
+	debugC(1, kDebugSound, "AudioPlayer: playMacMysterySound(%u, %s)",
+		   resourceId, compressed ? "csnd" : "snd");
+	return true;
 }
 
 bool AudioPlayer::isSpoolPlaying() const {

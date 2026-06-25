@@ -39,11 +39,14 @@ class EEMEngine;
  *
  * - VOC files (THUNDER.VOC, PHONE.VOC, JEN.VOC/JAKE.VOC): _LoadSoundName +
  *   _PlayVoice @ 1ff1:0299 / 1ff1:023e via _AIL_play_VOC_file.
- * - Mystery spool stream: _InitMysterySounds @ 202f:05cb opens M%d.SDX/.SDB.
+ * - DOS mystery spool stream: _InitMysterySounds @ 202f:05cb opens M%d.SDX/.SDB.
  *   Each SDX entry is (offset, compSize, uncompSize). Equal sizes => raw PCM
  *   (_UncompressedSound @ 202f:03e6); otherwise PKWARE DCL Implode
  *   (_DeCompressSound @ 202f:02ad). Each blob starts with SB Time Constant +
  *   AIL block count, then 8-bit unsigned PCM.
+ * - Mac mystery spool streams live in M%02d.DBD/M%02d.CPD resource forks.
+ *   The executable tries compressed 'csnd' by resource id, then falls back to
+ *   plain 'snd '; ids are 1001 + the zero-based mystery voice slot.
  *
  * M60.SDB/SDX holds the 19 voiceovers between ANIM01..ANIM20 in
  * _DoOpeningAnims (loaded via _InitMysterySounds(0x3c)).
@@ -82,8 +85,8 @@ public:
 	/// Common slots: 12 = PHONESL.VOC, 20 = partner intro, 25 = THUNDER.VOC.
 	void playFloppyVoiceSlot(uint slot, uint partner);
 
-	/// Loads M%u.SDX into memory and remembers the matching M%u.SDB path.
-	/// Mirrors _InitMysterySounds @ 202f:05cb.
+	/// Loads the current mystery voice bundle. DOS uses M%u.SDX/M%u.SDB;
+	/// Mac uses M%02u.DBD/M%02u.CPD 'csnd'/'snd ' resources.
 	bool initMysterySounds(uint mysteryNum);
 
 	/// _CleanMysterySounds @ 202f:05a5.
@@ -128,6 +131,8 @@ private:
 	};
 
 	bool readSdxIndex(const Common::Path &sdxPath);
+	bool initMacMysterySounds(uint mysteryNum);
+	bool playMacMysterySound(uint num);
 	void playMacSnd(uint16 resourceId, Audio::SoundHandle &handle,
 					Audio::Mixer::SoundType type);
 	void playPcmBuffer(byte *pcm, uint32 size, uint sampleRate,
@@ -141,6 +146,7 @@ private:
 
 	Common::Array<SoundEntry> _sdxIndex;
 	Common::Path _sdbPath;
+	Common::Path _macMysterySoundPath;
 	int _currentMystery = -1;
 	bool _voiceEnabled = true;
 	bool _isMacintosh = false;
