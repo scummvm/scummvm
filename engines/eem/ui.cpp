@@ -199,6 +199,8 @@ bool readBigMapEntryInfo(const byte *entry, bool floppy, bool macintosh,
 	return true;
 }
 
+const uint32 kMacMapColorCycleDelayMs = 25 * 1000 / 60;
+
 bool loadMacBigMapPixels(Common::Array<byte> &mapPixels,
 						 uint16 &mapW, uint16 &mapH) {
 	DBDArchive bigMapArchive;
@@ -3761,12 +3763,6 @@ void EEMEngine::doBigMap() {
 	if (!_mystery.isLoaded())
 		return;
 
-	if (isMacintosh()) {
-		for (uint i = 0; i < _mystery.numSites() &&
-						 i < Mystery::kVisitedSiteCap; i++)
-			_mystery._onSites[i] = 1;
-	}
-
 	if (isLondon()) {
 		_mystery._pendingSiteJump = 0;
 		_mystery._siteReturnDepth = 0;
@@ -3782,6 +3778,7 @@ void EEMEngine::doBigMap() {
 		const uint32 mapStartTick = g_system->getMillis();
 		drawBigMapOverview(0);
 		uint32 mapLastTick = mapStartTick;
+		uint32 mapLastCycleTick = mapStartTick;
 
 		const bool mac = isMacintosh();
 		const Common::Rect bigMapWindowBase(0, 0, 247, 192);
@@ -3835,12 +3832,24 @@ void EEMEngine::doBigMap() {
 				break;
 
 			const uint32 now = g_system->getMillis();
-			if (now - mapLastTick >= 100) {
+			if (mac && isLondon() &&
+				now - mapLastCycleTick >= kMacMapColorCycleDelayMs) {
+				mapLastCycleTick = now;
+				// Mac `_UpdateBigMap` rotates ColorTable entries 0xef..0xf2
+				// and 0xfc..0xff. Redraw immediately so Mac endpoint art maps
+				// its black pixels to the current black slot after the cycle.
+				cyclePaletteRangeReverse(0xef, 0xf2);
+				cyclePaletteRangeReverse(0xfc, 0xff);
+				drawBigMapOverview(now - mapStartTick);
+				mapLastTick = now;
+			} else if (now - mapLastTick >= 100) {
 				mapLastTick = now;
 				drawBigMapOverview(now - mapStartTick);
 				if (isLondon()) {
-					cyclePaletteRangeReverse(0xf4, 0xf9);
-					cyclePaletteRangeReverse(0xfa, 0xff);
+					if (!mac) {
+						cyclePaletteRangeReverse(0xf4, 0xf9);
+						cyclePaletteRangeReverse(0xfa, 0xff);
+					}
 				} else {
 					cyclePaletteRangeReverse(0xf7, 0xfa);
 					cyclePaletteRangeReverse(0xfb, 0xfe);
@@ -3902,6 +3911,7 @@ void EEMEngine::doBigMap() {
 		const uint32 detailStartTick = g_system->getMillis();
 		drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH, 0);
 		uint32 detailLastTick = detailStartTick;
+		uint32 detailLastCycleTick = detailStartTick;
 		bool returnToOverview = false;
 
 		const Common::Rect returnBase(252, 43, kScreenWidth, kScreenHeight);
@@ -3949,7 +3959,7 @@ void EEMEngine::doBigMap() {
 		while (!shouldQuit() && !returnToOverview) {
 			Common::Event ev;
 			bool dirty = false;
-			bool frameTick = false;
+			bool cycleTick = false;
 			while (g_system->getEventManager()->pollEvent(ev)) {
 				if (ev.type == Common::EVENT_QUIT ||
 					ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
@@ -4085,15 +4095,28 @@ void EEMEngine::doBigMap() {
 			if (now - detailLastTick >= 100) {
 				detailLastTick = now;
 				dirty = true;
-				frameTick = true;
+			}
+			if (isLondon()) {
+				const uint32 cycleDelay = mac ? kMacMapColorCycleDelayMs : 100;
+				if (now - detailLastCycleTick >= cycleDelay) {
+					detailLastCycleTick = now;
+					cycleTick = true;
+					dirty = true;
+				}
+			}
+			if (cycleTick && isLondon()) {
+				if (mac) {
+					cyclePaletteRangeReverse(0xe9, 0xeb);
+					cyclePaletteRangeReverse(0xec, 0xef);
+					cyclePaletteRangeReverse(0xf0, 0xf2);
+				} else {
+					cyclePaletteRangeReverse(0xee, 0xf2);
+					cyclePaletteRangeReverse(0xea, 0xed);
+				}
 			}
 			if (dirty)
 				drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH,
 					now - detailStartTick);
-			if (frameTick && isLondon()) {
-				cyclePaletteRangeReverse(0xee, 0xf2);
-				cyclePaletteRangeReverse(0xea, 0xed);
-			}
 			g_system->updateScreen();
 			g_system->delayMillis(10);
 		}
@@ -4399,8 +4422,11 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 	scratch.clear();
 
 	Picture frame;
-	if (_picsArchive.getPicture(0x42, frame))
+	if (_picsArchive.getPicture(0x42, frame)) {
+		if (mac)
+			remapMacSurfaceEndpoints(frame.surface, getMacSpritePaletteMap());
 		scratch.simpleBlitFrom(frame.surface);
+	}
 
 	// Marker PICs from `_main`:
 	//   EEM1 CD @ 1a35:0f59: Done=0x20d, Site=0xc5, Crime=0xc6.
@@ -4463,9 +4489,14 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 		const uint frameIdx = bigMapPartnerFrameAtTick((uint)mapAnim.size(),
 													   elapsedMs, isLondon());
 
-		blitAnimFrameAnchored(scratch.surfacePtr(), mapAnim[frameIdx],
-							  mac ? scaleX(0xfd) : 0xfd,
-							  mac ? scaleY(0x50) : 0x50);
+		const int anchorX = mac ? scaleX(0xfd) : 0xfd;
+		const int anchorY = mac ? scaleY(0x50) : 0x50;
+		if (mac)
+			blitMacAnimFrameAnchored(scratch.surfacePtr(), mapAnim[frameIdx],
+									 anchorX, anchorY);
+		else
+			blitAnimFrameAnchored(scratch.surfacePtr(), mapAnim[frameIdx],
+								  anchorX, anchorY);
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
