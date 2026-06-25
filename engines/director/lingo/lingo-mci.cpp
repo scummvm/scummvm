@@ -471,7 +471,7 @@ void Lingo::func_mci(const Common::String &name) {
         break;
 
     default:
-        warning("func_mci: Unhandled MCI command: %d", parsedCmd.id); /* TODO: Convert MCITokenType into string */
+        warning("func_mci: Unhandled MCI command: %d (%s)", parsedCmd.id, name.c_str()); /* TODO: Convert MCITokenType into string */
     }
 }
 
