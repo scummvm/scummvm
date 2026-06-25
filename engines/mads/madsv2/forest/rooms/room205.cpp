@@ -96,7 +96,7 @@ static void room_205_init1() {
 		midi_stop();
 		viewing_at_y = 22;
 		flags[10]--;
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		player.walker_visible = false;
 		aa[6] = kernel_run_animation(kernel_name('t', 1), 104);
 		aainfo[6]._active = -1;
@@ -128,7 +128,7 @@ static void room_205_init1() {
 		global[g143] = 0;
 	}
 
-	player.commands_allowed = -1;
+	player.commands_allowed = true;
 	player.walker_visible = true;
 }
 
@@ -138,7 +138,7 @@ static void room_205_init() {
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		if (previous_room != 199) {
 			player.walker_visible = false;
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 		}
 
 		for (int count = 0; count < 10; count++) {
@@ -192,7 +192,7 @@ static void room_205_anim2() {
 		scratch._a4 = 4;
 		kernel_abort_animation(scratch._9e);
 		kernel_abort_animation(scratch._a2);
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		player.walker_visible = true;
 		global[g017] = -1;
 		aainfo[1]._active = 0;
@@ -427,7 +427,7 @@ static void room_205_pre_parser() {
 
 static void room_205_parser() {
 	if (global[walker_converse_state] != 0) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		digi_play_build_ii('c', 1, 1);
 		scratch._a4 = 120;
 		player.command_ready = false;
@@ -435,7 +435,7 @@ static void room_205_parser() {
 	}
 
 	if (player_parse(words_click_on, words_hole, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		scratch._a4 = 121;
 		digi_play_build(221, '_', 1, 1);
 		player.command_ready = false;
@@ -448,7 +448,7 @@ static void room_205_parser() {
 	}
 
 	if (player_parse(words_look_at, words_map, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		global[g145] = -1;
 		scratch._8e = 2;
 		player.command_ready = false;
@@ -456,7 +456,7 @@ static void room_205_parser() {
 	}
 
 	if (player_parse(words_pick_up, words_flowers, 0) || player_parse(words_click_on, words_moss, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		global[g135] = -1;
 		scratch._8c = 3;
 		player.command_ready = false;

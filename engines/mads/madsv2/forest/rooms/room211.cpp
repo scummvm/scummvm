@@ -57,7 +57,7 @@ static void room_211_init() {
 	viewing_at_y = 22;
 	global[g009] = 0;
 	player.walker_visible = false;
-	player.commands_allowed = 0;
+	player.commands_allowed = false;
 
 	for (int i = 0; i < 10; i++) {
 		aainfo[i]._active = 0;

@@ -225,7 +225,7 @@ static void room_308_anim8() {
 	aainfo[6]._val4 = cur;
 
 	if (cur == 57) {
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		dont_frag_the_palette();
 		kernel_abort_animation(seq[5]);
 		aainfo[2]._frame = 0;
@@ -690,7 +690,7 @@ static void room_308_anim16() {
 		kernel_reset_animation(seq[3], 0);
 		aainfo[5]._val3 = 0;
 		kernel_synch(KERNEL_ANIM, seq[3], KERNEL_NOW, 0);
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 	}
 }
 
@@ -745,7 +745,7 @@ static void room_308_anim18() {
 		kernel_reset_animation(seq[0], 0);
 		aainfo[3]._frame = 0;
 		kernel_synch(KERNEL_ANIM, seq[0], KERNEL_NOW, 0);
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 	}
 }
 
@@ -1036,14 +1036,14 @@ static void room_308_init() {
 	}
 
 	if (previous_room == 401) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		aa[5] = kernel_run_animation(kernel_name('t', 27), 0);
 		scratch._a2 = -1;
 		return;
 	}
 
 	if (previous_room == 307 || previous_room == 322) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		if (player_has_been_in_room(401)) {
 			aa[7] = kernel_run_animation(kernel_name('t', 40), 0);
 			kernel_reset_animation(aa[7], 13);
@@ -1056,7 +1056,7 @@ static void room_308_init() {
 			kernel_synch(KERNEL_ANIM, ss[7], KERNEL_NOW, 0);
 			global[g009] = -1;
 			global_midi_play(15);
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 			return;
 		}
 		if (!player.been_here_before) {
@@ -1136,7 +1136,7 @@ static void room_308_daemon() {
 			display_interface();
 			aainfo[5]._val3 = 0;
 			scratch._b4 = -1;
-			player.commands_allowed = -1;
+			player.commands_allowed = true;
 			scratch._c2 = 0;
 			break;
 		case 2:
@@ -1144,7 +1144,7 @@ static void room_308_daemon() {
 			aainfo[5]._val3 = 0;
 			aainfo[8]._frame = 0;
 			scratch._b4 = -1;
-			player.commands_allowed = -1;
+			player.commands_allowed = true;
 			scratch._c2 = 0;
 			break;
 		case 3:
@@ -1303,20 +1303,20 @@ static void room_308_parser() {
 
 	if (global[walker_converse_state] != 0) {
 		scratch._bc = -1;
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		aainfo[5]._val3 = 8;
 		goto handled;
 	}
 
 	if (player_parse(words_tail, 0)) {
 		scratch._bc = -1;
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		goto handled;
 	}
 
 	if (player_parse(words_russel, 0)) {
 		scratch._be = -1;
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		goto handled;
 	}
 

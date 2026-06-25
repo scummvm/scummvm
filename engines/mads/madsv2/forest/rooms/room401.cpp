@@ -104,7 +104,7 @@ static void room_401_anim_state(int16 state) {
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		player.walker_visible = true;
 		if (config_file.forest1) {
 			digi_stop(1);
@@ -386,7 +386,7 @@ static void room_401_init1() {
 		global[g133] = 0;
 		global[g143] = 0;
 		restore_player();
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		player.walker_visible = true;
 		return;
 	}
@@ -428,7 +428,7 @@ static void room_401_init1() {
 	kernel_reset_animation(scratch._9c, 2);
 	global[g133] = 0;
 	global[g143] = 0;
-	player.commands_allowed = -1;
+	player.commands_allowed = true;
 	player.walker_visible = true;
 }
 
@@ -446,7 +446,7 @@ static void room_401_init() {
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		if (previous_room != 199) {
 			player.walker_visible = false;
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 		}
 
 		for (int16 count = 0; count < 10; count++) {
@@ -470,7 +470,7 @@ static void room_401_daemon() {
 			break;
 		global[walker_converse_state] = 0;
 		close_journal(3);
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		if (config_file.forest1)
 			kernel_timing_trigger(1, 106);
 		break;
@@ -504,7 +504,7 @@ static void room_401_daemon() {
 	case 26:
 		kernel_reset_animation(scratch._9a, 0);
 		kernel_reset_animation(scratch._9c, 0);
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		player.walker_visible = false;
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_ANIM, aa[1]);
 		kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_ANIM, aa[1]);
@@ -534,7 +534,7 @@ static void room_401_daemon() {
 		global[g133] = 0;
 		global[g143] = 0;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		break;
 
 	case 101:
@@ -544,7 +544,7 @@ static void room_401_daemon() {
 		kernel_reset_animation(scratch._9c, 1);
 		kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
 		global[g143] = 0;
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		kernel_timing_trigger(1, 106);
 		break;
 
@@ -555,7 +555,7 @@ static void room_401_daemon() {
 		kernel_reset_animation(scratch._9a, 1);
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		kernel_timing_trigger(1, 106);
 		break;
 
@@ -610,7 +610,7 @@ static void room_401_pre_parser() {
 
 static void room_401_parser() {
 	if (global[walker_converse_state]) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		digi_play_build_ii('c', 1, 1);
 		scratch._a0 = 668;
 		player.command_ready = 0;
@@ -620,7 +620,7 @@ static void room_401_parser() {
 	if (player_parse(words_walk_to, words_room_308, 0)) {
 		global[g150] = -1;
 		scratch._90 = 16;
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		player.command_ready = 0;
 		return;
 	}
@@ -631,7 +631,7 @@ static void room_401_parser() {
 	}
 
 	if (player_parse(words_look_at, words_thistle, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		global[g135] = -1;
 		scratch._8c = 20;
 		scratch._a2 = 1;

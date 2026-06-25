@@ -122,7 +122,7 @@ static void room_204_init1() {
 		global[g143] = 0;
 	}
 
-	player.commands_allowed = -1;
+	player.commands_allowed = true;
 	player.walker_visible = true;
 }
 
@@ -145,7 +145,7 @@ static void room_204_init() {
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		if (previous_room != 199) {
 			player.walker_visible = false;
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 		}
 
 		for (int count = 0; count < 10; count++) {
@@ -199,7 +199,7 @@ static void room_204_anim2() {
 		scratch._a4 = 4;
 		kernel_abort_animation(scratch._a2);
 		kernel_abort_animation(scratch._a0);
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		player.walker_visible = true;
 		global[g017] = -1;
 		aainfo[1]._active = 0;
@@ -369,7 +369,7 @@ static void room_204_daemon() {
 			kernel_reset_animation(scratch._9c, 1);
 			kernel_synch(3, scratch._9c, 4, 0);
 			global[g143] = 0;
-			player.commands_allowed = -1;
+			player.commands_allowed = true;
 			goto bottom;
 		} else if (trigger == 102) {
 			// abort _96 slot anim, re-enable
@@ -378,7 +378,7 @@ static void room_204_daemon() {
 			kernel_reset_animation(scratch._9a, 1);
 			kernel_synch(3, scratch._9a, 4, 0);
 			global[g133] = 0;
-			player.commands_allowed = -1;
+			player.commands_allowed = true;
 			goto bottom;
 		} else {
 			goto bottom;
@@ -397,7 +397,7 @@ trigger_7:
 	if (global[walker_converse_state] != 0) {
 		global[walker_converse_state] = 0;
 		close_journal(3);
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		goto bottom;
 	}
 	if (scratch._a4 != 400)
@@ -504,7 +504,7 @@ trigger_100:
 		kernel_synch(3, scratch._9c, 4, 0);
 		player.walker_visible = true;
 		kernel_synch(2, 0, 4, 0);
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 	}
 	goto bottom;
 
@@ -522,7 +522,7 @@ trigger_103:
 	kernel_flip_hotspot(158, -1);
 	inter_move_object(9, PLAYER);
 	global[player_score] = -1;
-	player.commands_allowed = -1;
+	player.commands_allowed = true;
 
 bottom:
 	global_anim1(3, scratch._9a, global[g131], &global[g132]);

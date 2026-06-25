@@ -119,7 +119,7 @@ static void room_199_init() {
 			seq[6 + slot] = kernel_seq_stamp(ss[slot], false, 1);
 			kernel_seq_depth(seq[6 + slot], 1);
 			aainfo[2]._active = slot;
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 			kernel_timing_trigger(300, 111);
 			return;
 		}
@@ -135,7 +135,7 @@ static void room_199_init() {
 		seq[6 + slot] = kernel_seq_stamp(ss[slot], false, 1);
 		kernel_seq_depth(seq[6 + slot], 5);
 		aainfo[2]._active = slot;
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		kernel_timing_trigger(2, 112);
 		return;
 	} else {
@@ -377,14 +377,14 @@ static void room_199_daemon() {
 	} else if (trig == 111) {
 		global[g070] = 0;
 		leave_journal();
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 	} else if (trig == 112) {
 		aainfo[2]._val3 = 0;
 		aainfo[2]._val4 = -1;
 		digi_play_build(521, 'e', 1, 1);
 	} else if (trig == 113) {
 		leave_journal();
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 	} else if (trig == 114) {
 		int result = room_199_anim1();
 		global[g100] = result;

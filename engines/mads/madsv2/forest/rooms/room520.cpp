@@ -74,7 +74,7 @@ static void room_520_init() {
 	global[player_score] = 0;
 	global[g009] = 0;
 	player.walker_visible = false;
-	player.commands_allowed = 0;
+	player.commands_allowed = false;
 	mouse_hide();
 
 	for (int i = 0; i < 10; i++) {

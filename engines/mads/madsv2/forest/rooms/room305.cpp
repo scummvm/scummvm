@@ -113,7 +113,7 @@ static void room_305_init1() {
 	global[g133] = 0;
 	global[g143] = 0;
 	player.walker_visible = true;
-	player.commands_allowed = -1;
+	player.commands_allowed = true;
 }
 
 static void room_305_init2() {
@@ -150,7 +150,7 @@ static void room_305_init2() {
 		global[g133] = 0;
 		global[g143] = 0;
 		restore_player();
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		player.walker_visible = true;
 		return;
 	}
@@ -189,7 +189,7 @@ static void room_305_init2() {
 	kernel_reset_animation(scratch._9c, 2);
 	global[g133] = 0;
 	global[g143] = 0;
-	player.commands_allowed = -1;
+	player.commands_allowed = true;
 	player.walker_visible = true;
 }
 
@@ -213,7 +213,7 @@ static void room_305_init() {
 	if (previous_room != KERNEL_LAST) {
 		if (previous_room != 199) {
 			player.walker_visible = false;
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 		}
 
 		for (int count = 0; count < 10; count++) {
@@ -746,7 +746,7 @@ static void room_305_anim10() {
 		if (f == 79) {
 			kernel_abort_animation(aa[9]);
 			aainfo[9]._active = 0;
-			player.commands_allowed = -1;
+			player.commands_allowed = true;
 			if (config_file.forest1 != 0)
 				kernel_timing_trigger(1, 109);
 			global[g131] = -1;
@@ -779,7 +779,7 @@ static void room_305_daemon() {
 		if (global[walker_converse_state] != 0) {
 			global[walker_converse_state] = 0;
 			close_journal(3);
-			player.commands_allowed = -1;
+			player.commands_allowed = true;
 			if (config_file.forest1 != 0)
 				kernel_timing_trigger(1, 109);
 		} else {
@@ -800,7 +800,7 @@ static void room_305_daemon() {
 				scratch._8c = 3;
 				player.walker_visible = true;
 				global[g135] = -1;
-				player.commands_allowed = 0;
+				player.commands_allowed = false;
 			}
 		}
 		break;
@@ -875,7 +875,7 @@ static void room_305_daemon() {
 		kernel_reset_animation(scratch._9a, 1);
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		if (config_file.forest1 != 0)
 			kernel_timing_trigger(1, 109);
 		break;
@@ -898,7 +898,7 @@ static void room_305_daemon() {
 			global[g133] = 0;
 			global[g143] = 0;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-			player.commands_allowed = -1;
+			player.commands_allowed = true;
 			if (config_file.forest1 != 0)
 				kernel_timing_trigger(1, 109);
 		}
@@ -911,7 +911,7 @@ static void room_305_daemon() {
 		kernel_reset_animation(scratch._9c, 1);
 		kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
 		global[g143] = 0;
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		if (config_file.forest1 != 0)
 			kernel_timing_trigger(1, 109);
 		break;
@@ -937,7 +937,7 @@ static void room_305_daemon() {
 				inter_move_object(7, PLAYER);
 			global[g069] = -1;
 			global[player_score] = -1;
-			player.commands_allowed = -1;
+			player.commands_allowed = true;
 			if (config_file.forest1 != 0)
 				kernel_timing_trigger(1, 109);
 		}
@@ -987,7 +987,7 @@ static void room_305_daemon() {
 		global[g133] = 0;
 		global[g143] = 0;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		if (config_file.forest1 != 0)
 			kernel_timing_trigger(1, 109);
 		break;
@@ -999,7 +999,7 @@ static void room_305_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
 		global[player_score] = -1;
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		if (config_file.forest1 != 0)
 			kernel_timing_trigger(1, 109);
 		break;
@@ -1054,7 +1054,7 @@ static void room_305_pre_parser() {
 
 static void room_305_parser() {
 	if (global[walker_converse_state] != 0) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		digi_play_build_ii('c', 1, 1);
 		goto handled;
 	}
@@ -1062,7 +1062,7 @@ static void room_305_parser() {
 	if (player_parse(words_room_210h, 0)) {
 		global[g154] = 2;
 		player.walker_visible = false;
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		scratch._9e = kernel_run_animation_talk('b', 9, 0);
 		kernel_position_anim(scratch._9e, player.x, player.y, player.scale, player.depth);
 		scratch._a8 = -1;
@@ -1077,7 +1077,7 @@ static void room_305_parser() {
 	if (player_parse(words_room_210, 0)) {
 		scratch._8c = 3;
 		global[g135] = -1;
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		goto handled;
 	}
 
@@ -1088,7 +1088,7 @@ static void room_305_parser() {
 	if (player_parse(words_look_at, words_mint, 0)) {
 		global[player_score] = 0;
 		digi_stop(3);
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		global[g135] = -1;
 		scratch._8c = 5;
 		scratch._aa = 1;
@@ -1098,7 +1098,7 @@ static void room_305_parser() {
 	if (player_parse(words_look_at, words_snapdragon, 0)) {
 		global[player_score] = 0;
 		digi_stop(3);
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		global[g135] = -1;
 		scratch._8c = 5;
 		scratch._aa = 2;
@@ -1109,7 +1109,7 @@ static void room_305_parser() {
 		global[player_score] = 0;
 		digi_stop(3);
 		global[g154] = 2;
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		player.walker_visible = false;
 		scratch._9e = kernel_run_animation_talk('b', 1, 0);
 		kernel_position_anim(scratch._9e, player.x, player.y, player.scale, player.depth);
@@ -1123,7 +1123,7 @@ static void room_305_parser() {
 	}
 
 	if (player_parse(words_click_on, words_moss, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		global[g135] = -1;
 		scratch._8c = 3;
 		goto handled;

@@ -66,7 +66,7 @@ static void room_220_init() {
 	global_midi_play(10);
 	viewing_at_y = 22;
 	player.walker_visible = false;
-	player.commands_allowed = 0;
+	player.commands_allowed = false;
 
 	for (int i = 0; i < 10; i++) {
 		aainfo[i]._active = 0;

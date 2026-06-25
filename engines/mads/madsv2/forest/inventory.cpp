@@ -343,7 +343,7 @@ void display_inventory() {
 				digi_play_build(308, 'e', 4, 1);
 				var_1C_1A = timer_read();
 				var_1E = -1;
-				player.commands_allowed = 0;
+				player.commands_allowed = false;
 				mouse_cursor_sprite(cursor, 2);
 				continue;
 			} else if (object_id == 5) {
@@ -351,7 +351,7 @@ void display_inventory() {
 				digi_play_build(308, 'r', 2, 1);
 				var_1C_1A = timer_read();
 				var_1E = -1;
-				player.commands_allowed = 0;
+				player.commands_allowed = false;
 				mouse_cursor_sprite(cursor, 2);
 				continue;
 			} else {
@@ -407,7 +407,7 @@ restore_interface:
 		stamp_sprite_to_interface(DOOR_X,    DOOR_Y,    1, int_sprite[fx_int_exit]);
 		if (inv_enable_command) {
 			mouse_cursor_sprite(cursor, 1);
-			player.commands_allowed = -1;
+			player.commands_allowed = true;
 		}
 		return;
 	}

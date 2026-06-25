@@ -151,7 +151,7 @@ static void room_203_init1() {
 		scratch._9c = 63;
 		player.walker_visible = true;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		kernel_flip_hotspot(168, -1);
 		kernel_flip_hotspot(170, -1);
 		kernel_flip_hotspot(169, -1);
@@ -164,7 +164,7 @@ static void room_203_init1() {
 			kernel_reset_animation(aa[3], 25);
 			global[g049] = -1;
 			player.walker_visible = false;
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 			kernel_synch(KERNEL_ANIM, aa[3], KERNEL_NOW, 0);
 		}
 
@@ -216,7 +216,7 @@ static void room_203_init() {
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		if (previous_room != 199) {
 			player.walker_visible = false;
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 		}
 
 		for (int i = 0; i < 10; i++) {
@@ -707,11 +707,11 @@ static void room_203_anim4() {
 			kernel_flip_hotspot(169, -1);
 			player.walker_visible = true;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-			player.commands_allowed = -1;
+			player.commands_allowed = true;
 			if (local->_ae) {
 				global[g145] = -1;
 				local->_8e = 41;
-				player.commands_allowed = 0;
+				player.commands_allowed = false;
 				local->_a8 = 0;
 				local->_ae = 0;
 			}
@@ -728,7 +728,7 @@ static void room_203_anim4() {
 					result = 1;
 				} else if (frame == 26) {
 					room_203_flip_hotspots1();
-					player.commands_allowed = -1;
+					player.commands_allowed = true;
 				} else if (frame == 28) {
 					result = 27;
 				}
@@ -755,7 +755,7 @@ static void room_203_anim4() {
 					aainfo[3]._active = -1;
 					aainfo[3]._frame = 0;
 					local->_98 = 31;
-					player.commands_allowed = 0;
+					player.commands_allowed = false;
 					room_203_flip_hotspots2();
 				}
 			}
@@ -1642,7 +1642,7 @@ static void room_203_parser() {
 			global[g135] = -1;
 			scratch._8c = 50;
 		} else {
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 			global[g150] = -1;
 			scratch._90 = 15;
 		}
@@ -1651,7 +1651,7 @@ static void room_203_parser() {
 
 	if (player_parse(words_walk_to, words_room_201, 0)) {
 		if (global[g046] == 0) {
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 			global[g150] = -1;
 			scratch._90 = 15;
 		}
@@ -1659,14 +1659,14 @@ static void room_203_parser() {
 	}
 
 	if (player_parse(words_walk_to, words_room_204, 0) && global[g046] == 0) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		global[g150] = -1;
 		scratch._90 = 15;
 	}
 
 	if (global[walker_converse_state] != 0) {
 		if (global[g046] == 0) {
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 			kernel_timing_trigger(1, 107);
 			scratch._a8 = 0;
@@ -1680,7 +1680,7 @@ static void room_203_parser() {
 				scratch._8c = 51;
 			}
 		} else {
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 			digi_play_build_ii('c', 1, 1);
 			scratch._a4 = 52;
 		}
@@ -1692,7 +1692,7 @@ static void room_203_parser() {
 			if (global[g046] != 0) {
 				// TODO: display_interface()
 			} else {
-				player.commands_allowed = 0;
+				player.commands_allowed = false;
 				kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 				kernel_timing_trigger(1, 107);
 				if (global[g049] != 0) {
@@ -1710,7 +1710,7 @@ static void room_203_parser() {
 			if (global[g046] != 0) {
 				// TODO: display_interface()
 			} else {
-				player.commands_allowed = 0;
+				player.commands_allowed = false;
 				kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 				kernel_timing_trigger(1, 107);
 				if (global[g049] != 0) {
@@ -1733,7 +1733,7 @@ static void room_203_parser() {
 	}
 
 	if (player_parse(words_click_on, words_moss, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		if (global[g046] == 0) {
 			global[g150] = -1;
 			scratch._90 = 15;
@@ -1759,7 +1759,7 @@ static void room_203_parser() {
 			global[g049] = -1;
 			aainfo[3]._frame = 0;
 			player.walker_visible = false;
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 			kernel_synch(KERNEL_ANIM, aa[3], KERNEL_NOW, 0);
 		} else if (player_has(8)) {
 			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
@@ -1769,9 +1769,9 @@ static void room_203_parser() {
 			scratch._98 = 31;
 			player.walker_visible = false;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 		} else {
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 			global[g150] = -1;
 			scratch._90 = 15;
 		}
@@ -1779,21 +1779,21 @@ static void room_203_parser() {
 	}
 
 	if (player_parse(words_click_on, words_edgar, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		global[g135] = -1;
 		scratch._8c = 51;
 		goto handled;
 	}
 
 	if (player_parse(words_click_on, words_russel, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		global[g145] = -1;
 		scratch._8e = 43;
 		goto handled;
 	}
 
 	if (player_parse(words_click_on, words_abi_bubble, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		aainfo[3]._frame = 28;
 		kernel_reset_animation(aa[3], 28);
 		global[g049] = 0;
@@ -1801,7 +1801,7 @@ static void room_203_parser() {
 	}
 
 	if (player_parse(words_click_on, words_all_bubble, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		aainfo[3]._frame = 33;
 		kernel_reset_animation(aa[3], 33);
 		global[g049] = 0;
@@ -1812,7 +1812,7 @@ static void room_203_parser() {
 		return;
 
 	if (player_parse(words_walk_to, words_ground, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		aainfo[3]._frame = 41;
 		kernel_reset_animation(aa[3], 41);
 		global[g049] = 0;

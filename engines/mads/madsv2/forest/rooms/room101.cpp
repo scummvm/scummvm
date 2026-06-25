@@ -130,7 +130,7 @@ static void room_101_init2() {
 }
 
 static void room_101_init3() {
-	player.commands_allowed = 0;
+	player.commands_allowed = false;
 	global[player_score] = 0;
 	global[g009] = 0;
 	midi_stop();
@@ -155,7 +155,7 @@ static void room_101_init3() {
 		kernel_reset_animation(scratch._russell, 2);
 		global[g133] = 0;
 		global[g143] = 0;
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		return;
 	}
 
@@ -181,7 +181,7 @@ static void room_101_init3() {
 		global[g133] = 0;
 		global[g143] = 0;
 		restore_player();
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		player.walker_visible = true;
 		return;
 	}
@@ -193,7 +193,7 @@ static void room_101_init3() {
 		kernel_reset_animation(scratch._russell, 2);
 		global[g133] = 0;
 		global[g143] = 0;
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		player.walker_visible = false;
 		global[g009] = 0;
 		aainfo[5]._active = -1;
@@ -208,7 +208,7 @@ static void room_101_init3() {
 	kernel_reset_animation(scratch._russell, 2);
 	global[g133] = 0;
 	global[g143] = 0;
-	player.commands_allowed = -1;
+	player.commands_allowed = true;
 	player.walker_visible = true;
 }
 
@@ -480,7 +480,7 @@ static void room_101_anim7() {
 		player.y = 140;
 		player.facing = 3;
 		player.walker_visible = true;
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		mouse_show();
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 	}
@@ -712,7 +712,7 @@ static void room_101_daemon() {
 		case 15:
 			scratch._aa = 59;
 			global[g154] = 2;
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 			scratch._a8 = kernel_run_animation_talk('b', 7, 0);
 			kernel_position_anim(scratch._a8, player.x, player.y, player.scale, player.depth);
 			scratch._b2 = -1;
@@ -722,7 +722,7 @@ static void room_101_daemon() {
 		case 14:
 			scratch._aa = 49;
 			global[g154] = 2;
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 			player.walker_visible = false;
 			scratch._a8 = kernel_run_animation_talk('b', 6, 0);
 			kernel_position_anim(scratch._a8, player.x, player.y, player.scale, player.depth);
@@ -733,7 +733,7 @@ static void room_101_daemon() {
 
 		case 13:
 			scratch._aa = 69;
-			player.commands_allowed = 0;
+			player.commands_allowed = false;
 			player.walker_visible = false;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			global[g154] = 2;
@@ -874,7 +874,7 @@ static void room_101_daemon() {
 		global[g133] = 0;
 		global[g143] = 0;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		break;
 
 	case 107:
@@ -939,7 +939,7 @@ static void room_101_daemon() {
 			kernel_synch(KERNEL_ANIM, scratch._russell, KERNEL_NOW, 0);
 			global[g143] = 0;
 			global[g009] = 0;
-			player.commands_allowed = -1;
+			player.commands_allowed = true;
 		} else if (aainfo[7]._val3 == 8) {
 			kernel_abort_animation(aa[7]);
 			aa[7] = kernel_run_animation(kernel_name('r', 3), 105);
@@ -962,7 +962,7 @@ static void room_101_daemon() {
 		global[g133] = 0;
 		global[g143] = 0;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		break;
 
 	case 101:
@@ -971,7 +971,7 @@ static void room_101_daemon() {
 		kernel_reset_animation(scratch._russell, 1);
 		kernel_synch(KERNEL_ANIM, scratch._russell, KERNEL_NOW, 0);
 		global[g143] = 0;
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		break;
 
 	case 102:
@@ -980,7 +980,7 @@ static void room_101_daemon() {
 		kernel_reset_animation(scratch._edgar, 1);
 		kernel_synch(KERNEL_ANIM, scratch._edgar, KERNEL_NOW, 0);
 		global[g133] = 0;
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		break;
 
 	case 113:
@@ -1034,7 +1034,7 @@ static void room_101_pre_parser() {
 
 static void room_101_parser() {
 	if (global[walker_converse_state] != 0) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		digi_play_build_ii('c', 1, 1);
 		scratch._aa = 29;
 		goto handled;
@@ -1045,35 +1045,35 @@ static void room_101_parser() {
 	}
 
 	if (player_parse(words_look_at, words_map, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		global[g145] = -1;
 		scratch._98 = 2;
 		goto handled;
 	}
 
 	if (player_parse(words_pick_up, words_twine, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		global[g150] = -1;
 		scratch._9a = 13;
 		goto handled;
 	}
 
 	if (player_parse(words_pick_up, words_gears, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		global[g150] = -1;
 		scratch._9a = 14;
 		goto handled;
 	}
 
 	if (player_parse(words_pick_up, words_wood, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		global[g150] = -1;
 		scratch._9a = 15;
 		goto handled;
 	}
 
 	if (player_parse(words_walk_to, words_telescope, 0)) {
-		player.commands_allowed = 0;
+		player.commands_allowed = false;
 		player.walker_visible = false;
 		kernel.trigger_setup_mode = 1;
 		aainfo[5]._active = -1;

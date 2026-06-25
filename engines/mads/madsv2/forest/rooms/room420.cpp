@@ -196,7 +196,7 @@ static void room_420_init() {
     global[player_score] = -1;
     global[g009] = 0;
     player.walker_visible = false;
-    player.commands_allowed = 0;
+    player.commands_allowed = false;
 
     for (int16 count = 0; count < 10; count++) {
         scratch.animation_info[count]._active = 0;
