@@ -141,7 +141,7 @@ static void inven_set_interface_mode(int mode) {
 void display_inventory() {
 	int var_10 = 17;
 	int var_12 = 72;
-	int var_2  = -1;
+	int object_id  = -1;
 	int var_22 = -1;
 	int var_6  = 0;
 	int var_E  = 0;
@@ -240,7 +240,7 @@ void display_inventory() {
 			if (object[object_num].location == 2) {
 				var_E++;
 				if (var_E == var_4) {
-					var_2 = object_num;
+					object_id = object_num;
 					break;
 				}
 			}
@@ -255,8 +255,8 @@ void display_inventory() {
 		kernel_force_refresh();
 
 		// Determine usability based on object number and room
-		if (var_2 <= 15) {
-			switch (var_2) {
+		if (object_id <= 15) {
+			switch (object_id) {
 			case 0:
 				var_22 = (room_id == 521) ? 0 : -1;
 				break;
@@ -284,13 +284,13 @@ void display_inventory() {
 			}
 		}
 
-		if (object_check_quality(var_2, 0))
+		if (object_check_quality(object_id, 0))
 			var_22 = -1;
 
 		// Room 203: special quality-gated overrides
 		if (room_id == 203 && !global[g046]) {
-			if (var_2 == 8 || var_2 == 5) {
-				if (object_check_quality(var_2, 0))
+			if (object_id == 8 || object_id == 5) {
+				if (object_check_quality(object_id, 0))
 					var_22 = -1;
 				else
 					var_22 = 0;
@@ -309,8 +309,8 @@ void display_inventory() {
 
 		// Room 308
 		if (room_id == 308) {
-			if (var_2 == 1 || var_2 == 15 || var_2 == 5) {
-				if (object_check_quality(var_2, 0))
+			if (object_id == 1 || object_id == 15 || object_id == 5) {
+				if (object_check_quality(object_id, 0))
 					var_22 = -1;
 				else
 					var_22 = 0;
@@ -319,7 +319,7 @@ void display_inventory() {
 			}
 		}
 
-		if (var_2 == -1 || var_4 == -1 || var_22 != 0) {
+		if (object_id == -1 || var_4 == -1 || var_22 != 0) {
 			var_E = 0;
 			var_4 = 0;
 			continue;
@@ -332,13 +332,13 @@ void display_inventory() {
 			var_22 = -1;
 			break;
 		case 203:
-			if (var_2 != 5 && var_2 != 8) {
+			if (object_id != 5 && object_id != 8) {
 				digi_play_build(203, 'R', 5, 2);
 				var_22 = -1;
 			}
 			break;
 		case 308:
-			if (var_2 == 1 || var_2 == 15) {
+			if (object_id == 1 || object_id == 15) {
 				var_8 = 90;
 				digi_play_build(308, 'e', 4, 1);
 				var_1C_1A = timer_read();
@@ -346,7 +346,7 @@ void display_inventory() {
 				player.commands_allowed = 0;
 				mouse_cursor_sprite(cursor, 2);
 				continue;
-			} else if (var_2 == 5) {
+			} else if (object_id == 5) {
 				var_8 = 180;
 				digi_play_build(308, 'r', 2, 1);
 				var_1C_1A = timer_read();
@@ -381,9 +381,9 @@ exit_inventory:
 		var_6 = var_20;
 		close_journal(2);
 		knuthole_flag = true;
-		inter_spin_object(var_2);
-		inter_move_object(var_2, 2);
-		global[player_selected_object] = var_2;
+		inter_spin_object(object_id);
+		inter_move_object(object_id, 2);
+		global[player_selected_object] = object_id;
 
 		player_verb        = -1;
 		player_main_noun   = -1;
