@@ -90,6 +90,7 @@ Score::Score(Movie *movie, bool haveInteractivity) {
 
 	_numChannelsDisplayed = 0;
 	_skipTransition = false;
+	_skipIdle = false;
 
 	_curFrameNumber = 1;
 	_framesStream = nullptr;
@@ -326,13 +327,15 @@ void Score::step() {
 
 	if (_playState == kPlayStopped)
 		return;
+	bool hasJump = (_nextFrame != 0) || !_window->_nextMovie.movie.empty();
 
-	if (_haveInteractivity) {
+	if (_haveInteractivity && !hasJump) {
 		if (!_movie->_inputEventQueue.empty() && !_window->frozenLingoStateCount()) {
 			_lingo->processEvents(_movie->_inputEventQueue, true);
 		}
 		if (_version >= kFileVer300 && !_window->_newMovieStarted && _playState != kPlayStopped) {
-			_movie->processEvent(kEventIdle);
+			if (!_skipIdle)
+				_movie->processEvent(kEventIdle);
 
 			if (_version >= kFileVer600) {
 				if (_movie->_currentHoveredSpriteId) {
@@ -633,6 +636,12 @@ void Score::update() {
 		}
 	}
 
+	// Don't process frozen script if we use jump instructions
+	// like "go to frame", or open a new movie.
+	bool hasJump = (_nextFrame != 0) || !_window->_nextMovie.movie.empty();
+	if ((g_director->getVersion() < 400) && hasJump)
+		_skipIdle = true;
+
 	if (!debugChannelSet(-1, kDebugFast)) {
 		// end update cycle if we're still waiting for the next frame
 		if (isWaitingForNextFrame()) {
@@ -641,9 +650,7 @@ void Score::update() {
 				_window->render();
 			}
 
-			// Don't process frozen script if we use jump instructions
-			// like "go to frame", or open a new movie.
-			if (!_nextFrame && _window->_nextMovie.movie.empty()) {
+			if (!hasJump) {
 				processFrozenScripts();
 			}
 			return;
@@ -659,6 +666,7 @@ void Score::update() {
 			// Exit the current frame. This can include scopeless ScoreScripts.
 			_movie->processEvent(kEventExitFrame);
 			_exitFrameCalled = true;
+			_skipIdle = false;
 		}
 	}
 
@@ -669,9 +677,7 @@ void Score::update() {
 			_window->render();
 		}
 
-		// Don't process frozen script if we use jump instructions
-		// like "go to frame", or open a new movie.
-		if ((!_nextFrame && _window->_nextMovie.movie.empty()) || _nextFrame == _curFrameNumber) {
+		if (!hasJump || _nextFrame == _curFrameNumber) {
 			processFrozenScripts();
 		}
 
