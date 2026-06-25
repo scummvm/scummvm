@@ -117,6 +117,7 @@ public:
 	virtual void unknownScriptProcedure(const Common::String &procedure);
 	virtual void unknownMenuAction(int32 actionId);
 
+	virtual Common::String alternativeAnimationName(const Common::String &fileName, int variant);
 	virtual void missingAnimation(const Common::String &fileName);
 	virtual void missingSound(const Common::String &fileName);
 	virtual void invalidSNDFormat(uint format, uint channels, uint freq, uint bps);

@@ -153,6 +153,10 @@ PointObject *Game::unknownGoPutTarget(const Process &process, const char *action
 	return nullptr;
 }
 
+String Game::alternativeAnimationName(const String &fileName, int variant) {
+	return {};
+}
+
 void Game::missingAnimation(const String &fileName) {
 	_message("Could not open animation %s", fileName.c_str());
 }
