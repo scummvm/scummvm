@@ -665,7 +665,8 @@ uint16 Mystery::hotspotCount(uint siteNum) const {
 const char *Mystery::textAt(uint16 offset) const {
 	if (!isLoaded())
 		return "";
-	const uint pos = _isMacintosh ? offset : _textOffset + offset;
+	const uint pos = (_isMacintosh && !_isMacintoshLooseScripts)
+		? offset : _textOffset + offset;
 	if (pos >= _data.size())
 		return "";
 	return (const char *)(_data.data() + pos);

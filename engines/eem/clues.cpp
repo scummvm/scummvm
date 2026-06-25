@@ -753,10 +753,38 @@ void EEMEngine::doInitClues() {
 	}
 }
 
+void splitLondonPlayerName(const Common::String &displayName,
+						   Common::String &firstName,
+						   Common::String &lastName) {
+	Common::String clean = displayName;
+	clean.trim();
+	const size_t split = clean.findFirstOf(' ');
+	if (split == Common::String::npos) {
+		firstName = clean;
+		lastName.clear();
+		return;
+	}
+
+	firstName = clean.substr(0, split);
+	lastName = clean.substr(split + 1);
+	lastName.trim();
+}
+
+void appendCapitalizedName(Common::String &out, const Common::String &name) {
+	bool capitalize = true;
+	for (uint i = 0; i < name.size(); i++) {
+		char c = name[i];
+		if (capitalize && c >= 'a' && c <= 'z')
+			c = (char)(c - 'a' + 'A');
+		out += c;
+		capitalize = (c == ' ');
+	}
+}
+
 // _ParseString @ EEM1 1b66:07c3 / EEM2 1bff:07c4 (jump table @ EEM2
 // CS:0xd2f). Each handler indexes a name table of far pointers
 // ({Jake, Jennifer, he, she, him, her, his}).
-//   0x80 player name (auto-cap word starts, uses _PlayerRecord)
+//   0x80 player first name (auto-cap word starts, uses _PlayerRecord)
 //   0x81 _Partner == 0 ? "Jake"     : "Jennifer"  (chosen detective)
 //   0x82 _Partner == 0 ? "Jennifer" : "Jake"      (the OTHER one)
 //   0x83 _Partner == 0 ? "he"       : "she"
@@ -770,17 +798,23 @@ void EEMEngine::doInitClues() {
 //     dialogue uses them (e.g. M13/M50.BIN "You and <86>..."). EEM1 never
 //     writes the flag (DAT_29be_7985) and ships no text using these bytes, so
 //     its always-male path is reproduced by `_playerFemale` defaulting false.
-//   0x89 KD hint placeholder (caller handles).
+//   0x89 player last name in Mac London loose scripts (same capitalization
+//     path as 0x80 in FUN_00002758).
 Common::String EEMEngine::parseString(const Common::String &raw,
 									  const Common::String &playerName,
 									  uint partner) const {
 	const bool isJake = (partner == 0);
+	Common::String firstName = playerName;
+	Common::String lastName;
+	if (isLondon())
+		splitLondonPlayerName(playerName, firstName, lastName);
+
 	Common::String out;
 	for (uint i = 0; i < raw.size(); i++) {
 		const byte c = (byte)raw[i];
 		switch (c) {
 		case 0x80:
-			out += playerName;
+			appendCapitalizedName(out, firstName);
 			break;
 		case 0x81:
 			out += isJake ? "Jake" : "Jennifer";
@@ -810,7 +844,8 @@ Common::String EEMEngine::parseString(const Common::String &raw,
 			out += _playerFemale ? "her" : "his";
 			break;
 		case 0x89:
-			// KD hint placeholder (caller handles before this point).
+			if (isLondon())
+				appendCapitalizedName(out, lastName);
 			break;
 		case 0:
 			return out;
