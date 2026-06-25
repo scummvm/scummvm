@@ -36,6 +36,8 @@
 #include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
 
+#include "video/flic_decoder.h"
+
 #include "eem/audio.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
@@ -374,13 +376,18 @@ static void addMacResourceSearchPaths() {
 static bool loadMacFontResource(EEMFont &font, uint16 resourceId, int size) {
 	addMacResourceSearchPaths();
 
-	const Common::Path appResourceFork("Eagle Eye Mysteries");
-	if (font.loadMacResource(appResourceFork, resourceId, size))
-		return true;
-
-	const Common::Path nestedAppResourceFork("rsrc/Eagle Eye Mysteries");
-	if (font.loadMacResource(nestedAppResourceFork, resourceId, size))
-		return true;
+	// The Eagle Eye fonts live in the game application's resource fork. EEM1 Mac
+	// ships it as "Eagle Eye Mysteries"; EEM2 (London) Mac ships it as
+	// "EEM London CD" but reuses the same FONT resource ids (3214/3209).
+	static const char *const kAppForks[] = {
+		"Eagle Eye Mysteries",
+		"rsrc/Eagle Eye Mysteries",
+		"EEM London CD",
+	};
+	for (uint i = 0; i < ARRAYSIZE(kAppForks); i++) {
+		if (font.loadMacResource(Common::Path(kAppForks[i]), resourceId, size))
+			return true;
+	}
 
 	return false;
 }
@@ -799,10 +806,12 @@ bool EEMEngine::openArchives() {
 		// descend two levels (see Common::addSubDirectoryMatching).
 		SearchMan.addSubDirectoryMatching(gameDir, "EEM2 CD/Data Files");
 		SearchMan.addSubDirectoryMatching(gameDir, "EEM2 CD/Mac Scripts");
+		SearchMan.addSubDirectoryMatching(gameDir, "EEM2 CD/Anim Files");
 		SearchMan.addSubDirectoryMatching(gameDir, "EEM London CD");
 		// ...or the user pointed ScummVM straight at the "EEM2 CD" folder.
 		SearchMan.addSubDirectoryMatching(gameDir, "Data Files");
 		SearchMan.addSubDirectoryMatching(gameDir, "Mac Scripts");
+		SearchMan.addSubDirectoryMatching(gameDir, "Anim Files");
 	}
 
 	// The EEM1 Mac release can be played straight from its floppy installer.
@@ -917,6 +926,64 @@ void EEMEngine::interruptAudio(bool stopMusicToo) {
 	}
 	if (stopMusicToo && _music)
 		_music->stop();
+}
+
+void EEMEngine::playFlc(const Common::Path &path, bool fadeIn) {
+	Video::FlicDecoder flic;
+	if (!flic.loadFile(path)) {
+		warning("playFlc: %s missing", path.toString().c_str());
+		return;
+	}
+
+	const int fw = flic.getWidth();
+	const int fh = flic.getHeight();
+	// Centre the movie on the (larger) Mac screen with a black letterbox.
+	const int ox = MAX(0, (screenWidth() - fw) / 2);
+	const int oy = MAX(0, (screenHeight() - fh) / 2);
+	const int w = MIN(fw, screenWidth() - ox);
+	const int h = MIN(fh, screenHeight() - oy);
+
+	byte black[3 * 256] = { 0 };
+	g_system->getPaletteManager()->setPalette(black, 0, 256);
+	if (Graphics::Surface *screen = g_system->lockScreen()) {
+		screen->fillRect(Common::Rect(screen->w, screen->h), 0);
+		g_system->unlockScreen();
+	}
+
+	flic.start();
+	bool paletteApplied = false;
+	while (!flic.endOfVideo() && !shouldQuit() && !_skipIntro) {
+		if (flic.needsUpdate()) {
+			const Graphics::Surface *frame = flic.decodeNextFrame();
+			if (frame) {
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch,
+										   ox, oy, w, h);
+				if (flic.hasDirtyPalette()) {
+					if (fadeIn && !paletteApplied)
+						fadePaletteFromBlack(flic.getPalette());
+					else
+						g_system->getPaletteManager()->setPalette(
+							flic.getPalette(), 0, 256);
+					paletteApplied = true;
+				}
+			}
+			g_system->updateScreen();
+		}
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_QUIT ||
+				event.type == Common::EVENT_RETURN_TO_LAUNCHER ||
+				event.type == Common::EVENT_LBUTTONDOWN)
+				return;
+			if (event.type == Common::EVENT_KEYDOWN) {
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					_skipIntro = true;
+				return;
+			}
+		}
+		g_system->delayMillis(10);
+	}
 }
 
 void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
@@ -1491,34 +1558,41 @@ void EEMEngine::runLondonStartup() {
 	if (!shouldQuit() && !_skipIntro)
 		showLondonLogo(0x20c, 0x3e, 2500);  // publisher logo (FUN_2721_07be)
 
-	// Storm Software — bolt.anm with the thunder roar.
-	if (!shouldQuit() && !_skipIntro) {
-		if (_audio)
-			_audio->playVoc(Common::Path("THUNDER.VOC"));
-		playAnm(Common::Path("BOLT.ANM"), 120, /* holdLastFrame= */ false,
-				/* fadeIn= */ true);
-		if (_audio)
-			_audio->stopVoice();
-		fadeCurrentPaletteToBlack();
+	if (isMacintosh()) {
+		// The Mac CD ships the post-logo intro as a single Flic movie
+		// (KDCDINTR.FLC) instead of the DOS bolt/movie/wave .ANM sequence.
+		if (!shouldQuit() && !_skipIntro)
+			playFlc(Common::Path("KDCDINTR.FLC"), /* fadeIn= */ true);
+	} else {
+		// Storm Software — bolt.anm with the thunder roar.
+		if (!shouldQuit() && !_skipIntro) {
+			if (_audio)
+				_audio->playVoc(Common::Path("THUNDER.VOC"));
+			playAnm(Common::Path("BOLT.ANM"), 120, /* holdLastFrame= */ false,
+					/* fadeIn= */ true);
+			if (_audio)
+				_audio->stopVoice();
+			fadeCurrentPaletteToBlack();
+		}
+
+		// Intro movie with its theme (MUS00101.XMI).
+		if (!shouldQuit() && !_skipIntro && _music)
+			_music->playFile(Common::Path("MUS00101.XMI"), /* loop= */ false);
+		if (!shouldQuit() && !_skipIntro)
+			playAnm(Common::Path("MOVIE.ANM"), 120, /* holdLastFrame= */ false,
+					/* fadeIn= */ true);
+
+		// Animated title (wave.anm) over the looping theme (MUS00102.XMI);
+		// a click / key advances to character creation. The original loops
+		// wave.anm; we play it once, hold the last frame and wait.
+		if (!shouldQuit() && !_skipIntro && _music)
+			_music->playFile(Common::Path("MUS00102.XMI"), /* loop= */ true);
+		if (!shouldQuit() && !_skipIntro)
+			playAnm(Common::Path("WAVE.ANM"), 120, /* holdLastFrame= */ true,
+					/* fadeIn= */ true);
+		if (!shouldQuit() && !_skipIntro)
+			waitForInput(kHoldForever);
 	}
-
-	// Intro movie with its theme (MUS00101.XMI).
-	if (!shouldQuit() && !_skipIntro && _music)
-		_music->playFile(Common::Path("MUS00101.XMI"), /* loop= */ false);
-	if (!shouldQuit() && !_skipIntro)
-		playAnm(Common::Path("MOVIE.ANM"), 120, /* holdLastFrame= */ false,
-				/* fadeIn= */ true);
-
-	// Animated title (wave.anm) over the looping theme (MUS00102.XMI);
-	// a click / key advances to character creation. The original loops
-	// wave.anm; we play it once, hold the last frame and wait.
-	if (!shouldQuit() && !_skipIntro && _music)
-		_music->playFile(Common::Path("MUS00102.XMI"), /* loop= */ true);
-	if (!shouldQuit() && !_skipIntro)
-		playAnm(Common::Path("WAVE.ANM"), 120, /* holdLastFrame= */ true,
-				/* fadeIn= */ true);
-	if (!shouldQuit() && !_skipIntro)
-		waitForInput(kHoldForever);
 	if (_music)
 		_music->stop();
 	_skipIntro = false;
@@ -1537,6 +1611,10 @@ void EEMEngine::runLondonStartup() {
 void EEMEngine::showLondonCharSelect() {
 	debugC(1, kDebugGeneral, "EEM2 (London): character creation");
 
+	// Coordinates are DOS-logical (320x200); on the Mac the screen is 512x384,
+	// so the rects scale up (scaleRect/scaleX/scaleY are identity on DOS). The
+	// passport background (PIC 0xc) is authored at each platform's resolution
+	// -- 512x384 on the Mac -- so the scaled field/box coords line up with it.
 	const Common::Rect kFirstRect(54, 75, 151, 85);
 	const Common::Rect kLastRect(167, 75, 266, 85);
 	const Common::Rect kMaleBox(110, 116, 120, 122);
@@ -1544,15 +1622,21 @@ void EEMEngine::showLondonCharSelect() {
 	const uint kMaxFirst = 12, kMaxLast = 20;
 	const uint8 kInkColor = 0x22;
 
+	const Common::Rect firstRect = scaleRect(kFirstRect);
+	const Common::Rect lastRect  = scaleRect(kLastRect);
+	const Common::Rect maleBox   = scaleRect(kMaleBox);
+	const Common::Rect femaleBox = scaleRect(kFemaleBox);
+	const int sw = screenWidth(), sh = screenHeight();
+
 	Picture bg;
 	const bool haveBg = _picsArchive.getPicture(0xc, bg) && !bg.surface.empty();
 	if (!haveBg)
 		warning("London: passport background PIC 0xc failed to load");
 	const uint8 boxBlankColor = haveBg
-		? (uint8)bg.surface.getPixel(kFirstRect.left, kFirstRect.top)
+		? (uint8)bg.surface.getPixel(firstRect.left, firstRect.top)
 		: 0x38;
 	const uint8 boxMarkColor = haveBg
-		? (uint8)bg.surface.getPixel(109, 115)
+		? (uint8)bg.surface.getPixel(scaleX(109), scaleY(115))
 		: 0x22;
 
 	byte pal[kPalSize];
@@ -1585,41 +1669,41 @@ void EEMEngine::showLondonCharSelect() {
 
 	while (!done && !shouldQuit()) {
 		if (needRedraw) {
-			Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+			Graphics::ManagedSurface scratch(sw, sh,
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.clear();
 			if (haveBg)
 				scratch.simpleBlitFrom(bg.surface);
 			if (getFont().isLoaded()) {
-				getFont().drawString(&scratch, first, kFirstRect.left + 2,
-									 kFirstRect.top + 1, kFirstRect.width(),
+				getFont().drawString(&scratch, first, firstRect.left + 2,
+									 firstRect.top + 1, firstRect.width(),
 									 kInkColor);
-				getFont().drawString(&scratch, last, kLastRect.left + 2,
-									 kLastRect.top + 1, kLastRect.width(),
+				getFont().drawString(&scratch, last, lastRect.left + 2,
+									 lastRect.top + 1, lastRect.width(),
 									 kInkColor);
 				if (blink && (field == kFieldFirst || field == kFieldLast)) {
 					const Common::Rect &fr =
-						(field == kFieldFirst) ? kFirstRect : kLastRect;
+						(field == kFieldFirst) ? firstRect : lastRect;
 					const Common::String &buf =
 						(field == kFieldFirst) ? first : last;
 					const int caretX =
 						fr.left + 2 + getFont().getStringWidth(buf);
-					Common::Rect caret(caretX, fr.top, caretX + 6,
-									   fr.top + 0xb);
-					caret.clip(Common::Rect(kScreenWidth, kScreenHeight));
+					Common::Rect caret(caretX, fr.top, caretX + scaleX(6),
+									   fr.bottom);
+					caret.clip(Common::Rect(sw, sh));
 					if (!caret.isEmpty())
 						scratch.fillRect(caret, kInkColor);
 				}
 			}
 			if (field == kFieldGender) {
-				scratch.fillRect(kMaleBox, boxBlankColor);
-				scratch.fillRect(kFemaleBox, boxBlankColor);
-				scratch.fillRect(female ? kFemaleBox : kMaleBox,
+				scratch.fillRect(maleBox, boxBlankColor);
+				scratch.fillRect(femaleBox, boxBlankColor);
+				scratch.fillRect(female ? femaleBox : maleBox,
 								 boxMarkColor);
 			}
 			CursorMan.showMouse(true);
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-									   0, 0, kScreenWidth, kScreenHeight);
+									   0, 0, sw, sh);
 			if (!fadedIn) {
 				if (havePal)
 					fadePaletteFromBlack(pal);
@@ -1642,7 +1726,7 @@ void EEMEngine::showLondonCharSelect() {
 			if (field == kFieldGender && ev.type == Common::EVENT_LBUTTONDOWN) {
 				if (!genderReady)
 					continue;
-				female = ev.mouse.x >= 160;
+				female = ev.mouse.x >= sw / 2;
 				done = true;
 				needRedraw = true;
 				break;

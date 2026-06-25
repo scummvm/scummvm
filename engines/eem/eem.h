@@ -414,6 +414,12 @@ public:
 				 bool holdLastFrame = false, bool fadeIn = false,
 				 bool setSkipIntroOnEsc = true);
 
+	/// Play a Flic (.FLC) movie, centred on the screen with a black
+	/// letterbox. The Mac CD ships its intro as a Flic (KDCDINTR.FLC) where
+	/// the DOS release uses .ANM movies. A click/key/Esc ends it (Esc also
+	/// sets `_skipIntro`).
+	void playFlc(const Common::Path &path, bool fadeIn = false);
+
 private:
 	void interruptAudio(bool stopMusicToo = true);
 
