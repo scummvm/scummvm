@@ -23,6 +23,7 @@
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/journal.h"
 #include "mads/madsv2/forest/midi.h"
+#include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
@@ -751,20 +752,20 @@ static void room_301_daemon() {
 }
 
 static void room_301_pre_parser() {
-	if (player_parse(13, 25, 0))
+	if (player_parse(words_walk_to, words_room_205, 0))
 		player.walk_off_edge_to_room = 205;
 
-	if (player_parse(13, 38, 0))
+	if (player_parse(words_walk_to, words_room_305, 0))
 		player.walk_off_edge_to_room = 305;
 
-	if (player_parse(13, 40, 0)) {
+	if (player_parse(words_walk_to, words_room_307, 0)) {
 		if (global[g064] != 0)
 			player.walk_off_edge_to_room = 322;
 		else
 			player.walk_off_edge_to_room = 307;
 	}
 
-	if (player_parse(13, 44, 0))
+	if (player_parse(words_walk_to, words_room_322, 0))
 		player.walk_off_edge_to_room = 322;
 }
 
@@ -776,7 +777,7 @@ static void room_301_parser() {
 		return;
 	}
 
-	if (player_parse(114, 83, 0)) {
+	if (player_parse(words_look_at, words_dandelion, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 5;
@@ -785,7 +786,7 @@ static void room_301_parser() {
 		return;
 	}
 
-	if (player_parse(114, 146, 0)) {
+	if (player_parse(words_look_at, words_sunflower, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 5;
@@ -794,7 +795,7 @@ static void room_301_parser() {
 		return;
 	}
 
-	if (player_parse(13, 35, 0)) {
+	if (player_parse(words_walk_to, words_room_302, 0)) {
 		new_room = 302;
 		player.command_ready = 0;
 		return;
@@ -805,7 +806,7 @@ static void room_301_parser() {
 		return;
 	}
 
-	if (player_parse(126, 163, 0)) {
+	if (player_parse(words_pick_up, words_web, 0)) {
 		global[g154] = 2;
 		player.commands_allowed = 0;
 		player.walker_visible = false;
@@ -819,7 +820,7 @@ static void room_301_parser() {
 		return;
 	}
 
-	if (player_parse(126, 101, 0)) {
+	if (player_parse(words_pick_up, words_forked_stick, 0)) {
 		global[g154] = 2;
 		player.commands_allowed = 0;
 		player.walker_visible = false;

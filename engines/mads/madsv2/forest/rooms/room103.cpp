@@ -395,7 +395,7 @@ static void room_103_daemon() {
 }
 
 static void room_103_pre_parser() {
-	if (player_parse(13, 15, 0))
+	if (player_parse(words_walk_to, words_room_101, 0))
 		player.walk_off_edge_to_room = 101;
 }
 

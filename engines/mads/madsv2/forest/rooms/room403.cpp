@@ -696,7 +696,7 @@ static void room_403_daemon() {
 }
 
 static void room_403_pre_parser() {
-	if (player_parse(13, 47, 0))
+	if (player_parse(words_walk_to, words_room_402, 0))
 		player.walk_off_edge_to_room = 402;
 }
 
@@ -713,7 +713,7 @@ static void room_403_parser() {
 		return;
 	}
 
-	if (player_parse(114, 142, 0)) {
+	if (player_parse(words_look_at, words_snapdragon, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 5;
@@ -722,7 +722,7 @@ static void room_403_parser() {
 		return;
 	}
 
-	if (player_parse(114, 83, 0)) {
+	if (player_parse(words_look_at, words_dandelion, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 5;
@@ -731,7 +731,7 @@ static void room_403_parser() {
 		return;
 	}
 
-	if (player_parse(114, 131, 0)) {
+	if (player_parse(words_look_at, words_primrose, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 5;
@@ -740,7 +740,7 @@ static void room_403_parser() {
 		return;
 	}
 
-	if (player_parse(114, 146, 0)) {
+	if (player_parse(words_look_at, words_sunflower, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 5;
@@ -749,7 +749,7 @@ static void room_403_parser() {
 		return;
 	}
 
-	if (player_parse(114, 116, 0)) {
+	if (player_parse(words_look_at, words_map, 0)) {
 		player.commands_allowed = 0;
 		global[g145] = -1;
 		scratch._8e = 2;
@@ -757,7 +757,7 @@ static void room_403_parser() {
 		return;
 	}
 
-	if (player_parse(126, 166, 0)) {
+	if (player_parse(words_pick_up, words_wrench, 0)) {
 		global[g154] = 2;
 		player.walker_visible = false;
 		player.commands_allowed = 0;
@@ -773,7 +773,7 @@ static void room_403_parser() {
 		return;
 	}
 
-	if (player_parse(126, 95, 0)) {
+	if (player_parse(words_pick_up, words_eyebright, 0)) {
 		global[g154] = 2;
 		player.walker_visible = false;
 		player.commands_allowed = 0;
@@ -789,7 +789,7 @@ static void room_403_parser() {
 		return;
 	}
 
-	if (player_parse(126, 99, 0) || player_parse(78, 119, 0)) {
+	if (player_parse(words_pick_up, words_flowers, 0) || player_parse(words_click_on, words_moss, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 3;

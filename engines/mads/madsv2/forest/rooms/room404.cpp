@@ -808,7 +808,7 @@ static void room_404_daemon() {
 }
 
 static void room_404_pre_parser() {
-	if (player_parse(13, 46, 0)) {
+	if (player_parse(words_walk_to, words_room_401, 0)) {
 		global[g084] = 15;
 		player.walk_off_edge_to_room = 401;
 	}
@@ -836,7 +836,7 @@ static void room_404_parser() {
 		return;
 	}
 
-	if (player_parse(13, 50, 0)) {
+	if (player_parse(words_walk_to, words_room_405, 0)) {
 		global[g084] = 15;
 		new_room = 405;
 		player.command_ready = false;
@@ -860,7 +860,7 @@ static void room_404_parser() {
 		return;
 	}
 
-	if (player_parse(114, 116, 0)) {
+	if (player_parse(words_look_at, words_map, 0)) {
 		player.commands_allowed = 0;
 		global[g145] = -1;
 		scratch._8e = 2;
@@ -868,7 +868,7 @@ static void room_404_parser() {
 		return;
 	}
 
-	if (player_parse(126, 99, 0)) {
+	if (player_parse(words_pick_up, words_flowers, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 3;
@@ -876,7 +876,7 @@ static void room_404_parser() {
 		return;
 	}
 
-	if (player_parse(78, 107, 0)) {
+	if (player_parse(words_click_on, words_hole, 0)) {
 		if (!global[g082]) {
 			player.commands_allowed = 0;
 			global[g150] = -1;
@@ -890,7 +890,7 @@ static void room_404_parser() {
 		return;
 	}
 
-	if (player_parse(78, 175, 0)) {
+	if (player_parse(words_click_on, words_dragon1, 0)) {
 		global[g154] = 2;
 		player.commands_allowed = 0;
 		player.walker_visible = false;
@@ -906,7 +906,7 @@ static void room_404_parser() {
 		return;
 	}
 
-	if (player_parse(78, 176, 0)) {
+	if (player_parse(words_click_on, words_dragon2, 0)) {
 		global[g154] = 2;
 		player.commands_allowed = 0;
 		player.walker_visible = false;

@@ -20,6 +20,7 @@
  */
 
 #include "mads/madsv2/forest/rooms/section1.h"
+#include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/journal.h"
@@ -497,36 +498,36 @@ static void room_199_parser1() {
 }
 
 static void room_199_parser() {
-	if (player_parse(174, 121, 0)) { digi_play_build(521, 'e', 6, 2);  goto handled; }
-	if (player_parse(174, 164, 0)) { digi_play_build(521, 'e', 10, 2); goto handled; }
-	if (player_parse(174, 112, 0)) { digi_play_build(521, 'e', 3, 2);  goto handled; }
-	if (player_parse(174, 163, 0)) { digi_play_build(521, 'e', 8, 2);  goto handled; }
-	if (player_parse(174, 158, 0)) { digi_play_build(521, 'e', 9, 2);  goto handled; }
-	if (player_parse(174, 154, 0)) { digi_play_build(521, 'e', 20, 2); goto handled; }
-	if (player_parse(174, 96, 0))  { digi_play_build(521, 'e', 5, 2);  goto handled; }
-	if (player_parse(174, 132, 0)) { digi_play_build(521, 'e', 2, 2);  goto handled; }
-	if (player_parse(174, 113, 0)) { digi_play_build(521, 'e', 7, 2);  goto handled; }
-	if (player_parse(174, 105, 0)) { digi_play_build(521, 'e', 4, 2);  goto handled; }
-	if (player_parse(174, 145, 0)) { digi_play_build(521, 'e', 21, 2); goto handled; }
+	if (player_parse(words_fwt, words_needle, 0)) { digi_play_build(521, 'e', 6, 2);  goto handled; }
+	if (player_parse(words_fwt, words_wood, 0)) { digi_play_build(521, 'e', 10, 2); goto handled; }
+	if (player_parse(words_fwt, words_leaves, 0)) { digi_play_build(521, 'e', 3, 2);  goto handled; }
+	if (player_parse(words_fwt, words_web, 0)) { digi_play_build(521, 'e', 8, 2);  goto handled; }
+	if (player_parse(words_fwt, words_vine_weed, 0)) { digi_play_build(521, 'e', 9, 2);  goto handled; }
+	if (player_parse(words_fwt, words_twine, 0)) { digi_play_build(521, 'e', 20, 2); goto handled; }
+	if (player_parse(words_fwt, words_feather, 0))  { digi_play_build(521, 'e', 5, 2);  goto handled; }
+	if (player_parse(words_fwt, words_reeds, 0)) { digi_play_build(521, 'e', 2, 2);  goto handled; }
+	if (player_parse(words_fwt, words_lily_pad, 0)) { digi_play_build(521, 'e', 7, 2);  goto handled; }
+	if (player_parse(words_fwt, words_gears, 0)) { digi_play_build(521, 'e', 4, 2);  goto handled; }
+	if (player_parse(words_fwt, words_sticks, 0)) { digi_play_build(521, 'e', 21, 2); goto handled; }
 
-	if (player_parse(99, 82, 0))  { digi_play_build_ii('e', 9, 2);  goto handled; }
-	if (player_parse(99, 131, 0)) { digi_play_build_ii('e', 5, 2);  goto handled; }
-	if (player_parse(99, 142, 0)) { digi_play_build_ii('e', 3, 2);  goto handled; }
-	if (player_parse(99, 146, 0)) { digi_play_build_ii('e', 6, 2);  goto handled; }
-	if (player_parse(99, 150, 0)) { digi_play_build_ii('e', 8, 2);  goto handled; }
-	if (player_parse(99, 95, 0))  { digi_play_build_ii('e', 11, 2); goto handled; }
-	if (player_parse(99, 118, 0)) { digi_play_build_ii('e', 1, 2);  goto handled; }
-	if (player_parse(99, 103, 0)) { digi_play_build_ii('e', 4, 2);  goto handled; }
-	if (player_parse(99, 83, 0))  { digi_play_build_ii('e', 7, 2);  goto handled; }
-	if (player_parse(99, 172, 0)) { digi_play_build_ii('e', 12, 2); goto handled; }
-	if (player_parse(99, 77, 0))  { digi_play_build_ii('e', 2, 2);  goto handled; }
+	if (player_parse(words_flowers, words_comfrey, 0))  { digi_play_build_ii('e', 9, 2);  goto handled; }
+	if (player_parse(words_flowers, words_primrose, 0)) { digi_play_build_ii('e', 5, 2);  goto handled; }
+	if (player_parse(words_flowers, words_snapdragon, 0)) { digi_play_build_ii('e', 3, 2);  goto handled; }
+	if (player_parse(words_flowers, words_sunflower, 0)) { digi_play_build_ii('e', 6, 2);  goto handled; }
+	if (player_parse(words_flowers, words_thistle, 0)) { digi_play_build_ii('e', 8, 2);  goto handled; }
+	if (player_parse(words_flowers, words_eyebright, 0))  { digi_play_build_ii('e', 11, 2); goto handled; }
+	if (player_parse(words_flowers, words_mint, 0)) { digi_play_build_ii('e', 1, 2);  goto handled; }
+	if (player_parse(words_flowers, words_foxglove, 0)) { digi_play_build_ii('e', 4, 2);  goto handled; }
+	if (player_parse(words_flowers, words_dandelion, 0))  { digi_play_build_ii('e', 7, 2);  goto handled; }
+	if (player_parse(words_flowers, words_lungwort, 0)) { digi_play_build_ii('e', 12, 2); goto handled; }
+	if (player_parse(words_flowers, words_chicory, 0))  { digi_play_build_ii('e', 2, 2);  goto handled; }
 
-	if (player_parse(94, 0)) {
+	if (player_parse(words_exit_journal, 0)) {
 		leave_journal();
 		goto handled;
 	}
 
-	if (player_parse(156, 0)) {
+	if (player_parse(words_up_page, 0)) {
 		if (aainfo[2]._active != 3) {
 			aainfo[2]._active = aainfo[2]._frame;
 			aainfo[2]._frame++;
@@ -536,7 +537,7 @@ static void room_199_parser() {
 		goto handled;
 	}
 
-	if (player_parse(90, 0)) {
+	if (player_parse(words_down_page, 0)) {
 		if (aainfo[2]._active != 0) {
 			aainfo[2]._active = aainfo[2]._frame;
 			aainfo[2]._frame--;

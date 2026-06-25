@@ -20,6 +20,7 @@
  */
 
 #include "mads/madsv2/forest/rooms/section3.h"
+#include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/forest/extra.h"
 #include "mads/madsv2/forest/global.h"
@@ -1286,14 +1287,14 @@ static void room_308_daemon() {
 }
 
 static void room_308_pre_parser() {
-	if (player_parse(13, 40, 0)) {
+	if (player_parse(words_walk_to, words_room_307, 0)) {
 		if (global[g064] != 0)
 			player.walk_off_edge_to_room = 322;
 		else
 			player.walk_off_edge_to_room = 307;
 	}
 
-	if (player_parse(13, 46, 0))
+	if (player_parse(words_walk_to, words_room_401, 0))
 		player.walk_off_edge_to_room = 401;
 }
 
@@ -1307,13 +1308,13 @@ static void room_308_parser() {
 		goto handled;
 	}
 
-	if (player_parse(189, 0)) {
+	if (player_parse(words_tail, 0)) {
 		scratch._bc = -1;
 		player.commands_allowed = 0;
 		goto handled;
 	}
 
-	if (player_parse(170, 0)) {
+	if (player_parse(words_russel, 0)) {
 		scratch._be = -1;
 		player.commands_allowed = 0;
 		goto handled;

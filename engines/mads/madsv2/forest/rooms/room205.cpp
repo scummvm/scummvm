@@ -20,6 +20,7 @@
  */
 
 #include "mads/madsv2/forest/rooms/section2.h"
+#include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/journal.h"
@@ -417,10 +418,10 @@ static void room_205_daemon() {
 }
 
 static void room_205_pre_parser() {
-	if (player_parse(13, 24, 0))
+	if (player_parse(words_walk_to, words_room_204, 0))
 		player.walk_off_edge_to_room = 204;
 
-	if (player_parse(13, 34, 0))
+	if (player_parse(words_walk_to, words_room_301, 0))
 		player.walk_off_edge_to_room = 301;
 }
 
@@ -433,7 +434,7 @@ static void room_205_parser() {
 		return;
 	}
 
-	if (player_parse(78, 107, 0)) {
+	if (player_parse(words_click_on, words_hole, 0)) {
 		player.commands_allowed = 0;
 		scratch._a4 = 121;
 		digi_play_build(221, '_', 1, 1);
@@ -446,7 +447,7 @@ static void room_205_parser() {
 		return;
 	}
 
-	if (player_parse(114, 116, 0)) {
+	if (player_parse(words_look_at, words_map, 0)) {
 		player.commands_allowed = 0;
 		global[g145] = -1;
 		scratch._8e = 2;
@@ -454,7 +455,7 @@ static void room_205_parser() {
 		return;
 	}
 
-	if (player_parse(126, 99, 0) || player_parse(78, 119, 0)) {
+	if (player_parse(words_pick_up, words_flowers, 0) || player_parse(words_click_on, words_moss, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 3;

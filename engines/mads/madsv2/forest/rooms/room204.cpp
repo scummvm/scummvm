@@ -20,6 +20,7 @@
  */
 
 #include "mads/madsv2/forest/rooms/section2.h"
+#include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/journal.h"
@@ -539,10 +540,10 @@ bottom:
 }
 
 static void room_204_pre_parser() {
-	if (player_parse(13, 23, 0))
+	if (player_parse(words_walk_to, words_room_203, 0))
 		player.walk_off_edge_to_room = 203;
 
-	if (player_parse(13, 25, 0))
+	if (player_parse(words_walk_to, words_room_205, 0))
 		player.walk_off_edge_to_room = flags[13] ? 205 : 220;
 }
 
@@ -557,7 +558,7 @@ static void room_204_parser() {
 		goto handled;
 	}
 
-	if (player_parse(114, 103, 0)) {
+	if (player_parse(words_look_at, words_foxglove, 0)) {
 		player.commands_allowed = false;
 		global[g135] = -1;
 		local->_8c = 5;
@@ -565,7 +566,7 @@ static void room_204_parser() {
 		goto handled;
 	}
 
-	if (player_parse(114, 82, 0)) {
+	if (player_parse(words_look_at, words_comfrey, 0)) {
 		player.commands_allowed = false;
 		global[g135] = -1;
 		local->_8c = 5;
@@ -573,7 +574,7 @@ static void room_204_parser() {
 		goto handled;
 	}
 
-	if (player_parse(126, 158, 0)) {
+	if (player_parse(words_pick_up, words_vine_weed, 0)) {
 		global[g154] = 2;
 		player.commands_allowed = false;
 		kernel_run_animation_talk('b', 9, 0);
@@ -581,7 +582,7 @@ static void room_204_parser() {
 		goto handled;
 	}
 
-	if (player_parse(78, 119, 0)) {
+	if (player_parse(words_click_on, words_moss, 0)) {
 		player.commands_allowed = false;
 		global[g135] = -1;
 		local->_8c = 3;

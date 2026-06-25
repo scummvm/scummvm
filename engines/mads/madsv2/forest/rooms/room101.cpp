@@ -1025,10 +1025,10 @@ static void room_101_daemon() {
 }
 
 static void room_101_pre_parser() {
-	if (player_parse(13, 16, 0))
+	if (player_parse(words_walk_to, words_room_104, 0))
 		player.walk_off_edge_to_room = 104;
 
-	if (player_parse(13, 17, 0))
+	if (player_parse(words_walk_to, words_room_106, 0))
 		player.walk_off_edge_to_room = 106;
 }
 
@@ -1044,35 +1044,35 @@ static void room_101_parser() {
 		goto handled;
 	}
 
-	if (player_parse(114, 116, 0)) {
+	if (player_parse(words_look_at, words_map, 0)) {
 		player.commands_allowed = 0;
 		global[g145] = -1;
 		scratch._98 = 2;
 		goto handled;
 	}
 
-	if (player_parse(126, 154, 0)) {
+	if (player_parse(words_pick_up, words_twine, 0)) {
 		player.commands_allowed = 0;
 		global[g150] = -1;
 		scratch._9a = 13;
 		goto handled;
 	}
 
-	if (player_parse(126, 105, 0)) {
+	if (player_parse(words_pick_up, words_gears, 0)) {
 		player.commands_allowed = 0;
 		global[g150] = -1;
 		scratch._9a = 14;
 		goto handled;
 	}
 
-	if (player_parse(126, 164, 0)) {
+	if (player_parse(words_pick_up, words_wood, 0)) {
 		player.commands_allowed = 0;
 		global[g150] = -1;
 		scratch._9a = 15;
 		goto handled;
 	}
 
-	if (player_parse(13, 149, 0)) {
+	if (player_parse(words_walk_to, words_telescope, 0)) {
 		player.commands_allowed = 0;
 		player.walker_visible = false;
 		kernel.trigger_setup_mode = 1;

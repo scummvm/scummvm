@@ -696,7 +696,7 @@ static void room_106_daemon() {
 }
 
 static void room_106_pre_parser() {
-	if (player_parse(13, 21, 0))
+	if (player_parse(words_walk_to, words_room_201, 0))
 		player.walk_off_edge_to_room = 201;
 }
 
@@ -708,19 +708,19 @@ static void room_106_parser() {
 		return;
 	}
 
-	if (player_parse(118, 0)) {
+	if (player_parse(words_mint, 0)) {
 		global[g135] = -1;
 		scratch._a2 = 2;
 		player.commands_allowed = 0;
 	}
 
-	if (player_parse(131, 0)) {
+	if (player_parse(words_primrose, 0)) {
 		global[g135] = -1;
 		scratch._a2 = 1;
 		player.commands_allowed = 0;
 	}
 
-	if (player_parse(125, 0)) {
+	if (player_parse(words_pebbles, 0)) {
 		global[g154] = 2;
 		player.commands_allowed = 0;
 		player.walker_visible = false;
@@ -734,13 +734,13 @@ static void room_106_parser() {
 		return;
 	}
 
-	if (player_parse(13, 15, 0)) {
+	if (player_parse(words_walk_to, words_room_101, 0)) {
 		new_room = 101;
 		player.command_ready = 0;
 		return;
 	}
 
-	if (player_parse(27, 84, 0) && global[g022] == 0) {
+	if (player_parse(words_room_210, words_door, 0) && global[g022] == 0) {
 		global[g154] = 2;
 		player.commands_allowed = 0;
 		player.walker_visible = false;
@@ -756,7 +756,7 @@ static void room_106_parser() {
 		return;
 	}
 
-	if (player_parse(13, 27, 0)) {
+	if (player_parse(words_walk_to, words_room_210, 0)) {
 		global[g150] = -1;
 		scratch._90 = 6;
 		player.commands_allowed = 0;
@@ -769,7 +769,7 @@ static void room_106_parser() {
 		return;
 	}
 
-	if (player_parse(114, 116, 0)) {
+	if (player_parse(words_look_at, words_map, 0)) {
 		player.commands_allowed = 0;
 		global[g145] = -1;
 		scratch._8e = 2;
@@ -777,7 +777,7 @@ static void room_106_parser() {
 		return;
 	}
 
-	if (player_parse(126, 99, 0) || player_parse(78, 119, 0)) {
+	if (player_parse(words_pick_up, words_flowers, 0) || player_parse(words_click_on, words_moss, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 3;

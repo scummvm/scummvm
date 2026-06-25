@@ -762,7 +762,7 @@ static void room_321_daemon() {
 }
 
 static void room_321_pre_parser() {
-	if (player_parse(13, 35, 0))
+	if (player_parse(words_walk_to, words_room_302, 0))
 		player.walk_off_edge_to_room = 302;
 }
 
@@ -778,7 +778,7 @@ static void room_321_parser() {
 		goto handled;
 	}
 
-	if (player_parse(114, 77, 0)) {
+	if (player_parse(words_look_at, words_chicory, 0)) {
 		global[player_score] = 0;
 		digi_stop(3);
 		player.commands_allowed = 0;
@@ -788,7 +788,7 @@ static void room_321_parser() {
 		goto handled;
 	}
 
-	if (player_parse(114, 103, 0)) {
+	if (player_parse(words_look_at, words_foxglove, 0)) {
 		global[player_score] = 0;
 		digi_stop(3);
 		player.commands_allowed = 0;
@@ -798,7 +798,7 @@ static void room_321_parser() {
 		goto handled;
 	}
 
-	if (player_parse(126, 132, 0)) {
+	if (player_parse(words_pick_up, words_reeds, 0)) {
 		global[g154] = 2;
 		global[player_score] = 0;
 		player.commands_allowed = 0;
@@ -812,7 +812,7 @@ static void room_321_parser() {
 		goto handled;
 	}
 
-	if (player_parse(126, 125, 0)) {
+	if (player_parse(words_pick_up, words_pebbles, 0)) {
 		global[g154] = 2;
 		global[player_score] = 0;
 		player.commands_allowed = 0;
@@ -826,33 +826,33 @@ static void room_321_parser() {
 		goto handled;
 	}
 
-	if (player_parse(78, 181, 0)) {
+	if (player_parse(words_click_on, words_turtle, 0)) {
 		aainfo[8]._frame = 1;
 		kernel_reset_animation(aa[8], 1);
 		player.commands_allowed = 0;
 		goto handled;
 	}
 
-	if (player_parse(78, 182, 0)) {
+	if (player_parse(words_click_on, words_dragonfly, 0)) {
 		aainfo[7]._frame = 5;
 		kernel_reset_animation(aa[7], 5);
 		goto handled;
 	}
 
-	if (player_parse(78, 177, 0)) {
+	if (player_parse(words_click_on, words_nest, 0)) {
 		aainfo[5]._frame = 1;
 		kernel_reset_animation(aa[5], 1);
 		player.commands_allowed = 0;
 		goto handled;
 	}
 
-	if (player_parse(78, 185, 0)) {
+	if (player_parse(words_click_on, words_black_bird, 0)) {
 		aainfo[4]._frame = 5;
 		kernel_reset_animation(aa[4], 5);
 		goto handled;
 	}
 
-	if (player_parse(78, 184, 0)) {
+	if (player_parse(words_click_on, words_blue_bird, 0)) {
 		aainfo[4]._frame = 12;
 		kernel_reset_animation(aa[4], 12);
 		goto handled;

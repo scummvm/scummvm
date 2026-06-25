@@ -899,7 +899,7 @@ static void room_104_daemon() {
 }
 
 static void room_104_pre_parser() {
-	if (player_parse(13, 15, 0)) {
+	if (player_parse(words_walk_to, words_room_101, 0)) {
 		global[g009] = 0;
 		midi_stop();
 		player.walk_off_edge_to_room = 101;
@@ -917,21 +917,21 @@ static void room_104_parser() {
 		goto handled;
 	}
 
-	if (player_parse(114, 116, 0)) {
+	if (player_parse(words_look_at, words_map, 0)) {
 		player.commands_allowed = 0;
 		global[g145] = -1;
 		scratch._8e = 2;
 		goto handled;
 	}
 
-	if (player_parse(126, 99, 0)) {
+	if (player_parse(words_pick_up, words_flowers, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 3;
 		goto handled;
 	}
 
-	if (player_parse(78, 119, 0)) {
+	if (player_parse(words_click_on, words_moss, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 3;

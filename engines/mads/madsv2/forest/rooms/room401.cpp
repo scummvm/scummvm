@@ -601,10 +601,10 @@ static void room_401_daemon() {
 }
 
 static void room_401_pre_parser() {
-	if (player_parse(13, 47, 0))
+	if (player_parse(words_walk_to, words_room_402, 0))
 		player.walk_off_edge_to_room = 402;
 
-	if (player_parse(13, 49, 0))
+	if (player_parse(words_walk_to, words_room_404, 0))
 		player.walk_off_edge_to_room = 404;
 }
 
@@ -617,7 +617,7 @@ static void room_401_parser() {
 		return;
 	}
 
-	if (player_parse(13, 41, 0)) {
+	if (player_parse(words_walk_to, words_room_308, 0)) {
 		global[g150] = -1;
 		scratch._90 = 16;
 		player.commands_allowed = 0;
@@ -630,7 +630,7 @@ static void room_401_parser() {
 		return;
 	}
 
-	if (player_parse(114, 150, 0)) {
+	if (player_parse(words_look_at, words_thistle, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 20;

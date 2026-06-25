@@ -604,7 +604,7 @@ static void room_210_parser() {
 		return;
 	}
 
-	if (player_parse(78, 85, 0)) {
+	if (player_parse(words_click_on, words_door_1, 0)) {
 		player.commands_allowed = 0;
 		player.walker_visible = false;
 		global[g150] = -1;
@@ -613,7 +613,7 @@ static void room_210_parser() {
 		return;
 	}
 
-	if (player_parse(78, 86, 0)) {
+	if (player_parse(words_click_on, words_door_2, 0)) {
 		player.commands_allowed = 0;
 		player.walker_visible = false;
 		global[g150] = -1;
@@ -622,7 +622,7 @@ static void room_210_parser() {
 		return;
 	}
 
-	if (player_parse(78, 87, 0)) {
+	if (player_parse(words_click_on, words_door_3, 0)) {
 		player.commands_allowed = 0;
 		player.walker_visible = false;
 		global[g150] = -1;
@@ -631,7 +631,7 @@ static void room_210_parser() {
 		return;
 	}
 
-	if (player_parse(78, 88, 0)) {
+	if (player_parse(words_click_on, words_door_4, 0)) {
 		player.commands_allowed = 0;
 		player.walker_visible = false;
 		global[g150] = -1;
@@ -640,7 +640,7 @@ static void room_210_parser() {
 		return;
 	}
 
-	if (player_parse(78, 89, 0)) {
+	if (player_parse(words_click_on, words_door_5, 0)) {
 		player.commands_allowed = 0;
 		player.walker_visible = false;
 		global[g150] = -1;

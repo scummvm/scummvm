@@ -20,6 +20,7 @@
  */
 
 #include "mads/madsv2/forest/rooms/section2.h"
+#include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/journal.h"
@@ -568,9 +569,9 @@ static void room_201_daemon() {
 }
 
 static void room_201_pre_parser() {
-	if (player_parse(13, 17, 0))
+	if (player_parse(words_walk_to, words_room_106, 0))
 		player.walk_off_edge_to_room = 106;
-	if (player_parse(13, 23, 0))
+	if (player_parse(words_walk_to, words_room_203, 0))
 		player.walk_off_edge_to_room = 203;
 }
 
@@ -581,7 +582,7 @@ static void room_201_parser() {
 		goto handled;
 	}
 
-	if (player_parse(93, 0)) {
+	if (player_parse(words_elm_leaves, 0)) {
 		global[g154] = 2;
 		player.commands_allowed = 0;
 		player.walker_visible = false;
@@ -594,7 +595,7 @@ static void room_201_parser() {
 		goto handled;
 	}
 
-	if (player_parse(145, 0)) {
+	if (player_parse(words_sticks, 0)) {
 		global[g154] = 2;
 		player.commands_allowed = 0;
 		player.walker_visible = false;
@@ -607,7 +608,7 @@ static void room_201_parser() {
 		goto handled;
 	}
 
-	if (player_parse(114, 77, 0)) {
+	if (player_parse(words_look_at, words_chicory, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 5;
@@ -615,7 +616,7 @@ static void room_201_parser() {
 		goto handled;
 	}
 
-	if (player_parse(114, 103, 0)) {
+	if (player_parse(words_look_at, words_foxglove, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 5;
@@ -628,21 +629,21 @@ static void room_201_parser() {
 		goto handled;
 	}
 
-	if (player_parse(114, 116, 0)) {
+	if (player_parse(words_look_at, words_map, 0)) {
 		player.commands_allowed = 0;
 		global[g145] = -1;
 		scratch._8e = 2;
 		goto handled;
 	}
 
-	if (player_parse(99, 0)) {
+	if (player_parse(words_flowers, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 3;
 		goto handled;
 	}
 
-	if (player_parse(78, 119, 0)) {
+	if (player_parse(words_click_on, words_moss, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 3;

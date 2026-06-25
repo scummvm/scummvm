@@ -30,6 +30,7 @@
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/forest/midi.h"
 #include "mads/madsv2/core/pal.h"
+#include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/extra.h"
 
@@ -928,7 +929,7 @@ void global_error_code() {
 	int16 randVal = imath_random(1, 1000);
 	int16 text_id = 0;
 
-	if (player_parse(4, 0)) {
+	if (player_parse(words_take, 0)) {
 		if (player_has(object_named(player_main_noun)) && player.main_object_source != 4) {
 			text_id = 25;
 		} else {
@@ -936,19 +937,19 @@ void global_error_code() {
 			else if (randVal <= 666) text_id = 2;
 			else                     text_id = 3;
 		}
-	} else if (player_parse(5, 0)) {
+	} else if (player_parse(words_push, 0)) {
 		text_id = (randVal < 750) ? 4 : 5;
-	} else if (player_parse(10, 0)) {
+	} else if (player_parse(words_pull, 0)) {
 		text_id = (randVal < 750) ? 6 : 7;
-	} else if (player_parse(6, 0)) {
+	} else if (player_parse(words_open, 0)) {
 		if (randVal <= 500)      text_id = 8;
 		else if (randVal <= 750) text_id = 9;
 		else                     text_id = 10;
-	} else if (player_parse(11, 0)) {
+	} else if (player_parse(words_close, 0)) {
 		if (randVal <= 500)      text_id = 11;
 		else if (randVal <= 750) text_id = 12;
 		else                     text_id = 13;
-	} else if (player_parse(7, 0)) {
+	} else if (player_parse(words_put, 0)) {
 		if (player_has(object_named(player_main_noun))) {
 			text_id = 26;
 		} else if (player.main_object_source == 4 && player.second_object_source == 4) {
@@ -956,9 +957,9 @@ void global_error_code() {
 		} else {
 			text_id = (randVal < 500) ? 14 : 15;
 		}
-	} else if (player_parse(8, 0)) {
+	} else if (player_parse(words_talk_to, 0)) {
 		text_id = (randVal <= 500) ? 16 : 17;
-	} else if (player_parse(9, 0)) {
+	} else if (player_parse(words_give, 0)) {
 		if (player_has(object_named(player_main_noun))) {
 			text_id = 27;
 		} else if (player.main_object_source == 4 && player.second_object_source == 4) {
@@ -966,18 +967,18 @@ void global_error_code() {
 		} else {
 			text_id = 18;
 		}
-	} else if (player_parse(12, 0)) {
+	} else if (player_parse(words_throw, 0)) {
 		if (player_has(object_named(player_main_noun))) {
 			text_id = 19;
 		} else {
 			text_id = 28;
 		}
-	} else if (player_parse(3, 0)) {
+	} else if (player_parse(words_look, 0)) {
 		object_named(player_main_noun);
 		if (randVal <= 333)      text_id = 20;
 		else if (randVal <= 666) text_id = 21;
 		else                     text_id = 22;
-	} else if (!player_parse(13, 0) && !player_parse(160, 0)) {
+	} else if (!player_parse(words_walk_to, 0) && !player_parse(words_walk_down, 0)) {
 		text_id = (randVal < 500) ? 23 : 24;
 	}
 

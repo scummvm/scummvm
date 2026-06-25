@@ -20,6 +20,7 @@
  */
 
 #include "mads/madsv2/forest/rooms/section1.h"
+#include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/midi.h"

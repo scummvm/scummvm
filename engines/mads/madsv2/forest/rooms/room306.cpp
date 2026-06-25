@@ -952,7 +952,7 @@ static void room_306_daemon() {
 }
 
 static void room_306_pre_parser() {
-	if (player_parse(13, 38, 0))
+	if (player_parse(words_walk_to, words_room_305, 0))
 		player.walk_off_edge_to_room = 305;
 }
 
@@ -963,7 +963,7 @@ static void room_306_parser() {
 		goto handled;
 	}
 
-	if (player_parse(180, 0)) {
+	if (player_parse(words_brown, 0)) {
 		aainfo[2]._val3 = 15;
 		player.commands_allowed = 0;
 		player.walker_visible = false;
@@ -981,7 +981,7 @@ static void room_306_parser() {
 		goto handled;
 	}
 
-	if (player_parse(133, 0)) {
+	if (player_parse(words_river, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		goto handled;

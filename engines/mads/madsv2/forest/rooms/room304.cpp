@@ -539,7 +539,7 @@ static void room_304_daemon() {
 }
 
 static void room_304_pre_parser() {
-	if (player_parse(13, 35, 0))
+	if (player_parse(words_walk_to, words_room_302, 0))
 		player.walk_off_edge_to_room = 302;
 }
 
@@ -563,7 +563,7 @@ static void room_304_parser() {
 		return;
 	}
 
-	if (player_parse(78, 178, 0)) {
+	if (player_parse(words_click_on, words_paint_can, 0)) {
 		player.commands_allowed = 0;
 		global[g150] = -1;
 		scratch._90 = 3;
@@ -571,7 +571,7 @@ static void room_304_parser() {
 		return;
 	}
 
-	if (player_parse(78, 179, 0)) {
+	if (player_parse(words_click_on, words_dam, 0)) {
 		player.commands_allowed = 0;
 		global[g135] = -1;
 		scratch._8c = 2;

@@ -762,7 +762,7 @@ static void room_402_daemon() {
 
 static void room_402_pre_parser() {
 	if (global[g083] == 0) {
-		if (player_parse(13, 186, 0)) {
+		if (player_parse(words_walk_to, words_lever, 0)) {
 			player.need_to_walk = 0;
 			return;
 		}
@@ -776,14 +776,14 @@ static void room_402_pre_parser() {
 		return;
 	}
 
-	if (player_parse(13, 46, 0)) {
+	if (player_parse(words_walk_to, words_room_401, 0)) {
 		if (global[g080] == 0 || flags[31] != 0)
 			player.walk_off_edge_to_room = 401;
 		else
 			player.walk_off_edge_to_room = 420;
 	}
 
-	if (player_parse(13, 48, 0))
+	if (player_parse(words_walk_to, words_room_403, 0))
 		player.walk_off_edge_to_room = 403;
 }
 
@@ -811,7 +811,7 @@ static void room_402_parser() {
 	}
 
 	if (global[g083] == 0) {
-		if (player_parse(13, 186, 0)) {
+		if (player_parse(words_walk_to, words_lever, 0)) {
 			player.commands_allowed = 0;
 			aainfo[1]._frame = 4;
 			kernel_reset_animation(aa[1], 4);
@@ -824,7 +824,7 @@ static void room_402_parser() {
 	}
 
 	if (global[g083] == 2) {
-		if (player_parse(78, 187, 0)) {
+		if (player_parse(words_click_on, words_rock, 0)) {
 			player.commands_allowed = 0;
 			scratch._90 = 17;
 		}
