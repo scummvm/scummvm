@@ -193,16 +193,16 @@ public:
 	const EEMFont &getFont() const { return _font; }
 	uint8       getPartnerIndex() const { return _partner; }
 
-	/// Red-outline cursor for interactive regions without original highlight art.
+	/// Interactive-region cursor. DOS/EEM1 uses a red-outline pointer; Mac
+	/// London uses the original Color QuickDraw arrow.
 	void setInteractiveMouseCursor(bool active);
 
 	/// Interactive cursor over searchable hotspots.
 	void setHotspotMouseCursor(bool active);
 
-	/// EEM2 `_SwitchMouse @ 17ee:2c83`: swap the cursor SHAPE to one of the
-	/// seven loaded cursors by ID (0 arrow, 1 wait, 2/3 examine, 4/5 partner
-	/// hand, 6 approach). London site hotspots carry a cursor ID at row +0xc;
-	/// EEM1 cursors are all 0 so this is a no-op there.
+	/// EEM2 `_SwitchMouse`: swap the cursor shape by ID. DOS uses the seven
+	/// PIC-backed cursor slots; Mac London maps the same IDs through the
+	/// original `crsr` resources loaded by the application.
 	void setSiteHotspotCursorId(int cursorId);
 
 	/// `_DisplayClue @ 2404:05e6`. 

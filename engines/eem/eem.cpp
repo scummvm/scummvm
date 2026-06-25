@@ -89,6 +89,13 @@ const uint16 kLondonCursorPics[7] = {
 	0x50, 0x51, 0x206, 0xa1, 0x207, 0x20b, 0x35e
 };
 
+// Mac EEM2 CODE resource 6 loads five Color QuickDraw cursors with
+// GetCCursor: 128, 138, 139, 129 and 132. Its SwitchMouse branch table maps
+// index 0/1/default to 132, 2 to 128, 3 to 129, and 4 to the active partner.
+const uint16 kLondonMacCursorCrsrs[7] = {
+	132, 132, 128, 129, 138, 139, 132
+};
+
 const byte kSaveBodyVer = 1;
 
 // Test switch: populate ScrapBook 1 at startup without exposing a game
@@ -214,21 +221,37 @@ void setInteractiveCursorPalette(const Picture &cursor, byte transparent) {
 	CursorMan.replaceCursorPalette(palette, 0, 256);
 }
 
-void installMouseCursor(DBDArchive &pics, bool interactive, bool mac) {
-	if (mac && !interactive) {
-		// EEM2 (London) Mac keeps its pointers as 'crsr' colour cursors in the
-		// "EEM London CD" application fork; PIC 0x50 is only a 1x1 stub there.
-		// EEM1 Mac has no such file, so it falls through to the PIC path below.
-		Common::ScopedPtr<Common::SeekableReadStream> crsrStream(openMacResource(
-			Common::Path("EEM London CD"), MKTAG('c', 'r', 's', 'r'), 128));
+bool installMacLondonCursor(uint16 resourceId) {
+	static const char *const kAppForks[] = {
+		"EEM London CD",
+		"rsrc/EEM London CD"
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(kAppForks); i++) {
+		Common::ScopedPtr<Common::SeekableReadStream> crsrStream(
+			openMacResource(Common::Path(kAppForks[i]),
+							MKTAG('c', 'r', 's', 'r'), resourceId));
 		if (crsrStream) {
 			Graphics::MacCursor macCursor;
 			if (macCursor.readFromStream(*crsrStream)) {
 				CursorMan.replaceCursor(&macCursor);
 				CursorMan.replaceCursorPalette(macCursor.getPalette(), 0, 256);
-				return;
+				return true;
 			}
 		}
+	}
+
+	return false;
+}
+
+void installMouseCursor(DBDArchive &pics, bool interactive, bool mac,
+						bool london) {
+	if (mac && london) {
+		// EEM2 (London) Mac keeps pointers as 'crsr' colour cursors in the
+		// application resource fork; the DOS cursor PIC ids are mostly 1x1
+		// stubs or unrelated full-screen pictures in this release.
+		if (installMacLondonCursor(kLondonMacCursorCrsrs[0]))
+			return;
 	}
 
 	Picture cursor;
@@ -463,7 +486,7 @@ Common::Error EEMEngine::run() {
 	_audio->setVoiceEnabled(_voiceOn);
 	syncSoundSettings();
 
-	installMouseCursor(_picsArchive, false, isMacintosh());
+	installMouseCursor(_picsArchive, false, isMacintosh(), isLondon());
 	CursorMan.showMouse(false);
 
 	// _AllBlack @ 172b:0d4b.
@@ -765,7 +788,7 @@ void EEMEngine::setInteractiveMouseCursor(bool active) {
 		return;
 
 	_interactiveMouseCursor = active;
-	installMouseCursor(_picsArchive, active, isMacintosh());
+	installMouseCursor(_picsArchive, active, isMacintosh(), isLondon());
 	// The red-outline highlight replaced any London cursor shape; force the
 	// next setSiteHotspotCursorId to reinstall.
 	_siteCursorId = -1;
@@ -783,13 +806,27 @@ void EEMEngine::setHotspotMouseCursor(bool active) {
 void EEMEngine::setSiteHotspotCursorId(int cursorId) {
 	if (!isLondon())
 		return;
-	if (cursorId == 4 && _partner == kPartnerJenny)
-		cursorId = 5;
 	if (cursorId < 0 || cursorId >= (int)ARRAYSIZE(kLondonCursorPics))
 		cursorId = 0;
 	if (cursorId == _siteCursorId)
 		return;
 
+	if (isMacintosh()) {
+		uint16 resourceId = kLondonMacCursorCrsrs[cursorId];
+		if (cursorId == 4 || cursorId == 5)
+			resourceId = (_partner == kPartnerJenny) ? 139 : 138;
+		if (!installMacLondonCursor(resourceId)) {
+			warning("EEM2 Mac: cursor %d ('crsr' %u) missing",
+					cursorId, resourceId);
+			return;
+		}
+		_siteCursorId = cursorId;
+		_interactiveMouseCursor = false;
+		return;
+	}
+
+	if (cursorId == 4 && _partner == kPartnerJenny)
+		cursorId = 5;
 	Picture cursor;
 	if (!_picsArchive.getPicture(kLondonCursorPics[cursorId], cursor) ||
 		cursor.surface.empty()) {

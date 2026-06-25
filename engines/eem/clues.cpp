@@ -70,6 +70,13 @@ const int kLondonJakeY  = 0x3a;
 const int kLondonJennyX = 0xac;
 const int kLondonJennyY = 0x3a;
 
+// Mac EEM2 `_DoChoosePartner` creates the animation objects at native
+// 512x384 coordinates: ANI 8 at 0x21,0xa5 and ANI 9 at 0x12d,0xa4.
+const int kMacLondonJakeX  = 0x21;
+const int kMacLondonJakeY  = 0xa5;
+const int kMacLondonJennyX = 0x12d;
+const int kMacLondonJennyY = 0xa4;
+
 uint markClueBlockNotebookEntries(Mystery &mystery, const byte *clueBlock,
 								  bool isLondon) {
 	if (!clueBlock)
@@ -220,6 +227,15 @@ void blitRawToScreen(const Picture &p, int x, int y) {
 							   x, y, w, h);
 }
 
+void blitMacMaskedToScreen(const Picture &pic, int x, int y) {
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen)
+		return;
+
+	blitMacMaskedSurface(screen, pic, x, y);
+	g_system->unlockScreen();
+}
+
 // _DoChoosePartner @ 1a35:0756 / EEM2 @ 1abf:0728.
 void EEMEngine::doChoosePartner() {
 	_partner = kPartnerJake;
@@ -245,24 +261,32 @@ void EEMEngine::doChoosePartner() {
 	CursorMan.showMouse(true);
 
 	// _DoChoosePartner opens with _SetMousePos(0xa0, 0x96).
-	const int jakeX = isLondon() ? kLondonJakeX : kJakeX;
-	const int jakeY = isLondon() ? kLondonJakeY : kJakeY;
-	const int jennyX = isLondon() ? kLondonJennyX : kJennyX;
-	const int jennyY = isLondon() ? kLondonJennyY : kJennyY;
+	const bool macLondon = isMacintosh() && isLondon();
+	const int jakeX = macLondon ? kMacLondonJakeX
+								: (isLondon() ? kLondonJakeX : kJakeX);
+	const int jakeY = macLondon ? kMacLondonJakeY
+								: (isLondon() ? kLondonJakeY : kJakeY);
+	const int jennyX = macLondon ? kMacLondonJennyX
+								 : (isLondon() ? kLondonJennyX : kJennyX);
+	const int jennyY = macLondon ? kMacLondonJennyY
+								 : (isLondon() ? kLondonJennyY : kJennyY);
 	const uint8 (*jakeSeqs)[9] = isLondon() ? kLondonJakeSeqs : kJakeSeqs;
 	const uint8 (*jennySeqs)[9] = isLondon() ? kLondonJennySeqs : kJennySeqs;
 	int curMouseX = 0xa0;
 	uint level = happinessLevel(curMouseX, isLondon());
 	uint seqIdx = 0;
-	// EEM2 (London) Mac stores the partner heads at half resolution and
-	// pixel-doubles them to fill the hi-res passport-photo boxes.
-	const int faceScale = (isMacintosh() && isLondon()) ? 2 : 1;
+	auto blitPartnerFrame = [&](const Picture &pic, int x, int y) {
+		if (macLondon)
+			blitMacMaskedToScreen(pic, x, y);
+		else
+			blitAtScaled(pic, x, y, 1);
+	};
 
 	blitAt(background, 0, 0);
-	blitAtScaled(jennyAnim[jennySeqs[level][seqIdx % 9] % jennyAnim.size()],
-		   jennyX, jennyY, faceScale);
-	blitAtScaled(jakeAnim [jakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
-		   jakeX, jakeY, faceScale);
+	blitPartnerFrame(jennyAnim[jennySeqs[level][seqIdx % 9] % jennyAnim.size()],
+					 jennyX, jennyY);
+	blitPartnerFrame(jakeAnim [jakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
+					 jakeX, jakeY);
 	g_system->updateScreen();
 
 	debugC(1, kDebugGeneral, "ChoosePartner: %u Jake frames at (%d,%d), "
@@ -276,10 +300,10 @@ void EEMEngine::doChoosePartner() {
 			lastTick = g_system->getMillis();
 			seqIdx = (seqIdx + 1) % 9;
 			blitAt(background, 0, 0);
-			blitAtScaled(jennyAnim[jennySeqs[level][seqIdx % 9] % jennyAnim.size()],
-				   jennyX, jennyY, faceScale);
-			blitAtScaled(jakeAnim [jakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
-				   jakeX, jakeY, faceScale);
+			blitPartnerFrame(jennyAnim[jennySeqs[level][seqIdx % 9] % jennyAnim.size()],
+							 jennyX, jennyY);
+			blitPartnerFrame(jakeAnim [jakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
+							 jakeX, jakeY);
 			g_system->updateScreen();
 		}
 
@@ -298,10 +322,10 @@ void EEMEngine::doChoosePartner() {
 					level = newLevel;
 					seqIdx = 0; // restart cycle so the gesture pops
 					blitAt(background, 0, 0);
-					blitAtScaled(jennyAnim[jennySeqs[level][seqIdx % 9] % jennyAnim.size()],
-						   jennyX, jennyY, faceScale);
-					blitAtScaled(jakeAnim [jakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
-						   jakeX, jakeY, faceScale);
+					blitPartnerFrame(jennyAnim[jennySeqs[level][seqIdx % 9] % jennyAnim.size()],
+									 jennyX, jennyY);
+					blitPartnerFrame(jakeAnim [jakeSeqs [level][seqIdx % 9] % jakeAnim.size()],
+									 jakeX, jakeY);
 					g_system->updateScreen();
 				}
 			}
