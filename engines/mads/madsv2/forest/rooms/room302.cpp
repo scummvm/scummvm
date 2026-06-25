@@ -172,7 +172,7 @@ static void room_302_init() {
 		kernel_seq_loc(seq[0], 244, 105);
 		kernel_seq_scale(seq[0], 65);
 	} else {
-		kernel_flip_hotspot(137, 0);
+		kernel_flip_hotspot(words_rubber_band, false);
 	}
 
 	ss[1] = kernel_load_series(kernel_name('p', 1), 0);
@@ -180,8 +180,8 @@ static void room_302_init() {
 	ss[3] = kernel_load_series("*rm302p21", 0);
 
 	if (global[g048]) {
-		kernel_flip_hotspot(173, 0);
-		kernel_flip_hotspot(27, -1);
+		kernel_flip_hotspot(words_grass, false);
+		kernel_flip_hotspot(words_room_210, true);
 		seq[2] = kernel_seq_stamp(ss[2], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[2], 15);
 		kernel_seq_loc(seq[2], 33, 86);
@@ -191,8 +191,8 @@ static void room_302_init() {
 		kernel_seq_loc(seq[3], 15, 86);
 		kernel_seq_scale(seq[3], 52);
 	} else {
-		kernel_flip_hotspot(173, -1);
-		kernel_flip_hotspot(27, 0);
+		kernel_flip_hotspot(words_grass, true);
+		kernel_flip_hotspot(words_room_210, false);
 		seq[1] = kernel_seq_stamp(ss[1], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[1], 15);
 		kernel_seq_loc(seq[1], 18, 90);
@@ -200,11 +200,11 @@ static void room_302_init() {
 	}
 
 	if (global[g067]) {
-		kernel_flip_hotspot(75, 0);
-		kernel_flip_hotspot(37, -1);
+		kernel_flip_hotspot(words_bush, false);
+		kernel_flip_hotspot(words_room_304, true);
 	} else {
-		kernel_flip_hotspot(75, -1);
-		kernel_flip_hotspot(37, 0);
+		kernel_flip_hotspot(words_bush, true);
+		kernel_flip_hotspot(words_room_304, false);
 	}
 
 	if (previous_room != KERNEL_LAST) {
@@ -752,7 +752,7 @@ static void room_302_daemon() {
 			kernel_reset_animation(scratch._9a, 1);
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
-			kernel_flip_hotspot(137, 0);
+			kernel_flip_hotspot(words_rubber_band, false);
 			inter_move_object(1, PLAYER);
 			global[player_score] = -1;
 			player.commands_allowed = true;
@@ -778,8 +778,8 @@ static void room_302_daemon() {
 				global[g048] = -1;
 				global[g133] = 0;
 				global[g143] = 0;
-				kernel_flip_hotspot(173, 0);
-				kernel_flip_hotspot(27, -1);
+				kernel_flip_hotspot(words_grass, false);
+				kernel_flip_hotspot(words_room_210, true);
 				seq[2] = kernel_seq_stamp(ss[2], 0, -1);
 				kernel_seq_depth(seq[2], 15);
 				kernel_seq_loc(seq[2], 33, 86);

@@ -276,7 +276,7 @@ static void room_306_init() {
 	scratch.xa4 = 0;
 
 	if (global[g066] >= 2)
-		kernel_flip_hotspot(180, 0);
+		kernel_flip_hotspot(words_brown, false);
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		scratch.xaa = 0;

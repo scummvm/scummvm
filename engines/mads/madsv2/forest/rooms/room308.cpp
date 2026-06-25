@@ -974,8 +974,8 @@ static void room_308_init() {
 	global[perform_displacements] = 180;
 
 	if (player_has_been_in_room(401)) {
-		kernel_flip_hotspot(189, 0);
-		kernel_flip_hotspot(170, 0);
+		kernel_flip_hotspot(words_tail, false);
+		kernel_flip_hotspot(words_russel, false);
 	}
 
 	player.walker_visible = false;
@@ -1020,8 +1020,8 @@ static void room_308_init() {
 	scratch._c5 = 0;
 	stop_speech_on_run_animation = true;
 
-	kernel_flip_hotspot(40, 0);
-	kernel_flip_hotspot(46, 0);
+	kernel_flip_hotspot(words_room_307, false);
+	kernel_flip_hotspot(words_room_401, false);
 
 	if (!player_has_been_in_room(401)) {
 		ss[0] = kernel_load_series(kernel_name('p', 3), 0);

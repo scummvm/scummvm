@@ -94,7 +94,7 @@ static void room_106_init() {
 	scratch._ae = -1;
 
 	if (global[g022] != 0)
-		kernel_flip_hotspot(84, 0);
+		kernel_flip_hotspot(words_door, false);
 
 	if (object_is_here(5)) {
 		ss[0] = kernel_load_series(kernel_name('p', 2), 0);
@@ -103,7 +103,7 @@ static void room_106_init() {
 		kernel_seq_loc(seq[0], 235, 99);
 		kernel_seq_scale(seq[0], 58);
 	} else {
-		kernel_flip_hotspot(125, 0);
+		kernel_flip_hotspot(words_pebbles, false);
 	}
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
@@ -633,7 +633,7 @@ static void room_106_daemon() {
 		kernel_reset_animation(scratch._9a, 1);
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
-		kernel_flip_hotspot(125, 0);
+		kernel_flip_hotspot(words_pebbles, false);
 		inter_move_object(5, PLAYER);
 		player.commands_allowed = true;
 		break;
@@ -750,7 +750,7 @@ static void room_106_parser() {
 		digi_play_build_ii('b', 1, 1);
 		scratch._ae = 89;
 		scratch._aa = -1;
-		kernel_flip_hotspot(84, 0);
+		kernel_flip_hotspot(words_door, false);
 		global[g022] = -1;
 		player.command_ready = 0;
 		return;

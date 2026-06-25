@@ -381,7 +381,7 @@ static void room_201_daemon() {
 		kernel_reset_animation(scratch._9a, 1);
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
-		kernel_flip_hotspot(145, false);
+		kernel_flip_hotspot(words_sticks, false);
 		inter_move_object(sticks, PLAYER);
 		player.commands_allowed = true;
 	} else if (trigger == 26) {
@@ -469,7 +469,7 @@ static void room_201_daemon() {
 			kernel_reset_animation(scratch._9a, 1);
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
-			kernel_flip_hotspot(93, false);
+			kernel_flip_hotspot(words_elm_leaves, false);
 			inter_move_object(elm_leaves, PLAYER);
 			player.commands_allowed = true;
 		}

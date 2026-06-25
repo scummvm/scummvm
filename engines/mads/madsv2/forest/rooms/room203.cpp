@@ -152,9 +152,9 @@ static void room_203_init1() {
 		player.walker_visible = true;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 		player.commands_allowed = true;
-		kernel_flip_hotspot(168, -1);
-		kernel_flip_hotspot(170, -1);
-		kernel_flip_hotspot(169, -1);
+		kernel_flip_hotspot(words_abigail, true);
+		kernel_flip_hotspot(words_russel, true);
+		kernel_flip_hotspot(words_edgar, true);
 
 		if (global[g049] != 0) {
 			aa[3] = kernel_run_animation(kernel_name('a', 1), 104);
@@ -188,25 +188,25 @@ static void room_203_init() {
 	scratch._a6 = 5;
 	global[player_score] = -1;
 	global[g009] = -1;
-	kernel_flip_hotspot(65, false);
-	kernel_flip_hotspot(66, false);
-	kernel_flip_hotspot(168, false);
-	kernel_flip_hotspot(170, false);
-	kernel_flip_hotspot(169, false);
+	kernel_flip_hotspot(words_abi_bubble, false);
+	kernel_flip_hotspot(words_all_bubble, false);
+	kernel_flip_hotspot(words_abigail, false);
+	kernel_flip_hotspot(words_russel, false);
+	kernel_flip_hotspot(words_edgar, false);
 
 	ss[0] = kernel_load_series(kernel_name('p', 5), 0);
 	ss[1] = kernel_load_series(kernel_name('p', 6), 0);
 
 	if (global[g047] != 0) {
-		kernel_flip_hotspot(119, false);
-		kernel_flip_hotspot(27, -1);
+		kernel_flip_hotspot(words_moss, false);
+		kernel_flip_hotspot(words_room_210, true);
 		seq[1] = kernel_seq_stamp(ss[1], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[1], 15);
 		kernel_seq_loc(seq[1], 128, 74);
 		kernel_seq_scale(seq[1], 100);
 	} else {
-		kernel_flip_hotspot(119, -1);
-		kernel_flip_hotspot(27, false);
+		kernel_flip_hotspot(words_moss, true);
+		kernel_flip_hotspot(words_room_210, false);
 		seq[0] = kernel_seq_stamp(ss[0], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[0], 15);
 		kernel_seq_loc(seq[0], 129, 79);
@@ -667,24 +667,24 @@ static void room_203_anim3() {
 }
 
 static void room_203_flip_hotspots1() {
-	kernel_flip_hotspot(65, true);
-	kernel_flip_hotspot(66, true);
-	kernel_flip_hotspot(168, false);
-	kernel_flip_hotspot(170, false);
-	kernel_flip_hotspot(169, false);
-	kernel_flip_hotspot(119, false);
-	kernel_flip_hotspot(27, false);
-	kernel_flip_hotspot(21, false);
-	kernel_flip_hotspot(24, false);
+	kernel_flip_hotspot(words_abi_bubble, true);
+	kernel_flip_hotspot(words_all_bubble, true);
+	kernel_flip_hotspot(words_abigail, false);
+	kernel_flip_hotspot(words_russel, false);
+	kernel_flip_hotspot(words_edgar, false);
+	kernel_flip_hotspot(words_moss, false);
+	kernel_flip_hotspot(words_room_210, false);
+	kernel_flip_hotspot(words_room_201, false);
+	kernel_flip_hotspot(words_room_204, false);
 }
 
 static void room_203_flip_hotspots2() {
-	kernel_flip_hotspot(65, 0);
-	kernel_flip_hotspot(66, 0);
+	kernel_flip_hotspot(words_abi_bubble, false);
+	kernel_flip_hotspot(words_all_bubble, false);
 	kernel_flip_hotspot(119, global[g047] < 1 ? 1 : 0);
 	kernel_flip_hotspot(27, global[g047]);
-	kernel_flip_hotspot(21, -1);
-	kernel_flip_hotspot(24, -1);
+	kernel_flip_hotspot(words_room_201, true);
+	kernel_flip_hotspot(words_room_204, true);
 }
 
 static void room_203_anim4() {
@@ -703,9 +703,9 @@ static void room_203_anim4() {
 			kernel_abort_animation(aa[3]);
 			aainfo[3]._active = 0;
 			room_203_flip_hotspots2();
-			kernel_flip_hotspot(168, -1);
-			kernel_flip_hotspot(170, -1);
-			kernel_flip_hotspot(169, -1);
+			kernel_flip_hotspot(words_abigail, true);
+			kernel_flip_hotspot(words_russel, true);
+			kernel_flip_hotspot(words_edgar, true);
 			player.walker_visible = true;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			player.commands_allowed = true;
@@ -1014,9 +1014,9 @@ static void room_203_anim7() {
 	player.walker_visible = true;
 	kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 	player.commands_allowed = -1;
-	kernel_flip_hotspot(168, -1);
-	kernel_flip_hotspot(170, -1);
-	kernel_flip_hotspot(169, -1);
+	kernel_flip_hotspot(words_abigail, true);
+	kernel_flip_hotspot(words_russel, true);
+	kernel_flip_hotspot(words_edgar, true);
 }
 
 static void room_203_daemon() {
@@ -1361,9 +1361,9 @@ static void room_203_daemon() {
 			if (local->_ac)
 				global[g050] = -1;
 
-			kernel_flip_hotspot(168, false);
-			kernel_flip_hotspot(170, false);
-			kernel_flip_hotspot(169, false);
+			kernel_flip_hotspot(words_abigail, false);
+			kernel_flip_hotspot(words_russel, false);
+			kernel_flip_hotspot(words_edgar, false);
 
 			global[g131] = -1;
 			global[g141] = -1;
@@ -1397,7 +1397,7 @@ static void room_203_daemon() {
 			global[g133] = 0;
 			global[g143] = 0;
 
-			kernel_flip_hotspot(27, true);
+			kernel_flip_hotspot(words_room_210, true);
 			seq[1] = kernel_seq_stamp(ss[1], true, -1);
 			kernel_seq_depth(seq[1], 15);
 			kernel_seq_loc(seq[1], 128, 74);

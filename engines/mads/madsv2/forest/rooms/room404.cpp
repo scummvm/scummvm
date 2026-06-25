@@ -129,7 +129,7 @@ static void room_404_init1() {
 		scratch._92 = 97;
 		global[g081] = -1;
 		global[g082] = 0;
-		kernel_flip_hotspot(107, 0);
+		kernel_flip_hotspot(words_hole, false);
 	} else {
 		global[g131] = -1;
 		global[g141] = -1;
@@ -179,7 +179,7 @@ static void room_404_init() {
 		kernel_seq_loc(seq[0], 271, 147);
 		kernel_seq_scale(seq[0], 77);
 	} else {
-		kernel_flip_hotspot(107, 0);
+		kernel_flip_hotspot(words_hole, false);
 		seq[1] = kernel_seq_stamp(ss[1], false, -1);
 		kernel_seq_depth(seq[1], 1);
 		kernel_seq_loc(seq[1], 229, 161);
@@ -708,7 +708,7 @@ static void room_404_daemon() {
 			global[g133] = 0;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			global[g081] = -1;
-			kernel_flip_hotspot(107, 0);
+			kernel_flip_hotspot(words_hole, false);
 			object_set_quality(13, 0, 0L);
 			inter_move_object(13, NOWHERE);
 			display_interface();

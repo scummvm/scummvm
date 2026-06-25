@@ -149,7 +149,7 @@ static void room_403_init() {
 		kernel_seq_loc(seq[0], 276, 154);
 		kernel_seq_scale(seq[0], 99);
 	} else {
-		kernel_flip_hotspot(166, 0);
+		kernel_flip_hotspot(words_wrench, false);
 	}
 
 	if (global[g080] == 0) {
@@ -159,7 +159,7 @@ static void room_403_init() {
 		kernel_seq_loc(seq[1], 51, 154);
 		kernel_seq_scale(seq[1], 100);
 	} else {
-		kernel_flip_hotspot(95, 0);
+		kernel_flip_hotspot(words_eyebright, false);
 	}
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
@@ -620,7 +620,7 @@ static void room_403_daemon() {
 			kernel_reset_animation(scratch._9a, 1);
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
-			kernel_flip_hotspot(166, 0);
+			kernel_flip_hotspot(words_wrench, false);
 			inter_move_object(13, PLAYER);
 			display_interface();
 			player.commands_allowed = true;
@@ -637,7 +637,7 @@ static void room_403_daemon() {
 			player.walker_visible = true;
 			global[g133] = 0;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-			kernel_flip_hotspot(95, 0);
+			kernel_flip_hotspot(words_eyebright, false);
 			player.commands_allowed = true;
 			if (config_file.forest1 != 0)
 				kernel_timing_trigger(1, 105);

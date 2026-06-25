@@ -135,7 +135,7 @@ static void room_321_init() {
 	scratch._aa = 0;
 
 	if (player_has(6))
-		kernel_flip_hotspot(132, 0);
+		kernel_flip_hotspot(words_reeds, false);
 
 	if (global[g068] == 0) {
 		ss[0] = kernel_load_series(kernel_name('p', 6), 0);
@@ -144,7 +144,7 @@ static void room_321_init() {
 		kernel_seq_loc(seq[0], 278, 126);
 		kernel_seq_scale(seq[0], 91);
 	} else {
-		kernel_flip_hotspot(125, 0);
+		kernel_flip_hotspot(words_pebbles, false);
 	}
 
 	if (global[g071] == 0) {
@@ -153,7 +153,7 @@ static void room_321_init() {
 		kernel_seq_depth(seq[4], 15);
 		kernel_seq_loc(seq[4], 230, 105);
 		kernel_seq_scale(seq[4], 83);
-		kernel_flip_hotspot(177, 0);
+		kernel_flip_hotspot(words_nest, false);
 		global_midi_play(13);
 	} else {
 		global_midi_play(3);
@@ -709,7 +709,7 @@ static void room_321_daemon() {
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
 			room_321_anim2();
-			kernel_flip_hotspot(132, 0);
+			kernel_flip_hotspot(words_reeds, false);
 			inter_move_object(6, PLAYER);
 			global[player_score] = -1;
 			player.commands_allowed = true;
@@ -724,7 +724,7 @@ static void room_321_daemon() {
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
 			room_321_anim2();
-			kernel_flip_hotspot(125, 0);
+			kernel_flip_hotspot(words_pebbles, false);
 			if (!player_has(5))
 				inter_move_object(pebbles, PLAYER);
 			global[g068] = -1;

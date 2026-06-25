@@ -205,7 +205,7 @@ static void room_307_anim3() {
 			kernel_seq_delete(seq[0]);
 			inter_move_object(4, PLAYER);
 			kernel_synch(KERNEL_SERIES, old, KERNEL_ANIM, aa[2]);
-			kernel_flip_hotspot(113, 0);
+			kernel_flip_hotspot(words_lily_pad, false);
 			break;
 		}
 		case 28:
@@ -540,7 +540,7 @@ static void room_307_init() {
 		kernel_seq_loc(seq[0], 184, 149);
 		kernel_seq_scale(seq[0], 98);
 	} else {
-		kernel_flip_hotspot(113, 0);
+		kernel_flip_hotspot(words_lily_pad, false);
 	}
 
 	if (object_is_here(14)) {
@@ -902,8 +902,8 @@ static void room_307_parser() {
 		digi_play_build_ii('b', 1, 1);
 		scratch._aa = 4;
 		scratch._a0 = -1;
-		kernel_flip_hotspot(28, 0);
-		kernel_flip_hotspot(27, -1);
+		kernel_flip_hotspot(words_room_210h, false);
+		kernel_flip_hotspot(words_room_210, true);
 		global[g075] = -1;
 		goto handled;
 	}

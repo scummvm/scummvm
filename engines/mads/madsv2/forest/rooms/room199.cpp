@@ -113,8 +113,8 @@ static void room_199_init() {
 		if (global[g070] != 0) {
 			aainfo[2]._frame = 1;
 			ss[1] = kernel_load_series("*rm199z1", 0);
-			kernel_flip_hotspot(99, false);
-			kernel_flip_hotspot(174, false);
+			kernel_flip_hotspot(words_flowers, false);
+			kernel_flip_hotspot(words_fwt, false);
 			int16 slot = aainfo[2]._frame;
 			seq[6 + slot] = kernel_seq_stamp(ss[slot], false, 1);
 			kernel_seq_depth(seq[6 + slot], 1);
@@ -129,8 +129,8 @@ static void room_199_init() {
 	} else if (previous_room == 503) {
 		aainfo[2]._frame = 3;
 		ss[3] = kernel_load_series("*rm199v1", 0);
-		kernel_flip_hotspot(99, false);
-		kernel_flip_hotspot(174, false);
+		kernel_flip_hotspot(words_flowers, false);
+		kernel_flip_hotspot(words_fwt, false);
 		int16 slot = aainfo[2]._frame;
 		seq[6 + slot] = kernel_seq_stamp(ss[slot], false, 1);
 		kernel_seq_depth(seq[6 + slot], 5);
@@ -144,8 +144,8 @@ static void room_199_init() {
 		ss[0] = kernel_load_series("*rm199n1", 0);
 	}
 
-	kernel_flip_hotspot(99, false);
-	kernel_flip_hotspot(174, false);
+	kernel_flip_hotspot(words_flowers, false);
+	kernel_flip_hotspot(words_fwt, false);
 	int16 slot = aainfo[2]._frame;
 	seq[6 + slot] = kernel_seq_stamp(ss[slot], false, 1);
 	kernel_seq_depth(seq[6 + slot], 1);
@@ -461,9 +461,9 @@ static void room_199_parser2() {
 
 static void room_199_parser1() {
 	if (aainfo[2]._active == 2)
-		kernel_flip_hotspot(99, 0);
+		kernel_flip_hotspot(words_flowers, false);
 	if (aainfo[2]._active == 3)
-		kernel_flip_hotspot(174, 0);
+		kernel_flip_hotspot(words_fwt, false);
 
 	int16 old_slot = aainfo[2]._active;
 	kernel_seq_delete(seq[6 + old_slot]);
@@ -483,11 +483,11 @@ static void room_199_parser1() {
 		break;
 	case 2:
 		ss[new_slot] = kernel_load_series("*rm199i1", 0);
-		kernel_flip_hotspot(99, -1);
+		kernel_flip_hotspot(words_flowers, true);
 		break;
 	case 3:
 		ss[new_slot] = kernel_load_series("*rm199v1", 0);
-		kernel_flip_hotspot(174, -1);
+		kernel_flip_hotspot(words_fwt, true);
 		break;
 	}
 

@@ -239,7 +239,7 @@ static void room_101_init() {
 		kernel_seq_loc(seq[0], 264, 131);
 		kernel_seq_scale(seq[0], 68);
 	} else {
-		kernel_flip_hotspot(164, false);
+		kernel_flip_hotspot(words_wood, false);
 	}
 
 	if (object_is_here(cogs)) {
@@ -249,7 +249,7 @@ static void room_101_init() {
 		kernel_seq_loc(seq[2], 159, 116);
 		kernel_seq_scale(seq[2], 100);
 	} else {
-		kernel_flip_hotspot(105, false);
+		kernel_flip_hotspot(words_gears, false);
 	}
 
 	if (object_is_here(twine)) {
@@ -259,7 +259,7 @@ static void room_101_init() {
 		kernel_seq_loc(seq[1], 21, 127);
 		kernel_seq_scale(seq[1], 100);
 	} else {
-		kernel_flip_hotspot(154, false);
+		kernel_flip_hotspot(words_twine, false);
 	}
 
 	switch (flags[0]) {
@@ -662,7 +662,7 @@ static void room_101_daemon() {
 			global[g143] = 1;
 			inter_move_object(cogs, PLAYER);
 			kernel_seq_delete(seq[2]);
-			kernel_flip_hotspot(105, 0);
+			kernel_flip_hotspot(words_gears, false);
 			aa[4] = kernel_run_animation(kernel_name('R', 5), 103);
 			aainfo[4]._active = -1;
 			aainfo[4]._val3 = 14;
@@ -687,7 +687,7 @@ static void room_101_daemon() {
 			global[g143] = 1;
 			inter_move_object(planks, PLAYER);
 			kernel_seq_delete(seq[0]);
-			kernel_flip_hotspot(164, 0);
+			kernel_flip_hotspot(words_wood, false);
 			aa[4] = kernel_run_animation(kernel_name('R', 6), 103);
 			aainfo[4]._active = -1;
 			aainfo[4]._val3 = 15;
@@ -808,7 +808,7 @@ static void room_101_daemon() {
 			break;
 		case 5:
 			kernel_seq_delete(seq[3]);
-			kernel_flip_hotspot(110, 0);
+			kernel_flip_hotspot(words_journal, false);
 			kernel_abort_animation(aa[6]);
 			aa[6] = kernel_run_animation(kernel_name('e', 2), 104);
 			aainfo[6]._active = -1;
@@ -913,7 +913,7 @@ static void room_101_daemon() {
 		global[g143] = 1;
 		inter_move_object(twine, PLAYER);
 		kernel_seq_delete(seq[1]);
-		kernel_flip_hotspot(154, 0);
+		kernel_flip_hotspot(words_twine, false);
 		aa[4] = kernel_run_animation(kernel_name('R', 4), 103);
 		aainfo[4]._active = -1;
 		aainfo[4]._val3 = 13;

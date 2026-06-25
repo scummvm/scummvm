@@ -194,7 +194,7 @@ static void room_322_anim2() {
 				kernel_seq_delete(seq_handle);
 				inter_move_object(4, PLAYER);
 				kernel_synch(KERNEL_SERIES, seq_handle, KERNEL_ANIM, aa[2]);
-				kernel_flip_hotspot(113, 0);
+				kernel_flip_hotspot(words_lily_pad, false);
 			} else if (cur == 28) {
 				digi_play_build(307, '_', 2, 2);
 			} else if (cur == 31) {
@@ -375,7 +375,7 @@ static void room_322_init() {
 		kernel_seq_loc(seq[0], 184, 149);
 		kernel_seq_scale(seq[0], 98);
 	} else {
-		kernel_flip_hotspot(113, 0);
+		kernel_flip_hotspot(words_lily_pad, false);
 	}
 
 	if (object[14].location == 307) {
@@ -755,8 +755,8 @@ static void room_322_parser() {
 		digi_play_build_ii('b', 1, 1);
 		scratch._b4 = 4;
 		scratch._aa = -1;
-		kernel_flip_hotspot(28, 0);
-		kernel_flip_hotspot(27, -1);
+		kernel_flip_hotspot(words_room_210h, false);
+		kernel_flip_hotspot(words_room_210, true);
 		global[g075] = -1;
 		player.command_ready = 0;
 		return;

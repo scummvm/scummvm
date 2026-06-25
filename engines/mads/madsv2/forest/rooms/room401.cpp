@@ -437,7 +437,7 @@ static void room_401_init() {
 	midi_stop();
 
 	if (!flags[31] || !global[g066])
-		kernel_flip_hotspot(49, 0);
+		kernel_flip_hotspot(words_room_404, false);
 
 	kernel_timing_trigger(1, 106);
 	global[player_score] = 0;

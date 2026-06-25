@@ -69,8 +69,8 @@ static void room_304_init1() {
 	kernel_position_anim(scratch._9a, 87, 150, 98, 3);
 
 	if (global[g064]) {
-		kernel_flip_hotspot(178, 0);
-		kernel_flip_hotspot(179, 0);
+		kernel_flip_hotspot(words_paint_can, false);
+		kernel_flip_hotspot(words_dam, false);
 	} else {
 		kernel_timing_trigger(1, 107);
 		aa[4] = kernel_run_animation(kernel_name('n', 2), 105);
@@ -374,8 +374,8 @@ static void room_304_daemon() {
 			dont_frag_the_palette();
 			kernel_abort_animation(aa[5]);
 			scratch.animation_info[5]._active = 0;
-			kernel_flip_hotspot(178, 0);
-			kernel_flip_hotspot(179, 0);
+			kernel_flip_hotspot(words_paint_can, false);
+			kernel_flip_hotspot(words_dam, false);
 			aa[3] = kernel_run_animation(kernel_name('e', 2), 103);
 			scratch.animation_info[3]._active = -1;
 			scratch._98 = 3;

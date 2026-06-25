@@ -136,16 +136,16 @@ static void room_402_init1() {
 		scratch._98 = 6;
 		break;
 	case 2:
-		kernel_flip_hotspot(46, 0);
+		kernel_flip_hotspot(words_room_401, false);
 		aa[1] = kernel_run_animation(kernel_name('N', 1), 103);
 		aainfo[1]._active = -1;
 		aainfo[1]._frame = 0;
 		scratch._98 = 15;
-		kernel_flip_hotspot(187, -1);
+		kernel_flip_hotspot(words_rock, true);
 		player.commands_allowed = true;
 		break;
 	case 3:
-		kernel_flip_hotspot(48, -1);
+		kernel_flip_hotspot(words_room_403, true);
 		aa[1] = kernel_run_animation(kernel_name('L', 14), 103);
 		aainfo[1]._active = -1;
 		aainfo[1]._frame = 0;
@@ -195,8 +195,8 @@ static void room_402_init() {
 	if (previous_room != KERNEL_RESTORING_GAME && previous_room != 199 && flags[27] != 3)
 		flags[27]++;
 
-	kernel_flip_hotspot(187, 0);
-	kernel_flip_hotspot(48, 0);
+	kernel_flip_hotspot(words_rock, false);
+	kernel_flip_hotspot(words_room_403, false);
 
 	room_402_init1();
 }
@@ -337,8 +337,8 @@ static void room_402_anim_state() {
 		room_402_anim5();
 		global[walker_converse_state] = 0;
 		close_journal(3);
-		kernel_flip_hotspot(187, -1);
-		kernel_flip_hotspot(46, 0);
+		kernel_flip_hotspot(words_rock, true);
+		kernel_flip_hotspot(words_room_401, false);
 		player.commands_allowed = true;
 		break;
 	case 15:
@@ -352,7 +352,7 @@ static void room_402_anim_state() {
 		aainfo[1]._active = -1;
 		aainfo[1]._frame = 0;
 		scratch._98 = 17;
-		kernel_flip_hotspot(187, 0);
+		kernel_flip_hotspot(words_rock, false);
 		break;
 	case 17:
 		global_midi_play(5);
@@ -368,8 +368,8 @@ static void room_402_anim_state() {
 		aainfo[1]._frame = 0;
 		scratch._98 = 19;
 		global[g083] = 3;
-		kernel_flip_hotspot(48, -1);
-		kernel_flip_hotspot(46, -1);
+		kernel_flip_hotspot(words_room_403, true);
+		kernel_flip_hotspot(words_room_401, true);
 		kernel_position_anim(scratch._9c, 71, 128, 63, 5);
 		kernel_position_anim(scratch._9a, 112, 131, 65, 5);
 		global[g131] = -1;
@@ -690,7 +690,7 @@ static void room_402_daemon() {
 			scratch._98 = 3;
 			break;
 		}
-		kernel_flip_hotspot(48, -1);
+		kernel_flip_hotspot(words_room_403, true);
 		aa[1] = kernel_run_animation(kernel_name('L', 14), 103);
 		aainfo[1]._active = -1;
 		aainfo[1]._frame = 0;

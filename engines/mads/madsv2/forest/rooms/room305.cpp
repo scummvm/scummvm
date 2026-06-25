@@ -198,7 +198,7 @@ static void room_305_init() {
 	scratch._aa = -1;
 
 	if (global[g074] != 0)
-		kernel_flip_hotspot(28, 0);
+		kernel_flip_hotspot(words_room_210h, false);
 
 	if (global[g069] == 0) {
 		ss[0] = kernel_load_series(kernel_name('p', 1), 0);
@@ -207,7 +207,7 @@ static void room_305_init() {
 		kernel_seq_loc(seq[0], 229, 146);
 		kernel_seq_scale(seq[0], 100);
 	} else {
-		kernel_flip_hotspot(145, 0);
+		kernel_flip_hotspot(words_sticks, false);
 	}
 
 	if (previous_room != KERNEL_LAST) {
@@ -812,7 +812,7 @@ static void room_305_daemon() {
 				aa[9] = kernel_run_animation(kernel_name('e', 1), 0);
 				aainfo[9]._active = -1;
 				aainfo[9]._val3 = 15;
-				kernel_flip_hotspot(28, 0);
+				kernel_flip_hotspot(words_room_210h, false);
 			} else {
 				aa[0] = kernel_run_animation(kernel_name('Z', 1), 102);
 				aainfo[0]._active = -1;
@@ -932,7 +932,7 @@ static void room_305_daemon() {
 			kernel_reset_animation(scratch._9a, 1);
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
-			kernel_flip_hotspot(145, false);
+			kernel_flip_hotspot(words_sticks, false);
 			if (!player_has(7))
 				inter_move_object(7, PLAYER);
 			global[g069] = -1;
