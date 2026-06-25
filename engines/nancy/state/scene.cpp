@@ -542,8 +542,15 @@ void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
 }
 
 void Scene::setEventFlag(int16 label, byte flag) {
+	if (label >= 2000) {
+		// In nancy12 and onwards flags begin from 2000
+		label -= 2000;
+	}
+
 	if (label >= 1000) {
 		// In nancy3 and onwards flags begin from 1000
+		// TODO: We need to separate the generic event flags
+		// from the normal event flags in Nancy12+
 		label -= 1000;
 	}
 
@@ -557,8 +564,15 @@ void Scene::setEventFlag(FlagDescription eventFlag) {
 }
 
 bool Scene::getEventFlag(int16 label, byte flag) const {
+	if (label >= 2000) {
+		// In nancy12 and onwards flags begin from 2000
+		label -= 2000;
+	}
+
 	if (label >= 1000) {
 		// In nancy3 and onwards flags begin from 1000
+		// TODO: We need to separate the generic event flags
+		// from the normal event flags in Nancy12+
 		label -= 1000;
 	}
 

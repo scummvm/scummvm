@@ -738,16 +738,11 @@ struct UINB : public EngineData {
 // (the engine registers several built-in event categories at runtime on top of
 // whatever this chunk provides). Each record is a name followed by an id.
 struct EVNT : public EngineData {
-	struct EventRecord {
-		Common::String name;
-		int16 id = 0;
-	};
-
 	EVNT(Common::SeekableReadStream *chunkStream);
 
 	static const uint kEventRecordSize = 35;
 
-	Common::Array<EventRecord> events;
+	Common::Array<Common::String> eventFlagNames;
 };
 
 // UI overlay element table. Introduced in Nancy 12. Each record describes one UI

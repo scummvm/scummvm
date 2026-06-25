@@ -504,41 +504,41 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 	for (const DependencyRecord &dep : record.children) {
 		debugPrintf("\n\t\t");
 		switch (dep.type) {
-		case DependencyType::kNone :
+		case DependencyType::kNone:
 			debugPrintf("kNone");
 			break;
-		case DependencyType::kInventory :
+		case DependencyType::kInventory:
 			debugPrintf("kInventory, item %u, %s, %s",
 				dep.label,
 				inventoryData->itemDescriptions[dep.label].name.c_str(),
 				dep.condition == g_nancy->_true ? "true" : "false");
 			break;
-		case DependencyType::kEvent :
+		case DependencyType::kEvent:
 			debugPrintf("kEvent, flag %u, %s, %s",
 				dep.label,
-				g_nancy->getStaticData().eventFlagNames[dep.label >= 1000 ? dep.label - 1000 : dep.label].c_str(),
+				g_nancy->getEventFlagName(dep.label).c_str(),
 				dep.condition == g_nancy->_true ? "true" : "false");
 			break;
-		case DependencyType::kLogic :
+		case DependencyType::kLogic:
 			debugPrintf("kLogic, flag %u, %s",
 				dep.label,
 				dep.condition == g_nancy->_true ? "used" : "not used");
 			break;
-		case DependencyType::kElapsedGameTime :
+		case DependencyType::kElapsedGameTime:
 			debugPrintf("kElapsedGameTime, %i hours, %i minutes, %i seconds, %i milliseconds",
 				dep.hours,
 				dep.minutes,
 				dep.seconds,
 				dep.milliseconds);
 			break;
-		case DependencyType::kElapsedSceneTime :
+		case DependencyType::kElapsedSceneTime:
 			debugPrintf("kElapsedSceneTime, %i hours, %i minutes, %i seconds, %i milliseconds",
 				dep.hours,
 				dep.minutes,
 				dep.seconds,
 				dep.milliseconds);
 			break;
-		case DependencyType::kElapsedPlayerTime :
+		case DependencyType::kElapsedPlayerTime:
 			debugPrintf("kPlayerTime, player time %s %i hours, %i minutes, %i seconds, %i milliseconds",
 				dep.condition == 0 ? "greater than" : (dep.condition == 1 ? "less than" : "equals"),
 				dep.hours,
@@ -546,45 +546,45 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 				dep.seconds,
 				dep.milliseconds);
 			break;
-		case DependencyType::kSceneCount :
+		case DependencyType::kSceneCount:
 			debugPrintf("kSceneCount, scene ID %i, hit count %s %i",
 				dep.hours,
 				dep.milliseconds == 1 ? ">" : dep.milliseconds == 2 ? "<" : "==",
 				dep.minutes);
 			break;
-		case DependencyType::kElapsedPlayerDay :
+		case DependencyType::kElapsedPlayerDay:
 			debugPrintf("kElapsedPlayerDay");
 			break;
-		case DependencyType::kCursorType :
+		case DependencyType::kCursorType:
 			debugPrintf("kCursorType, item %u, %s",
 				dep.label,
 				inventoryData->itemDescriptions[dep.label].name.c_str());
 			break;
-		case DependencyType::kPlayerTOD :
+		case DependencyType::kPlayerTOD:
 			debugPrintf("kPlayerTOD, %s",
 				dep.label == 0 ? "kPlayerDay" : dep.label == 1 ? "kPLayerNight" : "kPLayerDuskDawn");
 			break;
-		case DependencyType::kTimerLessThanDependencyTime :
+		case DependencyType::kTimerLessThanDependencyTime:
 			debugPrintf("kTimerLessThanDependencyTime");
 			break;
-		case DependencyType::kTimerGreaterThanDependencyTime :
+		case DependencyType::kTimerGreaterThanDependencyTime:
 			debugPrintf("kTimerGreaterThanDependencyTime");
 			break;
-		case DependencyType::kDifficultyLevel :
+		case DependencyType::kDifficultyLevel:
 			debugPrintf("kDifficultyLevel, level %i", dep.condition);
 			break;
-		case DependencyType::kClosedCaptioning :
+		case DependencyType::kClosedCaptioning:
 			debugPrintf("kClosedCaptioning, %s", dep.condition == 2 ? "true" : "false");
 			break;
-		case DependencyType::kSound :
+		case DependencyType::kSound:
 			debugPrintf("kSound, channel %i", dep.condition);
 			break;
-		case DependencyType::kOpenParenthesis :
+		case DependencyType::kOpenParenthesis:
 			debugPrintf("((((((((\n");
 			recursePrintDependencies(dep);
 			debugPrintf("\n))))))))");
 			break;
-		case DependencyType::kRandom :
+		case DependencyType::kRandom:
 			debugPrintf("kRandom, chance %i", dep.condition);
 			break;
 		default:
@@ -783,7 +783,7 @@ bool NancyConsole::Cmd_getEventFlags(int argc, const char **argv) {
 		for (uint i = 0; i < numEventFlags; ++i) {
 			debugPrintf("\nFlag %u, %s, %s",
 				i,
-				g_nancy->getStaticData().eventFlagNames[i].c_str(),
+				g_nancy->getEventFlagName(i).c_str(),
 				NancySceneState.getEventFlag(i, g_nancy->_true) == true ? "true" : "false");
 		}
 	} else {
@@ -795,7 +795,7 @@ bool NancyConsole::Cmd_getEventFlags(int argc, const char **argv) {
 			}
 			debugPrintf("\nFlag %u, %s, %s",
 				flagID,
-				g_nancy->getStaticData().eventFlagNames[flagID].c_str(),
+				g_nancy->getEventFlagName(flagID).c_str(),
 				NancySceneState.getEventFlag(flagID, g_nancy->_true) == true ? "true" : "false");
 
 		}
@@ -824,12 +824,12 @@ bool NancyConsole::Cmd_setEventFlags(int argc, const char **argv) {
 			NancySceneState.setEventFlag(flagID, g_nancy->_true);
 			debugPrintf("Set flag %i, %s, to true\n",
 				flagID,
-				g_nancy->getStaticData().eventFlagNames[flagID].c_str());
+				g_nancy->getEventFlagName(flagID).c_str());
 		} else if (Common::String(argv[i + 1]).compareTo("false") == 0) {
 			NancySceneState.setEventFlag(flagID, g_nancy->_false);
 			debugPrintf("Set flag %i, %s, to false\n",
 				flagID,
-				g_nancy->getStaticData().eventFlagNames[flagID].c_str());
+				g_nancy->getEventFlagName(flagID).c_str());
 		} else {
 			debugPrintf("Invalid value %s\n", argv[i + 1]);
 			continue;

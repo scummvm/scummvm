@@ -1115,11 +1115,15 @@ UINB::UINB(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 }
 
 EVNT::EVNT(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	while (chunkStream->size() - chunkStream->pos() >= (int64)kEventRecordSize) {
-		EventRecord rec;
-		readFilename(*chunkStream, rec.name);
-		rec.id = chunkStream->readSint16LE();
-		events.push_back(rec);
+	Common::String name;
+	const uint16 count = (uint16)(chunkStream->size() / (int64)kEventRecordSize);
+
+	eventFlagNames.resize(count);
+
+	for (uint16 i = 0; i < count; ++i) {
+		readFilename(*chunkStream, name);
+		chunkStream->skip(2);	// flag ID (starting from 2000)
+		eventFlagNames[i] = name;
 	}
 }
 

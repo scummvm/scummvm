@@ -98,6 +98,7 @@ public:
 
 	const StaticData &getStaticData() const;
 	const EngineData *getEngineData(const Common::String &name) const;
+	const Common::String getEventFlagName(uint flagID) const;
 
 	void setState(NancyState::NancyState state, NancyState::NancyState overridePrevious = NancyState::kNone);
 	NancyState::NancyState getState() { return _gameFlow.curState; }

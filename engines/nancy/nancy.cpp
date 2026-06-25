@@ -220,6 +220,29 @@ const EngineData *NancyEngine::getEngineData(const Common::String &name) const {
 	return nullptr;
 }
 
+const Common::String NancyEngine::getEventFlagName(uint flagID) const {
+	if (getGameType() <= kGameTypeNancy11) {
+		if (flagID >= 1000) {
+			// In nancy3 and onwards flags begin from 1000
+			flagID -= 1000;
+		}
+		return (flagID < _staticData.eventFlagNames.size()) ? _staticData.eventFlagNames[flagID] : "";
+	} else {
+		if (flagID >= 2000) {
+			flagID -= 2000;
+
+			auto flagNames = ((EVNT *)getEngineData("EVNT"))->eventFlagNames;
+			return (flagID < flagNames.size()) ? flagNames[flagID] : "";
+		} else {
+			if (flagID >= 1000) {
+				flagID -= 1000;
+			}
+
+			return Common::String::format("Generic%d", flagID);
+		}
+	}
+}
+
 void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState overridePrevious) {
 	// Handle special cases first
 	switch (state) {
@@ -441,11 +464,20 @@ void NancyEngine::bootGameEngine() {
 
 	// Load BOOT chunks data
 	Common::SeekableReadStream *chunkStream = nullptr;
-	#define LOAD_BOOT_L(t, s) if (chunkStream = iff->getChunkStream(s), chunkStream) {	\
-								_engineData.setVal(s, new t(chunkStream));				\
-								delete chunkStream;										\
-							}
+	#define LOAD_BOOT_L(t, s)	if (chunkStream = iff->getChunkStream(s), chunkStream) {	\
+									_engineData.setVal(s, new t(chunkStream));				\
+									delete chunkStream;										\
+								}
 	#define LOAD_BOOT(t) LOAD_BOOT_L(t, #t)
+
+	#define LOAD_CHUNK(n, t, s, k)	iff = _resource->loadIFF(n);								\
+									if (!iff)													\
+										error("Failed to load %s", n);							\
+									if (chunkStream = iff->getChunkStream(s), chunkStream) {	\
+										_engineData.setVal(k, new t(chunkStream));				\
+										delete chunkStream;										\
+									}															\
+									delete iff;
 
 	LOAD_BOOT_L(ImageChunk, "OB0")
 	LOAD_BOOT_L(ImageChunk, "FR0")
@@ -496,7 +528,7 @@ void NancyEngine::bootGameEngine() {
 
 	// Nancy 12+
 	// HINT chunk has been removed (the hint system and its action record were dropped in Nancy12)
-	LOAD_BOOT(EVNT)	// Named-event table (empty in Nancy 12)
+	// EVNT chunk added, which contains event flag names (loaded below)
 	LOAD_BOOT(UIRC)	// UI overlay element table
 
 	// Nancy 13+
@@ -535,32 +567,15 @@ void NancyEngine::bootGameEngine() {
 
 	delete iff;
 
+	if (getGameType() >= kGameTypeNancy12) {
+		LOAD_CHUNK("FLAGS", EVNT, "EVNT", "EVNT")
+	}
+
 	// Load convo texts and autotext
 	auto *bsum = GetEngineData(BSUM);
 	if (bsum && !bsum->conversationTextsFilename.empty() && !bsum->autotextFilename.empty()) {
-		iff = _resource->loadIFF(bsum->conversationTextsFilename);
-		if (!iff) {
-			error("Could not load CONVO IFF");
-		}
-
-		if (chunkStream = iff->getChunkStream("CVTX"), chunkStream) {
-			_engineData.setVal("CONVO", new CVTX(chunkStream));
-			delete chunkStream;
-		}
-
-		delete iff;
-
-		iff = _resource->loadIFF(bsum->autotextFilename);
-		if (!iff) {
-			error("Could not load AUTOTEXT IFF");
-		}
-
-		if (chunkStream = iff->getChunkStream("CVTX"), chunkStream) {
-			_engineData.setVal("AUTOTEXT", new CVTX(chunkStream));
-			delete chunkStream;
-		}
-
-		delete iff;
+		LOAD_CHUNK(bsum->conversationTextsFilename.toString().c_str(), CVTX, "CVTX", "CONVO")
+		LOAD_CHUNK(bsum->autotextFilename.toString().c_str(), CVTX, "CVTX", "AUTOTEXT")
 	}
 
 	#undef LOAD_BOOT_L
