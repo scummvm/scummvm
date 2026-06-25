@@ -644,8 +644,8 @@ static void room_303_daemon() {
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
 			kernel_flip_hotspot(125, 0);
-			if (!player_has(5))
-				inter_move_object(5, PLAYER);
+			if (!player_has(pebbles))
+				inter_move_object(pebbles, PLAYER);
 			global[g068] = -1;
 			player.commands_allowed = -1;
 		}

@@ -30,6 +30,7 @@ namespace Forest {
 
 enum {
 	cogs           =  0,
+	pebbles        =  5,
 	twine          =  8,
 	planks         = 11
 };

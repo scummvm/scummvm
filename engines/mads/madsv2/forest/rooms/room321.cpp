@@ -726,7 +726,7 @@ static void room_321_daemon() {
 			room_321_anim2();
 			kernel_flip_hotspot(125, 0);
 			if (!player_has(5))
-				inter_move_object(5, PLAYER);
+				inter_move_object(pebbles, PLAYER);
 			global[g068] = -1;
 			global[player_score] = -1;
 			player.commands_allowed = -1;
