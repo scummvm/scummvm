@@ -620,7 +620,7 @@ static void room_301_daemon() {
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
 			kernel_flip_hotspot(101, 0);
-			inter_move_object(15, 2);
+			inter_move_object(15, PLAYER);
 			global[player_score] = -1;
 			player.commands_allowed = -1;
 		} else if (scratch._a8 == 2) {
@@ -638,7 +638,7 @@ static void room_301_daemon() {
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
 			kernel_flip_hotspot(163, 0);
-			inter_move_object(10, 2);
+			inter_move_object(10, PLAYER);
 			global[player_score] = -1;
 			player.commands_allowed = -1;
 		}

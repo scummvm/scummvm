@@ -188,11 +188,11 @@ static void room_322_anim2() {
 				seq_handle = seq[1];
 				kernel_seq_delete(seq_handle);
 				kernel_synch(KERNEL_SERIES, seq_handle, KERNEL_ANIM, aa[2]);
-				inter_move_object(14, 2);
+				inter_move_object(14, PLAYER);
 			} else if (cur == 22) {
 				seq_handle = seq[0];
 				kernel_seq_delete(seq_handle);
-				inter_move_object(4, 2);
+				inter_move_object(4, PLAYER);
 				kernel_synch(KERNEL_SERIES, seq_handle, KERNEL_ANIM, aa[2]);
 				kernel_flip_hotspot(113, 0);
 			} else if (cur == 28) {
@@ -576,8 +576,8 @@ static void room_322_daemon() {
 			kernel_synch(KERNEL_ANIM, aa[8], KERNEL_NOW, 0);
 		} else {
 			kernel_synch(KERNEL_ANIM, aa[9], KERNEL_NOW, 0);
-			inter_move_object(14, 2);
-			inter_move_object(4, 2);
+			inter_move_object(14, PLAYER);
+			inter_move_object(4, PLAYER);
 		}
 		break;
 	}

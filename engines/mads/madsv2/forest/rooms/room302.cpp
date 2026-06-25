@@ -753,7 +753,7 @@ static void room_302_daemon() {
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
 			kernel_flip_hotspot(137, 0);
-			inter_move_object(1, 2);
+			inter_move_object(1, PLAYER);
 			global[player_score] = -1;
 			player.commands_allowed = -1;
 		}

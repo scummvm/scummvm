@@ -934,7 +934,7 @@ static void room_305_daemon() {
 			global[g133] = 0;
 			kernel_flip_hotspot(145, false);
 			if (!player_has(7))
-				inter_move_object(7, 2);
+				inter_move_object(7, PLAYER);
 			global[g069] = -1;
 			global[player_score] = -1;
 			player.commands_allowed = -1;

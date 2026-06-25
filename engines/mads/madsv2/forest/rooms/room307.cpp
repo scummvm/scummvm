@@ -197,13 +197,13 @@ static void room_307_anim3() {
 			int16 old = seq[1];
 			kernel_seq_delete(seq[1]);
 			kernel_synch(KERNEL_SERIES, old, KERNEL_ANIM, aa[2]);
-			inter_move_object(14, 2);
+			inter_move_object(14, PLAYER);
 			break;
 		}
 		case 22: {
 			int16 old = seq[0];
 			kernel_seq_delete(seq[0]);
-			inter_move_object(4, 2);
+			inter_move_object(4, PLAYER);
 			kernel_synch(KERNEL_SERIES, old, KERNEL_ANIM, aa[2]);
 			kernel_flip_hotspot(113, 0);
 			break;
@@ -783,8 +783,8 @@ static void room_307_daemon() {
 			kernel_synch(KERNEL_ANIM, aa[8], KERNEL_PLAYER, 0);
 		} else {
 			kernel_synch(KERNEL_ANIM, aa[9], KERNEL_NOW, 0);
-			inter_move_object(14, 2);
-			inter_move_object(4, 2);
+			inter_move_object(14, PLAYER);
+			inter_move_object(4, PLAYER);
 		}
 		break;
 	}

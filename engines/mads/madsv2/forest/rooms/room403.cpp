@@ -621,7 +621,7 @@ static void room_403_daemon() {
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
 			kernel_flip_hotspot(166, 0);
-			inter_move_object(13, 2);
+			inter_move_object(13, PLAYER);
 			display_interface();
 			player.commands_allowed = -1;
 			if (config_file.forest1 != 0)

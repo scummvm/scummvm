@@ -710,7 +710,7 @@ static void room_321_daemon() {
 			global[g133] = 0;
 			room_321_anim2();
 			kernel_flip_hotspot(132, 0);
-			inter_move_object(6, 2);
+			inter_move_object(6, PLAYER);
 			global[player_score] = -1;
 			player.commands_allowed = -1;
 		} else if (scratch._a6 == 2) {
@@ -726,7 +726,7 @@ static void room_321_daemon() {
 			room_321_anim2();
 			kernel_flip_hotspot(125, 0);
 			if (!player_has(5))
-				inter_move_object(5, 2);
+				inter_move_object(5, PLAYER);
 			global[g068] = -1;
 			global[player_score] = -1;
 			player.commands_allowed = -1;

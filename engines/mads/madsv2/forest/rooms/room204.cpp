@@ -520,7 +520,7 @@ trigger_103:
 	kernel_synch(3, scratch._9a, 4, 0);
 	global[g133] = 0;
 	kernel_flip_hotspot(158, -1);
-	inter_move_object(9, 2);
+	inter_move_object(9, PLAYER);
 	global[player_score] = -1;
 	player.commands_allowed = -1;
 

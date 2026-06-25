@@ -710,7 +710,7 @@ static void room_404_daemon() {
 			global[g081] = -1;
 			kernel_flip_hotspot(107, 0);
 			object_set_quality(13, 0, 0L);
-			inter_move_object(13, 1);
+			inter_move_object(13, NOWHERE);
 			display_interface();
 			if (global[walker_converse_state]) {
 				global[walker_converse_state] = 0;

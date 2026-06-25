@@ -634,7 +634,7 @@ static void room_106_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
 		kernel_flip_hotspot(125, 0);
-		inter_move_object(5, 2);
+		inter_move_object(5, PLAYER);
 		player.commands_allowed = -1;
 		break;
 	case 108:

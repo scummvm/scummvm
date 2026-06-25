@@ -382,7 +382,7 @@ exit_inventory:
 		close_journal(2);
 		knuthole_flag = true;
 		inter_spin_object(object_id);
-		inter_move_object(object_id, 2);
+		inter_move_object(object_id, PLAYER);
 		global[player_selected_object] = object_id;
 
 		player_verb        = -1;
