@@ -240,9 +240,10 @@ void blitMacMaskedToScreen(const Picture &pic, int x, int y) {
 void EEMEngine::doChoosePartner() {
 	_partner = kPartnerJake;
 
+	const uint chooseBgId = kPicChooseBackground;
 	Picture background;
-	if (!_picsArchive.getPicture(kPicChooseBackground, background)) {
-		warning("ChoosePartner background (%u) load failed", kPicChooseBackground);
+	if (!_picsArchive.getPicture(chooseBgId, background)) {
+		warning("ChoosePartner background (%u) load failed", chooseBgId);
 		return;
 	}
 
@@ -272,7 +273,7 @@ void EEMEngine::doChoosePartner() {
 								 : (isLondon() ? kLondonJennyY : kJennyY);
 	const uint8 (*jakeSeqs)[9] = isLondon() ? kLondonJakeSeqs : kJakeSeqs;
 	const uint8 (*jennySeqs)[9] = isLondon() ? kLondonJennySeqs : kJennySeqs;
-	int curMouseX = 0xa0;
+	int curMouseX = macLondon ? unscaleX(0xa0) : 0xa0;
 	uint level = happinessLevel(curMouseX, isLondon());
 	uint seqIdx = 0;
 	auto blitPartnerFrame = [&](const Picture &pic, int x, int y) {
@@ -375,11 +376,20 @@ void EEMEngine::doChoosePartner() {
 // EEM2 case-intro animation — `_DoInitClues` @ 1abf:03b3.
 void EEMEngine::playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
 										bool haveBriefingBg) {
-	const uint introAni = (_partner == kPartnerJake) ? 0x18 : 0x71;
-	const int kAnchorX = 0xd2, kAnchorY = 0x3f;  // _NewAnimation(0xd2, 0x3f)
+	const bool mac = isMacintosh();
+	const uint introAni = mac ? 0x17
+							  : (_partner == kPartnerJake ? 0x18 : 0x71);
+	const uint introScript = mac ? (_partner == kPartnerJake ? 0x18 : 0x1c)
+								 : 0x18;
+	const int kAnchorX = mac ? 0x14c : 0xd2;
+	const int kAnchorY = mac ? (_partner == kPartnerJake ? 0x78 : 0x76)
+							 : 0x3f;
 	Animation anim;
 	const bool haveAnim =
 		_aniArchive.loadAnimation(introAni, anim) && !anim.empty();
+	MacSpritePaletteMap macPaletteMap = {0x00, 0xFF};
+	if (mac)
+		macPaletteMap = getMacSpritePaletteMap();
 
 	// `_DoInitClues @ 1abf:03b3` registers a SECOND, fixed briefing character
 	// (Nigel) on the LEFT, gated on caseType (jumptable @ CS:0x720):
@@ -412,14 +422,24 @@ void EEMEngine::playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
 		if (scr) {
 			if (haveAnim) {
 				const uint cell =
-					partnerFrameAtTick(0x18, (uint)anim.size(), frame * 140);
-				blitAnimFrameAnchored(scr, anim[cell], kAnchorX, kAnchorY);
+					partnerFrameAtTick((uint16)introScript,
+									   (uint)anim.size(), frame * 140);
+				if (mac)
+					blitMacAnimFrameAnchored(scr, anim[cell],
+											 kAnchorX, kAnchorY,
+											 macPaletteMap);
+				else
+					blitAnimFrameAnchored(scr, anim[cell], kAnchorX, kAnchorY);
 			}
 			if (haveNpc) {
 				// NPC frame script = 0x0e (the `_NewAnimation` animId arg).
 				const uint ncell =
 					partnerFrameAtTick(0x0e, (uint)npc.size(), frame * 140);
-				blitAnimFrameAnchored(scr, npc[ncell], npcX, npcY);
+				if (mac)
+					blitMacAnimFrameAnchored(scr, npc[ncell], npcX, npcY,
+											 macPaletteMap);
+				else
+					blitAnimFrameAnchored(scr, npc[ncell], npcX, npcY);
 			}
 			g_system->unlockScreen();
 		}
@@ -666,13 +686,14 @@ void EEMEngine::doInitClues() {
 		return;
 
 	const bool floppy = isFloppy();
-	const bool compactInit = floppy || isMacintosh();
+	const bool compactMac = isMacintosh() && _mystery.usesCompactMacData();
+	const bool compactInit = floppy || compactMac;
 	const uint16 caseType = compactInit ? (uint16)ib[0] : READ_LE_UINT16(ib);
 
 	if (!floppy) {
-		const uint16 startSite = isMacintosh() ? (uint16)ib[1]
-											   : READ_LE_UINT16(ib + 2);
-		if (isMacintosh()) {
+		const uint16 startSite = compactMac ? (uint16)ib[1]
+											: READ_LE_UINT16(ib + 2);
+		if (compactMac) {
 			const uint sites = _mystery.numSites();
 			for (uint s = 0; s < sites && s < Mystery::kVisitedSiteCap; s++)
 				_mystery._onSites[s] = 1;
@@ -716,7 +737,7 @@ void EEMEngine::doInitClues() {
 	// Briefing dialogue. CD: clue block @ ib+4 (after caseType,startSite).
 	// Floppy: dialog records dispatched via FUN_22dc_05c8 @ 22dc:05c8
 	// (record size = 11 + textCount bytes).
-	if (floppy || isMacintosh()) {
+	if (floppy || compactMac) {
 		displayFloppyBriefing(ib);
 	} else {
 		const byte *briefingClues = ib + 4;
@@ -887,9 +908,18 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		return;
 
 	const uint stride = isLondon() ? 0x54 : 62;
+	const bool mac = isMacintosh();
+	const int sw = screenWidth();
+	const int sh = screenHeight();
+	MacSpritePaletteMap macPaletteMap = {0x00, 0xFF};
+	if (mac)
+		macPaletteMap = getMacSpritePaletteMap();
+	const EEMFont &dialogFont =
+		(mac && _dialogFont.isLoaded()) ? _dialogFont : _font;
+	const byte textColor = mac ? macPaletteMap.black : 0;
 
 	// Snapshot BG so per-entry character pics don't stack.
-	Graphics::ManagedSurface bg(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface bg(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
 	bg.clear();
 	{
@@ -911,7 +941,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 	//   +0x30..+0x39: 5 notebook entries (-1 terminated)
 	//   +0x3a..+0x3b: KD-anim number (-1 = none)
 	for (uint i = 0; i < number && !shouldQuit(); i++) {
-		g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, kScreenWidth, kScreenHeight);
+		g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, sw, sh);
 		const byte *c = clueBlock + 4 + i * stride;
 
 		if (isLondon() && _music && _musicOn) {
@@ -932,10 +962,10 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 
 		// Animate the gesture over the partner-less scene so it doesn't ghost
 		// the static partner.
-		if (haveKd && _partnerEraseBg.w == kScreenWidth &&
-			_partnerEraseBg.h == kScreenHeight) {
+		if (haveKd && _partnerEraseBg.w == sw &&
+			_partnerEraseBg.h == sh) {
 			g_system->copyRectToScreen(_partnerEraseBg.getPixels(),
-				_partnerEraseBg.pitch, 0, 0, kScreenWidth, kScreenHeight);
+				_partnerEraseBg.pitch, 0, 0, sw, sh);
 		}
 
 		const bool useP1 = (_partner == kPartnerJenny) &&
@@ -962,12 +992,15 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		if (charPicId != 0 && charPicId != 0xFFFF) {
 			Picture charPic;
 			if (_picsArchive.getPicture(charPicId, charPic) &&
-				charX < kScreenWidth && charY < kScreenHeight) {
+				charX < sw && charY < sh) {
 				// Draw over the per-entry clean BG (restored at the top of the
 				// loop), NOT into the persistent `bg` snapshot — baking it in
 				// makes successive speaker portraits stack instead of refresh
 				// (duplicate NPC portraits + labels).
-				blitMaskedToScreen(charPic, charX, charY);
+				if (mac)
+					blitMacMaskedToScreen(charPic, charX, charY);
+				else
+					blitMaskedToScreen(charPic, charX, charY);
 			}
 		}
 
@@ -982,30 +1015,35 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			_balloonArchive.size() > balloonId &&
 			_balloonArchive.loadEntry(balloonId, balloon);
 
-		if (_font.isLoaded() && !text.empty()) {
+		if (dialogFont.isLoaded() && !text.empty()) {
 			Graphics::Surface *screen = g_system->lockScreen();
 			if (!screen)
 				break;
-			Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+			Graphics::ManagedSurface scratch(sw, sh,
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.simpleBlitFrom(*screen);
 			g_system->unlockScreen();
 
 			int textX = bubX;
 			int textY = bubY;
-			int textW = MIN<int>(kScreenWidth - bubX, 200);
+			int textW = MIN<int>(sw - bubX, 200);
 			int copyY = bubY;
-			int copyH = _font.getFontHeight() * 4 + 8;
+			int copyH = dialogFont.getFontHeight() * 4 + 8;
 
 			if (haveBalloon) {
-				const int bw = MIN<int>(balloon.surface.w, kScreenWidth - bubX);
-				const int bh = MIN<int>(balloon.surface.h, kScreenHeight - bubY);
+				const int bw = MIN<int>(balloon.surface.w, sw - bubX);
+				const int bh = MIN<int>(balloon.surface.h, sh - bubY);
 				const byte transp = (byte)(balloon.flags >> 8);
 				const bool flipBalloon = (fittedBubNum & 0x80) != 0;
 				if (bw > 0 && bh > 0) {
-					scratch.transBlitFrom(balloon.surface,
-										  Common::Point(bubX, bubY),
-										  transp, flipBalloon);
+					if (mac)
+						blitMacMaskedSurface(scratch.surfacePtr(), balloon,
+											 bubX, bubY, flipBalloon,
+											 macPaletteMap);
+					else
+						scratch.transBlitFrom(balloon.surface,
+											  Common::Point(bubX, bubY),
+											  transp, flipBalloon);
 				}
 				uint16 insetX = 5;
 				uint16 insetY = 4;
@@ -1016,21 +1054,25 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 				textW = insetW;
 				copyH = bh;
 			} else {
-				const Common::Rect band(0, bubY, kScreenWidth,
-					MIN<int>(bubY + copyH, kScreenHeight));
+				const Common::Rect band(0, bubY, sw,
+					MIN<int>(bubY + copyH, sh));
 				scratch.fillRect(band, 0);
 				copyY = bubY;
 			}
 
-			_font.drawWordWrapped(&scratch, textX, textY,
-				MAX<int>(8, textW), text, 0);
+			if (mac && textColor != 0xFF) {
+				dialogFont.drawWordWrapped(&scratch, textX, textY,
+					MAX<int>(8, textW), text, 0xFF);
+			}
+			dialogFont.drawWordWrapped(&scratch, textX, textY,
+				MAX<int>(8, textW), text, textColor);
 
-			copyY = CLIP<int>(copyY, 0, kScreenHeight - 1);
-			const int copyRows = CLIP<int>(MIN<int>(copyH, kScreenHeight - copyY),
-										   0, kScreenHeight - copyY);
+			copyY = CLIP<int>(copyY, 0, sh - 1);
+			const int copyRows = CLIP<int>(MIN<int>(copyH, sh - copyY),
+										   0, sh - copyY);
 			if (copyRows > 0) {
 				g_system->copyRectToScreen(scratch.getBasePtr(0, copyY),
-					scratch.pitch, 0, copyY, kScreenWidth, copyRows);
+					scratch.pitch, 0, copyY, sw, copyRows);
 				// Gesture entry: let the wait loop present, so the partner-less
 				// base isn't flashed before the gesture's first frame.
 				if (!haveKd)
@@ -1055,7 +1097,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			setInteractiveMouseCursor(false);
 			bool advance = false;
 			bool skipAll = false;
-			Graphics::ManagedSurface kdBase(kScreenWidth, kScreenHeight,
+			Graphics::ManagedSurface kdBase(sw, sh,
 				Graphics::PixelFormat::createFormatCLUT8());
 			bool haveKdBase = false;
 			uint kdLastFrame = (uint)-1;
@@ -1128,13 +1170,17 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 							f < idleAnim.size()) {
 							kdInIdle = true;
 							kdLastIdleFrame = f;
-							Graphics::ManagedSurface comp(kScreenWidth, kScreenHeight,
+							Graphics::ManagedSurface comp(sw, sh,
 								Graphics::PixelFormat::createFormatCLUT8());
 							comp.simpleBlitFrom(kdBase);
-							blitAnimFrameAnchored(comp.surfacePtr(),
-								idleAnim[f], idleX, idleY);
+							if (mac)
+								blitMacAnimFrameAnchored(comp.surfacePtr(),
+									idleAnim[f], idleX, idleY, macPaletteMap);
+							else
+								blitAnimFrameAnchored(comp.surfacePtr(),
+									idleAnim[f], idleX, idleY);
 							g_system->copyRectToScreen(comp.getPixels(), comp.pitch,
-								0, 0, kScreenWidth, kScreenHeight);
+								0, 0, sw, sh);
 						}
 					} else {
 						// Gesture one-shot.
@@ -1142,13 +1188,17 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 							(uint)kdAnim.size(), kdElapsed);
 						if (f != kdLastFrame && f < kdAnim.size()) {
 							kdLastFrame = f;
-							Graphics::ManagedSurface comp(kScreenWidth, kScreenHeight,
+							Graphics::ManagedSurface comp(sw, sh,
 								Graphics::PixelFormat::createFormatCLUT8());
 							comp.simpleBlitFrom(kdBase);
-							blitAnimFrameAnchored(comp.surfacePtr(),
-								kdAnim[f], kdPx, kdPy);
+							if (mac)
+								blitMacAnimFrameAnchored(comp.surfacePtr(),
+									kdAnim[f], kdPx, kdPy, macPaletteMap);
+							else
+								blitAnimFrameAnchored(comp.surfacePtr(),
+									kdAnim[f], kdPx, kdPy);
 							g_system->copyRectToScreen(comp.getPixels(), comp.pitch,
-								0, 0, kScreenWidth, kScreenHeight);
+								0, 0, sw, sh);
 						}
 					}
 				}
@@ -1168,7 +1218,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			const uint16 puzzleId = READ_LE_UINT16(c + 0x50);
 			if (puzzleId != 0xFFFF) {
 				g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0,
-										   kScreenWidth, kScreenHeight);
+										   sw, sh);
 				g_system->updateScreen();
 				_mystery._solvedPuzzle = doPuzzle(puzzleId);
 				if (!_mystery._solvedPuzzle)

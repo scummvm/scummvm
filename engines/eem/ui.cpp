@@ -31,6 +31,9 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"
+#include "graphics/paletteman.h"
+
+#include "video/flic_decoder.h"
 
 #include "eem/audio.h"
 #include "eem/detection.h"
@@ -227,11 +230,43 @@ bool loadMacBigMapPixels(Common::Array<byte> &mapPixels,
 	return true;
 }
 
-bool loadLondonApproachData(uint16 approachId, LondonApproachData &out) {
+static bool openNumberedScriptFile(Common::File &f, Common::String &name,
+								   uint num, const char *const *patterns,
+								   uint patternCount) {
+	for (uint i = 0; i < patternCount; i++) {
+		name = Common::String::format(patterns[i], num);
+		if (f.open(Common::Path(name)))
+			return true;
+	}
+	name.clear();
+	return false;
+}
+
+static uint16 readScriptU16(const byte *p, bool bigEndian) {
+	return bigEndian ? READ_BE_UINT16(p) : READ_LE_UINT16(p);
+}
+
+bool loadLondonApproachData(uint16 approachId, LondonApproachData &out,
+							bool macintosh) {
+	static const char *const kDosPatterns[] = {
+		"A%u.BIN"
+	};
+	static const char *const kMacPatterns[] = {
+		"Approaches/a%u.bin",
+		"Approaches/A%u.BIN",
+		"a%u.bin",
+		"A%u.BIN"
+	};
+
 	Common::File f;
-	const Common::String name = Common::String::format("A%u.BIN", approachId);
-	if (!f.open(Common::Path(name))) {
-		warning("London approach: cannot open %s", name.c_str());
+	Common::String name;
+	const bool opened = macintosh
+		? openNumberedScriptFile(f, name, approachId, kMacPatterns,
+								 ARRAYSIZE(kMacPatterns))
+		: openNumberedScriptFile(f, name, approachId, kDosPatterns,
+								 ARRAYSIZE(kDosPatterns));
+	if (!opened) {
+		warning("London approach: cannot open approach %u", approachId);
 		return false;
 	}
 
@@ -248,16 +283,16 @@ bool loadLondonApproachData(uint16 approachId, LondonApproachData &out) {
 		return false;
 	}
 
-	out.videoId = READ_LE_UINT16(data.data() + 0);
-	out.videoX = READ_LE_UINT16(data.data() + 2);
-	out.videoY = READ_LE_UINT16(data.data() + 4);
-	const int16 x1 = (int16)READ_LE_UINT16(data.data() + 6);
-	const int16 y1 = (int16)READ_LE_UINT16(data.data() + 8);
-	const int16 x2 = (int16)READ_LE_UINT16(data.data() + 10);
-	const int16 y2 = (int16)READ_LE_UINT16(data.data() + 12);
+	out.videoId = readScriptU16(data.data() + 0, macintosh);
+	out.videoX = readScriptU16(data.data() + 2, macintosh);
+	out.videoY = readScriptU16(data.data() + 4, macintosh);
+	const int16 x1 = (int16)readScriptU16(data.data() + 6, macintosh);
+	const int16 y1 = (int16)readScriptU16(data.data() + 8, macintosh);
+	const int16 x2 = (int16)readScriptU16(data.data() + 10, macintosh);
+	const int16 y2 = (int16)readScriptU16(data.data() + 12, macintosh);
 	out.textRect = Common::Rect(x1, y1, x2, y2);
 
-	const uint16 pageCount = READ_LE_UINT16(data.data() + 14);
+	const uint16 pageCount = readScriptU16(data.data() + 14, macintosh);
 	out.pages.clear();
 	uint32 pos = 16;
 	// `_DoApproach @ 1717:009b` reads the pages with `_fgets` into 255-byte
@@ -274,9 +309,50 @@ bool loadLondonApproachData(uint16 approachId, LondonApproachData &out) {
 	return out.videoId != 0 && !out.pages.empty();
 }
 
+bool openLondonApproachFlic(uint16 videoId, Video::FlicDecoder &flic,
+							Common::String &name) {
+	static const char *const kPatterns[] = {
+		"VIDEO%02u.FLC",
+		"video%02u.FLC"
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(kPatterns); i++) {
+		name = Common::String::format(kPatterns[i], videoId);
+		if (flic.loadFile(Common::Path(name)))
+			return true;
+	}
+	name.clear();
+	return false;
+}
+
 bool decodeLondonApproachFirstFrame(uint16 videoId,
 									Graphics::ManagedSurface &base,
-									byte *palette) {
+									byte *palette, bool macintosh) {
+	if (macintosh) {
+		Video::FlicDecoder flic;
+		Common::String name;
+		if (!openLondonApproachFlic(videoId, flic, name)) {
+			warning("London approach: cannot open FLC video %u", videoId);
+			return false;
+		}
+
+		flic.start();
+		const Graphics::Surface *frame = flic.decodeNextFrame();
+		if (!frame) {
+			warning("London approach: %s has no first frame", name.c_str());
+			return false;
+		}
+
+		const byte *fpal = flic.getPalette();
+		if (fpal)
+			memcpy(palette, fpal, 768);
+		base.clear();
+		const int w = MIN<int>(frame->w, base.w);
+		const int h = MIN<int>(frame->h, base.h);
+		base.copyRectToSurface(frame->getPixels(), frame->pitch, 0, 0, w, h);
+		return true;
+	}
+
 	const Common::String name = Common::String::format("VIDEO%02u.A", videoId);
 	ANMDecoder anm;
 	if (!anm.open(Common::Path(name))) {
@@ -292,8 +368,8 @@ bool decodeLondonApproachFirstFrame(uint16 videoId,
 	}
 
 	base.clear();
-	const int w = MIN<int>(anm.width(), kScreenWidth);
-	const int h = MIN<int>(anm.height(), kScreenHeight);
+	const int w = MIN<int>(anm.width(), base.w);
+	const int h = MIN<int>(anm.height(), base.h);
 	base.copyRectToSurface(frame, anm.width(), 0, 0, w, h);
 	return true;
 }
@@ -683,7 +759,35 @@ void copyToScreen(Graphics::ManagedSurface &scratch) {
 	g_system->updateScreen();
 }
 
-bool loadMacEndingBlob(uint num, Common::Array<byte> &out) {
+bool loadMacEndingBlob(uint num, Common::Array<byte> &out, bool &looseScript) {
+	static const char *const kLoosePatterns[] = {
+		"Endings/e%u.bin",
+		"Endings/E%u.BIN",
+		"e%u.bin",
+		"E%u.BIN"
+	};
+
+	looseScript = false;
+	Common::File loose;
+	Common::String name;
+	if (openNumberedScriptFile(loose, name, num, kLoosePatterns,
+							   ARRAYSIZE(kLoosePatterns))) {
+		const uint32 size = loose.size();
+		if (size < 12) {
+			warning("doShowEnding: %s too small (%u bytes)",
+					name.c_str(), size);
+			return false;
+		}
+		out.resize(size);
+		if (loose.read(out.data(), size) != size) {
+			warning("doShowEnding: %s short read", name.c_str());
+			out.clear();
+			return false;
+		}
+		looseScript = true;
+		return true;
+	}
+
 	if (num >= kMacMysteryDataEndingCount)
 		return false;
 
@@ -1515,9 +1619,10 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 	Common::Array<byte> buf;
 	uint32 size = 0;
 	const bool macEnding = isMacintosh();
+	bool macLooseEnding = false;
 
 	if (macEnding) {
-		if (!loadMacEndingBlob(num, buf))
+		if (!loadMacEndingBlob(num, buf, macLooseEnding))
 			return 0;
 		size = (uint32)buf.size();
 	} else {
@@ -1560,9 +1665,11 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 	const uint pageOffsetCap =
 		(uint)(sizeof(pageOffsets) / sizeof(pageOffsets[0]));
 	uint validPages = 0;
+	const bool compactEnding = floppyEnding || (macEnding && !macLooseEnding);
+	const bool cdEnding = !compactEnding;
 
-	if (floppyEnding || macEnding) {
-		// Floppy `E<num>.BIN` and Mac `MysteryData[55 + num]` start with:
+	if (compactEnding) {
+		// Floppy `E<num>.BIN` and Mac EEM1 `MysteryData[55 + num]` start with:
 		//   u8 type, 3 bytes of title metadata, char title[], u8 pageCount
 		// followed by pages. Mac stores overlay pic/x words big-endian and
 		// native-coordinate text rects in little-endian order.
@@ -1591,7 +1698,7 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 			cursor++;  // past the null
 		}
 	} else {
-		const uint16 pageCount = READ_LE_UINT16(buf.data());
+		const uint16 pageCount = readScriptU16(buf.data(), macLooseEnding);
 		if (pageCount == 0)
 			return 0;
 		const uint maxPages = MIN<uint>(pageCount, pageOffsetCap);
@@ -1638,7 +1745,7 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.clear();
 
-			if (floppyEnding || macEnding) {
+			if (compactEnding) {
 				Picture bg;
 				if (floppyEnding &&
 					_picsArchive.getPicture(kFloppyEndingBackgroundPic, bg))
@@ -1679,14 +1786,15 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 				raw = (const char *)buf.data() + cursor + 8;
 				if (macEnding && (byte)*raw == 0xd9)
 					raw++;
-			} else {
+			} else if (cdEnding) {
 				if (off + 10 >= size)
 					break;
-				const uint16 picNum = READ_LE_UINT16(buf.data() + off);
-				x1 = READ_LE_UINT16(buf.data() + off + 2);
-				y1 = READ_LE_UINT16(buf.data() + off + 4);
-				x2 = READ_LE_UINT16(buf.data() + off + 6);
-				(void)READ_LE_UINT16(buf.data() + off + 8);  // y2 (unused — WordWrap2 takes width only)
+				const uint16 picNum =
+					readScriptU16(buf.data() + off, macLooseEnding);
+				x1 = readScriptU16(buf.data() + off + 2, macLooseEnding);
+				y1 = readScriptU16(buf.data() + off + 4, macLooseEnding);
+				x2 = readScriptU16(buf.data() + off + 6, macLooseEnding);
+				(void)readScriptU16(buf.data() + off + 8, macLooseEnding);  // y2 (unused — WordWrap2 takes width only)
 
 				Picture bg;
 				if (_picsArchive.getPicture(picNum, bg))
@@ -2990,7 +3098,7 @@ Common::String EEMEngine::notebookNoteText(uint clueId, const byte *ni,
 		return parseString(Common::String(p, len),
 						   _playerName, _partner);
 	}
-	if (isMacintosh() && bufBase) {
+	if (isMacintosh() && !isLondon() && bufBase) {
 		const uint16 textOff = READ_LE_UINT16(ni + clueId * 8);
 		if (textOff == 0 || textOff >= mysSz)
 			return Common::String();
@@ -3291,7 +3399,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 						  const Picture &galBg, bool haveBg) {
 	const bool floppyMI = isFloppy();
 	const bool mac = isMacintosh();
-	const bool compactMI = floppyMI || mac;
+	const bool compactMI = floppyMI || _mystery.usesCompactMacData();
 	const byte *suspect = compactMI
 							  ? _mystery.floppySuspectEntry(suspectIdx)
 							  : gd + suspectIdx * 0x46;
@@ -3573,7 +3681,7 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 				   g_system->getMillis(), mac);
 
 	const bool floppy = isFloppy();
-	const bool compactGallery = floppy || isMacintosh();
+	const bool compactGallery = floppy || _mystery.usesCompactMacData();
 	const GallerySlot * const slots =
 		mac ? kMacGallerySlots : (floppy ? kFloppyGallerySlots : kGallerySlots);
 	for (uint i = 0; i < numSuspects && i < Mystery::kGalleryCap; i++) {
@@ -3933,7 +4041,9 @@ void EEMEngine::doBigMap() {
 							if (!entry)
 								continue;
 							BigMapEntryInfo info;
-							if (!readBigMapEntryInfo(entry, fmap, mac, info))
+							if (!readBigMapEntryInfo(entry, fmap,
+													  mac && _mystery.usesCompactMacData(),
+													  info))
 								continue;
 							Picture button;
 							int bw = 16;
@@ -3997,14 +4107,21 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 		return false;
 
 	LondonApproachData data;
-	if (!loadLondonApproachData(approachId, data))
+	const bool mac = isMacintosh();
+	if (!loadLondonApproachData(approachId, data, mac))
 		return false;
 
-	Graphics::ManagedSurface base(kScreenWidth, kScreenHeight,
+	const int sw = screenWidth();
+	const int sh = screenHeight();
+	MacSpritePaletteMap macPaletteMap = {0x00, 0xFF};
+	if (mac)
+		macPaletteMap = getMacSpritePaletteMap();
+
+	Graphics::ManagedSurface base(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
 	byte palette[768] = {};
 	const bool haveVideo =
-		decodeLondonApproachFirstFrame(data.videoId, base, palette);
+		decodeLondonApproachFirstFrame(data.videoId, base, palette, mac);
 	if (!haveVideo)
 		base.clear();
 
@@ -4014,21 +4131,31 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 		haveButtons[i] = _picsArchive.getPicture(
 			kLondonApproachButtons[i].picId, buttonPics[i]);
 
+	auto buttonRect = [&](uint idx) {
+		const Common::Rect r = kLondonApproachButtons[idx].rect();
+		return mac ? scaleRect(r) : r;
+	};
+	auto buttonPoint = [&](uint idx) {
+		const LondonApproachButton &b = kLondonApproachButtons[idx];
+		return Common::Point(mac ? scaleX(b.x) : b.x,
+							 mac ? scaleY(b.y) : b.y);
+	};
+
 	auto drawButtonFallback = [&](Graphics::ManagedSurface &dst, uint idx) {
 		static const char *const kLabels[4] = { "OK", "PLAY", ">", "<" };
-		const Common::Rect r = kLondonApproachButtons[idx].rect();
+		const Common::Rect r = buttonRect(idx);
 		dst.fillRect(r, 0);
 		_font.drawString(&dst, kLabels[idx], r.left + 1, r.top + 5,
 						 r.width(), 0x0f);
 	};
 
 	auto drawScreen = [&](uint page) {
-		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+		Graphics::ManagedSurface scratch(sw, sh,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.simpleBlitFrom(base);
 
 		const Common::Rect textRect =
-			data.textRect.findIntersectingRect(Common::Rect(kScreenWidth, kScreenHeight));
+			data.textRect.findIntersectingRect(Common::Rect(sw, sh));
 		if (!textRect.isEmpty()) {
 			if (page < data.pages.size()) {
 				Common::Array<Common::String> wrapped;
@@ -4039,28 +4166,88 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 				for (uint i = 0; i < wrapped.size() && (int)i < maxLines; i++) {
 					_font.drawString(&scratch, wrapped[i], textRect.left,
 									 textRect.top + (int)i * lineH,
-									 textRect.width(), 1);
+									 textRect.width(),
+									 mac ? macPaletteMap.black : 1);
 				}
 			}
 		}
 
 		for (uint i = 0; i < ARRAYSIZE(kLondonApproachButtons); i++) {
-			const LondonApproachButton &b = kLondonApproachButtons[i];
 			if (haveButtons[i]) {
-				scratch.transBlitFrom(buttonPics[i].surface,
-									  Common::Point(b.x, b.y),
-									  (uint32)(byte)(buttonPics[i].flags >> 8));
+				const Common::Point p = buttonPoint(i);
+				if (mac)
+					blitMacMaskedSurface(scratch.surfacePtr(),
+										 buttonPics[i], p.x, p.y, false,
+										 macPaletteMap);
+				else
+					scratch.transBlitFrom(buttonPics[i].surface, p,
+										  (uint32)(byte)(buttonPics[i].flags >> 8));
 			} else {
 				drawButtonFallback(scratch, i);
 			}
 		}
 
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, kScreenWidth, kScreenHeight);
+								   0, 0, sw, sh);
 		g_system->updateScreen();
 	};
 
 	auto playVideo = [&]() {
+		if (mac) {
+			Video::FlicDecoder flic;
+			Common::String name;
+			if (!openLondonApproachFlic(data.videoId, flic, name)) {
+				warning("London approach: cannot open FLC video %u",
+						data.videoId);
+				return;
+			}
+
+			flic.start();
+			(void)flic.decodeNextFrame(); // first frame is already the background
+			const int videoBandH = scaleY(0x82);
+			while (!shouldQuit() && !flic.endOfVideo()) {
+				const Graphics::Surface *frame = flic.decodeNextFrame();
+				if (!frame)
+					break;
+				const int copyW = MIN<int>(frame->w - (int)data.videoX,
+										   sw - (int)data.videoX);
+				const int copyH = MIN<int>(videoBandH,
+					MIN<int>(frame->h - (int)data.videoY,
+							 sh - (int)data.videoY));
+				if (copyW <= 0 || copyH <= 0)
+					break;
+				g_system->copyRectToScreen(
+					(const byte *)frame->getBasePtr(data.videoX, data.videoY),
+					frame->pitch, data.videoX, data.videoY, copyW, copyH);
+				if (flic.hasDirtyPalette()) {
+					const byte *fpal = flic.getPalette();
+					if (fpal)
+						g_system->getPaletteManager()->setPalette(fpal, 0, 256);
+				}
+				g_system->updateScreen();
+
+				const uint32 start = g_system->getMillis();
+				bool skip = false;
+				while (g_system->getMillis() - start < 120 && !skip) {
+					Common::Event ev;
+					while (g_system->getEventManager()->pollEvent(ev)) {
+						if (ev.type == Common::EVENT_QUIT ||
+							ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+							return;
+						if (ev.type == Common::EVENT_LBUTTONDOWN ||
+							ev.type == Common::EVENT_KEYDOWN) {
+							skip = true;
+							break;
+						}
+					}
+					g_system->delayMillis(5);
+				}
+				if (skip)
+					break;
+			}
+			return;
+		}
+
 		const Common::String name =
 			Common::String::format("VIDEO%02u.A", data.videoId);
 		ANMDecoder anm;
@@ -4072,9 +4259,9 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 		// Frame 0 is already the static background. Replay frames 1..end
 		// into the upper video area, leaving text/buttons untouched.
 		(void)anm.nextFrame();
-		const int copyW = MIN<int>(anm.width(), kScreenWidth - (int)data.videoX);
+		const int copyW = MIN<int>(anm.width(), sw - (int)data.videoX);
 		const int copyH = MIN<int>(0x82, MIN<int>(anm.height(),
-			kScreenHeight - (int)data.videoY));
+			sh - (int)data.videoY));
 		if (copyW <= 0 || copyH <= 0)
 			return;
 
@@ -4134,8 +4321,7 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 			if (ev.type == Common::EVENT_MOUSEMOVE) {
 				bool overButton = false;
 				for (uint i = 0; i < ARRAYSIZE(kLondonApproachButtons); i++) {
-					if (kLondonApproachButtons[i].rect().contains(ev.mouse.x,
-																 ev.mouse.y)) {
+					if (buttonRect(i).contains(ev.mouse.x, ev.mouse.y)) {
 						overButton = true;
 						break;
 					}
@@ -4167,23 +4353,19 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				if (kLondonApproachButtons[0].rect().contains(ev.mouse.x,
-															 ev.mouse.y)) {
+				if (buttonRect(0).contains(ev.mouse.x, ev.mouse.y)) {
 					done = true;
 					break;
 				}
-				if (kLondonApproachButtons[1].rect().contains(ev.mouse.x,
-															 ev.mouse.y)) {
+				if (buttonRect(1).contains(ev.mouse.x, ev.mouse.y)) {
 					playVideo();
 					drawScreen(page);
-				} else if (kLondonApproachButtons[2].rect().contains(ev.mouse.x,
-																	ev.mouse.y)) {
+				} else if (buttonRect(2).contains(ev.mouse.x, ev.mouse.y)) {
 					if (page + 1 < data.pages.size()) {
 						page++;
 						drawScreen(page);
 					}
-				} else if (kLondonApproachButtons[3].rect().contains(ev.mouse.x,
-																	ev.mouse.y)) {
+				} else if (buttonRect(3).contains(ev.mouse.x, ev.mouse.y)) {
 					if (page > 0) {
 						page--;
 						drawScreen(page);
@@ -4244,7 +4426,8 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 
 		const bool floppy  = _mystery.isLoaded() && isFloppy();
 		BigMapEntryInfo info;
-		if (!readBigMapEntryInfo(entry, floppy, mac, info))
+		if (!readBigMapEntryInfo(entry, floppy,
+								 mac && _mystery.usesCompactMacData(), info))
 			continue;
 		const bool isDone = (i < Mystery::kVisitedSiteCap)
 							 && _mystery._visitedSite[i];
@@ -4332,7 +4515,8 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 		if (!entry)
 			continue;
 		BigMapEntryInfo info;
-		if (!readBigMapEntryInfo(entry, floppyMap, mac, info))
+		if (!readBigMapEntryInfo(entry, floppyMap,
+								 mac && _mystery.usesCompactMacData(), info))
 			continue;
 		Picture button;
 		if (!_buttonArchive.loadEntry(info.buttonId, button))
@@ -5099,7 +5283,7 @@ void EEMEngine::doAccuse() {
 		Picture alibiBg;
 		const bool haveAlibiBg = _picsArchive.getPicture(0x3e, alibiBg);
 		Picture suspect;
-		const byte *pickedSuspect = isMacintosh()
+		const byte *pickedSuspect = _mystery.usesCompactMacData()
 			? _mystery.floppySuspectEntry((uint)picked)
 			: (gd ? gd + (uint)picked * 0x46 : nullptr);
 		const uint16 picId = pickedSuspect ? READ_LE_UINT16(pickedSuspect) : 0;
@@ -5300,7 +5484,7 @@ void EEMEngine::doAccuse() {
 			_music->playMus(5, /* loop= */ false);
 
 		const byte *solved = _mystery.solvedClueBlock();
-		if (isMacintosh() && solved) {
+		if (isMacintosh() && _mystery.usesCompactMacData() && solved) {
 			const byte *bufBase = _mystery.blobAt(0);
 			const byte *end = bufBase ? bufBase + _mystery.dataSize()
 									  : nullptr;
@@ -5575,6 +5759,7 @@ void EEMEngine::accuseDrawGallery(int highlighted,
 	blitPdaPartner(scratch, _aniArchive, _partner, kPdaGalleryPartner,
 				   g_system->getMillis());
 
+	const byte *gd = _mystery.galleryData();
 	rects.resize(num);
 	suspects.resize(num);
 	for (uint i = 0; i < num; i++) {
@@ -5585,7 +5770,9 @@ void EEMEngine::accuseDrawGallery(int highlighted,
 			continue;
 		if (_mystery._inGallery[phys] == 0)
 			continue;
-		const byte *e = _mystery.floppySuspectEntry(i);
+		const byte *e = _mystery.usesCompactMacData()
+			? _mystery.floppySuspectEntry(i)
+			: (gd ? gd + i * 0x46 : nullptr);
 		if (!e)
 			continue;
 		const uint16 picId = READ_LE_UINT16(e + 0);
@@ -5741,6 +5928,7 @@ void EEMEngine::doAccuseFloppy() {
 	if (picked < 0)
 		return;
 
+	const byte *gd = _mystery.galleryData();
 	const bool guilty = _mystery.isGuilty((uint)picked);
 
 	if (guilty) {
@@ -5838,7 +6026,9 @@ void EEMEngine::doAccuseFloppy() {
 		return;
 	}
 
-	const byte *susp = _mystery.floppySuspectEntry((uint)picked);
+	const byte *susp = _mystery.usesCompactMacData()
+		? _mystery.floppySuspectEntry((uint)picked)
+		: (gd ? gd + (uint)picked * 0x46 : nullptr);
 	uint16 picId = 0;
 	uint16 alibiOff = 0xFFFF;
 	if (susp) {
@@ -5979,7 +6169,7 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 			continue;
 		const GallerySlot &s = slots[phys];
 
-		const byte *entry = isMacintosh()
+		const byte *entry = _mystery.usesCompactMacData()
 			? _mystery.floppySuspectEntry(i)
 			: gd + i * 0x46;
 		if (!entry)

@@ -81,6 +81,40 @@ static bool loadMacMysteryBlob(uint num, Common::Array<byte> &out) {
 	return true;
 }
 
+static bool loadLooseMacMysteryBlob(uint num, Common::Array<byte> &out,
+									Common::String &fname) {
+	static const char *const kPatterns[] = {
+		"m%u.bin",
+		"M%u.BIN"
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(kPatterns); i++) {
+		Common::String candidate = Common::String::format(kPatterns[i], num);
+		Common::File f;
+		if (!f.open(Common::Path(candidate)))
+			continue;
+
+		const int32 size = f.size();
+		if (size <= 20) {
+			warning("Mystery::load: %s too small (%d bytes)",
+					candidate.c_str(), size);
+			return false;
+		}
+
+		out.resize((uint)size);
+		if (f.read(out.data(), (uint32)size) != (uint32)size) {
+			warning("Mystery::load: short read on %s", candidate.c_str());
+			out.clear();
+			return false;
+		}
+
+		fname = candidate;
+		return true;
+	}
+
+	return false;
+}
+
 static uint16 readBE16(const Common::Array<byte> &data, uint offset) {
 	if (offset + 2 > data.size())
 		return 0;
@@ -195,6 +229,27 @@ static void normalizeMacMystery(Common::Array<byte> &data) {
 	// as big-endian for Mac.
 }
 
+static void normalizeMacLondonMystery(Common::Array<byte> &data) {
+	if (data.size() <= 0x3e)
+		return;
+
+	uint16 section[10];
+	for (uint i = 0; i < ARRAYSIZE(section); i++)
+		section[i] = readBE16(data, i * 2);
+
+	// Loose EEM2 Mac scripts use the DOS London section/count header with
+	// big-endian words. The structured regions before the text block are
+	// CD-style clue/map/site records; strings at section[4] stay byte-exact.
+	swapU16Range(data, 0, section[0]);
+	swapU16Range(data, section[0], section[4]);
+
+	swapU16Range(data, section[5], section[6]); // 2-byte London NoteIndex
+	swapU16Range(data, section[6], section[7]); // CD-style GalleryData
+	swapU16Range(data, section[7], section[8]); // KDTextIndex
+	swapU16Range(data, section[8], section[9]); // CD-style solved clue block
+	swapU16Range(data, section[9], data.size()); // Hint text index
+}
+
 uint16 Mystery::readU16(uint offset) const {
 	if (offset + 2 > _data.size())
 		return 0;
@@ -211,6 +266,7 @@ void Mystery::clear() {
 	_numSuspects = _numCONSITEs = _numCOFFSITEs = 0;
 	_isFloppy = false;
 	_isMacintosh = false;
+	_isMacintoshLooseScripts = false;
 	_floppySuspectsOff = _floppyHintBlockOff = _floppyNoteIndexOff = 0;
 	_floppyGalleryOff = _floppyTextOff = _floppyKDTextOff = 0;
 	_floppySolvedOff = 0;
@@ -239,12 +295,18 @@ void Mystery::clear() {
 bool Mystery::load(uint num, Common::RandomSource *rng, bool macintosh) {
 	Common::String fname = Common::String::format("M%u.BIN", num);
 	Common::Array<byte> staging;
+	bool macLooseScripts = false;
 
 	if (macintosh) {
-		if (!loadMacMysteryBlob(num, staging))
-			return false;
-		normalizeMacMystery(staging);
-		fname = Common::String::format("MysteryData[%u]", num);
+		if (loadLooseMacMysteryBlob(num, staging, fname)) {
+			macLooseScripts = true;
+			normalizeMacLondonMystery(staging);
+		} else {
+			if (!loadMacMysteryBlob(num, staging))
+				return false;
+			normalizeMacMystery(staging);
+			fname = Common::String::format("MysteryData[%u]", num);
+		}
 	} else {
 		Common::File f;
 		if (!f.open(Common::Path(fname))) {
@@ -270,24 +332,52 @@ bool Mystery::load(uint num, Common::RandomSource *rng, bool macintosh) {
 
 	_data = staging;
 	_number = num;
+	_isFloppy = false;
+	_isMacintosh = false;
+	_isMacintoshLooseScripts = false;
 
 	if (macintosh) {
 		_isMacintosh = true;
+		_isMacintoshLooseScripts = macLooseScripts;
 
-		_initOffset      = readU16(0 * 2);
-		_mapOffset       = readU16(2 * 2);
-		_siteIndexOffset = readU16(3 * 2);
-		_noteOffset      = readU16(4 * 2);
-		_galleryOffset   = readU16(5 * 2);
-		_textOffset      = readU16(7 * 2);
-		_kdTextOffset    = readU16(8 * 2);
-		_solvedOffset    = readU16(9 * 2);
-		_hintOffset      = _kdTextOffset;
+		if (_isMacintoshLooseScripts) {
+			_initOffset      = readU16(0  * 2);
+			_mapOffset       = readU16(2  * 2);
+			_siteIndexOffset = readU16(3  * 2);
+			_textOffset      = readU16(4  * 2);
+			_noteOffset      = readU16(5  * 2);
+			_galleryOffset   = readU16(6  * 2);
+			_kdTextOffset    = readU16(7  * 2);
+			_solvedOffset    = readU16(8  * 2);
+			_hintOffset      = readU16(9  * 2);
 
-		_numSites = (_mapOffset < _data.size()) ? _data[_mapOffset] : 0;
-		_numSuspects = (_galleryOffset < _data.size()) ? _data[_galleryOffset] : 0;
-		_numCONSITEs = 0;
-		_numCOFFSITEs = 0;
+			_numSites    = readU16(10 * 2);
+			_numSuspects = (uint8)readU16(13 * 2);
+			_numCONSITEs = (uint8)readU16(14 * 2);
+			_numCOFFSITEs = (uint8)readU16(15 * 2);
+
+			for (uint i = 0; i < kChainLen; i++) {
+				_aChain[i] = readU16((16 + i) * 2);
+				_bChain[i] = readU16((21 + i) * 2);
+				_cChain[i] = readU16((26 + i) * 2);
+			}
+		} else {
+			_initOffset      = readU16(0 * 2);
+			_mapOffset       = readU16(2 * 2);
+			_siteIndexOffset = readU16(3 * 2);
+			_noteOffset      = readU16(4 * 2);
+			_galleryOffset   = readU16(5 * 2);
+			_textOffset      = readU16(7 * 2);
+			_kdTextOffset    = readU16(8 * 2);
+			_solvedOffset    = readU16(9 * 2);
+			_hintOffset      = _kdTextOffset;
+
+			_numSites = (_mapOffset < _data.size()) ? _data[_mapOffset] : 0;
+			_numSuspects = (_galleryOffset < _data.size())
+				? _data[_galleryOffset] : 0;
+			_numCONSITEs = 0;
+			_numCOFFSITEs = 0;
+		}
 		if (_numSites > kVisitedSiteCap)
 			_numSites = kVisitedSiteCap;
 
@@ -452,7 +542,7 @@ const byte *Mystery::siteIndexEntry(uint siteNum) const {
 		return nullptr;
 	// Floppy site index: 2-byte u16 entries (_DoSiteLoop_Floppy @ 1652:03d2).
 	// CD: 6-byte rows.
-	const uint stride = (_isFloppy || _isMacintosh) ? 2 : 6;
+	const uint stride = (_isFloppy || usesCompactMacData()) ? 2 : 6;
 	const uint off = _siteIndexOffset + siteNum * stride;
 	if (off + stride > _data.size())
 		return nullptr;
@@ -538,7 +628,7 @@ void Mystery::loadFloppySiteAnimData() {
 }
 
 const byte *Mystery::hotspots(uint siteNum) const {
-	if (_isFloppy || _isMacintosh) {
+	if (_isFloppy || usesCompactMacData()) {
 		const byte *site = siteData(siteNum);
 		if (!site || (size_t)(site - _data.data()) + 6 > _data.size())
 			return nullptr;
@@ -557,7 +647,7 @@ const byte *Mystery::hotspots(uint siteNum) const {
 }
 
 uint16 Mystery::hotspotCount(uint siteNum) const {
-	if (_isFloppy || _isMacintosh) {
+	if (_isFloppy || usesCompactMacData()) {
 		const byte *site = siteData(siteNum);
 		if (!site || (size_t)(site - _data.data()) + 6 > _data.size())
 			return 0;
@@ -602,6 +692,11 @@ const byte *Mystery::noteIndex() const {
 uint16 Mystery::noteIndexCount() const {
 	if (!isLoaded())
 		return 0;
+	if (_isMacintoshLooseScripts) {
+		if (_galleryOffset <= _noteOffset)
+			return 0;
+		return (uint16)((_galleryOffset - _noteOffset) / 2);
+	}
 	// NoteIndex runs from _noteOffset to start of GalleryData.
 	// CD entries: 4 bytes (u16 textOff; u16 points).
 	// Floppy entries: 7 bytes (u16 ?; u16 jakeOff; u16 jennyOff; u8 score)
@@ -613,6 +708,11 @@ uint16 Mystery::noteIndexCount() const {
 }
 
 uint Mystery::noteSectionSize() const {
+	if (_isMacintoshLooseScripts) {
+		if (!isLoaded() || _galleryOffset <= _noteOffset)
+			return 0;
+		return _galleryOffset - _noteOffset;
+	}
 	const uint endOffset = _isMacintosh ? _textOffset : _galleryOffset;
 	if (!isLoaded() || endOffset <= _noteOffset)
 		return 0;
@@ -624,6 +724,9 @@ bool Mystery::noteHasNotebookText(uint clueId) const {
 	const uint16 cnt = noteIndexCount();
 	if (!ni || clueId >= cnt)
 		return false;
+
+	if (_isMacintoshLooseScripts)
+		return READ_LE_UINT16(ni + clueId * 2) != 0;
 
 	if (_isMacintosh)
 		return READ_LE_UINT16(ni + clueId * 8) != 0;
@@ -645,7 +748,7 @@ const byte *Mystery::kdTextIndex() const {
 const byte *Mystery::mapEntry(uint siteNum) const {
 	if (!isLoaded() || siteNum >= _numSites)
 		return nullptr;
-	if (_isMacintosh) {
+	if (usesCompactMacData()) {
 		// Mac SITES section: byte[0]=count, then 12-byte entries.
 		const uint off = _mapOffset + 1 + siteNum * 12;
 		if (off + 12 > _data.size())
@@ -674,7 +777,7 @@ const byte *Mystery::floppySuspectEntry(uint suspectIdx) const {
 	//   u16 +2 alibi marker/text offset (0xFFFF = guilty)
 	//   u8  +4 clue/name count
 	//   u8  +5.. clue ids (Mac) or name bytes (floppy)
-	if ((!_isFloppy && !_isMacintosh) || !isLoaded())
+	if ((!_isFloppy && !usesCompactMacData()) || !isLoaded())
 		return nullptr;
 	const byte *gd = _data.data() + _galleryOffset;
 	if (gd + 1 > _data.data() + _data.size())
@@ -695,7 +798,7 @@ const byte *Mystery::floppySuspectEntry(uint suspectIdx) const {
 }
 
 bool Mystery::isGuilty(uint suspectIdx) const {
-	if (_isFloppy || _isMacintosh) {
+	if (_isFloppy || usesCompactMacData()) {
 		const byte *e = floppySuspectEntry(suspectIdx);
 		return e && READ_LE_UINT16(e + 2) == 0xFFFF;
 	}
@@ -707,7 +810,7 @@ bool Mystery::isGuilty(uint suspectIdx) const {
 }
 
 uint16 Mystery::alibiTextOffset(uint suspectIdx) const {
-	if (_isMacintosh) {
+	if (usesCompactMacData()) {
 		const byte *e = floppySuspectEntry(suspectIdx);
 		if (!e)
 			return 0xFFFF;
@@ -747,6 +850,9 @@ const byte *Mystery::solvedClueBlock() const {
 }
 
 int Mystery::selectedPoints() const {
+	if (_isMacintoshLooseScripts)
+		return 0;
+
 	const byte *ni = noteIndex();
 	const uint16 cnt = noteIndexCount();
 	if (!ni || cnt == 0)
@@ -848,6 +954,9 @@ int Mystery::minCluesRemaining() const {
 }
 
 int Mystery::foundPoints() const {
+	if (_isMacintoshLooseScripts)
+		return 0;
+
 	const byte *ni = noteIndex();
 	const uint16 cnt = noteIndexCount();
 	if (!ni || cnt == 0)

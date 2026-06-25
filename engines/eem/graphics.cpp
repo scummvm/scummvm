@@ -187,20 +187,61 @@ static Common::String readPuzzleLine(Common::File &f) {
 	}
 	return s;
 }
+
+struct PuzzleFilePattern {
+	const char *pattern;
+	bool bigEndian;
+};
+
+static bool openPuzzleFile(uint puzzleId, bool macintosh, Common::File &f,
+						   Common::String &fname, bool &bigEndian) {
+	static const PuzzleFilePattern kDosPatterns[] = {
+		{ "P%u.BIN", false }
+	};
+	static const PuzzleFilePattern kMacPatterns[] = {
+		{ "Puzzles/p%u.bin", true },
+		{ "Puzzles/P%u.BIN", true },
+		{ "p%u.bin", true },
+		{ "P%u.BIN", false }
+	};
+
+	const PuzzleFilePattern *patterns = macintosh ? kMacPatterns
+												  : kDosPatterns;
+	const uint patternCount = macintosh ? ARRAYSIZE(kMacPatterns)
+										: ARRAYSIZE(kDosPatterns);
+	for (uint i = 0; i < patternCount; i++) {
+		fname = Common::String::format(patterns[i].pattern, puzzleId);
+		if (f.open(Common::Path(fname))) {
+			bigEndian = patterns[i].bigEndian;
+			return true;
+		}
+	}
+	bigEndian = false;
+	return false;
+}
+
+static uint16 readPuzzleU16(Common::File &f, bool bigEndian) {
+	return bigEndian ? f.readUint16BE() : f.readUint16LE();
+}
+
 // `_DoPuzzle @ 2542:1482`. 
 bool EEMEngine::doPuzzle(uint puzzleId) {
 	Common::File f;
-	const Common::String fname = Common::String::format("P%u.BIN", puzzleId);
-	if (!f.open(Common::Path(fname))) {
+	Common::String fname;
+	bool bigEndian = false;
+	if (!openPuzzleFile(puzzleId, isMacintosh(), f, fname, bigEndian)) {
 		// Fail open: never let a missing puzzle file permanently block a clue.
-		warning("doPuzzle: %s missing — leaving the clue ungated", fname.c_str());
+		warning("doPuzzle: puzzle %u missing — leaving the clue ungated",
+				puzzleId);
 		return true;
 	}
 
-	const uint16 type = f.readUint16LE();
+	const uint16 type = readPuzzleU16(f, bigEndian);
+	const int sw = screenWidth();
+	const int sh = screenHeight();
 
 	// the puzzle pics nor any bubble is left on the background.
-	Graphics::ManagedSurface cleanBg(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface cleanBg(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
 	cleanBg.clear();
 	{
@@ -210,18 +251,18 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 			g_system->unlockScreen();
 		}
 	}
-	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface scratch(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.simpleBlitFrom(cleanBg);
 
 	for (int phase = 0; phase < 2; phase++) {
 		uint16 n = 1;
 		if (phase == 1)
-			n = f.readUint16LE();
+			n = readPuzzleU16(f, bigEndian);
 		for (uint16 i = 0; i < n; i++) {
-			const uint16 id = f.readUint16LE();
-			const int16 px = (int16)f.readUint16LE();
-			const int16 py = (int16)f.readUint16LE();
+			const uint16 id = readPuzzleU16(f, bigEndian);
+			const int16 px = (int16)readPuzzleU16(f, bigEndian);
+			const int16 py = (int16)readPuzzleU16(f, bigEndian);
 			Picture pic;
 			if (_picsArchive.getPicture(id, pic) && !pic.surface.empty())
 				scratch.transBlitFrom(pic.surface, Common::Point(px, py),
@@ -229,18 +270,18 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 		}
 	}
 
-	const int16 qx = (int16)f.readUint16LE();
-	const int16 qy = (int16)f.readUint16LE();
-	const int16 qw = (int16)f.readUint16LE();
-	const uint16 voiceAlt  = f.readUint16LE();  // partner != Jake
-	const uint16 voiceMain = f.readUint16LE();  // partner == Jake
+	const int16 qx = (int16)readPuzzleU16(f, bigEndian);
+	const int16 qy = (int16)readPuzzleU16(f, bigEndian);
+	const int16 qw = (int16)readPuzzleU16(f, bigEndian);
+	const uint16 voiceAlt  = readPuzzleU16(f, bigEndian);  // partner != Jake
+	const uint16 voiceMain = readPuzzleU16(f, bigEndian);  // partner == Jake
 	const Common::String question =
 		parseString(readPuzzleLine(f), _playerName, _partner);
 	if (_font.isLoaded() && !question.empty())
 		_font.drawWordWrapped(&scratch, qx, qy, MAX<int>(8, (int)qw),
 							  question, 0);
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
+							   0, 0, sw, sh);
 	g_system->updateScreen();
 
 	if (_audio && _voiceOn) {
@@ -253,10 +294,10 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 	CursorMan.showMouse(true);
 
 	if (type == 0) {
-		const int16 ax1 = (int16)f.readUint16LE();
-		const int16 ay1 = (int16)f.readUint16LE();
-		const int16 ax2 = (int16)f.readUint16LE();
-		const int16 ay2 = (int16)f.readUint16LE();
+		const int16 ax1 = (int16)readPuzzleU16(f, bigEndian);
+		const int16 ay1 = (int16)readPuzzleU16(f, bigEndian);
+		const int16 ax2 = (int16)readPuzzleU16(f, bigEndian);
+		const int16 ay2 = (int16)readPuzzleU16(f, bigEndian);
 		const Common::Rect rect(ax1, ay1, ax2, ay2);
 		Common::String answer = readPuzzleLine(f);
 		const uint maxLen = answer.size() + 2;
@@ -266,7 +307,7 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 		uint32 blinkMs = g_system->getMillis();
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 		while (!done && !shouldQuit()) {
-			Graphics::ManagedSurface fld(kScreenWidth, kScreenHeight,
+			Graphics::ManagedSurface fld(sw, sh,
 				Graphics::PixelFormat::createFormatCLUT8());
 			fld.simpleBlitFrom(scratch);
 			Common::String shown = input;
@@ -276,7 +317,7 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 				_font.drawString(&fld, shown, rect.left + 2, rect.top + 1,
 								 MAX<int>(8, rect.width()), 0x0F);
 			g_system->copyRectToScreen(fld.getPixels(), fld.pitch, 0, 0,
-									   kScreenWidth, kScreenHeight);
+									   sw, sh);
 			g_system->updateScreen();
 
 			Common::Event ev;
@@ -316,13 +357,13 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 		correct = input.equals(answer);
 	} else {
 		// Multiple choice: click a region; correct = the FIRST rect.
-		const uint16 count = f.readUint16LE();
+		const uint16 count = readPuzzleU16(f, bigEndian);
 		Common::Array<Common::Rect> rects;
 		for (uint16 i = 0; i < count; i++) {
-			const int16 cx1 = (int16)f.readUint16LE();
-			const int16 cy1 = (int16)f.readUint16LE();
-			const int16 cx2 = (int16)f.readUint16LE();
-			const int16 cy2 = (int16)f.readUint16LE();
+			const int16 cx1 = (int16)readPuzzleU16(f, bigEndian);
+			const int16 cy1 = (int16)readPuzzleU16(f, bigEndian);
+			const int16 cx2 = (int16)readPuzzleU16(f, bigEndian);
+			const int16 cy2 = (int16)readPuzzleU16(f, bigEndian);
 			rects.push_back(Common::Rect(cx1, cy1, cx2, cy2));
 		}
 		applyHotspotGlowPalette();
@@ -335,7 +376,7 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 				const uint32 phase = g_system->getMillis() / 80;
 				if (phase != lastPhase) {
 					lastPhase = phase;
-					Graphics::ManagedSurface fr(kScreenWidth, kScreenHeight,
+					Graphics::ManagedSurface fr(sw, sh,
 						Graphics::PixelFormat::createFormatCLUT8());
 					fr.simpleBlitFrom(scratch);
 					for (uint i = 0; i < rects.size(); i++) {
@@ -344,7 +385,7 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 						fr.frameRect(rects[i], color);
 					}
 					g_system->copyRectToScreen(fr.getPixels(), fr.pitch, 0, 0,
-											   kScreenWidth, kScreenHeight);
+											   sw, sh);
 				}
 			}
 			const Common::Point mp = g_system->getEventManager()->getMousePos();
@@ -387,7 +428,7 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 	f.close();
 
 	g_system->copyRectToScreen(cleanBg.getPixels(), cleanBg.pitch, 0, 0,
-							   kScreenWidth, kScreenHeight);
+							   sw, sh);
 	g_system->updateScreen();
 
 	if (!correct && !shouldQuit()) {
@@ -398,7 +439,7 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 				_music->playMus(40, /* loop= */ false);
 			Common::String hint =
 				parseString(_mystery.textAt(hintOff), _playerName, _partner);
-			Graphics::ManagedSurface ms(kScreenWidth, kScreenHeight,
+			Graphics::ManagedSurface ms(sw, sh,
 				Graphics::PixelFormat::createFormatCLUT8());
 			ms.simpleBlitFrom(cleanBg);
 			const byte firstChar = hint.empty() ? (byte)0 : (byte)hint[0];
@@ -423,7 +464,7 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 				_font.drawWordWrapped(&ms, balloonX + tx, balloonY + ty, tw,
 									  hint, haveBalloon ? 0 : 0xF);
 			g_system->copyRectToScreen(ms.getPixels(), ms.pitch, 0, 0,
-									   kScreenWidth, kScreenHeight);
+									   sw, sh);
 			g_system->updateScreen();
 			if (_audio && _voiceOn && kd)
 				_audio->sayKDDigital(kd, 6, _partner);
@@ -431,7 +472,7 @@ bool EEMEngine::doPuzzle(uint puzzleId) {
 			stopMusic();
 
 			g_system->copyRectToScreen(cleanBg.getPixels(), cleanBg.pitch,
-									   0, 0, kScreenWidth, kScreenHeight);
+									   0, 0, sw, sh);
 			g_system->updateScreen();
 		}
 	}
@@ -733,8 +774,10 @@ void EEMEngine::doInterfaceHelp(uint num) {
 }
 
 void EEMEngine::setPartnerEraseBg(const Graphics::ManagedSurface *bg) {
-	if (bg && bg->w == kScreenWidth && bg->h == kScreenHeight) {
-		_partnerEraseBg.create(kScreenWidth, kScreenHeight,
+	const int sw = screenWidth();
+	const int sh = screenHeight();
+	if (bg && bg->w == sw && bg->h == sh) {
+		_partnerEraseBg.create(sw, sh,
 			Graphics::PixelFormat::createFormatCLUT8());
 		_partnerEraseBg.simpleBlitFrom(*bg);
 	} else {

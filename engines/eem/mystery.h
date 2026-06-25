@@ -67,6 +67,9 @@ public:
 	void clear();
 
 	bool isLoaded() const { return !_data.empty(); }
+	bool usesCompactMacData() const {
+		return _isMacintosh && !_isMacintoshLooseScripts;
+	}
 
 	uint number() const { return _number; }
 	uint16 numSites() const { return _numSites; }
@@ -242,6 +245,7 @@ private:
 
 	bool   _isFloppy = false;
 	bool   _isMacintosh = false;
+	bool   _isMacintoshLooseScripts = false;
 	uint16 _floppySuspectsOff = 0;   ///< header[+4]    suspects
 	uint16 _floppyHintBlockOff = 0;  ///< header[+6]    hint -> clue table
 	uint16 _floppyNoteIndexOff = 0;  ///< header[+8]    notes (7B/clue)
