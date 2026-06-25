@@ -56,8 +56,8 @@ struct Scratch {
 	int16 _9e;				// Offset 9eh
 	int16 _a0;				// Offset a0h
 	int16 _a2;				// Offset a2h
-	int16 _a4;
-	int16 _a6;
+	int16 _edgar;
+	int16 _russell;
 	int16 _a8;
 	int16 _aa;
 	int16 _startCutsceneCtr;
@@ -109,10 +109,10 @@ static void room_101_init2() {
 	global[g131] = 0;
 	global[g141] = 0;
 
-	scratch._a6 = kernel_run_animation_disp('r', 3, 0);
-	kernel_position_anim(scratch._a6, 123, 14, 69, 7);
-	scratch._a4 = kernel_run_animation_disp('e', 1, 0);
-	kernel_position_anim(scratch._a4, 194, 145, 75, 4);
+	scratch._russell = kernel_run_animation_disp('r', 3, 0);
+	kernel_position_anim(scratch._russell, 123, 14, 69, 7);
+	scratch._edgar = kernel_run_animation_disp('e', 1, 0);
+	kernel_position_anim(scratch._edgar, 194, 145, 75, 4);
 
 	global[g009] = -1;
 	global_midi_play(8);
@@ -137,10 +137,10 @@ static void room_101_init3() {
 	global[g131] = 0;
 	global[g141] = 0;
 
-	scratch._a6 = kernel_run_animation_disp('r', 3, 0);
-	kernel_position_anim(scratch._a6, 123, 134, 69, 7);
-	scratch._a4 = kernel_run_animation_disp('e', 1, 0);
-	kernel_position_anim(scratch._a4, 194, 145, 75, 4);
+	scratch._russell = kernel_run_animation_disp('r', 3, 0);
+	kernel_position_anim(scratch._russell, 123, 134, 69, 7);
+	scratch._edgar = kernel_run_animation_disp('e', 1, 0);
+	kernel_position_anim(scratch._edgar, 194, 145, 75, 4);
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 96;
@@ -151,8 +151,8 @@ static void room_101_init3() {
 	if (previous_room == KERNEL_RESTORING_GAME) {
 		global[g131] = -1;
 		global[g141] = -1;
-		kernel_reset_animation(scratch._a4, 2);
-		kernel_reset_animation(scratch._a6, 2);
+		kernel_reset_animation(scratch._edgar, 2);
+		kernel_reset_animation(scratch._russell, 2);
 		global[g133] = 0;
 		global[g143] = 0;
 		player.commands_allowed = -1;
@@ -176,8 +176,8 @@ static void room_101_init3() {
 	if (previous_room == 199) {
 		global[g131] = -1;
 		global[g141] = -1;
-		kernel_reset_animation(scratch._a4, 2);
-		kernel_reset_animation(scratch._a6, 2);
+		kernel_reset_animation(scratch._edgar, 2);
+		kernel_reset_animation(scratch._russell, 2);
 		global[g133] = 0;
 		global[g143] = 0;
 		restore_player();
@@ -189,8 +189,8 @@ static void room_101_init3() {
 	if (previous_room == 205) {
 		global[g131] = -1;
 		global[g141] = -1;
-		kernel_reset_animation(scratch._a4, 2);
-		kernel_reset_animation(scratch._a6, 2);
+		kernel_reset_animation(scratch._edgar, 2);
+		kernel_reset_animation(scratch._russell, 2);
 		global[g133] = 0;
 		global[g143] = 0;
 		player.commands_allowed = 0;
@@ -204,8 +204,8 @@ static void room_101_init3() {
 
 	global[g131] = -1;
 	global[g141] = -1;
-	kernel_reset_animation(scratch._a4, 2);
-	kernel_reset_animation(scratch._a6, 2);
+	kernel_reset_animation(scratch._edgar, 2);
+	kernel_reset_animation(scratch._russell, 2);
 	global[g133] = 0;
 	global[g143] = 0;
 	player.commands_allowed = -1;
@@ -264,6 +264,7 @@ static void room_101_init() {
 
 	switch (flags[0]) {
 	case -3:
+		// Intro
 		room_101_init1();
 		break;
 	case -2:
@@ -271,9 +272,11 @@ static void room_101_init() {
 		room_101_init2();
 		break;
 	case 1:
+		// Start of game
 		room_101_init2();
 		break;
 	default:
+		// Restoring savegame
 		room_101_init3();
 		break;
 	}
@@ -653,8 +656,8 @@ static void room_101_daemon() {
 		case 49:
 			kernel_abort_animation(scratch._a8);
 			scratch._b2 = 0;
-			kernel_reset_animation(scratch._a4, 0);
-			kernel_reset_animation(scratch._a6, 0);
+			kernel_reset_animation(scratch._edgar, 0);
+			kernel_reset_animation(scratch._russell, 0);
 			global[g133] = 1;
 			global[g143] = 1;
 			inter_move_object(cogs, PLAYER);
@@ -664,7 +667,7 @@ static void room_101_daemon() {
 			aainfo[4]._active = -1;
 			aainfo[4]._val3 = 14;
 			scratch._a2 = 4;
-			kernel_synch(KERNEL_ANIM, scratch._a4, KERNEL_ANIM, aa[4]);
+			kernel_synch(KERNEL_ANIM, scratch._edgar, KERNEL_ANIM, aa[4]);
 			break;
 		case 50:
 			aainfo[4]._frame = 8;
@@ -678,8 +681,8 @@ static void room_101_daemon() {
 		case 59:
 			kernel_abort_animation(scratch._a8);
 			scratch._b2 = 0;
-			kernel_reset_animation(scratch._a4, 0);
-			kernel_reset_animation(scratch._a6, 0);
+			kernel_reset_animation(scratch._edgar, 0);
+			kernel_reset_animation(scratch._russell, 0);
 			global[g133] = 1;
 			global[g143] = 1;
 			inter_move_object(planks, PLAYER);
@@ -689,7 +692,7 @@ static void room_101_daemon() {
 			aainfo[4]._active = -1;
 			aainfo[4]._val3 = 15;
 			scratch._a2 = 4;
-			kernel_synch(KERNEL_ANIM, scratch._a4, KERNEL_ANIM, aa[4]);
+			kernel_synch(KERNEL_ANIM, scratch._edgar, KERNEL_ANIM, aa[4]);
 			break;
 		case 69:
 			global[g154] = 0;
@@ -751,8 +754,8 @@ static void room_101_daemon() {
 			aa[1] = kernel_run_animation(kernel_name('E', 1), 102);
 			aainfo[1]._active = -1;
 			scratch._a0 = 1;
-			kernel_reset_animation(scratch._a4, 0);
-			kernel_synch(KERNEL_ANIM, aa[1], KERNEL_ANIM, scratch._a4);
+			kernel_reset_animation(scratch._edgar, 0);
+			kernel_synch(KERNEL_ANIM, aa[1], KERNEL_ANIM, scratch._edgar);
 			global[g133] = 1;
 		}
 		break;
@@ -762,8 +765,8 @@ static void room_101_daemon() {
 			aa[2] = kernel_run_animation(kernel_name('R', 1), 101);
 			aainfo[2]._active = -1;
 			scratch._9e = 2;
-			kernel_reset_animation(scratch._a6, 0);
-			kernel_synch(KERNEL_ANIM, aa[2], KERNEL_ANIM, scratch._a6);
+			kernel_reset_animation(scratch._russell, 0);
+			kernel_synch(KERNEL_ANIM, aa[2], KERNEL_ANIM, scratch._russell);
 			global[g143] = 1;
 		}
 		break;
@@ -815,8 +818,8 @@ static void room_101_daemon() {
 		case 6:
 			kernel_abort_animation(aa[6]);
 			global[g131] = -1;
-			kernel_reset_animation(scratch._a4, 1);
-			kernel_synch(KERNEL_ANIM, scratch._a4, KERNEL_NOW, 0);
+			kernel_reset_animation(scratch._edgar, 1);
+			kernel_synch(KERNEL_ANIM, scratch._edgar, KERNEL_NOW, 0);
 			global[g133] = 0;
 			aa[6] = kernel_run_animation(kernel_name('b', 4), 104);
 			aainfo[6]._active = -1;
@@ -863,10 +866,10 @@ static void room_101_daemon() {
 		aainfo[4]._active = 0;
 		global[g131] = -1;
 		global[g141] = -1;
-		kernel_reset_animation(scratch._a4, 1);
-		kernel_synch(KERNEL_ANIM, scratch._a4, KERNEL_NOW, 0);
-		kernel_reset_animation(scratch._a6, 1);
-		kernel_synch(KERNEL_ANIM, scratch._a6, KERNEL_NOW, 0);
+		kernel_reset_animation(scratch._edgar, 1);
+		kernel_synch(KERNEL_ANIM, scratch._edgar, KERNEL_NOW, 0);
+		kernel_reset_animation(scratch._russell, 1);
+		kernel_synch(KERNEL_ANIM, scratch._russell, KERNEL_NOW, 0);
 		player.walker_visible = true;
 		global[g133] = 0;
 		global[g143] = 0;
@@ -904,8 +907,8 @@ static void room_101_daemon() {
 		break;
 
 	case 109:
-		kernel_reset_animation(scratch._a4, 0);
-		kernel_reset_animation(scratch._a6, 0);
+		kernel_reset_animation(scratch._edgar, 0);
+		kernel_reset_animation(scratch._russell, 0);
 		global[g133] = 1;
 		global[g143] = 1;
 		inter_move_object(twine, PLAYER);
@@ -915,7 +918,7 @@ static void room_101_daemon() {
 		aainfo[4]._active = -1;
 		aainfo[4]._val3 = 13;
 		scratch._a2 = 4;
-		kernel_synch(KERNEL_ANIM, scratch._a4, KERNEL_ANIM, aa[4]);
+		kernel_synch(KERNEL_ANIM, scratch._edgar, KERNEL_ANIM, aa[4]);
 		digi_play_build(101, 'e', 3, 1);
 		scratch._aa = 0;
 		break;
@@ -932,8 +935,8 @@ static void room_101_daemon() {
 		if (aainfo[7]._val3 == 0) {
 			aainfo[7]._active = 0;
 			global[g141] = -1;
-			kernel_reset_animation(scratch._a6, 1);
-			kernel_synch(KERNEL_ANIM, scratch._a6, KERNEL_NOW, 0);
+			kernel_reset_animation(scratch._russell, 1);
+			kernel_synch(KERNEL_ANIM, scratch._russell, KERNEL_NOW, 0);
 			global[g143] = 0;
 			global[g009] = 0;
 			player.commands_allowed = -1;
@@ -951,10 +954,10 @@ static void room_101_daemon() {
 		aainfo[0]._active = 0;
 		global[g131] = -1;
 		global[g141] = -1;
-		kernel_reset_animation(scratch._a4, 1);
-		kernel_synch(KERNEL_ANIM, scratch._a4, KERNEL_NOW, 0);
-		kernel_reset_animation(scratch._a6, 1);
-		kernel_synch(KERNEL_ANIM, scratch._a6, KERNEL_NOW, 0);
+		kernel_reset_animation(scratch._edgar, 1);
+		kernel_synch(KERNEL_ANIM, scratch._edgar, KERNEL_NOW, 0);
+		kernel_reset_animation(scratch._russell, 1);
+		kernel_synch(KERNEL_ANIM, scratch._russell, KERNEL_NOW, 0);
 		player.walker_visible = true;
 		global[g133] = 0;
 		global[g143] = 0;
@@ -965,8 +968,8 @@ static void room_101_daemon() {
 	case 101:
 		kernel_abort_animation(aa[scratch._9e]);
 		aainfo[scratch._9e]._active = 0;
-		kernel_reset_animation(scratch._a6, 1);
-		kernel_synch(KERNEL_ANIM, scratch._a6, KERNEL_NOW, 0);
+		kernel_reset_animation(scratch._russell, 1);
+		kernel_synch(KERNEL_ANIM, scratch._russell, KERNEL_NOW, 0);
 		global[g143] = 0;
 		player.commands_allowed = -1;
 		break;
@@ -974,8 +977,8 @@ static void room_101_daemon() {
 	case 102:
 		kernel_abort_animation(aa[scratch._a0]);
 		aainfo[scratch._a0]._active = 0;
-		kernel_reset_animation(scratch._a4, 1);
-		kernel_synch(KERNEL_ANIM, scratch._a4, KERNEL_NOW, 0);
+		kernel_reset_animation(scratch._edgar, 1);
+		kernel_synch(KERNEL_ANIM, scratch._edgar, KERNEL_NOW, 0);
 		global[g133] = 0;
 		player.commands_allowed = -1;
 		break;
@@ -1000,8 +1003,8 @@ static void room_101_daemon() {
 	}
 
 	if (flags[0] != -3) {
-		global_anim1(1, scratch._a4, global[g131], &global[g132]);
-		global_anim2(3, scratch._a6, global[g141], &global[g142]);
+		global_anim1(1, scratch._edgar, global[g131], &global[g132]);
+		global_anim2(3, scratch._russell, global[g141], &global[g142]);
 		if (mouse_hidden != 0)
 			mouse_show();
 	}
@@ -1098,8 +1101,8 @@ void room_101_synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(scratch._9e);
 	s.syncAsSint16LE(scratch._a0);
 	s.syncAsSint16LE(scratch._a2);
-	s.syncAsSint16LE(scratch._a4);
-	s.syncAsSint16LE(scratch._a6);
+	s.syncAsSint16LE(scratch._edgar);
+	s.syncAsSint16LE(scratch._russell);
 	s.syncAsSint16LE(scratch._a8);
 	s.syncAsSint16LE(scratch._aa);
 	s.syncAsSint16LE(scratch._startCutsceneCtr);
