@@ -95,6 +95,7 @@ private:
 	// Interactive viewport scroll offset.
 	int _ra1ViewportOffsetX;
 	int _ra1ViewportOffsetY;
+	int _ra1FrameSourceSkipX;
 	int _ra1FrameSourceSkipY;
 	bool _ra1LastFrameObjectVisible;
 

@@ -28,7 +28,8 @@
 namespace Scumm {
 
 // RLE with transparency on pixel 0.
-void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize) {
+void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, int width, int height,
+		int pitch, int dataSize, int sourceSkipX) {
 	if (dst == nullptr || src == nullptr || width <= 0 || height <= 0 || pitch <= 0 || dataSize <= 0)
 		return;
 
@@ -39,33 +40,53 @@ void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, in
 		const byte *lineData = src + 2;
 		const byte *lineEnd = lineData + MIN<int>(lineSize, srcEnd - lineData);
 		byte *rowDst = dst + left;
+		int skip = sourceSkipX;
 		int remaining = width;
 
-		while (remaining > 0 && lineData < lineEnd) {
+		while ((skip > 0 || remaining > 0) && lineData < lineEnd) {
 			byte code = *lineData++;
 			int num = (code >> 1) + 1;
-			if (num > remaining)
-				num = remaining;
 
 			if (code & 1) {
 				if (lineData >= lineEnd)
 					break;
 				byte color = *lineData++;
+
+				const int skipped = MIN(num, skip);
+				skip -= skipped;
+				num -= skipped;
+				if (num == 0)
+					continue;
+
+				const int count = MIN(num, remaining);
 				if (color != 0)
-					memset(rowDst, color, num);
+					memset(rowDst, color, count);
+				rowDst += count;
+				remaining -= count;
 			} else {
 				const int readable = MIN<int>(num, lineEnd - lineData);
-				for (int j = 0; j < readable; j++) {
+				const int skipped = MIN(num, skip);
+				const int skippedBytes = MIN(readable, skipped);
+				lineData += skippedBytes;
+				skip -= skipped;
+				if (skipped == num) {
+					if (readable < num)
+						break;
+					continue;
+				}
+
+				const int count = MIN<int>(readable - skippedBytes, remaining);
+				for (int j = 0; j < count; j++) {
 					byte c = lineData[j];
 					if (c != 0)
 						rowDst[j] = c;
 				}
-				lineData += readable;
+				lineData += count;
 				if (readable < num)
 					break;
+				rowDst += count;
+				remaining -= count;
 			}
-			rowDst += num;
-			remaining -= num;
 		}
 
 		const int rowSize = 2 + lineSize;

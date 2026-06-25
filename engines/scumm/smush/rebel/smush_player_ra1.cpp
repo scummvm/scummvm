@@ -146,6 +146,7 @@ void SmushPlayerRebel1::initGamePlayerFields() {
 	_ra1ObjOverlayHeight = 0;
 	_ra1ViewportOffsetX = 0;
 	_ra1ViewportOffsetY = 0;
+	_ra1FrameSourceSkipX = 0;
 	_ra1FrameSourceSkipY = 0;
 	_ra1LastFrameObjectVisible = true;
 	_ra1FadeFrame = nullptr;
@@ -200,6 +201,7 @@ void SmushPlayerRebel1::resetGameVideoState() {
 	_ra1ObjOverlayHeight = 0;
 	_ra1ViewportOffsetX = 0;
 	_ra1ViewportOffsetY = 0;
+	_ra1FrameSourceSkipX = 0;
 	_ra1LastFrameObjectVisible = true;
 	_ra1UseFadeFrame = false;
 }
@@ -535,6 +537,7 @@ bool SmushPlayerRebel1::handleGameDimensionOverride(int codec, int width, int he
 }
 
 bool SmushPlayerRebel1::handleGameAdjustCoords(int codec, int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) {
+	_ra1FrameSourceSkipX = 0;
 	_ra1FrameSourceSkipY = 0;
 
 	// Additive and scatter codecs use absolute positions.
@@ -556,7 +559,10 @@ bool SmushPlayerRebel1::handleGameAdjustCoords(int codec, int &left, int &top, i
 	}
 
 	int sourceSkipY = 0;
+	const int sourceSkipX = MAX(0, -(left + _fobjOffsetX));
 	adjustFrameCoords(left, top, width, height, pitch, &sourceSkipY);
+	if (codec == SMUSH_CODEC_RLE)
+		_ra1FrameSourceSkipX = sourceSkipX;
 	if (codec == SMUSH_CODEC_RLE_ALT) {
 		_ra1FrameSourceSkipY = sourceSkipY;
 		if (srcSkipY)
@@ -570,7 +576,7 @@ bool SmushPlayerRebel1::handleGameAdjustCoords(int codec, int &left, int &top, i
 bool SmushPlayerRebel1::handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize, uint8 param, uint16 parm2) {
 	switch (codec) {
 	case SMUSH_CODEC_RLE:
-		smushDecodeRA1Transparent(_dst, src, left, top, width, height, pitch, dataSize);
+		smushDecodeRA1Transparent(_dst, src, left, top, width, height, pitch, dataSize, _ra1FrameSourceSkipX);
 		return true;
 	case SMUSH_CODEC_RLE_ALT:
 		src = smushSkipRLELines(src, dataSize, _ra1FrameSourceSkipY);

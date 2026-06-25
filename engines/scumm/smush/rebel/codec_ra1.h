@@ -26,7 +26,8 @@
 
 namespace Scumm {
 
-void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
+void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, int width, int height,
+		int pitch, int dataSize, int sourceSkipX = 0);
 void smushDecodeRA1SkipCopy(byte *dst, const byte *src, int left, int top, int width, int height,
 		int pitch, int bufWidth, int bufHeight, int dataSize);
 void smushDecodeRA1AdditiveLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height,
