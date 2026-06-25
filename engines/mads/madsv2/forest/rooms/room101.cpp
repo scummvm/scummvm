@@ -232,7 +232,7 @@ static void room_101_init() {
 			++flags[0];
 	}
 
-	if (object_is_here(11)) {
+	if (object_is_here(planks)) {
 		ss[0] = kernel_load_series("*rm101p11", 0);
 		seq[0] = kernel_seq_stamp(ss[0], 0, -1);
 		kernel_seq_depth(seq[0], 13);
@@ -242,7 +242,7 @@ static void room_101_init() {
 		kernel_flip_hotspot(164, false);
 	}
 
-	if (object_is_here(0)) {
+	if (object_is_here(cogs)) {
 		ss[2] = kernel_load_series("*rm101p10", 0);
 		seq[2] = kernel_seq_stamp(ss[2], 0, -1);
 		kernel_seq_depth(seq[2], 8);
@@ -252,7 +252,7 @@ static void room_101_init() {
 		kernel_flip_hotspot(105, false);
 	}
 
-	if (object_is_here(8)) {
+	if (object_is_here(twine)) {
 		ss[1] = kernel_load_series(kernel_name('p', 8), 0);
 		seq[1] = kernel_seq_stamp(ss[1], 0, -1);
 		kernel_seq_depth(seq[1], 1);
@@ -372,13 +372,13 @@ static void room_101_anim1() {
 
 static void room_101_anim2() {
 	int16 frame = kernel_anim[aa[7]].frame;
-	if (frame == aainfo[7]._frame)
-		return;
-	aainfo[7]._frame = frame;
-	if (frame != 18) return;
-	if (aainfo[7]._val3 != 7) return;
-	aainfo[7]._frame = 6;
-	kernel_reset_animation(aa[7], 6);
+	if (frame != aainfo[7]._frame) {
+		aainfo[7]._frame = frame;
+		if (frame == 18 && aainfo[7]._val3 == 7) {
+			aainfo[7]._frame = 6;
+			kernel_reset_animation(aa[7], 6);
+		}
+	}
 }
 
 static void room_101_anim3() {
@@ -657,7 +657,7 @@ static void room_101_daemon() {
 			kernel_reset_animation(scratch._a6, 0);
 			global[g133] = 1;
 			global[g143] = 1;
-			inter_move_object(0, 2);
+			inter_move_object(cogs, PLAYER);
 			kernel_seq_delete(seq[2]);
 			kernel_flip_hotspot(105, 0);
 			aa[4] = kernel_run_animation(kernel_name('R', 5), 103);
@@ -682,7 +682,7 @@ static void room_101_daemon() {
 			kernel_reset_animation(scratch._a6, 0);
 			global[g133] = 1;
 			global[g143] = 1;
-			inter_move_object(11, 2);
+			inter_move_object(planks, PLAYER);
 			kernel_seq_delete(seq[0]);
 			kernel_flip_hotspot(164, 0);
 			aa[4] = kernel_run_animation(kernel_name('R', 6), 103);
@@ -908,7 +908,7 @@ static void room_101_daemon() {
 		kernel_reset_animation(scratch._a6, 0);
 		global[g133] = 1;
 		global[g143] = 1;
-		inter_move_object(8, 2);
+		inter_move_object(twine, PLAYER);
 		kernel_seq_delete(seq[1]);
 		kernel_flip_hotspot(154, 0);
 		aa[4] = kernel_run_animation(kernel_name('R', 4), 103);

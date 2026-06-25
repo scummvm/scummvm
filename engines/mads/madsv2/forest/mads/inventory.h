@@ -28,7 +28,11 @@ namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
-//enum {};
+enum {
+	cogs           =  0,
+	twine          =  8,
+	planks         = 11
+};
 
 } // namespace Forest
 } // namespace MADSV2
