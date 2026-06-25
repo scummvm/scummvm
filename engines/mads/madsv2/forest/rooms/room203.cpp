@@ -234,6 +234,7 @@ static void room_203_init() {
 }
 
 static void room_203_anim5();
+static void room_203_anim7();
 
 static void room_203_anim1() {
 	int result = -1;
@@ -378,7 +379,7 @@ static void room_203_anim1() {
 			dont_frag_the_palette();
 			kernel_abort_animation(aa[0]);
 			aainfo[0]._active = 0;
-			room_203_anim5();
+			room_203_anim7();
 		} else if (frame < 29) {
 			if (frame == 22) {
 				result = 20;
@@ -996,6 +997,28 @@ static void room_203_anim6() {
 	}
 }
 
+static void room_203_anim7() {
+	global[g131] = -1;
+	global[g141] = -1;
+	kernel_reset_animation(local->_9e, 1);
+	kernel_reset_animation(local->_a0, 1);
+	kernel_synch(KERNEL_ANIM, local->_9e, KERNEL_NOW, 0);
+	kernel_synch(KERNEL_ANIM, local->_a0, KERNEL_NOW, 0);
+	global[g133] = 0;
+	global[g143] = 0;
+	aa[4] = kernel_run_animation(kernel_name('w', 4), 105);
+	aainfo[4]._active = -1;
+	aainfo[4]._frame = 0;
+	local->_9c = 63;
+	local->_aa = -1;
+	player.walker_visible = true;
+	kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
+	player.commands_allowed = -1;
+	kernel_flip_hotspot(168, -1);
+	kernel_flip_hotspot(170, -1);
+	kernel_flip_hotspot(169, -1);
+}
+
 static void room_203_daemon() {
 	switch (kernel.trigger) {
 	case 7:
@@ -1548,6 +1571,21 @@ static void room_203_daemon() {
 
 	case 106:
 		switch (local->_a4) {
+		case 11:
+			aainfo[0]._frame = 11;
+			kernel_reset_animation(aa[0], 11);
+			break;
+
+		case 12:
+			aainfo[0]._frame = 35;
+			kernel_reset_animation(aa[0], 35);
+			break;
+
+		case 21:
+			aainfo[0]._frame = 19;
+			kernel_reset_animation(aa[0], 19);
+			break;
+
 		case 23:
 			digi_play_build(203, 'W', 1, 1);
 			local->_a4 = 51;
@@ -1572,19 +1610,9 @@ static void room_203_daemon() {
 			local->_a4 = 38;
 			break;
 
-		case 34:
-			aainfo[0]._frame = 11;
-			kernel_reset_animation(aa[0], 11);
-			break;
-
-		case 35:
-			aainfo[0]._frame = 35;
-			kernel_reset_animation(aa[0], 35);
-			break;
-
-		case 44:
-			aainfo[0]._frame = 19;
-			kernel_reset_animation(aa[0], 19);
+		case 51:
+			aainfo[0]._frame = 25;
+			kernel_reset_animation(aa[0], 25);
 			break;
 
 		default:
