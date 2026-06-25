@@ -1903,7 +1903,7 @@ int SiteScreen::hotspotAtPoint(uint siteNum, int x, int y) const {
 	const bool compact = _vm &&
 		(_vm->isFloppy() || (_mystery && _mystery->usesCompactMacData()));
 	const uint stride = compact ? 8 : 14;
-	const bool mac = _vm && _mystery && _mystery->usesCompactMacData();
+	const bool mac = _vm && _vm->isMacintosh();
 	for (uint i = 0; i < count; i++) {
 		const byte *r = spots + i * stride;
 		Common::Rect rect;

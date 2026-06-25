@@ -377,10 +377,9 @@ void EEMEngine::doChoosePartner() {
 void EEMEngine::playLondonInitCluesAnim(uint16 caseType, const Picture &bg,
 										bool haveBriefingBg) {
 	const bool mac = isMacintosh();
-	const uint introAni = mac ? 0x17
+	const uint introAni = mac ? (_partner == kPartnerJake ? 0x18 : 0x1c)
 							  : (_partner == kPartnerJake ? 0x18 : 0x71);
-	const uint introScript = mac ? (_partner == kPartnerJake ? 0x18 : 0x1c)
-								 : 0x18;
+	const uint introScript = mac ? 0x17 : 0x18;
 	const int kAnchorX = mac ? 0x14c : 0xd2;
 	const int kAnchorY = mac ? (_partner == kPartnerJake ? 0x78 : 0x76)
 							 : 0x3f;
