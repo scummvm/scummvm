@@ -20,6 +20,7 @@
  */
 
 #include "mads/madsv2/forest/rooms/section2.h"
+#include "mads/madsv2/forest/mads/inventory.h"
 #include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/forest/global.h"
@@ -77,24 +78,24 @@ static void room_201_init1() {
 	global[g131] = 0;
 	global[g141] = 0;
 
-	if (object_is_here(12)) {
+	if (object_is_here(elm_leaves)) {
 		ss[0] = kernel_load_series(kernel_name('p', 2), 0);
 		seq[0] = kernel_seq_stamp(ss[0], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[0], 2);
 		kernel_seq_loc(seq[0], 204, 153);
 		kernel_seq_scale(seq[0], 100);
 	} else {
-		kernel_flip_hotspot(93, false);
+		kernel_flip_hotspot(words_elm_leaves, false);
 	}
 
-	if (object_is_here(7)) {
+	if (object_is_here(sticks)) {
 		ss[1] = kernel_load_series(kernel_name('p', 1), 0);
 		seq[1] = kernel_seq_stamp(ss[1], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[1], 10);
 		kernel_seq_loc(seq[1], 46, 103);
 		kernel_seq_scale(seq[1], 69);
 	} else {
-		kernel_flip_hotspot(145, false);
+		kernel_flip_hotspot(words_sticks, false);
 	}
 
 	scratch._9c = kernel_run_animation_disp('r', 1, 0);
@@ -381,7 +382,7 @@ static void room_201_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
 		kernel_flip_hotspot(145, false);
-		inter_move_object(7, PLAYER);
+		inter_move_object(sticks, PLAYER);
 		player.commands_allowed = -1;
 	} else if (trigger == 26) {
 		if (scratch._a8 == 1) {
@@ -469,7 +470,7 @@ static void room_201_daemon() {
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
 			kernel_flip_hotspot(93, false);
-			inter_move_object(12, PLAYER);
+			inter_move_object(elm_leaves, PLAYER);
 			player.commands_allowed = -1;
 		}
 	} else if (trigger == 7) {
