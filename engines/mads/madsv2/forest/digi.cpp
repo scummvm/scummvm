@@ -20,6 +20,7 @@
  */
 
 #include "audio/decoders/adpcm.h"
+#include "audio/decoders/raw.h"
 #include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/forest/forest.h"
 #include "mads/madsv2/core/env.h"
@@ -46,22 +47,28 @@ DigiPlayer::DigiPlayer(Audio::Mixer *mixer) : _mixer(mixer) {
 void DigiPlayer::play(const char *name, int slot) {
 	stop(slot);
 	DigiChannel &c = _channels[slot - 1];
-
+	Audio::AudioStream *audioStream;
 	Common::SeekableReadStream *src;
-	src = env_open(Common::String::format("*%s.rac", name).c_str());
-	if (!src)
-		src = env_open(Common::String::format("*%s.raw", name).c_str());
 
-	if (!src) {
-		warning("Could not open digi sound - %s", name);
-		return;
+	src = env_open(Common::String::format("*%s.rac", name).c_str());
+	if (src) {
+		// Skip past the HMI header
+		src->seek(0x20);
+
+		audioStream = Audio::makeADPCMStream(src, DisposeAfterUse::YES,
+			src->size() - 0x20, Audio::kADPCMApple, 11025, 1);
+
+	} else {
+		src = env_open(Common::String::format("*%s.raw", name).c_str());
+		if (src) {
+			// Raw audio
+			audioStream = Audio::makeRawStream(src, 11025, Audio::FLAG_UNSIGNED);
+		} else {
+			warning("Could not open digi sound - %s", name);
+			return;
+		}
 	}
 
-	// Skip past the HMI header
-	src->seek(0x20);
-
-	Audio::AudioStream *audioStream = Audio::makeADPCMStream(src, DisposeAfterUse::YES,
-		src->size() - 0x20, Audio::kADPCMApple, 11025, 1);
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &c._soundHandle, audioStream);
 	c._isPlaying = true;
 }
