@@ -43,6 +43,8 @@ enum {
 	kRA1PresentationScreenHeight = 200,
 	kRA1PresentationWidth = kRA1PresentationScreenWidth - kRA1PresentationBorder * 2,
 	kRA1PresentationHeight = kRA1PresentationScreenHeight - kRA1PresentationBorder * 2,
+	// Original RA1 keeps SAUD streams this large on the dedicated long audio buffer.
+	kRA1LargeAudioTrackThreshold = 45000,
 	kRebel1LongAudioTrackSize = 500000
 };
 
@@ -727,12 +729,16 @@ static bool ra1ScanFrameGameChunks(Common::SeekableReadStream &b, int32 frameSiz
 	return hasGameChunk;
 }
 
-static int16 getRA1AudioChunkTypeFlags(uint32 subType) {
+static int16 getRA1AudioChunkTypeFlags(uint32 subType, const uint8 *payload, uint32 payloadSize, uint16 index) {
 	switch (subType) {
 	case MKTAG('P','V','O','C'):
 		return IS_SPEECH;
 	case MKTAG('P','S','A','D'):
-		return IS_BKG_MUSIC;
+		if (index == 0 && payload && payloadSize >= 8 && READ_BE_UINT32(payload) == MKTAG('S','A','U','D') &&
+				READ_BE_UINT32(payload + 4) >= kRA1LargeAudioTrackThreshold) {
+			return IS_BKG_MUSIC;
+		}
+		return IS_SFX;
 	case MKTAG('P','S','D','2'):
 	case MKTAG('S','A','U','D'):
 	default:
@@ -762,7 +768,6 @@ void SmushPlayerRebel1::ra1FeedAudio(uint32 subType, uint8 *srcBuf, int groupId,
 		return;
 
 	const uint32 chunkSize = READ_BE_UINT32(&srcBuf[4]);
-	const int16 typeFlags = getRA1AudioChunkTypeFlags(subType);
 
 	if (chunkSize >= 12 &&
 			srcBuf[8] == 0 && srcBuf[9] == 0 && srcBuf[12] == 0 &&
@@ -770,6 +775,7 @@ void SmushPlayerRebel1::ra1FeedAudio(uint32 subType, uint8 *srcBuf, int groupId,
 		const uint16 trkId = READ_BE_INT16(&srcBuf[10]);
 		const uint16 index = READ_BE_INT16(&srcBuf[14]);
 		const int32 maxFrames = READ_BE_INT16(&srcBuf[18]);
+		const int16 typeFlags = getRA1AudioChunkTypeFlags(subType, srcBuf + 20, chunkSize - 12, index);
 		flags = (flags & ~TRK_TYPE_MASK) | typeFlags;
 
 		handleSAUDChunk(
@@ -787,6 +793,7 @@ void SmushPlayerRebel1::ra1FeedAudio(uint32 subType, uint8 *srcBuf, int groupId,
 		const uint16 index = READ_LE_INT16(&srcBuf[10]);
 		const int32 maxFrames = READ_LE_INT16(&srcBuf[12]);
 		flags |= READ_LE_INT16(&srcBuf[14]);
+		const int16 typeFlags = getRA1AudioChunkTypeFlags(subType, srcBuf + 18, chunkSize - 10, index);
 		flags = (flags & ~TRK_TYPE_MASK) | typeFlags;
 		volume = (volume * srcBuf[16]) >> 7;
 
