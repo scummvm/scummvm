@@ -543,13 +543,6 @@ void InsaneRebel2::handleOpcode6Handler8(Common::SeekableReadStream &b, int16 pa
 		int16 mouseX = aimPos.x;
 		int16 mouseY = aimPos.y;
 
-		if (_player && _player->_width > 320) {
-			mouseX = (mouseX * 320) / _player->_width;
-		}
-		if (_player && _player->_height > 200) {
-			mouseY = (mouseY * 200) / _player->_height;
-		}
-
 		// Horizontal: 5 zones (0=far left, 2=center, 4=far right)
 		if (mouseX < 64)
 			_shipDirectionH = 0;
@@ -933,9 +926,6 @@ void InsaneRebel2::handleOpcode6Handler25(byte *renderBitmap, Common::SeekableRe
 	if (_grdSpriteMode == 3) {
 		if (_rebelDamageLevel == 5) {
 			int16 mouseX = getGameplayAimPoint().x;
-			if (_player && _player->_width > 320) {
-				mouseX = (mouseX * 320) / _player->_width;
-			}
 			if (mouseX > 235) {  // 0x4b + 160 = 235
 				_rebelFlightDir = 1;
 			}

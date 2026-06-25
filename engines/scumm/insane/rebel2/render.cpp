@@ -3433,10 +3433,6 @@ void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width,
 			Common::Point aimPos = getGameplayAimPoint();
 			int16 crosshairX = aimPos.x;
 			int16 crosshairY = aimPos.y;
-			if (_player && _player->_width > 320) {
-				crosshairX = (crosshairX * 320) / _player->_width;
-				crosshairY = (crosshairY * 200) / _player->_height;
-			}
 
 			int areaWidth = areaRight - areaLeft;
 			int areaHeight = areaBottom - areaTop;
