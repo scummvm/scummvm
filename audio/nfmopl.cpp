@@ -32,12 +32,8 @@
 #include "audio/fmopl.h"
 #include "audio/nfmopl.h"
 
-extern "C"
-{
 #include <hwinfo.h>
-#include <sc_gmemalloc.h>
 #include <nfmoplshadowregs.h>
-}
 
 #ifndef RELEASE_BUILD
 	#include "common/debug.h"
@@ -64,17 +60,17 @@ namespace NfmOPL {
 extern "C"
 {
 	static mspace s_mNfmSpace = nullptr;
-	static sMemoryCallbacks s_MemCallbacks;
+	static sNfUserMemoryCallbacks s_MemCallbacks;
 	static void *s_nfmMemoryBase = nullptr;
 
-	static void *nfmAlloc(size_t amount, const eMemoryFlag flag, void* userData, const char* functionName, char* fileName, uint32_t lineNo) {
+	static void *nfmAlloc(size_t amount, const eNfMemoryFlag flag, void* userData, const char* functionName, char* fileName, uint32_t lineNo) {
 #if NFM_ENABLE_LOGS
 		debug("nfmAlloc()");
 #endif
 		return mspace_malloc(s_mNfmSpace, amount);
 	}
 
-	static void *nfmAlignedAlloc(size_t alignment, size_t amount, const eMemoryFlag flag, void* userData, const int8_t* functionName, int8_t* fileName, uint32_t lineNo) {
+	static void *nfmAlignedAlloc(size_t alignment, size_t amount, const eNfMemoryFlag flag, void* userData, const char* functionName, char* fileName, uint32_t lineNo) {
 #if NFM_ENABLE_LOGS
 		debug("nfmAlignedAlloc()");
 #endif
@@ -138,7 +134,7 @@ OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _dev
 	debug("NfmOPL::RealChip create");
 	debug("Requesting hardware info");
 #endif
-	Supexec(updateHardwareInfo);
+	Supexec(scOsUpdateHardwareInfo);
 
 	// defaults
 	_ifaceCfg.deviceType = eFmDriverType::FMD_UNDEFINED;
@@ -280,7 +276,6 @@ OPL::~OPL() {
 		_oplFlush = nullptr;
 		_oplReset = nullptr;
 
-		(void)nfDeinit(&_iface);
 		(void)nfDestroyInterface(&_iface);
 
 		_incapableDevice = false;
@@ -308,8 +303,6 @@ bool OPL::init() {
 	}
 
 #if NFM_ENABLE_CUSTOM_ALLOC
-	// set default callbacks
-	setDefaultUserMemoryCallbacks();
 
 	s_nfmMemoryBase = (void *)Mxalloc((int32_t)NFM_MSPACE_SIZE + 256, (int16_t)3);
 
@@ -323,14 +316,15 @@ bool OPL::init() {
 			return false;
 		}
 
-		// install custom memory allocator callbacks
+		// install user memory allocator callbacks
 		s_MemCallbacks.alloc = nfmAlloc;
 		s_MemCallbacks.alignedAlloc = nfmAlignedAlloc;
 		s_MemCallbacks.release = nfmFree;
 		s_MemCallbacks.realloc = nfmRealloc;
 		s_MemCallbacks.outOfMemory = nfmOutOfMemoryCb;
 
-		setUserMemoryCallbacks(&s_MemCallbacks);
+		nfInit(&s_MemCallbacks, NULL);
+
 	} else {
 #if NFM_ENABLE_LOGS
 		debug("NfmOPL::RealChip Out of system memory!");
@@ -338,12 +332,12 @@ bool OPL::init() {
 		return false;
 	}
 #else
-	setDefaultUserMemoryCallbacks();
+	nfInit(NULL,NULL);
 #endif
 	_iface = nfCreateInterface(_ifaceCfg);
 
 	if (_iface.setup != CC_UNDEFINED) {
-		const int32_t retval = nfInit(&_iface, &_params);
+		const int32_t retval = nfInitialiseInterface(&_iface, &_params);
 
 		if (retval >= 0) {
 			_oplWrite = _iface.write;
@@ -459,7 +453,7 @@ OPL::OPL(Config::OplType type, enum NfmOPL::OplDevice deviceType): _type(type), 
 	debug("NfmOPL::EmulatedChip create");
 	debug("Requesting hardware info");
 #endif
-	Supexec(updateHardwareInfo);
+	Supexec(scOsUpdateHardwareInfo);
 
 	// defaults
 	_ifaceCfg.deviceType = eFmDriverType::FMD_UNDEFINED;
@@ -533,7 +527,6 @@ OPL::~OPL() {
 		_oplReset = nullptr;
 		_generateAudioStream = nullptr;
 
-		(void)nfDeinit(&_iface);
 		(void)nfDestroyInterface(&_iface);
 
 		_incapableDevice = false;
@@ -562,8 +555,6 @@ bool OPL::init() {
 	}
 
 #if NFM_ENABLE_CUSTOM_ALLOC
-	// set default callbacks
-	setDefaultUserMemoryCallbacks();
 
 	s_nfmMemoryBase = (void *)Mxalloc((int32_t)NFM_MSPACE_SIZE + 256, (int16_t)3);
 
@@ -584,7 +575,8 @@ bool OPL::init() {
 		s_MemCallbacks.realloc = nfmRealloc;
 		s_MemCallbacks.outOfMemory = nfmOutOfMemoryCb;
 
-		setUserMemoryCallbacks(&s_MemCallbacks);
+		nfInit(&s_MemCallbacks,NULL);
+
 	} else {
 #if NFM_ENABLE_LOGS
 		debug("NfmOPL::EmulatedChip Out of system memory!");
@@ -592,12 +584,12 @@ bool OPL::init() {
 		return false;
 	}
 #else
-	setDefaultUserMemoryCallbacks();
+	nfInit(NULL,NULL);
 #endif
 	_iface = nfCreateInterface(_ifaceCfg);
 
 	if (_iface.setup != CC_UNDEFINED) {
-		const int32_t retval = nfInit(&_iface, &_params);
+		const int32_t retval = nfInitialiseInterface(&_iface, &_params);
 
 		if (retval >= 0) {
 			_oplWrite = _iface.write;

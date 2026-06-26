@@ -5612,16 +5612,16 @@ echocheck "nFM OPL2 / OPL3"
 if test "$_nfm" = auto ; then
 	_nfm=no
 	cat > $TMPC << EOF
-extern "C"
-{
+
 #include <nfmcore.h>
 #include <nfmutil.h>
-}
 
 sOplInterface gOplIf;
 
 int main(void)
 { 
+	nfInit(NULL, NULL);
+
 	sOplInterfaceConfiguration ifCfg;
 	ifCfg.deviceType = FMD_NULL;
     ifCfg.soundchip = CM_OPL3;
@@ -5635,11 +5635,11 @@ int main(void)
 
     gOplIf = nfCreateInterface(ifCfg); 
 
-    const int32_t retval = nfInit(&gOplIf, &params);
+    const int32_t retval = nfInitialiseInterface(&gOplIf, &params);
 
     if (retval >= 0)
     {
-	 (void)nfDeinit(&gOplIf);
+	 (void)nfDestroyInterface(&gOplIf);
      return 0;
     }	
 
