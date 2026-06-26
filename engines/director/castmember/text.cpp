@@ -299,7 +299,8 @@ bool textWindowCallback(Graphics::WindowClick click, Common::Event &event, void 
 Graphics::MacWidget *TextCastMember::createWindowOrWidget(Common::Rect &bbox, Common::Rect dims, Graphics::MacFont *macFont) {
 	Graphics::MacText *widget = nullptr;
 
-	widget = new Graphics::MacText(g_director->getCurrentWindow()->getMacWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), _lineSpacing, _borderSize, _gutterSize, _boxShadow, _textShadow, _textType == kTextTypeFixed || _textType == kTextTypeScrolling, _textType == kTextTypeScrolling);
+	int maxWidth = _initialRect.width() + _borderSize * 2 + _gutterSize * 2 + _boxShadow;
+	widget = new Graphics::MacText(g_director->getCurrentWindow()->getMacWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), maxWidth, getAlignment(), _lineSpacing, _borderSize, _gutterSize, _boxShadow, _textShadow, _textType == kTextTypeFixed || _textType == kTextTypeScrolling, _textType == kTextTypeScrolling);
 	widget->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
 	widget->draw();
 
