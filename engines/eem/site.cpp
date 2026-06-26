@@ -973,18 +973,20 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 
 	const byte *sd = _mystery->siteData(siteNum);
 	const bool playArrival = _vm->shouldPlaySiteArrival(siteNum);
+	const bool london = _vm->isLondon();
+	const uint16 approachId = (london && sd) ? READ_LE_UINT16(sd + 2) : 0xffff;
 
-	if (playArrival) {
-		if (_vm->isLondon()) {
-			bool showedApproach = false;
-			const uint16 approachId = sd ? READ_LE_UINT16(sd + 2) : 0xffff;
-			if (firstVisit && approachId != 0xffff)
-				showedApproach = _vm->doLondonApproach(approachId);
-			if (!showedApproach)
-				playLondonTravelAnimation(_mystery->_lastSite, siteNum);
-		} else {
-			_vm->startTravelMusic();
+	if (london) {
+		if (playArrival)
+			playLondonTravelAnimation(_mystery->_lastSite, siteNum);
+		if (firstVisit && approachId != 0xffff) {
+			debugC(1, kDebugSite,
+				   "London approach: site %u first visit, approach %u",
+				   siteNum, approachId);
+			_vm->doLondonApproach(approachId);
 		}
+	} else if (playArrival) {
+		_vm->startTravelMusic();
 	}
 
 	const bool compactSite = _vm->isFloppy() ||

@@ -87,6 +87,18 @@ const LondonApproachButton kLondonApproachButtons[4] = {
 	{ 287, 139, 307, 157, 287, 139, 0x360 }, // Previous
 };
 
+const uint16 kMacLondonApproachBackgroundBasePic = 0x38c;
+const int kMacLondonApproachMovieX = 114;
+const int kMacLondonApproachMovieY = 23;
+const int kMacLondonApproachPlayLeft = 9;
+const int kMacLondonApproachPlayTop = 277;
+const int kMacLondonApproachPlayRight = 60;
+const int kMacLondonApproachPlayBottom = 332;
+const int kMacLondonApproachDoneLeft = 452;
+const int kMacLondonApproachDoneTop = 277;
+const int kMacLondonApproachDoneRight = 504;
+const int kMacLondonApproachDoneBottom = 332;
+
 byte mapVisitedMarkerColor(byte color) {
 	switch (color) {
 	case 0xf7:
@@ -248,8 +260,17 @@ static uint16 readScriptU16(const byte *p, bool bigEndian) {
 	return bigEndian ? READ_BE_UINT16(p) : READ_LE_UINT16(p);
 }
 
+Common::String cleanLondonApproachPage(const byte *start, uint32 len) {
+	Common::String page((const char *)start, len);
+	while (!page.empty() &&
+		   (page.lastChar() == '\r' || page.lastChar() == '\n' ||
+			(byte)page.lastChar() == 0xff))
+		page.deleteLastChar();
+	return page;
+}
+
 bool loadLondonApproachData(uint16 approachId, LondonApproachData &out,
-							bool macintosh) {
+							 bool macintosh) {
 	static const char *const kDosPatterns[] = {
 		"A%u.BIN"
 	};
@@ -288,11 +309,19 @@ bool loadLondonApproachData(uint16 approachId, LondonApproachData &out,
 	out.videoId = readScriptU16(data.data() + 0, macintosh);
 	out.videoX = readScriptU16(data.data() + 2, macintosh);
 	out.videoY = readScriptU16(data.data() + 4, macintosh);
-	const int16 x1 = (int16)readScriptU16(data.data() + 6, macintosh);
-	const int16 y1 = (int16)readScriptU16(data.data() + 8, macintosh);
-	const int16 x2 = (int16)readScriptU16(data.data() + 10, macintosh);
-	const int16 y2 = (int16)readScriptU16(data.data() + 12, macintosh);
-	out.textRect = Common::Rect(x1, y1, x2, y2);
+	if (macintosh) {
+		const int16 top = (int16)readScriptU16(data.data() + 6, true);
+		const int16 left = (int16)readScriptU16(data.data() + 8, true);
+		const int16 bottom = (int16)readScriptU16(data.data() + 10, true);
+		const int16 right = (int16)readScriptU16(data.data() + 12, true);
+		out.textRect = Common::Rect(left, top, right, bottom);
+	} else {
+		const int16 x1 = (int16)readScriptU16(data.data() + 6, false);
+		const int16 y1 = (int16)readScriptU16(data.data() + 8, false);
+		const int16 x2 = (int16)readScriptU16(data.data() + 10, false);
+		const int16 y2 = (int16)readScriptU16(data.data() + 12, false);
+		out.textRect = Common::Rect(x1, y1, x2, y2);
+	}
 
 	const uint16 pageCount = readScriptU16(data.data() + 14, macintosh);
 	out.pages.clear();
@@ -303,8 +332,8 @@ bool loadLondonApproachData(uint16 approachId, LondonApproachData &out,
 		const uint32 start = pos;
 		while (pos < size && data[pos] != '\n')
 			pos++;
-		out.pages.push_back(Common::String((const char *)data.data() + start,
-										   pos - start));
+		out.pages.push_back(cleanLondonApproachPage(data.data() + start,
+													pos - start));
 		if (pos < size)
 			pos++;  // skip the '\n' separator
 	}
@@ -374,6 +403,39 @@ bool decodeLondonApproachFirstFrame(uint16 videoId,
 	const int h = MIN<int>(anm.height(), base.h);
 	base.copyRectToSurface(frame, anm.width(), 0, 0, w, h);
 	return true;
+}
+
+byte closestPaletteIndex(const byte *palette, byte r, byte g, byte b,
+						 byte fallback) {
+	if (!palette)
+		return fallback;
+
+	uint bestDist = 0xffffffff;
+	byte best = fallback;
+	for (uint i = 0; i < 256; i++) {
+		const int dr = (int)palette[i * 3 + 0] - r;
+		const int dg = (int)palette[i * 3 + 1] - g;
+		const int db = (int)palette[i * 3 + 2] - b;
+		const uint dist = (uint)(dr * dr + dg * dg + db * db);
+		if (dist < bestDist) {
+			bestDist = dist;
+			best = (byte)i;
+		}
+	}
+	return best;
+}
+
+void remapSurfaceColor(Graphics::ManagedSurface &surface, byte from, byte to) {
+	if (surface.empty() || from == to)
+		return;
+
+	for (int y = 0; y < surface.h; y++) {
+		byte *row = (byte *)surface.getBasePtr(0, y);
+		for (int x = 0; x < surface.w; x++) {
+			if (row[x] == from)
+				row[x] = to;
+		}
+	}
 }
 
 // Setup-screen highlight rects
@@ -4245,9 +4307,6 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 
 	const int sw = screenWidth();
 	const int sh = screenHeight();
-	MacSpritePaletteMap macPaletteMap = {0x00, 0xFF};
-	if (mac)
-		macPaletteMap = getMacSpritePaletteMap();
 
 	Graphics::ManagedSurface base(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
@@ -4256,38 +4315,67 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 		decodeLondonApproachFirstFrame(data.videoId, base, palette, mac);
 	if (!haveVideo)
 		base.clear();
+	if (mac) {
+		Picture background;
+		const uint16 backgroundPic =
+			kMacLondonApproachBackgroundBasePic + data.videoId;
+		if (_picsArchive.getPicture(backgroundPic, background) &&
+			!background.surface.empty()) {
+			if (haveVideo) {
+				const byte black =
+					closestPaletteIndex(palette, 0x00, 0x00, 0x00, 0xfe);
+				remapSurfaceColor(background.surface, 0xff, black);
+			}
+			base.clear();
+			base.simpleBlitFrom(background.surface);
+		}
+	}
 
 	Picture buttonPics[ARRAYSIZE(kLondonApproachButtons)];
 	bool haveButtons[ARRAYSIZE(kLondonApproachButtons)] = {};
-	for (uint i = 0; i < ARRAYSIZE(kLondonApproachButtons); i++)
-		haveButtons[i] = _picsArchive.getPicture(
+	for (uint i = 0; i < ARRAYSIZE(kLondonApproachButtons); i++) {
+		// DOS `_DoApproach` loads PICS 0x361/0x362/0x35f/0x360 as the
+		// four control sprites. In the Mac London data those IDs are
+		// full-screen scrapbook pages, not buttons.
+		haveButtons[i] = !mac && _picsArchive.getPicture(
 			kLondonApproachButtons[i].picId, buttonPics[i]);
+	}
 
 	auto buttonRect = [&](uint idx) {
-		const Common::Rect r = kLondonApproachButtons[idx].rect();
-		return mac ? scaleRect(r) : r;
+		return kLondonApproachButtons[idx].rect();
 	};
 	auto buttonPoint = [&](uint idx) {
 		const LondonApproachButton &b = kLondonApproachButtons[idx];
-		return Common::Point(mac ? scaleX(b.x) : b.x,
-							 mac ? scaleY(b.y) : b.y);
+		return Common::Point(b.x, b.y);
 	};
-
-	auto drawButtonFallback = [&](Graphics::ManagedSurface &dst, uint idx) {
-		static const char *const kLabels[4] = { "OK", "PLAY", ">", "<" };
-		const Common::Rect r = buttonRect(idx);
-		dst.fillRect(r, 0);
-		_font.drawString(&dst, kLabels[idx], r.left + 1, r.top + 5,
-						 r.width(), 0x0f);
+	const int movieX = mac ? kMacLondonApproachMovieX : (int)data.videoX;
+	const int movieY = mac ? kMacLondonApproachMovieY : (int)data.videoY;
+	auto approachTextRect = [&]() {
+		Common::Rect textRect = data.textRect;
+		if (mac)
+			textRect = scaleRect(textRect);
+		return textRect.findIntersectingRect(Common::Rect(sw, sh));
 	};
+	auto macApproachButton = [&](const Common::Point &mouse) {
+		if (mouse.x >= kMacLondonApproachDoneLeft &&
+			mouse.x < kMacLondonApproachDoneRight &&
+			mouse.y >= kMacLondonApproachDoneTop &&
+			mouse.y < kMacLondonApproachDoneBottom)
+			return 0;
+		if (mouse.x >= kMacLondonApproachPlayLeft &&
+			mouse.x < kMacLondonApproachPlayRight &&
+			mouse.y >= kMacLondonApproachPlayTop &&
+			mouse.y < kMacLondonApproachPlayBottom)
+			return 1;
+		return -1;
+	};
+	const byte approachTextColor =
+		closestPaletteIndex(haveVideo ? palette : nullptr, 0, 0, 0,
+							mac ? (byte)0xfe : (byte)1);
 
-	auto drawScreen = [&](uint page) {
-		Graphics::ManagedSurface scratch(sw, sh,
-			Graphics::PixelFormat::createFormatCLUT8());
-		scratch.simpleBlitFrom(base);
-
-		const Common::Rect textRect =
-			data.textRect.findIntersectingRect(Common::Rect(sw, sh));
+	auto drawApproachOverlay = [&](Graphics::ManagedSurface &scratch,
+								   uint page) {
+		const Common::Rect textRect = approachTextRect();
 		if (!textRect.isEmpty()) {
 			if (page < data.pages.size()) {
 				Common::Array<Common::String> wrapped;
@@ -4299,7 +4387,7 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 					_font.drawString(&scratch, wrapped[i], textRect.left,
 									 textRect.top + (int)i * lineH,
 									 textRect.width(),
-									 mac ? macPaletteMap.black : 1);
+									 approachTextColor);
 				}
 			}
 		}
@@ -4307,24 +4395,25 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 		for (uint i = 0; i < ARRAYSIZE(kLondonApproachButtons); i++) {
 			if (haveButtons[i]) {
 				const Common::Point p = buttonPoint(i);
-				if (mac)
-					blitMacMaskedSurface(scratch.surfacePtr(),
-										 buttonPics[i], p.x, p.y, false,
-										 macPaletteMap);
-				else
-					scratch.transBlitFrom(buttonPics[i].surface, p,
-										  (uint32)(byte)(buttonPics[i].flags >> 8));
-			} else {
-				drawButtonFallback(scratch, i);
+				scratch.transBlitFrom(buttonPics[i].surface, p,
+									  (uint32)(byte)(buttonPics[i].flags >> 8));
 			}
 		}
+	};
+
+	auto drawScreen = [&](uint page) {
+		Graphics::ManagedSurface scratch(sw, sh,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		scratch.simpleBlitFrom(base);
+		drawApproachOverlay(scratch, page);
 
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, sw, sh);
 		g_system->updateScreen();
 	};
 
-	auto playVideo = [&]() {
+	auto playVideo = [&](uint page) {
 		if (mac) {
 			Video::FlicDecoder flic;
 			Common::String name;
@@ -4335,22 +4424,24 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 			}
 
 			flic.start();
-			(void)flic.decodeNextFrame(); // first frame is already the background
-			const int videoBandH = scaleY(0x82);
 			while (!shouldQuit() && !flic.endOfVideo()) {
 				const Graphics::Surface *frame = flic.decodeNextFrame();
 				if (!frame)
 					break;
-				const int copyW = MIN<int>(frame->w - (int)data.videoX,
-										   sw - (int)data.videoX);
-				const int copyH = MIN<int>(videoBandH,
-					MIN<int>(frame->h - (int)data.videoY,
-							 sh - (int)data.videoY));
+				Graphics::ManagedSurface scratch(sw, sh,
+					Graphics::PixelFormat::createFormatCLUT8());
+				scratch.clear();
+				scratch.simpleBlitFrom(base);
+				const int copyW = MIN<int>(frame->w, sw - movieX);
+				const int copyH = MIN<int>(frame->h, sh - movieY);
 				if (copyW <= 0 || copyH <= 0)
 					break;
-				g_system->copyRectToScreen(
-					(const byte *)frame->getBasePtr(data.videoX, data.videoY),
-					frame->pitch, data.videoX, data.videoY, copyW, copyH);
+				scratch.copyRectToSurface(frame->getPixels(), frame->pitch,
+										  movieX, movieY,
+										  copyW, copyH);
+				drawApproachOverlay(scratch, page);
+				g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+										   0, 0, sw, sh);
 				if (flic.hasDirtyPalette()) {
 					const byte *fpal = flic.getPalette();
 					if (fpal)
@@ -4359,8 +4450,9 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 				g_system->updateScreen();
 
 				const uint32 start = g_system->getMillis();
+				const uint32 delay = MAX<uint32>(10, flic.getTimeToNextFrame());
 				bool skip = false;
-				while (g_system->getMillis() - start < 120 && !skip) {
+				while (g_system->getMillis() - start < delay && !skip) {
 					Common::Event ev;
 					while (g_system->getEventManager()->pollEvent(ev)) {
 						if (ev.type == Common::EVENT_QUIT ||
@@ -4389,11 +4481,10 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 		}
 
 		// Frame 0 is already the static background. Replay frames 1..end
-		// into the upper video area, leaving text/buttons untouched.
+		// with the approach text/buttons composited above it.
 		(void)anm.nextFrame();
 		const int copyW = MIN<int>(anm.width(), sw - (int)data.videoX);
-		const int copyH = MIN<int>(0x82, MIN<int>(anm.height(),
-			sh - (int)data.videoY));
+		const int copyH = MIN<int>(anm.height(), sh - (int)data.videoY);
 		if (copyW <= 0 || copyH <= 0)
 			return;
 
@@ -4401,9 +4492,15 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 			const byte *frame = anm.nextFrame();
 			if (!frame)
 				break;
-			g_system->copyRectToScreen(
-				frame + data.videoY * anm.width() + data.videoX,
-				anm.width(), data.videoX, data.videoY, copyW, copyH);
+			Graphics::ManagedSurface scratch(sw, sh,
+				Graphics::PixelFormat::createFormatCLUT8());
+			scratch.clear();
+			scratch.copyRectToSurface(frame, anm.width(),
+									  data.videoX, data.videoY,
+									  copyW, copyH);
+			drawApproachOverlay(scratch, page);
+			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+									   0, 0, sw, sh);
 			g_system->updateScreen();
 
 			const uint32 start = g_system->getMillis();
@@ -4440,6 +4537,10 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 		fadePaletteFromBlack(palette);
 	else
 		setSitePalette(0x3b);
+	if (haveVideo) {
+		playVideo(page);
+		drawScreen(page);
+	}
 	bool done = false;
 	uint32 lastShimmer = g_system->getMillis();
 	while (!shouldQuit() && !done) {
@@ -4452,10 +4553,15 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 			}
 			if (ev.type == Common::EVENT_MOUSEMOVE) {
 				bool overButton = false;
-				for (uint i = 0; i < ARRAYSIZE(kLondonApproachButtons); i++) {
-					if (buttonRect(i).contains(ev.mouse.x, ev.mouse.y)) {
-						overButton = true;
-						break;
+				if (mac) {
+					overButton = macApproachButton(
+						Common::Point(ev.mouse.x, ev.mouse.y)) >= 0;
+				} else {
+					for (uint i = 0; i < ARRAYSIZE(kLondonApproachButtons); i++) {
+						if (buttonRect(i).contains(ev.mouse.x, ev.mouse.y)) {
+							overButton = true;
+							break;
+						}
 					}
 				}
 				setInteractiveMouseCursor(overButton);
@@ -4468,7 +4574,7 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 					break;
 				}
 				if (ev.kbd.keycode == Common::KEYCODE_SPACE) {
-					playVideo();
+					playVideo(page);
 					drawScreen(page);
 				} else if (ev.kbd.keycode == Common::KEYCODE_RIGHT ||
 						   ev.kbd.keycode == Common::KEYCODE_DOWN) {
@@ -4485,12 +4591,25 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				if (mac) {
+					const int button = macApproachButton(
+						Common::Point(ev.mouse.x, ev.mouse.y));
+					if (button == 0) {
+						done = true;
+						break;
+					}
+					if (button == 1) {
+						playVideo(page);
+						drawScreen(page);
+					}
+					continue;
+				}
 				if (buttonRect(0).contains(ev.mouse.x, ev.mouse.y)) {
 					done = true;
 					break;
 				}
 				if (buttonRect(1).contains(ev.mouse.x, ev.mouse.y)) {
-					playVideo();
+					playVideo(page);
 					drawScreen(page);
 				} else if (buttonRect(2).contains(ev.mouse.x, ev.mouse.y)) {
 					if (page + 1 < data.pages.size()) {
@@ -4505,7 +4624,7 @@ bool EEMEngine::doLondonApproach(uint16 approachId) {
 				}
 			}
 		}
-		if (haveVideo) {
+		if (haveVideo && !mac) {
 			const uint32 now = g_system->getMillis();
 			if (now - lastShimmer >= 70) {
 				lastShimmer = now;

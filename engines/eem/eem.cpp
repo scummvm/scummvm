@@ -413,6 +413,83 @@ static void addMacResourceSearchPaths() {
 		SearchMan.addDirectory("eem-mac-rsrc-sibling", siblingRsrcDir);
 }
 
+Common::FSNode findChildDirectoryIgnoreCase(const Common::FSNode &dir,
+											const char *name) {
+	Common::FSList children;
+	if (!dir.exists() || !dir.isDirectory() ||
+		!dir.getChildren(children, Common::FSNode::kListDirectoriesOnly))
+		return Common::FSNode();
+
+	for (Common::FSList::const_iterator it = children.begin();
+		 it != children.end(); ++it) {
+		if (it->getName().equalsIgnoreCase(name))
+			return *it;
+	}
+
+	return Common::FSNode();
+}
+
+void addMacLondonDirectoryIfPresent(const Common::FSNode &dir,
+									const char *archiveName,
+									int depth = 1) {
+	if (dir.exists() && dir.isDirectory() &&
+		!SearchMan.hasArchive(archiveName))
+		SearchMan.addDirectory(archiveName, dir, 0, depth);
+}
+
+void addMacLondonSearchPathsFrom(const Common::FSNode &base,
+								 const char *archivePrefix) {
+	if (!base.exists() || !base.isDirectory())
+		return;
+
+	Common::FSNode cd = findChildDirectoryIgnoreCase(base, "EEM2 CD");
+	if (!cd.exists()) {
+		Common::FSNode wrapper = findChildDirectoryIgnoreCase(base, "EEM_London");
+		if (wrapper.exists())
+			cd = findChildDirectoryIgnoreCase(wrapper, "EEM2 CD");
+	}
+	if (!cd.exists() && base.getName().equalsIgnoreCase("EEM2 CD"))
+		cd = base;
+	if (!cd.exists()) {
+		const Common::String baseName = base.getName();
+		if (baseName.equalsIgnoreCase("Data Files") ||
+			baseName.equalsIgnoreCase("Mac Scripts") ||
+			baseName.equalsIgnoreCase("Anim Files"))
+			cd = base.getParent();
+	}
+	if (!cd.exists())
+		return;
+
+	Common::String dataArchive = Common::String::format(
+		"%s-data-files", archivePrefix);
+	Common::String scriptsArchive = Common::String::format(
+		"%s-mac-scripts", archivePrefix);
+	Common::String animArchive = Common::String::format(
+		"%s-anim-files", archivePrefix);
+	Common::String appArchive = Common::String::format(
+		"%s-app", archivePrefix);
+
+	const Common::FSNode dataDir = findChildDirectoryIgnoreCase(cd, "Data Files");
+	const Common::FSNode scriptsDir = findChildDirectoryIgnoreCase(cd, "Mac Scripts");
+	const Common::FSNode animDir = findChildDirectoryIgnoreCase(cd, "Anim Files");
+
+	addMacLondonDirectoryIfPresent(dataDir, dataArchive.c_str(), 2);
+	addMacLondonDirectoryIfPresent(scriptsDir, scriptsArchive.c_str(), 3);
+	addMacLondonDirectoryIfPresent(animDir, animArchive.c_str(), 2);
+
+	if (scriptsDir.exists()) {
+		Common::String approachesArchive = Common::String::format(
+			"%s-approaches", archivePrefix);
+		addMacLondonDirectoryIfPresent(
+			findChildDirectoryIgnoreCase(scriptsDir, "Approaches"),
+			approachesArchive.c_str());
+	}
+
+	const Common::FSNode app =
+		findChildDirectoryIgnoreCase(cd.getParent(), "EEM London CD");
+	addMacLondonDirectoryIfPresent(app, appArchive.c_str(), 2);
+}
+
 static bool loadMacFontResource(EEMFont &font, uint16 resourceId, int size) {
 	addMacResourceSearchPaths();
 
@@ -855,17 +932,19 @@ bool EEMEngine::openArchives() {
 	// the disc root or at the "EEM2 CD" folder.
 	if (mac && isLondon()) {
 		const Common::FSNode gameDir(ConfMan.getPath("path"));
+		addMacLondonSearchPathsFrom(gameDir, "eem-london-game");
+		addMacLondonSearchPathsFrom(gameDir.getParent(), "eem-london-parent");
 		// Disc-root layout (recommended -- this also reaches the "EEM London
 		// CD" app that holds the Mac fonts/sound). The "/"-separated names
 		// descend two levels (see Common::addSubDirectoryMatching).
-		SearchMan.addSubDirectoryMatching(gameDir, "EEM2 CD/Data Files");
-		SearchMan.addSubDirectoryMatching(gameDir, "EEM2 CD/Mac Scripts");
-		SearchMan.addSubDirectoryMatching(gameDir, "EEM2 CD/Anim Files");
-		SearchMan.addSubDirectoryMatching(gameDir, "EEM London CD");
+		SearchMan.addSubDirectoryMatching(gameDir, "EEM2 CD/Data Files", 0, 2);
+		SearchMan.addSubDirectoryMatching(gameDir, "EEM2 CD/Mac Scripts", 0, 3);
+		SearchMan.addSubDirectoryMatching(gameDir, "EEM2 CD/Anim Files", 0, 2);
+		SearchMan.addSubDirectoryMatching(gameDir, "EEM London CD", 0, 2);
 		// ...or the user pointed ScummVM straight at the "EEM2 CD" folder.
-		SearchMan.addSubDirectoryMatching(gameDir, "Data Files");
-		SearchMan.addSubDirectoryMatching(gameDir, "Mac Scripts");
-		SearchMan.addSubDirectoryMatching(gameDir, "Anim Files");
+		SearchMan.addSubDirectoryMatching(gameDir, "Data Files", 0, 2);
+		SearchMan.addSubDirectoryMatching(gameDir, "Mac Scripts", 0, 3);
+		SearchMan.addSubDirectoryMatching(gameDir, "Anim Files", 0, 2);
 	}
 
 	// The EEM1 Mac release can be played straight from its floppy installer.
