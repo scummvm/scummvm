@@ -86,7 +86,7 @@ uint markClueBlockNotebookEntries(Mystery &mystery, const byte *clueBlock,
 	if (number == 0 || number > 32)
 		return 0;
 
-	// EEM2 entries are 84 bytes (0x54) with the notebook list at entry+0x40;
+	// EEM2 entries are 84 bytes (0x54) with the notebook list at entry+0x3c;
 	// EEM1 entries are 62 bytes with the list at entry+0x30. See displayClue.
 	const uint stride    = isLondon ? 0x54 : 62;
 	const uint noteOffat = isLondon ? 0x3c : 0x30;
@@ -740,8 +740,9 @@ void EEMEngine::doInitClues() {
 		displayFloppyBriefing(ib);
 	} else {
 		const byte *briefingClues = ib + 4;
-		// _DisplayClue calls _AddNotebook for each ClueEntry note list at
-		// +0x30..+0x39. Mark starting notes before the first PDA visit.
+		// _DisplayClue calls _AddNotebook for each ClueEntry note list
+		// (EEM1 +0x30..+0x39, EEM2 +0x3c..+0x45). Mark starting notes
+		// before the first PDA visit.
 		const uint marked = markClueBlockNotebookEntries(_mystery, briefingClues,
 														 isLondon());
 		if (marked != 0)
@@ -964,7 +965,8 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		}
 	}
 
-	// ClueEntry layout (62 bytes):
+	// ClueEntry layout. EEM1 entries are 62 bytes; EEM2/London entries
+	// extend this to 0x54 bytes and move the side-effect lists below.
 	//   +0..1, +2..3:   p0 tx, ty       +4..5, +6..7:   p1 tx, ty
 	//   +8..9, +10..11: bubText offset p0/p1 (rel. TextBlock; -1 = none)
 	//   +12..13, +14..15: balloon pic ID p0/p1
@@ -972,8 +974,9 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 	//   +0x14/+0x16: bubX, bubY (partner 1)
 	//   +0x18: Jenny voice (1-based)
 	//   +0x1a: Jake  voice (1-based)
-	//   +0x30..+0x39: 5 notebook entries (-1 terminated)
-	//   +0x3a..+0x3b: KD-anim number (-1 = none)
+	//   EEM1 +0x30..+0x39 / EEM2 +0x3c..+0x45:
+	//       5 notebook entries (-1 terminated)
+	//   EEM1 +0x3a / EEM2 +0x4e: KD-anim number (-1 = none)
 	for (uint i = 0; i < number && !shouldQuit(); i++) {
 		g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, sw, sh);
 		const byte *c = clueBlock + 4 + i * stride;

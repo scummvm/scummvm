@@ -703,8 +703,12 @@ void EEMEngine::doInterfaceHelp(uint num) {
 	debugC(1, kDebugScript, "doInterfaceHelp(%u): showing pics 0x%x, 0x%x",
 		   num, kHelpPics[num][0], kHelpPics[num][1]);
 
+	const bool mac = isMacintosh();
+	const int sw = screenWidth();
+	const int sh = screenHeight();
+
 	// Snapshot caller's screen once: each PIC overlays the same clean BG.
-	Graphics::ManagedSurface bg(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface bg(sw, sh,
 		Graphics::PixelFormat::createFormatCLUT8());
 	{
 		Graphics::Surface *cur = g_system->lockScreen();
@@ -727,14 +731,18 @@ void EEMEngine::doInterfaceHelp(uint num) {
 		debugC(1, kDebugScript, "doInterfaceHelp: pic 0x%x = %dx%d flags=0x%x",
 			   picId, pic.surface.w, pic.surface.h, pic.flags);
 
-		Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+		Graphics::ManagedSurface scratch(sw, sh,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.simpleBlitFrom(bg);
 		const byte transp = (byte)(pic.flags >> 8);
-		scratch.transBlitFrom(pic.surface, Common::Point(0, 0),
-							  (uint32)transp);
+		if (mac) {
+			blitMacMaskedSurface(scratch.surfacePtr(), pic, 0, 0);
+		} else {
+			scratch.transBlitFrom(pic.surface, Common::Point(0, 0),
+								  (uint32)transp);
+		}
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, kScreenWidth, kScreenHeight);
+								   0, 0, sw, sh);
 		g_system->updateScreen();
 
 		bool escape = false;

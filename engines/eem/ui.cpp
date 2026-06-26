@@ -554,20 +554,21 @@ constexpr Common::Rect kPdaPagePrevRect(Common::Point(226, 174), 21, 16);
 constexpr Common::Rect kPdaHelp2Rect(Common::Point(267, 174), 21, 16);
 constexpr Common::Rect kPdaLondonCloseRect(Common::Point(0, 0), 66, 79);
 
-// Mac _NotebookRect and _NoteButtons table at 0x177e. The coordinates are
-// native QuickDraw rects; keep them exact instead of deriving them from the
-// rounded DOS scaler.
+// Mac _NotebookRect and the TRAVIS button table use native QuickDraw rects;
+// keep them exact instead of deriving them from the rounded DOS scaler.
 constexpr Common::Rect kMacNotebookTextRect(Common::Point(125, 23), 336, 269);
-constexpr Common::Rect kMacPdaNotebookRect(Common::Point(214, 334), 34, 30);
-constexpr Common::Rect kMacPdaHelpRect(Common::Point(149, 334), 35, 30);
-constexpr Common::Rect kMacPdaGalleryRect(Common::Point(251, 334), 34, 30);
+constexpr Common::Rect kMacPdaHelpRect(Common::Point(164, 336), 33, 28);
+constexpr Common::Rect kMacPdaNotebookRect(Common::Point(247, 336), 34, 28);
+constexpr Common::Rect kMacPdaGalleryRect(Common::Point(330, 336), 34, 28);
 constexpr Common::Rect kMacPdaPartnerHeadHintRect(Common::Point(13, 154), 57, 57);
 constexpr Common::Rect kMacPdaAccuseRect(Common::Point(288, 334), 33, 30);
-constexpr Common::Rect kMacPdaPageNextRect(Common::Point(325, 334), 33, 30);
-constexpr Common::Rect kMacPdaPagePrevRect(Common::Point(362, 334), 33, 30);
+constexpr Common::Rect kMacPdaPagePrevRect(Common::Point(112, 336), 48, 28);
+constexpr Common::Rect kMacPdaPageNextRect(Common::Point(452, 336), 42, 28);
+constexpr Common::Rect kMacPdaScrollBarRect(Common::Point(98, 336), 396, 48);
+constexpr int kMacPdaScrollBarMidX = 296;
 constexpr Common::Rect kMacPdaPartnerFootMapRect(Common::Point(11, 340), 80, 44);
 constexpr Common::Rect kMacPdaSiteRect(Common::Point(56, 213), 34, 48);
-constexpr Common::Rect kMacPdaHelp2Rect(Common::Point(427, 334), 33, 30);
+constexpr Common::Rect kMacPdaHelp2Rect(Common::Point(413, 336), 34, 28);
 
 constexpr uint16 kProfilePickerRevealPic = 0x105;
 constexpr int kProfilePickerRevealX = 0x3e;
@@ -636,6 +637,28 @@ Common::Rect pdaControlRect(const EEMEngine *vm, const Common::Rect &rect) {
 	return vm->scaleRect(rect);
 }
 
+int macPdaScrollBarDelta(const EEMEngine *vm, int x, int y) {
+	if (!vm || !vm->isMacintosh() || !kMacPdaScrollBarRect.contains(x, y))
+		return 0;
+
+	static const Common::Rect kMacPdaScrollBarButtons[] = {
+		kMacPdaHelpRect,
+		kMacPdaNotebookRect,
+		kMacPdaGalleryRect,
+		kMacPdaAccuseRect,
+		kMacPdaHelp2Rect
+	};
+	for (uint i = 0; i < ARRAYSIZE(kMacPdaScrollBarButtons); i++) {
+		if (kMacPdaScrollBarButtons[i].contains(x, y))
+			return 0;
+	}
+	return x < kMacPdaScrollBarMidX ? -1 : 1;
+}
+
+bool macPdaScrollBarAt(const EEMEngine *vm, int x, int y) {
+	return macPdaScrollBarDelta(vm, x, y) != 0;
+}
+
 bool notebookButtonAt(const EEMEngine *vm, int x, int y) {
 	return pdaControlRect(vm, kPdaHelpRect).contains(x, y) ||
 		   pdaControlRect(vm, kPdaGalleryRect).contains(x, y) ||
@@ -645,7 +668,8 @@ bool notebookButtonAt(const EEMEngine *vm, int x, int y) {
 		   pdaControlRect(vm, kPdaPagePrevRect).contains(x, y) ||
 		   pdaControlRect(vm, kPdaHelp2Rect).contains(x, y) ||
 		   pdaControlRect(vm, kPdaPartnerFootMapRect).contains(x, y) ||
-		   pdaControlRect(vm, kPdaSiteRect).contains(x, y);
+		   pdaControlRect(vm, kPdaSiteRect).contains(x, y) ||
+		   macPdaScrollBarAt(vm, x, y);
 }
 
 bool notebookButtonAt(int x, int y) {
@@ -667,6 +691,7 @@ bool galleryButtonAt(const EEMEngine *vm, int x, int y) {
 		   pdaControlRect(vm, kPdaAccuseRect).contains(x, y) ||
 		   pdaControlRect(vm, kPdaNotebookRect).contains(x, y) ||
 		   pdaControlRect(vm, kPdaHelpRect).contains(x, y) ||
+		   pdaControlRect(vm, kPdaHelp2Rect).contains(x, y) ||
 		   pdaControlRect(vm, kPdaPartnerHeadHintRect).contains(x, y);
 }
 
@@ -705,6 +730,18 @@ bool gallerySlotAt(const Common::Array<Common::Rect> &rects,
 			return true;
 	}
 	return false;
+}
+
+void blitTravisBackground(Graphics::ManagedSurface &dst, const Picture &pic,
+						  bool mac) {
+	if (mac) {
+		Graphics::ManagedSurface bg;
+		bg.copyFrom(pic.surface);
+		remapMacSurfaceEndpoints(bg, getMacSpritePaletteMap());
+		dst.simpleBlitFrom(bg);
+	} else {
+		dst.simpleBlitFrom(pic.surface);
+	}
 }
 
 const byte *advanceFloppyDialogRecords(const byte *rec, uint count,
@@ -3060,6 +3097,19 @@ void EEMEngine::doNotebook() {
 					dirty = true;
 					continue;
 				}
+				const int scrollDelta =
+					macPdaScrollBarDelta(this, ev.mouse.x, ev.mouse.y);
+				if (scrollDelta < 0) {
+					if (page > 0)
+						page--;
+					dirty = true;
+					continue;
+				}
+				if (scrollDelta > 0) {
+					page++;
+					dirty = true;
+					continue;
+				}
 			}
 		}
 		if (exitFlag)
@@ -3130,7 +3180,7 @@ void EEMEngine::drawNotebookFrame(int &page) {
 
 	Picture frame;
 	if (_picsArchive.getPicture(0x3f, frame))
-		scratch.simpleBlitFrom(frame.surface);
+		blitTravisBackground(scratch, frame, isMacintosh());
 
 	blitPdaPartner(scratch, _aniArchive, _partner, kPdaNotebookPartner,
 				   g_system->getMillis(), isMacintosh());
@@ -3342,6 +3392,15 @@ void EEMEngine::doGallery() {
 					lastDraw = 0;
 					continue;
 				}
+				if (pdaControlRect(this, kPdaHelp2Rect).contains(ev.mouse.x,
+																 ev.mouse.y)) {
+					setInteractiveMouseCursor(false);
+					doInterfaceHelp(0);
+					if (isMacintosh())
+						setSitePalette(0);
+					lastDraw = 0;
+					continue;
+				}
 				if (pdaControlRect(this, kPdaPartnerHeadHintRect)
 						.contains(ev.mouse.x, ev.mouse.y)) {
 					setInteractiveMouseCursor(false);
@@ -3440,7 +3499,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 			Graphics::PixelFormat::createFormatCLUT8());
 		ms.clear();
 		if (haveBg)
-			ms.simpleBlitFrom(galBg.surface);
+			blitTravisBackground(ms, galBg, mac);
 
 		blitPdaPartner(ms, _aniArchive, _partner, kPdaGalleryPartner,
 					   g_system->getMillis(), mac);
@@ -3490,8 +3549,7 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 				// Defer to next page.
 				break;
 			}
-			const byte color = _mystery._noteSelected[clueId]
-								   ? 0x3C : 0x5C;
+			const byte color = _mystery._noteSelected[clueId] ? 0x3C : 0x5C;
 			for (uint l = 0; l < wrapped.size(); l++) {
 				_font.drawString(&ms, wrapped[l], rx,
 					yPos + (int)l * lineH, MAX<int>(8, rw), color);
@@ -3557,6 +3615,14 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 					redraw = true;
 					break;
 				}
+				if (e2.type == Common::EVENT_MOUSEMOVE) {
+					const int scrollDelta =
+						macPdaScrollBarDelta(this, e2.mouse.x, e2.mouse.y);
+					setInteractiveMouseCursor(
+						galleryButtonAt(this, e2.mouse.x, e2.mouse.y) ||
+						(scrollDelta < 0 && hasPrev) ||
+						(scrollDelta > 0 && hasMore));
+				}
 				if (e2.type == Common::EVENT_LBUTTONDOWN) {
 					const int mx = e2.mouse.x;
 					const int my = e2.mouse.y;
@@ -3610,6 +3676,18 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 					if (pdaControlRect(this, kPdaPagePrevRect).contains(mx, my)) {
 						if (hasPrev)
 							prev = true;
+						break;
+					}
+					const int scrollDelta =
+						macPdaScrollBarDelta(this, mx, my);
+					if (scrollDelta < 0) {
+						if (hasPrev)
+							prev = true;
+						break;
+					}
+					if (scrollDelta > 0) {
+						if (hasMore)
+							advance = true;
 						break;
 					}
 					if (pdaControlRect(this, kPdaPartnerHeadHintRect).contains(mx, my)) {
@@ -3677,7 +3755,7 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 	scratch.clear();
 
 	if (haveBg)
-		scratch.simpleBlitFrom(galBg.surface);
+		blitTravisBackground(scratch, galBg, mac);
 
 	blitPdaPartner(scratch, _aniArchive, _partner, kPdaGalleryPartner,
 				   g_system->getMillis(), mac);
@@ -4607,7 +4685,9 @@ Common::String EEMEngine::accuseNoteText(uint clueId,
 			(const char *)(ctx.bufBaseNotes + textOff),
 			_playerName, _partner);
 	}
-	if (isMacintosh() && ctx.bufBaseNotes) {
+	// Only the compact EEM1 Mac mystery data uses 8-byte NoteIndex records.
+	// EEM2 London Mac loose scripts keep the London 2-byte table.
+	if (isMacintosh() && !isLondon() && ctx.bufBaseNotes) {
 		const uint16 textOff = READ_LE_UINT16(ctx.ni + clueId * 8);
 		if (textOff == 0 || textOff >= _mystery.dataSize())
 			return Common::String();
@@ -4658,7 +4738,7 @@ void EEMEngine::accuseDrawScreen(const AccuseNotesCtx &ctx) {
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 	if (ctx.haveBg)
-		scratch.simpleBlitFrom(ctx.accuseBg->surface);
+		blitTravisBackground(scratch, *ctx.accuseBg, mac);
 
 	blitPdaPartner(scratch, _aniArchive, _partner, kPdaGalleryPartner,
 				   g_system->getMillis(), mac);
@@ -4737,6 +4817,9 @@ bool EEMEngine::doAccuseNotes() {
 		: _mystery.noteIndexCount();
 	if (!ni)
 		return false;
+
+	if (isMacintosh())
+		setSitePalette(0);
 
 	Picture accuseBg;
 	const bool haveBg = _picsArchive.getPicture(0x1a7, accuseBg);
@@ -4894,6 +4977,21 @@ bool EEMEngine::doAccuseNotes() {
 					}
 					continue;
 				}
+				const int scrollDelta = macPdaScrollBarDelta(this, mx, my);
+				if (scrollDelta < 0) {
+					if (page > 0) {
+						page--;
+						dirty = true;
+					}
+					continue;
+				}
+				if (scrollDelta > 0) {
+					if (page + 1 < numPages) {
+						page++;
+						dirty = true;
+					}
+					continue;
+				}
 				if (btnPartner.contains(mx, my)) {
 					doHelp();
 					if (isMacintosh())
@@ -4907,9 +5005,8 @@ bool EEMEngine::doAccuseNotes() {
 						if (_mystery._noteSelected[found[i]])
 							selected++;
 					}
-					if (selected == expected) {
+					if (selected == expected)
 						return true;
-					}
 					continue;
 				}
 				// Toggle clue under cursor.
