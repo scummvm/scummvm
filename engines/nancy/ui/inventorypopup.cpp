@@ -308,10 +308,12 @@ void InventoryPopup::handleInput(NancyInput &input) {
 		input.mousePos.x - _screenPosition.left + _uiivData->header.normalDestRect.left,
 		input.mousePos.y - _screenPosition.top  + _uiivData->header.normalDestRect.top);
 
-	// kHotspot is the highlighted magnifier and also the cursor that
-	// blends a held-item sprite on Nancy 10+, so it works in both
-	// "empty hand" (plain magnifier) and "carrying" (magnifier + item) states.
-	const CursorManager::CursorType hoverCursor = CursorManager::kHotspot;
+	// Item slots use kHotspot: the highlighted magnifier, which also blends a
+	// held-item sprite on Nancy 10+, so it works in both "empty hand" (plain
+	// magnifier) and "carrying" (magnifier + item) states. The popup chrome
+	// (close button, scrollbar, filter tabs) uses kHotspotArrow instead, like
+	// the other Nancy 10+ popups.
+	const CursorManager::CursorType slotCursor = CursorManager::kHotspot;
 
 	// Scrollbar interaction takes priority while dragging.
 	const UISliderRecord &slider = _uiivData->header.slider;
@@ -331,7 +333,7 @@ void InventoryPopup::handleInput(NancyInput &input) {
 		const bool overScrollbar = thumbInChunk.contains(chunkMouse);
 
 		if (_scrollbarDragging) {
-			g_nancy->_cursor->setCursorType(hoverCursor);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 
 			const int newThumbTop = chunkMouse.y - _scrollbarGrabOffset;
 			const int clamped = CLIP<int>(newThumbTop, track.top, track.top + travel);
@@ -354,7 +356,7 @@ void InventoryPopup::handleInput(NancyInput &input) {
 			_needsRedraw = true;
 		}
 		if (overScrollbar) {
-			g_nancy->_cursor->setCursorType(hoverCursor);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 			if (slider.isDraggable && (input.input & NancyInput::kLeftMouseButtonDown)) {
 				_scrollbarDragging = true;
 				_scrollbarGrabOffset = chunkMouse.y - thumbY;
@@ -382,7 +384,7 @@ void InventoryPopup::handleInput(NancyInput &input) {
 			_needsRedraw = true;
 		}
 		if (overClose) {
-			g_nancy->_cursor->setCursorType(hoverCursor);
+			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				input.eatMouseInput();
 				close();
@@ -409,7 +411,7 @@ void InventoryPopup::handleInput(NancyInput &input) {
 	}
 
 	if (hoveredSlot != -1) {
-		g_nancy->_cursor->setCursorType(hoverCursor);
+		g_nancy->_cursor->setCursorType(slotCursor);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			if (heldItem != -1) {
@@ -482,7 +484,7 @@ void InventoryPopup::handleInput(NancyInput &input) {
 			continue;
 		}
 
-		g_nancy->_cursor->setCursorType(hoverCursor);
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 
 		drawFilterTab(i, true);
 
