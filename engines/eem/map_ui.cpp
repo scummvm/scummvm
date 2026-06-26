@@ -34,6 +34,7 @@
 #include "video/flic_decoder.h"
 
 #include "eem/animation.h"
+#include "eem/coords.h"
 #include "eem/eem.h"
 #include "eem/music.h"
 #include "eem/site.h"
@@ -78,6 +79,10 @@ const int kMacLondonApproachDoneLeft = 452;
 const int kMacLondonApproachDoneTop = 277;
 const int kMacLondonApproachDoneRight = 504;
 const int kMacLondonApproachDoneBottom = 332;
+// Mac FUN_0000849e maps overview clicks to detail scroll with
+// mouse * 2 - center, clamped to zero before subtracting.
+const int kMacBigMapScrollCenterX = 0xbf;
+const int kMacBigMapScrollCenterY = 0xab;
 
 byte mapVisitedMarkerColor(byte color) {
 	switch (color) {
@@ -236,10 +241,6 @@ static bool openNumberedScriptFile(Common::File &f, Common::String &name,
 	return false;
 }
 
-static uint16 readScriptU16(const byte *p, bool bigEndian) {
-	return bigEndian ? READ_BE_UINT16(p) : READ_LE_UINT16(p);
-}
-
 Common::String cleanLondonApproachPage(const byte *start, uint32 len) {
 	Common::String page((const char *)start, len);
 	while (!page.empty() &&
@@ -289,19 +290,8 @@ bool loadLondonApproachData(uint16 approachId, LondonApproachData &out,
 	out.videoId = readScriptU16(data.data() + 0, macintosh);
 	out.videoX = readScriptU16(data.data() + 2, macintosh);
 	out.videoY = readScriptU16(data.data() + 4, macintosh);
-	if (macintosh) {
-		const int16 top = (int16)readScriptU16(data.data() + 6, true);
-		const int16 left = (int16)readScriptU16(data.data() + 8, true);
-		const int16 bottom = (int16)readScriptU16(data.data() + 10, true);
-		const int16 right = (int16)readScriptU16(data.data() + 12, true);
-		out.textRect = Common::Rect(left, top, right, bottom);
-	} else {
-		const int16 x1 = (int16)readScriptU16(data.data() + 6, false);
-		const int16 y1 = (int16)readScriptU16(data.data() + 8, false);
-		const int16 x2 = (int16)readScriptU16(data.data() + 10, false);
-		const int16 y2 = (int16)readScriptU16(data.data() + 12, false);
-		out.textRect = Common::Rect(x1, y1, x2, y2);
-	}
+	out.textRect = macintosh ? readMacQuickDrawRectBE(data.data() + 6)
+							 : readDosRectLE(data.data() + 6);
 
 	const uint16 pageCount = readScriptU16(data.data() + 14, macintosh);
 	out.pages.clear();
@@ -427,10 +417,6 @@ void remapSurfaceColor(Graphics::ManagedSurface &surface, byte from, byte to) {
 //     20fe:0d2f`). Click icon = travel.
 // MapData entry (14 bytes): +0..3 ???, +4 BigMapX, +6 BigMapY,
 //   +8 SmallMapX, +0xa SmallMapY, +0xc crime-flag.
-Common::Rect EEMEngine::bigMapScaledRect(const Common::Rect &rect) const {
-	return isMacintosh() ? scaleRect(rect) : rect;
-}
-
 void EEMEngine::bigMapCycleOverviewPalette(bool mac) {
 	if (isLondon()) {
 		if (mac) {
@@ -472,8 +458,8 @@ bool EEMEngine::bigMapRunOverview(BigMapOverviewState &state) {
 		? Common::Rect(251, 3, 315, 42)
 		: (isLondon() ? Common::Rect(252, 1, 315, 42)
 					  : Common::Rect(252, 4, 315, 42));
-	const Common::Rect setupBtnRect = bigMapScaledRect(setupBtnBase);
-	state.window = bigMapScaledRect(Common::Rect(0, 0, 247, 192));
+	const Common::Rect setupBtnRect = scaleDosRectIfMac(*this, setupBtnBase);
+	state.window = scaleDosRectIfMac(*this, Common::Rect(0, 0, 247, 192));
 	state.zoomX = 0;
 	state.zoomY = 0;
 
@@ -580,10 +566,12 @@ void EEMEngine::bigMapInitDetailState(BigMapDetailState &state,
 	state.maxScrollY = MAX<int>(0, (int)mapH - state.mapWinH);
 
 	if (mac) {
-		state.scrollX = overview.zoomX * (int)mapW /
-			MAX<int>(1, overview.window.width()) - state.mapWinW / 2;
-		state.scrollY = overview.zoomY * (int)mapH /
-			MAX<int>(1, overview.window.height()) - state.mapWinH / 2;
+		state.scrollX = overview.zoomX * 2;
+		state.scrollY = overview.zoomY * 2;
+		state.scrollX = state.scrollX < kMacBigMapScrollCenterX + 1
+			? 0 : state.scrollX - kMacBigMapScrollCenterX;
+		state.scrollY = state.scrollY < kMacBigMapScrollCenterY + 1
+			? 0 : state.scrollY - kMacBigMapScrollCenterY;
 	} else {
 		state.scrollX = overview.zoomX;
 		state.scrollY = overview.zoomY;
@@ -591,19 +579,19 @@ void EEMEngine::bigMapInitDetailState(BigMapDetailState &state,
 	state.scrollX = MAX<int>(0, MIN<int>(state.maxScrollX, state.scrollX));
 	state.scrollY = MAX<int>(0, MIN<int>(state.maxScrollY, state.scrollY));
 
-	state.returnRect = bigMapScaledRect(
+	state.returnRect = scaleDosRectIfMac(*this,
 		Common::Rect(252, 43, kScreenWidth, kScreenHeight));
-	state.arrowYUp = bigMapScaledRect(Common::Rect(237, 2, 247, 11));
-	state.arrowYDown = bigMapScaledRect(Common::Rect(237, 163, 247, 172));
-	state.arrowXLeft = bigMapScaledRect(Common::Rect(2, 175, 12, 185));
-	state.arrowXRight = bigMapScaledRect(Common::Rect(224, 175, 234, 185));
-	state.xSlider = bigMapScaledRect(isLondon()
+	state.arrowYUp = scaleDosRectIfMac(*this, Common::Rect(237, 2, 247, 11));
+	state.arrowYDown = scaleDosRectIfMac(*this, Common::Rect(237, 163, 247, 172));
+	state.arrowXLeft = scaleDosRectIfMac(*this, Common::Rect(2, 175, 12, 185));
+	state.arrowXRight = scaleDosRectIfMac(*this, Common::Rect(224, 175, 234, 185));
+	state.xSlider = scaleDosRectIfMac(*this, isLondon()
 		? Common::Rect(15, 176, 220, 184)
 		: Common::Rect(15, 175, 221, 185));
-	state.ySlider = bigMapScaledRect(isLondon()
+	state.ySlider = scaleDosRectIfMac(*this, isLondon()
 		? Common::Rect(238, 16, 246, 158)
 		: Common::Rect(237, 14, 247, 160));
-	state.setupRect = bigMapScaledRect(isFloppy()
+	state.setupRect = scaleDosRectIfMac(*this, isFloppy()
 		? Common::Rect(251, 3, 315, 42)
 		: (isLondon() ? Common::Rect(251, 3, 315, 42)
 					  : Common::Rect(252, 4, 315, 42)));

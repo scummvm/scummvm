@@ -31,6 +31,7 @@
 #include "graphics/paletteman.h"
 
 #include "eem/audio.h"
+#include "eem/coords.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
 #include "eem/mystery.h"
@@ -219,29 +220,14 @@ void blitMacAnimFrameAnchored(Graphics::Surface *dst, const Picture &p,
 }
 
 bool readHotspotRect(const byte *r, bool mac, Common::Rect &rect) {
-	if (mac) {
-		const int16 top = (int16)READ_LE_UINT16(r + 0);
-		const int16 left = (int16)READ_LE_UINT16(r + 2);
-		const int16 bottom = (int16)READ_LE_UINT16(r + 4);
-		const int16 right = (int16)READ_LE_UINT16(r + 6);
-		if (right <= left || bottom <= top)
-			return false;
-		rect = Common::Rect(left, top, right, bottom);
-		return true;
-	}
-
-	const int16 x1 = (int16)READ_LE_UINT16(r + 0);
-	const int16 y1 = (int16)READ_LE_UINT16(r + 2);
-	const int16 x2 = (int16)READ_LE_UINT16(r + 4);
-	const int16 y2 = (int16)READ_LE_UINT16(r + 6);
-	if (x2 <= x1 || y2 <= y1)
+	rect = mac ? readMacQuickDrawRectLE(r) : readDosRectLE(r);
+	if (rect.right <= rect.left || rect.bottom <= rect.top)
 		return false;
-	rect = Common::Rect(x1, y1, x2, y2);
 	return true;
 }
 
 Common::Rect siteControlRect(const EEMEngine *vm, const Common::Rect &rect) {
-	return (vm && vm->isMacintosh()) ? vm->scaleRect(rect) : rect;
+	return pdaControlRect(vm, rect);
 }
 
 // `_ColorCycle @ 172b:2015` — rotate `_fpal[start..end]` by one slot:

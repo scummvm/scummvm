@@ -406,7 +406,6 @@ private:
 		uint32 lastCycleTick = 0;
 	};
 
-	Common::Rect bigMapScaledRect(const Common::Rect &rect) const;
 	bool bigMapRunOverview(BigMapOverviewState &state);
 	bool bigMapLoadDetailPixels(Common::Array<byte> &mapPixels,
 								uint16 &mapW, uint16 &mapH);
@@ -683,6 +682,8 @@ public:
 		_lastSiteArrivalAnim = (int)siteNum;
 	}
 };
+
+Common::Rect pdaControlRect(const EEMEngine *vm, const Common::Rect &rect);
 
 } // End of namespace EEM
 

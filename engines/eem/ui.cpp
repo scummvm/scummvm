@@ -33,6 +33,7 @@
 #include "graphics/managed_surface.h"
 
 #include "eem/audio.h"
+#include "eem/coords.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
 #include "eem/music.h"
@@ -67,10 +68,6 @@ static bool openNumberedScriptFile(Common::File &f, Common::String &name,
 	}
 	name.clear();
 	return false;
-}
-
-static uint16 readScriptU16(const byte *p, bool bigEndian) {
-	return bigEndian ? READ_BE_UINT16(p) : READ_LE_UINT16(p);
 }
 
 // Setup-screen highlight rects
@@ -1411,9 +1408,9 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 	const int sw = screenWidth();
 	const int sh = screenHeight();
 	const Common::Rect endingPrevRect =
-		macEnding ? scaleRect(kEndingPrevPageRect) : kEndingPrevPageRect;
+		scaleDosRectIfMac(*this, kEndingPrevPageRect);
 	const Common::Rect endingNextRect =
-		macEnding ? scaleRect(kEndingNextPageRect) : kEndingNextPageRect;
+		scaleDosRectIfMac(*this, kEndingNextPageRect);
 	uint pageOffsets[8];
 	const uint pageOffsetCap =
 		(uint)(sizeof(pageOffsets) / sizeof(pageOffsets[0]));
@@ -1544,10 +1541,11 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 					break;
 				const uint16 picNum =
 					readScriptU16(buf.data() + off, macLooseEnding);
-				x1 = readScriptU16(buf.data() + off + 2, macLooseEnding);
-				y1 = readScriptU16(buf.data() + off + 4, macLooseEnding);
-				x2 = readScriptU16(buf.data() + off + 6, macLooseEnding);
-				(void)readScriptU16(buf.data() + off + 8, macLooseEnding);  // y2 (unused — WordWrap2 takes width only)
+				const Common::Rect textRect =
+					readRectXYXY(buf.data() + off + 2, macLooseEnding);
+				x1 = textRect.left;
+				y1 = textRect.top;
+				x2 = textRect.right;
 
 				Picture bg;
 				if (_picsArchive.getPicture(picNum, bg))
