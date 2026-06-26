@@ -74,6 +74,8 @@ const uint kMacPicTitleLeft2   = 0x216;
 const uint kMacPicTitleRight0  = 0x217;
 const uint kMacPicTitleRight1  = 0x218;
 const uint kMacPicTitleRight2  = 0x219;
+const uint kDosLondonPicHighScoreLogo = 0x356; // FUN_2721_084d
+const uint kDosLondonPalHighScoreLogo = 0x3d;
 const uint kMacPalEAKids       = 0x28;
 const uint kMacPalTitle        = 0x29;
 const uint kPicMousePointer    = 0x50;  // 0x51 is the wait cursor
@@ -1776,15 +1778,17 @@ void EEMEngine::runLondonStartup() {
 	debugC(1, kDebugGeneral, "EEM2 (London): opening sequence");
 
 	// Opening logos. Mac London mirrors FUN_00009256: EA Kids colour-cycle,
-	// publisher still, Storm still, then the FLC intro/title pair.
+	// publisher still, Storm still, then the FLC intro/title pair. DOS London
+	// uses the original ANM sequence after EA Kids instead.
 	if (!shouldQuit() && !_skipIntro)
 		showLondonEAKidsLogo();
-	if (!shouldQuit() && !_skipIntro)
-		showLondonLogo(0x20c, 0x3e, 3000);  // publisher logo (FUN_00009074)
-	if (!shouldQuit() && !_skipIntro)
-		showLondonLogo(0x20b, 0x3d, 3000, /* playThunder= */ true);
 
 	if (isMacintosh()) {
+		if (!shouldQuit() && !_skipIntro)
+			showLondonLogo(0x20c, 0x3e, 3000);  // publisher logo (FUN_00009074)
+		if (!shouldQuit() && !_skipIntro)
+			showLondonLogo(0x20b, 0x3d, 3000, /* playThunder= */ true);
+
 		// The Mac CD ships the post-logo intro as Flic movies where DOS uses
 		// bolt/movie/wave .ANM. KDCDINTR is the centered intro; BOOK54 is the
 		// full-screen animated title, held for the profile click/key.
@@ -1806,6 +1810,9 @@ void EEMEngine::runLondonStartup() {
 				_audio->stopVoice();
 			fadeCurrentPaletteToBlack();
 		}
+		if (!shouldQuit() && !_skipIntro)
+			showLondonLogo(kDosLondonPicHighScoreLogo,
+						   kDosLondonPalHighScoreLogo, 3000);
 
 		// Intro movie with its theme (MUS00101.XMI).
 		if (!shouldQuit() && !_skipIntro && _music)
