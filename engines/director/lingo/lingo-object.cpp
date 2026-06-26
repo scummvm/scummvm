@@ -174,6 +174,7 @@
 #include "director/lingo/xtras/f/filextra4.h"
 #include "director/lingo/xtras/g/getdir.h"
 #include "director/lingo/xtras/g/glu32.h"
+#include "director/lingo/xtras/j/javaconvert.h"
 #include "director/lingo/xtras/k/keypoll.h"
 #include "director/lingo/xtras/m/masterapp.h"
 #include "director/lingo/xtras/m/mui.h"
@@ -344,6 +345,7 @@ static const struct XLibProto {
 	XLIBDEF(IsCD,				kXObj,			300),	// D3
 	XLIBDEF(IsPippin,			kXObj,			400),	// D4
 	XLIBDEF(JITDraw3XObj,		kXObj,			400),	// D4
+	XLIBDEF(JavaConvertXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(JourneyWareXINIXObj,kXObj,			400),	// D4
 	XLIBDEF(KeypollXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(LabelDrvXObj,		kXObj,			400),	// D4
