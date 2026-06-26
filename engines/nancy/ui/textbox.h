@@ -34,6 +34,7 @@ struct NancyInput;
 namespace UI {
 
 class Scrollbar;
+class ScrollTextBox;
 
 class Textbox : public RenderObject, public Misc::HypertextParser {
 public:
@@ -51,38 +52,25 @@ public:
 	void addTextLine(const Common::String &text, uint32 autoClearTime = 0);
 	void setOverrideFont(const uint fontID);
 
-	// Nancy 10+ open/full mode. When `open` is true the textbox extends
-	// down to cover the taskbar buttons; `timeoutMs` schedules an automatic
-	// return to closed mode Passing 0 disables the auto-close (the caller is
-	// then responsible for closing). No-op for pre-Nancy 10 games.
+	// Vestigial "full mode" toggle, now a no-op. Kept for the FrameTextBox AR.
 	void setFullMode(bool open, uint32 timeoutMs = 15000);
-	bool isFullMode() const { return _isFullMode; }
+	bool isFullMode() const { return false; }
 
 private:
-	enum DisplayMode {
-		kModeClosed = 0,
-		kModeOpen   = 1
-	};
-
 	uint16 getInnerHeight() const;
 	void onScrollbarMove();
-	void applyDisplayMode();
 
 	RenderObject _highlightRObj;
 	Scrollbar *_scrollbar;
+
+	// Nancy 10+ overlay popup the public API forwards to (UICO/SCTB-driven).
+	// The legacy members above are unused in that mode.
+	ScrollTextBox *_scrollTextBox;
 
 	float _scrollbarPos;
 
 	uint32 _autoClearTime;
 	int _fontIDOverride;
-
-	// Nancy 10+ open/closed strip geometry. `_closedRect` is the small
-	// taskbar-clipped strip; `_openRect` is the full bsum textbox area
-	// (extends through the taskbar zone).
-	bool _isFullMode;
-	uint32 _fullModeCloseTime;
-	Common::Rect _closedRect;
-	Common::Rect _openRect;
 };
 
 } // End of namespace UI

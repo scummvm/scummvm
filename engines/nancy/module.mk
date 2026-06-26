@@ -71,6 +71,7 @@ MODULE_OBJS = \
   ui/notebookpopup.o \
   ui/ornaments.o \
   ui/scrollbar.o \
+  ui/scrolltextbox.o \
   ui/taskbar.o \
   ui/textbox.o \
   ui/viewport.o \
