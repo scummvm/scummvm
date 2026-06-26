@@ -280,7 +280,7 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 			const int w = currentCharWidth + font.getKerningOffset(last, c);
 			last = c;
 			const bool wouldExceedWidth =
-				(lineWidth + tmpWidth + w > targetMaxLineWidth) &&
+				(lineWidth + tmpWidth + w >= targetMaxLineWidth) &&
 				!(mode & kWordWrapAllowTrailingWhitespace && Common::isSpace(c));
 
 			// If this char is a whitespace, then it represents a potential
