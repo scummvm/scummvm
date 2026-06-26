@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-24 10:59+0000\n"
-"PO-Revision-Date: 2026-05-12 22:22+0000\n"
+"PO-Revision-Date: 2026-06-26 17:22+0000\n"
 "Last-Translator: KARTIK SAXENA <kartiksaxena2005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -996,7 +996,7 @@ msgstr "कोई नहीं (सबसे तेज़)"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Linear"
-msgstr ""
+msgstr "रैखिक"
 
 #: gui/fluidsynth-dialog.cpp:146
 msgid "Fourth-order"
