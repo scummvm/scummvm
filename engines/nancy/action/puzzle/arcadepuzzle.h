@@ -67,26 +67,25 @@ protected:
 		bool pendingExplosion = false;  // true while queued in explosion list (not yet erased)
 	};
 
-	// ---------- Subfunction translations ----------
-	void paddleMovement();              // FUN_0044b99b
-	void ballAndCollision();            // FUN_0044bca3
-	void processExplosions();           // FUN_0044f9dd
-	void updateTimer();                 // FUN_00450276
-	void updateScore();                 // FUN_00450354
-	int  getNextLevel() const;          // FUN_0044e1a8
-	void initSublevel();                // FUN_0044d3c7
-	void resetRound();                  // FUN_0044b78e
+	void paddleMovement();
+	void ballAndCollision();
+	void processExplosions();
+	void updateTimer();
+	void updateScore();
+	int  getNextLevel() const;
+	void initSublevel();
+	void resetRound();
 	void wallAndPaddleCollision(int &ballLeft, int &ballTop, int &ballRight, int &ballBottom,
-	                             int &ballCenterX, int &ballCenterY);  // FUN_0044c378
+	                             int &ballCenterX, int &ballCenterY);
 	bool brickCollision(int &ballLeft, int &ballTop, int &ballRight, int &ballBottom,
-	                     int &ballCenterX, int &ballCenterY);            // FUN_0044cad5
-	void applyCollision();              // FUN_0044ced2
+	                     int &ballCenterX, int &ballCenterY);
+	void applyCollision();
 	bool ballExited(int ballLeft, int ballTop, int ballRight, int ballBottom,
-	                int &ballCenterX, int &ballCenterY);                 // FUN_0044d20e
-	void playBrickHitSound();           // FUN_0044fff5
+	                int &ballCenterX, int &ballCenterY);
+	void playBrickHitSound();
 	void addToExplosionList(int brickIdx, uint32 delay);
-	void generateBricks();              // FUN_0044e0b5
-	void buildAngleTable();				// FUN_0044e1a8
+	void generateBricks();
+	void buildAngleTable();
 	void drawBrick(int idx);
 	void eraseBrick(int idx);
 	void drawPaddle();

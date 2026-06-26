@@ -37,7 +37,7 @@ namespace Action {
 
 // Wall normals for collision types 0..16.
 // Each entry is {dx, dy, spin} matching original offsets at this+0x188 + type*0xc.
-// Type 0 = paddle center (handled specially by FUN_0044d03d — normal not used here).
+// Type 0 = paddle center (handled specially — normal not used here).
 // Positive dy = up in "math" coords, i.e. y -= dy*speed on screen.
 const float ArcadePuzzle::_wallNormals[17][3] = {
 	{  0.0f,  1.0f, 0.0f }, // 0  paddle center (placeholder — handled separately)
@@ -250,7 +250,7 @@ void ArcadePuzzle::buildAngleTable() {
 		_angleTable[right * 6 + 2] = 0.0f;
 
 		// sub-entry 1: reflect across y-axis: (-dx, dy)
-		// FUN_00447eb9 with no-negate: result = 2*(v·n)*n - v
+		// Reflection with no-negate: result = 2*(v·n)*n - v
 		// n=(0,1), v=(dx,dy): result = (-dx, dy)
 		float dot  = dx * mirrorNx + dy * mirrorNy; // = dy
 		float rdx  = 2.0f * dot * mirrorNx - dx;    // = -dx
@@ -947,7 +947,7 @@ void ArcadePuzzle::wallAndPaddleCollision(int &ballLeft, int &ballTop, int &ball
 	}
 }
 
-// ---- segmentsCross (FUN_00450120 / FUN_0045022b) ----------------------------
+// ---- segmentsCross ----------------------------------------------------------
 // Returns true if segment P1->P2 crosses segment P3->P4 (including touching).
 // Uses the standard 2D cross-product orientation test.
 
@@ -968,10 +968,10 @@ static bool segmentsCross(int p1x, int p1y, int p2x, int p2y,
 	return true;
 }
 
-// ---- brickCollision (FUN_0044cad5) ------------------------------------------
+// ---- brickCollision ---------------------------------------------------------
 // Ball center is inside brick area. Find which brick is hit and set collision type.
 // Direct grid-index lookup (O(1)), neighbor-based face detection with line-segment
-// intersection test (FUN_00450120).
+// intersection test.
 
 bool ArcadePuzzle::brickCollision(int &ballLeft, int &ballTop, int &ballRight, int &ballBottom,
                                    int &ballCenterX, int &ballCenterY) {

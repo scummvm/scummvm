@@ -46,7 +46,7 @@ void AngleTossPuzzle::init() {
 	// Draw the initial angle and power indicators.
 	// The throw button sprite is NOT drawn here — the static background already shows the
 	// idle button state. The sprite (data+0x4d) is the launched/pressed overlay, drawn
-	// only when LAUNCH is clicked (mirroring the DAT_0059bfbd conditional in FUN_0044b1fa).
+	// only when LAUNCH is clicked.
 	_drawSurface.blitFrom(_image, _angleSprites[_curAngle], _angleDisplay);
 	_drawSurface.blitFrom(_image, _powerSprites[_curPower], _powerDisplay);
 }
@@ -57,7 +57,7 @@ void AngleTossPuzzle::readData(Common::SeekableReadStream &stream) {
 	// data+0x21..0x2c: 6 × uint16.
 	// _initialPower/_initialAngle: starting player position (copied to object+0x24/0x26 in original).
 	// _numPowers/_numAngles: UI control bounds.
-	// _targetPower/_targetAngle: the correct answer for this round (compared in FUN_0044a6be).
+	// _targetPower/_targetAngle: the correct answer for this round.
 	_initialPower = stream.readUint16LE();
 	_initialAngle = stream.readUint16LE();
 	_numPowers    = stream.readUint16LE();
@@ -113,7 +113,7 @@ void AngleTossPuzzle::execute() {
 		g_nancy->_sound->loadSound(_squeakSound);
 		g_nancy->_sound->loadSound(_chainSound);
 
-		// FUN_0044a526: clear all result/hint flags before the player starts.
+		// Clear all result/hint flags before the player starts.
 		NancySceneState.setEventFlag(_powerTooStrongFlag, g_nancy->_false);
 		NancySceneState.setEventFlag(_powerTooWeakFlag, g_nancy->_false);
 		NancySceneState.setEventFlag(_angleTooLeftFlag, g_nancy->_false);
@@ -124,12 +124,12 @@ void AngleTossPuzzle::execute() {
 		break;
 
 	case kRun:
-		// Wait for the chain sound to finish, then evaluate the throw (FUN_0044a6be)
+		// Wait for the chain sound to finish, then evaluate the throw
 		// and always transition to _throwSquidScene so the animation plays.
 		if (_isThrown && !g_nancy->_sound->isSoundPlaying(_chainSound)) {
 			_isThrown = false;
 
-			// FUN_0044a6be: set exactly one result flag based on how accurate the throw was.
+			// Set exactly one result flag based on how accurate the throw was.
 			// The animation scene reads these flags to decide what to show.
 			if (_curPower == _targetPower && _curAngle == _targetAngle) {
 				// Exact match of power and angle — player wins round!
@@ -241,7 +241,7 @@ void AngleTossPuzzle::handleInput(NancyInput &input) {
 			g_nancy->_sound->playSound(_chainSound);
 			_isThrown = true;
 
-			// Show the launched/pressed overlay sprite (DAT_0059bfbd != 0 path in FUN_0044b1fa).
+			// Show the launched/pressed overlay sprite.
 			_drawSurface.blitFrom(_image, _throwSprite, _throwDisplay);
 			_needsRedraw = true;
 		}

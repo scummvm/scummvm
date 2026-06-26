@@ -183,19 +183,19 @@ protected:
 
 	// --- Internal methods ---
 
-	void playPickupSound();	// FUN_0047239c
-	void playRotateSoundAndStartTimer();	// FUN_0047212b
-	void playDropSound();	// FUN_004721dc
-	void playGoodPlacementSound();	// FUN_00472792
-	void playBadPlacementSound();	// FUN_00472440
-	void checkAllPlaced();	// FUN_00472ac6
-	void rotatePiece(int pieceIdx);	// FUN_004719a5
-	void updateDragPosition(Common::Point mouseVP);	// FUN_00471490
+	void playPickupSound();
+	void playRotateSoundAndStartTimer();
+	void playDropSound();
+	void playGoodPlacementSound();
+	void playBadPlacementSound();
+	void checkAllPlaced();
+	void rotatePiece(int pieceIdx);
+	void updateDragPosition(Common::Point mouseVP);
 	// Update the render object for a piece (set _drawSurface and moveTo gameRect)
 	void updatePieceRender(int pieceIdx);
 	// Rotate a surface 90 degrees clockwise into dst (dst is allocated here)
 	static void rotateSurface90CW(const Graphics::ManagedSurface &src, Graphics::ManagedSurface &dst);
-	// Clamp rect to viewport bounds while preserving dimensions - FUN_004713b8
+	// Clamp rect to viewport bounds while preserving dimensions
 	void clampRectToViewport(Common::Rect &rect);
 
 	// Final-animation helpers.

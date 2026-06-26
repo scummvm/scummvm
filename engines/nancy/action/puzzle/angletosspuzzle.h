@@ -41,7 +41,6 @@ namespace Action {
 // Wrong throws transition to _throwSquidScene, showing the appropriate failure animation,
 // based on which of the four fail flags is set (too strong/weak, too left/right). After the
 // separate AR instances (each with their own target) implement the 3-round mechanic.
-// FUN_0044a526 and FUN_0044a6be handle flag clearing and result evaluation in the original.
 
 class AngleTossPuzzle : public RenderActionRecord {
 public:
@@ -64,7 +63,7 @@ protected:
 	// data+0x21..0x2c: 6 × uint16.
 	// _initialPower/_initialAngle: starting player selection (copied to object+0x24/0x26 in original).
 	// _numPowers/_numAngles: UI control bounds (always 5 in practice).
-	// _targetPower/_targetAngle: the correct answer for this AR instance (compared in FUN_0044a6be).
+	// _targetPower/_targetAngle: the correct answer for this AR instance.
 	uint16 _initialPower = 0;
 	uint16 _initialAngle = 0;
 	uint16 _numPowers = 0;
@@ -73,7 +72,6 @@ protected:
 	uint16 _targetAngle = 0;
 
 	// The 22 rects read from the data file, in stream order.
-	// Rect-to-data-offset mapping confirmed from the render callback (FUN_0044b1fa).
 	//
 	// Sprite rects (_fooSprite) are source areas within the loaded image.
 	// Display rects (_fooDisplay) are destination areas on the viewport overlay.
@@ -105,7 +103,7 @@ protected:
 	SoundDescription _squeakSound;		// Played when changing aim angle
 	SoundDescription _chainSound;		// Played when LAUNCH is pressed
 
-	SceneChangeWithFlag _throwSquidScene;	// Triggered on throw (FUN_0044a6be result)
+	SceneChangeWithFlag _throwSquidScene;	// Triggered on throw
 
 	int16 _powerTooStrongFlag = -1;   // 0x236
 	int16 _powerTooWeakFlag = -1; // 0x238

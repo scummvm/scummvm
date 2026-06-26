@@ -588,9 +588,7 @@ void OneBuildPuzzle::checkAllPlaced() {
 	}
 
 	// Puzzles with a post-placement animation (e.g. scene 3637's music-box
-	// crank) require the player to click _animRectA before the puzzle solves;
-	// the original signals this in state 1 by skipping FUN_0047fadd when
-	// +0xc27 (anim B non-empty) is set.
+	// crank) require the player to click _animRectA before the puzzle solves.
 	if (_hasFinalAnim && !_finalAnimDone) {
 		_waitingForFinalAnim = true;
 		return;
