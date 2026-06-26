@@ -107,6 +107,7 @@ MODULE_OBJS = \
 	lingo/xlibs/g/getscreenrectsxfcn.o \
 	lingo/xlibs/g/getscreensizexfcn.o \
 	lingo/xlibs/g/getsoundinlevel.o \
+	lingo/xtras/g/glu32.o \
 	lingo/xlibs/g/gpid.o \
 	lingo/xlibs/h/henry.o \
 	lingo/xlibs/h/hitmap.o \
