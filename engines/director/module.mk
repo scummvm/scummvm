@@ -234,7 +234,8 @@ MODULE_OBJS = \
 	lingo/xtras/s/sharpexport.o \
 	lingo/xtras/s/soundchannel.o \
 	lingo/xtras/u/uihelper.o \
-	lingo/xtras/v/vlist.o
+	lingo/xtras/v/vlist.o \
+	lingo/xtras/w/wingroup.o
 
 
 ifdef USE_IMGUI

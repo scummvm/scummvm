@@ -201,6 +201,7 @@
 #include "director/lingo/xtras/t/timextra.h"
 #include "director/lingo/xtras/u/uihelper.h"
 #include "director/lingo/xtras/v/vlist.h"
+#include "director/lingo/xtras/w/wingroup.h"
 #include "director/lingo/xtras/x/xsound.h"
 
 namespace Director {
@@ -437,6 +438,7 @@ static const struct XLibProto {
 	XLIBDEF(VolumeList,			kXObj,			300),	// D3
 	XLIBDEF(VoyagerXSoundXObj,	kXObj,			400),	// D4
 	XLIBDEF(WidgetXObj,			kXObj,					300),	// D3
+	XLIBDEF(WinGroupXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(WinInfoXObj,		kXObj,			400),	// D4
 	XLIBDEF(WindowXObj,			kXObj,			200),	// D2
 	XLIBDEF(XCMDGlueXObj,		kXObj,			200),	// D2
