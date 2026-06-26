@@ -20,7 +20,7 @@
  */
 
 #include "common/system.h"
-#include "common/file.h"
+#include "common/stream.h"
 #include "common/language.h"
 #include "common/platform.h"
 #include "common/tokenizer.h"
@@ -689,11 +689,10 @@ void GridWidget::sortGroups() {
 
 		Common::U32StringTokenizer tok(_filter);
 		Common::U32String tmp;
-		int n = 0;
 
 		_sortedEntryList.clear();
 
-		for (GridItemInfo *i = _dataEntryList.begin(); i != _dataEntryList.end(); ++i, ++n) {
+		for (GridItemInfo *i = _dataEntryList.begin(); i != _dataEntryList.end(); ++i) {
 			tmp = i->title;
 			tmp.toLowercase();
 			bool matches = true;
@@ -1097,7 +1096,7 @@ void GridWidget::applyScrollPos() {
 		reloadThumbnails();
 
 	assignEntriesToItems();
-	scrollBarRecalc();	
+	scrollBarRecalc();
 	markAsDirty();
 	if (_highlightedItem)
 		_highlightedItem->handleMouseLeft(0);

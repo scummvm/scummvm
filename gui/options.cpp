@@ -336,7 +336,7 @@ void OptionsDialog::build() {
 			const Common::RenderModeDescription *p = Common::g_renderModes;
 			const Common::RenderMode renderMode = Common::parseRenderMode(ConfMan.get("render_mode", _domain));
 			int sel = 0;
-			for (int i = 0; p->code; ++p, ++i) {
+			for (; p->code; ++p) {
 				if (renderMode == p->id)
 					sel = p->id;
 			}
@@ -350,7 +350,7 @@ void OptionsDialog::build() {
 				const Common::RotationModeDescription *p = Common::g_rotationModes;
 				const Common::RotationMode rotationMode = Common::parseRotationMode(ConfMan.getInt("rotation_mode", _domain));
 				int sel = 0;
-				for (int i = 0; p->description; ++p, ++i) {
+				for (; p->description; ++p) {
 					if (rotationMode == p->id)
 						sel = p->id;
 				}
