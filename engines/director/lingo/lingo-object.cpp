@@ -160,6 +160,7 @@
 #include "director/lingo/xlibs/y/yasix.h"
 #include "director/lingo/xtras/a/audio.h"
 #include "director/lingo/xtras/b/border.h"
+#include "director/lingo/xtras/a/amplitude.h"
 #include "director/lingo/xtras/b/budapi.h"
 #include "director/lingo/xtras/d/directsound.h"
 #include "director/lingo/xtras/d/displayres.h"
@@ -265,6 +266,7 @@ static const struct XLibProto {
 	int version;
 } xlibs[] = {
 	XLIBDEF(AiffXObj,			kXObj,			400),	// D4
+	XLIBDEF(AmplitudeXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(AppleCDXObj,		kXObj,			300),	// D3
 	XLIBDEF(AskUser,			kXObj,			400),	// D4
 	XLIBDEF(AudioXtra,			kXtraObj,					500),	// D5
