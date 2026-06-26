@@ -195,6 +195,7 @@
 #include "director/lingo/xtras/s/staytoonedober.h"
 #include "director/lingo/xtras/s/staytoonedtoon.h"
 #include "director/lingo/xtras/s/setmouse.h"
+#include "director/lingo/xtras/s/scrnxtra.h"
 #include "director/lingo/xtras/t/timextra.h"
 #include "director/lingo/xtras/x/xsound.h"
 
@@ -400,6 +401,7 @@ static const struct XLibProto {
 	XLIBDEF(RolloverToolkitXtra,kXtraObj,		500),	// D5
 	XLIBDEF(SaveNRestoreXObj,			kXObj,					400),	// D4
 	XLIBDEF(ScrnUtilXtra,		kXtraObj,		500),	// D5
+	XLIBDEF(ScrnXtraXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(SerialPortXObj,		kXObj,			200),	// D2
 	XLIBDEF(SetMouseXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(SmackerXtra,			kXtraObj,					500),	// D5
