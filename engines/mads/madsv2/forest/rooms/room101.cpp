@@ -24,8 +24,8 @@
 #include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/forest/rooms/section1.h"
 #include "mads/madsv2/forest/digi.h"
+#include "mads/madsv2/forest/extra.h"
 #include "mads/madsv2/forest/global.h"
-#include "mads/madsv2/forest/journal.h"
 #include "mads/madsv2/forest/midi.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
@@ -638,7 +638,7 @@ static void room_101_daemon() {
 			break;
 		case 29:
 			global[walker_converse_state] = 0;
-			close_journal(3);
+			close_interface(CANDLE_FLY);
 			player.commands_allowed = true;
 			break;
 		case 30:

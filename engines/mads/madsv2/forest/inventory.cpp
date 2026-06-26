@@ -162,7 +162,7 @@ void display_inventory() {
 	inter_update_series(int_sprite[fx_int_exit]);
 	inven_set_interface_mode(-1);
 
-	open_journal(2);
+	open_interface(BP_FLY);
 	cursor_id = 2;
 	if (cursor_last != 2) {
 		mouse_cursor_sprite(cursor, 2);
@@ -208,12 +208,13 @@ void display_inventory() {
 	mouse_show();
 
 	// Main event loop
-	for (;;) {
+	while (!g_engine->shouldQuit()) {
 		digi_read_another_chunk();
 		if (global[g009])
 			midi_loop();
+
 		mouse_begin_cycle(0);
-		// TODO: delay_to_expiry(0, -1) — not yet declared
+		mouse_end_cycle(false, true);
 
 		if (var_1E) {
 			long current = timer_read();
@@ -379,7 +380,7 @@ void display_inventory() {
 exit_inventory:
 		global[inventory_is_displayed] = 0;
 		var_6 = var_20;
-		close_journal(2);
+		close_interface(BP_FLY);
 		knuthole_flag = true;
 		inter_spin_object(object_id);
 		inter_move_object(object_id, PLAYER);
@@ -398,7 +399,7 @@ cancel_inventory:
 		mouse_cursor_sprite(cursor, 2);
 		global[inventory_is_displayed] = 0;
 		var_6 = var_20;
-		close_journal(2);
+		close_interface(BP_FLY);
 
 restore_interface:
 		stamp_sprite_to_interface(JOURNAL_X, JOURNAL_Y, 1, int_sprite[fx_int_journal]);

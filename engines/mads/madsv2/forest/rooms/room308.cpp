@@ -862,7 +862,7 @@ static void room_308_anim22() {
 	if (cur == 70) {
 		if (global[walker_converse_state] != 0) {
 			global[walker_converse_state] = 0;
-			close_journal(3);
+			close_interface(CANDLE_FLY);
 		}
 		object_set_quality(5, -1, -1);
 		object_set_quality(1, -1, -1);

@@ -278,7 +278,7 @@ static void room_405_daemon() {
 	case 7:
 		if (global[walker_converse_state]) {
 			global[walker_converse_state] = 0;
-			close_journal(3);
+			close_interface(CANDLE_FLY);
 			player.commands_allowed = true;
 			if (config_file.forest1)
 				kernel_timing_trigger(1, 106);

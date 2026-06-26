@@ -24,8 +24,8 @@
 #include "mads/madsv2/forest/mads/sounds.h"
 #include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/forest/digi.h"
+#include "mads/madsv2/forest/extra.h"
 #include "mads/madsv2/forest/global.h"
-#include "mads/madsv2/forest/journal.h"
 #include "mads/madsv2/forest/midi.h"
 #include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/game.h"
@@ -389,7 +389,7 @@ static void room_210_daemon() {
 			break;
 		case 4:
 			global[walker_converse_state] = 0;
-			close_journal(3);
+			close_interface(CANDLE_FLY);
 			player.commands_allowed = true;
 			if (config_file.forest1 != 0) kernel_timing_trigger(1, 109);
 			break;

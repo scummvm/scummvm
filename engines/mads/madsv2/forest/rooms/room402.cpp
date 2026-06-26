@@ -24,6 +24,7 @@
 #include "mads/madsv2/forest/mads/sounds.h"
 #include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/forest/digi.h"
+#include "mads/madsv2/forest/extra.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/journal.h"
 #include "mads/madsv2/forest/midi.h"
@@ -210,7 +211,7 @@ static void room_402_anim_case7() {
 
 	if (a2 == -668) {
 		global[walker_converse_state] = 0;
-		close_journal(3);
+		close_interface(CANDLE_FLY);
 		player.commands_allowed = true;
 	} else if (a2 == 1) {
 		result = 14;
@@ -336,7 +337,7 @@ static void room_402_anim_state() {
 		scratch._98 = 15;
 		room_402_anim5();
 		global[walker_converse_state] = 0;
-		close_journal(3);
+		close_interface(CANDLE_FLY);
 		kernel_flip_hotspot(words_rock, true);
 		kernel_flip_hotspot(words_room_401, false);
 		player.commands_allowed = true;
@@ -386,7 +387,7 @@ static void room_402_anim_state() {
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 		player.commands_allowed = true;
 		global[walker_converse_state] = 0;
-		close_journal(3);
+		close_interface(CANDLE_FLY);
 		global[player_score] = -1;
 		break;
 	case 20:

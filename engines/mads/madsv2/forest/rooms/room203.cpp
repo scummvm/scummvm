@@ -1150,7 +1150,7 @@ static void room_203_daemon() {
 
 		case 52:
 			global[walker_converse_state] = 0;
-			close_journal(3);
+			close_interface(CANDLE_FLY);
 			player.commands_allowed = true;
 			local->_a4 = 0;
 			break;
@@ -1354,7 +1354,7 @@ static void room_203_daemon() {
 			kernel_position_anim(local->_a0, 132, 133, 88, 6);
 			local->_9e = kernel_run_animation_disp('e', 3, 0);
 			kernel_position_anim(local->_9e, 105, 137, 90, 5);
-			close_journal(3);
+			close_interface(CANDLE_FLY);
 			clear_selected_item();
 			global[g046] = -1;
 
