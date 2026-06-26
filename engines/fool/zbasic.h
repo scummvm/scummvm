@@ -284,7 +284,7 @@ public:
 	void writeFileDblInt(int16 fileNo, int32 data);
 	Common::U32String ucase(const Common::U32String &str);
 
-	const Common::U32String &str(size_t index);
+	const Common::U32String str(size_t index);
 	const Common::String strRaw(size_t index);
 
 
@@ -309,6 +309,7 @@ public:
 	Common::U32String index(int16 table, int16 index);
 	Common::String indexRaw(int16 table, int16 index);
 
+	int16 getFileId() { return _fileId; }
 	void injectFOND(const byte *data, const size_t size, const Common::String &name);
 	void setMenuFont(uint16 font, uint16 size);
 };

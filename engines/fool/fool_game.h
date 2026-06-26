@@ -112,7 +112,7 @@ public:
 	void fillRect(int16 patternID, PatternMode mode, int16 top, int16 left, int16 bottom, int16 right); // sub_128_69c
 	void drawTarotCard(int16 rectID, int16 deckPos, int16 type); // sub_128_712
 	void fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID); // sub_128_8b4
-	void drawStringCenter(const Common::U32String &str, int16 yPos); // sub_128_918
+	void drawTextCenter(const Common::U32String &str, int16 yPos); // sub_128_918
 	void zoomRect(int16 startTop, int16 startLeft, int16 startBottom, int16 startRight, int16 endTop, int16 endLeft, int16 endBottom, int16 endRight, int16 patternID, PatternMode mode, int16 steps); // sub_128_962
 	void sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 	void getNextEvent(uint32 mask); // sub_128_c6a

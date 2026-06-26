@@ -608,11 +608,19 @@ int16 ZBasic::rndInt(int16 max) {
 }
 
 
-const Common::U32String &ZBasic::str(size_t index) {
+const Common::U32String ZBasic::str(size_t index) {
+	if (_stringTable.size() < index) {
+		warning("ZBasic::str: no string %ld, returning empty", index);
+		return Common::U32String();
+	}
 	return *_stringTable[index]->data.str;
 }
 
 const Common::String ZBasic::strRaw(size_t index) {
+	if (_stringTable.size() < index) {
+		warning("ZBasic::strRaw: no string %ld, returning empty", index);
+		return Common::String();
+	}
 	return _stringTable[index]->data.str->encode(Common::kMacRoman);
 }
 

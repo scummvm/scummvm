@@ -80,8 +80,6 @@ static const byte fondPuzzle[] = {
 	0, 0, 0, 1, 0, 2, 0, 12, 0, 0, 125, 140, 0, 24, 0, 0,
 	125, 152, 0, 48, 0, 0, 125, 176
 };
-
-// v1.1 includes all fonts except Small
 static const byte fondSmall[] = {
 	96, 0, 0, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -104,23 +102,18 @@ void FoolGame::run() {
 		return;
 	}
 
-	_zbasic->loadFonts();
-
+	Common::String chicagoName("Chicago");
 	switch (_version) {
 	case kFool11:
 		_zstrOffset = fool11ZStrOffset;
 		// v1.1 and v2.0 provide direct overrides for "Chicago".
-		// v1.1 doesn't include any FOND chunks, so we have to provide them here.
 		_fontChicago = 0;
-		_zbasic->injectFOND(fondChicago, sizeof(fondChicago), Common::String("Chicago"));
-		_zbasic->injectFOND(fondFool, sizeof(fondFool), Common::String("fool"));
-		_zbasic->injectFOND(fondLarge, sizeof(fondLarge), Common::String("Large"));
-		_zbasic->injectFOND(fondPuzzle, sizeof(fondPuzzle), Common::String("Puzzle"));
 		break;
 	case kFool30:
 		_zstrOffset = fool30ZStrOffset;
 		// v3.0 calls the font "Foolish Chicago" and changes the index
 		_fontChicago = 255;
+		chicagoName = Common::String("Foolish Chicago");
 		break;
 	case kFool20:
 	default:
@@ -128,6 +121,29 @@ void FoolGame::run() {
 		_fontChicago = 0;
 		break;
 	}
+
+	if (_version == kFool11) {
+		// v1.1 doesn't include any FOND chunks, so we have to provide them here.
+		_zbasic->injectFOND(fondFool, sizeof(fondFool), Common::String("Fool"));
+		_zbasic->injectFOND(fondChicago, sizeof(fondChicago), chicagoName);
+		_zbasic->injectFOND(fondLarge, sizeof(fondLarge), Common::String("Large"));
+		_zbasic->injectFOND(fondPuzzle, sizeof(fondPuzzle), Common::String("Puzzle"));
+		_zbasic->injectFOND(fondSmall, sizeof(fondSmall), Common::String("Small"));
+	} else {
+		// Load in the FOND chunks from the executable
+		int16 exec = _zbasic->getFileId();
+		Handle foolFOND = _toolbox->GetResource(MKTAG('F', 'O', 'N', 'D'), kFontFool);
+		_toolbox->_injectFOND(exec, foolFOND->data(), foolFOND->size(), Common::String("Fool"));
+		Handle chicagoFOND = _toolbox->GetResource(MKTAG('F', 'O', 'N', 'D'), _fontChicago);
+		_toolbox->_injectFOND(exec, chicagoFOND->data(), chicagoFOND->size(), chicagoName);
+		Handle largeFOND = _toolbox->GetResource(MKTAG('F', 'O', 'N', 'D'), kFontLarge);
+		_toolbox->_injectFOND(exec, largeFOND->data(), largeFOND->size(), Common::String("Large"));
+		Handle puzzleFOND = _toolbox->GetResource(MKTAG('F', 'O', 'N', 'D'), kFontPuzzle);
+		_toolbox->_injectFOND(exec, puzzleFOND->data(), puzzleFOND->size(), Common::String("Puzzle"));
+		Handle smallFOND = _toolbox->GetResource(MKTAG('F', 'O', 'N', 'D'), kFontSmall);
+		_toolbox->_injectFOND(exec, smallFOND->data(), smallFOND->size(), Common::String("Small"));
+	}
+
 
 	// Fool's Errand has an embedded version of Chicago with custom characters
 	_zbasic->setMenuFont(_fontChicago, 12);
@@ -578,7 +594,7 @@ void FoolGame::fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 
 	_toolbox->FillRect(bounds, _patterns[patternID]);
 }
 
-void FoolGame::drawStringCenter(const Common::U32String &str, int16 yPos) {
+void FoolGame::drawTextCenter(const Common::U32String &str, int16 yPos) {
 	// 128:0918
 	int16 width = _toolbox->StringWidth(str);
 	_toolbox->MoveTo((SCREEN_WIDTH / 2) - (width / 2), yPos);
@@ -765,7 +781,7 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 	// 128:1056
 	for (int i = 0; i <= lineCount; i++) {
 		this->var_str_384 = _modalText[i];
-		this->drawStringCenter(this->var_str_384, strY);
+		this->drawTextCenter(this->var_str_384, strY);
 		// 128:1086
 		// 128:1086: CLR.W - -0x772(A5)
 		strY += 0x11;
@@ -1308,7 +1324,7 @@ void FoolGame::sub_128_2808() {
 	if (this->var_i16_7e6 != 0) {
 		_modalText[0] = Common::U32String::format("The file '%s' cannot be opened.", this->var_str_588.encode().c_str()); // was: str(17), str(18)
 		_modalText[1] = Common::U32String("Okay"); // was: str(19)
-		this->showChoiceModal(0, 0, 1, 1);
+		this->showChoiceModal(_fontChicago, 0, 1, 1);
 		this->var_str_588.clear(); // was: str(20)
 		this->var_i16_7e6 = 0;
 	}
@@ -1624,7 +1640,7 @@ void FoolGame::savePrompt() {
 	_modalText[1] = Common::U32String("Yes");
 	_modalText[2] = Common::U32String("No");
 	_modalText[3] = Common::U32String("Cancel");
-	this->showChoiceModal(0, 0, 3, 0);
+	this->showChoiceModal(_fontChicago, 0, 3, 0);
 	if (_savePromptChoice > 1) {
 		_saveFileName = previous;
 		return;
@@ -2353,13 +2369,13 @@ void FoolGame::menuAbout() {
 	int16 strY = 0xbe - this->var_i16_7b6;
 	for (int i = 0; i <= modalLines; i++) {
 		this->var_str_384 = _modalText[i];
-		this->drawStringCenter(this->var_str_384, strY);
+		this->drawTextCenter(this->var_str_384, strY);
 		strY += 0x11;
 	}
 	// 128:50f4
 	_zbasic->text(kFontSmall, 0x9, Graphics::kMacFontRegular, kSrcOr);
 	strY += 0xe;
-	this->drawStringCenter(_zbasic->str(_zstrOffset[kOffsetVersion]), strY); // version string
+	this->drawTextCenter(_zbasic->str(_zstrOffset[kOffsetVersion]), strY); // version string
 	this->menuClickMessage();
 	this->waitForClick();
 	_toolbox->DrawMenuBar();
@@ -2766,7 +2782,7 @@ void FoolGame::sub_129_068() {
 		_modalText[1] = Common::U32String("2 color black and white");
 		_modalText[2] = Common::U32String("and start the game again.");
 		_modalText[3] = Common::U32String("Okay");
-		this->showChoiceModal(0, 2, 1, 0);
+		this->showChoiceModal(_fontChicago, 2, 1, 0);
 		_zbasic->unk_4();
 	}
 	// 129:0390
@@ -2782,7 +2798,7 @@ void FoolGame::sub_129_068() {
 		_modalText[4] = Common::U32String("for possible solutions.");
 		_modalText[5] = Common::U32String();
 		_modalText[6] = Common::U32String("Quit");
-		this->showChoiceModal(0, 5, 1, 1);
+		this->showChoiceModal(_fontChicago, 5, 1, 1);
 		_zbasic->unk_4();
 	}
 	// 129:0496
@@ -3211,7 +3227,7 @@ void FoolGame::sub_144_004() {
 	_modalText[4] = Common::U32String("Congratulations!");
 	_modalText[5] = Common::U32String("You may now view the finale.");
 	_modalText[7] = Common::U32String("Okay");
-	showChoiceModal(0xfa, 6, 1, 0);
+	showChoiceModal(kFontFool, 6, 1, 0);
 	if (!_screenOversized) {
 		_toolbox->ClearMenuBar();
 		_toolbox->DrawMenuBar();

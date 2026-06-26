@@ -330,7 +330,7 @@ void FoolGame::wordSearchDrawFooter() {
 	// 131:0d22
 	this->fillRect(0x13b, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
 	_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
-	this->drawStringCenter(this->var_str_384, 0x152);
+	this->drawTextCenter(this->var_str_384, 0x152);
 }
 
 void FoolGame::wordSearchStoreState() {

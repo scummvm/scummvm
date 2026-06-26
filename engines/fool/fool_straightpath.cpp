@@ -184,7 +184,7 @@ void FoolGame::straightPathDrawText() {
 	// 143:0864
 	straightPathClearText();
 	_zbasic->text(kFontLarge, 0x18, 0x18, kSrcBic);
-	drawStringCenter(_activePuzzleBuffer, 0x148);
+	drawTextCenter(_activePuzzleBuffer, 0x148);
 }
 
 void FoolGame::straightPathClearText() {
