@@ -65,8 +65,9 @@
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/core/screen.h"
-#include "mads/madsv2/forest/extra.h"
 #include "mads/madsv2/forest/digi.h"
+#include "mads/madsv2/forest/extra.h"
+#include "mads/madsv2/forest/global.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -1522,20 +1523,22 @@ void game_control() {
 			if ((quote_emergency /* || vocab_emergency */) && !game_any_emergency) {
 				room_id = previous_room;
 				game_any_emergency = true;
-				goto emergency;
 			} else {
 				game_any_emergency = false;
-			}
 
-			game_control_loop();
+				game_control_loop();
+
+				if (g_engine->getGameID() == GType_Forest)
+					global[Forest::g016] = 0;
+
+				if (speech_system_active && speech_on)
+					speech_all_off();
+			}
 
 			// **********************************************************************************************
 													   // LEAVE ROOM
 			// **********************************************************************************************
-			if (speech_system_active && speech_on)
-				   speech_all_off();
 
-emergency:
 			game_wait_cursor();
 
 			kernel_mode = KERNEL_ROOM_PRELOAD;
