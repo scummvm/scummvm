@@ -74,6 +74,17 @@ void stamp_sprite_to_interface(int x, int y, int sprite, int series) {
 
 void delete_sprite_in_interface(int series) {
 	matte_deallocate_series(series, false);
+
+	// WORKAROUND: Remove any pending interface entries referencing the now-freed series.
+	// This fixes a game crash when opening the inventory, since there were pending items
+	// in image_inter_list for the series_id that had been deallocated
+	for (int i = (int)image_inter_marker - 1; i >= 0; --i) {
+		if (image_inter_list[i].series_id == series) {
+			for (int j = i; j < (int)image_inter_marker - 1; ++j)
+				image_inter_list[j] = image_inter_list[j + 1];
+			--image_inter_marker;
+		}
+	}
 }
 
 void extra_change_animation(int handle, int x, int y, byte scale, byte depth) {
