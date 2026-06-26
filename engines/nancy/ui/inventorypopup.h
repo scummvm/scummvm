@@ -22,6 +22,7 @@
 #ifndef NANCY_UI_INVENTORYPOPUP_H
 #define NANCY_UI_INVENTORYPOPUP_H
 
+#include "engines/nancy/commontypes.h"
 #include "engines/nancy/renderobject.h"
 
 namespace Nancy {
@@ -80,8 +81,8 @@ private:
 	void drawFilterTabs();
 	void drawFilterTab(uint index, bool drawHover = false);
 	void drawFilterCaption();
-	void drawCloseButton(WidgetState state);
-	void drawScrollbar(WidgetState state);
+	void drawCloseButton(bool hovered);
+	void drawScrollbar(UIButtonState state);
 	void rebuildVisibleList();
 	void setActiveFilterIndex(uint index);
 

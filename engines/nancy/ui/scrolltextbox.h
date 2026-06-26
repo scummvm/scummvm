@@ -22,6 +22,7 @@
 #ifndef NANCY_UI_SCROLLTEXTBOX_H
 #define NANCY_UI_SCROLLTEXTBOX_H
 
+#include "engines/nancy/commontypes.h"
 #include "engines/nancy/misc/hypertext.h"
 #include "engines/nancy/renderobject.h"
 
@@ -59,7 +60,7 @@ public:
 private:
 	void drawBackground();
 	void drawContent();
-	void drawScrollbar(uint state);
+	void drawScrollbar(UIButtonState state);
 	uint16 getInnerHeight() const;
 
 	// The text content area in popup-local coordinates (the screen-space text

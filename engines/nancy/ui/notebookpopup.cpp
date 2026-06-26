@@ -141,15 +141,9 @@ void NotebookPopup::drawBackground() {
 }
 
 void NotebookPopup::drawForeground() {
-	drawCloseButton(_closeButtonHovered ? kStateHover : kStateIdle);
+	drawCloseButton(_closeButtonHovered);
 
-	WidgetState sliderState = kStateIdle;
-	if (_scrollbarDragging) {
-		sliderState = kStatePressed;
-	} else if (_scrollbarHovered) {
-		sliderState = kStateHover;
-	}
-	drawScrollbar(sliderState);
+	drawScrollbar(_scrollbarDragging ? kUIButtonPressed : (_scrollbarHovered ? kUIButtonHover : kUIButtonIdle));
 }
 
 Common::Rect NotebookPopup::toPopupLocal(const Common::Rect &chunkRect, bool useGameFrame) const {
@@ -192,7 +186,7 @@ Common::Rect NotebookPopup::computeThumbRect() const {
 	return toPopupLocal(chunkThumb, sl.destUsesGameFrameOffset != 0);
 }
 
-void NotebookPopup::drawScrollbar(WidgetState state) {
+void NotebookPopup::drawScrollbar(UIButtonState state) {
 	const UISliderRecord &sl = _uinbData->header.slider;
 	if (!_uinbData->header.sliderEnabled)
 		return;
@@ -205,12 +199,12 @@ void NotebookPopup::drawScrollbar(WidgetState state) {
 	_drawSurface.blitFrom(_overlayImage, spr, Common::Point(thumb.left, thumb.top));
 }
 
-void NotebookPopup::drawCloseButton(WidgetState state) {
+void NotebookPopup::drawCloseButton(bool hovered) {
 	const UIButtonRecord &btn = _uinbData->header.secondaryButton;
 	if (!_uinbData->header.secondaryButtonEnabled || btn.destRect.isEmpty())
 		return;
 
-	Common::Rect spr = btn.sourceRects[state];
+	Common::Rect spr = btn.sourceRects[hovered ? kUIButtonHover : kUIButtonIdle];
 	const Common::Rect dstLocal = toPopupLocal(btn.destRect, btn.destUsesGameFrameOffset != 0);
 
 	const Graphics::ManagedSurface &srcSurf = _closeButtonImage.w != 0 ? _closeButtonImage : _overlayImage;
@@ -277,7 +271,7 @@ void NotebookPopup::handleInput(NancyInput &input) {
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_scrollbarDragging = false;
-				drawScrollbar(overThumb ? kStateHover : kStateIdle);
+				drawScrollbar(overThumb ? kUIButtonHover : kUIButtonIdle);
 				_needsRedraw = true;
 			}
 			input.eatMouseInput();
@@ -286,7 +280,7 @@ void NotebookPopup::handleInput(NancyInput &input) {
 
 		if (overThumb != _scrollbarHovered) {
 			_scrollbarHovered = overThumb;
-			drawScrollbar(overThumb ? kStateHover : kStateIdle);
+			drawScrollbar(overThumb ? kUIButtonHover : kUIButtonIdle);
 			_needsRedraw = true;
 		}
 		if (overThumb) {
@@ -294,7 +288,7 @@ void NotebookPopup::handleInput(NancyInput &input) {
 			if (slider.isDraggable && (input.input & NancyInput::kLeftMouseButtonDown)) {
 				_scrollbarDragging = true;
 				_scrollbarGrabOffset = localMouse.y - thumbY;
-				drawScrollbar(kStatePressed);
+				drawScrollbar(kUIButtonPressed);
 				_needsRedraw = true;
 				input.eatMouseInput();
 				return;
@@ -310,7 +304,7 @@ void NotebookPopup::handleInput(NancyInput &input) {
 		const bool overClose = closeLocal.contains(localMouse);
 		if (overClose != _closeButtonHovered) {
 			_closeButtonHovered = overClose;
-			drawCloseButton(overClose ? kStateHover : kStateIdle);
+			drawCloseButton(overClose);
 			_needsRedraw = true;
 		}
 		if (overClose) {

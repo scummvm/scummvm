@@ -164,15 +164,9 @@ void InventoryPopup::drawBackground() {
 	Common::Rect src = _uiivData->header.normalSrcRect;
 	_drawSurface.blitFrom(_overlayImage, src, Common::Point(0, 0));
 
-	drawCloseButton(_closeButtonHovered ? kStateHover : kStateIdle);
+	drawCloseButton(_closeButtonHovered);
 
-	WidgetState sliderState = kStateIdle;
-	if (_scrollbarDragging)
-		sliderState = kStatePressed;
-	else if (_scrollbarHovered)
-		sliderState = kStateHover;
-
-	drawScrollbar(sliderState);
+	drawScrollbar(_scrollbarDragging ? kUIButtonPressed : (_scrollbarHovered ? kUIButtonHover : kUIButtonIdle));
 }
 
 Common::Rect InventoryPopup::computeSliderRect() const {
@@ -195,7 +189,7 @@ Common::Rect InventoryPopup::computeSliderRect() const {
 	return r;
 }
 
-void InventoryPopup::drawScrollbar(WidgetState state) {
+void InventoryPopup::drawScrollbar(UIButtonState state) {
 	const UISliderRecord &sl = _uiivData->header.slider;
 	if (!_uiivData->header.sliderEnabled)
 		return;
@@ -226,9 +220,9 @@ void InventoryPopup::updatePageFromScroll() {
 	_currentPage = MIN<uint>(page, maxPage);
 }
 
-void InventoryPopup::drawCloseButton(WidgetState state) {
+void InventoryPopup::drawCloseButton(bool hovered) {
 	const UIButtonRecord &btn = _uiivData->header.secondaryButton;
-	Common::Rect spr = btn.sourceRects[state];
+	Common::Rect spr = btn.sourceRects[hovered ? kUIButtonHover : kUIButtonIdle];
 	Common::Rect dstRect = btn.destRect;
 	if (btn.destUsesGameFrameOffset) {
 		const VIEW *view = GetEngineData(VIEW);
@@ -347,7 +341,7 @@ void InventoryPopup::handleInput(NancyInput &input) {
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_scrollbarDragging = false;
-				drawScrollbar(overScrollbar ? kStateHover : kStateIdle);
+				drawScrollbar(overScrollbar ? kUIButtonHover : kUIButtonIdle);
 				_needsRedraw = true;
 			}
 			input.eatMouseInput();
@@ -356,7 +350,7 @@ void InventoryPopup::handleInput(NancyInput &input) {
 
 		if (overScrollbar != _scrollbarHovered) {
 			_scrollbarHovered = overScrollbar;
-			drawScrollbar(overScrollbar ? kStateHover : kStateIdle);
+			drawScrollbar(overScrollbar ? kUIButtonHover : kUIButtonIdle);
 			_needsRedraw = true;
 		}
 		if (overScrollbar) {
@@ -364,7 +358,7 @@ void InventoryPopup::handleInput(NancyInput &input) {
 			if (slider.isDraggable && (input.input & NancyInput::kLeftMouseButtonDown)) {
 				_scrollbarDragging = true;
 				_scrollbarGrabOffset = chunkMouse.y - thumbY;
-				drawScrollbar(kStatePressed);
+				drawScrollbar(kUIButtonPressed);
 				_needsRedraw = true;
 				input.eatMouseInput();
 				return;
@@ -384,7 +378,7 @@ void InventoryPopup::handleInput(NancyInput &input) {
 		const bool overClose = closeScreen.contains(input.mousePos);
 		if (overClose != _closeButtonHovered) {
 			_closeButtonHovered = overClose;
-			drawCloseButton(overClose ? kStateHover : kStateIdle);
+			drawCloseButton(overClose);
 			_needsRedraw = true;
 		}
 		if (overClose) {

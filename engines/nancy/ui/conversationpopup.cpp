@@ -94,7 +94,7 @@ void ConversationPopup::open() {
 	_textHighlightSurface.fillRect(Common::Rect(0, 0, _textHighlightSurface.w, _textHighlightSurface.h), 0);
 
 	drawBackground();
-	drawScrollbar(0);
+	drawScrollbar(kUIButtonIdle);
 	setVisible(true);
 }
 
@@ -103,7 +103,7 @@ void ConversationPopup::addTextLine(const Common::String &text) {
 
 	drawBackground();
 	drawContent();
-	drawScrollbar(0);
+	drawScrollbar(kUIButtonIdle);
 }
 
 void ConversationPopup::close() {
@@ -190,7 +190,7 @@ Common::Rect ConversationPopup::computeThumbRect() const {
 	return toPopupLocal(chunkThumb, sl.destUsesGameFrameOffset != 0);
 }
 
-void ConversationPopup::drawScrollbar(uint state) {
+void ConversationPopup::drawScrollbar(UIButtonState state) {
 	const UISliderRecord &sl = _uicoData->header.slider;
 	if (!_uicoData->header.sliderEnabled) {
 		return;
@@ -233,11 +233,11 @@ void ConversationPopup::handleInput(NancyInput &input) {
 
 			drawBackground();
 			drawContent();
-			drawScrollbar(2);
+			drawScrollbar(kUIButtonPressed);
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_scrollbarDragging = false;
-				drawScrollbar(overThumb ? 1 : 0);
+				drawScrollbar(overThumb ? kUIButtonHover : kUIButtonIdle);
 				_needsRedraw = true;
 			}
 			input.eatMouseInput();
@@ -246,7 +246,7 @@ void ConversationPopup::handleInput(NancyInput &input) {
 
 		if (overThumb != _scrollbarHovered) {
 			_scrollbarHovered = overThumb;
-			drawScrollbar(overThumb ? 1 : 0);
+			drawScrollbar(overThumb ? kUIButtonHover : kUIButtonIdle);
 			_needsRedraw = true;
 		}
 
@@ -255,7 +255,7 @@ void ConversationPopup::handleInput(NancyInput &input) {
 			if (slider.isDraggable && (input.input & NancyInput::kLeftMouseButtonDown)) {
 				_scrollbarDragging = true;
 				_scrollbarGrabOffset = localMouse.y - thumbY;
-				drawScrollbar(2);
+				drawScrollbar(kUIButtonPressed);
 				_needsRedraw = true;
 				input.eatMouseInput();
 				return;

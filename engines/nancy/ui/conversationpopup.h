@@ -22,6 +22,7 @@
 #ifndef NANCY_UI_CONVERSATIONPOPUP_H
 #define NANCY_UI_CONVERSATIONPOPUP_H
 
+#include "engines/nancy/commontypes.h"
 #include "engines/nancy/misc/hypertext.h"
 #include "engines/nancy/renderobject.h"
 
@@ -64,7 +65,7 @@ public:
 private:
 	void drawBackground();
 	void drawContent();
-	void drawScrollbar(uint state);
+	void drawScrollbar(UIButtonState state);
 	uint16 getInnerHeight() const;
 
 	// Returns the popup-local bounding rect of the scrollbar thumb at

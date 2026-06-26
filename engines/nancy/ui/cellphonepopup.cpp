@@ -409,7 +409,7 @@ void CellPhonePopup::drawChrome() {
 			? _uiclData->fullEmptyScreenSrc
 			: _uiclData->header.normalSrcRect;
 	_drawSurface.blitFrom(_overlayImage, chromeSrc, Common::Point(0, 0));
-	drawCloseButton(_closeButtonHovered ? 1 : 0);
+	drawCloseButton(_closeButtonHovered);
 	if (!isSubScreenState()) {
 		drawHelpButton(0);
 	}
@@ -647,14 +647,13 @@ void CellPhonePopup::drawHelpButton(uint state) {
 											hb.destRect.top - chunkOrigin.y));
 }
 
-void CellPhonePopup::drawCloseButton(uint state) {
+void CellPhonePopup::drawCloseButton(bool hovered) {
 	const UIButtonRecord &btn = _uiclData->header.secondaryButton;
 	if (!_uiclData->header.secondaryButtonEnabled || btn.destRect.isEmpty()) {
 		return;
 	}
 
-	const uint stateIdx = MIN<uint>(state, 3);
-	Common::Rect src = btn.sourceRects[stateIdx];
+	Common::Rect src = btn.sourceRects[hovered ? kUIButtonHover : kUIButtonIdle];
 	if (src.isEmpty()) {
 		src = btn.sourceRects[0];
 	}
@@ -820,7 +819,7 @@ void CellPhonePopup::drawContentView() {
 	// Content view runs under the zoomed-in chrome (drawChrome blits
 	// fullEmptyScreenSrc for kContentView), so the keypad is no longer
 	// visible underneath and we can render into the larger LCD area
-	// that emailListContainer / FUN_004dae28 define.
+	// that emailListContainer defines.
 	const Common::Rect &ws =
 		_uiclData->emailListContainer.isEmpty()
 			? _uiclData->welcomeScreen.destRect
@@ -1493,7 +1492,7 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		const bool overClose = closeScreen.contains(input.mousePos);
 		if (overClose != _closeButtonHovered) {
 			_closeButtonHovered = overClose;
-			drawCloseButton(overClose ? 1 : 0);
+			drawCloseButton(overClose);
 			_needsRedraw = true;
 		}
 		if (overClose) {

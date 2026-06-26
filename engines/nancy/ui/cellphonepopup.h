@@ -105,7 +105,7 @@ private:
 	void drawConnectingSprite();
 	void drawDialedNumber();
 	void drawHelpButton(uint state);
-	void drawCloseButton(uint state);
+	void drawCloseButton(bool hovered);
 	void drawStatusLabels();
 	void drawDirectoryList();
 	void drawDirectoryArrows();

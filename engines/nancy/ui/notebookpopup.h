@@ -22,6 +22,7 @@
 #ifndef NANCY_UI_NOTEBOOKPOPUP_H
 #define NANCY_UI_NOTEBOOKPOPUP_H
 
+#include "engines/nancy/commontypes.h"
 #include "engines/nancy/renderobject.h"
 #include "engines/nancy/misc/hypertext.h"
 
@@ -69,8 +70,8 @@ private:
 	// Paint foreground widgets (close button, scrollbar) on top of the
 	// already-drawn background + content layers.
 	void drawForeground();
-	void drawCloseButton(WidgetState state);
-	void drawScrollbar(WidgetState state);
+	void drawCloseButton(bool hovered);
+	void drawScrollbar(UIButtonState state);
 
 	// Returns the on-popup-surface bounding rect of the slider thumb at
 	// the current scroll position (in popup-local coords).

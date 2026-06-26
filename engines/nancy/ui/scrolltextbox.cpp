@@ -188,7 +188,7 @@ void ScrollTextBox::drawContent() {
 		Common::Point(textLeft, viewport.top));
 
 	if (_expanded) {
-		drawScrollbar(_scrollbarDragging ? 2 : (_scrollbarHovered ? 1 : 0));
+		drawScrollbar(_scrollbarDragging ? kUIButtonPressed : (_scrollbarHovered ? kUIButtonHover : kUIButtonIdle));
 	}
 
 	_needsRedraw = true;
@@ -232,7 +232,7 @@ Common::Rect ScrollTextBox::computeThumbRect() const {
 	return toPopupLocal(chunkThumb, sl.destUsesGameFrameOffset != 0);
 }
 
-void ScrollTextBox::drawScrollbar(uint state) {
+void ScrollTextBox::drawScrollbar(UIButtonState state) {
 	const UISliderRecord &sl = _header->slider;
 	if (!_header->sliderEnabled) {
 		return;
@@ -325,7 +325,7 @@ void ScrollTextBox::handleInput(NancyInput &input) {
 
 		if (overThumb != _scrollbarHovered) {
 			_scrollbarHovered = overThumb;
-			drawScrollbar(overThumb ? 1 : 0);
+			drawScrollbar(overThumb ? kUIButtonHover : kUIButtonIdle);
 			_needsRedraw = true;
 		}
 
@@ -334,7 +334,7 @@ void ScrollTextBox::handleInput(NancyInput &input) {
 			if (slider.isDraggable && (input.input & NancyInput::kLeftMouseButtonDown)) {
 				_scrollbarDragging = true;
 				_scrollbarGrabOffset = localMouse.y - thumbY;
-				drawScrollbar(2);
+				drawScrollbar(kUIButtonPressed);
 				_needsRedraw = true;
 				input.eatMouseInput();
 				return;
