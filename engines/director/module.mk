@@ -230,7 +230,8 @@ MODULE_OBJS = \
 	lingo/xtras/d/dirmmx.o \
 	lingo/xtras/d/dmxtremepack.o \
 	lingo/xtras/j/javaconvert.o \
-	lingo/xtras/s/scrnxtra.o
+	lingo/xtras/s/scrnxtra.o \
+	lingo/xtras/s/sharpexport.o
 
 
 ifdef USE_IMGUI
