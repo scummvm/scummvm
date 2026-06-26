@@ -1133,14 +1133,14 @@ static void room_308_daemon() {
 	case 7:
 		switch (scratch._b4) {
 		case 1:
-			display_interface();
+			clear_selected_item();
 			aainfo[5]._val3 = 0;
 			scratch._b4 = -1;
 			player.commands_allowed = true;
 			scratch._c2 = 0;
 			break;
 		case 2:
-			display_interface();
+			clear_selected_item();
 			aainfo[5]._val3 = 0;
 			aainfo[8]._frame = 0;
 			scratch._b4 = -1;

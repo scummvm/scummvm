@@ -20,6 +20,7 @@
  */
 
 #include "common/textconsole.h"
+#include "mads/madsv2/core/buffer.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/global.h"
 #include "mads/madsv2/core/inter.h"
@@ -27,6 +28,7 @@
 #include "mads/madsv2/core/matte.h"
 #include "mads/madsv2/core/mouse.h"
 #include "mads/madsv2/core/player.h"
+#include "mads/madsv2/core/screen.h"
 #include "mads/madsv2/forest/extra.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/journal.h"
@@ -45,10 +47,10 @@ void init_extra() {
 	paul_object_showing = -1;
 }
 
-void display_interface() {
-	error("TODO: display_interface");
+void clear_selected_item() {
+	inter_turn_off_object();
+	buffer_rect_copy_2(scr_inter_orig, scr_live, 138, 0, 138, 156, 55, 42);
 }
-
 
 void solve_me_selected(void) {
 	global[walker_converse_state] = -1;

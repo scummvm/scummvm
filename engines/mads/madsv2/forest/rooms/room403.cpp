@@ -622,7 +622,7 @@ static void room_403_daemon() {
 			global[g133] = 0;
 			kernel_flip_hotspot(words_wrench, false);
 			inter_move_object(13, PLAYER);
-			display_interface();
+			clear_selected_item();
 			player.commands_allowed = true;
 			if (config_file.forest1 != 0)
 				kernel_timing_trigger(1, 105);

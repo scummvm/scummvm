@@ -65,7 +65,7 @@ inline void extra_blank_knothole() {
 	knuthole_flag = 0;
 }
 
-extern void display_interface();
+extern void clear_selected_item();
 extern void display_inventory();
 extern void solve_me_selected();
 extern void door_selected();
