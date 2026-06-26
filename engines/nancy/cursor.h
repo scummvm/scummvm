@@ -88,6 +88,7 @@ public:
 		kNewRotateLeft			= 30,	// Type 15 — 360 scenes
 		kNewInvertedRotateRight = 32,	// Type 16 — Inverted 360 rotation
 		kNewInvertedRotateLeft	= 34,	// Type 17 — Inverted 360 rotation
+		kNewUseHand				= 36,	// Type 18 — Hand used while using items
 		kNewDragHand			= 38,	// Type 19 — Hand used while dragging puzzle pieces (e.g. SortPuzzle pickup action sets this)
 		kNewPuzzleArrow			= 45,	// Type 22 hotspot — Arrow cursor shown when hovering a clickable puzzle hotspot
 		kNewDropHand			= 64,	// Type 32 — Hand shown when a held piece is dropped (briefly set on the drop action)
