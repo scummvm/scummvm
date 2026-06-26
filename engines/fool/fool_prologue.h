@@ -34,10 +34,10 @@ namespace Fool {
 class ZBasic;
 
 enum FoolPrologueFontID : uint16 {
-	kPrologueFontFool = 250,
-	// The original prologue uses 251 for Small,
-	// however we need this to be the same as the main game.
-	kPrologueFontSmall = 252,
+	// We subtract 10 from the original ID so they can coexist with
+	// the fonts from the main game.
+	kPrologueFontFool = 240,
+	kPrologueFontSmall = 241,
 };
 
 class FoolPrologue {
@@ -52,8 +52,8 @@ public:
 	void setPortBitsToPage(int16 screenPage); // sub_128_1f4
 	void delay(int16 numTicks); // sub_128_21e
 	void delayFromMarker(int16 numTicks); // sub_128_24a
-	void drawTextRightAlign(int16 x, int16 y); // sub_128_26c
-	void drawTextCenterAlign(int16 x, int16 y); // sub_128_2a6
+	void drawTextRight(const Common::U32String &str, int16 x, int16 y); // sub_128_26c
+	void drawTextCenter(const Common::U32String &str, int16 x, int16 y); // sub_128_2a6
 	void fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID); // sub_128_2f0
 	void zoomClose(int16 patternID, PatternMode mode); // sub_128_354
 	void drawTreasurePhaseIn(int16 unk1); // sub_128_3ee
@@ -62,12 +62,12 @@ public:
 	void scanlineTransition(int16 patternID); // sub_128_64a
 	void zoomTransition(int16 screenPage); // sub_128_6e4
 	void sub_128_800(int16_t unk1, int16_t unk2, int16_t unk3, int16_t unk4, int16_t unk5, int16_t unk6, int16_t unk7, int16_t unk8, int16_t unk9);
-	void drawText(int16_t x, int16_t y); // sub_128_a6c
+	void drawText(const Common::U32String &str, int16_t x, int16_t y); // sub_128_a6c
 	void drawRainRecycle(int16_t unk); // sub_128_a8c
 	void sub_128_c8a();
 	void shuffleScanlines(); // sub_128_ccc
 	void drawClickMessage(); // sub_128_de2
-	void sub_128_e1c();
+	void drawClickMessageRightAlign(); // sub_128_e1c
 	void sub_128_e58();
 	void sub_128_e80();
 	void sub_128_ed2();
@@ -76,7 +76,6 @@ public:
 
 	void sub_129_004();
 	void sub_129_764();
-	void sub_129_772();
 
 	void prologueRun(); // sub_130_004
 	void prologueBufferNextPicture(); // sub_130_cea
@@ -90,8 +89,7 @@ public:
 	void finaleDrawLoadingMsg(); // sub_131_4dc0
 	void finaleDrawFoolUhOh(); // sub_131_4e48
 	void finaleStartText(); // sub_131_4e98
-	void sub_131_4f96(int16 offset);
-
+	void finaleDrawWind(int16 offset); // sub_131_4f96
 	void finaleCardRotate(); // sub_131_5038
 
 private:
@@ -181,9 +179,9 @@ private:
 	int16 var_i16_3fc;
 
 	// picture resource handles
-	PicHandle arr_i32_0[92] = { nullptr };
+	PicHandle _pics[92] = { nullptr }; // arr_i32_0
 
-	Pattern arr_pat_194[5];
+	Pattern _patterns[5]; // arr_pat_194
 
 
 	Common::Rect arr_i16_1bc;

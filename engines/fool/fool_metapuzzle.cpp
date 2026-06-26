@@ -329,7 +329,7 @@ void FoolGame::sub_138_9c4() {
 	temp.bottom = arr_i16_1eb8[2];
 	temp.right = arr_i16_1eb8[3];
 	_toolbox->FillRect(temp, _patterns[2]);
-	drawStringCenter(var_str_1272, 0x146);
+	drawTextCenter(var_str_1272, 0x146);
 }
 
 void FoolGame::sub_138_a06() {
@@ -350,7 +350,7 @@ void FoolGame::metapuzzleSecretCodeReset() {
 	_toolbox->FillRect(temp, _patterns[2]);
 	_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
 	var_str_384 = _zbasic->str(OFF(15)); // if you know which is which, enter the letters you wish to switch
-	drawStringCenter(var_str_384, 0x140);
+	drawTextCenter(var_str_384, 0x140);
 	var_str_1272.clear(); // was: str(OFF(16))
 	_metapuzzleSecretCodeCount = 0;
 }

@@ -160,9 +160,9 @@ void FoolGame::highPriestessRun() {
 		}
 		// 140:03f0
 		_zbasic->text(kFontLarge, 0x18, 0x10, kSrcBic);
-		this->drawStringCenter(_zbasic->str(OFF(3)), 0x96); // you cannot claim
-		this->drawStringCenter(_zbasic->str(OFF(4)), 0xb9); // the book of thoth
-		this->drawStringCenter(_zbasic->str(OFF(5)), 0xdc); // so easily
+		this->drawTextCenter(_zbasic->str(OFF(3)), 0x96); // you cannot claim
+		this->drawTextCenter(_zbasic->str(OFF(4)), 0xb9); // the book of thoth
+		this->drawTextCenter(_zbasic->str(OFF(5)), 0xdc); // so easily
 		_toolbox->SetPort(this->var_i32_0);
 		this->waitForClick();
 	}
@@ -186,8 +186,8 @@ void FoolGame::thoth99Enchantments() {
 	}
 	if (this->arr_i16_1eb8[0] == 0x63) {
 		_zbasic->text(kFontLarge, 0x18, 0x10, kSrcBic);
-		this->drawStringCenter(_zbasic->str(OFF(7)), 0xaf); // you dare to challenge
-		this->drawStringCenter(_zbasic->str(OFF(8)), 0xd2); // the high priestess
+		this->drawTextCenter(_zbasic->str(OFF(7)), 0xaf); // you dare to challenge
+		this->drawTextCenter(_zbasic->str(OFF(8)), 0xd2); // the high priestess
 		this->delay(0xb4);
 	}
 	// 140:0532

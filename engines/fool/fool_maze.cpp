@@ -502,7 +502,7 @@ void FoolGame::mazePrintMessage() {
 		_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
 		int16 width = _toolbox->StringWidth(var_str_1ce2);
 		fillRect(0x13b, 0xf1 - (width / 2), 0x14f, 0x10f + (width / 2), 2);
-		drawStringCenter(var_str_1ce2.decode(Common::kMacRoman), 0x149);
+		drawTextCenter(var_str_1ce2.decode(Common::kMacRoman), 0x149);
 	}
 	// 136:0e3a
 	var_str_1578 = var_str_1ce2.decode(Common::kMacRoman);

@@ -649,6 +649,15 @@ public:
 
 	// toolbox_resman.cpp
 
+	// PROCEDURE CloseResFile (refNum: INTEGER);
+	// Given the reference number of a resource file, CloseResFile does the following:
+	// - updates the resource file by calling the UpdateResFile procedure
+	// - for each resource in the resource file, releases the memory it occupies by calling the
+	//	 ReleaseResource procedure
+	// - releases the memory occupied by the resource map
+	// - closes the resource file
+	void CloseResFile(int16 refNum);
+
 	// FUNCTION CountResources (theType: ResType): Integer;
 	// Given a resource type, the CountResources function reads the resource maps in
 	// memory for all resource forks open to your application. It returns as its function result

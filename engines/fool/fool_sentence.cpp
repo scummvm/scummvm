@@ -192,7 +192,7 @@ void FoolGame::sentenceOnClick() {
 		return;
 	}
 	_zbasic->text(_fontChicago, 0xc, 0, kSrcBic);
-	drawStringCenter(_zbasic->str(OFF(4)), 0x124); // click mouse to reset puzzle
+	drawTextCenter(_zbasic->str(OFF(4)), 0x124); // click mouse to reset puzzle
 
 	this->waitForMouseUp();
 	this->var_i16_1abc = 1;
