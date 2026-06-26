@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-24 10:59+0000\n"
-"PO-Revision-Date: 2026-06-23 23:22+0000\n"
+"PO-Revision-Date: 2026-06-27 05:22+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -9915,28 +9915,20 @@ msgid "Secondary shoot"
 msgstr "Tret secundari"
 
 #: engines/hypno/metaengine.cpp:149
-#, fuzzy
-#| msgid "Map hide toolbar action"
 msgid "Rapid fire / secondary action"
-msgstr "Assigna l'acció d'ocultar la barra d'eines"
+msgstr "Tir ràpid / acció secundària"
 
 #: engines/hypno/metaengine.cpp:155
-#, fuzzy
-#| msgid "Slide left"
 msgid "Aim left"
-msgstr "Llisca cap a l'esquerra"
+msgstr "Apunta a l'esquerra"
 
 #: engines/hypno/metaengine.cpp:160
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Aim down"
-msgstr "Desplaçament avall"
+msgstr "Apunta cap avall"
 
 #: engines/hypno/metaengine.cpp:165
-#, fuzzy
-#| msgid "Up right"
 msgid "Aim right"
-msgstr "Amunt a la dreta"
+msgstr "Apunta a la dreta"
 
 #: engines/hypno/metaengine.cpp:170
 msgid "Aim up"
@@ -9944,31 +9936,23 @@ msgstr ""
 
 #: engines/hypno/metaengine.cpp:175 engines/scumm/metaengine.cpp:1202
 #: engines/scumm/metaengine.cpp:1279
-#, fuzzy
-#| msgid "Slide left"
 msgid "Stick left"
-msgstr "Llisca cap a l'esquerra"
+msgstr "Stick a l'esquerra"
 
 #: engines/hypno/metaengine.cpp:182 engines/scumm/metaengine.cpp:1195
 #: engines/scumm/metaengine.cpp:1272
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Stick down"
-msgstr "Desplaçament avall"
+msgstr "Stick cap vall"
 
 #: engines/hypno/metaengine.cpp:189 engines/scumm/metaengine.cpp:1209
 #: engines/scumm/metaengine.cpp:1286
-#, fuzzy
-#| msgid "Slide right"
 msgid "Stick right"
-msgstr "Llisca cap a la dreta"
+msgstr "Stick a la dreta"
 
 #: engines/hypno/metaengine.cpp:196 engines/scumm/metaengine.cpp:1188
 #: engines/scumm/metaengine.cpp:1265
-#, fuzzy
-#| msgid "Pick up"
 msgid "Stick up"
-msgstr "Recull"
+msgstr "Stick cap amunt"
 
 #: engines/hypno/metaengine.cpp:203 engines/lab/metaengine.cpp:209
 #: engines/ngi/metaengine.cpp:168 engines/sherlock/metaengine.cpp:872
@@ -10045,28 +10029,20 @@ msgid "Show credits"
 msgstr "Mostra els crèdits"
 
 #: engines/hypno/metaengine.cpp:417
-#, fuzzy
-#| msgid "Move left"
 msgid "Menu left"
-msgstr "Mou a l'esquerra"
+msgstr "Menú a l'esquerra"
 
 #: engines/hypno/metaengine.cpp:425
-#, fuzzy
-#| msgid "Move down"
 msgid "Menu down"
-msgstr "Mou avall"
+msgstr "Menú avall"
 
 #: engines/hypno/metaengine.cpp:433
-#, fuzzy
-#| msgid "Move right"
 msgid "Menu right"
-msgstr "Mou a la dreta"
+msgstr "Menú a la dreta"
 
 #: engines/hypno/metaengine.cpp:441
-#, fuzzy
-#| msgid "Menu"
 msgid "Menu up"
-msgstr "Menú"
+msgstr "Menú amunt"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
@@ -13165,11 +13141,8 @@ msgid "Enable ambience sounds."
 msgstr "Habilita els sons d'ambient."
 
 #: engines/scumm/metaengine.cpp:882
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "High resolution on"
 msgid "High resolution mode"
-msgstr "Alta resolució activada"
+msgstr "Mode d'alta resolució"
 
 #: engines/scumm/metaengine.cpp:883
 msgid "Run the game in 640x400 high resolution mode instead of 320x200"
@@ -13180,22 +13153,16 @@ msgid "All levels will be available without requiring passwords"
 msgstr "Tots els nivells estaran disponibles sense necessitat de contrasenyes"
 
 #: engines/scumm/metaengine.cpp:900 engines/scumm/metaengine.cpp:927
-#, fuzzy
-#| msgid "No date saved"
 msgid "No damage"
-msgstr "No hi ha data desada"
+msgstr "Sense danys"
 
 #: engines/scumm/metaengine.cpp:901 engines/scumm/metaengine.cpp:928
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable player damage"
-msgstr "Desactiva el menú de desar"
+msgstr "Desactiva el dany del jugador"
 
 #: engines/scumm/metaengine.cpp:909
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Yoda mode"
-msgstr "Mode ràpid"
+msgstr "Mode Yoda"
 
 #: engines/scumm/metaengine.cpp:910
 msgid "Enable original Yoda mode shortcuts, including movie mode and auto play"
@@ -13247,22 +13214,16 @@ msgid "Aim right / menu right"
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:1216 engines/scumm/metaengine.cpp:1293
-#, fuzzy
-#| msgid "Move / Select"
 msgid "Fire / select"
-msgstr "Mou / Selecciona"
+msgstr "Dispara / Selecciona"
 
 #: engines/scumm/metaengine.cpp:1222
-#, fuzzy
-#| msgid "Skip main menu"
 msgid "Walk / menu back"
-msgstr "Omet el menú principal"
+msgstr "Camina / torna al menú"
 
 #: engines/scumm/metaengine.cpp:1227
-#, fuzzy
-#| msgid "Skip main menu"
 msgid "Skip / menu back"
-msgstr "Omet el menú principal"
+msgstr "Omet / torna al menú"
 
 #: engines/scumm/metaengine.cpp:1243
 msgid "Rebel Assault II controls"
@@ -13273,16 +13234,12 @@ msgid "Cover"
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:1304
-#, fuzzy
-#| msgid "Skip walk"
 msgid "Skip / back"
-msgstr "Omet el desplaçament"
+msgstr "Omet / torna"
 
 #: engines/scumm/metaengine.cpp:1311
-#, fuzzy
-#| msgid "Skip main menu"
 msgid "Skip / menu"
-msgstr "Omet el menú principal"
+msgstr "Omet / menú"
 
 #: engines/scumm/saveload.cpp:1990
 #, c-format
@@ -15499,51 +15456,51 @@ msgstr "Tanca el menú emergent"
 
 #: engines/ultima/nuvie/metaengine.cpp:115
 msgid "Enter ALT code (hold)"
-msgstr ""
+msgstr "Introduïu el codi ALT (mantenint)"
 
 #: engines/ultima/nuvie/metaengine.cpp:116
 msgid "ALT code 0"
-msgstr ""
+msgstr "Codi ALT 0"
 
 #: engines/ultima/nuvie/metaengine.cpp:117
 msgid "ALT code 1"
-msgstr ""
+msgstr "Codi ALT 1"
 
 #: engines/ultima/nuvie/metaengine.cpp:118
 msgid "ALT code 2"
-msgstr ""
+msgstr "Codi ALT 2"
 
 #: engines/ultima/nuvie/metaengine.cpp:119
 msgid "ALT code 3"
-msgstr ""
+msgstr "Codi ALT 3"
 
 #: engines/ultima/nuvie/metaengine.cpp:120
 msgid "ALT code 4"
-msgstr ""
+msgstr "Codi ALT 4"
 
 #: engines/ultima/nuvie/metaengine.cpp:121
 msgid "ALT code 5"
-msgstr ""
+msgstr "Codi ALT 5"
 
 #: engines/ultima/nuvie/metaengine.cpp:122
 msgid "ALT code 6"
-msgstr ""
+msgstr "Codi ALT 6"
 
 #: engines/ultima/nuvie/metaengine.cpp:123
 msgid "ALT code 7"
-msgstr ""
+msgstr "Codi ALT 7"
 
 #: engines/ultima/nuvie/metaengine.cpp:124
 msgid "ALT code 8"
-msgstr ""
+msgstr "Codi ALT 8"
 
 #: engines/ultima/nuvie/metaengine.cpp:125
 msgid "ALT code 9"
-msgstr ""
+msgstr "Codi ALT 9"
 
 #: engines/ultima/nuvie/metaengine.cpp:129
 msgid "Open the asset viewer"
-msgstr ""
+msgstr "Obre el visor d'actius"
 
 #. I18N: Eggs are in-game hatchable objects that are normally invisible
 #: engines/ultima/nuvie/metaengine.cpp:131
