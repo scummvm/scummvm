@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	font.o \
 	graphics.o \
 	installer.o \
+	map_ui.o \
 	metaengine.o \
 	music.o \
 	mystery.o \
