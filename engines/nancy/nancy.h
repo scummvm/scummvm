@@ -144,6 +144,9 @@ private:
 
 	void preloadCals();
 	void readDatFile();
+	// Nancy12 onwards no longer ship their static data in nancy.dat; the values
+	// the engine still needs are provided here instead (see also the EVNT chunk).
+	void populateStaticData();
 
 	Common::Error synchronize(Common::Serializer &serializer);
 

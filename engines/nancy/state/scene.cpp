@@ -541,18 +541,22 @@ void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
 	}
 }
 
-void Scene::setEventFlag(int16 label, byte flag) {
-	if (label >= 2000) {
-		// In nancy12 and onwards flags begin from 2000
-		label -= 2000;
-	}
-
+int16 Scene::eventFlagToIndex(int16 label) const {
+	// Nancy3+ number their event flags from 1000. Nancy12 then split the flags
+	// into two ranges: the generic engine flags kept the 1xxx numbering, while
+	// the game-specific flags were renumbered from 2000. Subtracting a flat 1000
+	// from any 1xxx/2xxx label keeps the two ranges in separate, non-overlapping
+	// regions of the flags array (generic flags in [0, 1000), game-specific flags
+	// in [1000, ...)).
 	if (label >= 1000) {
-		// In nancy3 and onwards flags begin from 1000
-		// TODO: We need to separate the generic event flags
-		// from the normal event flags in Nancy12+
 		label -= 1000;
 	}
+
+	return label;
+}
+
+void Scene::setEventFlag(int16 label, byte flag) {
+	label = eventFlagToIndex(label);
 
 	if (label > kEvNoEvent && (uint)label < g_nancy->getStaticData().numEventFlags) {
 		_flags.eventFlags[label] = flag;
@@ -564,17 +568,7 @@ void Scene::setEventFlag(FlagDescription eventFlag) {
 }
 
 bool Scene::getEventFlag(int16 label, byte flag) const {
-	if (label >= 2000) {
-		// In nancy12 and onwards flags begin from 2000
-		label -= 2000;
-	}
-
-	if (label >= 1000) {
-		// In nancy3 and onwards flags begin from 1000
-		// TODO: We need to separate the generic event flags
-		// from the normal event flags in Nancy12+
-		label -= 1000;
-	}
+	label = eventFlagToIndex(label);
 
 	if (label > kEvNoEvent && (uint)label < g_nancy->getStaticData().numEventFlags) {
 		return _flags.eventFlags[label] == flag;
@@ -587,14 +581,16 @@ bool Scene::getEventFlag(FlagDescription eventFlag) const {
 	return getEventFlag(eventFlag.label, eventFlag.flag);
 }
 
-// Nancy 11+ AR 30/31 store the "player scrolling disabled" state in event flag
-// 1033 (eventData[0x21] in the original; nancy3+ event-flag labels start at
-// 1000, so this is index 33). It persists across scenes and is saved/restored
-// together with the rest of the event flags.
-static const int16 kPlayerScrollingDisabledFlag = 1033;
+// Nancy 11+ AR 30/31 store the "player scrolling disabled" state in an event
+// flag (eventData[0x21] in the original). It persists across scenes and is
+// saved/restored together with the rest of the event flags. Nancy12 shifted the
+// engine's generic flag numbering up by 10, moving this flag from 1033 to 1043.
+static int16 playerScrollingDisabledFlag() {
+	return g_nancy->getGameType() >= kGameTypeNancy12 ? 1043 : 1033;
+}
 
 void Scene::setPlayerScrolling(bool enabled) {
-	setEventFlag(kPlayerScrollingDisabledFlag, enabled ? g_nancy->_false : g_nancy->_true);
+	setEventFlag(playerScrollingDisabledFlag(), enabled ? g_nancy->_false : g_nancy->_true);
 }
 
 bool Scene::getPlayerScrolling() const {
@@ -604,7 +600,7 @@ bool Scene::getPlayerScrolling() const {
 		return true;
 	}
 
-	return !getEventFlag(kPlayerScrollingDisabledFlag, g_nancy->_true);
+	return !getEventFlag(playerScrollingDisabledFlag(), g_nancy->_true);
 }
 
 void Scene::setLogicCondition(int16 label, byte flag) {

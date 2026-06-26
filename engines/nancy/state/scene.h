@@ -260,6 +260,9 @@ private:
 	void clearSceneData();
 	void clearPuzzleData();
 
+	// Maps an event flag label to its index in the eventFlags array
+	int16 eventFlagToIndex(int16 label) const;
+
 	struct SceneState {
 		SceneSummary summary;
 		SceneChangeDescription currentScene;

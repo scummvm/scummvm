@@ -777,26 +777,32 @@ bool NancyConsole::Cmd_getEventFlags(int argc, const char **argv) {
 
 	uint numEventFlags = g_nancy->getStaticData().numEventFlags;
 
+	// Event flags are addressed by label. Nancy3 and later number them from 1000
+	// (and Nancy12+ splits them into a 1xxx generic and a 2xxx game-specific range),
+	// so the label of the flag stored at index i is i + baseLabel.
+	int baseLabel = g_nancy->getGameType() >= kGameTypeNancy3 ? 1000 : 0;
+
 	debugPrintf("Total number of event flags: %u\n", numEventFlags);
 
 	if (argc == 1) {
 		for (uint i = 0; i < numEventFlags; ++i) {
-			debugPrintf("\nFlag %u, %s, %s",
-				i,
-				g_nancy->getEventFlagName(i).c_str(),
-				NancySceneState.getEventFlag(i, g_nancy->_true) == true ? "true" : "false");
+			int label = baseLabel + (int)i;
+			debugPrintf("\nFlag %d, %s, %s",
+				label,
+				g_nancy->getEventFlagName(label).c_str(),
+				NancySceneState.getEventFlag(label, g_nancy->_true) ? "true" : "false");
 		}
 	} else {
 		for (int i = 1; i < argc; ++i) {
-			int flagID = atoi(argv[i]);
-			if (flagID < 0 || flagID >= (int)numEventFlags) {
+			int label = baseLabel + atoi(argv[i]);
+			if (label - baseLabel < 0 || label - baseLabel >= (int)numEventFlags) {
 				debugPrintf("\nInvalid flag %s", argv[i]);
 				continue;
 			}
-			debugPrintf("\nFlag %u, %s, %s",
-				flagID,
-				g_nancy->getEventFlagName(flagID).c_str(),
-				NancySceneState.getEventFlag(flagID, g_nancy->_true) == true ? "true" : "false");
+			debugPrintf("\nFlag %d, %s, %s",
+				label,
+				g_nancy->getEventFlagName(label).c_str(),
+				NancySceneState.getEventFlag(label, g_nancy->_true) ? "true" : "false");
 
 		}
 	}
@@ -813,23 +819,26 @@ bool NancyConsole::Cmd_setEventFlags(int argc, const char **argv) {
 		return true;
 	}
 
+	// Event flags are addressed by label (numbered from 1000 in Nancy3 and later)
+	int baseLabel = g_nancy->getGameType() >= kGameTypeNancy3 ? 1000 : 0;
+
 	for (int i = 1; i < argc; i += 2) {
-		int flagID = atoi(argv[i]);
-		if (flagID < 0 || flagID >= (int)g_nancy->getStaticData().numEventFlags) {
+		int label = baseLabel + atoi(argv[i]);
+		if (label - baseLabel < 0 || label - baseLabel >= (int)g_nancy->getStaticData().numEventFlags) {
 			debugPrintf("Invalid flag %s\n", argv[i]);
 			continue;
 		}
 
 		if (Common::String(argv[i + 1]).compareTo("true") == 0) {
-			NancySceneState.setEventFlag(flagID, g_nancy->_true);
-			debugPrintf("Set flag %i, %s, to true\n",
-				flagID,
-				g_nancy->getEventFlagName(flagID).c_str());
+			NancySceneState.setEventFlag(label, g_nancy->_true);
+			debugPrintf("Set flag %d, %s, to true\n",
+				label,
+				g_nancy->getEventFlagName(label).c_str());
 		} else if (Common::String(argv[i + 1]).compareTo("false") == 0) {
-			NancySceneState.setEventFlag(flagID, g_nancy->_false);
-			debugPrintf("Set flag %i, %s, to false\n",
-				flagID,
-				g_nancy->getEventFlagName(flagID).c_str());
+			NancySceneState.setEventFlag(label, g_nancy->_false);
+			debugPrintf("Set flag %d, %s, to false\n",
+				label,
+				g_nancy->getEventFlagName(label).c_str());
 		} else {
 			debugPrintf("Invalid value %s\n", argv[i + 1]);
 			continue;
