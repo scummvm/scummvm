@@ -200,7 +200,6 @@ void SoundDescription::readDIGI(Common::SeekableReadStream &stream) {
 	s.setVersion(g_nancy->getGameType());
 
 	readFilename(s, name);
-	resolveSoundNameAutoText(name);
 
 	s.syncAsUint16LE(channelID);
 
@@ -268,7 +267,6 @@ void SoundDescription::readScene(Common::SeekableReadStream &stream) {
 
 void SoundDescription::readTerse(Common::SeekableReadStream &stream) {
 	readFilename(stream, name);
-	resolveSoundNameAutoText(name);
 	channelID = stream.readUint16LE();
 	numLoops = stream.readUint32LE();
 	volume = stream.readUint16LE();

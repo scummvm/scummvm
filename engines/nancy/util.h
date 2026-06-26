@@ -58,8 +58,6 @@ void readFilenameArray(Common::Serializer &stream, Common::Array<Common::String>
 void readFilenameArray(Common::SeekableReadStream &stream, Common::Array<Common::Path> &inArray, uint num);
 void readFilenameArray(Common::Serializer &stream, Common::Array<Common::Path> &inArray, uint num, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
 
-void resolveSoundNameAutoText(Common::String &name);
-
 void assembleTextLine(char *rawCaption, Common::String &output, uint size);
 
 void readUIButton(Common::SeekableReadStream &stream, UIButtonRecord &dst);
