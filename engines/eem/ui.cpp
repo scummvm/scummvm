@@ -392,8 +392,25 @@ constexpr Common::Rect kLonSetMusicOff(Common::Point(128,  85), 18, 7); // 0x142
 constexpr Common::Rect kLonSetHiOn    (Common::Point(106, 110), 29, 8); // 0x1414
 constexpr Common::Rect kLonSetHiOff   (Common::Point(106, 100), 29, 8); // 0x140c
 
+// Mac setup PIC 0x40 is native 512x384 art. The selected-option labels are
+// encoded as 0xfe mask components in the picture itself, not DOS-scaled rects.
+constexpr Common::Rect kMacLonSetJake    (Common::Point(172,  87), 75, 14);
+constexpr Common::Rect kMacLonSetJenny   (Common::Point(172, 106), 75, 14);
+constexpr Common::Rect kMacLonSetVoiceOn (Common::Point(172, 139), 28, 14);
+constexpr Common::Rect kMacLonSetVoiceOff(Common::Point(205, 139), 28, 14);
+constexpr Common::Rect kMacLonSetMusicOn (Common::Point(172, 166), 28, 14);
+constexpr Common::Rect kMacLonSetMusicOff(Common::Point(205, 166), 28, 14);
+constexpr Common::Rect kMacLonSetHiOn    (Common::Point(172, 222), 44, 14);
+constexpr Common::Rect kMacLonSetHiOff   (Common::Point(172, 203), 44, 14);
+
+Common::Rect londonSetupTextRect(const EEMEngine *vm,
+								 const Common::Rect &dosRect,
+								 const Common::Rect &macRect) {
+	return vm && vm->isMacintosh() ? macRect : dosRect;
+}
+
 void swapColors(Graphics::ManagedSurface &dst,
-					   const Common::Rect &r, byte from, byte to) {
+						   const Common::Rect &r, byte from, byte to) {
 	const int x1 = MAX<int>(0, r.left);
 	const int y1 = MAX<int>(0, r.top);
 	const int x2 = MIN<int>(dst.w, r.right);
@@ -2277,7 +2294,10 @@ void EEMEngine::setupLeave() {
 }
 // `_SetupSettings @ 2046:0008`
 void EEMEngine::setupDrawScreenLondon() {
-	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+	if (isMacintosh())
+		setSitePalette(0);
+
+	Graphics::ManagedSurface scratch(screenWidth(), screenHeight(),
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 	Picture bg;
@@ -2286,21 +2306,29 @@ void EEMEngine::setupDrawScreenLondon() {
 
 	const byte kKey = 0xFE, kBright = 0x15, kDim = 0x00;
 
-	swapColors(scratch, kLonSetJake,  kKey, _partner == kPartnerJake  ? kBright : kDim);
-	swapColors(scratch, kLonSetJenny, kKey, _partner == kPartnerJenny ? kBright : kDim);
+	swapColors(scratch, londonSetupTextRect(this, kLonSetJake, kMacLonSetJake),
+			   kKey, _partner == kPartnerJake ? kBright : kDim);
+	swapColors(scratch, londonSetupTextRect(this, kLonSetJenny, kMacLonSetJenny),
+			   kKey, _partner == kPartnerJenny ? kBright : kDim);
 
-	swapColors(scratch, kLonSetVoiceOn,  kKey, _voiceOn ? kBright : kDim);
-	swapColors(scratch, kLonSetVoiceOff, kKey, _voiceOn ? kDim : kBright);
+	swapColors(scratch, londonSetupTextRect(this, kLonSetVoiceOn, kMacLonSetVoiceOn),
+			   kKey, _voiceOn ? kBright : kDim);
+	swapColors(scratch, londonSetupTextRect(this, kLonSetVoiceOff, kMacLonSetVoiceOff),
+			   kKey, _voiceOn ? kDim : kBright);
 
-	swapColors(scratch, kLonSetMusicOn,  kKey, _musicOn ? kBright : kDim);
-	swapColors(scratch, kLonSetMusicOff, kKey, _musicOn ? kDim : kBright);
+	swapColors(scratch, londonSetupTextRect(this, kLonSetMusicOn, kMacLonSetMusicOn),
+			   kKey, _musicOn ? kBright : kDim);
+	swapColors(scratch, londonSetupTextRect(this, kLonSetMusicOff, kMacLonSetMusicOff),
+			   kKey, _musicOn ? kDim : kBright);
 
 	const bool hiOn = !ConfMan.getBool("hide_highlight_boxes");
-	swapColors(scratch, kLonSetHiOn,  kKey, hiOn ? kBright : kDim);
-	swapColors(scratch, kLonSetHiOff, kKey, hiOn ? kDim : kBright);
+	swapColors(scratch, londonSetupTextRect(this, kLonSetHiOn, kMacLonSetHiOn),
+			   kKey, hiOn ? kBright : kDim);
+	swapColors(scratch, londonSetupTextRect(this, kLonSetHiOff, kMacLonSetHiOff),
+			   kKey, hiOn ? kDim : kBright);
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
+							   0, 0, scratch.w, scratch.h);
 	g_system->updateScreen();
 }
 
@@ -2308,19 +2336,19 @@ void EEMEngine::setupShowSavedConfirm() {
 	Picture pic;
 	if (!_picsArchive.getPicture(0x203, pic) || pic.surface.empty())
 		return;
-	Graphics::ManagedSurface scratch(kScreenWidth, kScreenHeight,
+	Graphics::ManagedSurface scratch(screenWidth(), screenHeight(),
 		Graphics::PixelFormat::createFormatCLUT8());
 	Graphics::Surface *cur = g_system->lockScreen();
 	if (cur) {
 		scratch.simpleBlitFrom(*cur);
 		g_system->unlockScreen();
 	}
-	const int sx = MAX<int>(0, (kScreenWidth  - pic.surface.w) / 2);
-	const int sy = MAX<int>(0, (kScreenHeight - pic.surface.h) / 2);
+	const int sx = MAX<int>(0, (scratch.w - pic.surface.w) / 2);
+	const int sy = MAX<int>(0, (scratch.h - pic.surface.h) / 2);
 	scratch.transBlitFrom(pic.surface, Common::Point(sx, sy),
 						  (uint32)(byte)(pic.flags >> 8));
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, kScreenWidth, kScreenHeight);
+							   0, 0, scratch.w, scratch.h);
 	g_system->updateScreen();
 	while (!shouldQuit()) {
 		Common::Event ev;
@@ -2374,7 +2402,10 @@ void EEMEngine::doSetupLondon() {
 			}
 			if (ev.type != Common::EVENT_LBUTTONDOWN)
 				continue;
-			const int mx = ev.mouse.x, my = ev.mouse.y;
+			const Common::Point mouse(unscaleX(ev.mouse.x),
+									  unscaleY(ev.mouse.y));
+			const int mx = mouse.x;
+			const int my = mouse.y;
 
 			if (kPartnerBtn.contains(mx, my)) {
 				_partner = (_partner == kPartnerJake) ? kPartnerJenny
