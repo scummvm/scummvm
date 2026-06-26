@@ -121,7 +121,7 @@ void VocStream::updateBlockIfNeeded() {
 				return;
 
 			// Skip all none sample blocks for now
-			if (_curBlock->code != 1 && _curBlock->code != 9)
+			if (_curBlock->code != 1 && _curBlock->code != 2 && _curBlock->code != 9)
 				continue;
 
 			_stream->seek(_curBlock->sampleBlock.offset, SEEK_SET);
@@ -198,7 +198,7 @@ bool VocStream::seek(const Timestamp &where) {
 
 	for (_curBlock = _blocks.begin(); _curBlock != _blocks.end(); ++_curBlock) {
 		// Skip all none sample blocks for now
-		if (_curBlock->code != 1 && _curBlock->code != 9)
+		if (_curBlock->code != 1 && _curBlock->code != 2 && _curBlock->code != 9)
 			continue;
 
 		uint32 nextBlockSample = curSample + _curBlock->sampleBlock.samples;
@@ -231,6 +231,7 @@ bool VocStream::seek(const Timestamp &where) {
 
 void VocStream::preProcess() {
 	Block block;
+	int lastSampleRate = 0;
 
 	// Scan through the file and collect all blocks
 	while (true) {
@@ -265,6 +266,7 @@ void VocStream::preProcess() {
 		}
 
 		uint32 skip = 0;
+		bool storeBlock = true;
 
 		switch (block.code) {
 		// Sound data
@@ -341,6 +343,21 @@ void VocStream::preProcess() {
 			// Check whether we found a new highest rate
 			if (_rate < block.sampleBlock.rate)
 				_rate = block.sampleBlock.rate;
+			lastSampleRate = block.sampleBlock.rate;
+			break;
+
+		// Sound data continuation
+		case 2:
+			if (lastSampleRate == 0) {
+				warning("VOC file contains continuation block before sound data");
+				skip = block.length;
+				storeBlock = false;
+				break;
+			}
+
+			block.sampleBlock.offset = _stream->pos();
+			block.sampleBlock.rate = lastSampleRate;
+			block.sampleBlock.samples = skip = block.length;
 			break;
 
 		// Silence
@@ -423,7 +440,8 @@ void VocStream::preProcess() {
 		if (skip)
 			_stream->skip(skip);
 
-		_blocks.push_back(block);
+		if (storeBlock)
+			_blocks.push_back(block);
 	}
 
 	// Since we determined the sample rate we need for playback now, we will
@@ -440,7 +458,7 @@ void VocStream::preProcess() {
 		}
 
 		// For now only use blocks with actual samples
-		if (curBlock.code != 1 && curBlock.code != 9)
+		if (curBlock.code != 1 && curBlock.code != 2 && curBlock.code != 9)
 			continue;
 
 		// Check the sample rate
