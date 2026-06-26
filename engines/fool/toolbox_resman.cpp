@@ -40,6 +40,19 @@ void Toolbox::_loadFonts(int16 resID) {
 	}
 }
 
+void Toolbox::CloseResFile(int16 refNum) {
+	if (_resMap.contains(refNum)) {
+		_resMap.erase(refNum);
+	}
+	for (int i = 0; i < (int)_resOrder.size(); i++) {
+		if (_resOrder[i] == refNum) {
+			_resOrder.remove_at(i);
+			i--;
+		}
+	}
+	// FIXME: free up all of the resource handles in _resInfo/_resPicts associated with this archive
+}
+
 int16 Toolbox::CurResFile() {
 	// Return whatever the first resource file is
 	if (_resOrder.empty())

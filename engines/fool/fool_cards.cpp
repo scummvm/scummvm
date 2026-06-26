@@ -188,12 +188,12 @@ void FoolGame::cardsDrawTable() {
 	this->drawTarotCard(3, 6, 0);
 	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	// 139:061a
-	this->drawStringCenter(_zbasic->str(OFF(0)), 0xc3); // Select a card above
-	this->drawStringCenter(_zbasic->str(OFF(1)), 0xd4); // or
+	this->drawTextCenter(_zbasic->str(OFF(0)), 0xc3); // Select a card above
+	this->drawTextCenter(_zbasic->str(OFF(1)), 0xd4); // or
 	_toolbox->FillRoundRect(this->arr_rect_4338, 0xa, 0xa, _patterns[0]);
 	_toolbox->FrameRoundRect(this->arr_rect_4338, 0xa, 0xa);
 	_zbasic->text(_fontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
-	this->drawStringCenter(_zbasic->str(OFF(2)), 0xe9); // Yield
+	this->drawTextCenter(_zbasic->str(OFF(2)), 0xe9); // Yield
 	this->var_i16_2016 = 1;
 	this->var_i16_2010 = 1;
 	this->waitForMouseUp();
@@ -279,7 +279,7 @@ void FoolGame::cardsOnClick() {
 		// original code has the font ID as 1... maybe there's a fallback?
 		// this was intended to be Small
 		_zbasic->text(kFontSmall, 9, Graphics::kMacFontRegular, kSrcBic);
-		this->drawStringCenter(_zbasic->str(OFF(3)), strY); // (click mouse to continue)
+		this->drawTextCenter(_zbasic->str(OFF(3)), strY); // (click mouse to continue)
 		this->var_i16_2014 = 0;
 		_stateFlags = 0;
 		while ((_stateFlags == 0) && (this->var_i16_2014 == 0)) {
@@ -389,7 +389,7 @@ void FoolGame::cardsOpponentYields() {
 	this->var_i16_2012 = -CARDS_YIELD_PENALTY;
 	this->cardsDrawScores();
 	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
-	this->drawStringCenter(_zbasic->str(OFF(4)), 0xc4); // The Old Man yields
+	this->drawTextCenter(_zbasic->str(OFF(4)), 0xc4); // The Old Man yields
 }
 
 void FoolGame::cardsRevealHands() {
@@ -515,10 +515,10 @@ void FoolGame::cardsRevealHands() {
 	this->var_i16_2322 = (this->var_i16_2322 / 2) + 0x14;
 	this->fillRect(0x2e, 0x100 - this->var_i16_2322, 0x9a, 0x100 + this->var_i16_2322, 2);
 	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
-	this->drawStringCenter(this->var_str_384, 0x46);
-	this->drawStringCenter(this->var_str_167c, 0x64);
-	this->drawStringCenter(_zbasic->str(OFF(16)), 0x78); // beats
-	this->drawStringCenter(this->var_str_2222, 0x8c);
+	this->drawTextCenter(this->var_str_384, 0x46);
+	this->drawTextCenter(this->var_str_167c, 0x64);
+	this->drawTextCenter(_zbasic->str(OFF(16)), 0x78); // beats
+	this->drawTextCenter(this->var_str_2222, 0x8c);
 	if (this->arr_i16_1eb8[1] != 0) {
 		this->var_i16_68a = this->arr_i16_1eb8[1];
 		if (this->var_i16_68a > 8) {
