@@ -169,6 +169,7 @@
 #include "director/lingo/xtras/d/directmedia.h"
 #include "director/lingo/xtras/d/directxport.h"
 #include "director/lingo/xtras/d/dirmmx.h"
+#include "director/lingo/xtras/d/dmxtremepack.h"
 #include "director/lingo/xtras/f/filextra.h"
 #include "director/lingo/xtras/f/filextra4.h"
 #include "director/lingo/xtras/g/getdir.h"
@@ -289,6 +290,7 @@ static const struct XLibProto {
 	XLIBDEF(ConsumerXObj,		kXObj,			400),	// D4
 	XLIBDEF(CursorXObj,			kXObj,			400),	// D4
 	XLIBDEF(DLLGlueXObj,		kXObj,			400),	// D4
+	XLIBDEF(DMXtremePackXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(DPWAVIXObj,			kXObj,			300),	// D3
 	XLIBDEF(DPWQTWXObj,			kXObj,			300),	// D3
 	XLIBDEF(DarkenScreen,		kXObj,			300),	// D3
