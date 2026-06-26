@@ -223,7 +223,8 @@ MODULE_OBJS = \
 	lingo/xtras/s/staytoonedtoon.o \
 	lingo/xtras/t/timextra.o \
 	lingo/xtras/x/xsound.o \
-	lingo/xtras/a/amplitude.o
+	lingo/xtras/a/amplitude.o \
+	lingo/xtras/d/directemail.o
 
 
 ifdef USE_IMGUI
