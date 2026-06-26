@@ -229,10 +229,10 @@ extern int inter_awaiting;              /* Current awaiting status          */
 extern int inter_words[3];              /* Vocabulary words for sentence    */
 extern char inter_sentence[64];         /* Sentence building buffer         */
 
-extern int inter_sentence_ready;        /* Flag if a sentence ready to go   */
-extern int inter_report_hotspots;       /* True = show hotspots even with no button pressed */
+extern bool inter_sentence_ready;       /* Flag if a sentence ready to go   */
+extern bool inter_report_hotspots;      /* True = show hotspots even with no button pressed */
 
-extern int inter_force_rescan;          /* Force mouse rescan even if not changed */
+extern bool inter_force_rescan;         /* Force mouse rescan even if not changed */
 extern int inter_base_hotspots;         /* Number of basic room hotspots          */
 
 extern long inter_base_time;            /* Timing marker for interface      */

@@ -169,17 +169,17 @@ int  inter_point_y;
 int  inter_recent_command;              /* Allows cancellation       */
 int  inter_recent_command_source;
 
-int  inter_sentence_ready = false;      /* Flag if a sentence ready to go */
+bool inter_sentence_ready = false;      /* Flag if a sentence ready to go */
 
 int  inter_awaiting = AWAITING_COMMAND; /* Current awaiting status        */
 
-int  inter_report_hotspots = false;     /* True = show hotspots even with no button pressed */
+bool inter_report_hotspots = false;     /* True = show hotspots even with no button pressed */
 
-int  inter_force_rescan = false;        /* Force mouse rescan even if didnt change */
+bool inter_force_rescan = false;        /* Force mouse rescan even if didnt change */
 int  inter_base_hotspots;               /* Number of basic hotspots                */
 
-int  inter_no_segments_active = true;
-int  inter_some_segments_active = false;
+bool inter_no_segments_active = true;
+bool inter_some_segments_active = false;
 
 int  inter_spot_class;
 int  inter_spot_index;
