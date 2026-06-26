@@ -196,6 +196,8 @@ const char *PrintOMaticXObj::xlibName = "PrintOMatic";
 const XlibFileDesc PrintOMaticXObj::fileNames[] = {
 	{ "PrintOMatic",   nullptr },
 	{ "PMATIC",   nullptr },
+	{ "PrintOMatic MX",   nullptr },
+	{ "POMLITE",   nullptr },
 	{ nullptr,        nullptr },
 };
 
