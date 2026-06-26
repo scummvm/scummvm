@@ -114,7 +114,7 @@ Taskbar::ButtonState Taskbar::restingState(uint index) const {
 		return kButtonDisabled;
 	}
 	// Disable override (ControlUIItems) takes precedence over the badge —
-	// FUN_004d51c3 only draws the notify sprite when state != 3.
+	// the notify sprite is only drawn when the button is not disabled.
 	const ButtonOverride &o = _overrides[index];
 	if (o.active && _currentScene >= o.startScene && _currentScene <= o.endScene) {
 		return kButtonDisabled;
