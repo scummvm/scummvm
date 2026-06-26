@@ -197,6 +197,7 @@
 #include "director/lingo/xtras/s/setmouse.h"
 #include "director/lingo/xtras/s/scrnxtra.h"
 #include "director/lingo/xtras/s/sharpexport.h"
+#include "director/lingo/xtras/s/soundchannel.h"
 #include "director/lingo/xtras/t/timextra.h"
 #include "director/lingo/xtras/x/xsound.h"
 
@@ -408,6 +409,7 @@ static const struct XLibProto {
 	XLIBDEF(SharpExportXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(SmackerXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(SmallUtilXObj,		kXObj,			400),	// D4
+	XLIBDEF(SoundChannelXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(SoundJam,			kXObj,			400),	// D4
 	XLIBDEF(SpaceMgr,			kXObj,			400),	// D4
 	XLIBDEF(StageControlXObj,			kXObj,					300),	// D3

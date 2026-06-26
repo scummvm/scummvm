@@ -231,7 +231,8 @@ MODULE_OBJS = \
 	lingo/xtras/d/dmxtremepack.o \
 	lingo/xtras/j/javaconvert.o \
 	lingo/xtras/s/scrnxtra.o \
-	lingo/xtras/s/sharpexport.o
+	lingo/xtras/s/sharpexport.o \
+	lingo/xtras/s/soundchannel.o
 
 
 ifdef USE_IMGUI
