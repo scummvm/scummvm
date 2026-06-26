@@ -24,6 +24,7 @@
 #define EEM_EEM_H
 
 #include "common/array.h"
+#include "common/events.h"
 #include "common/keyboard.h"
 #include "common/language.h"
 #include "common/platform.h"
@@ -366,6 +367,66 @@ private:
 	void drawGalleryFrame(const byte *gd, uint8 numSuspects,
 						  Common::Array<Common::Rect> &slotRects,
 						  Common::Array<int> &slotSuspect);
+
+	struct BigMapOverviewState {
+		Common::Rect window;
+		int zoomX = 0;
+		int zoomY = 0;
+	};
+
+	struct BigMapDetailState {
+		const Common::Array<byte> *mapPixels = nullptr;
+		uint16 mapW = 0;
+		uint16 mapH = 0;
+
+		int scrollX = 0;
+		int scrollY = 0;
+		int maxScrollX = 0;
+		int maxScrollY = 0;
+
+		int mapWinX = 0;
+		int mapWinY = 0;
+		int mapWinW = 0;
+		int mapWinH = 0;
+
+		Common::Rect returnRect;
+		Common::Rect setupRect;
+		Common::Rect arrowYUp;
+		Common::Rect arrowYDown;
+		Common::Rect arrowXLeft;
+		Common::Rect arrowXRight;
+		Common::Rect xSlider;
+		Common::Rect ySlider;
+
+		int arrowStepX = 0;
+		int arrowStepY = 0;
+
+		uint32 startTick = 0;
+		uint32 lastDrawTick = 0;
+		uint32 lastCycleTick = 0;
+	};
+
+	Common::Rect bigMapScaledRect(const Common::Rect &rect) const;
+	bool bigMapRunOverview(BigMapOverviewState &state);
+	bool bigMapLoadDetailPixels(Common::Array<byte> &mapPixels,
+								uint16 &mapW, uint16 &mapH);
+	void bigMapInitDetailState(BigMapDetailState &state,
+							   const Common::Array<byte> &mapPixels,
+							   uint16 mapW, uint16 mapH,
+							   const BigMapOverviewState &overview);
+	bool bigMapRunDetail(BigMapDetailState &state);
+	bool bigMapHandleDetailEvent(const Common::Event &ev,
+								 BigMapDetailState &state,
+								 bool &returnToOverview, bool &dirty);
+	void bigMapHandleDetailKey(const Common::Event &ev,
+							   BigMapDetailState &state, bool &dirty);
+	bool bigMapHandleDetailMouseDown(const Common::Event &ev,
+									 BigMapDetailState &state,
+									 bool &returnToOverview, bool &dirty);
+	bool bigMapTrySelectDetailSite(int mouseX, int mouseY,
+								   const BigMapDetailState &state);
+	void bigMapCycleOverviewPalette(bool mac);
+	void bigMapCycleDetailPalette(bool mac);
 	void drawBigMapOverview(uint32 elapsedMs);
 	void drawBigMapDetail(int scrollX, int scrollY,
 						  const Common::Array<byte> &mapPixels,

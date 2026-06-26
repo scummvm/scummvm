@@ -427,8 +427,437 @@ void remapSurfaceColor(Graphics::ManagedSurface &surface, byte from, byte to) {
 //     20fe:0d2f`). Click icon = travel.
 // MapData entry (14 bytes): +0..3 ???, +4 BigMapX, +6 BigMapY,
 //   +8 SmallMapX, +0xa SmallMapY, +0xc crime-flag.
-void EEMEngine::doBigMap() {
+Common::Rect EEMEngine::bigMapScaledRect(const Common::Rect &rect) const {
+	return isMacintosh() ? scaleRect(rect) : rect;
+}
 
+void EEMEngine::bigMapCycleOverviewPalette(bool mac) {
+	if (isLondon()) {
+		if (mac) {
+			// Mac `_UpdateBigMap` rotates ColorTable entries 0xef..0xf2
+			// and 0xfc..0xff. Redraw happens after the cycle so Mac endpoint
+			// art maps its black pixels to the current black slot.
+			cyclePaletteRangeReverse(0xef, 0xf2);
+			cyclePaletteRangeReverse(0xfc, 0xff);
+		} else {
+			cyclePaletteRangeReverse(0xf4, 0xf9);
+			cyclePaletteRangeReverse(0xfa, 0xff);
+		}
+	} else {
+		cyclePaletteRangeReverse(0xf7, 0xfa);
+		cyclePaletteRangeReverse(0xfb, 0xfe);
+	}
+}
+
+void EEMEngine::bigMapCycleDetailPalette(bool mac) {
+	if (!isLondon())
+		return;
+
+	if (mac) {
+		cyclePaletteRangeReverse(0xe9, 0xeb);
+		cyclePaletteRangeReverse(0xec, 0xef);
+		cyclePaletteRangeReverse(0xf0, 0xf2);
+	} else {
+		cyclePaletteRangeReverse(0xee, 0xf2);
+		cyclePaletteRangeReverse(0xea, 0xed);
+	}
+}
+
+bool EEMEngine::bigMapRunOverview(BigMapOverviewState &state) {
+	setInteractiveMouseCursor(false);
+	setSitePalette(isLondon() ? 0x3b : 0x24);
+
+	const bool mac = isMacintosh();
+	const Common::Rect setupBtnBase = isFloppy()
+		? Common::Rect(251, 3, 315, 42)
+		: (isLondon() ? Common::Rect(252, 1, 315, 42)
+					  : Common::Rect(252, 4, 315, 42));
+	const Common::Rect setupBtnRect = bigMapScaledRect(setupBtnBase);
+	state.window = bigMapScaledRect(Common::Rect(0, 0, 247, 192));
+	state.zoomX = 0;
+	state.zoomY = 0;
+
+	const uint32 mapStartTick = g_system->getMillis();
+	drawBigMapOverview(0);
+	uint32 mapLastTick = mapStartTick;
+	uint32 mapLastCycleTick = mapStartTick;
+
+	while (!shouldQuit()) {
+		Common::Event ev;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				return false;
+			if (ev.type == Common::EVENT_KEYDOWN &&
+				ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				openMainMenuDialog();
+				continue;
+			}
+			if (ev.type != Common::EVENT_LBUTTONDOWN)
+				continue;
+
+			if (setupBtnRect.contains(ev.mouse.x, ev.mouse.y)) {
+				_nextScreen = kScreenSetup;
+				return false;
+			}
+
+			if (state.window.contains(ev.mouse.x, ev.mouse.y)) {
+				if (mac) {
+					state.zoomX = ev.mouse.x - state.window.left;
+					state.zoomY = ev.mouse.y - state.window.top;
+				} else {
+					int sx = ev.mouse.x * 2;
+					int sy = ev.mouse.y * 2;
+					sx = (sx < 0x75) ? 0 : sx - 0x74;
+					sy = (sy < 0x56) ? 0 : sy - 0x55;
+					state.zoomX = sx;
+					state.zoomY = sy;
+				}
+				return true;
+			}
+		}
+
+		const uint32 now = g_system->getMillis();
+		if (mac && isLondon() &&
+			now - mapLastCycleTick >= kMacMapColorCycleDelayMs) {
+			mapLastCycleTick = now;
+			bigMapCycleOverviewPalette(mac);
+			drawBigMapOverview(now - mapStartTick);
+			mapLastTick = now;
+		} else if (now - mapLastTick >= 100) {
+			mapLastTick = now;
+			drawBigMapOverview(now - mapStartTick);
+			if (!mac || !isLondon())
+				bigMapCycleOverviewPalette(mac);
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+
+	return false;
+}
+
+bool EEMEngine::bigMapLoadDetailPixels(Common::Array<byte> &mapPixels,
+									   uint16 &mapW, uint16 &mapH) {
+	mapW = 0;
+	mapH = 0;
+	mapPixels.clear();
+
+	if (isMacintosh())
+		return loadMacBigMapPixels(mapPixels, mapW, mapH);
+
+	Common::File f;
+	if (!f.open(Common::Path("BIGMAP.PIC"))) {
+		warning("doBigMap: BIGMAP.PIC missing for detail view");
+		return false;
+	}
+	mapH = f.readUint16LE();
+	mapW = f.readUint16LE();
+	if (mapW == 0 || mapH == 0)
+		return false;
+	mapPixels.resize((uint32)mapW * mapH);
+	if (f.read(mapPixels.data(), mapPixels.size()) != mapPixels.size()) {
+		warning("doBigMap: short read on BIGMAP.PIC for detail view");
+		return false;
+	}
+	return true;
+}
+
+void EEMEngine::bigMapInitDetailState(BigMapDetailState &state,
+									  const Common::Array<byte> &mapPixels,
+									  uint16 mapW, uint16 mapH,
+									  const BigMapOverviewState &overview) {
+	const bool mac = isMacintosh();
+
+	state.mapPixels = &mapPixels;
+	state.mapW = mapW;
+	state.mapH = mapH;
+	state.mapWinW = mac ? scaleX(0xe9) : 0xe9; // 233
+	state.mapWinH = mac ? scaleY(0xab) : 0xab; // 171
+	state.mapWinX = mac ? scaleX(2) : 2;
+	state.mapWinY = mac ? scaleY(2) : 2;
+	state.maxScrollX = MAX<int>(0, (int)mapW - state.mapWinW);
+	state.maxScrollY = MAX<int>(0, (int)mapH - state.mapWinH);
+
+	if (mac) {
+		state.scrollX = overview.zoomX * (int)mapW /
+			MAX<int>(1, overview.window.width()) - state.mapWinW / 2;
+		state.scrollY = overview.zoomY * (int)mapH /
+			MAX<int>(1, overview.window.height()) - state.mapWinH / 2;
+	} else {
+		state.scrollX = overview.zoomX;
+		state.scrollY = overview.zoomY;
+	}
+	state.scrollX = MAX<int>(0, MIN<int>(state.maxScrollX, state.scrollX));
+	state.scrollY = MAX<int>(0, MIN<int>(state.maxScrollY, state.scrollY));
+
+	state.returnRect = bigMapScaledRect(
+		Common::Rect(252, 43, kScreenWidth, kScreenHeight));
+	state.arrowYUp = bigMapScaledRect(Common::Rect(237, 2, 247, 11));
+	state.arrowYDown = bigMapScaledRect(Common::Rect(237, 163, 247, 172));
+	state.arrowXLeft = bigMapScaledRect(Common::Rect(2, 175, 12, 185));
+	state.arrowXRight = bigMapScaledRect(Common::Rect(224, 175, 234, 185));
+	state.xSlider = bigMapScaledRect(isLondon()
+		? Common::Rect(15, 176, 220, 184)
+		: Common::Rect(15, 175, 221, 185));
+	state.ySlider = bigMapScaledRect(isLondon()
+		? Common::Rect(238, 16, 246, 158)
+		: Common::Rect(237, 14, 247, 160));
+	state.setupRect = bigMapScaledRect(isFloppy()
+		? Common::Rect(251, 3, 315, 42)
+		: (isLondon() ? Common::Rect(251, 3, 315, 42)
+					  : Common::Rect(252, 4, 315, 42)));
+
+	const int baseArrowStep = isLondon() ? 8 : 16;
+	state.arrowStepX = mac ? scaleX(baseArrowStep) : baseArrowStep;
+	state.arrowStepY = mac ? scaleY(baseArrowStep) : baseArrowStep;
+}
+
+bool EEMEngine::bigMapTrySelectDetailSite(int mouseX, int mouseY,
+										  const BigMapDetailState &state) {
+	if (mouseX < state.mapWinX || mouseX >= state.mapWinX + state.mapWinW ||
+		mouseY < state.mapWinY || mouseY >= state.mapWinY + state.mapWinH)
+		return false;
+
+	// Per-site bbox from `_StampButtons` (SmallMap +8/+0xa).
+	struct DetailMapHit {
+		uint site;
+		Common::Rect rect;
+	};
+	Common::Array<DetailMapHit> hits;
+	const bool floppyMap = _mystery.isLoaded() && isFloppy();
+	const bool macMap = isMacintosh() && _mystery.usesCompactMacData();
+	for (uint i = 0; i < _mystery.numSites(); i++) {
+		// On-map flag alone, matching `_SearchMapButtons`.
+		if (!_mystery._onSites[i])
+			continue;
+		const byte *entry = _mystery.mapEntry(i);
+		if (!entry)
+			continue;
+		BigMapEntryInfo info;
+		if (!readBigMapEntryInfo(entry, floppyMap, macMap, info))
+			continue;
+
+		Picture button;
+		int bw = 16;
+		int bh = 16;
+		if (_buttonArchive.loadEntry(info.buttonId, button)) {
+			bw = button.surface.w;
+			bh = button.surface.h;
+		}
+		const int sx = (int)info.detailX - state.scrollX + state.mapWinX;
+		const int sy = (int)info.detailY - state.scrollY + state.mapWinY;
+		const Common::Rect r(sx, sy, sx + bw, sy + bh);
+		if (r.intersects(Common::Rect(state.mapWinX, state.mapWinY,
+				state.mapWinX + state.mapWinW,
+				state.mapWinY + state.mapWinH))) {
+			DetailMapHit hit = { i, r };
+			hits.push_back(hit);
+		}
+	}
+	Common::sort(hits.begin(), hits.end(),
+		[](const DetailMapHit &a, const DetailMapHit &b) {
+			if (a.rect.top != b.rect.top)
+				return a.rect.top < b.rect.top;
+			return a.rect.left < b.rect.left;
+		});
+	for (uint i = 0; i < hits.size(); i++) {
+		if (hits[i].rect.contains(mouseX, mouseY)) {
+			_mystery._lastSite = _mystery._siteNumber;
+			_mystery._siteNumber = (uint16)hits[i].site;
+			return true;
+		}
+	}
+	return false;
+}
+
+void EEMEngine::bigMapHandleDetailKey(const Common::Event &ev,
+									  BigMapDetailState &state,
+									  bool &dirty) {
+	switch (ev.kbd.keycode) {
+	case Common::KEYCODE_ESCAPE:
+		openMainMenuDialog();
+		dirty = true;
+		break;
+	case Common::KEYCODE_LEFT:
+		state.scrollX = MAX<int>(0, state.scrollX - state.arrowStepX);
+		dirty = true;
+		break;
+	case Common::KEYCODE_RIGHT:
+		state.scrollX = MIN<int>(state.maxScrollX,
+								 state.scrollX + state.arrowStepX);
+		dirty = true;
+		break;
+	case Common::KEYCODE_UP:
+		state.scrollY = MAX<int>(0, state.scrollY - state.arrowStepY);
+		dirty = true;
+		break;
+	case Common::KEYCODE_DOWN:
+		state.scrollY = MIN<int>(state.maxScrollY,
+								 state.scrollY + state.arrowStepY);
+		dirty = true;
+		break;
+	default:
+		break;
+	}
+}
+
+bool EEMEngine::bigMapHandleDetailMouseDown(const Common::Event &ev,
+											BigMapDetailState &state,
+											bool &returnToOverview,
+											bool &dirty) {
+	setInteractiveMouseCursor(
+		state.returnRect.contains(ev.mouse.x, ev.mouse.y) ||
+		state.setupRect.contains(ev.mouse.x, ev.mouse.y));
+
+	if (state.setupRect.contains(ev.mouse.x, ev.mouse.y)) {
+		_nextScreen = kScreenSetup;
+		setInteractiveMouseCursor(false);
+		return false;
+	}
+	if (state.returnRect.contains(ev.mouse.x, ev.mouse.y)) {
+		returnToOverview = true;
+		return true;
+	}
+	if (state.arrowYUp.contains(ev.mouse.x, ev.mouse.y)) {
+		state.scrollY = MAX<int>(0, state.scrollY - state.arrowStepY);
+		dirty = true;
+		return true;
+	}
+	if (state.arrowYDown.contains(ev.mouse.x, ev.mouse.y)) {
+		state.scrollY = MIN<int>(state.maxScrollY,
+								 state.scrollY + state.arrowStepY);
+		dirty = true;
+		return true;
+	}
+	if (state.arrowXLeft.contains(ev.mouse.x, ev.mouse.y)) {
+		state.scrollX = MAX<int>(0, state.scrollX - state.arrowStepX);
+		dirty = true;
+		return true;
+	}
+	if (state.arrowXRight.contains(ev.mouse.x, ev.mouse.y)) {
+		state.scrollX = MIN<int>(state.maxScrollX,
+								 state.scrollX + state.arrowStepX);
+		dirty = true;
+		return true;
+	}
+	if (state.xSlider.contains(ev.mouse.x, ev.mouse.y)) {
+		if (state.maxScrollX > 0) {
+			const int t = ev.mouse.x - state.xSlider.left;
+			const int tw = state.xSlider.width();
+			state.scrollX = MAX<int>(0, MIN<int>(state.maxScrollX,
+				t * state.maxScrollX / MAX<int>(1, tw)));
+			dirty = true;
+		}
+		return true;
+	}
+	if (state.ySlider.contains(ev.mouse.x, ev.mouse.y)) {
+		if (state.maxScrollY > 0) {
+			const int t = ev.mouse.y - state.ySlider.top;
+			const int th = state.ySlider.height();
+			state.scrollY = MAX<int>(0, MIN<int>(state.maxScrollY,
+				t * state.maxScrollY / MAX<int>(1, th)));
+			dirty = true;
+		}
+		return true;
+	}
+	if (bigMapTrySelectDetailSite(ev.mouse.x, ev.mouse.y, state)) {
+		setInteractiveMouseCursor(false);
+		return false;
+	}
+
+	return true;
+}
+
+bool EEMEngine::bigMapHandleDetailEvent(const Common::Event &ev,
+										BigMapDetailState &state,
+										bool &returnToOverview,
+										bool &dirty) {
+	if (ev.type == Common::EVENT_QUIT ||
+		ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+		setInteractiveMouseCursor(false);
+		return false;
+	}
+
+	if (ev.type == Common::EVENT_KEYDOWN) {
+		bigMapHandleDetailKey(ev, state, dirty);
+		return true;
+	}
+
+	if (ev.type == Common::EVENT_MOUSEMOVE) {
+		setInteractiveMouseCursor(
+			state.returnRect.contains(ev.mouse.x, ev.mouse.y) ||
+			state.setupRect.contains(ev.mouse.x, ev.mouse.y));
+		return true;
+	}
+
+	if (ev.type == Common::EVENT_LBUTTONDOWN)
+		return bigMapHandleDetailMouseDown(ev, state, returnToOverview,
+										   dirty);
+
+	return true;
+}
+
+bool EEMEngine::bigMapRunDetail(BigMapDetailState &state) {
+	if (!state.mapPixels)
+		return false;
+
+	const bool mac = isMacintosh();
+	setSitePalette(isLondon() ? 0x3a : 0x23);
+
+	state.startTick = g_system->getMillis();
+	state.lastDrawTick = state.startTick;
+	state.lastCycleTick = state.startTick;
+	drawBigMapDetail(state.scrollX, state.scrollY, *state.mapPixels,
+					 state.mapW, state.mapH, 0);
+
+	const Common::Point detailMouse =
+		g_system->getEventManager()->getMousePos();
+	setInteractiveMouseCursor(
+		state.returnRect.contains(detailMouse.x, detailMouse.y) ||
+		state.setupRect.contains(detailMouse.x, detailMouse.y));
+
+	bool returnToOverview = false;
+	while (!shouldQuit() && !returnToOverview) {
+		Common::Event ev;
+		bool dirty = false;
+		bool cycleTick = false;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (!bigMapHandleDetailEvent(ev, state, returnToOverview, dirty))
+				return false;
+			if (returnToOverview)
+				break;
+		}
+		if (returnToOverview)
+			break;
+
+		const uint32 now = g_system->getMillis();
+		if (now - state.lastDrawTick >= 100) {
+			state.lastDrawTick = now;
+			dirty = true;
+		}
+		if (isLondon()) {
+			const uint32 cycleDelay = mac ? kMacMapColorCycleDelayMs : 100;
+			if (now - state.lastCycleTick >= cycleDelay) {
+				state.lastCycleTick = now;
+				cycleTick = true;
+				dirty = true;
+			}
+		}
+		if (cycleTick)
+			bigMapCycleDetailPalette(mac);
+		if (dirty)
+			drawBigMapDetail(state.scrollX, state.scrollY, *state.mapPixels,
+							 state.mapW, state.mapH,
+							 now - state.startTick);
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+
+	return returnToOverview;
+}
+
+void EEMEngine::doBigMap() {
 	if (!_mystery.isLoaded())
 		return;
 
@@ -441,355 +870,19 @@ void EEMEngine::doBigMap() {
 	CursorMan.showMouse(true);
 
 	while (!shouldQuit()) {
-		setInteractiveMouseCursor(false);
-		setSitePalette(isLondon() ? 0x3b : 0x24);
-
-		const uint32 mapStartTick = g_system->getMillis();
-		drawBigMapOverview(0);
-		uint32 mapLastTick = mapStartTick;
-		uint32 mapLastCycleTick = mapStartTick;
-
-		const bool mac = isMacintosh();
-		const Common::Rect bigMapWindowBase(0, 0, 247, 192);
-		const Common::Rect kBigMapWindow =
-			mac ? scaleRect(bigMapWindowBase) : bigMapWindowBase;
-		const Common::Rect setupBtnBase = isFloppy()
-			? Common::Rect(251, 3, 315, 42)
-			: (isLondon() ? Common::Rect(252, 1, 315, 42)
-						  : Common::Rect(252, 4, 315, 42));
-		const Common::Rect kSetupBtnRect =
-			mac ? scaleRect(setupBtnBase) : setupBtnBase;
-
-		bool wantZoom = false;
-		int zoomX = 0;
-		int zoomY = 0;
-		while (!shouldQuit()) {
-			Common::Event ev;
-			while (g_system->getEventManager()->pollEvent(ev)) {
-				if (ev.type == Common::EVENT_QUIT ||
-					ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
-					return;
-				if (ev.type == Common::EVENT_KEYDOWN &&
-					ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					openMainMenuDialog();
-					continue;
-				}
-				if (ev.type == Common::EVENT_LBUTTONDOWN) {
-					if (kSetupBtnRect.contains(ev.mouse.x, ev.mouse.y)) {
-						_nextScreen = kScreenSetup;
-						return;
-					}
-
-					if (kBigMapWindow.contains(ev.mouse.x, ev.mouse.y)) {
-						if (mac) {
-							zoomX = ev.mouse.x - kBigMapWindow.left;
-							zoomY = ev.mouse.y - kBigMapWindow.top;
-						} else {
-							int sx = ev.mouse.x * 2;
-							int sy = ev.mouse.y * 2;
-							sx = (sx < 0x75) ? 0 : sx - 0x74;
-							sy = (sy < 0x56) ? 0 : sy - 0x55;
-							zoomX = sx;
-							zoomY = sy;
-						}
-						wantZoom = true;
-						break;
-					}
-				}
-			}
-			if (wantZoom)
-				break;
-
-			const uint32 now = g_system->getMillis();
-			if (mac && isLondon() &&
-				now - mapLastCycleTick >= kMacMapColorCycleDelayMs) {
-				mapLastCycleTick = now;
-				// Mac `_UpdateBigMap` rotates ColorTable entries 0xef..0xf2
-				// and 0xfc..0xff. Redraw immediately so Mac endpoint art maps
-				// its black pixels to the current black slot after the cycle.
-				cyclePaletteRangeReverse(0xef, 0xf2);
-				cyclePaletteRangeReverse(0xfc, 0xff);
-				drawBigMapOverview(now - mapStartTick);
-				mapLastTick = now;
-			} else if (now - mapLastTick >= 100) {
-				mapLastTick = now;
-				drawBigMapOverview(now - mapStartTick);
-				if (isLondon()) {
-					if (!mac) {
-						cyclePaletteRangeReverse(0xf4, 0xf9);
-						cyclePaletteRangeReverse(0xfa, 0xff);
-					}
-				} else {
-					cyclePaletteRangeReverse(0xf7, 0xfa);
-					cyclePaletteRangeReverse(0xfb, 0xfe);
-				}
-			}
-			g_system->updateScreen();
-			g_system->delayMillis(10);
-		}
-
-		if (!wantZoom)
+		BigMapOverviewState overview;
+		if (!bigMapRunOverview(overview))
 			return;
 
+		Common::Array<byte> mapPixels;
 		uint16 mapW = 0;
 		uint16 mapH = 0;
-		Common::Array<byte> mapPixels;
-		if (mac) {
-			if (!loadMacBigMapPixels(mapPixels, mapW, mapH))
-				return;
-		} else {
-			Common::File f;
-			if (!f.open(Common::Path("BIGMAP.PIC"))) {
-				warning("doBigMap: BIGMAP.PIC missing for detail view");
-				return;
-			}
-			mapH = f.readUint16LE();
-			mapW = f.readUint16LE();
-			if (mapW == 0 || mapH == 0)
-				return;
-			mapPixels.resize((uint32)mapW * mapH);
-			if (f.read(mapPixels.data(), mapPixels.size()) != mapPixels.size()) {
-				warning("doBigMap: short read on BIGMAP.PIC for detail view");
-				return;
-			}
-		}
+		if (!bigMapLoadDetailPixels(mapPixels, mapW, mapH))
+			return;
 
-		const int kMapWinW = mac ? scaleX(0xe9) : 0xe9; // 233
-		const int kMapWinH = mac ? scaleY(0xab) : 0xab; // 171
-		const int kMapWinX = mac ? scaleX(2) : 2;
-		const int kMapWinY = mac ? scaleY(2) : 2;
-
-		const int maxScrollX = MAX<int>(0, (int)mapW - kMapWinW);
-		const int maxScrollY = MAX<int>(0, (int)mapH - kMapWinH);
-		int scrollX;
-		int scrollY;
-		if (mac) {
-			scrollX = zoomX * (int)mapW /
-				MAX<int>(1, kBigMapWindow.width()) - kMapWinW / 2;
-			scrollY = zoomY * (int)mapH /
-				MAX<int>(1, kBigMapWindow.height()) - kMapWinH / 2;
-		} else {
-			scrollX = zoomX;
-			scrollY = zoomY;
-		}
-		scrollX = MAX<int>(0, MIN<int>(maxScrollX, scrollX));
-		scrollY = MAX<int>(0, MIN<int>(maxScrollY, scrollY));
-
-		setSitePalette(isLondon() ? 0x3a : 0x23);
-
-		const uint32 detailStartTick = g_system->getMillis();
-		drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH, 0);
-		uint32 detailLastTick = detailStartTick;
-		uint32 detailLastCycleTick = detailStartTick;
-		bool returnToOverview = false;
-
-		const Common::Rect returnBase(252, 43, kScreenWidth, kScreenHeight);
-		const Common::Rect kBigMapReturnRect =
-			mac ? scaleRect(returnBase) : returnBase;
-		const Common::Rect kArrowYUp =
-			mac ? scaleRect(Common::Rect(237, 2, 247, 11))
-				: Common::Rect(237, 2, 247, 11);
-		const Common::Rect kArrowYDown =
-			mac ? scaleRect(Common::Rect(237, 163, 247, 172))
-				: Common::Rect(237, 163, 247, 172);
-		const Common::Rect kArrowXLeft =
-			mac ? scaleRect(Common::Rect(2, 175, 12, 185))
-				: Common::Rect(2, 175, 12, 185);
-		const Common::Rect kArrowXRight =
-			mac ? scaleRect(Common::Rect(224, 175, 234, 185))
-				: Common::Rect(224, 175, 234, 185);
-		const Common::Rect xSliderBase = isLondon()
-			? Common::Rect(15, 176, 220, 184)
-			: Common::Rect(15, 175, 221, 185);
-		const Common::Rect ySliderBase = isLondon()
-			? Common::Rect(238, 16, 246, 158)
-			: Common::Rect(237, 14, 247, 160);
-		const Common::Rect kXSlider =
-			mac ? scaleRect(xSliderBase) : xSliderBase;
-		const Common::Rect kYSlider =
-			mac ? scaleRect(ySliderBase) : ySliderBase;
-		const Common::Rect detailSetupBase = isFloppy()
-			? Common::Rect(251, 3, 315, 42)
-			: (isLondon() ? Common::Rect(251, 3, 315, 42)
-						  : Common::Rect(252, 4, 315, 42));
-		const Common::Rect kDetailSetupBtn =
-			mac ? scaleRect(detailSetupBase) : detailSetupBase;
-		const int baseArrowStep = isLondon() ? 8 : 16;
-		const int kArrowStepX = mac ? scaleX(baseArrowStep) : baseArrowStep;
-		const int kArrowStepY = mac ? scaleY(baseArrowStep) : baseArrowStep;
-		const int kSliderRange = maxScrollX;
-		const int kSliderRangeY = maxScrollY;
-		const Common::Point detailMouse =
-			g_system->getEventManager()->getMousePos();
-		setInteractiveMouseCursor(
-			kBigMapReturnRect.contains(detailMouse.x, detailMouse.y) ||
-			kDetailSetupBtn.contains(detailMouse.x, detailMouse.y));
-
-		while (!shouldQuit() && !returnToOverview) {
-			Common::Event ev;
-			bool dirty = false;
-			bool cycleTick = false;
-			while (g_system->getEventManager()->pollEvent(ev)) {
-				if (ev.type == Common::EVENT_QUIT ||
-					ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
-					setInteractiveMouseCursor(false);
-					return;
-				}
-				if (ev.type == Common::EVENT_KEYDOWN) {
-					if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-						openMainMenuDialog();
-						dirty = true;
-						continue;
-					}
-					if (ev.kbd.keycode == Common::KEYCODE_LEFT) {
-						scrollX = MAX<int>(0, scrollX - kArrowStepX);
-						dirty = true;
-					} else if (ev.kbd.keycode == Common::KEYCODE_RIGHT) {
-						scrollX = MIN<int>(maxScrollX, scrollX + kArrowStepX);
-						dirty = true;
-					} else if (ev.kbd.keycode == Common::KEYCODE_UP) {
-						scrollY = MAX<int>(0, scrollY - kArrowStepY);
-						dirty = true;
-					} else if (ev.kbd.keycode == Common::KEYCODE_DOWN) {
-						scrollY = MIN<int>(maxScrollY, scrollY + kArrowStepY);
-						dirty = true;
-					}
-				}
-				if (ev.type == Common::EVENT_MOUSEMOVE)
-					setInteractiveMouseCursor(
-						kBigMapReturnRect.contains(ev.mouse.x, ev.mouse.y) ||
-						kDetailSetupBtn.contains(ev.mouse.x, ev.mouse.y));
-				if (ev.type == Common::EVENT_LBUTTONDOWN) {
-					setInteractiveMouseCursor(
-						kBigMapReturnRect.contains(ev.mouse.x, ev.mouse.y) ||
-						kDetailSetupBtn.contains(ev.mouse.x, ev.mouse.y));
-					if (kDetailSetupBtn.contains(ev.mouse.x, ev.mouse.y)) {
-						_nextScreen = kScreenSetup;
-						setInteractiveMouseCursor(false);
-						return;
-					}
-					if (kBigMapReturnRect.contains(ev.mouse.x, ev.mouse.y)) {
-						returnToOverview = true;
-						break;
-					} else if (kArrowYUp.contains(ev.mouse.x, ev.mouse.y)) {
-						scrollY = MAX<int>(0, scrollY - kArrowStepY);
-						dirty = true;
-					} else if (kArrowYDown.contains(ev.mouse.x, ev.mouse.y)) {
-						scrollY = MIN<int>(MAX<int>(0, kSliderRangeY),
-							scrollY + kArrowStepY);
-						dirty = true;
-					} else if (kArrowXLeft.contains(ev.mouse.x, ev.mouse.y)) {
-						scrollX = MAX<int>(0, scrollX - kArrowStepX);
-						dirty = true;
-					} else if (kArrowXRight.contains(ev.mouse.x, ev.mouse.y)) {
-						scrollX = MIN<int>(MAX<int>(0, kSliderRange),
-							scrollX + kArrowStepX);
-						dirty = true;
-					} else if (kXSlider.contains(ev.mouse.x, ev.mouse.y)) {
-						if (kSliderRange > 0) {
-							const int t = ev.mouse.x - kXSlider.left;
-							const int tw = kXSlider.width();
-							scrollX = MAX<int>(0, MIN<int>(kSliderRange,
-								t * kSliderRange / MAX<int>(1, tw)));
-							dirty = true;
-						}
-					} else if (kYSlider.contains(ev.mouse.x, ev.mouse.y)) {
-						if (kSliderRangeY > 0) {
-							const int t = ev.mouse.y - kYSlider.top;
-							const int th = kYSlider.height();
-							scrollY = MAX<int>(0, MIN<int>(kSliderRangeY,
-								t * kSliderRangeY / MAX<int>(1, th)));
-							dirty = true;
-						}
-					} else if (ev.mouse.x >= kMapWinX &&
-							   ev.mouse.x < kMapWinX + kMapWinW &&
-							   ev.mouse.y >= kMapWinY &&
-							   ev.mouse.y < kMapWinY + kMapWinH) {
-						// Per-site bbox from `_StampButtons` (SmallMap +8/+0xa).
-						const bool fmap = _mystery.isLoaded() && isFloppy();
-						struct DetailMapHit {
-							uint site;
-							Common::Rect rect;
-						};
-						Common::Array<DetailMapHit> hits;
-						for (uint i = 0; i < _mystery.numSites(); i++) {
-							// On-map flag alone, matching `_SearchMapButtons`.
-							if (!_mystery._onSites[i])
-								continue;
-							const byte *entry = _mystery.mapEntry(i);
-							if (!entry)
-								continue;
-							BigMapEntryInfo info;
-							if (!readBigMapEntryInfo(entry, fmap,
-													  mac && _mystery.usesCompactMacData(),
-													  info))
-								continue;
-							Picture button;
-							int bw = 16;
-							int bh = 16;
-							if (_buttonArchive.loadEntry(info.buttonId, button)) {
-								bw = button.surface.w;
-								bh = button.surface.h;
-							}
-							const int sx = (int)info.detailX - scrollX + kMapWinX;
-							const int sy = (int)info.detailY - scrollY + kMapWinY;
-							const Common::Rect r(sx, sy, sx + bw, sy + bh);
-							if (r.intersects(Common::Rect(kMapWinX, kMapWinY,
-									kMapWinX + kMapWinW, kMapWinY + kMapWinH))) {
-								DetailMapHit hit = { i, r };
-								hits.push_back(hit);
-							}
-						}
-						Common::sort(hits.begin(), hits.end(),
-							[](const DetailMapHit &a, const DetailMapHit &b) {
-								if (a.rect.top != b.rect.top)
-									return a.rect.top < b.rect.top;
-								return a.rect.left < b.rect.left;
-							});
-						for (uint i = 0; i < hits.size(); i++) {
-							if (hits[i].rect.contains(ev.mouse.x, ev.mouse.y)) {
-								_mystery._lastSite = _mystery._siteNumber;
-								_mystery._siteNumber = (uint16)hits[i].site;
-								setInteractiveMouseCursor(false);
-								return;
-							}
-						}
-					}
-				}
-			}
-			if (returnToOverview)
-				break;
-
-			const uint32 now = g_system->getMillis();
-			if (now - detailLastTick >= 100) {
-				detailLastTick = now;
-				dirty = true;
-			}
-			if (isLondon()) {
-				const uint32 cycleDelay = mac ? kMacMapColorCycleDelayMs : 100;
-				if (now - detailLastCycleTick >= cycleDelay) {
-					detailLastCycleTick = now;
-					cycleTick = true;
-					dirty = true;
-				}
-			}
-			if (cycleTick && isLondon()) {
-				if (mac) {
-					cyclePaletteRangeReverse(0xe9, 0xeb);
-					cyclePaletteRangeReverse(0xec, 0xef);
-					cyclePaletteRangeReverse(0xf0, 0xf2);
-				} else {
-					cyclePaletteRangeReverse(0xee, 0xf2);
-					cyclePaletteRangeReverse(0xea, 0xed);
-				}
-			}
-			if (dirty)
-				drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH,
-					now - detailStartTick);
-			g_system->updateScreen();
-			g_system->delayMillis(10);
-		}
-		if (!returnToOverview)
+		BigMapDetailState detail;
+		bigMapInitDetailState(detail, mapPixels, mapW, mapH, overview);
+		if (!bigMapRunDetail(detail))
 			return;
 	}
 }
