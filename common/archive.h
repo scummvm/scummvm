@@ -410,7 +410,7 @@ public:
 	 *
 	 * In this example, the code first tries to search for all directories matching
 	 * "game" in the path "directory" first and search through all of the matches for
-	 * "itedata". If "ingoreCase" is set to true, the code does a case insensitive
+	 * "itedata". If "ignoreCase" is set to true, the code does a case insensitive
 	 * match, otherwise it is doing a case sensitive match.
 	 *
 	 * This method also works with tokens. For a list of available tokens,
