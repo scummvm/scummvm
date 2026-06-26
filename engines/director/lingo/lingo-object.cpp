@@ -167,6 +167,7 @@
 #include "director/lingo/xtras/d/datetime.h"
 #include "director/lingo/xtras/d/directemail.h"
 #include "director/lingo/xtras/d/directmedia.h"
+#include "director/lingo/xtras/d/directxport.h"
 #include "director/lingo/xtras/f/filextra.h"
 #include "director/lingo/xtras/f/filextra4.h"
 #include "director/lingo/xtras/g/getdir.h"
@@ -297,6 +298,7 @@ static const struct XLibProto {
 	XLIBDEF(DirUtilXObj,		kXObj,			400),	// D4
 	XLIBDEF(DirectEmailXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(DirectMediaXtra,			kXtraObj,					500),	// D5
+	XLIBDEF(DirectXportXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(DirectsoundXtra,	kXtraObj,		500),	// D5
 	XLIBDEF(DisplayResXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(DrawXObj,			kXObj,			400),	// D4

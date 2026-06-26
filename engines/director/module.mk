@@ -225,7 +225,8 @@ MODULE_OBJS = \
 	lingo/xtras/x/xsound.o \
 	lingo/xtras/a/amplitude.o \
 	lingo/xtras/d/directemail.o \
-	lingo/xtras/d/directmedia.o
+	lingo/xtras/d/directmedia.o \
+	lingo/xtras/d/directxport.o
 
 
 ifdef USE_IMGUI
