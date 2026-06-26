@@ -359,7 +359,14 @@ Common::String getTextFromCaseInsensitiveKey(Common::HashMap<Common::String, Com
 		if (texts.contains(key))
 			return texts[key];
 
+		// Try all uppercase
 		key.toUppercase();
+
+		if (texts.contains(key))
+			return texts[key];
+
+		// Check for lowercase cases for the second to last character, for Nancy11+
+		key[key.size() - 2] = tolower(key[key.size() - 2]);
 
 		if (texts.contains(key))
 			return texts[key];
