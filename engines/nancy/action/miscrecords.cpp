@@ -225,11 +225,9 @@ void FrameTextBox::execute() {
 		tb.addTextLine(_text);
 	}
 
-	// Variant 74 (case 0x4a in ProcessActionRecords) opens the full-width
-	// textbox overlay that covers the taskbar buttons; the original arms a
-	// 15-second timer (DAT_005a7a7d = GetTickCount + 15000) that drops it
-	// back to the closed strip. Variant 75 (case 0x4b) is the legacy
-	// closed/strip path.
+	// Variant 74 opens the full-width textbox overlay that covers the taskbar
+	// buttons; the original arms a 15-second timer that drops it back to the
+	// closed strip. Variant 75 is the legacy closed/strip path.
 	if (_variant == kVariant74) {
 		tb.setFullMode(true);
 	} else {
