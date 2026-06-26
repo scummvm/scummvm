@@ -373,7 +373,6 @@ class FourXMDecoder::FourXMVideoTrack : public FixedRateVideoTrack {
 	FourXMDecoder *_dec;
 	Common::Rational _frameRate;
 	uint _w, _h;
-	uint16 _version = 0;
 	Common::ScopedPtr<Graphics::ManagedSurface> _framePtr, _lastFramePtr;
 	Graphics::Surface *_frame = nullptr, *_lastFrame = nullptr;
 	using HuffmanBitStream = Common::BitStreamMemory32LEMSB;
@@ -383,7 +382,7 @@ class FourXMDecoder::FourXMVideoTrack : public FixedRateVideoTrack {
 	Common::HashMap<byte, Common::Array<byte>> _cframes;
 
 public:
-	FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h, uint16 version) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _version(version) {
+	FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h, uint16 version) : _dec(dec), _frameRate(frameRate), _w(w), _h(h) {
 		_blockType[0].reset(new HuffmanType(HuffmanType::fromFrequencies({16, 8, 4, 2, 1, 1})));
 		_blockType[1].reset(new HuffmanType(HuffmanType::fromFrequencies({8, 0, 4, 2, 1, 1})));
 		_blockType[2].reset(new HuffmanType(HuffmanType::fromFrequencies({8, 4, 0, 2, 1, 1})));
