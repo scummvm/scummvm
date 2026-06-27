@@ -23,6 +23,7 @@
 #define HOLLYWOOD_GAMEPLAY_GAME_LOOP_H
 
 #include "common/array.h"
+#include "common/keyboard.h"
 #include "common/types.h"
 
 #include "hollywood/gameplay/hotspots.h"
@@ -71,8 +72,14 @@ public:
 
 private:
 	bool pollEvents();
+	void handleKeyDown(const Common::KeyState &keyState);
+	void handleKeyUp(const Common::KeyState &keyState);
 	void handleLeftClick();
 	void handleRightClick();
+	void enterKeyboardStripMode();
+	void leaveKeyboardStripMode();
+	void selectPreviousKeyboardStrip();
+	void selectNextKeyboardStrip();
 	void selectNextStrip();
 	GameplayLoopCursorState makeCursorState() const;
 	void refreshHoverCaption();
@@ -83,6 +90,7 @@ private:
 	byte _currentStrip;
 	bool _leftButtonDown;
 	bool _rightButtonDown;
+	bool _keyboardStripMode;
 };
 
 } // End of namespace Hollywood

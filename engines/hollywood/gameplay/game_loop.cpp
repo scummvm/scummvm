@@ -61,7 +61,8 @@ GameplayLoop::GameplayLoop(HollywoodEngine *vm, GameplayLoopDelegate *delegate) 
 		_delegate(delegate),
 		_currentStrip(kGameplayDefaultStrip),
 		_leftButtonDown(false),
-		_rightButtonDown(false) {
+		_rightButtonDown(false),
+		_keyboardStripMode(false) {
 }
 
 bool GameplayLoop::run() {
@@ -72,6 +73,7 @@ bool GameplayLoop::run() {
 	_currentStrip = kGameplayDefaultStrip;
 	_leftButtonDown = false;
 	_rightButtonDown = false;
+	_keyboardStripMode = false;
 	_hoverCaption.reset();
 	_hoverCaption.setCurrentStrip(_currentStrip);
 
@@ -127,6 +129,12 @@ bool GameplayLoop::pollEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			_vm->cursor()->updatePosition(event.mouse);
 			break;
+		case Common::EVENT_KEYDOWN:
+			handleKeyDown(event.kbd);
+			break;
+		case Common::EVENT_KEYUP:
+			handleKeyUp(event.kbd);
+			break;
 		case Common::EVENT_LBUTTONDOWN:
 			if (!_leftButtonDown) {
 				_leftButtonDown = true;
@@ -153,6 +161,40 @@ bool GameplayLoop::pollEvents() {
 	return false;
 }
 
+void GameplayLoop::handleKeyDown(const Common::KeyState &keyState) {
+	switch (keyState.keycode) {
+	case Common::KEYCODE_LSHIFT:
+	case Common::KEYCODE_RSHIFT:
+		enterKeyboardStripMode();
+		break;
+	case Common::KEYCODE_LEFT:
+		if (_keyboardStripMode || (keyState.flags & Common::KBD_SHIFT)) {
+			enterKeyboardStripMode();
+			selectPreviousKeyboardStrip();
+		}
+		break;
+	case Common::KEYCODE_RIGHT:
+		if (_keyboardStripMode || (keyState.flags & Common::KBD_SHIFT)) {
+			enterKeyboardStripMode();
+			selectNextKeyboardStrip();
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void GameplayLoop::handleKeyUp(const Common::KeyState &keyState) {
+	switch (keyState.keycode) {
+	case Common::KEYCODE_LSHIFT:
+	case Common::KEYCODE_RSHIFT:
+		leaveKeyboardStripMode();
+		break;
+	default:
+		break;
+	}
+}
+
 void GameplayLoop::handleLeftClick() {
 	_delegate->handleLeftClick(makeCursorState());
 	refreshHoverCaption();
@@ -166,6 +208,42 @@ void GameplayLoop::handleRightClick() {
 		selectNextStrip();
 	}
 	_delegate->handleRightClick(makeCursorState());
+	refreshHoverCaption();
+}
+
+void GameplayLoop::enterKeyboardStripMode() {
+	if (_keyboardStripMode)
+		return;
+
+	_keyboardStripMode = true;
+	byte requestedStrip = _hoverCaption.requestedStrip();
+	if (requestedStrip < 2 && _currentStrip == kGameplayDefaultStrip)
+		requestedStrip = 5;
+	if (requestedStrip != 0)
+		_currentStrip = requestedStrip;
+
+	_hoverCaption.setCurrentStrip(_currentStrip);
+	refreshHoverCaption();
+}
+
+void GameplayLoop::leaveKeyboardStripMode() {
+	_keyboardStripMode = false;
+	refreshHoverCaption();
+}
+
+void GameplayLoop::selectPreviousKeyboardStrip() {
+	if (_currentStrip > 2)
+		--_currentStrip;
+
+	_hoverCaption.setCurrentStrip(_currentStrip);
+	refreshHoverCaption();
+}
+
+void GameplayLoop::selectNextKeyboardStrip() {
+	if (_currentStrip < kGameplayLastStrip)
+		++_currentStrip;
+
+	_hoverCaption.setCurrentStrip(_currentStrip);
 	refreshHoverCaption();
 }
 
