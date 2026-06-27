@@ -64,7 +64,7 @@ public:
 	Resource();
 	Resource(byte *data, int size);
 	~Resource();
-	byte *data();
+	const byte *data();
 
 	const char *getFileName() const;
 };

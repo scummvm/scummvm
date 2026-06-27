@@ -68,7 +68,7 @@ Resource::Resource(byte *p, int size) {
 	_stream = new Common::MemoryReadStream(p, size);
 }
 
-byte *Resource::data() {
+const byte *Resource::data() {
 	if (_data == nullptr) {
 		_data = new byte[_size];
 		int pos = _stream->pos();

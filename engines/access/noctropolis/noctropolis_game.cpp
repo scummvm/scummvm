@@ -258,16 +258,17 @@ void NoctropolisEngine::doPublisherLogo() {
 			}
 		}
 		delete bestPal;
+		delete scaledPng;
 		_screen->fadeIn();
 
 		_events->_vbCount = 0x7e;
 		while (!shouldQuit() && (_events->_vbCount > 0) && !_events->isKeyActionMousePressed()) {
 			_events->pollEventsAndWait();
 		}
+
 		if (shouldQuit())
 			return;
 		_screen->fadeOut();
-
 	} else {
 		// The original EA release, show their logo.
 		//
@@ -471,7 +472,7 @@ void NoctropolisEngine::doTravel() {
 
 		_player->calcPlayer();
 
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 14; i++) {
 			if (_travel[i]) {
 				int x = TRAV_ICONS[i * 3 + 0];
 				int y = TRAV_ICONS[i * 3 + 1];

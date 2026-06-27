@@ -352,7 +352,9 @@ void Room::loadRoomData(const byte *roomData) {
 	if (_vm->getGameID() == kGameNoctropolis && _roomFlag & kRoomFlagStiletto) {
 		// Load _vm->_screen->_stilPal
 		Resource *stilPal = _vm->_files->loadFile(0xfd, _palIntensity + 6);
-		memcpy(_vm->_screen->_stilPal, stilPal->data() + 480, 99);
+		const byte *stilPalData = stilPal->data();
+		assert(stilPal->_size >= 480 + 99);
+		memcpy(_vm->_screen->_stilPal, stilPalData + 480, 99);
 		delete stilPal;
 
 		Player *stil = ((Noctropolis::NoctropolisEngine *)_vm)->_stil;

@@ -459,7 +459,7 @@ void AccessEngine::plotList1() {
 
 void AccessEngine::clearPlotImagesIn(int16 x, int16 y, int16 w, int16 h) {
 	const Common::Rect toClear = Common::Rect(Common::Point(x, y), w, h);
-	for (uint idx = 0; idx < _images.size(); idx++) {
+	for (int idx = 0; idx < (int)_images.size(); idx++) {
 		const SpriteFrame *frame = _images[idx]._spritesPtr->getFrame(_images[idx]._frameNumber);
 		Common::Point topLeft = _images[idx]._position;
 		Common::Rect imgRect(topLeft, frame->w, frame->h);
@@ -618,6 +618,9 @@ bool AccessEngine::readSavegameHeader(Common::InSaveFile *in, AccessSavegameHead
 	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
 	if (strncmp(saveIdentBuffer, SAVEGAME_STR, SAVEGAME_STR_SIZE))
 		return false;
+
+	// This legacy header format doesn't include _totalPlayTime
+	header._totalPlayTime = 0;
 
 	header._version = in->readByte();
 	if (header._version > ACCESS_SAVEGAME_VERSION)
