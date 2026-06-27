@@ -80,7 +80,7 @@ private:
 	};
 
 	HollywoodEngine *_vm;
-	MusicPlayer _music;
+	MusicPlayer *_music;
 	SoundBank0Player _soundBank0;
 	Common::RandomSource _random;
 	ResourceChunkTable _i12ChunkTable;

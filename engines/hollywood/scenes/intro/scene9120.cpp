@@ -36,7 +36,7 @@ const uint16 kScene9120OverlaySoundId = 0x001a;
 
 Scene9120::Scene9120(HollywoodEngine *vm) :
 		_vm(vm),
-		_music(),
+		_music(vm->introMusic()),
 		_soundBank0(),
 		_random("hollywood_scene9120"),
 		_resourceArenaCursor(0),
@@ -91,8 +91,8 @@ bool Scene9120::play() {
 	memcpy(_paletteCurrent.data(), _paletteResource.data(), _paletteCurrent.size());
 	presentFrame();
 
-	if (!_music.isPlaying())
-		_music.playMusicCue(kScene9120MusicCueId, 100);
+	if (!_music->isPlaying())
+		_music->playMusicCue(kScene9120MusicCueId, 100);
 
 	for (int sweepOffset = 0xdc; sweepOffset >= 0 && !_skipRequested && !Engine::shouldQuit(); sweepOffset -= 0x14) {
 		if (pollEvents())
@@ -119,7 +119,7 @@ bool Scene9120::play() {
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	_yOffset = 0;
 	presentFrame();
-	stopAudio();
+	_soundBank0.stop();
 	return true;
 }
 
@@ -526,7 +526,7 @@ bool Scene9120::delay(uint32 millis) {
 }
 
 void Scene9120::stopAudio() {
-	_music.stop();
+	_music->stop();
 	_soundBank0.stop();
 }
 

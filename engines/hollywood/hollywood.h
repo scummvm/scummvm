@@ -26,6 +26,8 @@
 #include "common/platform.h"
 
 #include "engines/engine.h"
+#include "hollywood/gameplay/game_state.h"
+#include "hollywood/music.h"
 
 struct ADGameDescription;
 
@@ -55,6 +57,10 @@ public:
 
 	ResourceManager *resources() const { return _resources; }
 	HollywoodFont *font() const { return _font; }
+	MusicPlayer *introMusic() { return &_introMusic; }
+	MusicPlayer *gameplayMusic() { return &_gameplayMusic; }
+	GameplayState &gameState() { return _gameState; }
+	const GameplayState &gameState() const { return _gameState; }
 
 	enum {
 		kScreenWidth = 640,
@@ -69,6 +75,9 @@ private:
 	const ADGameDescription *_gameDescription;
 	ResourceManager *_resources;
 	HollywoodFont *_font;
+	MusicPlayer _introMusic;
+	MusicPlayer _gameplayMusic;
+	GameplayState _gameState;
 };
 
 } // End of namespace Hollywood
