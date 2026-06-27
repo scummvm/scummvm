@@ -83,6 +83,15 @@ static void room_301_init1() {
 	}
 
 	switch (previous_room) {
+	case KERNEL_RESTORING_GAME:
+		global[g131] = -1;
+		global[g141] = -1;
+		kernel_reset_animation(scratch._9a, 2);
+		kernel_reset_animation(scratch._9c, 2);
+		global[g133] = 0;
+		global[g143] = 0;
+		break;
+
 	case 221:
 	case 101:
 	case 205:
@@ -91,12 +100,12 @@ static void room_301_init1() {
 	case 307:
 	case 322:
 		aa[0] = kernel_run_animation(kernel_name('t', 1), 100);
-		aainfo[0]._active = -1;
+		aainfo[0]._active = true;
 		scratch._92 = 53;
 		player.x = 61;
 		player.y = 155;
 		player.facing = 2;
-		return;
+		break;
 
 	case 199:
 		global[g131] = -1;
@@ -108,16 +117,7 @@ static void room_301_init1() {
 		restore_player();
 		player.commands_allowed = true;
 		player.walker_visible = true;
-		return;
-
-	case KERNEL_RESTORING_GAME:
-		global[g131] = -1;
-		global[g141] = -1;
-		kernel_reset_animation(scratch._9a, 2);
-		kernel_reset_animation(scratch._9c, 2);
-		global[g133] = 0;
-		global[g143] = 0;
-		return;
+		break;
 
 	default:
 		global[g131] = -1;
@@ -128,7 +128,7 @@ static void room_301_init1() {
 		global[g143] = 0;
 		player.commands_allowed = true;
 		player.walker_visible = true;
-		return;
+		break;
 	}
 }
 
@@ -257,17 +257,17 @@ static void room_301_init() {
 }
 
 static void room_301_anim1() {
-	if (kernel_anim[aa[0]].frame == aainfo[0]._frame)
-		return;
-	aainfo[0]._frame = kernel_anim[aa[0]].frame;
-	int16 f = aainfo[0]._frame;
+	if (kernel_anim[aa[0]].frame != aainfo[0]._frame) {
+		aainfo[0]._frame = kernel_anim[aa[0]].frame;
+		int16 f = aainfo[0]._frame;
 
-	if (flags[30] == 1) {
-		if (f == 2) {
-			digi_play_build(301, '_', 2, 1);
-		} else if (f == 11) {
-			aainfo[0]._frame = 8;
-			kernel_reset_animation(aa[0], 8);
+		if (flags[30] == 1) {
+			if (f == 2) {
+				digi_play_build(301, '_', 2, 1);
+			} else if (f == 11) {
+				aainfo[0]._frame = 8;
+				kernel_reset_animation(aa[0], 8);
+			}
 		}
 	}
 
@@ -738,17 +738,17 @@ static void room_301_daemon() {
 	global_anim2(2, scratch._9c, global[g141], &global[g142]);
 	if (scratch._aa != 0)
 		kernel_random_frame(scratch._9e, &global[g151], global[g154]);
-	if (aainfo[0]._active != 0)
+	if (aainfo[0]._active)
 		room_301_anim1();
-	if (aainfo[2]._active != 0)
+	if (aainfo[2]._active)
 		room_301_anim3();
-	if (aainfo[4]._active != 0)
+	if (aainfo[4]._active)
 		room_301_anim4();
-	if (aainfo[1]._active != 0)
+	if (aainfo[1]._active)
 		room_301_anim2();
-	if (aainfo[5]._active != 0)
+	if (aainfo[5]._active)
 		room_301_anim5();
-	if (global[walker_converse_now] != 0)
+	if (global[walker_converse_now])
 		global_anim3(scratch._a6, &global[g008]);
 }
 
