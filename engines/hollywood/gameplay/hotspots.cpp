@@ -1,0 +1,259 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "hollywood/gameplay/hotspots.h"
+
+#include "graphics/surface.h"
+
+#include "hollywood/font.h"
+#include "hollywood/graphics.h"
+#include "hollywood/hollywood.h"
+#include "hollywood/resource.h"
+
+namespace Hollywood {
+
+const uint kSceneChunk3ColorToItemMapOffset = 0x100;
+const uint kSceneColorMapSize = 0x100;
+const uint kSceneVerbCount = 8;
+const uint kSceneVerbActionRecordSize = 4;
+const uint kStage003SmallRowSize = 0x29;
+const uint kInventoryActionCaptionCount = 9;
+const byte kSceneItemSourceKind = 2;
+const byte kBottomCaptionColorIndex = 0xfc;
+const uint kBottomCaptionPaletteOffset = kBottomCaptionColorIndex * 3;
+const int kBottomCaptionTopY = 0x1ca;
+const uint32 kHoverCaptionRefreshMillis = 100;
+const char *const kInventoryActionCaptions[kInventoryActionCaptionCount] = {
+	" a",
+	"Ir a",
+	"Hablar con",
+	"Coger",
+	"Mirar",
+	"Usar",
+	"Abrir",
+	"Cerrar",
+	"Dar"
+};
+
+bool SceneHotspotTable::load(const Common::Array<byte> &paletteMapBlock, const Common::Array<byte> &metadata,
+		const Common::Array<byte> &stageSmallRows) {
+	if (paletteMapBlock.size() < kSceneChunk3ColorToItemMapOffset + kSceneColorMapSize) {
+		warning("Scene palette map block is too short for hotspot color map");
+		return false;
+	}
+
+	const uint verbRecordBytes = HollywoodEngine::kSceneItemCount * kSceneVerbCount * kSceneVerbActionRecordSize;
+	if (metadata.size() < kSceneItemDefaultStrip + HollywoodEngine::kSceneItemCount ||
+			metadata.size() < kSceneVerbActionRecords + verbRecordBytes) {
+		warning("Scene metadata is too short for hotspot action tables");
+		return false;
+	}
+
+	_colorToItemMap.resize(kSceneColorMapSize);
+	memcpy(_colorToItemMap.data(), paletteMapBlock.data() + kSceneChunk3ColorToItemMapOffset,
+		_colorToItemMap.size());
+
+	_itemDefaultStrips.resize(HollywoodEngine::kSceneItemCount);
+	memcpy(_itemDefaultStrips.data(), metadata.data() + kSceneItemDefaultStrip, _itemDefaultStrips.size());
+
+	_verbActionRecords.resize(HollywoodEngine::kSceneItemCount * kSceneVerbCount);
+	for (uint record = 0; record < _verbActionRecords.size(); ++record) {
+		const uint offset = kSceneVerbActionRecords + record * kSceneVerbActionRecordSize;
+		_verbActionRecords[record].actionHandlerId = readUint16LE(metadata, offset);
+		_verbActionRecords[record].movementMode = readUint16LE(metadata, offset + 2);
+	}
+
+	_stageSmallRows = stageSmallRows;
+	return true;
+}
+
+byte SceneHotspotTable::resolveItemAt(const Common::Array<byte> &savedFramebuffer, uint16 cursorX, uint16 cursorY,
+		uint16 xOffset, uint16 yOffset) const {
+	if (_colorToItemMap.size() != kSceneColorMapSize)
+		return 0;
+
+	const uint sceneX = cursorX + xOffset;
+	const uint sceneY = cursorY + yOffset;
+	if (sceneX >= HollywoodEngine::kSceneBufferWidth || sceneY >= HollywoodEngine::kSceneBufferHeight)
+		return 0;
+
+	const uint framebufferOffset = sceneY * HollywoodEngine::kSceneBufferWidth + sceneX;
+	if (framebufferOffset >= savedFramebuffer.size())
+		return 0;
+
+	return _colorToItemMap[savedFramebuffer[framebufferOffset]];
+}
+
+byte SceneHotspotTable::defaultStripForItem(byte itemId) const {
+	if (itemId >= _itemDefaultStrips.size())
+		return 0;
+
+	return _itemDefaultStrips[itemId];
+}
+
+bool SceneHotspotTable::hasVerbAction(byte itemId, byte stripIndex) const {
+	if (itemId >= HollywoodEngine::kSceneItemCount || stripIndex == 0)
+		return false;
+
+	const uint verbIndex = stripIndex - 1;
+	if (verbIndex >= kSceneVerbCount)
+		return false;
+
+	const uint recordIndex = itemId * kSceneVerbCount + verbIndex;
+	if (recordIndex >= _verbActionRecords.size())
+		return false;
+
+	return _verbActionRecords[recordIndex].actionHandlerId != 0;
+}
+
+Common::String SceneHotspotTable::itemName(byte itemId) const {
+	const uint offset = (uint)itemId * kStage003SmallRowSize;
+	if (offset >= _stageSmallRows.size())
+		return Common::String();
+
+	const byte *row = _stageSmallRows.data() + offset;
+	uint length = 0;
+	while (offset + length < _stageSmallRows.size() && length < kStage003SmallRowSize && row[length] != 0)
+		++length;
+
+	return Common::String((const char *)row, length);
+}
+
+SceneHoverCaption::SceneHoverCaption() :
+		_timer(0),
+		_currentStrip(1),
+		_requestedStrip(1),
+		_resolvedItem(0),
+		_hasLastDescriptor(false) {
+	memset(&_descriptor, 0, sizeof(_descriptor));
+	memset(&_lastDescriptor, 0, sizeof(_lastDescriptor));
+}
+
+void SceneHoverCaption::reset() {
+	_timer = 0;
+	_currentStrip = 1;
+	_requestedStrip = 1;
+	_resolvedItem = 0;
+	_captionText.clear();
+	_hasLastDescriptor = false;
+	memset(&_descriptor, 0, sizeof(_descriptor));
+	memset(&_lastDescriptor, 0, sizeof(_lastDescriptor));
+}
+
+void SceneHoverCaption::setCurrentStrip(byte stripIndex) {
+	_currentStrip = stripIndex;
+}
+
+bool SceneHoverCaption::refreshNow(const SceneHotspotTable &hotspots, const Common::Array<byte> &savedFramebuffer,
+		uint16 cursorX, uint16 cursorY, uint16 xOffset, uint16 yOffset) {
+	_timer = 0;
+	return updateCaption(hotspots, savedFramebuffer, cursorX, cursorY, xOffset, yOffset, true);
+}
+
+bool SceneHoverCaption::advance(uint32 deltaMillis, const SceneHotspotTable &hotspots,
+		const Common::Array<byte> &savedFramebuffer, uint16 cursorX, uint16 cursorY,
+		uint16 xOffset, uint16 yOffset) {
+	_timer += deltaMillis;
+	if (_timer < kHoverCaptionRefreshMillis)
+		return false;
+
+	while (_timer >= kHoverCaptionRefreshMillis)
+		_timer -= kHoverCaptionRefreshMillis;
+
+	return updateCaption(hotspots, savedFramebuffer, cursorX, cursorY, xOffset, yOffset, false);
+}
+
+void SceneHoverCaption::applyPalette(Common::Array<byte> &palette) const {
+	if (palette.size() <= kBottomCaptionPaletteOffset + 2 || palette.size() <= 0x2d8)
+		return;
+
+	palette[kBottomCaptionPaletteOffset] = 0x32;
+	palette[kBottomCaptionPaletteOffset + 1] = palette[0x2d7];
+	palette[kBottomCaptionPaletteOffset + 2] = palette[0x2d8];
+}
+
+void SceneHoverCaption::draw(Graphics::Surface &surface, HollywoodFont &font) const {
+	if (_captionText.empty())
+		return;
+
+	font.setShadowColor(0);
+	const int textWidth = font.getStringWidth(_captionText) + 2;
+	const int x = MAX<int>(0, (HollywoodEngine::kScreenWidth - textWidth) / 2);
+	font.drawString(&surface, _captionText, x, kBottomCaptionTopY, textWidth, kBottomCaptionColorIndex,
+		Graphics::kTextAlignLeft, 0, false, true);
+}
+
+bool SceneHoverCaption::updateCaption(const SceneHotspotTable &hotspots, const Common::Array<byte> &savedFramebuffer,
+		uint16 cursorX, uint16 cursorY, uint16 xOffset, uint16 yOffset, bool force) {
+	Descriptor nextDescriptor;
+	memset(&nextDescriptor, 0, sizeof(nextDescriptor));
+	nextDescriptor.verbTextIndex = _currentStrip;
+	nextDescriptor.itemSourceKind = kSceneItemSourceKind;
+
+	if (cursorY < HollywoodEngine::kSceneBufferHeight) {
+		_resolvedItem = hotspots.resolveItemAt(savedFramebuffer, cursorX, cursorY, xOffset, yOffset);
+		_requestedStrip = hotspots.defaultStripForItem(_resolvedItem);
+		nextDescriptor.itemId = hotspots.hasVerbAction(_resolvedItem, _currentStrip) ? _resolvedItem : 0;
+	} else {
+		_resolvedItem = 0;
+		_requestedStrip = 0;
+		nextDescriptor.itemId = 0;
+	}
+
+	if (!force && !descriptorChanged(nextDescriptor))
+		return false;
+
+	_descriptor = nextDescriptor;
+	_lastDescriptor = nextDescriptor;
+	_hasLastDescriptor = true;
+	_captionText = buildCaption(hotspots, nextDescriptor);
+	return true;
+}
+
+bool SceneHoverCaption::descriptorChanged(const Descriptor &descriptor) const {
+	if (!_hasLastDescriptor)
+		return true;
+
+	return descriptor.verbTextIndex != _lastDescriptor.verbTextIndex ||
+		descriptor.itemId != _lastDescriptor.itemId ||
+		descriptor.itemSourceKind != _lastDescriptor.itemSourceKind ||
+		descriptor.relationTextIndex != _lastDescriptor.relationTextIndex ||
+		descriptor.secondItemId != _lastDescriptor.secondItemId ||
+		descriptor.secondItemSourceKind != _lastDescriptor.secondItemSourceKind;
+}
+
+Common::String SceneHoverCaption::buildCaption(const SceneHotspotTable &hotspots,
+		const Descriptor &descriptor) const {
+	Common::String caption = actionCaption(descriptor.verbTextIndex);
+	if (descriptor.itemSourceKind == kSceneItemSourceKind)
+		caption += hotspots.itemName(descriptor.itemId);
+
+	return caption;
+}
+
+Common::String SceneHoverCaption::actionCaption(byte stripIndex) const {
+	if (stripIndex >= kInventoryActionCaptionCount)
+		return Common::String();
+
+	return Common::String(kInventoryActionCaptions[stripIndex]);
+}
+
+} // End of namespace Hollywood

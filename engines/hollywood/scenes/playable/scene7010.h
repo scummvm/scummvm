@@ -26,6 +26,7 @@
 #include "common/str.h"
 #include "common/types.h"
 
+#include "hollywood/gameplay/hotspots.h"
 #include "hollywood/resource.h"
 
 namespace Hollywood {
@@ -151,7 +152,10 @@ private:
 	Common::Array<SecondaryActorSpriteDescriptor> _secondaryActorDescriptors;
 	Common::Array<byte> _stage003DecodeKey;
 	Common::Array<byte> _stage003StageBlock;
+	Common::Array<byte> _stage003SmallRows;
 	Common::Array<byte> _stage003LargeRows;
+	SceneHotspotTable _hotspots;
+	SceneHoverCaption _hoverCaption;
 	SpeechOverlay _speechOverlay;
 
 	byte _chunk8FrameIndex;
