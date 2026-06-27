@@ -35,10 +35,13 @@ namespace Hollywood {
 const char *const kIntroMusicArchiveName = "RESOURCE.M09";
 const uint16 kIntroMusicCueId = 0x000d;
 const char *const kSpeechArchiveName = "RESOURCE.004";
+const char *const kIntroSoundBank0ArchiveName = "RESOURCE.S09";
 const uint kMusicCueTableSize = 0x190;
 const int kMusicSampleRate = 11025;
 const uint kSpeechCueTableSize = 0x3e80;
 const int kSpeechSampleRate = 22050;
+const uint kSoundBank0CueTableSize = 0xfa0;
+const int kSoundBank0SampleRate = 11025;
 
 byte percentToMixerVolume(byte volumePercent) {
 	const uint volume = MIN<uint>(volumePercent, 100);
@@ -212,6 +215,85 @@ bool SpeechPlayer::readSampleSpan(uint16 sampleId, uint32 &start, uint32 &size) 
 	if (start >= end || end > (uint32)file.size()) {
 		warning("Invalid %s sample %u span: start=%u end=%u fileSize=%u",
 			kSpeechArchiveName, sampleId, start, end, (uint)file.size());
+		return false;
+	}
+
+	size = end - start;
+	return size != 0;
+}
+
+SoundBank0Player::SoundBank0Player() {
+}
+
+SoundBank0Player::~SoundBank0Player() {
+	stop();
+}
+
+bool SoundBank0Player::playSample(uint16 sampleId, byte volumePercent) {
+	stop();
+
+	uint32 start = 0;
+	uint32 size = 0;
+	if (!readSampleSpan(sampleId, start, size))
+		return false;
+
+	Common::File *file = new Common::File();
+	if (!file->open(Common::Path(kIntroSoundBank0ArchiveName))) {
+		warning("Failed to open %s", kIntroSoundBank0ArchiveName);
+		delete file;
+		return false;
+	}
+
+	Common::SeekableReadStream *sampleStream = new Common::SeekableSubReadStream(file, start, start + size, DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(sampleStream, kSoundBank0SampleRate,
+		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	if (!audioStream) {
+		warning("Failed to create raw stream for %s sample %u", kIntroSoundBank0ArchiveName, sampleId);
+		delete sampleStream;
+		return false;
+	}
+
+	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream,
+		-1, percentToMixerVolume(volumePercent), 0, DisposeAfterUse::YES);
+
+	debugC(1, kDebugResources, "Started sound %s sample %u: offset=%u size=%u",
+		kIntroSoundBank0ArchiveName, sampleId, start, size);
+	return true;
+}
+
+void SoundBank0Player::stop() {
+	if (isPlaying())
+		g_system->getMixer()->stopHandle(_soundHandle);
+}
+
+bool SoundBank0Player::isPlaying() const {
+	return g_system && g_system->getMixer() && g_system->getMixer()->isSoundHandleActive(_soundHandle);
+}
+
+bool SoundBank0Player::readSampleSpan(uint16 sampleId, uint32 &start, uint32 &size) const {
+	if ((sampleId + 1) * 4 >= kSoundBank0CueTableSize) {
+		warning("Invalid %s sample id %u", kIntroSoundBank0ArchiveName, sampleId);
+		return false;
+	}
+
+	Common::File file;
+	if (!file.open(Common::Path(kIntroSoundBank0ArchiveName))) {
+		warning("Failed to open %s", kIntroSoundBank0ArchiveName);
+		return false;
+	}
+
+	if (file.size() < (int32)kSoundBank0CueTableSize) {
+		warning("%s is too small for the cue table", kIntroSoundBank0ArchiveName);
+		return false;
+	}
+
+	file.seek(sampleId * 4);
+	start = file.readUint32LE();
+	const uint32 end = file.readUint32LE();
+
+	if (start >= end || end > (uint32)file.size()) {
+		warning("Invalid %s sample %u span: start=%u end=%u fileSize=%u",
+			kIntroSoundBank0ArchiveName, sampleId, start, end, (uint)file.size());
 		return false;
 	}
 
