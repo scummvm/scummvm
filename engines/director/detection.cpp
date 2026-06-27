@@ -403,6 +403,14 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 			} else {
 				f.seek(0);
 				uint32 initialTag = f.readUint32BE();
+
+				if (ConfMan.get("start_movie").hasPrefixIgnoreCase(".mmm")) {
+					desc->version = 200;
+				} else {
+					desc->version = 400; // We start from 400, and then the VWCF file will tell us the actual version
+				}
+
+				// Non-MacBinary files start from D3
 				switch (initialTag) {
 				case MKTAG('R', 'I', 'F', 'F'):
 				case MKTAG('R', 'I', 'F', 'X'):
