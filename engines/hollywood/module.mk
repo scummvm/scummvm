@@ -2,7 +2,9 @@ MODULE := engines/hollywood
 
 MODULE_OBJS = \
 	hollywood.o \
+	intro.o \
 	metaengine.o \
+	music.o \
 	resource.o
 
 # This module can be built as a plugin
