@@ -39,9 +39,16 @@ public:
 	bool play();
 
 private:
+	bool loadResourceChunk(const char *archiveName, uint index, Common::Array<byte> &destination, uint fixedSize);
+	bool loadResourceArenaChunk(const char *archiveName, uint archiveIndex, uint localChunkIndex);
+
 	bool loadResourceI06Assets();
 	bool loadResourceI06Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
 	bool loadResourceI06ArenaChunk(uint index);
+	bool loadResourceI05ClipSegment(byte segmentId);
+	bool loadResourceI05Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
+	bool loadResourceI05ArenaChunk(uint archiveIndex, uint localChunkIndex);
+	bool loadResourceI08BlinkAssets();
 
 	void runResourceI06AnimatedPresentation();
 	void initializeResourceI06AnimatedPresentation();
@@ -56,6 +63,19 @@ private:
 	void advanceResourceI06PalettePulse();
 	void markResourceI06CompositeDirty();
 
+	void runResourceI05Clip(byte segmentId, byte lastFrameIndex, bool fadeInBeforePlayback);
+	void drawResourceI05ClipFrameDelta(byte lastFrameIndex, byte frameIndex);
+	bool waitResourceI05ClipHold();
+	bool playResourceI05ClipSegment(byte segmentId, byte lastFrameIndex, bool fadeInBeforePlayback);
+	void runStage9050InterClipSpriteReveal();
+	void advanceStage9050Cutscene();
+	void runResourceI05InterClipRevealPhase(byte localChunkIndex);
+	void runResourceI05InterClipReversePhase();
+	void restoreAndDrawResourceDescriptorFrame(byte localChunkIndex, byte descriptorCount, byte descriptorIndex, bool drawFrame);
+	bool runResourceI08BlinkSequence();
+	bool waitResourceI08BlinkLoop(uint32 millis);
+	bool waitSceneCounterPast(uint threshold);
+
 	void revealSavedFramebufferBand(uint sweepOffset, byte bandWidth);
 	void clearSceneFramebufferBand(uint sweepOffset, byte bandWidth);
 	void presentFrame();
@@ -67,8 +87,12 @@ private:
 	enum {
 		kFrameBufferSize = 0x78000,
 		kResourceChunkCount = 40,
+		kI05EntriesPerSegment = 6,
 		kI06RequiredChunkCount = 6,
+		kI08RequiredChunkCount = 3,
 		kI06AnimatedFrameDescriptorCount = 0x1f,
+		kI05InterClipFrameDescriptorCount = 10,
+		kI08BlinkFrameDescriptorCount = 2,
 		kI06InitialBaseScrollOffset = 0xc0,
 		kI06SequenceDoneFrame = 0x17f,
 		kI06FrameCounterWrap = 0x27f
@@ -77,15 +101,21 @@ private:
 	HollywoodEngine *_vm;
 	MusicPlayer _music;
 	Common::RandomSource _random;
+	ResourceChunkTable _i05ChunkTable;
 	ResourceChunkTable _i06ChunkTable;
+	ResourceChunkTable _i08ChunkTable;
 	uint32 _resourceChunkOffsets[kResourceChunkCount];
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _paletteCurrent;
 	Common::Array<byte> _resourceArena;
 	Common::Array<byte> _sceneFramebuffer;
 	Common::Array<byte> _savedFramebuffer;
+	Common::Array<byte> _clipBaseFramebuffer;
 	Common::Array<byte> _screen;
 	uint32 _resourceArenaCursor;
+	uint32 _i05ClipFrameAccumulator;
+	uint32 _i05InterClipAccumulator;
+	uint32 _i08BlinkAccumulator;
 	uint32 _i06ScrollAccumulator;
 	uint32 _i06PrimarySpriteAccumulator;
 	uint32 _i06SecondarySpriteAccumulator;
