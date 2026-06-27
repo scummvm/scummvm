@@ -26,6 +26,7 @@
 #include "common/platform.h"
 
 #include "engines/engine.h"
+#include "hollywood/gameplay/cursor.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/music.h"
 
@@ -57,6 +58,7 @@ public:
 
 	ResourceManager *resources() const { return _resources; }
 	HollywoodFont *font() const { return _font; }
+	HollywoodCursor *cursor() { return &_cursor; }
 	MusicPlayer *introMusic() { return &_introMusic; }
 	MusicPlayer *gameplayMusic() { return &_gameplayMusic; }
 	GameplayState &gameState() { return _gameState; }
@@ -75,6 +77,7 @@ private:
 	const ADGameDescription *_gameDescription;
 	ResourceManager *_resources;
 	HollywoodFont *_font;
+	HollywoodCursor _cursor;
 	MusicPlayer _introMusic;
 	MusicPlayer _gameplayMusic;
 	GameplayState _gameState;
