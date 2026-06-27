@@ -1056,6 +1056,7 @@ void drawCMTypeProps(CastMember *member) {
 	case kCastMovie:
 	case kCastDigitalVideo:
 	case kCastLingoScript:
+	case kCastOLE:
 	case kCastTransition:
 	case kCastXtra:
 		// TODO

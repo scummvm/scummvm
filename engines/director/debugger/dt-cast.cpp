@@ -90,9 +90,11 @@ const char *toString(CastType castType) {
 		"DigitalVideo",
 		"Script",
 		"RTE",
-		"???",
-		"Transition"};
-	if (castType < 0 || castType > kCastTransition)
+		"OLE",
+		"Transition",
+		"Xtra",
+	};
+	if (castType < 0 || castType > kCastXtra)
 		return "???";
 	return castTypes[(int)castType];
 }

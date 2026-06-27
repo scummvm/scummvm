@@ -62,15 +62,16 @@ const char *const castTypes[] = {
 	"digitalVideo",
 	"script",
 	"richText",
-	"???",
+	"OLE",
 	"transition",
+	"Xtra",
 };
 
 const char *castType2str(CastType type) {
 	if (type == kCastTypeAny)
 		return "any";
 
-	if (type <= kCastTransition)
+	if (type <= kCastXtra && type >= kCastTypeNull)
 		return castTypes[type];
 
 	warning("BUILDBOT: Unknown castType: %d", type);
