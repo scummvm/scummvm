@@ -119,9 +119,6 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 		_activeActorWorldY(kG01SueEntryTargetY),
 		_activeActorFacing(kG01SueEntryFacing),
 		_activeActorCel(kG01SueEntryFinalCel),
-		_secondaryActorWorldX(kG01SueEntryTargetX),
-		_secondaryActorWorldY(kG01SueEntryTargetY),
-		_secondaryActorFacing(kG01SueEntryFacing),
 		_secondaryActorFrame(0),
 		_skipRequested(false) {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
@@ -543,9 +540,6 @@ void Scene7010::initializePreviewState() {
 	_activeActorWorldY = kG01SueEntryTargetY;
 	_activeActorFacing = kG01SueEntryFacing;
 	_activeActorCel = kG01SueEntryFinalCel;
-	_secondaryActorWorldX = kG01SueEntryTargetX;
-	_secondaryActorWorldY = kG01SueEntryTargetY;
-	_secondaryActorFacing = kG01SueEntryFacing;
 	_secondaryActorFrame = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	for (uint i = 0; i < ARRAYSIZE(kInitialInventoryItems); ++i)
@@ -606,8 +600,9 @@ void Scene7010::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, b
 }
 
 void Scene7010::drawPlayableComposite() {
+	const bool drawSecondaryActor = _speechOverlay.visible;
 	drawCutsceneComposite(true, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
-		true, _secondaryActorFacing, _secondaryActorFrame, _secondaryActorWorldX, _secondaryActorWorldY);
+		drawSecondaryActor, _activeActorFacing, _secondaryActorFrame, _activeActorWorldX, _activeActorWorldY);
 }
 
 void Scene7010::drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex) {
@@ -750,7 +745,9 @@ void Scene7010::runSueEntryPath() {
 
 void Scene7010::runJuniorSpeech() {
 	const byte secondaryFrames[] = { 0, 1, 2, 3, 4, 3, 2, 1 };
-	const uint32 speechMillis = MAX<uint32>(2800, _speechOverlay.lines.size() * 1500);
+	const uint32 speechMillis = _speech.isPlaying() ?
+		MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
+		MAX<uint32>(2800, _speechOverlay.lines.size() * 1500);
 	uint32 elapsed = 0;
 	uint frameIndex = 0;
 	uint32 frameAccumulator = kG01SecondaryActorFrameMillis;
@@ -758,17 +755,14 @@ void Scene7010::runJuniorSpeech() {
 	uint32 chunk10Accumulator = 0;
 	uint32 lastMillis = g_system->getMillis();
 
-	while (elapsed < speechMillis && !_skipRequested && !Engine::shouldQuit()) {
+	while ((_speech.isPlaying() || elapsed < speechMillis) && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents(true))
-			return;
+			break;
 
 		_activeActorWorldX = kG01SueEntryTargetX;
 		_activeActorWorldY = kG01SueEntryTargetY;
 		_activeActorFacing = kG01SueEntryFacing;
 		_activeActorCel = kG01SueEntryFinalCel;
-		_secondaryActorWorldX = kG01SueEntryTargetX;
-		_secondaryActorWorldY = kG01SueEntryTargetY;
-		_secondaryActorFacing = kG01SueEntryFacing;
 		_secondaryActorFrame = secondaryFrames[frameIndex % ARRAYSIZE(secondaryFrames)];
 		drawPlayableComposite();
 		presentFrame();
@@ -800,6 +794,7 @@ void Scene7010::runJuniorSpeech() {
 	}
 
 	clearSpeechOverlay();
+	_speech.stop();
 	_secondaryActorFrame = 0;
 	drawPlayableComposite();
 	presentFrame();
@@ -832,9 +827,6 @@ void Scene7010::prepareGameplayLoop() {
 	_activeActorWorldY = kG01SueEntryTargetY;
 	_activeActorFacing = kG01SueEntryFacing;
 	_activeActorCel = kG01SueEntryFinalCel;
-	_secondaryActorWorldX = kG01SueEntryTargetX;
-	_secondaryActorWorldY = kG01SueEntryTargetY;
-	_secondaryActorFacing = kG01SueEntryFacing;
 	_secondaryActorFrame = 0;
 }
 
@@ -851,10 +843,15 @@ void Scene7010::advanceGameplayLoop(uint32 delta) {
 		_chunk10TimerAccumulator -= kG01Chunk10FrameMillis;
 	}
 
-	_secondaryActorTimerAccumulator += delta;
-	while (_secondaryActorTimerAccumulator >= kG01SecondaryActorFrameMillis) {
-		advanceSecondaryActorIdleFrame();
-		_secondaryActorTimerAccumulator -= kG01SecondaryActorFrameMillis;
+	if (_speechOverlay.visible) {
+		_secondaryActorTimerAccumulator += delta;
+		while (_secondaryActorTimerAccumulator >= kG01SecondaryActorFrameMillis) {
+			advanceSecondaryActorIdleFrame();
+			_secondaryActorTimerAccumulator -= kG01SecondaryActorFrameMillis;
+		}
+	} else {
+		_secondaryActorFrame = 0;
+		_secondaryActorTimerAccumulator = 0;
 	}
 
 	advanceDialogueOverlay(delta);
@@ -1291,8 +1288,13 @@ void Scene7010::beginJuniorSpeech() {
 	clearSpeechOverlay();
 	uint16 textRecordId = 0;
 	byte continuationCount = 0;
-	if (!getStage003Cue(0, 0, textRecordId, continuationCount))
+	uint16 voiceSampleId = 0;
+	if (!getStage003Cue(0, 0, textRecordId, continuationCount, voiceSampleId))
 		return;
+
+	if (voiceSampleId != 0)
+		_speech.playSample(voiceSampleId, 100);
+
 	const Common::String text = getStage003LargeTextRecord(textRecordId);
 	if (text.empty())
 		return;
@@ -1368,7 +1370,8 @@ void Scene7010::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte fram
 		byte colorIndex, bool useRequestedTop) {
 	uint16 textRecordId = 0;
 	byte continuationCount = 0;
-	if (!getStage003Cue(rowIndex, frameIndex, textRecordId, continuationCount))
+	uint16 voiceSampleId = 0;
+	if (!getStage003Cue(rowIndex, frameIndex, textRecordId, continuationCount, voiceSampleId))
 		return;
 
 	const byte lineCount = MAX<byte>(1, continuationCount);
@@ -1387,20 +1390,28 @@ void Scene7010::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte fram
 			calculateSecondarySpeechBounds(centerX, _activeActorWorldY);
 		}
 
-		const uint32 duration = MAX<uint32>(1200, overlay.lines.size() * 1100);
-		waitSceneMillis(duration);
+		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
+		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
+		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
+			MAX<uint32>(1200, overlay.lines.size() * 1100);
+		const bool interrupted = waitForSpeechOrDelay(duration);
+		_speech.stop();
 		overlay.visible = false;
 		overlay.lines.clear();
+		if (interrupted)
+			break;
 	}
 }
 
-bool Scene7010::getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount) const {
+bool Scene7010::getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
+		uint16 &voiceSampleId) const {
 	const uint offset = ((uint)frameIndex + (uint)rowIndex * 100) * 5;
 	if (offset + 5 > _stage003StageBlock.size())
 		return false;
 
 	textRecordId = readUint16LE(_stage003StageBlock, offset);
 	continuationCount = _stage003StageBlock[offset + 2];
+	voiceSampleId = readUint16LE(_stage003StageBlock, offset + 3);
 	return textRecordId != 0;
 }
 
@@ -1484,6 +1495,22 @@ void Scene7010::calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY)
 
 	_speechOverlay.centerX = (uint16)centerX;
 	_speechOverlay.topY = (uint16)topY;
+}
+
+bool Scene7010::waitForSpeechOrDelay(uint32 fallbackMillis) {
+	uint32 elapsed = 0;
+	while (!Engine::shouldQuit()) {
+		const bool speechActive = _speech.isPlaying();
+		if (!speechActive && elapsed >= fallbackMillis)
+			break;
+
+		const uint32 slice = speechActive ? 50 : MIN<uint32>(50, fallbackMillis - elapsed);
+		if (waitSceneMillis(slice))
+			return true;
+		elapsed += slice;
+	}
+
+	return Engine::shouldQuit();
 }
 
 void Scene7010::presentFrame(const SceneHoverCaption *hoverCaption) {

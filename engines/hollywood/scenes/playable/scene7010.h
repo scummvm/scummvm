@@ -27,6 +27,7 @@
 #include "common/types.h"
 
 #include "hollywood/gameplay/game_loop.h"
+#include "hollywood/music.h"
 #include "hollywood/resource.h"
 
 namespace Hollywood {
@@ -162,11 +163,13 @@ private:
 		byte red, byte green, byte blue);
 	void runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte colorIndex, bool useRequestedTop);
-	bool getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount) const;
+	bool getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
+		uint16 &voiceSampleId) const;
 	void wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const;
 	Common::String getStage003LargeTextRecord(uint16 recordId) const;
 	uint actorSpeechTextWidth(const Common::String &text) const;
 	void calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY);
+	bool waitForSpeechOrDelay(uint32 fallbackMillis);
 	void presentFrame(const SceneHoverCaption *hoverCaption = nullptr);
 	bool pollEvents(bool allowSkip);
 	bool delay(uint32 millis);
@@ -197,6 +200,7 @@ private:
 	Common::Array<byte> _stage003SmallRows;
 	Common::Array<byte> _stage003LargeRows;
 	SceneHotspotTable _hotspots;
+	SpeechPlayer _speech;
 	SpeechOverlay _speechOverlay;
 	SpeechOverlay _primarySpeechOverlay;
 
@@ -231,9 +235,6 @@ private:
 	int _activeActorWorldY;
 	byte _activeActorFacing;
 	byte _activeActorCel;
-	int _secondaryActorWorldX;
-	int _secondaryActorWorldY;
-	byte _secondaryActorFacing;
 	byte _secondaryActorFrame;
 	bool _skipRequested;
 };
