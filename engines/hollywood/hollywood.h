@@ -38,6 +38,7 @@ enum HollywoodDebugChannels {
 };
 
 class ResourceManager;
+class HollywoodFont;
 
 class HollywoodEngine : public Engine {
 public:
@@ -53,6 +54,7 @@ public:
 	Common::Platform getPlatform() const;
 
 	ResourceManager *resources() const { return _resources; }
+	HollywoodFont *font() const { return _font; }
 
 	static const int kScreenWidth = 640;
 	static const int kScreenHeight = 480;
@@ -64,6 +66,7 @@ public:
 private:
 	const ADGameDescription *_gameDescription;
 	ResourceManager *_resources;
+	HollywoodFont *_font;
 };
 
 } // End of namespace Hollywood

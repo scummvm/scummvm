@@ -21,12 +21,16 @@
 
 #include "hollywood/scenes/intro/scene9100.h"
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "graphics/pixelformat.h"
 #include "graphics/paletteman.h"
+#include "graphics/surface.h"
 
+#include "hollywood/font.h"
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -37,6 +41,10 @@ static const uint16 kScene9100MusicCueId = 0x000f;
 static const uint kStage003DecodeKeySize = 0x141;
 static const uint kStage003StageOffsetTableSize = 0xff4;
 static const uint kStage910Index = 910;
+static const uint16 kStage910LargeRowBaseIndex = 500;
+static const byte kPrimarySpeechTextColor = 0xfb;
+static const byte kSecondarySpeechTextColor = 0xfd;
+static const int kOriginalSpeechLineHeight = 20;
 static const uint kActorFacingCount = 6;
 static const uint kActorCelsPerFacing = 13;
 static const uint kActorDescriptorCount = kActorFacingCount * kActorCelsPerFacing;
@@ -60,6 +68,13 @@ static const byte kI10ForegroundFrameRemap[] = {
 	2, 1, 0, 0
 };
 
+static const Scene9100::SpeechTextStyle kDeskPrimaryBlueSpeech = { 0x78, 0xb9, kPrimarySpeechTextColor, 0x00, 0x26, 0x3f, true };
+static const Scene9100::SpeechTextStyle kInsetBlueSpeech = { 0x140, 0x50, kPrimarySpeechTextColor, 0x00, 0x26, 0x3f, true };
+static const Scene9100::SpeechTextStyle kInsetWhiteSpeech = { 0x140, 0x50, kPrimarySpeechTextColor, 0x3f, 0x3f, 0x3f, true };
+static const Scene9100::SpeechTextStyle kInsetSueSpeech = { 0x140, 0x50, kPrimarySpeechTextColor, 0x3f, 0x28, 0x32, true };
+static const Scene9100::SpeechTextStyle kRonSecondarySpeech = { 0x276, 0x10c, kSecondarySpeechTextColor, 0x00, 0x00, 0x00, false };
+static const Scene9100::SpeechTextStyle kSueSecondarySpeech = { 0x276, 0xf7, kSecondarySpeechTextColor, 0x00, 0x00, 0x00, false };
+
 Scene9100::Scene9100(HollywoodEngine *vm) :
 		_vm(vm),
 		_music(),
@@ -77,6 +92,7 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 		_deskSecondaryActorFrame(0),
 		_deskPrimaryActorVisible(false),
 		_deskSecondaryActorVisible(false),
+		_subtitle(),
 		_skipRequested(false) {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
 	_paletteDefault.resize(kPaletteSize);
@@ -85,8 +101,14 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 	_sceneFramebuffer.resize(kFrameDecodeBufferSize);
 	_savedFramebuffer.resize(kFrameDecodeBufferSize);
 	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
+	_stage003DecodeKey.resize(kStage003DecodeKeySize);
 	_stage003Descriptors.resize(kStage003DescriptorTableSize);
+	_stage003LargeRowBaseIndex = kStage910LargeRowBaseIndex;
 	_secondaryScratchBuffer.resize(kSecondaryScratchBufferSize);
+	_subtitle.visible = false;
+	_subtitle.colorIndex = kPrimarySpeechTextColor;
+	_subtitle.centerX = 0;
+	_subtitle.topY = 0;
 }
 
 bool Scene9100::play() {
@@ -285,6 +307,11 @@ bool Scene9100::loadStage003Descriptors() {
 		return false;
 	}
 
+	if (file.read(_stage003DecodeKey.data(), _stage003DecodeKey.size()) != _stage003DecodeKey.size()) {
+		warning("Failed to read %s row decode key", kStage003ArchiveName);
+		return false;
+	}
+
 	const uint32 stageOffsetEntry = kStage003DecodeKeySize + (kStage910Index * 4);
 	if (stageOffsetEntry + 4 > kStage003DecodeKeySize + kStage003StageOffsetTableSize ||
 			stageOffsetEntry + 4 > (uint32)file.size()) {
@@ -305,7 +332,34 @@ bool Scene9100::loadStage003Descriptors() {
 		return false;
 	}
 
-	debugC(1, kDebugResources, "Loaded %s stage 910 descriptors at offset=%u", kStage003ArchiveName, stageOffset);
+	if (file.pos() + 3 > file.size()) {
+		warning("%s stage 910 text-row header is out of range", kStage003ArchiveName);
+		return false;
+	}
+
+	const byte smallRowCount = file.readByte();
+	const uint16 largeRowCount = file.readUint16LE();
+	const uint32 smallRowBytes = (uint32)smallRowCount * kStage003SmallRowSize;
+	const uint32 largeRowBytes = (uint32)largeRowCount * kStage003LargeRowSize;
+	if (file.pos() + smallRowBytes + largeRowBytes > file.size()) {
+		warning("%s stage 910 text rows are out of range", kStage003ArchiveName);
+		return false;
+	}
+
+	file.seek(file.pos() + smallRowBytes);
+	_stage003LargeRows.resize(largeRowBytes);
+	if (file.read(_stage003LargeRows.data(), _stage003LargeRows.size()) != _stage003LargeRows.size()) {
+		warning("Failed to read %s stage 910 large text rows", kStage003ArchiveName);
+		return false;
+	}
+
+	for (uint row = 0; row < largeRowCount; ++row) {
+		for (uint column = 0; column < kStage003LargeRowSize; ++column)
+			_stage003LargeRows[row * kStage003LargeRowSize + column] -= _stage003DecodeKey[column];
+	}
+
+	debugC(1, kDebugResources, "Loaded %s stage 910 descriptors/text at offset=%u largeRowBase=%u largeRows=%u",
+		kStage003ArchiveName, stageOffset, _stage003LargeRowBaseIndex, largeRowCount);
 	return true;
 }
 
@@ -451,6 +505,7 @@ void Scene9100::runRonEntryConversation() {
 
 	for (uint segmentIndex = 0; segmentIndex < segmentCount && !_skipRequested && !Engine::shouldQuit(); ++segmentIndex) {
 		const uint16 sampleId = popup.voiceSampleId + segmentIndex;
+		beginSubtitle(popup, segmentIndex, kDeskPrimaryBlueSpeech);
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
 		const uint32 fallbackMillis = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1200;
 		uint32 elapsed = 0;
@@ -507,6 +562,7 @@ void Scene9100::runRonEntryConversation() {
 		if (segmentIndex + 1 < segmentCount && !_skipRequested && !Engine::shouldQuit())
 			delayFrame(375, kTalkingOverlayNone, 0, true, true);
 	}
+	clearSubtitle();
 
 	if (!_skipRequested && !Engine::shouldQuit()) {
 		memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
@@ -552,7 +608,7 @@ void Scene9100::runSueEntrySequence() {
 
 	animateForegroundFrames(27, 31);
 	_foregroundTalkBaseFrame = 32;
-	runConversationStep(1, 6, kTalkingOverlayNone, 0, true, false);
+	runConversationStep(1, 6, kTalkingOverlayNone, 0, true, false, kDeskPrimaryBlueSpeech);
 	if (_skipRequested || Engine::shouldQuit())
 		return;
 
@@ -562,7 +618,7 @@ void Scene9100::runSueEntrySequence() {
 	animateDeskPrimaryStaticFrames(0, 2);
 	drawPersistentDeskActors();
 	presentFrame();
-	runConversationStep(1, 7, kTalkingOverlayNone, 0, false, false);
+	runConversationStep(1, 7, kTalkingOverlayNone, 0, false, false, kSueSecondarySpeech);
 	if (_skipRequested || Engine::shouldQuit())
 		return;
 
@@ -695,7 +751,7 @@ void Scene9100::runOpeningPrelude() {
 	animateForegroundFrames(11, 14);
 
 	_foregroundTalkBaseFrame = 15;
-	runConversationStep(0, 0, kTalkingOverlayNone, 0, true, true);
+	runConversationStep(0, 0, kTalkingOverlayNone, 0, true, true, kDeskPrimaryBlueSpeech);
 
 	animateForegroundFrames(20, 22);
 	for (uint pulse = 0; pulse < 12 && !_skipRequested && !Engine::shouldQuit(); ++pulse) {
@@ -711,29 +767,29 @@ void Scene9100::runOpeningPrelude() {
 		}
 	}
 
-	runConversationStep(0, 1, kTalkingOverlayNone, 0, false, true);
+	runConversationStep(0, 1, kTalkingOverlayNone, 0, false, true, kRonSecondarySpeech);
 	runRonEntryConversation();
 }
 
 void Scene9100::runCinematicSequence() {
 	static const CinematicStep kSteps[] = {
-		{ 2, 0, 3, kTalkingOverlayBase320000, 0, true, false },
-		{ 1, 1, 0, kTalkingOverlayBase0, 1, false, false },
-		{ 2, 1, 1, kTalkingOverlayBase320000, 0, false, false },
-		{ 4, 1, 2, kTalkingOverlayNone, 0, false, false },
-		{ 2, 1, 3, kTalkingOverlayBase320000, 0, true, false },
-		{ 1, 1, 4, kTalkingOverlayBase0, 1, false, false },
-		{ 2, 1, 5, kTalkingOverlayBase320000, 0, false, false },
-		{ 3, 1, 16, kTalkingOverlayBase640000, 0, true, false },
-		{ 2, 1, 8, kTalkingOverlayBase320000, 1, false, false },
-		{ 3, 1, 17, kTalkingOverlayBase640000, 1, false, false },
-		{ 0, 1, 9, kTalkingOverlayBase640000, 0, false, false },
-		{ 1, 1, 10, kTalkingOverlayBase0, 0, false, false },
-		{ 2, 1, 11, kTalkingOverlayBase320000, 0, false, false },
-		{ 3, 1, 12, kTalkingOverlayBase640000, 1, false, false },
-		{ 2, 1, 13, kTalkingOverlayBase320000, 1, false, false },
-		{ 4, 1, 14, kTalkingOverlayNone, 0, false, false },
-		{ 3, 1, 15, kTalkingOverlayBase640000, 0, true, false }
+		{ 2, 0, 3, kTalkingOverlayBase320000, 0, true, false, kInsetWhiteSpeech },
+		{ 1, 1, 0, kTalkingOverlayBase0, 1, false, false, kInsetBlueSpeech },
+		{ 2, 1, 1, kTalkingOverlayBase320000, 0, false, false, kInsetWhiteSpeech },
+		{ 4, 1, 2, kTalkingOverlayNone, 0, false, false, kDeskPrimaryBlueSpeech },
+		{ 2, 1, 3, kTalkingOverlayBase320000, 0, true, false, kInsetWhiteSpeech },
+		{ 1, 1, 4, kTalkingOverlayBase0, 1, false, false, kInsetBlueSpeech },
+		{ 2, 1, 5, kTalkingOverlayBase320000, 0, false, false, kInsetWhiteSpeech },
+		{ 3, 1, 16, kTalkingOverlayBase640000, 0, true, false, kInsetSueSpeech },
+		{ 2, 1, 8, kTalkingOverlayBase320000, 1, false, false, kInsetWhiteSpeech },
+		{ 3, 1, 17, kTalkingOverlayBase640000, 1, false, false, kInsetSueSpeech },
+		{ 0, 1, 9, kTalkingOverlayBase640000, 0, false, false, kInsetSueSpeech },
+		{ 1, 1, 10, kTalkingOverlayBase0, 0, false, false, kInsetBlueSpeech },
+		{ 2, 1, 11, kTalkingOverlayBase320000, 0, false, false, kInsetWhiteSpeech },
+		{ 3, 1, 12, kTalkingOverlayBase640000, 1, false, false, kInsetSueSpeech },
+		{ 2, 1, 13, kTalkingOverlayBase320000, 1, false, false, kInsetWhiteSpeech },
+		{ 4, 1, 14, kTalkingOverlayNone, 0, false, false, kDeskPrimaryBlueSpeech },
+		{ 3, 1, 15, kTalkingOverlayBase640000, 0, true, false, kInsetSueSpeech }
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(kSteps) && !_skipRequested && !Engine::shouldQuit(); ++i) {
@@ -744,7 +800,8 @@ void Scene9100::runCinematicSequence() {
 
 		applyBackgroundMode(kSteps[i]);
 		runConversationStep(kSteps[i].textBankIndex, kSteps[i].descriptorIndex,
-			kSteps[i].talkingOverlayBase, kSteps[i].talkingOverlayVariant, kSteps[i].animateForegroundActor, false);
+			kSteps[i].talkingOverlayBase, kSteps[i].talkingOverlayVariant, kSteps[i].animateForegroundActor, false,
+			kSteps[i].speechTextStyle);
 	}
 }
 
@@ -757,16 +814,19 @@ void Scene9100::runEndingWipe() {
 	}
 }
 
-void Scene9100::runConversationStep(uint16 textBankIndex, byte descriptorIndex, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor, byte insetTalkBaseFrame) {
+void Scene9100::runConversationStep(uint16 textBankIndex, byte descriptorIndex, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, const SpeechTextStyle &speechTextStyle, bool animateInsetActor, byte insetTalkBaseFrame) {
 	_talkingFrame = 0;
 	_lastTalkingFrameMillis = g_system->getMillis();
 	const PopupDescriptor popup = getStage003PopupDescriptor(textBankIndex, descriptorIndex);
 	const uint segmentCount = MAX<uint>(1, popup.continuationCount);
 	for (uint segmentIndex = 0; segmentIndex < segmentCount && !_skipRequested && !Engine::shouldQuit(); ++segmentIndex) {
 		const uint16 sampleId = popup.voiceSampleId + segmentIndex;
+		beginSubtitle(popup, segmentIndex, speechTextStyle);
+		presentFrame();
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
 		const uint32 fallbackMillis = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1200;
 		waitForSpeechOrDelay(fallbackMillis, talkingOverlayBase, talkingOverlayVariant, animateForegroundActor, animateClock, animateInsetActor, insetTalkBaseFrame);
+		clearSubtitle();
 		if (segmentIndex + 1 < segmentCount && !_skipRequested && !Engine::shouldQuit())
 			delayFrame(375, talkingOverlayBase, talkingOverlayVariant, animateForegroundActor, animateClock, animateInsetActor, insetTalkBaseFrame);
 	}
@@ -796,6 +856,149 @@ void Scene9100::waitForSpeechOrDelay(uint32 fallbackMillis, TalkingOverlayBase t
 			return;
 		elapsed += 50;
 	}
+}
+
+void Scene9100::beginSubtitle(const PopupDescriptor &popup, uint segmentIndex, const SpeechTextStyle &speechTextStyle) {
+	clearSubtitle();
+	if (!ConfMan.getBool("subtitles"))
+		return;
+	if (!_vm->font() || !_vm->font()->isLoaded()) {
+		debugC(1, kDebugScene, "Skipping subtitle for text record %u: Hollywood font is not loaded",
+			popup.textRecordId + segmentIndex);
+		return;
+	}
+
+	const Common::String text = getStage003LargeTextRecord(popup.textRecordId + segmentIndex);
+	if (text.empty()) {
+		debugC(2, kDebugScene, "Skipping empty subtitle text record %u",
+			popup.textRecordId + segmentIndex);
+		return;
+	}
+
+	wrapActorSpeechText(text, speechTextStyle.centerX, _subtitle.lines);
+	if (_subtitle.lines.empty())
+		return;
+
+	if (speechTextStyle.updatePalette) {
+		_paletteCurrent[speechTextStyle.colorIndex * 3] = speechTextStyle.red;
+		_paletteCurrent[speechTextStyle.colorIndex * 3 + 1] = speechTextStyle.green;
+		_paletteCurrent[speechTextStyle.colorIndex * 3 + 2] = speechTextStyle.blue;
+	}
+
+	_subtitle.visible = true;
+	_subtitle.colorIndex = speechTextStyle.colorIndex;
+	calculatePrimarySubtitleBounds(_subtitle.lines, speechTextStyle, _subtitle.centerX, _subtitle.topY);
+}
+
+void Scene9100::clearSubtitle() {
+	_subtitle.visible = false;
+	_subtitle.lines.clear();
+}
+
+void Scene9100::drawSubtitleOverlay() {
+	if (!_subtitle.visible || !_vm->font() || !_vm->font()->isLoaded())
+		return;
+
+	HollywoodFont *font = _vm->font();
+	font->setShadowColor(0);
+
+	Graphics::Surface screenSurface;
+	screenSurface.init(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
+		HollywoodEngine::kScreenWidth, _screen.data(), Graphics::PixelFormat::createFormatCLUT8());
+
+	for (uint lineIndex = 0; lineIndex < _subtitle.lines.size(); ++lineIndex) {
+		const Common::String &line = _subtitle.lines[lineIndex];
+		const int lineWidth = actorSpeechTextWidth(line);
+		const int x = (int)_subtitle.centerX - (lineWidth >> 1);
+		const int y = (int)_subtitle.topY + lineIndex * kOriginalSpeechLineHeight;
+		font->drawString(&screenSurface, line, x, y, lineWidth, _subtitle.colorIndex,
+			Graphics::kTextAlignLeft, 0, false, true);
+	}
+}
+
+void Scene9100::wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const {
+	lines.clear();
+	if (text.empty())
+		return;
+
+	uint maxChars = 0x32;
+	const int anchorX = anchorSceneX;
+	if (anchorX < 0xa0)
+		maxChars = (anchorX * 0x32) / 0xa0;
+	else if (HollywoodEngine::kScreenWidth - anchorX < 0xa0)
+		maxChars = ((HollywoodEngine::kScreenWidth - anchorX) * 0x32) / 0xa0;
+	maxChars = MAX<uint>(maxChars, 0x18);
+
+	const uint lineShrink = maxChars < 0x2a ? (maxChars > 0x20 ? 2 : 1) : 3;
+	const char *source = text.c_str();
+	const uint textLength = text.size();
+	uint cursor = 0;
+	while (cursor < textLength && lines.size() < 10) {
+		uint end = textLength;
+		if (cursor + maxChars < textLength) {
+			end = cursor + maxChars;
+			while (end > cursor && (byte)source[end] != 0x20 && source[end] != 0)
+				--end;
+			while (end > cursor && (byte)source[end - 1] == 0x20)
+				--end;
+			if (end == cursor)
+				end = MIN<uint>(textLength, cursor + maxChars);
+		}
+
+		lines.push_back(Common::String(source + cursor, end - cursor));
+
+		cursor = end;
+		while (cursor < textLength && (byte)source[cursor] == 0x20)
+			++cursor;
+
+		maxChars = maxChars > lineShrink ? maxChars - lineShrink : 1;
+	}
+}
+
+Common::String Scene9100::getStage003LargeTextRecord(uint16 recordId) const {
+	if (recordId < _stage003LargeRowBaseIndex)
+		return Common::String();
+
+	const uint localRecordId = recordId - _stage003LargeRowBaseIndex;
+	const uint offset = localRecordId * kStage003LargeRowSize;
+	if (offset >= _stage003LargeRows.size())
+		return Common::String();
+
+	const byte *row = _stage003LargeRows.data() + offset;
+	uint length = 0;
+	while (length < kStage003LargeRowSize && row[length] != 0)
+		++length;
+
+	return Common::String((const char *)row, length);
+}
+
+uint Scene9100::actorSpeechTextWidth(const Common::String &text) const {
+	if (!_vm->font() || !_vm->font()->isLoaded())
+		return 0;
+
+	return _vm->font()->getStringWidth(text) + 2;
+}
+
+void Scene9100::calculatePrimarySubtitleBounds(const Common::Array<Common::String> &lines, const SpeechTextStyle &speechTextStyle, uint16 &centerX, uint16 &topY) const {
+	uint textWidth = 0;
+	for (uint i = 0; i < lines.size(); ++i)
+		textWidth = MAX<uint>(textWidth, actorSpeechTextWidth(lines[i]));
+
+	int adjustedCenterX = speechTextStyle.centerX;
+	if (((adjustedCenterX - (int)(textWidth >> 1)) - 1 + (int)textWidth) > 0x27e) {
+		adjustedCenterX = 0x27d - (int)(textWidth >> 1);
+		if ((textWidth & 1) == 0)
+			adjustedCenterX = 0x27e - (int)(textWidth >> 1);
+	}
+	if (adjustedCenterX - (int)(textWidth >> 1) < 1)
+		adjustedCenterX = (textWidth >> 1) + 1;
+
+	int adjustedTopY = speechTextStyle.topY - (int)lines.size() * kOriginalSpeechLineHeight;
+	if (adjustedTopY < 1)
+		adjustedTopY = 1;
+
+	centerX = (uint16)MAX<int>(0, MIN<int>(adjustedCenterX, HollywoodEngine::kScreenWidth - 1));
+	topY = (uint16)MAX<int>(0, MIN<int>(adjustedTopY, HollywoodEngine::kScreenHeight - 1));
 }
 
 void Scene9100::drawInitialForegroundFrame() {
@@ -1130,6 +1333,8 @@ void Scene9100::presentFrame() {
 			HollywoodEngine::kScreenWidth);
 	}
 
+	drawSubtitleOverlay();
+
 	g_system->copyRectToScreen(_screen.data(), HollywoodEngine::kScreenWidth, 0, 0,
 		HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight);
 	g_system->updateScreen();
@@ -1214,6 +1419,7 @@ bool Scene9100::delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase,
 }
 
 void Scene9100::stopAudio() {
+	clearSubtitle();
 	_music.stop();
 	_speech.stop();
 }

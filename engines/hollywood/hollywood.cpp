@@ -20,6 +20,7 @@
  */
 
 #include "hollywood/hollywood.h"
+#include "hollywood/font.h"
 #include "hollywood/scenes/intro/scene9000.h"
 #include "hollywood/scenes/intro/scene9010.h"
 #include "hollywood/scenes/intro/scene9100.h"
@@ -34,15 +35,19 @@ namespace Hollywood {
 HollywoodEngine::HollywoodEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		Engine(syst),
 		_gameDescription(gameDesc),
-		_resources(new ResourceManager()) {
+		_resources(new ResourceManager()),
+		_font(new HollywoodFont()) {
 }
 
 HollywoodEngine::~HollywoodEngine() {
+	delete _font;
 	delete _resources;
 }
 
 Common::Error HollywoodEngine::run() {
 	initGraphics(kScreenWidth, kScreenHeight);
+
+	_font->load();
 
 	debugC(1, kDebugGeneral, "Hollywood Monsters engine initialized");
 	Scene9000 scene9000(this);
@@ -62,7 +67,7 @@ Common::Error HollywoodEngine::run() {
 }
 
 bool HollywoodEngine::hasFeature(EngineFeature f) const {
-	return f == kSupportsReturnToLauncher;
+	return f == kSupportsReturnToLauncher || f == kSupportsSubtitleOptions;
 }
 
 const char *HollywoodEngine::getGameId() const {

@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/file.h"
 #include "common/random.h"
+#include "common/str.h"
 
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
@@ -38,6 +39,16 @@ public:
 	Scene9100(HollywoodEngine *vm);
 
 	bool play();
+
+	struct SpeechTextStyle {
+		uint16 centerX;
+		uint16 topY;
+		byte colorIndex;
+		byte red;
+		byte green;
+		byte blue;
+		bool updatePalette;
+	};
 
 private:
 	enum TalkingOverlayBase {
@@ -55,12 +66,21 @@ private:
 		byte talkingOverlayVariant;
 		bool copyFrameToSavedBefore;
 		bool animateForegroundActor;
+		SpeechTextStyle speechTextStyle;
 	};
 
 	struct PopupDescriptor {
 		uint16 textRecordId;
 		byte continuationCount;
 		uint16 voiceSampleId;
+	};
+
+	struct SubtitleOverlay {
+		bool visible;
+		byte colorIndex;
+		uint16 centerX;
+		uint16 topY;
+		Common::Array<Common::String> lines;
 	};
 
 	struct ActorSpriteDescriptor {
@@ -101,8 +121,15 @@ private:
 	void runOpeningPrelude();
 	void runCinematicSequence();
 	void runEndingWipe();
-	void runConversationStep(uint16 textBankIndex, byte descriptorIndex, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor = false, byte insetTalkBaseFrame = 0);
+	void runConversationStep(uint16 textBankIndex, byte descriptorIndex, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, const SpeechTextStyle &speechTextStyle, bool animateInsetActor = false, byte insetTalkBaseFrame = 0);
 	void waitForSpeechOrDelay(uint32 fallbackMillis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor = false, byte insetTalkBaseFrame = 0);
+	void beginSubtitle(const PopupDescriptor &popup, uint segmentIndex, const SpeechTextStyle &speechTextStyle);
+	void clearSubtitle();
+	void drawSubtitleOverlay();
+	void wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const;
+	Common::String getStage003LargeTextRecord(uint16 recordId) const;
+	uint actorSpeechTextWidth(const Common::String &text) const;
+	void calculatePrimarySubtitleBounds(const Common::Array<Common::String> &lines, const SpeechTextStyle &speechTextStyle, uint16 &centerX, uint16 &topY) const;
 
 	void drawInitialForegroundFrame();
 	void drawForegroundActorFrame(byte frameIndex);
@@ -151,6 +178,8 @@ private:
 	static const uint kI10TalkingOverlayDescriptorCount = 10;
 	static const uint kFrameDescriptorSize = 14;
 	static const uint kStage003DescriptorTableSize = 0x186a0;
+	static const uint kStage003SmallRowSize = 0x29;
+	static const uint kStage003LargeRowSize = 0x141;
 	static const uint kSecondaryScratchBufferSize = 96000;
 	static const uint kDeskPrimaryStaticBase = 0;
 	static const uint kDeskSecondaryStaticBase = 48000;
@@ -173,9 +202,13 @@ private:
 	Common::Array<byte> _sceneFramebuffer;
 	Common::Array<byte> _savedFramebuffer;
 	Common::Array<byte> _screen;
+	Common::Array<byte> _stage003DecodeKey;
 	Common::Array<byte> _stage003Descriptors;
+	Common::Array<byte> _stage003LargeRows;
+	uint16 _stage003LargeRowBaseIndex;
 	ActorBank _actorBankI10Ron;
 	ActorBank _actorBankI10Sue;
+	SubtitleOverlay _subtitle;
 	uint32 _resourceArenaCursor;
 	uint32 _lastClockFrameMillis;
 	uint32 _lastTalkingFrameMillis;
