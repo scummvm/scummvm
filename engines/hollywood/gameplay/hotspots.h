@@ -26,6 +26,8 @@
 #include "common/str.h"
 #include "common/types.h"
 
+#include "hollywood/resource.h"
+
 namespace Graphics {
 struct Surface;
 }
@@ -39,6 +41,12 @@ struct SceneVerbActionRecord {
 	uint16 movementMode;
 };
 
+struct SceneActionTarget {
+	ScenePoint interactionPoint;
+	ScenePoint approachPoint;
+	byte facing;
+};
+
 class SceneHotspotTable {
 public:
 	bool load(const Common::Array<byte> &paletteMapBlock, const Common::Array<byte> &metadata,
@@ -48,11 +56,15 @@ public:
 		uint16 xOffset, uint16 yOffset) const;
 	byte defaultStripForItem(byte itemId) const;
 	bool hasVerbAction(byte itemId, byte stripIndex) const;
+	SceneVerbActionRecord verbActionRecord(byte itemId, byte stripIndex) const;
+	SceneActionTarget actionTarget(byte itemId) const;
+	void setVerbMovementModeByGlobalRecordIndex(uint globalRecordIndex, uint16 movementMode);
 	Common::String itemName(byte itemId) const;
 
 private:
 	Common::Array<byte> _colorToItemMap;
 	Common::Array<byte> _itemDefaultStrips;
+	Common::Array<SceneActionTarget> _actionTargets;
 	Common::Array<byte> _stageSmallRows;
 	Common::Array<SceneVerbActionRecord> _verbActionRecords;
 };

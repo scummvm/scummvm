@@ -26,14 +26,14 @@
 #include "common/str.h"
 #include "common/types.h"
 
-#include "hollywood/gameplay/hotspots.h"
+#include "hollywood/gameplay/game_loop.h"
 #include "hollywood/resource.h"
 
 namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene7010 {
+class Scene7010 : public GameplayLoopDelegate {
 public:
 	Scene7010(HollywoodEngine *vm);
 
@@ -113,19 +113,61 @@ private:
 	void runEntryCutscene();
 	void runSueEntryPath();
 	void runJuniorSpeech();
-	bool runFakePlayableLoop();
-	void advanceFakeGameplayTimers(uint32 delta);
+	bool runBasicGameplayLoop();
+	const SceneHotspotTable &hotspots() const override;
+	const Common::Array<byte> &savedFramebuffer() const override;
+	uint16 viewportXOffset() const override;
+	uint16 viewportYOffset() const override;
+	void prepareGameplayLoop() override;
+	void advanceGameplayLoop(uint32 delta) override;
+	void drawGameplayFrame() override;
+	void presentGameplayFrame(const SceneHoverCaption &hoverCaption) override;
+	bool shouldExitGameplayLoop() const override;
+	void handleLeftClick(const GameplayLoopCursorState &state) override;
 	void advanceChunk8Cycle();
 	void advanceChunk10IdleFrames();
 	void advanceSecondaryActorIdleFrame();
+	void advanceDialogueOverlay(uint32 delta);
+	void processSceneActionClick(const GameplayLoopCursorState &state);
+	void dispatchSceneAction(uint16 handlerId);
+	void walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel);
+	void adjustWalkTargetToFloorMask(int &targetX, int &targetY) const;
+	byte calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const;
+	void applySceneStateToHotspotsAndPatches(byte selector);
+	bool hasInventoryItem(byte itemId) const;
+	void addInventoryItem(byte itemId);
+	void removeInventoryItem(byte itemId);
+	void handleActionSlot00TransitionToG03();
+	void handleActionSlot02SecondarySpeech();
+	void handleActionSlot03DialogueSequence();
+	void handleActionSlot04Item06Speech();
+	void handleActionSlot06Item0BSequence();
+	void handleActionSlot07DialogueAndReturn();
+	void handleActionSlot08CommonSpeech();
+	void runChunk8RevealSequence();
+	void runChunk8HideSequence();
+	void runChunk11FrameRange(byte startFrame, byte endFrame);
+	void runChunk14FrameRange(byte startFrame, byte endFrame);
+	void runChunk15ItemSequence();
+	void runDialogueOverlayFrames(byte startFrame, byte endFrame, byte finalMode);
+	bool waitSceneMillis(uint32 millis);
 	void beginJuniorSpeech();
 	void clearSpeechOverlay();
+	void clearAllSpeechOverlays();
 	void drawSpeechOverlay();
+	void drawSpeechOverlay(const SpeechOverlay &overlay);
+	void drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex);
+	void beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
+	void beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
+		byte red, byte green, byte blue);
+	void runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
+		byte colorIndex, bool useRequestedTop);
+	bool getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount) const;
 	void wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const;
 	Common::String getStage003LargeTextRecord(uint16 recordId) const;
 	uint actorSpeechTextWidth(const Common::String &text) const;
 	void calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY);
-	void presentFrame();
+	void presentFrame(const SceneHoverCaption *hoverCaption = nullptr);
 	bool pollEvents(bool allowSkip);
 	bool delay(uint32 millis);
 
@@ -155,15 +197,25 @@ private:
 	Common::Array<byte> _stage003SmallRows;
 	Common::Array<byte> _stage003LargeRows;
 	SceneHotspotTable _hotspots;
-	SceneHoverCaption _hoverCaption;
 	SpeechOverlay _speechOverlay;
+	SpeechOverlay _primarySpeechOverlay;
 
+	bool _inventoryItems[121];
+	byte _sceneStateFlags[8];
 	byte _chunk8FrameIndex;
 	byte _chunk9AmbientOverlayFrameIndex;
 	byte _chunk10IdleFrameA;
 	byte _chunk10IdleFrameB;
 	byte _chunk10IdleFrameC;
 	byte _chunk10IdleFrameD;
+	byte _chunk11FrameIndex;
+	byte _chunk14FrameIndex;
+	byte _chunk15FrameIndex;
+	byte _dialogueOverlayFrameIndex;
+	byte _dialogueOverlayMode;
+	bool _chunk11Visible;
+	bool _chunk14Visible;
+	bool _chunk15Visible;
 	bool _chunk10IdlePairAAltPhase;
 	bool _chunk10IdlePairBAltPhase;
 	byte _chunk10IdlePairATicksRemaining;
@@ -173,6 +225,7 @@ private:
 	uint32 _chunk8TimerAccumulator;
 	uint32 _chunk10TimerAccumulator;
 	uint32 _secondaryActorTimerAccumulator;
+	uint32 _dialogueOverlayTimerAccumulator;
 	uint16 _secondaryActorIdleTick;
 	int _activeActorWorldX;
 	int _activeActorWorldY;
