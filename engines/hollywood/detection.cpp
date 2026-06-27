@@ -26,21 +26,21 @@
 
 #include "hollywood/hollywood.h"
 
-static const PlainGameDescriptor hollywoodGames[] = {
+namespace Hollywood {
+
+const PlainGameDescriptor hollywoodGames[] = {
 	{"hollywood", "Hollywood Monsters"},
 	{nullptr, nullptr}
 };
 
-static const DebugChannelDef debugFlagList[] = {
+const DebugChannelDef debugFlagList[] = {
 	{Hollywood::kDebugGeneral, "general", "General debug level"},
 	{Hollywood::kDebugResources, "resources", "Resource archive loading"},
 	{Hollywood::kDebugScene, "scene", "Scene state and presentation"},
 	DEBUG_CHANNEL_END
 };
 
-namespace Hollywood {
-
-static const ADGameDescription gameDescriptions[] = {
+const ADGameDescription gameDescriptions[] = {
 	// Spanish Windows full game, installed MONSTERS directory.
 	{
 		"hollywood",
@@ -56,8 +56,6 @@ static const ADGameDescription gameDescriptions[] = {
 
 	AD_TABLE_END_MARKER
 };
-
-} // End of namespace Hollywood
 
 class HollywoodMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
@@ -81,4 +79,6 @@ public:
 	}
 };
 
-REGISTER_PLUGIN_STATIC(HOLLYWOOD_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, HollywoodMetaEngineDetection);
+} // End of namespace Hollywood
+
+REGISTER_PLUGIN_STATIC(HOLLYWOOD_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Hollywood::HollywoodMetaEngineDetection);

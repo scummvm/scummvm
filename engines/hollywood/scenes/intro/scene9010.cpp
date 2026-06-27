@@ -31,24 +31,24 @@
 
 namespace Hollywood {
 
-static const char *const kI01ArchiveName = "RESOURCE.I01";
-static const char *const kI02ArchiveName = "RESOURCE.I02";
-static const char *const kI03ArchiveName = "RESOURCE.I03";
-static const char *const kStage003ArchiveName = "RESOURCE.003";
-static const uint16 kPostIntroMusicCueId = 0x000e;
-static const uint kStage003DecodeKeySize = 0x141;
-static const uint kStage003StageOffsetTableSize = 0xff4;
-static const uint kStage901Index = 901;
-static const byte kPaletteFadeExcludedIndex = 122;
+const char *const kI01ArchiveName = "RESOURCE.I01";
+const char *const kI02ArchiveName = "RESOURCE.I02";
+const char *const kI03ArchiveName = "RESOURCE.I03";
+const char *const kStage003ArchiveName = "RESOURCE.003";
+const uint16 kPostIntroMusicCueId = 0x000e;
+const uint kStage003DecodeKeySize = 0x141;
+const uint kStage003StageOffsetTableSize = 0xff4;
+const uint kStage901Index = 901;
+const byte kPaletteFadeExcludedIndex = 122;
 
-static const byte kCharacterDescriptorSequence[] = {
+const byte kCharacterDescriptorSequence[] = {
 	0x0f, 0x0d, 0x0e, 0x10, 0x00, 0x01, 0x02, 0x03,
 	0x04, 0x05, 0x06, 0x07, 0x08, 0x0b, 0x08, 0x09,
 	0x0a, 0x0c, 0x08, 0x07, 0x06, 0x05, 0x04, 0x03,
 	0x02, 0x01, 0x00, 0x0f, 0x00, 0x00, 0x00
 };
 
-static const byte kPopupSequence[] = {
+const byte kPopupSequence[] = {
 	1, 3, 4, 5, 2, 0, 4, 1, 5, 3, 0, 2
 };
 

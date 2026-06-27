@@ -23,13 +23,10 @@
 #define HOLLYWOOD_SCENES_INTRO_SCENE9010_H
 
 #include "common/array.h"
+#include "common/file.h"
 
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
-
-namespace Common {
-class File;
-}
 
 namespace Hollywood {
 
@@ -79,12 +76,14 @@ private:
 	uint16 readUint16(const Common::Array<byte> &source, uint offset) const;
 	uint32 readUint32(const Common::Array<byte> &source, uint offset) const;
 
-	static const uint kFrameDecodeBufferSize = 0x78000;
-	static const uint kSceneFramebufferSize = 0x100000;
-	static const uint kPaletteSize = 0x300;
-	static const uint kStage003DescriptorTableSize = 0x186a0;
-	static const uint kCharacterFrameDescriptorCount = 17;
-	static const uint kFrameDescriptorSize = 14;
+	enum {
+		kFrameDecodeBufferSize = 0x78000,
+		kSceneFramebufferSize = 0x100000,
+		kPaletteSize = 0x300,
+		kStage003DescriptorTableSize = 0x186a0,
+		kCharacterFrameDescriptorCount = 17,
+		kFrameDescriptorSize = 14
+	};
 
 	HollywoodEngine *_vm;
 	MusicPlayer _music;
