@@ -165,7 +165,7 @@ static void room_302_init() {
 	global[perform_displacements] = 240;
 	global[player_score] = -1;
 
-	if (object_is_here(1)) {
+	if (object_is_here(rubber_band)) {
 		ss[0] = kernel_load_series(kernel_name('P', 3), 0);
 		seq[0] = kernel_seq_stamp(ss[0], false, KERNEL_FIRST);
 		kernel_seq_depth(seq[0], 9);
@@ -753,7 +753,7 @@ static void room_302_daemon() {
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
 			kernel_flip_hotspot(words_rubber_band, false);
-			inter_move_object(1, PLAYER);
+			inter_move_object(rubber_band, PLAYER);
 			global[player_score] = -1;
 			player.commands_allowed = true;
 		}

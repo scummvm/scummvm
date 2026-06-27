@@ -69,7 +69,10 @@ void DigiPlayer::play(const char *name, int slot) {
 		}
 	}
 
-	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &c._soundHandle, audioStream);
+	int vol = (_initialVolume == MAX_DIGI_VOLUME) ? 255 : _initialVolume * 255 / 327 / 100;
+	_initialVolume = MAX_DIGI_VOLUME;
+
+	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &c._soundHandle, audioStream, -1, vol);
 	c._isPlaying = true;
 }
 
@@ -99,6 +102,14 @@ void DigiPlayer::poll() {
 	}
 }
 
+void DigiPlayer::setInitialVolume(int vol) {
+	_initialVolume = (vol < 0 || vol > 100) ? MAX_DIGI_VOLUME : vol * 327;
+}
+
+void DigiPlayer::setVolume(int slot, int vol) {
+	_mixer->setChannelVolume(_channels[slot]._soundHandle, (vol == MAX_DIGI_VOLUME) ? 255 : vol * 255 / 327);
+}
+
 void digi_play_build_ii(char thing, int num, int slot) {
 	Common::String name = Common::String::format("%c0ii%c%03d",
 		(thing == '_') ? 's' : 'd', thing, num);
@@ -124,9 +135,11 @@ void digi_read_another_chunk() {
 }
 
 void digi_initial_volume(int vol) {
+	g_engine->_digiPlayer.setInitialVolume(vol);
 }
 
 void digi_set_volume(int vol, int slot) {
+	g_engine->_digiPlayer.setVolume(vol, slot);
 }
 
 } // namespace Forest

@@ -30,6 +30,7 @@ namespace MADSV2 {
 namespace Forest {
 
 #define MAX_DIGI_CHANNELS 3
+#define MAX_DIGI_VOLUME 0x7fff
 
 class DigiPlayer {
 	struct DigiChannel {
@@ -41,6 +42,7 @@ class DigiPlayer {
 private:
 	Audio::Mixer *_mixer;
 	DigiChannel _channels[MAX_DIGI_CHANNELS];
+	int _initialVolume = MAX_DIGI_VOLUME;
 
 public:
 	DigiPlayer(Audio::Mixer *mixer);
@@ -62,6 +64,16 @@ public:
 	 * Polls for any playing sounds that are finished
 	 */
 	void poll();
+
+	/**
+	 * Sets the initial volume for new digi sounds
+	 */
+	void setInitialVolume(int vol);
+
+	/**
+	 * Sets the volume for a specific digi channel
+	 */
+	void setVolume(int vol, int slot);
 };
 
 extern int digi_val2;

@@ -30,8 +30,10 @@ namespace Forest {
 
 enum {
 	cogs           =  0,
+	rubber_band    =  1,
 	feather        =  2,
 	pebbles        =  5,
+	reeds          =  6,
 	sticks         =  7,
 	twine          =  8,
 	vine_weed      =  9,

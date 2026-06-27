@@ -631,7 +631,7 @@ static void room_303_daemon() {
 			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 			global[g133] = 0;
 			kernel_flip_hotspot(words_reeds, false);
-			inter_move_object(6, PLAYER);
+			inter_move_object(reeds, PLAYER);
 			player.commands_allowed = true;
 		} else if (scratch._a6 == 2) {
 			dont_frag_the_palette();
