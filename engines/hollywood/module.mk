@@ -2,12 +2,14 @@ MODULE := engines/hollywood
 
 MODULE_OBJS = \
 	font.o \
+	graphics.o \
 	hollywood.o \
 	metaengine.o \
 	music.o \
 	resource.o \
 	scenes/intro/scene9000.o \
 	scenes/intro/scene9010.o \
+	scenes/intro/scene9050.o \
 	scenes/intro/scene9100.o
 
 # This module can be built as a plugin

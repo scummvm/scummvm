@@ -23,6 +23,7 @@
 #include "hollywood/font.h"
 #include "hollywood/scenes/intro/scene9000.h"
 #include "hollywood/scenes/intro/scene9010.h"
+#include "hollywood/scenes/intro/scene9050.h"
 #include "hollywood/scenes/intro/scene9100.h"
 #include "hollywood/resource.h"
 
@@ -60,6 +61,10 @@ Common::Error HollywoodEngine::run() {
 
 	Scene9100 scene9100(this);
 	if (!scene9100.play())
+		return Common::kReadingFailed;
+
+	Scene9050 scene9050(this);
+	if (!scene9050.play())
 		return Common::kReadingFailed;
 
 	debugC(1, kDebugGeneral, "Intro presentation completed");
