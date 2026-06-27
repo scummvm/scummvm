@@ -83,17 +83,21 @@ private:
 	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
 	bool loadArenaChunk(uint index);
 	bool loadScratchChunk(uint index, uint32 destinationOffset);
+	bool loadScratchChunkTo(uint index, Common::Array<byte> &destination, uint32 destinationOffset);
 	bool loadStage003Descriptors();
 	bool loadActorResources();
 	bool loadActorBank(Common::File &file, const uint32 *offsets, const uint32 *sizes, uint offsetTableIndex, ActorBank &bank);
 	bool loadActorPalette(Common::File &file, const uint32 *offsets, uint offsetTableIndex, Common::Array<byte> &palette);
 
-	void applyActorPalette(const Common::Array<byte> &palette, byte highlightRed, byte highlightGreen, byte highlightBlue);
+	void applyActorHighlightColor(byte highlightRed, byte highlightGreen, byte highlightBlue);
 	void runEntryActorAnimations();
 	void showSueEntryActor();
 	void playEntryActorAnimation(const ActorBank &bank, int worldX, int worldY, Common::Array<byte> &baseFramebuffer);
 	void runRonEntryConversation();
 	void drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis);
+	void runSueEntrySequence();
+	void runSueEntryPath();
+	void drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis);
 	void drawActorSpriteFrame(const ActorBank &bank, byte facing, byte cel, int worldX, int worldY);
 	void runOpeningPrelude();
 	void runCinematicSequence();
@@ -103,9 +107,13 @@ private:
 
 	void drawInitialForegroundFrame();
 	void drawForegroundActorFrame(byte frameIndex);
-	void drawInsetActorFrame(byte frameIndex);
+	void drawDeskStaticActorFrame(uint32 baseOffset, uint16 descriptorCount, byte frameIndex, bool restoreBackground = true);
+	void drawDeskPrimaryStaticFrame(byte frameIndex, bool restoreBackground = true);
+	void drawDeskSecondaryStaticFrame(byte frameIndex, bool restoreBackground = true);
+	void drawPersistentDeskActors();
 	void animateForegroundFrames(byte firstFrame, byte lastFrame);
-	void animateInsetFrames(byte firstFrame, byte lastFrame);
+	void animateDeskPrimaryStaticFrames(byte firstFrame, byte lastFrame);
+	void animateDeskSecondaryStaticFrames(byte firstFrame, byte lastFrame);
 	void drawClockFrame(byte frameIndex);
 	void drawTalkingOverlay(TalkingOverlayBase talkingOverlayBase, byte frameIndex, byte talkingOverlayVariant);
 	void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset, uint16 descriptorCount, uint16 descriptorIndex);
@@ -113,6 +121,7 @@ private:
 	void drawResourceBlockListToBuffer(uint32 baseOffset, Common::Array<byte> &destination);
 	void restoreResourceBlocksToFrameAndScene(uint32 baseOffset);
 	void expandFillRunsToSavedFramebuffer();
+	void restoreOfficeFrameAndPresent();
 	void applyBackgroundMode(const CinematicStep &step);
 	void copyPaletteSegment(byte segmentIndex);
 	void copyDefaultPalette();
@@ -138,11 +147,15 @@ private:
 	static const uint kPaletteSize = 0x300;
 	static const uint kResourceChunkCount = 40;
 	static const uint kI10ForegroundDescriptorCount = 0x24;
-	static const uint kI10InsetDescriptorCount = 9;
+	static const uint kI10DeskPrimaryStaticDescriptorCount = 3;
+	static const uint kI10DeskSecondaryStaticDescriptorCount = 6;
 	static const uint kI10ClockDescriptorCount = 0x3c;
 	static const uint kI10TalkingOverlayDescriptorCount = 10;
 	static const uint kFrameDescriptorSize = 14;
 	static const uint kStage003DescriptorTableSize = 0x186a0;
+	static const uint kSecondaryScratchBufferSize = 96000;
+	static const uint kDeskPrimaryStaticBase = 0;
+	static const uint kDeskSecondaryStaticBase = 48000;
 	static const uint kScratchChunk21Base = 0x4e200;
 	static const uint kScratchPrimaryPayloadBase = 640000;
 
@@ -157,6 +170,7 @@ private:
 	Common::Array<byte> _sceneFillRuns;
 	Common::Array<byte> _resourceArena;
 	Common::Array<byte> _resourceScratchArena;
+	Common::Array<byte> _secondaryScratchBuffer;
 	Common::Array<byte> _frameDecodeBuffer;
 	Common::Array<byte> _sceneFramebuffer;
 	Common::Array<byte> _savedFramebuffer;
@@ -174,6 +188,10 @@ private:
 	byte _clockFrame;
 	byte _talkingFrame;
 	byte _lastTalkingFrameVariant;
+	byte _deskPrimaryActorFrame;
+	byte _deskSecondaryActorFrame;
+	bool _deskPrimaryActorVisible;
+	bool _deskSecondaryActorVisible;
 	bool _skipRequested;
 };
 

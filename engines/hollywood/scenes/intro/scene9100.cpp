@@ -45,7 +45,6 @@ static const uint kActorCelsPerFacing = 13;
 static const uint kActorDescriptorCount = kActorFacingCount * kActorCelsPerFacing;
 static const uint kActorSpriteDescriptorSize = 28;
 static const uint kActorFacingRunStride = 160000;
-static const uint kActorPaletteBaseOffset = 0x270;
 static const uint kActorPaletteByteCount = 0x90;
 static const uint kActorBankB4OffsetIndex = 0;
 static const uint kActorOwner0PaletteOffsetIndex = 0x33;
@@ -53,6 +52,7 @@ static const uint kActorBank00OffsetIndex = 0x34;
 static const uint kActorOwner1PaletteOffsetIndex = 0x42;
 static const uint kActorEntryFrameDelayMillis = 90;
 static const uint32 kRonEntryPathDurationMillis = 4200;
+static const uint32 kSueEntryPathDurationMillis = 3600;
 
 static const byte kI10ForegroundFrameRemap[] = {
 	0, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 13,
@@ -60,10 +60,6 @@ static const byte kI10ForegroundFrameRemap[] = {
 	23, 24, 25, 26, 30, 22, 21, 20, 16, 0, 0, 0, 0, 1, 2, 3,
 	0, 4, 5, 5, 6, 7, 8, 5, 4, 0, 0, 0, 0, 1, 2, 3,
 	2, 1, 0, 0
-};
-
-static const byte kI10InsetFrameRemap[] = {
-	0, 1, 2, 3, 0, 4, 5, 5, 6, 7, 8, 5, 4, 0
 };
 
 Scene9100::Scene9100(HollywoodEngine *vm) :
@@ -79,6 +75,10 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 		_clockFrame(32),
 		_talkingFrame(0),
 		_lastTalkingFrameVariant(0xff),
+		_deskPrimaryActorFrame(0),
+		_deskSecondaryActorFrame(0),
+		_deskPrimaryActorVisible(false),
+		_deskSecondaryActorVisible(false),
 		_skipRequested(false) {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
 	_paletteDefault.resize(kPaletteSize);
@@ -88,6 +88,7 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 	_savedFramebuffer.resize(kFrameDecodeBufferSize);
 	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
 	_stage003Descriptors.resize(kStage003DescriptorTableSize);
+	_secondaryScratchBuffer.resize(kSecondaryScratchBufferSize);
 	_actorPaletteOwner0.resize(kActorPaletteByteCount);
 	_actorPaletteOwner1.resize(kActorPaletteByteCount);
 }
@@ -145,7 +146,9 @@ bool Scene9100::load() {
 			return false;
 		}
 	}
-	if (!_i10ChunkTable.isValidChunk(20) || !_i10ChunkTable.isValidChunk(21) || !_i10ChunkTable.isValidChunk(22)) {
+	if (!_i10ChunkTable.isValidChunk(18) || !_i10ChunkTable.isValidChunk(19) ||
+			!_i10ChunkTable.isValidChunk(20) || !_i10ChunkTable.isValidChunk(21) ||
+			!_i10ChunkTable.isValidChunk(22)) {
 		warning("%s is missing required scene 9100 scratch chunks", kI10ArchiveName);
 		return false;
 	}
@@ -175,10 +178,13 @@ bool Scene9100::load() {
 		MAX<uint32>(_i10ChunkTable.sizes[20], kScratchChunk21Base + _i10ChunkTable.sizes[21]));
 	_resourceScratchArena.resize(scratchSize);
 	memset(_resourceScratchArena.data(), 0, _resourceScratchArena.size());
+	memset(_secondaryScratchBuffer.data(), 0, _secondaryScratchBuffer.size());
 
 	if (!loadScratchChunk(20, 0) ||
 			!loadScratchChunk(21, kScratchChunk21Base) ||
-			!loadScratchChunk(22, kScratchPrimaryPayloadBase))
+			!loadScratchChunk(22, kScratchPrimaryPayloadBase) ||
+			!loadScratchChunkTo(18, _secondaryScratchBuffer, kDeskPrimaryStaticBase) ||
+			!loadScratchChunkTo(19, _secondaryScratchBuffer, kDeskSecondaryStaticBase))
 		return false;
 
 	return loadActorResources();
@@ -249,18 +255,22 @@ bool Scene9100::loadArenaChunk(uint index) {
 }
 
 bool Scene9100::loadScratchChunk(uint index, uint32 destinationOffset) {
+	return loadScratchChunkTo(index, _resourceScratchArena, destinationOffset);
+}
+
+bool Scene9100::loadScratchChunkTo(uint index, Common::Array<byte> &destination, uint32 destinationOffset) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI10ArchiveName), index));
 	if (!stream) {
 		warning("Failed to open %s scratch chunk %u", kI10ArchiveName, index);
 		return false;
 	}
 
-	if (destinationOffset + stream->size() > _resourceScratchArena.size()) {
+	if (destinationOffset + stream->size() > destination.size()) {
 		warning("%s scratch chunk %u does not fit the scene 9100 scratch arena", kI10ArchiveName, index);
 		return false;
 	}
 
-	if (stream->read(_resourceScratchArena.data() + destinationOffset, stream->size()) != (uint32)stream->size()) {
+	if (stream->read(destination.data() + destinationOffset, stream->size()) != (uint32)stream->size()) {
 		warning("Failed to read %s scratch chunk %u", kI10ArchiveName, index);
 		return false;
 	}
@@ -408,10 +418,7 @@ bool Scene9100::loadActorPalette(Common::File &file, const uint32 *offsets, uint
 	return true;
 }
 
-void Scene9100::applyActorPalette(const Common::Array<byte> &palette, byte highlightRed, byte highlightGreen, byte highlightBlue) {
-	if (palette.size() >= kActorPaletteByteCount)
-		memcpy(_paletteCurrent.data() + kActorPaletteBaseOffset, palette.data(), kActorPaletteByteCount);
-
+void Scene9100::applyActorHighlightColor(byte highlightRed, byte highlightGreen, byte highlightBlue) {
 	_paletteCurrent[0x2f7] = highlightRed;
 	_paletteCurrent[0x2f8] = highlightGreen;
 	_paletteCurrent[0x2f9] = highlightBlue;
@@ -422,7 +429,7 @@ void Scene9100::runEntryActorAnimations() {
 	baseFramebuffer.resize(_sceneFramebuffer.size());
 	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
 
-	applyActorPalette(_actorPaletteOwner0, 0x3f, 0x3f, 0x3f);
+	applyActorHighlightColor(0x3f, 0x3f, 0x3f);
 	playEntryActorAnimation(_actorBankB4, 0x307, 0x1d4, baseFramebuffer);
 
 	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
@@ -433,7 +440,7 @@ void Scene9100::showSueEntryActor() {
 	baseFramebuffer.resize(_sceneFramebuffer.size());
 	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
 
-	applyActorPalette(_actorPaletteOwner1, 0x3f, 0x28, 0x32);
+	applyActorHighlightColor(0x3f, 0x28, 0x32);
 	playEntryActorAnimation(_actorBank00, 0x130, 0x172, baseFramebuffer);
 
 	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
@@ -539,6 +546,8 @@ void Scene9100::runRonEntryConversation() {
 		drawForegroundActorFrame(_foregroundTalkBaseFrame);
 		drawRonEntryPathFrame(kRonEntryPathDurationMillis, kRonEntryPathDurationMillis);
 		presentFrame();
+		_deskPrimaryActorVisible = true;
+		_deskPrimaryActorFrame = 0;
 	}
 }
 
@@ -565,6 +574,97 @@ void Scene9100::drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 	const byte facing = finalFrame ? 5 : 4;
 	const byte cel = finalFrame ? 0 : (byte)(1 + ((clampedElapsed / 60) % 12));
 	drawActorSpriteFrame(_actorBankB4, facing, cel, x, y);
+}
+
+void Scene9100::runSueEntrySequence() {
+	if (_skipRequested || Engine::shouldQuit())
+		return;
+
+	restoreOfficeFrameAndPresent();
+	applyActorHighlightColor(0x3f, 0x28, 0x32);
+
+	animateForegroundFrames(27, 31);
+	_foregroundTalkBaseFrame = 32;
+	runConversationStep(1, 6, kTalkingOverlayNone, 0, true, false);
+	if (_skipRequested || Engine::shouldQuit())
+		return;
+
+	animateForegroundFrames(36, 40);
+	_foregroundTalkBaseFrame = 23;
+	_deskPrimaryActorVisible = true;
+	animateDeskPrimaryStaticFrames(0, 2);
+	drawPersistentDeskActors();
+	presentFrame();
+	runConversationStep(1, 7, kTalkingOverlayNone, 0, false, false);
+	if (_skipRequested || Engine::shouldQuit())
+		return;
+
+	runSueEntryPath();
+	_deskSecondaryActorVisible = true;
+	animateDeskSecondaryStaticFrames(0, 5);
+	drawPersistentDeskActors();
+	presentFrame();
+}
+
+void Scene9100::runSueEntryPath() {
+	Common::Array<byte> baseFramebuffer;
+	baseFramebuffer.resize(_sceneFramebuffer.size());
+	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
+
+	uint32 pathElapsed = 0;
+	uint32 lastPathFrameMillis = g_system->getMillis();
+
+	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
+	drawSueEntryPathFrame(0, kSueEntryPathDurationMillis);
+	presentFrame();
+
+	while (pathElapsed < kSueEntryPathDurationMillis && !_skipRequested && !Engine::shouldQuit()) {
+		if (pollEvents())
+			return;
+
+		g_system->delayMillis(10);
+
+		const uint32 now = g_system->getMillis();
+		if (now - lastPathFrameMillis < 60)
+			continue;
+
+		pathElapsed = MIN<uint32>(kSueEntryPathDurationMillis, pathElapsed + (now - lastPathFrameMillis));
+		lastPathFrameMillis = now;
+		memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
+		drawSueEntryPathFrame(pathElapsed, kSueEntryPathDurationMillis);
+		presentFrame();
+	}
+
+	if (!_skipRequested && !Engine::shouldQuit()) {
+		memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
+		drawSueEntryPathFrame(kSueEntryPathDurationMillis, kSueEntryPathDurationMillis);
+		presentFrame();
+	}
+}
+
+void Scene9100::drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis) {
+	const int originalStartX = 0x308;
+	const int originalStartY = 0x1b5;
+	const int targetX = 0x11b;
+	const int targetY = 0x16e;
+	const uint startDescriptorIndex = (4 * kActorCelsPerFacing) + 1;
+	if (startDescriptorIndex >= _actorBank00.descriptors.size())
+		return;
+
+	const ActorSpriteDescriptor &startDescriptor = _actorBank00.descriptors[startDescriptorIndex];
+	const int startSpriteLeft = MAX<int>(0, HollywoodEngine::kScreenWidth - (int)startDescriptor.width - 8);
+	const int fixedViewportStartX = startSpriteLeft + startDescriptor.anchorX;
+
+	const int visibleStartY = originalStartY +
+		((originalStartX - fixedViewportStartX) * (targetY - originalStartY)) / (originalStartX - targetX);
+	const uint32 clampedElapsed = MIN<uint32>(pathElapsedMillis, pathDurationMillis);
+	const int x = fixedViewportStartX + ((targetX - fixedViewportStartX) * (int)clampedElapsed) / (int)pathDurationMillis;
+	const int y = visibleStartY + ((targetY - visibleStartY) * (int)clampedElapsed) / (int)pathDurationMillis;
+
+	const bool finalFrame = clampedElapsed >= pathDurationMillis;
+	const byte facing = finalFrame ? 5 : 4;
+	const byte cel = finalFrame ? 0 : (byte)(1 + ((clampedElapsed / 60) % 12));
+	drawActorSpriteFrame(_actorBank00, facing, cel, x, y);
 }
 
 void Scene9100::drawActorSpriteFrame(const ActorBank &bank, byte facing, byte cel, int worldX, int worldY) {
@@ -660,7 +760,7 @@ void Scene9100::runCinematicSequence() {
 		{ 3, 1, 16, kTalkingOverlayBase640000, 0, true, false },
 		{ 2, 1, 8, kTalkingOverlayBase320000, 1, false, false },
 		{ 3, 1, 17, kTalkingOverlayBase640000, 1, false, false },
-		{ 0, 1, 9, kTalkingOverlayBase640000, 1, false, false },
+		{ 0, 1, 9, kTalkingOverlayBase640000, 0, false, false },
 		{ 1, 1, 10, kTalkingOverlayBase0, 0, false, false },
 		{ 2, 1, 11, kTalkingOverlayBase320000, 0, false, false },
 		{ 3, 1, 12, kTalkingOverlayBase640000, 1, false, false },
@@ -670,6 +770,11 @@ void Scene9100::runCinematicSequence() {
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(kSteps) && !_skipRequested && !Engine::shouldQuit(); ++i) {
+		if (i == 7)
+			runSueEntrySequence();
+		if (_skipRequested || Engine::shouldQuit())
+			return;
+
 		applyBackgroundMode(kSteps[i]);
 		runConversationStep(kSteps[i].textBankIndex, kSteps[i].descriptorIndex,
 			kSteps[i].talkingOverlayBase, kSteps[i].talkingOverlayVariant, kSteps[i].animateForegroundActor, false);
@@ -704,7 +809,7 @@ void Scene9100::runConversationStep(uint16 textBankIndex, byte descriptorIndex, 
 			drawTalkingOverlay(talkingOverlayBase, 0, talkingOverlayVariant);
 			presentFrame();
 		} else if (animateInsetActor) {
-			drawInsetActorFrame(insetTalkBaseFrame);
+			drawPersistentDeskActors();
 			presentFrame();
 		} else if (animateForegroundActor) {
 			drawForegroundActorFrame(_foregroundTalkBaseFrame);
@@ -738,15 +843,35 @@ void Scene9100::drawForegroundActorFrame(byte frameIndex) {
 	const uint16 descriptorIndex = kI10ForegroundFrameRemap[frameIndex];
 	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
+	drawPersistentDeskActors();
 }
 
-void Scene9100::drawInsetActorFrame(byte frameIndex) {
-	if (frameIndex >= ARRAYSIZE(kI10InsetFrameRemap))
+void Scene9100::drawDeskStaticActorFrame(uint32 baseOffset, uint16 descriptorCount, byte frameIndex, bool restoreBackground) {
+	if (frameIndex >= descriptorCount)
 		return;
 
-	const uint16 descriptorIndex = kI10InsetFrameRemap[frameIndex];
-	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[7], 0, kI10InsetDescriptorCount, descriptorIndex);
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[7], 0, kI10InsetDescriptorCount, descriptorIndex);
+	if (restoreBackground)
+		restoreSpriteBackground(_secondaryScratchBuffer, baseOffset, 0, descriptorCount, frameIndex);
+	drawStripSpriteFrame(_secondaryScratchBuffer, baseOffset, 0, descriptorCount, frameIndex);
+}
+
+void Scene9100::drawDeskPrimaryStaticFrame(byte frameIndex, bool restoreBackground) {
+	_deskPrimaryActorFrame = MIN<byte>(frameIndex, kI10DeskPrimaryStaticDescriptorCount - 1);
+	drawDeskStaticActorFrame(kDeskPrimaryStaticBase, kI10DeskPrimaryStaticDescriptorCount,
+		_deskPrimaryActorFrame, restoreBackground);
+}
+
+void Scene9100::drawDeskSecondaryStaticFrame(byte frameIndex, bool restoreBackground) {
+	_deskSecondaryActorFrame = MIN<byte>(frameIndex, kI10DeskSecondaryStaticDescriptorCount - 1);
+	drawDeskStaticActorFrame(kDeskSecondaryStaticBase, kI10DeskSecondaryStaticDescriptorCount,
+		_deskSecondaryActorFrame, restoreBackground);
+}
+
+void Scene9100::drawPersistentDeskActors() {
+	if (_deskSecondaryActorVisible)
+		drawDeskSecondaryStaticFrame(_deskSecondaryActorFrame, false);
+	if (_deskPrimaryActorVisible)
+		drawDeskPrimaryStaticFrame(_deskPrimaryActorFrame, false);
 }
 
 void Scene9100::animateForegroundFrames(byte firstFrame, byte lastFrame) {
@@ -758,11 +883,21 @@ void Scene9100::animateForegroundFrames(byte firstFrame, byte lastFrame) {
 	}
 }
 
-void Scene9100::animateInsetFrames(byte firstFrame, byte lastFrame) {
+void Scene9100::animateDeskPrimaryStaticFrames(byte firstFrame, byte lastFrame) {
 	for (byte frame = firstFrame; frame <= lastFrame && !_skipRequested && !Engine::shouldQuit(); ++frame) {
-		drawInsetActorFrame(frame);
+		drawDeskPrimaryStaticFrame(frame);
 		presentFrame();
 		if (delayFrame(100, kTalkingOverlayNone, 0, false, true))
+			return;
+	}
+}
+
+void Scene9100::animateDeskSecondaryStaticFrames(byte firstFrame, byte lastFrame) {
+	for (byte frame = firstFrame; frame <= lastFrame && !_skipRequested && !Engine::shouldQuit(); ++frame) {
+		drawDeskSecondaryStaticFrame(frame);
+		drawPersistentDeskActors();
+		presentFrame();
+		if (delayFrame(50, kTalkingOverlayNone, 0, false, true))
 			return;
 	}
 }
@@ -891,6 +1026,15 @@ void Scene9100::expandFillRunsToSavedFramebuffer() {
 	}
 }
 
+void Scene9100::restoreOfficeFrameAndPresent() {
+	memcpy(_frameDecodeBuffer.data(), _savedFramebuffer.data(), _frameDecodeBuffer.size());
+	expandFillRunsToSavedFramebuffer();
+	memcpy(_sceneFramebuffer.data(), _frameDecodeBuffer.data(), _sceneFramebuffer.size());
+	drawForegroundActorFrame(_foregroundActorFrame);
+	copyDefaultPalette();
+	presentFrame();
+}
+
 void Scene9100::applyBackgroundMode(const CinematicStep &step) {
 	if (step.copyFrameToSavedBefore)
 		memcpy(_savedFramebuffer.data(), _frameDecodeBuffer.data(), _savedFramebuffer.size());
@@ -912,11 +1056,7 @@ void Scene9100::applyBackgroundMode(const CinematicStep &step) {
 		copyPaletteSegment(7);
 		break;
 	case 4:
-		memcpy(_frameDecodeBuffer.data(), _savedFramebuffer.data(), _frameDecodeBuffer.size());
-		expandFillRunsToSavedFramebuffer();
-		memcpy(_sceneFramebuffer.data(), _frameDecodeBuffer.data(), _sceneFramebuffer.size());
-		drawForegroundActorFrame(_foregroundActorFrame);
-		copyDefaultPalette();
+		restoreOfficeFrameAndPresent();
 		break;
 	default:
 		break;
@@ -926,7 +1066,7 @@ void Scene9100::applyBackgroundMode(const CinematicStep &step) {
 	if (drewInitialOverlay)
 		drawTalkingOverlay(step.talkingOverlayBase, 0, step.talkingOverlayVariant);
 
-	if (step.backgroundMode != 0 || drewInitialOverlay)
+	if ((step.backgroundMode != 0 && step.backgroundMode != 4) || drewInitialOverlay)
 		presentFrame();
 }
 
@@ -1097,7 +1237,7 @@ bool Scene9100::delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase,
 		}
 		if (animateInsetActor && talkingOverlayBase == kTalkingOverlayNone && now - _lastTalkingFrameMillis >= 125) {
 			_lastTalkingFrameMillis = now;
-			drawInsetActorFrame((byte)(insetTalkBaseFrame + nextTalkingFrameVariant()));
+			drawPersistentDeskActors();
 			dirty = true;
 		} else if (animateForegroundActor && talkingOverlayBase == kTalkingOverlayNone && now - _lastTalkingFrameMillis >= 125) {
 			_lastTalkingFrameMillis = now;
