@@ -133,14 +133,20 @@ private:
 
 	void drawInitialForegroundFrame();
 	void drawForegroundActorFrame(byte frameIndex);
-	void drawDeskStaticActorFrame(uint32 baseOffset, uint16 descriptorCount, byte frameIndex, bool restoreBackground = true);
+	void restoreForegroundActorLayer();
+	void drawForegroundActorLayer();
+	void drawDeskActorLayer(uint32 baseOffset, uint16 descriptorCount, byte frameIndex, bool restoreBackground);
 	void drawDeskPrimaryStaticFrame(byte frameIndex, bool restoreBackground = true);
 	void drawDeskSecondaryStaticFrame(byte frameIndex, bool restoreBackground = true);
+	void drawDeskPrimaryStaticLayer(bool restoreBackground);
+	void drawDeskSecondaryStaticLayer(bool restoreBackground);
 	void drawPersistentDeskActors();
+	void drawOfficeCompositeLayers();
 	void animateForegroundFrames(byte firstFrame, byte lastFrame);
 	void animateDeskPrimaryStaticFrames(byte firstFrame, byte lastFrame);
 	void animateDeskSecondaryStaticFrames(byte firstFrame, byte lastFrame);
 	void drawClockFrame(byte frameIndex);
+	void drawClockLayer(bool restoreBackground);
 	void drawTalkingOverlay(TalkingOverlayBase talkingOverlayBase, byte frameIndex, byte talkingOverlayVariant);
 	void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset, uint16 descriptorCount, uint16 descriptorIndex);
 	void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset, uint16 descriptorCount, uint16 descriptorIndex);
@@ -221,6 +227,7 @@ private:
 	byte _lastTalkingFrameVariant;
 	byte _deskPrimaryActorFrame;
 	byte _deskSecondaryActorFrame;
+	bool _clockVisible;
 	bool _deskPrimaryActorVisible;
 	bool _deskSecondaryActorVisible;
 	bool _skipRequested;
