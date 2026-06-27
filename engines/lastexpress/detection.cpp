@@ -30,11 +30,6 @@ static const PlainGameDescriptor lastExpressGames[] = {
 	{nullptr, nullptr}
 };
 
-static const DebugChannelDef debugFlagList[] = {
-	{LastExpress::kDebugImGui, "ImGui", "Enable the ImGui debugger"},
-	DEBUG_CHANNEL_END
-};
-
 static const ADGameDescription gameDescriptions[] = {
 
 	// The Last Express (English) - US Broderbund Release
@@ -289,10 +284,6 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "The Last Express (C) 1997 Smoking Car Productions";
-	}
-
-	const DebugChannelDef *getDebugChannels() const override {
-		return debugFlagList;
 	}
 };
 
