@@ -10,7 +10,8 @@ MODULE_OBJS = \
 	scenes/intro/scene9000.o \
 	scenes/intro/scene9010.o \
 	scenes/intro/scene9050.o \
-	scenes/intro/scene9100.o
+	scenes/intro/scene9100.o \
+	scenes/intro/scene9120.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_HOLLYWOOD), DYNAMIC_PLUGIN)
