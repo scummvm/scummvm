@@ -174,6 +174,9 @@ bool Scene7010::load() {
 			!loadStage003SceneRows())
 		return false;
 
+	if (!_hotspots.load(_paletteMask, _metadata, _stage003SmallRows))
+		return false;
+
 	debugC(1, kDebugScene, "Scene 7010 loaded RESOURCE.G01 for non-interactive preview");
 	return true;
 }
@@ -363,11 +366,22 @@ bool Scene7010::loadStage003SceneRows() {
 		return false;
 	}
 
-	file.seek(file.pos() + smallRowBytes);
+	_stage003SmallRows.resize((uint32)(smallRowCount + 1) * kStage003SmallRowSize);
+	memset(_stage003SmallRows.data(), 0, _stage003SmallRows.size());
+	if (file.read(_stage003SmallRows.data() + kStage003SmallRowSize, smallRowBytes) != smallRowBytes) {
+		warning("Failed to read %s stage 701 small text rows", kStage003ArchiveName);
+		return false;
+	}
+
 	_stage003LargeRows.resize(largeRowBytes);
 	if (file.read(_stage003LargeRows.data(), _stage003LargeRows.size()) != _stage003LargeRows.size()) {
 		warning("Failed to read %s stage 701 large text rows", kStage003ArchiveName);
 		return false;
+	}
+
+	for (uint row = 1; row <= smallRowCount; ++row) {
+		for (uint column = 0; column < kStage003SmallRowSize; ++column)
+			_stage003SmallRows[row * kStage003SmallRowSize + column] -= _stage003DecodeKey[column];
 	}
 
 	for (uint row = 0; row < largeRowCount; ++row) {
@@ -375,7 +389,8 @@ bool Scene7010::loadStage003SceneRows() {
 			_stage003LargeRows[row * kStage003LargeRowSize + column] -= _stage003DecodeKey[column];
 	}
 
-	debugC(1, kDebugResources, "Loaded %s stage 701 text rows: largeRows=%u", kStage003ArchiveName, largeRowCount);
+	debugC(1, kDebugResources, "Loaded %s stage 701 text rows: smallRows=%u largeRows=%u",
+		kStage003ArchiveName, smallRowCount, largeRowCount);
 	return true;
 }
 
@@ -722,6 +737,10 @@ bool Scene7010::runFakePlayableLoop() {
 	_secondaryActorFrame = 0;
 	_vm->cursor()->enterInteractiveMode();
 	_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
+	_hoverCaption.reset();
+	_hoverCaption.setCurrentStrip(1);
+	_hoverCaption.refreshNow(_hotspots, _savedFramebuffer, _vm->cursor()->surfaceX(),
+		_vm->cursor()->surfaceY(), kG01InitialViewportXOffset, 0);
 
 	uint32 lastMillis = g_system->getMillis();
 	drawPlayableComposite();
@@ -741,6 +760,8 @@ bool Scene7010::runFakePlayableLoop() {
 
 		advanceFakeGameplayTimers(delta);
 		_vm->cursor()->advance(delta);
+		_hoverCaption.advance(delta, _hotspots, _savedFramebuffer, _vm->cursor()->surfaceX(),
+			_vm->cursor()->surfaceY(), kG01InitialViewportXOffset, 0);
 		drawPlayableComposite();
 		presentFrame();
 	}
@@ -968,6 +989,7 @@ void Scene7010::calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY)
 }
 
 void Scene7010::presentFrame() {
+	_hoverCaption.applyPalette(_paletteCurrent);
 	uploadPalette6Bit(_paletteCurrent);
 
 	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
@@ -978,6 +1000,12 @@ void Scene7010::presentFrame() {
 	}
 
 	drawSpeechOverlay();
+	if (_vm->font() && _vm->font()->isLoaded()) {
+		Graphics::Surface screenSurface;
+		screenSurface.init(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
+			HollywoodEngine::kScreenWidth, _screen.data(), Graphics::PixelFormat::createFormatCLUT8());
+		_hoverCaption.draw(screenSurface, *_vm->font());
+	}
 
 	g_system->copyRectToScreen(_screen.data(), HollywoodEngine::kScreenWidth, 0, 0,
 		HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight);
