@@ -88,6 +88,7 @@ private:
 		kStage003DecodeKeySize = 0x141,
 		kStage003StageOffsetTableSize = 0xff4,
 		kStage003DescriptorTableSize = 0x186a0,
+		kOwner1Resource003RowsOffsetIndex = 0x32,
 		kOwner1SpeechCueDescriptorTableOffset = 0x5f58,
 		kOwner1SpeechCueDescriptorTableSize = 20000,
 		kStage003SmallRowSize = 0x29,
