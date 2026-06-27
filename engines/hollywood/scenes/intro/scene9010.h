@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_POST_INTRO_H
-#define HOLLYWOOD_POST_INTRO_H
+#ifndef HOLLYWOOD_SCENES_INTRO_SCENE9010_H
+#define HOLLYWOOD_SCENES_INTRO_SCENE9010_H
 
 #include "common/array.h"
 
@@ -35,17 +35,17 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-class PostIntroPlayer {
+class Scene9010 {
 public:
-	PostIntroPlayer(HollywoodEngine *vm);
+	Scene9010(HollywoodEngine *vm);
 
 	bool play();
 
 private:
-	bool playStage9010();
-	bool playStage9030();
+	bool playScene9010();
+	bool playScene9030();
 
-	bool loadStage9010Resources();
+	bool loadScene9010Resources();
 	bool loadI01Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
 	bool loadStage003Descriptors();
 	bool loadI03Scene();
@@ -56,14 +56,14 @@ private:
 	bool readI02StreamFrame(Common::File &file);
 	void setI02PaletteFrame(uint frameIndex);
 	void drawResourceBlockList(const Common::Array<byte> &blockList);
-	uint16 getStage9010SpeechSample(byte descriptorIndex) const;
+	uint16 getScene9010SpeechSample(byte descriptorIndex) const;
 	byte nextTalkingFrameVariant();
 
 	void drawCharacterFrame(byte frameIndex);
 	void restoreSpriteBackground(uint16 descriptorIndex);
 	void drawStripSpriteFrame(uint16 descriptorIndex);
 
-	void updateStage9010PaletteFade();
+	void updateScene9010PaletteFade();
 	bool fadeInPalette(uint32 stepMillis);
 	bool fadeOutPalette(uint32 stepMillis);
 	void presentFrame(uint rowOffset = 0, uint xOffset = 0);
@@ -73,7 +73,7 @@ private:
 
 	bool pollEvents();
 	bool delay(uint32 millis);
-	bool delayStage9010(uint32 millis);
+	bool delayScene9010(uint32 millis);
 	void stopAudio();
 
 	uint16 readUint16(const Common::Array<byte> &source, uint offset) const;
@@ -103,11 +103,11 @@ private:
 	bool _alternatePoseActive;
 	byte _characterFrameIndex;
 	byte _lastTalkingFrameVariant;
-	byte _stage9010FadeCountdown;
-	bool _stage9010FadeComplete;
-	uint32 _stage9010FadeAccumulator;
+	byte _scene9010FadeCountdown;
+	bool _scene9010FadeComplete;
+	uint32 _scene9010FadeAccumulator;
 };
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_POST_INTRO_H
+#endif // HOLLYWOOD_SCENES_INTRO_SCENE9010_H

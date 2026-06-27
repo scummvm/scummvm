@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_INTRO_H
-#define HOLLYWOOD_INTRO_H
+#ifndef HOLLYWOOD_SCENES_INTRO_SCENE9000_H
+#define HOLLYWOOD_SCENES_INTRO_SCENE9000_H
 
 #include "common/array.h"
 
@@ -31,9 +31,9 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-class IntroPlayer {
+class Scene9000 {
 public:
-	IntroPlayer(HollywoodEngine *vm);
+	Scene9000(HollywoodEngine *vm);
 
 	bool play();
 
@@ -75,4 +75,4 @@ private:
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_INTRO_H
+#endif // HOLLYWOOD_SCENES_INTRO_SCENE9000_H
