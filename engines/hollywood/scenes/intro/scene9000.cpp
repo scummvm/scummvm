@@ -19,7 +19,7 @@
  *
  */
 
-#include "hollywood/intro.h"
+#include "hollywood/scenes/intro/scene9000.h"
 
 #include "common/debug.h"
 #include "common/events.h"
@@ -37,7 +37,7 @@ static const byte kIntroAnimationDescriptorSequence[] = {
 	12, 13, 14, 15, 16, 17, 18, 19, 20
 };
 
-IntroPlayer::IntroPlayer(HollywoodEngine *vm) :
+Scene9000::Scene9000(HollywoodEngine *vm) :
 		_vm(vm),
 		_music(),
 		_skipRequested(false) {
@@ -48,7 +48,7 @@ IntroPlayer::IntroPlayer(HollywoodEngine *vm) :
 	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
 }
 
-bool IntroPlayer::play() {
+bool Scene9000::play() {
 	if (!load())
 		return false;
 
@@ -71,7 +71,7 @@ bool IntroPlayer::play() {
 	return true;
 }
 
-bool IntroPlayer::load() {
+bool Scene9000::load() {
 	if (!_vm->resources()->readChunkTable(Common::Path(kIntroArchiveName), _chunkTable)) {
 		warning("Failed to read %s header", kIntroArchiveName);
 		return false;
@@ -87,7 +87,7 @@ bool IntroPlayer::load() {
 	return true;
 }
 
-bool IntroPlayer::loadChunk(uint chunkIndex) {
+bool Scene9000::loadChunk(uint chunkIndex) {
 	const uint paletteChunk = chunkIndex * 2;
 	const uint spriteChunk = paletteChunk + 1;
 
@@ -121,7 +121,7 @@ bool IntroPlayer::loadChunk(uint chunkIndex) {
 	return true;
 }
 
-bool IntroPlayer::runChunk() {
+bool Scene9000::runChunk() {
 	byte frameIndex = 0;
 	byte fadeThreshold = 63;
 	bool fadeInComplete = false;
@@ -194,7 +194,7 @@ bool IntroPlayer::runChunk() {
 	return true;
 }
 
-bool IntroPlayer::pollEvents() {
+bool Scene9000::pollEvents() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -218,7 +218,7 @@ bool IntroPlayer::pollEvents() {
 	return false;
 }
 
-bool IntroPlayer::delay(uint32 millis) {
+bool Scene9000::delay(uint32 millis) {
 	uint32 remaining = millis;
 	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
@@ -232,13 +232,13 @@ bool IntroPlayer::delay(uint32 millis) {
 	return _skipRequested || Engine::shouldQuit();
 }
 
-void IntroPlayer::resetChunkState() {
+void Scene9000::resetChunkState() {
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	memset(_frameDecodeBuffer.data(), 0, _frameDecodeBuffer.size());
 	memset(_sceneFramebuffer.data(), 0, _sceneFramebuffer.size());
 }
 
-void IntroPlayer::presentFrame() {
+void Scene9000::presentFrame() {
 	byte palette[0x300];
 	for (uint i = 0; i < ARRAYSIZE(palette); ++i)
 		palette[i] = MIN<byte>(255, _paletteCurrent[i] * 4);
@@ -256,7 +256,7 @@ void IntroPlayer::presentFrame() {
 	g_system->updateScreen();
 }
 
-void IntroPlayer::restoreSpriteBackground(uint16 descriptorIndex) {
+void Scene9000::restoreSpriteBackground(uint16 descriptorIndex) {
 	if (descriptorIndex >= kIntroFrameDescriptorCount)
 		return;
 
@@ -284,7 +284,7 @@ void IntroPlayer::restoreSpriteBackground(uint16 descriptorIndex) {
 	}
 }
 
-void IntroPlayer::drawStripSpriteFrame(uint16 descriptorIndex) {
+void Scene9000::drawStripSpriteFrame(uint16 descriptorIndex) {
 	if (descriptorIndex >= kIntroFrameDescriptorCount)
 		return;
 
@@ -318,14 +318,14 @@ void IntroPlayer::drawStripSpriteFrame(uint16 descriptorIndex) {
 	}
 }
 
-uint16 IntroPlayer::readUint16(uint offset) const {
+uint16 Scene9000::readUint16(uint offset) const {
 	if (offset + 2 > _resourceArena.size())
 		return 0;
 
 	return _resourceArena[offset] | (_resourceArena[offset + 1] << 8);
 }
 
-uint32 IntroPlayer::readUint32(uint offset) const {
+uint32 Scene9000::readUint32(uint offset) const {
 	if (offset + 4 > _resourceArena.size())
 		return 0;
 

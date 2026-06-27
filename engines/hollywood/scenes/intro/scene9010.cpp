@@ -19,7 +19,7 @@
  *
  */
 
-#include "hollywood/post_intro.h"
+#include "hollywood/scenes/intro/scene9010.h"
 
 #include "common/debug.h"
 #include "common/events.h"
@@ -52,7 +52,7 @@ static const byte kPopupSequence[] = {
 	1, 3, 4, 5, 2, 0, 4, 1, 5, 3, 0, 2
 };
 
-PostIntroPlayer::PostIntroPlayer(HollywoodEngine *vm) :
+Scene9010::Scene9010(HollywoodEngine *vm) :
 		_vm(vm),
 		_music(),
 		_speech(),
@@ -60,9 +60,9 @@ PostIntroPlayer::PostIntroPlayer(HollywoodEngine *vm) :
 		_alternatePoseActive(false),
 		_characterFrameIndex(0),
 		_lastTalkingFrameVariant(0xff),
-		_stage9010FadeCountdown(63),
-		_stage9010FadeComplete(false),
-		_stage9010FadeAccumulator(0) {
+		_scene9010FadeCountdown(63),
+		_scene9010FadeComplete(false),
+		_scene9010FadeAccumulator(0) {
 	_paletteSource.resize(kPaletteSize);
 	_paletteCurrent.resize(kPaletteSize);
 	_frameDecodeBuffer.resize(kFrameDecodeBufferSize);
@@ -71,11 +71,11 @@ PostIntroPlayer::PostIntroPlayer(HollywoodEngine *vm) :
 	_stage003Descriptors.resize(kStage003DescriptorTableSize);
 }
 
-bool PostIntroPlayer::play() {
-	if (!playStage9010())
+bool Scene9010::play() {
+	if (!playScene9010())
 		return false;
 
-	if (!_skipRequested && !Engine::shouldQuit() && !playStage9030())
+	if (!_skipRequested && !Engine::shouldQuit() && !playScene9030())
 		return false;
 
 	stopAudio();
@@ -84,17 +84,17 @@ bool PostIntroPlayer::play() {
 	return true;
 }
 
-bool PostIntroPlayer::playStage9010() {
-	if (!loadStage9010Resources())
+bool Scene9010::playScene9010() {
+	if (!loadScene9010Resources())
 		return false;
 
 	_music.playMusicCue(kPostIntroMusicCueId, 100);
 
 	memcpy(_sceneFramebuffer.data(), _frameDecodeBuffer.data(), _frameDecodeBuffer.size());
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
-	_stage9010FadeCountdown = 63;
-	_stage9010FadeComplete = false;
-	_stage9010FadeAccumulator = 0;
+	_scene9010FadeCountdown = 63;
+	_scene9010FadeComplete = false;
+	_scene9010FadeAccumulator = 0;
 	_alternatePoseActive = false;
 	_characterFrameIndex = 0;
 	_lastTalkingFrameVariant = 0xff;
@@ -120,7 +120,7 @@ bool PostIntroPlayer::playStage9010() {
 	return true;
 }
 
-bool PostIntroPlayer::playStage9030() {
+bool Scene9010::playScene9030() {
 	if (!loadI03Scene())
 		return false;
 
@@ -150,7 +150,7 @@ bool PostIntroPlayer::playStage9030() {
 	return true;
 }
 
-bool PostIntroPlayer::loadStage9010Resources() {
+bool Scene9010::loadScene9010Resources() {
 	if (!_vm->resources()->readChunkTable(Common::Path(kI01ArchiveName), _i01ChunkTable)) {
 		warning("Failed to read %s header", kI01ArchiveName);
 		return false;
@@ -178,7 +178,7 @@ bool PostIntroPlayer::loadStage9010Resources() {
 	return true;
 }
 
-bool PostIntroPlayer::loadI01Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
+bool Scene9010::loadI01Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI01ArchiveName), index));
 	if (!stream) {
 		warning("Failed to open %s chunk %u", kI01ArchiveName, index);
@@ -204,7 +204,7 @@ bool PostIntroPlayer::loadI01Chunk(uint index, Common::Array<byte> &destination,
 	return true;
 }
 
-bool PostIntroPlayer::loadStage003Descriptors() {
+bool Scene9010::loadStage003Descriptors() {
 	Common::File file;
 	if (!file.open(Common::Path(kStage003ArchiveName))) {
 		warning("Failed to open %s", kStage003ArchiveName);
@@ -235,7 +235,7 @@ bool PostIntroPlayer::loadStage003Descriptors() {
 	return true;
 }
 
-bool PostIntroPlayer::loadI03Scene() {
+bool Scene9010::loadI03Scene() {
 	Common::File file;
 	if (!file.open(Common::Path(kI03ArchiveName))) {
 		warning("Failed to open %s", kI03ArchiveName);
@@ -282,9 +282,9 @@ bool PostIntroPlayer::loadI03Scene() {
 	return true;
 }
 
-bool PostIntroPlayer::runPoseTransition(bool targetAlternatePose) {
+bool Scene9010::runPoseTransition(bool targetAlternatePose) {
 	if (targetAlternatePose == _alternatePoseActive)
-		return !delayStage9010(2000);
+		return !delayScene9010(2000);
 
 	if (targetAlternatePose) {
 		_characterFrameIndex = 5;
@@ -293,7 +293,7 @@ bool PostIntroPlayer::runPoseTransition(bool targetAlternatePose) {
 			presentFrame();
 			if (_characterFrameIndex == 0x0e)
 				break;
-			if (delayStage9010(75))
+			if (delayScene9010(75))
 				return false;
 			_characterFrameIndex++;
 		}
@@ -307,7 +307,7 @@ bool PostIntroPlayer::runPoseTransition(bool targetAlternatePose) {
 		presentFrame();
 		if (_characterFrameIndex == 0x1c)
 			break;
-		if (delayStage9010(75))
+		if (delayScene9010(75))
 			return false;
 		_characterFrameIndex++;
 	}
@@ -319,8 +319,8 @@ bool PostIntroPlayer::runPoseTransition(bool targetAlternatePose) {
 	return true;
 }
 
-bool PostIntroPlayer::playSpeechExchange(byte descriptorIndex) {
-	const uint16 sampleId = getStage9010SpeechSample(descriptorIndex);
+bool Scene9010::playSpeechExchange(byte descriptorIndex) {
+	const uint16 sampleId = getScene9010SpeechSample(descriptorIndex);
 	const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
 	const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1000;
 	uint32 elapsed = 0;
@@ -332,7 +332,7 @@ bool PostIntroPlayer::playSpeechExchange(byte descriptorIndex) {
 		presentFrame();
 
 		const uint32 step = MIN<uint32>(125, duration - elapsed);
-		if (delayStage9010(step))
+		if (delayScene9010(step))
 			break;
 		elapsed += step;
 	}
@@ -345,10 +345,10 @@ bool PostIntroPlayer::playSpeechExchange(byte descriptorIndex) {
 	if (_skipRequested || Engine::shouldQuit())
 		return false;
 
-	return !delayStage9010(250);
+	return !delayScene9010(250);
 }
 
-bool PostIntroPlayer::playI02Animation() {
+bool Scene9010::playI02Animation() {
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	presentFrame();
 
@@ -384,7 +384,7 @@ bool PostIntroPlayer::playI02Animation() {
 	return true;
 }
 
-bool PostIntroPlayer::readI02StreamFrame(Common::File &file) {
+bool Scene9010::readI02StreamFrame(Common::File &file) {
 	if (_i02FramePayload.size() == 0)
 		return false;
 
@@ -396,7 +396,7 @@ bool PostIntroPlayer::readI02StreamFrame(Common::File &file) {
 	return true;
 }
 
-void PostIntroPlayer::setI02PaletteFrame(uint frameIndex) {
+void Scene9010::setI02PaletteFrame(uint frameIndex) {
 	const uint offset = frameIndex * kPaletteSize;
 	if (offset + kPaletteSize > _i02PaletteTable.size())
 		return;
@@ -405,7 +405,7 @@ void PostIntroPlayer::setI02PaletteFrame(uint frameIndex) {
 	memcpy(_paletteCurrent.data(), _paletteSource.data(), kPaletteSize);
 }
 
-void PostIntroPlayer::drawResourceBlockList(const Common::Array<byte> &blockList) {
+void Scene9010::drawResourceBlockList(const Common::Array<byte> &blockList) {
 	if (blockList.size() < 2)
 		return;
 
@@ -430,7 +430,7 @@ void PostIntroPlayer::drawResourceBlockList(const Common::Array<byte> &blockList
 	}
 }
 
-uint16 PostIntroPlayer::getStage9010SpeechSample(byte descriptorIndex) const {
+uint16 Scene9010::getScene9010SpeechSample(byte descriptorIndex) const {
 	const uint recordOffset = 500 + (descriptorIndex * 5);
 	if (recordOffset + 5 > _stage003Descriptors.size())
 		return 0;
@@ -438,12 +438,12 @@ uint16 PostIntroPlayer::getStage9010SpeechSample(byte descriptorIndex) const {
 	return readUint16(_stage003Descriptors, recordOffset + 3);
 }
 
-byte PostIntroPlayer::nextTalkingFrameVariant() {
+byte Scene9010::nextTalkingFrameVariant() {
 	_lastTalkingFrameVariant = (byte)((_lastTalkingFrameVariant + 1) % 5);
 	return _lastTalkingFrameVariant;
 }
 
-void PostIntroPlayer::drawCharacterFrame(byte frameIndex) {
+void Scene9010::drawCharacterFrame(byte frameIndex) {
 	if (frameIndex >= ARRAYSIZE(kCharacterDescriptorSequence))
 		frameIndex = 0;
 
@@ -452,7 +452,7 @@ void PostIntroPlayer::drawCharacterFrame(byte frameIndex) {
 	drawStripSpriteFrame(descriptorIndex);
 }
 
-void PostIntroPlayer::restoreSpriteBackground(uint16 descriptorIndex) {
+void Scene9010::restoreSpriteBackground(uint16 descriptorIndex) {
 	if (descriptorIndex >= kCharacterFrameDescriptorCount)
 		return;
 
@@ -480,7 +480,7 @@ void PostIntroPlayer::restoreSpriteBackground(uint16 descriptorIndex) {
 	}
 }
 
-void PostIntroPlayer::drawStripSpriteFrame(uint16 descriptorIndex) {
+void Scene9010::drawStripSpriteFrame(uint16 descriptorIndex) {
 	if (descriptorIndex >= kCharacterFrameDescriptorCount)
 		return;
 
@@ -514,8 +514,8 @@ void PostIntroPlayer::drawStripSpriteFrame(uint16 descriptorIndex) {
 	}
 }
 
-void PostIntroPlayer::updateStage9010PaletteFade() {
-	if (_stage9010FadeComplete)
+void Scene9010::updateScene9010PaletteFade() {
+	if (_scene9010FadeComplete)
 		return;
 
 	for (uint paletteIndex = 0; paletteIndex < 256; ++paletteIndex) {
@@ -524,18 +524,18 @@ void PostIntroPlayer::updateStage9010PaletteFade() {
 
 		for (uint channel = 0; channel < 3; ++channel) {
 			const uint offset = (paletteIndex * 3) + channel;
-			if (_paletteSource[offset] >= _stage9010FadeCountdown && _paletteCurrent[offset] < _paletteSource[offset])
+			if (_paletteSource[offset] >= _scene9010FadeCountdown && _paletteCurrent[offset] < _paletteSource[offset])
 				_paletteCurrent[offset]++;
 		}
 	}
 
-	if (_stage9010FadeCountdown == 1)
-		_stage9010FadeComplete = true;
+	if (_scene9010FadeCountdown == 1)
+		_scene9010FadeComplete = true;
 	else
-		_stage9010FadeCountdown--;
+		_scene9010FadeCountdown--;
 }
 
-bool PostIntroPlayer::fadeInPalette(uint32 stepMillis) {
+bool Scene9010::fadeInPalette(uint32 stepMillis) {
 	byte fadeThreshold = 63;
 	bool fadeInComplete = false;
 
@@ -558,7 +558,7 @@ bool PostIntroPlayer::fadeInPalette(uint32 stepMillis) {
 	return _skipRequested || Engine::shouldQuit();
 }
 
-bool PostIntroPlayer::fadeOutPalette(uint32 stepMillis) {
+bool Scene9010::fadeOutPalette(uint32 stepMillis) {
 	byte fadeThreshold = 0;
 	bool fadeOutComplete = false;
 
@@ -581,7 +581,7 @@ bool PostIntroPlayer::fadeOutPalette(uint32 stepMillis) {
 	return _skipRequested || Engine::shouldQuit();
 }
 
-void PostIntroPlayer::presentFrame(uint rowOffset, uint xOffset) {
+void Scene9010::presentFrame(uint rowOffset, uint xOffset) {
 	byte palette[0x300];
 	for (uint i = 0; i < ARRAYSIZE(palette); ++i)
 		palette[i] = MIN<byte>(255, _paletteCurrent[i] * 4);
@@ -604,7 +604,7 @@ void PostIntroPlayer::presentFrame(uint rowOffset, uint xOffset) {
 	g_system->updateScreen();
 }
 
-void PostIntroPlayer::clearFinalSweepBand(uint rowOffset, uint sweepOffset, byte bandWidth) {
+void Scene9010::clearFinalSweepBand(uint rowOffset, uint sweepOffset, byte bandWidth) {
 	const int innerWidth = HollywoodEngine::kScreenWidth - (2 * (int)sweepOffset);
 	if (innerWidth <= 0)
 		return;
@@ -629,7 +629,7 @@ void PostIntroPlayer::clearFinalSweepBand(uint rowOffset, uint sweepOffset, byte
 	}
 }
 
-void PostIntroPlayer::clearSceneFramebufferRun(int y, int x, int width) {
+void Scene9010::clearSceneFramebufferRun(int y, int x, int width) {
 	if (width <= 0 || y < 0 || x < 0)
 		return;
 
@@ -640,7 +640,7 @@ void PostIntroPlayer::clearSceneFramebufferRun(int y, int x, int width) {
 	memset(&_sceneFramebuffer[offset], 0, width);
 }
 
-bool PostIntroPlayer::pollEvents() {
+bool Scene9010::pollEvents() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -666,7 +666,7 @@ bool PostIntroPlayer::pollEvents() {
 	return false;
 }
 
-bool PostIntroPlayer::delay(uint32 millis) {
+bool Scene9010::delay(uint32 millis) {
 	uint32 remaining = millis;
 	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
@@ -680,7 +680,7 @@ bool PostIntroPlayer::delay(uint32 millis) {
 	return _skipRequested || Engine::shouldQuit();
 }
 
-bool PostIntroPlayer::delayStage9010(uint32 millis) {
+bool Scene9010::delayScene9010(uint32 millis) {
 	uint32 remaining = millis;
 	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
@@ -690,10 +690,10 @@ bool PostIntroPlayer::delayStage9010(uint32 millis) {
 		g_system->delayMillis(slice);
 		remaining -= slice;
 
-		_stage9010FadeAccumulator += slice;
-		while (_stage9010FadeAccumulator >= 150) {
-			_stage9010FadeAccumulator -= 150;
-			updateStage9010PaletteFade();
+		_scene9010FadeAccumulator += slice;
+		while (_scene9010FadeAccumulator >= 150) {
+			_scene9010FadeAccumulator -= 150;
+			updateScene9010PaletteFade();
 			presentFrame();
 		}
 	}
@@ -701,19 +701,19 @@ bool PostIntroPlayer::delayStage9010(uint32 millis) {
 	return _skipRequested || Engine::shouldQuit();
 }
 
-void PostIntroPlayer::stopAudio() {
+void Scene9010::stopAudio() {
 	_speech.stop();
 	_music.stop();
 }
 
-uint16 PostIntroPlayer::readUint16(const Common::Array<byte> &source, uint offset) const {
+uint16 Scene9010::readUint16(const Common::Array<byte> &source, uint offset) const {
 	if (offset + 2 > source.size())
 		return 0;
 
 	return source[offset] | (source[offset + 1] << 8);
 }
 
-uint32 PostIntroPlayer::readUint32(const Common::Array<byte> &source, uint offset) const {
+uint32 Scene9010::readUint32(const Common::Array<byte> &source, uint offset) const {
 	if (offset + 4 > source.size())
 		return 0;
 
