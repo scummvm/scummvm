@@ -25,7 +25,9 @@
 #include "hollywood/scenes/intro/scene9010.h"
 #include "hollywood/scenes/intro/scene9050.h"
 #include "hollywood/scenes/intro/scene9100.h"
+#include "hollywood/scenes/intro/scene9110.h"
 #include "hollywood/scenes/intro/scene9120.h"
+#include "hollywood/scenes/playable/scene7000.h"
 #include "hollywood/resource.h"
 
 #include "common/debug.h"
@@ -38,7 +40,10 @@ HollywoodEngine::HollywoodEngine(OSystem *syst, const ADGameDescription *gameDes
 		Engine(syst),
 		_gameDescription(gameDesc),
 		_resources(new ResourceManager()),
-		_font(new HollywoodFont()) {
+		_font(new HollywoodFont()),
+		_introMusic(),
+		_gameplayMusic(),
+		_gameState() {
 }
 
 HollywoodEngine::~HollywoodEngine() {
@@ -72,7 +77,15 @@ Common::Error HollywoodEngine::run() {
 	if (!scene9120.play())
 		return Common::kReadingFailed;
 
-	debugC(1, kDebugGeneral, "Intro presentation completed");
+	Scene9110 scene9110(this);
+	if (!scene9110.play())
+		return Common::kReadingFailed;
+
+	Scene7000 scene7000(this);
+	if (!scene7000.play())
+		return Common::kReadingFailed;
+
+	debugC(1, kDebugGeneral, "Gameplay bootstrap completed; next main-flow state is 0x%04x", gameState().mainFlowStateId);
 	return Common::kNoError;
 }
 

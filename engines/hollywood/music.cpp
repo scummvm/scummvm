@@ -48,29 +48,38 @@ byte percentToMixerVolume(byte volumePercent) {
 	return (byte)((volume * Audio::Mixer::kMaxChannelVolume) / 100);
 }
 
-MusicPlayer::MusicPlayer() {
+MusicPlayer::MusicPlayer() :
+		_archiveName(kIntroMusicArchiveName) {
 }
 
 MusicPlayer::~MusicPlayer() {
 	stop();
 }
 
+void MusicPlayer::setArchive(const Common::Path &archiveName) {
+	if (_archiveName == archiveName)
+		return;
+
+	stop();
+	_archiveName = archiveName;
+}
+
 bool MusicPlayer::playIntroMusic() {
+	setArchive(Common::Path(kIntroMusicArchiveName));
 	return playMusicCue(kIntroMusicCueId);
 }
 
 bool MusicPlayer::playMusicCue(uint16 cueId, byte volumePercent) {
 	stop();
 
-	const Common::Path fileName(kIntroMusicArchiveName);
 	uint32 start = 0;
 	uint32 size = 0;
-	if (!readCueSpan(fileName, cueId, start, size))
+	if (!readCueSpan(_archiveName, cueId, start, size))
 		return false;
 
 	Common::File *file = new Common::File();
-	if (!file->open(fileName)) {
-		warning("Failed to open %s", kIntroMusicArchiveName);
+	if (!file->open(_archiveName)) {
+		warning("Failed to open %s", _archiveName.toString().c_str());
 		delete file;
 		return false;
 	}
@@ -79,7 +88,7 @@ bool MusicPlayer::playMusicCue(uint16 cueId, byte volumePercent) {
 	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(sampleStream, kMusicSampleRate,
 		Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::YES);
 	if (!audioStream) {
-		warning("Failed to create raw stream for %s cue %u", kIntroMusicArchiveName, cueId);
+		warning("Failed to create raw stream for %s cue %u", _archiveName.toString().c_str(), cueId);
 		delete sampleStream;
 		return false;
 	}
@@ -88,7 +97,7 @@ bool MusicPlayer::playMusicCue(uint16 cueId, byte volumePercent) {
 		-1, percentToMixerVolume(volumePercent), 0, DisposeAfterUse::YES);
 
 	debugC(1, kDebugResources, "Started music %s cue %u: offset=%u size=%u",
-		kIntroMusicArchiveName, cueId, start, size);
+		_archiveName.toString().c_str(), cueId, start, size);
 	return true;
 }
 
@@ -103,18 +112,18 @@ bool MusicPlayer::isPlaying() const {
 
 bool MusicPlayer::readCueSpan(const Common::Path &fileName, uint16 cueId, uint32 &start, uint32 &size) const {
 	if ((cueId + 1) * 4 >= kMusicCueTableSize) {
-		warning("Invalid %s cue id %u", kIntroMusicArchiveName, cueId);
+		warning("Invalid %s cue id %u", fileName.toString().c_str(), cueId);
 		return false;
 	}
 
 	Common::File file;
 	if (!file.open(fileName)) {
-		warning("Failed to open %s", kIntroMusicArchiveName);
+		warning("Failed to open %s", fileName.toString().c_str());
 		return false;
 	}
 
 	if (file.size() < (int32)kMusicCueTableSize) {
-		warning("%s is too small for the cue table", kIntroMusicArchiveName);
+		warning("%s is too small for the cue table", fileName.toString().c_str());
 		return false;
 	}
 
@@ -124,7 +133,7 @@ bool MusicPlayer::readCueSpan(const Common::Path &fileName, uint16 cueId, uint32
 
 	if (start >= end || end > (uint32)file.size()) {
 		warning("Invalid %s cue %u span: start=%u end=%u fileSize=%u",
-			kIntroMusicArchiveName, cueId, start, end, (uint)file.size());
+			fileName.toString().c_str(), cueId, start, end, (uint)file.size());
 		return false;
 	}
 
@@ -133,7 +142,7 @@ bool MusicPlayer::readCueSpan(const Common::Path &fileName, uint16 cueId, uint32
 		size--;
 
 	if (size == 0) {
-		warning("%s cue %u is empty", kIntroMusicArchiveName, cueId);
+		warning("%s cue %u is empty", fileName.toString().c_str(), cueId);
 		return false;
 	}
 
