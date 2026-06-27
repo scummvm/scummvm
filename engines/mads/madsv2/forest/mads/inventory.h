@@ -33,6 +33,7 @@ enum {
 	pebbles        =  5,
 	sticks         =  7,
 	twine          =  8,
+	vine_weed      =  9,
 	planks         = 11,
 	elm_leaves     = 12
 };
