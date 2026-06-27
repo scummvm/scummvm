@@ -35,6 +35,8 @@
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
 
+#include <math.h>
+
 namespace Hollywood {
 
 const char *const kG01ArchiveName = "RESOURCE.G01";
@@ -86,6 +88,27 @@ const byte kG01DialogueOverlayMode2FrameMap[] = {
 	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
 };
 const byte kInitialInventoryItems[] = { 1, 2, 5, 7 };
+const byte kActorPathStepDeltaTableSet00[] = {
+	2, 2, 2, 3, 3, 0, 2, 2, 2, 3, 3, 0,
+	6, 7, 7, 5, 5, 5, 4, 6, 6, 5, 3, 4,
+	5, 5, 5, 6, 2, 3, 4, 8, 10, 6, 3, 5,
+	3, 0, 0, 3, 3, 3, 3, 0, 0, 3, 3, 3,
+	4, 8, 10, 6, 3, 5, 5, 5, 5, 6, 2, 3,
+	4, 6, 6, 5, 3, 4, 6, 7, 7, 5, 5, 5
+};
+const byte kActorFacingTurnTable[] = {
+	0, 0, 0, 1, 0, 0, 1, 2, 0, 1, 2, 3, 5, 4, 0, 5, 0, 0,
+	0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 3, 0, 0, 5, 4, 0, 5, 0,
+	1, 0, 0, 1, 0, 0, 0, 0, 0, 3, 0, 0, 3, 4, 0, 1, 0, 5,
+	4, 5, 0, 2, 1, 0, 2, 0, 0, 0, 0, 0, 4, 0, 0, 4, 5, 0,
+	5, 0, 0, 5, 0, 1, 3, 2, 0, 3, 0, 0, 0, 0, 0, 5, 0, 0,
+	0, 0, 0, 0, 1, 0, 0, 1, 2, 4, 3, 0, 4, 0, 0, 0, 0, 0
+};
+const int8 kActorPathAxisDirectionByFacing[] = { -1, 1, 1, 1, -1, -1 };
+const byte kActorInitialCelByFacing[] = { 0, 12, 12, 12, 1, 12 };
+const float kActorPathDiagonalSlopeThreshold = 0.087488f;
+const float kActorFacingSteepSlopeThreshold = 3.732051f;
+const float kActorFacingDiagonalSlopeThreshold = 0.267949f;
 
 Scene7010::Scene7010(HollywoodEngine *vm) :
 		_vm(vm),
@@ -121,6 +144,7 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 		_activeActorWorldY(kG01SueEntryTargetY),
 		_activeActorFacing(kG01SueEntryFacing),
 		_activeActorCel(kG01SueEntryFinalCel),
+		_activeActorDrawOrderMode(0),
 		_secondaryActorFrame(0),
 		_skipRequested(false) {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
@@ -129,6 +153,8 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 	_baseFramebuffer.resize(kFrameBufferSize);
 	_sceneFramebuffer.resize(kFrameBufferSize);
 	_savedFramebuffer.resize(kFrameBufferSize);
+	_fullPaletteRegionMask.resize(kG01PaletteMaskUsedBytes);
+	_walkablePaletteMask.resize(kG01PaletteMaskUsedBytes);
 	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
 	_activeActorRunStreams.resize(kActorFacingCount * kActiveActorFacingRunStride);
 	_secondaryActorRunStreams.resize(kActorFacingCount * kSecondaryActorFacingRunStride);
@@ -137,6 +163,10 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 	_stage003DecodeKey.resize(kStage003DecodeKeySize);
 	_stage003StageBlock.resize(kStage003DescriptorTableSize);
 	_owner1SpeechCueDescriptors.resize(kOwner1SpeechCueDescriptorTableSize);
+	_routeBoundaryPoints.resize(kSceneRouteBoundaryPointCount);
+	_routeSteps.resize(kSceneRouteStepCount);
+	_actorPathStepDeltas.resize(ARRAYSIZE(kActorPathStepDeltaTableSet00));
+	memcpy(_actorPathStepDeltas.data(), kActorPathStepDeltaTableSet00, _actorPathStepDeltas.size());
 	_speechOverlay.visible = false;
 	_speechOverlay.colorIndex = kG01SecondarySpeechTextColor;
 	_speechOverlay.centerX = 0;
@@ -192,6 +222,8 @@ bool Scene7010::load() {
 		warning("%s chunk 3 is shorter than the G01 palette mask table", kG01ArchiveName);
 		return false;
 	}
+	if (!initializeScenePathTables())
+		return false;
 
 	uint32 arenaSize = 0;
 	for (uint i = kG01ArenaFirstChunk; i <= kG01ArenaLastChunk; ++i)
@@ -562,6 +594,30 @@ void Scene7010::expandFillRunsToSavedFramebuffer() {
 	}
 }
 
+bool Scene7010::initializeScenePathTables() {
+	const uint boundaryBytes = kSceneRouteBoundaryPointCount * 4;
+	if (_metadata.size() < kRouteBoundaryPoints + boundaryBytes ||
+			_metadata.size() < kRouteBoundarySteps + kSceneRouteStepCount) {
+		warning("%s chunk 4 is too short for G01 path route tables", kG01ArchiveName);
+		return false;
+	}
+
+	memcpy(_fullPaletteRegionMask.data(), _paletteMask.data(), _fullPaletteRegionMask.size());
+	memcpy(_walkablePaletteMask.data(), _paletteMask.data(), _walkablePaletteMask.size());
+	for (uint i = 0; i < _walkablePaletteMask.size(); ++i) {
+		if (_walkablePaletteMask[i] > 1)
+			_walkablePaletteMask[i] = 0;
+	}
+
+	for (uint i = 0; i < _routeBoundaryPoints.size(); ++i) {
+		const uint offset = kRouteBoundaryPoints + i * 4;
+		_routeBoundaryPoints[i].x = readSint16LE(_metadata, offset);
+		_routeBoundaryPoints[i].y = readSint16LE(_metadata, offset + 2);
+	}
+	memcpy(_routeSteps.data(), _metadata.data() + kRouteBoundarySteps, _routeSteps.size());
+	return true;
+}
+
 void Scene7010::initializePreviewState() {
 	_chunk8FrameIndex = _vm->gameState().currentRandomAmbientMusicTrackId == kG01AmbientMusicCueWithoutChunk9 ? 0x14 : 0;
 	_chunk9AmbientOverlayFrameIndex = 0;
@@ -593,6 +649,7 @@ void Scene7010::initializePreviewState() {
 	_activeActorWorldY = kG01SueEntryTargetY;
 	_activeActorFacing = kG01SueEntryFacing;
 	_activeActorCel = kG01SueEntryFinalCel;
+	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_secondaryActorFrame = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	for (uint i = 0; i < ARRAYSIZE(kInitialInventoryItems); ++i)
@@ -605,7 +662,8 @@ void Scene7010::drawPreviewComposite() {
 }
 
 void Scene7010::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY) {
+		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+		byte actorDrawOrderMode) {
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
 
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[10], 0,
@@ -640,7 +698,12 @@ void Scene7010::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, b
 		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, -1);
 	}
 
-	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
+	if (actorDrawOrderMode == 1) {
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _sceneFramebuffer);
+	} else {
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
+	}
 	const byte chunk8DescriptorIndex = _chunk8FrameIndex < ARRAYSIZE(kG01Chunk8FrameMap) ?
 		kG01Chunk8FrameMap[_chunk8FrameIndex] : 0;
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[8], 0,
@@ -659,7 +722,8 @@ void Scene7010::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, b
 void Scene7010::drawPlayableComposite() {
 	const bool drawSecondaryActor = _speechOverlay.visible;
 	drawCutsceneComposite(true, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
-		drawSecondaryActor, _activeActorFacing, _secondaryActorFrame, _activeActorWorldX, _activeActorWorldY);
+		drawSecondaryActor, _activeActorFacing, _secondaryActorFrame, _activeActorWorldX, _activeActorWorldY,
+		_activeActorDrawOrderMode);
 }
 
 void Scene7010::drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex) {
@@ -768,8 +832,9 @@ void Scene7010::runSueEntryPath() {
 		_activeActorWorldY = y;
 		_activeActorFacing = kG01SueEntryFacing;
 		_activeActorCel = cels[frame];
+		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 		drawCutsceneComposite(true, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
-			false, 0, 0, 0, 0);
+			false, 0, 0, 0, 0, _activeActorDrawOrderMode);
 		presentFrame();
 
 		uint32 waited = 0;
@@ -802,6 +867,7 @@ void Scene7010::runSueEntryPath() {
 	_activeActorWorldY = kG01SueEntryTargetY;
 	_activeActorFacing = kG01SueEntryFacing;
 	_activeActorCel = kG01SueEntryFinalCel;
+	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
 void Scene7010::runJuniorSpeech() {
@@ -822,6 +888,7 @@ void Scene7010::runJuniorSpeech() {
 		_activeActorWorldY = kG01SueEntryTargetY;
 		_activeActorFacing = kG01SueEntryFacing;
 		_activeActorCel = kG01SueEntryFinalCel;
+		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 		drawPlayableComposite();
 		presentFrame();
 
@@ -886,6 +953,7 @@ void Scene7010::prepareGameplayLoop() {
 	_activeActorWorldY = kG01SueEntryTargetY;
 	_activeActorFacing = kG01SueEntryFacing;
 	_activeActorCel = kG01SueEntryFinalCel;
+	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_secondaryActorFrame = 0;
 }
 
@@ -967,16 +1035,29 @@ void Scene7010::processSceneActionClick(const GameplayLoopCursorState &state) {
 	const SceneActionTarget target = _hotspots.actionTarget(itemId);
 	int targetX = target.interactionPoint.x;
 	int targetY = target.interactionPoint.y;
-	byte finalFacing = target.facing;
-	byte finalCel = 0;
+	byte finalFacing = kInvalidFacing;
+	byte finalCel = kInvalidCel;
 
-	if (actionRecord.movementMode == 0 && (target.approachPoint.x != 0 || target.approachPoint.y != 0)) {
-		targetX = target.approachPoint.x;
-		targetY = target.approachPoint.y;
-		finalFacing = target.facing;
-	} else if (actionRecord.movementMode == 3) {
-		finalCel = kInvalidCel;
+	if (actionRecord.movementMode == 0) {
+		const bool atInteractionPoint =
+			_activeActorWorldX == target.interactionPoint.x &&
+			_activeActorWorldY == target.interactionPoint.y;
+		if (atInteractionPoint) {
+			if (_activeActorFacing != target.facing)
+				finalFacing = target.facing;
+		} else {
+			targetX = _activeActorWorldX;
+			targetY = _activeActorWorldY;
+			if (target.approachPoint.x != 0 || target.approachPoint.y != 0) {
+				finalFacing = calculateFacingTowardPoint(_activeActorWorldX, _activeActorWorldY,
+					target.approachPoint.x, target.approachPoint.y);
+			}
+		}
 	}
+	if (actionRecord.movementMode == 1)
+		finalFacing = target.facing;
+	if (actionRecord.movementMode != 3)
+		finalCel = 0;
 
 	walkActiveActorTo(targetX, targetY, finalFacing, finalCel);
 	dispatchSceneAction(actionRecord.actionHandlerId);
@@ -1027,57 +1108,335 @@ void Scene7010::dispatchSceneAction(uint16 handlerId) {
 }
 
 void Scene7010::walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel) {
-	if (targetX == _activeActorWorldX && targetY == _activeActorWorldY) {
-		if (finalFacing != kInvalidFacing)
-			_activeActorFacing = finalFacing;
-		if (finalCel != kInvalidCel)
-			_activeActorCel = finalCel;
+	queueActorPathWithPaletteRegionRouting(_activeActorWorldX, _activeActorWorldY, targetX, targetY,
+		finalFacing, finalCel);
+
+	if (_actorPathFrames.size() <= 1) {
 		drawPlayableComposite();
 		presentFrame();
 		return;
 	}
 
-	const int startX = _activeActorWorldX;
-	const int startY = _activeActorWorldY;
-	byte movementFacing = calculateFacingTowardPoint(startX, startY, targetX, targetY);
-	const uint steps = MAX<uint>(1, MAX<int>(ABS(targetX - startX), ABS(targetY - startY)) / 7);
-
-	for (uint step = 1; step <= steps && !Engine::shouldQuit(); ++step) {
-		_activeActorWorldX = startX + ((targetX - startX) * (int)step) / (int)steps;
-		_activeActorWorldY = startY + ((targetY - startY) * (int)step) / (int)steps;
-		_activeActorFacing = movementFacing;
-		_activeActorCel = (byte)(1 + (step % 12));
+	for (uint frameIndex = 1; frameIndex < _actorPathFrames.size() && !Engine::shouldQuit(); ++frameIndex) {
+		const ActorPathFrame &frame = _actorPathFrames[frameIndex];
+		_activeActorWorldX = frame.worldX;
+		_activeActorWorldY = frame.worldY;
+		_activeActorFacing = frame.facing;
+		_activeActorCel = frame.cel;
+		_activeActorDrawOrderMode = frame.drawOrderMode;
 		waitSceneMillis(kG01ActorPathFrameMillis);
 	}
 
-	_activeActorWorldX = targetX;
-	_activeActorWorldY = targetY;
-	if (finalFacing != kInvalidFacing)
-		_activeActorFacing = finalFacing;
-	else
-		_activeActorFacing = movementFacing;
-	_activeActorCel = finalCel == kInvalidCel ? 0 : finalCel;
 	drawPlayableComposite();
 	presentFrame();
 }
 
 void Scene7010::adjustWalkTargetToFloorMask(int &targetX, int &targetY) const {
 	targetX = CLIP<int>(targetX, 0x16b, 0x268);
-	targetY = CLIP<int>(targetY, 0, HollywoodEngine::kSceneBufferHeight - 1);
 
 	while (targetY < 0x1df) {
 		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
-		if (offset < _savedFramebuffer.size() && _paletteMask[_savedFramebuffer[offset]] != 0)
+		if (offset < _savedFramebuffer.size() && _walkablePaletteMask[_savedFramebuffer[offset]] != 0)
 			return;
 		++targetY;
 	}
 
 	while (targetY > 0) {
 		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
-		if (offset < _savedFramebuffer.size() && _paletteMask[_savedFramebuffer[offset]] != 0)
+		if (offset < _savedFramebuffer.size() && _walkablePaletteMask[_savedFramebuffer[offset]] != 0)
 			return;
 		--targetY;
 	}
+}
+
+void Scene7010::queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
+		byte finalFacing, byte finalCel) {
+	_actorPathFrames.clear();
+	memcpy(_actorPathStepDeltas.data(), kActorPathStepDeltaTableSet00, _actorPathStepDeltas.size());
+
+	ActorPathBuildState state;
+	state.drawOrderMode = _activeActorDrawOrderMode;
+	state.facing = _activeActorFacing;
+	state.cel = nextActorPathCel(_activeActorCel);
+	state.x = startX;
+	state.y = startY;
+	appendActorPathFrame(state);
+
+	byte currentRegion = paletteRegionAt(startX, startY);
+	if (currentRegion == 0)
+		currentRegion = _activeActorDrawOrderMode;
+
+	byte targetRegion = paletteRegionAt(targetX, targetY);
+	if (targetRegion == 0)
+		targetRegion = currentRegion;
+
+	if (currentRegion != targetRegion) {
+		for (uint stepIndex = 0; stepIndex < kScenePaletteRegionRouteStepCount &&
+				currentRegion != targetRegion; ++stepIndex) {
+			const uint routeOffset =
+				((uint)currentRegion * kScenePaletteRegionCount + targetRegion) *
+				kScenePaletteRegionRouteStepCount + stepIndex;
+			if (routeOffset >= _routeSteps.size())
+				break;
+
+			const byte nextRegion = _routeSteps[routeOffset];
+			if (nextRegion == 0 || nextRegion >= kScenePaletteRegionCount)
+				break;
+
+			state.drawOrderMode = currentRegion;
+			const ScenePoint boundary = nextRegion == targetRegion ?
+				bestPaletteRouteBoundaryPoint(state.x, state.y, targetX, targetY, currentRegion, nextRegion) :
+				nearestPaletteRouteBoundaryPoint(state.x, state.y, currentRegion, nextRegion);
+
+			byte segmentFinalFacing = kInvalidFacing;
+			byte segmentFinalCel = kInvalidCel;
+			if (boundary.x == targetX && boundary.y == targetY) {
+				segmentFinalFacing = finalFacing;
+				segmentFinalCel = finalCel;
+			}
+
+			int requestedFacing = -1;
+			bool restoredStepDeltas = false;
+			if (currentRegion == 3 && nextRegion == 2) {
+				memcpy(_actorPathStepDeltas.data() + 12, kActorPathStepDeltaTableSet00 + 48, 12);
+				requestedFacing = 1;
+				restoredStepDeltas = true;
+			}
+			if (currentRegion == 2 && nextRegion == 1 &&
+					state.x < boundary.x && boundary.y <= state.y)
+				requestedFacing = 1;
+
+			buildActorPathFramesBetweenPoints(state, boundary.x, boundary.y,
+				segmentFinalFacing, segmentFinalCel, requestedFacing);
+			if (restoredStepDeltas)
+				memcpy(_actorPathStepDeltas.data(), kActorPathStepDeltaTableSet00, _actorPathStepDeltas.size());
+
+			currentRegion = nextRegion;
+		}
+	}
+
+	int requestedFacing = -1;
+	if (currentRegion == 3 && targetRegion == 3)
+		requestedFacing = 4;
+	if (currentRegion == 1 && targetRegion == 1 && state.x < targetX && targetY <= state.y)
+		requestedFacing = 1;
+
+	state.drawOrderMode = currentRegion;
+	buildActorPathFramesBetweenPoints(state, targetX, targetY, finalFacing, finalCel, requestedFacing);
+
+	if (!_actorPathFrames.empty()) {
+		const ActorPathFrame &lastFrame = _actorPathFrames.back();
+		_activeActorWorldX = lastFrame.worldX;
+		_activeActorWorldY = lastFrame.worldY;
+		_activeActorFacing = lastFrame.facing;
+		_activeActorCel = lastFrame.cel;
+		_activeActorDrawOrderMode = lastFrame.drawOrderMode;
+	}
+}
+
+void Scene7010::buildActorPathFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,
+		byte finalFacing, byte finalCel, int requestedFacing) {
+	if (targetX == state.x && targetY == state.y) {
+		if (finalFacing != kInvalidFacing && state.facing != finalFacing) {
+			for (uint turnStep = 0; turnStep < 3 && state.facing != finalFacing; ++turnStep) {
+				const uint turnOffset = ((uint)state.facing * kActorFacingCount + finalFacing) * 3 + turnStep;
+				state.facing = kActorFacingTurnTable[turnOffset];
+				state.cel = kActorInitialCelByFacing[state.facing];
+				appendActorPathFrame(state);
+				state.cel = nextActorPathCel(state.cel);
+			}
+		}
+		if (finalCel != kInvalidCel)
+			state.cel = finalCel;
+		appendActorPathFrame(state);
+		state.cel = nextActorPathCel(state.cel);
+		return;
+	}
+
+	const byte movementFacing = calculateMovementFacingForPath(state.x, state.y, targetX, targetY, requestedFacing);
+	if (state.facing != movementFacing) {
+		for (uint turnStep = 0; turnStep < 3 && state.facing != movementFacing; ++turnStep) {
+			const uint turnOffset = ((uint)state.facing * kActorFacingCount + movementFacing) * 3 + turnStep;
+			state.facing = kActorFacingTurnTable[turnOffset];
+			state.cel = kActorInitialCelByFacing[state.facing];
+			appendActorPathFrame(state);
+			state.cel = nextActorPathCel(state.cel);
+		}
+	}
+
+	const int startX = state.x;
+	const int startY = state.y;
+	const int principalStart = (movementFacing == 0 || movementFacing == 3) ? startY : startX;
+	const int principalTarget = (movementFacing == 0 || movementFacing == 3) ? targetY : targetX;
+	const uint stepCount = calculateWalkStepCountForAxisDelta(principalStart, principalTarget,
+		movementFacing, state.cel);
+
+	if (stepCount != 0) {
+		for (uint step = 1; step <= stepCount; ++step) {
+			const int delta = actorPathStepDelta(movementFacing, state.cel);
+			if (movementFacing == 0 || movementFacing == 3) {
+				state.y += (startY < targetY) ? delta : -delta;
+				state.x = startX + ((targetX - startX) * (int)step) / (int)stepCount;
+			} else {
+				state.x += (startX < targetX) ? delta : -delta;
+				state.y = startY + ((targetY - startY) * (int)step) / (int)stepCount;
+			}
+			state.facing = movementFacing;
+			appendActorPathFrame(state);
+			state.cel = nextActorPathCel(state.cel);
+		}
+	}
+
+	state.x = targetX;
+	state.y = targetY;
+	if (finalFacing != kInvalidFacing && state.facing != finalFacing) {
+		for (uint turnStep = 0; turnStep < 3 && state.facing != finalFacing; ++turnStep) {
+			const uint turnOffset = ((uint)state.facing * kActorFacingCount + finalFacing) * 3 + turnStep;
+			state.facing = kActorFacingTurnTable[turnOffset];
+			state.cel = kActorInitialCelByFacing[state.facing];
+			appendActorPathFrame(state);
+			state.cel = nextActorPathCel(state.cel);
+		}
+	}
+	if (finalCel != kInvalidCel)
+		state.cel = finalCel;
+	appendActorPathFrame(state);
+	state.cel = nextActorPathCel(state.cel);
+}
+
+void Scene7010::appendActorPathFrame(const ActorPathBuildState &state) {
+	ActorPathFrame frame;
+	frame.drawOrderMode = state.drawOrderMode;
+	frame.facing = state.facing;
+	frame.cel = state.cel;
+	frame.worldX = (int16)CLIP<int>(state.x, -32768, 32767);
+	frame.worldY = (int16)CLIP<int>(state.y, -32768, 32767);
+	_actorPathFrames.push_back(frame);
+}
+
+ScenePoint Scene7010::nearestPaletteRouteBoundaryPoint(int startX, int startY, byte currentRegion, byte nextRegion) const {
+	ScenePoint bestPoint;
+	memset(&bestPoint, 0, sizeof(bestPoint));
+
+	const uint baseIndex = ((uint)currentRegion * kScenePaletteRegionCount + nextRegion) *
+		kScenePaletteRegionBoundaryCandidateCount;
+	float bestScore = 0.0f;
+	for (uint candidate = 0; candidate < kScenePaletteRegionBoundaryCandidateCount; ++candidate) {
+		const uint pointIndex = baseIndex + candidate;
+		if (pointIndex >= _routeBoundaryPoints.size())
+			break;
+
+		const ScenePoint point = _routeBoundaryPoints[pointIndex];
+		const float score = sqrtf((float)ABS(startX - point.x)) + sqrtf((float)ABS(startY - point.y));
+		if (candidate == 0 || score < bestScore) {
+			bestScore = score;
+			bestPoint = point;
+		}
+	}
+
+	return bestPoint;
+}
+
+ScenePoint Scene7010::bestPaletteRouteBoundaryPoint(int startX, int startY, int targetX, int targetY,
+		byte currentRegion, byte targetRegion) const {
+	ScenePoint bestPoint;
+	memset(&bestPoint, 0, sizeof(bestPoint));
+
+	const uint baseIndex = ((uint)currentRegion * kScenePaletteRegionCount + targetRegion) *
+		kScenePaletteRegionBoundaryCandidateCount;
+	float bestScore = 0.0f;
+	for (uint candidate = 0; candidate < kScenePaletteRegionBoundaryCandidateCount; ++candidate) {
+		const uint pointIndex = baseIndex + candidate;
+		if (pointIndex >= _routeBoundaryPoints.size())
+			break;
+
+		const ScenePoint point = _routeBoundaryPoints[pointIndex];
+		const float score =
+			sqrtf((float)ABS(startX - point.x)) +
+			sqrtf((float)ABS(startY - point.y)) +
+			sqrtf((float)ABS(targetX - point.x)) +
+			sqrtf((float)ABS(targetY - point.y));
+		if (candidate == 0 || score < bestScore) {
+			bestScore = score;
+			bestPoint = point;
+		}
+	}
+
+	return bestPoint;
+}
+
+byte Scene7010::paletteRegionAt(int x, int y) const {
+	if (x < 0 || y < 0 || x >= HollywoodEngine::kSceneBufferWidth || y >= HollywoodEngine::kSceneBufferHeight ||
+			_fullPaletteRegionMask.empty())
+		return 0;
+
+	const uint offset = y * HollywoodEngine::kSceneBufferWidth + x;
+	if (offset >= _savedFramebuffer.size())
+		return 0;
+
+	return _fullPaletteRegionMask[_savedFramebuffer[offset]];
+}
+
+byte Scene7010::calculateMovementFacingForPath(int fromX, int fromY, int toX, int toY, int requestedFacing) const {
+	if (requestedFacing >= 0)
+		return (byte)requestedFacing;
+
+	if (toX == fromX)
+		return fromY < toY ? 3 : 0;
+
+	const float slope = (float)ABS(toY - fromY) / (float)MAX<int>(1, ABS(toX - fromX));
+	if (fromX < toX) {
+		if (toY < fromY) {
+			if (slope < 1.0f)
+				return slope <= kActorPathDiagonalSlopeThreshold ? 2 : 1;
+			return 0;
+		}
+		return slope < 1.0f ? 2 : 3;
+	}
+
+	if (toY < fromY) {
+		if (slope > 1.0f)
+			return 0;
+		return slope > kActorPathDiagonalSlopeThreshold ? 5 : 4;
+	}
+	return slope > 1.0f ? 3 : 4;
+}
+
+uint Scene7010::calculateWalkStepCountForAxisDelta(int startAxis, int targetAxis, byte facing, byte cel) const {
+	if (facing >= kActorFacingCount)
+		return 0;
+
+	const int direction = kActorPathAxisDirectionByFacing[facing];
+	int remaining = (targetAxis - startAxis) * direction;
+	if (remaining <= 0)
+		return 0;
+
+	uint steps = 0;
+	byte nextCel = cel;
+	while (actorPathStepDelta(facing, nextCel) < (uint)remaining) {
+		remaining -= (int)actorPathStepDelta(facing, nextCel);
+		nextCel = nextActorPathCel(nextCel);
+		++steps;
+		if (steps > 300)
+			break;
+	}
+
+	return steps;
+}
+
+byte Scene7010::nextActorPathCel(byte cel) const {
+	return cel == 12 ? 1 : (byte)(cel + 1);
+}
+
+uint Scene7010::actorPathStepDelta(byte facing, byte cel) const {
+	if (facing >= kActorFacingCount || cel == 0 || cel > 12)
+		return 0;
+
+	const uint offset = (uint)facing * 12 + cel - 1;
+	if (offset >= _actorPathStepDeltas.size())
+		return 0;
+
+	return _actorPathStepDeltas[offset];
 }
 
 byte Scene7010::calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const {
@@ -1087,13 +1446,15 @@ byte Scene7010::calculateFacingTowardPoint(int fromX, int fromY, int toX, int to
 	const float slope = (float)ABS(toY - fromY) / (float)MAX<int>(1, ABS(toX - fromX));
 	if (toX > fromX) {
 		if (toY < fromY)
-			return slope > 1.0f ? 0 : (slope > 0.33f ? 1 : 2);
-		return slope > 1.0f ? 3 : 2;
+			return slope > kActorFacingSteepSlopeThreshold ? 0 :
+				(slope > kActorFacingDiagonalSlopeThreshold ? 1 : 2);
+		return slope > kActorFacingSteepSlopeThreshold ? 3 : 2;
 	}
 
 	if (toY < fromY)
-		return slope > 1.0f ? 0 : (slope > 0.33f ? 5 : 4);
-	return slope > 1.0f ? 3 : 4;
+		return slope > kActorFacingSteepSlopeThreshold ? 0 :
+			(slope > kActorFacingDiagonalSlopeThreshold ? 5 : 4);
+	return slope > kActorFacingSteepSlopeThreshold ? 3 : 4;
 }
 
 void Scene7010::advanceDialogueOverlay(uint32 delta) {
