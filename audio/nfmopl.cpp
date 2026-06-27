@@ -32,7 +32,10 @@
 #include "audio/fmopl.h"
 #include "audio/nfmopl.h"
 
+#ifdef ATARI
 #include <hwinfo.h>
+#endif
+
 #include <nfmoplshadowregs.h>
 
 #ifndef RELEASE_BUILD
@@ -134,7 +137,10 @@ OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _dev
 	debug("NfmOPL::RealChip create");
 	debug("Requesting hardware info");
 #endif
+
+#ifdef ATARI
 	Supexec(scOsUpdateHardwareInfo);
+#endif
 
 	// defaults
 	_ifaceCfg.deviceType = eFmDriverType::FMD_UNDEFINED;
@@ -453,8 +459,11 @@ OPL::OPL(Config::OplType type, enum NfmOPL::OplDevice deviceType): _type(type), 
 	debug("NfmOPL::EmulatedChip create");
 	debug("Requesting hardware info");
 #endif
-	Supexec(scOsUpdateHardwareInfo);
 
+#ifdef ATARI
+	Supexec(scOsUpdateHardwareInfo);
+#endif
+	
 	// defaults
 	_ifaceCfg.deviceType = eFmDriverType::FMD_UNDEFINED;
 	_ifaceCfg.soundchip = CM_UNDEFINED;
