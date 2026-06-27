@@ -2,11 +2,11 @@ MODULE := engines/hollywood
 
 MODULE_OBJS = \
 	hollywood.o \
-	intro.o \
 	metaengine.o \
 	music.o \
-	post_intro.o \
-	resource.o
+	resource.o \
+	scenes/intro/scene9000.o \
+	scenes/intro/scene9010.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_HOLLYWOOD), DYNAMIC_PLUGIN)

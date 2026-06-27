@@ -20,8 +20,8 @@
  */
 
 #include "hollywood/hollywood.h"
-#include "hollywood/intro.h"
-#include "hollywood/post_intro.h"
+#include "hollywood/scenes/intro/scene9000.h"
+#include "hollywood/scenes/intro/scene9010.h"
 #include "hollywood/resource.h"
 
 #include "common/debug.h"
@@ -44,15 +44,15 @@ Common::Error HollywoodEngine::run() {
 	initGraphics(kScreenWidth, kScreenHeight);
 
 	debugC(1, kDebugGeneral, "Hollywood Monsters engine initialized");
-	IntroPlayer intro(this);
-	if (!intro.play())
+	Scene9000 scene9000(this);
+	if (!scene9000.play())
 		return Common::kReadingFailed;
 
-	PostIntroPlayer postIntro(this);
-	if (!postIntro.play())
+	Scene9010 scene9010(this);
+	if (!scene9010.play())
 		return Common::kReadingFailed;
 
-	debugC(1, kDebugGeneral, "Intro playback completed");
+	debugC(1, kDebugGeneral, "Intro presentation completed");
 	return Common::kNoError;
 }
 
