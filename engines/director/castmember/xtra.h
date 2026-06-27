@@ -41,6 +41,10 @@ public:
 
 	uint32 getCastDataSize() override;
 	void writeCastData(Common::SeekableWriteStream *writeStream) override;
+
+private:
+	Common::String _xtraSymbol;
+	Common::Array<byte> _xtraData;
 };
 
 } // End of namespace Director

@@ -35,6 +35,30 @@ XtraCastMember::XtraCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		stream.hexdump(stream.size());
 	}
 
+	CastMemberInfo *ci = getInfo();
+
+	if (ci && ci->isExternal) {
+		warning("STUB: XtraCastMember::XtraCastMember(): External Xtra cast members not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
+	} else {
+		uint32 symbolLen = stream.readUint32BE();
+		_xtraSymbol = stream.readString(0, symbolLen);
+
+		// TODO: Lookup synmbol
+
+		uint32 xtraDataLen = stream.readUint32BE();
+		xtraDataLen = MIN<int>(xtraDataLen, (int)(stream.size() - stream.pos()));
+		_xtraData = Common::Array<byte>(xtraDataLen);
+		stream.read(_xtraData.data(), xtraDataLen);
+
+		debugC(3, kDebugLoading, "  XtraCastMember: xtraSymbol: '%s', xtraDataLen: %d", _xtraSymbol.c_str(), xtraDataLen);
+
+		if (debugChannelSet(5, kDebugLoading)) {
+			Common::hexdump(_xtraData.data(), xtraDataLen);
+		}
+
+		// TODO: Process data in the Xtra
+	}
+
 	warning("STUB: XtraCastMember::XtraCastMember(): Xtra cast members not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 }
 
