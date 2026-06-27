@@ -32,6 +32,7 @@ public:
 	MusicPlayer();
 	~MusicPlayer();
 
+	void setArchive(const Common::Path &archiveName);
 	bool playIntroMusic();
 	bool playMusicCue(uint16 cueId, byte volumePercent = 100);
 	void stop();
@@ -41,6 +42,7 @@ private:
 	bool readCueSpan(const Common::Path &fileName, uint16 cueId, uint32 &start, uint32 &size) const;
 
 	Audio::SoundHandle _musicHandle;
+	Common::Path _archiveName;
 };
 
 class SpeechPlayer {
