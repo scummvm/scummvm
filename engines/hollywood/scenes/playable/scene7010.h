@@ -67,12 +67,33 @@ private:
 		Common::Array<Common::String> lines;
 	};
 
+	struct ActorPathFrame {
+		byte drawOrderMode;
+		byte facing;
+		byte cel;
+		int16 worldX;
+		int16 worldY;
+	};
+
+	struct ActorPathBuildState {
+		byte drawOrderMode;
+		byte facing;
+		byte cel;
+		int x;
+		int y;
+	};
+
 	enum {
 		kFrameBufferSize = 0x78000,
 		kG01InitialRequiredChunkCount = 19,
 		kG01ArenaFirstChunk = 5,
 		kG01ArenaLastChunk = 18,
 		kG01PaletteMaskUsedBytes = 0x100,
+		kScenePaletteRegionCount = 21,
+		kScenePaletteRegionBoundaryCandidateCount = 3,
+		kScenePaletteRegionRouteStepCount = 19,
+		kSceneRouteBoundaryPointCount = kScenePaletteRegionCount * kScenePaletteRegionCount * kScenePaletteRegionBoundaryCandidateCount,
+		kSceneRouteStepCount = kScenePaletteRegionCount * kScenePaletteRegionCount * kScenePaletteRegionRouteStepCount,
 		kResource000TableByteCount = 400,
 		kResource000ActorSet00TableEntry = 0xd0,
 		kResource000Owner1PaletteTableEntry = 0x108,
@@ -107,10 +128,12 @@ private:
 	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
 	bool loadArenaChunk(uint index);
 	void expandFillRunsToSavedFramebuffer();
+	bool initializeScenePathTables();
 	void initializePreviewState();
 	void drawPreviewComposite();
 	void drawCutsceneComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY);
+		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+		byte actorDrawOrderMode = 0);
 	void drawPlayableComposite();
 	void drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY, int minimumYExclusive);
 	int drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY);
@@ -139,6 +162,19 @@ private:
 	void dispatchSceneAction(uint16 handlerId);
 	void walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel);
 	void adjustWalkTargetToFloorMask(int &targetX, int &targetY) const;
+	void queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
+		byte finalFacing, byte finalCel);
+	void buildActorPathFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,
+		byte finalFacing, byte finalCel, int requestedFacing);
+	void appendActorPathFrame(const ActorPathBuildState &state);
+	ScenePoint nearestPaletteRouteBoundaryPoint(int startX, int startY, byte currentRegion, byte nextRegion) const;
+	ScenePoint bestPaletteRouteBoundaryPoint(int startX, int startY, int targetX, int targetY,
+		byte currentRegion, byte targetRegion) const;
+	byte paletteRegionAt(int x, int y) const;
+	byte calculateMovementFacingForPath(int fromX, int fromY, int toX, int toY, int requestedFacing) const;
+	uint calculateWalkStepCountForAxisDelta(int startAxis, int targetAxis, byte facing, byte cel) const;
+	byte nextActorPathCel(byte cel) const;
+	uint actorPathStepDelta(byte facing, byte cel) const;
 	byte calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const;
 	void applySceneStateToHotspotsAndPatches(byte selector);
 	bool hasInventoryItem(byte itemId) const;
@@ -199,6 +235,8 @@ private:
 	Common::Array<byte> _savedFramebuffer;
 	Common::Array<byte> _fillRuns;
 	Common::Array<byte> _paletteMask;
+	Common::Array<byte> _fullPaletteRegionMask;
+	Common::Array<byte> _walkablePaletteMask;
 	Common::Array<byte> _metadata;
 	Common::Array<byte> _resourceArena;
 	Common::Array<byte> _screen;
@@ -214,6 +252,10 @@ private:
 	Common::Array<byte> _stage003LargeRows;
 	Common::Array<byte> _owner1SpeechCueDescriptors;
 	Common::Array<byte> _owner1LargeRows;
+	Common::Array<ScenePoint> _routeBoundaryPoints;
+	Common::Array<byte> _routeSteps;
+	Common::Array<ActorPathFrame> _actorPathFrames;
+	Common::Array<byte> _actorPathStepDeltas;
 	SceneHotspotTable _hotspots;
 	SpeechPlayer _speech;
 	SpeechOverlay _speechOverlay;
@@ -252,6 +294,7 @@ private:
 	int _activeActorWorldY;
 	byte _activeActorFacing;
 	byte _activeActorCel;
+	byte _activeActorDrawOrderMode;
 	byte _secondaryActorFrame;
 	bool _skipRequested;
 };
