@@ -23,6 +23,8 @@
 #define HOLLYWOOD_SCENES_INTRO_SCENE9100_H
 
 #include "common/array.h"
+#include "common/file.h"
+#include "common/random.h"
 
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
@@ -55,21 +57,54 @@ private:
 		bool animateForegroundActor;
 	};
 
+	struct PopupDescriptor {
+		uint16 textRecordId;
+		byte continuationCount;
+		uint16 voiceSampleId;
+	};
+
+	struct ActorSpriteDescriptor {
+		uint32 runStreamOffset;
+		uint32 opaqueRunCount;
+		uint32 paletteRunCount;
+		int16 anchorX;
+		int16 anchorY;
+		uint16 width;
+		uint16 height;
+	};
+
+	struct ActorBank {
+		Common::Array<byte> runStreams;
+		Common::Array<ActorSpriteDescriptor> descriptors;
+	};
+
 	bool load();
 	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
 	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
 	bool loadArenaChunk(uint index);
 	bool loadScratchChunk(uint index, uint32 destinationOffset);
 	bool loadStage003Descriptors();
+	bool loadActorResources();
+	bool loadActorBank(Common::File &file, const uint32 *offsets, const uint32 *sizes, uint offsetTableIndex, ActorBank &bank);
+	bool loadActorPalette(Common::File &file, const uint32 *offsets, uint offsetTableIndex, Common::Array<byte> &palette);
 
+	void applyActorPalette(const Common::Array<byte> &palette, byte highlightRed, byte highlightGreen, byte highlightBlue);
+	void runEntryActorAnimations();
+	void showRonEntryActor();
+	void showSueEntryActor();
+	void playEntryActorAnimation(const ActorBank &bank, int worldX, int worldY, Common::Array<byte> &baseFramebuffer);
+	void drawActorSpriteFrame(const ActorBank &bank, byte facing, byte cel, int worldX, int worldY);
 	void runOpeningPrelude();
 	void runCinematicSequence();
 	void runEndingWipe();
-	void runConversationStep(uint16 textBankIndex, byte descriptorIndex, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor);
-	void waitForSpeechOrDelay(uint32 fallbackMillis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor);
+	void runConversationStep(uint16 textBankIndex, byte descriptorIndex, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor = false, byte insetTalkBaseFrame = 0);
+	void waitForSpeechOrDelay(uint32 fallbackMillis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor = false, byte insetTalkBaseFrame = 0);
 
 	void drawInitialForegroundFrame();
 	void drawForegroundActorFrame(byte frameIndex);
+	void drawInsetActorFrame(byte frameIndex);
+	void animateForegroundFrames(byte firstFrame, byte lastFrame);
+	void animateInsetFrames(byte firstFrame, byte lastFrame);
 	void drawClockFrame(byte frameIndex);
 	void drawTalkingOverlay(TalkingOverlayBase talkingOverlayBase, byte frameIndex, byte talkingOverlayVariant);
 	void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset, uint16 descriptorCount, uint16 descriptorIndex);
@@ -88,18 +123,21 @@ private:
 
 	bool pollEvents();
 	bool delay(uint32 millis);
-	bool delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor);
+	bool delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor = false, byte insetTalkBaseFrame = 0);
 	void stopAudio();
 
+	byte nextTalkingFrameVariant();
 	uint32 getSegmentOffset(byte segmentIndex) const;
-	uint16 getStage003VoiceSample(uint16 textBankIndex, byte descriptorIndex) const;
+	PopupDescriptor getStage003PopupDescriptor(uint16 textBankIndex, byte descriptorIndex) const;
 	uint16 readUint16(const Common::Array<byte> &source, uint offset) const;
+	int16 readSint16(const Common::Array<byte> &source, uint offset) const;
 	uint32 readUint32(const Common::Array<byte> &source, uint offset) const;
 
 	static const uint kFrameDecodeBufferSize = 0x78000;
 	static const uint kPaletteSize = 0x300;
 	static const uint kResourceChunkCount = 40;
 	static const uint kI10ForegroundDescriptorCount = 0x24;
+	static const uint kI10InsetDescriptorCount = 9;
 	static const uint kI10ClockDescriptorCount = 0x3c;
 	static const uint kI10TalkingOverlayDescriptorCount = 10;
 	static const uint kFrameDescriptorSize = 14;
@@ -110,6 +148,7 @@ private:
 	HollywoodEngine *_vm;
 	MusicPlayer _music;
 	SpeechPlayer _speech;
+	Common::RandomSource _random;
 	ResourceChunkTable _i10ChunkTable;
 	uint32 _resourceChunkOffsets[kResourceChunkCount];
 	Common::Array<byte> _paletteDefault;
@@ -122,12 +161,18 @@ private:
 	Common::Array<byte> _savedFramebuffer;
 	Common::Array<byte> _screen;
 	Common::Array<byte> _stage003Descriptors;
+	ActorBank _actorBankB4;
+	ActorBank _actorBank00;
+	Common::Array<byte> _actorPaletteOwner0;
+	Common::Array<byte> _actorPaletteOwner1;
 	uint32 _resourceArenaCursor;
 	uint32 _lastClockFrameMillis;
 	uint32 _lastTalkingFrameMillis;
 	byte _foregroundActorFrame;
+	byte _foregroundTalkBaseFrame;
 	byte _clockFrame;
 	byte _talkingFrame;
+	byte _lastTalkingFrameVariant;
 	bool _skipRequested;
 };
 
