@@ -90,6 +90,7 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 		_lastTalkingFrameVariant(0xff),
 		_deskPrimaryActorFrame(0),
 		_deskSecondaryActorFrame(0),
+		_clockVisible(false),
 		_deskPrimaryActorVisible(false),
 		_deskSecondaryActorVisible(false),
 		_subtitle(),
@@ -616,7 +617,7 @@ void Scene9100::runSueEntrySequence() {
 	_foregroundTalkBaseFrame = 23;
 	_deskPrimaryActorVisible = true;
 	animateDeskPrimaryStaticFrames(0, 2);
-	drawPersistentDeskActors();
+	drawOfficeCompositeLayers();
 	presentFrame();
 	runConversationStep(1, 7, kTalkingOverlayNone, 0, false, false, kSueSecondarySpeech);
 	if (_skipRequested || Engine::shouldQuit())
@@ -625,7 +626,7 @@ void Scene9100::runSueEntrySequence() {
 	runSueEntryPath();
 	_deskSecondaryActorVisible = true;
 	animateDeskSecondaryStaticFrames(0, 5);
-	drawPersistentDeskActors();
+	drawOfficeCompositeLayers();
 	presentFrame();
 }
 
@@ -1010,13 +1011,27 @@ void Scene9100::drawForegroundActorFrame(byte frameIndex) {
 		return;
 
 	_foregroundActorFrame = frameIndex;
-	const uint16 descriptorIndex = kI10ForegroundFrameRemap[frameIndex];
-	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
-	drawPersistentDeskActors();
+	restoreForegroundActorLayer();
+	drawOfficeCompositeLayers();
 }
 
-void Scene9100::drawDeskStaticActorFrame(uint32 baseOffset, uint16 descriptorCount, byte frameIndex, bool restoreBackground) {
+void Scene9100::restoreForegroundActorLayer() {
+	if (_foregroundActorFrame >= ARRAYSIZE(kI10ForegroundFrameRemap))
+		return;
+
+	const uint16 descriptorIndex = kI10ForegroundFrameRemap[_foregroundActorFrame];
+	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
+}
+
+void Scene9100::drawForegroundActorLayer() {
+	if (_foregroundActorFrame >= ARRAYSIZE(kI10ForegroundFrameRemap))
+		return;
+
+	const uint16 descriptorIndex = kI10ForegroundFrameRemap[_foregroundActorFrame];
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
+}
+
+void Scene9100::drawDeskActorLayer(uint32 baseOffset, uint16 descriptorCount, byte frameIndex, bool restoreBackground) {
 	if (frameIndex >= descriptorCount)
 		return;
 
@@ -1027,21 +1042,43 @@ void Scene9100::drawDeskStaticActorFrame(uint32 baseOffset, uint16 descriptorCou
 
 void Scene9100::drawDeskPrimaryStaticFrame(byte frameIndex, bool restoreBackground) {
 	_deskPrimaryActorFrame = MIN<byte>(frameIndex, kI10DeskPrimaryStaticDescriptorCount - 1);
-	drawDeskStaticActorFrame(kDeskPrimaryStaticBase, kI10DeskPrimaryStaticDescriptorCount,
-		_deskPrimaryActorFrame, restoreBackground);
+	if (restoreBackground)
+		drawDeskPrimaryStaticLayer(true);
+	drawOfficeCompositeLayers();
 }
 
 void Scene9100::drawDeskSecondaryStaticFrame(byte frameIndex, bool restoreBackground) {
 	_deskSecondaryActorFrame = MIN<byte>(frameIndex, kI10DeskSecondaryStaticDescriptorCount - 1);
-	drawDeskStaticActorFrame(kDeskSecondaryStaticBase, kI10DeskSecondaryStaticDescriptorCount,
+	if (restoreBackground)
+		drawDeskSecondaryStaticLayer(true);
+	drawOfficeCompositeLayers();
+}
+
+void Scene9100::drawDeskPrimaryStaticLayer(bool restoreBackground) {
+	if (!_deskPrimaryActorVisible)
+		return;
+
+	drawDeskActorLayer(kDeskPrimaryStaticBase, kI10DeskPrimaryStaticDescriptorCount,
+		_deskPrimaryActorFrame, restoreBackground);
+}
+
+void Scene9100::drawDeskSecondaryStaticLayer(bool restoreBackground) {
+	if (!_deskSecondaryActorVisible)
+		return;
+
+	drawDeskActorLayer(kDeskSecondaryStaticBase, kI10DeskSecondaryStaticDescriptorCount,
 		_deskSecondaryActorFrame, restoreBackground);
 }
 
 void Scene9100::drawPersistentDeskActors() {
-	if (_deskSecondaryActorVisible)
-		drawDeskSecondaryStaticFrame(_deskSecondaryActorFrame, false);
-	if (_deskPrimaryActorVisible)
-		drawDeskPrimaryStaticFrame(_deskPrimaryActorFrame, false);
+	drawDeskSecondaryStaticLayer(false);
+	drawDeskPrimaryStaticLayer(false);
+}
+
+void Scene9100::drawOfficeCompositeLayers() {
+	drawForegroundActorLayer();
+	drawPersistentDeskActors();
+	drawClockLayer(false);
 }
 
 void Scene9100::animateForegroundFrames(byte firstFrame, byte lastFrame) {
@@ -1065,7 +1102,6 @@ void Scene9100::animateDeskPrimaryStaticFrames(byte firstFrame, byte lastFrame) 
 void Scene9100::animateDeskSecondaryStaticFrames(byte firstFrame, byte lastFrame) {
 	for (byte frame = firstFrame; frame <= lastFrame && !_skipRequested && !Engine::shouldQuit(); ++frame) {
 		drawDeskSecondaryStaticFrame(frame);
-		drawPersistentDeskActors();
 		presentFrame();
 		if (delayFrame(50, kTalkingOverlayNone, 0, false, true))
 			return;
@@ -1074,7 +1110,17 @@ void Scene9100::animateDeskSecondaryStaticFrames(byte firstFrame, byte lastFrame
 
 void Scene9100::drawClockFrame(byte frameIndex) {
 	_clockFrame = frameIndex % kI10ClockDescriptorCount;
-	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[9], 0, kI10ClockDescriptorCount, _clockFrame);
+	_clockVisible = true;
+	drawClockLayer(true);
+	drawOfficeCompositeLayers();
+}
+
+void Scene9100::drawClockLayer(bool restoreBackground) {
+	if (!_clockVisible)
+		return;
+
+	if (restoreBackground)
+		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[9], 0, kI10ClockDescriptorCount, _clockFrame);
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[9], 0, kI10ClockDescriptorCount, _clockFrame);
 }
 
