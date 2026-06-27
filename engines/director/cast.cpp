@@ -2148,6 +2148,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	if (member->_type == kCastPalette)
 		member->load();
 
+	ci->isExternal = castInfo.flags & 1;
 	ci->autoHilite = castInfo.flags & 2;
 	ci->scriptId = castInfo.scriptId;
 	if (ci->scriptId != 0)

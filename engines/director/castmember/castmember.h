@@ -167,6 +167,7 @@ struct CastMemberInfo {
 	uint32 flags;
 	uint16 count;
 	bool autoHilite;
+	bool isExternal;
 	uint32 scriptId;
 
 	// List items
@@ -197,6 +198,7 @@ struct CastMemberInfo {
 	CastMemberInfo() : autoHilite(false), scriptId(0) {
 		memset(xtraGuid, 0, 16);
 		memset(guid, 0, 16);
+		isExternal = false;
 		creationTime = 0;
 		modifiedTime = 0;
 		imageQuality = 0;

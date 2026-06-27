@@ -103,8 +103,10 @@ void drawBitmapCMprops(BitmapCastMember *member) {
 			if (ImGui::BeginTable("##BitmapPlaybackProperties", 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
 
 				if (info == nullptr) {
+					showProperty("isExternal", "No Info");
 					showProperty("autohilite", "No Info");
 				} else {
+					showPropertyBool("isExternal", info->isExternal);
 					showPropertyBool("autoHilite", info->autoHilite);
 				}
 
