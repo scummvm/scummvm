@@ -90,9 +90,10 @@ private:
 
 	void applyActorPalette(const Common::Array<byte> &palette, byte highlightRed, byte highlightGreen, byte highlightBlue);
 	void runEntryActorAnimations();
-	void showRonEntryActor();
 	void showSueEntryActor();
 	void playEntryActorAnimation(const ActorBank &bank, int worldX, int worldY, Common::Array<byte> &baseFramebuffer);
+	void runRonEntryConversation();
+	void drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis);
 	void drawActorSpriteFrame(const ActorBank &bank, byte facing, byte cel, int worldX, int worldY);
 	void runOpeningPrelude();
 	void runCinematicSequence();
