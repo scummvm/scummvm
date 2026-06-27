@@ -21,6 +21,7 @@
 
 #include "hollywood/hollywood.h"
 #include "hollywood/intro.h"
+#include "hollywood/post_intro.h"
 #include "hollywood/resource.h"
 
 #include "common/debug.h"
@@ -45,6 +46,10 @@ Common::Error HollywoodEngine::run() {
 	debugC(1, kDebugGeneral, "Hollywood Monsters engine initialized");
 	IntroPlayer intro(this);
 	if (!intro.play())
+		return Common::kReadingFailed;
+
+	PostIntroPlayer postIntro(this);
+	if (!postIntro.play())
 		return Common::kReadingFailed;
 
 	debugC(1, kDebugGeneral, "Intro playback completed");

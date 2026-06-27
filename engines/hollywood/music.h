@@ -33,6 +33,7 @@ public:
 	~MusicPlayer();
 
 	bool playIntroMusic();
+	bool playMusicCue(uint16 cueId, byte volumePercent = 100);
 	void stop();
 	bool isPlaying() const;
 
@@ -40,6 +41,23 @@ private:
 	bool readCueSpan(const Common::Path &fileName, uint16 cueId, uint32 &start, uint32 &size) const;
 
 	Audio::SoundHandle _musicHandle;
+};
+
+class SpeechPlayer {
+public:
+	SpeechPlayer();
+	~SpeechPlayer();
+
+	bool playSample(uint16 sampleId, byte volumePercent = 100);
+	void stop();
+	bool isPlaying() const;
+	uint32 lastSampleDurationMillis() const { return _lastSampleDurationMillis; }
+
+private:
+	bool readSampleSpan(uint16 sampleId, uint32 &start, uint32 &size) const;
+
+	Audio::SoundHandle _speechHandle;
+	uint32 _lastSampleDurationMillis;
 };
 
 } // End of namespace Hollywood

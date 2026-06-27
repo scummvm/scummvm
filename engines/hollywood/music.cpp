@@ -34,8 +34,16 @@ namespace Hollywood {
 
 static const char *const kIntroMusicArchiveName = "RESOURCE.M09";
 static const uint16 kIntroMusicCueId = 0x000d;
+static const char *const kSpeechArchiveName = "RESOURCE.004";
 static const uint kMusicCueTableSize = 0x190;
 static const int kMusicSampleRate = 11025;
+static const uint kSpeechCueTableSize = 0x3e80;
+static const int kSpeechSampleRate = 22050;
+
+static byte percentToMixerVolume(byte volumePercent) {
+	const uint volume = MIN<uint>(volumePercent, 100);
+	return (byte)((volume * Audio::Mixer::kMaxChannelVolume) / 100);
+}
 
 MusicPlayer::MusicPlayer() {
 }
@@ -45,12 +53,16 @@ MusicPlayer::~MusicPlayer() {
 }
 
 bool MusicPlayer::playIntroMusic() {
+	return playMusicCue(kIntroMusicCueId);
+}
+
+bool MusicPlayer::playMusicCue(uint16 cueId, byte volumePercent) {
 	stop();
 
 	const Common::Path fileName(kIntroMusicArchiveName);
 	uint32 start = 0;
 	uint32 size = 0;
-	if (!readCueSpan(fileName, kIntroMusicCueId, start, size))
+	if (!readCueSpan(fileName, cueId, start, size))
 		return false;
 
 	Common::File *file = new Common::File();
@@ -64,16 +76,16 @@ bool MusicPlayer::playIntroMusic() {
 	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(sampleStream, kMusicSampleRate,
 		Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::YES);
 	if (!audioStream) {
-		warning("Failed to create raw stream for %s cue %u", kIntroMusicArchiveName, kIntroMusicCueId);
+		warning("Failed to create raw stream for %s cue %u", kIntroMusicArchiveName, cueId);
 		delete sampleStream;
 		return false;
 	}
 
 	g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, audioStream,
-		-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
+		-1, percentToMixerVolume(volumePercent), 0, DisposeAfterUse::YES);
 
-	debugC(1, kDebugResources, "Started intro music %s cue %u: offset=%u size=%u",
-		kIntroMusicArchiveName, kIntroMusicCueId, start, size);
+	debugC(1, kDebugResources, "Started music %s cue %u: offset=%u size=%u",
+		kIntroMusicArchiveName, cueId, start, size);
 	return true;
 }
 
@@ -123,6 +135,88 @@ bool MusicPlayer::readCueSpan(const Common::Path &fileName, uint16 cueId, uint32
 	}
 
 	return true;
+}
+
+SpeechPlayer::SpeechPlayer() :
+		_lastSampleDurationMillis(0) {
+}
+
+SpeechPlayer::~SpeechPlayer() {
+	stop();
+}
+
+bool SpeechPlayer::playSample(uint16 sampleId, byte volumePercent) {
+	stop();
+	_lastSampleDurationMillis = 0;
+
+	uint32 start = 0;
+	uint32 size = 0;
+	if (!readSampleSpan(sampleId, start, size))
+		return false;
+
+	Common::File *file = new Common::File();
+	if (!file->open(Common::Path(kSpeechArchiveName))) {
+		warning("Failed to open %s", kSpeechArchiveName);
+		delete file;
+		return false;
+	}
+
+	Common::SeekableReadStream *sampleStream = new Common::SeekableSubReadStream(file, start, start + size, DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(sampleStream, kSpeechSampleRate,
+		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	if (!audioStream) {
+		warning("Failed to create raw stream for %s sample %u", kSpeechArchiveName, sampleId);
+		delete sampleStream;
+		return false;
+	}
+
+	_lastSampleDurationMillis = (uint32)(((uint64)size * 1000) / kSpeechSampleRate);
+	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, audioStream,
+		-1, percentToMixerVolume(volumePercent), 0, DisposeAfterUse::YES);
+
+	debugC(1, kDebugResources, "Started speech %s sample %u: offset=%u size=%u duration=%u ms",
+		kSpeechArchiveName, sampleId, start, size, _lastSampleDurationMillis);
+	return true;
+}
+
+void SpeechPlayer::stop() {
+	if (isPlaying())
+		g_system->getMixer()->stopHandle(_speechHandle);
+}
+
+bool SpeechPlayer::isPlaying() const {
+	return g_system && g_system->getMixer() && g_system->getMixer()->isSoundHandleActive(_speechHandle);
+}
+
+bool SpeechPlayer::readSampleSpan(uint16 sampleId, uint32 &start, uint32 &size) const {
+	if ((sampleId + 1) * 4 >= kSpeechCueTableSize) {
+		warning("Invalid %s sample id %u", kSpeechArchiveName, sampleId);
+		return false;
+	}
+
+	Common::File file;
+	if (!file.open(Common::Path(kSpeechArchiveName))) {
+		warning("Failed to open %s", kSpeechArchiveName);
+		return false;
+	}
+
+	if (file.size() < (int32)kSpeechCueTableSize) {
+		warning("%s is too small for the cue table", kSpeechArchiveName);
+		return false;
+	}
+
+	file.seek(sampleId * 4);
+	start = file.readUint32LE();
+	const uint32 end = file.readUint32LE();
+
+	if (start >= end || end > (uint32)file.size()) {
+		warning("Invalid %s sample %u span: start=%u end=%u fileSize=%u",
+			kSpeechArchiveName, sampleId, start, end, (uint)file.size());
+		return false;
+	}
+
+	size = end - start;
+	return size != 0;
 }
 
 } // End of namespace Hollywood
