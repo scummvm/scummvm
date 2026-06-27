@@ -28,6 +28,7 @@
 #include "hollywood/scenes/intro/scene9110.h"
 #include "hollywood/scenes/intro/scene9120.h"
 #include "hollywood/scenes/playable/scene7000.h"
+#include "hollywood/scenes/playable/scene7010.h"
 #include "hollywood/resource.h"
 
 #include "common/debug.h"
@@ -85,7 +86,13 @@ Common::Error HollywoodEngine::run() {
 	if (!scene7000.play())
 		return Common::kReadingFailed;
 
-	debugC(1, kDebugGeneral, "Gameplay bootstrap completed; next main-flow state is 0x%04x", gameState().mainFlowStateId);
+	if (gameState().mainFlowStateId == 0x1b62) {
+		Scene7010 scene7010(this);
+		if (!scene7010.play())
+			return Common::kReadingFailed;
+	}
+
+	debugC(1, kDebugGeneral, "Gameplay preview completed; current main-flow state is 0x%04x", gameState().mainFlowStateId);
 	return Common::kNoError;
 }
 
