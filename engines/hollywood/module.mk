@@ -2,6 +2,7 @@ MODULE := engines/hollywood
 
 MODULE_OBJS = \
 	font.o \
+	gameplay/cursor.o \
 	graphics.o \
 	hollywood.o \
 	metaengine.o \
