@@ -3,6 +3,7 @@ MODULE := engines/hollywood
 MODULE_OBJS = \
 	font.o \
 	gameplay/cursor.o \
+	gameplay/game_loop.o \
 	gameplay/hotspots.o \
 	graphics.o \
 	hollywood.o \
