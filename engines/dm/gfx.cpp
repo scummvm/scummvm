@@ -1055,6 +1055,23 @@ void DisplayMan::fillScreenBox(Box &box, Color color) {
 		memset(_bitmapScreen + y * _screenWidth + box._rect.left, color, sizeof(byte) * width);
 }
 
+void DisplayMan::shadeScreenBox(Box *box, Color color) {
+	if (!box)
+		return;
+
+	int16 x1 = MAX<int16>(0, box->_rect.left);
+	int16 x2 = MIN<int16>(_screenWidth - 1, box->_rect.right);
+	int16 y1 = MAX<int16>(0, box->_rect.top);
+	int16 y2 = MIN<int16>(_screenHeight - 1, box->_rect.bottom);
+
+	for (int16 y = y1; y <= y2; ++y) {
+		for (int16 x = x1; x <= x2; ++x) {
+			if ((x + y) % 2 == 0)
+				_bitmapScreen[y * _screenWidth + x] = color;
+		}
+	}
+}
+
 void DisplayMan::fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 byteWidth, int16 height) {
 	for (int16 y = box._rect.top; y < box._rect.bottom + 1; ++y) // + 1 for inclusive boundaries
 		memset(destBitmap + y * byteWidth * 2 + box._rect.left, color, sizeof(byte) * (box._rect.right - box._rect.left + 1)); // + 1 for inclusive boundaries
