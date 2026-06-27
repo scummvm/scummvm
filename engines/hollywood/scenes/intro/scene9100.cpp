@@ -52,6 +52,7 @@ static const uint kActorOwner0PaletteOffsetIndex = 0x33;
 static const uint kActorBank00OffsetIndex = 0x34;
 static const uint kActorOwner1PaletteOffsetIndex = 0x42;
 static const uint kActorEntryFrameDelayMillis = 90;
+static const uint32 kRonEntryPathDurationMillis = 4200;
 
 static const byte kI10ForegroundFrameRemap[] = {
 	0, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 13,
@@ -427,17 +428,6 @@ void Scene9100::runEntryActorAnimations() {
 	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
 }
 
-void Scene9100::showRonEntryActor() {
-	Common::Array<byte> baseFramebuffer;
-	baseFramebuffer.resize(_sceneFramebuffer.size());
-	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
-
-	applyActorPalette(_actorPaletteOwner0, 0x3f, 0x3f, 0x3f);
-	playEntryActorAnimation(_actorBankB4, 0xc0, 0x191, baseFramebuffer);
-
-	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
-}
-
 void Scene9100::showSueEntryActor() {
 	Common::Array<byte> baseFramebuffer;
 	baseFramebuffer.resize(_sceneFramebuffer.size());
@@ -470,6 +460,111 @@ void Scene9100::playEntryActorAnimation(const ActorBank &bank, int worldX, int w
 	}
 
 	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
+}
+
+void Scene9100::runRonEntryConversation() {
+	const PopupDescriptor popup = getStage003PopupDescriptor(0, 2);
+	const uint segmentCount = MAX<uint>(1, popup.continuationCount);
+
+	Common::Array<byte> baseFramebuffer;
+	baseFramebuffer.resize(_sceneFramebuffer.size());
+	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
+
+	uint32 pathElapsed = 0;
+	uint32 lastPathFrameMillis = g_system->getMillis();
+	byte foregroundFrame = _foregroundTalkBaseFrame;
+	bool pathPresented = false;
+
+	for (uint segmentIndex = 0; segmentIndex < segmentCount && !_skipRequested && !Engine::shouldQuit(); ++segmentIndex) {
+		const uint16 sampleId = popup.voiceSampleId + segmentIndex;
+		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
+		const uint32 fallbackMillis = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1200;
+		uint32 elapsed = 0;
+
+		if (!pathPresented) {
+			memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
+			drawForegroundActorFrame(foregroundFrame);
+			drawRonEntryPathFrame(0, kRonEntryPathDurationMillis);
+			presentFrame();
+			pathPresented = true;
+		}
+
+		while (!_skipRequested && !Engine::shouldQuit()) {
+			const bool speechActive = _speech.isPlaying();
+			if (!speechActive && elapsed >= fallbackMillis)
+				break;
+
+			if (pollEvents())
+				return;
+
+			const uint32 slice = 10;
+			g_system->delayMillis(slice);
+			elapsed += slice;
+
+			const uint32 now = g_system->getMillis();
+			bool dirty = false;
+			bool clockDirty = false;
+			if (now - _lastClockFrameMillis >= 1000) {
+				_lastClockFrameMillis = now;
+				clockDirty = true;
+				dirty = true;
+			}
+			if (now - _lastTalkingFrameMillis >= 125) {
+				_lastTalkingFrameMillis = now;
+				foregroundFrame = (byte)(_foregroundTalkBaseFrame + nextTalkingFrameVariant());
+				dirty = true;
+			}
+			if (pathElapsed < kRonEntryPathDurationMillis && now - lastPathFrameMillis >= 60) {
+				pathElapsed = MIN<uint32>(kRonEntryPathDurationMillis, pathElapsed + (now - lastPathFrameMillis));
+				lastPathFrameMillis = now;
+				dirty = true;
+			}
+
+			if (dirty) {
+				memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
+				if (clockDirty)
+					drawClockFrame((byte)((_clockFrame + 1) % kI10ClockDescriptorCount));
+				drawForegroundActorFrame(foregroundFrame);
+				drawRonEntryPathFrame(pathElapsed, kRonEntryPathDurationMillis);
+				presentFrame();
+			}
+		}
+
+		if (segmentIndex + 1 < segmentCount && !_skipRequested && !Engine::shouldQuit())
+			delayFrame(375, kTalkingOverlayNone, 0, true, true);
+	}
+
+	if (!_skipRequested && !Engine::shouldQuit()) {
+		memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
+		drawForegroundActorFrame(_foregroundTalkBaseFrame);
+		drawRonEntryPathFrame(kRonEntryPathDurationMillis, kRonEntryPathDurationMillis);
+		presentFrame();
+	}
+}
+
+void Scene9100::drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis) {
+	const int originalStartX = 0x307;
+	const int originalStartY = 0x1d4;
+	const int targetX = 0xc0;
+	const int targetY = 0x191;
+	const uint startDescriptorIndex = (4 * kActorCelsPerFacing) + 1;
+	if (startDescriptorIndex >= _actorBankB4.descriptors.size())
+		return;
+
+	const ActorSpriteDescriptor &startDescriptor = _actorBankB4.descriptors[startDescriptorIndex];
+	const int startSpriteLeft = MAX<int>(0, HollywoodEngine::kScreenWidth - (int)startDescriptor.width - 8);
+	const int fixedViewportStartX = startSpriteLeft + startDescriptor.anchorX;
+
+	const int visibleStartY = originalStartY +
+		((originalStartX - fixedViewportStartX) * (targetY - originalStartY)) / (originalStartX - targetX);
+	const uint32 clampedElapsed = MIN<uint32>(pathElapsedMillis, pathDurationMillis);
+	const int x = fixedViewportStartX + ((targetX - fixedViewportStartX) * (int)clampedElapsed) / (int)pathDurationMillis;
+	const int y = visibleStartY + ((targetY - visibleStartY) * (int)clampedElapsed) / (int)pathDurationMillis;
+
+	const bool finalFrame = clampedElapsed >= pathDurationMillis;
+	const byte facing = finalFrame ? 5 : 4;
+	const byte cel = finalFrame ? 0 : (byte)(1 + ((clampedElapsed / 60) % 12));
+	drawActorSpriteFrame(_actorBankB4, facing, cel, x, y);
 }
 
 void Scene9100::drawActorSpriteFrame(const ActorBank &bank, byte facing, byte cel, int worldX, int worldY) {
@@ -550,8 +645,7 @@ void Scene9100::runOpeningPrelude() {
 	}
 
 	runConversationStep(0, 1, kTalkingOverlayNone, 0, false, true);
-	showRonEntryActor();
-	runConversationStep(0, 2, kTalkingOverlayNone, 0, true, true);
+	runRonEntryConversation();
 }
 
 void Scene9100::runCinematicSequence() {
