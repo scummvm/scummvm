@@ -86,8 +86,7 @@ private:
 	bool loadScratchChunkTo(uint index, Common::Array<byte> &destination, uint32 destinationOffset);
 	bool loadStage003Descriptors();
 	bool loadActorResources();
-	bool loadActorBank(Common::File &file, const uint32 *offsets, const uint32 *sizes, uint offsetTableIndex, ActorBank &bank);
-	bool loadActorPalette(Common::File &file, const uint32 *offsets, uint offsetTableIndex, Common::Array<byte> &palette);
+	bool loadI10ActorBank(uint runStreamChunkIndex, uint descriptorChunkIndex, ActorBank &bank);
 
 	void applyActorHighlightColor(byte highlightRed, byte highlightGreen, byte highlightBlue);
 	void runEntryActorAnimations();
@@ -119,7 +118,6 @@ private:
 	void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset, uint16 descriptorCount, uint16 descriptorIndex);
 	void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset, uint16 descriptorCount, uint16 descriptorIndex);
 	void drawResourceBlockListToBuffer(uint32 baseOffset, Common::Array<byte> &destination);
-	void restoreResourceBlocksToFrameAndScene(uint32 baseOffset);
 	void expandFillRunsToSavedFramebuffer();
 	void restoreOfficeFrameAndPresent();
 	void applyBackgroundMode(const CinematicStep &step);
@@ -176,10 +174,8 @@ private:
 	Common::Array<byte> _savedFramebuffer;
 	Common::Array<byte> _screen;
 	Common::Array<byte> _stage003Descriptors;
-	ActorBank _actorBankB4;
-	ActorBank _actorBank00;
-	Common::Array<byte> _actorPaletteOwner0;
-	Common::Array<byte> _actorPaletteOwner1;
+	ActorBank _actorBankI10Ron;
+	ActorBank _actorBankI10Sue;
 	uint32 _resourceArenaCursor;
 	uint32 _lastClockFrameMillis;
 	uint32 _lastTalkingFrameMillis;

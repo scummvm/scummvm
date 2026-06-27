@@ -33,23 +33,21 @@ namespace Hollywood {
 
 static const char *const kI10ArchiveName = "RESOURCE.I10";
 static const char *const kStage003ArchiveName = "RESOURCE.003";
-static const char *const kResource000ArchiveName = "RESOURCE.000";
 static const uint16 kScene9100MusicCueId = 0x000f;
 static const uint kStage003DecodeKeySize = 0x141;
 static const uint kStage003StageOffsetTableSize = 0xff4;
 static const uint kStage910Index = 910;
-static const uint kResource000OffsetCount = 100;
-static const uint kActorBankChunkCount = 14;
 static const uint kActorFacingCount = 6;
 static const uint kActorCelsPerFacing = 13;
 static const uint kActorDescriptorCount = kActorFacingCount * kActorCelsPerFacing;
 static const uint kActorSpriteDescriptorSize = 28;
 static const uint kActorFacingRunStride = 160000;
-static const uint kActorPaletteByteCount = 0x90;
-static const uint kActorBankB4OffsetIndex = 0;
-static const uint kActorOwner0PaletteOffsetIndex = 0x33;
-static const uint kActorBank00OffsetIndex = 0x34;
-static const uint kActorOwner1PaletteOffsetIndex = 0x42;
+static const uint kI10RonActorRunChunk = 23;
+static const uint kI10RonActorDescriptorChunk = 24;
+static const uint kI10SueActorRunChunk = 25;
+static const uint kI10SueActorDescriptorChunk = 26;
+static const byte kI10SceneActorFacing = 5;
+static const uint kI10SceneActorDescriptorBase = kI10SceneActorFacing * kActorCelsPerFacing;
 static const uint kActorEntryFrameDelayMillis = 90;
 static const uint32 kRonEntryPathDurationMillis = 4200;
 static const uint32 kSueEntryPathDurationMillis = 3600;
@@ -89,8 +87,6 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
 	_stage003Descriptors.resize(kStage003DescriptorTableSize);
 	_secondaryScratchBuffer.resize(kSecondaryScratchBufferSize);
-	_actorPaletteOwner0.resize(kActorPaletteByteCount);
-	_actorPaletteOwner1.resize(kActorPaletteByteCount);
 }
 
 bool Scene9100::play() {
@@ -116,7 +112,7 @@ bool Scene9100::play() {
 
 	if (!_skipRequested && !Engine::shouldQuit()) {
 		expandFillRunsToSavedFramebuffer();
-		restoreResourceBlocksToFrameAndScene(_resourceChunkOffsets[16]);
+		drawResourceBlockListToBuffer(_resourceChunkOffsets[16], _sceneFramebuffer);
 		presentFrame();
 		runOpeningPrelude();
 	}
@@ -148,7 +144,9 @@ bool Scene9100::load() {
 	}
 	if (!_i10ChunkTable.isValidChunk(18) || !_i10ChunkTable.isValidChunk(19) ||
 			!_i10ChunkTable.isValidChunk(20) || !_i10ChunkTable.isValidChunk(21) ||
-			!_i10ChunkTable.isValidChunk(22)) {
+			!_i10ChunkTable.isValidChunk(22) || !_i10ChunkTable.isValidChunk(23) ||
+			!_i10ChunkTable.isValidChunk(24) || !_i10ChunkTable.isValidChunk(25) ||
+			!_i10ChunkTable.isValidChunk(26)) {
 		warning("%s is missing required scene 9100 scratch chunks", kI10ArchiveName);
 		return false;
 	}
@@ -312,79 +310,68 @@ bool Scene9100::loadStage003Descriptors() {
 }
 
 bool Scene9100::loadActorResources() {
-	Common::File file;
-	if (!file.open(Common::Path(kResource000ArchiveName))) {
-		warning("Failed to open %s", kResource000ArchiveName);
-		return false;
-	}
-
-	if (file.size() < 1 + (kResource000OffsetCount * 8)) {
-		warning("%s header is too small", kResource000ArchiveName);
-		return false;
-	}
-
-	file.readByte();
-
-	uint32 offsets[kResource000OffsetCount];
-	uint32 sizes[kResource000OffsetCount];
-	for (uint i = 0; i < kResource000OffsetCount; ++i)
-		offsets[i] = file.readUint32LE();
-	for (uint i = 0; i < kResource000OffsetCount; ++i)
-		sizes[i] = file.readUint32LE();
-
-	if (!loadActorBank(file, offsets, sizes, kActorBankB4OffsetIndex, _actorBankB4) ||
-			!loadActorPalette(file, offsets, kActorOwner0PaletteOffsetIndex, _actorPaletteOwner0) ||
-			!loadActorBank(file, offsets, sizes, kActorBank00OffsetIndex, _actorBank00) ||
-			!loadActorPalette(file, offsets, kActorOwner1PaletteOffsetIndex, _actorPaletteOwner1))
-		return false;
-
-	return true;
+	return loadI10ActorBank(kI10RonActorRunChunk, kI10RonActorDescriptorChunk, _actorBankI10Ron) &&
+		loadI10ActorBank(kI10SueActorRunChunk, kI10SueActorDescriptorChunk, _actorBankI10Sue);
 }
 
-bool Scene9100::loadActorBank(Common::File &file, const uint32 *offsets, const uint32 *sizes, uint offsetTableIndex, ActorBank &bank) {
-	if (offsetTableIndex + kActorBankChunkCount > kResource000OffsetCount) {
-		warning("%s actor bank offset index %u is out of range", kResource000ArchiveName, offsetTableIndex);
+bool Scene9100::loadI10ActorBank(uint runStreamChunkIndex, uint descriptorChunkIndex, ActorBank &bank) {
+	Common::ScopedPtr<Common::SeekableReadStream> runStream(_vm->resources()->createChunkReadStream(Common::Path(kI10ArchiveName), runStreamChunkIndex));
+	if (!runStream) {
+		warning("Failed to open %s actor run chunk %u", kI10ArchiveName, runStreamChunkIndex);
 		return false;
 	}
 
 	bank.runStreams.resize(kActorFacingCount * kActorFacingRunStride);
 	memset(bank.runStreams.data(), 0, bank.runStreams.size());
 	bank.descriptors.resize(kActorDescriptorCount);
+	for (uint i = 0; i < bank.descriptors.size(); ++i) {
+		bank.descriptors[i].runStreamOffset = 0;
+		bank.descriptors[i].opaqueRunCount = 0;
+		bank.descriptors[i].paletteRunCount = 0;
+		bank.descriptors[i].anchorX = 0;
+		bank.descriptors[i].anchorY = 0;
+		bank.descriptors[i].width = 0;
+		bank.descriptors[i].height = 0;
+	}
 
-	if (!file.seek(offsets[offsetTableIndex])) {
-		warning("Failed to seek %s actor bank at offset %u", kResource000ArchiveName, offsets[offsetTableIndex]);
+	if (runStream->size() > kActorFacingRunStride) {
+		warning("%s actor run chunk %u is too large", kI10ArchiveName, runStreamChunkIndex);
 		return false;
 	}
 
-	for (uint facing = 0; facing < kActorFacingCount; ++facing) {
-		const uint32 chunkSize = sizes[offsetTableIndex + facing];
-		if (chunkSize > kActorFacingRunStride) {
-			warning("%s actor bank %u facing %u is too large", kResource000ArchiveName, offsetTableIndex, facing);
-			return false;
-		}
-
-		if (file.read(bank.runStreams.data() + (facing * kActorFacingRunStride), chunkSize) != chunkSize) {
-			warning("Failed to read %s actor bank %u facing %u", kResource000ArchiveName, offsetTableIndex, facing);
-			return false;
-		}
+	const uint runBase = kI10SceneActorFacing * kActorFacingRunStride;
+	if (runStream->read(bank.runStreams.data() + runBase, runStream->size()) != (uint32)runStream->size()) {
+		warning("Failed to read %s actor run chunk %u", kI10ArchiveName, runStreamChunkIndex);
+		return false;
 	}
 
-	const uint32 descriptorByteCount = sizes[offsetTableIndex + kActorFacingCount];
-	if (descriptorByteCount < kActorDescriptorCount * kActorSpriteDescriptorSize) {
-		warning("%s actor bank %u descriptor block is too small", kResource000ArchiveName, offsetTableIndex);
+	Common::ScopedPtr<Common::SeekableReadStream> descriptorStream(_vm->resources()->createChunkReadStream(Common::Path(kI10ArchiveName), descriptorChunkIndex));
+	if (!descriptorStream) {
+		warning("Failed to open %s actor descriptor chunk %u", kI10ArchiveName, descriptorChunkIndex);
+		return false;
+	}
+
+	if (descriptorStream->size() % kActorSpriteDescriptorSize != 0) {
+		warning("%s actor descriptor chunk %u has an invalid size", kI10ArchiveName, descriptorChunkIndex);
+		return false;
+	}
+
+	const uint descriptorCount = descriptorStream->size() / kActorSpriteDescriptorSize;
+	if (descriptorCount > kActorCelsPerFacing) {
+		warning("%s actor descriptor chunk %u has too many descriptors", kI10ArchiveName, descriptorChunkIndex);
 		return false;
 	}
 
 	Common::Array<byte> descriptorData;
-	descriptorData.resize(descriptorByteCount);
-	if (file.read(descriptorData.data(), descriptorByteCount) != descriptorByteCount) {
-		warning("Failed to read %s actor bank %u descriptors", kResource000ArchiveName, offsetTableIndex);
+	descriptorData.resize(descriptorStream->size());
+	if (descriptorStream->read(descriptorData.data(), descriptorData.size()) != descriptorData.size()) {
+		warning("Failed to read %s actor descriptor chunk %u", kI10ArchiveName, descriptorChunkIndex);
 		return false;
 	}
 
-	for (uint i = 0; i < kActorDescriptorCount; ++i) {
+	for (uint i = 0; i < descriptorCount; ++i) {
 		const uint offset = i * kActorSpriteDescriptorSize;
-		ActorSpriteDescriptor &descriptor = bank.descriptors[i];
+		ActorSpriteDescriptor &descriptor = bank.descriptors[kI10SceneActorDescriptorBase + i];
 		descriptor.runStreamOffset = readUint32(descriptorData, offset);
 		descriptor.opaqueRunCount = readUint32(descriptorData, offset + 4);
 		descriptor.paletteRunCount = readUint32(descriptorData, offset + 8);
@@ -394,27 +381,7 @@ bool Scene9100::loadActorBank(Common::File &file, const uint32 *offsets, const u
 		descriptor.height = readUint16(descriptorData, offset + 24);
 	}
 
-	debugC(1, kDebugResources, "Loaded %s actor bank at offset index %u", kResource000ArchiveName, offsetTableIndex);
-	return true;
-}
-
-bool Scene9100::loadActorPalette(Common::File &file, const uint32 *offsets, uint offsetTableIndex, Common::Array<byte> &palette) {
-	if (offsetTableIndex >= kResource000OffsetCount) {
-		warning("%s actor palette offset index %u is out of range", kResource000ArchiveName, offsetTableIndex);
-		return false;
-	}
-
-	if (!file.seek(offsets[offsetTableIndex])) {
-		warning("Failed to seek %s actor palette at offset %u", kResource000ArchiveName, offsets[offsetTableIndex]);
-		return false;
-	}
-
-	palette.resize(kActorPaletteByteCount);
-	if (file.read(palette.data(), kActorPaletteByteCount) != kActorPaletteByteCount) {
-		warning("Failed to read %s actor palette at offset index %u", kResource000ArchiveName, offsetTableIndex);
-		return false;
-	}
-
+	debugC(1, kDebugResources, "Loaded %s actor chunks %u/%u", kI10ArchiveName, runStreamChunkIndex, descriptorChunkIndex);
 	return true;
 }
 
@@ -430,7 +397,7 @@ void Scene9100::runEntryActorAnimations() {
 	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
 
 	applyActorHighlightColor(0x3f, 0x3f, 0x3f);
-	playEntryActorAnimation(_actorBankB4, 0x307, 0x1d4, baseFramebuffer);
+	playEntryActorAnimation(_actorBankI10Ron, 0x307, 0x1d4, baseFramebuffer);
 
 	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
 }
@@ -441,7 +408,7 @@ void Scene9100::showSueEntryActor() {
 	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
 
 	applyActorHighlightColor(0x3f, 0x28, 0x32);
-	playEntryActorAnimation(_actorBank00, 0x130, 0x172, baseFramebuffer);
+	playEntryActorAnimation(_actorBankI10Sue, 0x130, 0x172, baseFramebuffer);
 
 	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
 }
@@ -556,11 +523,11 @@ void Scene9100::drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 	const int originalStartY = 0x1d4;
 	const int targetX = 0xc0;
 	const int targetY = 0x191;
-	const uint startDescriptorIndex = (4 * kActorCelsPerFacing) + 1;
-	if (startDescriptorIndex >= _actorBankB4.descriptors.size())
+	const uint startDescriptorIndex = kI10SceneActorDescriptorBase + 1;
+	if (startDescriptorIndex >= _actorBankI10Ron.descriptors.size())
 		return;
 
-	const ActorSpriteDescriptor &startDescriptor = _actorBankB4.descriptors[startDescriptorIndex];
+	const ActorSpriteDescriptor &startDescriptor = _actorBankI10Ron.descriptors[startDescriptorIndex];
 	const int startSpriteLeft = MAX<int>(0, HollywoodEngine::kScreenWidth - (int)startDescriptor.width - 8);
 	const int fixedViewportStartX = startSpriteLeft + startDescriptor.anchorX;
 
@@ -571,9 +538,9 @@ void Scene9100::drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 	const int y = visibleStartY + ((targetY - visibleStartY) * (int)clampedElapsed) / (int)pathDurationMillis;
 
 	const bool finalFrame = clampedElapsed >= pathDurationMillis;
-	const byte facing = finalFrame ? 5 : 4;
+	const byte facing = kI10SceneActorFacing;
 	const byte cel = finalFrame ? 0 : (byte)(1 + ((clampedElapsed / 60) % 12));
-	drawActorSpriteFrame(_actorBankB4, facing, cel, x, y);
+	drawActorSpriteFrame(_actorBankI10Ron, facing, cel, x, y);
 }
 
 void Scene9100::runSueEntrySequence() {
@@ -647,11 +614,11 @@ void Scene9100::drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 	const int originalStartY = 0x1b5;
 	const int targetX = 0x11b;
 	const int targetY = 0x16e;
-	const uint startDescriptorIndex = (4 * kActorCelsPerFacing) + 1;
-	if (startDescriptorIndex >= _actorBank00.descriptors.size())
+	const uint startDescriptorIndex = kI10SceneActorDescriptorBase + 1;
+	if (startDescriptorIndex >= _actorBankI10Sue.descriptors.size())
 		return;
 
-	const ActorSpriteDescriptor &startDescriptor = _actorBank00.descriptors[startDescriptorIndex];
+	const ActorSpriteDescriptor &startDescriptor = _actorBankI10Sue.descriptors[startDescriptorIndex];
 	const int startSpriteLeft = MAX<int>(0, HollywoodEngine::kScreenWidth - (int)startDescriptor.width - 8);
 	const int fixedViewportStartX = startSpriteLeft + startDescriptor.anchorX;
 
@@ -662,9 +629,9 @@ void Scene9100::drawSueEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurat
 	const int y = visibleStartY + ((targetY - visibleStartY) * (int)clampedElapsed) / (int)pathDurationMillis;
 
 	const bool finalFrame = clampedElapsed >= pathDurationMillis;
-	const byte facing = finalFrame ? 5 : 4;
+	const byte facing = kI10SceneActorFacing;
 	const byte cel = finalFrame ? 0 : (byte)(1 + ((clampedElapsed / 60) % 12));
-	drawActorSpriteFrame(_actorBank00, facing, cel, x, y);
+	drawActorSpriteFrame(_actorBankI10Sue, facing, cel, x, y);
 }
 
 void Scene9100::drawActorSpriteFrame(const ActorBank &bank, byte facing, byte cel, int worldX, int worldY) {
@@ -1003,11 +970,6 @@ void Scene9100::drawResourceBlockListToBuffer(uint32 baseOffset, Common::Array<b
 		memcpy(destination.data() + targetOffset, _resourceArena.data() + cursor, size);
 		cursor += size;
 	}
-}
-
-void Scene9100::restoreResourceBlocksToFrameAndScene(uint32 baseOffset) {
-	drawResourceBlockListToBuffer(baseOffset, _frameDecodeBuffer);
-	drawResourceBlockListToBuffer(baseOffset, _sceneFramebuffer);
 }
 
 void Scene9100::expandFillRunsToSavedFramebuffer() {
