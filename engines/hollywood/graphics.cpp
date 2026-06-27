@@ -1,0 +1,193 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "hollywood/graphics.h"
+
+#include "common/system.h"
+#include "graphics/paletteman.h"
+
+#include "hollywood/hollywood.h"
+
+namespace Hollywood {
+
+uint16 readUint16LE(const Common::Array<byte> &source, uint offset) {
+	if (offset + 2 > source.size())
+		return 0;
+
+	return source[offset] | (source[offset + 1] << 8);
+}
+
+int16 readSint16LE(const Common::Array<byte> &source, uint offset) {
+	return (int16)readUint16LE(source, offset);
+}
+
+uint32 readUint32LE(const Common::Array<byte> &source, uint offset) {
+	if (offset + 4 > source.size())
+		return 0;
+
+	return source[offset] |
+		(source[offset + 1] << 8) |
+		(source[offset + 2] << 16) |
+		(source[offset + 3] << 24);
+}
+
+void uploadPalette6Bit(const Common::Array<byte> &palette) {
+	byte systemPalette[kHollywoodPaletteSize];
+	for (uint i = 0; i < ARRAYSIZE(systemPalette); ++i) {
+		const byte component = i < palette.size() ? palette[i] : 0;
+		systemPalette[i] = MIN<byte>(255, component * 4);
+	}
+
+	g_system->getPaletteManager()->setPalette(systemPalette, 0, 256);
+}
+
+void presentIndexedFrame(const Common::Array<byte> &framebuffer, const Common::Array<byte> &palette,
+		Common::Array<byte> &screen, uint rowOffset, uint xOffset) {
+	uploadPalette6Bit(palette);
+
+	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
+		const uint sourceOffset = xOffset + (y + rowOffset) * HollywoodEngine::kSceneBufferWidth;
+		if (sourceOffset + HollywoodEngine::kScreenWidth <= framebuffer.size()) {
+			memcpy(screen.data() + y * HollywoodEngine::kScreenWidth,
+				framebuffer.data() + sourceOffset,
+				HollywoodEngine::kScreenWidth);
+		} else {
+			memset(screen.data() + y * HollywoodEngine::kScreenWidth, 0, HollywoodEngine::kScreenWidth);
+		}
+	}
+
+	g_system->copyRectToScreen(screen.data(), HollywoodEngine::kScreenWidth, 0, 0,
+		HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight);
+	g_system->updateScreen();
+}
+
+void copyFramebufferRun(const Common::Array<byte> &source, Common::Array<byte> &destination, int y, int x, int width) {
+	if (width <= 0 || y < 0 || x < 0)
+		return;
+
+	const uint offset = x + y * HollywoodEngine::kSceneBufferWidth;
+	if (offset + width > source.size() || offset + width > destination.size())
+		return;
+
+	memcpy(destination.data() + offset, source.data() + offset, width);
+}
+
+void clearFramebufferRun(Common::Array<byte> &destination, int y, int x, int width) {
+	if (width <= 0 || y < 0 || x < 0)
+		return;
+
+	const uint offset = x + y * HollywoodEngine::kSceneBufferWidth;
+	if (offset + width > destination.size())
+		return;
+
+	memset(destination.data() + offset, 0, width);
+}
+
+void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
+		uint16 descriptorCount, uint16 descriptorIndex, const Common::Array<byte> &background,
+		Common::Array<byte> &destination, int yOffset) {
+	if (descriptorIndex >= descriptorCount)
+		return;
+
+	const uint entryOffset = baseOffset + descriptorTableOffset + (kHollywoodFrameDescriptorSize * descriptorIndex);
+	if (entryOffset + kHollywoodFrameDescriptorSize > resource.size())
+		return;
+
+	const uint32 packedWidth = readUint32LE(resource, entryOffset + 4);
+	const uint32 packedRows = readUint32LE(resource, entryOffset + 8);
+	const uint copyWidth = (packedWidth >> 16) & 0xffff;
+	const uint x = packedWidth & 0xffff;
+	const int firstRow = (int)(packedRows & 0xffff) + yOffset;
+	const int lastRow = (int)((packedRows >> 16) & 0xffff) + yOffset;
+	if (copyWidth == 0 || firstRow > lastRow)
+		return;
+
+	for (int row = firstRow; row <= lastRow; ++row)
+		copyFramebufferRun(background, destination, row, x, copyWidth);
+}
+
+void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
+		uint16 descriptorCount, uint16 descriptorIndex, Common::Array<byte> &destination, int yOffset) {
+	if (descriptorIndex >= descriptorCount)
+		return;
+
+	const uint entryOffset = baseOffset + descriptorTableOffset + (kHollywoodFrameDescriptorSize * descriptorIndex);
+	if (entryOffset + kHollywoodFrameDescriptorSize > resource.size())
+		return;
+
+	const uint16 spanCount = readUint16LE(resource, entryOffset + 12);
+	uint cursor = baseOffset + descriptorTableOffset + (kHollywoodFrameDescriptorSize * descriptorCount) + readUint32LE(resource, entryOffset);
+	if (cursor > resource.size())
+		return;
+
+	for (uint spanIndex = 0; spanIndex < spanCount; ++spanIndex) {
+		if (cursor + 5 > resource.size())
+			return;
+
+		const uint32 packedDestination = readUint32LE(resource, cursor);
+		const uint dataLength = resource[cursor + 4];
+		cursor += 5;
+
+		if (cursor + dataLength > resource.size())
+			return;
+
+		const uint x = packedDestination & 0xffff;
+		const int y = (int)((packedDestination >> 16) & 0xffff) + yOffset;
+		if (y >= 0 && y < HollywoodEngine::kSceneBufferHeight) {
+			const uint destinationOffset = x + y * HollywoodEngine::kSceneBufferWidth;
+			if (destinationOffset + dataLength <= destination.size())
+				memcpy(destination.data() + destinationOffset, resource.data() + cursor, dataLength);
+		}
+
+		cursor += dataLength;
+	}
+}
+
+void drawResourceBlockList(const Common::Array<byte> &resource, uint32 baseOffset,
+		Common::Array<byte> &destination, int yOffset) {
+	if (baseOffset + 2 > resource.size())
+		return;
+
+	const uint16 blockCount = readUint16LE(resource, baseOffset);
+	uint cursor = baseOffset + 2;
+	for (uint blockIndex = 0; blockIndex < blockCount; ++blockIndex) {
+		if (cursor + 6 > resource.size())
+			return;
+
+		const uint32 packedDestination = readUint32LE(resource, cursor);
+		const uint16 size = readUint16LE(resource, cursor + 4);
+		cursor += 6;
+
+		if (cursor + size > resource.size())
+			return;
+
+		const uint x = packedDestination & 0xffff;
+		const int y = (int)((packedDestination >> 16) & 0xffff) + yOffset;
+		if (y >= 0 && y < HollywoodEngine::kSceneBufferHeight) {
+			const uint destinationOffset = x + y * HollywoodEngine::kSceneBufferWidth;
+			if (destinationOffset + size <= destination.size())
+				memcpy(destination.data() + destinationOffset, resource.data() + cursor, size);
+		}
+		cursor += size;
+	}
+}
+
+} // End of namespace Hollywood
