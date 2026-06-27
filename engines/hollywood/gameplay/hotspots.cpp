@@ -62,6 +62,9 @@ bool SceneHotspotTable::load(const Common::Array<byte> &paletteMapBlock, const C
 
 	const uint verbRecordBytes = HollywoodEngine::kSceneItemCount * kSceneVerbCount * kSceneVerbActionRecordSize;
 	if (metadata.size() < kSceneItemDefaultStrip + HollywoodEngine::kSceneItemCount ||
+			metadata.size() < kSceneItemInteractionPoints + HollywoodEngine::kSceneItemCount * 4 ||
+			metadata.size() < kSceneItemApproachPoints + HollywoodEngine::kSceneItemCount * 4 ||
+			metadata.size() < kSceneItemFacing + HollywoodEngine::kSceneItemCount ||
 			metadata.size() < kSceneVerbActionRecords + verbRecordBytes) {
 		warning("Scene metadata is too short for hotspot action tables");
 		return false;
@@ -73,6 +76,17 @@ bool SceneHotspotTable::load(const Common::Array<byte> &paletteMapBlock, const C
 
 	_itemDefaultStrips.resize(HollywoodEngine::kSceneItemCount);
 	memcpy(_itemDefaultStrips.data(), metadata.data() + kSceneItemDefaultStrip, _itemDefaultStrips.size());
+
+	_actionTargets.resize(HollywoodEngine::kSceneItemCount);
+	for (uint item = 0; item < _actionTargets.size(); ++item) {
+		uint offset = kSceneItemInteractionPoints + item * 4;
+		_actionTargets[item].interactionPoint.x = readSint16LE(metadata, offset);
+		_actionTargets[item].interactionPoint.y = readSint16LE(metadata, offset + 2);
+		offset = kSceneItemApproachPoints + item * 4;
+		_actionTargets[item].approachPoint.x = readSint16LE(metadata, offset);
+		_actionTargets[item].approachPoint.y = readSint16LE(metadata, offset + 2);
+		_actionTargets[item].facing = metadata[kSceneItemFacing + item];
+	}
 
 	_verbActionRecords.resize(HollywoodEngine::kSceneItemCount * kSceneVerbCount);
 	for (uint record = 0; record < _verbActionRecords.size(); ++record) {
@@ -110,18 +124,44 @@ byte SceneHotspotTable::defaultStripForItem(byte itemId) const {
 }
 
 bool SceneHotspotTable::hasVerbAction(byte itemId, byte stripIndex) const {
+	return verbActionRecord(itemId, stripIndex).actionHandlerId != 0;
+}
+
+SceneVerbActionRecord SceneHotspotTable::verbActionRecord(byte itemId, byte stripIndex) const {
+	SceneVerbActionRecord emptyRecord;
+	emptyRecord.actionHandlerId = 0;
+	emptyRecord.movementMode = 0;
+
 	if (itemId >= HollywoodEngine::kSceneItemCount || stripIndex == 0)
-		return false;
+		return emptyRecord;
 
 	const uint verbIndex = stripIndex - 1;
 	if (verbIndex >= kSceneVerbCount)
-		return false;
+		return emptyRecord;
 
 	const uint recordIndex = itemId * kSceneVerbCount + verbIndex;
 	if (recordIndex >= _verbActionRecords.size())
-		return false;
+		return emptyRecord;
 
-	return _verbActionRecords[recordIndex].actionHandlerId != 0;
+	return _verbActionRecords[recordIndex];
+}
+
+SceneActionTarget SceneHotspotTable::actionTarget(byte itemId) const {
+	SceneActionTarget emptyTarget;
+	memset(&emptyTarget, 0, sizeof(emptyTarget));
+	if (itemId >= _actionTargets.size())
+		return emptyTarget;
+
+	return _actionTargets[itemId];
+}
+
+void SceneHotspotTable::setVerbMovementModeByGlobalRecordIndex(uint globalRecordIndex, uint16 movementMode) {
+	if (globalRecordIndex == 0)
+		return;
+
+	const uint recordIndex = globalRecordIndex - 1;
+	if (recordIndex < _verbActionRecords.size())
+		_verbActionRecords[recordIndex].movementMode = movementMode;
 }
 
 Common::String SceneHotspotTable::itemName(byte itemId) const {
