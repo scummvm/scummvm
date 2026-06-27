@@ -80,7 +80,7 @@ static void room_304_init1() {
 		scratch.animation_info[5]._active = -1;
 	}
 
-	if (previous_room != KERNEL_LAST) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 154;
 		player.y = 154;
 		player.facing = 9;
@@ -111,7 +111,7 @@ static void room_304_init() {
 	digi_stop(2);
 	global[g070] = 0;
 
-	if (previous_room != KERNEL_LAST) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		if (previous_room != 199) {
 			player.walker_visible = false;
 			player.commands_allowed = false;

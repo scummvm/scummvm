@@ -164,14 +164,14 @@ static void room_106_init2() {
 	scratch._9a = kernel_run_animation_disp('e', 2, 0);
 	kernel_position_anim(scratch._9a, 277, 92, 55, 9);
 
-	if (previous_room != KERNEL_LAST) {
+	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 259;
 		player.y = 98;
 		player.facing = 3;
 	}
 
 	switch (previous_room) {
-	case KERNEL_LAST:
+	case KERNEL_RESTORING_GAME:
 		global[g131] = -1;
 		global[g141] = -1;
 		kernel_reset_animation(scratch._9a, 2);
