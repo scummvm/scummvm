@@ -720,6 +720,8 @@ bool Scene7010::runFakePlayableLoop() {
 	_secondaryActorWorldY = kG01SueEntryTargetY;
 	_secondaryActorFacing = kG01SueEntryFacing;
 	_secondaryActorFrame = 0;
+	_vm->cursor()->enterInteractiveMode();
+	_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
 
 	uint32 lastMillis = g_system->getMillis();
 	drawPlayableComposite();
@@ -738,10 +740,12 @@ bool Scene7010::runFakePlayableLoop() {
 			delta = 250;
 
 		advanceFakeGameplayTimers(delta);
+		_vm->cursor()->advance(delta);
 		drawPlayableComposite();
 		presentFrame();
 	}
 
+	_vm->cursor()->leaveInteractiveMode();
 	return true;
 }
 
@@ -995,6 +999,14 @@ bool Scene7010::pollEvents(bool allowSkip) {
 				_skipRequested = true;
 				return true;
 			}
+			break;
+		case Common::EVENT_MOUSEMOVE:
+			_vm->cursor()->updatePosition(event.mouse);
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONDOWN:
+		case Common::EVENT_RBUTTONUP:
 			break;
 		default:
 			break;
