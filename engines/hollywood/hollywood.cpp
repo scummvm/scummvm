@@ -20,6 +20,7 @@
  */
 
 #include "hollywood/hollywood.h"
+#include "hollywood/intro.h"
 #include "hollywood/resource.h"
 
 #include "common/debug.h"
@@ -41,8 +42,12 @@ HollywoodEngine::~HollywoodEngine() {
 Common::Error HollywoodEngine::run() {
 	initGraphics(kScreenWidth, kScreenHeight);
 
-	debugC(1, kDebugGeneral, "Hollywood Monsters engine skeleton initialized");
-	warning("Hollywood Monsters engine runtime is not implemented yet");
+	debugC(1, kDebugGeneral, "Hollywood Monsters engine initialized");
+	IntroPlayer intro(this);
+	if (!intro.play())
+		return Common::kReadingFailed;
+
+	debugC(1, kDebugGeneral, "Intro playback completed");
 	return Common::kNoError;
 }
 
