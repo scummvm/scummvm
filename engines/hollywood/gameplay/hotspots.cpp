@@ -88,11 +88,12 @@ bool SceneHotspotTable::load(const Common::Array<byte> &paletteMapBlock, const C
 		_actionTargets[item].facing = metadata[kSceneItemFacing + item];
 	}
 
-	_verbActionRecords.resize(HollywoodEngine::kSceneItemCount * kSceneVerbCount);
-	for (uint record = 0; record < _verbActionRecords.size(); ++record) {
+	_verbActionRecords.resize(HollywoodEngine::kSceneItemCount * kSceneVerbCount + 1);
+	memset(_verbActionRecords.data(), 0, _verbActionRecords.size() * sizeof(SceneVerbActionRecord));
+	for (uint record = 0; record < HollywoodEngine::kSceneItemCount * kSceneVerbCount; ++record) {
 		const uint offset = kSceneVerbActionRecords + record * kSceneVerbActionRecordSize;
-		_verbActionRecords[record].actionHandlerId = readUint16LE(metadata, offset);
-		_verbActionRecords[record].movementMode = readUint16LE(metadata, offset + 2);
+		_verbActionRecords[record + 1].actionHandlerId = readUint16LE(metadata, offset);
+		_verbActionRecords[record + 1].movementMode = readUint16LE(metadata, offset + 2);
 	}
 
 	_stageSmallRows = stageSmallRows;
@@ -135,11 +136,10 @@ SceneVerbActionRecord SceneHotspotTable::verbActionRecord(byte itemId, byte stri
 	if (itemId >= HollywoodEngine::kSceneItemCount || stripIndex == 0)
 		return emptyRecord;
 
-	const uint verbIndex = stripIndex - 1;
-	if (verbIndex >= kSceneVerbCount)
+	if (stripIndex > kSceneVerbCount)
 		return emptyRecord;
 
-	const uint recordIndex = itemId * kSceneVerbCount + verbIndex;
+	const uint recordIndex = itemId * kSceneVerbCount + stripIndex;
 	if (recordIndex >= _verbActionRecords.size())
 		return emptyRecord;
 
@@ -156,12 +156,8 @@ SceneActionTarget SceneHotspotTable::actionTarget(byte itemId) const {
 }
 
 void SceneHotspotTable::setVerbMovementModeByGlobalRecordIndex(uint globalRecordIndex, uint16 movementMode) {
-	if (globalRecordIndex == 0)
-		return;
-
-	const uint recordIndex = globalRecordIndex - 1;
-	if (recordIndex < _verbActionRecords.size())
-		_verbActionRecords[recordIndex].movementMode = movementMode;
+	if (globalRecordIndex < _verbActionRecords.size())
+		_verbActionRecords[globalRecordIndex].movementMode = movementMode;
 }
 
 Common::String SceneHotspotTable::itemName(byte itemId) const {

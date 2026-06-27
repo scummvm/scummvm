@@ -23,6 +23,7 @@
 #define HOLLYWOOD_SCENES_PLAYABLE_SCENE7010_H
 
 #include "common/array.h"
+#include "common/random.h"
 #include "common/str.h"
 #include "common/types.h"
 
@@ -87,6 +88,8 @@ private:
 		kStage003DecodeKeySize = 0x141,
 		kStage003StageOffsetTableSize = 0xff4,
 		kStage003DescriptorTableSize = 0x186a0,
+		kOwner1SpeechCueDescriptorTableOffset = 0x5f58,
+		kOwner1SpeechCueDescriptorTableSize = 20000,
 		kStage003SmallRowSize = 0x29,
 		kStage003LargeRowSize = 0x141,
 		kStage003LargeRowBaseIndex = 500,
@@ -139,6 +142,7 @@ private:
 	void addInventoryItem(byte itemId);
 	void removeInventoryItem(byte itemId);
 	void handleActionSlot00TransitionToG03();
+	void handleActionSlot01SecondarySpeech();
 	void handleActionSlot02SecondarySpeech();
 	void handleActionSlot03DialogueSequence();
 	void handleActionSlot04Item06Speech();
@@ -159,14 +163,19 @@ private:
 	void drawSpeechOverlay(const SpeechOverlay &overlay);
 	void drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex);
 	void beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
+	void beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
 	void beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue);
 	void runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte colorIndex, bool useRequestedTop);
+	void runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte continuationCount, uint16 voiceSampleId,
+		uint16 centerX, uint16 topY, byte colorIndex, bool useRequestedTop);
 	bool getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
 		uint16 &voiceSampleId) const;
+	bool getStaticSpeechCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
+		uint16 &voiceSampleId) const;
 	void wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const;
-	Common::String getStage003LargeTextRecord(uint16 recordId) const;
+	Common::String getResource003LargeTextRecord(uint16 recordId) const;
 	uint actorSpeechTextWidth(const Common::String &text) const;
 	void calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY);
 	bool waitForSpeechOrDelay(uint32 fallbackMillis);
@@ -199,10 +208,13 @@ private:
 	Common::Array<byte> _stage003StageBlock;
 	Common::Array<byte> _stage003SmallRows;
 	Common::Array<byte> _stage003LargeRows;
+	Common::Array<byte> _owner1SpeechCueDescriptors;
+	Common::Array<byte> _owner1LargeRows;
 	SceneHotspotTable _hotspots;
 	SpeechPlayer _speech;
 	SpeechOverlay _speechOverlay;
 	SpeechOverlay _primarySpeechOverlay;
+	Common::RandomSource _random;
 
 	bool _inventoryItems[121];
 	byte _sceneStateFlags[8];
