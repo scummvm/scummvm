@@ -56,12 +56,14 @@ public:
 	ResourceManager *resources() const { return _resources; }
 	HollywoodFont *font() const { return _font; }
 
-	static const int kScreenWidth = 640;
-	static const int kScreenHeight = 480;
-	static const int kSceneBufferWidth = 1024;
-	static const int kSceneBufferHeight = 480;
-	static const int kResourceChunkCount = 40;
-	static const int kSceneItemCount = 21;
+	enum {
+		kScreenWidth = 640,
+		kScreenHeight = 480,
+		kSceneBufferWidth = 1024,
+		kSceneBufferHeight = 480,
+		kResourceChunkCount = 40,
+		kSceneItemCount = 21
+	};
 
 private:
 	const ADGameDescription *_gameDescription;

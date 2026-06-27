@@ -168,23 +168,25 @@ private:
 	int16 readSint16(const Common::Array<byte> &source, uint offset) const;
 	uint32 readUint32(const Common::Array<byte> &source, uint offset) const;
 
-	static const uint kFrameDecodeBufferSize = 0x78000;
-	static const uint kPaletteSize = 0x300;
-	static const uint kResourceChunkCount = 40;
-	static const uint kI10ForegroundDescriptorCount = 0x24;
-	static const uint kI10DeskPrimaryStaticDescriptorCount = 3;
-	static const uint kI10DeskSecondaryStaticDescriptorCount = 6;
-	static const uint kI10ClockDescriptorCount = 0x3c;
-	static const uint kI10TalkingOverlayDescriptorCount = 10;
-	static const uint kFrameDescriptorSize = 14;
-	static const uint kStage003DescriptorTableSize = 0x186a0;
-	static const uint kStage003SmallRowSize = 0x29;
-	static const uint kStage003LargeRowSize = 0x141;
-	static const uint kSecondaryScratchBufferSize = 96000;
-	static const uint kDeskPrimaryStaticBase = 0;
-	static const uint kDeskSecondaryStaticBase = 48000;
-	static const uint kScratchChunk21Base = 0x4e200;
-	static const uint kScratchPrimaryPayloadBase = 640000;
+	enum {
+		kFrameDecodeBufferSize = 0x78000,
+		kPaletteSize = 0x300,
+		kResourceChunkCount = 40,
+		kI10ForegroundDescriptorCount = 0x24,
+		kI10DeskPrimaryStaticDescriptorCount = 3,
+		kI10DeskSecondaryStaticDescriptorCount = 6,
+		kI10ClockDescriptorCount = 0x3c,
+		kI10TalkingOverlayDescriptorCount = 10,
+		kFrameDescriptorSize = 14,
+		kStage003DescriptorTableSize = 0x186a0,
+		kStage003SmallRowSize = 0x29,
+		kStage003LargeRowSize = 0x141,
+		kSecondaryScratchBufferSize = 96000,
+		kDeskPrimaryStaticBase = 0,
+		kDeskSecondaryStaticBase = 48000,
+		kScratchChunk21Base = 0x4e200,
+		kScratchPrimaryPayloadBase = 640000
+	};
 
 	HollywoodEngine *_vm;
 	MusicPlayer _music;

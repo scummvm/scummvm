@@ -32,15 +32,15 @@
 
 namespace Hollywood {
 
-static const char *const kIntroMusicArchiveName = "RESOURCE.M09";
-static const uint16 kIntroMusicCueId = 0x000d;
-static const char *const kSpeechArchiveName = "RESOURCE.004";
-static const uint kMusicCueTableSize = 0x190;
-static const int kMusicSampleRate = 11025;
-static const uint kSpeechCueTableSize = 0x3e80;
-static const int kSpeechSampleRate = 22050;
+const char *const kIntroMusicArchiveName = "RESOURCE.M09";
+const uint16 kIntroMusicCueId = 0x000d;
+const char *const kSpeechArchiveName = "RESOURCE.004";
+const uint kMusicCueTableSize = 0x190;
+const int kMusicSampleRate = 11025;
+const uint kSpeechCueTableSize = 0x3e80;
+const int kSpeechSampleRate = 22050;
 
-static byte percentToMixerVolume(byte volumePercent) {
+byte percentToMixerVolume(byte volumePercent) {
 	const uint volume = MIN<uint>(volumePercent, 100);
 	return (byte)((volume * Audio::Mixer::kMaxChannelVolume) / 100);
 }

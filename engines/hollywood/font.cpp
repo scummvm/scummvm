@@ -28,18 +28,18 @@
 
 namespace Hollywood {
 
-static const char *const kExecutableName = "MONSTERS.EXE";
-static const char *const kResource000Name = "RESOURCE.000";
-static const uint32 kOriginalCharacterMapVa = 0x00501540;
-static const uint kCharacterMapSize = 0x100;
-static const uint kResource000HeaderByteCount = 1;
-static const uint kResource000OffsetTableSize = 400;
-static const uint kResource000SizeTableSize = 400;
-static const uint kResource000FontOffsetEntry = 0xb0;
-static const uint kGlyphDescriptorSize = 5;
-static const byte kFontSpaceGlyph = 0xfe;
-static const byte kFontUnsupportedGlyph = 0xff;
-static const int kOriginalSpeechLineHeight = 20;
+const char *const kExecutableName = "MONSTERS.EXE";
+const char *const kResource000Name = "RESOURCE.000";
+const uint32 kOriginalCharacterMapVa = 0x00501540;
+const uint kCharacterMapSize = 0x100;
+const uint kResource000HeaderByteCount = 1;
+const uint kResource000OffsetTableSize = 400;
+const uint kResource000SizeTableSize = 400;
+const uint kResource000FontOffsetEntry = 0xb0;
+const uint kGlyphDescriptorSize = 5;
+const byte kFontSpaceGlyph = 0xfe;
+const byte kFontUnsupportedGlyph = 0xff;
+const int kOriginalSpeechLineHeight = 20;
 
 HollywoodFont::HollywoodFont() :
 		_shadowColor(0),
