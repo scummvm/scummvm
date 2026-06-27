@@ -112,9 +112,10 @@ private:
 	void drawCutsceneComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY);
 	void drawPlayableComposite();
-	void drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY);
-	void drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY);
-	void drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount, int spriteX, int spriteY);
+	void drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY, int minimumYExclusive);
+	int drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY);
+	int drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
+		int spriteX, int spriteY, int minimumYExclusive);
 	void runEntryCutscene();
 	void runSueEntryPath();
 	void runJuniorSpeech();
@@ -131,7 +132,8 @@ private:
 	void handleLeftClick(const GameplayLoopCursorState &state) override;
 	void advanceChunk8Cycle();
 	void advanceChunk10IdleFrames();
-	void advanceSecondaryActorIdleFrame();
+	void advanceSecondaryActorSpeechFrame();
+	void advancePrimaryLeftSpeechFrame();
 	void advanceDialogueOverlay(uint32 delta);
 	void processSceneActionClick(const GameplayLoopCursorState &state);
 	void dispatchSceneAction(uint16 handlerId);
@@ -167,10 +169,11 @@ private:
 	void beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
 	void beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue);
+	void beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex);
 	void runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
-		byte colorIndex, bool useRequestedTop);
+		byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft);
 	void runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte continuationCount, uint16 voiceSampleId,
-		uint16 centerX, uint16 topY, byte colorIndex, bool useRequestedTop);
+		uint16 centerX, uint16 topY, byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft);
 	bool getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
 		uint16 &voiceSampleId) const;
 	bool getStaticSpeechCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
@@ -179,7 +182,7 @@ private:
 	Common::String getResource003LargeTextRecord(uint16 recordId) const;
 	uint actorSpeechTextWidth(const Common::String &text) const;
 	void calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY);
-	bool waitForSpeechOrDelay(uint32 fallbackMillis);
+	bool waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryLeft);
 	void presentFrame(const SceneHoverCaption *hoverCaption = nullptr);
 	bool pollEvents(bool allowSkip);
 	bool delay(uint32 millis);
@@ -230,20 +233,21 @@ private:
 	byte _chunk15FrameIndex;
 	byte _dialogueOverlayFrameIndex;
 	byte _dialogueOverlayMode;
+	byte _primaryLeftSpeechLastFrame;
 	bool _chunk11Visible;
 	bool _chunk14Visible;
 	bool _chunk15Visible;
 	bool _chunk10IdlePairAAltPhase;
 	bool _chunk10IdlePairBAltPhase;
+	bool _primaryLeftSpeechActive;
 	byte _chunk10IdlePairATicksRemaining;
 	byte _chunk10IdlePairBTicksRemaining;
 	byte _chunk9AmbientDecisionCounter;
-	byte _chunk10DeterministicCounter;
 	uint32 _chunk8TimerAccumulator;
 	uint32 _chunk10TimerAccumulator;
 	uint32 _secondaryActorTimerAccumulator;
 	uint32 _dialogueOverlayTimerAccumulator;
-	uint16 _secondaryActorIdleTick;
+	uint32 _primaryLeftSpeechTimerAccumulator;
 	int _activeActorWorldX;
 	int _activeActorWorldY;
 	byte _activeActorFacing;
