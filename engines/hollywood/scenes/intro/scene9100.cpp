@@ -33,10 +33,25 @@ namespace Hollywood {
 
 static const char *const kI10ArchiveName = "RESOURCE.I10";
 static const char *const kStage003ArchiveName = "RESOURCE.003";
+static const char *const kResource000ArchiveName = "RESOURCE.000";
 static const uint16 kScene9100MusicCueId = 0x000f;
 static const uint kStage003DecodeKeySize = 0x141;
 static const uint kStage003StageOffsetTableSize = 0xff4;
 static const uint kStage910Index = 910;
+static const uint kResource000OffsetCount = 100;
+static const uint kActorBankChunkCount = 14;
+static const uint kActorFacingCount = 6;
+static const uint kActorCelsPerFacing = 13;
+static const uint kActorDescriptorCount = kActorFacingCount * kActorCelsPerFacing;
+static const uint kActorSpriteDescriptorSize = 28;
+static const uint kActorFacingRunStride = 160000;
+static const uint kActorPaletteBaseOffset = 0x270;
+static const uint kActorPaletteByteCount = 0x90;
+static const uint kActorBankB4OffsetIndex = 0;
+static const uint kActorOwner0PaletteOffsetIndex = 0x33;
+static const uint kActorBank00OffsetIndex = 0x34;
+static const uint kActorOwner1PaletteOffsetIndex = 0x42;
+static const uint kActorEntryFrameDelayMillis = 90;
 
 static const byte kI10ForegroundFrameRemap[] = {
 	0, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 13,
@@ -46,16 +61,23 @@ static const byte kI10ForegroundFrameRemap[] = {
 	2, 1, 0, 0
 };
 
+static const byte kI10InsetFrameRemap[] = {
+	0, 1, 2, 3, 0, 4, 5, 5, 6, 7, 8, 5, 4, 0
+};
+
 Scene9100::Scene9100(HollywoodEngine *vm) :
 		_vm(vm),
 		_music(),
 		_speech(),
+		_random("hollywood_scene9100"),
 		_resourceArenaCursor(0),
 		_lastClockFrameMillis(0),
 		_lastTalkingFrameMillis(0),
 		_foregroundActorFrame(0),
+		_foregroundTalkBaseFrame(15),
 		_clockFrame(32),
 		_talkingFrame(0),
+		_lastTalkingFrameVariant(0xff),
 		_skipRequested(false) {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
 	_paletteDefault.resize(kPaletteSize);
@@ -65,6 +87,8 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 	_savedFramebuffer.resize(kFrameDecodeBufferSize);
 	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
 	_stage003Descriptors.resize(kStage003DescriptorTableSize);
+	_actorPaletteOwner0.resize(kActorPaletteByteCount);
+	_actorPaletteOwner1.resize(kActorPaletteByteCount);
 }
 
 bool Scene9100::play() {
@@ -72,13 +96,11 @@ bool Scene9100::play() {
 		return false;
 
 	memcpy(_sceneFramebuffer.data(), _frameDecodeBuffer.data(), _frameDecodeBuffer.size());
+	runEntryActorAnimations();
 	drawInitialForegroundFrame();
 	memcpy(_savedFramebuffer.data(), _sceneFramebuffer.data(), _sceneFramebuffer.size());
 	memset(_sceneFramebuffer.data(), 0, _sceneFramebuffer.size());
 
-	_paletteCurrent[0x2f7] = 0x3f;
-	_paletteCurrent[0x2f8] = 0x3f;
-	_paletteCurrent[0x2f9] = 0x3f;
 	presentFrame();
 
 	_music.playMusicCue(kScene9100MusicCueId, 30);
@@ -122,7 +144,7 @@ bool Scene9100::load() {
 			return false;
 		}
 	}
-	if (!_i10ChunkTable.isValidChunk(20) || !_i10ChunkTable.isValidChunk(21) || !_i10ChunkTable.isValidChunk(23)) {
+	if (!_i10ChunkTable.isValidChunk(20) || !_i10ChunkTable.isValidChunk(21) || !_i10ChunkTable.isValidChunk(22)) {
 		warning("%s is missing required scene 9100 scratch chunks", kI10ArchiveName);
 		return false;
 	}
@@ -148,17 +170,17 @@ bool Scene9100::load() {
 	}
 
 	const uint32 scratchSize = MAX<uint32>(
-		kScratchPrimaryPayloadBase + _i10ChunkTable.sizes[23],
+		kScratchPrimaryPayloadBase + _i10ChunkTable.sizes[22],
 		MAX<uint32>(_i10ChunkTable.sizes[20], kScratchChunk21Base + _i10ChunkTable.sizes[21]));
 	_resourceScratchArena.resize(scratchSize);
 	memset(_resourceScratchArena.data(), 0, _resourceScratchArena.size());
 
 	if (!loadScratchChunk(20, 0) ||
 			!loadScratchChunk(21, kScratchChunk21Base) ||
-			!loadScratchChunk(23, kScratchPrimaryPayloadBase))
+			!loadScratchChunk(22, kScratchPrimaryPayloadBase))
 		return false;
 
-	return true;
+	return loadActorResources();
 }
 
 bool Scene9100::loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
@@ -278,32 +300,263 @@ bool Scene9100::loadStage003Descriptors() {
 	return true;
 }
 
+bool Scene9100::loadActorResources() {
+	Common::File file;
+	if (!file.open(Common::Path(kResource000ArchiveName))) {
+		warning("Failed to open %s", kResource000ArchiveName);
+		return false;
+	}
+
+	if (file.size() < 1 + (kResource000OffsetCount * 8)) {
+		warning("%s header is too small", kResource000ArchiveName);
+		return false;
+	}
+
+	file.readByte();
+
+	uint32 offsets[kResource000OffsetCount];
+	uint32 sizes[kResource000OffsetCount];
+	for (uint i = 0; i < kResource000OffsetCount; ++i)
+		offsets[i] = file.readUint32LE();
+	for (uint i = 0; i < kResource000OffsetCount; ++i)
+		sizes[i] = file.readUint32LE();
+
+	if (!loadActorBank(file, offsets, sizes, kActorBankB4OffsetIndex, _actorBankB4) ||
+			!loadActorPalette(file, offsets, kActorOwner0PaletteOffsetIndex, _actorPaletteOwner0) ||
+			!loadActorBank(file, offsets, sizes, kActorBank00OffsetIndex, _actorBank00) ||
+			!loadActorPalette(file, offsets, kActorOwner1PaletteOffsetIndex, _actorPaletteOwner1))
+		return false;
+
+	return true;
+}
+
+bool Scene9100::loadActorBank(Common::File &file, const uint32 *offsets, const uint32 *sizes, uint offsetTableIndex, ActorBank &bank) {
+	if (offsetTableIndex + kActorBankChunkCount > kResource000OffsetCount) {
+		warning("%s actor bank offset index %u is out of range", kResource000ArchiveName, offsetTableIndex);
+		return false;
+	}
+
+	bank.runStreams.resize(kActorFacingCount * kActorFacingRunStride);
+	memset(bank.runStreams.data(), 0, bank.runStreams.size());
+	bank.descriptors.resize(kActorDescriptorCount);
+
+	if (!file.seek(offsets[offsetTableIndex])) {
+		warning("Failed to seek %s actor bank at offset %u", kResource000ArchiveName, offsets[offsetTableIndex]);
+		return false;
+	}
+
+	for (uint facing = 0; facing < kActorFacingCount; ++facing) {
+		const uint32 chunkSize = sizes[offsetTableIndex + facing];
+		if (chunkSize > kActorFacingRunStride) {
+			warning("%s actor bank %u facing %u is too large", kResource000ArchiveName, offsetTableIndex, facing);
+			return false;
+		}
+
+		if (file.read(bank.runStreams.data() + (facing * kActorFacingRunStride), chunkSize) != chunkSize) {
+			warning("Failed to read %s actor bank %u facing %u", kResource000ArchiveName, offsetTableIndex, facing);
+			return false;
+		}
+	}
+
+	const uint32 descriptorByteCount = sizes[offsetTableIndex + kActorFacingCount];
+	if (descriptorByteCount < kActorDescriptorCount * kActorSpriteDescriptorSize) {
+		warning("%s actor bank %u descriptor block is too small", kResource000ArchiveName, offsetTableIndex);
+		return false;
+	}
+
+	Common::Array<byte> descriptorData;
+	descriptorData.resize(descriptorByteCount);
+	if (file.read(descriptorData.data(), descriptorByteCount) != descriptorByteCount) {
+		warning("Failed to read %s actor bank %u descriptors", kResource000ArchiveName, offsetTableIndex);
+		return false;
+	}
+
+	for (uint i = 0; i < kActorDescriptorCount; ++i) {
+		const uint offset = i * kActorSpriteDescriptorSize;
+		ActorSpriteDescriptor &descriptor = bank.descriptors[i];
+		descriptor.runStreamOffset = readUint32(descriptorData, offset);
+		descriptor.opaqueRunCount = readUint32(descriptorData, offset + 4);
+		descriptor.paletteRunCount = readUint32(descriptorData, offset + 8);
+		descriptor.anchorX = readSint16(descriptorData, offset + 12);
+		descriptor.anchorY = readSint16(descriptorData, offset + 16);
+		descriptor.width = readUint16(descriptorData, offset + 20);
+		descriptor.height = readUint16(descriptorData, offset + 24);
+	}
+
+	debugC(1, kDebugResources, "Loaded %s actor bank at offset index %u", kResource000ArchiveName, offsetTableIndex);
+	return true;
+}
+
+bool Scene9100::loadActorPalette(Common::File &file, const uint32 *offsets, uint offsetTableIndex, Common::Array<byte> &palette) {
+	if (offsetTableIndex >= kResource000OffsetCount) {
+		warning("%s actor palette offset index %u is out of range", kResource000ArchiveName, offsetTableIndex);
+		return false;
+	}
+
+	if (!file.seek(offsets[offsetTableIndex])) {
+		warning("Failed to seek %s actor palette at offset %u", kResource000ArchiveName, offsets[offsetTableIndex]);
+		return false;
+	}
+
+	palette.resize(kActorPaletteByteCount);
+	if (file.read(palette.data(), kActorPaletteByteCount) != kActorPaletteByteCount) {
+		warning("Failed to read %s actor palette at offset index %u", kResource000ArchiveName, offsetTableIndex);
+		return false;
+	}
+
+	return true;
+}
+
+void Scene9100::applyActorPalette(const Common::Array<byte> &palette, byte highlightRed, byte highlightGreen, byte highlightBlue) {
+	if (palette.size() >= kActorPaletteByteCount)
+		memcpy(_paletteCurrent.data() + kActorPaletteBaseOffset, palette.data(), kActorPaletteByteCount);
+
+	_paletteCurrent[0x2f7] = highlightRed;
+	_paletteCurrent[0x2f8] = highlightGreen;
+	_paletteCurrent[0x2f9] = highlightBlue;
+}
+
+void Scene9100::runEntryActorAnimations() {
+	Common::Array<byte> baseFramebuffer;
+	baseFramebuffer.resize(_sceneFramebuffer.size());
+	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
+
+	applyActorPalette(_actorPaletteOwner0, 0x3f, 0x3f, 0x3f);
+	playEntryActorAnimation(_actorBankB4, 0x307, 0x1d4, baseFramebuffer);
+
+	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
+}
+
+void Scene9100::showRonEntryActor() {
+	Common::Array<byte> baseFramebuffer;
+	baseFramebuffer.resize(_sceneFramebuffer.size());
+	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
+
+	applyActorPalette(_actorPaletteOwner0, 0x3f, 0x3f, 0x3f);
+	playEntryActorAnimation(_actorBankB4, 0xc0, 0x191, baseFramebuffer);
+
+	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
+}
+
+void Scene9100::showSueEntryActor() {
+	Common::Array<byte> baseFramebuffer;
+	baseFramebuffer.resize(_sceneFramebuffer.size());
+	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
+
+	applyActorPalette(_actorPaletteOwner1, 0x3f, 0x28, 0x32);
+	playEntryActorAnimation(_actorBank00, 0x130, 0x172, baseFramebuffer);
+
+	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
+}
+
+void Scene9100::playEntryActorAnimation(const ActorBank &bank, int worldX, int worldY, Common::Array<byte> &baseFramebuffer) {
+	static const byte kFacingTurnToCamera = 5;
+	static const byte kTurnCel = 2;
+	static const byte kFinalCel = 0;
+	static const byte kFrames[][2] = {
+		{ kFacingTurnToCamera, kTurnCel },
+		{ kFacingTurnToCamera, kFinalCel }
+	};
+
+	if (bank.descriptors.size() < kActorDescriptorCount || bank.runStreams.size() < kActorFacingCount * kActorFacingRunStride)
+		return;
+
+	for (uint i = 0; i < ARRAYSIZE(kFrames) && !_skipRequested && !Engine::shouldQuit(); ++i) {
+		memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
+		drawActorSpriteFrame(bank, kFrames[i][0], kFrames[i][1], worldX, worldY);
+		presentFrame();
+		if (delay(kActorEntryFrameDelayMillis))
+			return;
+	}
+
+	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
+}
+
+void Scene9100::drawActorSpriteFrame(const ActorBank &bank, byte facing, byte cel, int worldX, int worldY) {
+	if (facing >= kActorFacingCount || cel >= kActorCelsPerFacing)
+		return;
+
+	const uint descriptorIndex = facing * kActorCelsPerFacing + cel;
+	if (descriptorIndex >= bank.descriptors.size())
+		return;
+
+	const ActorSpriteDescriptor &descriptor = bank.descriptors[descriptorIndex];
+	uint cursor = facing * kActorFacingRunStride + descriptor.runStreamOffset;
+	if (cursor >= bank.runStreams.size())
+		return;
+
+	const int spriteX = worldX - descriptor.anchorX;
+	const int spriteY = worldY - descriptor.anchorY;
+	for (uint runIndex = 0; runIndex < descriptor.opaqueRunCount; ++runIndex) {
+		if (cursor + 3 > bank.runStreams.size())
+			return;
+
+		const int xOffset = bank.runStreams[cursor++];
+		const int yOffset = bank.runStreams[cursor++];
+		const uint pixelCount = bank.runStreams[cursor++];
+		if (cursor + pixelCount > bank.runStreams.size())
+			return;
+
+		const int dstY = spriteY + yOffset;
+		if (dstY >= 0 && dstY < HollywoodEngine::kSceneBufferHeight) {
+			int dstX = spriteX + xOffset;
+			uint sourceOffset = 0;
+			uint copyCount = pixelCount;
+			if (dstX < 0) {
+				const uint clipped = MIN<uint>(copyCount, (uint)-dstX);
+				sourceOffset += clipped;
+				copyCount -= clipped;
+				dstX = 0;
+			}
+			if (dstX + (int)copyCount > HollywoodEngine::kSceneBufferWidth)
+				copyCount = MAX<int>(0, HollywoodEngine::kSceneBufferWidth - dstX);
+
+			if (copyCount != 0) {
+				const uint destinationOffset = dstX + dstY * HollywoodEngine::kSceneBufferWidth;
+				if (destinationOffset + copyCount <= _sceneFramebuffer.size())
+					memcpy(_sceneFramebuffer.data() + destinationOffset, bank.runStreams.data() + cursor + sourceOffset, copyCount);
+			}
+		}
+
+		cursor += pixelCount;
+	}
+
+	for (uint runIndex = 0; runIndex < descriptor.paletteRunCount; ++runIndex) {
+		if (cursor + 3 > bank.runStreams.size())
+			return;
+
+		cursor += 3;
+	}
+}
+
 void Scene9100::runOpeningPrelude() {
-	for (byte frame = 11; frame <= 14 && !_skipRequested && !Engine::shouldQuit(); ++frame) {
-		drawForegroundActorFrame(frame);
-		presentFrame();
-		if (delayFrame(100, kTalkingOverlayNone, 0, false))
-			return;
-	}
+	animateForegroundFrames(11, 14);
 
-	runConversationStep(0, 0, kTalkingOverlayNone, 0, true);
+	_foregroundTalkBaseFrame = 15;
+	runConversationStep(0, 0, kTalkingOverlayNone, 0, true, true);
 
-	for (byte frame = 20; frame <= 22 && !_skipRequested && !Engine::shouldQuit(); ++frame) {
-		drawForegroundActorFrame(frame);
-		presentFrame();
-		if (delayFrame(100, kTalkingOverlayNone, 0, false))
-			return;
-	}
-
+	animateForegroundFrames(20, 22);
 	for (uint pulse = 0; pulse < 12 && !_skipRequested && !Engine::shouldQuit(); ++pulse) {
-		if (delayFrame(100, kTalkingOverlayNone, 0, false))
+		if (_random.getRandomNumber(14) == 0) {
+			drawForegroundActorFrame(27);
+			presentFrame();
+		}
+		if (delayFrame(100, kTalkingOverlayNone, 0, false, true))
 			return;
+		if (_foregroundActorFrame == 27) {
+			drawForegroundActorFrame(23);
+			presentFrame();
+		}
 	}
+
+	runConversationStep(0, 1, kTalkingOverlayNone, 0, false, true);
+	showRonEntryActor();
+	runConversationStep(0, 2, kTalkingOverlayNone, 0, true, true);
 }
 
 void Scene9100::runCinematicSequence() {
 	static const CinematicStep kSteps[] = {
-		{ 2, 1, 3, kTalkingOverlayBase320000, 0, true, false },
+		{ 2, 0, 3, kTalkingOverlayBase320000, 0, true, false },
 		{ 1, 1, 0, kTalkingOverlayBase0, 1, false, false },
 		{ 2, 1, 1, kTalkingOverlayBase320000, 0, false, false },
 		{ 4, 1, 2, kTalkingOverlayNone, 0, false, false },
@@ -325,7 +578,7 @@ void Scene9100::runCinematicSequence() {
 	for (uint i = 0; i < ARRAYSIZE(kSteps) && !_skipRequested && !Engine::shouldQuit(); ++i) {
 		applyBackgroundMode(kSteps[i]);
 		runConversationStep(kSteps[i].textBankIndex, kSteps[i].descriptorIndex,
-			kSteps[i].talkingOverlayBase, kSteps[i].talkingOverlayVariant, kSteps[i].animateForegroundActor);
+			kSteps[i].talkingOverlayBase, kSteps[i].talkingOverlayVariant, kSteps[i].animateForegroundActor, false);
 	}
 }
 
@@ -338,23 +591,42 @@ void Scene9100::runEndingWipe() {
 	}
 }
 
-void Scene9100::runConversationStep(uint16 textBankIndex, byte descriptorIndex, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor) {
+void Scene9100::runConversationStep(uint16 textBankIndex, byte descriptorIndex, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor, byte insetTalkBaseFrame) {
 	_talkingFrame = 0;
 	_lastTalkingFrameMillis = g_system->getMillis();
-	const uint16 sampleId = getStage003VoiceSample(textBankIndex, descriptorIndex);
-	const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
-	const uint32 fallbackMillis = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1200;
-	waitForSpeechOrDelay(fallbackMillis, talkingOverlayBase, talkingOverlayVariant, animateForegroundActor);
+	const PopupDescriptor popup = getStage003PopupDescriptor(textBankIndex, descriptorIndex);
+	const uint segmentCount = MAX<uint>(1, popup.continuationCount);
+	for (uint segmentIndex = 0; segmentIndex < segmentCount && !_skipRequested && !Engine::shouldQuit(); ++segmentIndex) {
+		const uint16 sampleId = popup.voiceSampleId + segmentIndex;
+		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
+		const uint32 fallbackMillis = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) : 1200;
+		waitForSpeechOrDelay(fallbackMillis, talkingOverlayBase, talkingOverlayVariant, animateForegroundActor, animateClock, animateInsetActor, insetTalkBaseFrame);
+		if (segmentIndex + 1 < segmentCount && !_skipRequested && !Engine::shouldQuit())
+			delayFrame(375, talkingOverlayBase, talkingOverlayVariant, animateForegroundActor, animateClock, animateInsetActor, insetTalkBaseFrame);
+	}
+
+	if (!_skipRequested && !Engine::shouldQuit()) {
+		if (talkingOverlayBase != kTalkingOverlayNone) {
+			drawTalkingOverlay(talkingOverlayBase, 0, talkingOverlayVariant);
+			presentFrame();
+		} else if (animateInsetActor) {
+			drawInsetActorFrame(insetTalkBaseFrame);
+			presentFrame();
+		} else if (animateForegroundActor) {
+			drawForegroundActorFrame(_foregroundTalkBaseFrame);
+			presentFrame();
+		}
+	}
 }
 
-void Scene9100::waitForSpeechOrDelay(uint32 fallbackMillis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor) {
+void Scene9100::waitForSpeechOrDelay(uint32 fallbackMillis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor, byte insetTalkBaseFrame) {
 	uint32 elapsed = 0;
 	while (!_skipRequested && !Engine::shouldQuit()) {
 		const bool speechActive = _speech.isPlaying();
 		if (!speechActive && elapsed >= fallbackMillis)
 			break;
 
-		if (delayFrame(50, talkingOverlayBase, talkingOverlayVariant, animateForegroundActor))
+		if (delayFrame(50, talkingOverlayBase, talkingOverlayVariant, animateForegroundActor, animateClock, animateInsetActor, insetTalkBaseFrame))
 			return;
 		elapsed += 50;
 	}
@@ -374,6 +646,33 @@ void Scene9100::drawForegroundActorFrame(byte frameIndex) {
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[5], 0, kI10ForegroundDescriptorCount, descriptorIndex);
 }
 
+void Scene9100::drawInsetActorFrame(byte frameIndex) {
+	if (frameIndex >= ARRAYSIZE(kI10InsetFrameRemap))
+		return;
+
+	const uint16 descriptorIndex = kI10InsetFrameRemap[frameIndex];
+	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[7], 0, kI10InsetDescriptorCount, descriptorIndex);
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[7], 0, kI10InsetDescriptorCount, descriptorIndex);
+}
+
+void Scene9100::animateForegroundFrames(byte firstFrame, byte lastFrame) {
+	for (byte frame = firstFrame; frame <= lastFrame && !_skipRequested && !Engine::shouldQuit(); ++frame) {
+		drawForegroundActorFrame(frame);
+		presentFrame();
+		if (delayFrame(100, kTalkingOverlayNone, 0, false, true))
+			return;
+	}
+}
+
+void Scene9100::animateInsetFrames(byte firstFrame, byte lastFrame) {
+	for (byte frame = firstFrame; frame <= lastFrame && !_skipRequested && !Engine::shouldQuit(); ++frame) {
+		drawInsetActorFrame(frame);
+		presentFrame();
+		if (delayFrame(100, kTalkingOverlayNone, 0, false, true))
+			return;
+	}
+}
+
 void Scene9100::drawClockFrame(byte frameIndex) {
 	_clockFrame = frameIndex % kI10ClockDescriptorCount;
 	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[9], 0, kI10ClockDescriptorCount, _clockFrame);
@@ -385,6 +684,7 @@ void Scene9100::drawTalkingOverlay(TalkingOverlayBase talkingOverlayBase, byte f
 		return;
 
 	_talkingFrame = frameIndex % 5;
+	_lastTalkingFrameVariant = _talkingFrame;
 	const uint16 descriptorIndex = _talkingFrame + (5 * (talkingOverlayVariant != 0 ? 1 : 0));
 	const uint32 baseOffset = (uint32)talkingOverlayBase;
 	restoreSpriteBackground(_resourceScratchArena, baseOffset, 0, kI10TalkingOverlayDescriptorCount, descriptorIndex);
@@ -528,10 +828,11 @@ void Scene9100::applyBackgroundMode(const CinematicStep &step) {
 		break;
 	}
 
-	if (step.talkingOverlayBase != kTalkingOverlayNone && step.talkingOverlayVariant != 0)
+	const bool drewInitialOverlay = step.talkingOverlayBase != kTalkingOverlayNone;
+	if (drewInitialOverlay)
 		drawTalkingOverlay(step.talkingOverlayBase, 0, step.talkingOverlayVariant);
 
-	if (step.backgroundMode != 0)
+	if (step.backgroundMode != 0 || drewInitialOverlay)
 		presentFrame();
 }
 
@@ -678,7 +979,7 @@ bool Scene9100::delay(uint32 millis) {
 	return _skipRequested || Engine::shouldQuit();
 }
 
-bool Scene9100::delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor) {
+bool Scene9100::delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor, byte insetTalkBaseFrame) {
 	uint32 remaining = millis;
 	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents())
@@ -690,20 +991,23 @@ bool Scene9100::delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase,
 
 		const uint32 now = g_system->getMillis();
 		bool dirty = false;
-		if (now - _lastClockFrameMillis >= 1000) {
+		if (animateClock && now - _lastClockFrameMillis >= 1000) {
 			_lastClockFrameMillis = now;
 			drawClockFrame((byte)((_clockFrame + 1) % kI10ClockDescriptorCount));
 			dirty = true;
 		}
 		if (talkingOverlayBase != kTalkingOverlayNone && now - _lastTalkingFrameMillis >= 125) {
 			_lastTalkingFrameMillis = now;
-			drawTalkingOverlay(talkingOverlayBase, (byte)((_talkingFrame + 1) % 5), talkingOverlayVariant);
+			drawTalkingOverlay(talkingOverlayBase, nextTalkingFrameVariant(), talkingOverlayVariant);
 			dirty = true;
 		}
-		if (animateForegroundActor && talkingOverlayBase == kTalkingOverlayNone && now - _lastTalkingFrameMillis >= 125) {
+		if (animateInsetActor && talkingOverlayBase == kTalkingOverlayNone && now - _lastTalkingFrameMillis >= 125) {
 			_lastTalkingFrameMillis = now;
-			_talkingFrame = (_talkingFrame + 1) % 4;
-			drawForegroundActorFrame((byte)(15 + _talkingFrame));
+			drawInsetActorFrame((byte)(insetTalkBaseFrame + nextTalkingFrameVariant()));
+			dirty = true;
+		} else if (animateForegroundActor && talkingOverlayBase == kTalkingOverlayNone && now - _lastTalkingFrameMillis >= 125) {
+			_lastTalkingFrameMillis = now;
+			drawForegroundActorFrame((byte)(_foregroundTalkBaseFrame + nextTalkingFrameVariant()));
 			dirty = true;
 		}
 		if (dirty)
@@ -718,6 +1022,16 @@ void Scene9100::stopAudio() {
 	_speech.stop();
 }
 
+byte Scene9100::nextTalkingFrameVariant() {
+	byte nextFrame = 0;
+	do {
+		nextFrame = (byte)_random.getRandomNumber(4);
+	} while (nextFrame == _lastTalkingFrameVariant);
+
+	_lastTalkingFrameVariant = nextFrame;
+	return nextFrame;
+}
+
 uint32 Scene9100::getSegmentOffset(byte segmentIndex) const {
 	const uint chunkIndex = 5 + segmentIndex;
 	if (chunkIndex >= ARRAYSIZE(_resourceChunkOffsets))
@@ -726,12 +1040,16 @@ uint32 Scene9100::getSegmentOffset(byte segmentIndex) const {
 	return _resourceChunkOffsets[chunkIndex];
 }
 
-uint16 Scene9100::getStage003VoiceSample(uint16 textBankIndex, byte descriptorIndex) const {
+Scene9100::PopupDescriptor Scene9100::getStage003PopupDescriptor(uint16 textBankIndex, byte descriptorIndex) const {
 	const uint recordOffset = (textBankIndex * 500) + (descriptorIndex * 5);
 	if (recordOffset + 5 > _stage003Descriptors.size())
-		return 0;
+		return PopupDescriptor{0, 0, 0};
 
-	return readUint16(_stage003Descriptors, recordOffset + 3);
+	return PopupDescriptor{
+		readUint16(_stage003Descriptors, recordOffset),
+		_stage003Descriptors[recordOffset + 2],
+		readUint16(_stage003Descriptors, recordOffset + 3)
+	};
 }
 
 uint16 Scene9100::readUint16(const Common::Array<byte> &source, uint offset) const {
@@ -739,6 +1057,10 @@ uint16 Scene9100::readUint16(const Common::Array<byte> &source, uint offset) con
 		return 0;
 
 	return source[offset] | (source[offset + 1] << 8);
+}
+
+int16 Scene9100::readSint16(const Common::Array<byte> &source, uint offset) const {
+	return (int16)readUint16(source, offset);
 }
 
 uint32 Scene9100::readUint32(const Common::Array<byte> &source, uint offset) const {
