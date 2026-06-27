@@ -2008,22 +2008,20 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		// fallthrough
 	case 12:
 		if (castInfo.strings[12].len) {
-			warning("Cast::loadCastInfo(): BUILDBOT: xtraRect for castid %d", id);
 			Common::hexdump(castInfo.strings[12].data, castInfo.strings[12].len);
 			ci->xtraRect.top = READ_BE_INT32(castInfo.strings[12].data);
 			ci->xtraRect.left = READ_BE_INT32(castInfo.strings[12].data + 4);
 			ci->xtraRect.bottom = READ_BE_INT32(castInfo.strings[12].data + 8);
 			ci->xtraRect.right = READ_BE_INT32(castInfo.strings[12].data + 12);
 
-			dumpS = "xtraRect: <data>, " + dumpS;
+			dumpS = Common::String::format("xtraRect: [%d,%d,%d,%d], ", ci->xtraRect.left, ci->xtraRect.top, ci->xtraRect.right, ci->xtraRect.bottom) + dumpS;
 		}
 		// fallthrough
 	case 11:
 		if (castInfo.strings[11].len) {
-			warning("Cast::loadCastInfo(): BUILDBOT: bptable for castid %d", id);
-			Common::hexdump(castInfo.strings[11].data, castInfo.strings[11].len);
+			// Breakpoints table, used only by the Authoring
 			ci->bpTable = Common::Array<byte>(castInfo.strings[11].data, castInfo.strings[11].len);
-			dumpS = "bpTable: <data>, " + dumpS;
+			dumpS = Common::String::format("bpTable: <data %d bytes>, ", ci->bpTable.size()) + dumpS;
 		}
 		// fallthrough
 	case 10:
