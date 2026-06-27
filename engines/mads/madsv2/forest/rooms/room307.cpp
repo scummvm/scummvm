@@ -702,8 +702,12 @@ static void room_307_daemon() {
 			kernel_position_anim(scratch._a6, 18, 130, 95, 3);
 			scratch._a8 = kernel_run_animation_talk('e', 6, 0);
 			kernel_position_anim(scratch._a8, 71, 81, 87, 7);
-			kernel_synch(KERNEL_ANIM, scratch._a8, KERNEL_ANIM, scratch._9a);
-			kernel_synch(KERNEL_ANIM, scratch._a6, KERNEL_ANIM, scratch._9c);
+
+			// WORKAROUND: In the original when first entering room _9a & _9c == -1, which caused a
+			// wobbly in kernel_synch. Hence the conditional check to set master_type to PLAYER
+			kernel_synch(KERNEL_ANIM, scratch._a8, (scratch._9a == -1) ? KERNEL_PLAYER : KERNEL_ANIM, scratch._9a);
+			kernel_synch(KERNEL_ANIM, scratch._a6, (scratch._9c == -1) ? KERNEL_PLAYER : KERNEL_ANIM, scratch._9c);
+
 			kernel_synch(KERNEL_ANIM, scratch._a4, KERNEL_PLAYER, 0);
 			digi_play_build(307, 'r', 1, 1);
 			scratch._aa = 10;
