@@ -30,10 +30,21 @@
 
 namespace Hollywood {
 
+const char *const kI05ArchiveName = "RESOURCE.I05";
 const char *const kI06ArchiveName = "RESOURCE.I06";
+const char *const kI08ArchiveName = "RESOURCE.I08";
 const uint16 kStage9050MusicCuePrelude = 0x000b;
 const uint16 kStage9050MusicCueMain = 0x000c;
 const byte kNoMusicCue = 0xff;
+const byte kStage9050FirstClipSegmentId = 1;
+const byte kStage9050FirstClipLastFrameIndex = 0x90;
+const byte kStage9050SecondClipSegmentId = 2;
+const byte kStage9050SecondClipLastFrameIndex = 0x22;
+const byte kStage9050ThirdClipSegmentId = 3;
+const byte kStage9050ThirdClipLastFrameIndex = 0x3f;
+
+const byte kStage9050InterClipRevealFrames[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+const byte kStage9050InterClipReverseFrames[] = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0 };
 
 const byte kStage9050ResourceI06SecondarySpriteFrameByHalfFrame[] = {
 	15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
@@ -84,6 +95,9 @@ Scene9050::Scene9050(HollywoodEngine *vm) :
 		_music(),
 		_random("hollywood_scene9050"),
 		_resourceArenaCursor(0),
+		_i05ClipFrameAccumulator(0),
+		_i05InterClipAccumulator(0),
+		_i08BlinkAccumulator(0),
 		_i06ScrollAccumulator(0),
 		_i06PrimarySpriteAccumulator(0),
 		_i06SecondarySpriteAccumulator(0),
@@ -117,6 +131,7 @@ Scene9050::Scene9050(HollywoodEngine *vm) :
 	_paletteCurrent.resize(kHollywoodPaletteSize);
 	_sceneFramebuffer.resize(kFrameBufferSize);
 	_savedFramebuffer.resize(kFrameBufferSize);
+	_clipBaseFramebuffer.resize(kFrameBufferSize);
 	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
 }
 
@@ -124,11 +139,79 @@ bool Scene9050::play() {
 	if (!loadResourceI06Assets())
 		return false;
 
+	bool result = true;
 	runResourceI06AnimatedPresentation();
+
+	if (result && !_skipRequested && !Engine::shouldQuit())
+		result = playResourceI05ClipSegment(kStage9050FirstClipSegmentId, kStage9050FirstClipLastFrameIndex, false);
+	if (result && !_skipRequested && !Engine::shouldQuit())
+		runStage9050InterClipSpriteReveal();
+	if (result && !_skipRequested && !Engine::shouldQuit())
+		advanceStage9050Cutscene();
+	if (result && !_skipRequested && !Engine::shouldQuit())
+		result = runResourceI08BlinkSequence();
+	if (result && !_skipRequested && !Engine::shouldQuit())
+		result = playResourceI05ClipSegment(kStage9050SecondClipSegmentId, kStage9050SecondClipLastFrameIndex, false);
+	if (result && !_skipRequested && !Engine::shouldQuit())
+		runStage9050InterClipSpriteReveal();
+	if (result && !_skipRequested && !Engine::shouldQuit())
+		advanceStage9050Cutscene();
+	if (result && !_skipRequested && !Engine::shouldQuit())
+		result = playResourceI05ClipSegment(kStage9050ThirdClipSegmentId, kStage9050ThirdClipLastFrameIndex, true);
+	if (result && !_skipRequested && !Engine::shouldQuit())
+		runStage9050InterClipSpriteReveal();
+	if (result && !_skipRequested && !Engine::shouldQuit())
+		advanceStage9050Cutscene();
 
 	stopAudio();
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	presentFrame();
+	return result;
+}
+
+bool Scene9050::loadResourceChunk(const char *archiveName, uint index, Common::Array<byte> &destination, uint fixedSize) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(archiveName), index));
+	if (!stream) {
+		warning("Failed to open %s chunk %u", archiveName, index);
+		return false;
+	}
+
+	if (stream->size() > fixedSize || destination.size() < fixedSize) {
+		warning("%s chunk %u does not fit its fixed destination", archiveName, index);
+		return false;
+	}
+
+	memset(destination.data(), 0, destination.size());
+	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
+		warning("Failed to read %s chunk %u", archiveName, index);
+		return false;
+	}
+
+	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", archiveName, index, (uint)stream->size());
+	return true;
+}
+
+bool Scene9050::loadResourceArenaChunk(const char *archiveName, uint archiveIndex, uint localChunkIndex) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(archiveName), archiveIndex));
+	if (!stream) {
+		warning("Failed to open %s chunk %u", archiveName, archiveIndex);
+		return false;
+	}
+
+	if (_resourceArenaCursor + stream->size() > _resourceArena.size()) {
+		warning("%s chunk %u does not fit the Stage 9050 arena", archiveName, archiveIndex);
+		return false;
+	}
+
+	_resourceChunkOffsets[localChunkIndex] = _resourceArenaCursor;
+	if (stream->read(_resourceArena.data() + _resourceArenaCursor, stream->size()) != (uint32)stream->size()) {
+		warning("Failed to read %s chunk %u", archiveName, archiveIndex);
+		return false;
+	}
+
+	debugC(1, kDebugResources, "Loaded %s arena chunk %u as local chunk %u: offset=%u size=%u",
+		archiveName, archiveIndex, localChunkIndex, _resourceArenaCursor, (uint)stream->size());
+	_resourceArenaCursor += stream->size();
 	return true;
 }
 
@@ -166,48 +249,93 @@ bool Scene9050::loadResourceI06Assets() {
 }
 
 bool Scene9050::loadResourceI06Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI06ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kI06ArchiveName, index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit its fixed destination", kI06ArchiveName, index);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kI06ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", kI06ArchiveName, index, (uint)stream->size());
-	return true;
+	return loadResourceChunk(kI06ArchiveName, index, destination, fixedSize);
 }
 
 bool Scene9050::loadResourceI06ArenaChunk(uint index) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI06ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kI06ArchiveName, index);
+	return loadResourceArenaChunk(kI06ArchiveName, index, index);
+}
+
+bool Scene9050::loadResourceI05ClipSegment(byte segmentId) {
+	if (segmentId == 0) {
+		warning("Invalid %s Stage 9050 segment 0", kI05ArchiveName);
 		return false;
 	}
 
-	if (_resourceArenaCursor + stream->size() > _resourceArena.size()) {
-		warning("%s chunk %u does not fit the Stage 9050 arena", kI06ArchiveName, index);
+	if (!_vm->resources()->readChunkTable(Common::Path(kI05ArchiveName), _i05ChunkTable)) {
+		warning("Failed to read %s header", kI05ArchiveName);
 		return false;
 	}
 
-	_resourceChunkOffsets[index] = _resourceArenaCursor;
-	if (stream->read(_resourceArena.data() + _resourceArenaCursor, stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kI06ArchiveName, index);
+	const uint baseIndex = ((uint)segmentId - 1) * kI05EntriesPerSegment;
+	const uint lastLocalChunkIndex = segmentId < 7 ? 5 : 3;
+	if (baseIndex + lastLocalChunkIndex >= kResourceChunkCount) {
+		warning("%s Stage 9050 segment %u exceeds the archive chunk table", kI05ArchiveName, segmentId);
 		return false;
 	}
 
-	debugC(1, kDebugResources, "Loaded %s arena chunk %u: offset=%u size=%u",
-		kI06ArchiveName, index, _resourceArenaCursor, (uint)stream->size());
-	_resourceArenaCursor += stream->size();
+	for (uint i = 0; i <= lastLocalChunkIndex; ++i) {
+		if (!_i05ChunkTable.isValidChunk(baseIndex + i)) {
+			warning("%s is missing Stage 9050 segment %u chunk %u", kI05ArchiveName, segmentId, i);
+			return false;
+		}
+	}
+
+	uint32 resourceArenaSize = 0;
+	for (uint i = 2; i <= lastLocalChunkIndex; ++i)
+		resourceArenaSize += _i05ChunkTable.sizes[baseIndex + i];
+
+	_resourceArena.resize(resourceArenaSize);
+	memset(_resourceArena.data(), 0, _resourceArena.size());
+	_resourceArenaCursor = 0;
+	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
+
+	if (!loadResourceI05Chunk(baseIndex, _clipBaseFramebuffer, kFrameBufferSize))
+		return false;
+	if (!loadResourceI05Chunk(baseIndex + 1, _paletteResource, kHollywoodPaletteSize))
+		return false;
+
+	for (uint i = 2; i <= lastLocalChunkIndex; ++i) {
+		if (!loadResourceI05ArenaChunk(baseIndex + i, i))
+			return false;
+	}
+
+	return true;
+}
+
+bool Scene9050::loadResourceI05Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
+	return loadResourceChunk(kI05ArchiveName, index, destination, fixedSize);
+}
+
+bool Scene9050::loadResourceI05ArenaChunk(uint archiveIndex, uint localChunkIndex) {
+	return loadResourceArenaChunk(kI05ArchiveName, archiveIndex, localChunkIndex);
+}
+
+bool Scene9050::loadResourceI08BlinkAssets() {
+	if (!_vm->resources()->readChunkTable(Common::Path(kI08ArchiveName), _i08ChunkTable)) {
+		warning("Failed to read %s header", kI08ArchiveName);
+		return false;
+	}
+
+	for (uint i = 0; i < kI08RequiredChunkCount; ++i) {
+		if (!_i08ChunkTable.isValidChunk(i)) {
+			warning("%s is missing required Stage 9050 chunk %u", kI08ArchiveName, i);
+			return false;
+		}
+	}
+
+	_resourceArena.resize(_i08ChunkTable.sizes[2]);
+	memset(_resourceArena.data(), 0, _resourceArena.size());
+	_resourceArenaCursor = 0;
+	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
+
+	if (!loadResourceChunk(kI08ArchiveName, 0, _clipBaseFramebuffer, kFrameBufferSize))
+		return false;
+	if (!loadResourceChunk(kI08ArchiveName, 1, _paletteResource, kHollywoodPaletteSize))
+		return false;
+	if (!loadResourceArenaChunk(kI08ArchiveName, 2, 2))
+		return false;
+
 	return true;
 }
 
@@ -515,6 +643,291 @@ void Scene9050::markResourceI06CompositeDirty() {
 	_i06PrimarySpriteDirty = true;
 	_i06SecondarySpriteDirty = true;
 	_i06CompositeForceDirty = true;
+}
+
+void Scene9050::runResourceI05Clip(byte segmentId, byte lastFrameIndex, bool fadeInBeforePlayback) {
+	debugC(1, kDebugScene, "Playing Stage 9050 %s segment %u to frame %u", kI05ArchiveName, segmentId, lastFrameIndex);
+
+	if (fadeInBeforePlayback) {
+		for (uint sweepOffset = 0; sweepOffset < 240 && !_skipRequested && !Engine::shouldQuit(); sweepOffset += 0x14) {
+			if (pollEvents())
+				return;
+			clearSceneFramebufferBand(sweepOffset, 0x14);
+			presentFrame();
+		}
+	}
+
+	if (_skipRequested || Engine::shouldQuit())
+		return;
+
+	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
+	presentFrame();
+
+	memcpy(_savedFramebuffer.data(), _clipBaseFramebuffer.data(), _savedFramebuffer.size());
+	memset(_sceneFramebuffer.data(), 0, _sceneFramebuffer.size());
+	presentFrame();
+
+	memcpy(_paletteCurrent.data(), _paletteResource.data(), _paletteCurrent.size());
+	for (int sweepOffset = 0xdc; sweepOffset >= 0 && !_skipRequested && !Engine::shouldQuit(); sweepOffset -= 0x14) {
+		if (pollEvents())
+			return;
+		revealSavedFramebufferBand((uint)sweepOffset, 0x14);
+		presentFrame();
+	}
+
+	if (waitResourceI05ClipHold())
+		return;
+
+	byte frameIndex = 0;
+	_i05ClipFrameAccumulator = 50;
+	uint32 lastFrameMillis = g_system->getMillis();
+	while (frameIndex < lastFrameIndex && !_skipRequested && !Engine::shouldQuit()) {
+		if (pollEvents())
+			return;
+
+		const uint32 now = g_system->getMillis();
+		const uint32 elapsed = now - lastFrameMillis;
+		lastFrameMillis = now;
+		_i05ClipFrameAccumulator += elapsed;
+
+		if (_i05ClipFrameAccumulator >= 50) {
+			_i05ClipFrameAccumulator %= 50;
+			drawResourceI05ClipFrameDelta(lastFrameIndex, frameIndex);
+			frameIndex++;
+			presentFrame();
+		}
+
+		g_system->delayMillis(1);
+	}
+}
+
+void Scene9050::drawResourceI05ClipFrameDelta(byte lastFrameIndex, byte frameIndex) {
+	const uint32 frameTableOffset = _resourceChunkOffsets[3];
+	const uint32 tableEntryOffset = frameTableOffset + ((uint32)frameIndex * 4);
+	if (tableEntryOffset + 4 > _resourceArena.size())
+		return;
+
+	const uint32 frameOffset = frameTableOffset + ((uint32)lastFrameIndex * 4) +
+		readUint32LE(_resourceArena, tableEntryOffset);
+	if (frameOffset + 4 > _resourceArena.size())
+		return;
+
+	const uint16 firstRow = readUint16LE(_resourceArena, frameOffset);
+	const uint16 lastRow = readUint16LE(_resourceArena, frameOffset + 2);
+	uint cursor = frameOffset + 4;
+
+	for (uint row = firstRow; row <= lastRow && row < HollywoodEngine::kSceneBufferHeight; ++row) {
+		if (cursor >= _resourceArena.size())
+			return;
+
+		byte runCount = _resourceArena[cursor++];
+		for (; runCount != 0; --runCount) {
+			if (cursor + 3 > _resourceArena.size())
+				return;
+
+			const uint x = readUint16LE(_resourceArena, cursor);
+			const byte literalLength = _resourceArena[cursor + 2];
+			const uint destinationOffset = row * HollywoodEngine::kSceneBufferWidth + x;
+			if (destinationOffset >= _sceneFramebuffer.size())
+				return;
+
+			if (literalLength == 0) {
+				if (cursor + 5 > _resourceArena.size())
+					return;
+
+				const byte fillValue = _resourceArena[cursor + 3];
+				const uint fillLength = _resourceArena[cursor + 4];
+				cursor += 5;
+				if (destinationOffset + fillLength <= _sceneFramebuffer.size())
+					memset(_sceneFramebuffer.data() + destinationOffset, fillValue, fillLength);
+			} else {
+				const uint literalOffset = cursor + 3;
+				if (literalOffset + literalLength > _resourceArena.size())
+					return;
+
+				if (destinationOffset + literalLength <= _sceneFramebuffer.size())
+					memcpy(_sceneFramebuffer.data() + destinationOffset,
+						_resourceArena.data() + literalOffset, literalLength);
+				cursor = literalOffset + literalLength;
+			}
+		}
+	}
+}
+
+bool Scene9050::waitResourceI05ClipHold() {
+	if (_skipRequested || Engine::shouldQuit())
+		return true;
+
+	return waitSceneCounterPast(2);
+}
+
+bool Scene9050::playResourceI05ClipSegment(byte segmentId, byte lastFrameIndex, bool fadeInBeforePlayback) {
+	if (!loadResourceI05ClipSegment(segmentId))
+		return false;
+
+	runResourceI05Clip(segmentId, lastFrameIndex, fadeInBeforePlayback);
+	return !_skipRequested && !Engine::shouldQuit();
+}
+
+void Scene9050::runStage9050InterClipSpriteReveal() {
+	const uint32 paletteOffset = _resourceChunkOffsets[2];
+	if (paletteOffset + kHollywoodPaletteSize <= _resourceArena.size()) {
+		memcpy(_paletteCurrent.data(), _resourceArena.data() + paletteOffset, kHollywoodPaletteSize);
+		memcpy(_paletteResource.data(), _paletteCurrent.data(), kHollywoodPaletteSize);
+		presentFrame();
+	}
+
+	runResourceI05InterClipRevealPhase(4);
+	if (waitSceneCounterPast(1))
+		return;
+
+	runResourceI05InterClipRevealPhase(5);
+}
+
+void Scene9050::advanceStage9050Cutscene() {
+	if (waitSceneCounterPast(4))
+		return;
+
+	runResourceI05InterClipReversePhase();
+}
+
+void Scene9050::runResourceI05InterClipRevealPhase(byte localChunkIndex) {
+	_i05InterClipAccumulator = 60;
+	uint frameListIndex = 0;
+	uint32 lastFrameMillis = g_system->getMillis();
+	while (frameListIndex < ARRAYSIZE(kStage9050InterClipRevealFrames) && !_skipRequested && !Engine::shouldQuit()) {
+		if (pollEvents())
+			return;
+
+		const uint32 now = g_system->getMillis();
+		const uint32 elapsed = now - lastFrameMillis;
+		lastFrameMillis = now;
+		_i05InterClipAccumulator += elapsed;
+
+		if (_i05InterClipAccumulator >= 60) {
+			_i05InterClipAccumulator %= 60;
+			restoreAndDrawResourceDescriptorFrame(localChunkIndex, kI05InterClipFrameDescriptorCount,
+				kStage9050InterClipRevealFrames[frameListIndex], true);
+			presentFrame();
+			frameListIndex++;
+		}
+
+		g_system->delayMillis(1);
+	}
+}
+
+void Scene9050::runResourceI05InterClipReversePhase() {
+	_i05InterClipAccumulator = 60;
+	uint frameListIndex = 0;
+	uint32 lastFrameMillis = g_system->getMillis();
+	while (frameListIndex < ARRAYSIZE(kStage9050InterClipReverseFrames) && !_skipRequested && !Engine::shouldQuit()) {
+		if (pollEvents())
+			return;
+
+		const uint32 now = g_system->getMillis();
+		const uint32 elapsed = now - lastFrameMillis;
+		lastFrameMillis = now;
+		_i05InterClipAccumulator += elapsed;
+
+		if (_i05InterClipAccumulator >= 60) {
+			_i05InterClipAccumulator %= 60;
+			const bool drawFrame = frameListIndex + 1 < ARRAYSIZE(kStage9050InterClipReverseFrames);
+			const byte frameIndex = kStage9050InterClipReverseFrames[frameListIndex];
+			restoreAndDrawResourceDescriptorFrame(4, kI05InterClipFrameDescriptorCount, frameIndex, drawFrame);
+			restoreAndDrawResourceDescriptorFrame(5, kI05InterClipFrameDescriptorCount, frameIndex, drawFrame);
+			presentFrame();
+			frameListIndex++;
+		}
+
+		g_system->delayMillis(1);
+	}
+}
+
+void Scene9050::restoreAndDrawResourceDescriptorFrame(byte localChunkIndex, byte descriptorCount, byte descriptorIndex,
+		bool drawFrame) {
+	if (localChunkIndex >= kResourceChunkCount)
+		return;
+
+	const uint32 baseOffset = _resourceChunkOffsets[localChunkIndex];
+	restoreSpriteBackground(_resourceArena, baseOffset, 0, descriptorCount, descriptorIndex,
+		_clipBaseFramebuffer, _sceneFramebuffer);
+	if (drawFrame)
+		drawStripSpriteFrame(_resourceArena, baseOffset, 0, descriptorCount, descriptorIndex, _sceneFramebuffer);
+}
+
+bool Scene9050::runResourceI08BlinkSequence() {
+	if (!loadResourceI08BlinkAssets())
+		return false;
+
+	for (uint sweepOffset = 0; sweepOffset < 240 && !_skipRequested && !Engine::shouldQuit(); sweepOffset += 0x14) {
+		if (pollEvents())
+			return true;
+		clearSceneFramebufferBand(sweepOffset, 0x14);
+		presentFrame();
+	}
+
+	if (_skipRequested || Engine::shouldQuit())
+		return true;
+
+	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
+	presentFrame();
+
+	memcpy(_savedFramebuffer.data(), _clipBaseFramebuffer.data(), _savedFramebuffer.size());
+	memset(_sceneFramebuffer.data(), 0, _sceneFramebuffer.size());
+	presentFrame();
+
+	memcpy(_paletteCurrent.data(), _paletteResource.data(), _paletteCurrent.size());
+	for (int sweepOffset = 0xdc; sweepOffset >= 0 && !_skipRequested && !Engine::shouldQuit(); sweepOffset -= 0x14) {
+		if (pollEvents())
+			return true;
+		revealSavedFramebufferBand((uint)sweepOffset, 0x14);
+		presentFrame();
+	}
+
+	if (waitResourceI08BlinkLoop(6000))
+		return true;
+
+	for (uint sweepOffset = 0; sweepOffset < 240 && !_skipRequested && !Engine::shouldQuit(); sweepOffset += 0x14) {
+		if (pollEvents())
+			return true;
+		clearSceneFramebufferBand(sweepOffset, 0x14);
+		presentFrame();
+	}
+
+	return true;
+}
+
+bool Scene9050::waitResourceI08BlinkLoop(uint32 millis) {
+	byte blinkFrame = 0;
+	uint32 elapsedTotal = 0;
+	_i08BlinkAccumulator = 50;
+	uint32 lastFrameMillis = g_system->getMillis();
+	while (elapsedTotal < millis && !_skipRequested && !Engine::shouldQuit()) {
+		if (pollEvents())
+			return true;
+
+		const uint32 now = g_system->getMillis();
+		const uint32 elapsed = now - lastFrameMillis;
+		lastFrameMillis = now;
+		elapsedTotal += elapsed;
+		_i08BlinkAccumulator += elapsed;
+
+		if (_i08BlinkAccumulator >= 50) {
+			_i08BlinkAccumulator %= 50;
+			blinkFrame = blinkFrame == 0 ? 1 : 0;
+			restoreAndDrawResourceDescriptorFrame(2, kI08BlinkFrameDescriptorCount, blinkFrame, true);
+			presentFrame();
+		}
+
+		g_system->delayMillis(1);
+	}
+
+	return _skipRequested || Engine::shouldQuit();
+}
+
+bool Scene9050::waitSceneCounterPast(uint threshold) {
+	const uint32 millis = (threshold + 1) * 1000;
+	return delay(millis);
 }
 
 void Scene9050::revealSavedFramebufferBand(uint sweepOffset, byte bandWidth) {
