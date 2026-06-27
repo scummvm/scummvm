@@ -163,6 +163,7 @@ bool Scene9050::play() {
 	if (result && !_skipRequested && !Engine::shouldQuit())
 		advanceStage9050Cutscene();
 
+	// Remaining Stage 9050 beats are lower-priority credits; continue with Scene 9120 work.
 	stopAudio();
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	presentFrame();

@@ -60,6 +60,21 @@ private:
 	uint32 _lastSampleDurationMillis;
 };
 
+class SoundBank0Player {
+public:
+	SoundBank0Player();
+	~SoundBank0Player();
+
+	bool playSample(uint16 sampleId, byte volumePercent = 100);
+	void stop();
+	bool isPlaying() const;
+
+private:
+	bool readSampleSpan(uint16 sampleId, uint32 &start, uint32 &size) const;
+
+	Audio::SoundHandle _soundHandle;
+};
+
 } // End of namespace Hollywood
 
 #endif // HOLLYWOOD_MUSIC_H
