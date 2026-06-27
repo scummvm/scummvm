@@ -395,7 +395,14 @@ bool Scene7010::loadStage003SceneRows() {
 		return false;
 	}
 
-	file.seek(kStage003DecodeKeySize);
+	const uint32 owner1RowsOffsetEntry = kStage003DecodeKeySize + kOwner1Resource003RowsOffsetIndex * 4;
+	if (owner1RowsOffsetEntry + 4 > kStage003DecodeKeySize + kStage003StageOffsetTableSize ||
+			owner1RowsOffsetEntry + 4 > (uint32)file.size()) {
+		warning("%s owner 1 text row offset entry is out of range", kStage003ArchiveName);
+		return false;
+	}
+
+	file.seek(owner1RowsOffsetEntry);
 	const uint32 owner1RowsOffset = file.readUint32LE();
 	const uint32 owner1SmallRowBytes = (uint32)owner1SmallRowCount * kStage003SmallRowSize;
 	const uint32 owner1LargeRowBytes = (uint32)owner1LargeRowCount * kStage003LargeRowSize;
