@@ -35,32 +35,32 @@
 
 namespace Hollywood {
 
-static const char *const kI10ArchiveName = "RESOURCE.I10";
-static const char *const kStage003ArchiveName = "RESOURCE.003";
-static const uint16 kScene9100MusicCueId = 0x000f;
-static const uint kStage003DecodeKeySize = 0x141;
-static const uint kStage003StageOffsetTableSize = 0xff4;
-static const uint kStage910Index = 910;
-static const uint16 kStage910LargeRowBaseIndex = 500;
-static const byte kPrimarySpeechTextColor = 0xfb;
-static const byte kSecondarySpeechTextColor = 0xfd;
-static const int kOriginalSpeechLineHeight = 20;
-static const uint kActorFacingCount = 6;
-static const uint kActorCelsPerFacing = 13;
-static const uint kActorDescriptorCount = kActorFacingCount * kActorCelsPerFacing;
-static const uint kActorSpriteDescriptorSize = 28;
-static const uint kActorFacingRunStride = 160000;
-static const uint kI10RonActorRunChunk = 23;
-static const uint kI10RonActorDescriptorChunk = 24;
-static const uint kI10SueActorRunChunk = 25;
-static const uint kI10SueActorDescriptorChunk = 26;
-static const byte kI10SceneActorFacing = 5;
-static const uint kI10SceneActorDescriptorBase = kI10SceneActorFacing * kActorCelsPerFacing;
-static const uint kActorEntryFrameDelayMillis = 90;
-static const uint32 kRonEntryPathDurationMillis = 4200;
-static const uint32 kSueEntryPathDurationMillis = 3600;
+const char *const kI10ArchiveName = "RESOURCE.I10";
+const char *const kStage003ArchiveName = "RESOURCE.003";
+const uint16 kScene9100MusicCueId = 0x000f;
+const uint kStage003DecodeKeySize = 0x141;
+const uint kStage003StageOffsetTableSize = 0xff4;
+const uint kStage910Index = 910;
+const uint16 kStage910LargeRowBaseIndex = 500;
+const byte kPrimarySpeechTextColor = 0xfb;
+const byte kSecondarySpeechTextColor = 0xfd;
+const int kOriginalSpeechLineHeight = 20;
+const uint kActorFacingCount = 6;
+const uint kActorCelsPerFacing = 13;
+const uint kActorDescriptorCount = kActorFacingCount * kActorCelsPerFacing;
+const uint kActorSpriteDescriptorSize = 28;
+const uint kActorFacingRunStride = 160000;
+const uint kI10RonActorRunChunk = 23;
+const uint kI10RonActorDescriptorChunk = 24;
+const uint kI10SueActorRunChunk = 25;
+const uint kI10SueActorDescriptorChunk = 26;
+const byte kI10SceneActorFacing = 5;
+const uint kI10SceneActorDescriptorBase = kI10SceneActorFacing * kActorCelsPerFacing;
+const uint kActorEntryFrameDelayMillis = 90;
+const uint32 kRonEntryPathDurationMillis = 4200;
+const uint32 kSueEntryPathDurationMillis = 3600;
 
-static const byte kI10ForegroundFrameRemap[] = {
+const byte kI10ForegroundFrameRemap[] = {
 	0, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 13,
 	32, 33, 34, 35, 14, 15, 16, 16, 17, 18, 19, 29, 20, 21, 22, 23,
 	23, 24, 25, 26, 30, 22, 21, 20, 16, 0, 0, 0, 0, 1, 2, 3,
@@ -68,12 +68,12 @@ static const byte kI10ForegroundFrameRemap[] = {
 	2, 1, 0, 0
 };
 
-static const Scene9100::SpeechTextStyle kDeskPrimaryBlueSpeech = { 0x78, 0xb9, kPrimarySpeechTextColor, 0x00, 0x26, 0x3f, true };
-static const Scene9100::SpeechTextStyle kInsetBlueSpeech = { 0x140, 0x50, kPrimarySpeechTextColor, 0x00, 0x26, 0x3f, true };
-static const Scene9100::SpeechTextStyle kInsetWhiteSpeech = { 0x140, 0x50, kPrimarySpeechTextColor, 0x3f, 0x3f, 0x3f, true };
-static const Scene9100::SpeechTextStyle kInsetSueSpeech = { 0x140, 0x50, kPrimarySpeechTextColor, 0x3f, 0x28, 0x32, true };
-static const Scene9100::SpeechTextStyle kRonSecondarySpeech = { 0x276, 0x10c, kSecondarySpeechTextColor, 0x00, 0x00, 0x00, false };
-static const Scene9100::SpeechTextStyle kSueSecondarySpeech = { 0x276, 0xf7, kSecondarySpeechTextColor, 0x00, 0x00, 0x00, false };
+const Scene9100::SpeechTextStyle kDeskPrimaryBlueSpeech = { 0x78, 0xb9, kPrimarySpeechTextColor, 0x00, 0x26, 0x3f, true };
+const Scene9100::SpeechTextStyle kInsetBlueSpeech = { 0x140, 0x50, kPrimarySpeechTextColor, 0x00, 0x26, 0x3f, true };
+const Scene9100::SpeechTextStyle kInsetWhiteSpeech = { 0x140, 0x50, kPrimarySpeechTextColor, 0x3f, 0x3f, 0x3f, true };
+const Scene9100::SpeechTextStyle kInsetSueSpeech = { 0x140, 0x50, kPrimarySpeechTextColor, 0x3f, 0x28, 0x32, true };
+const Scene9100::SpeechTextStyle kRonSecondarySpeech = { 0x276, 0x10c, kSecondarySpeechTextColor, 0x00, 0x00, 0x00, false };
+const Scene9100::SpeechTextStyle kSueSecondarySpeech = { 0x276, 0xf7, kSecondarySpeechTextColor, 0x00, 0x00, 0x00, false };
 
 Scene9100::Scene9100(HollywoodEngine *vm) :
 		_vm(vm),
@@ -468,10 +468,10 @@ void Scene9100::showSueEntryActor() {
 }
 
 void Scene9100::playEntryActorAnimation(const ActorBank &bank, int worldX, int worldY, Common::Array<byte> &baseFramebuffer) {
-	static const byte kFacingTurnToCamera = 5;
-	static const byte kTurnCel = 2;
-	static const byte kFinalCel = 0;
-	static const byte kFrames[][2] = {
+	const byte kFacingTurnToCamera = 5;
+	const byte kTurnCel = 2;
+	const byte kFinalCel = 0;
+	const byte kFrames[][2] = {
 		{ kFacingTurnToCamera, kTurnCel },
 		{ kFacingTurnToCamera, kFinalCel }
 	};
@@ -772,7 +772,7 @@ void Scene9100::runOpeningPrelude() {
 }
 
 void Scene9100::runCinematicSequence() {
-	static const CinematicStep kSteps[] = {
+	const CinematicStep kSteps[] = {
 		{ 2, 0, 3, kTalkingOverlayBase320000, 0, true, false, kInsetWhiteSpeech },
 		{ 1, 1, 0, kTalkingOverlayBase0, 1, false, false, kInsetBlueSpeech },
 		{ 2, 1, 1, kTalkingOverlayBase320000, 0, false, false, kInsetWhiteSpeech },

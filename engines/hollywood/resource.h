@@ -50,20 +50,20 @@ struct SceneItemMetadata {
 	ScenePoint approachPoint;
 };
 
-namespace SceneMetadataOffsets {
-static const uint16 kActorDepthThresholds = 0x0000;
-static const uint16 kPaletteDeltaTable = 0x002a;
-static const uint16 kPaletteAdjustTable = 0x003f;
-static const uint16 kRouteBoundaryPoints = 0x007d;
-static const uint16 kRouteBoundarySteps = 0x1529;
-static const uint16 kSceneItemDefaultStrip = 0x35e4;
-static const uint16 kSceneItemInteractionPoints = 0x35f9;
-static const uint16 kSceneItemApproachPoints = 0x364d;
-static const uint16 kSceneItemFacing = 0x36a1;
-static const uint16 kSceneVerbActionRecords = 0x36b6;
-static const uint16 kSceneRelationRecords = 0x3956;
-static const uint16 kSceneMode2RelationOverlay = 0x610a;
-} // End of namespace SceneMetadataOffsets
+enum SceneMetadataOffset {
+	kActorDepthThresholds = 0x0000,
+	kPaletteDeltaTable = 0x002a,
+	kPaletteAdjustTable = 0x003f,
+	kRouteBoundaryPoints = 0x007d,
+	kRouteBoundarySteps = 0x1529,
+	kSceneItemDefaultStrip = 0x35e4,
+	kSceneItemInteractionPoints = 0x35f9,
+	kSceneItemApproachPoints = 0x364d,
+	kSceneItemFacing = 0x36a1,
+	kSceneVerbActionRecords = 0x36b6,
+	kSceneRelationRecords = 0x3956,
+	kSceneMode2RelationOverlay = 0x610a
+};
 
 class ResourceManager {
 public:

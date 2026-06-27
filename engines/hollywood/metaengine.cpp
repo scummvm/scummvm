@@ -27,6 +27,8 @@
 
 #include "hollywood/hollywood.h"
 
+namespace Hollywood {
+
 class HollywoodMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
@@ -39,7 +41,7 @@ public:
 };
 
 Common::Error HollywoodMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Hollywood::HollywoodEngine(syst, desc);
+	*engine = new HollywoodEngine(syst, desc);
 	return Common::kNoError;
 }
 
@@ -51,8 +53,10 @@ void HollywoodMetaEngine::registerDefaultSettings(const Common::String &) const 
 	ConfMan.registerDefault("subtitles", true);
 }
 
+} // End of namespace Hollywood
+
 #if PLUGIN_ENABLED_DYNAMIC(HOLLYWOOD)
-	REGISTER_PLUGIN_DYNAMIC(HOLLYWOOD, PLUGIN_TYPE_ENGINE, HollywoodMetaEngine);
+	REGISTER_PLUGIN_DYNAMIC(HOLLYWOOD, PLUGIN_TYPE_ENGINE, Hollywood::HollywoodMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(HOLLYWOOD, PLUGIN_TYPE_ENGINE, HollywoodMetaEngine);
+	REGISTER_PLUGIN_STATIC(HOLLYWOOD, PLUGIN_TYPE_ENGINE, Hollywood::HollywoodMetaEngine);
 #endif

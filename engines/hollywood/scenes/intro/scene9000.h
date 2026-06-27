@@ -53,13 +53,15 @@ private:
 	uint16 readUint16(uint offset) const;
 	uint32 readUint32(uint offset) const;
 
-	static const uint kIntroChunkCount = 4;
-	static const uint kIntroFrameDescriptorCount = 21;
-	static const uint kIntroFrameDescriptorSize = 14;
-	static const uint32 kFrameStepMillis = 50;
-	static const uint32 kPaletteStepMillis = 50;
-	static const uint32 kHoldStepMillis = 1000;
-	static const uint kHoldStepCount = 4;
+	enum {
+		kIntroChunkCount = 4,
+		kIntroFrameDescriptorCount = 21,
+		kIntroFrameDescriptorSize = 14,
+		kFrameStepMillis = 50,
+		kPaletteStepMillis = 50,
+		kHoldStepMillis = 1000,
+		kHoldStepCount = 4
+	};
 
 	HollywoodEngine *_vm;
 	MusicPlayer _music;
