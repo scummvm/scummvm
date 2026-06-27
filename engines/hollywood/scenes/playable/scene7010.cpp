@@ -90,6 +90,7 @@ const byte kInitialInventoryItems[] = { 1, 2, 5, 7 };
 Scene7010::Scene7010(HollywoodEngine *vm) :
 		_vm(vm),
 		_resourceArenaCursor(0),
+		_random("hollywood_scene7010"),
 		_chunk8FrameIndex(0),
 		_chunk9AmbientOverlayFrameIndex(0),
 		_chunk10IdleFrameA(0),
@@ -134,6 +135,7 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 	_secondaryActorDescriptors.resize(kActorFacingCount * kSecondaryActorFramesPerFacing);
 	_stage003DecodeKey.resize(kStage003DecodeKeySize);
 	_stage003StageBlock.resize(kStage003DescriptorTableSize);
+	_owner1SpeechCueDescriptors.resize(kOwner1SpeechCueDescriptorTableSize);
 	_speechOverlay.visible = false;
 	_speechOverlay.colorIndex = kG01SecondarySpeechTextColor;
 	_speechOverlay.centerX = 0;
@@ -372,6 +374,48 @@ bool Scene7010::loadStage003SceneRows() {
 	if (file.read(_stage003DecodeKey.data(), _stage003DecodeKey.size()) != _stage003DecodeKey.size()) {
 		warning("Failed to read %s row decode key", kStage003ArchiveName);
 		return false;
+	}
+
+	if (kOwner1SpeechCueDescriptorTableOffset + kOwner1SpeechCueDescriptorTableSize + 3 > (uint32)file.size()) {
+		warning("%s owner 1 speech cue table is out of range", kStage003ArchiveName);
+		return false;
+	}
+
+	file.seek(kOwner1SpeechCueDescriptorTableOffset);
+	if (file.read(_owner1SpeechCueDescriptors.data(), _owner1SpeechCueDescriptors.size()) !=
+			_owner1SpeechCueDescriptors.size()) {
+		warning("Failed to read %s owner 1 speech cue table", kStage003ArchiveName);
+		return false;
+	}
+
+	const byte owner1SmallRowCount = file.readByte();
+	const uint16 owner1LargeRowCount = file.readUint16LE();
+	if (file.err()) {
+		warning("Failed to read %s owner 1 text row counts", kStage003ArchiveName);
+		return false;
+	}
+
+	file.seek(kStage003DecodeKeySize);
+	const uint32 owner1RowsOffset = file.readUint32LE();
+	const uint32 owner1SmallRowBytes = (uint32)owner1SmallRowCount * kStage003SmallRowSize;
+	const uint32 owner1LargeRowBytes = (uint32)owner1LargeRowCount * kStage003LargeRowSize;
+	if (owner1RowsOffset == 0 ||
+			owner1RowsOffset + owner1SmallRowBytes + owner1LargeRowBytes > (uint32)file.size()) {
+		warning("%s owner 1 text rows are out of range", kStage003ArchiveName);
+		return false;
+	}
+
+	_owner1LargeRows.resize((uint32)(owner1LargeRowCount + 1) * kStage003LargeRowSize);
+	memset(_owner1LargeRows.data(), 0, _owner1LargeRows.size());
+	file.seek(owner1RowsOffset + owner1SmallRowBytes);
+	if (file.read(_owner1LargeRows.data() + kStage003LargeRowSize, owner1LargeRowBytes) != owner1LargeRowBytes) {
+		warning("Failed to read %s owner 1 large text rows", kStage003ArchiveName);
+		return false;
+	}
+
+	for (uint row = 1; row <= owner1LargeRowCount; ++row) {
+		for (uint column = 0; column < kStage003LargeRowSize; ++column)
+			_owner1LargeRows[row * kStage003LargeRowSize + column] -= _stage003DecodeKey[column];
 	}
 
 	const uint32 stageOffsetEntry = kStage003DecodeKeySize + (kG01StageIndex * 4);
@@ -917,28 +961,43 @@ void Scene7010::processSceneActionClick(const GameplayLoopCursorState &state) {
 void Scene7010::dispatchSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 0:
+	case 1:
+		break;
+	case 9:
+		beginStaticSecondarySpeechLine(8, 0);
+		break;
+	case 10:
+		beginStaticSecondarySpeechLine(9, (byte)_random.getRandomNumber(1));
+		break;
+	case 20:
+		beginStaticSecondarySpeechLine(0x13, 0);
+		break;
+	case 301:
 		handleActionSlot00TransitionToG03();
 		break;
-	case 2:
+	case 302:
+		handleActionSlot01SecondarySpeech();
+		break;
+	case 303:
 		handleActionSlot02SecondarySpeech();
 		break;
-	case 3:
+	case 304:
 		handleActionSlot03DialogueSequence();
 		break;
-	case 4:
+	case 305:
 		handleActionSlot04Item06Speech();
 		break;
-	case 6:
+	case 307:
 		handleActionSlot06Item0BSequence();
 		break;
-	case 7:
+	case 308:
 		handleActionSlot07DialogueAndReturn();
 		break;
-	case 8:
+	case 309:
 		handleActionSlot08CommonSpeech();
 		break;
 	default:
-		handleActionSlot08CommonSpeech();
+		warning("Unhandled Scene7010 action handler %u", handlerId);
 		break;
 	}
 }
@@ -1060,6 +1119,10 @@ void Scene7010::removeInventoryItem(byte itemId) {
 
 void Scene7010::handleActionSlot00TransitionToG03() {
 	_vm->gameState().mainFlowStateId = 0x1b76;
+}
+
+void Scene7010::handleActionSlot01SecondarySpeech() {
+	beginSecondarySpeechLine(1, 0);
 }
 
 void Scene7010::handleActionSlot02SecondarySpeech() {
@@ -1295,7 +1358,7 @@ void Scene7010::beginJuniorSpeech() {
 	if (voiceSampleId != 0)
 		_speech.playSample(voiceSampleId, 100);
 
-	const Common::String text = getStage003LargeTextRecord(textRecordId);
+	const Common::String text = getResource003LargeTextRecord(textRecordId);
 	if (text.empty())
 		return;
 
@@ -1353,6 +1416,17 @@ void Scene7010::beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
 		kG01SecondarySpeechTextColor, false);
 }
 
+void Scene7010::beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
+	uint16 textRecordId = 0;
+	byte continuationCount = 0;
+	uint16 voiceSampleId = 0;
+	if (!getStaticSpeechCue(rowIndex, frameIndex, textRecordId, continuationCount, voiceSampleId))
+		return;
+
+	runSpeechCue(_speechOverlay, textRecordId, continuationCount, voiceSampleId, _activeActorWorldX, 0,
+		kG01SecondarySpeechTextColor, false);
+}
+
 void Scene7010::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue) {
 	const uint paletteOffset = kG01PrimarySpeechTextColor * 3;
@@ -1374,9 +1448,14 @@ void Scene7010::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte fram
 	if (!getStage003Cue(rowIndex, frameIndex, textRecordId, continuationCount, voiceSampleId))
 		return;
 
+	runSpeechCue(overlay, textRecordId, continuationCount, voiceSampleId, centerX, topY, colorIndex, useRequestedTop);
+}
+
+void Scene7010::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte continuationCount,
+		uint16 voiceSampleId, uint16 centerX, uint16 topY, byte colorIndex, bool useRequestedTop) {
 	const byte lineCount = MAX<byte>(1, continuationCount);
 	for (byte part = 0; part < lineCount && !Engine::shouldQuit(); ++part) {
-		const Common::String text = getStage003LargeTextRecord(textRecordId + part);
+		const Common::String text = getResource003LargeTextRecord(textRecordId + part);
 		if (text.empty())
 			continue;
 
@@ -1412,6 +1491,18 @@ bool Scene7010::getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRec
 	textRecordId = readUint16LE(_stage003StageBlock, offset);
 	continuationCount = _stage003StageBlock[offset + 2];
 	voiceSampleId = readUint16LE(_stage003StageBlock, offset + 3);
+	return textRecordId != 0;
+}
+
+bool Scene7010::getStaticSpeechCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
+		uint16 &voiceSampleId) const {
+	const uint offset = ((uint)frameIndex + (uint)rowIndex * 10) * 5;
+	if (offset + 5 > _owner1SpeechCueDescriptors.size())
+		return false;
+
+	textRecordId = readUint16LE(_owner1SpeechCueDescriptors, offset);
+	continuationCount = _owner1SpeechCueDescriptors[offset + 2];
+	voiceSampleId = readUint16LE(_owner1SpeechCueDescriptors, offset + 3);
 	return textRecordId != 0;
 }
 
@@ -1454,9 +1545,19 @@ void Scene7010::wrapActorSpeechText(const Common::String &text, uint16 anchorSce
 	}
 }
 
-Common::String Scene7010::getStage003LargeTextRecord(uint16 recordId) const {
-	if (recordId < kStage003LargeRowBaseIndex)
-		return Common::String();
+Common::String Scene7010::getResource003LargeTextRecord(uint16 recordId) const {
+	if (recordId < kStage003LargeRowBaseIndex) {
+		const uint offset = (uint)recordId * kStage003LargeRowSize;
+		if (recordId == 0 || offset >= _owner1LargeRows.size())
+			return Common::String();
+
+		const byte *row = _owner1LargeRows.data() + offset;
+		uint length = 0;
+		while (length < kStage003LargeRowSize && row[length] != 0)
+			++length;
+
+		return Common::String((const char *)row, length);
+	}
 
 	const uint localRecordId = recordId - kStage003LargeRowBaseIndex;
 	const uint offset = localRecordId * kStage003LargeRowSize;
