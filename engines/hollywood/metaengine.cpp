@@ -21,6 +21,8 @@
 
 #include "base/plugins.h"
 
+#include "common/config-manager.h"
+
 #include "engines/advancedDetector.h"
 
 #include "hollywood/hollywood.h"
@@ -33,6 +35,7 @@ public:
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
+	void registerDefaultSettings(const Common::String &target) const override;
 };
 
 Common::Error HollywoodMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -42,6 +45,10 @@ Common::Error HollywoodMetaEngine::createInstance(OSystem *syst, Engine **engine
 
 bool HollywoodMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return false;
+}
+
+void HollywoodMetaEngine::registerDefaultSettings(const Common::String &) const {
+	ConfMan.registerDefault("subtitles", true);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(HOLLYWOOD)

@@ -1,6 +1,7 @@
 MODULE := engines/hollywood
 
 MODULE_OBJS = \
+	font.o \
 	hollywood.o \
 	metaengine.o \
 	music.o \
