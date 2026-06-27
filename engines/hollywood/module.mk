@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	intro.o \
 	metaengine.o \
 	music.o \
+	post_intro.o \
 	resource.o
 
 # This module can be built as a plugin
