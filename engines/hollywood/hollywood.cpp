@@ -22,6 +22,7 @@
 #include "hollywood/hollywood.h"
 #include "hollywood/scenes/intro/scene9000.h"
 #include "hollywood/scenes/intro/scene9010.h"
+#include "hollywood/scenes/intro/scene9100.h"
 #include "hollywood/resource.h"
 
 #include "common/debug.h"
@@ -50,6 +51,10 @@ Common::Error HollywoodEngine::run() {
 
 	Scene9010 scene9010(this);
 	if (!scene9010.play())
+		return Common::kReadingFailed;
+
+	Scene9100 scene9100(this);
+	if (!scene9100.play())
 		return Common::kReadingFailed;
 
 	debugC(1, kDebugGeneral, "Intro presentation completed");
