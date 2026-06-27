@@ -102,20 +102,21 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 		_chunk15FrameIndex(0),
 		_dialogueOverlayFrameIndex(0),
 		_dialogueOverlayMode(0),
+		_primaryLeftSpeechLastFrame(0),
 		_chunk11Visible(false),
 		_chunk14Visible(false),
 		_chunk15Visible(false),
 		_chunk10IdlePairAAltPhase(false),
 		_chunk10IdlePairBAltPhase(false),
+		_primaryLeftSpeechActive(false),
 		_chunk10IdlePairATicksRemaining(10),
 		_chunk10IdlePairBTicksRemaining(16),
 		_chunk9AmbientDecisionCounter(0),
-		_chunk10DeterministicCounter(0),
 		_chunk8TimerAccumulator(0),
 		_chunk10TimerAccumulator(0),
 		_secondaryActorTimerAccumulator(0),
 		_dialogueOverlayTimerAccumulator(0),
-		_secondaryActorIdleTick(0),
+		_primaryLeftSpeechTimerAccumulator(0),
 		_activeActorWorldX(kG01SueEntryTargetX),
 		_activeActorWorldY(kG01SueEntryTargetY),
 		_activeActorFacing(kG01SueEntryFacing),
@@ -573,20 +574,21 @@ void Scene7010::initializePreviewState() {
 	_chunk15FrameIndex = 0;
 	_dialogueOverlayFrameIndex = 0;
 	_dialogueOverlayMode = 0;
+	_primaryLeftSpeechLastFrame = 0;
 	_chunk11Visible = false;
 	_chunk14Visible = false;
 	_chunk15Visible = false;
-	_chunk10IdlePairAAltPhase = false;
-	_chunk10IdlePairBAltPhase = false;
-	_chunk10IdlePairATicksRemaining = 10;
-	_chunk10IdlePairBTicksRemaining = 16;
+	_chunk10IdlePairAAltPhase = _random.getRandomNumber(1) != 0;
+	_chunk10IdlePairBAltPhase = _random.getRandomNumber(1) != 0;
+	_primaryLeftSpeechActive = false;
+	_chunk10IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
+	_chunk10IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
 	_chunk9AmbientDecisionCounter = 0;
-	_chunk10DeterministicCounter = 0;
 	_chunk8TimerAccumulator = 0;
 	_chunk10TimerAccumulator = 0;
 	_secondaryActorTimerAccumulator = 0;
 	_dialogueOverlayTimerAccumulator = 0;
-	_secondaryActorIdleTick = 0;
+	_primaryLeftSpeechTimerAccumulator = 0;
 	_activeActorWorldX = kG01SueEntryTargetX;
 	_activeActorWorldY = kG01SueEntryTargetY;
 	_activeActorFacing = kG01SueEntryFacing;
@@ -629,10 +631,14 @@ void Scene7010::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, b
 		drawMappedSpriteFrame(11, 0x25, kG01Chunk11FrameMap, ARRAYSIZE(kG01Chunk11FrameMap),
 			_chunk11FrameIndex);
 
-	if (drawSecondaryActor)
-		drawSecondaryActorFrame(secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY);
-	if (drawActiveActor)
-		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY);
+	if (drawSecondaryActor) {
+		const int secondaryActorBottomY = drawSecondaryActorFrame(secondaryFacing, secondaryFrame,
+			secondaryWorldX, secondaryWorldY);
+		if (drawActiveActor)
+			drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, secondaryActorBottomY);
+	} else if (drawActiveActor) {
+		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, -1);
+	}
 
 	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 	const byte chunk8DescriptorIndex = _chunk8FrameIndex < ARRAYSIZE(kG01Chunk8FrameMap) ?
@@ -664,7 +670,7 @@ void Scene7010::drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, con
 		descriptorCount, frameMap[frameIndex], _sceneFramebuffer);
 }
 
-void Scene7010::drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY) {
+void Scene7010::drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY, int minimumYExclusive) {
 	if (facing >= kActorFacingCount || cel >= kActorCelsPerFacing)
 		return;
 
@@ -676,38 +682,41 @@ void Scene7010::drawActiveActorFrame(byte facing, byte cel, int worldX, int worl
 	const int spriteX = worldX - descriptor.anchorX;
 	const int spriteY = worldY - descriptor.anchorY;
 	drawActorRun(_activeActorRunStreams, descriptor.runStreamOffset, facing * kActiveActorFacingRunStride,
-		descriptor.opaqueRunCount, spriteX, spriteY);
+		descriptor.opaqueRunCount, spriteX, spriteY, minimumYExclusive);
 }
 
-void Scene7010::drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY) {
+int Scene7010::drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY) {
 	if (facing >= kActorFacingCount || frame >= kSecondaryActorFramesPerFacing)
-		return;
+		return -1;
 
 	const uint descriptorIndex = facing * kSecondaryActorFramesPerFacing + frame;
 	if (descriptorIndex >= _secondaryActorDescriptors.size())
-		return;
+		return -1;
 
 	const SecondaryActorSpriteDescriptor &descriptor = _secondaryActorDescriptors[descriptorIndex];
 	const int spriteX = worldX - descriptor.anchorX;
 	const int spriteY = worldY - descriptor.anchorY;
-	drawActorRun(_secondaryActorRunStreams, descriptor.runStreamOffset, facing * kSecondaryActorFacingRunStride,
-		descriptor.runCount, spriteX, spriteY);
+	return drawActorRun(_secondaryActorRunStreams, descriptor.runStreamOffset, facing * kSecondaryActorFacingRunStride,
+		descriptor.runCount, spriteX, spriteY, -1);
 }
 
-void Scene7010::drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount, int spriteX, int spriteY) {
+int Scene7010::drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
+		int spriteX, int spriteY, int minimumYExclusive) {
 	cursor += runBase;
+	int lastRunY = minimumYExclusive;
 	for (uint runIndex = 0; runIndex < runCount; ++runIndex) {
 		if (cursor + 3 > runStreams.size())
-			return;
+			return lastRunY;
 
 		const int xOffset = runStreams[cursor++];
 		const int yOffset = runStreams[cursor++];
 		const uint pixelCount = runStreams[cursor++];
 		if (cursor + pixelCount > runStreams.size())
-			return;
+			return lastRunY;
 
 		const int dstY = spriteY + yOffset;
-		if (dstY >= 0 && dstY < HollywoodEngine::kSceneBufferHeight) {
+		lastRunY = dstY;
+		if (dstY > minimumYExclusive && dstY >= 0 && dstY < HollywoodEngine::kSceneBufferHeight) {
 			int dstX = spriteX + xOffset;
 			uint sourceOffset = 0;
 			uint copyCount = pixelCount;
@@ -729,6 +738,8 @@ void Scene7010::drawActorRun(const Common::Array<byte> &runStreams, uint cursor,
 
 		cursor += pixelCount;
 	}
+
+	return lastRunY;
 }
 
 void Scene7010::runEntryCutscene() {
@@ -782,8 +793,7 @@ void Scene7010::runSueEntryPath() {
 			chunk8Accumulator = 0;
 		}
 		if (chunk10Accumulator >= kG01Chunk10FrameMillis) {
-			_chunk10IdleFrameB = _chunk10IdleFrameB == 0x0b ? 8 : _chunk10IdleFrameB + 1;
-			_chunk10IdleFrameD = _chunk10IdleFrameD == 0x0f ? 0x0c : _chunk10IdleFrameD + 1;
+			advanceChunk10IdleFrames();
 			chunk10Accumulator = 0;
 		}
 	}
@@ -795,12 +805,10 @@ void Scene7010::runSueEntryPath() {
 }
 
 void Scene7010::runJuniorSpeech() {
-	const byte secondaryFrames[] = { 0, 1, 2, 3, 4, 3, 2, 1 };
 	const uint32 speechMillis = _speech.isPlaying() ?
 		MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 		MAX<uint32>(2800, _speechOverlay.lines.size() * 1500);
 	uint32 elapsed = 0;
-	uint frameIndex = 0;
 	uint32 frameAccumulator = kG01SecondaryActorFrameMillis;
 	uint32 chunk8Accumulator = 0;
 	uint32 chunk10Accumulator = 0;
@@ -814,7 +822,6 @@ void Scene7010::runJuniorSpeech() {
 		_activeActorWorldY = kG01SueEntryTargetY;
 		_activeActorFacing = kG01SueEntryFacing;
 		_activeActorCel = kG01SueEntryFinalCel;
-		_secondaryActorFrame = secondaryFrames[frameIndex % ARRAYSIZE(secondaryFrames)];
 		drawPlayableComposite();
 		presentFrame();
 
@@ -828,7 +835,7 @@ void Scene7010::runJuniorSpeech() {
 		chunk8Accumulator += delta;
 		chunk10Accumulator += delta;
 		if (frameAccumulator >= kG01SecondaryActorFrameMillis) {
-			++frameIndex;
+			advanceSecondaryActorSpeechFrame();
 			frameAccumulator = 0;
 		}
 		if (chunk8Accumulator >= kG01Chunk8FrameMillis) {
@@ -838,8 +845,7 @@ void Scene7010::runJuniorSpeech() {
 			chunk8Accumulator = 0;
 		}
 		if (chunk10Accumulator >= kG01Chunk10FrameMillis) {
-			_chunk10IdleFrameA = _chunk10IdleFrameA == 3 ? 0 : _chunk10IdleFrameA + 1;
-			_chunk10IdleFrameC = _chunk10IdleFrameC == 7 ? 4 : _chunk10IdleFrameC + 1;
+			advanceChunk10IdleFrames();
 			chunk10Accumulator = 0;
 		}
 	}
@@ -874,6 +880,8 @@ uint16 Scene7010::viewportYOffset() const {
 
 void Scene7010::prepareGameplayLoop() {
 	clearAllSpeechOverlays();
+	_primaryLeftSpeechActive = false;
+	_primaryLeftSpeechTimerAccumulator = 0;
 	_activeActorWorldX = kG01SueEntryTargetX;
 	_activeActorWorldY = kG01SueEntryTargetY;
 	_activeActorFacing = kG01SueEntryFacing;
@@ -882,10 +890,19 @@ void Scene7010::prepareGameplayLoop() {
 }
 
 void Scene7010::advanceGameplayLoop(uint32 delta) {
-	_chunk8TimerAccumulator += delta;
-	while (_chunk8TimerAccumulator >= kG01Chunk8FrameMillis) {
-		advanceChunk8Cycle();
-		_chunk8TimerAccumulator -= kG01Chunk8FrameMillis;
+	if (_primaryLeftSpeechActive && _primarySpeechOverlay.visible) {
+		_primaryLeftSpeechTimerAccumulator += delta;
+		while (_primaryLeftSpeechTimerAccumulator >= kG01Chunk10FrameMillis) {
+			advancePrimaryLeftSpeechFrame();
+			_primaryLeftSpeechTimerAccumulator -= kG01Chunk10FrameMillis;
+		}
+	} else {
+		_primaryLeftSpeechTimerAccumulator = 0;
+		_chunk8TimerAccumulator += delta;
+		while (_chunk8TimerAccumulator >= kG01Chunk8FrameMillis) {
+			advanceChunk8Cycle();
+			_chunk8TimerAccumulator -= kG01Chunk8FrameMillis;
+		}
 	}
 
 	_chunk10TimerAccumulator += delta;
@@ -897,7 +914,7 @@ void Scene7010::advanceGameplayLoop(uint32 delta) {
 	if (_speechOverlay.visible) {
 		_secondaryActorTimerAccumulator += delta;
 		while (_secondaryActorTimerAccumulator >= kG01SecondaryActorFrameMillis) {
-			advanceSecondaryActorIdleFrame();
+			advanceSecondaryActorSpeechFrame();
 			_secondaryActorTimerAccumulator -= kG01SecondaryActorFrameMillis;
 		}
 	} else {
@@ -1187,14 +1204,24 @@ void Scene7010::handleActionSlot06Item0BSequence() {
 void Scene7010::handleActionSlot07DialogueAndReturn() {
 	beginSecondarySpeechLine(7, 0);
 	runChunk8RevealSequence();
+	byte primaryFollowUpFrame = 2;
 	if (_sceneStateFlags[3] == 0) {
-		beginPrimarySpeechLine(8, 0, 0xfa, 0x136, 0x33, 0x22, 0x39);
-		beginPrimarySpeechLine(8, 4, 0xfa, 0x136, 0x33, 0x22, 0x39);
+		const byte firstVisitVariant = (byte)_random.getRandomNumber(2);
+		if (firstVisitVariant == 0) {
+			beginPrimaryLeftSpeechLine(8, 0);
+			primaryFollowUpFrame = 3;
+		} else if (firstVisitVariant == 1) {
+			beginPrimaryLeftSpeechLine(8, 0);
+			primaryFollowUpFrame = 4;
+		} else {
+			beginPrimaryLeftSpeechLine(8, 3);
+			primaryFollowUpFrame = 4;
+		}
 		_sceneStateFlags[3] = 1;
 	} else {
-		beginPrimarySpeechLine(8, 1, 0xfa, 0x136, 0x33, 0x22, 0x39);
-		beginPrimarySpeechLine(8, 2, 0xfa, 0x136, 0x33, 0x22, 0x39);
+		beginPrimaryLeftSpeechLine(8, 1);
 	}
+	beginPrimaryLeftSpeechLine(8, primaryFollowUpFrame);
 	beginSecondarySpeechLine(7, 1);
 	runChunk8HideSequence();
 	walkActiveActorTo(0x16b, 0x1df, 3, 0);
@@ -1303,55 +1330,64 @@ void Scene7010::advanceChunk8Cycle() {
 }
 
 void Scene7010::advanceChunk10IdleFrames() {
-	++_chunk10DeterministicCounter;
-	const byte nextFrameOffset = _chunk10DeterministicCounter & 3;
-
 	if (!_chunk10IdlePairAAltPhase) {
 		if (_chunk10IdlePairATicksRemaining == 0) {
 			_chunk10IdlePairAAltPhase = true;
 			_chunk10IdleFrameA = 0;
-			_chunk10IdlePairATicksRemaining = 18;
+			_chunk10IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
 		} else {
 			--_chunk10IdlePairATicksRemaining;
-			_chunk10IdleFrameB = 8 + nextFrameOffset;
+			_chunk10IdleFrameB = 8 + (byte)_random.getRandomNumber(3);
 		}
 	} else if (_chunk10IdlePairATicksRemaining == 0) {
 		_chunk10IdlePairAAltPhase = false;
 		_chunk10IdleFrameB = 8;
-		_chunk10IdlePairATicksRemaining = 18;
+		_chunk10IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
 	} else {
 		--_chunk10IdlePairATicksRemaining;
-		_chunk10IdleFrameA = nextFrameOffset;
+		_chunk10IdleFrameA = (byte)_random.getRandomNumber(3);
 	}
 
 	if (!_chunk10IdlePairBAltPhase) {
 		if (_chunk10IdlePairBTicksRemaining == 0) {
 			_chunk10IdlePairBAltPhase = true;
 			_chunk10IdleFrameC = 4;
-			_chunk10IdlePairBTicksRemaining = 14;
+			_chunk10IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
 		} else {
 			--_chunk10IdlePairBTicksRemaining;
-			_chunk10IdleFrameD = 0x0c + nextFrameOffset;
+			_chunk10IdleFrameD = 0x0c + (byte)_random.getRandomNumber(3);
 		}
 	} else if (_chunk10IdlePairBTicksRemaining == 0) {
 		_chunk10IdlePairBAltPhase = false;
 		_chunk10IdleFrameD = 0x0c;
-		_chunk10IdlePairBTicksRemaining = 14;
+		_chunk10IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
 	} else {
 		--_chunk10IdlePairBTicksRemaining;
-		_chunk10IdleFrameC = 4 + nextFrameOffset;
+		_chunk10IdleFrameC = 4 + (byte)_random.getRandomNumber(3);
 	}
 }
 
-void Scene7010::advanceSecondaryActorIdleFrame() {
-	if (_secondaryActorFrame == 4) {
-		_secondaryActorFrame = 0;
-		return;
-	}
+void Scene7010::advanceSecondaryActorSpeechFrame() {
+	byte nextFrame = _secondaryActorFrame;
+	for (uint attempt = 0; attempt < 8 && nextFrame == _secondaryActorFrame; ++attempt)
+		nextFrame = (byte)_random.getRandomNumber(kSecondaryActorFramesPerFacing - 1);
 
-	++_secondaryActorIdleTick;
-	if ((_secondaryActorIdleTick % 15) == 0)
-		_secondaryActorFrame = 4;
+	if (nextFrame == _secondaryActorFrame)
+		nextFrame = (byte)((_secondaryActorFrame + 1) % kSecondaryActorFramesPerFacing);
+
+	_secondaryActorFrame = nextFrame;
+}
+
+void Scene7010::advancePrimaryLeftSpeechFrame() {
+	byte nextFrame = _primaryLeftSpeechLastFrame;
+	for (uint attempt = 0; attempt < 8 && nextFrame == _primaryLeftSpeechLastFrame; ++attempt)
+		nextFrame = (byte)_random.getRandomNumber(3);
+
+	if (nextFrame == _primaryLeftSpeechLastFrame)
+		nextFrame = (byte)((_primaryLeftSpeechLastFrame + 1) % 4);
+
+	_primaryLeftSpeechLastFrame = nextFrame;
+	_chunk8FrameIndex = 0x0b + nextFrame;
 }
 
 void Scene7010::beginJuniorSpeech() {
@@ -1420,7 +1456,7 @@ void Scene7010::drawSpeechOverlay(const SpeechOverlay &overlay) {
 
 void Scene7010::beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
 	runSpeechLine(_speechOverlay, rowIndex, frameIndex, _activeActorWorldX, 0,
-		kG01SecondarySpeechTextColor, false);
+		kG01SecondarySpeechTextColor, false, false);
 }
 
 void Scene7010::beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
@@ -1431,7 +1467,7 @@ void Scene7010::beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex)
 		return;
 
 	runSpeechCue(_speechOverlay, textRecordId, continuationCount, voiceSampleId, _activeActorWorldX, 0,
-		kG01SecondarySpeechTextColor, false);
+		kG01SecondarySpeechTextColor, false, false);
 }
 
 void Scene7010::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
@@ -1444,22 +1480,36 @@ void Scene7010::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 
 	}
 
 	runSpeechLine(_primarySpeechOverlay, rowIndex, frameIndex, centerX, topY,
-		kG01PrimarySpeechTextColor, true);
+		kG01PrimarySpeechTextColor, true, false);
+}
+
+void Scene7010::beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex) {
+	const uint paletteOffset = kG01PrimarySpeechTextColor * 3;
+	if (_paletteCurrent.size() > paletteOffset + 2) {
+		_paletteCurrent[paletteOffset] = 0x33;
+		_paletteCurrent[paletteOffset + 1] = 0x22;
+		_paletteCurrent[paletteOffset + 2] = 0x39;
+	}
+
+	runSpeechLine(_primarySpeechOverlay, rowIndex, frameIndex, 0xfa, 0x136,
+		kG01PrimarySpeechTextColor, true, true);
 }
 
 void Scene7010::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
-		byte colorIndex, bool useRequestedTop) {
+		byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft) {
 	uint16 textRecordId = 0;
 	byte continuationCount = 0;
 	uint16 voiceSampleId = 0;
 	if (!getStage003Cue(rowIndex, frameIndex, textRecordId, continuationCount, voiceSampleId))
 		return;
 
-	runSpeechCue(overlay, textRecordId, continuationCount, voiceSampleId, centerX, topY, colorIndex, useRequestedTop);
+	runSpeechCue(overlay, textRecordId, continuationCount, voiceSampleId, centerX, topY, colorIndex,
+		useRequestedTop, animatePrimaryLeft);
 }
 
 void Scene7010::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte continuationCount,
-		uint16 voiceSampleId, uint16 centerX, uint16 topY, byte colorIndex, bool useRequestedTop) {
+		uint16 voiceSampleId, uint16 centerX, uint16 topY, byte colorIndex, bool useRequestedTop,
+		bool animatePrimaryLeft) {
 	const byte lineCount = MAX<byte>(1, continuationCount);
 	for (byte part = 0; part < lineCount && !Engine::shouldQuit(); ++part) {
 		const Common::String text = getResource003LargeTextRecord(textRecordId + part);
@@ -1480,7 +1530,15 @@ void Scene7010::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte c
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
 		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 			MAX<uint32>(1200, overlay.lines.size() * 1100);
-		const bool interrupted = waitForSpeechOrDelay(duration);
+		_primaryLeftSpeechActive = animatePrimaryLeft;
+		if (animatePrimaryLeft)
+			_chunk8FrameIndex = 0x0b;
+		const bool interrupted = waitForSpeechOrDelay(duration, animatePrimaryLeft);
+		if (animatePrimaryLeft) {
+			_primaryLeftSpeechActive = false;
+			_primaryLeftSpeechTimerAccumulator = 0;
+			_chunk8FrameIndex = 0x0b;
+		}
 		_speech.stop();
 		overlay.visible = false;
 		overlay.lines.clear();
@@ -1605,7 +1663,7 @@ void Scene7010::calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY)
 	_speechOverlay.topY = (uint16)topY;
 }
 
-bool Scene7010::waitForSpeechOrDelay(uint32 fallbackMillis) {
+bool Scene7010::waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryLeft) {
 	uint32 elapsed = 0;
 	while (!Engine::shouldQuit()) {
 		const bool speechActive = _speech.isPlaying();
@@ -1615,6 +1673,8 @@ bool Scene7010::waitForSpeechOrDelay(uint32 fallbackMillis) {
 		const uint32 slice = speechActive ? 50 : MIN<uint32>(50, fallbackMillis - elapsed);
 		if (waitSceneMillis(slice))
 			return true;
+		if (animatePrimaryLeft && !_primarySpeechOverlay.visible)
+			break;
 		elapsed += slice;
 	}
 
