@@ -32,6 +32,7 @@ TransitionCastMember::TransitionCastMember(Cast *cast, uint16 castId, Common::Se
 	_type = kCastTransition;
 
 	_transType = kTransNone;
+	_transTime = 0;
 	_durationMillis = 0;
 	_chunkSize = 0;
 	_area = false;
@@ -40,13 +41,13 @@ TransitionCastMember::TransitionCastMember(Cast *cast, uint16 castId, Common::Se
 		stream.hexdump(stream.size());
 	}
 	if (_cast->_version < kFileVer1100) {
-		stream.readByte();
+		_transTime = stream.readByte();
 		_chunkSize = stream.readByte();
 		_transType = static_cast<TransitionType>(stream.readByte());
 		_flags = stream.readByte();
 		_area = !(_flags & 1);
 		_durationMillis = stream.readUint16BE();
-		debugC(3, kDebugLoading, "  TransitionCastMember: transType: %d, durationMillis: %d, flags: %d, chunkSize: %d, area: %d", _transType, _durationMillis, _flags, _chunkSize, _area);
+		debugC(3, kDebugLoading, "  TransitionCastMember: transTime: %d, transType: %d, durationMillis: %d, flags: %d, chunkSize: %d, area: %d", _transTime, _transType, _durationMillis, _flags, _chunkSize, _area);
 	} else {
 		warning("STUB: TransitionCastMember::TransitionCastMember(): Transitions not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 	}
@@ -57,6 +58,7 @@ TransitionCastMember::TransitionCastMember(Cast *cast, uint16 castId, Transition
 	_transType = source._transType;
 	_loaded = source._loaded;
 
+	_transTime = source._transTime;
 	_durationMillis = source._durationMillis;
 	_flags = source._flags;
 	_chunkSize = source._chunkSize;
@@ -122,7 +124,7 @@ void TransitionCastMember::setField(int field, const Datum &d) {
 }
 
 Common::String TransitionCastMember::formatInfo() {
-	return Common::String::format("transType: %d, durationMillis: %d, flags: %d, chunkSize: %d, area: %d", _transType, _durationMillis, _flags, _chunkSize, _area);
+	return Common::String::format("transType: %d, transTime: %d, durationMillis: %d, flags: %d, chunkSize: %d, area: %d", _transType, _transTime, _durationMillis, _flags, _chunkSize, _area);
 }
 
 uint32 TransitionCastMember::getCastDataSize() {
@@ -141,7 +143,7 @@ uint32 TransitionCastMember::getCastDataSize() {
 
 void TransitionCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer1100) {
-		writeStream->writeByte(0);
+		writeStream->writeByte(_transTime);
 		writeStream->writeByte(_chunkSize);
 		writeStream->writeByte((uint8)_transType);
 		writeStream->writeByte(_flags);

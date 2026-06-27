@@ -42,6 +42,7 @@ public:
 	uint32 getCastDataSize() override;
 	void writeCastData(Common::SeekableWriteStream *writeStream) override;
 
+	uint8 _transTime;
 	TransitionType _transType;
 	uint16 _durationMillis;
 	uint8 _flags;
