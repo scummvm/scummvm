@@ -211,6 +211,7 @@ private:
 	void drawSpeechOverlay(const SpeechOverlay &overlay);
 	void drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex);
 	void beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
+	bool startSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
 	void beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
 	void beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue);
