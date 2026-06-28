@@ -140,14 +140,8 @@ struct GameplayState {
 		}
 
 		if (giveAllItems) {
-			for (byte itemId = 1; itemId < 0x6d; ++itemId) {
-				inventorySlotItemIdByOwner[owner][itemId] = itemId;
-				inventoryItemSlotByOwnerAndItemId[owner][itemId] = itemId;
-			}
-			inventoryItemCountByOwner[owner] = 0x6c;
-			inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(0x6c);
+			giveInventoryItemsWithResourcePages(owner);
 			inventoryOwner1ItemsInitialized = true;
-			inventoryPanelRedrawn = true;
 			return;
 		}
 
@@ -184,6 +178,31 @@ struct GameplayState {
 		inventoryItemSlotByOwnerAndItemId[owner][itemId] = slot;
 		inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(slot);
 		inventoryPanelRedrawn = true;
+	}
+
+	byte giveInventoryItemsWithResourcePages(byte owner) {
+		if (owner >= kInventoryOwnerCount)
+			return 0;
+
+		for (uint slot = 0; slot < kInventoryOwnerSlotStride; ++slot) {
+			inventorySlotItemIdByOwner[owner][slot] = 0;
+			inventoryItemSlotByOwnerAndItemId[owner][slot] = 0;
+		}
+
+		byte writeSlot = kInventoryFirstSlot;
+		for (byte itemId = kInventoryFirstSlot; itemId < kInventoryOwnerSlotStride; ++itemId) {
+			if (inventoryItemResourcePageByOwnerAndItemId[owner][itemId] == 0)
+				continue;
+
+			inventorySlotItemIdByOwner[owner][writeSlot] = itemId;
+			inventoryItemSlotByOwnerAndItemId[owner][itemId] = writeSlot;
+			++writeSlot;
+		}
+
+		inventoryItemCountByOwner[owner] = (byte)(writeSlot - 1);
+		inventoryFirstVisibleSlotByOwner[owner] = kInventoryFirstSlot;
+		inventoryPanelRedrawn = true;
+		return inventoryItemCountByOwner[owner];
 	}
 
 	void removeInventoryItem(byte owner, byte itemId) {
