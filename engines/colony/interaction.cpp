@@ -136,7 +136,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 					_carryPatch[1].xloc = 1;
 					_carryPatch[1].yloc = 1;
 					_carryPatch[1].ang = 1;
-					newPatch(kObjTeleport, from, _carryPatch[1], _mapData[from.xindex][from.yindex][4]);
+					newPatch(kObjTeleport, from, _carryPatch[1], _mapData[CLIP<int>(from.xindex, 0, 30)][CLIP<int>(from.yindex, 0, 30)][4]);
 					_carryType = kObjTeleport;
 					_robotArray[obj.where.xindex][obj.where.yindex] = 0;
 					_objects[objNum - 1].alive = 0;
@@ -230,7 +230,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 					_carryPatch[0].xloc = 0;
 					_carryPatch[0].yloc = 0;
 					_carryPatch[0].ang = 0;
-					newPatch(kObjForkLift, from, _carryPatch[0], _mapData[from.xindex][from.yindex][4]);
+					newPatch(kObjForkLift, from, _carryPatch[0], _mapData[CLIP<int>(from.xindex, 0, 30)][CLIP<int>(from.yindex, 0, 30)][4]);
 					_robotArray[obj.where.xindex][obj.where.yindex] = 0;
 					_objects[objNum - 1].alive = 0;
 					_me.look = _me.ang = obj.where.ang;
@@ -263,7 +263,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 					_carryPatch[1].xloc = 1;
 					_carryPatch[1].yloc = 1;
 					_carryPatch[1].ang = 1;
-					newPatch(obj.type, from, _carryPatch[1], _mapData[from.xindex][from.yindex][4]);
+					newPatch(obj.type, from, _carryPatch[1], _mapData[CLIP<int>(from.xindex, 0, 30)][CLIP<int>(from.yindex, 0, 30)][4]);
 					_carryType = obj.type;
 					_robotArray[obj.where.xindex][obj.where.yindex] = 0;
 					_objects[objNum - 1].alive = 0;
