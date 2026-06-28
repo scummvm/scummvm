@@ -1460,17 +1460,18 @@ void Scene7010::applySceneStateToHotspotsAndPatches(byte selector) {
 }
 
 bool Scene7010::hasInventoryItem(byte itemId) const {
-	return itemId < ARRAYSIZE(_inventoryItems) && _inventoryItems[itemId];
+	const byte owner = _vm->gameState().currentInventoryOwnerIndex;
+	return _vm->gameState().hasInventoryItem(owner, itemId);
 }
 
 void Scene7010::addInventoryItem(byte itemId) {
-	if (itemId < ARRAYSIZE(_inventoryItems))
-		_inventoryItems[itemId] = true;
+	GameplayState &state = _vm->gameState();
+	state.addInventoryItem(state.currentInventoryOwnerIndex, itemId);
 }
 
 void Scene7010::removeInventoryItem(byte itemId) {
-	if (itemId < ARRAYSIZE(_inventoryItems))
-		_inventoryItems[itemId] = false;
+	GameplayState &state = _vm->gameState();
+	state.removeInventoryItem(state.currentInventoryOwnerIndex, itemId);
 }
 
 void Scene7010::handleActionSlot00TransitionToG03() {
@@ -2057,7 +2058,7 @@ void Scene7010::drawVerbPanel(Graphics::Surface &surface, const GameplayPanelSta
 
 void Scene7010::drawInventoryPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
 	_panelArt.drawDialogueInventoryPanel(surface, _savedFramebuffer, kG01InitialViewportXOffset, 0,
-		panelState, _vm->font());
+		panelState, _vm->gameState(), _vm->font());
 }
 
 void Scene7010::presentFrame(const SceneHoverCaption *hoverCaption, const GameplayPanelState *panelState) {

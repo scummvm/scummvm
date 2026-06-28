@@ -165,6 +165,8 @@ private:
 	void advanceSecondaryActorSpeechFrame();
 	void advancePrimaryLeftSpeechFrame();
 	void processSceneActionClick(const GameplayLoopCursorState &state);
+	void processSceneRelationClick(const GameplayLoopCursorState &state, byte itemId);
+	SceneVerbActionRecord relationActionRecord(byte inventoryItemId, byte sceneItemId, byte relationMode) const;
 	void dispatchSceneAction(uint16 handlerId);
 	void walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel);
 	void adjustWalkTargetToFloorMask(int &targetX, int &targetY) const;
@@ -196,10 +198,10 @@ private:
 	void handleActionSlot08CommonSpeech();
 	void handleActionSlot09CommonSpeech();
 	void handleActionSlot10CommonSpeech();
-	void handleActionSlot11ExchangeItem0CFor0D();
-	void handleActionSlot12PickupItem0B();
-	void handleActionSlot13PickupItem0C();
-	void handleActionSlot14SecondarySpeech();
+	void handleActionHandler313ExchangeItem0CFor0D();
+	void handleActionHandler314PickupItem0B();
+	void handleActionHandler315PickupItem0C();
+	void handleActionHandler316SecondarySpeech();
 	void runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame = -1);
 	bool waitSceneMillis(uint32 millis);
