@@ -177,7 +177,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 	//
 	{
 		{
-			"corvino",
+			"mamelucos",
 			"Mortadelo y Filemón: Mamelucos a la Romana",
 			AD_ENTRY2s(
 				"Fondos/MUSEO_O.ANI", "830443af2290a96a95703a17c1915c21", 9732,

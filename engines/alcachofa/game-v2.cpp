@@ -238,6 +238,9 @@ public:
 				} else if (ch == 0xD1) {
 					u32String[i] = 0xF1; // Ñ -> ñ
 					hasChanges = true;
+				} else if (ch == 0xC9) {
+					u32String[i] = 0xE9; // É -> é
+					hasChanges = true;
 				}
 			}
 			return hasChanges ? u32String.encode() : String();
@@ -518,6 +521,39 @@ public:
 
 	Path getVideoPath(int32 videoId) override {
 		return Path(String::format("Bin/DATA%02d.BIN", videoId));
+	}
+
+	void missingAnimation(const String &filename) override {
+		if (filename.equalsIgnoreCase("AUTÓGRAFO.ANI") ||
+			filename.equalsIgnoreCase("GOMA3.ANI") ||
+			filename.equalsIgnoreCase("IMAN.ANI") ||
+			filename.equalsIgnoreCase("BOTELLA WHISKEY.ANI") ||
+			filename.equalsIgnoreCase("VASO LLENO.ANI") ||
+			filename.equalsIgnoreCase("VASO VACIO.ANI") ||
+			filename.equalsIgnoreCase("PAÑUELO.ANI") ||
+			filename.equalsIgnoreCase("PAÑUELO CON EXTRAÑAS MANCHAS.ANI") ||
+			filename.equalsIgnoreCase("TABLÓN.ANI") ||
+			filename.equalsIgnoreCase("TENAZAS.ANI") ||
+			filename.equalsIgnoreCase("VASO QUITANERVIOS.ANI") ||
+			filename.equalsIgnoreCase("PEGAMENTO.ANI") ||
+			filename.equalsIgnoreCase("MEDIO EURO.ANI") ||
+			filename.equalsIgnoreCase("BOTELLA LICOR.ANI") ||
+			filename.equalsIgnoreCase("OSCAR TECNOLOGICO.ANI") ||
+			filename.equalsIgnoreCase("COSA RARA CON BOMBILLA.ANI") ||
+			filename.equalsIgnoreCase("CONTRATO SIN FIRMAR.ANI") ||
+			filename.equalsIgnoreCase("CONTRATO FIRMADO.ANI") ||
+			filename.equalsIgnoreCase("BOTELLA CHAMPAGNE.ANI") ||
+			filename.equalsIgnoreCase("BOMBA.ANI") ||
+			filename.equalsIgnoreCase("OTRA BOMBA.ANI") ||
+			filename.equalsIgnoreCase("BOMBA CON RELOJ.ANI"))
+			return;
+		GameWithVersion2_1::missingAnimation(filename);
+	}
+
+	void missingSound(const String &filename) override {
+		if (filename.equalsIgnoreCase("Sonidos/T2"))
+			return;
+		GameWithVersion2_1::missingSound(filename);
 	}
 };
 
