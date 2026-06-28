@@ -385,10 +385,13 @@ void Scene7070::handleChunk12ItemAction() {
 	if (state.g07ObjectPatchState == 1) {
 		beginSecondarySpeechLine(0x0e, 0);
 		state.g07ObjectPatchState = 3;
+		state.g01DialogueBranchState = 1;
 	} else if (state.g07ObjectPatchState == 2) {
 		state.g07ObjectPatchState = 3;
+		state.g01DialogueBranchState = 1;
 	} else {
 		state.g07ObjectPatchState = 2;
+		state.g01DialogueBranchState = 0;
 	}
 	applySceneStateToHotspotsAndPatches(2);
 }

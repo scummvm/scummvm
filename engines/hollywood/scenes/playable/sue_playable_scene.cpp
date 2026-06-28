@@ -2564,7 +2564,7 @@ void SuePlayableScene::handleActionSlot02MajorHotspotAction() {
 	case 2:
 		beginSecondarySpeechLine(3, 10);
 		state.g04MajorActionProgress = 3;
-		_sceneStateFlags[1] = 1;
+		state.g01DialogueOverlayMode = 1;
 		break;
 	default:
 		beginSecondarySpeechLine(2, 2);
