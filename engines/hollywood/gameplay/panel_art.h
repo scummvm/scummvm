@@ -45,6 +45,7 @@ public:
 	bool isLoaded() const { return _loaded; }
 
 	bool applyPalette(Common::Array<byte> &palette) const;
+	bool applyInteractiveObjectPalette(Common::Array<byte> &palette) const;
 	void drawVerbPanel(Graphics::Surface &surface, const Common::Array<byte> &savedFramebuffer,
 		uint16 viewportXOffset, uint16 viewportYOffset, const GameplayPanelState &panelState,
 		HollywoodFont *font) const;

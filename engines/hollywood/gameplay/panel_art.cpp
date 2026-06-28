@@ -245,6 +245,10 @@ bool GameplayPanelArt::loadInventoryItemTilePage(byte pageIndex, Common::Array<b
 }
 
 bool GameplayPanelArt::applyPalette(Common::Array<byte> &palette) const {
+	return applyInteractiveObjectPalette(palette);
+}
+
+bool GameplayPanelArt::applyInteractiveObjectPalette(Common::Array<byte> &palette) const {
 	if (_objectPaletteTriples.size() != kPanelObjectPaletteSize ||
 			palette.size() < kPanelObjectPaletteOffset + kPanelObjectPaletteObjectOnlySize)
 		return false;
