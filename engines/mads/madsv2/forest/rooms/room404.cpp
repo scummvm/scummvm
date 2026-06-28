@@ -70,6 +70,7 @@ static Scratch scratch;
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
+#define aainfo local->animation_info
 
 
 static void room_404_init1() {
@@ -120,12 +121,12 @@ static void room_404_init1() {
 		player.walker_visible = true;
 	} else if (previous_room == 401) {
 		aa[0] = kernel_run_animation(kernel_name('y', 1), 100);
-		scratch.animation_info[0]._active = -1;
+		aainfo[0]._active = -1;
 		scratch._92 = 74;
 		global[g082] = 0;
 	} else if (previous_room == 405) {
 		aa[0] = kernel_run_animation(kernel_name('y', 2), 100);
-		scratch.animation_info[0]._active = -1;
+		aainfo[0]._active = -1;
 		scratch._92 = 97;
 		global[g081] = -1;
 		global[g082] = 0;
@@ -147,10 +148,10 @@ static void room_404_init1() {
 
 static void room_404_init() {
 	for (int16 count = 0; count < 10; count++) {
-		scratch.animation_info[count]._active = 0;
-		scratch.animation_info[count]._frame = 0;
-		scratch.animation_info[count]._val3 = 0;
-		scratch.animation_info[count]._val4 = 0;
+		aainfo[count]._active = 0;
+		aainfo[count]._frame = 0;
+		aainfo[count]._val3 = 0;
+		aainfo[count]._val4 = 0;
 	}
 	scratch._aa = 0;
 
@@ -158,12 +159,12 @@ static void room_404_init() {
 	ss[1] = kernel_load_series(kernel_name('p', 3), 0);
 
 	aa[7] = kernel_run_animation(kernel_name('N', 1), 105);
-	scratch.animation_info[7]._active = -1;
+	aainfo[7]._active = -1;
 
 	aa[8] = kernel_run_animation(kernel_name('N', 2), 105);
-	scratch.animation_info[8]._active = -1;
+	aainfo[8]._active = -1;
 
-	if (scratch.animation_info[7]._active == -1) {
+	if (aainfo[7]._active == -1) {
 		kernel.trigger_setup_mode = 1;
 		kernel_timing_trigger(1, 110);
 	}
@@ -195,10 +196,10 @@ static void room_404_init() {
 		}
 
 		for (int16 count = 0; count < 10; count++) {
-			scratch.animation_info[count]._active = 0;
-			scratch.animation_info[count]._frame = 1;
-			scratch.animation_info[count]._val3 = 0;
-			scratch.animation_info[count]._val4 = 0;
+			aainfo[count]._active = 0;
+			aainfo[count]._frame = 1;
+			aainfo[count]._val3 = 0;
+			aainfo[count]._val4 = 0;
 		}
 
 		if (previous_room != 199 && flags[29] != 3) {
@@ -211,52 +212,52 @@ static void room_404_init() {
 
 static void room_404_anim1() {
 	int16 cur = kernel_anim[scratch.animation[0]].frame;
-	if (cur != scratch.animation_info[0]._frame)
-		scratch.animation_info[0]._frame = cur;
+	if (cur != aainfo[0]._frame)
+		aainfo[0]._frame = cur;
 	if (global[player_hyperwalked] != -1)
 		return;
 	int16 f = scratch._92 - 1;
-	scratch.animation_info[0]._frame = f;
+	aainfo[0]._frame = f;
 	kernel_reset_animation(scratch.animation[0], f);
 }
 
 static void room_404_anim2() {
 	int16 cur = kernel_anim[scratch.animation[9]].frame;
-	if (cur != scratch.animation_info[9]._frame) {
-		scratch.animation_info[9]._frame = cur;
+	if (cur != aainfo[9]._frame) {
+		aainfo[9]._frame = cur;
 		if (flags[29] == 1) {
 			if (cur == 4) {
-				scratch.animation_info[9]._val3 = 11;
+				aainfo[9]._val3 = 11;
 				digi_play_build(404, 'e', 1, 1);
 				scratch._a6 = 1;
 			} else if (cur == 7) {
-				if (scratch.animation_info[9]._val3 == 11) {
-					scratch.animation_info[9]._frame = 5;
+				if (aainfo[9]._val3 == 11) {
+					aainfo[9]._frame = 5;
 					kernel_reset_animation(scratch.animation[9], 5);
 				}
 			}
 		} else {
 			if (cur == 18) {
-				if (scratch.animation_info[9]._val3 == 10) {
-					scratch.animation_info[9]._frame = 15;
+				if (aainfo[9]._val3 == 10) {
+					aainfo[9]._frame = 15;
 					kernel_reset_animation(scratch.animation[9], 15);
 				}
 			} else if (cur < 18) {
 				if (cur == 2) {
-					scratch.animation_info[9]._frame = 13;
+					aainfo[9]._frame = 13;
 					kernel_reset_animation(scratch.animation[9], 13);
 				} else if (cur == 4) {
-					if (scratch.animation_info[9]._val3 == 13) {
-						scratch.animation_info[9]._frame = 3;
+					if (aainfo[9]._val3 == 13) {
+						aainfo[9]._frame = 3;
 						kernel_reset_animation(scratch.animation[9], 3);
 					}
 				} else if (cur == 7) {
-					if (scratch.animation_info[9]._val3 == 11) {
-						scratch.animation_info[9]._frame = 5;
+					if (aainfo[9]._val3 == 11) {
+						aainfo[9]._frame = 5;
 						kernel_reset_animation(scratch.animation[9], 5);
 					}
 				} else if (cur == 14) {
-					scratch.animation_info[9]._val3 = 10;
+					aainfo[9]._val3 = 10;
 					digi_play_build(404, 'b', 5, 1);
 					scratch._a6 = 1;
 				}
@@ -268,8 +269,8 @@ static void room_404_anim2() {
 		return;
 
 	if (flags[29] == 1) {
-		scratch.animation_info[9]._val3 = 13;
-		scratch.animation_info[9]._frame = 18;
+		aainfo[9]._val3 = 13;
+		aainfo[9]._frame = 18;
 		kernel_reset_animation(scratch.animation[9], 18);
 		scratch._a6 = -1;
 		return;
@@ -278,19 +279,19 @@ static void room_404_anim2() {
 	if (scratch._a6 == 1) {
 		global[g154] = 0;
 		kernel_timing_trigger(30, 28);
-		scratch.animation_info[9]._val3 = 13;
-		scratch.animation_info[9]._frame = 3;
+		aainfo[9]._val3 = 13;
+		aainfo[9]._frame = 3;
 		kernel_reset_animation(scratch.animation[9], 3);
 		scratch._a6 = 2;
 	} else if (scratch._a6 == 2) {
-		scratch.animation_info[9]._val3 = 11;
-		scratch.animation_info[9]._frame = 5;
+		aainfo[9]._val3 = 11;
+		aainfo[9]._frame = 5;
 		kernel_reset_animation(scratch.animation[9], 5);
 		scratch._a6 = 3;
 		digi_play_build(404, 'e', 5, 1);
 	} else if (scratch._a6 == 3) {
-		scratch.animation_info[9]._val3 = 13;
-		scratch.animation_info[9]._frame = 18;
+		aainfo[9]._val3 = 13;
+		aainfo[9]._frame = 18;
 		kernel_reset_animation(scratch.animation[9], 18);
 		scratch._a6 = -1;
 	}
@@ -298,27 +299,27 @@ static void room_404_anim2() {
 
 static void room_404_anim3() {
 	int16 cur = kernel_anim[scratch.animation[2]].frame;
-	if (cur != scratch.animation_info[2]._frame)
-		scratch.animation_info[2]._frame = cur;
+	if (cur != aainfo[2]._frame)
+		aainfo[2]._frame = cur;
 }
 
 static void room_404_anim4() {
 	int16 cur = kernel_anim[scratch.animation[1]].frame;
-	if (cur != scratch.animation_info[1]._frame)
-		scratch.animation_info[1]._frame = cur;
+	if (cur != aainfo[1]._frame)
+		aainfo[1]._frame = cur;
 }
 
 static void room_404_anim5() {
 	int16 cur = kernel_anim[scratch.animation[3]].frame;
-	if (cur != scratch.animation_info[3]._frame) {
-		scratch.animation_info[3]._frame = cur;
+	if (cur != aainfo[3]._frame) {
+		aainfo[3]._frame = cur;
 		if (cur == 5) {
-			scratch.animation_info[3]._val3 = 11;
+			aainfo[3]._val3 = 11;
 			digi_play_build(404, 'e', 3, 1);
 			scratch._a6 = 5;
 		} else if (cur == 9) {
-			if (scratch.animation_info[3]._val3 == 11) {
-				scratch.animation_info[3]._frame = 5;
+			if (aainfo[3]._val3 == 11) {
+				aainfo[3]._frame = 5;
 				kernel_reset_animation(scratch.animation[3], 5);
 			}
 		}
@@ -328,8 +329,8 @@ static void room_404_anim5() {
 		return;
 
 	if (scratch._a6 == 5) {
-		scratch.animation_info[3]._val3 = 14;
-		scratch.animation_info[3]._frame = 9;
+		aainfo[3]._val3 = 14;
+		aainfo[3]._frame = 9;
 		kernel_reset_animation(scratch.animation[3], 9);
 		scratch._a6 = -1;
 	}
@@ -337,25 +338,25 @@ static void room_404_anim5() {
 
 static void room_404_anim6() {
 	int16 cur = kernel_anim[scratch.animation[5]].frame;
-	if (cur != scratch.animation_info[5]._frame) {
-		scratch.animation_info[5]._frame = cur;
+	if (cur != aainfo[5]._frame) {
+		aainfo[5]._frame = cur;
 		if (cur == 72) {
-			if (scratch.animation_info[5]._val3 == 11) {
-				scratch.animation_info[5]._frame = 67;
+			if (aainfo[5]._val3 == 11) {
+				aainfo[5]._frame = 67;
 				kernel_reset_animation(scratch.animation[5], 67);
 			}
 		} else if (cur < 72) {
 			if (cur == 5) {
-				scratch.animation_info[5]._val3 = 10;
+				aainfo[5]._val3 = 10;
 				digi_play_build(404, 'b', 2, 1);
 				scratch._a6 = 5;
 			} else if (cur == 10) {
-				if (scratch.animation_info[5]._val3 == 10) {
-					scratch.animation_info[5]._frame = 5;
+				if (aainfo[5]._val3 == 10) {
+					aainfo[5]._frame = 5;
 					kernel_reset_animation(scratch.animation[5], 5);
 				}
 			} else if (cur == 67) {
-				scratch.animation_info[5]._val3 = 11;
+				aainfo[5]._val3 = 11;
 				digi_play_build(404, 'e', 2, 1);
 				scratch._a6 = 67;
 			}
@@ -366,13 +367,13 @@ static void room_404_anim6() {
 		return;
 
 	if (scratch._a6 == 5) {
-		scratch.animation_info[5]._val3 = 13;
-		scratch.animation_info[5]._frame = 11;
+		aainfo[5]._val3 = 13;
+		aainfo[5]._frame = 11;
 		kernel_reset_animation(scratch.animation[5], 11);
 		scratch._a6 = -1;
 	} else if (scratch._a6 == 67) {
-		scratch.animation_info[5]._val3 = 13;
-		scratch.animation_info[5]._frame = 73;
+		aainfo[5]._val3 = 13;
+		aainfo[5]._frame = 73;
 		kernel_reset_animation(scratch.animation[5], 73);
 		scratch._a6 = -1;
 	}
@@ -380,24 +381,24 @@ static void room_404_anim6() {
 
 static void room_404_anim7() {
 	int16 cur = kernel_anim[scratch.animation[6]].frame;
-	if (cur != scratch.animation_info[6]._frame) {
-		scratch.animation_info[6]._frame = cur;
+	if (cur != aainfo[6]._frame) {
+		aainfo[6]._frame = cur;
 		if (cur == 57) {
-			if (scratch.animation_info[6]._val3 == 10) {
-				scratch.animation_info[6]._frame = 52;
+			if (aainfo[6]._val3 == 10) {
+				aainfo[6]._frame = 52;
 				kernel_reset_animation(scratch.animation[6], 52);
 			}
 		} else if (cur > 57) {
 			// no action
 		} else if (cur < 40) {
 			if (cur == 6) {
-				scratch.animation_info[6]._val3 = 11;
+				aainfo[6]._val3 = 11;
 				digi_play_build(404, 'e', 4, 1);
 				scratch._a6 = 6;
 				kernel_seq_delete(scratch.sequence[0]);
 			} else if (cur == 11) {
-				if (scratch.animation_info[6]._val3 == 11) {
-					scratch.animation_info[6]._frame = 6;
+				if (aainfo[6]._val3 == 11) {
+					aainfo[6]._frame = 6;
 					kernel_reset_animation(scratch.animation[6], 6);
 				}
 			} else if (cur == 39) {
@@ -412,7 +413,7 @@ static void room_404_anim7() {
 						digi_play_build(404, '_', 2, 2);
 						scratch._a6 = 39;
 					}
-					scratch.animation_info[6]._frame = 39;
+					aainfo[6]._frame = 39;
 					kernel_reset_animation(scratch.animation[6], 39);
 					scratch._aa++;
 				}
@@ -421,7 +422,7 @@ static void room_404_anim7() {
 				digi_play_build(404, '_', 3, 2);
 				scratch._a6 = -1;
 			} else if (cur == 52) {
-				scratch.animation_info[6]._val3 = 10;
+				aainfo[6]._val3 = 10;
 				digi_play_build(404, 'b', 3, 1);
 				scratch._a6 = 52;
 				scratch.sequence[1] = kernel_seq_stamp(scratch.sprite[1], 0, -1);
@@ -434,13 +435,13 @@ static void room_404_anim7() {
 
 	if (kernel.trigger == 7 || kernel.trigger == 28) {
 		if (scratch._a6 == 6) {
-			scratch.animation_info[6]._val3 = 13;
-			scratch.animation_info[6]._frame = 11;
+			aainfo[6]._val3 = 13;
+			aainfo[6]._frame = 11;
 			kernel_reset_animation(scratch.animation[6], 11);
 			scratch._a6 = -1;
 		} else if (scratch._a6 == 52) {
-			scratch.animation_info[6]._val3 = 13;
-			scratch.animation_info[6]._frame = 57;
+			aainfo[6]._val3 = 13;
+			aainfo[6]._frame = 57;
 			kernel_reset_animation(scratch.animation[6], 57);
 			scratch._a6 = -1;
 		}
@@ -452,10 +453,10 @@ static void room_404_anim7() {
 
 static void room_404_anim8() {
 	int16 cur = kernel_anim[scratch.animation[7]].frame;
-	if (cur != scratch.animation_info[7]._frame) {
-		scratch.animation_info[7]._frame = cur;
+	if (cur != aainfo[7]._frame) {
+		aainfo[7]._frame = cur;
 		if (cur == 99) {
-			scratch.animation_info[7]._frame = 1;
+			aainfo[7]._frame = 1;
 			kernel_reset_animation(scratch.animation[7], 1);
 		} else if (cur < 99) {
 			int threshold = -1;
@@ -466,8 +467,8 @@ static void room_404_anim8() {
 			else if (cur == 1 || cur == 28 || cur == 31 || cur == 94)
 				threshold = 80;
 			if (threshold >= 0 && imath_random(0, 100) > threshold) {
-				scratch.animation_info[7]._frame--;
-				kernel_reset_animation(scratch.animation[7], scratch.animation_info[7]._frame);
+				aainfo[7]._frame--;
+				kernel_reset_animation(scratch.animation[7], aainfo[7]._frame);
 			}
 		}
 	}
@@ -478,33 +479,33 @@ static void room_404_anim8() {
 
 static void room_404_anim9() {
 	int16 cur = kernel_anim[scratch.animation[8]].frame;
-	if (cur == scratch.animation_info[8]._frame)
+	if (cur == aainfo[8]._frame)
 		return;
-	scratch.animation_info[8]._frame = cur;
+	aainfo[8]._frame = cur;
 
 	if (cur == 49) {
 		if (imath_random(0, 100) > 50) {
-			scratch.animation_info[8]._frame--;
-			kernel_reset_animation(scratch.animation[8], scratch.animation_info[8]._frame);
+			aainfo[8]._frame--;
+			kernel_reset_animation(scratch.animation[8], aainfo[8]._frame);
 		} else {
-			scratch.animation_info[8]._frame = 21;
+			aainfo[8]._frame = 21;
 			kernel_reset_animation(scratch.animation[8], 21);
 		}
 	} else if (cur < 49) {
 		if (cur == 19 || cur == 30 || cur == 40) {
 			if (imath_random(0, 100) > 20) {
-				scratch.animation_info[8]._frame--;
-				kernel_reset_animation(scratch.animation[8], scratch.animation_info[8]._frame);
+				aainfo[8]._frame--;
+				kernel_reset_animation(scratch.animation[8], aainfo[8]._frame);
 			}
 		} else if (cur == 34 || cur == 46) {
 			if (imath_random(0, 100) > 40) {
-				scratch.animation_info[8]._frame--;
-				kernel_reset_animation(scratch.animation[8], scratch.animation_info[8]._frame);
+				aainfo[8]._frame--;
+				kernel_reset_animation(scratch.animation[8], aainfo[8]._frame);
 			}
 		} else if (cur == 20 || cur == 48) {
 			if (imath_random(0, 100) > 60) {
-				scratch.animation_info[8]._frame -= 2;
-				kernel_reset_animation(scratch.animation[8], scratch.animation_info[8]._frame);
+				aainfo[8]._frame -= 2;
+				kernel_reset_animation(scratch.animation[8], aainfo[8]._frame);
 			}
 		}
 	}
@@ -534,7 +535,7 @@ static void room_404_daemon() {
 	case 24:
 		if (scratch._8c == 3) {
 			aa[1] = kernel_run_animation(kernel_name('E', 1), 102);
-			scratch.animation_info[1]._active = -1;
+			aainfo[1]._active = -1;
 			scratch._96 = 1;
 			kernel_reset_animation(scratch._9a, 0);
 			kernel_synch(KERNEL_ANIM, aa[1], KERNEL_ANIM, scratch._9a);
@@ -542,7 +543,7 @@ static void room_404_daemon() {
 			kernel_timing_trigger(1, 110);
 		} else if (scratch._8c == 7) {
 			aa[3] = kernel_run_animation(kernel_name('L', 2), 102);
-			scratch.animation_info[3]._active = -1;
+			aainfo[3]._active = -1;
 			scratch._96 = 3;
 			kernel_reset_animation(scratch._9a, 0);
 			kernel_synch(KERNEL_ANIM, aa[3], KERNEL_ANIM, scratch._9a);
@@ -554,7 +555,7 @@ static void room_404_daemon() {
 	case 25:
 		if (scratch._8e == 2) {
 			aa[2] = kernel_run_animation(kernel_name('R', 1), 101);
-			scratch.animation_info[2]._active = -1;
+			aainfo[2]._active = -1;
 			scratch._94 = 2;
 			kernel_reset_animation(scratch._9c, 0);
 			kernel_synch(KERNEL_ANIM, aa[2], KERNEL_ANIM, scratch._9c);
@@ -571,7 +572,7 @@ static void room_404_daemon() {
 				// TODO: loc_6B318
 			} else if (scratch._90 == 6) {
 				aa[5] = kernel_run_animation(kernel_name('L', 1), 103);
-				scratch.animation_info[5]._active = -1;
+				aainfo[5]._active = -1;
 				scratch._98 = 5;
 				kernel_reset_animation(scratch._9a, 0);
 				kernel_reset_animation(scratch._9c, 0);
@@ -600,13 +601,13 @@ static void room_404_daemon() {
 
 	case 100:
 		kernel_abort_animation(aa[0]);
-		scratch.animation_info[0]._active = 0;
+		aainfo[0]._active = 0;
 		if (previous_room == 401) {
 			global[g084] = 15;
 			if (flags[29] == 1 || global[g081]) {
 				aa[9] = kernel_run_animation(kernel_name('t', 1), 107);
 				kernel_synch(KERNEL_ANIM, aa[9], KERNEL_ANIM, aa[0]);
-				scratch.animation_info[9]._active = -1;
+				aainfo[9]._active = -1;
 				player.commands_allowed = false;
 				kernel_timing_trigger(1, 110);
 			} else {
@@ -643,7 +644,7 @@ static void room_404_daemon() {
 
 	case 101:
 		kernel_abort_animation(aa[scratch._94]);
-		scratch.animation_info[scratch._94]._active = 0;
+		aainfo[scratch._94]._active = 0;
 		kernel_reset_animation(scratch._9c, 1);
 		kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
 		global[g143] = 0;
@@ -654,7 +655,7 @@ static void room_404_daemon() {
 
 	case 102:
 		kernel_abort_animation(aa[scratch._96]);
-		scratch.animation_info[scratch._96]._active = 0;
+		aainfo[scratch._96]._active = 0;
 		kernel_reset_animation(scratch._9a, 1);
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
@@ -666,7 +667,7 @@ static void room_404_daemon() {
 	case 103:
 		if (scratch._a4 == 1) {
 			kernel_abort_animation(aa[5]);
-			scratch.animation_info[5]._active = 0;
+			aainfo[5]._active = 0;
 			kernel_abort_animation(scratch._9a);
 			kernel_abort_animation(scratch._9c);
 			global[g084] = 16;
@@ -692,13 +693,13 @@ static void room_404_daemon() {
 			kernel_timing_trigger(1, 110);
 		} else if (scratch._a4 == 2) {
 			kernel_abort_animation(aa[6]);
-			scratch.animation_info[6]._active = 0;
+			aainfo[6]._active = 0;
 			aa[6] = kernel_run_animation(kernel_name('L', 4), 103);
 			scratch._a4 = 3;
 			kernel_timing_trigger(1, 110);
 		} else if (scratch._a4 == 3) {
 			kernel_abort_animation(aa[6]);
-			scratch.animation_info[6]._active = 0;
+			aainfo[6]._active = 0;
 			kernel_reset_animation(scratch._9c, 1);
 			kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
 			global[g143] = 0;
@@ -732,7 +733,7 @@ static void room_404_daemon() {
 
 	case 107:
 		kernel_abort_animation(aa[9]);
-		scratch.animation_info[9]._active = 0;
+		aainfo[9]._active = 0;
 		if (flags[29] == 1) {
 			global[g141] = -1;
 			kernel_reset_animation(scratch._9c, 1);
@@ -792,13 +793,13 @@ static void room_404_daemon() {
 	if (scratch._a2)
 		kernel_random_frame(scratch._9e, &global[g151], global[g154]);
 
-	if (scratch.animation_info[0]._active)  room_404_anim1();
-	if (scratch.animation_info[9]._active)  room_404_anim2();
-	if (scratch.animation_info[2]._active)  room_404_anim3();
-	if (scratch.animation_info[1]._active)  room_404_anim4();
-	if (scratch.animation_info[3]._active)  room_404_anim5();
-	if (scratch.animation_info[5]._active)  room_404_anim6();
-	if (scratch.animation_info[6]._active)  room_404_anim7();
+	if (aainfo[0]._active)  room_404_anim1();
+	if (aainfo[9]._active)  room_404_anim2();
+	if (aainfo[2]._active)  room_404_anim3();
+	if (aainfo[1]._active)  room_404_anim4();
+	if (aainfo[3]._active)  room_404_anim5();
+	if (aainfo[5]._active)  room_404_anim6();
+	if (aainfo[6]._active)  room_404_anim7();
 
 	if (global[walker_converse_now])
 		global_anim3(scratch._a0, &global[g008]);
@@ -927,7 +928,7 @@ void room_404_synchronize(Common::Serializer &s) {
 	for (int16 &v : scratch.sprite)    s.syncAsSint16LE(v);
 	for (int16 &v : scratch.sequence)  s.syncAsSint16LE(v);
 	for (int16 &v : scratch.animation) s.syncAsSint16LE(v);
-	for (AnimationInfo &ai : scratch.animation_info) ai.synchronize(s);
+	for (AnimationInfo &ai : aainfo) ai.synchronize(s);
 	s.syncAsSint16LE(scratch._8c);
 	s.syncAsSint16LE(scratch._8e);
 	s.syncAsSint16LE(scratch._90);
