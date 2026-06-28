@@ -327,6 +327,7 @@ const struct Quirk {
 	{ "flipper", Common::kPlatformWindows, &quirkPretend16Bit },
 	{ "incarnatia", Common::kPlatformMacintosh, &quirkPretend16Bit },
 	{ "incarnatia", Common::kPlatformWindows, &quirkPretend16Bit },
+	{ "loewe4", Common::kPlatformWindows, &quirkPretend16Bit },
 
 	// The standard FileIO xlib exists as both an XObject and Xtra version, with similar functionality
 	// but incompatible APIs.
