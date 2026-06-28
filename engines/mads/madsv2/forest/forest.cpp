@@ -26,6 +26,7 @@
 #include "mads/madsv2/core/env.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
+#include "mads/madsv2/core/timer.h"
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/matte.h"
@@ -90,11 +91,35 @@ Common::Error ForestEngine::run() {
 }
 
 void ForestEngine::global_init_code() {
-	int count;
+	Common::fill(global, global + GLOBAL_LIST_SIZE, 0);
+	Common::fill(flags, flags + 40, 0);
 
-	for (count = 0; count < GLOBAL_LIST_SIZE; count++) {
-		global[count] = 0;
+	flags[0] = flags[1] = flags[2] = flags[3] = -4;
+	flags[4] = flags[5] = 4;
+	flags[34] = flags[35] = flags[36] = 4;
+
+	global[g009] = -1;
+	global[player_score] = -1;
+	global[g022] = 0;
+
+	int16 table[5] = { 106, 203, 302, 305, 307 };
+
+	for (int16 *dest : { &global[g041], &global[g042], &global[g043], &global[g044], &global[g045] }) {
+		int pick;
+		do {
+			int index = imath_random(0, 4);
+			pick = table[index];
+			table[index] = 0;
+		} while (pick == 0);
+		*dest = pick;
 	}
+
+	global[player_selected_object] = -1;
+	global[g017] = -1;
+	global[intro] = 0;
+	global[outro] = 0;
+	global[g066] = 0;
+	global[walker_converse_now] = 0;
 
 	player.facing = FACING_NORTH;
 	player.turn_to_facing = FACING_NORTH;
