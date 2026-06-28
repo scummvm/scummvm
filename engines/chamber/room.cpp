@@ -27,6 +27,7 @@
 #include "chamber/cga.h"
 #include "chamber/ega.h"
 #include "chamber/ega_resource.h"
+#include "chamber/amiga.h"
 #include "chamber/print.h"
 #include "chamber/anim.h"
 #include "chamber/cursor.h"
@@ -150,12 +151,19 @@ static const byte cga_color_sels[] = {
 };
 
 void selectSpecificPalette(byte index) {
-	g_vm->_renderer->colorSelect(cga_color_sels[index]);
+	// Amiga composes the room palette from the zone palette_index
+	if (g_vm->_videoMode == Common::kRenderAmiga)
+		amigaApplyRoomPalette(index);
+	else
+		g_vm->_renderer->colorSelect(cga_color_sels[index]);
 }
 
 
 void selectPalette(void) {
-	g_vm->_renderer->colorSelect(cga_color_sels[script_byte_vars.palette_index]);
+	if (g_vm->_videoMode == Common::kRenderAmiga)
+		amigaApplyRoomPalette(script_byte_vars.palette_index);
+	else
+		g_vm->_renderer->colorSelect(cga_color_sels[script_byte_vars.palette_index]);
 }
 
 /*
@@ -384,6 +392,10 @@ void loadZone(void) {
 	next_turkey_cmd = 0;
 	next_vorts_cmd = 0;
 	script_byte_vars.used_commands = 0;
+
+	// Apply the zone palette at load time for screens that skip refreshZone()
+	if (g_vm->_videoMode == Common::kRenderAmiga)
+		selectPalette();
 }
 
 void resetZone(void) {
