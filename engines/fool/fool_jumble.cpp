@@ -151,12 +151,12 @@ void FoolGame::jumbleRun() {
 		this->var_str_1170.clear(); // was: str(169)
 		this->var_i16_1270 = puzzlesReadShort();
 		for (this->var_i16_103a = 1; this->var_i16_103a <= this->var_i16_1270; this->var_i16_103a++) {
-			this->var_str_1272 = puzzlesReadString().decode(Common::kMacRoman);
-			this->var_i16_1372 = this->var_str_1272.size();
-			this->var_str_1170 += this->var_str_1272;
+			Common::U32String data = puzzlesReadString().decode(Common::kMacRoman);
+			this->var_i16_1372 = data.size();
+			this->var_str_1170 += data;
 			// 130:047e
 			if (_activePuzzleStatus > _jumbleCurrentSubPuzzle) {
-				this->var_str_1070 += this->var_str_1272;
+				this->var_str_1070 += data;
 			} else {
 				// 130:04ac
 				if ((_activePuzzleStatus == _jumbleCurrentSubPuzzle) && !_activePuzzleBuffer.empty()) { // was: str(170)
@@ -166,12 +166,12 @@ void FoolGame::jumbleRun() {
 					// 130:04f0
 					if ((_jumbleGameType == 1) || (_jumbleGameType == 5)) {
 						// 130:0514
-						this->var_str_384 = this->var_str_1272;
+						this->var_str_384 = data;
 						this->sub_130_25d8();
 					}
 					// 130:0528
 					if (_jumbleGameType == 2) {
-						this->var_str_384 = this->var_str_1272;
+						this->var_str_384 = data;
 						this->sub_130_2790();
 					}
 					// 130:0548
@@ -181,13 +181,13 @@ void FoolGame::jumbleRun() {
 					// 130:0580
 					// word square
 					if (_jumbleGameType == 4) {
-						this->var_str_384 = _zbasic->leftStr(this->var_str_1272, 4);
+						this->var_str_384 = _zbasic->leftStr(data, 4);
 						this->sub_130_25d8();
 						this->var_str_1374 = this->var_str_9f4;
-						this->var_str_384 = _zbasic->rightStr(this->var_str_1272, 4);
+						this->var_str_384 = _zbasic->rightStr(data, 4);
 						this->sub_130_25d8();
 						this->var_str_1474 = this->var_str_9f4;
-						this->var_str_9f4 = this->var_str_1374 + _zbasic->midStr(this->var_str_1272, 5, 1) + this->var_str_1474;
+						this->var_str_9f4 = this->var_str_1374 + _zbasic->midStr(data, 5, 1) + this->var_str_1474;
 					}
 					// 130:0610
 					this->var_str_1070 += this->var_str_9f4;
@@ -573,7 +573,7 @@ void FoolGame::jumbleRunHiddenMessage() {
 		if (_keyLastPressed != 0) {
 			this->jumbleOnKey();
 		}
-		this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
+		this->getGridFromMouse(this->var_i16_68a, this->var_i16_68c);
 		if (_event.what == kMouseDown) {
 			this->jumbleOnClick();
 		}
@@ -619,7 +619,7 @@ void FoolGame::sub_130_1426() {
 void FoolGame::jumbleOnClick() {
 	warning(__func__);
 	// 130:1476
-	this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
+	this->getGridFromMouse(this->var_i16_68a, this->var_i16_68c);
 	if ((this->var_i16_68a < 1) || (this->var_i16_68a > this->arr_i16_1eb8[0]) || (this->var_i16_68c < 1) || (this->var_i16_68c > this->arr_i16_1eb8[1])) {
 		// 130:14fa
 		if (_event.where.x > 0x14) {

@@ -127,7 +127,7 @@ void FoolGame::sunMapRun() {
 
 void FoolGame::sunMapOnClick() {
 	// 137:03e2
-	this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
+	this->getGridFromMouse(this->var_i16_68a, this->var_i16_68c);
 	if ((this->var_i16_68a < 1) || (this->var_i16_68a > this->arr_i16_1eb8[0]) ||
 		(this->var_i16_68c < 1) || (this->var_i16_68c > this->arr_i16_1eb8[1])) {
 		return;
@@ -162,7 +162,7 @@ void FoolGame::sunMapDragSelect() {
 	// 137:0598
 	do {
 		this->getNextEvent(4);
-		this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
+		this->getGridFromMouse(this->var_i16_68a, this->var_i16_68c);
 		this->sub_128_342(this->var_i16_68a, this->var_i16_68c);
 		if (this->var_i16_68a >= this->arr_i16_4758[0]) {
 			this->arr_i16_4758[2] = this->arr_i16_4758[0];
@@ -199,7 +199,7 @@ void FoolGame::sunMapMoveSelected() {
 	// 137:0880
 	do {
 		this->getNextEvent(2);
-		this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
+		this->getGridFromMouse(this->var_i16_68a, this->var_i16_68c);
 		this->sub_128_342(this->var_i16_68a, this->var_i16_68c);
 		if (this->arr_i16_4758[0] >= 0) {
 			this->arr_i16_4758[4] = this->var_i16_68a;

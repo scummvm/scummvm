@@ -43,30 +43,30 @@ void FoolGame::polyominoRun() {
 	// "the completed puzzle will reveal..."
 	hint = _zbasic->str(OFF(0)) + hint + _zbasic->str(OFF(1));
 	_zbasic->menu(8, 0xf, 1, hint);
-	this->var_i16_484 = 0;
-	this->var_i16_68c = this->arr_i16_1eb8[8];
+	int16 gridIndex = 0;
+	int16 gridY = this->arr_i16_1eb8[8];
 	do {
 		// 133:009e
-		this->var_i16_68a = this->arr_i16_1eb8[10];
+		int16 gridX = this->arr_i16_1eb8[10];
 		do {
 			// 133:00b2
-			this->var_i16_484 += 1;
+			gridIndex++;
 			_toolbox->SetRect(
-				_screenGrid[this->var_i16_484],
-				this->var_i16_68a,
-				this->var_i16_68c,
-				this->var_i16_68a + this->arr_i16_1eb8[13],
-				this->var_i16_68c + this->arr_i16_1eb8[12]
+				_screenGrid[gridIndex],
+				gridX,
+				gridY,
+				gridX + this->arr_i16_1eb8[13],
+				gridY + this->arr_i16_1eb8[12]
 			);
 			// 133:0112
 		} while (_zbasic->incrAndCheck(
-			this->var_i16_68a,
+			gridX,
 			this->arr_i16_1eb8[11],
 			this->arr_i16_1eb8[6]
 		));
 		// 133:0142
 	} while (_zbasic->incrAndCheck(
-		this->var_i16_68c,
+		gridY,
 		this->arr_i16_1eb8[9],
 		this->arr_i16_1eb8[7]
 	));
@@ -266,7 +266,7 @@ void FoolGame::polyominoRun() {
 
 void FoolGame::polyominoOnClick() {
 	// 133:087c
-	this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
+	this->getGridFromMouse(this->var_i16_68a, this->var_i16_68c);
 	debug(5, "FoolGame::polyominoOnClick: grid pos: (%d, %d)", this->var_i16_68a, this->var_i16_68c);
 	if ((this->var_i16_68a < 1) || (this->var_i16_68a > this->arr_i16_1eb8[0]) || (this->var_i16_68c < 1) || (this->var_i16_68c > this->arr_i16_1eb8[1])) {
 		this->waitForMouseUp();

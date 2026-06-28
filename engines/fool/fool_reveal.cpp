@@ -75,13 +75,13 @@ void FoolGame::revealRun() {
 
 	this->arr_i16_1eb8[17] = (0x1c2 / this->arr_i16_1eb8[15]);
 	this->arr_i16_1eb8[18] = 0x100 - ((this->arr_i16_1eb8[15] * this->arr_i16_1eb8[17]) / 2);
-	this->var_str_1272 = puzzlesReadString();
+	Common::U32String letters = puzzlesReadString().decode(Common::kMacRoman);
 	this->zoomRect(0xb4, 0xff, 0xb6, 0x101, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x19);
 	this->zoomRect(0x9a, 0xff, 0x9c, 0x101, 0x37, 0x13, 0xff, 0x1ee, 0, kPatCopy, 0x19);
 	// 134:02f0
 	this->arr_i16_1eb8[19] = _zbasic->decodeInt(_activePuzzleBuffer);
 	this->var_i16_1aba = this->arr_i16_1eb8[18];
-	_zbasic->text(_fontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	for (this->var_i16_7be = 1; this->var_i16_7be <= this->arr_i16_1eb8[15]; this->var_i16_7be++) {
 		// play a random tone and draw each of the letter buttons in sequence
 		this->playTone(
@@ -100,7 +100,7 @@ void FoolGame::revealRun() {
 		_toolbox->FillRoundRect(_screenGrid[this->var_i16_7be], 0x19, 0x19, _patterns[0]);
 		_toolbox->FrameRoundRect(_screenGrid[this->var_i16_7be], 0x19, 0x19);
 		// 134:0448
-		this->var_str_384 = _zbasic->midStr(this->var_str_1272, this->var_i16_7be, 1);
+		this->var_str_384 = _zbasic->midStr(letters, this->var_i16_7be, 1);
 		this->var_i16_7ba = _toolbox->StringWidth(this->var_str_384);
 		_toolbox->MoveTo(
 			_screenGrid[this->var_i16_7be].left + (this->arr_i16_1eb8[17] / 2) - (this->var_i16_7ba / 2),

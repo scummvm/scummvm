@@ -51,7 +51,7 @@ void FoolGame::humbugRun() {
 	}
 	// 142:00b2
 	if (_activePuzzleStatus == 0x63) {
-		this->sub_142_630();
+		this->humbugShowThoth();
 	}
 	if (_activePuzzleStatus >= 0x64) {
 		this->humbugPlayTrail();
@@ -76,7 +76,7 @@ void FoolGame::humbugPlayTrail() {
 	// 142:0166
 	this->fetchPuzzleData();
 	this->toggleMouseCursor(false);
-	_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
+	_zbasic->text(kFontChicago, 0xc, 0, kSrcOr);
 	this->drawPuzzleButton(_zbasic->str(OFF(5))); // ~
 	// eye button
 	_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_b3ec);
@@ -111,7 +111,7 @@ void FoolGame::humbugPlayTrail() {
 		// 142:02ee
 		this->getNextEvent(-1);
 		if (!((this->var_i16_1ab6 == _event.where.x) && (this->var_i16_1ab8 == _event.where.y))) {
-			this->sub_142_370();
+			this->humbugMoveMouse();
 		}
 		if (this->_humbugTrailIndex >= 0xa42) {
 			_activePuzzleSolved = true;
@@ -123,7 +123,7 @@ void FoolGame::humbugPlayTrail() {
 	}
 }
 
-void FoolGame::sub_142_370() {
+void FoolGame::humbugMoveMouse() {
 	// 142:0370
 	int16 trailMax = this->_humbugTrailIndex + 0x19;
 	if (trailMax > 0xa42) {
@@ -189,7 +189,7 @@ void FoolGame::humbugSuccess() {
 	this->zoomRect(0x137, 0xc6, 0x147, 0xdd, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x19);
 }
 
-void FoolGame::sub_142_630() {
+void FoolGame::humbugShowThoth() {
 	// 142:0630
 	_zbasic->menu(8, 0, 1, _zbasic->str(OFF(6))); // the 2nd key of thoth
 	_zbasic->menu(8, 1, 1, _zbasic->str(OFF(7))); // return to scroll
@@ -217,7 +217,7 @@ void FoolGame::sub_142_630() {
 			_toolbox->DrawString(idStr);
 		}
 		// 142:07ca
-		_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
+		_zbasic->text(kFontChicago, 0xc, 0, kSrcOr);
 		this->waitForMouseUp();
 		this->menuClickMessage();
 

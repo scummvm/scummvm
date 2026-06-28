@@ -61,7 +61,7 @@ void FoolGame::highPriestessRun() {
 	}
 	// 140:007e
 	_toolbox->SetCursor(_cursors[0x10]);
-	this->sub_140_2f92();
+	this->thothSetupMenu();
 	if (_activePuzzleStatus == 2) {
 		this->thothKey2nd();
 		if (!_activePuzzleSolved) {
@@ -327,15 +327,15 @@ void FoolGame::thothDrawEnchantment() {
 	_toolbox->PenNormal();
 	_toolbox->EraseRoundRect(_screenGrid[this->arr_i16_1eb8[2]], 0x14, 0x14);
 	_toolbox->FrameRoundRect(_screenGrid[this->arr_i16_1eb8[2]], 0x14, 0x14);
-	_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
-	this->var_str_384 = Common::U32String::format(" %d ", this->arr_i16_1eb8[2]); // was: str(OFF(10))
-	this->var_i16_484 = _toolbox->StringWidth(this->var_str_384);
+	_zbasic->text(kFontChicago, 0xc, 0, kSrcOr);
+	Common::U32String label = Common::U32String::format(" %d ", this->arr_i16_1eb8[2]); // was: str(OFF(10))
+	int16 width = _toolbox->StringWidth(label);
 	// 140:0bd2
 	_toolbox->MoveTo(
-		_screenGrid[this->arr_i16_1eb8[2]].left + 0x14 - (this->var_i16_484 / 2),
+		_screenGrid[this->arr_i16_1eb8[2]].left + 0x14 - (width / 2),
 		_screenGrid[this->arr_i16_1eb8[2]].top + 0x18
 	);
-	_toolbox->DrawString(this->var_str_384);
+	_toolbox->DrawString(label);
 }
 
 void FoolGame::sub_140_c4c() {
@@ -480,7 +480,7 @@ void FoolGame::thothKey1st() {
 	} else {
 		// 140:1446
 		showBehold(0, 0, _zbasic->str(OFF(21)));
-		this->sub_140_2f92();
+		this->thothSetupMenu();
 		this->var_i16_7ce ^= 2;
 		this->var_i16_7b2 = 0xa;
 		_activePuzzleSolved = true;
@@ -946,7 +946,7 @@ void FoolGame::thothKeyLastOnClick() {
 	while (((_event.modifiers & kModMouseButtonUp) == 0) && (this->var_i16_1de6 != (this->arr_i16_3b38[0x20 + _hermitPathStage] + 1))) {
 		// 140:22bc
 		this->getNextEvent(-1); // was: 0
-		this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
+		this->getGridFromMouse(this->var_i16_68a, this->var_i16_68c);
 		if ((this->var_i16_68a >= 0) && (this->var_i16_68c >= 0) && (this->var_i16_68a <= 0x13) && (this->var_i16_68c <= 0xd)) {
 			// 140:2316
 			this->arr_i16_1eb8[0] = this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c];
@@ -1228,7 +1228,7 @@ void FoolGame::thothKeyLastSetup() {
 	this->copyScreen(0, this->arr_bmp_b3ec);
 }
 
-void FoolGame::sub_140_2f92() {
+void FoolGame::thothSetupMenu() {
 	// 140:2f92
 	_zbasic->menu(8, 0, 1, _zbasic->str(OFF(25))); // the book of thoth
 	_zbasic->menu(8, 1, 1, _zbasic->str(OFF(26))); // return to scroll
