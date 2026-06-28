@@ -1,6 +1,7 @@
 MODULE := engines/hollywood
 
 MODULE_OBJS = \
+	console.o \
 	font.o \
 	gameplay/actor_renderer.o \
 	gameplay/cursor.o \

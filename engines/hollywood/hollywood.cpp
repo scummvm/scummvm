@@ -20,6 +20,7 @@
  */
 
 #include "hollywood/hollywood.h"
+#include "hollywood/console.h"
 #include "hollywood/font.h"
 #include "hollywood/scenes/intro/scene9000.h"
 #include "hollywood/scenes/intro/scene9010.h"
@@ -85,6 +86,8 @@ HollywoodEngine::~HollywoodEngine() {
 }
 
 Common::Error HollywoodEngine::run() {
+	setDebugger(new Console(this));
+
 	initGraphics(kScreenWidth, kScreenHeight);
 
 	syncSoundSettings();
