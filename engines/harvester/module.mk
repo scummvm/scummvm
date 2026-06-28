@@ -1,21 +1,35 @@
 MODULE := engines/harvester
 
-	MODULE_OBJS = \
+MODULE_OBJS = \
+	art.o \
+	cft_font.o \
+	console.o \
+	dialogue.o \
+	flow.o \
+	fst_player.o \
+	harvester.o \
+	inventory.o \
+	media_manager.o \
+	menu.o \
+	metaengine.o \
+	monster.o \
+	player.o \
+	resources.o \
+	room_combat.o \
+	room_interaction.o \
+	room.o \
+	runtime_entity.o \
+	saveload.o \
+	script.o \
+	text.o \
+	xfile_archive.o \
 	npc/authority_dialogue.o \
 	npc/beggar_dialogue.o \
 	npc/boyle_dialogue.o \
 	npc/buster_dialogue.o \
 	npc/butcher_dialogue.o \
-	cft_font.o \
-	harvester.o \
 	npc/chessmaster_dialogue.o \
 	npc/cloak_atnd_dialogue.o \
-	console.o \
-	dialogue.o \
-	fst_player.o \
-	metaengine.o \
-	media_manager.o \
-	saveload.o \
 	npc/curator_dialogue.o \
 	npc/dad_dialogue.o \
 	npc/dark_woman_dialogue.o \
@@ -31,12 +45,12 @@ MODULE := engines/harvester
 	npc/johnson_dialogue.o \
 	npc/karin_dialogue.o \
 	npc/librarian_dialogue.o \
-	npc/loomis_dialogue.o \
 	npc/lodge_chef_dialogue.o \
+	npc/loomis_dialogue.o \
+	npc/madam_dialogue.o \
+	npc/maint_man_dialogue.o \
 	npc/mcknight_dialogue.o \
 	npc/memb_dir_dialogue.o \
-	npc/maint_man_dialogue.o \
-	npc/madam_dialogue.o \
 	npc/mom_dialogue.o \
 	npc/mother_dialogue.o \
 	npc/moynahan_dialogue.o \
@@ -50,28 +64,14 @@ MODULE := engines/harvester
 	npc/pta_mom_dialogue.o \
 	npc/ryder_dialogue.o \
 	npc/sergeant_dialogue.o \
-	npc/stephanie_dialogue.o \
 	npc/sparky_dialogue.o \
+	npc/stephanie_dialogue.o \
 	npc/stub_dialogue.o \
 	npc/swell_dialogue.o \
 	npc/valet_dialogue.o \
 	npc/vet_dialogue.o \
-	npc/whaley_dialogue.o \
 	npc/wasp_woman_dialogue.o \
-	resources.o \
-	runtime_entity.o \
-	art.o \
-	flow.o \
-	inventory.o \
-	menu.o \
-	monster.o \
-	player.o \
-	room_combat.o \
-	room_interaction.o \
-	room.o \
-	script.o \
-	text.o \
-	xfile_archive.o
+	npc/whaley_dialogue.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_HARVESTER), DYNAMIC_PLUGIN)
