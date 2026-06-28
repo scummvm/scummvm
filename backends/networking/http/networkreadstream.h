@@ -38,32 +38,11 @@ class NetworkReadStream : public Common::ReadStream {
 protected:
 	bool _keepAlive;
 	long _keepAliveIdle, _keepAliveInterval;
-	bool _eos, _requestComplete;
-	const byte *_sendingContentsBuffer;
-	uint32 _sendingContentsSize;
-	uint32 _sendingContentsPos;
-	Common::String _responseHeaders;
-
-	/**
-	 * Fills the passed buffer with _sendingContentsBuffer contents.
-	 * It works similarly to read(), expect it's not for reading
-	 * Stream's contents, but for sending our own data to the server.
-	 *
-	 * @returns how many bytes were actually read (filled in)
-	 */
-	uint32 fillWithSendingContents(char *bufferToFill, uint32 maxSize);
-
-	/**
-	 * Remembers headers returned to CURL in server's response.
-	 *
-	 * @returns how many bytes were actually read
-	 */
-	uint32 addResponseHeaders(char *buffer, uint32 bufferSize);
+	bool _eos;
 
 	NetworkReadStream(bool keepAlive, long keepAliveIdle, long keepAliveInterval)
-		: _eos(false), _requestComplete(false), _sendingContentsBuffer(nullptr),
-		  _sendingContentsSize(0), _sendingContentsPos(0),
-		  _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval) {
+		: _eos(false), _keepAlive(keepAlive),
+		  _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval) {
 	}
 
 public:

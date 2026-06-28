@@ -45,6 +45,13 @@ private:
 	CURLcode _errorCode;
 	byte *_bufferCopy; // To use with old curl version where CURLOPT_COPYPOSTFIELDS is not available
 	uint64 _progressDownloaded, _progressTotal;
+	bool _requestComplete;
+	Common::String _responseHeaders;
+
+	const byte *_sendingContentsBuffer;
+	uint32 _sendingContentsSize;
+	uint32 _sendingContentsPos;
+
 	void initCurl(const char *url, RequestHeaders *headersList);
 	bool reuseCurl(const char *url, RequestHeaders *headersList);
 	static struct curl_slist *requestHeadersToSlist(const RequestHeaders *headersList);

@@ -46,6 +46,7 @@ private:
 	Common::HashMap<Common::String, Common::String> _responseHeadersMap;
 	uint64 _downloaded;
 	uint64 _progressDownloaded, _progressTotal;
+	bool _requestComplete;
 	int _errorCode;
 	Common::String _errorMsg;
 public:
