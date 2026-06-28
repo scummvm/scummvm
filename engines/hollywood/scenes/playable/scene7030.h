@@ -28,6 +28,7 @@
 #include "common/types.h"
 
 #include "hollywood/gameplay/game_loop.h"
+#include "hollywood/gameplay/panel_art.h"
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
 
@@ -227,11 +228,6 @@ private:
 	void drawGameplayPanel(Graphics::Surface &surface, const GameplayPanelState &panelState);
 	void drawVerbPanel(Graphics::Surface &surface, const GameplayPanelState &panelState);
 	void drawInventoryPanel(Graphics::Surface &surface, const GameplayPanelState &panelState);
-	void drawPanelText(Graphics::Surface &surface, const Common::String &text, int y, byte colorIndex);
-	void drawPanelButtonText(Graphics::Surface &surface, const Common::String &text,
-		int x, int y, int width, byte colorIndex);
-	void fillScreenRect(int x, int y, int width, int height, byte colorIndex);
-	void drawScreenRect(int x, int y, int width, int height, byte colorIndex);
 	void presentFrame(const SceneHoverCaption *hoverCaption = nullptr, const GameplayPanelState *panelState = nullptr);
 	bool pollEvents(bool allowSkip);
 	bool delay(uint32 millis);
@@ -271,6 +267,7 @@ private:
 	Common::Array<byte> _routeSteps;
 	Common::Array<ActorPathFrame> _actorPathFrames;
 	Common::Array<byte> _actorPathStepDeltas;
+	GameplayPanelArt _panelArt;
 	SceneHotspotTable _hotspots;
 	SpeechPlayer _speech;
 	SoundBank0Player _soundBank0;

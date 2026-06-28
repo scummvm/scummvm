@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	gameplay/cursor.o \
 	gameplay/game_loop.o \
 	gameplay/hotspots.o \
+	gameplay/panel_art.o \
 	graphics.o \
 	hollywood.o \
 	metaengine.o \
