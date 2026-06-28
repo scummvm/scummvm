@@ -80,14 +80,89 @@ struct GameplayState {
 
 	void initializeForState7000() {
 		actorSpriteBankSet00Loaded = true;
-		inventoryOwner1ResourceTablesLoaded = true;
-		inventoryOwner1ItemsInitialized = true;
+		inventoryOwner1ResourceTablesLoaded = false;
 		sceneActionCallbackTableInstalled = true;
+		initializeOwner1ItemResourcePages();
+		initializeInventoryOwner1Items(false);
 		currentInventoryOwnerIndex = 1;
 		activeChapterAudioArchiveIndex = 7;
 		currentRandomAmbientMusicTrackId = 0x0c;
 		inventoryPanelRedrawn = true;
 		mainFlowStateId = 0x1b62;
+	}
+
+	void initializeOwner1ItemResourcePages() {
+		if (kInventoryOwnerCount <= 1)
+			return;
+
+		for (uint itemId = 0; itemId < kInventoryOwnerSlotStride; ++itemId)
+			inventoryItemResourcePageByOwnerAndItemId[1][itemId] = 0;
+
+		inventoryItemResourcePageByOwnerAndItemId[1][0x01] = 0x6f;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x02] = 0x7c;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x05] = 0x7a;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x06] = 0x78;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x07] = 0x06;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x08] = 0x76;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x09] = 0x77;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x0b] = 0x74;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x0c] = 0x71;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x0d] = 0x72;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x0f] = 0x70;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x10] = 0x75;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x11] = 0x73;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x13] = 0x79;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x14] = 0x65;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x15] = 0x6b;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x16] = 0x55;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x17] = 0x03;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x18] = 0x61;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x19] = 0x26;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x1a] = 0x68;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x1b] = 0x2f;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x1c] = 0x3f;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x1d] = 0x14;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x1e] = 0x29;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x1f] = 0x4a;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x20] = 0x52;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x21] = 0x4b;
+		inventoryItemResourcePageByOwnerAndItemId[1][0x22] = 0x7b;
+	}
+
+	void initializeInventoryOwner1Items(bool giveAllItems) {
+		if (kInventoryOwnerCount <= 1)
+			return;
+
+		const byte owner = 1;
+		for (uint slot = 0; slot < kInventoryOwnerSlotStride; ++slot) {
+			inventorySlotItemIdByOwner[owner][slot] = 0;
+			inventoryItemSlotByOwnerAndItemId[owner][slot] = 0;
+		}
+
+		if (giveAllItems) {
+			for (byte itemId = 1; itemId < 0x6d; ++itemId) {
+				inventorySlotItemIdByOwner[owner][itemId] = itemId;
+				inventoryItemSlotByOwnerAndItemId[owner][itemId] = itemId;
+			}
+			inventoryItemCountByOwner[owner] = 0x6c;
+			inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(0x6c);
+			inventoryOwner1ItemsInitialized = true;
+			inventoryPanelRedrawn = true;
+			return;
+		}
+
+		inventorySlotItemIdByOwner[owner][1] = 1;
+		inventorySlotItemIdByOwner[owner][2] = 7;
+		inventorySlotItemIdByOwner[owner][3] = 2;
+		inventorySlotItemIdByOwner[owner][4] = 5;
+		inventoryItemSlotByOwnerAndItemId[owner][1] = 1;
+		inventoryItemSlotByOwnerAndItemId[owner][2] = 3;
+		inventoryItemSlotByOwnerAndItemId[owner][5] = 4;
+		inventoryItemSlotByOwnerAndItemId[owner][9] = 2;
+		inventoryItemCountByOwner[owner] = 4;
+		inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(4);
+		inventoryOwner1ItemsInitialized = true;
+		inventoryPanelRedrawn = true;
 	}
 
 	bool hasInventoryItem(byte owner, byte itemId) const {
@@ -107,7 +182,6 @@ struct GameplayState {
 		inventoryItemCountByOwner[owner] = slot;
 		inventorySlotItemIdByOwner[owner][slot] = itemId;
 		inventoryItemSlotByOwnerAndItemId[owner][itemId] = slot;
-		inventoryItemResourcePageByOwnerAndItemId[owner][itemId] = 0;
 		inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(slot);
 		inventoryPanelRedrawn = true;
 	}
@@ -121,7 +195,6 @@ struct GameplayState {
 			return;
 
 		inventoryItemSlotByOwnerAndItemId[owner][itemId] = 0;
-		inventoryItemResourcePageByOwnerAndItemId[owner][itemId] = 0;
 		inventorySlotItemIdByOwner[owner][slot] = 0;
 		compactInventory(owner);
 		inventoryPanelRedrawn = true;
