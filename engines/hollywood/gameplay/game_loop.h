@@ -133,9 +133,6 @@ private:
 	void syncPanelState();
 	GameplayLoopCursorState makeCursorState() const;
 	GameplayLoopCursorState makeInventoryItemState(byte owner, byte itemId, uint16 actionHandlerId) const;
-	bool dispatchGlobalInventoryFixedAction(const GameplayLoopCursorState &state);
-	bool dispatchGlobalInventoryItemAction(const GameplayLoopCursorState &state);
-	bool dispatchSharedInventoryAction(uint16 handlerId);
 	void syncHoverCaptionRelationContext();
 	void refreshHoverCaption();
 
