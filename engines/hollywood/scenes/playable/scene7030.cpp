@@ -265,164 +265,52 @@ bool Scene7030::advanceCustomGameplayLoop(uint32 delta) {
 bool Scene7030::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 0:
-	case 1:
-		break;
-	case 2:
-		beginStaticSecondarySpeechLine(1, (byte)_random.getRandomNumber(1));
-		break;
-	case 3:
-		beginStaticSecondarySpeechLine(2, 0);
-		break;
-	case 4:
-		beginStaticSecondarySpeechLine(3, (byte)_random.getRandomNumber(1));
-		break;
-	case 5:
-	{
-		const byte variant = (byte)_random.getRandomNumber(2);
-		if (variant == 2)
-			beginStaticSecondarySpeechLine(3, 1);
-		else
-			beginStaticSecondarySpeechLine(4, variant);
-		break;
-	}
-	case 6:
-		beginStaticSecondarySpeechLine(5, 0);
-		break;
-	case 7:
-		beginStaticSecondarySpeechLine(6, (byte)_random.getRandomNumber(1));
-		break;
-	case 8:
-		beginStaticSecondarySpeechLine(7, 0);
-		break;
-	case 9:
-		beginStaticSecondarySpeechLine(8, 0);
-		break;
-	case 10:
-		beginStaticSecondarySpeechLine(9, (byte)_random.getRandomNumber(1));
-		break;
-	case 11:
-		beginStaticSecondarySpeechLine(0x0a, 0);
-		break;
-	case 12:
-		beginStaticSecondarySpeechLine(0x0b, 0);
-		break;
-	case 13:
-		beginStaticSecondarySpeechLine(0x0c, (byte)_random.getRandomNumber(1));
-		break;
-	case 14:
-		beginStaticSecondarySpeechLine(0x0d, (byte)_random.getRandomNumber(1));
-		break;
-	case 15:
-		beginStaticSecondarySpeechLine(0x0e, 0);
-		break;
-	case 16:
-		beginStaticSecondarySpeechLine(0x0f, (byte)_random.getRandomNumber(2));
-		break;
-	case 17:
-		beginStaticSecondarySpeechLine(0x10, 0);
-		break;
-	case 18:
-		beginStaticSecondarySpeechLine(0x11, (byte)_random.getRandomNumber(1));
-		break;
-	case 19:
-		beginStaticSecondarySpeechLine(0x12, (byte)_random.getRandomNumber(2));
-		break;
-	case 20:
-		beginStaticSecondarySpeechLine(0x13, 0);
-		break;
-	case 21:
-		beginStaticSecondarySpeechLine(0x14, 0);
-		break;
-	case 22:
-		beginStaticSecondarySpeechLine(0x15, 0);
-		break;
-	case 23:
-		beginStaticSecondarySpeechLine(0x16, (byte)_random.getRandomNumber(1));
-		break;
-	case 24:
-		beginStaticSecondarySpeechLine(0x17, (byte)_random.getRandomNumber(1));
-		break;
-	case 25:
-		beginStaticSecondarySpeechLine(0x18, (byte)_random.getRandomNumber(1));
-		break;
-	case 26:
-		beginStaticSecondarySpeechLine(0x19, 0);
-		break;
-	case 27:
-		beginStaticSecondarySpeechLine(0x1a, 0);
-		break;
-	case 28:
-		beginStaticSecondarySpeechLine(0x1b, 0);
-		break;
-	case 29:
-		beginStaticSecondarySpeechLine(0x1c, 0);
-		break;
-	case 30:
-		beginStaticSecondarySpeechLine(0x1d, 0);
-		break;
-	case 31:
-		beginStaticSecondarySpeechLine(0x1e, 0);
-		break;
-	case 32:
-		beginStaticSecondarySpeechLine(0x1f, 0);
-		break;
-	case 33:
-		beginStaticSecondarySpeechLine(0x20, 0);
-		break;
-	case 34:
-		beginStaticSecondarySpeechLine(0x21, 0);
-		break;
-	case 36:
-		beginStaticSecondarySpeechLine(0x23, 0);
-		break;
-	case 38:
-		beginStaticSecondarySpeechLine(0x25, 0);
-		break;
-	case 39:
-		beginStaticSecondarySpeechLine(0x26, 0);
-		break;
-	case 40:
-		beginStaticSecondarySpeechLine(0x27, 0);
-		break;
-	case 301:
+	case 1: // Ir a Húmero/hueso/vaso/ponchera (go to Húmero/bone/glass/punch bowl)
+	case 3: // Usar objetos sin efecto en la escena (use items with no scene effect)
+	case 9: // Abrir puerta (open door)
+	case 13: // Dar objetos a Húmero (give items to Húmero)
+	case 18: // Cerrar puerta/respuesta genérica de usar objeto (close door/generic use response)
+	case 24: // Coger ponchera (take punch bowl)
+		return dispatchGenericSceneAction(handlerId);
+	case 301: // Ir a puerta (go to door)
 		handleActionSlot00TransitionToG04();
 		break;
-	case 302:
+	case 302: // Mirar puerta (look at door)
 		handleActionSlot01SecondarySpeech();
 		break;
-	case 303:
+	case 303: // Ir a escalera (go to stairs)
 		handleActionSlot02TransitionToG01Alt();
 		break;
-	case 304:
+	case 304: // Mirar escalera (look at stairs)
 		handleActionSlot03SecondarySpeech();
 		break;
-	case 305:
+	case 305: // Hablar con Húmero (talk to Húmero)
 		handleActionSlot04SecondarySpeech();
 		break;
-	case 306:
+	case 306: // Mirar Húmero (look at Húmero)
 		handleActionSlot05ToggleSceneState0Speech();
 		break;
-	case 309:
+	case 309: // Mirar vaso (look at glass)
 		handleActionSlot08CommonSpeech();
 		break;
-	case 310:
+	case 310: // Mirar ponchera (look at punch bowl)
 		handleActionSlot09CommonSpeech();
 		break;
-	case 311:
+	case 311: // Usar ponchera (use punch bowl)
 		handleActionSlot10CommonSpeech();
 		break;
-	case 312:
+	case 312: // Usar florero con ponchera (use vase with punch bowl)
 		break;
-	case 313:
+	case 313: // Usar vaso con ponchera (use glass with punch bowl)
 		handleActionHandler313ExchangeItem0CFor0D();
 		break;
-	case 314:
+	case 314: // Coger Húmero/hueso (take Húmero/bone)
 		handleActionHandler314PickupItem0B();
 		break;
-	case 315:
+	case 315: // Coger vaso (take glass)
 		handleActionHandler315PickupItem0C();
 		break;
-	case 316:
+	case 316: // Usar vaso con ponchera (use glass with punch bowl)
 		handleActionHandler316SecondarySpeech();
 		break;
 	default:

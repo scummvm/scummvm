@@ -169,37 +169,37 @@ bool Scene7080::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene7080::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301:
+	case 301: // Usar/Abrir puerta (use/open door)
 		handleBackToG07();
 		return true;
-	case 302:
+	case 302: // Mirar puerta (look at door)
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 303:
+	case 303: // Mirar ventana (look at window)
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 304:
+	case 304: // Mirar estantería (look at shelves)
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 305:
+	case 305: // Mirar mesa (look at table)
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 306:
+	case 306: // Mirar archivadores (look at filing cabinets)
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 307:
+	case 307: // Coger manivela (take crank)
 		handlePickupItem13();
 		return true;
-	case 308:
+	case 308: // Mirar manivela (look at crank)
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 309:
+	case 309: // Mirar papelera (look at wastebasket)
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 310:
+	case 310: // Mirar armadura (look at armor)
 		beginSecondarySpeechLine(8, 0);
 		return true;
-	case 311:
+	case 311: // Usar armadura (use armor)
 		beginSecondarySpeechLine(9, 0);
 		return true;
 	default:
