@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-24 10:59+0000\n"
+"POT-Creation-Date: 2026-06-28 21:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -9247,6 +9247,26 @@ msgstr ""
 
 #: engines/hadesch/rooms/troy.cpp:505
 msgid "The Troy minigame is not supported yet. Skipping"
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:33
+msgid "Enable gore"
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:34
+msgid ""
+"When disabled, the startup movie player follows the original GORE=NO "
+"censorship path."
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:44
+msgid "Show CD change prompts"
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:45
+msgid ""
+"Display the original CD swap image and wait for a left click when the script "
+"requests disc 2 or 3."
 msgstr ""
 
 #: engines/hdb/metaengine.cpp:44 engines/illusions/metaengine.cpp:153
