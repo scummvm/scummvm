@@ -206,61 +206,61 @@ bool Scene7070::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene7070::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301:
+	case 301: // Ir a pasillo (go to hallway)
 		handleBackToG06();
 		return true;
-	case 302:
+	case 302: // Mirar chimenea (look at fireplace)
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 303:
+	case 303: // Mirar gramófono (look at gramophone)
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 304:
+	case 304: // Usar gramófono/disco (use gramophone/record)
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 305:
+	case 305: // Mirar mueble con discos (look at record cabinet)
 		beginSecondarySpeechLine(0x17, 0);
 		return true;
-	case 306:
+	case 306: // Mirar puerta (look at door)
 		beginSecondarySpeechLine(5, _vm->gameState().g07ExitDoorState < 2 ? 0 : 1);
 		return true;
-	case 307:
+	case 307: // Usar/Abrir puerta (use/open door)
 		handleExitDoorAction();
 		return true;
-	case 308:
+	case 308: // Mirar mesa (look at table)
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 309:
+	case 309: // Mirar trofeos (look at trophies)
 		beginSecondarySpeechLine(8, 0);
 		return true;
-	case 310:
+	case 310: // Coger/Usar carbón (take/use coal)
 		beginSecondarySpeechLine(9, 0);
 		return true;
-	case 311:
+	case 311: // Mirar carbón (look at coal)
 		beginSecondarySpeechLine(10, 0);
 		return true;
-	case 314:
+	case 314: // Cerrar cajón/Coger manivela (close drawer/take crank)
 		beginSecondarySpeechLine(0x16, 0);
 		return true;
-	case 315:
+	case 315: // Mirar manivela (look at crank)
 		beginSecondarySpeechLine(0x0d, _vm->gameState().g07ExitDoorState < 2 ? 0 : 1);
 		return true;
-	case 316:
+	case 316: // Usar manivela (use crank)
 		handleChunk12ItemAction();
 		return true;
-	case 317:
+	case 317: // Usar trapo con carbón (use rag with coal)
 		handleTradeItem10ForItem08();
 		return true;
-	case 318:
+	case 318: // Usar trapo con carbón (use sooty rag with coal)
 		beginSecondarySpeechLine(0x0f, 1);
 		return true;
-	case 319:
+	case 319: // Usar tarjeta con puerta (use card with door)
 		handlePrimeExitDoorAction();
 		return true;
-	case 320:
+	case 320: // Usar manivela con gramófono/cajón (use crank with gramophone/drawer)
 		handleUseItem13OnSceneObject();
 		return true;
-	case 321:
+	case 321: // Usar llave con puerta (use key with door)
 		beginSecondarySpeechLine(0x12, 0);
 		return true;
 	default:
