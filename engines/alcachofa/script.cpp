@@ -143,6 +143,10 @@ bool Script::hasProcedure(const Common::String &procedure) const {
 }
 
 String Script::procedureAt(uint32 pc) const {
+	// this can only happen if an error occurs before we load the script
+	if (_procedures.empty())
+		return "<none>";
+
 	// this method is very inefficient but it is only used for debugging
 	typedef Pair<String, uint32> Node;
 	Array<Node> sorted;
