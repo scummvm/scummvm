@@ -77,7 +77,7 @@ struct GameplayState {
 		g07ExitDoorState = 0;
 		g07ObjectPatchState = 0;
 		g08IntroSeen = false;
-		g08PatchState = true;
+		g08Item13OnTable = true;
 		g09IntroSeen = false;
 		g09PatchState = false;
 		g09ActionGate = false;
@@ -330,7 +330,7 @@ struct GameplayState {
 	byte g07ExitDoorState;
 	byte g07ObjectPatchState;
 	bool g08IntroSeen;
-	bool g08PatchState;
+	bool g08Item13OnTable;
 	bool g09IntroSeen;
 	bool g09PatchState;
 	bool g09ActionGate;
