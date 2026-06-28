@@ -98,6 +98,14 @@ const uint32 kG04Chunk14FrameMillis = 75;
 const uint32 kG04Chunk16FrameMillis = 75;
 const uint32 kG04Chunk17FrameMillis = 125;
 const uint32 kG04AmbientMusicCheckMillis = 250;
+const byte kG04DialogueStageId = 0x62;
+const byte kG04DialoguePrimaryRow = 99;
+const uint16 kG04DialoguePrimaryCenterX = 0x1c2;
+const uint16 kG04DialoguePrimaryTopY = 0x73;
+const byte kG04DialoguePrimaryRed = 0x3f;
+const byte kG04DialoguePrimaryGreen = 0x32;
+const byte kG04DialoguePrimaryBlue = 0x0c;
+const uint kG04DialogueChoiceRecordCount = 10 * 10 * 7;
 const byte kInvalidFacing = 0xff;
 const byte kInvalidCel = 0xff;
 const byte kG04Chunk11FrameMap[] = {
@@ -169,9 +177,11 @@ Scene7040::Scene7040(HollywoodEngine *vm) :
 		_chunk6IdleFrameC(8),
 		_chunk6IdleFrameD(0x0c),
 		_primaryLeftSpeechLastFrame(0),
+		_primaryDialogueSpeechLastFrame(7),
 		_chunk6IdlePairAAltPhase(false),
 		_chunk6IdlePairBAltPhase(false),
 		_primaryLeftSpeechActive(false),
+		_primaryDialogueSpeechActive(false),
 		_chunk6IdlePairATicksRemaining(10),
 		_chunk6IdlePairBTicksRemaining(16),
 		_chunk9AmbientDecisionCounter(0),
@@ -182,6 +192,7 @@ Scene7040::Scene7040(HollywoodEngine *vm) :
 		_ambientMusicTimerAccumulator(0),
 		_secondaryActorTimerAccumulator(0),
 		_primaryLeftSpeechTimerAccumulator(0),
+		_primaryDialogueSpeechTimerAccumulator(0),
 		_previousAmbientMusicTrackId(0),
 		_activeActorWorldX(kG04Entry7040FirstTargetX),
 		_activeActorWorldY(kG04Entry7040FirstTargetY),
@@ -789,6 +800,7 @@ void Scene7040::initializePreviewState() {
 	_chunk6IdleFrameC = 8;
 	_chunk6IdleFrameD = 0x0c;
 	_primaryLeftSpeechLastFrame = 0;
+	_primaryDialogueSpeechLastFrame = 7;
 	_actionOverlayVisible = false;
 	_actionOverlayChunkIndex = 0;
 	_actionOverlayDescriptorCount = 0;
@@ -808,6 +820,7 @@ void Scene7040::initializePreviewState() {
 	_chunk6IdlePairAAltPhase = _random.getRandomNumber(1) != 0;
 	_chunk6IdlePairBAltPhase = _random.getRandomNumber(1) != 0;
 	_primaryLeftSpeechActive = false;
+	_primaryDialogueSpeechActive = false;
 	_chunk6IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
 	_chunk6IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
 	_chunk9AmbientDecisionCounter = 0;
@@ -817,6 +830,7 @@ void Scene7040::initializePreviewState() {
 	_ambientMusicTimerAccumulator = 0;
 	_secondaryActorTimerAccumulator = 0;
 	_primaryLeftSpeechTimerAccumulator = 0;
+	_primaryDialogueSpeechTimerAccumulator = 0;
 	_chunk11TimerAccumulator = 0;
 	_chunk12TimerAccumulator = 0;
 	_chunk16TimerAccumulator = 0;
@@ -1076,7 +1090,9 @@ uint16 Scene7040::viewportYOffset() const {
 void Scene7040::prepareGameplayLoop() {
 	clearAllSpeechOverlays();
 	_primaryLeftSpeechActive = false;
+	_primaryDialogueSpeechActive = false;
 	_primaryLeftSpeechTimerAccumulator = 0;
+	_primaryDialogueSpeechTimerAccumulator = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_secondaryActorFrame = 0;
 	_actionOverlayVisible = false;
@@ -1089,6 +1105,8 @@ void Scene7040::prepareGameplayLoop() {
 void Scene7040::advanceGameplayLoop(uint32 delta) {
 	if (_vm->gameState().g01Item0BSequenceCompleted)
 		advanceChunk16PostItemAnimation(delta);
+	else if (_primaryDialogueSpeechActive)
+		advancePrimaryDialogueSpeechFrame(delta);
 	else
 		advanceChunk11PreItemIdleAnimation(delta);
 
@@ -1948,11 +1966,147 @@ void Scene7040::handleActionHandler313ConversationGate() {
 		beginSecondarySpeechLine(11, 2);
 		return;
 	}
-	beginSecondarySpeechLine(11, 0);
+	runDialogueMenuRow98();
 }
 
 void Scene7040::handleActionHandler314Item0BSpeech() {
 	beginSecondarySpeechLine(11, _vm->gameState().g01Item0BSequenceCompleted ? 1 : 0);
+}
+
+void Scene7040::runDialogueMenuRow98() {
+	Common::Array<DialogueChoiceRecord> records;
+	initializeDialogueRecords(records);
+
+	byte depthIndex = 0;
+	byte nodeIndex = 0;
+	bool finished = false;
+
+	beginSecondarySpeechLine(kG04DialogueStageId, 0);
+	_preItemIdleState = 3;
+	_chunk11FrameIndex = 7;
+	beginPrimarySpeechLine(kG04DialoguePrimaryRow, 0, kG04DialoguePrimaryCenterX,
+		kG04DialoguePrimaryTopY, kG04DialoguePrimaryRed, kG04DialoguePrimaryGreen,
+		kG04DialoguePrimaryBlue);
+
+	while (!finished && !Engine::shouldQuit()) {
+		DialogueMenu menu(_vm, this);
+		const byte selectedChoice = menu.choose(kG04DialogueStageId, records, depthIndex, nodeIndex);
+		if (selectedChoice == DialogueMenu::kCancelledChoice) {
+			beginSecondarySpeechLine(kG04DialogueStageId, 5);
+			beginPrimarySpeechLine(kG04DialoguePrimaryRow, 5, kG04DialoguePrimaryCenterX,
+				kG04DialoguePrimaryTopY, kG04DialoguePrimaryRed, kG04DialoguePrimaryGreen,
+				kG04DialoguePrimaryBlue);
+			_chunk11FrameIndex = 0;
+			_preItemIdleState = 0;
+			return;
+		}
+
+		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
+		if (recordIndex >= records.size())
+			break;
+
+		DialogueChoiceRecord &record = records[recordIndex];
+		beginSecondarySpeechLine(kG04DialogueStageId, record.playerTextRowId);
+		if (record.responseFrameIndex != 0 && record.responseFrameIndex != 0xff) {
+			beginPrimarySpeechLine(kG04DialoguePrimaryRow, record.responseFrameIndex,
+				kG04DialoguePrimaryCenterX, kG04DialoguePrimaryTopY, kG04DialoguePrimaryRed,
+				kG04DialoguePrimaryGreen, kG04DialoguePrimaryBlue);
+		}
+
+		if (record.disableAfterUse == 1)
+			record.enabled = 0;
+
+		const byte previousDepth = depthIndex;
+		switch (record.transitionMode) {
+		case 0:
+			finished = true;
+			break;
+		case 1:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth + 1;
+			break;
+		case 2:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth - 1;
+			break;
+		case 4:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth - 2;
+			break;
+		default:
+			break;
+		}
+	}
+
+	_chunk11FrameIndex = 0;
+	_preItemIdleState = 0;
+}
+
+void Scene7040::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
+	records.clear();
+	records.resize(kG04DialogueChoiceRecordCount);
+
+	records[0].transitionMode = 3;
+	records[0].playerTextRowId = 1;
+	records[0].responseFrameIndex = 1;
+	records[0].disableAfterUse = 1;
+	records[0].reserved = 0xff;
+
+	records[1].transitionMode = 3;
+	records[1].playerTextRowId = 2;
+	records[1].responseFrameIndex = 2;
+	records[1].disableAfterUse = 1;
+	records[1].reserved = 0xff;
+
+	records[2].enabled = 1;
+	records[2].transitionMode = 3;
+	records[2].playerTextRowId = 3;
+	records[2].responseFrameIndex = 3;
+	records[2].disableAfterUse = 1;
+	records[2].reserved = 0xff;
+
+	records[3].transitionMode = 3;
+	records[3].playerTextRowId = 4;
+	records[3].responseFrameIndex = 4;
+	records[3].disableAfterUse = 1;
+	records[3].reserved = 0xff;
+
+	records[4].enabled = 1;
+	records[4].transitionMode = 0;
+	records[4].playerTextRowId = 5;
+	records[4].responseFrameIndex = 5;
+	records[4].reserved = 0xff;
+
+	const GameplayState &state = _vm->gameState();
+	if (state.g04MajorActionProgress != 0)
+		records[0].enabled = 1;
+	if (state.g04MajorActionProgress == 3) {
+		if (!state.hasInventoryItem(state.currentInventoryOwnerIndex, 6))
+			records[1].enabled = 1;
+		if (state.g04PatchState != 2)
+			records[3].enabled = 1;
+	}
+}
+
+Common::String Scene7040::dialogueMenuText(byte stageId, byte textRowId) const {
+	const uint offset = ((uint)stageId * 100 + textRowId) * 5;
+	if (offset + 5 > _stage003StageBlock.size())
+		return Common::String();
+
+	const uint16 textRecordId = readUint16LE(_stage003StageBlock, offset);
+	return getResource003LargeTextRecord(textRecordId);
+}
+
+void Scene7040::advanceDialogueMenu(uint32 delta) {
+	advanceGameplayLoop(delta);
+}
+
+void Scene7040::drawDialogueMenuFrame() {
+	drawPlayableComposite();
+}
+
+void Scene7040::presentDialogueMenuFrame(const DialogueMenuState &state) {
+	presentFrame(nullptr, nullptr, &state);
 }
 
 void Scene7040::runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
@@ -2134,6 +2288,22 @@ void Scene7040::advancePrimaryLeftSpeechFrame() {
 	_chunk5FrameIndex = 0x0b + nextFrame;
 }
 
+void Scene7040::advancePrimaryDialogueSpeechFrame(uint32 delta) {
+	_primaryDialogueSpeechTimerAccumulator += delta;
+	while (_primaryDialogueSpeechTimerAccumulator >= kG04Chunk11FrameMillis) {
+		_primaryDialogueSpeechTimerAccumulator -= kG04Chunk11FrameMillis;
+		byte nextFrame = _primaryDialogueSpeechLastFrame;
+		for (uint attempt = 0; attempt < 8 && nextFrame == _primaryDialogueSpeechLastFrame; ++attempt)
+			nextFrame = (byte)(7 + _random.getRandomNumber(4));
+
+		if (nextFrame == _primaryDialogueSpeechLastFrame)
+			nextFrame = nextFrame >= 11 ? 7 : (byte)(nextFrame + 1);
+
+		_primaryDialogueSpeechLastFrame = nextFrame;
+		_chunk11FrameIndex = nextFrame;
+	}
+}
+
 void Scene7040::clearSpeechOverlay() {
 	_speechOverlay.visible = false;
 	_speechOverlay.lines.clear();
@@ -2176,7 +2346,7 @@ void Scene7040::drawSpeechOverlay(const SpeechOverlay &overlay) {
 
 void Scene7040::beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
 	runSpeechLine(_speechOverlay, rowIndex, frameIndex, _activeActorWorldX, 0,
-		kG04SecondarySpeechTextColor, false, false);
+		kG04SecondarySpeechTextColor, false, false, false);
 }
 
 bool Scene7040::startSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
@@ -2209,7 +2379,7 @@ void Scene7040::beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex)
 		return;
 
 	runSpeechCue(_speechOverlay, textRecordId, continuationCount, voiceSampleId, _activeActorWorldX, 0,
-		kG04SecondarySpeechTextColor, false, false);
+		kG04SecondarySpeechTextColor, false, false, false);
 }
 
 void Scene7040::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
@@ -2222,7 +2392,7 @@ void Scene7040::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 
 	}
 
 	runSpeechLine(_primarySpeechOverlay, rowIndex, frameIndex, centerX, topY,
-		kG04PrimarySpeechTextColor, true, false);
+		kG04PrimarySpeechTextColor, true, false, true);
 }
 
 void Scene7040::beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex) {
@@ -2234,11 +2404,11 @@ void Scene7040::beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex) {
 	}
 
 	runSpeechLine(_primarySpeechOverlay, rowIndex, frameIndex, 0xfa, 0x136,
-		kG04PrimarySpeechTextColor, true, true);
+		kG04PrimarySpeechTextColor, true, true, false);
 }
 
 void Scene7040::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
-		byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft) {
+		byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft, bool animatePrimaryDialogue) {
 	uint16 textRecordId = 0;
 	byte continuationCount = 0;
 	uint16 voiceSampleId = 0;
@@ -2246,12 +2416,12 @@ void Scene7040::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte fram
 		return;
 
 	runSpeechCue(overlay, textRecordId, continuationCount, voiceSampleId, centerX, topY, colorIndex,
-		useRequestedTop, animatePrimaryLeft);
+		useRequestedTop, animatePrimaryLeft, animatePrimaryDialogue);
 }
 
 void Scene7040::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte continuationCount,
 		uint16 voiceSampleId, uint16 centerX, uint16 topY, byte colorIndex, bool useRequestedTop,
-		bool animatePrimaryLeft) {
+		bool animatePrimaryLeft, bool animatePrimaryDialogue) {
 	const byte lineCount = MAX<byte>(1, continuationCount);
 	for (byte part = 0; part < lineCount && !Engine::shouldQuit(); ++part) {
 		const Common::String text = getResource003LargeTextRecord(textRecordId + part);
@@ -2275,11 +2445,23 @@ void Scene7040::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte c
 		_primaryLeftSpeechActive = animatePrimaryLeft;
 		if (animatePrimaryLeft)
 			_chunk5FrameIndex = 0x0b;
+		_primaryDialogueSpeechActive = animatePrimaryDialogue;
+		if (animatePrimaryDialogue) {
+			_primaryDialogueSpeechLastFrame = 7;
+			_primaryDialogueSpeechTimerAccumulator = 0;
+			_chunk11FrameIndex = 7;
+		}
 		const bool interrupted = waitForSpeechOrDelay(duration, animatePrimaryLeft);
 		if (animatePrimaryLeft) {
 			_primaryLeftSpeechActive = false;
 			_primaryLeftSpeechTimerAccumulator = 0;
 			_chunk5FrameIndex = 0x0b;
+		}
+		if (animatePrimaryDialogue) {
+			_primaryDialogueSpeechActive = false;
+			_primaryDialogueSpeechTimerAccumulator = 0;
+			_primaryDialogueSpeechLastFrame = 7;
+			_chunk11FrameIndex = 7;
 		}
 		_speech.stop();
 		overlay.visible = false;
@@ -2470,10 +2652,11 @@ void Scene7040::drawInventoryPanel(Graphics::Surface &surface, const GameplayPan
 		panelState, _vm->gameState(), _vm->font());
 }
 
-void Scene7040::presentFrame(const SceneHoverCaption *hoverCaption, const GameplayPanelState *panelState) {
+void Scene7040::presentFrame(const SceneHoverCaption *hoverCaption, const GameplayPanelState *panelState,
+		const DialogueMenuState *dialogueMenuState) {
 	if (hoverCaption)
 		hoverCaption->applyPalette(_paletteCurrent);
-	if (panelState && panelState->visible())
+	if ((panelState && panelState->visible()) || (dialogueMenuState && dialogueMenuState->visible()))
 		applyGameplayPanelPalette();
 	uploadPalette6Bit(_paletteCurrent);
 
@@ -2488,7 +2671,9 @@ void Scene7040::presentFrame(const SceneHoverCaption *hoverCaption, const Gamepl
 	Graphics::Surface screenSurface;
 	screenSurface.init(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
 		HollywoodEngine::kScreenWidth, _screen.data(), Graphics::PixelFormat::createFormatCLUT8());
-	if (panelState && panelState->visible())
+	if (dialogueMenuState && dialogueMenuState->visible())
+		_panelArt.drawDialogueMenuPanel(screenSurface, *dialogueMenuState, _vm->font());
+	else if (panelState && panelState->visible())
 		drawGameplayPanel(screenSurface, *panelState);
 	else if (_vm->font() && _vm->font()->isLoaded()) {
 		if (hoverCaption)

@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	font.o \
 	gameplay/actor_renderer.o \
 	gameplay/cursor.o \
+	gameplay/dialogue_menu.o \
 	gameplay/game_loop.o \
 	gameplay/hotspots.o \
 	gameplay/options_menu.o \
