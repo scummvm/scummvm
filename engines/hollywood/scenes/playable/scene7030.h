@@ -128,6 +128,7 @@ private:
 	bool loadResource000RuntimeTables(Common::Array<byte> &offsetTable, Common::Array<byte> &sizeTable);
 	bool loadResource000ActorBankSet00(const Common::Array<byte> &offsetTable, const Common::Array<byte> &sizeTable);
 	bool loadResource000Owner1ActorPalette(const Common::Array<byte> &offsetTable);
+	bool loadResource000InventoryActionTables(const Common::Array<byte> &offsetTable);
 	bool loadStage003SceneRows();
 	bool loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
 	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
@@ -158,7 +159,9 @@ private:
 	void drawGameplayFrame() override;
 	void presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) override;
 	bool shouldExitGameplayLoop() const override;
+	Common::String inventoryItemName(byte owner, byte itemId) const override;
 	void handleLeftClick(const GameplayLoopCursorState &state) override;
+	void handleInventoryItemClick(const GameplayLoopCursorState &state) override;
 	void updateAmbientAudioAndMusicCues(uint32 delta);
 	void advanceChunk5AmbientOverlay();
 	void advanceChunk6IdleFrames();
@@ -270,6 +273,7 @@ private:
 	Common::Array<byte> _stage003SmallRows;
 	Common::Array<byte> _stage003LargeRows;
 	Common::Array<byte> _owner1SpeechCueDescriptors;
+	Common::Array<byte> _owner1SmallRows;
 	Common::Array<byte> _owner1LargeRows;
 	Common::Array<ScenePoint> _routeBoundaryPoints;
 	Common::Array<byte> _routeSteps;

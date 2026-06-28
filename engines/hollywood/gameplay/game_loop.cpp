@@ -41,10 +41,17 @@ const uint16 kGameplayInventoryCloseY = 0x122;
 const uint16 kGameplayVerbPanelStripWidth = 0x58;
 const uint16 kGameplayVerbPanelStripHeight = 0x1b;
 const uint16 kGameplayVerbPanelStripTopY = 0x1bd;
+const uint16 kGameplayInventoryPanelStripTopY = 0x12b;
 const uint16 kGameplayInventoryGridLeft = 0x32;
 const uint16 kGameplayInventoryGridTop = 0x152;
 const uint16 kGameplayInventoryTileSize = 0x40;
 const uint16 kGameplayInventoryTileStride = 0x44;
+const uint16 kGameplayInventoryPageArrowLeft = 0x25a;
+const uint16 kGameplayInventoryPageArrowRight = 0x277;
+const uint16 kGameplayInventoryPreviousPageArrowTop = 0x178;
+const uint16 kGameplayInventoryPreviousPageArrowBottom = 0x192;
+const uint16 kGameplayInventoryNextPageArrowTop = 0x195;
+const uint16 kGameplayInventoryNextPageArrowBottom = 0x1af;
 const byte kGameplayUseStrip = 5;
 const byte kGameplayGiveStrip = 8;
 const uint16 kGameplayVerbPanelStripXOffsets[9] = {
@@ -73,7 +80,17 @@ bool GameplayLoopDelegate::shouldExitGameplayLoop() const {
 	return false;
 }
 
+Common::String GameplayLoopDelegate::inventoryItemName(byte owner, byte itemId) const {
+	(void)owner;
+	(void)itemId;
+	return Common::String();
+}
+
 void GameplayLoopDelegate::handleLeftClick(const GameplayLoopCursorState &state) {
+	(void)state;
+}
+
+void GameplayLoopDelegate::handleInventoryItemClick(const GameplayLoopCursorState &state) {
 	(void)state;
 }
 
@@ -239,12 +256,56 @@ void GameplayLoop::handleKeyUp(const Common::KeyState &keyState) {
 
 void GameplayLoop::handleLeftClick() {
 	if (_panelState.inventoryPanelVisible) {
-		const byte itemId = inventoryItemAtPanelPosition(_vm->cursor()->surfaceX(), _vm->cursor()->surfaceY());
-		if (itemId != 0 && (_currentStrip == kGameplayUseStrip || _currentStrip == kGameplayGiveStrip)) {
+		const uint16 cursorX = _vm->cursor()->surfaceX();
+		const uint16 cursorY = _vm->cursor()->surfaceY();
+		const byte stripIndex = inventoryPanelStripAt(cursorX, cursorY);
+		if (stripIndex != 0) {
+			selectPanelStrip(stripIndex);
+			updateInventoryPanelCaption();
+			syncPanelState();
+			return;
+		}
+		if (isInventoryPanelPreviousPageArrow(cursorX, cursorY)) {
+			if (scrollInventoryPanelPreviousPage())
+				updateInventoryPanelCaption();
+			syncPanelState();
+			return;
+		}
+		if (isInventoryPanelNextPageArrow(cursorX, cursorY)) {
+			if (scrollInventoryPanelNextPage())
+				updateInventoryPanelCaption();
+			syncPanelState();
+			return;
+		}
+
+		const byte itemId = inventoryItemAtPanelPosition(cursorX, cursorY);
+		if (itemId == 0)
+			return;
+
+		const byte owner = currentInventoryOwner();
+		const uint16 actionHandlerId = fixedInventoryActionHandler(owner, itemId, _currentStrip);
+		if ((_currentStrip == kGameplayUseStrip || _currentStrip == kGameplayGiveStrip) &&
+				actionHandlerId == 1) {
 			_relationMode = _currentStrip == kGameplayUseStrip ? 1 : 2;
 			_primaryInventoryItem = itemId;
 			closeInventoryPanel();
 			refreshHoverCaption();
+			syncPanelState();
+			return;
+		}
+
+		if (actionHandlerId != 0) {
+			GameplayLoopCursorState state = makeInventoryItemState(owner, itemId, actionHandlerId);
+			closeInventoryPanel();
+			_delegate->handleInventoryItemClick(state);
+			_relationMode = 0;
+			_primaryInventoryItem = 0;
+			_currentStrip = kGameplayDefaultStrip;
+			_hoverCaption.setCurrentStrip(_currentStrip);
+			refreshHoverCaption();
+			syncPanelState();
+		} else {
+			updateInventoryPanelCaption();
 			syncPanelState();
 		}
 		return;
@@ -356,6 +417,7 @@ void GameplayLoop::openInventoryPanel() {
 	_panelState.captionText = "Inventario";
 	_panelState.resolvedItem = 0;
 	_panelState.itemName.clear();
+	updateInventoryPanelCaption();
 }
 
 void GameplayLoop::closeInventoryPanel() {
@@ -397,8 +459,11 @@ void GameplayLoop::updatePanelFromMousePosition() {
 	}
 
 	if (_panelState.inventoryPanelVisible) {
-		if (cursorY <= kGameplayInventoryCloseY)
+		if (cursorY <= kGameplayInventoryCloseY) {
 			closeInventoryPanel();
+		} else {
+			updateInventoryPanelCaption();
+		}
 		return;
 	}
 
@@ -414,13 +479,25 @@ void GameplayLoop::selectPanelStrip(byte stripIndex) {
 
 	_currentStrip = stripIndex;
 	_hoverCaption.setCurrentStrip(_currentStrip);
-	updatePanelCaption();
+	if (_panelState.inventoryPanelVisible)
+		updateInventoryPanelCaption();
+	else
+		updatePanelCaption();
 }
 
 byte GameplayLoop::panelStripAt(uint16 cursorX, uint16 cursorY) const {
 	if (cursorY < kGameplayVerbPanelTopY ||
 			cursorY < kGameplayVerbPanelStripTopY ||
 			cursorY >= kGameplayVerbPanelStripTopY + kGameplayVerbPanelStripHeight)
+		return 0;
+
+	return inventoryPanelStripAt(cursorX, cursorY - kGameplayVerbPanelStripTopY +
+		kGameplayInventoryPanelStripTopY);
+}
+
+byte GameplayLoop::inventoryPanelStripAt(uint16 cursorX, uint16 cursorY) const {
+	if (cursorY < kGameplayInventoryPanelStripTopY ||
+			cursorY >= kGameplayInventoryPanelStripTopY + kGameplayVerbPanelStripHeight)
 		return 0;
 
 	for (byte stripIndex = kGameplayFirstPanelStrip; stripIndex <= kGameplayLastStrip; ++stripIndex) {
@@ -462,11 +539,77 @@ byte GameplayLoop::inventoryItemAtPanelPosition(uint16 cursorX, uint16 cursorY) 
 	return gameState.inventorySlotItemIdByOwner[owner][slot];
 }
 
+byte GameplayLoop::currentInventoryOwner() const {
+	const GameplayState &gameState = _vm->gameState();
+	if (gameState.currentInventoryOwnerIndex >= GameplayState::kInventoryOwnerCount)
+		return 0;
+
+	return gameState.currentInventoryOwnerIndex;
+}
+
+uint16 GameplayLoop::fixedInventoryActionHandler(byte owner, byte itemId, byte stripIndex) const {
+	return _vm->gameState().fixedInventoryVerbHandler(owner, itemId, stripIndex);
+}
+
+bool GameplayLoop::scrollInventoryPanelPreviousPage() {
+	GameplayState &gameState = _vm->gameState();
+	const byte owner = currentInventoryOwner();
+	byte &firstVisibleSlot = gameState.inventoryFirstVisibleSlotByOwner[owner];
+	if (firstVisibleSlot <= GameplayState::kInventoryFirstSlot)
+		return false;
+
+	firstVisibleSlot = firstVisibleSlot > 8 ? (byte)(firstVisibleSlot - 8) : GameplayState::kInventoryFirstSlot;
+	gameState.inventoryPanelRedrawn = true;
+	return true;
+}
+
+bool GameplayLoop::scrollInventoryPanelNextPage() {
+	GameplayState &gameState = _vm->gameState();
+	const byte owner = currentInventoryOwner();
+	byte &firstVisibleSlot = gameState.inventoryFirstVisibleSlotByOwner[owner];
+	const byte itemCount = gameState.inventoryItemCountByOwner[owner];
+	if (firstVisibleSlot == 0)
+		firstVisibleSlot = GameplayState::kInventoryFirstSlot;
+	if (firstVisibleSlot + GameplayState::kInventoryVisibleSlotCount - 1 >= itemCount)
+		return false;
+
+	firstVisibleSlot = (byte)(firstVisibleSlot + 8);
+	gameState.inventoryPanelRedrawn = true;
+	return true;
+}
+
+bool GameplayLoop::isInventoryPanelPreviousPageArrow(uint16 cursorX, uint16 cursorY) const {
+	return cursorX >= kGameplayInventoryPageArrowLeft &&
+		cursorX <= kGameplayInventoryPageArrowRight &&
+		cursorY >= kGameplayInventoryPreviousPageArrowTop &&
+		cursorY <= kGameplayInventoryPreviousPageArrowBottom;
+}
+
+bool GameplayLoop::isInventoryPanelNextPageArrow(uint16 cursorX, uint16 cursorY) const {
+	return cursorX >= kGameplayInventoryPageArrowLeft &&
+		cursorX <= kGameplayInventoryPageArrowRight &&
+		cursorY >= kGameplayInventoryNextPageArrowTop &&
+		cursorY <= kGameplayInventoryNextPageArrowBottom;
+}
+
 void GameplayLoop::updatePanelCaption() {
 	_panelState.currentStrip = _currentStrip;
 	_panelState.captionText = inventoryActionCaption(_currentStrip);
 	if (_panelState.resolvedItem != 0 &&
 			_delegate->hotspots().hasVerbAction(_panelState.resolvedItem, _currentStrip))
+		_panelState.captionText += _panelState.itemName;
+}
+
+void GameplayLoop::updateInventoryPanelCaption() {
+	const byte owner = currentInventoryOwner();
+	const byte itemId = inventoryItemAtPanelPosition(_vm->cursor()->surfaceX(), _vm->cursor()->surfaceY());
+	const uint16 actionHandlerId = fixedInventoryActionHandler(owner, itemId, _currentStrip);
+
+	_panelState.currentStrip = _currentStrip;
+	_panelState.resolvedItem = itemId;
+	_panelState.itemName = itemId == 0 ? Common::String() : _delegate->inventoryItemName(owner, itemId);
+	_panelState.captionText = inventoryActionCaption(_currentStrip);
+	if (itemId != 0 && actionHandlerId != 0)
 		_panelState.captionText += _panelState.itemName;
 }
 
@@ -486,9 +629,21 @@ GameplayLoopCursorState GameplayLoop::makeCursorState() const {
 	state.currentStrip = _currentStrip;
 	state.requestedStrip = _hoverCaption.requestedStrip();
 	state.resolvedItem = _hoverCaption.resolvedItem();
+	state.inventoryOwner = 0;
+	state.inventoryActionHandlerId = 0;
 	state.relationMode = _relationMode;
 	state.primaryInventoryItem = _primaryInventoryItem;
 	state.relationModeActive = _relationMode != 0 && _primaryInventoryItem != 0;
+	state.inventoryItemSelected = false;
+	return state;
+}
+
+GameplayLoopCursorState GameplayLoop::makeInventoryItemState(byte owner, byte itemId, uint16 actionHandlerId) const {
+	GameplayLoopCursorState state = makeCursorState();
+	state.resolvedItem = itemId;
+	state.inventoryOwner = owner;
+	state.inventoryActionHandlerId = actionHandlerId;
+	state.inventoryItemSelected = true;
 	return state;
 }
 
