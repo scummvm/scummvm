@@ -108,6 +108,7 @@ const byte kG04DialoguePrimaryBlue = 0x0c;
 const uint kG04DialogueChoiceRecordCount = 10 * 10 * 7;
 const byte kInvalidFacing = 0xff;
 const byte kInvalidCel = 0xff;
+const byte kInvalidPrimarySpeechAnimationGroup = 0xff;
 const byte kG04Chunk11FrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 1, 28, 29, 30, 0, 7, 8, 9, 10,
 	11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
@@ -185,6 +186,7 @@ Scene7040::Scene7040(HollywoodEngine *vm) :
 		_chunk6IdlePairATicksRemaining(10),
 		_chunk6IdlePairBTicksRemaining(16),
 		_chunk9AmbientDecisionCounter(0),
+		_primaryDialogueSpeechGroup(kInvalidPrimarySpeechAnimationGroup),
 		_chunk5FrameDirection(1),
 		_chunk5TimerAccumulator(0),
 		_chunk6TimerAccumulator(0),
@@ -208,6 +210,7 @@ Scene7040::Scene7040(HollywoodEngine *vm) :
 		_chunk12FrameIndex(0),
 		_chunk14ActionFrameIndex(0),
 		_chunk14AltFrameIndex(0),
+		_chunk14AltChunkIndex(14),
 		_chunk16FrameIndex(1),
 		_chunk17FrameIndex(0),
 		_preItemIdleState(0),
@@ -809,6 +812,7 @@ void Scene7040::initializePreviewState() {
 	_chunk12FrameIndex = 0;
 	_chunk14ActionFrameIndex = 0;
 	_chunk14AltFrameIndex = 0;
+	_chunk14AltChunkIndex = 14;
 	_chunk16FrameIndex = 1;
 	_chunk17FrameIndex = 0;
 	_preItemIdleState = 0;
@@ -821,6 +825,7 @@ void Scene7040::initializePreviewState() {
 	_chunk6IdlePairBAltPhase = _random.getRandomNumber(1) != 0;
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
+	_primaryDialogueSpeechGroup = kInvalidPrimarySpeechAnimationGroup;
 	_chunk6IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
 	_chunk6IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
 	_chunk9AmbientDecisionCounter = 0;
@@ -881,8 +886,10 @@ void Scene7040::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, b
 		if (_chunk14AltVisible) {
 			const byte altFrame = _chunk14AltFrameIndex < ARRAYSIZE(kG04Chunk14AltFrameMap) ?
 				kG04Chunk14AltFrameMap[_chunk14AltFrameIndex] : 0;
-			drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[14], 0,
-				kG04Chunk14AltDescriptorCount, altFrame, _sceneFramebuffer);
+			if (_chunk14AltChunkIndex < HollywoodEngine::kResourceChunkCount) {
+				drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_chunk14AltChunkIndex], 0,
+					kG04Chunk14AltDescriptorCount, altFrame, _sceneFramebuffer);
+			}
 		}
 	}
 
@@ -1093,12 +1100,14 @@ void Scene7040::prepareGameplayLoop() {
 	_primaryDialogueSpeechActive = false;
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
+	_primaryDialogueSpeechGroup = kInvalidPrimarySpeechAnimationGroup;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_secondaryActorFrame = 0;
 	_actionOverlayVisible = false;
 	_chunk12OverlayVisible = false;
 	_chunk14ActionVisible = false;
 	_chunk14AltVisible = false;
+	_chunk14AltChunkIndex = 14;
 	_hideActiveActor = false;
 }
 
@@ -1274,6 +1283,9 @@ SceneVerbActionRecord Scene7040::relationActionRecord(byte inventoryItemId, byte
 }
 
 void Scene7040::dispatchSceneAction(uint16 handlerId) {
+	if (dispatchGenericSceneAction(handlerId))
+		return;
+
 	switch (handlerId) {
 	case 0:
 	case 1:
@@ -1408,6 +1420,7 @@ void Scene7040::dispatchSceneAction(uint16 handlerId) {
 		handleActionSlot03TransitionToState7060();
 		break;
 	case 305:
+		beginSecondarySpeechLine(4, 0);
 		break;
 	case 306:
 		handleActionSlot05ExitProgressSpeech();
@@ -1416,8 +1429,10 @@ void Scene7040::dispatchSceneAction(uint16 handlerId) {
 		handleActionSlot06TransitionToG05();
 		break;
 	case 308:
+		beginSecondarySpeechLine(6, 0);
 		break;
 	case 309:
+		beginSecondarySpeechLine(7, 0);
 		break;
 	case 310:
 		handleActionSlot09PickupItem0FThenExit();
@@ -1434,9 +1449,230 @@ void Scene7040::dispatchSceneAction(uint16 handlerId) {
 	case 314:
 		handleActionHandler314Item0BSpeech();
 		break;
+	case 315:
+		handleActionHandler315PickupItem0C();
+		break;
 	default:
 		warning("Unhandled Scene7040 action handler %u", handlerId);
 		break;
+	}
+}
+
+bool Scene7040::dispatchGenericSceneAction(uint16 handlerId) {
+	switch (handlerId) {
+	case 0:
+	case 1:
+	case 35:
+	case 41:
+	case 45:
+	case 49:
+		return true;
+	case 2:
+		beginStaticSecondarySpeechLine(1, (byte)_random.getRandomNumber(1));
+		return true;
+	case 3:
+		beginStaticSecondarySpeechLine(2, 0);
+		return true;
+	case 4:
+		beginStaticSecondarySpeechLine(3, (byte)_random.getRandomNumber(1));
+		return true;
+	case 5:
+	{
+		const byte variant = (byte)_random.getRandomNumber(2);
+		if (variant == 2)
+			beginStaticSecondarySpeechLine(3, 1);
+		else
+			beginStaticSecondarySpeechLine(4, variant);
+		return true;
+	}
+	case 6:
+		beginStaticSecondarySpeechLine(5, 0);
+		return true;
+	case 7:
+		beginStaticSecondarySpeechLine(6, (byte)_random.getRandomNumber(1));
+		return true;
+	case 8:
+		beginStaticSecondarySpeechLine(7, 0);
+		return true;
+	case 9:
+		beginStaticSecondarySpeechLine(8, 0);
+		return true;
+	case 10:
+		beginStaticSecondarySpeechLine(9, (byte)_random.getRandomNumber(1));
+		return true;
+	case 11:
+		beginStaticSecondarySpeechLine(0x0a, 0);
+		return true;
+	case 12:
+		beginStaticSecondarySpeechLine(0x0b, 0);
+		return true;
+	case 13:
+		beginStaticSecondarySpeechLine(0x0c, (byte)_random.getRandomNumber(1));
+		return true;
+	case 14:
+		beginStaticSecondarySpeechLine(0x0d, (byte)_random.getRandomNumber(1));
+		return true;
+	case 15:
+		beginStaticSecondarySpeechLine(0x0e, 0);
+		return true;
+	case 16:
+		beginStaticSecondarySpeechLine(0x0f, (byte)_random.getRandomNumber(2));
+		return true;
+	case 17:
+		beginStaticSecondarySpeechLine(0x10, 0);
+		return true;
+	case 18:
+		beginStaticSecondarySpeechLine(0x11, (byte)_random.getRandomNumber(1));
+		return true;
+	case 19:
+		beginStaticSecondarySpeechLine(0x12, (byte)_random.getRandomNumber(2));
+		return true;
+	case 20:
+		beginStaticSecondarySpeechLine(0x13, 0);
+		return true;
+	case 21:
+		beginStaticSecondarySpeechLine(0x14, 0);
+		return true;
+	case 22:
+		beginStaticSecondarySpeechLine(0x15, 0);
+		return true;
+	case 23:
+		beginStaticSecondarySpeechLine(0x16, (byte)_random.getRandomNumber(1));
+		return true;
+	case 24:
+		beginStaticSecondarySpeechLine(0x17, (byte)_random.getRandomNumber(1));
+		return true;
+	case 25:
+		beginStaticSecondarySpeechLine(0x18, (byte)_random.getRandomNumber(1));
+		return true;
+	case 26:
+		beginStaticSecondarySpeechLine(0x19, 0);
+		return true;
+	case 27:
+		beginStaticSecondarySpeechLine(0x1a, 0);
+		return true;
+	case 28:
+		beginStaticSecondarySpeechLine(0x1b, 0);
+		return true;
+	case 29:
+		beginStaticSecondarySpeechLine(0x1c, 0);
+		return true;
+	case 30:
+		beginStaticSecondarySpeechLine(0x1d, 0);
+		return true;
+	case 31:
+		beginStaticSecondarySpeechLine(0x1e, 0);
+		return true;
+	case 32:
+		beginStaticSecondarySpeechLine(0x1f, 0);
+		return true;
+	case 33:
+		beginStaticSecondarySpeechLine(0x20, 0);
+		return true;
+	case 34:
+		beginStaticSecondarySpeechLine(0x21, 0);
+		return true;
+	case 36:
+		beginStaticSecondarySpeechLine(0x23, 0);
+		return true;
+	case 37:
+		handleStaticSpeech43And24Sequence();
+		return true;
+	case 38:
+		beginStaticSecondarySpeechLine(0x25, 0);
+		return true;
+	case 39:
+		beginStaticSecondarySpeechLine(0x26, 0);
+		return true;
+	case 40:
+		beginStaticSecondarySpeechLine(0x27, 0);
+		return true;
+	case 42:
+		beginStaticSecondarySpeechLine(0x29, 0);
+		return true;
+	case 43:
+		beginStaticSecondarySpeechLine(0x2a, 0);
+		return true;
+	case 44:
+		beginStaticSecondarySpeechLine(0x2b, 0);
+		return true;
+	case 46:
+		beginStaticSecondarySpeechLine(0x2d, 0);
+		return true;
+	case 47:
+		beginStaticSecondarySpeechLine(0x2e, 0);
+		return true;
+	case 48:
+		beginStaticSecondarySpeechLine(0x2f, 0);
+		return true;
+	case 50:
+		beginStaticSecondarySpeechLine(0x31, 0);
+		return true;
+	case 51:
+		beginStaticSecondarySpeechLine(0x32, 0);
+		return true;
+	case 52:
+		beginStaticSecondarySpeechLine(0x33, 0);
+		return true;
+	case 53:
+		beginStaticSecondarySpeechLine(0x34, 0);
+		return true;
+	case 54:
+		beginStaticSecondarySpeechLine(0x35, 0);
+		return true;
+	case 55:
+		beginStaticSecondarySpeechLine(0x36, 0);
+		return true;
+	case 56:
+		beginStaticSecondarySpeechLine(0x37, 0);
+		return true;
+	case 57:
+		beginStaticSecondarySpeechLine(0x38, 0);
+		return true;
+	case 58:
+		beginStaticSecondarySpeechLine(0x39, 0);
+		return true;
+	case 59:
+		beginStaticSecondarySpeechLine(0x3a, 0);
+		return true;
+	case 60:
+		beginStaticSecondarySpeechLine(0x3b, 0);
+		return true;
+	case 61:
+		beginStaticSecondarySpeechLine(0x3c, 0);
+		return true;
+	case 62:
+		beginStaticSecondarySpeechLine(0x3d, 0);
+		return true;
+	case 63:
+		beginStaticSecondarySpeechLine(0x3e, 0);
+		return true;
+	case 64:
+		beginStaticSecondarySpeechLine(0x3f, 0);
+		return true;
+	case 65:
+		beginStaticSecondarySpeechLine(0x40, 0);
+		return true;
+	case 66:
+		handleGrantItem22IfMissing();
+		return true;
+	case 67:
+		beginStaticSecondarySpeechLine(0x42, 0);
+		return true;
+	case 68:
+		handleSwapItems08And0FForItem06();
+		return true;
+	case 69:
+		beginStaticSecondarySpeechLine(0x44, 0);
+		return true;
+	case 70:
+		handleAdvanceSceneActionStateAndInventoryPage();
+		return true;
+	case 71:
+		handleAdvanceSceneActionStateToItem1APage68();
+		return true;
+	default:
+		return false;
 	}
 }
 
@@ -1886,8 +2122,19 @@ void Scene7040::handleActionSlot02MajorHotspotAction() {
 	}
 
 	_chunk12OverlayVisible = true;
-	runMappedActionOverlay(13, kG04Chunk13DescriptorCount, kG04MajorHotspotFrameMap,
-		ARRAYSIZE(kG04MajorHotspotFrameMap), kG04Chunk14FrameMillis, 0x2c, false);
+	if (state.g04MajorActionProgress == 2) {
+		runMappedActionOverlayRange(13, kG04Chunk13DescriptorCount, kG04MajorHotspotFrameMap,
+			ARRAYSIZE(kG04MajorHotspotFrameMap), kG04Chunk14FrameMillis, 0, 0x2d, -1, false);
+		_soundBank0.playSample(0x15, 100);
+		runMajorHotspotFrankensteinBranch();
+		_chunk12OverlayVisible = true;
+		runMappedActionOverlayRange(13, kG04Chunk13DescriptorCount, kG04MajorHotspotFrameMap,
+			ARRAYSIZE(kG04MajorHotspotFrameMap), kG04Chunk14FrameMillis, 0x35,
+			ARRAYSIZE(kG04MajorHotspotFrameMap), -1, false);
+	} else {
+		runMappedActionOverlay(13, kG04Chunk13DescriptorCount, kG04MajorHotspotFrameMap,
+			ARRAYSIZE(kG04MajorHotspotFrameMap), kG04Chunk14FrameMillis, 0x2c, false);
+	}
 	_chunk12OverlayVisible = false;
 
 	walkActiveActorTo(0x10d, 0x124, state.g04MajorActionProgress == 2 ? 4 : 5, 0);
@@ -1958,7 +2205,7 @@ void Scene7040::handleActionHandler312ProgressSpeech() {
 	if (state.g04MajorActionProgress == 3)
 		beginSecondarySpeechLine(10, state.g04PatchState >= 2 ? 1 : 0);
 	else
-		beginSecondarySpeechLine(0x2d, 0);
+		beginStaticSecondarySpeechLine(0x2d, 0);
 }
 
 void Scene7040::handleActionHandler313ConversationGate() {
@@ -1971,6 +2218,105 @@ void Scene7040::handleActionHandler313ConversationGate() {
 
 void Scene7040::handleActionHandler314Item0BSpeech() {
 	beginSecondarySpeechLine(11, _vm->gameState().g01Item0BSequenceCompleted ? 1 : 0);
+}
+
+void Scene7040::handleActionHandler315PickupItem0C() {
+	if (hasInventoryItem(0x0c))
+		return;
+
+	addInventoryItem(0x0c);
+	_soundBank0.playSample(1, 100);
+}
+
+void Scene7040::handleStaticSpeech43And24Sequence() {
+	beginStaticSecondarySpeechLine(0x43, 1);
+	beginStaticSecondarySpeechLine(0x24, 0);
+	beginStaticSecondarySpeechLine(0x43, 2);
+}
+
+void Scene7040::handleGrantItem22IfMissing() {
+	if (hasInventoryItem(0x22)) {
+		beginStaticSecondarySpeechLine(0x41, 1);
+		return;
+	}
+
+	addInventoryItem(0x22);
+	_soundBank0.playSample(1, 100);
+	beginStaticSecondarySpeechLine(0x41, 0);
+}
+
+void Scene7040::handleSwapItems08And0FForItem06() {
+	beginStaticSecondarySpeechLine(0x43, 0);
+	removeInventoryItem(0x08);
+	removeInventoryItem(0x0f);
+	addInventoryItem(0x06);
+	_soundBank0.playSample(1, 100);
+	handleStaticSpeech43And24Sequence();
+}
+
+void Scene7040::handleAdvanceSceneActionStateAndInventoryPage() {
+	GameplayState &state = _vm->gameState();
+	if ((state.sceneActionStateSelector & 1) != 0) {
+		if (state.sceneActionStateSelector < 9)
+			++state.sceneActionStateSelector;
+		else
+			state.sceneActionStateSelector = 0;
+	}
+
+	byte pageIndex = 0;
+	switch (state.sceneActionStateSelector) {
+	case 0:
+		state.sceneActionStateSelector = 1;
+		pageIndex = 0x1e;
+		break;
+	case 2:
+		state.sceneActionStateSelector = 3;
+		pageIndex = 0x2d;
+		break;
+	case 4:
+		state.sceneActionStateSelector = 5;
+		pageIndex = 0x7d;
+		break;
+	case 6:
+		state.sceneActionStateSelector = 7;
+		pageIndex = 0x0e;
+		break;
+	case 8:
+		state.sceneActionStateSelector = 9;
+		pageIndex = 0x18;
+		break;
+	default:
+		break;
+	}
+
+	const byte owner = state.currentInventoryOwnerIndex;
+	if (owner < GameplayState::kInventoryOwnerCount && pageIndex != 0) {
+		state.inventoryItemResourcePageByOwnerAndItemId[owner][0x1a] = pageIndex;
+		state.inventoryPanelRedrawn = true;
+	}
+	_soundBank0.playSample(1, 100);
+	beginStaticSecondarySpeechLine(0x15, 0);
+}
+
+void Scene7040::handleAdvanceSceneActionStateToItem1APage68() {
+	GameplayState &state = _vm->gameState();
+	if ((state.sceneActionStateSelector & 1) == 0) {
+		beginStaticSecondarySpeechLine(0x0b, 0);
+		return;
+	}
+
+	if (state.sceneActionStateSelector == 9)
+		state.sceneActionStateSelector = 0;
+	else
+		++state.sceneActionStateSelector;
+
+	const byte owner = state.currentInventoryOwnerIndex;
+	if (owner < GameplayState::kInventoryOwnerCount) {
+		state.inventoryItemResourcePageByOwnerAndItemId[owner][0x1a] = 0x68;
+		state.inventoryPanelRedrawn = true;
+	}
+	_soundBank0.playSample(1, 100);
+	beginStaticSecondarySpeechLine(0x15, 0);
 }
 
 void Scene7040::runDialogueMenuRow98() {
@@ -2116,12 +2462,21 @@ void Scene7040::runMappedActionOverlay(uint chunkIndex, uint descriptorCount, co
 
 void Scene7040::runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame, bool hideActiveActor) {
+	runMappedActionOverlayRange(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
+		0, frameMapSize, statePatchFrame, hideActiveActor);
+	drawPlayableComposite();
+	presentFrame();
+}
+
+void Scene7040::runMappedActionOverlayRange(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
+		uint32 frameMillis, uint firstFrame, uint endFrame, int statePatchFrame, bool hideActiveActor) {
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = hideActiveActor;
 	_actionOverlayVisible = true;
 	_actionOverlayChunkIndex = (byte)chunkIndex;
 	_actionOverlayDescriptorCount = (byte)descriptorCount;
-	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
+	const uint cappedEndFrame = MIN<uint>(endFrame, frameMapSize);
+	for (uint frame = firstFrame; frame < cappedEndFrame && !Engine::shouldQuit(); ++frame) {
 		_actionOverlayFrameIndex = frameMap[frame];
 		if (statePatchFrame >= 0 && (int)frame == statePatchFrame) {
 			_soundBank0.playSample(0x15, 100);
@@ -2136,8 +2491,195 @@ void Scene7040::runMappedActionOverlay(uint chunkIndex, uint descriptorCount, co
 	_actionOverlayVisible = false;
 	_actionOverlayFrameIndex = 0;
 	_hideActiveActor = previousHideActiveActor;
-	drawPlayableComposite();
-	presentFrame();
+}
+
+void Scene7040::runMajorHotspotFrankensteinBranch() {
+	const bool previousHideActiveActor = _hideActiveActor;
+	const byte previousPreItemIdleState = _preItemIdleState;
+	const byte previousAltChunkIndex = _chunk14AltChunkIndex;
+	_hideActiveActor = true;
+	_preItemIdleState = 3;
+	_chunk12OverlayVisible = true;
+	_chunk12FrameIndex = 0;
+	_chunk14ActionVisible = true;
+	_chunk14AltVisible = false;
+
+	runChunk14ActionRange(0, 0x10);
+	beginPrimarySpeechLineWithAnimationGroup(3, 0, 0x154, 0x5f, 0x20, 0, 0x3f, 3);
+	beginPrimarySpeechLineWithAnimationGroup(3, 1, 0x1c2, 0x73, 0x3f, 0x32, 0x0c, 0);
+	runChunk14ActionRange(0x15, 0x61);
+	_vm->gameState().g04PatchState = 1;
+	applySceneStateToHotspotsAndPatches(3);
+	runChunk14ActionRange(0x61, 0x6b);
+	beginPrimarySpeechLineWithAnimationGroup(3, 2, 0x16d, 0x69, 0x20, 0, 0x3f, 4);
+	runChunk14ActionRange(0x6f, 0x7c);
+	_chunk14ActionVisible = false;
+	_chunk12OverlayVisible = false;
+	_chunk12FrameIndex = 0;
+
+	_chunk14AltChunkIndex = 15;
+	runChunk11Range(0x0b, 0x12);
+	beginPrimarySpeechLineWithAnimationGroup(3, 3, 0x1a9, 0x82, 0x3f, 0x32, 0x0c, 1);
+	_chunk14AltVisible = true;
+	runChunk14AltRange(15, 0, 0x14);
+	beginPrimarySpeechLineWithAnimationGroup(3, 4, 0x136, 0x6e, 0x0a, 0x3f, 0, 5);
+	runChunk11Range(0x16, 0x1a);
+	beginPrimarySpeechLineWithAnimationGroup(3, 5, 0x1a9, 0x82, 0x3f, 0x32, 0x0c, 2);
+	runChunk11Range(0x1e, 0x21);
+	runChunk14AltRange(15, 0x18, 0x1c);
+	beginPrimarySpeechLineWithAnimationGroup(3, 6, 0x14f, 0x73, 0x0a, 0x3f, 0, 6);
+	runChunk14AltRange(15, 0x20, 0x25);
+	beginPrimarySpeechLineWithAnimationGroup(3, 7, 0x1c2, 0x73, 0x3f, 0x32, 0x0c, 0);
+	runChunk14AltRange(15, 0x18, 0x1c);
+	beginPrimarySpeechLineWithAnimationGroup(3, 8, 0x14f, 0x73, 0x0a, 0x3f, 0, 6);
+	runChunk14AltRange(15, 0x25, 0x3f);
+	_chunk14AltVisible = false;
+	_chunk14AltChunkIndex = previousAltChunkIndex;
+	beginPrimarySpeechLineWithAnimationGroup(3, 9, 0x1c2, 0x73, 0x3f, 0x32, 0x0c, 0);
+
+	_chunk11FrameIndex = 0;
+	_chunk14ActionVisible = false;
+	_chunk14AltVisible = false;
+	_chunk12OverlayVisible = false;
+	_preItemIdleState = previousPreItemIdleState;
+	_hideActiveActor = previousHideActiveActor;
+}
+
+void Scene7040::runChunk11Range(byte firstFrame, byte endFrame) {
+	const byte previousPreItemIdleState = _preItemIdleState;
+	_preItemIdleState = 3;
+	for (uint frame = firstFrame; frame < endFrame && !Engine::shouldQuit(); ++frame) {
+		_chunk11FrameIndex = (byte)MIN<uint>(frame + 1, ARRAYSIZE(kG04Chunk11FrameMap) - 1);
+		if (waitSceneMillis(kG04Chunk11FrameMillis))
+			break;
+	}
+	_preItemIdleState = previousPreItemIdleState;
+}
+
+void Scene7040::runChunk14ActionRange(byte firstFrame, byte endFrame) {
+	_chunk14ActionVisible = true;
+	for (uint frame = firstFrame; frame < endFrame && !Engine::shouldQuit(); ++frame) {
+		applyChunk14ActionSideEffects((byte)frame);
+		_chunk14ActionFrameIndex = (byte)MIN<uint>(frame + 1, ARRAYSIZE(kG04Chunk14ActionFrameMap) - 1);
+		if (waitSceneMillis(kG04Chunk14FrameMillis))
+			break;
+	}
+}
+
+void Scene7040::runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame) {
+	_chunk14AltVisible = true;
+	_chunk14AltChunkIndex = (byte)chunkIndex;
+	for (uint frame = firstFrame; frame < endFrame && !Engine::shouldQuit(); ++frame) {
+		applyChunk14AltSideEffects((byte)frame);
+		_chunk14AltFrameIndex = (byte)MIN<uint>(frame + 1, ARRAYSIZE(kG04Chunk14AltFrameMap) - 1);
+		if (waitSceneMillis(kG04Chunk14FrameMillis))
+			break;
+	}
+}
+
+void Scene7040::applyChunk14ActionSideEffects(byte frameIndex) {
+	switch (frameIndex) {
+	case 0:
+		_soundBank0.playSample(3, 100);
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 1;
+		break;
+	case 1:
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 2;
+		break;
+	case 8:
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 1;
+		break;
+	case 9:
+		_soundBank0.playSample(4, 100);
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 0;
+		break;
+	case 0x0a:
+		_chunk12OverlayVisible = false;
+		break;
+	case 0x22:
+		_soundBank0.playSample(0x16, 50);
+		break;
+	case 0x6a:
+		_soundBank0.stop();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene7040::applyChunk14AltSideEffects(byte frameIndex) {
+	switch (frameIndex) {
+	case 0x2b:
+		_soundBank0.playSample(0x17, 50);
+		_vm->gameState().g04PatchState = 0;
+		applySceneStateToHotspotsAndPatches(3);
+		break;
+	case 0x37:
+		_soundBank0.playSample(3, 100);
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 1;
+		break;
+	case 0x38:
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 2;
+		break;
+	case 0x3d:
+		_soundBank0.playSample(3, 100);
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 1;
+		break;
+	case 0x3e:
+		_soundBank0.playSample(4, 100);
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 0;
+		break;
+	case 0x3f:
+		_chunk12OverlayVisible = false;
+		break;
+	default:
+		break;
+	}
+}
+
+byte Scene7040::primarySpeechAnimationBaseFrame(byte animationGroup) const {
+	switch (animationGroup) {
+	case 1:
+		return 0x12;
+	case 2:
+		return 0x1a;
+	case 3:
+		return 0x11;
+	case 4:
+		return 0x6b;
+	case 5:
+		return 0x14;
+	case 6:
+		return 0x1c;
+	default:
+		return 7;
+	}
+}
+
+void Scene7040::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
+	switch (animationGroup) {
+	case 3:
+	case 4:
+		_chunk14ActionVisible = true;
+		_chunk14ActionFrameIndex = frameIndex;
+		break;
+	case 5:
+	case 6:
+		_chunk14AltVisible = true;
+		_chunk14AltFrameIndex = frameIndex;
+		break;
+	default:
+		_chunk11FrameIndex = frameIndex;
+		break;
+	}
 }
 
 bool Scene7040::waitSceneMillis(uint32 millis) {
@@ -2292,15 +2834,16 @@ void Scene7040::advancePrimaryDialogueSpeechFrame(uint32 delta) {
 	_primaryDialogueSpeechTimerAccumulator += delta;
 	while (_primaryDialogueSpeechTimerAccumulator >= kG04Chunk11FrameMillis) {
 		_primaryDialogueSpeechTimerAccumulator -= kG04Chunk11FrameMillis;
+		const byte baseFrame = primarySpeechAnimationBaseFrame(_primaryDialogueSpeechGroup);
 		byte nextFrame = _primaryDialogueSpeechLastFrame;
 		for (uint attempt = 0; attempt < 8 && nextFrame == _primaryDialogueSpeechLastFrame; ++attempt)
-			nextFrame = (byte)(7 + _random.getRandomNumber(4));
+			nextFrame = (byte)(baseFrame + _random.getRandomNumber(4));
 
 		if (nextFrame == _primaryDialogueSpeechLastFrame)
-			nextFrame = nextFrame >= 11 ? 7 : (byte)(nextFrame + 1);
+			nextFrame = nextFrame >= baseFrame + 4 ? baseFrame : (byte)(nextFrame + 1);
 
 		_primaryDialogueSpeechLastFrame = nextFrame;
-		_chunk11FrameIndex = nextFrame;
+		setPrimarySpeechAnimationFrame(_primaryDialogueSpeechGroup, nextFrame);
 	}
 }
 
@@ -2384,6 +2927,11 @@ void Scene7040::beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex)
 
 void Scene7040::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue) {
+	beginPrimarySpeechLineWithAnimationGroup(rowIndex, frameIndex, centerX, topY, red, green, blue, 0);
+}
+
+void Scene7040::beginPrimarySpeechLineWithAnimationGroup(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
+		byte red, byte green, byte blue, byte animationGroup) {
 	const uint paletteOffset = kG04PrimarySpeechTextColor * 3;
 	if (_paletteCurrent.size() > paletteOffset + 2) {
 		_paletteCurrent[paletteOffset] = red;
@@ -2392,7 +2940,7 @@ void Scene7040::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 
 	}
 
 	runSpeechLine(_primarySpeechOverlay, rowIndex, frameIndex, centerX, topY,
-		kG04PrimarySpeechTextColor, true, false, true);
+		kG04PrimarySpeechTextColor, true, false, true, animationGroup);
 }
 
 void Scene7040::beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex) {
@@ -2408,7 +2956,8 @@ void Scene7040::beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex) {
 }
 
 void Scene7040::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
-		byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft, bool animatePrimaryDialogue) {
+		byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft, bool animatePrimaryDialogue,
+		byte primaryAnimationGroup) {
 	uint16 textRecordId = 0;
 	byte continuationCount = 0;
 	uint16 voiceSampleId = 0;
@@ -2416,12 +2965,12 @@ void Scene7040::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte fram
 		return;
 
 	runSpeechCue(overlay, textRecordId, continuationCount, voiceSampleId, centerX, topY, colorIndex,
-		useRequestedTop, animatePrimaryLeft, animatePrimaryDialogue);
+		useRequestedTop, animatePrimaryLeft, animatePrimaryDialogue, primaryAnimationGroup);
 }
 
 void Scene7040::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte continuationCount,
 		uint16 voiceSampleId, uint16 centerX, uint16 topY, byte colorIndex, bool useRequestedTop,
-		bool animatePrimaryLeft, bool animatePrimaryDialogue) {
+		bool animatePrimaryLeft, bool animatePrimaryDialogue, byte primaryAnimationGroup) {
 	const byte lineCount = MAX<byte>(1, continuationCount);
 	for (byte part = 0; part < lineCount && !Engine::shouldQuit(); ++part) {
 		const Common::String text = getResource003LargeTextRecord(textRecordId + part);
@@ -2445,11 +2994,15 @@ void Scene7040::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte c
 		_primaryLeftSpeechActive = animatePrimaryLeft;
 		if (animatePrimaryLeft)
 			_chunk5FrameIndex = 0x0b;
-		_primaryDialogueSpeechActive = animatePrimaryDialogue;
-		if (animatePrimaryDialogue) {
-			_primaryDialogueSpeechLastFrame = 7;
+		const byte animationGroup = animatePrimaryDialogue ?
+			(primaryAnimationGroup == kInvalidPrimarySpeechAnimationGroup ? 0 : primaryAnimationGroup) :
+			kInvalidPrimarySpeechAnimationGroup;
+		_primaryDialogueSpeechActive = animationGroup != kInvalidPrimarySpeechAnimationGroup;
+		if (_primaryDialogueSpeechActive) {
+			_primaryDialogueSpeechGroup = animationGroup;
+			_primaryDialogueSpeechLastFrame = primarySpeechAnimationBaseFrame(animationGroup);
 			_primaryDialogueSpeechTimerAccumulator = 0;
-			_chunk11FrameIndex = 7;
+			setPrimarySpeechAnimationFrame(animationGroup, _primaryDialogueSpeechLastFrame);
 		}
 		const bool interrupted = waitForSpeechOrDelay(duration, animatePrimaryLeft);
 		if (animatePrimaryLeft) {
@@ -2457,11 +3010,13 @@ void Scene7040::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte c
 			_primaryLeftSpeechTimerAccumulator = 0;
 			_chunk5FrameIndex = 0x0b;
 		}
-		if (animatePrimaryDialogue) {
+		if (_primaryDialogueSpeechActive) {
+			setPrimarySpeechAnimationFrame(_primaryDialogueSpeechGroup,
+				primarySpeechAnimationBaseFrame(_primaryDialogueSpeechGroup));
 			_primaryDialogueSpeechActive = false;
+			_primaryDialogueSpeechGroup = kInvalidPrimarySpeechAnimationGroup;
 			_primaryDialogueSpeechTimerAccumulator = 0;
 			_primaryDialogueSpeechLastFrame = 7;
-			_chunk11FrameIndex = 7;
 		}
 		_speech.stop();
 		overlay.visible = false;
