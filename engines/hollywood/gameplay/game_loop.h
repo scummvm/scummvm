@@ -118,6 +118,7 @@ private:
 	byte inventoryItemAtPanelPosition(uint16 cursorX, uint16 cursorY) const;
 	byte currentInventoryOwner() const;
 	uint16 fixedInventoryActionHandler(byte owner, byte itemId, byte stripIndex) const;
+	uint16 dialogueInventoryRelationHandler(byte primaryItemId, byte secondaryItemId, byte relationMode) const;
 	bool scrollInventoryPanelPreviousPage();
 	bool scrollInventoryPanelNextPage();
 	bool isInventoryPanelOptionsButton(uint16 cursorX, uint16 cursorY) const;
@@ -128,6 +129,7 @@ private:
 	void syncPanelState();
 	GameplayLoopCursorState makeCursorState() const;
 	GameplayLoopCursorState makeInventoryItemState(byte owner, byte itemId, uint16 actionHandlerId) const;
+	void syncHoverCaptionRelationContext();
 	void refreshHoverCaption();
 
 	HollywoodEngine *_vm;

@@ -59,6 +59,7 @@ public:
 	byte defaultStripForItem(byte itemId) const;
 	bool hasVerbAction(byte itemId, byte stripIndex) const;
 	SceneVerbActionRecord verbActionRecord(byte itemId, byte stripIndex) const;
+	SceneVerbActionRecord relationActionRecord(byte inventoryItemId, byte sceneItemId, byte relationMode) const;
 	SceneActionTarget actionTarget(byte itemId) const;
 	void setVerbMovementModeByGlobalRecordIndex(uint globalRecordIndex, uint16 movementMode);
 	Common::String itemName(byte itemId) const;
@@ -69,6 +70,8 @@ private:
 	Common::Array<SceneActionTarget> _actionTargets;
 	Common::Array<byte> _stageSmallRows;
 	Common::Array<SceneVerbActionRecord> _verbActionRecords;
+	Common::Array<SceneVerbActionRecord> _relationMode1ActionRecords;
+	Common::Array<SceneVerbActionRecord> _relationMode2ActionRecords;
 };
 
 class SceneHoverCaption {
@@ -77,6 +80,7 @@ public:
 
 	void reset();
 	void setCurrentStrip(byte stripIndex);
+	void setRelationContext(byte relationMode, byte primaryInventoryItem, const Common::String &primaryItemName);
 	bool refreshNow(const SceneHotspotTable &hotspots, const Common::Array<byte> &savedFramebuffer,
 		uint16 cursorX, uint16 cursorY, uint16 xOffset, uint16 yOffset);
 	bool advance(uint32 deltaMillis, const SceneHotspotTable &hotspots,
@@ -112,6 +116,9 @@ private:
 	Common::String _captionText;
 	uint32 _timer;
 	byte _currentStrip;
+	byte _relationMode;
+	byte _primaryInventoryItem;
+	Common::String _primaryItemName;
 	byte _requestedStrip;
 	byte _resolvedItem;
 	bool _hasLastDescriptor;
