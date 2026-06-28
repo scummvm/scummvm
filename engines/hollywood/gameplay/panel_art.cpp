@@ -433,8 +433,11 @@ void GameplayPanelArt::drawInventoryItems(Graphics::Surface &surface, const Game
 			continue;
 
 		byte pageIndex = 0;
-		if (owner == 1)
-			pageIndex = inventoryOwner1ItemPage(itemId);
+		if (owner == 1) {
+			pageIndex = gameState.inventoryItemResourcePageByOwnerAndItemId[owner][itemId];
+			if (pageIndex == 0)
+				pageIndex = inventoryOwner1ItemPage(itemId);
+		}
 		if (pageIndex == 0)
 			continue;
 

@@ -52,6 +52,7 @@ struct GameplayState {
 			for (uint slot = 0; slot < kInventoryOwnerSlotStride; ++slot) {
 				inventorySlotItemIdByOwner[owner][slot] = 0;
 				inventoryItemSlotByOwnerAndItemId[owner][slot] = 0;
+				inventoryItemResourcePageByOwnerAndItemId[owner][slot] = 0;
 			}
 		}
 		for (uint i = 0; i < kFixedInventoryActionTableEntryCount; ++i)
@@ -61,6 +62,7 @@ struct GameplayState {
 		inventoryOwner1ItemsInitialized = false;
 		sceneActionCallbackTableInstalled = false;
 		inventoryPanelRedrawn = false;
+		sceneActionStateSelector = 0;
 		g01Item0BSequenceCompleted = false;
 		g04EntryConversationPlayed = false;
 		g04MajorActionProgress = 0;
@@ -105,6 +107,7 @@ struct GameplayState {
 		inventoryItemCountByOwner[owner] = slot;
 		inventorySlotItemIdByOwner[owner][slot] = itemId;
 		inventoryItemSlotByOwnerAndItemId[owner][itemId] = slot;
+		inventoryItemResourcePageByOwnerAndItemId[owner][itemId] = 0;
 		inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(slot);
 		inventoryPanelRedrawn = true;
 	}
@@ -118,6 +121,7 @@ struct GameplayState {
 			return;
 
 		inventoryItemSlotByOwnerAndItemId[owner][itemId] = 0;
+		inventoryItemResourcePageByOwnerAndItemId[owner][itemId] = 0;
 		inventorySlotItemIdByOwner[owner][slot] = 0;
 		compactInventory(owner);
 		inventoryPanelRedrawn = true;
@@ -172,12 +176,14 @@ struct GameplayState {
 	byte inventoryFirstVisibleSlotByOwner[kInventoryOwnerCount];
 	byte inventorySlotItemIdByOwner[kInventoryOwnerCount][kInventoryOwnerSlotStride];
 	byte inventoryItemSlotByOwnerAndItemId[kInventoryOwnerCount][kInventoryOwnerSlotStride];
+	byte inventoryItemResourcePageByOwnerAndItemId[kInventoryOwnerCount][kInventoryOwnerSlotStride];
 	uint16 fixedInventoryVerbHandlerIdsByItemAndStrip[kFixedInventoryActionTableEntryCount];
 	bool actorSpriteBankSet00Loaded;
 	bool inventoryOwner1ResourceTablesLoaded;
 	bool inventoryOwner1ItemsInitialized;
 	bool sceneActionCallbackTableInstalled;
 	bool inventoryPanelRedrawn;
+	byte sceneActionStateSelector;
 	bool g01Item0BSequenceCompleted;
 	bool g04EntryConversationPlayed;
 	byte g04MajorActionProgress;
