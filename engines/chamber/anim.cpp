@@ -60,7 +60,7 @@ void getScratchBuffer(byte mode) {
 	// otherwise a large lutin overruns its slot into the next one - and the top
 	// slot overruns the end of scratch_mem1 into the adjacent sprites_list[],
 	// corrupting it (later crashing in blitSpritesToBackBuffer/restoreImage).
-	uint16 slot = (g_vm->_videoMode == Common::kRenderEGA) ? 3200 : 1600;
+	uint16 slot = (isEgaLikeRenderer()) ? 3200 : 1600;
 	if (mode & 0x80)
 		offs += slot * 2;
 	if (mode & 0x40)
@@ -80,7 +80,7 @@ void animLoadSprite(byte **panim) {
 void clipSprite(byte *x, byte *y, byte *sprw, byte *sprh, byte **sprite, int8 dx, int8 dy) {
 	if (anim_flags == 7)
 		return;
-	uint16 bytes_per_col = (g_vm->_videoMode == Common::kRenderEGA) ? 4 : 2;
+	uint16 bytes_per_col = (isEgaLikeRenderer()) ? 4 : 2;
 	if (anim_flags & 4) {
 		if (anim_cycle == 0)
 			return;
@@ -115,7 +115,7 @@ void clipSprite(byte *x, byte *y, byte *sprw, byte *sprh, byte **sprite, int8 dx
 }
 
 void copyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte height, byte *target) {
-	if (g_vm->_videoMode == Common::kRenderEGA) {
+	if (isEgaLikeRenderer()) {
 		/* EGA: linear 1 byte/pixel. Reveal the block in the same scattered
 		   ("dot dissolve") order as the CGA path, blitting periodically so the
 		   transition is animated instead of an instant copy. */
@@ -252,7 +252,7 @@ void playAnimCore(byte **panim) {
 			sprw = *sprite++;
 			sprh = *sprite++;
 
-			if (g_vm->_videoMode == Common::kRenderEGA)
+			if (isEgaLikeRenderer())
 				pitch = sprw * 4;
 			else
 				pitch = sprw * 2;

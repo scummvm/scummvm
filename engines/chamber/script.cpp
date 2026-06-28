@@ -669,7 +669,7 @@ uint16 SCR_5_DrawPortraitLiftRight(void) {
 		return 0;
 
 	/*TODO: use local args instead of globals*/
-	if (g_vm->_videoMode == Common::kRenderEGA)
+	if (isEgaLikeRenderer())
 		g_vm->_renderer->animLiftToRight(width, cur_image_pixels + width * 4 - 4, width, 1, height, SCREENBUFFER, g_vm->_renderer->calcXY_p(x, y));
 	else
 		g_vm->_renderer->animLiftToRight(width, cur_image_pixels + width - 1, width, 1, height, SCREENBUFFER, g_vm->_renderer->calcXY_p(x, y));
@@ -866,7 +866,7 @@ uint16 SCR_D_DrawPortraitDotEffect(void) {
 	if (!drawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
-	if (g_vm->_videoMode == Common::kRenderEGA) {
+	if (isEgaLikeRenderer()) {
 		uint16 pw = width * 4;
 		cur_image_end = pw * height;
 		uint16 baseOfs = g_vm->_renderer->calcXY_p(x, y);
@@ -940,7 +940,7 @@ uint16 drawPortraitZoomed(byte **params) {
 	zwidth = *((*params)++);
 	zheight = *((*params)++);
 
-	if (g_vm->_videoMode == Common::kRenderEGA) {
+	if (isEgaLikeRenderer()) {
 		/*EGA can't zoom: draw at original size; dirty rect already has correct dimensions from drawPortrait*/
 		g_vm->_renderer->zoomImage(cur_image_pixels, cur_image_size_w, cur_image_size_h, cur_image_size_w, cur_image_size_h, frontbuffer, cur_image_offs);
 	} else {
@@ -989,7 +989,7 @@ uint16 SCR_19_HidePortraitLiftLeft(void) {
 
 	/*TODO: This originally was done by reusing door sliding routine*/
 
-	if (g_vm->_videoMode == Common::kRenderEGA) {
+	if (isEgaLikeRenderer()) {
 		offs += 4;
 		while (--width)
 			g_vm->_renderer->hideScreenBlockLiftToLeft(1, SCREENBUFFER, backbuffer, width, height, SCREENBUFFER, offs);
@@ -1050,7 +1050,7 @@ uint16 SCR_1A_HidePortraitLiftRight(void) {
 
 	/*TODO: This originally was done by reusing door sliding routine*/
 
-	if (g_vm->_videoMode == Common::kRenderEGA) {
+	if (isEgaLikeRenderer()) {
 		offs = g_vm->_renderer->calcXY_p(x + width - 2, y);
 		while (--width)
 			g_vm->_renderer->hideScreenBlockLiftToRight(1, SCREENBUFFER, backbuffer, width, height, SCREENBUFFER, offs);
@@ -1108,7 +1108,7 @@ uint16 SCR_1B_HidePortraitLiftUp(void) {
 		return 0;
 	}
 
-	if (g_vm->_videoMode == Common::kRenderEGA) {
+	if (isEgaLikeRenderer()) {
 		offs = g_vm->_renderer->calcXY_p(x, y + 1);
 		while (--height)
 			g_vm->_renderer->hideScreenBlockLiftToUp(1, SCREENBUFFER, backbuffer, width, height, SCREENBUFFER, offs);
@@ -1155,7 +1155,7 @@ uint16 SCR_1C_HidePortraitLiftDown(void) {
 		return 0;
 	}
 
-	if (g_vm->_videoMode == Common::kRenderEGA) {
+	if (isEgaLikeRenderer()) {
 		offs = g_vm->_renderer->calcXY_p(x, y + height - 2);
 		while (--height)
 			g_vm->_renderer->hideScreenBlockLiftToDown(1, SCREENBUFFER, backbuffer, width, height, SCREENBUFFER, offs);
@@ -1421,7 +1421,7 @@ void drawStars(star_t *stars, int16 iter, byte *target) {
 		short z, x, y;
 		byte pixel, mask;
 
-		if (g_vm->_videoMode == Common::kRenderEGA)
+		if (isEgaLikeRenderer())
 			target[stars->ofs] = 0;
 		else
 			target[stars->ofs] &= stars->mask;
@@ -1445,7 +1445,7 @@ void drawStars(star_t *stars, int16 iter, byte *target) {
 			continue;
 		}
 
-		if (g_vm->_videoMode == Common::kRenderEGA) {
+		if (isEgaLikeRenderer()) {
 			stars->ofs = g_vm->_renderer->calcXY_p(x, y);
 			pixel = (stars->z < 0xE00) ? 15 : 8;
 			stars->pixel = pixel;
@@ -2898,7 +2898,7 @@ static void AnimSaucer(void) {
 	  saucer region, so leftover sprites from the final game frame (player,
 	  HUD pixels) would otherwise survive on the black backdrop right through to
 	  THE END screen.*/
-	if (g_vm->_videoMode == Common::kRenderEGA)
+	if (isEgaLikeRenderer())
 		memset(frontbuffer, 0, sizeof(SCREENBUFFER));
 	g_vm->_renderer->backBufferToRealFull();
 	g_vm->_renderer->colorSelect(0x30);
@@ -3554,7 +3554,7 @@ void DrawStickyNet(void) {
 
 	/*16x30 is the net sprite size*/
 
-	if (g_vm->_videoMode == Common::kRenderEGA) {
+	if (isEgaLikeRenderer()) {
 		Graphics::Surface *surf = ega_puzzl_res->getSprite(80);
 		uint16 sprW = surf->w;
 		uint16 sprH = surf->h;

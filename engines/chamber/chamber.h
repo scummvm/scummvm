@@ -108,6 +108,12 @@ void init(void);
 
 extern ChamberEngine *g_vm;
 
+// Amiga shares the EGA planar 16-colour pipeline; graphics code branches on this
+inline bool isEgaLikeRenderer() {
+	return g_vm->_videoMode == Common::kRenderEGA ||
+	       g_vm->_videoMode == Common::kRenderAmiga;
+}
+
 } // End of namespace Chamber
 
 #endif
