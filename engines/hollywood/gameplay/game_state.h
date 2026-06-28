@@ -34,7 +34,8 @@ struct GameplayState {
 		kInventoryFirstSlot = 1,
 		kInventoryLastSlot = kInventoryOwnerSlotStride - 1,
 		kInventoryVisibleSlotCount = 16,
-		kFixedInventoryActionTableEntryCount = kInventoryOwnerSlotStride * kInventoryVerbCount + 1
+		kFixedInventoryActionTableEntryCount = kInventoryOwnerSlotStride * kInventoryVerbCount + 1,
+		kInventoryItemRelationTableEntryCount = kInventoryOwnerSlotStride * kInventoryOwnerSlotStride
 	};
 
 	GameplayState() {
@@ -55,8 +56,7 @@ struct GameplayState {
 				inventoryItemResourcePageByOwnerAndItemId[owner][slot] = 0;
 			}
 		}
-		for (uint i = 0; i < kFixedInventoryActionTableEntryCount; ++i)
-			fixedInventoryVerbHandlerIdsByItemAndStrip[i] = 0;
+		clearInventoryActionTables();
 		actorSpriteBankSet00Loaded = false;
 		inventoryOwner1ResourceTablesLoaded = false;
 		inventoryOwner1ItemsInitialized = false;
@@ -241,6 +241,31 @@ struct GameplayState {
 		return fixedInventoryVerbHandlerIdsByItemAndStrip[index];
 	}
 
+	uint16 dialogueInventoryRelationHandler(byte primaryItemId, byte secondaryItemId, byte relationMode) const {
+		if (primaryItemId >= kInventoryOwnerSlotStride || secondaryItemId >= kInventoryOwnerSlotStride)
+			return 0;
+
+		const uint index = (uint)primaryItemId * kInventoryOwnerSlotStride + secondaryItemId;
+		if (index >= kInventoryItemRelationTableEntryCount)
+			return 0;
+
+		if (relationMode == 1)
+			return dialogueRelationMode1HandlerIdsByItemPair[index];
+		if (relationMode == 2)
+			return dialogueRelationMode2HandlerIdsByItemPair[index];
+
+		return 0;
+	}
+
+	void clearInventoryActionTables() {
+		for (uint i = 0; i < kFixedInventoryActionTableEntryCount; ++i)
+			fixedInventoryVerbHandlerIdsByItemAndStrip[i] = 0;
+		for (uint i = 0; i < kInventoryItemRelationTableEntryCount; ++i) {
+			dialogueRelationMode1HandlerIdsByItemPair[i] = 0;
+			dialogueRelationMode2HandlerIdsByItemPair[i] = 0;
+		}
+	}
+
 	uint16 mainFlowStateId;
 	byte activeChapterAudioArchiveIndex;
 	byte currentInventoryOwnerIndex;
@@ -251,6 +276,8 @@ struct GameplayState {
 	byte inventoryItemSlotByOwnerAndItemId[kInventoryOwnerCount][kInventoryOwnerSlotStride];
 	byte inventoryItemResourcePageByOwnerAndItemId[kInventoryOwnerCount][kInventoryOwnerSlotStride];
 	uint16 fixedInventoryVerbHandlerIdsByItemAndStrip[kFixedInventoryActionTableEntryCount];
+	uint16 dialogueRelationMode1HandlerIdsByItemPair[kInventoryItemRelationTableEntryCount];
+	uint16 dialogueRelationMode2HandlerIdsByItemPair[kInventoryItemRelationTableEntryCount];
 	bool actorSpriteBankSet00Loaded;
 	bool inventoryOwner1ResourceTablesLoaded;
 	bool inventoryOwner1ItemsInitialized;

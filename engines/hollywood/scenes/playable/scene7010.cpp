@@ -991,8 +991,22 @@ void Scene7010::handleLeftClick(const GameplayLoopCursorState &state) {
 	}
 }
 
+void Scene7010::handleInventoryItemClick(const GameplayLoopCursorState &state) {
+	_vm->cursor()->leaveInteractiveMode();
+	dispatchSceneAction(state.inventoryActionHandlerId);
+	if (!Engine::shouldQuit() && !shouldExitGameplayLoop()) {
+		_vm->cursor()->enterInteractiveMode();
+		_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
+	}
+}
+
 void Scene7010::processSceneActionClick(const GameplayLoopCursorState &state) {
 	byte itemId = state.resolvedItem;
+	if (state.relationModeActive) {
+		processSceneRelationClick(state, itemId);
+		return;
+	}
+
 	SceneVerbActionRecord actionRecord = _hotspots.verbActionRecord(itemId, state.currentStrip);
 
 	if (itemId == 0) {
@@ -1040,10 +1054,76 @@ void Scene7010::processSceneActionClick(const GameplayLoopCursorState &state) {
 	dispatchSceneAction(actionRecord.actionHandlerId);
 }
 
+void Scene7010::processSceneRelationClick(const GameplayLoopCursorState &state, byte itemId) {
+	if (itemId == 0)
+		return;
+
+	const SceneVerbActionRecord actionRecord =
+		relationActionRecord(state.primaryInventoryItem, itemId, state.relationMode);
+	if (actionRecord.actionHandlerId == 0)
+		return;
+
+	const SceneActionTarget target = _hotspots.actionTarget(itemId);
+	int targetX = _activeActorWorldX;
+	int targetY = _activeActorWorldY;
+	byte finalFacing = kInvalidFacing;
+
+	if (actionRecord.movementMode != 0) {
+		targetX = target.interactionPoint.x;
+		targetY = target.interactionPoint.y;
+		finalFacing = target.facing;
+	} else {
+		const bool atInteractionPoint =
+			_activeActorWorldX == target.interactionPoint.x &&
+			_activeActorWorldY == target.interactionPoint.y;
+		if (atInteractionPoint) {
+			if (_activeActorFacing != target.facing)
+				finalFacing = target.facing;
+		} else if (target.approachPoint.x != 0 || target.approachPoint.y != 0) {
+			finalFacing = calculateFacingTowardPoint(_activeActorWorldX, _activeActorWorldY,
+				target.approachPoint.x, target.approachPoint.y);
+		}
+	}
+
+	walkActiveActorTo(targetX, targetY, finalFacing, 0);
+	dispatchSceneAction(actionRecord.actionHandlerId);
+}
+
+SceneVerbActionRecord Scene7010::relationActionRecord(byte inventoryItemId, byte sceneItemId, byte relationMode) const {
+	return _hotspots.relationActionRecord(inventoryItemId, sceneItemId, relationMode);
+}
+
 void Scene7010::dispatchSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 0:
 	case 1:
+		break;
+	case 2:
+		beginStaticSecondarySpeechLine(1, (byte)_random.getRandomNumber(1));
+		break;
+	case 3:
+		beginStaticSecondarySpeechLine(2, 0);
+		break;
+	case 4:
+		beginStaticSecondarySpeechLine(3, (byte)_random.getRandomNumber(1));
+		break;
+	case 5:
+	{
+		const byte variant = (byte)_random.getRandomNumber(2);
+		if (variant == 2)
+			beginStaticSecondarySpeechLine(3, 1);
+		else
+			beginStaticSecondarySpeechLine(4, variant);
+		break;
+	}
+	case 6:
+		beginStaticSecondarySpeechLine(5, 0);
+		break;
+	case 7:
+		beginStaticSecondarySpeechLine(6, (byte)_random.getRandomNumber(1));
+		break;
+	case 8:
+		beginStaticSecondarySpeechLine(7, 0);
 		break;
 	case 9:
 		beginStaticSecondarySpeechLine(8, 0);
@@ -1051,8 +1131,89 @@ void Scene7010::dispatchSceneAction(uint16 handlerId) {
 	case 10:
 		beginStaticSecondarySpeechLine(9, (byte)_random.getRandomNumber(1));
 		break;
+	case 11:
+		beginStaticSecondarySpeechLine(0x0a, 0);
+		break;
+	case 12:
+		beginStaticSecondarySpeechLine(0x0b, 0);
+		break;
+	case 13:
+		beginStaticSecondarySpeechLine(0x0c, (byte)_random.getRandomNumber(1));
+		break;
+	case 14:
+		beginStaticSecondarySpeechLine(0x0d, (byte)_random.getRandomNumber(1));
+		break;
+	case 15:
+		beginStaticSecondarySpeechLine(0x0e, 0);
+		break;
+	case 16:
+		beginStaticSecondarySpeechLine(0x0f, (byte)_random.getRandomNumber(2));
+		break;
+	case 17:
+		beginStaticSecondarySpeechLine(0x10, 0);
+		break;
+	case 18:
+		beginStaticSecondarySpeechLine(0x11, (byte)_random.getRandomNumber(1));
+		break;
+	case 19:
+		beginStaticSecondarySpeechLine(0x12, (byte)_random.getRandomNumber(2));
+		break;
 	case 20:
 		beginStaticSecondarySpeechLine(0x13, 0);
+		break;
+	case 21:
+		beginStaticSecondarySpeechLine(0x14, 0);
+		break;
+	case 22:
+		beginStaticSecondarySpeechLine(0x15, 0);
+		break;
+	case 23:
+		beginStaticSecondarySpeechLine(0x16, (byte)_random.getRandomNumber(1));
+		break;
+	case 24:
+		beginStaticSecondarySpeechLine(0x17, (byte)_random.getRandomNumber(1));
+		break;
+	case 25:
+		beginStaticSecondarySpeechLine(0x18, (byte)_random.getRandomNumber(1));
+		break;
+	case 26:
+		beginStaticSecondarySpeechLine(0x19, 0);
+		break;
+	case 27:
+		beginStaticSecondarySpeechLine(0x1a, 0);
+		break;
+	case 28:
+		beginStaticSecondarySpeechLine(0x1b, 0);
+		break;
+	case 29:
+		beginStaticSecondarySpeechLine(0x1c, 0);
+		break;
+	case 30:
+		beginStaticSecondarySpeechLine(0x1d, 0);
+		break;
+	case 31:
+		beginStaticSecondarySpeechLine(0x1e, 0);
+		break;
+	case 32:
+		beginStaticSecondarySpeechLine(0x1f, 0);
+		break;
+	case 33:
+		beginStaticSecondarySpeechLine(0x20, 0);
+		break;
+	case 34:
+		beginStaticSecondarySpeechLine(0x21, 0);
+		break;
+	case 36:
+		beginStaticSecondarySpeechLine(0x23, 0);
+		break;
+	case 38:
+		beginStaticSecondarySpeechLine(0x25, 0);
+		break;
+	case 39:
+		beginStaticSecondarySpeechLine(0x26, 0);
+		break;
+	case 40:
+		beginStaticSecondarySpeechLine(0x27, 0);
 		break;
 	case 301:
 		handleActionSlot00TransitionToG03();

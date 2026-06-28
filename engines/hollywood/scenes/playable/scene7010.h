@@ -159,12 +159,15 @@ private:
 	void prepareOptionsMenuPalette(Common::Array<byte> &palette) const override;
 	bool shouldExitGameplayLoop() const override;
 	void handleLeftClick(const GameplayLoopCursorState &state) override;
+	void handleInventoryItemClick(const GameplayLoopCursorState &state) override;
 	void advanceChunk8Cycle();
 	void advanceChunk10IdleFrames();
 	void advanceSecondaryActorSpeechFrame();
 	void advancePrimaryLeftSpeechFrame();
 	void advanceDialogueOverlay(uint32 delta);
 	void processSceneActionClick(const GameplayLoopCursorState &state);
+	void processSceneRelationClick(const GameplayLoopCursorState &state, byte itemId);
+	SceneVerbActionRecord relationActionRecord(byte inventoryItemId, byte sceneItemId, byte relationMode) const;
 	void dispatchSceneAction(uint16 handlerId);
 	void walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel);
 	void adjustWalkTargetToFloorMask(int &targetX, int &targetY) const;

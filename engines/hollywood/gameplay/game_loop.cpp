@@ -139,6 +139,7 @@ bool GameplayLoop::run() {
 
 	_vm->cursor()->enterInteractiveMode();
 	_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
+	syncHoverCaptionRelationContext();
 	refreshHoverCaption();
 	syncPanelState();
 
@@ -160,6 +161,7 @@ bool GameplayLoop::run() {
 
 		_delegate->advanceGameplayLoop(delta);
 		_vm->cursor()->advance(delta);
+		syncHoverCaptionRelationContext();
 		_hoverCaption.setCurrentStrip(_currentStrip);
 		if (_panelState.visible())
 			updatePanelHover(delta);
@@ -300,12 +302,32 @@ void GameplayLoop::handleLeftClick() {
 			return;
 
 		const byte owner = currentInventoryOwner();
+		if (_relationMode != 0 && _primaryInventoryItem != 0) {
+			const uint16 actionHandlerId =
+				dialogueInventoryRelationHandler(_primaryInventoryItem, itemId, _relationMode);
+			if (actionHandlerId != 0) {
+				GameplayLoopCursorState state = makeInventoryItemState(owner, itemId, actionHandlerId);
+				closeInventoryPanel();
+				_delegate->handleInventoryItemClick(state);
+				_relationMode = 0;
+				_primaryInventoryItem = 0;
+				_currentStrip = kGameplayDefaultStrip;
+				_hoverCaption.setCurrentStrip(_currentStrip);
+				refreshHoverCaption();
+				syncPanelState();
+			} else {
+				updateInventoryPanelCaption();
+				syncPanelState();
+			}
+			return;
+		}
+
 		const uint16 actionHandlerId = fixedInventoryActionHandler(owner, itemId, _currentStrip);
 		if ((_currentStrip == kGameplayUseStrip || _currentStrip == kGameplayGiveStrip) &&
 				actionHandlerId == 1) {
 			_relationMode = _currentStrip == kGameplayUseStrip ? 1 : 2;
 			_primaryInventoryItem = itemId;
-			closeInventoryPanel();
+			updateInventoryPanelCaption();
 			refreshHoverCaption();
 			syncPanelState();
 			return;
@@ -443,7 +465,7 @@ void GameplayLoop::closeInventoryPanel() {
 
 	_panelState.inventoryPanelVisible = false;
 	_panelState.captionText.clear();
-	if (_inventoryPanelOpenedFromDefault && _currentStrip == 5) {
+	if (_inventoryPanelOpenedFromDefault && _currentStrip == 5 && _relationMode == 0) {
 		_currentStrip = kGameplayDefaultStrip;
 		_hoverCaption.setCurrentStrip(_currentStrip);
 	}
@@ -608,6 +630,10 @@ uint16 GameplayLoop::fixedInventoryActionHandler(byte owner, byte itemId, byte s
 	return _vm->gameState().fixedInventoryVerbHandler(owner, itemId, stripIndex);
 }
 
+uint16 GameplayLoop::dialogueInventoryRelationHandler(byte primaryItemId, byte secondaryItemId, byte relationMode) const {
+	return _vm->gameState().dialogueInventoryRelationHandler(primaryItemId, secondaryItemId, relationMode);
+}
+
 bool GameplayLoop::scrollInventoryPanelPreviousPage() {
 	GameplayState &gameState = _vm->gameState();
 	const byte owner = currentInventoryOwner();
@@ -667,11 +693,21 @@ void GameplayLoop::updatePanelCaption() {
 void GameplayLoop::updateInventoryPanelCaption() {
 	const byte owner = currentInventoryOwner();
 	const byte itemId = inventoryItemAtPanelPosition(_vm->cursor()->surfaceX(), _vm->cursor()->surfaceY());
-	const uint16 actionHandlerId = fixedInventoryActionHandler(owner, itemId, _currentStrip);
 
 	_panelState.currentStrip = _currentStrip;
 	_panelState.resolvedItem = itemId;
 	_panelState.itemName = itemId == 0 ? Common::String() : _delegate->inventoryItemName(owner, itemId);
+	if (_relationMode != 0 && _primaryInventoryItem != 0) {
+		_panelState.captionText = inventoryActionCaption(_relationMode == 2 ? kGameplayGiveStrip : kGameplayUseStrip);
+		_panelState.captionText += _delegate->inventoryItemName(owner, _primaryInventoryItem);
+		_panelState.captionText += _relationMode == 2 ? " a " : " con ";
+		if (itemId != 0 &&
+				dialogueInventoryRelationHandler(_primaryInventoryItem, itemId, _relationMode) != 0)
+			_panelState.captionText += _panelState.itemName;
+		return;
+	}
+
+	const uint16 actionHandlerId = fixedInventoryActionHandler(owner, itemId, _currentStrip);
 	_panelState.captionText = inventoryActionCaption(_currentStrip);
 	if (itemId != 0 && actionHandlerId != 0)
 		_panelState.captionText += _panelState.itemName;
@@ -711,7 +747,18 @@ GameplayLoopCursorState GameplayLoop::makeInventoryItemState(byte owner, byte it
 	return state;
 }
 
+void GameplayLoop::syncHoverCaptionRelationContext() {
+	if (_relationMode == 0 || _primaryInventoryItem == 0) {
+		_hoverCaption.setRelationContext(0, 0, Common::String());
+		return;
+	}
+
+	_hoverCaption.setRelationContext(_relationMode, _primaryInventoryItem,
+		_delegate->inventoryItemName(currentInventoryOwner(), _primaryInventoryItem));
+}
+
 void GameplayLoop::refreshHoverCaption() {
+	syncHoverCaptionRelationContext();
 	_hoverCaption.refreshNow(_delegate->hotspots(), _delegate->savedFramebuffer(),
 		_vm->cursor()->surfaceX(), _vm->cursor()->surfaceY(),
 		_delegate->viewportXOffset(), _delegate->viewportYOffset());

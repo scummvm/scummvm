@@ -54,7 +54,6 @@ const uint16 kG04Chunk14AltDescriptorCount = 0x38;
 const uint16 kG04Chunk16DescriptorCount = 0x0b;
 const uint16 kG04Chunk17DescriptorCount = 9;
 const uint16 kG04Chunk18DescriptorCount = 0x0a;
-const uint kG04RelationRecordSize = 4;
 const byte kG04AmbientMusicCueStillFrame = 0x0f;
 const uint16 kG04State7040 = 0x1b80;
 const uint16 kG04State7041 = 0x1b81;
@@ -515,21 +514,26 @@ bool Scene7040::loadResource000InventoryActionTables(const Common::Array<byte> &
 	const uint32 tableOffset = readUint32LE(offsetTable, kResource000InventoryActionTablesEntry);
 	const uint32 fixedTableOffset = tableOffset + kResource000FixedInventoryVerbTableOffset;
 	const uint fixedTableEntryCount = GameplayState::kFixedInventoryActionTableEntryCount - 1;
+	const uint relationTableEntryCount = GameplayState::kInventoryItemRelationTableEntryCount;
+	const uint32 requiredTableBytes = fixedTableEntryCount * 2 + relationTableEntryCount * 2 * 2;
 	if (fixedTableOffset > (uint32)file.size() ||
-			fixedTableEntryCount * 2 > (uint32)file.size() - fixedTableOffset) {
-		warning("%s fixed inventory action table is out of range", kResource000Name);
+			requiredTableBytes > (uint32)file.size() - fixedTableOffset) {
+		warning("%s inventory action tables are out of range", kResource000Name);
 		return false;
 	}
 
 	GameplayState &state = _vm->gameState();
-	for (uint i = 0; i < GameplayState::kFixedInventoryActionTableEntryCount; ++i)
-		state.fixedInventoryVerbHandlerIdsByItemAndStrip[i] = 0;
+	state.clearInventoryActionTables();
 
 	file.seek(fixedTableOffset);
 	for (uint i = 1; i < GameplayState::kFixedInventoryActionTableEntryCount; ++i)
 		state.fixedInventoryVerbHandlerIdsByItemAndStrip[i] = file.readUint16LE();
+	for (uint i = 0; i < GameplayState::kInventoryItemRelationTableEntryCount; ++i)
+		state.dialogueRelationMode1HandlerIdsByItemPair[i] = file.readUint16LE();
+	for (uint i = 0; i < GameplayState::kInventoryItemRelationTableEntryCount; ++i)
+		state.dialogueRelationMode2HandlerIdsByItemPair[i] = file.readUint16LE();
 	if (file.err()) {
-		warning("Failed to read %s fixed inventory action table", kResource000Name);
+		warning("Failed to read %s inventory action tables", kResource000Name);
 		return false;
 	}
 
@@ -1264,22 +1268,7 @@ void Scene7040::processSceneRelationClick(const GameplayLoopCursorState &state, 
 }
 
 SceneVerbActionRecord Scene7040::relationActionRecord(byte inventoryItemId, byte sceneItemId, byte relationMode) const {
-	SceneVerbActionRecord record;
-	record.actionHandlerId = 0;
-	record.movementMode = 0;
-
-	if (sceneItemId >= HollywoodEngine::kSceneItemCount)
-		return record;
-
-	const uint tableOffset = relationMode == 2 ? kSceneMode2RelationOverlay : kSceneRelationRecords;
-	const uint recordIndex = (uint)inventoryItemId * HollywoodEngine::kSceneItemCount + sceneItemId;
-	const uint offset = tableOffset + recordIndex * kG04RelationRecordSize;
-	if (offset + kG04RelationRecordSize > _metadata.size())
-		return record;
-
-	record.actionHandlerId = readUint16LE(_metadata, offset);
-	record.movementMode = readUint16LE(_metadata, offset + 2);
-	return record;
+	return _hotspots.relationActionRecord(inventoryItemId, sceneItemId, relationMode);
 }
 
 void Scene7040::dispatchSceneAction(uint16 handlerId) {

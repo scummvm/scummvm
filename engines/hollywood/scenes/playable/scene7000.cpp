@@ -88,21 +88,26 @@ bool Scene7000::loadInventoryOwner1ResourceTables() {
 	const uint32 tableOffset = READ_LE_UINT32(offsetTable.data() + kResource000InventoryActionTablesEntry);
 	const uint32 fixedTableOffset = tableOffset + kResource000FixedInventoryVerbTableOffset;
 	const uint fixedTableEntryCount = GameplayState::kFixedInventoryActionTableEntryCount - 1;
+	const uint relationTableEntryCount = GameplayState::kInventoryItemRelationTableEntryCount;
+	const uint32 requiredTableBytes = fixedTableEntryCount * 2 + relationTableEntryCount * 2 * 2;
 	if (fixedTableOffset > (uint32)file.size() ||
-			fixedTableEntryCount * 2 > (uint32)file.size() - fixedTableOffset) {
-		warning("%s fixed inventory action table is out of range", kResource000Name);
+			requiredTableBytes > (uint32)file.size() - fixedTableOffset) {
+		warning("%s inventory action tables are out of range", kResource000Name);
 		return false;
 	}
 
 	GameplayState &state = _vm->gameState();
-	for (uint i = 0; i < GameplayState::kFixedInventoryActionTableEntryCount; ++i)
-		state.fixedInventoryVerbHandlerIdsByItemAndStrip[i] = 0;
+	state.clearInventoryActionTables();
 
 	file.seek(fixedTableOffset);
 	for (uint i = 1; i < GameplayState::kFixedInventoryActionTableEntryCount; ++i)
 		state.fixedInventoryVerbHandlerIdsByItemAndStrip[i] = file.readUint16LE();
+	for (uint i = 0; i < GameplayState::kInventoryItemRelationTableEntryCount; ++i)
+		state.dialogueRelationMode1HandlerIdsByItemPair[i] = file.readUint16LE();
+	for (uint i = 0; i < GameplayState::kInventoryItemRelationTableEntryCount; ++i)
+		state.dialogueRelationMode2HandlerIdsByItemPair[i] = file.readUint16LE();
 	if (file.err()) {
-		warning("Failed to read %s fixed inventory action table", kResource000Name);
+		warning("Failed to read %s inventory action tables", kResource000Name);
 		return false;
 	}
 
