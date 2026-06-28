@@ -81,6 +81,10 @@ struct GameplayState {
 		g09IntroSeen = false;
 		g09PatchState = false;
 		g09ActionGate = false;
+		g10EnvironmentActive = true;
+		g10ObjectPatchState = 0;
+		g10Item15OnScene = true;
+		g10Item14PatchState = false;
 		musicEnabled = true;
 		soundEffectsEnabled = true;
 		optionsTestAudioEnabled = false;
@@ -334,6 +338,10 @@ struct GameplayState {
 	bool g09IntroSeen;
 	bool g09PatchState;
 	bool g09ActionGate;
+	bool g10EnvironmentActive;
+	byte g10ObjectPatchState;
+	bool g10Item15OnScene;
+	bool g10Item14PatchState;
 	bool musicEnabled;
 	bool soundEffectsEnabled;
 	bool optionsTestAudioEnabled;

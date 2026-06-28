@@ -37,6 +37,7 @@
 #include "hollywood/scenes/playable/scene7070.h"
 #include "hollywood/scenes/playable/scene7080.h"
 #include "hollywood/scenes/playable/scene7090.h"
+#include "hollywood/scenes/playable/scene7100.h"
 #include "hollywood/resource.h"
 
 #include "audio/mixer.h"
@@ -65,7 +66,8 @@ bool isImplementedGameplayState(int stateId) {
 		(stateId >= 0x1b94 && stateId <= 0x1b9d) ||
 		(stateId >= 0x1b9e && stateId <= 0x1ba0) ||
 		(stateId >= 0x1ba8 && stateId <= 0x1bb1) ||
-		(stateId >= 0x1bb2 && stateId <= 0x1bbb);
+		(stateId >= 0x1bb2 && stateId <= 0x1bbb) ||
+		(stateId >= 0x1bbc && stateId <= 0x1bc5);
 }
 
 bool shouldRunSceneForBootParam(int bootParam, int sceneNumber, bool &bootSceneReached) {
@@ -252,6 +254,14 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene7090 scene7090(this);
 			if (!scene7090.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= 0x1bbc && stateId <= 0x1bc5) {
+			handledState = true;
+			Scene7100 scene7100(this);
+			if (!scene7100.play())
 				return Common::kReadingFailed;
 			continue;
 		}
