@@ -31,6 +31,7 @@
 #include "graphics/surface.h"
 
 #include "hollywood/font.h"
+#include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -772,44 +773,8 @@ int Scene7010::drawSecondaryActorFrame(byte facing, byte frame, int worldX, int 
 
 int Scene7010::drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
 		int spriteX, int spriteY, int minimumYExclusive) {
-	cursor += runBase;
-	int lastRunY = minimumYExclusive;
-	for (uint runIndex = 0; runIndex < runCount; ++runIndex) {
-		if (cursor + 3 > runStreams.size())
-			return lastRunY;
-
-		const int xOffset = runStreams[cursor++];
-		const int yOffset = runStreams[cursor++];
-		const uint pixelCount = runStreams[cursor++];
-		if (cursor + pixelCount > runStreams.size())
-			return lastRunY;
-
-		const int dstY = spriteY + yOffset;
-		lastRunY = dstY;
-		if (dstY > minimumYExclusive && dstY >= 0 && dstY < HollywoodEngine::kSceneBufferHeight) {
-			int dstX = spriteX + xOffset;
-			uint sourceOffset = 0;
-			uint copyCount = pixelCount;
-			if (dstX < 0) {
-				const uint clipped = MIN<uint>(copyCount, (uint)-dstX);
-				sourceOffset += clipped;
-				copyCount -= clipped;
-				dstX = 0;
-			}
-			if (dstX + (int)copyCount > HollywoodEngine::kSceneBufferWidth)
-				copyCount = MAX<int>(0, HollywoodEngine::kSceneBufferWidth - dstX);
-
-			if (copyCount != 0) {
-				const uint destinationOffset = dstX + dstY * HollywoodEngine::kSceneBufferWidth;
-				if (destinationOffset + copyCount <= _sceneFramebuffer.size())
-					memcpy(_sceneFramebuffer.data() + destinationOffset, runStreams.data() + cursor + sourceOffset, copyCount);
-			}
-		}
-
-		cursor += pixelCount;
-	}
-
-	return lastRunY;
+	return drawActorRunStream(runStreams, cursor, runBase, runCount, spriteX, spriteY,
+		minimumYExclusive, _sceneFramebuffer, nullptr);
 }
 
 void Scene7010::runEntryCutscene() {

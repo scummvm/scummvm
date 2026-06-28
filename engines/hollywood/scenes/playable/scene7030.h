@@ -132,6 +132,8 @@ private:
 	bool loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
 	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
 	bool loadArenaChunk(uint index);
+	bool initializeActorDepthTables();
+	void updateActorDepthThresholds(byte actorDrawOrderMode);
 	void expandFillRunsToSavedFramebuffer();
 	bool initializeScenePathTables();
 	void initializePreviewState();
@@ -143,7 +145,7 @@ private:
 	void drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY, int minimumYExclusive);
 	int drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY);
 	int drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
-		int spriteX, int spriteY, int minimumYExclusive);
+		int spriteX, int spriteY, int minimumYExclusive, int actorWorldY);
 	void runEntryCutscene();
 	void runEntryPath(int startX, int startY, byte startFacing, int targetX, int targetY);
 	bool runBasicGameplayLoop();
@@ -248,6 +250,9 @@ private:
 	Common::Array<byte> _paletteMask;
 	Common::Array<byte> _fullPaletteRegionMask;
 	Common::Array<byte> _walkablePaletteMask;
+	Common::Array<byte> _colorToActorDepthClassMap;
+	Common::Array<uint16> _actorDepthYThresholds;
+	Common::Array<uint16> _drawActorDepthYThresholds;
 	Common::Array<byte> _metadata;
 	Common::Array<byte> _resourceArena;
 	Common::Array<byte> _screen;

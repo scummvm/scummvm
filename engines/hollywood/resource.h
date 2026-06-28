@@ -65,6 +65,13 @@ enum SceneMetadataOffset {
 	kSceneMode2RelationOverlay = 0x610a
 };
 
+enum ScenePaletteMapOffset {
+	kScenePaletteRegionMap = 0x000,
+	kSceneColorToItemMap = 0x100,
+	kSceneColorToActorDepthClassMap = 0x200,
+	kScenePaletteMapPageSize = 0x100
+};
+
 class ResourceManager {
 public:
 	bool readChunkTable(const Common::Path &fileName, ResourceChunkTable &table) const;
