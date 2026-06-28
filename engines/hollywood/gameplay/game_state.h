@@ -76,6 +76,11 @@ struct GameplayState {
 		g07IntroSeen = false;
 		g07ExitDoorState = 0;
 		g07ObjectPatchState = 0;
+		g08IntroSeen = false;
+		g08PatchState = true;
+		g09IntroSeen = false;
+		g09PatchState = false;
+		g09ActionGate = false;
 		musicEnabled = true;
 		soundEffectsEnabled = true;
 		optionsTestAudioEnabled = false;
@@ -324,6 +329,11 @@ struct GameplayState {
 	bool g07IntroSeen;
 	byte g07ExitDoorState;
 	byte g07ObjectPatchState;
+	bool g08IntroSeen;
+	bool g08PatchState;
+	bool g09IntroSeen;
+	bool g09PatchState;
+	bool g09ActionGate;
 	bool musicEnabled;
 	bool soundEffectsEnabled;
 	bool optionsTestAudioEnabled;
