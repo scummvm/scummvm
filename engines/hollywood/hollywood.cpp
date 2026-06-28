@@ -40,32 +40,32 @@
 
 namespace Hollywood {
 
-const uint kHollywoodOptionsMaximumLevel = 200;
-const int kHollywoodMaximumConfigVolume = Audio::Mixer::kMaxMixerVolume;
-const int kHollywoodMaximumTalkSpeed = 255;
+const uint kOptionsMaximumLevel = 200;
+const int kMaximumConfigVolume = Audio::Mixer::kMaxMixerVolume;
+const int kMaximumTalkSpeed = 255;
 
-byte hollywoodConfigVolumeToOptionsLevel(int volume) {
-	const int clippedVolume = CLIP<int>(volume, 0, kHollywoodMaximumConfigVolume);
-	return (byte)((clippedVolume * kHollywoodOptionsMaximumLevel +
-		kHollywoodMaximumConfigVolume / 2) / kHollywoodMaximumConfigVolume);
+byte configVolumeToOptionsLevel(int volume) {
+	const int clippedVolume = CLIP<int>(volume, 0, kMaximumConfigVolume);
+	return (byte)((clippedVolume * kOptionsMaximumLevel +
+		kMaximumConfigVolume / 2) / kMaximumConfigVolume);
 }
 
-int hollywoodOptionsLevelToConfigVolume(byte level) {
-	const uint clippedLevel = MIN<uint>(level, kHollywoodOptionsMaximumLevel);
-	return (clippedLevel * kHollywoodMaximumConfigVolume +
-		kHollywoodOptionsMaximumLevel / 2) / kHollywoodOptionsMaximumLevel;
+int optionsLevelToConfigVolume(byte level) {
+	const uint clippedLevel = MIN<uint>(level, kOptionsMaximumLevel);
+	return (clippedLevel * kMaximumConfigVolume +
+		kOptionsMaximumLevel / 2) / kOptionsMaximumLevel;
 }
 
-byte hollywoodConfigTalkSpeedToOptionsLevel(int talkSpeed) {
-	const int clippedTalkSpeed = CLIP<int>(talkSpeed, 0, kHollywoodMaximumTalkSpeed);
-	return (byte)((clippedTalkSpeed * kHollywoodOptionsMaximumLevel +
-		kHollywoodMaximumTalkSpeed / 2) / kHollywoodMaximumTalkSpeed);
+byte configTalkSpeedToOptionsLevel(int talkSpeed) {
+	const int clippedTalkSpeed = CLIP<int>(talkSpeed, 0, kMaximumTalkSpeed);
+	return (byte)((clippedTalkSpeed * kOptionsMaximumLevel +
+		kMaximumTalkSpeed / 2) / kMaximumTalkSpeed);
 }
 
-int hollywoodOptionsLevelToConfigTalkSpeed(byte level) {
-	const uint clippedLevel = MIN<uint>(level, kHollywoodOptionsMaximumLevel);
-	return (clippedLevel * kHollywoodMaximumTalkSpeed +
-		kHollywoodOptionsMaximumLevel / 2) / kHollywoodOptionsMaximumLevel;
+int optionsLevelToConfigTalkSpeed(byte level) {
+	const uint clippedLevel = MIN<uint>(level, kOptionsMaximumLevel);
+	return (clippedLevel * kMaximumTalkSpeed +
+		kOptionsMaximumLevel / 2) / kOptionsMaximumLevel;
 }
 
 HollywoodEngine::HollywoodEngine(OSystem *syst, const ADGameDescription *gameDesc) :
@@ -153,10 +153,10 @@ void HollywoodEngine::syncSoundSettings() {
 
 	_gameState.musicEnabled = !musicMuted;
 	_gameState.soundEffectsEnabled = !sfxMuted;
-	_gameState.musicVolumeLevel = hollywoodConfigVolumeToOptionsLevel(ConfMan.getInt("music_volume"));
-	_gameState.soundEffectsVolumeLevel = hollywoodConfigVolumeToOptionsLevel(ConfMan.getInt("sfx_volume"));
-	_gameState.voiceVolumeLevel = hollywoodConfigVolumeToOptionsLevel(ConfMan.getInt("speech_volume"));
-	_gameState.speechTextSpeedLevel = hollywoodConfigTalkSpeedToOptionsLevel(ConfMan.getInt("talkspeed"));
+	_gameState.musicVolumeLevel = configVolumeToOptionsLevel(ConfMan.getInt("music_volume"));
+	_gameState.soundEffectsVolumeLevel = configVolumeToOptionsLevel(ConfMan.getInt("sfx_volume"));
+	_gameState.voiceVolumeLevel = configVolumeToOptionsLevel(ConfMan.getInt("speech_volume"));
+	_gameState.speechTextSpeedLevel = configTalkSpeedToOptionsLevel(ConfMan.getInt("talkspeed"));
 	if (speechMuted)
 		_gameState.actorSpeechTextMode = 2;
 	else
@@ -171,10 +171,10 @@ void HollywoodEngine::syncSoundSettingsFromGameState() {
 	const GameplayState &state = _gameState;
 	ConfMan.setBool("music_mute", !state.musicEnabled);
 	ConfMan.setBool("sfx_mute", !state.soundEffectsEnabled);
-	ConfMan.setInt("music_volume", hollywoodOptionsLevelToConfigVolume(state.musicVolumeLevel));
-	ConfMan.setInt("sfx_volume", hollywoodOptionsLevelToConfigVolume(state.soundEffectsVolumeLevel));
-	ConfMan.setInt("speech_volume", hollywoodOptionsLevelToConfigVolume(state.voiceVolumeLevel));
-	ConfMan.setInt("talkspeed", hollywoodOptionsLevelToConfigTalkSpeed(state.speechTextSpeedLevel));
+	ConfMan.setInt("music_volume", optionsLevelToConfigVolume(state.musicVolumeLevel));
+	ConfMan.setInt("sfx_volume", optionsLevelToConfigVolume(state.soundEffectsVolumeLevel));
+	ConfMan.setInt("speech_volume", optionsLevelToConfigVolume(state.voiceVolumeLevel));
+	ConfMan.setInt("talkspeed", optionsLevelToConfigTalkSpeed(state.speechTextSpeedLevel));
 	ConfMan.setBool("subtitles", state.actorSpeechTextMode != 0);
 	ConfMan.setBool("speech_mute", state.actorSpeechTextMode == 2);
 

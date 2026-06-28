@@ -28,8 +28,8 @@
 namespace Hollywood {
 
 enum {
-	kHollywoodPaletteSize = 0x300,
-	kHollywoodFrameDescriptorSize = 14
+	kPaletteSize = 0x300,
+	kFrameDescriptorSize = 14
 };
 
 uint16 readUint16LE(const Common::Array<byte> &source, uint offset);

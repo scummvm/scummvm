@@ -50,7 +50,7 @@ uint32 readUint32LE(const Common::Array<byte> &source, uint offset) {
 }
 
 void uploadPalette6Bit(const Common::Array<byte> &palette) {
-	byte systemPalette[kHollywoodPaletteSize];
+	byte systemPalette[kPaletteSize];
 	for (uint i = 0; i < ARRAYSIZE(systemPalette); ++i) {
 		const byte component = i < palette.size() ? palette[i] : 0;
 		systemPalette[i] = MIN<byte>(255, component * 4);
@@ -107,8 +107,8 @@ void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOff
 	if (descriptorIndex >= descriptorCount)
 		return;
 
-	const uint entryOffset = baseOffset + descriptorTableOffset + (kHollywoodFrameDescriptorSize * descriptorIndex);
-	if (entryOffset + kHollywoodFrameDescriptorSize > resource.size())
+	const uint entryOffset = baseOffset + descriptorTableOffset + (kFrameDescriptorSize * descriptorIndex);
+	if (entryOffset + kFrameDescriptorSize > resource.size())
 		return;
 
 	const uint32 packedWidth = readUint32LE(resource, entryOffset + 4);
@@ -129,12 +129,12 @@ void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset
 	if (descriptorIndex >= descriptorCount)
 		return;
 
-	const uint entryOffset = baseOffset + descriptorTableOffset + (kHollywoodFrameDescriptorSize * descriptorIndex);
-	if (entryOffset + kHollywoodFrameDescriptorSize > resource.size())
+	const uint entryOffset = baseOffset + descriptorTableOffset + (kFrameDescriptorSize * descriptorIndex);
+	if (entryOffset + kFrameDescriptorSize > resource.size())
 		return;
 
 	const uint16 spanCount = readUint16LE(resource, entryOffset + 12);
-	uint cursor = baseOffset + descriptorTableOffset + (kHollywoodFrameDescriptorSize * descriptorCount) + readUint32LE(resource, entryOffset);
+	uint cursor = baseOffset + descriptorTableOffset + (kFrameDescriptorSize * descriptorCount) + readUint32LE(resource, entryOffset);
 	if (cursor > resource.size())
 		return;
 

@@ -163,8 +163,8 @@ Scene7030::Scene7030(HollywoodEngine *vm) :
 		_actionOverlayFrameIndex(0),
 		_skipRequested(false) {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
-	_paletteResource.resize(kHollywoodPaletteSize);
-	_paletteCurrent.resize(kHollywoodPaletteSize);
+	_paletteResource.resize(kPaletteSize);
+	_paletteCurrent.resize(kPaletteSize);
 	_baseFramebufferOriginal.resize(kFrameBufferSize);
 	_baseFramebuffer.resize(kFrameBufferSize);
 	_sceneFramebuffer.resize(kFrameBufferSize);
@@ -235,7 +235,7 @@ bool Scene7030::load() {
 	}
 
 	if (!loadFixedChunk(0, _baseFramebuffer, kFrameBufferSize) ||
-			!loadFixedChunk(1, _paletteResource, kHollywoodPaletteSize) ||
+			!loadFixedChunk(1, _paletteResource, kPaletteSize) ||
 			!loadVariableChunk(2, _fillRuns) ||
 			!loadVariableChunk(3, _paletteMask) ||
 			!loadVariableChunk(4, _metadata))

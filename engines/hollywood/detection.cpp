@@ -28,7 +28,7 @@
 
 namespace Hollywood {
 
-const PlainGameDescriptor hollywoodGames[] = {
+const PlainGameDescriptor plainGameDescriptors[] = {
 	{"hollywood", "Hollywood Monsters"},
 	{nullptr, nullptr}
 };
@@ -59,7 +59,7 @@ const ADGameDescription gameDescriptions[] = {
 
 class HollywoodMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
-	HollywoodMetaEngineDetection() : AdvancedMetaEngineDetection(Hollywood::gameDescriptions, hollywoodGames) {
+	HollywoodMetaEngineDetection() : AdvancedMetaEngineDetection(Hollywood::gameDescriptions, plainGameDescriptors) {
 	}
 
 	const char *getName() const override {

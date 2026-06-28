@@ -54,8 +54,8 @@ Scene9120::Scene9120(HollywoodEngine *vm) :
 		_viewportDirty(false),
 		_skipRequested(false) {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
-	_paletteResource.resize(kHollywoodPaletteSize);
-	_paletteCurrent.resize(kHollywoodPaletteSize);
+	_paletteResource.resize(kPaletteSize);
+	_paletteCurrent.resize(kPaletteSize);
 	_sceneFramebuffer.resize(kScene9120FramebufferSize);
 	_savedFramebuffer.resize(kFrameBufferSize);
 	_descriptorBackground.resize(kFrameBufferSize);
@@ -137,7 +137,7 @@ bool Scene9120::loadResourceI12Assets() {
 	}
 
 	if (!loadResourceI12Chunk(0, _sceneFramebuffer, kScene9120FramebufferSize) ||
-			!loadResourceI12Chunk(1, _paletteResource, kHollywoodPaletteSize))
+			!loadResourceI12Chunk(1, _paletteResource, kPaletteSize))
 		return false;
 
 	uint32 resourceArenaSize = 0;
