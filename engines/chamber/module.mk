@@ -1,6 +1,7 @@
 MODULE := engines/chamber
 
 MODULE_OBJS := \
+	amiga.o \
 	anim.o \
 	bkbuff.o \
 	cga.o \

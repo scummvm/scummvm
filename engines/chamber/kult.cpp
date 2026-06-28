@@ -30,6 +30,7 @@
 #include "chamber/decompr.h"
 #include "chamber/cga.h"
 #include "chamber/ega.h"
+#include "chamber/amiga.h"
 #include "chamber/ega_resource.h"
 #include "chamber/anim.h"
 #include "chamber/cursor.h"
@@ -294,7 +295,18 @@ Common::Error ChamberEngine::init() {
 
 	Graphics::Surface *splash = nullptr;
 
-	if (_videoMode == Common::RenderMode::kRenderEGA) {
+	if (_videoMode == Common::kRenderAmiga) {
+		// Amiga title: static resources (incl. palette) live in KULT, load them first
+		loadAmigaStaticData();
+		splash = ega_loadFond("PRES.BIN");
+		if (!splash) {
+			_shouldQuit = true;
+			return Common::kNoError;
+		}
+		// Last palette index is the full-brightness end of the title fade ramp
+		g_vm->_renderer->colorSelect(AMIGA_NUM_PALETTES - 1);
+		g_vm->_renderer->backBufferToRealFull();
+	} else if (_videoMode == Common::RenderMode::kRenderEGA) {
 		/* EGA title screen */
 		splash = ega_loadFond("PRESEGA.EGA");
 		if (!splash) {
@@ -349,7 +361,9 @@ Common::Error ChamberEngine::init() {
 	}
 
 	if (splash) {
-		if (g_vm->_videoMode != Common::RenderMode::kRenderEGA)
+		// EGA/Amiga splashes wrap ega_backbuffer; only CGA/Herc own their pixels
+		if (g_vm->_videoMode != Common::RenderMode::kRenderEGA &&
+		    g_vm->_videoMode != Common::kRenderAmiga)
 			splash->free();
 		delete splash;
 	}

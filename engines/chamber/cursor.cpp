@@ -27,6 +27,7 @@
 #include "chamber/resdata.h"
 #include "chamber/cga.h"
 #include "chamber/ega.h"
+#include "chamber/amiga.h"
 #include "chamber/renderer.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
@@ -131,6 +132,51 @@ void EGARenderer::selectCursor(uint16 num) {
 	CursorMan.replaceCursor(cursorImage, CURSOR_WIDTH, CURSOR_HEIGHT, cursor_x_shift, cursor_y_shift, 255);
 	// TODO: Replace use of cursor palettes
 	CursorMan.replaceCursorPalette(Graphics::Palette::createEGAPalette().data(), 0, 16);
+	CursorMan.showMouse(true);
+}
+
+void AmigaRenderer::selectCursor(uint16 num) {
+	cursor_x_shift = cursor_shifts[num][0];
+	cursor_y_shift = cursor_shifts[num][1];
+
+	byte *dst = cursorImage;
+
+	// 72-byte hardware sprite: skip the 4-byte header, then 16 rows of two BE words
+	// plane0 is the outline, plane1 the body
+	const int kAmigaCursorStride = 72;
+	const int kAmigaCursorHeader = 4;
+	cursor_shape = souri_data + num * kAmigaCursorStride + kAmigaCursorHeader;
+	byte *src = cursor_shape;
+	// white reticle, red on a hotspot; the rest use yellow or white
+	bool reticle = (num == CURSOR_TARGET || num == CURSOR_CROSSHAIR);
+	byte mainColor = 0;                                                      /*plane0 only: black edges*/
+	byte bodyColor = reticle ? ((cursor_color == 0xAA) ? 12 : 15)
+	                         : ((cursor_color == 0xAA) ? 14 : 15);           /*plane0+plane1: interior*/
+	for (int16 y = 0; y < CURSOR_HEIGHT; y++) {
+		uint16 plane0 = ((uint16)src[0] << 8) | (uint16)src[1];
+		uint16 plane1 = ((uint16)src[2] << 8) | (uint16)src[3];
+		src += 4;
+		for (int16 x = 0; x < CURSOR_WIDTH; x++) {
+			byte bit0 = (plane0 >> (CURSOR_WIDTH - 1 - x)) & 1;
+			byte bit1 = (plane1 >> (CURSOR_WIDTH - 1 - x)) & 1;
+			if (!bit0 && !bit1)
+				*dst++ = 255; /*transparent*/
+			else if (bit1)
+				*dst++ = bodyColor;
+			else
+				*dst++ = mainColor;
+		}
+	}
+
+	CursorMan.replaceCursor(cursorImage, CURSOR_WIDTH, CURSOR_HEIGHT, cursor_x_shift, cursor_y_shift, 255);
+	// Fixed palette so the cursor stays visible: 0 black, 12 red, 14 yellow, 15 white
+	static const byte cursorPal[16 * 3] = {
+		0, 0, 0,        0, 0, 0,  0, 0, 0,  0, 0, 0,
+		0, 0, 0,        0, 0, 0,  0, 0, 0,  0, 0, 0,
+		0, 0, 0,        0, 0, 0,  0, 0, 0,  0, 0, 0,
+		238, 17, 68,    0, 0, 0,  255, 255, 0, 255, 255, 255
+	};
+	CursorMan.replaceCursorPalette(cursorPal, 0, 16);
 	CursorMan.showMouse(true);
 }
 
