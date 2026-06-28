@@ -639,6 +639,7 @@ public:
 	void checkHandler7RightBoundary(const CollisionZone &zone, int16 hMargin, int wallDamage);
 	void checkHandler7BoundaryZones(uint16 &warningMask);
 	void renderHandler7WarningCues(byte *renderBitmap, int pitch, int width, int height, int32 curFrame, uint16 warningMask);
+	void updateLevel7Fork(int32 curFrame);
 
 	int16 _playerDamage;
 	int16 _playerShield;
@@ -815,6 +816,10 @@ public:
 
 	int16 _flyShipScreenX;
 	int16 _flyShipScreenY;
+
+	// Level 7 (handler-7 flight) corridor fork: 07PLAY -> 07PLAYB right branch.
+	bool _level7ForkActive;     // armed only while 07PLAY is playing
+	bool _level7TookRightFork;  // sampled at frame 0x638: ship on the right half
 
 	int16 _smoothedVelocity;
 	int16 _verticalInput;

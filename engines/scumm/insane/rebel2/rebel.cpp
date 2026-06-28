@@ -439,6 +439,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_flyOverlayRepeatCount = 0;
 	_flyShipScreenX = 0xd4;
 	_flyShipScreenY = 0x82;
+	_level7ForkActive = false;
+	_level7TookRightFork = false;
 	_smoothedVelocity = 0;
 	_verticalInput = 0;
 	memset(_velocityHistory, 0, sizeof(_velocityHistory));

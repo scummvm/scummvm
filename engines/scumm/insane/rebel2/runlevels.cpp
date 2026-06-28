@@ -887,8 +887,6 @@ int InsaneRebel2::runLevel6() {
 }
 
 int InsaneRebel2::runLevel7() {
-	bool reachedFork = false;
-
 	playCinematic("LEV07/07CUT.SAN");
 	if (_vm->shouldQuit())
 		return kLevelQuit;
@@ -903,25 +901,43 @@ int InsaneRebel2::runLevel7() {
 		_playerShield = 255;
 		_playerDamage = 0;
 		_deathFrame = 0;
-		reachedFork = false;
+		_level7TookRightFork = false;
 		resetExplosions();
 
 		clearBit(0);
 		_rebelKillCounter = 0;
 		_rebelHitCounter = 0;
 
-		if (!playLevelSegment("LEV07/07PLAY.SAN", 0x28))
+		// The corridor forks at frame 0x638. updateLevel7Fork() is armed only
+		// during 07PLAY: if the player is on the right half there, it stops this
+		// segment (so 07PLAYB can splice in) and sets _level7TookRightFork; the
+		// left half plays 07PLAY through to its end.
+		_level7ForkActive = true;
+		const bool playOk = playLevelSegment("LEV07/07PLAY.SAN", 0x28);
+		_level7ForkActive = false;
+		if (!playOk)
 			return kLevelQuit;
 
+		// Right fork: continue into the alternate corridor segment (0x40 =
+		// continuation, so the ship position carries over instead of recentering).
+		if (_level7TookRightFork && _playerShield > 0) {
+			if (!playLevelSegment("LEV07/07PLAYB.SAN", 0x68))
+				return kLevelQuit;
+		}
+
 		if (_playerShield > 0) {
-			debugC(DEBUG_INSANE, "Level 7 completed!");
-			playLevelEnd(7, -1, _rebelHitCounter, !reachedFork);
+			debugC(DEBUG_INSANE, "Level 7 completed! fork=%d", _level7TookRightFork);
+			playLevelEnd(7, -1, _rebelHitCounter, !_level7TookRightFork);
 			_levelUnlocked[7] = true;
 			return kLevelNextLevel;
 		}
 
-		debugC(DEBUG_INSANE, "Level 7 death at frame %d, fork=%d", _deathFrame, reachedFork);
-		if (reachedFork) {
+		// Death cinematic depends on which corridor side the player died on
+		// (the original keys 07DIE_B/07DIE_A on DAT_0047ab8c), independent of
+		// the fork frame; taking the right fork implies the right side.
+		const bool diedOnRight = _level7TookRightFork || (_flyShipScreenX > 0xd4);
+		debugC(DEBUG_INSANE, "Level 7 death at frame %d, right=%d", _deathFrame, diedOnRight);
+		if (diedOnRight) {
 			playCinematic("LEV07/07DIE_B.SAN");
 		} else {
 			playCinematic("LEV07/07DIE_A.SAN");

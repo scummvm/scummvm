@@ -2110,6 +2110,22 @@ void InsaneRebel2::updatePostRenderDeath() {
 	}
 }
 
+void InsaneRebel2::updateLevel7Fork(int32 curFrame) {
+	// Level 7 (TIE-fighter flight) forks at frame 0x638: if the ship is on the
+	// right half of the corridor (_flyShipScreenX past the 0xd4 center, matching
+	// the original's DAT_0047ab8c test), stop 07PLAY here so the alternate
+	// 07PLAYB segment can splice in. The left half plays 07PLAY through to its
+	// end. Sampled exactly once (the active flag is its own one-shot guard).
+	if (!_level7ForkActive || curFrame < 0x638)
+		return;
+
+	_level7ForkActive = false;
+	if (_flyShipScreenX > 0xd4) {
+		_level7TookRightFork = true;
+		_vm->_smushVideoShouldFinish = true;
+	}
+}
+
 void InsaneRebel2::renderPostRenderMenuCursor(byte *renderBitmap, int pitch, int width, int height) {
 	static const byte kRa2MenuCursor[] = {
 		 0,  0,  1,  1,  1,  1,  1,
@@ -2390,6 +2406,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	updatePostRenderScroll(width, height);
 	updatePostRenderDeath();
+	updateLevel7Fork(curFrame);
 
 	// End the looping attack-run segment once the shield/reactor is destroyed.
 	if (_rebelShieldGateActive) {
