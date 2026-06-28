@@ -20,6 +20,7 @@
  */
 
 #include "mads/madsv2/forest/rooms/section3.h"
+#include "mads/madsv2/forest/mads/inventory.h"
 #include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/forest/extra.h"
@@ -864,13 +865,13 @@ static void room_308_anim22() {
 			global[walker_converse_state] = 0;
 			close_interface(CANDLE_FLY);
 		}
-		object_set_quality(5, -1, -1);
-		object_set_quality(1, -1, -1);
-		object_set_quality(15, -1, -1);
-		inter_move_object(1, NOWHERE);
-		inter_move_object(15, NOWHERE);
-		inter_move_object(4, PLAYER);
-		inter_move_object(14, PLAYER);
+		object_set_quality(pebbles, -1, -1);
+		object_set_quality(rubber_band, -1, -1);
+		object_set_quality(forked_stick, -1, -1);
+		inter_move_object(rubber_band, NOWHERE);
+		inter_move_object(forked_stick, NOWHERE);
+		inter_move_object(lily_pad, PLAYER);
+		inter_move_object(stick, PLAYER);
 		global[player_score] = -1;
 		new_room = 401;
 	}
@@ -891,11 +892,11 @@ static void room_308_anim23() {
 		digi_initial_volume(60);
 		digi_play_build(308, '_', 1, 2);
 	} else if (cur == 164) {
-		object_set_quality(5, -1, -1);
-		object_set_quality(1, -1, -1);
-		object_set_quality(15, -1, -1);
-		inter_move_object(4, PLAYER);
-		inter_move_object(14, PLAYER);
+		object_set_quality(pebbles, -1, -1);
+		object_set_quality(rubber_band, -1, -1);
+		object_set_quality(forked_stick, -1, -1);
+		inter_move_object(lily_pad, PLAYER);
+		inter_move_object(stick, PLAYER);
 		global[player_score] = -1;
 		if (global[g064] != 0)
 			new_room = 322;
@@ -947,24 +948,24 @@ static void room_308_anim25() {
 		digi_initial_volume(60);
 		digi_play_build(308, '_', 1, 2);
 	} else if (cur == 122) {
-		object_set_quality(5, -1, -1);
-		object_set_quality(1, -1, -1);
-		object_set_quality(15, -1, -1);
-		inter_move_object(1, NOWHERE);
-		inter_move_object(15, NOWHERE);
+		object_set_quality(pebbles, -1, -1);
+		object_set_quality(rubber_band, -1, -1);
+		object_set_quality(forked_stick, -1, -1);
+		inter_move_object(rubber_band, NOWHERE);
+		inter_move_object(forked_stick, NOWHERE);
 		kernel_timing_trigger(140, 112);
 	}
 }
 
 static void room_308_init() {
-	inter_move_object(4, NOWHERE);
-	inter_move_object(14, NOWHERE);
+	inter_move_object(lily_pad, NOWHERE);
+	inter_move_object(stick, NOWHERE);
 
 	if (!player_has_been_in_room(401)) {
 		if (previous_room == 307 || previous_room == 322) {
-			object_set_quality(5, 0, 0);
-			object_set_quality(1, 0, 0);
-			object_set_quality(15, 0, 0);
+			object_set_quality(pebbles, 0, 0);
+			object_set_quality(rubber_band, 0, 0);
+			object_set_quality(forked_stick, 0, 0);
 		}
 	}
 
@@ -1206,11 +1207,11 @@ static void room_308_daemon() {
 		break;
 
 	case 104:
-		object_set_quality(5, -1, -1);
-		object_set_quality(1, -1, -1);
-		object_set_quality(15, -1, -1);
-		inter_move_object(4, PLAYER);
-		inter_move_object(14, PLAYER);
+		object_set_quality(pebbles, -1, -1);
+		object_set_quality(rubber_band, -1, -1);
+		object_set_quality(forked_stick, -1, -1);
+		inter_move_object(lily_pad, PLAYER);
+		inter_move_object(stick, PLAYER);
 		global[player_score] = -1;
 		if (global[g064] != 0)
 			new_room = 322;
@@ -1250,8 +1251,8 @@ static void room_308_daemon() {
 		break;
 
 	case 112:
-		inter_move_object(4, PLAYER);
-		inter_move_object(14, PLAYER);
+		inter_move_object(lily_pad, PLAYER);
+		inter_move_object(stick, PLAYER);
 		global[player_score] = -1;
 		new_room = 401;
 		break;
@@ -1326,9 +1327,9 @@ static void room_308_parser() {
 
 	if (sel == 15 || sel == 1) {
 		inv_enable_command = false;
-		object_set_quality(1, 0, -1);
-		object_set_quality(15, 0, -1);
-		object_set_quality(5, 0, -1);
+		object_set_quality(rubber_band, 0, -1);
+		object_set_quality(forked_stick, 0, -1);
+		object_set_quality(pebbles, 0, -1);
 		scratch._b8 = 1;
 		aainfo[4]._val4 = 7;
 		aainfo[5]._val3 = 8;
@@ -1337,7 +1338,7 @@ static void room_308_parser() {
 
 	if (sel == 5) {
 		inv_enable_command = false;
-		object_set_quality(5, 0, -1);
+		object_set_quality(pebbles, 0, -1);
 		scratch._b8 = 0;
 		aainfo[4]._val4 = 6;
 		aainfo[5]._val3 = 8;
