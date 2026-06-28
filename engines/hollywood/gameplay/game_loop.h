@@ -79,6 +79,9 @@ public:
 	virtual void prepareOptionsMenuPalette(Common::Array<byte> &palette) const;
 	virtual bool shouldExitGameplayLoop() const;
 	virtual Common::String inventoryItemName(byte owner, byte itemId) const;
+	virtual void beginSharedInventorySpeechLine(uint16 rowIndex, byte frameIndex);
+	virtual byte randomSharedInventorySpeechFrame(byte maxFrameIndex);
+	virtual void playSharedInventorySound(byte sampleId);
 	virtual void handleLeftClick(const GameplayLoopCursorState &state);
 	virtual void handleInventoryItemClick(const GameplayLoopCursorState &state);
 	virtual void handleRightClick(const GameplayLoopCursorState &state);
@@ -115,6 +118,7 @@ private:
 	void selectPanelStrip(byte stripIndex);
 	byte panelStripAt(uint16 cursorX, uint16 cursorY) const;
 	byte inventoryPanelStripAt(uint16 cursorX, uint16 cursorY) const;
+	uint inventoryPanelSlotAtPosition(uint16 cursorX, uint16 cursorY) const;
 	byte inventoryItemAtPanelPosition(uint16 cursorX, uint16 cursorY) const;
 	byte currentInventoryOwner() const;
 	uint16 fixedInventoryActionHandler(byte owner, byte itemId, byte stripIndex) const;
@@ -129,6 +133,9 @@ private:
 	void syncPanelState();
 	GameplayLoopCursorState makeCursorState() const;
 	GameplayLoopCursorState makeInventoryItemState(byte owner, byte itemId, uint16 actionHandlerId) const;
+	bool dispatchGlobalInventoryFixedAction(const GameplayLoopCursorState &state);
+	bool dispatchGlobalInventoryItemAction(const GameplayLoopCursorState &state);
+	bool dispatchSharedInventoryAction(uint16 handlerId);
 	void syncHoverCaptionRelationContext();
 	void refreshHoverCaption();
 
