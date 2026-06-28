@@ -31,6 +31,7 @@
 #include "graphics/surface.h"
 
 #include "hollywood/font.h"
+#include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -168,6 +169,9 @@ Scene7030::Scene7030(HollywoodEngine *vm) :
 	_paletteMaskOriginal.resize(0x700);
 	_fullPaletteRegionMask.resize(kG03PaletteMaskUsedBytes);
 	_walkablePaletteMask.resize(kG03PaletteMaskUsedBytes);
+	_colorToActorDepthClassMap.resize(kScenePaletteMapPageSize);
+	_actorDepthYThresholds.resize(kScenePaletteRegionCount);
+	_drawActorDepthYThresholds.resize(kScenePaletteRegionCount);
 	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
 	_activeActorRunStreams.resize(kActorFacingCount * kActiveActorFacingRunStride);
 	_secondaryActorRunStreams.resize(kActorFacingCount * kSecondaryActorFacingRunStride);
@@ -240,6 +244,8 @@ bool Scene7030::load() {
 		warning("%s chunk 3 is shorter than the G03 palette mask table", kG03ArchiveName);
 		return false;
 	}
+	if (!initializeActorDepthTables())
+		return false;
 	if (!initializeScenePathTables())
 		return false;
 
@@ -599,6 +605,32 @@ bool Scene7030::loadArenaChunk(uint index) {
 	return true;
 }
 
+bool Scene7030::initializeActorDepthTables() {
+	if (_metadata.size() < kActorDepthThresholds + kScenePaletteRegionCount * 2) {
+		warning("%s chunk 4 is too short for G03 actor depth thresholds", kG03ArchiveName);
+		return false;
+	}
+	if (_paletteMask.size() < kSceneColorToActorDepthClassMap + kScenePaletteMapPageSize) {
+		warning("%s chunk 3 is too short for G03 actor depth map", kG03ArchiveName);
+		return false;
+	}
+
+	for (uint i = 0; i < _actorDepthYThresholds.size(); ++i)
+		_actorDepthYThresholds[i] = readUint16LE(_metadata, kActorDepthThresholds + i * 2);
+	_drawActorDepthYThresholds = _actorDepthYThresholds;
+
+	memcpy(_colorToActorDepthClassMap.data(),
+		_paletteMask.data() + kSceneColorToActorDepthClassMap,
+		_colorToActorDepthClassMap.size());
+	return true;
+}
+
+void Scene7030::updateActorDepthThresholds(byte actorDrawOrderMode) {
+	_drawActorDepthYThresholds = _actorDepthYThresholds;
+	if (_drawActorDepthYThresholds.size() > 2)
+		_drawActorDepthYThresholds[2] = actorDrawOrderMode == 6 ? 0x3e7 : 0x158;
+}
+
 void Scene7030::expandFillRunsToSavedFramebuffer() {
 	uint destinationOffset = 0;
 	uint sourceOffset = 0;
@@ -683,7 +715,6 @@ void Scene7030::drawPreviewComposite() {
 void Scene7030::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
-	(void)actorDrawOrderMode;
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
 
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
@@ -702,6 +733,7 @@ void Scene7030::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, b
 			kG03Chunk5DescriptorCount, frame, _sceneFramebuffer);
 	}
 
+	updateActorDepthThresholds(actorDrawOrderMode);
 	if (drawSecondaryActor) {
 		const int secondaryActorBottomY = drawSecondaryActorFrame(secondaryFacing, secondaryFrame,
 			secondaryWorldX, secondaryWorldY);
@@ -744,7 +776,7 @@ void Scene7030::drawActiveActorFrame(byte facing, byte cel, int worldX, int worl
 	const int spriteX = worldX - descriptor.anchorX;
 	const int spriteY = worldY - descriptor.anchorY;
 	drawActorRun(_activeActorRunStreams, descriptor.runStreamOffset, facing * kActiveActorFacingRunStride,
-		descriptor.opaqueRunCount, spriteX, spriteY, minimumYExclusive);
+		descriptor.opaqueRunCount, spriteX, spriteY, minimumYExclusive, worldY);
 }
 
 int Scene7030::drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY) {
@@ -759,49 +791,20 @@ int Scene7030::drawSecondaryActorFrame(byte facing, byte frame, int worldX, int 
 	const int spriteX = worldX - descriptor.anchorX;
 	const int spriteY = worldY - descriptor.anchorY;
 	return drawActorRun(_secondaryActorRunStreams, descriptor.runStreamOffset, facing * kSecondaryActorFacingRunStride,
-		descriptor.runCount, spriteX, spriteY, -1);
+		descriptor.runCount, spriteX, spriteY, -1, worldY);
 }
 
 int Scene7030::drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
-		int spriteX, int spriteY, int minimumYExclusive) {
-	cursor += runBase;
-	int lastRunY = minimumYExclusive;
-	for (uint runIndex = 0; runIndex < runCount; ++runIndex) {
-		if (cursor + 3 > runStreams.size())
-			return lastRunY;
+		int spriteX, int spriteY, int minimumYExclusive, int actorWorldY) {
+	ActorDepthTest depthTest;
+	depthTest.enabled = true;
+	depthTest.savedFramebuffer = &_savedFramebuffer;
+	depthTest.colorToDepthClassMap = &_colorToActorDepthClassMap;
+	depthTest.depthYThresholds = &_drawActorDepthYThresholds;
+	depthTest.actorWorldY = actorWorldY;
 
-		const int xOffset = runStreams[cursor++];
-		const int yOffset = runStreams[cursor++];
-		const uint pixelCount = runStreams[cursor++];
-		if (cursor + pixelCount > runStreams.size())
-			return lastRunY;
-
-		const int dstY = spriteY + yOffset;
-		lastRunY = dstY;
-		if (dstY > minimumYExclusive && dstY >= 0 && dstY < HollywoodEngine::kSceneBufferHeight) {
-			int dstX = spriteX + xOffset;
-			uint sourceOffset = 0;
-			uint copyCount = pixelCount;
-			if (dstX < 0) {
-				const uint clipped = MIN<uint>(copyCount, (uint)-dstX);
-				sourceOffset += clipped;
-				copyCount -= clipped;
-				dstX = 0;
-			}
-			if (dstX + (int)copyCount > HollywoodEngine::kSceneBufferWidth)
-				copyCount = MAX<int>(0, HollywoodEngine::kSceneBufferWidth - dstX);
-
-			if (copyCount != 0) {
-				const uint destinationOffset = dstX + dstY * HollywoodEngine::kSceneBufferWidth;
-				if (destinationOffset + copyCount <= _sceneFramebuffer.size())
-					memcpy(_sceneFramebuffer.data() + destinationOffset, runStreams.data() + cursor + sourceOffset, copyCount);
-			}
-		}
-
-		cursor += pixelCount;
-	}
-
-	return lastRunY;
+	return drawActorRunStream(runStreams, cursor, runBase, runCount, spriteX, spriteY,
+		minimumYExclusive, _sceneFramebuffer, &depthTest);
 }
 
 void Scene7030::runEntryCutscene() {

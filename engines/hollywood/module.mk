@@ -2,6 +2,7 @@ MODULE := engines/hollywood
 
 MODULE_OBJS = \
 	font.o \
+	gameplay/actor_renderer.o \
 	gameplay/cursor.o \
 	gameplay/game_loop.o \
 	gameplay/hotspots.o \
