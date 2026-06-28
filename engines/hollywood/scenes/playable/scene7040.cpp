@@ -1161,6 +1161,18 @@ Common::String Scene7040::inventoryItemName(byte owner, byte itemId) const {
 	return Common::String((const char *)row, length);
 }
 
+void Scene7040::beginSharedInventorySpeechLine(uint16 rowIndex, byte frameIndex) {
+	beginStaticSecondarySpeechLine(rowIndex, frameIndex);
+}
+
+byte Scene7040::randomSharedInventorySpeechFrame(byte maxFrameIndex) {
+	return (byte)_random.getRandomNumber(maxFrameIndex);
+}
+
+void Scene7040::playSharedInventorySound(byte sampleId) {
+	_soundBank0.playSample(sampleId, 100);
+}
+
 void Scene7040::handleLeftClick(const GameplayLoopCursorState &state) {
 	_vm->cursor()->leaveInteractiveMode();
 	processSceneActionClick(state);

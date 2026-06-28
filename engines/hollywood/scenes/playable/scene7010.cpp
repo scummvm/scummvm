@@ -455,12 +455,23 @@ bool Scene7010::loadStage003SceneRows() {
 		return false;
 	}
 
+	_owner1SmallRows.resize((uint32)(owner1SmallRowCount + 1) * kStage003SmallRowSize);
+	memset(_owner1SmallRows.data(), 0, _owner1SmallRows.size());
 	_owner1LargeRows.resize((uint32)(owner1LargeRowCount + 1) * kStage003LargeRowSize);
 	memset(_owner1LargeRows.data(), 0, _owner1LargeRows.size());
-	file.seek(owner1RowsOffset + owner1SmallRowBytes);
+	file.seek(owner1RowsOffset);
+	if (file.read(_owner1SmallRows.data() + kStage003SmallRowSize, owner1SmallRowBytes) != owner1SmallRowBytes) {
+		warning("Failed to read %s owner 1 small text rows", kStage003ArchiveName);
+		return false;
+	}
 	if (file.read(_owner1LargeRows.data() + kStage003LargeRowSize, owner1LargeRowBytes) != owner1LargeRowBytes) {
 		warning("Failed to read %s owner 1 large text rows", kStage003ArchiveName);
 		return false;
+	}
+
+	for (uint row = 1; row <= owner1SmallRowCount; ++row) {
+		for (uint column = 0; column < kStage003SmallRowSize; ++column)
+			_owner1SmallRows[row * kStage003SmallRowSize + column] -= _stage003DecodeKey[column];
 	}
 
 	for (uint row = 1; row <= owner1LargeRowCount; ++row) {
@@ -980,6 +991,31 @@ void Scene7010::prepareOptionsMenuPalette(Common::Array<byte> &palette) const {
 
 bool Scene7010::shouldExitGameplayLoop() const {
 	return _vm->gameState().mainFlowStateId != 0x1b62;
+}
+
+Common::String Scene7010::inventoryItemName(byte owner, byte itemId) const {
+	if (owner != 1)
+		return Common::String();
+
+	const uint offset = (uint)itemId * kStage003SmallRowSize;
+	if (offset >= _owner1SmallRows.size())
+		return Common::String();
+
+	const byte *row = _owner1SmallRows.data() + offset;
+	uint length = 0;
+	while (offset + length < _owner1SmallRows.size() &&
+			length < kStage003SmallRowSize && row[length] != 0)
+		++length;
+
+	return Common::String((const char *)row, length);
+}
+
+void Scene7010::beginSharedInventorySpeechLine(uint16 rowIndex, byte frameIndex) {
+	beginStaticSecondarySpeechLine(rowIndex, frameIndex);
+}
+
+byte Scene7010::randomSharedInventorySpeechFrame(byte maxFrameIndex) {
+	return (byte)_random.getRandomNumber(maxFrameIndex);
 }
 
 void Scene7010::handleLeftClick(const GameplayLoopCursorState &state) {

@@ -366,7 +366,7 @@ bool SceneHoverCaption::descriptorChanged(const Descriptor &descriptor) const {
 Common::String SceneHoverCaption::buildCaption(const SceneHotspotTable &hotspots,
 		const Descriptor &descriptor) const {
 	Common::String caption = actionCaption(descriptor.verbTextIndex);
-	if (descriptor.relationTextIndex != 0 && !_primaryItemName.empty()) {
+	if (descriptor.relationTextIndex != 0) {
 		caption += _primaryItemName;
 		caption += descriptor.relationTextIndex == 2 ? " a " : " con ";
 		if (descriptor.secondItemId != 0 && descriptor.secondItemSourceKind == kSceneItemSourceKind)
