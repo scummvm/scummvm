@@ -231,11 +231,20 @@ bool SpeechPlayer::readSampleSpan(uint16 sampleId, uint32 &start, uint32 &size) 
 	return size != 0;
 }
 
-SoundBank0Player::SoundBank0Player() {
+SoundBank0Player::SoundBank0Player() :
+		_archiveName(kIntroSoundBank0ArchiveName) {
 }
 
 SoundBank0Player::~SoundBank0Player() {
 	stop();
+}
+
+void SoundBank0Player::setArchive(const Common::Path &archiveName) {
+	if (_archiveName == archiveName)
+		return;
+
+	stop();
+	_archiveName = archiveName;
 }
 
 bool SoundBank0Player::playSample(uint16 sampleId, byte volumePercent) {
@@ -247,8 +256,8 @@ bool SoundBank0Player::playSample(uint16 sampleId, byte volumePercent) {
 		return false;
 
 	Common::File *file = new Common::File();
-	if (!file->open(Common::Path(kIntroSoundBank0ArchiveName))) {
-		warning("Failed to open %s", kIntroSoundBank0ArchiveName);
+	if (!file->open(_archiveName)) {
+		warning("Failed to open %s", _archiveName.toString().c_str());
 		delete file;
 		return false;
 	}
@@ -257,7 +266,7 @@ bool SoundBank0Player::playSample(uint16 sampleId, byte volumePercent) {
 	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(sampleStream, kSoundBank0SampleRate,
 		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	if (!audioStream) {
-		warning("Failed to create raw stream for %s sample %u", kIntroSoundBank0ArchiveName, sampleId);
+		warning("Failed to create raw stream for %s sample %u", _archiveName.toString().c_str(), sampleId);
 		delete sampleStream;
 		return false;
 	}
@@ -266,7 +275,7 @@ bool SoundBank0Player::playSample(uint16 sampleId, byte volumePercent) {
 		-1, percentToMixerVolume(volumePercent), 0, DisposeAfterUse::YES);
 
 	debugC(1, kDebugResources, "Started sound %s sample %u: offset=%u size=%u",
-		kIntroSoundBank0ArchiveName, sampleId, start, size);
+		_archiveName.toString().c_str(), sampleId, start, size);
 	return true;
 }
 
@@ -281,18 +290,18 @@ bool SoundBank0Player::isPlaying() const {
 
 bool SoundBank0Player::readSampleSpan(uint16 sampleId, uint32 &start, uint32 &size) const {
 	if ((sampleId + 1) * 4 >= kSoundBank0CueTableSize) {
-		warning("Invalid %s sample id %u", kIntroSoundBank0ArchiveName, sampleId);
+		warning("Invalid %s sample id %u", _archiveName.toString().c_str(), sampleId);
 		return false;
 	}
 
 	Common::File file;
-	if (!file.open(Common::Path(kIntroSoundBank0ArchiveName))) {
-		warning("Failed to open %s", kIntroSoundBank0ArchiveName);
+	if (!file.open(_archiveName)) {
+		warning("Failed to open %s", _archiveName.toString().c_str());
 		return false;
 	}
 
 	if (file.size() < (int32)kSoundBank0CueTableSize) {
-		warning("%s is too small for the cue table", kIntroSoundBank0ArchiveName);
+		warning("%s is too small for the cue table", _archiveName.toString().c_str());
 		return false;
 	}
 
@@ -302,7 +311,7 @@ bool SoundBank0Player::readSampleSpan(uint16 sampleId, uint32 &start, uint32 &si
 
 	if (start >= end || end > (uint32)file.size()) {
 		warning("Invalid %s sample %u span: start=%u end=%u fileSize=%u",
-			kIntroSoundBank0ArchiveName, sampleId, start, end, (uint)file.size());
+			_archiveName.toString().c_str(), sampleId, start, end, (uint)file.size());
 		return false;
 	}
 

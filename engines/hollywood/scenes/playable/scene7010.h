@@ -31,6 +31,10 @@
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
 
+namespace Graphics {
+struct Surface;
+}
+
 namespace Hollywood {
 
 class HollywoodEngine;
@@ -150,7 +154,7 @@ private:
 	void prepareGameplayLoop() override;
 	void advanceGameplayLoop(uint32 delta) override;
 	void drawGameplayFrame() override;
-	void presentGameplayFrame(const SceneHoverCaption &hoverCaption) override;
+	void presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) override;
 	bool shouldExitGameplayLoop() const override;
 	void handleLeftClick(const GameplayLoopCursorState &state) override;
 	void advanceChunk8Cycle();
@@ -219,7 +223,16 @@ private:
 	uint actorSpeechTextWidth(const Common::String &text) const;
 	void calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY);
 	bool waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryLeft);
-	void presentFrame(const SceneHoverCaption *hoverCaption = nullptr);
+	void applyGameplayPanelPalette();
+	void drawGameplayPanel(Graphics::Surface &surface, const GameplayPanelState &panelState);
+	void drawVerbPanel(Graphics::Surface &surface, const GameplayPanelState &panelState);
+	void drawInventoryPanel(Graphics::Surface &surface, const GameplayPanelState &panelState);
+	void drawPanelText(Graphics::Surface &surface, const Common::String &text, int y, byte colorIndex);
+	void drawPanelButtonText(Graphics::Surface &surface, const Common::String &text,
+		int x, int y, int width, byte colorIndex);
+	void fillScreenRect(int x, int y, int width, int height, byte colorIndex);
+	void drawScreenRect(int x, int y, int width, int height, byte colorIndex);
+	void presentFrame(const SceneHoverCaption *hoverCaption = nullptr, const GameplayPanelState *panelState = nullptr);
 	bool pollEvents(bool allowSkip);
 	bool delay(uint32 millis);
 
