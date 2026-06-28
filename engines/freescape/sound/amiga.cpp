@@ -309,7 +309,7 @@ private:
 								}
 							}
 
-						double durationSec = (dmaCount + 1) * bufSize * _periodShadow[0] / Audio::Paula::kPalPaulaClock;
+						double durationSec = (double)(dmaCount + 1) * bufSize * _periodShadow[0] / Audio::Paula::kPalPaulaClock;
 						_dmaCounter = (int)(durationSec * 50.0) + 1;
 						_dmaAud0Active = true;
 						enableChannel(0);
