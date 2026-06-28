@@ -21,16 +21,26 @@
 
 #include "hollywood/scenes/playable/scene7000.h"
 
+#include "common/array.h"
 #include "common/debug.h"
+#include "common/endian.h"
+#include "common/file.h"
 #include "common/path.h"
+#include "common/textconsole.h"
 
+#include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
 
 const char *const kChapter7MusicArchiveName = "RESOURCE.M07";
+const char *const kResource000Name = "RESOURCE.000";
 const uint16 kScene7000MusicCueId = 0x000c;
 const byte kScene7000MusicVolumePercent = 10;
+const uint kResource000HeaderByteCount = 1;
+const uint kResource000TableByteCount = 400;
+const uint kResource000InventoryActionTablesEntry = 0xc8;
+const uint kResource000FixedInventoryVerbTableOffset = 0xec54;
 
 Scene7000::Scene7000(HollywoodEngine *vm) :
 		_vm(vm) {
@@ -39,12 +49,64 @@ Scene7000::Scene7000(HollywoodEngine *vm) :
 bool Scene7000::play() {
 	GameplayState &state = _vm->gameState();
 	state.initializeForState7000();
+	if (!loadInventoryOwner1ResourceTables())
+		return false;
 
 	MusicPlayer *music = _vm->gameplayMusic();
 	music->setArchive(Common::Path(kChapter7MusicArchiveName));
 	music->playMusicCue(kScene7000MusicCueId, kScene7000MusicVolumePercent);
 
 	debugC(1, kDebugScene, "Scene 7000 initialized gameplay bootstrap; next state=0x%04x", state.mainFlowStateId);
+	return true;
+}
+
+bool Scene7000::loadInventoryOwner1ResourceTables() {
+	Common::File file;
+	if (!file.open(Common::Path(kResource000Name))) {
+		warning("Failed to open %s inventory action tables", kResource000Name);
+		return false;
+	}
+
+	if ((uint32)file.size() < kResource000HeaderByteCount + 2 * kResource000TableByteCount) {
+		warning("%s is too small for inventory action tables", kResource000Name);
+		return false;
+	}
+
+	Common::Array<byte> offsetTable;
+	offsetTable.resize(kResource000TableByteCount);
+	file.seek(kResource000HeaderByteCount);
+	if (file.read(offsetTable.data(), offsetTable.size()) != offsetTable.size()) {
+		warning("Failed to read %s offset table", kResource000Name);
+		return false;
+	}
+
+	if (kResource000InventoryActionTablesEntry + 4 > offsetTable.size()) {
+		warning("%s inventory action table entry is out of range", kResource000Name);
+		return false;
+	}
+
+	const uint32 tableOffset = READ_LE_UINT32(offsetTable.data() + kResource000InventoryActionTablesEntry);
+	const uint32 fixedTableOffset = tableOffset + kResource000FixedInventoryVerbTableOffset;
+	const uint fixedTableEntryCount = GameplayState::kFixedInventoryActionTableEntryCount - 1;
+	if (fixedTableOffset > (uint32)file.size() ||
+			fixedTableEntryCount * 2 > (uint32)file.size() - fixedTableOffset) {
+		warning("%s fixed inventory action table is out of range", kResource000Name);
+		return false;
+	}
+
+	GameplayState &state = _vm->gameState();
+	for (uint i = 0; i < GameplayState::kFixedInventoryActionTableEntryCount; ++i)
+		state.fixedInventoryVerbHandlerIdsByItemAndStrip[i] = 0;
+
+	file.seek(fixedTableOffset);
+	for (uint i = 1; i < GameplayState::kFixedInventoryActionTableEntryCount; ++i)
+		state.fixedInventoryVerbHandlerIdsByItemAndStrip[i] = file.readUint16LE();
+	if (file.err()) {
+		warning("Failed to read %s fixed inventory action table", kResource000Name);
+		return false;
+	}
+
+	state.inventoryOwner1ResourceTablesLoaded = true;
 	return true;
 }
 
