@@ -39,6 +39,7 @@ const uint16 kScene7010ViewportXOffset = 0;
 const uint16 kScene7010FirstState = 0x1b62;
 const uint16 kScene7010LastState = 0x1b6b;
 const uint16 kScene7010ReturnState = 0x1b63;
+const uint16 kScene7010ExitState7020 = 0x1b6c;
 const uint16 kScene7010ExitState7030 = 0x1b76;
 const uint16 kScene7010Chunk8DescriptorCount = 0x16;
 const uint16 kScene7010Chunk9DescriptorCount = 2;
@@ -89,7 +90,7 @@ const byte kScene7010Route3To2StepDeltas[] = {
 };
 
 Scene7010::Scene7010(HollywoodEngine *vm) :
-		SuePlayableScene(vm, "hollywood_scene7010", 0x184, 0x1c6, 1, 0xfd, 0xfb),
+		SuePlayableScene(vm, "scene7010", 0x184, 0x1c6, 1, 0xfd, 0xfb),
 		_chunk8FrameIndex(0),
 		_chunk9AmbientOverlayFrameIndex(0),
 		_chunk9AmbientDecisionCounter(0),
@@ -198,6 +199,12 @@ void Scene7010::initializeCustomPreviewState() {
 	_hideActiveActor = false;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
+	_sceneStateFlags[1] = _vm->gameState().g01DialogueOverlayMode;
+	_sceneStateFlags[5] = _vm->gameState().g01DialogueBranchState;
+	_sceneStateFlags[6] = _vm->gameState().g01DialogueBranchFollowUpSeen ? 1 : 0;
+	_dialogueOverlayMode = _sceneStateFlags[1];
+	if (_dialogueOverlayMode != 0)
+		_dialogueOverlayFrameIndex = 0;
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
@@ -659,6 +666,10 @@ void Scene7010::handleActionSlot02SecondarySpeech() {
 }
 
 void Scene7010::handleActionSlot03DialogueSequence() {
+	GameplayState &state = _vm->gameState();
+	_sceneStateFlags[5] = state.g01DialogueBranchState;
+	_sceneStateFlags[6] = state.g01DialogueBranchFollowUpSeen ? 1 : 0;
+
 	if (!hasInventoryItem(6)) {
 		beginSecondarySpeechLine(3, 0);
 		return;
@@ -675,6 +686,26 @@ void Scene7010::handleActionSlot03DialogueSequence() {
 	runChunk11FrameRange(0x12, 0x16);
 	beginPrimarySpeechLine(99, _sceneStateFlags[4] == 1 ? 1 : 4, 0x2ee, 0xe8, 0x28, 0x16, 0x0b);
 	runChunk11FrameRange(0x1a, 0x1e);
+	if (_sceneStateFlags[5] != 0) {
+		beginPrimarySpeechLine(99, 10, 0x302, 0xe3, 0x28, 0x16, 0x0b);
+		runChunk14FrameRange(0, 0x18);
+		if (_sceneStateFlags[6] == 0) {
+			beginSecondarySpeechLine(0x62, 0x0b);
+			beginPrimarySpeechLine(99, 0x0b, 0x302, 0xe3, 0x28, 0x16, 0x0b);
+			_sceneStateFlags[6] = 1;
+			state.g01DialogueBranchFollowUpSeen = true;
+		}
+		if (_sceneStateFlags[5] == 2) {
+			beginPrimarySpeechLine(99, 0x0c, 0x302, 0xe3, 0x28, 0x16, 0x0b);
+			runChunk14FrameRange(0x19, 0x26);
+			walkActiveActorTo(0x298, 0x1af, 4, 0);
+			beginSecondarySpeechLine(0x62, 0x0c);
+			walkActiveActorTo(0x3b0, 0x1a9, 0xff, 0);
+			_vm->gameplayMusic()->stop();
+			state.mainFlowStateId = kScene7010ExitState7020;
+			return;
+		}
+	}
 	walkActiveActorTo(0x17b, 0x1b2, 0xff, 0);
 	_chunk11Visible = false;
 	if (_sceneStateFlags[4] == 1)
@@ -789,12 +820,14 @@ void Scene7010::runChunk15ItemSequence() {
 void Scene7010::runDialogueOverlayFrames(byte startFrame, byte endFrame, byte finalMode) {
 	_dialogueOverlayMode = 2;
 	_sceneStateFlags[1] = 2;
+	_vm->gameState().g01DialogueOverlayMode = 2;
 	for (byte frame = startFrame; frame <= endFrame && !Engine::shouldQuit(); ++frame) {
 		_dialogueOverlayFrameIndex = frame;
 		waitSceneMillis(kScene7010DialogueOverlayFrameMillis);
 	}
 	_dialogueOverlayMode = finalMode;
 	_sceneStateFlags[1] = finalMode;
+	_vm->gameState().g01DialogueOverlayMode = finalMode;
 	_dialogueOverlayFrameIndex = finalMode == 0 ? 0 : endFrame;
 }
 
