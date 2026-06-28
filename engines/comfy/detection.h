@@ -58,7 +58,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Comfy (C)";
+		return "Comfy Interactive Movies, Ltd. (C)";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {

@@ -38,8 +38,17 @@ const DebugChannelDef ComfyMetaEngineDetection::debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
+static const char *const directoryGlobs[] = {
+	"SETLANG",
+	"ENGLISH",
+	nullptr
+};
+
 ComfyMetaEngineDetection::ComfyMetaEngineDetection() : AdvancedMetaEngineDetection(
 	Comfy::gameDescriptions, Comfy::comfyGames) {
+	_flags = kADFlagMatchFullPaths;
+	_maxScanDepth = 2;
+	_directoryGlobs = directoryGlobs;
 }
 
 REGISTER_PLUGIN_STATIC(COMFY_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, ComfyMetaEngineDetection);

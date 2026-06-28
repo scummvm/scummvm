@@ -21,27 +21,5 @@
 
 namespace Comfy {
 
-const PlainGameDescriptor comfyGames[] = {
-	{ "comfyland", "Comfy Land" },
-	{ 0, 0 }
-};
-
-const ADGameDescription gameDescriptions[] = {
-	{
-		"comfyland",
-		nullptr,
-		{
-			{"ENGLISH/COMFY.OBJ", 0, "7b4ce03e92a27c2271d3657d3c13084b", 221184},
-			{"SETLANG/PICFILE.DAT", 0, "88dbbc127cd269b286f4d8c0adad0f1b", 29789},
-			AD_LISTEND
-		},
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
-	},
-
-	AD_TABLE_END_MARKER
-};
 
 } // End of namespace Comfy

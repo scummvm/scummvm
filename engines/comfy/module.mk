@@ -1,9 +1,26 @@
 MODULE := engines/comfy
 
 MODULE_OBJS = \
+	actor.o \
 	comfy.o \
+	comfy_keyboard_ui.o \
 	console.o \
-	metaengine.o
+	entry.o \
+	expr.o \
+	game.o \
+	input.o \
+	keybits.o \
+	metaengine.o \
+	midi.o \
+	midiplyr/midiplyr.o \
+	palette.o \
+	scene.o \
+	script.o \
+	script_ops.o \
+	script_vm.o \
+	sound.o \
+	timer.o \
+	video.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_COMFY), DYNAMIC_PLUGIN)
