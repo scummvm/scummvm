@@ -177,6 +177,7 @@ private:
 	void processSceneRelationClick(const GameplayLoopCursorState &state, byte itemId);
 	SceneVerbActionRecord relationActionRecord(byte inventoryItemId, byte sceneItemId, byte relationMode) const;
 	void dispatchSceneAction(uint16 handlerId);
+	bool dispatchGenericSceneAction(uint16 handlerId);
 	void walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel);
 	void adjustWalkTargetToFloorMask(int &targetX, int &targetY) const;
 	void queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
@@ -209,6 +210,12 @@ private:
 	void handleActionHandler312ProgressSpeech();
 	void handleActionHandler313ConversationGate();
 	void handleActionHandler314Item0BSpeech();
+	void handleActionHandler315PickupItem0C();
+	void handleStaticSpeech43And24Sequence();
+	void handleGrantItem22IfMissing();
+	void handleSwapItems08And0FForItem06();
+	void handleAdvanceSceneActionStateAndInventoryPage();
+	void handleAdvanceSceneActionStateToItem1APage68();
 	void runDialogueMenuRow98();
 	void initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	Common::String dialogueMenuText(byte stageId, byte textRowId) const override;
@@ -219,6 +226,16 @@ private:
 		uint32 frameMillis, int statePatchFrame = -1);
 	void runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame, bool hideActiveActor);
+	void runMappedActionOverlayRange(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
+		uint32 frameMillis, uint firstFrame, uint endFrame, int statePatchFrame, bool hideActiveActor);
+	void runMajorHotspotFrankensteinBranch();
+	void runChunk11Range(byte firstFrame, byte endFrame);
+	void runChunk14ActionRange(byte firstFrame, byte endFrame);
+	void runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame);
+	void applyChunk14ActionSideEffects(byte frameIndex);
+	void applyChunk14AltSideEffects(byte frameIndex);
+	byte primarySpeechAnimationBaseFrame(byte animationGroup) const;
+	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex);
 	bool waitSceneMillis(uint32 millis);
 	void clearSpeechOverlay();
 	void clearAllSpeechOverlays();
@@ -230,12 +247,15 @@ private:
 	void beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
 	void beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue);
+	void beginPrimarySpeechLineWithAnimationGroup(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
+		byte red, byte green, byte blue, byte animationGroup);
 	void beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex);
 	void runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
-		byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft, bool animatePrimaryDialogue);
+		byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft, bool animatePrimaryDialogue,
+		byte primaryAnimationGroup = 0xff);
 	void runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte continuationCount, uint16 voiceSampleId,
 		uint16 centerX, uint16 topY, byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft,
-		bool animatePrimaryDialogue);
+		bool animatePrimaryDialogue, byte primaryAnimationGroup = 0xff);
 	bool getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
 		uint16 &voiceSampleId) const;
 	bool getStaticSpeechCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
@@ -311,6 +331,7 @@ private:
 	byte _chunk6IdleFrameD;
 	byte _primaryLeftSpeechLastFrame;
 	byte _primaryDialogueSpeechLastFrame;
+	byte _primaryDialogueSpeechGroup;
 	bool _chunk6IdlePairAAltPhase;
 	bool _chunk6IdlePairBAltPhase;
 	bool _primaryLeftSpeechActive;
@@ -341,6 +362,7 @@ private:
 	byte _chunk12FrameIndex;
 	byte _chunk14ActionFrameIndex;
 	byte _chunk14AltFrameIndex;
+	byte _chunk14AltChunkIndex;
 	byte _chunk16FrameIndex;
 	byte _chunk17FrameIndex;
 	byte _preItemIdleState;
