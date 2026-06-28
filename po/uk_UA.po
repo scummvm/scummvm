@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-24 10:59+0000\n"
+"POT-Creation-Date: 2026-06-28 21:29+0000\n"
 "PO-Revision-Date: 2026-06-20 14:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -10101,6 +10101,30 @@ msgstr "Міні-гра Medusa ще не підтримується. Пропу�
 #: engines/hadesch/rooms/troy.cpp:505
 msgid "The Troy minigame is not supported yet. Skipping"
 msgstr "Міні-гра Troy ще не підтримується. Пропускаю"
+
+#: engines/harvester/metaengine.cpp:33
+#, fuzzy
+#| msgid "Enable storage"
+msgid "Enable gore"
+msgstr "Ввімкнути сховище"
+
+#: engines/harvester/metaengine.cpp:34
+msgid ""
+"When disabled, the startup movie player follows the original GORE=NO "
+"censorship path."
+msgstr ""
+
+#: engines/harvester/metaengine.cpp:44
+#, fuzzy
+#| msgid "Show character portraits"
+msgid "Show CD change prompts"
+msgstr "Показувати портрети героїв"
+
+#: engines/harvester/metaengine.cpp:45
+msgid ""
+"Display the original CD swap image and wait for a left click when the script "
+"requests disc 2 or 3."
+msgstr ""
 
 #: engines/hdb/metaengine.cpp:44 engines/illusions/metaengine.cpp:153
 msgid "Enable cheat mode"
