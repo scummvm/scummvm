@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	music.o \
 	resource.o \
+	saveload.o \
 	scenes/intro/scene9000.o \
 	scenes/intro/scene9010.o \
 	scenes/intro/scene9050.o \

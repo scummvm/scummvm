@@ -282,12 +282,12 @@ bool SuePlayableScene::play() {
 	drawPreviewComposite();
 	presentFrame();
 	runEntryCutscene();
-	if (Engine::shouldQuit())
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 		return true;
 
 	_skipRequested = false;
 	const bool result = runBasicGameplayLoop();
-	if (shouldRunExitSideEffectsAfterLoop())
+	if (!_vm->isSceneRestartRequested() && shouldRunExitSideEffectsAfterLoop())
 		handleG04ExitSideEffects();
 	return result;
 }
@@ -1427,6 +1427,9 @@ void SuePlayableScene::prepareOptionsMenuPalette(Common::Array<byte> &palette) c
 }
 
 bool SuePlayableScene::shouldExitGameplayLoop() const {
+	if (_vm->isSceneRestartRequested())
+		return true;
+
 	const uint16 stateId = _vm->gameState().mainFlowStateId;
 	return !isMainFlowStateInScene(stateId);
 }
@@ -3269,7 +3272,7 @@ void SuePlayableScene::setPrimarySpeechAnimationFrame(byte animationGroup, byte 
 
 bool SuePlayableScene::waitSceneMillis(uint32 millis) {
 	uint32 remaining = millis;
-	while (remaining != 0 && !Engine::shouldQuit()) {
+	while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		if (pollEvents(true))
 			return true;
 
@@ -3284,7 +3287,7 @@ bool SuePlayableScene::waitSceneMillis(uint32 millis) {
 		remaining -= slice;
 	}
 
-	return Engine::shouldQuit();
+	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
 }
 
 void SuePlayableScene::updateAmbientAudioAndMusicCues(uint32 delta) {
@@ -3909,6 +3912,11 @@ bool SuePlayableScene::pollEvents(bool allowSkip) {
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			Engine::quitGame();
 			return true;
+		case Common::EVENT_MAINMENU:
+			_vm->openMainMenuDialog();
+			if (_vm->isSceneRestartRequested())
+				return true;
+			break;
 		case Common::EVENT_KEYDOWN:
 			if (allowSkip && (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
 					event.kbd.keycode == Common::KEYCODE_RETURN ||

@@ -115,7 +115,8 @@ HollywoodEngine::HollywoodEngine(OSystem *syst, const ADGameDescription *gameDes
 		_font(new HollywoodFont()),
 		_introMusic(),
 		_gameplayMusic(),
-		_gameState() {
+		_gameState(),
+		_sceneRestartRequested(false) {
 }
 
 HollywoodEngine::~HollywoodEngine() {
@@ -133,7 +134,17 @@ Common::Error HollywoodEngine::run() {
 
 	debugC(1, kDebugGeneral, "Hollywood Monsters engine initialized");
 
-	const int bootParam = ConfMan.getInt("boot_param");
+	const int startupLoadSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+	const bool startupLoad = startupLoadSlot >= 0;
+	if (startupLoad) {
+		Common::Error loadError = loadGameState(startupLoadSlot);
+		if (loadError.getCode() != Common::kNoError)
+			return loadError;
+		clearSceneRestartRequest();
+		debugC(1, kDebugGeneral, "Loaded startup save slot %d", startupLoadSlot);
+	}
+
+	const int bootParam = startupLoad ? 0 : ConfMan.getInt("boot_param");
 	const bool bootToIntroScene = isImplementedIntroSceneNumber(bootParam);
 	const bool bootToGameplayScene = isImplementedGameplayState(bootParam);
 	bool bootSceneReached = bootParam == 0;
@@ -147,7 +158,7 @@ Common::Error HollywoodEngine::run() {
 		}
 	}
 
-	if (!bootToGameplayScene) {
+	if (!startupLoad && !bootToGameplayScene) {
 		if (shouldRunSceneForBootParam(bootParam, 9000, bootSceneReached)) {
 			Scene9000 scene9000(this);
 			if (!scene9000.play())
@@ -185,15 +196,18 @@ Common::Error HollywoodEngine::run() {
 		}
 	}
 
-	Scene7000 scene7000(this);
-	if (!scene7000.play())
-		return Common::kReadingFailed;
-	if (bootToGameplayScene && bootParam != 7000)
-		gameState().mainFlowStateId = (uint16)bootParam;
+	if (!startupLoad) {
+		Scene7000 scene7000(this);
+		if (!scene7000.play())
+			return Common::kReadingFailed;
+		if (bootToGameplayScene && bootParam != 7000)
+			gameState().mainFlowStateId = (uint16)bootParam;
+	}
 
 	bool handledState = true;
 	while (!Engine::shouldQuit() && handledState) {
 		handledState = false;
+		clearSceneRestartRequest();
 		const uint16 stateId = gameState().mainFlowStateId;
 
 		if (stateId >= 0x1b62 && stateId <= 0x1b6b) {
@@ -282,7 +296,10 @@ Common::Error HollywoodEngine::run() {
 }
 
 bool HollywoodEngine::hasFeature(EngineFeature f) const {
-	return f == kSupportsReturnToLauncher || f == kSupportsSubtitleOptions;
+	return f == kSupportsReturnToLauncher ||
+		f == kSupportsSubtitleOptions ||
+		f == kSupportsLoadingDuringRuntime ||
+		f == kSupportsSavingDuringRuntime;
 }
 
 void HollywoodEngine::syncSoundSettings() {

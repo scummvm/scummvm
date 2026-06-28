@@ -46,7 +46,8 @@ Common::Error HollywoodMetaEngine::createInstance(OSystem *syst, Engine **engine
 }
 
 bool HollywoodMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
+	return checkExtendedSaves(f) ||
+		f == kSupportsLoadingDuringStartup;
 }
 
 void HollywoodMetaEngine::registerDefaultSettings(const Common::String &) const {
