@@ -380,6 +380,8 @@ int8 PathFindingShape::orderAt(Point query) const {
 
 float PathFindingShape::depthAt(Point query) const {
 	int32 polygon = polygonContaining(query);
+	if (polygon < 0)
+		query = closestPointTo(query, polygon);
 	return polygon < 0 ? 1.0f : at(polygon).depthAt(query);
 }
 
