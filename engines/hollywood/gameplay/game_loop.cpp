@@ -196,6 +196,13 @@ bool GameplayLoop::pollEvents() {
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			Engine::quitGame();
 			return true;
+		case Common::EVENT_MAINMENU:
+			_vm->openMainMenuDialog();
+			if (_vm->isSceneRestartRequested())
+				return true;
+			_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
+			updatePanelFromMousePosition();
+			break;
 		case Common::EVENT_MOUSEMOVE:
 			_vm->cursor()->updatePosition(event.mouse);
 			updatePanelFromMousePosition();

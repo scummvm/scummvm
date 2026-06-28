@@ -87,7 +87,7 @@ bool Scene7020::play() {
 	_speech.stop();
 	_soundBank0.stop();
 	_ambientSoundBank0.stop();
-	if (!Engine::shouldQuit())
+	if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested())
 		_vm->gameState().mainFlowStateId = kScene7020ExitState9101;
 	return true;
 }

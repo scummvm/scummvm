@@ -32,6 +32,10 @@
 
 struct ADGameDescription;
 
+namespace Common {
+class Serializer;
+}
+
 namespace Hollywood {
 
 enum HollywoodDebugChannels {
@@ -43,6 +47,8 @@ enum HollywoodDebugChannels {
 class ResourceManager;
 class HollywoodFont;
 
+bool isImplementedGameplayState(int stateId);
+
 class HollywoodEngine : public Engine {
 public:
 	HollywoodEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -50,6 +56,10 @@ public:
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	void syncSoundSettings() override;
 	void syncSoundSettingsFromGameState();
 
@@ -65,6 +75,8 @@ public:
 	MusicPlayer *gameplayMusic() { return &_gameplayMusic; }
 	GameplayState &gameState() { return _gameState; }
 	const GameplayState &gameState() const { return _gameState; }
+	bool isSceneRestartRequested() const { return _sceneRestartRequested; }
+	void clearSceneRestartRequest() { _sceneRestartRequested = false; }
 
 	enum {
 		kScreenWidth = 640,
@@ -76,6 +88,9 @@ public:
 	};
 
 private:
+	Common::Error syncGameStream(Common::Serializer &s);
+	void normalizeLoadedGameState();
+
 	const ADGameDescription *_gameDescription;
 	ResourceManager *_resources;
 	HollywoodFont *_font;
@@ -83,6 +98,7 @@ private:
 	MusicPlayer _introMusic;
 	MusicPlayer _gameplayMusic;
 	GameplayState _gameState;
+	bool _sceneRestartRequested;
 };
 
 } // End of namespace Hollywood
