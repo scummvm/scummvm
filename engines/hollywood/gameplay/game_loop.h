@@ -116,6 +116,7 @@ private:
 	bool _leftButtonDown;
 	bool _rightButtonDown;
 	bool _keyboardStripMode;
+	bool _inventoryPanelOpenedFromDefault;
 	GameplayPanelState _panelState;
 	uint32 _panelHoverTimer;
 };

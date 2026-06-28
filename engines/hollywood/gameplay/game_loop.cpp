@@ -29,7 +29,6 @@
 namespace Hollywood {
 
 const byte kGameplayDefaultStrip = 1;
-const byte kGameplayFirstStrip = 1;
 const byte kGameplayFirstPanelStrip = 2;
 const byte kGameplayLastStrip = 8;
 const uint32 kGameplayLoopTickMillis = 10;
@@ -40,7 +39,7 @@ const uint16 kGameplayInventoryOpenY = 0x1df;
 const uint16 kGameplayInventoryCloseY = 0x122;
 const uint16 kGameplayVerbPanelStripWidth = 0x58;
 const uint16 kGameplayVerbPanelStripHeight = 0x1b;
-const uint16 kGameplayVerbPanelStripTopY = 0x1a7;
+const uint16 kGameplayVerbPanelStripTopY = 0x1bd;
 const uint16 kGameplayVerbPanelStripXOffsets[9] = {
 	0xff, 0, 8, 97, 186, 276, 366, 456, 545
 };
@@ -82,6 +81,7 @@ GameplayLoop::GameplayLoop(HollywoodEngine *vm, GameplayLoopDelegate *delegate) 
 		_leftButtonDown(false),
 		_rightButtonDown(false),
 		_keyboardStripMode(false),
+		_inventoryPanelOpenedFromDefault(false),
 		_panelHoverTimer(0) {
 }
 
@@ -94,6 +94,7 @@ bool GameplayLoop::run() {
 	_leftButtonDown = false;
 	_rightButtonDown = false;
 	_keyboardStripMode = false;
+	_inventoryPanelOpenedFromDefault = false;
 	_panelState = GameplayPanelState();
 	_panelHoverTimer = 0;
 	_hoverCaption.reset();
@@ -230,12 +231,16 @@ void GameplayLoop::handleLeftClick() {
 		return;
 
 	_delegate->handleLeftClick(makeCursorState());
+	_currentStrip = kGameplayDefaultStrip;
+	_hoverCaption.setCurrentStrip(_currentStrip);
 	refreshHoverCaption();
 }
 
 void GameplayLoop::handleRightClick() {
-	if (_hoverCaption.requestedStrip() != 0 && _hoverCaption.requestedStrip() != _currentStrip) {
-		_currentStrip = _hoverCaption.requestedStrip();
+	const byte requestedStrip = _hoverCaption.requestedStrip();
+	if (requestedStrip >= kGameplayFirstPanelStrip && requestedStrip <= kGameplayLastStrip &&
+			requestedStrip != _currentStrip) {
+		_currentStrip = requestedStrip;
 		_hoverCaption.setCurrentStrip(_currentStrip);
 	} else {
 		selectNextStrip();
@@ -268,8 +273,8 @@ void GameplayLoop::selectNextKeyboardStrip() {
 }
 
 void GameplayLoop::selectNextStrip() {
-	if (_currentStrip < kGameplayFirstStrip || _currentStrip >= kGameplayLastStrip)
-		_currentStrip = kGameplayFirstStrip;
+	if (_currentStrip < kGameplayFirstPanelStrip || _currentStrip >= kGameplayLastStrip)
+		_currentStrip = kGameplayFirstPanelStrip;
 	else
 		++_currentStrip;
 
@@ -281,9 +286,13 @@ void GameplayLoop::openVerbPanel() {
 	refreshHoverCaption();
 
 	byte requestedStrip = _hoverCaption.requestedStrip();
-	if (requestedStrip < kGameplayFirstPanelStrip && _currentStrip == kGameplayDefaultStrip)
-		requestedStrip = 5;
-	if (requestedStrip != 0)
+	if (requestedStrip < kGameplayFirstPanelStrip) {
+		if (_currentStrip == kGameplayDefaultStrip)
+			requestedStrip = 5;
+		else
+			requestedStrip = 0;
+	}
+	if (requestedStrip >= kGameplayFirstPanelStrip)
 		_currentStrip = requestedStrip;
 	if (_currentStrip > kGameplayLastStrip)
 		_currentStrip = kGameplayLastStrip;
@@ -313,6 +322,11 @@ void GameplayLoop::openInventoryPanel() {
 	if (_panelState.inventoryPanelVisible || _panelState.verbPanelVisible)
 		return;
 
+	_inventoryPanelOpenedFromDefault = _currentStrip == kGameplayDefaultStrip;
+	if (_inventoryPanelOpenedFromDefault) {
+		_currentStrip = 5;
+		_hoverCaption.setCurrentStrip(_currentStrip);
+	}
 	_panelState.inventoryPanelVisible = true;
 	_panelState.captionText = "Inventario";
 	_panelState.resolvedItem = 0;
@@ -325,6 +339,11 @@ void GameplayLoop::closeInventoryPanel() {
 
 	_panelState.inventoryPanelVisible = false;
 	_panelState.captionText.clear();
+	if (_inventoryPanelOpenedFromDefault && _currentStrip == 5) {
+		_currentStrip = kGameplayDefaultStrip;
+		_hoverCaption.setCurrentStrip(_currentStrip);
+	}
+	_inventoryPanelOpenedFromDefault = false;
 	refreshHoverCaption();
 }
 
