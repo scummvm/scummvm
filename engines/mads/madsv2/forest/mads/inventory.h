@@ -32,6 +32,7 @@ enum {
 	cogs           =  0,
 	rubber_band    =  1,
 	feather        =  2,
+	lily_pad       =  4,
 	pebbles        =  5,
 	reeds          =  6,
 	sticks         =  7,
@@ -40,6 +41,7 @@ enum {
 	web            = 10,
 	planks         = 11,
 	elm_leaves     = 12,
+	stick          = 14,
 	forked_stick   = 15
 };
 

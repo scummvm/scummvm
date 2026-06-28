@@ -197,13 +197,13 @@ static void room_307_anim3() {
 			int16 old = seq[1];
 			kernel_seq_delete(seq[1]);
 			kernel_synch(KERNEL_SERIES, old, KERNEL_ANIM, aa[2]);
-			inter_move_object(14, PLAYER);
+			inter_move_object(stick, PLAYER);
 			break;
 		}
 		case 22: {
 			int16 old = seq[0];
 			kernel_seq_delete(seq[0]);
-			inter_move_object(4, PLAYER);
+			inter_move_object(lily_pad, PLAYER);
 			kernel_synch(KERNEL_SERIES, old, KERNEL_ANIM, aa[2]);
 			kernel_flip_hotspot(words_lily_pad, false);
 			break;
@@ -518,8 +518,8 @@ static void room_307_anim10() {
 }
 
 static void room_307_init() {
-	object_set_quality(4, 0, -1);
-	object_set_quality(14, 0, -1);
+	object_set_quality(lily_pad, 0, -1);
+	object_set_quality(stick, 0, -1);
 
 	scratch._9a = -1;
 	scratch._9c = -1;
@@ -533,7 +533,7 @@ static void room_307_init() {
 
 	kernel_flip_hotspot(global[g075] != 0 ? 28 : 27, 0);
 
-	if (object_is_here(4)) {
+	if (object_is_here(lily_pad)) {
 		ss[0] = kernel_load_series(kernel_name('p', 1), 0);
 		seq[0] = kernel_seq_stamp(ss[0], false, -1);
 		kernel_seq_depth(seq[0], 10);
@@ -543,7 +543,7 @@ static void room_307_init() {
 		kernel_flip_hotspot(words_lily_pad, false);
 	}
 
-	if (object_is_here(14)) {
+	if (object_is_here(stick)) {
 		ss[1] = kernel_load_series(kernel_name('p', 2), 0);
 		seq[1] = kernel_seq_stamp(ss[1], false, -1);
 		kernel_seq_depth(seq[1], 9);
@@ -783,12 +783,12 @@ static void room_307_daemon() {
 		scratch._92 = 100;
 		player.walker_visible = false;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-		if (player_has(14)) {
+		if (player_has(stick)) {
 			kernel_synch(KERNEL_ANIM, aa[8], KERNEL_PLAYER, 0);
 		} else {
 			kernel_synch(KERNEL_ANIM, aa[9], KERNEL_NOW, 0);
-			inter_move_object(14, PLAYER);
-			inter_move_object(4, PLAYER);
+			inter_move_object(stick, PLAYER);
+			inter_move_object(lily_pad, PLAYER);
 		}
 		break;
 	}
