@@ -191,7 +191,7 @@ void FoolGame::sentenceOnClick() {
 	if (buttonsRemaining) {
 		return;
 	}
-	_zbasic->text(_fontChicago, 0xc, 0, kSrcBic);
+	_zbasic->text(kFontChicago, 0xc, 0, kSrcBic);
 	drawTextCenter(_zbasic->str(OFF(4)), 0x124); // click mouse to reset puzzle
 
 	this->waitForMouseUp();
@@ -267,7 +267,7 @@ void FoolGame::sentenceUndo() {
 
 void FoolGame::sentenceDrawButton(int16 gridIndex) {
 	// 135:0a34
-	_zbasic->text(_fontChicago, 0xc, 0, kSrcOr);
+	_zbasic->text(kFontChicago, 0xc, 0, kSrcOr);
 	Common::U32String buf = Common::U32String::format("%d", gridIndex) + _zbasic->str(OFF(6)); // ' '
 	int16 width = _toolbox->StringWidth(buf);
 	_toolbox->FillOval(_screenGrid[gridIndex], _patterns[0]);

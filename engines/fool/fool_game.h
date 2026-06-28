@@ -78,11 +78,11 @@ enum FoolZStrOffset : uint16 {
 };
 
 enum FoolFontID : uint16 {
-	kFontChicago = 0,
 	kFontFool = 250,
 	kFontPuzzle = 251,
 	kFontSmall = 252,
 	kFontLarge = 254,
+	kFontChicago = 255,
 };
 
 class FoolGame {
@@ -95,8 +95,8 @@ public:
 	void foolRun(); // sub_128_004
 	void copyScreen(int16 put, BitMap &bmp); // sub_128_0a2
 	void openSaveFileDialog(const Common::U32String &title, const Common::U32String &filename); // sub_128_11c
-	void sub_128_1e4(const Common::U32String &unk1);
-	void sub_128_2be(int16 unk2, int16 unk1);
+	void sub_128_1e4(const Common::String &osType);
+	void getGridFromMouse(int16 &gridX, int16 &gridY); // sub_128_2be
 	void sub_128_342(int16 unk2, int16 unk1);
 	void delay(int16 numTicks); // sub_128_3da
 	void delayFromMarker(int16 numTicks); // sub_128_406
@@ -107,8 +107,8 @@ public:
 	void toggleMouseCursor(bool visible); // sub_128_4da
 	void playTone(int16 freq, int16 duration, bool wait);
 	void drawPuzzleButton(const Common::U32String &symbol); // sub_128_55c
-	int16 sub_128_5fe();
-	OSErr sub_128_64c(int16 unk1);
+	int16 getVolRefNum(); // sub_128_5fe
+	OSErr setVolRefNum(int16 volRefNum); // sub_128_64c
 	void fillRect(int16 patternID, PatternMode mode, int16 top, int16 left, int16 bottom, int16 right); // sub_128_69c
 	void drawTarotCard(int16 rectID, int16 deckPos, int16 type); // sub_128_712
 	void fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID); // sub_128_8b4
@@ -147,7 +147,7 @@ public:
 	void openGame(); // sub_128_2e3e
 
 	void sub_128_3032();
-	void sub_128_32c8();
+	void menuToggleSound(); // sub_128_32c8
 	void savePrompt(); // sub_128_32fa
 	void autoSaveGame();
 	void saveGame(); // sub_128_3536
@@ -163,7 +163,7 @@ public:
 	void puzzleLoadContext(); // sub_128_4168
 	void puzzleSaveContext(); // sub_128_41aa
 	void sub_128_41d8();
-	void sub_128_4472();
+	void storyDrawZoom(); // sub_128_4472
 	void menuAbout(); // sub_128_4a92
 	void menuPrologue();
 	void menuFinale();
@@ -175,14 +175,14 @@ public:
 	void sub_128_5a6c();
 
 	void onClickMenu(); // sub_128_5b30
-	void sub_128_5baa();
-	void sub_128_5c20();
+	void onMenuKey(); // sub_128_5baa
+	void onMenuSelect(); // sub_128_5c20
 	void thothHidePlayfield(); // sub_128_5ef0
 	void thothShowPlayfield(); // sub_128_5f16
 	void sub_128_5f9e();
-	void sub_128_5fb4();
+	void onUpdateEvent(); // sub_128_5fb4
 	void sub_128_5fea();
-	void sub_128_6154();
+	void onDiskEvent(); // sub_128_6154
 	void waitForMouseUp(); // sub_128_6186
 	void waitForClick(); // sub_128_61c2
 	void sub_128_61ec(); // sub_128_61ec
@@ -401,7 +401,7 @@ public:
 	void sub_140_2968();
 	void sub_140_2978();
 	void thothKeyLastSetup(); // sub_140_2998
-	void sub_140_2f92();
+	void thothSetupMenu(); // sub_140_2f92
 	Common::Rect thothRandomSquare(); // sub_140_3050
 	Common::Rect thothRandomHRect(); // sub_140_30da
 	Common::Rect thothRandomVRect(); // sub_140_3148
@@ -420,20 +420,21 @@ public:
 	// fool_humbug.cpp
 	void humbugRun(); // sub_142_004
 	void humbugPlayTrail(); // sub_142_0e6
-	void sub_142_370();
+	void humbugMoveMouse(); // sub_142_370
 	void humbugSuccess(); // sub_142_5f2
-	void sub_142_630();
+	void humbugShowThoth(); // sub_142_630
 
 	// fool_justice.cpp
 	void justiceRun(); // sub_142_852
-	void sub_142_9be();
+	void justiceSetup(); // sub_142_9be
 	void justiceOnClick(); // sub_142_cb2
 	void justiceZoom(); // sub_142_f58
-	void justiceDrawBlock(); // sub_142_f96
-	void justiceRemoveBlock(); // sub_142_10bc
+	void justiceDrawBlock(int16 gridIndex); // sub_142_f96
+	void justiceRemoveBlock(int16 gridIndex); // sub_142_10bc
 	void justiceStoreState(); // sub_142_111e
 	void justiceResetGrid(); // sub_142_11fe
 
+	// fool_hermit.cpp
 	void hermitRun(); // sub_142_12ac
 
 	// fool_straightpath.cpp
@@ -450,7 +451,6 @@ public:
 private:
 	FoolVersion _version;
 	const int *_zstrOffset;
-	int _fontChicago;
 	Toolbox *_toolbox;
 	ZBasic *_zbasic;
 	bool _quit = false;
@@ -473,8 +473,6 @@ private:
 	int16 _windowWidth; // var_i16_5a
 	int16 _windowHeight; // var_i16_5c
 	SFReply var_sfr_5e; // -> aa
-	int16 var_i16_16c;
-	ProcPtr var_i32_16e;
 	Common::U32String var_str_172;
 	Common::U32String var_str_272;
 	RGBColor var_i16_372;
@@ -538,9 +536,6 @@ private:
 	Common::U32String var_str_af4;
 
 	int16 var_i16_bfc;
-	// Used as both a pointer and a bitstore
-	uint32 var_i32_bf8;
-	MenuHandle var_menu_bf8;
 	int16 var_i16_c00;
 	int16 var_i16_c02;
 	int16 _activePuzzleStatus; // var_i16_c04
@@ -589,15 +584,18 @@ private:
 	int16 _jumblePosition; // var_i16_106e
 	Common::U32String var_str_1070;
 	Common::U32String _sentenceBuffer; // var_str_1070
+	Common::U32String _metapuzzleSecretGoal; // var_str_1170
 	Common::U32String var_str_1170;
 	int16 var_i16_1270;
-	Common::U32String var_str_1272;
+	Common::U32String _metapuzzleSecretBuffer;
+	Common::String _straightPathGoal; // var_str_1272
 	Common::U32String _sentenceGoal; // var_str_1272
 	int16 var_i16_1372;
 
 	Common::U32String var_str_1374;
 	Common::U32String var_str_1474;
 	int16 var_i16_1574;
+	int16 _straightPathSelected; // var_i16_1574
 	int16 _jumbleSelected; // var_i16_1574
 	int16 var_i16_1576;
 
@@ -729,11 +727,8 @@ private:
 
 	int16 var_i16_2338;
 	bool _deathWhiteEyeNeedsDraw; // var_i16_233a
-	int16 var_i16_233e;
+	int16 _justiceFirstMove; // var_i16_233e
 	int16 _humbugTrailIndex; // var_i16_233c
-
-	int16 var_i16_2340;
-	int16 var_i16_2342;
 
 	// FIXME: bounds on the following are guessed! need to trace index range
 	int16 _pageLineRanges[202]; // arr_i16_0

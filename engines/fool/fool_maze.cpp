@@ -183,7 +183,7 @@ void FoolGame::mazeRun() {
 
 void FoolGame::mazeOnClick() {
 	// 136:079e
-	sub_128_2be(var_i16_68a, var_i16_68c);
+	getGridFromMouse(var_i16_68a, var_i16_68c);
 	if ((var_i16_68a == _mazePlayerX) && (var_i16_68c == _mazePlayerY)) {
 		return;
 	}
@@ -1099,9 +1099,9 @@ void FoolGame::mazeDrawPlayer() {
 }
 
 void FoolGame::mazeSetupMenu() {
-	this->var_menu_bf8 = _toolbox->GetMHandle(8);
+	MenuHandle menu = _toolbox->GetMHandle(8);
 	_toolbox->DeleteMenu(8);
-	_toolbox->DisposeMenu(this->var_menu_bf8);
+	_toolbox->DisposeMenu(menu);
 
 	// 136:274e
 	_zbasic->menu(8, 0, 1, _puzzleName[_activePuzzle]);

@@ -47,7 +47,7 @@ public:
 
 	void run(bool finale);
 
-	void sub_128_004(bool finale);
+	void setup(bool finale); // sub_128_004
 	void copyScreenToPage(int16 screenPage); // sub_128_1ba
 	void setPortBitsToPage(int16 screenPage); // sub_128_1f4
 	void delay(int16 numTicks); // sub_128_21e
@@ -57,22 +57,20 @@ public:
 	void fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID); // sub_128_2f0
 	void zoomClose(int16 patternID, PatternMode mode); // sub_128_354
 	void drawTreasurePhaseIn(int16 unk1); // sub_128_3ee
-	void sub_128_50a(int16 screenPage, int16 left, int16 right, int16 updatePeriod);
+	void scanlineBlitPageToScreen(int16 screenPage, int16 left, int16 right, int16 updatePeriod); // sub_128_50a
 	void blitPageToScreen(int16 screenPage); // sub_128_610
 	void scanlineTransition(int16 patternID); // sub_128_64a
 	void zoomTransition(int16 screenPage); // sub_128_6e4
-	void sub_128_800(int16_t unk1, int16_t unk2, int16_t unk3, int16_t unk4, int16_t unk5, int16_t unk6, int16_t unk7, int16_t unk8, int16_t unk9);
-	void drawText(const Common::U32String &str, int16_t x, int16_t y); // sub_128_a6c
-	void drawRainRecycle(int16_t unk); // sub_128_a8c
-	void sub_128_c8a();
+	void zoomFlash(int16 startTop, int16 startLeft, int16 startBottom, int16 startRight, int16 endTop, int16 endLeft, int16 endBottom, int16 endRight, int16 steps); // sub_128_800
+	void drawText(const Common::U32String &str, int16 x, int16 y); // sub_128_a6c
+	void drawRainRecycle(int16 unk); // sub_128_a8c
 	void shuffleScanlines(); // sub_128_ccc
 	void drawClickMessage(); // sub_128_de2
 	void drawClickMessageRightAlign(); // sub_128_e1c
-	void sub_128_e58();
-	void sub_128_e80();
-	void sub_128_ed2();
-	void sub_128_ee0();
-	void sub_128_f0a();
+	void waitForClick(); // sub_128_e58
+	void waitForMouseUp(); // sub_128_e80
+	void onUpdateEvent(); // sub_128_ed2
+	void onDiskEvent(); // sub_128_ee0
 
 	void sub_129_004();
 	void sub_129_764();
@@ -98,18 +96,17 @@ private:
 	bool _quit = false;
 
 	// last tick count
-	uint32 var_i32_2;
+	uint32 _tickMarker; // var_i32_2
 	int16 var_i16_6;
-	GrafPtr var_i32_8;
-	GrafPtr var_i32_c;
+	GrafPtr _grafPtrWindow; // var_i32_8
+	GrafPtr _grafPtrMenu; // var_i32_c
 
-	int16 var_i16_10;
-	int16 var_i16_12;
-	int16 var_i16_14;
-	int16 var_i16_16;
-	RGBColor var_i16_1c;
+	int16 _windowWidth; // var_i16_10
+	int16 _windowHeight; // var_i16_12
+	int16 _windowLeft; // var_i16_14
+	int16 _windowTop; // var_i16_16
 
-	EventRecord var_ev_22;
+	EventRecord _event; // var_ev_22
 
 	WindowRecord var_window_24;
 
@@ -163,14 +160,8 @@ private:
 	int16 var_i16_2cc;
 	Common::U32String var_i16_2ce;
 
-	int16 var_i16_3ce;
-	int16 var_i16_3d2;
-	int16 var_i16_3d4;
-	PolyHandle var_i32_3d6;
-	int16 var_i16_3da;
-	int16 var_i16_3dc;
-	int16 var_i16_3e0;
-	int16 var_i16_3e2;
+	int16 _prologueLoading; // var_i16_3ce
+	int16 _prologuePicIndex; // var_i16_3d4
 	int16 var_i16_3e6;
 
 	int16 var_i16_3ec;
@@ -189,10 +180,8 @@ private:
 
 	int16 arr_i16_1e8[1004] = { 0 };
 
-	GrafPort arr_grafport_9c0;
-	GrafPort arr_grafport_a8a;
-
-	byte arr_i32_b54[SCREEN_PAGE_SIZE*12];
+	GrafPort _grafPortWindow; // arr_i32_9c0
+	GrafPort _grafPortMenu; // arr_i32_a8a
 
 	BitMap arr_i32_1e3fc[16];
 
@@ -200,9 +189,7 @@ private:
 
 	BitMap arr_i32_41296[12];
 
-	int16 arr_i16_412ea[SCREEN_HEIGHT] = { 0 };
-	int16 arr_i16_41598[SCREEN_HEIGHT] = { 0 };
-	int16 arr_i16_41846[SCREEN_HEIGHT] = { 0 };
+	int16 _randScanline[SCREEN_HEIGHT] = { 0 }; // arr_i16_412ea
 
 	int16 arr_i16_41af4[32];
 	Common::Rect arr_rect_41af4;
@@ -211,9 +198,6 @@ private:
 	Common::Rect arr_i16_41b0a;
 
 	double arr_f64_41bbe[16] = { 0 };
-
-	PicHandle glob_i32_2ce;
-
 
 };
 
