@@ -50,6 +50,8 @@ public:
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
+	void syncSoundSettings() override;
+	void syncSoundSettingsFromGameState();
 
 	const ADGameDescription *getGameDescription() const { return _gameDescription; }
 	const char *getGameId() const;

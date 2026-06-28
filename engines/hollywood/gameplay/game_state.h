@@ -61,6 +61,14 @@ struct GameplayState {
 		inventoryOwner1ItemsInitialized = false;
 		sceneActionCallbackTableInstalled = false;
 		inventoryPanelRedrawn = false;
+		musicEnabled = true;
+		soundEffectsEnabled = true;
+		optionsTestAudioEnabled = false;
+		musicVolumeLevel = 200;
+		soundEffectsVolumeLevel = 200;
+		voiceVolumeLevel = 200;
+		speechTextSpeedLevel = 200;
+		actorSpeechTextMode = 1;
 	}
 
 	void initializeForState7000() {
@@ -165,6 +173,14 @@ struct GameplayState {
 	bool inventoryOwner1ItemsInitialized;
 	bool sceneActionCallbackTableInstalled;
 	bool inventoryPanelRedrawn;
+	bool musicEnabled;
+	bool soundEffectsEnabled;
+	bool optionsTestAudioEnabled;
+	byte musicVolumeLevel;
+	byte soundEffectsVolumeLevel;
+	byte voiceVolumeLevel;
+	byte speechTextSpeedLevel;
+	byte actorSpeechTextMode;
 };
 
 } // End of namespace Hollywood
