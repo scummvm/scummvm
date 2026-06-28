@@ -101,6 +101,7 @@ const uint32 kG04Chunk14FrameMillis = 75;
 const uint32 kG04Chunk16FrameMillis = 75;
 const uint32 kG04Chunk17FrameMillis = 125;
 const uint32 kG04AmbientMusicCheckMillis = 250;
+const uint32 kSecondaryActorSpeechFrameMillis = 150;
 const byte kG04DialogueStageId = 0x62;
 const byte kG04DialoguePrimaryRow = 99;
 const uint16 kG04DialoguePrimaryCenterX = 0x1c2;
@@ -351,7 +352,7 @@ void SuePlayableScene::drawCustomComposite(bool drawActiveActor, byte activeFaci
 }
 
 bool SuePlayableScene::shouldDrawSecondaryActorInPlayableComposite() const {
-	return false;
+	return _speechOverlay.visible && !_actionOverlayVisible;
 }
 
 bool SuePlayableScene::hasCustomEntrySequence() const {
@@ -1048,17 +1049,9 @@ void SuePlayableScene::drawCutsceneComposite(bool drawActiveActor, byte activeFa
 	}
 
 	if (usesSingleSecondaryActorComposite()) {
-		(void)activeFacing;
-		(void)activeCel;
-		(void)activeWorldX;
-		(void)activeWorldY;
-		(void)drawSecondaryActor;
-		(void)secondaryFacing;
-		(void)secondaryFrame;
-		(void)secondaryWorldX;
-		(void)secondaryWorldY;
 		(void)actorDrawOrderMode;
-		drawG05Composite(drawActiveActor);
+		drawG05Composite(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY);
 		return;
 	}
 
@@ -1096,14 +1089,8 @@ void SuePlayableScene::drawCutsceneComposite(bool drawActiveActor, byte activeFa
 		}
 	}
 
-	if (drawSecondaryActor) {
-		const int secondaryActorBottomY = drawSecondaryActorFrame(secondaryFacing, secondaryFrame,
-			secondaryWorldX, secondaryWorldY);
-		if (drawActiveActor)
-			drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, secondaryActorBottomY);
-	} else if (drawActiveActor) {
-		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, -1);
-	}
+	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 
 	if (_actionOverlayVisible) {
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
@@ -1169,7 +1156,9 @@ void SuePlayableScene::drawActionOverlayComposite() {
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[blockChunk], _sceneFramebuffer);
 }
 
-void SuePlayableScene::drawG05Composite(bool drawActiveActor) {
+void SuePlayableScene::drawG05Composite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX,
+		int activeWorldY, bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame,
+		int secondaryWorldX, int secondaryWorldY) {
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
 
 	const byte frame = _g05SecondaryActorFrame < ARRAYSIZE(kG05SecondaryActorFrameMap) ?
@@ -1177,12 +1166,10 @@ void SuePlayableScene::drawG05Composite(bool drawActiveActor) {
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[7], 0,
 		kG05Chunk7DescriptorCount, frame, _sceneFramebuffer);
 
-	if (drawActiveActor) {
-		drawActiveActorFrame(_activeActorFacing, _activeActorCel,
-			_activeActorWorldX, _activeActorWorldY, -1);
-	}
+	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 
-	const uint blockChunk = _activeActorWorldX < 0x1a4 ? 5 : 6;
+	const uint blockChunk = activeWorldX < 0x1a4 ? 5 : 6;
 	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[blockChunk], _sceneFramebuffer);
 }
 
@@ -1209,6 +1196,21 @@ void SuePlayableScene::drawPlayableComposite() {
 	drawCutsceneComposite(drawActiveActor, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
 		drawSecondaryActor, _activeActorFacing, _secondaryActorFrame, _activeActorWorldX, _activeActorWorldY,
 		_activeActorDrawOrderMode);
+}
+
+void SuePlayableScene::drawActiveAndSecondaryActorFrames(bool drawActiveActor, byte activeFacing, byte activeCel,
+		int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame,
+		int secondaryWorldX, int secondaryWorldY, int minimumYExclusive) {
+	if (drawSecondaryActor) {
+		const int secondaryActorBottomY = drawSecondaryActorFrame(secondaryFacing, secondaryFrame,
+			secondaryWorldX, secondaryWorldY);
+		if (drawActiveActor)
+			drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, secondaryActorBottomY);
+		return;
+	}
+
+	if (drawActiveActor)
+		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, minimumYExclusive);
 }
 
 void SuePlayableScene::drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex) {
@@ -1387,6 +1389,8 @@ void SuePlayableScene::prepareGameplayLoop() {
 }
 
 void SuePlayableScene::advanceGameplayLoop(uint32 delta) {
+	advanceSecondaryActorSpeechAnimation(delta);
+
 	if (advanceCustomGameplayLoop(delta))
 		return;
 
@@ -3433,6 +3437,20 @@ void SuePlayableScene::advanceG05SecondaryActorAnimation(uint32 delta) {
 		default:
 			break;
 		}
+	}
+}
+
+void SuePlayableScene::advanceSecondaryActorSpeechAnimation(uint32 delta) {
+	if (!_speechOverlay.visible) {
+		_secondaryActorFrame = 0;
+		_secondaryActorTimerAccumulator = 0;
+		return;
+	}
+
+	_secondaryActorTimerAccumulator += delta;
+	while (_secondaryActorTimerAccumulator >= kSecondaryActorSpeechFrameMillis) {
+		_secondaryActorTimerAccumulator -= kSecondaryActorSpeechFrameMillis;
+		advanceSecondaryActorSpeechFrame();
 	}
 }
 
