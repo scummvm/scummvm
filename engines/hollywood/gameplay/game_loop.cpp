@@ -25,6 +25,7 @@
 #include "common/system.h"
 
 #include "hollywood/gameplay/game_state.h"
+#include "hollywood/gameplay/options_menu.h"
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -48,6 +49,10 @@ const uint16 kGameplayInventoryTileSize = 0x40;
 const uint16 kGameplayInventoryTileStride = 0x44;
 const uint16 kGameplayInventoryPageArrowLeft = 0x25a;
 const uint16 kGameplayInventoryPageArrowRight = 0x277;
+const uint16 kGameplayInventoryOptionsButtonLeft = 7;
+const uint16 kGameplayInventoryOptionsButtonRight = 0x26;
+const uint16 kGameplayInventoryOptionsButtonTop = 0x178;
+const uint16 kGameplayInventoryOptionsButtonBottom = 0x1b0;
 const uint16 kGameplayInventoryPreviousPageArrowTop = 0x178;
 const uint16 kGameplayInventoryPreviousPageArrowBottom = 0x192;
 const uint16 kGameplayInventoryNextPageArrowTop = 0x195;
@@ -74,6 +79,10 @@ uint16 GameplayLoopDelegate::viewportYOffset() const {
 }
 
 void GameplayLoopDelegate::prepareGameplayLoop() {
+}
+
+void GameplayLoopDelegate::prepareOptionsMenuPalette(Common::Array<byte> &palette) const {
+	palette.clear();
 }
 
 bool GameplayLoopDelegate::shouldExitGameplayLoop() const {
@@ -238,6 +247,9 @@ void GameplayLoop::handleKeyDown(const Common::KeyState &keyState) {
 			selectNextKeyboardStrip();
 		}
 		break;
+	case Common::KEYCODE_ESCAPE:
+		openOptionsMenu();
+		break;
 	default:
 		break;
 	}
@@ -258,6 +270,11 @@ void GameplayLoop::handleLeftClick() {
 	if (_panelState.inventoryPanelVisible) {
 		const uint16 cursorX = _vm->cursor()->surfaceX();
 		const uint16 cursorY = _vm->cursor()->surfaceY();
+		if (isInventoryPanelOptionsButton(cursorX, cursorY)) {
+			openOptionsMenu();
+			return;
+		}
+
 		const byte stripIndex = inventoryPanelStripAt(cursorX, cursorY);
 		if (stripIndex != 0) {
 			selectPanelStrip(stripIndex);
@@ -434,6 +451,46 @@ void GameplayLoop::closeInventoryPanel() {
 	refreshHoverCaption();
 }
 
+void GameplayLoop::openOptionsMenu() {
+	const bool restoreInventoryPanel = _panelState.inventoryPanelVisible;
+	const bool restoreVerbPanel = _panelState.verbPanelVisible && !restoreInventoryPanel;
+
+	_vm->cursor()->leaveInteractiveMode();
+
+	Common::Array<byte> palette;
+	_delegate->prepareOptionsMenuPalette(palette);
+	GameplayOptionsMenu menu(_vm);
+	menu.run(palette);
+	if (Engine::shouldQuit())
+		return;
+
+	_leftButtonDown = false;
+	_rightButtonDown = false;
+	_keyboardStripMode = false;
+	_vm->cursor()->enterInteractiveMode();
+	_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
+
+	if (restoreInventoryPanel) {
+		_panelState.inventoryPanelVisible = true;
+		_panelState.verbPanelVisible = false;
+		updateInventoryPanelCaption();
+	} else if (restoreVerbPanel) {
+		_panelState.verbPanelVisible = true;
+		_panelState.inventoryPanelVisible = false;
+		updatePanelCaption();
+	} else {
+		_panelState.verbPanelVisible = false;
+		_panelState.inventoryPanelVisible = false;
+		_panelState.captionText.clear();
+		_panelState.itemName.clear();
+	}
+
+	refreshHoverCaption();
+	syncPanelState();
+	_delegate->drawGameplayFrame();
+	_delegate->presentGameplayFrame(_hoverCaption, _panelState);
+}
+
 void GameplayLoop::updatePanelHover(uint32 deltaMillis) {
 	if (!_panelState.verbPanelVisible || _keyboardStripMode)
 		return;
@@ -576,6 +633,13 @@ bool GameplayLoop::scrollInventoryPanelNextPage() {
 	firstVisibleSlot = (byte)(firstVisibleSlot + 8);
 	gameState.inventoryPanelRedrawn = true;
 	return true;
+}
+
+bool GameplayLoop::isInventoryPanelOptionsButton(uint16 cursorX, uint16 cursorY) const {
+	return cursorX > kGameplayInventoryOptionsButtonLeft &&
+		cursorX < kGameplayInventoryOptionsButtonRight &&
+		cursorY >= kGameplayInventoryOptionsButtonTop &&
+		cursorY < kGameplayInventoryOptionsButtonBottom;
 }
 
 bool GameplayLoop::isInventoryPanelPreviousPageArrow(uint16 cursorX, uint16 cursorY) const {

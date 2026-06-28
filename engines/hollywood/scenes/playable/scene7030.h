@@ -158,6 +158,7 @@ private:
 	void advanceGameplayLoop(uint32 delta) override;
 	void drawGameplayFrame() override;
 	void presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) override;
+	void prepareOptionsMenuPalette(Common::Array<byte> &palette) const override;
 	bool shouldExitGameplayLoop() const override;
 	Common::String inventoryItemName(byte owner, byte itemId) const override;
 	void handleLeftClick(const GameplayLoopCursorState &state) override;

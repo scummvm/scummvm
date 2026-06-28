@@ -76,6 +76,7 @@ public:
 	virtual void advanceGameplayLoop(uint32 deltaMillis) = 0;
 	virtual void drawGameplayFrame() = 0;
 	virtual void presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) = 0;
+	virtual void prepareOptionsMenuPalette(Common::Array<byte> &palette) const;
 	virtual bool shouldExitGameplayLoop() const;
 	virtual Common::String inventoryItemName(byte owner, byte itemId) const;
 	virtual void handleLeftClick(const GameplayLoopCursorState &state);
@@ -108,6 +109,7 @@ private:
 	void closeVerbPanel();
 	void openInventoryPanel();
 	void closeInventoryPanel();
+	void openOptionsMenu();
 	void updatePanelHover(uint32 deltaMillis);
 	void updatePanelFromMousePosition();
 	void selectPanelStrip(byte stripIndex);
@@ -118,6 +120,7 @@ private:
 	uint16 fixedInventoryActionHandler(byte owner, byte itemId, byte stripIndex) const;
 	bool scrollInventoryPanelPreviousPage();
 	bool scrollInventoryPanelNextPage();
+	bool isInventoryPanelOptionsButton(uint16 cursorX, uint16 cursorY) const;
 	bool isInventoryPanelPreviousPageArrow(uint16 cursorX, uint16 cursorY) const;
 	bool isInventoryPanelNextPageArrow(uint16 cursorX, uint16 cursorY) const;
 	void updatePanelCaption();

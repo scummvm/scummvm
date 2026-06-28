@@ -987,6 +987,11 @@ void Scene7030::presentGameplayFrame(const SceneHoverCaption &hoverCaption, cons
 	presentFrame(&hoverCaption, &panelState);
 }
 
+void Scene7030::prepareOptionsMenuPalette(Common::Array<byte> &palette) const {
+	palette = _paletteCurrent;
+	_panelArt.applyPalette(palette);
+}
+
 bool Scene7030::shouldExitGameplayLoop() const {
 	const uint16 stateId = _vm->gameState().mainFlowStateId;
 	return stateId < kG03State7030 || stateId > kG03LastInteractiveState;

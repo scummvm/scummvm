@@ -972,6 +972,11 @@ void Scene7010::presentGameplayFrame(const SceneHoverCaption &hoverCaption, cons
 	presentFrame(&hoverCaption, &panelState);
 }
 
+void Scene7010::prepareOptionsMenuPalette(Common::Array<byte> &palette) const {
+	palette = _paletteCurrent;
+	_panelArt.applyPalette(palette);
+}
+
 bool Scene7010::shouldExitGameplayLoop() const {
 	return _vm->gameState().mainFlowStateId != 0x1b62;
 }

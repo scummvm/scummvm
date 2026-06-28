@@ -32,11 +32,41 @@
 #include "hollywood/scenes/playable/scene7030.h"
 #include "hollywood/resource.h"
 
+#include "audio/mixer.h"
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 
 namespace Hollywood {
+
+const uint kHollywoodOptionsMaximumLevel = 200;
+const int kHollywoodMaximumConfigVolume = Audio::Mixer::kMaxMixerVolume;
+const int kHollywoodMaximumTalkSpeed = 255;
+
+byte hollywoodConfigVolumeToOptionsLevel(int volume) {
+	const int clippedVolume = CLIP<int>(volume, 0, kHollywoodMaximumConfigVolume);
+	return (byte)((clippedVolume * kHollywoodOptionsMaximumLevel +
+		kHollywoodMaximumConfigVolume / 2) / kHollywoodMaximumConfigVolume);
+}
+
+int hollywoodOptionsLevelToConfigVolume(byte level) {
+	const uint clippedLevel = MIN<uint>(level, kHollywoodOptionsMaximumLevel);
+	return (clippedLevel * kHollywoodMaximumConfigVolume +
+		kHollywoodOptionsMaximumLevel / 2) / kHollywoodOptionsMaximumLevel;
+}
+
+byte hollywoodConfigTalkSpeedToOptionsLevel(int talkSpeed) {
+	const int clippedTalkSpeed = CLIP<int>(talkSpeed, 0, kHollywoodMaximumTalkSpeed);
+	return (byte)((clippedTalkSpeed * kHollywoodOptionsMaximumLevel +
+		kHollywoodMaximumTalkSpeed / 2) / kHollywoodMaximumTalkSpeed);
+}
+
+int hollywoodOptionsLevelToConfigTalkSpeed(byte level) {
+	const uint clippedLevel = MIN<uint>(level, kHollywoodOptionsMaximumLevel);
+	return (clippedLevel * kHollywoodMaximumTalkSpeed +
+		kHollywoodOptionsMaximumLevel / 2) / kHollywoodOptionsMaximumLevel;
+}
 
 HollywoodEngine::HollywoodEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		Engine(syst),
@@ -56,6 +86,7 @@ HollywoodEngine::~HollywoodEngine() {
 Common::Error HollywoodEngine::run() {
 	initGraphics(kScreenWidth, kScreenHeight);
 
+	syncSoundSettings();
 	_font->load();
 
 	debugC(1, kDebugGeneral, "Hollywood Monsters engine initialized");
@@ -105,6 +136,49 @@ Common::Error HollywoodEngine::run() {
 
 bool HollywoodEngine::hasFeature(EngineFeature f) const {
 	return f == kSupportsReturnToLauncher || f == kSupportsSubtitleOptions;
+}
+
+void HollywoodEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	const bool globalMute = ConfMan.hasKey("mute") && ConfMan.getBool("mute");
+	const bool musicMuted = ConfMan.getBool("music_mute");
+	const bool sfxMuted = ConfMan.getBool("sfx_mute");
+	const bool speechMuted = ConfMan.getBool("speech_mute");
+	bool subtitlesEnabled = ConfMan.getBool("subtitles");
+	if (speechMuted && !subtitlesEnabled) {
+		ConfMan.setBool("subtitles", true);
+		subtitlesEnabled = true;
+	}
+
+	_gameState.musicEnabled = !musicMuted;
+	_gameState.soundEffectsEnabled = !sfxMuted;
+	_gameState.musicVolumeLevel = hollywoodConfigVolumeToOptionsLevel(ConfMan.getInt("music_volume"));
+	_gameState.soundEffectsVolumeLevel = hollywoodConfigVolumeToOptionsLevel(ConfMan.getInt("sfx_volume"));
+	_gameState.voiceVolumeLevel = hollywoodConfigVolumeToOptionsLevel(ConfMan.getInt("speech_volume"));
+	_gameState.speechTextSpeedLevel = hollywoodConfigTalkSpeedToOptionsLevel(ConfMan.getInt("talkspeed"));
+	if (speechMuted)
+		_gameState.actorSpeechTextMode = 2;
+	else
+		_gameState.actorSpeechTextMode = subtitlesEnabled ? 1 : 0;
+
+	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, globalMute || musicMuted);
+	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, globalMute || sfxMuted);
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, globalMute || speechMuted);
+}
+
+void HollywoodEngine::syncSoundSettingsFromGameState() {
+	const GameplayState &state = _gameState;
+	ConfMan.setBool("music_mute", !state.musicEnabled);
+	ConfMan.setBool("sfx_mute", !state.soundEffectsEnabled);
+	ConfMan.setInt("music_volume", hollywoodOptionsLevelToConfigVolume(state.musicVolumeLevel));
+	ConfMan.setInt("sfx_volume", hollywoodOptionsLevelToConfigVolume(state.soundEffectsVolumeLevel));
+	ConfMan.setInt("speech_volume", hollywoodOptionsLevelToConfigVolume(state.voiceVolumeLevel));
+	ConfMan.setInt("talkspeed", hollywoodOptionsLevelToConfigTalkSpeed(state.speechTextSpeedLevel));
+	ConfMan.setBool("subtitles", state.actorSpeechTextMode != 0);
+	ConfMan.setBool("speech_mute", state.actorSpeechTextMode == 2);
+
+	syncSoundSettings();
 }
 
 const char *HollywoodEngine::getGameId() const {
