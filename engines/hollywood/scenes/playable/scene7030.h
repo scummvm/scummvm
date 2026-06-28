@@ -162,6 +162,9 @@ private:
 	void prepareOptionsMenuPalette(Common::Array<byte> &palette) const override;
 	bool shouldExitGameplayLoop() const override;
 	Common::String inventoryItemName(byte owner, byte itemId) const override;
+	void beginSharedInventorySpeechLine(uint16 rowIndex, byte frameIndex) override;
+	byte randomSharedInventorySpeechFrame(byte maxFrameIndex) override;
+	void playSharedInventorySound(byte sampleId) override;
 	void handleLeftClick(const GameplayLoopCursorState &state) override;
 	void handleInventoryItemClick(const GameplayLoopCursorState &state) override;
 	void updateAmbientAudioAndMusicCues(uint32 delta);

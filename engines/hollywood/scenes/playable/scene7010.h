@@ -158,6 +158,9 @@ private:
 	void presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) override;
 	void prepareOptionsMenuPalette(Common::Array<byte> &palette) const override;
 	bool shouldExitGameplayLoop() const override;
+	Common::String inventoryItemName(byte owner, byte itemId) const override;
+	void beginSharedInventorySpeechLine(uint16 rowIndex, byte frameIndex) override;
+	byte randomSharedInventorySpeechFrame(byte maxFrameIndex) override;
 	void handleLeftClick(const GameplayLoopCursorState &state) override;
 	void handleInventoryItemClick(const GameplayLoopCursorState &state) override;
 	void advanceChunk8Cycle();
@@ -264,6 +267,7 @@ private:
 	Common::Array<byte> _stage003SmallRows;
 	Common::Array<byte> _stage003LargeRows;
 	Common::Array<byte> _owner1SpeechCueDescriptors;
+	Common::Array<byte> _owner1SmallRows;
 	Common::Array<byte> _owner1LargeRows;
 	Common::Array<ScenePoint> _routeBoundaryPoints;
 	Common::Array<byte> _routeSteps;
