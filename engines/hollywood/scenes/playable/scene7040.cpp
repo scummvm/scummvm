@@ -897,6 +897,48 @@ void Scene7040::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, b
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[blockChunk], _sceneFramebuffer);
 }
 
+void Scene7040::drawActionOverlayComposite() {
+	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
+
+	if (_chunk12OverlayVisible) {
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[12], 0,
+			kG04Chunk12DescriptorCount, _chunk12FrameIndex, _sceneFramebuffer);
+	}
+
+	if (_vm->gameState().g01Item0BSequenceCompleted) {
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[17], 0,
+			kG04Chunk17DescriptorCount, _chunk17FrameIndex, _sceneFramebuffer);
+		const byte frame = _chunk16FrameIndex < ARRAYSIZE(kG04Chunk16PostItemFrameMap) ?
+			kG04Chunk16PostItemFrameMap[_chunk16FrameIndex] : 0;
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[16], 0,
+			kG04Chunk16DescriptorCount, frame, _sceneFramebuffer);
+		if (_actionOverlayVisible) {
+			drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
+				_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
+		}
+	} else {
+		if (_actionOverlayVisible) {
+			drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
+				_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
+		}
+		const byte frame = _chunk11FrameIndex < ARRAYSIZE(kG04Chunk11FrameMap) ?
+			kG04Chunk11FrameMap[_chunk11FrameIndex] : 0;
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[11], 0,
+			kG04Chunk11DescriptorCount, frame, _sceneFramebuffer);
+	}
+
+	uint blockChunk = 5;
+	if (_activeActorDrawOrderMode == 2 || _activeActorDrawOrderMode == 3) {
+		blockChunk = _activeActorWorldY <= 0x15f ? 6 : 0;
+	} else if (_activeActorDrawOrderMode == 6) {
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _sceneFramebuffer);
+		blockChunk = _vm->gameState().g04PatchState == 1 ? 9 : 0;
+	}
+	if (blockChunk != 0)
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[blockChunk], _sceneFramebuffer);
+}
+
 void Scene7040::drawPlayableComposite() {
 	const bool drawActiveActor = !_hideActiveActor;
 	drawCutsceneComposite(drawActiveActor, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
@@ -1952,7 +1994,10 @@ bool Scene7040::waitSceneMillis(uint32 millis) {
 		const uint32 slice = MIN<uint32>(remaining, 10);
 		g_system->delayMillis(slice);
 		advanceGameplayLoop(slice);
-		drawPlayableComposite();
+		if (_actionOverlayVisible)
+			drawActionOverlayComposite();
+		else
+			drawPlayableComposite();
 		presentFrame();
 		remaining -= slice;
 	}

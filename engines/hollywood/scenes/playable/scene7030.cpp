@@ -802,6 +802,31 @@ void Scene7030::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, b
 	}
 }
 
+void Scene7030::drawActionOverlayComposite() {
+	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
+
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
+		kG03Chunk6DescriptorCount, _chunk6IdleFrameA, _sceneFramebuffer);
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
+		kG03Chunk6DescriptorCount, _chunk6IdleFrameB, _sceneFramebuffer);
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
+		kG03Chunk6DescriptorCount, _chunk6IdleFrameC, _sceneFramebuffer);
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
+		kG03Chunk6DescriptorCount, _chunk6IdleFrameD, _sceneFramebuffer);
+
+	if (_sceneStateFlags[0] != 0) {
+		const byte frame = _chunk5FrameIndex < ARRAYSIZE(kG03Chunk5FrameMap) ?
+			kG03Chunk5FrameMap[_chunk5FrameIndex] : 0;
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[5], 0,
+			kG03Chunk5DescriptorCount, frame, _sceneFramebuffer);
+	}
+
+	if (_actionOverlayVisible) {
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
+			_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
+	}
+}
+
 void Scene7030::drawPlayableComposite() {
 	const bool drawSecondaryActor = _speechOverlay.visible;
 	drawCutsceneComposite(true, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
@@ -1860,7 +1885,10 @@ bool Scene7030::waitSceneMillis(uint32 millis) {
 		const uint32 slice = MIN<uint32>(remaining, 10);
 		g_system->delayMillis(slice);
 		advanceGameplayLoop(slice);
-		drawPlayableComposite();
+		if (_actionOverlayVisible)
+			drawActionOverlayComposite();
+		else
+			drawPlayableComposite();
 		presentFrame();
 		remaining -= slice;
 	}

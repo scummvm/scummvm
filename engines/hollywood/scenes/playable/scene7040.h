@@ -142,6 +142,7 @@ private:
 	void drawCutsceneComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode = 0);
+	void drawActionOverlayComposite();
 	void drawPlayableComposite();
 	void drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY, int minimumYExclusive);
 	int drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY);
