@@ -209,14 +209,8 @@ void Scene7030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	}
 
 	updateActorDepthThresholds(actorDrawOrderMode);
-	if (drawSecondaryActor) {
-		const int secondaryActorBottomY = drawSecondaryActorFrame(secondaryFacing, secondaryFrame,
-			secondaryWorldX, secondaryWorldY);
-		if (drawActiveActor)
-			drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, secondaryActorBottomY);
-	} else if (drawActiveActor) {
-		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, -1);
-	}
+	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 
 	if (_actionOverlayVisible) {
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
@@ -254,12 +248,6 @@ bool Scene7030::advanceCustomGameplayLoop(uint32 delta) {
 	while (_chunk6TimerAccumulator >= kScene7030Chunk6FrameMillis) {
 		_chunk6TimerAccumulator -= kScene7030Chunk6FrameMillis;
 		advanceChunk6IdleFrames();
-	}
-
-	_secondaryActorTimerAccumulator += delta;
-	while (_secondaryActorTimerAccumulator >= kScene7030SecondaryActorFrameMillis) {
-		_secondaryActorTimerAccumulator -= kScene7030SecondaryActorFrameMillis;
-		advanceSecondaryActorSpeechFrame();
 	}
 
 	if (_primaryLeftSpeechActive) {
