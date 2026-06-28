@@ -340,6 +340,8 @@ void Scene7070::updateSceneAmbientAudioAndMusicCues(uint32 delta) {
 
 void Scene7070::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame, int soundFrame, byte soundId) {
+	const bool previousHideActiveActor = _hideActiveActor;
+	_hideActiveActor = true;
 	_actionOverlayVisible = true;
 	_actionOverlayChunkIndex = (byte)chunkIndex;
 	_actionOverlayDescriptorCount = (byte)descriptorCount;
@@ -354,6 +356,7 @@ void Scene7070::runOverlaySequence(uint chunkIndex, uint descriptorCount, const 
 	}
 	_actionOverlayVisible = false;
 	_actionOverlayFrameIndex = 0;
+	_hideActiveActor = previousHideActiveActor;
 	drawPlayableComposite();
 	presentFrame();
 }
