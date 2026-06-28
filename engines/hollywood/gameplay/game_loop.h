@@ -41,9 +41,12 @@ struct GameplayLoopCursorState {
 	byte currentStrip;
 	byte requestedStrip;
 	byte resolvedItem;
+	byte inventoryOwner;
+	uint16 inventoryActionHandlerId;
 	byte relationMode;
 	byte primaryInventoryItem;
 	bool relationModeActive;
+	bool inventoryItemSelected;
 };
 
 struct GameplayPanelState {
@@ -74,7 +77,9 @@ public:
 	virtual void drawGameplayFrame() = 0;
 	virtual void presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) = 0;
 	virtual bool shouldExitGameplayLoop() const;
+	virtual Common::String inventoryItemName(byte owner, byte itemId) const;
 	virtual void handleLeftClick(const GameplayLoopCursorState &state);
+	virtual void handleInventoryItemClick(const GameplayLoopCursorState &state);
 	virtual void handleRightClick(const GameplayLoopCursorState &state);
 };
 
@@ -107,10 +112,19 @@ private:
 	void updatePanelFromMousePosition();
 	void selectPanelStrip(byte stripIndex);
 	byte panelStripAt(uint16 cursorX, uint16 cursorY) const;
+	byte inventoryPanelStripAt(uint16 cursorX, uint16 cursorY) const;
 	byte inventoryItemAtPanelPosition(uint16 cursorX, uint16 cursorY) const;
+	byte currentInventoryOwner() const;
+	uint16 fixedInventoryActionHandler(byte owner, byte itemId, byte stripIndex) const;
+	bool scrollInventoryPanelPreviousPage();
+	bool scrollInventoryPanelNextPage();
+	bool isInventoryPanelPreviousPageArrow(uint16 cursorX, uint16 cursorY) const;
+	bool isInventoryPanelNextPageArrow(uint16 cursorX, uint16 cursorY) const;
 	void updatePanelCaption();
+	void updateInventoryPanelCaption();
 	void syncPanelState();
 	GameplayLoopCursorState makeCursorState() const;
+	GameplayLoopCursorState makeInventoryItemState(byte owner, byte itemId, uint16 actionHandlerId) const;
 	void refreshHoverCaption();
 
 	HollywoodEngine *_vm;

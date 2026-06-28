@@ -30,9 +30,11 @@ struct GameplayState {
 	enum {
 		kInventoryOwnerCount = 2,
 		kInventoryOwnerSlotStride = 0x79,
+		kInventoryVerbCount = 8,
 		kInventoryFirstSlot = 1,
 		kInventoryLastSlot = kInventoryOwnerSlotStride - 1,
-		kInventoryVisibleSlotCount = 16
+		kInventoryVisibleSlotCount = 16,
+		kFixedInventoryActionTableEntryCount = kInventoryOwnerSlotStride * kInventoryVerbCount + 1
 	};
 
 	GameplayState() {
@@ -52,6 +54,8 @@ struct GameplayState {
 				inventoryItemSlotByOwnerAndItemId[owner][slot] = 0;
 			}
 		}
+		for (uint i = 0; i < kFixedInventoryActionTableEntryCount; ++i)
+			fixedInventoryVerbHandlerIdsByItemAndStrip[i] = 0;
 		actorSpriteBankSet00Loaded = false;
 		inventoryOwner1ResourceTablesLoaded = false;
 		inventoryOwner1ItemsInitialized = false;
@@ -135,6 +139,18 @@ struct GameplayState {
 		return (byte)(((itemCount - 9) & ~7) + 1);
 	}
 
+	uint16 fixedInventoryVerbHandler(byte owner, byte itemId, byte stripIndex) const {
+		if (owner != 1 || itemId >= kInventoryOwnerSlotStride || stripIndex == 0 ||
+				stripIndex > kInventoryVerbCount)
+			return 0;
+
+		const uint index = (uint)itemId * kInventoryVerbCount + stripIndex;
+		if (index >= kFixedInventoryActionTableEntryCount)
+			return 0;
+
+		return fixedInventoryVerbHandlerIdsByItemAndStrip[index];
+	}
+
 	uint16 mainFlowStateId;
 	byte activeChapterAudioArchiveIndex;
 	byte currentInventoryOwnerIndex;
@@ -143,6 +159,7 @@ struct GameplayState {
 	byte inventoryFirstVisibleSlotByOwner[kInventoryOwnerCount];
 	byte inventorySlotItemIdByOwner[kInventoryOwnerCount][kInventoryOwnerSlotStride];
 	byte inventoryItemSlotByOwnerAndItemId[kInventoryOwnerCount][kInventoryOwnerSlotStride];
+	uint16 fixedInventoryVerbHandlerIdsByItemAndStrip[kFixedInventoryActionTableEntryCount];
 	bool actorSpriteBankSet00Loaded;
 	bool inventoryOwner1ResourceTablesLoaded;
 	bool inventoryOwner1ItemsInitialized;

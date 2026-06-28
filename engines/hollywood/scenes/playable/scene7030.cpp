@@ -79,6 +79,8 @@ const int kG03Entry7031StartX = 0x60;
 const int kG03Entry7031StartY = 0x10e;
 const int kG03Entry7031TargetX = 0x133;
 const int kG03Entry7031TargetY = 0x134;
+const uint kResource000InventoryActionTablesEntry = 0xc8;
+const uint kResource000FixedInventoryVerbTableOffset = 0xec54;
 const uint32 kG03ActorPathFrameMillis = 60;
 const uint32 kG03SecondaryActorFrameMillis = 150;
 const uint32 kG03Chunk5FrameMillis = 75;
@@ -214,7 +216,8 @@ bool Scene7030::play() {
 
 bool Scene7030::load() {
 	if (!loadResource000RuntimeTables(_resource000OffsetTable, _resource000SizeTable) ||
-			!loadResource000ActorBankSet00(_resource000OffsetTable, _resource000SizeTable))
+			!loadResource000ActorBankSet00(_resource000OffsetTable, _resource000SizeTable) ||
+			!loadResource000InventoryActionTables(_resource000OffsetTable))
 		return false;
 	if (!_panelArt.load())
 		return false;
@@ -425,6 +428,43 @@ bool Scene7030::loadResource000Owner1ActorPalette(const Common::Array<byte> &off
 	return true;
 }
 
+bool Scene7030::loadResource000InventoryActionTables(const Common::Array<byte> &offsetTable) {
+	if (kResource000InventoryActionTablesEntry + 4 > offsetTable.size()) {
+		warning("%s inventory action table entry is out of range", kResource000Name);
+		return false;
+	}
+
+	Common::File file;
+	if (!file.open(Common::Path(kResource000Name))) {
+		warning("Failed to open %s inventory action tables", kResource000Name);
+		return false;
+	}
+
+	const uint32 tableOffset = readUint32LE(offsetTable, kResource000InventoryActionTablesEntry);
+	const uint32 fixedTableOffset = tableOffset + kResource000FixedInventoryVerbTableOffset;
+	const uint fixedTableEntryCount = GameplayState::kFixedInventoryActionTableEntryCount - 1;
+	if (fixedTableOffset > (uint32)file.size() ||
+			fixedTableEntryCount * 2 > (uint32)file.size() - fixedTableOffset) {
+		warning("%s fixed inventory action table is out of range", kResource000Name);
+		return false;
+	}
+
+	GameplayState &state = _vm->gameState();
+	for (uint i = 0; i < GameplayState::kFixedInventoryActionTableEntryCount; ++i)
+		state.fixedInventoryVerbHandlerIdsByItemAndStrip[i] = 0;
+
+	file.seek(fixedTableOffset);
+	for (uint i = 1; i < GameplayState::kFixedInventoryActionTableEntryCount; ++i)
+		state.fixedInventoryVerbHandlerIdsByItemAndStrip[i] = file.readUint16LE();
+	if (file.err()) {
+		warning("Failed to read %s fixed inventory action table", kResource000Name);
+		return false;
+	}
+
+	state.inventoryOwner1ResourceTablesLoaded = true;
+	return true;
+}
+
 bool Scene7030::loadStage003SceneRows() {
 	Common::File file;
 	if (!file.open(Common::Path(kStage003ArchiveName))) {
@@ -473,12 +513,23 @@ bool Scene7030::loadStage003SceneRows() {
 		return false;
 	}
 
+	_owner1SmallRows.resize((uint32)(owner1SmallRowCount + 1) * kStage003SmallRowSize);
+	memset(_owner1SmallRows.data(), 0, _owner1SmallRows.size());
 	_owner1LargeRows.resize((uint32)(owner1LargeRowCount + 1) * kStage003LargeRowSize);
 	memset(_owner1LargeRows.data(), 0, _owner1LargeRows.size());
-	file.seek(owner1RowsOffset + owner1SmallRowBytes);
+	file.seek(owner1RowsOffset);
+	if (file.read(_owner1SmallRows.data() + kStage003SmallRowSize, owner1SmallRowBytes) != owner1SmallRowBytes) {
+		warning("Failed to read %s owner 1 small text rows", kStage003ArchiveName);
+		return false;
+	}
 	if (file.read(_owner1LargeRows.data() + kStage003LargeRowSize, owner1LargeRowBytes) != owner1LargeRowBytes) {
 		warning("Failed to read %s owner 1 large text rows", kStage003ArchiveName);
 		return false;
+	}
+
+	for (uint row = 1; row <= owner1SmallRowCount; ++row) {
+		for (uint column = 0; column < kStage003SmallRowSize; ++column)
+			_owner1SmallRows[row * kStage003SmallRowSize + column] -= _stage003DecodeKey[column];
 	}
 
 	for (uint row = 1; row <= owner1LargeRowCount; ++row) {
@@ -941,9 +992,35 @@ bool Scene7030::shouldExitGameplayLoop() const {
 	return stateId < kG03State7030 || stateId > kG03LastInteractiveState;
 }
 
+Common::String Scene7030::inventoryItemName(byte owner, byte itemId) const {
+	if (owner != 1)
+		return Common::String();
+
+	const uint offset = (uint)itemId * kStage003SmallRowSize;
+	if (offset >= _owner1SmallRows.size())
+		return Common::String();
+
+	const byte *row = _owner1SmallRows.data() + offset;
+	uint length = 0;
+	while (offset + length < _owner1SmallRows.size() &&
+			length < kStage003SmallRowSize && row[length] != 0)
+		++length;
+
+	return Common::String((const char *)row, length);
+}
+
 void Scene7030::handleLeftClick(const GameplayLoopCursorState &state) {
 	_vm->cursor()->leaveInteractiveMode();
 	processSceneActionClick(state);
+	if (!Engine::shouldQuit() && !shouldExitGameplayLoop()) {
+		_vm->cursor()->enterInteractiveMode();
+		_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
+	}
+}
+
+void Scene7030::handleInventoryItemClick(const GameplayLoopCursorState &state) {
+	_vm->cursor()->leaveInteractiveMode();
+	dispatchSceneAction(state.inventoryActionHandlerId);
 	if (!Engine::shouldQuit() && !shouldExitGameplayLoop()) {
 		_vm->cursor()->enterInteractiveMode();
 		_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
@@ -1062,8 +1139,32 @@ void Scene7030::dispatchSceneAction(uint16 handlerId) {
 	case 0:
 	case 1:
 		break;
+	case 2:
+		beginStaticSecondarySpeechLine(1, (byte)_random.getRandomNumber(1));
+		break;
 	case 3:
 		beginStaticSecondarySpeechLine(2, 0);
+		break;
+	case 4:
+		beginStaticSecondarySpeechLine(3, (byte)_random.getRandomNumber(1));
+		break;
+	case 5:
+	{
+		const byte variant = (byte)_random.getRandomNumber(2);
+		if (variant == 2)
+			beginStaticSecondarySpeechLine(3, 1);
+		else
+			beginStaticSecondarySpeechLine(4, variant);
+		break;
+	}
+	case 6:
+		beginStaticSecondarySpeechLine(5, 0);
+		break;
+	case 7:
+		beginStaticSecondarySpeechLine(6, (byte)_random.getRandomNumber(1));
+		break;
+	case 8:
+		beginStaticSecondarySpeechLine(7, 0);
 		break;
 	case 9:
 		beginStaticSecondarySpeechLine(8, 0);
@@ -1071,17 +1172,89 @@ void Scene7030::dispatchSceneAction(uint16 handlerId) {
 	case 10:
 		beginStaticSecondarySpeechLine(9, (byte)_random.getRandomNumber(1));
 		break;
+	case 11:
+		beginStaticSecondarySpeechLine(0x0a, 0);
+		break;
+	case 12:
+		beginStaticSecondarySpeechLine(0x0b, 0);
+		break;
 	case 13:
 		beginStaticSecondarySpeechLine(0x0c, (byte)_random.getRandomNumber(1));
+		break;
+	case 14:
+		beginStaticSecondarySpeechLine(0x0d, (byte)_random.getRandomNumber(1));
+		break;
+	case 15:
+		beginStaticSecondarySpeechLine(0x0e, 0);
+		break;
+	case 16:
+		beginStaticSecondarySpeechLine(0x0f, (byte)_random.getRandomNumber(2));
+		break;
+	case 17:
+		beginStaticSecondarySpeechLine(0x10, 0);
 		break;
 	case 18:
 		beginStaticSecondarySpeechLine(0x11, (byte)_random.getRandomNumber(1));
 		break;
+	case 19:
+		beginStaticSecondarySpeechLine(0x12, (byte)_random.getRandomNumber(2));
+		break;
 	case 20:
 		beginStaticSecondarySpeechLine(0x13, 0);
 		break;
+	case 21:
+		beginStaticSecondarySpeechLine(0x14, 0);
+		break;
+	case 22:
+		beginStaticSecondarySpeechLine(0x15, 0);
+		break;
+	case 23:
+		beginStaticSecondarySpeechLine(0x16, (byte)_random.getRandomNumber(1));
+		break;
 	case 24:
 		beginStaticSecondarySpeechLine(0x17, (byte)_random.getRandomNumber(1));
+		break;
+	case 25:
+		beginStaticSecondarySpeechLine(0x18, (byte)_random.getRandomNumber(1));
+		break;
+	case 26:
+		beginStaticSecondarySpeechLine(0x19, 0);
+		break;
+	case 27:
+		beginStaticSecondarySpeechLine(0x1a, 0);
+		break;
+	case 28:
+		beginStaticSecondarySpeechLine(0x1b, 0);
+		break;
+	case 29:
+		beginStaticSecondarySpeechLine(0x1c, 0);
+		break;
+	case 30:
+		beginStaticSecondarySpeechLine(0x1d, 0);
+		break;
+	case 31:
+		beginStaticSecondarySpeechLine(0x1e, 0);
+		break;
+	case 32:
+		beginStaticSecondarySpeechLine(0x1f, 0);
+		break;
+	case 33:
+		beginStaticSecondarySpeechLine(0x20, 0);
+		break;
+	case 34:
+		beginStaticSecondarySpeechLine(0x21, 0);
+		break;
+	case 36:
+		beginStaticSecondarySpeechLine(0x23, 0);
+		break;
+	case 38:
+		beginStaticSecondarySpeechLine(0x25, 0);
+		break;
+	case 39:
+		beginStaticSecondarySpeechLine(0x26, 0);
+		break;
+	case 40:
+		beginStaticSecondarySpeechLine(0x27, 0);
 		break;
 	case 301:
 		handleActionSlot00TransitionToG04();
