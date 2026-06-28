@@ -30,6 +30,7 @@
 #include "graphics/surface.h"
 
 #include "hollywood/font.h"
+#include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -41,11 +42,18 @@ const char *const kPanelPaletteResourceName = "obj_pal";
 const uint kPanelResource000HeaderByteCount = 1;
 const uint kPanelResource000OffsetTableSize = 400;
 const uint kPanelResource000SizeTableSize = 400;
+const uint kPanelInventoryItemPagesResourceEntry = 0x2b;
 const uint kPanelStartupResourceEntry = 0x2c;
 const uint kPanelStartupPrecedingBlockCount = 3;
 const uint kPanelBottomBufferWidth = 640;
 const uint kPanelBottomBufferRows = 0xbd;
 const uint kPanelResourceSourceStride = 1024;
+const uint kPanelInventoryTilePageCount = 0x100;
+const uint kPanelInventoryTilePageSize = 0x1000;
+const uint16 kPanelInventoryGridLeft = 0x32;
+const uint16 kPanelInventoryGridTop = 0x152;
+const uint16 kPanelInventoryTileSize = 0x40;
+const uint16 kPanelInventoryTileStride = 0x44;
 const uint kPanelObjectPaletteOffset = 0x210;
 const uint kPanelObjectPaletteSize = 0xf0;
 const uint kPanelObjectPaletteObjectOnlySize = 0x60;
@@ -71,7 +79,45 @@ const char *const kPanelVerbStripLabels[9] = {
 	"", "", "Hablar", "Coger", "Mirar", "Usar", "Abrir", "Cerrar", "Dar"
 };
 
+struct InventoryItemPageMapEntry {
+	byte itemId;
+	byte pageIndex;
+};
+
+const InventoryItemPageMapEntry kOwner1InventoryItemPageMap[] = {
+	{ 0x01, 0x6f },
+	{ 0x02, 0x7c },
+	{ 0x05, 0x7a },
+	{ 0x06, 0x78 },
+	{ 0x07, 0x06 },
+	{ 0x08, 0x76 },
+	{ 0x09, 0x77 },
+	{ 0x0b, 0x74 },
+	{ 0x0c, 0x71 },
+	{ 0x0d, 0x72 },
+	{ 0x0f, 0x70 },
+	{ 0x10, 0x75 },
+	{ 0x11, 0x73 },
+	{ 0x13, 0x79 },
+	{ 0x14, 0x65 },
+	{ 0x15, 0x6b },
+	{ 0x16, 0x55 },
+	{ 0x17, 0x03 },
+	{ 0x18, 0x61 },
+	{ 0x19, 0x26 },
+	{ 0x1a, 0x68 },
+	{ 0x1b, 0x2f },
+	{ 0x1c, 0x3f },
+	{ 0x1d, 0x14 },
+	{ 0x1e, 0x29 },
+	{ 0x1f, 0x4a },
+	{ 0x20, 0x52 },
+	{ 0x21, 0x4b },
+	{ 0x22, 0x7b }
+};
+
 GameplayPanelArt::GameplayPanelArt() :
+		_inventoryItemPageBaseOffset(0),
 		_loaded(false) {
 }
 
@@ -117,10 +163,15 @@ bool GameplayPanelArt::loadBottomPanelBuffer() {
 
 	const uint tableEntryOffset = kPanelStartupResourceEntry * 4;
 	if (tableEntryOffset + (kPanelStartupPrecedingBlockCount + 1) * 4 > offsetTable.size() ||
-			tableEntryOffset + kPanelStartupPrecedingBlockCount * 4 > sizeTable.size()) {
+			tableEntryOffset + kPanelStartupPrecedingBlockCount * 4 > sizeTable.size() ||
+			kPanelInventoryItemPagesResourceEntry * 4 + 4 > offsetTable.size()) {
 		warning("%s startup table is too short for Hollywood bottom-panel art", kPanelResource000Name);
 		return false;
 	}
+
+	_inventoryItemPageBaseOffset =
+		READ_LE_UINT32(offsetTable.data() + kPanelInventoryItemPagesResourceEntry * 4);
+	_inventoryItemTilePages.resize(kPanelInventoryTilePageCount);
 
 	uint32 panelOffset = READ_LE_UINT32(offsetTable.data() + tableEntryOffset);
 	for (uint i = 0; i < kPanelStartupPrecedingBlockCount; ++i)
@@ -163,6 +214,36 @@ bool GameplayPanelArt::loadObjectPalette() {
 		_objectPaletteTriples.size();
 }
 
+bool GameplayPanelArt::loadInventoryItemTilePage(byte pageIndex, Common::Array<byte> &page) const {
+	if (_inventoryItemPageBaseOffset == 0)
+		return false;
+	if (!page.empty())
+		return page.size() == kPanelInventoryTilePageSize;
+
+	Common::File file;
+	if (!file.open(Common::Path(kPanelResource000Name))) {
+		warning("Failed to open %s for Hollywood inventory item art", kPanelResource000Name);
+		return false;
+	}
+
+	const uint32 pageOffset = _inventoryItemPageBaseOffset + (uint32)pageIndex * kPanelInventoryTilePageSize;
+	if (pageOffset > (uint32)file.size() ||
+			kPanelInventoryTilePageSize > (uint32)file.size() - pageOffset) {
+		warning("%s inventory item page %u is out of range", kPanelResource000Name, pageIndex);
+		return false;
+	}
+
+	page.resize(kPanelInventoryTilePageSize);
+	file.seek(pageOffset);
+	if (file.read(page.data(), page.size()) != page.size()) {
+		warning("Failed to read Hollywood inventory item page %u", pageIndex);
+		page.clear();
+		return false;
+	}
+
+	return true;
+}
+
 bool GameplayPanelArt::applyPalette(Common::Array<byte> &palette) const {
 	if (_objectPaletteTriples.size() != kPanelObjectPaletteSize ||
 			palette.size() < kPanelObjectPaletteOffset + kPanelObjectPaletteObjectOnlySize)
@@ -188,13 +269,14 @@ void GameplayPanelArt::drawVerbPanel(Graphics::Surface &surface, const Common::A
 
 void GameplayPanelArt::drawDialogueInventoryPanel(Graphics::Surface &surface,
 		const Common::Array<byte> &savedFramebuffer, uint16 viewportXOffset, uint16 viewportYOffset,
-		const GameplayPanelState &panelState, HollywoodFont *font) const {
+		const GameplayPanelState &panelState, const GameplayState &gameState, HollywoodFont *font) const {
 	if (!_loaded)
 		return;
 
 	copySavedCaptionBand(surface, savedFramebuffer, viewportXOffset, viewportYOffset, kPanelDialogueCaptionY);
 	copyBottomPanelRows(surface, 0, kPanelDialogueContentY,
 		HollywoodEngine::kScreenHeight - kPanelDialogueContentY);
+	drawInventoryItems(surface, gameState);
 	drawVerbStripLabels(surface, kPanelDialogueContentY, font);
 	applySelectedVerbStrip(surface, kPanelDialogueContentY, panelState.currentStrip);
 	drawCaptionText(surface, panelState.captionText, kPanelDialogueCaptionY, font);
@@ -234,6 +316,53 @@ void GameplayPanelArt::copyBottomPanelRows(Graphics::Surface &surface, uint16 so
 
 		memcpy(surface.getBasePtr(0, targetY), _bottomPanelBuffer.data() + sourceOffset,
 			kPanelBottomBufferWidth);
+	}
+}
+
+void GameplayPanelArt::drawInventoryItems(Graphics::Surface &surface, const GameplayState &gameState) const {
+	if (surface.format.bytesPerPixel != 1)
+		return;
+
+	const byte owner = gameState.currentInventoryOwnerIndex;
+	if (owner >= GameplayState::kInventoryOwnerCount)
+		return;
+
+	byte firstVisibleSlot = gameState.inventoryFirstVisibleSlotByOwner[owner];
+	if (firstVisibleSlot == 0)
+		firstVisibleSlot = GameplayState::kInventoryFirstSlot;
+
+	for (byte visibleSlot = 0; visibleSlot < GameplayState::kInventoryVisibleSlotCount; ++visibleSlot) {
+		const uint slot = firstVisibleSlot + visibleSlot;
+		if (slot >= GameplayState::kInventoryOwnerSlotStride ||
+				slot > gameState.inventoryItemCountByOwner[owner])
+			continue;
+
+		const byte itemId = gameState.inventorySlotItemIdByOwner[owner][slot];
+		if (itemId == 0)
+			continue;
+
+		byte pageIndex = 0;
+		if (owner == 1)
+			pageIndex = inventoryOwner1ItemPage(itemId);
+		if (pageIndex == 0)
+			continue;
+
+		Common::Array<byte> &page = _inventoryItemTilePages[pageIndex];
+		if (!loadInventoryItemTilePage(pageIndex, page))
+			continue;
+
+		const int targetX = kPanelInventoryGridLeft + (visibleSlot % 8) * kPanelInventoryTileStride;
+		const int targetY = kPanelInventoryGridTop + (visibleSlot / 8) * kPanelInventoryTileStride;
+		for (uint row = 0; row < kPanelInventoryTileSize; ++row) {
+			const int y = targetY + row;
+			if (y < 0 || y >= surface.h)
+				continue;
+
+			byte *destination = (byte *)surface.getBasePtr(targetX, y);
+			const byte *source = page.data() + row * kPanelInventoryTileSize;
+			for (uint column = 0; column < kPanelInventoryTileSize && targetX + (int)column < surface.w; ++column)
+				destination[column] = source[column];
+		}
 	}
 }
 
@@ -281,6 +410,15 @@ void GameplayPanelArt::applySelectedVerbStrip(Graphics::Surface &surface, int sc
 				pixels[column] += kPanelSelectedColorDelta;
 		}
 	}
+}
+
+byte GameplayPanelArt::inventoryOwner1ItemPage(byte itemId) const {
+	for (uint i = 0; i < ARRAYSIZE(kOwner1InventoryItemPageMap); ++i) {
+		if (kOwner1InventoryItemPageMap[i].itemId == itemId)
+			return kOwner1InventoryItemPageMap[i].pageIndex;
+	}
+
+	return 0;
 }
 
 } // End of namespace Hollywood

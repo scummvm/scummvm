@@ -50,6 +50,7 @@ const uint16 kG03Chunk6DescriptorCount = 0x10;
 const uint16 kG03Chunk7DescriptorCount = 0x0d;
 const uint16 kG03Chunk10DescriptorCount = 0x0a;
 const uint16 kG03Chunk11DescriptorCount = 0x20;
+const uint kG03RelationRecordSize = 4;
 const byte kG03AmbientMusicCueStillFrame = 0x0f;
 const uint16 kG03State7030 = 0x1b76;
 const uint16 kG03State7031 = 0x1b77;
@@ -950,7 +951,10 @@ void Scene7030::handleLeftClick(const GameplayLoopCursorState &state) {
 
 void Scene7030::processSceneActionClick(const GameplayLoopCursorState &state) {
 	byte itemId = state.resolvedItem;
-	SceneVerbActionRecord actionRecord = _hotspots.verbActionRecord(itemId, state.currentStrip);
+	if (state.relationModeActive) {
+		processSceneRelationClick(state, itemId);
+		return;
+	}
 
 	if (itemId == 0) {
 		if (state.currentStrip != 1)
@@ -963,6 +967,7 @@ void Scene7030::processSceneActionClick(const GameplayLoopCursorState &state) {
 		return;
 	}
 
+	SceneVerbActionRecord actionRecord = _hotspots.verbActionRecord(itemId, state.currentStrip);
 	if (actionRecord.actionHandlerId == 0)
 		return;
 
@@ -995,6 +1000,60 @@ void Scene7030::processSceneActionClick(const GameplayLoopCursorState &state) {
 
 	walkActiveActorTo(targetX, targetY, finalFacing, finalCel);
 	dispatchSceneAction(actionRecord.actionHandlerId);
+}
+
+void Scene7030::processSceneRelationClick(const GameplayLoopCursorState &state, byte itemId) {
+	if (itemId == 0)
+		return;
+
+	const SceneVerbActionRecord actionRecord =
+		relationActionRecord(state.primaryInventoryItem, itemId, state.relationMode);
+	if (actionRecord.actionHandlerId == 0)
+		return;
+
+	const SceneActionTarget target = _hotspots.actionTarget(itemId);
+	int targetX = _activeActorWorldX;
+	int targetY = _activeActorWorldY;
+	byte finalFacing = kInvalidFacing;
+
+	if (actionRecord.movementMode != 0) {
+		targetX = target.interactionPoint.x;
+		targetY = target.interactionPoint.y;
+		finalFacing = target.facing;
+	} else {
+		const bool atInteractionPoint =
+			_activeActorWorldX == target.interactionPoint.x &&
+			_activeActorWorldY == target.interactionPoint.y;
+		if (atInteractionPoint) {
+			if (_activeActorFacing != target.facing)
+				finalFacing = target.facing;
+		} else if (target.approachPoint.x != 0 || target.approachPoint.y != 0) {
+			finalFacing = calculateFacingTowardPoint(_activeActorWorldX, _activeActorWorldY,
+				target.approachPoint.x, target.approachPoint.y);
+		}
+	}
+
+	walkActiveActorTo(targetX, targetY, finalFacing, 0);
+	dispatchSceneAction(actionRecord.actionHandlerId);
+}
+
+SceneVerbActionRecord Scene7030::relationActionRecord(byte inventoryItemId, byte sceneItemId, byte relationMode) const {
+	SceneVerbActionRecord record;
+	record.actionHandlerId = 0;
+	record.movementMode = 0;
+
+	if (sceneItemId >= HollywoodEngine::kSceneItemCount)
+		return record;
+
+	const uint tableOffset = relationMode == 2 ? kSceneMode2RelationOverlay : kSceneRelationRecords;
+	const uint recordIndex = (uint)inventoryItemId * HollywoodEngine::kSceneItemCount + sceneItemId;
+	const uint offset = tableOffset + recordIndex * kG03RelationRecordSize;
+	if (offset + kG03RelationRecordSize > _metadata.size())
+		return record;
+
+	record.actionHandlerId = readUint16LE(_metadata, offset);
+	record.movementMode = readUint16LE(_metadata, offset + 2);
+	return record;
 }
 
 void Scene7030::dispatchSceneAction(uint16 handlerId) {
@@ -1039,16 +1098,18 @@ void Scene7030::dispatchSceneAction(uint16 handlerId) {
 		handleActionSlot10CommonSpeech();
 		break;
 	case 312:
-		handleActionSlot11ExchangeItem0CFor0D();
 		break;
 	case 313:
-		handleActionSlot12PickupItem0B();
+		handleActionHandler313ExchangeItem0CFor0D();
 		break;
 	case 314:
-		handleActionSlot13PickupItem0C();
+		handleActionHandler314PickupItem0B();
 		break;
 	case 315:
-		handleActionSlot14SecondarySpeech();
+		handleActionHandler315PickupItem0C();
+		break;
+	case 316:
+		handleActionHandler316SecondarySpeech();
 		break;
 	default:
 		warning("Unhandled Scene7030 action handler %u", handlerId);
@@ -1469,17 +1530,18 @@ void Scene7030::rebuildWalkablePaletteMask() {
 }
 
 bool Scene7030::hasInventoryItem(byte itemId) const {
-	return itemId < ARRAYSIZE(_inventoryItems) && _inventoryItems[itemId];
+	const byte owner = _vm->gameState().currentInventoryOwnerIndex;
+	return _vm->gameState().hasInventoryItem(owner, itemId);
 }
 
 void Scene7030::addInventoryItem(byte itemId) {
-	if (itemId < ARRAYSIZE(_inventoryItems))
-		_inventoryItems[itemId] = true;
+	GameplayState &state = _vm->gameState();
+	state.addInventoryItem(state.currentInventoryOwnerIndex, itemId);
 }
 
 void Scene7030::removeInventoryItem(byte itemId) {
-	if (itemId < ARRAYSIZE(_inventoryItems))
-		_inventoryItems[itemId] = false;
+	GameplayState &state = _vm->gameState();
+	state.removeInventoryItem(state.currentInventoryOwnerIndex, itemId);
 }
 
 void Scene7030::handleActionSlot00TransitionToG04() {
@@ -1526,7 +1588,7 @@ void Scene7030::handleActionSlot10CommonSpeech() {
 	beginSecondarySpeechLine(9, 0);
 }
 
-void Scene7030::handleActionSlot11ExchangeItem0CFor0D() {
+void Scene7030::handleActionHandler313ExchangeItem0CFor0D() {
 	beginSecondarySpeechLine(10, 0);
 	runMappedActionOverlay(11, kG03Chunk11DescriptorCount, kG03Chunk11ExchangeItem0CFrameMap,
 		ARRAYSIZE(kG03Chunk11ExchangeItem0CFrameMap), kG03Chunk5FrameMillis);
@@ -1536,7 +1598,7 @@ void Scene7030::handleActionSlot11ExchangeItem0CFor0D() {
 	_soundBank0.playSample(1, 100);
 }
 
-void Scene7030::handleActionSlot12PickupItem0B() {
+void Scene7030::handleActionHandler314PickupItem0B() {
 	if (hasInventoryItem(0x0b)) {
 		beginSecondarySpeechLine(5, 2);
 		return;
@@ -1556,7 +1618,7 @@ void Scene7030::handleActionSlot12PickupItem0B() {
 	beginSecondarySpeechLine(5, 1);
 }
 
-void Scene7030::handleActionSlot13PickupItem0C() {
+void Scene7030::handleActionHandler315PickupItem0C() {
 	if (_sceneStateFlags[2] == 1) {
 		handleActionSlot08CommonSpeech();
 		clearSpeechOverlay();
@@ -1570,7 +1632,7 @@ void Scene7030::handleActionSlot13PickupItem0C() {
 	_soundBank0.playSample(1, 100);
 }
 
-void Scene7030::handleActionSlot14SecondarySpeech() {
+void Scene7030::handleActionHandler316SecondarySpeech() {
 	beginSecondarySpeechLine(10, 1);
 }
 
@@ -2038,7 +2100,7 @@ void Scene7030::drawVerbPanel(Graphics::Surface &surface, const GameplayPanelSta
 
 void Scene7030::drawInventoryPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
 	_panelArt.drawDialogueInventoryPanel(surface, _savedFramebuffer, kG03InitialViewportXOffset, 0,
-		panelState, _vm->font());
+		panelState, _vm->gameState(), _vm->font());
 }
 
 void Scene7030::presentFrame(const SceneHoverCaption *hoverCaption, const GameplayPanelState *panelState) {
