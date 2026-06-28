@@ -32,8 +32,8 @@ namespace Chamber {
 
 
 void animateGauss(byte *target) {
-	if (g_vm->_videoMode == Common::kRenderEGA)
-		return; /*gauss area is pre-rendered in FOND.EGA*/
+	if (isEgaLikeRenderer())
+		return; /*gauss is pre-rendered in FOND; on Amiga blitting here races the render thread*/
 	byte *sprite;
 	byte phase = getRand() % 4;
 	if (phase == script_byte_vars.gauss_phase)

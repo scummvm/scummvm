@@ -4489,6 +4489,13 @@ uint16 RunScript(byte *code) {
 #endif
 
 
+		// Amiga pads opcodes to word with 0x00 or 0xAA
+		if (g_vm->_videoMode == Common::kRenderAmiga
+		        && (opcode == 0x00 || opcode == 0xAA)) {
+			script_ptr++;
+			continue;
+		}
+
 		if (opcode == 0 || opcode >= MAX_SCR_HANDLERS)
 			break;
 
