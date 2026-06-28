@@ -248,7 +248,8 @@ Common::Error ChamberEngine::init() {
 
 	// Initialize graphics using following:
 	bool isCustomHerc = false;
-	if (_videoMode == Common::RenderMode::kRenderEGA) {
+	if (isEgaLikeRenderer()) {
+		// EGA and Amiga use the chunky 8bpp pipeline (1 byte/pixel, linear lines)
 		_screenW = 320;
 		_screenH = 200;
 		_screenBits = 8;

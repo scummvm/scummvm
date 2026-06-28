@@ -193,7 +193,7 @@ void showPromptAnim(void) {
 }
 
 void promptWait(void) {
-	if (g_vm->_videoMode == Common::kRenderEGA)
+	if (isEgaLikeRenderer())
 		g_vm->_renderer->blitToScreen(0, 0, 320, 200);
 	cursor_anim_phase = 0;
 
