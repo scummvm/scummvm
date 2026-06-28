@@ -29,6 +29,7 @@
 #include "hollywood/scenes/intro/scene9120.h"
 #include "hollywood/scenes/playable/scene7000.h"
 #include "hollywood/scenes/playable/scene7010.h"
+#include "hollywood/scenes/playable/scene7030.h"
 #include "hollywood/resource.h"
 
 #include "common/debug.h"
@@ -89,6 +90,12 @@ Common::Error HollywoodEngine::run() {
 	if (gameState().mainFlowStateId == 0x1b62) {
 		Scene7010 scene7010(this);
 		if (!scene7010.play())
+			return Common::kReadingFailed;
+	}
+
+	if (gameState().mainFlowStateId == 0x1b76 || gameState().mainFlowStateId == 0x1b77) {
+		Scene7030 scene7030(this);
+		if (!scene7030.play())
 			return Common::kReadingFailed;
 	}
 

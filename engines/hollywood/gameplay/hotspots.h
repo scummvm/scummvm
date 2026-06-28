@@ -36,6 +36,8 @@ namespace Hollywood {
 
 class HollywoodFont;
 
+Common::String inventoryActionCaption(byte stripIndex);
+
 struct SceneVerbActionRecord {
 	uint16 actionHandlerId;
 	uint16 movementMode;

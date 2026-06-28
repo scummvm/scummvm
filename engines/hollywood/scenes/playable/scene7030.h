@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE7010_H
-#define HOLLYWOOD_SCENES_PLAYABLE_SCENE7010_H
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE7030_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE7030_H
 
 #include "common/array.h"
 #include "common/random.h"
@@ -39,9 +39,9 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene7010 : public GameplayLoopDelegate {
+class Scene7030 : public GameplayLoopDelegate {
 public:
-	Scene7010(HollywoodEngine *vm);
+	Scene7030(HollywoodEngine *vm);
 
 	bool play();
 
@@ -89,10 +89,10 @@ private:
 
 	enum {
 		kFrameBufferSize = 0x78000,
-		kG01InitialRequiredChunkCount = 19,
-		kG01ArenaFirstChunk = 5,
-		kG01ArenaLastChunk = 18,
-		kG01PaletteMaskUsedBytes = 0x100,
+		kG03InitialRequiredChunkCount = 12,
+		kG03ArenaFirstChunk = 5,
+		kG03ArenaLastChunk = 11,
+		kG03PaletteMaskUsedBytes = 0x100,
 		kScenePaletteRegionCount = 21,
 		kScenePaletteRegionBoundaryCandidateCount = 3,
 		kScenePaletteRegionRouteStepCount = 19,
@@ -119,7 +119,7 @@ private:
 		kStage003SmallRowSize = 0x29,
 		kStage003LargeRowSize = 0x141,
 		kStage003LargeRowBaseIndex = 500,
-		kG01StageIndex = 701,
+		kG03StageIndex = 703,
 		kOriginalSpeechLineHeight = 20
 	};
 
@@ -144,8 +144,7 @@ private:
 	int drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
 		int spriteX, int spriteY, int minimumYExclusive);
 	void runEntryCutscene();
-	void runSueEntryPath();
-	void runJuniorSpeech();
+	void runEntryPath(int startX, int startY, byte startFacing, int targetX, int targetY);
 	bool runBasicGameplayLoop();
 	const SceneHotspotTable &hotspots() const override;
 	const Common::Array<byte> &savedFramebuffer() const override;
@@ -157,11 +156,11 @@ private:
 	void presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) override;
 	bool shouldExitGameplayLoop() const override;
 	void handleLeftClick(const GameplayLoopCursorState &state) override;
-	void advanceChunk8Cycle();
-	void advanceChunk10IdleFrames();
+	void updateAmbientAudioAndMusicCues(uint32 delta);
+	void advanceChunk5AmbientOverlay();
+	void advanceChunk6IdleFrames();
 	void advanceSecondaryActorSpeechFrame();
 	void advancePrimaryLeftSpeechFrame();
-	void advanceDialogueOverlay(uint32 delta);
 	void processSceneActionClick(const GameplayLoopCursorState &state);
 	void dispatchSceneAction(uint16 handlerId);
 	void walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel);
@@ -181,25 +180,26 @@ private:
 	uint actorPathStepDelta(byte facing, byte cel) const;
 	byte calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const;
 	void applySceneStateToHotspotsAndPatches(byte selector);
+	void rebuildWalkablePaletteMask();
 	bool hasInventoryItem(byte itemId) const;
 	void addInventoryItem(byte itemId);
 	void removeInventoryItem(byte itemId);
-	void handleActionSlot00TransitionToG03();
+	void handleActionSlot00TransitionToG04();
 	void handleActionSlot01SecondarySpeech();
-	void handleActionSlot02SecondarySpeech();
-	void handleActionSlot03DialogueSequence();
-	void handleActionSlot04Item06Speech();
-	void handleActionSlot06Item0BSequence();
-	void handleActionSlot07DialogueAndReturn();
+	void handleActionSlot02TransitionToG01Alt();
+	void handleActionSlot03SecondarySpeech();
+	void handleActionSlot04SecondarySpeech();
+	void handleActionSlot05ToggleSceneState0Speech();
 	void handleActionSlot08CommonSpeech();
-	void runChunk8RevealSequence();
-	void runChunk8HideSequence();
-	void runChunk11FrameRange(byte startFrame, byte endFrame);
-	void runChunk14FrameRange(byte startFrame, byte endFrame);
-	void runChunk15ItemSequence();
-	void runDialogueOverlayFrames(byte startFrame, byte endFrame, byte finalMode);
+	void handleActionSlot09CommonSpeech();
+	void handleActionSlot10CommonSpeech();
+	void handleActionSlot11ExchangeItem0CFor0D();
+	void handleActionSlot12PickupItem0B();
+	void handleActionSlot13PickupItem0C();
+	void handleActionSlot14SecondarySpeech();
+	void runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
+		uint32 frameMillis, int statePatchFrame = -1);
 	bool waitSceneMillis(uint32 millis);
-	void beginJuniorSpeech();
 	void clearSpeechOverlay();
 	void clearAllSpeechOverlays();
 	void drawSpeechOverlay();
@@ -237,16 +237,18 @@ private:
 	bool delay(uint32 millis);
 
 	HollywoodEngine *_vm;
-	ResourceChunkTable _g01ChunkTable;
+	ResourceChunkTable _g03ChunkTable;
 	uint32 _resourceChunkOffsets[HollywoodEngine::kResourceChunkCount];
 	uint32 _resourceArenaCursor;
 
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _paletteCurrent;
+	Common::Array<byte> _baseFramebufferOriginal;
 	Common::Array<byte> _baseFramebuffer;
 	Common::Array<byte> _sceneFramebuffer;
 	Common::Array<byte> _savedFramebuffer;
 	Common::Array<byte> _fillRuns;
+	Common::Array<byte> _paletteMaskOriginal;
 	Common::Array<byte> _paletteMask;
 	Common::Array<byte> _fullPaletteRegionMask;
 	Common::Array<byte> _walkablePaletteMask;
@@ -271,47 +273,46 @@ private:
 	Common::Array<byte> _actorPathStepDeltas;
 	SceneHotspotTable _hotspots;
 	SpeechPlayer _speech;
+	SoundBank0Player _soundBank0;
 	SpeechOverlay _speechOverlay;
 	SpeechOverlay _primarySpeechOverlay;
 	Common::RandomSource _random;
 
 	bool _inventoryItems[121];
 	byte _sceneStateFlags[8];
-	byte _chunk8FrameIndex;
-	byte _chunk9AmbientOverlayFrameIndex;
-	byte _chunk10IdleFrameA;
-	byte _chunk10IdleFrameB;
-	byte _chunk10IdleFrameC;
-	byte _chunk10IdleFrameD;
-	byte _chunk11FrameIndex;
-	byte _chunk14FrameIndex;
-	byte _chunk15FrameIndex;
-	byte _dialogueOverlayFrameIndex;
-	byte _dialogueOverlayMode;
+	byte _chunk5FrameIndex;
+	byte _chunk6IdleFrameA;
+	byte _chunk6IdleFrameB;
+	byte _chunk6IdleFrameC;
+	byte _chunk6IdleFrameD;
 	byte _primaryLeftSpeechLastFrame;
-	bool _chunk11Visible;
-	bool _chunk14Visible;
-	bool _chunk15Visible;
-	bool _chunk10IdlePairAAltPhase;
-	bool _chunk10IdlePairBAltPhase;
+	bool _chunk6IdlePairAAltPhase;
+	bool _chunk6IdlePairBAltPhase;
 	bool _primaryLeftSpeechActive;
-	byte _chunk10IdlePairATicksRemaining;
-	byte _chunk10IdlePairBTicksRemaining;
+	byte _chunk6IdlePairATicksRemaining;
+	byte _chunk6IdlePairBTicksRemaining;
 	byte _chunk9AmbientDecisionCounter;
-	uint32 _chunk8TimerAccumulator;
-	uint32 _chunk10TimerAccumulator;
+	int _chunk5FrameDirection;
+	uint32 _chunk5TimerAccumulator;
+	uint32 _chunk6TimerAccumulator;
+	uint32 _chunk5FrameMillis;
+	uint32 _ambientMusicTimerAccumulator;
 	uint32 _secondaryActorTimerAccumulator;
-	uint32 _dialogueOverlayTimerAccumulator;
 	uint32 _primaryLeftSpeechTimerAccumulator;
+	byte _previousAmbientMusicTrackId;
 	int _activeActorWorldX;
 	int _activeActorWorldY;
 	byte _activeActorFacing;
 	byte _activeActorCel;
 	byte _activeActorDrawOrderMode;
 	byte _secondaryActorFrame;
+	bool _actionOverlayVisible;
+	byte _actionOverlayChunkIndex;
+	byte _actionOverlayDescriptorCount;
+	byte _actionOverlayFrameIndex;
 	bool _skipRequested;
 };
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE7010_H
+#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE7030_H

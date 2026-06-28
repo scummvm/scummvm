@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/keyboard.h"
+#include "common/str.h"
 #include "common/types.h"
 
 #include "hollywood/gameplay/hotspots.h"
@@ -42,6 +43,20 @@ struct GameplayLoopCursorState {
 	byte resolvedItem;
 };
 
+struct GameplayPanelState {
+	GameplayPanelState();
+
+	bool visible() const { return verbPanelVisible || inventoryPanelVisible; }
+
+	bool verbPanelVisible;
+	bool inventoryPanelVisible;
+	byte currentStrip;
+	byte requestedStrip;
+	byte resolvedItem;
+	Common::String itemName;
+	Common::String captionText;
+};
+
 class GameplayLoopDelegate {
 public:
 	virtual ~GameplayLoopDelegate();
@@ -54,7 +69,7 @@ public:
 	virtual void prepareGameplayLoop();
 	virtual void advanceGameplayLoop(uint32 deltaMillis) = 0;
 	virtual void drawGameplayFrame() = 0;
-	virtual void presentGameplayFrame(const SceneHoverCaption &hoverCaption) = 0;
+	virtual void presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) = 0;
 	virtual bool shouldExitGameplayLoop() const;
 	virtual void handleLeftClick(const GameplayLoopCursorState &state);
 	virtual void handleRightClick(const GameplayLoopCursorState &state);
@@ -81,6 +96,16 @@ private:
 	void selectPreviousKeyboardStrip();
 	void selectNextKeyboardStrip();
 	void selectNextStrip();
+	void openVerbPanel();
+	void closeVerbPanel();
+	void openInventoryPanel();
+	void closeInventoryPanel();
+	void updatePanelHover(uint32 deltaMillis);
+	void updatePanelFromMousePosition();
+	void selectPanelStrip(byte stripIndex);
+	byte panelStripAt(uint16 cursorX, uint16 cursorY) const;
+	void updatePanelCaption();
+	void syncPanelState();
 	GameplayLoopCursorState makeCursorState() const;
 	void refreshHoverCaption();
 
@@ -91,6 +116,8 @@ private:
 	bool _leftButtonDown;
 	bool _rightButtonDown;
 	bool _keyboardStripMode;
+	GameplayPanelState _panelState;
+	uint32 _panelHoverTimer;
 };
 
 } // End of namespace Hollywood

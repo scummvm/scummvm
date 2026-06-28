@@ -19,7 +19,7 @@
  *
  */
 
-#include "hollywood/scenes/playable/scene7010.h"
+#include "hollywood/scenes/playable/scene7030.h"
 
 #include "common/debug.h"
 #include "common/events.h"
@@ -39,74 +39,81 @@
 
 namespace Hollywood {
 
-const char *const kG01ArchiveName = "RESOURCE.G01";
+const char *const kG03ArchiveName = "RESOURCE.G03";
 const char *const kResource000Name = "RESOURCE.000";
 const char *const kStage003ArchiveName = "RESOURCE.003";
-const uint16 kG01Chunk8DescriptorCount = 0x16;
-const uint16 kG01Chunk9DescriptorCount = 2;
-const uint16 kG01Chunk10DescriptorCount = 0x10;
-const byte kG01AmbientMusicCueWithoutChunk9 = 0x0f;
-const uint16 kG01InitialViewportXOffset = 0;
-const byte kG01SecondarySpeechTextColor = 0xfd;
-const byte kG01PrimarySpeechTextColor = 0xfb;
-const byte kG01PanelDarkColor = 0xe7;
-const byte kG01PanelFillColor = 0xe8;
-const byte kG01PanelSlotColor = 0xe9;
-const byte kG01PanelLineColor = 0xea;
-const byte kG01PanelSelectedColor = 0xf1;
-const byte kG01PanelSelectedLineColor = 0xf2;
-const byte kG01PanelTextColor = 0xfc;
-const int kG01VerbPanelTopY = 0x19f;
-const int kG01VerbPanelCaptionY = 0x19f;
-const int kG01VerbPanelStripTopY = 0x1a7;
-const int kG01VerbPanelStripHeight = 0x1b;
-const int kG01VerbPanelStripWidth = 0x58;
-const int kG01InventoryPanelTopY = 0x10d;
-const int kG01InventoryPanelCaptionY = 0x10d;
-const int kG01InventorySlotStartX = 0x32;
-const int kG01InventorySlotStartY = 0x13c;
-const int kG01InventorySlotSize = 0x40;
-const int kG01InventorySlotGap = 4;
-const uint16 kG01VerbPanelStripXOffsets[9] = {
+const char *const kGameplayMusicArchiveName = "RESOURCE.M07";
+const char *const kGameplaySoundBank0ArchiveName = "RESOURCE.S07";
+const uint16 kG03Chunk5DescriptorCount = 9;
+const uint16 kG03Chunk6DescriptorCount = 0x10;
+const uint16 kG03Chunk7DescriptorCount = 0x0d;
+const uint16 kG03Chunk10DescriptorCount = 0x0a;
+const uint16 kG03Chunk11DescriptorCount = 0x20;
+const byte kG03AmbientMusicCueStillFrame = 0x0f;
+const uint16 kG03State7030 = 0x1b76;
+const uint16 kG03State7031 = 0x1b77;
+const uint16 kG03LastInteractiveState = 0x1b7f;
+const uint16 kG03ExitState7040 = 0x1b80;
+const uint16 kG01ReturnState7011 = 0x1b63;
+const uint16 kG03InitialViewportXOffset = 0x60;
+const uint kSceneColorToItemMapOffset = 0x100;
+const uint kSceneColorMapSize = 0x100;
+const byte kG03SecondarySpeechTextColor = 0xfd;
+const byte kG03PrimarySpeechTextColor = 0xfb;
+const byte kG03PanelDarkColor = 0xe7;
+const byte kG03PanelFillColor = 0xe8;
+const byte kG03PanelSlotColor = 0xe9;
+const byte kG03PanelLineColor = 0xea;
+const byte kG03PanelSelectedColor = 0xf1;
+const byte kG03PanelSelectedLineColor = 0xf2;
+const byte kG03PanelTextColor = 0xfc;
+const int kG03VerbPanelTopY = 0x19f;
+const int kG03VerbPanelCaptionY = 0x19f;
+const int kG03VerbPanelStripTopY = 0x1a7;
+const int kG03VerbPanelStripHeight = 0x1b;
+const int kG03VerbPanelStripWidth = 0x58;
+const int kG03InventoryPanelTopY = 0x10d;
+const int kG03InventoryPanelCaptionY = 0x10d;
+const int kG03InventorySlotStartX = 0x32;
+const int kG03InventorySlotStartY = 0x13c;
+const int kG03InventorySlotSize = 0x40;
+const int kG03InventorySlotGap = 4;
+const uint16 kG03VerbPanelStripXOffsets[9] = {
 	0xff, 0, 8, 97, 186, 276, 366, 456, 545
 };
-const byte kG01SueEntryFacing = 1;
-const byte kG01SueEntryFinalCel = 0;
-const int kG01SueEntryStartX = 0x16b;
-const int kG01SueEntryStartY = 0x1df;
-const int kG01SueEntryTargetX = 0x184;
-const int kG01SueEntryTargetY = 0x1c6;
-const uint32 kG01ActorPathFrameMillis = 60;
-const uint32 kG01SecondaryActorFrameMillis = 150;
-const uint32 kG01Chunk8FrameMillis = 75;
-const uint32 kG01Chunk10FrameMillis = 125;
-const uint32 kG01DialogueOverlayFrameMillis = 60;
+const byte kG03Entry7030Facing = 4;
+const int kG03Entry7030StartX = 0x312;
+const int kG03Entry7030StartY = 0x19d;
+const int kG03Entry7030TargetX = 0x1fa;
+const int kG03Entry7030TargetY = 0x142;
+const byte kG03Entry7031Facing = 2;
+const int kG03Entry7031StartX = 0x60;
+const int kG03Entry7031StartY = 0x10e;
+const int kG03Entry7031TargetX = 0x133;
+const int kG03Entry7031TargetY = 0x134;
+const uint32 kG03ActorPathFrameMillis = 60;
+const uint32 kG03SecondaryActorFrameMillis = 150;
+const uint32 kG03Chunk5FrameMillis = 75;
+const uint32 kG03Chunk5FastFrameMillis = 60;
+const uint32 kG03Chunk6FrameMillis = 125;
+const uint32 kG03AmbientMusicCheckMillis = 250;
 const byte kInvalidFacing = 0xff;
 const byte kInvalidCel = 0xff;
-const byte kG01Chunk8FrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 5, 7, 8, 9, 10, 11, 12, 13, 21,
-	9, 8, 7, 0, 14, 15
+const byte kG03Chunk5FrameMap[] = {
+	0, 0, 1, 2, 3, 4, 3, 2, 3, 4, 3, 2, 1, 0, 5, 6,
+	7, 8, 7, 6, 7, 8, 7, 6, 5
 };
-const byte kG01Chunk11FrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 20, 19, 18, 13, 12,
-	11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 35, 13, 26, 27,
-	28, 29, 30, 31, 32, 33, 34, 13, 36
+const byte kG03Chunk7PickupItem0BFrameMap[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
 };
-const byte kG01Chunk14FrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 7, 7, 7, 7, 7, 7, 7,
-	7, 7, 6, 5, 4, 3, 2, 1, 0, 0, 1, 2, 3, 4, 5, 6,
-	7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-	23, 24, 25, 26, 27, 28, 29, 30, 31
+const byte kG03Chunk10PickupItem0CFrameMap[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 7, 8, 9, 0
 };
-const byte kG01Chunk15FrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 19, 20, 21, 10, 11,
-	12, 13, 14, 15, 16, 17, 18, 22
-};
-const byte kG01DialogueOverlayMode1FrameMap[] = { 0, 1, 2, 1 };
-const byte kG01DialogueOverlayMode2FrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
+const byte kG03Chunk11ExchangeItem0CFrameMap[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 25, 25, 25, 25, 25, 25,
+	25, 25, 25, 25, 26, 27, 28, 29, 30, 31, 13, 12, 11, 10, 9, 8,
+	7, 6, 5, 4, 3, 2, 1, 0
 };
 const byte kActorPathStepDeltaTableSet00[] = {
 	2, 2, 2, 3, 3, 0, 2, 2, 2, 3, 3, 0,
@@ -130,51 +137,51 @@ const float kActorPathDiagonalSlopeThreshold = 0.087488f;
 const float kActorFacingSteepSlopeThreshold = 3.732051f;
 const float kActorFacingDiagonalSlopeThreshold = 0.267949f;
 
-Scene7010::Scene7010(HollywoodEngine *vm) :
+Scene7030::Scene7030(HollywoodEngine *vm) :
 		_vm(vm),
 		_resourceArenaCursor(0),
-		_random("hollywood_scene7010"),
-		_chunk8FrameIndex(0),
-		_chunk9AmbientOverlayFrameIndex(0),
-		_chunk10IdleFrameA(0),
-		_chunk10IdleFrameB(8),
-		_chunk10IdleFrameC(4),
-		_chunk10IdleFrameD(0x0c),
-		_chunk11FrameIndex(0),
-		_chunk14FrameIndex(0),
-		_chunk15FrameIndex(0),
-		_dialogueOverlayFrameIndex(0),
-		_dialogueOverlayMode(0),
+		_random("hollywood_scene7030"),
+		_chunk5FrameIndex(1),
+		_chunk6IdleFrameA(0),
+		_chunk6IdleFrameB(4),
+		_chunk6IdleFrameC(8),
+		_chunk6IdleFrameD(0x0c),
 		_primaryLeftSpeechLastFrame(0),
-		_chunk11Visible(false),
-		_chunk14Visible(false),
-		_chunk15Visible(false),
-		_chunk10IdlePairAAltPhase(false),
-		_chunk10IdlePairBAltPhase(false),
+		_chunk6IdlePairAAltPhase(false),
+		_chunk6IdlePairBAltPhase(false),
 		_primaryLeftSpeechActive(false),
-		_chunk10IdlePairATicksRemaining(10),
-		_chunk10IdlePairBTicksRemaining(16),
+		_chunk6IdlePairATicksRemaining(10),
+		_chunk6IdlePairBTicksRemaining(16),
 		_chunk9AmbientDecisionCounter(0),
-		_chunk8TimerAccumulator(0),
-		_chunk10TimerAccumulator(0),
+		_chunk5FrameDirection(1),
+		_chunk5TimerAccumulator(0),
+		_chunk6TimerAccumulator(0),
+		_chunk5FrameMillis(kG03Chunk5FrameMillis),
+		_ambientMusicTimerAccumulator(0),
 		_secondaryActorTimerAccumulator(0),
-		_dialogueOverlayTimerAccumulator(0),
 		_primaryLeftSpeechTimerAccumulator(0),
-		_activeActorWorldX(kG01SueEntryTargetX),
-		_activeActorWorldY(kG01SueEntryTargetY),
-		_activeActorFacing(kG01SueEntryFacing),
-		_activeActorCel(kG01SueEntryFinalCel),
+		_previousAmbientMusicTrackId(0),
+		_activeActorWorldX(kG03Entry7030TargetX),
+		_activeActorWorldY(kG03Entry7030TargetY),
+		_activeActorFacing(kG03Entry7030Facing),
+		_activeActorCel(0),
 		_activeActorDrawOrderMode(0),
 		_secondaryActorFrame(0),
+		_actionOverlayVisible(false),
+		_actionOverlayChunkIndex(0),
+		_actionOverlayDescriptorCount(0),
+		_actionOverlayFrameIndex(0),
 		_skipRequested(false) {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
 	_paletteResource.resize(kHollywoodPaletteSize);
 	_paletteCurrent.resize(kHollywoodPaletteSize);
+	_baseFramebufferOriginal.resize(kFrameBufferSize);
 	_baseFramebuffer.resize(kFrameBufferSize);
 	_sceneFramebuffer.resize(kFrameBufferSize);
 	_savedFramebuffer.resize(kFrameBufferSize);
-	_fullPaletteRegionMask.resize(kG01PaletteMaskUsedBytes);
-	_walkablePaletteMask.resize(kG01PaletteMaskUsedBytes);
+	_paletteMaskOriginal.resize(0x700);
+	_fullPaletteRegionMask.resize(kG03PaletteMaskUsedBytes);
+	_walkablePaletteMask.resize(kG03PaletteMaskUsedBytes);
 	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
 	_activeActorRunStreams.resize(kActorFacingCount * kActiveActorFacingRunStride);
 	_secondaryActorRunStreams.resize(kActorFacingCount * kSecondaryActorFacingRunStride);
@@ -188,18 +195,18 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 	_actorPathStepDeltas.resize(ARRAYSIZE(kActorPathStepDeltaTableSet00));
 	memcpy(_actorPathStepDeltas.data(), kActorPathStepDeltaTableSet00, _actorPathStepDeltas.size());
 	_speechOverlay.visible = false;
-	_speechOverlay.colorIndex = kG01SecondarySpeechTextColor;
+	_speechOverlay.colorIndex = kG03SecondarySpeechTextColor;
 	_speechOverlay.centerX = 0;
 	_speechOverlay.topY = 0;
 	_primarySpeechOverlay.visible = false;
-	_primarySpeechOverlay.colorIndex = kG01PrimarySpeechTextColor;
+	_primarySpeechOverlay.colorIndex = kG03PrimarySpeechTextColor;
 	_primarySpeechOverlay.centerX = 0;
 	_primarySpeechOverlay.topY = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 }
 
-bool Scene7010::play() {
+bool Scene7030::play() {
 	if (!load())
 		return false;
 
@@ -214,19 +221,19 @@ bool Scene7010::play() {
 	return runBasicGameplayLoop();
 }
 
-bool Scene7010::load() {
+bool Scene7030::load() {
 	if (!loadResource000RuntimeTables(_resource000OffsetTable, _resource000SizeTable) ||
 			!loadResource000ActorBankSet00(_resource000OffsetTable, _resource000SizeTable))
 		return false;
 
-	if (!_vm->resources()->readChunkTable(Common::Path(kG01ArchiveName), _g01ChunkTable)) {
-		warning("Failed to read %s header", kG01ArchiveName);
+	if (!_vm->resources()->readChunkTable(Common::Path(kG03ArchiveName), _g03ChunkTable)) {
+		warning("Failed to read %s header", kG03ArchiveName);
 		return false;
 	}
 
-	for (uint i = 0; i < kG01InitialRequiredChunkCount; ++i) {
-		if (!_g01ChunkTable.isValidChunk(i)) {
-			warning("%s is missing required Scene 7010 chunk %u", kG01ArchiveName, i);
+	for (uint i = 0; i < kG03InitialRequiredChunkCount; ++i) {
+		if (!_g03ChunkTable.isValidChunk(i)) {
+			warning("%s is missing required Scene 7030 chunk %u", kG03ArchiveName, i);
 			return false;
 		}
 	}
@@ -238,23 +245,26 @@ bool Scene7010::load() {
 			!loadVariableChunk(4, _metadata))
 		return false;
 
-	if (_paletteMask.size() < kG01PaletteMaskUsedBytes) {
-		warning("%s chunk 3 is shorter than the G01 palette mask table", kG01ArchiveName);
+	_baseFramebufferOriginal = _baseFramebuffer;
+	_paletteMaskOriginal = _paletteMask;
+
+	if (_paletteMask.size() < kG03PaletteMaskUsedBytes) {
+		warning("%s chunk 3 is shorter than the G03 palette mask table", kG03ArchiveName);
 		return false;
 	}
 	if (!initializeScenePathTables())
 		return false;
 
 	uint32 arenaSize = 0;
-	for (uint i = kG01ArenaFirstChunk; i <= kG01ArenaLastChunk; ++i)
-		arenaSize += _g01ChunkTable.sizes[i];
+	for (uint i = kG03ArenaFirstChunk; i <= kG03ArenaLastChunk; ++i)
+		arenaSize += _g03ChunkTable.sizes[i];
 
 	_resourceArena.resize(arenaSize);
 	memset(_resourceArena.data(), 0, _resourceArena.size());
 	_resourceArenaCursor = 0;
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
 
-	for (uint i = kG01ArenaFirstChunk; i <= kG01ArenaLastChunk; ++i) {
+	for (uint i = kG03ArenaFirstChunk; i <= kG03ArenaLastChunk; ++i) {
 		if (!loadArenaChunk(i))
 			return false;
 	}
@@ -269,19 +279,22 @@ bool Scene7010::load() {
 	if (!_hotspots.load(_paletteMask, _metadata, _stage003SmallRows))
 		return false;
 
-	debugC(1, kDebugScene, "Scene 7010 loaded RESOURCE.G01 for non-interactive preview");
+	_vm->gameplayMusic()->setArchive(Common::Path(kGameplayMusicArchiveName));
+	_soundBank0.setArchive(Common::Path(kGameplaySoundBank0ArchiveName));
+
+	debugC(1, kDebugScene, "Scene 7030 loaded RESOURCE.G03");
 	return true;
 }
 
-bool Scene7010::loadResource000RuntimeTables(Common::Array<byte> &offsetTable, Common::Array<byte> &sizeTable) {
+bool Scene7030::loadResource000RuntimeTables(Common::Array<byte> &offsetTable, Common::Array<byte> &sizeTable) {
 	Common::File file;
 	if (!file.open(Common::Path(kResource000Name))) {
-		warning("Failed to open %s for Scene 7010 actor resources", kResource000Name);
+		warning("Failed to open %s for Scene 7030 actor resources", kResource000Name);
 		return false;
 	}
 
 	if ((uint32)file.size() < 1 + (2 * kResource000TableByteCount)) {
-		warning("%s is too small for Scene 7010 runtime tables", kResource000Name);
+		warning("%s is too small for Scene 7030 runtime tables", kResource000Name);
 		return false;
 	}
 
@@ -290,14 +303,14 @@ bool Scene7010::loadResource000RuntimeTables(Common::Array<byte> &offsetTable, C
 	sizeTable.resize(kResource000TableByteCount);
 	if (file.read(offsetTable.data(), offsetTable.size()) != offsetTable.size() ||
 			file.read(sizeTable.data(), sizeTable.size()) != sizeTable.size()) {
-		warning("Failed to read %s runtime tables for Scene 7010", kResource000Name);
+		warning("Failed to read %s runtime tables for Scene 7030", kResource000Name);
 		return false;
 	}
 
 	return true;
 }
 
-bool Scene7010::loadResource000ActorBankSet00(const Common::Array<byte> &offsetTable, const Common::Array<byte> &sizeTable) {
+bool Scene7030::loadResource000ActorBankSet00(const Common::Array<byte> &offsetTable, const Common::Array<byte> &sizeTable) {
 	if (kResource000ActorSet00TableEntry + 4 > offsetTable.size() ||
 			kResource000ActorSet00TableEntry + kResource000ActorSet00SegmentCount * 4 > sizeTable.size()) {
 		warning("%s actor bank set 00 table entries are out of range", kResource000Name);
@@ -385,11 +398,11 @@ bool Scene7010::loadResource000ActorBankSet00(const Common::Array<byte> &offsetT
 		}
 	}
 
-	debugC(1, kDebugResources, "Loaded %s actor bank set 00 for Scene 7010", kResource000Name);
+	debugC(1, kDebugResources, "Loaded %s actor bank set 00 for Scene 7030", kResource000Name);
 	return true;
 }
 
-bool Scene7010::loadResource000Owner1ActorPalette(const Common::Array<byte> &offsetTable) {
+bool Scene7030::loadResource000Owner1ActorPalette(const Common::Array<byte> &offsetTable) {
 	if (kResource000Owner1PaletteTableEntry + 4 > offsetTable.size()) {
 		warning("%s owner 1 palette table entry is out of range", kResource000Name);
 		return false;
@@ -417,10 +430,10 @@ bool Scene7010::loadResource000Owner1ActorPalette(const Common::Array<byte> &off
 	return true;
 }
 
-bool Scene7010::loadStage003SceneRows() {
+bool Scene7030::loadStage003SceneRows() {
 	Common::File file;
 	if (!file.open(Common::Path(kStage003ArchiveName))) {
-		warning("Failed to open %s for Scene 7010 text", kStage003ArchiveName);
+		warning("Failed to open %s for Scene 7030 text", kStage003ArchiveName);
 		return false;
 	}
 
@@ -478,23 +491,23 @@ bool Scene7010::loadStage003SceneRows() {
 			_owner1LargeRows[row * kStage003LargeRowSize + column] -= _stage003DecodeKey[column];
 	}
 
-	const uint32 stageOffsetEntry = kStage003DecodeKeySize + (kG01StageIndex * 4);
+	const uint32 stageOffsetEntry = kStage003DecodeKeySize + (kG03StageIndex * 4);
 	if (stageOffsetEntry + 4 > kStage003DecodeKeySize + kStage003StageOffsetTableSize ||
 			stageOffsetEntry + 4 > (uint32)file.size()) {
-		warning("%s has no stage 701 offset entry", kStage003ArchiveName);
+		warning("%s has no stage 703 offset entry", kStage003ArchiveName);
 		return false;
 	}
 
 	file.seek(stageOffsetEntry);
 	const uint32 stageOffset = file.readUint32LE();
 	if (stageOffset + kStage003DescriptorTableSize + 3 > (uint32)file.size()) {
-		warning("%s stage 701 descriptor table is out of range", kStage003ArchiveName);
+		warning("%s stage 703 descriptor table is out of range", kStage003ArchiveName);
 		return false;
 	}
 
 	file.seek(stageOffset);
 	if (file.read(_stage003StageBlock.data(), _stage003StageBlock.size()) != _stage003StageBlock.size()) {
-		warning("Failed to read %s stage 701 descriptor table", kStage003ArchiveName);
+		warning("Failed to read %s stage 703 descriptor table", kStage003ArchiveName);
 		return false;
 	}
 
@@ -503,20 +516,20 @@ bool Scene7010::loadStage003SceneRows() {
 	const uint32 smallRowBytes = (uint32)smallRowCount * kStage003SmallRowSize;
 	const uint32 largeRowBytes = (uint32)largeRowCount * kStage003LargeRowSize;
 	if (file.pos() + smallRowBytes + largeRowBytes > file.size()) {
-		warning("%s stage 701 text rows are out of range", kStage003ArchiveName);
+		warning("%s stage 703 text rows are out of range", kStage003ArchiveName);
 		return false;
 	}
 
 	_stage003SmallRows.resize((uint32)(smallRowCount + 1) * kStage003SmallRowSize);
 	memset(_stage003SmallRows.data(), 0, _stage003SmallRows.size());
 	if (file.read(_stage003SmallRows.data() + kStage003SmallRowSize, smallRowBytes) != smallRowBytes) {
-		warning("Failed to read %s stage 701 small text rows", kStage003ArchiveName);
+		warning("Failed to read %s stage 703 small text rows", kStage003ArchiveName);
 		return false;
 	}
 
 	_stage003LargeRows.resize(largeRowBytes);
 	if (file.read(_stage003LargeRows.data(), _stage003LargeRows.size()) != _stage003LargeRows.size()) {
-		warning("Failed to read %s stage 701 large text rows", kStage003ArchiveName);
+		warning("Failed to read %s stage 703 large text rows", kStage003ArchiveName);
 		return false;
 	}
 
@@ -530,75 +543,75 @@ bool Scene7010::loadStage003SceneRows() {
 			_stage003LargeRows[row * kStage003LargeRowSize + column] -= _stage003DecodeKey[column];
 	}
 
-	debugC(1, kDebugResources, "Loaded %s stage 701 text rows: smallRows=%u largeRows=%u",
+	debugC(1, kDebugResources, "Loaded %s stage 703 text rows: smallRows=%u largeRows=%u",
 		kStage003ArchiveName, smallRowCount, largeRowCount);
 	return true;
 }
 
-bool Scene7010::loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kG01ArchiveName), index));
+bool Scene7030::loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kG03ArchiveName), index));
 	if (!stream) {
-		warning("Failed to open %s chunk %u", kG01ArchiveName, index);
+		warning("Failed to open %s chunk %u", kG03ArchiveName, index);
 		return false;
 	}
 
 	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit its fixed Scene 7010 destination", kG01ArchiveName, index);
+		warning("%s chunk %u does not fit its fixed Scene 7030 destination", kG03ArchiveName, index);
 		return false;
 	}
 
 	memset(destination.data(), 0, destination.size());
 	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kG01ArchiveName, index);
+		warning("Failed to read %s chunk %u", kG03ArchiveName, index);
 		return false;
 	}
 
-	debugC(1, kDebugResources, "Loaded %s fixed chunk %u: size=%u", kG01ArchiveName, index, (uint)stream->size());
+	debugC(1, kDebugResources, "Loaded %s fixed chunk %u: size=%u", kG03ArchiveName, index, (uint)stream->size());
 	return true;
 }
 
-bool Scene7010::loadVariableChunk(uint index, Common::Array<byte> &destination) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kG01ArchiveName), index));
+bool Scene7030::loadVariableChunk(uint index, Common::Array<byte> &destination) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kG03ArchiveName), index));
 	if (!stream) {
-		warning("Failed to open %s chunk %u", kG01ArchiveName, index);
+		warning("Failed to open %s chunk %u", kG03ArchiveName, index);
 		return false;
 	}
 
 	destination.resize(stream->size());
 	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kG01ArchiveName, index);
+		warning("Failed to read %s chunk %u", kG03ArchiveName, index);
 		return false;
 	}
 
-	debugC(1, kDebugResources, "Loaded %s variable chunk %u: size=%u", kG01ArchiveName, index, (uint)stream->size());
+	debugC(1, kDebugResources, "Loaded %s variable chunk %u: size=%u", kG03ArchiveName, index, (uint)stream->size());
 	return true;
 }
 
-bool Scene7010::loadArenaChunk(uint index) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kG01ArchiveName), index));
+bool Scene7030::loadArenaChunk(uint index) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kG03ArchiveName), index));
 	if (!stream) {
-		warning("Failed to open %s chunk %u", kG01ArchiveName, index);
+		warning("Failed to open %s chunk %u", kG03ArchiveName, index);
 		return false;
 	}
 
 	if (_resourceArenaCursor + stream->size() > _resourceArena.size()) {
-		warning("%s chunk %u does not fit the Scene 7010 resource arena", kG01ArchiveName, index);
+		warning("%s chunk %u does not fit the Scene 7030 resource arena", kG03ArchiveName, index);
 		return false;
 	}
 
 	_resourceChunkOffsets[index] = _resourceArenaCursor;
 	if (stream->read(_resourceArena.data() + _resourceArenaCursor, stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kG01ArchiveName, index);
+		warning("Failed to read %s chunk %u", kG03ArchiveName, index);
 		return false;
 	}
 
 	debugC(1, kDebugResources, "Loaded %s arena chunk %u: offset=%u size=%u",
-		kG01ArchiveName, index, _resourceArenaCursor, (uint)stream->size());
+		kG03ArchiveName, index, _resourceArenaCursor, (uint)stream->size());
 	_resourceArenaCursor += stream->size();
 	return true;
 }
 
-void Scene7010::expandFillRunsToSavedFramebuffer() {
+void Scene7030::expandFillRunsToSavedFramebuffer() {
 	uint destinationOffset = 0;
 	uint sourceOffset = 0;
 	while (destinationOffset < _savedFramebuffer.size() && sourceOffset + 3 <= _fillRuns.size()) {
@@ -614,18 +627,18 @@ void Scene7010::expandFillRunsToSavedFramebuffer() {
 	}
 }
 
-bool Scene7010::initializeScenePathTables() {
+bool Scene7030::initializeScenePathTables() {
 	const uint boundaryBytes = kSceneRouteBoundaryPointCount * 4;
 	if (_metadata.size() < kRouteBoundaryPoints + boundaryBytes ||
 			_metadata.size() < kRouteBoundarySteps + kSceneRouteStepCount) {
-		warning("%s chunk 4 is too short for G01 path route tables", kG01ArchiveName);
+		warning("%s chunk 4 is too short for G03 path route tables", kG03ArchiveName);
 		return false;
 	}
 
 	memcpy(_fullPaletteRegionMask.data(), _paletteMask.data(), _fullPaletteRegionMask.size());
 	memcpy(_walkablePaletteMask.data(), _paletteMask.data(), _walkablePaletteMask.size());
 	for (uint i = 0; i < _walkablePaletteMask.size(); ++i) {
-		if (_walkablePaletteMask[i] > 1)
+		if (_walkablePaletteMask[i] > 4)
 			_walkablePaletteMask[i] = 0;
 	}
 
@@ -638,74 +651,68 @@ bool Scene7010::initializeScenePathTables() {
 	return true;
 }
 
-void Scene7010::initializePreviewState() {
-	_chunk8FrameIndex = _vm->gameState().currentRandomAmbientMusicTrackId == kG01AmbientMusicCueWithoutChunk9 ? 0x14 : 0;
-	_chunk9AmbientOverlayFrameIndex = 0;
-	_chunk10IdleFrameA = 0;
-	_chunk10IdleFrameB = 8;
-	_chunk10IdleFrameC = 4;
-	_chunk10IdleFrameD = 0x0c;
-	_chunk11FrameIndex = 0;
-	_chunk14FrameIndex = 0;
-	_chunk15FrameIndex = 0;
-	_dialogueOverlayFrameIndex = 0;
-	_dialogueOverlayMode = 0;
+void Scene7030::initializePreviewState() {
+	_chunk5FrameIndex = 1;
+	_chunk5FrameDirection = 1;
+	_chunk6IdleFrameA = 0;
+	_chunk6IdleFrameB = 4;
+	_chunk6IdleFrameC = 8;
+	_chunk6IdleFrameD = 0x0c;
 	_primaryLeftSpeechLastFrame = 0;
-	_chunk11Visible = false;
-	_chunk14Visible = false;
-	_chunk15Visible = false;
-	_chunk10IdlePairAAltPhase = _random.getRandomNumber(1) != 0;
-	_chunk10IdlePairBAltPhase = _random.getRandomNumber(1) != 0;
+	_actionOverlayVisible = false;
+	_actionOverlayChunkIndex = 0;
+	_actionOverlayDescriptorCount = 0;
+	_actionOverlayFrameIndex = 0;
+	_chunk6IdlePairAAltPhase = _random.getRandomNumber(1) != 0;
+	_chunk6IdlePairBAltPhase = _random.getRandomNumber(1) != 0;
 	_primaryLeftSpeechActive = false;
-	_chunk10IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
-	_chunk10IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
+	_chunk6IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
+	_chunk6IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
 	_chunk9AmbientDecisionCounter = 0;
-	_chunk8TimerAccumulator = 0;
-	_chunk10TimerAccumulator = 0;
+	_chunk5TimerAccumulator = 0;
+	_chunk6TimerAccumulator = 0;
+	_chunk5FrameMillis = kG03Chunk5FrameMillis;
+	_ambientMusicTimerAccumulator = 0;
 	_secondaryActorTimerAccumulator = 0;
-	_dialogueOverlayTimerAccumulator = 0;
 	_primaryLeftSpeechTimerAccumulator = 0;
-	_activeActorWorldX = kG01SueEntryTargetX;
-	_activeActorWorldY = kG01SueEntryTargetY;
-	_activeActorFacing = kG01SueEntryFacing;
-	_activeActorCel = kG01SueEntryFinalCel;
+	_previousAmbientMusicTrackId = 0;
+	_activeActorWorldX = kG03Entry7030TargetX;
+	_activeActorWorldY = kG03Entry7030TargetY;
+	_activeActorFacing = kG03Entry7030Facing;
+	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_secondaryActorFrame = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
+	_sceneStateFlags[2] = 2;
+	applySceneStateToHotspotsAndPatches(0xff);
 }
 
-void Scene7010::drawPreviewComposite() {
+void Scene7030::drawPreviewComposite() {
 	drawCutsceneComposite(false, 0, 0, 0, 0, false, 0, 0, 0, 0);
 }
 
-void Scene7010::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
+void Scene7030::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
+	(void)actorDrawOrderMode;
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
 
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[10], 0,
-		kG01Chunk10DescriptorCount, _chunk10IdleFrameA, _sceneFramebuffer);
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[10], 0,
-		kG01Chunk10DescriptorCount, _chunk10IdleFrameC, _sceneFramebuffer);
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[10], 0,
-		kG01Chunk10DescriptorCount, _chunk10IdleFrameB, _sceneFramebuffer);
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[10], 0,
-		kG01Chunk10DescriptorCount, _chunk10IdleFrameD, _sceneFramebuffer);
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
+		kG03Chunk6DescriptorCount, _chunk6IdleFrameA, _sceneFramebuffer);
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
+		kG03Chunk6DescriptorCount, _chunk6IdleFrameB, _sceneFramebuffer);
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
+		kG03Chunk6DescriptorCount, _chunk6IdleFrameC, _sceneFramebuffer);
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
+		kG03Chunk6DescriptorCount, _chunk6IdleFrameD, _sceneFramebuffer);
 
-	if (_dialogueOverlayMode == 1)
-		drawMappedSpriteFrame(12, 3, kG01DialogueOverlayMode1FrameMap,
-			ARRAYSIZE(kG01DialogueOverlayMode1FrameMap), _dialogueOverlayFrameIndex);
-	else if (_dialogueOverlayMode == 2)
-		drawMappedSpriteFrame(16, 0x1b, kG01DialogueOverlayMode2FrameMap,
-			ARRAYSIZE(kG01DialogueOverlayMode2FrameMap), _dialogueOverlayFrameIndex);
-
-	if (_chunk14Visible)
-		drawMappedSpriteFrame(14, 0x20, kG01Chunk14FrameMap, ARRAYSIZE(kG01Chunk14FrameMap),
-			_chunk14FrameIndex);
-	if (_chunk11Visible)
-		drawMappedSpriteFrame(11, 0x25, kG01Chunk11FrameMap, ARRAYSIZE(kG01Chunk11FrameMap),
-			_chunk11FrameIndex);
+	if (_sceneStateFlags[0] != 0) {
+		const byte frame = _chunk5FrameIndex < ARRAYSIZE(kG03Chunk5FrameMap) ?
+			kG03Chunk5FrameMap[_chunk5FrameIndex] : 0;
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[5], 0,
+			kG03Chunk5DescriptorCount, frame, _sceneFramebuffer);
+	}
 
 	if (drawSecondaryActor) {
 		const int secondaryActorBottomY = drawSecondaryActorFrame(secondaryFacing, secondaryFrame,
@@ -716,35 +723,20 @@ void Scene7010::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, b
 		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, -1);
 	}
 
-	if (actorDrawOrderMode == 1) {
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _sceneFramebuffer);
-	} else {
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
+	if (_actionOverlayVisible) {
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
+			_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
 	}
-	const byte chunk8DescriptorIndex = _chunk8FrameIndex < ARRAYSIZE(kG01Chunk8FrameMap) ?
-		kG01Chunk8FrameMap[_chunk8FrameIndex] : 0;
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[8], 0,
-		kG01Chunk8DescriptorCount, chunk8DescriptorIndex, _sceneFramebuffer);
-
-	if (_vm->gameState().currentRandomAmbientMusicTrackId != kG01AmbientMusicCueWithoutChunk9) {
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[9], 0,
-			kG01Chunk9DescriptorCount, _chunk9AmbientOverlayFrameIndex, _sceneFramebuffer);
-	}
-
-	if (_chunk15Visible)
-		drawMappedSpriteFrame(15, 0x17, kG01Chunk15FrameMap, ARRAYSIZE(kG01Chunk15FrameMap),
-			_chunk15FrameIndex);
 }
 
-void Scene7010::drawPlayableComposite() {
+void Scene7030::drawPlayableComposite() {
 	const bool drawSecondaryActor = _speechOverlay.visible;
 	drawCutsceneComposite(true, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
 		drawSecondaryActor, _activeActorFacing, _secondaryActorFrame, _activeActorWorldX, _activeActorWorldY,
 		_activeActorDrawOrderMode);
 }
 
-void Scene7010::drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex) {
+void Scene7030::drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex) {
 	if (chunkIndex >= HollywoodEngine::kResourceChunkCount || frameIndex >= frameMapSize)
 		return;
 
@@ -752,7 +744,7 @@ void Scene7010::drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, con
 		descriptorCount, frameMap[frameIndex], _sceneFramebuffer);
 }
 
-void Scene7010::drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY, int minimumYExclusive) {
+void Scene7030::drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY, int minimumYExclusive) {
 	if (facing >= kActorFacingCount || cel >= kActorCelsPerFacing)
 		return;
 
@@ -767,7 +759,7 @@ void Scene7010::drawActiveActorFrame(byte facing, byte cel, int worldX, int worl
 		descriptor.opaqueRunCount, spriteX, spriteY, minimumYExclusive);
 }
 
-int Scene7010::drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY) {
+int Scene7030::drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY) {
 	if (facing >= kActorFacingCount || frame >= kSecondaryActorFramesPerFacing)
 		return -1;
 
@@ -782,7 +774,7 @@ int Scene7010::drawSecondaryActorFrame(byte facing, byte frame, int worldX, int 
 		descriptor.runCount, spriteX, spriteY, -1);
 }
 
-int Scene7010::drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
+int Scene7030::drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
 		int spriteX, int spriteY, int minimumYExclusive) {
 	cursor += runBase;
 	int lastRunY = minimumYExclusive;
@@ -824,206 +816,139 @@ int Scene7010::drawActorRun(const Common::Array<byte> &runStreams, uint cursor, 
 	return lastRunY;
 }
 
-void Scene7010::runEntryCutscene() {
-	runSueEntryPath();
-	if (_skipRequested || Engine::shouldQuit())
-		return;
-
-	beginJuniorSpeech();
-	runJuniorSpeech();
-	_sceneStateFlags[0] = 1;
+void Scene7030::runEntryCutscene() {
+	if (_vm->gameState().mainFlowStateId == kG03State7031) {
+		runEntryPath(kG03Entry7031StartX, kG03Entry7031StartY, kG03Entry7031Facing,
+			kG03Entry7031TargetX, kG03Entry7031TargetY);
+	} else {
+		runEntryPath(kG03Entry7030StartX, kG03Entry7030StartY, kG03Entry7030Facing,
+			kG03Entry7030TargetX, kG03Entry7030TargetY);
+	}
 }
 
-void Scene7010::runSueEntryPath() {
-	const byte cels[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, kG01SueEntryFinalCel };
-	uint32 chunk8Accumulator = 0;
-	uint32 chunk10Accumulator = 0;
-	uint32 lastMillis = g_system->getMillis();
-
-	for (uint frame = 0; frame < ARRAYSIZE(cels) && !_skipRequested && !Engine::shouldQuit(); ++frame) {
-		if (pollEvents(true))
-			return;
-
-		const int x = kG01SueEntryStartX + ((kG01SueEntryTargetX - kG01SueEntryStartX) * (int)frame) / (int)(ARRAYSIZE(cels) - 1);
-		const int y = kG01SueEntryStartY + ((kG01SueEntryTargetY - kG01SueEntryStartY) * (int)frame) / (int)(ARRAYSIZE(cels) - 1);
-		_activeActorWorldX = x;
-		_activeActorWorldY = y;
-		_activeActorFacing = kG01SueEntryFacing;
-		_activeActorCel = cels[frame];
-		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-		drawCutsceneComposite(true, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
-			false, 0, 0, 0, 0, _activeActorDrawOrderMode);
-		presentFrame();
-
-		uint32 waited = 0;
-		while (waited < kG01ActorPathFrameMillis && !_skipRequested && !Engine::shouldQuit()) {
-			if (pollEvents(true))
-				return;
-			const uint32 slice = MIN<uint32>(10, kG01ActorPathFrameMillis - waited);
-			g_system->delayMillis(slice);
-			waited += slice;
-		}
-
-		const uint32 now = g_system->getMillis();
-		const uint32 elapsed = now - lastMillis;
-		lastMillis = now;
-		chunk8Accumulator += elapsed;
-		chunk10Accumulator += elapsed;
-		if (chunk8Accumulator >= kG01Chunk8FrameMillis) {
-			_chunk8FrameIndex = (_chunk8FrameIndex == 7) ? 0 : _chunk8FrameIndex + 1;
-			if ((_chunk8FrameIndex & 1) != 0)
-				_chunk9AmbientOverlayFrameIndex ^= 1;
-			chunk8Accumulator = 0;
-		}
-		if (chunk10Accumulator >= kG01Chunk10FrameMillis) {
-			advanceChunk10IdleFrames();
-			chunk10Accumulator = 0;
-		}
-	}
-
-	_activeActorWorldX = kG01SueEntryTargetX;
-	_activeActorWorldY = kG01SueEntryTargetY;
-	_activeActorFacing = kG01SueEntryFacing;
-	_activeActorCel = kG01SueEntryFinalCel;
+void Scene7030::runEntryPath(int startX, int startY, byte startFacing, int targetX, int targetY) {
+	_activeActorWorldX = startX;
+	_activeActorWorldY = startY;
+	_activeActorFacing = startFacing;
+	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-}
+	_chunk5FrameIndex = 1;
+	_chunk6IdleFrameA = 0;
+	_chunk6IdleFrameB = 4;
+	_chunk6IdleFrameC = 8;
+	_chunk6IdleFrameD = 0x0c;
+	_chunk6IdlePairAAltPhase = _random.getRandomNumber(1) != 0;
+	_chunk6IdlePairBAltPhase = _random.getRandomNumber(1) != 0;
+	_chunk6IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
+	_chunk6IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
 
-void Scene7010::runJuniorSpeech() {
-	const uint32 speechMillis = _speech.isPlaying() ?
-		MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
-		MAX<uint32>(2800, _speechOverlay.lines.size() * 1500);
-	uint32 elapsed = 0;
-	uint32 frameAccumulator = kG01SecondaryActorFrameMillis;
-	uint32 chunk8Accumulator = 0;
-	uint32 chunk10Accumulator = 0;
-	uint32 lastMillis = g_system->getMillis();
+	drawPlayableComposite();
+	presentFrame();
 
-	while ((_speech.isPlaying() || elapsed < speechMillis) && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents(true))
-			break;
-
-		_activeActorWorldX = kG01SueEntryTargetX;
-		_activeActorWorldY = kG01SueEntryTargetY;
-		_activeActorFacing = kG01SueEntryFacing;
-		_activeActorCel = kG01SueEntryFinalCel;
-		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-		drawPlayableComposite();
-		presentFrame();
-
-		g_system->delayMillis(10);
-		elapsed += 10;
-
-		const uint32 now = g_system->getMillis();
-		const uint32 delta = now - lastMillis;
-		lastMillis = now;
-		frameAccumulator += delta;
-		chunk8Accumulator += delta;
-		chunk10Accumulator += delta;
-		if (frameAccumulator >= kG01SecondaryActorFrameMillis) {
-			advanceSecondaryActorSpeechFrame();
-			frameAccumulator = 0;
-		}
-		if (chunk8Accumulator >= kG01Chunk8FrameMillis) {
-			_chunk8FrameIndex = (_chunk8FrameIndex == 7) ? 0 : _chunk8FrameIndex + 1;
-			if ((_chunk8FrameIndex & 1) != 0)
-				_chunk9AmbientOverlayFrameIndex ^= 1;
-			chunk8Accumulator = 0;
-		}
-		if (chunk10Accumulator >= kG01Chunk10FrameMillis) {
-			advanceChunk10IdleFrames();
-			chunk10Accumulator = 0;
-		}
+	queueActorPathWithPaletteRegionRouting(startX, startY, targetX, targetY, kInvalidFacing, 0);
+	for (uint frameIndex = 1; frameIndex < _actorPathFrames.size() && !_skipRequested && !Engine::shouldQuit(); ++frameIndex) {
+		const ActorPathFrame &frame = _actorPathFrames[frameIndex];
+		_activeActorWorldX = frame.worldX;
+		_activeActorWorldY = frame.worldY;
+		_activeActorFacing = frame.facing;
+		_activeActorCel = frame.cel;
+		_activeActorDrawOrderMode = frame.drawOrderMode;
+		if (waitSceneMillis(kG03ActorPathFrameMillis))
+			return;
 	}
 
-	clearSpeechOverlay();
-	_speech.stop();
-	_secondaryActorFrame = 0;
+	_activeActorWorldX = targetX;
+	_activeActorWorldY = targetY;
+	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	_activeActorCel = 0;
 	drawPlayableComposite();
 	presentFrame();
 }
 
-bool Scene7010::runBasicGameplayLoop() {
+bool Scene7030::runBasicGameplayLoop() {
 	GameplayLoop loop(_vm, this);
 	return loop.run();
 }
 
-const SceneHotspotTable &Scene7010::hotspots() const {
+const SceneHotspotTable &Scene7030::hotspots() const {
 	return _hotspots;
 }
 
-const Common::Array<byte> &Scene7010::savedFramebuffer() const {
+const Common::Array<byte> &Scene7030::savedFramebuffer() const {
 	return _savedFramebuffer;
 }
 
-uint16 Scene7010::viewportXOffset() const {
-	return kG01InitialViewportXOffset;
+uint16 Scene7030::viewportXOffset() const {
+	return kG03InitialViewportXOffset;
 }
 
-uint16 Scene7010::viewportYOffset() const {
+uint16 Scene7030::viewportYOffset() const {
 	return 0;
 }
 
-void Scene7010::prepareGameplayLoop() {
+void Scene7030::prepareGameplayLoop() {
 	clearAllSpeechOverlays();
 	_primaryLeftSpeechActive = false;
 	_primaryLeftSpeechTimerAccumulator = 0;
-	_activeActorWorldX = kG01SueEntryTargetX;
-	_activeActorWorldY = kG01SueEntryTargetY;
-	_activeActorFacing = kG01SueEntryFacing;
-	_activeActorCel = kG01SueEntryFinalCel;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_secondaryActorFrame = 0;
+	_actionOverlayVisible = false;
 }
 
-void Scene7010::advanceGameplayLoop(uint32 delta) {
+void Scene7030::advanceGameplayLoop(uint32 delta) {
 	if (_primaryLeftSpeechActive && _primarySpeechOverlay.visible) {
 		_primaryLeftSpeechTimerAccumulator += delta;
-		while (_primaryLeftSpeechTimerAccumulator >= kG01Chunk10FrameMillis) {
+		while (_primaryLeftSpeechTimerAccumulator >= kG03Chunk6FrameMillis) {
 			advancePrimaryLeftSpeechFrame();
-			_primaryLeftSpeechTimerAccumulator -= kG01Chunk10FrameMillis;
+			_primaryLeftSpeechTimerAccumulator -= kG03Chunk6FrameMillis;
 		}
 	} else {
 		_primaryLeftSpeechTimerAccumulator = 0;
-		_chunk8TimerAccumulator += delta;
-		while (_chunk8TimerAccumulator >= kG01Chunk8FrameMillis) {
-			advanceChunk8Cycle();
-			_chunk8TimerAccumulator -= kG01Chunk8FrameMillis;
+		if (_sceneStateFlags[0] != 0) {
+			_chunk5TimerAccumulator += delta;
+			while (_chunk5TimerAccumulator >= _chunk5FrameMillis) {
+				advanceChunk5AmbientOverlay();
+				_chunk5TimerAccumulator -= _chunk5FrameMillis;
+			}
+		} else {
+			_chunk5TimerAccumulator = 0;
 		}
 	}
 
-	_chunk10TimerAccumulator += delta;
-	while (_chunk10TimerAccumulator >= kG01Chunk10FrameMillis) {
-		advanceChunk10IdleFrames();
-		_chunk10TimerAccumulator -= kG01Chunk10FrameMillis;
+	_chunk6TimerAccumulator += delta;
+	while (_chunk6TimerAccumulator >= kG03Chunk6FrameMillis) {
+		advanceChunk6IdleFrames();
+		_chunk6TimerAccumulator -= kG03Chunk6FrameMillis;
 	}
 
 	if (_speechOverlay.visible) {
 		_secondaryActorTimerAccumulator += delta;
-		while (_secondaryActorTimerAccumulator >= kG01SecondaryActorFrameMillis) {
+		while (_secondaryActorTimerAccumulator >= kG03SecondaryActorFrameMillis) {
 			advanceSecondaryActorSpeechFrame();
-			_secondaryActorTimerAccumulator -= kG01SecondaryActorFrameMillis;
+			_secondaryActorTimerAccumulator -= kG03SecondaryActorFrameMillis;
 		}
 	} else {
 		_secondaryActorFrame = 0;
 		_secondaryActorTimerAccumulator = 0;
 	}
 
-	advanceDialogueOverlay(delta);
+	updateAmbientAudioAndMusicCues(delta);
 }
 
-void Scene7010::drawGameplayFrame() {
+void Scene7030::drawGameplayFrame() {
 	drawPlayableComposite();
 }
 
-void Scene7010::presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) {
+void Scene7030::presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) {
 	presentFrame(&hoverCaption, &panelState);
 }
 
-bool Scene7010::shouldExitGameplayLoop() const {
-	return _vm->gameState().mainFlowStateId != 0x1b62;
+bool Scene7030::shouldExitGameplayLoop() const {
+	const uint16 stateId = _vm->gameState().mainFlowStateId;
+	return stateId < kG03State7030 || stateId > kG03LastInteractiveState;
 }
 
-void Scene7010::handleLeftClick(const GameplayLoopCursorState &state) {
+void Scene7030::handleLeftClick(const GameplayLoopCursorState &state) {
 	_vm->cursor()->leaveInteractiveMode();
 	processSceneActionClick(state);
 	if (!Engine::shouldQuit() && !shouldExitGameplayLoop()) {
@@ -1032,7 +957,7 @@ void Scene7010::handleLeftClick(const GameplayLoopCursorState &state) {
 	}
 }
 
-void Scene7010::processSceneActionClick(const GameplayLoopCursorState &state) {
+void Scene7030::processSceneActionClick(const GameplayLoopCursorState &state) {
 	byte itemId = state.resolvedItem;
 	SceneVerbActionRecord actionRecord = _hotspots.verbActionRecord(itemId, state.currentStrip);
 
@@ -1081,7 +1006,7 @@ void Scene7010::processSceneActionClick(const GameplayLoopCursorState &state) {
 	dispatchSceneAction(actionRecord.actionHandlerId);
 }
 
-void Scene7010::dispatchSceneAction(uint16 handlerId) {
+void Scene7030::dispatchSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 0:
 	case 1:
@@ -1096,36 +1021,51 @@ void Scene7010::dispatchSceneAction(uint16 handlerId) {
 		beginStaticSecondarySpeechLine(0x13, 0);
 		break;
 	case 301:
-		handleActionSlot00TransitionToG03();
+		handleActionSlot00TransitionToG04();
 		break;
 	case 302:
 		handleActionSlot01SecondarySpeech();
 		break;
 	case 303:
-		handleActionSlot02SecondarySpeech();
+		handleActionSlot02TransitionToG01Alt();
 		break;
 	case 304:
-		handleActionSlot03DialogueSequence();
+		handleActionSlot03SecondarySpeech();
 		break;
 	case 305:
-		handleActionSlot04Item06Speech();
+		handleActionSlot04SecondarySpeech();
 		break;
-	case 307:
-		handleActionSlot06Item0BSequence();
-		break;
-	case 308:
-		handleActionSlot07DialogueAndReturn();
+	case 306:
+		handleActionSlot05ToggleSceneState0Speech();
 		break;
 	case 309:
 		handleActionSlot08CommonSpeech();
 		break;
+	case 310:
+		handleActionSlot09CommonSpeech();
+		break;
+	case 311:
+		handleActionSlot10CommonSpeech();
+		break;
+	case 312:
+		handleActionSlot11ExchangeItem0CFor0D();
+		break;
+	case 313:
+		handleActionSlot12PickupItem0B();
+		break;
+	case 314:
+		handleActionSlot13PickupItem0C();
+		break;
+	case 315:
+		handleActionSlot14SecondarySpeech();
+		break;
 	default:
-		warning("Unhandled Scene7010 action handler %u", handlerId);
+		warning("Unhandled Scene7030 action handler %u", handlerId);
 		break;
 	}
 }
 
-void Scene7010::walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel) {
+void Scene7030::walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel) {
 	queueActorPathWithPaletteRegionRouting(_activeActorWorldX, _activeActorWorldY, targetX, targetY,
 		finalFacing, finalCel);
 
@@ -1142,15 +1082,16 @@ void Scene7010::walkActiveActorTo(int targetX, int targetY, byte finalFacing, by
 		_activeActorFacing = frame.facing;
 		_activeActorCel = frame.cel;
 		_activeActorDrawOrderMode = frame.drawOrderMode;
-		waitSceneMillis(kG01ActorPathFrameMillis);
+		waitSceneMillis(kG03ActorPathFrameMillis);
 	}
 
 	drawPlayableComposite();
 	presentFrame();
 }
 
-void Scene7010::adjustWalkTargetToFloorMask(int &targetX, int &targetY) const {
-	targetX = CLIP<int>(targetX, 0x16b, 0x268);
+void Scene7030::adjustWalkTargetToFloorMask(int &targetX, int &targetY) const {
+	if (targetX > 0x242)
+		targetX = 0x242;
 
 	while (targetY < 0x1df) {
 		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
@@ -1167,7 +1108,7 @@ void Scene7010::adjustWalkTargetToFloorMask(int &targetX, int &targetY) const {
 	}
 }
 
-void Scene7010::queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
+void Scene7030::queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
 		byte finalFacing, byte finalCel) {
 	_actorPathFrames.clear();
 	memcpy(_actorPathStepDeltas.data(), kActorPathStepDeltaTableSet00, _actorPathStepDeltas.size());
@@ -1215,12 +1156,9 @@ void Scene7010::queueActorPathWithPaletteRegionRouting(int startX, int startY, i
 
 			int requestedFacing = -1;
 			bool restoredStepDeltas = false;
-			if (currentRegion == 3 && nextRegion == 2) {
-				memcpy(_actorPathStepDeltas.data() + 12, kActorPathStepDeltaTableSet00 + 48, 12);
-				requestedFacing = 1;
-				restoredStepDeltas = true;
-			}
-			if (currentRegion == 2 && nextRegion == 1 &&
+			if (currentRegion == 6 && nextRegion == 1)
+				requestedFacing = 4;
+			if (currentRegion == 1 && nextRegion == 6 &&
 					state.x < boundary.x && boundary.y <= state.y)
 				requestedFacing = 1;
 
@@ -1234,13 +1172,19 @@ void Scene7010::queueActorPathWithPaletteRegionRouting(int startX, int startY, i
 	}
 
 	int requestedFacing = -1;
-	if (currentRegion == 3 && targetRegion == 3)
-		requestedFacing = 4;
+	bool restoredStepDeltas = false;
+	if (currentRegion == 6 && targetRegion == 6) {
+		memcpy(_actorPathStepDeltas.data() + 12, kActorPathStepDeltaTableSet00 + 24, 12);
+		requestedFacing = 1;
+		restoredStepDeltas = true;
+	}
 	if (currentRegion == 1 && targetRegion == 1 && state.x < targetX && targetY <= state.y)
 		requestedFacing = 1;
 
 	state.drawOrderMode = currentRegion;
 	buildActorPathFramesBetweenPoints(state, targetX, targetY, finalFacing, finalCel, requestedFacing);
+	if (restoredStepDeltas)
+		memcpy(_actorPathStepDeltas.data(), kActorPathStepDeltaTableSet00, _actorPathStepDeltas.size());
 
 	if (!_actorPathFrames.empty()) {
 		const ActorPathFrame &lastFrame = _actorPathFrames.back();
@@ -1252,7 +1196,7 @@ void Scene7010::queueActorPathWithPaletteRegionRouting(int startX, int startY, i
 	}
 }
 
-void Scene7010::buildActorPathFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,
+void Scene7030::buildActorPathFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,
 		byte finalFacing, byte finalCel, int requestedFacing) {
 	if (targetX == state.x && targetY == state.y) {
 		if (finalFacing != kInvalidFacing && state.facing != finalFacing) {
@@ -1322,7 +1266,7 @@ void Scene7010::buildActorPathFramesBetweenPoints(ActorPathBuildState &state, in
 	state.cel = nextActorPathCel(state.cel);
 }
 
-void Scene7010::appendActorPathFrame(const ActorPathBuildState &state) {
+void Scene7030::appendActorPathFrame(const ActorPathBuildState &state) {
 	ActorPathFrame frame;
 	frame.drawOrderMode = state.drawOrderMode;
 	frame.facing = state.facing;
@@ -1332,7 +1276,7 @@ void Scene7010::appendActorPathFrame(const ActorPathBuildState &state) {
 	_actorPathFrames.push_back(frame);
 }
 
-ScenePoint Scene7010::nearestPaletteRouteBoundaryPoint(int startX, int startY, byte currentRegion, byte nextRegion) const {
+ScenePoint Scene7030::nearestPaletteRouteBoundaryPoint(int startX, int startY, byte currentRegion, byte nextRegion) const {
 	ScenePoint bestPoint;
 	memset(&bestPoint, 0, sizeof(bestPoint));
 
@@ -1355,7 +1299,7 @@ ScenePoint Scene7010::nearestPaletteRouteBoundaryPoint(int startX, int startY, b
 	return bestPoint;
 }
 
-ScenePoint Scene7010::bestPaletteRouteBoundaryPoint(int startX, int startY, int targetX, int targetY,
+ScenePoint Scene7030::bestPaletteRouteBoundaryPoint(int startX, int startY, int targetX, int targetY,
 		byte currentRegion, byte targetRegion) const {
 	ScenePoint bestPoint;
 	memset(&bestPoint, 0, sizeof(bestPoint));
@@ -1383,7 +1327,7 @@ ScenePoint Scene7010::bestPaletteRouteBoundaryPoint(int startX, int startY, int 
 	return bestPoint;
 }
 
-byte Scene7010::paletteRegionAt(int x, int y) const {
+byte Scene7030::paletteRegionAt(int x, int y) const {
 	if (x < 0 || y < 0 || x >= HollywoodEngine::kSceneBufferWidth || y >= HollywoodEngine::kSceneBufferHeight ||
 			_fullPaletteRegionMask.empty())
 		return 0;
@@ -1395,7 +1339,7 @@ byte Scene7010::paletteRegionAt(int x, int y) const {
 	return _fullPaletteRegionMask[_savedFramebuffer[offset]];
 }
 
-byte Scene7010::calculateMovementFacingForPath(int fromX, int fromY, int toX, int toY, int requestedFacing) const {
+byte Scene7030::calculateMovementFacingForPath(int fromX, int fromY, int toX, int toY, int requestedFacing) const {
 	if (requestedFacing >= 0)
 		return (byte)requestedFacing;
 
@@ -1420,7 +1364,7 @@ byte Scene7010::calculateMovementFacingForPath(int fromX, int fromY, int toX, in
 	return slope > 1.0f ? 3 : 4;
 }
 
-uint Scene7010::calculateWalkStepCountForAxisDelta(int startAxis, int targetAxis, byte facing, byte cel) const {
+uint Scene7030::calculateWalkStepCountForAxisDelta(int startAxis, int targetAxis, byte facing, byte cel) const {
 	if (facing >= kActorFacingCount)
 		return 0;
 
@@ -1442,11 +1386,11 @@ uint Scene7010::calculateWalkStepCountForAxisDelta(int startAxis, int targetAxis
 	return steps;
 }
 
-byte Scene7010::nextActorPathCel(byte cel) const {
+byte Scene7030::nextActorPathCel(byte cel) const {
 	return cel == 12 ? 1 : (byte)(cel + 1);
 }
 
-uint Scene7010::actorPathStepDelta(byte facing, byte cel) const {
+uint Scene7030::actorPathStepDelta(byte facing, byte cel) const {
 	if (facing >= kActorFacingCount || cel == 0 || cel > 12)
 		return 0;
 
@@ -1457,7 +1401,7 @@ uint Scene7010::actorPathStepDelta(byte facing, byte cel) const {
 	return _actorPathStepDeltas[offset];
 }
 
-byte Scene7010::calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const {
+byte Scene7030::calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const {
 	if (toX == fromX)
 		return fromY < toY ? 3 : 0;
 
@@ -1475,204 +1419,191 @@ byte Scene7010::calculateFacingTowardPoint(int fromX, int fromY, int toX, int to
 	return slope > kActorFacingSteepSlopeThreshold ? 3 : 4;
 }
 
-void Scene7010::advanceDialogueOverlay(uint32 delta) {
-	if (_dialogueOverlayMode == 0)
-		return;
+void Scene7030::applySceneStateToHotspotsAndPatches(byte selector) {
+	if (selector == 0 || selector == 0xff) {
+		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
+		for (uint i = 0; i < _fullPaletteRegionMask.size(); ++i) {
+			if (_paletteMaskOriginal[i] == 7)
+				_fullPaletteRegionMask[i] = _sceneStateFlags[0] == 1 ? 0 : 1;
+		}
 
-	_dialogueOverlayTimerAccumulator += delta;
-	while (_dialogueOverlayTimerAccumulator >= kG01DialogueOverlayFrameMillis) {
-		_dialogueOverlayTimerAccumulator -= kG01DialogueOverlayFrameMillis;
-		if (_dialogueOverlayMode == 1) {
-			_dialogueOverlayFrameIndex = _dialogueOverlayFrameIndex == 3 ? 0 : _dialogueOverlayFrameIndex + 1;
+		if (_sceneStateFlags[0] != 1) {
+			if (_routeBoundaryPoints.size() > 0x100) {
+				_routeBoundaryPoints[0x4b].x = 0x149;
+				_routeBoundaryPoints[0x4b].y = 0x136;
+				_routeBoundaryPoints[0x4c].x = 0x16f;
+				_routeBoundaryPoints[0x4c].y = 0x13f;
+				_routeBoundaryPoints[0xff].x = 0x14a;
+				_routeBoundaryPoints[0xff].y = 0x136;
+				_routeBoundaryPoints[0x100].x = 0x170;
+				_routeBoundaryPoints[0x100].y = 0x13e;
+			}
+		}
+
+		rebuildWalkablePaletteMask();
+	}
+
+	if (selector == 2 || selector == 0xff) {
+		if (!_baseFramebufferOriginal.empty())
+			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
+
+		if (_sceneStateFlags[2] != 0) {
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
 		} else {
-			_dialogueOverlayFrameIndex = _dialogueOverlayFrameIndex == 0x1b ? 5 : _dialogueOverlayFrameIndex + 1;
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[9], _baseFramebuffer);
 		}
+
+		if (_paletteMaskOriginal.size() >= kSceneColorToItemMapOffset + kSceneColorMapSize &&
+				_paletteMask.size() >= kSceneColorToItemMapOffset + kSceneColorMapSize) {
+			memcpy(_paletteMask.data() + kSceneColorToItemMapOffset,
+				_paletteMaskOriginal.data() + kSceneColorToItemMapOffset, kSceneColorMapSize);
+			if (_sceneStateFlags[2] == 0) {
+				for (uint i = 0; i < kSceneColorMapSize; ++i) {
+					if (_paletteMaskOriginal[kSceneColorToItemMapOffset + i] == 5)
+						_paletteMask[kSceneColorToItemMapOffset + i] = 0;
+				}
+			}
+		}
+
+		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
 	}
 }
 
-void Scene7010::applySceneStateToHotspotsAndPatches(byte selector) {
-	if ((selector == 2 || selector == 0xff) && _sceneStateFlags[2] == 1) {
-		const uint sourceOffset = 5 * kStage003SmallRowSize;
-		const uint destinationOffset = 3 * kStage003SmallRowSize;
-		if (sourceOffset + kStage003SmallRowSize <= _stage003SmallRows.size() &&
-				destinationOffset + kStage003SmallRowSize <= _stage003SmallRows.size()) {
-			memcpy(_stage003SmallRows.data() + destinationOffset,
-				_stage003SmallRows.data() + sourceOffset, kStage003SmallRowSize);
-			_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
-		}
+void Scene7030::rebuildWalkablePaletteMask() {
+	memcpy(_walkablePaletteMask.data(), _fullPaletteRegionMask.data(), _walkablePaletteMask.size());
+	for (uint i = 0; i < _walkablePaletteMask.size(); ++i) {
+		if (_walkablePaletteMask[i] > 4)
+			_walkablePaletteMask[i] = 0;
 	}
-
-	if (selector == 4 || selector == 0xff)
-		_hotspots.setVerbMovementModeByGlobalRecordIndex(0x19, _sceneStateFlags[4] == 0 ? 1 : 0);
 }
 
-bool Scene7010::hasInventoryItem(byte itemId) const {
+bool Scene7030::hasInventoryItem(byte itemId) const {
 	return itemId < ARRAYSIZE(_inventoryItems) && _inventoryItems[itemId];
 }
 
-void Scene7010::addInventoryItem(byte itemId) {
+void Scene7030::addInventoryItem(byte itemId) {
 	if (itemId < ARRAYSIZE(_inventoryItems))
 		_inventoryItems[itemId] = true;
 }
 
-void Scene7010::removeInventoryItem(byte itemId) {
+void Scene7030::removeInventoryItem(byte itemId) {
 	if (itemId < ARRAYSIZE(_inventoryItems))
 		_inventoryItems[itemId] = false;
 }
 
-void Scene7010::handleActionSlot00TransitionToG03() {
-	_vm->gameState().mainFlowStateId = 0x1b76;
+void Scene7030::handleActionSlot00TransitionToG04() {
+	_vm->gameState().mainFlowStateId = kG03ExitState7040;
 }
 
-void Scene7010::handleActionSlot01SecondarySpeech() {
+void Scene7030::handleActionSlot01SecondarySpeech() {
 	beginSecondarySpeechLine(1, 0);
 }
 
-void Scene7010::handleActionSlot02SecondarySpeech() {
-	beginSecondarySpeechLine(2, _sceneStateFlags[1] == 0 ? 0 : 1);
+void Scene7030::handleActionSlot02TransitionToG01Alt() {
+	_vm->gameState().mainFlowStateId = kG01ReturnState7011;
 }
 
-void Scene7010::handleActionSlot03DialogueSequence() {
-	if (!hasInventoryItem(6)) {
-		beginSecondarySpeechLine(3, 0);
-		return;
-	}
-
-	if (_sceneStateFlags[2] == 0)
-		handleActionSlot04Item06Speech();
-
-	beginSecondarySpeechLine(_sceneStateFlags[4] == 1 ? 3 : 4, _sceneStateFlags[4] == 1 ? 1 : 2);
-	walkActiveActorTo(0x298, 0x1af, 1, 0);
-	_chunk11Visible = true;
-	runChunk11FrameRange(0, 0x0e);
-	beginPrimarySpeechLine(99, _sceneStateFlags[4] == 1 ? 0 : 2, 0x302, 0xe3, 0x28, 0x16, 0x0b);
-	runChunk11FrameRange(0x12, 0x16);
-	beginPrimarySpeechLine(99, _sceneStateFlags[4] == 1 ? 1 : 4, 0x2ee, 0xe8, 0x28, 0x16, 0x0b);
-	runChunk11FrameRange(0x1a, 0x1e);
-	walkActiveActorTo(0x17b, 0x1b2, kInvalidFacing, 0);
-	_chunk11Visible = false;
-	if (_sceneStateFlags[4] == 1)
-		_sceneStateFlags[4] = 2;
-	else
-		beginSecondarySpeechLine(5, 0);
+void Scene7030::handleActionSlot03SecondarySpeech() {
+	beginSecondarySpeechLine(2, 0);
 }
 
-void Scene7010::handleActionSlot04Item06Speech() {
-	if (_sceneStateFlags[2] == 0) {
+void Scene7030::handleActionSlot04SecondarySpeech() {
+	beginSecondarySpeechLine(3, 0);
+}
+
+void Scene7030::handleActionSlot05ToggleSceneState0Speech() {
+	if (_sceneStateFlags[0] == 1) {
 		beginSecondarySpeechLine(4, 0);
-		_sceneStateFlags[2] = 1;
-		applySceneStateToHotspotsAndPatches(2);
-		return;
-	}
-
-	beginSecondarySpeechLine(4, hasInventoryItem(6) ? 2 : 1);
-}
-
-void Scene7010::handleActionSlot06Item0BSequence() {
-	if (_sceneStateFlags[1] == 0) {
-		beginSecondarySpeechLine(6, 0);
-		return;
-	}
-
-	runChunk15ItemSequence();
-	removeInventoryItem(0x0b);
-	runDialogueOverlayFrames(5, 0x1b, 0);
-	beginSecondarySpeechLine(6, 4);
-}
-
-void Scene7010::handleActionSlot07DialogueAndReturn() {
-	beginSecondarySpeechLine(7, 0);
-	runChunk8RevealSequence();
-	byte primaryFollowUpFrame = 2;
-	if (_sceneStateFlags[3] == 0) {
-		const byte firstVisitVariant = (byte)_random.getRandomNumber(2);
-		if (firstVisitVariant == 0) {
-			beginPrimaryLeftSpeechLine(8, 0);
-			primaryFollowUpFrame = 3;
-		} else if (firstVisitVariant == 1) {
-			beginPrimaryLeftSpeechLine(8, 0);
-			primaryFollowUpFrame = 4;
-		} else {
-			beginPrimaryLeftSpeechLine(8, 3);
-			primaryFollowUpFrame = 4;
-		}
-		_sceneStateFlags[3] = 1;
+		_sceneStateFlags[0] = 2;
+		applySceneStateToHotspotsAndPatches(0);
 	} else {
-		beginPrimaryLeftSpeechLine(8, 1);
+		beginSecondarySpeechLine(4, 1);
 	}
-	beginPrimaryLeftSpeechLine(8, primaryFollowUpFrame);
-	beginSecondarySpeechLine(7, 1);
-	runChunk8HideSequence();
-	walkActiveActorTo(0x16b, 0x1df, 3, 0);
-	beginSecondarySpeechLine(7, 2);
 }
 
-void Scene7010::handleActionSlot08CommonSpeech() {
+void Scene7030::handleActionSlot08CommonSpeech() {
+	beginSecondarySpeechLine(7, 0);
+	_sceneStateFlags[2] = 2;
+	applySceneStateToHotspotsAndPatches(2);
+}
+
+void Scene7030::handleActionSlot09CommonSpeech() {
+	beginSecondarySpeechLine(8, 0);
+}
+
+void Scene7030::handleActionSlot10CommonSpeech() {
 	beginSecondarySpeechLine(9, 0);
 }
 
-void Scene7010::runChunk8RevealSequence() {
-	_chunk8FrameIndex = 7;
-	for (byte frame = 7; frame <= 0x0b && !Engine::shouldQuit(); ++frame) {
-		_chunk8FrameIndex = frame;
-		waitSceneMillis(kG01Chunk8FrameMillis);
-	}
+void Scene7030::handleActionSlot11ExchangeItem0CFor0D() {
+	beginSecondarySpeechLine(10, 0);
+	runMappedActionOverlay(11, kG03Chunk11DescriptorCount, kG03Chunk11ExchangeItem0CFrameMap,
+		ARRAYSIZE(kG03Chunk11ExchangeItem0CFrameMap), kG03Chunk5FrameMillis);
+	removeInventoryItem(0x0c);
+	addInventoryItem(0x0d);
+	_vm->gameState().inventoryPanelRedrawn = true;
+	_soundBank0.playSample(1, 100);
 }
 
-void Scene7010::runChunk8HideSequence() {
-	for (byte frame = 0x0f; frame <= 0x13 && !Engine::shouldQuit(); ++frame) {
-		_chunk8FrameIndex = frame;
-		waitSceneMillis(kG01Chunk8FrameMillis);
+void Scene7030::handleActionSlot12PickupItem0B() {
+	if (hasInventoryItem(0x0b)) {
+		beginSecondarySpeechLine(5, 2);
+		return;
 	}
-	_chunk8FrameIndex = _vm->gameState().currentRandomAmbientMusicTrackId == kG01AmbientMusicCueWithoutChunk9 ? 0x14 : 0;
+	if (_vm->gameState().currentRandomAmbientMusicTrackId != kG03AmbientMusicCueStillFrame) {
+		beginSecondarySpeechLine(5, 3);
+		return;
+	}
+
+	beginSecondarySpeechLine(5, 0);
+	runMappedActionOverlay(7, kG03Chunk7DescriptorCount, kG03Chunk7PickupItem0BFrameMap,
+		ARRAYSIZE(kG03Chunk7PickupItem0BFrameMap), kG03Chunk5FrameMillis);
+	addInventoryItem(0x0b);
+	_vm->gameState().inventoryPanelRedrawn = true;
+	_soundBank0.playSample(1, 100);
+	_sceneStateFlags[1] = 1;
+	beginSecondarySpeechLine(5, 1);
 }
 
-void Scene7010::runChunk11FrameRange(byte startFrame, byte endFrame) {
-	_chunk11Visible = true;
-	for (byte frame = startFrame; frame <= endFrame && !Engine::shouldQuit(); ++frame) {
-		_chunk11FrameIndex = frame;
-		waitSceneMillis(75);
+void Scene7030::handleActionSlot13PickupItem0C() {
+	if (_sceneStateFlags[2] == 1) {
+		handleActionSlot08CommonSpeech();
+		clearSpeechOverlay();
+		_speech.stop();
 	}
+
+	runMappedActionOverlay(10, kG03Chunk10DescriptorCount, kG03Chunk10PickupItem0CFrameMap,
+		ARRAYSIZE(kG03Chunk10PickupItem0CFrameMap), kG03Chunk5FrameMillis, 3);
+	addInventoryItem(0x0c);
+	_vm->gameState().inventoryPanelRedrawn = true;
+	_soundBank0.playSample(1, 100);
 }
 
-void Scene7010::runChunk14FrameRange(byte startFrame, byte endFrame) {
-	_chunk14Visible = true;
-	_chunk11Visible = false;
-	for (byte frame = startFrame; frame <= endFrame && !Engine::shouldQuit(); ++frame) {
-		_chunk14FrameIndex = frame;
-		waitSceneMillis(75);
-	}
-	_chunk14Visible = false;
+void Scene7030::handleActionSlot14SecondarySpeech() {
+	beginSecondarySpeechLine(10, 1);
 }
 
-void Scene7010::runChunk15ItemSequence() {
-	_chunk15Visible = true;
-	for (byte frame = 0; frame <= 0x17 && !Engine::shouldQuit(); ++frame) {
-		_chunk15FrameIndex = frame;
-		if (frame == 10) {
-			beginPrimarySpeechLine(6, 1, 0x20e, 0x109, 0x3f, 0x28, 0x32);
-			beginPrimarySpeechLine(6, 2, 0x20e, 0x109, 0x3f, 0x28, 0x32);
-			runDialogueOverlayFrames(0, 5, 2);
-			beginPrimarySpeechLine(6, 3, 0x20e, 0x109, 0x3f, 0x28, 0x32);
+void Scene7030::runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
+		uint32 frameMillis, int statePatchFrame) {
+	_actionOverlayVisible = true;
+	_actionOverlayChunkIndex = (byte)chunkIndex;
+	_actionOverlayDescriptorCount = (byte)descriptorCount;
+	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
+		_actionOverlayFrameIndex = frameMap[frame];
+		if (statePatchFrame >= 0 && (int)frame == statePatchFrame) {
+			_sceneStateFlags[2] = 0;
+			applySceneStateToHotspotsAndPatches(2);
 		}
-		waitSceneMillis(75);
+		if (waitSceneMillis(frameMillis))
+			break;
 	}
-	_chunk15Visible = false;
+	_actionOverlayVisible = false;
+	_actionOverlayFrameIndex = 0;
+	drawPlayableComposite();
+	presentFrame();
 }
 
-void Scene7010::runDialogueOverlayFrames(byte startFrame, byte endFrame, byte finalMode) {
-	_dialogueOverlayMode = 2;
-	_sceneStateFlags[1] = 2;
-	for (byte frame = startFrame; frame <= endFrame && !Engine::shouldQuit(); ++frame) {
-		_dialogueOverlayFrameIndex = frame;
-		waitSceneMillis(kG01DialogueOverlayFrameMillis);
-	}
-	_dialogueOverlayMode = finalMode;
-	_sceneStateFlags[1] = finalMode;
-	_dialogueOverlayFrameIndex = finalMode == 0 ? 0 : endFrame;
-}
-
-bool Scene7010::waitSceneMillis(uint32 millis) {
+bool Scene7030::waitSceneMillis(uint32 millis) {
 	uint32 remaining = millis;
 	while (remaining != 0 && !Engine::shouldQuit()) {
 		if (pollEvents(true))
@@ -1689,64 +1620,100 @@ bool Scene7010::waitSceneMillis(uint32 millis) {
 	return Engine::shouldQuit();
 }
 
-void Scene7010::advanceChunk8Cycle() {
-	if (_vm->gameState().currentRandomAmbientMusicTrackId == kG01AmbientMusicCueWithoutChunk9) {
-		_chunk8FrameIndex = _chunk8FrameIndex == 0x1a ? 0x14 : _chunk8FrameIndex + 1;
+void Scene7030::updateAmbientAudioAndMusicCues(uint32 delta) {
+	_ambientMusicTimerAccumulator += delta;
+	if (_ambientMusicTimerAccumulator < kG03AmbientMusicCheckMillis)
+		return;
+	_ambientMusicTimerAccumulator %= kG03AmbientMusicCheckMillis;
+
+	if (_vm->gameplayMusic()->isPlaying())
+		return;
+
+	GameplayState &state = _vm->gameState();
+	if (state.currentRandomAmbientMusicTrackId != kG03AmbientMusicCueStillFrame) {
+		_previousAmbientMusicTrackId = state.currentRandomAmbientMusicTrackId;
+		state.currentRandomAmbientMusicTrackId = kG03AmbientMusicCueStillFrame;
+		_chunk5FrameIndex = 0;
+		_chunk5FrameMillis = kG03Chunk5FrameMillis;
+		_vm->gameplayMusic()->playMusicCue(state.currentRandomAmbientMusicTrackId, 75);
 		return;
 	}
 
-	_chunk8FrameIndex = _chunk8FrameIndex == 7 ? 0 : _chunk8FrameIndex + 1;
-	if ((_chunk8FrameIndex & 1) == 0)
+	byte nextTrack = 0;
+	do {
+		nextTrack = (byte)(0x0c + _random.getRandomNumber(2));
+	} while (nextTrack == _previousAmbientMusicTrackId);
+
+	_previousAmbientMusicTrackId = state.currentRandomAmbientMusicTrackId;
+	state.currentRandomAmbientMusicTrackId = nextTrack;
+	_chunk5FrameIndex = 1;
+	_chunk5FrameDirection = 1;
+	_chunk5FrameMillis = nextTrack == 0x0e ? kG03Chunk5FastFrameMillis : kG03Chunk5FrameMillis;
+	_vm->gameplayMusic()->playMusicCue(state.currentRandomAmbientMusicTrackId, 75);
+}
+
+void Scene7030::advanceChunk5AmbientOverlay() {
+	if (_vm->gameState().currentRandomAmbientMusicTrackId == kG03AmbientMusicCueStillFrame) {
+		if (_chunk5FrameIndex < ARRAYSIZE(kG03Chunk5FrameMap) && kG03Chunk5FrameMap[_chunk5FrameIndex] != 0) {
+			if ((_chunk5FrameIndex % 12) < 7)
+				--_chunk5FrameIndex;
+			else
+				++_chunk5FrameIndex;
+		}
 		return;
+	}
 
-	if (_chunk9AmbientOverlayFrameIndex == 1) {
-		_chunk9AmbientOverlayFrameIndex = 0;
+	if (_chunk9AmbientDecisionCounter == 0) {
+		_chunk9AmbientDecisionCounter = (byte)(_random.getRandomNumber(3) + 1);
+		_chunk5FrameDirection = _random.getRandomNumber(1) == 0 ? -1 : 1;
+	}
+	_chunk5FrameIndex = (byte)((int)_chunk5FrameIndex + _chunk5FrameDirection);
+	if (_chunk5FrameIndex == 0)
+		_chunk5FrameIndex = 0x18;
+	else if (_chunk5FrameIndex == 0x19)
+		_chunk5FrameIndex = 1;
+	--_chunk9AmbientDecisionCounter;
+}
+
+void Scene7030::advanceChunk6IdleFrames() {
+	if (!_chunk6IdlePairAAltPhase) {
+		if (_chunk6IdlePairATicksRemaining == 0) {
+			_chunk6IdlePairAAltPhase = true;
+			_chunk6IdleFrameB = 4;
+			_chunk6IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
+		} else {
+			--_chunk6IdlePairATicksRemaining;
+			_chunk6IdleFrameA = (byte)_random.getRandomNumber(3);
+		}
+	} else if (_chunk6IdlePairATicksRemaining == 0) {
+		_chunk6IdlePairAAltPhase = false;
+		_chunk6IdleFrameA = 0;
+		_chunk6IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
 	} else {
-		++_chunk9AmbientDecisionCounter;
-		if ((_chunk9AmbientDecisionCounter % 5) == 0)
-			_chunk9AmbientOverlayFrameIndex = 1;
+		--_chunk6IdlePairATicksRemaining;
+		_chunk6IdleFrameB = 4 + (byte)_random.getRandomNumber(3);
+	}
+
+	if (!_chunk6IdlePairBAltPhase) {
+		if (_chunk6IdlePairBTicksRemaining == 0) {
+			_chunk6IdlePairBAltPhase = true;
+			_chunk6IdleFrameC = 8;
+			_chunk6IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
+		} else {
+			--_chunk6IdlePairBTicksRemaining;
+			_chunk6IdleFrameD = 0x0c + (byte)_random.getRandomNumber(3);
+		}
+	} else if (_chunk6IdlePairBTicksRemaining == 0) {
+		_chunk6IdlePairBAltPhase = false;
+		_chunk6IdleFrameD = 0x0c;
+		_chunk6IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
+	} else {
+		--_chunk6IdlePairBTicksRemaining;
+		_chunk6IdleFrameC = 8 + (byte)_random.getRandomNumber(3);
 	}
 }
 
-void Scene7010::advanceChunk10IdleFrames() {
-	if (!_chunk10IdlePairAAltPhase) {
-		if (_chunk10IdlePairATicksRemaining == 0) {
-			_chunk10IdlePairAAltPhase = true;
-			_chunk10IdleFrameA = 0;
-			_chunk10IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
-		} else {
-			--_chunk10IdlePairATicksRemaining;
-			_chunk10IdleFrameB = 8 + (byte)_random.getRandomNumber(3);
-		}
-	} else if (_chunk10IdlePairATicksRemaining == 0) {
-		_chunk10IdlePairAAltPhase = false;
-		_chunk10IdleFrameB = 8;
-		_chunk10IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
-	} else {
-		--_chunk10IdlePairATicksRemaining;
-		_chunk10IdleFrameA = (byte)_random.getRandomNumber(3);
-	}
-
-	if (!_chunk10IdlePairBAltPhase) {
-		if (_chunk10IdlePairBTicksRemaining == 0) {
-			_chunk10IdlePairBAltPhase = true;
-			_chunk10IdleFrameC = 4;
-			_chunk10IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
-		} else {
-			--_chunk10IdlePairBTicksRemaining;
-			_chunk10IdleFrameD = 0x0c + (byte)_random.getRandomNumber(3);
-		}
-	} else if (_chunk10IdlePairBTicksRemaining == 0) {
-		_chunk10IdlePairBAltPhase = false;
-		_chunk10IdleFrameD = 0x0c;
-		_chunk10IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
-	} else {
-		--_chunk10IdlePairBTicksRemaining;
-		_chunk10IdleFrameC = 4 + (byte)_random.getRandomNumber(3);
-	}
-}
-
-void Scene7010::advanceSecondaryActorSpeechFrame() {
+void Scene7030::advanceSecondaryActorSpeechFrame() {
 	byte nextFrame = _secondaryActorFrame;
 	for (uint attempt = 0; attempt < 8 && nextFrame == _secondaryActorFrame; ++attempt)
 		nextFrame = (byte)_random.getRandomNumber(kSecondaryActorFramesPerFacing - 1);
@@ -1757,7 +1724,7 @@ void Scene7010::advanceSecondaryActorSpeechFrame() {
 	_secondaryActorFrame = nextFrame;
 }
 
-void Scene7010::advancePrimaryLeftSpeechFrame() {
+void Scene7030::advancePrimaryLeftSpeechFrame() {
 	byte nextFrame = _primaryLeftSpeechLastFrame;
 	for (uint attempt = 0; attempt < 8 && nextFrame == _primaryLeftSpeechLastFrame; ++attempt)
 		nextFrame = (byte)_random.getRandomNumber(3);
@@ -1766,45 +1733,21 @@ void Scene7010::advancePrimaryLeftSpeechFrame() {
 		nextFrame = (byte)((_primaryLeftSpeechLastFrame + 1) % 4);
 
 	_primaryLeftSpeechLastFrame = nextFrame;
-	_chunk8FrameIndex = 0x0b + nextFrame;
+	_chunk5FrameIndex = 0x0b + nextFrame;
 }
 
-void Scene7010::beginJuniorSpeech() {
-	clearSpeechOverlay();
-	uint16 textRecordId = 0;
-	byte continuationCount = 0;
-	uint16 voiceSampleId = 0;
-	if (!getStage003Cue(0, 0, textRecordId, continuationCount, voiceSampleId))
-		return;
-
-	if (voiceSampleId != 0)
-		_speech.playSample(voiceSampleId, 100);
-
-	const Common::String text = getResource003LargeTextRecord(textRecordId);
-	if (text.empty())
-		return;
-
-	wrapActorSpeechText(text, kG01SueEntryTargetX, _speechOverlay.lines);
-	if (_speechOverlay.lines.empty())
-		return;
-
-	_speechOverlay.visible = true;
-	_speechOverlay.colorIndex = kG01SecondarySpeechTextColor;
-	calculateSecondarySpeechBounds(kG01SueEntryTargetX, kG01SueEntryTargetY);
-}
-
-void Scene7010::clearSpeechOverlay() {
+void Scene7030::clearSpeechOverlay() {
 	_speechOverlay.visible = false;
 	_speechOverlay.lines.clear();
 }
 
-void Scene7010::clearAllSpeechOverlays() {
+void Scene7030::clearAllSpeechOverlays() {
 	clearSpeechOverlay();
 	_primarySpeechOverlay.visible = false;
 	_primarySpeechOverlay.lines.clear();
 }
 
-void Scene7010::drawSpeechOverlay() {
+void Scene7030::drawSpeechOverlay() {
 	if (!_vm->font() || !_vm->font()->isLoaded())
 		return;
 
@@ -1812,7 +1755,7 @@ void Scene7010::drawSpeechOverlay() {
 	drawSpeechOverlay(_primarySpeechOverlay);
 }
 
-void Scene7010::drawSpeechOverlay(const SpeechOverlay &overlay) {
+void Scene7030::drawSpeechOverlay(const SpeechOverlay &overlay) {
 	if (!overlay.visible)
 		return;
 
@@ -1826,19 +1769,19 @@ void Scene7010::drawSpeechOverlay(const SpeechOverlay &overlay) {
 	for (uint lineIndex = 0; lineIndex < overlay.lines.size(); ++lineIndex) {
 		const Common::String &line = overlay.lines[lineIndex];
 		const int lineWidth = actorSpeechTextWidth(line);
-		const int x = (int)overlay.centerX - (lineWidth >> 1) - kG01InitialViewportXOffset;
+		const int x = (int)overlay.centerX - (lineWidth >> 1) - kG03InitialViewportXOffset;
 		const int y = (int)overlay.topY + lineIndex * kOriginalSpeechLineHeight;
 		font->drawString(&screenSurface, line, x, y, lineWidth, overlay.colorIndex,
 			Graphics::kTextAlignLeft, 0, false, true);
 	}
 }
 
-void Scene7010::beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
+void Scene7030::beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
 	runSpeechLine(_speechOverlay, rowIndex, frameIndex, _activeActorWorldX, 0,
-		kG01SecondarySpeechTextColor, false, false);
+		kG03SecondarySpeechTextColor, false, false);
 }
 
-void Scene7010::beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
+void Scene7030::beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
 	uint16 textRecordId = 0;
 	byte continuationCount = 0;
 	uint16 voiceSampleId = 0;
@@ -1846,12 +1789,12 @@ void Scene7010::beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex)
 		return;
 
 	runSpeechCue(_speechOverlay, textRecordId, continuationCount, voiceSampleId, _activeActorWorldX, 0,
-		kG01SecondarySpeechTextColor, false, false);
+		kG03SecondarySpeechTextColor, false, false);
 }
 
-void Scene7010::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
+void Scene7030::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue) {
-	const uint paletteOffset = kG01PrimarySpeechTextColor * 3;
+	const uint paletteOffset = kG03PrimarySpeechTextColor * 3;
 	if (_paletteCurrent.size() > paletteOffset + 2) {
 		_paletteCurrent[paletteOffset] = red;
 		_paletteCurrent[paletteOffset + 1] = green;
@@ -1859,11 +1802,11 @@ void Scene7010::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 
 	}
 
 	runSpeechLine(_primarySpeechOverlay, rowIndex, frameIndex, centerX, topY,
-		kG01PrimarySpeechTextColor, true, false);
+		kG03PrimarySpeechTextColor, true, false);
 }
 
-void Scene7010::beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex) {
-	const uint paletteOffset = kG01PrimarySpeechTextColor * 3;
+void Scene7030::beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex) {
+	const uint paletteOffset = kG03PrimarySpeechTextColor * 3;
 	if (_paletteCurrent.size() > paletteOffset + 2) {
 		_paletteCurrent[paletteOffset] = 0x33;
 		_paletteCurrent[paletteOffset + 1] = 0x22;
@@ -1871,10 +1814,10 @@ void Scene7010::beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex) {
 	}
 
 	runSpeechLine(_primarySpeechOverlay, rowIndex, frameIndex, 0xfa, 0x136,
-		kG01PrimarySpeechTextColor, true, true);
+		kG03PrimarySpeechTextColor, true, true);
 }
 
-void Scene7010::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
+void Scene7030::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft) {
 	uint16 textRecordId = 0;
 	byte continuationCount = 0;
@@ -1886,7 +1829,7 @@ void Scene7010::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte fram
 		useRequestedTop, animatePrimaryLeft);
 }
 
-void Scene7010::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte continuationCount,
+void Scene7030::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte continuationCount,
 		uint16 voiceSampleId, uint16 centerX, uint16 topY, byte colorIndex, bool useRequestedTop,
 		bool animatePrimaryLeft) {
 	const byte lineCount = MAX<byte>(1, continuationCount);
@@ -1911,12 +1854,12 @@ void Scene7010::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte c
 			MAX<uint32>(1200, overlay.lines.size() * 1100);
 		_primaryLeftSpeechActive = animatePrimaryLeft;
 		if (animatePrimaryLeft)
-			_chunk8FrameIndex = 0x0b;
+			_chunk5FrameIndex = 0x0b;
 		const bool interrupted = waitForSpeechOrDelay(duration, animatePrimaryLeft);
 		if (animatePrimaryLeft) {
 			_primaryLeftSpeechActive = false;
 			_primaryLeftSpeechTimerAccumulator = 0;
-			_chunk8FrameIndex = 0x0b;
+			_chunk5FrameIndex = 0x0b;
 		}
 		_speech.stop();
 		overlay.visible = false;
@@ -1926,7 +1869,7 @@ void Scene7010::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte c
 	}
 }
 
-bool Scene7010::getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
+bool Scene7030::getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
 		uint16 &voiceSampleId) const {
 	const uint offset = ((uint)frameIndex + (uint)rowIndex * 100) * 5;
 	if (offset + 5 > _stage003StageBlock.size())
@@ -1938,7 +1881,7 @@ bool Scene7010::getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRec
 	return textRecordId != 0;
 }
 
-bool Scene7010::getStaticSpeechCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
+bool Scene7030::getStaticSpeechCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
 		uint16 &voiceSampleId) const {
 	const uint offset = ((uint)frameIndex + (uint)rowIndex * 10) * 5;
 	if (offset + 5 > _owner1SpeechCueDescriptors.size())
@@ -1950,13 +1893,13 @@ bool Scene7010::getStaticSpeechCue(uint16 rowIndex, byte frameIndex, uint16 &tex
 	return textRecordId != 0;
 }
 
-void Scene7010::wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const {
+void Scene7030::wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const {
 	lines.clear();
 	if (text.empty())
 		return;
 
 	uint maxChars = 0x32;
-	const int anchorX = anchorSceneX - kG01InitialViewportXOffset;
+	const int anchorX = anchorSceneX - kG03InitialViewportXOffset;
 	if (anchorX < 0xa0)
 		maxChars = (anchorX * 0x32) / 0xa0;
 	else if (HollywoodEngine::kScreenWidth - anchorX < 0xa0)
@@ -1989,7 +1932,7 @@ void Scene7010::wrapActorSpeechText(const Common::String &text, uint16 anchorSce
 	}
 }
 
-Common::String Scene7010::getResource003LargeTextRecord(uint16 recordId) const {
+Common::String Scene7030::getResource003LargeTextRecord(uint16 recordId) const {
 	if (recordId < kStage003LargeRowBaseIndex) {
 		const uint offset = (uint)recordId * kStage003LargeRowSize;
 		if (recordId == 0 || offset >= _owner1LargeRows.size())
@@ -2016,14 +1959,14 @@ Common::String Scene7010::getResource003LargeTextRecord(uint16 recordId) const {
 	return Common::String((const char *)row, length);
 }
 
-uint Scene7010::actorSpeechTextWidth(const Common::String &text) const {
+uint Scene7030::actorSpeechTextWidth(const Common::String &text) const {
 	if (!_vm->font() || !_vm->font()->isLoaded())
 		return 0;
 
 	return _vm->font()->getStringWidth(text) + 2;
 }
 
-void Scene7010::calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY) {
+void Scene7030::calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY) {
 	uint textWidth = 0;
 	for (uint i = 0; i < _speechOverlay.lines.size(); ++i)
 		textWidth = MAX<uint>(textWidth, actorSpeechTextWidth(_speechOverlay.lines[i]));
@@ -2042,7 +1985,7 @@ void Scene7010::calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY)
 	_speechOverlay.topY = (uint16)topY;
 }
 
-bool Scene7010::waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryLeft) {
+bool Scene7030::waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryLeft) {
 	uint32 elapsed = 0;
 	while (!Engine::shouldQuit()) {
 		const bool speechActive = _speech.isPlaying();
@@ -2060,17 +2003,17 @@ bool Scene7010::waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryL
 	return Engine::shouldQuit();
 }
 
-void Scene7010::applyGameplayPanelPalette() {
-	if (_paletteCurrent.size() <= kG01PanelTextColor * 3 + 2)
+void Scene7030::applyGameplayPanelPalette() {
+	if (_paletteCurrent.size() <= kG03PanelTextColor * 3 + 2)
 		return;
 
 	const byte colors[] = {
-		kG01PanelDarkColor, 0x05, 0x06, 0x08,
-		kG01PanelFillColor, 0x0b, 0x0d, 0x11,
-		kG01PanelSlotColor, 0x14, 0x16, 0x1a,
-		kG01PanelLineColor, 0x24, 0x25, 0x28,
-		kG01PanelSelectedColor, 0x2e, 0x1d, 0x0e,
-		kG01PanelSelectedLineColor, 0x3a, 0x2d, 0x16
+		kG03PanelDarkColor, 0x05, 0x06, 0x08,
+		kG03PanelFillColor, 0x0b, 0x0d, 0x11,
+		kG03PanelSlotColor, 0x14, 0x16, 0x1a,
+		kG03PanelLineColor, 0x24, 0x25, 0x28,
+		kG03PanelSelectedColor, 0x2e, 0x1d, 0x0e,
+		kG03PanelSelectedLineColor, 0x3a, 0x2d, 0x16
 	};
 	for (uint i = 0; i < ARRAYSIZE(colors); i += 4) {
 		const uint paletteOffset = colors[i] * 3;
@@ -2081,56 +2024,56 @@ void Scene7010::applyGameplayPanelPalette() {
 		}
 	}
 
-	const uint textOffset = kG01PanelTextColor * 3;
+	const uint textOffset = kG03PanelTextColor * 3;
 	_paletteCurrent[textOffset] = 0x32;
 	_paletteCurrent[textOffset + 1] = _paletteCurrent[0x2d7];
 	_paletteCurrent[textOffset + 2] = _paletteCurrent[0x2d8];
 }
 
-void Scene7010::drawGameplayPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
+void Scene7030::drawGameplayPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
 	if (panelState.inventoryPanelVisible)
 		drawInventoryPanel(surface, panelState);
 	else if (panelState.verbPanelVisible)
 		drawVerbPanel(surface, panelState);
 }
 
-void Scene7010::drawVerbPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
-	fillScreenRect(0, kG01VerbPanelTopY, HollywoodEngine::kScreenWidth,
-		HollywoodEngine::kScreenHeight - kG01VerbPanelTopY, kG01PanelFillColor);
-	drawScreenRect(0, kG01VerbPanelTopY, HollywoodEngine::kScreenWidth,
-		HollywoodEngine::kScreenHeight - kG01VerbPanelTopY, kG01PanelLineColor);
-	drawPanelText(surface, panelState.captionText, kG01VerbPanelCaptionY, kG01PanelTextColor);
+void Scene7030::drawVerbPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
+	fillScreenRect(0, kG03VerbPanelTopY, HollywoodEngine::kScreenWidth,
+		HollywoodEngine::kScreenHeight - kG03VerbPanelTopY, kG03PanelFillColor);
+	drawScreenRect(0, kG03VerbPanelTopY, HollywoodEngine::kScreenWidth,
+		HollywoodEngine::kScreenHeight - kG03VerbPanelTopY, kG03PanelLineColor);
+	drawPanelText(surface, panelState.captionText, kG03VerbPanelCaptionY, kG03PanelTextColor);
 
 	for (byte stripIndex = 2; stripIndex <= 8; ++stripIndex) {
-		const int x = kG01VerbPanelStripXOffsets[stripIndex];
+		const int x = kG03VerbPanelStripXOffsets[stripIndex];
 		const bool selected = stripIndex == panelState.currentStrip;
-		fillScreenRect(x, kG01VerbPanelStripTopY, kG01VerbPanelStripWidth, kG01VerbPanelStripHeight,
-			selected ? kG01PanelSelectedColor : kG01PanelDarkColor);
-		drawScreenRect(x, kG01VerbPanelStripTopY, kG01VerbPanelStripWidth, kG01VerbPanelStripHeight,
-			selected ? kG01PanelSelectedLineColor : kG01PanelLineColor);
+		fillScreenRect(x, kG03VerbPanelStripTopY, kG03VerbPanelStripWidth, kG03VerbPanelStripHeight,
+			selected ? kG03PanelSelectedColor : kG03PanelDarkColor);
+		drawScreenRect(x, kG03VerbPanelStripTopY, kG03VerbPanelStripWidth, kG03VerbPanelStripHeight,
+			selected ? kG03PanelSelectedLineColor : kG03PanelLineColor);
 		drawPanelButtonText(surface, inventoryActionCaption(stripIndex), x,
-			kG01VerbPanelStripTopY + 3, kG01VerbPanelStripWidth, kG01PanelTextColor);
+			kG03VerbPanelStripTopY + 3, kG03VerbPanelStripWidth, kG03PanelTextColor);
 	}
 }
 
-void Scene7010::drawInventoryPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
-	fillScreenRect(0, kG01InventoryPanelTopY, HollywoodEngine::kScreenWidth,
-		HollywoodEngine::kScreenHeight - kG01InventoryPanelTopY, kG01PanelFillColor);
-	drawScreenRect(0, kG01InventoryPanelTopY, HollywoodEngine::kScreenWidth,
-		HollywoodEngine::kScreenHeight - kG01InventoryPanelTopY, kG01PanelLineColor);
-	drawPanelText(surface, panelState.captionText, kG01InventoryPanelCaptionY, kG01PanelTextColor);
+void Scene7030::drawInventoryPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
+	fillScreenRect(0, kG03InventoryPanelTopY, HollywoodEngine::kScreenWidth,
+		HollywoodEngine::kScreenHeight - kG03InventoryPanelTopY, kG03PanelFillColor);
+	drawScreenRect(0, kG03InventoryPanelTopY, HollywoodEngine::kScreenWidth,
+		HollywoodEngine::kScreenHeight - kG03InventoryPanelTopY, kG03PanelLineColor);
+	drawPanelText(surface, panelState.captionText, kG03InventoryPanelCaptionY, kG03PanelTextColor);
 
 	for (uint slot = 0; slot < 16; ++slot) {
 		const int column = slot % 8;
 		const int row = slot / 8;
-		const int x = kG01InventorySlotStartX + column * (kG01InventorySlotSize + kG01InventorySlotGap);
-		const int y = kG01InventorySlotStartY + row * (kG01InventorySlotSize + kG01InventorySlotGap);
-		fillScreenRect(x, y, kG01InventorySlotSize, kG01InventorySlotSize, kG01PanelSlotColor);
-		drawScreenRect(x, y, kG01InventorySlotSize, kG01InventorySlotSize, kG01PanelLineColor);
+		const int x = kG03InventorySlotStartX + column * (kG03InventorySlotSize + kG03InventorySlotGap);
+		const int y = kG03InventorySlotStartY + row * (kG03InventorySlotSize + kG03InventorySlotGap);
+		fillScreenRect(x, y, kG03InventorySlotSize, kG03InventorySlotSize, kG03PanelSlotColor);
+		drawScreenRect(x, y, kG03InventorySlotSize, kG03InventorySlotSize, kG03PanelLineColor);
 	}
 }
 
-void Scene7010::drawPanelText(Graphics::Surface &surface, const Common::String &text, int y, byte colorIndex) {
+void Scene7030::drawPanelText(Graphics::Surface &surface, const Common::String &text, int y, byte colorIndex) {
 	if (!_vm->font() || !_vm->font()->isLoaded() || text.empty())
 		return;
 
@@ -2141,7 +2084,7 @@ void Scene7010::drawPanelText(Graphics::Surface &surface, const Common::String &
 	font->drawString(&surface, text, x, y, textWidth, colorIndex, Graphics::kTextAlignLeft, 0, false, true);
 }
 
-void Scene7010::drawPanelButtonText(Graphics::Surface &surface, const Common::String &text,
+void Scene7030::drawPanelButtonText(Graphics::Surface &surface, const Common::String &text,
 		int x, int y, int width, byte colorIndex) {
 	if (!_vm->font() || !_vm->font()->isLoaded() || text.empty())
 		return;
@@ -2153,7 +2096,7 @@ void Scene7010::drawPanelButtonText(Graphics::Surface &surface, const Common::St
 	font->drawString(&surface, text, textX, y, textWidth, colorIndex, Graphics::kTextAlignLeft, 0, false, true);
 }
 
-void Scene7010::fillScreenRect(int x, int y, int width, int height, byte colorIndex) {
+void Scene7030::fillScreenRect(int x, int y, int width, int height, byte colorIndex) {
 	const int left = CLIP<int>(x, 0, HollywoodEngine::kScreenWidth);
 	const int top = CLIP<int>(y, 0, HollywoodEngine::kScreenHeight);
 	const int right = CLIP<int>(x + width, 0, HollywoodEngine::kScreenWidth);
@@ -2165,14 +2108,14 @@ void Scene7010::fillScreenRect(int x, int y, int width, int height, byte colorIn
 		memset(_screen.data() + row * HollywoodEngine::kScreenWidth + left, colorIndex, right - left);
 }
 
-void Scene7010::drawScreenRect(int x, int y, int width, int height, byte colorIndex) {
+void Scene7030::drawScreenRect(int x, int y, int width, int height, byte colorIndex) {
 	fillScreenRect(x, y, width, 1, colorIndex);
 	fillScreenRect(x, y + height - 1, width, 1, colorIndex);
 	fillScreenRect(x, y, 1, height, colorIndex);
 	fillScreenRect(x + width - 1, y, 1, height, colorIndex);
 }
 
-void Scene7010::presentFrame(const SceneHoverCaption *hoverCaption, const GameplayPanelState *panelState) {
+void Scene7030::presentFrame(const SceneHoverCaption *hoverCaption, const GameplayPanelState *panelState) {
 	if (hoverCaption)
 		hoverCaption->applyPalette(_paletteCurrent);
 	if (panelState && panelState->visible())
@@ -2180,7 +2123,7 @@ void Scene7010::presentFrame(const SceneHoverCaption *hoverCaption, const Gamepl
 	uploadPalette6Bit(_paletteCurrent);
 
 	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
-		const uint sourceOffset = kG01InitialViewportXOffset + y * HollywoodEngine::kSceneBufferWidth;
+		const uint sourceOffset = kG03InitialViewportXOffset + y * HollywoodEngine::kSceneBufferWidth;
 		memcpy(_screen.data() + y * HollywoodEngine::kScreenWidth,
 			_sceneFramebuffer.data() + sourceOffset,
 			HollywoodEngine::kScreenWidth);
@@ -2202,7 +2145,7 @@ void Scene7010::presentFrame(const SceneHoverCaption *hoverCaption, const Gamepl
 	g_system->updateScreen();
 }
 
-bool Scene7010::pollEvents(bool allowSkip) {
+bool Scene7030::pollEvents(bool allowSkip) {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -2234,7 +2177,7 @@ bool Scene7010::pollEvents(bool allowSkip) {
 	return false;
 }
 
-bool Scene7010::delay(uint32 millis) {
+bool Scene7030::delay(uint32 millis) {
 	uint32 remaining = millis;
 	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents(true))

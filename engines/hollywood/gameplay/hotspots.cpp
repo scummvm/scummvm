@@ -53,6 +53,13 @@ const char *const kInventoryActionCaptions[kInventoryActionCaptionCount] = {
 	"Dar"
 };
 
+Common::String inventoryActionCaption(byte stripIndex) {
+	if (stripIndex >= kInventoryActionCaptionCount)
+		return Common::String();
+
+	return Common::String(kInventoryActionCaptions[stripIndex]);
+}
+
 bool SceneHotspotTable::load(const Common::Array<byte> &paletteMapBlock, const Common::Array<byte> &metadata,
 		const Common::Array<byte> &stageSmallRows) {
 	if (paletteMapBlock.size() < kSceneChunk3ColorToItemMapOffset + kSceneColorMapSize) {
@@ -286,10 +293,7 @@ Common::String SceneHoverCaption::buildCaption(const SceneHotspotTable &hotspots
 }
 
 Common::String SceneHoverCaption::actionCaption(byte stripIndex) const {
-	if (stripIndex >= kInventoryActionCaptionCount)
-		return Common::String();
-
-	return Common::String(kInventoryActionCaptions[stripIndex]);
+	return inventoryActionCaption(stripIndex);
 }
 
 } // End of namespace Hollywood
