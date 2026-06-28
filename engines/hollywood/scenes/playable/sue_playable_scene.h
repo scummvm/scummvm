@@ -185,9 +185,13 @@ protected:
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode = 0);
 	void drawActionOverlayComposite();
-	void drawG05Composite(bool drawActiveActor);
+	void drawG05Composite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
+		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY);
 	void drawG05ActionOverlayComposite();
 	void drawPlayableComposite();
+	void drawActiveAndSecondaryActorFrames(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
+		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+		int minimumYExclusive);
 	void drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY, int minimumYExclusive);
 	int drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY);
 	int drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
@@ -216,6 +220,7 @@ protected:
 	void advanceChunk11PreItemIdleAnimation(uint32 delta);
 	void advanceChunk16PostItemAnimation(uint32 delta);
 	void advanceG05SecondaryActorAnimation(uint32 delta);
+	void advanceSecondaryActorSpeechAnimation(uint32 delta);
 	void advanceSecondaryActorSpeechFrame();
 	void advancePrimaryLeftSpeechFrame();
 	void advancePrimaryDialogueSpeechFrame(uint32 delta);

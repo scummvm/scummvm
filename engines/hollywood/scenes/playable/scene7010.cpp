@@ -233,14 +233,8 @@ void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawMappedSpriteFrame(11, 0x25, kScene7010Chunk11FrameMap, ARRAYSIZE(kScene7010Chunk11FrameMap),
 			_chunk11FrameIndex);
 
-	if (drawSecondaryActor) {
-		const int secondaryActorBottomY = drawSecondaryActorFrame(secondaryFacing, secondaryFrame,
-			secondaryWorldX, secondaryWorldY);
-		if (drawActiveActor)
-			drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, secondaryActorBottomY);
-	} else if (drawActiveActor) {
-		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, -1);
-	}
+	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 
 	if (actorDrawOrderMode == 1) {
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
@@ -464,17 +458,6 @@ bool Scene7010::advanceCustomGameplayLoop(uint32 delta) {
 	while (_chunk10TimerAccumulator >= kScene7010Chunk10FrameMillis) {
 		advanceChunk10IdleFrames();
 		_chunk10TimerAccumulator -= kScene7010Chunk10FrameMillis;
-	}
-
-	if (_speechOverlay.visible) {
-		_secondaryActorTimerAccumulator += delta;
-		while (_secondaryActorTimerAccumulator >= kScene7010SecondaryActorFrameMillis) {
-			advanceSecondaryActorSpeechFrame();
-			_secondaryActorTimerAccumulator -= kScene7010SecondaryActorFrameMillis;
-		}
-	} else {
-		_secondaryActorFrame = 0;
-		_secondaryActorTimerAccumulator = 0;
 	}
 
 	advanceDialogueOverlay(delta);

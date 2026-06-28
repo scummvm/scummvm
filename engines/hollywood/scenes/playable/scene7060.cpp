@@ -179,11 +179,6 @@ bool Scene7060::hasCustomComposite() const {
 void Scene7060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
-	(void)drawSecondaryActor;
-	(void)secondaryFacing;
-	(void)secondaryFrame;
-	(void)secondaryWorldX;
-	(void)secondaryWorldY;
 	(void)actorDrawOrderMode;
 
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
@@ -204,8 +199,8 @@ void Scene7060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
 		kScene7060Chunk6DescriptorCount, chunk6Frame, _sceneFramebuffer);
 
-	if (drawActiveActor)
-		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, -1);
+	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 
 	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 }
