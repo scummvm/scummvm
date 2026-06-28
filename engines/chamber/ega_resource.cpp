@@ -46,11 +46,82 @@ EgaSpriteResource::~EgaSpriteResource() {
 	}
 }
 
+Graphics::Surface *EgaSpriteResource::getSprite(uint index) const {
+	if (index < _sprites.size())
+		return _sprites[index];
+
+	// Shared 1x1 placeholder for missing sprites (keeps blits in-bounds)
+	static Graphics::Surface *dummy = nullptr;
+	if (!dummy) {
+		dummy = new Graphics::Surface();
+		dummy->create(1, 1, Graphics::PixelFormat::createFormatCLUT8());
+	}
+	return dummy;
+}
+
 void EgaSpriteResource::appendFromFile(const char *filename) {
 	Common::File fd;
 	if (!fd.open(filename))
 		error("EgaSpriteResource::appendFromFile: cannot open %s", filename);
 	appendFromStream(fd);
+}
+
+void EgaSpriteResource::appendFromFileAmiga(const char *filename) {
+	Common::File fd;
+	if (!fd.open(filename))
+		error("EgaSpriteResource::appendFromFileAmiga: cannot open %s", filename);
+	appendFromStreamAmiga(fd);
+}
+
+void EgaSpriteResource::appendFromStreamAmiga(Common::SeekableReadStream &stream) {
+	stream.skip(4); // skip 4-byte junk header
+
+	while (!stream.eos()) {
+		uint16 size = stream.readUint16BE();
+		if (stream.eos())
+			break;
+
+		byte h = stream.readByte(); // height in pixels
+		byte w = stream.readByte(); // width in 4-pixel units → actual pixel width = w * 4
+
+		if (size < 4)
+			break;
+
+		uint16 dataSize = size - 4; // bytes of word-planar pixel data
+
+		byte *data = new byte[dataSize];
+		uint16 read = stream.read(data, dataSize);
+
+		Graphics::Surface *sprite = new Graphics::Surface();
+		sprite->create(w * 4, h, Graphics::PixelFormat::createFormatCLUT8());
+
+		byte *pixels = (byte *)sprite->getPixels();
+
+		const uint16 rowBytes = w * 2; // w big-endian words per row
+		for (byte y = 0; y < h; y++) {
+			byte *dst = pixels + (uint)y * (w * 4);
+			for (byte c = 0; c < w; c++) {
+				uint off = (uint)y * rowBytes + c * 2;
+				uint16 word = (off + 1 < read) ? ((data[off] << 8) | data[off + 1]) : 0;
+				byte plane[4];
+				plane[0] = (word >> 12) & 0x0F;
+				plane[1] = (word >> 8) & 0x0F;
+				plane[2] = (word >> 4) & 0x0F;
+				plane[3] = word & 0x0F;
+				for (byte j = 0; j < 4; j++) {
+					byte bit = 3 - j; // MSB of each nibble is the leftmost pixel
+					byte ci = 0;
+					for (byte p = 0; p < 4; p++)
+						ci |= ((plane[p] >> bit) & 1) << p;
+					*dst++ = ci;
+				}
+			}
+		}
+
+		delete[] data;
+
+		_sprites.push_back(sprite);
+	}
 }
 
 void EgaSpriteResource::appendFromStream(Common::SeekableReadStream &stream) {
