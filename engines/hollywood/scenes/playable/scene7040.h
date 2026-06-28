@@ -27,6 +27,7 @@
 #include "common/str.h"
 #include "common/types.h"
 
+#include "hollywood/gameplay/dialogue_menu.h"
 #include "hollywood/gameplay/game_loop.h"
 #include "hollywood/gameplay/panel_art.h"
 #include "hollywood/music.h"
@@ -40,7 +41,7 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene7040 : public GameplayLoopDelegate {
+class Scene7040 : public GameplayLoopDelegate, public DialogueMenuDelegate {
 public:
 	Scene7040(HollywoodEngine *vm);
 
@@ -171,6 +172,7 @@ private:
 	void advanceChunk16PostItemAnimation(uint32 delta);
 	void advanceSecondaryActorSpeechFrame();
 	void advancePrimaryLeftSpeechFrame();
+	void advancePrimaryDialogueSpeechFrame(uint32 delta);
 	void processSceneActionClick(const GameplayLoopCursorState &state);
 	void processSceneRelationClick(const GameplayLoopCursorState &state, byte itemId);
 	SceneVerbActionRecord relationActionRecord(byte inventoryItemId, byte sceneItemId, byte relationMode) const;
@@ -207,6 +209,12 @@ private:
 	void handleActionHandler312ProgressSpeech();
 	void handleActionHandler313ConversationGate();
 	void handleActionHandler314Item0BSpeech();
+	void runDialogueMenuRow98();
+	void initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
+	Common::String dialogueMenuText(byte stageId, byte textRowId) const override;
+	void advanceDialogueMenu(uint32 delta) override;
+	void drawDialogueMenuFrame() override;
+	void presentDialogueMenuFrame(const DialogueMenuState &state) override;
 	void runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame = -1);
 	void runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
@@ -224,9 +232,10 @@ private:
 		byte red, byte green, byte blue);
 	void beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex);
 	void runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
-		byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft);
+		byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft, bool animatePrimaryDialogue);
 	void runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte continuationCount, uint16 voiceSampleId,
-		uint16 centerX, uint16 topY, byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft);
+		uint16 centerX, uint16 topY, byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft,
+		bool animatePrimaryDialogue);
 	bool getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
 		uint16 &voiceSampleId) const;
 	bool getStaticSpeechCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
@@ -240,7 +249,8 @@ private:
 	void drawGameplayPanel(Graphics::Surface &surface, const GameplayPanelState &panelState);
 	void drawVerbPanel(Graphics::Surface &surface, const GameplayPanelState &panelState);
 	void drawInventoryPanel(Graphics::Surface &surface, const GameplayPanelState &panelState);
-	void presentFrame(const SceneHoverCaption *hoverCaption = nullptr, const GameplayPanelState *panelState = nullptr);
+	void presentFrame(const SceneHoverCaption *hoverCaption = nullptr,
+		const GameplayPanelState *panelState = nullptr, const DialogueMenuState *dialogueMenuState = nullptr);
 	bool pollEvents(bool allowSkip);
 	bool delay(uint32 millis);
 
@@ -300,9 +310,11 @@ private:
 	byte _chunk6IdleFrameC;
 	byte _chunk6IdleFrameD;
 	byte _primaryLeftSpeechLastFrame;
+	byte _primaryDialogueSpeechLastFrame;
 	bool _chunk6IdlePairAAltPhase;
 	bool _chunk6IdlePairBAltPhase;
 	bool _primaryLeftSpeechActive;
+	bool _primaryDialogueSpeechActive;
 	byte _chunk6IdlePairATicksRemaining;
 	byte _chunk6IdlePairBTicksRemaining;
 	byte _chunk9AmbientDecisionCounter;
@@ -313,6 +325,7 @@ private:
 	uint32 _ambientMusicTimerAccumulator;
 	uint32 _secondaryActorTimerAccumulator;
 	uint32 _primaryLeftSpeechTimerAccumulator;
+	uint32 _primaryDialogueSpeechTimerAccumulator;
 	byte _previousAmbientMusicTrackId;
 	int _activeActorWorldX;
 	int _activeActorWorldY;
