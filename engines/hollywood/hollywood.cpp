@@ -32,6 +32,7 @@
 #include "hollywood/scenes/playable/scene7010.h"
 #include "hollywood/scenes/playable/scene7030.h"
 #include "hollywood/scenes/playable/scene7040.h"
+#include "hollywood/scenes/playable/scene7050.h"
 #include "hollywood/resource.h"
 
 #include "audio/mixer.h"
@@ -122,22 +123,42 @@ Common::Error HollywoodEngine::run() {
 	if (!scene7000.play())
 		return Common::kReadingFailed;
 
-	if (gameState().mainFlowStateId == 0x1b62) {
-		Scene7010 scene7010(this);
-		if (!scene7010.play())
-			return Common::kReadingFailed;
-	}
+	bool handledState = true;
+	while (!Engine::shouldQuit() && handledState) {
+		handledState = false;
+		const uint16 stateId = gameState().mainFlowStateId;
 
-	if (gameState().mainFlowStateId == 0x1b76 || gameState().mainFlowStateId == 0x1b77) {
-		Scene7030 scene7030(this);
-		if (!scene7030.play())
-			return Common::kReadingFailed;
-	}
+		if (stateId >= 0x1b62 && stateId <= 0x1b6b) {
+			handledState = true;
+			Scene7010 scene7010(this);
+			if (!scene7010.play())
+				return Common::kReadingFailed;
+			continue;
+		}
 
-	if (gameState().mainFlowStateId >= 0x1b80 && gameState().mainFlowStateId <= 0x1b82) {
-		Scene7040 scene7040(this);
-		if (!scene7040.play())
-			return Common::kReadingFailed;
+		if (stateId >= 0x1b76 && stateId <= 0x1b7f) {
+			handledState = true;
+			Scene7030 scene7030(this);
+			if (!scene7030.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= 0x1b80 && stateId <= 0x1b89) {
+			handledState = true;
+			Scene7040 scene7040(this);
+			if (!scene7040.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId == 0x1b8a) {
+			handledState = true;
+			Scene7050 scene7050(this);
+			if (!scene7050.play())
+				return Common::kReadingFailed;
+			continue;
+		}
 	}
 
 	debugC(1, kDebugGeneral, "Gameplay preview completed; current main-flow state is 0x%04x", gameState().mainFlowStateId);

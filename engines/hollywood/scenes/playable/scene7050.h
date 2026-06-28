@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE7040_H
-#define HOLLYWOOD_SCENES_PLAYABLE_SCENE7040_H
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE7050_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE7050_H
 
 #include "hollywood/scenes/playable/sue_playable_scene.h"
 
@@ -28,9 +28,9 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene7040 : public SuePlayableScene {
+class Scene7050 : public SuePlayableScene {
 public:
-	Scene7040(HollywoodEngine *vm);
+	Scene7050(HollywoodEngine *vm);
 
 private:
 	const char *resourceArchiveName() const override;
@@ -40,10 +40,7 @@ private:
 	uint sceneStageIndex() const override;
 	const char *sceneDebugName() const override;
 	uint16 sceneViewportXOffset() const override;
-	bool shouldLoadAlternatePaletteAfterItem0B() const override;
-	bool shouldConvertSavedFramebufferFF() const override;
-	bool shouldRunExitSideEffectsAfterLoop() const override;
-	bool usesG04PathRouteSpecialCase() const override;
+	bool usesSingleSecondaryActorComposite() const override;
 	bool isMainFlowStateInScene(uint16 stateId) const override;
 };
 

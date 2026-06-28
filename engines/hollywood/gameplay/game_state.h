@@ -68,6 +68,8 @@ struct GameplayState {
 		g04MajorActionProgress = 0;
 		g04PatchState = 0;
 		g04ExitActionDone = false;
+		g05DialogueIntroSeen = false;
+		g05PatchState = 1;
 		musicEnabled = true;
 		soundEffectsEnabled = true;
 		optionsTestAudioEnabled = false;
@@ -308,6 +310,8 @@ struct GameplayState {
 	byte g04MajorActionProgress;
 	byte g04PatchState;
 	bool g04ExitActionDone;
+	bool g05DialogueIntroSeen;
+	byte g05PatchState;
 	bool musicEnabled;
 	bool soundEffectsEnabled;
 	bool optionsTestAudioEnabled;
