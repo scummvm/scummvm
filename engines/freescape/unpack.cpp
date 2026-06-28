@@ -190,14 +190,15 @@ unsigned char *create_reloc_table(struct memstream *ms, struct dos_header *dh, s
 			if (msread(ms, &entry, sizeof(unsigned short)) != sizeof(unsigned short)) {
 				debug("msread failed");
 			}
-			if (reloc_position >= *reloc_table_size) {
-				debug("overflow");
+			// The relocation counts are read from the (untrusted) packed file,
+			// so their sum can exceed the header-derived table size. Stop before
+			// writing past the end of buf_reloc rather than overflowing it.
+			if (reloc_position + 2 * sizeof(unsigned short) > *reloc_table_size) {
+				debug("relocation table overflow, truncating");
+				break;
 			}
 			*(unsigned short*)(buf_reloc + reloc_position) = entry;
 			reloc_position += 2;
-			if (reloc_position >= *reloc_table_size) {
-				debug("overflow");
-			}
 			*(unsigned short*)(buf_reloc + reloc_position) = (i * 0x1000) & 0xFFFF;
 			reloc_position += 2;
 		}
