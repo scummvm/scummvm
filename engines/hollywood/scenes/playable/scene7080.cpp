@@ -45,7 +45,8 @@ const uint16 kScene7080Chunk6DescriptorCount = 4;
 const uint16 kScene7080Chunk7DescriptorCount = 0x0b;
 const uint32 kScene7080FrameMillis = 75;
 const uint32 kScene7080AmbientCheckMillis = 250;
-const uint kScene7080Item08VerbRecordIndex = 0x45;
+const byte kScene7080TableItemColorId = 6;
+const byte kScene7080PostPickupTableItemId = 4;
 const byte kScene7080BackToG07FrameMap[] = {
 	0, 1, 2, 3
 };
@@ -161,7 +162,7 @@ void Scene7080::runCustomEntrySequence() {
 
 	GameplayState &state = _vm->gameState();
 	if (!state.g08IntroSeen) {
-		beginSecondarySpeechLine(1, 0);
+		beginSecondarySpeechLine(0, 0);
 		state.g08IntroSeen = true;
 	}
 }
@@ -219,57 +220,20 @@ bool Scene7080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
 
 		GameplayState &state = _vm->gameState();
-		if (state.g08PatchState) {
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _baseFramebuffer);
+		if (!state.g08Item13OnTable)
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
-		}
 
 		if (_paletteMaskOriginal.size() >= kSceneColorToItemMap + kScenePaletteMapPageSize &&
 				_paletteMask.size() >= kSceneColorToItemMap + kScenePaletteMapPageSize) {
 			for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
 				const byte originalItem = _paletteMaskOriginal[kSceneColorToItemMap + i];
-				if (state.g08PatchState) {
-					if (originalItem == 9 || originalItem == 0x0b)
-						_paletteMask[kSceneColorToItemMap + i] = 8;
-					else if (originalItem == 0x0a)
-						_paletteMask[kSceneColorToItemMap + i] = 2;
-					else if (originalItem == 0x0c)
-						_paletteMask[kSceneColorToItemMap + i] = 0;
-				} else {
-					if (originalItem == 9)
-						_paletteMask[kSceneColorToItemMap + i] = 2;
-					else if (originalItem == 0x0a || originalItem == 0x0c)
-						_paletteMask[kSceneColorToItemMap + i] = 8;
-					else if (originalItem == 0x0b)
-						_paletteMask[kSceneColorToItemMap + i] = 0;
-				}
+				if (!state.g08Item13OnTable && originalItem == kScene7080TableItemColorId)
+					_paletteMask[kSceneColorToItemMap + i] = kScene7080PostPickupTableItemId;
 			}
-		}
-
-		const uint interactionOffset = kSceneItemInteractionPoints + 8 * sizeof(ScenePoint);
-		if (_metadata.size() >= interactionOffset + sizeof(ScenePoint)) {
-			const uint16 x = state.g08PatchState ? 0x1fc : 0x245;
-			const uint16 y = state.g08PatchState ? 0x110 : 0x11f;
-			_metadata[interactionOffset] = x & 0xff;
-			_metadata[interactionOffset + 1] = x >> 8;
-			_metadata[interactionOffset + 2] = y & 0xff;
-			_metadata[interactionOffset + 3] = y >> 8;
-		}
-
-		const uint approachOffset = kSceneItemApproachPoints + 8 * sizeof(ScenePoint);
-		if (_metadata.size() >= approachOffset + sizeof(ScenePoint)) {
-			const uint16 x = state.g08PatchState ? 0x23a : 0x288;
-			const uint16 y = state.g08PatchState ? 0x096 : 0x0a8;
-			_metadata[approachOffset] = x & 0xff;
-			_metadata[approachOffset + 1] = x >> 8;
-			_metadata[approachOffset + 2] = y & 0xff;
-			_metadata[approachOffset + 3] = y >> 8;
 		}
 
 		rebuildWalkableMask();
 		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
-		if (state.g08PatchState)
-			_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene7080Item08VerbRecordIndex, 0);
 	}
 	return true;
 }
@@ -314,13 +278,15 @@ void Scene7080::updateSceneAmbientAudioAndMusicCues(uint32 delta) {
 
 void Scene7080::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame) {
+	const bool previousHideActiveActor = _hideActiveActor;
+	_hideActiveActor = true;
 	_actionOverlayVisible = true;
 	_actionOverlayChunkIndex = (byte)chunkIndex;
 	_actionOverlayDescriptorCount = (byte)descriptorCount;
 	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
 		_actionOverlayFrameIndex = frameMap[frame];
 		if (statePatchFrame >= 0 && (int)frame == statePatchFrame) {
-			_vm->gameState().g08PatchState = false;
+			_vm->gameState().g08Item13OnTable = false;
 			applySceneStateToHotspotsAndPatches(1);
 		}
 		if (waitSceneMillis(frameMillis))
@@ -328,6 +294,7 @@ void Scene7080::runOverlaySequence(uint chunkIndex, uint descriptorCount, const 
 	}
 	_actionOverlayVisible = false;
 	_actionOverlayFrameIndex = 0;
+	_hideActiveActor = previousHideActiveActor;
 	drawPlayableComposite();
 	presentFrame();
 }
@@ -344,7 +311,7 @@ void Scene7080::handlePickupItem13() {
 	dispatchGenericSceneAction(19);
 	runOverlaySequence(7, kScene7080Chunk7DescriptorCount,
 		kScene7080PickupItem13FrameMap, ARRAYSIZE(kScene7080PickupItem13FrameMap),
-		kScene7080FrameMillis, 4);
+		kScene7080FrameMillis, 3);
 	addInventoryItem(0x13);
 	_soundBank0.playSample(1, 100);
 }
