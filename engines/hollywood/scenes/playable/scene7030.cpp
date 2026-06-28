@@ -705,7 +705,8 @@ void Scene7030::initializePreviewState() {
 	_secondaryActorFrame = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
-	_sceneStateFlags[2] = 2;
+	_sceneStateFlags[0] = 1;
+	_sceneStateFlags[2] = 1;
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
@@ -1061,14 +1062,26 @@ void Scene7030::dispatchSceneAction(uint16 handlerId) {
 	case 0:
 	case 1:
 		break;
+	case 3:
+		beginStaticSecondarySpeechLine(2, 0);
+		break;
 	case 9:
 		beginStaticSecondarySpeechLine(8, 0);
 		break;
 	case 10:
 		beginStaticSecondarySpeechLine(9, (byte)_random.getRandomNumber(1));
 		break;
+	case 13:
+		beginStaticSecondarySpeechLine(0x0c, (byte)_random.getRandomNumber(1));
+		break;
+	case 18:
+		beginStaticSecondarySpeechLine(0x11, (byte)_random.getRandomNumber(1));
+		break;
 	case 20:
 		beginStaticSecondarySpeechLine(0x13, 0);
+		break;
+	case 24:
+		beginStaticSecondarySpeechLine(0x17, (byte)_random.getRandomNumber(1));
 		break;
 	case 301:
 		handleActionSlot00TransitionToG04();
@@ -1589,9 +1602,13 @@ void Scene7030::handleActionSlot10CommonSpeech() {
 }
 
 void Scene7030::handleActionHandler313ExchangeItem0CFor0D() {
-	beginSecondarySpeechLine(10, 0);
+	const bool speechStarted = startSecondarySpeechLine(10, 0);
 	runMappedActionOverlay(11, kG03Chunk11DescriptorCount, kG03Chunk11ExchangeItem0CFrameMap,
 		ARRAYSIZE(kG03Chunk11ExchangeItem0CFrameMap), kG03Chunk5FrameMillis);
+	if (speechStarted)
+		waitForSpeechOrDelay(0, false);
+	clearSpeechOverlay();
+	_speech.stop();
 	removeInventoryItem(0x0c);
 	addInventoryItem(0x0d);
 	_vm->gameState().inventoryPanelRedrawn = true;
@@ -1832,6 +1849,28 @@ void Scene7030::drawSpeechOverlay(const SpeechOverlay &overlay) {
 void Scene7030::beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
 	runSpeechLine(_speechOverlay, rowIndex, frameIndex, _activeActorWorldX, 0,
 		kG03SecondarySpeechTextColor, false, false);
+}
+
+bool Scene7030::startSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
+	uint16 textRecordId = 0;
+	byte continuationCount = 0;
+	uint16 voiceSampleId = 0;
+	if (!getStage003Cue(rowIndex, frameIndex, textRecordId, continuationCount, voiceSampleId))
+		return false;
+	(void)continuationCount;
+
+	const Common::String text = getResource003LargeTextRecord(textRecordId);
+	if (text.empty())
+		return false;
+
+	_speechOverlay.visible = true;
+	_speechOverlay.colorIndex = kG03SecondarySpeechTextColor;
+	wrapActorSpeechText(text, _activeActorWorldX, _speechOverlay.lines);
+	calculateSecondarySpeechBounds(_activeActorWorldX, _activeActorWorldY);
+	_secondaryActorFrame = 0;
+	_secondaryActorTimerAccumulator = 0;
+
+	return voiceSampleId != 0 && _speech.playSample(voiceSampleId, 100);
 }
 
 void Scene7030::beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
