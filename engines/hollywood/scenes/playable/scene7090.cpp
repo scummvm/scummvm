@@ -194,38 +194,38 @@ bool Scene7090::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene7090::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301:
+	case 301: // Usar/Abrir puerta (use/open door)
 		handleBackToG07();
 		return true;
-	case 302:
+	case 302: // Mirar puerta (look at door)
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 303:
+	case 303: // Mirar ventana (look at window)
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 304:
+	case 304: // Mirar cama (look at bed)
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 305:
+	case 305: // Usar cama (use bed)
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 306:
+	case 306: // Mirar mesa (look at table)
 		beginSecondarySpeechLine(5, 0);
 		_vm->gameState().mainFlowStateId = kScene7090ExitToG10State;
 		return true;
-	case 307:
+	case 307: // Mirar archivadores (look at filing cabinets)
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 308:
+	case 308: // Mirar botella y copas de champagne (look at champagne bottle and glasses)
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 309:
+	case 309: // Mirar papelera (look at wastebasket)
 		beginSecondarySpeechLine(8, 0);
 		return true;
-	case 310:
+	case 310: // Mirar armadura (look at armor)
 		beginSecondarySpeechLine(9, 0);
 		return true;
-	case 311:
+	case 311: // Usar armadura (use armor)
 		handleGatedAction();
 		return true;
 	default:

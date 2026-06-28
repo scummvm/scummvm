@@ -262,99 +262,99 @@ bool Scene7100::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene7100::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301:
+	case 301: // Mirar puerta (look at door)
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 302:
+	case 302: // Usar/Abrir puerta (use/open door)
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 303:
+	case 303: // Hablar con Ron (talk to Ron)
 		handleG10DialogueStub();
 		return true;
-	case 304:
+	case 304: // Mirar Ron (look at Ron)
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 305:
+	case 305: // Coger póster (take poster)
 		handlePickupItem15();
 		return true;
-	case 306:
+	case 306: // Mirar póster (look at poster)
 		return true;
-	case 307:
+	case 307: // Mirar ratonera (look at mousetrap)
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 308:
+	case 308: // Coger placa (take plate)
 		beginSecondarySpeechLine(7, _vm->gameState().g10ObjectPatchState == 0 ? 0 : 1);
 		return true;
-	case 309:
+	case 309: // Mirar placa (look at plate)
 		beginSecondarySpeechLine(8, MIN<byte>(_vm->gameState().g10ObjectPatchState, 2));
 		return true;
-	case 310:
+	case 310: // Mirar camastro (look at cot)
 		beginSecondarySpeechLine(9, 0);
 		return true;
-	case 311:
+	case 311: // Usar camastro (use cot)
 		beginSecondarySpeechLine(10, 0);
 		return true;
-	case 314:
+	case 314: // Mirar pulsador (look at push button)
 		beginSecondarySpeechLine(0x0d, 0);
 		return true;
-	case 315:
+	case 315: // Usar pulsador (use push button)
 		handleActionHandler315();
 		return true;
-	case 331:
+	case 331: // Usar lupa con objetos de la celda (use magnifying glass with cell objects)
 		beginSecondarySpeechLine(0x13, 0);
 		return true;
-	case 332:
+	case 332: // Usar navaja multiusos con puerta (use multi-tool knife with door)
 		beginSecondarySpeechLine(0x14, 0);
 		return true;
-	case 333:
+	case 333: // Usar varios objetos con Ron (use several items with Ron)
 		beginSecondarySpeechLine(0x15, 0);
 		return true;
-	case 334:
+	case 334: // Usar baraja de cartas con Ron (use deck of cards with Ron)
 		beginSecondarySpeechLine(0x16, 0);
 		return true;
-	case 335:
+	case 335: // Usar bisturí/navaja/pintura con objetos (use scalpel/knife/paint with objects)
 		beginSecondarySpeechLine(0x17, 0);
 		return true;
-	case 336:
+	case 336: // Usar pamela/frasco de perfume con objetos (use hat/perfume with objects)
 		beginSecondarySpeechLine(0x18, 0);
 		return true;
-	case 337:
+	case 337: // Usar rata con gancho/trozo de tubería/cables (use rat with hook/pipe piece/wires)
 		handleExtendedAction337();
 		return true;
-	case 338:
+	case 338: // Coger rata (take rat)
 		handlePickupItem16();
 		return true;
-	case 339:
+	case 339: // Coger placa (take plate)
 		handlePickupItem14();
 		return true;
-	case 340:
+	case 340: // Dar objetos a Ron (give items to Ron)
 		beginSecondarySpeechLine(0x1c, 0);
 		return true;
-	case 341:
+	case 341: // Respuesta genérica de objeto (generic item response)
 		beginSecondarySpeechLine(0x1d, (byte)_random.getRandomNumber(1));
 		return true;
-	case 342:
+	case 342: // Respuesta genérica de objeto (generic item response)
 		beginSecondarySpeechLine(0x1e, 0);
 		return true;
-	case 343:
+	case 343: // Respuesta genérica de objeto (generic item response)
 		beginSecondarySpeechLine(0x1f, 0);
 		return true;
-	case 344:
+	case 344: // Respuesta genérica de objeto (generic item response)
 		beginSecondarySpeechLine(0x20, 0);
 		return true;
-	case 345:
+	case 345: // Respuesta genérica de objeto (generic item response)
 		beginSecondarySpeechLine(0x21, 0);
 		return true;
-	case 346:
+	case 346: // Respuesta genérica de objeto (generic item response)
 		beginSecondarySpeechLine(0x22, (byte)_random.getRandomNumber(1));
 		return true;
-	case 347:
+	case 347: // Respuesta genérica de objeto (generic item response)
 		beginSecondarySpeechLine(0x23, 0);
 		return true;
-	case 348:
+	case 348: // Respuesta genérica de objeto (generic item response)
 		beginSecondarySpeechLine(0x24, 0);
 		return true;
-	case 351:
+	case 351: // Transferencia de inventario (inventory transfer)
 		handleInventoryTransferAction();
 		return true;
 	default:

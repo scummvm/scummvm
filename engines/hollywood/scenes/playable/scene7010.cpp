@@ -476,28 +476,28 @@ bool Scene7010::dispatchCustomSceneAction(uint16 handlerId) {
 		return dispatchGenericSceneAction(handlerId);
 
 	switch (handlerId) {
-	case 301:
+	case 301: // Ir a escalera (go to stairs)
 		handleActionSlot00TransitionToG03();
 		break;
-	case 302:
+	case 302: // Mirar escalera (look at stairs)
 		handleActionSlot01SecondarySpeech();
 		break;
-	case 303:
+	case 303: // Mirar caseta de perro (look at doghouse)
 		handleActionSlot02SecondarySpeech();
 		break;
-	case 304:
+	case 304: // Ir a edificio (go to building)
 		handleActionSlot03DialogueSequence();
 		break;
-	case 305:
+	case 305: // Mirar edificio (look at building)
 		handleActionSlot04Item06Speech();
 		break;
-	case 307:
+	case 307: // Usar hueso con caseta de perro (use bone with doghouse)
 		handleActionSlot06Item0BSequence();
 		break;
-	case 308:
+	case 308: // Hablar con Junior (talk to Junior)
 		handleActionSlot07DialogueAndReturn();
 		break;
-	case 309:
+	case 309: // Mirar Junior (look at Junior)
 		handleActionSlot08CommonSpeech();
 		break;
 	default:

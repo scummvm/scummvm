@@ -1706,49 +1706,49 @@ void SuePlayableScene::dispatchSceneAction(uint16 handlerId) {
 	case 40:
 		beginStaticSecondarySpeechLine(0x27, 0);
 		break;
-	case 301:
+	case 301: // Ir a terraza (go to terrace)
 		handleActionSlot00ReturnToG03();
 		break;
-	case 302:
+	case 302: // Mirar puerta (look at door)
 		handleActionSlot01ProgressSpeech();
 		break;
-	case 303:
+	case 303: // Usar/Abrir puerta (use/open door)
 		handleActionSlot02MajorHotspotAction();
 		break;
-	case 304:
+	case 304: // Ir a escalera (go to stairs)
 		handleActionSlot03TransitionToState7060();
 		break;
-	case 305:
+	case 305: // Mirar escalera (look at stairs)
 		beginSecondarySpeechLine(4, 0);
 		break;
-	case 306:
+	case 306: // Mirar puerta (look at door)
 		handleActionSlot05ExitProgressSpeech();
 		break;
-	case 307:
+	case 307: // Usar/Abrir puerta (use/open door)
 		handleActionSlot06TransitionToG05();
 		break;
-	case 308:
+	case 308: // Mirar estatua (look at statue)
 		beginSecondarySpeechLine(6, 0);
 		break;
-	case 309:
+	case 309: // Mirar florero (look at vase)
 		beginSecondarySpeechLine(7, 0);
 		break;
-	case 310:
+	case 310: // Coger libreta (take notebook)
 		handleActionSlot09PickupItem0FThenExit();
 		break;
-	case 311:
+	case 311: // Usar libreta (use notebook)
 		handleActionSlot10CommonSpeech();
 		break;
-	case 312:
+	case 312: // Mirar libreta (look at notebook)
 		handleActionHandler312ProgressSpeech();
 		break;
-	case 313:
+	case 313: // Hablar con Joseph (talk to Joseph)
 		handleActionHandler313ConversationGate();
 		break;
-	case 314:
+	case 314: // Mirar Joseph (look at Joseph)
 		handleActionHandler314Item0BSpeech();
 		break;
-	case 315:
+	case 315: // Coger florero (take vase)
 		handleActionHandler315PickupItem0C();
 		break;
 	default:
@@ -1985,26 +1985,26 @@ void SuePlayableScene::dispatchG05SceneAction(uint16 handlerId) {
 	case 306:
 	case 307:
 		break;
-	case 301:
+	case 301: // Mirar puerta (look at door)
 		beginSecondarySpeechLine(1, 0);
 		break;
-	case 302:
+	case 302: // Usar/Abrir puerta (use/open door)
 		handleG05ActionSlot01ReturnToG04();
 		break;
-	case 303:
+	case 303: // Hablar con empleado del guardarropa (talk to cloakroom attendant)
 		runG05DialogueMenuRow98();
 		applySceneStateToHotspotsAndPatches(0);
 		break;
-	case 304:
+	case 304: // Mirar empleado del guardarropa (look at cloakroom attendant)
 		beginSecondarySpeechLine(2, 0);
 		break;
-	case 305:
+	case 305: // Mirar trapo (look at rag)
 		beginSecondarySpeechLine(3, 0);
 		break;
-	case 308:
+	case 308: // Mirar caja/Charlie (look at box/Charlie)
 		beginSecondarySpeechLine(6, 0);
 		break;
-	case 311:
+	case 311: // Coger trapo (take rag)
 		handleG05ActionSlot10PickupItem10();
 		break;
 	default:
