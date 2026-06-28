@@ -64,8 +64,8 @@ Scene9110::Scene9110(HollywoodEngine *vm) :
 		_lastMouthVariant(0xff),
 		_skipRequested(false) {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
-	_paletteResource.resize(kHollywoodPaletteSize);
-	_paletteCurrent.resize(kHollywoodPaletteSize);
+	_paletteResource.resize(kPaletteSize);
+	_paletteCurrent.resize(kPaletteSize);
 	_baseFramebuffer.resize(kFrameBufferSize);
 	_sceneFramebuffer.resize(kFrameBufferSize);
 	_savedFramebuffer.resize(kFrameBufferSize);
@@ -133,7 +133,7 @@ bool Scene9110::loadResourceI11Assets() {
 	}
 
 	if (!loadResourceI11Chunk(0, _baseFramebuffer, kFrameBufferSize) ||
-			!loadResourceI11Chunk(1, _paletteResource, kHollywoodPaletteSize))
+			!loadResourceI11Chunk(1, _paletteResource, kPaletteSize))
 		return false;
 
 	uint32 resourceArenaSize = 0;

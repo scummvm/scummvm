@@ -181,9 +181,9 @@ bool GameplayOptionsMenu::loadObjectPalette() {
 
 void GameplayOptionsMenu::preparePalette(const Common::Array<byte> &basePalette) {
 	_palette = basePalette;
-	if (_palette.size() < kHollywoodPaletteSize) {
+	if (_palette.size() < kPaletteSize) {
 		const uint oldSize = _palette.size();
-		_palette.resize(kHollywoodPaletteSize);
+		_palette.resize(kPaletteSize);
 		memset(_palette.data() + oldSize, 0, _palette.size() - oldSize);
 	}
 

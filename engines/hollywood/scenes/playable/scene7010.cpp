@@ -155,8 +155,8 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 		_secondaryActorFrame(0),
 		_skipRequested(false) {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
-	_paletteResource.resize(kHollywoodPaletteSize);
-	_paletteCurrent.resize(kHollywoodPaletteSize);
+	_paletteResource.resize(kPaletteSize);
+	_paletteCurrent.resize(kPaletteSize);
 	_baseFramebuffer.resize(kFrameBufferSize);
 	_sceneFramebuffer.resize(kFrameBufferSize);
 	_savedFramebuffer.resize(kFrameBufferSize);
@@ -221,7 +221,7 @@ bool Scene7010::load() {
 	}
 
 	if (!loadFixedChunk(0, _baseFramebuffer, kFrameBufferSize) ||
-			!loadFixedChunk(1, _paletteResource, kHollywoodPaletteSize) ||
+			!loadFixedChunk(1, _paletteResource, kPaletteSize) ||
 			!loadVariableChunk(2, _fillRuns) ||
 			!loadVariableChunk(3, _paletteMask) ||
 			!loadVariableChunk(4, _metadata))
