@@ -2879,10 +2879,6 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 void DisplayMan::blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitmap,
 													  int16 srcPixelWidth, int16 srcHeight,
 													  int16 destPixelWidth, int16 destHeight, byte *palChange) {
-	warning("DUMMY CODE: f129_blitToBitmapShrinkWithPalChange");
-	warning("MISSING CODE: No palette change takes place in f129_blitToBitmapShrinkWithPalChange");
-
-
 	destPixelWidth = (destPixelWidth + 1) & 0xFFFE;
 
 	uint32 scaleX = (kScaleThreshold * srcPixelWidth) / destPixelWidth;
@@ -2895,8 +2891,13 @@ void DisplayMan::blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitm
 		byte *destLine = &destBitmap[destY * destStride];
 
 		// Loop through drawing the pixels of the row
-		for (uint32 destX = 0, xCtr = 0, scaleXCtr = 0; destX < (uint32)destPixelWidth; ++destX, ++xCtr, scaleXCtr += scaleX)
-			destLine[xCtr] = srcLine[scaleXCtr / kScaleThreshold];
+		for (uint32 destX = 0, xCtr = 0, scaleXCtr = 0; destX < (uint32)destPixelWidth; ++destX, ++xCtr, scaleXCtr += scaleX) {
+			byte srcPixel = srcLine[scaleXCtr / kScaleThreshold];
+			if (palChange)
+				destLine[xCtr] = palChange[srcPixel] / 10; // Palette values are stored as multiples of 10
+			else
+				destLine[xCtr] = srcPixel;
+		}
 	}
 }
 
