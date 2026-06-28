@@ -30,6 +30,7 @@
 #include "hollywood/scenes/intro/scene9120.h"
 #include "hollywood/scenes/playable/scene7000.h"
 #include "hollywood/scenes/playable/scene7010.h"
+#include "hollywood/scenes/playable/scene7020.h"
 #include "hollywood/scenes/playable/scene7030.h"
 #include "hollywood/scenes/playable/scene7040.h"
 #include "hollywood/scenes/playable/scene7050.h"
@@ -60,6 +61,7 @@ bool isImplementedIntroSceneNumber(int sceneNumber) {
 bool isImplementedGameplayState(int stateId) {
 	return stateId == 7000 ||
 		(stateId >= 0x1b62 && stateId <= 0x1b6b) ||
+		stateId == 0x1b6c ||
 		(stateId >= 0x1b76 && stateId <= 0x1b7f) ||
 		(stateId >= 0x1b80 && stateId <= 0x1b89) ||
 		stateId == 0x1b8a ||
@@ -198,6 +200,14 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene7010 scene7010(this);
 			if (!scene7010.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId == 0x1b6c) {
+			handledState = true;
+			Scene7020 scene7020(this);
+			if (!scene7020.play())
 				return Common::kReadingFailed;
 			continue;
 		}

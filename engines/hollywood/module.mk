@@ -24,6 +24,7 @@ MODULE_OBJS = \
 	scenes/intro/scene9120.o \
 	scenes/playable/scene7000.o \
 	scenes/playable/scene7010.o \
+	scenes/playable/scene7020.o \
 	scenes/playable/scene7030.o \
 	scenes/playable/scene7040.o \
 	scenes/playable/scene7050.o \

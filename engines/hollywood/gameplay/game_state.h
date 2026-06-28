@@ -64,6 +64,9 @@ struct GameplayState {
 		inventoryPanelRedrawn = false;
 		sceneActionStateSelector = 0;
 		g01Item0BSequenceCompleted = false;
+		g01DialogueOverlayMode = 0;
+		g01DialogueBranchState = 0;
+		g01DialogueBranchFollowUpSeen = false;
 		g04EntryConversationPlayed = false;
 		g04MajorActionProgress = 0;
 		g04PatchState = 0;
@@ -321,6 +324,9 @@ struct GameplayState {
 	bool inventoryPanelRedrawn;
 	byte sceneActionStateSelector;
 	bool g01Item0BSequenceCompleted;
+	byte g01DialogueOverlayMode;
+	byte g01DialogueBranchState;
+	bool g01DialogueBranchFollowUpSeen;
 	bool g04EntryConversationPlayed;
 	byte g04MajorActionProgress;
 	byte g04PatchState;
