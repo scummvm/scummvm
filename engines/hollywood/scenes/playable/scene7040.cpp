@@ -329,6 +329,7 @@ bool Scene7040::load() {
 	if (!loadResource000Owner1ActorPalette(_resource000OffsetTable) ||
 			!loadStage003SceneRows())
 		return false;
+	_panelArt.applyInteractiveObjectPalette(_paletteCurrent);
 
 	if (!_hotspots.load(_paletteMask, _metadata, _stage003SmallRows))
 		return false;
@@ -1104,7 +1105,7 @@ void Scene7040::presentGameplayFrame(const SceneHoverCaption &hoverCaption, cons
 
 void Scene7040::prepareOptionsMenuPalette(Common::Array<byte> &palette) const {
 	palette = _paletteCurrent;
-	_panelArt.applyPalette(palette);
+	_panelArt.applyInteractiveObjectPalette(palette);
 }
 
 bool Scene7040::shouldExitGameplayLoop() const {
@@ -2426,7 +2427,7 @@ void Scene7040::applyGameplayPanelPalette() {
 	if (_paletteCurrent.size() <= kG04PanelTextColor * 3 + 2)
 		return;
 
-	const bool originalPaletteApplied = _panelArt.applyPalette(_paletteCurrent);
+	const bool originalPaletteApplied = _panelArt.applyInteractiveObjectPalette(_paletteCurrent);
 	if (!originalPaletteApplied) {
 		const byte colors[] = {
 			kG04PanelDarkColor, 0x05, 0x06, 0x08,
