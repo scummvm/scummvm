@@ -127,8 +127,8 @@ Scene9050::Scene9050(HollywoodEngine *vm) :
 		_i06SequenceFinished(false),
 		_skipRequested(false) {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
-	_paletteResource.resize(kHollywoodPaletteSize);
-	_paletteCurrent.resize(kHollywoodPaletteSize);
+	_paletteResource.resize(kPaletteSize);
+	_paletteCurrent.resize(kPaletteSize);
 	_sceneFramebuffer.resize(kFrameBufferSize);
 	_savedFramebuffer.resize(kFrameBufferSize);
 	_clipBaseFramebuffer.resize(kFrameBufferSize);
@@ -238,7 +238,7 @@ bool Scene9050::loadResourceI06Assets() {
 	_resourceArenaCursor = 0;
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
 
-	if (!loadResourceI06Chunk(0, _paletteResource, kHollywoodPaletteSize))
+	if (!loadResourceI06Chunk(0, _paletteResource, kPaletteSize))
 		return false;
 
 	for (uint i = 1; i < kI06RequiredChunkCount; ++i) {
@@ -293,7 +293,7 @@ bool Scene9050::loadResourceI05ClipSegment(byte segmentId) {
 
 	if (!loadResourceI05Chunk(baseIndex, _clipBaseFramebuffer, kFrameBufferSize))
 		return false;
-	if (!loadResourceI05Chunk(baseIndex + 1, _paletteResource, kHollywoodPaletteSize))
+	if (!loadResourceI05Chunk(baseIndex + 1, _paletteResource, kPaletteSize))
 		return false;
 
 	for (uint i = 2; i <= lastLocalChunkIndex; ++i) {
@@ -332,7 +332,7 @@ bool Scene9050::loadResourceI08BlinkAssets() {
 
 	if (!loadResourceChunk(kI08ArchiveName, 0, _clipBaseFramebuffer, kFrameBufferSize))
 		return false;
-	if (!loadResourceChunk(kI08ArchiveName, 1, _paletteResource, kHollywoodPaletteSize))
+	if (!loadResourceChunk(kI08ArchiveName, 1, _paletteResource, kPaletteSize))
 		return false;
 	if (!loadResourceArenaChunk(kI08ArchiveName, 2, 2))
 		return false;
@@ -772,9 +772,9 @@ bool Scene9050::playResourceI05ClipSegment(byte segmentId, byte lastFrameIndex, 
 
 void Scene9050::runStage9050InterClipSpriteReveal() {
 	const uint32 paletteOffset = _resourceChunkOffsets[2];
-	if (paletteOffset + kHollywoodPaletteSize <= _resourceArena.size()) {
-		memcpy(_paletteCurrent.data(), _resourceArena.data() + paletteOffset, kHollywoodPaletteSize);
-		memcpy(_paletteResource.data(), _paletteCurrent.data(), kHollywoodPaletteSize);
+	if (paletteOffset + kPaletteSize <= _resourceArena.size()) {
+		memcpy(_paletteCurrent.data(), _resourceArena.data() + paletteOffset, kPaletteSize);
+		memcpy(_paletteResource.data(), _paletteCurrent.data(), kPaletteSize);
 		presentFrame();
 	}
 
