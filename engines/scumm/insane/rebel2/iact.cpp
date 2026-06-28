@@ -2190,6 +2190,7 @@ void InsaneRebel2::initEnemyStruct(int id, int32 x, int32 y, int32 w, int32 h, b
 	e.active = active;
 	e.destroyed = destroyed;
 	e.explosionFrame = explosionFrame;
+	e.explosionComplete = false;
 	e.savedBackground = nullptr;
 	e.savedBgWidth = 0;
 	e.savedBgHeight = 0;
