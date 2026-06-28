@@ -192,7 +192,7 @@ void FoolGame::cardsDrawTable() {
 	this->drawTextCenter(_zbasic->str(OFF(1)), 0xd4); // or
 	_toolbox->FillRoundRect(this->arr_rect_4338, 0xa, 0xa, _patterns[0]);
 	_toolbox->FrameRoundRect(this->arr_rect_4338, 0xa, 0xa);
-	_zbasic->text(_fontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	this->drawTextCenter(_zbasic->str(OFF(2)), 0xe9); // Yield
 	this->var_i16_2016 = 1;
 	this->var_i16_2010 = 1;

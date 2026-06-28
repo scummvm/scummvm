@@ -228,7 +228,7 @@ void FoolGame::wordSearchOnClick() {
 	while ((_event.modifiers & 0x80) == 0) {
 		// 131:08d4
 		this->getNextEvent(0);
-		this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
+		this->getGridFromMouse(this->var_i16_68a, this->var_i16_68c);
 		this->sub_128_342(this->var_i16_68a, this->var_i16_68c);
 		if (!((this->var_i16_68a == this->var_i16_1a96) && (this->var_i16_68c == this->var_i16_1a98))) {
 			// 131:0934
