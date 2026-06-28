@@ -24,6 +24,7 @@
 #include "common/events.h"
 #include "common/system.h"
 
+#include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -40,6 +41,12 @@ const uint16 kGameplayInventoryCloseY = 0x122;
 const uint16 kGameplayVerbPanelStripWidth = 0x58;
 const uint16 kGameplayVerbPanelStripHeight = 0x1b;
 const uint16 kGameplayVerbPanelStripTopY = 0x1bd;
+const uint16 kGameplayInventoryGridLeft = 0x32;
+const uint16 kGameplayInventoryGridTop = 0x152;
+const uint16 kGameplayInventoryTileSize = 0x40;
+const uint16 kGameplayInventoryTileStride = 0x44;
+const byte kGameplayUseStrip = 5;
+const byte kGameplayGiveStrip = 8;
 const uint16 kGameplayVerbPanelStripXOffsets[9] = {
 	0xff, 0, 8, 97, 186, 276, 366, 456, 545
 };
@@ -82,6 +89,8 @@ GameplayLoop::GameplayLoop(HollywoodEngine *vm, GameplayLoopDelegate *delegate) 
 		_rightButtonDown(false),
 		_keyboardStripMode(false),
 		_inventoryPanelOpenedFromDefault(false),
+		_relationMode(0),
+		_primaryInventoryItem(0),
 		_panelHoverTimer(0) {
 }
 
@@ -95,6 +104,8 @@ bool GameplayLoop::run() {
 	_rightButtonDown = false;
 	_keyboardStripMode = false;
 	_inventoryPanelOpenedFromDefault = false;
+	_relationMode = 0;
+	_primaryInventoryItem = 0;
 	_panelState = GameplayPanelState();
 	_panelHoverTimer = 0;
 	_hoverCaption.reset();
@@ -227,10 +238,24 @@ void GameplayLoop::handleKeyUp(const Common::KeyState &keyState) {
 }
 
 void GameplayLoop::handleLeftClick() {
-	if (_panelState.visible())
+	if (_panelState.inventoryPanelVisible) {
+		const byte itemId = inventoryItemAtPanelPosition(_vm->cursor()->surfaceX(), _vm->cursor()->surfaceY());
+		if (itemId != 0 && (_currentStrip == kGameplayUseStrip || _currentStrip == kGameplayGiveStrip)) {
+			_relationMode = _currentStrip == kGameplayUseStrip ? 1 : 2;
+			_primaryInventoryItem = itemId;
+			closeInventoryPanel();
+			refreshHoverCaption();
+			syncPanelState();
+		}
+		return;
+	}
+
+	if (_panelState.verbPanelVisible)
 		return;
 
 	_delegate->handleLeftClick(makeCursorState());
+	_relationMode = 0;
+	_primaryInventoryItem = 0;
 	_currentStrip = kGameplayDefaultStrip;
 	_hoverCaption.setCurrentStrip(_currentStrip);
 	refreshHoverCaption();
@@ -407,6 +432,36 @@ byte GameplayLoop::panelStripAt(uint16 cursorX, uint16 cursorY) const {
 	return 0;
 }
 
+byte GameplayLoop::inventoryItemAtPanelPosition(uint16 cursorX, uint16 cursorY) const {
+	if (cursorX < kGameplayInventoryGridLeft || cursorY < kGameplayInventoryGridTop)
+		return 0;
+
+	const uint16 gridX = cursorX - kGameplayInventoryGridLeft;
+	const uint16 gridY = cursorY - kGameplayInventoryGridTop;
+	const byte column = gridX / kGameplayInventoryTileStride;
+	const byte row = gridY / kGameplayInventoryTileStride;
+	if (column >= 8 || row >= 2 ||
+			gridX % kGameplayInventoryTileStride >= kGameplayInventoryTileSize ||
+			gridY % kGameplayInventoryTileStride >= kGameplayInventoryTileSize)
+		return 0;
+
+	const GameplayState &gameState = _vm->gameState();
+	const byte owner = gameState.currentInventoryOwnerIndex;
+	if (owner >= GameplayState::kInventoryOwnerCount)
+		return 0;
+
+	byte firstVisibleSlot = gameState.inventoryFirstVisibleSlotByOwner[owner];
+	if (firstVisibleSlot == 0)
+		firstVisibleSlot = GameplayState::kInventoryFirstSlot;
+
+	const uint slot = firstVisibleSlot + row * 8 + column;
+	if (slot >= GameplayState::kInventoryOwnerSlotStride ||
+			slot > gameState.inventoryItemCountByOwner[owner])
+		return 0;
+
+	return gameState.inventorySlotItemIdByOwner[owner][slot];
+}
+
 void GameplayLoop::updatePanelCaption() {
 	_panelState.currentStrip = _currentStrip;
 	_panelState.captionText = inventoryActionCaption(_currentStrip);
@@ -431,6 +486,9 @@ GameplayLoopCursorState GameplayLoop::makeCursorState() const {
 	state.currentStrip = _currentStrip;
 	state.requestedStrip = _hoverCaption.requestedStrip();
 	state.resolvedItem = _hoverCaption.resolvedItem();
+	state.relationMode = _relationMode;
+	state.primaryInventoryItem = _primaryInventoryItem;
+	state.relationModeActive = _relationMode != 0 && _primaryInventoryItem != 0;
 	return state;
 }
 

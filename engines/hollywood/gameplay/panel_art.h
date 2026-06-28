@@ -35,6 +35,7 @@ struct Surface;
 namespace Hollywood {
 
 class HollywoodFont;
+struct GameplayState;
 
 class GameplayPanelArt {
 public:
@@ -49,22 +50,27 @@ public:
 		HollywoodFont *font) const;
 	void drawDialogueInventoryPanel(Graphics::Surface &surface, const Common::Array<byte> &savedFramebuffer,
 		uint16 viewportXOffset, uint16 viewportYOffset, const GameplayPanelState &panelState,
-		HollywoodFont *font) const;
+		const GameplayState &gameState, HollywoodFont *font) const;
 
 private:
 	bool loadBottomPanelBuffer();
 	bool loadObjectPalette();
+	bool loadInventoryItemTilePage(byte pageIndex, Common::Array<byte> &page) const;
 	void copySavedCaptionBand(Graphics::Surface &surface, const Common::Array<byte> &savedFramebuffer,
 		uint16 viewportXOffset, uint16 viewportYOffset, uint16 screenY) const;
 	void copyBottomPanelRows(Graphics::Surface &surface, uint16 sourceRow, uint16 screenY,
 		uint16 rowCount) const;
+	void drawInventoryItems(Graphics::Surface &surface, const GameplayState &gameState) const;
 	void drawCaptionText(Graphics::Surface &surface, const Common::String &text, int y,
 		HollywoodFont *font) const;
 	void drawVerbStripLabels(Graphics::Surface &surface, int screenY, HollywoodFont *font) const;
 	void applySelectedVerbStrip(Graphics::Surface &surface, int screenY, byte stripIndex) const;
+	byte inventoryOwner1ItemPage(byte itemId) const;
 
 	Common::Array<byte> _bottomPanelBuffer;
 	Common::Array<byte> _objectPaletteTriples;
+	mutable Common::Array<Common::Array<byte> > _inventoryItemTilePages;
+	uint32 _inventoryItemPageBaseOffset;
 	bool _loaded;
 };
 

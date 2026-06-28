@@ -41,6 +41,9 @@ struct GameplayLoopCursorState {
 	byte currentStrip;
 	byte requestedStrip;
 	byte resolvedItem;
+	byte relationMode;
+	byte primaryInventoryItem;
+	bool relationModeActive;
 };
 
 struct GameplayPanelState {
@@ -104,6 +107,7 @@ private:
 	void updatePanelFromMousePosition();
 	void selectPanelStrip(byte stripIndex);
 	byte panelStripAt(uint16 cursorX, uint16 cursorY) const;
+	byte inventoryItemAtPanelPosition(uint16 cursorX, uint16 cursorY) const;
 	void updatePanelCaption();
 	void syncPanelState();
 	GameplayLoopCursorState makeCursorState() const;
@@ -117,6 +121,8 @@ private:
 	bool _rightButtonDown;
 	bool _keyboardStripMode;
 	bool _inventoryPanelOpenedFromDefault;
+	byte _relationMode;
+	byte _primaryInventoryItem;
 	GameplayPanelState _panelState;
 	uint32 _panelHoverTimer;
 };
