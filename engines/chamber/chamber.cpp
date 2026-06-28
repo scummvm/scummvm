@@ -38,6 +38,7 @@
 #include "chamber/chamber.h"
 #include "chamber/detection.h"
 #include "chamber/renderer.h"
+#include "chamber/amiga.h"
 #include "chamber/script.h"
 #include "chamber/resdata.h"
 #include "chamber/room.h"
@@ -77,10 +78,16 @@ ChamberEngine::ChamberEngine(OSystem *syst, const ADGameDescription *desc)
 	if (_renderMode == Common::kRenderHercA)
 		_videoMode = Common::kRenderHercG;
 
+	// Amiga has its own renderer, picked by platform
+	if (_gameDescription->platform == Common::kPlatformAmiga)
+		_videoMode = Common::kRenderAmiga;
+
 	_screenH = _screenW = _screenBits = _screenBPL = _screenPPB = 0;
 	_line_offset = _line_offset2 = _fontHeight = _fontWidth = 0;
 
-	if (_videoMode == Common::kRenderEGA)
+	if (_videoMode == Common::kRenderAmiga)
+		_renderer = new AmigaRenderer();
+	else if (_videoMode == Common::kRenderEGA)
 		_renderer = new EGARenderer();
 	else
 		_renderer = new CGARenderer();
