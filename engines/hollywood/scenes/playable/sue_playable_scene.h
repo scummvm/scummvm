@@ -290,8 +290,8 @@ protected:
 	void runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame);
 	void applyChunk14ActionSideEffects(byte frameIndex);
 	void applyChunk14AltSideEffects(byte frameIndex);
-	byte primarySpeechAnimationBaseFrame(byte animationGroup) const;
-	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex);
+	virtual byte primarySpeechAnimationBaseFrame(byte animationGroup) const;
+	virtual void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex);
 	bool waitSceneMillis(uint32 millis);
 	void clearSpeechOverlay();
 	void clearAllSpeechOverlays();
