@@ -30,7 +30,6 @@ MODULE_OBJS := \
 ifdef USE_HTTP
 MODULE_OBJS += \
 	networking/http/connectionmanager.o \
-	networking/http/networkreadstream.o \
 	networking/http/httpjsonrequest.o \
 	networking/http/httprequest.o \
 	networking/http/postrequest.o \

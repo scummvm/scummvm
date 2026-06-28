@@ -55,16 +55,31 @@ size_t NetworkReadStreamCurl::curlDataCallback(char *d, size_t n, size_t l, void
 
 size_t NetworkReadStreamCurl::curlReadDataCallback(char *d, size_t n, size_t l, void *p) {
 	NetworkReadStreamCurl *stream = (NetworkReadStreamCurl *)p;
-	if (stream)
-		return stream->fillWithSendingContents(d, n * l);
-	return 0;
+	if (!stream) {
+		return 0;
+	}
+
+	const uint32 maxSize = n * l;
+
+	uint32 sendSize = stream->_sendingContentsSize - stream->_sendingContentsPos;
+	if (sendSize > maxSize)
+		sendSize = maxSize;
+
+	memcpy(d, &stream->_sendingContentsBuffer[stream->_sendingContentsPos], sendSize * sizeof(byte));
+
+	stream->_sendingContentsPos += sendSize;
+	return sendSize;
 }
 
 size_t NetworkReadStreamCurl::curlHeadersCallback(char *d, size_t n, size_t l, void *p) {
 	NetworkReadStreamCurl *stream = (NetworkReadStreamCurl *)p;
-	if (stream)
-		return stream->addResponseHeaders(d, n * l);
-	return 0;
+	if (!stream) {
+		return 0;
+	}
+
+	const size_t bufferSize = n * l;
+	stream->_responseHeaders += Common::String(d, bufferSize);
+	return bufferSize;
 }
 
 static int curlProgressCallback(void *p, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {

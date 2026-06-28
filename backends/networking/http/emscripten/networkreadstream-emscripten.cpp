@@ -40,7 +40,6 @@ NetworkReadStream *NetworkReadStream::make(const char *url, RequestHeaders *head
 
 void NetworkReadStreamEmscripten::resetStream() {
 	_eos = false;
-	_sendingContentsSize = _sendingContentsPos = 0;
 	_readPos = 0;
 	_fetchId = 0;
 }
