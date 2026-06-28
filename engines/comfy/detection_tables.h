@@ -22,15 +22,19 @@
 namespace Comfy {
 
 const PlainGameDescriptor comfyGames[] = {
-	{ "comfy", "Comfy" },
+	{ "comfyland", "Comfy Land" },
 	{ 0, 0 }
 };
 
 const ADGameDescription gameDescriptions[] = {
 	{
-		"comfy",
+		"comfyland",
 		nullptr,
-		AD_ENTRY1s("file1.bin", "00000000000000000000000000000000", 11111),
+		{
+			{"ENGLISH/COMFY.OBJ", 0, "7b4ce03e92a27c2271d3657d3c13084b", 221184},
+			{"SETLANG/PICFILE.DAT", 0, "88dbbc127cd269b286f4d8c0adad0f1b", 29789},
+			AD_LISTEND
+		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
