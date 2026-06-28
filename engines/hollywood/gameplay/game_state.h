@@ -61,6 +61,11 @@ struct GameplayState {
 		inventoryOwner1ItemsInitialized = false;
 		sceneActionCallbackTableInstalled = false;
 		inventoryPanelRedrawn = false;
+		g01Item0BSequenceCompleted = false;
+		g04EntryConversationPlayed = false;
+		g04MajorActionProgress = 0;
+		g04PatchState = 0;
+		g04ExitActionDone = false;
 		musicEnabled = true;
 		soundEffectsEnabled = true;
 		optionsTestAudioEnabled = false;
@@ -173,6 +178,11 @@ struct GameplayState {
 	bool inventoryOwner1ItemsInitialized;
 	bool sceneActionCallbackTableInstalled;
 	bool inventoryPanelRedrawn;
+	bool g01Item0BSequenceCompleted;
+	bool g04EntryConversationPlayed;
+	byte g04MajorActionProgress;
+	byte g04PatchState;
+	bool g04ExitActionDone;
 	bool musicEnabled;
 	bool soundEffectsEnabled;
 	bool optionsTestAudioEnabled;
