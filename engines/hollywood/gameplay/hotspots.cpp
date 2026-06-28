@@ -34,8 +34,10 @@ const uint kSceneChunk3ColorToItemMapOffset = 0x100;
 const uint kSceneColorMapSize = 0x100;
 const uint kSceneVerbCount = 8;
 const uint kSceneVerbActionRecordSize = 4;
+const uint kSceneInventoryRelationInventoryItemCount = 0x79;
 const uint kStage003SmallRowSize = 0x29;
 const uint kInventoryActionCaptionCount = 9;
+const byte kInventoryItemSourceKind = 1;
 const byte kSceneItemSourceKind = 2;
 const byte kBottomCaptionColorIndex = 0xfc;
 const uint kBottomCaptionPaletteOffset = kBottomCaptionColorIndex * 3;
@@ -103,6 +105,27 @@ bool SceneHotspotTable::load(const Common::Array<byte> &paletteMapBlock, const C
 		_verbActionRecords[record + 1].movementMode = readUint16LE(metadata, offset + 2);
 	}
 
+	const uint relationRecordCount = kSceneInventoryRelationInventoryItemCount * HollywoodEngine::kSceneItemCount;
+	const uint relationRecordBytes = relationRecordCount * kSceneVerbActionRecordSize;
+	_relationMode1ActionRecords.clear();
+	_relationMode2ActionRecords.clear();
+	if (metadata.size() >= kSceneRelationRecords + relationRecordBytes) {
+		_relationMode1ActionRecords.resize(relationRecordCount);
+		for (uint record = 0; record < relationRecordCount; ++record) {
+			const uint offset = kSceneRelationRecords + record * kSceneVerbActionRecordSize;
+			_relationMode1ActionRecords[record].actionHandlerId = readUint16LE(metadata, offset);
+			_relationMode1ActionRecords[record].movementMode = readUint16LE(metadata, offset + 2);
+		}
+	}
+	if (metadata.size() >= kSceneMode2RelationOverlay + relationRecordBytes) {
+		_relationMode2ActionRecords.resize(relationRecordCount);
+		for (uint record = 0; record < relationRecordCount; ++record) {
+			const uint offset = kSceneMode2RelationOverlay + record * kSceneVerbActionRecordSize;
+			_relationMode2ActionRecords[record].actionHandlerId = readUint16LE(metadata, offset);
+			_relationMode2ActionRecords[record].movementMode = readUint16LE(metadata, offset + 2);
+		}
+	}
+
 	_stageSmallRows = stageSmallRows;
 	return true;
 }
@@ -153,6 +176,26 @@ SceneVerbActionRecord SceneHotspotTable::verbActionRecord(byte itemId, byte stri
 	return _verbActionRecords[recordIndex];
 }
 
+SceneVerbActionRecord SceneHotspotTable::relationActionRecord(byte inventoryItemId, byte sceneItemId, byte relationMode) const {
+	SceneVerbActionRecord emptyRecord;
+	emptyRecord.actionHandlerId = 0;
+	emptyRecord.movementMode = 0;
+
+	if (inventoryItemId >= kSceneInventoryRelationInventoryItemCount ||
+			sceneItemId >= HollywoodEngine::kSceneItemCount)
+		return emptyRecord;
+	if (relationMode != 1 && relationMode != 2)
+		return emptyRecord;
+
+	const Common::Array<SceneVerbActionRecord> &records =
+		relationMode == 2 ? _relationMode2ActionRecords : _relationMode1ActionRecords;
+	const uint recordIndex = (uint)inventoryItemId * HollywoodEngine::kSceneItemCount + sceneItemId;
+	if (recordIndex >= records.size())
+		return emptyRecord;
+
+	return records[recordIndex];
+}
+
 SceneActionTarget SceneHotspotTable::actionTarget(byte itemId) const {
 	SceneActionTarget emptyTarget;
 	memset(&emptyTarget, 0, sizeof(emptyTarget));
@@ -183,6 +226,8 @@ Common::String SceneHotspotTable::itemName(byte itemId) const {
 SceneHoverCaption::SceneHoverCaption() :
 		_timer(0),
 		_currentStrip(1),
+		_relationMode(0),
+		_primaryInventoryItem(0),
 		_requestedStrip(1),
 		_resolvedItem(0),
 		_hasLastDescriptor(false) {
@@ -193,9 +238,12 @@ SceneHoverCaption::SceneHoverCaption() :
 void SceneHoverCaption::reset() {
 	_timer = 0;
 	_currentStrip = 1;
+	_relationMode = 0;
+	_primaryInventoryItem = 0;
 	_requestedStrip = 1;
 	_resolvedItem = 0;
 	_captionText.clear();
+	_primaryItemName.clear();
 	_hasLastDescriptor = false;
 	memset(&_descriptor, 0, sizeof(_descriptor));
 	memset(&_lastDescriptor, 0, sizeof(_lastDescriptor));
@@ -203,6 +251,19 @@ void SceneHoverCaption::reset() {
 
 void SceneHoverCaption::setCurrentStrip(byte stripIndex) {
 	_currentStrip = stripIndex;
+}
+
+void SceneHoverCaption::setRelationContext(byte relationMode, byte primaryInventoryItem,
+		const Common::String &primaryItemName) {
+	if (_relationMode == relationMode &&
+			_primaryInventoryItem == primaryInventoryItem &&
+			_primaryItemName == primaryItemName)
+		return;
+
+	_relationMode = relationMode;
+	_primaryInventoryItem = primaryInventoryItem;
+	_primaryItemName = primaryItemName;
+	_hasLastDescriptor = false;
 }
 
 bool SceneHoverCaption::refreshNow(const SceneHotspotTable &hotspots, const Common::Array<byte> &savedFramebuffer,
@@ -254,11 +315,30 @@ bool SceneHoverCaption::updateCaption(const SceneHotspotTable &hotspots, const C
 	if (cursorY < HollywoodEngine::kSceneBufferHeight) {
 		_resolvedItem = hotspots.resolveItemAt(savedFramebuffer, cursorX, cursorY, xOffset, yOffset);
 		_requestedStrip = hotspots.defaultStripForItem(_resolvedItem);
-		nextDescriptor.itemId = hotspots.hasVerbAction(_resolvedItem, _currentStrip) ? _resolvedItem : 0;
+		if (_relationMode != 0 && _primaryInventoryItem != 0) {
+			nextDescriptor.verbTextIndex = _relationMode == 2 ? 8 : 5;
+			nextDescriptor.itemId = _primaryInventoryItem;
+			nextDescriptor.itemSourceKind = kInventoryItemSourceKind;
+			nextDescriptor.relationTextIndex = _relationMode;
+			nextDescriptor.secondItemSourceKind = kSceneItemSourceKind;
+			nextDescriptor.secondItemId =
+				hotspots.relationActionRecord(_primaryInventoryItem, _resolvedItem,
+					_relationMode).actionHandlerId != 0 ? _resolvedItem : 0;
+		} else {
+			nextDescriptor.itemId = hotspots.hasVerbAction(_resolvedItem, _currentStrip) ? _resolvedItem : 0;
+		}
 	} else {
 		_resolvedItem = 0;
 		_requestedStrip = 0;
-		nextDescriptor.itemId = 0;
+		if (_relationMode != 0 && _primaryInventoryItem != 0) {
+			nextDescriptor.verbTextIndex = _relationMode == 2 ? 8 : 5;
+			nextDescriptor.itemId = _primaryInventoryItem;
+			nextDescriptor.itemSourceKind = kInventoryItemSourceKind;
+			nextDescriptor.relationTextIndex = _relationMode;
+			nextDescriptor.secondItemSourceKind = kSceneItemSourceKind;
+		} else {
+			nextDescriptor.itemId = 0;
+		}
 	}
 
 	if (!force && !descriptorChanged(nextDescriptor))
@@ -286,6 +366,14 @@ bool SceneHoverCaption::descriptorChanged(const Descriptor &descriptor) const {
 Common::String SceneHoverCaption::buildCaption(const SceneHotspotTable &hotspots,
 		const Descriptor &descriptor) const {
 	Common::String caption = actionCaption(descriptor.verbTextIndex);
+	if (descriptor.relationTextIndex != 0 && !_primaryItemName.empty()) {
+		caption += _primaryItemName;
+		caption += descriptor.relationTextIndex == 2 ? " a " : " con ";
+		if (descriptor.secondItemId != 0 && descriptor.secondItemSourceKind == kSceneItemSourceKind)
+			caption += hotspots.itemName(descriptor.secondItemId);
+		return caption;
+	}
+
 	if (descriptor.itemSourceKind == kSceneItemSourceKind)
 		caption += hotspots.itemName(descriptor.itemId);
 
