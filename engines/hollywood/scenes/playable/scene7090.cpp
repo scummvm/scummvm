@@ -41,6 +41,7 @@ const uint16 kScene7090ViewportXOffset = 0x68;
 const int kScene7090EntryX = 0x1dd;
 const int kScene7090EntryY = 0x101;
 const byte kScene7090EntryFacing = 2;
+const byte kScene7090IntroTurnFacing = 4;
 const uint16 kScene7090Chunk9DescriptorCount = 4;
 const uint16 kScene7090Chunk10DescriptorCount = 0x16;
 const uint32 kScene7090FrameMillis = 75;
@@ -173,8 +174,14 @@ void Scene7090::runCustomEntrySequence() {
 
 	GameplayState &state = _vm->gameState();
 	if (!state.g09IntroSeen) {
-		walkActiveActorTo(kScene7090EntryX, kScene7090EntryY, 4, 0);
+		walkActiveActorTo(kScene7090EntryX, kScene7090EntryY, kScene7090IntroTurnFacing, 0);
+		const byte pathFacing = _activeActorFacing;
+		const byte pathCel = _activeActorCel;
+		_activeActorFacing = kScene7090EntryFacing;
+		_activeActorCel = 0;
 		beginSecondarySpeechLine(0, 0);
+		_activeActorFacing = pathFacing;
+		_activeActorCel = pathCel;
 		state.g09IntroSeen = true;
 	}
 }
