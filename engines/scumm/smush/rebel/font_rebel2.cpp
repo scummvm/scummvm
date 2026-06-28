@@ -365,7 +365,12 @@ void Rebel2NutRenderer::loadRebel2Font(const char *filename) {
 		offset = (uint32)nextOffset;
 		int width = READ_LE_UINT16(dataSrc + offset + 14);
 		_fontHeight = READ_LE_UINT16(dataSrc + offset + 16);
-		decodedLength += width * _fontHeight;
+		const uint64 pixels = (uint64)width * _fontHeight;
+		if (pixels > kRebel2MaxSpritePixels || decodedLength + pixels > kRebel2MaxDecodedSpriteBytes) {
+			warning("Rebel2NutRenderer::loadRebel2Font(%s) invalid glyph dimensions %dx%d at char %d, clamping", filename, width, _fontHeight, l);
+			break;
+		}
+		decodedLength += (uint32)pixels;
 	}
 
 	if (l < _numChars)
@@ -413,9 +418,10 @@ void Rebel2NutRenderer::loadRebel2Font(const char *filename) {
 		_chars[l].height = READ_LE_UINT16(dataSrc + offset + 16);
 		_chars[l].src = decodedPtr;
 
-		decodedPtr += (_chars[l].width * _chars[l].height);
+		const uint32 pixels = (uint32)_chars[l].width * _chars[l].height;
+		decodedPtr += pixels;
 
-		memset(_chars[l].src, kDefaultTransparentColor, _chars[l].width * _chars[l].height);
+		memset(_chars[l].src, kDefaultTransparentColor, pixels);
 		_chars[l].transparency = kDefaultTransparentColor;
 
 		const uint8 *fobjptr = dataSrc + offset + 22;
