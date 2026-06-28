@@ -53,7 +53,11 @@ public:
 	void appendFromFile(const char *filename);
 	void appendFromStream(Common::SeekableReadStream &stream);
 
-	Graphics::Surface *getSprite(uint index) const { return _sprites[index]; }
+	void appendFromFileAmiga(const char *filename);
+	void appendFromStreamAmiga(Common::SeekableReadStream &stream);
+
+	// Returns a shared 1x1 placeholder when the bank has no such sprite
+	Graphics::Surface *getSprite(uint index) const;
 	uint getSpriteCount() const { return _sprites.size(); }
 
 private:

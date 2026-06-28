@@ -447,6 +447,25 @@ Common::Error ChamberEngine::init() {
 			exitGame();
 		/* fond wraps ega_backbuffer via init() — surface does not own pixel data, safe to delete directly */
 		delete fond;
+	} else if (g_vm->_videoMode == Common::kRenderAmiga) {
+		// Amiga sprite banks (appendFromFileAmiga); PUZZL/perso banks are merged here
+		ega_sprit_res = new EgaSpriteResource();
+		ega_sprit_res->appendFromFileAmiga("SPRIT.BIN");
+
+		ega_puzzl_res = new EgaSpriteResource();
+		ega_puzzl_res->appendFromFileAmiga("PUZZL.BIN");
+
+		ega_perso_res = new EgaSpriteResource();
+		ega_perso_res->appendFromFileAmiga("A.BIN");
+		ega_perso_res->appendFromFileAmiga("B.BIN");
+
+		Graphics::Surface *fond = loadFond();
+		if (!fond)
+			exitGame();
+		delete fond;
+
+		// Early intro screens set no palette of their own; apply the room palette now
+		amigaApplyRoomPalette(0);
 	} else {
 		while (!loadFond() || !loadSpritesData() || !loadPersData())
 			askDisk2();
