@@ -28,6 +28,7 @@ MODULE_OBJS = \
 	scenes/playable/scene7040.o \
 	scenes/playable/scene7050.o \
 	scenes/playable/scene7060.o \
+	scenes/playable/scene7070.o \
 	scenes/playable/sue_playable_scene.o
 
 # This module can be built as a plugin

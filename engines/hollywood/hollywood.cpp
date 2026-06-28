@@ -34,6 +34,7 @@
 #include "hollywood/scenes/playable/scene7040.h"
 #include "hollywood/scenes/playable/scene7050.h"
 #include "hollywood/scenes/playable/scene7060.h"
+#include "hollywood/scenes/playable/scene7070.h"
 #include "hollywood/resource.h"
 
 #include "audio/mixer.h"
@@ -47,6 +48,33 @@ namespace Hollywood {
 const uint kOptionsMaximumLevel = 200;
 const int kMaximumConfigVolume = Audio::Mixer::kMaxMixerVolume;
 const int kMaximumTalkSpeed = 255;
+
+bool isImplementedIntroSceneNumber(int sceneNumber) {
+	return sceneNumber == 9000 || sceneNumber == 9010 || sceneNumber == 9050 ||
+		sceneNumber == 9100 || sceneNumber == 9110 || sceneNumber == 9120;
+}
+
+bool isImplementedGameplayState(int stateId) {
+	return stateId == 7000 ||
+		(stateId >= 0x1b62 && stateId <= 0x1b6b) ||
+		(stateId >= 0x1b76 && stateId <= 0x1b7f) ||
+		(stateId >= 0x1b80 && stateId <= 0x1b89) ||
+		stateId == 0x1b8a ||
+		(stateId >= 0x1b94 && stateId <= 0x1b9d) ||
+		(stateId >= 0x1b9e && stateId <= 0x1ba0);
+}
+
+bool shouldRunSceneForBootParam(int bootParam, int sceneNumber, bool &bootSceneReached) {
+	if (bootParam == 0 || bootSceneReached)
+		return true;
+
+	if (bootParam == sceneNumber) {
+		bootSceneReached = true;
+		return true;
+	}
+
+	return false;
+}
 
 byte configVolumeToOptionsLevel(int volume) {
 	const int clippedVolume = CLIP<int>(volume, 0, kMaximumConfigVolume);
@@ -96,33 +124,64 @@ Common::Error HollywoodEngine::run() {
 	_font->load();
 
 	debugC(1, kDebugGeneral, "Hollywood Monsters engine initialized");
-	Scene9000 scene9000(this);
-	if (!scene9000.play())
-		return Common::kReadingFailed;
 
-	Scene9010 scene9010(this);
-	if (!scene9010.play())
-		return Common::kReadingFailed;
+	const int bootParam = ConfMan.getInt("boot_param");
+	const bool bootToIntroScene = isImplementedIntroSceneNumber(bootParam);
+	const bool bootToGameplayScene = isImplementedGameplayState(bootParam);
+	bool bootSceneReached = bootParam == 0;
 
-	Scene9100 scene9100(this);
-	if (!scene9100.play())
-		return Common::kReadingFailed;
+	if (bootParam != 0) {
+		if (bootToIntroScene || bootToGameplayScene) {
+			debugC(1, kDebugGeneral, "Boot parameter requested scene/state %d", bootParam);
+		} else {
+			warning("Unsupported Hollywood boot parameter %d; starting normally", bootParam);
+			bootSceneReached = true;
+		}
+	}
 
-	Scene9050 scene9050(this);
-	if (!scene9050.play())
-		return Common::kReadingFailed;
+	if (!bootToGameplayScene) {
+		if (shouldRunSceneForBootParam(bootParam, 9000, bootSceneReached)) {
+			Scene9000 scene9000(this);
+			if (!scene9000.play())
+				return Common::kReadingFailed;
+		}
 
-	Scene9120 scene9120(this);
-	if (!scene9120.play())
-		return Common::kReadingFailed;
+		if (shouldRunSceneForBootParam(bootParam, 9010, bootSceneReached)) {
+			Scene9010 scene9010(this);
+			if (!scene9010.play())
+				return Common::kReadingFailed;
+		}
 
-	Scene9110 scene9110(this);
-	if (!scene9110.play())
-		return Common::kReadingFailed;
+		if (shouldRunSceneForBootParam(bootParam, 9100, bootSceneReached)) {
+			Scene9100 scene9100(this);
+			if (!scene9100.play())
+				return Common::kReadingFailed;
+		}
+
+		if (shouldRunSceneForBootParam(bootParam, 9050, bootSceneReached)) {
+			Scene9050 scene9050(this);
+			if (!scene9050.play())
+				return Common::kReadingFailed;
+		}
+
+		if (shouldRunSceneForBootParam(bootParam, 9120, bootSceneReached)) {
+			Scene9120 scene9120(this);
+			if (!scene9120.play())
+				return Common::kReadingFailed;
+		}
+
+		if (shouldRunSceneForBootParam(bootParam, 9110, bootSceneReached)) {
+			Scene9110 scene9110(this);
+			if (!scene9110.play())
+				return Common::kReadingFailed;
+		}
+	}
 
 	Scene7000 scene7000(this);
 	if (!scene7000.play())
 		return Common::kReadingFailed;
+	if (bootToGameplayScene && bootParam != 7000)
+		gameState().mainFlowStateId = (uint16)bootParam;
 
 	bool handledState = true;
 	while (!Engine::shouldQuit() && handledState) {
@@ -165,6 +224,14 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene7060 scene7060(this);
 			if (!scene7060.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= 0x1b9e && stateId <= 0x1ba0) {
+			handledState = true;
+			Scene7070 scene7070(this);
+			if (!scene7070.play())
 				return Common::kReadingFailed;
 			continue;
 		}
