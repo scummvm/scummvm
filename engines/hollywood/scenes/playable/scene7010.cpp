@@ -49,6 +49,27 @@ const byte kG01AmbientMusicCueWithoutChunk9 = 0x0f;
 const uint16 kG01InitialViewportXOffset = 0;
 const byte kG01SecondarySpeechTextColor = 0xfd;
 const byte kG01PrimarySpeechTextColor = 0xfb;
+const byte kG01PanelDarkColor = 0xe7;
+const byte kG01PanelFillColor = 0xe8;
+const byte kG01PanelSlotColor = 0xe9;
+const byte kG01PanelLineColor = 0xea;
+const byte kG01PanelSelectedColor = 0xf1;
+const byte kG01PanelSelectedLineColor = 0xf2;
+const byte kG01PanelTextColor = 0xfc;
+const int kG01VerbPanelTopY = 0x19f;
+const int kG01VerbPanelCaptionY = 0x19f;
+const int kG01VerbPanelStripTopY = 0x1a7;
+const int kG01VerbPanelStripHeight = 0x1b;
+const int kG01VerbPanelStripWidth = 0x58;
+const int kG01InventoryPanelTopY = 0x10d;
+const int kG01InventoryPanelCaptionY = 0x10d;
+const int kG01InventorySlotStartX = 0x32;
+const int kG01InventorySlotStartY = 0x13c;
+const int kG01InventorySlotSize = 0x40;
+const int kG01InventorySlotGap = 4;
+const uint16 kG01VerbPanelStripXOffsets[9] = {
+	0xff, 0, 8, 97, 186, 276, 366, 456, 545
+};
 const byte kG01SueEntryFacing = 1;
 const byte kG01SueEntryFinalCel = 0;
 const int kG01SueEntryStartX = 0x16b;
@@ -87,7 +108,6 @@ const byte kG01DialogueOverlayMode2FrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
 	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
 };
-const byte kInitialInventoryItems[] = { 1, 2, 5, 7 };
 const byte kActorPathStepDeltaTableSet00[] = {
 	2, 2, 2, 3, 3, 0, 2, 2, 2, 3, 3, 0,
 	6, 7, 7, 5, 5, 5, 4, 6, 6, 5, 3, 4,
@@ -652,8 +672,6 @@ void Scene7010::initializePreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_secondaryActorFrame = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
-	for (uint i = 0; i < ARRAYSIZE(kInitialInventoryItems); ++i)
-		_inventoryItems[kInitialInventoryItems[i]] = true;
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 }
 
@@ -997,8 +1015,8 @@ void Scene7010::drawGameplayFrame() {
 	drawPlayableComposite();
 }
 
-void Scene7010::presentGameplayFrame(const SceneHoverCaption &hoverCaption) {
-	presentFrame(&hoverCaption);
+void Scene7010::presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) {
+	presentFrame(&hoverCaption, &panelState);
 }
 
 bool Scene7010::shouldExitGameplayLoop() const {
@@ -2042,9 +2060,123 @@ bool Scene7010::waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryL
 	return Engine::shouldQuit();
 }
 
-void Scene7010::presentFrame(const SceneHoverCaption *hoverCaption) {
+void Scene7010::applyGameplayPanelPalette() {
+	if (_paletteCurrent.size() <= kG01PanelTextColor * 3 + 2)
+		return;
+
+	const byte colors[] = {
+		kG01PanelDarkColor, 0x05, 0x06, 0x08,
+		kG01PanelFillColor, 0x0b, 0x0d, 0x11,
+		kG01PanelSlotColor, 0x14, 0x16, 0x1a,
+		kG01PanelLineColor, 0x24, 0x25, 0x28,
+		kG01PanelSelectedColor, 0x2e, 0x1d, 0x0e,
+		kG01PanelSelectedLineColor, 0x3a, 0x2d, 0x16
+	};
+	for (uint i = 0; i < ARRAYSIZE(colors); i += 4) {
+		const uint paletteOffset = colors[i] * 3;
+		if (paletteOffset + 2 < _paletteCurrent.size()) {
+			_paletteCurrent[paletteOffset] = colors[i + 1];
+			_paletteCurrent[paletteOffset + 1] = colors[i + 2];
+			_paletteCurrent[paletteOffset + 2] = colors[i + 3];
+		}
+	}
+
+	const uint textOffset = kG01PanelTextColor * 3;
+	_paletteCurrent[textOffset] = 0x32;
+	_paletteCurrent[textOffset + 1] = _paletteCurrent[0x2d7];
+	_paletteCurrent[textOffset + 2] = _paletteCurrent[0x2d8];
+}
+
+void Scene7010::drawGameplayPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
+	if (panelState.inventoryPanelVisible)
+		drawInventoryPanel(surface, panelState);
+	else if (panelState.verbPanelVisible)
+		drawVerbPanel(surface, panelState);
+}
+
+void Scene7010::drawVerbPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
+	fillScreenRect(0, kG01VerbPanelTopY, HollywoodEngine::kScreenWidth,
+		HollywoodEngine::kScreenHeight - kG01VerbPanelTopY, kG01PanelFillColor);
+	drawScreenRect(0, kG01VerbPanelTopY, HollywoodEngine::kScreenWidth,
+		HollywoodEngine::kScreenHeight - kG01VerbPanelTopY, kG01PanelLineColor);
+	drawPanelText(surface, panelState.captionText, kG01VerbPanelCaptionY, kG01PanelTextColor);
+
+	for (byte stripIndex = 2; stripIndex <= 8; ++stripIndex) {
+		const int x = kG01VerbPanelStripXOffsets[stripIndex];
+		const bool selected = stripIndex == panelState.currentStrip;
+		fillScreenRect(x, kG01VerbPanelStripTopY, kG01VerbPanelStripWidth, kG01VerbPanelStripHeight,
+			selected ? kG01PanelSelectedColor : kG01PanelDarkColor);
+		drawScreenRect(x, kG01VerbPanelStripTopY, kG01VerbPanelStripWidth, kG01VerbPanelStripHeight,
+			selected ? kG01PanelSelectedLineColor : kG01PanelLineColor);
+		drawPanelButtonText(surface, inventoryActionCaption(stripIndex), x,
+			kG01VerbPanelStripTopY + 3, kG01VerbPanelStripWidth, kG01PanelTextColor);
+	}
+}
+
+void Scene7010::drawInventoryPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
+	fillScreenRect(0, kG01InventoryPanelTopY, HollywoodEngine::kScreenWidth,
+		HollywoodEngine::kScreenHeight - kG01InventoryPanelTopY, kG01PanelFillColor);
+	drawScreenRect(0, kG01InventoryPanelTopY, HollywoodEngine::kScreenWidth,
+		HollywoodEngine::kScreenHeight - kG01InventoryPanelTopY, kG01PanelLineColor);
+	drawPanelText(surface, panelState.captionText, kG01InventoryPanelCaptionY, kG01PanelTextColor);
+
+	for (uint slot = 0; slot < 16; ++slot) {
+		const int column = slot % 8;
+		const int row = slot / 8;
+		const int x = kG01InventorySlotStartX + column * (kG01InventorySlotSize + kG01InventorySlotGap);
+		const int y = kG01InventorySlotStartY + row * (kG01InventorySlotSize + kG01InventorySlotGap);
+		fillScreenRect(x, y, kG01InventorySlotSize, kG01InventorySlotSize, kG01PanelSlotColor);
+		drawScreenRect(x, y, kG01InventorySlotSize, kG01InventorySlotSize, kG01PanelLineColor);
+	}
+}
+
+void Scene7010::drawPanelText(Graphics::Surface &surface, const Common::String &text, int y, byte colorIndex) {
+	if (!_vm->font() || !_vm->font()->isLoaded() || text.empty())
+		return;
+
+	HollywoodFont *font = _vm->font();
+	font->setShadowColor(0);
+	const int textWidth = font->getStringWidth(text) + 2;
+	const int x = MAX<int>(0, (HollywoodEngine::kScreenWidth - textWidth) / 2);
+	font->drawString(&surface, text, x, y, textWidth, colorIndex, Graphics::kTextAlignLeft, 0, false, true);
+}
+
+void Scene7010::drawPanelButtonText(Graphics::Surface &surface, const Common::String &text,
+		int x, int y, int width, byte colorIndex) {
+	if (!_vm->font() || !_vm->font()->isLoaded() || text.empty())
+		return;
+
+	HollywoodFont *font = _vm->font();
+	font->setShadowColor(0);
+	const int textWidth = MIN<int>(font->getStringWidth(text) + 2, width);
+	const int textX = x + MAX<int>(1, (width - textWidth) / 2);
+	font->drawString(&surface, text, textX, y, textWidth, colorIndex, Graphics::kTextAlignLeft, 0, false, true);
+}
+
+void Scene7010::fillScreenRect(int x, int y, int width, int height, byte colorIndex) {
+	const int left = CLIP<int>(x, 0, HollywoodEngine::kScreenWidth);
+	const int top = CLIP<int>(y, 0, HollywoodEngine::kScreenHeight);
+	const int right = CLIP<int>(x + width, 0, HollywoodEngine::kScreenWidth);
+	const int bottom = CLIP<int>(y + height, 0, HollywoodEngine::kScreenHeight);
+	if (right <= left || bottom <= top)
+		return;
+
+	for (int row = top; row < bottom; ++row)
+		memset(_screen.data() + row * HollywoodEngine::kScreenWidth + left, colorIndex, right - left);
+}
+
+void Scene7010::drawScreenRect(int x, int y, int width, int height, byte colorIndex) {
+	fillScreenRect(x, y, width, 1, colorIndex);
+	fillScreenRect(x, y + height - 1, width, 1, colorIndex);
+	fillScreenRect(x, y, 1, height, colorIndex);
+	fillScreenRect(x + width - 1, y, 1, height, colorIndex);
+}
+
+void Scene7010::presentFrame(const SceneHoverCaption *hoverCaption, const GameplayPanelState *panelState) {
 	if (hoverCaption)
 		hoverCaption->applyPalette(_paletteCurrent);
+	if (panelState && panelState->visible())
+		applyGameplayPanelPalette();
 	uploadPalette6Bit(_paletteCurrent);
 
 	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
@@ -2055,10 +2187,12 @@ void Scene7010::presentFrame(const SceneHoverCaption *hoverCaption) {
 	}
 
 	drawSpeechOverlay();
-	if (_vm->font() && _vm->font()->isLoaded()) {
-		Graphics::Surface screenSurface;
-		screenSurface.init(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
-			HollywoodEngine::kScreenWidth, _screen.data(), Graphics::PixelFormat::createFormatCLUT8());
+	Graphics::Surface screenSurface;
+	screenSurface.init(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
+		HollywoodEngine::kScreenWidth, _screen.data(), Graphics::PixelFormat::createFormatCLUT8());
+	if (panelState && panelState->visible())
+		drawGameplayPanel(screenSurface, *panelState);
+	else if (_vm->font() && _vm->font()->isLoaded()) {
 		if (hoverCaption)
 			hoverCaption->draw(screenSurface, *_vm->font());
 	}

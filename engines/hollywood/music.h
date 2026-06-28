@@ -67,6 +67,7 @@ public:
 	SoundBank0Player();
 	~SoundBank0Player();
 
+	void setArchive(const Common::Path &archiveName);
 	bool playSample(uint16 sampleId, byte volumePercent = 100);
 	void stop();
 	bool isPlaying() const;
@@ -75,6 +76,7 @@ private:
 	bool readSampleSpan(uint16 sampleId, uint32 &start, uint32 &size) const;
 
 	Audio::SoundHandle _soundHandle;
+	Common::Path _archiveName;
 };
 
 } // End of namespace Hollywood
