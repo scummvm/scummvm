@@ -51,7 +51,9 @@ uint32 readUint32LE(const Common::Array<byte> &source, uint offset) {
 }
 
 Palette6Bit::Palette6Bit() :
-		_palette(256) {
+		_palette(256),
+		_dirtyStart(0),
+		_dirtyEnd(256) {
 }
 
 void Palette6Bit::setFrom6Bit(const Common::Array<byte> &palette) {
@@ -60,12 +62,33 @@ void Palette6Bit::setFrom6Bit(const Common::Array<byte> &palette) {
 		const byte red = sourceOffset < palette.size() ? palette[sourceOffset] : 0;
 		const byte green = sourceOffset + 1 < palette.size() ? palette[sourceOffset + 1] : 0;
 		const byte blue = sourceOffset + 2 < palette.size() ? palette[sourceOffset + 2] : 0;
-		_palette.set(i, MIN<byte>(255, red * 4), MIN<byte>(255, green * 4), MIN<byte>(255, blue * 4));
+		const byte red8 = MIN<byte>(255, red * 4);
+		const byte green8 = MIN<byte>(255, green * 4);
+		const byte blue8 = MIN<byte>(255, blue * 4);
+		byte previousRed = 0;
+		byte previousGreen = 0;
+		byte previousBlue = 0;
+		_palette.get(i, previousRed, previousGreen, previousBlue);
+		if (red8 != previousRed || green8 != previousGreen || blue8 != previousBlue) {
+			_palette.set(i, red8, green8, blue8);
+			_dirtyStart = MIN<uint>(_dirtyStart, i);
+			_dirtyEnd = MAX<uint>(_dirtyEnd, i + 1);
+		}
 	}
 }
 
-void Palette6Bit::upload() const {
-	g_system->getPaletteManager()->setPalette(_palette);
+void Palette6Bit::markAllDirty() {
+	_dirtyStart = 0;
+	_dirtyEnd = 256;
+}
+
+void Palette6Bit::upload() {
+	if (_dirtyStart >= _dirtyEnd)
+		return;
+
+	g_system->getPaletteManager()->setPalette(_palette.data() + _dirtyStart * 3, _dirtyStart, _dirtyEnd - _dirtyStart);
+	_dirtyStart = 256;
+	_dirtyEnd = 0;
 }
 
 void Palette6Bit::uploadFrom6Bit(const Common::Array<byte> &palette) {

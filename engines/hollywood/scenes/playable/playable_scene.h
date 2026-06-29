@@ -279,6 +279,8 @@ protected:
 	void drawGameplayFrame() override;
 	// Gameplay-loop hook for presenting scene, captions, and panel.
 	void presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) override;
+	// Marks the hardware palette as needing a full scene restore.
+	void invalidatePresentationPalette() override;
 	// Provides a palette for the ScummVM options menu.
 	void prepareOptionsMenuPalette(Common::Array<byte> &palette) const override;
 	// Tells the gameplay loop when scene state has exited.
