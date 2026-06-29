@@ -69,7 +69,7 @@ bool MusicPlayer::playIntroMusic() {
 	return playMusicCue(kIntroMusicCueId);
 }
 
-bool MusicPlayer::playMusicCue(uint16 cueId, byte volumePercent) {
+bool MusicPlayer::playMusicCue(uint16 cueId, byte volumePercent, bool loop) {
 	stop();
 
 	uint32 start = 0;
@@ -93,11 +93,12 @@ bool MusicPlayer::playMusicCue(uint16 cueId, byte volumePercent) {
 		return false;
 	}
 
-	g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, audioStream,
+	Audio::AudioStream *playbackStream = loop ? Audio::makeLoopingAudioStream(audioStream, 0) : audioStream;
+	g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, playbackStream,
 		-1, percentToMixerVolume(volumePercent), 0, DisposeAfterUse::YES);
 
-	debugC(1, kDebugResources, "Started music %s cue %u: offset=%u size=%u",
-		_archiveName.toString().c_str(), cueId, start, size);
+	debugC(1, kDebugResources, "Started music %s cue %u: offset=%u size=%u loop=%u",
+		_archiveName.toString().c_str(), cueId, start, size, loop ? 1 : 0);
 	return true;
 }
 
@@ -247,7 +248,7 @@ void SoundBank0Player::setArchive(const Common::Path &archiveName) {
 	_archiveName = archiveName;
 }
 
-bool SoundBank0Player::playSample(uint16 sampleId, byte volumePercent) {
+bool SoundBank0Player::playSample(uint16 sampleId, byte volumePercent, bool loop) {
 	stop();
 
 	uint32 start = 0;
@@ -271,12 +272,17 @@ bool SoundBank0Player::playSample(uint16 sampleId, byte volumePercent) {
 		return false;
 	}
 
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream,
+	Audio::AudioStream *playbackStream = loop ? Audio::makeLoopingAudioStream(audioStream, 0) : audioStream;
+	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, playbackStream,
 		-1, percentToMixerVolume(volumePercent), 0, DisposeAfterUse::YES);
 
-	debugC(1, kDebugResources, "Started sound %s sample %u: offset=%u size=%u",
-		_archiveName.toString().c_str(), sampleId, start, size);
+	debugC(1, kDebugResources, "Started sound %s sample %u: offset=%u size=%u loop=%u",
+		_archiveName.toString().c_str(), sampleId, start, size, loop ? 1 : 0);
 	return true;
+}
+
+bool SoundBank0Player::playSampleLooping(uint16 sampleId, byte volumePercent) {
+	return playSample(sampleId, volumePercent, true);
 }
 
 void SoundBank0Player::stop() {

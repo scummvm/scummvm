@@ -2431,7 +2431,7 @@ void PlayableScene::updateAmbientSoundCue(const AmbientAudioProfile &profile) {
 		return;
 
 	if (profile.soundMode == kAmbientSoundLoop) {
-		_ambientSoundBank0.playSample(profile.soundCueId, profile.soundVolumePercent);
+		_ambientSoundBank0.playSampleLooping(profile.soundCueId, profile.soundVolumePercent);
 		return;
 	}
 
