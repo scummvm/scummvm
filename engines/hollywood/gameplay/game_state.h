@@ -65,8 +65,8 @@ struct GameplayState {
 		multiToolKnifeState = 0;
 		reviewedFrankensteinNote = false;
 		frankensteinNoteOverlayMode = 0;
-		juniorDialogueBranchState = 0;
-		juniorDialogueFollowUpSeen = false;
+		hannoverCourtyardDialogueState = 0;
+		hannoverCourtyardFollowUpSeen = false;
 		seenOfficeEntryConversation = false;
 		officeStatueActionProgress = 0;
 		officeNotePickupState = 0;
@@ -83,7 +83,6 @@ struct GameplayState {
 		crankOnHannoverDesk = true;
 		seenHannoverBedroomIntro = false;
 		movedBedroomArmor = false;
-		knowsHannoverWaitingForSecretary = false;
 		cellPipesActive = true;
 		cellPlateRatProgress = 0;
 		posterOnCellWall = true;
@@ -325,8 +324,8 @@ struct GameplayState {
 	byte multiToolKnifeState;
 	bool reviewedFrankensteinNote;
 	byte frankensteinNoteOverlayMode;
-	byte juniorDialogueBranchState;
-	bool juniorDialogueFollowUpSeen;
+	byte hannoverCourtyardDialogueState;
+	bool hannoverCourtyardFollowUpSeen;
 	bool seenOfficeEntryConversation;
 	byte officeStatueActionProgress;
 	byte officeNotePickupState;
@@ -343,7 +342,6 @@ struct GameplayState {
 	bool crankOnHannoverDesk;
 	bool seenHannoverBedroomIntro;
 	bool movedBedroomArmor;
-	bool knowsHannoverWaitingForSecretary;
 	bool cellPipesActive;
 	byte cellPlateRatProgress;
 	bool posterOnCellWall;
