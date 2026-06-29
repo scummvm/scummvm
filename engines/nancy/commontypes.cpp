@@ -273,6 +273,19 @@ void SoundDescription::readTerse(Common::SeekableReadStream &stream) {
 	stream.skip(2);
 }
 
+void RandomSoundBlock::readData(Common::SeekableReadStream &stream) {
+	int16 count = stream.readSint16LE();
+	if (count > 0) {
+		names.resize(count);
+		for (int i = 0; i < count; ++i) {
+			readFilename(stream, names[i]);
+		}
+		channel = stream.readSint16LE();
+		numLoops = stream.readSint32LE();
+		volume = stream.readSint16LE();
+	}
+}
+
 void ConditionalDialogue::readData(Common::SeekableReadStream &stream) {
 	textID = stream.readByte();
 	sceneID = stream.readUint16LE();

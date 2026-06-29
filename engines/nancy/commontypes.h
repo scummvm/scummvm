@@ -269,6 +269,16 @@ struct SoundDescription {
 	void readTerse(Common::SeekableReadStream &stream);
 };
 
+// The "random sound" block shared by some Nancy 12 puzzles
+struct RandomSoundBlock {
+	Common::Array<Common::String> names;
+	int16 channel = 0;
+	int32 numLoops = 0;
+	int16 volume = 0;
+
+	void readData(Common::SeekableReadStream &stream);
+};
+
 // Structs inside nancy.dat, which contains all the data that was
 // originally stored inside the executable
 

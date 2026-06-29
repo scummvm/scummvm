@@ -51,6 +51,7 @@
 #include "engines/nancy/action/puzzle/magnetmazepuzzle.h"
 #include "engines/nancy/action/puzzle/mazechasepuzzle.h"
 #include "engines/nancy/action/puzzle/memorypuzzle.h"
+#include "engines/nancy/action/puzzle/mindpuzzle.h"
 #include "engines/nancy/action/puzzle/mouselightpuzzle.h"
 #include "engines/nancy/action/puzzle/multibuildpuzzle.h"
 #include "engines/nancy/action/puzzle/onebuildpuzzle.h"
@@ -453,8 +454,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		// TODO: Nancy12 BoardGamePuzzle (new), not implemented
 		return nullptr;
 	case 165:
-		// TODO: Nancy12 MindPuzzle (new), not implemented
-		return nullptr;
+		return new MindPuzzle();
 	case 166:
 		// OneBuildPuzzle, moved here from 234 in Nancy12.
 		// TODO: verify the Nancy12 data layout against OneBuildPuzzle::readData
