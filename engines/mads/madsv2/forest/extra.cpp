@@ -195,9 +195,9 @@ void open_interface(InterfaceButton button) {
 
 		if (button == JOURNAL_FLY) {
 			if (count != 23) {
-				int x = count * 2 + 46;
+				int y = count * 2 + 46;
 				int scale = 100 - count * 9;
-				sprite_draw_scaled(series_list[0], 1, &scr_inter, 30, x, scale);
+				sprite_draw_scaled(series_list[0], 1, &scr_inter, 30, y, scale);
 			}
 		} else {
 			sprite_draw(series_list[0], 1, &scr_inter, JOURNAL_X, JOURNAL_Y);
@@ -205,9 +205,9 @@ void open_interface(InterfaceButton button) {
 
 		if (button == BP_FLY) {
 			if (count != 23) {
-				int x = count * 2 + 40;
+				int y = count * 2 + 40;
 				int scale = 100 - count * 9;
-				sprite_draw_scaled(series_list[1], 1, &scr_inter, 96, x, scale);
+				sprite_draw_scaled(series_list[1], 1, &scr_inter, 96, y, scale);
 			}
 		} else {
 			sprite_draw(series_list[1], 1, &scr_inter, BP_X, BP_Y);
@@ -258,9 +258,9 @@ void close_interface(InterfaceButton button) {
 
 		if (button == JOURNAL_FLY) {
 			if (count != 0) {
-				int x = count * 2 + 43;
+				int y = count * 2 + 43;
 				int scale = 100 - count * 9;
-				sprite_draw_scaled(series_list[0], 1, &scr_inter, 30, x, scale);
+				sprite_draw_scaled(series_list[0], 1, &scr_inter, 30, y, scale);
 			} else {
 				sprite_draw(series_list[0], 1, &scr_inter, JOURNAL_X, JOURNAL_Y);
 			}
@@ -270,9 +270,9 @@ void close_interface(InterfaceButton button) {
 
 		if (button == BP_FLY) {
 			if (count != 0) {
-				int x = count * 2 + 37;
+				int y = count * 2 + 37;
 				int scale = 100 - count * 9;
-				sprite_draw_scaled(series_list[1], 1, &scr_inter, 96, x, scale);
+				sprite_draw_scaled(series_list[1], 1, &scr_inter, 96, y, scale);
 			} else {
 				sprite_draw(series_list[1], 1, &scr_inter, BP_X, BP_Y);
 			}
