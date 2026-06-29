@@ -30,6 +30,7 @@
 #include "chamber/cga.h"
 #include "chamber/ega.h"
 #include "chamber/ega_resource.h"
+#include "chamber/amiga.h"
 #include "chamber/cursor.h"
 #include "chamber/portrait.h"
 #include "chamber/input.h"
@@ -3021,6 +3022,11 @@ void theEnd(void) {
 		while (!loadFond())
 			askDisk2();
 		jaggedZoom(backbuffer, frontbuffer);
+		g_vm->_renderer->backBufferToRealFull();
+	} else if (g_vm->getPlatform() == Common::kPlatformAmiga) {
+		while (!ega_loadFond("PRES.BIN"))
+			askDisk2();
+		g_vm->_renderer->colorSelect(AMIGA_NUM_PALETTES - 1);
 		g_vm->_renderer->backBufferToRealFull();
 	} else {
 		while (!loadSplash("PRES.BIN"))
