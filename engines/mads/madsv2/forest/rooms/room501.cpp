@@ -393,8 +393,8 @@ static void room_501_daemon() {
 		if (global[walker_converse_state] != 0) {
 			global[walker_converse_state] = 0;
 			close_interface(CANDLE_FLY);
+			player.commands_allowed = true;
 		}
-		player.commands_allowed = true;
 		break;
 
 	case 24:
