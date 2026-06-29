@@ -126,6 +126,15 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.scene1030PatchState);
 	syncStateBool(s, state.scene1030EventFlag0);
 	syncStateBool(s, state.scene1030SmallBumpRenamed);
+	syncStateBool(s, state.seenScene1040EntryLine);
+	syncStateBool(s, state.scene1040DoorOpened);
+	s.syncAsByte(state.scene1040CordState);
+	syncStateBool(s, state.scene1040BalloonTaken);
+	syncStateBool(s, state.scene1050SuitcaseTaken);
+	syncStateBool(s, state.scene1050TalkedToCloakroomAttendant);
+	syncStateBool(s, state.scene1050JackLookedAt);
+	s.syncAsByte(state.scene1050TravelUnlockFlags);
+	syncStateBool(s, state.scene1050CloakroomSecretMentioned);
 	syncStateBool(s, state.reviewedFrankensteinNote);
 	s.syncAsByte(state.frankensteinNoteOverlayMode);
 	s.syncAsByte(state.hannoverCourtyardDialogueState);
@@ -208,6 +217,9 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene1020ResourceBlockVariantState = 0;
 	if (state.scene1030PatchState > 3)
 		state.scene1030PatchState = 0;
+	if (state.scene1040CordState > 2)
+		state.scene1040CordState = 0;
+	state.scene1050TravelUnlockFlags &= 0x07;
 }
 
 } // End of namespace Hollywood

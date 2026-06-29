@@ -32,6 +32,8 @@
 #include "hollywood/scenes/playable/scene1010.h"
 #include "hollywood/scenes/playable/scene1020.h"
 #include "hollywood/scenes/playable/scene1030.h"
+#include "hollywood/scenes/playable/scene1040.h"
+#include "hollywood/scenes/playable/scene1050.h"
 #include "hollywood/scenes/playable/scene7000.h"
 #include "hollywood/scenes/playable/scene7010.h"
 #include "hollywood/scenes/playable/scene7020.h"
@@ -65,6 +67,10 @@ const int kScene1020FirstState = 0x03fc;
 const int kScene1020LastState = 0x0405;
 const int kScene1030FirstState = 0x0406;
 const int kScene1030LastState = 0x0407;
+const int kScene1040FirstState = 0x0410;
+const int kScene1040LastState = 0x0419;
+const int kScene1050FirstState = 0x041a;
+const int kScene1050LastState = 0x0423;
 const int kScene9101State = 0x238d;
 
 bool isImplementedIntroSceneNumber(int sceneNumber) {
@@ -77,6 +83,8 @@ bool isImplementedGameplayState(int stateId) {
 		(stateId >= kScene1010FirstState && stateId <= kScene1010LastState) ||
 		(stateId >= kScene1020FirstState && stateId <= kScene1020LastState) ||
 		(stateId >= kScene1030FirstState && stateId <= kScene1030LastState) ||
+		(stateId >= kScene1040FirstState && stateId <= kScene1040LastState) ||
+		(stateId >= kScene1050FirstState && stateId <= kScene1050LastState) ||
 		stateId == 7000 ||
 		(stateId >= 0x1b62 && stateId <= 0x1b6b) ||
 		stateId == 0x1b6c ||
@@ -286,6 +294,22 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene1030 scene1030(this);
 			if (!scene1030.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene1040FirstState && stateId <= kScene1040LastState) {
+			handledState = true;
+			Scene1040 scene1040(this);
+			if (!scene1040.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene1050FirstState && stateId <= kScene1050LastState) {
+			handledState = true;
+			Scene1050 scene1050(this);
+			if (!scene1050.play())
 				return Common::kReadingFailed;
 			continue;
 		}
