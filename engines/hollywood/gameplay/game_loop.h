@@ -82,6 +82,7 @@ public:
 	virtual void beginSharedInventorySpeechLine(uint16 rowIndex, byte frameIndex);
 	virtual byte randomSharedInventorySpeechFrame(byte maxFrameIndex);
 	virtual void playSharedInventorySound(byte sampleId);
+	virtual void showTravelScreenViewer();
 	virtual void handleLeftClick(const GameplayLoopCursorState &state);
 	virtual void handleInventoryItemClick(const GameplayLoopCursorState &state);
 	virtual void handleRightClick(const GameplayLoopCursorState &state);

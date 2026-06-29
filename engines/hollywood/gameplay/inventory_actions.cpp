@@ -44,6 +44,84 @@ void GameplayLoopDelegate::playSharedInventorySound(byte sampleId) {
 	(void)sampleId;
 }
 
+void GameplayLoopDelegate::showTravelScreenViewer() {
+}
+
+bool isRonInventoryAction(uint16 handlerId) {
+	switch (handlerId) {
+	case 74:
+	case 75:
+	case 76:
+	case 85:
+	case 86:
+	case 87:
+	case 215:
+	case 216:
+	case 217:
+		return true;
+	default:
+		return false;
+	}
+}
+
+void dispatchRonInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *delegate,
+		uint16 handlerId, byte owner) {
+	GameplayState &gameState = vm->gameState();
+
+	switch (handlerId) {
+	case 74:
+		delegate->beginSharedInventorySpeechLine(0x46, 0);
+		break;
+	case 75:
+		delegate->showTravelScreenViewer();
+		break;
+	case 76:
+		delegate->beginSharedInventorySpeechLine(0x47, 0);
+		break;
+	case 85:
+		if (gameState.ronTapeRecorderState == 0) {
+			delegate->beginSharedInventorySpeechLine(0x50, 0);
+			gameState.ronTapeRecorderState = 1;
+		} else if (gameState.ronTapeRecorderState == 1) {
+			delegate->beginSharedInventorySpeechLine(0x50, 1);
+		} else if (gameState.ronTapeRecorderState == 2) {
+			delegate->beginSharedInventorySpeechLine(0x50, 2);
+		}
+		break;
+	case 86:
+		if (gameState.ronTapeRecorderState < 2)
+			delegate->beginSharedInventorySpeechLine(0x50, 1);
+		break;
+	case 87:
+		if (gameState.ronTapeRecorderState < 2) {
+			delegate->beginSharedInventorySpeechLine(0x50, 1);
+		} else {
+			gameState.addInventoryItem(owner, 0x16);
+			delegate->playSharedInventorySound(1);
+			gameState.ronTapeRecorderState = 1;
+		}
+		break;
+	case 215:
+		delegate->beginSharedInventorySpeechLine(0xc8, 0);
+		break;
+	case 216:
+		delegate->beginSharedInventorySpeechLine(0xc9, 0);
+		break;
+	case 217:
+		if (gameState.ronWalletOpened) {
+			delegate->beginSharedInventorySpeechLine(0xca, 1);
+			break;
+		}
+		gameState.addInventoryItem(owner, 0x29);
+		delegate->playSharedInventorySound(1);
+		gameState.ronWalletOpened = true;
+		delegate->beginSharedInventorySpeechLine(0xca, 0);
+		break;
+	default:
+		break;
+	}
+}
+
 bool dispatchInventoryFixedAction(HollywoodEngine *vm, GameplayLoopDelegate *delegate,
 		const GameplayLoopCursorState &state) {
 	if (state.relationModeActive || !state.inventoryItemSelected)
@@ -75,10 +153,20 @@ bool dispatchSharedInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *de
 		handlerId == 42 || handlerId == 43 || handlerId == 44 ||
 		handlerId == 46 || handlerId == 47 || handlerId == 48 ||
 		(handlerId >= 50 && handlerId <= 71);
-	if (!sharedHandler)
+	const bool ronHandler = owner == 0 && isRonInventoryAction(handlerId);
+	if (!sharedHandler && !ronHandler)
 		return false;
 
 	vm->cursor()->leaveInteractiveMode();
+
+	if (ronHandler) {
+		dispatchRonInventoryAction(vm, delegate, handlerId, owner);
+		if (!Engine::shouldQuit() && !delegate->shouldExitGameplayLoop()) {
+			vm->cursor()->enterInteractiveMode();
+			vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
+		}
+		return true;
+	}
 
 	switch (handlerId) {
 	case 0:
