@@ -45,7 +45,13 @@ private:
 	bool shouldRunExitSideEffectsAfterLoop() const override;
 	bool usesG04PathRouteSpecialCase() const override;
 	bool isMainFlowStateInScene(uint16 stateId) const override;
+	bool hasCustomEntrySequence() const override;
+	void runCustomEntrySequence() override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+
+	void runJosephGuestListGreeting();
+	void waitPreItemIdleSequence();
+	bool shouldStopJosephGuestListGreeting();
 };
 
 } // End of namespace Hollywood
