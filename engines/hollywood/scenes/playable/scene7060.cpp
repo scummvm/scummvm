@@ -182,8 +182,7 @@ void Scene7060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	if (_actionOverlayVisible) {
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
 			kScene7060Chunk6DescriptorCount, chunk6Frame, _sceneFramebuffer);
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
-			_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
+		drawActionOverlayLayer();
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 		return;
 	}

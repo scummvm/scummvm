@@ -207,10 +207,7 @@ void Scene7100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 
-	if (_actionOverlayVisible) {
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
-			_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
-	}
+	drawActionOverlayLayer();
 
 	const uint foregroundChunk = activeWorldX < 0x156 ? 5 : 6;
 	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[foregroundChunk], _sceneFramebuffer);
