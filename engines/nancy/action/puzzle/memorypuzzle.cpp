@@ -145,7 +145,7 @@ void MemoryPuzzle::readDataNancy11(Common::SeekableReadStream &stream) {
 	_winScene._sceneChange.continueSceneSound = stream.readUint16LE();
 	_winScene._flag.label = stream.readSint16LE();
 	_winScene._flag.flag = stream.readSint16LE() ? g_nancy->_true : g_nancy->_false;
-	stream.skip(26); // alternate scene
+	stream.skip(g_nancy->getGameType() >= kGameTypeNancy12 ? 24 : 26);	// alternate scene
 }
 
 // Shuffles type IDs (0..numPairs-1) into the 72-card array so that every type
