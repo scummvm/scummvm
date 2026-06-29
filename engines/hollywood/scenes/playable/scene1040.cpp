@@ -245,11 +245,10 @@ void Scene1040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	copyBaseFramebufferToSceneFramebuffer();
 	drawResourceSpriteLayer(_gorillaLayer);
-
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawForegroundBlocks(activeWorldY);
 	drawActionOverlayLayer();
+	drawForegroundBlocks(activeWorldY);
 	if (_sceneChunkTable.isValidChunk(5))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 }
@@ -472,6 +471,7 @@ void Scene1040::runGorillaExitBackToBanquetRoom() {
 void Scene1040::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame, byte patchSelector) {
 	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayHideActiveActor;
 	if (patchFrame >= 0) {
 		options.statePatchFrame = patchFrame;
 		options.statePatchSelector = patchSelector;

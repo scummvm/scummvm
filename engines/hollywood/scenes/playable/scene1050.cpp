@@ -114,11 +114,24 @@ const byte kScene1050JacketFirstFrameMap[] = {
 	0
 };
 
+const byte kScene1050JacketFirstLargeOverlayFrameMap[] = {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 61, 62, 63, 64, 64, 64,
+	64
+};
+
 const byte kScene1050JacketSecondFrameMap[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 1, 2, 3,
 	4, 5, 6, 7, 8, 9, 10, 11,
 	12, 13, 0
+};
+
+const byte kScene1050JacketSecondLargeOverlayFrameMap[] = {
+	0, 46, 47, 48, 49, 50, 51, 52,
+	53, 54, 55, 56, 57, 57, 57, 57,
+	57, 57, 58, 59, 60, 60, 60, 60,
+	60, 60, 60
 };
 
 Scene1050::Scene1050(HollywoodEngine *vm) :
@@ -127,7 +140,8 @@ Scene1050::Scene1050(HollywoodEngine *vm) :
 		_largeOverlayChannel(),
 		_smallOverlayLayer(),
 		_largeOverlayLayer(),
-		_largeOverlayMode(0) {
+		_largeOverlayMode(0),
+		_largeOverlayActionLocked(false) {
 	_smallOverlayLayer.configure(7, kScene1050SmallOverlayDescriptorCount,
 		kScene1050SmallOverlayFrameMap, ARRAYSIZE(kScene1050SmallOverlayFrameMap));
 	_largeOverlayLayer.configure(8, kScene1050LargeOverlayDescriptorCount,
@@ -242,6 +256,7 @@ void Scene1050::initializeCustomPreviewState() {
 	_smallOverlayLayer.visible = true;
 	_largeOverlayLayer.visible = true;
 	_largeOverlayMode = 0;
+	_largeOverlayActionLocked = false;
 	_activeActorWorldX = 0x07f;
 	_activeActorWorldY = 0x174;
 	_activeActorFacing = 2;
@@ -260,10 +275,13 @@ void Scene1050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	copyBaseFramebufferToSceneFramebuffer();
 	drawResourceSpriteLayer(_largeOverlayLayer);
+	if (_actionOverlayChunkIndex == 12)
+		drawActionOverlayLayer();
 	drawResourceSpriteLayer(_smallOverlayLayer);
+	if (_actionOverlayChunkIndex != 12)
+		drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawActionOverlayLayer();
 	if (_sceneChunkTable.isValidChunk(5))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 	if (_sceneChunkTable.isValidChunk(6))
@@ -291,7 +309,7 @@ bool Scene1050::advanceCustomGameplayLoop(uint32 delta) {
 	advanceSmallOverlay(delta);
 	if (_primaryDialogueSpeechActive)
 		advancePrimaryDialogueSpeechFrame(delta);
-	else
+	else if (!_largeOverlayActionLocked)
 		advanceLargeOverlay(delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
@@ -655,13 +673,16 @@ void Scene1050::runTravelUnlockEffect(byte travelSlotId) {
 }
 
 void Scene1050::handleJacketExchange() {
-	runActionOverlay(10, kScene1050JacketOverlayDescriptorCount,
-		kScene1050JacketFirstFrameMap, ARRAYSIZE(kScene1050JacketFirstFrameMap), kScene1050FrameMillis);
+	finishLargeOverlayIdleSequence();
+	runSynchronizedOverlaySequence(10, kScene1050JacketOverlayDescriptorCount,
+		kScene1050JacketFirstFrameMap, kScene1050JacketFirstLargeOverlayFrameMap,
+		ARRAYSIZE(kScene1050JacketFirstFrameMap), kScene1050FrameMillis);
 	beginPrimarySpeechLine(kScene1050DialoguePrimaryRow, 6, kScene1050DialoguePrimaryCenterX,
 		kScene1050DialoguePrimaryTopY, kScene1050DialoguePrimaryRed,
 		kScene1050DialoguePrimaryGreen, kScene1050DialoguePrimaryBlue);
-	runActionOverlay(10, kScene1050JacketOverlayDescriptorCount,
-		kScene1050JacketSecondFrameMap, ARRAYSIZE(kScene1050JacketSecondFrameMap), kScene1050FrameMillis);
+	runSynchronizedOverlaySequence(10, kScene1050JacketOverlayDescriptorCount,
+		kScene1050JacketSecondFrameMap, kScene1050JacketSecondLargeOverlayFrameMap,
+		ARRAYSIZE(kScene1050JacketSecondFrameMap), kScene1050FrameMillis);
 	removeInventoryItem(0x22);
 	addInventoryItem(0x1d);
 	_soundBank0.playSample(1, 100);
@@ -695,9 +716,56 @@ void Scene1050::handleSuitcasePickup() {
 	beginSecondarySpeechLine(9, 0);
 }
 
+void Scene1050::finishLargeOverlayIdleSequence() {
+	if (_largeOverlayMode < 3 || _largeOverlayMode > 5)
+		return;
+
+	while (_largeOverlayMode >= 3 && _largeOverlayMode <= 5 && !Engine::shouldQuit()) {
+		advanceSmallOverlay(kScene1050FrameMillis);
+		advanceLargeOverlay(kScene1050FrameMillis, true);
+		drawPlayableComposite();
+		presentFrame();
+		if (waitSceneMillis(kScene1050FrameMillis))
+			break;
+	}
+}
+
+void Scene1050::runSynchronizedOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *actionFrameMap,
+		const byte *largeOverlayFrameMap, uint frameMapSize, uint32 frameMillis) {
+	if (frameMapSize == 0)
+		return;
+
+	const bool previousHideActiveActor = _hideActiveActor;
+	const bool previousLargeOverlayActionLocked = _largeOverlayActionLocked;
+	_hideActiveActor = true;
+	_largeOverlayActionLocked = true;
+	_largeOverlayMode = 0;
+
+	_actionOverlayVisible = true;
+	_actionOverlayChunkIndex = (byte)chunkIndex;
+	_actionOverlayDescriptorCount = (byte)descriptorCount;
+	_actionOverlayLayer.configure(chunkIndex, (uint16)descriptorCount, actionFrameMap, frameMapSize);
+	_actionOverlayLayer.visible = true;
+
+	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
+		_actionOverlayLayer.setFrame((byte)frame);
+		_actionOverlayFrameIndex = (byte)_actionOverlayLayer.descriptorIndex();
+		_largeOverlayLayer.setFrame(largeOverlayFrameMap[frame]);
+		if (waitSceneMillis(frameMillis))
+			break;
+	}
+
+	_actionOverlayVisible = false;
+	_actionOverlayLayer.visible = false;
+	_actionOverlayFrameIndex = 0;
+	_hideActiveActor = previousHideActiveActor;
+	_largeOverlayActionLocked = previousLargeOverlayActionLocked;
+}
+
 void Scene1050::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame) {
 	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayHideActiveActor;
 	if (patchFrame >= 0) {
 		options.statePatchFrame = patchFrame;
 		options.statePatchSelector = 0xff;
@@ -719,6 +787,10 @@ void Scene1050::advanceSmallOverlay(uint32 delta) {
 }
 
 void Scene1050::advanceLargeOverlay(uint32 delta) {
+	advanceLargeOverlay(delta, false);
+}
+
+void Scene1050::advanceLargeOverlay(uint32 delta, bool forceFinish) {
 	const uint frameCount = _largeOverlayChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
 		if (_largeOverlayMode == 0) {
@@ -741,7 +813,7 @@ void Scene1050::advanceLargeOverlay(uint32 delta) {
 		} else if (_largeOverlayMode == 4) {
 			if (_largeOverlayLayer.frameIndex < 0x23) {
 				_largeOverlayLayer.setFrame(_largeOverlayLayer.frameIndex + 1);
-			} else if (_random.getRandomNumber(5) == 0) {
+			} else if (forceFinish || _random.getRandomNumber(5) == 0) {
 				_largeOverlayLayer.setFrame(0x24);
 				_largeOverlayMode = 5;
 			} else {
