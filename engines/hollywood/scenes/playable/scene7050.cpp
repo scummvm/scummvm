@@ -66,9 +66,13 @@ const byte kScene7050Chunk11PickupItem10FrameMap[] = {
 
 Scene7050::Scene7050(HollywoodEngine *vm) :
 		PlayableScene(vm, "scene7050", 0x0a1, 0x158, 2, 0xfd, 0xfb),
-		_cloakroomAttendantRepeatCount(0) {
+		_cloakroomAttendantRepeatCount(0),
+		_cloakroomAttendantLayer() {
 	_cloakroomAttendantAnimation.configure(kScene7050FrameMillis, 1, 5, 6, 0x0e, 0x0e, 0x31);
 	_cloakroomAttendantAnimation.returnToIdleAfterLongSequence = false;
+	_cloakroomAttendantLayer.configure(7, kScene7050Chunk7DescriptorCount,
+		kScene7050Chunk7FrameMap, ARRAYSIZE(kScene7050Chunk7FrameMap));
+	_cloakroomAttendantLayer.visible = true;
 }
 
 const char *Scene7050::resourceArchiveName() const {
@@ -120,6 +124,8 @@ void Scene7050::initializeCustomPreviewState() {
 	_primaryDialogueSpeechTimerAccumulator = 0;
 	_cloakroomAttendantRepeatCount = 0;
 	_cloakroomAttendantAnimation.reset();
+	_cloakroomAttendantLayer.reset(_cloakroomAttendantAnimation.channel.frameIndex);
+	_cloakroomAttendantLayer.visible = true;
 	_activeActorWorldX = kScene7050EntryX;
 	_activeActorWorldY = kScene7050EntryY;
 	_activeActorFacing = kScene7050EntryFacing;
@@ -142,18 +148,13 @@ void Scene7050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
 
-	const byte frame = _cloakroomAttendantAnimation.channel.frameIndex < ARRAYSIZE(kScene7050Chunk7FrameMap) ?
-		kScene7050Chunk7FrameMap[_cloakroomAttendantAnimation.channel.frameIndex] : 0;
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[7], 0,
-		kScene7050Chunk7DescriptorCount, frame, _sceneFramebuffer);
+	_cloakroomAttendantLayer.setFrame(_cloakroomAttendantAnimation.channel.frameIndex);
+	drawResourceSpriteLayer(_cloakroomAttendantLayer);
 
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 
-	if (_actionOverlayVisible) {
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
-			_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
-	}
+	drawActionOverlayLayer();
 
 	const uint blockChunk = activeWorldX < 0x1a4 ? 5 : 6;
 	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[blockChunk], _sceneFramebuffer);

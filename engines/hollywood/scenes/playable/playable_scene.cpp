@@ -134,6 +134,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int de
 		_secondaryActorFrame(0),
 		_lastSceneActionItemId(0),
 		_actionOverlayVisible(false),
+		_actionOverlayLayer(),
 		_actionOverlayChunkIndex(0),
 		_actionOverlayDescriptorCount(0),
 		_actionOverlayFrameIndex(0),
@@ -1047,6 +1048,7 @@ void PlayableScene::initializeDefaultPreviewState() {
 	_primaryLeftSpeechLastFrame = 0;
 	_primaryDialogueSpeechLastFrame = 7;
 	_actionOverlayVisible = false;
+	_actionOverlayLayer.visible = false;
 	_actionOverlayChunkIndex = 0;
 	_actionOverlayDescriptorCount = 0;
 	_actionOverlayFrameIndex = 0;
@@ -1086,10 +1088,7 @@ void PlayableScene::drawCutsceneComposite(bool drawActiveActor, byte activeFacin
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 
-	if (_actionOverlayVisible) {
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
-			_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
-	}
+	drawActionOverlayLayer();
 }
 
 void PlayableScene::drawPlayableComposite() {
@@ -1121,6 +1120,38 @@ void PlayableScene::drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount,
 
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[chunkIndex], 0,
 		descriptorCount, frameMap[frameIndex], _sceneFramebuffer);
+}
+
+void PlayableScene::restoreResourceSpriteLayerBackground(const ResourceSpriteLayer &layer, const Common::Array<byte> &background) {
+	if (!layer.visible || layer.chunkIndex >= HollywoodEngine::kResourceChunkCount)
+		return;
+
+	if (layer.hasPreviousDescriptor) {
+		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[layer.chunkIndex], 0,
+			layer.descriptorCount, layer.previousDescriptorIndex, background, _sceneFramebuffer);
+	}
+	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[layer.chunkIndex], 0,
+		layer.descriptorCount, layer.descriptorIndex(), background, _sceneFramebuffer);
+}
+
+void PlayableScene::drawResourceSpriteLayer(const ResourceSpriteLayer &layer) {
+	if (!layer.visible || layer.chunkIndex >= HollywoodEngine::kResourceChunkCount)
+		return;
+
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[layer.chunkIndex], 0,
+		layer.descriptorCount, layer.descriptorIndex(), _sceneFramebuffer);
+}
+
+void PlayableScene::drawActionOverlayLayer() {
+	if (_actionOverlayLayer.visible) {
+		drawResourceSpriteLayer(_actionOverlayLayer);
+		return;
+	}
+
+	if (_actionOverlayVisible) {
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
+			_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
+	}
 }
 
 void PlayableScene::drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY, int minimumYExclusive) {
@@ -1248,6 +1279,7 @@ void PlayableScene::prepareGameplayLoop() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_secondaryActorFrame = 0;
 	_actionOverlayVisible = false;
+	_actionOverlayLayer.visible = false;
 	_hideActiveActor = false;
 	resetAmbientAudioState();
 	prepareCustomGameplayLoop();
@@ -2196,12 +2228,15 @@ void PlayableScene::runActionOverlay(uint chunkIndex, uint descriptorCount, cons
 	_actionOverlayVisible = true;
 	_actionOverlayChunkIndex = (byte)chunkIndex;
 	_actionOverlayDescriptorCount = (byte)descriptorCount;
+	_actionOverlayLayer.configure(chunkIndex, (uint16)descriptorCount, frameMap, frameMapSize);
+	_actionOverlayLayer.visible = true;
 
 	const uint firstFrame = MIN<uint>(options.firstFrame, frameMapSize);
 	const uint requestedEndFrame = options.endFrame == 0 ? frameMapSize : options.endFrame;
 	const uint cappedEndFrame = MIN<uint>(requestedEndFrame, frameMapSize);
 	for (uint frame = firstFrame; frame < cappedEndFrame && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayFrameIndex = frameMap[frame];
+		_actionOverlayLayer.setFrame((byte)frame);
+		_actionOverlayFrameIndex = (byte)_actionOverlayLayer.descriptorIndex();
 		if (options.statePatchFrame >= 0 && (int)frame == options.statePatchFrame)
 			applySceneStateToHotspotsAndPatches(options.statePatchSelector);
 		if (options.soundFrame >= 0 && (int)frame == options.soundFrame)
@@ -2212,6 +2247,7 @@ void PlayableScene::runActionOverlay(uint chunkIndex, uint descriptorCount, cons
 			break;
 	}
 	_actionOverlayVisible = false;
+	_actionOverlayLayer.visible = false;
 	_actionOverlayFrameIndex = 0;
 	_hideActiveActor = previousHideActiveActor;
 
