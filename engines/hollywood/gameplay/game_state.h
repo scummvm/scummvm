@@ -83,7 +83,7 @@ struct GameplayState {
 		seenScene1030EntryConversation = false;
 		scene1030PatchState = 0;
 		scene1030EventFlag0 = false;
-		scene1030SmallBumpRenamed = false;
+		scene1030ShrinkingManNamed = false;
 		seenScene1040EntryLine = false;
 		scene1040DoorOpened = false;
 		scene1040CordState = 0;
@@ -528,7 +528,7 @@ struct GameplayState {
 	bool seenScene1030EntryConversation;
 	byte scene1030PatchState;
 	bool scene1030EventFlag0;
-	bool scene1030SmallBumpRenamed;
+	bool scene1030ShrinkingManNamed;
 	bool seenScene1040EntryLine;
 	bool scene1040DoorOpened;
 	byte scene1040CordState;
