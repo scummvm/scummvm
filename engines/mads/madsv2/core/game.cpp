@@ -1504,7 +1504,7 @@ void game_control() {
 			player.clock = kernel.clock;
 			player_stationary_update();
 
-			if (active_inven >= 0) {
+			if (g_engine->getGameID() != GType_Forest && active_inven >= 0) {
 				inter_spin_object(inven[active_inven]);
 			} else {
 				inter_turn_off_object();

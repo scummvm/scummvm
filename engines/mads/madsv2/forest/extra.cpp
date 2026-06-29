@@ -122,35 +122,32 @@ void unload_interface() {
 }
 
 void draw_interface() {
-	// Once Upon a Forest uses a custom interface
+	// Draw backpack icon
 	stamp_sprite_to_interface(BP_X, BP_Y, 1, int_sprite[fx_int_backpack]);
-	if (global[Forest::walker_converse_state]) {  // candle_is_on
+
+	// Draw candle cion
+	if (global[Forest::walker_converse_state]) {
 		stamp_sprite_to_interface(CANDLE_X, CANDLE_Y, 1, int_sprite[fx_int_candle_on]);
 	} else {
 		stamp_sprite_to_interface(CANDLE_X, CANDLE_Y, 1, int_sprite[fx_int_candle]);
 	}
+
+	// Draw door icon
 	stamp_sprite_to_interface(DOOR_X, DOOR_Y, 1, int_sprite[fx_int_exit]);
 
-	if (room_id != 199) {  // Taranjeet, if this is not journal room
+	// Draw journal icon, except when in journal room
+	if (room_id != 199) {
 		stamp_sprite_to_interface(JOURNAL_X, JOURNAL_Y, 1, int_sprite[fx_int_journal]);
 	}
-
 }
 
 void do_interface() {
-	if (mouse_y > 156 &&
-		mouse_stop_stroke &&
-		player.commands_allowed &&
-		/* global[4] == -1 && */
-		!kernel.trigger &&
-		/* player.command_ready && */
-		inter_input_mode == INTER_LIMITED_SENTENCES &&
-		!global[inventory_is_displayed]
-		/* pl conv_control.running < 0 */) {
+	if (mouse_y > 156 && mouse_stop_stroke && player.commands_allowed &&
+			!kernel.trigger && inter_input_mode == INTER_LIMITED_SENTENCES &&
+			!global[inventory_is_displayed]) {
+		// Interface click handling
 		if (room_id == 199) {
-			// Taranjeet's Journal
 			leave_journal();
-
 		} else if (mouse_x < 64) {
 			display_journal();
 		} else if (mouse_x < 139) {
