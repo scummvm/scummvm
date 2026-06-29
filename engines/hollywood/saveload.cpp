@@ -116,7 +116,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.frankensteinNoteOverlayMode);
 	s.syncAsByte(state.hannoverCourtyardDialogueState);
 	syncStateBool(s, state.hannoverCourtyardFollowUpSeen);
-	syncStateBool(s, state.seenOfficeEntryConversation);
+	syncStateBool(s, state.seenJosephGuestListGreeting);
 	s.syncAsByte(state.officeStatueActionProgress);
 	s.syncAsByte(state.officeNotePickupState);
 	syncStateBool(s, state.openedOfficeClosetDoor);
