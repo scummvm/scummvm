@@ -306,25 +306,17 @@ PlayableScene::AmbientAudioProfile Scene7070::ambientAudioProfile() const {
 
 void Scene7070::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame, int soundFrame, byte soundId) {
-	const bool previousHideActiveActor = _hideActiveActor;
-	_hideActiveActor = true;
-	_actionOverlayVisible = true;
-	_actionOverlayChunkIndex = (byte)chunkIndex;
-	_actionOverlayDescriptorCount = (byte)descriptorCount;
-	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayFrameIndex = frameMap[frame];
-		if (statePatchFrame >= 0 && (int)frame == statePatchFrame)
-			applySceneStateToHotspotsAndPatches(2);
-		if (soundFrame >= 0 && (int)frame == soundFrame)
-			_soundBank0.playSample(soundId, 100);
-		if (waitSceneMillis(frameMillis))
-			break;
+	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayHideActiveActor;
+	if (statePatchFrame >= 0) {
+		options.statePatchFrame = statePatchFrame;
+		options.statePatchSelector = 2;
 	}
-	_actionOverlayVisible = false;
-	_actionOverlayFrameIndex = 0;
-	_hideActiveActor = previousHideActiveActor;
-	drawPlayableComposite();
-	presentFrame();
+	if (soundFrame >= 0) {
+		options.soundFrame = soundFrame;
+		options.soundId = soundId;
+	}
+	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, options);
 }
 
 void Scene7070::handleBackToG06() {

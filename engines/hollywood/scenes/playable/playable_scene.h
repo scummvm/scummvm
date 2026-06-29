@@ -103,6 +103,12 @@ protected:
 		kAmbientMusicRandomRange
 	};
 
+	enum ActionOverlayActorVisibility {
+		kActionOverlayKeepActiveActorVisibility,
+		kActionOverlayShowActiveActor,
+		kActionOverlayHideActiveActor
+	};
+
 	struct AmbientAudioProfile {
 		AmbientAudioProfile() :
 			checkMillis(0),
@@ -133,6 +139,34 @@ protected:
 		byte musicCueCount;
 		byte musicProbabilityModulus;
 		byte musicVolumePercent;
+	};
+
+	struct ActionOverlayOptions {
+		ActionOverlayOptions() :
+			firstFrame(0),
+			endFrame(0),
+			actorVisibility(kActionOverlayKeepActiveActorVisibility),
+			redrawAtEnd(true),
+			statePatchFrame(-1),
+			statePatchSelector(0),
+			soundFrame(-1),
+			soundId(0),
+			soundVolumePercent(100),
+			hookFrame(-1),
+			hookId(0) {
+		}
+
+		uint firstFrame;
+		uint endFrame;
+		ActionOverlayActorVisibility actorVisibility;
+		bool redrawAtEnd;
+		int statePatchFrame;
+		byte statePatchSelector;
+		int soundFrame;
+		byte soundId;
+		byte soundVolumePercent;
+		int hookFrame;
+		byte hookId;
 	};
 
 	enum {
@@ -220,6 +254,7 @@ protected:
 	virtual bool shouldAnimatePrimarySpeechLine() const;
 	virtual void setPrimaryLeftSpeechFrame(byte frameIndex);
 	virtual AmbientAudioProfile ambientAudioProfile() const;
+	virtual void handleActionOverlayFrameHook(byte hookId, uint frame);
 	AmbientAudioProfile createLoopingAmbientAudioProfile(byte volumePercent) const;
 	AmbientAudioProfile createRandomAmbientAudioProfile(byte soundFirstCueId, byte soundCueCount,
 		byte soundVolumePercent, byte soundProbabilityModulus, byte musicFirstCueId,
@@ -316,12 +351,10 @@ protected:
 	void advanceDialogueMenu(uint32 delta) override;
 	void drawDialogueMenuFrame() override;
 	void presentDialogueMenuFrame(const DialogueMenuState &state) override;
-	void runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, int statePatchFrame = -1);
-	void runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, int statePatchFrame, bool hideActiveActor);
-	void runMappedActionOverlayRange(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, uint firstFrame, uint endFrame, int statePatchFrame, bool hideActiveActor);
+	void runActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
+		uint32 frameMillis);
+	void runActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
+		uint32 frameMillis, const ActionOverlayOptions &options);
 	virtual byte primarySpeechAnimationBaseFrame(byte animationGroup) const;
 	virtual void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex);
 	bool waitSceneMillis(uint32 millis);

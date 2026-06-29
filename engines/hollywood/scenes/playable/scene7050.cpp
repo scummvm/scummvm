@@ -53,6 +53,7 @@ const byte kScene7050PrimarySpeechAltGroup = 8;
 const uint kScene7050DialogueChoiceRecordCount = 10 * 10 * 7;
 const uint kScene7050ColorToItemMapOffset = 0x100;
 const uint kScene7050ColorMapSize = 0x100;
+const byte kScene7050CloakroomRagPickupHook = 1;
 const byte kScene7050Chunk7FrameMap[] = {
 	0, 0, 1, 2, 3, 25, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
 	14, 15, 16, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5,
@@ -427,32 +428,32 @@ void Scene7050::beginCloakroomAttendantSpeechLine(byte frameIndex, bool alternat
 }
 
 void Scene7050::handleActionSlot01ReturnToG04() {
-	runMappedActionOverlay(8, kScene7050Chunk8DescriptorCount, kScene7050Chunk8ReturnFrameMap,
-		ARRAYSIZE(kScene7050Chunk8ReturnFrameMap), kScene7050FrameMillis, -1, false);
+	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayShowActiveActor;
+	runActionOverlay(8, kScene7050Chunk8DescriptorCount, kScene7050Chunk8ReturnFrameMap,
+		ARRAYSIZE(kScene7050Chunk8ReturnFrameMap), kScene7050FrameMillis, options);
 	_soundBank0.playSample(3, 100);
 	_vm->gameState().mainFlowStateId = kScene7050ReturnToG04State;
 }
 
 void Scene7050::handleActionSlot10PickupItem10() {
 	dispatchGenericSceneAction(19);
-	for (uint frame = 0; frame < ARRAYSIZE(kScene7050Chunk11PickupItem10FrameMap) && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayVisible = true;
-		_actionOverlayChunkIndex = 11;
-		_actionOverlayDescriptorCount = kScene7050Chunk11DescriptorCount;
-		_actionOverlayFrameIndex = kScene7050Chunk11PickupItem10FrameMap[frame];
-		if (frame == 4) {
-			_vm->gameState().cloakroomRagVisible = 0;
-			applySceneStateToHotspotsAndPatches(1);
-		}
-		if (waitSceneMillis(kScene7050FrameMillis))
-			break;
-	}
-	_actionOverlayVisible = false;
-	_actionOverlayFrameIndex = 0;
+	ActionOverlayOptions options;
+	options.hookFrame = 4;
+	options.hookId = kScene7050CloakroomRagPickupHook;
+	runActionOverlay(11, kScene7050Chunk11DescriptorCount, kScene7050Chunk11PickupItem10FrameMap,
+		ARRAYSIZE(kScene7050Chunk11PickupItem10FrameMap), kScene7050FrameMillis, options);
 	addInventoryItem(0x10);
 	_soundBank0.playSample(1, 100);
-	drawPlayableComposite();
-	presentFrame();
+}
+
+void Scene7050::handleActionOverlayFrameHook(byte hookId, uint frame) {
+	(void)frame;
+
+	if (hookId == kScene7050CloakroomRagPickupHook) {
+		_vm->gameState().cloakroomRagVisible = 0;
+		applySceneStateToHotspotsAndPatches(1);
+	}
 }
 
 void Scene7050::advanceSecondaryActorAnimation(uint32 delta) {

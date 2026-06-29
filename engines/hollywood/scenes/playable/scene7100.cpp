@@ -526,25 +526,17 @@ void Scene7100::drawEnvironmentOverlayAfterForeground() {
 
 void Scene7100::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int patchFrame, byte patchSelector, int soundFrame, byte soundId) {
-	const bool previousHideActiveActor = _hideActiveActor;
-	_hideActiveActor = true;
-	_actionOverlayVisible = true;
-	_actionOverlayChunkIndex = (byte)chunkIndex;
-	_actionOverlayDescriptorCount = (byte)descriptorCount;
-	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayFrameIndex = frameMap[frame];
-		if (patchFrame >= 0 && (int)frame == patchFrame && patchSelector != 0xff)
-			applySceneStateToHotspotsAndPatches(patchSelector);
-		if (soundFrame >= 0 && (int)frame == soundFrame)
-			_soundBank0.playSample(soundId, 100);
-		if (waitSceneMillis(frameMillis))
-			break;
+	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayHideActiveActor;
+	if (patchFrame >= 0 && patchSelector != 0xff) {
+		options.statePatchFrame = patchFrame;
+		options.statePatchSelector = patchSelector;
 	}
-	_actionOverlayVisible = false;
-	_actionOverlayFrameIndex = 0;
-	_hideActiveActor = previousHideActiveActor;
-	drawPlayableComposite();
-	presentFrame();
+	if (soundFrame >= 0) {
+		options.soundFrame = soundFrame;
+		options.soundId = soundId;
+	}
+	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, options);
 }
 
 void Scene7100::handleG10DialogueStub() {
@@ -598,17 +590,12 @@ void Scene7100::handlePickupItem16() {
 		kScene7100FrameMillis, 0x1e, 2);
 	walkActiveActorTo(0x168, 0x198, 4, 0);
 
-	for (uint frame = 0; frame < ARRAYSIZE(kScene7100Chunk8ScriptFrameMap) && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayVisible = true;
-		_actionOverlayChunkIndex = 8;
-		_actionOverlayDescriptorCount = kScene7100Chunk8DescriptorCount;
-		_actionOverlayFrameIndex = kScene7100Chunk8ScriptFrameMap[frame];
-		if (frame == 0x0e)
-			_soundBank0.playSample(0x16, 100);
-		if (waitSceneMillis(kScene7100FrameMillis))
-			break;
-	}
-	_actionOverlayVisible = false;
+	ActionOverlayOptions options;
+	options.redrawAtEnd = false;
+	options.soundFrame = 0x0e;
+	options.soundId = 0x16;
+	runActionOverlay(8, kScene7100Chunk8DescriptorCount, kScene7100Chunk8ScriptFrameMap,
+		ARRAYSIZE(kScene7100Chunk8ScriptFrameMap), kScene7100FrameMillis, options);
 
 	beginSecondarySpeechLine(0x1a, 1);
 	_environmentState = 4;
