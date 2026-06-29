@@ -74,7 +74,7 @@ struct GameplayState {
 		frankensteinNoteOverlayMode = 0;
 		hannoverCourtyardDialogueState = 0;
 		hannoverCourtyardFollowUpSeen = false;
-		seenOfficeEntryConversation = false;
+		seenJosephGuestListGreeting = false;
 		officeStatueActionProgress = 0;
 		officeNotePickupState = 0;
 		openedOfficeClosetDoor = false;
@@ -343,7 +343,7 @@ struct GameplayState {
 	byte frankensteinNoteOverlayMode;
 	byte hannoverCourtyardDialogueState;
 	bool hannoverCourtyardFollowUpSeen;
-	bool seenOfficeEntryConversation;
+	bool seenJosephGuestListGreeting;
 	byte officeStatueActionProgress;
 	byte officeNotePickupState;
 	bool openedOfficeClosetDoor;

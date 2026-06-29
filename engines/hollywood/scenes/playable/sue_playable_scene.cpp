@@ -58,7 +58,6 @@ const uint16 kG05Chunk8DescriptorCount = 4;
 const uint16 kG05Chunk11DescriptorCount = 0x0c;
 const byte kG04AmbientMusicCueStillFrame = 0x0f;
 const uint16 kG04State7041 = 0x1b81;
-const uint16 kG04State7042 = 0x1b82;
 const uint16 kG04ReturnState7031 = 0x1b77;
 const uint16 kG04ExitState7050 = 0x1b8a;
 const uint16 kG04ExitState7060 = 0x1b94;
@@ -74,20 +73,8 @@ const byte kG04PanelSelectedColor = 0xf1;
 const byte kG04PanelSelectedLineColor = 0xf2;
 const byte kG04PanelTextColor = 0xfc;
 const byte kG04Entry7040Facing = 1;
-const int kG04Entry7040StartX = 100;
-const int kG04Entry7040StartY = 0x1b1;
 const int kG04Entry7040FirstTargetX = 0x14a;
 const int kG04Entry7040FirstTargetY = 0x139;
-const int kG04Entry7040RepeatTargetX = 0x16f;
-const int kG04Entry7040RepeatTargetY = 0x177;
-const byte kG04Entry7041Facing = 4;
-const int kG04Entry7041StartX = 600;
-const int kG04Entry7041StartY = 0x132;
-const byte kG04Entry7042Facing = 4;
-const int kG04Entry7042StartX = 0x322;
-const int kG04Entry7042StartY = 0x1c9;
-const int kG04Entry7042TargetX = 0x29e;
-const int kG04Entry7042TargetY = 0x1cc;
 const int kG05EntryX = 0x0a1;
 const int kG05EntryY = 0x158;
 const byte kG05EntryFacing = 2;
@@ -1369,23 +1356,8 @@ void SuePlayableScene::runEntryCutscene() {
 		return;
 	}
 
-	GameplayState &state = _vm->gameState();
-	if (state.mainFlowStateId == kG04State7041) {
-		_soundBank0.playSample(4, 100);
-		runEntryPath(kG04Entry7041StartX, kG04Entry7041StartY, kG04Entry7041Facing,
-			kG04Entry7041StartX, kG04Entry7041StartY);
-	} else if (state.mainFlowStateId == kG04State7042) {
-		runEntryPath(kG04Entry7042StartX, kG04Entry7042StartY, kG04Entry7042Facing,
-			kG04Entry7042TargetX, kG04Entry7042TargetY);
-	} else {
-		const int targetX = state.seenOfficeEntryConversation ?
-			kG04Entry7040RepeatTargetX : kG04Entry7040FirstTargetX;
-		const int targetY = state.seenOfficeEntryConversation ?
-			kG04Entry7040RepeatTargetY : kG04Entry7040FirstTargetY;
-		runEntryPath(kG04Entry7040StartX, kG04Entry7040StartY, kG04Entry7040Facing,
-			targetX, targetY);
-		state.seenOfficeEntryConversation = true;
-	}
+	drawPlayableComposite();
+	presentFrame();
 }
 
 void SuePlayableScene::runG05EntrySequence() {
