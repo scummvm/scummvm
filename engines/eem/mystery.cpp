@@ -439,6 +439,8 @@ bool Mystery::load(uint num, Common::RandomSource *rng, bool macintosh) {
 		const byte *susSec   = (_floppyGalleryOff < _data.size())
 								? _data.data() + _floppyGalleryOff : nullptr;
 		_numSites    = sitesSec ? *sitesSec : 0;
+		if (_numSites > kVisitedSiteCap)
+			_numSites = kVisitedSiteCap;
 		_numSuspects = susSec   ? *susSec   : 0;
 		_numCONSITEs = 0;
 		_numCOFFSITEs = 0;
