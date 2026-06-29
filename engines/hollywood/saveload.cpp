@@ -114,6 +114,14 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.multiToolKnifeState);
 	s.syncAsByte(state.ronTapeRecorderState);
 	syncStateBool(s, state.ronWalletOpened);
+	syncStateBool(s, state.seenScene1020EntryLine);
+	s.syncAsByte(state.scene1020ResourceBlockChoiceState);
+	s.syncAsByte(state.scene1020ResourceBlockVariantState);
+	syncStateBool(s, state.scene1020AlternateResourceBlockActive);
+	syncStateBool(s, state.scene1020EventFlag0);
+	syncStateBool(s, state.scene1020EventFlag1);
+	syncStateBool(s, state.scene1020EventFlag2);
+	syncStateBool(s, state.scene1020EventFlag3);
 	syncStateBool(s, state.reviewedFrankensteinNote);
 	s.syncAsByte(state.frankensteinNoteOverlayMode);
 	s.syncAsByte(state.hannoverCourtyardDialogueState);
@@ -190,6 +198,10 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.humeroBarrierState = 1;
 	if (state.punchBowlGlassPatchState > 2)
 		state.punchBowlGlassPatchState = 1;
+	if (state.scene1020ResourceBlockChoiceState > 2)
+		state.scene1020ResourceBlockChoiceState = 0;
+	if (state.scene1020ResourceBlockVariantState > 1)
+		state.scene1020ResourceBlockVariantState = 0;
 }
 
 } // End of namespace Hollywood

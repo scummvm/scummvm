@@ -127,6 +127,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int de
 		_activeActorCel(0),
 		_activeActorDrawOrderMode(0),
 		_secondaryActorFrame(0),
+		_lastSceneActionItemId(0),
 		_actionOverlayVisible(false),
 		_actionOverlayChunkIndex(0),
 		_actionOverlayDescriptorCount(0),
@@ -327,6 +328,11 @@ bool PlayableScene::shouldConvertSavedFramebufferFF() const {
 	return false;
 }
 
+bool PlayableScene::shouldLoadArenaChunk(uint index) const {
+	(void)index;
+	return true;
+}
+
 bool PlayableScene::shouldRunExitSideEffectsAfterLoop() const {
 	return false;
 }
@@ -484,8 +490,11 @@ bool PlayableScene::load() {
 		return false;
 
 	uint32 arenaSize = 0;
-	for (uint i = sceneArenaFirstChunk(); i <= sceneArenaLastChunk(); ++i)
+	for (uint i = sceneArenaFirstChunk(); i <= sceneArenaLastChunk(); ++i) {
+		if (!shouldLoadArenaChunk(i))
+			continue;
 		arenaSize += _sceneChunkTable.sizes[i];
+	}
 
 	_resourceArena.resize(arenaSize);
 	memset(_resourceArena.data(), 0, _resourceArena.size());
@@ -493,6 +502,8 @@ bool PlayableScene::load() {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
 
 	for (uint i = sceneArenaFirstChunk(); i <= sceneArenaLastChunk(); ++i) {
+		if (!shouldLoadArenaChunk(i))
+			continue;
 		if (!loadArenaChunk(i))
 			return false;
 	}
@@ -1005,6 +1016,7 @@ void PlayableScene::initializeDefaultPreviewState() {
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_secondaryActorFrame = 0;
+	_lastSceneActionItemId = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 	applySceneStateToHotspotsAndPatches(0xff);
@@ -1355,6 +1367,7 @@ void PlayableScene::processSceneActionClick(const GameplayLoopCursorState &state
 	}
 
 	if (itemId == 0) {
+		_lastSceneActionItemId = 0;
 		if (state.currentStrip != 1)
 			return;
 
@@ -1368,6 +1381,7 @@ void PlayableScene::processSceneActionClick(const GameplayLoopCursorState &state
 	SceneVerbActionRecord actionRecord = _hotspots.verbActionRecord(itemId, state.currentStrip);
 	if (actionRecord.actionHandlerId == 0)
 		return;
+	_lastSceneActionItemId = itemId;
 
 	const SceneActionTarget target = _hotspots.actionTarget(itemId);
 	int targetX = target.interactionPoint.x;
@@ -1409,6 +1423,7 @@ void PlayableScene::processSceneRelationClick(const GameplayLoopCursorState &sta
 		relationActionRecord(state.primaryInventoryItem, itemId, state.relationMode);
 	if (actionRecord.actionHandlerId == 0)
 		return;
+	_lastSceneActionItemId = itemId;
 
 	const SceneActionTarget target = _hotspots.actionTarget(itemId);
 	int targetX = _activeActorWorldX;
