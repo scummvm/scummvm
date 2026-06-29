@@ -1091,12 +1091,17 @@ void DisplayMan::blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask
 			byte *nextDestPixel = dest + next_y * destByteWidth * 2 + next_x;
 			byte nextSrcPixel = src[nextUnitIndex];
 
-			if (nextSrcPixel != transparent) {
-				if (useMask && mask && *mask++) {
-					*nextDestPixel = *mask & nextSrcPixel;
-				} else
-					*nextDestPixel = nextSrcPixel;
-			}
+			byte pixelVal = kDMColorBlack;
+			if (useMask && mask && *mask != kDMColorWhite)
+				pixelVal = *mask;
+			else if (nextSrcPixel != transparent)
+				pixelVal = nextSrcPixel;
+
+			if (useMask && mask)
+				mask++;
+
+			if (pixelVal != kDMColorBlack)
+				*nextDestPixel = pixelVal;
 
 			if (++nextUnitIndex >= lastUnitIndex)
 				nextUnitIndex = 0; // 0 is not an error
