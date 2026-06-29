@@ -283,6 +283,28 @@ public:
 		return static_cast<char>(0xA3);
 	}
 
+	
+
+	void missingAnimation(const String &filename) override {
+		// missing background, not actually necessary as graphic objects cover the entire room
+		if (filename.equalsIgnoreCase("HISTORIA_CLEOPATRA")) {
+			// unrelated to the animation, if we query this we apparently entered the room
+			// there is an original script bug where triggering this dialog twice
+			// only the last graphic object is active blocking all others
+			// we fix this by restoring the original state
+			const Room *room = g_engine->player().currentRoom();
+			ObjectBase *firstPicture = room->getObjectByName("OL Cleo1");
+			ObjectBase *lastPicture = room->getObjectByName("OL Cleo10");
+			if (firstPicture != nullptr && lastPicture != nullptr &&
+				!firstPicture->isEnabled() && lastPicture->isEnabled()) {
+				firstPicture->toggle(true);
+				lastPicture->toggle(false);
+			}
+			return; // and we still ignore the missing background
+		}
+		GameWithVersion2::missingAnimation(filename);
+	}
+
 	PointObject *unknownCamLerpTarget(const char *action, const char *name) override {
 		// Original bug: a main character being reinterpret_cast to a PointObject, undefined behavior ensues
 		if (scumm_stricmp(name, "FILEMON"))
