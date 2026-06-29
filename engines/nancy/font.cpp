@@ -328,27 +328,6 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 				break;
 			// TODO: _uppercaseAWithDotOffset
 			// TODO: _aWithDotOffset
-			case '\x5f':
-				offset = _underscoreOffset;
-				break;
-			case '\x23':
-				offset = _hashOffset;
-				break;
-			case '\x24':
-				offset = _dollarOffset;
-				break;
-			case '\x3c':
-				offset = _lessThanOffset;
-				break;
-			case '\x3e':
-				offset = _greaterThanOffset;
-				break;
-			case '\x7b':
-				offset = _leftCurlyBracketOffset;
-				break;
-			case '\x7d':
-				offset = _rightCurlyBracketOffset;
-				break;
 			// TODO: _euroOffset
 			default:
 				offset = -1;
@@ -416,6 +395,29 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 			break;
 		case '/':
 			offset = _slashOffset;
+			break;
+		// ASCII punctuation whose glyphs were added in nancy10. These are < 128,
+		// so they belong here rather than in the extended-ASCII switch above.
+		case '_':
+			offset = _underscoreOffset;
+			break;
+		case '#':
+			offset = _hashOffset;
+			break;
+		case '$':
+			offset = _dollarOffset;
+			break;
+		case '<':
+			offset = _lessThanOffset;
+			break;
+		case '>':
+			offset = _greaterThanOffset;
+			break;
+		case '{':
+			offset = _leftCurlyBracketOffset;
+			break;
+		case '}':
+			offset = _rightCurlyBracketOffset;
 			break;
 		default:
 			offset = -1;
