@@ -26,6 +26,8 @@
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/amiga.h"
+#include "chamber/cga.h"
+#include "chamber/ega.h"
 #include "chamber/resdata.h"
 
 namespace Chamber {
@@ -59,7 +61,7 @@ static const uint16 amiga_room_base_pal[16] = {
 	0x000, // 4  stone
 	0x000, // 5  stone
 	0x101, // 6  crevice
-	0x100, // 7  dark detail
+	0xE14, // 7  bright red UI accent (room-name-bar / timer-box border)
 	0x886, // 8  stone/sprite highlight
 	0x64A, // 9  blue-purple accent
 	0x700, // 10 dark red
@@ -188,6 +190,28 @@ void AmigaRenderer::switchToGraphicsMode() {
 void AmigaRenderer::colorSelect(byte csel) {
 	// On Amiga this carries the real palette index (see room.cpp)
 	amigaApplyPalette(csel);
+}
+
+static const byte amiga_cga_to_slot[4] = { 0, 11, 7, 15 };
+
+void AmigaRenderer::drawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
+	byte pixel = amiga_cga_to_slot[color & 0x03];
+	uint16 ofs = calcXY(x, y);
+	for (uint16 i = 0; i < l; i++) {
+		target[ofs] = pixel;
+		ofs += EGA_BYTES_PER_LINE;
+	}
+
+	if (target == SCREENBUFFER)
+		blitToScreen(x, y, 1, l);
+}
+
+void AmigaRenderer::drawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
+	byte pixel = amiga_cga_to_slot[color & 0x03];
+	memset(target + calcXY(x, y), pixel, l);
+
+	if (target == SCREENBUFFER)
+		blitToScreen(x, y, l, 1);
 }
 
 } // End of namespace Chamber
