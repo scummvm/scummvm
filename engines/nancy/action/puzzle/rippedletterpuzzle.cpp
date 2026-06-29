@@ -120,8 +120,8 @@ void RippedLetterPuzzle::readData(Common::SeekableReadStream &stream) {
 	stream.skip((maxWidth > width ? (maxHeight - height) * maxWidth : maxWidth * maxHeight - width * height) * elemSize);
 
 	if (g_nancy->getGameType() >= kGameTypeNancy9) {
-		uint16 numDoubledElements = stream.readUint16LE();
-		_doubles.resize(numDoubledElements);
+		uint16 numDoubledElements = stream.readUint16LE();	// 0 in Nancy 12
+		_doubles.resize(numDoubledElements > 0 ? numDoubledElements : 20);
 		uint i = 0;
 		for (uint j = 0; j < 20; ++j) {
 			int16 id = stream.readSint16LE();
