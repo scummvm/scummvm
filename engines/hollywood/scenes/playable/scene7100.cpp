@@ -444,7 +444,7 @@ void Scene7100::rebuildWalkableMask() {
 	}
 }
 
-PlayableScene::AmbientAudioProfile Scene7100::ambientAudioProfile() const {
+AmbientAudioProfile Scene7100::ambientAudioProfile() const {
 	return createLoopingAmbientAudioProfile(50);
 }
 
