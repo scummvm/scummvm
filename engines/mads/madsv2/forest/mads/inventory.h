@@ -41,6 +41,7 @@ enum {
 	web            = 10,
 	planks         = 11,
 	elm_leaves     = 12,
+	sturdy_stick   = 13,
 	stick          = 14,
 	forked_stick   = 15
 };
