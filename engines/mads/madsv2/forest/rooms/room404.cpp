@@ -78,7 +78,7 @@ static void room_404_init1() {
 	global[g141] = 0;
 
 	if (global[g084] == 16) {
-		object_set_quality(13, 0, 0L);
+		object_set_quality(sturdy_stick, 0, 0);
 		scratch._9c = kernel_run_animation_disp('r', 6, 0);
 		kernel_position_anim(scratch._9c, 123, 145, 92, 1);
 		scratch._9a = kernel_run_animation_disp('e', 6, 0);
@@ -100,7 +100,7 @@ static void room_404_init1() {
 		global[g131] = -1;
 		global[g141] = -1;
 		if (global[g084] == 16) {
-			object_set_quality(13, 0, 0L);
+			object_set_quality(sturdy_stick, 0, 0);
 			kernel_reset_animation(scratch._9c, 1);
 			kernel_reset_animation(scratch._9a, 1);
 		} else {
@@ -169,7 +169,7 @@ static void room_404_init() {
 		kernel_timing_trigger(1, 110);
 	}
 
-	object_set_quality(13, 0, -1L);
+	object_set_quality(sturdy_stick, 0, -1);
 
 	scratch._a2 = 0;
 	scratch._a4 = -1;
@@ -671,7 +671,7 @@ static void room_404_daemon() {
 			kernel_abort_animation(scratch._9a);
 			kernel_abort_animation(scratch._9c);
 			global[g084] = 16;
-			object_set_quality(13, 0, 0L);
+			object_set_quality(sturdy_stick, 0, 0);
 			scratch._9c = kernel_run_animation_disp('r', 6, 0);
 			kernel_position_anim(scratch._9c, 123, 145, 92, 1);
 			scratch._9a = kernel_run_animation_disp('e', 6, 0);
@@ -710,8 +710,8 @@ static void room_404_daemon() {
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			global[g081] = -1;
 			kernel_flip_hotspot(words_hole, false);
-			object_set_quality(13, 0, 0L);
-			inter_move_object(13, NOWHERE);
+			object_set_quality(sturdy_stick, 0, 0);
+			inter_move_object(sturdy_stick, NOWHERE);
 			clear_selected_item();
 			if (global[walker_converse_state]) {
 				global[walker_converse_state] = 0;
@@ -726,7 +726,7 @@ static void room_404_daemon() {
 	case 104:
 		player.commands_allowed = false;
 		if (global[walker_converse_state])
-			inter_spin_object(13);
+			inter_spin_object(sturdy_stick);
 		global[g150] = -1;
 		scratch._90 = 8;
 		break;
@@ -845,7 +845,7 @@ static void room_404_parser() {
 	}
 
 	if (global[player_selected_object] >= 0) {
-		if (global[player_selected_object] == 13) {
+		if (global[player_selected_object] == sturdy_stick) {
 			if (!global[g081] && global[g082]) {
 				kernel.trigger_setup_mode = 1;
 				kernel_timing_trigger(2, 109);
