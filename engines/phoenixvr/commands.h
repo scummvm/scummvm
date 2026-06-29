@@ -1726,10 +1726,12 @@ struct Return : public Script::Command {
 	Return() {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		ctx.running = false;
-		if (ctx.subroutine)
+		if (ctx.subroutine) {
 			debug("return to caller");
-		else
-			debug("return from script");
+		} else {
+			debug("return to previous warp");
+			g_engine->returnToWarp();
+		}
 	}
 };
 

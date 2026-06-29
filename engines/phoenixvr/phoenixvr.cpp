@@ -2065,8 +2065,7 @@ Common::Error PhoenixVREngine::saveGameStream(Common::WriteStream *slot, bool is
 	state.dibHeader.assign(dib.getData(), dib.getData() + dib.size());
 
 	state.thumbnail.assign(thumbnailPixels, thumbnailPixels + thumbnailSize);
-	state.state = Common::move(_capturedState);
-	_capturedState.clear();
+	state.state = _capturedState;
 
 	state.save(*slot);
 	return Common::kNoError;
