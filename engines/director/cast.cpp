@@ -1624,10 +1624,25 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastTransition (id=%d, %d children)",  id, res->children.size());
 		target = new TransitionCastMember(this, id, castStream, _version);
 		break;
-	case kCastXtra:
+	case kCastXtra: {
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastXtra (id=%d, %d children)",  id, res->children.size());
-		target = new XtraCastMember(this, id, castStream, _version);
+		XtraCastMember *xtra = new XtraCastMember(this, id, castStream, _version);
+		if (xtra->isQuickTimeVideo()) {
+			// Director 7+ stores QuickTime videos as "quickTimeMedia" Xtra cast
+			// members rather than classic digital video members. Promote them to a
+			// DigitalVideoCastMember so the existing video playback and Lingo
+			// property machinery (duration, movieTime, movieRate, ...) works. The
+			// linked .mov path is resolved from the cast member info at load time.
+			debugC(3, kDebugLoading, "Cast::loadCastData(): promoting QuickTime Xtra (id=%d) to digital video", id);
+			delete xtra;
+			DigitalVideoCastMember *dv = new DigitalVideoCastMember(this, id);
+			dv->_qtmovie = true;
+			target = dv;
+		} else {
+			target = xtra;
+		}
 		break;
+	}
 	default:
 		warning("BUILDBOT: STUB: Cast::loadCastData(): Unhandled cast type: %d [%s] (id=%d, %d children)! This will be missing from the movie and may cause problems", castType, tag2str(castType), id, res->children.size());
 		// also don't try and read the strings... we don't know what this item is.

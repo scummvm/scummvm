@@ -59,11 +59,21 @@ XtraCastMember::XtraCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		// TODO: Process data in the Xtra
 	}
 
-	warning("STUB: XtraCastMember::XtraCastMember(): Xtra cast members not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
+	// Director 7+ stores QuickTime videos as "quickTimeMedia" Xtra cast members.
+	// Those are promoted to DigitalVideoCastMembers in Cast::loadCastData(), so
+	// don't warn about them being unsupported here.
+	if (!isQuickTimeVideo())
+		warning("STUB: XtraCastMember::XtraCastMember(): Xtra cast members not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 }
 
 XtraCastMember::XtraCastMember(Cast *cast, uint16 castId, XtraCastMember &source)
 		: CastMember(cast, castId) {
+}
+
+bool XtraCastMember::isQuickTimeVideo() const {
+	// QuickTime Asset Xtra ("QuickTime 3" / "QTASSET"). In D7+ this is how
+	// linked .mov digital videos are represented in the cast.
+	return _xtraSymbol.equalsIgnoreCase("quickTimeMedia");
 }
 
 bool XtraCastMember::hasField(int field) {

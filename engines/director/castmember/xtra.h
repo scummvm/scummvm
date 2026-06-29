@@ -33,6 +33,8 @@ public:
 
 	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new XtraCastMember(cast, castId, *this)); }
 
+	bool isQuickTimeVideo() const;
+
 	bool hasField(int field) override;
 	Datum getField(int field) override;
 	void setField(int field, const Datum &value) override;
