@@ -19,13 +19,43 @@
  *
  */
 
+#include "common/hash-str.h"
+#include "common/hashmap.h"
+
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/movie.h"
 #include "director/castmember/xtra.h"
+#include "director/castmember/digitalvideo.h"
 #include "director/lingo/lingo-the.h"
+#include "director/lingo/xtras-cast/textxtra.h"
 
 namespace Director {
+
+struct XtraCastMemberProto {
+	const char *symbol;
+	CastMember *(*promote)(Cast *cast, uint16 castId, XtraCastMember *xtra);
+};
+
+static const XtraCastMemberProto xtraCastMemberProtos[] = {
+	{ "quickTimeMedia", DigitalVideoCastMember::createFromXtra },
+	{ "text", TextXtra::createCastMember },
+	{ "font", nullptr },
+	{ nullptr, nullptr },
+};
+
+static const XtraCastMemberProto *findXtraCastMemberProto(const Common::String &symbol) {
+	static Common::HashMap<Common::String, const XtraCastMemberProto *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> map;
+
+	if (map.empty()) {
+		for (const XtraCastMemberProto *p = xtraCastMemberProtos; p->symbol; p++)
+			map.setVal(p->symbol, p);
+	}
+
+	if (map.contains(symbol))
+		return map.getVal(symbol);
+	return nullptr;
+}
 
 XtraCastMember::XtraCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
@@ -42,9 +72,6 @@ XtraCastMember::XtraCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	} else {
 		uint32 symbolLen = stream.readUint32BE();
 		_xtraSymbol = stream.readString(0, symbolLen);
-
-		// TODO: Lookup synmbol
-
 		uint32 xtraDataLen = stream.readUint32BE();
 		xtraDataLen = MIN<int>(xtraDataLen, (int)(stream.size() - stream.pos()));
 		_xtraData = Common::Array<byte>(xtraDataLen);
@@ -55,15 +82,24 @@ XtraCastMember::XtraCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		if (debugChannelSet(5, kDebugLoading)) {
 			Common::hexdump(_xtraData.data(), xtraDataLen);
 		}
-
-		// TODO: Process data in the Xtra
 	}
 
-	warning("STUB: XtraCastMember::XtraCastMember(): Xtra cast members not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
+	if (!findXtraCastMemberProto(_xtraSymbol))
+		warning("STUB: XtraCastMember::XtraCastMember(): Xtra cast members not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 }
 
 XtraCastMember::XtraCastMember(Cast *cast, uint16 castId, XtraCastMember &source)
 		: CastMember(cast, castId) {
+}
+
+CastMember *XtraCastMember::promote(Cast *cast, uint16 castId, XtraCastMember *xtra) {
+	// Lookup the Xtra and instantiate it if registered
+	const XtraCastMemberProto *p = findXtraCastMemberProto(xtra->_xtraSymbol);
+	if (!p || !p->promote)
+		return xtra;
+	CastMember *promoted = p->promote(cast, castId, xtra);
+	delete xtra;
+	return promoted;
 }
 
 bool XtraCastMember::hasField(int field) {

@@ -33,6 +33,11 @@ public:
 
 	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new XtraCastMember(cast, castId, *this)); }
 
+	const Common::String &getXtraSymbol() const { return _xtraSymbol; }
+	const Common::Array<byte> &getXtraData() const { return _xtraData; }
+
+	static CastMember *promote(Cast *cast, uint16 castId, XtraCastMember *xtra);
+
 	bool hasField(int field) override;
 	Datum getField(int field) override;
 	void setField(int field, const Datum &value) override;
