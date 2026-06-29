@@ -30,6 +30,8 @@ class VideoDecoder;
 
 namespace Director {
 
+class XtraCastMember;
+
 enum DigitalVideoType {
 	kDVQuickTime,
 	kDVVideoForWindows,
@@ -44,6 +46,8 @@ public:
 	~DigitalVideoCastMember();
 
 	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new DigitalVideoCastMember(cast, castId, *this)); }
+
+	static CastMember *createFromXtra(Cast *cast, uint16 castId, XtraCastMember *xtra);
 
 	bool isModified() override;
 	Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) override;

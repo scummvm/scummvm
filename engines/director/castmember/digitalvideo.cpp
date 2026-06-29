@@ -39,6 +39,7 @@
 #include "director/movie.h"
 #include "director/window.h"
 #include "director/castmember/digitalvideo.h"
+#include "director/castmember/xtra.h"
 #include "director/lingo/lingo-the.h"
 
 namespace Director {
@@ -209,6 +210,47 @@ DigitalVideoCastMember::~DigitalVideoCastMember() {
 
 	if (_video)
 		delete _video;
+}
+
+// QuickTime Asset Xtra property flags, stored as a BE32 word after the
+// 16-bit serialization version in the member's Xtra payload.
+enum {
+	kQTflag_Controller  = 0x1,
+	kQTflag_Crop        = 0x2,
+	kQTflag_Center      = 0x4,
+	kQTflag_Video       = 0x8,
+	kQTflag_DTS         = 0x10,
+	kQTflag_InvertMask  = 0x20,
+	kQTflag_Loop        = 0x40,
+	kQTflag_Preload     = 0x80,
+	kQTflag_PAS         = 0x100,
+	kQTflag_Sound       = 0x200,
+	kQTflag_Mask        = 0x400,
+	kQTflag_Rotation    = 0x800,
+	kQTflag_Translation = 0x1000,
+	kQTflag_Scale       = 0x2000,
+	kQTflag_FrameRate   = 0x4000,
+	kQTflag_AlphaMask   = 0x8000,
+	kQTflag_Stream      = 0x10000
+};
+
+CastMember *DigitalVideoCastMember::createFromXtra(Cast *cast, uint16 castId, XtraCastMember *xtra) {
+	DigitalVideoCastMember *dv = new DigitalVideoCastMember(cast, castId);
+	dv->_qtmovie = true;
+	const Common::Array<byte> &data = xtra->getXtraData();
+	if (data.size() >= 8) {
+		uint32 flags = READ_BE_UINT32(&data[4]);
+		dv->_showControls = (flags & kQTflag_Controller) != 0;
+		dv->_crop = (flags & kQTflag_Crop) != 0;
+		dv->_center = (flags & kQTflag_Center) != 0;
+		dv->_enableVideo = (flags & kQTflag_Video) != 0;
+		dv->_directToStage = (flags & kQTflag_DTS) != 0;
+		dv->_looping = (flags & kQTflag_Loop) != 0;
+		dv->_preload = (flags & kQTflag_Preload) != 0;
+		dv->_pausedAtStart = (flags & kQTflag_PAS) != 0;
+		dv->_enableSound = (flags & kQTflag_Sound) != 0;
+	}
+	return dv;
 }
 
 bool DigitalVideoCastMember::loadVideoFromCast() {
