@@ -83,6 +83,7 @@ private:
 	void handleJackTalkLine();
 	void handleJackLookLine();
 	void handleSuitcasePickup();
+	void runLargeOverlayPoseTransition(byte mode, byte startFrame);
 	void finishLargeOverlayIdleSequence();
 	void runSynchronizedOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *actionFrameMap,
 		const byte *largeOverlayFrameMap, uint frameMapSize, uint32 frameMillis);

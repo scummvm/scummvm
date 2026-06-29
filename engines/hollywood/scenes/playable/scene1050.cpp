@@ -45,7 +45,7 @@ const uint kScene1050ActorPaletteTableEntry = 0x00cc;
 const uint kScene1050Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene1050SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene1050FrameMillis = 75;
-const uint32 kScene1050SmallOverlayFrameMillis = 75;
+const uint32 kScene1050SmallOverlayFrameMillis = 125;
 const uint32 kScene1050LargeOverlayFrameMillis = 75;
 const uint kScene1050SmallOverlayDescriptorCount = 5;
 const uint kScene1050LargeOverlayDescriptorCount = 0x3e;
@@ -96,7 +96,7 @@ const byte kScene1050LargeOverlayFrameMap[] = {
 	0, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
 	38, 39, 40, 0, 25, 26, 25, 0, 41, 42, 43, 44,
 	45, 44, 45, 44, 45, 44, 45, 46, 45, 46, 45, 46,
-	45, 46, 47, 48, 48, 48, 48
+	45, 46, 47, 48, 48, 48, 48, 48
 };
 
 const byte kScene1050DoorFrameMap[] = { 0, 1, 2, 3, 4, 5 };
@@ -597,12 +597,8 @@ void Scene1050::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 
 void Scene1050::beginCloakroomAttendantSpeechLine(byte frameIndex, bool alternatePose) {
 	const byte group = alternatePose ? kScene1050PrimarySpeechAltGroup : kScene1050PrimarySpeechNormalGroup;
-	if (alternatePose) {
-		_largeOverlayMode = 1;
-		_largeOverlayLayer.setFrame(5);
-		drawPlayableComposite();
-		presentFrame();
-	}
+	if (alternatePose)
+		runLargeOverlayPoseTransition(1, 5);
 
 	beginPrimarySpeechLineWithAnimationGroup(kScene1050DialoguePrimaryRow, frameIndex,
 		alternatePose ? kScene1050DialoguePrimaryAltCenterX : kScene1050DialoguePrimaryCenterX,
@@ -610,8 +606,12 @@ void Scene1050::beginCloakroomAttendantSpeechLine(byte frameIndex, bool alternat
 		kScene1050DialoguePrimaryRed, kScene1050DialoguePrimaryGreen,
 		kScene1050DialoguePrimaryBlue, group);
 
-	_largeOverlayLayer.setFrame(alternatePose ? 9 : 0);
-	_largeOverlayMode = 0;
+	if (alternatePose)
+		runLargeOverlayPoseTransition(2, 0x0e);
+	else {
+		_largeOverlayLayer.setFrame(0);
+		_largeOverlayMode = 0;
+	}
 }
 
 void Scene1050::handleDialogueEffect(byte effectId) {
@@ -649,14 +649,14 @@ void Scene1050::handleDialogueEffect(byte effectId) {
 void Scene1050::runDialogueEffectTen() {
 	_largeOverlayMode = 6;
 	_largeOverlayLayer.setFrame(0x41);
+	_largeOverlayChannel.resetTimer();
 	_soundBank0.playSample(0x0b, 100);
-	for (byte frame = 0x41; frame <= 0x64 && !Engine::shouldQuit(); ++frame) {
-		_largeOverlayLayer.setFrame(frame);
-		if (frame == 0x59)
-			_soundBank0.playSample(0x0e, 100);
+
+	while (_largeOverlayMode == 6 && !Engine::shouldQuit()) {
 		if (waitSceneMillis(kScene1050FrameMillis))
 			break;
 	}
+
 	_largeOverlayMode = 0;
 	_largeOverlayLayer.setFrame(0);
 	waitSceneMillis(1000);
@@ -714,6 +714,22 @@ void Scene1050::handleSuitcasePickup() {
 	addInventoryItem(0x19);
 	_soundBank0.playSample(1, 100);
 	beginSecondarySpeechLine(9, 0);
+}
+
+void Scene1050::runLargeOverlayPoseTransition(byte mode, byte startFrame) {
+	_largeOverlayMode = mode;
+	_largeOverlayLayer.setFrame(startFrame);
+	_largeOverlayChannel.resetTimer();
+
+	while (_largeOverlayMode == mode && !Engine::shouldQuit()) {
+		if (waitSceneMillis(kScene1050FrameMillis))
+			break;
+	}
+
+	if (_largeOverlayMode == mode) {
+		_largeOverlayLayer.setFrame(mode == 1 ? 9 : 0);
+		_largeOverlayMode = 0;
+	}
 }
 
 void Scene1050::finishLargeOverlayIdleSequence() {
@@ -820,11 +836,34 @@ void Scene1050::advanceLargeOverlay(uint32 delta, bool forceFinish) {
 				_largeOverlayLayer.setFrame(0x1d);
 			}
 		} else if (_largeOverlayMode == 5) {
-			if (_largeOverlayLayer.frameIndex < 0x2c) {
+			if (_largeOverlayLayer.frameIndex <= 0x2c) {
 				_largeOverlayLayer.setFrame(_largeOverlayLayer.frameIndex + 1);
 			} else {
 				_largeOverlayLayer.setFrame(0);
 				_largeOverlayMode = 0;
+			}
+		} else if (_largeOverlayMode == 1) {
+			if (_largeOverlayLayer.frameIndex < 8 && !_primaryDialogueSpeechActive) {
+				_largeOverlayLayer.setFrame(_largeOverlayLayer.frameIndex + 1);
+			} else {
+				_largeOverlayLayer.setFrame(9);
+				_largeOverlayMode = 0;
+			}
+		} else if (_largeOverlayMode == 2) {
+			if (_largeOverlayLayer.frameIndex > 0x10 || _primaryDialogueSpeechActive) {
+				_largeOverlayLayer.setFrame(0);
+				_largeOverlayMode = 0;
+			} else {
+				_largeOverlayLayer.setFrame(_largeOverlayLayer.frameIndex + 1);
+			}
+		} else if (_largeOverlayMode == 6) {
+			if (_largeOverlayLayer.frameIndex > 100) {
+				_largeOverlayLayer.setFrame(0);
+				_largeOverlayMode = 0;
+			} else {
+				if (_largeOverlayLayer.frameIndex == 0x59)
+					_soundBank0.playSample(0x0e, 100);
+				_largeOverlayLayer.setFrame(_largeOverlayLayer.frameIndex + 1);
 			}
 		}
 	}
