@@ -1,0 +1,100 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE1020_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE1020_H
+
+#include "hollywood/scenes/playable/playable_scene.h"
+
+namespace Hollywood {
+
+class HollywoodEngine;
+
+class Scene1020 : public PlayableScene {
+public:
+	Scene1020(HollywoodEngine *vm);
+
+private:
+	const char *resourceArchiveName() const override;
+	uint sceneInitialRequiredChunkCount() const override;
+	uint sceneArenaFirstChunk() const override;
+	uint sceneArenaLastChunk() const override;
+	uint sceneStageIndex() const override;
+	const char *sceneDebugName() const override;
+	uint16 sceneViewportXOffset() const override;
+	byte inventoryOwnerIndex() const override;
+	void initializeInventoryOwnerState() override;
+	uint resource000ActorBankTableEntry() const override;
+	uint resource000ActorPaletteTableEntry() const override;
+	uint32 inventoryActionTableExtraOffset() const override;
+	uint resource003InventoryRowsOffsetIndex() const override;
+	uint32 speechCueDescriptorTableOffset() const override;
+	const byte *actorPathStepDeltaTable() const override;
+	uint actorPathStepDeltaTableSize() const override;
+	byte walkablePaletteMaxRegion() const override;
+	const char *musicArchiveName() const override;
+	const char *soundBank0ArchiveName() const override;
+	bool shouldLoadArenaChunk(uint index) const override;
+	bool shouldLoadActorDepthTables() const override;
+	bool usesActorDepthTest() const override;
+	bool isMainFlowStateInScene(uint16 stateId) const override;
+	bool hasCustomPreviewState() const override;
+	void initializeCustomPreviewState() override;
+	bool hasCustomEntrySequence() const override;
+	void runCustomEntrySequence() override;
+	bool prepareCustomGameplayLoop() override;
+	bool advanceCustomGameplayLoop(uint32 delta) override;
+	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
+
+	void applyResourceBlockBackground();
+	void applySceneColorMapRules(byte selector);
+	void copyStageSmallRow(byte sourceRow, byte destinationRow);
+	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
+		uint frameMapSize, uint32 frameMillis, int patchFrame = -1);
+	void runOverlaySequenceWithActor(uint overlayChunkIndex, uint overlayDescriptorCount,
+		const byte *overlayFrameMap, uint overlayFrameMapSize, uint directChunkIndex,
+		uint directDescriptorCount, const byte *directFrameMap, uint directFrameMapSize);
+	void handleSceneEventFlag0();
+	void handleSceneEventFlag0Overlay();
+	void handleResourceBlockChoiceSpeech();
+	void handleSceneVerb7Or8DescriptorAction();
+	void handleSceneEventFlag1Speech();
+	void handleSpeech19AfterEventFlag1();
+	void handleResourceOverlayChunk18StateChange();
+	void handleResourceOverlayChunk19EventFlag();
+	void updateSceneAmbientAudioAndMusicCues(uint32 delta);
+
+	bool isFirstEntryState() const;
+	bool isSpecialOverlayEntryState() const;
+
+	uint32 _ambientTimerAccumulator;
+	byte _currentAmbientSoundCueId;
+	byte _previousAmbientSoundCueId;
+};
+
+} // End of namespace Hollywood
+
+#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE1020_H

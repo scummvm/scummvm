@@ -150,6 +150,7 @@ protected:
 	virtual bool shouldLoadInventoryActionTables() const;
 	virtual bool shouldLoadActorDepthTables() const;
 	virtual bool shouldConvertSavedFramebufferFF() const;
+	virtual bool shouldLoadArenaChunk(uint index) const;
 	virtual bool shouldRunExitSideEffectsAfterLoop() const;
 	virtual void runExitSideEffectsAfterLoop();
 	virtual bool usesActorDepthTest() const;
@@ -385,6 +386,7 @@ protected:
 	byte _activeActorCel;
 	byte _activeActorDrawOrderMode;
 	byte _secondaryActorFrame;
+	byte _lastSceneActionItemId;
 	bool _actionOverlayVisible;
 	byte _actionOverlayChunkIndex;
 	byte _actionOverlayDescriptorCount;
