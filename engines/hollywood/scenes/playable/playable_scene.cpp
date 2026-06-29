@@ -42,6 +42,7 @@ namespace Hollywood {
 
 const char *const kResource000Name = "RESOURCE.000";
 const char *const kStage003ArchiveName = "RESOURCE.003";
+const char *const kTravelScreenArchiveName = "RESOURCE.I04";
 const char *const kDefaultGameplayMusicArchiveName = "RESOURCE.M07";
 const char *const kDefaultGameplaySoundBank0ArchiveName = "RESOURCE.S07";
 const byte kAmbientMusicCueStillFrame = 0x0f;
@@ -1262,6 +1263,66 @@ byte PlayableScene::randomSharedInventorySpeechFrame(byte maxFrameIndex) {
 
 void PlayableScene::playSharedInventorySound(byte sampleId) {
 	_soundBank0.playSample(sampleId, 100);
+}
+
+void PlayableScene::showTravelScreenViewer() {
+	Common::File file;
+	if (!file.open(Common::Path(kTravelScreenArchiveName))) {
+		warning("Failed to open %s", kTravelScreenArchiveName);
+		return;
+	}
+
+	const uint32 requiredSize = kPaletteSize + kFrameBufferSize;
+	if ((uint32)file.size() < requiredSize) {
+		warning("%s is too small for travel screen viewer", kTravelScreenArchiveName);
+		return;
+	}
+
+	Common::Array<byte> viewerPalette;
+	Common::Array<byte> viewerFramebuffer;
+	viewerPalette.resize(kPaletteSize);
+	viewerFramebuffer.resize(kFrameBufferSize);
+
+	file.seek(0);
+	if (file.read(viewerPalette.data(), viewerPalette.size()) != viewerPalette.size() ||
+			file.read(viewerFramebuffer.data(), viewerFramebuffer.size()) != viewerFramebuffer.size()) {
+		warning("Failed to read %s travel screen viewer", kTravelScreenArchiveName);
+		return;
+	}
+
+	presentIndexedFrame(viewerFramebuffer, viewerPalette, _screen);
+
+	bool done = false;
+	while (!done && !Engine::shouldQuit()) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				Engine::quitGame();
+				return;
+			case Common::EVENT_MAINMENU:
+				_vm->openMainMenuDialog();
+				if (_vm->isSceneRestartRequested())
+					return;
+				presentIndexedFrame(viewerFramebuffer, viewerPalette, _screen);
+				break;
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					done = true;
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				done = true;
+				break;
+			default:
+				break;
+			}
+		}
+		if (!done)
+			g_system->delayMillis(10);
+	}
+
+	presentFrame();
 }
 
 void PlayableScene::handleLeftClick(const GameplayLoopCursorState &state) {

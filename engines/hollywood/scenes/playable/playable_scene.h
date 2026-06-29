@@ -221,6 +221,7 @@ protected:
 	void beginSharedInventorySpeechLine(uint16 rowIndex, byte frameIndex) override;
 	byte randomSharedInventorySpeechFrame(byte maxFrameIndex) override;
 	void playSharedInventorySound(byte sampleId) override;
+	void showTravelScreenViewer() override;
 	void handleLeftClick(const GameplayLoopCursorState &state) override;
 	void handleInventoryItemClick(const GameplayLoopCursorState &state) override;
 	void updateAmbientAudioAndMusicCues(uint32 delta);

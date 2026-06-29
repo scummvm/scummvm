@@ -70,6 +70,8 @@ struct GameplayState {
 		sceneActionCallbacksInstalled = false;
 		inventoryPanelDirty = false;
 		multiToolKnifeState = 0;
+		ronTapeRecorderState = 0;
+		ronWalletOpened = false;
 		reviewedFrankensteinNote = false;
 		frankensteinNoteOverlayMode = 0;
 		hannoverCourtyardDialogueState = 0;
@@ -476,6 +478,8 @@ struct GameplayState {
 	bool sceneActionCallbacksInstalled;
 	bool inventoryPanelDirty;
 	byte multiToolKnifeState;
+	byte ronTapeRecorderState;
+	bool ronWalletOpened;
 	bool reviewedFrankensteinNote;
 	byte frankensteinNoteOverlayMode;
 	byte hannoverCourtyardDialogueState;
