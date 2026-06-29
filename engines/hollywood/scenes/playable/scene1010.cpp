@@ -76,6 +76,8 @@ const int kScene1010ForegroundLeftXThreshold = 500;
 const int kScene1010ForegroundLeftYThreshold = 0x1cd;
 const int kScene1010ForegroundRightXThreshold = 0x28a;
 const int kScene1010ForegroundRightYThreshold = 0x1cb;
+const uint32 kScene1010SceneActorBlinkFrameMillis = 75;
+const uint kScene1010SceneActorBlinkDescriptorCount = 0x0c;
 
 const byte kActorPathStepDeltaTableSetB4[] = {
 	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
@@ -95,12 +97,22 @@ const byte kActorPathStepDeltaTableSet87[] = {
 	6, 4, 10, 3, 2, 9, 3, 2, 8, 6, 6, 7
 };
 
+const byte kScene1010SceneActorBlinkFrameMap[] = {
+	0, 11, 0, 1, 2, 1, 0, 0,
+	1, 2, 3, 4, 5, 6, 7, 8,
+	9, 10, 10, 10, 10, 10, 9, 8,
+	7, 6, 5, 4, 3, 2, 1, 0
+};
+
 Scene1010::Scene1010(HollywoodEngine *vm) :
 		PlayableScene(vm, "scene1010", kScene1010CenterEntryTargetX, kScene1010CenterEntryTargetY,
 			kScene1010CenterEntryFacing, 0xfd, 0xfb),
 		_ambientTimerAccumulator(0),
+		_sceneActorBlinkTimerAccumulator(0),
 		_currentAmbientSoundCueId(0),
-		_previousAmbientSoundCueId(0) {
+		_previousAmbientSoundCueId(0),
+		_sceneActorBlinkFrameIndex(0),
+		_sceneActorBlinkPatternMode(0) {
 }
 
 const char *Scene1010::resourceArchiveName() const {
@@ -207,8 +219,11 @@ bool Scene1010::hasCustomPreviewState() const {
 void Scene1010::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	_ambientTimerAccumulator = 0;
+	_sceneActorBlinkTimerAccumulator = 0;
 	_currentAmbientSoundCueId = 0;
 	_previousAmbientSoundCueId = 0;
+	_sceneActorBlinkFrameIndex = 0;
+	_sceneActorBlinkPatternMode = 0;
 	if (_vm->gameState().mainFlowStateId == kScene1010LeftEntryState) {
 		_activeActorWorldX = kScene1010LeftEntryTargetX;
 		_activeActorWorldY = kScene1010LeftEntryTargetY;
@@ -255,6 +270,8 @@ void Scene1010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _sceneFramebuffer);
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _sceneFramebuffer);
 	}
+
+	drawSceneActorBlinkFrame();
 }
 
 bool Scene1010::hasCustomEntrySequence() const {
@@ -289,10 +306,12 @@ void Scene1010::runCustomEntrySequence() {
 
 bool Scene1010::prepareCustomGameplayLoop() {
 	_ambientTimerAccumulator = 0;
+	_sceneActorBlinkTimerAccumulator = 0;
 	return true;
 }
 
 bool Scene1010::advanceCustomGameplayLoop(uint32 delta) {
+	advanceSceneActorBlinkAnimation(delta);
 	updateSceneAmbientAudioAndMusicCues(delta);
 	return true;
 }
@@ -399,6 +418,59 @@ void Scene1010::updateSceneAmbientAudioAndMusicCues(uint32 delta) {
 		} while (state.currentAmbientMusicCueId == _previousAmbientMusicTrackId);
 		_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 100);
 	}
+}
+
+void Scene1010::advanceSceneActorBlinkAnimation(uint32 delta) {
+	_sceneActorBlinkTimerAccumulator += delta;
+	if (_sceneActorBlinkTimerAccumulator < kScene1010SceneActorBlinkFrameMillis)
+		return;
+	_sceneActorBlinkTimerAccumulator %= kScene1010SceneActorBlinkFrameMillis;
+
+	if (_sceneActorBlinkPatternMode != 0) {
+		if (_sceneActorBlinkPatternMode == 1) {
+			if (_sceneActorBlinkFrameIndex > 5) {
+				_sceneActorBlinkPatternMode = 0;
+				return;
+			}
+		} else if (_sceneActorBlinkPatternMode == 2) {
+			if (_sceneActorBlinkFrameIndex > 0x1e) {
+				_sceneActorBlinkPatternMode = 0;
+				return;
+			}
+		}
+		++_sceneActorBlinkFrameIndex;
+		return;
+	}
+
+	if (_sceneActorBlinkFrameIndex != 0) {
+		_sceneActorBlinkFrameIndex = 0;
+		return;
+	}
+
+	if (_random.getRandomNumber(14) == 0) {
+		_sceneActorBlinkFrameIndex = 1;
+		return;
+	}
+
+	if (_random.getRandomNumber(19) != 0)
+		return;
+
+	if (_random.getRandomNumber(1) != 0) {
+		_sceneActorBlinkFrameIndex = 7;
+		_sceneActorBlinkPatternMode = 2;
+	} else {
+		_sceneActorBlinkFrameIndex = 2;
+		_sceneActorBlinkPatternMode = 1;
+	}
+}
+
+void Scene1010::drawSceneActorBlinkFrame() {
+	if (_sceneActorBlinkFrameIndex >= ARRAYSIZE(kScene1010SceneActorBlinkFrameMap))
+		return;
+
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[5], 0,
+		kScene1010SceneActorBlinkDescriptorCount,
+		kScene1010SceneActorBlinkFrameMap[_sceneActorBlinkFrameIndex], _sceneFramebuffer);
 }
 
 } // End of namespace Hollywood
