@@ -39,6 +39,7 @@ public:
 	Scene9100(HollywoodEngine *vm);
 
 	bool play();
+	bool playDialogueBranch();
 
 	struct SpeechTextStyle {
 		uint16 centerX;
@@ -98,10 +99,11 @@ private:
 		Common::Array<ActorSpriteDescriptor> descriptors;
 	};
 
-	bool load();
+	bool load(bool dialogueBranch);
 	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
 	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
 	bool loadArenaChunk(uint index);
+	bool loadArenaChunkAlias(uint sourceIndex, uint aliasIndex, uint targetIndex);
 	bool loadScratchChunk(uint index, uint32 destinationOffset);
 	bool loadScratchChunkTo(uint index, Common::Array<byte> &destination, uint32 destinationOffset);
 	bool loadStage003Descriptors();
@@ -120,6 +122,13 @@ private:
 	void drawActorSpriteFrame(const ActorBank &bank, byte facing, byte cel, int worldX, int worldY);
 	void runOpeningPrelude();
 	void runCinematicSequence();
+	void initializeDialogueBranchOfficeState();
+	void runDialogueBranchSequence();
+	void prepareDialogueBranchOfficePatch();
+	void runForegroundPoseToDialogueState();
+	void runForegroundPoseBackToDeskIdle();
+	void prepareSceneFadeFrameWithScratchActor(byte talkingOverlayVariant);
+	void prepareChunkDFrameWithOptionalActorOverlay(bool actorOverlayEnabled);
 	void runEndingWipe();
 	void runConversationStep(uint16 textBankIndex, byte descriptorIndex, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, const SpeechTextStyle &speechTextStyle, bool animateInsetActor = false, byte insetTalkBaseFrame = 0);
 	void waitForSpeechOrDelay(uint32 fallbackMillis, TalkingOverlayBase talkingOverlayBase, byte talkingOverlayVariant, bool animateForegroundActor, bool animateClock, bool animateInsetActor = false, byte insetTalkBaseFrame = 0);
@@ -150,6 +159,8 @@ private:
 	void drawTalkingOverlay(TalkingOverlayBase talkingOverlayBase, byte frameIndex, byte talkingOverlayVariant);
 	void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset, uint16 descriptorCount, uint16 descriptorIndex);
 	void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset, uint16 descriptorCount, uint16 descriptorIndex);
+	void applyResourceSpanPatchToFrameDecodeBuffer(uint32 baseOffset);
+	void drawResourceBlockListToSceneFramebuffer(uint32 baseOffset);
 	void drawResourceBlockListToBuffer(uint32 baseOffset, Common::Array<byte> &destination);
 	void expandFillRunsToSavedFramebuffer();
 	void restoreOfficeFrameAndPresent();
