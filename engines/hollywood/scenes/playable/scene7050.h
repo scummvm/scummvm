@@ -40,9 +40,36 @@ private:
 	uint sceneStageIndex() const override;
 	const char *sceneDebugName() const override;
 	uint16 sceneViewportXOffset() const override;
-	bool usesSingleSecondaryActorComposite() const override;
 	bool isMainFlowStateInScene(uint16 stateId) const override;
+	bool hasCustomPreviewState() const override;
+	void initializeCustomPreviewState() override;
+	bool hasCustomComposite() const override;
+	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
+		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+		byte actorDrawOrderMode) override;
+	bool hasCustomEntrySequence() const override;
+	void runCustomEntrySequence() override;
+	bool prepareCustomGameplayLoop() override;
+	bool advanceCustomGameplayLoop(uint32 delta) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
+
+	void runDialogueMenuRow98();
+	void initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
+	void runSecondaryActorPoseIn();
+	void runSecondaryActorPoseOut();
+	void beginCloakroomAttendantSpeechLine(byte frameIndex, bool alternatePose);
+	void handleActionSlot01ReturnToG04();
+	void handleActionSlot10PickupItem10();
+	void advanceSecondaryActorAnimation(uint32 delta);
+
+	byte _cloakroomAttendantFrame;
+	byte _cloakroomAttendantState;
+	byte _cloakroomAttendantRepeatCount;
+	uint32 _cloakroomAttendantTimerAccumulator;
 };
 
 } // End of namespace Hollywood

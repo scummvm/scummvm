@@ -44,117 +44,25 @@ const char *const kResource000Name = "RESOURCE.000";
 const char *const kStage003ArchiveName = "RESOURCE.003";
 const char *const kGameplayMusicArchiveName = "RESOURCE.M07";
 const char *const kGameplaySoundBank0ArchiveName = "RESOURCE.S07";
-const uint16 kG04Chunk10DescriptorCount = 5;
-const uint16 kG04Chunk11DescriptorCount = 0x1f;
-const uint16 kG04Chunk12DescriptorCount = 3;
-const uint16 kG04Chunk13DescriptorCount = 0x1c;
-const uint16 kG04Chunk14ActionDescriptorCount = 0x32;
-const uint16 kG04Chunk14AltDescriptorCount = 0x38;
-const uint16 kG04Chunk16DescriptorCount = 0x0b;
-const uint16 kG04Chunk17DescriptorCount = 9;
-const uint16 kG04Chunk18DescriptorCount = 0x0a;
-const uint16 kG05Chunk7DescriptorCount = 0x1b;
-const uint16 kG05Chunk8DescriptorCount = 4;
-const uint16 kG05Chunk11DescriptorCount = 0x0c;
-const byte kG04AmbientMusicCueStillFrame = 0x0f;
-const uint16 kG04State7041 = 0x1b81;
-const uint16 kG04ReturnState7031 = 0x1b77;
-const uint16 kG04ExitState7050 = 0x1b8a;
-const uint16 kG04ExitState7060 = 0x1b94;
-const uint kSceneColorToItemMapOffset = 0x100;
-const uint kSceneColorMapSize = 0x100;
-const byte kG04SecondarySpeechTextColor = 0xfd;
-const byte kG04PrimarySpeechTextColor = 0xfb;
-const byte kG04PanelDarkColor = 0xe7;
-const byte kG04PanelFillColor = 0xe8;
-const byte kG04PanelSlotColor = 0xe9;
-const byte kG04PanelLineColor = 0xea;
-const byte kG04PanelSelectedColor = 0xf1;
-const byte kG04PanelSelectedLineColor = 0xf2;
-const byte kG04PanelTextColor = 0xfc;
-const byte kG04Entry7040Facing = 1;
-const int kG04Entry7040FirstTargetX = 0x14a;
-const int kG04Entry7040FirstTargetY = 0x139;
-const int kG05EntryX = 0x0a1;
-const int kG05EntryY = 0x158;
-const byte kG05EntryFacing = 2;
-const int kG05MinimumWalkX = 0x7a;
-const int kG05MaximumWalkX = 0x2c0;
+const byte kAmbientMusicCueStillFrame = 0x0f;
+const byte kDefaultSecondarySpeechTextColor = 0xfd;
+const byte kDefaultPrimarySpeechTextColor = 0xfb;
+const byte kPanelDarkColor = 0xe7;
+const byte kPanelFillColor = 0xe8;
+const byte kPanelSlotColor = 0xe9;
+const byte kPanelLineColor = 0xea;
+const byte kPanelSelectedColor = 0xf1;
+const byte kPanelSelectedLineColor = 0xf2;
+const byte kPanelTextColor = 0xfc;
 const uint kResource000InventoryActionTablesEntry = 0xc8;
 const uint kResource000FixedInventoryVerbTableOffset = 0xec54;
-const uint32 kG04ActorPathFrameMillis = 60;
-const uint32 kG04Chunk11FrameMillis = 75;
-const uint32 kG04Chunk14FrameMillis = 75;
-const uint32 kG04Chunk16FrameMillis = 75;
-const uint32 kG04Chunk17FrameMillis = 125;
-const uint32 kG04AmbientMusicCheckMillis = 250;
+const uint32 kActorPathFrameMillis = 60;
+const uint32 kPrimaryDialogueSpeechFrameMillis = 75;
+const uint32 kAmbientMusicCheckMillis = 250;
 const uint32 kSecondaryActorSpeechFrameMillis = 150;
-const byte kG04DialogueStageId = 0x62;
-const byte kG04DialoguePrimaryRow = 99;
-const uint16 kG04DialoguePrimaryCenterX = 0x1c2;
-const uint16 kG04DialoguePrimaryTopY = 0x73;
-const byte kG04DialoguePrimaryRed = 0x3f;
-const byte kG04DialoguePrimaryGreen = 0x32;
-const byte kG04DialoguePrimaryBlue = 0x0c;
-const byte kG05DialoguePrimaryRed = 6;
-const byte kG05DialoguePrimaryGreen = 0x3f;
-const byte kG05DialoguePrimaryBlue = 0x2d;
-const uint16 kG05DialoguePrimaryCenterX = 0x1d6;
-const uint16 kG05DialoguePrimaryTopY = 0x95;
-const uint16 kG05DialoguePrimaryAltCenterX = 0x1cb;
-const uint16 kG05DialoguePrimaryAltTopY = 0x96;
-const uint kG04DialogueChoiceRecordCount = 10 * 10 * 7;
 const byte kInvalidFacing = 0xff;
 const byte kInvalidCel = 0xff;
 const byte kInvalidPrimarySpeechAnimationGroup = 0xff;
-const byte kG05PrimarySpeechNormalGroup = 7;
-const byte kG05PrimarySpeechAltGroup = 8;
-const byte kG04Chunk11FrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 1, 28, 29, 30, 0, 7, 8, 9, 10,
-	11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
-	27, 1, 0, 0, 0, 0, 0, 0
-};
-const byte kG04Chunk14ActionFrameMap[] = {
-	49, 49, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-	14, 15, 16, 17, 14, 18, 19, 20, 21, 25, 26, 27, 28, 29, 30, 31,
-	32, 33, 34, 35, 36, 34, 33, 36, 35, 34, 35, 36, 34, 33, 36, 35,
-	33, 36, 35, 33, 34, 35, 36, 34, 33, 34, 35, 36, 34, 33, 36, 35,
-	34, 33, 34, 35, 36, 34, 33, 36, 35, 34, 35, 36, 34, 33, 36, 35,
-	33, 36, 35, 33, 34, 35, 36, 34, 33, 34, 35, 36, 34, 33, 36, 35,
-	34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 21, 22, 23, 24, 21, 37,
-	38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 0, 0, 0, 0
-};
-const byte kG04Chunk14AltFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-	27, 26, 25, 24, 19, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
-	43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 55, 55, 0
-};
-const byte kG04Chunk16PostItemFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 5, 6, 5, 4, 5, 6,
-	5, 4, 5, 6, 5, 4, 5, 6, 5, 4, 3, 2, 1, 0, 7, 8,
-	9, 10, 7, 0, 0, 0, 0, 0, 0, 0
-};
-const byte kG04MajorHotspotFrameMap[] = {
-	0, 0, 1, 2, 3, 4, 5, 6, 6, 7, 8, 7, 6, 6, 7, 8,
-	9, 8, 7, 6, 6, 7, 8, 9, 10, 9, 8, 7, 6, 6, 7, 8,
-	9, 10, 11, 11, 11, 11, 12, 13, 14, 15, 16, 17, 18, 18,
-	18, 18, 18, 18, 18, 18, 18, 19, 20, 21, 22, 23, 24, 25,
-	26, 27
-};
-const byte kG04Chunk10ExitFrameMap[] = { 0, 0, 1, 2, 3, 4 };
-const byte kG04Chunk18PickupItem0FFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9
-};
-const byte kCloakroomAttendantFrameMap[] = {
-	0, 0, 1, 2, 3, 25, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-	14, 15, 16, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5,
-	4, 18, 19, 20, 21, 22, 23, 24, 26, 20, 19, 18, 0
-};
-const byte kG05Chunk8ReturnFrameMap[] = { 0, 0, 1, 2, 3 };
-const byte kG05Chunk11PickupItem10FrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-};
 const byte kActorPathStepDeltaTableSet00[] = {
 	2, 2, 2, 3, 3, 0, 2, 2, 2, 3, 3, 0,
 	6, 7, 7, 5, 5, 5, 4, 6, 6, 5, 3, 4,
@@ -222,27 +130,7 @@ SuePlayableScene::SuePlayableScene(HollywoodEngine *vm, const char *randomName, 
 		_actionOverlayChunkIndex(0),
 		_actionOverlayDescriptorCount(0),
 		_actionOverlayFrameIndex(0),
-		_chunk11FrameIndex(0),
-		_chunk12FrameIndex(0),
-		_chunk14ActionFrameIndex(0),
-		_chunk14AltFrameIndex(0),
-		_chunk14AltChunkIndex(14),
-		_chunk16FrameIndex(1),
-		_chunk17FrameIndex(0),
-		_preItemIdleState(0),
-		_postItemIdleState(0),
-		_cloakroomAttendantFrame(1),
-		_cloakroomAttendantState(0),
-		_cloakroomAttendantRepeatCount(0),
-		_chunk12OverlayVisible(false),
-		_chunk14ActionVisible(false),
-		_chunk14AltVisible(false),
 		_hideActiveActor(false),
-		_chunk11TimerAccumulator(0),
-		_chunk12TimerAccumulator(0),
-		_chunk16TimerAccumulator(0),
-		_chunk17TimerAccumulator(0),
-		_cloakroomAttendantTimerAccumulator(0),
 		_skipRequested(false) {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
 	_paletteResource.resize(kPaletteSize);
@@ -252,8 +140,8 @@ SuePlayableScene::SuePlayableScene(HollywoodEngine *vm, const char *randomName, 
 	_sceneFramebuffer.resize(kFrameBufferSize);
 	_savedFramebuffer.resize(kFrameBufferSize);
 	_paletteMaskOriginal.resize(0x700);
-	_fullPaletteRegionMask.resize(kG04PaletteMaskUsedBytes);
-	_walkablePaletteMask.resize(kG04PaletteMaskUsedBytes);
+	_fullPaletteRegionMask.resize(kPaletteMaskUsedBytes);
+	_walkablePaletteMask.resize(kPaletteMaskUsedBytes);
 	_colorToActorDepthClassMap.resize(kScenePaletteMapPageSize);
 	_actorDepthYThresholds.resize(kScenePaletteRegionCount);
 	_drawActorDepthYThresholds.resize(kScenePaletteRegionCount);
@@ -301,7 +189,7 @@ bool SuePlayableScene::play() {
 		if (_vm->gameState().activeActorPoseStateId != _vm->gameState().mainFlowStateId)
 			_vm->gameState().activeActorPoseValid = false;
 		if (shouldRunExitSideEffectsAfterLoop())
-			handleG04ExitSideEffects();
+			runExitSideEffectsAfterLoop();
 	}
 	return result;
 }
@@ -366,7 +254,11 @@ uint16 SuePlayableScene::sceneViewportMaxXOffset() const {
 	return sceneViewportXOffset();
 }
 
-bool SuePlayableScene::shouldLoadPaletteAfterFrankensteinNote() const {
+int SuePlayableScene::alternatePaletteResourceChunkIndex() const {
+	return -1;
+}
+
+bool SuePlayableScene::isAlternatePaletteResourceActive() const {
 	return false;
 }
 
@@ -386,15 +278,10 @@ bool SuePlayableScene::shouldRunExitSideEffectsAfterLoop() const {
 	return false;
 }
 
+void SuePlayableScene::runExitSideEffectsAfterLoop() {
+}
+
 bool SuePlayableScene::usesActorDepthTest() const {
-	return false;
-}
-
-bool SuePlayableScene::usesSingleSecondaryActorComposite() const {
-	return false;
-}
-
-bool SuePlayableScene::usesG04PathRouteSpecialCase() const {
 	return false;
 }
 
@@ -522,14 +409,16 @@ bool SuePlayableScene::load() {
 			!loadVariableChunk(4, _metadata))
 		return false;
 
-	if (shouldLoadPaletteAfterFrankensteinNote() && _vm->gameState().reviewedFrankensteinNote &&
-			!loadFixedChunk(19, _paletteResource, kPaletteSize))
-		return false;
+	const int alternatePaletteChunkIndex = alternatePaletteResourceChunkIndex();
+	if (alternatePaletteChunkIndex >= 0 && isAlternatePaletteResourceActive()) {
+		if (!loadFixedChunk((uint)alternatePaletteChunkIndex, _paletteResource, kPaletteSize))
+			return false;
+	}
 
 	_baseFramebufferOriginal = _baseFramebuffer;
 	_paletteMaskOriginal = _paletteMask;
 
-	if (_paletteMask.size() < kG04PaletteMaskUsedBytes) {
+	if (_paletteMask.size() < kPaletteMaskUsedBytes) {
 		warning("%s chunk 3 is shorter than the scene palette mask table", resourceArchiveName());
 		return false;
 	}
@@ -1033,33 +922,12 @@ void SuePlayableScene::initializePreviewState() {
 		return;
 	}
 
-	if (usesSingleSecondaryActorComposite()) {
-		initializeG05PreviewState();
-		return;
-	}
-
-	initializeG04PreviewState();
-}
-
-void SuePlayableScene::initializeG04PreviewState() {
 	_primaryLeftSpeechLastFrame = 0;
 	_primaryDialogueSpeechLastFrame = 7;
 	_actionOverlayVisible = false;
 	_actionOverlayChunkIndex = 0;
 	_actionOverlayDescriptorCount = 0;
 	_actionOverlayFrameIndex = 0;
-	_chunk11FrameIndex = 0;
-	_chunk12FrameIndex = 0;
-	_chunk14ActionFrameIndex = 0;
-	_chunk14AltFrameIndex = 0;
-	_chunk14AltChunkIndex = 14;
-	_chunk16FrameIndex = 1;
-	_chunk17FrameIndex = 0;
-	_preItemIdleState = 0;
-	_postItemIdleState = 0;
-	_chunk12OverlayVisible = false;
-	_chunk14ActionVisible = false;
-	_chunk14AltVisible = false;
 	_hideActiveActor = false;
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
@@ -1068,40 +936,7 @@ void SuePlayableScene::initializeG04PreviewState() {
 	_secondaryActorTimerAccumulator = 0;
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
-	_chunk11TimerAccumulator = 0;
-	_chunk12TimerAccumulator = 0;
-	_chunk16TimerAccumulator = 0;
-	_chunk17TimerAccumulator = 0;
 	_previousAmbientMusicTrackId = 0;
-	_activeActorWorldX = kG04Entry7040FirstTargetX;
-	_activeActorWorldY = kG04Entry7040FirstTargetY;
-	_activeActorFacing = kG04Entry7040Facing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-	_secondaryActorFrame = 0;
-	memset(_inventoryItems, 0, sizeof(_inventoryItems));
-	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
-	applySceneStateToHotspotsAndPatches(0xff);
-}
-
-void SuePlayableScene::initializeG05PreviewState() {
-	_actionOverlayVisible = false;
-	_actionOverlayChunkIndex = 0;
-	_actionOverlayDescriptorCount = 0;
-	_actionOverlayFrameIndex = 0;
-	_hideActiveActor = false;
-	_primaryLeftSpeechActive = false;
-	_primaryDialogueSpeechActive = false;
-	_primaryDialogueSpeechGroup = kInvalidPrimarySpeechAnimationGroup;
-	_primaryLeftSpeechTimerAccumulator = 0;
-	_primaryDialogueSpeechTimerAccumulator = 0;
-	_cloakroomAttendantFrame = 1;
-	_cloakroomAttendantState = 0;
-	_cloakroomAttendantRepeatCount = 0;
-	_cloakroomAttendantTimerAccumulator = 0;
-	_activeActorWorldX = kG05EntryX;
-	_activeActorWorldY = kG05EntryY;
-	_activeActorFacing = kG05EntryFacing;
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_secondaryActorFrame = 0;
@@ -1124,47 +959,8 @@ void SuePlayableScene::drawCutsceneComposite(bool drawActiveActor, byte activeFa
 		return;
 	}
 
-	if (usesSingleSecondaryActorComposite()) {
-		(void)actorDrawOrderMode;
-		drawG05Composite(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY);
-		return;
-	}
-
+	(void)actorDrawOrderMode;
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
-
-	if (_vm->gameState().reviewedFrankensteinNote) {
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[17], 0,
-			kG04Chunk17DescriptorCount, _chunk17FrameIndex, _sceneFramebuffer);
-		const byte frame = _chunk16FrameIndex < ARRAYSIZE(kG04Chunk16PostItemFrameMap) ?
-			kG04Chunk16PostItemFrameMap[_chunk16FrameIndex] : 0;
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[16], 0,
-			kG04Chunk16DescriptorCount, frame, _sceneFramebuffer);
-	} else {
-		if (_chunk12OverlayVisible) {
-			drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[12], 0,
-				kG04Chunk12DescriptorCount, _chunk12FrameIndex, _sceneFramebuffer);
-		}
-		const byte frame = _chunk11FrameIndex < ARRAYSIZE(kG04Chunk11FrameMap) ?
-			kG04Chunk11FrameMap[_chunk11FrameIndex] : 0;
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[11], 0,
-			kG04Chunk11DescriptorCount, frame, _sceneFramebuffer);
-		if (_chunk14ActionVisible) {
-			const byte actionFrame = _chunk14ActionFrameIndex < ARRAYSIZE(kG04Chunk14ActionFrameMap) ?
-				kG04Chunk14ActionFrameMap[_chunk14ActionFrameIndex] : 0;
-			drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[14], 0,
-				kG04Chunk14ActionDescriptorCount, actionFrame, _sceneFramebuffer);
-		}
-		if (_chunk14AltVisible) {
-			const byte altFrame = _chunk14AltFrameIndex < ARRAYSIZE(kG04Chunk14AltFrameMap) ?
-				kG04Chunk14AltFrameMap[_chunk14AltFrameIndex] : 0;
-			if (_chunk14AltChunkIndex < HollywoodEngine::kResourceChunkCount) {
-				drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_chunk14AltChunkIndex], 0,
-					kG04Chunk14AltDescriptorCount, altFrame, _sceneFramebuffer);
-			}
-		}
-	}
-
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 
@@ -1172,98 +968,6 @@ void SuePlayableScene::drawCutsceneComposite(bool drawActiveActor, byte activeFa
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
 			_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
 	}
-
-	uint blockChunk = 5;
-	if (actorDrawOrderMode == 2 || actorDrawOrderMode == 3) {
-		blockChunk = activeWorldY <= 0x15f ? 6 : 0;
-	} else if (actorDrawOrderMode == 6) {
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _sceneFramebuffer);
-		blockChunk = _vm->gameState().officeNotePickupState == 1 ? 9 : 0;
-	}
-	if (blockChunk != 0)
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[blockChunk], _sceneFramebuffer);
-}
-
-void SuePlayableScene::drawActionOverlayComposite() {
-	if (usesSingleSecondaryActorComposite()) {
-		drawG05ActionOverlayComposite();
-		return;
-	}
-
-	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
-
-	if (_chunk12OverlayVisible) {
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[12], 0,
-			kG04Chunk12DescriptorCount, _chunk12FrameIndex, _sceneFramebuffer);
-	}
-
-	if (_vm->gameState().reviewedFrankensteinNote) {
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[17], 0,
-			kG04Chunk17DescriptorCount, _chunk17FrameIndex, _sceneFramebuffer);
-		const byte frame = _chunk16FrameIndex < ARRAYSIZE(kG04Chunk16PostItemFrameMap) ?
-			kG04Chunk16PostItemFrameMap[_chunk16FrameIndex] : 0;
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[16], 0,
-			kG04Chunk16DescriptorCount, frame, _sceneFramebuffer);
-		if (_actionOverlayVisible) {
-			drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
-				_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
-		}
-	} else {
-		if (_actionOverlayVisible) {
-			drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
-				_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
-		}
-		const byte frame = _chunk11FrameIndex < ARRAYSIZE(kG04Chunk11FrameMap) ?
-			kG04Chunk11FrameMap[_chunk11FrameIndex] : 0;
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[11], 0,
-			kG04Chunk11DescriptorCount, frame, _sceneFramebuffer);
-	}
-
-	uint blockChunk = 5;
-	if (_activeActorDrawOrderMode == 2 || _activeActorDrawOrderMode == 3) {
-		blockChunk = _activeActorWorldY <= 0x15f ? 6 : 0;
-	} else if (_activeActorDrawOrderMode == 6) {
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _sceneFramebuffer);
-		blockChunk = _vm->gameState().officeNotePickupState == 1 ? 9 : 0;
-	}
-	if (blockChunk != 0)
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[blockChunk], _sceneFramebuffer);
-}
-
-void SuePlayableScene::drawG05Composite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX,
-		int activeWorldY, bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame,
-		int secondaryWorldX, int secondaryWorldY) {
-	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
-
-	const byte frame = _cloakroomAttendantFrame < ARRAYSIZE(kCloakroomAttendantFrameMap) ?
-		kCloakroomAttendantFrameMap[_cloakroomAttendantFrame] : 0;
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[7], 0,
-		kG05Chunk7DescriptorCount, frame, _sceneFramebuffer);
-
-	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
-		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-
-	const uint blockChunk = activeWorldX < 0x1a4 ? 5 : 6;
-	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[blockChunk], _sceneFramebuffer);
-}
-
-void SuePlayableScene::drawG05ActionOverlayComposite() {
-	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
-
-	const byte frame = _cloakroomAttendantFrame < ARRAYSIZE(kCloakroomAttendantFrameMap) ?
-		kCloakroomAttendantFrameMap[_cloakroomAttendantFrame] : 0;
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[7], 0,
-		kG05Chunk7DescriptorCount, frame, _sceneFramebuffer);
-
-	if (_actionOverlayVisible) {
-		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
-			_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
-	}
-
-	const uint blockChunk = _activeActorWorldX < 0x1a4 ? 5 : 6;
-	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[blockChunk], _sceneFramebuffer);
 }
 
 void SuePlayableScene::drawPlayableComposite() {
@@ -1351,27 +1055,8 @@ void SuePlayableScene::runEntryCutscene() {
 		return;
 	}
 
-	if (usesSingleSecondaryActorComposite()) {
-		runG05EntrySequence();
-		return;
-	}
-
 	drawPlayableComposite();
 	presentFrame();
-}
-
-void SuePlayableScene::runG05EntrySequence() {
-	_soundBank0.playSample(4, 100);
-	_activeActorWorldX = kG05EntryX;
-	_activeActorWorldY = kG05EntryY;
-	_activeActorFacing = kG05EntryFacing;
-	_activeActorCel = 0;
-	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-	_cloakroomAttendantFrame = 1;
-	_cloakroomAttendantState = 0;
-	drawPlayableComposite();
-	presentFrame();
-	waitSceneMillis(kG04ActorPathFrameMillis);
 }
 
 void SuePlayableScene::runEntryPath(int startX, int startY, byte startFacing, int targetX, int targetY) {
@@ -1393,7 +1078,7 @@ void SuePlayableScene::runEntryPath(int startX, int startY, byte startFacing, in
 		_activeActorFacing = frame.facing;
 		_activeActorCel = frame.cel;
 		_activeActorDrawOrderMode = frame.drawOrderMode;
-		if (waitSceneMillis(kG04ActorPathFrameMillis)) {
+		if (waitSceneMillis(kActorPathFrameMillis)) {
 			_actorPathPlaybackActive = false;
 			return;
 		}
@@ -1441,17 +1126,8 @@ void SuePlayableScene::prepareGameplayLoop() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_secondaryActorFrame = 0;
 	_actionOverlayVisible = false;
-	_chunk12OverlayVisible = false;
-	_chunk14ActionVisible = false;
-	_chunk14AltVisible = false;
-	_chunk14AltChunkIndex = 14;
 	_hideActiveActor = false;
-	const bool customPrepared = prepareCustomGameplayLoop();
-	if (!customPrepared && usesSingleSecondaryActorComposite()) {
-		_cloakroomAttendantTimerAccumulator = 0;
-		if (_cloakroomAttendantFrame == 0)
-			_cloakroomAttendantFrame = 1;
-	}
+	prepareCustomGameplayLoop();
 	restoreActiveActorPoseFromGameState();
 	syncActiveActorPoseToGameState();
 }
@@ -1465,23 +1141,8 @@ void SuePlayableScene::advanceGameplayLoop(uint32 delta) {
 		return;
 	}
 
-	if (usesSingleSecondaryActorComposite()) {
-		if (_primaryDialogueSpeechActive)
-			advancePrimaryDialogueSpeechFrame(delta);
-		else
-			advanceG05SecondaryActorAnimation(delta);
-		updateAmbientAudioAndMusicCues(delta);
-		advanceViewportScroll(delta);
-		syncActiveActorPoseToGameState();
-		return;
-	}
-
-	if (_vm->gameState().reviewedFrankensteinNote)
-		advanceChunk16PostItemAnimation(delta);
-	else if (_primaryDialogueSpeechActive)
+	if (_primaryDialogueSpeechActive)
 		advancePrimaryDialogueSpeechFrame(delta);
-	else
-		advanceChunk11PreItemIdleAnimation(delta);
 
 	updateAmbientAudioAndMusicCues(delta);
 	advanceViewportScroll(delta);
@@ -1896,7 +1557,7 @@ bool SuePlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFac
 		_activeActorFacing = frame.facing;
 		_activeActorCel = frame.cel;
 		_activeActorDrawOrderMode = frame.drawOrderMode;
-		if (waitSceneMillis(kG04ActorPathFrameMillis)) {
+		if (waitSceneMillis(kActorPathFrameMillis)) {
 			_actorPathPlaybackActive = false;
 			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 				return false;
@@ -1930,24 +1591,6 @@ bool SuePlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFac
 void SuePlayableScene::adjustWalkTargetToFloorMask(int &targetX, int &targetY) const {
 	if (adjustCustomWalkTargetToFloorMask(targetX, targetY))
 		return;
-
-	if (usesSingleSecondaryActorComposite()) {
-		targetX = CLIP<int>(targetX, kG05MinimumWalkX, kG05MaximumWalkX);
-		while (targetY < 0x1df) {
-			const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
-			if (offset < _savedFramebuffer.size() && _fullPaletteRegionMask[_savedFramebuffer[offset]] != 0)
-				return;
-			++targetY;
-		}
-
-		while (targetY > 0) {
-			const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
-			if (offset < _savedFramebuffer.size() && _fullPaletteRegionMask[_savedFramebuffer[offset]] != 0)
-				return;
-			--targetY;
-		}
-		return;
-	}
 
 	if (targetX > 0x30f)
 		targetX = 0x30f;
@@ -2019,10 +1662,6 @@ void SuePlayableScene::queueActorPathWithPaletteRegionRouting(int startX, int st
 			bool restoredStepDeltas = false;
 			customizeRouteSegment(currentRegion, nextRegion, state, boundary,
 				requestedFacing, restoredStepDeltas);
-			if (usesG04PathRouteSpecialCase() && currentRegion == 3 && nextRegion == 3 &&
-					state.x < boundary.x && boundary.y <= state.y)
-				requestedFacing = 1;
-
 			buildActorPathFramesBetweenPoints(state, boundary.x, boundary.y,
 				segmentFinalFacing, segmentFinalCel, requestedFacing);
 			if (restoredStepDeltas)
@@ -2036,10 +1675,6 @@ void SuePlayableScene::queueActorPathWithPaletteRegionRouting(int startX, int st
 	bool restoredStepDeltas = false;
 	customizeRouteFinal(currentRegion, targetRegion, state, targetX, targetY,
 		requestedFacing, restoredStepDeltas);
-	if (usesG04PathRouteSpecialCase() && currentRegion == 3 && targetRegion == 3 &&
-			state.x < targetX && targetY <= state.y)
-		requestedFacing = 1;
-
 	state.drawOrderMode = currentRegion;
 	buildActorPathFramesBetweenPoints(state, targetX, targetY, finalFacing, finalCel, requestedFacing);
 	if (restoredStepDeltas)
@@ -2282,57 +1917,9 @@ void SuePlayableScene::applySceneStateToHotspotsAndPatches(byte selector) {
 	if (applyCustomSceneStateToHotspotsAndPatches(selector))
 		return;
 
-	if (usesSingleSecondaryActorComposite()) {
-		applyG05SceneStateToHotspotsAndPatches(selector);
-		return;
-	}
-
 	if (selector == 0 || selector == 0xff) {
 		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
-
-		// After the Frankenstein-note item sequence completes in G01, G04
-		// remaps the left-side/doghouse colors and interaction points.
-		for (uint i = 0; i < _fullPaletteRegionMask.size(); ++i) {
-			if (_paletteMaskOriginal[i] == 7)
-				_fullPaletteRegionMask[i] = _vm->gameState().reviewedFrankensteinNote ? 0 : 1;
-		}
-
-		if (_paletteMaskOriginal.size() >= kSceneColorToItemMapOffset + kSceneColorMapSize &&
-				_paletteMask.size() >= kSceneColorToItemMapOffset + kSceneColorMapSize) {
-			for (uint i = 0; i < kSceneColorMapSize; ++i) {
-				const byte originalItem = _paletteMaskOriginal[kSceneColorToItemMapOffset + i];
-				if (!_vm->gameState().reviewedFrankensteinNote) {
-					if (originalItem == 9)
-						_paletteMask[kSceneColorToItemMapOffset + i] = 2;
-					if (originalItem == 10)
-						_paletteMask[kSceneColorToItemMapOffset + i] = 0;
-				} else {
-					if (originalItem == 8)
-						_paletteMask[kSceneColorToItemMapOffset + i] = 0;
-					if (originalItem == 9 || originalItem == 10)
-						_paletteMask[kSceneColorToItemMapOffset + i] = 8;
-				}
-			}
-		}
-
-		if (_vm->gameState().reviewedFrankensteinNote) {
-			if (_metadata.size() >= kSceneItemInteractionPoints + 9 * 4 &&
-					_metadata.size() >= kSceneItemFacing + 3) {
-				const uint item2Interaction = kSceneItemInteractionPoints + 2 * 4;
-				_metadata[item2Interaction] = 0xf2;
-				_metadata[item2Interaction + 1] = 0;
-				_metadata[item2Interaction + 2] = 0x46;
-				_metadata[item2Interaction + 3] = 1;
-				const uint item8Interaction = kSceneItemInteractionPoints + 8 * 4;
-				_metadata[item8Interaction] = 0xf2;
-				_metadata[item8Interaction + 1] = 0;
-				_metadata[item8Interaction + 2] = 0x46;
-				_metadata[item8Interaction + 3] = 1;
-				_metadata[kSceneItemFacing + 2] = 1;
-			}
-		}
-
 		rebuildWalkablePaletteMask();
 		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
 	}
@@ -2340,59 +1927,7 @@ void SuePlayableScene::applySceneStateToHotspotsAndPatches(byte selector) {
 	if (selector == 3 || selector == 0xff) {
 		if (!_baseFramebufferOriginal.empty())
 			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
-
-		if (_vm->gameState().officeNotePickupState == 1) {
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[9], _baseFramebuffer);
-		} else {
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
-		}
 	}
-}
-
-void SuePlayableScene::applyG05SceneStateToHotspotsAndPatches(byte selector) {
-	GameplayState &state = _vm->gameState();
-	bool textRowsChanged = false;
-
-	if ((selector == 0 || selector == 0xff) && state.spokenToCloakroomAttendant &&
-			_stage003SmallRows.size() >= 0xcd + kStage003SmallRowSize &&
-			_stage003SmallRows.size() >= 0x52 + kStage003SmallRowSize) {
-		const byte *source = _stage003SmallRows.data() + 0xcd;
-		byte *destination = _stage003SmallRows.data() + 0x52;
-		uint length = 0;
-		while (length < kStage003SmallRowSize && source[length] != 0)
-			++length;
-		if (length < kStage003SmallRowSize)
-			++length;
-		memcpy(destination, source, length);
-		textRowsChanged = true;
-	}
-
-	if (selector == 1 || selector == 0xff) {
-		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
-		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
-		if (!_baseFramebufferOriginal.empty())
-			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
-
-		if (state.cloakroomRagVisible != 0) {
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[10], _baseFramebuffer);
-		} else {
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[9], _baseFramebuffer);
-			if (_paletteMaskOriginal.size() >= kSceneColorToItemMapOffset + kSceneColorMapSize &&
-					_paletteMask.size() >= kSceneColorToItemMapOffset + kSceneColorMapSize) {
-				for (uint i = 0; i < kSceneColorMapSize; ++i) {
-					if (_paletteMaskOriginal[kSceneColorToItemMapOffset + i] == 3)
-						_paletteMask[kSceneColorToItemMapOffset + i] = 4;
-				}
-			}
-		}
-
-		rebuildWalkablePaletteMask();
-		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
-		textRowsChanged = false;
-	}
-
-	if (textRowsChanged)
-		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
 }
 
 void SuePlayableScene::rebuildWalkablePaletteMask() {
@@ -2416,130 +1951,6 @@ void SuePlayableScene::addInventoryItem(byte itemId) {
 void SuePlayableScene::removeInventoryItem(byte itemId) {
 	GameplayState &state = _vm->gameState();
 	state.removeInventoryItem(state.currentInventoryOwnerIndex, itemId);
-}
-
-void SuePlayableScene::handleActionSlot00ReturnToG03() {
-	_vm->gameState().mainFlowStateId = kG04ReturnState7031;
-}
-
-void SuePlayableScene::handleActionSlot01ProgressSpeech() {
-	beginSecondarySpeechLine(1, _vm->gameState().officeStatueActionProgress == 0 ? 0 : 1);
-}
-
-void SuePlayableScene::handleActionSlot02MajorHotspotAction() {
-	GameplayState &state = _vm->gameState();
-	if (state.reviewedFrankensteinNote) {
-		beginSecondarySpeechLine(3, 0x0b);
-		return;
-	}
-
-	_chunk12OverlayVisible = true;
-	if (state.officeStatueActionProgress == 2) {
-		runMappedActionOverlayRange(13, kG04Chunk13DescriptorCount, kG04MajorHotspotFrameMap,
-			ARRAYSIZE(kG04MajorHotspotFrameMap), kG04Chunk14FrameMillis, 0, 0x2d, -1, false);
-		_soundBank0.playSample(0x15, 100);
-		runMajorHotspotFrankensteinBranch();
-		_chunk12OverlayVisible = true;
-		runMappedActionOverlayRange(13, kG04Chunk13DescriptorCount, kG04MajorHotspotFrameMap,
-			ARRAYSIZE(kG04MajorHotspotFrameMap), kG04Chunk14FrameMillis, 0x35,
-			ARRAYSIZE(kG04MajorHotspotFrameMap), -1, false);
-	} else {
-		runMappedActionOverlay(13, kG04Chunk13DescriptorCount, kG04MajorHotspotFrameMap,
-			ARRAYSIZE(kG04MajorHotspotFrameMap), kG04Chunk14FrameMillis, 0x2c, false);
-	}
-	_chunk12OverlayVisible = false;
-
-	walkActiveActorTo(0x10d, 0x124, state.officeStatueActionProgress == 2 ? 4 : 5, 0);
-	switch (state.officeStatueActionProgress) {
-	case 0:
-		beginSecondarySpeechLine(2, 0);
-		state.officeStatueActionProgress = 1;
-		break;
-	case 1:
-		beginSecondarySpeechLine(2, 1);
-		state.officeStatueActionProgress = 2;
-		break;
-	case 2:
-		beginSecondarySpeechLine(3, 10);
-		state.officeStatueActionProgress = 3;
-		// Original RunG04MajorHotspotActionSequence primes the
-		// Frankenstein-note overlay and later yard look lines here.
-		state.frankensteinNoteOverlayMode = 1;
-		break;
-	default:
-		beginSecondarySpeechLine(2, 2);
-		break;
-	}
-}
-
-void SuePlayableScene::handleActionSlot03TransitionToState7060() {
-	_vm->gameState().mainFlowStateId = kG04ExitState7060;
-}
-
-void SuePlayableScene::handleActionSlot05ExitProgressSpeech() {
-	beginSecondarySpeechLine(5, _vm->gameState().openedOfficeClosetDoor ? 1 : 0);
-}
-
-void SuePlayableScene::handleActionSlot06TransitionToG05() {
-	runMappedActionOverlay(10, kG04Chunk10DescriptorCount, kG04Chunk10ExitFrameMap,
-		ARRAYSIZE(kG04Chunk10ExitFrameMap), kG04Chunk14FrameMillis, -1, false);
-	_vm->gameState().openedOfficeClosetDoor = true;
-	_soundBank0.playSample(3, 100);
-	_vm->gameState().mainFlowStateId = kG04ExitState7050;
-}
-
-void SuePlayableScene::handleActionSlot09PickupItem0FThenExit() {
-	GameplayState &state = _vm->gameState();
-	if (state.officeStatueActionProgress <= 2 || state.officeNotePickupState == 2) {
-		beginSecondarySpeechLine(9, 0);
-		return;
-	}
-	if (!state.reviewedFrankensteinNote) {
-		beginSecondarySpeechLine(8, 0);
-		return;
-	}
-
-	beginSecondarySpeechLine(8, 1);
-	runMappedActionOverlay(18, kG04Chunk18DescriptorCount, kG04Chunk18PickupItem0FFrameMap,
-		ARRAYSIZE(kG04Chunk18PickupItem0FFrameMap), kG04Chunk14FrameMillis, -1, false);
-	addInventoryItem(0x0f);
-	_soundBank0.playSample(1, 100);
-	state.officeNotePickupState = 2;
-	beginSecondarySpeechLine(8, 2);
-	walkActiveActorTo(600, 0x132, kInvalidFacing, 0);
-	handleActionSlot06TransitionToG05();
-}
-
-void SuePlayableScene::handleActionSlot10CommonSpeech() {
-	beginSecondarySpeechLine(9, 0);
-}
-
-void SuePlayableScene::handleActionHandler312ProgressSpeech() {
-	GameplayState &state = _vm->gameState();
-	if (state.officeStatueActionProgress == 3)
-		beginSecondarySpeechLine(10, state.officeNotePickupState >= 2 ? 1 : 0);
-	else
-		beginStaticSecondarySpeechLine(0x2d, 0);
-}
-
-void SuePlayableScene::handleActionHandler313ConversationGate() {
-	if (_vm->gameState().reviewedFrankensteinNote) {
-		beginSecondarySpeechLine(11, 2);
-		return;
-	}
-	runDialogueMenuRow98();
-}
-
-void SuePlayableScene::handleActionHandler314FrankensteinNoteSpeech() {
-	beginSecondarySpeechLine(11, _vm->gameState().reviewedFrankensteinNote ? 1 : 0);
-}
-
-void SuePlayableScene::handleActionHandler315PickupItem0C() {
-	if (hasInventoryItem(0x0c))
-		return;
-
-	addInventoryItem(0x0c);
-	_soundBank0.playSample(1, 100);
 }
 
 void SuePlayableScene::handleStaticSpeech43And24Sequence() {
@@ -2566,280 +1977,6 @@ void SuePlayableScene::handleSwapItems08And0FForItem06() {
 	addInventoryItem(0x06);
 	_soundBank0.playSample(1, 100);
 	handleStaticSpeech43And24Sequence();
-}
-
-void SuePlayableScene::runDialogueMenuRow98() {
-	Common::Array<DialogueChoiceRecord> records;
-	initializeDialogueRecords(records);
-
-	byte depthIndex = 0;
-	byte nodeIndex = 0;
-	bool finished = false;
-
-	beginSecondarySpeechLine(kG04DialogueStageId, 0);
-	_preItemIdleState = 3;
-	_chunk11FrameIndex = 7;
-	beginPrimarySpeechLine(kG04DialoguePrimaryRow, 0, kG04DialoguePrimaryCenterX,
-		kG04DialoguePrimaryTopY, kG04DialoguePrimaryRed, kG04DialoguePrimaryGreen,
-		kG04DialoguePrimaryBlue);
-
-	while (!finished && !Engine::shouldQuit()) {
-		DialogueMenu menu(_vm, this);
-		const byte selectedChoice = menu.choose(kG04DialogueStageId, records, depthIndex, nodeIndex);
-		if (selectedChoice == DialogueMenu::kCancelledChoice) {
-			beginSecondarySpeechLine(kG04DialogueStageId, 5);
-			beginPrimarySpeechLine(kG04DialoguePrimaryRow, 5, kG04DialoguePrimaryCenterX,
-				kG04DialoguePrimaryTopY, kG04DialoguePrimaryRed, kG04DialoguePrimaryGreen,
-				kG04DialoguePrimaryBlue);
-			_chunk11FrameIndex = 0;
-			_preItemIdleState = 0;
-			return;
-		}
-
-		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
-		if (recordIndex >= records.size())
-			break;
-
-		DialogueChoiceRecord &record = records[recordIndex];
-		beginSecondarySpeechLine(kG04DialogueStageId, record.playerTextRowId);
-		if (record.responseFrameIndex != 0 && record.responseFrameIndex != 0xff) {
-			beginPrimarySpeechLine(kG04DialoguePrimaryRow, record.responseFrameIndex,
-				kG04DialoguePrimaryCenterX, kG04DialoguePrimaryTopY, kG04DialoguePrimaryRed,
-				kG04DialoguePrimaryGreen, kG04DialoguePrimaryBlue);
-		}
-
-		if (record.disableAfterUse == 1)
-			record.enabled = 0;
-
-		const byte previousDepth = depthIndex;
-		switch (record.transitionMode) {
-		case 0:
-			finished = true;
-			break;
-		case 1:
-			nodeIndex = record.nextNodeIndex;
-			depthIndex = previousDepth + 1;
-			break;
-		case 2:
-			nodeIndex = record.nextNodeIndex;
-			depthIndex = previousDepth - 1;
-			break;
-		case 4:
-			nodeIndex = record.nextNodeIndex;
-			depthIndex = previousDepth - 2;
-			break;
-		default:
-			break;
-		}
-	}
-
-	_chunk11FrameIndex = 0;
-	_preItemIdleState = 0;
-}
-
-void SuePlayableScene::runG05DialogueMenuRow98() {
-	Common::Array<DialogueChoiceRecord> records;
-	initializeG05DialogueRecords(records);
-
-	byte depthIndex = 0;
-	byte nodeIndex = 0;
-	bool finished = false;
-
-	GameplayState &state = _vm->gameState();
-	if (!state.spokenToCloakroomAttendant) {
-		beginSecondarySpeechLine(kG04DialogueStageId, 0);
-		beginG05PrimarySpeechLine(0, false);
-		state.spokenToCloakroomAttendant = true;
-	} else {
-		beginSecondarySpeechLine(kG04DialogueStageId, 1);
-		beginG05PrimarySpeechLine(1, false);
-	}
-
-	while (!finished && !Engine::shouldQuit()) {
-		DialogueMenu menu(_vm, this);
-		const byte selectedChoice = menu.choose(kG04DialogueStageId, records, depthIndex, nodeIndex);
-		if (selectedChoice == DialogueMenu::kCancelledChoice) {
-			beginSecondarySpeechLine(kG04DialogueStageId, 4);
-			beginG05PrimarySpeechLine(4, false);
-			return;
-		}
-
-		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
-		if (recordIndex >= records.size())
-			break;
-
-		DialogueChoiceRecord &record = records[recordIndex];
-		beginSecondarySpeechLine(kG04DialogueStageId, record.playerTextRowId);
-		if (record.responseFrameIndex != 0 && record.responseFrameIndex != 0xff) {
-			const bool alternatePose = record.transitionMode != 0;
-			if (alternatePose)
-				runG05SecondaryActorPoseIn();
-			beginG05PrimarySpeechLine(record.responseFrameIndex, alternatePose);
-			if (alternatePose)
-				runG05SecondaryActorPoseOut();
-		}
-
-		if (record.disableAfterUse == 1)
-			record.enabled = 0;
-
-		const byte previousDepth = depthIndex;
-		switch (record.transitionMode) {
-		case 0:
-			finished = true;
-			break;
-		case 1:
-			nodeIndex = record.nextNodeIndex;
-			depthIndex = previousDepth + 1;
-			break;
-		case 2:
-			nodeIndex = record.nextNodeIndex;
-			depthIndex = previousDepth - 1;
-			break;
-		case 4:
-			nodeIndex = record.nextNodeIndex;
-			depthIndex = previousDepth - 2;
-			break;
-		default:
-			break;
-		}
-	}
-}
-
-void SuePlayableScene::initializeG05DialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
-	records.clear();
-	records.resize(kG04DialogueChoiceRecordCount);
-
-	records[0].enabled = 1;
-	records[0].transitionMode = 3;
-	records[0].playerTextRowId = 2;
-	records[0].responseFrameIndex = 2;
-	records[0].disableAfterUse = 1;
-	records[0].reserved = 0xff;
-
-	records[1].enabled = 1;
-	records[1].transitionMode = 3;
-	records[1].playerTextRowId = 3;
-	records[1].responseFrameIndex = 3;
-	records[1].disableAfterUse = 1;
-	records[1].reserved = 0xff;
-
-	records[2].enabled = 1;
-	records[2].transitionMode = 0;
-	records[2].playerTextRowId = 4;
-	records[2].responseFrameIndex = 4;
-	records[2].reserved = 0xff;
-}
-
-void SuePlayableScene::runG05SecondaryActorPoseIn() {
-	_cloakroomAttendantFrame = 0x20;
-	_cloakroomAttendantState = 5;
-	for (byte frame = 0x20; frame <= 0x24 && !Engine::shouldQuit(); ++frame) {
-		_cloakroomAttendantFrame = frame;
-		if (waitSceneMillis(kG04Chunk11FrameMillis))
-			break;
-	}
-	_cloakroomAttendantFrame = 0x24;
-}
-
-void SuePlayableScene::runG05SecondaryActorPoseOut() {
-	for (byte frame = 0x28; frame <= 0x2c && !Engine::shouldQuit(); ++frame) {
-		_cloakroomAttendantFrame = frame;
-		if (waitSceneMillis(kG04Chunk11FrameMillis))
-			break;
-	}
-	_cloakroomAttendantFrame = 1;
-	_cloakroomAttendantState = 0;
-}
-
-void SuePlayableScene::beginG05PrimarySpeechLine(byte frameIndex, bool alternatePose) {
-	const byte group = alternatePose ? kG05PrimarySpeechAltGroup : kG05PrimarySpeechNormalGroup;
-	beginPrimarySpeechLineWithAnimationGroup(kG04DialoguePrimaryRow, frameIndex,
-		alternatePose ? kG05DialoguePrimaryAltCenterX : kG05DialoguePrimaryCenterX,
-		alternatePose ? kG05DialoguePrimaryAltTopY : kG05DialoguePrimaryTopY,
-		kG05DialoguePrimaryRed, kG05DialoguePrimaryGreen, kG05DialoguePrimaryBlue, group);
-}
-
-void SuePlayableScene::handleG05ActionSlot01ReturnToG04() {
-	runMappedActionOverlay(8, kG05Chunk8DescriptorCount, kG05Chunk8ReturnFrameMap,
-		ARRAYSIZE(kG05Chunk8ReturnFrameMap), kG04Chunk14FrameMillis, -1, false);
-	_soundBank0.playSample(3, 100);
-	_vm->gameState().mainFlowStateId = kG04State7041;
-}
-
-void SuePlayableScene::handleG05ActionSlot10PickupItem10() {
-	dispatchGenericSceneAction(19);
-	for (uint frame = 0; frame < ARRAYSIZE(kG05Chunk11PickupItem10FrameMap) && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayVisible = true;
-		_actionOverlayChunkIndex = 11;
-		_actionOverlayDescriptorCount = kG05Chunk11DescriptorCount;
-		_actionOverlayFrameIndex = kG05Chunk11PickupItem10FrameMap[frame];
-		if (frame == 4) {
-			_vm->gameState().cloakroomRagVisible = 0;
-			applySceneStateToHotspotsAndPatches(1);
-		}
-		if (waitSceneMillis(kG04Chunk14FrameMillis))
-			break;
-	}
-	_actionOverlayVisible = false;
-	_actionOverlayFrameIndex = 0;
-	addInventoryItem(0x10);
-	_soundBank0.playSample(1, 100);
-	drawPlayableComposite();
-	presentFrame();
-}
-
-void SuePlayableScene::handleG04ExitSideEffects() {
-	GameplayState &state = _vm->gameState();
-	if (state.mainFlowStateId == kG04ExitState7050 &&
-			state.reviewedFrankensteinNote && state.officeNotePickupState == 2) {
-		state.reviewedFrankensteinNote = false;
-	}
-}
-
-void SuePlayableScene::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
-	records.clear();
-	records.resize(kG04DialogueChoiceRecordCount);
-
-	records[0].transitionMode = 3;
-	records[0].playerTextRowId = 1;
-	records[0].responseFrameIndex = 1;
-	records[0].disableAfterUse = 1;
-	records[0].reserved = 0xff;
-
-	records[1].transitionMode = 3;
-	records[1].playerTextRowId = 2;
-	records[1].responseFrameIndex = 2;
-	records[1].disableAfterUse = 1;
-	records[1].reserved = 0xff;
-
-	records[2].enabled = 1;
-	records[2].transitionMode = 3;
-	records[2].playerTextRowId = 3;
-	records[2].responseFrameIndex = 3;
-	records[2].disableAfterUse = 1;
-	records[2].reserved = 0xff;
-
-	records[3].transitionMode = 3;
-	records[3].playerTextRowId = 4;
-	records[3].responseFrameIndex = 4;
-	records[3].disableAfterUse = 1;
-	records[3].reserved = 0xff;
-
-	records[4].enabled = 1;
-	records[4].transitionMode = 0;
-	records[4].playerTextRowId = 5;
-	records[4].responseFrameIndex = 5;
-	records[4].reserved = 0xff;
-
-	const GameplayState &state = _vm->gameState();
-	if (state.officeStatueActionProgress != 0)
-		records[0].enabled = 1;
-	if (state.officeStatueActionProgress == 3) {
-		if (!state.hasInventoryItem(state.currentInventoryOwnerIndex, 6))
-			records[1].enabled = 1;
-		if (state.officeNotePickupState != 2)
-			records[3].enabled = 1;
-	}
 }
 
 Common::String SuePlayableScene::dialogueMenuText(byte stageId, byte textRowId) const {
@@ -2901,205 +2038,14 @@ void SuePlayableScene::runMappedActionOverlayRange(uint chunkIndex, uint descrip
 	_hideActiveActor = previousHideActiveActor;
 }
 
-void SuePlayableScene::runMajorHotspotFrankensteinBranch() {
-	const bool previousHideActiveActor = _hideActiveActor;
-	const byte previousPreItemIdleState = _preItemIdleState;
-	const byte previousAltChunkIndex = _chunk14AltChunkIndex;
-	_hideActiveActor = true;
-	_preItemIdleState = 3;
-	_chunk12OverlayVisible = true;
-	_chunk12FrameIndex = 0;
-	_chunk14ActionVisible = true;
-	_chunk14AltVisible = false;
-
-	runChunk14ActionRange(0, 0x10);
-	beginPrimarySpeechLineWithAnimationGroup(3, 0, 0x154, 0x5f, 0x20, 0, 0x3f, 3);
-	beginPrimarySpeechLineWithAnimationGroup(3, 1, 0x1c2, 0x73, 0x3f, 0x32, 0x0c, 0);
-	runChunk14ActionRange(0x15, 0x61);
-	_vm->gameState().officeNotePickupState = 1;
-	applySceneStateToHotspotsAndPatches(3);
-	runChunk14ActionRange(0x61, 0x6b);
-	beginPrimarySpeechLineWithAnimationGroup(3, 2, 0x16d, 0x69, 0x20, 0, 0x3f, 4);
-	runChunk14ActionRange(0x6f, 0x7c);
-	_chunk14ActionVisible = false;
-	_chunk12OverlayVisible = false;
-	_chunk12FrameIndex = 0;
-
-	_chunk14AltChunkIndex = 15;
-	runChunk11Range(0x0b, 0x12);
-	beginPrimarySpeechLineWithAnimationGroup(3, 3, 0x1a9, 0x82, 0x3f, 0x32, 0x0c, 1);
-	_chunk14AltVisible = true;
-	runChunk14AltRange(15, 0, 0x14);
-	beginPrimarySpeechLineWithAnimationGroup(3, 4, 0x136, 0x6e, 0x0a, 0x3f, 0, 5);
-	runChunk11Range(0x16, 0x1a);
-	beginPrimarySpeechLineWithAnimationGroup(3, 5, 0x1a9, 0x82, 0x3f, 0x32, 0x0c, 2);
-	runChunk11Range(0x1e, 0x21);
-	runChunk14AltRange(15, 0x18, 0x1c);
-	beginPrimarySpeechLineWithAnimationGroup(3, 6, 0x14f, 0x73, 0x0a, 0x3f, 0, 6);
-	runChunk14AltRange(15, 0x20, 0x25);
-	beginPrimarySpeechLineWithAnimationGroup(3, 7, 0x1c2, 0x73, 0x3f, 0x32, 0x0c, 0);
-	runChunk14AltRange(15, 0x18, 0x1c);
-	beginPrimarySpeechLineWithAnimationGroup(3, 8, 0x14f, 0x73, 0x0a, 0x3f, 0, 6);
-	runChunk14AltRange(15, 0x25, 0x3f);
-	_chunk14AltVisible = false;
-	_chunk14AltChunkIndex = previousAltChunkIndex;
-	beginPrimarySpeechLineWithAnimationGroup(3, 9, 0x1c2, 0x73, 0x3f, 0x32, 0x0c, 0);
-
-	_chunk11FrameIndex = 0;
-	_chunk14ActionVisible = false;
-	_chunk14AltVisible = false;
-	_chunk12OverlayVisible = false;
-	_preItemIdleState = previousPreItemIdleState;
-	_hideActiveActor = previousHideActiveActor;
-}
-
-void SuePlayableScene::runChunk11Range(byte firstFrame, byte endFrame) {
-	const byte previousPreItemIdleState = _preItemIdleState;
-	_preItemIdleState = 3;
-	for (uint frame = firstFrame; frame < endFrame && !Engine::shouldQuit(); ++frame) {
-		_chunk11FrameIndex = (byte)MIN<uint>(frame + 1, ARRAYSIZE(kG04Chunk11FrameMap) - 1);
-		if (waitSceneMillis(kG04Chunk11FrameMillis))
-			break;
-	}
-	_preItemIdleState = previousPreItemIdleState;
-}
-
-void SuePlayableScene::runChunk14ActionRange(byte firstFrame, byte endFrame) {
-	_chunk14ActionVisible = true;
-	for (uint frame = firstFrame; frame < endFrame && !Engine::shouldQuit(); ++frame) {
-		applyChunk14ActionSideEffects((byte)frame);
-		_chunk14ActionFrameIndex = (byte)MIN<uint>(frame + 1, ARRAYSIZE(kG04Chunk14ActionFrameMap) - 1);
-		if (waitSceneMillis(kG04Chunk14FrameMillis))
-			break;
-	}
-}
-
-void SuePlayableScene::runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame) {
-	_chunk14AltVisible = true;
-	_chunk14AltChunkIndex = (byte)chunkIndex;
-	for (uint frame = firstFrame; frame < endFrame && !Engine::shouldQuit(); ++frame) {
-		applyChunk14AltSideEffects((byte)frame);
-		_chunk14AltFrameIndex = (byte)MIN<uint>(frame + 1, ARRAYSIZE(kG04Chunk14AltFrameMap) - 1);
-		if (waitSceneMillis(kG04Chunk14FrameMillis))
-			break;
-	}
-}
-
-void SuePlayableScene::applyChunk14ActionSideEffects(byte frameIndex) {
-	switch (frameIndex) {
-	case 0:
-		_soundBank0.playSample(3, 100);
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 1;
-		break;
-	case 1:
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 2;
-		break;
-	case 8:
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 1;
-		break;
-	case 9:
-		_soundBank0.playSample(4, 100);
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 0;
-		break;
-	case 0x0a:
-		_chunk12OverlayVisible = false;
-		break;
-	case 0x22:
-		_soundBank0.playSample(0x16, 50);
-		break;
-	case 0x6a:
-		_soundBank0.stop();
-		break;
-	default:
-		break;
-	}
-}
-
-void SuePlayableScene::applyChunk14AltSideEffects(byte frameIndex) {
-	switch (frameIndex) {
-	case 0x2b:
-		_soundBank0.playSample(0x17, 50);
-		_vm->gameState().officeNotePickupState = 0;
-		applySceneStateToHotspotsAndPatches(3);
-		break;
-	case 0x37:
-		_soundBank0.playSample(3, 100);
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 1;
-		break;
-	case 0x38:
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 2;
-		break;
-	case 0x3d:
-		_soundBank0.playSample(3, 100);
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 1;
-		break;
-	case 0x3e:
-		_soundBank0.playSample(4, 100);
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 0;
-		break;
-	case 0x3f:
-		_chunk12OverlayVisible = false;
-		break;
-	default:
-		break;
-	}
-}
-
 byte SuePlayableScene::primarySpeechAnimationBaseFrame(byte animationGroup) const {
-	if (usesSingleSecondaryActorComposite()) {
-		if (animationGroup == kG05PrimarySpeechAltGroup)
-			return 0x24;
-		return 1;
-	}
-
-	switch (animationGroup) {
-	case 1:
-		return 0x12;
-	case 2:
-		return 0x1a;
-	case 3:
-		return 0x11;
-	case 4:
-		return 0x6b;
-	case 5:
-		return 0x14;
-	case 6:
-		return 0x1c;
-	default:
-		return 7;
-	}
+	(void)animationGroup;
+	return 0;
 }
 
 void SuePlayableScene::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
-	if (usesSingleSecondaryActorComposite()) {
-		(void)animationGroup;
-		_cloakroomAttendantFrame = frameIndex;
-		return;
-	}
-
-	switch (animationGroup) {
-	case 3:
-	case 4:
-		_chunk14ActionVisible = true;
-		_chunk14ActionFrameIndex = frameIndex;
-		break;
-	case 5:
-	case 6:
-		_chunk14AltVisible = true;
-		_chunk14AltFrameIndex = frameIndex;
-		break;
-	default:
-		_chunk11FrameIndex = frameIndex;
-		break;
-	}
+	(void)animationGroup;
+	(void)frameIndex;
 }
 
 bool SuePlayableScene::waitSceneMillis(uint32 millis) {
@@ -3111,10 +2057,7 @@ bool SuePlayableScene::waitSceneMillis(uint32 millis) {
 		const uint32 slice = MIN<uint32>(remaining, 10);
 		g_system->delayMillis(slice);
 		advanceGameplayLoop(slice);
-		if (_actionOverlayVisible && !hasCustomComposite())
-			drawActionOverlayComposite();
-		else
-			drawPlayableComposite();
+		drawPlayableComposite();
 		presentFrame();
 		remaining -= slice;
 	}
@@ -3171,9 +2114,9 @@ void SuePlayableScene::advanceViewportScroll(uint32 delta) {
 
 void SuePlayableScene::updateAmbientAudioAndMusicCues(uint32 delta) {
 	_ambientMusicTimerAccumulator += delta;
-	if (_ambientMusicTimerAccumulator < kG04AmbientMusicCheckMillis)
+	if (_ambientMusicTimerAccumulator < kAmbientMusicCheckMillis)
 		return;
-	_ambientMusicTimerAccumulator %= kG04AmbientMusicCheckMillis;
+	_ambientMusicTimerAccumulator %= kAmbientMusicCheckMillis;
 
 	if (!_ambientSoundBank0.isPlaying())
 		_ambientSoundBank0.playSample(0x0b, 100);
@@ -3182,9 +2125,9 @@ void SuePlayableScene::updateAmbientAudioAndMusicCues(uint32 delta) {
 		return;
 
 	GameplayState &state = _vm->gameState();
-	if (state.currentAmbientMusicCueId != kG04AmbientMusicCueStillFrame) {
+	if (state.currentAmbientMusicCueId != kAmbientMusicCueStillFrame) {
 		_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
-		state.currentAmbientMusicCueId = kG04AmbientMusicCueStillFrame;
+		state.currentAmbientMusicCueId = kAmbientMusicCueStillFrame;
 		_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 100);
 		return;
 	}
@@ -3197,129 +2140,6 @@ void SuePlayableScene::updateAmbientAudioAndMusicCues(uint32 delta) {
 	_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
 	state.currentAmbientMusicCueId = nextTrack;
 	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 100);
-}
-
-void SuePlayableScene::advanceChunk11PreItemIdleAnimation(uint32 delta) {
-	_chunk11TimerAccumulator += delta;
-	while (_chunk11TimerAccumulator >= kG04Chunk11FrameMillis) {
-		_chunk11TimerAccumulator -= kG04Chunk11FrameMillis;
-		if (_preItemIdleState == 3)
-			continue;
-
-		if (_preItemIdleState == 0) {
-			if (_random.getRandomNumber(0x31) == 0) {
-				_preItemIdleState = 2;
-				_chunk11FrameIndex = 0;
-			} else if (_random.getRandomNumber(0x0e) == 0) {
-				_preItemIdleState = 1;
-				_chunk11FrameIndex = 1;
-			}
-		} else if (_preItemIdleState == 1) {
-			_chunk11FrameIndex = 0;
-			_preItemIdleState = 0;
-		} else if (_preItemIdleState == 2) {
-			if (_chunk11FrameIndex == 6) {
-				_chunk11FrameIndex = 0;
-				_preItemIdleState = 0;
-			} else {
-				++_chunk11FrameIndex;
-			}
-		}
-	}
-}
-
-void SuePlayableScene::advanceChunk16PostItemAnimation(uint32 delta) {
-	_chunk16TimerAccumulator += delta;
-	while (_chunk16TimerAccumulator >= kG04Chunk16FrameMillis) {
-		_chunk16TimerAccumulator -= kG04Chunk16FrameMillis;
-		switch (_postItemIdleState) {
-		case 0:
-			++_chunk16FrameIndex;
-			if (_chunk16FrameIndex >= 5)
-				_postItemIdleState = 1;
-			break;
-		case 1:
-			++_chunk16FrameIndex;
-			if (_chunk16FrameIndex >= 0x1a)
-				_postItemIdleState = 2;
-			break;
-		case 2:
-			++_chunk16FrameIndex;
-			if (_chunk16FrameIndex >= 0x1e)
-				_postItemIdleState = 3;
-			break;
-		default:
-			if (_random.getRandomNumber(0x0e) == 0)
-				_chunk16FrameIndex = 0x22;
-			else
-				_chunk16FrameIndex = 0x1e;
-			break;
-		}
-		if (_chunk16FrameIndex >= ARRAYSIZE(kG04Chunk16PostItemFrameMap))
-			_chunk16FrameIndex = 1;
-	}
-
-	_chunk17TimerAccumulator += delta;
-	while (_chunk17TimerAccumulator >= kG04Chunk17FrameMillis) {
-		_chunk17TimerAccumulator -= kG04Chunk17FrameMillis;
-		if (_postItemIdleState > 1 || _chunk17FrameIndex != 0)
-			_chunk17FrameIndex = _chunk17FrameIndex == 8 ? 0 : (byte)(_chunk17FrameIndex + 1);
-	}
-}
-
-void SuePlayableScene::advanceG05SecondaryActorAnimation(uint32 delta) {
-	_cloakroomAttendantTimerAccumulator += delta;
-	while (_cloakroomAttendantTimerAccumulator >= kG04Chunk11FrameMillis) {
-		_cloakroomAttendantTimerAccumulator -= kG04Chunk11FrameMillis;
-
-		switch (_cloakroomAttendantState) {
-		case 0:
-			if (_random.getRandomNumber(0x31) == 0) {
-				_cloakroomAttendantFrame = 6;
-				_cloakroomAttendantState = 2;
-			} else if (_random.getRandomNumber(0x0e) == 0) {
-				_cloakroomAttendantFrame = 5;
-				_cloakroomAttendantState = 1;
-			}
-			break;
-		case 1:
-			_cloakroomAttendantFrame = 1;
-			_cloakroomAttendantState = 0;
-			break;
-		case 2:
-			if (_cloakroomAttendantFrame == 0x0e) {
-				_cloakroomAttendantFrame = 0x0f;
-				_cloakroomAttendantState = 3;
-				_cloakroomAttendantRepeatCount = (byte)(_random.getRandomNumber(3) + 2);
-			} else {
-				++_cloakroomAttendantFrame;
-			}
-			break;
-		case 3:
-			if (_cloakroomAttendantFrame == 0x17) {
-				if (_cloakroomAttendantRepeatCount == 0) {
-					_cloakroomAttendantFrame = 0x18;
-					_cloakroomAttendantState = 4;
-				} else {
-					_cloakroomAttendantFrame = 0x0f;
-					--_cloakroomAttendantRepeatCount;
-				}
-			} else {
-				++_cloakroomAttendantFrame;
-			}
-			break;
-		case 4:
-			if (_cloakroomAttendantFrame == 0x20) {
-				_cloakroomAttendantFrame = 1;
-				_cloakroomAttendantState = 0;
-			} else {
-				++_cloakroomAttendantFrame;
-			}
-			break;
-		default:
-			break;
-		}
-	}
 }
 
 void SuePlayableScene::advanceSecondaryActorSpeechAnimation(uint32 delta) {
@@ -3361,8 +2181,8 @@ void SuePlayableScene::advancePrimaryLeftSpeechFrame() {
 
 void SuePlayableScene::advancePrimaryDialogueSpeechFrame(uint32 delta) {
 	_primaryDialogueSpeechTimerAccumulator += delta;
-	while (_primaryDialogueSpeechTimerAccumulator >= kG04Chunk11FrameMillis) {
-		_primaryDialogueSpeechTimerAccumulator -= kG04Chunk11FrameMillis;
+	while (_primaryDialogueSpeechTimerAccumulator >= kPrimaryDialogueSpeechFrameMillis) {
+		_primaryDialogueSpeechTimerAccumulator -= kPrimaryDialogueSpeechFrameMillis;
 		const byte baseFrame = primarySpeechAnimationBaseFrame(_primaryDialogueSpeechGroup);
 		byte nextFrame = _primaryDialogueSpeechLastFrame;
 		for (uint attempt = 0; attempt < 8 && nextFrame == _primaryDialogueSpeechLastFrame; ++attempt)
@@ -3418,7 +2238,7 @@ void SuePlayableScene::drawSpeechOverlay(const SpeechOverlay &overlay) {
 
 void SuePlayableScene::beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
 	runSpeechLine(_speechOverlay, rowIndex, frameIndex, _activeActorWorldX, 0,
-		kG04SecondarySpeechTextColor, false, false, false);
+		kDefaultSecondarySpeechTextColor, false, false, false);
 }
 
 bool SuePlayableScene::startSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
@@ -3434,7 +2254,7 @@ bool SuePlayableScene::startSecondarySpeechLine(uint16 rowIndex, byte frameIndex
 		return false;
 
 	_speechOverlay.visible = true;
-	_speechOverlay.colorIndex = kG04SecondarySpeechTextColor;
+	_speechOverlay.colorIndex = kDefaultSecondarySpeechTextColor;
 	wrapActorSpeechText(text, _activeActorWorldX, _speechOverlay.lines);
 	calculateSecondarySpeechBounds(_activeActorWorldX, _activeActorWorldY);
 	_secondaryActorFrame = 0;
@@ -3451,13 +2271,13 @@ void SuePlayableScene::beginStaticSecondarySpeechLine(uint16 rowIndex, byte fram
 		return;
 
 	runSpeechCue(_speechOverlay, textRecordId, continuationCount, voiceSampleId, _activeActorWorldX, 0,
-		kG04SecondarySpeechTextColor, false, false, false);
+		kDefaultSecondarySpeechTextColor, false, false, false);
 }
 
 void SuePlayableScene::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue) {
 	if (!shouldAnimatePrimarySpeechLine()) {
-		const uint paletteOffset = kG04PrimarySpeechTextColor * 3;
+		const uint paletteOffset = kDefaultPrimarySpeechTextColor * 3;
 		if (_paletteCurrent.size() > paletteOffset + 2) {
 			_paletteCurrent[paletteOffset] = red;
 			_paletteCurrent[paletteOffset + 1] = green;
@@ -3465,7 +2285,7 @@ void SuePlayableScene::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, 
 		}
 
 		runSpeechLine(_primarySpeechOverlay, rowIndex, frameIndex, centerX, topY,
-			kG04PrimarySpeechTextColor, true, false, false);
+			kDefaultPrimarySpeechTextColor, true, false, false);
 		return;
 	}
 
@@ -3474,7 +2294,7 @@ void SuePlayableScene::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, 
 
 void SuePlayableScene::beginPrimarySpeechLineWithAnimationGroup(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue, byte animationGroup) {
-	const uint paletteOffset = kG04PrimarySpeechTextColor * 3;
+	const uint paletteOffset = kDefaultPrimarySpeechTextColor * 3;
 	if (_paletteCurrent.size() > paletteOffset + 2) {
 		_paletteCurrent[paletteOffset] = red;
 		_paletteCurrent[paletteOffset + 1] = green;
@@ -3482,11 +2302,11 @@ void SuePlayableScene::beginPrimarySpeechLineWithAnimationGroup(uint16 rowIndex,
 	}
 
 	runSpeechLine(_primarySpeechOverlay, rowIndex, frameIndex, centerX, topY,
-		kG04PrimarySpeechTextColor, true, false, true, animationGroup);
+		kDefaultPrimarySpeechTextColor, true, false, true, animationGroup);
 }
 
 void SuePlayableScene::beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex) {
-	const uint paletteOffset = kG04PrimarySpeechTextColor * 3;
+	const uint paletteOffset = kDefaultPrimarySpeechTextColor * 3;
 	if (_paletteCurrent.size() > paletteOffset + 2) {
 		_paletteCurrent[paletteOffset] = 0x33;
 		_paletteCurrent[paletteOffset + 1] = 0x22;
@@ -3494,7 +2314,7 @@ void SuePlayableScene::beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameInd
 	}
 
 	runSpeechLine(_primarySpeechOverlay, rowIndex, frameIndex, 0xfa, 0x136,
-		kG04PrimarySpeechTextColor, true, true, false);
+		kDefaultPrimarySpeechTextColor, true, true, false);
 }
 
 void SuePlayableScene::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
@@ -3703,18 +2523,18 @@ bool SuePlayableScene::waitForSpeechOrDelay(uint32 fallbackMillis, bool animateP
 }
 
 void SuePlayableScene::applyGameplayPanelPalette() {
-	if (_paletteCurrent.size() <= kG04PanelTextColor * 3 + 2)
+	if (_paletteCurrent.size() <= kPanelTextColor * 3 + 2)
 		return;
 
 	const bool originalPaletteApplied = _panelArt.applyInteractiveObjectPalette(_paletteCurrent);
 	if (!originalPaletteApplied) {
 		const byte colors[] = {
-			kG04PanelDarkColor, 0x05, 0x06, 0x08,
-			kG04PanelFillColor, 0x0b, 0x0d, 0x11,
-			kG04PanelSlotColor, 0x14, 0x16, 0x1a,
-			kG04PanelLineColor, 0x24, 0x25, 0x28,
-			kG04PanelSelectedColor, 0x2e, 0x1d, 0x0e,
-			kG04PanelSelectedLineColor, 0x3a, 0x2d, 0x16
+			kPanelDarkColor, 0x05, 0x06, 0x08,
+			kPanelFillColor, 0x0b, 0x0d, 0x11,
+			kPanelSlotColor, 0x14, 0x16, 0x1a,
+			kPanelLineColor, 0x24, 0x25, 0x28,
+			kPanelSelectedColor, 0x2e, 0x1d, 0x0e,
+			kPanelSelectedLineColor, 0x3a, 0x2d, 0x16
 		};
 		for (uint i = 0; i < ARRAYSIZE(colors); i += 4) {
 			const uint paletteOffset = colors[i] * 3;
@@ -3726,7 +2546,7 @@ void SuePlayableScene::applyGameplayPanelPalette() {
 		}
 	}
 
-	const uint textOffset = kG04PanelTextColor * 3;
+	const uint textOffset = kPanelTextColor * 3;
 	_paletteCurrent[textOffset] = 0x32;
 	_paletteCurrent[textOffset + 1] = _paletteCurrent[0x2d7];
 	_paletteCurrent[textOffset + 2] = _paletteCurrent[0x2d8];

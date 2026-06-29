@@ -24,12 +24,25 @@
 #include "common/system.h"
 
 #include "hollywood/gameplay/game_state.h"
+#include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
 
+const uint16 kScene7040Chunk10DescriptorCount = 5;
+const uint16 kScene7040Chunk11DescriptorCount = 0x1f;
+const uint16 kScene7040Chunk12DescriptorCount = 3;
+const uint16 kScene7040Chunk13DescriptorCount = 0x1c;
+const uint16 kScene7040Chunk14ActionDescriptorCount = 0x32;
+const uint16 kScene7040Chunk14AltDescriptorCount = 0x38;
+const uint16 kScene7040Chunk16DescriptorCount = 0x0b;
+const uint16 kScene7040Chunk17DescriptorCount = 9;
+const uint16 kScene7040Chunk18DescriptorCount = 0x0a;
 const uint16 kScene7040State7041 = 0x1b81;
 const uint16 kScene7040State7042 = 0x1b82;
+const uint16 kScene7040ReturnState7031 = 0x1b77;
+const uint16 kScene7040ExitState7050 = 0x1b8a;
+const uint16 kScene7040ExitState7060 = 0x1b94;
 const byte kScene7040Entry7040Facing = 1;
 const int kScene7040Entry7040StartX = 100;
 const int kScene7040Entry7040StartY = 0x1b1;
@@ -46,6 +59,12 @@ const int kScene7040Entry7042StartY = 0x1c9;
 const int kScene7040Entry7042TargetX = 0x29e;
 const int kScene7040Entry7042TargetY = 0x1cc;
 const uint32 kScene7040Chunk11FrameMillis = 75;
+const uint32 kScene7040Chunk14FrameMillis = 75;
+const uint32 kScene7040Chunk16FrameMillis = 75;
+const uint32 kScene7040Chunk17FrameMillis = 125;
+const uint kScene7040ColorToItemMapOffset = 0x100;
+const uint kScene7040ColorMapSize = 0x100;
+const byte kScene7040InvalidFacing = 0xff;
 const byte kScene7040DialogueStageId = 0x62;
 const byte kScene7040DialoguePrimaryRow = 99;
 const uint16 kScene7040DialoguePrimaryCenterX = 0x1c2;
@@ -53,9 +72,62 @@ const uint16 kScene7040DialoguePrimaryTopY = 0x73;
 const byte kScene7040DialoguePrimaryRed = 0x3f;
 const byte kScene7040DialoguePrimaryGreen = 0x32;
 const byte kScene7040DialoguePrimaryBlue = 0x0c;
+const uint kScene7040DialogueChoiceRecordCount = 10 * 10 * 7;
+const byte kScene7040Chunk11FrameMap[] = {
+	0, 1, 2, 3, 4, 5, 6, 1, 28, 29, 30, 0, 7, 8, 9, 10,
+	11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+	27, 1, 0, 0, 0, 0, 0, 0
+};
+const byte kScene7040Chunk14ActionFrameMap[] = {
+	49, 49, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+	14, 15, 16, 17, 14, 18, 19, 20, 21, 25, 26, 27, 28, 29, 30, 31,
+	32, 33, 34, 35, 36, 34, 33, 36, 35, 34, 35, 36, 34, 33, 36, 35,
+	33, 36, 35, 33, 34, 35, 36, 34, 33, 34, 35, 36, 34, 33, 36, 35,
+	34, 33, 34, 35, 36, 34, 33, 36, 35, 34, 35, 36, 34, 33, 36, 35,
+	33, 36, 35, 33, 34, 35, 36, 34, 33, 34, 35, 36, 34, 33, 36, 35,
+	34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 21, 22, 23, 24, 21, 37,
+	38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 0, 0, 0, 0
+};
+const byte kScene7040Chunk14AltFrameMap[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+	27, 26, 25, 24, 19, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
+	43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 55, 55, 0
+};
+const byte kScene7040Chunk16PostItemFrameMap[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 5, 6, 5, 4, 5, 6,
+	5, 4, 5, 6, 5, 4, 5, 6, 5, 4, 3, 2, 1, 0, 7, 8,
+	9, 10, 7, 0, 0, 0, 0, 0, 0, 0
+};
+const byte kScene7040MajorHotspotFrameMap[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 6, 7, 8, 7, 6, 6, 7, 8,
+	9, 8, 7, 6, 6, 7, 8, 9, 10, 9, 8, 7, 6, 6, 7, 8,
+	9, 10, 11, 11, 11, 11, 12, 13, 14, 15, 16, 17, 18, 18,
+	18, 18, 18, 18, 18, 18, 18, 19, 20, 21, 22, 23, 24, 25,
+	26, 27
+};
+const byte kScene7040Chunk10ExitFrameMap[] = { 0, 0, 1, 2, 3, 4 };
+const byte kScene7040Chunk18PickupItem0FFrameMap[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+};
 
 Scene7040::Scene7040(HollywoodEngine *vm) :
-		SuePlayableScene(vm, "scene7040", 0x14a, 0x139, 1, 0xfd, 0xfb) {
+		SuePlayableScene(vm, "scene7040", 0x14a, 0x139, 1, 0xfd, 0xfb),
+		_chunk11FrameIndex(0),
+		_chunk12FrameIndex(0),
+		_chunk14ActionFrameIndex(0),
+		_chunk14AltFrameIndex(0),
+		_chunk14AltChunkIndex(14),
+		_chunk16FrameIndex(1),
+		_chunk17FrameIndex(0),
+		_preItemIdleState(0),
+		_postItemIdleState(0),
+		_chunk12OverlayVisible(false),
+		_chunk14ActionVisible(false),
+		_chunk14AltVisible(false),
+		_chunk11TimerAccumulator(0),
+		_chunk16TimerAccumulator(0),
+		_chunk17TimerAccumulator(0) {
 }
 
 const char *Scene7040::resourceArchiveName() const {
@@ -86,8 +158,12 @@ uint16 Scene7040::sceneViewportXOffset() const {
 	return 0xc8;
 }
 
-bool Scene7040::shouldLoadPaletteAfterFrankensteinNote() const {
-	return true;
+int Scene7040::alternatePaletteResourceChunkIndex() const {
+	return 19;
+}
+
+bool Scene7040::isAlternatePaletteResourceActive() const {
+	return _vm->gameState().reviewedFrankensteinNote;
 }
 
 bool Scene7040::shouldConvertSavedFramebufferFF() const {
@@ -98,12 +174,115 @@ bool Scene7040::shouldRunExitSideEffectsAfterLoop() const {
 	return true;
 }
 
-bool Scene7040::usesG04PathRouteSpecialCase() const {
+bool Scene7040::isMainFlowStateInScene(uint16 stateId) const {
+	return stateId >= 0x1b80 && stateId <= 0x1b89;
+}
+
+bool Scene7040::hasCustomPreviewState() const {
 	return true;
 }
 
-bool Scene7040::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId >= 0x1b80 && stateId <= 0x1b89;
+void Scene7040::initializeCustomPreviewState() {
+	_primaryLeftSpeechLastFrame = 0;
+	_primaryDialogueSpeechLastFrame = 7;
+	_actionOverlayVisible = false;
+	_actionOverlayChunkIndex = 0;
+	_actionOverlayDescriptorCount = 0;
+	_actionOverlayFrameIndex = 0;
+	_chunk11FrameIndex = 0;
+	_chunk12FrameIndex = 0;
+	_chunk14ActionFrameIndex = 0;
+	_chunk14AltFrameIndex = 0;
+	_chunk14AltChunkIndex = 14;
+	_chunk16FrameIndex = 1;
+	_chunk17FrameIndex = 0;
+	_preItemIdleState = 0;
+	_postItemIdleState = 0;
+	_chunk12OverlayVisible = false;
+	_chunk14ActionVisible = false;
+	_chunk14AltVisible = false;
+	_hideActiveActor = false;
+	_primaryLeftSpeechActive = false;
+	_primaryDialogueSpeechActive = false;
+	_primaryDialogueSpeechGroup = 0xff;
+	_ambientMusicTimerAccumulator = 0;
+	_secondaryActorTimerAccumulator = 0;
+	_primaryLeftSpeechTimerAccumulator = 0;
+	_primaryDialogueSpeechTimerAccumulator = 0;
+	_chunk11TimerAccumulator = 0;
+	_chunk16TimerAccumulator = 0;
+	_chunk17TimerAccumulator = 0;
+	_previousAmbientMusicTrackId = 0;
+	_activeActorWorldX = kScene7040Entry7040FirstTargetX;
+	_activeActorWorldY = kScene7040Entry7040FirstTargetY;
+	_activeActorFacing = kScene7040Entry7040Facing;
+	_activeActorCel = 0;
+	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+	_secondaryActorFrame = 0;
+	memset(_inventoryItems, 0, sizeof(_inventoryItems));
+	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
+	applySceneStateToHotspotsAndPatches(0xff);
+}
+
+bool Scene7040::hasCustomComposite() const {
+	return true;
+}
+
+void Scene7040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
+		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+		byte actorDrawOrderMode) {
+	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
+
+	if (_vm->gameState().reviewedFrankensteinNote) {
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[17], 0,
+			kScene7040Chunk17DescriptorCount, _chunk17FrameIndex, _sceneFramebuffer);
+		const byte frame = _chunk16FrameIndex < ARRAYSIZE(kScene7040Chunk16PostItemFrameMap) ?
+			kScene7040Chunk16PostItemFrameMap[_chunk16FrameIndex] : 0;
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[16], 0,
+			kScene7040Chunk16DescriptorCount, frame, _sceneFramebuffer);
+	} else {
+		if (_chunk12OverlayVisible) {
+			drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[12], 0,
+				kScene7040Chunk12DescriptorCount, _chunk12FrameIndex, _sceneFramebuffer);
+		}
+		const byte frame = _chunk11FrameIndex < ARRAYSIZE(kScene7040Chunk11FrameMap) ?
+			kScene7040Chunk11FrameMap[_chunk11FrameIndex] : 0;
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[11], 0,
+			kScene7040Chunk11DescriptorCount, frame, _sceneFramebuffer);
+		if (_chunk14ActionVisible) {
+			const byte actionFrame = _chunk14ActionFrameIndex < ARRAYSIZE(kScene7040Chunk14ActionFrameMap) ?
+				kScene7040Chunk14ActionFrameMap[_chunk14ActionFrameIndex] : 0;
+			drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[14], 0,
+				kScene7040Chunk14ActionDescriptorCount, actionFrame, _sceneFramebuffer);
+		}
+		if (_chunk14AltVisible) {
+			const byte altFrame = _chunk14AltFrameIndex < ARRAYSIZE(kScene7040Chunk14AltFrameMap) ?
+				kScene7040Chunk14AltFrameMap[_chunk14AltFrameIndex] : 0;
+			if (_chunk14AltChunkIndex < HollywoodEngine::kResourceChunkCount) {
+				drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_chunk14AltChunkIndex], 0,
+					kScene7040Chunk14AltDescriptorCount, altFrame, _sceneFramebuffer);
+			}
+		}
+	}
+
+	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+
+	if (_actionOverlayVisible) {
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
+			_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
+	}
+
+	uint blockChunk = 5;
+	if (actorDrawOrderMode == 2 || actorDrawOrderMode == 3) {
+		blockChunk = activeWorldY <= 0x15f ? 6 : 0;
+	} else if (actorDrawOrderMode == 6) {
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _sceneFramebuffer);
+		blockChunk = _vm->gameState().officeNotePickupState == 1 ? 9 : 0;
+	}
+	if (blockChunk != 0)
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[blockChunk], _sceneFramebuffer);
 }
 
 bool Scene7040::hasCustomEntrySequence() const {
@@ -179,6 +358,213 @@ bool Scene7040::shouldStopJosephGuestListGreeting() {
 	return true;
 }
 
+bool Scene7040::prepareCustomGameplayLoop() {
+	_chunk12OverlayVisible = false;
+	_chunk14ActionVisible = false;
+	_chunk14AltVisible = false;
+	_chunk14AltChunkIndex = 14;
+	return true;
+}
+
+bool Scene7040::advanceCustomGameplayLoop(uint32 delta) {
+	if (_vm->gameState().reviewedFrankensteinNote)
+		advanceChunk16PostItemAnimation(delta);
+	else if (_primaryDialogueSpeechActive)
+		advancePrimaryDialogueSpeechFrame(delta);
+	else
+		advanceChunk11PreItemIdleAnimation(delta);
+
+	updateAmbientAudioAndMusicCues(delta);
+	return true;
+}
+
+bool Scene7040::customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) {
+	(void)restoredStepDeltas;
+	if (currentRegion == 3 && nextRegion == 3 && state.x < boundary.x && boundary.y <= state.y) {
+		requestedFacing = 1;
+		return true;
+	}
+	return false;
+}
+
+bool Scene7040::customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) {
+	(void)restoredStepDeltas;
+	if (currentRegion == 3 && targetRegion == 3 && state.x < targetX && targetY <= state.y) {
+		requestedFacing = 1;
+		return true;
+	}
+	return false;
+}
+
+bool Scene7040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
+	if (selector == 0 || selector == 0xff) {
+		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
+		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
+
+		for (uint i = 0; i < _fullPaletteRegionMask.size(); ++i) {
+			if (_paletteMaskOriginal[i] == 7)
+				_fullPaletteRegionMask[i] = _vm->gameState().reviewedFrankensteinNote ? 0 : 1;
+		}
+
+		if (_paletteMaskOriginal.size() >= kScene7040ColorToItemMapOffset + kScene7040ColorMapSize &&
+				_paletteMask.size() >= kScene7040ColorToItemMapOffset + kScene7040ColorMapSize) {
+			for (uint i = 0; i < kScene7040ColorMapSize; ++i) {
+				const byte originalItem = _paletteMaskOriginal[kScene7040ColorToItemMapOffset + i];
+				if (!_vm->gameState().reviewedFrankensteinNote) {
+					if (originalItem == 9)
+						_paletteMask[kScene7040ColorToItemMapOffset + i] = 2;
+					if (originalItem == 10)
+						_paletteMask[kScene7040ColorToItemMapOffset + i] = 0;
+				} else {
+					if (originalItem == 8)
+						_paletteMask[kScene7040ColorToItemMapOffset + i] = 0;
+					if (originalItem == 9 || originalItem == 10)
+						_paletteMask[kScene7040ColorToItemMapOffset + i] = 8;
+				}
+			}
+		}
+
+		if (_vm->gameState().reviewedFrankensteinNote) {
+			if (_metadata.size() >= kSceneItemInteractionPoints + 9 * 4 &&
+					_metadata.size() >= kSceneItemFacing + 3) {
+				const uint item2Interaction = kSceneItemInteractionPoints + 2 * 4;
+				_metadata[item2Interaction] = 0xf2;
+				_metadata[item2Interaction + 1] = 0;
+				_metadata[item2Interaction + 2] = 0x46;
+				_metadata[item2Interaction + 3] = 1;
+				const uint item8Interaction = kSceneItemInteractionPoints + 8 * 4;
+				_metadata[item8Interaction] = 0xf2;
+				_metadata[item8Interaction + 1] = 0;
+				_metadata[item8Interaction + 2] = 0x46;
+				_metadata[item8Interaction + 3] = 1;
+				_metadata[kSceneItemFacing + 2] = 1;
+			}
+		}
+
+		rebuildWalkablePaletteMask();
+		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	}
+
+	if (selector == 3 || selector == 0xff) {
+		if (!_baseFramebufferOriginal.empty())
+			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
+
+		if (_vm->gameState().officeNotePickupState == 1)
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[9], _baseFramebuffer);
+		else
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
+	}
+
+	return true;
+}
+
+byte Scene7040::primarySpeechAnimationBaseFrame(byte animationGroup) const {
+	switch (animationGroup) {
+	case 1:
+		return 0x12;
+	case 2:
+		return 0x1a;
+	case 3:
+		return 0x11;
+	case 4:
+		return 0x6b;
+	case 5:
+		return 0x14;
+	case 6:
+		return 0x1c;
+	default:
+		return 7;
+	}
+}
+
+void Scene7040::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
+	switch (animationGroup) {
+	case 3:
+	case 4:
+		_chunk14ActionVisible = true;
+		_chunk14ActionFrameIndex = frameIndex;
+		break;
+	case 5:
+	case 6:
+		_chunk14AltVisible = true;
+		_chunk14AltFrameIndex = frameIndex;
+		break;
+	default:
+		_chunk11FrameIndex = frameIndex;
+		break;
+	}
+}
+
+void Scene7040::advanceChunk11PreItemIdleAnimation(uint32 delta) {
+	_chunk11TimerAccumulator += delta;
+	while (_chunk11TimerAccumulator >= kScene7040Chunk11FrameMillis) {
+		_chunk11TimerAccumulator -= kScene7040Chunk11FrameMillis;
+		if (_preItemIdleState == 3)
+			continue;
+
+		if (_preItemIdleState == 0) {
+			if (_random.getRandomNumber(0x31) == 0) {
+				_preItemIdleState = 2;
+				_chunk11FrameIndex = 0;
+			} else if (_random.getRandomNumber(0x0e) == 0) {
+				_preItemIdleState = 1;
+				_chunk11FrameIndex = 1;
+			}
+		} else if (_preItemIdleState == 1) {
+			_chunk11FrameIndex = 0;
+			_preItemIdleState = 0;
+		} else if (_preItemIdleState == 2) {
+			if (_chunk11FrameIndex == 6) {
+				_chunk11FrameIndex = 0;
+				_preItemIdleState = 0;
+			} else {
+				++_chunk11FrameIndex;
+			}
+		}
+	}
+}
+
+void Scene7040::advanceChunk16PostItemAnimation(uint32 delta) {
+	_chunk16TimerAccumulator += delta;
+	while (_chunk16TimerAccumulator >= kScene7040Chunk16FrameMillis) {
+		_chunk16TimerAccumulator -= kScene7040Chunk16FrameMillis;
+		switch (_postItemIdleState) {
+		case 0:
+			++_chunk16FrameIndex;
+			if (_chunk16FrameIndex >= 5)
+				_postItemIdleState = 1;
+			break;
+		case 1:
+			++_chunk16FrameIndex;
+			if (_chunk16FrameIndex >= 0x1a)
+				_postItemIdleState = 2;
+			break;
+		case 2:
+			++_chunk16FrameIndex;
+			if (_chunk16FrameIndex >= 0x1e)
+				_postItemIdleState = 3;
+			break;
+		default:
+			if (_random.getRandomNumber(0x0e) == 0)
+				_chunk16FrameIndex = 0x22;
+			else
+				_chunk16FrameIndex = 0x1e;
+			break;
+		}
+		if (_chunk16FrameIndex >= ARRAYSIZE(kScene7040Chunk16PostItemFrameMap))
+			_chunk16FrameIndex = 1;
+	}
+
+	_chunk17TimerAccumulator += delta;
+	while (_chunk17TimerAccumulator >= kScene7040Chunk17FrameMillis) {
+		_chunk17TimerAccumulator -= kScene7040Chunk17FrameMillis;
+		if (_postItemIdleState > 1 || _chunk17FrameIndex != 0)
+			_chunk17FrameIndex = _chunk17FrameIndex == 8 ? 0 : (byte)(_chunk17FrameIndex + 1);
+	}
+}
+
 bool Scene7040::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 301: // Ir a terraza (go to terrace)
@@ -228,6 +614,403 @@ bool Scene7040::dispatchCustomSceneAction(uint16 handlerId) {
 		return true;
 	default:
 		return false;
+	}
+}
+
+void Scene7040::handleActionSlot00ReturnToG03() {
+	_vm->gameState().mainFlowStateId = kScene7040ReturnState7031;
+}
+
+void Scene7040::handleActionSlot01ProgressSpeech() {
+	beginSecondarySpeechLine(1, _vm->gameState().officeStatueActionProgress == 0 ? 0 : 1);
+}
+
+void Scene7040::handleActionSlot02MajorHotspotAction() {
+	GameplayState &state = _vm->gameState();
+	if (state.reviewedFrankensteinNote) {
+		beginSecondarySpeechLine(3, 0x0b);
+		return;
+	}
+
+	_chunk12OverlayVisible = true;
+	if (state.officeStatueActionProgress == 2) {
+		runMappedActionOverlayRange(13, kScene7040Chunk13DescriptorCount, kScene7040MajorHotspotFrameMap,
+			ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis, 0, 0x2d, -1, false);
+		_soundBank0.playSample(0x15, 100);
+		runMajorHotspotFrankensteinBranch();
+		_chunk12OverlayVisible = true;
+		runMappedActionOverlayRange(13, kScene7040Chunk13DescriptorCount, kScene7040MajorHotspotFrameMap,
+			ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis, 0x35,
+			ARRAYSIZE(kScene7040MajorHotspotFrameMap), -1, false);
+	} else {
+		runMappedActionOverlay(13, kScene7040Chunk13DescriptorCount, kScene7040MajorHotspotFrameMap,
+			ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis, 0x2c, false);
+	}
+	_chunk12OverlayVisible = false;
+
+	walkActiveActorTo(0x10d, 0x124, state.officeStatueActionProgress == 2 ? 4 : 5, 0);
+	switch (state.officeStatueActionProgress) {
+	case 0:
+		beginSecondarySpeechLine(2, 0);
+		state.officeStatueActionProgress = 1;
+		break;
+	case 1:
+		beginSecondarySpeechLine(2, 1);
+		state.officeStatueActionProgress = 2;
+		break;
+	case 2:
+		beginSecondarySpeechLine(3, 10);
+		state.officeStatueActionProgress = 3;
+		state.frankensteinNoteOverlayMode = 1;
+		break;
+	default:
+		beginSecondarySpeechLine(2, 2);
+		break;
+	}
+}
+
+void Scene7040::handleActionSlot03TransitionToState7060() {
+	_vm->gameState().mainFlowStateId = kScene7040ExitState7060;
+}
+
+void Scene7040::handleActionSlot05ExitProgressSpeech() {
+	beginSecondarySpeechLine(5, _vm->gameState().openedOfficeClosetDoor ? 1 : 0);
+}
+
+void Scene7040::handleActionSlot06TransitionToG05() {
+	runMappedActionOverlay(10, kScene7040Chunk10DescriptorCount, kScene7040Chunk10ExitFrameMap,
+		ARRAYSIZE(kScene7040Chunk10ExitFrameMap), kScene7040Chunk14FrameMillis, -1, false);
+	_vm->gameState().openedOfficeClosetDoor = true;
+	_soundBank0.playSample(3, 100);
+	_vm->gameState().mainFlowStateId = kScene7040ExitState7050;
+}
+
+void Scene7040::handleActionSlot09PickupItem0FThenExit() {
+	GameplayState &state = _vm->gameState();
+	if (state.officeStatueActionProgress <= 2 || state.officeNotePickupState == 2) {
+		beginSecondarySpeechLine(9, 0);
+		return;
+	}
+	if (!state.reviewedFrankensteinNote) {
+		beginSecondarySpeechLine(8, 0);
+		return;
+	}
+
+	beginSecondarySpeechLine(8, 1);
+	runMappedActionOverlay(18, kScene7040Chunk18DescriptorCount, kScene7040Chunk18PickupItem0FFrameMap,
+		ARRAYSIZE(kScene7040Chunk18PickupItem0FFrameMap), kScene7040Chunk14FrameMillis, -1, false);
+	addInventoryItem(0x0f);
+	_soundBank0.playSample(1, 100);
+	state.officeNotePickupState = 2;
+	beginSecondarySpeechLine(8, 2);
+	walkActiveActorTo(600, 0x132, kScene7040InvalidFacing, 0);
+	handleActionSlot06TransitionToG05();
+}
+
+void Scene7040::handleActionSlot10CommonSpeech() {
+	beginSecondarySpeechLine(9, 0);
+}
+
+void Scene7040::handleActionHandler312ProgressSpeech() {
+	GameplayState &state = _vm->gameState();
+	if (state.officeStatueActionProgress == 3)
+		beginSecondarySpeechLine(10, state.officeNotePickupState >= 2 ? 1 : 0);
+	else
+		beginStaticSecondarySpeechLine(0x2d, 0);
+}
+
+void Scene7040::handleActionHandler313ConversationGate() {
+	if (_vm->gameState().reviewedFrankensteinNote) {
+		beginSecondarySpeechLine(11, 2);
+		return;
+	}
+	runDialogueMenuRow98();
+}
+
+void Scene7040::handleActionHandler314FrankensteinNoteSpeech() {
+	beginSecondarySpeechLine(11, _vm->gameState().reviewedFrankensteinNote ? 1 : 0);
+}
+
+void Scene7040::handleActionHandler315PickupItem0C() {
+	if (hasInventoryItem(0x0c))
+		return;
+
+	addInventoryItem(0x0c);
+	_soundBank0.playSample(1, 100);
+}
+
+void Scene7040::runDialogueMenuRow98() {
+	Common::Array<DialogueChoiceRecord> records;
+	initializeDialogueRecords(records);
+
+	byte depthIndex = 0;
+	byte nodeIndex = 0;
+	bool finished = false;
+
+	beginSecondarySpeechLine(kScene7040DialogueStageId, 0);
+	_preItemIdleState = 3;
+	_chunk11FrameIndex = 7;
+	beginPrimarySpeechLine(kScene7040DialoguePrimaryRow, 0, kScene7040DialoguePrimaryCenterX,
+		kScene7040DialoguePrimaryTopY, kScene7040DialoguePrimaryRed, kScene7040DialoguePrimaryGreen,
+		kScene7040DialoguePrimaryBlue);
+
+	while (!finished && !Engine::shouldQuit()) {
+		DialogueMenu menu(_vm, this);
+		const byte selectedChoice = menu.choose(kScene7040DialogueStageId, records, depthIndex, nodeIndex);
+		if (selectedChoice == DialogueMenu::kCancelledChoice) {
+			beginSecondarySpeechLine(kScene7040DialogueStageId, 5);
+			beginPrimarySpeechLine(kScene7040DialoguePrimaryRow, 5, kScene7040DialoguePrimaryCenterX,
+				kScene7040DialoguePrimaryTopY, kScene7040DialoguePrimaryRed, kScene7040DialoguePrimaryGreen,
+				kScene7040DialoguePrimaryBlue);
+			_chunk11FrameIndex = 0;
+			_preItemIdleState = 0;
+			return;
+		}
+
+		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
+		if (recordIndex >= records.size())
+			break;
+
+		DialogueChoiceRecord &record = records[recordIndex];
+		beginSecondarySpeechLine(kScene7040DialogueStageId, record.playerTextRowId);
+		if (record.responseFrameIndex != 0 && record.responseFrameIndex != 0xff) {
+			beginPrimarySpeechLine(kScene7040DialoguePrimaryRow, record.responseFrameIndex,
+				kScene7040DialoguePrimaryCenterX, kScene7040DialoguePrimaryTopY, kScene7040DialoguePrimaryRed,
+				kScene7040DialoguePrimaryGreen, kScene7040DialoguePrimaryBlue);
+		}
+
+		if (record.disableAfterUse == 1)
+			record.enabled = 0;
+
+		const byte previousDepth = depthIndex;
+		switch (record.transitionMode) {
+		case 0:
+			finished = true;
+			break;
+		case 1:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth + 1;
+			break;
+		case 2:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth - 1;
+			break;
+		case 4:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth - 2;
+			break;
+		default:
+			break;
+		}
+	}
+
+	_chunk11FrameIndex = 0;
+	_preItemIdleState = 0;
+}
+
+void Scene7040::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
+	records.clear();
+	records.resize(kScene7040DialogueChoiceRecordCount);
+
+	records[0].transitionMode = 3;
+	records[0].playerTextRowId = 1;
+	records[0].responseFrameIndex = 1;
+	records[0].disableAfterUse = 1;
+	records[0].reserved = 0xff;
+
+	records[1].transitionMode = 3;
+	records[1].playerTextRowId = 2;
+	records[1].responseFrameIndex = 2;
+	records[1].disableAfterUse = 1;
+	records[1].reserved = 0xff;
+
+	records[2].enabled = 1;
+	records[2].transitionMode = 3;
+	records[2].playerTextRowId = 3;
+	records[2].responseFrameIndex = 3;
+	records[2].disableAfterUse = 1;
+	records[2].reserved = 0xff;
+
+	records[3].transitionMode = 3;
+	records[3].playerTextRowId = 4;
+	records[3].responseFrameIndex = 4;
+	records[3].disableAfterUse = 1;
+	records[3].reserved = 0xff;
+
+	records[4].enabled = 1;
+	records[4].transitionMode = 0;
+	records[4].playerTextRowId = 5;
+	records[4].responseFrameIndex = 5;
+	records[4].reserved = 0xff;
+
+	const GameplayState &state = _vm->gameState();
+	if (state.officeStatueActionProgress != 0)
+		records[0].enabled = 1;
+	if (state.officeStatueActionProgress == 3) {
+		if (!state.hasInventoryItem(state.currentInventoryOwnerIndex, 6))
+			records[1].enabled = 1;
+		if (state.officeNotePickupState != 2)
+			records[3].enabled = 1;
+	}
+}
+
+void Scene7040::runMajorHotspotFrankensteinBranch() {
+	const bool previousHideActiveActor = _hideActiveActor;
+	const byte previousPreItemIdleState = _preItemIdleState;
+	const byte previousAltChunkIndex = _chunk14AltChunkIndex;
+	_hideActiveActor = true;
+	_preItemIdleState = 3;
+	_chunk12OverlayVisible = true;
+	_chunk12FrameIndex = 0;
+	_chunk14ActionVisible = true;
+	_chunk14AltVisible = false;
+
+	runChunk14ActionRange(0, 0x10);
+	beginPrimarySpeechLineWithAnimationGroup(3, 0, 0x154, 0x5f, 0x20, 0, 0x3f, 3);
+	beginPrimarySpeechLineWithAnimationGroup(3, 1, 0x1c2, 0x73, 0x3f, 0x32, 0x0c, 0);
+	runChunk14ActionRange(0x15, 0x61);
+	_vm->gameState().officeNotePickupState = 1;
+	applySceneStateToHotspotsAndPatches(3);
+	runChunk14ActionRange(0x61, 0x6b);
+	beginPrimarySpeechLineWithAnimationGroup(3, 2, 0x16d, 0x69, 0x20, 0, 0x3f, 4);
+	runChunk14ActionRange(0x6f, 0x7c);
+	_chunk14ActionVisible = false;
+	_chunk12OverlayVisible = false;
+	_chunk12FrameIndex = 0;
+
+	_chunk14AltChunkIndex = 15;
+	runChunk11Range(0x0b, 0x12);
+	beginPrimarySpeechLineWithAnimationGroup(3, 3, 0x1a9, 0x82, 0x3f, 0x32, 0x0c, 1);
+	_chunk14AltVisible = true;
+	runChunk14AltRange(15, 0, 0x14);
+	beginPrimarySpeechLineWithAnimationGroup(3, 4, 0x136, 0x6e, 0x0a, 0x3f, 0, 5);
+	runChunk11Range(0x16, 0x1a);
+	beginPrimarySpeechLineWithAnimationGroup(3, 5, 0x1a9, 0x82, 0x3f, 0x32, 0x0c, 2);
+	runChunk11Range(0x1e, 0x21);
+	runChunk14AltRange(15, 0x18, 0x1c);
+	beginPrimarySpeechLineWithAnimationGroup(3, 6, 0x14f, 0x73, 0x0a, 0x3f, 0, 6);
+	runChunk14AltRange(15, 0x20, 0x25);
+	beginPrimarySpeechLineWithAnimationGroup(3, 7, 0x1c2, 0x73, 0x3f, 0x32, 0x0c, 0);
+	runChunk14AltRange(15, 0x18, 0x1c);
+	beginPrimarySpeechLineWithAnimationGroup(3, 8, 0x14f, 0x73, 0x0a, 0x3f, 0, 6);
+	runChunk14AltRange(15, 0x25, 0x3f);
+	_chunk14AltVisible = false;
+	_chunk14AltChunkIndex = previousAltChunkIndex;
+	beginPrimarySpeechLineWithAnimationGroup(3, 9, 0x1c2, 0x73, 0x3f, 0x32, 0x0c, 0);
+
+	_chunk11FrameIndex = 0;
+	_chunk14ActionVisible = false;
+	_chunk14AltVisible = false;
+	_chunk12OverlayVisible = false;
+	_preItemIdleState = previousPreItemIdleState;
+	_hideActiveActor = previousHideActiveActor;
+}
+
+void Scene7040::runChunk11Range(byte firstFrame, byte endFrame) {
+	const byte previousPreItemIdleState = _preItemIdleState;
+	_preItemIdleState = 3;
+	for (uint frame = firstFrame; frame < endFrame && !Engine::shouldQuit(); ++frame) {
+		_chunk11FrameIndex = (byte)MIN<uint>(frame + 1, ARRAYSIZE(kScene7040Chunk11FrameMap) - 1);
+		if (waitSceneMillis(kScene7040Chunk11FrameMillis))
+			break;
+	}
+	_preItemIdleState = previousPreItemIdleState;
+}
+
+void Scene7040::runChunk14ActionRange(byte firstFrame, byte endFrame) {
+	_chunk14ActionVisible = true;
+	for (uint frame = firstFrame; frame < endFrame && !Engine::shouldQuit(); ++frame) {
+		applyChunk14ActionSideEffects((byte)frame);
+		_chunk14ActionFrameIndex = (byte)MIN<uint>(frame + 1, ARRAYSIZE(kScene7040Chunk14ActionFrameMap) - 1);
+		if (waitSceneMillis(kScene7040Chunk14FrameMillis))
+			break;
+	}
+}
+
+void Scene7040::runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame) {
+	_chunk14AltVisible = true;
+	_chunk14AltChunkIndex = (byte)chunkIndex;
+	for (uint frame = firstFrame; frame < endFrame && !Engine::shouldQuit(); ++frame) {
+		applyChunk14AltSideEffects((byte)frame);
+		_chunk14AltFrameIndex = (byte)MIN<uint>(frame + 1, ARRAYSIZE(kScene7040Chunk14AltFrameMap) - 1);
+		if (waitSceneMillis(kScene7040Chunk14FrameMillis))
+			break;
+	}
+}
+
+void Scene7040::applyChunk14ActionSideEffects(byte frameIndex) {
+	switch (frameIndex) {
+	case 0:
+		_soundBank0.playSample(3, 100);
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 1;
+		break;
+	case 1:
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 2;
+		break;
+	case 8:
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 1;
+		break;
+	case 9:
+		_soundBank0.playSample(4, 100);
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 0;
+		break;
+	case 0x0a:
+		_chunk12OverlayVisible = false;
+		break;
+	case 0x22:
+		_soundBank0.playSample(0x16, 50);
+		break;
+	case 0x6a:
+		_soundBank0.stop();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene7040::applyChunk14AltSideEffects(byte frameIndex) {
+	switch (frameIndex) {
+	case 0x2b:
+		_soundBank0.playSample(0x17, 50);
+		_vm->gameState().officeNotePickupState = 0;
+		applySceneStateToHotspotsAndPatches(3);
+		break;
+	case 0x37:
+		_soundBank0.playSample(3, 100);
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 1;
+		break;
+	case 0x38:
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 2;
+		break;
+	case 0x3d:
+		_soundBank0.playSample(3, 100);
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 1;
+		break;
+	case 0x3e:
+		_soundBank0.playSample(4, 100);
+		_chunk12OverlayVisible = true;
+		_chunk12FrameIndex = 0;
+		break;
+	case 0x3f:
+		_chunk12OverlayVisible = false;
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene7040::runExitSideEffectsAfterLoop() {
+	GameplayState &state = _vm->gameState();
+	if (state.mainFlowStateId == kScene7040ExitState7050 &&
+			state.reviewedFrankensteinNote && state.officeNotePickupState == 2) {
+		state.reviewedFrankensteinNote = false;
 	}
 }
 

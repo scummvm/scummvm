@@ -40,18 +40,72 @@ private:
 	uint sceneStageIndex() const override;
 	const char *sceneDebugName() const override;
 	uint16 sceneViewportXOffset() const override;
-	bool shouldLoadPaletteAfterFrankensteinNote() const override;
+	int alternatePaletteResourceChunkIndex() const override;
+	bool isAlternatePaletteResourceActive() const override;
 	bool shouldConvertSavedFramebufferFF() const override;
 	bool shouldRunExitSideEffectsAfterLoop() const override;
-	bool usesG04PathRouteSpecialCase() const override;
+	void runExitSideEffectsAfterLoop() override;
 	bool isMainFlowStateInScene(uint16 stateId) const override;
+	bool hasCustomPreviewState() const override;
+	void initializeCustomPreviewState() override;
+	bool hasCustomComposite() const override;
+	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
+		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+		byte actorDrawOrderMode) override;
 	bool hasCustomEntrySequence() const override;
 	void runCustomEntrySequence() override;
+	bool prepareCustomGameplayLoop() override;
+	bool advanceCustomGameplayLoop(uint32 delta) override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 
 	void runJosephGuestListGreeting();
 	void waitPreItemIdleSequence();
 	bool shouldStopJosephGuestListGreeting();
+	void advanceChunk11PreItemIdleAnimation(uint32 delta);
+	void advanceChunk16PostItemAnimation(uint32 delta);
+	void handleActionSlot00ReturnToG03();
+	void handleActionSlot01ProgressSpeech();
+	void handleActionSlot02MajorHotspotAction();
+	void handleActionSlot03TransitionToState7060();
+	void handleActionSlot05ExitProgressSpeech();
+	void handleActionSlot06TransitionToG05();
+	void handleActionSlot09PickupItem0FThenExit();
+	void handleActionSlot10CommonSpeech();
+	void handleActionHandler312ProgressSpeech();
+	void handleActionHandler313ConversationGate();
+	void handleActionHandler314FrankensteinNoteSpeech();
+	void handleActionHandler315PickupItem0C();
+	void runDialogueMenuRow98();
+	void initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
+	void runMajorHotspotFrankensteinBranch();
+	void runChunk11Range(byte firstFrame, byte endFrame);
+	void runChunk14ActionRange(byte firstFrame, byte endFrame);
+	void runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame);
+	void applyChunk14ActionSideEffects(byte frameIndex);
+	void applyChunk14AltSideEffects(byte frameIndex);
+
+	byte _chunk11FrameIndex;
+	byte _chunk12FrameIndex;
+	byte _chunk14ActionFrameIndex;
+	byte _chunk14AltFrameIndex;
+	byte _chunk14AltChunkIndex;
+	byte _chunk16FrameIndex;
+	byte _chunk17FrameIndex;
+	byte _preItemIdleState;
+	byte _postItemIdleState;
+	bool _chunk12OverlayVisible;
+	bool _chunk14ActionVisible;
+	bool _chunk14AltVisible;
+	uint32 _chunk11TimerAccumulator;
+	uint32 _chunk16TimerAccumulator;
+	uint32 _chunk17TimerAccumulator;
 };
 
 } // End of namespace Hollywood
