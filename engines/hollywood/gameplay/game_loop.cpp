@@ -330,6 +330,7 @@ void GameplayLoop::handleLeftClick() {
 				closeInventoryPanel();
 				if (!dispatchInventoryRelationAction(_vm, _delegate, state))
 					_delegate->handleInventoryItemClick(state);
+				clearButtonLatches();
 				_relationMode = 0;
 				_primaryInventoryItem = 0;
 				_currentStrip = kGameplayDefaultStrip;
@@ -369,6 +370,7 @@ void GameplayLoop::handleLeftClick() {
 			closeInventoryPanel();
 			if (!dispatchInventoryFixedAction(_vm, _delegate, state))
 				_delegate->handleInventoryItemClick(state);
+			clearButtonLatches();
 			_relationMode = 0;
 			_primaryInventoryItem = 0;
 			_currentStrip = kGameplayDefaultStrip;
@@ -389,6 +391,7 @@ void GameplayLoop::handleLeftClick() {
 		return;
 
 	_delegate->handleLeftClick(makeCursorState());
+	clearButtonLatches();
 	_relationMode = 0;
 	_primaryInventoryItem = 0;
 	_currentStrip = kGameplayDefaultStrip;
@@ -815,6 +818,11 @@ GameplayLoopCursorState GameplayLoop::makeInventoryItemState(byte owner, byte it
 	state.inventoryActionHandlerId = actionHandlerId;
 	state.inventoryItemSelected = true;
 	return state;
+}
+
+void GameplayLoop::clearButtonLatches() {
+	_leftButtonDown = false;
+	_rightButtonDown = false;
 }
 
 void GameplayLoop::syncHoverCaptionRelationContext() {

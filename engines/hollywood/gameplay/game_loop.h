@@ -133,6 +133,7 @@ private:
 	void syncPanelState();
 	GameplayLoopCursorState makeCursorState() const;
 	GameplayLoopCursorState makeInventoryItemState(byte owner, byte itemId, uint16 actionHandlerId) const;
+	void clearButtonLatches();
 	void syncHoverCaptionRelationContext();
 	void refreshHoverCaption();
 

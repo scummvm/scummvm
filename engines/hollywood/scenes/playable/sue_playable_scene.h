@@ -229,7 +229,7 @@ protected:
 	SceneVerbActionRecord relationActionRecord(byte inventoryItemId, byte sceneItemId, byte relationMode) const;
 	void dispatchSceneAction(uint16 handlerId);
 	bool dispatchGenericSceneAction(uint16 handlerId);
-	void walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel);
+	bool walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel, bool cancelOnSkip = false);
 	void adjustWalkTargetToFloorMask(int &targetX, int &targetY) const;
 	void queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
 		byte finalFacing, byte finalCel);
