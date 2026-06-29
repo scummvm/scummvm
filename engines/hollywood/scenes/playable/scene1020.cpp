@@ -57,11 +57,12 @@ const byte kScene1020RightEntryFacing = 2;
 const int kScene1020OverlayEntryX = 0x18d;
 const int kScene1020OverlayEntryY = 0x155;
 const byte kScene1020OverlayEntryFacing = 5;
-const uint32 kScene1020AmbientCheckMillis = 250;
 const byte kScene1020FirstAmbientSoundCue = 0x25;
 const byte kScene1020AmbientSoundCueCount = 7;
 const byte kScene1020FirstAmbientMusicCue = 0x0b;
 const byte kScene1020AmbientMusicCueCount = 5;
+const byte kScene1020AmbientSoundProbabilityModulus = 25;
+const byte kScene1020AmbientMusicProbabilityModulus = 50;
 const uint32 kScene1020OverlayFrameMillis = 75;
 const uint kScene1020ActionChunk14DescriptorCount = 6;
 const uint kScene1020ActionChunk15DescriptorCount = 0x15;
@@ -139,10 +140,7 @@ const byte kScene1020Chunk22PickupFrameMap[] = {
 
 Scene1020::Scene1020(HollywoodEngine *vm) :
 		PlayableScene(vm, "scene1020", kScene1020DefaultActorX, kScene1020DefaultActorY,
-			kScene1020DefaultActorFacing, 0xfd, 0xfb),
-		_ambientTimerAccumulator(0),
-		_currentAmbientSoundCueId(0),
-		_previousAmbientSoundCueId(0) {
+			kScene1020DefaultActorFacing, 0xfd, 0xfb) {
 }
 
 const char *Scene1020::resourceArchiveName() const {
@@ -298,12 +296,11 @@ void Scene1020::runCustomEntrySequence() {
 }
 
 bool Scene1020::prepareCustomGameplayLoop() {
-	_ambientTimerAccumulator = 0;
 	return true;
 }
 
 bool Scene1020::advanceCustomGameplayLoop(uint32 delta) {
-	updateSceneAmbientAudioAndMusicCues(delta);
+	updateAmbientAudioAndMusicCues(delta);
 	return true;
 }
 
@@ -736,30 +733,11 @@ void Scene1020::handleResourceOverlayChunk19EventFlag() {
 	state.scene1020EventFlag2 = true;
 }
 
-void Scene1020::updateSceneAmbientAudioAndMusicCues(uint32 delta) {
-	_ambientTimerAccumulator += delta;
-	if (_ambientTimerAccumulator < kScene1020AmbientCheckMillis)
-		return;
-	_ambientTimerAccumulator %= kScene1020AmbientCheckMillis;
-
-	if (!_ambientSoundBank0.isPlaying() && _random.getRandomNumber(24) == 0) {
-		_previousAmbientSoundCueId = _currentAmbientSoundCueId;
-		do {
-			_currentAmbientSoundCueId = (byte)(kScene1020FirstAmbientSoundCue +
-				_random.getRandomNumber(kScene1020AmbientSoundCueCount - 1));
-		} while (_currentAmbientSoundCueId == _previousAmbientSoundCueId);
-		_ambientSoundBank0.playSample(_currentAmbientSoundCueId, 15);
-	}
-
-	if (!_vm->gameplayMusic()->isPlaying() && _random.getRandomNumber(49) == 0) {
-		GameplayState &state = _vm->gameState();
-		_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
-		do {
-			state.currentAmbientMusicCueId = (byte)(kScene1020FirstAmbientMusicCue +
-				_random.getRandomNumber(kScene1020AmbientMusicCueCount - 1));
-		} while (state.currentAmbientMusicCueId == _previousAmbientMusicTrackId);
-		_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 100);
-	}
+PlayableScene::AmbientAudioProfile Scene1020::ambientAudioProfile() const {
+	return createRandomAmbientAudioProfile(kScene1020FirstAmbientSoundCue,
+		kScene1020AmbientSoundCueCount, 15, kScene1020AmbientSoundProbabilityModulus,
+		kScene1020FirstAmbientMusicCue, kScene1020AmbientMusicCueCount, 100,
+		kScene1020AmbientMusicProbabilityModulus);
 }
 
 bool Scene1020::isFirstEntryState() const {

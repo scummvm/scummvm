@@ -46,6 +46,9 @@ const char *const kTravelScreenArchiveName = "RESOURCE.I04";
 const char *const kDefaultGameplayMusicArchiveName = "RESOURCE.M07";
 const char *const kDefaultGameplaySoundBank0ArchiveName = "RESOURCE.S07";
 const byte kAmbientMusicCueStillFrame = 0x0f;
+const byte kAmbientMusicCueFirstRandomTrack = 0x0c;
+const byte kAmbientMusicCueRandomTrackCount = 3;
+const byte kAmbientLoopingSoundCue = 0x0b;
 const byte kDefaultSecondarySpeechTextColor = 0xfd;
 const byte kDefaultPrimarySpeechTextColor = 0xfb;
 const byte kPanelDarkColor = 0xe7;
@@ -116,6 +119,8 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int de
 		_primaryLeftSpeechTimerAccumulator(0),
 		_primaryDialogueSpeechTimerAccumulator(0),
 		_previousAmbientMusicTrackId(0),
+		_currentAmbientSoundCueId(0),
+		_previousAmbientSoundCueId(0),
 		_viewportXOffset(0),
 		_viewportMinXOffset(0),
 		_viewportMaxXOffset(0),
@@ -428,6 +433,42 @@ bool PlayableScene::customizeRouteFinal(byte currentRegion, byte targetRegion, c
 bool PlayableScene::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	(void)selector;
 	return false;
+}
+
+PlayableScene::AmbientAudioProfile PlayableScene::ambientAudioProfile() const {
+	return createLoopingAmbientAudioProfile(100);
+}
+
+PlayableScene::AmbientAudioProfile PlayableScene::createLoopingAmbientAudioProfile(byte volumePercent) const {
+	AmbientAudioProfile profile;
+	profile.checkMillis = kAmbientMusicCheckMillis;
+	profile.soundMode = kAmbientSoundLoop;
+	profile.soundCueId = kAmbientLoopingSoundCue;
+	profile.soundVolumePercent = volumePercent;
+	profile.musicMode = kAmbientMusicLoopRotation;
+	profile.musicStillCueId = kAmbientMusicCueStillFrame;
+	profile.musicFirstCueId = kAmbientMusicCueFirstRandomTrack;
+	profile.musicCueCount = kAmbientMusicCueRandomTrackCount;
+	profile.musicVolumePercent = volumePercent;
+	return profile;
+}
+
+PlayableScene::AmbientAudioProfile PlayableScene::createRandomAmbientAudioProfile(byte soundFirstCueId, byte soundCueCount,
+		byte soundVolumePercent, byte soundProbabilityModulus, byte musicFirstCueId,
+		byte musicCueCount, byte musicVolumePercent, byte musicProbabilityModulus) const {
+	AmbientAudioProfile profile;
+	profile.checkMillis = kAmbientMusicCheckMillis;
+	profile.soundMode = kAmbientSoundRandomRange;
+	profile.soundFirstCueId = soundFirstCueId;
+	profile.soundCueCount = soundCueCount;
+	profile.soundProbabilityModulus = soundProbabilityModulus;
+	profile.soundVolumePercent = soundVolumePercent;
+	profile.musicMode = kAmbientMusicRandomRange;
+	profile.musicFirstCueId = musicFirstCueId;
+	profile.musicCueCount = musicCueCount;
+	profile.musicProbabilityModulus = musicProbabilityModulus;
+	profile.musicVolumePercent = musicVolumePercent;
+	return profile;
 }
 
 bool PlayableScene::shouldAnimatePrimarySpeechLine() const {
@@ -1008,11 +1049,10 @@ void PlayableScene::initializeDefaultPreviewState() {
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
 	_primaryDialogueSpeechGroup = kInvalidPrimarySpeechAnimationGroup;
-	_ambientMusicTimerAccumulator = 0;
+	resetAmbientAudioState();
 	_secondaryActorTimerAccumulator = 0;
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
-	_previousAmbientMusicTrackId = 0;
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_secondaryActorFrame = 0;
@@ -1204,6 +1244,7 @@ void PlayableScene::prepareGameplayLoop() {
 	_secondaryActorFrame = 0;
 	_actionOverlayVisible = false;
 	_hideActiveActor = false;
+	resetAmbientAudioState();
 	prepareCustomGameplayLoop();
 	restoreActiveActorPoseFromGameState();
 	syncActiveActorPoseToGameState();
@@ -2261,33 +2302,92 @@ void PlayableScene::advanceViewportScroll(uint32 delta) {
 }
 
 void PlayableScene::updateAmbientAudioAndMusicCues(uint32 delta) {
-	_ambientMusicTimerAccumulator += delta;
-	if (_ambientMusicTimerAccumulator < kAmbientMusicCheckMillis)
+	const AmbientAudioProfile profile = ambientAudioProfile();
+	if (profile.checkMillis == 0)
 		return;
-	_ambientMusicTimerAccumulator %= kAmbientMusicCheckMillis;
 
-	if (!_ambientSoundBank0.isPlaying())
-		_ambientSoundBank0.playSample(0x0b, 100);
+	_ambientMusicTimerAccumulator += delta;
+	if (_ambientMusicTimerAccumulator < profile.checkMillis)
+		return;
+	_ambientMusicTimerAccumulator %= profile.checkMillis;
 
+	updateAmbientSoundCue(profile);
+	updateAmbientMusicCue(profile);
+}
+
+void PlayableScene::resetAmbientAudioState() {
+	_ambientMusicTimerAccumulator = 0;
+	_previousAmbientMusicTrackId = 0;
+	_currentAmbientSoundCueId = 0;
+	_previousAmbientSoundCueId = 0;
+}
+
+void PlayableScene::updateAmbientSoundCue(const AmbientAudioProfile &profile) {
+	if (_ambientSoundBank0.isPlaying())
+		return;
+
+	if (profile.soundMode == kAmbientSoundLoop) {
+		_ambientSoundBank0.playSample(profile.soundCueId, profile.soundVolumePercent);
+		return;
+	}
+
+	if (profile.soundMode != kAmbientSoundRandomRange ||
+			profile.soundCueCount == 0 || profile.soundProbabilityModulus == 0)
+		return;
+
+	if (_random.getRandomNumber(profile.soundProbabilityModulus - 1) != 0)
+		return;
+
+	_previousAmbientSoundCueId = _currentAmbientSoundCueId;
+	do {
+		_currentAmbientSoundCueId = (byte)(profile.soundFirstCueId +
+			_random.getRandomNumber(profile.soundCueCount - 1));
+	} while (profile.soundCueCount > 1 && _currentAmbientSoundCueId == _previousAmbientSoundCueId);
+	_ambientSoundBank0.playSample(_currentAmbientSoundCueId, profile.soundVolumePercent);
+}
+
+void PlayableScene::updateAmbientMusicCue(const AmbientAudioProfile &profile) {
 	if (_vm->gameplayMusic()->isPlaying())
 		return;
 
 	GameplayState &state = _vm->gameState();
-	if (state.currentAmbientMusicCueId != kAmbientMusicCueStillFrame) {
+	if (profile.musicMode == kAmbientMusicLoopRotation) {
+		if (state.currentAmbientMusicCueId != profile.musicStillCueId) {
+			_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
+			state.currentAmbientMusicCueId = profile.musicStillCueId;
+			_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, profile.musicVolumePercent);
+			return;
+		}
+
+		if (profile.musicCueCount == 0)
+			return;
+
+		byte nextTrack = 0;
+		do {
+			nextTrack = (byte)(profile.musicFirstCueId + _random.getRandomNumber(profile.musicCueCount - 1));
+		} while (profile.musicCueCount > 1 && nextTrack == _previousAmbientMusicTrackId);
+
 		_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
-		state.currentAmbientMusicCueId = kAmbientMusicCueStillFrame;
-		_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 100);
+		state.currentAmbientMusicCueId = nextTrack;
+		_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, profile.musicVolumePercent);
 		return;
 	}
 
-	byte nextTrack = 0;
-	do {
-		nextTrack = (byte)(0x0c + _random.getRandomNumber(2));
-	} while (nextTrack == _previousAmbientMusicTrackId);
+	if (profile.musicMode != kAmbientMusicRandomRange ||
+			profile.musicCueCount == 0 || profile.musicProbabilityModulus == 0)
+		return;
 
+	if (_random.getRandomNumber(profile.musicProbabilityModulus - 1) != 0)
+		return;
+
+	byte nextTrack = 0;
+	_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
+	do {
+		nextTrack = (byte)(profile.musicFirstCueId + _random.getRandomNumber(profile.musicCueCount - 1));
+	} while (profile.musicCueCount > 1 && nextTrack == _previousAmbientMusicTrackId);
 	_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
 	state.currentAmbientMusicCueId = nextTrack;
-	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 100);
+	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, profile.musicVolumePercent);
 }
 
 void PlayableScene::advanceSecondaryActorSpeechAnimation(uint32 delta) {

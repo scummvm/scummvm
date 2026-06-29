@@ -44,7 +44,6 @@ const byte kScene7080EntryFacing = 2;
 const uint16 kScene7080Chunk6DescriptorCount = 4;
 const uint16 kScene7080Chunk7DescriptorCount = 0x0b;
 const uint32 kScene7080FrameMillis = 75;
-const uint32 kScene7080AmbientCheckMillis = 250;
 const byte kScene7080TableItemColorId = 6;
 const byte kScene7080PostPickupTableItemId = 4;
 const byte kScene7080BackToG07FrameMap[] = {
@@ -56,8 +55,7 @@ const byte kScene7080PickupItem13FrameMap[] = {
 
 Scene7080::Scene7080(HollywoodEngine *vm) :
 		PlayableScene(vm, "scene7080", kScene7080EntryX, kScene7080EntryY,
-			kScene7080EntryFacing, 0xfd, 0xfb),
-		_ambientTimerAccumulator(0) {
+			kScene7080EntryFacing, 0xfd, 0xfb) {
 }
 
 const char *Scene7080::resourceArchiveName() const {
@@ -107,7 +105,6 @@ void Scene7080::initializeCustomPreviewState() {
 	_primaryDialogueSpeechGroup = 0xff;
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
-	_ambientTimerAccumulator = 0;
 	_previousAmbientMusicTrackId = 0;
 	_activeActorWorldX = kScene7080EntryX;
 	_activeActorWorldY = kScene7080EntryY;
@@ -163,7 +160,7 @@ void Scene7080::runCustomEntrySequence() {
 }
 
 bool Scene7080::advanceCustomGameplayLoop(uint32 delta) {
-	updateSceneAmbientAudioAndMusicCues(delta);
+	updateAmbientAudioAndMusicCues(delta);
 	return true;
 }
 
@@ -241,34 +238,8 @@ void Scene7080::rebuildWalkableMask() {
 	}
 }
 
-void Scene7080::updateSceneAmbientAudioAndMusicCues(uint32 delta) {
-	_ambientTimerAccumulator += delta;
-	if (_ambientTimerAccumulator < kScene7080AmbientCheckMillis)
-		return;
-	_ambientTimerAccumulator %= kScene7080AmbientCheckMillis;
-
-	if (!_ambientSoundBank0.isPlaying())
-		_ambientSoundBank0.playSample(0x0b, 50);
-
-	if (_vm->gameplayMusic()->isPlaying())
-		return;
-
-	GameplayState &state = _vm->gameState();
-	if (state.currentAmbientMusicCueId != 0x0f) {
-		_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
-		state.currentAmbientMusicCueId = 0x0f;
-		_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 50);
-		return;
-	}
-
-	byte nextTrack = 0;
-	do {
-		nextTrack = (byte)(0x0c + _random.getRandomNumber(2));
-	} while (nextTrack == _previousAmbientMusicTrackId);
-
-	_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
-	state.currentAmbientMusicCueId = nextTrack;
-	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 50);
+PlayableScene::AmbientAudioProfile Scene7080::ambientAudioProfile() const {
+	return createLoopingAmbientAudioProfile(50);
 }
 
 void Scene7080::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,

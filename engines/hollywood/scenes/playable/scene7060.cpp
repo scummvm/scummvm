@@ -53,7 +53,6 @@ const uint16 kScene7060Chunk8DescriptorCount = 4;
 const uint16 kScene7060Chunk9And10DescriptorCount = 10;
 const uint32 kScene7060Chunk6FrameMillis = 75;
 const uint32 kScene7060OverlayFrameMillis = 100;
-const uint32 kScene7060AmbientCheckMillis = 250;
 const byte kScene7060DialogueStageId = 0x62;
 const byte kScene7060DialoguePrimaryRow = 99;
 const uint16 kScene7060DialoguePrimaryCenterX = 0x0d2;
@@ -99,8 +98,7 @@ Scene7060::Scene7060(HollywoodEngine *vm) :
 		_chunk6RandomIdlePaused(false),
 		_colorMapItem8Promoted(false),
 		_chunk6TimerAccumulator(0),
-		_chunk6FrameMillis(kScene7060Chunk6FrameMillis),
-		_ambientTimerAccumulator(0) {
+		_chunk6FrameMillis(kScene7060Chunk6FrameMillis) {
 	initializeChunk6FrameMap();
 }
 
@@ -149,7 +147,6 @@ void Scene7060::initializeCustomPreviewState() {
 	_colorMapItem8Promoted = false;
 	_chunk6TimerAccumulator = 0;
 	_chunk6FrameMillis = kScene7060Chunk6FrameMillis;
-	_ambientTimerAccumulator = 0;
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
 	_primaryDialogueSpeechGroup = kScene7060InvalidPrimarySpeechAnimationGroup;
@@ -229,7 +226,6 @@ void Scene7060::runCustomEntrySequence() {
 
 bool Scene7060::prepareCustomGameplayLoop() {
 	_chunk6TimerAccumulator = 0;
-	_ambientTimerAccumulator = 0;
 	_chunk6FrameMillis = kScene7060Chunk6FrameMillis;
 	if (_chunk6FrameMap.empty())
 		initializeChunk6FrameMap();
@@ -244,6 +240,8 @@ bool Scene7060::advanceCustomGameplayLoop(uint32 delta) {
 		advanceChunk6IdleAndMachineFrame(delta);
 
 	updateAmbientAudioAndMusicCues(delta);
+	if (_chunk6State == 4 && !_soundBank0.isPlaying())
+		_soundBank0.playSample(0x18, 50);
 	return true;
 }
 
@@ -413,37 +411,8 @@ void Scene7060::setColorMapItem8Promoted(bool promoted) {
 	applyCustomSceneStateToHotspotsAndPatches(0);
 }
 
-void Scene7060::updateAmbientAudioAndMusicCues(uint32 delta) {
-	_ambientTimerAccumulator += delta;
-	if (_ambientTimerAccumulator < kScene7060AmbientCheckMillis)
-		return;
-	_ambientTimerAccumulator %= kScene7060AmbientCheckMillis;
-
-	if (!_ambientSoundBank0.isPlaying())
-		_ambientSoundBank0.playSample(0x0b, 50);
-
-	if (_chunk6State == 4 && !_soundBank0.isPlaying())
-		_soundBank0.playSample(0x18, 50);
-
-	if (_vm->gameplayMusic()->isPlaying())
-		return;
-
-	GameplayState &state = _vm->gameState();
-	if (state.currentAmbientMusicCueId != 0x0f) {
-		_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
-		state.currentAmbientMusicCueId = 0x0f;
-		_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 50);
-		return;
-	}
-
-	byte nextTrack = 0;
-	do {
-		nextTrack = (byte)(0x0c + _random.getRandomNumber(2));
-	} while (nextTrack == _previousAmbientMusicTrackId);
-
-	_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
-	state.currentAmbientMusicCueId = nextTrack;
-	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 50);
+PlayableScene::AmbientAudioProfile Scene7060::ambientAudioProfile() const {
+	return createLoopingAmbientAudioProfile(50);
 }
 
 void Scene7060::advanceChunk6IdleAndMachineFrame(uint32 delta) {

@@ -91,6 +91,50 @@ protected:
 		int y;
 	};
 
+	enum AmbientSoundMode {
+		kAmbientSoundNone,
+		kAmbientSoundLoop,
+		kAmbientSoundRandomRange
+	};
+
+	enum AmbientMusicMode {
+		kAmbientMusicNone,
+		kAmbientMusicLoopRotation,
+		kAmbientMusicRandomRange
+	};
+
+	struct AmbientAudioProfile {
+		AmbientAudioProfile() :
+			checkMillis(0),
+			soundMode(kAmbientSoundNone),
+			soundCueId(0),
+			soundFirstCueId(0),
+			soundCueCount(0),
+			soundProbabilityModulus(0),
+			soundVolumePercent(0),
+			musicMode(kAmbientMusicNone),
+			musicStillCueId(0),
+			musicFirstCueId(0),
+			musicCueCount(0),
+			musicProbabilityModulus(0),
+			musicVolumePercent(0) {
+		}
+
+		uint32 checkMillis;
+		AmbientSoundMode soundMode;
+		byte soundCueId;
+		byte soundFirstCueId;
+		byte soundCueCount;
+		byte soundProbabilityModulus;
+		byte soundVolumePercent;
+		AmbientMusicMode musicMode;
+		byte musicStillCueId;
+		byte musicFirstCueId;
+		byte musicCueCount;
+		byte musicProbabilityModulus;
+		byte musicVolumePercent;
+	};
+
 	enum {
 		kFrameBufferSize = 0x78000,
 		kPaletteMaskUsedBytes = 0x100,
@@ -175,6 +219,11 @@ protected:
 	virtual bool applyCustomSceneStateToHotspotsAndPatches(byte selector);
 	virtual bool shouldAnimatePrimarySpeechLine() const;
 	virtual void setPrimaryLeftSpeechFrame(byte frameIndex);
+	virtual AmbientAudioProfile ambientAudioProfile() const;
+	AmbientAudioProfile createLoopingAmbientAudioProfile(byte volumePercent) const;
+	AmbientAudioProfile createRandomAmbientAudioProfile(byte soundFirstCueId, byte soundCueCount,
+		byte soundVolumePercent, byte soundProbabilityModulus, byte musicFirstCueId,
+		byte musicCueCount, byte musicVolumePercent, byte musicProbabilityModulus) const;
 	bool hasSavedActiveActorPoseForCurrentState() const;
 	void restoreActiveActorPoseFromGameState();
 	void syncActiveActorPoseToGameState();
@@ -226,6 +275,9 @@ protected:
 	void handleLeftClick(const GameplayLoopCursorState &state) override;
 	void handleInventoryItemClick(const GameplayLoopCursorState &state) override;
 	void updateAmbientAudioAndMusicCues(uint32 delta);
+	void resetAmbientAudioState();
+	void updateAmbientSoundCue(const AmbientAudioProfile &profile);
+	void updateAmbientMusicCue(const AmbientAudioProfile &profile);
 	void advanceSecondaryActorSpeechAnimation(uint32 delta);
 	void advanceSecondaryActorSpeechFrame();
 	void advancePrimaryLeftSpeechFrame();
@@ -375,6 +427,8 @@ protected:
 	uint32 _primaryLeftSpeechTimerAccumulator;
 	uint32 _primaryDialogueSpeechTimerAccumulator;
 	byte _previousAmbientMusicTrackId;
+	byte _currentAmbientSoundCueId;
+	byte _previousAmbientSoundCueId;
 	uint16 _viewportXOffset;
 	uint16 _viewportMinXOffset;
 	uint16 _viewportMaxXOffset;
