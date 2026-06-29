@@ -490,6 +490,10 @@ void EEMEngine::doHelp() {
 			return;
 		}
 		const uint32 hsz = hf.size();
+		// An empty help file leaves hbuf.data() null below; bail before the
+		// hd[0] read so it cannot dereference null.
+		if (hsz == 0)
+			return;
 		Common::Array<byte> hbuf;
 		hbuf.resize(hsz);
 		if (hf.read(hbuf.data(), hsz) != hsz)
