@@ -282,8 +282,9 @@ void ControlUIItems::execute() {
 		// player is in scene range [_startScene, _endScene]. _flagB != 0 sets
 		// the toggle (a _startScene of 9997 means "from scene 0", with the
 		// range capped at 9997); _flagB == 0 clears it once a bound is 9999
-		// (kNoScene). The _autoOpenOrBadgeSound value selects the button's
-		// click sound in the original (not yet implemented).
+		// (kNoScene). _flagB != 0 also sets the disabled button's rejection-sound
+		// mode from _autoOpenOrBadgeSound (which clickSoundName line plays when
+		// the button is clicked while its popup is unavailable).
 		UI::Taskbar *taskbar = NancySceneState.getTaskbar();
 		if (taskbar) {
 			if (_flagB != 0) {
@@ -294,6 +295,7 @@ void ControlUIItems::execute() {
 					end = 9997;
 				}
 				taskbar->setDisabledRange(_uiButton, start, end);
+				taskbar->setClickSoundMode(_uiButton, _autoOpenOrBadgeSound);
 			} else if (_startScene == (int16)kNoScene || _endScene == (int16)kNoScene) {
 				taskbar->clearButtonOverride(_uiButton);
 			}

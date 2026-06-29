@@ -64,6 +64,9 @@ public:
 	// sprite. Call after a scene change so the range check kicks in.
 	void updateNotificationStates(int16 currentSceneID);
 
+	// Set a disabled button's rejection-sound mode, from ControlUIItems (AR 29).
+	void setClickSoundMode(uint buttonIndex, uint mode);
+
 	// Returns the index of the button that was clicked this frame, or -1
 	// if none. Cleared on the next call to handleInput().
 	int getClickedButton() const { return _clickedButton; }
@@ -73,17 +76,30 @@ private:
 		kButtonIdle         = 0,
 		kButtonHover        = 1,
 		kButtonPressed      = 2,
-		kButtonDisabled     = 3,   // not clickable
+		kButtonDisabled     = 3,   // popup unavailable; click plays a rejection sound
 		kButtonNotification = 4    // popup has new content (badge sprite)
 	};
 
+	// Rejection-sound mode for a disabled button (ControlUIItems'
+	// autoOpenOrBadgeSound value). When a disabled button is clicked it plays a
+	// "popup unavailable" line from clickSoundName: the default picks a random
+	// valid one; kClickSound0..2 force a specific one; kClickSoundSilent is mute.
+	enum ClickSoundMode {
+		kClickSoundDefault = 0,
+		kClickSound0       = 10,
+		kClickSound1       = 11,
+		kClickSound2       = 12,
+		kClickSoundSilent  = 13
+	};
+
 	// A scene-ranged disable override for one button. While active and the
-	// current scene is within [startScene, endScene] the button renders in
-	// the disabled state.
+	// current scene is within [startScene, endScene] the button renders in the
+	// disabled state; clicking it then plays the rejection sound (clickSoundMode).
 	struct ButtonOverride {
 		bool active = false;
 		int16 startScene = -1;
 		int16 endScene = -1;
+		uint clickSoundMode = kClickSoundDefault;
 	};
 
 	static const uint kNumNotificationSubCategories = 3;
@@ -92,6 +108,11 @@ private:
 	ButtonState restingState(uint index) const;
 	// True when the button currently accepts hover/click (not disabled).
 	bool isButtonActive(uint index) const;
+
+	// Play a normal click sound (the button's clickSound), or the "popup
+	// unavailable" rejection sound for a disabled button.
+	void playClickSound(uint index);
+	void playRejectionSound(uint index);
 
 	Graphics::ManagedSurface _backgroundImage; // TASK::imageName (e.g. "Frame")
 	Graphics::ManagedSurface _buttonImage;     // buttons' primaryImageName (e.g. "UIShared_OVL")
