@@ -28,6 +28,7 @@
 
 namespace Graphics {
 class ManagedSurface;
+struct Surface;
 }
 
 namespace Hollywood {
@@ -66,13 +67,27 @@ void presentIndexedFrame(const Common::Array<byte> &framebuffer, const Common::A
 
 void copyFramebufferRun(const Common::Array<byte> &source, Common::Array<byte> &destination, int y, int x, int width);
 void clearFramebufferRun(Common::Array<byte> &destination, int y, int x, int width);
+void copySurfaceRun(const Graphics::Surface &source, Graphics::Surface &destination, int y, int x, int width);
+void clearSurfaceRun(Graphics::Surface &destination, int y, int x, int width);
 
 void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
 	uint16 descriptorCount, uint16 descriptorIndex, const Common::Array<byte> &background,
 	Common::Array<byte> &destination, int yOffset = 0);
+void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
+	uint16 descriptorCount, uint16 descriptorIndex, const Graphics::Surface &background,
+	Graphics::Surface &destination, int yOffset = 0);
+void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
+	uint16 descriptorCount, uint16 descriptorIndex, const Graphics::ManagedSurface &background,
+	Graphics::ManagedSurface &destination, int yOffset = 0);
 void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
 	uint16 descriptorCount, uint16 descriptorIndex, Common::Array<byte> &destination, int yOffset = 0);
+void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
+	uint16 descriptorCount, uint16 descriptorIndex, Graphics::Surface &destination, int yOffset = 0);
+void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
+	uint16 descriptorCount, uint16 descriptorIndex, Graphics::ManagedSurface &destination, int yOffset = 0);
 void drawResourceBlockList(const Common::Array<byte> &resource, uint32 baseOffset, Common::Array<byte> &destination, int yOffset = 0);
+void drawResourceBlockList(const Common::Array<byte> &resource, uint32 baseOffset, Graphics::Surface &destination, int yOffset = 0);
+void drawResourceBlockList(const Common::Array<byte> &resource, uint32 baseOffset, Graphics::ManagedSurface &destination, int yOffset = 0);
 
 } // End of namespace Hollywood
 

@@ -143,10 +143,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int de
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
 	_paletteResource.resize(kPaletteSize);
 	_paletteCurrent.resize(kPaletteSize);
-	_baseFramebufferOriginal.resize(kFrameBufferSize);
-	_baseFramebuffer.resize(kFrameBufferSize);
-	_sceneFramebuffer.resize(kFrameBufferSize);
-	_savedFramebuffer.resize(kFrameBufferSize);
+	initializeFramebuffers();
 	_paletteMaskOriginal.resize(0x700);
 	_fullPaletteRegionMask.resize(kPaletteMaskUsedBytes);
 	_walkablePaletteMask.resize(kPaletteMaskUsedBytes);
@@ -175,6 +172,52 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int de
 	_primarySpeechOverlay.topY = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
+}
+
+void PlayableScene::initializeFramebuffers() {
+	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+	_baseFramebufferOriginal.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
+	_baseFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
+	_sceneFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
+	_savedFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
+}
+
+uint PlayableScene::framebufferByteCount() const {
+	return HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight;
+}
+
+byte *PlayableScene::framebufferPixels(Graphics::ManagedSurface &surface) {
+	return (byte *)surface.getPixels();
+}
+
+const byte *PlayableScene::framebufferPixels(const Graphics::ManagedSurface &surface) const {
+	return (const byte *)surface.getPixels();
+}
+
+void PlayableScene::copyBaseFramebufferToSceneFramebuffer() {
+	_sceneFramebuffer.copyRectToSurface(_baseFramebuffer.rawSurface(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+}
+
+void PlayableScene::restoreBaseFramebufferFromOriginal() {
+	if (_baseFramebufferOriginal.empty())
+		return;
+
+	_baseFramebuffer.copyRectToSurface(_baseFramebufferOriginal.rawSurface(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+}
+
+bool PlayableScene::isFramebufferOffsetValid(uint offset) const {
+	return offset < framebufferByteCount();
+}
+
+byte PlayableScene::savedFramebufferPixelAt(uint offset) const {
+	if (!isFramebufferOffsetValid(offset))
+		return 0;
+
+	const uint x = offset % HollywoodEngine::kSceneBufferWidth;
+	const uint y = offset / HollywoodEngine::kSceneBufferWidth;
+	return *(const byte *)_savedFramebuffer.getBasePtr(x, y);
 }
 
 bool PlayableScene::play() {
@@ -524,7 +567,7 @@ bool PlayableScene::load() {
 			return false;
 	}
 
-	_baseFramebufferOriginal = _baseFramebuffer;
+	_baseFramebufferOriginal.copyFrom(_baseFramebuffer);
 	_paletteMaskOriginal = _paletteMask;
 
 	if (_paletteMask.size() < kPaletteMaskUsedBytes) {
@@ -555,12 +598,13 @@ bool PlayableScene::load() {
 			return false;
 	}
 
-	memset(_savedFramebuffer.data(), 0, _savedFramebuffer.size());
+	memset(framebufferPixels(_savedFramebuffer), 0, framebufferByteCount());
 	expandFillRunsToSavedFramebuffer();
 	if (shouldConvertSavedFramebufferFF()) {
-		for (uint i = 0; i < _savedFramebuffer.size(); ++i) {
-			if (_savedFramebuffer[i] == 0xff)
-				_savedFramebuffer[i] = 0xfa;
+		byte *savedPixels = framebufferPixels(_savedFramebuffer);
+		for (uint i = 0; i < framebufferByteCount(); ++i) {
+			if (savedPixels[i] == 0xff)
+				savedPixels[i] = 0xfa;
 		}
 	}
 	memcpy(_paletteCurrent.data(), _paletteResource.data(), _paletteCurrent.size());
@@ -926,6 +970,30 @@ bool PlayableScene::loadFixedChunk(uint index, Common::Array<byte> &destination,
 	return true;
 }
 
+bool PlayableScene::loadFixedChunk(uint index, Graphics::ManagedSurface &destination, uint fixedSize) {
+	const char *archiveName = resourceArchiveName();
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(archiveName), index));
+	if (!stream) {
+		warning("Failed to open %s chunk %u", archiveName, index);
+		return false;
+	}
+
+	const uint destinationSize = destination.pitch * destination.h;
+	if (stream->size() > fixedSize || destinationSize < fixedSize) {
+		warning("%s chunk %u does not fit its fixed %s destination", archiveName, index, sceneDebugName());
+		return false;
+	}
+
+	memset(destination.getPixels(), 0, destinationSize);
+	if (stream->read(destination.getPixels(), stream->size()) != (uint32)stream->size()) {
+		warning("Failed to read %s chunk %u", archiveName, index);
+		return false;
+	}
+
+	debugC(1, kDebugResources, "Loaded %s fixed chunk %u: size=%u", archiveName, index, (uint)stream->size());
+	return true;
+}
+
 bool PlayableScene::loadVariableChunk(uint index, Common::Array<byte> &destination) {
 	const char *archiveName = resourceArchiveName();
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(archiveName), index));
@@ -998,14 +1066,16 @@ void PlayableScene::updateActorDepthThresholds(byte actorDrawOrderMode) {
 void PlayableScene::expandFillRunsToSavedFramebuffer() {
 	uint destinationOffset = 0;
 	uint sourceOffset = 0;
-	while (destinationOffset < _savedFramebuffer.size() && sourceOffset + 3 <= _fillRuns.size()) {
+	byte *savedPixels = framebufferPixels(_savedFramebuffer);
+	const uint savedSize = framebufferByteCount();
+	while (destinationOffset < savedSize && sourceOffset + 3 <= _fillRuns.size()) {
 		const byte fill = _fillRuns[sourceOffset];
 		const uint16 runLength = readUint16LE(_fillRuns, sourceOffset + 1);
 		sourceOffset += 3;
 
-		const uint count = MIN<uint>(runLength, _savedFramebuffer.size() - destinationOffset);
+		const uint count = MIN<uint>(runLength, savedSize - destinationOffset);
 		if (count != 0) {
-			memset(_savedFramebuffer.data() + destinationOffset, fill, count);
+			memset(savedPixels + destinationOffset, fill, count);
 			destinationOffset += count;
 		}
 	}
@@ -1084,7 +1154,7 @@ void PlayableScene::drawCutsceneComposite(bool drawActiveActor, byte activeFacin
 	}
 
 	(void)actorDrawOrderMode;
-	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
+	copyBaseFramebufferToSceneFramebuffer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 
@@ -1122,16 +1192,16 @@ void PlayableScene::drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount,
 		descriptorCount, frameMap[frameIndex], _sceneFramebuffer);
 }
 
-void PlayableScene::restoreResourceSpriteLayerBackground(const ResourceSpriteLayer &layer, const Common::Array<byte> &background) {
+void PlayableScene::restoreResourceSpriteLayerBackground(const ResourceSpriteLayer &layer, const Graphics::Surface &background) {
 	if (!layer.visible || layer.chunkIndex >= HollywoodEngine::kResourceChunkCount)
 		return;
 
 	if (layer.hasPreviousDescriptor) {
 		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[layer.chunkIndex], 0,
-			layer.descriptorCount, layer.previousDescriptorIndex, background, _sceneFramebuffer);
+			layer.descriptorCount, layer.previousDescriptorIndex, background, *_sceneFramebuffer.surfacePtr());
 	}
 	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[layer.chunkIndex], 0,
-		layer.descriptorCount, layer.descriptorIndex(), background, _sceneFramebuffer);
+		layer.descriptorCount, layer.descriptorIndex(), background, *_sceneFramebuffer.surfacePtr());
 }
 
 void PlayableScene::drawResourceSpriteLayer(const ResourceSpriteLayer &layer) {
@@ -1189,17 +1259,17 @@ int PlayableScene::drawActorRun(const Common::Array<byte> &runStreams, uint curs
 	if (usesActorDepthTest()) {
 		ActorDepthTest depthTest;
 		depthTest.enabled = true;
-		depthTest.savedFramebuffer = &_savedFramebuffer;
+		depthTest.savedFramebuffer = &_savedFramebuffer.rawSurface();
 		depthTest.colorToDepthClassMap = &_colorToActorDepthClassMap;
 		depthTest.depthYThresholds = &_drawActorDepthYThresholds;
 		depthTest.actorWorldY = actorWorldY;
 
 		return drawActorRunStream(runStreams, cursor, runBase, runCount, spriteX, spriteY,
-			minimumYExclusive, _sceneFramebuffer, &depthTest);
+			minimumYExclusive, *_sceneFramebuffer.surfacePtr(), &depthTest);
 	}
 
 	return drawActorRunStream(runStreams, cursor, runBase, runCount, spriteX, spriteY,
-		minimumYExclusive, _sceneFramebuffer, nullptr);
+		minimumYExclusive, *_sceneFramebuffer.surfacePtr(), nullptr);
 }
 
 void PlayableScene::runEntryCutscene() {
@@ -1255,8 +1325,8 @@ const SceneHotspotTable &PlayableScene::hotspots() const {
 	return _hotspots;
 }
 
-const Common::Array<byte> &PlayableScene::savedFramebuffer() const {
-	return _savedFramebuffer;
+const Graphics::Surface &PlayableScene::savedFramebuffer() const {
+	return _savedFramebuffer.rawSurface();
 }
 
 uint16 PlayableScene::viewportXOffset() const {
@@ -1831,14 +1901,14 @@ void PlayableScene::adjustWalkTargetToFloorMask(int &targetX, int &targetY) cons
 
 	while (targetY < 0x1df) {
 		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
-		if (offset < _savedFramebuffer.size() && _walkablePaletteMask[_savedFramebuffer[offset]] != 0)
+		if (isFramebufferOffsetValid(offset) && _walkablePaletteMask[savedFramebufferPixelAt(offset)] != 0)
 			return;
 		++targetY;
 	}
 
 	while (targetY > 0) {
 		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
-		if (offset < _savedFramebuffer.size() && _walkablePaletteMask[_savedFramebuffer[offset]] != 0)
+		if (isFramebufferOffsetValid(offset) && _walkablePaletteMask[savedFramebufferPixelAt(offset)] != 0)
 			return;
 		--targetY;
 	}
@@ -2061,10 +2131,10 @@ byte PlayableScene::paletteRegionAt(int x, int y) const {
 		return 0;
 
 	const uint offset = y * HollywoodEngine::kSceneBufferWidth + x;
-	if (offset >= _savedFramebuffer.size())
+	if (!isFramebufferOffsetValid(offset))
 		return 0;
 
-	return _fullPaletteRegionMask[_savedFramebuffer[offset]];
+	return _fullPaletteRegionMask[savedFramebufferPixelAt(offset)];
 }
 
 byte PlayableScene::calculateMovementFacingForPath(int fromX, int fromY, int toX, int toY, int requestedFacing) const {
@@ -2167,8 +2237,7 @@ void PlayableScene::applySceneStateToHotspotsAndPatches(byte selector) {
 	}
 
 	if (selector == 3 || selector == 0xff) {
-		if (!_baseFramebufferOriginal.empty())
-			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
+		restoreBaseFramebufferFromOriginal();
 	}
 }
 
@@ -2876,10 +2945,7 @@ void PlayableScene::presentFrame(const SceneHoverCaption *hoverCaption, const Ga
 		applyGameplayPanelPalette();
 	const uint16 xOffset = viewportXOffset();
 	_displayPalette.uploadFrom6Bit(_paletteCurrent);
-	Graphics::Surface sceneSurface;
-	sceneSurface.init(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight,
-		HollywoodEngine::kSceneBufferWidth, _sceneFramebuffer.data(), Graphics::PixelFormat::createFormatCLUT8());
-	_screen.copyRectToSurface(sceneSurface, 0, 0,
+	_screen.copyRectToSurface(_sceneFramebuffer.rawSurface(), 0, 0,
 		Common::Rect(xOffset, 0, xOffset + HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight));
 
 	drawSpeechOverlay();

@@ -199,7 +199,7 @@ bool Scene7030::hasCustomComposite() const {
 void Scene7030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
-	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
+	copyBaseFramebufferToSceneFramebuffer();
 
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
 		kScene7030Chunk6DescriptorCount, _chunk6IdleFrameA, _sceneFramebuffer);
@@ -332,14 +332,14 @@ bool Scene7030::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) co
 
 	while (targetY < 0x1df) {
 		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
-		if (offset < _savedFramebuffer.size() && _walkablePaletteMask[_savedFramebuffer[offset]] != 0)
+		if (isFramebufferOffsetValid(offset) && _walkablePaletteMask[savedFramebufferPixelAt(offset)] != 0)
 			return true;
 		++targetY;
 	}
 
 	while (targetY > 0) {
 		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
-		if (offset < _savedFramebuffer.size() && _walkablePaletteMask[_savedFramebuffer[offset]] != 0)
+		if (isFramebufferOffsetValid(offset) && _walkablePaletteMask[savedFramebufferPixelAt(offset)] != 0)
 			return true;
 		--targetY;
 	}
@@ -399,8 +399,7 @@ bool Scene7030::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	}
 
 	if (selector == 2 || selector == 0xff) {
-		if (!_baseFramebufferOriginal.empty())
-			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
+		restoreBaseFramebufferFromOriginal();
 
 		if (_sceneStateFlags[2] != 0)
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);

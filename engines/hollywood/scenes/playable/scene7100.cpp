@@ -200,7 +200,7 @@ void Scene7100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 	(void)activeWorldY;
 
-	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
+	copyBaseFramebufferToSceneFramebuffer();
 
 	drawPrimaryNpc();
 	drawEnvironmentOverlayBeforeActor();
@@ -359,8 +359,7 @@ bool Scene7100::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	if (selector == 2 || selector == 3 || selector == 4 || selector == 0xff) {
 		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
 		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
-		if (!_baseFramebufferOriginal.empty())
-			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
+		restoreBaseFramebufferFromOriginal();
 
 		GameplayState &state = _vm->gameState();
 		if (state.cellPlateRatProgress != 0) {

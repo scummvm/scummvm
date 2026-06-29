@@ -146,7 +146,7 @@ void Scene7050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		byte actorDrawOrderMode) {
 	(void)actorDrawOrderMode;
 
-	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
+	copyBaseFramebufferToSceneFramebuffer();
 
 	_cloakroomAttendantLayer.setFrame(_cloakroomAttendantAnimation.channel.frameIndex);
 	drawResourceSpriteLayer(_cloakroomAttendantLayer);
@@ -197,14 +197,14 @@ bool Scene7050::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) co
 	targetX = CLIP<int>(targetX, kScene7050MinimumWalkX, kScene7050MaximumWalkX);
 	while (targetY < 0x1df) {
 		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
-		if (offset < _savedFramebuffer.size() && _fullPaletteRegionMask[_savedFramebuffer[offset]] != 0)
+		if (isFramebufferOffsetValid(offset) && _fullPaletteRegionMask[savedFramebufferPixelAt(offset)] != 0)
 			return true;
 		++targetY;
 	}
 
 	while (targetY > 0) {
 		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
-		if (offset < _savedFramebuffer.size() && _fullPaletteRegionMask[_savedFramebuffer[offset]] != 0)
+		if (isFramebufferOffsetValid(offset) && _fullPaletteRegionMask[savedFramebufferPixelAt(offset)] != 0)
 			return true;
 		--targetY;
 	}
@@ -232,8 +232,7 @@ bool Scene7050::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	if (selector == 1 || selector == 0xff) {
 		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
 		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
-		if (!_baseFramebufferOriginal.empty())
-			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
+		restoreBaseFramebufferFromOriginal();
 
 		if (state.cloakroomRagVisible != 0) {
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[10], _baseFramebuffer);

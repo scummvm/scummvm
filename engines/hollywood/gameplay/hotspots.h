@@ -54,7 +54,7 @@ public:
 	bool load(const Common::Array<byte> &paletteMapBlock, const Common::Array<byte> &metadata,
 		const Common::Array<byte> &stageSmallRows);
 
-	byte resolveItemAt(const Common::Array<byte> &savedFramebuffer, uint16 cursorX, uint16 cursorY,
+	byte resolveItemAt(const Graphics::Surface &savedFramebuffer, uint16 cursorX, uint16 cursorY,
 		uint16 xOffset, uint16 yOffset) const;
 	byte defaultStripForItem(byte itemId) const;
 	bool hasVerbAction(byte itemId, byte stripIndex) const;
@@ -82,10 +82,10 @@ public:
 	void reset();
 	void setCurrentStrip(byte stripIndex);
 	void setRelationContext(byte relationMode, byte primaryInventoryItem, const Common::String &primaryItemName);
-	bool refreshNow(const SceneHotspotTable &hotspots, const Common::Array<byte> &savedFramebuffer,
+	bool refreshNow(const SceneHotspotTable &hotspots, const Graphics::Surface &savedFramebuffer,
 		uint16 cursorX, uint16 cursorY, uint16 xOffset, uint16 yOffset);
 	bool advance(uint32 deltaMillis, const SceneHotspotTable &hotspots,
-		const Common::Array<byte> &savedFramebuffer, uint16 cursorX, uint16 cursorY,
+		const Graphics::Surface &savedFramebuffer, uint16 cursorX, uint16 cursorY,
 		uint16 xOffset, uint16 yOffset);
 
 	void applyPalette(Common::Array<byte> &palette) const;
@@ -106,7 +106,7 @@ private:
 		byte secondItemSourceKind;
 	};
 
-	bool updateCaption(const SceneHotspotTable &hotspots, const Common::Array<byte> &savedFramebuffer,
+	bool updateCaption(const SceneHotspotTable &hotspots, const Graphics::Surface &savedFramebuffer,
 		uint16 cursorX, uint16 cursorY, uint16 xOffset, uint16 yOffset, bool force);
 	bool descriptorChanged(const Descriptor &descriptor) const;
 	Common::String buildCaption(const SceneHotspotTable &hotspots, const Descriptor &descriptor) const;

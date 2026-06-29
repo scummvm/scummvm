@@ -139,7 +139,7 @@ void Scene7090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		byte actorDrawOrderMode) {
 	(void)actorDrawOrderMode;
 
-	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
+	copyBaseFramebufferToSceneFramebuffer();
 
 	if (_prePatchChunk7Visible)
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _sceneFramebuffer);
@@ -232,8 +232,7 @@ bool Scene7090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	if (selector == 1 || selector == 0xff) {
 		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
 		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
-		if (!_baseFramebufferOriginal.empty())
-			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
+		restoreBaseFramebufferFromOriginal();
 
 		GameplayState &state = _vm->gameState();
 		if (state.movedBedroomArmor) {
