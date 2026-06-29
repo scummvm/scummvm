@@ -9757,6 +9757,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("physicus", "", "Physikus", "5d3f89e052320f8ce140451c730e232b", 114645, Common::FR_FRA, 702),
 	WINGAME1("physicus", "",   "Physicus.exe", "t:d2a772b412a278bda68bd64a00af9b04", 2298279, 702),
 	WINGAME1_l("physicus", "", "Physikus.exe", "t:89be052460986358d7e4724ebc940af6", 1816828, Common::DE_DEU, 702),
+	// Italian edition "Físicus", published by l'Espresso
+	WINGAME1_l("physicus", "", "Physikus.exe", "t:026868d136e559a3eca5445221d123f1", 1816876, Common::IT_ITA, 702),
 
 	WINDEMO2("planetstrass", "Demo", "Planet.exe", "t:a053c117847a545ef72aecb425fed9e7", 15434606,
 									 "strass.jpg", "d:d76c7387399626e7a3daef54cbcd6451",	39135, 702),
