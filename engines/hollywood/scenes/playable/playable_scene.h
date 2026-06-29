@@ -32,6 +32,11 @@
 #include "hollywood/gameplay/panel_art.h"
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
+#include "hollywood/scenes/playable/action_overlay.h"
+#include "hollywood/scenes/playable/actor_types.h"
+#include "hollywood/scenes/playable/ambient_audio.h"
+#include "hollywood/scenes/playable/animation_channels.h"
+#include "hollywood/scenes/playable/speech_overlay.h"
 
 namespace Graphics {
 struct Surface;
@@ -50,257 +55,6 @@ protected:
 		byte defaultActorFacing, byte secondarySpeechTextColor, byte primarySpeechTextColor);
 
 protected:
-	struct ActiveActorSpriteDescriptor {
-		uint32 runStreamOffset;
-		uint32 opaqueRunCount;
-		uint32 paletteRunCount;
-		int16 anchorX;
-		int16 anchorY;
-		uint16 width;
-		uint16 height;
-	};
-
-	struct SecondaryActorSpriteDescriptor {
-		uint32 runStreamOffset;
-		uint32 runCount;
-		int16 anchorX;
-		int16 anchorY;
-	};
-
-	struct SpeechOverlay {
-		bool visible;
-		byte colorIndex;
-		uint16 centerX;
-		uint16 topY;
-		Common::Array<Common::String> lines;
-	};
-
-	struct ActorPathFrame {
-		byte drawOrderMode;
-		byte facing;
-		byte cel;
-		int16 worldX;
-		int16 worldY;
-	};
-
-	struct ActorPathBuildState {
-		byte drawOrderMode;
-		byte facing;
-		byte cel;
-		int x;
-		int y;
-	};
-
-	enum AmbientSoundMode {
-		kAmbientSoundNone,
-		kAmbientSoundLoop,
-		kAmbientSoundRandomRange
-	};
-
-	enum AmbientMusicMode {
-		kAmbientMusicNone,
-		kAmbientMusicLoopRotation,
-		kAmbientMusicRandomRange
-	};
-
-	enum ActionOverlayActorVisibility {
-		kActionOverlayKeepActiveActorVisibility,
-		kActionOverlayShowActiveActor,
-		kActionOverlayHideActiveActor
-	};
-
-	struct TimedAnimationChannel {
-		TimedAnimationChannel() :
-			frameIndex(0),
-			timerAccumulator(0),
-			frameMillis(0) {
-		}
-
-		void reset(byte initialFrame, uint32 millis) {
-			frameIndex = initialFrame;
-			timerAccumulator = 0;
-			frameMillis = millis;
-		}
-
-		void resetTimer() {
-			timerAccumulator = 0;
-		}
-
-		void addDelta(uint32 delta) {
-			timerAccumulator += delta;
-		}
-
-		bool consumeFrame() {
-			if (frameMillis == 0 || timerAccumulator < frameMillis)
-				return false;
-
-			timerAccumulator -= frameMillis;
-			return true;
-		}
-
-		uint consumeFrames(uint32 delta) {
-			addDelta(delta);
-
-			uint frameCount = 0;
-			while (consumeFrame())
-				++frameCount;
-			return frameCount;
-		}
-
-		byte frameIndex;
-		uint32 timerAccumulator;
-		uint32 frameMillis;
-	};
-
-	struct RandomIdleAnimation {
-		enum Event {
-			kNoEvent,
-			kShortStarted,
-			kLongStarted,
-			kLongFinished
-		};
-
-		RandomIdleAnimation() :
-			channel(),
-			state(0),
-			idleFrame(0),
-			shortFrame(0),
-			longFirstFrame(0),
-			longLastFrame(0),
-			shortRandomMax(0),
-			longRandomMax(0),
-			returnToIdleAfterLongSequence(true) {
-		}
-
-		void configure(uint32 frameMillis, byte idle, byte shortStart, byte longStart, byte longEnd,
-				byte shortRandom, byte longRandom) {
-			idleFrame = idle;
-			shortFrame = shortStart;
-			longFirstFrame = longStart;
-			longLastFrame = longEnd;
-			shortRandomMax = shortRandom;
-			longRandomMax = longRandom;
-			returnToIdleAfterLongSequence = true;
-			channel.reset(idleFrame, frameMillis);
-			state = 0;
-		}
-
-		void reset() {
-			channel.frameIndex = idleFrame;
-			channel.resetTimer();
-			state = 0;
-		}
-
-		void setStateAndFrame(byte newState, byte newFrame) {
-			state = newState;
-			channel.frameIndex = newFrame;
-		}
-
-		void setFrame(byte newFrame) {
-			channel.frameIndex = newFrame;
-		}
-
-		Event advanceTick(Common::RandomSource &random, bool canStartSequence = true) {
-			if (state == 0) {
-				if (canStartSequence && longRandomMax != 0 && random.getRandomNumber(longRandomMax) == 0) {
-					setStateAndFrame(2, longFirstFrame);
-					return kLongStarted;
-				}
-				if (canStartSequence && shortRandomMax != 0 && random.getRandomNumber(shortRandomMax) == 0) {
-					setStateAndFrame(1, shortFrame);
-					return kShortStarted;
-				}
-			} else if (state == 1) {
-				reset();
-			} else if (state == 2) {
-				if (channel.frameIndex == longLastFrame) {
-					if (returnToIdleAfterLongSequence)
-						reset();
-					return kLongFinished;
-				}
-				++channel.frameIndex;
-			}
-
-			return kNoEvent;
-		}
-
-		void advance(Common::RandomSource &random, uint32 delta, bool canStartSequence = true) {
-			const uint frameCount = channel.consumeFrames(delta);
-			for (uint frame = 0; frame < frameCount; ++frame)
-				advanceTick(random, canStartSequence);
-		}
-
-		TimedAnimationChannel channel;
-		byte state;
-		byte idleFrame;
-		byte shortFrame;
-		byte longFirstFrame;
-		byte longLastFrame;
-		byte shortRandomMax;
-		byte longRandomMax;
-		bool returnToIdleAfterLongSequence;
-	};
-
-	struct AmbientAudioProfile {
-		AmbientAudioProfile() :
-			checkMillis(0),
-			soundMode(kAmbientSoundNone),
-			soundCueId(0),
-			soundFirstCueId(0),
-			soundCueCount(0),
-			soundProbabilityModulus(0),
-			soundVolumePercent(0),
-			musicMode(kAmbientMusicNone),
-			musicStillCueId(0),
-			musicFirstCueId(0),
-			musicCueCount(0),
-			musicProbabilityModulus(0),
-			musicVolumePercent(0) {
-		}
-
-		uint32 checkMillis;
-		AmbientSoundMode soundMode;
-		byte soundCueId;
-		byte soundFirstCueId;
-		byte soundCueCount;
-		byte soundProbabilityModulus;
-		byte soundVolumePercent;
-		AmbientMusicMode musicMode;
-		byte musicStillCueId;
-		byte musicFirstCueId;
-		byte musicCueCount;
-		byte musicProbabilityModulus;
-		byte musicVolumePercent;
-	};
-
-	struct ActionOverlayOptions {
-		ActionOverlayOptions() :
-			firstFrame(0),
-			endFrame(0),
-			actorVisibility(kActionOverlayKeepActiveActorVisibility),
-			redrawAtEnd(true),
-			statePatchFrame(-1),
-			statePatchSelector(0),
-			soundFrame(-1),
-			soundId(0),
-			soundVolumePercent(100),
-			hookFrame(-1),
-			hookId(0) {
-		}
-
-		uint firstFrame;
-		uint endFrame;
-		ActionOverlayActorVisibility actorVisibility;
-		bool redrawAtEnd;
-		int statePatchFrame;
-		byte statePatchSelector;
-		int soundFrame;
-		byte soundId;
-		byte soundVolumePercent;
-		int hookFrame;
-		byte hookId;
-	};
-
 	enum {
 		kFrameBufferSize = 0x78000,
 		kPaletteMaskUsedBytes = 0x100,
@@ -451,7 +205,6 @@ protected:
 	void advancePrimaryDialogueSpeechFrame(uint32 delta);
 	void processSceneActionClick(const GameplayLoopCursorState &state);
 	void processSceneRelationClick(const GameplayLoopCursorState &state, byte itemId);
-	SceneVerbActionRecord relationActionRecord(byte inventoryItemId, byte sceneItemId, byte relationMode) const;
 	void dispatchSceneAction(uint16 handlerId);
 	bool dispatchGenericSceneAction(uint16 handlerId);
 	bool walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel, bool cancelOnSkip = false);
@@ -476,9 +229,6 @@ protected:
 	bool hasInventoryItem(byte itemId) const;
 	void addInventoryItem(byte itemId);
 	void removeInventoryItem(byte itemId);
-	void handleStaticSpeech43And24Sequence();
-	void handleGrantItem22IfMissing();
-	void handleSwapItems08And0FForItem06();
 	Common::String dialogueMenuText(byte stageId, byte textRowId) const override;
 	void advanceDialogueMenu(uint32 delta) override;
 	void drawDialogueMenuFrame() override;
@@ -530,7 +280,6 @@ protected:
 	void presentFrame(const SceneHoverCaption *hoverCaption = nullptr,
 		const GameplayPanelState *panelState = nullptr, const DialogueMenuState *dialogueMenuState = nullptr);
 	bool pollEvents(bool allowSkip);
-	bool delay(uint32 millis);
 
 	HollywoodEngine *_vm;
 	ResourceChunkTable _sceneChunkTable;

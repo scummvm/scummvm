@@ -300,7 +300,7 @@ void Scene7070::rebuildWalkableMask() {
 	}
 }
 
-PlayableScene::AmbientAudioProfile Scene7070::ambientAudioProfile() const {
+AmbientAudioProfile Scene7070::ambientAudioProfile() const {
 	return createLoopingAmbientAudioProfile(50);
 }
 

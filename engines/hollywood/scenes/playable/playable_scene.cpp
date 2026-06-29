@@ -435,7 +435,7 @@ bool PlayableScene::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	return false;
 }
 
-PlayableScene::AmbientAudioProfile PlayableScene::ambientAudioProfile() const {
+AmbientAudioProfile PlayableScene::ambientAudioProfile() const {
 	return createLoopingAmbientAudioProfile(100);
 }
 
@@ -444,7 +444,7 @@ void PlayableScene::handleActionOverlayFrameHook(byte hookId, uint frame) {
 	(void)frame;
 }
 
-PlayableScene::AmbientAudioProfile PlayableScene::createLoopingAmbientAudioProfile(byte volumePercent) const {
+AmbientAudioProfile PlayableScene::createLoopingAmbientAudioProfile(byte volumePercent) const {
 	AmbientAudioProfile profile;
 	profile.checkMillis = kAmbientMusicCheckMillis;
 	profile.soundMode = kAmbientSoundLoop;
@@ -458,7 +458,7 @@ PlayableScene::AmbientAudioProfile PlayableScene::createLoopingAmbientAudioProfi
 	return profile;
 }
 
-PlayableScene::AmbientAudioProfile PlayableScene::createRandomAmbientAudioProfile(byte soundFirstCueId, byte soundCueCount,
+AmbientAudioProfile PlayableScene::createRandomAmbientAudioProfile(byte soundFirstCueId, byte soundCueCount,
 		byte soundVolumePercent, byte soundProbabilityModulus, byte musicFirstCueId,
 		byte musicCueCount, byte musicVolumePercent, byte musicProbabilityModulus) const {
 	AmbientAudioProfile profile;
@@ -1466,7 +1466,7 @@ void PlayableScene::processSceneRelationClick(const GameplayLoopCursorState &sta
 		return;
 
 	const SceneVerbActionRecord actionRecord =
-		relationActionRecord(state.primaryInventoryItem, itemId, state.relationMode);
+		_hotspots.relationActionRecord(state.primaryInventoryItem, itemId, state.relationMode);
 	if (actionRecord.actionHandlerId == 0)
 		return;
 	_lastSceneActionItemId = itemId;
@@ -1496,10 +1496,6 @@ void PlayableScene::processSceneRelationClick(const GameplayLoopCursorState &sta
 	if (!walkActiveActorTo(targetX, targetY, finalFacing, 0, true))
 		return;
 	dispatchSceneAction(actionRecord.actionHandlerId);
-}
-
-SceneVerbActionRecord PlayableScene::relationActionRecord(byte inventoryItemId, byte sceneItemId, byte relationMode) const {
-	return _hotspots.relationActionRecord(inventoryItemId, sceneItemId, relationMode);
 }
 
 void PlayableScene::dispatchSceneAction(uint16 handlerId) {
@@ -1631,7 +1627,9 @@ bool PlayableScene::dispatchGenericSceneAction(uint16 handlerId) {
 		beginStaticSecondarySpeechLine(0x23, 0);
 		return true;
 	case 37: // Mirar hoja revelada (look at revealed Frankie note): read message.
-		handleStaticSpeech43And24Sequence();
+		beginStaticSecondarySpeechLine(0x43, 1);
+		beginStaticSecondarySpeechLine(0x24, 0);
+		beginStaticSecondarySpeechLine(0x43, 2);
 		return true;
 	case 38: // Mirar magnetófono (look at tape recorder): enough tape left.
 		beginStaticSecondarySpeechLine(0x25, 0);
@@ -1709,13 +1707,26 @@ bool PlayableScene::dispatchGenericSceneAction(uint16 handlerId) {
 		beginStaticSecondarySpeechLine(0x40, 0);
 		return true;
 	case 66: // Abrir maletín de maquillaje: find pintauñas multicolor if missing.
-		handleGrantItem22IfMissing();
+		if (hasInventoryItem(0x22)) {
+			beginStaticSecondarySpeechLine(0x41, 1);
+			return true;
+		}
+		addInventoryItem(0x22);
+		_soundBank0.playSample(1, 100);
+		beginStaticSecondarySpeechLine(0x41, 0);
 		return true;
 	case 67: // Mirar pintauñas multicolor (look at multicolor nail polish).
 		beginStaticSecondarySpeechLine(0x42, 0);
 		return true;
 	case 68: // Usar trapo con carbón + hoja: reveal Frankie's note.
-		handleSwapItems08And0FForItem06();
+		beginStaticSecondarySpeechLine(0x43, 0);
+		removeInventoryItem(0x08);
+		removeInventoryItem(0x0f);
+		addInventoryItem(0x06);
+		_soundBank0.playSample(1, 100);
+		beginStaticSecondarySpeechLine(0x43, 1);
+		beginStaticSecondarySpeechLine(0x24, 0);
+		beginStaticSecondarySpeechLine(0x43, 2);
 		return true;
 	case 69: // Door/lock condition: no key needed, it is not locked.
 		beginStaticSecondarySpeechLine(0x44, 0);
@@ -2145,32 +2156,6 @@ void PlayableScene::addInventoryItem(byte itemId) {
 void PlayableScene::removeInventoryItem(byte itemId) {
 	GameplayState &state = _vm->gameState();
 	state.removeInventoryItem(state.currentInventoryOwnerIndex, itemId);
-}
-
-void PlayableScene::handleStaticSpeech43And24Sequence() {
-	beginStaticSecondarySpeechLine(0x43, 1);
-	beginStaticSecondarySpeechLine(0x24, 0);
-	beginStaticSecondarySpeechLine(0x43, 2);
-}
-
-void PlayableScene::handleGrantItem22IfMissing() {
-	if (hasInventoryItem(0x22)) {
-		beginStaticSecondarySpeechLine(0x41, 1);
-		return;
-	}
-
-	addInventoryItem(0x22);
-	_soundBank0.playSample(1, 100);
-	beginStaticSecondarySpeechLine(0x41, 0);
-}
-
-void PlayableScene::handleSwapItems08And0FForItem06() {
-	beginStaticSecondarySpeechLine(0x43, 0);
-	removeInventoryItem(0x08);
-	removeInventoryItem(0x0f);
-	addInventoryItem(0x06);
-	_soundBank0.playSample(1, 100);
-	handleStaticSpeech43And24Sequence();
 }
 
 Common::String PlayableScene::dialogueMenuText(byte stageId, byte textRowId) const {
@@ -2914,20 +2899,6 @@ bool PlayableScene::pollEvents(bool allowSkip) {
 	}
 
 	return false;
-}
-
-bool PlayableScene::delay(uint32 millis) {
-	uint32 remaining = millis;
-	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents(true))
-			return true;
-
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		remaining -= slice;
-	}
-
-	return _skipRequested || Engine::shouldQuit();
 }
 
 } // End of namespace Hollywood

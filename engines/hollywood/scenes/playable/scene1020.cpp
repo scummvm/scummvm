@@ -725,7 +725,7 @@ void Scene1020::handleResourceOverlayChunk19EventFlag() {
 	state.scene1020EventFlag2 = true;
 }
 
-PlayableScene::AmbientAudioProfile Scene1020::ambientAudioProfile() const {
+AmbientAudioProfile Scene1020::ambientAudioProfile() const {
 	return createRandomAmbientAudioProfile(kScene1020FirstAmbientSoundCue,
 		kScene1020AmbientSoundCueCount, 15, kScene1020AmbientSoundProbabilityModulus,
 		kScene1020FirstAmbientMusicCue, kScene1020AmbientMusicCueCount, 100,
