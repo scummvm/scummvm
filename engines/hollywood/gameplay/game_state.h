@@ -34,6 +34,8 @@ struct GameplayState {
 		kInventoryFirstSlot = 1,
 		kInventoryLastSlot = kInventoryOwnerSlotStride - 1,
 		kInventoryVisibleSlotCount = 16,
+		kTravelScreenSlotCount = 8,
+		kTravelScreenDisabledSlot = 0xff,
 		kFixedInventoryActionTableEntryCount = kInventoryOwnerSlotStride * kInventoryVerbCount + 1,
 		kInventoryItemRelationTableEntryCount = kInventoryOwnerSlotStride * kInventoryOwnerSlotStride
 	};
@@ -72,6 +74,7 @@ struct GameplayState {
 		multiToolKnifeState = 0;
 		ronTapeRecorderState = 0;
 		ronWalletOpened = false;
+		initializeTravelScreenSlots();
 		seenScene1020EntryLine = false;
 		scene1020ResourceBlockChoiceState = 0;
 		scene1020ResourceBlockVariantState = 0;
@@ -91,7 +94,6 @@ struct GameplayState {
 		scene1050SuitcaseTaken = false;
 		scene1050TalkedToCloakroomAttendant = false;
 		scene1050JackLookedAt = false;
-		scene1050TravelUnlockFlags = 0;
 		scene1050CloakroomSecretMentioned = false;
 		seenScene1060EntryLine = false;
 		scene1060FlyDoctorState = 0;
@@ -299,6 +301,39 @@ struct GameplayState {
 		inventoryItemCountByOwner[owner] = 3;
 		inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(3);
 		inventoryPanelDirty = true;
+	}
+
+	void initializeTravelScreenSlots() {
+		for (uint slot = 0; slot < kTravelScreenSlotCount; ++slot)
+			travelScreenSlotIds[slot] = kTravelScreenDisabledSlot;
+
+		// Verified in LoadResource000StartupTablesAndRuntimeGlobals: Ron starts
+		// with destination 0 and destination 5 visible in the notebook.
+		travelScreenSlotIds[0] = 0;
+		travelScreenSlotIds[1] = 5;
+	}
+
+	bool hasTravelScreenDestination(byte destinationId) const {
+		for (uint slot = 0; slot < kTravelScreenSlotCount; ++slot) {
+			if (travelScreenSlotIds[slot] == destinationId)
+				return true;
+		}
+
+		return false;
+	}
+
+	bool unlockTravelScreenDestination(byte destinationId) {
+		if (destinationId >= 7 || hasTravelScreenDestination(destinationId))
+			return false;
+
+		for (uint slot = 2; slot < 7; ++slot) {
+			if (travelScreenSlotIds[slot] == kTravelScreenDisabledSlot) {
+				travelScreenSlotIds[slot] = destinationId;
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	void initializeSueItemResourcePages() {
@@ -522,6 +557,7 @@ struct GameplayState {
 	byte multiToolKnifeState;
 	byte ronTapeRecorderState;
 	bool ronWalletOpened;
+	byte travelScreenSlotIds[kTravelScreenSlotCount];
 	bool seenScene1020EntryLine;
 	byte scene1020ResourceBlockChoiceState;
 	byte scene1020ResourceBlockVariantState;
@@ -541,7 +577,6 @@ struct GameplayState {
 	bool scene1050SuitcaseTaken;
 	bool scene1050TalkedToCloakroomAttendant;
 	bool scene1050JackLookedAt;
-	byte scene1050TravelUnlockFlags;
 	bool scene1050CloakroomSecretMentioned;
 	bool seenScene1060EntryLine;
 	byte scene1060FlyDoctorState;

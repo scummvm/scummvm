@@ -43,6 +43,18 @@ namespace Hollywood {
 const char *const kResource000Name = "RESOURCE.000";
 const char *const kStage003ArchiveName = "RESOURCE.003";
 const char *const kTravelScreenArchiveName = "RESOURCE.I04";
+const uint kTravelScreenFramebufferBytes = HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight;
+const uint kTravelScreenPaletteChunk = 0;
+const uint kTravelScreenFramebufferChunk = 1;
+const uint kTravelScreenFirstTileChunk = 2;
+const uint kTravelScreenTileChunkCount = 5;
+const uint kTravelScreenTileWidth = 200;
+const uint kTravelScreenTileHeight = 0x5d;
+const uint kTravelScreenTileBytes = kTravelScreenTileWidth * kTravelScreenTileHeight;
+const uint kTravelScreenVisibleSlotCount = 7;
+const int kTravelSlotX[] = { 0x5e, 0x5e, 0x5e, 0x5e, 0x16a, 0x16a, 0x16a };
+const int kTravelSlotY[] = { 0x37, 0x94, 0xf1, 0x14e, 0x37, 0x94, 0xf1 };
+const byte kTravelDestinationTileSourceIds[] = { 0, 0, 1, 2, 3, 0, 4 };
 const char *const kDefaultGameplayMusicArchiveName = "RESOURCE.M07";
 const char *const kDefaultGameplaySoundBank0ArchiveName = "RESOURCE.S07";
 const byte kAmbientMusicCueStillFrame = 0x0f;
@@ -102,6 +114,88 @@ int actorPathRoundToNearestEven(float value) {
 	if (fraction < 0.5f)
 		return lowerInt;
 	return (lowerInt & 1) ? lowerInt + 1 : lowerInt;
+}
+
+bool readTravelScreenChunk(HollywoodEngine *vm, uint index, Common::Array<byte> &destination,
+		uint expectedSize) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		vm->resources()->createChunkReadStream(Common::Path(kTravelScreenArchiveName), index));
+	if (!stream) {
+		warning("Failed to open %s chunk %u", kTravelScreenArchiveName, index);
+		return false;
+	}
+
+	if ((uint)stream->size() != expectedSize) {
+		warning("%s chunk %u has unexpected size %u, expected %u",
+			kTravelScreenArchiveName, index, (uint)stream->size(), expectedSize);
+		return false;
+	}
+
+	destination.resize(expectedSize);
+	if (stream->read(destination.data(), destination.size()) != destination.size()) {
+		warning("Failed to read %s chunk %u", kTravelScreenArchiveName, index);
+		return false;
+	}
+
+	return true;
+}
+
+bool loadTravelScreenResources(HollywoodEngine *vm, Common::Array<byte> &palette,
+		IndexedSurfaceBuffer &framebuffer, Common::Array<byte> &tilePixels) {
+	Common::Array<byte> framebufferChunk;
+	if (!readTravelScreenChunk(vm, kTravelScreenPaletteChunk, palette, kPaletteSize) ||
+			!readTravelScreenChunk(vm, kTravelScreenFramebufferChunk, framebufferChunk,
+				kTravelScreenFramebufferBytes))
+		return false;
+
+	framebuffer.resize(kTravelScreenFramebufferBytes);
+	memcpy(framebuffer.data(), framebufferChunk.data(), framebufferChunk.size());
+
+	tilePixels.resize(kTravelScreenTileBytes * kTravelScreenTileChunkCount);
+	for (uint chunk = 0; chunk < kTravelScreenTileChunkCount; ++chunk) {
+		Common::Array<byte> sourceChunk;
+		if (!readTravelScreenChunk(vm, kTravelScreenFirstTileChunk + chunk, sourceChunk,
+				kTravelScreenTileBytes))
+			return false;
+		memcpy(tilePixels.data() + chunk * kTravelScreenTileBytes, sourceChunk.data(),
+			sourceChunk.size());
+	}
+
+	return true;
+}
+
+void composeTravelScreenSlots(const GameplayState &state, const Common::Array<byte> &tilePixels,
+		IndexedSurfaceBuffer &framebuffer) {
+	for (uint slot = 2; slot < kTravelScreenVisibleSlotCount; ++slot) {
+		const byte destinationId = state.travelScreenSlotIds[slot];
+		if (destinationId == GameplayState::kTravelScreenDisabledSlot ||
+				destinationId >= ARRAYSIZE(kTravelDestinationTileSourceIds))
+			continue;
+
+		const byte sourceId = kTravelDestinationTileSourceIds[destinationId];
+		if (sourceId >= kTravelScreenTileChunkCount)
+			continue;
+
+		for (uint row = 0; row < kTravelScreenTileHeight; ++row) {
+			const int dstY = kTravelSlotY[slot] + row;
+			if (dstY < 0 || dstY >= HollywoodEngine::kSceneBufferHeight)
+				continue;
+
+			const uint sourceOffset = sourceId * kTravelScreenTileBytes +
+				row * kTravelScreenTileWidth;
+			const uint destinationOffset = dstY * HollywoodEngine::kSceneBufferWidth +
+				kTravelSlotX[slot];
+			for (uint column = 0; column < kTravelScreenTileWidth; ++column) {
+				const int dstX = kTravelSlotX[slot] + column;
+				if (dstX < 0 || dstX >= HollywoodEngine::kSceneBufferWidth)
+					continue;
+
+				const byte pixel = tilePixels[sourceOffset + column];
+				if (pixel != 0xff)
+					framebuffer[destinationOffset + column] = pixel;
+			}
+		}
+	}
 }
 
 PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int defaultActorX, int defaultActorY,
@@ -1430,29 +1524,14 @@ void PlayableScene::playSharedInventorySound(byte sampleId) {
 }
 
 void PlayableScene::showTravelScreenViewer() {
-	Common::File file;
-	if (!file.open(Common::Path(kTravelScreenArchiveName))) {
-		warning("Failed to open %s", kTravelScreenArchiveName);
-		return;
-	}
-
-	const uint32 requiredSize = kPaletteSize + kFrameBufferSize;
-	if ((uint32)file.size() < requiredSize) {
-		warning("%s is too small for travel screen viewer", kTravelScreenArchiveName);
-		return;
-	}
-
 	Common::Array<byte> viewerPalette;
 	IndexedSurfaceBuffer viewerFramebuffer;
-	viewerPalette.resize(kPaletteSize);
-	viewerFramebuffer.resize(kFrameBufferSize);
-
-	file.seek(0);
-	if (file.read(viewerPalette.data(), viewerPalette.size()) != viewerPalette.size() ||
-			file.read(viewerFramebuffer.data(), viewerFramebuffer.size()) != viewerFramebuffer.size()) {
-		warning("Failed to read %s travel screen viewer", kTravelScreenArchiveName);
+	Common::Array<byte> tilePixels;
+	if (!loadTravelScreenResources(_vm, viewerPalette, viewerFramebuffer, tilePixels))
 		return;
-	}
+
+	GameplayState &state = _vm->gameState();
+	composeTravelScreenSlots(state, tilePixels, viewerFramebuffer);
 
 	presentIndexedFrame(viewerFramebuffer.surface(), viewerPalette, _screen, _displayPalette);
 

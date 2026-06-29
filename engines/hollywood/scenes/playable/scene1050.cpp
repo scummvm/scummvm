@@ -618,21 +618,21 @@ void Scene1050::handleDialogueEffect(byte effectId) {
 	GameplayState &state = _vm->gameState();
 	switch (effectId) {
 	case 2:
-		if ((state.scene1050TravelUnlockFlags & 0x01) == 0) {
+		if (!state.hasTravelScreenDestination(1)) {
 			runTravelUnlockEffect(1);
-			state.scene1050TravelUnlockFlags |= 0x01;
+			state.unlockTravelScreenDestination(1);
 		}
 		break;
 	case 3:
-		if ((state.scene1050TravelUnlockFlags & 0x02) == 0) {
+		if (!state.hasTravelScreenDestination(2)) {
 			runTravelUnlockEffect(2);
-			state.scene1050TravelUnlockFlags |= 0x02;
+			state.unlockTravelScreenDestination(2);
 		}
 		break;
 	case 4:
-		if ((state.scene1050TravelUnlockFlags & 0x04) == 0) {
+		if (!state.hasTravelScreenDestination(3)) {
 			runTravelUnlockEffect(3);
-			state.scene1050TravelUnlockFlags |= 0x04;
+			state.unlockTravelScreenDestination(3);
 		}
 		break;
 	case 5:
