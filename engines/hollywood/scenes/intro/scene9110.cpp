@@ -69,7 +69,7 @@ Scene9110::Scene9110(HollywoodEngine *vm) :
 	_baseFramebuffer.resize(kFrameBufferSize);
 	_sceneFramebuffer.resize(kFrameBufferSize);
 	_savedFramebuffer.resize(kFrameBufferSize);
-	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
+	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_stage003DecodeKey.resize(kStage003DecodeKeySize);
 	_stage003Descriptors.resize(kStage003DescriptorTableSize);
 	_subtitle.visible = false;
@@ -157,6 +157,28 @@ bool Scene9110::loadResourceI11Assets() {
 }
 
 bool Scene9110::loadResourceI11Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI11ArchiveName), index));
+	if (!stream) {
+		warning("Failed to open %s chunk %u", kI11ArchiveName, index);
+		return false;
+	}
+
+	if (stream->size() > fixedSize || destination.size() < fixedSize) {
+		warning("%s chunk %u does not fit its fixed destination", kI11ArchiveName, index);
+		return false;
+	}
+
+	memset(destination.data(), 0, destination.size());
+	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
+		warning("Failed to read %s chunk %u", kI11ArchiveName, index);
+		return false;
+	}
+
+	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", kI11ArchiveName, index, (uint)stream->size());
+	return true;
+}
+
+bool Scene9110::loadResourceI11Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI11ArchiveName), index));
 	if (!stream) {
 		warning("Failed to open %s chunk %u", kI11ArchiveName, index);
@@ -411,7 +433,7 @@ void Scene9110::drawDescriptorFrame(byte localChunkIndex, byte descriptorCount, 
 		return;
 
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[localChunkIndex], 0,
-		descriptorCount, descriptorIndex, _sceneFramebuffer);
+		descriptorCount, descriptorIndex, _sceneFramebuffer.surface());
 }
 
 byte Scene9110::nextMouthFrameVariant() {
@@ -468,16 +490,12 @@ void Scene9110::drawSubtitleOverlay() {
 	HollywoodFont *font = _vm->font();
 	font->setShadowColor(0);
 
-	Graphics::Surface screenSurface;
-	screenSurface.init(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
-		HollywoodEngine::kScreenWidth, _screen.data(), Graphics::PixelFormat::createFormatCLUT8());
-
 	for (uint lineIndex = 0; lineIndex < _subtitle.lines.size(); ++lineIndex) {
 		const Common::String &line = _subtitle.lines[lineIndex];
 		const int lineWidth = actorSpeechTextWidth(line);
 		const int x = (int)_subtitle.centerX - (lineWidth >> 1);
 		const int y = (int)_subtitle.topY + lineIndex * kOriginalSpeechLineHeight;
-		font->drawString(&screenSurface, line, x, y, lineWidth, _subtitle.colorIndex,
+		font->drawString(_screen.surfacePtr(), line, x, y, lineWidth, _subtitle.colorIndex,
 			Graphics::kTextAlignLeft, 0, false, true);
 	}
 }
@@ -578,8 +596,8 @@ void Scene9110::revealSavedFramebufferBand(uint sweepOffset, byte bandWidth) {
 	const int leftInset = sweepOffset;
 
 	for (uint row = 0; row < bandWidth; ++row) {
-		copyFramebufferRun(_savedFramebuffer, _sceneFramebuffer, sweepOffset + row, leftInset, innerWidth);
-		copyFramebufferRun(_savedFramebuffer, _sceneFramebuffer,
+		copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(), sweepOffset + row, leftInset, innerWidth);
+		copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(),
 			(HollywoodEngine::kScreenHeight - bandWidth - sweepOffset) + row, leftInset, innerWidth);
 	}
 
@@ -587,8 +605,8 @@ void Scene9110::revealSavedFramebufferBand(uint sweepOffset, byte bandWidth) {
 		const int middleRightX = sweepOffset + innerWidth - bandWidth;
 		for (int row = 0; row < middleHeight; ++row) {
 			const int y = combinedInset + row;
-			copyFramebufferRun(_savedFramebuffer, _sceneFramebuffer, y, leftInset, bandWidth);
-			copyFramebufferRun(_savedFramebuffer, _sceneFramebuffer, y, middleRightX, bandWidth);
+			copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(), y, leftInset, bandWidth);
+			copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(), y, middleRightX, bandWidth);
 		}
 	}
 }
@@ -603,8 +621,8 @@ void Scene9110::clearSceneFramebufferBand(uint sweepOffset, byte bandWidth) {
 	const int leftInset = sweepOffset;
 
 	for (uint row = 0; row < bandWidth; ++row) {
-		clearFramebufferRun(_sceneFramebuffer, sweepOffset + row, leftInset, innerWidth);
-		clearFramebufferRun(_sceneFramebuffer,
+		clearSurfaceRun(_sceneFramebuffer.surface(), sweepOffset + row, leftInset, innerWidth);
+		clearSurfaceRun(_sceneFramebuffer.surface(),
 			(HollywoodEngine::kScreenHeight - bandWidth - sweepOffset) + row, leftInset, innerWidth);
 	}
 
@@ -612,25 +630,25 @@ void Scene9110::clearSceneFramebufferBand(uint sweepOffset, byte bandWidth) {
 		const int middleRightX = sweepOffset + innerWidth - bandWidth;
 		for (int row = 0; row < middleHeight; ++row) {
 			const int y = combinedInset + row;
-			clearFramebufferRun(_sceneFramebuffer, y, leftInset, bandWidth);
-			clearFramebufferRun(_sceneFramebuffer, y, middleRightX, bandWidth);
+			clearSurfaceRun(_sceneFramebuffer.surface(), y, leftInset, bandWidth);
+			clearSurfaceRun(_sceneFramebuffer.surface(), y, middleRightX, bandWidth);
 		}
 	}
 }
 
 void Scene9110::presentFrame() {
-	uploadPalette6Bit(_paletteCurrent);
+	_displayPalette.uploadFrom6Bit(_paletteCurrent);
 
 	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
 		const uint sourceOffset = y * HollywoodEngine::kSceneBufferWidth;
-		memcpy(_screen.data() + y * HollywoodEngine::kScreenWidth,
+		memcpy(_screen.getBasePtr(0, y),
 			_sceneFramebuffer.data() + sourceOffset,
 			HollywoodEngine::kScreenWidth);
 	}
 
 	drawSubtitleOverlay();
 
-	g_system->copyRectToScreen(_screen.data(), HollywoodEngine::kScreenWidth, 0, 0,
+	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0,
 		HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight);
 	g_system->updateScreen();
 }

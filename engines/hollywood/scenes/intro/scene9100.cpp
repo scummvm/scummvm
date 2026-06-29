@@ -27,7 +27,6 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "graphics/pixelformat.h"
-#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 #include "hollywood/font.h"
@@ -102,7 +101,7 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 	_frameDecodeBuffer.resize(kFrameDecodeBufferSize);
 	_sceneFramebuffer.resize(kFrameDecodeBufferSize);
 	_savedFramebuffer.resize(kFrameDecodeBufferSize);
-	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
+	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_stage003DecodeKey.resize(kStage003DecodeKeySize);
 	_stage003Descriptors.resize(kStage003DescriptorTableSize);
 	_stage003LargeRowBaseIndex = kStage910LargeRowBaseIndex;
@@ -261,6 +260,28 @@ bool Scene9100::load(bool dialogueBranch) {
 }
 
 bool Scene9100::loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI10ArchiveName), index));
+	if (!stream) {
+		warning("Failed to open %s chunk %u", kI10ArchiveName, index);
+		return false;
+	}
+
+	if (stream->size() > fixedSize || destination.size() < fixedSize) {
+		warning("%s chunk %u does not fit its fixed destination", kI10ArchiveName, index);
+		return false;
+	}
+
+	memset(destination.data(), 0, destination.size());
+	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
+		warning("Failed to read %s chunk %u", kI10ArchiveName, index);
+		return false;
+	}
+
+	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", kI10ArchiveName, index, (uint)stream->size());
+	return true;
+}
+
+bool Scene9100::loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI10ArchiveName), index));
 	if (!stream) {
 		warning("Failed to open %s chunk %u", kI10ArchiveName, index);
@@ -528,7 +549,7 @@ void Scene9100::applyActorHighlightColor(byte highlightRed, byte highlightGreen,
 }
 
 void Scene9100::runEntryActorAnimations() {
-	Common::Array<byte> baseFramebuffer;
+	IndexedSurfaceBuffer baseFramebuffer;
 	baseFramebuffer.resize(_sceneFramebuffer.size());
 	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
 
@@ -539,7 +560,7 @@ void Scene9100::runEntryActorAnimations() {
 }
 
 void Scene9100::showSueEntryActor() {
-	Common::Array<byte> baseFramebuffer;
+	IndexedSurfaceBuffer baseFramebuffer;
 	baseFramebuffer.resize(_sceneFramebuffer.size());
 	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
 
@@ -549,7 +570,7 @@ void Scene9100::showSueEntryActor() {
 	memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
 }
 
-void Scene9100::playEntryActorAnimation(const ActorBank &bank, int worldX, int worldY, Common::Array<byte> &baseFramebuffer) {
+void Scene9100::playEntryActorAnimation(const ActorBank &bank, int worldX, int worldY, IndexedSurfaceBuffer &baseFramebuffer) {
 	const byte kFacingTurnToCamera = 5;
 	const byte kTurnCel = 2;
 	const byte kFinalCel = 0;
@@ -576,7 +597,7 @@ void Scene9100::runRonEntryConversation() {
 	const PopupDescriptor popup = getStage003PopupDescriptor(0, 2);
 	const uint segmentCount = MAX<uint>(1, popup.continuationCount);
 
-	Common::Array<byte> baseFramebuffer;
+	IndexedSurfaceBuffer baseFramebuffer;
 	baseFramebuffer.resize(_sceneFramebuffer.size());
 	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
 
@@ -712,7 +733,7 @@ void Scene9100::runSueEntrySequence() {
 }
 
 void Scene9100::runSueEntryPath() {
-	Common::Array<byte> baseFramebuffer;
+	IndexedSurfaceBuffer baseFramebuffer;
 	baseFramebuffer.resize(_sceneFramebuffer.size());
 	memcpy(baseFramebuffer.data(), _sceneFramebuffer.data(), baseFramebuffer.size());
 
@@ -1077,16 +1098,12 @@ void Scene9100::drawSubtitleOverlay() {
 	HollywoodFont *font = _vm->font();
 	font->setShadowColor(0);
 
-	Graphics::Surface screenSurface;
-	screenSurface.init(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
-		HollywoodEngine::kScreenWidth, _screen.data(), Graphics::PixelFormat::createFormatCLUT8());
-
 	for (uint lineIndex = 0; lineIndex < _subtitle.lines.size(); ++lineIndex) {
 		const Common::String &line = _subtitle.lines[lineIndex];
 		const int lineWidth = actorSpeechTextWidth(line);
 		const int x = (int)_subtitle.centerX - (lineWidth >> 1);
 		const int y = (int)_subtitle.topY + lineIndex * kOriginalSpeechLineHeight;
-		font->drawString(&screenSurface, line, x, y, lineWidth, _subtitle.colorIndex,
+		font->drawString(_screen.surfacePtr(), line, x, y, lineWidth, _subtitle.colorIndex,
 			Graphics::kTextAlignLeft, 0, false, true);
 	}
 }
@@ -1378,7 +1395,7 @@ void Scene9100::drawResourceBlockListToSceneFramebuffer(uint32 baseOffset) {
 	drawResourceBlockListToBuffer(baseOffset, _sceneFramebuffer);
 }
 
-void Scene9100::drawResourceBlockListToBuffer(uint32 baseOffset, Common::Array<byte> &destination) {
+void Scene9100::drawResourceBlockListToBuffer(uint32 baseOffset, IndexedSurfaceBuffer &destination) {
 	if (baseOffset + 2 > _resourceArena.size())
 		return;
 
@@ -1548,22 +1565,18 @@ void Scene9100::clearSceneFramebufferRun(int y, int x, int width) {
 }
 
 void Scene9100::presentFrame() {
-	byte palette[0x300];
-	for (uint i = 0; i < ARRAYSIZE(palette); ++i)
-		palette[i] = MIN<byte>(255, _paletteCurrent[i] * 4);
-
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+	_displayPalette.uploadFrom6Bit(_paletteCurrent);
 
 	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
 		const uint sourceOffset = y * HollywoodEngine::kSceneBufferWidth;
-		memcpy(_screen.data() + y * HollywoodEngine::kScreenWidth,
+		memcpy(_screen.getBasePtr(0, y),
 			_sceneFramebuffer.data() + sourceOffset,
 			HollywoodEngine::kScreenWidth);
 	}
 
 	drawSubtitleOverlay();
 
-	g_system->copyRectToScreen(_screen.data(), HollywoodEngine::kScreenWidth, 0, 0,
+	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0,
 		HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight);
 	g_system->updateScreen();
 }

@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 
+#include "hollywood/graphics.h"
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
 
@@ -69,9 +70,10 @@ private:
 	Common::Array<byte> _paletteSource;
 	Common::Array<byte> _paletteCurrent;
 	Common::Array<byte> _resourceArena;
-	Common::Array<byte> _frameDecodeBuffer;
-	Common::Array<byte> _sceneFramebuffer;
-	Common::Array<byte> _screen;
+	IndexedSurfaceBuffer _frameDecodeBuffer;
+	IndexedSurfaceBuffer _sceneFramebuffer;
+	Graphics::ManagedSurface _screen;
+	Palette6Bit _displayPalette;
 	bool _skipRequested;
 };
 

@@ -1443,7 +1443,7 @@ void PlayableScene::showTravelScreenViewer() {
 	}
 
 	Common::Array<byte> viewerPalette;
-	Common::Array<byte> viewerFramebuffer;
+	IndexedSurfaceBuffer viewerFramebuffer;
 	viewerPalette.resize(kPaletteSize);
 	viewerFramebuffer.resize(kFrameBufferSize);
 
@@ -1454,7 +1454,7 @@ void PlayableScene::showTravelScreenViewer() {
 		return;
 	}
 
-	presentIndexedFrame(viewerFramebuffer, viewerPalette, _screen, _displayPalette);
+	presentIndexedFrame(viewerFramebuffer.surface(), viewerPalette, _screen, _displayPalette);
 
 	bool done = false;
 	while (!done && !Engine::shouldQuit()) {
@@ -1470,7 +1470,7 @@ void PlayableScene::showTravelScreenViewer() {
 				if (_vm->isSceneRestartRequested())
 					return;
 				_displayPalette.markAllDirty();
-				presentIndexedFrame(viewerFramebuffer, viewerPalette, _screen, _displayPalette);
+				presentIndexedFrame(viewerFramebuffer.surface(), viewerPalette, _screen, _displayPalette);
 				break;
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
