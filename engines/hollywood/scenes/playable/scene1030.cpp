@@ -385,7 +385,7 @@ bool Scene1030::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene1030::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 108: // Hablar con pequeño bulto en movimiento (talk to small moving lump).
+	case 108: // Hablar con pequeño bulto en movimiento / hombre menguante (talk to moving lump / shrinking man).
 		beginStaticSecondarySpeechLine(0x64, 0);
 		return true;
 	case 301: // Ir a entrada (go to entrance).
@@ -400,10 +400,10 @@ bool Scene1030::dispatchCustomSceneAction(uint16 handlerId) {
 	case 304: // Mirar tipo durmiendo la mona (look at sleeping drunk).
 		handleSceneEventFlag0();
 		return true;
-	case 305: // Coger maletín (take doctor's bag).
+	case 305: // Coger hombre menguante (take shrinking man).
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 306: // Mirar maletín (look at doctor's bag).
+	case 306: // Mirar hombre menguante (look at shrinking man).
 		beginSecondarySpeechLine(5, 0);
 		return true;
 	case 307: // Mirar plato (look at plate).
@@ -430,11 +430,11 @@ bool Scene1030::dispatchCustomSceneAction(uint16 handlerId) {
 	case 314: // Mirar escaleras (look at stairs).
 		beginSecondarySpeechLine(10, 0);
 		return true;
-	case 315: // Coger pequeño bulto en movimiento (take small moving lump).
-		handlePickupSmallMan();
+	case 315: // Coger pequeño bulto en movimiento / hombre menguante (take moving lump / shrinking man).
+		handlePickupShrinkingMan();
 		return true;
-	case 316: // Mirar pequeño bulto en movimiento (look at small moving lump).
-		handleSmallBumpDescription();
+	case 316: // Mirar pequeño bulto en movimiento / hombre menguante (look at moving lump / shrinking man).
+		handleShrinkingManDescription();
 		return true;
 	case 317: // Usar algodón con plato (use cotton with plate).
 		handleGreasyCottonExchange();
@@ -504,7 +504,7 @@ bool Scene1030::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 	applyPatchStateColorMaps();
 	rebuildScene1030WalkableMask();
-	if (_vm->gameState().scene1030SmallBumpRenamed)
+	if (_vm->gameState().scene1030ShrinkingManNamed)
 		copyStageSmallRow(10, 8);
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
 	return true;
@@ -738,9 +738,9 @@ void Scene1030::handlePickupLemonSlice() {
 	beginSecondarySpeechLine(0x14, (byte)_random.getRandomNumber(4));
 }
 
-void Scene1030::handlePickupSmallMan() {
+void Scene1030::handlePickupShrinkingMan() {
 	GameplayState &state = _vm->gameState();
-	if (!state.scene1030SmallBumpRenamed)
+	if (!state.scene1030ShrinkingManNamed)
 		beginSecondarySpeechLine(0x0c, 0);
 	beginSecondarySpeechLine(0x0b, 0);
 	runPickupOverlay(7, kScene1030PickupDescriptorCount, kScene1030PickupFrameMap,
@@ -749,11 +749,11 @@ void Scene1030::handlePickupSmallMan() {
 	_soundBank0.playSample(1, 100);
 }
 
-void Scene1030::handleSmallBumpDescription() {
+void Scene1030::handleShrinkingManDescription() {
 	GameplayState &state = _vm->gameState();
-	if (!state.scene1030SmallBumpRenamed) {
+	if (!state.scene1030ShrinkingManNamed) {
 		beginSecondarySpeechLine(0x0c, 0);
-		state.scene1030SmallBumpRenamed = true;
+		state.scene1030ShrinkingManNamed = true;
 		applySceneStateToHotspotsAndPatches(2);
 		return;
 	}
