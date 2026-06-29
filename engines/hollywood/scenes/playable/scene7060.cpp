@@ -370,7 +370,7 @@ bool Scene7060::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 			}
 		}
 
-		if (_vm->gameState().g06DialogueIntroSeen &&
+		if (_vm->gameState().spokenToBruno &&
 				_stage003SmallRows.size() >= 10 * kStage003SmallRowSize) {
 			memcpy(_stage003SmallRows.data() + 2 * kStage003SmallRowSize,
 				_stage003SmallRows.data() + 9 * kStage003SmallRowSize, kStage003SmallRowSize);
@@ -429,10 +429,10 @@ void Scene7060::updateAmbientAudioAndMusicCues(uint32 delta) {
 		return;
 
 	GameplayState &state = _vm->gameState();
-	if (state.currentRandomAmbientMusicTrackId != 0x0f) {
-		_previousAmbientMusicTrackId = state.currentRandomAmbientMusicTrackId;
-		state.currentRandomAmbientMusicTrackId = 0x0f;
-		_vm->gameplayMusic()->playMusicCue(state.currentRandomAmbientMusicTrackId, 50);
+	if (state.currentAmbientMusicCueId != 0x0f) {
+		_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
+		state.currentAmbientMusicCueId = 0x0f;
+		_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 50);
 		return;
 	}
 
@@ -441,9 +441,9 @@ void Scene7060::updateAmbientAudioAndMusicCues(uint32 delta) {
 		nextTrack = (byte)(0x0c + _random.getRandomNumber(2));
 	} while (nextTrack == _previousAmbientMusicTrackId);
 
-	_previousAmbientMusicTrackId = state.currentRandomAmbientMusicTrackId;
-	state.currentRandomAmbientMusicTrackId = nextTrack;
-	_vm->gameplayMusic()->playMusicCue(state.currentRandomAmbientMusicTrackId, 50);
+	_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
+	state.currentAmbientMusicCueId = nextTrack;
+	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 50);
 }
 
 void Scene7060::advanceChunk6IdleAndMachineFrame(uint32 delta) {
@@ -485,12 +485,12 @@ void Scene7060::advanceChunk6IdleAndMachineFrame(uint32 delta) {
 			break;
 		case 4:
 			if (_chunk6FrameIndex == 0x23)
-				_chunk6FrameMillis = _vm->gameState().g06MachineSpeed * 2 + 100;
+				_chunk6FrameMillis = _vm->gameState().labMachineSpeed * 2 + 100;
 			if (_chunk6FrameIndex == 0x2c) {
 				_chunk6FrameIndex = 0x2d;
 				_chunk6State = 5;
 				_chunk6FrameMillis = kScene7060OverlayFrameMillis;
-				_vm->gameState().g06MachineSpeed = 0x0c;
+				_vm->gameState().labMachineSpeed = 0x0c;
 				setColorMapItem8Promoted(false);
 			} else {
 				++_chunk6FrameIndex;
@@ -498,7 +498,7 @@ void Scene7060::advanceChunk6IdleAndMachineFrame(uint32 delta) {
 			break;
 		case 5:
 			if (_chunk6FrameIndex == 0x31) {
-				_vm->gameState().g06MachineSpeed = 9;
+				_vm->gameState().labMachineSpeed = 9;
 				_chunk6FrameMillis = kScene7060OverlayFrameMillis;
 			}
 			if (_chunk6FrameIndex >= 0x35 && _chunk6FrameIndex <= 0x38)
@@ -506,7 +506,7 @@ void Scene7060::advanceChunk6IdleAndMachineFrame(uint32 delta) {
 			if (_chunk6FrameIndex == 0x39) {
 				_chunk6FrameIndex = 0x47;
 				_chunk6State = 6;
-				_vm->gameState().g06MachineSpeed = 0x0c;
+				_vm->gameState().labMachineSpeed = 0x0c;
 			} else {
 				++_chunk6FrameIndex;
 			}
@@ -519,7 +519,7 @@ void Scene7060::advanceChunk6IdleAndMachineFrame(uint32 delta) {
 			if (_chunk6FrameIndex == 0x4d) {
 				_chunk6FrameIndex = 1;
 				_chunk6State = 0;
-				_vm->gameState().g06MachineSpeed = 0x0c;
+				_vm->gameState().labMachineSpeed = 0x0c;
 				_chunk6FrameMillis = kScene7060OverlayFrameMillis;
 			} else {
 				++_chunk6FrameIndex;
@@ -591,11 +591,11 @@ void Scene7060::runDialogueMenuRow98() {
 	bool finished = false;
 
 	GameplayState &state = _vm->gameState();
-	if (!state.g06DialogueIntroSeen) {
+	if (!state.spokenToBruno) {
 		beginSecondarySpeechLine(kScene7060DialogueStageId, 0);
 		waitForMachineIdleBeforeDialogue();
 		beginPrimaryDialogueSpeech(0);
-		state.g06DialogueIntroSeen = true;
+		state.spokenToBruno = true;
 		applySceneStateToHotspotsAndPatches(0);
 	} else {
 		beginSecondarySpeechLine(kScene7060DialogueStageId, 1);
@@ -673,18 +673,18 @@ void Scene7060::runOverlaySequence(uint chunkIndex, uint descriptorCount, const 
 }
 
 void Scene7060::handleSpeechRow04Variant() {
-	beginSecondarySpeechLine(4, _vm->gameState().g06ExitMachineTriggered ? 1 : 0);
+	beginSecondarySpeechLine(4, _vm->gameState().activatedLabExitMachine ? 1 : 0);
 }
 
 void Scene7060::handleSpeechRow04Or06() {
-	if (_vm->gameState().g06ExitMachineTriggered)
+	if (_vm->gameState().activatedLabExitMachine)
 		beginSecondarySpeechLine(6, 0);
 	else
 		beginSecondarySpeechLine(4, 0);
 }
 
 void Scene7060::handleChunk9Or10MachineAction() {
-	if (_activeActorWorldX < 600 && _vm->gameState().g06ExitMachineTriggered) {
+	if (_activeActorWorldX < 600 && _vm->gameState().activatedLabExitMachine) {
 		handleShortExitToState7071();
 		return;
 	}
@@ -731,7 +731,7 @@ void Scene7060::handleChunk7PickupItem11() {
 }
 
 void Scene7060::handleChunk9ExitToG07() {
-	if (_vm->gameState().g06ExitMachineTriggered) {
+	if (_vm->gameState().activatedLabExitMachine) {
 		beginSecondarySpeechLine(8, 0);
 		return;
 	}
@@ -739,7 +739,7 @@ void Scene7060::handleChunk9ExitToG07() {
 	runOverlaySequence(9, kScene7060Chunk9And10DescriptorCount,
 		kScene7060Chunk9ExitFrameMap, ARRAYSIZE(kScene7060Chunk9ExitFrameMap),
 		kScene7060OverlayFrameMillis, 8, 0x11);
-	_vm->gameState().g06ExitMachineTriggered = true;
+	_vm->gameState().activatedLabExitMachine = true;
 	_vm->gameState().mainFlowStateId = kScene7060ExitToG07State;
 }
 
@@ -754,10 +754,10 @@ void Scene7060::handleChunk10SpeechAction() {
 void Scene7060::handleUseItem0DOnMachine() {
 	GameplayState &state = _vm->gameState();
 	_chunk6RandomIdlePaused = true;
-	if (!hasInventoryItem(0x11) && state.g06MachineSpeed < 0x5c)
-		state.g06MachineSpeed += 8;
+	if (!hasInventoryItem(0x11) && state.labMachineSpeed < 0x5c)
+		state.labMachineSpeed += 8;
 
-	beginSecondarySpeechLine(12, state.g06MachineSpeed != 0x0c ? 1 : 0);
+	beginSecondarySpeechLine(12, state.labMachineSpeed != 0x0c ? 1 : 0);
 	waitForMachineIdleBeforeDialogue();
 	beginPrimaryDialogueSpeech(2);
 	beginSecondarySpeechLine(12, 3);

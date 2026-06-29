@@ -193,9 +193,9 @@ void Scene7070::runCustomEntrySequence() {
 	runEntryPath(kScene7070EntryFromG06StartX, kScene7070EntryFromG06StartY,
 		kScene7070EntryFromG06Facing, kScene7070EntryFromG06TargetX, kScene7070EntryFromG06TargetY);
 
-	if (!state.g07IntroSeen) {
+	if (!state.seenGramophoneRoomIntro) {
 		beginSecondarySpeechLine(0, 0);
-		state.g07IntroSeen = true;
+		state.seenGramophoneRoomIntro = true;
 	}
 }
 
@@ -222,7 +222,7 @@ bool Scene7070::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(0x17, 0);
 		return true;
 	case 306: // Mirar puerta (look at door)
-		beginSecondarySpeechLine(5, _vm->gameState().g07ExitDoorState < 2 ? 0 : 1);
+		beginSecondarySpeechLine(5, _vm->gameState().gramophoneRoomDoorState < 2 ? 0 : 1);
 		return true;
 	case 307: // Usar/Abrir puerta (use/open door)
 		handleExitDoorAction();
@@ -243,7 +243,7 @@ bool Scene7070::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(0x16, 0);
 		return true;
 	case 315: // Mirar manivela (look at crank)
-		beginSecondarySpeechLine(0x0d, _vm->gameState().g07ExitDoorState < 2 ? 0 : 1);
+		beginSecondarySpeechLine(0x0d, _vm->gameState().gramophoneRoomDoorState < 2 ? 0 : 1);
 		return true;
 	case 316: // Usar manivela (use crank)
 		handleChunk12ItemAction();
@@ -275,7 +275,7 @@ bool Scene7070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		if (!_baseFramebufferOriginal.empty())
 			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
 
-		if (_vm->gameState().g07ObjectPatchState != 0) {
+		if (_vm->gameState().gramophoneCrankState != 0) {
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[10], _baseFramebuffer);
 		}
 
@@ -284,7 +284,7 @@ bool Scene7070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 			for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
 				if (_paletteMaskOriginal[kSceneColorToItemMap + i] == 10) {
 					_paletteMask[kSceneColorToItemMap + i] =
-						_vm->gameState().g07ObjectPatchState != 0 ? 10 : 3;
+						_vm->gameState().gramophoneCrankState != 0 ? 10 : 3;
 				}
 			}
 		}
@@ -316,10 +316,10 @@ void Scene7070::updateSceneAmbientAudioAndMusicCues(uint32 delta) {
 		return;
 
 	GameplayState &state = _vm->gameState();
-	if (state.currentRandomAmbientMusicTrackId != 0x0f) {
-		_previousAmbientMusicTrackId = state.currentRandomAmbientMusicTrackId;
-		state.currentRandomAmbientMusicTrackId = 0x0f;
-		_vm->gameplayMusic()->playMusicCue(state.currentRandomAmbientMusicTrackId, 50);
+	if (state.currentAmbientMusicCueId != 0x0f) {
+		_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
+		state.currentAmbientMusicCueId = 0x0f;
+		_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 50);
 		return;
 	}
 
@@ -328,9 +328,9 @@ void Scene7070::updateSceneAmbientAudioAndMusicCues(uint32 delta) {
 		nextTrack = (byte)(0x0c + _random.getRandomNumber(2));
 	} while (nextTrack == _previousAmbientMusicTrackId);
 
-	_previousAmbientMusicTrackId = state.currentRandomAmbientMusicTrackId;
-	state.currentRandomAmbientMusicTrackId = nextTrack;
-	_vm->gameplayMusic()->playMusicCue(state.currentRandomAmbientMusicTrackId, 50);
+	_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
+	state.currentAmbientMusicCueId = nextTrack;
+	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 50);
 }
 
 void Scene7070::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
@@ -363,7 +363,7 @@ void Scene7070::handleBackToG06() {
 
 void Scene7070::handleExitDoorAction() {
 	GameplayState &state = _vm->gameState();
-	if (state.g07ExitDoorState == 0) {
+	if (state.gramophoneRoomDoorState == 0) {
 		beginSecondarySpeechLine(6, 0);
 		return;
 	}
@@ -372,8 +372,8 @@ void Scene7070::handleExitDoorAction() {
 		kScene7070ExitDoorFrameMap, ARRAYSIZE(kScene7070ExitDoorFrameMap),
 		kScene7070OverlayFrameMillis);
 	_soundBank0.playSample(3, 100);
-	state.g07ExitDoorState = 2;
-	state.mainFlowStateId = state.g07ObjectPatchState < 3 ? kScene7070ExitToG08State : kScene7070ExitToG09State;
+	state.gramophoneRoomDoorState = 2;
+	state.mainFlowStateId = state.gramophoneCrankState < 3 ? kScene7070ExitToG08State : kScene7070ExitToG09State;
 }
 
 void Scene7070::handleChunk12ItemAction() {
@@ -382,16 +382,16 @@ void Scene7070::handleChunk12ItemAction() {
 		kScene7070Chunk12ItemFrameMap, ARRAYSIZE(kScene7070Chunk12ItemFrameMap),
 		kScene7070OverlayFrameMillis, -1, 6, 0x19);
 
-	if (state.g07ObjectPatchState == 1) {
+	if (state.gramophoneCrankState == 1) {
 		beginSecondarySpeechLine(0x0e, 0);
-		state.g07ObjectPatchState = 3;
-		state.g01DialogueBranchState = 1;
-	} else if (state.g07ObjectPatchState == 2) {
-		state.g07ObjectPatchState = 3;
-		state.g01DialogueBranchState = 1;
+		state.gramophoneCrankState = 3;
+		state.juniorDialogueBranchState = 1;
+	} else if (state.gramophoneCrankState == 2) {
+		state.gramophoneCrankState = 3;
+		state.juniorDialogueBranchState = 1;
 	} else {
-		state.g07ObjectPatchState = 2;
-		state.g01DialogueBranchState = 0;
+		state.gramophoneCrankState = 2;
+		state.juniorDialogueBranchState = 0;
 	}
 	applySceneStateToHotspotsAndPatches(2);
 }
@@ -408,7 +408,7 @@ void Scene7070::handleTradeItem10ForItem08() {
 
 void Scene7070::handlePrimeExitDoorAction() {
 	GameplayState &state = _vm->gameState();
-	if (state.g07ExitDoorState != 0) {
+	if (state.gramophoneRoomDoorState != 0) {
 		handleExitDoorAction();
 		return;
 	}
@@ -417,13 +417,13 @@ void Scene7070::handlePrimeExitDoorAction() {
 	runOverlaySequence(9, kScene7070Chunk7DescriptorCount,
 		kScene7070PrimeExitDoorFrameMap, ARRAYSIZE(kScene7070PrimeExitDoorFrameMap),
 		kScene7070OverlayFrameMillis);
-	state.g07ExitDoorState = 1;
+	state.gramophoneRoomDoorState = 1;
 	beginSecondarySpeechLine(0x10, 1);
 }
 
 void Scene7070::handleUseItem13OnSceneObject() {
 	GameplayState &state = _vm->gameState();
-	state.g07ObjectPatchState = 1;
+	state.gramophoneCrankState = 1;
 	runOverlaySequence(12, kScene7070Chunk12DescriptorCount,
 		kScene7070UseItem13FrameMap, ARRAYSIZE(kScene7070UseItem13FrameMap),
 		kScene7070OverlayFrameMillis, 0x16);

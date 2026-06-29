@@ -156,9 +156,9 @@ void Scene7080::runCustomEntrySequence() {
 	presentFrame();
 
 	GameplayState &state = _vm->gameState();
-	if (!state.g08IntroSeen) {
+	if (!state.seenHannoverOfficeIntro) {
 		beginSecondarySpeechLine(0, 0);
-		state.g08IntroSeen = true;
+		state.seenHannoverOfficeIntro = true;
 	}
 }
 
@@ -215,14 +215,14 @@ bool Scene7080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
 
 		GameplayState &state = _vm->gameState();
-		if (!state.g08Item13OnTable)
+		if (!state.crankOnHannoverDesk)
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
 
 		if (_paletteMaskOriginal.size() >= kSceneColorToItemMap + kScenePaletteMapPageSize &&
 				_paletteMask.size() >= kSceneColorToItemMap + kScenePaletteMapPageSize) {
 			for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
 				const byte originalItem = _paletteMaskOriginal[kSceneColorToItemMap + i];
-				if (!state.g08Item13OnTable && originalItem == kScene7080TableItemColorId)
+				if (!state.crankOnHannoverDesk && originalItem == kScene7080TableItemColorId)
 					_paletteMask[kSceneColorToItemMap + i] = kScene7080PostPickupTableItemId;
 			}
 		}
@@ -254,10 +254,10 @@ void Scene7080::updateSceneAmbientAudioAndMusicCues(uint32 delta) {
 		return;
 
 	GameplayState &state = _vm->gameState();
-	if (state.currentRandomAmbientMusicTrackId != 0x0f) {
-		_previousAmbientMusicTrackId = state.currentRandomAmbientMusicTrackId;
-		state.currentRandomAmbientMusicTrackId = 0x0f;
-		_vm->gameplayMusic()->playMusicCue(state.currentRandomAmbientMusicTrackId, 50);
+	if (state.currentAmbientMusicCueId != 0x0f) {
+		_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
+		state.currentAmbientMusicCueId = 0x0f;
+		_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 50);
 		return;
 	}
 
@@ -266,9 +266,9 @@ void Scene7080::updateSceneAmbientAudioAndMusicCues(uint32 delta) {
 		nextTrack = (byte)(0x0c + _random.getRandomNumber(2));
 	} while (nextTrack == _previousAmbientMusicTrackId);
 
-	_previousAmbientMusicTrackId = state.currentRandomAmbientMusicTrackId;
-	state.currentRandomAmbientMusicTrackId = nextTrack;
-	_vm->gameplayMusic()->playMusicCue(state.currentRandomAmbientMusicTrackId, 50);
+	_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
+	state.currentAmbientMusicCueId = nextTrack;
+	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 50);
 }
 
 void Scene7080::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
@@ -281,7 +281,7 @@ void Scene7080::runOverlaySequence(uint chunkIndex, uint descriptorCount, const 
 	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
 		_actionOverlayFrameIndex = frameMap[frame];
 		if (statePatchFrame >= 0 && (int)frame == statePatchFrame) {
-			_vm->gameState().g08Item13OnTable = false;
+			_vm->gameState().crankOnHannoverDesk = false;
 			applySceneStateToHotspotsAndPatches(1);
 		}
 		if (waitSceneMillis(frameMillis))

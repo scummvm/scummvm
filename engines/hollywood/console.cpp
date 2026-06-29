@@ -44,7 +44,7 @@ bool Console::cmdGet(int argc, const char **argv) {
 	const byte owner = inventoryOwner();
 	state.currentInventoryOwnerIndex = owner;
 	if (owner == 1)
-		state.initializeOwner1ItemResourcePages();
+		state.initializeSueItemResourcePages();
 
 	if (Common::String(argv[1]).equalsIgnoreCase("all")) {
 		const byte itemCount = state.giveInventoryItemsWithResourcePages(owner);

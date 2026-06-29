@@ -103,7 +103,7 @@ struct InventoryItemPageMapEntry {
 	byte pageIndex;
 };
 
-const InventoryItemPageMapEntry kOwner1InventoryItemPageMap[] = {
+const InventoryItemPageMapEntry kSueInventoryItemPageMap[] = {
 	{ 0x01, 0x6f },
 	{ 0x02, 0x7c },
 	{ 0x05, 0x7a },
@@ -434,7 +434,7 @@ void GameplayPanelArt::drawInventoryItems(Graphics::Surface &surface, const Game
 
 		byte pageIndex = gameState.inventoryItemResourcePageByOwnerAndItemId[owner][itemId];
 		if (owner == 1 && pageIndex == 0)
-			pageIndex = inventoryOwner1ItemPage(itemId);
+			pageIndex = sueInventoryItemPage(itemId);
 		if (pageIndex == 0)
 			continue;
 
@@ -523,10 +523,10 @@ void GameplayPanelArt::applySelectedVerbStrip(Graphics::Surface &surface, int sc
 	}
 }
 
-byte GameplayPanelArt::inventoryOwner1ItemPage(byte itemId) const {
-	for (uint i = 0; i < ARRAYSIZE(kOwner1InventoryItemPageMap); ++i) {
-		if (kOwner1InventoryItemPageMap[i].itemId == itemId)
-			return kOwner1InventoryItemPageMap[i].pageIndex;
+byte GameplayPanelArt::sueInventoryItemPage(byte itemId) const {
+	for (uint i = 0; i < ARRAYSIZE(kSueInventoryItemPageMap); ++i) {
+		if (kSueInventoryItemPageMap[i].itemId == itemId)
+			return kSueInventoryItemPageMap[i].pageIndex;
 	}
 
 	return 0;

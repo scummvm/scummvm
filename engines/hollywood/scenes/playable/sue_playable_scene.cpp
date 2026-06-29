@@ -159,7 +159,7 @@ const byte kG04Chunk10ExitFrameMap[] = { 0, 0, 1, 2, 3, 4 };
 const byte kG04Chunk18PickupItem0FFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 };
-const byte kG05SecondaryActorFrameMap[] = {
+const byte kCloakroomAttendantFrameMap[] = {
 	0, 0, 1, 2, 3, 25, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
 	14, 15, 16, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5,
 	4, 18, 19, 20, 21, 22, 23, 24, 26, 20, 19, 18, 0
@@ -224,9 +224,9 @@ SuePlayableScene::SuePlayableScene(HollywoodEngine *vm, const char *randomName, 
 		_chunk17FrameIndex(0),
 		_preItemIdleState(0),
 		_postItemIdleState(0),
-		_g05SecondaryActorFrame(1),
-		_g05SecondaryActorState(0),
-		_g05SecondaryActorRepeatCount(0),
+		_cloakroomAttendantFrame(1),
+		_cloakroomAttendantState(0),
+		_cloakroomAttendantRepeatCount(0),
 		_chunk12OverlayVisible(false),
 		_chunk14ActionVisible(false),
 		_chunk14AltVisible(false),
@@ -235,7 +235,7 @@ SuePlayableScene::SuePlayableScene(HollywoodEngine *vm, const char *randomName, 
 		_chunk12TimerAccumulator(0),
 		_chunk16TimerAccumulator(0),
 		_chunk17TimerAccumulator(0),
-		_g05SecondaryActorTimerAccumulator(0),
+		_cloakroomAttendantTimerAccumulator(0),
 		_skipRequested(false) {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
 	_paletteResource.resize(kPaletteSize);
@@ -257,7 +257,7 @@ SuePlayableScene::SuePlayableScene(HollywoodEngine *vm, const char *randomName, 
 	_secondaryActorDescriptors.resize(kActorFacingCount * kSecondaryActorFramesPerFacing);
 	_stage003DecodeKey.resize(kStage003DecodeKeySize);
 	_stage003StageBlock.resize(kStage003DescriptorTableSize);
-	_owner1SpeechCueDescriptors.resize(kOwner1SpeechCueDescriptorTableSize);
+	_sueSpeechCueDescriptors.resize(kSpeechCueDescriptorTableSize);
 	_routeBoundaryPoints.resize(kSceneRouteBoundaryPointCount);
 	_routeSteps.resize(kSceneRouteStepCount);
 	_actorPathStepDeltas.resize(ARRAYSIZE(kActorPathStepDeltaTableSet00));
@@ -292,7 +292,7 @@ bool SuePlayableScene::play() {
 	return result;
 }
 
-bool SuePlayableScene::shouldLoadAlternatePaletteAfterItem0B() const {
+bool SuePlayableScene::shouldLoadPaletteAfterFrankensteinNote() const {
 	return false;
 }
 
@@ -448,7 +448,7 @@ bool SuePlayableScene::load() {
 			!loadVariableChunk(4, _metadata))
 		return false;
 
-	if (shouldLoadAlternatePaletteAfterItem0B() && _vm->gameState().g01Item0BSequenceCompleted &&
+	if (shouldLoadPaletteAfterFrankensteinNote() && _vm->gameState().reviewedFrankensteinNote &&
 			!loadFixedChunk(19, _paletteResource, kPaletteSize))
 		return false;
 
@@ -487,7 +487,7 @@ bool SuePlayableScene::load() {
 		}
 	}
 	memcpy(_paletteCurrent.data(), _paletteResource.data(), _paletteCurrent.size());
-	if (!loadResource000Owner1ActorPalette(_resource000OffsetTable) ||
+	if (!loadResource000SueActorPalette(_resource000OffsetTable) ||
 			!loadStage003SceneRows())
 		return false;
 	_panelArt.applyInteractiveObjectPalette(_paletteCurrent);
@@ -619,8 +619,8 @@ bool SuePlayableScene::loadResource000ActorBankSet00(const Common::Array<byte> &
 	return true;
 }
 
-bool SuePlayableScene::loadResource000Owner1ActorPalette(const Common::Array<byte> &offsetTable) {
-	if (kResource000Owner1PaletteTableEntry + 4 > offsetTable.size()) {
+bool SuePlayableScene::loadResource000SueActorPalette(const Common::Array<byte> &offsetTable) {
+	if (kResource000SuePaletteTableEntry + 4 > offsetTable.size()) {
 		warning("%s owner 1 palette table entry is out of range", kResource000Name);
 		return false;
 	}
@@ -631,15 +631,15 @@ bool SuePlayableScene::loadResource000Owner1ActorPalette(const Common::Array<byt
 		return false;
 	}
 
-	const uint32 paletteOffset = readUint32LE(offsetTable, kResource000Owner1PaletteTableEntry);
-	if (paletteOffset > (uint32)file.size() || kOwner1ActorPaletteBytes > (uint32)file.size() - paletteOffset ||
-			0x270 + kOwner1ActorPaletteBytes > _paletteCurrent.size()) {
+	const uint32 paletteOffset = readUint32LE(offsetTable, kResource000SuePaletteTableEntry);
+	if (paletteOffset > (uint32)file.size() || kSueActorPaletteBytes > (uint32)file.size() - paletteOffset ||
+			0x270 + kSueActorPaletteBytes > _paletteCurrent.size()) {
 		warning("%s owner 1 palette is out of range", kResource000Name);
 		return false;
 	}
 
 	file.seek(paletteOffset);
-	if (file.read(_paletteCurrent.data() + 0x270, kOwner1ActorPaletteBytes) != kOwner1ActorPaletteBytes) {
+	if (file.read(_paletteCurrent.data() + 0x270, kSueActorPaletteBytes) != kSueActorPaletteBytes) {
 		warning("Failed to read %s owner 1 palette", kResource000Name);
 		return false;
 	}
@@ -685,7 +685,7 @@ bool SuePlayableScene::loadResource000InventoryActionTables(const Common::Array<
 		return false;
 	}
 
-	state.inventoryOwner1ResourceTablesLoaded = true;
+	state.sueInventoryResourceTablesLoaded = true;
 	return true;
 }
 
@@ -701,64 +701,64 @@ bool SuePlayableScene::loadStage003SceneRows() {
 		return false;
 	}
 
-	if (kOwner1SpeechCueDescriptorTableOffset + kOwner1SpeechCueDescriptorTableSize + 3 > (uint32)file.size()) {
+	if (kSueSpeechCueDescriptorTableOffset + kSpeechCueDescriptorTableSize + 3 > (uint32)file.size()) {
 		warning("%s owner 1 speech cue table is out of range", kStage003ArchiveName);
 		return false;
 	}
 
-	file.seek(kOwner1SpeechCueDescriptorTableOffset);
-	if (file.read(_owner1SpeechCueDescriptors.data(), _owner1SpeechCueDescriptors.size()) !=
-			_owner1SpeechCueDescriptors.size()) {
+	file.seek(kSueSpeechCueDescriptorTableOffset);
+	if (file.read(_sueSpeechCueDescriptors.data(), _sueSpeechCueDescriptors.size()) !=
+			_sueSpeechCueDescriptors.size()) {
 		warning("Failed to read %s owner 1 speech cue table", kStage003ArchiveName);
 		return false;
 	}
 
-	const byte owner1SmallRowCount = file.readByte();
-	const uint16 owner1LargeRowCount = file.readUint16LE();
+	const byte sueSmallRowCount = file.readByte();
+	const uint16 sueLargeRowCount = file.readUint16LE();
 	if (file.err()) {
 		warning("Failed to read %s owner 1 text row counts", kStage003ArchiveName);
 		return false;
 	}
 
-	const uint32 owner1RowsOffsetEntry = kStage003DecodeKeySize + kOwner1Resource003RowsOffsetIndex * 4;
-	if (owner1RowsOffsetEntry + 4 > kStage003DecodeKeySize + kStage003StageOffsetTableSize ||
-			owner1RowsOffsetEntry + 4 > (uint32)file.size()) {
+	const uint32 sueRowsOffsetEntry = kStage003DecodeKeySize + kSueResource003RowsOffsetIndex * 4;
+	if (sueRowsOffsetEntry + 4 > kStage003DecodeKeySize + kStage003StageOffsetTableSize ||
+			sueRowsOffsetEntry + 4 > (uint32)file.size()) {
 		warning("%s owner 1 text row offset entry is out of range", kStage003ArchiveName);
 		return false;
 	}
 
-	file.seek(owner1RowsOffsetEntry);
-	const uint32 owner1RowsOffset = file.readUint32LE();
-	const uint32 owner1SmallRowBytes = (uint32)owner1SmallRowCount * kStage003SmallRowSize;
-	const uint32 owner1LargeRowBytes = (uint32)owner1LargeRowCount * kStage003LargeRowSize;
-	if (owner1RowsOffset == 0 ||
-			owner1RowsOffset + owner1SmallRowBytes + owner1LargeRowBytes > (uint32)file.size()) {
+	file.seek(sueRowsOffsetEntry);
+	const uint32 sueRowsOffset = file.readUint32LE();
+	const uint32 sueSmallRowBytes = (uint32)sueSmallRowCount * kStage003SmallRowSize;
+	const uint32 sueLargeRowBytes = (uint32)sueLargeRowCount * kStage003LargeRowSize;
+	if (sueRowsOffset == 0 ||
+			sueRowsOffset + sueSmallRowBytes + sueLargeRowBytes > (uint32)file.size()) {
 		warning("%s owner 1 text rows are out of range", kStage003ArchiveName);
 		return false;
 	}
 
-	_owner1SmallRows.resize((uint32)(owner1SmallRowCount + 1) * kStage003SmallRowSize);
-	memset(_owner1SmallRows.data(), 0, _owner1SmallRows.size());
-	_owner1LargeRows.resize((uint32)(owner1LargeRowCount + 1) * kStage003LargeRowSize);
-	memset(_owner1LargeRows.data(), 0, _owner1LargeRows.size());
-	file.seek(owner1RowsOffset);
-	if (file.read(_owner1SmallRows.data() + kStage003SmallRowSize, owner1SmallRowBytes) != owner1SmallRowBytes) {
+	_sueSmallRows.resize((uint32)(sueSmallRowCount + 1) * kStage003SmallRowSize);
+	memset(_sueSmallRows.data(), 0, _sueSmallRows.size());
+	_sueLargeRows.resize((uint32)(sueLargeRowCount + 1) * kStage003LargeRowSize);
+	memset(_sueLargeRows.data(), 0, _sueLargeRows.size());
+	file.seek(sueRowsOffset);
+	if (file.read(_sueSmallRows.data() + kStage003SmallRowSize, sueSmallRowBytes) != sueSmallRowBytes) {
 		warning("Failed to read %s owner 1 small text rows", kStage003ArchiveName);
 		return false;
 	}
-	if (file.read(_owner1LargeRows.data() + kStage003LargeRowSize, owner1LargeRowBytes) != owner1LargeRowBytes) {
+	if (file.read(_sueLargeRows.data() + kStage003LargeRowSize, sueLargeRowBytes) != sueLargeRowBytes) {
 		warning("Failed to read %s owner 1 large text rows", kStage003ArchiveName);
 		return false;
 	}
 
-	for (uint row = 1; row <= owner1SmallRowCount; ++row) {
+	for (uint row = 1; row <= sueSmallRowCount; ++row) {
 		for (uint column = 0; column < kStage003SmallRowSize; ++column)
-			_owner1SmallRows[row * kStage003SmallRowSize + column] -= _stage003DecodeKey[column];
+			_sueSmallRows[row * kStage003SmallRowSize + column] -= _stage003DecodeKey[column];
 	}
 
-	for (uint row = 1; row <= owner1LargeRowCount; ++row) {
+	for (uint row = 1; row <= sueLargeRowCount; ++row) {
 		for (uint column = 0; column < kStage003LargeRowSize; ++column)
-			_owner1LargeRows[row * kStage003LargeRowSize + column] -= _stage003DecodeKey[column];
+			_sueLargeRows[row * kStage003LargeRowSize + column] -= _stage003DecodeKey[column];
 	}
 
 	const uint stageIndex = sceneStageIndex();
@@ -1019,10 +1019,10 @@ void SuePlayableScene::initializeG05PreviewState() {
 	_primaryDialogueSpeechGroup = kInvalidPrimarySpeechAnimationGroup;
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
-	_g05SecondaryActorFrame = 1;
-	_g05SecondaryActorState = 0;
-	_g05SecondaryActorRepeatCount = 0;
-	_g05SecondaryActorTimerAccumulator = 0;
+	_cloakroomAttendantFrame = 1;
+	_cloakroomAttendantState = 0;
+	_cloakroomAttendantRepeatCount = 0;
+	_cloakroomAttendantTimerAccumulator = 0;
 	_activeActorWorldX = kG05EntryX;
 	_activeActorWorldY = kG05EntryY;
 	_activeActorFacing = kG05EntryFacing;
@@ -1057,7 +1057,7 @@ void SuePlayableScene::drawCutsceneComposite(bool drawActiveActor, byte activeFa
 
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
 
-	if (_vm->gameState().g01Item0BSequenceCompleted) {
+	if (_vm->gameState().reviewedFrankensteinNote) {
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[17], 0,
 			kG04Chunk17DescriptorCount, _chunk17FrameIndex, _sceneFramebuffer);
 		const byte frame = _chunk16FrameIndex < ARRAYSIZE(kG04Chunk16PostItemFrameMap) ?
@@ -1103,7 +1103,7 @@ void SuePlayableScene::drawCutsceneComposite(bool drawActiveActor, byte activeFa
 	} else if (actorDrawOrderMode == 6) {
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _sceneFramebuffer);
-		blockChunk = _vm->gameState().g04PatchState == 1 ? 9 : 0;
+		blockChunk = _vm->gameState().officeNotePickupState == 1 ? 9 : 0;
 	}
 	if (blockChunk != 0)
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[blockChunk], _sceneFramebuffer);
@@ -1122,7 +1122,7 @@ void SuePlayableScene::drawActionOverlayComposite() {
 			kG04Chunk12DescriptorCount, _chunk12FrameIndex, _sceneFramebuffer);
 	}
 
-	if (_vm->gameState().g01Item0BSequenceCompleted) {
+	if (_vm->gameState().reviewedFrankensteinNote) {
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[17], 0,
 			kG04Chunk17DescriptorCount, _chunk17FrameIndex, _sceneFramebuffer);
 		const byte frame = _chunk16FrameIndex < ARRAYSIZE(kG04Chunk16PostItemFrameMap) ?
@@ -1150,7 +1150,7 @@ void SuePlayableScene::drawActionOverlayComposite() {
 	} else if (_activeActorDrawOrderMode == 6) {
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _sceneFramebuffer);
-		blockChunk = _vm->gameState().g04PatchState == 1 ? 9 : 0;
+		blockChunk = _vm->gameState().officeNotePickupState == 1 ? 9 : 0;
 	}
 	if (blockChunk != 0)
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[blockChunk], _sceneFramebuffer);
@@ -1161,8 +1161,8 @@ void SuePlayableScene::drawG05Composite(bool drawActiveActor, byte activeFacing,
 		int secondaryWorldX, int secondaryWorldY) {
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
 
-	const byte frame = _g05SecondaryActorFrame < ARRAYSIZE(kG05SecondaryActorFrameMap) ?
-		kG05SecondaryActorFrameMap[_g05SecondaryActorFrame] : 0;
+	const byte frame = _cloakroomAttendantFrame < ARRAYSIZE(kCloakroomAttendantFrameMap) ?
+		kCloakroomAttendantFrameMap[_cloakroomAttendantFrame] : 0;
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[7], 0,
 		kG05Chunk7DescriptorCount, frame, _sceneFramebuffer);
 
@@ -1176,8 +1176,8 @@ void SuePlayableScene::drawG05Composite(bool drawActiveActor, byte activeFacing,
 void SuePlayableScene::drawG05ActionOverlayComposite() {
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
 
-	const byte frame = _g05SecondaryActorFrame < ARRAYSIZE(kG05SecondaryActorFrameMap) ?
-		kG05SecondaryActorFrameMap[_g05SecondaryActorFrame] : 0;
+	const byte frame = _cloakroomAttendantFrame < ARRAYSIZE(kCloakroomAttendantFrameMap) ?
+		kCloakroomAttendantFrameMap[_cloakroomAttendantFrame] : 0;
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[7], 0,
 		kG05Chunk7DescriptorCount, frame, _sceneFramebuffer);
 
@@ -1289,13 +1289,13 @@ void SuePlayableScene::runEntryCutscene() {
 		runEntryPath(kG04Entry7042StartX, kG04Entry7042StartY, kG04Entry7042Facing,
 			kG04Entry7042TargetX, kG04Entry7042TargetY);
 	} else {
-		const int targetX = state.g04EntryConversationPlayed ?
+		const int targetX = state.seenOfficeEntryConversation ?
 			kG04Entry7040RepeatTargetX : kG04Entry7040FirstTargetX;
-		const int targetY = state.g04EntryConversationPlayed ?
+		const int targetY = state.seenOfficeEntryConversation ?
 			kG04Entry7040RepeatTargetY : kG04Entry7040FirstTargetY;
 		runEntryPath(kG04Entry7040StartX, kG04Entry7040StartY, kG04Entry7040Facing,
 			targetX, targetY);
-		state.g04EntryConversationPlayed = true;
+		state.seenOfficeEntryConversation = true;
 	}
 }
 
@@ -1306,8 +1306,8 @@ void SuePlayableScene::runG05EntrySequence() {
 	_activeActorFacing = kG05EntryFacing;
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-	_g05SecondaryActorFrame = 1;
-	_g05SecondaryActorState = 0;
+	_cloakroomAttendantFrame = 1;
+	_cloakroomAttendantState = 0;
 	drawPlayableComposite();
 	presentFrame();
 	waitSceneMillis(kG04ActorPathFrameMillis);
@@ -1382,9 +1382,9 @@ void SuePlayableScene::prepareGameplayLoop() {
 	if (prepareCustomGameplayLoop())
 		return;
 	if (usesSingleSecondaryActorComposite()) {
-		_g05SecondaryActorTimerAccumulator = 0;
-		if (_g05SecondaryActorFrame == 0)
-			_g05SecondaryActorFrame = 1;
+		_cloakroomAttendantTimerAccumulator = 0;
+		if (_cloakroomAttendantFrame == 0)
+			_cloakroomAttendantFrame = 1;
 	}
 }
 
@@ -1403,7 +1403,7 @@ void SuePlayableScene::advanceGameplayLoop(uint32 delta) {
 		return;
 	}
 
-	if (_vm->gameState().g01Item0BSequenceCompleted)
+	if (_vm->gameState().reviewedFrankensteinNote)
 		advanceChunk16PostItemAnimation(delta);
 	else if (_primaryDialogueSpeechActive)
 		advancePrimaryDialogueSpeechFrame(delta);
@@ -1439,12 +1439,12 @@ Common::String SuePlayableScene::inventoryItemName(byte owner, byte itemId) cons
 		return Common::String();
 
 	const uint offset = (uint)itemId * kStage003SmallRowSize;
-	if (offset >= _owner1SmallRows.size())
+	if (offset >= _sueSmallRows.size())
 		return Common::String();
 
-	const byte *row = _owner1SmallRows.data() + offset;
+	const byte *row = _sueSmallRows.data() + offset;
 	uint length = 0;
-	while (offset + length < _owner1SmallRows.size() &&
+	while (offset + length < _sueSmallRows.size() &&
 			length < kStage003SmallRowSize && row[length] != 0)
 		++length;
 
@@ -1577,205 +1577,32 @@ void SuePlayableScene::dispatchSceneAction(uint16 handlerId) {
 	if (dispatchCustomSceneAction(handlerId))
 		return;
 
-	if (usesSingleSecondaryActorComposite()) {
-		dispatchG05SceneAction(handlerId);
-		return;
-	}
-
 	if (dispatchGenericSceneAction(handlerId))
 		return;
 
-	switch (handlerId) {
-	case 0:
-	case 1:
-		break;
-	case 2:
-		beginStaticSecondarySpeechLine(1, (byte)_random.getRandomNumber(1));
-		break;
-	case 3:
-		beginStaticSecondarySpeechLine(2, 0);
-		break;
-	case 4:
-		beginStaticSecondarySpeechLine(3, (byte)_random.getRandomNumber(1));
-		break;
-	case 5:
-	{
-		const byte variant = (byte)_random.getRandomNumber(2);
-		if (variant == 2)
-			beginStaticSecondarySpeechLine(3, 1);
-		else
-			beginStaticSecondarySpeechLine(4, variant);
-		break;
-	}
-	case 6:
-		beginStaticSecondarySpeechLine(5, 0);
-		break;
-	case 7:
-		beginStaticSecondarySpeechLine(6, (byte)_random.getRandomNumber(1));
-		break;
-	case 8:
-		beginStaticSecondarySpeechLine(7, 0);
-		break;
-	case 9:
-		beginStaticSecondarySpeechLine(8, 0);
-		break;
-	case 10:
-		beginStaticSecondarySpeechLine(9, (byte)_random.getRandomNumber(1));
-		break;
-	case 11:
-		beginStaticSecondarySpeechLine(0x0a, 0);
-		break;
-	case 12:
-		beginStaticSecondarySpeechLine(0x0b, 0);
-		break;
-	case 13:
-		beginStaticSecondarySpeechLine(0x0c, (byte)_random.getRandomNumber(1));
-		break;
-	case 14:
-		beginStaticSecondarySpeechLine(0x0d, (byte)_random.getRandomNumber(1));
-		break;
-	case 15:
-		beginStaticSecondarySpeechLine(0x0e, 0);
-		break;
-	case 16:
-		beginStaticSecondarySpeechLine(0x0f, (byte)_random.getRandomNumber(2));
-		break;
-	case 17:
-		beginStaticSecondarySpeechLine(0x10, 0);
-		break;
-	case 18:
-		beginStaticSecondarySpeechLine(0x11, (byte)_random.getRandomNumber(1));
-		break;
-	case 19:
-		beginStaticSecondarySpeechLine(0x12, (byte)_random.getRandomNumber(2));
-		break;
-	case 20:
-		beginStaticSecondarySpeechLine(0x13, 0);
-		break;
-	case 21:
-		beginStaticSecondarySpeechLine(0x14, 0);
-		break;
-	case 22:
-		beginStaticSecondarySpeechLine(0x15, 0);
-		break;
-	case 23:
-		beginStaticSecondarySpeechLine(0x16, (byte)_random.getRandomNumber(1));
-		break;
-	case 24:
-		beginStaticSecondarySpeechLine(0x17, (byte)_random.getRandomNumber(1));
-		break;
-	case 25:
-		beginStaticSecondarySpeechLine(0x18, (byte)_random.getRandomNumber(1));
-		break;
-	case 26:
-		beginStaticSecondarySpeechLine(0x19, 0);
-		break;
-	case 27:
-		beginStaticSecondarySpeechLine(0x1a, 0);
-		break;
-	case 28:
-		beginStaticSecondarySpeechLine(0x1b, 0);
-		break;
-	case 29:
-		beginStaticSecondarySpeechLine(0x1c, 0);
-		break;
-	case 30:
-		beginStaticSecondarySpeechLine(0x1d, 0);
-		break;
-	case 31:
-		beginStaticSecondarySpeechLine(0x1e, 0);
-		break;
-	case 32:
-		beginStaticSecondarySpeechLine(0x1f, 0);
-		break;
-	case 33:
-		beginStaticSecondarySpeechLine(0x20, 0);
-		break;
-	case 34:
-		beginStaticSecondarySpeechLine(0x21, 0);
-		break;
-	case 36:
-		beginStaticSecondarySpeechLine(0x23, 0);
-		break;
-	case 38:
-		beginStaticSecondarySpeechLine(0x25, 0);
-		break;
-	case 39:
-		beginStaticSecondarySpeechLine(0x26, 0);
-		break;
-	case 40:
-		beginStaticSecondarySpeechLine(0x27, 0);
-		break;
-	case 301: // Ir a terraza (go to terrace)
-		handleActionSlot00ReturnToG03();
-		break;
-	case 302: // Mirar puerta (look at door)
-		handleActionSlot01ProgressSpeech();
-		break;
-	case 303: // Usar/Abrir puerta (use/open door)
-		handleActionSlot02MajorHotspotAction();
-		break;
-	case 304: // Ir a escalera (go to stairs)
-		handleActionSlot03TransitionToState7060();
-		break;
-	case 305: // Mirar escalera (look at stairs)
-		beginSecondarySpeechLine(4, 0);
-		break;
-	case 306: // Mirar puerta (look at door)
-		handleActionSlot05ExitProgressSpeech();
-		break;
-	case 307: // Usar/Abrir puerta (use/open door)
-		handleActionSlot06TransitionToG05();
-		break;
-	case 308: // Mirar estatua (look at statue)
-		beginSecondarySpeechLine(6, 0);
-		break;
-	case 309: // Mirar florero (look at vase)
-		beginSecondarySpeechLine(7, 0);
-		break;
-	case 310: // Coger libreta (take notebook)
-		handleActionSlot09PickupItem0FThenExit();
-		break;
-	case 311: // Usar libreta (use notebook)
-		handleActionSlot10CommonSpeech();
-		break;
-	case 312: // Mirar libreta (look at notebook)
-		handleActionHandler312ProgressSpeech();
-		break;
-	case 313: // Hablar con Joseph (talk to Joseph)
-		handleActionHandler313ConversationGate();
-		break;
-	case 314: // Mirar Joseph (look at Joseph)
-		handleActionHandler314Item0BSpeech();
-		break;
-	case 315: // Coger florero (take vase)
-		handleActionHandler315PickupItem0C();
-		break;
-	default:
-		warning("Unhandled %s action handler %u", sceneDebugName(), handlerId);
-		break;
-	}
+	warning("Unhandled %s action handler %u", sceneDebugName(), handlerId);
 }
 
 bool SuePlayableScene::dispatchGenericSceneAction(uint16 handlerId) {
+	// Shared callback table installed by InstallSceneActionCallbackTable.
 	switch (handlerId) {
-	case 0:
-	case 1:
-	case 35:
-	case 41:
-	case 45:
-	case 49:
+	case 0:  // Shared no-op/default action slot.
+	case 1:  // Usar/Dar inventory relation starter; no direct speech.
+	case 35: // Mirar florero variant (look at vase): silent in original.
+	case 41: // Mirar florero variant (look at vase): silent in original.
+	case 45: // Mirar florero variant (look at vase): silent in original.
+	case 49: // Mirar disco (look at record): silent in original.
 		return true;
-	case 2:
+	case 2: // Generic failed use/combine: no effect.
 		beginStaticSecondarySpeechLine(1, (byte)_random.getRandomNumber(1));
 		return true;
-	case 3:
+	case 3: // Generic nonsensical action.
 		beginStaticSecondarySpeechLine(2, 0);
 		return true;
-	case 4:
+	case 4: // Generic impossible action/object too large.
 		beginStaticSecondarySpeechLine(3, (byte)_random.getRandomNumber(1));
 		return true;
-	case 5:
+	case 5: // Sue refuses risky physical action: impossible/stockings/nails.
 	{
 		const byte variant = (byte)_random.getRandomNumber(2);
 		if (variant == 2)
@@ -1784,232 +1611,188 @@ bool SuePlayableScene::dispatchGenericSceneAction(uint16 handlerId) {
 			beginStaticSecondarySpeechLine(4, variant);
 		return true;
 	}
-	case 6:
+	case 6: // Coger inventory item already owned (take already-have item).
 		beginStaticSecondarySpeechLine(5, 0);
 		return true;
-	case 7:
+	case 7: // Abrir non-openable inventory object (open object).
 		beginStaticSecondarySpeechLine(6, (byte)_random.getRandomNumber(1));
 		return true;
-	case 8:
+	case 8: // Abrir bote de pintura (open paint can): already open.
 		beginStaticSecondarySpeechLine(7, 0);
 		return true;
-	case 9:
+	case 9: // Generic feminine object already open.
 		beginStaticSecondarySpeechLine(8, 0);
 		return true;
-	case 10:
+	case 10: // Cerrar non-closable inventory object (close object).
 		beginStaticSecondarySpeechLine(9, (byte)_random.getRandomNumber(1));
 		return true;
-	case 11:
+	case 11: // Cerrar closed masculine object: magnetófono/perfume/makeup/polish.
 		beginStaticSecondarySpeechLine(0x0a, 0);
 		return true;
-	case 12:
+	case 12: // Cerrar agenda/cartera (close notebook/wallet): already closed.
 		beginStaticSecondarySpeechLine(0x0b, 0);
 		return true;
-	case 13:
+	case 13: // Dar to uninterested target (give item): recipient would not want it.
 		beginStaticSecondarySpeechLine(0x0c, (byte)_random.getRandomNumber(1));
 		return true;
-	case 14:
+	case 14: // Dar owned item refusal: Sue wants to keep it.
 		beginStaticSecondarySpeechLine(0x0d, (byte)_random.getRandomNumber(1));
 		return true;
-	case 15:
+	case 15: // Generic immovable object.
 		beginStaticSecondarySpeechLine(0x0e, 0);
 		return true;
-	case 16:
+	case 16: // Hablar with object/non-responsive target (talk).
 		beginStaticSecondarySpeechLine(0x0f, (byte)_random.getRandomNumber(2));
 		return true;
-	case 17:
+	case 17: // Action requires an item Sue does not have yet.
 		beginStaticSecondarySpeechLine(0x10, 0);
 		return true;
-	case 18:
+	case 18: // Generic bad idea/refusal condition.
 		beginStaticSecondarySpeechLine(0x11, (byte)_random.getRandomNumber(1));
 		return true;
-	case 19:
+	case 19: // Keep item for later; it may be useful.
 		beginStaticSecondarySpeechLine(0x12, (byte)_random.getRandomNumber(2));
 		return true;
-	case 20:
+	case 20: // Wrong time for this action.
 		beginStaticSecondarySpeechLine(0x13, 0);
 		return true;
-	case 21:
+	case 21: // Wrong place for this action.
 		beginStaticSecondarySpeechLine(0x14, 0);
 		return true;
-	case 22:
+	case 22: // Action completed.
 		beginStaticSecondarySpeechLine(0x15, 0);
 		return true;
-	case 23:
+	case 23: // Generic no-reason/no-result action.
 		beginStaticSecondarySpeechLine(0x16, (byte)_random.getRandomNumber(1));
 		return true;
-	case 24:
+	case 24: // Generic unnecessary action.
 		beginStaticSecondarySpeechLine(0x17, (byte)_random.getRandomNumber(1));
 		return true;
-	case 25:
+	case 25: // Coger unavailable object (take object): cannot pick it up.
 		beginStaticSecondarySpeechLine(0x18, (byte)_random.getRandomNumber(1));
 		return true;
-	case 26:
+	case 26: // Usar magnetófono (use tape recorder): save tape for interviews.
 		beginStaticSecondarySpeechLine(0x19, 0);
 		return true;
-	case 27:
+	case 27: // Dar magnetófono (give tape recorder): Sue keeps it.
 		beginStaticSecondarySpeechLine(0x1a, 0);
 		return true;
-	case 28:
+	case 28: // Usar agenda (use notebook): no notes needed now.
 		beginStaticSecondarySpeechLine(0x1b, 0);
 		return true;
-	case 29:
+	case 29: // Dar agenda (give notebook): Sue keeps it.
 		beginStaticSecondarySpeechLine(0x1c, 0);
 		return true;
-	case 30:
+	case 30: // Usar/Dar cartera (use/give wallet): do not play with wallet.
 		beginStaticSecondarySpeechLine(0x1d, 0);
 		return true;
-	case 31:
+	case 31: // Mirar cartera (look at wallet): gift from Sue's father.
 		beginStaticSecondarySpeechLine(0x1e, 0);
 		return true;
-	case 32:
+	case 32: // Abrir cartera (open wallet): only documentation inside.
 		beginStaticSecondarySpeechLine(0x1f, 0);
 		return true;
-	case 33:
+	case 33: // Mirar/Abrir agenda (look/open notebook): no useful notes now.
 		beginStaticSecondarySpeechLine(0x20, 0);
 		return true;
-	case 34:
+	case 34: // Mirar florero (look at vase): empty.
 		beginStaticSecondarySpeechLine(0x21, 0);
 		return true;
-	case 36:
+	case 36: // Mirar invitación/pase de prensa (look at invitation/press pass).
 		beginStaticSecondarySpeechLine(0x23, 0);
 		return true;
-	case 37:
+	case 37: // Mirar hoja revelada (look at revealed Frankie note): read message.
 		handleStaticSpeech43And24Sequence();
 		return true;
-	case 38:
+	case 38: // Mirar magnetófono (look at tape recorder): enough tape left.
 		beginStaticSecondarySpeechLine(0x25, 0);
 		return true;
-	case 39:
+	case 39: // Mirar trapo con carbón (look at sooty rag): wrapped safely.
 		beginStaticSecondarySpeechLine(0x26, 0);
 		return true;
-	case 40:
+	case 40: // Mirar tarjeta (look at card): M.K.O./Otto J. Hannover.
 		beginStaticSecondarySpeechLine(0x27, 0);
 		return true;
-	case 42:
+	case 42: // Mirar hueso (look at bone): should return it to Húmero.
 		beginStaticSecondarySpeechLine(0x29, 0);
 		return true;
-	case 43:
+	case 43: // Mirar vaso vacío (look at empty glass).
 		beginStaticSecondarySpeechLine(0x2a, 0);
 		return true;
-	case 44:
+	case 44: // Mirar vaso con ponche (look at punch glass).
 		beginStaticSecondarySpeechLine(0x2b, 0);
 		return true;
-	case 46:
+	case 46: // Mirar hoja en blanco (look at blank sheet).
 		beginStaticSecondarySpeechLine(0x2d, 0);
 		return true;
-	case 47:
+	case 47: // Mirar trapo/gamuza (look at cloth).
 		beginStaticSecondarySpeechLine(0x2e, 0);
 		return true;
-	case 48:
+	case 48: // Mirar llave (look at key): Bruno will miss it.
 		beginStaticSecondarySpeechLine(0x2f, 0);
 		return true;
-	case 50:
+	case 50: // Mirar manivela (look at crank).
 		beginStaticSecondarySpeechLine(0x31, 0);
 		return true;
-	case 51:
+	case 51: // Mirar placa (look at plate/plaque): painted to blend into wall.
 		beginStaticSecondarySpeechLine(0x32, 0);
 		return true;
-	case 52:
+	case 52: // Mirar póster (look at poster): familiar face.
 		beginStaticSecondarySpeechLine(0x33, 0);
 		return true;
-	case 53:
+	case 53: // Mirar rata (look at rat): stunned after the hit.
 		beginStaticSecondarySpeechLine(0x34, 0);
 		return true;
-	case 54:
+	case 54: // Mirar bisturí (look at scalpel): Sue wonders where Ron got it.
 		beginStaticSecondarySpeechLine(0x35, 0);
 		return true;
-	case 55:
+	case 55: // Mirar pie de micro con algodón (look at mic stand with cotton).
 		beginStaticSecondarySpeechLine(0x36, 0);
 		return true;
-	case 56:
+	case 56: // Mirar pamela (look at hat): Sue keeps it.
 		beginStaticSecondarySpeechLine(0x37, 0);
 		return true;
-	case 57:
+	case 57: // Usar pamela (use hat): do not put it inside; it may stain.
 		beginStaticSecondarySpeechLine(0x38, 0);
 		return true;
-	case 58:
+	case 58: // Mirar navaja multiusos (look at multi-tool knife).
 		beginStaticSecondarySpeechLine(0x39, 0);
 		return true;
-	case 59:
+	case 59: // Mirar varita zahorí (look at divining rod).
 		beginStaticSecondarySpeechLine(0x3a, 0);
 		return true;
-	case 60:
+	case 60: // Mirar/Abrir frasco de perfume (look/open perfume bottle): empty.
 		beginStaticSecondarySpeechLine(0x3b, 0);
 		return true;
-	case 61:
+	case 61: // Mirar baraja de cartas (look at deck of cards).
 		beginStaticSecondarySpeechLine(0x3c, 0);
 		return true;
-	case 62:
+	case 62: // Mirar pinzas (look at tweezers): not for eyebrows.
 		beginStaticSecondarySpeechLine(0x3d, 0);
 		return true;
-	case 63:
+	case 63: // Mirar lupa (look at magnifying glass): smells of perfume.
 		beginStaticSecondarySpeechLine(0x3e, 0);
 		return true;
-	case 64:
+	case 64: // Mirar bote de pintura (look at black paint can).
 		beginStaticSecondarySpeechLine(0x3f, 0);
 		return true;
-	case 65:
+	case 65: // Mirar maletín de maquillaje (look at makeup case).
 		beginStaticSecondarySpeechLine(0x40, 0);
 		return true;
-	case 66:
+	case 66: // Abrir maletín de maquillaje: find pintauñas multicolor if missing.
 		handleGrantItem22IfMissing();
 		return true;
-	case 67:
+	case 67: // Mirar pintauñas multicolor (look at multicolor nail polish).
 		beginStaticSecondarySpeechLine(0x42, 0);
 		return true;
-	case 68:
+	case 68: // Usar trapo con carbón + hoja: reveal Frankie's note.
 		handleSwapItems08And0FForItem06();
 		return true;
-	case 69:
+	case 69: // Door/lock condition: no key needed, it is not locked.
 		beginStaticSecondarySpeechLine(0x44, 0);
-		return true;
-	case 70:
-		handleAdvanceSceneActionStateAndInventoryPage();
-		return true;
-	case 71:
-		handleAdvanceSceneActionStateToItem1APage68();
 		return true;
 	default:
 		return false;
-	}
-}
-
-void SuePlayableScene::dispatchG05SceneAction(uint16 handlerId) {
-	if (dispatchGenericSceneAction(handlerId))
-		return;
-
-	switch (handlerId) {
-	case 0:
-	case 1:
-	case 306:
-	case 307:
-		break;
-	case 301: // Mirar puerta (look at door)
-		beginSecondarySpeechLine(1, 0);
-		break;
-	case 302: // Usar/Abrir puerta (use/open door)
-		handleG05ActionSlot01ReturnToG04();
-		break;
-	case 303: // Hablar con empleado del guardarropa (talk to cloakroom attendant)
-		runG05DialogueMenuRow98();
-		applySceneStateToHotspotsAndPatches(0);
-		break;
-	case 304: // Mirar empleado del guardarropa (look at cloakroom attendant)
-		beginSecondarySpeechLine(2, 0);
-		break;
-	case 305: // Mirar trapo (look at rag)
-		beginSecondarySpeechLine(3, 0);
-		break;
-	case 308: // Mirar caja/Charlie (look at box/Charlie)
-		beginSecondarySpeechLine(6, 0);
-		break;
-	case 311: // Coger trapo (take rag)
-		handleG05ActionSlot10PickupItem10();
-		break;
-	default:
-		warning("Unhandled Scene7050 action handler %u", handlerId);
-		break;
 	}
 }
 
@@ -2398,16 +2181,19 @@ void SuePlayableScene::applySceneStateToHotspotsAndPatches(byte selector) {
 	if (selector == 0 || selector == 0xff) {
 		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
+
+		// After the Frankenstein-note item sequence completes in G01, G04
+		// remaps the left-side/doghouse colors and interaction points.
 		for (uint i = 0; i < _fullPaletteRegionMask.size(); ++i) {
 			if (_paletteMaskOriginal[i] == 7)
-				_fullPaletteRegionMask[i] = _vm->gameState().g01Item0BSequenceCompleted ? 0 : 1;
+				_fullPaletteRegionMask[i] = _vm->gameState().reviewedFrankensteinNote ? 0 : 1;
 		}
 
 		if (_paletteMaskOriginal.size() >= kSceneColorToItemMapOffset + kSceneColorMapSize &&
 				_paletteMask.size() >= kSceneColorToItemMapOffset + kSceneColorMapSize) {
 			for (uint i = 0; i < kSceneColorMapSize; ++i) {
 				const byte originalItem = _paletteMaskOriginal[kSceneColorToItemMapOffset + i];
-				if (!_vm->gameState().g01Item0BSequenceCompleted) {
+				if (!_vm->gameState().reviewedFrankensteinNote) {
 					if (originalItem == 9)
 						_paletteMask[kSceneColorToItemMapOffset + i] = 2;
 					if (originalItem == 10)
@@ -2421,7 +2207,7 @@ void SuePlayableScene::applySceneStateToHotspotsAndPatches(byte selector) {
 			}
 		}
 
-		if (_vm->gameState().g01Item0BSequenceCompleted) {
+		if (_vm->gameState().reviewedFrankensteinNote) {
 			if (_metadata.size() >= kSceneItemInteractionPoints + 9 * 4 &&
 					_metadata.size() >= kSceneItemFacing + 3) {
 				const uint item2Interaction = kSceneItemInteractionPoints + 2 * 4;
@@ -2446,7 +2232,7 @@ void SuePlayableScene::applySceneStateToHotspotsAndPatches(byte selector) {
 		if (!_baseFramebufferOriginal.empty())
 			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
 
-		if (_vm->gameState().g04PatchState == 1) {
+		if (_vm->gameState().officeNotePickupState == 1) {
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[9], _baseFramebuffer);
 		} else {
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
@@ -2458,7 +2244,7 @@ void SuePlayableScene::applyG05SceneStateToHotspotsAndPatches(byte selector) {
 	GameplayState &state = _vm->gameState();
 	bool textRowsChanged = false;
 
-	if ((selector == 0 || selector == 0xff) && state.g05DialogueIntroSeen &&
+	if ((selector == 0 || selector == 0xff) && state.spokenToCloakroomAttendant &&
 			_stage003SmallRows.size() >= 0xcd + kStage003SmallRowSize &&
 			_stage003SmallRows.size() >= 0x52 + kStage003SmallRowSize) {
 		const byte *source = _stage003SmallRows.data() + 0xcd;
@@ -2478,7 +2264,7 @@ void SuePlayableScene::applyG05SceneStateToHotspotsAndPatches(byte selector) {
 		if (!_baseFramebufferOriginal.empty())
 			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
 
-		if (state.g05PatchState != 0) {
+		if (state.cloakroomRagVisible != 0) {
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[10], _baseFramebuffer);
 		} else {
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[9], _baseFramebuffer);
@@ -2528,18 +2314,18 @@ void SuePlayableScene::handleActionSlot00ReturnToG03() {
 }
 
 void SuePlayableScene::handleActionSlot01ProgressSpeech() {
-	beginSecondarySpeechLine(1, _vm->gameState().g04MajorActionProgress == 0 ? 0 : 1);
+	beginSecondarySpeechLine(1, _vm->gameState().officeStatueActionProgress == 0 ? 0 : 1);
 }
 
 void SuePlayableScene::handleActionSlot02MajorHotspotAction() {
 	GameplayState &state = _vm->gameState();
-	if (state.g01Item0BSequenceCompleted) {
+	if (state.reviewedFrankensteinNote) {
 		beginSecondarySpeechLine(3, 0x0b);
 		return;
 	}
 
 	_chunk12OverlayVisible = true;
-	if (state.g04MajorActionProgress == 2) {
+	if (state.officeStatueActionProgress == 2) {
 		runMappedActionOverlayRange(13, kG04Chunk13DescriptorCount, kG04MajorHotspotFrameMap,
 			ARRAYSIZE(kG04MajorHotspotFrameMap), kG04Chunk14FrameMillis, 0, 0x2d, -1, false);
 		_soundBank0.playSample(0x15, 100);
@@ -2554,20 +2340,22 @@ void SuePlayableScene::handleActionSlot02MajorHotspotAction() {
 	}
 	_chunk12OverlayVisible = false;
 
-	walkActiveActorTo(0x10d, 0x124, state.g04MajorActionProgress == 2 ? 4 : 5, 0);
-	switch (state.g04MajorActionProgress) {
+	walkActiveActorTo(0x10d, 0x124, state.officeStatueActionProgress == 2 ? 4 : 5, 0);
+	switch (state.officeStatueActionProgress) {
 	case 0:
 		beginSecondarySpeechLine(2, 0);
-		state.g04MajorActionProgress = 1;
+		state.officeStatueActionProgress = 1;
 		break;
 	case 1:
 		beginSecondarySpeechLine(2, 1);
-		state.g04MajorActionProgress = 2;
+		state.officeStatueActionProgress = 2;
 		break;
 	case 2:
 		beginSecondarySpeechLine(3, 10);
-		state.g04MajorActionProgress = 3;
-		state.g01DialogueOverlayMode = 1;
+		state.officeStatueActionProgress = 3;
+		// Original RunG04MajorHotspotActionSequence primes the
+		// Frankenstein-note overlay and later yard look lines here.
+		state.frankensteinNoteOverlayMode = 1;
 		break;
 	default:
 		beginSecondarySpeechLine(2, 2);
@@ -2580,24 +2368,24 @@ void SuePlayableScene::handleActionSlot03TransitionToState7060() {
 }
 
 void SuePlayableScene::handleActionSlot05ExitProgressSpeech() {
-	beginSecondarySpeechLine(5, _vm->gameState().g04ExitActionDone ? 1 : 0);
+	beginSecondarySpeechLine(5, _vm->gameState().openedOfficeClosetDoor ? 1 : 0);
 }
 
 void SuePlayableScene::handleActionSlot06TransitionToG05() {
 	runMappedActionOverlay(10, kG04Chunk10DescriptorCount, kG04Chunk10ExitFrameMap,
 		ARRAYSIZE(kG04Chunk10ExitFrameMap), kG04Chunk14FrameMillis, -1, false);
-	_vm->gameState().g04ExitActionDone = true;
+	_vm->gameState().openedOfficeClosetDoor = true;
 	_soundBank0.playSample(3, 100);
 	_vm->gameState().mainFlowStateId = kG04ExitState7050;
 }
 
 void SuePlayableScene::handleActionSlot09PickupItem0FThenExit() {
 	GameplayState &state = _vm->gameState();
-	if (state.g04MajorActionProgress <= 2 || state.g04PatchState == 2) {
+	if (state.officeStatueActionProgress <= 2 || state.officeNotePickupState == 2) {
 		beginSecondarySpeechLine(9, 0);
 		return;
 	}
-	if (!state.g01Item0BSequenceCompleted) {
+	if (!state.reviewedFrankensteinNote) {
 		beginSecondarySpeechLine(8, 0);
 		return;
 	}
@@ -2607,7 +2395,7 @@ void SuePlayableScene::handleActionSlot09PickupItem0FThenExit() {
 		ARRAYSIZE(kG04Chunk18PickupItem0FFrameMap), kG04Chunk14FrameMillis, -1, false);
 	addInventoryItem(0x0f);
 	_soundBank0.playSample(1, 100);
-	state.g04PatchState = 2;
+	state.officeNotePickupState = 2;
 	beginSecondarySpeechLine(8, 2);
 	walkActiveActorTo(600, 0x132, kInvalidFacing, 0);
 	handleActionSlot06TransitionToG05();
@@ -2619,22 +2407,22 @@ void SuePlayableScene::handleActionSlot10CommonSpeech() {
 
 void SuePlayableScene::handleActionHandler312ProgressSpeech() {
 	GameplayState &state = _vm->gameState();
-	if (state.g04MajorActionProgress == 3)
-		beginSecondarySpeechLine(10, state.g04PatchState >= 2 ? 1 : 0);
+	if (state.officeStatueActionProgress == 3)
+		beginSecondarySpeechLine(10, state.officeNotePickupState >= 2 ? 1 : 0);
 	else
 		beginStaticSecondarySpeechLine(0x2d, 0);
 }
 
 void SuePlayableScene::handleActionHandler313ConversationGate() {
-	if (_vm->gameState().g01Item0BSequenceCompleted) {
+	if (_vm->gameState().reviewedFrankensteinNote) {
 		beginSecondarySpeechLine(11, 2);
 		return;
 	}
 	runDialogueMenuRow98();
 }
 
-void SuePlayableScene::handleActionHandler314Item0BSpeech() {
-	beginSecondarySpeechLine(11, _vm->gameState().g01Item0BSequenceCompleted ? 1 : 0);
+void SuePlayableScene::handleActionHandler314FrankensteinNoteSpeech() {
+	beginSecondarySpeechLine(11, _vm->gameState().reviewedFrankensteinNote ? 1 : 0);
 }
 
 void SuePlayableScene::handleActionHandler315PickupItem0C() {
@@ -2669,71 +2457,6 @@ void SuePlayableScene::handleSwapItems08And0FForItem06() {
 	addInventoryItem(0x06);
 	_soundBank0.playSample(1, 100);
 	handleStaticSpeech43And24Sequence();
-}
-
-void SuePlayableScene::handleAdvanceSceneActionStateAndInventoryPage() {
-	GameplayState &state = _vm->gameState();
-	if ((state.sceneActionStateSelector & 1) != 0) {
-		if (state.sceneActionStateSelector < 9)
-			++state.sceneActionStateSelector;
-		else
-			state.sceneActionStateSelector = 0;
-	}
-
-	byte pageIndex = 0;
-	switch (state.sceneActionStateSelector) {
-	case 0:
-		state.sceneActionStateSelector = 1;
-		pageIndex = 0x1e;
-		break;
-	case 2:
-		state.sceneActionStateSelector = 3;
-		pageIndex = 0x2d;
-		break;
-	case 4:
-		state.sceneActionStateSelector = 5;
-		pageIndex = 0x7d;
-		break;
-	case 6:
-		state.sceneActionStateSelector = 7;
-		pageIndex = 0x0e;
-		break;
-	case 8:
-		state.sceneActionStateSelector = 9;
-		pageIndex = 0x18;
-		break;
-	default:
-		break;
-	}
-
-	const byte owner = state.currentInventoryOwnerIndex;
-	if (owner < GameplayState::kInventoryOwnerCount && pageIndex != 0) {
-		state.inventoryItemResourcePageByOwnerAndItemId[owner][0x1a] = pageIndex;
-		state.inventoryPanelRedrawn = true;
-	}
-	_soundBank0.playSample(1, 100);
-	beginStaticSecondarySpeechLine(0x15, 0);
-}
-
-void SuePlayableScene::handleAdvanceSceneActionStateToItem1APage68() {
-	GameplayState &state = _vm->gameState();
-	if ((state.sceneActionStateSelector & 1) == 0) {
-		beginStaticSecondarySpeechLine(0x0b, 0);
-		return;
-	}
-
-	if (state.sceneActionStateSelector == 9)
-		state.sceneActionStateSelector = 0;
-	else
-		++state.sceneActionStateSelector;
-
-	const byte owner = state.currentInventoryOwnerIndex;
-	if (owner < GameplayState::kInventoryOwnerCount) {
-		state.inventoryItemResourcePageByOwnerAndItemId[owner][0x1a] = 0x68;
-		state.inventoryPanelRedrawn = true;
-	}
-	_soundBank0.playSample(1, 100);
-	beginStaticSecondarySpeechLine(0x15, 0);
 }
 
 void SuePlayableScene::runDialogueMenuRow98() {
@@ -2814,10 +2537,10 @@ void SuePlayableScene::runG05DialogueMenuRow98() {
 	bool finished = false;
 
 	GameplayState &state = _vm->gameState();
-	if (!state.g05DialogueIntroSeen) {
+	if (!state.spokenToCloakroomAttendant) {
 		beginSecondarySpeechLine(kG04DialogueStageId, 0);
 		beginG05PrimarySpeechLine(0, false);
-		state.g05DialogueIntroSeen = true;
+		state.spokenToCloakroomAttendant = true;
 	} else {
 		beginSecondarySpeechLine(kG04DialogueStageId, 1);
 		beginG05PrimarySpeechLine(1, false);
@@ -2899,24 +2622,24 @@ void SuePlayableScene::initializeG05DialogueRecords(Common::Array<DialogueChoice
 }
 
 void SuePlayableScene::runG05SecondaryActorPoseIn() {
-	_g05SecondaryActorFrame = 0x20;
-	_g05SecondaryActorState = 5;
+	_cloakroomAttendantFrame = 0x20;
+	_cloakroomAttendantState = 5;
 	for (byte frame = 0x20; frame <= 0x24 && !Engine::shouldQuit(); ++frame) {
-		_g05SecondaryActorFrame = frame;
+		_cloakroomAttendantFrame = frame;
 		if (waitSceneMillis(kG04Chunk11FrameMillis))
 			break;
 	}
-	_g05SecondaryActorFrame = 0x24;
+	_cloakroomAttendantFrame = 0x24;
 }
 
 void SuePlayableScene::runG05SecondaryActorPoseOut() {
 	for (byte frame = 0x28; frame <= 0x2c && !Engine::shouldQuit(); ++frame) {
-		_g05SecondaryActorFrame = frame;
+		_cloakroomAttendantFrame = frame;
 		if (waitSceneMillis(kG04Chunk11FrameMillis))
 			break;
 	}
-	_g05SecondaryActorFrame = 1;
-	_g05SecondaryActorState = 0;
+	_cloakroomAttendantFrame = 1;
+	_cloakroomAttendantState = 0;
 }
 
 void SuePlayableScene::beginG05PrimarySpeechLine(byte frameIndex, bool alternatePose) {
@@ -2942,7 +2665,7 @@ void SuePlayableScene::handleG05ActionSlot10PickupItem10() {
 		_actionOverlayDescriptorCount = kG05Chunk11DescriptorCount;
 		_actionOverlayFrameIndex = kG05Chunk11PickupItem10FrameMap[frame];
 		if (frame == 4) {
-			_vm->gameState().g05PatchState = 0;
+			_vm->gameState().cloakroomRagVisible = 0;
 			applySceneStateToHotspotsAndPatches(1);
 		}
 		if (waitSceneMillis(kG04Chunk14FrameMillis))
@@ -2959,8 +2682,8 @@ void SuePlayableScene::handleG05ActionSlot10PickupItem10() {
 void SuePlayableScene::handleG04ExitSideEffects() {
 	GameplayState &state = _vm->gameState();
 	if (state.mainFlowStateId == kG04ExitState7050 &&
-			state.g01Item0BSequenceCompleted && state.g04PatchState == 2) {
-		state.g01Item0BSequenceCompleted = false;
+			state.reviewedFrankensteinNote && state.officeNotePickupState == 2) {
+		state.reviewedFrankensteinNote = false;
 	}
 }
 
@@ -3000,12 +2723,12 @@ void SuePlayableScene::initializeDialogueRecords(Common::Array<DialogueChoiceRec
 	records[4].reserved = 0xff;
 
 	const GameplayState &state = _vm->gameState();
-	if (state.g04MajorActionProgress != 0)
+	if (state.officeStatueActionProgress != 0)
 		records[0].enabled = 1;
-	if (state.g04MajorActionProgress == 3) {
+	if (state.officeStatueActionProgress == 3) {
 		if (!state.hasInventoryItem(state.currentInventoryOwnerIndex, 6))
 			records[1].enabled = 1;
-		if (state.g04PatchState != 2)
+		if (state.officeNotePickupState != 2)
 			records[3].enabled = 1;
 	}
 }
@@ -3056,8 +2779,8 @@ void SuePlayableScene::runMappedActionOverlayRange(uint chunkIndex, uint descrip
 		_actionOverlayFrameIndex = frameMap[frame];
 		if (statePatchFrame >= 0 && (int)frame == statePatchFrame) {
 			_soundBank0.playSample(0x15, 100);
-			if (_vm->gameState().g04MajorActionProgress == 2) {
-				_vm->gameState().g04PatchState = 1;
+			if (_vm->gameState().officeStatueActionProgress == 2) {
+				_vm->gameState().officeNotePickupState = 1;
 				applySceneStateToHotspotsAndPatches(3);
 			}
 		}
@@ -3084,7 +2807,7 @@ void SuePlayableScene::runMajorHotspotFrankensteinBranch() {
 	beginPrimarySpeechLineWithAnimationGroup(3, 0, 0x154, 0x5f, 0x20, 0, 0x3f, 3);
 	beginPrimarySpeechLineWithAnimationGroup(3, 1, 0x1c2, 0x73, 0x3f, 0x32, 0x0c, 0);
 	runChunk14ActionRange(0x15, 0x61);
-	_vm->gameState().g04PatchState = 1;
+	_vm->gameState().officeNotePickupState = 1;
 	applySceneStateToHotspotsAndPatches(3);
 	runChunk14ActionRange(0x61, 0x6b);
 	beginPrimarySpeechLineWithAnimationGroup(3, 2, 0x16d, 0x69, 0x20, 0, 0x3f, 4);
@@ -3191,7 +2914,7 @@ void SuePlayableScene::applyChunk14AltSideEffects(byte frameIndex) {
 	switch (frameIndex) {
 	case 0x2b:
 		_soundBank0.playSample(0x17, 50);
-		_vm->gameState().g04PatchState = 0;
+		_vm->gameState().officeNotePickupState = 0;
 		applySceneStateToHotspotsAndPatches(3);
 		break;
 	case 0x37:
@@ -3249,7 +2972,7 @@ byte SuePlayableScene::primarySpeechAnimationBaseFrame(byte animationGroup) cons
 void SuePlayableScene::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	if (usesSingleSecondaryActorComposite()) {
 		(void)animationGroup;
-		_g05SecondaryActorFrame = frameIndex;
+		_cloakroomAttendantFrame = frameIndex;
 		return;
 	}
 
@@ -3303,10 +3026,10 @@ void SuePlayableScene::updateAmbientAudioAndMusicCues(uint32 delta) {
 		return;
 
 	GameplayState &state = _vm->gameState();
-	if (state.currentRandomAmbientMusicTrackId != kG04AmbientMusicCueStillFrame) {
-		_previousAmbientMusicTrackId = state.currentRandomAmbientMusicTrackId;
-		state.currentRandomAmbientMusicTrackId = kG04AmbientMusicCueStillFrame;
-		_vm->gameplayMusic()->playMusicCue(state.currentRandomAmbientMusicTrackId, 100);
+	if (state.currentAmbientMusicCueId != kG04AmbientMusicCueStillFrame) {
+		_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
+		state.currentAmbientMusicCueId = kG04AmbientMusicCueStillFrame;
+		_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 100);
 		return;
 	}
 
@@ -3315,9 +3038,9 @@ void SuePlayableScene::updateAmbientAudioAndMusicCues(uint32 delta) {
 		nextTrack = (byte)(0x0c + _random.getRandomNumber(2));
 	} while (nextTrack == _previousAmbientMusicTrackId);
 
-	_previousAmbientMusicTrackId = state.currentRandomAmbientMusicTrackId;
-	state.currentRandomAmbientMusicTrackId = nextTrack;
-	_vm->gameplayMusic()->playMusicCue(state.currentRandomAmbientMusicTrackId, 100);
+	_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
+	state.currentAmbientMusicCueId = nextTrack;
+	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 100);
 }
 
 void SuePlayableScene::advanceChunk11PreItemIdleAnimation(uint32 delta) {
@@ -3389,52 +3112,52 @@ void SuePlayableScene::advanceChunk16PostItemAnimation(uint32 delta) {
 }
 
 void SuePlayableScene::advanceG05SecondaryActorAnimation(uint32 delta) {
-	_g05SecondaryActorTimerAccumulator += delta;
-	while (_g05SecondaryActorTimerAccumulator >= kG04Chunk11FrameMillis) {
-		_g05SecondaryActorTimerAccumulator -= kG04Chunk11FrameMillis;
+	_cloakroomAttendantTimerAccumulator += delta;
+	while (_cloakroomAttendantTimerAccumulator >= kG04Chunk11FrameMillis) {
+		_cloakroomAttendantTimerAccumulator -= kG04Chunk11FrameMillis;
 
-		switch (_g05SecondaryActorState) {
+		switch (_cloakroomAttendantState) {
 		case 0:
 			if (_random.getRandomNumber(0x31) == 0) {
-				_g05SecondaryActorFrame = 6;
-				_g05SecondaryActorState = 2;
+				_cloakroomAttendantFrame = 6;
+				_cloakroomAttendantState = 2;
 			} else if (_random.getRandomNumber(0x0e) == 0) {
-				_g05SecondaryActorFrame = 5;
-				_g05SecondaryActorState = 1;
+				_cloakroomAttendantFrame = 5;
+				_cloakroomAttendantState = 1;
 			}
 			break;
 		case 1:
-			_g05SecondaryActorFrame = 1;
-			_g05SecondaryActorState = 0;
+			_cloakroomAttendantFrame = 1;
+			_cloakroomAttendantState = 0;
 			break;
 		case 2:
-			if (_g05SecondaryActorFrame == 0x0e) {
-				_g05SecondaryActorFrame = 0x0f;
-				_g05SecondaryActorState = 3;
-				_g05SecondaryActorRepeatCount = (byte)(_random.getRandomNumber(3) + 2);
+			if (_cloakroomAttendantFrame == 0x0e) {
+				_cloakroomAttendantFrame = 0x0f;
+				_cloakroomAttendantState = 3;
+				_cloakroomAttendantRepeatCount = (byte)(_random.getRandomNumber(3) + 2);
 			} else {
-				++_g05SecondaryActorFrame;
+				++_cloakroomAttendantFrame;
 			}
 			break;
 		case 3:
-			if (_g05SecondaryActorFrame == 0x17) {
-				if (_g05SecondaryActorRepeatCount == 0) {
-					_g05SecondaryActorFrame = 0x18;
-					_g05SecondaryActorState = 4;
+			if (_cloakroomAttendantFrame == 0x17) {
+				if (_cloakroomAttendantRepeatCount == 0) {
+					_cloakroomAttendantFrame = 0x18;
+					_cloakroomAttendantState = 4;
 				} else {
-					_g05SecondaryActorFrame = 0x0f;
-					--_g05SecondaryActorRepeatCount;
+					_cloakroomAttendantFrame = 0x0f;
+					--_cloakroomAttendantRepeatCount;
 				}
 			} else {
-				++_g05SecondaryActorFrame;
+				++_cloakroomAttendantFrame;
 			}
 			break;
 		case 4:
-			if (_g05SecondaryActorFrame == 0x20) {
-				_g05SecondaryActorFrame = 1;
-				_g05SecondaryActorState = 0;
+			if (_cloakroomAttendantFrame == 0x20) {
+				_cloakroomAttendantFrame = 1;
+				_cloakroomAttendantState = 0;
 			} else {
-				++_g05SecondaryActorFrame;
+				++_cloakroomAttendantFrame;
 			}
 			break;
 		default:
@@ -3704,12 +3427,12 @@ bool SuePlayableScene::getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &
 bool SuePlayableScene::getStaticSpeechCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
 		uint16 &voiceSampleId) const {
 	const uint offset = ((uint)frameIndex + (uint)rowIndex * 10) * 5;
-	if (offset + 5 > _owner1SpeechCueDescriptors.size())
+	if (offset + 5 > _sueSpeechCueDescriptors.size())
 		return false;
 
-	textRecordId = readUint16LE(_owner1SpeechCueDescriptors, offset);
-	continuationCount = _owner1SpeechCueDescriptors[offset + 2];
-	voiceSampleId = readUint16LE(_owner1SpeechCueDescriptors, offset + 3);
+	textRecordId = readUint16LE(_sueSpeechCueDescriptors, offset);
+	continuationCount = _sueSpeechCueDescriptors[offset + 2];
+	voiceSampleId = readUint16LE(_sueSpeechCueDescriptors, offset + 3);
 	return textRecordId != 0;
 }
 
@@ -3755,10 +3478,10 @@ void SuePlayableScene::wrapActorSpeechText(const Common::String &text, uint16 an
 Common::String SuePlayableScene::getResource003LargeTextRecord(uint16 recordId) const {
 	if (recordId < kStage003LargeRowBaseIndex) {
 		const uint offset = (uint)recordId * kStage003LargeRowSize;
-		if (recordId == 0 || offset >= _owner1LargeRows.size())
+		if (recordId == 0 || offset >= _sueLargeRows.size())
 			return Common::String();
 
-		const byte *row = _owner1LargeRows.data() + offset;
+		const byte *row = _sueLargeRows.data() + offset;
 		uint length = 0;
 		while (length < kStage003LargeRowSize && row[length] != 0)
 			++length;
