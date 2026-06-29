@@ -250,10 +250,11 @@ void GameplayOptionsMenu::handleLeftClick(uint16 cursorX, uint16 cursorY, bool &
 	const HitAction action = hitActionAt(cursorX, cursorY);
 	switch (action) {
 	case kHitSave:
-		warning("Hollywood original save menu is not implemented yet");
+		_vm->saveGameDialog();
 		break;
 	case kHitLoad:
-		warning("Hollywood original load menu is not implemented yet");
+		if (_vm->loadGameDialog())
+			done = true;
 		break;
 	case kHitQuit:
 		_confirmQuit = true;

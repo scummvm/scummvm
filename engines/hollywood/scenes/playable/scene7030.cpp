@@ -143,6 +143,8 @@ bool Scene7030::hasCustomPreviewState() const {
 }
 
 void Scene7030::initializeCustomPreviewState() {
+	GameplayState &state = _vm->gameState();
+
 	_chunk5FrameIndex = 1;
 	_chunk5FrameDirection = 1;
 	_chunk6IdleFrameA = 0;
@@ -178,8 +180,14 @@ void Scene7030::initializeCustomPreviewState() {
 	_secondaryActorFrame = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
-	_sceneStateFlags[0] = 1;
-	_sceneStateFlags[2] = 1;
+	_sceneStateFlags[0] = state.humeroBarrierState;
+	_sceneStateFlags[1] = state.humeroBonePickupState;
+	_sceneStateFlags[2] = state.punchBowlGlassPatchState;
+	if (!hasInventoryItem(0x0c) && !hasInventoryItem(0x0d) && !hasInventoryItem(0x11) &&
+			_sceneStateFlags[2] == 0) {
+		_sceneStateFlags[2] = 2;
+		state.punchBowlGlassPatchState = _sceneStateFlags[2];
+	}
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
@@ -562,6 +570,7 @@ void Scene7030::handleActionSlot05ToggleSceneState0Speech() {
 	if (_sceneStateFlags[0] == 1) {
 		beginSecondarySpeechLine(4, 0);
 		_sceneStateFlags[0] = 2;
+		_vm->gameState().humeroBarrierState = _sceneStateFlags[0];
 		applySceneStateToHotspotsAndPatches(0);
 	} else {
 		beginSecondarySpeechLine(4, 1);
@@ -571,6 +580,7 @@ void Scene7030::handleActionSlot05ToggleSceneState0Speech() {
 void Scene7030::handleActionSlot08CommonSpeech() {
 	beginSecondarySpeechLine(7, 0);
 	_sceneStateFlags[2] = 2;
+	_vm->gameState().punchBowlGlassPatchState = _sceneStateFlags[2];
 	applySceneStateToHotspotsAndPatches(2);
 }
 
@@ -615,6 +625,7 @@ void Scene7030::handleActionHandler314PickupBone() {
 	_vm->gameState().inventoryPanelDirty = true;
 	_soundBank0.playSample(1, 100);
 	_sceneStateFlags[1] = 1;
+	_vm->gameState().humeroBonePickupState = _sceneStateFlags[1];
 	beginSecondarySpeechLine(5, 1);
 }
 
@@ -628,6 +639,7 @@ void Scene7030::handleActionHandler315PickupItem0C() {
 	runMappedActionOverlayWithSceneStatePatch(10, kScene7030Chunk10DescriptorCount,
 		kScene7030Chunk10PickupItem0CFrameMap, ARRAYSIZE(kScene7030Chunk10PickupItem0CFrameMap),
 		kScene7030Chunk5FrameMillis, 3);
+	_vm->gameState().punchBowlGlassPatchState = _sceneStateFlags[2];
 	addInventoryItem(0x0c);
 	_vm->gameState().inventoryPanelDirty = true;
 	_soundBank0.playSample(1, 100);

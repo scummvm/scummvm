@@ -46,6 +46,7 @@
 #include "common/debug.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
+#include "graphics/thumbnail.h"
 
 namespace Hollywood {
 
@@ -116,12 +117,33 @@ HollywoodEngine::HollywoodEngine(OSystem *syst, const ADGameDescription *gameDes
 		_introMusic(),
 		_gameplayMusic(),
 		_gameState(),
+		_lastGameplayThumbnail(),
+		_lastGameplayThumbnailValid(false),
 		_sceneRestartRequested(false) {
 }
 
 HollywoodEngine::~HollywoodEngine() {
+	_lastGameplayThumbnail.free();
 	delete _font;
 	delete _resources;
+}
+
+void HollywoodEngine::captureLastGameplayThumbnail() {
+	Graphics::Surface thumbnail;
+	if (!Graphics::createThumbnail(thumbnail))
+		return;
+
+	_lastGameplayThumbnail.copyFrom(thumbnail);
+	_lastGameplayThumbnailValid = true;
+	thumbnail.free();
+}
+
+bool HollywoodEngine::copyLastGameplayThumbnail(Graphics::Surface &thumbnail) const {
+	if (!_lastGameplayThumbnailValid || !_lastGameplayThumbnail.getPixels())
+		return false;
+
+	thumbnail.copyFrom(_lastGameplayThumbnail);
+	return true;
 }
 
 Common::Error HollywoodEngine::run() {

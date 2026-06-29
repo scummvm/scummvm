@@ -44,6 +44,13 @@ struct GameplayState {
 
 	void reset() {
 		mainFlowStateId = 0;
+		activeActorPoseValid = false;
+		activeActorPoseStateId = 0;
+		activeActorWorldX = 0;
+		activeActorWorldY = 0;
+		activeActorFacing = 1;
+		activeActorCel = 0;
+		activeViewportXOffset = 0;
 		activeAudioChapterIndex = 0;
 		currentInventoryOwnerIndex = 0;
 		currentAmbientMusicCueId = 0;
@@ -74,6 +81,9 @@ struct GameplayState {
 		spokenToCloakroomAttendant = false;
 		cloakroomRagVisible = 1;
 		spokenToBruno = false;
+		humeroBarrierState = 1;
+		humeroBonePickupState = 0;
+		punchBowlGlassPatchState = 1;
 		activatedLabExitMachine = false;
 		labMachineSpeed = 4;
 		seenGramophoneRoomIntro = false;
@@ -305,6 +315,13 @@ struct GameplayState {
 	}
 
 	uint16 mainFlowStateId;
+	bool activeActorPoseValid;
+	uint16 activeActorPoseStateId;
+	uint16 activeActorWorldX;
+	uint16 activeActorWorldY;
+	byte activeActorFacing;
+	byte activeActorCel;
+	uint16 activeViewportXOffset;
 	byte activeAudioChapterIndex;
 	byte currentInventoryOwnerIndex;
 	byte currentAmbientMusicCueId;
@@ -333,6 +350,9 @@ struct GameplayState {
 	bool spokenToCloakroomAttendant;
 	byte cloakroomRagVisible;
 	bool spokenToBruno;
+	byte humeroBarrierState;
+	byte humeroBonePickupState;
+	byte punchBowlGlassPatchState;
 	bool activatedLabExitMachine;
 	byte labMachineSpeed;
 	bool seenGramophoneRoomIntro;
