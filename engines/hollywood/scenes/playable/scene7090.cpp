@@ -174,7 +174,7 @@ void Scene7090::runCustomEntrySequence() {
 	presentFrame();
 
 	GameplayState &state = _vm->gameState();
-	if (!state.seenBedroomIntro) {
+	if (!state.seenHannoverBedroomIntro) {
 		walkActiveActorTo(kScene7090EntryX, kScene7090EntryY, kScene7090IntroTurnFacing, 0);
 		const byte pathFacing = _activeActorFacing;
 		const byte pathCel = _activeActorCel;
@@ -183,7 +183,7 @@ void Scene7090::runCustomEntrySequence() {
 		beginSecondarySpeechLine(0, 0);
 		_activeActorFacing = pathFacing;
 		_activeActorCel = pathCel;
-		state.seenBedroomIntro = true;
+		state.seenHannoverBedroomIntro = true;
 	}
 }
 
@@ -241,7 +241,7 @@ bool Scene7090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
 
 		GameplayState &state = _vm->gameState();
-		if (state.openedBedroomSecretPassage) {
+		if (state.movedBedroomArmor) {
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _baseFramebuffer);
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
 		}
@@ -250,7 +250,7 @@ bool Scene7090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 				_paletteMask.size() >= kSceneColorToItemMap + kScenePaletteMapPageSize) {
 			for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
 				const byte originalItem = _paletteMaskOriginal[kSceneColorToItemMap + i];
-				if (state.openedBedroomSecretPassage) {
+				if (state.movedBedroomArmor) {
 					if (originalItem == 9 || originalItem == 0x0b)
 						_paletteMask[kSceneColorToItemMap + i] = 8;
 					else if (originalItem == 0x0a)
@@ -270,8 +270,8 @@ bool Scene7090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 		const uint interactionOffset = kSceneItemInteractionPoints + 8 * sizeof(ScenePoint);
 		if (_metadata.size() >= interactionOffset + sizeof(ScenePoint)) {
-			const uint16 x = state.openedBedroomSecretPassage ? 0x1fc : 0x245;
-			const uint16 y = state.openedBedroomSecretPassage ? 0x110 : 0x11f;
+			const uint16 x = state.movedBedroomArmor ? 0x1fc : 0x245;
+			const uint16 y = state.movedBedroomArmor ? 0x110 : 0x11f;
 			_metadata[interactionOffset] = x & 0xff;
 			_metadata[interactionOffset + 1] = x >> 8;
 			_metadata[interactionOffset + 2] = y & 0xff;
@@ -280,8 +280,8 @@ bool Scene7090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 		const uint approachOffset = kSceneItemApproachPoints + 8 * sizeof(ScenePoint);
 		if (_metadata.size() >= approachOffset + sizeof(ScenePoint)) {
-			const uint16 x = state.openedBedroomSecretPassage ? 0x23a : 0x288;
-			const uint16 y = state.openedBedroomSecretPassage ? 0x096 : 0x0a8;
+			const uint16 x = state.movedBedroomArmor ? 0x23a : 0x288;
+			const uint16 y = state.movedBedroomArmor ? 0x096 : 0x0a8;
 			_metadata[approachOffset] = x & 0xff;
 			_metadata[approachOffset + 1] = x >> 8;
 			_metadata[approachOffset + 2] = y & 0xff;
@@ -290,7 +290,7 @@ bool Scene7090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 		rebuildWalkableMask();
 		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
-		if (state.openedBedroomSecretPassage)
+		if (state.movedBedroomArmor)
 			_hotspots.setVerbMovementModeByGlobalRecordIndex(kScene7090Item08VerbRecordIndex, 0);
 	}
 	return true;
@@ -373,12 +373,14 @@ void Scene7090::handleBackToG07() {
 
 void Scene7090::handleGatedAction() {
 	GameplayState &state = _vm->gameState();
-	if (state.openedBedroomSecretPassage) {
+	if (state.movedBedroomArmor) {
 		beginSecondarySpeechLine(10, 3);
 		return;
 	}
 
-	if (!state.canOpenBedroomSecretPassage) {
+	// Set after Sue learns Hannover is waiting for his secretary, via
+	// Hannover's dialogue and the bedroom window clue.
+	if (!state.knowsHannoverWaitingForSecretary) {
 		beginSecondarySpeechLine(10, 0);
 		return;
 	}
@@ -404,7 +406,7 @@ void Scene7090::handleGatedAction() {
 	_actionOverlayFrameIndex = 0;
 	_prePatchChunk7Visible = false;
 
-	state.openedBedroomSecretPassage = true;
+	state.movedBedroomArmor = true;
 	applySceneStateToHotspotsAndPatches(1);
 	walkActiveActorTo(kScene7090GatedActionReturnX, kScene7090GatedActionReturnY,
 		kScene7090GatedActionTargetFacing, 0);

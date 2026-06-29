@@ -123,9 +123,9 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.gramophoneCrankState);
 	syncStateBool(s, state.seenHannoverOfficeIntro);
 	syncStateBool(s, state.crankOnHannoverDesk);
-	syncStateBool(s, state.seenBedroomIntro);
-	syncStateBool(s, state.openedBedroomSecretPassage);
-	syncStateBool(s, state.canOpenBedroomSecretPassage);
+	syncStateBool(s, state.seenHannoverBedroomIntro);
+	syncStateBool(s, state.movedBedroomArmor);
+	syncStateBool(s, state.knowsHannoverWaitingForSecretary);
 	syncStateBool(s, state.cellPipesActive);
 	s.syncAsByte(state.cellPlateRatProgress);
 	syncStateBool(s, state.posterOnCellWall);
