@@ -2475,12 +2475,7 @@ void PlayableScene::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, by
 		overlay.visible = true;
 		overlay.colorIndex = colorIndex;
 		wrapActorSpeechText(text, centerX, overlay.lines);
-		if (useRequestedTop) {
-			overlay.centerX = centerX;
-			overlay.topY = topY;
-		} else {
-			calculateSecondarySpeechBounds(centerX, _activeActorWorldY);
-		}
+		calculateSpeechOverlayBounds(overlay, centerX, topY, useRequestedTop, _activeActorWorldY);
 
 		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
@@ -2551,7 +2546,16 @@ void PlayableScene::wrapActorSpeechText(const Common::String &text, uint16 ancho
 		return;
 
 	uint maxChars = 0x32;
-	const int anchorX = anchorSceneX - viewportXOffset();
+	const int viewportX = viewportXOffset();
+	int clampedAnchorSceneX = anchorSceneX;
+	if (viewportX < clampedAnchorSceneX) {
+		if (clampedAnchorSceneX - viewportX > HollywoodEngine::kScreenWidth - 1)
+			clampedAnchorSceneX = viewportX + 0x276;
+	} else {
+		clampedAnchorSceneX = viewportX + 10;
+	}
+
+	const int anchorX = clampedAnchorSceneX - viewportX;
 	if (anchorX < 0xa0)
 		maxChars = (anchorX * 0x32) / 0xa0;
 	else if (HollywoodEngine::kScreenWidth - anchorX < 0xa0)
@@ -2618,23 +2622,38 @@ uint PlayableScene::actorSpeechTextWidth(const Common::String &text) const {
 	return _vm->font()->getStringWidth(text) + 2;
 }
 
-void PlayableScene::calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY) {
+uint PlayableScene::speechOverlayTextWidth(const SpeechOverlay &overlay) const {
 	uint textWidth = 0;
-	for (uint i = 0; i < _speechOverlay.lines.size(); ++i)
-		textWidth = MAX<uint>(textWidth, actorSpeechTextWidth(_speechOverlay.lines[i]));
+	for (uint i = 0; i < overlay.lines.size(); ++i)
+		textWidth = MAX<uint>(textWidth, actorSpeechTextWidth(overlay.lines[i]));
 
-	int centerX = actorWorldX;
-	if (((centerX - (int)(textWidth >> 1)) - 1 + (int)textWidth) > 0x27e)
-		centerX = (textWidth & 1) == 0 ? 0x27e - (textWidth >> 1) : 0x27d - (textWidth >> 1);
-	if (centerX - (int)(textWidth >> 1) < 1)
-		centerX = (textWidth >> 1) + 1;
+	return textWidth;
+}
 
-	int topY = actorWorldY - (int)_speechOverlay.lines.size() * kOriginalSpeechLineHeight - 0xbe;
-	if (topY < 1)
-		topY = 1;
+void PlayableScene::calculateSpeechOverlayBounds(SpeechOverlay &overlay, int centerX, int topY, bool useRequestedTop,
+		int actorWorldY) {
+	const uint textWidth = speechOverlayTextWidth(overlay);
+	int adjustedCenterX = centerX - viewportXOffset();
+	if (((adjustedCenterX - (int)(textWidth >> 1)) - 1 + (int)textWidth) > 0x27e)
+		adjustedCenterX = (textWidth & 1) == 0 ? 0x27e - (textWidth >> 1) : 0x27d - (textWidth >> 1);
+	if (adjustedCenterX - (int)(textWidth >> 1) < 1)
+		adjustedCenterX = (textWidth >> 1) + 1;
+	adjustedCenterX += viewportXOffset();
 
-	_speechOverlay.centerX = (uint16)centerX;
-	_speechOverlay.topY = (uint16)topY;
+	int adjustedTopY = 0;
+	if (useRequestedTop)
+		adjustedTopY = topY - (int)overlay.lines.size() * kOriginalSpeechLineHeight;
+	else
+		adjustedTopY = actorWorldY - (int)overlay.lines.size() * kOriginalSpeechLineHeight - 0xbe;
+	if (adjustedTopY < 1)
+		adjustedTopY = 1;
+
+	overlay.centerX = (uint16)adjustedCenterX;
+	overlay.topY = (uint16)adjustedTopY;
+}
+
+void PlayableScene::calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY) {
+	calculateSpeechOverlayBounds(_speechOverlay, actorWorldX, 0, false, actorWorldY);
 }
 
 bool PlayableScene::waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryLeft) {

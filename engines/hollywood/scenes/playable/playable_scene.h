@@ -300,6 +300,9 @@ protected:
 	void wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const;
 	Common::String getResource003LargeTextRecord(uint16 recordId) const;
 	uint actorSpeechTextWidth(const Common::String &text) const;
+	uint speechOverlayTextWidth(const SpeechOverlay &overlay) const;
+	void calculateSpeechOverlayBounds(SpeechOverlay &overlay, int centerX, int topY, bool useRequestedTop,
+		int actorWorldY);
 	void calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY);
 	bool waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryLeft);
 	void applyGameplayPanelPalette();

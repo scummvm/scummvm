@@ -335,12 +335,7 @@ void Scene7020::runOwner0SpeechCue(SpeechOverlay &overlay, uint16 textRecordId, 
 		overlay.visible = true;
 		overlay.colorIndex = colorIndex;
 		wrapActorSpeechText(text, centerX, overlay.lines);
-		if (useRequestedTop) {
-			overlay.centerX = centerX;
-			overlay.topY = topY;
-		} else {
-			calculateSecondarySpeechBounds(centerX, _activeActorWorldY);
-		}
+		calculateSpeechOverlayBounds(overlay, centerX, topY, useRequestedTop, _activeActorWorldY);
 
 		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
