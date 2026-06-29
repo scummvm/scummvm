@@ -25,6 +25,7 @@
  * The Legend of Lotus Spring
  * Löwenzahn 2&3
  * Oscar the Balloonist Drops into the Countryside
+ * Physicus / Physikus (l'Espresso, Italian; Ruske & Pühretmaier)
  *
  *************************************/
 
@@ -68,6 +69,7 @@ const char *QTSupport::xlibName = "QuickTimeSupport";
 const XlibFileDesc QTSupport::fileNames[] = {
 	{ "QuickTime Asset",	nullptr },
 	{ "QTASSET",			nullptr },
+	{ "QT3Asset",			nullptr },	// QuickTime 3 Asset Xtra
 	{ nullptr,		nullptr },
 };
 
