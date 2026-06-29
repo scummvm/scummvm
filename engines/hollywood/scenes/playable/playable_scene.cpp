@@ -153,7 +153,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int de
 	_colorToActorDepthClassMap.resize(kScenePaletteMapPageSize);
 	_actorDepthYThresholds.resize(kScenePaletteRegionCount);
 	_drawActorDepthYThresholds.resize(kScenePaletteRegionCount);
-	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
+	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_activeActorRunStreams.resize(kActorFacingCount * kActiveActorFacingRunStride);
 	_secondaryActorRunStreams.resize(kActorFacingCount * kSecondaryActorFacingRunStride);
 	_activeActorDescriptors.resize(kActorFacingCount * kActorCelsPerFacing);
@@ -1380,7 +1380,7 @@ void PlayableScene::showTravelScreenViewer() {
 		return;
 	}
 
-	presentIndexedFrame(viewerFramebuffer, viewerPalette, _screen);
+	presentIndexedFrame(viewerFramebuffer, viewerPalette, _screen, _displayPalette);
 
 	bool done = false;
 	while (!done && !Engine::shouldQuit()) {
@@ -1395,7 +1395,7 @@ void PlayableScene::showTravelScreenViewer() {
 				_vm->openMainMenuDialog();
 				if (_vm->isSceneRestartRequested())
 					return;
-				presentIndexedFrame(viewerFramebuffer, viewerPalette, _screen);
+				presentIndexedFrame(viewerFramebuffer, viewerPalette, _screen, _displayPalette);
 				break;
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
@@ -2500,16 +2500,14 @@ void PlayableScene::drawSpeechOverlay(const SpeechOverlay &overlay) {
 	HollywoodFont *font = _vm->font();
 	font->setShadowColor(0);
 
-	Graphics::Surface screenSurface;
-	screenSurface.init(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
-		HollywoodEngine::kScreenWidth, _screen.data(), Graphics::PixelFormat::createFormatCLUT8());
+	Graphics::Surface *screenSurface = _screen.surfacePtr();
 
 	for (uint lineIndex = 0; lineIndex < overlay.lines.size(); ++lineIndex) {
 		const Common::String &line = overlay.lines[lineIndex];
 		const int lineWidth = actorSpeechTextWidth(line);
 		const int x = (int)overlay.centerX - (lineWidth >> 1) - viewportXOffset();
 		const int y = (int)overlay.topY + lineIndex * kOriginalSpeechLineHeight;
-		font->drawString(&screenSurface, line, x, y, lineWidth, overlay.colorIndex,
+		font->drawString(screenSurface, line, x, y, lineWidth, overlay.colorIndex,
 			Graphics::kTextAlignLeft, 0, false, true);
 	}
 }
@@ -2872,31 +2870,26 @@ void PlayableScene::presentFrame(const SceneHoverCaption *hoverCaption, const Ga
 		hoverCaption->applyPalette(_paletteCurrent);
 	if ((panelState && panelState->visible()) || (dialogueMenuState && dialogueMenuState->visible()))
 		applyGameplayPanelPalette();
-	uploadPalette6Bit(_paletteCurrent);
-
 	const uint16 xOffset = viewportXOffset();
-	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
-		const uint sourceOffset = xOffset + y * HollywoodEngine::kSceneBufferWidth;
-		memcpy(_screen.data() + y * HollywoodEngine::kScreenWidth,
-			_sceneFramebuffer.data() + sourceOffset,
-			HollywoodEngine::kScreenWidth);
-	}
+	_displayPalette.uploadFrom6Bit(_paletteCurrent);
+	Graphics::Surface sceneSurface;
+	sceneSurface.init(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight,
+		HollywoodEngine::kSceneBufferWidth, _sceneFramebuffer.data(), Graphics::PixelFormat::createFormatCLUT8());
+	_screen.copyRectToSurface(sceneSurface, 0, 0,
+		Common::Rect(xOffset, 0, xOffset + HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight));
 
 	drawSpeechOverlay();
-	Graphics::Surface screenSurface;
-	screenSurface.init(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
-		HollywoodEngine::kScreenWidth, _screen.data(), Graphics::PixelFormat::createFormatCLUT8());
+	Graphics::Surface *screenSurface = _screen.surfacePtr();
 	if (dialogueMenuState && dialogueMenuState->visible())
-		_panelArt.drawDialogueMenuPanel(screenSurface, *dialogueMenuState, _vm->font());
+		_panelArt.drawDialogueMenuPanel(*screenSurface, *dialogueMenuState, _vm->font());
 	else if (panelState && panelState->visible())
-		drawGameplayPanel(screenSurface, *panelState);
+		drawGameplayPanel(*screenSurface, *panelState);
 	else if (_vm->font() && _vm->font()->isLoaded()) {
 		if (hoverCaption)
-			hoverCaption->draw(screenSurface, *_vm->font());
+			hoverCaption->draw(*screenSurface, *_vm->font());
 	}
 
-	g_system->copyRectToScreen(_screen.data(), HollywoodEngine::kScreenWidth, 0, 0,
-		HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight);
+	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
 	g_system->updateScreen();
 }
 

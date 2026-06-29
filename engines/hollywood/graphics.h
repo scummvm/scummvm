@@ -24,6 +24,11 @@
 
 #include "common/array.h"
 #include "common/types.h"
+#include "graphics/palette.h"
+
+namespace Graphics {
+class ManagedSurface;
+}
 
 namespace Hollywood {
 
@@ -36,9 +41,25 @@ uint16 readUint16LE(const Common::Array<byte> &source, uint offset);
 int16 readSint16LE(const Common::Array<byte> &source, uint offset);
 uint32 readUint32LE(const Common::Array<byte> &source, uint offset);
 
+class Palette6Bit {
+public:
+	Palette6Bit();
+
+	void setFrom6Bit(const Common::Array<byte> &palette);
+	void upload() const;
+	void uploadFrom6Bit(const Common::Array<byte> &palette);
+
+	const Graphics::Palette &palette() const { return _palette; }
+
+private:
+	Graphics::Palette _palette;
+};
+
 void uploadPalette6Bit(const Common::Array<byte> &palette);
 void presentIndexedFrame(const Common::Array<byte> &framebuffer, const Common::Array<byte> &palette,
 	Common::Array<byte> &screen, uint rowOffset = 0, uint xOffset = 0);
+void presentIndexedFrame(const Common::Array<byte> &framebuffer, const Common::Array<byte> &palette,
+	Graphics::ManagedSurface &screen, Palette6Bit &convertedPalette, uint rowOffset = 0, uint xOffset = 0);
 
 void copyFramebufferRun(const Common::Array<byte> &source, Common::Array<byte> &destination, int y, int x, int width);
 void clearFramebufferRun(Common::Array<byte> &destination, int y, int x, int width);
