@@ -109,6 +109,11 @@ struct GameplayState {
 		scene1070MicrophoneStandTaken = false;
 		scene1070MicrophoneTaken = false;
 		scene1070SpencerExtraFlag = false;
+		seenScene1080EntryLine = false;
+		scene1080FrancoisState = 0;
+		seenScene1090EntryLine = false;
+		scene1090LightsOn = false;
+		scene1090WrappedBrainState = 0;
 		reviewedFrankensteinNote = false;
 		frankensteinNoteOverlayMode = 0;
 		hannoverCourtyardDialogueState = 0;
@@ -554,6 +559,11 @@ struct GameplayState {
 	bool scene1070MicrophoneStandTaken;
 	bool scene1070MicrophoneTaken;
 	bool scene1070SpencerExtraFlag;
+	bool seenScene1080EntryLine;
+	byte scene1080FrancoisState;
+	bool seenScene1090EntryLine;
+	bool scene1090LightsOn;
+	byte scene1090WrappedBrainState;
 	bool reviewedFrankensteinNote;
 	byte frankensteinNoteOverlayMode;
 	byte hannoverCourtyardDialogueState;
