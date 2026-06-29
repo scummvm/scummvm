@@ -52,16 +52,15 @@ private:
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void darkenActorPaletteRange();
 	void rebuildWalkableMask();
-	void updateSceneAmbientAudioAndMusicCues(uint32 delta);
 	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis);
 	void handleBackToG07();
 	void handleGatedAction();
 
-	uint32 _ambientTimerAccumulator;
 	bool _prePatchChunk7Visible;
 };
 

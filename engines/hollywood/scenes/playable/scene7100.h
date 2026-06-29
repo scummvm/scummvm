@@ -55,9 +55,9 @@ private:
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
+	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void rebuildWalkableMask();
-	void updateSceneAmbientAudioAndMusicCues(uint32 delta);
 	void advancePrimaryIdleFrame(uint32 delta);
 	void advanceEnvironmentFrame(uint32 delta);
 	void drawPrimaryNpc();
@@ -74,7 +74,6 @@ private:
 	void handlePickupItem14();
 	void handleInventoryTransferAction();
 
-	uint32 _ambientTimerAccumulator;
 	uint32 _primaryTimerAccumulator;
 	uint32 _environmentTimerAccumulator;
 	byte _primaryMode;
