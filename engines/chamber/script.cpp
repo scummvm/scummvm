@@ -3041,10 +3041,17 @@ uint16 SCR_5B_TheEnd(void) {
 
 	theEnd();
 
-	if (g_vm->getLanguage() == Common::EN_USA)
+	if (g_vm->getLanguage() == Common::EN_USA) {
 		restartGame();
-	else
-		for (;;) ;  /*HANG*/
+	} else {
+		clearButtons();
+		do {
+			pollInputButtonsOnly();
+			g_system->delayMillis(10);
+			g_system->updateScreen();
+		} while (!g_vm->_shouldQuit && buttons == 0);
+		g_vm->_shouldQuit = true;
+	}
 
 	return 0;
 }
