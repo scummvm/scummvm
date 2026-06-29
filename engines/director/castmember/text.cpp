@@ -33,6 +33,7 @@
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/window.h"
+#include "director/xmed.h"
 #include "director/castmember/text.h"
 #include "director/lingo/lingo-the.h"
 
@@ -200,6 +201,38 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, TextCastMember &source
 
 	_bgcolor = source._bgcolor;
 	_fgcolor = source._fgcolor;
+}
+
+TextCastMember::TextCastMember(Cast *cast, uint16 castId, uint16 version)
+		: CastMember(cast, castId) {
+	// Promotion target for a "Text" Asset Xtra member; load() fills in the rest.
+	_type = kCastText;
+
+	_borderSize = 0;
+	_gutterSize = 0;
+	_boxShadow = 0;
+	_buttonType = kTypeButton;
+	_editable = false;
+	_maxHeight = _textHeight = 0;
+
+	// Undocumented authored colour; white is legible on Physikus' dark UI.
+	_bgcolor = g_director->_wm->findBestColor(0, 0, 0);
+	_fgcolor = g_director->_wm->findBestColor(0xff, 0xff, 0xff);
+
+	_textFlags = 0;
+	_scroll = 0;
+	_fontId = 1;
+	_fontSize = 12;
+	_textType = kTextTypeFixed;
+	_textAlign = kTextAlignLeft;
+	_textShadow = 0;
+	_textSlant = 0;
+	_bgpalinfo1 = _bgpalinfo2 = _bgpalinfo3 = 0;
+	_fgpalinfo1 = _fgpalinfo2 = _fgpalinfo3 = 0xffff;
+
+	_lineSpacing = g_director->getVersion() >= 400 ? 1 : 0;
+
+	_modified = true;
 }
 
 void TextCastMember::setColors(uint32 *fgcolor, uint32 *bgcolor) {
@@ -619,6 +652,31 @@ Common::String TextCastMember::formatInfo() {
 void TextCastMember::load() {
 	if (_loaded)
 		return;
+
+	// Text Asset Xtra members carry an XMED child instead of an STXT resource.
+	for (auto &it : _children) {
+		if (it.tag != MKTAG('X', 'M', 'E', 'D'))
+			continue;
+
+		if (_cast->_loadedXMEDs.contains(it.index)) {
+			const XMED *xmed = _cast->_loadedXMEDs.getVal(it.index);
+			if (xmed->_isText) {
+				_rtext = xmed->_text;
+				_ptext = _ftext = Common::U32String(xmed->_text, g_director->getPlatformEncoding());
+
+				// Authored field rect lives in the cast member info.
+				CastMemberInfo *ci = getInfo();
+				if (ci && !ci->xtraRect.isEmpty())
+					_initialRect = Common::Rect((int16)ci->xtraRect.width(), (int16)ci->xtraRect.height());
+
+				_loaded = true;
+				return;
+			}
+		} else {
+			warning("TextCastMember::load(): XMED %d isn't loaded", it.index);
+		}
+		break;
+	}
 
 	uint stxtid = 0;
 	if (_cast->_version >= kFileVer400) {

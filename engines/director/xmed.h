@@ -19,35 +19,30 @@
  *
  */
 
-#ifndef DIRECTOR_CASTMEMBER_XTRA_H
-#define DIRECTOR_CASTMEMBER_XTRA_H
+#ifndef DIRECTOR_XMED_H
+#define DIRECTOR_XMED_H
 
-#include "director/castmember/castmember.h"
+#include "common/str.h"
+
+namespace Common {
+class SeekableReadStreamEndian;
+}
 
 namespace Director {
 
-class XtraCastMember : public CastMember {
+class Cast;
+
+// XMED ("Xtra MEDia") child resource of an Asset Xtra cast member; observed
+// in Physikus (D7.0.2)'s "Text" and "Font" Asset Xtras. Only the Text variant
+// is decoded, to recover its displayed string (0x00, ASCII hex length, ',',
+// raw platform-encoded bytes).
+class XMED {
 public:
-	XtraCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
-	XtraCastMember(Cast *cast, uint16 castId, XtraCastMember &source);
+	XMED(Cast *cast, Common::SeekableReadStreamEndian &stream);
 
-	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new XtraCastMember(cast, castId, *this)); }
-
-	bool isQuickTimeVideo() const;
-	bool isTextXtra() const;
-
-	bool hasField(int field) override;
-	Datum getField(int field) override;
-	void setField(int field, const Datum &value) override;
-
-	Common::String formatInfo() override;
-
-	uint32 getCastDataSize() override;
-	void writeCastData(Common::SeekableWriteStream *writeStream) override;
-
-private:
-	Common::String _xtraSymbol;
-	Common::Array<byte> _xtraData;
+	Cast *_cast;
+	bool _isText;            // true for the "Text" Asset Xtra, false otherwise (e.g. an embedded font)
+	Common::String _text;    // raw displayed text, platform encoded, with '\r' line breaks
 };
 
 } // End of namespace Director

@@ -42,6 +42,7 @@
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/stxt.h"
+#include "director/xmed.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/bitmap.h"
 #include "director/castmember/digitalvideo.h"
@@ -128,6 +129,9 @@ Cast::~Cast() {
 		delete it._value;
 
 	for (auto &it : _loadedRTE2s)
+		delete it._value;
+
+	for (auto &it : _loadedXMEDs)
 		delete it._value;
 
 	delete _loadedCast;
@@ -916,6 +920,17 @@ void Cast::loadCast() {
 		delete r;
 	}
 
+	// "Text" Asset Xtra cast members keep their string in an XMED child.
+	Common::Array<uint16> xmed = _castArchive->getResourceIDList(MKTAG('X','M','E','D'));
+	debugC(2, kDebugLoading, "****** Loading %d XMED resources", xmed.size());
+
+	for (auto &iterator : xmed) {
+		r = _castArchive->getResource(MKTAG('X','M','E','D'), iterator);
+		debugC(3, kDebugText, "XMED: id %d", iterator - _castIDoffset);
+		_loadedXMEDs.setVal(iterator, new XMED(this, *r));
+		delete r;
+	}
+
 	// For D4+ we may request to force Lingo scripts and skip precompiled bytecode
 	if (_version >= kFileVer400 && !debugChannelSet(-1, kDebugNoBytecode)) {
 		// Try to load script context
@@ -1652,10 +1667,26 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastTransition (id=%d, %d children)",  id, res->children.size());
 		target = new TransitionCastMember(this, id, castStream, _version);
 		break;
-	case kCastXtra:
+	case kCastXtra: {
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastXtra (id=%d, %d children)",  id, res->children.size());
-		target = new XtraCastMember(this, id, castStream, _version);
+		XtraCastMember *xtra = new XtraCastMember(this, id, castStream, _version);
+		if (xtra->isQuickTimeVideo()) {
+			// Promote to a digital video member so playback/property machinery applies.
+			debugC(3, kDebugLoading, "Cast::loadCastData(): promoting QuickTime Xtra (id=%d) to digital video", id);
+			delete xtra;
+			DigitalVideoCastMember *dv = new DigitalVideoCastMember(this, id);
+			dv->_qtmovie = true;
+			target = dv;
+		} else if (xtra->isTextXtra()) {
+			// Text, rect and styling are filled in lazily by TextCastMember::load().
+			debugC(3, kDebugLoading, "Cast::loadCastData(): promoting Text Xtra (id=%d) to text cast member", id);
+			delete xtra;
+			target = new TextCastMember(this, id, _version);
+		} else {
+			target = xtra;
+		}
 		break;
+	}
 	default:
 		warning("BUILDBOT: STUB: Cast::loadCastData(): Unhandled cast type: %d [%s] (id=%d, %d children)! This will be missing from the movie and may cause problems", castType, tag2str(castType), id, res->children.size());
 		// also don't try and read the strings... we don't know what this item is.

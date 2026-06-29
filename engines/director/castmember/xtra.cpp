@@ -59,11 +59,23 @@ XtraCastMember::XtraCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		// TODO: Process data in the Xtra
 	}
 
-	warning("STUB: XtraCastMember::XtraCastMember(): Xtra cast members not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
+	// quickTimeMedia/text are promoted in Cast::loadCastData(); don't warn about them here.
+	if (!isQuickTimeVideo() && !isTextXtra())
+		warning("STUB: XtraCastMember::XtraCastMember(): Xtra cast members not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 }
 
 XtraCastMember::XtraCastMember(Cast *cast, uint16 castId, XtraCastMember &source)
 		: CastMember(cast, castId) {
+}
+
+bool XtraCastMember::isQuickTimeVideo() const {
+	// Symbol observed in Physikus (D7.0.2)'s "QuickTime 3" Asset Xtra.
+	return _xtraSymbol.equalsIgnoreCase("quickTimeMedia");
+}
+
+bool XtraCastMember::isTextXtra() const {
+	// Symbol observed in Physikus (D7.0.2)'s "Text" Asset Xtra; string lives in an XMED child.
+	return _xtraSymbol.equalsIgnoreCase("text");
 }
 
 bool XtraCastMember::hasField(int field) {

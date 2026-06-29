@@ -50,6 +50,7 @@ class Stxt;
 class RTE0;
 class RTE1;
 class RTE2;
+class XMED;
 class BitmapCastMember;
 class FilmLoopCastMember;
 class ScriptCastMember;
@@ -183,6 +184,7 @@ public:
 	Common::HashMap<uint, const RTE0 *> _loadedRTE0s;
 	Common::HashMap<uint, const RTE1 *> _loadedRTE1s;
 	Common::HashMap<uint, const RTE2 *> _loadedRTE2s;
+	Common::HashMap<uint, const XMED *> _loadedXMEDs;
 	uint16 _castIDoffset;
 
 	Common::Rect _movieRect;
