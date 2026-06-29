@@ -1156,7 +1156,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 			debugC(5, kDebugLoading, "%d: %s", i, name);
 			_assemblyContext->setProp(name, Datum(), true);
 		} else {
-			warning("Property %d has unknown name id %d, skipping define", i, index);
+			debugC(1, kDebugCompile, "Property %d has unknown name id %d, skipping define", i, index);
 		}
 	}
 
@@ -1182,7 +1182,10 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 				debugC(5, kDebugLoading, "%d: %s (already defined)", i, name);
 			}
 		} else {
-			warning("Global %d has unknown name id %d, skipping define", i, index);
+			// Out-of-range name IDs occur in degenerate/empty D7 script slots
+			// (e.g. CDWechsel.dxr). ProjectorRays skips these silently via its
+			// validName() check, so treat it as a debug note, not a warning.
+			debugC(1, kDebugCompile, "Global %d has unknown name id %d, skipping define", i, index);
 		}
 	}
 
