@@ -386,7 +386,10 @@ void EventFlagsMultiHS::execute() {
 		// Swallow clicks if the cursor is in the puzzle-drag range
 		if (g_nancy->getGameType() <= kGameTypeNancy9 && (_hoverCursor == CursorManager::kCustom1 || _hoverCursor == CursorManager::kCustom2)) {
 			_state = kRun;
-		} else if (g_nancy->getGameType() >= kGameTypeNancy10 && (int)_hoverCursor >= CursorManager::kNewUseHand) {
+		} else if (g_nancy->getGameType() >= kGameTypeNancy10 &&
+				(int)_hoverCursor >= (g_nancy->getGameType() >= kGameTypeNancy12 ?
+					CursorManager::kNewUseHand : CursorManager::kNewUseHand - 1)) {
+			// The puzzle-drag cursor range starts one slot earlier before Nancy12
 			_state = kRun;
 		} else {
 			_hasHotspot = false;
