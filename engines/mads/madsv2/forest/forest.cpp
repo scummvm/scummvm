@@ -141,7 +141,7 @@ void ForestEngine::global_section_constructor() {
 }
 
 bool ForestEngine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return game.going && !win_status && !kernel.activate_menu &&
+	return game.going && !win_status && !kernel.activate_menu && player.commands_allowed &&
 		inter_input_mode == INTER_LIMITED_SENTENCES && section_id != 9;
 }
 
