@@ -39,7 +39,7 @@ namespace Rooms {
 struct Scratch {
 	int16 sprite[16];
 	int16 sequence[16];
-	int16 val3;
+	int16 needed_item_num;
 	int16 val4;
 	int16 bg_active;
 	int16 bg_frame;
@@ -107,7 +107,7 @@ static void room_199_init() {
 	global[g009] = -1;
 	global_midi_play(7);
 
-	local->val3      = -1;
+	local->needed_item_num      = -1;
 	local->val4      = 0;
 	local->anim_flag  = 0;
 	local->anim_frame = -1;
@@ -162,95 +162,95 @@ static int room_199_has_materials() {
 		player_has(planks) && player_has(sticks) ? 1 : 0;
 }
 
-static void room_199_anim2() {
+static void room_199_iterate_missing_items() {
 	if (kernel.trigger == 7)
 		kernel_timing_trigger(30, 28);
 	if (kernel.trigger != 28)
 		return;
 
-	switch (local->val3) {
+	switch (local->needed_item_num) {
 	case 1:
 		if (!player_has(stick))
 			digi_play_build(521, 'e', 6, 1);
 		else
 			kernel_timing_trigger(2, 28);
-		local->val3 = 2;
+		local->needed_item_num = 2;
 		break;
 	case 2:
 		if (!player_has(planks))
 			digi_play_build(521, 'e', 10, 1);
 		else
 			kernel_timing_trigger(2, 28);
-		local->val3 = 3;
+		local->needed_item_num = 3;
 		break;
 	case 3:
 		if (!player_has(elm_leaves))
 			digi_play_build(521, 'e', 3, 1);
 		else
 			kernel_timing_trigger(2, 28);
-		local->val3 = 4;
+		local->needed_item_num = 4;
 		break;
 	case 4:
 		if (!player_has(web)) digi_play_build(521, 'e', 8, 1);
 		else kernel_timing_trigger(2, 28);
-		local->val3 = 5;
+		local->needed_item_num = 5;
 		break;
 	case 5:
 		if (!player_has(vine_weed))
 			digi_play_build(521, 'e', 9, 1);
 		else
 			kernel_timing_trigger(2, 28);
-		local->val3 = 6;
+		local->needed_item_num = 6;
 		break;
 	case 6:
 		if (!player_has(twine)) digi_play_build(521, 'e', 20, 1);
 		else
 			kernel_timing_trigger(2, 28);
-		local->val3 = 7;
+		local->needed_item_num = 7;
 		break;
 	case 7:
 		if (!player_has(feather))
 			digi_play_build(521, 'e', 5, 1);
 		else
 			kernel_timing_trigger(2, 28);
-		local->val3 = 8;
+		local->needed_item_num = 8;
 		break;
 	case 8:
 		if (!player_has(reeds))
 			digi_play_build(521, 'e', 2, 1);
 		else
 			kernel_timing_trigger(2, 28);
-		local->val3 = 9;
+		local->needed_item_num = 9;
 		break;
 	case 9:
 		if (!player_has(lily_pad))
 			digi_play_build(521, 'e', 7, 1);
 		else
 			kernel_timing_trigger(2, 28);
-		local->val3 = 10;
+		local->needed_item_num = 10;
 		break;
 	case 10:
 		if (!player_has(cogs))
 			digi_play_build(521, 'e', 4, 1);
 		else
 			kernel_timing_trigger(2, 28);
-		local->val3 = 11;
+		local->needed_item_num = 11;
 		break;
 	case 11:
 		if (!player_has(sticks))
 			digi_play_build(521, 'e', 21, 1);
 		else
 			kernel_timing_trigger(2, 28);
-		local->val3 = 12;
+		local->needed_item_num = 12;
 		break;
 	case 12:
 		digi_play_build(521, 'b', 1, 1);
-		local->val3 = 20;
+		local->needed_item_num = 14;
 		break;
 	case 14:
-		local->val4      = 0;
-		local->val3      = -1;
-		local->anim_flag  = 0;
+		local->val4 = 0;
+		local->needed_item_num = -1;
+		local->anim_flag = 0;
 		kernel_timing_trigger(2, 113);
 		break;
 	default:
@@ -259,7 +259,7 @@ static void room_199_anim2() {
 }
 
 static void room_199_anim3() {
-	switch (local->val3) {
+	switch (local->needed_item_num) {
 	case 1:  digi_play_build(521, 'e', 6, 1);  break;
 	case 2:  digi_play_build(521, 'e', 10, 1); break;
 	case 3:  digi_play_build(521, 'e', 3, 1);  break;
@@ -278,12 +278,12 @@ static void room_199_anim3() {
 static void room_199_anim4() {
 	if (kernel.trigger == 7) {
 		kernel_timing_trigger(15, 28);
-		local->val3++;
+		local->needed_item_num++;
 	}
 	if (kernel.trigger != 28)
 		return;
 
-	switch (local->val3) {
+	switch (local->needed_item_num) {
 	case 1:
 		if (player_has(stick)) {
 			ss[8] = kernel_load_series("*ob014i", 0);
@@ -384,7 +384,7 @@ static void room_199_anim4() {
 		kernel_timing_trigger(15, 115); return;
 	case 12:
 		local->val4 = 0;
-		local->val3 = -1;
+		local->needed_item_num = -1;
 		kernel_timing_trigger(30, 114);
 		return;
 	default:
@@ -393,48 +393,61 @@ static void room_199_anim4() {
 }
 
 static void room_199_daemon() {
-	int16 trig = kernel.trigger;
+	int hasMaterials;
 
-	if (trig == 7) {
+	switch (kernel.trigger) {
+	case 7:
 		if (local->anim_frame == 11) {
 			local->anim_frame = -1;
 			kernel_timing_trigger(30, 113);
 		}
-	} else if (trig == 111) {
+		break;
+
+	case 111:
 		global[g070] = 0;
 		leave_journal();
 		player.commands_allowed = true;
-	} else if (trig == 112) {
-		local->val3 = 0;
+		break;
+
+	case 112:
+		local->needed_item_num = 0;
 		local->val4 = -1;
 		digi_play_build(521, 'e', 1, 1);
-	} else if (trig == 113) {
+		break;
+
+	case 113:
 		leave_journal();
 		player.commands_allowed = true;
-	} else if (trig == 114) {
-		int result = room_199_has_materials();
-		global[g100] = result;
-		if (result) {
+		break;
+
+	case 114:
+		hasMaterials = room_199_has_materials();
+		global[g100] = hasMaterials;
+		if (hasMaterials) {
+			// Got everything we need
 			digi_play_build(521, 'e', 11, 1);
 			local->anim_frame = 11;
 		} else {
-			local->val3      = 1;
+			// Start iterating through items to list what's missing
+			local->needed_item_num = 1;
 			local->anim_flag  = -1;
 			digi_play_build(521, 'e', 12, 1);
-			room_199_anim2();
+			room_199_iterate_missing_items();
 		}
-	} else if (trig == 115) {
+		break;
+
+	case 115:
 		room_199_anim3();
+		break;
+
+	default:
+		break;
 	}
 
 	if (local->val4 != 0)
 		room_199_anim4();
 	if (local->anim_flag != 0)
-		room_199_anim2();
-}
-
-static void room_199_pre_parser() {
-	// No implementation
+		room_199_iterate_missing_items();
 }
 
 static void room_199_parser2() {
@@ -583,7 +596,7 @@ done:
 void room_199_synchronize(Common::Serializer &s) {
 	for (int16 &v : scratch.sprite)    s.syncAsSint16LE(v);
 	for (int16 &v : scratch.sequence)  s.syncAsSint16LE(v);
-	s.syncAsSint16LE(scratch.val3);
+	s.syncAsSint16LE(scratch.needed_item_num);
 	s.syncAsSint16LE(scratch.val4);
 	s.syncAsSint16LE(scratch.bg_active);
 	s.syncAsSint16LE(scratch.bg_frame);
@@ -593,7 +606,6 @@ void room_199_synchronize(Common::Serializer &s) {
 
 void room_199_preload() {
 	room_init_code_pointer = room_199_init;
-	room_pre_parser_code_pointer = room_199_pre_parser;
 	room_parser_code_pointer = room_199_parser;
 	room_daemon_code_pointer = room_199_daemon;
 
