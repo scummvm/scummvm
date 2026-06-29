@@ -91,21 +91,17 @@ private:
 	void applyChunk14ActionSideEffects(byte frameIndex);
 	void applyChunk14AltSideEffects(byte frameIndex);
 
-	byte _chunk11FrameIndex;
 	byte _chunk12FrameIndex;
 	byte _chunk14ActionFrameIndex;
 	byte _chunk14AltFrameIndex;
 	byte _chunk14AltChunkIndex;
-	byte _chunk16FrameIndex;
-	byte _chunk17FrameIndex;
-	byte _preItemIdleState;
 	byte _postItemIdleState;
 	bool _chunk12OverlayVisible;
 	bool _chunk14ActionVisible;
 	bool _chunk14AltVisible;
-	uint32 _chunk11TimerAccumulator;
-	uint32 _chunk16TimerAccumulator;
-	uint32 _chunk17TimerAccumulator;
+	RandomIdleAnimation _preItemIdleAnimation;
+	TimedAnimationChannel _postItemAnimation;
+	TimedAnimationChannel _chunk17Animation;
 };
 
 } // End of namespace Hollywood

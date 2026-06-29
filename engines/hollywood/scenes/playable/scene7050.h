@@ -67,10 +67,8 @@ private:
 	void handleActionSlot10PickupItem10();
 	void advanceSecondaryActorAnimation(uint32 delta);
 
-	byte _cloakroomAttendantFrame;
-	byte _cloakroomAttendantState;
 	byte _cloakroomAttendantRepeatCount;
-	uint32 _cloakroomAttendantTimerAccumulator;
+	RandomIdleAnimation _cloakroomAttendantAnimation;
 };
 
 } // End of namespace Hollywood

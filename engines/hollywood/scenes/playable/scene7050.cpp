@@ -66,10 +66,9 @@ const byte kScene7050Chunk11PickupItem10FrameMap[] = {
 
 Scene7050::Scene7050(HollywoodEngine *vm) :
 		PlayableScene(vm, "scene7050", 0x0a1, 0x158, 2, 0xfd, 0xfb),
-		_cloakroomAttendantFrame(1),
-		_cloakroomAttendantState(0),
-		_cloakroomAttendantRepeatCount(0),
-		_cloakroomAttendantTimerAccumulator(0) {
+		_cloakroomAttendantRepeatCount(0) {
+	_cloakroomAttendantAnimation.configure(kScene7050FrameMillis, 1, 5, 6, 0x0e, 0x0e, 0x31);
+	_cloakroomAttendantAnimation.returnToIdleAfterLongSequence = false;
 }
 
 const char *Scene7050::resourceArchiveName() const {
@@ -119,10 +118,8 @@ void Scene7050::initializeCustomPreviewState() {
 	_primaryDialogueSpeechGroup = 0xff;
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
-	_cloakroomAttendantFrame = 1;
-	_cloakroomAttendantState = 0;
 	_cloakroomAttendantRepeatCount = 0;
-	_cloakroomAttendantTimerAccumulator = 0;
+	_cloakroomAttendantAnimation.reset();
 	_activeActorWorldX = kScene7050EntryX;
 	_activeActorWorldY = kScene7050EntryY;
 	_activeActorFacing = kScene7050EntryFacing;
@@ -145,8 +142,8 @@ void Scene7050::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
 
-	const byte frame = _cloakroomAttendantFrame < ARRAYSIZE(kScene7050Chunk7FrameMap) ?
-		kScene7050Chunk7FrameMap[_cloakroomAttendantFrame] : 0;
+	const byte frame = _cloakroomAttendantAnimation.channel.frameIndex < ARRAYSIZE(kScene7050Chunk7FrameMap) ?
+		kScene7050Chunk7FrameMap[_cloakroomAttendantAnimation.channel.frameIndex] : 0;
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[7], 0,
 		kScene7050Chunk7DescriptorCount, frame, _sceneFramebuffer);
 
@@ -173,17 +170,16 @@ void Scene7050::runCustomEntrySequence() {
 	_activeActorFacing = kScene7050EntryFacing;
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-	_cloakroomAttendantFrame = 1;
-	_cloakroomAttendantState = 0;
+	_cloakroomAttendantAnimation.reset();
 	drawPlayableComposite();
 	presentFrame();
 	waitSceneMillis(kScene7050FrameMillis);
 }
 
 bool Scene7050::prepareCustomGameplayLoop() {
-	_cloakroomAttendantTimerAccumulator = 0;
-	if (_cloakroomAttendantFrame == 0)
-		_cloakroomAttendantFrame = 1;
+	_cloakroomAttendantAnimation.channel.resetTimer();
+	if (_cloakroomAttendantAnimation.channel.frameIndex == 0)
+		_cloakroomAttendantAnimation.setFrame(1);
 	return true;
 }
 
@@ -270,7 +266,7 @@ byte Scene7050::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 
 void Scene7050::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	(void)animationGroup;
-	_cloakroomAttendantFrame = frameIndex;
+	_cloakroomAttendantAnimation.setFrame(frameIndex);
 }
 
 bool Scene7050::dispatchCustomSceneAction(uint16 handlerId) {
@@ -399,24 +395,22 @@ void Scene7050::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 }
 
 void Scene7050::runSecondaryActorPoseIn() {
-	_cloakroomAttendantFrame = 0x20;
-	_cloakroomAttendantState = 5;
+	_cloakroomAttendantAnimation.setStateAndFrame(5, 0x20);
 	for (byte frame = 0x20; frame <= 0x24 && !Engine::shouldQuit(); ++frame) {
-		_cloakroomAttendantFrame = frame;
+		_cloakroomAttendantAnimation.setFrame(frame);
 		if (waitSceneMillis(kScene7050FrameMillis))
 			break;
 	}
-	_cloakroomAttendantFrame = 0x24;
+	_cloakroomAttendantAnimation.setFrame(0x24);
 }
 
 void Scene7050::runSecondaryActorPoseOut() {
 	for (byte frame = 0x28; frame <= 0x2c && !Engine::shouldQuit(); ++frame) {
-		_cloakroomAttendantFrame = frame;
+		_cloakroomAttendantAnimation.setFrame(frame);
 		if (waitSceneMillis(kScene7050FrameMillis))
 			break;
 	}
-	_cloakroomAttendantFrame = 1;
-	_cloakroomAttendantState = 0;
+	_cloakroomAttendantAnimation.reset();
 }
 
 void Scene7050::beginCloakroomAttendantSpeechLine(byte frameIndex, bool alternatePose) {
@@ -457,52 +451,34 @@ void Scene7050::handleActionOverlayFrameHook(byte hookId, uint frame) {
 }
 
 void Scene7050::advanceSecondaryActorAnimation(uint32 delta) {
-	_cloakroomAttendantTimerAccumulator += delta;
-	while (_cloakroomAttendantTimerAccumulator >= kScene7050FrameMillis) {
-		_cloakroomAttendantTimerAccumulator -= kScene7050FrameMillis;
-
-		switch (_cloakroomAttendantState) {
+	_cloakroomAttendantAnimation.channel.addDelta(delta);
+	while (_cloakroomAttendantAnimation.channel.consumeFrame()) {
+		switch (_cloakroomAttendantAnimation.state) {
 		case 0:
-			if (_random.getRandomNumber(0x31) == 0) {
-				_cloakroomAttendantFrame = 6;
-				_cloakroomAttendantState = 2;
-			} else if (_random.getRandomNumber(0x0e) == 0) {
-				_cloakroomAttendantFrame = 5;
-				_cloakroomAttendantState = 1;
-			}
-			break;
 		case 1:
-			_cloakroomAttendantFrame = 1;
-			_cloakroomAttendantState = 0;
-			break;
 		case 2:
-			if (_cloakroomAttendantFrame == 0x0e) {
-				_cloakroomAttendantFrame = 0x0f;
-				_cloakroomAttendantState = 3;
+			if (_cloakroomAttendantAnimation.advanceTick(_random) == RandomIdleAnimation::kLongFinished) {
+				_cloakroomAttendantAnimation.setStateAndFrame(3, 0x0f);
 				_cloakroomAttendantRepeatCount = (byte)(_random.getRandomNumber(3) + 2);
-			} else {
-				++_cloakroomAttendantFrame;
 			}
 			break;
 		case 3:
-			if (_cloakroomAttendantFrame == 0x17) {
+			if (_cloakroomAttendantAnimation.channel.frameIndex == 0x17) {
 				if (_cloakroomAttendantRepeatCount == 0) {
-					_cloakroomAttendantFrame = 0x18;
-					_cloakroomAttendantState = 4;
+					_cloakroomAttendantAnimation.setStateAndFrame(4, 0x18);
 				} else {
-					_cloakroomAttendantFrame = 0x0f;
+					_cloakroomAttendantAnimation.setFrame(0x0f);
 					--_cloakroomAttendantRepeatCount;
 				}
 			} else {
-				++_cloakroomAttendantFrame;
+				++_cloakroomAttendantAnimation.channel.frameIndex;
 			}
 			break;
 		case 4:
-			if (_cloakroomAttendantFrame == 0x20) {
-				_cloakroomAttendantFrame = 1;
-				_cloakroomAttendantState = 0;
+			if (_cloakroomAttendantAnimation.channel.frameIndex == 0x20) {
+				_cloakroomAttendantAnimation.reset();
 			} else {
-				++_cloakroomAttendantFrame;
+				++_cloakroomAttendantAnimation.channel.frameIndex;
 			}
 			break;
 		default:

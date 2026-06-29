@@ -109,6 +109,138 @@ protected:
 		kActionOverlayHideActiveActor
 	};
 
+	struct TimedAnimationChannel {
+		TimedAnimationChannel() :
+			frameIndex(0),
+			timerAccumulator(0),
+			frameMillis(0) {
+		}
+
+		void reset(byte initialFrame, uint32 millis) {
+			frameIndex = initialFrame;
+			timerAccumulator = 0;
+			frameMillis = millis;
+		}
+
+		void resetTimer() {
+			timerAccumulator = 0;
+		}
+
+		void addDelta(uint32 delta) {
+			timerAccumulator += delta;
+		}
+
+		bool consumeFrame() {
+			if (frameMillis == 0 || timerAccumulator < frameMillis)
+				return false;
+
+			timerAccumulator -= frameMillis;
+			return true;
+		}
+
+		uint consumeFrames(uint32 delta) {
+			addDelta(delta);
+
+			uint frameCount = 0;
+			while (consumeFrame())
+				++frameCount;
+			return frameCount;
+		}
+
+		byte frameIndex;
+		uint32 timerAccumulator;
+		uint32 frameMillis;
+	};
+
+	struct RandomIdleAnimation {
+		enum Event {
+			kNoEvent,
+			kShortStarted,
+			kLongStarted,
+			kLongFinished
+		};
+
+		RandomIdleAnimation() :
+			channel(),
+			state(0),
+			idleFrame(0),
+			shortFrame(0),
+			longFirstFrame(0),
+			longLastFrame(0),
+			shortRandomMax(0),
+			longRandomMax(0),
+			returnToIdleAfterLongSequence(true) {
+		}
+
+		void configure(uint32 frameMillis, byte idle, byte shortStart, byte longStart, byte longEnd,
+				byte shortRandom, byte longRandom) {
+			idleFrame = idle;
+			shortFrame = shortStart;
+			longFirstFrame = longStart;
+			longLastFrame = longEnd;
+			shortRandomMax = shortRandom;
+			longRandomMax = longRandom;
+			returnToIdleAfterLongSequence = true;
+			channel.reset(idleFrame, frameMillis);
+			state = 0;
+		}
+
+		void reset() {
+			channel.frameIndex = idleFrame;
+			channel.resetTimer();
+			state = 0;
+		}
+
+		void setStateAndFrame(byte newState, byte newFrame) {
+			state = newState;
+			channel.frameIndex = newFrame;
+		}
+
+		void setFrame(byte newFrame) {
+			channel.frameIndex = newFrame;
+		}
+
+		Event advanceTick(Common::RandomSource &random, bool canStartSequence = true) {
+			if (state == 0) {
+				if (canStartSequence && longRandomMax != 0 && random.getRandomNumber(longRandomMax) == 0) {
+					setStateAndFrame(2, longFirstFrame);
+					return kLongStarted;
+				}
+				if (canStartSequence && shortRandomMax != 0 && random.getRandomNumber(shortRandomMax) == 0) {
+					setStateAndFrame(1, shortFrame);
+					return kShortStarted;
+				}
+			} else if (state == 1) {
+				reset();
+			} else if (state == 2) {
+				if (channel.frameIndex == longLastFrame) {
+					if (returnToIdleAfterLongSequence)
+						reset();
+					return kLongFinished;
+				}
+				++channel.frameIndex;
+			}
+
+			return kNoEvent;
+		}
+
+		void advance(Common::RandomSource &random, uint32 delta, bool canStartSequence = true) {
+			const uint frameCount = channel.consumeFrames(delta);
+			for (uint frame = 0; frame < frameCount; ++frame)
+				advanceTick(random, canStartSequence);
+		}
+
+		TimedAnimationChannel channel;
+		byte state;
+		byte idleFrame;
+		byte shortFrame;
+		byte longFirstFrame;
+		byte longLastFrame;
+		byte shortRandomMax;
+		byte longRandomMax;
+		bool returnToIdleAfterLongSequence;
+	};
+
 	struct AmbientAudioProfile {
 		AmbientAudioProfile() :
 			checkMillis(0),

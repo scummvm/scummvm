@@ -94,13 +94,10 @@ const byte kScene7060ShortExitFrameMap[] = {
 Scene7060::Scene7060(HollywoodEngine *vm) :
 		PlayableScene(vm, "scene7060", kScene7060EntryFromG04TargetX, kScene7060EntryFromG04TargetY,
 			kScene7060EntryFromG04Facing, 0xfd, 0xfb),
-		_chunk6FrameIndex(1),
-		_chunk6State(0),
 		_chunk8FrameIndex(3),
 		_chunk6RandomIdlePaused(false),
-		_colorMapItem8Promoted(false),
-		_chunk6TimerAccumulator(0),
-		_chunk6FrameMillis(kScene7060Chunk6FrameMillis) {
+		_colorMapItem8Promoted(false) {
+	_chunk6Animation.configure(kScene7060Chunk6FrameMillis, 1, 2, 3, 0x16, 0x0e, 0x31);
 	initializeChunk6FrameMap();
 }
 
@@ -142,13 +139,11 @@ bool Scene7060::hasCustomPreviewState() const {
 
 void Scene7060::initializeCustomPreviewState() {
 	initializeChunk6FrameMap();
-	_chunk6FrameIndex = 1;
-	_chunk6State = 0;
+	_chunk6Animation.channel.frameMillis = kScene7060Chunk6FrameMillis;
+	_chunk6Animation.reset();
 	_chunk8FrameIndex = 3;
 	_chunk6RandomIdlePaused = false;
 	_colorMapItem8Promoted = false;
-	_chunk6TimerAccumulator = 0;
-	_chunk6FrameMillis = kScene7060Chunk6FrameMillis;
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
 	_primaryDialogueSpeechGroup = kScene7060InvalidPrimarySpeechAnimationGroup;
@@ -182,8 +177,8 @@ void Scene7060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
 
-	const byte chunk6Frame = _chunk6FrameIndex < _chunk6FrameMap.size() ?
-		_chunk6FrameMap[_chunk6FrameIndex] : 0;
+	const byte chunk6Frame = _chunk6Animation.channel.frameIndex < _chunk6FrameMap.size() ?
+		_chunk6FrameMap[_chunk6Animation.channel.frameIndex] : 0;
 	if (_actionOverlayVisible) {
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[6], 0,
 			kScene7060Chunk6DescriptorCount, chunk6Frame, _sceneFramebuffer);
@@ -218,8 +213,8 @@ void Scene7060::runCustomEntrySequence() {
 			kScene7060EntryFromG04Facing, kScene7060EntryFromG04TargetX, kScene7060EntryFromG04TargetY);
 	}
 
-	_chunk6FrameIndex = 1;
-	_chunk6State = 0;
+	_chunk6Animation.channel.frameMillis = kScene7060Chunk6FrameMillis;
+	_chunk6Animation.reset();
 	_chunk8FrameIndex = 3;
 	_chunk6RandomIdlePaused = false;
 	drawPlayableComposite();
@@ -227,8 +222,8 @@ void Scene7060::runCustomEntrySequence() {
 }
 
 bool Scene7060::prepareCustomGameplayLoop() {
-	_chunk6TimerAccumulator = 0;
-	_chunk6FrameMillis = kScene7060Chunk6FrameMillis;
+	_chunk6Animation.channel.resetTimer();
+	_chunk6Animation.channel.frameMillis = kScene7060Chunk6FrameMillis;
 	if (_chunk6FrameMap.empty())
 		initializeChunk6FrameMap();
 	setColorMapItem8Promoted(false);
@@ -242,7 +237,7 @@ bool Scene7060::advanceCustomGameplayLoop(uint32 delta) {
 		advanceChunk6IdleAndMachineFrame(delta);
 
 	updateAmbientAudioAndMusicCues(delta);
-	if (_chunk6State == 4 && !_soundBank0.isPlaying())
+	if (_chunk6Animation.state == 4 && !_soundBank0.isPlaying())
 		_soundBank0.playSample(0x18, 50);
 	return true;
 }
@@ -389,7 +384,7 @@ byte Scene7060::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 
 void Scene7060::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	(void)animationGroup;
-	_chunk6FrameIndex = frameIndex;
+	_chunk6Animation.setFrame(frameIndex);
 }
 
 void Scene7060::initializeChunk6FrameMap() {
@@ -418,97 +413,74 @@ PlayableScene::AmbientAudioProfile Scene7060::ambientAudioProfile() const {
 }
 
 void Scene7060::advanceChunk6IdleAndMachineFrame(uint32 delta) {
-	_chunk6TimerAccumulator += delta;
-	while (_chunk6TimerAccumulator >= _chunk6FrameMillis) {
-		_chunk6TimerAccumulator -= _chunk6FrameMillis;
-		switch (_chunk6State) {
+	TimedAnimationChannel &channel = _chunk6Animation.channel;
+	channel.addDelta(delta);
+	while (channel.consumeFrame()) {
+		switch (_chunk6Animation.state) {
 		case 0:
-			if (!_chunk6RandomIdlePaused) {
-				if (_random.getRandomNumber(0x31) == 0) {
-					_chunk6FrameIndex = 3;
-					_chunk6State = 2;
-				} else if (_random.getRandomNumber(0x0e) == 0) {
-					_chunk6FrameIndex = 2;
-					_chunk6State = 1;
-				}
-			}
-			break;
 		case 1:
-			_chunk6FrameIndex = 1;
-			_chunk6State = 0;
-			break;
 		case 2:
-			if (_chunk6FrameIndex == 0x16) {
-				_chunk6FrameIndex = 1;
-				_chunk6State = 0;
-			} else {
-				++_chunk6FrameIndex;
-			}
+			_chunk6Animation.advanceTick(_random, !_chunk6RandomIdlePaused);
 			break;
 		case 3:
-			if (_chunk6FrameIndex == 0x20) {
-				_chunk6FrameIndex = 0x21;
-				_chunk6State = 4;
+			if (channel.frameIndex == 0x20) {
+				_chunk6Animation.setStateAndFrame(4, 0x21);
 				setColorMapItem8Promoted(true);
 			} else {
-				++_chunk6FrameIndex;
+				++channel.frameIndex;
 			}
 			break;
 		case 4:
-			if (_chunk6FrameIndex == 0x23)
-				_chunk6FrameMillis = _vm->gameState().labMachineSpeed * 2 + 100;
-			if (_chunk6FrameIndex == 0x2c) {
-				_chunk6FrameIndex = 0x2d;
-				_chunk6State = 5;
-				_chunk6FrameMillis = kScene7060OverlayFrameMillis;
+			if (channel.frameIndex == 0x23)
+				channel.frameMillis = _vm->gameState().labMachineSpeed * 2 + 100;
+			if (channel.frameIndex == 0x2c) {
+				_chunk6Animation.setStateAndFrame(5, 0x2d);
+				channel.frameMillis = kScene7060OverlayFrameMillis;
 				_vm->gameState().labMachineSpeed = 0x0c;
 				setColorMapItem8Promoted(false);
 			} else {
-				++_chunk6FrameIndex;
+				++channel.frameIndex;
 			}
 			break;
 		case 5:
-			if (_chunk6FrameIndex == 0x31) {
+			if (channel.frameIndex == 0x31) {
 				_vm->gameState().labMachineSpeed = 9;
-				_chunk6FrameMillis = kScene7060OverlayFrameMillis;
+				channel.frameMillis = kScene7060OverlayFrameMillis;
 			}
-			if (_chunk6FrameIndex >= 0x35 && _chunk6FrameIndex <= 0x38)
-				_chunk8FrameIndex = _chunk6FrameIndex - 0x35;
-			if (_chunk6FrameIndex == 0x39) {
-				_chunk6FrameIndex = 0x47;
-				_chunk6State = 6;
+			if (channel.frameIndex >= 0x35 && channel.frameIndex <= 0x38)
+				_chunk8FrameIndex = channel.frameIndex - 0x35;
+			if (channel.frameIndex == 0x39) {
+				_chunk6Animation.setStateAndFrame(6, 0x47);
 				_vm->gameState().labMachineSpeed = 0x0c;
 			} else {
-				++_chunk6FrameIndex;
+				++channel.frameIndex;
 			}
 			break;
 		case 6:
-			if (_chunk6FrameIndex == 0x48)
+			if (channel.frameIndex == 0x48)
 				_ambientSoundBank0.playSample(0x0e, 100);
-			if (_chunk6FrameIndex == 0x49)
+			if (channel.frameIndex == 0x49)
 				_soundBank0.playSample(0x0f, 100);
-			if (_chunk6FrameIndex == 0x4d) {
-				_chunk6FrameIndex = 1;
-				_chunk6State = 0;
+			if (channel.frameIndex == 0x4d) {
+				_chunk6Animation.reset();
 				_vm->gameState().labMachineSpeed = 0x0c;
-				_chunk6FrameMillis = kScene7060OverlayFrameMillis;
+				channel.frameMillis = kScene7060OverlayFrameMillis;
 			} else {
-				++_chunk6FrameIndex;
+				++channel.frameIndex;
 			}
 			break;
 		default:
-			_chunk6FrameIndex = 1;
-			_chunk6State = 0;
+			_chunk6Animation.reset();
 			break;
 		}
 
-		if (_chunk6FrameIndex >= _chunk6FrameMap.size())
-			_chunk6FrameIndex = 1;
+		if (channel.frameIndex >= _chunk6FrameMap.size())
+			channel.frameIndex = 1;
 	}
 }
 
 void Scene7060::waitForMachineIdleBeforeDialogue() {
-	while (_chunk6State > 1 && !Engine::shouldQuit()) {
+	while (_chunk6Animation.state > 1 && !Engine::shouldQuit()) {
 		if (waitSceneMillis(kScene7060Chunk6FrameMillis))
 			break;
 	}
@@ -732,8 +704,7 @@ void Scene7060::handleActionOverlayFrameHook(byte hookId, uint frame) {
 		}
 		setColorMapItem8Promoted(false);
 	} else if (hookId == kScene7060UseItem0DHook) {
-		_chunk6FrameIndex = 0x1c;
-		_chunk6State = 3;
+		_chunk6Animation.setStateAndFrame(3, 0x1c);
 	}
 }
 
