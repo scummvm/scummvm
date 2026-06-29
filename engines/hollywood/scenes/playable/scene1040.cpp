@@ -293,19 +293,19 @@ bool Scene1040::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene1040::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301: // Coger puerta (take door).
+	case 301: // Mirar puerta (look at door): state-dependent line.
 		beginSecondarySpeechLine(1, _vm->gameState().scene1040DoorOpened ? 1 : 0);
 		return true;
-	case 302: // Mirar/usar puerta (look/use door).
+	case 302: // Usar/abrir puerta (use/open door): enter cloakroom.
 		runDoorToCloakroomAction();
 		return true;
-	case 303: // Dar puerta (give door): forward exit.
+	case 303: // Ir a salón (go to lounge): next room.
 		_vm->gameState().mainFlowStateId = kScene1040ExitState1060;
 		return true;
 	case 304: // Mirar salón (look at lounge).
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 305: // Hablar/coger cordón (talk/take cord).
+	case 305: // Coger cordón (take cord).
 		handleCordPickup();
 		return true;
 	case 306: // Mirar cordón (look at cord).
@@ -320,7 +320,7 @@ bool Scene1040::dispatchCustomSceneAction(uint16 handlerId) {
 	case 309: // Mirar estatua (look at statue).
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 310: // Dar estatua (give statue).
+	case 310: // Ir a escalera (go to stairs).
 		beginSecondarySpeechLine(7, 0);
 		return true;
 	case 311: // Mirar escalera (look at stairs).
@@ -338,7 +338,7 @@ bool Scene1040::dispatchCustomSceneAction(uint16 handlerId) {
 	case 315: // Mirar enorme gorila intimidatorio (look at huge intimidating gorilla).
 		beginSecondarySpeechLine(12, 0);
 		return true;
-	case 316: // Usar terraza/gorila to expose the cord (use terrace/gorilla).
+	case 316: // Usar bisturí/navaja con cordón (use scalpel/knife with cord).
 		handleGorillaCordSetup();
 		return true;
 	case 317: // Ir a terraza / back to banquet room.
