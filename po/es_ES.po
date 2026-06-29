@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-28 21:29+0000\n"
-"PO-Revision-Date: 2026-06-22 10:29+0000\n"
+"PO-Revision-Date: 2026-06-29 08:35+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -10230,28 +10230,28 @@ msgid "The Troy minigame is not supported yet. Skipping"
 msgstr "El minijuego de Troya todavía no está soportado. Omitiendo..."
 
 #: engines/harvester/metaengine.cpp:33
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable gore"
-msgstr "Activar almacenamiento"
+msgstr "Activar escenas sangrientas"
 
 #: engines/harvester/metaengine.cpp:34
 msgid ""
 "When disabled, the startup movie player follows the original GORE=NO "
 "censorship path."
 msgstr ""
+"Al desactivar esta opción, el reproductor de la escena de introducción "
+"respeta la ruta de censura original GORE=NO."
 
 #: engines/harvester/metaengine.cpp:44
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Show CD change prompts"
-msgstr "Mostrar retratos"
+msgstr "Mostrar ventanas de cambio de CD"
 
 #: engines/harvester/metaengine.cpp:45
 msgid ""
 "Display the original CD swap image and wait for a left click when the script "
 "requests disc 2 or 3."
 msgstr ""
+"Muestra la imagen original para solicitar un cambio de CD y espera a que "
+"pulses el botón izquierdo cuando el script solicite los discos 2 o 3."
 
 #: engines/hdb/metaengine.cpp:44 engines/illusions/metaengine.cpp:153
 msgid "Enable cheat mode"
