@@ -19,7 +19,7 @@
  *
  */
 
-#include "hollywood/scenes/playable/sue_playable_scene.h"
+#include "hollywood/scenes/playable/playable_scene.h"
 
 #include "common/debug.h"
 #include "common/events.h"
@@ -42,8 +42,8 @@ namespace Hollywood {
 
 const char *const kResource000Name = "RESOURCE.000";
 const char *const kStage003ArchiveName = "RESOURCE.003";
-const char *const kGameplayMusicArchiveName = "RESOURCE.M07";
-const char *const kGameplaySoundBank0ArchiveName = "RESOURCE.S07";
+const char *const kDefaultGameplayMusicArchiveName = "RESOURCE.M07";
+const char *const kDefaultGameplaySoundBank0ArchiveName = "RESOURCE.S07";
 const byte kAmbientMusicCueStillFrame = 0x0f;
 const byte kDefaultSecondarySpeechTextColor = 0xfd;
 const byte kDefaultPrimarySpeechTextColor = 0xfb;
@@ -100,7 +100,7 @@ int actorPathRoundToNearestEven(float value) {
 	return (lowerInt & 1) ? lowerInt + 1 : lowerInt;
 }
 
-SuePlayableScene::SuePlayableScene(HollywoodEngine *vm, const char *randomName, int defaultActorX, int defaultActorY,
+PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int defaultActorX, int defaultActorY,
 		byte defaultActorFacing, byte secondarySpeechTextColor, byte primarySpeechTextColor) :
 		_vm(vm),
 		_resourceArenaCursor(0),
@@ -152,7 +152,7 @@ SuePlayableScene::SuePlayableScene(HollywoodEngine *vm, const char *randomName, 
 	_secondaryActorDescriptors.resize(kActorFacingCount * kSecondaryActorFramesPerFacing);
 	_stage003DecodeKey.resize(kStage003DecodeKeySize);
 	_stage003StageBlock.resize(kStage003DescriptorTableSize);
-	_sueSpeechCueDescriptors.resize(kSpeechCueDescriptorTableSize);
+	_staticSpeechCueDescriptors.resize(kSpeechCueDescriptorTableSize);
 	_routeBoundaryPoints.resize(kSceneRouteBoundaryPointCount);
 	_routeSteps.resize(kSceneRouteStepCount);
 	_actorPathStepDeltas.resize(ARRAYSIZE(kActorPathStepDeltaTableSet00));
@@ -169,7 +169,7 @@ SuePlayableScene::SuePlayableScene(HollywoodEngine *vm, const char *randomName, 
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 }
 
-bool SuePlayableScene::play() {
+bool PlayableScene::play() {
 	if (!load())
 		return false;
 
@@ -194,14 +194,14 @@ bool SuePlayableScene::play() {
 	return result;
 }
 
-bool SuePlayableScene::hasSavedActiveActorPoseForCurrentState() const {
+bool PlayableScene::hasSavedActiveActorPoseForCurrentState() const {
 	const GameplayState &state = _vm->gameState();
 	return state.activeActorPoseValid &&
 		state.activeActorPoseStateId == state.mainFlowStateId &&
 		isMainFlowStateInScene(state.mainFlowStateId);
 }
 
-void SuePlayableScene::restoreActiveActorPoseFromGameState() {
+void PlayableScene::restoreActiveActorPoseFromGameState() {
 	if (!hasSavedActiveActorPoseForCurrentState())
 		return;
 
@@ -219,7 +219,7 @@ void SuePlayableScene::restoreActiveActorPoseFromGameState() {
 		_viewportXOffset = _viewportMaxXOffset;
 }
 
-void SuePlayableScene::syncActiveActorPoseToGameState() {
+void PlayableScene::syncActiveActorPoseToGameState() {
 	GameplayState &state = _vm->gameState();
 	if (!isMainFlowStateInScene(state.mainFlowStateId)) {
 		state.activeActorPoseValid = false;
@@ -246,57 +246,109 @@ void SuePlayableScene::syncActiveActorPoseToGameState() {
 	state.activeViewportXOffset = _viewportXOffset;
 }
 
-uint16 SuePlayableScene::sceneViewportMinXOffset() const {
+uint16 PlayableScene::sceneViewportMinXOffset() const {
 	return sceneViewportXOffset();
 }
 
-uint16 SuePlayableScene::sceneViewportMaxXOffset() const {
+uint16 PlayableScene::sceneViewportMaxXOffset() const {
 	return sceneViewportXOffset();
 }
 
-int SuePlayableScene::alternatePaletteResourceChunkIndex() const {
+byte PlayableScene::inventoryOwnerIndex() const {
+	return 1;
+}
+
+void PlayableScene::initializeInventoryOwnerState() {
+	_vm->gameState().initializeSueItemResourcePages();
+}
+
+uint PlayableScene::resource000ActorBankTableEntry() const {
+	return kResource000DefaultActorBankTableEntry;
+}
+
+uint PlayableScene::resource000ActorBankSegmentCount() const {
+	return kResource000DefaultActorBankSegmentCount;
+}
+
+uint PlayableScene::resource000ActorPaletteTableEntry() const {
+	return kResource000DefaultActorPaletteTableEntry;
+}
+
+uint32 PlayableScene::inventoryActionTableExtraOffset() const {
+	return kResource000FixedInventoryVerbTableOffset;
+}
+
+uint PlayableScene::resource003InventoryRowsOffsetIndex() const {
+	return kDefaultResource003InventoryRowsOffsetIndex;
+}
+
+uint32 PlayableScene::speechCueDescriptorTableOffset() const {
+	return kDefaultSpeechCueDescriptorTableOffset;
+}
+
+const byte *PlayableScene::actorPathStepDeltaTable() const {
+	return kActorPathStepDeltaTableSet00;
+}
+
+uint PlayableScene::actorPathStepDeltaTableSize() const {
+	return ARRAYSIZE(kActorPathStepDeltaTableSet00);
+}
+
+byte PlayableScene::walkablePaletteMaxRegion() const {
+	return 3;
+}
+
+const char *PlayableScene::musicArchiveName() const {
+	return kDefaultGameplayMusicArchiveName;
+}
+
+const char *PlayableScene::soundBank0ArchiveName() const {
+	return kDefaultGameplaySoundBank0ArchiveName;
+}
+
+int PlayableScene::alternatePaletteResourceChunkIndex() const {
 	return -1;
 }
 
-bool SuePlayableScene::isAlternatePaletteResourceActive() const {
+bool PlayableScene::isAlternatePaletteResourceActive() const {
 	return false;
 }
 
-bool SuePlayableScene::shouldLoadInventoryActionTables() const {
+bool PlayableScene::shouldLoadInventoryActionTables() const {
 	return true;
 }
 
-bool SuePlayableScene::shouldLoadActorDepthTables() const {
+bool PlayableScene::shouldLoadActorDepthTables() const {
 	return true;
 }
 
-bool SuePlayableScene::shouldConvertSavedFramebufferFF() const {
+bool PlayableScene::shouldConvertSavedFramebufferFF() const {
 	return false;
 }
 
-bool SuePlayableScene::shouldRunExitSideEffectsAfterLoop() const {
+bool PlayableScene::shouldRunExitSideEffectsAfterLoop() const {
 	return false;
 }
 
-void SuePlayableScene::runExitSideEffectsAfterLoop() {
+void PlayableScene::runExitSideEffectsAfterLoop() {
 }
 
-bool SuePlayableScene::usesActorDepthTest() const {
+bool PlayableScene::usesActorDepthTest() const {
 	return false;
 }
 
-bool SuePlayableScene::hasCustomPreviewState() const {
+bool PlayableScene::hasCustomPreviewState() const {
 	return false;
 }
 
-void SuePlayableScene::initializeCustomPreviewState() {
+void PlayableScene::initializeCustomPreviewState() {
 }
 
-bool SuePlayableScene::hasCustomComposite() const {
+bool PlayableScene::hasCustomComposite() const {
 	return false;
 }
 
-void SuePlayableScene::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
+void PlayableScene::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
 	(void)drawActiveActor;
@@ -312,38 +364,38 @@ void SuePlayableScene::drawCustomComposite(bool drawActiveActor, byte activeFaci
 	(void)actorDrawOrderMode;
 }
 
-bool SuePlayableScene::shouldDrawSecondaryActorInPlayableComposite() const {
+bool PlayableScene::shouldDrawSecondaryActorInPlayableComposite() const {
 	return _speechOverlay.visible && !_actionOverlayVisible;
 }
 
-bool SuePlayableScene::hasCustomEntrySequence() const {
+bool PlayableScene::hasCustomEntrySequence() const {
 	return false;
 }
 
-void SuePlayableScene::runCustomEntrySequence() {
+void PlayableScene::runCustomEntrySequence() {
 }
 
-bool SuePlayableScene::prepareCustomGameplayLoop() {
+bool PlayableScene::prepareCustomGameplayLoop() {
 	return false;
 }
 
-bool SuePlayableScene::advanceCustomGameplayLoop(uint32 delta) {
+bool PlayableScene::advanceCustomGameplayLoop(uint32 delta) {
 	(void)delta;
 	return false;
 }
 
-bool SuePlayableScene::dispatchCustomSceneAction(uint16 handlerId) {
+bool PlayableScene::dispatchCustomSceneAction(uint16 handlerId) {
 	(void)handlerId;
 	return false;
 }
 
-bool SuePlayableScene::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
+bool PlayableScene::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
 	(void)targetX;
 	(void)targetY;
 	return false;
 }
 
-bool SuePlayableScene::customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+bool PlayableScene::customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
 		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) {
 	(void)currentRegion;
 	(void)nextRegion;
@@ -354,7 +406,7 @@ bool SuePlayableScene::customizeRouteSegment(byte currentRegion, byte nextRegion
 	return false;
 }
 
-bool SuePlayableScene::customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+bool PlayableScene::customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) {
 	(void)currentRegion;
 	(void)targetRegion;
@@ -366,22 +418,25 @@ bool SuePlayableScene::customizeRouteFinal(byte currentRegion, byte targetRegion
 	return false;
 }
 
-bool SuePlayableScene::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
+bool PlayableScene::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	(void)selector;
 	return false;
 }
 
-bool SuePlayableScene::shouldAnimatePrimarySpeechLine() const {
+bool PlayableScene::shouldAnimatePrimarySpeechLine() const {
 	return true;
 }
 
-void SuePlayableScene::setPrimaryLeftSpeechFrame(byte frameIndex) {
+void PlayableScene::setPrimaryLeftSpeechFrame(byte frameIndex) {
 	(void)frameIndex;
 }
 
-bool SuePlayableScene::load() {
+bool PlayableScene::load() {
+	initializeInventoryOwnerState();
+	_vm->gameState().currentInventoryOwnerIndex = inventoryOwnerIndex();
+
 	if (!loadResource000RuntimeTables(_resource000OffsetTable, _resource000SizeTable) ||
-			!loadResource000ActorBankSet00(_resource000OffsetTable, _resource000SizeTable))
+			!loadResource000ActorBank(_resource000OffsetTable, _resource000SizeTable))
 		return false;
 	if (shouldLoadInventoryActionTables() &&
 			!loadResource000InventoryActionTables(_resource000OffsetTable))
@@ -450,7 +505,7 @@ bool SuePlayableScene::load() {
 		}
 	}
 	memcpy(_paletteCurrent.data(), _paletteResource.data(), _paletteCurrent.size());
-	if (!loadResource000SueActorPalette(_resource000OffsetTable) ||
+	if (!loadResource000ActorPalette(_resource000OffsetTable) ||
 			!loadStage003SceneRows())
 		return false;
 	_panelArt.applyInteractiveObjectPalette(_paletteCurrent);
@@ -460,23 +515,23 @@ bool SuePlayableScene::load() {
 
 	resetViewportFromScene();
 
-	_vm->gameplayMusic()->setArchive(Common::Path(kGameplayMusicArchiveName));
-	_soundBank0.setArchive(Common::Path(kGameplaySoundBank0ArchiveName));
-	_ambientSoundBank0.setArchive(Common::Path(kGameplaySoundBank0ArchiveName));
+	_vm->gameplayMusic()->setArchive(Common::Path(musicArchiveName()));
+	_soundBank0.setArchive(Common::Path(soundBank0ArchiveName()));
+	_ambientSoundBank0.setArchive(Common::Path(soundBank0ArchiveName()));
 
 	debugC(1, kDebugScene, "%s loaded %s", sceneDebugName(), archiveName);
 	return true;
 }
 
-bool SuePlayableScene::loadResource000RuntimeTables(Common::Array<byte> &offsetTable, Common::Array<byte> &sizeTable) {
+bool PlayableScene::loadResource000RuntimeTables(Common::Array<byte> &offsetTable, Common::Array<byte> &sizeTable) {
 	Common::File file;
 	if (!file.open(Common::Path(kResource000Name))) {
-		warning("Failed to open %s for Scene 7040 actor resources", kResource000Name);
+		warning("Failed to open %s for actor resources", kResource000Name);
 		return false;
 	}
 
 	if ((uint32)file.size() < 1 + (2 * kResource000TableByteCount)) {
-		warning("%s is too small for Scene 7040 runtime tables", kResource000Name);
+		warning("%s is too small for runtime tables", kResource000Name);
 		return false;
 	}
 
@@ -485,29 +540,31 @@ bool SuePlayableScene::loadResource000RuntimeTables(Common::Array<byte> &offsetT
 	sizeTable.resize(kResource000TableByteCount);
 	if (file.read(offsetTable.data(), offsetTable.size()) != offsetTable.size() ||
 			file.read(sizeTable.data(), sizeTable.size()) != sizeTable.size()) {
-		warning("Failed to read %s runtime tables for Scene 7040", kResource000Name);
+		warning("Failed to read %s runtime tables", kResource000Name);
 		return false;
 	}
 
 	return true;
 }
 
-bool SuePlayableScene::loadResource000ActorBankSet00(const Common::Array<byte> &offsetTable, const Common::Array<byte> &sizeTable) {
-	if (kResource000ActorSet00TableEntry + 4 > offsetTable.size() ||
-			kResource000ActorSet00TableEntry + kResource000ActorSet00SegmentCount * 4 > sizeTable.size()) {
-		warning("%s actor bank set 00 table entries are out of range", kResource000Name);
+bool PlayableScene::loadResource000ActorBank(const Common::Array<byte> &offsetTable, const Common::Array<byte> &sizeTable) {
+	const uint tableEntry = resource000ActorBankTableEntry();
+	const uint segmentCount = resource000ActorBankSegmentCount();
+	if (tableEntry + 4 > offsetTable.size() ||
+			tableEntry + segmentCount * 4 > sizeTable.size()) {
+		warning("%s actor bank table entries are out of range", kResource000Name);
 		return false;
 	}
 
 	Common::File file;
 	if (!file.open(Common::Path(kResource000Name))) {
-		warning("Failed to open %s actor bank set 00", kResource000Name);
+		warning("Failed to open %s actor bank", kResource000Name);
 		return false;
 	}
 
-	const uint32 actorBankOffset = readUint32LE(offsetTable, kResource000ActorSet00TableEntry);
+	const uint32 actorBankOffset = readUint32LE(offsetTable, tableEntry);
 	if (actorBankOffset > (uint32)file.size()) {
-		warning("%s actor bank set 00 offset is out of range", kResource000Name);
+		warning("%s actor bank offset is out of range", kResource000Name);
 		return false;
 	}
 
@@ -515,26 +572,26 @@ bool SuePlayableScene::loadResource000ActorBankSet00(const Common::Array<byte> &
 	memset(_activeActorRunStreams.data(), 0, _activeActorRunStreams.size());
 	memset(_secondaryActorRunStreams.data(), 0, _secondaryActorRunStreams.size());
 
-	for (uint segment = 0; segment < kResource000ActorSet00SegmentCount; ++segment) {
-		const uint32 segmentSize = readUint32LE(sizeTable, kResource000ActorSet00TableEntry + segment * 4);
+	for (uint segment = 0; segment < segmentCount; ++segment) {
+		const uint32 segmentSize = readUint32LE(sizeTable, tableEntry + segment * 4);
 		if (segment <= 5) {
 			if (segmentSize > kActiveActorFacingRunStride) {
-				warning("%s actor set 00 active run segment %u is too large", kResource000Name, segment);
+				warning("%s actor active run segment %u is too large", kResource000Name, segment);
 				return false;
 			}
 			if (file.read(_activeActorRunStreams.data() + segment * kActiveActorFacingRunStride, segmentSize) != segmentSize) {
-				warning("Failed to read %s actor set 00 active run segment %u", kResource000Name, segment);
+				warning("Failed to read %s actor active run segment %u", kResource000Name, segment);
 				return false;
 			}
 		} else if (segment == 6) {
 			if (segmentSize % kActiveActorDescriptorSize != 0) {
-				warning("%s actor set 00 active descriptors have invalid size", kResource000Name);
+				warning("%s actor active descriptors have invalid size", kResource000Name);
 				return false;
 			}
 			Common::Array<byte> descriptors;
 			descriptors.resize(segmentSize);
 			if (file.read(descriptors.data(), descriptors.size()) != descriptors.size()) {
-				warning("Failed to read %s actor set 00 active descriptors", kResource000Name);
+				warning("Failed to read %s actor active descriptors", kResource000Name);
 				return false;
 			}
 			const uint descriptorCount = MIN<uint>(_activeActorDescriptors.size(), descriptors.size() / kActiveActorDescriptorSize);
@@ -551,22 +608,22 @@ bool SuePlayableScene::loadResource000ActorBankSet00(const Common::Array<byte> &
 		} else if (segment <= 12) {
 			const uint facing = segment - 7;
 			if (segmentSize > kSecondaryActorFacingRunStride) {
-				warning("%s actor set 00 secondary run segment %u is too large", kResource000Name, facing);
+				warning("%s actor secondary run segment %u is too large", kResource000Name, facing);
 				return false;
 			}
 			if (file.read(_secondaryActorRunStreams.data() + facing * kSecondaryActorFacingRunStride, segmentSize) != segmentSize) {
-				warning("Failed to read %s actor set 00 secondary run segment %u", kResource000Name, facing);
+				warning("Failed to read %s actor secondary run segment %u", kResource000Name, facing);
 				return false;
 			}
 		} else {
 			if (segmentSize % kSecondaryActorDescriptorSize != 0) {
-				warning("%s actor set 00 secondary descriptors have invalid size", kResource000Name);
+				warning("%s actor secondary descriptors have invalid size", kResource000Name);
 				return false;
 			}
 			Common::Array<byte> descriptors;
 			descriptors.resize(segmentSize);
 			if (file.read(descriptors.data(), descriptors.size()) != descriptors.size()) {
-				warning("Failed to read %s actor set 00 secondary descriptors", kResource000Name);
+				warning("Failed to read %s actor secondary descriptors", kResource000Name);
 				return false;
 			}
 			const uint descriptorCount = MIN<uint>(_secondaryActorDescriptors.size(), descriptors.size() / kSecondaryActorDescriptorSize);
@@ -580,39 +637,41 @@ bool SuePlayableScene::loadResource000ActorBankSet00(const Common::Array<byte> &
 		}
 	}
 
-	debugC(1, kDebugResources, "Loaded %s actor bank set 00 for Scene 7040", kResource000Name);
+	resetActorPathStepDeltas();
+	debugC(1, kDebugResources, "Loaded %s actor bank for %s", kResource000Name, sceneDebugName());
 	return true;
 }
 
-bool SuePlayableScene::loadResource000SueActorPalette(const Common::Array<byte> &offsetTable) {
-	if (kResource000SuePaletteTableEntry + 4 > offsetTable.size()) {
-		warning("%s owner 1 palette table entry is out of range", kResource000Name);
+bool PlayableScene::loadResource000ActorPalette(const Common::Array<byte> &offsetTable) {
+	const uint tableEntry = resource000ActorPaletteTableEntry();
+	if (tableEntry + 4 > offsetTable.size()) {
+		warning("%s actor palette table entry is out of range", kResource000Name);
 		return false;
 	}
 
 	Common::File file;
 	if (!file.open(Common::Path(kResource000Name))) {
-		warning("Failed to open %s owner 1 palette", kResource000Name);
+		warning("Failed to open %s actor palette", kResource000Name);
 		return false;
 	}
 
-	const uint32 paletteOffset = readUint32LE(offsetTable, kResource000SuePaletteTableEntry);
-	if (paletteOffset > (uint32)file.size() || kSueActorPaletteBytes > (uint32)file.size() - paletteOffset ||
-			0x270 + kSueActorPaletteBytes > _paletteCurrent.size()) {
-		warning("%s owner 1 palette is out of range", kResource000Name);
+	const uint32 paletteOffset = readUint32LE(offsetTable, tableEntry);
+	if (paletteOffset > (uint32)file.size() || kActorPaletteBytes > (uint32)file.size() - paletteOffset ||
+			0x270 + kActorPaletteBytes > _paletteCurrent.size()) {
+		warning("%s actor palette is out of range", kResource000Name);
 		return false;
 	}
 
 	file.seek(paletteOffset);
-	if (file.read(_paletteCurrent.data() + 0x270, kSueActorPaletteBytes) != kSueActorPaletteBytes) {
-		warning("Failed to read %s owner 1 palette", kResource000Name);
+	if (file.read(_paletteCurrent.data() + 0x270, kActorPaletteBytes) != kActorPaletteBytes) {
+		warning("Failed to read %s actor palette", kResource000Name);
 		return false;
 	}
 
 	return true;
 }
 
-bool SuePlayableScene::loadResource000InventoryActionTables(const Common::Array<byte> &offsetTable) {
+bool PlayableScene::loadResource000InventoryActionTables(const Common::Array<byte> &offsetTable) {
 	if (kResource000InventoryActionTablesEntry + 4 > offsetTable.size()) {
 		warning("%s inventory action table entry is out of range", kResource000Name);
 		return false;
@@ -625,7 +684,7 @@ bool SuePlayableScene::loadResource000InventoryActionTables(const Common::Array<
 	}
 
 	const uint32 tableOffset = readUint32LE(offsetTable, kResource000InventoryActionTablesEntry);
-	const uint32 fixedTableOffset = tableOffset + kResource000FixedInventoryVerbTableOffset;
+	const uint32 fixedTableOffset = tableOffset + inventoryActionTableExtraOffset();
 	const uint fixedTableEntryCount = GameplayState::kFixedInventoryActionTableEntryCount - 1;
 	const uint relationTableEntryCount = GameplayState::kInventoryItemRelationTableEntryCount;
 	const uint32 requiredTableBytes = fixedTableEntryCount * 2 + relationTableEntryCount * 2 * 2;
@@ -654,7 +713,7 @@ bool SuePlayableScene::loadResource000InventoryActionTables(const Common::Array<
 	return true;
 }
 
-bool SuePlayableScene::loadStage003SceneRows() {
+bool PlayableScene::loadStage003SceneRows() {
 	Common::File file;
 	if (!file.open(Common::Path(kStage003ArchiveName))) {
 		warning("Failed to open %s for %s text", kStage003ArchiveName, sceneDebugName());
@@ -666,64 +725,65 @@ bool SuePlayableScene::loadStage003SceneRows() {
 		return false;
 	}
 
-	if (kSueSpeechCueDescriptorTableOffset + kSpeechCueDescriptorTableSize + 3 > (uint32)file.size()) {
-		warning("%s owner 1 speech cue table is out of range", kStage003ArchiveName);
+	const uint32 speechCueOffset = speechCueDescriptorTableOffset();
+	if (speechCueOffset + kSpeechCueDescriptorTableSize + 3 > (uint32)file.size()) {
+		warning("%s static speech cue table is out of range", kStage003ArchiveName);
 		return false;
 	}
 
-	file.seek(kSueSpeechCueDescriptorTableOffset);
-	if (file.read(_sueSpeechCueDescriptors.data(), _sueSpeechCueDescriptors.size()) !=
-			_sueSpeechCueDescriptors.size()) {
-		warning("Failed to read %s owner 1 speech cue table", kStage003ArchiveName);
+	file.seek(speechCueOffset);
+	if (file.read(_staticSpeechCueDescriptors.data(), _staticSpeechCueDescriptors.size()) !=
+			_staticSpeechCueDescriptors.size()) {
+		warning("Failed to read %s static speech cue table", kStage003ArchiveName);
 		return false;
 	}
 
-	const byte sueSmallRowCount = file.readByte();
-	const uint16 sueLargeRowCount = file.readUint16LE();
+	const byte ownerSmallRowCount = file.readByte();
+	const uint16 ownerLargeRowCount = file.readUint16LE();
 	if (file.err()) {
-		warning("Failed to read %s owner 1 text row counts", kStage003ArchiveName);
+		warning("Failed to read %s static text row counts", kStage003ArchiveName);
 		return false;
 	}
 
-	const uint32 sueRowsOffsetEntry = kStage003DecodeKeySize + kSueResource003RowsOffsetIndex * 4;
-	if (sueRowsOffsetEntry + 4 > kStage003DecodeKeySize + kStage003StageOffsetTableSize ||
-			sueRowsOffsetEntry + 4 > (uint32)file.size()) {
-		warning("%s owner 1 text row offset entry is out of range", kStage003ArchiveName);
+	const uint32 ownerRowsOffsetEntry = kStage003DecodeKeySize + resource003InventoryRowsOffsetIndex() * 4;
+	if (ownerRowsOffsetEntry + 4 > kStage003DecodeKeySize + kStage003StageOffsetTableSize ||
+			ownerRowsOffsetEntry + 4 > (uint32)file.size()) {
+		warning("%s static text row offset entry is out of range", kStage003ArchiveName);
 		return false;
 	}
 
-	file.seek(sueRowsOffsetEntry);
-	const uint32 sueRowsOffset = file.readUint32LE();
-	const uint32 sueSmallRowBytes = (uint32)sueSmallRowCount * kStage003SmallRowSize;
-	const uint32 sueLargeRowBytes = (uint32)sueLargeRowCount * kStage003LargeRowSize;
-	if (sueRowsOffset == 0 ||
-			sueRowsOffset + sueSmallRowBytes + sueLargeRowBytes > (uint32)file.size()) {
-		warning("%s owner 1 text rows are out of range", kStage003ArchiveName);
+	file.seek(ownerRowsOffsetEntry);
+	const uint32 ownerRowsOffset = file.readUint32LE();
+	const uint32 ownerSmallRowBytes = (uint32)ownerSmallRowCount * kStage003SmallRowSize;
+	const uint32 ownerLargeRowBytes = (uint32)ownerLargeRowCount * kStage003LargeRowSize;
+	if (ownerRowsOffset == 0 ||
+			ownerRowsOffset + ownerSmallRowBytes + ownerLargeRowBytes > (uint32)file.size()) {
+		warning("%s static text rows are out of range", kStage003ArchiveName);
 		return false;
 	}
 
-	_sueSmallRows.resize((uint32)(sueSmallRowCount + 1) * kStage003SmallRowSize);
-	memset(_sueSmallRows.data(), 0, _sueSmallRows.size());
-	_sueLargeRows.resize((uint32)(sueLargeRowCount + 1) * kStage003LargeRowSize);
-	memset(_sueLargeRows.data(), 0, _sueLargeRows.size());
-	file.seek(sueRowsOffset);
-	if (file.read(_sueSmallRows.data() + kStage003SmallRowSize, sueSmallRowBytes) != sueSmallRowBytes) {
-		warning("Failed to read %s owner 1 small text rows", kStage003ArchiveName);
+	_inventoryOwnerSmallRows.resize((uint32)(ownerSmallRowCount + 1) * kStage003SmallRowSize);
+	memset(_inventoryOwnerSmallRows.data(), 0, _inventoryOwnerSmallRows.size());
+	_inventoryOwnerLargeRows.resize((uint32)(ownerLargeRowCount + 1) * kStage003LargeRowSize);
+	memset(_inventoryOwnerLargeRows.data(), 0, _inventoryOwnerLargeRows.size());
+	file.seek(ownerRowsOffset);
+	if (file.read(_inventoryOwnerSmallRows.data() + kStage003SmallRowSize, ownerSmallRowBytes) != ownerSmallRowBytes) {
+		warning("Failed to read %s static small text rows", kStage003ArchiveName);
 		return false;
 	}
-	if (file.read(_sueLargeRows.data() + kStage003LargeRowSize, sueLargeRowBytes) != sueLargeRowBytes) {
-		warning("Failed to read %s owner 1 large text rows", kStage003ArchiveName);
+	if (file.read(_inventoryOwnerLargeRows.data() + kStage003LargeRowSize, ownerLargeRowBytes) != ownerLargeRowBytes) {
+		warning("Failed to read %s static large text rows", kStage003ArchiveName);
 		return false;
 	}
 
-	for (uint row = 1; row <= sueSmallRowCount; ++row) {
+	for (uint row = 1; row <= ownerSmallRowCount; ++row) {
 		for (uint column = 0; column < kStage003SmallRowSize; ++column)
-			_sueSmallRows[row * kStage003SmallRowSize + column] -= _stage003DecodeKey[column];
+			_inventoryOwnerSmallRows[row * kStage003SmallRowSize + column] -= _stage003DecodeKey[column];
 	}
 
-	for (uint row = 1; row <= sueLargeRowCount; ++row) {
+	for (uint row = 1; row <= ownerLargeRowCount; ++row) {
 		for (uint column = 0; column < kStage003LargeRowSize; ++column)
-			_sueLargeRows[row * kStage003LargeRowSize + column] -= _stage003DecodeKey[column];
+			_inventoryOwnerLargeRows[row * kStage003LargeRowSize + column] -= _stage003DecodeKey[column];
 	}
 
 	const uint stageIndex = sceneStageIndex();
@@ -784,7 +844,7 @@ bool SuePlayableScene::loadStage003SceneRows() {
 	return true;
 }
 
-bool SuePlayableScene::loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
+bool PlayableScene::loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
 	const char *archiveName = resourceArchiveName();
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(archiveName), index));
 	if (!stream) {
@@ -807,7 +867,7 @@ bool SuePlayableScene::loadFixedChunk(uint index, Common::Array<byte> &destinati
 	return true;
 }
 
-bool SuePlayableScene::loadVariableChunk(uint index, Common::Array<byte> &destination) {
+bool PlayableScene::loadVariableChunk(uint index, Common::Array<byte> &destination) {
 	const char *archiveName = resourceArchiveName();
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(archiveName), index));
 	if (!stream) {
@@ -825,7 +885,7 @@ bool SuePlayableScene::loadVariableChunk(uint index, Common::Array<byte> &destin
 	return true;
 }
 
-bool SuePlayableScene::loadArenaChunk(uint index) {
+bool PlayableScene::loadArenaChunk(uint index) {
 	const char *archiveName = resourceArchiveName();
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(archiveName), index));
 	if (!stream) {
@@ -850,7 +910,7 @@ bool SuePlayableScene::loadArenaChunk(uint index) {
 	return true;
 }
 
-bool SuePlayableScene::initializeActorDepthTables() {
+bool PlayableScene::initializeActorDepthTables() {
 	if (_metadata.size() < kActorDepthThresholds + kScenePaletteRegionCount * 2) {
 		warning("%s chunk 4 is too short for actor depth thresholds", resourceArchiveName());
 		return false;
@@ -870,13 +930,13 @@ bool SuePlayableScene::initializeActorDepthTables() {
 	return true;
 }
 
-void SuePlayableScene::updateActorDepthThresholds(byte actorDrawOrderMode) {
+void PlayableScene::updateActorDepthThresholds(byte actorDrawOrderMode) {
 	_drawActorDepthYThresholds = _actorDepthYThresholds;
 	if (_drawActorDepthYThresholds.size() > 2)
 		_drawActorDepthYThresholds[2] = actorDrawOrderMode == 6 ? 0x3e7 : 0x158;
 }
 
-void SuePlayableScene::expandFillRunsToSavedFramebuffer() {
+void PlayableScene::expandFillRunsToSavedFramebuffer() {
 	uint destinationOffset = 0;
 	uint sourceOffset = 0;
 	while (destinationOffset < _savedFramebuffer.size() && sourceOffset + 3 <= _fillRuns.size()) {
@@ -892,7 +952,7 @@ void SuePlayableScene::expandFillRunsToSavedFramebuffer() {
 	}
 }
 
-bool SuePlayableScene::initializeScenePathTables() {
+bool PlayableScene::initializeScenePathTables() {
 	const uint boundaryBytes = kSceneRouteBoundaryPointCount * 4;
 	if (_metadata.size() < kRouteBoundaryPoints + boundaryBytes ||
 			_metadata.size() < kRouteBoundarySteps + kSceneRouteStepCount) {
@@ -903,7 +963,7 @@ bool SuePlayableScene::initializeScenePathTables() {
 	memcpy(_fullPaletteRegionMask.data(), _paletteMask.data(), _fullPaletteRegionMask.size());
 	memcpy(_walkablePaletteMask.data(), _paletteMask.data(), _walkablePaletteMask.size());
 	for (uint i = 0; i < _walkablePaletteMask.size(); ++i) {
-		if (_walkablePaletteMask[i] > 3)
+		if (_walkablePaletteMask[i] > walkablePaletteMaxRegion())
 			_walkablePaletteMask[i] = 0;
 	}
 
@@ -916,12 +976,16 @@ bool SuePlayableScene::initializeScenePathTables() {
 	return true;
 }
 
-void SuePlayableScene::initializePreviewState() {
+void PlayableScene::initializePreviewState() {
 	if (hasCustomPreviewState()) {
 		initializeCustomPreviewState();
 		return;
 	}
 
+	initializeDefaultPreviewState();
+}
+
+void PlayableScene::initializeDefaultPreviewState() {
 	_primaryLeftSpeechLastFrame = 0;
 	_primaryDialogueSpeechLastFrame = 7;
 	_actionOverlayVisible = false;
@@ -945,11 +1009,11 @@ void SuePlayableScene::initializePreviewState() {
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
-void SuePlayableScene::drawPreviewComposite() {
+void PlayableScene::drawPreviewComposite() {
 	drawCutsceneComposite(false, 0, 0, 0, 0, false, 0, 0, 0, 0);
 }
 
-void SuePlayableScene::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
+void PlayableScene::drawCutsceneComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
 	if (hasCustomComposite()) {
@@ -970,7 +1034,7 @@ void SuePlayableScene::drawCutsceneComposite(bool drawActiveActor, byte activeFa
 	}
 }
 
-void SuePlayableScene::drawPlayableComposite() {
+void PlayableScene::drawPlayableComposite() {
 	const bool drawActiveActor = !_hideActiveActor;
 	const bool drawSecondaryActor = shouldDrawSecondaryActorInPlayableComposite();
 	drawCutsceneComposite(drawActiveActor, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
@@ -978,7 +1042,7 @@ void SuePlayableScene::drawPlayableComposite() {
 		_activeActorDrawOrderMode);
 }
 
-void SuePlayableScene::drawActiveAndSecondaryActorFrames(bool drawActiveActor, byte activeFacing, byte activeCel,
+void PlayableScene::drawActiveAndSecondaryActorFrames(bool drawActiveActor, byte activeFacing, byte activeCel,
 		int activeWorldX, int activeWorldY, bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame,
 		int secondaryWorldX, int secondaryWorldY, int minimumYExclusive) {
 	if (drawSecondaryActor) {
@@ -993,7 +1057,7 @@ void SuePlayableScene::drawActiveAndSecondaryActorFrames(bool drawActiveActor, b
 		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, minimumYExclusive);
 }
 
-void SuePlayableScene::drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex) {
+void PlayableScene::drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex) {
 	if (chunkIndex >= HollywoodEngine::kResourceChunkCount || frameIndex >= frameMapSize)
 		return;
 
@@ -1001,7 +1065,7 @@ void SuePlayableScene::drawMappedSpriteFrame(uint chunkIndex, uint descriptorCou
 		descriptorCount, frameMap[frameIndex], _sceneFramebuffer);
 }
 
-void SuePlayableScene::drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY, int minimumYExclusive) {
+void PlayableScene::drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY, int minimumYExclusive) {
 	if (facing >= kActorFacingCount || cel >= kActorCelsPerFacing)
 		return;
 
@@ -1016,7 +1080,7 @@ void SuePlayableScene::drawActiveActorFrame(byte facing, byte cel, int worldX, i
 		descriptor.opaqueRunCount, spriteX, spriteY, minimumYExclusive, worldY);
 }
 
-int SuePlayableScene::drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY) {
+int PlayableScene::drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY) {
 	if (facing >= kActorFacingCount || frame >= kSecondaryActorFramesPerFacing)
 		return -1;
 
@@ -1031,7 +1095,7 @@ int SuePlayableScene::drawSecondaryActorFrame(byte facing, byte frame, int world
 		descriptor.runCount, spriteX, spriteY, -1, worldY);
 }
 
-int SuePlayableScene::drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
+int PlayableScene::drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
 		int spriteX, int spriteY, int minimumYExclusive, int actorWorldY) {
 	if (usesActorDepthTest()) {
 		ActorDepthTest depthTest;
@@ -1049,7 +1113,7 @@ int SuePlayableScene::drawActorRun(const Common::Array<byte> &runStreams, uint c
 		minimumYExclusive, _sceneFramebuffer, nullptr);
 }
 
-void SuePlayableScene::runEntryCutscene() {
+void PlayableScene::runEntryCutscene() {
 	if (hasCustomEntrySequence()) {
 		runCustomEntrySequence();
 		return;
@@ -1059,7 +1123,7 @@ void SuePlayableScene::runEntryCutscene() {
 	presentFrame();
 }
 
-void SuePlayableScene::runEntryPath(int startX, int startY, byte startFacing, int targetX, int targetY) {
+void PlayableScene::runEntryPath(int startX, int startY, byte startFacing, int targetX, int targetY) {
 	_activeActorWorldX = startX;
 	_activeActorWorldY = startY;
 	_activeActorFacing = startFacing;
@@ -1093,28 +1157,28 @@ void SuePlayableScene::runEntryPath(int startX, int startY, byte startFacing, in
 	presentFrame();
 }
 
-bool SuePlayableScene::runBasicGameplayLoop() {
+bool PlayableScene::runBasicGameplayLoop() {
 	GameplayLoop loop(_vm, this);
 	return loop.run();
 }
 
-const SceneHotspotTable &SuePlayableScene::hotspots() const {
+const SceneHotspotTable &PlayableScene::hotspots() const {
 	return _hotspots;
 }
 
-const Common::Array<byte> &SuePlayableScene::savedFramebuffer() const {
+const Common::Array<byte> &PlayableScene::savedFramebuffer() const {
 	return _savedFramebuffer;
 }
 
-uint16 SuePlayableScene::viewportXOffset() const {
+uint16 PlayableScene::viewportXOffset() const {
 	return _viewportXOffset;
 }
 
-uint16 SuePlayableScene::viewportYOffset() const {
+uint16 PlayableScene::viewportYOffset() const {
 	return 0;
 }
 
-void SuePlayableScene::prepareGameplayLoop() {
+void PlayableScene::prepareGameplayLoop() {
 	_skipRequested = false;
 	_actorPathPlaybackActive = false;
 	clearAllSpeechOverlays();
@@ -1132,7 +1196,7 @@ void SuePlayableScene::prepareGameplayLoop() {
 	syncActiveActorPoseToGameState();
 }
 
-void SuePlayableScene::advanceGameplayLoop(uint32 delta) {
+void PlayableScene::advanceGameplayLoop(uint32 delta) {
 	advanceSecondaryActorSpeechAnimation(delta);
 
 	if (advanceCustomGameplayLoop(delta)) {
@@ -1149,21 +1213,21 @@ void SuePlayableScene::advanceGameplayLoop(uint32 delta) {
 	syncActiveActorPoseToGameState();
 }
 
-void SuePlayableScene::drawGameplayFrame() {
+void PlayableScene::drawGameplayFrame() {
 	drawPlayableComposite();
 }
 
-void SuePlayableScene::presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) {
+void PlayableScene::presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) {
 	syncActiveActorPoseToGameState();
 	presentFrame(&hoverCaption, &panelState);
 }
 
-void SuePlayableScene::prepareOptionsMenuPalette(Common::Array<byte> &palette) const {
+void PlayableScene::prepareOptionsMenuPalette(Common::Array<byte> &palette) const {
 	palette = _paletteCurrent;
 	_panelArt.applyInteractiveObjectPalette(palette);
 }
 
-bool SuePlayableScene::shouldExitGameplayLoop() const {
+bool PlayableScene::shouldExitGameplayLoop() const {
 	if (_vm->isSceneRestartRequested())
 		return true;
 
@@ -1171,36 +1235,36 @@ bool SuePlayableScene::shouldExitGameplayLoop() const {
 	return !isMainFlowStateInScene(stateId);
 }
 
-Common::String SuePlayableScene::inventoryItemName(byte owner, byte itemId) const {
-	if (owner != 1)
+Common::String PlayableScene::inventoryItemName(byte owner, byte itemId) const {
+	if (owner != inventoryOwnerIndex())
 		return Common::String();
 
 	const uint offset = (uint)itemId * kStage003SmallRowSize;
-	if (offset >= _sueSmallRows.size())
+	if (offset >= _inventoryOwnerSmallRows.size())
 		return Common::String();
 
-	const byte *row = _sueSmallRows.data() + offset;
+	const byte *row = _inventoryOwnerSmallRows.data() + offset;
 	uint length = 0;
-	while (offset + length < _sueSmallRows.size() &&
+	while (offset + length < _inventoryOwnerSmallRows.size() &&
 			length < kStage003SmallRowSize && row[length] != 0)
 		++length;
 
 	return Common::String((const char *)row, length);
 }
 
-void SuePlayableScene::beginSharedInventorySpeechLine(uint16 rowIndex, byte frameIndex) {
+void PlayableScene::beginSharedInventorySpeechLine(uint16 rowIndex, byte frameIndex) {
 	beginStaticSecondarySpeechLine(rowIndex, frameIndex);
 }
 
-byte SuePlayableScene::randomSharedInventorySpeechFrame(byte maxFrameIndex) {
+byte PlayableScene::randomSharedInventorySpeechFrame(byte maxFrameIndex) {
 	return (byte)_random.getRandomNumber(maxFrameIndex);
 }
 
-void SuePlayableScene::playSharedInventorySound(byte sampleId) {
+void PlayableScene::playSharedInventorySound(byte sampleId) {
 	_soundBank0.playSample(sampleId, 100);
 }
 
-void SuePlayableScene::handleLeftClick(const GameplayLoopCursorState &state) {
+void PlayableScene::handleLeftClick(const GameplayLoopCursorState &state) {
 	_skipRequested = false;
 	_vm->cursor()->leaveInteractiveMode();
 	processSceneActionClick(state);
@@ -1211,7 +1275,7 @@ void SuePlayableScene::handleLeftClick(const GameplayLoopCursorState &state) {
 	}
 }
 
-void SuePlayableScene::handleInventoryItemClick(const GameplayLoopCursorState &state) {
+void PlayableScene::handleInventoryItemClick(const GameplayLoopCursorState &state) {
 	_skipRequested = false;
 	_vm->cursor()->leaveInteractiveMode();
 	dispatchSceneAction(state.inventoryActionHandlerId);
@@ -1222,7 +1286,7 @@ void SuePlayableScene::handleInventoryItemClick(const GameplayLoopCursorState &s
 	}
 }
 
-void SuePlayableScene::processSceneActionClick(const GameplayLoopCursorState &state) {
+void PlayableScene::processSceneActionClick(const GameplayLoopCursorState &state) {
 	byte itemId = state.resolvedItem;
 	if (state.relationModeActive) {
 		processSceneRelationClick(state, itemId);
@@ -1276,7 +1340,7 @@ void SuePlayableScene::processSceneActionClick(const GameplayLoopCursorState &st
 	dispatchSceneAction(actionRecord.actionHandlerId);
 }
 
-void SuePlayableScene::processSceneRelationClick(const GameplayLoopCursorState &state, byte itemId) {
+void PlayableScene::processSceneRelationClick(const GameplayLoopCursorState &state, byte itemId) {
 	if (itemId == 0)
 		return;
 
@@ -1312,11 +1376,11 @@ void SuePlayableScene::processSceneRelationClick(const GameplayLoopCursorState &
 	dispatchSceneAction(actionRecord.actionHandlerId);
 }
 
-SceneVerbActionRecord SuePlayableScene::relationActionRecord(byte inventoryItemId, byte sceneItemId, byte relationMode) const {
+SceneVerbActionRecord PlayableScene::relationActionRecord(byte inventoryItemId, byte sceneItemId, byte relationMode) const {
 	return _hotspots.relationActionRecord(inventoryItemId, sceneItemId, relationMode);
 }
 
-void SuePlayableScene::dispatchSceneAction(uint16 handlerId) {
+void PlayableScene::dispatchSceneAction(uint16 handlerId) {
 	if (dispatchCustomSceneAction(handlerId))
 		return;
 
@@ -1326,7 +1390,7 @@ void SuePlayableScene::dispatchSceneAction(uint16 handlerId) {
 	warning("Unhandled %s action handler %u", sceneDebugName(), handlerId);
 }
 
-bool SuePlayableScene::dispatchGenericSceneAction(uint16 handlerId) {
+bool PlayableScene::dispatchGenericSceneAction(uint16 handlerId) {
 	// Shared callback table installed by InstallSceneActionCallbackTable.
 	switch (handlerId) {
 	case 0:  // Shared no-op/default action slot.
@@ -1539,7 +1603,7 @@ bool SuePlayableScene::dispatchGenericSceneAction(uint16 handlerId) {
 	}
 }
 
-bool SuePlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel, bool cancelOnSkip) {
+bool PlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel, bool cancelOnSkip) {
 	queueActorPathWithPaletteRegionRouting(_activeActorWorldX, _activeActorWorldY, targetX, targetY,
 		finalFacing, finalCel);
 
@@ -1588,7 +1652,7 @@ bool SuePlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFac
 	return !Engine::shouldQuit() && !_vm->isSceneRestartRequested();
 }
 
-void SuePlayableScene::adjustWalkTargetToFloorMask(int &targetX, int &targetY) const {
+void PlayableScene::adjustWalkTargetToFloorMask(int &targetX, int &targetY) const {
 	if (adjustCustomWalkTargetToFloorMask(targetX, targetY))
 		return;
 
@@ -1610,10 +1674,10 @@ void SuePlayableScene::adjustWalkTargetToFloorMask(int &targetX, int &targetY) c
 	}
 }
 
-void SuePlayableScene::queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
+void PlayableScene::queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
 		byte finalFacing, byte finalCel) {
 	_actorPathFrames.clear();
-	memcpy(_actorPathStepDeltas.data(), kActorPathStepDeltaTableSet00, _actorPathStepDeltas.size());
+	resetActorPathStepDeltas();
 
 	ActorPathBuildState state;
 	state.drawOrderMode = _activeActorDrawOrderMode;
@@ -1665,7 +1729,7 @@ void SuePlayableScene::queueActorPathWithPaletteRegionRouting(int startX, int st
 			buildActorPathFramesBetweenPoints(state, boundary.x, boundary.y,
 				segmentFinalFacing, segmentFinalCel, requestedFacing);
 			if (restoredStepDeltas)
-				memcpy(_actorPathStepDeltas.data(), kActorPathStepDeltaTableSet00, _actorPathStepDeltas.size());
+				resetActorPathStepDeltas();
 
 			currentRegion = nextRegion;
 		}
@@ -1678,11 +1742,11 @@ void SuePlayableScene::queueActorPathWithPaletteRegionRouting(int startX, int st
 	state.drawOrderMode = currentRegion;
 	buildActorPathFramesBetweenPoints(state, targetX, targetY, finalFacing, finalCel, requestedFacing);
 	if (restoredStepDeltas)
-		memcpy(_actorPathStepDeltas.data(), kActorPathStepDeltaTableSet00, _actorPathStepDeltas.size());
+		resetActorPathStepDeltas();
 
 }
 
-void SuePlayableScene::buildActorPathFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,
+void PlayableScene::buildActorPathFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,
 		byte finalFacing, byte finalCel, int requestedFacing) {
 	if (targetX == state.x && targetY == state.y) {
 		if (finalFacing != kInvalidFacing && state.facing != finalFacing) {
@@ -1758,7 +1822,7 @@ void SuePlayableScene::buildActorPathFramesBetweenPoints(ActorPathBuildState &st
 	state.cel = nextActorPathCel(state.cel);
 }
 
-void SuePlayableScene::appendActorPathFrame(const ActorPathBuildState &state) {
+void PlayableScene::appendActorPathFrame(const ActorPathBuildState &state) {
 	ActorPathFrame frame;
 	frame.drawOrderMode = state.drawOrderMode;
 	frame.facing = state.facing;
@@ -1768,7 +1832,7 @@ void SuePlayableScene::appendActorPathFrame(const ActorPathBuildState &state) {
 	_actorPathFrames.push_back(frame);
 }
 
-ScenePoint SuePlayableScene::nearestPaletteRouteBoundaryPoint(int startX, int startY, byte currentRegion, byte nextRegion) const {
+ScenePoint PlayableScene::nearestPaletteRouteBoundaryPoint(int startX, int startY, byte currentRegion, byte nextRegion) const {
 	ScenePoint points[kScenePaletteRegionBoundaryCandidateCount];
 	float scores[kScenePaletteRegionBoundaryCandidateCount];
 	memset(points, 0, sizeof(points));
@@ -1793,7 +1857,7 @@ ScenePoint SuePlayableScene::nearestPaletteRouteBoundaryPoint(int startX, int st
 	return scores[0] < scores[2] ? points[0] : points[2];
 }
 
-ScenePoint SuePlayableScene::bestPaletteRouteBoundaryPoint(int startX, int startY, int targetX, int targetY,
+ScenePoint PlayableScene::bestPaletteRouteBoundaryPoint(int startX, int startY, int targetX, int targetY,
 		byte currentRegion, byte targetRegion) const {
 	ScenePoint points[kScenePaletteRegionBoundaryCandidateCount];
 	float scores[kScenePaletteRegionBoundaryCandidateCount];
@@ -1821,7 +1885,7 @@ ScenePoint SuePlayableScene::bestPaletteRouteBoundaryPoint(int startX, int start
 	return scores[0] < scores[2] ? points[0] : points[2];
 }
 
-byte SuePlayableScene::paletteRegionAt(int x, int y) const {
+byte PlayableScene::paletteRegionAt(int x, int y) const {
 	if (x < 0 || y < 0 || x >= HollywoodEngine::kSceneBufferWidth || y >= HollywoodEngine::kSceneBufferHeight ||
 			_fullPaletteRegionMask.empty())
 		return 0;
@@ -1833,7 +1897,7 @@ byte SuePlayableScene::paletteRegionAt(int x, int y) const {
 	return _fullPaletteRegionMask[_savedFramebuffer[offset]];
 }
 
-byte SuePlayableScene::calculateMovementFacingForPath(int fromX, int fromY, int toX, int toY, int requestedFacing) const {
+byte PlayableScene::calculateMovementFacingForPath(int fromX, int fromY, int toX, int toY, int requestedFacing) const {
 	if (requestedFacing >= 0)
 		return (byte)requestedFacing;
 
@@ -1858,7 +1922,7 @@ byte SuePlayableScene::calculateMovementFacingForPath(int fromX, int fromY, int 
 	return slope > 1.0f ? 3 : 4;
 }
 
-uint SuePlayableScene::calculateWalkStepCountForAxisDelta(int startAxis, int targetAxis, byte facing, byte cel) const {
+uint PlayableScene::calculateWalkStepCountForAxisDelta(int startAxis, int targetAxis, byte facing, byte cel) const {
 	if (facing >= kActorFacingCount)
 		return 0;
 
@@ -1880,11 +1944,11 @@ uint SuePlayableScene::calculateWalkStepCountForAxisDelta(int startAxis, int tar
 	return steps;
 }
 
-byte SuePlayableScene::nextActorPathCel(byte cel) const {
+byte PlayableScene::nextActorPathCel(byte cel) const {
 	return cel == 12 ? 1 : (byte)(cel + 1);
 }
 
-uint SuePlayableScene::actorPathStepDelta(byte facing, byte cel) const {
+uint PlayableScene::actorPathStepDelta(byte facing, byte cel) const {
 	if (facing >= kActorFacingCount || cel == 0 || cel > 12)
 		return 0;
 
@@ -1895,7 +1959,15 @@ uint SuePlayableScene::actorPathStepDelta(byte facing, byte cel) const {
 	return _actorPathStepDeltas[offset];
 }
 
-byte SuePlayableScene::calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const {
+void PlayableScene::resetActorPathStepDeltas() {
+	const byte *table = actorPathStepDeltaTable();
+	const uint tableSize = actorPathStepDeltaTableSize();
+	_actorPathStepDeltas.resize(tableSize);
+	if (table != nullptr && tableSize != 0)
+		memcpy(_actorPathStepDeltas.data(), table, tableSize);
+}
+
+byte PlayableScene::calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const {
 	if (toX == fromX)
 		return fromY < toY ? 3 : 0;
 
@@ -1913,7 +1985,7 @@ byte SuePlayableScene::calculateFacingTowardPoint(int fromX, int fromY, int toX,
 	return slope > kActorFacingSteepSlopeThreshold ? 3 : 4;
 }
 
-void SuePlayableScene::applySceneStateToHotspotsAndPatches(byte selector) {
+void PlayableScene::applySceneStateToHotspotsAndPatches(byte selector) {
 	if (applyCustomSceneStateToHotspotsAndPatches(selector))
 		return;
 
@@ -1930,36 +2002,36 @@ void SuePlayableScene::applySceneStateToHotspotsAndPatches(byte selector) {
 	}
 }
 
-void SuePlayableScene::rebuildWalkablePaletteMask() {
+void PlayableScene::rebuildWalkablePaletteMask() {
 	memcpy(_walkablePaletteMask.data(), _fullPaletteRegionMask.data(), _walkablePaletteMask.size());
 	for (uint i = 0; i < _walkablePaletteMask.size(); ++i) {
-		if (_walkablePaletteMask[i] > 3)
+		if (_walkablePaletteMask[i] > walkablePaletteMaxRegion())
 			_walkablePaletteMask[i] = 0;
 	}
 }
 
-bool SuePlayableScene::hasInventoryItem(byte itemId) const {
+bool PlayableScene::hasInventoryItem(byte itemId) const {
 	const byte owner = _vm->gameState().currentInventoryOwnerIndex;
 	return _vm->gameState().hasInventoryItem(owner, itemId);
 }
 
-void SuePlayableScene::addInventoryItem(byte itemId) {
+void PlayableScene::addInventoryItem(byte itemId) {
 	GameplayState &state = _vm->gameState();
 	state.addInventoryItem(state.currentInventoryOwnerIndex, itemId);
 }
 
-void SuePlayableScene::removeInventoryItem(byte itemId) {
+void PlayableScene::removeInventoryItem(byte itemId) {
 	GameplayState &state = _vm->gameState();
 	state.removeInventoryItem(state.currentInventoryOwnerIndex, itemId);
 }
 
-void SuePlayableScene::handleStaticSpeech43And24Sequence() {
+void PlayableScene::handleStaticSpeech43And24Sequence() {
 	beginStaticSecondarySpeechLine(0x43, 1);
 	beginStaticSecondarySpeechLine(0x24, 0);
 	beginStaticSecondarySpeechLine(0x43, 2);
 }
 
-void SuePlayableScene::handleGrantItem22IfMissing() {
+void PlayableScene::handleGrantItem22IfMissing() {
 	if (hasInventoryItem(0x22)) {
 		beginStaticSecondarySpeechLine(0x41, 1);
 		return;
@@ -1970,7 +2042,7 @@ void SuePlayableScene::handleGrantItem22IfMissing() {
 	beginStaticSecondarySpeechLine(0x41, 0);
 }
 
-void SuePlayableScene::handleSwapItems08And0FForItem06() {
+void PlayableScene::handleSwapItems08And0FForItem06() {
 	beginStaticSecondarySpeechLine(0x43, 0);
 	removeInventoryItem(0x08);
 	removeInventoryItem(0x0f);
@@ -1979,7 +2051,7 @@ void SuePlayableScene::handleSwapItems08And0FForItem06() {
 	handleStaticSpeech43And24Sequence();
 }
 
-Common::String SuePlayableScene::dialogueMenuText(byte stageId, byte textRowId) const {
+Common::String PlayableScene::dialogueMenuText(byte stageId, byte textRowId) const {
 	const uint offset = ((uint)stageId * 100 + textRowId) * 5;
 	if (offset + 5 > _stage003StageBlock.size())
 		return Common::String();
@@ -1988,24 +2060,24 @@ Common::String SuePlayableScene::dialogueMenuText(byte stageId, byte textRowId) 
 	return getResource003LargeTextRecord(textRecordId);
 }
 
-void SuePlayableScene::advanceDialogueMenu(uint32 delta) {
+void PlayableScene::advanceDialogueMenu(uint32 delta) {
 	advanceGameplayLoop(delta);
 }
 
-void SuePlayableScene::drawDialogueMenuFrame() {
+void PlayableScene::drawDialogueMenuFrame() {
 	drawPlayableComposite();
 }
 
-void SuePlayableScene::presentDialogueMenuFrame(const DialogueMenuState &state) {
+void PlayableScene::presentDialogueMenuFrame(const DialogueMenuState &state) {
 	presentFrame(nullptr, nullptr, &state);
 }
 
-void SuePlayableScene::runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
+void PlayableScene::runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame) {
 	runMappedActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, statePatchFrame, false);
 }
 
-void SuePlayableScene::runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
+void PlayableScene::runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame, bool hideActiveActor) {
 	runMappedActionOverlayRange(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
 		0, frameMapSize, statePatchFrame, hideActiveActor);
@@ -2013,7 +2085,7 @@ void SuePlayableScene::runMappedActionOverlay(uint chunkIndex, uint descriptorCo
 	presentFrame();
 }
 
-void SuePlayableScene::runMappedActionOverlayRange(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
+void PlayableScene::runMappedActionOverlayRange(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, uint firstFrame, uint endFrame, int statePatchFrame, bool hideActiveActor) {
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = hideActiveActor;
@@ -2038,17 +2110,17 @@ void SuePlayableScene::runMappedActionOverlayRange(uint chunkIndex, uint descrip
 	_hideActiveActor = previousHideActiveActor;
 }
 
-byte SuePlayableScene::primarySpeechAnimationBaseFrame(byte animationGroup) const {
+byte PlayableScene::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	(void)animationGroup;
 	return 0;
 }
 
-void SuePlayableScene::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
+void PlayableScene::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	(void)animationGroup;
 	(void)frameIndex;
 }
 
-bool SuePlayableScene::waitSceneMillis(uint32 millis) {
+bool PlayableScene::waitSceneMillis(uint32 millis) {
 	uint32 remaining = millis;
 	while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		if (pollEvents(true))
@@ -2065,7 +2137,7 @@ bool SuePlayableScene::waitSceneMillis(uint32 millis) {
 	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
 }
 
-void SuePlayableScene::resetViewportFromScene() {
+void PlayableScene::resetViewportFromScene() {
 	const uint16 maximumFramebufferOffset =
 		HollywoodEngine::kSceneBufferWidth - HollywoodEngine::kScreenWidth;
 
@@ -2078,7 +2150,7 @@ void SuePlayableScene::resetViewportFromScene() {
 	_viewportScrollTimerAccumulator = 0;
 }
 
-void SuePlayableScene::advanceViewportScroll(uint32 delta) {
+void PlayableScene::advanceViewportScroll(uint32 delta) {
 	if (_actorPathPlaybackActive) {
 		_viewportScrollTimerAccumulator = 0;
 		return;
@@ -2112,7 +2184,7 @@ void SuePlayableScene::advanceViewportScroll(uint32 delta) {
 	}
 }
 
-void SuePlayableScene::updateAmbientAudioAndMusicCues(uint32 delta) {
+void PlayableScene::updateAmbientAudioAndMusicCues(uint32 delta) {
 	_ambientMusicTimerAccumulator += delta;
 	if (_ambientMusicTimerAccumulator < kAmbientMusicCheckMillis)
 		return;
@@ -2142,7 +2214,7 @@ void SuePlayableScene::updateAmbientAudioAndMusicCues(uint32 delta) {
 	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 100);
 }
 
-void SuePlayableScene::advanceSecondaryActorSpeechAnimation(uint32 delta) {
+void PlayableScene::advanceSecondaryActorSpeechAnimation(uint32 delta) {
 	if (!_speechOverlay.visible) {
 		_secondaryActorFrame = 0;
 		_secondaryActorTimerAccumulator = 0;
@@ -2156,7 +2228,7 @@ void SuePlayableScene::advanceSecondaryActorSpeechAnimation(uint32 delta) {
 	}
 }
 
-void SuePlayableScene::advanceSecondaryActorSpeechFrame() {
+void PlayableScene::advanceSecondaryActorSpeechFrame() {
 	byte nextFrame = _secondaryActorFrame;
 	for (uint attempt = 0; attempt < 8 && nextFrame == _secondaryActorFrame; ++attempt)
 		nextFrame = (byte)_random.getRandomNumber(kSecondaryActorFramesPerFacing - 1);
@@ -2167,7 +2239,7 @@ void SuePlayableScene::advanceSecondaryActorSpeechFrame() {
 	_secondaryActorFrame = nextFrame;
 }
 
-void SuePlayableScene::advancePrimaryLeftSpeechFrame() {
+void PlayableScene::advancePrimaryLeftSpeechFrame() {
 	byte nextFrame = _primaryLeftSpeechLastFrame;
 	for (uint attempt = 0; attempt < 8 && nextFrame == _primaryLeftSpeechLastFrame; ++attempt)
 		nextFrame = (byte)_random.getRandomNumber(3);
@@ -2179,7 +2251,7 @@ void SuePlayableScene::advancePrimaryLeftSpeechFrame() {
 	setPrimaryLeftSpeechFrame(nextFrame);
 }
 
-void SuePlayableScene::advancePrimaryDialogueSpeechFrame(uint32 delta) {
+void PlayableScene::advancePrimaryDialogueSpeechFrame(uint32 delta) {
 	_primaryDialogueSpeechTimerAccumulator += delta;
 	while (_primaryDialogueSpeechTimerAccumulator >= kPrimaryDialogueSpeechFrameMillis) {
 		_primaryDialogueSpeechTimerAccumulator -= kPrimaryDialogueSpeechFrameMillis;
@@ -2196,18 +2268,18 @@ void SuePlayableScene::advancePrimaryDialogueSpeechFrame(uint32 delta) {
 	}
 }
 
-void SuePlayableScene::clearSpeechOverlay() {
+void PlayableScene::clearSpeechOverlay() {
 	_speechOverlay.visible = false;
 	_speechOverlay.lines.clear();
 }
 
-void SuePlayableScene::clearAllSpeechOverlays() {
+void PlayableScene::clearAllSpeechOverlays() {
 	clearSpeechOverlay();
 	_primarySpeechOverlay.visible = false;
 	_primarySpeechOverlay.lines.clear();
 }
 
-void SuePlayableScene::drawSpeechOverlay() {
+void PlayableScene::drawSpeechOverlay() {
 	if (!_vm->font() || !_vm->font()->isLoaded())
 		return;
 
@@ -2215,7 +2287,7 @@ void SuePlayableScene::drawSpeechOverlay() {
 	drawSpeechOverlay(_primarySpeechOverlay);
 }
 
-void SuePlayableScene::drawSpeechOverlay(const SpeechOverlay &overlay) {
+void PlayableScene::drawSpeechOverlay(const SpeechOverlay &overlay) {
 	if (!overlay.visible)
 		return;
 
@@ -2236,12 +2308,12 @@ void SuePlayableScene::drawSpeechOverlay(const SpeechOverlay &overlay) {
 	}
 }
 
-void SuePlayableScene::beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
+void PlayableScene::beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
 	runSpeechLine(_speechOverlay, rowIndex, frameIndex, _activeActorWorldX, 0,
 		kDefaultSecondarySpeechTextColor, false, false, false);
 }
 
-bool SuePlayableScene::startSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
+bool PlayableScene::startSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
 	uint16 textRecordId = 0;
 	byte continuationCount = 0;
 	uint16 voiceSampleId = 0;
@@ -2263,7 +2335,7 @@ bool SuePlayableScene::startSecondarySpeechLine(uint16 rowIndex, byte frameIndex
 	return voiceSampleId != 0 && _speech.playSample(voiceSampleId, 100);
 }
 
-void SuePlayableScene::beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
+void PlayableScene::beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
 	uint16 textRecordId = 0;
 	byte continuationCount = 0;
 	uint16 voiceSampleId = 0;
@@ -2274,7 +2346,7 @@ void SuePlayableScene::beginStaticSecondarySpeechLine(uint16 rowIndex, byte fram
 		kDefaultSecondarySpeechTextColor, false, false, false);
 }
 
-void SuePlayableScene::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
+void PlayableScene::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue) {
 	if (!shouldAnimatePrimarySpeechLine()) {
 		const uint paletteOffset = kDefaultPrimarySpeechTextColor * 3;
@@ -2292,7 +2364,7 @@ void SuePlayableScene::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, 
 	beginPrimarySpeechLineWithAnimationGroup(rowIndex, frameIndex, centerX, topY, red, green, blue, 0);
 }
 
-void SuePlayableScene::beginPrimarySpeechLineWithAnimationGroup(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
+void PlayableScene::beginPrimarySpeechLineWithAnimationGroup(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue, byte animationGroup) {
 	const uint paletteOffset = kDefaultPrimarySpeechTextColor * 3;
 	if (_paletteCurrent.size() > paletteOffset + 2) {
@@ -2305,7 +2377,7 @@ void SuePlayableScene::beginPrimarySpeechLineWithAnimationGroup(uint16 rowIndex,
 		kDefaultPrimarySpeechTextColor, true, false, true, animationGroup);
 }
 
-void SuePlayableScene::beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex) {
+void PlayableScene::beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex) {
 	const uint paletteOffset = kDefaultPrimarySpeechTextColor * 3;
 	if (_paletteCurrent.size() > paletteOffset + 2) {
 		_paletteCurrent[paletteOffset] = 0x33;
@@ -2317,7 +2389,7 @@ void SuePlayableScene::beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameInd
 		kDefaultPrimarySpeechTextColor, true, true, false);
 }
 
-void SuePlayableScene::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
+void PlayableScene::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft, bool animatePrimaryDialogue,
 		byte primaryAnimationGroup) {
 	uint16 textRecordId = 0;
@@ -2330,7 +2402,7 @@ void SuePlayableScene::runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, by
 		useRequestedTop, animatePrimaryLeft, animatePrimaryDialogue, primaryAnimationGroup);
 }
 
-void SuePlayableScene::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte continuationCount,
+void PlayableScene::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte continuationCount,
 		uint16 voiceSampleId, uint16 centerX, uint16 topY, byte colorIndex, bool useRequestedTop,
 		bool animatePrimaryLeft, bool animatePrimaryDialogue, byte primaryAnimationGroup) {
 	const byte lineCount = MAX<byte>(1, continuationCount);
@@ -2388,7 +2460,7 @@ void SuePlayableScene::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId,
 	}
 }
 
-bool SuePlayableScene::getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
+bool PlayableScene::getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
 		uint16 &voiceSampleId) const {
 	const uint offset = ((uint)frameIndex + (uint)rowIndex * 100) * 5;
 	if (offset + 5 > _stage003StageBlock.size())
@@ -2400,19 +2472,19 @@ bool SuePlayableScene::getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &
 	return textRecordId != 0;
 }
 
-bool SuePlayableScene::getStaticSpeechCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
+bool PlayableScene::getStaticSpeechCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
 		uint16 &voiceSampleId) const {
 	const uint offset = ((uint)frameIndex + (uint)rowIndex * 10) * 5;
-	if (offset + 5 > _sueSpeechCueDescriptors.size())
+	if (offset + 5 > _staticSpeechCueDescriptors.size())
 		return false;
 
-	textRecordId = readUint16LE(_sueSpeechCueDescriptors, offset);
-	continuationCount = _sueSpeechCueDescriptors[offset + 2];
-	voiceSampleId = readUint16LE(_sueSpeechCueDescriptors, offset + 3);
+	textRecordId = readUint16LE(_staticSpeechCueDescriptors, offset);
+	continuationCount = _staticSpeechCueDescriptors[offset + 2];
+	voiceSampleId = readUint16LE(_staticSpeechCueDescriptors, offset + 3);
 	return textRecordId != 0;
 }
 
-void SuePlayableScene::wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const {
+void PlayableScene::wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const {
 	lines.clear();
 	if (text.empty())
 		return;
@@ -2451,13 +2523,13 @@ void SuePlayableScene::wrapActorSpeechText(const Common::String &text, uint16 an
 	}
 }
 
-Common::String SuePlayableScene::getResource003LargeTextRecord(uint16 recordId) const {
+Common::String PlayableScene::getResource003LargeTextRecord(uint16 recordId) const {
 	if (recordId < kStage003LargeRowBaseIndex) {
 		const uint offset = (uint)recordId * kStage003LargeRowSize;
-		if (recordId == 0 || offset >= _sueLargeRows.size())
+		if (recordId == 0 || offset >= _inventoryOwnerLargeRows.size())
 			return Common::String();
 
-		const byte *row = _sueLargeRows.data() + offset;
+		const byte *row = _inventoryOwnerLargeRows.data() + offset;
 		uint length = 0;
 		while (length < kStage003LargeRowSize && row[length] != 0)
 			++length;
@@ -2478,14 +2550,14 @@ Common::String SuePlayableScene::getResource003LargeTextRecord(uint16 recordId) 
 	return Common::String((const char *)row, length);
 }
 
-uint SuePlayableScene::actorSpeechTextWidth(const Common::String &text) const {
+uint PlayableScene::actorSpeechTextWidth(const Common::String &text) const {
 	if (!_vm->font() || !_vm->font()->isLoaded())
 		return 0;
 
 	return _vm->font()->getStringWidth(text) + 2;
 }
 
-void SuePlayableScene::calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY) {
+void PlayableScene::calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY) {
 	uint textWidth = 0;
 	for (uint i = 0; i < _speechOverlay.lines.size(); ++i)
 		textWidth = MAX<uint>(textWidth, actorSpeechTextWidth(_speechOverlay.lines[i]));
@@ -2504,7 +2576,7 @@ void SuePlayableScene::calculateSecondarySpeechBounds(int actorWorldX, int actor
 	_speechOverlay.topY = (uint16)topY;
 }
 
-bool SuePlayableScene::waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryLeft) {
+bool PlayableScene::waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryLeft) {
 	uint32 elapsed = 0;
 	while (!Engine::shouldQuit()) {
 		const bool speechActive = _speech.isPlaying();
@@ -2522,7 +2594,7 @@ bool SuePlayableScene::waitForSpeechOrDelay(uint32 fallbackMillis, bool animateP
 	return Engine::shouldQuit();
 }
 
-void SuePlayableScene::applyGameplayPanelPalette() {
+void PlayableScene::applyGameplayPanelPalette() {
 	if (_paletteCurrent.size() <= kPanelTextColor * 3 + 2)
 		return;
 
@@ -2552,24 +2624,24 @@ void SuePlayableScene::applyGameplayPanelPalette() {
 	_paletteCurrent[textOffset + 2] = _paletteCurrent[0x2d8];
 }
 
-void SuePlayableScene::drawGameplayPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
+void PlayableScene::drawGameplayPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
 	if (panelState.inventoryPanelVisible)
 		drawInventoryPanel(surface, panelState);
 	else if (panelState.verbPanelVisible)
 		drawVerbPanel(surface, panelState);
 }
 
-void SuePlayableScene::drawVerbPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
+void PlayableScene::drawVerbPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
 	_panelArt.drawVerbPanel(surface, _savedFramebuffer, viewportXOffset(), 0, panelState,
 		_vm->font());
 }
 
-void SuePlayableScene::drawInventoryPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
+void PlayableScene::drawInventoryPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
 	_panelArt.drawDialogueInventoryPanel(surface, _savedFramebuffer, viewportXOffset(), 0,
 		panelState, _vm->gameState(), _vm->font());
 }
 
-void SuePlayableScene::presentFrame(const SceneHoverCaption *hoverCaption, const GameplayPanelState *panelState,
+void PlayableScene::presentFrame(const SceneHoverCaption *hoverCaption, const GameplayPanelState *panelState,
 		const DialogueMenuState *dialogueMenuState) {
 	if (hoverCaption)
 		hoverCaption->applyPalette(_paletteCurrent);
@@ -2603,7 +2675,7 @@ void SuePlayableScene::presentFrame(const SceneHoverCaption *hoverCaption, const
 	g_system->updateScreen();
 }
 
-bool SuePlayableScene::pollEvents(bool allowSkip) {
+bool PlayableScene::pollEvents(bool allowSkip) {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -2640,7 +2712,7 @@ bool SuePlayableScene::pollEvents(bool allowSkip) {
 	return false;
 }
 
-bool SuePlayableScene::delay(uint32 millis) {
+bool PlayableScene::delay(uint32 millis) {
 	uint32 remaining = millis;
 	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
 		if (pollEvents(true))

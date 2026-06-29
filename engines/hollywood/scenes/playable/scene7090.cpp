@@ -65,7 +65,7 @@ const byte kScene7090GatedActionFrameMap[] = {
 };
 
 Scene7090::Scene7090(HollywoodEngine *vm) :
-		SuePlayableScene(vm, "scene7090", kScene7090EntryX, kScene7090EntryY,
+		PlayableScene(vm, "scene7090", kScene7090EntryX, kScene7090EntryY,
 			kScene7090EntryFacing, 0xfd, 0xfb),
 		_ambientTimerAccumulator(0),
 		_prePatchChunk7Visible(false) {

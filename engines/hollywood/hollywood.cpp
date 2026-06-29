@@ -29,6 +29,7 @@
 #include "hollywood/scenes/intro/scene9100.h"
 #include "hollywood/scenes/intro/scene9110.h"
 #include "hollywood/scenes/intro/scene9120.h"
+#include "hollywood/scenes/playable/scene1010.h"
 #include "hollywood/scenes/playable/scene7000.h"
 #include "hollywood/scenes/playable/scene7010.h"
 #include "hollywood/scenes/playable/scene7020.h"
@@ -55,6 +56,8 @@ const uint kOptionsMaximumLevel = 200;
 const int kMaximumConfigVolume = Audio::Mixer::kMaxMixerVolume;
 const int kMaximumTalkSpeed = 255;
 const int kTitleFrontEndState = 1000;
+const int kScene1010FirstState = 0x03f2;
+const int kScene1010LastState = 0x03fb;
 const int kScene9101State = 0x238d;
 
 bool isImplementedIntroSceneNumber(int sceneNumber) {
@@ -64,6 +67,7 @@ bool isImplementedIntroSceneNumber(int sceneNumber) {
 
 bool isImplementedGameplayState(int stateId) {
 	return stateId == kTitleFrontEndState ||
+		(stateId >= kScene1010FirstState && stateId <= kScene1010LastState) ||
 		stateId == 7000 ||
 		(stateId >= 0x1b62 && stateId <= 0x1b6b) ||
 		stateId == 0x1b6c ||
@@ -88,6 +92,13 @@ bool shouldRunSceneForBootParam(int bootParam, int sceneNumber, bool &bootSceneR
 	}
 
 	return false;
+}
+
+int gameplayStateForBootParam(int bootParam) {
+	if (bootParam == kScene1010FirstState)
+		return 0x03f4;
+
+	return bootParam;
 }
 
 byte configVolumeToOptionsLevel(int volume) {
@@ -228,7 +239,7 @@ Common::Error HollywoodEngine::run() {
 		if (!scene7000.play())
 			return Common::kReadingFailed;
 		if (bootToGameplayScene && bootParam != 7000)
-			gameState().mainFlowStateId = (uint16)bootParam;
+			gameState().mainFlowStateId = (uint16)gameplayStateForBootParam(bootParam);
 	}
 
 	bool handledState = true;
@@ -241,6 +252,14 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene1000 scene1000(this);
 			if (!scene1000.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene1010FirstState && stateId <= kScene1010LastState) {
+			handledState = true;
+			Scene1010 scene1010(this);
+			if (!scene1010.play())
 				return Common::kReadingFailed;
 			continue;
 		}

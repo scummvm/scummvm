@@ -85,7 +85,7 @@ const byte kScene7030Route6StepDeltas[] = {
 };
 
 Scene7030::Scene7030(HollywoodEngine *vm) :
-		SuePlayableScene(vm, "scene7030", 0x1fa, 0x142, 4, 0xfd, 0xfb),
+		PlayableScene(vm, "scene7030", 0x1fa, 0x142, 4, 0xfd, 0xfb),
 		_chunk5FrameIndex(1),
 		_chunk6IdleFrameA(0),
 		_chunk6IdleFrameB(4),
