@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-28 21:29+0000\n"
+"POT-Creation-Date: 2026-06-29 23:10+0000\n"
 "PO-Revision-Date: 2026-05-19 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -333,7 +333,7 @@ msgstr "다른 저장소가 지금 작동 중입니다. 중단할까요?"
 #: gui/launcher.cpp:534 gui/launcher.cpp:1970 gui/options.cpp:3498
 #: gui/options.cpp:3872 base/main.cpp:608
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:598
-#: engines/chamber/metaengine.cpp:91 engines/director/events.cpp:122
+#: engines/chamber/metaengine.cpp:95 engines/director/events.cpp:122
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
 #: engines/efh/metaengine.cpp:362 engines/grim/grim.cpp:366
 #: engines/hypno/metaengine.cpp:249 engines/kyra/gui/saveload_eob.cpp:611
@@ -352,7 +352,7 @@ msgstr "예"
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
 #: gui/launcher.cpp:534 gui/launcher.cpp:1971 gui/options.cpp:3498
 #: gui/options.cpp:3872 engines/buried/buried.cpp:598
-#: engines/chamber/metaengine.cpp:97 engines/director/events.cpp:122
+#: engines/chamber/metaengine.cpp:101 engines/director/events.cpp:122
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
 #: engines/efh/metaengine.cpp:368 engines/grim/grim.cpp:366
 #: engines/hypno/metaengine.cpp:255 engines/kyra/gui/saveload_eob.cpp:611
@@ -3362,7 +3362,7 @@ msgstr "그래픽 고급 게임 엔진"
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
-#: engines/chamber/metaengine.cpp:84 engines/colony/intro.cpp:156
+#: engines/chamber/metaengine.cpp:88 engines/colony/intro.cpp:156
 #: engines/colony/intro.cpp:1243 engines/drascula/metaengine.cpp:304
 #: engines/hdb/metaengine.cpp:275 engines/hypno/metaengine.cpp:308
 #: engines/lab/metaengine.cpp:172 engines/mohawk/myst_stacks/menu.cpp:317
@@ -6272,7 +6272,7 @@ msgstr ""
 
 #: engines/access/metaengine.cpp:236 engines/alcachofa/metaengine.cpp:94
 #: engines/bbvs/metaengine.cpp:92 engines/buried/metaengine.cpp:133
-#: engines/chamber/metaengine.cpp:59 engines/cine/metaengine.cpp:270
+#: engines/chamber/metaengine.cpp:63 engines/cine/metaengine.cpp:270
 #: engines/cruise/metaengine.cpp:168 engines/dm/metaengine.cpp:124
 #: engines/draci/metaengine.cpp:195 engines/drascula/metaengine.cpp:205
 #: engines/efh/metaengine.cpp:256 engines/hopkins/metaengine.cpp:206
@@ -6821,7 +6821,7 @@ msgstr "AGOS 메인"
 
 #: engines/agos/metaengine.cpp:154 engines/bbvs/metaengine.cpp:93
 #: engines/buried/metaengine.cpp:136 engines/cge/metaengine.cpp:199
-#: engines/cge2/metaengine.cpp:212 engines/chamber/metaengine.cpp:60
+#: engines/cge2/metaengine.cpp:212 engines/chamber/metaengine.cpp:64
 #: engines/cine/metaengine.cpp:271 engines/cruise/metaengine.cpp:169
 #: engines/dm/metaengine.cpp:126 engines/draci/metaengine.cpp:196
 #: engines/drascula/metaengine.cpp:206 engines/hopkins/metaengine.cpp:207
@@ -7742,8 +7742,8 @@ msgstr "메인 메뉴 키매핑"
 msgid "Inventory keymappings"
 msgstr "인벤토리 키맵핑"
 
-#: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:65
-#: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
+#: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:69
+#: engines/chamber/metaengine.cpp:75 engines/chamber/metaengine.cpp:81
 #: engines/dm/metaengine.cpp:130 engines/private/metaengine.cpp:141
 #: engines/sherlock/metaengine.cpp:1187
 msgid "Select / Interact"
@@ -7984,7 +7984,7 @@ msgstr "TTS를 사용하여 자막 읽기 (TTS가 가능한 경우)"
 msgid "Close the dialog box"
 msgstr "대화 상자를 닫기"
 
-#: engines/chamber/metaengine.cpp:61 engines/drascula/metaengine.cpp:208
+#: engines/chamber/metaengine.cpp:65 engines/drascula/metaengine.cpp:208
 #: engines/lab/metaengine.cpp:151 engines/sherlock/metaengine.cpp:338
 #: engines/sherlock/metaengine.cpp:790 engines/tot/metaengine.cpp:104
 msgid "Quit dialog keymappings"
