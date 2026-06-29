@@ -447,6 +447,10 @@ protected:
 	void calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY);
 	// Waits for speech playback or a fallback text delay.
 	bool waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryLeft);
+	// Updates one 6-bit palette entry in the scene palette.
+	void setPaletteEntry6Bit(byte colorIndex, byte red, byte green, byte blue);
+	// Reads one component from a 6-bit scene palette entry.
+	byte paletteEntryComponent6Bit(byte colorIndex, uint component) const;
 	// Applies bottom-panel colors to the current palette.
 	void applyGameplayPanelPalette();
 	// Draws the active gameplay panel.

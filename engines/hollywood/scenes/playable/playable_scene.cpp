@@ -2558,12 +2558,7 @@ void PlayableScene::beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIn
 void PlayableScene::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue) {
 	if (!shouldAnimatePrimarySpeechLine()) {
-		const uint paletteOffset = kDefaultPrimarySpeechTextColor * 3;
-		if (_paletteCurrent.size() > paletteOffset + 2) {
-			_paletteCurrent[paletteOffset] = red;
-			_paletteCurrent[paletteOffset + 1] = green;
-			_paletteCurrent[paletteOffset + 2] = blue;
-		}
+		setPaletteEntry6Bit(kDefaultPrimarySpeechTextColor, red, green, blue);
 
 		runSpeechLine(_primarySpeechOverlay, rowIndex, frameIndex, centerX, topY,
 			kDefaultPrimarySpeechTextColor, true, false, false);
@@ -2575,24 +2570,14 @@ void PlayableScene::beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uin
 
 void PlayableScene::beginPrimarySpeechLineWithAnimationGroup(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue, byte animationGroup) {
-	const uint paletteOffset = kDefaultPrimarySpeechTextColor * 3;
-	if (_paletteCurrent.size() > paletteOffset + 2) {
-		_paletteCurrent[paletteOffset] = red;
-		_paletteCurrent[paletteOffset + 1] = green;
-		_paletteCurrent[paletteOffset + 2] = blue;
-	}
+	setPaletteEntry6Bit(kDefaultPrimarySpeechTextColor, red, green, blue);
 
 	runSpeechLine(_primarySpeechOverlay, rowIndex, frameIndex, centerX, topY,
 		kDefaultPrimarySpeechTextColor, true, false, true, animationGroup);
 }
 
 void PlayableScene::beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex) {
-	const uint paletteOffset = kDefaultPrimarySpeechTextColor * 3;
-	if (_paletteCurrent.size() > paletteOffset + 2) {
-		_paletteCurrent[paletteOffset] = 0x33;
-		_paletteCurrent[paletteOffset + 1] = 0x22;
-		_paletteCurrent[paletteOffset + 2] = 0x39;
-	}
+	setPaletteEntry6Bit(kDefaultPrimarySpeechTextColor, 0x33, 0x22, 0x39);
 
 	runSpeechLine(_primarySpeechOverlay, rowIndex, frameIndex, 0xfa, 0x136,
 		kDefaultPrimarySpeechTextColor, true, true, false);
@@ -2822,6 +2807,27 @@ bool PlayableScene::waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrim
 	return Engine::shouldQuit();
 }
 
+void PlayableScene::setPaletteEntry6Bit(byte colorIndex, byte red, byte green, byte blue) {
+	const uint paletteOffset = colorIndex * 3;
+	if (_paletteCurrent.size() <= paletteOffset + 2)
+		return;
+
+	_paletteCurrent[paletteOffset] = red;
+	_paletteCurrent[paletteOffset + 1] = green;
+	_paletteCurrent[paletteOffset + 2] = blue;
+}
+
+byte PlayableScene::paletteEntryComponent6Bit(byte colorIndex, uint component) const {
+	if (component >= 3)
+		return 0;
+
+	const uint paletteOffset = colorIndex * 3 + component;
+	if (paletteOffset >= _paletteCurrent.size())
+		return 0;
+
+	return _paletteCurrent[paletteOffset];
+}
+
 void PlayableScene::applyGameplayPanelPalette() {
 	if (_paletteCurrent.size() <= kPanelTextColor * 3 + 2)
 		return;
@@ -2836,20 +2842,13 @@ void PlayableScene::applyGameplayPanelPalette() {
 			kPanelSelectedColor, 0x2e, 0x1d, 0x0e,
 			kPanelSelectedLineColor, 0x3a, 0x2d, 0x16
 		};
-		for (uint i = 0; i < ARRAYSIZE(colors); i += 4) {
-			const uint paletteOffset = colors[i] * 3;
-			if (paletteOffset + 2 < _paletteCurrent.size()) {
-				_paletteCurrent[paletteOffset] = colors[i + 1];
-				_paletteCurrent[paletteOffset + 1] = colors[i + 2];
-				_paletteCurrent[paletteOffset + 2] = colors[i + 3];
-			}
-		}
+		for (uint i = 0; i < ARRAYSIZE(colors); i += 4)
+			setPaletteEntry6Bit(colors[i], colors[i + 1], colors[i + 2], colors[i + 3]);
 	}
 
-	const uint textOffset = kPanelTextColor * 3;
-	_paletteCurrent[textOffset] = 0x32;
-	_paletteCurrent[textOffset + 1] = _paletteCurrent[0x2d7];
-	_paletteCurrent[textOffset + 2] = _paletteCurrent[0x2d8];
+	setPaletteEntry6Bit(kPanelTextColor, 0x32,
+		paletteEntryComponent6Bit(kPanelSelectedLineColor, 1),
+		paletteEntryComponent6Bit(kPanelSelectedLineColor, 2));
 }
 
 void PlayableScene::drawGameplayPanel(Graphics::Surface &surface, const GameplayPanelState &panelState) {
