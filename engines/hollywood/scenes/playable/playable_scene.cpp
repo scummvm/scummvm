@@ -439,6 +439,11 @@ PlayableScene::AmbientAudioProfile PlayableScene::ambientAudioProfile() const {
 	return createLoopingAmbientAudioProfile(100);
 }
 
+void PlayableScene::handleActionOverlayFrameHook(byte hookId, uint frame) {
+	(void)hookId;
+	(void)frame;
+}
+
 PlayableScene::AmbientAudioProfile PlayableScene::createLoopingAmbientAudioProfile(byte volumePercent) const {
 	AmbientAudioProfile profile;
 	profile.checkMillis = kAmbientMusicCheckMillis;
@@ -2189,42 +2194,46 @@ void PlayableScene::presentDialogueMenuFrame(const DialogueMenuState &state) {
 	presentFrame(nullptr, nullptr, &state);
 }
 
-void PlayableScene::runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, int statePatchFrame) {
-	runMappedActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, statePatchFrame, false);
+void PlayableScene::runActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
+		uint32 frameMillis) {
+	ActionOverlayOptions options;
+	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, options);
 }
 
-void PlayableScene::runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, int statePatchFrame, bool hideActiveActor) {
-	runMappedActionOverlayRange(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
-		0, frameMapSize, statePatchFrame, hideActiveActor);
-	drawPlayableComposite();
-	presentFrame();
-}
-
-void PlayableScene::runMappedActionOverlayRange(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, uint firstFrame, uint endFrame, int statePatchFrame, bool hideActiveActor) {
+void PlayableScene::runActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
+		uint32 frameMillis, const ActionOverlayOptions &options) {
 	const bool previousHideActiveActor = _hideActiveActor;
-	_hideActiveActor = hideActiveActor;
+	if (options.actorVisibility == kActionOverlayShowActiveActor)
+		_hideActiveActor = false;
+	else if (options.actorVisibility == kActionOverlayHideActiveActor)
+		_hideActiveActor = true;
+
 	_actionOverlayVisible = true;
 	_actionOverlayChunkIndex = (byte)chunkIndex;
 	_actionOverlayDescriptorCount = (byte)descriptorCount;
-	const uint cappedEndFrame = MIN<uint>(endFrame, frameMapSize);
+
+	const uint firstFrame = MIN<uint>(options.firstFrame, frameMapSize);
+	const uint requestedEndFrame = options.endFrame == 0 ? frameMapSize : options.endFrame;
+	const uint cappedEndFrame = MIN<uint>(requestedEndFrame, frameMapSize);
 	for (uint frame = firstFrame; frame < cappedEndFrame && !Engine::shouldQuit(); ++frame) {
 		_actionOverlayFrameIndex = frameMap[frame];
-		if (statePatchFrame >= 0 && (int)frame == statePatchFrame) {
-			_soundBank0.playSample(0x15, 100);
-			if (_vm->gameState().officeStatueActionProgress == 2) {
-				_vm->gameState().officeNotePickupState = 1;
-				applySceneStateToHotspotsAndPatches(3);
-			}
-		}
+		if (options.statePatchFrame >= 0 && (int)frame == options.statePatchFrame)
+			applySceneStateToHotspotsAndPatches(options.statePatchSelector);
+		if (options.soundFrame >= 0 && (int)frame == options.soundFrame)
+			_soundBank0.playSample(options.soundId, options.soundVolumePercent);
+		if (options.hookId != 0 && (options.hookFrame < 0 || (int)frame == options.hookFrame))
+			handleActionOverlayFrameHook(options.hookId, frame);
 		if (waitSceneMillis(frameMillis))
 			break;
 	}
 	_actionOverlayVisible = false;
 	_actionOverlayFrameIndex = 0;
 	_hideActiveActor = previousHideActiveActor;
+
+	if (options.redrawAtEnd) {
+		drawPlayableComposite();
+		presentFrame();
+	}
 }
 
 byte PlayableScene::primarySpeechAnimationBaseFrame(byte animationGroup) const {

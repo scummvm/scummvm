@@ -46,6 +46,7 @@ const uint16 kScene7080Chunk7DescriptorCount = 0x0b;
 const uint32 kScene7080FrameMillis = 75;
 const byte kScene7080TableItemColorId = 6;
 const byte kScene7080PostPickupTableItemId = 4;
+const byte kScene7080CrankPickupHook = 1;
 const byte kScene7080BackToG07FrameMap[] = {
 	0, 1, 2, 3
 };
@@ -244,25 +245,22 @@ PlayableScene::AmbientAudioProfile Scene7080::ambientAudioProfile() const {
 
 void Scene7080::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame) {
-	const bool previousHideActiveActor = _hideActiveActor;
-	_hideActiveActor = true;
-	_actionOverlayVisible = true;
-	_actionOverlayChunkIndex = (byte)chunkIndex;
-	_actionOverlayDescriptorCount = (byte)descriptorCount;
-	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayFrameIndex = frameMap[frame];
-		if (statePatchFrame >= 0 && (int)frame == statePatchFrame) {
-			_vm->gameState().crankOnHannoverDesk = false;
-			applySceneStateToHotspotsAndPatches(1);
-		}
-		if (waitSceneMillis(frameMillis))
-			break;
+	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayHideActiveActor;
+	if (statePatchFrame >= 0) {
+		options.hookFrame = statePatchFrame;
+		options.hookId = kScene7080CrankPickupHook;
 	}
-	_actionOverlayVisible = false;
-	_actionOverlayFrameIndex = 0;
-	_hideActiveActor = previousHideActiveActor;
-	drawPlayableComposite();
-	presentFrame();
+	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, options);
+}
+
+void Scene7080::handleActionOverlayFrameHook(byte hookId, uint frame) {
+	(void)frame;
+
+	if (hookId == kScene7080CrankPickupHook) {
+		_vm->gameState().crankOnHannoverDesk = false;
+		applySceneStateToHotspotsAndPatches(1);
+	}
 }
 
 void Scene7080::handleBackToG07() {

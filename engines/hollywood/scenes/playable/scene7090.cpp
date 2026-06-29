@@ -55,6 +55,7 @@ const int kScene7090GatedActionTargetY = 0x11b;
 const byte kScene7090GatedActionTargetFacing = 5;
 const int kScene7090GatedActionReturnX = 0x281;
 const int kScene7090GatedActionReturnY = 0x10d;
+const byte kScene7090GatedActionHook = 1;
 const byte kScene7090BackToG07FrameMap[] = {
 	0, 1, 2, 3
 };
@@ -320,18 +321,7 @@ PlayableScene::AmbientAudioProfile Scene7090::ambientAudioProfile() const {
 
 void Scene7090::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis) {
-	_actionOverlayVisible = true;
-	_actionOverlayChunkIndex = (byte)chunkIndex;
-	_actionOverlayDescriptorCount = (byte)descriptorCount;
-	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayFrameIndex = frameMap[frame];
-		if (waitSceneMillis(frameMillis))
-			break;
-	}
-	_actionOverlayVisible = false;
-	_actionOverlayFrameIndex = 0;
-	drawPlayableComposite();
-	presentFrame();
+	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis);
 }
 
 void Scene7090::handleBackToG07() {
@@ -361,20 +351,11 @@ void Scene7090::handleGatedAction() {
 		kScene7090GatedActionTargetFacing, 0);
 
 	_prePatchChunk7Visible = true;
-	_actionOverlayVisible = true;
-	_actionOverlayChunkIndex = 10;
-	_actionOverlayDescriptorCount = kScene7090Chunk10DescriptorCount;
-	for (uint frame = 0; frame < ARRAYSIZE(kScene7090GatedActionFrameMap) && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayFrameIndex = kScene7090GatedActionFrameMap[frame];
-		if (frame == 3)
-			_soundBank0.playSample(0x1b, 100);
-		if (frame == 0x12)
-			_soundBank0.stop();
-		if (waitSceneMillis(kScene7090FrameMillis))
-			break;
-	}
-	_actionOverlayVisible = false;
-	_actionOverlayFrameIndex = 0;
+	ActionOverlayOptions options;
+	options.redrawAtEnd = false;
+	options.hookId = kScene7090GatedActionHook;
+	runActionOverlay(10, kScene7090Chunk10DescriptorCount, kScene7090GatedActionFrameMap,
+		ARRAYSIZE(kScene7090GatedActionFrameMap), kScene7090FrameMillis, options);
 	_prePatchChunk7Visible = false;
 
 	state.movedBedroomArmor = true;
@@ -383,6 +364,15 @@ void Scene7090::handleGatedAction() {
 	walkActiveActorTo(kScene7090GatedActionReturnX, kScene7090GatedActionReturnY,
 		kScene7090GatedActionTargetFacing, 0);
 	beginSecondarySpeechLine(10, 2);
+}
+
+void Scene7090::handleActionOverlayFrameHook(byte hookId, uint frame) {
+	if (hookId == kScene7090GatedActionHook) {
+		if (frame == 3)
+			_soundBank0.playSample(0x1b, 100);
+		else if (frame == 0x12)
+			_soundBank0.stop();
+	}
 }
 
 } // End of namespace Hollywood

@@ -64,6 +64,7 @@ const uint32 kScene7030SecondaryActorFrameMillis = 150;
 const uint32 kScene7030AmbientMusicCheckMillis = 250;
 const uint kScene7030ColorToItemMapOffset = 0x100;
 const uint kScene7030ColorMapSize = 0x100;
+const byte kScene7030PunchBowlGlassPatchHook = 1;
 const byte kScene7030Chunk5FrameMap[] = {
 	0, 0, 1, 2, 3, 4, 3, 2, 3, 4, 3, 2, 1, 0, 5, 6,
 	7, 8, 7, 6, 7, 8, 7, 6, 5
@@ -523,27 +524,24 @@ void Scene7030::advanceChunk6IdleFrames() {
 	}
 }
 
-void Scene7030::runMappedActionOverlayWithSceneStatePatch(uint chunkIndex, uint descriptorCount, const byte *frameMap,
+void Scene7030::runPunchBowlPatchOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int statePatchFrame) {
-	const bool previousHideActiveActor = _hideActiveActor;
-	_hideActiveActor = true;
-	_actionOverlayVisible = true;
-	_actionOverlayChunkIndex = (byte)chunkIndex;
-	_actionOverlayDescriptorCount = (byte)descriptorCount;
-	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayFrameIndex = frameMap[frame];
-		if (statePatchFrame >= 0 && (int)frame == statePatchFrame) {
-			_sceneStateFlags[2] = 0;
-			applySceneStateToHotspotsAndPatches(2);
-		}
-		if (waitSceneMillis(frameMillis))
-			break;
+	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayHideActiveActor;
+	if (statePatchFrame >= 0) {
+		options.hookFrame = statePatchFrame;
+		options.hookId = kScene7030PunchBowlGlassPatchHook;
 	}
-	_actionOverlayVisible = false;
-	_actionOverlayFrameIndex = 0;
-	_hideActiveActor = previousHideActiveActor;
-	drawPlayableComposite();
-	presentFrame();
+	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, options);
+}
+
+void Scene7030::handleActionOverlayFrameHook(byte hookId, uint frame) {
+	(void)frame;
+
+	if (hookId == kScene7030PunchBowlGlassPatchHook) {
+		_sceneStateFlags[2] = 0;
+		applySceneStateToHotspotsAndPatches(2);
+	}
 }
 
 void Scene7030::handleActionSlot00TransitionToG04() {
@@ -594,7 +592,7 @@ void Scene7030::handleActionSlot10CommonSpeech() {
 
 void Scene7030::handleActionHandler313ExchangeItem0CFor0D() {
 	const bool speechStarted = startSecondarySpeechLine(10, 0);
-	runMappedActionOverlayWithSceneStatePatch(11, kScene7030Chunk11DescriptorCount,
+	runPunchBowlPatchOverlay(11, kScene7030Chunk11DescriptorCount,
 		kScene7030Chunk11ExchangeItem0CFrameMap, ARRAYSIZE(kScene7030Chunk11ExchangeItem0CFrameMap),
 		kScene7030Chunk5FrameMillis);
 	if (speechStarted)
@@ -618,7 +616,7 @@ void Scene7030::handleActionHandler314PickupBone() {
 	}
 
 	beginSecondarySpeechLine(5, 0);
-	runMappedActionOverlayWithSceneStatePatch(7, kScene7030Chunk7DescriptorCount,
+	runPunchBowlPatchOverlay(7, kScene7030Chunk7DescriptorCount,
 		kScene7030Chunk7PickupBoneFrameMap, ARRAYSIZE(kScene7030Chunk7PickupBoneFrameMap),
 		kScene7030Chunk5FrameMillis);
 	addInventoryItem(0x0b);
@@ -636,7 +634,7 @@ void Scene7030::handleActionHandler315PickupItem0C() {
 		_speech.stop();
 	}
 
-	runMappedActionOverlayWithSceneStatePatch(10, kScene7030Chunk10DescriptorCount,
+	runPunchBowlPatchOverlay(10, kScene7030Chunk10DescriptorCount,
 		kScene7030Chunk10PickupItem0CFrameMap, ARRAYSIZE(kScene7030Chunk10PickupItem0CFrameMap),
 		kScene7030Chunk5FrameMillis, 3);
 	_vm->gameState().punchBowlGlassPatchState = _sceneStateFlags[2];

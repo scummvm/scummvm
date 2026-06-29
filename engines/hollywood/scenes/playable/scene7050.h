@@ -56,6 +56,7 @@ private:
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
+	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
 
 	void runDialogueMenuRow98();
 	void initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
