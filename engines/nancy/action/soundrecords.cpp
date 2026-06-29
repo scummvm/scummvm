@@ -331,20 +331,29 @@ void StopSound::execute() {
 	_sceneChange.execute();
 }
 
+// A name beginning with '*' is the forced selection (the marker is stripped);
+// otherwise the played sound is picked at random. The choice is made once, when
+// the record is loaded.
+static uint selectRandomSound(Common::Array<Common::String> &soundNames) {
+	for (uint i = 0; i < soundNames.size(); ++i) {
+		if (soundNames[i].hasPrefix("*")) {
+			soundNames[i].deleteChar(0);
+			return i;
+		}
+	}
+
+	return g_nancy->_randomSource->getRandomNumber(soundNames.size() - 1);
+}
+
 void PlayRandomSound::readData(Common::SeekableReadStream &stream) {
 	uint16 numSounds = stream.readUint16LE();
 	readFilenameArray(stream, _soundNames, numSounds - 1);
 
 	PlaySound::readData(stream);
 	_soundNames.push_back(_sound.name);
-}
 
-void PlayRandomSound::execute() {
-	if (_state == kBegin) {
-		_sound.name = _soundNames[g_nancy->_randomSource->getRandomNumber(_soundNames.size() - 1)];
-	}
-
-	PlaySound::execute();
+	_selectedSound = selectRandomSound(_soundNames);
+	_sound.name = _soundNames[_selectedSound];
 }
 
 void PlayRandomSoundTerse::readData(Common::SeekableReadStream &stream) {
@@ -361,16 +370,10 @@ void PlayRandomSoundTerse::readData(Common::SeekableReadStream &stream) {
 		_ccTexts.push_back(Common::String());
 		readCCText(stream, _ccTexts.back());
 	}
-}
 
-void PlayRandomSoundTerse::execute() {
-	if (_state == kBegin) {
-		uint16 randomID = g_nancy->_randomSource->getRandomNumber(_soundNames.size() - 1);
-		_sound.name = _soundNames[randomID];
-		_ccText = _ccTexts[randomID];
-	}
-
-	PlaySoundCC::execute();
+	_selectedSound = selectRandomSound(_soundNames);
+	_sound.name = _soundNames[_selectedSound];
+	_ccText = _ccTexts[_selectedSound];
 }
 
 void TableIndexPlaySound::readData(Common::SeekableReadStream &stream) {

@@ -192,12 +192,12 @@ protected:
 	Common::String getRecordTypeName() const override { return "StopSound"; }
 };
 
-// Same as PlaySound, except it randomly picks between one of several
-// provided sound files; all other settings for the sound are shared.
+// Same as PlaySound, except it randomly picks between one of several provided
+// sound files; all other settings for the sound are shared. The played sound is
+// chosen when the record is loaded.
 class PlayRandomSound : public PlaySound {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
-	void execute() override;
 
 	Common::Array<Common::String> _soundNames;
 
@@ -207,11 +207,11 @@ protected:
 	Common::String getRecordTypeName() const override { return "PlayRandomSound"; }
 };
 
-// Short version of PlayRandomSound, but ALSO supports closed captioning text
+// Short version of PlayRandomSound, but ALSO supports closed captioning text.
+// The played sound is chosen at random when the record is loaded.
 class PlayRandomSoundTerse : public PlaySoundTerse {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
-	void execute() override;
 
 	Common::Array<Common::String> _soundNames;
 	Common::Array<Common::String> _ccTexts;
