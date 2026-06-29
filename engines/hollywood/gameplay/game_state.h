@@ -81,9 +81,9 @@ struct GameplayState {
 		gramophoneCrankState = 0;
 		seenHannoverOfficeIntro = false;
 		crankOnHannoverDesk = true;
-		seenBedroomIntro = false;
-		openedBedroomSecretPassage = false;
-		canOpenBedroomSecretPassage = false;
+		seenHannoverBedroomIntro = false;
+		movedBedroomArmor = false;
+		knowsHannoverWaitingForSecretary = false;
 		cellPipesActive = true;
 		cellPlateRatProgress = 0;
 		posterOnCellWall = true;
@@ -341,9 +341,9 @@ struct GameplayState {
 	byte gramophoneCrankState;
 	bool seenHannoverOfficeIntro;
 	bool crankOnHannoverDesk;
-	bool seenBedroomIntro;
-	bool openedBedroomSecretPassage;
-	bool canOpenBedroomSecretPassage;
+	bool seenHannoverBedroomIntro;
+	bool movedBedroomArmor;
+	bool knowsHannoverWaitingForSecretary;
 	bool cellPipesActive;
 	byte cellPlateRatProgress;
 	bool posterOnCellWall;
