@@ -31,6 +31,8 @@ public:
 	void switchToGraphicsMode() override;
 	void colorSelect(byte csel) override;     // csel is the real palette index
 	void selectCursor(uint16 num) override;   // SOURI.BIN: big-endian cursor planes
+	void drawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) override;
+	void drawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) override;
 };
 
 #define AMIGA_NUM_PALETTES 31
