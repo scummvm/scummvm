@@ -36,6 +36,7 @@
 #include "hollywood/scenes/playable/actor_types.h"
 #include "hollywood/scenes/playable/ambient_audio.h"
 #include "hollywood/scenes/playable/animation_channels.h"
+#include "hollywood/scenes/playable/animation_layers.h"
 #include "hollywood/scenes/playable/speech_overlay.h"
 
 namespace Graphics {
@@ -247,6 +248,9 @@ protected:
 	void drawSpeechOverlay();
 	void drawSpeechOverlay(const SpeechOverlay &overlay);
 	void drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex);
+	void restoreResourceSpriteLayerBackground(const ResourceSpriteLayer &layer, const Common::Array<byte> &background);
+	void drawResourceSpriteLayer(const ResourceSpriteLayer &layer);
+	void drawActionOverlayLayer();
 	void beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
 	bool startSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
 	void beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
@@ -356,6 +360,7 @@ protected:
 	byte _secondaryActorFrame;
 	byte _lastSceneActionItemId;
 	bool _actionOverlayVisible;
+	ResourceSpriteLayer _actionOverlayLayer;
 	byte _actionOverlayChunkIndex;
 	byte _actionOverlayDescriptorCount;
 	byte _actionOverlayFrameIndex;

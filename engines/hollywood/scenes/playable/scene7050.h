@@ -69,6 +69,7 @@ private:
 
 	byte _cloakroomAttendantRepeatCount;
 	RandomIdleAnimation _cloakroomAttendantAnimation;
+	ResourceSpriteLayer _cloakroomAttendantLayer;
 };
 
 } // End of namespace Hollywood

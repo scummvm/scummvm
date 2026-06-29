@@ -75,6 +75,7 @@ private:
 	bool shouldAnimatePrimarySpeechLine() const override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
+	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void applyFirstEntryPalette();
@@ -88,7 +89,7 @@ private:
 	void advanceLargeForegroundActor(uint32 delta);
 	void advanceSmallForegroundActor(uint32 delta);
 	void runPickupOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
-		uint frameMapSize, int patchFrame, byte patchSelector);
+		uint frameMapSize, int patchFrame, byte patchState);
 	void handleSceneEventFlag0();
 	void handlePickupPunchBowl();
 	void handlePickupLemonSlice();
@@ -104,14 +105,14 @@ private:
 
 	TimedAnimationChannel _largeForegroundChannel;
 	TimedAnimationChannel _smallForegroundChannel;
-	byte _largeForegroundFrame;
+	ResourceSpriteLayer _largeForegroundLayer;
+	ResourceSpriteLayer _smallForegroundLayer;
+	ResourceSpriteLayer _leftEntryActorLayer;
+	ResourceSpriteLayer _rightEntryActorLayer;
 	byte _largeForegroundMode;
-	byte _smallForegroundFrame;
 	byte _smallForegroundTickCount;
 	bool _entryActorsVisible;
 	bool _entryActorsAlternatePose;
-	byte _leftEntryActorFrame;
-	byte _rightEntryActorFrame;
 };
 
 } // End of namespace Hollywood
