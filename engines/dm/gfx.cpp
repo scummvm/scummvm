@@ -1140,7 +1140,7 @@ byte *DisplayMan::getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int
 	else {
 		byte *nativeBitmap = getNativeBitmapOrGraphic(MIN(explosionAspIndex, (uint16)kDMExplosionAspectPoison) + kDMGraphicIdxFirstExplosion);
 		bitmap = getDerivedBitmap(derBitmapIndex);
-		blitToBitmapShrinkWithPalChange(nativeBitmap, bitmap, explAsp->_byteWidth, explAsp->_height, pixelWidth * 2, height,
+		blitToBitmapShrinkWithPalChange(nativeBitmap, bitmap, explAsp->_byteWidth * 2, explAsp->_height, pixelWidth * 2, height,
 			(explosionAspIndex == kDMExplosionAspectSmoke) ? _palChangeSmoke : _palChangesNoChanges);
 		addDerivedBitmap(derBitmapIndex);
 	}
