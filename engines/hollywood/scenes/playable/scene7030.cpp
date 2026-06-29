@@ -68,7 +68,7 @@ const byte kScene7030Chunk5FrameMap[] = {
 	0, 0, 1, 2, 3, 4, 3, 2, 3, 4, 3, 2, 1, 0, 5, 6,
 	7, 8, 7, 6, 7, 8, 7, 6, 5
 };
-const byte kScene7030Chunk7PickupItem0BFrameMap[] = {
+const byte kScene7030Chunk7PickupBoneFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
 };
 const byte kScene7030Chunk10PickupItem0CFrameMap[] = {
@@ -305,7 +305,7 @@ bool Scene7030::dispatchCustomSceneAction(uint16 handlerId) {
 		handleActionHandler313ExchangeItem0CFor0D();
 		break;
 	case 314: // Coger Húmero/hueso (take Húmero/bone)
-		handleActionHandler314PickupItem0B();
+		handleActionHandler314PickupBone();
 		break;
 	case 315: // Coger vaso (take glass)
 		handleActionHandler315PickupItem0C();
@@ -432,12 +432,12 @@ void Scene7030::updateAmbientAudioAndMusicCues(uint32 delta) {
 		return;
 
 	GameplayState &state = _vm->gameState();
-	if (state.currentRandomAmbientMusicTrackId != kScene7030AmbientMusicCueStillFrame) {
-		_previousAmbientMusicTrackId = state.currentRandomAmbientMusicTrackId;
-		state.currentRandomAmbientMusicTrackId = kScene7030AmbientMusicCueStillFrame;
+	if (state.currentAmbientMusicCueId != kScene7030AmbientMusicCueStillFrame) {
+		_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
+		state.currentAmbientMusicCueId = kScene7030AmbientMusicCueStillFrame;
 		_chunk5FrameIndex = 0;
 		_chunk5FrameMillis = kScene7030Chunk5FrameMillis;
-		_vm->gameplayMusic()->playMusicCue(state.currentRandomAmbientMusicTrackId, 75);
+		_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 75);
 		return;
 	}
 
@@ -446,16 +446,16 @@ void Scene7030::updateAmbientAudioAndMusicCues(uint32 delta) {
 		nextTrack = (byte)(0x0c + _random.getRandomNumber(2));
 	} while (nextTrack == _previousAmbientMusicTrackId);
 
-	_previousAmbientMusicTrackId = state.currentRandomAmbientMusicTrackId;
-	state.currentRandomAmbientMusicTrackId = nextTrack;
+	_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
+	state.currentAmbientMusicCueId = nextTrack;
 	_chunk5FrameIndex = 1;
 	_chunk5FrameDirection = 1;
 	_chunk5FrameMillis = nextTrack == 0x0e ? kScene7030Chunk5FastFrameMillis : kScene7030Chunk5FrameMillis;
-	_vm->gameplayMusic()->playMusicCue(state.currentRandomAmbientMusicTrackId, 75);
+	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 75);
 }
 
 void Scene7030::advanceChunk5AmbientOverlay() {
-	if (_vm->gameState().currentRandomAmbientMusicTrackId == kScene7030AmbientMusicCueStillFrame) {
+	if (_vm->gameState().currentAmbientMusicCueId == kScene7030AmbientMusicCueStillFrame) {
 		if (_chunk5FrameIndex < ARRAYSIZE(kScene7030Chunk5FrameMap) && kScene7030Chunk5FrameMap[_chunk5FrameIndex] != 0) {
 			if ((_chunk5FrameIndex % 12) < 7)
 				--_chunk5FrameIndex;
@@ -593,26 +593,26 @@ void Scene7030::handleActionHandler313ExchangeItem0CFor0D() {
 	_speech.stop();
 	removeInventoryItem(0x0c);
 	addInventoryItem(0x0d);
-	_vm->gameState().inventoryPanelRedrawn = true;
+	_vm->gameState().inventoryPanelDirty = true;
 	_soundBank0.playSample(1, 100);
 }
 
-void Scene7030::handleActionHandler314PickupItem0B() {
+void Scene7030::handleActionHandler314PickupBone() {
 	if (hasInventoryItem(0x0b)) {
 		beginSecondarySpeechLine(5, 2);
 		return;
 	}
-	if (_vm->gameState().currentRandomAmbientMusicTrackId != kScene7030AmbientMusicCueStillFrame) {
+	if (_vm->gameState().currentAmbientMusicCueId != kScene7030AmbientMusicCueStillFrame) {
 		beginSecondarySpeechLine(5, 3);
 		return;
 	}
 
 	beginSecondarySpeechLine(5, 0);
 	runMappedActionOverlayWithSceneStatePatch(7, kScene7030Chunk7DescriptorCount,
-		kScene7030Chunk7PickupItem0BFrameMap, ARRAYSIZE(kScene7030Chunk7PickupItem0BFrameMap),
+		kScene7030Chunk7PickupBoneFrameMap, ARRAYSIZE(kScene7030Chunk7PickupBoneFrameMap),
 		kScene7030Chunk5FrameMillis);
 	addInventoryItem(0x0b);
-	_vm->gameState().inventoryPanelRedrawn = true;
+	_vm->gameState().inventoryPanelDirty = true;
 	_soundBank0.playSample(1, 100);
 	_sceneStateFlags[1] = 1;
 	beginSecondarySpeechLine(5, 1);
@@ -629,7 +629,7 @@ void Scene7030::handleActionHandler315PickupItem0C() {
 		kScene7030Chunk10PickupItem0CFrameMap, ARRAYSIZE(kScene7030Chunk10PickupItem0CFrameMap),
 		kScene7030Chunk5FrameMillis, 3);
 	addInventoryItem(0x0c);
-	_vm->gameState().inventoryPanelRedrawn = true;
+	_vm->gameState().inventoryPanelDirty = true;
 	_soundBank0.playSample(1, 100);
 }
 

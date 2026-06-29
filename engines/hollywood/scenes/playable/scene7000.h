@@ -33,7 +33,7 @@ public:
 	bool play();
 
 private:
-	bool loadInventoryOwner1ResourceTables();
+	bool loadSueInventoryResourceTables();
 
 	HollywoodEngine *_vm;
 };

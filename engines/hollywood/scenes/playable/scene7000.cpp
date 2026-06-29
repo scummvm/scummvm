@@ -49,7 +49,7 @@ Scene7000::Scene7000(HollywoodEngine *vm) :
 bool Scene7000::play() {
 	GameplayState &state = _vm->gameState();
 	state.initializeForState7000();
-	if (!loadInventoryOwner1ResourceTables())
+	if (!loadSueInventoryResourceTables())
 		return false;
 
 	MusicPlayer *music = _vm->gameplayMusic();
@@ -60,7 +60,7 @@ bool Scene7000::play() {
 	return true;
 }
 
-bool Scene7000::loadInventoryOwner1ResourceTables() {
+bool Scene7000::loadSueInventoryResourceTables() {
 	Common::File file;
 	if (!file.open(Common::Path(kResource000Name))) {
 		warning("Failed to open %s inventory action tables", kResource000Name);
@@ -111,7 +111,7 @@ bool Scene7000::loadInventoryOwner1ResourceTables() {
 		return false;
 	}
 
-	state.inventoryOwner1ResourceTablesLoaded = true;
+	state.sueInventoryResourceTablesLoaded = true;
 	return true;
 }
 

@@ -160,7 +160,7 @@ bool Scene7010::hasCustomPreviewState() const {
 }
 
 void Scene7010::initializeCustomPreviewState() {
-	_chunk8FrameIndex = _vm->gameState().currentRandomAmbientMusicTrackId == kScene7010AmbientMusicCueWithoutChunk9 ? 0x14 : 0;
+	_chunk8FrameIndex = _vm->gameState().currentAmbientMusicCueId == kScene7010AmbientMusicCueWithoutChunk9 ? 0x14 : 0;
 	_chunk9AmbientOverlayFrameIndex = 0;
 	_chunk10IdleFrameA = 0;
 	_chunk10IdleFrameB = 8;
@@ -199,9 +199,9 @@ void Scene7010::initializeCustomPreviewState() {
 	_hideActiveActor = false;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
-	_sceneStateFlags[1] = _vm->gameState().g01DialogueOverlayMode;
-	_sceneStateFlags[5] = _vm->gameState().g01DialogueBranchState;
-	_sceneStateFlags[6] = _vm->gameState().g01DialogueBranchFollowUpSeen ? 1 : 0;
+	_sceneStateFlags[1] = _vm->gameState().frankensteinNoteOverlayMode;
+	_sceneStateFlags[5] = _vm->gameState().juniorDialogueBranchState;
+	_sceneStateFlags[6] = _vm->gameState().juniorDialogueFollowUpSeen ? 1 : 0;
 	_dialogueOverlayMode = _sceneStateFlags[1];
 	if (_dialogueOverlayMode != 0)
 		_dialogueOverlayFrameIndex = 0;
@@ -255,7 +255,7 @@ void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[8], 0,
 		kScene7010Chunk8DescriptorCount, chunk8DescriptorIndex, _sceneFramebuffer);
 
-	if (_vm->gameState().currentRandomAmbientMusicTrackId != kScene7010AmbientMusicCueWithoutChunk9) {
+	if (_vm->gameState().currentAmbientMusicCueId != kScene7010AmbientMusicCueWithoutChunk9) {
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[9], 0,
 			kScene7010Chunk9DescriptorCount, _chunk9AmbientOverlayFrameIndex, _sceneFramebuffer);
 	}
@@ -492,7 +492,7 @@ bool Scene7010::dispatchCustomSceneAction(uint16 handlerId) {
 		handleActionSlot04Item06Speech();
 		break;
 	case 307: // Usar hueso con caseta de perro (use bone with doghouse)
-		handleActionSlot06Item0BSequence();
+		handleActionSlot06FrankensteinNoteSequence();
 		break;
 	case 308: // Hablar con Junior (talk to Junior)
 		handleActionSlot07DialogueAndReturn();
@@ -582,7 +582,7 @@ void Scene7010::setPrimaryLeftSpeechFrame(byte frameIndex) {
 }
 
 void Scene7010::advanceChunk8Cycle() {
-	if (_vm->gameState().currentRandomAmbientMusicTrackId == kScene7010AmbientMusicCueWithoutChunk9) {
+	if (_vm->gameState().currentAmbientMusicCueId == kScene7010AmbientMusicCueWithoutChunk9) {
 		_chunk8FrameIndex = _chunk8FrameIndex == 0x1a ? 0x14 : _chunk8FrameIndex + 1;
 		return;
 	}
@@ -662,13 +662,15 @@ void Scene7010::handleActionSlot01SecondarySpeech() {
 }
 
 void Scene7010::handleActionSlot02SecondarySpeech() {
+	// The office statue sequence primes the Frankenstein-note condition;
+	// this look/description slot switches to the post-note line when set.
 	beginSecondarySpeechLine(2, _sceneStateFlags[1] == 0 ? 0 : 1);
 }
 
 void Scene7010::handleActionSlot03DialogueSequence() {
 	GameplayState &state = _vm->gameState();
-	_sceneStateFlags[5] = state.g01DialogueBranchState;
-	_sceneStateFlags[6] = state.g01DialogueBranchFollowUpSeen ? 1 : 0;
+	_sceneStateFlags[5] = state.juniorDialogueBranchState;
+	_sceneStateFlags[6] = state.juniorDialogueFollowUpSeen ? 1 : 0;
 
 	if (!hasInventoryItem(6)) {
 		beginSecondarySpeechLine(3, 0);
@@ -693,7 +695,7 @@ void Scene7010::handleActionSlot03DialogueSequence() {
 			beginSecondarySpeechLine(0x62, 0x0b);
 			beginPrimarySpeechLine(99, 0x0b, 0x302, 0xe3, 0x28, 0x16, 0x0b);
 			_sceneStateFlags[6] = 1;
-			state.g01DialogueBranchFollowUpSeen = true;
+			state.juniorDialogueFollowUpSeen = true;
 		}
 		if (_sceneStateFlags[5] == 2) {
 			beginPrimarySpeechLine(99, 0x0c, 0x302, 0xe3, 0x28, 0x16, 0x0b);
@@ -725,7 +727,9 @@ void Scene7010::handleActionSlot04Item06Speech() {
 	beginSecondarySpeechLine(4, hasInventoryItem(6) ? 2 : 1);
 }
 
-void Scene7010::handleActionSlot06Item0BSequence() {
+void Scene7010::handleActionSlot06FrankensteinNoteSequence() {
+	// Payoff for the Frankenstein-note condition. Without the primed overlay,
+	// the original only plays row 6 frame 0 and does not consume Húmero's bone.
 	if (_sceneStateFlags[1] == 0) {
 		beginSecondarySpeechLine(6, 0);
 		return;
@@ -735,6 +739,7 @@ void Scene7010::handleActionSlot06Item0BSequence() {
 	removeInventoryItem(0x0b);
 	runDialogueOverlayFrames(5, 0x1b, 0);
 	beginSecondarySpeechLine(6, 4);
+	_vm->gameState().reviewedFrankensteinNote = true;
 }
 
 void Scene7010::handleActionSlot07DialogueAndReturn() {
@@ -781,7 +786,7 @@ void Scene7010::runChunk8HideSequence() {
 		_chunk8FrameIndex = frame;
 		waitSceneMillis(kScene7010Chunk8FrameMillis);
 	}
-	_chunk8FrameIndex = _vm->gameState().currentRandomAmbientMusicTrackId == kScene7010AmbientMusicCueWithoutChunk9 ? 0x14 : 0;
+	_chunk8FrameIndex = _vm->gameState().currentAmbientMusicCueId == kScene7010AmbientMusicCueWithoutChunk9 ? 0x14 : 0;
 }
 
 void Scene7010::runChunk11FrameRange(byte startFrame, byte endFrame) {
@@ -818,16 +823,18 @@ void Scene7010::runChunk15ItemSequence() {
 }
 
 void Scene7010::runDialogueOverlayFrames(byte startFrame, byte endFrame, byte finalMode) {
+	// Mode 1 is the persistent Frankenstein-note overlay from G04.
+	// Mode 2 is the active note transition; mode 0 clears it after the bone is used.
 	_dialogueOverlayMode = 2;
 	_sceneStateFlags[1] = 2;
-	_vm->gameState().g01DialogueOverlayMode = 2;
+	_vm->gameState().frankensteinNoteOverlayMode = 2;
 	for (byte frame = startFrame; frame <= endFrame && !Engine::shouldQuit(); ++frame) {
 		_dialogueOverlayFrameIndex = frame;
 		waitSceneMillis(kScene7010DialogueOverlayFrameMillis);
 	}
 	_dialogueOverlayMode = finalMode;
 	_sceneStateFlags[1] = finalMode;
-	_vm->gameState().g01DialogueOverlayMode = finalMode;
+	_vm->gameState().frankensteinNoteOverlayMode = finalMode;
 	_dialogueOverlayFrameIndex = finalMode == 0 ? 0 : endFrame;
 }
 

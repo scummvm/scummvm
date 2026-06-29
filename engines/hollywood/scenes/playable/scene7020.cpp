@@ -241,12 +241,12 @@ bool Scene7020::loadOwner0StaticSpeechTables() {
 		return false;
 	}
 
-	if (kScene7020Owner0SpeechCueTableOffset + kOwner1SpeechCueDescriptorTableSize + 3 > (uint32)file.size()) {
+	if (kScene7020Owner0SpeechCueTableOffset + kSpeechCueDescriptorTableSize + 3 > (uint32)file.size()) {
 		warning("%s owner 0 speech cue table is out of range", kScene7020StageArchiveName);
 		return false;
 	}
 
-	_owner0SpeechCueDescriptors.resize(kOwner1SpeechCueDescriptorTableSize);
+	_owner0SpeechCueDescriptors.resize(kSpeechCueDescriptorTableSize);
 	file.seek(kScene7020Owner0SpeechCueTableOffset);
 	if (file.read(_owner0SpeechCueDescriptors.data(), _owner0SpeechCueDescriptors.size()) !=
 			_owner0SpeechCueDescriptors.size()) {

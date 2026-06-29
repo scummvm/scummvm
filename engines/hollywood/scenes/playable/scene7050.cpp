@@ -63,4 +63,36 @@ bool Scene7050::isMainFlowStateInScene(uint16 stateId) const {
 	return stateId == 0x1b8a;
 }
 
+bool Scene7050::dispatchCustomSceneAction(uint16 handlerId) {
+	switch (handlerId) {
+	case 306:
+	case 307:
+		return true;
+	case 301: // Mirar puerta (look at door)
+		beginSecondarySpeechLine(1, 0);
+		return true;
+	case 302: // Usar/Abrir puerta (use/open door)
+		handleG05ActionSlot01ReturnToG04();
+		return true;
+	case 303: // Hablar con empleado del guardarropa (talk to cloakroom attendant)
+		runG05DialogueMenuRow98();
+		applySceneStateToHotspotsAndPatches(0);
+		return true;
+	case 304: // Mirar empleado del guardarropa (look at cloakroom attendant)
+		beginSecondarySpeechLine(2, 0);
+		return true;
+	case 305: // Mirar trapo (look at rag)
+		beginSecondarySpeechLine(3, 0);
+		return true;
+	case 308: // Mirar caja/Charlie (look at box/Charlie)
+		beginSecondarySpeechLine(6, 0);
+		return true;
+	case 311: // Coger trapo (take rag)
+		handleG05ActionSlot10PickupItem10();
+		return true;
+	default:
+		return false;
+	}
+}
+
 } // End of namespace Hollywood

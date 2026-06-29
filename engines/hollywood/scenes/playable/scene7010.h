@@ -73,7 +73,7 @@ private:
 	void handleActionSlot02SecondarySpeech();
 	void handleActionSlot03DialogueSequence();
 	void handleActionSlot04Item06Speech();
-	void handleActionSlot06Item0BSequence();
+	void handleActionSlot06FrankensteinNoteSequence();
 	void handleActionSlot07DialogueAndReturn();
 	void handleActionSlot08CommonSpeech();
 	void runChunk8RevealSequence();

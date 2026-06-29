@@ -283,10 +283,10 @@ bool Scene7100::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(6, 0);
 		return true;
 	case 308: // Coger placa (take plate)
-		beginSecondarySpeechLine(7, _vm->gameState().g10ObjectPatchState == 0 ? 0 : 1);
+		beginSecondarySpeechLine(7, _vm->gameState().cellPlateRatProgress == 0 ? 0 : 1);
 		return true;
 	case 309: // Mirar placa (look at plate)
-		beginSecondarySpeechLine(8, MIN<byte>(_vm->gameState().g10ObjectPatchState, 2));
+		beginSecondarySpeechLine(8, MIN<byte>(_vm->gameState().cellPlateRatProgress, 2));
 		return true;
 	case 310: // Mirar camastro (look at cot)
 		beginSecondarySpeechLine(9, 0);
@@ -370,31 +370,31 @@ bool Scene7100::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
 
 		GameplayState &state = _vm->gameState();
-		if (state.g10ObjectPatchState != 0) {
+		if (state.cellPlateRatProgress != 0) {
 			drawResourceBlockList(_resourceArena,
-				_resourceChunkOffsets[state.g10ObjectPatchState == 1 ? 10 : 11],
+				_resourceChunkOffsets[state.cellPlateRatProgress == 1 ? 10 : 11],
 				_baseFramebuffer);
 		}
-		if (!state.g10Item15OnScene)
+		if (!state.posterOnCellWall)
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[17], _baseFramebuffer);
-		if (state.g10Item14PatchState)
+		if (state.cellPlateRemoved)
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[9], _baseFramebuffer);
 
 		if (_paletteMaskOriginal.size() >= kSceneColorToItemMap + kScenePaletteMapPageSize &&
 				_paletteMask.size() >= kSceneColorToItemMap + kScenePaletteMapPageSize) {
 			for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
 				const byte originalItem = _paletteMaskOriginal[kSceneColorToItemMap + i];
-				if (state.g10ObjectPatchState == 0) {
+				if (state.cellPlateRatProgress == 0) {
 					if (originalItem == 0x10)
 						_paletteMask[kSceneColorToItemMap + i] = 0;
 				} else if (originalItem == 4 || originalItem == 0x10) {
 					_paletteMask[kSceneColorToItemMap + i] = 5;
 				}
 
-				if (!state.g10Item15OnScene && originalItem == 3)
+				if (!state.posterOnCellWall && originalItem == 3)
 					_paletteMask[kSceneColorToItemMap + i] = 0;
 
-				if (state.g10Item14PatchState) {
+				if (state.cellPlateRemoved) {
 					if (originalItem == 0x0f)
 						_paletteMask[kSceneColorToItemMap + i] = 0x0f;
 					else if (originalItem == 5)
@@ -405,7 +405,7 @@ bool Scene7100::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 			}
 		}
 
-		if (state.g10ObjectPatchState != 0) {
+		if (state.cellPlateRatProgress != 0) {
 			const uint item4Offset = 4 * sizeof(ScenePoint);
 			const uint item5Offset = 5 * sizeof(ScenePoint);
 			if (_metadata.size() >= kSceneItemInteractionPoints + item5Offset + sizeof(ScenePoint)) {
@@ -461,10 +461,10 @@ void Scene7100::updateSceneAmbientAudioAndMusicCues(uint32 delta) {
 		return;
 
 	GameplayState &state = _vm->gameState();
-	if (state.currentRandomAmbientMusicTrackId != 0x0f) {
-		_previousAmbientMusicTrackId = state.currentRandomAmbientMusicTrackId;
-		state.currentRandomAmbientMusicTrackId = 0x0f;
-		_vm->gameplayMusic()->playMusicCue(state.currentRandomAmbientMusicTrackId, 50);
+	if (state.currentAmbientMusicCueId != 0x0f) {
+		_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
+		state.currentAmbientMusicCueId = 0x0f;
+		_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 50);
 		return;
 	}
 
@@ -473,9 +473,9 @@ void Scene7100::updateSceneAmbientAudioAndMusicCues(uint32 delta) {
 		nextTrack = (byte)(0x0c + _random.getRandomNumber(2));
 	} while (nextTrack == _previousAmbientMusicTrackId);
 
-	_previousAmbientMusicTrackId = state.currentRandomAmbientMusicTrackId;
-	state.currentRandomAmbientMusicTrackId = nextTrack;
-	_vm->gameplayMusic()->playMusicCue(state.currentRandomAmbientMusicTrackId, 50);
+	_previousAmbientMusicTrackId = state.currentAmbientMusicCueId;
+	state.currentAmbientMusicCueId = nextTrack;
+	_vm->gameplayMusic()->playMusicCue(state.currentAmbientMusicCueId, 50);
 }
 
 void Scene7100::advancePrimaryIdleFrame(uint32 delta) {
@@ -492,7 +492,7 @@ void Scene7100::advancePrimaryIdleFrame(uint32 delta) {
 }
 
 void Scene7100::advanceEnvironmentFrame(uint32 delta) {
-	if (!_vm->gameState().g10EnvironmentActive)
+	if (!_vm->gameState().cellPipesActive)
 		return;
 
 	_environmentTimerAccumulator += delta;
@@ -590,7 +590,7 @@ void Scene7100::handlePickupItem15() {
 		kScene7100FrameMillis);
 	addInventoryItem(0x15);
 	_soundBank0.playSample(1, 100);
-	_vm->gameState().g10Item15OnScene = false;
+	_vm->gameState().posterOnCellWall = false;
 	applySceneStateToHotspotsAndPatches(3);
 }
 
@@ -611,18 +611,18 @@ void Scene7100::handleExtendedAction337() {
 	}
 
 	beginSecondarySpeechLine(0x19, 0);
-	_vm->gameState().g10ObjectPatchState = 1;
+	_vm->gameState().cellPlateRatProgress = 1;
 	runOverlaySequence(19, kScene7100Chunk19DescriptorCount,
 		kScene7100Extended337FrameMap, ARRAYSIZE(kScene7100Extended337FrameMap),
 		kScene7100FrameMillis, 0x17, 2);
 	removeInventoryItem(0x14);
 	_soundBank0.playSample(1, 100);
-	_vm->gameState().g10EnvironmentActive = false;
+	_vm->gameState().cellPipesActive = false;
 }
 
 void Scene7100::handlePickupItem16() {
 	beginSecondarySpeechLine(0x1a, 0);
-	_vm->gameState().g10ObjectPatchState = 2;
+	_vm->gameState().cellPlateRatProgress = 2;
 	runOverlaySequence(19, kScene7100Chunk19DescriptorCount,
 		kScene7100Item16FirstFrameMap, ARRAYSIZE(kScene7100Item16FirstFrameMap),
 		kScene7100FrameMillis, 0x1e, 2);
@@ -654,11 +654,11 @@ void Scene7100::handlePickupItem16() {
 }
 
 void Scene7100::handlePickupItem14() {
-	if (_vm->gameState().g10ObjectPatchState != 0) {
+	if (_vm->gameState().cellPlateRatProgress != 0) {
 		dispatchGenericSceneAction(18);
 		return;
 	}
-	if (_vm->gameState().sceneActionStateSelector != 9) {
+	if (_vm->gameState().multiToolKnifeState != 9) {
 		dispatchGenericSceneAction(23);
 		return;
 	}
@@ -666,7 +666,7 @@ void Scene7100::handlePickupItem14() {
 	runOverlaySequence(18, kScene7100Chunk18DescriptorCount,
 		kScene7100Item14FrameMap, ARRAYSIZE(kScene7100Item14FrameMap),
 		kScene7100FrameMillis);
-	_vm->gameState().g10Item14PatchState = true;
+	_vm->gameState().cellPlateRemoved = true;
 	applySceneStateToHotspotsAndPatches(4);
 	addInventoryItem(0x14);
 	_soundBank0.playSample(1, 100);

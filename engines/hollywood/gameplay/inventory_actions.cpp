@@ -64,6 +64,8 @@ bool dispatchInventoryRelationAction(HollywoodEngine *vm, GameplayLoopDelegate *
 
 bool dispatchSharedInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *delegate,
 		uint16 handlerId, byte owner) {
+	// Mirrors the low shared table installed by InstallSceneActionCallbackTable
+	// at 004d6000. This is not the larger main-scene callback table.
 	const bool sharedHandler =
 		handlerId == 0 || handlerId == 1 || handlerId == 35 ||
 		handlerId == 41 || handlerId == 45 || handlerId == 49 ||
@@ -72,7 +74,7 @@ bool dispatchSharedInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *de
 		handlerId == 38 || handlerId == 39 || handlerId == 40 ||
 		handlerId == 42 || handlerId == 43 || handlerId == 44 ||
 		handlerId == 46 || handlerId == 47 || handlerId == 48 ||
-		(handlerId >= 50 && handlerId <= 69);
+		(handlerId >= 50 && handlerId <= 71);
 	if (!sharedHandler)
 		return false;
 
@@ -85,6 +87,7 @@ bool dispatchSharedInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *de
 	case 41:
 	case 45:
 	case 49:
+		// Original default callback: consume the action without speech.
 		break;
 	case 2:
 		delegate->beginSharedInventorySpeechLine(1, delegate->randomSharedInventorySpeechFrame(1));
@@ -195,6 +198,8 @@ bool dispatchSharedInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *de
 		delegate->beginSharedInventorySpeechLine(0x23, 0);
 		break;
 	case 37:
+		// Original callback 0x25: row 0x43 frame 1, row 0x24 frame 0,
+		// then row 0x43 frame 2, with a render pass between each line.
 		delegate->beginSharedInventorySpeechLine(0x43, 1);
 		delegate->beginSharedInventorySpeechLine(0x24, 0);
 		delegate->beginSharedInventorySpeechLine(0x43, 2);
@@ -276,6 +281,7 @@ bool dispatchSharedInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *de
 		break;
 	case 66:
 	{
+		// Original callback 0x42: grant item 0x22 once.
 		GameplayState &gameState = vm->gameState();
 		if (gameState.hasInventoryItem(owner, 0x22)) {
 			delegate->beginSharedInventorySpeechLine(0x41, 1);
@@ -291,6 +297,8 @@ bool dispatchSharedInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *de
 		break;
 	case 68:
 	{
+		// Original callback 0x44: combine item 0x08 with item 0x0f,
+		// grant item 0x06, then run callback 0x25's speech sequence.
 		GameplayState &gameState = vm->gameState();
 		delegate->beginSharedInventorySpeechLine(0x43, 0);
 		gameState.removeInventoryItem(owner, 0x08);
@@ -305,6 +313,73 @@ bool dispatchSharedInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *de
 	case 69:
 		delegate->beginSharedInventorySpeechLine(0x44, 0);
 		break;
+	case 70:
+	{
+		// Original callback 0x46: advance item 0x1a through its alternate pages.
+		GameplayState &gameState = vm->gameState();
+		if ((gameState.multiToolKnifeState & 1) != 0) {
+			if (gameState.multiToolKnifeState < 9)
+				++gameState.multiToolKnifeState;
+			else
+				gameState.multiToolKnifeState = 0;
+		}
+
+		byte pageIndex = 0;
+		switch (gameState.multiToolKnifeState) {
+		case 0:
+			gameState.multiToolKnifeState = 1;
+			pageIndex = 0x1e;
+			break;
+		case 2:
+			gameState.multiToolKnifeState = 3;
+			pageIndex = 0x2d;
+			break;
+		case 4:
+			gameState.multiToolKnifeState = 5;
+			pageIndex = 0x7d;
+			break;
+		case 6:
+			gameState.multiToolKnifeState = 7;
+			pageIndex = 0x0e;
+			break;
+		case 8:
+			gameState.multiToolKnifeState = 9;
+			pageIndex = 0x18;
+			break;
+		default:
+			break;
+		}
+
+		if (owner < GameplayState::kInventoryOwnerCount && pageIndex != 0) {
+			gameState.inventoryItemResourcePageByOwnerAndItemId[owner][0x1a] = pageIndex;
+			gameState.inventoryPanelDirty = true;
+		}
+		delegate->playSharedInventorySound(1);
+		delegate->beginSharedInventorySpeechLine(0x15, 0);
+		break;
+	}
+	case 71:
+	{
+		// Original callback 0x47: reset item 0x1a to page 0x68 after a valid state.
+		GameplayState &gameState = vm->gameState();
+		if ((gameState.multiToolKnifeState & 1) == 0) {
+			delegate->beginSharedInventorySpeechLine(0x0b, 0);
+			break;
+		}
+
+		if (gameState.multiToolKnifeState == 9)
+			gameState.multiToolKnifeState = 0;
+		else
+			++gameState.multiToolKnifeState;
+
+		if (owner < GameplayState::kInventoryOwnerCount) {
+			gameState.inventoryItemResourcePageByOwnerAndItemId[owner][0x1a] = 0x68;
+			gameState.inventoryPanelDirty = true;
+		}
+		delegate->playSharedInventorySound(1);
+		delegate->beginSharedInventorySpeechLine(0x15, 0);
+		break;
+	}
 	default:
 		return false;
 	}
