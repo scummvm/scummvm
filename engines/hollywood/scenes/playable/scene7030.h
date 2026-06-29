@@ -60,10 +60,11 @@ private:
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	void setPrimaryLeftSpeechFrame(byte frameIndex) override;
+	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
 	void updateAmbientAudioAndMusicCues(uint32 delta);
 	void advanceChunk5AmbientOverlay();
 	void advanceChunk6IdleFrames();
-	void runMappedActionOverlayWithSceneStatePatch(uint chunkIndex, uint descriptorCount, const byte *frameMap,
+	void runPunchBowlPatchOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int statePatchFrame = -1);
 	void handleActionSlot00TransitionToG04();
 	void handleActionSlot01SecondarySpeech();

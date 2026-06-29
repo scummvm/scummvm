@@ -62,6 +62,8 @@ const byte kScene7060DialoguePrimaryGreen = 0x3f;
 const byte kScene7060DialoguePrimaryBlue = 0x2c;
 const byte kScene7060InvalidPrimarySpeechAnimationGroup = 0xff;
 const uint kScene7060DialogueRecordCount = 10 * 10 * 7;
+const byte kScene7060PickupItem11Hook = 1;
+const byte kScene7060UseItem0DHook = 2;
 const byte kScene7060Chunk6FrameMap[] = {
 	0, 0, 51, 1, 2, 3, 4, 5, 6, 7, 7, 7, 8, 9, 10, 11,
 	12, 13, 14, 15, 16, 17, 0, 18, 19, 20, 21, 52, 22, 23, 24, 25,
@@ -625,20 +627,12 @@ void Scene7060::beginPrimaryDialogueSpeech(byte frameIndex) {
 
 void Scene7060::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int soundFrame, byte soundId) {
-	_actionOverlayVisible = true;
-	_actionOverlayChunkIndex = (byte)chunkIndex;
-	_actionOverlayDescriptorCount = (byte)descriptorCount;
-	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayFrameIndex = frameMap[frame];
-		if (soundFrame >= 0 && (int)frame == soundFrame)
-			_soundBank0.playSample(soundId, 100);
-		if (waitSceneMillis(frameMillis))
-			break;
+	ActionOverlayOptions options;
+	if (soundFrame >= 0) {
+		options.soundFrame = soundFrame;
+		options.soundId = soundId;
 	}
-	_actionOverlayVisible = false;
-	_actionOverlayFrameIndex = 0;
-	drawPlayableComposite();
-	presentFrame();
+	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, options);
 }
 
 void Scene7060::handleSpeechRow04Variant() {
@@ -674,29 +668,13 @@ void Scene7060::handleShortExitToState7071() {
 }
 
 void Scene7060::handleChunk7PickupItem11() {
-	_actionOverlayVisible = true;
-	_actionOverlayChunkIndex = 7;
-	_actionOverlayDescriptorCount = kScene7060Chunk7DescriptorCount;
-	for (uint frame = 0; frame < ARRAYSIZE(kScene7060Chunk7PickupItem11FrameMap) && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayFrameIndex = kScene7060Chunk7PickupItem11FrameMap[frame];
-		if (frame == 4) {
-			if (_chunk6FrameMap.size() > 70) {
-				_chunk6FrameMap[33] = _chunk6FrameMap[58];
-				_chunk6FrameMap[37] = _chunk6FrameMap[62];
-				_chunk6FrameMap[41] = _chunk6FrameMap[66];
-				_chunk6FrameMap[45] = _chunk6FrameMap[70];
-			}
-			setColorMapItem8Promoted(false);
-		}
-		if (waitSceneMillis(kScene7060OverlayFrameMillis))
-			break;
-	}
-	_actionOverlayVisible = false;
-	_actionOverlayFrameIndex = 0;
+	ActionOverlayOptions options;
+	options.hookFrame = 4;
+	options.hookId = kScene7060PickupItem11Hook;
+	runActionOverlay(7, kScene7060Chunk7DescriptorCount, kScene7060Chunk7PickupItem11FrameMap,
+		ARRAYSIZE(kScene7060Chunk7PickupItem11FrameMap), kScene7060OverlayFrameMillis, options);
 	addInventoryItem(0x11);
 	_soundBank0.playSample(1, 100);
-	drawPlayableComposite();
-	presentFrame();
 }
 
 void Scene7060::handleChunk9ExitToG07() {
@@ -731,26 +709,32 @@ void Scene7060::handleUseItem0DOnMachine() {
 	beginPrimaryDialogueSpeech(2);
 	beginSecondarySpeechLine(12, 3);
 
-	_actionOverlayVisible = true;
-	_actionOverlayChunkIndex = 7;
-	_actionOverlayDescriptorCount = kScene7060Chunk7DescriptorCount;
-	for (uint frame = 0; frame < ARRAYSIZE(kScene7060Chunk7UseItem0DFrameMap) && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayFrameIndex = kScene7060Chunk7UseItem0DFrameMap[frame];
-		if (frame == 4) {
-			_chunk6FrameIndex = 0x1c;
-			_chunk6State = 3;
-		}
-		if (waitSceneMillis(kScene7060OverlayFrameMillis))
-			break;
-	}
-	_actionOverlayVisible = false;
-	_actionOverlayFrameIndex = 0;
+	ActionOverlayOptions options;
+	options.hookFrame = 4;
+	options.hookId = kScene7060UseItem0DHook;
+	runActionOverlay(7, kScene7060Chunk7DescriptorCount, kScene7060Chunk7UseItem0DFrameMap,
+		ARRAYSIZE(kScene7060Chunk7UseItem0DFrameMap), kScene7060OverlayFrameMillis, options);
 
 	removeInventoryItem(0x0d);
 	_soundBank0.playSample(1, 100);
 	_chunk6RandomIdlePaused = false;
-	drawPlayableComposite();
-	presentFrame();
+}
+
+void Scene7060::handleActionOverlayFrameHook(byte hookId, uint frame) {
+	(void)frame;
+
+	if (hookId == kScene7060PickupItem11Hook) {
+		if (_chunk6FrameMap.size() > 70) {
+			_chunk6FrameMap[33] = _chunk6FrameMap[58];
+			_chunk6FrameMap[37] = _chunk6FrameMap[62];
+			_chunk6FrameMap[41] = _chunk6FrameMap[66];
+			_chunk6FrameMap[45] = _chunk6FrameMap[70];
+		}
+		setColorMapItem8Promoted(false);
+	} else if (hookId == kScene7060UseItem0DHook) {
+		_chunk6FrameIndex = 0x1c;
+		_chunk6State = 3;
+	}
 }
 
 } // End of namespace Hollywood

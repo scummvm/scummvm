@@ -558,20 +558,12 @@ void Scene1020::runOverlaySequence(uint chunkIndex, uint descriptorCount, const 
 		return;
 	}
 
-	_actionOverlayVisible = true;
-	_actionOverlayChunkIndex = (byte)chunkIndex;
-	_actionOverlayDescriptorCount = (byte)descriptorCount;
-	for (uint frame = 0; frame < frameMapSize && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayFrameIndex = frameMap[frame];
-		if (patchFrame >= 0 && (int)frame == patchFrame)
-			applySceneStateToHotspotsAndPatches(0xff);
-		if (waitSceneMillis(frameMillis))
-			break;
+	ActionOverlayOptions options;
+	if (patchFrame >= 0) {
+		options.statePatchFrame = patchFrame;
+		options.statePatchSelector = 0xff;
 	}
-	_actionOverlayVisible = false;
-	_actionOverlayFrameIndex = 0;
-	drawPlayableComposite();
-	presentFrame();
+	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, options);
 }
 
 void Scene1020::runOverlaySequenceWithActor(uint overlayChunkIndex, uint overlayDescriptorCount,
