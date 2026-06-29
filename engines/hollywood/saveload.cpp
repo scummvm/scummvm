@@ -133,7 +133,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene1050SuitcaseTaken);
 	syncStateBool(s, state.scene1050TalkedToCloakroomAttendant);
 	syncStateBool(s, state.scene1050JackLookedAt);
-	s.syncAsByte(state.scene1050TravelUnlockFlags);
+	s.syncBytes(state.travelScreenSlotIds, sizeof(state.travelScreenSlotIds));
 	syncStateBool(s, state.scene1050CloakroomSecretMentioned);
 	syncStateBool(s, state.seenScene1060EntryLine);
 	s.syncAsByte(state.scene1060FlyDoctorState);
@@ -240,7 +240,24 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene1030PatchState = 0;
 	if (state.scene1040CordState > 2)
 		state.scene1040CordState = 0;
-	state.scene1050TravelUnlockFlags &= 0x07;
+	if (state.travelScreenSlotIds[0] > 6)
+		state.travelScreenSlotIds[0] = 0;
+	if (state.travelScreenSlotIds[1] > 6)
+		state.travelScreenSlotIds[1] = 5;
+	for (uint slot = 2; slot < GameplayState::kTravelScreenSlotCount; ++slot) {
+		if (state.travelScreenSlotIds[slot] == GameplayState::kTravelScreenDisabledSlot)
+			continue;
+		if (state.travelScreenSlotIds[slot] > 6) {
+			state.travelScreenSlotIds[slot] = GameplayState::kTravelScreenDisabledSlot;
+			continue;
+		}
+		for (uint previous = 0; previous < slot; ++previous) {
+			if (state.travelScreenSlotIds[previous] == state.travelScreenSlotIds[slot]) {
+				state.travelScreenSlotIds[slot] = GameplayState::kTravelScreenDisabledSlot;
+				break;
+			}
+		}
+	}
 	if (state.scene1060FlyDoctorState > 2)
 		state.scene1060FlyDoctorState = 0;
 	if (state.scene1060PartyRemainsState > 1)
