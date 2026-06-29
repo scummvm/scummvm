@@ -46,12 +46,15 @@ static int strToInt(const char *s) {
 }
 
 bool Console::cmdTeleport(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2) {
 		debugPrintf("Current room is: %d\n", new_room);
-		debugPrintf("Usage: %s <room number>\n", argv[0]);
+		debugPrintf("Usage: %s <room number> [<previous room>]\n", argv[0]);
 		return true;
 	} else {
+		if (argc >= 3)
+			room_id = strToInt(argv[2]);
 		new_room = strToInt(argv[1]);
+
 		return false;
 	}
 }
