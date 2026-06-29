@@ -1313,6 +1313,10 @@ void PlayableScene::presentGameplayFrame(const SceneHoverCaption &hoverCaption, 
 	presentFrame(&hoverCaption, &panelState);
 }
 
+void PlayableScene::invalidatePresentationPalette() {
+	_displayPalette.markAllDirty();
+}
+
 void PlayableScene::prepareOptionsMenuPalette(Common::Array<byte> &palette) const {
 	palette = _paletteCurrent;
 	_panelArt.applyInteractiveObjectPalette(palette);
@@ -1395,6 +1399,7 @@ void PlayableScene::showTravelScreenViewer() {
 				_vm->openMainMenuDialog();
 				if (_vm->isSceneRestartRequested())
 					return;
+				_displayPalette.markAllDirty();
 				presentIndexedFrame(viewerFramebuffer, viewerPalette, _screen, _displayPalette);
 				break;
 			case Common::EVENT_KEYDOWN:
@@ -2905,6 +2910,7 @@ bool PlayableScene::pollEvents(bool allowSkip) {
 			_vm->openMainMenuDialog();
 			if (_vm->isSceneRestartRequested())
 				return true;
+			_displayPalette.markAllDirty();
 			break;
 		case Common::EVENT_KEYDOWN:
 			if (allowSkip && (event.kbd.keycode == Common::KEYCODE_ESCAPE ||

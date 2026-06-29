@@ -76,6 +76,7 @@ public:
 	virtual void advanceGameplayLoop(uint32 deltaMillis) = 0;
 	virtual void drawGameplayFrame() = 0;
 	virtual void presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) = 0;
+	virtual void invalidatePresentationPalette();
 	virtual void prepareOptionsMenuPalette(Common::Array<byte> &palette) const;
 	virtual bool shouldExitGameplayLoop() const;
 	virtual Common::String inventoryItemName(byte owner, byte itemId) const;

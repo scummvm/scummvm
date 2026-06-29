@@ -84,6 +84,9 @@ uint16 GameplayLoopDelegate::viewportYOffset() const {
 void GameplayLoopDelegate::prepareGameplayLoop() {
 }
 
+void GameplayLoopDelegate::invalidatePresentationPalette() {
+}
+
 void GameplayLoopDelegate::prepareOptionsMenuPalette(Common::Array<byte> &palette) const {
 	palette.clear();
 }
@@ -207,6 +210,7 @@ bool GameplayLoop::pollEvents() {
 			_vm->openMainMenuDialog();
 			if (_vm->isSceneRestartRequested())
 				return true;
+			_delegate->invalidatePresentationPalette();
 			_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
 			updatePanelFromMousePosition();
 			break;
@@ -536,6 +540,7 @@ void GameplayLoop::openOptionsMenu() {
 		return;
 	if (_vm->isSceneRestartRequested())
 		return;
+	_delegate->invalidatePresentationPalette();
 
 	_leftButtonDown = false;
 	_rightButtonDown = false;

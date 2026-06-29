@@ -46,13 +46,16 @@ public:
 	Palette6Bit();
 
 	void setFrom6Bit(const Common::Array<byte> &palette);
-	void upload() const;
+	void markAllDirty();
+	void upload();
 	void uploadFrom6Bit(const Common::Array<byte> &palette);
 
 	const Graphics::Palette &palette() const { return _palette; }
 
 private:
 	Graphics::Palette _palette;
+	uint _dirtyStart;
+	uint _dirtyEnd;
 };
 
 void uploadPalette6Bit(const Common::Array<byte> &palette);

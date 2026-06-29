@@ -50,6 +50,7 @@
 #include "common/debug.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
+#include "graphics/pixelformat.h"
 #include "graphics/thumbnail.h"
 
 namespace Hollywood {
@@ -173,7 +174,8 @@ bool HollywoodEngine::copyLastGameplayThumbnail(Graphics::Surface &thumbnail) co
 Common::Error HollywoodEngine::run() {
 	setDebugger(new Console(this));
 
-	initGraphics(kScreenWidth, kScreenHeight);
+	const Graphics::PixelFormat screenFormat = Graphics::PixelFormat::createFormatCLUT8();
+	initGraphics(kScreenWidth, kScreenHeight, &screenFormat);
 
 	syncSoundSettings();
 	_font->load();
