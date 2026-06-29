@@ -134,7 +134,7 @@ static void room_321_init() {
 	scratch._a6 = -1;
 	scratch._aa = 0;
 
-	if (player_has(6))
+	if (player_has(reeds))
 		kernel_flip_hotspot(words_reeds, false);
 
 	if (global[g068] == 0) {
@@ -725,7 +725,7 @@ static void room_321_daemon() {
 			global[g133] = 0;
 			room_321_anim2();
 			kernel_flip_hotspot(words_pebbles, false);
-			if (!player_has(5))
+			if (!player_has(pebbles))
 				inter_move_object(pebbles, PLAYER);
 			global[g068] = -1;
 			global[player_score] = -1;

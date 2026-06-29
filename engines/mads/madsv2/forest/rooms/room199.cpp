@@ -20,6 +20,7 @@
  */
 
 #include "mads/madsv2/forest/rooms/section1.h"
+#include "mads/madsv2/forest/mads/inventory.h"
 #include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/forest/global.h"
@@ -154,19 +155,11 @@ static void room_199_init() {
 	local->bg_active = slot;
 }
 
-static int room_199_anim1() {
-	if (!player_has(6))  return 0;
-	if (!player_has(12)) return 0;
-	if (!player_has(0))  return 0;
-	if (!player_has(2))  return 0;
-	if (!player_has(14)) return 0;
-	if (!player_has(4))  return 0;
-	if (!player_has(8))  return 0;
-	if (!player_has(10)) return 0;
-	if (!player_has(9))  return 0;
-	if (!player_has(11)) return 0;
-	if (!player_has(7))  return 0;
-	return 1;
+static int room_199_has_materials() {
+	return player_has(reeds) && player_has(elm_leaves) && player_has(cogs) &&
+		player_has(feather) && player_has(stick) && player_has(lily_pad) &&
+		player_has(twine) && player_has(web) && player_has(vine_weed) &&
+		player_has(planks) && player_has(sticks) ? 1 : 0;
 }
 
 static void room_199_anim2() {
@@ -177,60 +170,91 @@ static void room_199_anim2() {
 
 	switch (local->val3) {
 	case 1:
-		if (!player_has(14)) digi_play_build(521, 'e', 6, 1);
-		else kernel_timing_trigger(2, 28);
-		local->val3 = 2; return;
+		if (!player_has(stick))
+			digi_play_build(521, 'e', 6, 1);
+		else
+			kernel_timing_trigger(2, 28);
+		local->val3 = 2;
+		break;
 	case 2:
-		if (!player_has(11)) digi_play_build(521, 'e', 10, 1);
-		else kernel_timing_trigger(2, 28);
-		local->val3 = 3; return;
+		if (!player_has(planks))
+			digi_play_build(521, 'e', 10, 1);
+		else
+			kernel_timing_trigger(2, 28);
+		local->val3 = 3;
+		break;
 	case 3:
-		if (!player_has(12)) digi_play_build(521, 'e', 3, 1);
-		else kernel_timing_trigger(2, 28);
-		local->val3 = 4; return;
+		if (!player_has(elm_leaves))
+			digi_play_build(521, 'e', 3, 1);
+		else
+			kernel_timing_trigger(2, 28);
+		local->val3 = 4;
+		break;
 	case 4:
-		if (!player_has(10)) digi_play_build(521, 'e', 8, 1);
+		if (!player_has(web)) digi_play_build(521, 'e', 8, 1);
 		else kernel_timing_trigger(2, 28);
-		local->val3 = 5; return;
+		local->val3 = 5;
+		break;
 	case 5:
-		if (!player_has(9)) digi_play_build(521, 'e', 9, 1);
-		else kernel_timing_trigger(2, 28);
-		local->val3 = 6; return;
+		if (!player_has(vine_weed))
+			digi_play_build(521, 'e', 9, 1);
+		else
+			kernel_timing_trigger(2, 28);
+		local->val3 = 6;
+		break;
 	case 6:
-		if (!player_has(8)) digi_play_build(521, 'e', 20, 1);
-		else kernel_timing_trigger(2, 28);
-		local->val3 = 7; return;
+		if (!player_has(twine)) digi_play_build(521, 'e', 20, 1);
+		else
+			kernel_timing_trigger(2, 28);
+		local->val3 = 7;
+		break;
 	case 7:
-		if (!player_has(2)) digi_play_build(521, 'e', 5, 1);
-		else kernel_timing_trigger(2, 28);
-		local->val3 = 8; return;
+		if (!player_has(feather))
+			digi_play_build(521, 'e', 5, 1);
+		else
+			kernel_timing_trigger(2, 28);
+		local->val3 = 8;
+		break;
 	case 8:
-		if (!player_has(6)) digi_play_build(521, 'e', 2, 1);
-		else kernel_timing_trigger(2, 28);
-		local->val3 = 9; return;
+		if (!player_has(reeds))
+			digi_play_build(521, 'e', 2, 1);
+		else
+			kernel_timing_trigger(2, 28);
+		local->val3 = 9;
+		break;
 	case 9:
-		if (!player_has(4)) digi_play_build(521, 'e', 7, 1);
-		else kernel_timing_trigger(2, 28);
-		local->val3 = 10; return;
+		if (!player_has(lily_pad))
+			digi_play_build(521, 'e', 7, 1);
+		else
+			kernel_timing_trigger(2, 28);
+		local->val3 = 10;
+		break;
 	case 10:
-		if (!player_has(0)) digi_play_build(521, 'e', 4, 1);
-		else kernel_timing_trigger(2, 28);
-		local->val3 = 11; return;
+		if (!player_has(cogs))
+			digi_play_build(521, 'e', 4, 1);
+		else
+			kernel_timing_trigger(2, 28);
+		local->val3 = 11;
+		break;
 	case 11:
-		if (!player_has(7)) digi_play_build(521, 'e', 21, 1);
-		else kernel_timing_trigger(2, 28);
-		local->val3 = 12; return;
+		if (!player_has(sticks))
+			digi_play_build(521, 'e', 21, 1);
+		else
+			kernel_timing_trigger(2, 28);
+		local->val3 = 12;
+		break;
 	case 12:
 		digi_play_build(521, 'b', 1, 1);
-		local->val3 = 20; return;
+		local->val3 = 20;
+		break;
 	case 14:
 		local->val4      = 0;
 		local->val3      = -1;
 		local->anim_flag  = 0;
 		kernel_timing_trigger(2, 113);
-		return;
+		break;
 	default:
-		return;
+		break;
 	}
 }
 
@@ -261,7 +285,7 @@ static void room_199_anim4() {
 
 	switch (local->val3) {
 	case 1:
-		if (player_has(14)) {
+		if (player_has(stick)) {
 			ss[8] = kernel_load_series("*ob014i", 0);
 			seq[8] = kernel_seq_stamp(ss[8], false, 1);
 			kernel_seq_depth(seq[8], 1);
@@ -270,7 +294,7 @@ static void room_199_anim4() {
 		}
 		kernel_timing_trigger(15, 115); return;
 	case 2:
-		if (player_has(11)) {
+		if (player_has(planks)) {
 			ss[13] = kernel_load_series("*ob011i", 0);
 			seq[13] = kernel_seq_stamp(ss[13], false, 1);
 			kernel_seq_depth(seq[13], 1);
@@ -278,7 +302,7 @@ static void room_199_anim4() {
 		}
 		kernel_timing_trigger(15, 115); return;
 	case 3:
-		if (player_has(12)) {
+		if (player_has(elm_leaves)) {
 			ss[5] = kernel_load_series("*ob012i", 0);
 			seq[5] = kernel_seq_stamp(ss[5], false, 1);
 			kernel_seq_depth(seq[5], 1);
@@ -287,7 +311,7 @@ static void room_199_anim4() {
 		}
 		kernel_timing_trigger(15, 115); return;
 	case 4:
-		if (player_has(10)) {
+		if (player_has(web)) {
 			ss[11] = kernel_load_series("*ob010i", 0);
 			seq[11] = kernel_seq_stamp(ss[11], false, 1);
 			kernel_seq_depth(seq[11], 1);
@@ -296,7 +320,7 @@ static void room_199_anim4() {
 		}
 		kernel_timing_trigger(15, 115); return;
 	case 5:
-		if (player_has(9)) {
+		if (player_has(vine_weed)) {
 			ss[12] = kernel_load_series("*ob009i", 0);
 			seq[12] = kernel_seq_stamp(ss[12], false, 1);
 			kernel_seq_depth(seq[12], 1);
@@ -305,7 +329,7 @@ static void room_199_anim4() {
 		}
 		kernel_timing_trigger(15, 115); return;
 	case 6:
-		if (player_has(8)) {
+		if (player_has(twine)) {
 			ss[10] = kernel_load_series("*ob008i", 0);
 			seq[10] = kernel_seq_stamp(ss[10], false, 1);
 			kernel_seq_depth(seq[10], 1);
@@ -314,7 +338,7 @@ static void room_199_anim4() {
 		}
 		kernel_timing_trigger(15, 115); return;
 	case 7:
-		if (player_has(2)) {
+		if (player_has(feather)) {
 			ss[7] = kernel_load_series("*ob002i", 0);
 			seq[7] = kernel_seq_stamp(ss[7], false, 1);
 			kernel_seq_depth(seq[7], 1);
@@ -323,7 +347,7 @@ static void room_199_anim4() {
 		}
 		kernel_timing_trigger(15, 115); return;
 	case 8:
-		if (player_has(6)) {
+		if (player_has(reeds)) {
 			ss[4] = kernel_load_series("*ob006i", 0);
 			seq[4] = kernel_seq_stamp(ss[4], false, 1);
 			kernel_seq_depth(seq[4], 1);
@@ -332,7 +356,7 @@ static void room_199_anim4() {
 		}
 		kernel_timing_trigger(15, 115); return;
 	case 9:
-		if (player_has(4)) {
+		if (player_has(lily_pad)) {
 			ss[9] = kernel_load_series("*ob004i", 0);
 			seq[9] = kernel_seq_stamp(ss[9], false, 1);
 			kernel_seq_depth(seq[9], 1);
@@ -341,7 +365,7 @@ static void room_199_anim4() {
 		}
 		kernel_timing_trigger(15, 115); return;
 	case 10:
-		if (player_has(0)) {
+		if (player_has(cogs)) {
 			ss[6] = kernel_load_series("*ob000i", 0);
 			seq[6] = kernel_seq_stamp(ss[6], false, 1);
 			kernel_seq_depth(seq[6], 1);
@@ -350,7 +374,7 @@ static void room_199_anim4() {
 		}
 		kernel_timing_trigger(15, 115); return;
 	case 11:
-		if (player_has(7)) {
+		if (player_has(sticks)) {
 			ss[14] = kernel_load_series("*ob007i", 0);
 			seq[14] = kernel_seq_stamp(ss[14], false, 1);
 			kernel_seq_depth(seq[14], 1);
@@ -388,7 +412,7 @@ static void room_199_daemon() {
 		leave_journal();
 		player.commands_allowed = true;
 	} else if (trig == 114) {
-		int result = room_199_anim1();
+		int result = room_199_has_materials();
 		global[g100] = result;
 		if (result) {
 			digi_play_build(521, 'e', 11, 1);

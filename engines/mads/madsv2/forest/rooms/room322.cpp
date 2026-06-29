@@ -484,7 +484,7 @@ static void room_322_daemon() {
 			kernel_abort_animation(scratch._a6);
 			scratch._a4 = -1;
 			kernel_reset_animation(scratch._a6, 0);
-			if (player_has(4)) {
+			if (player_has(lily_pad)) {
 				aa[8] = kernel_run_animation("*rm307r4", 111);
 				aainfo[8]._frame = -1;
 				scratch._9c = 32;
@@ -553,7 +553,7 @@ static void room_322_daemon() {
 
 	case 111: {
 		int16 seq_handle;
-		if (player_has(14)) {
+		if (player_has(stick)) {
 			dont_frag_the_palette();
 			kernel_abort_animation(aa[8]);
 		} else {
@@ -572,7 +572,7 @@ static void room_322_daemon() {
 		player.walker_visible = false;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 
-		if (player_has(14)) {
+		if (player_has(stick)) {
 			kernel_synch(KERNEL_ANIM, aa[8], KERNEL_NOW, 0);
 		} else {
 			kernel_synch(KERNEL_ANIM, aa[9], KERNEL_NOW, 0);

@@ -1010,7 +1010,7 @@ static void room_308_init() {
 			aainfo[23]._active = -1;
 			return;
 		}
-		if (player.been_here_before && player_has(5) && player_has(1) && player_has(15)) {
+		if (player.been_here_before && player_has(pebbles) && player_has(rubber_band) && player_has(forked_stick)) {
 			aa[3] = kernel_run_animation(kernel_name('t', 8), 103);
 			aainfo[3]._active = -1;
 			kernel_synch(KERNEL_ANIM, aa[3], KERNEL_NOW, 0);
@@ -1025,7 +1025,7 @@ static void room_308_init() {
 			aainfo[0]._active = -1;
 			return;
 		}
-		if (!player_has(5) || !player_has(1)) {
+		if (!player_has(pebbles) || !player_has(rubber_band)) {
 			aa[4] = kernel_run_animation(kernel_name('t', 6), 104);
 			aainfo[4]._active = -1;
 			kernel_synch(KERNEL_ANIM, aa[4], KERNEL_NOW, 0);
@@ -1033,7 +1033,7 @@ static void room_308_init() {
 			global_midi_play(15);
 			return;
 		}
-		if (player_has(15)) {
+		if (player_has(forked_stick)) {
 			aa[0] = kernel_run_animation(kernel_name('t', 1), 100);
 			kernel_reset_animation(aa[0], 13);
 			aainfo[0]._active = -1;
@@ -1143,7 +1143,7 @@ static void room_308_daemon() {
 		dont_frag_the_palette();
 		kernel_abort_animation(aa[2]);
 		aainfo[2]._active = 0;
-		if (player_has(5) && player_has(1) && player_has(15)) {
+		if (player_has(pebbles) && player_has(rubber_band) && player_has(forked_stick)) {
 			aa[3] = kernel_run_animation(kernel_name('t', 8), 103);
 			aainfo[3]._active = -1;
 			kernel_synch(KERNEL_ANIM, aa[3], KERNEL_NOW, 0);

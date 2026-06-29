@@ -20,6 +20,7 @@
  */
 
 #include "mads/madsv2/forest/rooms/section2.h"
+#include "mads/madsv2/forest/mads/inventory.h"
 #include "mads/madsv2/forest/mads/words.h"
 #include "mads/madsv2/forest/digi.h"
 #include "mads/madsv2/forest/extra.h"
@@ -1779,7 +1780,7 @@ static void room_203_parser() {
 	}
 
 	if (player_parse(words_click_on, words_abigail, 0)) {
-		if (player_has(5) && player_has(8)) {
+		if (player_has(pebbles) && player_has(twine)) {
 			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 			aa[3] = kernel_run_animation(kernel_name('a', 1), 104);
 			scratch._98 = 30;
@@ -1789,7 +1790,7 @@ static void room_203_parser() {
 			player.walker_visible = false;
 			player.commands_allowed = false;
 			kernel_synch(KERNEL_ANIM, aa[3], KERNEL_NOW, 0);
-		} else if (player_has(8)) {
+		} else if (player_has(twine)) {
 			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
 			aa[3] = kernel_run_animation(kernel_name('a', 2), 104);
 			aainfo[3]._active = -1;

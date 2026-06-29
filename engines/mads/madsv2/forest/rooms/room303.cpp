@@ -417,7 +417,7 @@ static void room_303_init() {
 	seq[1] = kernel_seq_stamp(ss[1], false, KERNEL_FIRST);
 	kernel_seq_depth(seq[1], 15);
 
-	if (!player_has(6)) {
+	if (!player_has(reeds)) {
 		scratch._a6 = -1;
 	} else {
 		kernel_flip_hotspot(words_reeds, false);

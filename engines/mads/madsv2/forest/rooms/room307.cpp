@@ -649,7 +649,7 @@ static void room_307_daemon() {
 			kernel_abort_animation(scratch._9c);
 			scratch._9a = -1;
 			scratch._9c = -1;
-			if (player_has(4)) {
+			if (player_has(lily_pad)) {
 				aa[8] = kernel_run_animation(kernel_name('R', 4), 111);
 				aainfo[8]._active = -1;
 				scratch._92 = 32;
@@ -766,7 +766,7 @@ static void room_307_daemon() {
 		break;
 
 	case 111: {
-		if (player_has(14)) {
+		if (player_has(stick)) {
 			dont_frag_the_palette();
 			kernel_abort_animation(aa[8]);
 		} else {
