@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_SUE_PLAYABLE_SCENE_H
-#define HOLLYWOOD_SCENES_PLAYABLE_SUE_PLAYABLE_SCENE_H
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_PLAYABLE_SCENE_H
+#define HOLLYWOOD_SCENES_PLAYABLE_PLAYABLE_SCENE_H
 
 #include "common/array.h"
 #include "common/random.h"
@@ -41,12 +41,12 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-class SuePlayableScene : public GameplayLoopDelegate, public DialogueMenuDelegate {
+class PlayableScene : public GameplayLoopDelegate, public DialogueMenuDelegate {
 public:
 	bool play();
 
 protected:
-	SuePlayableScene(HollywoodEngine *vm, const char *randomName, int defaultActorX, int defaultActorY,
+	PlayableScene(HollywoodEngine *vm, const char *randomName, int defaultActorX, int defaultActorY,
 		byte defaultActorFacing, byte secondarySpeechTextColor, byte primarySpeechTextColor);
 
 protected:
@@ -100,9 +100,9 @@ protected:
 		kSceneRouteBoundaryPointCount = kScenePaletteRegionCount * kScenePaletteRegionCount * kScenePaletteRegionBoundaryCandidateCount,
 		kSceneRouteStepCount = kScenePaletteRegionCount * kScenePaletteRegionCount * kScenePaletteRegionRouteStepCount,
 		kResource000TableByteCount = 400,
-		kResource000ActorSet00TableEntry = 0xd0,
-		kResource000SuePaletteTableEntry = 0x108,
-		kResource000ActorSet00SegmentCount = 14,
+		kResource000DefaultActorBankTableEntry = 0xd0,
+		kResource000DefaultActorPaletteTableEntry = 0x108,
+		kResource000DefaultActorBankSegmentCount = 14,
 		kActorFacingCount = 6,
 		kActorCelsPerFacing = 13,
 		kActiveActorDescriptorSize = 28,
@@ -110,12 +110,12 @@ protected:
 		kSecondaryActorDescriptorSize = 16,
 		kSecondaryActorFramesPerFacing = 5,
 		kSecondaryActorFacingRunStride = 16000,
-		kSueActorPaletteBytes = 0x90,
+		kActorPaletteBytes = 0x90,
 		kStage003DecodeKeySize = 0x141,
 		kStage003StageOffsetTableSize = 0xff4,
 		kStage003DescriptorTableSize = 0x186a0,
-		kSueResource003RowsOffsetIndex = 0x32,
-		kSueSpeechCueDescriptorTableOffset = 0x5f58,
+		kDefaultResource003InventoryRowsOffsetIndex = 0x32,
+		kDefaultSpeechCueDescriptorTableOffset = 0x5f58,
 		kSpeechCueDescriptorTableSize = 20000,
 		kStage003SmallRowSize = 0x29,
 		kStage003LargeRowSize = 0x141,
@@ -132,6 +132,19 @@ protected:
 	virtual uint16 sceneViewportXOffset() const = 0;
 	virtual uint16 sceneViewportMinXOffset() const;
 	virtual uint16 sceneViewportMaxXOffset() const;
+	virtual byte inventoryOwnerIndex() const;
+	virtual void initializeInventoryOwnerState();
+	virtual uint resource000ActorBankTableEntry() const;
+	virtual uint resource000ActorBankSegmentCount() const;
+	virtual uint resource000ActorPaletteTableEntry() const;
+	virtual uint32 inventoryActionTableExtraOffset() const;
+	virtual uint resource003InventoryRowsOffsetIndex() const;
+	virtual uint32 speechCueDescriptorTableOffset() const;
+	virtual const byte *actorPathStepDeltaTable() const;
+	virtual uint actorPathStepDeltaTableSize() const;
+	virtual byte walkablePaletteMaxRegion() const;
+	virtual const char *musicArchiveName() const;
+	virtual const char *soundBank0ArchiveName() const;
 	virtual int alternatePaletteResourceChunkIndex() const;
 	virtual bool isAlternatePaletteResourceActive() const;
 	virtual bool shouldLoadInventoryActionTables() const;
@@ -166,8 +179,8 @@ protected:
 	void syncActiveActorPoseToGameState();
 	bool load();
 	bool loadResource000RuntimeTables(Common::Array<byte> &offsetTable, Common::Array<byte> &sizeTable);
-	bool loadResource000ActorBankSet00(const Common::Array<byte> &offsetTable, const Common::Array<byte> &sizeTable);
-	bool loadResource000SueActorPalette(const Common::Array<byte> &offsetTable);
+	bool loadResource000ActorBank(const Common::Array<byte> &offsetTable, const Common::Array<byte> &sizeTable);
+	bool loadResource000ActorPalette(const Common::Array<byte> &offsetTable);
 	bool loadResource000InventoryActionTables(const Common::Array<byte> &offsetTable);
 	bool loadStage003SceneRows();
 	bool loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
@@ -178,6 +191,7 @@ protected:
 	void expandFillRunsToSavedFramebuffer();
 	bool initializeScenePathTables();
 	void initializePreviewState();
+	void initializeDefaultPreviewState();
 	void drawPreviewComposite();
 	void drawCutsceneComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
@@ -234,6 +248,7 @@ protected:
 	uint calculateWalkStepCountForAxisDelta(int startAxis, int targetAxis, byte facing, byte cel) const;
 	byte nextActorPathCel(byte cel) const;
 	uint actorPathStepDelta(byte facing, byte cel) const;
+	void resetActorPathStepDeltas();
 	byte calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const;
 	void applySceneStateToHotspotsAndPatches(byte selector);
 	void rebuildWalkablePaletteMask();
@@ -327,9 +342,9 @@ protected:
 	Common::Array<byte> _stage003StageBlock;
 	Common::Array<byte> _stage003SmallRows;
 	Common::Array<byte> _stage003LargeRows;
-	Common::Array<byte> _sueSpeechCueDescriptors;
-	Common::Array<byte> _sueSmallRows;
-	Common::Array<byte> _sueLargeRows;
+	Common::Array<byte> _staticSpeechCueDescriptors;
+	Common::Array<byte> _inventoryOwnerSmallRows;
+	Common::Array<byte> _inventoryOwnerLargeRows;
 	Common::Array<ScenePoint> _routeBoundaryPoints;
 	Common::Array<byte> _routeSteps;
 	Common::Array<ActorPathFrame> _actorPathFrames;
@@ -376,4 +391,4 @@ protected:
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_PLAYABLE_SUE_PLAYABLE_SCENE_H
+#endif // HOLLYWOOD_SCENES_PLAYABLE_PLAYABLE_SCENE_H

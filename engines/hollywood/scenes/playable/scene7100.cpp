@@ -108,7 +108,7 @@ const byte kScene7100TransferFrameMap[] = {
 };
 
 Scene7100::Scene7100(HollywoodEngine *vm) :
-		SuePlayableScene(vm, "scene7100", kScene7100EntryX, kScene7100EntryY,
+		PlayableScene(vm, "scene7100", kScene7100EntryX, kScene7100EntryY,
 			kScene7100EntryFacing, 0xfd, 0xfb),
 		_ambientTimerAccumulator(0),
 		_primaryTimerAccumulator(0),
