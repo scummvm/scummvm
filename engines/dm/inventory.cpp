@@ -404,7 +404,7 @@ void InventoryMan::drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yP
 
 void InventoryMan::buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, const char **attribStrings, char *destString, const char *prefixString, const char *suffixString) {
 	uint16 identicalBitCount = 0;
-	int16 attribMask = 1;
+	uint16 attribMask = 1;
 	for (uint16 stringIndex = 0; stringIndex < 16; stringIndex++, attribMask <<= 1) {
 		if (attribMask & potentialAttribMask & actualAttribMask)
 			identicalBitCount++;
