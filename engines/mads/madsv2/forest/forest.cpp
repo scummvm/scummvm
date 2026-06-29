@@ -102,9 +102,14 @@ void ForestEngine::global_init_code() {
 	global[player_score] = -1;
 	global[g022] = 0;
 
+	// Randomly select the destinations for the passageways in the underground quick transport area
 	int16 table[5] = { 106, 203, 302, 305, 307 };
+	int16 *const global_ptrs[5] = {
+		&global[tunnel_1_room], &global[tunnel_2_room], &global[tunnel_3_room],
+		&global[tunnel_4_room], &global[tunnel_5_room]
+	};
 
-	for (int16 *dest : { &global[g041], &global[g042], &global[g043], &global[g044], &global[g045] }) {
+	for (int16 *dest : global_ptrs) {
 		int pick;
 		do {
 			int index = imath_random(0, 4);

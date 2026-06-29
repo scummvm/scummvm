@@ -1463,7 +1463,7 @@ static void room_203_daemon() {
 
 		switch (local->_96) {
 		case 50:
-			global[g040] = -1;
+			global[tunnel_exit_2_opened] = -1;
 			new_room = 210;
 			break;
 

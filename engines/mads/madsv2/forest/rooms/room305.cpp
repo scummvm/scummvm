@@ -910,7 +910,7 @@ static void room_305_daemon() {
 	}
 
 	case 102:
-		global[g060] = -1;
+		global[tunnel_exit_4_opened] = -1;
 		new_room = 210;
 		break;
 

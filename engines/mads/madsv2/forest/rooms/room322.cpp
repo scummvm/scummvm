@@ -664,7 +664,7 @@ static void room_322_daemon() {
 		break;
 
 	case 119:
-		global[g061] = -1;
+		global[tunnel_exit_5_opened] = -1;
 		new_room = 210;
 		midi_stop();
 		break;

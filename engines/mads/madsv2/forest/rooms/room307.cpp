@@ -733,7 +733,7 @@ static void room_307_daemon() {
 		break;
 
 	case 102:
-		global[g061] = -1;
+		global[tunnel_exit_5_opened] = -1;
 		new_room = 210;
 		break;
 

@@ -802,7 +802,7 @@ static void room_302_daemon() {
 		global[g143] = 0;
 		player.commands_allowed = true;
 		if (scratch._96 - 7 == 0) {
-			global[g063] = -1;
+			global[tunnel_exit_3_opened] = -1;
 			new_room = 210;
 		}
 		scratch._96 = 0;

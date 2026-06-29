@@ -97,7 +97,7 @@ static void room_210_init1() {
 	if (previous_room == 322)
 		previous_room = 307;
 
-	if (previous_room == global[g041]) {
+	if (previous_room == global[tunnel_1_room]) {
 		aa[0] = kernel_run_animation(kernel_name('y', 1), 100);
 		aainfo[0]._active = -1;
 		aainfo[0]._frame = 0;
@@ -105,7 +105,7 @@ static void room_210_init1() {
 		return;
 	}
 
-	if (previous_room == global[g042]) {
+	if (previous_room == global[tunnel_2_room]) {
 		aa[0] = kernel_run_animation(kernel_name('y', 2), 100);
 		aainfo[0]._active = -1;
 		aainfo[0]._frame = 0;
@@ -113,7 +113,7 @@ static void room_210_init1() {
 		return;
 	}
 
-	if (previous_room == global[g043]) {
+	if (previous_room == global[tunnel_3_room]) {
 		aa[0] = kernel_run_animation(kernel_name('y', 3), 100);
 		aainfo[0]._active = -1;
 		aainfo[0]._frame = 0;
@@ -121,7 +121,7 @@ static void room_210_init1() {
 		return;
 	}
 
-	if (previous_room == global[g044]) {
+	if (previous_room == global[tunnel_4_room]) {
 		aa[0] = kernel_run_animation(kernel_name('y', 4), 100);
 		aainfo[0]._active = -1;
 		aainfo[0]._frame = 0;
@@ -129,7 +129,7 @@ static void room_210_init1() {
 		return;
 	}
 
-	if (previous_room == global[g045]) {
+	if (previous_room == global[tunnel_5_room]) {
 		aa[0] = kernel_run_animation(kernel_name('y', 5), 100);
 		scratch._92 = 88;
 		aainfo[0]._active = -1;
@@ -189,61 +189,61 @@ static void room_210_anim1() {
 	if (kernel_anim[aa[0]].frame != aainfo[0]._frame)
 		aainfo[0]._frame = kernel_anim[aa[0]].frame;
 
-	if (global[player_hyperwalked] != -1)
-		return;
-	aainfo[0]._frame = scratch._92 - 1;
-	kernel_reset_animation(aa[0], aainfo[0]._frame);
+	if (global[player_hyperwalked] == -1) {
+		aainfo[0]._frame = scratch._92 - 1;
+		kernel_reset_animation(aa[0], aainfo[0]._frame);
+	}
 }
 
 static void room_210_anim2() {
 	if (kernel_anim[aa[1]].frame != aainfo[1]._frame)
 		aainfo[1]._frame = kernel_anim[aa[1]].frame;
 
-	if (global[player_hyperwalked] != -1)
-		return;
-	aainfo[1]._frame = scratch._94 - 1;
-	kernel_reset_animation(aa[1], aainfo[1]._frame);
+	if (global[player_hyperwalked] == -1) {
+		aainfo[1]._frame = scratch._94 - 1;
+		kernel_reset_animation(aa[1], aainfo[1]._frame);
+	}
 }
 
 static void room_210_anim3() {
-	if (kernel_anim[aa[7]].frame == aainfo[7]._frame)
-		return;
-	aainfo[7]._frame = kernel_anim[aa[7]].frame;
+	if (kernel_anim[aa[7]].frame != aainfo[7]._frame) {
+		aainfo[7]._frame = kernel_anim[aa[7]].frame;
 
-	int16 f = aainfo[7]._frame;
-	if (f == 1) {
-		kernel_timing_trigger(10, 114);
-	} else if (f == 6) {
-		aainfo[7]._frame = 2;
-		kernel_reset_animation(aa[7], 2);
+		int16 f = aainfo[7]._frame;
+		if (f == 1) {
+			kernel_timing_trigger(10, 114);
+		} else if (f == 6) {
+			aainfo[7]._frame = 2;
+			kernel_reset_animation(aa[7], 2);
+		}
 	}
 }
 
 static void room_210_anim4() {
 	int16 result = -1;
 
-	if (kernel_anim[aa[8]].frame == aainfo[8]._frame)
-		return;
-	aainfo[8]._frame = kernel_anim[aa[8]].frame;
-	int16 f = aainfo[8]._frame;
+	if (kernel_anim[aa[8]].frame != aainfo[8]._frame) {
+		aainfo[8]._frame = kernel_anim[aa[8]].frame;
+		int16 f = aainfo[8]._frame;
 
-	if (f == 11) {
-		result = 9;
-	} else if (f < 11) {
-		if (f == 1) {
-			digi_play_build(210, 'R', 1, 1);
-			scratch._a6 = 2;
-		} else if (f == 3) {
-			result = 1;
-		} else if (f == 9) {
-			digi_play_build(210, 'E', 1, 1);
-			scratch._a6 = 3;
+		if (f == 11) {
+			result = 9;
+		} else if (f < 11) {
+			if (f == 1) {
+				digi_play_build(210, 'R', 1, 1);
+				scratch._a6 = 2;
+			} else if (f == 3) {
+				result = 1;
+			} else if (f == 9) {
+				digi_play_build(210, 'E', 1, 1);
+				scratch._a6 = 3;
+			}
 		}
-	}
 
-	if (result >= 0) {
-		aainfo[8]._frame = result;
-		kernel_reset_animation(aa[8], result);
+		if (result >= 0) {
+			aainfo[8]._frame = result;
+			kernel_reset_animation(aa[8], result);
+		}
 	}
 }
 
@@ -314,17 +314,17 @@ static void room_210_anim5() {
 	}
 }
 
-static void room_210_anim6(int roomNum) {
+static void room_210_change_room(int roomNum) {
 	if (roomNum == 106) {
-		if (global[g021] != 0) { new_room = 106; return; }
+		if (global[tunnel_exit_1_opened] != 0) { new_room = 106; return; }
 	} else if (roomNum == 203) {
-		if (global[g040] != 0) { new_room = 203; return; }
+		if (global[tunnel_exit_2_opened] != 0) { new_room = 203; return; }
 	} else if (roomNum == 302) {
-		if (global[g063] != 0) { new_room = 302; return; }
+		if (global[tunnel_exit_3_opened] != 0) { new_room = 302; return; }
 	} else if (roomNum == 305) {
-		if (global[g060] != 0) { new_room = 305; return; }
+		if (global[tunnel_exit_4_opened] != 0) { new_room = 305; return; }
 	} else if (roomNum == 307) {
-		if (global[g061] != 0) {
+		if (global[tunnel_exit_5_opened] != 0) {
 			if (global[g064] != 0)
 				new_room = 322;
 			else
@@ -401,6 +401,7 @@ static void room_210_daemon() {
 		kernel_abort_animation(scratch._a2);
 		kernel_abort_animation(scratch._a4);
 		scratch._a2 = -1;
+
 		switch (scratch._90) {
 		case 1:
 			aa[1] = kernel_run_animation(kernel_name('z', 1), 101);
@@ -463,23 +464,23 @@ static void room_210_daemon() {
 		aainfo[1]._active = 0;
 		switch (scratch._90) {
 		case 1:
-			room_210_anim6(global[g041]);
+			room_210_change_room(global[tunnel_1_room]);
 			scratch._aa = 1;
 			break;
 		case 2:
-			room_210_anim6(global[g042]);
+			room_210_change_room(global[tunnel_2_room]);
 			scratch._aa = 2;
 			break;
 		case 3:
-			room_210_anim6(global[g043]);
+			room_210_change_room(global[tunnel_3_room]);
 			scratch._aa = 3;
 			break;
 		case 4:
-			room_210_anim6(global[g044]);
+			room_210_change_room(global[tunnel_4_room]);
 			scratch._aa = 4;
 			break;
 		case 5:
-			room_210_anim6(global[g045]);
+			room_210_change_room(global[tunnel_5_room]);
 			scratch._aa = 5;
 			break;
 		default:

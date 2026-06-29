@@ -598,7 +598,7 @@ static void room_106_daemon() {
 		break;
 	case 103:
 		if (scratch._90 == 6) {
-			global[g021] = -1;
+			global[tunnel_exit_1_opened] = -1;
 			new_room = 210;
 		}
 		break;
