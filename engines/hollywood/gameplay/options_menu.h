@@ -25,6 +25,8 @@
 #include "common/array.h"
 #include "common/str.h"
 #include "common/types.h"
+#include "graphics/managed_surface.h"
+#include "hollywood/graphics.h"
 
 namespace Graphics {
 struct Surface;
@@ -90,7 +92,8 @@ private:
 	Common::Array<byte> _menuFramebuffer;
 	Common::Array<byte> _objectPaletteTriples;
 	Common::Array<byte> _palette;
-	Common::Array<byte> _screen;
+	Graphics::ManagedSurface _screen;
+	Palette6Bit _displayPalette;
 	bool _loaded;
 	bool _confirmQuit;
 };
