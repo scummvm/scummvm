@@ -83,13 +83,10 @@ private:
 	void handleUseItem0DOnMachine();
 
 	Common::Array<byte> _chunk6FrameMap;
-	byte _chunk6FrameIndex;
-	byte _chunk6State;
 	byte _chunk8FrameIndex;
 	bool _chunk6RandomIdlePaused;
 	bool _colorMapItem8Promoted;
-	uint32 _chunk6TimerAccumulator;
-	uint32 _chunk6FrameMillis;
+	RandomIdleAnimation _chunk6Animation;
 };
 
 } // End of namespace Hollywood

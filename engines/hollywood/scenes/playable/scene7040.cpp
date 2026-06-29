@@ -113,21 +113,17 @@ const byte kScene7040Chunk18PickupItem0FFrameMap[] = {
 
 Scene7040::Scene7040(HollywoodEngine *vm) :
 		PlayableScene(vm, "scene7040", 0x14a, 0x139, 1, 0xfd, 0xfb),
-		_chunk11FrameIndex(0),
 		_chunk12FrameIndex(0),
 		_chunk14ActionFrameIndex(0),
 		_chunk14AltFrameIndex(0),
 		_chunk14AltChunkIndex(14),
-		_chunk16FrameIndex(1),
-		_chunk17FrameIndex(0),
-		_preItemIdleState(0),
 		_postItemIdleState(0),
 		_chunk12OverlayVisible(false),
 		_chunk14ActionVisible(false),
-		_chunk14AltVisible(false),
-		_chunk11TimerAccumulator(0),
-		_chunk16TimerAccumulator(0),
-		_chunk17TimerAccumulator(0) {
+		_chunk14AltVisible(false) {
+	_preItemIdleAnimation.configure(kScene7040Chunk11FrameMillis, 0, 1, 0, 6, 0x0e, 0x31);
+	_postItemAnimation.reset(1, kScene7040Chunk16FrameMillis);
+	_chunk17Animation.reset(0, kScene7040Chunk17FrameMillis);
 }
 
 const char *Scene7040::resourceArchiveName() const {
@@ -189,15 +185,14 @@ void Scene7040::initializeCustomPreviewState() {
 	_actionOverlayChunkIndex = 0;
 	_actionOverlayDescriptorCount = 0;
 	_actionOverlayFrameIndex = 0;
-	_chunk11FrameIndex = 0;
 	_chunk12FrameIndex = 0;
 	_chunk14ActionFrameIndex = 0;
 	_chunk14AltFrameIndex = 0;
 	_chunk14AltChunkIndex = 14;
-	_chunk16FrameIndex = 1;
-	_chunk17FrameIndex = 0;
-	_preItemIdleState = 0;
 	_postItemIdleState = 0;
+	_preItemIdleAnimation.reset();
+	_postItemAnimation.reset(1, kScene7040Chunk16FrameMillis);
+	_chunk17Animation.reset(0, kScene7040Chunk17FrameMillis);
 	_chunk12OverlayVisible = false;
 	_chunk14ActionVisible = false;
 	_chunk14AltVisible = false;
@@ -209,9 +204,6 @@ void Scene7040::initializeCustomPreviewState() {
 	_secondaryActorTimerAccumulator = 0;
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
-	_chunk11TimerAccumulator = 0;
-	_chunk16TimerAccumulator = 0;
-	_chunk17TimerAccumulator = 0;
 	_previousAmbientMusicTrackId = 0;
 	_activeActorWorldX = kScene7040Entry7040FirstTargetX;
 	_activeActorWorldY = kScene7040Entry7040FirstTargetY;
@@ -235,9 +227,9 @@ void Scene7040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	if (_vm->gameState().reviewedFrankensteinNote) {
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[17], 0,
-			kScene7040Chunk17DescriptorCount, _chunk17FrameIndex, _sceneFramebuffer);
-		const byte frame = _chunk16FrameIndex < ARRAYSIZE(kScene7040Chunk16PostItemFrameMap) ?
-			kScene7040Chunk16PostItemFrameMap[_chunk16FrameIndex] : 0;
+			kScene7040Chunk17DescriptorCount, _chunk17Animation.frameIndex, _sceneFramebuffer);
+		const byte frame = _postItemAnimation.frameIndex < ARRAYSIZE(kScene7040Chunk16PostItemFrameMap) ?
+			kScene7040Chunk16PostItemFrameMap[_postItemAnimation.frameIndex] : 0;
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[16], 0,
 			kScene7040Chunk16DescriptorCount, frame, _sceneFramebuffer);
 	} else {
@@ -245,8 +237,8 @@ void Scene7040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 			drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[12], 0,
 				kScene7040Chunk12DescriptorCount, _chunk12FrameIndex, _sceneFramebuffer);
 		}
-		const byte frame = _chunk11FrameIndex < ARRAYSIZE(kScene7040Chunk11FrameMap) ?
-			kScene7040Chunk11FrameMap[_chunk11FrameIndex] : 0;
+		const byte frame = _preItemIdleAnimation.channel.frameIndex < ARRAYSIZE(kScene7040Chunk11FrameMap) ?
+			kScene7040Chunk11FrameMap[_preItemIdleAnimation.channel.frameIndex] : 0;
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[11], 0,
 			kScene7040Chunk11DescriptorCount, frame, _sceneFramebuffer);
 		if (_chunk14ActionVisible) {
@@ -319,11 +311,11 @@ void Scene7040::runJosephGuestListGreeting() {
 	beginSecondarySpeechLine(kScene7040DialogueStageId, 6);
 	if (shouldStopJosephGuestListGreeting())
 		return;
-	_preItemIdleState = 2;
+	_preItemIdleAnimation.state = 2;
 	waitPreItemIdleSequence();
 	if (shouldStopJosephGuestListGreeting())
 		return;
-	_preItemIdleState = 3;
+	_preItemIdleAnimation.state = 3;
 	beginPrimarySpeechLine(kScene7040DialoguePrimaryRow, 6, kScene7040DialoguePrimaryCenterX,
 		kScene7040DialoguePrimaryTopY, kScene7040DialoguePrimaryRed, kScene7040DialoguePrimaryGreen,
 		kScene7040DialoguePrimaryBlue);
@@ -337,13 +329,12 @@ void Scene7040::runJosephGuestListGreeting() {
 		kScene7040DialoguePrimaryBlue);
 	if (shouldStopJosephGuestListGreeting())
 		return;
-	_chunk11FrameIndex = 0;
-	_preItemIdleState = 0;
+	_preItemIdleAnimation.reset();
 	_vm->gameState().seenJosephGuestListGreeting = true;
 }
 
 void Scene7040::waitPreItemIdleSequence() {
-	for (uint step = 0; _preItemIdleState != 0 && step < 8 && !Engine::shouldQuit(); ++step) {
+	for (uint step = 0; _preItemIdleAnimation.state != 0 && step < 8 && !Engine::shouldQuit(); ++step) {
 		if (waitSceneMillis(kScene7040Chunk11FrameMillis))
 			break;
 	}
@@ -353,8 +344,7 @@ bool Scene7040::shouldStopJosephGuestListGreeting() {
 	if (!_skipRequested && !Engine::shouldQuit() && !_vm->isSceneRestartRequested())
 		return false;
 
-	_chunk11FrameIndex = 0;
-	_preItemIdleState = 0;
+	_preItemIdleAnimation.reset();
 	return true;
 }
 
@@ -492,76 +482,48 @@ void Scene7040::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 		_chunk14AltFrameIndex = frameIndex;
 		break;
 	default:
-		_chunk11FrameIndex = frameIndex;
+		_preItemIdleAnimation.setFrame(frameIndex);
 		break;
 	}
 }
 
 void Scene7040::advanceChunk11PreItemIdleAnimation(uint32 delta) {
-	_chunk11TimerAccumulator += delta;
-	while (_chunk11TimerAccumulator >= kScene7040Chunk11FrameMillis) {
-		_chunk11TimerAccumulator -= kScene7040Chunk11FrameMillis;
-		if (_preItemIdleState == 3)
-			continue;
-
-		if (_preItemIdleState == 0) {
-			if (_random.getRandomNumber(0x31) == 0) {
-				_preItemIdleState = 2;
-				_chunk11FrameIndex = 0;
-			} else if (_random.getRandomNumber(0x0e) == 0) {
-				_preItemIdleState = 1;
-				_chunk11FrameIndex = 1;
-			}
-		} else if (_preItemIdleState == 1) {
-			_chunk11FrameIndex = 0;
-			_preItemIdleState = 0;
-		} else if (_preItemIdleState == 2) {
-			if (_chunk11FrameIndex == 6) {
-				_chunk11FrameIndex = 0;
-				_preItemIdleState = 0;
-			} else {
-				++_chunk11FrameIndex;
-			}
-		}
-	}
+	_preItemIdleAnimation.advance(_random, delta);
 }
 
 void Scene7040::advanceChunk16PostItemAnimation(uint32 delta) {
-	_chunk16TimerAccumulator += delta;
-	while (_chunk16TimerAccumulator >= kScene7040Chunk16FrameMillis) {
-		_chunk16TimerAccumulator -= kScene7040Chunk16FrameMillis;
+	for (uint frame = 0; frame < _postItemAnimation.consumeFrames(delta); ++frame) {
 		switch (_postItemIdleState) {
 		case 0:
-			++_chunk16FrameIndex;
-			if (_chunk16FrameIndex >= 5)
+			++_postItemAnimation.frameIndex;
+			if (_postItemAnimation.frameIndex >= 5)
 				_postItemIdleState = 1;
 			break;
 		case 1:
-			++_chunk16FrameIndex;
-			if (_chunk16FrameIndex >= 0x1a)
+			++_postItemAnimation.frameIndex;
+			if (_postItemAnimation.frameIndex >= 0x1a)
 				_postItemIdleState = 2;
 			break;
 		case 2:
-			++_chunk16FrameIndex;
-			if (_chunk16FrameIndex >= 0x1e)
+			++_postItemAnimation.frameIndex;
+			if (_postItemAnimation.frameIndex >= 0x1e)
 				_postItemIdleState = 3;
 			break;
 		default:
 			if (_random.getRandomNumber(0x0e) == 0)
-				_chunk16FrameIndex = 0x22;
+				_postItemAnimation.frameIndex = 0x22;
 			else
-				_chunk16FrameIndex = 0x1e;
+				_postItemAnimation.frameIndex = 0x1e;
 			break;
 		}
-		if (_chunk16FrameIndex >= ARRAYSIZE(kScene7040Chunk16PostItemFrameMap))
-			_chunk16FrameIndex = 1;
+		if (_postItemAnimation.frameIndex >= ARRAYSIZE(kScene7040Chunk16PostItemFrameMap))
+			_postItemAnimation.frameIndex = 1;
 	}
 
-	_chunk17TimerAccumulator += delta;
-	while (_chunk17TimerAccumulator >= kScene7040Chunk17FrameMillis) {
-		_chunk17TimerAccumulator -= kScene7040Chunk17FrameMillis;
-		if (_postItemIdleState > 1 || _chunk17FrameIndex != 0)
-			_chunk17FrameIndex = _chunk17FrameIndex == 8 ? 0 : (byte)(_chunk17FrameIndex + 1);
+	for (uint frame = 0; frame < _chunk17Animation.consumeFrames(delta); ++frame) {
+		if (_postItemIdleState > 1 || _chunk17Animation.frameIndex != 0)
+			_chunk17Animation.frameIndex = _chunk17Animation.frameIndex == 8 ? 0 :
+				(byte)(_chunk17Animation.frameIndex + 1);
 	}
 }
 
@@ -760,8 +722,7 @@ void Scene7040::runDialogueMenuRow98() {
 	bool finished = false;
 
 	beginSecondarySpeechLine(kScene7040DialogueStageId, 0);
-	_preItemIdleState = 3;
-	_chunk11FrameIndex = 7;
+	_preItemIdleAnimation.setStateAndFrame(3, 7);
 	beginPrimarySpeechLine(kScene7040DialoguePrimaryRow, 0, kScene7040DialoguePrimaryCenterX,
 		kScene7040DialoguePrimaryTopY, kScene7040DialoguePrimaryRed, kScene7040DialoguePrimaryGreen,
 		kScene7040DialoguePrimaryBlue);
@@ -774,8 +735,7 @@ void Scene7040::runDialogueMenuRow98() {
 			beginPrimarySpeechLine(kScene7040DialoguePrimaryRow, 5, kScene7040DialoguePrimaryCenterX,
 				kScene7040DialoguePrimaryTopY, kScene7040DialoguePrimaryRed, kScene7040DialoguePrimaryGreen,
 				kScene7040DialoguePrimaryBlue);
-			_chunk11FrameIndex = 0;
-			_preItemIdleState = 0;
+			_preItemIdleAnimation.reset();
 			return;
 		}
 
@@ -816,8 +776,7 @@ void Scene7040::runDialogueMenuRow98() {
 		}
 	}
 
-	_chunk11FrameIndex = 0;
-	_preItemIdleState = 0;
+	_preItemIdleAnimation.reset();
 }
 
 void Scene7040::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
@@ -868,10 +827,10 @@ void Scene7040::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 
 void Scene7040::runMajorHotspotFrankensteinBranch() {
 	const bool previousHideActiveActor = _hideActiveActor;
-	const byte previousPreItemIdleState = _preItemIdleState;
+	const byte previousPreItemIdleState = _preItemIdleAnimation.state;
 	const byte previousAltChunkIndex = _chunk14AltChunkIndex;
 	_hideActiveActor = true;
-	_preItemIdleState = 3;
+	_preItemIdleAnimation.state = 3;
 	_chunk12OverlayVisible = true;
 	_chunk12FrameIndex = 0;
 	_chunk14ActionVisible = true;
@@ -910,23 +869,23 @@ void Scene7040::runMajorHotspotFrankensteinBranch() {
 	_chunk14AltChunkIndex = previousAltChunkIndex;
 	beginPrimarySpeechLineWithAnimationGroup(3, 9, 0x1c2, 0x73, 0x3f, 0x32, 0x0c, 0);
 
-	_chunk11FrameIndex = 0;
+	_preItemIdleAnimation.setFrame(0);
 	_chunk14ActionVisible = false;
 	_chunk14AltVisible = false;
 	_chunk12OverlayVisible = false;
-	_preItemIdleState = previousPreItemIdleState;
+	_preItemIdleAnimation.state = previousPreItemIdleState;
 	_hideActiveActor = previousHideActiveActor;
 }
 
 void Scene7040::runChunk11Range(byte firstFrame, byte endFrame) {
-	const byte previousPreItemIdleState = _preItemIdleState;
-	_preItemIdleState = 3;
+	const byte previousPreItemIdleState = _preItemIdleAnimation.state;
+	_preItemIdleAnimation.state = 3;
 	for (uint frame = firstFrame; frame < endFrame && !Engine::shouldQuit(); ++frame) {
-		_chunk11FrameIndex = (byte)MIN<uint>(frame + 1, ARRAYSIZE(kScene7040Chunk11FrameMap) - 1);
+		_preItemIdleAnimation.setFrame((byte)MIN<uint>(frame + 1, ARRAYSIZE(kScene7040Chunk11FrameMap) - 1));
 		if (waitSceneMillis(kScene7040Chunk11FrameMillis))
 			break;
 	}
-	_preItemIdleState = previousPreItemIdleState;
+	_preItemIdleAnimation.state = previousPreItemIdleState;
 }
 
 void Scene7040::runChunk14ActionRange(byte firstFrame, byte endFrame) {
