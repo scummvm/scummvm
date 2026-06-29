@@ -956,7 +956,16 @@ private:
 				_character = g_engine->game().unknownSayTextCharacter(characterName, dialogId);
 			if (_character == nullptr)
 				return TaskReturn::finish(1);
-			return TaskReturn::waitFor(_character->sayText(process(), dialogId));
+			return TaskReturn::waitFor(_character->sayText(process(), dialogId, nullptr));
+		};
+		case ScriptKernelTask::SayTextOnlySound: {
+			const char *dialogSound = getStringArg(1);
+			Character *_character = getObjectArg<Character>(0);
+			if (_character == nullptr)
+				_character = g_engine->game().unknownSayTextCharacter(getStringArg(0), -1);
+			if (_character == nullptr)
+				return TaskReturn::finish(1);
+			return TaskReturn::waitFor(_character->sayText(process(), -1, dialogSound));
 		};
 		case ScriptKernelTask::SetDialogLineReturn:
 			relatedCharacter().setLastDialogReturnValue(getNumberArg(0));

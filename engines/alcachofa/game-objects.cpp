@@ -315,10 +315,11 @@ void Character::trigger(const char *action) {
 }
 
 struct SayTextTask final : public Task {
-	SayTextTask(Process &process, Character *character, int32 dialogId)
+	SayTextTask(Process &process, Character *character, int32 dialogId, const char *dialogSound)
 		: Task(process)
 		, _character(character)
-		, _dialogId(dialogId) {}
+		, _dialogId(dialogId)
+		, _dialogSound(dialogSound) {}
 
 	SayTextTask(Process &process, Serializer &s)
 		: Task(process) {
@@ -337,7 +338,7 @@ struct SayTextTask final : public Task {
 			if (_soundHandle == SoundHandle {}) {
 				bool hasMortadeloVoice = g_engine->game().hasMortadeloVoice(_character);
 				_soundHandle = g_engine->sounds().playVoice(
-					String::format(hasMortadeloVoice ? "M%04d" : "%04d", _dialogId),
+					_dialogSound.empty() ? String::format(hasMortadeloVoice ? "M%04d" : "%04d", _dialogId) : _dialogSound,
 					0);
 			}
 			isSoundStillPlaying = g_engine->sounds().isAlive(_soundHandle);
@@ -346,7 +347,8 @@ struct SayTextTask final : public Task {
 				_character->_isTalking = false;
 
 			if (g_engine->config().subtitles() &&
-				process().isActiveForPlayer()) {
+				process().isActiveForPlayer() &&
+				_dialogId >= 0) {
 				g_engine->drawQueue().add<TextDrawRequest>(
 					g_engine->globalUI().dialogFont(),
 					g_engine->world().getDialogLine(_dialogId),
@@ -375,6 +377,8 @@ struct SayTextTask final : public Task {
 		Task::syncGame(s);
 		syncObjectAsString(s, _character);
 		s.syncAsSint32LE(_dialogId);
+		if (_dialogId == -1)
+			s.syncString(_dialogSound);
 	}
 
 	const char *taskName() const override;
@@ -382,12 +386,13 @@ struct SayTextTask final : public Task {
 private:
 	Character *_character = nullptr;
 	int32 _dialogId = 0;
+	String _dialogSound = nullptr;
 	SoundHandle _soundHandle = {};
 };
 DECLARE_TASK(SayTextTask)
 
-Task *Character::sayText(Process &process, int32 dialogId) {
-	return new SayTextTask(process, this, dialogId);
+Task *Character::sayText(Process &process, int32 dialogId, const char *dialogSound) {
+	return new SayTextTask(process, this, dialogId, dialogSound);
 }
 
 void Character::resetTalking() {
@@ -1096,7 +1101,7 @@ struct DialogMenuTask final : public Task {
 			if (_clickedLineI != UINT_MAX) {
 				TASK_YIELD(2);
 				process().lockInteraction();
-				TASK_WAIT(3, _character->sayText(process(), _character->_dialogLines[_clickedLineI]._dialogId));
+				TASK_WAIT(3, _character->sayText(process(), _character->_dialogLines[_clickedLineI]._dialogId, nullptr));
 				int32 returnValue = _character->_dialogLines[_clickedLineI]._returnValue;
 				_character->_dialogLines.clear();
 				TASK_RETURN(returnValue);

@@ -102,7 +102,7 @@ static constexpr const ScriptKernelTask kScriptKernelTaskMap[] = {
 	ScriptKernelTask::PlayMusic,
 	ScriptKernelTask::StopMusic,
 	ScriptKernelTask::WaitForMusicToEnd,
-	ScriptKernelTask::SayTextV2, // *might* be used in secta, unused in corvino
+	ScriptKernelTask::SayTextOnlySound, // only used in secta/escarabajo with subtitles off (speaking with YAFAR)
 	ScriptKernelTask::AnimateCharacter, // from here on only corvino
 	ScriptKernelTask::AnimateTalking,
 	ScriptKernelTask::ClearInventory,

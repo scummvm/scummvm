@@ -506,7 +506,7 @@ public:
 	void trigger(const char *action) override;
 	const char *typeName() const override;
 
-	Task *sayText(Process &process, int32 dialogId);
+	Task *sayText(Process &process, int32 dialogId, const char *dialogSound);
 	void resetTalking();
 	void talkUsing(ObjectBase *talkObject);
 	Task *animate(Process &process, ObjectBase *animateObject);

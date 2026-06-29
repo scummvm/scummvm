@@ -83,7 +83,7 @@ enum class ScriptKernelTask {
 	StopAndTurnMe,
 	ChangeCharacter,
 	SayText,
-	SayTextV2, // TODO: Reverse engineer this variant
+	SayTextOnlySound, // only used in secta with subtitles turned off...
 	Go,
 	Put,
 	ChangeCharacterRoom,
