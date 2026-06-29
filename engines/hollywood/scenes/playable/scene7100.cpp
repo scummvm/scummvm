@@ -587,6 +587,7 @@ void Scene7100::handlePickupItem16() {
 	walkActiveActorTo(0x168, 0x198, 4, 0);
 
 	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayHideActiveActor;
 	options.redrawAtEnd = false;
 	options.soundFrame = 0x0e;
 	options.soundId = 0x16;

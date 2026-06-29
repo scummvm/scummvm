@@ -558,6 +558,7 @@ void Scene1020::runOverlaySequence(uint chunkIndex, uint descriptorCount, const 
 	}
 
 	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayShowActiveActor;
 	if (patchFrame >= 0) {
 		options.statePatchFrame = patchFrame;
 		options.statePatchSelector = 0xff;

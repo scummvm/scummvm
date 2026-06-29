@@ -317,7 +317,9 @@ AmbientAudioProfile Scene7090::ambientAudioProfile() const {
 
 void Scene7090::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis) {
-	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis);
+	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayHideActiveActor;
+	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, options);
 }
 
 void Scene7090::handleBackToG07() {
@@ -348,6 +350,7 @@ void Scene7090::handleGatedAction() {
 
 	_prePatchChunk7Visible = true;
 	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayHideActiveActor;
 	options.redrawAtEnd = false;
 	options.hookId = kScene7090GatedActionHook;
 	runActionOverlay(10, kScene7090Chunk10DescriptorCount, kScene7090GatedActionFrameMap,

@@ -83,10 +83,14 @@ private:
 	void handleJackTalkLine();
 	void handleJackLookLine();
 	void handleSuitcasePickup();
+	void finishLargeOverlayIdleSequence();
+	void runSynchronizedOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *actionFrameMap,
+		const byte *largeOverlayFrameMap, uint frameMapSize, uint32 frameMillis);
 	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame = -1);
 	void advanceSmallOverlay(uint32 delta);
 	void advanceLargeOverlay(uint32 delta);
+	void advanceLargeOverlay(uint32 delta, bool forceFinish);
 	void copyStageSmallRow(byte sourceRow, byte destinationRow);
 
 	TimedAnimationChannel _smallOverlayChannel;
@@ -94,6 +98,7 @@ private:
 	ResourceSpriteLayer _smallOverlayLayer;
 	ResourceSpriteLayer _largeOverlayLayer;
 	byte _largeOverlayMode;
+	bool _largeOverlayActionLocked;
 };
 
 } // End of namespace Hollywood

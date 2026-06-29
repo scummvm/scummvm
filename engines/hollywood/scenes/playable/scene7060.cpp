@@ -599,6 +599,7 @@ void Scene7060::beginPrimaryDialogueSpeech(byte frameIndex) {
 void Scene7060::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int soundFrame, byte soundId) {
 	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayHideActiveActor;
 	if (soundFrame >= 0) {
 		options.soundFrame = soundFrame;
 		options.soundId = soundId;
@@ -640,6 +641,7 @@ void Scene7060::handleShortExitToState7071() {
 
 void Scene7060::handleChunk7PickupItem11() {
 	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayHideActiveActor;
 	options.hookFrame = 4;
 	options.hookId = kScene7060PickupItem11Hook;
 	runActionOverlay(7, kScene7060Chunk7DescriptorCount, kScene7060Chunk7PickupItem11FrameMap,
@@ -681,6 +683,7 @@ void Scene7060::handleUseItem0DOnMachine() {
 	beginSecondarySpeechLine(12, 3);
 
 	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayHideActiveActor;
 	options.hookFrame = 4;
 	options.hookId = kScene7060UseItem0DHook;
 	runActionOverlay(7, kScene7060Chunk7DescriptorCount, kScene7060Chunk7UseItem0DFrameMap,

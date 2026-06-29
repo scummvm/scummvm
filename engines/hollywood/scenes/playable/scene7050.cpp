@@ -423,7 +423,7 @@ void Scene7050::beginCloakroomAttendantSpeechLine(byte frameIndex, bool alternat
 
 void Scene7050::handleActionSlot01ReturnToG04() {
 	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayShowActiveActor;
+	options.actorVisibility = kActionOverlayHideActiveActor;
 	runActionOverlay(8, kScene7050Chunk8DescriptorCount, kScene7050Chunk8ReturnFrameMap,
 		ARRAYSIZE(kScene7050Chunk8ReturnFrameMap), kScene7050FrameMillis, options);
 	_soundBank0.playSample(3, 100);
@@ -433,6 +433,7 @@ void Scene7050::handleActionSlot01ReturnToG04() {
 void Scene7050::handleActionSlot10PickupItem10() {
 	dispatchGenericSceneAction(19);
 	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayHideActiveActor;
 	options.hookFrame = 4;
 	options.hookId = kScene7050CloakroomRagPickupHook;
 	runActionOverlay(11, kScene7050Chunk11DescriptorCount, kScene7050Chunk11PickupItem10FrameMap,
