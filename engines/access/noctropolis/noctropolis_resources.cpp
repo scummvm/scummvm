@@ -2004,7 +2004,7 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	int i = 0;
 	while (i < ARRAYSIZE(MENU_POLYS)) {
 		_menus.push_back(MENU_POLYS + i);
-		while (MENU_POLYS[i] != Polygon::LISTEND)
+		while (MENU_POLYS[i] != Polygon::LISTEND && i < ARRAYSIZE(MENU_POLYS))
 			i++;
 		i++;
 	}

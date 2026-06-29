@@ -228,7 +228,8 @@ void NoctropolisEngine::doPublisherLogo() {
 		pngFile.open(nightDive);
 
 		Image::PNGDecoder decoder;
-		decoder.loadStream(pngFile);
+		if (!decoder.loadStream(pngFile))
+			error("Failed to load nightdive logo nds.png");
 
 		// Find the best 8-bit palette for this logo as the png is 24-bit and we're
 		// not changing the output surface format for this one logo at the start!
