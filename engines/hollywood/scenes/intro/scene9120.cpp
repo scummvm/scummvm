@@ -59,7 +59,7 @@ Scene9120::Scene9120(HollywoodEngine *vm) :
 	_sceneFramebuffer.resize(kScene9120FramebufferSize);
 	_savedFramebuffer.resize(kFrameBufferSize);
 	_descriptorBackground.resize(kFrameBufferSize);
-	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
+	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	memset(_paletteResource.data(), 0, _paletteResource.size());
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	memset(_sceneFramebuffer.data(), 0, _sceneFramebuffer.size());
@@ -166,6 +166,28 @@ bool Scene9120::loadResourceI12Assets() {
 }
 
 bool Scene9120::loadResourceI12Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI12ArchiveName), index));
+	if (!stream) {
+		warning("Failed to open %s chunk %u", kI12ArchiveName, index);
+		return false;
+	}
+
+	if (stream->size() > fixedSize || destination.size() < fixedSize) {
+		warning("%s chunk %u does not fit its fixed destination", kI12ArchiveName, index);
+		return false;
+	}
+
+	memset(destination.data(), 0, destination.size());
+	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
+		warning("Failed to read %s chunk %u", kI12ArchiveName, index);
+		return false;
+	}
+
+	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", kI12ArchiveName, index, (uint)stream->size());
+	return true;
+}
+
+bool Scene9120::loadResourceI12Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI12ArchiveName), index));
 	if (!stream) {
 		warning("Failed to open %s chunk %u", kI12ArchiveName, index);
@@ -336,9 +358,9 @@ void Scene9120::restoreAndDrawResourceDescriptorFrame(byte localChunkIndex, byte
 
 	const uint32 baseOffset = _resourceChunkOffsets[localChunkIndex];
 	restoreSpriteBackground(_resourceArena, baseOffset, 0, descriptorCount, descriptorIndex,
-		_descriptorBackground, _sceneFramebuffer);
+		_descriptorBackground.surface(), _sceneFramebuffer.surface());
 	if (drawFrame)
-		drawStripSpriteFrame(_resourceArena, baseOffset, 0, descriptorCount, descriptorIndex, _sceneFramebuffer);
+		drawStripSpriteFrame(_resourceArena, baseOffset, 0, descriptorCount, descriptorIndex, _sceneFramebuffer.surface());
 }
 
 byte Scene9120::getTimedOverlayChunk(uint tickIndex) const {
@@ -482,7 +504,7 @@ void Scene9120::clearSceneRun(int destinationY, int x, int width) {
 }
 
 void Scene9120::presentFrame() {
-	presentIndexedFrame(_sceneFramebuffer, _paletteCurrent, _screen, _yOffset, _xOffset);
+	presentIndexedFrame(_sceneFramebuffer.surface(), _paletteCurrent, _screen, _displayPalette, _yOffset, _xOffset);
 }
 
 bool Scene9120::pollEvents() {

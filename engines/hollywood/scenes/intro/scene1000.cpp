@@ -24,7 +24,6 @@
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/system.h"
-#include "graphics/paletteman.h"
 
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
@@ -67,7 +66,7 @@ Scene1000::Scene1000(HollywoodEngine *vm) :
 	_paletteCurrent.resize(kPaletteSize);
 	_frameDecodeBuffer.resize(kFrameBufferSize);
 	_sceneFramebuffer.resize(kFrameBufferSize);
-	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
+	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 bool Scene1000::play() {
@@ -136,6 +135,29 @@ bool Scene1000::load() {
 }
 
 bool Scene1000::loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kTitleFrontEndArchiveName), index));
+	if (!stream) {
+		warning("Failed to open %s chunk %u", kTitleFrontEndArchiveName, index);
+		return false;
+	}
+
+	if (stream->size() > fixedSize || destination.size() < fixedSize) {
+		warning("%s chunk %u does not fit its fixed destination", kTitleFrontEndArchiveName, index);
+		return false;
+	}
+
+	memset(destination.data(), 0, destination.size());
+	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
+		warning("Failed to read %s chunk %u", kTitleFrontEndArchiveName, index);
+		return false;
+	}
+
+	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u",
+		kTitleFrontEndArchiveName, index, (uint)stream->size());
+	return true;
+}
+
+bool Scene1000::loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kTitleFrontEndArchiveName), index));
 	if (!stream) {
 		warning("Failed to open %s chunk %u", kTitleFrontEndArchiveName, index);
@@ -411,22 +433,7 @@ void Scene1000::fadeOutPalette() {
 }
 
 void Scene1000::presentFrame() {
-	byte palette[kPaletteSize];
-	for (uint i = 0; i < ARRAYSIZE(palette); ++i)
-		palette[i] = MIN<byte>(255, _paletteCurrent[i] * 4);
-
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
-
-	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
-		const uint sourceOffset = y * HollywoodEngine::kSceneBufferWidth;
-		memcpy(_screen.data() + y * HollywoodEngine::kScreenWidth,
-			_sceneFramebuffer.data() + sourceOffset,
-			HollywoodEngine::kScreenWidth);
-	}
-
-	g_system->copyRectToScreen(_screen.data(), HollywoodEngine::kScreenWidth, 0, 0,
-		HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight);
-	g_system->updateScreen();
+	presentIndexedFrame(_sceneFramebuffer.surface(), _paletteCurrent, _screen, _displayPalette);
 }
 
 bool Scene1000::pollEvents() {

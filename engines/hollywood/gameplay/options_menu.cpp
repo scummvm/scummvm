@@ -48,7 +48,6 @@ const uint kOptionsResource000OffsetTableSize = 400;
 const uint kOptionsResource000SizeTableSize = 400;
 const uint kOptionsFramebufferEntry = 0x2a;
 const uint kOptionsFramebufferSize = 0x78000;
-const uint kOptionsFramebufferWidth = 1024;
 const uint kOptionsViewportXOffset = 0x180;
 const uint kOptionsObjectPaletteOffset = 0x210;
 const uint kOptionsObjectPaletteSize = 0xf0;
@@ -400,10 +399,7 @@ void GameplayOptionsMenu::composeScreen() {
 		return;
 	}
 
-	Graphics::Surface menuSurface;
-	menuSurface.init(kOptionsFramebufferWidth, HollywoodEngine::kScreenHeight,
-		kOptionsFramebufferWidth, _menuFramebuffer.data(), Graphics::PixelFormat::createFormatCLUT8());
-	_screen.copyRectToSurface(menuSurface, 0, 0,
+	_screen.copyRectToSurface(_menuFramebuffer.surface(), 0, 0,
 		Common::Rect(kOptionsViewportXOffset, 0,
 			kOptionsViewportXOffset + HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight));
 }

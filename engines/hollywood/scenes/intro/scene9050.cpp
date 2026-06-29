@@ -132,7 +132,7 @@ Scene9050::Scene9050(HollywoodEngine *vm) :
 	_sceneFramebuffer.resize(kFrameBufferSize);
 	_savedFramebuffer.resize(kFrameBufferSize);
 	_clipBaseFramebuffer.resize(kFrameBufferSize);
-	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
+	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 bool Scene9050::play() {
@@ -171,6 +171,28 @@ bool Scene9050::play() {
 }
 
 bool Scene9050::loadResourceChunk(const char *archiveName, uint index, Common::Array<byte> &destination, uint fixedSize) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(archiveName), index));
+	if (!stream) {
+		warning("Failed to open %s chunk %u", archiveName, index);
+		return false;
+	}
+
+	if (stream->size() > fixedSize || destination.size() < fixedSize) {
+		warning("%s chunk %u does not fit its fixed destination", archiveName, index);
+		return false;
+	}
+
+	memset(destination.data(), 0, destination.size());
+	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
+		warning("Failed to read %s chunk %u", archiveName, index);
+		return false;
+	}
+
+	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", archiveName, index, (uint)stream->size());
+	return true;
+}
+
+bool Scene9050::loadResourceChunk(const char *archiveName, uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(archiveName), index));
 	if (!stream) {
 		warning("Failed to open %s chunk %u", archiveName, index);
@@ -308,6 +330,10 @@ bool Scene9050::loadResourceI05Chunk(uint index, Common::Array<byte> &destinatio
 	return loadResourceChunk(kI05ArchiveName, index, destination, fixedSize);
 }
 
+bool Scene9050::loadResourceI05Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
+	return loadResourceChunk(kI05ArchiveName, index, destination, fixedSize);
+}
+
 bool Scene9050::loadResourceI05ArenaChunk(uint archiveIndex, uint localChunkIndex) {
 	return loadResourceArenaChunk(kI05ArchiveName, archiveIndex, localChunkIndex);
 }
@@ -433,11 +459,11 @@ void Scene9050::presentResourceI06AnimatedFrame() {
 
 	if (redrawFrame) {
 		copyResourceI06ScrolledBaseFrame();
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[4], _sceneFramebuffer, _i06RandomBasePhase);
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[4], _sceneFramebuffer.surface(), _i06RandomBasePhase);
 		drawResourceI06AnimatedFrame(2, (byte)(_i06PrimarySpriteFrame + _i06VerticalBobOffset));
 		drawResourceI06AnimatedFrame(3, _i06SecondarySpriteFrame);
 		if (_i06OptionalOverlayChunk5Enabled)
-			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer);
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _sceneFramebuffer.surface());
 
 		_i06BaseFrameDirty = false;
 		_i06PrimarySpriteDirty = false;
@@ -456,7 +482,7 @@ void Scene9050::drawResourceI06AnimatedFrame(byte chunkIndex, byte frameIndex) {
 		return;
 
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[chunkIndex], 0,
-		kI06AnimatedFrameDescriptorCount, frameIndex, _sceneFramebuffer, _i06RandomBasePhase);
+		kI06AnimatedFrameDescriptorCount, frameIndex, _sceneFramebuffer.surface(), _i06RandomBasePhase);
 }
 
 void Scene9050::advanceResourceI06Timers(uint32 millis) {
@@ -851,9 +877,9 @@ void Scene9050::restoreAndDrawResourceDescriptorFrame(byte localChunkIndex, byte
 
 	const uint32 baseOffset = _resourceChunkOffsets[localChunkIndex];
 	restoreSpriteBackground(_resourceArena, baseOffset, 0, descriptorCount, descriptorIndex,
-		_clipBaseFramebuffer, _sceneFramebuffer);
+		_clipBaseFramebuffer.surface(), _sceneFramebuffer.surface());
 	if (drawFrame)
-		drawStripSpriteFrame(_resourceArena, baseOffset, 0, descriptorCount, descriptorIndex, _sceneFramebuffer);
+		drawStripSpriteFrame(_resourceArena, baseOffset, 0, descriptorCount, descriptorIndex, _sceneFramebuffer.surface());
 }
 
 bool Scene9050::runResourceI08BlinkSequence() {
@@ -941,8 +967,8 @@ void Scene9050::revealSavedFramebufferBand(uint sweepOffset, byte bandWidth) {
 	const int leftInset = sweepOffset;
 
 	for (uint row = 0; row < bandWidth; ++row) {
-		copyFramebufferRun(_savedFramebuffer, _sceneFramebuffer, sweepOffset + row, leftInset, innerWidth);
-		copyFramebufferRun(_savedFramebuffer, _sceneFramebuffer,
+		copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(), sweepOffset + row, leftInset, innerWidth);
+		copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(),
 			(HollywoodEngine::kScreenHeight - bandWidth - sweepOffset) + row, leftInset, innerWidth);
 	}
 
@@ -950,8 +976,8 @@ void Scene9050::revealSavedFramebufferBand(uint sweepOffset, byte bandWidth) {
 		const int middleRightX = sweepOffset + innerWidth - bandWidth;
 		for (int row = 0; row < middleHeight; ++row) {
 			const int y = combinedInset + row;
-			copyFramebufferRun(_savedFramebuffer, _sceneFramebuffer, y, leftInset, bandWidth);
-			copyFramebufferRun(_savedFramebuffer, _sceneFramebuffer, y, middleRightX, bandWidth);
+			copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(), y, leftInset, bandWidth);
+			copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(), y, middleRightX, bandWidth);
 		}
 	}
 }
@@ -966,8 +992,8 @@ void Scene9050::clearSceneFramebufferBand(uint sweepOffset, byte bandWidth) {
 	const int leftInset = sweepOffset;
 
 	for (uint row = 0; row < bandWidth; ++row) {
-		clearFramebufferRun(_sceneFramebuffer, sweepOffset + row, leftInset, innerWidth);
-		clearFramebufferRun(_sceneFramebuffer,
+		clearSurfaceRun(_sceneFramebuffer.surface(), sweepOffset + row, leftInset, innerWidth);
+		clearSurfaceRun(_sceneFramebuffer.surface(),
 			(HollywoodEngine::kScreenHeight - bandWidth - sweepOffset) + row, leftInset, innerWidth);
 	}
 
@@ -975,14 +1001,14 @@ void Scene9050::clearSceneFramebufferBand(uint sweepOffset, byte bandWidth) {
 		const int middleRightX = sweepOffset + innerWidth - bandWidth;
 		for (int row = 0; row < middleHeight; ++row) {
 			const int y = combinedInset + row;
-			clearFramebufferRun(_sceneFramebuffer, y, leftInset, bandWidth);
-			clearFramebufferRun(_sceneFramebuffer, y, middleRightX, bandWidth);
+			clearSurfaceRun(_sceneFramebuffer.surface(), y, leftInset, bandWidth);
+			clearSurfaceRun(_sceneFramebuffer.surface(), y, middleRightX, bandWidth);
 		}
 	}
 }
 
 void Scene9050::presentFrame() {
-	presentIndexedFrame(_sceneFramebuffer, _paletteCurrent, _screen);
+	presentIndexedFrame(_sceneFramebuffer.surface(), _paletteCurrent, _screen, _displayPalette);
 }
 
 bool Scene9050::pollEvents() {

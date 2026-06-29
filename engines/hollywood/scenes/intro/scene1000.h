@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/random.h"
 
+#include "hollywood/graphics.h"
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
 
@@ -41,6 +42,7 @@ public:
 private:
 	bool load();
 	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
+	bool loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
 	bool loadArenaChunk(uint index);
 	void runTitleFrontEndSequence();
 	void applyTitlePatch();
@@ -74,10 +76,11 @@ private:
 	uint32 _resourceArenaCursor;
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _paletteCurrent;
-	Common::Array<byte> _frameDecodeBuffer;
-	Common::Array<byte> _sceneFramebuffer;
+	IndexedSurfaceBuffer _frameDecodeBuffer;
+	IndexedSurfaceBuffer _sceneFramebuffer;
 	Common::Array<byte> _resourceArena;
-	Common::Array<byte> _screen;
+	Graphics::ManagedSurface _screen;
+	Palette6Bit _displayPalette;
 	uint32 _lastBlinkMillis;
 	byte _blinkPatternMode;
 	byte _blinkFrameIndex;

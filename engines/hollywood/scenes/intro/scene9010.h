@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/file.h"
 
+#include "hollywood/graphics.h"
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
 
@@ -44,6 +45,7 @@ private:
 
 	bool loadScene9010Resources();
 	bool loadI01Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
+	bool loadI01Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
 	bool loadStage003Descriptors();
 	bool loadI03Scene();
 
@@ -94,9 +96,10 @@ private:
 	Common::Array<byte> _resourceArena;
 	Common::Array<byte> _i02PaletteTable;
 	Common::Array<byte> _i02FramePayload;
-	Common::Array<byte> _frameDecodeBuffer;
-	Common::Array<byte> _sceneFramebuffer;
-	Common::Array<byte> _screen;
+	IndexedSurfaceBuffer _frameDecodeBuffer;
+	IndexedSurfaceBuffer _sceneFramebuffer;
+	Graphics::ManagedSurface _screen;
+	Palette6Bit _displayPalette;
 	Common::Array<byte> _stage003Descriptors;
 	bool _skipRequested;
 	bool _alternatePoseActive;

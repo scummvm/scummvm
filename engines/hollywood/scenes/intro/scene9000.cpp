@@ -24,7 +24,6 @@
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/system.h"
-#include "graphics/paletteman.h"
 
 #include "hollywood/hollywood.h"
 
@@ -45,7 +44,7 @@ Scene9000::Scene9000(HollywoodEngine *vm) :
 	_paletteCurrent.resize(0x300);
 	_frameDecodeBuffer.resize(HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight);
 	_sceneFramebuffer.resize(HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight);
-	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
+	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 bool Scene9000::play() {
@@ -239,21 +238,7 @@ void Scene9000::resetChunkState() {
 }
 
 void Scene9000::presentFrame() {
-	byte palette[0x300];
-	for (uint i = 0; i < ARRAYSIZE(palette); ++i)
-		palette[i] = MIN<byte>(255, _paletteCurrent[i] * 4);
-
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
-
-	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
-		memcpy(&_screen[y * HollywoodEngine::kScreenWidth],
-			&_sceneFramebuffer[y * HollywoodEngine::kSceneBufferWidth],
-			HollywoodEngine::kScreenWidth);
-	}
-
-	g_system->copyRectToScreen(_screen.data(), HollywoodEngine::kScreenWidth, 0, 0,
-		HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight);
-	g_system->updateScreen();
+	presentIndexedFrame(_sceneFramebuffer.surface(), _paletteCurrent, _screen, _displayPalette);
 }
 
 void Scene9000::restoreSpriteBackground(uint16 descriptorIndex) {

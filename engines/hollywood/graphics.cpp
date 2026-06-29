@@ -98,32 +98,47 @@ void Palette6Bit::uploadFrom6Bit(const Common::Array<byte> &palette) {
 	upload();
 }
 
-void uploadPalette6Bit(const Common::Array<byte> &palette) {
-	Palette6Bit convertedPalette;
-	convertedPalette.uploadFrom6Bit(palette);
+IndexedSurfaceBuffer::IndexedSurfaceBuffer() :
+		_surface(),
+		_byteCount(0) {
 }
 
-void presentIndexedFrame(const Common::Array<byte> &framebuffer, const Common::Array<byte> &palette,
-		Common::Array<byte> &screen, uint rowOffset, uint xOffset) {
-	uploadPalette6Bit(palette);
-
-	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
-		const uint sourceOffset = xOffset + (y + rowOffset) * HollywoodEngine::kSceneBufferWidth;
-		if (sourceOffset + HollywoodEngine::kScreenWidth <= framebuffer.size()) {
-			memcpy(screen.data() + y * HollywoodEngine::kScreenWidth,
-				framebuffer.data() + sourceOffset,
-				HollywoodEngine::kScreenWidth);
-		} else {
-			memset(screen.data() + y * HollywoodEngine::kScreenWidth, 0, HollywoodEngine::kScreenWidth);
-		}
+void IndexedSurfaceBuffer::resize(uint byteCount) {
+	_byteCount = byteCount;
+	if (byteCount == 0) {
+		_surface.free();
+		return;
 	}
 
-	g_system->copyRectToScreen(screen.data(), HollywoodEngine::kScreenWidth, 0, 0,
-		HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight);
-	g_system->updateScreen();
+	const uint width = HollywoodEngine::kSceneBufferWidth;
+	const uint height = (byteCount + width - 1) / width;
+	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 }
 
-void presentIndexedFrame(const Common::Array<byte> &framebuffer, const Common::Array<byte> &palette,
+void IndexedSurfaceBuffer::clear(byte value) {
+	if (_byteCount == 0 || _surface.empty())
+		return;
+
+	memset(data(), value, _byteCount);
+}
+
+byte *IndexedSurfaceBuffer::data() {
+	return (byte *)_surface.getPixels();
+}
+
+const byte *IndexedSurfaceBuffer::data() const {
+	return (const byte *)_surface.getPixels();
+}
+
+byte &IndexedSurfaceBuffer::operator[](uint offset) {
+	return data()[offset];
+}
+
+const byte &IndexedSurfaceBuffer::operator[](uint offset) const {
+	return data()[offset];
+}
+
+void presentIndexedFrame(const Graphics::Surface &framebuffer, const Common::Array<byte> &palette,
 		Graphics::ManagedSurface &screen, Palette6Bit &convertedPalette, uint rowOffset, uint xOffset) {
 	convertedPalette.uploadFrom6Bit(palette);
 
@@ -132,9 +147,9 @@ void presentIndexedFrame(const Common::Array<byte> &framebuffer, const Common::A
 
 	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
 		byte *destination = (byte *)screen.getBasePtr(0, y);
-		const uint sourceOffset = xOffset + (y + rowOffset) * HollywoodEngine::kSceneBufferWidth;
-		if (sourceOffset + HollywoodEngine::kScreenWidth <= framebuffer.size()) {
-			memcpy(destination, framebuffer.data() + sourceOffset, HollywoodEngine::kScreenWidth);
+		const uint sourceY = y + rowOffset;
+		if (sourceY < (uint)framebuffer.h && xOffset + HollywoodEngine::kScreenWidth <= (uint)framebuffer.w) {
+			memcpy(destination, framebuffer.getBasePtr(xOffset, sourceY), HollywoodEngine::kScreenWidth);
 		} else {
 			memset(destination, 0, HollywoodEngine::kScreenWidth);
 		}
@@ -142,28 +157,6 @@ void presentIndexedFrame(const Common::Array<byte> &framebuffer, const Common::A
 
 	g_system->copyRectToScreen(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
 	g_system->updateScreen();
-}
-
-void copyFramebufferRun(const Common::Array<byte> &source, Common::Array<byte> &destination, int y, int x, int width) {
-	if (width <= 0 || y < 0 || x < 0)
-		return;
-
-	const uint offset = x + y * HollywoodEngine::kSceneBufferWidth;
-	if (offset + width > source.size() || offset + width > destination.size())
-		return;
-
-	memcpy(destination.data() + offset, source.data() + offset, width);
-}
-
-void clearFramebufferRun(Common::Array<byte> &destination, int y, int x, int width) {
-	if (width <= 0 || y < 0 || x < 0)
-		return;
-
-	const uint offset = x + y * HollywoodEngine::kSceneBufferWidth;
-	if (offset + width > destination.size())
-		return;
-
-	memset(destination.data() + offset, 0, width);
 }
 
 void copySurfaceRun(const Graphics::Surface &source, Graphics::Surface &destination, int y, int x, int width) {
@@ -187,29 +180,6 @@ void clearSurfaceRun(Graphics::Surface &destination, int y, int x, int width) {
 		return;
 
 	memset(destination.getBasePtr(x, y), 0, clearWidth * destination.format.bytesPerPixel);
-}
-
-void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
-		uint16 descriptorCount, uint16 descriptorIndex, const Common::Array<byte> &background,
-		Common::Array<byte> &destination, int yOffset) {
-	if (descriptorIndex >= descriptorCount)
-		return;
-
-	const uint entryOffset = baseOffset + descriptorTableOffset + (kFrameDescriptorSize * descriptorIndex);
-	if (entryOffset + kFrameDescriptorSize > resource.size())
-		return;
-
-	const uint32 packedWidth = readUint32LE(resource, entryOffset + 4);
-	const uint32 packedRows = readUint32LE(resource, entryOffset + 8);
-	const uint copyWidth = (packedWidth >> 16) & 0xffff;
-	const uint x = packedWidth & 0xffff;
-	const int firstRow = (int)(packedRows & 0xffff) + yOffset;
-	const int lastRow = (int)((packedRows >> 16) & 0xffff) + yOffset;
-	if (copyWidth == 0 || firstRow > lastRow)
-		return;
-
-	for (int row = firstRow; row <= lastRow; ++row)
-		copyFramebufferRun(background, destination, row, x, copyWidth);
 }
 
 void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
@@ -240,43 +210,6 @@ void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOff
 		Graphics::ManagedSurface &destination, int yOffset) {
 	restoreSpriteBackground(resource, baseOffset, descriptorTableOffset, descriptorCount, descriptorIndex,
 		background.rawSurface(), *destination.surfacePtr(), yOffset);
-}
-
-void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
-		uint16 descriptorCount, uint16 descriptorIndex, Common::Array<byte> &destination, int yOffset) {
-	if (descriptorIndex >= descriptorCount)
-		return;
-
-	const uint entryOffset = baseOffset + descriptorTableOffset + (kFrameDescriptorSize * descriptorIndex);
-	if (entryOffset + kFrameDescriptorSize > resource.size())
-		return;
-
-	const uint16 spanCount = readUint16LE(resource, entryOffset + 12);
-	uint cursor = baseOffset + descriptorTableOffset + (kFrameDescriptorSize * descriptorCount) + readUint32LE(resource, entryOffset);
-	if (cursor > resource.size())
-		return;
-
-	for (uint spanIndex = 0; spanIndex < spanCount; ++spanIndex) {
-		if (cursor + 5 > resource.size())
-			return;
-
-		const uint32 packedDestination = readUint32LE(resource, cursor);
-		const uint dataLength = resource[cursor + 4];
-		cursor += 5;
-
-		if (cursor + dataLength > resource.size())
-			return;
-
-		const uint x = packedDestination & 0xffff;
-		const int y = (int)((packedDestination >> 16) & 0xffff) + yOffset;
-		if (y >= 0 && y < HollywoodEngine::kSceneBufferHeight) {
-			const uint destinationOffset = x + y * HollywoodEngine::kSceneBufferWidth;
-			if (destinationOffset + dataLength <= destination.size())
-				memcpy(destination.data() + destinationOffset, resource.data() + cursor, dataLength);
-		}
-
-		cursor += dataLength;
-	}
 }
 
 void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
@@ -320,35 +253,6 @@ void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset
 		uint16 descriptorCount, uint16 descriptorIndex, Graphics::ManagedSurface &destination, int yOffset) {
 	drawStripSpriteFrame(resource, baseOffset, descriptorTableOffset, descriptorCount, descriptorIndex,
 		*destination.surfacePtr(), yOffset);
-}
-
-void drawResourceBlockList(const Common::Array<byte> &resource, uint32 baseOffset,
-		Common::Array<byte> &destination, int yOffset) {
-	if (baseOffset + 2 > resource.size())
-		return;
-
-	const uint16 blockCount = readUint16LE(resource, baseOffset);
-	uint cursor = baseOffset + 2;
-	for (uint blockIndex = 0; blockIndex < blockCount; ++blockIndex) {
-		if (cursor + 6 > resource.size())
-			return;
-
-		const uint32 packedDestination = readUint32LE(resource, cursor);
-		const uint16 size = readUint16LE(resource, cursor + 4);
-		cursor += 6;
-
-		if (cursor + size > resource.size())
-			return;
-
-		const uint x = packedDestination & 0xffff;
-		const int y = (int)((packedDestination >> 16) & 0xffff) + yOffset;
-		if (y >= 0 && y < HollywoodEngine::kSceneBufferHeight) {
-			const uint destinationOffset = x + y * HollywoodEngine::kSceneBufferWidth;
-			if (destinationOffset + size <= destination.size())
-				memcpy(destination.data() + destinationOffset, resource.data() + cursor, size);
-		}
-		cursor += size;
-	}
 }
 
 void drawResourceBlockList(const Common::Array<byte> &resource, uint32 baseOffset,

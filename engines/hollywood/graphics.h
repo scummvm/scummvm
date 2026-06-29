@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/types.h"
+#include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 
 namespace Graphics {
@@ -59,20 +60,37 @@ private:
 	uint _dirtyEnd;
 };
 
-void uploadPalette6Bit(const Common::Array<byte> &palette);
-void presentIndexedFrame(const Common::Array<byte> &framebuffer, const Common::Array<byte> &palette,
-	Common::Array<byte> &screen, uint rowOffset = 0, uint xOffset = 0);
-void presentIndexedFrame(const Common::Array<byte> &framebuffer, const Common::Array<byte> &palette,
+// Owns a CLUT8 scene-sized surface while preserving byte-offset access for
+// original resource decoders that address 1024-wide framebuffers directly.
+class IndexedSurfaceBuffer {
+public:
+	IndexedSurfaceBuffer();
+
+	void resize(uint byteCount);
+	void clear(byte value = 0);
+
+	bool empty() const { return _surface.empty(); }
+	uint size() const { return _byteCount; }
+	byte *data();
+	const byte *data() const;
+	byte &operator[](uint offset);
+	const byte &operator[](uint offset) const;
+	Graphics::ManagedSurface &managedSurface() { return _surface; }
+	const Graphics::ManagedSurface &managedSurface() const { return _surface; }
+	Graphics::Surface &surface() { return *_surface.surfacePtr(); }
+	const Graphics::Surface &surface() const { return _surface.rawSurface(); }
+
+private:
+	Graphics::ManagedSurface _surface;
+	uint _byteCount;
+};
+
+void presentIndexedFrame(const Graphics::Surface &framebuffer, const Common::Array<byte> &palette,
 	Graphics::ManagedSurface &screen, Palette6Bit &convertedPalette, uint rowOffset = 0, uint xOffset = 0);
 
-void copyFramebufferRun(const Common::Array<byte> &source, Common::Array<byte> &destination, int y, int x, int width);
-void clearFramebufferRun(Common::Array<byte> &destination, int y, int x, int width);
 void copySurfaceRun(const Graphics::Surface &source, Graphics::Surface &destination, int y, int x, int width);
 void clearSurfaceRun(Graphics::Surface &destination, int y, int x, int width);
 
-void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
-	uint16 descriptorCount, uint16 descriptorIndex, const Common::Array<byte> &background,
-	Common::Array<byte> &destination, int yOffset = 0);
 void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
 	uint16 descriptorCount, uint16 descriptorIndex, const Graphics::Surface &background,
 	Graphics::Surface &destination, int yOffset = 0);
@@ -80,12 +98,9 @@ void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOff
 	uint16 descriptorCount, uint16 descriptorIndex, const Graphics::ManagedSurface &background,
 	Graphics::ManagedSurface &destination, int yOffset = 0);
 void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
-	uint16 descriptorCount, uint16 descriptorIndex, Common::Array<byte> &destination, int yOffset = 0);
-void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
 	uint16 descriptorCount, uint16 descriptorIndex, Graphics::Surface &destination, int yOffset = 0);
 void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset,
 	uint16 descriptorCount, uint16 descriptorIndex, Graphics::ManagedSurface &destination, int yOffset = 0);
-void drawResourceBlockList(const Common::Array<byte> &resource, uint32 baseOffset, Common::Array<byte> &destination, int yOffset = 0);
 void drawResourceBlockList(const Common::Array<byte> &resource, uint32 baseOffset, Graphics::Surface &destination, int yOffset = 0);
 void drawResourceBlockList(const Common::Array<byte> &resource, uint32 baseOffset, Graphics::ManagedSurface &destination, int yOffset = 0);
 

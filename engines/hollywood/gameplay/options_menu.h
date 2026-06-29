@@ -89,7 +89,7 @@ private:
 	void present();
 
 	HollywoodEngine *_vm;
-	Common::Array<byte> _menuFramebuffer;
+	IndexedSurfaceBuffer _menuFramebuffer;
 	Common::Array<byte> _objectPaletteTriples;
 	Common::Array<byte> _palette;
 	Graphics::ManagedSurface _screen;
