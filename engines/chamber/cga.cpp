@@ -142,7 +142,7 @@ void switchToTextMode(void) {
 
 void waitVBlank(void) {
 	pollInput();
-	if (g_vm->_videoMode == Common::kRenderEGA)
+	if (isEgaLikeRenderer())
 		g_vm->_renderer->blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
 	g_system->delayMillis(10);
 	g_system->updateScreen();
