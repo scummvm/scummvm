@@ -131,7 +131,9 @@ void ScrollTextBox::drawContent() {
 	textBounds.top  += _tboxData->scrollbarDefaultPos.y;
 	textBounds.left += _tboxData->scrollbarDefaultPos.x;
 
-	const uint16 fontID = _fontIDOverride != -1 ? (uint16)_fontIDOverride : _tboxData->conversationFontID;
+	// Narration/caption text uses the (white) highlight font, not the (cyan)
+	// conversation body font that the ConversationPopup uses.
+	const uint16 fontID = _fontIDOverride != -1 ? (uint16)_fontIDOverride : _tboxData->highlightConversationFontID;
 	drawAllText(textBounds, 0, fontID, _tboxData->highlightConversationFontID);
 
 	// Two discrete states: "mini" (<= 2 lines) is a short strip above the
