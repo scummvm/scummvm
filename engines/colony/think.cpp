@@ -586,7 +586,10 @@ void ColonyEngine::snoopThink(int num) {
 	}
 
 	case kOpcodeSnoop: {
-		const int target = trailTargetAngle(_dirXY[obj.where.xindex][obj.where.yindex]);
+		int target = -1;
+		if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
+			obj.where.yindex >= 0 && obj.where.yindex < 32)
+			target = trailTargetAngle(_dirXY[obj.where.xindex][obj.where.yindex]);
 		if (target >= 0 && obj.where.ang != target) {
 			const int diff = (target - obj.where.ang) & 0xFF;
 			if (diff < 128)
