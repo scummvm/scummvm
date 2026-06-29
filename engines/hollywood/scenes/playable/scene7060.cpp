@@ -408,7 +408,7 @@ void Scene7060::setColorMapItem8Promoted(bool promoted) {
 	applyCustomSceneStateToHotspotsAndPatches(0);
 }
 
-PlayableScene::AmbientAudioProfile Scene7060::ambientAudioProfile() const {
+AmbientAudioProfile Scene7060::ambientAudioProfile() const {
 	return createLoopingAmbientAudioProfile(50);
 }
 

@@ -388,7 +388,7 @@ bool Scene1010::customizeRouteFinal(byte currentRegion, byte targetRegion, const
 	return restoredStepDeltas || requestedFacing >= 0;
 }
 
-PlayableScene::AmbientAudioProfile Scene1010::ambientAudioProfile() const {
+AmbientAudioProfile Scene1010::ambientAudioProfile() const {
 	return createRandomAmbientAudioProfile(kScene1010FirstAmbientSoundCue,
 		kScene1010AmbientSoundCueCount, 15, kScene1010AmbientSoundProbabilityModulus,
 		kScene1010FirstAmbientMusicCue, kScene1010AmbientMusicCueCount, 100,
