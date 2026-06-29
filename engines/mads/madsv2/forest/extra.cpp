@@ -196,8 +196,8 @@ void open_interface(InterfaceButton button) {
 		if (button == JOURNAL_FLY) {
 			if (count != 23) {
 				int x = count * 2 + 46;
-				int clip_x = 100 - count * 9;
-				sprite_draw_clipped(series_list[0], 1, clip_x, &scr_inter, x, 30);
+				int scale = 100 - count * 9;
+				sprite_draw_scaled(series_list[0], 1, &scr_inter, 30, x, scale);
 			}
 		} else {
 			sprite_draw(series_list[0], 1, &scr_inter, JOURNAL_X, JOURNAL_Y);
@@ -206,8 +206,8 @@ void open_interface(InterfaceButton button) {
 		if (button == BP_FLY) {
 			if (count != 23) {
 				int x = count * 2 + 40;
-				int clip_x = 100 - count * 9;
-				sprite_draw_clipped(series_list[1], 1, clip_x, &scr_inter, x, 96);
+				int scale = 100 - count * 9;
+				sprite_draw_scaled(series_list[1], 1, &scr_inter, 96, x, scale);
 			}
 		} else {
 			sprite_draw(series_list[1], 1, &scr_inter, BP_X, BP_Y);
@@ -232,6 +232,7 @@ void open_interface(InterfaceButton button) {
 		}
 
 		buffer_rect_copy_2(scr_inter, scr_main, 168, 0, 168, 156, 152, 44);
+		buffer_rect_copy_2(scr_main, scr_live, 0, 156, 0, 156, 320, 44);
 
 		while (timer_read() - current_time < 2) {
 		}
@@ -258,8 +259,8 @@ void close_interface(InterfaceButton button) {
 		if (button == JOURNAL_FLY) {
 			if (count != 0) {
 				int x = count * 2 + 43;
-				int clip_x = 100 - count * 9;
-				sprite_draw_clipped(series_list[0], 1, clip_x, &scr_inter, x, 30);
+				int scale = 100 - count * 9;
+				sprite_draw_scaled(series_list[0], 1, &scr_inter, 30, x, scale);
 			} else {
 				sprite_draw(series_list[0], 1, &scr_inter, JOURNAL_X, JOURNAL_Y);
 			}
@@ -270,8 +271,8 @@ void close_interface(InterfaceButton button) {
 		if (button == BP_FLY) {
 			if (count != 0) {
 				int x = count * 2 + 37;
-				int clip_x = 100 - count * 9;
-				sprite_draw_clipped(series_list[1], 1, clip_x, &scr_inter, x, 96);
+				int scale = 100 - count * 9;
+				sprite_draw_scaled(series_list[1], 1, &scr_inter, 96, x, scale);
 			} else {
 				sprite_draw(series_list[1], 1, &scr_inter, BP_X, BP_Y);
 			}
@@ -293,6 +294,7 @@ void close_interface(InterfaceButton button) {
 		sprite_draw(series_list[3], 1, &scr_inter, DOOR_X, DOOR_Y);
 
 		buffer_rect_copy_2(scr_inter, scr_main, 168, 0, 168, 156, 152, 44);
+		buffer_rect_copy_2(scr_main, scr_live, 0, 156, 0, 156, 320, 44);
 
 		while (timer_read() - current_time < 2) {
 		}
