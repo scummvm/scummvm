@@ -368,6 +368,12 @@ bool Sprite::isActive() {
 	if (_cast && _cast->_type == kCastButton)
 		return true;
 
+	// D6+ sprites attach their scripts as behaviors rather than via the
+	// legacy score/cast script IDs, so a behavior-only sprite must still
+	// count as active (e.g. for `the clickOn`). Mirrors respondsToMouse().
+	if (g_director->getVersion() >= 600 && _behaviors.size() > 0)
+		return true;
+
 	return (_movie->getScriptContext(kScoreScript, _scriptId) != nullptr)
 			|| (_movie->getScriptContext(kCastScript, _castId) != nullptr);
 }
