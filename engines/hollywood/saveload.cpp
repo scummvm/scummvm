@@ -89,6 +89,13 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	GameplayState &state = _gameState;
 
 	s.syncAsUint16LE(state.mainFlowStateId);
+	syncStateBool(s, state.activeActorPoseValid);
+	s.syncAsUint16LE(state.activeActorPoseStateId);
+	s.syncAsUint16LE(state.activeActorWorldX);
+	s.syncAsUint16LE(state.activeActorWorldY);
+	s.syncAsByte(state.activeActorFacing);
+	s.syncAsByte(state.activeActorCel);
+	s.syncAsUint16LE(state.activeViewportXOffset);
 	s.syncAsByte(state.activeAudioChapterIndex);
 	s.syncAsByte(state.currentInventoryOwnerIndex);
 	s.syncAsByte(state.currentAmbientMusicCueId);
@@ -116,6 +123,9 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.spokenToCloakroomAttendant);
 	s.syncAsByte(state.cloakroomRagVisible);
 	syncStateBool(s, state.spokenToBruno);
+	s.syncAsByte(state.humeroBarrierState);
+	s.syncAsByte(state.humeroBonePickupState);
+	s.syncAsByte(state.punchBowlGlassPatchState);
 	syncStateBool(s, state.activatedLabExitMachine);
 	s.syncAsByte(state.labMachineSpeed);
 	syncStateBool(s, state.seenGramophoneRoomIntro);
@@ -152,6 +162,20 @@ void HollywoodEngine::normalizeLoadedGameState() {
 	if (state.currentInventoryOwnerIndex >= GameplayState::kInventoryOwnerCount)
 		state.currentInventoryOwnerIndex = 1;
 
+	if (state.activeActorPoseValid) {
+		if (state.activeActorPoseStateId != state.mainFlowStateId ||
+				!isImplementedGameplayState(state.activeActorPoseStateId) ||
+				state.activeActorWorldX >= kSceneBufferWidth ||
+				state.activeActorWorldY >= kSceneBufferHeight) {
+			state.activeActorPoseValid = false;
+		} else {
+			if (state.activeActorFacing == 0xff || state.activeActorFacing > 4)
+				state.activeActorFacing = 1;
+			if (state.activeViewportXOffset > kSceneBufferWidth - kScreenWidth)
+				state.activeViewportXOffset = 0;
+		}
+	}
+
 	for (uint owner = 0; owner < GameplayState::kInventoryOwnerCount; ++owner) {
 		if (state.inventoryItemCountByOwner[owner] > GameplayState::kInventoryLastSlot)
 			state.inventoryItemCountByOwner[owner] = GameplayState::kInventoryLastSlot;
@@ -159,6 +183,11 @@ void HollywoodEngine::normalizeLoadedGameState() {
 				state.inventoryFirstVisibleSlotByOwner[owner] == 0)
 			state.inventoryFirstVisibleSlotByOwner[owner] = GameplayState::kInventoryFirstSlot;
 	}
+
+	if (state.humeroBarrierState == 0)
+		state.humeroBarrierState = 1;
+	if (state.punchBowlGlassPatchState > 2)
+		state.punchBowlGlassPatchState = 1;
 }
 
 } // End of namespace Hollywood

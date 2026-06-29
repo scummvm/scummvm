@@ -243,6 +243,9 @@ bool GameplayLoop::pollEvents() {
 		default:
 			break;
 		}
+
+		if (_vm->isSceneRestartRequested())
+			return true;
 	}
 
 	return false;
@@ -522,6 +525,7 @@ void GameplayLoop::openOptionsMenu() {
 	const bool restoreInventoryPanel = _panelState.inventoryPanelVisible;
 	const bool restoreVerbPanel = _panelState.verbPanelVisible && !restoreInventoryPanel;
 
+	_vm->captureLastGameplayThumbnail();
 	_vm->cursor()->leaveInteractiveMode();
 
 	Common::Array<byte> palette;
@@ -529,6 +533,8 @@ void GameplayLoop::openOptionsMenu() {
 	GameplayOptionsMenu menu(_vm);
 	menu.run(palette);
 	if (Engine::shouldQuit())
+		return;
+	if (_vm->isSceneRestartRequested())
 		return;
 
 	_leftButtonDown = false;

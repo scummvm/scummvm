@@ -298,18 +298,77 @@ bool SuePlayableScene::play() {
 	if (!load())
 		return false;
 
+	const bool resumeGameplayPose = hasSavedActiveActorPoseForCurrentState();
 	initializePreviewState();
-	drawPreviewComposite();
-	presentFrame();
-	runEntryCutscene();
-	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
-		return true;
+	if (!resumeGameplayPose) {
+		drawPreviewComposite();
+		presentFrame();
+		runEntryCutscene();
+		if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+			return true;
+	}
 
 	_skipRequested = false;
 	const bool result = runBasicGameplayLoop();
-	if (!_vm->isSceneRestartRequested() && shouldRunExitSideEffectsAfterLoop())
-		handleG04ExitSideEffects();
+	if (!_vm->isSceneRestartRequested()) {
+		if (_vm->gameState().activeActorPoseStateId != _vm->gameState().mainFlowStateId)
+			_vm->gameState().activeActorPoseValid = false;
+		if (shouldRunExitSideEffectsAfterLoop())
+			handleG04ExitSideEffects();
+	}
 	return result;
+}
+
+bool SuePlayableScene::hasSavedActiveActorPoseForCurrentState() const {
+	const GameplayState &state = _vm->gameState();
+	return state.activeActorPoseValid &&
+		state.activeActorPoseStateId == state.mainFlowStateId &&
+		isMainFlowStateInScene(state.mainFlowStateId);
+}
+
+void SuePlayableScene::restoreActiveActorPoseFromGameState() {
+	if (!hasSavedActiveActorPoseForCurrentState())
+		return;
+
+	const GameplayState &state = _vm->gameState();
+	_activeActorWorldX = state.activeActorWorldX;
+	_activeActorWorldY = state.activeActorWorldY;
+	_activeActorFacing = state.activeActorFacing;
+	_activeActorCel = state.activeActorCel;
+	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+
+	_viewportXOffset = state.activeViewportXOffset;
+	if (_viewportXOffset < _viewportMinXOffset)
+		_viewportXOffset = _viewportMinXOffset;
+	else if (_viewportXOffset > _viewportMaxXOffset)
+		_viewportXOffset = _viewportMaxXOffset;
+}
+
+void SuePlayableScene::syncActiveActorPoseToGameState() {
+	GameplayState &state = _vm->gameState();
+	if (!isMainFlowStateInScene(state.mainFlowStateId)) {
+		state.activeActorPoseValid = false;
+		return;
+	}
+
+	int actorX = _activeActorWorldX;
+	int actorY = _activeActorWorldY;
+	if (actorX < 0)
+		actorX = 0;
+	else if (actorX >= HollywoodEngine::kSceneBufferWidth)
+		actorX = HollywoodEngine::kSceneBufferWidth - 1;
+	if (actorY < 0)
+		actorY = 0;
+	else if (actorY >= HollywoodEngine::kSceneBufferHeight)
+		actorY = HollywoodEngine::kSceneBufferHeight - 1;
+
+	state.activeActorPoseValid = true;
+	state.activeActorPoseStateId = state.mainFlowStateId;
+	state.activeActorWorldX = (uint16)actorX;
+	state.activeActorWorldY = (uint16)actorY;
+	state.activeActorFacing = _activeActorFacing;
+	state.activeActorCel = _activeActorCel;
+	state.activeViewportXOffset = _viewportXOffset;
 }
 
 uint16 SuePlayableScene::sceneViewportMinXOffset() const {
@@ -1415,13 +1474,14 @@ void SuePlayableScene::prepareGameplayLoop() {
 	_chunk14AltVisible = false;
 	_chunk14AltChunkIndex = 14;
 	_hideActiveActor = false;
-	if (prepareCustomGameplayLoop())
-		return;
-	if (usesSingleSecondaryActorComposite()) {
+	const bool customPrepared = prepareCustomGameplayLoop();
+	if (!customPrepared && usesSingleSecondaryActorComposite()) {
 		_cloakroomAttendantTimerAccumulator = 0;
 		if (_cloakroomAttendantFrame == 0)
 			_cloakroomAttendantFrame = 1;
 	}
+	restoreActiveActorPoseFromGameState();
+	syncActiveActorPoseToGameState();
 }
 
 void SuePlayableScene::advanceGameplayLoop(uint32 delta) {
@@ -1429,6 +1489,7 @@ void SuePlayableScene::advanceGameplayLoop(uint32 delta) {
 
 	if (advanceCustomGameplayLoop(delta)) {
 		advanceViewportScroll(delta);
+		syncActiveActorPoseToGameState();
 		return;
 	}
 
@@ -1439,6 +1500,7 @@ void SuePlayableScene::advanceGameplayLoop(uint32 delta) {
 			advanceG05SecondaryActorAnimation(delta);
 		updateAmbientAudioAndMusicCues(delta);
 		advanceViewportScroll(delta);
+		syncActiveActorPoseToGameState();
 		return;
 	}
 
@@ -1451,6 +1513,7 @@ void SuePlayableScene::advanceGameplayLoop(uint32 delta) {
 
 	updateAmbientAudioAndMusicCues(delta);
 	advanceViewportScroll(delta);
+	syncActiveActorPoseToGameState();
 }
 
 void SuePlayableScene::drawGameplayFrame() {
@@ -1458,6 +1521,7 @@ void SuePlayableScene::drawGameplayFrame() {
 }
 
 void SuePlayableScene::presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) {
+	syncActiveActorPoseToGameState();
 	presentFrame(&hoverCaption, &panelState);
 }
 

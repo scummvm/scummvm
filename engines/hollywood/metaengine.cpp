@@ -24,6 +24,7 @@
 #include "common/config-manager.h"
 
 #include "engines/advancedDetector.h"
+#include "graphics/thumbnail.h"
 
 #include "hollywood/hollywood.h"
 
@@ -38,6 +39,9 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 	void registerDefaultSettings(const Common::String &target) const override;
+
+protected:
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 Common::Error HollywoodMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -52,6 +56,16 @@ bool HollywoodMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 void HollywoodMetaEngine::registerDefaultSettings(const Common::String &) const {
 	ConfMan.registerDefault("subtitles", true);
+}
+
+void HollywoodMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	if (g_engine) {
+		HollywoodEngine *engine = (HollywoodEngine *)g_engine;
+		if (engine->copyLastGameplayThumbnail(thumb))
+			return;
+	}
+
+	Graphics::createThumbnail(thumb);
 }
 
 } // End of namespace Hollywood
