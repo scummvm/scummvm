@@ -22,6 +22,7 @@
 #include "hollywood/graphics.h"
 
 #include "common/system.h"
+#include "graphics/managed_surface.h"
 #include "graphics/paletteman.h"
 
 #include "hollywood/hollywood.h"
@@ -49,14 +50,32 @@ uint32 readUint32LE(const Common::Array<byte> &source, uint offset) {
 		(source[offset + 3] << 24);
 }
 
-void uploadPalette6Bit(const Common::Array<byte> &palette) {
-	byte systemPalette[kPaletteSize];
-	for (uint i = 0; i < ARRAYSIZE(systemPalette); ++i) {
-		const byte component = i < palette.size() ? palette[i] : 0;
-		systemPalette[i] = MIN<byte>(255, component * 4);
-	}
+Palette6Bit::Palette6Bit() :
+		_palette(256) {
+}
 
-	g_system->getPaletteManager()->setPalette(systemPalette, 0, 256);
+void Palette6Bit::setFrom6Bit(const Common::Array<byte> &palette) {
+	for (uint i = 0; i < 256; ++i) {
+		const uint sourceOffset = i * 3;
+		const byte red = sourceOffset < palette.size() ? palette[sourceOffset] : 0;
+		const byte green = sourceOffset + 1 < palette.size() ? palette[sourceOffset + 1] : 0;
+		const byte blue = sourceOffset + 2 < palette.size() ? palette[sourceOffset + 2] : 0;
+		_palette.set(i, MIN<byte>(255, red * 4), MIN<byte>(255, green * 4), MIN<byte>(255, blue * 4));
+	}
+}
+
+void Palette6Bit::upload() const {
+	g_system->getPaletteManager()->setPalette(_palette);
+}
+
+void Palette6Bit::uploadFrom6Bit(const Common::Array<byte> &palette) {
+	setFrom6Bit(palette);
+	upload();
+}
+
+void uploadPalette6Bit(const Common::Array<byte> &palette) {
+	Palette6Bit convertedPalette;
+	convertedPalette.uploadFrom6Bit(palette);
 }
 
 void presentIndexedFrame(const Common::Array<byte> &framebuffer, const Common::Array<byte> &palette,
@@ -76,6 +95,27 @@ void presentIndexedFrame(const Common::Array<byte> &framebuffer, const Common::A
 
 	g_system->copyRectToScreen(screen.data(), HollywoodEngine::kScreenWidth, 0, 0,
 		HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight);
+	g_system->updateScreen();
+}
+
+void presentIndexedFrame(const Common::Array<byte> &framebuffer, const Common::Array<byte> &palette,
+		Graphics::ManagedSurface &screen, Palette6Bit &convertedPalette, uint rowOffset, uint xOffset) {
+	convertedPalette.uploadFrom6Bit(palette);
+
+	if (screen.empty())
+		screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
+
+	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
+		byte *destination = (byte *)screen.getBasePtr(0, y);
+		const uint sourceOffset = xOffset + (y + rowOffset) * HollywoodEngine::kSceneBufferWidth;
+		if (sourceOffset + HollywoodEngine::kScreenWidth <= framebuffer.size()) {
+			memcpy(destination, framebuffer.data() + sourceOffset, HollywoodEngine::kScreenWidth);
+		} else {
+			memset(destination, 0, HollywoodEngine::kScreenWidth);
+		}
+	}
+
+	g_system->copyRectToScreen(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
 	g_system->updateScreen();
 }
 

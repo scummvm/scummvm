@@ -27,9 +27,11 @@
 #include "common/str.h"
 #include "common/types.h"
 
+#include "graphics/managed_surface.h"
 #include "hollywood/gameplay/dialogue_menu.h"
 #include "hollywood/gameplay/game_loop.h"
 #include "hollywood/gameplay/panel_art.h"
+#include "hollywood/graphics.h"
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
 #include "hollywood/scenes/playable/action_overlay.h"
@@ -478,7 +480,8 @@ protected:
 	Common::Array<uint16> _drawActorDepthYThresholds;
 	Common::Array<byte> _metadata;
 	Common::Array<byte> _resourceArena;
-	Common::Array<byte> _screen;
+	Graphics::ManagedSurface _screen;
+	Palette6Bit _displayPalette;
 	Common::Array<byte> _resource000OffsetTable;
 	Common::Array<byte> _resource000SizeTable;
 	Common::Array<byte> _activeActorRunStreams;
