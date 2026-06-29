@@ -52,7 +52,7 @@ public:
 	void execute() override;
 
 	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
-	bool cursorSetFromScript() const override { return true; }
+	bool cursorSetFromScript() const override { return false; }
 
 	HotspotDescription _sceneHotspot;
 

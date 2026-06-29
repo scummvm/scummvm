@@ -82,8 +82,34 @@ void HotMultiframeSceneChange::execute() {
 	}
 }
 
+// The hover cursor is stored as the id of the matching directional scene-change
+// action record type, which gets translated into the actual cursor to display.
+static CursorManager::CursorType getNavigationCursor(uint16 id) {
+	switch (id) {
+	case 14:
+		return CursorManager::kExit;
+	case 15:
+	case 23:
+		return CursorManager::kMoveForward;
+	case 16:
+		return CursorManager::kMoveBackward;
+	case 17:
+	case 24:
+		return CursorManager::kMoveUp;
+	case 18:
+	case 25:
+		return CursorManager::kMoveDown;
+	case 19:
+		return CursorManager::kMoveLeft;
+	case 20:
+		return CursorManager::kMoveRight;
+	default:
+		return CursorManager::kHotspot;
+	}
+}
+
 void HotSingleFrameSceneChange::readData(Common::SeekableReadStream &stream) {
-	_hoverCursor = (CursorManager::CursorType)stream.readUint16LE();
+	_hoverCursor = getNavigationCursor(stream.readUint16LE());
 	_sceneChange.sceneID = stream.readUint16LE();
 	_sceneChange.continueSceneSound = kContinueSceneSound;
 	_sceneChange.listenerFrontVector.set(0, 0, 1);

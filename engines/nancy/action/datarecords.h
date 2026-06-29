@@ -122,7 +122,7 @@ public:
 	void execute() override;
 
 	CursorManager::CursorType getHoverCursor() const override;
-	bool cursorSetFromScript() const override { return true; }
+	bool cursorSetFromScript() const override;
 
 	CursorManager::CursorType _hoverCursor = CursorManager::kHotspot;
 	Common::Array<HotspotDescription> _hotspots;
