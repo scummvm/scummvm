@@ -78,6 +78,21 @@ protected:
 	Common::String getRecordTypeName() const override { return "Update3DSound"; }
 };
 
+// Added in Nancy12 (AR 168). Sets a 3D-sound position from a set of coordinates,
+// most likely the global listener position.
+class Set3DSoundListenerPosition : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	int32 _posX = 0;
+	int32 _posY = 0;
+	int32 _posZ = 0;
+
+protected:
+	Common::String getRecordTypeName() const override { return "Set3DSoundListenerPosition"; }
+};
+
 // Used for sound effects. From nancy3 up it includes 3D sound data, which lets
 // the sound move in 3D space as the player rotates/changes scenes. Also supports
 // changing the scene and/or setting a flag

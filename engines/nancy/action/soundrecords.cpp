@@ -99,6 +99,17 @@ void Update3DSound::execute() {
 	_isDone = true;
 }
 
+void Set3DSoundListenerPosition::readData(Common::SeekableReadStream &stream) {
+	_posX = stream.readSint32LE();
+	_posY = stream.readSint32LE();
+	_posZ = stream.readSint16LE();
+}
+
+void Set3DSoundListenerPosition::execute() {
+	// TODO: forward the listener position to the sound manager.
+	_isDone = true;
+}
+
 void PlaySound::readData(Common::SeekableReadStream &stream) {
 	_sound.readDIGI(stream);
 
