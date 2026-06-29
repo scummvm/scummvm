@@ -41,7 +41,7 @@ struct AmigaResEnt {
 	uint32 size;
 };
 
-#define AMIGA_PAL_OFFSET 122836   // title fade ramp, end of LUTIN
+#define AMIGA_PAL_OFFSET 40896
 
 // Each room takes a shared base and drops its own 5-word delta over slots 1..5
 #define AMIGA_ROOM_PAL_OFFSET 40268
@@ -144,7 +144,7 @@ void amigaApplyPalette(byte index) {
 	if (index >= AMIGA_NUM_PALETTES)
 		return;
 
-	const byte *src = amiga_palette_table + index * (16 * 2);
+	const byte *src = amiga_palette_table;
 	byte palData[16 * 3];
 	for (int c = 0; c < 16; c++) {
 		uint16 w = (src[c * 2] << 8) | src[c * 2 + 1];   // big-endian 0x0RGB
