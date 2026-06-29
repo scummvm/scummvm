@@ -171,7 +171,7 @@ void inter_update_series(int series_id) {
 
 		if (ii.series_id == series_id)
 			ii.flags = IMAGE_ERASE;
-		else if (ii.series_id != IMAGE_ERASE)
+		else if (ii.flags != IMAGE_ERASE)
 			ii.flags = IMAGE_UPDATE;
 	}
 }
