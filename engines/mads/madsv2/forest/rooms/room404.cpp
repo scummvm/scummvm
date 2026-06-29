@@ -562,10 +562,27 @@ static void room_404_daemon() {
 
 	case 26:
 		if (scratch._90 == 8) {
-			// TODO: loc_6B27A
+			aa[6] = kernel_run_animation(kernel_name('L', 3), 103);
+			scratch.animation_info[6]._active = -1;
+			scratch._98 = 6;
+			kernel_reset_animation(scratch._9a, 0);
+			kernel_reset_animation(scratch._9c, 0);
+			kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
+			kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
+			kernel_synch(KERNEL_ANIM, aa[6], KERNEL_NOW, 0);
+			scratch._a4 = 2;
+			player.commands_allowed = 0;
+			global[g133] = 1;
+			global[g143] = 1;
+			kernel_timing_trigger(1, 110);
+			player.walker_visible = 0;
+			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 		} else if (scratch._90 < 8) {
 			if (scratch._90 == 1) {
-				// TODO: loc_6B318
+				kernel_reset_animation(scratch._9a, 0);
+				kernel_reset_animation(scratch._9c, 0);
+				global[g133] = 1;
+				global[g143] = 1;
 			} else if (scratch._90 == 6) {
 				aa[5] = kernel_run_animation(kernel_name('L', 1), 103);
 				aainfo[5]._active = -1;
