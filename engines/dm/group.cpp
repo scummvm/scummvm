@@ -1256,10 +1256,10 @@ int16 GroupMan::getDistanceBetweenUnblockedSquares(int16 srcMapX, int16 srcMapY,
 
 	if (isDistanceXSmallerThanDistanceY) {
 		largestAxisDistance = pathMapY - srcMapY;
-		valueC = (largestAxisDistance ? ((pathMapX - srcMapX) << 6) / largestAxisDistance : 128);
+		valueC = (largestAxisDistance ? ((pathMapX - srcMapX) * 64) / largestAxisDistance : 128);
 	} else {
 		largestAxisDistance = pathMapX - srcMapX;
-		valueC = (largestAxisDistance ? ((pathMapY - srcMapY) << 6) / largestAxisDistance : 128);
+		valueC = (largestAxisDistance ? ((pathMapY - srcMapY) * 64) / largestAxisDistance : 128);
 	}
 
 	/* 128 when the creature is on the same row or column as the party */
@@ -1271,11 +1271,11 @@ int16 GroupMan::getDistanceBetweenUnblockedSquares(int16 srcMapX, int16 srcMapY,
 				return 0;
 		} else {
 			if (isDistanceXSmallerThanDistanceY) {
-				valueA = ABS(((pathMapY - srcMapY) ? ((pathMapX + axisStepX - srcMapX) << 6) / largestAxisDistance : 128) - valueC);
-				valueB = ABS(((pathMapY + axisStepY - srcMapY) ? ((pathMapX - srcMapX) << 6) / largestAxisDistance : 128) - valueC);
+				valueA = ABS(((pathMapY - srcMapY) ? ((pathMapX + axisStepX - srcMapX) * 64) / largestAxisDistance : 128) - valueC);
+				valueB = ABS(((pathMapY + axisStepY - srcMapY) ? ((pathMapX - srcMapX) * 64) / largestAxisDistance : 128) - valueC);
 			} else {
-				valueA = ABS(((pathMapX + axisStepX - srcMapX) ? ((pathMapY - srcMapY) << 6) / largestAxisDistance : 128) - valueC);
-				valueB = ABS(((pathMapX - srcMapX) ? ((pathMapY + axisStepY - srcMapY) << 6) / largestAxisDistance : 128) - valueC);
+				valueA = ABS(((pathMapX + axisStepX - srcMapX) ? ((pathMapY - srcMapY) * 64) / largestAxisDistance : 128) - valueC);
+				valueB = ABS(((pathMapX - srcMapX) ? ((pathMapY + axisStepY - srcMapY) * 64) / largestAxisDistance : 128) - valueC);
 			}
 
 			if (valueA < valueB)

@@ -1192,7 +1192,7 @@ void DungeonMan::setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowe
 }
 
 int16 DungeonMan::getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int16 mapY, int16 modulo) {
-	int16 randomOrnamentIndex = getRandomOrnamentIndex((int16)2000 + (mapX << 5) + mapY, (int16)3000 + (_currMapIndex << (int16)6) + _currMapWidth + _currMapHeight, modulo);
+	int16 randomOrnamentIndex = getRandomOrnamentIndex((int16)2000 + (mapX * 32) + mapY, (int16)3000 + (_currMapIndex * 64) + _currMapWidth + _currMapHeight, modulo);
 
 	if (allowed && (randomOrnamentIndex < count))
 		return _vm->indexToOrdinal(randomOrnamentIndex);
