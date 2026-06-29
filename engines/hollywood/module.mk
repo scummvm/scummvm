@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	music.o \
 	resource.o \
 	saveload.o \
+	scenes/intro/scene1000.o \
 	scenes/intro/scene9000.o \
 	scenes/intro/scene9010.o \
 	scenes/intro/scene9050.o \
