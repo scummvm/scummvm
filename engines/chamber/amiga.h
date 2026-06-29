@@ -35,7 +35,6 @@ public:
 
 #define AMIGA_NUM_PALETTES 31
 
-// 31x16 12-bit RGB title palette table inside the loaded KULT image
 extern const byte *amiga_palette_table;
 
 // Master's-Orbit full 16-colour palette (the one scene not using base+delta)
