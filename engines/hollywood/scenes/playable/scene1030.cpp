@@ -1,0 +1,837 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "hollywood/scenes/playable/scene1030.h"
+
+#include "common/debug.h"
+
+#include "hollywood/gameplay/game_state.h"
+#include "hollywood/graphics.h"
+#include "hollywood/hollywood.h"
+
+namespace Hollywood {
+
+const char *const kScene1030ArchiveName = "RESOURCE.A03";
+const char *const kScene1030MusicArchiveName = "RESOURCE.M01";
+const char *const kScene1030SoundArchiveName = "RESOURCE.S01";
+const uint kScene1030InitialRequiredChunkCount = 15;
+const uint kScene1030ArenaFirstChunk = 5;
+const uint kScene1030ArenaLastChunk = 14;
+const uint kScene1030StageIndex = 103;
+const uint16 kScene1030FirstEntryState = 0x0406;
+const uint16 kScene1030LeftEntryState = 0x0407;
+const uint16 kScene1030ExitState1040 = 0x0412;
+const uint16 kScene1030ExitState1010LeftEntry = 0x03f2;
+const uint16 kScene1030ViewportXOffset = 0x0010;
+const uint kScene1030ActorBankTableEntry = 0x0000;
+const uint kScene1030ActorPaletteTableEntry = 0x00cc;
+const uint kScene1030Resource003RowsOffsetIndex = 0x0000;
+const uint32 kScene1030SpeechCueDescriptorTableOffset = 0x1135;
+const int kScene1030FirstEntryStartX = 0x294;
+const int kScene1030FirstEntryStartY = 0x177;
+const int kScene1030FirstEntryTargetX = 0x17d;
+const int kScene1030FirstEntryTargetY = 0x13a;
+const byte kScene1030FirstEntryFacing = 4;
+const int kScene1030ReturnEntryStartX = 0x294;
+const int kScene1030ReturnEntryStartY = 0x177;
+const int kScene1030ReturnEntryTargetX = 0x0dc;
+const int kScene1030ReturnEntryTargetY = 0x15e;
+const byte kScene1030ReturnEntryFacing = 4;
+const int kScene1030LeftEntryStartX = 0x051;
+const int kScene1030LeftEntryStartY = 0x11d;
+const int kScene1030LeftEntryTargetX = 0x0dc;
+const int kScene1030LeftEntryTargetY = 0x15e;
+const byte kScene1030LeftEntryFacing = 2;
+const int kScene1030WalkTargetMinX = 0x050;
+const int kScene1030WalkTargetMaxX = 0x1f3;
+const byte kScene1030FirstAmbientSoundCue = 0x25;
+const byte kScene1030AmbientSoundCueCount = 7;
+const byte kScene1030FirstAmbientMusicCue = 0x0b;
+const byte kScene1030AmbientMusicCueCount = 5;
+const byte kScene1030AmbientSoundProbabilityModulus = 25;
+const byte kScene1030AmbientMusicProbabilityModulus = 50;
+const uint32 kScene1030ForegroundFrameMillis = 75;
+const uint32 kScene1030SmallForegroundTickMillis = 150;
+const uint kScene1030LargeForegroundDescriptorCount = 0x3f;
+const uint kScene1030SmallForegroundDescriptorCount = 2;
+const uint kScene1030LeftEntryActorDescriptorCount = 0x1a;
+const uint kScene1030RightEntryActorDescriptorCount = 0x20;
+const uint kScene1030PickupDescriptorCount = 0x0e;
+const uint kScene1030GreasyCottonDescriptorCount = 0x10;
+const uint kScene1030EntryPaletteByteCount = 0x210;
+const byte kScene1030EntryLeftSpeechGroup = 0;
+const byte kScene1030EntryRightSpeechGroup = 1;
+
+const byte kScene1030ActorPathStepDeltaTableSetB4[] = {
+	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
+	4, 2, 11, 8, 8, 9, 8, 5, 14, 3, 2, 12,
+	11, 11, 9, 7, 13, 8, 13, 13, 6, 8, 6, 14,
+	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
+	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
+	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
+};
+
+const byte kScene1030ActorPathStepDeltaTableSet87[] = {
+	6, 1, 1, 3, 3, 3, 7, 1, 0, 0, 4, 3,
+	3, 2, 8, 6, 6, 7, 6, 4, 10, 3, 2, 9,
+	8, 8, 7, 5, 10, 6, 10, 10, 4, 6, 4, 10,
+	4, 3, 3, 4, 0, 4, 4, 2, 0, 4, 2, 5,
+	6, 10, 10, 4, 6, 4, 10, 8, 8, 7, 5, 10,
+	6, 4, 10, 3, 2, 9, 3, 2, 8, 6, 6, 7
+};
+
+const byte kScene1030LargeForegroundFrameMap[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+	12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+	22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+	32, 33, 34, 35, 27, 0, 28, 29, 30, 31,
+	32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
+	42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+	52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
+	62
+};
+
+const byte kScene1030LeftEntryActorFrameMap[] = {
+	0, 0, 1, 2, 3, 4, 5, 6,
+	7, 8, 9, 10, 10, 11, 12, 13,
+	14, 15, 16, 17, 18, 19, 20, 21,
+	22, 23, 24, 25
+};
+
+const byte kScene1030RightEntryActorFrameMap[] = {
+	0, 0, 1, 2, 3, 4, 5, 6,
+	7, 8, 9, 10, 10, 11, 12, 13,
+	14, 15, 16, 17, 18, 19, 20, 21,
+	22, 23, 24, 25, 26, 27, 28, 29,
+	30, 31
+};
+
+const byte kScene1030EntryGestureRightFrames[] = {
+	5, 6, 7, 8, 8, 8, 8, 9, 10, 10
+};
+
+const byte kScene1030EntryGestureLeftFrames[] = {
+	0, 0, 0, 0, 5, 6, 7, 8, 9, 10
+};
+
+const byte kScene1030PickupFrameMap[] = {
+	0, 0, 1, 2, 3, 4, 5, 6,
+	7, 8, 9, 10, 11, 12, 13
+};
+
+const byte kScene1030GreasyCottonFrameMap[] = {
+	12, 12, 11, 10, 9, 8, 7, 6,
+	5, 4, 3, 2, 13, 14, 15, 14,
+	13, 14, 15, 14, 13, 14, 15, 14,
+	13, 14, 15, 14, 13, 2, 3, 4,
+	5, 6, 7, 8, 9, 10, 11, 12
+};
+
+Scene1030::Scene1030(HollywoodEngine *vm) :
+		PlayableScene(vm, "scene1030", kScene1030FirstEntryTargetX, kScene1030FirstEntryTargetY,
+			kScene1030FirstEntryFacing, 0xfd, 0xfb),
+		_largeForegroundChannel(),
+		_smallForegroundChannel(),
+		_largeForegroundFrame(0),
+		_largeForegroundMode(0),
+		_smallForegroundFrame(0),
+		_smallForegroundTickCount(0),
+		_entryActorsVisible(false),
+		_entryActorsAlternatePose(false),
+		_leftEntryActorFrame(0),
+		_rightEntryActorFrame(0) {
+}
+
+const char *Scene1030::resourceArchiveName() const {
+	return kScene1030ArchiveName;
+}
+
+uint Scene1030::sceneInitialRequiredChunkCount() const {
+	return kScene1030InitialRequiredChunkCount;
+}
+
+uint Scene1030::sceneArenaFirstChunk() const {
+	return kScene1030ArenaFirstChunk;
+}
+
+uint Scene1030::sceneArenaLastChunk() const {
+	return kScene1030ArenaLastChunk;
+}
+
+uint Scene1030::sceneStageIndex() const {
+	return kScene1030StageIndex;
+}
+
+const char *Scene1030::sceneDebugName() const {
+	return "Scene 1030";
+}
+
+uint16 Scene1030::sceneViewportXOffset() const {
+	return kScene1030ViewportXOffset;
+}
+
+byte Scene1030::inventoryOwnerIndex() const {
+	return 0;
+}
+
+void Scene1030::initializeInventoryOwnerState() {
+	GameplayState &state = _vm->gameState();
+	state.initializeRonItemResourcePages();
+	if (state.inventoryItemCountByOwner[0] == 0)
+		state.initializeRonInventoryItems();
+	state.currentInventoryOwnerIndex = 0;
+	state.activeAudioChapterIndex = 1;
+}
+
+uint Scene1030::resource000ActorBankTableEntry() const {
+	return kScene1030ActorBankTableEntry;
+}
+
+uint Scene1030::resource000ActorPaletteTableEntry() const {
+	return kScene1030ActorPaletteTableEntry;
+}
+
+uint32 Scene1030::inventoryActionTableExtraOffset() const {
+	return 0;
+}
+
+uint Scene1030::resource003InventoryRowsOffsetIndex() const {
+	return kScene1030Resource003RowsOffsetIndex;
+}
+
+uint32 Scene1030::speechCueDescriptorTableOffset() const {
+	return kScene1030SpeechCueDescriptorTableOffset;
+}
+
+const byte *Scene1030::actorPathStepDeltaTable() const {
+	return kScene1030ActorPathStepDeltaTableSetB4;
+}
+
+uint Scene1030::actorPathStepDeltaTableSize() const {
+	return ARRAYSIZE(kScene1030ActorPathStepDeltaTableSetB4);
+}
+
+byte Scene1030::walkablePaletteMaxRegion() const {
+	return 5;
+}
+
+const char *Scene1030::musicArchiveName() const {
+	return kScene1030MusicArchiveName;
+}
+
+const char *Scene1030::soundBank0ArchiveName() const {
+	return kScene1030SoundArchiveName;
+}
+
+bool Scene1030::shouldLoadActorDepthTables() const {
+	return true;
+}
+
+bool Scene1030::usesActorDepthTest() const {
+	return true;
+}
+
+bool Scene1030::isMainFlowStateInScene(uint16 stateId) const {
+	return stateId == kScene1030FirstEntryState || stateId == kScene1030LeftEntryState;
+}
+
+bool Scene1030::hasCustomPreviewState() const {
+	return true;
+}
+
+void Scene1030::initializeCustomPreviewState() {
+	initializeDefaultPreviewState();
+	_largeForegroundChannel.reset(0, kScene1030ForegroundFrameMillis);
+	_smallForegroundChannel.reset(0, kScene1030SmallForegroundTickMillis);
+	_largeForegroundFrame = _vm->gameState().seenScene1030EntryConversation ? 0x1c : 0;
+	_largeForegroundMode = _vm->gameState().seenScene1030EntryConversation ? 1 : 0;
+	_smallForegroundFrame = 0;
+	_smallForegroundTickCount = 0;
+	_entryActorsVisible = false;
+	_entryActorsAlternatePose = false;
+	_leftEntryActorFrame = 0;
+	_rightEntryActorFrame = 0;
+
+	if (isLeftEntryState()) {
+		_activeActorWorldX = kScene1030LeftEntryTargetX;
+		_activeActorWorldY = kScene1030LeftEntryTargetY;
+		_activeActorFacing = kScene1030LeftEntryFacing;
+	} else if (_vm->gameState().seenScene1030EntryConversation) {
+		_activeActorWorldX = kScene1030ReturnEntryTargetX;
+		_activeActorWorldY = kScene1030ReturnEntryTargetY;
+		_activeActorFacing = kScene1030ReturnEntryFacing;
+	} else {
+		_activeActorWorldX = kScene1030FirstEntryTargetX;
+		_activeActorWorldY = kScene1030FirstEntryTargetY;
+		_activeActorFacing = kScene1030FirstEntryFacing;
+		applyFirstEntryPalette();
+	}
+	_activeActorCel = 0;
+	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+}
+
+bool Scene1030::hasCustomComposite() const {
+	return true;
+}
+
+void Scene1030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
+		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+		byte actorDrawOrderMode) {
+	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
+
+	if (_entryActorsVisible) {
+		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+		drawEntryActors();
+		return;
+	}
+
+	if (drawActiveActor && actorDrawOrderMode < 3)
+		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, -1);
+
+	drawSmallForegroundActor();
+
+	if (drawActiveActor && actorDrawOrderMode >= 3)
+		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, -1);
+
+	drawLargeForegroundActor();
+
+	if (_actionOverlayVisible) {
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
+			_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
+	}
+}
+
+bool Scene1030::hasCustomEntrySequence() const {
+	return isFirstEntryState() || isLeftEntryState();
+}
+
+void Scene1030::runCustomEntrySequence() {
+	GameplayState &state = _vm->gameState();
+
+	if (isLeftEntryState()) {
+		runEntryPath(kScene1030LeftEntryStartX, kScene1030LeftEntryStartY,
+			kScene1030LeftEntryFacing, kScene1030LeftEntryTargetX, kScene1030LeftEntryTargetY);
+		return;
+	}
+
+	if (state.seenScene1030EntryConversation) {
+		runEntryPath(kScene1030ReturnEntryStartX, kScene1030ReturnEntryStartY,
+			kScene1030ReturnEntryFacing, kScene1030ReturnEntryTargetX, kScene1030ReturnEntryTargetY);
+		return;
+	}
+
+	applyFirstEntryPalette();
+	runEntryPath(kScene1030FirstEntryStartX, kScene1030FirstEntryStartY,
+		kScene1030FirstEntryFacing, kScene1030FirstEntryTargetX, kScene1030FirstEntryTargetY);
+	runFirstEntryConversation();
+}
+
+bool Scene1030::prepareCustomGameplayLoop() {
+	_largeForegroundChannel.reset(0, kScene1030ForegroundFrameMillis);
+	_smallForegroundChannel.reset(0, kScene1030SmallForegroundTickMillis);
+	_smallForegroundTickCount = 0;
+	return true;
+}
+
+bool Scene1030::advanceCustomGameplayLoop(uint32 delta) {
+	if (_primaryDialogueSpeechActive)
+		advancePrimaryDialogueSpeechFrame(delta);
+	advanceLargeForegroundActor(delta);
+	advanceSmallForegroundActor(delta);
+	updateAmbientAudioAndMusicCues(delta);
+	return true;
+}
+
+bool Scene1030::dispatchCustomSceneAction(uint16 handlerId) {
+	switch (handlerId) {
+	case 108: // Hablar con pequeño bulto en movimiento (talk to small moving lump).
+		beginStaticSecondarySpeechLine(0x64, 0);
+		return true;
+	case 301: // Ir a entrada (go to entrance).
+		_vm->gameState().mainFlowStateId = kScene1030ExitState1040;
+		return true;
+	case 302: // Mirar entrada (look at entrance).
+		beginSecondarySpeechLine(1, 0);
+		return true;
+	case 303: // Hablar con tipo durmiendo la mona (talk to sleeping drunk).
+		beginSecondarySpeechLine(2, 0);
+		return true;
+	case 304: // Mirar tipo durmiendo la mona (look at sleeping drunk).
+		handleSceneEventFlag0();
+		return true;
+	case 305: // Coger maletín (take doctor's bag).
+		beginSecondarySpeechLine(4, 0);
+		return true;
+	case 306: // Mirar maletín (look at doctor's bag).
+		beginSecondarySpeechLine(5, 0);
+		return true;
+	case 307: // Mirar plato (look at plate).
+		beginSecondarySpeechLine(7, 0);
+		return true;
+	case 308: // Coger plato (take plate).
+		beginSecondarySpeechLine(6, 0);
+		return true;
+	case 309: // Coger ponchera (take punch bowl).
+		handlePickupPunchBowl();
+		return true;
+	case 310: // Mirar ponchera (look at punch bowl).
+		beginSecondarySpeechLine(8, 0);
+		return true;
+	case 311: // Coger rodaja de limón (take lemon slice).
+		handlePickupLemonSlice();
+		return true;
+	case 312: // Mirar rodaja de limón (look at lemon slice).
+		beginSecondarySpeechLine(9, 0);
+		return true;
+	case 313: // Ir a escaleras (go to stairs).
+		_vm->gameState().mainFlowStateId = kScene1030ExitState1010LeftEntry;
+		return true;
+	case 314: // Mirar escaleras (look at stairs).
+		beginSecondarySpeechLine(10, 0);
+		return true;
+	case 315: // Coger pequeño bulto en movimiento (take small moving lump).
+		handlePickupSmallMan();
+		return true;
+	case 316: // Mirar pequeño bulto en movimiento (look at small moving lump).
+		handleSmallBumpDescription();
+		return true;
+	case 317: // Usar algodón con plato (use cotton with plate).
+		handleGreasyCottonExchange();
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool Scene1030::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
+	targetX = CLIP<int>(targetX, kScene1030WalkTargetMinX, kScene1030WalkTargetMaxX);
+
+	while (targetY < 0x1df) {
+		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
+		if (offset < _savedFramebuffer.size() && _walkablePaletteMask[_savedFramebuffer[offset]] != 0)
+			return true;
+		++targetY;
+	}
+
+	while (targetY > 0) {
+		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
+		if (offset < _savedFramebuffer.size() && _walkablePaletteMask[_savedFramebuffer[offset]] != 0)
+			return true;
+		--targetY;
+	}
+
+	return true;
+}
+
+bool Scene1030::customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) {
+	(void)state;
+	(void)boundary;
+	if (currentRegion == 1 && nextRegion == 2) {
+		for (uint offset = 0x30; offset <= 0x3b && offset < _actorPathStepDeltas.size(); ++offset)
+			_actorPathStepDeltas[offset] = kScene1030ActorPathStepDeltaTableSet87[offset];
+		requestedFacing = 4;
+		restoredStepDeltas = true;
+		return true;
+	}
+
+	return false;
+}
+
+bool Scene1030::customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) {
+	(void)targetRegion;
+	(void)state;
+	(void)targetX;
+	(void)targetY;
+	if (currentRegion == 1) {
+		for (uint offset = 0x0c; offset <= 0x17 && offset < _actorPathStepDeltas.size(); ++offset)
+			_actorPathStepDeltas[offset] = kScene1030ActorPathStepDeltaTableSet87[offset];
+		requestedFacing = 1;
+		restoredStepDeltas = true;
+	}
+
+	return restoredStepDeltas || requestedFacing >= 0;
+}
+
+bool Scene1030::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
+	if (selector != 1 && selector != 2 && selector != 0xff)
+		return false;
+
+	if (!_baseFramebufferOriginal.empty())
+		memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
+	memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
+	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
+	applyPatchStateColorMaps();
+	rebuildScene1030WalkableMask();
+	if (_vm->gameState().scene1030SmallBumpRenamed)
+		copyStageSmallRow(10, 8);
+	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	return true;
+}
+
+bool Scene1030::shouldAnimatePrimarySpeechLine() const {
+	return _entryActorsVisible;
+}
+
+byte Scene1030::primarySpeechAnimationBaseFrame(byte animationGroup) const {
+	(void)animationGroup;
+	return _entryActorsAlternatePose ? 0x0b : 0;
+}
+
+void Scene1030::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
+	if (animationGroup == kScene1030EntryLeftSpeechGroup)
+		_leftEntryActorFrame = frameIndex;
+	else if (animationGroup == kScene1030EntryRightSpeechGroup)
+		_rightEntryActorFrame = frameIndex;
+}
+
+AmbientAudioProfile Scene1030::ambientAudioProfile() const {
+	return createRandomAmbientAudioProfile(kScene1030FirstAmbientSoundCue,
+		kScene1030AmbientSoundCueCount, 15, kScene1030AmbientSoundProbabilityModulus,
+		kScene1030FirstAmbientMusicCue, kScene1030AmbientMusicCueCount, 100,
+		kScene1030AmbientMusicProbabilityModulus);
+}
+
+void Scene1030::applyFirstEntryPalette() {
+	if (_vm->gameState().seenScene1030EntryConversation || !_sceneChunkTable.isValidChunk(8))
+		return;
+
+	const uint32 sourceOffset = _resourceChunkOffsets[8];
+	if (sourceOffset >= _resourceArena.size())
+		return;
+
+	const uint32 byteCount = MIN<uint32>(_sceneChunkTable.sizes[8],
+		MIN<uint32>((uint32)kScene1030EntryPaletteByteCount, (uint32)_paletteCurrent.size()));
+	if (sourceOffset + byteCount <= _resourceArena.size())
+		memcpy(_paletteCurrent.data(), _resourceArena.data() + sourceOffset, byteCount);
+}
+
+void Scene1030::restoreNormalPalette() {
+	const uint32 byteCount = MIN<uint32>((uint32)kScene1030EntryPaletteByteCount,
+		MIN<uint32>((uint32)_paletteResource.size(), (uint32)_paletteCurrent.size()));
+	memcpy(_paletteCurrent.data(), _paletteResource.data(), byteCount);
+}
+
+void Scene1030::runFirstEntryConversation() {
+	GameplayState &state = _vm->gameState();
+
+	_entryActorsVisible = true;
+	_entryActorsAlternatePose = false;
+	_leftEntryActorFrame = 0;
+	_rightEntryActorFrame = 0;
+	drawPlayableComposite();
+	presentFrame();
+
+	beginPrimarySpeechLineWithAnimationGroup(0x0d, 0, 0x0e3, 0x084, 0x0d, 0x32, 0x3a,
+		kScene1030EntryLeftSpeechGroup);
+	beginPrimarySpeechLineWithAnimationGroup(0x0e, 0, 0x079, 0x086, 0x0a, 0x3f, 0,
+		kScene1030EntryRightSpeechGroup);
+
+	runEntryGestureSequence();
+
+	_entryActorsAlternatePose = true;
+	beginPrimarySpeechLineWithAnimationGroup(0x0d, 1, 0x0e3, 0x084, 0x0d, 0x32, 0x3a,
+		kScene1030EntryLeftSpeechGroup);
+	beginPrimarySpeechLineWithAnimationGroup(0x0e, 1, 0x079, 0x086, 0x0a, 0x3f, 0,
+		kScene1030EntryRightSpeechGroup);
+
+	runEntryOpenSequence();
+
+	restoreNormalPalette();
+	_entryActorsVisible = false;
+	_entryActorsAlternatePose = false;
+	_largeForegroundFrame = 0x1c;
+	_largeForegroundMode = 1;
+	state.seenScene1030EntryConversation = true;
+	drawPlayableComposite();
+	presentFrame();
+	beginSecondarySpeechLine(0, 0);
+}
+
+void Scene1030::runEntryGestureSequence() {
+	for (uint i = 0; i < ARRAYSIZE(kScene1030EntryGestureRightFrames) && !Engine::shouldQuit(); ++i) {
+		_rightEntryActorFrame = kScene1030EntryGestureRightFrames[i];
+		_leftEntryActorFrame = kScene1030EntryGestureLeftFrames[i];
+		if (waitSceneMillis(kScene1030ForegroundFrameMillis))
+			return;
+	}
+}
+
+void Scene1030::runEntryOpenSequence() {
+	for (uint i = 0; i <= 0x10 && !Engine::shouldQuit(); ++i) {
+		_rightEntryActorFrame = MIN<byte>(0x20, 0x10 + i);
+		_leftEntryActorFrame = MIN<byte>(0x1a, 0x10 + i);
+		if (waitSceneMillis(kScene1030ForegroundFrameMillis))
+			return;
+	}
+}
+
+void Scene1030::drawEntryActors() {
+	if (_leftEntryActorFrame < ARRAYSIZE(kScene1030LeftEntryActorFrameMap)) {
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[9], 0,
+			kScene1030LeftEntryActorDescriptorCount,
+			kScene1030LeftEntryActorFrameMap[_leftEntryActorFrame], _sceneFramebuffer);
+	}
+	if (_rightEntryActorFrame < ARRAYSIZE(kScene1030RightEntryActorFrameMap)) {
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[10], 0,
+			kScene1030RightEntryActorDescriptorCount,
+			kScene1030RightEntryActorFrameMap[_rightEntryActorFrame], _sceneFramebuffer);
+	}
+}
+
+void Scene1030::drawSmallForegroundActor() {
+	if (_vm->gameState().scene1030PatchState != 1)
+		return;
+
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[13], 0,
+		kScene1030SmallForegroundDescriptorCount, _smallForegroundFrame, _sceneFramebuffer);
+}
+
+void Scene1030::drawLargeForegroundActor() {
+	if (_largeForegroundFrame >= ARRAYSIZE(kScene1030LargeForegroundFrameMap))
+		return;
+
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[5], 0,
+		kScene1030LargeForegroundDescriptorCount,
+		kScene1030LargeForegroundFrameMap[_largeForegroundFrame], _sceneFramebuffer);
+}
+
+void Scene1030::advanceLargeForegroundActor(uint32 delta) {
+	const uint frameCount = _largeForegroundChannel.consumeFrames(delta);
+	for (uint i = 0; i < frameCount; ++i) {
+		const bool actorNearForeground = _activeActorWorldX < 0x0da && _activeActorWorldY > 0x16e;
+		if (_largeForegroundMode == 0) {
+			if (_largeForegroundFrame < 0x1b) {
+				++_largeForegroundFrame;
+				if (_largeForegroundFrame == 9 || _largeForegroundFrame == 0x12 ||
+						_largeForegroundFrame == 0x1b)
+					_soundBank0.playSample(0x24, 20);
+			} else if (actorNearForeground) {
+				_largeForegroundFrame = 0x25;
+				_largeForegroundMode = 2;
+			} else {
+				_largeForegroundFrame = 0x1c;
+				_largeForegroundMode = 1;
+			}
+		} else if (_largeForegroundMode == 1) {
+			if (_largeForegroundFrame < 0x24) {
+				++_largeForegroundFrame;
+				if (_largeForegroundFrame == 0x24)
+					_soundBank0.playSample(0x24, 20);
+			} else if (actorNearForeground) {
+				_largeForegroundFrame = 0x25;
+				_largeForegroundMode = 2;
+			} else {
+				_largeForegroundFrame = 0x1c;
+			}
+		} else {
+			if (_largeForegroundFrame < 0x48) {
+				++_largeForegroundFrame;
+				if (_largeForegroundFrame == 0x2e || _largeForegroundFrame == 0x37 ||
+						_largeForegroundFrame == 0x40)
+					_soundBank0.playSample(0x24, 20);
+			} else if (!actorNearForeground) {
+				_largeForegroundFrame = 0;
+				_largeForegroundMode = 0;
+			}
+		}
+	}
+}
+
+void Scene1030::advanceSmallForegroundActor(uint32 delta) {
+	if (_vm->gameState().scene1030PatchState != 1)
+		return;
+
+	const uint frameCount = _smallForegroundChannel.consumeFrames(delta);
+	for (uint i = 0; i < frameCount; ++i) {
+		if (_smallForegroundTickCount < 0x0f) {
+			++_smallForegroundTickCount;
+			continue;
+		}
+		_smallForegroundTickCount = 0;
+		_smallForegroundFrame = _smallForegroundFrame == 0 ? 1 : 0;
+		if (_smallForegroundFrame == 1) {
+			const byte soundId = (byte)(0x0f + _random.getRandomNumber(2));
+			_soundBank0.playSample(soundId, 5);
+		}
+	}
+}
+
+void Scene1030::runPickupOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
+		uint frameMapSize, int patchFrame, byte patchSelector) {
+	ActionOverlayOptions options;
+	options.statePatchFrame = patchFrame;
+	options.statePatchSelector = patchSelector;
+	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize,
+		kScene1030ForegroundFrameMillis, options);
+}
+
+void Scene1030::handleSceneEventFlag0() {
+	GameplayState &state = _vm->gameState();
+	if (!state.scene1030EventFlag0) {
+		state.scene1030EventFlag0 = true;
+		applySceneStateToHotspotsAndPatches(2);
+		beginSecondarySpeechLine(3, 0);
+		return;
+	}
+
+	beginStaticSecondarySpeechLine(0x0e, 0);
+}
+
+void Scene1030::handlePickupPunchBowl() {
+	GameplayState &state = _vm->gameState();
+	state.scene1030PatchState = 1;
+	runPickupOverlay(7, kScene1030PickupDescriptorCount, kScene1030PickupFrameMap,
+		ARRAYSIZE(kScene1030PickupFrameMap), 4, 1);
+	applySceneStateToHotspotsAndPatches(1);
+	addInventoryItem(0x1a);
+	_soundBank0.playSample(1, 100);
+	beginSecondarySpeechLine(0x14, (byte)_random.getRandomNumber(4));
+}
+
+void Scene1030::handlePickupLemonSlice() {
+	GameplayState &state = _vm->gameState();
+	state.scene1030PatchState = 3;
+	runPickupOverlay(7, kScene1030PickupDescriptorCount, kScene1030PickupFrameMap,
+		ARRAYSIZE(kScene1030PickupFrameMap), 4, 1);
+	applySceneStateToHotspotsAndPatches(1);
+	addInventoryItem(0x57);
+	_soundBank0.playSample(1, 100);
+	beginSecondarySpeechLine(0x14, (byte)_random.getRandomNumber(4));
+}
+
+void Scene1030::handlePickupSmallMan() {
+	GameplayState &state = _vm->gameState();
+	if (!state.scene1030SmallBumpRenamed)
+		beginSecondarySpeechLine(0x0c, 0);
+	beginSecondarySpeechLine(0x0b, 0);
+	state.scene1030PatchState = 2;
+	runPickupOverlay(7, kScene1030PickupDescriptorCount, kScene1030PickupFrameMap,
+		ARRAYSIZE(kScene1030PickupFrameMap), 4, 1);
+	_smallForegroundFrame = 0;
+	applySceneStateToHotspotsAndPatches(1);
+	addInventoryItem(0x18);
+	_soundBank0.playSample(1, 100);
+}
+
+void Scene1030::handleSmallBumpDescription() {
+	GameplayState &state = _vm->gameState();
+	if (!state.scene1030SmallBumpRenamed) {
+		beginSecondarySpeechLine(0x0c, 0);
+		state.scene1030SmallBumpRenamed = true;
+		applySceneStateToHotspotsAndPatches(2);
+		return;
+	}
+
+	beginSecondarySpeechLine(0x0c, 1);
+}
+
+void Scene1030::handleGreasyCottonExchange() {
+	beginSecondarySpeechLine(0x0f, 0);
+	runPickupOverlay(14, kScene1030GreasyCottonDescriptorCount, kScene1030GreasyCottonFrameMap,
+		ARRAYSIZE(kScene1030GreasyCottonFrameMap), -1, 0);
+	removeInventoryItem(0x02);
+	addInventoryItem(0x17);
+	_soundBank0.playSample(1, 100);
+}
+
+void Scene1030::applyPatchStateColorMaps() {
+	if (_paletteMaskOriginal.size() < kSceneColorToActorDepthClassMap + kScenePaletteMapPageSize ||
+			_paletteMask.size() < kSceneColorToActorDepthClassMap + kScenePaletteMapPageSize ||
+			_colorToActorDepthClassMap.size() < kScenePaletteMapPageSize)
+		return;
+
+	const byte patchState = MIN<byte>(_vm->gameState().scene1030PatchState, 3);
+	for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
+		const byte originalItem = _paletteMaskOriginal[kSceneColorToItemMap + i];
+		const byte originalDepth = _paletteMaskOriginal[kSceneColorToActorDepthClassMap + i];
+		byte item = originalItem;
+		byte depth = originalDepth;
+
+		if (patchState == 0) {
+			if (depth == 5)
+				depth = 3;
+			if (item == 6 || item == 8)
+				item = 5;
+		} else if (patchState == 1) {
+			if (item == 5 || item == 6)
+				item = 0;
+			if (originalItem == 8)
+				item = 8;
+			if (originalDepth == 5)
+				depth = 0;
+		} else if (patchState == 2) {
+			if (item == 5 || item == 8)
+				item = 0;
+			if (originalItem == 8)
+				item = 6;
+			if (originalDepth == 5)
+				depth = 0;
+		} else {
+			if (item == 5 || item == 6 || item == 8)
+				item = 0;
+			if (originalDepth == 5)
+				depth = 0;
+		}
+
+		_paletteMask[kSceneColorToItemMap + i] = item;
+		_paletteMask[kSceneColorToActorDepthClassMap + i] = depth;
+		_colorToActorDepthClassMap[i] = depth;
+	}
+
+	if (patchState == 1 && _sceneChunkTable.isValidChunk(6))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _baseFramebuffer);
+	else if (patchState == 2 && _sceneChunkTable.isValidChunk(11))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[11], _baseFramebuffer);
+	else if (patchState == 3 && _sceneChunkTable.isValidChunk(12))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[12], _baseFramebuffer);
+}
+
+void Scene1030::rebuildScene1030WalkableMask() {
+	rebuildWalkablePaletteMask();
+	for (uint i = 0; i < _walkablePaletteMask.size(); ++i) {
+		if (_walkablePaletteMask[i] == 1 || _walkablePaletteMask[i] == 5)
+			_walkablePaletteMask[i] = 0;
+	}
+}
+
+void Scene1030::copyStageSmallRow(byte sourceRow, byte destinationRow) {
+	const uint sourceOffset = (uint)sourceRow * kStage003SmallRowSize;
+	const uint destinationOffset = (uint)destinationRow * kStage003SmallRowSize;
+	if (sourceOffset + kStage003SmallRowSize > _stage003SmallRows.size() ||
+			destinationOffset + kStage003SmallRowSize > _stage003SmallRows.size())
+		return;
+
+	memcpy(_stage003SmallRows.data() + destinationOffset,
+		_stage003SmallRows.data() + sourceOffset, kStage003SmallRowSize);
+}
+
+bool Scene1030::isFirstEntryState() const {
+	return _vm->gameState().mainFlowStateId == kScene1030FirstEntryState;
+}
+
+bool Scene1030::isLeftEntryState() const {
+	return _vm->gameState().mainFlowStateId == kScene1030LeftEntryState;
+}
+
+} // End of namespace Hollywood
