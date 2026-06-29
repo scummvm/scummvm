@@ -223,7 +223,7 @@ bool Scene7040::hasCustomComposite() const {
 void Scene7040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
-	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
+	copyBaseFramebufferToSceneFramebuffer();
 
 	if (_vm->gameState().reviewedFrankensteinNote) {
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[17], 0,
@@ -435,8 +435,7 @@ bool Scene7040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	}
 
 	if (selector == 3 || selector == 0xff) {
-		if (!_baseFramebufferOriginal.empty())
-			memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
+		restoreBaseFramebufferFromOriginal();
 
 		if (_vm->gameState().officeNotePickupState == 1)
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[9], _baseFramebuffer);

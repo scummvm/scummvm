@@ -25,18 +25,22 @@
 #include "common/array.h"
 #include "common/types.h"
 
+namespace Graphics {
+struct Surface;
+}
+
 namespace Hollywood {
 
 struct ActorDepthTest {
 	bool enabled;
-	const Common::Array<byte> *savedFramebuffer;
+	const Graphics::Surface *savedFramebuffer;
 	const Common::Array<byte> *colorToDepthClassMap;
 	const Common::Array<uint16> *depthYThresholds;
 	int actorWorldY;
 };
 
 int drawActorRunStream(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
-	int spriteX, int spriteY, int minimumYExclusive, Common::Array<byte> &destination,
+	int spriteX, int spriteY, int minimumYExclusive, Graphics::Surface &destination,
 	const ActorDepthTest *depthTest);
 
 } // End of namespace Hollywood

@@ -386,8 +386,7 @@ bool Scene1020::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 	memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
-	if (!_baseFramebufferOriginal.empty())
-		memcpy(_baseFramebuffer.data(), _baseFramebufferOriginal.data(), _baseFramebuffer.size());
+	restoreBaseFramebufferFromOriginal();
 
 	applyResourceBlockBackground();
 	applySceneColorMapRules(0xff);

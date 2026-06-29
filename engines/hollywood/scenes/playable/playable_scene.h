@@ -208,6 +208,22 @@ protected:
 	void restoreActiveActorPoseFromGameState();
 	// Saves active actor position/facing into game state.
 	void syncActiveActorPoseToGameState();
+	// Allocates the fixed CLUT8 scene framebuffers.
+	void initializeFramebuffers();
+	// Returns the byte count of one full scene framebuffer.
+	uint framebufferByteCount() const;
+	// Returns a mutable pixel pointer for an owning scene framebuffer.
+	byte *framebufferPixels(Graphics::ManagedSurface &surface);
+	// Returns a const pixel pointer for an owning scene framebuffer.
+	const byte *framebufferPixels(const Graphics::ManagedSurface &surface) const;
+	// Copies the current base framebuffer into the scene framebuffer.
+	void copyBaseFramebufferToSceneFramebuffer();
+	// Copies the original base framebuffer back to the mutable base framebuffer.
+	void restoreBaseFramebufferFromOriginal();
+	// Tests a flat offset into the fixed scene framebuffer.
+	bool isFramebufferOffsetValid(uint offset) const;
+	// Reads one pixel from the saved scene framebuffer.
+	byte savedFramebufferPixelAt(uint offset) const;
 	// Loads all scene resources and runtime tables.
 	bool load();
 	// Loads RESOURCE.000 offset and size tables.
@@ -222,6 +238,8 @@ protected:
 	bool loadStage003SceneRows();
 	// Loads a fixed-size scene chunk into a preallocated buffer.
 	bool loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
+	// Loads a fixed-size scene chunk into a framebuffer surface.
+	bool loadFixedChunk(uint index, Graphics::ManagedSurface &destination, uint fixedSize);
 	// Loads a variable-size scene chunk into a resized buffer.
 	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
 	// Appends an arena chunk and records its arena offset.
@@ -266,7 +284,7 @@ protected:
 	// Exposes loaded scene hotspots to the gameplay loop.
 	const SceneHotspotTable &hotspots() const override;
 	// Exposes the saved background for panel/cursor drawing.
-	const Common::Array<byte> &savedFramebuffer() const override;
+	const Graphics::Surface &savedFramebuffer() const override;
 	// Current horizontal viewport offset.
 	uint16 viewportXOffset() const override;
 	// Current vertical viewport offset.
@@ -399,7 +417,7 @@ protected:
 	// Draws a resource sprite using a frame map.
 	void drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex);
 	// Restores current and previous sprite-layer bounds from background.
-	void restoreResourceSpriteLayerBackground(const ResourceSpriteLayer &layer, const Common::Array<byte> &background);
+	void restoreResourceSpriteLayerBackground(const ResourceSpriteLayer &layer, const Graphics::Surface &background);
 	// Draws the current frame of a resource sprite layer.
 	void drawResourceSpriteLayer(const ResourceSpriteLayer &layer);
 	// Draws the currently active action overlay layer.
@@ -472,10 +490,10 @@ protected:
 
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _paletteCurrent;
-	Common::Array<byte> _baseFramebufferOriginal;
-	Common::Array<byte> _baseFramebuffer;
-	Common::Array<byte> _sceneFramebuffer;
-	Common::Array<byte> _savedFramebuffer;
+	Graphics::ManagedSurface _baseFramebufferOriginal;
+	Graphics::ManagedSurface _baseFramebuffer;
+	Graphics::ManagedSurface _sceneFramebuffer;
+	Graphics::ManagedSurface _savedFramebuffer;
 	Common::Array<byte> _fillRuns;
 	Common::Array<byte> _paletteMaskOriginal;
 	Common::Array<byte> _paletteMask;

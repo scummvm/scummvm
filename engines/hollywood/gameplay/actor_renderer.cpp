@@ -21,6 +21,8 @@
 
 #include "hollywood/gameplay/actor_renderer.h"
 
+#include "graphics/surface.h"
+
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -34,10 +36,16 @@ bool actorDepthTestEnabled(const ActorDepthTest *depthTest) {
 }
 
 bool actorPixelPassesDepthTest(const ActorDepthTest &depthTest, uint framebufferOffset) {
-	if (framebufferOffset >= depthTest.savedFramebuffer->size())
+	if (depthTest.savedFramebuffer->format.bytesPerPixel != 1 ||
+			framebufferOffset >= (uint)depthTest.savedFramebuffer->w * (uint)depthTest.savedFramebuffer->h)
 		return false;
 
-	const byte savedColor = (*depthTest.savedFramebuffer)[framebufferOffset];
+	const uint x = framebufferOffset % HollywoodEngine::kSceneBufferWidth;
+	const uint y = framebufferOffset / HollywoodEngine::kSceneBufferWidth;
+	if (x >= (uint)depthTest.savedFramebuffer->w || y >= (uint)depthTest.savedFramebuffer->h)
+		return false;
+
+	const byte savedColor = *(const byte *)depthTest.savedFramebuffer->getBasePtr(x, y);
 	if (savedColor >= depthTest.colorToDepthClassMap->size())
 		return false;
 
@@ -49,9 +57,12 @@ bool actorPixelPassesDepthTest(const ActorDepthTest &depthTest, uint framebuffer
 }
 
 int drawActorRunStream(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
-		int spriteX, int spriteY, int minimumYExclusive, Common::Array<byte> &destination,
+		int spriteX, int spriteY, int minimumYExclusive, Graphics::Surface &destination,
 		const ActorDepthTest *depthTest) {
 	const bool useDepthTest = actorDepthTestEnabled(depthTest);
+	if (destination.format.bytesPerPixel != 1)
+		return minimumYExclusive;
+
 	cursor += runBase;
 	int lastRunY = minimumYExclusive;
 
@@ -82,14 +93,15 @@ int drawActorRunStream(const Common::Array<byte> &runStreams, uint cursor, uint 
 
 			if (copyCount != 0) {
 				const uint destinationOffset = dstX + dstY * HollywoodEngine::kSceneBufferWidth;
-				if (destinationOffset + copyCount <= destination.size()) {
+				if (dstX + copyCount <= (uint)destination.w) {
+					byte *destinationPixels = (byte *)destination.getBasePtr(dstX, dstY);
 					if (useDepthTest) {
 						for (uint i = 0; i < copyCount; ++i) {
 							if (actorPixelPassesDepthTest(*depthTest, destinationOffset + i))
-								destination[destinationOffset + i] = runStreams[cursor + sourceOffset + i];
+								destinationPixels[i] = runStreams[cursor + sourceOffset + i];
 						}
 					} else {
-						memcpy(destination.data() + destinationOffset, runStreams.data() + cursor + sourceOffset, copyCount);
+						memcpy(destinationPixels, runStreams.data() + cursor + sourceOffset, copyCount);
 					}
 				}
 			}

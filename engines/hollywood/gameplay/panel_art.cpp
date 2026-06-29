@@ -299,7 +299,7 @@ bool GameplayPanelArt::applyInteractiveObjectPalette(Common::Array<byte> &palett
 	return true;
 }
 
-void GameplayPanelArt::drawVerbPanel(Graphics::Surface &surface, const Common::Array<byte> &savedFramebuffer,
+void GameplayPanelArt::drawVerbPanel(Graphics::Surface &surface, const Graphics::Surface &savedFramebuffer,
 		uint16 viewportXOffset, uint16 viewportYOffset, const GameplayPanelState &panelState,
 		HollywoodFont *font) const {
 	if (!_loaded)
@@ -313,7 +313,7 @@ void GameplayPanelArt::drawVerbPanel(Graphics::Surface &surface, const Common::A
 }
 
 void GameplayPanelArt::drawDialogueInventoryPanel(Graphics::Surface &surface,
-		const Common::Array<byte> &savedFramebuffer, uint16 viewportXOffset, uint16 viewportYOffset,
+		const Graphics::Surface &savedFramebuffer, uint16 viewportXOffset, uint16 viewportYOffset,
 		const GameplayPanelState &panelState, const GameplayState &gameState, HollywoodFont *font) const {
 	if (!_loaded)
 		return;
@@ -374,20 +374,21 @@ void GameplayPanelArt::drawDialogueMenuPanel(Graphics::Surface &surface,
 }
 
 void GameplayPanelArt::copySavedCaptionBand(Graphics::Surface &surface,
-		const Common::Array<byte> &savedFramebuffer, uint16 viewportXOffset, uint16 viewportYOffset,
+		const Graphics::Surface &savedFramebuffer, uint16 viewportXOffset, uint16 viewportYOffset,
 		uint16 screenY) const {
-	if (surface.format.bytesPerPixel != 1)
+	if (surface.format.bytesPerPixel != 1 || savedFramebuffer.format.bytesPerPixel != 1)
 		return;
 
 	for (uint row = 0; row < kPanelCaptionBandHeight; ++row) {
 		const uint sceneY = viewportYOffset + screenY + row;
-		const uint sourceOffset = sceneY * HollywoodEngine::kSceneBufferWidth + viewportXOffset;
 		if (sceneY >= HollywoodEngine::kSceneBufferHeight ||
-				sourceOffset + HollywoodEngine::kScreenWidth > savedFramebuffer.size() ||
+				sceneY >= (uint)savedFramebuffer.h ||
+				viewportXOffset + HollywoodEngine::kScreenWidth > (uint)savedFramebuffer.w ||
 				screenY + row >= (uint)surface.h)
 			continue;
 
-		memcpy(surface.getBasePtr(0, screenY + row), savedFramebuffer.data() + sourceOffset,
+		memcpy(surface.getBasePtr(0, screenY + row),
+			savedFramebuffer.getBasePtr(viewportXOffset, sceneY),
 			HollywoodEngine::kScreenWidth);
 	}
 }

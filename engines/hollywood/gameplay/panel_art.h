@@ -47,10 +47,10 @@ public:
 
 	bool applyPalette(Common::Array<byte> &palette) const;
 	bool applyInteractiveObjectPalette(Common::Array<byte> &palette) const;
-	void drawVerbPanel(Graphics::Surface &surface, const Common::Array<byte> &savedFramebuffer,
+	void drawVerbPanel(Graphics::Surface &surface, const Graphics::Surface &savedFramebuffer,
 		uint16 viewportXOffset, uint16 viewportYOffset, const GameplayPanelState &panelState,
 		HollywoodFont *font) const;
-	void drawDialogueInventoryPanel(Graphics::Surface &surface, const Common::Array<byte> &savedFramebuffer,
+	void drawDialogueInventoryPanel(Graphics::Surface &surface, const Graphics::Surface &savedFramebuffer,
 		uint16 viewportXOffset, uint16 viewportYOffset, const GameplayPanelState &panelState,
 		const GameplayState &gameState, HollywoodFont *font) const;
 	void drawDialogueMenuPanel(Graphics::Surface &surface, const DialogueMenuState &menuState,
@@ -61,7 +61,7 @@ private:
 	bool loadDialogueMenuPanelBuffer();
 	bool loadObjectPalette();
 	bool loadInventoryItemTilePage(byte pageIndex, Common::Array<byte> &page) const;
-	void copySavedCaptionBand(Graphics::Surface &surface, const Common::Array<byte> &savedFramebuffer,
+	void copySavedCaptionBand(Graphics::Surface &surface, const Graphics::Surface &savedFramebuffer,
 		uint16 viewportXOffset, uint16 viewportYOffset, uint16 screenY) const;
 	void copyBottomPanelRows(Graphics::Surface &surface, uint16 sourceRow, uint16 screenY,
 		uint16 rowCount) const;
