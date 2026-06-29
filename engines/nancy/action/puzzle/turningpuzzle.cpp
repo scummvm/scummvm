@@ -182,12 +182,22 @@ void TurningPuzzle::readData(Common::SeekableReadStream &stream) {
 	}
 	stream.skip((16 - numSpindles) * 2);
 
+	if (g_nancy->getGameType() >= kGameTypeNancy12) {
+		// Nancy 12 inserts 3 bytes here (zero in the samples seen); purpose unknown.
+		stream.skip(3);
+	}
+
 	_solveScene.readData(stream);
 	_solveSoundDelay = stream.readUint16LE();
 	_solveSound.readNormal(stream);
 
 	_exitScene.readData(stream);
 	readRect(stream, _exitHotspot);
+
+	if (g_nancy->getGameType() >= kGameTypeNancy12) {
+		// Nancy 12 appends a uint16 here (5 in the sample seen); purpose unknown.
+		stream.skip(2);
+	}
 }
 
 void TurningPuzzle::execute() {
