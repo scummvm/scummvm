@@ -379,8 +379,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 132:
 		// ResourceUse ("UIResource Adjust") - adjusts a UI overlay resource (see the UIRC
 		// boot chunk) at runtime. Added in Nancy12.
-		// TODO: not implemented
-		return nullptr;
+		return new ResourceUse();
 	case 140:
 		if (g_nancy->getGameType() >= kGameTypeNancy12)
 			return new SetPlayerClock();	// Moved from 170 in Nancy12

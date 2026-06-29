@@ -153,6 +153,13 @@ public:
 	bool isSoftwareTimerActive(uint16 index) const;
 	uint32 getSoftwareTimerElapsed(uint16 index) const;
 
+	// Nancy 12+ UI resource values (the UIRC boot chunk). Resource 0 is the
+	// coin purse amount in cents. Backed by the lazily-created, saved
+	// UIResourceData puzzle chunk, seeded from UIRC on first use and mutated by
+	// AR 132 (ResourceUse). Non-const because the first access creates/seeds it.
+	int32 getUIResource(uint index);
+	void setUIResource(uint index, int32 value);
+
 	void setLogicCondition(int16 label, byte flag);
 	bool getLogicCondition(int16 label, byte flag) const;
 	void clearLogicConditions();

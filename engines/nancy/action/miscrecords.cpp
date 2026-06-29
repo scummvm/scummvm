@@ -751,5 +751,35 @@ void HintSystem::selectHint() {
 	}
 }
 
+void ResourceUse::readData(Common::SeekableReadStream &stream) {
+	_resourceIndex = stream.readSint16LE();   // which UIRC resource to change
+	_amount = stream.readSint16LE();           // value / delta
+	_mode = stream.readByte();                 // 0 = set, non-zero = add
+	_flag.label = stream.readSint16LE();       // event flag set on success
+	_flag.flag = stream.readByte();
+	// The rest of the 113-byte block (success/fail sounds, an optional scene
+	// change at +0x5b, and a transient "UIResource_Overlay" sprite) isn't
+	// handled yet.
+	stream.skip(0x71 - 8);
+}
+
+void ResourceUse::execute() {
+	if (_mode == 0) {
+		// Set the resource outright.
+		NancySceneState.setUIResource(_resourceIndex, _amount);
+		NancySceneState.setEventFlag(_flag);
+	} else {
+		// Add the (signed) amount, but never let the resource go negative —
+		// the original skips the change (e.g. when Nancy can't afford it).
+		const int32 result = NancySceneState.getUIResource(_resourceIndex) + _amount;
+		if (result >= 0) {
+			NancySceneState.setUIResource(_resourceIndex, result);
+			NancySceneState.setEventFlag(_flag);
+		}
+	}
+
+	_isDone = true;
+}
+
 } // End of namespace Action
 } // End of namespace Nancy

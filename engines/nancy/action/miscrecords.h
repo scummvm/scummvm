@@ -445,6 +445,22 @@ protected:
 	Common::String getRecordTypeName() const override { return "HintSystem"; }
 };
 
+// Added in Nancy12 (AR 132). Adjusts a UI overlay resource (from the UIRC boot
+// chunk) at runtime.
+class ResourceUse : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "ResourceUse"; }
+
+	int16 _resourceIndex = 0;
+	int16 _amount = 0;
+	byte _mode = 0;        // 0 = set the resource, non-zero = add (clamped to >= 0)
+	FlagDescription _flag; // event flag set when the change is applied
+};
+
 } // End of namespace Action
 } // End of namespace Nancy
 

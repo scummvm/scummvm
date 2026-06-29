@@ -152,6 +152,46 @@ bool Taskbar::isButtonActive(uint index) const {
 	return _enabled[index] && restingState(index) != kButtonDisabled;
 }
 
+bool Taskbar::isMoneyDisplay(uint index) const {
+	return g_nancy->getGameType() == kGameTypeNancy12 && index == kTaskButtonCoinPurse;
+}
+
+void Taskbar::drawMoney() {
+	auto *taskData = GetEngineData(TASK);
+	const UIRC *uirc = GetEngineData(UIRC);
+	if (!taskData || !uirc || uirc->items.empty()) {
+		return;
+	}
+
+	// The coin purse displays UI resource 0: its current value rendered with a
+	// '$' prefix and `unknown2` decimal places. Old Clock tracks cents
+	// (decimals 2), so a value of 350 shows as "$3.50". `unknown1` selects the
+	// font. The live value lives in the scene state (seeded from UIRC, changed
+	// by AR 132); UIRC only supplies the formatting config.
+	const UIRC::ItemRecord &res = uirc->items[0];
+	if (res.unknown2 < 1) {
+		return;
+	}
+	const int32 value = NancySceneState.getUIResource(0);
+	const Common::String text =
+		Common::String::format("$%d.%02d", value / 100, value % 100);
+
+	const Font *font = g_nancy->_graphics->getFont(res.unknown1);
+	if (!font) {
+		return;
+	}
+
+	Common::Rect dst = taskData->buttons[kTaskButtonCoinPurse].button.destRect;
+	dst.translate(-_screenPosition.left, -_screenPosition.top);
+
+	// Position matches the original: a small inset from the left, and a little
+	// below the button's vertical centre.
+	const int x = dst.left + 12;
+	const int y = dst.top + dst.height() / 2 + 10;
+	font->drawString(&_drawSurface, text, x, y, dst.right - x, 0, Graphics::kTextAlignLeft);
+	_needsRedraw = true;
+}
+
 void Taskbar::toggleButton(uint index, bool enabled) {
 	if (index >= TASK::kNumButtons) {
 		return;
@@ -328,6 +368,9 @@ void Taskbar::handleInput(NancyInput &input) {
 		}
 		if (newHovered != -1 && hoveredActive) {
 			drawButton(newHovered, kButtonHover);
+			if (isMoneyDisplay(newHovered)) {
+				drawMoney();
+			}
 		}
 		_hoveredButton = newHovered;
 	}
@@ -337,6 +380,12 @@ void Taskbar::handleInput(NancyInput &input) {
 	}
 
 	g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+
+	// The Nancy12 coin purse shows Nancy's money on hover but isn't clickable, so
+	// it skips the press/click handling below.
+	if (isMoneyDisplay(newHovered)) {
+		return;
+	}
 
 	// Disabled button: a click just plays the rejection sound, no popup.
 	if (!hoveredActive) {

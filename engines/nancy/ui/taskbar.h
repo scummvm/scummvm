@@ -109,6 +109,13 @@ private:
 	// True when the button currently accepts hover/click (not disabled).
 	bool isButtonActive(uint index) const;
 
+	// Nancy12 replaces the (era-inappropriate) cell phone with a coin purse that
+	// is not clickable but shows Nancy's money when hovered. True only for that
+	// game and button slot.
+	bool isMoneyDisplay(uint index) const;
+	// Draw Nancy's current money over the coin purse button (Nancy12 only).
+	void drawMoney();
+
 	// Play a normal click sound (the button's clickSound), or the "popup
 	// unavailable" rejection sound for a disabled button.
 	void playClickSound(uint index);
@@ -119,10 +126,11 @@ private:
 	int _hoveredButton;
 	int _clickedButton;
 	int16 _currentScene;
-	bool _enabled[5];
-	ButtonState _buttonStates[5];
-	ButtonOverride _overrides[5];
-	bool _notifications[5][kNumNotificationSubCategories];
+	// Sized to TASK::kNumButtons (the maximum, 6 — Nancy12's coin purse slot).
+	bool _enabled[6];
+	ButtonState _buttonStates[6];
+	ButtonOverride _overrides[6];
+	bool _notifications[6][kNumNotificationSubCategories];
 };
 
 } // End of namespace UI

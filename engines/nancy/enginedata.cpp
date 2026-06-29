@@ -890,8 +890,14 @@ TASK::TASK(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRect(*chunkStream, unkRect1);
 	readRect(*chunkStream, unkRect2);
 
+	// The button count varies by game (Nancy12 adds a 6th slot for the coin
+	// purse), so derive it from the chunk size. A slot marked "NO_UI_ITEM" (e.g.
+	// the cell phone Nancy12 removed) is read but skipped by the taskbar.
+	const uint numButtons = MIN<uint>(kNumButtons,
+		(uint)(chunkStream->size() - chunkStream->pos()) / kButtonRecordSize);
+
 	char nameBuf[34];
-	for (uint i = 0; i < kNumButtons; ++i) {
+	for (uint i = 0; i < numButtons; ++i) {
 		readUIButton(*chunkStream, buttons[i].button);
 		readRect(*chunkStream, buttons[i].notificationSrcRect);
 		for (uint s = 0; s < kNumAltSounds; ++s) {

@@ -286,6 +286,21 @@ struct TimerData : public PuzzleData {
 	Timer timers[kNumTimers];
 };
 
+// Nancy 12+ UI resource values (from the UIRC boot chunk), e.g. resource 0 is
+// the coin purse amount in cents. Seeded from UIRC on first use, mutated by AR
+// 132 (ResourceUse), and persisted between saves.
+struct UIResourceData : public PuzzleData {
+	UIResourceData() {}
+	virtual ~UIResourceData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('U', 'R', 'E', 'S'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	// Set true once seeded from UIRC, so a loaded save isn't re-seeded.
+	bool seeded = false;
+	Common::Array<int32> values;
+};
+
 PuzzleData *makePuzzleData(const uint32 tag);
 
 } // End of namespace Nancy

@@ -376,6 +376,20 @@ void TimerData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+void UIResourceData::synchronize(Common::Serializer &ser) {
+	ser.syncAsByte(seeded);
+
+	uint16 numValues = (uint16)values.size();
+	ser.syncAsUint16LE(numValues);
+	if (ser.isLoading()) {
+		values.resize(numValues);
+	}
+
+	for (uint16 i = 0; i < numValues; ++i) {
+		ser.syncAsSint32LE(values[i]);
+	}
+}
+
 PuzzleData *makePuzzleData(const uint32 tag) {
 	switch(tag) {
 	case SliderPuzzleData::getTag():
@@ -408,6 +422,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new CellPhoneData();
 	case TimerData::getTag():
 		return new TimerData();
+	case UIResourceData::getTag():
+		return new UIResourceData();
 	default:
 		return nullptr;
 	}

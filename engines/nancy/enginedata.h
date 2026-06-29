@@ -520,7 +520,11 @@ enum TaskButton {
 	kTaskButtonInventory = 1,
 	kTaskButtonNotebook = 2,
 	kTaskButtonCellphone = 3,
-	kTaskButtonHelp = 4
+	// Nancy12 only: a non-clickable coin purse that shows Nancy's money on
+	// hover, inserted before HELP. HELP is therefore always the last taskbar
+	// button (index 4 in games without the coin purse, index 5 in Nancy12) and
+	// has no fixed constant.
+	kTaskButtonCoinPurse = 4
 };
 
 // Taskbar (the always-on strip at the bottom of the screen with MENU /
@@ -537,7 +541,9 @@ struct TASK : public EngineData {
 
 	TASK(Common::SeekableReadStream *chunkStream);
 
-	static const uint kNumButtons = 5;
+	// Maximum taskbar button slots: menu / inventory / notebook / cell phone /
+	// help, plus Nancy12's extra coin purse. Earlier games fill only the first 5.
+	static const uint kNumButtons = 6;
 	static const uint kButtonRecordSize = 354;
 	static const uint kNumAltSounds = 3;
 
