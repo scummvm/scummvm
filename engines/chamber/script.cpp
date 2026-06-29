@@ -4490,7 +4490,7 @@ uint16 RunScript(byte *code) {
 
 
 		// Amiga pads opcodes to word with 0x00 or 0xAA
-		if (g_vm->_videoMode == Common::kRenderAmiga
+		if (g_vm->getPlatform() == Common::kPlatformAmiga
 		        && (opcode == 0x00 || opcode == 0xAA)) {
 			script_ptr++;
 			continue;
