@@ -125,7 +125,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.seenScene1030EntryConversation);
 	s.syncAsByte(state.scene1030PatchState);
 	syncStateBool(s, state.scene1030EventFlag0);
-	syncStateBool(s, state.scene1030SmallBumpRenamed);
+	syncStateBool(s, state.scene1030ShrinkingManNamed);
 	syncStateBool(s, state.seenScene1040EntryLine);
 	syncStateBool(s, state.scene1040DoorOpened);
 	s.syncAsByte(state.scene1040CordState);

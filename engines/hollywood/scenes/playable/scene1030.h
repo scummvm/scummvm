@@ -93,8 +93,8 @@ private:
 	void handleSceneEventFlag0();
 	void handlePickupPunchBowl();
 	void handlePickupLemonSlice();
-	void handlePickupSmallMan();
-	void handleSmallBumpDescription();
+	void handlePickupShrinkingMan();
+	void handleShrinkingManDescription();
 	void handleGreasyCottonExchange();
 	void applyPatchStateColorMaps();
 	void rebuildScene1030WalkableMask();
