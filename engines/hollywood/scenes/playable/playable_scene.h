@@ -49,9 +49,11 @@ class HollywoodEngine;
 
 class PlayableScene : public GameplayLoopDelegate, public DialogueMenuDelegate {
 public:
+	// Loads, runs, and exits a playable scene.
 	bool play();
 
 protected:
+	// Creates a playable scene with default actor placement and speech colors.
 	PlayableScene(HollywoodEngine *vm, const char *randomName, int defaultActorX, int defaultActorY,
 		byte defaultActorFacing, byte secondarySpeechTextColor, byte primarySpeechTextColor);
 
@@ -88,201 +90,371 @@ protected:
 		kOriginalSpeechLineHeight = 20
 	};
 
+	// Names the scene resource archive, such as RESOURCE.G04.
 	virtual const char *resourceArchiveName() const = 0;
+	// Number of low-index chunks required before optional scene data.
 	virtual uint sceneInitialRequiredChunkCount() const = 0;
+	// First chunk copied into the scene resource arena.
 	virtual uint sceneArenaFirstChunk() const = 0;
+	// Last chunk copied into the scene resource arena.
 	virtual uint sceneArenaLastChunk() const = 0;
+	// RESOURCE.003 stage number used for scene text and metadata.
 	virtual uint sceneStageIndex() const = 0;
+	// Human-readable scene label for warnings and debug output.
 	virtual const char *sceneDebugName() const = 0;
+	// Default horizontal viewport offset for the scene.
 	virtual uint16 sceneViewportXOffset() const = 0;
+	// Minimum horizontal viewport offset allowed while scrolling.
 	virtual uint16 sceneViewportMinXOffset() const;
+	// Maximum horizontal viewport offset allowed while scrolling.
 	virtual uint16 sceneViewportMaxXOffset() const;
+	// Inventory owner/character index used by this scene.
 	virtual byte inventoryOwnerIndex() const;
+	// Initializes character-specific inventory tables and defaults.
 	virtual void initializeInventoryOwnerState();
+	// RESOURCE.000 offset-table entry for the active actor bank.
 	virtual uint resource000ActorBankTableEntry() const;
+	// Number of RESOURCE.000 actor bank segments to load.
 	virtual uint resource000ActorBankSegmentCount() const;
+	// RESOURCE.000 offset-table entry for actor palette colors.
 	virtual uint resource000ActorPaletteTableEntry() const;
+	// Extra byte offset into RESOURCE.000 inventory action tables.
 	virtual uint32 inventoryActionTableExtraOffset() const;
+	// RESOURCE.003 owner text table index for inventory item names.
 	virtual uint resource003InventoryRowsOffsetIndex() const;
+	// RESOURCE.003 offset for fixed speech cue descriptors.
 	virtual uint32 speechCueDescriptorTableOffset() const;
+	// Actor path step table used to advance cels while walking.
 	virtual const byte *actorPathStepDeltaTable() const;
+	// Byte count for the actor path step table.
 	virtual uint actorPathStepDeltaTableSize() const;
+	// Highest palette-region id treated as walkable by default.
 	virtual byte walkablePaletteMaxRegion() const;
+	// Music archive used by the scene.
 	virtual const char *musicArchiveName() const;
+	// Sound bank 0 archive used by the scene.
 	virtual const char *soundBank0ArchiveName() const;
+	// Optional palette chunk replacing chunk 1 for scene state.
 	virtual int alternatePaletteResourceChunkIndex() const;
+	// Whether the optional alternate palette chunk is active.
 	virtual bool isAlternatePaletteResourceActive() const;
+	// Whether RESOURCE.000 inventory action tables should be loaded.
 	virtual bool shouldLoadInventoryActionTables() const;
+	// Whether actor depth tables are available in chunk 4.
 	virtual bool shouldLoadActorDepthTables() const;
+	// Whether 0xff fill pixels need conversion after fill expansion.
 	virtual bool shouldConvertSavedFramebufferFF() const;
+	// Allows scenes to skip individual arena chunks.
 	virtual bool shouldLoadArenaChunk(uint index) const;
+	// Whether to run scene-specific side effects after loop exit.
 	virtual bool shouldRunExitSideEffectsAfterLoop() const;
+	// Runs scene-specific side effects after loop exit.
 	virtual void runExitSideEffectsAfterLoop();
+	// Enables per-pixel actor depth clipping while drawing actors.
 	virtual bool usesActorDepthTest() const;
+	// Checks if a main-flow state belongs to this scene.
 	virtual bool isMainFlowStateInScene(uint16 stateId) const = 0;
+	// Whether the scene replaces default preview initialization.
 	virtual bool hasCustomPreviewState() const;
+	// Initializes scene-local preview/entry state.
 	virtual void initializeCustomPreviewState();
+	// Whether the scene replaces the default composite renderer.
 	virtual bool hasCustomComposite() const;
+	// Draws a scene-specific frame composite.
 	virtual void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode);
+	// Decides if the speech/secondary actor should be drawn.
 	virtual bool shouldDrawSecondaryActorInPlayableComposite() const;
+	// Whether the scene has a custom entry sequence.
 	virtual bool hasCustomEntrySequence() const;
+	// Runs the scene-specific entry sequence.
 	virtual void runCustomEntrySequence();
+	// Initializes scene-specific state before the gameplay loop.
 	virtual bool prepareCustomGameplayLoop();
+	// Advances scene-specific timers and animation during gameplay.
 	virtual bool advanceCustomGameplayLoop(uint32 delta);
+	// Handles scene-specific action handler ids.
 	virtual bool dispatchCustomSceneAction(uint16 handlerId);
+	// Adjusts a target click to a legal walkable point.
 	virtual bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const;
+	// Lets scenes alter routing for an intermediate region hop.
 	virtual bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
 		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas);
+	// Lets scenes alter routing for the final path segment.
 	virtual bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas);
+	// Applies scene state to hotspot maps and framebuffer patches.
 	virtual bool applyCustomSceneStateToHotspotsAndPatches(byte selector);
+	// Whether primary speech should drive primary actor animation.
 	virtual bool shouldAnimatePrimarySpeechLine() const;
+	// Updates the legacy primary-left speech animation frame.
 	virtual void setPrimaryLeftSpeechFrame(byte frameIndex);
+	// Describes ambient sound/music behavior for this scene.
 	virtual AmbientAudioProfile ambientAudioProfile() const;
+	// Receives frame hooks from action overlay playback.
 	virtual void handleActionOverlayFrameHook(byte hookId, uint frame);
+	// Builds a simple looping ambient audio profile.
 	AmbientAudioProfile createLoopingAmbientAudioProfile(byte volumePercent) const;
+	// Builds a random sound/music ambient audio profile.
 	AmbientAudioProfile createRandomAmbientAudioProfile(byte soundFirstCueId, byte soundCueCount,
 		byte soundVolumePercent, byte soundProbabilityModulus, byte musicFirstCueId,
 		byte musicCueCount, byte musicVolumePercent, byte musicProbabilityModulus) const;
+	// Checks whether saved actor pose belongs to the current scene state.
 	bool hasSavedActiveActorPoseForCurrentState() const;
+	// Restores active actor position/facing from game state.
 	void restoreActiveActorPoseFromGameState();
+	// Saves active actor position/facing into game state.
 	void syncActiveActorPoseToGameState();
+	// Loads all scene resources and runtime tables.
 	bool load();
+	// Loads RESOURCE.000 offset and size tables.
 	bool loadResource000RuntimeTables(Common::Array<byte> &offsetTable, Common::Array<byte> &sizeTable);
+	// Loads active and secondary actor banks from RESOURCE.000.
 	bool loadResource000ActorBank(const Common::Array<byte> &offsetTable, const Common::Array<byte> &sizeTable);
+	// Loads actor palette colors from RESOURCE.000.
 	bool loadResource000ActorPalette(const Common::Array<byte> &offsetTable);
+	// Loads global inventory verb/relation action tables.
 	bool loadResource000InventoryActionTables(const Common::Array<byte> &offsetTable);
+	// Loads scene and inventory text rows from RESOURCE.003.
 	bool loadStage003SceneRows();
+	// Loads a fixed-size scene chunk into a preallocated buffer.
 	bool loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
+	// Loads a variable-size scene chunk into a resized buffer.
 	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
+	// Appends an arena chunk and records its arena offset.
 	bool loadArenaChunk(uint index);
+	// Initializes actor depth tables from metadata and palette maps.
 	bool initializeActorDepthTables();
+	// Applies scene-specific depth threshold changes for draw order.
 	void updateActorDepthThresholds(byte actorDrawOrderMode);
+	// Expands fill runs into the saved background framebuffer.
 	void expandFillRunsToSavedFramebuffer();
+	// Initializes walkable regions and route boundary tables.
 	bool initializeScenePathTables();
+	// Initializes preview state, delegating to scene custom code if needed.
 	void initializePreviewState();
+	// Initializes the default preview state.
 	void initializeDefaultPreviewState();
+	// Draws the initial preview frame without actors.
 	void drawPreviewComposite();
+	// Draws a cutscene frame with explicit actor parameters.
 	void drawCutsceneComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode = 0);
+	// Draws the current playable frame.
 	void drawPlayableComposite();
+	// Draws active and secondary actors in their shared ordering.
 	void drawActiveAndSecondaryActorFrames(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		int minimumYExclusive);
+	// Draws one active actor cel.
 	void drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY, int minimumYExclusive);
+	// Draws one secondary actor frame and returns its bottom Y.
 	int drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY);
+	// Draws an actor run stream with optional depth clipping.
 	int drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
 		int spriteX, int spriteY, int minimumYExclusive, int actorWorldY);
+	// Runs the scene entry cutscene or default preview.
 	void runEntryCutscene();
+	// Runs an entry walking path from offscreen/door to target.
 	void runEntryPath(int startX, int startY, byte startFacing, int targetX, int targetY);
+	// Runs the common point-and-click gameplay loop.
 	bool runBasicGameplayLoop();
+	// Exposes loaded scene hotspots to the gameplay loop.
 	const SceneHotspotTable &hotspots() const override;
+	// Exposes the saved background for panel/cursor drawing.
 	const Common::Array<byte> &savedFramebuffer() const override;
+	// Current horizontal viewport offset.
 	uint16 viewportXOffset() const override;
+	// Current vertical viewport offset.
 	uint16 viewportYOffset() const override;
+	// Gameplay-loop hook for per-loop initialization.
 	void prepareGameplayLoop() override;
+	// Gameplay-loop hook for per-frame advancement.
 	void advanceGameplayLoop(uint32 delta) override;
+	// Gameplay-loop hook for drawing the scene frame.
 	void drawGameplayFrame() override;
+	// Gameplay-loop hook for presenting scene, captions, and panel.
 	void presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) override;
+	// Provides a palette for the ScummVM options menu.
 	void prepareOptionsMenuPalette(Common::Array<byte> &palette) const override;
+	// Tells the gameplay loop when scene state has exited.
 	bool shouldExitGameplayLoop() const override;
+	// Returns an inventory item display name for the active owner.
 	Common::String inventoryItemName(byte owner, byte itemId) const override;
+	// Speaks a shared inventory response line.
 	void beginSharedInventorySpeechLine(uint16 rowIndex, byte frameIndex) override;
+	// Returns a random shared inventory speech frame.
 	byte randomSharedInventorySpeechFrame(byte maxFrameIndex) override;
+	// Plays a shared inventory sound effect.
 	void playSharedInventorySound(byte sampleId) override;
+	// Shows the travel screen viewer.
 	void showTravelScreenViewer() override;
+	// Handles a scene left-click from the gameplay loop.
 	void handleLeftClick(const GameplayLoopCursorState &state) override;
+	// Handles an inventory item click from the gameplay loop.
 	void handleInventoryItemClick(const GameplayLoopCursorState &state) override;
+	// Advances ambient sound and music timers.
 	void updateAmbientAudioAndMusicCues(uint32 delta);
+	// Clears ambient audio state for a new scene loop.
 	void resetAmbientAudioState();
+	// Updates ambient sound according to the profile.
 	void updateAmbientSoundCue(const AmbientAudioProfile &profile);
+	// Updates ambient music according to the profile.
 	void updateAmbientMusicCue(const AmbientAudioProfile &profile);
+	// Advances the secondary actor speech animation timer.
 	void advanceSecondaryActorSpeechAnimation(uint32 delta);
+	// Advances one secondary actor speech frame.
 	void advanceSecondaryActorSpeechFrame();
+	// Advances the primary-left speech frame.
 	void advancePrimaryLeftSpeechFrame();
+	// Advances primary dialogue speech animation.
 	void advancePrimaryDialogueSpeechFrame(uint32 delta);
+	// Resolves and dispatches a scene click action.
 	void processSceneActionClick(const GameplayLoopCursorState &state);
+	// Resolves and dispatches an item-to-scene relation click.
 	void processSceneRelationClick(const GameplayLoopCursorState &state, byte itemId);
+	// Dispatches an action handler id to custom or generic code.
 	void dispatchSceneAction(uint16 handlerId);
+	// Handles generic/shared action handler ids.
 	bool dispatchGenericSceneAction(uint16 handlerId);
+	// Walks the active actor to a target and optional final pose.
 	bool walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel, bool cancelOnSkip = false);
+	// Applies default or scene-specific walk target adjustment.
 	void adjustWalkTargetToFloorMask(int &targetX, int &targetY) const;
+	// Builds path frames using palette-region routing.
 	void queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
 		byte finalFacing, byte finalCel);
+	// Appends path frames between two points.
 	void buildActorPathFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,
 		byte finalFacing, byte finalCel, int requestedFacing);
+	// Appends one actor path frame from path build state.
 	void appendActorPathFrame(const ActorPathBuildState &state);
+	// Finds the nearest boundary point for a palette-region hop.
 	ScenePoint nearestPaletteRouteBoundaryPoint(int startX, int startY, byte currentRegion, byte nextRegion) const;
+	// Finds the best boundary point toward a final destination.
 	ScenePoint bestPaletteRouteBoundaryPoint(int startX, int startY, int targetX, int targetY,
 		byte currentRegion, byte targetRegion) const;
+	// Reads the palette-region id at scene coordinates.
 	byte paletteRegionAt(int x, int y) const;
+	// Chooses actor facing for a movement vector.
 	byte calculateMovementFacingForPath(int fromX, int fromY, int toX, int toY, int requestedFacing) const;
+	// Calculates walk steps needed for one axis.
 	uint calculateWalkStepCountForAxisDelta(int startAxis, int targetAxis, byte facing, byte cel) const;
+	// Returns the next cel in the walking cycle.
 	byte nextActorPathCel(byte cel) const;
+	// Returns the movement delta for a facing/cel pair.
 	uint actorPathStepDelta(byte facing, byte cel) const;
+	// Restores the actor path step table to scene defaults.
 	void resetActorPathStepDeltas();
+	// Calculates facing from one point toward another.
 	byte calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const;
+	// Applies state-driven hotspot and framebuffer patches.
 	void applySceneStateToHotspotsAndPatches(byte selector);
+	// Rebuilds the walkable palette-region mask from full region data.
 	void rebuildWalkablePaletteMask();
+	// Checks whether the active owner has an inventory item.
 	bool hasInventoryItem(byte itemId) const;
+	// Adds an item to the active owner inventory.
 	void addInventoryItem(byte itemId);
+	// Removes an item from the active owner inventory.
 	void removeInventoryItem(byte itemId);
+	// Provides dialogue menu text for a stage/text row.
 	Common::String dialogueMenuText(byte stageId, byte textRowId) const override;
+	// Dialogue-menu hook for advancing the underlying scene.
 	void advanceDialogueMenu(uint32 delta) override;
+	// Dialogue-menu hook for drawing the underlying scene.
 	void drawDialogueMenuFrame() override;
+	// Dialogue-menu hook for presenting the menu frame.
 	void presentDialogueMenuFrame(const DialogueMenuState &state) override;
+	// Runs an action overlay with default options.
 	void runActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis);
+	// Runs an action overlay with actor visibility, sounds, and hooks.
 	void runActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, const ActionOverlayOptions &options);
+	// Maps a primary dialogue animation group to a base frame.
 	virtual byte primarySpeechAnimationBaseFrame(byte animationGroup) const;
+	// Updates a primary dialogue animation group frame.
 	virtual void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex);
+	// Waits while pumping events and redrawing scene frames.
 	bool waitSceneMillis(uint32 millis);
+	// Resets viewport offsets from scene defaults.
 	void resetViewportFromScene();
+	// Advances automatic viewport scrolling.
 	void advanceViewportScroll(uint32 delta);
+	// Clears the secondary speech overlay.
 	void clearSpeechOverlay();
+	// Clears all speech overlays.
 	void clearAllSpeechOverlays();
+	// Draws the active secondary speech overlay.
 	void drawSpeechOverlay();
+	// Draws a specific speech overlay.
 	void drawSpeechOverlay(const SpeechOverlay &overlay);
+	// Draws a resource sprite using a frame map.
 	void drawMappedSpriteFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize, byte frameIndex);
+	// Restores current and previous sprite-layer bounds from background.
 	void restoreResourceSpriteLayerBackground(const ResourceSpriteLayer &layer, const Common::Array<byte> &background);
+	// Draws the current frame of a resource sprite layer.
 	void drawResourceSpriteLayer(const ResourceSpriteLayer &layer);
+	// Draws the currently active action overlay layer.
 	void drawActionOverlayLayer();
+	// Runs a scene-local secondary speech line.
 	void beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
+	// Starts a secondary speech line without waiting for completion.
 	bool startSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
+	// Runs a fixed/shared secondary speech line.
 	void beginStaticSecondarySpeechLine(uint16 rowIndex, byte frameIndex);
+	// Runs a primary speech line with explicit placement/color.
 	void beginPrimarySpeechLine(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue);
+	// Runs a primary speech line tied to an animation group.
 	void beginPrimarySpeechLineWithAnimationGroup(uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte red, byte green, byte blue, byte animationGroup);
+	// Runs a primary-left speech line.
 	void beginPrimaryLeftSpeechLine(uint16 rowIndex, byte frameIndex);
+	// Resolves cue data and runs a speech overlay.
 	void runSpeechLine(SpeechOverlay &overlay, uint16 rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
 		byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft, bool animatePrimaryDialogue,
 		byte primaryAnimationGroup = 0xff);
+	// Plays speech audio/text from an already resolved cue.
 	void runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, byte continuationCount, uint16 voiceSampleId,
 		uint16 centerX, uint16 topY, byte colorIndex, bool useRequestedTop, bool animatePrimaryLeft,
 		bool animatePrimaryDialogue, byte primaryAnimationGroup = 0xff);
+	// Looks up a scene-local speech cue.
 	bool getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
 		uint16 &voiceSampleId) const;
+	// Looks up a fixed/shared speech cue.
 	bool getStaticSpeechCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
 		uint16 &voiceSampleId) const;
+	// Wraps actor speech text near an actor anchor.
 	void wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const;
+	// Returns a decoded RESOURCE.003 large text record.
 	Common::String getResource003LargeTextRecord(uint16 recordId) const;
+	// Measures speech text using the original font.
 	uint actorSpeechTextWidth(const Common::String &text) const;
+	// Measures the widest line in a speech overlay.
 	uint speechOverlayTextWidth(const SpeechOverlay &overlay) const;
+	// Calculates clamped speech overlay screen bounds.
 	void calculateSpeechOverlayBounds(SpeechOverlay &overlay, int centerX, int topY, bool useRequestedTop,
 		int actorWorldY);
+	// Calculates secondary speech bounds from actor coordinates.
 	void calculateSecondarySpeechBounds(int actorWorldX, int actorWorldY);
+	// Waits for speech playback or a fallback text delay.
 	bool waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrimaryLeft);
+	// Applies bottom-panel colors to the current palette.
 	void applyGameplayPanelPalette();
+	// Draws the active gameplay panel.
 	void drawGameplayPanel(Graphics::Surface &surface, const GameplayPanelState &panelState);
+	// Draws the verb panel.
 	void drawVerbPanel(Graphics::Surface &surface, const GameplayPanelState &panelState);
+	// Draws the inventory panel.
 	void drawInventoryPanel(Graphics::Surface &surface, const GameplayPanelState &panelState);
+	// Uploads palette and presents scene/panel/menu layers.
 	void presentFrame(const SceneHoverCaption *hoverCaption = nullptr,
 		const GameplayPanelState *panelState = nullptr, const DialogueMenuState *dialogueMenuState = nullptr);
+	// Polls system events and optionally treats input as skip.
 	bool pollEvents(bool allowSkip);
 
 	HollywoodEngine *_vm;
