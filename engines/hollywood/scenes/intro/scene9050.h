@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/random.h"
 
+#include "hollywood/graphics.h"
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
 
@@ -40,6 +41,7 @@ public:
 
 private:
 	bool loadResourceChunk(const char *archiveName, uint index, Common::Array<byte> &destination, uint fixedSize);
+	bool loadResourceChunk(const char *archiveName, uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
 	bool loadResourceArenaChunk(const char *archiveName, uint archiveIndex, uint localChunkIndex);
 
 	bool loadResourceI06Assets();
@@ -47,6 +49,7 @@ private:
 	bool loadResourceI06ArenaChunk(uint index);
 	bool loadResourceI05ClipSegment(byte segmentId);
 	bool loadResourceI05Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
+	bool loadResourceI05Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
 	bool loadResourceI05ArenaChunk(uint archiveIndex, uint localChunkIndex);
 	bool loadResourceI08BlinkAssets();
 
@@ -108,10 +111,11 @@ private:
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _paletteCurrent;
 	Common::Array<byte> _resourceArena;
-	Common::Array<byte> _sceneFramebuffer;
-	Common::Array<byte> _savedFramebuffer;
-	Common::Array<byte> _clipBaseFramebuffer;
-	Common::Array<byte> _screen;
+	IndexedSurfaceBuffer _sceneFramebuffer;
+	IndexedSurfaceBuffer _savedFramebuffer;
+	IndexedSurfaceBuffer _clipBaseFramebuffer;
+	Graphics::ManagedSurface _screen;
+	Palette6Bit _displayPalette;
 	uint32 _resourceArenaCursor;
 	uint32 _i05ClipFrameAccumulator;
 	uint32 _i05InterClipAccumulator;

@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/random.h"
 
+#include "hollywood/graphics.h"
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
 
@@ -41,6 +42,7 @@ public:
 private:
 	bool loadResourceI12Assets();
 	bool loadResourceI12Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
+	bool loadResourceI12Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
 	bool loadResourceI12ArenaChunk(uint index);
 
 	void runTimedOverlayPhase();
@@ -88,10 +90,11 @@ private:
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _paletteCurrent;
 	Common::Array<byte> _resourceArena;
-	Common::Array<byte> _sceneFramebuffer;
-	Common::Array<byte> _savedFramebuffer;
-	Common::Array<byte> _descriptorBackground;
-	Common::Array<byte> _screen;
+	IndexedSurfaceBuffer _sceneFramebuffer;
+	IndexedSurfaceBuffer _savedFramebuffer;
+	IndexedSurfaceBuffer _descriptorBackground;
+	Graphics::ManagedSurface _screen;
+	Palette6Bit _displayPalette;
 	uint32 _resourceArenaCursor;
 	uint32 _overlayAccumulator;
 	uint32 _scrollAccumulator;

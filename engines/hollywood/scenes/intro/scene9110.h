@@ -26,6 +26,7 @@
 #include "common/random.h"
 #include "common/str.h"
 
+#include "hollywood/graphics.h"
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
 
@@ -79,6 +80,7 @@ private:
 	bool load();
 	bool loadResourceI11Assets();
 	bool loadResourceI11Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
+	bool loadResourceI11Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
 	bool loadResourceI11ArenaChunk(uint index);
 	bool loadStage003Descriptors();
 
@@ -135,10 +137,11 @@ private:
 	Common::Array<byte> _paletteResource;
 	Common::Array<byte> _paletteCurrent;
 	Common::Array<byte> _resourceArena;
-	Common::Array<byte> _baseFramebuffer;
-	Common::Array<byte> _sceneFramebuffer;
-	Common::Array<byte> _savedFramebuffer;
-	Common::Array<byte> _screen;
+	IndexedSurfaceBuffer _baseFramebuffer;
+	IndexedSurfaceBuffer _sceneFramebuffer;
+	IndexedSurfaceBuffer _savedFramebuffer;
+	Graphics::ManagedSurface _screen;
+	Palette6Bit _displayPalette;
 	Common::Array<byte> _stage003DecodeKey;
 	Common::Array<byte> _stage003Descriptors;
 	Common::Array<byte> _stage003LargeRows;

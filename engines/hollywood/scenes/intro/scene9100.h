@@ -27,6 +27,7 @@
 #include "common/random.h"
 #include "common/str.h"
 
+#include "hollywood/graphics.h"
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
 
@@ -101,6 +102,7 @@ private:
 
 	bool load(bool dialogueBranch);
 	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
+	bool loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
 	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
 	bool loadArenaChunk(uint index);
 	bool loadArenaChunkAlias(uint sourceIndex, uint aliasIndex, uint targetIndex);
@@ -113,7 +115,7 @@ private:
 	void applyActorHighlightColor(byte highlightRed, byte highlightGreen, byte highlightBlue);
 	void runEntryActorAnimations();
 	void showSueEntryActor();
-	void playEntryActorAnimation(const ActorBank &bank, int worldX, int worldY, Common::Array<byte> &baseFramebuffer);
+	void playEntryActorAnimation(const ActorBank &bank, int worldX, int worldY, IndexedSurfaceBuffer &baseFramebuffer);
 	void runRonEntryConversation();
 	void drawRonEntryPathFrame(uint32 pathElapsedMillis, uint32 pathDurationMillis);
 	void runSueEntrySequence();
@@ -161,7 +163,7 @@ private:
 	void restoreSpriteBackground(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset, uint16 descriptorCount, uint16 descriptorIndex);
 	void applyResourceSpanPatchToFrameDecodeBuffer(uint32 baseOffset);
 	void drawResourceBlockListToSceneFramebuffer(uint32 baseOffset);
-	void drawResourceBlockListToBuffer(uint32 baseOffset, Common::Array<byte> &destination);
+	void drawResourceBlockListToBuffer(uint32 baseOffset, IndexedSurfaceBuffer &destination);
 	void expandFillRunsToSavedFramebuffer();
 	void restoreOfficeFrameAndPresent();
 	void applyBackgroundMode(const CinematicStep &step);
@@ -217,10 +219,11 @@ private:
 	Common::Array<byte> _resourceArena;
 	Common::Array<byte> _resourceScratchArena;
 	Common::Array<byte> _secondaryScratchBuffer;
-	Common::Array<byte> _frameDecodeBuffer;
-	Common::Array<byte> _sceneFramebuffer;
-	Common::Array<byte> _savedFramebuffer;
-	Common::Array<byte> _screen;
+	IndexedSurfaceBuffer _frameDecodeBuffer;
+	IndexedSurfaceBuffer _sceneFramebuffer;
+	IndexedSurfaceBuffer _savedFramebuffer;
+	Graphics::ManagedSurface _screen;
+	Palette6Bit _displayPalette;
 	Common::Array<byte> _stage003DecodeKey;
 	Common::Array<byte> _stage003Descriptors;
 	Common::Array<byte> _stage003LargeRows;
