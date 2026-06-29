@@ -53,6 +53,7 @@ namespace Hollywood {
 const uint kOptionsMaximumLevel = 200;
 const int kMaximumConfigVolume = Audio::Mixer::kMaxMixerVolume;
 const int kMaximumTalkSpeed = 255;
+const int kScene9101State = 0x238d;
 
 bool isImplementedIntroSceneNumber(int sceneNumber) {
 	return sceneNumber == 9000 || sceneNumber == 9010 || sceneNumber == 9050 ||
@@ -63,6 +64,7 @@ bool isImplementedGameplayState(int stateId) {
 	return stateId == 7000 ||
 		(stateId >= 0x1b62 && stateId <= 0x1b6b) ||
 		stateId == 0x1b6c ||
+		stateId == kScene9101State ||
 		(stateId >= 0x1b76 && stateId <= 0x1b7f) ||
 		(stateId >= 0x1b80 && stateId <= 0x1b89) ||
 		stateId == 0x1b8a ||
@@ -244,6 +246,14 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene7020 scene7020(this);
 			if (!scene7020.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId == kScene9101State) {
+			handledState = true;
+			Scene9100 scene9101(this);
+			if (!scene9101.playDialogueBranch())
 				return Common::kReadingFailed;
 			continue;
 		}
