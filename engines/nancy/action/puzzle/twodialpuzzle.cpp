@@ -64,18 +64,55 @@ void TwoDialPuzzle::readData(Common::SeekableReadStream &stream) {
 	readRectArray(stream, _srcs[0], num1, 20);
 	readRectArray(stream, _srcs[1], num2, 20);
 
-	_correctPositions[0] = stream.readUint16LE();
-	_correctPositions[1] = stream.readUint16LE();
+	if (g_nancy->getGameType() < kGameTypeNancy12) {
+		_correctPositions[0] = stream.readUint16LE();
+		_correctPositions[1] = stream.readUint16LE();
+	}
 
 	_rotateSounds[0].readNormal(stream);
 	_rotateSounds[1].readNormal(stream);
 
-	_solveScene.readData(stream);
-	_solveSoundDelay = stream.readUint16LE();
-	_solveSound.readNormal(stream);
+	if (g_nancy->getGameType() >= kGameTypeNancy12) {
+		// Nancy 12 reworked this puzzle (see execute()): the single correctPositions
+		// pair was replaced by an event-flag-gated solution list at the end. The
+		// solve scene here carries NO sceneID of its own (it is taken from the matched
+		// solution), so it is read manually starting from the frameID.
+		_solveScene._sceneChange.frameID = stream.readUint16LE();
+		_solveScene._sceneChange.verticalOffset = stream.readUint16LE();
+		_solveScene._sceneChange.continueSceneSound = stream.readUint16LE();
+		int32 x = stream.readSint32LE();
+		int32 y = stream.readSint32LE();
+		int32 z = stream.readSint32LE();
+		_solveScene._sceneChange.listenerFrontVector.set(x, y, z);
+		_solveScene._sceneChange.frontVectorFrameID = _solveScene._sceneChange.frameID;
+		stream.skip(2); // shouldStopRendering
+		_solveScene._flag.label = stream.readSint16LE();
+		_solveScene._flag.flag = stream.readByte();
 
-	_exitScene.readData(stream);
-	readRect(stream, _exitHotspot);
+		_solveSoundDelay = stream.readUint16LE();
+		_solveSound.readNormal(stream);
+
+		_exitScene.readData(stream);
+		stream.skip(2); // unknown
+		readRect(stream, _exitHotspot);
+
+		uint16 numSolutions = stream.readUint16LE();
+		_solutions.resize(numSolutions);
+		for (uint i = 0; i < numSolutions; ++i) {
+			_solutions[i].positions[0] = stream.readUint16LE();
+			_solutions[i].positions[1] = stream.readUint16LE();
+			_solutions[i].sceneID = stream.readUint16LE();
+			_solutions[i].condition.label = stream.readSint16LE();
+			_solutions[i].condition.flag = stream.readByte();
+		}
+	} else {
+		_solveScene.readData(stream);
+		_solveSoundDelay = stream.readUint16LE();
+		_solveSound.readNormal(stream);
+
+		_exitScene.readData(stream);
+		readRect(stream, _exitHotspot);
+	}
 }
 
 void TwoDialPuzzle::execute() {
@@ -100,7 +137,24 @@ void TwoDialPuzzle::execute() {
 			return;
 		}
 
-		if ((uint)_currentPositions[0] == _correctPositions[0] && (uint)_currentPositions[1] == _correctPositions[1]) {
+		if (g_nancy->getGameType() >= kGameTypeNancy12) {
+			// A combo solves only while one of its solutions is active: the dial
+			// positions match and that solution's condition flag is currently set.
+			// The matched solution supplies the scene to change to.
+			for (uint i = 0; i < _solutions.size(); ++i) {
+				const DialSolution &sol = _solutions[i];
+				if (sol.sceneID != 9999 &&
+						_currentPositions[0] == sol.positions[0] &&
+						_currentPositions[1] == sol.positions[1] &&
+						NancySceneState.getEventFlag(sol.condition.label, sol.condition.flag)) {
+					_solveScene._sceneChange.sceneID = sol.sceneID;
+					_state = kActionTrigger;
+					_isSolved = true;
+					_solveSoundDelayTime = g_nancy->getTotalPlayTime() + (_solveSoundDelay * 1000);
+					break;
+				}
+			}
+		} else if ((uint)_currentPositions[0] == _correctPositions[0] && (uint)_currentPositions[1] == _correctPositions[1]) {
 			_state = kActionTrigger;
 			_isSolved = true;
 			_solveSoundDelayTime = g_nancy->getTotalPlayTime() + (_solveSoundDelay * 1000);
