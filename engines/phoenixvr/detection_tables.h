@@ -211,11 +211,38 @@ const ADGameDescription gameDescriptions[] = {
 
 	{"messenger",
 		nullptr,
-		AD_ENTRY2s("script.pak", "1e0f9cb47bc203e9e2983b03ffa85174", 185,
-				   "textes.txt", "23f577d1201bc3024ca49cb11f9f7347", 5261),
+		AD_ENTRY5s("script.pak", "1e0f9cb47bc203e9e2983b03ffa85174", 185,
+				   "textes.txt", "23f577d1201bc3024ca49cb11f9f7347", 5261,
+				   "cd1/Data/interface.vr", "110c55142ec95dcbdc0dd86a68013d2a", 188422,
+				   "cd1/Data/Script1.pak", "e0cf6ed93ea338dc91d639c6b70b75c1", 54920,
+				   "cd2/Data/Script2.pak", "26fe454a74da294ff622cdc5663f2c8c", 82085),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"messenger",
+		nullptr,
+		AD_ENTRY4s("script.pak", "0c9c4b2bfa3b1399b89f6b62063a2e80", 210,
+				   "cd1/Data/interface.vr", "c128d4c10122ae50ad50e2d3c4ccfbc5", 218081,
+				   "cd1/Data/Script.pak", "b8bf0acf2202f1929ed34305346303d9", 54752,
+				   "cd2/Data/Script2.pak", "01bccbbb33e901c9addfa0de51d1bea3", 81955),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"messenger",
+		nullptr,
+		AD_ENTRY4s("script.pak", "0c9c4b2bfa3b1399b89f6b62063a2e80", 210,
+				   "cd1/Data/interface.vr", "a11ca0314af1d863bbd289e3af4a52c9", 214009,
+				   "cd1/Data/Script.pak", "62980f95be48448d738747a3cac9b2b2", 54944,
+				   "cd2/Data/Script2.pak", "ea95c1be10f24c4ad5ad4cb4ad130699", 82104),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 
