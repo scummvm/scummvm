@@ -187,7 +187,7 @@ void Scene7020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 bool Scene7020::advanceCustomGameplayLoop(uint32 delta) {
 	if (!_ambientSoundBank0.isPlaying())
-		_ambientSoundBank0.playSample(0x0c, 100);
+		_ambientSoundBank0.playSampleLooping(0x0c, 100);
 
 	if (_primaryDialogueSpeechActive) {
 		_primaryTimerAccumulator += delta;

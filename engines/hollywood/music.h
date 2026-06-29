@@ -34,7 +34,7 @@ public:
 
 	void setArchive(const Common::Path &archiveName);
 	bool playIntroMusic();
-	bool playMusicCue(uint16 cueId, byte volumePercent = 100);
+	bool playMusicCue(uint16 cueId, byte volumePercent = 100, bool loop = false);
 	void stop();
 	bool isPlaying() const;
 
@@ -68,7 +68,8 @@ public:
 	~SoundBank0Player();
 
 	void setArchive(const Common::Path &archiveName);
-	bool playSample(uint16 sampleId, byte volumePercent = 100);
+	bool playSample(uint16 sampleId, byte volumePercent = 100, bool loop = false);
+	bool playSampleLooping(uint16 sampleId, byte volumePercent = 100);
 	void stop();
 	bool isPlaying() const;
 
