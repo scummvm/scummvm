@@ -107,8 +107,8 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.multiToolKnifeState);
 	syncStateBool(s, state.reviewedFrankensteinNote);
 	s.syncAsByte(state.frankensteinNoteOverlayMode);
-	s.syncAsByte(state.juniorDialogueBranchState);
-	syncStateBool(s, state.juniorDialogueFollowUpSeen);
+	s.syncAsByte(state.hannoverCourtyardDialogueState);
+	syncStateBool(s, state.hannoverCourtyardFollowUpSeen);
 	syncStateBool(s, state.seenOfficeEntryConversation);
 	s.syncAsByte(state.officeStatueActionProgress);
 	s.syncAsByte(state.officeNotePickupState);
@@ -125,7 +125,6 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.crankOnHannoverDesk);
 	syncStateBool(s, state.seenHannoverBedroomIntro);
 	syncStateBool(s, state.movedBedroomArmor);
-	syncStateBool(s, state.knowsHannoverWaitingForSecretary);
 	syncStateBool(s, state.cellPipesActive);
 	s.syncAsByte(state.cellPlateRatProgress);
 	syncStateBool(s, state.posterOnCellWall);

@@ -200,8 +200,8 @@ void Scene7010::initializeCustomPreviewState() {
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 	_sceneStateFlags[1] = _vm->gameState().frankensteinNoteOverlayMode;
-	_sceneStateFlags[5] = _vm->gameState().juniorDialogueBranchState;
-	_sceneStateFlags[6] = _vm->gameState().juniorDialogueFollowUpSeen ? 1 : 0;
+	_sceneStateFlags[5] = _vm->gameState().hannoverCourtyardDialogueState;
+	_sceneStateFlags[6] = _vm->gameState().hannoverCourtyardFollowUpSeen ? 1 : 0;
 	_dialogueOverlayMode = _sceneStateFlags[1];
 	if (_dialogueOverlayMode != 0)
 		_dialogueOverlayFrameIndex = 0;
@@ -669,8 +669,8 @@ void Scene7010::handleActionSlot02SecondarySpeech() {
 
 void Scene7010::handleActionSlot03DialogueSequence() {
 	GameplayState &state = _vm->gameState();
-	_sceneStateFlags[5] = state.juniorDialogueBranchState;
-	_sceneStateFlags[6] = state.juniorDialogueFollowUpSeen ? 1 : 0;
+	_sceneStateFlags[5] = state.hannoverCourtyardDialogueState;
+	_sceneStateFlags[6] = state.hannoverCourtyardFollowUpSeen ? 1 : 0;
 
 	if (!hasInventoryItem(6)) {
 		beginSecondarySpeechLine(3, 0);
@@ -695,7 +695,7 @@ void Scene7010::handleActionSlot03DialogueSequence() {
 			beginSecondarySpeechLine(0x62, 0x0b);
 			beginPrimarySpeechLine(99, 0x0b, 0x302, 0xe3, 0x28, 0x16, 0x0b);
 			_sceneStateFlags[6] = 1;
-			state.juniorDialogueFollowUpSeen = true;
+			state.hannoverCourtyardFollowUpSeen = true;
 		}
 		if (_sceneStateFlags[5] == 2) {
 			beginPrimarySpeechLine(99, 0x0c, 0x302, 0xe3, 0x28, 0x16, 0x0b);

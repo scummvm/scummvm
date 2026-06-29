@@ -378,9 +378,9 @@ void Scene7090::handleGatedAction() {
 		return;
 	}
 
-	// Set after Sue learns Hannover is waiting for his secretary, via
-	// Hannover's dialogue and the bedroom window clue.
-	if (!state.knowsHannoverWaitingForSecretary) {
+	// Original scene 7090 checks G01 state flag 6 here. That flag is set by
+	// the one-time Hannover courtyard follow-up before the armor can be moved.
+	if (!state.hannoverCourtyardFollowUpSeen) {
 		beginSecondarySpeechLine(10, 0);
 		return;
 	}
@@ -407,6 +407,7 @@ void Scene7090::handleGatedAction() {
 	_prePatchChunk7Visible = false;
 
 	state.movedBedroomArmor = true;
+	state.hannoverCourtyardDialogueState = 2;
 	applySceneStateToHotspotsAndPatches(1);
 	walkActiveActorTo(kScene7090GatedActionReturnX, kScene7090GatedActionReturnY,
 		kScene7090GatedActionTargetFacing, 0);

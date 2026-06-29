@@ -385,13 +385,13 @@ void Scene7070::handleChunk12ItemAction() {
 	if (state.gramophoneCrankState == 1) {
 		beginSecondarySpeechLine(0x0e, 0);
 		state.gramophoneCrankState = 3;
-		state.juniorDialogueBranchState = 1;
+		state.hannoverCourtyardDialogueState = 1;
 	} else if (state.gramophoneCrankState == 2) {
 		state.gramophoneCrankState = 3;
-		state.juniorDialogueBranchState = 1;
+		state.hannoverCourtyardDialogueState = 1;
 	} else {
 		state.gramophoneCrankState = 2;
-		state.juniorDialogueBranchState = 0;
+		state.hannoverCourtyardDialogueState = 0;
 	}
 	applySceneStateToHotspotsAndPatches(2);
 }
