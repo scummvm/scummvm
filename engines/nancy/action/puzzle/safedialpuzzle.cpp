@@ -90,7 +90,10 @@ void SafeDialPuzzle::updateGraphics() {
 void SafeDialPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName1);
 	readFilename(stream, _imageName2);
-	readFilename(stream, _resetImageName);
+	if (g_nancy->getGameType() < kGameTypeNancy12) {
+		// Nancy 12 dropped the separate reset image from the header
+		readFilename(stream, _resetImageName);
+	}
 
 	_numInbetweens = (!_imageName2.empty() ? 1 : 0);
 
@@ -108,7 +111,7 @@ void SafeDialPuzzle::readData(Common::SeekableReadStream &stream) {
 	readRect(stream, _arrowDest);
 	readRect(stream, _arrowSrc);
 
-	readRectArray(stream, _resetDialSrcs, 10);
+	readRectArray(stream, _resetDialSrcs, g_nancy->getGameType() >= kGameTypeNancy12 ? 12 : 10);
 
 	_resetTurns = stream.readUint16LE();
 
