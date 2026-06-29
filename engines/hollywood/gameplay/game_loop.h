@@ -29,6 +29,10 @@
 
 #include "hollywood/gameplay/hotspots.h"
 
+namespace Graphics {
+struct Surface;
+}
+
 namespace Hollywood {
 
 class HollywoodEngine;
@@ -68,7 +72,7 @@ public:
 	virtual ~GameplayLoopDelegate();
 
 	virtual const SceneHotspotTable &hotspots() const = 0;
-	virtual const Common::Array<byte> &savedFramebuffer() const = 0;
+	virtual const Graphics::Surface &savedFramebuffer() const = 0;
 	virtual uint16 viewportXOffset() const = 0;
 	virtual uint16 viewportYOffset() const;
 

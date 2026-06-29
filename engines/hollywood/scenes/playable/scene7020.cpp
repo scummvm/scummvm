@@ -161,7 +161,7 @@ bool Scene7020::hasCustomComposite() const {
 void Scene7020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
-	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
+	copyBaseFramebufferToSceneFramebuffer();
 
 	if (_chunk6Visible) {
 		const byte frame = _chunk6FrameMapIndex < ARRAYSIZE(kScene7020Chunk6FrameMap) ?

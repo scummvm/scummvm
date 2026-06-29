@@ -130,21 +130,19 @@ bool SceneHotspotTable::load(const Common::Array<byte> &paletteMapBlock, const C
 	return true;
 }
 
-byte SceneHotspotTable::resolveItemAt(const Common::Array<byte> &savedFramebuffer, uint16 cursorX, uint16 cursorY,
+byte SceneHotspotTable::resolveItemAt(const Graphics::Surface &savedFramebuffer, uint16 cursorX, uint16 cursorY,
 		uint16 xOffset, uint16 yOffset) const {
-	if (_colorToItemMap.size() != kSceneColorMapSize)
+	if (_colorToItemMap.size() != kSceneColorMapSize || savedFramebuffer.format.bytesPerPixel != 1)
 		return 0;
 
 	const uint sceneX = cursorX + xOffset;
 	const uint sceneY = cursorY + yOffset;
-	if (sceneX >= HollywoodEngine::kSceneBufferWidth || sceneY >= HollywoodEngine::kSceneBufferHeight)
+	if (sceneX >= HollywoodEngine::kSceneBufferWidth || sceneY >= HollywoodEngine::kSceneBufferHeight ||
+			sceneX >= (uint)savedFramebuffer.w || sceneY >= (uint)savedFramebuffer.h)
 		return 0;
 
-	const uint framebufferOffset = sceneY * HollywoodEngine::kSceneBufferWidth + sceneX;
-	if (framebufferOffset >= savedFramebuffer.size())
-		return 0;
-
-	return _colorToItemMap[savedFramebuffer[framebufferOffset]];
+	const byte color = *(const byte *)savedFramebuffer.getBasePtr(sceneX, sceneY);
+	return _colorToItemMap[color];
 }
 
 byte SceneHotspotTable::defaultStripForItem(byte itemId) const {
@@ -274,14 +272,14 @@ void SceneHoverCaption::setRelationContext(byte relationMode, byte primaryInvent
 	_hasLastDescriptor = false;
 }
 
-bool SceneHoverCaption::refreshNow(const SceneHotspotTable &hotspots, const Common::Array<byte> &savedFramebuffer,
+bool SceneHoverCaption::refreshNow(const SceneHotspotTable &hotspots, const Graphics::Surface &savedFramebuffer,
 		uint16 cursorX, uint16 cursorY, uint16 xOffset, uint16 yOffset) {
 	_timer = 0;
 	return updateCaption(hotspots, savedFramebuffer, cursorX, cursorY, xOffset, yOffset, true);
 }
 
 bool SceneHoverCaption::advance(uint32 deltaMillis, const SceneHotspotTable &hotspots,
-		const Common::Array<byte> &savedFramebuffer, uint16 cursorX, uint16 cursorY,
+		const Graphics::Surface &savedFramebuffer, uint16 cursorX, uint16 cursorY,
 		uint16 xOffset, uint16 yOffset) {
 	_timer += deltaMillis;
 	if (_timer < kHoverCaptionRefreshMillis)
@@ -313,7 +311,7 @@ void SceneHoverCaption::draw(Graphics::Surface &surface, HollywoodFont &font) co
 		Graphics::kTextAlignLeft, 0, false, true);
 }
 
-bool SceneHoverCaption::updateCaption(const SceneHotspotTable &hotspots, const Common::Array<byte> &savedFramebuffer,
+bool SceneHoverCaption::updateCaption(const SceneHotspotTable &hotspots, const Graphics::Surface &savedFramebuffer,
 		uint16 cursorX, uint16 cursorY, uint16 xOffset, uint16 yOffset, bool force) {
 	Descriptor nextDescriptor;
 	memset(&nextDescriptor, 0, sizeof(nextDescriptor));
