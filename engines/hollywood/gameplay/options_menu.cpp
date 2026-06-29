@@ -73,7 +73,8 @@ GameplayOptionsMenu::GameplayOptionsMenu(HollywoodEngine *vm) :
 		_vm(vm),
 		_loaded(false),
 		_confirmQuit(false) {
-	_screen.resize(HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight);
+	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
+		Graphics::PixelFormat::createFormatCLUT8());
 }
 
 bool GameplayOptionsMenu::run(const Common::Array<byte> &basePalette) {
@@ -395,15 +396,16 @@ void GameplayOptionsMenu::setSpeechMode(byte mode) {
 
 void GameplayOptionsMenu::composeScreen() {
 	if (_menuFramebuffer.size() < kOptionsFramebufferSize) {
-		memset(_screen.data(), 0, _screen.size());
+		_screen.fillRect(_screen.getBounds(), 0);
 		return;
 	}
 
-	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
-		const uint sourceOffset = y * kOptionsFramebufferWidth + kOptionsViewportXOffset;
-		memcpy(_screen.data() + y * HollywoodEngine::kScreenWidth,
-			_menuFramebuffer.data() + sourceOffset, HollywoodEngine::kScreenWidth);
-	}
+	Graphics::Surface menuSurface;
+	menuSurface.init(kOptionsFramebufferWidth, HollywoodEngine::kScreenHeight,
+		kOptionsFramebufferWidth, _menuFramebuffer.data(), Graphics::PixelFormat::createFormatCLUT8());
+	_screen.copyRectToSurface(menuSurface, 0, 0,
+		Common::Rect(kOptionsViewportXOffset, 0,
+			kOptionsViewportXOffset + HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight));
 }
 
 void GameplayOptionsMenu::drawControls(Graphics::Surface &surface) {
@@ -492,7 +494,7 @@ void GameplayOptionsMenu::drawValueBar(int rowIndex, byte value, byte color) {
 	const int top = kOptionsValueBarY[rowIndex];
 	const int filledWidth = CLIP<int>(value, 0, kOptionsValueBarWidth);
 	for (int row = 0; row < kOptionsValueBarHeight; ++row) {
-		byte *pixels = _screen.data() + (top + row) * HollywoodEngine::kScreenWidth + kOptionsValueBarX;
+		byte *pixels = (byte *)_screen.getBasePtr(kOptionsValueBarX, top + row);
 		for (int x = 0; x < kOptionsValueBarWidth; ++x)
 			pixels[x] = x < filledWidth ? color : kOptionsBarEmptyColor;
 	}
@@ -505,7 +507,7 @@ void GameplayOptionsMenu::drawToggleSquare(int columnIndex, int rowIndex, byte c
 	const int left = kOptionsToggleSquareX[columnIndex];
 	const int top = kOptionsToggleSquareY[rowIndex];
 	for (int row = 0; row < kOptionsToggleSquareSize; ++row) {
-		byte *pixels = _screen.data() + (top + row) * HollywoodEngine::kScreenWidth + left;
+		byte *pixels = (byte *)_screen.getBasePtr(left, top + row);
 		for (int column = 0; column < kOptionsToggleSquareSize; ++column) {
 			if (pixels[column] == kOptionsTextActiveColor ||
 					pixels[column] == kOptionsTextDisabledColor ||
@@ -518,16 +520,13 @@ void GameplayOptionsMenu::drawToggleSquare(int columnIndex, int rowIndex, byte c
 void GameplayOptionsMenu::present() {
 	composeScreen();
 
-	Graphics::Surface screenSurface;
-	screenSurface.init(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
-		HollywoodEngine::kScreenWidth, _screen.data(), Graphics::PixelFormat::createFormatCLUT8());
-	drawControls(screenSurface);
+	Graphics::Surface *screenSurface = _screen.surfacePtr();
+	drawControls(*screenSurface);
 	if (_confirmQuit)
-		drawQuitConfirmation(screenSurface);
+		drawQuitConfirmation(*screenSurface);
 
-	uploadPalette6Bit(_palette);
-	g_system->copyRectToScreen(_screen.data(), HollywoodEngine::kScreenWidth, 0, 0,
-		HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight);
+	_displayPalette.uploadFrom6Bit(_palette);
+	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
 	g_system->updateScreen();
 }
 
