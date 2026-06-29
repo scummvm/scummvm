@@ -877,8 +877,13 @@ uint16 SCR_D_DrawPortraitDotEffect(void) {
 			uint16 py = offs / pw;
 			target[baseOfs + py * EGA_BYTES_PER_LINE + px] = cur_image_pixels[offs];
 
-			if (count % 20 == 0)
+			if (count % 20 == 0) {
 				g_vm->_renderer->blitToScreen(x * 4, y, pw, height);
+				pollInput();
+				g_system->updateScreen();
+				if (g_vm->_shouldQuit)
+					return 0;
+			}
 
 			offs += step;
 			if (offs > cur_image_end)
@@ -902,8 +907,15 @@ uint16 SCR_D_DrawPortraitDotEffect(void) {
 	for (offs = 0; offs != cur_image_end;) {
 		target[g_vm->_renderer->calcXY_p(x + offs % cur_image_size_w, y + offs / cur_image_size_w)] = cur_image_pixels[offs]; // TODO check this
 
-		if (count % 5 == 0)
+		if (count % 5 == 0) {
 			g_vm->_renderer->blitToScreen(offs, g_vm->_screenPPB, 1);
+			if ((count % 100) == 0) {
+				pollInput();
+				g_system->updateScreen();
+				if (g_vm->_shouldQuit)
+					return 0;
+			}
+		}
 
 		offs += step;
 		if (offs > cur_image_end)
