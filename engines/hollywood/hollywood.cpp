@@ -22,6 +22,7 @@
 #include "hollywood/hollywood.h"
 #include "hollywood/console.h"
 #include "hollywood/font.h"
+#include "hollywood/scenes/intro/scene1000.h"
 #include "hollywood/scenes/intro/scene9000.h"
 #include "hollywood/scenes/intro/scene9010.h"
 #include "hollywood/scenes/intro/scene9050.h"
@@ -53,6 +54,7 @@ namespace Hollywood {
 const uint kOptionsMaximumLevel = 200;
 const int kMaximumConfigVolume = Audio::Mixer::kMaxMixerVolume;
 const int kMaximumTalkSpeed = 255;
+const int kTitleFrontEndState = 1000;
 const int kScene9101State = 0x238d;
 
 bool isImplementedIntroSceneNumber(int sceneNumber) {
@@ -61,7 +63,8 @@ bool isImplementedIntroSceneNumber(int sceneNumber) {
 }
 
 bool isImplementedGameplayState(int stateId) {
-	return stateId == 7000 ||
+	return stateId == kTitleFrontEndState ||
+		stateId == 7000 ||
 		(stateId >= 0x1b62 && stateId <= 0x1b6b) ||
 		stateId == 0x1b6c ||
 		stateId == kScene9101State ||
@@ -233,6 +236,14 @@ Common::Error HollywoodEngine::run() {
 		handledState = false;
 		clearSceneRestartRequest();
 		const uint16 stateId = gameState().mainFlowStateId;
+
+		if (stateId == kTitleFrontEndState) {
+			handledState = true;
+			Scene1000 scene1000(this);
+			if (!scene1000.play())
+				return Common::kReadingFailed;
+			continue;
+		}
 
 		if (stateId >= 0x1b62 && stateId <= 0x1b6b) {
 			handledState = true;

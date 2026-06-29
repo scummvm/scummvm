@@ -184,10 +184,13 @@ bool Scene9100::playDialogueBranch() {
 	presentFrame();
 
 	if (!Engine::shouldQuit()) {
-		_vm->gameState().currentInventoryOwnerIndex = 0;
-		_vm->gameState().activeAudioChapterIndex = 9;
-		_vm->gameState().inventoryPanelDirty = true;
-		_vm->gameState().mainFlowStateId = kScene9101CompletionState;
+		GameplayState &state = _vm->gameState();
+		state.initializeRonItemResourcePages();
+		state.initializeRonInventoryItems();
+		state.currentInventoryOwnerIndex = 0;
+		state.activeAudioChapterIndex = 9;
+		state.inventoryPanelDirty = true;
+		state.mainFlowStateId = kScene9101CompletionState;
 	}
 
 	return true;

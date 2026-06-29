@@ -43,7 +43,9 @@ bool Console::cmdGet(int argc, const char **argv) {
 	GameplayState &state = _vm->gameState();
 	const byte owner = inventoryOwner();
 	state.currentInventoryOwnerIndex = owner;
-	if (owner == 1)
+	if (owner == 0)
+		state.initializeRonItemResourcePages();
+	else if (owner == 1)
 		state.initializeSueItemResourcePages();
 
 	if (Common::String(argv[1]).equalsIgnoreCase("all")) {

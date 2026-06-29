@@ -120,6 +120,39 @@ struct GameplayState {
 		mainFlowStateId = 0x1b62;
 	}
 
+	void initializeRonItemResourcePages() {
+		if (kInventoryOwnerCount == 0)
+			return;
+
+		for (uint itemId = 0; itemId < kInventoryOwnerSlotStride; ++itemId)
+			inventoryItemResourcePageByOwnerAndItemId[0][itemId] = 0;
+
+		inventoryItemResourcePageByOwnerAndItemId[0][0x01] = 0x09;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x09] = 0x06;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x6a] = 0x08;
+	}
+
+	void initializeRonInventoryItems() {
+		if (kInventoryOwnerCount == 0)
+			return;
+
+		const byte owner = 0;
+		for (uint slot = 0; slot < kInventoryOwnerSlotStride; ++slot) {
+			inventorySlotItemIdByOwner[owner][slot] = 0;
+			inventoryItemSlotByOwnerAndItemId[owner][slot] = 0;
+		}
+
+		inventorySlotItemIdByOwner[owner][1] = 0x6a;
+		inventorySlotItemIdByOwner[owner][2] = 0x09;
+		inventorySlotItemIdByOwner[owner][3] = 0x01;
+		inventoryItemSlotByOwnerAndItemId[owner][0x6a] = 1;
+		inventoryItemSlotByOwnerAndItemId[owner][0x09] = 2;
+		inventoryItemSlotByOwnerAndItemId[owner][0x01] = 3;
+		inventoryItemCountByOwner[owner] = 3;
+		inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(3);
+		inventoryPanelDirty = true;
+	}
+
 	void initializeSueItemResourcePages() {
 		if (kInventoryOwnerCount <= 1)
 			return;
