@@ -26,6 +26,7 @@
 #include "common/random.h"
 #include "common/serializer.h"
 #include "common/rendermode.h"
+#include "common/platform.h"
 #include "engines/engine.h"
 #include "chamber/renderer.h"
 
@@ -55,6 +56,7 @@ public:
 	~ChamberEngine();
 
 	Common::Language getLanguage() const;
+	Common::Platform getPlatform() const;
 
 	Common::Error run() override;
 	Common::Error init();

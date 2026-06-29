@@ -87,7 +87,9 @@ static AmigaResEnt amiga_res[] = {
 static const int kAmigaNumRes = sizeof(amiga_res) / sizeof(amiga_res[0]);
 
 int16 loadAmigaStaticData() {
-	// Idempotent: called before the title splash and again from loadStaticData()
+	// Safe to call more than once: it runs both before the title splash (to make
+	// the palette available) and again from loadStaticData(); the second call
+	// returns immediately.
 	if (amiga_palette_table != nullptr)
 		return 1;
 

@@ -34,6 +34,10 @@ Common::Language ChamberEngine::getLanguage() const {
 	return _gameDescription->language;
 }
 
+Common::Platform ChamberEngine::getPlatform() const {
+	return _gameDescription->platform;
+}
+
 } // end of namespace Chamber
 
 class ChamberMetaEngine : public AdvancedMetaEngine<ADGameDescription> {

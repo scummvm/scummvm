@@ -301,7 +301,7 @@ Common::Error ChamberEngine::init() {
 
 	Graphics::Surface *splash = nullptr;
 
-	if (_videoMode == Common::kRenderAmiga) {
+	if (getPlatform() == Common::kPlatformAmiga) {
 		// Amiga title: static resources (incl. palette) live in KULT, load them first
 		loadAmigaStaticData();
 		splash = ega_loadFond("PRES.BIN");
@@ -453,7 +453,7 @@ Common::Error ChamberEngine::init() {
 			exitGame();
 		/* fond wraps ega_backbuffer via init() — surface does not own pixel data, safe to delete directly */
 		delete fond;
-	} else if (g_vm->_videoMode == Common::kRenderAmiga) {
+	} else if (g_vm->getPlatform() == Common::kPlatformAmiga) {
 		// Amiga sprite banks (appendFromFileAmiga); PUZZL/perso banks are merged here
 		ega_sprit_res = new EgaSpriteResource();
 		ega_sprit_res->appendFromFileAmiga("SPRIT.BIN");

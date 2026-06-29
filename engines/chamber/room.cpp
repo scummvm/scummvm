@@ -160,7 +160,7 @@ static const byte cga_color_sels[] = {
 
 void selectSpecificPalette(byte index) {
 	// Amiga composes the room palette from the zone palette_index
-	if (g_vm->_videoMode == Common::kRenderAmiga)
+	if (g_vm->getPlatform() == Common::kPlatformAmiga)
 		amigaApplyRoomPalette(index);
 	else
 		g_vm->_renderer->colorSelect(cga_color_sels[index]);
@@ -168,7 +168,7 @@ void selectSpecificPalette(byte index) {
 
 
 void selectPalette(void) {
-	if (g_vm->_videoMode == Common::kRenderAmiga)
+	if (g_vm->getPlatform() == Common::kPlatformAmiga)
 		amigaApplyRoomPalette(script_byte_vars.palette_index);
 	else
 		g_vm->_renderer->colorSelect(cga_color_sels[script_byte_vars.palette_index]);
@@ -402,7 +402,7 @@ void loadZone(void) {
 	script_byte_vars.used_commands = 0;
 
 	// Apply the zone palette at load time for screens that skip refreshZone()
-	if (g_vm->_videoMode == Common::kRenderAmiga)
+	if (g_vm->getPlatform() == Common::kPlatformAmiga)
 		selectPalette();
 }
 

@@ -157,7 +157,7 @@ NB! Static data includes the font file, don't use any text print routines before
 */
 int16 loadStaticData() {
 	// Amiga keeps the static resources uncompressed inside the KULT executable
-	if (g_vm->_videoMode == Common::kRenderAmiga)
+	if (g_vm->getPlatform() == Common::kPlatformAmiga)
 		return loadAmigaStaticData();
 
 	Common::File pxi;
@@ -277,7 +277,7 @@ ResEntry_t res_texts_amiga[] = {
 Load strings data (commands/names)
 */
 int16 loadVepciData() {
-	if (g_vm->_videoMode == Common::kRenderAmiga)
+	if (g_vm->getPlatform() == Common::kPlatformAmiga)
 		return loadFilesList(res_texts_amiga);
 	return loadFilesList(res_texts);
 }
@@ -286,7 +286,7 @@ Graphics::Surface *loadFond(void) {
 	if (g_vm->_videoMode == Common::kRenderEGA)
 		return ega_loadFond("FOND.EGA");
 	// Amiga FOND.BIN is the same planar format as EGA
-	if (g_vm->_videoMode == Common::kRenderAmiga)
+	if (g_vm->getPlatform() == Common::kPlatformAmiga)
 		return ega_loadFond("FOND.BIN");
 	return loadSplash("FOND.BIN");
 }
@@ -328,7 +328,7 @@ ResEntry_t res_desci_amiga[] = {
 Load strings data (obj. descriptions)
 */
 int16 loadDesciData(void) {
-	if (g_vm->_videoMode == Common::kRenderAmiga)
+	if (g_vm->getPlatform() == Common::kPlatformAmiga)
 		return loadFilesList(res_desci_amiga);
 	while (!loadFilesList(res_desci))
 		askDisk2();
@@ -349,7 +349,7 @@ ResEntry_t res_diali_amiga[] = {
 Load strings data (dialogs)
 */
 int16 loadDialiData(void) {
-	if (g_vm->_videoMode == Common::kRenderAmiga)
+	if (g_vm->getPlatform() == Common::kPlatformAmiga)
 		return loadFilesList(res_diali_amiga);
 	while (!loadFilesList(res_diali))
 		askDisk2();
