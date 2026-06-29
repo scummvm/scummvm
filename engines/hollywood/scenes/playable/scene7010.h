@@ -40,6 +40,7 @@ private:
 	uint sceneStageIndex() const override;
 	const char *sceneDebugName() const override;
 	uint16 sceneViewportXOffset() const override;
+	uint16 sceneViewportMaxXOffset() const override;
 	bool shouldLoadInventoryActionTables() const override;
 	bool shouldLoadActorDepthTables() const override;
 	bool isMainFlowStateInScene(uint16 stateId) const override;

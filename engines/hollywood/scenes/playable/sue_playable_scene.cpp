@@ -186,6 +186,10 @@ const byte kActorFacingTurnTable[] = {
 };
 const int8 kActorPathAxisDirectionByFacing[] = { -1, 1, 1, 1, -1, -1 };
 const byte kActorInitialCelByFacing[] = { 0, 12, 12, 12, 1, 12 };
+const uint32 kViewportScrollTickMillis = 10;
+const uint16 kViewportScrollRightThreshold = 0x144;
+const uint16 kViewportScrollLeftThreshold = 0x13c;
+const uint16 kViewportScrollStep = 2;
 const float kActorPathDiagonalSlopeThreshold = 0.087488f;
 const float kActorFacingSteepSlopeThreshold = 3.732051f;
 const float kActorFacingDiagonalSlopeThreshold = 0.267949f;
@@ -216,6 +220,11 @@ SuePlayableScene::SuePlayableScene(HollywoodEngine *vm, const char *randomName, 
 		_primaryLeftSpeechTimerAccumulator(0),
 		_primaryDialogueSpeechTimerAccumulator(0),
 		_previousAmbientMusicTrackId(0),
+		_viewportXOffset(0),
+		_viewportMinXOffset(0),
+		_viewportMaxXOffset(0),
+		_viewportScrollTimerAccumulator(0),
+		_actorPathPlaybackActive(false),
 		_activeActorWorldX(defaultActorX),
 		_activeActorWorldY(defaultActorY),
 		_activeActorFacing(defaultActorFacing),
@@ -301,6 +310,14 @@ bool SuePlayableScene::play() {
 	if (!_vm->isSceneRestartRequested() && shouldRunExitSideEffectsAfterLoop())
 		handleG04ExitSideEffects();
 	return result;
+}
+
+uint16 SuePlayableScene::sceneViewportMinXOffset() const {
+	return sceneViewportXOffset();
+}
+
+uint16 SuePlayableScene::sceneViewportMaxXOffset() const {
+	return sceneViewportXOffset();
 }
 
 bool SuePlayableScene::shouldLoadPaletteAfterFrankensteinNote() const {
@@ -505,6 +522,8 @@ bool SuePlayableScene::load() {
 
 	if (!_hotspots.load(_paletteMask, _metadata, _stage003SmallRows))
 		return false;
+
+	resetViewportFromScene();
 
 	_vm->gameplayMusic()->setArchive(Common::Path(kGameplayMusicArchiveName));
 	_soundBank0.setArchive(Common::Path(kGameplaySoundBank0ArchiveName));
@@ -1335,6 +1354,7 @@ void SuePlayableScene::runEntryPath(int startX, int startY, byte startFacing, in
 	presentFrame();
 
 	queueActorPathWithPaletteRegionRouting(startX, startY, targetX, targetY, kInvalidFacing, 0);
+	_actorPathPlaybackActive = true;
 	for (uint frameIndex = 1; frameIndex < _actorPathFrames.size() && !_skipRequested && !Engine::shouldQuit(); ++frameIndex) {
 		const ActorPathFrame &frame = _actorPathFrames[frameIndex];
 		_activeActorWorldX = frame.worldX;
@@ -1342,9 +1362,12 @@ void SuePlayableScene::runEntryPath(int startX, int startY, byte startFacing, in
 		_activeActorFacing = frame.facing;
 		_activeActorCel = frame.cel;
 		_activeActorDrawOrderMode = frame.drawOrderMode;
-		if (waitSceneMillis(kG04ActorPathFrameMillis))
+		if (waitSceneMillis(kG04ActorPathFrameMillis)) {
+			_actorPathPlaybackActive = false;
 			return;
+		}
 	}
+	_actorPathPlaybackActive = false;
 
 	_activeActorWorldX = targetX;
 	_activeActorWorldY = targetY;
@@ -1368,7 +1391,7 @@ const Common::Array<byte> &SuePlayableScene::savedFramebuffer() const {
 }
 
 uint16 SuePlayableScene::viewportXOffset() const {
-	return sceneViewportXOffset();
+	return _viewportXOffset;
 }
 
 uint16 SuePlayableScene::viewportYOffset() const {
@@ -1377,6 +1400,7 @@ uint16 SuePlayableScene::viewportYOffset() const {
 
 void SuePlayableScene::prepareGameplayLoop() {
 	_skipRequested = false;
+	_actorPathPlaybackActive = false;
 	clearAllSpeechOverlays();
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
@@ -1403,8 +1427,10 @@ void SuePlayableScene::prepareGameplayLoop() {
 void SuePlayableScene::advanceGameplayLoop(uint32 delta) {
 	advanceSecondaryActorSpeechAnimation(delta);
 
-	if (advanceCustomGameplayLoop(delta))
+	if (advanceCustomGameplayLoop(delta)) {
+		advanceViewportScroll(delta);
 		return;
+	}
 
 	if (usesSingleSecondaryActorComposite()) {
 		if (_primaryDialogueSpeechActive)
@@ -1412,6 +1438,7 @@ void SuePlayableScene::advanceGameplayLoop(uint32 delta) {
 		else
 			advanceG05SecondaryActorAnimation(delta);
 		updateAmbientAudioAndMusicCues(delta);
+		advanceViewportScroll(delta);
 		return;
 	}
 
@@ -1423,6 +1450,7 @@ void SuePlayableScene::advanceGameplayLoop(uint32 delta) {
 		advanceChunk11PreItemIdleAnimation(delta);
 
 	updateAmbientAudioAndMusicCues(delta);
+	advanceViewportScroll(delta);
 }
 
 void SuePlayableScene::drawGameplayFrame() {
@@ -1824,6 +1852,7 @@ bool SuePlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFac
 		return true;
 	}
 
+	_actorPathPlaybackActive = true;
 	for (uint frameIndex = 1; frameIndex < _actorPathFrames.size() && !Engine::shouldQuit(); ++frameIndex) {
 		const ActorPathFrame &frame = _actorPathFrames[frameIndex];
 		_activeActorWorldX = frame.worldX;
@@ -1832,6 +1861,7 @@ bool SuePlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFac
 		_activeActorCel = frame.cel;
 		_activeActorDrawOrderMode = frame.drawOrderMode;
 		if (waitSceneMillis(kG04ActorPathFrameMillis)) {
+			_actorPathPlaybackActive = false;
 			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
 				return false;
 
@@ -1848,12 +1878,14 @@ bool SuePlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFac
 			_activeActorFacing = lastFrame.facing;
 			_activeActorCel = lastFrame.cel;
 			_activeActorDrawOrderMode = lastFrame.drawOrderMode;
+			_actorPathPlaybackActive = false;
 			drawPlayableComposite();
 			presentFrame();
 			return true;
 		}
 	}
 
+	_actorPathPlaybackActive = false;
 	drawPlayableComposite();
 	presentFrame();
 	return !Engine::shouldQuit() && !_vm->isSceneRestartRequested();
@@ -3052,6 +3084,53 @@ bool SuePlayableScene::waitSceneMillis(uint32 millis) {
 	}
 
 	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
+}
+
+void SuePlayableScene::resetViewportFromScene() {
+	const uint16 maximumFramebufferOffset =
+		HollywoodEngine::kSceneBufferWidth - HollywoodEngine::kScreenWidth;
+
+	_viewportMinXOffset = MIN<uint16>(sceneViewportMinXOffset(), maximumFramebufferOffset);
+	_viewportMaxXOffset = MIN<uint16>(sceneViewportMaxXOffset(), maximumFramebufferOffset);
+	if (_viewportMaxXOffset < _viewportMinXOffset)
+		_viewportMaxXOffset = _viewportMinXOffset;
+
+	_viewportXOffset = CLIP<uint16>(sceneViewportXOffset(), _viewportMinXOffset, _viewportMaxXOffset);
+	_viewportScrollTimerAccumulator = 0;
+}
+
+void SuePlayableScene::advanceViewportScroll(uint32 delta) {
+	if (_actorPathPlaybackActive) {
+		_viewportScrollTimerAccumulator = 0;
+		return;
+	}
+
+	if (_viewportMinXOffset >= _viewportMaxXOffset) {
+		_viewportScrollTimerAccumulator = 0;
+		return;
+	}
+
+	_viewportScrollTimerAccumulator += delta;
+	while (_viewportScrollTimerAccumulator >= kViewportScrollTickMillis) {
+		_viewportScrollTimerAccumulator -= kViewportScrollTickMillis;
+		const int actorScreenX = _activeActorWorldX - _viewportXOffset;
+
+		if (actorScreenX > kViewportScrollRightThreshold && _viewportXOffset < _viewportMaxXOffset) {
+			_viewportXOffset = MIN<uint16>(_viewportXOffset + kViewportScrollStep, _viewportMaxXOffset);
+			continue;
+		}
+
+		if (actorScreenX < kViewportScrollLeftThreshold && _viewportMinXOffset < _viewportXOffset) {
+			if (_viewportXOffset > _viewportMinXOffset + kViewportScrollStep)
+				_viewportXOffset -= kViewportScrollStep;
+			else
+				_viewportXOffset = _viewportMinXOffset;
+			continue;
+		}
+
+		_viewportScrollTimerAccumulator = 0;
+		break;
+	}
 }
 
 void SuePlayableScene::updateAmbientAudioAndMusicCues(uint32 delta) {
