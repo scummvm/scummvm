@@ -36,6 +36,7 @@ const uint kScene7010ArenaFirstChunk = 5;
 const uint kScene7010ArenaLastChunk = 18;
 const uint kScene7010StageIndex = 701;
 const uint16 kScene7010ViewportXOffset = 0;
+const uint16 kScene7010ViewportMaxXOffset = 0xd0;
 const uint16 kScene7010FirstState = 0x1b62;
 const uint16 kScene7010LastState = 0x1b6b;
 const uint16 kScene7010ReturnState = 0x1b63;
@@ -143,6 +144,10 @@ uint16 Scene7010::sceneViewportXOffset() const {
 	return kScene7010ViewportXOffset;
 }
 
+uint16 Scene7010::sceneViewportMaxXOffset() const {
+	return kScene7010ViewportMaxXOffset;
+}
+
 bool Scene7010::shouldLoadInventoryActionTables() const {
 	return false;
 }
@@ -200,6 +205,7 @@ void Scene7010::initializeCustomPreviewState() {
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 	_sceneStateFlags[1] = _vm->gameState().frankensteinNoteOverlayMode;
+	_sceneStateFlags[4] = 1;
 	_sceneStateFlags[5] = _vm->gameState().hannoverCourtyardDialogueState;
 	_sceneStateFlags[6] = _vm->gameState().hannoverCourtyardFollowUpSeen ? 1 : 0;
 	_dialogueOverlayMode = _sceneStateFlags[1];
@@ -568,8 +574,12 @@ bool Scene7010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		}
 	}
 
-	if (selector == 4 || selector == 0xff)
-		_hotspots.setVerbMovementModeByGlobalRecordIndex(0x19, _sceneStateFlags[4] == 0 ? 1 : 0);
+	if (selector == 4 || selector == 0xff) {
+		// The original initializer sets G01 flag 4 to 1, and slot 03 only
+		// promotes it to 2. The pre-walk branch for value 0 is not reachable
+		// in normal gameplay, so bodegas/edificio dispatches in place.
+		_hotspots.setVerbMovementModeByGlobalRecordIndex(0x19, 0);
+	}
 	return true;
 }
 

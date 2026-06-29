@@ -135,6 +135,8 @@ protected:
 	virtual uint sceneStageIndex() const = 0;
 	virtual const char *sceneDebugName() const = 0;
 	virtual uint16 sceneViewportXOffset() const = 0;
+	virtual uint16 sceneViewportMinXOffset() const;
+	virtual uint16 sceneViewportMaxXOffset() const;
 	virtual bool shouldLoadPaletteAfterFrankensteinNote() const;
 	virtual bool shouldLoadInventoryActionTables() const;
 	virtual bool shouldLoadActorDepthTables() const;
@@ -295,6 +297,8 @@ protected:
 	virtual byte primarySpeechAnimationBaseFrame(byte animationGroup) const;
 	virtual void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex);
 	bool waitSceneMillis(uint32 millis);
+	void resetViewportFromScene();
+	void advanceViewportScroll(uint32 delta);
 	void clearSpeechOverlay();
 	void clearAllSpeechOverlays();
 	void drawSpeechOverlay();
@@ -392,6 +396,11 @@ protected:
 	uint32 _primaryLeftSpeechTimerAccumulator;
 	uint32 _primaryDialogueSpeechTimerAccumulator;
 	byte _previousAmbientMusicTrackId;
+	uint16 _viewportXOffset;
+	uint16 _viewportMinXOffset;
+	uint16 _viewportMaxXOffset;
+	uint32 _viewportScrollTimerAccumulator;
+	bool _actorPathPlaybackActive;
 	int _activeActorWorldX;
 	int _activeActorWorldY;
 	byte _activeActorFacing;

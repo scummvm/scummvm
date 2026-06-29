@@ -162,12 +162,19 @@ bool GameplayLoop::run() {
 		if (delta > kGameplayMaxFrameDeltaMillis)
 			delta = kGameplayMaxFrameDeltaMillis;
 
+		const uint16 previousViewportX = _delegate->viewportXOffset();
+		const uint16 previousViewportY = _delegate->viewportYOffset();
 		_delegate->advanceGameplayLoop(delta);
+		const bool viewportChanged =
+			previousViewportX != _delegate->viewportXOffset() ||
+			previousViewportY != _delegate->viewportYOffset();
 		_vm->cursor()->advance(delta);
 		syncHoverCaptionRelationContext();
 		_hoverCaption.setCurrentStrip(_currentStrip);
 		if (_panelState.visible())
 			updatePanelHover(delta);
+		else if (viewportChanged)
+			refreshHoverCaption();
 		else
 			_hoverCaption.advance(delta, _delegate->hotspots(), _delegate->savedFramebuffer(),
 				_vm->cursor()->surfaceX(), _vm->cursor()->surfaceY(),
