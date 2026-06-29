@@ -871,8 +871,8 @@ UI::Clock *Scene::getClock() {
 }
 
 void Scene::init() {
-	auto *bootSummary = GetEngineData(BSUM);
-	auto *hintData = GetEngineData(HINT);
+	auto *bootSummary = GetEngineData(BSUM)
+	auto *hintData = GetEngineData(HINT)
 	assert(bootSummary);
 
 	_flags.eventFlags.resize(g_nancy->getStaticData().numEventFlags, g_nancy->_false);
@@ -1213,6 +1213,25 @@ void Scene::tickSoftwareTimers(uint32 deltaMs) {
 			}
 		}
 	}
+}
+
+bool Scene::isSoftwareTimerActive(uint16 index) const {
+	if (index >= TimerData::kNumTimers || !_puzzleData.contains(TimerData::getTag())) {
+		return false;
+	}
+
+	const TimerData::Timer &timer = ((const TimerData *)_puzzleData.getVal(TimerData::getTag()))->timers[index];
+	return timer.state == TimerData::Timer::kRunning ||
+		timer.state == TimerData::Timer::kOneShot ||
+		timer.state == TimerData::Timer::kRepeating;
+}
+
+uint32 Scene::getSoftwareTimerElapsed(uint16 index) const {
+	if (index >= TimerData::kNumTimers || !_puzzleData.contains(TimerData::getTag())) {
+		return 0;
+	}
+
+	return ((const TimerData *)_puzzleData.getVal(TimerData::getTag()))->timers[index].currentTimeMs;
 }
 
 void Scene::fireSoftwareTimer(TimerData::Timer &timer) {

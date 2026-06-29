@@ -496,19 +496,27 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 
 			break;
 		case DependencyType::kTimerLessThanDependencyTime:
-			if (NancySceneState._timers.timerTime <= dep.timeData) {
-				dep.satisfied = true;
+			if (g_nancy->getGameType() >= kGameTypeNancy11) {
+				// Nancy11+ checks a software-timer slot (label = slot index)
+				dep.satisfied = NancySceneState.isSoftwareTimerActive(dep.label) &&
+					NancySceneState.getSoftwareTimerElapsed(dep.label) <= (uint32)dep.timeData;
 			} else {
-				dep.satisfied = false;
+				dep.satisfied = NancySceneState._timers.timerTime <= dep.timeData;
 			}
 
 			break;
 		case DependencyType::kTimerGreaterThanDependencyTime:
-			if (NancySceneState._timers.timerTime > dep.timeData) {
-				dep.satisfied = true;
+			if (g_nancy->getGameType() >= kGameTypeNancy11) {
+				dep.satisfied = NancySceneState.isSoftwareTimerActive(dep.label) &&
+					(uint32)dep.timeData < NancySceneState.getSoftwareTimerElapsed(dep.label);
 			} else {
-				dep.satisfied = false;
+				dep.satisfied = NancySceneState._timers.timerTime > dep.timeData;
 			}
+
+			break;
+		case DependencyType::kTimerIsActive:
+			// Nancy11+ only: satisfied while the software-timer slot is running/counting
+			dep.satisfied = NancySceneState.isSoftwareTimerActive(dep.label);
 
 			break;
 		case DependencyType::kDifficultyLevel:

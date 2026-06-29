@@ -149,6 +149,10 @@ public:
 	bool getEventFlag(int16 label, byte flag) const;
 	bool getEventFlag(FlagDescription eventFlag) const;
 
+	// Nancy 11+ software-timer queries used by timer dependencies.
+	bool isSoftwareTimerActive(uint16 index) const;
+	uint32 getSoftwareTimerElapsed(uint16 index) const;
+
 	void setLogicCondition(int16 label, byte flag);
 	bool getLogicCondition(int16 label, byte flag) const;
 	void clearLogicConditions();
