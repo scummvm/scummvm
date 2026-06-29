@@ -212,7 +212,13 @@ void CollisionPuzzle::readData(Common::SeekableReadStream &stream) {
 		numPieces = 6;
 	}
 
-	const uint maxGridSize = (_puzzleType == kTileMove && g_nancy->getGameType() >= kGameTypeNancy10) ? 11 : 8;
+	// Nancy 12 enlarged the Collision grid from 8x8 to 12x12; TileMove went 8 to 11 in Nancy 10
+	uint maxGridSize = 8;
+	if (_puzzleType == kTileMove && g_nancy->getGameType() >= kGameTypeNancy10) {
+		maxGridSize = 11;
+	} else if (_puzzleType == kCollision && g_nancy->getGameType() >= kGameTypeNancy12) {
+		maxGridSize = 12;
+	}
 
 	_grid.resize(height, Common::Array<uint16>(width));
 	for (uint y = 0; y < height; ++y) {
