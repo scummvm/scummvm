@@ -77,7 +77,7 @@ const byte kScene7070UseItem13FrameMap[] = {
 };
 
 Scene7070::Scene7070(HollywoodEngine *vm) :
-		SuePlayableScene(vm, "scene7070", kScene7070EntryFromG06TargetX, kScene7070EntryFromG06TargetY,
+		PlayableScene(vm, "scene7070", kScene7070EntryFromG06TargetX, kScene7070EntryFromG06TargetY,
 			kScene7070EntryFromG06Facing, 0xfd, 0xfb),
 		_ambientTimerAccumulator(0) {
 }

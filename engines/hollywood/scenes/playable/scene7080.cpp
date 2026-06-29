@@ -55,7 +55,7 @@ const byte kScene7080PickupItem13FrameMap[] = {
 };
 
 Scene7080::Scene7080(HollywoodEngine *vm) :
-		SuePlayableScene(vm, "scene7080", kScene7080EntryX, kScene7080EntryY,
+		PlayableScene(vm, "scene7080", kScene7080EntryX, kScene7080EntryY,
 			kScene7080EntryFacing, 0xfd, 0xfb),
 		_ambientTimerAccumulator(0) {
 }

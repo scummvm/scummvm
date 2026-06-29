@@ -128,8 +128,112 @@ struct GameplayState {
 			inventoryItemResourcePageByOwnerAndItemId[0][itemId] = 0;
 
 		inventoryItemResourcePageByOwnerAndItemId[0][0x01] = 0x09;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x02] = 0x5c;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x03] = 0x03;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x04] = 0x04;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x05] = 0x0a;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x06] = 0x0d;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x07] = 0x47;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x08] = 0x48;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x09] = 0x06;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x0a] = 0x07;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x0b] = 0x4f;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x0c] = 0x50;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x0d] = 0x4f;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x0e] = 0x51;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x0f] = 0x50;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x10] = 0x61;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x11] = 0x17;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x12] = 0x6a;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x13] = 0x01;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x14] = 0x59;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x15] = 0x69;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x16] = 0x16;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x17] = 0x5e;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x18] = 0x67;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x19] = 0x02;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x1a] = 0x53;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x1b] = 0x5d;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x1c] = 0x5f;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x1d] = 0x05;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x1e] = 0x0b;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x1f] = 0x33;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x20] = 0x2e;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x21] = 0x04;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x23] = 0x4c;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x24] = 0x60;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x25] = 0x15;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x26] = 0x1a;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x27] = 0x1c;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x28] = 0x26;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x29] = 0x23;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x2a] = 0x28;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x2b] = 0x2c;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x2c] = 0x0c;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x2d] = 0x68;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x2e] = 0x27;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x2f] = 0x0f;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x30] = 0x5a;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x31] = 0x22;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x32] = 0x31;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x33] = 0x19;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x34] = 0x56;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x35] = 0x54;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x36] = 0x2b;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x37] = 0x2f;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x38] = 0x58;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x39] = 0x21;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x3a] = 0x39;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x3b] = 0x50;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x3c] = 0x3a;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x3d] = 0x5b;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x3e] = 0x44;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x3f] = 0x12;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x40] = 0x62;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x41] = 0x3f;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x42] = 0x37;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x43] = 0x30;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x44] = 0x42;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x45] = 0x10;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x46] = 0x24;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x47] = 0x1b;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x48] = 0x14;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x49] = 0x38;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x4a] = 0x3b;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x4b] = 0x1f;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x4c] = 0x66;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x4d] = 0x41;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x4e] = 0x57;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x4f] = 0x43;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x50] = 0x25;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x51] = 0x1d;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x52] = 0x4d;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x53] = 0x11;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x54] = 0x20;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x55] = 0x3d;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x56] = 0x29;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x57] = 0x49;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x58] = 0x3e;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x59] = 0x63;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x5a] = 0x4a;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x5b] = 0x4e;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x5c] = 0x64;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x5d] = 0x45;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x5e] = 0x35;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x5f] = 0x32;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x60] = 0x52;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x61] = 0x65;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x62] = 0x34;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x63] = 0x6b;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x64] = 0x55;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x65] = 0x4b;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x66] = 0x6e;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x67] = 0x6d;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x68] = 0x6c;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x69] = 0x3c;
 		inventoryItemResourcePageByOwnerAndItemId[0][0x6a] = 0x08;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x6b] = 0x36;
+		inventoryItemResourcePageByOwnerAndItemId[0][0x6c] = 0x46;
 	}
 
 	void initializeRonInventoryItems() {
@@ -311,7 +415,7 @@ struct GameplayState {
 	}
 
 	uint16 fixedInventoryVerbHandler(byte owner, byte itemId, byte stripIndex) const {
-		if (owner != 1 || itemId >= kInventoryOwnerSlotStride || stripIndex == 0 ||
+		if (owner >= kInventoryOwnerCount || itemId >= kInventoryOwnerSlotStride || stripIndex == 0 ||
 				stripIndex > kInventoryVerbCount)
 			return 0;
 

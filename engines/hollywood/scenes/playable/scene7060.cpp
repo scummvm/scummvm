@@ -91,7 +91,7 @@ const byte kScene7060ShortExitFrameMap[] = {
 };
 
 Scene7060::Scene7060(HollywoodEngine *vm) :
-		SuePlayableScene(vm, "scene7060", kScene7060EntryFromG04TargetX, kScene7060EntryFromG04TargetY,
+		PlayableScene(vm, "scene7060", kScene7060EntryFromG04TargetX, kScene7060EntryFromG04TargetY,
 			kScene7060EntryFromG04Facing, 0xfd, 0xfb),
 		_chunk6FrameIndex(1),
 		_chunk6State(0),

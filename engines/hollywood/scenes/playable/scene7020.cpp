@@ -62,7 +62,7 @@ const byte kScene7020Chunk7RevealFrameMap[] = {
 };
 
 Scene7020::Scene7020(HollywoodEngine *vm) :
-		SuePlayableScene(vm, "scene7020", kScene7020SueTargetX, kScene7020SueTargetY,
+		PlayableScene(vm, "scene7020", kScene7020SueTargetX, kScene7020SueTargetY,
 			kScene7020SueDialogueFacing, 0xfd, 0xfb),
 		_chunk6FrameMapIndex(0),
 		_primaryPoseMode(0),

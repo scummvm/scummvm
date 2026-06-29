@@ -64,7 +64,7 @@ const byte kScene7050Chunk11PickupItem10FrameMap[] = {
 };
 
 Scene7050::Scene7050(HollywoodEngine *vm) :
-		SuePlayableScene(vm, "scene7050", 0x0a1, 0x158, 2, 0xfd, 0xfb),
+		PlayableScene(vm, "scene7050", 0x0a1, 0x158, 2, 0xfd, 0xfb),
 		_cloakroomAttendantFrame(1),
 		_cloakroomAttendantState(0),
 		_cloakroomAttendantRepeatCount(0),

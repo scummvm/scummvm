@@ -22,13 +22,13 @@
 #ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE7060_H
 #define HOLLYWOOD_SCENES_PLAYABLE_SCENE7060_H
 
-#include "hollywood/scenes/playable/sue_playable_scene.h"
+#include "hollywood/scenes/playable/playable_scene.h"
 
 namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene7060 : public SuePlayableScene {
+class Scene7060 : public PlayableScene {
 public:
 	Scene7060(HollywoodEngine *vm);
 

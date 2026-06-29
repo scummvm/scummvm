@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE7090_H
-#define HOLLYWOOD_SCENES_PLAYABLE_SCENE7090_H
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE1010_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE1010_H
 
 #include "hollywood/scenes/playable/playable_scene.h"
 
@@ -28,9 +28,9 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene7090 : public PlayableScene {
+class Scene1010 : public PlayableScene {
 public:
-	Scene7090(HollywoodEngine *vm);
+	Scene1010(HollywoodEngine *vm);
 
 private:
 	const char *resourceArchiveName() const override;
@@ -40,6 +40,21 @@ private:
 	uint sceneStageIndex() const override;
 	const char *sceneDebugName() const override;
 	uint16 sceneViewportXOffset() const override;
+	uint16 sceneViewportMinXOffset() const override;
+	uint16 sceneViewportMaxXOffset() const override;
+	byte inventoryOwnerIndex() const override;
+	void initializeInventoryOwnerState() override;
+	uint resource000ActorBankTableEntry() const override;
+	uint resource000ActorPaletteTableEntry() const override;
+	uint32 inventoryActionTableExtraOffset() const override;
+	uint resource003InventoryRowsOffsetIndex() const override;
+	uint32 speechCueDescriptorTableOffset() const override;
+	const byte *actorPathStepDeltaTable() const override;
+	uint actorPathStepDeltaTableSize() const override;
+	byte walkablePaletteMaxRegion() const override;
+	const char *musicArchiveName() const override;
+	const char *soundBank0ArchiveName() const override;
+	bool shouldLoadActorDepthTables() const override;
 	bool isMainFlowStateInScene(uint16 stateId) const override;
 	bool hasCustomPreviewState() const override;
 	void initializeCustomPreviewState() override;
@@ -49,20 +64,20 @@ private:
 		byte actorDrawOrderMode) override;
 	bool hasCustomEntrySequence() const override;
 	void runCustomEntrySequence() override;
+	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
-	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 
-	void darkenActorPaletteRange();
-	void rebuildWalkableMask();
 	void updateSceneAmbientAudioAndMusicCues(uint32 delta);
-	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis);
-	void handleBackToG07();
-	void handleGatedAction();
 
 	uint32 _ambientTimerAccumulator;
-	bool _prePatchChunk7Visible;
+	byte _currentAmbientSoundCueId;
+	byte _previousAmbientSoundCueId;
 };
 
 } // End of namespace Hollywood

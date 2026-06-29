@@ -112,7 +112,7 @@ const byte kScene7040Chunk18PickupItem0FFrameMap[] = {
 };
 
 Scene7040::Scene7040(HollywoodEngine *vm) :
-		SuePlayableScene(vm, "scene7040", 0x14a, 0x139, 1, 0xfd, 0xfb),
+		PlayableScene(vm, "scene7040", 0x14a, 0x139, 1, 0xfd, 0xfb),
 		_chunk11FrameIndex(0),
 		_chunk12FrameIndex(0),
 		_chunk14ActionFrameIndex(0),

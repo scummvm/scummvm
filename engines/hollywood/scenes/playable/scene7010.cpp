@@ -91,7 +91,7 @@ const byte kScene7010Route3To2StepDeltas[] = {
 };
 
 Scene7010::Scene7010(HollywoodEngine *vm) :
-		SuePlayableScene(vm, "scene7010", 0x184, 0x1c6, 1, 0xfd, 0xfb),
+		PlayableScene(vm, "scene7010", 0x184, 0x1c6, 1, 0xfd, 0xfb),
 		_chunk8FrameIndex(0),
 		_chunk9AmbientOverlayFrameIndex(0),
 		_chunk9AmbientDecisionCounter(0),
