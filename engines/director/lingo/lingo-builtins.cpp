@@ -1928,7 +1928,11 @@ void LB::b_xtra(int nargs) {
 			}
 		}
 	}
-	g_lingo->lingoError("Xtra not found: %s", d.asString().c_str());
+	// The game may reference an Xtra we don't implement (e.g. the custom
+	// "Border"/budapi Xtras shipped with Director 7 titles such as Physikus).
+	// Degrade gracefully by returning VOID instead of aborting Lingo execution.
+	warning("b_xtra: Xtra not found: %s", d.asString().c_str());
+	g_lingo->push(Datum());
 }
 
 ///////////////////
