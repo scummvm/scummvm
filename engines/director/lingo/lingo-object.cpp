@@ -158,6 +158,7 @@
 #include "director/lingo/xlibs/x/xwin.h"
 #include "director/lingo/xlibs/y/yasix.h"
 #include "director/lingo/xtras/a/audio.h"
+#include "director/lingo/xtras/b/border.h"
 #include "director/lingo/xtras/b/budapi.h"
 #include "director/lingo/xtras/d/directsound.h"
 #include "director/lingo/xtras/d/displayres.h"
@@ -271,6 +272,7 @@ static const struct XLibProto {
 	XLIBDEF(BIMXObj,			kXObj,			400),	// D4
 	XLIBDEF(BlitPictXObj,		kXObj,			400),	// D4
 	XLIBDEF(BlockTheDrawingXObj,			kXObj,					400),	// D4
+	XLIBDEF(BorderXtra,			kXtraObj,		500),	// D5
 	XLIBDEF(BudAPIXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(CDROMXObj,			kXObj,			200),	// D2
 	XLIBDEF(CloseBleedWindowXCMD,kXObj,			300),	// D3

@@ -189,6 +189,7 @@ MODULE_OBJS = \
 	lingo/xlibs/x/xwin.o \
 	lingo/xlibs/y/yasix.o \
 	lingo/xtras/a/audio.o \
+	lingo/xtras/b/border.o \
 	lingo/xtras/b/budapi.o \
 	lingo/xtras/d/datetime.o \
 	lingo/xtras/d/directsound.o \
