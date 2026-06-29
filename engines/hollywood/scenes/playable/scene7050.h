@@ -42,6 +42,7 @@ private:
 	uint16 sceneViewportXOffset() const override;
 	bool usesSingleSecondaryActorComposite() const override;
 	bool isMainFlowStateInScene(uint16 stateId) const override;
+	bool dispatchCustomSceneAction(uint16 handlerId) override;
 };
 
 } // End of namespace Hollywood

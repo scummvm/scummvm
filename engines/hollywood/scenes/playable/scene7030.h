@@ -75,7 +75,7 @@ private:
 	void handleActionSlot09CommonSpeech();
 	void handleActionSlot10CommonSpeech();
 	void handleActionHandler313ExchangeItem0CFor0D();
-	void handleActionHandler314PickupItem0B();
+	void handleActionHandler314PickupBone();
 	void handleActionHandler315PickupItem0C();
 	void handleActionHandler316SecondarySpeech();
 

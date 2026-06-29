@@ -55,7 +55,7 @@ uint16 Scene7040::sceneViewportXOffset() const {
 	return 0xc8;
 }
 
-bool Scene7040::shouldLoadAlternatePaletteAfterItem0B() const {
+bool Scene7040::shouldLoadPaletteAfterFrankensteinNote() const {
 	return true;
 }
 
@@ -73,6 +73,58 @@ bool Scene7040::usesG04PathRouteSpecialCase() const {
 
 bool Scene7040::isMainFlowStateInScene(uint16 stateId) const {
 	return stateId >= 0x1b80 && stateId <= 0x1b89;
+}
+
+bool Scene7040::dispatchCustomSceneAction(uint16 handlerId) {
+	switch (handlerId) {
+	case 301: // Ir a terraza (go to terrace)
+		handleActionSlot00ReturnToG03();
+		return true;
+	case 302: // Mirar puerta (look at door)
+		handleActionSlot01ProgressSpeech();
+		return true;
+	case 303: // Usar/Abrir puerta (use/open door)
+		handleActionSlot02MajorHotspotAction();
+		return true;
+	case 304: // Ir a escalera (go to stairs)
+		handleActionSlot03TransitionToState7060();
+		return true;
+	case 305: // Mirar escalera (look at stairs)
+		beginSecondarySpeechLine(4, 0);
+		return true;
+	case 306: // Mirar puerta (look at door)
+		handleActionSlot05ExitProgressSpeech();
+		return true;
+	case 307: // Usar/Abrir puerta (use/open door)
+		handleActionSlot06TransitionToG05();
+		return true;
+	case 308: // Mirar estatua (look at statue)
+		beginSecondarySpeechLine(6, 0);
+		return true;
+	case 309: // Mirar florero (look at vase)
+		beginSecondarySpeechLine(7, 0);
+		return true;
+	case 310: // Coger libreta (take notebook)
+		handleActionSlot09PickupItem0FThenExit();
+		return true;
+	case 311: // Usar libreta (use notebook)
+		handleActionSlot10CommonSpeech();
+		return true;
+	case 312: // Mirar libreta (look at notebook)
+		handleActionHandler312ProgressSpeech();
+		return true;
+	case 313: // Hablar con Joseph (talk to Joseph)
+		handleActionHandler313ConversationGate();
+		return true;
+	case 314: // Mirar Joseph (look at Joseph)
+		handleActionHandler314FrankensteinNoteSpeech();
+		return true;
+	case 315: // Coger florero (take vase)
+		handleActionHandler315PickupItem0C();
+		return true;
+	default:
+		return false;
+	}
 }
 
 } // End of namespace Hollywood

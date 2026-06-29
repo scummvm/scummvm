@@ -89,9 +89,9 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	GameplayState &state = _gameState;
 
 	s.syncAsUint16LE(state.mainFlowStateId);
-	s.syncAsByte(state.activeChapterAudioArchiveIndex);
+	s.syncAsByte(state.activeAudioChapterIndex);
 	s.syncAsByte(state.currentInventoryOwnerIndex);
-	s.syncAsByte(state.currentRandomAmbientMusicTrackId);
+	s.syncAsByte(state.currentAmbientMusicCueId);
 	s.syncBytes(state.inventoryItemCountByOwner, sizeof(state.inventoryItemCountByOwner));
 	s.syncBytes(state.inventoryFirstVisibleSlotByOwner, sizeof(state.inventoryFirstVisibleSlotByOwner));
 	s.syncBytes(&state.inventorySlotItemIdByOwner[0][0], sizeof(state.inventorySlotItemIdByOwner));
@@ -103,33 +103,33 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 		GameplayState::kInventoryItemRelationTableEntryCount);
 	syncUint16Table(s, state.dialogueRelationMode2HandlerIdsByItemPair,
 		GameplayState::kInventoryItemRelationTableEntryCount);
-	syncStateBool(s, state.inventoryOwner1ItemsInitialized);
-	s.syncAsByte(state.sceneActionStateSelector);
-	syncStateBool(s, state.g01Item0BSequenceCompleted);
-	s.syncAsByte(state.g01DialogueOverlayMode);
-	s.syncAsByte(state.g01DialogueBranchState);
-	syncStateBool(s, state.g01DialogueBranchFollowUpSeen);
-	syncStateBool(s, state.g04EntryConversationPlayed);
-	s.syncAsByte(state.g04MajorActionProgress);
-	s.syncAsByte(state.g04PatchState);
-	syncStateBool(s, state.g04ExitActionDone);
-	syncStateBool(s, state.g05DialogueIntroSeen);
-	s.syncAsByte(state.g05PatchState);
-	syncStateBool(s, state.g06DialogueIntroSeen);
-	syncStateBool(s, state.g06ExitMachineTriggered);
-	s.syncAsByte(state.g06MachineSpeed);
-	syncStateBool(s, state.g07IntroSeen);
-	s.syncAsByte(state.g07ExitDoorState);
-	s.syncAsByte(state.g07ObjectPatchState);
-	syncStateBool(s, state.g08IntroSeen);
-	syncStateBool(s, state.g08Item13OnTable);
-	syncStateBool(s, state.g09IntroSeen);
-	syncStateBool(s, state.g09PatchState);
-	syncStateBool(s, state.g09ActionGate);
-	syncStateBool(s, state.g10EnvironmentActive);
-	s.syncAsByte(state.g10ObjectPatchState);
-	syncStateBool(s, state.g10Item15OnScene);
-	syncStateBool(s, state.g10Item14PatchState);
+	syncStateBool(s, state.sueInventoryInitialized);
+	s.syncAsByte(state.multiToolKnifeState);
+	syncStateBool(s, state.reviewedFrankensteinNote);
+	s.syncAsByte(state.frankensteinNoteOverlayMode);
+	s.syncAsByte(state.juniorDialogueBranchState);
+	syncStateBool(s, state.juniorDialogueFollowUpSeen);
+	syncStateBool(s, state.seenOfficeEntryConversation);
+	s.syncAsByte(state.officeStatueActionProgress);
+	s.syncAsByte(state.officeNotePickupState);
+	syncStateBool(s, state.openedOfficeClosetDoor);
+	syncStateBool(s, state.spokenToCloakroomAttendant);
+	s.syncAsByte(state.cloakroomRagVisible);
+	syncStateBool(s, state.spokenToBruno);
+	syncStateBool(s, state.activatedLabExitMachine);
+	s.syncAsByte(state.labMachineSpeed);
+	syncStateBool(s, state.seenGramophoneRoomIntro);
+	s.syncAsByte(state.gramophoneRoomDoorState);
+	s.syncAsByte(state.gramophoneCrankState);
+	syncStateBool(s, state.seenHannoverOfficeIntro);
+	syncStateBool(s, state.crankOnHannoverDesk);
+	syncStateBool(s, state.seenBedroomIntro);
+	syncStateBool(s, state.openedBedroomSecretPassage);
+	syncStateBool(s, state.canOpenBedroomSecretPassage);
+	syncStateBool(s, state.cellPipesActive);
+	s.syncAsByte(state.cellPlateRatProgress);
+	syncStateBool(s, state.posterOnCellWall);
+	syncStateBool(s, state.cellPlateRemoved);
 	syncStateBool(s, state.musicEnabled);
 	syncStateBool(s, state.soundEffectsEnabled);
 	syncStateBool(s, state.optionsTestAudioEnabled);
@@ -145,10 +145,10 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 void HollywoodEngine::normalizeLoadedGameState() {
 	GameplayState &state = _gameState;
 
-	state.actorSpriteBankSet00Loaded = false;
-	state.inventoryOwner1ResourceTablesLoaded = false;
-	state.sceneActionCallbackTableInstalled = false;
-	state.inventoryPanelRedrawn = true;
+	state.sharedActorSpriteBankLoaded = false;
+	state.sueInventoryResourceTablesLoaded = false;
+	state.sceneActionCallbacksInstalled = false;
+	state.inventoryPanelDirty = true;
 
 	if (state.currentInventoryOwnerIndex >= GameplayState::kInventoryOwnerCount)
 		state.currentInventoryOwnerIndex = 1;

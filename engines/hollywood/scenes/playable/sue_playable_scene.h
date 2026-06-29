@@ -104,7 +104,7 @@ protected:
 		kSceneRouteStepCount = kScenePaletteRegionCount * kScenePaletteRegionCount * kScenePaletteRegionRouteStepCount,
 		kResource000TableByteCount = 400,
 		kResource000ActorSet00TableEntry = 0xd0,
-		kResource000Owner1PaletteTableEntry = 0x108,
+		kResource000SuePaletteTableEntry = 0x108,
 		kResource000ActorSet00SegmentCount = 14,
 		kActorFacingCount = 6,
 		kActorCelsPerFacing = 13,
@@ -113,13 +113,13 @@ protected:
 		kSecondaryActorDescriptorSize = 16,
 		kSecondaryActorFramesPerFacing = 5,
 		kSecondaryActorFacingRunStride = 16000,
-		kOwner1ActorPaletteBytes = 0x90,
+		kSueActorPaletteBytes = 0x90,
 		kStage003DecodeKeySize = 0x141,
 		kStage003StageOffsetTableSize = 0xff4,
 		kStage003DescriptorTableSize = 0x186a0,
-		kOwner1Resource003RowsOffsetIndex = 0x32,
-		kOwner1SpeechCueDescriptorTableOffset = 0x5f58,
-		kOwner1SpeechCueDescriptorTableSize = 20000,
+		kSueResource003RowsOffsetIndex = 0x32,
+		kSueSpeechCueDescriptorTableOffset = 0x5f58,
+		kSpeechCueDescriptorTableSize = 20000,
 		kStage003SmallRowSize = 0x29,
 		kStage003LargeRowSize = 0x141,
 		kStage003LargeRowBaseIndex = 500,
@@ -135,7 +135,7 @@ protected:
 	virtual uint sceneStageIndex() const = 0;
 	virtual const char *sceneDebugName() const = 0;
 	virtual uint16 sceneViewportXOffset() const = 0;
-	virtual bool shouldLoadAlternatePaletteAfterItem0B() const;
+	virtual bool shouldLoadPaletteAfterFrankensteinNote() const;
 	virtual bool shouldLoadInventoryActionTables() const;
 	virtual bool shouldLoadActorDepthTables() const;
 	virtual bool shouldConvertSavedFramebufferFF() const;
@@ -167,7 +167,7 @@ protected:
 	bool load();
 	bool loadResource000RuntimeTables(Common::Array<byte> &offsetTable, Common::Array<byte> &sizeTable);
 	bool loadResource000ActorBankSet00(const Common::Array<byte> &offsetTable, const Common::Array<byte> &sizeTable);
-	bool loadResource000Owner1ActorPalette(const Common::Array<byte> &offsetTable);
+	bool loadResource000SueActorPalette(const Common::Array<byte> &offsetTable);
 	bool loadResource000InventoryActionTables(const Common::Array<byte> &offsetTable);
 	bool loadStage003SceneRows();
 	bool loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
@@ -261,13 +261,11 @@ protected:
 	void handleActionSlot10CommonSpeech();
 	void handleActionHandler312ProgressSpeech();
 	void handleActionHandler313ConversationGate();
-	void handleActionHandler314Item0BSpeech();
+	void handleActionHandler314FrankensteinNoteSpeech();
 	void handleActionHandler315PickupItem0C();
 	void handleStaticSpeech43And24Sequence();
 	void handleGrantItem22IfMissing();
 	void handleSwapItems08And0FForItem06();
-	void handleAdvanceSceneActionStateAndInventoryPage();
-	void handleAdvanceSceneActionStateToItem1APage68();
 	void runDialogueMenuRow98();
 	void runG05DialogueMenuRow98();
 	void initializeG05DialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
@@ -279,7 +277,6 @@ protected:
 	void runG05SecondaryActorPoseIn();
 	void runG05SecondaryActorPoseOut();
 	void beginG05PrimarySpeechLine(byte frameIndex, bool alternatePose);
-	void dispatchG05SceneAction(uint16 handlerId);
 	void handleG05ActionSlot01ReturnToG04();
 	void handleG05ActionSlot10PickupItem10();
 	void handleG04ExitSideEffects();
@@ -367,9 +364,9 @@ protected:
 	Common::Array<byte> _stage003StageBlock;
 	Common::Array<byte> _stage003SmallRows;
 	Common::Array<byte> _stage003LargeRows;
-	Common::Array<byte> _owner1SpeechCueDescriptors;
-	Common::Array<byte> _owner1SmallRows;
-	Common::Array<byte> _owner1LargeRows;
+	Common::Array<byte> _sueSpeechCueDescriptors;
+	Common::Array<byte> _sueSmallRows;
+	Common::Array<byte> _sueLargeRows;
 	Common::Array<ScenePoint> _routeBoundaryPoints;
 	Common::Array<byte> _routeSteps;
 	Common::Array<ActorPathFrame> _actorPathFrames;
@@ -414,9 +411,9 @@ protected:
 	byte _chunk17FrameIndex;
 	byte _preItemIdleState;
 	byte _postItemIdleState;
-	byte _g05SecondaryActorFrame;
-	byte _g05SecondaryActorState;
-	byte _g05SecondaryActorRepeatCount;
+	byte _cloakroomAttendantFrame;
+	byte _cloakroomAttendantState;
+	byte _cloakroomAttendantRepeatCount;
 	bool _chunk12OverlayVisible;
 	bool _chunk14ActionVisible;
 	bool _chunk14AltVisible;
@@ -425,7 +422,7 @@ protected:
 	uint32 _chunk12TimerAccumulator;
 	uint32 _chunk16TimerAccumulator;
 	uint32 _chunk17TimerAccumulator;
-	uint32 _g05SecondaryActorTimerAccumulator;
+	uint32 _cloakroomAttendantTimerAccumulator;
 	bool _skipRequested;
 };
 

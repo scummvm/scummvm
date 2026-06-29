@@ -72,7 +72,7 @@ private:
 		HollywoodFont *font) const;
 	void drawVerbStripLabels(Graphics::Surface &surface, int screenY, HollywoodFont *font) const;
 	void applySelectedVerbStrip(Graphics::Surface &surface, int screenY, byte stripIndex) const;
-	byte inventoryOwner1ItemPage(byte itemId) const;
+	byte sueInventoryItemPage(byte itemId) const;
 
 	Common::Array<byte> _bottomPanelBuffer;
 	Common::Array<byte> _dialogueMenuPanelBuffer;

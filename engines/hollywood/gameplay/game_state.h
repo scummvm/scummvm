@@ -44,9 +44,9 @@ struct GameplayState {
 
 	void reset() {
 		mainFlowStateId = 0;
-		activeChapterAudioArchiveIndex = 0;
+		activeAudioChapterIndex = 0;
 		currentInventoryOwnerIndex = 0;
-		currentRandomAmbientMusicTrackId = 0;
+		currentAmbientMusicCueId = 0;
 		for (uint owner = 0; owner < kInventoryOwnerCount; ++owner) {
 			inventoryItemCountByOwner[owner] = 0;
 			inventoryFirstVisibleSlotByOwner[owner] = 0;
@@ -57,37 +57,37 @@ struct GameplayState {
 			}
 		}
 		clearInventoryActionTables();
-		actorSpriteBankSet00Loaded = false;
-		inventoryOwner1ResourceTablesLoaded = false;
-		inventoryOwner1ItemsInitialized = false;
-		sceneActionCallbackTableInstalled = false;
-		inventoryPanelRedrawn = false;
-		sceneActionStateSelector = 0;
-		g01Item0BSequenceCompleted = false;
-		g01DialogueOverlayMode = 0;
-		g01DialogueBranchState = 0;
-		g01DialogueBranchFollowUpSeen = false;
-		g04EntryConversationPlayed = false;
-		g04MajorActionProgress = 0;
-		g04PatchState = 0;
-		g04ExitActionDone = false;
-		g05DialogueIntroSeen = false;
-		g05PatchState = 1;
-		g06DialogueIntroSeen = false;
-		g06ExitMachineTriggered = false;
-		g06MachineSpeed = 4;
-		g07IntroSeen = false;
-		g07ExitDoorState = 0;
-		g07ObjectPatchState = 0;
-		g08IntroSeen = false;
-		g08Item13OnTable = true;
-		g09IntroSeen = false;
-		g09PatchState = false;
-		g09ActionGate = false;
-		g10EnvironmentActive = true;
-		g10ObjectPatchState = 0;
-		g10Item15OnScene = true;
-		g10Item14PatchState = false;
+		sharedActorSpriteBankLoaded = false;
+		sueInventoryResourceTablesLoaded = false;
+		sueInventoryInitialized = false;
+		sceneActionCallbacksInstalled = false;
+		inventoryPanelDirty = false;
+		multiToolKnifeState = 0;
+		reviewedFrankensteinNote = false;
+		frankensteinNoteOverlayMode = 0;
+		juniorDialogueBranchState = 0;
+		juniorDialogueFollowUpSeen = false;
+		seenOfficeEntryConversation = false;
+		officeStatueActionProgress = 0;
+		officeNotePickupState = 0;
+		openedOfficeClosetDoor = false;
+		spokenToCloakroomAttendant = false;
+		cloakroomRagVisible = 1;
+		spokenToBruno = false;
+		activatedLabExitMachine = false;
+		labMachineSpeed = 4;
+		seenGramophoneRoomIntro = false;
+		gramophoneRoomDoorState = 0;
+		gramophoneCrankState = 0;
+		seenHannoverOfficeIntro = false;
+		crankOnHannoverDesk = true;
+		seenBedroomIntro = false;
+		openedBedroomSecretPassage = false;
+		canOpenBedroomSecretPassage = false;
+		cellPipesActive = true;
+		cellPlateRatProgress = 0;
+		posterOnCellWall = true;
+		cellPlateRemoved = false;
 		musicEnabled = true;
 		soundEffectsEnabled = true;
 		optionsTestAudioEnabled = false;
@@ -99,19 +99,19 @@ struct GameplayState {
 	}
 
 	void initializeForState7000() {
-		actorSpriteBankSet00Loaded = true;
-		inventoryOwner1ResourceTablesLoaded = false;
-		sceneActionCallbackTableInstalled = true;
-		initializeOwner1ItemResourcePages();
-		initializeInventoryOwner1Items(false);
+		sharedActorSpriteBankLoaded = true;
+		sueInventoryResourceTablesLoaded = false;
+		sceneActionCallbacksInstalled = true;
+		initializeSueItemResourcePages();
+		initializeSueInventoryItems(false);
 		currentInventoryOwnerIndex = 1;
-		activeChapterAudioArchiveIndex = 7;
-		currentRandomAmbientMusicTrackId = 0x0c;
-		inventoryPanelRedrawn = true;
+		activeAudioChapterIndex = 7;
+		currentAmbientMusicCueId = 0x0c;
+		inventoryPanelDirty = true;
 		mainFlowStateId = 0x1b62;
 	}
 
-	void initializeOwner1ItemResourcePages() {
+	void initializeSueItemResourcePages() {
 		if (kInventoryOwnerCount <= 1)
 			return;
 
@@ -149,7 +149,7 @@ struct GameplayState {
 		inventoryItemResourcePageByOwnerAndItemId[1][0x22] = 0x7b;
 	}
 
-	void initializeInventoryOwner1Items(bool giveAllItems) {
+	void initializeSueInventoryItems(bool giveAllItems) {
 		if (kInventoryOwnerCount <= 1)
 			return;
 
@@ -161,7 +161,7 @@ struct GameplayState {
 
 		if (giveAllItems) {
 			giveInventoryItemsWithResourcePages(owner);
-			inventoryOwner1ItemsInitialized = true;
+			sueInventoryInitialized = true;
 			return;
 		}
 
@@ -175,8 +175,8 @@ struct GameplayState {
 		inventoryItemSlotByOwnerAndItemId[owner][9] = 2;
 		inventoryItemCountByOwner[owner] = 4;
 		inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(4);
-		inventoryOwner1ItemsInitialized = true;
-		inventoryPanelRedrawn = true;
+		sueInventoryInitialized = true;
+		inventoryPanelDirty = true;
 	}
 
 	bool hasInventoryItem(byte owner, byte itemId) const {
@@ -197,7 +197,7 @@ struct GameplayState {
 		inventorySlotItemIdByOwner[owner][slot] = itemId;
 		inventoryItemSlotByOwnerAndItemId[owner][itemId] = slot;
 		inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(slot);
-		inventoryPanelRedrawn = true;
+		inventoryPanelDirty = true;
 	}
 
 	byte giveInventoryItemsWithResourcePages(byte owner) {
@@ -221,7 +221,7 @@ struct GameplayState {
 
 		inventoryItemCountByOwner[owner] = (byte)(writeSlot - 1);
 		inventoryFirstVisibleSlotByOwner[owner] = kInventoryFirstSlot;
-		inventoryPanelRedrawn = true;
+		inventoryPanelDirty = true;
 		return inventoryItemCountByOwner[owner];
 	}
 
@@ -236,7 +236,7 @@ struct GameplayState {
 		inventoryItemSlotByOwnerAndItemId[owner][itemId] = 0;
 		inventorySlotItemIdByOwner[owner][slot] = 0;
 		compactInventory(owner);
-		inventoryPanelRedrawn = true;
+		inventoryPanelDirty = true;
 	}
 
 	void compactInventory(byte owner) {
@@ -306,9 +306,9 @@ struct GameplayState {
 	}
 
 	uint16 mainFlowStateId;
-	byte activeChapterAudioArchiveIndex;
+	byte activeAudioChapterIndex;
 	byte currentInventoryOwnerIndex;
-	byte currentRandomAmbientMusicTrackId;
+	byte currentAmbientMusicCueId;
 	byte inventoryItemCountByOwner[kInventoryOwnerCount];
 	byte inventoryFirstVisibleSlotByOwner[kInventoryOwnerCount];
 	byte inventorySlotItemIdByOwner[kInventoryOwnerCount][kInventoryOwnerSlotStride];
@@ -317,37 +317,37 @@ struct GameplayState {
 	uint16 fixedInventoryVerbHandlerIdsByItemAndStrip[kFixedInventoryActionTableEntryCount];
 	uint16 dialogueRelationMode1HandlerIdsByItemPair[kInventoryItemRelationTableEntryCount];
 	uint16 dialogueRelationMode2HandlerIdsByItemPair[kInventoryItemRelationTableEntryCount];
-	bool actorSpriteBankSet00Loaded;
-	bool inventoryOwner1ResourceTablesLoaded;
-	bool inventoryOwner1ItemsInitialized;
-	bool sceneActionCallbackTableInstalled;
-	bool inventoryPanelRedrawn;
-	byte sceneActionStateSelector;
-	bool g01Item0BSequenceCompleted;
-	byte g01DialogueOverlayMode;
-	byte g01DialogueBranchState;
-	bool g01DialogueBranchFollowUpSeen;
-	bool g04EntryConversationPlayed;
-	byte g04MajorActionProgress;
-	byte g04PatchState;
-	bool g04ExitActionDone;
-	bool g05DialogueIntroSeen;
-	byte g05PatchState;
-	bool g06DialogueIntroSeen;
-	bool g06ExitMachineTriggered;
-	byte g06MachineSpeed;
-	bool g07IntroSeen;
-	byte g07ExitDoorState;
-	byte g07ObjectPatchState;
-	bool g08IntroSeen;
-	bool g08Item13OnTable;
-	bool g09IntroSeen;
-	bool g09PatchState;
-	bool g09ActionGate;
-	bool g10EnvironmentActive;
-	byte g10ObjectPatchState;
-	bool g10Item15OnScene;
-	bool g10Item14PatchState;
+	bool sharedActorSpriteBankLoaded;
+	bool sueInventoryResourceTablesLoaded;
+	bool sueInventoryInitialized;
+	bool sceneActionCallbacksInstalled;
+	bool inventoryPanelDirty;
+	byte multiToolKnifeState;
+	bool reviewedFrankensteinNote;
+	byte frankensteinNoteOverlayMode;
+	byte juniorDialogueBranchState;
+	bool juniorDialogueFollowUpSeen;
+	bool seenOfficeEntryConversation;
+	byte officeStatueActionProgress;
+	byte officeNotePickupState;
+	bool openedOfficeClosetDoor;
+	bool spokenToCloakroomAttendant;
+	byte cloakroomRagVisible;
+	bool spokenToBruno;
+	bool activatedLabExitMachine;
+	byte labMachineSpeed;
+	bool seenGramophoneRoomIntro;
+	byte gramophoneRoomDoorState;
+	byte gramophoneCrankState;
+	bool seenHannoverOfficeIntro;
+	bool crankOnHannoverDesk;
+	bool seenBedroomIntro;
+	bool openedBedroomSecretPassage;
+	bool canOpenBedroomSecretPassage;
+	bool cellPipesActive;
+	byte cellPlateRatProgress;
+	bool posterOnCellWall;
+	bool cellPlateRemoved;
 	bool musicEnabled;
 	bool soundEffectsEnabled;
 	bool optionsTestAudioEnabled;

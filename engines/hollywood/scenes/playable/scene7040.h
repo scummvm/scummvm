@@ -40,11 +40,12 @@ private:
 	uint sceneStageIndex() const override;
 	const char *sceneDebugName() const override;
 	uint16 sceneViewportXOffset() const override;
-	bool shouldLoadAlternatePaletteAfterItem0B() const override;
+	bool shouldLoadPaletteAfterFrankensteinNote() const override;
 	bool shouldConvertSavedFramebufferFF() const override;
 	bool shouldRunExitSideEffectsAfterLoop() const override;
 	bool usesG04PathRouteSpecialCase() const override;
 	bool isMainFlowStateInScene(uint16 stateId) const override;
+	bool dispatchCustomSceneAction(uint16 handlerId) override;
 };
 
 } // End of namespace Hollywood
