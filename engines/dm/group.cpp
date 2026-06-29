@@ -1403,7 +1403,6 @@ void GroupMan::setGroupDirection(ActiveGroup *activeGroup, int16 dir, int16 crea
 }
 
 void GroupMan::addGroupEvent(TimelineEvent *event, uint32 time) {
-	warning("potentially dangerous cast to uint32 below");
 	if (time < (uint32)_vm->filterTime(event->_mapTime)) {
 		int16 tmpType = event->_type - 5;
 		event->_type = (TimelineEventType)tmpType;
