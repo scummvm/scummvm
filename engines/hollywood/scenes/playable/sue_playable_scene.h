@@ -166,6 +166,9 @@ protected:
 	virtual bool applyCustomSceneStateToHotspotsAndPatches(byte selector);
 	virtual bool shouldAnimatePrimarySpeechLine() const;
 	virtual void setPrimaryLeftSpeechFrame(byte frameIndex);
+	bool hasSavedActiveActorPoseForCurrentState() const;
+	void restoreActiveActorPoseFromGameState();
+	void syncActiveActorPoseToGameState();
 	bool load();
 	bool loadResource000RuntimeTables(Common::Array<byte> &offsetTable, Common::Array<byte> &sizeTable);
 	bool loadResource000ActorBankSet00(const Common::Array<byte> &offsetTable, const Common::Array<byte> &sizeTable);

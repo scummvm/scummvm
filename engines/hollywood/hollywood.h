@@ -26,6 +26,7 @@
 #include "common/platform.h"
 
 #include "engines/engine.h"
+#include "graphics/surface.h"
 #include "hollywood/gameplay/cursor.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/music.h"
@@ -75,6 +76,8 @@ public:
 	MusicPlayer *gameplayMusic() { return &_gameplayMusic; }
 	GameplayState &gameState() { return _gameState; }
 	const GameplayState &gameState() const { return _gameState; }
+	void captureLastGameplayThumbnail();
+	bool copyLastGameplayThumbnail(Graphics::Surface &thumbnail) const;
 	bool isSceneRestartRequested() const { return _sceneRestartRequested; }
 	void clearSceneRestartRequest() { _sceneRestartRequested = false; }
 
@@ -98,6 +101,8 @@ private:
 	MusicPlayer _introMusic;
 	MusicPlayer _gameplayMusic;
 	GameplayState _gameState;
+	Graphics::Surface _lastGameplayThumbnail;
+	bool _lastGameplayThumbnailValid;
 	bool _sceneRestartRequested;
 };
 
