@@ -467,8 +467,7 @@ void animPortrait(byte layer, byte index, byte delay) {
 				else
 					blinkToWhite();
 			} else {
-				int16 i;
-				while (delay--) for (i = 0; i < cpu_speed_delay; i++) ; /*TODO: FIXME weak delay*/
+				g_system->delayMillis(delay * 1000 / 128);
 			}
 		}
 	}
