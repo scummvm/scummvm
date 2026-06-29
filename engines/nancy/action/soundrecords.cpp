@@ -139,6 +139,14 @@ void PlaySound::execute() {
 			NancySceneState.setEventFlag(_flag);
 		}
 
+		// A looping sound with no scene change and no event flag is started and then
+		// left to play; the record is marked done at once instead of waiting on a sound
+		// that never ends.
+		if (_sceneChange.sceneID == kNoScene && _flag.label == kEvNoEvent && _sound.numLoops == 0) {
+			_isDone = true;
+			break;
+		}
+
 		if (_changeSceneImmediately) {
 			NancySceneState.changeScene(_sceneChange);
 			finishExecution();
