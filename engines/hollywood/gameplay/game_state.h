@@ -80,6 +80,10 @@ struct GameplayState {
 		scene1020EventFlag1 = false;
 		scene1020EventFlag2 = false;
 		scene1020EventFlag3 = false;
+		seenScene1030EntryConversation = false;
+		scene1030PatchState = 0;
+		scene1030EventFlag0 = false;
+		scene1030SmallBumpRenamed = false;
 		reviewedFrankensteinNote = false;
 		frankensteinNoteOverlayMode = 0;
 		hannoverCourtyardDialogueState = 0;
@@ -496,6 +500,10 @@ struct GameplayState {
 	bool scene1020EventFlag1;
 	bool scene1020EventFlag2;
 	bool scene1020EventFlag3;
+	bool seenScene1030EntryConversation;
+	byte scene1030PatchState;
+	bool scene1030EventFlag0;
+	bool scene1030SmallBumpRenamed;
 	bool reviewedFrankensteinNote;
 	byte frankensteinNoteOverlayMode;
 	byte hannoverCourtyardDialogueState;
