@@ -93,10 +93,7 @@ protected:
 
 	enum {
 		kFrameBufferSize = 0x78000,
-		kG04InitialRequiredChunkCount = 20,
-		kG04ArenaFirstChunk = 5,
-		kG04ArenaLastChunk = 18,
-		kG04PaletteMaskUsedBytes = 0x100,
+		kPaletteMaskUsedBytes = 0x100,
 		kScenePaletteRegionCount = 21,
 		kScenePaletteRegionBoundaryCandidateCount = 3,
 		kScenePaletteRegionRouteStepCount = 19,
@@ -123,8 +120,6 @@ protected:
 		kStage003SmallRowSize = 0x29,
 		kStage003LargeRowSize = 0x141,
 		kStage003LargeRowBaseIndex = 500,
-		kG04StageIndex = 704,
-		kG05StageIndex = 705,
 		kOriginalSpeechLineHeight = 20
 	};
 
@@ -137,14 +132,14 @@ protected:
 	virtual uint16 sceneViewportXOffset() const = 0;
 	virtual uint16 sceneViewportMinXOffset() const;
 	virtual uint16 sceneViewportMaxXOffset() const;
-	virtual bool shouldLoadPaletteAfterFrankensteinNote() const;
+	virtual int alternatePaletteResourceChunkIndex() const;
+	virtual bool isAlternatePaletteResourceActive() const;
 	virtual bool shouldLoadInventoryActionTables() const;
 	virtual bool shouldLoadActorDepthTables() const;
 	virtual bool shouldConvertSavedFramebufferFF() const;
 	virtual bool shouldRunExitSideEffectsAfterLoop() const;
+	virtual void runExitSideEffectsAfterLoop();
 	virtual bool usesActorDepthTest() const;
-	virtual bool usesSingleSecondaryActorComposite() const;
-	virtual bool usesG04PathRouteSpecialCase() const;
 	virtual bool isMainFlowStateInScene(uint16 stateId) const = 0;
 	virtual bool hasCustomPreviewState() const;
 	virtual void initializeCustomPreviewState();
@@ -183,16 +178,10 @@ protected:
 	void expandFillRunsToSavedFramebuffer();
 	bool initializeScenePathTables();
 	void initializePreviewState();
-	void initializeG04PreviewState();
-	void initializeG05PreviewState();
 	void drawPreviewComposite();
 	void drawCutsceneComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode = 0);
-	void drawActionOverlayComposite();
-	void drawG05Composite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
-		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY);
-	void drawG05ActionOverlayComposite();
 	void drawPlayableComposite();
 	void drawActiveAndSecondaryActorFrames(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
@@ -202,7 +191,6 @@ protected:
 	int drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
 		int spriteX, int spriteY, int minimumYExclusive, int actorWorldY);
 	void runEntryCutscene();
-	void runG05EntrySequence();
 	void runEntryPath(int startX, int startY, byte startFacing, int targetX, int targetY);
 	bool runBasicGameplayLoop();
 	const SceneHotspotTable &hotspots() const override;
@@ -222,9 +210,6 @@ protected:
 	void handleLeftClick(const GameplayLoopCursorState &state) override;
 	void handleInventoryItemClick(const GameplayLoopCursorState &state) override;
 	void updateAmbientAudioAndMusicCues(uint32 delta);
-	void advanceChunk11PreItemIdleAnimation(uint32 delta);
-	void advanceChunk16PostItemAnimation(uint32 delta);
-	void advanceG05SecondaryActorAnimation(uint32 delta);
 	void advanceSecondaryActorSpeechAnimation(uint32 delta);
 	void advanceSecondaryActorSpeechFrame();
 	void advancePrimaryLeftSpeechFrame();
@@ -251,52 +236,23 @@ protected:
 	uint actorPathStepDelta(byte facing, byte cel) const;
 	byte calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const;
 	void applySceneStateToHotspotsAndPatches(byte selector);
-	void applyG05SceneStateToHotspotsAndPatches(byte selector);
 	void rebuildWalkablePaletteMask();
 	bool hasInventoryItem(byte itemId) const;
 	void addInventoryItem(byte itemId);
 	void removeInventoryItem(byte itemId);
-	void handleActionSlot00ReturnToG03();
-	void handleActionSlot01ProgressSpeech();
-	void handleActionSlot02MajorHotspotAction();
-	void handleActionSlot03TransitionToState7060();
-	void handleActionSlot05ExitProgressSpeech();
-	void handleActionSlot06TransitionToG05();
-	void handleActionSlot09PickupItem0FThenExit();
-	void handleActionSlot10CommonSpeech();
-	void handleActionHandler312ProgressSpeech();
-	void handleActionHandler313ConversationGate();
-	void handleActionHandler314FrankensteinNoteSpeech();
-	void handleActionHandler315PickupItem0C();
 	void handleStaticSpeech43And24Sequence();
 	void handleGrantItem22IfMissing();
 	void handleSwapItems08And0FForItem06();
-	void runDialogueMenuRow98();
-	void runG05DialogueMenuRow98();
-	void initializeG05DialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
-	void initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	Common::String dialogueMenuText(byte stageId, byte textRowId) const override;
 	void advanceDialogueMenu(uint32 delta) override;
 	void drawDialogueMenuFrame() override;
 	void presentDialogueMenuFrame(const DialogueMenuState &state) override;
-	void runG05SecondaryActorPoseIn();
-	void runG05SecondaryActorPoseOut();
-	void beginG05PrimarySpeechLine(byte frameIndex, bool alternatePose);
-	void handleG05ActionSlot01ReturnToG04();
-	void handleG05ActionSlot10PickupItem10();
-	void handleG04ExitSideEffects();
 	void runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame = -1);
 	void runMappedActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame, bool hideActiveActor);
 	void runMappedActionOverlayRange(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, uint firstFrame, uint endFrame, int statePatchFrame, bool hideActiveActor);
-	void runMajorHotspotFrankensteinBranch();
-	void runChunk11Range(byte firstFrame, byte endFrame);
-	void runChunk14ActionRange(byte firstFrame, byte endFrame);
-	void runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame);
-	void applyChunk14ActionSideEffects(byte frameIndex);
-	void applyChunk14AltSideEffects(byte frameIndex);
 	virtual byte primarySpeechAnimationBaseFrame(byte animationGroup) const;
 	virtual void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex);
 	bool waitSceneMillis(uint32 millis);
@@ -414,27 +370,7 @@ protected:
 	byte _actionOverlayChunkIndex;
 	byte _actionOverlayDescriptorCount;
 	byte _actionOverlayFrameIndex;
-	byte _chunk11FrameIndex;
-	byte _chunk12FrameIndex;
-	byte _chunk14ActionFrameIndex;
-	byte _chunk14AltFrameIndex;
-	byte _chunk14AltChunkIndex;
-	byte _chunk16FrameIndex;
-	byte _chunk17FrameIndex;
-	byte _preItemIdleState;
-	byte _postItemIdleState;
-	byte _cloakroomAttendantFrame;
-	byte _cloakroomAttendantState;
-	byte _cloakroomAttendantRepeatCount;
-	bool _chunk12OverlayVisible;
-	bool _chunk14ActionVisible;
-	bool _chunk14AltVisible;
 	bool _hideActiveActor;
-	uint32 _chunk11TimerAccumulator;
-	uint32 _chunk12TimerAccumulator;
-	uint32 _chunk16TimerAccumulator;
-	uint32 _chunk17TimerAccumulator;
-	uint32 _cloakroomAttendantTimerAccumulator;
 	bool _skipRequested;
 };
 
