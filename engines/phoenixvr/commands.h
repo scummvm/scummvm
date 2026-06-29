@@ -266,8 +266,7 @@ void drawLouvreActionButtons() {
 }
 
 void drawLouvreSelectionMarker(int slot, int imageNumber, bool selected) {
-	static const Common::Point kSlotSelectedPos[kMessengerInventorySlots + 1] = {
-		Common::Point(273, 15),
+	static const Common::Point kSlotSelectedPos[kMessengerInventorySlots] = {
 		Common::Point(389, 82),
 		Common::Point(482, 83),
 		Common::Point(574, 84),
@@ -282,7 +281,7 @@ void drawLouvreSelectionMarker(int slot, int imageNumber, bool selected) {
 		Common::Point(264, 28)};
 
 	if (slot >= 1 && slot <= kMessengerInventorySlots && imageNumber > 0)
-		drawLouvreImage(Common::String::format(selected ? "Sel%04d.bmp" : "DSel%04d.bmp", imageNumber), kSlotSelectedPos[slot].x, kSlotSelectedPos[slot].y);
+		drawLouvreImage(Common::String::format(selected ? "Sel%04d.bmp" : "DSel%04d.bmp", imageNumber), kSlotSelectedPos[slot - 1].x, kSlotSelectedPos[slot - 1].y);
 }
 
 void drawLouvreSelectedObject(int objectSlot) {
