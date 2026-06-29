@@ -42,6 +42,7 @@
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/stxt.h"
+#include "director/xmed.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/bitmap.h"
 #include "director/castmember/digitalvideo.h"
@@ -123,6 +124,9 @@ Cast::~Cast() {
 		delete it._value;
 
 	for (auto &it : _loadedRTE2s)
+		delete it._value;
+
+	for (auto &it : _loadedXMEDs)
 		delete it._value;
 
 	delete _loadedCast;
@@ -892,6 +896,19 @@ void Cast::loadCast() {
 		delete r;
 	}
 
+	// Director 7+ Xtra cast members (e.g. the "Text" Asset Xtra) keep their
+	// media in an XMED child resource. Decode them so the owning cast member
+	// can render its text.
+	Common::Array<uint16> xmed = _castArchive->getResourceIDList(MKTAG('X','M','E','D'));
+	debugC(2, kDebugLoading, "****** Loading %d XMED resources", xmed.size());
+
+	for (auto &iterator : xmed) {
+		r = _castArchive->getResource(MKTAG('X','M','E','D'), iterator);
+		debugC(3, kDebugText, "XMED: id %d", iterator - _castIDoffset);
+		_loadedXMEDs.setVal(iterator, new XMED(this, *r));
+		delete r;
+	}
+
 	// For D4+ we may request to force Lingo scripts and skip precompiled bytecode
 	if (_version >= kFileVer400 && !debugChannelSet(-1, kDebugNoBytecode)) {
 		// Try to load script context
@@ -1638,6 +1655,15 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 			DigitalVideoCastMember *dv = new DigitalVideoCastMember(this, id);
 			dv->_qtmovie = true;
 			target = dv;
+		} else if (xtra->isTextXtra()) {
+			// Director 7+ stores rich text fields as "text" Asset Xtra cast
+			// members whose string lives in an XMED child resource. Promote them
+			// to a TextCastMember so the regular text rendering, widget and Lingo
+			// machinery apply. The text, rect and styling are filled in lazily by
+			// TextCastMember::load() from the decoded XMED.
+			debugC(3, kDebugLoading, "Cast::loadCastData(): promoting Text Xtra (id=%d) to text cast member", id);
+			delete xtra;
+			target = new TextCastMember(this, id, _version);
 		} else {
 			target = xtra;
 		}

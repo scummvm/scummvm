@@ -59,10 +59,11 @@ XtraCastMember::XtraCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		// TODO: Process data in the Xtra
 	}
 
-	// Director 7+ stores QuickTime videos as "quickTimeMedia" Xtra cast members.
-	// Those are promoted to DigitalVideoCastMembers in Cast::loadCastData(), so
-	// don't warn about them being unsupported here.
-	if (!isQuickTimeVideo())
+	// Director 7+ stores QuickTime videos as "quickTimeMedia" Xtra cast members
+	// and rich text fields as "text" Xtra cast members. Both are promoted to
+	// dedicated cast members in Cast::loadCastData(), so don't warn about them
+	// being unsupported here.
+	if (!isQuickTimeVideo() && !isTextXtra())
 		warning("STUB: XtraCastMember::XtraCastMember(): Xtra cast members not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 }
 
@@ -74,6 +75,12 @@ bool XtraCastMember::isQuickTimeVideo() const {
 	// QuickTime Asset Xtra ("QuickTime 3" / "QTASSET"). In D7+ this is how
 	// linked .mov digital videos are represented in the cast.
 	return _xtraSymbol.equalsIgnoreCase("quickTimeMedia");
+}
+
+bool XtraCastMember::isTextXtra() const {
+	// "Text" Asset Xtra. In D7+ this is how editable rich text fields are
+	// represented in the cast; the displayed string is stored in an XMED child.
+	return _xtraSymbol.equalsIgnoreCase("text");
 }
 
 bool XtraCastMember::hasField(int field) {

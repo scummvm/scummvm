@@ -33,6 +33,7 @@
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/window.h"
+#include "director/xmed.h"
 #include "director/castmember/text.h"
 #include "director/lingo/lingo-the.h"
 
@@ -200,6 +201,42 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, TextCastMember &source
 
 	_bgcolor = source._bgcolor;
 	_fgcolor = source._fgcolor;
+}
+
+TextCastMember::TextCastMember(Cast *cast, uint16 castId, uint16 version)
+		: CastMember(cast, castId) {
+	// Promotion target for a Director 7+ "Text" Asset Xtra. The string, rect
+	// and styling are filled in by load() from the decoded XMED child; here we
+	// only establish sensible defaults shared with the regular text path.
+	_type = kCastText;
+
+	_borderSize = 0;
+	_gutterSize = 0;
+	_boxShadow = 0;
+	_buttonType = kTypeButton;
+	_editable = false;
+	_maxHeight = _textHeight = 0;
+
+	// Physikus' Text Xtra fields are light labels on a dark UI. The exact
+	// authored colour lives in the (undocumented) XMED style-run table, so use
+	// white, which is legible across the game's dark screens.
+	_bgcolor = g_director->_wm->findBestColor(0, 0, 0);
+	_fgcolor = g_director->_wm->findBestColor(0xff, 0xff, 0xff);
+
+	_textFlags = 0;
+	_scroll = 0;
+	_fontId = 1;
+	_fontSize = 12;
+	_textType = kTextTypeFixed;
+	_textAlign = kTextAlignLeft;
+	_textShadow = 0;
+	_textSlant = 0;
+	_bgpalinfo1 = _bgpalinfo2 = _bgpalinfo3 = 0;
+	_fgpalinfo1 = _fgpalinfo2 = _fgpalinfo3 = 0xffff;
+
+	_lineSpacing = g_director->getVersion() >= 400 ? 1 : 0;
+
+	_modified = true;
 }
 
 void TextCastMember::setColors(uint32 *fgcolor, uint32 *bgcolor) {
@@ -619,6 +656,33 @@ Common::String TextCastMember::formatInfo() {
 void TextCastMember::load() {
 	if (_loaded)
 		return;
+
+	// Director 7+ "Text" Asset Xtra cast members (promoted here to text cast
+	// members) carry an XMED child instead of an STXT resource. Recover the
+	// displayed string from it and size the field from the Xtra's authored rect.
+	for (auto &it : _children) {
+		if (it.tag != MKTAG('X', 'M', 'E', 'D'))
+			continue;
+
+		if (_cast->_loadedXMEDs.contains(it.index)) {
+			const XMED *xmed = _cast->_loadedXMEDs.getVal(it.index);
+			if (xmed->_isText) {
+				_rtext = xmed->_text;
+				_ptext = _ftext = Common::U32String(xmed->_text, g_director->getPlatformEncoding());
+
+				// The authored field rect is stored in the cast member info.
+				CastMemberInfo *ci = getInfo();
+				if (ci && !ci->xtraRect.isEmpty())
+					_initialRect = Common::Rect((int16)ci->xtraRect.width(), (int16)ci->xtraRect.height());
+
+				_loaded = true;
+				return;
+			}
+		} else {
+			warning("TextCastMember::load(): XMED %d isn't loaded", it.index);
+		}
+		break;
+	}
 
 	uint stxtid = 0;
 	if (_cast->_version >= kFileVer400) {

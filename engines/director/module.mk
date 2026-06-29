@@ -28,6 +28,7 @@ MODULE_OBJS = \
 	types.o \
 	util.o \
 	window.o \
+	xmed.o \
 	castmember/castmember.o \
 	castmember/bitmap.o \
 	castmember/digitalvideo.o \
