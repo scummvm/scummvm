@@ -52,15 +52,14 @@ private:
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void rebuildWalkableMask();
-	void updateSceneAmbientAudioAndMusicCues(uint32 delta);
 	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame = -1);
 	void handleBackToG07();
 	void handlePickupItem13();
 
-	uint32 _ambientTimerAccumulator;
 };
 
 } // End of namespace Hollywood

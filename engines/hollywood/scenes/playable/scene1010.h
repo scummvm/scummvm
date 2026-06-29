@@ -72,15 +72,12 @@ private:
 		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
 		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
+	AmbientAudioProfile ambientAudioProfile() const override;
 
-	void updateSceneAmbientAudioAndMusicCues(uint32 delta);
 	void advanceSceneActorBlinkAnimation(uint32 delta);
 	void drawSceneActorBlinkFrame();
 
-	uint32 _ambientTimerAccumulator;
 	uint32 _sceneActorBlinkTimerAccumulator;
-	byte _currentAmbientSoundCueId;
-	byte _previousAmbientSoundCueId;
 	byte _sceneActorBlinkFrameIndex;
 	byte _sceneActorBlinkPatternMode;
 };

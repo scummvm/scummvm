@@ -85,14 +85,10 @@ private:
 	void handleSpeech19AfterEventFlag1();
 	void handleResourceOverlayChunk18StateChange();
 	void handleResourceOverlayChunk19EventFlag();
-	void updateSceneAmbientAudioAndMusicCues(uint32 delta);
+	AmbientAudioProfile ambientAudioProfile() const override;
 
 	bool isFirstEntryState() const;
 	bool isSpecialOverlayEntryState() const;
-
-	uint32 _ambientTimerAccumulator;
-	byte _currentAmbientSoundCueId;
-	byte _previousAmbientSoundCueId;
 };
 
 } // End of namespace Hollywood

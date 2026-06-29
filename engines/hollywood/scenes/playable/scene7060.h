@@ -60,11 +60,11 @@ private:
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
+	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void initializeChunk6FrameMap();
 	void rebuildWalkableMask();
 	void setColorMapItem8Promoted(bool promoted);
-	void updateAmbientAudioAndMusicCues(uint32 delta);
 	void advanceChunk6IdleAndMachineFrame(uint32 delta);
 	void waitForMachineIdleBeforeDialogue();
 	void initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
@@ -89,7 +89,6 @@ private:
 	bool _colorMapItem8Promoted;
 	uint32 _chunk6TimerAccumulator;
 	uint32 _chunk6FrameMillis;
-	uint32 _ambientTimerAccumulator;
 };
 
 } // End of namespace Hollywood
