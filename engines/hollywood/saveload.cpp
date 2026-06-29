@@ -135,6 +135,22 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene1050JackLookedAt);
 	s.syncAsByte(state.scene1050TravelUnlockFlags);
 	syncStateBool(s, state.scene1050CloakroomSecretMentioned);
+	syncStateBool(s, state.seenScene1060EntryLine);
+	s.syncAsByte(state.scene1060FlyDoctorState);
+	syncStateBool(s, state.seenScene1060DoctorConversation);
+	syncStateBool(s, state.scene1060PocketPaperTaken);
+	syncStateBool(s, state.seenScene1060InvisibleManConversation);
+	s.syncAsByte(state.scene1060PartyRemainsState);
+	syncStateBool(s, state.scene1060FlySlimeHotspotActive);
+	syncStateBool(s, state.scene1070DoorOpened);
+	syncStateBool(s, state.scene1070ChainRemoved);
+	syncStateBool(s, state.scene1070SpiritBlockingHotspot);
+	syncStateBool(s, state.seenScene1070QuasimodoConversation);
+	syncStateBool(s, state.seenScene1070SpencerConversation);
+	s.syncAsByte(state.scene1070SpencerDialogueState);
+	syncStateBool(s, state.scene1070MicrophoneStandTaken);
+	syncStateBool(s, state.scene1070MicrophoneTaken);
+	syncStateBool(s, state.scene1070SpencerExtraFlag);
 	syncStateBool(s, state.reviewedFrankensteinNote);
 	s.syncAsByte(state.frankensteinNoteOverlayMode);
 	s.syncAsByte(state.hannoverCourtyardDialogueState);
@@ -220,6 +236,12 @@ void HollywoodEngine::normalizeLoadedGameState() {
 	if (state.scene1040CordState > 2)
 		state.scene1040CordState = 0;
 	state.scene1050TravelUnlockFlags &= 0x07;
+	if (state.scene1060FlyDoctorState > 2)
+		state.scene1060FlyDoctorState = 0;
+	if (state.scene1060PartyRemainsState > 1)
+		state.scene1060PartyRemainsState = 0;
+	if (state.scene1070SpencerDialogueState > 3)
+		state.scene1070SpencerDialogueState = 0;
 }
 
 } // End of namespace Hollywood
