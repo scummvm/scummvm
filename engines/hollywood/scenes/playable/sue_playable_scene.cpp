@@ -190,6 +190,17 @@ const float kActorPathDiagonalSlopeThreshold = 0.087488f;
 const float kActorFacingSteepSlopeThreshold = 3.732051f;
 const float kActorFacingDiagonalSlopeThreshold = 0.267949f;
 
+int actorPathRoundToNearestEven(float value) {
+	const float lower = floorf(value);
+	const float fraction = value - lower;
+	const int lowerInt = (int)lower;
+	if (fraction > 0.5f)
+		return lowerInt + 1;
+	if (fraction < 0.5f)
+		return lowerInt;
+	return (lowerInt & 1) ? lowerInt + 1 : lowerInt;
+}
+
 SuePlayableScene::SuePlayableScene(HollywoodEngine *vm, const char *randomName, int defaultActorX, int defaultActorY,
 		byte defaultActorFacing, byte secondarySpeechTextColor, byte primarySpeechTextColor) :
 		_vm(vm),
@@ -1365,6 +1376,7 @@ uint16 SuePlayableScene::viewportYOffset() const {
 }
 
 void SuePlayableScene::prepareGameplayLoop() {
+	_skipRequested = false;
 	clearAllSpeechOverlays();
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
@@ -1464,18 +1476,22 @@ void SuePlayableScene::playSharedInventorySound(byte sampleId) {
 }
 
 void SuePlayableScene::handleLeftClick(const GameplayLoopCursorState &state) {
+	_skipRequested = false;
 	_vm->cursor()->leaveInteractiveMode();
 	processSceneActionClick(state);
 	if (!Engine::shouldQuit() && !shouldExitGameplayLoop()) {
+		_skipRequested = false;
 		_vm->cursor()->enterInteractiveMode();
 		_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
 	}
 }
 
 void SuePlayableScene::handleInventoryItemClick(const GameplayLoopCursorState &state) {
+	_skipRequested = false;
 	_vm->cursor()->leaveInteractiveMode();
 	dispatchSceneAction(state.inventoryActionHandlerId);
 	if (!Engine::shouldQuit() && !shouldExitGameplayLoop()) {
+		_skipRequested = false;
 		_vm->cursor()->enterInteractiveMode();
 		_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
 	}
@@ -1495,7 +1511,7 @@ void SuePlayableScene::processSceneActionClick(const GameplayLoopCursorState &st
 		int targetX = state.sceneX;
 		int targetY = state.sceneY;
 		adjustWalkTargetToFloorMask(targetX, targetY);
-		walkActiveActorTo(targetX, targetY, kInvalidFacing, 0);
+		walkActiveActorTo(targetX, targetY, kInvalidFacing, 0, true);
 		return;
 	}
 
@@ -1530,7 +1546,8 @@ void SuePlayableScene::processSceneActionClick(const GameplayLoopCursorState &st
 	if (actionRecord.movementMode != 3)
 		finalCel = 0;
 
-	walkActiveActorTo(targetX, targetY, finalFacing, finalCel);
+	if (!walkActiveActorTo(targetX, targetY, finalFacing, finalCel, true))
+		return;
 	dispatchSceneAction(actionRecord.actionHandlerId);
 }
 
@@ -1565,7 +1582,8 @@ void SuePlayableScene::processSceneRelationClick(const GameplayLoopCursorState &
 		}
 	}
 
-	walkActiveActorTo(targetX, targetY, finalFacing, 0);
+	if (!walkActiveActorTo(targetX, targetY, finalFacing, 0, true))
+		return;
 	dispatchSceneAction(actionRecord.actionHandlerId);
 }
 
@@ -1796,14 +1814,14 @@ bool SuePlayableScene::dispatchGenericSceneAction(uint16 handlerId) {
 	}
 }
 
-void SuePlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel) {
+bool SuePlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel, bool cancelOnSkip) {
 	queueActorPathWithPaletteRegionRouting(_activeActorWorldX, _activeActorWorldY, targetX, targetY,
 		finalFacing, finalCel);
 
 	if (_actorPathFrames.size() <= 1) {
 		drawPlayableComposite();
 		presentFrame();
-		return;
+		return true;
 	}
 
 	for (uint frameIndex = 1; frameIndex < _actorPathFrames.size() && !Engine::shouldQuit(); ++frameIndex) {
@@ -1813,11 +1831,32 @@ void SuePlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFac
 		_activeActorFacing = frame.facing;
 		_activeActorCel = frame.cel;
 		_activeActorDrawOrderMode = frame.drawOrderMode;
-		waitSceneMillis(kG04ActorPathFrameMillis);
+		if (waitSceneMillis(kG04ActorPathFrameMillis)) {
+			if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+				return false;
+
+			if (cancelOnSkip) {
+				_skipRequested = false;
+				drawPlayableComposite();
+				presentFrame();
+				return false;
+			}
+
+			const ActorPathFrame &lastFrame = _actorPathFrames.back();
+			_activeActorWorldX = lastFrame.worldX;
+			_activeActorWorldY = lastFrame.worldY;
+			_activeActorFacing = lastFrame.facing;
+			_activeActorCel = lastFrame.cel;
+			_activeActorDrawOrderMode = lastFrame.drawOrderMode;
+			drawPlayableComposite();
+			presentFrame();
+			return true;
+		}
 	}
 
 	drawPlayableComposite();
 	presentFrame();
+	return !Engine::shouldQuit() && !_vm->isSceneRestartRequested();
 }
 
 void SuePlayableScene::adjustWalkTargetToFloorMask(int &targetX, int &targetY) const {
@@ -1882,10 +1921,12 @@ void SuePlayableScene::queueActorPathWithPaletteRegionRouting(int startX, int st
 		targetRegion = currentRegion;
 
 	if (currentRegion != targetRegion) {
+		const byte routeStartRegion = currentRegion;
+		const byte routeTargetRegion = targetRegion;
 		for (uint stepIndex = 0; stepIndex < kScenePaletteRegionRouteStepCount &&
 				currentRegion != targetRegion; ++stepIndex) {
 			const uint routeOffset =
-				((uint)currentRegion * kScenePaletteRegionCount + targetRegion) *
+				((uint)routeStartRegion * kScenePaletteRegionCount + routeTargetRegion) *
 				kScenePaletteRegionRouteStepCount + stepIndex;
 			if (routeOffset >= _routeSteps.size())
 				break;
@@ -1936,14 +1977,6 @@ void SuePlayableScene::queueActorPathWithPaletteRegionRouting(int startX, int st
 	if (restoredStepDeltas)
 		memcpy(_actorPathStepDeltas.data(), kActorPathStepDeltaTableSet00, _actorPathStepDeltas.size());
 
-	if (!_actorPathFrames.empty()) {
-		const ActorPathFrame &lastFrame = _actorPathFrames.back();
-		_activeActorWorldX = lastFrame.worldX;
-		_activeActorWorldY = lastFrame.worldY;
-		_activeActorFacing = lastFrame.facing;
-		_activeActorCel = lastFrame.cel;
-		_activeActorDrawOrderMode = lastFrame.drawOrderMode;
-	}
 }
 
 void SuePlayableScene::buildActorPathFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,
@@ -1984,18 +2017,24 @@ void SuePlayableScene::buildActorPathFramesBetweenPoints(ActorPathBuildState &st
 		movementFacing, state.cel);
 
 	if (stepCount != 0) {
+		const bool verticalMovement = movementFacing == 0 || movementFacing == 3;
+		const int secondaryDelta = verticalMovement ? ABS(startX - targetX) : ABS(startY - targetY);
+		const float secondaryStep = (float)secondaryDelta / (float)stepCount;
+		float secondaryAccumulator = secondaryStep;
 		for (uint step = 1; step <= stepCount; ++step) {
+			const int secondaryOffset = actorPathRoundToNearestEven(secondaryAccumulator);
 			const int delta = actorPathStepDelta(movementFacing, state.cel);
-			if (movementFacing == 0 || movementFacing == 3) {
+			if (verticalMovement) {
 				state.y += (startY < targetY) ? delta : -delta;
-				state.x = startX + ((targetX - startX) * (int)step) / (int)stepCount;
+				state.x = startX < targetX ? startX + secondaryOffset : startX - secondaryOffset;
 			} else {
 				state.x += (startX < targetX) ? delta : -delta;
-				state.y = startY + ((targetY - startY) * (int)step) / (int)stepCount;
+				state.y = startY < targetY ? startY + secondaryOffset : startY - secondaryOffset;
 			}
 			state.facing = movementFacing;
 			appendActorPathFrame(state);
 			state.cel = nextActorPathCel(state.cel);
+			secondaryAccumulator += secondaryStep;
 		}
 	}
 
@@ -2027,54 +2066,56 @@ void SuePlayableScene::appendActorPathFrame(const ActorPathBuildState &state) {
 }
 
 ScenePoint SuePlayableScene::nearestPaletteRouteBoundaryPoint(int startX, int startY, byte currentRegion, byte nextRegion) const {
-	ScenePoint bestPoint;
-	memset(&bestPoint, 0, sizeof(bestPoint));
+	ScenePoint points[kScenePaletteRegionBoundaryCandidateCount];
+	float scores[kScenePaletteRegionBoundaryCandidateCount];
+	memset(points, 0, sizeof(points));
+	memset(scores, 0, sizeof(scores));
 
 	const uint baseIndex = ((uint)currentRegion * kScenePaletteRegionCount + nextRegion) *
 		kScenePaletteRegionBoundaryCandidateCount;
-	float bestScore = 0.0f;
 	for (uint candidate = 0; candidate < kScenePaletteRegionBoundaryCandidateCount; ++candidate) {
 		const uint pointIndex = baseIndex + candidate;
 		if (pointIndex >= _routeBoundaryPoints.size())
 			break;
 
 		const ScenePoint point = _routeBoundaryPoints[pointIndex];
-		const float score = sqrtf((float)ABS(startX - point.x)) + sqrtf((float)ABS(startY - point.y));
-		if (candidate == 0 || score < bestScore) {
-			bestScore = score;
-			bestPoint = point;
-		}
+		points[candidate] = point;
+		scores[candidate] =
+			sqrtf((float)ABS(startX - point.x)) +
+			sqrtf((float)ABS(startY - point.y));
 	}
 
-	return bestPoint;
+	if (scores[1] <= scores[0])
+		return scores[2] < scores[1] ? points[2] : points[1];
+	return scores[0] < scores[2] ? points[0] : points[2];
 }
 
 ScenePoint SuePlayableScene::bestPaletteRouteBoundaryPoint(int startX, int startY, int targetX, int targetY,
 		byte currentRegion, byte targetRegion) const {
-	ScenePoint bestPoint;
-	memset(&bestPoint, 0, sizeof(bestPoint));
+	ScenePoint points[kScenePaletteRegionBoundaryCandidateCount];
+	float scores[kScenePaletteRegionBoundaryCandidateCount];
+	memset(points, 0, sizeof(points));
+	memset(scores, 0, sizeof(scores));
 
 	const uint baseIndex = ((uint)currentRegion * kScenePaletteRegionCount + targetRegion) *
 		kScenePaletteRegionBoundaryCandidateCount;
-	float bestScore = 0.0f;
 	for (uint candidate = 0; candidate < kScenePaletteRegionBoundaryCandidateCount; ++candidate) {
 		const uint pointIndex = baseIndex + candidate;
 		if (pointIndex >= _routeBoundaryPoints.size())
 			break;
 
 		const ScenePoint point = _routeBoundaryPoints[pointIndex];
-		const float score =
+		points[candidate] = point;
+		scores[candidate] =
 			sqrtf((float)ABS(startX - point.x)) +
 			sqrtf((float)ABS(startY - point.y)) +
 			sqrtf((float)ABS(targetX - point.x)) +
 			sqrtf((float)ABS(targetY - point.y));
-		if (candidate == 0 || score < bestScore) {
-			bestScore = score;
-			bestPoint = point;
-		}
 	}
 
-	return bestPoint;
+	if (scores[1] <= scores[0])
+		return scores[2] < scores[1] ? points[2] : points[1];
+	return scores[0] < scores[2] ? points[0] : points[2];
 }
 
 byte SuePlayableScene::paletteRegionAt(int x, int y) const {
