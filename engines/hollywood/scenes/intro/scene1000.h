@@ -22,65 +22,40 @@
 #ifndef HOLLYWOOD_SCENES_INTRO_SCENE1000_H
 #define HOLLYWOOD_SCENES_INTRO_SCENE1000_H
 
-#include "common/array.h"
 #include "common/random.h"
 
-#include "hollywood/graphics.h"
-#include "hollywood/music.h"
-#include "hollywood/resource.h"
+#include "hollywood/scenes/chapter_intro_scene.h"
 
 namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene1000 {
+class Scene1000 : public ChapterIntroScene {
 public:
 	Scene1000(HollywoodEngine *vm);
 
-	bool play();
-
 private:
-	bool load();
-	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
-	bool loadArenaChunk(uint index);
-	void runTitleFrontEndSequence();
+	const char *resourceArchiveName() const override;
+	const char *musicArchiveName() const override;
+	uint16 musicCueId() const override;
+	uint16 nextState() const override;
+	byte activeAudioChapterIndex() const override;
+	uint sceneArenaFirstChunk() const override;
+	uint sceneArenaLastChunk() const override;
+	void initializeChapterState() override;
+	void drawInitialFrame() override;
+	void runPresentation() override;
+
 	void applyTitlePatch();
 	void advanceBlinkFrame();
 	void renderOverlayFrame(bool forceDirty);
-	void restoreSpriteBackground(uint32 baseOffset, uint16 descriptorCount, uint16 descriptorIndex);
-	void drawStripSpriteFrame(uint32 baseOffset, uint16 descriptorCount, uint16 descriptorIndex);
-	void drawResourceBlockListToSceneFramebuffer(uint32 baseOffset);
-	void fadeInPalette();
-	void fadeOutPalette();
-	void presentFrame();
-	bool pollEvents();
-	bool delay(uint32 millis);
-	uint16 readUint16(const Common::Array<byte> &source, uint offset) const;
-	uint32 readUint32(const Common::Array<byte> &source, uint offset) const;
 
 	enum {
-		kFrameBufferSize = HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight,
-		kPaletteSize = 0x300,
-		kFrameDescriptorSize = 14,
 		kBlinkDescriptorCount = 0x0c,
-		kSecondaryDescriptorCount = 0x47,
-		kResourceChunkCount = 40
+		kSecondaryDescriptorCount = 0x47
 	};
 
-	HollywoodEngine *_vm;
-	MusicPlayer _music;
 	Common::RandomSource _random;
-	ResourceChunkTable _chunkTable;
-	uint32 _resourceChunkOffsets[kResourceChunkCount];
-	uint32 _resourceArenaCursor;
-	Common::Array<byte> _paletteResource;
-	Common::Array<byte> _paletteCurrent;
-	IndexedSurfaceBuffer _frameDecodeBuffer;
-	IndexedSurfaceBuffer _sceneFramebuffer;
-	Common::Array<byte> _resourceArena;
-	Graphics::ManagedSurface _screen;
-	Palette6Bit _displayPalette;
 	uint32 _lastBlinkMillis;
 	byte _blinkPatternMode;
 	byte _blinkFrameIndex;
@@ -89,9 +64,8 @@ private:
 	bool _secondaryDirty;
 	bool _secondaryVisible;
 	bool _titlePatchApplied;
-	bool _skipRequested;
 };
 
 } // End of namespace Hollywood
 
-#endif
+#endif // HOLLYWOOD_SCENES_INTRO_SCENE1000_H
