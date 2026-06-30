@@ -35,8 +35,8 @@ class File;
 }
 
 namespace Graphics {
-class Surface;
-class PixelFormat;
+struct Surface;
+struct PixelFormat;
 }
 
 struct FileEntry {
