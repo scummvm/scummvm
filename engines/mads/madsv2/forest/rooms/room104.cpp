@@ -95,51 +95,51 @@ static void room_104_init() {
 		aainfo[count]._val4 = 0;
 	}
 
-	if (previous_room != -2 && previous_room != 199) {
+	if (previous_room != KERNEL_RESTORING_GAME && previous_room != 199) {
 		player.walker_visible = false;
 		player.commands_allowed = false;
-		if (flags[4] != 3)
-			flags[4]++;
+		if (flags[2] != 3)
+			flags[2]++;
 	}
 
-	switch (flags[4]) {
+	switch (flags[2]) {
 	case -3:
-		if (previous_room == 107) { flags[4] = 5; room_104_init2(); return; }
+		if (previous_room == 107) { flags[2] = 5; room_104_init2(); return; }
 		room_104_init1();
 		return;
 	case -2:
-		if (previous_room == 107) { flags[4] = 5; room_104_init2(); return; }
-		flags[4] = -3;
+		if (previous_room == 107) { flags[2] = 5; room_104_init2(); return; }
+		flags[2] = -3;
 		room_104_init1();
 		return;
 	case -1:
-		if (previous_room == 107) { flags[4] = 5; room_104_init2(); return; }
-		flags[4] = -3;
+		if (previous_room == 107) { flags[2] = 5; room_104_init2(); return; }
+		flags[2] = -3;
 		room_104_init1();
 		return;
 	case 1:
-		if (previous_room == 107) { flags[4] = 5; room_104_init2(); return; }
+		if (previous_room == 107) { flags[2] = 5; room_104_init2(); return; }
 		room_104_init3();
 		return;
 	case 2:
-		if (previous_room == 107) { flags[4] = 5; room_104_init2(); return; }
+		if (previous_room == 107) { flags[2] = 5; room_104_init2(); return; }
 		room_104_init3();
 		return;
 	case 3:
 		if (previous_room != 107) { room_104_init3(); return; }
-		flags[4] = 5;
+		flags[2] = 5;
 		room_104_init2();
 		return;
 	case 5:
-		if (previous_room == 107) flags[4] = 5;
+		if (previous_room == 107) flags[2] = 5;
 		room_104_init2();
 		return;
 	case 6:
-		if (previous_room == 107) { flags[4] = 5; room_104_init2(); return; }
+		if (previous_room == 107) { flags[2] = 5; room_104_init2(); return; }
 		room_104_init3();
 		return;
 	case 7:
-		if (previous_room == 107) { flags[4] = 5; room_104_init2(); return; }
+		if (previous_room == 107) { flags[2] = 5; room_104_init2(); return; }
 		room_104_init3();
 		return;
 	default:
