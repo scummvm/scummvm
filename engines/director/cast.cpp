@@ -449,18 +449,36 @@ bool Cast::loadConfig() {
 
 	_unk1 = stream->readSint16();
 
-	// Warning for post-D7 movies (unk1 is stageColorG and stageColorB post-D7)
-	if (humanVer >= 700)
-		warning("STUB: Cast::loadConfig: 16 bit unk1 read instead of two 8 bit stageColorG and stageColorB. Read value: %04x", _unk1);
+	// D7+: stageColorG is file byte 18, stageColorB is byte 19 (fixed
+	// offsets, so the split depends on the stream endianness); the raw
+	// 16-bit value is kept for checksum/save
+	if (humanVer >= 700) {
+		if (stream->isBE()) {
+			_D7stageColorG = (_unk1 >> 8) & 0xFF;
+			_D7stageColorB = _unk1 & 0xFF;
+		} else {
+			_D7stageColorG = _unk1 & 0xFF;
+			_D7stageColorB = (_unk1 >> 8) & 0xFF;
+		}
+	}
 
 	_commentFont = stream->readUint16();
 	_commentSize = stream->readUint16();
 	_commentStyle = stream->readUint16();
 	_stageColor = stream->readUint16();
 
-	// Warning for post-D7 movies (stageColor is isStageColorRGB and stageColorR post-D7)
-	if (humanVer >= 700)
-		warning("STUB: Cast::loadConfig: 16 bit stageColor read instead of two 8 bit isStageColorRGB and stageColorR. Read value: %04x", _stageColor);
+	// D7+: stageColorIsRGB is file byte 26, stageColorR is byte 27
+	if (humanVer >= 700) {
+		if (stream->isBE()) {
+			_D7stageColorIsRGB = (_stageColor >> 8) & 0xFF;
+			_D7stageColorR = _stageColor & 0xFF;
+		} else {
+			_D7stageColorIsRGB = _stageColor & 0xFF;
+			_D7stageColorR = (_stageColor >> 8) & 0xFF;
+		}
+		debugC(1, kDebugLoading, "Cast::loadConfig(): D7 stage color: isRGB %d, R %d, G %d, B %d",
+			_D7stageColorIsRGB, _D7stageColorR, _D7stageColorG, _D7stageColorB);
+	}
 
 	_bitdepth = stream->readUint16();
 
@@ -600,6 +618,7 @@ bool Cast::loadConfig() {
 	}
 
 	if (_movieDepth != _vm->_colorDepth) {
+		// TODO: switch Director and WindowManager to the requested color depth
 		warning("STUB: loadConfig(): Movie bit depth is %d, but set to %d", _movieDepth, _vm->_colorDepth);
 	}
 
@@ -1177,10 +1196,16 @@ uint32 Cast::computeChecksum() {
 	check -= (int8)_readRate + 9;
 	check -= _lightswitch + 10;
 
-	if (humanVer < 700)
-		check += _unk1 + 11;
-	else
-		warning("STUB: skipped using stageColorG, stageColorB for post-D7 movie in checksum calulation");
+	int32 operand11;
+	if (humanVer < 700) {
+		operand11 = _unk1;
+	} else {
+		// Reconstructs the int16 Director summed here pre-D7 (ProjectorRays)
+		operand11 = _castArchive->_isBigEndian
+			? (int16)((_D7stageColorG << 8) | _D7stageColorB)
+			: (int16)((_D7stageColorB << 8) | _D7stageColorG);
+	}
+	check += operand11 + 11;
 
 	check *= _commentFont + 12;
 	check += _commentSize + 13;
@@ -1190,10 +1215,8 @@ uint32 Cast::computeChecksum() {
 	else
 		check *= _commentStyle + 14;
 
-	if (humanVer < 700)
-		check += _stageColor + 15;
-	else
-		check += (uint8)(_stageColor & 0xFF) + 15;	// Taking lower 8 bits to take into account stageColorR
+	int32 operand15 = (humanVer < 700) ? _stageColor : _D7stageColorR;
+	check += operand15 + 15;
 
 
 	check += _bitdepth + 16;
@@ -2135,10 +2158,10 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		}
 	}
 
-	// For SoundCastMember, read the flags in the CastInfo
-	if (_version >= kFileVer400 && _version < kFileVer700 && member->_type == kCastSound) {
+	// Looping = play-once bit (flags & 16) cleared; verified on D7 only
+	if (_version >= kFileVer400 && _version < kFileVer800 && member->_type == kCastSound) {
 		((SoundCastMember *)member)->_looping = castInfo.flags & 16 ? 0 : 1;
-	} else if (_version >= kFileVer700 && member->_type == kCastSound) {
+	} else if (_version >= kFileVer800 && member->_type == kCastSound) {
 		warning("STUB: Cast::loadCastInfo(): Sound cast member info not yet supported for version v%d (%d)", humanVersion(_version), _version);
 	}
 
