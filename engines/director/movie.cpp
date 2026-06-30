@@ -167,8 +167,18 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		int pathSize = stream.readByte();
 		Common::String path = stream.readString('\0', pathSize);
 		stream.readByte(); // null
-		if (pathSize > 1)
-			stream.readUint16();
+		if (pathSize > 1) {
+			// The field separating a non-empty (external) cast path from the
+			// member-range/resource-id records is a single byte in D7, but a
+			// 16-bit field in D5/D6. Reading the wrong width shifts every
+			// following cast-lib entry by one byte, corrupting the name, member
+			// range and resource id of any library listed after an external one
+			// (e.g. an internal cast that follows an external .cxt).
+			if (g_director->getVersion() >= 700)
+				stream.readByte();
+			else
+				stream.readUint16();
+		}
 		uint16 minMember = stream.readUint16();
 		uint16 maxMember = stream.readUint16();
 		stream.readUint16();
