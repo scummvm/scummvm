@@ -224,28 +224,39 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	if (isKeypad && g_nancy->getGameType() >= kGameTypeNancy7) {
 		if (_puzzleType == kKeypad) {
-			if (g_nancy->getGameType() >= kGameTypeNancy11) {
-				// Nancy 11 multi-stage keypad: a stage count, per-stage display rects, the codes
-				// for stages 1+, a final code matrix and an alternate scene, then the button rects.
-				_numStages = stream.readUint16LE();
-				stream.skip(20 * 16 + 1); // per-stage display rects + blink flag
+			if (g_nancy->getGameType() >= kGameTypeNancy12) {
+				// Nancy 12 reworked the keypad block: grid dimensions and the per-stage
+				// codes (the win still uses the sequence read above), then three button
+				// rect arrays - sprite source rects, on-screen dest positions, and tighter
+				// per-button hotspots. The dest rects double as the hotspots here.
+				stream.skip(0x309 - 0x10c); // grid + per-stage codes (not modeled)
+				readRectArray(stream, _down1Rects, numElements, 30); // button sprite source rects
+				readRectArray(stream, _destRects, numElements, 30);  // on-screen button positions
+				stream.skip(30 * 16);       // tighter per-button hotspots (we use _destRects)
+			} else {
+				if (g_nancy->getGameType() >= kGameTypeNancy11) {
+					// Nancy 11 multi-stage keypad: a stage count, per-stage display rects, the codes
+					// for stages 1+, a final code matrix and an alternate scene, then the button rects.
+					_numStages = stream.readUint16LE();
+					stream.skip(20 * 16 + 1); // per-stage display rects + blink flag
 
-				_stageSequences.resize(4);
-				_stageCheckOrder.resize(4);
-				for (uint s = 0; s < 4; ++s) {
-					uint16 len = stream.readUint16LE();
-					_stageCheckOrder[s] = (stream.readByte() != 0);
-					len = MIN<uint16>(len, 30);
-					_stageSequences[s].resize(len);
-					for (uint16 k = 0; k < len; ++k)
-						_stageSequences[s][k] = stream.readByte();
-					stream.skip(30 - len);
+					_stageSequences.resize(4);
+					_stageCheckOrder.resize(4);
+					for (uint s = 0; s < 4; ++s) {
+						uint16 len = stream.readUint16LE();
+						_stageCheckOrder[s] = (stream.readByte() != 0);
+						len = MIN<uint16>(len, 30);
+						_stageSequences[s].resize(len);
+						for (uint16 k = 0; k < len; ++k)
+							_stageSequences[s][k] = stream.readByte();
+						stream.skip(30 - len);
+					}
+
+					stream.skip(25 + 25); // final code matrix + alternate scene (unused by the sequential model)
 				}
-
-				stream.skip(25 + 25); // final code matrix + alternate scene (unused by the sequential model)
+				readRectArray(ser, _down1Rects, numElements, maxNumElements);
+				readRectArray(ser, _destRects, numElements, maxNumElements);
 			}
-			readRectArray(ser, _down1Rects, numElements, maxNumElements);
-			readRectArray(ser, _destRects, numElements, maxNumElements);
 		} else if (_puzzleType == kKeypadTerse) {
 			// Terse elements are the same size & placed on a grid (in the source image AND on screen)
 			uint16 columns = stream.readUint16LE();
@@ -306,6 +317,11 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 				dest.setWidth(width + 1);
 				dest.setHeight(height + 1);
 			}
+		}
+
+		if (g_nancy->getGameType() >= kGameTypeNancy12 && _puzzleType == kKeypadTerse) {
+			// Nancy 12 keypad-terse grew by 4 bytes (exact layout not yet mapped).
+			stream.skip(4);
 		}
 
 		_hotspots = _destRects;
