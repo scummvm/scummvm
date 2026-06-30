@@ -2714,7 +2714,12 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 		if (member->hasProp(propName)) {
 			member->setProp(propName, val);
 		} else {
-			g_lingo->lingoError("Lingo::setObjectProp(): %s has no property '%s'", id.asString().c_str(), propName.c_str());
+			// Some D6/D7 titles set cast-member properties we don't model
+			// (e.g. `the scale`/`the crop` of a digital-video member in
+			// Physikus' loading screen). Degrade to a warning instead of
+			// aborting the handler mid-frame, which would otherwise drop the
+			// rest of an exitFrame/mouseUp script and stall navigation.
+			warning("Lingo::setObjectProp(): %s has no property '%s', ignoring", id.asString().c_str(), propName.c_str());
 		}
 	} else if (obj.type == CASTLIBREF) {
 		Common::String key = Common::String::format("%d%s", kTheCastLib, propName.c_str());
