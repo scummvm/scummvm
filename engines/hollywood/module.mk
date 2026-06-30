@@ -43,6 +43,10 @@ MODULE_OBJS = \
 	scenes/playable/scene3060.o \
 	scenes/playable/scene3080.o \
 	scenes/playable/scene3090.o \
+	scenes/playable/scene4000.o \
+	scenes/playable/scene4010.o \
+	scenes/playable/scene5000.o \
+	scenes/playable/scene5010.o \
 	scenes/playable/scene6000.o \
 	scenes/playable/scene6010.o \
 	scenes/playable/scene6020.o \

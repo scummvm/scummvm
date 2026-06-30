@@ -45,6 +45,10 @@
 #include "hollywood/scenes/playable/scene3060.h"
 #include "hollywood/scenes/playable/scene3080.h"
 #include "hollywood/scenes/playable/scene3090.h"
+#include "hollywood/scenes/playable/scene4000.h"
+#include "hollywood/scenes/playable/scene4010.h"
+#include "hollywood/scenes/playable/scene5000.h"
+#include "hollywood/scenes/playable/scene5010.h"
 #include "hollywood/scenes/playable/scene6000.h"
 #include "hollywood/scenes/playable/scene6010.h"
 #include "hollywood/scenes/playable/scene6020.h"
@@ -105,6 +109,12 @@ const int kScene3080FirstState = 0x0c08;
 const int kScene3080LastState = 0x0c11;
 const int kScene3090FirstState = 0x0c12;
 const int kScene3090LastState = 0x0c1b;
+const int kScene4000State = 4000;
+const int kScene4010FirstState = 0x0faa;
+const int kScene4010LastState = 0x0fb3;
+const int kScene5000State = 5000;
+const int kScene5010FirstState = 0x1392;
+const int kScene5010LastState = 0x139b;
 const int kScene6000State = 6000;
 const int kScene6010FirstState = 0x177a;
 const int kScene6010LastState = 0x1783;
@@ -137,6 +147,10 @@ bool isImplementedGameplayState(int stateId) {
 		(stateId >= kScene3060FirstState && stateId <= kScene3060LastState) ||
 		(stateId >= kScene3080FirstState && stateId <= kScene3080LastState) ||
 		(stateId >= kScene3090FirstState && stateId <= kScene3090LastState) ||
+		stateId == kScene4000State ||
+		(stateId >= kScene4010FirstState && stateId <= kScene4010LastState) ||
+		stateId == kScene5000State ||
+		(stateId >= kScene5010FirstState && stateId <= kScene5010LastState) ||
 		stateId == kScene6000State ||
 		(stateId >= kScene6010FirstState && stateId <= kScene6010LastState) ||
 		(stateId >= kScene6020FirstState && stateId <= kScene6020LastState) ||
@@ -464,6 +478,38 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene3090 scene3090(this);
 			if (!scene3090.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId == kScene4000State) {
+			handledState = true;
+			Scene4000 scene4000(this);
+			if (!scene4000.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene4010FirstState && stateId <= kScene4010LastState) {
+			handledState = true;
+			Scene4010 scene4010(this);
+			if (!scene4010.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId == kScene5000State) {
+			handledState = true;
+			Scene5000 scene5000(this);
+			if (!scene5000.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene5010FirstState && stateId <= kScene5010LastState) {
+			handledState = true;
+			Scene5010 scene5010(this);
+			if (!scene5010.play())
 				return Common::kReadingFailed;
 			continue;
 		}

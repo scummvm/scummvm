@@ -1,0 +1,131 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE4010_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE4010_H
+
+#include "graphics/managed_surface.h"
+
+#include "hollywood/scenes/playable/playable_scene.h"
+
+namespace Hollywood {
+
+class HollywoodEngine;
+
+class Scene4010 : public PlayableScene {
+public:
+	Scene4010(HollywoodEngine *vm);
+
+private:
+	const char *resourceArchiveName() const override;
+	uint sceneInitialRequiredChunkCount() const override;
+	uint sceneArenaFirstChunk() const override;
+	uint sceneArenaLastChunk() const override;
+	uint sceneStageIndex() const override;
+	const char *sceneDebugName() const override;
+	uint16 sceneViewportXOffset() const override;
+	uint16 sceneViewportMinXOffset() const override;
+	uint16 sceneViewportMaxXOffset() const override;
+	byte inventoryOwnerIndex() const override;
+	void initializeInventoryOwnerState() override;
+	uint resource000ActorBankTableEntry() const override;
+	uint resource000ActorPaletteTableEntry() const override;
+	uint32 inventoryActionTableExtraOffset() const override;
+	uint resource003InventoryRowsOffsetIndex() const override;
+	uint32 speechCueDescriptorTableOffset() const override;
+	const byte *actorPathStepDeltaTable() const override;
+	uint actorPathStepDeltaTableSize() const override;
+	byte walkablePaletteMaxRegion() const override;
+	const char *musicArchiveName() const override;
+	const char *soundBank0ArchiveName() const override;
+	bool usesActorDepthTest() const override;
+	bool isMainFlowStateInScene(uint16 stateId) const override;
+	bool hasCustomPreviewState() const override;
+	void initializeCustomPreviewState() override;
+	bool hasCustomComposite() const override;
+	void drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
+		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+		byte actorDrawOrderMode) override;
+	bool hasCustomEntrySequence() const override;
+	void runCustomEntrySequence() override;
+	bool advanceCustomGameplayLoop(uint32 delta) override;
+	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	AmbientAudioProfile ambientAudioProfile() const override;
+	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
+	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
+
+	bool alternateBackgroundActive() const;
+	void initializeRoomIdleLayer();
+	void advanceHeckerIdleLayer(uint32 delta);
+	void advanceHeckerIdleTick();
+	void drawForegroundBlocks(int activeWorldY);
+	void runFirstEntrySequence();
+	void runEntryFromRightSide();
+	void runEntryFromLeftSide();
+	void setActiveActorPose(int x, int y, byte facing);
+	void setHeckerFrame(byte frameIndex);
+	void runHeckerFrameSequence(const byte *frames, uint frameCount);
+	void runHeckerDialoguePoseStart();
+	void runHeckerRandomResponsePoseStart();
+	void runHeckerResponsePoseEnd();
+	void finishHeckerDialoguePose();
+	void beginD01SpeechLine(uint16 rowIndex, byte normalFrame, byte alternateFrame = 0xff);
+	void beginHeckerSpeechLine(byte frameIndex);
+	void runHeckerDialogue();
+	void initializeHeckerDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
+	void setHeckerDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
+		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
+		byte responseFrameIndex, byte disableAfterUse) const;
+	void runProgressiveExitSpeech();
+	void takeAnimatedItem3A();
+	void handlePendingItem3A();
+	void takeGenericItem0C();
+	void unlockDestinationFromRoomAction();
+	void takeAnimatedItem3B();
+	void ensureNormalBaseFramebuffer();
+	void applyD01BackgroundForCurrentState();
+	void copySmallRow(uint sourceOffset, uint destinationOffset);
+	void setScenePoint(uint baseOffset, byte itemId, uint16 x, uint16 y);
+	void clearVerbActionRecord(uint recordIndex);
+	void removeColorMapItem(byte itemId);
+	void replaceColorMapItem(byte sourceItem, byte destinationItem);
+	void copyStepDeltas(uint firstOffset, uint lastOffset);
+
+	TimedAnimationChannel _roomIdleChannel;
+	ResourceSpriteLayer _roomIdleLayer;
+	Graphics::ManagedSurface _normalBaseFramebuffer;
+	bool _normalBaseFramebufferInitialized;
+	byte _heckerAnimationState;
+	byte _heckerLoopCount;
+	bool _heckerAlternateSpeechPose;
+	bool _heckerManualSequenceActive;
+};
+
+} // End of namespace Hollywood
+
+#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE4010_H
