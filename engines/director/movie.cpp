@@ -167,8 +167,13 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		int pathSize = stream.readByte();
 		Common::String path = stream.readString('\0', pathSize);
 		stream.readByte(); // null
-		if (pathSize > 1)
-			stream.readUint16();
+		if (pathSize > 1) {
+			// Separator after an external cast path: 1 byte in D7+, uint16 in D5/D6
+			if (g_director->getVersion() >= 700)
+				stream.readByte();
+			else
+				stream.readUint16();
+		}
 		uint16 minMember = stream.readUint16();
 		uint16 maxMember = stream.readUint16();
 		stream.readUint16();
