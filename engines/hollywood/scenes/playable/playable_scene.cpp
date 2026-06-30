@@ -128,16 +128,36 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int de
 		_drawActorDepthYThresholds(_surfaceState.drawActorDepthYThresholds),
 		_screen(_surfaceState.screen),
 		_displayPalette(_surfaceState.displayPalette),
+		_textStore(),
+		_stage003DecodeKey(_textStore.decodeKey),
+		_stage003StageBlock(_textStore.stageBlock),
+		_stage003SmallRows(_textStore.stageSmallRows),
+		_stage003LargeRows(_textStore.stageLargeRows),
+		_staticSpeechCueDescriptors(_textStore.staticSpeechCueDescriptors),
+		_inventoryOwnerSmallRows(_textStore.inventoryOwnerSmallRows),
+		_inventoryOwnerLargeRows(_textStore.inventoryOwnerLargeRows),
 		_random(randomName),
-		_primaryLeftSpeechLastFrame(0),
-		_primaryDialogueSpeechLastFrame(7),
-		_primaryLeftSpeechActive(false),
-		_primaryDialogueSpeechActive(false),
-		_primaryDialogueSpeechGroup(kInvalidPrimarySpeechAnimationGroup),
+		_speechController(),
+		_speech(_speechController.player),
+		_speechOverlay(_speechController.secondaryOverlay),
+		_primarySpeechOverlay(_speechController.primaryOverlay),
+		_primaryLeftSpeechLastFrame(_speechController.primaryLeftSpeechLastFrame),
+		_primaryDialogueSpeechLastFrame(_speechController.primaryDialogueSpeechLastFrame),
+		_primaryDialogueSpeechGroup(_speechController.primaryDialogueSpeechGroup),
+		_primaryLeftSpeechActive(_speechController.primaryLeftSpeechActive),
+		_primaryDialogueSpeechActive(_speechController.primaryDialogueSpeechActive),
+		_secondaryActorTimerAccumulator(_speechController.secondaryActorTimerAccumulator),
+		_primaryLeftSpeechTimerAccumulator(_speechController.primaryLeftSpeechTimerAccumulator),
+		_primaryDialogueSpeechTimerAccumulator(_speechController.primaryDialogueSpeechTimerAccumulator),
+		_secondaryActorFrame(_speechController.secondaryActorFrame),
+		_actionOverlayPlayer(),
+		_actionOverlayVisible(_actionOverlayPlayer.visible),
+		_actionOverlayLayer(_actionOverlayPlayer.layer),
+		_actionOverlayChunkIndex(_actionOverlayPlayer.chunkIndex),
+		_actionOverlayDescriptorCount(_actionOverlayPlayer.descriptorCount),
+		_actionOverlayFrameIndex(_actionOverlayPlayer.frameIndex),
+		_hideActiveActor(_actionOverlayPlayer.hideActiveActor),
 		_ambientMusicTimerAccumulator(0),
-		_secondaryActorTimerAccumulator(0),
-		_primaryLeftSpeechTimerAccumulator(0),
-		_primaryDialogueSpeechTimerAccumulator(0),
 		_previousAmbientMusicTrackId(0),
 		_currentAmbientSoundCueId(0),
 		_previousAmbientSoundCueId(0),
@@ -151,35 +171,19 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int de
 		_activeActorFacing(defaultActorFacing),
 		_activeActorCel(0),
 		_activeActorDrawOrderMode(0),
-		_secondaryActorFrame(0),
 		_lastSceneActionItemId(0),
-		_actionOverlayVisible(false),
-		_actionOverlayLayer(),
-		_actionOverlayChunkIndex(0),
-		_actionOverlayDescriptorCount(0),
-		_actionOverlayFrameIndex(0),
-		_hideActiveActor(false),
 		_skipRequested(false) {
 	_surfaceState.initialize(kPaletteSize, 0x700, kPaletteMaskUsedBytes, kScenePaletteMapPageSize, kScenePaletteRegionCount);
+	_speechController.initialize(secondarySpeechTextColor, primarySpeechTextColor);
+	_speechController.resetRuntimeState(kInvalidPrimarySpeechAnimationGroup, 7);
 	_activeActorRunStreams.resize(kActorFacingCount * kActiveActorFacingRunStride);
 	_secondaryActorRunStreams.resize(kActorFacingCount * kSecondaryActorFacingRunStride);
 	_activeActorDescriptors.resize(kActorFacingCount * kActorCelsPerFacing);
 	_secondaryActorDescriptors.resize(kActorFacingCount * kSecondaryActorFramesPerFacing);
-	_stage003DecodeKey.resize(kStage003DecodeKeySize);
-	_stage003StageBlock.resize(kStage003DescriptorTableSize);
-	_staticSpeechCueDescriptors.resize(kSpeechCueDescriptorTableSize);
 	_routeBoundaryPoints.resize(kSceneRouteBoundaryPointCount);
 	_routeSteps.resize(kSceneRouteStepCount);
 	_actorPathStepDeltas.resize(ARRAYSIZE(kActorPathStepDeltaTableSet00));
 	memcpy(_actorPathStepDeltas.data(), kActorPathStepDeltaTableSet00, _actorPathStepDeltas.size());
-	_speechOverlay.visible = false;
-	_speechOverlay.colorIndex = secondarySpeechTextColor;
-	_speechOverlay.centerX = 0;
-	_speechOverlay.topY = 0;
-	_primarySpeechOverlay.visible = false;
-	_primarySpeechOverlay.colorIndex = primarySpeechTextColor;
-	_primarySpeechOverlay.centerX = 0;
-	_primarySpeechOverlay.topY = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 }
@@ -806,134 +810,8 @@ bool PlayableScene::loadResource000InventoryActionTables(const Common::Array<byt
 }
 
 bool PlayableScene::loadStage003SceneRows() {
-	Common::File file;
-	if (!file.open(Common::Path(kStage003ArchiveName))) {
-		warning("Failed to open %s for %s text", kStage003ArchiveName, sceneDebugName());
-		return false;
-	}
-
-	if (file.read(_stage003DecodeKey.data(), _stage003DecodeKey.size()) != _stage003DecodeKey.size()) {
-		warning("Failed to read %s row decode key", kStage003ArchiveName);
-		return false;
-	}
-
-	const uint32 speechCueOffset = speechCueDescriptorTableOffset();
-	if (speechCueOffset + kSpeechCueDescriptorTableSize + 3 > (uint32)file.size()) {
-		warning("%s static speech cue table is out of range", kStage003ArchiveName);
-		return false;
-	}
-
-	file.seek(speechCueOffset);
-	if (file.read(_staticSpeechCueDescriptors.data(), _staticSpeechCueDescriptors.size()) !=
-			_staticSpeechCueDescriptors.size()) {
-		warning("Failed to read %s static speech cue table", kStage003ArchiveName);
-		return false;
-	}
-
-	const byte ownerSmallRowCount = file.readByte();
-	const uint16 ownerLargeRowCount = file.readUint16LE();
-	if (file.err()) {
-		warning("Failed to read %s static text row counts", kStage003ArchiveName);
-		return false;
-	}
-
-	const uint32 ownerRowsOffsetEntry = kStage003DecodeKeySize + resource003InventoryRowsOffsetIndex() * 4;
-	if (ownerRowsOffsetEntry + 4 > kStage003DecodeKeySize + kStage003StageOffsetTableSize ||
-			ownerRowsOffsetEntry + 4 > (uint32)file.size()) {
-		warning("%s static text row offset entry is out of range", kStage003ArchiveName);
-		return false;
-	}
-
-	file.seek(ownerRowsOffsetEntry);
-	const uint32 ownerRowsOffset = file.readUint32LE();
-	const uint32 ownerSmallRowBytes = (uint32)ownerSmallRowCount * kStage003SmallRowSize;
-	const uint32 ownerLargeRowBytes = (uint32)ownerLargeRowCount * kStage003LargeRowSize;
-	if (ownerRowsOffset == 0 ||
-			ownerRowsOffset + ownerSmallRowBytes + ownerLargeRowBytes > (uint32)file.size()) {
-		warning("%s static text rows are out of range", kStage003ArchiveName);
-		return false;
-	}
-
-	_inventoryOwnerSmallRows.resize((uint32)(ownerSmallRowCount + 1) * kStage003SmallRowSize);
-	memset(_inventoryOwnerSmallRows.data(), 0, _inventoryOwnerSmallRows.size());
-	_inventoryOwnerLargeRows.resize((uint32)(ownerLargeRowCount + 1) * kStage003LargeRowSize);
-	memset(_inventoryOwnerLargeRows.data(), 0, _inventoryOwnerLargeRows.size());
-	file.seek(ownerRowsOffset);
-	if (file.read(_inventoryOwnerSmallRows.data() + kStage003SmallRowSize, ownerSmallRowBytes) != ownerSmallRowBytes) {
-		warning("Failed to read %s static small text rows", kStage003ArchiveName);
-		return false;
-	}
-	if (file.read(_inventoryOwnerLargeRows.data() + kStage003LargeRowSize, ownerLargeRowBytes) != ownerLargeRowBytes) {
-		warning("Failed to read %s static large text rows", kStage003ArchiveName);
-		return false;
-	}
-
-	for (uint row = 1; row <= ownerSmallRowCount; ++row) {
-		for (uint column = 0; column < kStage003SmallRowSize; ++column)
-			_inventoryOwnerSmallRows[row * kStage003SmallRowSize + column] -= _stage003DecodeKey[column];
-	}
-
-	for (uint row = 1; row <= ownerLargeRowCount; ++row) {
-		for (uint column = 0; column < kStage003LargeRowSize; ++column)
-			_inventoryOwnerLargeRows[row * kStage003LargeRowSize + column] -= _stage003DecodeKey[column];
-	}
-
-	const uint stageIndex = sceneStageIndex();
-	const uint32 stageOffsetEntry = kStage003DecodeKeySize + (stageIndex * 4);
-	if (stageOffsetEntry + 4 > kStage003DecodeKeySize + kStage003StageOffsetTableSize ||
-			stageOffsetEntry + 4 > (uint32)file.size()) {
-		warning("%s has no stage %u offset entry", kStage003ArchiveName, stageIndex);
-		return false;
-	}
-
-	file.seek(stageOffsetEntry);
-	const uint32 stageOffset = file.readUint32LE();
-	if (stageOffset + kStage003DescriptorTableSize + 3 > (uint32)file.size()) {
-		warning("%s stage %u descriptor table is out of range", kStage003ArchiveName, stageIndex);
-		return false;
-	}
-
-	file.seek(stageOffset);
-	if (file.read(_stage003StageBlock.data(), _stage003StageBlock.size()) != _stage003StageBlock.size()) {
-		warning("Failed to read %s stage %u descriptor table", kStage003ArchiveName, stageIndex);
-		return false;
-	}
-
-	const byte smallRowCount = file.readByte();
-	const uint16 largeRowCount = file.readUint16LE();
-	const uint32 smallRowBytes = (uint32)smallRowCount * kStage003SmallRowSize;
-	const uint32 largeRowBytes = (uint32)largeRowCount * kStage003LargeRowSize;
-	if (file.pos() + smallRowBytes + largeRowBytes > file.size()) {
-		warning("%s stage %u text rows are out of range", kStage003ArchiveName, stageIndex);
-		return false;
-	}
-
-	_stage003SmallRows.resize((uint32)(smallRowCount + 1) * kStage003SmallRowSize);
-	memset(_stage003SmallRows.data(), 0, _stage003SmallRows.size());
-	if (file.read(_stage003SmallRows.data() + kStage003SmallRowSize, smallRowBytes) != smallRowBytes) {
-		warning("Failed to read %s stage %u small text rows", kStage003ArchiveName, stageIndex);
-		return false;
-	}
-
-	_stage003LargeRows.resize(largeRowBytes);
-	if (file.read(_stage003LargeRows.data(), _stage003LargeRows.size()) != _stage003LargeRows.size()) {
-		warning("Failed to read %s stage %u large text rows", kStage003ArchiveName, stageIndex);
-		return false;
-	}
-
-	for (uint row = 1; row <= smallRowCount; ++row) {
-		for (uint column = 0; column < kStage003SmallRowSize; ++column)
-			_stage003SmallRows[row * kStage003SmallRowSize + column] -= _stage003DecodeKey[column];
-	}
-
-	for (uint row = 0; row < largeRowCount; ++row) {
-		for (uint column = 0; column < kStage003LargeRowSize; ++column)
-			_stage003LargeRows[row * kStage003LargeRowSize + column] -= _stage003DecodeKey[column];
-	}
-
-	debugC(1, kDebugResources, "Loaded %s stage %u text rows: smallRows=%u largeRows=%u",
-		kStage003ArchiveName, stageIndex, smallRowCount, largeRowCount);
-	return true;
+	return _textStore.load(kStage003ArchiveName, sceneDebugName(), sceneStageIndex(),
+		resource003InventoryRowsOffsetIndex(), speechCueDescriptorTableOffset());
 }
 
 bool PlayableScene::loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
@@ -1032,24 +910,11 @@ void PlayableScene::initializePreviewState() {
 }
 
 void PlayableScene::initializeDefaultPreviewState() {
-	_primaryLeftSpeechLastFrame = 0;
-	_primaryDialogueSpeechLastFrame = 7;
-	_actionOverlayVisible = false;
-	_actionOverlayLayer.visible = false;
-	_actionOverlayChunkIndex = 0;
-	_actionOverlayDescriptorCount = 0;
-	_actionOverlayFrameIndex = 0;
-	_hideActiveActor = false;
-	_primaryLeftSpeechActive = false;
-	_primaryDialogueSpeechActive = false;
-	_primaryDialogueSpeechGroup = kInvalidPrimarySpeechAnimationGroup;
+	_speechController.resetRuntimeState(kInvalidPrimarySpeechAnimationGroup, 7);
+	_actionOverlayPlayer.reset();
 	resetAmbientAudioState();
-	_secondaryActorTimerAccumulator = 0;
-	_primaryLeftSpeechTimerAccumulator = 0;
-	_primaryDialogueSpeechTimerAccumulator = 0;
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-	_secondaryActorFrame = 0;
 	_lastSceneActionItemId = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
@@ -1257,17 +1122,9 @@ uint16 PlayableScene::viewportYOffset() const {
 void PlayableScene::prepareGameplayLoop() {
 	_skipRequested = false;
 	_actorPathPlaybackActive = false;
-	clearAllSpeechOverlays();
-	_primaryLeftSpeechActive = false;
-	_primaryDialogueSpeechActive = false;
-	_primaryLeftSpeechTimerAccumulator = 0;
-	_primaryDialogueSpeechTimerAccumulator = 0;
-	_primaryDialogueSpeechGroup = kInvalidPrimarySpeechAnimationGroup;
+	_speechController.resetRuntimeState(kInvalidPrimarySpeechAnimationGroup, 7);
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
-	_secondaryActorFrame = 0;
-	_actionOverlayVisible = false;
-	_actionOverlayLayer.visible = false;
-	_hideActiveActor = false;
+	_actionOverlayPlayer.reset();
 	resetAmbientAudioState();
 	prepareCustomGameplayLoop();
 	restoreActiveActorPoseFromGameState();
@@ -1321,17 +1178,7 @@ Common::String PlayableScene::inventoryItemName(byte owner, byte itemId) const {
 	if (owner != inventoryOwnerIndex())
 		return Common::String();
 
-	const uint offset = (uint)itemId * kStage003SmallRowSize;
-	if (offset >= _inventoryOwnerSmallRows.size())
-		return Common::String();
-
-	const byte *row = _inventoryOwnerSmallRows.data() + offset;
-	uint length = 0;
-	while (offset + length < _inventoryOwnerSmallRows.size() &&
-			length < kStage003SmallRowSize && row[length] != 0)
-		++length;
-
-	return Common::String((const char *)row, length);
+	return _textStore.inventoryItemName(itemId);
 }
 
 void PlayableScene::beginSharedInventorySpeechLine(uint16 rowIndex, byte frameIndex) {
@@ -2130,12 +1977,7 @@ void PlayableScene::removeInventoryItem(byte itemId) {
 }
 
 Common::String PlayableScene::dialogueMenuText(byte stageId, byte textRowId) const {
-	const uint offset = ((uint)stageId * 100 + textRowId) * 5;
-	if (offset + 5 > _stage003StageBlock.size())
-		return Common::String();
-
-	const uint16 textRecordId = readUint16LE(_stage003StageBlock, offset);
-	return getResource003LargeTextRecord(textRecordId);
+	return _textStore.dialogueMenuText(stageId, textRowId);
 }
 
 void PlayableScene::advanceDialogueMenu(uint32 delta) {
@@ -2158,24 +2000,14 @@ void PlayableScene::runActionOverlay(uint chunkIndex, uint descriptorCount, cons
 
 void PlayableScene::runActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, const ActionOverlayOptions &options) {
-	const bool previousHideActiveActor = _hideActiveActor;
-	if (options.actorVisibility == kActionOverlayShowActiveActor)
-		_hideActiveActor = false;
-	else if (options.actorVisibility == kActionOverlayHideActiveActor)
-		_hideActiveActor = true;
-
-	_actionOverlayVisible = true;
-	_actionOverlayChunkIndex = (byte)chunkIndex;
-	_actionOverlayDescriptorCount = (byte)descriptorCount;
-	_actionOverlayLayer.configure(chunkIndex, (uint16)descriptorCount, frameMap, frameMapSize);
-	_actionOverlayLayer.visible = true;
+	const bool previousHideActiveActor = _actionOverlayPlayer.applyActorVisibility(options.actorVisibility);
+	_actionOverlayPlayer.begin(chunkIndex, descriptorCount, frameMap, frameMapSize);
 
 	const uint firstFrame = MIN<uint>(options.firstFrame, frameMapSize);
 	const uint requestedEndFrame = options.endFrame == 0 ? frameMapSize : options.endFrame;
 	const uint cappedEndFrame = MIN<uint>(requestedEndFrame, frameMapSize);
 	for (uint frame = firstFrame; frame < cappedEndFrame && !Engine::shouldQuit(); ++frame) {
-		_actionOverlayLayer.setFrame((byte)frame);
-		_actionOverlayFrameIndex = (byte)_actionOverlayLayer.descriptorIndex();
+		_actionOverlayPlayer.setFrame(frame);
 		if (options.statePatchFrame >= 0 && (int)frame == options.statePatchFrame)
 			applySceneStateToHotspotsAndPatches(options.statePatchSelector);
 		if (options.soundFrame >= 0 && (int)frame == options.soundFrame)
@@ -2185,10 +2017,7 @@ void PlayableScene::runActionOverlay(uint chunkIndex, uint descriptorCount, cons
 		if (waitSceneMillis(frameMillis))
 			break;
 	}
-	_actionOverlayVisible = false;
-	_actionOverlayLayer.visible = false;
-	_actionOverlayFrameIndex = 0;
-	_hideActiveActor = previousHideActiveActor;
+	_actionOverlayPlayer.finish(previousHideActiveActor);
 
 	if (options.redrawAtEnd) {
 		drawPlayableComposite();
@@ -2391,39 +2220,16 @@ void PlayableScene::updateAmbientMusicCue(const AmbientAudioProfile &profile) {
 }
 
 void PlayableScene::advanceSecondaryActorSpeechAnimation(uint32 delta) {
-	if (!_speechOverlay.visible) {
-		_secondaryActorFrame = 0;
-		_secondaryActorTimerAccumulator = 0;
-		return;
-	}
-
-	_secondaryActorTimerAccumulator += delta;
-	while (_secondaryActorTimerAccumulator >= kSecondaryActorSpeechFrameMillis) {
-		_secondaryActorTimerAccumulator -= kSecondaryActorSpeechFrameMillis;
-		advanceSecondaryActorSpeechFrame();
-	}
+	_speechController.advanceSecondaryActorSpeechAnimation(delta, _random,
+		kSecondaryActorSpeechFrameMillis, kSecondaryActorFramesPerFacing);
 }
 
 void PlayableScene::advanceSecondaryActorSpeechFrame() {
-	byte nextFrame = _secondaryActorFrame;
-	for (uint attempt = 0; attempt < 8 && nextFrame == _secondaryActorFrame; ++attempt)
-		nextFrame = (byte)_random.getRandomNumber(kSecondaryActorFramesPerFacing - 1);
-
-	if (nextFrame == _secondaryActorFrame)
-		nextFrame = (byte)((_secondaryActorFrame + 1) % kSecondaryActorFramesPerFacing);
-
-	_secondaryActorFrame = nextFrame;
+	_speechController.advanceSecondaryActorSpeechFrame(_random, kSecondaryActorFramesPerFacing);
 }
 
 void PlayableScene::advancePrimaryLeftSpeechFrame() {
-	byte nextFrame = _primaryLeftSpeechLastFrame;
-	for (uint attempt = 0; attempt < 8 && nextFrame == _primaryLeftSpeechLastFrame; ++attempt)
-		nextFrame = (byte)_random.getRandomNumber(3);
-
-	if (nextFrame == _primaryLeftSpeechLastFrame)
-		nextFrame = (byte)((_primaryLeftSpeechLastFrame + 1) % 4);
-
-	_primaryLeftSpeechLastFrame = nextFrame;
+	const byte nextFrame = _speechController.advancePrimaryLeftSpeechFrame(_random);
 	setPrimaryLeftSpeechFrame(nextFrame);
 }
 
@@ -2432,27 +2238,17 @@ void PlayableScene::advancePrimaryDialogueSpeechFrame(uint32 delta) {
 	while (_primaryDialogueSpeechTimerAccumulator >= kPrimaryDialogueSpeechFrameMillis) {
 		_primaryDialogueSpeechTimerAccumulator -= kPrimaryDialogueSpeechFrameMillis;
 		const byte baseFrame = primarySpeechAnimationBaseFrame(_primaryDialogueSpeechGroup);
-		byte nextFrame = _primaryDialogueSpeechLastFrame;
-		for (uint attempt = 0; attempt < 8 && nextFrame == _primaryDialogueSpeechLastFrame; ++attempt)
-			nextFrame = (byte)(baseFrame + _random.getRandomNumber(4));
-
-		if (nextFrame == _primaryDialogueSpeechLastFrame)
-			nextFrame = nextFrame >= baseFrame + 4 ? baseFrame : (byte)(nextFrame + 1);
-
-		_primaryDialogueSpeechLastFrame = nextFrame;
+		const byte nextFrame = _speechController.advancePrimaryDialogueSpeechFrame(_random, baseFrame);
 		setPrimarySpeechAnimationFrame(_primaryDialogueSpeechGroup, nextFrame);
 	}
 }
 
 void PlayableScene::clearSpeechOverlay() {
-	_speechOverlay.visible = false;
-	_speechOverlay.lines.clear();
+	_speechController.clearSecondaryOverlay();
 }
 
 void PlayableScene::clearAllSpeechOverlays() {
-	clearSpeechOverlay();
-	_primarySpeechOverlay.visible = false;
-	_primarySpeechOverlay.lines.clear();
+	_speechController.clearAllOverlays();
 }
 
 void PlayableScene::drawSpeechOverlay() {
@@ -2503,8 +2299,7 @@ bool PlayableScene::startSecondarySpeechLine(uint16 rowIndex, byte frameIndex) {
 	_speechOverlay.colorIndex = kDefaultSecondarySpeechTextColor;
 	wrapActorSpeechText(text, _activeActorWorldX, _speechOverlay.lines);
 	calculateSecondarySpeechBounds(_activeActorWorldX, _activeActorWorldY);
-	_secondaryActorFrame = 0;
-	_secondaryActorTimerAccumulator = 0;
+	_speechController.prepareSecondaryActorSpeech();
 
 	return voiceSampleId != 0 && _speech.playSample(voiceSampleId, 100);
 }
@@ -2579,32 +2374,27 @@ void PlayableScene::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, by
 		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
 		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
 			MAX<uint32>(1200, overlay.lines.size() * 1100);
-		_primaryLeftSpeechActive = animatePrimaryLeft;
-		if (animatePrimaryLeft)
+		if (animatePrimaryLeft) {
+			_speechController.startPrimaryLeftSpeech();
 			setPrimaryLeftSpeechFrame(0);
+		}
 		const byte animationGroup = animatePrimaryDialogue ?
 			(primaryAnimationGroup == kInvalidPrimarySpeechAnimationGroup ? 0 : primaryAnimationGroup) :
 			kInvalidPrimarySpeechAnimationGroup;
-		_primaryDialogueSpeechActive = animationGroup != kInvalidPrimarySpeechAnimationGroup;
-		if (_primaryDialogueSpeechActive) {
-			_primaryDialogueSpeechGroup = animationGroup;
-			_primaryDialogueSpeechLastFrame = primarySpeechAnimationBaseFrame(animationGroup);
-			_primaryDialogueSpeechTimerAccumulator = 0;
-			setPrimarySpeechAnimationFrame(animationGroup, _primaryDialogueSpeechLastFrame);
+		if (animationGroup != kInvalidPrimarySpeechAnimationGroup) {
+			const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
+			_speechController.startPrimaryDialogueSpeech(animationGroup, baseFrame);
+			setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
 		}
 		const bool interrupted = waitForSpeechOrDelay(duration, animatePrimaryLeft);
 		if (animatePrimaryLeft) {
-			_primaryLeftSpeechActive = false;
-			_primaryLeftSpeechTimerAccumulator = 0;
+			_speechController.stopPrimaryLeftSpeech();
 			setPrimaryLeftSpeechFrame(0);
 		}
 		if (_primaryDialogueSpeechActive) {
 			setPrimarySpeechAnimationFrame(_primaryDialogueSpeechGroup,
 				primarySpeechAnimationBaseFrame(_primaryDialogueSpeechGroup));
-			_primaryDialogueSpeechActive = false;
-			_primaryDialogueSpeechGroup = kInvalidPrimarySpeechAnimationGroup;
-			_primaryDialogueSpeechTimerAccumulator = 0;
-			_primaryDialogueSpeechLastFrame = 7;
+			_speechController.stopPrimaryDialogueSpeech(kInvalidPrimarySpeechAnimationGroup, 7);
 		}
 		_speech.stop();
 		overlay.visible = false;
@@ -2616,26 +2406,12 @@ void PlayableScene::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, by
 
 bool PlayableScene::getStage003Cue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
 		uint16 &voiceSampleId) const {
-	const uint offset = ((uint)frameIndex + (uint)rowIndex * 100) * 5;
-	if (offset + 5 > _stage003StageBlock.size())
-		return false;
-
-	textRecordId = readUint16LE(_stage003StageBlock, offset);
-	continuationCount = _stage003StageBlock[offset + 2];
-	voiceSampleId = readUint16LE(_stage003StageBlock, offset + 3);
-	return textRecordId != 0;
+	return _textStore.getStageCue(rowIndex, frameIndex, textRecordId, continuationCount, voiceSampleId);
 }
 
 bool PlayableScene::getStaticSpeechCue(uint16 rowIndex, byte frameIndex, uint16 &textRecordId, byte &continuationCount,
 		uint16 &voiceSampleId) const {
-	const uint offset = ((uint)frameIndex + (uint)rowIndex * 10) * 5;
-	if (offset + 5 > _staticSpeechCueDescriptors.size())
-		return false;
-
-	textRecordId = readUint16LE(_staticSpeechCueDescriptors, offset);
-	continuationCount = _staticSpeechCueDescriptors[offset + 2];
-	voiceSampleId = readUint16LE(_staticSpeechCueDescriptors, offset + 3);
-	return textRecordId != 0;
+	return _textStore.getStaticSpeechCue(rowIndex, frameIndex, textRecordId, continuationCount, voiceSampleId);
 }
 
 void PlayableScene::wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const {
@@ -2687,30 +2463,7 @@ void PlayableScene::wrapActorSpeechText(const Common::String &text, uint16 ancho
 }
 
 Common::String PlayableScene::getResource003LargeTextRecord(uint16 recordId) const {
-	if (recordId < kStage003LargeRowBaseIndex) {
-		const uint offset = (uint)recordId * kStage003LargeRowSize;
-		if (recordId == 0 || offset >= _inventoryOwnerLargeRows.size())
-			return Common::String();
-
-		const byte *row = _inventoryOwnerLargeRows.data() + offset;
-		uint length = 0;
-		while (length < kStage003LargeRowSize && row[length] != 0)
-			++length;
-
-		return Common::String((const char *)row, length);
-	}
-
-	const uint localRecordId = recordId - kStage003LargeRowBaseIndex;
-	const uint offset = localRecordId * kStage003LargeRowSize;
-	if (offset >= _stage003LargeRows.size())
-		return Common::String();
-
-	const byte *row = _stage003LargeRows.data() + offset;
-	uint length = 0;
-	while (length < kStage003LargeRowSize && row[length] != 0)
-		++length;
-
-	return Common::String((const char *)row, length);
+	return _textStore.largeTextRecord(recordId);
 }
 
 uint PlayableScene::actorSpeechTextWidth(const Common::String &text) const {
