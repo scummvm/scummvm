@@ -453,18 +453,29 @@ bool Cast::loadConfig() {
 
 	_unk1 = stream->readSint16();
 
-	// Warning for post-D7 movies (unk1 is stageColorG and stageColorB post-D7)
-	if (humanVer >= 700)
-		warning("STUB: Cast::loadConfig: 16 bit unk1 read instead of two 8 bit stageColorG and stageColorB. Read value: %04x", _unk1);
+	// In D7 and later the 16-bit field at offset 18 is two 8-bit stage-color
+	// components: stageColorG (high byte) and stageColorB (low byte). _unk1
+	// keeps the raw 16-bit value for the VWCF checksum and round-trip save.
+	if (humanVer >= 700) {
+		_D7stageColorG = (_unk1 >> 8) & 0xFF;
+		_D7stageColorB = _unk1 & 0xFF;
+	}
 
 	_commentFont = stream->readUint16();
 	_commentSize = stream->readUint16();
 	_commentStyle = stream->readUint16();
 	_stageColor = stream->readUint16();
 
-	// Warning for post-D7 movies (stageColor is isStageColorRGB and stageColorR post-D7)
-	if (humanVer >= 700)
-		warning("STUB: Cast::loadConfig: 16 bit stageColor read instead of two 8 bit isStageColorRGB and stageColorR. Read value: %04x", _stageColor);
+	// In D7 and later the 16-bit field at offset 26 is a stageColorIsRGB flag
+	// (high byte) and stageColorR (low byte). For the common non-RGB case
+	// stageColorR is the palette index, which equals the low byte of the raw
+	// _stageColor used by the renderer, checksum and save.
+	if (humanVer >= 700) {
+		_D7stageColorIsRGB = (_stageColor >> 8) & 0xFF;
+		_D7stageColorR = _stageColor & 0xFF;
+		debugC(1, kDebugLoading, "Cast::loadConfig(): D7 stage color: isRGB %d, R %d, G %d, B %d",
+			_D7stageColorIsRGB, _D7stageColorR, _D7stageColorG, _D7stageColorB);
+	}
 
 	_bitdepth = stream->readUint16();
 
@@ -604,7 +615,10 @@ bool Cast::loadConfig() {
 	}
 
 	if (_movieDepth != _vm->_colorDepth) {
-		warning("STUB: loadConfig(): Movie bit depth is %d, but set to %d", _movieDepth, _vm->_colorDepth);
+		// The engine renders at its configured color depth (e.g. 32-bit true
+		// color) and converts movie graphics as needed, so an authored movie
+		// depth differing from the engine's is expected, not a defect.
+		debugC(1, kDebugLoading, "Cast::loadConfig(): Movie bit depth is %d, engine color depth is %d", _movieDepth, _vm->_colorDepth);
 	}
 
 	delete stream;
@@ -1194,10 +1208,10 @@ uint32 Cast::computeChecksum() {
 	check -= (int8)_readRate + 9;
 	check -= _lightswitch + 10;
 
-	if (humanVer < 700)
-		check += _unk1 + 11;
-	else
-		warning("STUB: skipped using stageColorG, stageColorB for post-D7 movie in checksum calulation");
+	// The 16-bit value at offset 18 (preD7field11, or stageColorG/stageColorB
+	// in D7+) enters the checksum the same way in every version, verified
+	// against D7 (fileVer 1406) VWCF resources.
+	check += _unk1 + 11;
 
 	check *= _commentFont + 12;
 	check += _commentSize + 13;
@@ -1207,10 +1221,9 @@ uint32 Cast::computeChecksum() {
 	else
 		check *= _commentStyle + 14;
 
-	if (humanVer < 700)
-		check += _stageColor + 15;
-	else
-		check += (uint8)(_stageColor & 0xFF) + 15;	// Taking lower 8 bits to take into account stageColorR
+	// The 16-bit value at offset 26 (stageColor, or stageColorIsRGB/stageColorR
+	// in D7+) enters the checksum the same way in every version.
+	check += _stageColor + 15;
 
 
 	check += _bitdepth + 16;
@@ -2176,11 +2189,14 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		}
 	}
 
-	// For SoundCastMember, read the flags in the CastInfo
-	if (_version >= kFileVer400 && _version < kFileVer700 && member->_type == kCastSound) {
+	// For SoundCastMember, read the looping flag from the CastInfo. The
+	// play-once bit (flags & 16) is version-independent: verified against D7
+	// (fileVer 1406) sound members, where one-shot effects ("switch",
+	// "Schalter") set it and ambient loops ("Regenloop") clear it. The info
+	// block is fully consumed by loadInfoEntries() above, so nothing is read
+	// from the stream here.
+	if (_version >= kFileVer400 && member->_type == kCastSound) {
 		((SoundCastMember *)member)->_looping = castInfo.flags & 16 ? 0 : 1;
-	} else if (_version >= kFileVer700 && member->_type == kCastSound) {
-		warning("STUB: Cast::loadCastInfo(): Sound cast member info not yet supported for version v%d (%d)", humanVersion(_version), _version);
 	}
 
 	// For PaletteCastMember, run load() as we need it right now
