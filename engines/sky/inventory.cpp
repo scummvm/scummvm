@@ -88,7 +88,7 @@ void Logic::startInventory(uint32 highlightedId) {
 
 void Logic::killInventory() {
 	// shut down displayed inv objects
-	int j;
+	uint32 j;
 	Compact *itemData;
 
 	if (_liveInv) {
