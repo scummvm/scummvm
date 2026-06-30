@@ -120,6 +120,29 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.windmillBladesMoving);
 	syncStateBool(s, state.seenScene3050EntryLine);
 	syncStateBool(s, state.scene3050Row3CaptionUpdated);
+	s.syncAsByte(state.scene3060SecretDoorState);
+	s.syncAsByte(state.scene3060GlobeFrame);
+	s.syncAsByte(state.scene3060GlobePuzzleSlot);
+	s.syncAsByte(state.scene3060LastGlobeButton);
+	s.syncBytes(state.scene3060GlobePuzzleHistory, sizeof(state.scene3060GlobePuzzleHistory));
+	s.syncAsByte(state.scene3060TitleFlags);
+	syncStateBool(s, state.scene3060GlobeButtonsKnown);
+	syncStateBool(s, state.seenScene3080EntryLine);
+	syncStateBool(s, state.scene3080DoorSeen);
+	syncStateBool(s, state.scene3080FrankensteinDiaryRevealed);
+	syncStateBool(s, state.scene3080DiaryTaken);
+	syncStateBool(s, state.scene3080WindowPatchActive);
+	syncStateBool(s, state.scene3080StickTaken);
+	syncStateBool(s, state.scene3080SmokeAlternateFrames);
+	syncStateBool(s, state.seenScene3090EntryLine);
+	s.syncAsByte(state.scene3090BlindManPuzzleStage);
+	s.syncAsByte(state.scene3090WindowSequenceState);
+	syncStateBool(s, state.scene3090BlindManPlayingSaxophone);
+	syncStateBool(s, state.scene3090SaltShakerTaken);
+	syncStateBool(s, state.scene3090DowsingRodTaken);
+	syncStateBool(s, state.scene3090TalkedToBlindMan);
+	s.syncAsByte(state.scene3090PuzzleProgress);
+	syncStateBool(s, state.scene3090DialogueMentionedBlindManLaxative);
 	syncStateBool(s, state.seenScene1020EntryLine);
 	s.syncAsByte(state.scene1020ResourceBlockChoiceState);
 	s.syncAsByte(state.scene1020ResourceBlockVariantState);
@@ -257,6 +280,20 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene1030PatchState = 0;
 	if (state.scene1040CordState > 2)
 		state.scene1040CordState = 0;
+	if (state.scene3060SecretDoorState > 1)
+		state.scene3060SecretDoorState = 0;
+	if (state.scene3060GlobeFrame >= 0x1e)
+		state.scene3060GlobeFrame = 0;
+	if (state.scene3060GlobePuzzleSlot > 3)
+		state.scene3060GlobePuzzleSlot = 3;
+	if (state.scene3060LastGlobeButton > 2)
+		state.scene3060LastGlobeButton = 0;
+	if (state.scene3090BlindManPuzzleStage > 2)
+		state.scene3090BlindManPuzzleStage = 0;
+	if (state.scene3090WindowSequenceState > 2)
+		state.scene3090WindowSequenceState = 0;
+	if (state.scene3090PuzzleProgress > 9)
+		state.scene3090PuzzleProgress = 9;
 	if (state.travelScreenSlotIds[0] > 6)
 		state.travelScreenSlotIds[0] = 0;
 	if (state.travelScreenSlotIds[1] > 6)
