@@ -22,6 +22,7 @@
 #include "hollywood/hollywood.h"
 #include "hollywood/console.h"
 #include "hollywood/font.h"
+#include "hollywood/gameplay/travel_screen.h"
 #include "hollywood/scenes/intro/scene1000.h"
 #include "hollywood/scenes/intro/scene9000.h"
 #include "hollywood/scenes/intro/scene9010.h"
@@ -83,6 +84,7 @@ const int kScene1080FirstState = 0x0438;
 const int kScene1080LastState = 0x0441;
 const int kScene1090FirstState = 0x0442;
 const int kScene1090LastState = 0x044b;
+const int kTravelScreenSelectionState = 0xffff;
 const int kScene9101State = 0x238d;
 
 bool isImplementedIntroSceneNumber(int sceneNumber) {
@@ -101,6 +103,7 @@ bool isImplementedGameplayState(int stateId) {
 		(stateId >= kScene1070FirstState && stateId <= kScene1070LastState) ||
 		(stateId >= kScene1080FirstState && stateId <= kScene1080LastState) ||
 		(stateId >= kScene1090FirstState && stateId <= kScene1090LastState) ||
+		stateId == kTravelScreenSelectionState ||
 		stateId == 7000 ||
 		(stateId >= 0x1b62 && stateId <= 0x1b6b) ||
 		stateId == 0x1b6c ||
@@ -281,6 +284,21 @@ Common::Error HollywoodEngine::run() {
 		handledState = false;
 		clearSceneRestartRequest();
 		const uint16 stateId = gameState().mainFlowStateId;
+
+		if (stateId == kTravelScreenSelectionState) {
+			handledState = true;
+			TravelScreen travelScreen(this);
+			uint16 selectedStateId = stateId;
+			const byte currentChapterId = gameState().travelScreenCurrentChapterId != 0 ?
+				gameState().travelScreenCurrentChapterId : 1;
+			if (!travelScreen.runSelection(currentChapterId, selectedStateId))
+				return Common::kReadingFailed;
+			if (!Engine::shouldQuit() && !isSceneRestartRequested()) {
+				gameState().mainFlowStateId = selectedStateId;
+				gameState().travelScreenCurrentChapterId = 0;
+			}
+			continue;
+		}
 
 		if (stateId == kTitleFrontEndState) {
 			handledState = true;

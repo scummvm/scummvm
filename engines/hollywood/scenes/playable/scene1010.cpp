@@ -325,7 +325,11 @@ bool Scene1010::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(3, 0);
 		return true;
 	case 306:
-		beginSecondarySpeechLine(4, 0);
+		if (!_vm->gameState().ronTravelScreenUnlocked) {
+			beginSecondarySpeechLine(1, 4);
+			return true;
+		}
+		_vm->gameState().requestTravelScreenSelection(1);
 		return true;
 	default:
 		return false;

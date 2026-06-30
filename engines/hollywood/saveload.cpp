@@ -134,6 +134,8 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene1050TalkedToCloakroomAttendant);
 	syncStateBool(s, state.scene1050JackLookedAt);
 	s.syncBytes(state.travelScreenSlotIds, sizeof(state.travelScreenSlotIds));
+	syncStateBool(s, state.ronTravelScreenUnlocked);
+	s.syncAsByte(state.travelScreenCurrentChapterId);
 	syncStateBool(s, state.scene1050CloakroomSecretMentioned);
 	syncStateBool(s, state.seenScene1060EntryLine);
 	s.syncAsByte(state.scene1060FlyDoctorState);
@@ -258,6 +260,8 @@ void HollywoodEngine::normalizeLoadedGameState() {
 			}
 		}
 	}
+	if (state.travelScreenCurrentChapterId > 9)
+		state.travelScreenCurrentChapterId = 0;
 	if (state.scene1060FlyDoctorState > 2)
 		state.scene1060FlyDoctorState = 0;
 	if (state.scene1060PartyRemainsState > 1)

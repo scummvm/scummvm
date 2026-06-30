@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	gameplay/inventory_actions.o \
 	gameplay/options_menu.o \
 	gameplay/panel_art.o \
+	gameplay/travel_screen.o \
 	graphics.o \
 	hollywood.o \
 	metaengine.o \

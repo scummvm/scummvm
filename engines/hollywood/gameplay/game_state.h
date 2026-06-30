@@ -75,6 +75,8 @@ struct GameplayState {
 		ronTapeRecorderState = 0;
 		ronWalletOpened = false;
 		initializeTravelScreenSlots();
+		ronTravelScreenUnlocked = false;
+		travelScreenCurrentChapterId = 0;
 		seenScene1020EntryLine = false;
 		scene1020ResourceBlockChoiceState = 0;
 		scene1020ResourceBlockVariantState = 0;
@@ -300,6 +302,7 @@ struct GameplayState {
 		inventoryItemSlotByOwnerAndItemId[owner][0x01] = 3;
 		inventoryItemCountByOwner[owner] = 3;
 		inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(3);
+		ronTravelScreenUnlocked = true;
 		inventoryPanelDirty = true;
 	}
 
@@ -334,6 +337,12 @@ struct GameplayState {
 		}
 
 		return false;
+	}
+
+	void requestTravelScreenSelection(byte currentChapterId) {
+		travelScreenCurrentChapterId = currentChapterId;
+		mainFlowStateId = 0xffff;
+		activeActorPoseValid = false;
 	}
 
 	void initializeSueItemResourcePages() {
@@ -558,6 +567,8 @@ struct GameplayState {
 	byte ronTapeRecorderState;
 	bool ronWalletOpened;
 	byte travelScreenSlotIds[kTravelScreenSlotCount];
+	bool ronTravelScreenUnlocked;
+	byte travelScreenCurrentChapterId;
 	bool seenScene1020EntryLine;
 	byte scene1020ResourceBlockChoiceState;
 	byte scene1020ResourceBlockVariantState;
