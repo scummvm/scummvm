@@ -506,6 +506,16 @@ void Score::updateCurrentFrame() {
 		// This copies in the frame data and updates _curFrameNumber.
 		loadFrame(nextFrameNumberToLoad, true);
 
+		// Auto-puppeting (latched when a Lingo script changes a sprite
+		// property such as its member/ink/loc) lasts only until the playback
+		// head moves to another frame; the score then reasserts control.
+		// Manual puppetSprite is NOT affected. Without this reset the latch
+		// (e.g. kAPCast set by an animation in one room) would persist and make
+		// the channel ignore the next room's score data, leaving the previous
+		// scene's sprite drawn over the new one. (Director in a Nutshell, p.15.)
+		for (uint ch = 0; ch < _channels.size(); ch++)
+			_channels[ch]->_sprite->_autoPuppet = kAPNone;
+
 		// Finally, update the channels and buffer any dirty rectangles.
 		// This will ignore any channel data that is overridden with the puppet flag.
 		updateSprites(kRenderModeNormal, true);
