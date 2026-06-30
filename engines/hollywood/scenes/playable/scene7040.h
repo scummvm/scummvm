@@ -85,6 +85,7 @@ private:
 	void runDialogueMenuRow98();
 	void initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	void runMajorHotspotFrankensteinBranch();
+	void runMajorHotspotReturnPath(byte finalFacing);
 	void runChunk11Range(byte firstFrame, byte endFrame);
 	void runChunk14ActionRange(byte firstFrame, byte endFrame);
 	void runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame);
