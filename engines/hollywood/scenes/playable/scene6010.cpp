@@ -700,13 +700,9 @@ void Scene6010::runPendingItem69PickupOverlay() {
 	beginSecondarySpeechLine(0x0c, 1);
 	walkActiveActorTo(0x15d, 0x0ed, 1, 0, false);
 
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayHideActiveActor;
-	options.statePatchFrame = 7;
-	options.statePatchSelector = 5;
-	runActionOverlay(12, kScene6010PendingItem69DescriptorCount,
+	runConfiguredActionOverlay(12, kScene6010PendingItem69DescriptorCount,
 		kScene6010PendingItem69FrameMap, ARRAYSIZE(kScene6010PendingItem69FrameMap),
-		kScene6010FrameMillis, options);
+		kScene6010FrameMillis, kActionOverlayHideActiveActor, 7, 5);
 
 	GameplayState &state = _vm->gameState();
 	state.scene6011PendingItem69Visible = false;
@@ -726,14 +722,10 @@ void Scene6010::runDoorRevealOverlay() {
 }
 
 void Scene6010::runExitToScene6020Overlay() {
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayHideActiveActor;
-	options.soundFrame = ARRAYSIZE(kScene6010ExitFrameMap) - 1;
-	options.soundId = 3;
-	options.soundVolumePercent = 100;
-	runActionOverlay(9, kScene6010ExitDescriptorCount,
+	runConfiguredActionOverlay(9, kScene6010ExitDescriptorCount,
 		kScene6010ExitFrameMap, ARRAYSIZE(kScene6010ExitFrameMap),
-		kScene6010FrameMillis, options);
+		kScene6010FrameMillis, kActionOverlayHideActiveActor, -1, 0,
+		ARRAYSIZE(kScene6010ExitFrameMap) - 1, 3);
 	_vm->gameState().scene6010ExitOverlayPlayed = true;
 	_vm->gameState().mainFlowStateId = kScene6020State;
 }
