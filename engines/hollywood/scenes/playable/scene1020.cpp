@@ -557,13 +557,8 @@ void Scene1020::runOverlaySequence(uint chunkIndex, uint descriptorCount, const 
 		return;
 	}
 
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayShowActiveActor;
-	if (patchFrame >= 0) {
-		options.statePatchFrame = patchFrame;
-		options.statePatchSelector = 0xff;
-	}
-	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, options);
+	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
+		kActionOverlayShowActiveActor, patchFrame, 0xff);
 }
 
 void Scene1020::runOverlaySequenceWithActor(uint overlayChunkIndex, uint overlayDescriptorCount,

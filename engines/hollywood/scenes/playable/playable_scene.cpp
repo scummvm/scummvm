@@ -2279,6 +2279,37 @@ void PlayableScene::runActionOverlay(uint chunkIndex, uint descriptorCount, cons
 	}
 }
 
+void PlayableScene::runHiddenActorActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
+		uint frameMapSize, uint32 frameMillis) {
+	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
+		kActionOverlayHideActiveActor);
+}
+
+void PlayableScene::runVisibleActorActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
+		uint frameMapSize, uint32 frameMillis) {
+	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
+		kActionOverlayShowActiveActor);
+}
+
+void PlayableScene::runConfiguredActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
+		uint frameMapSize, uint32 frameMillis, ActionOverlayActorVisibility actorVisibility,
+		int statePatchFrame, byte statePatchSelector, int soundFrame, byte soundId,
+		byte soundVolumePercent, int hookFrame, byte hookId, bool redrawAtEnd, uint firstFrame, uint endFrame) {
+	ActionOverlayOptions options;
+	options.actorVisibility = actorVisibility;
+	options.statePatchFrame = statePatchFrame;
+	options.statePatchSelector = statePatchSelector;
+	options.soundFrame = soundFrame;
+	options.soundId = soundId;
+	options.soundVolumePercent = soundVolumePercent;
+	options.hookFrame = hookFrame;
+	options.hookId = hookId;
+	options.redrawAtEnd = redrawAtEnd;
+	options.firstFrame = firstFrame;
+	options.endFrame = endFrame;
+	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, options);
+}
+
 byte PlayableScene::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	(void)animationGroup;
 	return 0;
