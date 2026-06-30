@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-30 09:21+0000\n"
-"PO-Revision-Date: 2026-06-29 08:35+0000\n"
+"PO-Revision-Date: 2026-06-30 09:26+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -11180,16 +11180,12 @@ msgid "Select index"
 msgstr "Seleccionar índice"
 
 #: engines/macs2/metaengine.cpp:52
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change cursor mode"
-msgstr "Cambiar modo"
+msgstr "Cambiar modo del cursor"
 
 #: engines/macs2/metaengine.cpp:75
-#, fuzzy
-#| msgid "Slower game speed"
 msgid "Cycle game speed"
-msgstr "Ralentizar velocidad del juego"
+msgstr "Alternar velocidad del juego"
 
 #: engines/macs2/metaengine.cpp:80 engines/sherlock/metaengine.cpp:846
 #: engines/touche/metaengine.cpp:147
