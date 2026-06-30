@@ -74,9 +74,12 @@ struct GameplayState {
 		multiToolKnifeState = 0;
 		ronTapeRecorderState = 0;
 		ronWalletOpened = false;
+		ronPendingMabusePillsInMagnetPillbox = false;
+		ronLampFueled = false;
 		initializeTravelScreenSlots();
 		ronTravelScreenUnlocked = false;
 		travelScreenCurrentChapterId = 0;
+		seenScene3010EntryLine = false;
 		seenScene1020EntryLine = false;
 		scene1020ResourceBlockChoiceState = 0;
 		scene1020ResourceBlockVariantState = 0;
@@ -575,9 +578,12 @@ struct GameplayState {
 	byte multiToolKnifeState;
 	byte ronTapeRecorderState;
 	bool ronWalletOpened;
+	bool ronPendingMabusePillsInMagnetPillbox;
+	bool ronLampFueled;
 	byte travelScreenSlotIds[kTravelScreenSlotCount];
 	bool ronTravelScreenUnlocked;
 	byte travelScreenCurrentChapterId;
+	bool seenScene3010EntryLine;
 	bool seenScene1020EntryLine;
 	byte scene1020ResourceBlockChoiceState;
 	byte scene1020ResourceBlockVariantState;

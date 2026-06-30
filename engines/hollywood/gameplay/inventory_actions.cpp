@@ -47,17 +47,598 @@ void GameplayLoopDelegate::playSharedInventorySound(byte sampleId) {
 void GameplayLoopDelegate::showTravelScreenViewer() {
 }
 
-bool isRonInventoryAction(uint16 handlerId) {
+void beginRonSpeechLine(GameplayLoopDelegate *delegate, uint16 rowIndex, byte frameIndex) {
+	delegate->beginSharedInventorySpeechLine(rowIndex, frameIndex);
+}
+
+void beginRonRandomSpeechLine(GameplayLoopDelegate *delegate, uint16 rowIndex, byte maxFrameIndex) {
+	beginRonSpeechLine(delegate, rowIndex, delegate->randomSharedInventorySpeechFrame(maxFrameIndex));
+}
+
+void playRonInventoryChange(GameplayLoopDelegate *delegate) {
+	delegate->playSharedInventorySound(1);
+}
+
+void setInventoryItemResourcePage(GameplayState &gameState, byte owner, byte itemId, byte pageIndex) {
+	if (owner >= GameplayState::kInventoryOwnerCount || itemId >= GameplayState::kInventoryOwnerSlotStride)
+		return;
+
+	gameState.inventoryItemResourcePageByOwnerAndItemId[owner][itemId] = pageIndex;
+	gameState.inventoryPanelDirty = true;
+}
+
+void advanceRonKnifePage(GameplayState &gameState, GameplayLoopDelegate *delegate, byte owner) {
+	if ((gameState.multiToolKnifeState & 1) != 0) {
+		if (gameState.multiToolKnifeState < 9)
+			++gameState.multiToolKnifeState;
+		else
+			gameState.multiToolKnifeState = 0;
+	}
+
+	byte pageIndex = 0;
+	switch (gameState.multiToolKnifeState) {
+	case 0:
+		gameState.multiToolKnifeState = 1;
+		pageIndex = 0x1e;
+		break;
+	case 2:
+		gameState.multiToolKnifeState = 3;
+		pageIndex = 0x2d;
+		break;
+	case 4:
+		gameState.multiToolKnifeState = 5;
+		pageIndex = 0x7d;
+		break;
+	case 6:
+		gameState.multiToolKnifeState = 7;
+		pageIndex = 0x0e;
+		break;
+	case 8:
+		gameState.multiToolKnifeState = 9;
+		pageIndex = 0x18;
+		break;
+	default:
+		break;
+	}
+
+	if (pageIndex != 0)
+		setInventoryItemResourcePage(gameState, owner, 0x2d, pageIndex);
+	playRonInventoryChange(delegate);
+	beginRonSpeechLine(delegate, 0x35, 0);
+}
+
+void closeRonKnifePage(GameplayState &gameState, GameplayLoopDelegate *delegate, byte owner) {
+	if ((gameState.multiToolKnifeState & 1) == 0) {
+		beginRonSpeechLine(delegate, 0x0b, 0);
+		return;
+	}
+
+	if (gameState.multiToolKnifeState == 9)
+		gameState.multiToolKnifeState = 0;
+	else
+		++gameState.multiToolKnifeState;
+
+	setInventoryItemResourcePage(gameState, owner, 0x2d, 0x68);
+	playRonInventoryChange(delegate);
+	beginRonSpeechLine(delegate, 0x35, 0);
+}
+
+void grantRonItem(GameplayState &gameState, GameplayLoopDelegate *delegate, byte owner, byte itemId) {
+	gameState.addInventoryItem(owner, itemId);
+	playRonInventoryChange(delegate);
+}
+
+bool beginRonSimpleInventorySpeech(HollywoodEngine *vm, GameplayLoopDelegate *delegate,
+		uint16 handlerId) {
+	const GameplayState &gameState = vm->gameState();
+
 	switch (handlerId) {
-	case 74:
-	case 75:
-	case 76:
-	case 85:
-	case 86:
-	case 87:
-	case 215:
-	case 216:
-	case 217:
+	case 2:   // Usar item con item: generic "No funcionaria".
+		beginRonRandomSpeechLine(delegate, 0x01, 2);
+		return true;
+	case 20:  // Abrir closed/unsafe item: generic bad idea.
+	case 56:  // Usar iman with microphone: generic bad idea.
+		beginRonRandomSpeechLine(delegate, 0x13, 1);
+		return true;
+	case 30:  // Usar algodon as cleaning rag: Ron refuses to clean.
+		beginRonRandomSpeechLine(delegate, 0x1d, 1);
+		return true;
+	case 32:  // Usar bisturi as tool: "I am a journalist, not a surgeon."
+		beginRonRandomSpeechLine(delegate, 0x1f, 1);
+		return true;
+	case 34:  // Usar control remoto violently: Ron avoids violence.
+		beginRonRandomSpeechLine(delegate, 0x21, 1);
+		return true;
+	case 40:  // Usar cuerda on people: Ron refuses to tie people up.
+		beginRonRandomSpeechLine(delegate, 0x27, 1);
+		return true;
+	case 44:  // Usar lupa where not needed.
+		beginRonRandomSpeechLine(delegate, 0x2b, 2);
+		return true;
+	case 52:  // Usar estaca with serrucho: too small to sharpen.
+		beginRonSpeechLine(delegate, 0x33, 0);
+		return true;
+	case 53:  // Usar serrucho with estaca: Ron would cut it badly.
+		beginRonSpeechLine(delegate, 0x34, 0);
+		return true;
+	case 58:  // Usar flor del Nilo with ponchera/glass: keeps well without water.
+		beginRonSpeechLine(delegate, 0x36, 0);
+		return true;
+	case 61:  // Usar varita zahori with diamond: it reacts.
+		beginRonSpeechLine(delegate, 0x39, 0);
+		return true;
+	case 64:  // Usar paja with candil: wrong fuel.
+		beginRonSpeechLine(delegate, 0x3c, 0);
+		return true;
+	case 66:  // Usar folleto with hair treatment: needs glue.
+		beginRonSpeechLine(delegate, 0x3e, 0);
+		return true;
+	case 67:  // Usar pintura with picture: Ron could repaint it, but time matters.
+		beginRonSpeechLine(delegate, 0x3f, 0);
+		return true;
+	case 70:  // Dar any item to hombre menguante: he is too drunk/asleep.
+		beginRonRandomSpeechLine(delegate, 0x42, 2);
+		return true;
+	case 71:  // Dar any item to rata: it is still stunned.
+		beginRonRandomSpeechLine(delegate, 0x43, 1);
+		return true;
+	case 72:  // Dar pildoras del Dr. Mabuse to hombre menguante.
+		beginRonSpeechLine(delegate, 0x44, 0);
+		return true;
+	case 73:  // Dar tratamiento capilar to hombre menguante.
+		beginRonSpeechLine(delegate, 0x45, 0);
+		return true;
+	case 74:  // Usar agenda: nothing interesting to note right now.
+		beginRonSpeechLine(delegate, 0x46, 0);
+		return true;
+	case 76:  // Dar agenda: Ron will not give away his work tool.
+		beginRonSpeechLine(delegate, 0x47, 0);
+		return true;
+	case 77:  // Mirar algodon (look cotton): soft.
+		beginRonSpeechLine(delegate, 0x48, 0);
+		return true;
+	case 78:  // Mirar bisturi (look scalpel): Jack's use is unpleasant.
+		beginRonSpeechLine(delegate, 0x49, 0);
+		return true;
+	case 79:  // Mirar carta (look letter): handwriting is terrible.
+		beginRonSpeechLine(delegate, 0x4a, 0);
+		return true;
+	case 80:  // Mirar control remoto (look remote): drives Dr. Fly's device.
+		beginRonSpeechLine(delegate, 0x4b, 0);
+		return true;
+	case 81:  // Usar control remoto (use remote): experiment is not ready yet.
+		beginRonSpeechLine(delegate, 0x4c, 2);
+		return true;
+	case 82:  // Mirar estaca (look stake): sharp enough to be driven in.
+		beginRonSpeechLine(delegate, 0x4d, 0);
+		return true;
+	case 83:  // Mirar iman (look magnet): small but powerful.
+		beginRonSpeechLine(delegate, 0x4e, 0);
+		return true;
+	case 84:  // Mirar jeringuilla (look syringe): empty.
+		beginRonSpeechLine(delegate, 0x4f, 0);
+		return true;
+	case 88:  // Mirar artilugio del Dr. Mosca (look Dr. Fly device).
+		beginRonSpeechLine(delegate, 0x52, 0);
+		return true;
+	case 89:  // Usar artilugio del Dr. Mosca (use Dr. Fly device): wrong place.
+		beginRonSpeechLine(delegate, 0x53, 0);
+		return true;
+	case 90:  // Mirar pastillero bomba / pastillero bomba con iman.
+		beginRonSpeechLine(delegate, 0x54, 0);
+		return true;
+	case 91:  // Mirar pastillero con iman.
+		beginRonSpeechLine(delegate, 0x55, 0);
+		return true;
+	case 93:  // Mirar pildoras del Dr. Mabuse.
+		beginRonSpeechLine(delegate, 0x56, 0);
+		return true;
+	case 95:  // Mirar pastillero.
+		beginRonSpeechLine(delegate, 0x59, 0);
+		return true;
+	case 97:  // Mirar engrasador para largas distancias.
+		beginRonSpeechLine(delegate, 0x5a, 0);
+		return true;
+	case 98:  // Mirar filete durillo.
+		beginRonSpeechLine(delegate, 0x5b, 0);
+		return true;
+	case 99:  // Mirar papiro.
+		beginRonSpeechLine(delegate, 0x5c, 0);
+		return true;
+	case 100: // Mirar serrucho.
+		beginRonSpeechLine(delegate, 0x5d, 0);
+		return true;
+	case 101: // Mirar sobre.
+		beginRonSpeechLine(delegate, 0x5e, 0);
+		return true;
+	case 103: // Mirar tratamiento adelgazante.
+		beginRonSpeechLine(delegate, 0x5f, 0);
+		return true;
+	case 104: // Usar tratamiento adelgazante / capilar: Ron does not need it.
+		beginRonSpeechLine(delegate, 0x60, 0);
+		return true;
+	case 105: // Mirar cinta de Sue.
+		beginRonSpeechLine(delegate, 0x61, gameState.ronTapeRecorderState == 2 ? 1 : 0);
+		return true;
+	case 106: // Mirar algodon empapado de grasa.
+		beginRonSpeechLine(delegate, 0x62, 0);
+		return true;
+	case 107: // Mirar increible hombre menguante.
+		beginRonSpeechLine(delegate, 0x63, 0);
+		return true;
+	case 108: // Hablar/usar/dar hombre menguante: he is sleeping.
+		beginRonSpeechLine(delegate, 0x64, 0);
+		return true;
+	case 109: // Mirar maletin de Jack el destripador.
+		beginRonSpeechLine(delegate, 0x65, 0);
+		return true;
+	case 111: // Mirar ponchera.
+		beginRonSpeechLine(delegate, 0x66, 0);
+		return true;
+	case 112: // Mirar cordon.
+		beginRonSpeechLine(delegate, 0x67, 0);
+		return true;
+	case 113: // Mirar globo.
+		beginRonSpeechLine(delegate, 0x68, 0);
+		return true;
+	case 114: // Mirar paquete.
+		beginRonSpeechLine(delegate, 0x69, 0);
+		return true;
+	case 117: // Mirar cadena.
+		beginRonSpeechLine(delegate, 0x6a, 0);
+		return true;
+	case 118: // Mirar babas de mosca.
+		beginRonSpeechLine(delegate, 0x6b, 0);
+		return true;
+	case 119: // Mirar revienta-craneos.
+		beginRonSpeechLine(delegate, 0x6c, 0);
+		return true;
+	case 120: // Mirar nota de Frankenstein.
+		beginRonSpeechLine(delegate, 0x6d, 0);
+		return true;
+	case 121: // Dar nota de Frankenstein: keep the case quiet.
+		beginRonSpeechLine(delegate, 0x6e, 0);
+		return true;
+	case 122: // Mirar ticket.
+		beginRonSpeechLine(delegate, 0x6f, 0);
+		return true;
+	case 123: // Mirar microfono.
+		beginRonSpeechLine(delegate, 0x70, 0);
+		return true;
+	case 125: // Mirar pie de microfono.
+		beginRonSpeechLine(delegate, 0x72, 0);
+		return true;
+	case 126: // Mirar cerebro de Frankenstein.
+		beginRonSpeechLine(delegate, 0x73, 0);
+		return true;
+	case 127: // Usar/dar body part to wrong target.
+		beginRonSpeechLine(delegate, 0x74, 0);
+		return true;
+	case 128: // Mirar colmillo de tigre.
+		beginRonSpeechLine(delegate, 0x75, 0);
+		return true;
+	case 129: // Mirar gafas de sol.
+		beginRonSpeechLine(delegate, 0x76, 0);
+		return true;
+	case 130: // Usar gafas de sol.
+		beginRonSpeechLine(delegate, 0x77, 0);
+		return true;
+	case 131: // Mirar pamela.
+		beginRonSpeechLine(delegate, 0x78, 0);
+		return true;
+	case 132: // Usar pamela.
+		beginRonSpeechLine(delegate, 0x79, 0);
+		return true;
+	case 134: // Usar/dar dinero.
+		beginRonSpeechLine(delegate, 0x7b, 0);
+		return true;
+	case 135: // Mirar pergamino.
+		beginRonSpeechLine(delegate, 0x7c, 0);
+		return true;
+	case 136: // Usar pergamino outside Karnak altar.
+		beginRonSpeechLine(delegate, 0x7d, 0);
+		return true;
+	case 137: // Mirar semillas.
+		beginRonSpeechLine(delegate, 0x7e, 0);
+		return true;
+	case 138: // Mirar flor del Nilo.
+		beginRonSpeechLine(delegate, 0x7f, 0);
+		return true;
+	case 139: // Mirar navaja.
+		beginRonSpeechLine(delegate, 0x80, 0);
+		return true;
+	case 140: // Mirar pelo de Amesis-Huni.
+		beginRonSpeechLine(delegate, 0x81, 0);
+		return true;
+	case 141: // Mirar baston de Ra.
+		beginRonSpeechLine(delegate, 0x82, 0);
+		return true;
+	case 142: // Usar baston de Ra in the wrong place.
+		beginRonSpeechLine(delegate, 0x83, 0);
+		return true;
+	case 143: // Mirar piernas de Frankenstein.
+		beginRonSpeechLine(delegate, 0x84, 0);
+		return true;
+	case 144: // Mirar maza.
+		beginRonSpeechLine(delegate, 0x85, 0);
+		return true;
+	case 145: // Mirar aguja e hilo quirurgicos.
+		beginRonSpeechLine(delegate, 0x86, 0);
+		return true;
+	case 146: // Usar aguja e hilo quirurgicos outside the experiment.
+		beginRonSpeechLine(delegate, 0x87, 0);
+		return true;
+	case 148: // Mirar folleto de adelgazamiento pegajoso.
+		beginRonSpeechLine(delegate, 0x88, 0);
+		return true;
+	case 149: // Mirar palo.
+		beginRonSpeechLine(delegate, 0x89, 0);
+		return true;
+	case 150: // Mirar sal.
+		beginRonSpeechLine(delegate, 0x8a, 0);
+		return true;
+	case 151: // Mirar varita zahori.
+		beginRonSpeechLine(delegate, 0x8b, 2);
+		return true;
+	case 152: // Mirar jeringuilla llena de savia.
+		beginRonSpeechLine(delegate, 0x8c, 0);
+		return true;
+	case 153: // Mirar margarita.
+		beginRonSpeechLine(delegate, 0x8d, 0);
+		return true;
+	case 154: // Mirar camafeo de Samarkanda.
+		beginRonSpeechLine(delegate, 0x8e, 0);
+		return true;
+	case 155: // Abrir camafeo de Samarkanda: do not waste the sun ray.
+		beginRonSpeechLine(delegate, 0x8f, 0);
+		return true;
+	case 156: // Mirar candil.
+		beginRonSpeechLine(delegate, 0x90, gameState.ronLampFueled ? 1 : 0);
+		return true;
+	case 157: // Mirar cuerda.
+		beginRonSpeechLine(delegate, 0x91, 0);
+		return true;
+	case 158: // Mirar hueso.
+		beginRonSpeechLine(delegate, 0x92, 0);
+		return true;
+	case 159: // Mirar camison de Sherilyn.
+		beginRonSpeechLine(delegate, 0x93, 0);
+		return true;
+	case 160: // Usar camison de Sherilyn: wrong size.
+		beginRonSpeechLine(delegate, 0x94, 0);
+		return true;
+	case 161: // Mirar cuadro.
+		beginRonSpeechLine(delegate, 0x95, 0);
+		return true;
+	case 162: // Mirar/abrir perfume: empty.
+		beginRonSpeechLine(delegate, 0x50, 1);
+		return true;
+	case 163: // Mirar tronco y brazos de Frankenstein.
+		beginRonSpeechLine(delegate, 0x96, 0);
+		return true;
+	case 164: // Mirar aceite.
+		beginRonSpeechLine(delegate, 0x97, 0);
+		return true;
+	case 165: // Mirar gominola.
+		beginRonSpeechLine(delegate, 0x98, 0);
+		return true;
+	case 166: // Mirar filete.
+		beginRonSpeechLine(delegate, 0x99, 0);
+		return true;
+	case 167: // Mirar punado de paja.
+		beginRonSpeechLine(delegate, 0x9a, 0);
+		return true;
+	case 168: // Mirar madero.
+		beginRonSpeechLine(delegate, 0x9b, 0);
+		return true;
+	case 169: // Mirar baraja de cartas.
+		beginRonSpeechLine(delegate, 0x9c, 0);
+		return true;
+	case 170: // Usar baraja de cartas.
+		beginRonSpeechLine(delegate, 0x9d, 0);
+		return true;
+	case 171: // Mirar calcetin remendado.
+		beginRonSpeechLine(delegate, 0x9e, 0);
+		return true;
+	case 172: // Usar calcetin remendado.
+		beginRonSpeechLine(delegate, 0x9f, 0);
+		return true;
+	case 173: // Mirar diamante mas grande del mundo.
+		beginRonSpeechLine(delegate, 0xa0, 0);
+		return true;
+	case 174: // Mirar llave.
+		beginRonSpeechLine(delegate, 0xa1, 0);
+		return true;
+	case 175: // Hablar con cabeza de Frankenstein.
+		beginRonSpeechLine(delegate, 0xa2, 0);
+		return true;
+	case 176: // Mirar cabeza de Frankenstein.
+		beginRonSpeechLine(delegate, 0xa3, 0);
+		return true;
+	case 177: // Mirar globo inflado con gas.
+		beginRonSpeechLine(delegate, 0xa4, 0);
+		return true;
+	case 178: // Usar globo inflado / bisturi with Dr. Fly device: generic no use.
+		beginRonSpeechLine(delegate, 0xa5, 0);
+		return true;
+	case 179: // Mirar pedrusco.
+		beginRonSpeechLine(delegate, 0xa6, 0);
+		return true;
+	case 180: // Mirar gorro de aviador.
+		beginRonSpeechLine(delegate, 0xa7, 0);
+		return true;
+	case 181: // Usar gorro de aviador.
+		beginRonSpeechLine(delegate, 0xa8, 0);
+		return true;
+	case 182: // Mirar pala.
+		beginRonSpeechLine(delegate, 0xa9, 0);
+		return true;
+	case 183: // Mirar libro de Karl.
+		beginRonSpeechLine(delegate, 0xaa, 0);
+		return true;
+	case 185: // Usar libro de Karl.
+		beginRonSpeechLine(delegate, 0xac, 0);
+		return true;
+	case 186: // Mirar ponchera.
+		beginRonSpeechLine(delegate, 0xad, 0);
+		return true;
+	case 187: // Mirar calzoncillo.
+		beginRonSpeechLine(delegate, 0xae, 0);
+		return true;
+	case 188: // Usar calzoncillo.
+		beginRonSpeechLine(delegate, 0xaf, 0);
+		return true;
+	case 189: // Mirar tratamiento capilar.
+		beginRonSpeechLine(delegate, 0xb0, 0);
+		return true;
+	case 190: // Mirar espejo.
+		beginRonSpeechLine(delegate, 0xb1, 0);
+		return true;
+	case 191: // Mirar pinzas.
+		beginRonSpeechLine(delegate, 0xb2, 0);
+		return true;
+	case 192: // Hablar con espejo.
+		beginRonSpeechLine(delegate, 0xb3, 0);
+		return true;
+	case 193: // Mirar rodaja de limon.
+		beginRonSpeechLine(delegate, 0xb4, 0);
+		return true;
+	case 194: // Mirar folleto de adelgazamiento.
+		beginRonSpeechLine(delegate, 0xb5, 0);
+		return true;
+	case 195: // Mirar pelicula.
+		beginRonSpeechLine(delegate, 0xb6, 0);
+		return true;
+	case 196: // Mirar lupa.
+		beginRonSpeechLine(delegate, 0xb7, 0);
+		return true;
+	case 197: // Mirar paraguas.
+		beginRonSpeechLine(delegate, 0xb8, 0);
+		return true;
+	case 198: // Mirar saxofon.
+		beginRonSpeechLine(delegate, 0xb9, 0);
+		return true;
+	case 199: // Usar saxofon.
+		beginRonSpeechLine(delegate, 0xba, 0);
+		return true;
+	case 200: // Mirar cascara de huevo.
+		beginRonSpeechLine(delegate, 0xbb, 0);
+		return true;
+	case 201: // Mirar bolso de Taffy.
+		beginRonSpeechLine(delegate, 0xbc, 0);
+		return true;
+	case 203: // Mirar trocito de alambre.
+		beginRonSpeechLine(delegate, 0xbe, 0);
+		return true;
+	case 204: // Mirar bote de pintura.
+		beginRonSpeechLine(delegate, 0xbf, 0);
+		return true;
+	case 205: // Mirar tapa.
+		beginRonSpeechLine(delegate, 0xc0, 0);
+		return true;
+	case 206: // Mirar pelota de cera.
+		beginRonSpeechLine(delegate, 0xc1, 0);
+		return true;
+	case 208: // Mirar rata.
+		beginRonSpeechLine(delegate, 0xc2, 0);
+		return true;
+	case 209: // Mirar maletin de Charlie.
+		beginRonSpeechLine(delegate, 0xc3, 0);
+		return true;
+	case 210: // Abrir maletin de Charlie.
+		beginRonSpeechLine(delegate, 0xc4, 0);
+		return true;
+	case 211: // Mirar pase trucado: original opens pass viewer, then says it looks real.
+		beginRonSpeechLine(delegate, 0xc5, 0);
+		return true;
+	case 213: // Mirar foto de Robert Feynman.
+		beginRonSpeechLine(delegate, 0xc6, 0);
+		return true;
+	case 215: // Mirar cartera.
+		beginRonSpeechLine(delegate, 0xc8, 0);
+		return true;
+	case 216: // Usar/dar cartera.
+		beginRonSpeechLine(delegate, 0xc9, 0);
+		return true;
+	case 218: // Mirar cuerda larga.
+		beginRonSpeechLine(delegate, 0xcb, 0);
+		return true;
+	case 219: // Mirar huevo.
+		beginRonSpeechLine(delegate, 0xcc, 0);
+		return true;
+	case 220: // Abrir huevo.
+		beginRonSpeechLine(delegate, 0xcd, 0);
+		return true;
+	case 221: // Usar rata.
+		beginRonSpeechLine(delegate, 0xce, 0);
+		return true;
+	case 226: // Generic use: no need.
+		beginRonRandomSpeechLine(delegate, 0xd5, 1);
+		return true;
+	case 227: // Generic take: cannot take that.
+		beginRonRandomSpeechLine(delegate, 0xd6, 1);
+		return true;
+	case 228: // Mirar sobre de Billy Ford.
+		beginRonSpeechLine(delegate, 0xd7, 0);
+		return true;
+	case 229: // Abrir sobre de Billy Ford.
+		beginRonSpeechLine(delegate, 0xd8, 0);
+		return true;
+	case 230: // Generic cut glass failure.
+		beginRonSpeechLine(delegate, 0xd9, 0);
+		return true;
+	case 231: // Generic item combination failure.
+		beginRonRandomSpeechLine(delegate, 0xda, 1);
+		return true;
+	case 234: // Agenda note: interesting, write it down.
+		beginRonSpeechLine(delegate, 0xdb, 0);
+		return true;
+	case 235: // Generic "No sirve".
+		beginRonSpeechLine(delegate, 0xe3, 0);
+		return true;
+	case 236: // Generic "No alcanzo".
+		beginRonSpeechLine(delegate, 0xe4, 0);
+		return true;
+	case 238: // Generic "use the buttons there".
+		beginRonSpeechLine(delegate, 0xe6, 0);
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool isRonInventoryAction(uint16 handlerId) {
+	if (handlerId >= 55 && handlerId <= 73)
+		return true;
+	if (handlerId >= 74 && handlerId <= 213 && handlerId != 94)
+		return true;
+	if (handlerId >= 215 && handlerId <= 221)
+		return true;
+
+	switch (handlerId) {
+	case 2:
+	case 20:
+	case 30:
+	case 32:
+	case 34:
+	case 40:
+	case 44:
+	case 52:
+	case 53:
+	case 226:
+	case 227:
+	case 228:
+	case 229:
+	case 230:
+	case 231:
+	case 232:
+	case 233:
+	case 234:
+	case 235:
+	case 236:
+	case 237:
+	case 238:
+	case 239:
 		return true;
 	default:
 		return false;
@@ -69,55 +650,242 @@ void dispatchRonInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *deleg
 	GameplayState &gameState = vm->gameState();
 
 	switch (handlerId) {
-	case 74:
-		delegate->beginSharedInventorySpeechLine(0x46, 0);
-		break;
 	case 75:
+		// Mirar agenda: destination selector.
 		delegate->showTravelScreenViewer();
 		break;
-	case 76:
-		delegate->beginSharedInventorySpeechLine(0x47, 0);
+	case 55:
+		// Usar iman con pastillero variants: attach magnet and transform the pillbox.
+		gameState.removeInventoryItem(owner, 0x07);
+		if (gameState.hasInventoryItem(owner, 0x0c)) {
+			gameState.removeInventoryItem(owner, 0x0c);
+			gameState.addInventoryItem(owner, 0x0b);
+		} else if (gameState.hasInventoryItem(owner, 0x0f)) {
+			gameState.removeInventoryItem(owner, 0x0f);
+			gameState.addInventoryItem(owner, 0x0d);
+		} else if (gameState.hasInventoryItem(owner, 0x3b)) {
+			gameState.removeInventoryItem(owner, 0x3b);
+			gameState.addInventoryItem(owner, 0x0d);
+			gameState.ronPendingMabusePillsInMagnetPillbox = true;
+		}
+		playRonInventoryChange(delegate);
+		beginRonSpeechLine(delegate, 0x35, 0);
+		break;
+	case 57:
+		// Usar pie de microfono con algodon empapado de grasa: creates long-distance greaser.
+		gameState.removeInventoryItem(owner, 0x17);
+		gameState.removeInventoryItem(owner, 0x24);
+		gameState.addInventoryItem(owner, 0x10);
+		playRonInventoryChange(delegate);
+		beginRonSpeechLine(delegate, 0x35, 0);
+		break;
+	case 59:
+		// Usar navaja con madero: original is state-gated; generic failure until that state exists.
+		beginRonRandomSpeechLine(delegate, 0x01, 2);
+		break;
+	case 60:
+		// Usar folleto pegajoso con tratamiento capilar: creates slimming treatment.
+		gameState.removeInventoryItem(owner, 0x34);
+		gameState.removeInventoryItem(owner, 0x54);
+		gameState.addInventoryItem(owner, 0x15);
+		playRonInventoryChange(delegate);
+		beginRonSpeechLine(delegate, 0x38, 0);
+		break;
+	case 62:
+		// Usar cuerda con cordon: creates cuerda larga.
+		beginRonSpeechLine(delegate, 0x3a, 0);
+		gameState.removeInventoryItem(owner, 0x3d);
+		gameState.removeInventoryItem(owner, 0x1b);
+		gameState.addInventoryItem(owner, 0x6b);
+		playRonInventoryChange(delegate);
+		beginRonSpeechLine(delegate, 0x35, 0);
+		break;
+	case 63:
+		// Usar aceite con candil: fuels the lamp.
+		gameState.removeInventoryItem(owner, 0x43);
+		gameState.ronLampFueled = true;
+		playRonInventoryChange(delegate);
+		beginRonSpeechLine(delegate, 0x3b, 0);
+		break;
+	case 65:
+		// Usar filete con pedrusco: scene-flag gated; use original fallback until modeled.
+		beginRonRandomSpeechLine(delegate, 0xda, 1);
+		break;
+	case 68:
+		// Usar pase de Taffy con foto de Robert Feynman: creates forged pass.
+		gameState.removeInventoryItem(owner, 0x67);
+		gameState.removeInventoryItem(owner, 0x68);
+		gameState.addInventoryItem(owner, 0x66);
+		playRonInventoryChange(delegate);
+		beginRonSpeechLine(delegate, 0x40, 0);
+		break;
+	case 69:
+		// Usar navaja/sobre with poster: state-gated photo grant; fallback is generic failure.
+		beginRonRandomSpeechLine(delegate, 0x01, 2);
 		break;
 	case 85:
+		// Mirar magnetofono.
 		if (gameState.ronTapeRecorderState == 0) {
-			delegate->beginSharedInventorySpeechLine(0x50, 0);
+			beginRonSpeechLine(delegate, 0x50, 0);
 			gameState.ronTapeRecorderState = 1;
 		} else if (gameState.ronTapeRecorderState == 1) {
-			delegate->beginSharedInventorySpeechLine(0x50, 1);
+			beginRonSpeechLine(delegate, 0x50, 1);
 		} else if (gameState.ronTapeRecorderState == 2) {
-			delegate->beginSharedInventorySpeechLine(0x50, 2);
+			beginRonSpeechLine(delegate, 0x50, 2);
 		}
 		break;
 	case 86:
-		if (gameState.ronTapeRecorderState < 2)
-			delegate->beginSharedInventorySpeechLine(0x50, 1);
+		// Usar magnetofono: empty warning, or play Sue's recorded tape.
+		if (gameState.ronTapeRecorderState < 2) {
+			beginRonSpeechLine(delegate, 0x50, 1);
+		} else {
+			for (byte frame = 0; frame < 10; ++frame)
+				beginRonSpeechLine(delegate, 0x51, frame);
+		}
 		break;
 	case 87:
+		// Abrir magnetofono: retrieve Sue's tape if it is inside.
 		if (gameState.ronTapeRecorderState < 2) {
-			delegate->beginSharedInventorySpeechLine(0x50, 1);
+			beginRonSpeechLine(delegate, 0x50, 1);
 		} else {
 			gameState.addInventoryItem(owner, 0x16);
-			delegate->playSharedInventorySound(1);
+			playRonInventoryChange(delegate);
 			gameState.ronTapeRecorderState = 1;
 		}
 		break;
-	case 215:
-		delegate->beginSharedInventorySpeechLine(0xc8, 0);
+	case 92:
+		// Abrir pastillero con iman: optionally grants Dr. Mabuse's pills.
+		if (gameState.ronPendingMabusePillsInMagnetPillbox) {
+			gameState.addInventoryItem(owner, 0x0e);
+			gameState.ronPendingMabusePillsInMagnetPillbox = false;
+			playRonInventoryChange(delegate);
+			beginRonSpeechLine(delegate, 0x56, 0);
+		} else {
+			beginRonSpeechLine(delegate, 0x50, 1);
+		}
 		break;
-	case 216:
-		delegate->beginSharedInventorySpeechLine(0xc9, 0);
+	case 96:
+		// Abrir pastillero: grants empty pillbox and Mabuse pills.
+		gameState.removeInventoryItem(owner, 0x3b);
+		gameState.addInventoryItem(owner, 0x0f);
+		gameState.addInventoryItem(owner, 0x0e);
+		gameState.ronPendingMabusePillsInMagnetPillbox = false;
+		playRonInventoryChange(delegate);
+		beginRonSpeechLine(delegate, 0x56, 0);
+		break;
+	case 102:
+		// Abrir sobre: grants letter and papyrus once.
+		if (gameState.hasInventoryItem(owner, 0x04) || gameState.hasInventoryItem(owner, 0x12)) {
+			beginRonSpeechLine(delegate, 0x50, 1);
+			break;
+		}
+		gameState.addInventoryItem(owner, 0x04);
+		gameState.addInventoryItem(owner, 0x12);
+		playRonInventoryChange(delegate);
+		beginRonSpeechLine(delegate, 0x35, 0);
+		break;
+	case 110:
+		// Abrir maletin de Jack: grants cotton, scalpel, syringe, and saw once.
+		if (gameState.hasInventoryItem(owner, 0x03)) {
+			beginRonSpeechLine(delegate, 0x50, 1);
+			break;
+		}
+		gameState.addInventoryItem(owner, 0x02);
+		gameState.addInventoryItem(owner, 0x03);
+		gameState.addInventoryItem(owner, 0x08);
+		gameState.addInventoryItem(owner, 0x13);
+		playRonInventoryChange(delegate);
+		beginRonSpeechLine(delegate, 0x35, 0);
+		break;
+	case 115:
+		// Abrir paquete: grants remote control and Dr. Fly device.
+		gameState.removeInventoryItem(owner, 0x1d);
+		gameState.addInventoryItem(owner, 0x05);
+		gameState.addInventoryItem(owner, 0x0a);
+		playRonInventoryChange(delegate);
+		beginRonSpeechLine(delegate, 0x35, 0);
+		break;
+	case 116:
+		// Cerrar paquete: original callback is a no-op.
+		break;
+	case 124:
+		// Abrir microfono: grants the small magnet hidden inside.
+		if (gameState.hasInventoryItem(owner, 0x07)) {
+			beginRonSpeechLine(delegate, 0x50, 1);
+			break;
+		}
+		grantRonItem(gameState, delegate, owner, 0x07);
+		beginRonSpeechLine(delegate, 0x71, 0);
+		break;
+	case 133:
+		// Mirar dinero: original follows with a money counter; show the lead-in line for now.
+		beginRonSpeechLine(delegate, 0x7a, 0);
+		break;
+	case 147:
+		// Mirar/usar/abrir diario de Frankenstein: original opens the diary viewer.
+		beginRonSpeechLine(delegate, 0xdd, 0);
+		break;
+	case 184:
+		// Abrir libro de Karl: grants the letter hidden inside once.
+		if (gameState.hasInventoryItem(owner, 0x14)) {
+			beginRonSpeechLine(delegate, 0x50, 1);
+			break;
+		}
+		grantRonItem(gameState, delegate, owner, 0x14);
+		beginRonSpeechLine(delegate, 0xab, 0);
+		break;
+	case 202:
+		// Abrir bolso de Taffy: grants Taffy's pass unless a pass is already present.
+		if (gameState.hasInventoryItem(owner, 0x66) || gameState.hasInventoryItem(owner, 0x67)) {
+			beginRonSpeechLine(delegate, 0x50, 1);
+			break;
+		}
+		beginRonSpeechLine(delegate, 0xbd, 0);
+		grantRonItem(gameState, delegate, owner, 0x67);
+		break;
+	case 207:
+		// Mirar poster: original opens a full-screen poster viewer; no speech row.
+		break;
+	case 212:
+		// Mirar pase de Taffy: original opens the pass viewer; no speech row.
 		break;
 	case 217:
+		// Abrir cartera: grants money once.
 		if (gameState.ronWalletOpened) {
-			delegate->beginSharedInventorySpeechLine(0xca, 1);
+			beginRonSpeechLine(delegate, 0xca, 1);
 			break;
 		}
 		gameState.addInventoryItem(owner, 0x29);
-		delegate->playSharedInventorySound(1);
+		playRonInventoryChange(delegate);
 		gameState.ronWalletOpened = true;
-		delegate->beginSharedInventorySpeechLine(0xca, 0);
+		beginRonSpeechLine(delegate, 0xca, 0);
+		break;
+	case 232:
+		// Abrir navaja: cycles through the original multi-tool pages.
+		advanceRonKnifePage(gameState, delegate, owner);
+		break;
+	case 233:
+		// Cerrar navaja: resets the multi-tool page.
+		closeRonKnifePage(gameState, delegate, owner);
+		break;
+	case 237:
+		// Usar cinta de Sue con magnetofono: inserts the tape into the recorder.
+		gameState.removeInventoryItem(owner, 0x16);
+		gameState.ronTapeRecorderState = 2;
+		playRonInventoryChange(delegate);
+		break;
+	case 239:
+		// Usar navaja con trocito de alambre: requires the correct knife tool page.
+		if (gameState.multiToolKnifeState != 7) {
+			beginRonRandomSpeechLine(delegate, 0xda, 1);
+			break;
+		}
+		setInventoryItemResourcePage(gameState, owner, 0x5f, 0x40);
+		playRonInventoryChange(delegate);
+		beginRonSpeechLine(delegate, 0xbe, 1);
 		break;
 	default:
+		beginRonSimpleInventorySpeech(vm, delegate, handlerId);
 		break;
 	}
 }
