@@ -2765,10 +2765,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1_l("granmarmalade", "Demo", "GranMarmalade", "f5277c53bacd27936158dd3867e587e2", 1076950, Common::JA_JPN, 311),
 
-	MACGAME1("gustown", "", "GUS",	  	 "7f443f2e63fd497a9ad85b10dc880a91", 384206, 313),
-	WINGAME2("gustown", "", "GUS.EXE",	 "65d06b5fef155a2473434571aff5bc29", 369999,
-							"CYBER.MMM", "c3b0a84cd1a8ae966c38a3deceed6496", 237702, 310),
-	MACDEMO1("gustown", "Demo", "CyberTown Demo", "7f443f2e63fd497a9ad85b10dc880a91", 384223, 313),
+	WINGAME2("gustown", "Retail",         "GUS.EXE",        "t:9f8421d38173ad8f6957dcc9b08a07cc", 369999,
+	                                      "CYBER.MMM",      "d:c3b0a84cd1a8ae966c38a3deceed6496", 237702,  310),
+	WINGAME2("gustown", "Retail Revised", "GUS.EXE",        "t:0334eb4d4e54a7585838520019fa1f9d", 684211,
+	                                      "MAINMENU.DIR",   "d:f7b1af165c42e487df55a8be7195ade7", 2057392, 400),
+	WINGAME2("gustown", "Golden Master",  "CTOWN.EXE",      "t:9e9e9324fa36ab84f5ca333e248172a7", 703915,
+	                                      "MAINMENU.DIR",   "d:9a4551a60f683646c167460af27dbf9d", 2135060, 400),
+	MACDEMO1("gustown", "Demo",           "CyberTown Demo", "7f443f2e63fd497a9ad85b10dc880a91",   384223,  313),
 
 	MACGAME1("hawaiihigh", "", "Click for Adventure! (8mb)", "rt:2a37313361f96a8232feb27db3593d7c", 383286, 310),
 	WINGAME2("hawaiihigh", "", "HAWAII.EXE", "t:437dcff5a9cdf4085a7463f9388b17ad", 712673,
