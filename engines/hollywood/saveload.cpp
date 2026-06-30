@@ -165,6 +165,8 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene6010EndgameTravelExitBlocked);
 	syncStateBool(s, state.scene6011PendingItem69Visible);
 	syncStateBool(s, state.scene6010Item58Taken);
+	syncStateBool(s, state.scene6020TaffyKnown);
+	syncStateBool(s, state.scene6020TaffyLeft);
 	syncStateBool(s, state.reviewedFrankensteinNote);
 	s.syncAsByte(state.frankensteinNoteOverlayMode);
 	s.syncAsByte(state.hannoverCourtyardDialogueState);
