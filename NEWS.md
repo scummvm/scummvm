@@ -32,6 +32,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCUMM:
    - Improved cursor scale in early Windows HE games.
 
+ SLUDGE:
+   - Added detection for Shape-Shift Escape.
+
  Atari port:
    - Added integration with nFM library.
 
