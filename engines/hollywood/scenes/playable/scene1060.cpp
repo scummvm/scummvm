@@ -51,13 +51,14 @@ const uint32 kScene1060SlowFrameMillis = 150;
 const uint32 kScene1060SmallTriggerFrameMillis = 60;
 const uint32 kScene1060FlySlimeDripFrameMillis = 50;
 const uint32 kScene1060FlyDoctorModeMillis = 250;
+const uint32 kScene1060PrimarySpeechFrameMillis = 75;
 const uint kScene1060LargeBackgroundDescriptorCount = 0x27;
 const uint kScene1060InvisibleManDescriptorCount = 0x16;
 const uint kScene1060FlyDoctorDescriptorCount = 0x0e;
 const uint kScene1060SmallLoopDescriptorCount = 5;
 const uint kScene1060SmallTriggerDescriptorCount = 7;
 const uint kScene1060FlySlimePickupDescriptorCount = 0x0e;
-const uint kScene1060PocketPaperDescriptorCount = 0x1e;
+const uint kScene1060PocketPaperDescriptorCount = 0x0e;
 const byte kScene1060DoctorSpeechGroup = 1;
 const byte kScene1060InvisibleManSpeechGroup = 2;
 const byte kScene1060JuniorSpeechGroup = 3;
@@ -121,7 +122,8 @@ const byte kScene1060LargeBackgroundFrameMap[] = {
 
 const byte kScene1060InvisibleManFrameMap[] = {
 	13, 14, 15, 16, 17, 18, 19, 20, 21, 0,
-	0, 1, 2, 3, 21, 20, 19, 18, 17, 13
+	0, 1, 2, 3, 21, 20, 19, 18, 17, 13,
+	4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 };
 
 const byte kScene1060FlyDoctorFrameMap[] = {
@@ -136,10 +138,14 @@ const byte kScene1060FlySlimePickupFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 };
 
-const byte kScene1060PocketPaperFrameMap[] = {
-	13, 13, 13, 13, 13, 13, 13, 13, 13, 0, 1, 2, 3, 4, 5, 6,
-	7, 8, 9, 10, 11, 12, 13, 20, 20, 21, 22, 23, 24, 25, 26, 27,
-	27, 27, 27, 27, 27, 27, 28, 29, 29, 29, 29, 29, 29, 29
+const byte kScene1060PocketPaperActionFrameMap[] = {
+	13, 13, 13, 13, 13, 13, 13, 13, 0, 1, 2, 3,
+	4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+};
+
+const byte kScene1060PocketPaperInvisibleFrameMap[] = {
+	20, 21, 22, 23, 24, 25, 26, 27, 27, 27, 27, 27,
+	27, 28, 29, 29, 29, 29, 29, 29, 29, 29
 };
 
 Scene1060::Scene1060(HollywoodEngine *vm) :
@@ -165,6 +171,7 @@ Scene1060::Scene1060(HollywoodEngine *vm) :
 		_lastFlyDoctorIdleFrame(0),
 		_smallTriggerMode(0),
 		_flySlimePickupSequenceActive(false),
+		_pocketPaperPickupSequenceActive(false),
 		_juniorPoseSequenceActive(false),
 		_juniorConversationActive(false) {
 	_largeBackgroundLayer.configure(9, kScene1060LargeBackgroundDescriptorCount,
@@ -339,13 +346,19 @@ bool Scene1060::advanceCustomGameplayLoop(uint32 delta) {
 	advanceSmallLoop(delta);
 	advanceSmallTrigger(delta);
 	advanceLargeBackground(delta);
-	advanceFlyDoctorModeAndInvisibleMan(delta);
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else if (_flySlimePickupSequenceActive)
+	if (!_pocketPaperPickupSequenceActive)
+		advanceFlyDoctorModeAndInvisibleMan(delta);
+	if (_primaryDialogueSpeechActive) {
+		if (_primaryDialogueSpeechGroup == kScene1060DoctorSpeechGroup ||
+				_primaryDialogueSpeechGroup == kScene1060InvisibleManSpeechGroup)
+			advanceA06PrimaryDialogueSpeechFrame(delta);
+		else
+			advancePrimaryDialogueSpeechFrame(delta);
+	} else if (_flySlimePickupSequenceActive) {
 		advanceFlySlimePickupFrame(delta);
-	else
+	} else {
 		advanceFlyDoctor(delta);
+	}
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
 }
@@ -509,6 +522,7 @@ void Scene1060::resetAnimationLayers() {
 	_lastFlyDoctorIdleFrame = 0;
 	_smallTriggerMode = 0;
 	_flySlimePickupSequenceActive = false;
+	_pocketPaperPickupSequenceActive = false;
 	_juniorPoseSequenceActive = false;
 	_juniorConversationActive = false;
 }
@@ -608,6 +622,28 @@ void Scene1060::advanceFlyDoctorModeAndInvisibleMan(uint32 delta) {
 				_invisibleManMode = kScene1060InvisibleManModeIdle;
 				_invisibleManLayer.setFrame(0);
 			}
+		}
+	}
+}
+
+void Scene1060::advanceA06PrimaryDialogueSpeechFrame(uint32 delta) {
+	_primaryDialogueSpeechTimerAccumulator += delta;
+	while (_primaryDialogueSpeechTimerAccumulator >= kScene1060PrimarySpeechFrameMillis) {
+		_primaryDialogueSpeechTimerAccumulator -= kScene1060PrimarySpeechFrameMillis;
+		if (_primaryDialogueSpeechGroup == kScene1060DoctorSpeechGroup) {
+			const byte previousFrame = _primaryDialogueSpeechLastFrame < 4 ?
+				_primaryDialogueSpeechLastFrame : 0xff;
+			const byte nextFrame = pickRandomFrameExcluding(4, previousFrame);
+			_primaryDialogueSpeechLastFrame = nextFrame;
+			setPrimarySpeechAnimationFrame(_primaryDialogueSpeechGroup, nextFrame);
+		} else if (_primaryDialogueSpeechGroup == kScene1060InvisibleManSpeechGroup) {
+			const byte baseFrame = primarySpeechAnimationBaseFrame(_primaryDialogueSpeechGroup);
+			const byte previousFrame = (_primaryDialogueSpeechLastFrame >= baseFrame &&
+					_primaryDialogueSpeechLastFrame < baseFrame + 4) ?
+				(byte)(_primaryDialogueSpeechLastFrame - baseFrame) : 0xff;
+			const byte nextFrame = (byte)(baseFrame + pickRandomFrameExcluding(4, previousFrame));
+			_primaryDialogueSpeechLastFrame = nextFrame;
+			setPrimarySpeechAnimationFrame(_primaryDialogueSpeechGroup, nextFrame);
 		}
 	}
 }
@@ -1084,12 +1120,42 @@ void Scene1060::handlePocketPaperPickup() {
 		return;
 	}
 
-	runOverlaySequence(11, kScene1060PocketPaperDescriptorCount, kScene1060PocketPaperFrameMap,
-		ARRAYSIZE(kScene1060PocketPaperFrameMap), kScene1060FrameMillis);
+	runPocketPaperPickupSequence();
 	state.scene1060PocketPaperTaken = true;
 	addInventoryItem(0x21);
 	_soundBank0.playSample(1, 100);
 	applySceneStateToHotspotsAndPatches(6);
+}
+
+void Scene1060::runPocketPaperPickupSequence() {
+	if (ARRAYSIZE(kScene1060PocketPaperActionFrameMap) != ARRAYSIZE(kScene1060PocketPaperInvisibleFrameMap))
+		return;
+
+	const bool previousHideActiveActor = _hideActiveActor;
+	_hideActiveActor = true;
+	_pocketPaperPickupSequenceActive = true;
+	_flyDoctorMode = kScene1060FlyDoctorModeConversation;
+
+	_actionOverlayVisible = true;
+	_actionOverlayChunkIndex = 11;
+	_actionOverlayDescriptorCount = (byte)kScene1060PocketPaperDescriptorCount;
+	_actionOverlayLayer.configure(11, (uint16)kScene1060PocketPaperDescriptorCount,
+		kScene1060PocketPaperActionFrameMap, ARRAYSIZE(kScene1060PocketPaperActionFrameMap));
+	_actionOverlayLayer.visible = true;
+
+	for (uint frame = 0; frame < ARRAYSIZE(kScene1060PocketPaperActionFrameMap) && !Engine::shouldQuit(); ++frame) {
+		_actionOverlayLayer.setFrame((byte)frame);
+		_actionOverlayFrameIndex = (byte)_actionOverlayLayer.descriptorIndex();
+		_invisibleManLayer.setFrame(kScene1060PocketPaperInvisibleFrameMap[frame]);
+		if (waitSceneMillis(kScene1060FrameMillis))
+			break;
+	}
+
+	_actionOverlayVisible = false;
+	_actionOverlayLayer.visible = false;
+	_actionOverlayFrameIndex = 0;
+	_pocketPaperPickupSequenceActive = false;
+	_hideActiveActor = previousHideActiveActor;
 }
 
 void Scene1060::handleFlySlimePickup() {

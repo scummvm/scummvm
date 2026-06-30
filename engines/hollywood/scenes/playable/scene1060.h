@@ -76,6 +76,7 @@ private:
 	void resetAnimationLayers();
 	void advanceLargeBackground(uint32 delta);
 	void advanceFlyDoctorModeAndInvisibleMan(uint32 delta);
+	void advanceA06PrimaryDialogueSpeechFrame(uint32 delta);
 	void advanceFlyDoctor(uint32 delta);
 	void advanceFlyDoctorIdle(uint32 delta);
 	void advanceFlySlimeDrip(uint32 delta);
@@ -100,6 +101,7 @@ private:
 	void beginInvisibleManPrimarySpeech(byte frameIndex, bool allowRandomTransition);
 	void finishCharacterConversation();
 	void handlePocketPaperPickup();
+	void runPocketPaperPickupSequence();
 	void handleFlySlimePickup();
 	void handlePocketPaperLook();
 	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
@@ -126,6 +128,7 @@ private:
 	byte _lastFlyDoctorIdleFrame;
 	byte _smallTriggerMode;
 	bool _flySlimePickupSequenceActive;
+	bool _pocketPaperPickupSequenceActive;
 	bool _juniorPoseSequenceActive;
 	bool _juniorConversationActive;
 };
