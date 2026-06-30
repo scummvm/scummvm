@@ -80,6 +80,16 @@ bool XtraCastMember::isQuickTimeVideo() const {
 	return _xtraSymbol.equalsIgnoreCase("quickTimeMedia");
 }
 
+bool XtraCastMember::isQuickTimeLooping() const {
+	// The quickTimeMedia Asset Xtra payload carries the QuickTime member's
+	// playback flags. Byte 7 holds a bitfield in which 0x40 is the "loop"
+	// flag (verified empirically against Physikus: the looping logo sample
+	// Maschine.mov has it set, the play-once Trailer.mov has it clear).
+	// Short videos authored as ambient loops rely on this to keep repeating
+	// while a longer concurrent sound plays and the score holds the frame.
+	return isQuickTimeVideo() && _xtraData.size() > 7 && (_xtraData[7] & 0x40);
+}
+
 bool XtraCastMember::isTextXtra() const {
 	// "Text" Asset Xtra. In D7+ this is how editable rich text fields are
 	// represented in the cast; the displayed string is stored in an XMED child.

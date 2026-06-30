@@ -1664,9 +1664,11 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 			// property machinery (duration, movieTime, movieRate, ...) works. The
 			// linked .mov path is resolved from the cast member info at load time.
 			debugC(3, kDebugLoading, "Cast::loadCastData(): promoting QuickTime Xtra (id=%d) to digital video", id);
+			bool qtLooping = xtra->isQuickTimeLooping();
 			delete xtra;
 			DigitalVideoCastMember *dv = new DigitalVideoCastMember(this, id);
 			dv->_qtmovie = true;
+			dv->_looping = qtLooping;
 			target = dv;
 		} else if (xtra->isTextXtra()) {
 			// Director 7+ stores rich text fields as "text" Asset Xtra cast
