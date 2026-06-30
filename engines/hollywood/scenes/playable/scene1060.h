@@ -88,10 +88,17 @@ private:
 	void replaceColorMapItem(byte sourceItem, byte destinationItem);
 	void copyStageSmallRow(byte sourceRow, byte destinationRow);
 	byte pickRandomFrameExcluding(byte frameCount, byte previousFrame);
+	void prepareDrMoscaConversation();
+	void prepareInvisibleManConversation();
 	void runInvisibleManTransition(bool entering);
 	void runJuniorConversation();
 	void runDrMoscaConversation();
 	void runInvisibleManConversation();
+	void initializeDrMoscaDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
+	void initializeInvisibleManDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
+	void beginDrMoscaPrimarySpeech(byte frameIndex);
+	void beginInvisibleManPrimarySpeech(byte frameIndex, bool allowRandomTransition);
+	void finishCharacterConversation();
 	void handlePocketPaperPickup();
 	void handleFlySlimePickup();
 	void handlePocketPaperLook();

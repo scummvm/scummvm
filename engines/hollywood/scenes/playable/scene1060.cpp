@@ -61,6 +61,11 @@ const uint kScene1060PocketPaperDescriptorCount = 0x1e;
 const byte kScene1060DoctorSpeechGroup = 1;
 const byte kScene1060InvisibleManSpeechGroup = 2;
 const byte kScene1060JuniorSpeechGroup = 3;
+const byte kScene1060DrMoscaDialogueStageId = 0x60;
+const byte kScene1060DrMoscaDialogueResponseRow = 0x61;
+const byte kScene1060InvisibleManDialogueStageId = 0x62;
+const byte kScene1060InvisibleManDialogueResponseRow = 0x63;
+const uint kScene1060DialogueRecordCount = 10 * 10 * 7;
 const byte kScene1060FirstAmbientMusicCue = 0x0b;
 const byte kScene1060AmbientMusicCueCount = 5;
 const byte kScene1060AmbientMusicProbabilityModulus = 50;
@@ -778,6 +783,30 @@ void Scene1060::runInvisibleManTransition(bool entering) {
 	}
 }
 
+void Scene1060::prepareDrMoscaConversation() {
+	if (_invisibleManMode == kScene1060InvisibleManModeEntering ||
+			_invisibleManMode == kScene1060InvisibleManModeTalking ||
+			_invisibleManMode == kScene1060InvisibleManModeLeaving)
+		runInvisibleManTransition(false);
+
+	_flyDoctorMode = kScene1060FlyDoctorModeConversation;
+	_flyDoctorLayer.setFrame(0);
+	_smallTriggerMode = 0;
+	_smallTriggerLayer.setFrame(0);
+}
+
+void Scene1060::prepareInvisibleManConversation() {
+	if (_invisibleManMode == kScene1060InvisibleManModeEntering ||
+			_invisibleManMode == kScene1060InvisibleManModeTalking ||
+			_invisibleManMode == kScene1060InvisibleManModeLeaving)
+		runInvisibleManTransition(false);
+
+	_flyDoctorMode = kScene1060FlyDoctorModeConversation;
+	_flyDoctorLayer.setFrame(0);
+	_smallTriggerMode = 0;
+	_smallTriggerLayer.setFrame(0);
+}
+
 void Scene1060::runJuniorConversation() {
 	GameplayState &state = _vm->gameState();
 	beginSecondarySpeechLine(1, 0);
@@ -801,32 +830,251 @@ void Scene1060::runJuniorConversation() {
 }
 
 void Scene1060::runDrMoscaConversation() {
+	Common::Array<DialogueChoiceRecord> records;
+	initializeDrMoscaDialogueRecords(records);
+
 	GameplayState &state = _vm->gameState();
-	beginSecondarySpeechLine(0x60, state.seenScene1060DoctorConversation ? 1 : 0);
-	beginPrimarySpeechLineWithAnimationGroup(0x61, state.seenScene1060DoctorConversation ? 1 : 0,
-		0x235, 0x094, 0x3f, 0x20, 0, kScene1060DoctorSpeechGroup);
+	byte depthIndex = 0;
+	byte nodeIndex = 0;
+	bool finished = false;
+
+	beginSecondarySpeechLine(kScene1060DrMoscaDialogueStageId,
+		state.seenScene1060DoctorConversation ? 1 : 0);
+	prepareDrMoscaConversation();
+	beginDrMoscaPrimarySpeech(state.seenScene1060DoctorConversation ? 1 : 0);
 	state.seenScene1060DoctorConversation = true;
+
+	while (!finished && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		DialogueMenu menu(_vm, this);
+		const byte selectedChoice = menu.choose(kScene1060DrMoscaDialogueStageId, records, depthIndex, nodeIndex);
+		if (selectedChoice == DialogueMenu::kCancelledChoice) {
+			beginSecondarySpeechLine(kScene1060DrMoscaDialogueStageId, 7);
+			beginDrMoscaPrimarySpeech(7);
+			break;
+		}
+
+		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
+		if (recordIndex >= records.size())
+			break;
+
+		DialogueChoiceRecord &record = records[recordIndex];
+		beginSecondarySpeechLine(kScene1060DrMoscaDialogueStageId, record.playerTextRowId);
+		if (record.responseFrameIndex != 0xff)
+			beginDrMoscaPrimarySpeech(record.responseFrameIndex);
+
+		if (record.disableAfterUse == 1)
+			record.enabled = 0;
+
+		const byte previousDepth = depthIndex;
+		switch (record.transitionMode) {
+		case 0:
+			finished = true;
+			break;
+		case 1:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth + 1;
+			break;
+		case 2:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth - 1;
+			break;
+		case 4:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth - 2;
+			break;
+		default:
+			break;
+		}
+	}
+
+	finishCharacterConversation();
 }
 
 void Scene1060::runInvisibleManConversation() {
-	GameplayState &state = _vm->gameState();
-	if (_invisibleManMode == kScene1060InvisibleManModeEntering ||
-			_invisibleManMode == kScene1060InvisibleManModeTalking ||
-			_invisibleManMode == kScene1060InvisibleManModeLeaving)
-		runInvisibleManTransition(false);
+	Common::Array<DialogueChoiceRecord> records;
+	initializeInvisibleManDialogueRecords(records);
 
-	_flyDoctorMode = kScene1060FlyDoctorModeConversation;
-	beginSecondarySpeechLine(0x62, state.seenScene1060InvisibleManConversation ? 1 : 0);
-	const bool showInvisibleMan = _random.getRandomNumber(1) != 0;
+	GameplayState &state = _vm->gameState();
+	byte depthIndex = 0;
+	byte nodeIndex = 0;
+	bool finished = false;
+
+	beginSecondarySpeechLine(kScene1060InvisibleManDialogueStageId,
+		state.seenScene1060InvisibleManConversation ? 1 : 0);
+	prepareInvisibleManConversation();
+	beginInvisibleManPrimarySpeech(state.seenScene1060InvisibleManConversation ? 1 : 0, true);
+	state.seenScene1060InvisibleManConversation = true;
+
+	while (!finished && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		DialogueMenu menu(_vm, this);
+		const byte selectedChoice = menu.choose(kScene1060InvisibleManDialogueStageId, records, depthIndex, nodeIndex);
+		if (selectedChoice == DialogueMenu::kCancelledChoice) {
+			beginSecondarySpeechLine(kScene1060InvisibleManDialogueStageId, 5);
+			beginInvisibleManPrimarySpeech(5, true);
+			break;
+		}
+
+		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
+		if (recordIndex >= records.size())
+			break;
+
+		DialogueChoiceRecord &record = records[recordIndex];
+		beginSecondarySpeechLine(kScene1060InvisibleManDialogueStageId, record.playerTextRowId);
+		if (record.responseFrameIndex != 0xff)
+			beginInvisibleManPrimarySpeech(record.responseFrameIndex, record.disableAfterUse != 2);
+
+		if (record.disableAfterUse != 0)
+			record.enabled = 0;
+		if (record.disableAfterUse == 2)
+			handlePocketPaperPickup();
+
+		switch (record.transitionMode) {
+		case 0:
+			finished = true;
+			break;
+		case 1:
+			nodeIndex = record.nextNodeIndex;
+			++depthIndex;
+			break;
+		case 2:
+			nodeIndex = record.nextNodeIndex;
+			--depthIndex;
+			break;
+		case 4:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex -= 2;
+			break;
+		default:
+			break;
+		}
+	}
+
+	finishCharacterConversation();
+}
+
+void Scene1060::initializeDrMoscaDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
+	records.clear();
+	records.resize(kScene1060DialogueRecordCount);
+
+	records[0].enabled = 1;
+	records[0].transitionMode = 3;
+	records[0].playerTextRowId = 2;
+	records[0].responseFrameIndex = 2;
+	records[0].disableAfterUse = 1;
+	records[0].reserved = 0xff;
+
+	records[1].enabled = 1;
+	records[1].transitionMode = 3;
+	records[1].playerTextRowId = 3;
+	records[1].responseFrameIndex = 3;
+	records[1].disableAfterUse = 1;
+	records[1].reserved = 0xff;
+
+	records[2].enabled = 1;
+	records[2].transitionMode = 3;
+	records[2].playerTextRowId = 4;
+	records[2].responseFrameIndex = 4;
+	records[2].disableAfterUse = 1;
+	records[2].reserved = 0xff;
+
+	records[3].enabled = 1;
+	records[3].transitionMode = 1;
+	records[3].playerTextRowId = 5;
+	records[3].responseFrameIndex = 5;
+	records[3].disableAfterUse = 1;
+	records[3].reserved = 0xff;
+
+	records[4].enabled = 1;
+	records[4].transitionMode = 3;
+	records[4].playerTextRowId = 6;
+	records[4].responseFrameIndex = 6;
+	records[4].disableAfterUse = 1;
+	records[4].reserved = 0xff;
+
+	records[5].enabled = 1;
+	records[5].transitionMode = 0;
+	records[5].playerTextRowId = 7;
+	records[5].responseFrameIndex = 7;
+	records[5].reserved = 0xff;
+
+	records[70].enabled = 1;
+	records[70].transitionMode = 2;
+	records[70].playerTextRowId = 8;
+	records[70].responseFrameIndex = 8;
+	records[70].reserved = 0xff;
+}
+
+void Scene1060::initializeInvisibleManDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
+	records.clear();
+	records.resize(kScene1060DialogueRecordCount);
+
+	records[0].enabled = 1;
+	records[0].transitionMode = 1;
+	records[0].playerTextRowId = 2;
+	records[0].responseFrameIndex = 2;
+	records[0].disableAfterUse = 1;
+	records[0].reserved = 0xff;
+
+	records[1].enabled = 1;
+	records[1].transitionMode = 3;
+	records[1].playerTextRowId = 3;
+	records[1].responseFrameIndex = 3;
+	records[1].disableAfterUse = 1;
+	records[1].reserved = 0xff;
+
+	records[2].enabled = 1;
+	records[2].transitionMode = 3;
+	records[2].playerTextRowId = 4;
+	records[2].responseFrameIndex = 4;
+	records[2].disableAfterUse = 1;
+	records[2].reserved = 0xff;
+
+	records[3].enabled = 1;
+	records[3].transitionMode = 0;
+	records[3].playerTextRowId = 5;
+	records[3].responseFrameIndex = 5;
+	records[3].disableAfterUse = 1;
+	records[3].reserved = 0xff;
+
+	records[70].enabled = _vm->gameState().scene1060PocketPaperTaken ? 0 : 1;
+	records[70].transitionMode = 3;
+	records[70].playerTextRowId = 6;
+	records[70].responseFrameIndex = 6;
+	records[70].disableAfterUse = 2;
+	records[70].reserved = 0xff;
+
+	records[71].enabled = 1;
+	records[71].transitionMode = 3;
+	records[71].playerTextRowId = 7;
+	records[71].responseFrameIndex = 7;
+	records[71].disableAfterUse = 1;
+	records[71].reserved = 0xff;
+
+	records[72].enabled = 1;
+	records[72].transitionMode = 2;
+	records[72].playerTextRowId = 8;
+	records[72].responseFrameIndex = 8;
+	records[72].reserved = 0xff;
+}
+
+void Scene1060::beginDrMoscaPrimarySpeech(byte frameIndex) {
+	beginPrimarySpeechLineWithAnimationGroup(kScene1060DrMoscaDialogueResponseRow, frameIndex,
+		0x235, 0x094, 0x3f, 0x20, 0, kScene1060DoctorSpeechGroup);
+}
+
+void Scene1060::beginInvisibleManPrimarySpeech(byte frameIndex, bool allowRandomTransition) {
+	const bool showInvisibleMan = allowRandomTransition && _random.getRandomNumber(1) != 0;
 	if (showInvisibleMan)
 		runInvisibleManTransition(true);
-	beginPrimarySpeechLineWithAnimationGroup(0x63, state.seenScene1060InvisibleManConversation ? 1 : 0,
+	beginPrimarySpeechLineWithAnimationGroup(kScene1060InvisibleManDialogueResponseRow, frameIndex,
 		0x2aa, 0x0b8, 0, 0x3a, 0x28, kScene1060InvisibleManSpeechGroup);
 	if (showInvisibleMan)
 		runInvisibleManTransition(false);
-	state.seenScene1060InvisibleManConversation = true;
-	if (!state.scene1060PocketPaperTaken)
-		handlePocketPaperPickup();
+}
+
+void Scene1060::finishCharacterConversation() {
+	_flyDoctorMode = _random.getRandomNumber(1) == 0 ?
+		kScene1060FlyDoctorModeIdle : kScene1060FlyDoctorModeDripReady;
 }
 
 void Scene1060::handlePocketPaperPickup() {
