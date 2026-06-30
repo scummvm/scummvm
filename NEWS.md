@@ -8,6 +8,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented ImGui-based interface for the Event Recorder.
    - Fixed bug with inability to specify game overrides for MIDI and MT-32
      devices.
+   - Switched Nuked-OPL3 AdLib emulator to Nuked-OPL3-fast fork.
 
  GLK:
    - Fixed saved font selections not being applied correctly in some games.
