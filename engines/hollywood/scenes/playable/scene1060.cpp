@@ -60,6 +60,7 @@ const uint kScene1060FlySlimePickupDescriptorCount = 0x0e;
 const uint kScene1060PocketPaperDescriptorCount = 0x1e;
 const byte kScene1060DoctorSpeechGroup = 1;
 const byte kScene1060InvisibleManSpeechGroup = 2;
+const byte kScene1060JuniorSpeechGroup = 3;
 const byte kScene1060FirstAmbientMusicCue = 0x0b;
 const byte kScene1060AmbientMusicCueCount = 5;
 const byte kScene1060AmbientMusicProbabilityModulus = 50;
@@ -79,6 +80,15 @@ const byte kScene1060FlySlimePickupStateFrame = 4;
 const byte kScene1060FlySlimePickupHook = 1;
 const byte kScene1060FlySlimePickupAdvanceLimitFrame = 0x20;
 const byte kScene1060FlySlimePickupResetFrame = 8;
+const byte kScene1060JuniorIdleFrame = 0;
+const byte kScene1060JuniorPartyIdleFrame = 0x29;
+const byte kScene1060JuniorPreTalkFirstFrame = 0x0b;
+const byte kScene1060JuniorPreTalkLastFrame = 0x11;
+const byte kScene1060JuniorPartyPreTalkFirstFrame = 0x4d;
+const byte kScene1060JuniorPartyPreTalkLastFrame = 0x53;
+const byte kScene1060JuniorSpeechBaseFrame = 0x12;
+const byte kScene1060JuniorPreTalkSoundFrame = 0x0e;
+const byte kScene1060JuniorPartyPreTalkSoundFrame = 0x4f;
 const byte kScene1060InvisibleManEnterFirstFrame = 4;
 const byte kScene1060InvisibleManEnterLastFrame = 9;
 const byte kScene1060InvisibleManTalkingFirstFrame = 10;
@@ -149,7 +159,9 @@ Scene1060::Scene1060(HollywoodEngine *vm) :
 		_lastInvisibleManRandomFrame(0),
 		_lastFlyDoctorIdleFrame(0),
 		_smallTriggerMode(0),
-		_flySlimePickupSequenceActive(false) {
+		_flySlimePickupSequenceActive(false),
+		_juniorPoseSequenceActive(false),
+		_juniorConversationActive(false) {
 	_largeBackgroundLayer.configure(9, kScene1060LargeBackgroundDescriptorCount,
 		kScene1060LargeBackgroundFrameMap, ARRAYSIZE(kScene1060LargeBackgroundFrameMap));
 	_invisibleManLayer.configure(5, kScene1060InvisibleManDescriptorCount,
@@ -425,12 +437,16 @@ bool Scene1060::shouldAnimatePrimarySpeechLine() const {
 byte Scene1060::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	if (animationGroup == kScene1060InvisibleManSpeechGroup)
 		return _invisibleManMode == kScene1060InvisibleManModeTalking ? kScene1060InvisibleManTalkingFirstFrame : 0;
+	if (animationGroup == kScene1060JuniorSpeechGroup)
+		return kScene1060JuniorSpeechBaseFrame;
 	return 0;
 }
 
 void Scene1060::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	if (animationGroup == kScene1060InvisibleManSpeechGroup) {
 		_invisibleManLayer.setFrame(frameIndex);
+	} else if (animationGroup == kScene1060JuniorSpeechGroup) {
+		_largeBackgroundLayer.setFrame(frameIndex);
 	} else {
 		_flyDoctorLayer.setFrame(frameIndex);
 		restartSmallTriggerLayerFromFlyDoctorFrame(frameIndex);
@@ -469,7 +485,7 @@ void Scene1060::resetAnimationLayers() {
 	_smallLoopChannel.reset(0, kScene1060FrameMillis);
 	_smallTriggerChannel.reset(0, kScene1060SmallTriggerFrameMillis);
 
-	_largeBackgroundLayer.reset(state.scene1060PartyRemainsState == 1 ? 0x29 : 0);
+	_largeBackgroundLayer.reset(juniorIdleFrame());
 	_invisibleManLayer.reset(0);
 	_flyDoctorLayer.reset(0);
 	_flyDoctorLayer.chunkIndex = state.scene1060FlyDoctorState == 2 ? 14 : 6;
@@ -488,9 +504,15 @@ void Scene1060::resetAnimationLayers() {
 	_lastFlyDoctorIdleFrame = 0;
 	_smallTriggerMode = 0;
 	_flySlimePickupSequenceActive = false;
+	_juniorPoseSequenceActive = false;
+	_juniorConversationActive = false;
 }
 
 void Scene1060::advanceLargeBackground(uint32 delta) {
+	if (_juniorConversationActive || _juniorPoseSequenceActive ||
+			(_primaryDialogueSpeechActive && _primaryDialogueSpeechGroup == kScene1060JuniorSpeechGroup))
+		return;
+
 	const uint frameCount = _largeBackgroundChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
 		if (_largeBackgroundMode == 0) {
@@ -498,7 +520,7 @@ void Scene1060::advanceLargeBackground(uint32 delta) {
 				continue;
 			_largeBackgroundIdleCounter = 0;
 			_largeBackgroundMode = 1;
-			_largeBackgroundLayer.setFrame(_vm->gameState().scene1060PartyRemainsState == 1 ? 0x29 : 0);
+			_largeBackgroundLayer.setFrame(juniorIdleFrame());
 			_soundBank0.playSample(0x0c, 60);
 		} else {
 			const byte endFrame = _vm->gameState().scene1060PartyRemainsState == 1 ? 0x4c : 0x0a;
@@ -506,7 +528,7 @@ void Scene1060::advanceLargeBackground(uint32 delta) {
 				_largeBackgroundLayer.setFrame(_largeBackgroundLayer.frameIndex + 1);
 			} else {
 				_largeBackgroundMode = 0;
-				_largeBackgroundLayer.setFrame(0);
+				_largeBackgroundLayer.setFrame(juniorIdleFrame());
 			}
 		}
 	}
@@ -664,6 +686,49 @@ void Scene1060::restartSmallTriggerLayerFromFlyDoctorFrame(byte flyDoctorFrame) 
 	_smallTriggerMode = 1;
 }
 
+byte Scene1060::juniorIdleFrame() const {
+	return _vm->gameState().scene1060PartyRemainsState == 1 ?
+		kScene1060JuniorPartyIdleFrame : kScene1060JuniorIdleFrame;
+}
+
+void Scene1060::runJuniorPoseTransition(bool opening) {
+	if (opening) {
+		while (_largeBackgroundMode != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+			if (waitSceneMillis(10))
+				return;
+		}
+	}
+
+	const bool partyRemainsTaken = _vm->gameState().scene1060PartyRemainsState == 1;
+	const byte firstFrame = partyRemainsTaken ?
+		(opening ? kScene1060JuniorPartyPreTalkFirstFrame : kScene1060JuniorPartyPreTalkLastFrame) :
+		(opening ? kScene1060JuniorPreTalkFirstFrame : kScene1060JuniorPreTalkLastFrame);
+	const byte lastFrame = partyRemainsTaken ?
+		(opening ? kScene1060JuniorPartyPreTalkLastFrame : kScene1060JuniorPartyPreTalkFirstFrame + 1) :
+		(opening ? kScene1060JuniorPreTalkLastFrame : kScene1060JuniorPreTalkFirstFrame + 1);
+	const byte soundFrame = partyRemainsTaken ?
+		kScene1060JuniorPartyPreTalkSoundFrame : kScene1060JuniorPreTalkSoundFrame;
+
+	_juniorPoseSequenceActive = true;
+	_largeBackgroundMode = 0;
+	_largeBackgroundIdleCounter = 0;
+
+	for (byte frame = firstFrame; !Engine::shouldQuit() && !_vm->isSceneRestartRequested();) {
+		_largeBackgroundLayer.setFrame(frame);
+		if (frame == soundFrame)
+			_soundBank0.playSample(0x0c, 100);
+		if (waitSceneMillis(kScene1060LargeBackgroundFrameMillis))
+			break;
+		if (frame == lastFrame)
+			break;
+		frame = opening ? (byte)(frame + 1) : (byte)(frame - 1);
+	}
+
+	if (!opening)
+		_largeBackgroundLayer.setFrame(juniorIdleFrame());
+	_juniorPoseSequenceActive = false;
+}
+
 void Scene1060::replaceColorMapItem(byte sourceItem, byte destinationItem) {
 	if (_paletteMaskOriginal.size() < kSceneColorToItemMap + kScenePaletteMapPageSize ||
 			_paletteMask.size() < kSceneColorToItemMap + kScenePaletteMapPageSize)
@@ -716,15 +781,22 @@ void Scene1060::runInvisibleManTransition(bool entering) {
 void Scene1060::runJuniorConversation() {
 	GameplayState &state = _vm->gameState();
 	beginSecondarySpeechLine(1, 0);
+	runJuniorPoseTransition(true);
+	_juniorConversationActive = true;
 	beginPrimarySpeechLineWithAnimationGroup(2, state.scene1060PartyRemainsState == 1 ? 3 : 0,
-		0x235, 0x094, 0x3f, 0x20, 0, kScene1060DoctorSpeechGroup);
+		0x124, 0x06d, 0x33, 0x22, 0x39, kScene1060JuniorSpeechGroup);
 	beginSecondarySpeechLine(1, 1);
-	beginPrimarySpeechLineWithAnimationGroup(2, state.scene1060PartyRemainsState == 1 ? 4 : 1,
-		0x235, 0x094, 0x3f, 0x20, 0, kScene1060DoctorSpeechGroup);
 	if (state.scene1060PartyRemainsState == 0) {
-		state.scene1060PartyRemainsState = 1;
-		applySceneStateToHotspotsAndPatches(5);
+		beginPrimarySpeechLineWithAnimationGroup(2, 1, 0x124, 0x06d, 0x33, 0x22, 0x39,
+			kScene1060JuniorSpeechGroup);
+		beginPrimarySpeechLineWithAnimationGroup(2, 2, 0x124, 0x06d, 0x33, 0x22, 0x39,
+			kScene1060JuniorSpeechGroup);
+	} else {
+		beginPrimarySpeechLineWithAnimationGroup(2, 4, 0x124, 0x06d, 0x33, 0x22, 0x39,
+			kScene1060JuniorSpeechGroup);
 	}
+	runJuniorPoseTransition(false);
+	_juniorConversationActive = false;
 	beginSecondarySpeechLine(1, 2);
 }
 
