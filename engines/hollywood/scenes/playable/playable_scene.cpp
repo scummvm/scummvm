@@ -35,8 +35,6 @@
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
 
-#include <math.h>
-
 namespace Hollywood {
 
 const char *const kResource000Name = "RESOURCE.000";
@@ -65,42 +63,10 @@ const uint32 kSecondaryActorSpeechFrameMillis = 150;
 const byte kInvalidFacing = 0xff;
 const byte kInvalidCel = 0xff;
 const byte kInvalidPrimarySpeechAnimationGroup = 0xff;
-const byte kActorPathStepDeltaTableSet00[] = {
-	2, 2, 2, 3, 3, 0, 2, 2, 2, 3, 3, 0,
-	6, 7, 7, 5, 5, 5, 4, 6, 6, 5, 3, 4,
-	5, 5, 5, 6, 2, 3, 4, 8, 10, 6, 3, 5,
-	3, 0, 0, 3, 3, 3, 3, 0, 0, 3, 3, 3,
-	4, 8, 10, 6, 3, 5, 5, 5, 5, 6, 2, 3,
-	4, 6, 6, 5, 3, 4, 6, 7, 7, 5, 5, 5
-};
-const byte kActorFacingTurnTable[] = {
-	0, 0, 0, 1, 0, 0, 1, 2, 0, 1, 2, 3, 5, 4, 0, 5, 0, 0,
-	0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 3, 0, 0, 5, 4, 0, 5, 0,
-	1, 0, 0, 1, 0, 0, 0, 0, 0, 3, 0, 0, 3, 4, 0, 1, 0, 5,
-	4, 5, 0, 2, 1, 0, 2, 0, 0, 0, 0, 0, 4, 0, 0, 4, 5, 0,
-	5, 0, 0, 5, 0, 1, 3, 2, 0, 3, 0, 0, 0, 0, 0, 5, 0, 0,
-	0, 0, 0, 0, 1, 0, 0, 1, 2, 4, 3, 0, 4, 0, 0, 0, 0, 0
-};
-const int8 kActorPathAxisDirectionByFacing[] = { -1, 1, 1, 1, -1, -1 };
-const byte kActorInitialCelByFacing[] = { 0, 12, 12, 12, 1, 12 };
 const uint32 kViewportScrollTickMillis = 10;
 const uint16 kViewportScrollRightThreshold = 0x144;
 const uint16 kViewportScrollLeftThreshold = 0x13c;
 const uint16 kViewportScrollStep = 2;
-const float kActorPathDiagonalSlopeThreshold = 0.087488f;
-const float kActorFacingSteepSlopeThreshold = 3.732051f;
-const float kActorFacingDiagonalSlopeThreshold = 0.267949f;
-
-int actorPathRoundToNearestEven(float value) {
-	const float lower = floorf(value);
-	const float fraction = value - lower;
-	const int lowerInt = (int)lower;
-	if (fraction > 0.5f)
-		return lowerInt + 1;
-	if (fraction < 0.5f)
-		return lowerInt;
-	return (lowerInt & 1) ? lowerInt + 1 : lowerInt;
-}
 
 PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int defaultActorX, int defaultActorY,
 		byte defaultActorFacing, byte secondarySpeechTextColor, byte primarySpeechTextColor) :
@@ -136,6 +102,11 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int de
 		_staticSpeechCueDescriptors(_textStore.staticSpeechCueDescriptors),
 		_inventoryOwnerSmallRows(_textStore.inventoryOwnerSmallRows),
 		_inventoryOwnerLargeRows(_textStore.inventoryOwnerLargeRows),
+		_pathController(),
+		_routeBoundaryPoints(_pathController.routeBoundaryPoints),
+		_routeSteps(_pathController.routeSteps),
+		_actorPathFrames(_pathController.frames),
+		_actorPathStepDeltas(_pathController.stepDeltas),
 		_random(randomName),
 		_speechController(),
 		_speech(_speechController.player),
@@ -180,10 +151,10 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int de
 	_secondaryActorRunStreams.resize(kActorFacingCount * kSecondaryActorFacingRunStride);
 	_activeActorDescriptors.resize(kActorFacingCount * kActorCelsPerFacing);
 	_secondaryActorDescriptors.resize(kActorFacingCount * kSecondaryActorFramesPerFacing);
-	_routeBoundaryPoints.resize(kSceneRouteBoundaryPointCount);
-	_routeSteps.resize(kSceneRouteStepCount);
-	_actorPathStepDeltas.resize(ARRAYSIZE(kActorPathStepDeltaTableSet00));
-	memcpy(_actorPathStepDeltas.data(), kActorPathStepDeltaTableSet00, _actorPathStepDeltas.size());
+	_pathController.initialize(kSceneRouteBoundaryPointCount, kSceneRouteStepCount,
+		kScenePaletteRegionCount, kScenePaletteRegionBoundaryCandidateCount,
+		kScenePaletteRegionRouteStepCount, defaultActorPathStepDeltaTable(),
+		defaultActorPathStepDeltaTableSize());
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 }
@@ -338,11 +309,11 @@ uint32 PlayableScene::speechCueDescriptorTableOffset() const {
 }
 
 const byte *PlayableScene::actorPathStepDeltaTable() const {
-	return kActorPathStepDeltaTableSet00;
+	return defaultActorPathStepDeltaTable();
 }
 
 uint PlayableScene::actorPathStepDeltaTableSize() const {
-	return ARRAYSIZE(kActorPathStepDeltaTableSet00);
+	return defaultActorPathStepDeltaTableSize();
 }
 
 byte PlayableScene::walkablePaletteMaxRegion() const {
@@ -877,12 +848,9 @@ void PlayableScene::expandFillRunsToSavedFramebuffer() {
 }
 
 bool PlayableScene::initializeScenePathTables() {
-	const uint boundaryBytes = kSceneRouteBoundaryPointCount * 4;
-	if (_metadata.size() < kRouteBoundaryPoints + boundaryBytes ||
-			_metadata.size() < kRouteBoundarySteps + kSceneRouteStepCount) {
-		warning("%s chunk 4 is too short for path route tables", resourceArchiveName());
+	if (!_pathController.loadRouteTables(_metadata, kRouteBoundaryPoints, kRouteBoundarySteps,
+			resourceArchiveName()))
 		return false;
-	}
 
 	memcpy(_fullPaletteRegionMask.data(), _paletteMask.data(), _fullPaletteRegionMask.size());
 	memcpy(_walkablePaletteMask.data(), _paletteMask.data(), _walkablePaletteMask.size());
@@ -891,12 +859,6 @@ bool PlayableScene::initializeScenePathTables() {
 			_walkablePaletteMask[i] = 0;
 	}
 
-	for (uint i = 0; i < _routeBoundaryPoints.size(); ++i) {
-		const uint offset = kRouteBoundaryPoints + i * 4;
-		_routeBoundaryPoints[i].x = readSint16LE(_metadata, offset);
-		_routeBoundaryPoints[i].y = readSint16LE(_metadata, offset + 2);
-	}
-	memcpy(_routeSteps.data(), _metadata.data() + kRouteBoundarySteps, _routeSteps.size());
 	return true;
 }
 
@@ -1628,213 +1590,29 @@ void PlayableScene::adjustWalkTargetToFloorMask(int &targetX, int &targetY) cons
 
 void PlayableScene::queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
 		byte finalFacing, byte finalCel) {
-	_actorPathFrames.clear();
-	resetActorPathStepDeltas();
-
-	ActorPathBuildState state;
-	state.drawOrderMode = _activeActorDrawOrderMode;
-	state.facing = _activeActorFacing;
-	state.cel = nextActorPathCel(_activeActorCel);
-	state.x = startX;
-	state.y = startY;
-	appendActorPathFrame(state);
-
-	byte currentRegion = paletteRegionAt(startX, startY);
-	if (currentRegion == 0)
-		currentRegion = _activeActorDrawOrderMode;
-
-	byte targetRegion = paletteRegionAt(targetX, targetY);
-	if (targetRegion == 0)
-		targetRegion = currentRegion;
-
-	if (currentRegion != targetRegion) {
-		const byte routeStartRegion = currentRegion;
-		const byte routeTargetRegion = targetRegion;
-		for (uint stepIndex = 0; stepIndex < kScenePaletteRegionRouteStepCount &&
-				currentRegion != targetRegion; ++stepIndex) {
-			const uint routeOffset =
-				((uint)routeStartRegion * kScenePaletteRegionCount + routeTargetRegion) *
-				kScenePaletteRegionRouteStepCount + stepIndex;
-			if (routeOffset >= _routeSteps.size())
-				break;
-
-			const byte nextRegion = _routeSteps[routeOffset];
-			if (nextRegion == 0 || nextRegion >= kScenePaletteRegionCount)
-				break;
-
-			state.drawOrderMode = currentRegion;
-			const ScenePoint boundary = nextRegion == targetRegion ?
-				bestPaletteRouteBoundaryPoint(state.x, state.y, targetX, targetY, currentRegion, nextRegion) :
-				nearestPaletteRouteBoundaryPoint(state.x, state.y, currentRegion, nextRegion);
-
-			byte segmentFinalFacing = kInvalidFacing;
-			byte segmentFinalCel = kInvalidCel;
-			if (boundary.x == targetX && boundary.y == targetY) {
-				segmentFinalFacing = finalFacing;
-				segmentFinalCel = finalCel;
-			}
-
-			int requestedFacing = -1;
-			bool restoredStepDeltas = false;
-			customizeRouteSegment(currentRegion, nextRegion, state, boundary,
-				requestedFacing, restoredStepDeltas);
-			buildActorPathFramesBetweenPoints(state, boundary.x, boundary.y,
-				segmentFinalFacing, segmentFinalCel, requestedFacing);
-			if (restoredStepDeltas)
-				resetActorPathStepDeltas();
-
-			currentRegion = nextRegion;
-		}
-	}
-
-	int requestedFacing = -1;
-	bool restoredStepDeltas = false;
-	customizeRouteFinal(currentRegion, targetRegion, state, targetX, targetY,
-		requestedFacing, restoredStepDeltas);
-	state.drawOrderMode = currentRegion;
-	buildActorPathFramesBetweenPoints(state, targetX, targetY, finalFacing, finalCel, requestedFacing);
-	if (restoredStepDeltas)
-		resetActorPathStepDeltas();
-
+	_pathController.queueWithPaletteRegionRouting(*this, startX, startY, targetX, targetY,
+		_activeActorDrawOrderMode, _activeActorFacing, _activeActorCel, finalFacing, finalCel,
+		kInvalidFacing, kInvalidCel, actorPathStepDeltaTable(), actorPathStepDeltaTableSize());
 }
 
 void PlayableScene::buildActorPathFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,
 		byte finalFacing, byte finalCel, int requestedFacing) {
-	if (targetX == state.x && targetY == state.y) {
-		if (finalFacing != kInvalidFacing && state.facing != finalFacing) {
-			for (uint turnStep = 0; turnStep < 3 && state.facing != finalFacing; ++turnStep) {
-				const uint turnOffset = ((uint)state.facing * kActorFacingCount + finalFacing) * 3 + turnStep;
-				state.facing = kActorFacingTurnTable[turnOffset];
-				state.cel = kActorInitialCelByFacing[state.facing];
-				appendActorPathFrame(state);
-				state.cel = nextActorPathCel(state.cel);
-			}
-		}
-		if (finalCel != kInvalidCel)
-			state.cel = finalCel;
-		appendActorPathFrame(state);
-		state.cel = nextActorPathCel(state.cel);
-		return;
-	}
-
-	const byte movementFacing = calculateMovementFacingForPath(state.x, state.y, targetX, targetY, requestedFacing);
-	if (state.facing != movementFacing) {
-		for (uint turnStep = 0; turnStep < 3 && state.facing != movementFacing; ++turnStep) {
-			const uint turnOffset = ((uint)state.facing * kActorFacingCount + movementFacing) * 3 + turnStep;
-			state.facing = kActorFacingTurnTable[turnOffset];
-			state.cel = kActorInitialCelByFacing[state.facing];
-			appendActorPathFrame(state);
-			state.cel = nextActorPathCel(state.cel);
-		}
-	}
-
-	const int startX = state.x;
-	const int startY = state.y;
-	const int principalStart = (movementFacing == 0 || movementFacing == 3) ? startY : startX;
-	const int principalTarget = (movementFacing == 0 || movementFacing == 3) ? targetY : targetX;
-	const uint stepCount = calculateWalkStepCountForAxisDelta(principalStart, principalTarget,
-		movementFacing, state.cel);
-
-	if (stepCount != 0) {
-		const bool verticalMovement = movementFacing == 0 || movementFacing == 3;
-		const int secondaryDelta = verticalMovement ? ABS(startX - targetX) : ABS(startY - targetY);
-		const float secondaryStep = (float)secondaryDelta / (float)stepCount;
-		float secondaryAccumulator = secondaryStep;
-		for (uint step = 1; step <= stepCount; ++step) {
-			const int secondaryOffset = actorPathRoundToNearestEven(secondaryAccumulator);
-			const int delta = actorPathStepDelta(movementFacing, state.cel);
-			if (verticalMovement) {
-				state.y += (startY < targetY) ? delta : -delta;
-				state.x = startX < targetX ? startX + secondaryOffset : startX - secondaryOffset;
-			} else {
-				state.x += (startX < targetX) ? delta : -delta;
-				state.y = startY < targetY ? startY + secondaryOffset : startY - secondaryOffset;
-			}
-			state.facing = movementFacing;
-			appendActorPathFrame(state);
-			state.cel = nextActorPathCel(state.cel);
-			secondaryAccumulator += secondaryStep;
-		}
-	}
-
-	state.x = targetX;
-	state.y = targetY;
-	if (finalFacing != kInvalidFacing && state.facing != finalFacing) {
-		for (uint turnStep = 0; turnStep < 3 && state.facing != finalFacing; ++turnStep) {
-			const uint turnOffset = ((uint)state.facing * kActorFacingCount + finalFacing) * 3 + turnStep;
-			state.facing = kActorFacingTurnTable[turnOffset];
-			state.cel = kActorInitialCelByFacing[state.facing];
-			appendActorPathFrame(state);
-			state.cel = nextActorPathCel(state.cel);
-		}
-	}
-	if (finalCel != kInvalidCel)
-		state.cel = finalCel;
-	appendActorPathFrame(state);
-	state.cel = nextActorPathCel(state.cel);
+	_pathController.buildFramesBetweenPoints(state, targetX, targetY, finalFacing, finalCel,
+		requestedFacing, kInvalidFacing, kInvalidCel);
 }
 
 void PlayableScene::appendActorPathFrame(const ActorPathBuildState &state) {
-	ActorPathFrame frame;
-	frame.drawOrderMode = state.drawOrderMode;
-	frame.facing = state.facing;
-	frame.cel = state.cel;
-	frame.worldX = (int16)CLIP<int>(state.x, -32768, 32767);
-	frame.worldY = (int16)CLIP<int>(state.y, -32768, 32767);
-	_actorPathFrames.push_back(frame);
+	_pathController.appendFrame(state);
 }
 
 ScenePoint PlayableScene::nearestPaletteRouteBoundaryPoint(int startX, int startY, byte currentRegion, byte nextRegion) const {
-	ScenePoint points[kScenePaletteRegionBoundaryCandidateCount];
-	float scores[kScenePaletteRegionBoundaryCandidateCount];
-	memset(points, 0, sizeof(points));
-	memset(scores, 0, sizeof(scores));
-
-	const uint baseIndex = ((uint)currentRegion * kScenePaletteRegionCount + nextRegion) *
-		kScenePaletteRegionBoundaryCandidateCount;
-	for (uint candidate = 0; candidate < kScenePaletteRegionBoundaryCandidateCount; ++candidate) {
-		const uint pointIndex = baseIndex + candidate;
-		if (pointIndex >= _routeBoundaryPoints.size())
-			break;
-
-		const ScenePoint point = _routeBoundaryPoints[pointIndex];
-		points[candidate] = point;
-		scores[candidate] =
-			sqrtf((float)ABS(startX - point.x)) +
-			sqrtf((float)ABS(startY - point.y));
-	}
-
-	if (scores[1] <= scores[0])
-		return scores[2] < scores[1] ? points[2] : points[1];
-	return scores[0] < scores[2] ? points[0] : points[2];
+	return _pathController.nearestPaletteRouteBoundaryPoint(startX, startY, currentRegion, nextRegion);
 }
 
 ScenePoint PlayableScene::bestPaletteRouteBoundaryPoint(int startX, int startY, int targetX, int targetY,
 		byte currentRegion, byte targetRegion) const {
-	ScenePoint points[kScenePaletteRegionBoundaryCandidateCount];
-	float scores[kScenePaletteRegionBoundaryCandidateCount];
-	memset(points, 0, sizeof(points));
-	memset(scores, 0, sizeof(scores));
-
-	const uint baseIndex = ((uint)currentRegion * kScenePaletteRegionCount + targetRegion) *
-		kScenePaletteRegionBoundaryCandidateCount;
-	for (uint candidate = 0; candidate < kScenePaletteRegionBoundaryCandidateCount; ++candidate) {
-		const uint pointIndex = baseIndex + candidate;
-		if (pointIndex >= _routeBoundaryPoints.size())
-			break;
-
-		const ScenePoint point = _routeBoundaryPoints[pointIndex];
-		points[candidate] = point;
-		scores[candidate] =
-			sqrtf((float)ABS(startX - point.x)) +
-			sqrtf((float)ABS(startY - point.y)) +
-			sqrtf((float)ABS(targetX - point.x)) +
-			sqrtf((float)ABS(targetY - point.y));
-	}
-
-	if (scores[1] <= scores[0])
-		return scores[2] < scores[1] ? points[2] : points[1];
-	return scores[0] < scores[2] ? points[0] : points[2];
+	return _pathController.bestPaletteRouteBoundaryPoint(startX, startY, targetX, targetY,
+		currentRegion, targetRegion);
 }
 
 byte PlayableScene::paletteRegionAt(int x, int y) const {
@@ -1850,91 +1628,27 @@ byte PlayableScene::paletteRegionAt(int x, int y) const {
 }
 
 byte PlayableScene::calculateMovementFacingForPath(int fromX, int fromY, int toX, int toY, int requestedFacing) const {
-	if (requestedFacing >= 0)
-		return (byte)requestedFacing;
-
-	if (toX == fromX)
-		return fromY < toY ? 3 : 0;
-
-	const float slope = (float)ABS(toY - fromY) / (float)MAX<int>(1, ABS(toX - fromX));
-	if (fromX < toX) {
-		if (toY < fromY) {
-			if (slope < 1.0f)
-				return slope <= kActorPathDiagonalSlopeThreshold ? 2 : 1;
-			return 0;
-		}
-		return slope < 1.0f ? 2 : 3;
-	}
-
-	if (toY < fromY) {
-		if (slope > 1.0f)
-			return 0;
-		return slope > kActorPathDiagonalSlopeThreshold ? 5 : 4;
-	}
-	return slope > 1.0f ? 3 : 4;
+	return _pathController.calculateMovementFacingForPath(fromX, fromY, toX, toY, requestedFacing);
 }
 
 uint PlayableScene::calculateWalkStepCountForAxisDelta(int startAxis, int targetAxis, byte facing, byte cel) const {
-	if (facing >= kActorFacingCount)
-		return 0;
-
-	const int direction = kActorPathAxisDirectionByFacing[facing];
-	int remaining = (targetAxis - startAxis) * direction;
-	if (remaining <= 0)
-		return 0;
-
-	uint steps = 0;
-	byte nextCel = cel;
-	while (actorPathStepDelta(facing, nextCel) < (uint)remaining) {
-		remaining -= (int)actorPathStepDelta(facing, nextCel);
-		nextCel = nextActorPathCel(nextCel);
-		++steps;
-		if (steps > 300)
-			break;
-	}
-
-	return steps;
+	return _pathController.calculateWalkStepCountForAxisDelta(startAxis, targetAxis, facing, cel);
 }
 
 byte PlayableScene::nextActorPathCel(byte cel) const {
-	return cel == 12 ? 1 : (byte)(cel + 1);
+	return _pathController.nextCel(cel);
 }
 
 uint PlayableScene::actorPathStepDelta(byte facing, byte cel) const {
-	if (facing >= kActorFacingCount || cel == 0 || cel > 12)
-		return 0;
-
-	const uint offset = (uint)facing * 12 + cel - 1;
-	if (offset >= _actorPathStepDeltas.size())
-		return 0;
-
-	return _actorPathStepDeltas[offset];
+	return _pathController.stepDelta(facing, cel);
 }
 
 void PlayableScene::resetActorPathStepDeltas() {
-	const byte *table = actorPathStepDeltaTable();
-	const uint tableSize = actorPathStepDeltaTableSize();
-	_actorPathStepDeltas.resize(tableSize);
-	if (table != nullptr && tableSize != 0)
-		memcpy(_actorPathStepDeltas.data(), table, tableSize);
+	_pathController.resetStepDeltas(actorPathStepDeltaTable(), actorPathStepDeltaTableSize());
 }
 
 byte PlayableScene::calculateFacingTowardPoint(int fromX, int fromY, int toX, int toY) const {
-	if (toX == fromX)
-		return fromY < toY ? 3 : 0;
-
-	const float slope = (float)ABS(toY - fromY) / (float)MAX<int>(1, ABS(toX - fromX));
-	if (toX > fromX) {
-		if (toY < fromY)
-			return slope > kActorFacingSteepSlopeThreshold ? 0 :
-				(slope > kActorFacingDiagonalSlopeThreshold ? 1 : 2);
-		return slope > kActorFacingSteepSlopeThreshold ? 3 : 2;
-	}
-
-	if (toY < fromY)
-		return slope > kActorFacingSteepSlopeThreshold ? 0 :
-			(slope > kActorFacingDiagonalSlopeThreshold ? 5 : 4);
-	return slope > kActorFacingSteepSlopeThreshold ? 3 : 4;
+	return _pathController.calculateFacingTowardPoint(fromX, fromY, toX, toY);
 }
 
 void PlayableScene::applySceneStateToHotspotsAndPatches(byte selector) {

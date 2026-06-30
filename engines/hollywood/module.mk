@@ -25,6 +25,7 @@ MODULE_OBJS = \
 	scenes/intro/scene9100.o \
 	scenes/intro/scene9110.o \
 	scenes/intro/scene9120.o \
+	scenes/playable/actor_path_controller.o \
 	scenes/playable/action_overlay_player.o \
 	scenes/playable/scene1010.o \
 	scenes/playable/scene1020.o \
