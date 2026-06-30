@@ -125,6 +125,8 @@ struct GameplayState {
 		scene6010EndgameTravelExitBlocked = false;
 		scene6011PendingItem69Visible = false;
 		scene6010Item58Taken = false;
+		scene6020TaffyKnown = false;
+		scene6020TaffyLeft = false;
 		reviewedFrankensteinNote = false;
 		frankensteinNoteOverlayMode = 0;
 		hannoverCourtyardDialogueState = 0;
@@ -624,6 +626,8 @@ struct GameplayState {
 	bool scene6010EndgameTravelExitBlocked;
 	bool scene6011PendingItem69Visible;
 	bool scene6010Item58Taken;
+	bool scene6020TaffyKnown;
+	bool scene6020TaffyLeft;
 	bool reviewedFrankensteinNote;
 	byte frankensteinNoteOverlayMode;
 	byte hannoverCourtyardDialogueState;
