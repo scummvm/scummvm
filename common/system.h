@@ -938,7 +938,7 @@ public:
 	 *
 	 * If loading the new shader fails, this method returns false.
 	 *
-	 * @param fileNode File node of the new shader.
+	 * @param fileName File node of the new shader.
 	 *
 	 * @return True if the switch was successful, false otherwise.
 	 */
@@ -1386,7 +1386,7 @@ public:
 	 * This works because we assume the game to be "paused" whenever an overlay
 	 * is active.
 	 *
-	 * @param inGame Whether the overlay is used to display GUI or in game images
+	 * @param inGUI Whether the overlay is used to display GUI or in game images
 	 *
 	 */
 
