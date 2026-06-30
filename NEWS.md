@@ -23,10 +23,13 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix M&M1 spelling mistakes.
    - Improved M&M1 Enhanced mouse support, character generation, and general in-game UI.
 
-NANCY:
+ NANCY:
    - Generic flags are no longer cleared when saving or auto-saving. Clearing
      them introduced issues when auto-saving was done in some scenes.
    - Loading from the GMM is now possible before starting a new scene.
+
+ SCUMM:
+   - Improved cursor scale in early Windows HE games.
 
  Atari port:
    - Added integration with nFM library.
