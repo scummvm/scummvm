@@ -80,6 +80,9 @@ struct GameplayState {
 		ronTravelScreenUnlocked = false;
 		travelScreenCurrentChapterId = 0;
 		seenScene3010EntryLine = false;
+		windmillBladesMoving = false;
+		seenScene3050EntryLine = false;
+		scene3050Row3CaptionUpdated = false;
 		seenScene1020EntryLine = false;
 		scene1020ResourceBlockChoiceState = 0;
 		scene1020ResourceBlockVariantState = 0;
@@ -584,6 +587,9 @@ struct GameplayState {
 	bool ronTravelScreenUnlocked;
 	byte travelScreenCurrentChapterId;
 	bool seenScene3010EntryLine;
+	bool windmillBladesMoving;
+	bool seenScene3050EntryLine;
+	bool scene3050Row3CaptionUpdated;
 	bool seenScene1020EntryLine;
 	byte scene1020ResourceBlockChoiceState;
 	byte scene1020ResourceBlockVariantState;
