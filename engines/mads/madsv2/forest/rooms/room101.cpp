@@ -44,18 +44,17 @@ namespace Forest {
 namespace Rooms {
 
 struct Scratch {
-	// Tentative field definitions
-	int16 sprite[10];       // Offset 00h
-	int16 sequence[10];     // Offset 14h
-	int16 animation[11];	// Offset 28h
-	AnimationInfo animation_info[11];	// Offset 3eh
-	int16 _96;				// Offset 96h
-	int16 _98;				// Offset 98h
-	int16 _9a;				// Offset 9ah
-	int16 _9c;				// Offset 9ch
-	int16 _9e;				// Offset 9eh
-	int16 _a0;				// Offset a0h
-	int16 _a2;				// Offset a2h
+	int16 sprite[10];
+	int16 sequence[10];
+	int16 animation[11];
+	AnimationInfo animation_info[11];
+	int16 _96;
+	int16 _98;
+	int16 _9a;
+	int16 _9c;
+	int16 _9e;
+	int16 _a0;
+	int16 _a2;
 	int16 _edgar;
 	int16 _russell;
 	int16 _a8;

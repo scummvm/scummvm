@@ -43,22 +43,22 @@ namespace Forest {
 namespace Rooms {
 
 struct Scratch {
-	int16 sprite[10];                  // 0x00
-	int16 sequence[10];                // 0x14
-	int16 animation[10];               // 0x28
-	AnimationInfo animation_info[10];  // 0x3C (80 bytes, ends at 0x8B)
-	int16 _8c;                         // 0x8C
-	int16 _8e;                         // 0x8E
-	int16 _90;                         // 0x90
-	int16 _92;                         // 0x92 — hotspot ID for incoming transition
-	int16 _94;                         // 0x94
-	int16 _96;                         // 0x96
-	int16 _98;                         // 0x98 — room state / variant index
-	int16 _9a;                         // 0x9A — background anim handle (e-series)
-	int16 _9c;                         // 0x9C — background anim handle (r-series)
-	int16 _9e;                         // 0x9E
-	int16 _a0;                         // 0xA0
-	int16 _a2;                         // 0xA2
+	int16 sprite[10];
+	int16 sequence[10];
+	int16 animation[10];
+	AnimationInfo animation_info[10];
+	int16 _8c;
+	int16 _8e;
+	int16 _90;
+	int16 _92;
+	int16 _94;
+	int16 _96;
+	int16 _98;
+	int16 _9a;
+	int16 _9c;
+	int16 _9e;
+	int16 _a0;
+	int16 _a2;
 };
 
 static Scratch scratch;

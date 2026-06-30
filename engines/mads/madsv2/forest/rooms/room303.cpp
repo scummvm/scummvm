@@ -46,10 +46,7 @@ struct Scratch {
 	int16 animation[10];
 	AnimationInfo animation_info[10];
 	int16 _8c, _8e, _90, _92, _94, _96, _98, _9a, _9c, _9e, _a0, _a2;
-	int16 _a4;  // scratch+0xA4
-	int16 _a6;  // scratch+0xA6
-	int16 _a8;  // scratch+0xA8
-	int16 _aa;  // scratch+0xAA
+	int16 _a4, _a6, _a8, _aa;
 };
 
 static Scratch scratch;

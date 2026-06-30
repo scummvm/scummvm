@@ -39,17 +39,17 @@ namespace Forest {
 namespace Rooms {
 
 struct Scratch {
-	int16 sprite[10];           /* 0x00 — sprite series handles */
-	int16 sequence[10];         /* 0x14 — sequence handles      */
-	int16 animation[10];        /* 0x28 — animation handles     */
-	AnimationInfo animation_info[10]; /* 0x3C                   */
-	int16 _8c;                  /* 0x8C                         */
-	int16 _8e;                  /* 0x8E — digi-play phase check */
-	int16 _90;                  /* 0x90 — volume/replay flag    */
-	int16 _92;                  /* 0x92 — timing accumulator    */
-	int16 _94;                  /* 0x94 — sequence table index  */
-	int16 _96;                  /* 0x96 — active flag           */
-	int16 _98;                  /* 0x98 — room mode (669/670)   */
+	int16 sprite[10];
+	int16 sequence[10];
+	int16 animation[10];
+	AnimationInfo animation_info[10];
+	int16 _8c;
+	int16 _8e;
+	int16 _90;
+	int16 _92;
+	int16 _94;
+	int16 _96;
+	int16 _98;
 };
 
 static Scratch scratch;

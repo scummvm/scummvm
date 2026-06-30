@@ -44,27 +44,27 @@ namespace Forest {
 namespace Rooms {
 
 struct Scratch {
-	int16 sprite[10];            // 0x00–0x13
-	int16 sequence[10];          // 0x14–0x27
-	int16 animation[10];         // 0x28–0x3B
-	AnimationInfo animation_info[10]; // 0x3C–0x8B
-	int16 _pad8C[3];             // 0x8C–0x91
-	int16 _92;                   // 0x92
-	int16 _pad94;                // 0x94
-	int16 _96;                   // 0x96
-	int16 _pad98;                // 0x98
-	int16 _9a;                   // 0x9A
-	int16 _9c;                   // 0x9C
-	int16 _9e;                   // 0x9E
-	int16 _a0;                   // 0xA0
-	int16 _a2;                   // 0xA2
-	int16 _a4;                   // 0xA4
-	int16 _a6;                   // 0xA6
-	int16 _a8;                   // 0xA8
-	int16 _aa;                   // 0xAA
-	int16 _ac;                   // 0xAC
-	int16 _ae;                   // 0xAE
-	int16 _b0;                   // 0xB0
+	int16 sprite[10];
+	int16 sequence[10];
+	int16 animation[10];
+	AnimationInfo animation_info[10];
+	int16 _pad8C[3];
+	int16 _92;
+	int16 _pad94;
+	int16 _96;
+	int16 _pad98;
+	int16 _9a;
+	int16 _9c;
+	int16 _9e;
+	int16 _a0;
+	int16 _a2;
+	int16 _a4;
+	int16 _a6;
+	int16 _a8;
+	int16 _aa;
+	int16 _ac;
+	int16 _ae;
+	int16 _b0;
 };
 
 static Scratch scratch;

@@ -44,9 +44,9 @@ namespace Forest {
 namespace Rooms {
 
 struct Scratch {
-	int16 sprite[10];       /* Sprite series handles */
-	int16 sequence[10];     /* Sequence handles      */
-	int16 animation[10];    /* Animation handles     */
+	int16 sprite[10];
+	int16 sequence[10];
+	int16 animation[10];
 	AnimationInfo animation_info[10];
 
 	int16 _8c;

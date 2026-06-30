@@ -44,10 +44,10 @@ namespace Forest {
 namespace Rooms {
 
 struct Scratch {
-	int16 sprite[10];            /* 0x00 — sprite series handles  */
-	int16 sequence[10];          /* 0x14 — sequence handles       */
-	int16 animation[10];         /* 0x28 — animation handles      */
-	AnimationInfo animation_info[10]; /* 0x3C */
+	int16 sprite[10];
+	int16 sequence[10];
+	int16 animation[10];
+	AnimationInfo animation_info[10];
 	int16 _8c;
 	int16 _8e;
 	int16 _90;
@@ -63,9 +63,9 @@ struct Scratch {
 	int16 _a4;
 	int16 _a6;
 	int16 _a8;
-	int16 _aa;                   /* 0xAA — initialised to 0      */
+	int16 _aa;
 	int16 _ac;
-	int16 _ae;                   /* 0xAE — initialised to -1     */
+	int16 _ae;
 };
 
 static Scratch scratch;
