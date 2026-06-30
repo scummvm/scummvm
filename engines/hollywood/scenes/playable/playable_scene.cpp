@@ -1780,6 +1780,16 @@ void PlayableScene::setPrimarySpeechAnimationFrame(byte animationGroup, byte fra
 	(void)frameIndex;
 }
 
+void PlayableScene::primarySpeechAnimationStarted(byte animationGroup, byte baseFrame) {
+	(void)animationGroup;
+	(void)baseFrame;
+}
+
+void PlayableScene::primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) {
+	(void)animationGroup;
+	(void)baseFrame;
+}
+
 bool PlayableScene::waitSceneMillis(uint32 millis) {
 	uint32 remaining = millis;
 	while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
@@ -2098,6 +2108,7 @@ void PlayableScene::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, by
 		if (animationGroup != kInvalidPrimarySpeechAnimationGroup) {
 			const byte baseFrame = primarySpeechAnimationBaseFrame(animationGroup);
 			_speechController.startPrimaryDialogueSpeech(animationGroup, baseFrame);
+			primarySpeechAnimationStarted(animationGroup, baseFrame);
 			setPrimarySpeechAnimationFrame(animationGroup, baseFrame);
 		}
 		const bool interrupted = waitForSpeechOrDelay(duration, animatePrimaryLeft);
@@ -2105,14 +2116,21 @@ void PlayableScene::runSpeechCue(SpeechOverlay &overlay, uint16 textRecordId, by
 			_speechController.stopPrimaryLeftSpeech();
 			setPrimaryLeftSpeechFrame(0);
 		}
+		bool restoredPrimarySpeechAnimation = false;
+		byte restoredPrimarySpeechAnimationGroup = 0;
+		byte restoredPrimarySpeechBaseFrame = 0;
 		if (_primaryDialogueSpeechActive) {
-			setPrimarySpeechAnimationFrame(_primaryDialogueSpeechGroup,
-				primarySpeechAnimationBaseFrame(_primaryDialogueSpeechGroup));
+			restoredPrimarySpeechAnimation = true;
+			restoredPrimarySpeechAnimationGroup = _primaryDialogueSpeechGroup;
+			restoredPrimarySpeechBaseFrame = primarySpeechAnimationBaseFrame(_primaryDialogueSpeechGroup);
+			setPrimarySpeechAnimationFrame(restoredPrimarySpeechAnimationGroup, restoredPrimarySpeechBaseFrame);
 			_speechController.stopPrimaryDialogueSpeech(kInvalidPrimarySpeechAnimationGroup, 7);
 		}
 		_speech.stop();
 		overlay.visible = false;
 		overlay.lines.clear();
+		if (restoredPrimarySpeechAnimation)
+			primarySpeechAnimationRestored(restoredPrimarySpeechAnimationGroup, restoredPrimarySpeechBaseFrame);
 		if (interrupted)
 			break;
 	}

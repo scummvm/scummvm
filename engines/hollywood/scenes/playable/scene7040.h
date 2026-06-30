@@ -64,12 +64,17 @@ private:
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
+	void primarySpeechAnimationStarted(byte animationGroup, byte baseFrame) override;
+	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
 
 	void runJosephGuestListGreeting();
 	void waitPreItemIdleSequence();
 	bool shouldStopJosephGuestListGreeting();
 	void advanceChunk11PreItemIdleAnimation(uint32 delta);
+	void advanceJosephIdleAnimationTick();
 	void advanceChunk16PostItemAnimation(uint32 delta);
+	void advancePrimaryDialogueSpeechFrame(uint32 delta);
+	byte pickPrimarySpeechFrameExcluding(byte frameCount, byte previousFrame);
 	void handleActionSlot00ReturnToG03();
 	void handleActionSlot01ProgressSpeech();
 	void handleActionSlot02MajorHotspotAction();
@@ -100,6 +105,8 @@ private:
 	bool _chunk12OverlayVisible;
 	bool _chunk14ActionVisible;
 	bool _chunk14AltVisible;
+	byte _primarySpeechLeadInTicks;
+	byte _primarySpeechLastMouthFrameOffset;
 	RandomIdleAnimation _preItemIdleAnimation;
 	TimedAnimationChannel _postItemAnimation;
 	TimedAnimationChannel _chunk17Animation;
