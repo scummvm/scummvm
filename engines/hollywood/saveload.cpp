@@ -196,6 +196,23 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene6010Item58Taken);
 	syncStateBool(s, state.scene6020TaffyKnown);
 	syncStateBool(s, state.scene6020TaffyLeft);
+	s.syncAsByte(state.scene4010AlternateBackgroundState);
+	syncStateBool(s, state.scene4010FirstEntryConversationSeen);
+	s.syncAsByte(state.scene4010EntryPathSpeechState);
+	s.syncAsByte(state.scene4010ProgressiveExitSpeechState);
+	s.syncAsByte(state.scene4010Item3APickupState);
+	s.syncAsByte(state.scene4010Item3BPickupState);
+	syncStateBool(s, state.scene4010DestinationUnlocked);
+	syncStateBool(s, state.seenScene5010EntryLine);
+	s.syncAsByte(state.scene5010MineTransportState);
+	syncStateBool(s, state.scene5010MineTransportReady);
+	syncStateBool(s, state.scene5010SwitchPanelSeen);
+	s.syncAsByte(state.scene5010SwitchRow);
+	s.syncAsByte(state.scene5010SwitchColumn);
+	syncStateBool(s, state.scene5010MineCartDeparted);
+	syncStateBool(s, state.scene5010DestinationTableInitialized);
+	syncUint16Table(s, state.scene5010DestinationStateBySwitchSlot,
+		ARRAYSIZE(state.scene5010DestinationStateBySwitchSlot));
 	syncStateBool(s, state.reviewedFrankensteinNote);
 	s.syncAsByte(state.frankensteinNoteOverlayMode);
 	s.syncAsByte(state.hannoverCourtyardDialogueState);
@@ -324,6 +341,31 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene1080FrancoisState = 0;
 	if (state.scene1090WrappedBrainState > 2)
 		state.scene1090WrappedBrainState = 0;
+	if (state.scene4010AlternateBackgroundState > 1)
+		state.scene4010AlternateBackgroundState = 0;
+	if (state.scene4010EntryPathSpeechState > 2)
+		state.scene4010EntryPathSpeechState = 0;
+	if (state.scene4010ProgressiveExitSpeechState > 3)
+		state.scene4010ProgressiveExitSpeechState = 0;
+	if (state.scene4010Item3APickupState > 3)
+		state.scene4010Item3APickupState = 0;
+	if (state.scene4010Item3BPickupState > 2)
+		state.scene4010Item3BPickupState = 0;
+	if (state.scene5010MineTransportState > 4)
+		state.scene5010MineTransportState = 0;
+	if (state.scene5010SwitchRow > 2)
+		state.scene5010SwitchRow = 0;
+	if (state.scene5010SwitchColumn > 2)
+		state.scene5010SwitchColumn = 0;
+	for (uint slot = 0; slot < ARRAYSIZE(state.scene5010DestinationStateBySwitchSlot); ++slot) {
+		const uint16 destination = state.scene5010DestinationStateBySwitchSlot[slot];
+		if (destination == 0)
+			continue;
+		if (destination < 5020 || destination > 5100 || destination % 10 != 0) {
+			state.scene5010DestinationStateBySwitchSlot[slot] = 0;
+			state.scene5010DestinationTableInitialized = false;
+		}
+	}
 	if (state.scene6010DoorActionState > 3)
 		state.scene6010DoorActionState = 0;
 }
