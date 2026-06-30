@@ -868,7 +868,7 @@ bool VQADecoder::VQAVideoTrack::readCBFZ(Common::SeekableReadStream *s, uint32 s
 		uint16 *block_src = (uint16 *)codebookInfo.data;
 		uint8 *mask_src = (uint8 *)codebookInfo.data + (bpp * _maxBlocks * _blockW * _blockH);
 
-		for (uint x = 0; x < _maxBlocks * _blockW * _blockH; ++x) {
+		for (uint x = 0; x < static_cast<uint>(_maxBlocks * _blockW * _blockH); ++x) {
 #ifdef SCUMM_BIG_ENDIAN
 			// Swap bytes to big endian as the source is little endian
 			block_src[x] = SWAP_BYTES_16(block_src[x]);
