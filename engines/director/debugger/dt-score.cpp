@@ -974,13 +974,20 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 				case kChScript: // open script in script editor
 					if (mc.actionId.member) {
 						ScriptContext *ctx = getScriptContext(mc.actionId);
-						if (!ctx)
-							break;
-						for (auto &handler : ctx->_functionHandlers) {
-							ImGuiScript script = toImGuiScript(kScoreScript, mc.actionId, handler._key);
-							script.byteOffsets = ctx->_functionByteOffsets[script.handlerId];
+						if (ctx) {
+							for (auto &handler : ctx->_functionHandlers) {
+								ImGuiScript script = toImGuiScript(kScoreScript, mc.actionId, handler._key);
+								script.byteOffsets = ctx->_functionByteOffsets[script.handlerId];
+								script.moviePath = g_director->getCurrentMovie()->getArchive()->getPathName().toString();
+								script.handlerName = formatHandlerName(ctx->_scriptId, mc.actionId.member, handler._key, kScoreScript, false);
+								addToOpenHandlers(script);
+							}
+						} else {
+							ImGuiScript script;
+							script.id = mc.actionId;
+							script.type = kScoreScript;
 							script.moviePath = g_director->getCurrentMovie()->getArchive()->getPathName().toString();
-							script.handlerName = formatHandlerName(ctx->_scriptId, mc.actionId.member, handler._key, kScoreScript, false);
+							script.handlerName = Common::String::format("Cast %d (source)", mc.actionId.member);
 							addToOpenHandlers(script);
 						}
 					}

@@ -42,8 +42,11 @@ static void renderScript(ImGuiScript &script, bool showByteCode, bool scrollTo) 
 		return;
 	}
 
-	if (!script.root)
+	if (!script.root) {
+		if (!script.rawText.empty())
+			ImGui::TextUnformatted(script.rawText.c_str());
 		return;
+	}
 
 	renderScriptAST(script, showByteCode, scrollTo);
 }
@@ -206,8 +209,10 @@ void showScriptsWindow() {
 
 	if (ImGui::Begin("Scripts", &_state->_w.scripts)) {
 		ScriptContext *ctx = getScriptContext(data._scripts[data._current].id);
+
 		if (ctx)
 			ImGui::Text("%s", ctx->asString().c_str());
+
 
 		if (renderScriptNavBar(data)) {
 			ImGui::Separator();

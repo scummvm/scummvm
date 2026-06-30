@@ -75,6 +75,7 @@ typedef struct ImGuiScript {
 	Common::Array<LingoDec::Bytecode> bytecodeArray;
 	Common::Array<uint> startOffsets;
 	Common::SharedPtr<Node> oldAst;
+	Common::String rawText;
 
 	bool operator==(const ImGuiScript &c) const {
 		return moviePath == c.moviePath && score == c.score && id == c.id && handlerId == c.handlerId;

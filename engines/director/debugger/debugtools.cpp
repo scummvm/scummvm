@@ -62,7 +62,7 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 			continue;
 
 		for (const LingoDec::Handler &handler : p.second->handlers) {
-			if (handler.name == handlerId) {
+			if (handler.name == handlerId || (handler.isGenericEvent && handlerId == "scummvm_generic")) {
 				return &handler;
 			}
 		}
@@ -533,6 +533,21 @@ ImVec4 convertColor(uint32 color) {
 }
 
 void addToOpenHandlers(ImGuiScript handler) {
+	// If no decompiled AST is available, fall back to the source text from CastMemberInfo.
+	if (!handler.root && !handler.oldAst && handler.rawText.empty()) {
+		Movie *movie = g_director->getCurrentMovie();
+		if (movie) {
+			CastMember *member = movie->getCastMember(handler.id);
+			if (member) {
+				const CastMemberInfo *info = member->getInfo();
+				if (info && !info->script.empty()) {
+					handler.rawText = info->script;
+					handler.rawText.replace('\r', '\n');
+				}
+			}
+		}
+	}
+
 	ScriptData &data = _state->_openScripts;
 	_state->_w.scripts = true;  // always (re)open the window
 	// Truncate forward history when navigating to a new script
