@@ -509,6 +509,16 @@ void PlaySecondaryMovie::execute() {
 			_isFinished = false;
 			_decoder->seek(0);
 			_decoder->pauseVideo(false);
+		} else if (_playerCursorAllowed == kNoPlayerCursorAllowed) {
+			// The movie finished and isn't looping, so restore the cursor now.
+			// WORKAROUND: Don't restore the cursor for Nancy 8, scenes 5420 - 5422
+			// (confrontation with the culprit). For some reason, the original engine
+			// doesn't restore the cursor in this scene - restoring it allows the user
+			// to examine items and break the scene itself.
+			// Refer to bug #16728 for more details
+			const uint16 sceneId = NancySceneState.getSceneInfo().sceneID;
+			if (!(g_nancy->getGameType() == kGameTypeNancy8 && (sceneId >= 5420 && sceneId <= 5422)))
+				g_nancy->setMouseEnabled(true);
 		}
 
 		break;
