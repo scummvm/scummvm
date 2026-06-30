@@ -451,6 +451,10 @@ protected:
 	virtual byte primarySpeechAnimationBaseFrame(byte animationGroup) const;
 	// Updates a primary dialogue animation group frame.
 	virtual void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex);
+	// Notifies scenes that a primary dialogue animation started.
+	virtual void primarySpeechAnimationStarted(byte animationGroup, byte baseFrame);
+	// Notifies scenes after a primary dialogue animation returns to its base frame.
+	virtual void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame);
 
 	// Timing
 	// Waits while pumping events and redrawing scene frames.

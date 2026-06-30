@@ -78,6 +78,21 @@ const uint16 kScene7040DialoguePrimaryTopY = 0x73;
 const byte kScene7040DialoguePrimaryRed = 0x3f;
 const byte kScene7040DialoguePrimaryGreen = 0x32;
 const byte kScene7040DialoguePrimaryBlue = 0x0c;
+const byte kScene7040JosephNormalSpeechGroup = 0;
+const byte kScene7040JosephRevealSpeechGroupA = 1;
+const byte kScene7040JosephRevealSpeechGroupB = 2;
+const byte kScene7040ActionSpeechGroupA = 3;
+const byte kScene7040ActionSpeechGroupB = 4;
+const byte kScene7040FrankieSpeechGroupA = 5;
+const byte kScene7040FrankieSpeechGroupB = 6;
+const byte kScene7040PrimarySpeechFrameCount = 5;
+const byte kScene7040JosephNormalSpeechBaseFrame = 7;
+const byte kScene7040JosephRevealSpeechBaseFrameA = 0x12;
+const byte kScene7040JosephRevealSpeechBaseFrameB = 0x1a;
+const byte kScene7040ActionSpeechBaseFrameA = 0x11;
+const byte kScene7040ActionSpeechBaseFrameB = 0x6b;
+const byte kScene7040FrankieSpeechBaseFrameA = 0x14;
+const byte kScene7040FrankieSpeechBaseFrameB = 0x1c;
 const uint kScene7040DialogueChoiceRecordCount = 10 * 10 * 7;
 const byte kScene7040Chunk11FrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 1, 28, 29, 30, 0, 7, 8, 9, 10,
@@ -126,7 +141,9 @@ Scene7040::Scene7040(HollywoodEngine *vm) :
 		_postItemIdleState(0),
 		_chunk12OverlayVisible(false),
 		_chunk14ActionVisible(false),
-		_chunk14AltVisible(false) {
+		_chunk14AltVisible(false),
+		_primarySpeechLeadInTicks(0),
+		_primarySpeechLastMouthFrameOffset(0) {
 	_preItemIdleAnimation.configure(kScene7040Chunk11FrameMillis, 0, 1, 0, 6, 0x0e, 0x31);
 	_postItemAnimation.reset(1, kScene7040Chunk16FrameMillis);
 	_chunk17Animation.reset(0, kScene7040Chunk17FrameMillis);
@@ -202,6 +219,8 @@ void Scene7040::initializeCustomPreviewState() {
 	_chunk12OverlayVisible = false;
 	_chunk14ActionVisible = false;
 	_chunk14AltVisible = false;
+	_primarySpeechLeadInTicks = 0;
+	_primarySpeechLastMouthFrameOffset = 0;
 	_hideActiveActor = false;
 	_primaryLeftSpeechActive = false;
 	_primaryDialogueSpeechActive = false;
@@ -337,7 +356,7 @@ void Scene7040::runJosephGuestListGreeting() {
 }
 
 void Scene7040::waitPreItemIdleSequence() {
-	for (uint step = 0; _preItemIdleAnimation.state != 0 && step < 8 && !Engine::shouldQuit(); ++step) {
+	while (_preItemIdleAnimation.state != 0 && _preItemIdleAnimation.state != 3 && !Engine::shouldQuit()) {
 		if (waitSceneMillis(kScene7040Chunk11FrameMillis))
 			break;
 	}
@@ -454,33 +473,34 @@ bool Scene7040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 byte Scene7040::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	switch (animationGroup) {
-	case 1:
-		return 0x12;
-	case 2:
-		return 0x1a;
-	case 3:
-		return 0x11;
-	case 4:
-		return 0x6b;
-	case 5:
-		return 0x14;
-	case 6:
-		return 0x1c;
+	case kScene7040JosephRevealSpeechGroupA:
+		return kScene7040JosephRevealSpeechBaseFrameA;
+	case kScene7040JosephRevealSpeechGroupB:
+		return kScene7040JosephRevealSpeechBaseFrameB;
+	case kScene7040ActionSpeechGroupA:
+		return kScene7040ActionSpeechBaseFrameA;
+	case kScene7040ActionSpeechGroupB:
+		return kScene7040ActionSpeechBaseFrameB;
+	case kScene7040FrankieSpeechGroupA:
+		return kScene7040FrankieSpeechBaseFrameA;
+	case kScene7040FrankieSpeechGroupB:
+		return kScene7040FrankieSpeechBaseFrameB;
 	default:
-		return 7;
+		return kScene7040JosephNormalSpeechBaseFrame;
 	}
 }
 
 void Scene7040::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	switch (animationGroup) {
-	case 3:
-	case 4:
+	case kScene7040ActionSpeechGroupA:
+	case kScene7040ActionSpeechGroupB:
 		_chunk14ActionVisible = true;
 		_chunk14ActionFrameIndex = frameIndex;
 		break;
-	case 5:
-	case 6:
+	case kScene7040FrankieSpeechGroupA:
+	case kScene7040FrankieSpeechGroupB:
 		_chunk14AltVisible = true;
+		_chunk14AltChunkIndex = 15;
 		_chunk14AltFrameIndex = frameIndex;
 		break;
 	default:
@@ -489,8 +509,83 @@ void Scene7040::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 	}
 }
 
+void Scene7040::primarySpeechAnimationStarted(byte animationGroup, byte baseFrame) {
+	(void)animationGroup;
+	(void)baseFrame;
+
+	_primarySpeechLeadInTicks = 0;
+}
+
+void Scene7040::primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) {
+	(void)animationGroup;
+	(void)baseFrame;
+
+	if (Engine::shouldQuit() || _vm->isSceneRestartRequested())
+		return;
+
+	drawPlayableComposite();
+	presentFrame();
+}
+
 void Scene7040::advanceChunk11PreItemIdleAnimation(uint32 delta) {
-	_preItemIdleAnimation.advance(_random, delta);
+	const uint frameCount = _preItemIdleAnimation.channel.consumeFrames(delta);
+	for (uint frame = 0; frame < frameCount; ++frame)
+		advanceJosephIdleAnimationTick();
+}
+
+void Scene7040::advanceJosephIdleAnimationTick() {
+	switch (_preItemIdleAnimation.state) {
+	case 0:
+		if (_random.getRandomNumber(0x31) == 0) {
+			_preItemIdleAnimation.state = 2;
+		} else if (_random.getRandomNumber(0x0e) == 0) {
+			_preItemIdleAnimation.setStateAndFrame(1, 1);
+		}
+		break;
+	case 1:
+		_preItemIdleAnimation.reset();
+		break;
+	case 2:
+		if (_preItemIdleAnimation.channel.frameIndex == 6)
+			_preItemIdleAnimation.reset();
+		else
+			_preItemIdleAnimation.setFrame(_preItemIdleAnimation.channel.frameIndex + 1);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene7040::advancePrimaryDialogueSpeechFrame(uint32 delta) {
+	_primaryDialogueSpeechTimerAccumulator += delta;
+	while (_primaryDialogueSpeechTimerAccumulator >= kScene7040Chunk14FrameMillis) {
+		_primaryDialogueSpeechTimerAccumulator -= kScene7040Chunk14FrameMillis;
+		if (_primarySpeechLeadInTicks < 3) {
+			++_primarySpeechLeadInTicks;
+			continue;
+		}
+
+		const byte baseFrame = primarySpeechAnimationBaseFrame(_primaryDialogueSpeechGroup);
+		const byte nextFrame = (byte)(baseFrame +
+			pickPrimarySpeechFrameExcluding(kScene7040PrimarySpeechFrameCount, _primarySpeechLastMouthFrameOffset));
+		_primarySpeechLastMouthFrameOffset = (byte)(nextFrame - baseFrame);
+		_primaryDialogueSpeechLastFrame = nextFrame;
+		setPrimarySpeechAnimationFrame(_primaryDialogueSpeechGroup, nextFrame);
+	}
+}
+
+byte Scene7040::pickPrimarySpeechFrameExcluding(byte frameCount, byte previousFrame) {
+	if (frameCount <= 1)
+		return 0;
+
+	byte nextFrame = previousFrame;
+	for (uint attempt = 0; attempt < 8 && nextFrame == previousFrame; ++attempt)
+		nextFrame = (byte)_random.getRandomNumber(frameCount - 1);
+
+	if (nextFrame == previousFrame)
+		nextFrame = (byte)((previousFrame + 1) % frameCount);
+
+	return nextFrame;
 }
 
 void Scene7040::advanceChunk16PostItemAnimation(uint32 delta) {
@@ -832,13 +927,16 @@ void Scene7040::runMajorHotspotFrankensteinBranch() {
 	_chunk14AltVisible = false;
 
 	runChunk14ActionRange(0, 0x10);
-	beginPrimarySpeechLineWithAnimationGroup(3, 0, 0x154, 0x5f, 0x20, 0, 0x3f, 3);
-	beginPrimarySpeechLineWithAnimationGroup(3, 1, 0x1c2, 0x73, 0x3f, 0x32, 0x0c, 0);
+	beginPrimarySpeechLineWithAnimationGroup(3, 0, 0x154, 0x5f, 0x20, 0, 0x3f,
+		kScene7040ActionSpeechGroupA);
+	beginPrimarySpeechLineWithAnimationGroup(3, 1, 0x1c2, 0x73, 0x3f, 0x32, 0x0c,
+		kScene7040JosephNormalSpeechGroup);
 	runChunk14ActionRange(0x15, 0x61);
 	_vm->gameState().officeNotePickupState = 1;
 	applySceneStateToHotspotsAndPatches(3);
 	runChunk14ActionRange(0x61, 0x6b);
-	beginPrimarySpeechLineWithAnimationGroup(3, 2, 0x16d, 0x69, 0x20, 0, 0x3f, 4);
+	beginPrimarySpeechLineWithAnimationGroup(3, 2, 0x16d, 0x69, 0x20, 0, 0x3f,
+		kScene7040ActionSpeechGroupB);
 	runChunk14ActionRange(0x6f, 0x7c);
 	_chunk14ActionVisible = false;
 	_chunk12OverlayVisible = false;
@@ -846,23 +944,30 @@ void Scene7040::runMajorHotspotFrankensteinBranch() {
 
 	_chunk14AltChunkIndex = 15;
 	runChunk11Range(0x0b, 0x12);
-	beginPrimarySpeechLineWithAnimationGroup(3, 3, 0x1a9, 0x82, 0x3f, 0x32, 0x0c, 1);
+	beginPrimarySpeechLineWithAnimationGroup(3, 3, 0x1a9, 0x82, 0x3f, 0x32, 0x0c,
+		kScene7040JosephRevealSpeechGroupA);
 	_chunk14AltVisible = true;
 	runChunk14AltRange(15, 0, 0x14);
-	beginPrimarySpeechLineWithAnimationGroup(3, 4, 0x136, 0x6e, 0x0a, 0x3f, 0, 5);
+	beginPrimarySpeechLineWithAnimationGroup(3, 4, 0x136, 0x6e, 0x0a, 0x3f, 0,
+		kScene7040FrankieSpeechGroupA);
 	runChunk11Range(0x16, 0x1a);
-	beginPrimarySpeechLineWithAnimationGroup(3, 5, 0x1a9, 0x82, 0x3f, 0x32, 0x0c, 2);
+	beginPrimarySpeechLineWithAnimationGroup(3, 5, 0x1a9, 0x82, 0x3f, 0x32, 0x0c,
+		kScene7040JosephRevealSpeechGroupB);
 	runChunk11Range(0x1e, 0x21);
 	runChunk14AltRange(15, 0x18, 0x1c);
-	beginPrimarySpeechLineWithAnimationGroup(3, 6, 0x14f, 0x73, 0x0a, 0x3f, 0, 6);
+	beginPrimarySpeechLineWithAnimationGroup(3, 6, 0x14f, 0x73, 0x0a, 0x3f, 0,
+		kScene7040FrankieSpeechGroupB);
 	runChunk14AltRange(15, 0x20, 0x25);
-	beginPrimarySpeechLineWithAnimationGroup(3, 7, 0x1c2, 0x73, 0x3f, 0x32, 0x0c, 0);
+	beginPrimarySpeechLineWithAnimationGroup(3, 7, 0x1c2, 0x73, 0x3f, 0x32, 0x0c,
+		kScene7040JosephNormalSpeechGroup);
 	runChunk14AltRange(15, 0x18, 0x1c);
-	beginPrimarySpeechLineWithAnimationGroup(3, 8, 0x14f, 0x73, 0x0a, 0x3f, 0, 6);
+	beginPrimarySpeechLineWithAnimationGroup(3, 8, 0x14f, 0x73, 0x0a, 0x3f, 0,
+		kScene7040FrankieSpeechGroupB);
 	runChunk14AltRange(15, 0x25, 0x3f);
 	_chunk14AltVisible = false;
 	_chunk14AltChunkIndex = previousAltChunkIndex;
-	beginPrimarySpeechLineWithAnimationGroup(3, 9, 0x1c2, 0x73, 0x3f, 0x32, 0x0c, 0);
+	beginPrimarySpeechLineWithAnimationGroup(3, 9, 0x1c2, 0x73, 0x3f, 0x32, 0x0c,
+		kScene7040JosephNormalSpeechGroup);
 
 	_preItemIdleAnimation.setFrame(0);
 	_chunk14ActionVisible = false;
