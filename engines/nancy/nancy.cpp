@@ -258,7 +258,7 @@ const Common::String NancyEngine::getEventFlagName(uint flagID) const {
 	if (flagID >= 2000) {
 		flagID -= 2000;
 
-		const Common::Array<Common::String> &flagNames = ((EVNT *)getEngineData("EVNT"))->eventFlagNames;
+		const Common::Array<Common::String> &flagNames = dynamic_cast<const EVNT *>(getEngineData("EVNT"))->eventFlagNames;
 		return (flagID < flagNames.size()) ? flagNames[flagID] : "";
 	}
 
