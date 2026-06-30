@@ -2062,7 +2062,8 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		// fallthrough
 	case 12:
 		if (castInfo.strings[12].len) {
-			Common::hexdump(castInfo.strings[12].data, castInfo.strings[12].len);
+			if (debugChannelSet(5, kDebugLoading))
+				Common::hexdump(castInfo.strings[12].data, castInfo.strings[12].len);
 			ci->xtraRect.top = READ_BE_INT32(castInfo.strings[12].data);
 			ci->xtraRect.left = READ_BE_INT32(castInfo.strings[12].data + 4);
 			ci->xtraRect.bottom = READ_BE_INT32(castInfo.strings[12].data + 8);
@@ -2080,7 +2081,8 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		// fallthrough
 	case 10:
 		if (castInfo.strings[10].len) {
-			Common::hexdump(castInfo.strings[10].data, castInfo.strings[10].len);
+			if (debugChannelSet(5, kDebugLoading))
+				Common::hexdump(castInfo.strings[10].data, castInfo.strings[10].len);
 			ci->xtraDisplayName = castInfo.strings[10].readString(false); // C string
 			dumpS = Common::String::format("xtraDisplayName: '%s', ", ci->xtraDisplayName.c_str()) + dumpS;
 		}

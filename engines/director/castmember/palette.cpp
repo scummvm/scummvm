@@ -30,7 +30,8 @@ namespace Director {
 
 PaletteCastMember::PaletteCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 	: CastMember(cast, castId, stream) {
-	stream.hexdump(stream.size());
+	if (debugChannelSet(5, kDebugLoading))
+		stream.hexdump(stream.size());
 	_type = kCastPalette;
 	_palette = nullptr;
 }

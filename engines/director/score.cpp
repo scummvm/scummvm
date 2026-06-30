@@ -425,6 +425,9 @@ bool Score::isWaitingForNextFrame() {
 		if (movieChannel->isActiveVideo() && movieChannel->_movieRate != 0.0 && !goingTo) {
 			keepWaiting = true;
 		} else {
+			debugC(5, kDebugEvents, "Score::isWaitingForNextFrame(): video-wait ch%d done: active=%d rate=%g goingTo=%d",
+				_waitForVideoChannel, movieChannel->isActiveVideo(),
+				movieChannel->_movieRate, goingTo ? 1 : 0);
 			_waitForVideoChannel = 0;
 		}
 	} else if (g_system->getMillis() < _nextFrameTime) {
@@ -2000,7 +2003,8 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version,
 
 				Common::MemoryReadStreamEndian *stream1 = getSpriteDetailsStream(i);
 				if (stream1) {
-					stream1->hexdump(stream1->size());
+					if (debugChannelSet(2, kDebugLoading))
+						stream1->hexdump(stream1->size());
 					delete stream1;
 				}
 			}
