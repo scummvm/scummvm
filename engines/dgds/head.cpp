@@ -432,7 +432,7 @@ bool Conversation::runScriptFrame(int16 frameNum) {
 	return _ttmScript->run(_ttmEnv, *seq);
 }
 
-void Conversation::checkAndRunScript() {
+void Conversation::checkAndRunScript(bool advanceTiming) {
 	if (!_ttmScript || _finished)
 		return;
 
@@ -445,13 +445,17 @@ void Conversation::checkAndRunScript() {
 		runScriptFrame(_tempFrameNum);
 	}
 	runScriptFrame(_ttmEnv._cdsFrame);
-	if (_ttmEnv._cdsDelay > 0) {
-		_nextExecMs = _thisFrameMs + _ttmEnv._cdsDelay;
-		debug(10, "CDS: This fame %d. Next frame will be on or after %d", _thisFrameMs, _nextExecMs);
-		_ttmEnv._cdsDelay = -1;
-	} else {
-		_nextExecMs = 0;
+	// Only update the next-frame time on an actual advance; the frame is re-drawn every game
+	// frame, so otherwise the delay would be reset each frame and never elapse.
+	if (advanceTiming) {
+		if (_ttmEnv._cdsDelay > 0) {
+			_nextExecMs = _thisFrameMs + _ttmEnv._cdsDelay;
+			debug(10, "CDS: This fame %d. Next frame will be on or after %d", _thisFrameMs, _nextExecMs);
+		} else {
+			_nextExecMs = 0;
+		}
 	}
+	_ttmEnv._cdsDelay = -1;
 }
 
 void Conversation::incrementFrame() {
@@ -531,10 +535,13 @@ void Conversation::runScriptStep() {
 		return;
 
 	_thisFrameMs = engine->getThisFrameMs();
-	if (!_nextExecMs || _nextExecMs <= _thisFrameMs) {
+	// Re-draw the current frame every game frame (the main loop clears the buffer each frame),
+	// but only advance the frame counter once its delay has elapsed - otherwise the actor
+	// flickers against the background between advances (bug #16583).
+	bool advance = (!_nextExecMs || _nextExecMs <= _thisFrameMs);
+	if (advance)
 		incrementFrame();
-		checkAndRunScript();
-	}
+	checkAndRunScript(advance);
 }
 
 
@@ -587,7 +594,7 @@ void Conversation::runScriptExclusive() {
 		if (!_nextExecMs || _nextExecMs <= _thisFrameMs) {
 			incrementFrame();
 
-			checkAndRunScript();
+			checkAndRunScript(true);
 
 			// Redraw active dialogs eg to make sure thought bubble dots are
 			// over the moving heads

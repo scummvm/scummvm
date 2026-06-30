@@ -169,7 +169,7 @@ private:
 	uint32 _nextExecMs;
 
 	bool runScriptFrame(int16 frameNum);
-	void checkAndRunScript();
+	void checkAndRunScript(bool advanceTiming);
 	void incrementFrame();
 	bool isScriptRunning();
 	void pumpMessages();
