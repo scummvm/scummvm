@@ -118,6 +118,13 @@ struct GameplayState {
 		seenScene1090EntryLine = false;
 		scene1090LightsOn = false;
 		scene1090WrappedBrainState = 0;
+		scene6010StudioEntryUnlocked = true;
+		scene6010Item59Visible = false;
+		scene6010DoorActionState = 0;
+		scene6010ExitOverlayPlayed = false;
+		scene6010EndgameTravelExitBlocked = false;
+		scene6011PendingItem69Visible = false;
+		scene6010Item58Taken = false;
 		reviewedFrankensteinNote = false;
 		frankensteinNoteOverlayMode = 0;
 		hannoverCourtyardDialogueState = 0;
@@ -610,6 +617,13 @@ struct GameplayState {
 	bool seenScene1090EntryLine;
 	bool scene1090LightsOn;
 	byte scene1090WrappedBrainState;
+	bool scene6010StudioEntryUnlocked;
+	bool scene6010Item59Visible;
+	byte scene6010DoorActionState;
+	bool scene6010ExitOverlayPlayed;
+	bool scene6010EndgameTravelExitBlocked;
+	bool scene6011PendingItem69Visible;
+	bool scene6010Item58Taken;
 	bool reviewedFrankensteinNote;
 	byte frankensteinNoteOverlayMode;
 	byte hannoverCourtyardDialogueState;
