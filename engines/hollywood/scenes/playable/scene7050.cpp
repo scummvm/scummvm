@@ -422,22 +422,17 @@ void Scene7050::beginCloakroomAttendantSpeechLine(byte frameIndex, bool alternat
 }
 
 void Scene7050::handleActionSlot01ReturnToG04() {
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayHideActiveActor;
-	runActionOverlay(8, kScene7050Chunk8DescriptorCount, kScene7050Chunk8ReturnFrameMap,
-		ARRAYSIZE(kScene7050Chunk8ReturnFrameMap), kScene7050FrameMillis, options);
+	runHiddenActorActionOverlay(8, kScene7050Chunk8DescriptorCount, kScene7050Chunk8ReturnFrameMap,
+		ARRAYSIZE(kScene7050Chunk8ReturnFrameMap), kScene7050FrameMillis);
 	_soundBank0.playSample(3, 100);
 	_vm->gameState().mainFlowStateId = kScene7050ReturnToG04State;
 }
 
 void Scene7050::handleActionSlot10PickupItem10() {
 	dispatchGenericSceneAction(19);
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayHideActiveActor;
-	options.hookFrame = 4;
-	options.hookId = kScene7050CloakroomRagPickupHook;
-	runActionOverlay(11, kScene7050Chunk11DescriptorCount, kScene7050Chunk11PickupItem10FrameMap,
-		ARRAYSIZE(kScene7050Chunk11PickupItem10FrameMap), kScene7050FrameMillis, options);
+	runConfiguredActionOverlay(11, kScene7050Chunk11DescriptorCount, kScene7050Chunk11PickupItem10FrameMap,
+		ARRAYSIZE(kScene7050Chunk11PickupItem10FrameMap), kScene7050FrameMillis,
+		kActionOverlayHideActiveActor, -1, 0, -1, 0, 100, 4, kScene7050CloakroomRagPickupHook);
 	addInventoryItem(0x10);
 	_soundBank0.playSample(1, 100);
 }

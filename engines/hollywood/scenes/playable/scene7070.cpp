@@ -302,17 +302,8 @@ AmbientAudioProfile Scene7070::ambientAudioProfile() const {
 
 void Scene7070::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame, int soundFrame, byte soundId) {
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayHideActiveActor;
-	if (statePatchFrame >= 0) {
-		options.statePatchFrame = statePatchFrame;
-		options.statePatchSelector = 2;
-	}
-	if (soundFrame >= 0) {
-		options.soundFrame = soundFrame;
-		options.soundId = soundId;
-	}
-	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, options);
+	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
+		kActionOverlayHideActiveActor, statePatchFrame, 2, soundFrame, soundId);
 }
 
 void Scene7070::handleBackToG06() {

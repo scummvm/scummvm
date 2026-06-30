@@ -702,12 +702,9 @@ void Scene1030::advanceSmallForegroundActor(uint32 delta) {
 
 void Scene1030::runPickupOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, int patchFrame, byte patchState) {
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayHideActiveActor;
-	options.hookFrame = patchFrame;
-	options.hookId = patchState;
-	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize,
-		kScene1030ForegroundFrameMillis, options);
+	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize,
+		kScene1030ForegroundFrameMillis, kActionOverlayHideActiveActor,
+		-1, 0, -1, 0, 100, patchFrame, patchState);
 }
 
 void Scene1030::handleSceneEventFlag0() {

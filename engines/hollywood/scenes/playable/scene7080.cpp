@@ -241,13 +241,9 @@ AmbientAudioProfile Scene7080::ambientAudioProfile() const {
 
 void Scene7080::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int statePatchFrame) {
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayHideActiveActor;
-	if (statePatchFrame >= 0) {
-		options.hookFrame = statePatchFrame;
-		options.hookId = kScene7080CrankPickupHook;
-	}
-	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, options);
+	const byte hookId = statePatchFrame >= 0 ? kScene7080CrankPickupHook : 0;
+	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
+		kActionOverlayHideActiveActor, -1, 0, -1, 0, 100, statePatchFrame, hookId);
 }
 
 void Scene7080::handleActionOverlayFrameHook(byte hookId, uint frame) {

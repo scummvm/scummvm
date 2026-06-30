@@ -376,12 +376,9 @@ void Scene1090::applyWrappedBrainPatch() {
 }
 
 void Scene1090::runSwitchAction() {
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayHideActiveActor;
-	options.hookFrame = 5;
-	options.hookId = kScene1090LightSwitchHook;
-	runActionOverlay(8, kScene1090SwitchDescriptorCount, kScene1090SwitchFrameMap,
-		ARRAYSIZE(kScene1090SwitchFrameMap), kScene1090FrameMillis, options);
+	runConfiguredActionOverlay(8, kScene1090SwitchDescriptorCount, kScene1090SwitchFrameMap,
+		ARRAYSIZE(kScene1090SwitchFrameMap), kScene1090FrameMillis,
+		kActionOverlayHideActiveActor, -1, 0, -1, 0, 100, 5, kScene1090LightSwitchHook);
 }
 
 void Scene1090::revealWrappedBrain() {
@@ -397,11 +394,9 @@ void Scene1090::takeWrappedBrain() {
 
 	if (state.scene1090WrappedBrainState == 0)
 		revealWrappedBrain();
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayHideActiveActor;
-	runActionOverlay(13, kScene1090WrappedBrainPickupDescriptorCount,
+	runHiddenActorActionOverlay(13, kScene1090WrappedBrainPickupDescriptorCount,
 		kScene1090WrappedBrainPickupFrameMap, ARRAYSIZE(kScene1090WrappedBrainPickupFrameMap),
-		kScene1090FrameMillis, options);
+		kScene1090FrameMillis);
 	state.scene1090WrappedBrainState = 2;
 	applySceneStateToHotspotsAndPatches(2);
 	addInventoryItem(0x25);

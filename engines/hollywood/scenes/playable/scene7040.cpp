@@ -592,25 +592,21 @@ void Scene7040::handleActionSlot02MajorHotspotAction() {
 
 	_chunk12OverlayVisible = true;
 	if (state.officeStatueActionProgress == 2) {
-		ActionOverlayOptions options;
-		options.actorVisibility = kActionOverlayShowActiveActor;
-		options.endFrame = 0x2d;
-		runActionOverlay(13, kScene7040Chunk13DescriptorCount, kScene7040MajorHotspotFrameMap,
-			ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis, options);
+		runConfiguredActionOverlay(13, kScene7040Chunk13DescriptorCount,
+			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap),
+			kScene7040Chunk14FrameMillis, kActionOverlayShowActiveActor,
+			-1, 0, -1, 0, 100, -1, 0, true, 0, 0x2d);
 		_soundBank0.playSample(0x15, 100);
 		runMajorHotspotFrankensteinBranch();
 		_chunk12OverlayVisible = true;
-		options.firstFrame = 0x35;
-		options.endFrame = ARRAYSIZE(kScene7040MajorHotspotFrameMap);
-		runActionOverlay(13, kScene7040Chunk13DescriptorCount, kScene7040MajorHotspotFrameMap,
-			ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis, options);
+		runConfiguredActionOverlay(13, kScene7040Chunk13DescriptorCount,
+			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap),
+			kScene7040Chunk14FrameMillis, kActionOverlayShowActiveActor,
+			-1, 0, -1, 0, 100, -1, 0, true, 0x35, ARRAYSIZE(kScene7040MajorHotspotFrameMap));
 	} else {
-		ActionOverlayOptions options;
-		options.actorVisibility = kActionOverlayShowActiveActor;
-		options.soundFrame = 0x2c;
-		options.soundId = 0x15;
-		runActionOverlay(13, kScene7040Chunk13DescriptorCount, kScene7040MajorHotspotFrameMap,
-			ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis, options);
+		runConfiguredActionOverlay(13, kScene7040Chunk13DescriptorCount,
+			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap),
+			kScene7040Chunk14FrameMillis, kActionOverlayShowActiveActor, -1, 0, 0x2c, 0x15);
 	}
 	_chunk12OverlayVisible = false;
 
@@ -644,10 +640,8 @@ void Scene7040::handleActionSlot05ExitProgressSpeech() {
 }
 
 void Scene7040::handleActionSlot06TransitionToG05() {
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayShowActiveActor;
-	runActionOverlay(10, kScene7040Chunk10DescriptorCount, kScene7040Chunk10ExitFrameMap,
-		ARRAYSIZE(kScene7040Chunk10ExitFrameMap), kScene7040Chunk14FrameMillis, options);
+	runVisibleActorActionOverlay(10, kScene7040Chunk10DescriptorCount, kScene7040Chunk10ExitFrameMap,
+		ARRAYSIZE(kScene7040Chunk10ExitFrameMap), kScene7040Chunk14FrameMillis);
 	_vm->gameState().openedOfficeClosetDoor = true;
 	_soundBank0.playSample(3, 100);
 	_vm->gameState().mainFlowStateId = kScene7040ExitState7050;
@@ -665,10 +659,8 @@ void Scene7040::handleActionSlot09PickupItem0FThenExit() {
 	}
 
 	beginSecondarySpeechLine(8, 1);
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayShowActiveActor;
-	runActionOverlay(18, kScene7040Chunk18DescriptorCount, kScene7040Chunk18PickupItem0FFrameMap,
-		ARRAYSIZE(kScene7040Chunk18PickupItem0FFrameMap), kScene7040Chunk14FrameMillis, options);
+	runVisibleActorActionOverlay(18, kScene7040Chunk18DescriptorCount, kScene7040Chunk18PickupItem0FFrameMap,
+		ARRAYSIZE(kScene7040Chunk18PickupItem0FFrameMap), kScene7040Chunk14FrameMillis);
 	addInventoryItem(0x0f);
 	_soundBank0.playSample(1, 100);
 	state.officeNotePickupState = 2;

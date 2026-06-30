@@ -609,13 +609,8 @@ void Scene1070::handleBallChainPickup() {
 
 void Scene1070::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame, byte patchSelector) {
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayHideActiveActor;
-	if (patchFrame >= 0) {
-		options.statePatchFrame = patchFrame;
-		options.statePatchSelector = patchSelector;
-	}
-	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, options);
+	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
+		kActionOverlayHideActiveActor, patchFrame, patchSelector);
 }
 
 } // End of namespace Hollywood
