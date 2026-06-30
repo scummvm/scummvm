@@ -143,7 +143,7 @@ Common::SeekableReadStreamEndian *Archive::getFirstResource(uint32 tag) {
 	return getResource(tag, getResourceIDList(tag)[0]);
 }
 
-Common::SeekableReadStreamEndian *Archive::getFirstResource(uint32 tag, uint16 parentId) {
+Common::SeekableReadStreamEndian *Archive::getFirstResource(uint32 tag, uint32 parentId) {
 	return getResource(tag, getResourceIDList(tag)[0]);
 }
 
@@ -1022,7 +1022,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 	return true;
 }
 
-void RIFXArchive::readCast(Common::SeekableReadStreamEndian &casStream, uint16 libResourceId) {
+void RIFXArchive::readCast(Common::SeekableReadStreamEndian &casStream, uint32 libResourceId) {
 	int castTag = MKTAG('C', 'A', 'S', 't');
 
 	uint casSize = casStream.size() / 4;
@@ -1100,7 +1100,7 @@ Common::SeekableReadStreamEndian *RIFXArchive::getFirstResource(uint32 tag, bool
 	return getResource(tag, getResourceIDList(tag)[0], fileEndianness);
 }
 
-Common::SeekableReadStreamEndian *RIFXArchive::getFirstResource(uint32 tag, uint16 parentId) {
+Common::SeekableReadStreamEndian *RIFXArchive::getFirstResource(uint32 tag, uint32 parentId) {
 	if (!_keyData.contains(tag))
 		return nullptr;
 	if (!_keyData[tag].contains(parentId))
