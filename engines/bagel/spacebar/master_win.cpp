@@ -45,7 +45,11 @@ namespace Bagel {
 namespace SpaceBar {
 
 static const char *GetBuildVersion() {
+#ifdef RELEASE_BUILD
+	return buildString("Version: %s", SCUMMVM_VERSION);
+#else
 	return buildString("Version: %s, %s", __DATE__, __TIME__);
+#endif
 }
 
 CBagStorageDev *CSBarMasterWin::onNewStorageDev(const CBofString &typeStr) {
