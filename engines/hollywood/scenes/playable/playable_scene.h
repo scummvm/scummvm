@@ -39,6 +39,8 @@
 #include "hollywood/scenes/playable/ambient_audio.h"
 #include "hollywood/scenes/playable/animation_channels.h"
 #include "hollywood/scenes/playable/animation_layers.h"
+#include "hollywood/scenes/playable/scene_resources.h"
+#include "hollywood/scenes/playable/scene_surface_state.h"
 #include "hollywood/scenes/playable/speech_overlay.h"
 
 namespace Graphics {
@@ -546,29 +548,33 @@ protected:
 
 	// Engine And Resources
 	HollywoodEngine *_vm;
-	ResourceChunkTable _sceneChunkTable;
-	uint32 _resourceChunkOffsets[HollywoodEngine::kResourceChunkCount];
-	uint32 _resourceArenaCursor;
 
-	// Framebuffer And Palette Data
-	Common::Array<byte> _paletteResource;
-	Common::Array<byte> _paletteCurrent;
-	Graphics::ManagedSurface _baseFramebufferOriginal;
-	Graphics::ManagedSurface _baseFramebuffer;
-	Graphics::ManagedSurface _sceneFramebuffer;
-	Graphics::ManagedSurface _savedFramebuffer;
-	Common::Array<byte> _fillRuns;
-	Common::Array<byte> _paletteMaskOriginal;
-	Common::Array<byte> _paletteMask;
-	Common::Array<byte> _fullPaletteRegionMask;
-	Common::Array<byte> _walkablePaletteMask;
-	Common::Array<byte> _colorToActorDepthClassMap;
-	Common::Array<uint16> _actorDepthYThresholds;
-	Common::Array<uint16> _drawActorDepthYThresholds;
-	Common::Array<byte> _metadata;
-	Common::Array<byte> _resourceArena;
-	Graphics::ManagedSurface _screen;
-	Palette6Bit _displayPalette;
+	// Scene Resource State
+	SceneResources _resources;
+	ResourceChunkTable &_sceneChunkTable;
+	uint32 (&_resourceChunkOffsets)[HollywoodEngine::kResourceChunkCount];
+	uint32 &_resourceArenaCursor;
+	Common::Array<byte> &_resourceArena;
+	Common::Array<byte> &_metadata;
+
+	// Scene Surface State
+	SceneSurfaceState _surfaceState;
+	Common::Array<byte> &_paletteResource;
+	Common::Array<byte> &_paletteCurrent;
+	Graphics::ManagedSurface &_baseFramebufferOriginal;
+	Graphics::ManagedSurface &_baseFramebuffer;
+	Graphics::ManagedSurface &_sceneFramebuffer;
+	Graphics::ManagedSurface &_savedFramebuffer;
+	Common::Array<byte> &_fillRuns;
+	Common::Array<byte> &_paletteMaskOriginal;
+	Common::Array<byte> &_paletteMask;
+	Common::Array<byte> &_fullPaletteRegionMask;
+	Common::Array<byte> &_walkablePaletteMask;
+	Common::Array<byte> &_colorToActorDepthClassMap;
+	Common::Array<uint16> &_actorDepthYThresholds;
+	Common::Array<uint16> &_drawActorDepthYThresholds;
+	Graphics::ManagedSurface &_screen;
+	Palette6Bit &_displayPalette;
 
 	// Actor And Text Resources
 	Common::Array<byte> _resource000OffsetTable;
