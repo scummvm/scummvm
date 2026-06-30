@@ -107,6 +107,7 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 		_chunk11Visible(false),
 		_chunk14Visible(false),
 		_chunk15Visible(false),
+		_chunk8SpecialSequenceActive(false),
 		_chunk10IdlePairAAltPhase(false),
 		_chunk10IdlePairBAltPhase(false),
 		_chunk10IdlePairATicksRemaining(10),
@@ -180,6 +181,7 @@ void Scene7010::initializeCustomPreviewState() {
 	_chunk11Visible = false;
 	_chunk14Visible = false;
 	_chunk15Visible = false;
+	_chunk8SpecialSequenceActive = false;
 	_chunk10IdlePairAAltPhase = _random.getRandomNumber(1) != 0;
 	_chunk10IdlePairBAltPhase = _random.getRandomNumber(1) != 0;
 	_primaryLeftSpeechActive = false;
@@ -261,7 +263,8 @@ void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[8], 0,
 		kScene7010Chunk8DescriptorCount, chunk8DescriptorIndex, _sceneFramebuffer);
 
-	if (_vm->gameState().currentAmbientMusicCueId != kScene7010AmbientMusicCueWithoutChunk9) {
+	if (!_chunk8SpecialSequenceActive &&
+			_vm->gameState().currentAmbientMusicCueId != kScene7010AmbientMusicCueWithoutChunk9) {
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[9], 0,
 			kScene7010Chunk9DescriptorCount, _chunk9AmbientOverlayFrameIndex, _sceneFramebuffer);
 	}
@@ -272,7 +275,8 @@ void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 }
 
 bool Scene7010::shouldDrawSecondaryActorInPlayableComposite() const {
-	return _speechOverlay.visible;
+	// Junior is RESOURCE.G01 chunk 8; secondary speech should only add text.
+	return false;
 }
 
 bool Scene7010::hasCustomEntrySequence() const {
@@ -443,6 +447,7 @@ bool Scene7010::prepareCustomGameplayLoop() {
 	_chunk11Visible = false;
 	_chunk14Visible = false;
 	_chunk15Visible = false;
+	_chunk8SpecialSequenceActive = false;
 	_dialogueOverlayMode = 0;
 	_dialogueOverlayFrameIndex = 0;
 	_chunk8TimerAccumulator = 0;
@@ -784,6 +789,7 @@ void Scene7010::handleActionSlot08CommonSpeech() {
 }
 
 void Scene7010::runChunk8RevealSequence() {
+	_chunk8SpecialSequenceActive = true;
 	_chunk8FrameIndex = 7;
 	for (byte frame = 7; frame <= 0x0b && !Engine::shouldQuit(); ++frame) {
 		_chunk8FrameIndex = frame;
@@ -797,6 +803,7 @@ void Scene7010::runChunk8HideSequence() {
 		waitSceneMillis(kScene7010Chunk8FrameMillis);
 	}
 	_chunk8FrameIndex = _vm->gameState().currentAmbientMusicCueId == kScene7010AmbientMusicCueWithoutChunk9 ? 0x14 : 0;
+	_chunk8SpecialSequenceActive = false;
 }
 
 void Scene7010::runChunk11FrameRange(byte startFrame, byte endFrame) {

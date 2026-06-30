@@ -99,6 +99,7 @@ private:
 	bool _chunk11Visible;
 	bool _chunk14Visible;
 	bool _chunk15Visible;
+	bool _chunk8SpecialSequenceActive;
 	bool _chunk10IdlePairAAltPhase;
 	bool _chunk10IdlePairBAltPhase;
 	byte _chunk10IdlePairATicksRemaining;
