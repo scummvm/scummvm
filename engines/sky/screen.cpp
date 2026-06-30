@@ -167,7 +167,6 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	_skyDisk = pDisk;
 	_skyCompact = skyCompact;
 
-	int i;
 	uint8 tmpPal[VGA_COLORS * 3];
 
 	_gameGrid = (uint8 *)malloc(GRID_X * GRID_Y * 2);
@@ -182,7 +181,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	memset(tmpPal, 0, GAME_COLORS * 3);
 
 	//set the remaining colors
-	for (i = 0; i < (VGA_COLORS-GAME_COLORS); i++) {
+	for (int i = 0; i < (VGA_COLORS-GAME_COLORS); i++) {
 		tmpPal[3 * GAME_COLORS + i * 3 + 0] = (_top16Colors[i * 3 + 0] << 2) + (_top16Colors[i * 3 + 0] >> 4);
 		tmpPal[3 * GAME_COLORS + i * 3 + 1] = (_top16Colors[i * 3 + 1] << 2) + (_top16Colors[i * 3 + 1] >> 4);
 		tmpPal[3 * GAME_COLORS + i * 3 + 2] = (_top16Colors[i * 3 + 2] << 2) + (_top16Colors[i * 3 + 2] >> 4);
