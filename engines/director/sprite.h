@@ -129,6 +129,7 @@ public:
 	uint32 getBackColor();
 	void setAutoPuppet(AutoPuppetProperty property, bool value);
 	bool getAutoPuppet(AutoPuppetProperty property);
+	void releaseAutoPuppet(uint32 copyBackMask);
 
 	inline int getWidth() { return _width; }
 	void setWidth(int w);

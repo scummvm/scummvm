@@ -458,6 +458,24 @@ bool Sprite::getAutoPuppet(AutoPuppetProperty property) {
 	return (_autoPuppet & (1 << property)) != 0;
 }
 
+// Predicates mirror the auto-puppet checks in replaceFrom().
+void Sprite::releaseAutoPuppet(uint32 copyBackMask) {
+	static const struct { AutoPuppetProperty property; uint32 mask; } releases[] = {
+		{ kAPInk,       kSCBInk },
+		{ kAPForeColor, kSCBForeColor },
+		{ kAPBackColor, kSCBBackColor },
+		{ kAPCast,      kSCBCastId },
+		{ kAPLoc,       kSCBStartPoint },
+		{ kAPHeight,    kSCBCastId | kSCBHeight },
+		{ kAPWidth,     kSCBCastId | kSCBWidth },
+		{ kAPMoveable,  kSCBMoveable }
+	};
+
+	for (auto &release : releases)
+		if (copyBackMask & release.mask)
+			setAutoPuppet(release.property, false);
+}
+
 void Sprite::setWidth(int w) {
 	_width = MAX<int>(w, 0);
 
