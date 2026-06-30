@@ -2362,8 +2362,8 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 
 	_cursorNeedsRedraw = true;
 
-	frac_t cursorScaleX = _cursorScaleX == 0 ? FRAC_ONE : _videoMode.scaleFactor * _cursorScaleX;
-	frac_t cursorScaleY = _cursorScaleY == 0 ? FRAC_ONE : _videoMode.scaleFactor * _cursorScaleY;
+	frac_t cursorScaleX = _cursorScaleX == 0 ? static_cast<frac_t>(FRAC_ONE) : _videoMode.scaleFactor * _cursorScaleX;
+	frac_t cursorScaleY = _cursorScaleY == 0 ? static_cast<frac_t>(FRAC_ONE) : _videoMode.scaleFactor * _cursorScaleY;
 
 	// Adapt the real hotspot according to the scale factor.
 	int rW = fracToInt(w * cursorScaleX);
