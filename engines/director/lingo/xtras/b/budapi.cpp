@@ -441,7 +441,17 @@ XOBJSTUB(BudAPIXtra::m_baWriteRegNumber, 0)
 XOBJSTUB(BudAPIXtra::m_baDeleteReg, 0)
 XOBJSTUB(BudAPIXtra::m_baRegKeyList, 0)
 XOBJSTUB(BudAPIXtra::m_baRegValueList, 0)
-XOBJSTUB(BudAPIXtra::m_baSoundCard, 0)
+void BudAPIXtra::m_baSoundCard(int nargs) {
+	// baSoundCard() -> 1 if a sound card is installed, else 0.
+	// The original boot Lingo (Intro.dxr) does, on Windows (machineType 256):
+	//   if the machineType = 256 then set _SoundSchalter to baSoundCard()
+	// _SoundSchalter then gates ALL chapter narration (on Audioint: if
+	// _SoundSchalter then puppetSound(...)) and some frame-hold timing. A 0
+	// here silently mutes chapters. ScummVM always provides a mixer, so a
+	// sound card is effectively always present.
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(1));
+}
 XOBJSTUB(BudAPIXtra::m_baFontInstalled, 0)
 XOBJSTUB(BudAPIXtra::m_baFontList, 0)
 XOBJSTUB(BudAPIXtra::m_baFontStyleList, 0)
