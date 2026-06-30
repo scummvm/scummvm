@@ -433,6 +433,10 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 		}
 	}
 
+	// Zero-sized bbox: nothing to render, and scaling to it would divide by zero.
+	if (bbox.width() <= 0 || bbox.height() <= 0)
+		return nullptr;
+
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow()->getMacWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
 	_channel = channel;
