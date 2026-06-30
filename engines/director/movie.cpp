@@ -181,8 +181,12 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		}
 		uint16 minMember = stream.readUint16();
 		uint16 maxMember = stream.readUint16();
-		stream.readUint16();
-		uint16 libResourceId = stream.readUint16();
+		// libResourceId is a 32-bit field: the chunk-map resource index of the
+		// cast library's config. In large movies it can exceed 0xFFFF (e.g.
+		// 0x00010402 = 66562), so it must be read as a full uint32 — reading it
+		// as uint16 truncates the high word and makes distinct libraries alias
+		// the same id (causing a union cast-load with overwritten members).
+		uint32 libResourceId = stream.readUint32();
 		uint16 libId = i + 1;
 		debugC(5, kDebugLoading, "Movie::loadCastLibMapping: name: %s, path: %s, minMember: %d, maxMember: %d, libResourceId: %d, libId: %d", utf8ToPrintable(name).c_str(), utf8ToPrintable(path).c_str(), minMember, maxMember, libResourceId, libId);
 		Common::SharedPtr<Archive> castArchive = _movieArchive;
@@ -493,7 +497,7 @@ bool Movie::loadCastLibFrom(uint16 libId, Common::Path &filename) {
 		return false;
 	}
 
-	uint16 libResourceId = 1024;
+	uint32 libResourceId = 1024;
 	Common::String name;
 	if (_casts.contains(libId)) {
 		Cast *cast = _casts[libId];
@@ -541,7 +545,7 @@ Cast *Movie::getCast(CastMemberID memberID) {
 	return nullptr;
 }
 
-Cast *Movie::getCastByLibResourceID(int libresourceID) {
+Cast *Movie::getCastByLibResourceID(uint32 libresourceID) {
 	for (auto it : _casts) {
 		if (it._value->_libResourceId == libresourceID) {
 			debugC(3, kDebugSaving, "Movie::getCastByLibResourceID: Found cast with libresourceID: %d", libresourceID);

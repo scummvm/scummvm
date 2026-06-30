@@ -101,7 +101,7 @@ public:
 	bool hasResource(uint32 tag, const Common::String &resName) const;
 	virtual Common::SeekableReadStreamEndian *getResource(uint32 tag, uint16 id);
 	virtual Common::SeekableReadStreamEndian *getFirstResource(uint32 tag);
-	virtual Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, uint16 parentId);
+	virtual Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, uint32 parentId);
 	virtual Resource getResourceDetail(uint32 tag, uint16 id);
 	uint32 getOffset(uint32 tag, uint16 id) const;
 	uint getResourceSize(uint32 tag, uint16 id) const;
@@ -170,7 +170,7 @@ public:
 
 	Common::SeekableReadStreamEndian *getFirstResource(uint32 tag) override;
 	virtual Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, bool fileEndianness);
-	Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, uint16 parentId) override;
+	Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, uint32 parentId) override;
 	Common::SeekableReadStreamEndian *getResource(uint32 tag, uint16 id) override;
 	virtual Common::SeekableReadStreamEndian *getResource(uint32 tag, uint16 id, bool fileEndianness);
 	Resource getResourceDetail(uint32 tag, uint16 id) override;
@@ -193,7 +193,7 @@ private:
 
 	bool readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset, Common::SeekableMemoryWriteStream *dumpStream, uint32 movieStartOffset);
 	bool readAfterburnerMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset);
-	void readCast(Common::SeekableReadStreamEndian &casStream, uint16 libResourceId);
+	void readCast(Common::SeekableReadStreamEndian &casStream, uint32 libResourceId);
 	void readKeyTable(Common::SeekableReadStreamEndian &keyStream);
 
 	uint32 findParentIndex(uint32 tag, uint16 index);
