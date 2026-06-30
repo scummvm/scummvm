@@ -1688,7 +1688,7 @@ void EventManager::highlightScreenBox(int16 x1, int16 x2, int16 y1, int16 y2) {
 
 	for (int16 y = y1; y <= y2; ++y) {
 		for (int16 x = x1; x <= x2; ++x) {
-			screen[y * pitch + x] ^= 0x0F;
+			screen[y * pitch + x] ^= 0x04;
 		}
 	}
 }
