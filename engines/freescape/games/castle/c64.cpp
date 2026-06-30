@@ -446,7 +446,7 @@ void CastleEngine::loadAssetsC64FullGame() {
 
 	for (uint i = 0; i < database[0]; i++) {
 		uint16 areaOffset = readCastleC64Uint16LE(database, kCastleC64RuntimeAreaTableOffset + 2 * i);
-		if (areaOffset + 6 >= database.size())
+		if (areaOffset + 6u >= database.size())
 			error("Castle C64 area color read out of range at 0x%x", areaOffset);
 
 		byte areaID = database[areaOffset + 2];
