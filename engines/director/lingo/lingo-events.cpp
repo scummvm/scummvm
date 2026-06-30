@@ -690,6 +690,13 @@ void Movie::broadcastEvent(LEvent event) {
 			queueEvent(queue, event, i);
 		}
 	}
+
+	// With no sprite behaviors, cast/frame/movie handlers were never queued
+	// at all; add a no-target pass. When behaviors exist, their pass()
+	// semantics already decide whether those handlers run.
+	if (queue.empty())
+		queueEvent(queue, event, 0);
+
 	_vm->setCurrentWindow(this->getWindow());
 	_lingo->processEvents(queue, false);
 }
