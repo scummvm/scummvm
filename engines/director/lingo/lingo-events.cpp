@@ -690,6 +690,13 @@ void Movie::broadcastEvent(LEvent event) {
 			queueEvent(queue, event, i);
 		}
 	}
+
+	// Sprite queueing above swallows cast/frame/movie handlers sharing its eventId
+	// (last behavior is queued passByDefault=false), so a frame/movie script's
+	// on prepareFrame never ran. Queue one more pass with no sprite target so
+	// they resolve with a fresh eventId, like enterFrame/exitFrame already do.
+	queueEvent(queue, event, 0);
+
 	_vm->setCurrentWindow(this->getWindow());
 	_lingo->processEvents(queue, false);
 }
