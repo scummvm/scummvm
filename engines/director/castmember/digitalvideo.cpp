@@ -540,6 +540,16 @@ void DigitalVideoCastMember::setStopTime(int stamp) {
 
 	_channel->_stopTime = stamp;
 
+	// A stamp of 0 means "play to the natural end" in Director.
+	// Do NOT pass 0ms to setEndTime() – the VideoDecoder interprets that as
+	// "end immediately" because every getNextFrameStartTime() >= 0 satisfies
+	// the videoEndTimeReached condition, causing endOfVideo() to return true
+	// before a single frame is shown.
+	if (stamp <= 0) {
+		debugC(2, kDebugImages, "DigitalVideoCastMember::setStopTime(): stamp=0 – ignoring (play to natural end)");
+		return;
+	}
+
 	Audio::Timestamp dur = _video->getDuration();
 
 	_video->setEndTime(Audio::Timestamp(_channel->_stopTime * 1000 / 60, dur.framerate()));
