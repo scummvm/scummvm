@@ -37,8 +37,8 @@ static const char *const dataFilename = "sky.dsk";
 static const char *const dinnerFilename = "sky.dnr";
 
 static int hashCompFunc(const void *m1, const void *m2) {
-	FileEntry *e1 = (FileEntry *)m1;
-	FileEntry *e2 = (FileEntry *)m2;
+	const FileEntry *e1 = static_cast<const FileEntry *>(m1);
+	const FileEntry *e2 = static_cast<const FileEntry *>(m2);
 	if (e1->_fileNum == e2->_fileNum)
 		return 0;
 	return (e1->_fileNum < e2->_fileNum ? -1 : 1);
