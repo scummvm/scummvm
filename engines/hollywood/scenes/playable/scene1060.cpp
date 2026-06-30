@@ -46,19 +46,45 @@ const uint kScene1060ActorPaletteTableEntry = 0x00cc;
 const uint kScene1060Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene1060SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene1060FrameMillis = 75;
+const uint32 kScene1060LargeBackgroundFrameMillis = 150;
 const uint32 kScene1060SlowFrameMillis = 150;
+const uint32 kScene1060SmallTriggerFrameMillis = 60;
+const uint32 kScene1060FlySlimeDripFrameMillis = 50;
+const uint32 kScene1060FlyDoctorModeMillis = 250;
 const uint kScene1060LargeBackgroundDescriptorCount = 0x27;
 const uint kScene1060InvisibleManDescriptorCount = 0x16;
 const uint kScene1060FlyDoctorDescriptorCount = 0x0e;
 const uint kScene1060SmallLoopDescriptorCount = 5;
 const uint kScene1060SmallTriggerDescriptorCount = 7;
-const uint kScene1060SkullcrackerDescriptorCount = 0x0e;
+const uint kScene1060FlySlimePickupDescriptorCount = 0x0e;
 const uint kScene1060PocketPaperDescriptorCount = 0x1e;
 const byte kScene1060DoctorSpeechGroup = 1;
 const byte kScene1060InvisibleManSpeechGroup = 2;
 const byte kScene1060FirstAmbientMusicCue = 0x0b;
 const byte kScene1060AmbientMusicCueCount = 5;
 const byte kScene1060AmbientMusicProbabilityModulus = 50;
+const byte kScene1060FlyDoctorModeIdle = 0;
+const byte kScene1060FlyDoctorModeDripReady = 1;
+const byte kScene1060FlyDoctorModeConversation = 2;
+const byte kScene1060InvisibleManModeIdle = 0;
+const byte kScene1060InvisibleManModeEntering = 1;
+const byte kScene1060InvisibleManModeTalking = 2;
+const byte kScene1060InvisibleManModeLeaving = 3;
+const byte kScene1060FlyDoctorIdleFrameCount = 4;
+const byte kScene1060FlySlimeFirstFrame = 3;
+const byte kScene1060FlySlimeIdleFrame = 0;
+const byte kScene1060FlySlimeLastPickupFrame = 0x1e;
+const byte kScene1060FlySlimeLastFrame = 0x24;
+const byte kScene1060FlySlimePickupStateFrame = 4;
+const byte kScene1060FlySlimePickupHook = 1;
+const byte kScene1060FlySlimePickupAdvanceLimitFrame = 0x20;
+const byte kScene1060FlySlimePickupResetFrame = 8;
+const byte kScene1060InvisibleManEnterFirstFrame = 4;
+const byte kScene1060InvisibleManEnterLastFrame = 9;
+const byte kScene1060InvisibleManTalkingFirstFrame = 10;
+const byte kScene1060InvisibleManTalkingRandomFrameCount = 4;
+const byte kScene1060InvisibleManLeaveFirstFrame = 14;
+const byte kScene1060InvisibleManLeaveLastFrame = 0x13;
 
 const byte kScene1060ActorPathStepDeltaTable[] = {
 	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
@@ -89,9 +115,9 @@ const byte kScene1060FlyDoctorFrameMap[] = {
 	7, 6, 5, 4, 0
 };
 
-const byte kScene1060SmallTriggerFrameMap[] = { 0, 0, 1, 2, 3, 4, 5, 6, 0, 1, 2 };
+const byte kScene1060SmallTriggerFrameMap[] = { 0, 0, 1, 2, 3, 4, 5, 6 };
 
-const byte kScene1060SkullcrackerFrameMap[] = {
+const byte kScene1060FlySlimePickupFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 };
 
@@ -105,7 +131,10 @@ Scene1060::Scene1060(HollywoodEngine *vm) :
 		PlayableScene(vm, "scene1060", 0x0aa, 0x1b3, 2, 0xfd, 0xfb),
 		_largeBackgroundChannel(),
 		_invisibleManChannel(),
-		_flyDoctorChannel(),
+		_invisibleManRandomChannel(),
+		_flyDoctorModeChannel(),
+		_flyDoctorIdleChannel(),
+		_flySlimeDripChannel(),
 		_smallLoopChannel(),
 		_smallTriggerChannel(),
 		_largeBackgroundLayer(),
@@ -115,7 +144,12 @@ Scene1060::Scene1060(HollywoodEngine *vm) :
 		_smallTriggerLayer(),
 		_largeBackgroundMode(0),
 		_largeBackgroundIdleCounter(0),
-		_smallTriggerMode(0) {
+		_flyDoctorMode(kScene1060FlyDoctorModeIdle),
+		_invisibleManMode(kScene1060InvisibleManModeIdle),
+		_lastInvisibleManRandomFrame(0),
+		_lastFlyDoctorIdleFrame(0),
+		_smallTriggerMode(0),
+		_flySlimePickupSequenceActive(false) {
 	_largeBackgroundLayer.configure(9, kScene1060LargeBackgroundDescriptorCount,
 		kScene1060LargeBackgroundFrameMap, ARRAYSIZE(kScene1060LargeBackgroundFrameMap));
 	_invisibleManLayer.configure(5, kScene1060InvisibleManDescriptorCount,
@@ -285,14 +319,16 @@ bool Scene1060::prepareCustomGameplayLoop() {
 }
 
 bool Scene1060::advanceCustomGameplayLoop(uint32 delta) {
-	advanceLargeBackground(delta);
-	advanceInvisibleMan(delta);
-	if (_primaryDialogueSpeechActive)
-		advancePrimaryDialogueSpeechFrame(delta);
-	else
-		advanceFlyDoctor(delta);
 	advanceSmallLoop(delta);
 	advanceSmallTrigger(delta);
+	advanceLargeBackground(delta);
+	advanceFlyDoctorModeAndInvisibleMan(delta);
+	if (_primaryDialogueSpeechActive)
+		advancePrimaryDialogueSpeechFrame(delta);
+	else if (_flySlimePickupSequenceActive)
+		advanceFlySlimePickupFrame(delta);
+	else
+		advanceFlyDoctor(delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
 }
@@ -329,8 +365,8 @@ bool Scene1060::dispatchCustomSceneAction(uint16 handlerId) {
 	case 310: // Mirar babas de mosca (look at fly slime).
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 311: // Coger papel que asoma del bolsillo (take paper sticking out of pocket).
-		handlePocketPaperTakeAction();
+	case 311: // Coger babas de mosca activas (take active fly slime).
+		handleFlySlimePickup();
 		return true;
 	case 312: // Mirar papel que asoma del bolsillo (look at paper sticking out of pocket).
 		handlePocketPaperLook();
@@ -388,15 +424,17 @@ bool Scene1060::shouldAnimatePrimarySpeechLine() const {
 
 byte Scene1060::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 	if (animationGroup == kScene1060InvisibleManSpeechGroup)
-		return 10;
+		return _invisibleManMode == kScene1060InvisibleManModeTalking ? kScene1060InvisibleManTalkingFirstFrame : 0;
 	return 0;
 }
 
 void Scene1060::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
-	if (animationGroup == kScene1060InvisibleManSpeechGroup)
+	if (animationGroup == kScene1060InvisibleManSpeechGroup) {
 		_invisibleManLayer.setFrame(frameIndex);
-	else
+	} else {
 		_flyDoctorLayer.setFrame(frameIndex);
+		restartSmallTriggerLayerFromFlyDoctorFrame(frameIndex);
+	}
 }
 
 AmbientAudioProfile Scene1060::ambientAudioProfile() const {
@@ -410,13 +448,26 @@ AmbientAudioProfile Scene1060::ambientAudioProfile() const {
 	return profile;
 }
 
+void Scene1060::handleActionOverlayFrameHook(byte hookId, uint frame) {
+	if (hookId != kScene1060FlySlimePickupHook || frame != kScene1060FlySlimePickupStateFrame)
+		return;
+
+	GameplayState &state = _vm->gameState();
+	state.scene1060FlyDoctorState = 2;
+	state.scene1060FlySlimeHotspotActive = false;
+	applySceneStateToHotspotsAndPatches(1);
+}
+
 void Scene1060::resetAnimationLayers() {
 	GameplayState &state = _vm->gameState();
-	_largeBackgroundChannel.reset(0, kScene1060FrameMillis);
-	_invisibleManChannel.reset(0, kScene1060SlowFrameMillis);
-	_flyDoctorChannel.reset(0, kScene1060FrameMillis);
-	_smallLoopChannel.reset(0, kScene1060SlowFrameMillis);
-	_smallTriggerChannel.reset(0, kScene1060FrameMillis);
+	_largeBackgroundChannel.reset(0, kScene1060LargeBackgroundFrameMillis);
+	_invisibleManChannel.reset(0, kScene1060FrameMillis);
+	_invisibleManRandomChannel.reset(0, kScene1060SlowFrameMillis);
+	_flyDoctorModeChannel.reset(0, kScene1060FlyDoctorModeMillis);
+	_flyDoctorIdleChannel.reset(0, kScene1060SlowFrameMillis);
+	_flySlimeDripChannel.reset(0, kScene1060FlySlimeDripFrameMillis);
+	_smallLoopChannel.reset(0, kScene1060FrameMillis);
+	_smallTriggerChannel.reset(0, kScene1060SmallTriggerFrameMillis);
 
 	_largeBackgroundLayer.reset(state.scene1060PartyRemainsState == 1 ? 0x29 : 0);
 	_invisibleManLayer.reset(0);
@@ -431,7 +482,12 @@ void Scene1060::resetAnimationLayers() {
 	_smallTriggerLayer.visible = true;
 	_largeBackgroundMode = 0;
 	_largeBackgroundIdleCounter = 0;
+	_flyDoctorMode = kScene1060FlyDoctorModeIdle;
+	_invisibleManMode = kScene1060InvisibleManModeIdle;
+	_lastInvisibleManRandomFrame = 0;
+	_lastFlyDoctorIdleFrame = 0;
 	_smallTriggerMode = 0;
+	_flySlimePickupSequenceActive = false;
 }
 
 void Scene1060::advanceLargeBackground(uint32 delta) {
@@ -456,25 +512,131 @@ void Scene1060::advanceLargeBackground(uint32 delta) {
 	}
 }
 
-void Scene1060::advanceInvisibleMan(uint32 delta) {
-	const uint frameCount = _invisibleManChannel.consumeFrames(delta);
-	for (uint i = 0; i < frameCount; ++i) {
-		if (_invisibleManLayer.frameIndex < ARRAYSIZE(kScene1060InvisibleManFrameMap) - 1)
-			_invisibleManLayer.setFrame(_invisibleManLayer.frameIndex + 1);
-		else
-			_invisibleManLayer.setFrame(0);
+void Scene1060::advanceFlyDoctorModeAndInvisibleMan(uint32 delta) {
+	if (_primaryDialogueSpeechActive && _primaryDialogueSpeechGroup == kScene1060InvisibleManSpeechGroup)
+		return;
+
+	if (!_flySlimePickupSequenceActive) {
+		const uint toggleCount = _flyDoctorModeChannel.consumeFrames(delta);
+		for (uint i = 0; i < toggleCount; ++i) {
+			if (_flyDoctorMode == kScene1060FlyDoctorModeIdle) {
+				if (_random.getRandomNumber(9) == 0) {
+					_flyDoctorMode = kScene1060FlyDoctorModeDripReady;
+					_flyDoctorLayer.setFrame(0);
+					if (_random.getRandomNumber(1) == 0) {
+						_invisibleManMode = kScene1060InvisibleManModeEntering;
+						_invisibleManLayer.setFrame(kScene1060InvisibleManEnterFirstFrame);
+					}
+				}
+			} else if (_flyDoctorMode == kScene1060FlyDoctorModeDripReady &&
+					_invisibleManMode != kScene1060InvisibleManModeEntering &&
+					!_vm->gameState().scene1060FlySlimeHotspotActive &&
+					_random.getRandomNumber(9) == 0) {
+				_flyDoctorMode = kScene1060FlyDoctorModeIdle;
+				if (_invisibleManMode == kScene1060InvisibleManModeTalking) {
+					_invisibleManMode = kScene1060InvisibleManModeLeaving;
+					_invisibleManLayer.setFrame(kScene1060InvisibleManLeaveFirstFrame);
+				} else {
+					_invisibleManLayer.setFrame(0);
+				}
+			}
+		}
+	}
+
+	const uint randomFrameCount = _invisibleManRandomChannel.consumeFrames(delta);
+	for (uint i = 0; i < randomFrameCount; ++i) {
+		if (_flyDoctorMode == kScene1060FlyDoctorModeDripReady &&
+				(_invisibleManMode == kScene1060InvisibleManModeIdle ||
+				_invisibleManMode == kScene1060InvisibleManModeTalking)) {
+			const byte baseFrame = _invisibleManMode == kScene1060InvisibleManModeTalking ?
+				kScene1060InvisibleManTalkingFirstFrame : 0;
+			const byte nextFrame = (byte)(baseFrame + pickRandomFrameExcluding(
+				kScene1060InvisibleManTalkingRandomFrameCount, _lastInvisibleManRandomFrame));
+			_lastInvisibleManRandomFrame = (byte)(nextFrame - baseFrame);
+			_invisibleManLayer.setFrame(nextFrame);
+		} else if (_flyDoctorMode == kScene1060FlyDoctorModeConversation &&
+				_invisibleManMode == kScene1060InvisibleManModeTalking) {
+			const byte baseFrame = kScene1060InvisibleManTalkingFirstFrame;
+			const byte nextFrame = (byte)(baseFrame + pickRandomFrameExcluding(
+				kScene1060InvisibleManTalkingRandomFrameCount, _lastInvisibleManRandomFrame));
+			_lastInvisibleManRandomFrame = (byte)(nextFrame - baseFrame);
+			_invisibleManLayer.setFrame(nextFrame);
+		}
+	}
+
+	const uint transitionFrameCount = _invisibleManChannel.consumeFrames(delta);
+	for (uint i = 0; i < transitionFrameCount; ++i) {
+		if (_invisibleManMode == kScene1060InvisibleManModeEntering) {
+			if (_invisibleManLayer.frameIndex < kScene1060InvisibleManEnterLastFrame) {
+				_invisibleManLayer.setFrame(_invisibleManLayer.frameIndex + 1);
+			} else {
+				_invisibleManMode = kScene1060InvisibleManModeTalking;
+				_invisibleManLayer.setFrame(kScene1060InvisibleManTalkingFirstFrame);
+				_lastInvisibleManRandomFrame = 0;
+			}
+		} else if (_invisibleManMode == kScene1060InvisibleManModeLeaving) {
+			if (_invisibleManLayer.frameIndex < kScene1060InvisibleManLeaveLastFrame) {
+				_invisibleManLayer.setFrame(_invisibleManLayer.frameIndex + 1);
+			} else {
+				_invisibleManMode = kScene1060InvisibleManModeIdle;
+				_invisibleManLayer.setFrame(0);
+			}
+		}
 	}
 }
 
 void Scene1060::advanceFlyDoctor(uint32 delta) {
-	const uint frameCount = _flyDoctorChannel.consumeFrames(delta);
+	if (_flyDoctorMode == kScene1060FlyDoctorModeIdle) {
+		advanceFlyDoctorIdle(delta);
+		return;
+	}
+
+	advanceFlySlimeDrip(delta);
+}
+
+void Scene1060::advanceFlyDoctorIdle(uint32 delta) {
+	const uint frameCount = _flyDoctorIdleChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
-		if (_flyDoctorLayer.frameIndex == 0 && _random.getRandomNumber(10) != 0)
-			continue;
-		if (_flyDoctorLayer.frameIndex < ARRAYSIZE(kScene1060FlyDoctorFrameMap) - 1)
+		const byte nextFrame = pickRandomFrameExcluding(kScene1060FlyDoctorIdleFrameCount, _lastFlyDoctorIdleFrame);
+		_lastFlyDoctorIdleFrame = nextFrame;
+		_flyDoctorLayer.setFrame(nextFrame);
+		restartSmallTriggerLayerFromFlyDoctorFrame(nextFrame);
+	}
+}
+
+void Scene1060::advanceFlySlimeDrip(uint32 delta) {
+	GameplayState &state = _vm->gameState();
+	if (state.scene1060FlyDoctorState >= 2) {
+		if (_flyDoctorLayer.frameIndex > kScene1060FlyDoctorIdleFrameCount - 1)
+			_flyDoctorLayer.setFrame(0);
+		return;
+	}
+
+	const uint frameCount = _flySlimeDripChannel.consumeFrames(delta);
+	for (uint i = 0; i < frameCount; ++i) {
+		if (state.scene1060FlySlimeHotspotActive) {
+			if (_flyDoctorLayer.frameIndex < kScene1060FlySlimeLastFrame) {
+				_flyDoctorLayer.setFrame(_flyDoctorLayer.frameIndex + 1);
+			} else {
+				_flyDoctorLayer.setFrame(kScene1060FlySlimeIdleFrame);
+				state.scene1060FlySlimeHotspotActive = false;
+				applySceneStateToHotspotsAndPatches(6);
+			}
+		} else if (_random.getRandomNumber(49) == 0) {
+			_flyDoctorLayer.setFrame(kScene1060FlySlimeFirstFrame);
+			state.scene1060FlySlimeHotspotActive = true;
+			applySceneStateToHotspotsAndPatches(6);
+		}
+	}
+}
+
+void Scene1060::advanceFlySlimePickupFrame(uint32 delta) {
+	const uint frameCount = _flySlimeDripChannel.consumeFrames(delta);
+	for (uint i = 0; i < frameCount; ++i) {
+		if (_flyDoctorLayer.frameIndex < kScene1060FlySlimePickupAdvanceLimitFrame)
 			_flyDoctorLayer.setFrame(_flyDoctorLayer.frameIndex + 1);
 		else
-			_flyDoctorLayer.setFrame(0);
+			_flyDoctorLayer.setFrame(kScene1060FlySlimePickupResetFrame);
 	}
 }
 
@@ -487,18 +649,19 @@ void Scene1060::advanceSmallLoop(uint32 delta) {
 void Scene1060::advanceSmallTrigger(uint32 delta) {
 	const uint frameCount = _smallTriggerChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
-		if (_smallTriggerMode == 0) {
-			if (_random.getRandomNumber(28) == 0) {
-				_smallTriggerMode = 1;
-				_smallTriggerLayer.setFrame(1);
-			}
-		} else if (_smallTriggerLayer.frameIndex < ARRAYSIZE(kScene1060SmallTriggerFrameMap) - 1) {
+		if (_smallTriggerMode != 0 && _smallTriggerLayer.frameIndex < ARRAYSIZE(kScene1060SmallTriggerFrameMap) - 1)
 			_smallTriggerLayer.setFrame(_smallTriggerLayer.frameIndex + 1);
-		} else {
-			_smallTriggerLayer.setFrame(0);
+		else if (_smallTriggerMode != 0)
 			_smallTriggerMode = 0;
-		}
 	}
+}
+
+void Scene1060::restartSmallTriggerLayerFromFlyDoctorFrame(byte flyDoctorFrame) {
+	if (flyDoctorFrame != 2)
+		return;
+
+	_smallTriggerLayer.setFrame(0);
+	_smallTriggerMode = 1;
 }
 
 void Scene1060::replaceColorMapItem(byte sourceItem, byte destinationItem) {
@@ -521,6 +684,33 @@ void Scene1060::copyStageSmallRow(byte sourceRow, byte destinationRow) {
 
 	memcpy(_stage003SmallRows.data() + destinationOffset,
 		_stage003SmallRows.data() + sourceOffset, kStage003SmallRowSize);
+}
+
+byte Scene1060::pickRandomFrameExcluding(byte frameCount, byte previousFrame) {
+	if (frameCount <= 1)
+		return 0;
+
+	byte nextFrame = previousFrame;
+	for (uint attempt = 0; attempt < 8 && nextFrame == previousFrame; ++attempt)
+		nextFrame = (byte)_random.getRandomNumber(frameCount - 1);
+
+	if (nextFrame == previousFrame)
+		nextFrame = (byte)((previousFrame + 1) % frameCount);
+
+	return nextFrame;
+}
+
+void Scene1060::runInvisibleManTransition(bool entering) {
+	_flyDoctorMode = kScene1060FlyDoctorModeConversation;
+	_invisibleManMode = entering ? kScene1060InvisibleManModeEntering : kScene1060InvisibleManModeLeaving;
+	_invisibleManLayer.setFrame(entering ? kScene1060InvisibleManEnterFirstFrame : kScene1060InvisibleManLeaveFirstFrame);
+	_invisibleManChannel.resetTimer();
+
+	const byte terminalMode = entering ? kScene1060InvisibleManModeTalking : kScene1060InvisibleManModeIdle;
+	while (_invisibleManMode != terminalMode && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (waitSceneMillis(10))
+			break;
+	}
 }
 
 void Scene1060::runJuniorConversation() {
@@ -548,9 +738,20 @@ void Scene1060::runDrMoscaConversation() {
 
 void Scene1060::runInvisibleManConversation() {
 	GameplayState &state = _vm->gameState();
+	if (_invisibleManMode == kScene1060InvisibleManModeEntering ||
+			_invisibleManMode == kScene1060InvisibleManModeTalking ||
+			_invisibleManMode == kScene1060InvisibleManModeLeaving)
+		runInvisibleManTransition(false);
+
+	_flyDoctorMode = kScene1060FlyDoctorModeConversation;
 	beginSecondarySpeechLine(0x62, state.seenScene1060InvisibleManConversation ? 1 : 0);
+	const bool showInvisibleMan = _random.getRandomNumber(1) != 0;
+	if (showInvisibleMan)
+		runInvisibleManTransition(true);
 	beginPrimarySpeechLineWithAnimationGroup(0x63, state.seenScene1060InvisibleManConversation ? 1 : 0,
 		0x2aa, 0x0b8, 0, 0x3a, 0x28, kScene1060InvisibleManSpeechGroup);
+	if (showInvisibleMan)
+		runInvisibleManTransition(false);
 	state.seenScene1060InvisibleManConversation = true;
 	if (!state.scene1060PocketPaperTaken)
 		handlePocketPaperPickup();
@@ -571,14 +772,29 @@ void Scene1060::handlePocketPaperPickup() {
 	applySceneStateToHotspotsAndPatches(6);
 }
 
-void Scene1060::handlePocketPaperTakeAction() {
+void Scene1060::handleFlySlimePickup() {
 	GameplayState &state = _vm->gameState();
 	if (state.scene1060FlyDoctorState == 2 || hasInventoryItem(0x22))
 		return;
 
-	state.scene1060FlyDoctorState = 2;
-	runOverlaySequence(14, kScene1060SkullcrackerDescriptorCount, kScene1060SkullcrackerFrameMap,
-		ARRAYSIZE(kScene1060SkullcrackerFrameMap), kScene1060FrameMillis, 4, 1);
+	if (!state.scene1060FlySlimeHotspotActive || _flyDoctorLayer.frameIndex > kScene1060FlySlimeLastPickupFrame) {
+		beginSecondarySpeechLine(8, 1);
+		return;
+	}
+
+	ActionOverlayOptions options;
+	options.actorVisibility = kActionOverlayHideActiveActor;
+	options.hookFrame = kScene1060FlySlimePickupStateFrame;
+	options.hookId = kScene1060FlySlimePickupHook;
+	_flySlimePickupSequenceActive = true;
+	runActionOverlay(10, kScene1060FlySlimePickupDescriptorCount, kScene1060FlySlimePickupFrameMap,
+		ARRAYSIZE(kScene1060FlySlimePickupFrameMap), kScene1060FrameMillis, options);
+	_flySlimePickupSequenceActive = false;
+	if (state.scene1060FlyDoctorState != 2) {
+		state.scene1060FlyDoctorState = 2;
+		state.scene1060FlySlimeHotspotActive = false;
+		applySceneStateToHotspotsAndPatches(1);
+	}
 	addInventoryItem(0x22);
 	_soundBank0.playSample(1, 100);
 	beginSecondarySpeechLine(8, 0);
@@ -592,7 +808,7 @@ void Scene1060::handlePocketPaperLook() {
 		applySceneStateToHotspotsAndPatches(1);
 		return;
 	}
-	beginSecondarySpeechLine(9, 0);
+	beginSecondarySpeechLine(9, 1);
 }
 
 void Scene1060::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,

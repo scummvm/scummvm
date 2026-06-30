@@ -71,27 +71,37 @@ private:
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
 
 	void resetAnimationLayers();
 	void advanceLargeBackground(uint32 delta);
-	void advanceInvisibleMan(uint32 delta);
+	void advanceFlyDoctorModeAndInvisibleMan(uint32 delta);
 	void advanceFlyDoctor(uint32 delta);
+	void advanceFlyDoctorIdle(uint32 delta);
+	void advanceFlySlimeDrip(uint32 delta);
+	void advanceFlySlimePickupFrame(uint32 delta);
 	void advanceSmallLoop(uint32 delta);
 	void advanceSmallTrigger(uint32 delta);
+	void restartSmallTriggerLayerFromFlyDoctorFrame(byte flyDoctorFrame);
 	void replaceColorMapItem(byte sourceItem, byte destinationItem);
 	void copyStageSmallRow(byte sourceRow, byte destinationRow);
+	byte pickRandomFrameExcluding(byte frameCount, byte previousFrame);
+	void runInvisibleManTransition(bool entering);
 	void runJuniorConversation();
 	void runDrMoscaConversation();
 	void runInvisibleManConversation();
 	void handlePocketPaperPickup();
-	void handlePocketPaperTakeAction();
+	void handleFlySlimePickup();
 	void handlePocketPaperLook();
 	void runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame = -1, byte patchSelector = 0);
 
 	TimedAnimationChannel _largeBackgroundChannel;
 	TimedAnimationChannel _invisibleManChannel;
-	TimedAnimationChannel _flyDoctorChannel;
+	TimedAnimationChannel _invisibleManRandomChannel;
+	TimedAnimationChannel _flyDoctorModeChannel;
+	TimedAnimationChannel _flyDoctorIdleChannel;
+	TimedAnimationChannel _flySlimeDripChannel;
 	TimedAnimationChannel _smallLoopChannel;
 	TimedAnimationChannel _smallTriggerChannel;
 	ResourceSpriteLayer _largeBackgroundLayer;
@@ -101,7 +111,12 @@ private:
 	ResourceSpriteLayer _smallTriggerLayer;
 	byte _largeBackgroundMode;
 	uint16 _largeBackgroundIdleCounter;
+	byte _flyDoctorMode;
+	byte _invisibleManMode;
+	byte _lastInvisibleManRandomFrame;
+	byte _lastFlyDoctorIdleFrame;
 	byte _smallTriggerMode;
+	bool _flySlimePickupSequenceActive;
 };
 
 } // End of namespace Hollywood
