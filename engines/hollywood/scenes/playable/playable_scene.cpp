@@ -25,9 +25,7 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/path.h"
-#include "common/ptr.h"
 #include "common/system.h"
-#include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
 #include "hollywood/font.h"
@@ -107,7 +105,29 @@ int actorPathRoundToNearestEven(float value) {
 PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int defaultActorX, int defaultActorY,
 		byte defaultActorFacing, byte secondarySpeechTextColor, byte primarySpeechTextColor) :
 		_vm(vm),
-		_resourceArenaCursor(0),
+		_resources(),
+		_sceneChunkTable(_resources.chunkTable),
+		_resourceChunkOffsets(_resources.chunkOffsets),
+		_resourceArenaCursor(_resources.arenaCursor),
+		_resourceArena(_resources.arena),
+		_metadata(_resources.metadata),
+		_surfaceState(),
+		_paletteResource(_surfaceState.paletteResource),
+		_paletteCurrent(_surfaceState.paletteCurrent),
+		_baseFramebufferOriginal(_surfaceState.baseFramebufferOriginal),
+		_baseFramebuffer(_surfaceState.baseFramebuffer),
+		_sceneFramebuffer(_surfaceState.sceneFramebuffer),
+		_savedFramebuffer(_surfaceState.savedFramebuffer),
+		_fillRuns(_surfaceState.fillRuns),
+		_paletteMaskOriginal(_surfaceState.paletteMaskOriginal),
+		_paletteMask(_surfaceState.paletteMask),
+		_fullPaletteRegionMask(_surfaceState.fullPaletteRegionMask),
+		_walkablePaletteMask(_surfaceState.walkablePaletteMask),
+		_colorToActorDepthClassMap(_surfaceState.colorToActorDepthClassMap),
+		_actorDepthYThresholds(_surfaceState.actorDepthYThresholds),
+		_drawActorDepthYThresholds(_surfaceState.drawActorDepthYThresholds),
+		_screen(_surfaceState.screen),
+		_displayPalette(_surfaceState.displayPalette),
 		_random(randomName),
 		_primaryLeftSpeechLastFrame(0),
 		_primaryDialogueSpeechLastFrame(7),
@@ -140,17 +160,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int de
 		_actionOverlayFrameIndex(0),
 		_hideActiveActor(false),
 		_skipRequested(false) {
-	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
-	_paletteResource.resize(kPaletteSize);
-	_paletteCurrent.resize(kPaletteSize);
-	initializeFramebuffers();
-	_paletteMaskOriginal.resize(0x700);
-	_fullPaletteRegionMask.resize(kPaletteMaskUsedBytes);
-	_walkablePaletteMask.resize(kPaletteMaskUsedBytes);
-	_colorToActorDepthClassMap.resize(kScenePaletteMapPageSize);
-	_actorDepthYThresholds.resize(kScenePaletteRegionCount);
-	_drawActorDepthYThresholds.resize(kScenePaletteRegionCount);
-	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
+	_surfaceState.initialize(kPaletteSize, 0x700, kPaletteMaskUsedBytes, kScenePaletteMapPageSize, kScenePaletteRegionCount);
 	_activeActorRunStreams.resize(kActorFacingCount * kActiveActorFacingRunStride);
 	_secondaryActorRunStreams.resize(kActorFacingCount * kSecondaryActorFacingRunStride);
 	_activeActorDescriptors.resize(kActorFacingCount * kActorCelsPerFacing);
@@ -175,49 +185,35 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int de
 }
 
 void PlayableScene::initializeFramebuffers() {
-	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-	_baseFramebufferOriginal.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
-	_baseFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
-	_sceneFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
-	_savedFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight, format);
+	_surfaceState.initializeFramebuffers();
 }
 
 uint PlayableScene::framebufferByteCount() const {
-	return HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight;
+	return _surfaceState.framebufferByteCount();
 }
 
 byte *PlayableScene::framebufferPixels(Graphics::ManagedSurface &surface) {
-	return (byte *)surface.getPixels();
+	return _surfaceState.framebufferPixels(surface);
 }
 
 const byte *PlayableScene::framebufferPixels(const Graphics::ManagedSurface &surface) const {
-	return (const byte *)surface.getPixels();
+	return _surfaceState.framebufferPixels(surface);
 }
 
 void PlayableScene::copyBaseFramebufferToSceneFramebuffer() {
-	_sceneFramebuffer.copyRectToSurface(_baseFramebuffer.rawSurface(), 0, 0,
-		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+	_surfaceState.copyBaseFramebufferToSceneFramebuffer();
 }
 
 void PlayableScene::restoreBaseFramebufferFromOriginal() {
-	if (_baseFramebufferOriginal.empty())
-		return;
-
-	_baseFramebuffer.copyRectToSurface(_baseFramebufferOriginal.rawSurface(), 0, 0,
-		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+	_surfaceState.restoreBaseFramebufferFromOriginal();
 }
 
 bool PlayableScene::isFramebufferOffsetValid(uint offset) const {
-	return offset < framebufferByteCount();
+	return _surfaceState.isFramebufferOffsetValid(offset);
 }
 
 byte PlayableScene::savedFramebufferPixelAt(uint offset) const {
-	if (!isFramebufferOffsetValid(offset))
-		return 0;
-
-	const uint x = offset % HollywoodEngine::kSceneBufferWidth;
-	const uint y = offset / HollywoodEngine::kSceneBufferWidth;
-	return *(const byte *)_savedFramebuffer.getBasePtr(x, y);
+	return _surfaceState.savedFramebufferPixelAt(offset);
 }
 
 bool PlayableScene::play() {
@@ -542,17 +538,13 @@ bool PlayableScene::load() {
 		return false;
 
 	const char *archiveName = resourceArchiveName();
-	if (!_vm->resources()->readChunkTable(Common::Path(archiveName), _sceneChunkTable)) {
+	if (!_resources.loadChunkTable(_vm->resources(), archiveName)) {
 		warning("Failed to read %s header", archiveName);
 		return false;
 	}
 
-	for (uint i = 0; i < sceneInitialRequiredChunkCount(); ++i) {
-		if (!_sceneChunkTable.isValidChunk(i)) {
-			warning("%s is missing required %s chunk %u", archiveName, sceneDebugName(), i);
-			return false;
-		}
-	}
+	if (!_resources.validateRequiredChunks(archiveName, sceneDebugName(), sceneInitialRequiredChunkCount()))
+		return false;
 
 	if (!loadFixedChunk(0, _baseFramebuffer, kFrameBufferSize) ||
 			!loadFixedChunk(1, _paletteResource, kPaletteSize) ||
@@ -586,10 +578,7 @@ bool PlayableScene::load() {
 		arenaSize += _sceneChunkTable.sizes[i];
 	}
 
-	_resourceArena.resize(arenaSize);
-	memset(_resourceArena.data(), 0, _resourceArena.size());
-	_resourceArenaCursor = 0;
-	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
+	_resources.allocateArena(arenaSize);
 
 	for (uint i = sceneArenaFirstChunk(); i <= sceneArenaLastChunk(); ++i) {
 		if (!shouldLoadArenaChunk(i))
@@ -948,93 +937,21 @@ bool PlayableScene::loadStage003SceneRows() {
 }
 
 bool PlayableScene::loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	const char *archiveName = resourceArchiveName();
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(archiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", archiveName, index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit its fixed %s destination", archiveName, index, sceneDebugName());
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", archiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s fixed chunk %u: size=%u", archiveName, index, (uint)stream->size());
-	return true;
+	return _resources.loadFixedChunk(_vm->resources(), resourceArchiveName(), sceneDebugName(),
+		index, destination, fixedSize);
 }
 
 bool PlayableScene::loadFixedChunk(uint index, Graphics::ManagedSurface &destination, uint fixedSize) {
-	const char *archiveName = resourceArchiveName();
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(archiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", archiveName, index);
-		return false;
-	}
-
-	const uint destinationSize = destination.pitch * destination.h;
-	if (stream->size() > fixedSize || destinationSize < fixedSize) {
-		warning("%s chunk %u does not fit its fixed %s destination", archiveName, index, sceneDebugName());
-		return false;
-	}
-
-	memset(destination.getPixels(), 0, destinationSize);
-	if (stream->read(destination.getPixels(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", archiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s fixed chunk %u: size=%u", archiveName, index, (uint)stream->size());
-	return true;
+	return _resources.loadFixedChunk(_vm->resources(), resourceArchiveName(), sceneDebugName(),
+		index, destination, fixedSize);
 }
 
 bool PlayableScene::loadVariableChunk(uint index, Common::Array<byte> &destination) {
-	const char *archiveName = resourceArchiveName();
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(archiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", archiveName, index);
-		return false;
-	}
-
-	destination.resize(stream->size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", archiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s variable chunk %u: size=%u", archiveName, index, (uint)stream->size());
-	return true;
+	return _resources.loadVariableChunk(_vm->resources(), resourceArchiveName(), index, destination);
 }
 
 bool PlayableScene::loadArenaChunk(uint index) {
-	const char *archiveName = resourceArchiveName();
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(archiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", archiveName, index);
-		return false;
-	}
-
-	if (_resourceArenaCursor + stream->size() > _resourceArena.size()) {
-		warning("%s chunk %u does not fit the %s resource arena", archiveName, index, sceneDebugName());
-		return false;
-	}
-
-	_resourceChunkOffsets[index] = _resourceArenaCursor;
-	if (stream->read(_resourceArena.data() + _resourceArenaCursor, stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", archiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s arena chunk %u: offset=%u size=%u",
-		archiveName, index, _resourceArenaCursor, (uint)stream->size());
-	_resourceArenaCursor += stream->size();
-	return true;
+	return _resources.loadArenaChunk(_vm->resources(), resourceArchiveName(), sceneDebugName(), index);
 }
 
 bool PlayableScene::initializeActorDepthTables() {
@@ -2856,24 +2773,11 @@ bool PlayableScene::waitForSpeechOrDelay(uint32 fallbackMillis, bool animatePrim
 }
 
 void PlayableScene::setPaletteEntry6Bit(byte colorIndex, byte red, byte green, byte blue) {
-	const uint paletteOffset = colorIndex * 3;
-	if (_paletteCurrent.size() <= paletteOffset + 2)
-		return;
-
-	_paletteCurrent[paletteOffset] = red;
-	_paletteCurrent[paletteOffset + 1] = green;
-	_paletteCurrent[paletteOffset + 2] = blue;
+	_surfaceState.setPaletteEntry6Bit(colorIndex, red, green, blue);
 }
 
 byte PlayableScene::paletteEntryComponent6Bit(byte colorIndex, uint component) const {
-	if (component >= 3)
-		return 0;
-
-	const uint paletteOffset = colorIndex * 3 + component;
-	if (paletteOffset >= _paletteCurrent.size())
-		return 0;
-
-	return _paletteCurrent[paletteOffset];
+	return _surfaceState.paletteEntryComponent6Bit(colorIndex, component);
 }
 
 void PlayableScene::applyGameplayPanelPalette() {
