@@ -297,6 +297,14 @@ bool Channel::isDirty(Sprite *nextSprite) {
 			isDirtyFlag |= _sprite->getPosition() != nextSprite->getPosition();
 		if (isStretched() && !hasTextCastMember(_sprite))
 			isDirtyFlag |= _sprite->_width != nextSprite->_width || _sprite->_height != nextSprite->_height;
+		// D6+: the per-frame sprite-details index selects the behavior set and
+		// the sprite's start/end frame range. It can change while the visible
+		// cast member stays identical (e.g. returning to a menu frame after a
+		// dialog that ran killScriptInstances). Without flagging this, the
+		// channel keeps its stale (emptied) _behaviors and -1 frame range, so
+		// createScriptInstances() never re-arms the sprite and clicks die.
+		if (g_director->getVersion() >= 600)
+			isDirtyFlag |= _sprite->_spriteListIdx != nextSprite->_spriteListIdx;
 	}
 
 	return isDirtyFlag;
