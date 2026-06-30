@@ -311,10 +311,10 @@ void splashScreen() {
 
 	// Print version information
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
-	int w = font->getStringWidth(gScummVMVersionDate);
+	int w = font->getStringWidth(gScummVMFullVersion);
 	int x = screen.w - w - 5;
 	int y = screen.h - font->getFontHeight() - 5;
-	font->drawString(&screen, gScummVMVersionDate, x, y, w, screen.format.ARGBToColor(0xff, 0, 0, 0));
+	font->drawString(&screen, gScummVMFullVersion, x, y, w, screen.format.ARGBToColor(0xff, 0, 0, 0));
 
 	// Scale if needed and copy to overlay
 	if (screen.w != overlayWidth) {

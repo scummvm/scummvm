@@ -63,7 +63,7 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	title->setAlign(Graphics::kTextAlignCenter);
 #endif
 
-	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", Common::U32String(gScummVMVersionDate));
+	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", Common::U32String(gScummVMFullVersion));
 	version->setAlign(Graphics::kTextAlignCenter);
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", _("~R~esume"), Common::U32String(), kPlayCmd, 'P');
