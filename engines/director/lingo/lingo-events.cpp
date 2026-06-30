@@ -681,6 +681,17 @@ void Movie::broadcastEvent(LEvent event) {
 			queueEvent(queue, event, i);
 		}
 	}
+
+	// The per-sprite queueing above only reaches sprite behaviors: within each
+	// sprite's event group the sprite handler runs first and (because the last
+	// behavior is queued with passByDefault=false) marks the event handled, which
+	// swallows the cast/frame/movie handlers that share its eventId. As a result a
+	// frame script's `on prepareFrame` (and the movie script's) would never run.
+	// Queue one more pass with no sprite target so the frame and movie handlers are
+	// resolved with a fresh eventId, exactly like enterFrame/exitFrame reach them
+	// via processEvent().
+	queueEvent(queue, event, 0);
+
 	_vm->setCurrentWindow(this->getWindow());
 	_lingo->processEvents(queue, false);
 }
