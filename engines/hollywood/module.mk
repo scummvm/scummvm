@@ -18,6 +18,7 @@ MODULE_OBJS = \
 	music.o \
 	resource.o \
 	saveload.o \
+	scenes/chapter_intro_scene.o \
 	scenes/intro/scene1000.o \
 	scenes/intro/scene9000.o \
 	scenes/intro/scene9010.o \
@@ -36,6 +37,8 @@ MODULE_OBJS = \
 	scenes/playable/scene1070.o \
 	scenes/playable/scene1080.o \
 	scenes/playable/scene1090.o \
+	scenes/playable/scene3000.o \
+	scenes/playable/scene3010.o \
 	scenes/playable/scene6000.o \
 	scenes/playable/scene6010.o \
 	scenes/playable/scene6020.o \
@@ -55,7 +58,8 @@ MODULE_OBJS = \
 	scenes/playable/scene_surface_state.o \
 	scenes/playable/scene_text_store.o \
 	scenes/playable/speech_controller.o \
-	scenes/playable/playable_scene.o
+	scenes/playable/playable_scene.o \
+	scenes/playable/playable_scene_actions.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_HOLLYWOOD), DYNAMIC_PLUGIN)

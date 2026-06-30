@@ -21,11 +21,9 @@
 
 #include "hollywood/scenes/playable/scene6000.h"
 
-#include "common/debug.h"
 #include "common/events.h"
 #include "common/system.h"
 
-#include "hollywood/gameplay/game_state.h"
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -49,161 +47,46 @@ const byte kScene6000SpriteFrameMap[] = {
 };
 
 Scene6000::Scene6000(HollywoodEngine *vm) :
-		_vm(vm),
-		_music(),
-		_resourceArenaCursor(0),
+		ChapterIntroScene(vm, "scene 6000"),
 		_spriteFrameIndex(0),
 		_previousSpriteDescriptor(0),
-		_hasPreviousSpriteDescriptor(false),
-		_skipRequested(false) {
-	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
-	_paletteResource.resize(kPaletteSize);
-	_paletteCurrent.resize(kPaletteSize);
-	_baseFramebuffer.resize(kFrameBufferSize);
-	_sceneFramebuffer.resize(kFrameBufferSize);
-	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
+		_hasPreviousSpriteDescriptor(false) {
 }
 
-bool Scene6000::play() {
-	GameplayState &state = _vm->gameState();
-	state.initializeRonItemResourcePages();
-	if (state.inventoryItemCountByOwner[0] == 0)
-		state.initializeRonInventoryItems();
-	state.currentInventoryOwnerIndex = 0;
-	state.activeAudioChapterIndex = 6;
-	state.currentAmbientMusicCueId = kScene6000MusicCueId;
-
-	if (!load())
-		return false;
-
-	_music.setArchive(Common::Path(kScene6000MusicArchiveName));
-	_music.playMusicCue(kScene6000MusicCueId, 100);
-	fadeInPalette();
-
-	if (!_skipRequested && !Engine::shouldQuit())
-		runPresentation();
-
-	fadeOutPalette();
-	_music.stop();
-	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
-	presentFrame();
-
-	if (!Engine::shouldQuit())
-		_vm->gameState().mainFlowStateId = kScene6000NextState;
-
-	return true;
+const char *Scene6000::resourceArchiveName() const {
+	return kScene6000ArchiveName;
 }
 
-bool Scene6000::load() {
-	if (!_vm->resources()->readChunkTable(Common::Path(kScene6000ArchiveName), _chunkTable)) {
-		warning("Failed to read %s header", kScene6000ArchiveName);
-		return false;
-	}
+const char *Scene6000::musicArchiveName() const {
+	return kScene6000MusicArchiveName;
+}
 
-	for (uint i = 0; i <= 3; ++i) {
-		if (!_chunkTable.isValidChunk(i)) {
-			warning("%s is missing scene 6000 chunk %u", kScene6000ArchiveName, i);
-			return false;
-		}
-	}
+uint16 Scene6000::musicCueId() const {
+	return kScene6000MusicCueId;
+}
 
-	if (!loadChunk(0, _baseFramebuffer, kFrameBufferSize) ||
-			!loadChunk(1, _paletteResource, kPaletteSize))
-		return false;
+uint16 Scene6000::nextState() const {
+	return kScene6000NextState;
+}
 
-	uint32 resourceArenaSize = 0;
-	for (uint i = 2; i <= 3; ++i)
-		resourceArenaSize += _chunkTable.sizes[i];
+byte Scene6000::activeAudioChapterIndex() const {
+	return 6;
+}
 
-	_resourceArena.resize(resourceArenaSize);
-	memset(_resourceArena.data(), 0, _resourceArena.size());
-	_resourceArenaCursor = 0;
-	for (uint i = 2; i <= 3; ++i) {
-		if (!loadArenaChunk(i))
-			return false;
-	}
+uint Scene6000::sceneArenaFirstChunk() const {
+	return 2;
+}
 
+uint Scene6000::sceneArenaLastChunk() const {
+	return 3;
+}
+
+void Scene6000::adjustPaletteAfterLoad() {
 	if (_paletteResource.size() >= 0x300) {
 		_paletteResource[0x2fd] = 0x3f;
 		_paletteResource[0x2fe] = 0x3f;
 		_paletteResource[0x2ff] = 0x3f;
 	}
-	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
-	memcpy(_sceneFramebuffer.data(), _baseFramebuffer.data(), _sceneFramebuffer.size());
-	return true;
-}
-
-bool Scene6000::loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_vm->resources()->createChunkReadStream(Common::Path(kScene6000ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kScene6000ArchiveName, index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit scene 6000 destination", kScene6000ArchiveName, index);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kScene6000ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u",
-		kScene6000ArchiveName, index, (uint)stream->size());
-	return true;
-}
-
-bool Scene6000::loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_vm->resources()->createChunkReadStream(Common::Path(kScene6000ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kScene6000ArchiveName, index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit scene 6000 destination", kScene6000ArchiveName, index);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kScene6000ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u",
-		kScene6000ArchiveName, index, (uint)stream->size());
-	return true;
-}
-
-bool Scene6000::loadArenaChunk(uint index) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(
-		_vm->resources()->createChunkReadStream(Common::Path(kScene6000ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kScene6000ArchiveName, index);
-		return false;
-	}
-
-	if (_resourceArenaCursor + stream->size() > _resourceArena.size()) {
-		warning("%s chunk %u does not fit the scene 6000 resource arena", kScene6000ArchiveName, index);
-		return false;
-	}
-
-	_resourceChunkOffsets[index] = _resourceArenaCursor;
-	if (stream->read(_resourceArena.data() + _resourceArenaCursor, stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kScene6000ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s arena chunk %u: offset=%u size=%u",
-		kScene6000ArchiveName, index, _resourceArenaCursor, (uint)stream->size());
-	_resourceArenaCursor += stream->size();
-	return true;
 }
 
 void Scene6000::runPresentation() {
@@ -271,81 +154,6 @@ void Scene6000::drawAnimatedSpriteFrame(bool drawSprite) {
 	_previousSpriteDescriptor = descriptor;
 	_hasPreviousSpriteDescriptor = true;
 	presentFrame();
-}
-
-void Scene6000::fadeInPalette() {
-	byte threshold = 0x3f;
-	while (!_skipRequested && !Engine::shouldQuit()) {
-		for (uint i = 0; i < _paletteResource.size(); ++i) {
-			if (_paletteResource[i] >= threshold)
-				_paletteCurrent[i] = MIN<byte>(_paletteResource[i], _paletteCurrent[i] + 3);
-		}
-		presentFrame();
-		if (threshold == 0)
-			return;
-		threshold = threshold > 3 ? threshold - 3 : 0;
-		if (delay(20))
-			return;
-	}
-}
-
-void Scene6000::fadeOutPalette() {
-	byte threshold = 0;
-	while (!_skipRequested && !Engine::shouldQuit()) {
-		for (uint i = 0; i < _paletteResource.size(); ++i) {
-			if (_paletteResource[i] >= threshold)
-				_paletteCurrent[i] = _paletteCurrent[i] >= 3 ? _paletteCurrent[i] - 3 : 0;
-		}
-		presentFrame();
-		if (threshold >= 0x3f)
-			return;
-		threshold = MIN<byte>(0x3f, threshold + 3);
-		if (delay(20))
-			return;
-	}
-}
-
-void Scene6000::presentFrame() {
-	presentIndexedFrame(_sceneFramebuffer.surface(), _paletteCurrent, _screen, _displayPalette);
-}
-
-bool Scene6000::delay(uint32 millis) {
-	uint32 remaining = millis;
-	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
-
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		remaining -= slice;
-	}
-
-	return _skipRequested || Engine::shouldQuit();
-}
-
-bool Scene6000::pollEvents() {
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RETURN_TO_LAUNCHER:
-			Engine::quitGame();
-			_music.stop();
-			return true;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-					event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_SPACE) {
-				_skipRequested = true;
-				return true;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
-	return false;
 }
 
 } // End of namespace Hollywood

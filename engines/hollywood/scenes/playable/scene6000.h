@@ -22,56 +22,32 @@
 #ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE6000_H
 #define HOLLYWOOD_SCENES_PLAYABLE_SCENE6000_H
 
-#include "common/array.h"
-
-#include "hollywood/graphics.h"
-#include "hollywood/music.h"
-#include "hollywood/resource.h"
+#include "hollywood/scenes/chapter_intro_scene.h"
 
 namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene6000 {
+class Scene6000 : public ChapterIntroScene {
 public:
 	Scene6000(HollywoodEngine *vm);
 
-	bool play();
-
 private:
-	bool load();
-	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
-	bool loadArenaChunk(uint index);
-	void runPresentation();
+	const char *resourceArchiveName() const override;
+	const char *musicArchiveName() const override;
+	uint16 musicCueId() const override;
+	uint16 nextState() const override;
+	byte activeAudioChapterIndex() const override;
+	uint sceneArenaFirstChunk() const override;
+	uint sceneArenaLastChunk() const override;
+	void adjustPaletteAfterLoad() override;
+	void runPresentation() override;
+
 	void drawAnimatedSpriteFrame(bool drawSprite);
-	void fadeInPalette();
-	void fadeOutPalette();
-	void presentFrame();
-	bool delay(uint32 millis);
-	bool pollEvents();
 
-	enum {
-		kResourceChunkCount = 40,
-		kFrameBufferSize = HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight
-	};
-
-	HollywoodEngine *_vm;
-	MusicPlayer _music;
-	ResourceChunkTable _chunkTable;
-	uint32 _resourceChunkOffsets[kResourceChunkCount];
-	uint32 _resourceArenaCursor;
-	Common::Array<byte> _paletteResource;
-	Common::Array<byte> _paletteCurrent;
-	IndexedSurfaceBuffer _baseFramebuffer;
-	IndexedSurfaceBuffer _sceneFramebuffer;
-	Common::Array<byte> _resourceArena;
-	Graphics::ManagedSurface _screen;
-	Palette6Bit _displayPalette;
 	byte _spriteFrameIndex;
 	uint16 _previousSpriteDescriptor;
 	bool _hasPreviousSpriteDescriptor;
-	bool _skipRequested;
 };
 
 } // End of namespace Hollywood

@@ -21,8 +21,6 @@
 
 #include "hollywood/scenes/intro/scene1000.h"
 
-#include "common/debug.h"
-#include "common/events.h"
 #include "common/system.h"
 
 #include "hollywood/gameplay/game_state.h"
@@ -48,10 +46,8 @@ const byte kTitleBlinkDescriptorFrameMap[] = {
 };
 
 Scene1000::Scene1000(HollywoodEngine *vm) :
-		_vm(vm),
-		_music(),
+		ChapterIntroScene(vm, "title front-end"),
 		_random("hollywood_scene1000"),
-		_resourceArenaCursor(0),
 		_lastBlinkMillis(0),
 		_blinkPatternMode(0),
 		_blinkFrameIndex(0),
@@ -59,153 +55,51 @@ Scene1000::Scene1000(HollywoodEngine *vm) :
 		_blinkDirty(true),
 		_secondaryDirty(false),
 		_secondaryVisible(false),
-		_titlePatchApplied(false),
-		_skipRequested(false) {
-	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
-	_paletteResource.resize(kPaletteSize);
-	_paletteCurrent.resize(kPaletteSize);
-	_frameDecodeBuffer.resize(kFrameBufferSize);
-	_sceneFramebuffer.resize(kFrameBufferSize);
-	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
+		_titlePatchApplied(false) {
 }
 
-bool Scene1000::play() {
+const char *Scene1000::resourceArchiveName() const {
+	return kTitleFrontEndArchiveName;
+}
+
+const char *Scene1000::musicArchiveName() const {
+	return kChapter1MusicArchiveName;
+}
+
+uint16 Scene1000::musicCueId() const {
+	return kTitleFrontEndMusicCueId;
+}
+
+uint16 Scene1000::nextState() const {
+	return kTitleFrontEndNextState;
+}
+
+byte Scene1000::activeAudioChapterIndex() const {
+	return 1;
+}
+
+uint Scene1000::sceneArenaFirstChunk() const {
+	return 2;
+}
+
+uint Scene1000::sceneArenaLastChunk() const {
+	return 4;
+}
+
+void Scene1000::initializeChapterState() {
 	GameplayState &state = _vm->gameState();
 	state.initializeRonItemResourcePages();
 	state.initializeRonInventoryItems();
 	state.currentInventoryOwnerIndex = 0;
-	state.activeAudioChapterIndex = 1;
-	state.currentAmbientMusicCueId = kTitleFrontEndMusicCueId;
+	state.activeAudioChapterIndex = activeAudioChapterIndex();
+	state.currentAmbientMusicCueId = musicCueId();
+}
 
-	if (!load())
-		return false;
-
-	_music.setArchive(Common::Path(kChapter1MusicArchiveName));
-	_music.playMusicCue(kTitleFrontEndMusicCueId, 100);
-
+void Scene1000::drawInitialFrame() {
 	renderOverlayFrame(true);
-	fadeInPalette();
-
-	if (!_skipRequested && !Engine::shouldQuit())
-		runTitleFrontEndSequence();
-
-	fadeOutPalette();
-	_music.stop();
-	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
-	presentFrame();
-
-	if (!Engine::shouldQuit())
-		_vm->gameState().mainFlowStateId = kTitleFrontEndNextState;
-
-	return true;
 }
 
-bool Scene1000::load() {
-	if (!_vm->resources()->readChunkTable(Common::Path(kTitleFrontEndArchiveName), _chunkTable)) {
-		warning("Failed to read %s header", kTitleFrontEndArchiveName);
-		return false;
-	}
-
-	for (uint i = 0; i <= 4; ++i) {
-		if (!_chunkTable.isValidChunk(i)) {
-			warning("%s is missing title front-end chunk %u", kTitleFrontEndArchiveName, i);
-			return false;
-		}
-	}
-
-	if (!loadChunk(0, _frameDecodeBuffer, kFrameBufferSize) ||
-			!loadChunk(1, _paletteResource, kPaletteSize))
-		return false;
-
-	uint32 resourceArenaSize = 0;
-	for (uint i = 2; i <= 4; ++i)
-		resourceArenaSize += _chunkTable.sizes[i];
-
-	_resourceArena.resize(resourceArenaSize);
-	memset(_resourceArena.data(), 0, _resourceArena.size());
-	_resourceArenaCursor = 0;
-	for (uint i = 2; i <= 4; ++i) {
-		if (!loadArenaChunk(i))
-			return false;
-	}
-
-	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
-	memcpy(_sceneFramebuffer.data(), _frameDecodeBuffer.data(), _sceneFramebuffer.size());
-	return true;
-}
-
-bool Scene1000::loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kTitleFrontEndArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kTitleFrontEndArchiveName, index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit its fixed destination", kTitleFrontEndArchiveName, index);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kTitleFrontEndArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u",
-		kTitleFrontEndArchiveName, index, (uint)stream->size());
-	return true;
-}
-
-bool Scene1000::loadChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kTitleFrontEndArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kTitleFrontEndArchiveName, index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit its fixed destination", kTitleFrontEndArchiveName, index);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kTitleFrontEndArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u",
-		kTitleFrontEndArchiveName, index, (uint)stream->size());
-	return true;
-}
-
-bool Scene1000::loadArenaChunk(uint index) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kTitleFrontEndArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kTitleFrontEndArchiveName, index);
-		return false;
-	}
-
-	if (_resourceArenaCursor + stream->size() > _resourceArena.size()) {
-		warning("%s chunk %u does not fit the title front-end resource arena",
-			kTitleFrontEndArchiveName, index);
-		return false;
-	}
-
-	_resourceChunkOffsets[index] = _resourceArenaCursor;
-	if (stream->read(_resourceArena.data() + _resourceArenaCursor, stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kTitleFrontEndArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s arena chunk %u: offset=%u size=%u",
-		kTitleFrontEndArchiveName, index, _resourceArenaCursor, (uint)stream->size());
-	_resourceArenaCursor += stream->size();
-	return true;
-}
-
-void Scene1000::runTitleFrontEndSequence() {
+void Scene1000::runPresentation() {
 	uint32 elapsed = 0;
 	uint32 secondaryElapsed = 0;
 	uint32 lastMillis = g_system->getMillis();
@@ -247,7 +141,7 @@ void Scene1000::runTitleFrontEndSequence() {
 }
 
 void Scene1000::applyTitlePatch() {
-	drawResourceBlockListToSceneFramebuffer(_resourceChunkOffsets[2]);
+	drawResourceBlockList(_resourceArena, _resourceChunkOffsets[2], _sceneFramebuffer.managedSurface());
 	_titlePatchApplied = true;
 	renderOverlayFrame(true);
 }
@@ -295,201 +189,30 @@ void Scene1000::renderOverlayFrame(bool forceDirty) {
 			_secondaryDirty = true;
 	}
 
-	if (_blinkDirty) {
-		const uint blinkMapIndex = MIN<uint>(_blinkFrameIndex, ARRAYSIZE(kTitleBlinkDescriptorFrameMap) - 1);
-		restoreSpriteBackground(_resourceChunkOffsets[3], kBlinkDescriptorCount,
-			kTitleBlinkDescriptorFrameMap[blinkMapIndex]);
-	}
-	if (_secondaryDirty && _secondaryVisible)
-		restoreSpriteBackground(_resourceChunkOffsets[4], kSecondaryDescriptorCount, _secondaryFrameIndex);
-
 	const uint blinkMapIndex = MIN<uint>(_blinkFrameIndex, ARRAYSIZE(kTitleBlinkDescriptorFrameMap) - 1);
-	drawStripSpriteFrame(_resourceChunkOffsets[3], kBlinkDescriptorCount,
-		kTitleBlinkDescriptorFrameMap[blinkMapIndex]);
-	if (_secondaryVisible)
-		drawStripSpriteFrame(_resourceChunkOffsets[4], kSecondaryDescriptorCount, _secondaryFrameIndex);
+	const byte blinkDescriptor = kTitleBlinkDescriptorFrameMap[blinkMapIndex];
+
+	if (_blinkDirty) {
+		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[3], 0,
+			kBlinkDescriptorCount, blinkDescriptor, _baseFramebuffer.surface(),
+			_sceneFramebuffer.surface());
+	}
+	if (_secondaryDirty && _secondaryVisible) {
+		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[4], 0,
+			kSecondaryDescriptorCount, _secondaryFrameIndex, _baseFramebuffer.surface(),
+			_sceneFramebuffer.surface());
+	}
+
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[3], 0,
+		kBlinkDescriptorCount, blinkDescriptor, _sceneFramebuffer.surface());
+	if (_secondaryVisible) {
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[4], 0,
+			kSecondaryDescriptorCount, _secondaryFrameIndex, _sceneFramebuffer.surface());
+	}
 
 	_blinkDirty = false;
 	_secondaryDirty = false;
 	presentFrame();
-}
-
-void Scene1000::restoreSpriteBackground(uint32 baseOffset, uint16 descriptorCount, uint16 descriptorIndex) {
-	if (descriptorIndex >= descriptorCount)
-		return;
-
-	const uint entryOffset = baseOffset + kFrameDescriptorSize * descriptorIndex;
-	if (entryOffset + kFrameDescriptorSize > _resourceArena.size())
-		return;
-
-	const uint32 packedWidth = readUint32(_resourceArena, entryOffset + 4);
-	const uint32 packedRows = readUint32(_resourceArena, entryOffset + 8);
-	const uint copyWidth = (packedWidth >> 16) & 0xffff;
-	const uint x = packedWidth & 0xffff;
-	const uint firstRow = packedRows & 0xffff;
-	const uint lastRow = (packedRows >> 16) & 0xffff;
-	if (copyWidth == 0 || firstRow > lastRow)
-		return;
-
-	for (uint row = firstRow; row <= lastRow; ++row) {
-		const uint destinationOffset = x + row * HollywoodEngine::kSceneBufferWidth;
-		if (destinationOffset + copyWidth > _frameDecodeBuffer.size() ||
-				destinationOffset + copyWidth > _sceneFramebuffer.size())
-			return;
-
-		memcpy(_sceneFramebuffer.data() + destinationOffset, _frameDecodeBuffer.data() + destinationOffset, copyWidth);
-	}
-}
-
-void Scene1000::drawStripSpriteFrame(uint32 baseOffset, uint16 descriptorCount, uint16 descriptorIndex) {
-	if (descriptorIndex >= descriptorCount)
-		return;
-
-	const uint entryOffset = baseOffset + kFrameDescriptorSize * descriptorIndex;
-	if (entryOffset + kFrameDescriptorSize > _resourceArena.size())
-		return;
-
-	const uint16 spanCount = readUint16(_resourceArena, entryOffset + 12);
-	uint cursor = baseOffset + kFrameDescriptorSize * descriptorCount + readUint32(_resourceArena, entryOffset);
-	if (cursor > _resourceArena.size())
-		return;
-
-	for (uint spanIndex = 0; spanIndex < spanCount; ++spanIndex) {
-		if (cursor + 5 > _resourceArena.size())
-			return;
-
-		const uint32 packedDestination = readUint32(_resourceArena, cursor);
-		const uint dataLength = _resourceArena[cursor + 4];
-		cursor += 5;
-
-		const uint x = packedDestination & 0xffff;
-		const uint y = (packedDestination >> 16) & 0xffff;
-		const uint destinationOffset = x + y * HollywoodEngine::kSceneBufferWidth;
-		if (cursor + dataLength > _resourceArena.size() ||
-				destinationOffset + dataLength > _sceneFramebuffer.size())
-			return;
-
-		memcpy(_sceneFramebuffer.data() + destinationOffset, _resourceArena.data() + cursor, dataLength);
-		cursor += dataLength;
-	}
-}
-
-void Scene1000::drawResourceBlockListToSceneFramebuffer(uint32 baseOffset) {
-	if (baseOffset + 2 > _resourceArena.size())
-		return;
-
-	const uint16 blockCount = readUint16(_resourceArena, baseOffset);
-	uint cursor = baseOffset + 2;
-	for (uint blockIndex = 0; blockIndex < blockCount; ++blockIndex) {
-		if (cursor + 6 > _resourceArena.size())
-			return;
-
-		const uint32 packedDestination = readUint32(_resourceArena, cursor);
-		const uint16 size = readUint16(_resourceArena, cursor + 4);
-		cursor += 6;
-
-		const uint x = packedDestination & 0xffff;
-		const uint y = (packedDestination >> 16) & 0xffff;
-		const uint destinationOffset = x + y * HollywoodEngine::kSceneBufferWidth;
-		if (cursor + size > _resourceArena.size() ||
-				destinationOffset + size > _sceneFramebuffer.size())
-			return;
-
-		memcpy(_sceneFramebuffer.data() + destinationOffset, _resourceArena.data() + cursor, size);
-		cursor += size;
-	}
-}
-
-void Scene1000::fadeInPalette() {
-	byte threshold = 0x3f;
-	while (!_skipRequested && !Engine::shouldQuit()) {
-		for (uint i = 0; i < _paletteResource.size(); ++i) {
-			if (_paletteResource[i] >= threshold)
-				_paletteCurrent[i] = MIN<byte>(_paletteResource[i], _paletteCurrent[i] + 3);
-		}
-		presentFrame();
-		if (threshold == 0)
-			return;
-		threshold = threshold > 3 ? threshold - 3 : 0;
-		if (delay(20))
-			return;
-	}
-}
-
-void Scene1000::fadeOutPalette() {
-	byte threshold = 0;
-	while (!_skipRequested && !Engine::shouldQuit()) {
-		for (uint i = 0; i < _paletteResource.size(); ++i) {
-			if (_paletteResource[i] >= threshold)
-				_paletteCurrent[i] = _paletteCurrent[i] >= 3 ? _paletteCurrent[i] - 3 : 0;
-		}
-		presentFrame();
-		if (threshold >= 0x3f)
-			return;
-		threshold = MIN<byte>(0x3f, threshold + 3);
-		if (delay(20))
-			return;
-	}
-}
-
-void Scene1000::presentFrame() {
-	presentIndexedFrame(_sceneFramebuffer.surface(), _paletteCurrent, _screen, _displayPalette);
-}
-
-bool Scene1000::pollEvents() {
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RETURN_TO_LAUNCHER:
-			Engine::quitGame();
-			_music.stop();
-			return true;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-					event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_SPACE) {
-				_skipRequested = true;
-				return true;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
-	return false;
-}
-
-bool Scene1000::delay(uint32 millis) {
-	uint32 remaining = millis;
-	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
-
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		remaining -= slice;
-	}
-
-	return _skipRequested || Engine::shouldQuit();
-}
-
-uint16 Scene1000::readUint16(const Common::Array<byte> &source, uint offset) const {
-	if (offset + 2 > source.size())
-		return 0;
-
-	return source[offset] | (source[offset + 1] << 8);
-}
-
-uint32 Scene1000::readUint32(const Common::Array<byte> &source, uint offset) const {
-	if (offset + 4 > source.size())
-		return 0;
-
-	return source[offset] |
-		(source[offset + 1] << 8) |
-		(source[offset + 2] << 16) |
-		(source[offset + 3] << 24);
 }
 
 } // End of namespace Hollywood
