@@ -41,6 +41,7 @@ public:
 	void init() override;
 
 	void readData(Common::SeekableReadStream &stream) override;
+	void readDataNancy12(Common::SeekableReadStream &stream);
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 
@@ -62,6 +63,8 @@ protected:
 	static const int kMaxSourceRows = 8;
 	static const int kMaxSourceCols = 5;
 	static const int kNumCursors    = 10;
+	static const int kNumValueRects = 114; // Nancy 12: per-kind/size source sprites (19 kinds x 6 sizes)
+	static const int kSizesPerKind  = 6;   // Nancy 12: stride between kinds in _valueSrcRects
 
 	// File data
 
@@ -76,6 +79,7 @@ protected:
 
 	Common::Rect _cellSrcRects[kMaxSourceRows][kMaxSourceCols];
 	Common::Rect _cursorSrcRects[kNumCursors];
+	Common::Array<Common::Rect> _valueSrcRects; // Nancy 12: indexed by gem value
 
 	uint16 _originX  = 0;
 	uint16 _originY  = 0;
@@ -124,6 +128,7 @@ protected:
 	void redraw();
 	void checkSolved();
 	Common::Rect cellRect(int row, int col) const;
+	Common::Rect cellSprite(const Cell &cell) const;
 	bool hitTestCell(const Common::Point &p, int &outRow, int &outCol) const;
 };
 

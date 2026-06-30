@@ -73,6 +73,11 @@ static bool unpackGrid(const Common::Array<int16> &in, SortPuzzle::Cell grid[][S
 }
 
 void SortPuzzle::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy12) {
+		readDataNancy12(stream);
+		return;
+	}
+
 	readFilename(stream, _boardImageName);
 	readFilename(stream, _cursorImageName);
 
@@ -119,6 +124,81 @@ void SortPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_cellWidth  = _cellSrcRects[0][0].width();
 	_cellHeight = _cellSrcRects[0][0].height();
+}
+
+// Nancy 12 reworked the record: the board layout is computed from a single cell
+// size plus origin/spacing (rather than a per-position rect grid), gems are drawn
+// from one source sprite per value, and there is an (unused-here) preset board and
+// shuffle flag. The engine reshuffles itself, so those are skipped.
+void SortPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
+	readFilename(stream, _boardImageName);  // 0x000
+	readFilename(stream, _cursorImageName); // 0x021
+	_retainState = (stream.readByte() != 0); // 0x042
+	_rows = stream.readUint16LE();           // 0x043
+	_cols = stream.readUint16LE();           // 0x045
+	stream.skip(4);                          // 0x047 unknown
+	stream.skip(1);                          // 0x04b preset/shuffle flag (engine reshuffles)
+	stream.skip(200);                        // 0x04c preset board values (100 x int16)
+	stream.skip(2);                          // 0x114 unknown
+	_groupDivisor = stream.readUint16LE();   // 0x116
+	_valueRange   = stream.readUint16LE();   // 0x118
+
+	_valueSrcRects.resize(kNumValueRects);   // 0x11a: one source sprite per gem value
+	for (uint i = 0; i < (uint)kNumValueRects; ++i) {
+		readRect(stream, _valueSrcRects[i]);
+	}
+
+	_originX  = stream.readUint16LE();        // 0x83a
+	_originY  = stream.readUint16LE();        // 0x83c
+	_spacingY = stream.readUint16LE();        // 0x83e
+	_spacingX = stream.readUint16LE();        // 0x840
+
+	_pickupSound.readNormal(stream);          // 0x842
+	_dropSound.readNormal(stream);            // 0x873
+
+	_winScene.readData(stream);               // 0x8a4
+	stream.skip(2);
+	_winFlag.label = stream.readSint16LE();
+	_winFlag.flag  = stream.readByte();
+	_winSound.readNormal(stream);             // 0x8bd
+
+	_cancelScene.readData(stream);            // 0x8ee
+	stream.skip(2);
+	_cancelFlag.label = stream.readSint16LE();
+	_cancelFlag.flag  = stream.readByte();
+
+	readRect(stream, _exitHotspot);           // 0x907
+	stream.skip(2); // exit cursor type id
+
+	if (_rows > kMaxRows) _rows = kMaxRows;
+	if (_cols > kMaxCols) _cols = kMaxCols;
+	if (_groupDivisor == 0) _groupDivisor = 1;
+	if (_valueRange == 0) _valueRange = 1;
+
+	_cellWidth  = _valueSrcRects[0].width();
+	_cellHeight = _valueSrcRects[0].height();
+}
+
+Common::Rect SortPuzzle::cellSprite(const Cell &cell) const {
+	if (g_nancy->getGameType() >= kGameTypeNancy12) {
+		// Each pie has a kind (its group/column, cell.srcCol) and a size
+		// (cell.value, smallest to biggest). The source sprites are laid out as a
+		// grid - kind * kSizesPerKind + size - so the index must combine both,
+		// otherwise every kind would draw the same pie at a given size.
+		if (cell.srcCol >= 0 && cell.value >= 0) {
+			uint idx = (uint)cell.srcCol * kSizesPerKind + (uint)cell.value;
+			if (idx < _valueSrcRects.size()) {
+				return _valueSrcRects[idx];
+			}
+		}
+		return Common::Rect();
+	}
+
+	if (cell.srcRow >= 0 && cell.srcRow < kMaxSourceRows &&
+			cell.srcCol >= 0 && cell.srcCol < kMaxSourceCols) {
+		return _cellSrcRects[cell.srcRow][cell.srcCol];
+	}
+	return Common::Rect();
 }
 
 void SortPuzzle::initState() {
@@ -373,10 +453,7 @@ void SortPuzzle::redraw() {
 			const Cell &cell = _current[r][c];
 			if (cell.isEmpty)
 				continue;
-			if (cell.srcRow < 0 || cell.srcRow >= kMaxSourceRows ||
-			    cell.srcCol < 0 || cell.srcCol >= kMaxSourceCols)
-				continue;
-			const Common::Rect &src = _cellSrcRects[cell.srcRow][cell.srcCol];
+			Common::Rect src = cellSprite(cell);
 			if (src.isEmpty())
 				continue;
 			Common::Rect dst = cellRect(r, c);
@@ -386,7 +463,9 @@ void SortPuzzle::redraw() {
 
 	if (_hasHeld) {
 		bool drawn = false;
-		if (_held.value >= 0 && _held.value < kNumCursors) {
+		// Older games carry a separate cursor image with one sprite per value;
+		// Nancy 12 has no cursor image and draws the held gem from the board image.
+		if (g_nancy->getGameType() < kGameTypeNancy12 && _held.value >= 0 && _held.value < kNumCursors) {
 			const Common::Rect &src = _cursorSrcRects[_held.value];
 			if (!src.isEmpty()) {
 				int x = _heldDrawPos.x - src.width()  / 2;
@@ -395,9 +474,8 @@ void SortPuzzle::redraw() {
 				drawn = true;
 			}
 		}
-		if (!drawn && _held.srcRow >= 0 && _held.srcRow < kMaxSourceRows &&
-		    _held.srcCol >= 0 && _held.srcCol < kMaxSourceCols) {
-			const Common::Rect &src = _cellSrcRects[_held.srcRow][_held.srcCol];
+		if (!drawn) {
+			Common::Rect src = cellSprite(_held);
 			if (!src.isEmpty()) {
 				int x = _heldDrawPos.x - _cellWidth  / 2;
 				int y = _heldDrawPos.y - _cellHeight / 2;
