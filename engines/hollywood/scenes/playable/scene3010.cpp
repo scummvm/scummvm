@@ -266,7 +266,8 @@ bool Scene3010::prepareCustomGameplayLoop() {
 }
 
 bool Scene3010::advanceCustomGameplayLoop(uint32 delta) {
-	advanceWindmillLayer(delta);
+	if (_vm->gameState().windmillBladesMoving)
+		advanceWindmillLayer(delta);
 	advanceForestIdleLayer(delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
