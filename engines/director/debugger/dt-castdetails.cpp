@@ -581,6 +581,13 @@ void drawBaseCMprops(CastMember *member) {
 									script.handlerName = formatHandlerName(scriptCtx->_scriptId, scriptCastId.member, script.handlerId, scriptCtx->_scriptType, false);
 									addToOpenHandlers(script);
 								}
+							} else {
+								ImGuiScript script;
+								script.id = scriptCastId;
+								script.type = kCastScript;
+								script.moviePath = g_director->getCurrentMovie()->getArchive()->getPathName().toString();
+								script.handlerName = Common::String::format("Cast %d (source)", scriptCastId.member);
+								addToOpenHandlers(script);
 							}
 						}
 					} else {
