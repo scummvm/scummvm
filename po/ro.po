@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-29 23:10+0000\n"
+"POT-Creation-Date: 2026-06-30 09:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -999,9 +999,10 @@ msgstr ""
 #. I18N: Action in In Cold Blood
 #: gui/gui-manager.cpp:163 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173
-#: engines/lab/metaengine.cpp:160 engines/mohawk/myst.cpp:572
-#: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
-#: engines/supernova/metaengine.cpp:226 engines/teenagent/metaengine.cpp:207
+#: engines/lab/metaengine.cpp:160 engines/macs2/metaengine.cpp:45
+#: engines/mohawk/myst.cpp:572 engines/mohawk/riven.cpp:853
+#: engines/sludge/keymapper_tables.h:40 engines/supernova/metaengine.cpp:226
+#: engines/teenagent/metaengine.cpp:207
 #: engines/ultima/ultima4/metaengine.cpp:42
 #: engines/ultima/ultima4/metaengine.cpp:147 engines/voyeur/metaengine.cpp:192
 msgid "Interact"
@@ -3690,9 +3691,10 @@ msgstr ""
 #: engines/composer/metaengine.cpp:126 engines/drascula/metaengine.cpp:224
 #: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:93
 #: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
-#: engines/illusions/metaengine.cpp:142 engines/made/metaengine.cpp:151
-#: engines/mohawk/myst.cpp:566 engines/mohawk/riven.cpp:847
-#: engines/prince/metaengine.cpp:269 engines/sherlock/metaengine.cpp:384
+#: engines/illusions/metaengine.cpp:142 engines/macs2/metaengine.cpp:57
+#: engines/made/metaengine.cpp:151 engines/mohawk/myst.cpp:566
+#: engines/mohawk/riven.cpp:847 engines/prince/metaengine.cpp:269
+#: engines/sherlock/metaengine.cpp:384
 #: engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1276
@@ -5483,8 +5485,9 @@ msgstr ""
 #: backends/platform/sdl/miyoo/miyoo.cpp:114
 #: engines/alcachofa/metaengine.cpp:110 engines/grim/grim.cpp:545
 #: engines/grim/grim.cpp:645 engines/hdb/metaengine.cpp:264
-#: engines/made/metaengine.cpp:186 engines/phoenixvr/metaengine.cpp:110
-#: engines/scumm/metaengine.cpp:1232 engines/toltecs/metaengine.cpp:252
+#: engines/macs2/metaengine.cpp:69 engines/made/metaengine.cpp:186
+#: engines/phoenixvr/metaengine.cpp:110 engines/scumm/metaengine.cpp:1232
+#: engines/toltecs/metaengine.cpp:252
 msgid "Menu"
 msgstr ""
 
@@ -5866,16 +5869,17 @@ msgstr ""
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:521
 #: engines/grim/grim.cpp:621 engines/hdb/metaengine.cpp:251
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
-#: engines/icb/icb.cpp:179 engines/petka/metaengine.cpp:173
-#: engines/phoenixvr/metaengine.cpp:82 engines/scumm/help.cpp:228
-#: engines/scumm/help.cpp:237 engines/scumm/help.cpp:244
-#: engines/scumm/help.cpp:252 engines/sherlock/metaengine.cpp:435
-#: engines/sludge/keymapper_tables.h:58 engines/sludge/keymapper_tables.h:119
-#: engines/sludge/keymapper_tables.h:168 engines/sludge/keymapper_tables.h:181
-#: engines/sludge/keymapper_tables.h:217 engines/sludge/keymapper_tables.h:256
-#: engines/stark/metaengine.cpp:267 engines/tinsel/metaengine.cpp:313
-#: engines/titanic/metaengine.cpp:244 engines/titanic/metaengine.cpp:297
-#: engines/twine/metaengine.cpp:370 engines/zvision/metaengine.cpp:252
+#: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:63
+#: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
+#: engines/scumm/help.cpp:228 engines/scumm/help.cpp:237
+#: engines/scumm/help.cpp:244 engines/scumm/help.cpp:252
+#: engines/sherlock/metaengine.cpp:435 engines/sludge/keymapper_tables.h:58
+#: engines/sludge/keymapper_tables.h:119 engines/sludge/keymapper_tables.h:168
+#: engines/sludge/keymapper_tables.h:181 engines/sludge/keymapper_tables.h:217
+#: engines/sludge/keymapper_tables.h:256 engines/stark/metaengine.cpp:267
+#: engines/tinsel/metaengine.cpp:313 engines/titanic/metaengine.cpp:244
+#: engines/titanic/metaengine.cpp:297 engines/twine/metaengine.cpp:370
+#: engines/zvision/metaengine.cpp:252
 msgid "Inventory"
 msgstr ""
 
@@ -10126,6 +10130,19 @@ msgstr ""
 msgid "Select index"
 msgstr ""
 
+#: engines/macs2/metaengine.cpp:52
+msgid "Change cursor mode"
+msgstr ""
+
+#: engines/macs2/metaengine.cpp:75
+msgid "Cycle game speed"
+msgstr ""
+
+#: engines/macs2/metaengine.cpp:80 engines/sherlock/metaengine.cpp:846
+#: engines/touche/metaengine.cpp:147
+msgid "Open options menu"
+msgstr ""
+
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
 msgid "The game is using unsupported engine"
 msgstr ""
@@ -13125,10 +13142,6 @@ msgstr ""
 
 #: engines/sherlock/metaengine.cpp:833
 msgid "Open journal"
-msgstr ""
-
-#: engines/sherlock/metaengine.cpp:846 engines/touche/metaengine.cpp:147
-msgid "Open options menu"
 msgstr ""
 
 #: engines/sherlock/metaengine.cpp:862
