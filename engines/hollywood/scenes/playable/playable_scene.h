@@ -35,12 +35,15 @@
 #include "hollywood/music.h"
 #include "hollywood/resource.h"
 #include "hollywood/scenes/playable/action_overlay.h"
+#include "hollywood/scenes/playable/action_overlay_player.h"
 #include "hollywood/scenes/playable/actor_types.h"
 #include "hollywood/scenes/playable/ambient_audio.h"
 #include "hollywood/scenes/playable/animation_channels.h"
 #include "hollywood/scenes/playable/animation_layers.h"
 #include "hollywood/scenes/playable/scene_resources.h"
 #include "hollywood/scenes/playable/scene_surface_state.h"
+#include "hollywood/scenes/playable/scene_text_store.h"
+#include "hollywood/scenes/playable/speech_controller.h"
 #include "hollywood/scenes/playable/speech_overlay.h"
 
 namespace Graphics {
@@ -576,20 +579,23 @@ protected:
 	Graphics::ManagedSurface &_screen;
 	Palette6Bit &_displayPalette;
 
-	// Actor And Text Resources
+	// Actor Resources
 	Common::Array<byte> _resource000OffsetTable;
 	Common::Array<byte> _resource000SizeTable;
 	Common::Array<byte> _activeActorRunStreams;
 	Common::Array<byte> _secondaryActorRunStreams;
 	Common::Array<ActiveActorSpriteDescriptor> _activeActorDescriptors;
 	Common::Array<SecondaryActorSpriteDescriptor> _secondaryActorDescriptors;
-	Common::Array<byte> _stage003DecodeKey;
-	Common::Array<byte> _stage003StageBlock;
-	Common::Array<byte> _stage003SmallRows;
-	Common::Array<byte> _stage003LargeRows;
-	Common::Array<byte> _staticSpeechCueDescriptors;
-	Common::Array<byte> _inventoryOwnerSmallRows;
-	Common::Array<byte> _inventoryOwnerLargeRows;
+
+	// Scene Text Store
+	SceneTextStore _textStore;
+	Common::Array<byte> &_stage003DecodeKey;
+	Common::Array<byte> &_stage003StageBlock;
+	Common::Array<byte> &_stage003SmallRows;
+	Common::Array<byte> &_stage003LargeRows;
+	Common::Array<byte> &_staticSpeechCueDescriptors;
+	Common::Array<byte> &_inventoryOwnerSmallRows;
+	Common::Array<byte> &_inventoryOwnerLargeRows;
 
 	// Pathfinding State
 	Common::Array<ScenePoint> _routeBoundaryPoints;
@@ -600,25 +606,38 @@ protected:
 	// Runtime Systems
 	GameplayPanelArt _panelArt;
 	SceneHotspotTable _hotspots;
-	SpeechPlayer _speech;
 	SoundBank0Player _soundBank0;
 	SoundBank0Player _ambientSoundBank0;
-	SpeechOverlay _speechOverlay;
-	SpeechOverlay _primarySpeechOverlay;
 	Common::RandomSource _random;
+
+	// Speech Runtime State
+	SpeechController _speechController;
+	SpeechPlayer &_speech;
+	SpeechOverlay &_speechOverlay;
+	SpeechOverlay &_primarySpeechOverlay;
+	byte &_primaryLeftSpeechLastFrame;
+	byte &_primaryDialogueSpeechLastFrame;
+	byte &_primaryDialogueSpeechGroup;
+	bool &_primaryLeftSpeechActive;
+	bool &_primaryDialogueSpeechActive;
+	uint32 &_secondaryActorTimerAccumulator;
+	uint32 &_primaryLeftSpeechTimerAccumulator;
+	uint32 &_primaryDialogueSpeechTimerAccumulator;
+	byte &_secondaryActorFrame;
+
+	// Action Overlay Runtime State
+	ActionOverlayPlayer _actionOverlayPlayer;
+	bool &_actionOverlayVisible;
+	ResourceSpriteLayer &_actionOverlayLayer;
+	byte &_actionOverlayChunkIndex;
+	byte &_actionOverlayDescriptorCount;
+	byte &_actionOverlayFrameIndex;
+	bool &_hideActiveActor;
 
 	// Scene Runtime State
 	bool _inventoryItems[121];
 	byte _sceneStateFlags[8];
-	byte _primaryLeftSpeechLastFrame;
-	byte _primaryDialogueSpeechLastFrame;
-	byte _primaryDialogueSpeechGroup;
-	bool _primaryLeftSpeechActive;
-	bool _primaryDialogueSpeechActive;
 	uint32 _ambientMusicTimerAccumulator;
-	uint32 _secondaryActorTimerAccumulator;
-	uint32 _primaryLeftSpeechTimerAccumulator;
-	uint32 _primaryDialogueSpeechTimerAccumulator;
 	byte _previousAmbientMusicTrackId;
 	byte _currentAmbientSoundCueId;
 	byte _previousAmbientSoundCueId;
@@ -632,14 +651,7 @@ protected:
 	byte _activeActorFacing;
 	byte _activeActorCel;
 	byte _activeActorDrawOrderMode;
-	byte _secondaryActorFrame;
 	byte _lastSceneActionItemId;
-	bool _actionOverlayVisible;
-	ResourceSpriteLayer _actionOverlayLayer;
-	byte _actionOverlayChunkIndex;
-	byte _actionOverlayDescriptorCount;
-	byte _actionOverlayFrameIndex;
-	bool _hideActiveActor;
 	bool _skipRequested;
 };
 
