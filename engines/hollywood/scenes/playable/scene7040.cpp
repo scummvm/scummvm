@@ -58,6 +58,12 @@ const int kScene7040Entry7042StartX = 0x322;
 const int kScene7040Entry7042StartY = 0x1c9;
 const int kScene7040Entry7042TargetX = 0x29e;
 const int kScene7040Entry7042TargetY = 0x1cc;
+const int kScene7040MajorHotspotOverlayEndX = 0x179;
+const int kScene7040MajorHotspotOverlayEndY = 0x113;
+const byte kScene7040MajorHotspotOverlayEndFacing = 5;
+const byte kScene7040MajorHotspotReturnStartFacing = 4;
+const int kScene7040MajorHotspotReturnX = 0x10d;
+const int kScene7040MajorHotspotReturnY = 0x124;
 const uint32 kScene7040Chunk11FrameMillis = 75;
 const uint32 kScene7040Chunk14FrameMillis = 75;
 const uint32 kScene7040Chunk16FrameMillis = 75;
@@ -594,23 +600,24 @@ void Scene7040::handleActionSlot02MajorHotspotAction() {
 	if (state.officeStatueActionProgress == 2) {
 		runConfiguredActionOverlay(13, kScene7040Chunk13DescriptorCount,
 			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap),
-			kScene7040Chunk14FrameMillis, kActionOverlayShowActiveActor,
-			-1, 0, -1, 0, 100, -1, 0, true, 0, 0x2d);
+			kScene7040Chunk14FrameMillis, kActionOverlayHideActiveActor,
+			-1, 0, -1, 0, 100, -1, 0, false, 0, 0x2d);
 		_soundBank0.playSample(0x15, 100);
 		runMajorHotspotFrankensteinBranch();
 		_chunk12OverlayVisible = true;
 		runConfiguredActionOverlay(13, kScene7040Chunk13DescriptorCount,
 			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap),
-			kScene7040Chunk14FrameMillis, kActionOverlayShowActiveActor,
-			-1, 0, -1, 0, 100, -1, 0, true, 0x35, ARRAYSIZE(kScene7040MajorHotspotFrameMap));
+			kScene7040Chunk14FrameMillis, kActionOverlayHideActiveActor,
+			-1, 0, -1, 0, 100, -1, 0, false, 0x35, ARRAYSIZE(kScene7040MajorHotspotFrameMap));
 	} else {
 		runConfiguredActionOverlay(13, kScene7040Chunk13DescriptorCount,
 			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap),
-			kScene7040Chunk14FrameMillis, kActionOverlayShowActiveActor, -1, 0, 0x2c, 0x15);
+			kScene7040Chunk14FrameMillis, kActionOverlayHideActiveActor, -1, 0, 0x2c, 0x15,
+			100, -1, 0, false);
 	}
 	_chunk12OverlayVisible = false;
 
-	walkActiveActorTo(0x10d, 0x124, state.officeStatueActionProgress == 2 ? 4 : 5, 0);
+	runMajorHotspotReturnPath(state.officeStatueActionProgress == 2 ? 4 : 5);
 	switch (state.officeStatueActionProgress) {
 	case 0:
 		beginSecondarySpeechLine(2, 0);
@@ -863,6 +870,18 @@ void Scene7040::runMajorHotspotFrankensteinBranch() {
 	_chunk12OverlayVisible = false;
 	_preItemIdleAnimation.state = previousPreItemIdleState;
 	_hideActiveActor = previousHideActiveActor;
+}
+
+void Scene7040::runMajorHotspotReturnPath(byte finalFacing) {
+	_activeActorWorldX = kScene7040MajorHotspotOverlayEndX;
+	_activeActorWorldY = kScene7040MajorHotspotOverlayEndY;
+	_activeActorFacing = kScene7040MajorHotspotOverlayEndFacing;
+	_activeActorCel = 0;
+	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+
+	walkActiveActorTo(kScene7040MajorHotspotOverlayEndX, kScene7040MajorHotspotOverlayEndY,
+		kScene7040MajorHotspotReturnStartFacing, 0, false);
+	walkActiveActorTo(kScene7040MajorHotspotReturnX, kScene7040MajorHotspotReturnY, finalFacing, 0, false);
 }
 
 void Scene7040::runChunk11Range(byte firstFrame, byte endFrame) {
