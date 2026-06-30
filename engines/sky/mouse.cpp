@@ -911,7 +911,7 @@ void Mouse::pointerEngine(uint16 xPos, uint16 yPos) {
 }
 
 void Mouse::pointerEngineIBASS(uint16 xPos, uint16 yPos) {
-	int midx, midy; // open hotspot dimensions
+	int midx = 0, midy = 0; // open hotspot dimensions
 	Compact *itemData;
 	int itemProx;
 	int d = 0;
@@ -1425,7 +1425,7 @@ bool Mouse::wasClicked() {
 void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 	uint32 *objList;
 	int j, num;
-	Compact *itemData;
+	Compact *itemData = nullptr;
 	bool touched = false;
 	bool buttonHeld = (_system->getEventManager()->getButtonState() != 0); // mouseEngine() consumes the click at the end so using _mouseB would increment the timer at each click not on hold
 
@@ -1652,7 +1652,7 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 
 void Mouse::invMouse(uint16 xPos, uint16 yPos) {
 	uint32 *objList;
-	Compact *itemData;
+	Compact *itemData = nullptr;
 	int j, num;
 	bool touched = false;
 
