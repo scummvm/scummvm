@@ -499,7 +499,7 @@ struct RoomPasserBys {
  * Structure to hold a parsed choice option
  */
 struct ChoiceOption {
-	byte room = -1;
+	byte room = static_cast<byte>(-1);
 	int choiceIndex;
 	Common::String text;
 	uint32 dataOffset;
