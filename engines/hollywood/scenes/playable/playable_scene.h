@@ -36,6 +36,7 @@
 #include "hollywood/resource.h"
 #include "hollywood/scenes/playable/action_overlay.h"
 #include "hollywood/scenes/playable/action_overlay_player.h"
+#include "hollywood/scenes/playable/actor_path_controller.h"
 #include "hollywood/scenes/playable/actor_types.h"
 #include "hollywood/scenes/playable/ambient_audio.h"
 #include "hollywood/scenes/playable/animation_channels.h"
@@ -54,7 +55,7 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-class PlayableScene : public GameplayLoopDelegate, public DialogueMenuDelegate {
+class PlayableScene : public GameplayLoopDelegate, public DialogueMenuDelegate, public ActorPathControllerDelegate {
 public:
 	// Loads, runs, and exits a playable scene.
 	bool play();
@@ -189,11 +190,11 @@ protected:
 	// Adjusts a target click to a legal walkable point.
 	virtual bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const;
 	// Lets scenes alter routing for an intermediate region hop.
-	virtual bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
-		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas);
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
 	// Lets scenes alter routing for the final path segment.
-	virtual bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
-		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas);
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	// Applies scene state to hotspot maps and framebuffer patches.
 	virtual bool applyCustomSceneStateToHotspotsAndPatches(byte selector);
 	// Whether primary speech should drive primary actor animation.
@@ -387,7 +388,7 @@ protected:
 	ScenePoint bestPaletteRouteBoundaryPoint(int startX, int startY, int targetX, int targetY,
 		byte currentRegion, byte targetRegion) const;
 	// Reads the palette-region id at scene coordinates.
-	byte paletteRegionAt(int x, int y) const;
+	byte paletteRegionAt(int x, int y) const override;
 	// Chooses actor facing for a movement vector.
 	byte calculateMovementFacingForPath(int fromX, int fromY, int toX, int toY, int requestedFacing) const;
 	// Calculates walk steps needed for one axis.
@@ -598,10 +599,11 @@ protected:
 	Common::Array<byte> &_inventoryOwnerLargeRows;
 
 	// Pathfinding State
-	Common::Array<ScenePoint> _routeBoundaryPoints;
-	Common::Array<byte> _routeSteps;
-	Common::Array<ActorPathFrame> _actorPathFrames;
-	Common::Array<byte> _actorPathStepDeltas;
+	ActorPathController _pathController;
+	Common::Array<ScenePoint> &_routeBoundaryPoints;
+	Common::Array<byte> &_routeSteps;
+	Common::Array<ActorPathFrame> &_actorPathFrames;
+	Common::Array<byte> &_actorPathStepDeltas;
 
 	// Runtime Systems
 	GameplayPanelArt _panelArt;
