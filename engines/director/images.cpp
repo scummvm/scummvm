@@ -347,6 +347,10 @@ void copyStretchImg(const Graphics::Surface *srcSurface, Graphics::Surface *targ
 		// Source area is nonexistant
 		return;
 	}
+	if ((targetRect.width() <= 0) || (targetRect.height() <= 0)) {
+		// Target area is nonexistant
+		return;
+	}
 
 	Graphics::Surface *temp1 = nullptr;
 	Graphics::Surface *temp2 = nullptr;
