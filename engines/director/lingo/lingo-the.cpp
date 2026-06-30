@@ -166,6 +166,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheSerialNumber,		"serialNumber",		false, 500, false },//				D5 p, documnted in D7
 	{ kTheShiftDown,		"shiftDown",		false, 200, true },	// D2 f
 	{ kTheSoundEnabled,		"soundEnabled",		false, 200, false },// D2 p
+	{ kTheSoundDevice,		"soundDevice",		false, 700, false },//					D7 p
 	{ kTheSoundEntity,		"sound",			true,  300, false },// 		D3 p
 	{ kTheSoundKeepDevice,	"soundKeepDevice",	false, 600, false },//					D6 p, documented in D7
 	{ kTheSoundLevel,		"soundLevel",		false, 200, false },// D2 p
@@ -1092,6 +1093,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 			}
 		}
 		break;
+	case kTheSoundDevice:
+		// ScummVM uses a single sound output; report the stored device name.
+		d = _soundDevice;
+		break;
 	case kTheSoundKeepDevice:
 		// System property; for Windows only, prevents the sound driver from unloading
 		// and reloading each time a sound needs to play. The default value is TRUE.
@@ -1449,6 +1454,11 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 				break;
 			}
 		}
+		break;
+	case kTheSoundDevice:
+		// ScummVM has a single sound output and cannot switch devices; store
+		// the movie's chosen device name so it round-trips on read.
+		_soundDevice = d.asString();
 		break;
 	case kTheSoundKeepDevice:
 		// We do not need to unload the sound driver, so just ignore this.
