@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-30 09:21+0000\n"
+"POT-Creation-Date: 2026-06-30 19:33+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://"
@@ -4329,32 +4329,32 @@ msgid "Resolution: %dx%d"
 msgstr "分辨率：%dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1010
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2869
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2859
 msgid "Active graphics filter:"
 msgstr "活动图形过滤器："
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1031
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2903
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2893
 msgid "Enabled aspect ratio correction"
 msgstr "已启用宽高比矫正"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1033
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2909
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2899
 msgid "Disabled aspect ratio correction"
 msgstr "已禁用宽高比矫正"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1046
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2925
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2915
 msgid "Filtering enabled"
 msgstr "过滤已启用"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1048
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2927
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2917
 msgid "Filtering disabled"
 msgstr "过滤已禁用"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1074
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2954
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2944
 msgid "Stretch mode"
 msgstr "拉伸模式"
 

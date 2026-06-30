@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-06-30 09:21+0000\n"
+"POT-Creation-Date: 2026-06-30 19:33+0000\n"
 "PO-Revision-Date: 2026-04-19 13:22+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -4371,32 +4371,32 @@ msgid "Resolution: %dx%d"
 msgstr "Upplösning: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1010
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2869
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2859
 msgid "Active graphics filter:"
 msgstr "Aktivt grafikfilter:"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1031
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2903
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2893
 msgid "Enabled aspect ratio correction"
 msgstr "Aktiverade korrigering av bildförhållande"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1033
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2909
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2899
 msgid "Disabled aspect ratio correction"
 msgstr "Inaktiverade korrigering av bildförhållande"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1046
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2925
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2915
 msgid "Filtering enabled"
 msgstr "Filtrering aktiverad"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1048
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2927
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2917
 msgid "Filtering disabled"
 msgstr "Filtrering inaktiverad"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:1074
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2954
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2944
 msgid "Stretch mode"
 msgstr "Utdraget läge"
 
