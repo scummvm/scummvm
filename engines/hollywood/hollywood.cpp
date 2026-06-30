@@ -42,6 +42,9 @@
 #include "hollywood/scenes/playable/scene3000.h"
 #include "hollywood/scenes/playable/scene3010.h"
 #include "hollywood/scenes/playable/scene3050.h"
+#include "hollywood/scenes/playable/scene3060.h"
+#include "hollywood/scenes/playable/scene3080.h"
+#include "hollywood/scenes/playable/scene3090.h"
 #include "hollywood/scenes/playable/scene6000.h"
 #include "hollywood/scenes/playable/scene6010.h"
 #include "hollywood/scenes/playable/scene6020.h"
@@ -96,6 +99,12 @@ const int kScene3010FirstState = 0x0bc2;
 const int kScene3010LastState = 0x0bcb;
 const int kScene3050FirstState = 0x0bea;
 const int kScene3050LastState = 0x0bf3;
+const int kScene3060FirstState = 0x0bf4;
+const int kScene3060LastState = 0x0bf5;
+const int kScene3080FirstState = 0x0c08;
+const int kScene3080LastState = 0x0c11;
+const int kScene3090FirstState = 0x0c12;
+const int kScene3090LastState = 0x0c1b;
 const int kScene6000State = 6000;
 const int kScene6010FirstState = 0x177a;
 const int kScene6010LastState = 0x1783;
@@ -125,6 +134,9 @@ bool isImplementedGameplayState(int stateId) {
 		stateId == kScene3000State ||
 		(stateId >= kScene3010FirstState && stateId <= kScene3010LastState) ||
 		(stateId >= kScene3050FirstState && stateId <= kScene3050LastState) ||
+		(stateId >= kScene3060FirstState && stateId <= kScene3060LastState) ||
+		(stateId >= kScene3080FirstState && stateId <= kScene3080LastState) ||
+		(stateId >= kScene3090FirstState && stateId <= kScene3090LastState) ||
 		stateId == kScene6000State ||
 		(stateId >= kScene6010FirstState && stateId <= kScene6010LastState) ||
 		(stateId >= kScene6020FirstState && stateId <= kScene6020LastState) ||
@@ -159,6 +171,8 @@ bool shouldRunSceneForBootParam(int bootParam, int sceneNumber, bool &bootSceneR
 int gameplayStateForBootParam(int bootParam) {
 	if (bootParam == kScene1010FirstState)
 		return 0x03f4;
+	if (bootParam == 3090)
+		return kScene3090FirstState;
 
 	return bootParam;
 }
@@ -426,6 +440,30 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene3050 scene3050(this);
 			if (!scene3050.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene3060FirstState && stateId <= kScene3060LastState) {
+			handledState = true;
+			Scene3060 scene3060(this);
+			if (!scene3060.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene3080FirstState && stateId <= kScene3080LastState) {
+			handledState = true;
+			Scene3080 scene3080(this);
+			if (!scene3080.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene3090FirstState && stateId <= kScene3090LastState) {
+			handledState = true;
+			Scene3090 scene3090(this);
+			if (!scene3090.play())
 				return Common::kReadingFailed;
 			continue;
 		}
