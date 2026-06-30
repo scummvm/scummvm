@@ -108,6 +108,7 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId)
 	_enableSound = true;
 	_crop = false;
 	_center = false;
+	_scaleX = _scaleY = 100;
 	_dirty = false;
 	_emptyFile = false;
 
@@ -183,6 +184,8 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Digita
 	_enableSound = source._enableSound;
 	_crop = source._crop;
 	_center = source._center;
+	_scaleX = source._scaleX;
+	_scaleY = source._scaleY;
 	_preload = source._preload;
 	_showControls = source._showControls;
 	_directToStage = source._directToStage;
@@ -626,8 +629,20 @@ Common::String DigitalVideoCastMember::formatInfo() {
 	);
 }
 
+Common::Rect DigitalVideoCastMember::getInitialRect() {
+	// Sprites are sized from this rect, and the widget stretches the
+	// decoded frame to the sprite bbox, so scaling here scales rendering.
+	Common::Rect rect = _initialRect;
+	if (_scaleX > 0 && _scaleX != 100)
+		rect.setWidth(_initialRect.width() * _scaleX / 100);
+	if (_scaleY > 0 && _scaleY != 100)
+		rect.setHeight(_initialRect.height() * _scaleY / 100);
+	return rect;
+}
+
 Common::Point DigitalVideoCastMember::getRegistrationOffset() {
-	return Common::Point(_initialRect.width() / 2, _initialRect.height() / 2);
+	Common::Rect rect = getInitialRect();
+	return Common::Point(rect.width() / 2, rect.height() / 2);
 }
 
 Common::Point DigitalVideoCastMember::getRegistrationOffset(int16 width, int16 height) {
@@ -649,6 +664,7 @@ bool DigitalVideoCastMember::hasField(int field) {
 	case kTheLoop:
 	case kThePausedAtStart:
 	case kThePreLoad:
+	case kTheScale:
 	case kTheSound:
 	case kTheTimeScale:
 	case kTheVideo:
@@ -701,6 +717,12 @@ Datum DigitalVideoCastMember::getField(int field) {
 	case kThePreLoad:
 		d = _preload;
 		break;
+	case kTheScale:
+		d.type = ARRAY;
+		d.u.farr = new FArray;
+		d.u.farr->arr.push_back(_scaleX);
+		d.u.farr->arr.push_back(_scaleY);
+		break;
 	case kTheSound:
 		d = _enableSound;
 		break;
@@ -744,8 +766,9 @@ void DigitalVideoCastMember::setField(int field, const Datum &d) {
 		CastMember::setField(field, d);
 		loadVideoFromCast();
 		if (_channel) {
-			_channel->setWidth(_initialRect.width());
-			_channel->setHeight(_initialRect.height());
+			Common::Rect rect = getInitialRect();
+			_channel->setWidth(rect.width());
+			_channel->setHeight(rect.height());
 		}
 		return;
 	case kTheFrameRate:
@@ -763,6 +786,19 @@ void DigitalVideoCastMember::setField(int field, const Datum &d) {
 		return;
 	case kThePreLoad:
 		_preload = (bool)d.asInt();
+		return;
+	case kTheScale:
+		if ((d.type == ARRAY || d.type == POINT) && d.u.farr->arr.size() >= 2) {
+			_scaleX = d.u.farr->arr[0].asInt();
+			_scaleY = d.u.farr->arr[1].asInt();
+			if (_channel) {
+				Common::Rect rect = getInitialRect();
+				_channel->setWidth(rect.width());
+				_channel->setHeight(rect.height());
+			}
+		} else {
+			warning("DigitalVideoCastMember::setField(): scale expects an [x, y] percentage list, got %s", d.type2str());
+		}
 		return;
 	case kTheSound:
 		_enableSound = (bool)d.asInt();

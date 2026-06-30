@@ -285,6 +285,7 @@ const TheEntityField fields[] = {
 	{ kTheSprite,	"movieTime",	kTheMovieTime,	300 },//		D3.1 P
 	{ kTheCast,		"pausedAtStart",kThePausedAtStart,400 },//				D4 p
 	{ kTheCast,		"preLoad",		kThePreLoad,	300 },//		D3.1 p
+	{ kTheCast,		"scale",		kTheScale,		700 },//							D7 p
 	{ kTheSprite,	"setTrackEnabled",kTheSetTrackEnabled, 500 },//				D5 p
 	{ kTheCast,		"sound",		kTheSound,		300 },//		D3.1 p // 0-1 off-on
 	{ kTheSprite,	"startTime",	kTheStartTime,	300 },//		D3.1 p

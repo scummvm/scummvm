@@ -73,6 +73,7 @@ public:
 
 	Common::String formatInfo() override;
 
+	Common::Rect getInitialRect() override;
 	Common::Point getRegistrationOffset() override;
 	Common::Point getRegistrationOffset(int16 width, int16 height) override;
 
@@ -89,6 +90,7 @@ public:
 	bool _crop;
 	bool _center;
 	bool _preload;
+	int _scaleX, _scaleY;	// D7+: playback size percentages [x, y]; [100, 100] = original size
 	bool _showControls;
 	bool _directToStage;
 	bool _avimovie, _qtmovie;

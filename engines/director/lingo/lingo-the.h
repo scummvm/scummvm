@@ -271,6 +271,7 @@ enum TheFieldType {
 	kTheRight,
 	kTheSampleRate,
 	kTheSampleSize,
+	kTheScale,
 	kTheScoreColor,
 	kTheScoreSelection,
 	kTheScript,
