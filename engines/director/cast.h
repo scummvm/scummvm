@@ -201,10 +201,10 @@ public:
 	// Director 6 and below
 		/* 18 */ int16 _unk1;	// Mentioned in ProjectorRays as preD7field11
 
-	// Director 7 and above
-	// Currently not supporting Director 7
-		// /* 18 */ int8 D7stageColorG;
-		// /* 19 */ int8 D7stageColorB;
+	// Director 7 and above: offset 18-19 hold two 8-bit stage-color
+	// components; _unk1 keeps the raw 16-bit value for the VWCF checksum.
+		/* 18 */ uint8 _D7stageColorG = 0;
+		/* 19 */ uint8 _D7stageColorB = 0;
 
 	/* 20 */ uint16 _commentFont;
 	/* 22 */ uint16 _commentSize;
@@ -212,10 +212,11 @@ public:
 
 	// Director 6 and below
 		/* 26 */ uint16 _stageColor;
-	// Director 7 and above
-	// Currently not supporting Director 7
-		// /* 26 */ uint8 D7stageColorIsRGB;
-		// /* 27 */ uint8 D7stageColorR;
+	// Director 7 and above: high byte is stageColorIsRGB, low byte is
+	// stageColorR; _stageColor keeps the raw 16-bit value (== palette index
+	// for the common non-RGB case) for rendering, checksum and save.
+		/* 26 */ uint8 _D7stageColorIsRGB = 0;
+		/* 27 */ uint8 _D7stageColorR = 0;
 
 	/* 28 */ uint16 _bitdepth;
 	/* 30 */ uint8 _field17;
