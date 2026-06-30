@@ -64,7 +64,7 @@
 
 namespace Director {
 
-Cast::Cast(Movie *movie, uint16 castLibID, bool isShared, bool isExternal, uint16 libResourceId) {
+Cast::Cast(Movie *movie, uint16 castLibID, bool isShared, bool isExternal, uint32 libResourceId) {
 	_movie = movie;
 	_vm = _movie->getVM();
 	_lingo = _vm->getLingo();
@@ -812,7 +812,7 @@ void Cast::loadCast() {
 
 	// External casts only have one library ID, so instead
 	// we use the movie's mapping.
-	uint16 libResourceId = _isExternal ? 1024 : _libResourceId;
+	uint32 libResourceId = _isExternal ? 1024 : _libResourceId;
 
 	if (cast.size() > 0) {
 		debugC(2, kDebugLoading, "****** Loading CASt resources for libId %d (%s), resourceId %d", _castLibID, _castName.c_str(), libResourceId);
