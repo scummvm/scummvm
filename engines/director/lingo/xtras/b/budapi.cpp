@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/formats/ini-file.h"
 
 #include "director/director.h"
 #include "director/util.h"
@@ -381,10 +382,59 @@ XOBJSTUB(BudAPIXtra::m_baCpuInfo, 0)
 XOBJSTUB(BudAPIXtra::m_baDiskInfo, 0)
 XOBJSTUB(BudAPIXtra::m_baMemoryInfo, 0)
 XOBJSTUB(BudAPIXtra::m_baFindApp, 0)
-XOBJSTUB(BudAPIXtra::m_baReadIni, 0)
-XOBJSTUB(BudAPIXtra::m_baWriteIni, 0)
+void BudAPIXtra::m_baReadIni(int nargs) {
+	// baReadIni(section, key, default, iniFile) reads a Windows INI entry.
+	// Mirrors GetPrivateProfileString: section and key match case-insensitively
+	// and the supplied default is returned when the file, section or key is
+	// missing. The game derives runtime settings (e.g. _Lautstaerke from
+	// [general] VolSound) from this, so a stubbed 0 return silenced all audio.
+	ARGNUMCHECK(4);
+	Common::String iniFile = g_lingo->pop().asString();
+	Common::String defaultVal = g_lingo->pop().asString();
+	Common::String key = g_lingo->pop().asString();
+	Common::String section = g_lingo->pop().asString();
+
+	Common::Path resolved = findPath(iniFile);
+	Common::INIFile ini;
+	ini.allowNonEnglishCharacters();
+	Common::String value;
+	if (!resolved.empty() && ini.loadFromFile(resolved) && ini.getKey(key, section, value)) {
+		g_lingo->push(Datum(value));
+		return;
+	}
+	g_lingo->push(Datum(defaultVal));
+}
+void BudAPIXtra::m_baWriteIni(int nargs) {
+	// baWriteIni(section, key, value, iniFile) writes a Windows INI entry.
+	// Best-effort persist to the resolved file so later reads stay consistent;
+	// read-only media (e.g. CD) simply leave the value unsaved.
+	ARGNUMCHECK(4);
+	Common::String iniFile = g_lingo->pop().asString();
+	Common::String value = g_lingo->pop().asString();
+	Common::String key = g_lingo->pop().asString();
+	Common::String section = g_lingo->pop().asString();
+
+	Common::Path resolved = findPath(iniFile);
+	Common::INIFile ini;
+	ini.allowNonEnglishCharacters();
+	if (!resolved.empty())
+		ini.loadFromFile(resolved);
+	ini.setKey(key, section, value);
+	if (!resolved.empty())
+		ini.saveToFile(resolved);
+	g_lingo->push(Datum(1));
+}
 XOBJSTUB(BudAPIXtra::m_baFlushIni, 0)
-XOBJSTUB(BudAPIXtra::m_baReadRegString, 0)
+void BudAPIXtra::m_baReadRegString(int nargs) {
+	// baReadRegString(keyName, value, default, branch). ScummVM has no Windows
+	// registry, so return the caller-supplied default rather than a numeric 0.
+	ARGNUMCHECK(4);
+	/* branch  */ g_lingo->pop();
+	Common::String defaultVal = g_lingo->pop().asString();
+	/* value   */ g_lingo->pop();
+	/* keyName */ g_lingo->pop();
+	g_lingo->push(Datum(defaultVal));
+}
 XOBJSTUB(BudAPIXtra::m_baWriteRegString, 0)
 XOBJSTUB(BudAPIXtra::m_baReadRegNumber, 0)
 XOBJSTUB(BudAPIXtra::m_baWriteRegNumber, 0)
