@@ -182,8 +182,15 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		}
 		uint16 minMember = stream.readUint16();
 		uint16 maxMember = stream.readUint16();
-		stream.readUint16();
-		uint16 libResourceId = stream.readUint16();
+		uint32 libResourceId;
+		if (g_director->getVersion() >= 700) {
+			// D7+: single 32-bit resource id; verified against a D7 specimen
+			// (0x00010402) that a 16-bit read would truncate.
+			libResourceId = stream.readUint32();
+		} else {
+			stream.readUint16(); // unknown/reserved; 0 in tested D5/D6 movies
+			libResourceId = stream.readUint16();
+		}
 		uint16 libId = i + 1;
 		debugC(5, kDebugLoading, "Movie::loadCastLibMapping: name: %s, path: %s, minMember: %d, maxMember: %d, libResourceId: %d, libId: %d", utf8ToPrintable(name).c_str(), utf8ToPrintable(path).c_str(), minMember, maxMember, libResourceId, libId);
 		Common::SharedPtr<Archive> castArchive = _movieArchive;
@@ -494,7 +501,7 @@ bool Movie::loadCastLibFrom(uint16 libId, Common::Path &filename) {
 		return false;
 	}
 
-	uint16 libResourceId = 1024;
+	uint32 libResourceId = 1024;
 	Common::String name;
 	if (_casts.contains(libId)) {
 		Cast *cast = _casts[libId];
@@ -542,7 +549,7 @@ Cast *Movie::getCast(CastMemberID memberID) {
 	return nullptr;
 }
 
-Cast *Movie::getCastByLibResourceID(int libresourceID) {
+Cast *Movie::getCastByLibResourceID(uint32 libresourceID) {
 	for (auto it : _casts) {
 		if (it._value->_libResourceId == libresourceID) {
 			debugC(3, kDebugSaving, "Movie::getCastByLibResourceID: Found cast with libresourceID: %d", libresourceID);
