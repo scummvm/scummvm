@@ -931,7 +931,7 @@ bool SdlEventSource::handleJoystickAdded(const SDL_JoyDeviceEvent &device, Commo
 	debug(5, "SdlEventSource: Received joystick added event for index '%d'", device.which);
 
 	int joystick_num = ConfMan.getInt("joystick_num");
-	if (joystick_num != device.which) {
+	if (joystick_num != static_cast<int>(device.which)) {
 		return false;
 	}
 
