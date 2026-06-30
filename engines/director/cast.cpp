@@ -1673,9 +1673,11 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		if (xtra->isQuickTimeVideo()) {
 			// Promote to a digital video member so playback/property machinery applies.
 			debugC(3, kDebugLoading, "Cast::loadCastData(): promoting QuickTime Xtra (id=%d) to digital video", id);
+			bool qtLooping = xtra->isQuickTimeLooping();
 			delete xtra;
 			DigitalVideoCastMember *dv = new DigitalVideoCastMember(this, id);
 			dv->_qtmovie = true;
+			dv->_looping = qtLooping;
 			target = dv;
 		} else if (xtra->isTextXtra()) {
 			// Text, rect and styling are filled in lazily by TextCastMember::load().

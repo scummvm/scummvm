@@ -34,6 +34,7 @@ public:
 	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new XtraCastMember(cast, castId, *this)); }
 
 	bool isQuickTimeVideo() const;
+	bool isQuickTimeLooping() const;
 	bool isTextXtra() const;
 
 	bool hasField(int field) override;

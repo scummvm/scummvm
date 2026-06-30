@@ -73,6 +73,12 @@ bool XtraCastMember::isQuickTimeVideo() const {
 	return _xtraSymbol.equalsIgnoreCase("quickTimeMedia");
 }
 
+bool XtraCastMember::isQuickTimeLooping() const {
+	// Byte 7 bit 0x40 of the quickTimeMedia payload is the loop flag (observed
+	// set on Physikus' looping Maschine.mov, clear on the play-once Trailer.mov).
+	return isQuickTimeVideo() && _xtraData.size() > 7 && (_xtraData[7] & 0x40);
+}
+
 bool XtraCastMember::isTextXtra() const {
 	// Symbol observed in Physikus (D7.0.2)'s "Text" Asset Xtra; string lives in an XMED child.
 	return _xtraSymbol.equalsIgnoreCase("text");
