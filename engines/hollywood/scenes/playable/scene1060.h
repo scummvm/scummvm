@@ -83,6 +83,8 @@ private:
 	void advanceSmallLoop(uint32 delta);
 	void advanceSmallTrigger(uint32 delta);
 	void restartSmallTriggerLayerFromFlyDoctorFrame(byte flyDoctorFrame);
+	byte juniorIdleFrame() const;
+	void runJuniorPoseTransition(bool opening);
 	void replaceColorMapItem(byte sourceItem, byte destinationItem);
 	void copyStageSmallRow(byte sourceRow, byte destinationRow);
 	byte pickRandomFrameExcluding(byte frameCount, byte previousFrame);
@@ -117,6 +119,8 @@ private:
 	byte _lastFlyDoctorIdleFrame;
 	byte _smallTriggerMode;
 	bool _flySlimePickupSequenceActive;
+	bool _juniorPoseSequenceActive;
+	bool _juniorConversationActive;
 };
 
 } // End of namespace Hollywood
