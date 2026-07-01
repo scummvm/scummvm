@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/keyboard.h"
+#include "common/path.h"
 #include "common/str.h"
 #include "common/types.h"
 
@@ -82,6 +83,9 @@ public:
 	virtual void presentGameplayFrame(const SceneHoverCaption &hoverCaption, const GameplayPanelState &panelState) = 0;
 	virtual void invalidatePresentationPalette();
 	virtual void prepareOptionsMenuPalette(Common::Array<byte> &palette) const;
+	virtual Common::Path optionsMenuSoundBank0ArchiveName() const;
+	virtual bool optionsMenuSpeechPreviewSampleId(uint16 &sampleId) const;
+	virtual void suspendAudioForOptionsMenu();
 	virtual bool shouldExitGameplayLoop() const;
 	virtual Common::String inventoryItemName(byte owner, byte itemId) const;
 	virtual void beginSharedInventorySpeechLine(uint16 rowIndex, byte frameIndex);

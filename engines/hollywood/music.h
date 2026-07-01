@@ -33,8 +33,11 @@ public:
 	~MusicPlayer();
 
 	void setArchive(const Common::Path &archiveName);
+	const Common::Path &archiveName() const { return _archiveName; }
 	bool playIntroMusic();
 	bool playMusicCue(uint16 cueId, byte volumePercent = 100, bool loop = false);
+	bool resumeLastCue();
+	void setVolume(byte volumePercent);
 	void stop();
 	bool isPlaying() const;
 
@@ -43,6 +46,10 @@ private:
 
 	Audio::SoundHandle _musicHandle;
 	Common::Path _archiveName;
+	uint16 _currentCueId;
+	byte _currentVolumePercent;
+	bool _currentLoop;
+	bool _hasCurrentCue;
 };
 
 class SpeechPlayer {
@@ -50,7 +57,7 @@ public:
 	SpeechPlayer();
 	~SpeechPlayer();
 
-	bool playSample(uint16 sampleId, byte volumePercent = 100);
+	bool playSample(uint16 sampleId, byte volumePercent = 100, bool loop = false);
 	void setVolume(byte volumePercent);
 	void stop();
 	bool isPlaying() const;
@@ -69,8 +76,10 @@ public:
 	~SoundBank0Player();
 
 	void setArchive(const Common::Path &archiveName);
+	const Common::Path &archiveName() const { return _archiveName; }
 	bool playSample(uint16 sampleId, byte volumePercent = 100, bool loop = false);
 	bool playSampleLooping(uint16 sampleId, byte volumePercent = 100);
+	void setVolume(byte volumePercent);
 	void stop();
 	bool isPlaying() const;
 

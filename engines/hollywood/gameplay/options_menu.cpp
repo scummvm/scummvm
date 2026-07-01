@@ -57,8 +57,25 @@ const byte kOptionsTextDisabledColor = 0xf0;
 const byte kOptionsTextTestColor = 0xfa;
 const byte kOptionsBarDisabledColor = 0xee;
 const byte kOptionsBarEmptyColor = 0xe9;
+const byte kOptionsStatusDotOffColor = 0xea;
+const byte kOptionsStatusDotTestColor = 0xf9;
 const uint32 kOptionsTickMillis = 10;
 const byte kOptionsVolumeStep = 10;
+const uint32 kOptionsVolumeInitialRepeatMillis = 160;
+const uint32 kOptionsVolumeRepeatMillis = 60;
+const int kOptionsGameplayPreviewX = 0x1a4 - kOptionsViewportXOffset;
+const int kOptionsGameplayPreviewY = 0x24;
+const int kOptionsGameplayPreviewWidth = 0xb8;
+const int kOptionsGameplayPreviewHeight = 0x8a;
+const int kOptionsTopStatusDotY = 0x24;
+const int kOptionsSpeechStatusDotY = 0x271 - 0xc0;
+const int kOptionsStatusDotSize = 0x0b;
+const int kOptionsMusicStatusDotX = 0x290;
+const int kOptionsSoundStatusDotX = 0x31a;
+const int kOptionsTestStatusDotX = 0x38d;
+const int kOptionsSpeechTextStatusDotX = 0x290;
+const int kOptionsSpeechVoiceStatusDotX = 0x30b;
+const int kOptionsSpeechBothStatusDotX = 0x386;
 const int kOptionsValueBarX = 0x15c;
 const int kOptionsValueBarWidth = 200;
 const int kOptionsValueBarHeight = 7;
@@ -70,10 +87,24 @@ const uint kOptionsMaximumLevel = 200;
 
 GameplayOptionsMenu::GameplayOptionsMenu(HollywoodEngine *vm) :
 		_vm(vm),
+		_speechPreviewSampleId(0),
 		_loaded(false),
-		_confirmQuit(false) {
+		_confirmQuit(false),
+		_loadedGame(false),
+		_sceneMusicWasPlaying(false),
+		_hasSpeechPreviewSample(false),
+		_heldVolumeAction(kHitNone),
+		_heldVolumeAccumulator(0),
+		_heldVolumeRepeatMillis(kOptionsVolumeInitialRepeatMillis) {
 	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
+}
+
+void GameplayOptionsMenu::setAudioContext(const Common::Path &soundBank0ArchiveName,
+		bool hasSpeechPreviewSample, uint16 speechPreviewSampleId) {
+	_soundBank0ArchiveName = soundBank0ArchiveName;
+	_hasSpeechPreviewSample = hasSpeechPreviewSample;
+	_speechPreviewSampleId = speechPreviewSampleId;
 }
 
 bool GameplayOptionsMenu::run(const Common::Array<byte> &basePalette) {
@@ -81,10 +112,13 @@ bool GameplayOptionsMenu::run(const Common::Array<byte> &basePalette) {
 		return false;
 
 	preparePalette(basePalette);
+	captureGameplayPreview();
 	_vm->syncSoundSettings();
 	_confirmQuit = false;
+	_loadedGame = false;
 	_vm->cursor()->enterInteractiveMode();
 	_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
+	beginAudioSession();
 
 	bool done = false;
 	uint32 lastMillis = g_system->getMillis();
@@ -97,11 +131,13 @@ bool GameplayOptionsMenu::run(const Common::Array<byte> &basePalette) {
 		if (delta > 250)
 			delta = 250;
 		_vm->cursor()->advance(delta);
+		advanceHeldVolume(delta);
 
 		present();
 		g_system->delayMillis(kOptionsTickMillis);
 	}
 
+	endAudioSession();
 	_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
 	return !Engine::shouldQuit();
 }
@@ -213,7 +249,11 @@ void GameplayOptionsMenu::pollEvents(bool &done) {
 			_vm->cursor()->updatePosition(event.mouse);
 			handleLeftClick(_vm->cursor()->surfaceX(), _vm->cursor()->surfaceY(), done);
 			break;
+		case Common::EVENT_LBUTTONUP:
+			stopHeldVolume();
+			break;
 		case Common::EVENT_RBUTTONDOWN:
+			stopHeldVolume();
 			if (_confirmQuit)
 				_confirmQuit = false;
 			else
@@ -228,6 +268,7 @@ void GameplayOptionsMenu::pollEvents(bool &done) {
 void GameplayOptionsMenu::handleKeyDown(uint16 keycode, bool &done) {
 	switch (keycode) {
 	case Common::KEYCODE_ESCAPE:
+		stopHeldVolume();
 		if (_confirmQuit)
 			_confirmQuit = false;
 		else
@@ -235,6 +276,7 @@ void GameplayOptionsMenu::handleKeyDown(uint16 keycode, bool &done) {
 		break;
 	case Common::KEYCODE_RETURN:
 	case Common::KEYCODE_KP_ENTER:
+		stopHeldVolume();
 		if (_confirmQuit) {
 			Engine::quitGame();
 			done = true;
@@ -248,71 +290,113 @@ void GameplayOptionsMenu::handleKeyDown(uint16 keycode, bool &done) {
 void GameplayOptionsMenu::handleLeftClick(uint16 cursorX, uint16 cursorY, bool &done) {
 	GameplayState &state = _vm->gameState();
 	const HitAction action = hitActionAt(cursorX, cursorY);
+	bool syncSettings = false;
+	bool refreshTestAudio = false;
 	switch (action) {
 	case kHitSave:
+		disableTestAudio();
 		_vm->saveGameDialog();
 		break;
 	case kHitLoad:
-		if (_vm->loadGameDialog())
+		disableTestAudio();
+		if (_vm->loadGameDialog()) {
+			_loadedGame = true;
 			done = true;
+		}
 		break;
 	case kHitQuit:
+		disableTestAudio();
 		_confirmQuit = true;
 		break;
 	case kHitPlay:
+		disableTestAudio();
 		done = true;
 		break;
 	case kHitMusicToggle:
 		state.musicEnabled = !state.musicEnabled;
+		syncSettings = true;
+		refreshTestAudio = true;
 		break;
 	case kHitSoundToggle:
 		state.soundEffectsEnabled = !state.soundEffectsEnabled;
+		syncSettings = true;
+		refreshTestAudio = true;
 		break;
 	case kHitTestToggle:
 		state.optionsTestAudioEnabled = !state.optionsTestAudioEnabled;
+		refreshTestAudio = true;
 		break;
 	case kHitMusicDown:
-		if (state.musicEnabled)
-			changeVolume(state.musicVolumeLevel, -kOptionsVolumeStep);
+		if (applyVolumeHitAction(action)) {
+			syncSettings = true;
+			refreshTestAudio = true;
+			startHeldVolume(action);
+		}
 		break;
 	case kHitMusicUp:
-		if (state.musicEnabled)
-			changeVolume(state.musicVolumeLevel, kOptionsVolumeStep);
+		if (applyVolumeHitAction(action)) {
+			syncSettings = true;
+			refreshTestAudio = true;
+			startHeldVolume(action);
+		}
 		break;
 	case kHitSoundDown:
-		if (state.soundEffectsEnabled)
-			changeVolume(state.soundEffectsVolumeLevel, -kOptionsVolumeStep);
+		if (applyVolumeHitAction(action)) {
+			syncSettings = true;
+			refreshTestAudio = true;
+			startHeldVolume(action);
+		}
 		break;
 	case kHitSoundUp:
-		if (state.soundEffectsEnabled)
-			changeVolume(state.soundEffectsVolumeLevel, kOptionsVolumeStep);
+		if (applyVolumeHitAction(action)) {
+			syncSettings = true;
+			refreshTestAudio = true;
+			startHeldVolume(action);
+		}
 		break;
 	case kHitVoiceDown:
-		if (state.actorSpeechTextMode < 2)
-			changeVolume(state.voiceVolumeLevel, -kOptionsVolumeStep);
+		if (applyVolumeHitAction(action)) {
+			syncSettings = true;
+			refreshTestAudio = true;
+			startHeldVolume(action);
+		}
 		break;
 	case kHitVoiceUp:
-		if (state.actorSpeechTextMode < 2)
-			changeVolume(state.voiceVolumeLevel, kOptionsVolumeStep);
+		if (applyVolumeHitAction(action)) {
+			syncSettings = true;
+			refreshTestAudio = true;
+			startHeldVolume(action);
+		}
 		break;
 	case kHitTextSpeedDown:
-		if (state.actorSpeechTextMode == 2)
-			changeVolume(state.speechTextSpeedLevel, -kOptionsVolumeStep);
+		if (applyVolumeHitAction(action)) {
+			syncSettings = true;
+			startHeldVolume(action);
+		}
 		break;
 	case kHitTextSpeedUp:
-		if (state.actorSpeechTextMode == 2)
-			changeVolume(state.speechTextSpeedLevel, kOptionsVolumeStep);
+		if (applyVolumeHitAction(action)) {
+			syncSettings = true;
+			startHeldVolume(action);
+		}
 		break;
 	case kHitSpeechText:
 		setSpeechMode(2);
+		syncSettings = true;
+		refreshTestAudio = true;
 		break;
 	case kHitSpeechVoice:
 		setSpeechMode(0);
+		syncSettings = true;
+		refreshTestAudio = true;
 		break;
 	case kHitSpeechBoth:
 		setSpeechMode(1);
+		syncSettings = true;
+		refreshTestAudio = true;
 		break;
 	case kHitConfirmQuit:
+		disableTestAudio();
 		Engine::quitGame();
 		done = true;
 		break;
@@ -323,7 +407,12 @@ void GameplayOptionsMenu::handleLeftClick(uint16 cursorX, uint16 cursorY, bool &
 		break;
 	}
 
-	_vm->syncSoundSettingsFromGameState();
+	if (!isVolumeHitAction(action))
+		stopHeldVolume();
+	if (syncSettings)
+		_vm->syncSoundSettingsFromGameState();
+	if (refreshTestAudio)
+		updateTestAudio();
 }
 
 GameplayOptionsMenu::HitAction GameplayOptionsMenu::hitActionAt(uint16 cursorX, uint16 cursorY) const {
@@ -378,6 +467,112 @@ GameplayOptionsMenu::HitAction GameplayOptionsMenu::hitActionAt(uint16 cursorX, 
 	return kHitNone;
 }
 
+bool GameplayOptionsMenu::isVolumeHitAction(HitAction action) const {
+	return action == kHitMusicDown || action == kHitMusicUp ||
+		action == kHitSoundDown || action == kHitSoundUp ||
+		action == kHitVoiceDown || action == kHitVoiceUp ||
+		action == kHitTextSpeedDown || action == kHitTextSpeedUp;
+}
+
+bool GameplayOptionsMenu::applyVolumeHitAction(HitAction action) {
+	GameplayState &state = _vm->gameState();
+	byte *volume = nullptr;
+	int delta = 0;
+
+	switch (action) {
+	case kHitMusicDown:
+		if (state.musicEnabled) {
+			volume = &state.musicVolumeLevel;
+			delta = -kOptionsVolumeStep;
+		}
+		break;
+	case kHitMusicUp:
+		if (state.musicEnabled) {
+			volume = &state.musicVolumeLevel;
+			delta = kOptionsVolumeStep;
+		}
+		break;
+	case kHitSoundDown:
+		if (state.soundEffectsEnabled) {
+			volume = &state.soundEffectsVolumeLevel;
+			delta = -kOptionsVolumeStep;
+		}
+		break;
+	case kHitSoundUp:
+		if (state.soundEffectsEnabled) {
+			volume = &state.soundEffectsVolumeLevel;
+			delta = kOptionsVolumeStep;
+		}
+		break;
+	case kHitVoiceDown:
+		if (state.actorSpeechTextMode < 2) {
+			volume = &state.voiceVolumeLevel;
+			delta = -kOptionsVolumeStep;
+		}
+		break;
+	case kHitVoiceUp:
+		if (state.actorSpeechTextMode < 2) {
+			volume = &state.voiceVolumeLevel;
+			delta = kOptionsVolumeStep;
+		}
+		break;
+	case kHitTextSpeedDown:
+		if (state.actorSpeechTextMode == 2) {
+			volume = &state.speechTextSpeedLevel;
+			delta = -kOptionsVolumeStep;
+		}
+		break;
+	case kHitTextSpeedUp:
+		if (state.actorSpeechTextMode == 2) {
+			volume = &state.speechTextSpeedLevel;
+			delta = kOptionsVolumeStep;
+		}
+		break;
+	default:
+		break;
+	}
+
+	if (!volume)
+		return false;
+
+	const byte oldVolume = *volume;
+	changeVolume(*volume, delta);
+	return *volume != oldVolume;
+}
+
+void GameplayOptionsMenu::startHeldVolume(HitAction action) {
+	_heldVolumeAction = action;
+	_heldVolumeAccumulator = 0;
+	_heldVolumeRepeatMillis = kOptionsVolumeInitialRepeatMillis;
+}
+
+void GameplayOptionsMenu::stopHeldVolume() {
+	_heldVolumeAction = kHitNone;
+	_heldVolumeAccumulator = 0;
+	_heldVolumeRepeatMillis = kOptionsVolumeInitialRepeatMillis;
+}
+
+void GameplayOptionsMenu::advanceHeldVolume(uint32 delta) {
+	if (_heldVolumeAction == kHitNone)
+		return;
+
+	_heldVolumeAccumulator += delta;
+	if (_heldVolumeAccumulator < _heldVolumeRepeatMillis)
+		return;
+
+	while (_heldVolumeAccumulator >= _heldVolumeRepeatMillis &&
+			_heldVolumeAction != kHitNone) {
+		_heldVolumeAccumulator -= _heldVolumeRepeatMillis;
+		_heldVolumeRepeatMillis = kOptionsVolumeRepeatMillis;
+		if (!applyVolumeHitAction(_heldVolumeAction)) {
+			stopHeldVolume();
+			break;
+		}
+		_vm->syncSoundSettingsFromGameState();
+		updateTestAudio();
+	}
+}
+
 bool GameplayOptionsMenu::pointInGlobalRect(uint16 cursorX, uint16 cursorY, uint16 left, uint16 top,
 		uint16 right, uint16 bottom) const {
 	const uint globalX = cursorX + kOptionsViewportXOffset;
@@ -393,6 +588,162 @@ void GameplayOptionsMenu::setSpeechMode(byte mode) {
 	_vm->gameState().actorSpeechTextMode = mode;
 }
 
+void GameplayOptionsMenu::beginAudioSession() {
+	MusicPlayer *gameplayMusic = _vm->gameplayMusic();
+	_sceneMusicWasPlaying = gameplayMusic->isPlaying();
+	_testMusic.setArchive(gameplayMusic->archiveName());
+	if (!_soundBank0ArchiveName.empty())
+		_testSound.setArchive(_soundBank0ArchiveName);
+
+	if (_sceneMusicWasPlaying)
+		gameplayMusic->stop();
+
+	updateTestAudio();
+}
+
+void GameplayOptionsMenu::endAudioSession() {
+	disableTestAudio();
+
+	if (_sceneMusicWasPlaying && !_loadedGame && !Engine::shouldQuit() &&
+			!_vm->isSceneRestartRequested())
+		_vm->gameplayMusic()->resumeLastCue();
+	_sceneMusicWasPlaying = false;
+}
+
+void GameplayOptionsMenu::disableTestAudio() {
+	_vm->gameState().optionsTestAudioEnabled = false;
+	stopTestAudio();
+}
+
+void GameplayOptionsMenu::updateTestAudio() {
+	GameplayState &state = _vm->gameState();
+	if (!state.optionsTestAudioEnabled) {
+		stopTestAudio();
+		return;
+	}
+
+	if (state.musicEnabled) {
+		if (!_testMusic.isPlaying())
+			_testMusic.playMusicCue(testMusicCueId(), 100, true);
+		_testMusic.setVolume(100);
+	} else {
+		_testMusic.stop();
+	}
+
+	if (state.soundEffectsEnabled && !_soundBank0ArchiveName.empty()) {
+		if (!_testSound.isPlaying())
+			_testSound.playSample(testSoundCueId(), 100, true);
+		_testSound.setVolume(100);
+	} else {
+		_testSound.stop();
+	}
+
+	if (state.actorSpeechTextMode < 2 && _hasSpeechPreviewSample) {
+		if (!_testSpeech.isPlaying())
+			_testSpeech.playSample(_speechPreviewSampleId, 100, true);
+		_testSpeech.setVolume(100);
+	} else {
+		_testSpeech.stop();
+	}
+}
+
+void GameplayOptionsMenu::stopTestAudio() {
+	_testMusic.stop();
+	_testSound.stop();
+	_testSpeech.stop();
+}
+
+uint16 GameplayOptionsMenu::testMusicCueId() const {
+	const uint16 chapter = _vm->gameState().mainFlowStateId / 1000;
+	if (chapter == 9)
+		return 0x0c;
+	if (chapter == 7)
+		return 0x0e;
+	return 0x0f;
+}
+
+uint16 GameplayOptionsMenu::testSoundCueId() const {
+	return _vm->gameState().mainFlowStateId / 1000 == 9 ? 0x0f : 2;
+}
+
+void GameplayOptionsMenu::captureGameplayPreview() {
+	if (_palette.size() < kPaletteSize)
+		return;
+
+	Graphics::Surface *lockedScreen = g_system->lockScreen();
+	if (!lockedScreen)
+		return;
+
+	if (lockedScreen->format.bytesPerPixel != 1 || lockedScreen->w <= 0 || lockedScreen->h <= 0) {
+		g_system->unlockScreen();
+		return;
+	}
+
+	_gameplayPreview.create(kOptionsGameplayPreviewWidth, kOptionsGameplayPreviewHeight,
+		Graphics::PixelFormat::createFormatCLUT8());
+
+	for (int dstY = 0; dstY < kOptionsGameplayPreviewHeight; ++dstY) {
+		int srcY0 = (dstY * lockedScreen->h) / kOptionsGameplayPreviewHeight;
+		int srcY1 = ((dstY + 1) * lockedScreen->h) / kOptionsGameplayPreviewHeight;
+		if (srcY1 <= srcY0)
+			srcY1 = srcY0 + 1;
+		srcY1 = MIN<int>(srcY1, lockedScreen->h);
+
+		byte *dst = (byte *)_gameplayPreview.getBasePtr(0, dstY);
+		for (int dstX = 0; dstX < kOptionsGameplayPreviewWidth; ++dstX) {
+			int srcX0 = (dstX * lockedScreen->w) / kOptionsGameplayPreviewWidth;
+			int srcX1 = ((dstX + 1) * lockedScreen->w) / kOptionsGameplayPreviewWidth;
+			if (srcX1 <= srcX0)
+				srcX1 = srcX0 + 1;
+			srcX1 = MIN<int>(srcX1, lockedScreen->w);
+
+			uint red = 0;
+			uint green = 0;
+			uint blue = 0;
+			uint sampleCount = 0;
+			for (int srcY = srcY0; srcY < srcY1; ++srcY) {
+				const byte *src = (const byte *)lockedScreen->getBasePtr(srcX0, srcY);
+				for (int srcX = srcX0; srcX < srcX1; ++srcX) {
+					const uint paletteOffset = (uint)*src++ * 3;
+					red += _palette[paletteOffset];
+					green += _palette[paletteOffset + 1];
+					blue += _palette[paletteOffset + 2];
+					++sampleCount;
+				}
+			}
+
+			if (sampleCount == 0) {
+				dst[dstX] = 0;
+			} else {
+				dst[dstX] = nearestPreviewPaletteColor(red / sampleCount,
+					green / sampleCount, blue / sampleCount);
+			}
+		}
+	}
+
+	g_system->unlockScreen();
+}
+
+byte GameplayOptionsMenu::nearestPreviewPaletteColor(uint red, uint green, uint blue) const {
+	uint bestDistance = 0xffffffff;
+	byte bestColor = 0;
+	for (uint color = 0; color < 256; ++color) {
+		const uint paletteOffset = color * 3;
+		const int deltaRed = (int)red - _palette[paletteOffset];
+		const int deltaGreen = (int)green - _palette[paletteOffset + 1];
+		const int deltaBlue = (int)blue - _palette[paletteOffset + 2];
+		const uint distance = (uint)(deltaRed * deltaRed + deltaGreen * deltaGreen +
+			deltaBlue * deltaBlue);
+		if (distance < bestDistance) {
+			bestDistance = distance;
+			bestColor = (byte)color;
+			if (distance == 0)
+				break;
+		}
+	}
+	return bestColor;
+}
+
 void GameplayOptionsMenu::composeScreen() {
 	if (_menuFramebuffer.size() < kOptionsFramebufferSize) {
 		_screen.fillRect(_screen.getBounds(), 0);
@@ -402,6 +753,14 @@ void GameplayOptionsMenu::composeScreen() {
 	_screen.copyRectToSurface(_menuFramebuffer.surface(), 0, 0,
 		Common::Rect(kOptionsViewportXOffset, 0,
 			kOptionsViewportXOffset + HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight));
+}
+
+void GameplayOptionsMenu::drawGameplayPreview() {
+	if (!_gameplayPreview.getPixels())
+		return;
+
+	_screen.copyRectToSurface(_gameplayPreview.rawSurface(), kOptionsGameplayPreviewX,
+		kOptionsGameplayPreviewY, Common::Rect(0, 0, _gameplayPreview.w, _gameplayPreview.h));
 }
 
 void GameplayOptionsMenu::drawControls(Graphics::Surface &surface) {
@@ -418,6 +777,7 @@ void GameplayOptionsMenu::drawControls(Graphics::Surface &surface) {
 		state.soundEffectsEnabled ? kOptionsTextActiveColor : kOptionsTextDisabledColor, false);
 	drawText(surface, state.optionsTestAudioEnabled ? "Test ON" : "Test OFF", 0x3a0, 0x20,
 		state.optionsTestAudioEnabled ? kOptionsTextTestColor : kOptionsTextDisabledColor, false);
+	drawStatusDots();
 
 	drawText(surface, "Volumen musica", 0x33f, 0x55,
 		state.musicEnabled ? kOptionsTextActiveColor : kOptionsTextDisabledColor, true);
@@ -483,6 +843,54 @@ void GameplayOptionsMenu::drawText(Graphics::Surface &surface, const Common::Str
 		false, true);
 }
 
+void GameplayOptionsMenu::drawStatusDot(int globalX, int y, byte color) {
+	const int left = globalX - kOptionsViewportXOffset;
+	uint changed = 0;
+	for (int row = 0; row < kOptionsStatusDotSize; ++row) {
+		byte *pixels = (byte *)_screen.getBasePtr(left, y + row);
+		for (int x = 0; x < kOptionsStatusDotSize; ++x) {
+			if (pixels[x] == kOptionsStatusDotOffColor ||
+					pixels[x] == kOptionsTextActiveColor ||
+					pixels[x] == kOptionsStatusDotTestColor ||
+					pixels[x] == kOptionsTextTestColor) {
+				pixels[x] = color;
+				++changed;
+			}
+		}
+	}
+
+	if (changed != 0)
+		return;
+
+	const int center = kOptionsStatusDotSize / 2;
+	const int radiusSquared = center * center;
+	for (int row = 0; row < kOptionsStatusDotSize; ++row) {
+		byte *pixels = (byte *)_screen.getBasePtr(left, y + row);
+		for (int x = 0; x < kOptionsStatusDotSize; ++x) {
+			const int dx = x - center;
+			const int dy = row - center;
+			if (dx * dx + dy * dy <= radiusSquared)
+				pixels[x] = color;
+		}
+	}
+}
+
+void GameplayOptionsMenu::drawStatusDots() {
+	const GameplayState &state = _vm->gameState();
+	drawStatusDot(kOptionsMusicStatusDotX, kOptionsTopStatusDotY,
+		state.musicEnabled ? kOptionsTextActiveColor : kOptionsStatusDotOffColor);
+	drawStatusDot(kOptionsSoundStatusDotX, kOptionsTopStatusDotY,
+		state.soundEffectsEnabled ? kOptionsTextActiveColor : kOptionsStatusDotOffColor);
+	drawStatusDot(kOptionsTestStatusDotX, kOptionsTopStatusDotY,
+		state.optionsTestAudioEnabled ? kOptionsStatusDotTestColor : kOptionsStatusDotOffColor);
+	drawStatusDot(kOptionsSpeechTextStatusDotX, kOptionsSpeechStatusDotY,
+		state.actorSpeechTextMode == 2 ? kOptionsTextActiveColor : kOptionsStatusDotOffColor);
+	drawStatusDot(kOptionsSpeechVoiceStatusDotX, kOptionsSpeechStatusDotY,
+		state.actorSpeechTextMode == 0 ? kOptionsTextActiveColor : kOptionsStatusDotOffColor);
+	drawStatusDot(kOptionsSpeechBothStatusDotX, kOptionsSpeechStatusDotY,
+		state.actorSpeechTextMode == 1 ? kOptionsTextActiveColor : kOptionsStatusDotOffColor);
+}
+
 void GameplayOptionsMenu::drawValueBar(int rowIndex, byte value, byte color) {
 	if (rowIndex < 0 || rowIndex >= 4)
 		return;
@@ -515,6 +923,7 @@ void GameplayOptionsMenu::drawToggleSquare(int columnIndex, int rowIndex, byte c
 
 void GameplayOptionsMenu::present() {
 	composeScreen();
+	drawGameplayPreview();
 
 	Graphics::Surface *screenSurface = _screen.surfacePtr();
 	drawControls(*screenSurface);
