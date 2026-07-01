@@ -41,6 +41,7 @@
 #include "hollywood/scenes/playable/ambient_audio.h"
 #include "hollywood/scenes/playable/animation_channels.h"
 #include "hollywood/scenes/playable/animation_layers.h"
+#include "hollywood/scenes/playable/scene_config.h"
 #include "hollywood/scenes/playable/scene_resources.h"
 #include "hollywood/scenes/playable/scene_surface_state.h"
 #include "hollywood/scenes/playable/scene_text_store.h"
@@ -147,6 +148,10 @@ protected:
 	// Creates a playable scene with default actor placement and speech colors.
 	PlayableScene(HollywoodEngine *vm, const char *randomName, int defaultActorX, int defaultActorY,
 		byte defaultActorFacing, byte secondarySpeechTextColor, byte primarySpeechTextColor);
+	// Creates a playable scene whose common metadata comes from a config struct.
+	PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &config, const char *randomName,
+		int defaultActorX, int defaultActorY, byte defaultActorFacing,
+		byte secondarySpeechTextColor, byte primarySpeechTextColor);
 
 	// Fixed table and buffer sizes shared by playable scenes.
 	enum {
@@ -183,19 +188,19 @@ protected:
 
 	// Scene Resource Configuration
 	// Names the scene resource archive, such as RESOURCE.G04.
-	virtual const char *resourceArchiveName() const = 0;
+	virtual const char *resourceArchiveName() const;
 	// Number of low-index chunks required before optional scene data.
-	virtual uint sceneInitialRequiredChunkCount() const = 0;
+	virtual uint sceneInitialRequiredChunkCount() const;
 	// First chunk copied into the scene resource arena.
-	virtual uint sceneArenaFirstChunk() const = 0;
+	virtual uint sceneArenaFirstChunk() const;
 	// Last chunk copied into the scene resource arena.
-	virtual uint sceneArenaLastChunk() const = 0;
+	virtual uint sceneArenaLastChunk() const;
 	// RESOURCE.003 stage number used for scene text and metadata.
-	virtual uint sceneStageIndex() const = 0;
+	virtual uint sceneStageIndex() const;
 	// Human-readable scene label for warnings and debug output.
-	virtual const char *sceneDebugName() const = 0;
+	virtual const char *sceneDebugName() const;
 	// Default horizontal viewport offset for the scene.
-	virtual uint16 sceneViewportXOffset() const = 0;
+	virtual uint16 sceneViewportXOffset() const;
 	// Minimum horizontal viewport offset allowed while scrolling.
 	virtual uint16 sceneViewportMinXOffset() const;
 	// Maximum horizontal viewport offset allowed while scrolling.
@@ -245,7 +250,7 @@ protected:
 	// Enables per-pixel actor depth clipping while drawing actors.
 	virtual bool usesActorDepthTest() const;
 	// Checks if a main-flow state belongs to this scene.
-	virtual bool isMainFlowStateInScene(uint16 stateId) const = 0;
+	virtual bool isMainFlowStateInScene(uint16 stateId) const;
 
 	// Scene Hooks
 	// Whether the scene replaces default preview initialization.
@@ -639,6 +644,7 @@ protected:
 
 	// Engine And Resources
 	HollywoodEngine *_vm;
+	PlayableSceneConfig _config;
 
 	// Scene Resource State
 	SceneResources _resources;

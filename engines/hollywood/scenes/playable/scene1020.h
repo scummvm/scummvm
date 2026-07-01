@@ -33,29 +33,7 @@ public:
 	Scene1020(HollywoodEngine *vm);
 
 private:
-	const char *resourceArchiveName() const override;
-	uint sceneInitialRequiredChunkCount() const override;
-	uint sceneArenaFirstChunk() const override;
-	uint sceneArenaLastChunk() const override;
-	uint sceneStageIndex() const override;
-	const char *sceneDebugName() const override;
-	uint16 sceneViewportXOffset() const override;
-	byte inventoryOwnerIndex() const override;
-	void initializeInventoryOwnerState() override;
-	uint resource000ActorBankTableEntry() const override;
-	uint resource000ActorPaletteTableEntry() const override;
-	uint32 inventoryActionTableExtraOffset() const override;
-	uint resource003InventoryRowsOffsetIndex() const override;
-	uint32 speechCueDescriptorTableOffset() const override;
-	const byte *actorPathStepDeltaTable() const override;
-	uint actorPathStepDeltaTableSize() const override;
-	byte walkablePaletteMaxRegion() const override;
-	const char *musicArchiveName() const override;
-	const char *soundBank0ArchiveName() const override;
 	bool shouldLoadArenaChunk(uint index) const override;
-	bool shouldLoadActorDepthTables() const override;
-	bool usesActorDepthTest() const override;
-	bool isMainFlowStateInScene(uint16 stateId) const override;
 	bool hasCustomPreviewState() const override;
 	void initializeCustomPreviewState() override;
 	bool hasCustomEntrySequence() const override;
