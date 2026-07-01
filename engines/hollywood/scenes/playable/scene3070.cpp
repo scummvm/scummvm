@@ -39,7 +39,7 @@ const uint16 kScene3070LastState = 0x0c07;
 const uint16 kScene3070EntryFromOtherSideState = 0x0bff;
 const uint16 kScene3070LateCutsceneState = 0x0c00;
 const uint16 kScene3060ReturnFromScene3070State = 0x0bf5;
-const uint16 kScene3070NextUnimplementedState = 0x0c27;
+const uint16 kScene3110ShortTransitionState = 0x0c27;
 const uint16 kScene3070LaterUnimplementedCutsceneState = 0x23b4;
 const uint16 kScene3070ViewportXOffset = 0x0090;
 const uint16 kScene3070ViewportMinXOffset = 0x0068;
@@ -418,7 +418,7 @@ void Scene3070::runEntryFromOtherSide() {
 	}
 
 	beginSecondarySpeechLine(0x0d, 5);
-	state.mainFlowStateId = kScene3070NextUnimplementedState;
+	state.mainFlowStateId = kScene3110ShortTransitionState;
 }
 
 void Scene3070::runLateCutsceneBranch() {
