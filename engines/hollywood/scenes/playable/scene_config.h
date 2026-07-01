@@ -62,6 +62,7 @@ struct PlayableSceneConfig {
 	byte walkablePaletteMaxRegion;
 	const char *musicArchiveName;
 	const char *soundBank0ArchiveName;
+	bool loadInventoryActionTables;
 	bool loadActorDepthTables;
 	bool useActorDepthTest;
 	uint16 mainFlowFirstState;
