@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/savefile.h"
 #include "common/formats/ini-file.h"
 
 #include "director/director.h"
@@ -388,41 +389,62 @@ void BudAPIXtra::m_baReadIni(int nargs) {
 	// and the supplied default is returned when the file, section or key is
 	// missing. The game derives runtime settings (e.g. _Lautstaerke from
 	// [general] VolSound) from this, so a stubbed 0 return silenced all audio.
+	//
+	// The game treats this file as read/write persistent state (settings,
+	// savegame slots), so -- like FileIO's xlib and BudAPI's own writer
+	// below -- prefer the ScummVM save sandbox (mangled with savePrefix(),
+	// matching what m_baWriteIni() persists to) over the game/CD directory,
+	// which ScummVM otherwise treats as read-only and which a real Windows
+	// install would never see written back to anyway. Fall back to a
+	// bundled file via findPath() only for a value never written yet.
 	ARGNUMCHECK(4);
 	Common::String iniFile = g_lingo->pop().asString();
 	Common::String defaultVal = g_lingo->pop().asString();
 	Common::String key = g_lingo->pop().asString();
 	Common::String section = g_lingo->pop().asString();
 
-	Common::Path resolved = findPath(iniFile);
+	Common::String saveName = savePrefix() + lastPathComponent(iniFile, g_director->_dirSeparator);
 	Common::INIFile ini;
 	ini.allowNonEnglishCharacters();
 	Common::String value;
-	if (!resolved.empty() && ini.loadFromFile(resolved) && ini.getKey(key, section, value)) {
+	if (ini.loadFromSaveFile(saveName) && ini.getKey(key, section, value)) {
 		g_lingo->push(Datum(value));
 		return;
+	}
+
+	Common::Path resolved = findPath(iniFile);
+	if (!resolved.empty()) {
+		Common::INIFile bundled;
+		bundled.allowNonEnglishCharacters();
+		if (bundled.loadFromFile(resolved) && bundled.getKey(key, section, value)) {
+			g_lingo->push(Datum(value));
+			return;
+		}
 	}
 	g_lingo->push(Datum(defaultVal));
 }
 void BudAPIXtra::m_baWriteIni(int nargs) {
 	// baWriteIni(section, key, value, iniFile) writes a Windows INI entry.
-	// Best-effort persist to the resolved file so later reads stay consistent;
-	// read-only media (e.g. CD) simply leave the value unsaved.
+	// Always persist to the ScummVM save sandbox via SaveFileManager (same
+	// mangled name m_baReadIni() above checks first), never to a real path
+	// resolved by findPath(): that mixed a SearchMan-relative result with
+	// Common::INIFile::saveToFile(), which writes via DumpFile straight to
+	// the OS filesystem -- for a bare relative name that lands in whatever
+	// the process's current working directory happens to be, not the game
+	// or save directory, so the value was never seen again by baReadIni()
+	// (silently discarding e.g. save-game and settings data).
 	ARGNUMCHECK(4);
 	Common::String iniFile = g_lingo->pop().asString();
 	Common::String value = g_lingo->pop().asString();
 	Common::String key = g_lingo->pop().asString();
 	Common::String section = g_lingo->pop().asString();
 
-	Common::Path resolved = findPath(iniFile);
+	Common::String saveName = savePrefix() + lastPathComponent(iniFile, g_director->_dirSeparator);
 	Common::INIFile ini;
 	ini.allowNonEnglishCharacters();
-	if (!resolved.empty())
-		ini.loadFromFile(resolved);
+	ini.loadFromSaveFile(saveName);
 	ini.setKey(key, section, value);
-	if (!resolved.empty())
-		ini.saveToFile(resolved);
-	g_lingo->push(Datum(1));
+	g_lingo->push(Datum(ini.saveToSaveFile(saveName) ? 1 : 0));
 }
 XOBJSTUB(BudAPIXtra::m_baFlushIni, 0)
 void BudAPIXtra::m_baReadRegString(int nargs) {
@@ -511,6 +533,22 @@ void BudAPIXtra::m_baFileExists(int nargs) {
 		if (i == nargs - 1)
 			path = d.asString();
 	}
+
+	// Games use this to detect a previously-written persistent ini/rup file
+	// (e.g. Physikus checks baFileExists(_Root & "Physicus.rup") to decide
+	// whether to bootstrap defaults). Those files are written by
+	// baWriteIni() into the SaveFileManager sandbox, not the game
+	// directory, so check there too -- otherwise this always reports
+	// "missing" post-write, sending the game back through its
+	// default-bootstrap path (which computes a different, inconsistent
+	// ini filename) every subsequent run.
+	Common::String saveName = savePrefix() + lastPathComponent(path, g_director->_dirSeparator);
+	Common::SaveFileManager *saves = g_system->getSavefileManager();
+	if (!saves->listSavefiles(saveName).empty()) {
+		g_lingo->push(Datum(1));
+		return;
+	}
+
 	g_lingo->push(Datum(findPath(path, true, true, false).empty() ? 0 : 1));
 }
 void BudAPIXtra::m_baDiskList(int nargs) {
