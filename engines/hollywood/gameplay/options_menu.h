@@ -103,6 +103,9 @@ private:
 	void drawQuitConfirmation(Graphics::Surface &surface);
 	void drawText(Graphics::Surface &surface, const Common::String &text, int globalX, int y,
 		byte color, bool centered);
+	void drawQuitConfirmationBacking();
+	void drawQuitButtonFrame(int globalLeft, int globalRight);
+	void shiftGlobalRectColors(int globalLeft, int top, int globalRight, int bottom, int delta);
 	void drawStatusDot(int globalX, int y, byte color);
 	void drawStatusDots();
 	void drawValueBar(int rowIndex, byte value, byte color);
