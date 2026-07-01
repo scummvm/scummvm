@@ -192,6 +192,11 @@ bool SpeechPlayer::playSample(uint16 sampleId, byte volumePercent) {
 	return true;
 }
 
+void SpeechPlayer::setVolume(byte volumePercent) {
+	if (isPlaying())
+		g_system->getMixer()->setChannelVolume(_speechHandle, percentToMixerVolume(volumePercent));
+}
+
 void SpeechPlayer::stop() {
 	if (isPlaying())
 		g_system->getMixer()->stopHandle(_speechHandle);
