@@ -271,8 +271,8 @@ void Scene7050::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 
 bool Scene7050::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 306:
-	case 307:
+	case 306: // Unused G05 no-op slot.
+	case 307: // Unused G05 no-op slot.
 		return true;
 	case 301: // Mirar puerta (look at door)
 		beginSecondarySpeechLine(1, 0);
@@ -290,7 +290,7 @@ bool Scene7050::dispatchCustomSceneAction(uint16 handlerId) {
 	case 305: // Mirar trapo (look at rag)
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 308: // Mirar caja/Charlie (look at box/Charlie)
+	case 308: // Mirar caja (look at box): party horns / movement behind it.
 		beginSecondarySpeechLine(6, 0);
 		return true;
 	case 311: // Coger trapo (take rag)

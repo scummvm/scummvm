@@ -241,22 +241,22 @@ bool Scene1010::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene1010::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301:
+	case 301: // Ir a bodega / sala de fiesta (go to cellar/party room): enter scene 1030.
 		_vm->gameState().mainFlowStateId = kScene1010ExitState1030;
 		return true;
-	case 302:
+	case 302: // Mirar escaleras (look at stairs): they lead to the mansion.
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 303:
+	case 303: // Mirar caseta de perro (look at doghouse): empty doghouse.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 304:
+	case 304: // Ir a bodega exterior / rejilla (go to cellar exterior/grate): enter scene 1020.
 		_vm->gameState().mainFlowStateId = kScene1010ExitState1020;
 		return true;
-	case 305:
+	case 305: // Mirar edificio (look at distant building): too far from here.
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 306:
+	case 306: // Usar coche (use car): open Ron destination selector once unlocked.
 		if (!_vm->gameState().ronTravelScreenUnlocked) {
 			beginSecondarySpeechLine(1, 4);
 			return true;

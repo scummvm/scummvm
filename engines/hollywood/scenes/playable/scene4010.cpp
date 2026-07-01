@@ -214,32 +214,32 @@ bool Scene4010::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene4010::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301: // Slot 00: first room object speech, disabled in alternate room.
+	case 301: // Usar puente levadizo levantado (use raised drawbridge): no effect outside.
 		if (!alternateBackgroundActive())
 			beginSecondarySpeechLine(0, 0);
 		return true;
-	case 302: // Slot 01: row 1 speech, alternate variant after room transition.
+	case 302: // Mirar puente levadizo / entrada (look at drawbridge/entrance), state-aware.
 		beginD01SpeechLine(1, 0, 1);
 		return true;
-	case 303: // Slot 02: row 2 speech.
+	case 303: // Usar puente levadizo (use drawbridge): still raised.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 304: // Slot 03: row 3 speech, row 7 in alternate room.
+	case 304: // Usar puente/ventana or mirar foso in alternate room (state-aware).
 		if (alternateBackgroundActive())
 			beginSecondarySpeechLine(7, 0);
 		else
 			beginSecondarySpeechLine(3, 0);
 		return true;
-	case 305: // Slot 04: row 4 speech.
+	case 305: // Mirar ventana (look at window): too far to see.
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 306: // Slot 05: row 5 speech.
+	case 306: // Mirar objeto brillante (look at shiny object): too far to reach.
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 307: // Slot 06: progressive exit speech and transition to 4020.
+	case 307: // Ir/saltar al foso (go/jump into moat): progressive exit to scene 4020.
 		runProgressiveExitSpeech();
 		return true;
-	case 308: // Slot 07: row 7 speech gated by progressive exit state.
+	case 308: // Mirar foso (look at moat): state-aware moat response.
 		beginSecondarySpeechLine(7, _vm->gameState().scene4010ProgressiveExitSpeechState < 2 ? 0 : 1);
 		return true;
 	case 309: // Hablar con profesor Hecker (talk to Professor Hecker).
@@ -248,31 +248,31 @@ bool Scene4010::dispatchCustomSceneAction(uint16 handlerId) {
 		else
 			runHeckerDialogue();
 		return true;
-	case 310: // Slot 09: row 8 speech, alternate variant after room transition.
+	case 310: // Mirar coche / puente desde dentro (look at car/drawbridge), state-aware.
 		beginD01SpeechLine(8, 0, 1);
 		return true;
-	case 311: // Slot 10: row 9 speech, alternate variant after room transition.
+	case 311: // Mirar viejo trastornado / Dr. Hecker (look at old man / Dr. Hecker).
 		beginD01SpeechLine(9, 0, 1);
 		return true;
-	case 312: // Slot 11: row 11 in normal room, row 8 alternate variant otherwise.
+	case 312: // Hablar/mirar viejo or coche alternate response (state-aware).
 		if (alternateBackgroundActive())
 			beginSecondarySpeechLine(8, 1);
 		else
 			beginSecondarySpeechLine(11, 0);
 		return true;
-	case 313: // Animated pickup for inventory item 0x3a.
+	case 313: // Coger camafeo de Samarkanda (take Samarkanda cameo): item 0x3a.
 		takeAnimatedItem3A();
 		return true;
-	case 314: // Follow-up/inspection for item 0x3a pickup state.
+	case 314: // Mirar camafeo de Samarkanda (look at Samarkanda cameo), state-aware.
 		handlePendingItem3A();
 		return true;
-	case 315: // Shared original pickup helper for inventory item 0x0c.
+	case 315: // Coger postal / objeto brillante compartido (take postcard/shiny item): item 0x0c.
 		takeGenericItem0C();
 		return true;
-	case 316: // Unlock a Ron destination from the room action.
+	case 316: // Usar coche (use car): unlock castle travel destination with required item.
 		unlockDestinationFromRoomAction();
 		return true;
-	case 317: // Animated pickup for inventory item 0x3b.
+	case 317: // Coger pastillero (take pillbox): item 0x3b.
 		takeAnimatedItem3B();
 		return true;
 	default:

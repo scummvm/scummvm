@@ -190,52 +190,52 @@ bool Scene6030::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene6030::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301:
+	case 301: // Mirar silla (look at chair).
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 302:
+	case 302: // Usar silla (use chair): Ron refuses to sit.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 303:
+	case 303: // Mirar sillon de Hannover (look at Hannover's armchair).
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 304:
+	case 304: // Usar sillon de Hannover (use Hannover's armchair): Hannover may return.
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 305: // Original patch-backed raw callback label.
+	case 305: // Usar sillon de Hannover (use Hannover's armchair), duplicate scene action.
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 306:
+	case 306: // Mirar saxofon (look at saxophone).
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 307:
+	case 307: // Usar saxofon (use saxophone): bad time to play.
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 308: // Original raw callback label near the scene exit path.
+	case 308: // Ir a oficina de Taffy / puerta (go to Taffy's office/door): return scene 6020.
 		returnToScene6020();
 		return true;
-	case 309:
+	case 309: // Mirar puerta/oficina de Taffy (look at door/Taffy's office).
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 310:
+	case 310: // Mirar cafe (look at coffee), state-aware after margarita.
 		beginSecondarySpeechLine(8, 0);
 		return true;
-	case 311:
+	case 311: // Usar/coger cafe (use/take coffee): Ron refuses.
 		beginSecondarySpeechLine(9, 0);
 		return true;
-	case 312:
+	case 312: // Mirar cafe tras margarita (look at coffee after daisy effect).
 		beginSecondarySpeechLine(10, 0);
 		return true;
-	case 313:
+	case 313: // Mirar palos de golf (look at golf clubs).
 		beginSecondarySpeechLine(11, 0);
 		return true;
-	case 314:
+	case 314: // Mirar telefono (look at telephone).
 		beginSecondarySpeechLine(13, 0);
 		return true;
-	case 315:
+	case 315: // Usar telefono (use telephone): no need to call.
 		beginSecondarySpeechLine(14, 0);
 		return true;
-	case 316:
+	case 316: // Usar telefono (use telephone), duplicate scene action.
 		beginSecondarySpeechLine(14, 0);
 		return true;
 	default:

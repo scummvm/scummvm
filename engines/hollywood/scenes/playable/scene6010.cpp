@@ -228,7 +228,7 @@ bool Scene6010::advanceCustomGameplayLoop(uint32 delta) {
 bool Scene6010::dispatchCustomSceneAction(uint16 handlerId) {
 	GameplayState &state = _vm->gameState();
 	switch (handlerId) {
-	case 301:
+	case 301: // Ir/usar puerta del plato (go/use studio stage door): guard/reveal branch.
 		if (!state.scene6010StudioEntryUnlocked) {
 			if (state.scene6010DoorActionState == 2) {
 				beginSecondarySpeechLine(1, 7);
@@ -260,49 +260,49 @@ bool Scene6010::dispatchCustomSceneAction(uint16 handlerId) {
 		state.scene6010DoorActionState = 2;
 		applySceneStateToHotspotsAndPatches(2);
 		return true;
-	case 302:
+	case 302: // Mirar puerta/plato de cine (look at studio stage door).
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 303:
+	case 303: // Mirar cartel del museo (look at museum sign).
 		beginSecondarySpeechLine(3, 1);
 		return true;
-	case 304:
+	case 304: // Usar/entrar plato (use/enter stage): plays clip or reports closed.
 		if (state.scene6010StudioEntryUnlocked)
 			beginSecondarySpeechLine(4, 0);
 		else
 			runStudioClipSequence(true);
 		return true;
-	case 305:
+	case 305: // Mirar oficinas de los estudios (look at studio offices), state-aware.
 		beginSecondarySpeechLine(5, state.scene6010ExitOverlayPlayed ? 1 : 0);
 		return true;
-	case 306:
+	case 306: // Ir a oficinas de los estudios (go to studio offices): scene 6020.
 		runExitToScene6020Overlay();
 		return true;
-	case 307:
+	case 307: // Usar/abrir oficinas (use/open offices): generic refusal.
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 308:
+	case 308: // Mirar cartel "Museo de los horrores Hannover" (look at museum sign).
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 309:
+	case 309: // Mirar buzon (look at mailbox): brochure slot or already empty.
 		if (state.scene6010Item58Taken)
 			beginSecondarySpeechLine(0x50, 1);
 		else
 			beginSecondarySpeechLine(8, 0);
 		return true;
-	case 310:
+	case 310: // Usar/abrir buzon (use/open mailbox): locked.
 		beginSecondarySpeechLine(9, 0);
 		return true;
-	case 311:
+	case 311: // Coger paquete del mensajero (take courier package): item 0x59.
 		runPickupItem59Overlay();
 		return true;
-	case 312:
+	case 312: // Mirar pelicula/cartel de la pelicula (look at movie/poster title).
 		beginSecondarySpeechLine(10, 0);
 		return true;
-	case 313:
+	case 313: // Coger folleto del buzon (take mailbox brochure): item 0x58.
 		runPickupItem58Overlay();
 		return true;
-	case 314:
+	case 314: // Usar coche (use car): open Ron destination selector unless blocked.
 		if (state.scene6010EndgameTravelExitBlocked) {
 			beginSecondarySpeechLine(0, 1);
 			return true;

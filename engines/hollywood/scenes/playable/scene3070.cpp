@@ -203,28 +203,28 @@ bool Scene3070::dispatchCustomSceneAction(uint16 handlerId) {
 	case 301: // Ir a pasadizo secreto (go to secret passage): return to scene 3060.
 		state.mainFlowStateId = kScene3060ReturnFromScene3070State;
 		return true;
-	case 302: // C07 hotspot: look/use response row 1.
+	case 302: // Mirar escalera (look at stairs): connects to the library.
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 303: // C07 hotspot: look/use response row 2.
+	case 303: // Mirar riachuelo (look at brook): looks natural.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 304: // C07 hotspot: alternate row 3 response.
+	case 304: // Mirar mesa de operaciones (look at operating table), state-aware.
 		beginSecondarySpeechLine(3, state.scene3070Row3Alternate ? 1 : 0);
 		return true;
-	case 305: // C07 hotspot: row 4 response.
+	case 305: // Mirar mesa (look at table): dusty table / surgical thread clue.
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 306: // C07 hotspot: row 5 response.
+	case 306: // Mirar cubetas (look at tubs).
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 307: // C07 hotspot: row 6 response.
+	case 307: // Mirar panel de controles / cajon (look at controls/drawer).
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 308: // C07 hotspot: row 7 response.
+	case 308: // Mirar interruptor (look at switch): starts the machine.
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 309: // Mirar mecanismo/patch item 9 (look at patched hotspot).
+	case 309: // Mirar cajon / aguja e hilo quirurgicos (look at drawer / surgical needle and thread).
 		if (!state.scene3070PatchDoorOpen) {
 			beginSecondarySpeechLine(8, 0);
 		} else if (state.scene3070Item9PatchState < 2) {
@@ -237,25 +237,25 @@ bool Scene3070::dispatchCustomSceneAction(uint16 handlerId) {
 			beginSecondarySpeechLine(8, 2);
 		}
 		return true;
-	case 310: // Abrir/activar mecanismo (open/activate mechanism).
+	case 310: // Abrir cajon (open drawer): reveals needle and thread.
 		runDoorPatchOverlay(true);
 		return true;
-	case 311: // Cerrar/desactivar mecanismo (close/deactivate mechanism).
+	case 311: // Cerrar cajon (close drawer).
 		runDoorPatchOverlay(false);
 		return true;
-	case 312: // Coger objeto revelado del mecanismo (take revealed item): adds item 0x32.
+	case 312: // Coger aguja e hilo quirurgicos (take surgical needle and thread): adds item 0x32.
 		runItemPatchPickup();
 		return true;
-	case 313: // C07 hotspot: row 9 response.
+	case 313: // Mirar aguja e hilo / Frankenstein (look at needle and thread / Frankenstein).
 		beginSecondarySpeechLine(9, 0);
 		return true;
-	case 314: // C07 hotspot: row 10 response.
+	case 314: // Hablar con Frankenstein inconsciente (talk to unconscious Frankenstein).
 		beginSecondarySpeechLine(10, 0);
 		return true;
-	case 315: // C07 hotspot: row 11 response.
+	case 315: // Coger Frankenstein (take Frankenstein): leave him in place.
 		beginSecondarySpeechLine(11, 0);
 		return true;
-	case 316: // C07 hotspot: alternate row 12 response.
+	case 316: // Usar/animar Frankenstein (use/revive Frankenstein), state-aware.
 		beginSecondarySpeechLine(12, state.scene3070Row12Alternate ? 1 : 0);
 		return true;
 	default:
