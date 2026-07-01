@@ -1,0 +1,375 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "hollywood/scenes/playable/scene3040.h"
+
+#include "common/system.h"
+
+#include "hollywood/gameplay/game_state.h"
+#include "hollywood/graphics.h"
+#include "hollywood/hollywood.h"
+
+namespace Hollywood {
+
+const char *const kScene3040ArchiveName = "RESOURCE.C04";
+const char *const kScene3040MusicArchiveName = "RESOURCE.M03";
+const char *const kScene3040SoundArchiveName = "RESOURCE.S03";
+const uint kScene3040InitialRequiredChunkCount = 8;
+const uint kScene3040ArenaFirstChunk = 5;
+const uint kScene3040ArenaLastChunk = 7;
+const uint kScene3040StageIndex = 304;
+const uint16 kScene3040State = 0x0be0;
+const uint16 kScene3010EntryFromScene3040State = 0x0bc3;
+const uint16 kScene3040ViewportXOffset = 0x0060;
+const uint kScene3040ActorBankTableEntry = 0x0000;
+const uint kScene3040ActorPaletteTableEntry = 0x00cc;
+const uint kScene3040Resource003RowsOffsetIndex = 0x0000;
+const uint32 kScene3040SpeechCueDescriptorTableOffset = 0x1135;
+const uint32 kScene3040LoopFrameMillis = 125;
+const uint32 kScene3040ForegroundFrameMillis = 75;
+const uint32 kScene3040ForegroundIdleFrameMillis = 150;
+const uint kScene3040ForegroundActorDescriptorCount = 0x14;
+const uint kScene3040LoopDescriptorCount = 8;
+const byte kScene3040ConditionalObjectItemId = 3;
+const byte kScene3040ConditionalPatchChunk = 7;
+
+const byte kScene3040ForegroundFrameMap[] = {
+	0, 1, 2, 1, 4, 5, 6, 7, 8, 9,
+	10, 11, 12, 13, 0, 14, 15, 16, 17, 18,
+	19
+};
+
+const byte kScene3040LoopFrameMap[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+};
+
+static PlayableSceneConfig scene3040Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = kScene3040ArchiveName;
+	config.initialRequiredChunkCount = kScene3040InitialRequiredChunkCount;
+	config.arenaFirstChunk = kScene3040ArenaFirstChunk;
+	config.arenaLastChunk = kScene3040ArenaLastChunk;
+	config.stageIndex = kScene3040StageIndex;
+	config.debugName = "Scene 3040";
+	config.viewportXOffset = kScene3040ViewportXOffset;
+	config.viewportMinXOffset = kScene3040ViewportXOffset;
+	config.viewportMaxXOffset = kScene3040ViewportXOffset;
+	config.inventoryOwnerIndex = 0;
+	config.activeAudioChapterIndex = 3;
+	config.actorBankTableEntry = kScene3040ActorBankTableEntry;
+	config.actorPaletteTableEntry = kScene3040ActorPaletteTableEntry;
+	config.inventoryActionTableExtraOffset = 0;
+	config.inventoryRowsOffsetIndex = kScene3040Resource003RowsOffsetIndex;
+	config.speechCueDescriptorTableOffset = kScene3040SpeechCueDescriptorTableOffset;
+	config.walkablePaletteMaxRegion = 20;
+	config.musicArchiveName = kScene3040MusicArchiveName;
+	config.soundBank0ArchiveName = kScene3040SoundArchiveName;
+	config.mainFlowFirstState = kScene3040State;
+	config.mainFlowLastState = kScene3040State;
+	return config;
+}
+
+static void drawLooseSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset,
+		uint16 descriptorCount, uint16 descriptorIndex, Graphics::ManagedSurface &destination) {
+	const uint entryOffset = baseOffset + kFrameDescriptorSize * descriptorIndex;
+	if (entryOffset + kFrameDescriptorSize > resource.size())
+		return;
+
+	const uint16 spanCount = readUint16LE(resource, entryOffset + 12);
+	uint cursor = baseOffset + kFrameDescriptorSize * descriptorCount + readUint32LE(resource, entryOffset);
+	if (cursor > resource.size())
+		return;
+
+	for (uint spanIndex = 0; spanIndex < spanCount; ++spanIndex) {
+		if (cursor + 5 > resource.size())
+			return;
+
+		const uint32 packedDestination = readUint32LE(resource, cursor);
+		const int dataLength = resource[cursor + 4];
+		cursor += 5;
+
+		if (cursor + dataLength > resource.size())
+			return;
+
+		const int x = packedDestination & 0xffff;
+		const int y = (int)((packedDestination >> 16) & 0xffff);
+		if (y >= 0 && y < destination.h && x >= 0 && x < destination.w) {
+			const int drawWidth = MIN<int>(dataLength, destination.w - x);
+			if (drawWidth > 0)
+				destination.copyRectToSurface(resource.data() + cursor, dataLength, x, y, drawWidth, 1);
+		}
+
+		cursor += dataLength;
+	}
+}
+
+Scene3040::Scene3040(HollywoodEngine *vm) :
+		PlayableScene(vm, scene3040Config(), "scene3040", 0x210, 0x139, 2, 0xfd, 0xfb),
+		_loopChannel(),
+		_foregroundActorChannel(),
+		_foregroundActorLayer(),
+		_loopLayer(),
+		_foregroundActorBlinkActive(false),
+		_foregroundActionActive(false) {
+	_foregroundActorLayer.configure(5, kScene3040ForegroundActorDescriptorCount,
+		kScene3040ForegroundFrameMap, ARRAYSIZE(kScene3040ForegroundFrameMap));
+	_loopLayer.configure(6, kScene3040LoopDescriptorCount,
+		kScene3040LoopFrameMap, ARRAYSIZE(kScene3040LoopFrameMap));
+}
+
+bool Scene3040::hasCustomPreviewState() const {
+	return true;
+}
+
+void Scene3040::initializeCustomPreviewState() {
+	initializeDefaultPreviewState();
+	resetAnimationLayers();
+
+	_activeActorWorldX = 0x210;
+	_activeActorWorldY = 0x139;
+	_activeActorFacing = 2;
+	_activeActorCel = 0;
+	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
+}
+
+bool Scene3040::hasCustomComposite() const {
+	return true;
+}
+
+void Scene3040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
+		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+		byte actorDrawOrderMode) {
+	(void)actorDrawOrderMode;
+
+	copyBaseFramebufferToSceneFramebuffer();
+	drawLooseResourceSpriteLayer(_foregroundActorLayer);
+	drawLooseResourceSpriteLayer(_loopLayer);
+	drawActionOverlayLayer();
+	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+}
+
+bool Scene3040::hasCustomEntrySequence() const {
+	return _vm->gameState().mainFlowStateId == kScene3040State;
+}
+
+void Scene3040::runCustomEntrySequence() {
+	runEntryPath(0x210, 0x139, 2, 0x210, 0x139);
+	resetAnimationLayers();
+	drawPlayableComposite();
+	presentFrame();
+
+	if (!_vm->gameState().seenScene3040EntryLine) {
+		beginSecondarySpeechLine(1, 0);
+		_vm->gameState().seenScene3040EntryLine = true;
+	}
+}
+
+bool Scene3040::prepareCustomGameplayLoop() {
+	resetAnimationLayers();
+	rebuildWalkableMask();
+	return true;
+}
+
+bool Scene3040::advanceCustomGameplayLoop(uint32 delta) {
+	advanceLoopingLayer(delta);
+	advanceForegroundActorLayer(delta);
+	updateAmbientAudioAndMusicCues(delta);
+	return true;
+}
+
+bool Scene3040::dispatchCustomSceneAction(uint16 handlerId) {
+	switch (handlerId) {
+	case 301: // Mirar/Hablar con actor de escena (look/talk to foreground actor), row 1.
+		beginSecondarySpeechLine(1, 0);
+		return true;
+	case 302: // Ir a exterior/camino (go outside/path): return toward scene 3010.
+		runExitToScene3010();
+		return true;
+	case 303: // Mirar objeto de escena (look at scene object), row 2.
+		beginSecondarySpeechLine(2, 0);
+		return true;
+	case 304: // Mirar objeto de escena (look at scene object), row 3.
+		beginSecondarySpeechLine(3, 0);
+		return true;
+	case 305: // Mirar objeto de escena (look at scene object), row 4.
+		beginSecondarySpeechLine(4, 0);
+		return true;
+	case 306: // Usar objeto de inventario con hotspot condicional: reveal scene object.
+		runInventoryPatchAction();
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool Scene3040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
+	if (selector == 0xff || selector == 0 || selector == 1) {
+		restoreBaseFramebufferFromOriginal();
+		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
+		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
+		updateConditionalObjectHotspots();
+		rebuildWalkableMask();
+		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
+	}
+
+	return true;
+}
+
+AmbientAudioProfile Scene3040::ambientAudioProfile() const {
+	AmbientAudioProfile profile;
+	profile.checkMillis = 250;
+	profile.musicMode = kAmbientMusicRandomRange;
+	profile.musicFirstCueId = 0x0b;
+	profile.musicCueCount = 5;
+	profile.musicVolumePercent = 100;
+	profile.musicProbabilityModulus = 50;
+	return profile;
+}
+
+void Scene3040::resetAnimationLayers() {
+	_loopChannel.reset(0, kScene3040LoopFrameMillis);
+	_foregroundActorChannel.reset(0, kScene3040ForegroundIdleFrameMillis);
+	_foregroundActorLayer.visible = true;
+	_loopLayer.visible = true;
+	_foregroundActorLayer.reset(0);
+	_loopLayer.reset(0);
+	_foregroundActorBlinkActive = false;
+	_foregroundActionActive = false;
+}
+
+void Scene3040::rebuildWalkableMask() {
+	memcpy(_walkablePaletteMask.data(), _fullPaletteRegionMask.data(), _walkablePaletteMask.size());
+	for (uint i = 0; i < _walkablePaletteMask.size(); ++i) {
+		if (_walkablePaletteMask[i] > walkablePaletteMaxRegion())
+			_walkablePaletteMask[i] = 0;
+	}
+}
+
+void Scene3040::advanceLoopingLayer(uint32 delta) {
+	const uint frameCount = _loopChannel.consumeFrames(delta);
+	for (uint frame = 0; frame < frameCount; ++frame) {
+		_loopChannel.frameIndex = _loopChannel.frameIndex + 1 < ARRAYSIZE(kScene3040LoopFrameMap) ?
+			_loopChannel.frameIndex + 1 : 0;
+		_loopLayer.setFrame(_loopChannel.frameIndex);
+	}
+}
+
+void Scene3040::advanceForegroundActorLayer(uint32 delta) {
+	if (_foregroundActionActive)
+		return;
+
+	const uint frameCount = _foregroundActorChannel.consumeFrames(delta);
+	for (uint frame = 0; frame < frameCount; ++frame) {
+		if (_speechOverlay.visible) {
+			byte nextFrame = (byte)_random.getRandomNumber(3);
+			if (nextFrame == _foregroundActorLayer.frameIndex)
+				nextFrame = (byte)((nextFrame + 1) & 3);
+			_foregroundActorLayer.setFrame(nextFrame);
+			_foregroundActorBlinkActive = false;
+			continue;
+		}
+
+		if (_foregroundActorLayer.frameIndex != 0) {
+			_foregroundActorLayer.setFrame(0);
+			_foregroundActorBlinkActive = false;
+			continue;
+		}
+
+		if (!_foregroundActorBlinkActive && _random.getRandomNumber(14) == 0) {
+			_foregroundActorLayer.setFrame(4);
+			_foregroundActorBlinkActive = true;
+		}
+	}
+}
+
+void Scene3040::drawLooseResourceSpriteLayer(const ResourceSpriteLayer &layer) {
+	if (!layer.visible || layer.chunkIndex >= HollywoodEngine::kResourceChunkCount ||
+			!_sceneChunkTable.isValidChunk(layer.chunkIndex))
+		return;
+
+	drawLooseSpriteFrame(_resourceArena, _resourceChunkOffsets[layer.chunkIndex],
+		layer.descriptorCount, layer.descriptorIndex(), _sceneFramebuffer);
+}
+
+void Scene3040::updateConditionalObjectHotspots() {
+	if (_paletteMaskOriginal.size() < kSceneColorToItemMap + kScenePaletteMapPageSize ||
+			_paletteMask.size() < kSceneColorToItemMap + kScenePaletteMapPageSize)
+		return;
+
+	for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
+		if (_paletteMaskOriginal[kSceneColorToItemMap + i] == kScene3040ConditionalObjectItemId) {
+			_paletteMask[kSceneColorToItemMap + i] =
+				_vm->gameState().scene3040ConditionalObjectVisible ? kScene3040ConditionalObjectItemId : 0;
+		}
+	}
+
+	if (_vm->gameState().scene3040ConditionalObjectVisible)
+		applyConditionalObjectPatch();
+}
+
+void Scene3040::runExitToScene3010() {
+	runForegroundActionFrames(0x0e, 0x14);
+	_vm->gameState().mainFlowStateId = kScene3010EntryFromScene3040State;
+}
+
+void Scene3040::runInventoryPatchAction() {
+	beginSecondarySpeechLine(1, 5);
+	runForegroundActionFrames(4, 0x0e, 0x0b);
+
+	const byte inventoryItem = selectedInventoryItemForPatchAction();
+	if (inventoryItem != 0)
+		removeInventoryItem(inventoryItem);
+
+	_vm->gameState().scene3040ConditionalObjectVisible = true;
+	applySceneStateToHotspotsAndPatches(1);
+	_soundBank0.playSample(1, 100);
+	drawPlayableComposite();
+	presentFrame();
+}
+
+void Scene3040::runForegroundActionFrames(byte firstFrame, byte lastFrame, int patchFrame) {
+	_foregroundActionActive = true;
+	for (byte frame = firstFrame; frame <= lastFrame && !Engine::shouldQuit() &&
+			!_vm->isSceneRestartRequested(); ++frame) {
+		_foregroundActorLayer.setFrame(frame);
+		if (patchFrame >= 0 && frame == patchFrame) {
+			_vm->gameState().scene3040ConditionalObjectVisible = true;
+			applySceneStateToHotspotsAndPatches(1);
+		}
+		if (waitSceneMillis(kScene3040ForegroundFrameMillis))
+			break;
+	}
+	_foregroundActionActive = false;
+}
+
+void Scene3040::applyConditionalObjectPatch() {
+	if (_sceneChunkTable.isValidChunk(kScene3040ConditionalPatchChunk))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene3040ConditionalPatchChunk], _baseFramebuffer);
+}
+
+byte Scene3040::selectedInventoryItemForPatchAction() const {
+	if (_lastInventoryPrimaryItemId != 0)
+		return _lastInventoryPrimaryItemId;
+	return _lastInventoryActionItemId;
+}
+
+} // End of namespace Hollywood

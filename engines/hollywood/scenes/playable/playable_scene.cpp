@@ -152,6 +152,8 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_activeActorCel(0),
 		_activeActorDrawOrderMode(0),
 		_lastSceneActionItemId(0),
+		_lastInventoryActionItemId(0),
+		_lastInventoryPrimaryItemId(0),
 		_skipRequested(false) {
 	_surfaceState.initialize(kPaletteSize, 0x700, kPaletteMaskUsedBytes, kScenePaletteMapPageSize, kScenePaletteRegionCount);
 	_speechController.initialize(secondarySpeechTextColor, primarySpeechTextColor);
@@ -969,6 +971,8 @@ void PlayableScene::initializeDefaultPreviewState() {
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_lastSceneActionItemId = 0;
+	_lastInventoryActionItemId = 0;
+	_lastInventoryPrimaryItemId = 0;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
 	applySceneStateToHotspotsAndPatches(0xff);
