@@ -45,6 +45,7 @@ ARN *ARN::create() {
 	if (!file.open("BDataHeader.vit"))
 		return nullptr;
 
+	// TODO: Convert to the screen format ahead of time?
 	Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
 	auto numEntries = file.readUint32LE();
