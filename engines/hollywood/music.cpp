@@ -49,7 +49,11 @@ byte percentToMixerVolume(byte volumePercent) {
 }
 
 MusicPlayer::MusicPlayer() :
-		_archiveName(kIntroMusicArchiveName) {
+		_archiveName(kIntroMusicArchiveName),
+		_currentCueId(0),
+		_currentVolumePercent(100),
+		_currentLoop(false),
+		_hasCurrentCue(false) {
 }
 
 MusicPlayer::~MusicPlayer() {
@@ -62,6 +66,10 @@ void MusicPlayer::setArchive(const Common::Path &archiveName) {
 
 	stop();
 	_archiveName = archiveName;
+	_currentCueId = 0;
+	_currentVolumePercent = 100;
+	_currentLoop = false;
+	_hasCurrentCue = false;
 }
 
 bool MusicPlayer::playIntroMusic() {
@@ -97,9 +105,27 @@ bool MusicPlayer::playMusicCue(uint16 cueId, byte volumePercent, bool loop) {
 	g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, playbackStream,
 		-1, percentToMixerVolume(volumePercent), 0, DisposeAfterUse::YES);
 
+	_currentCueId = cueId;
+	_currentVolumePercent = volumePercent;
+	_currentLoop = loop;
+	_hasCurrentCue = true;
+
 	debugC(1, kDebugResources, "Started music %s cue %u: offset=%u size=%u loop=%u",
 		_archiveName.toString().c_str(), cueId, start, size, loop ? 1 : 0);
 	return true;
+}
+
+bool MusicPlayer::resumeLastCue() {
+	if (!_hasCurrentCue)
+		return false;
+
+	return playMusicCue(_currentCueId, _currentVolumePercent, _currentLoop);
+}
+
+void MusicPlayer::setVolume(byte volumePercent) {
+	_currentVolumePercent = volumePercent;
+	if (isPlaying())
+		g_system->getMixer()->setChannelVolume(_musicHandle, percentToMixerVolume(volumePercent));
 }
 
 void MusicPlayer::stop() {
@@ -158,7 +184,7 @@ SpeechPlayer::~SpeechPlayer() {
 	stop();
 }
 
-bool SpeechPlayer::playSample(uint16 sampleId, byte volumePercent) {
+bool SpeechPlayer::playSample(uint16 sampleId, byte volumePercent, bool loop) {
 	stop();
 	_lastSampleDurationMillis = 0;
 
@@ -184,11 +210,12 @@ bool SpeechPlayer::playSample(uint16 sampleId, byte volumePercent) {
 	}
 
 	_lastSampleDurationMillis = (uint32)(((uint64)size * 1000) / kSpeechSampleRate);
-	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, audioStream,
+	Audio::AudioStream *playbackStream = loop ? Audio::makeLoopingAudioStream(audioStream, 0) : audioStream;
+	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, playbackStream,
 		-1, percentToMixerVolume(volumePercent), 0, DisposeAfterUse::YES);
 
-	debugC(1, kDebugResources, "Started speech %s sample %u: offset=%u size=%u duration=%u ms",
-		kSpeechArchiveName, sampleId, start, size, _lastSampleDurationMillis);
+	debugC(1, kDebugResources, "Started speech %s sample %u: offset=%u size=%u duration=%u ms loop=%u",
+		kSpeechArchiveName, sampleId, start, size, _lastSampleDurationMillis, loop ? 1 : 0);
 	return true;
 }
 
@@ -288,6 +315,11 @@ bool SoundBank0Player::playSample(uint16 sampleId, byte volumePercent, bool loop
 
 bool SoundBank0Player::playSampleLooping(uint16 sampleId, byte volumePercent) {
 	return playSample(sampleId, volumePercent, true);
+}
+
+void SoundBank0Player::setVolume(byte volumePercent) {
+	if (isPlaying())
+		g_system->getMixer()->setChannelVolume(_soundHandle, percentToMixerVolume(volumePercent));
 }
 
 void SoundBank0Player::stop() {
