@@ -456,6 +456,10 @@ void Channel::setCast(CastMemberID memberID) {
 		_sprite->_cast->releaseWidget();
 
 	bool hasChanged = _sprite->_castId != memberID;
+
+	// Save bbox before swapping cast so we can restore visual position afterward.
+	Common::Rect oldBbox = getBbox();
+
 	// Replace the cast member in the sprite.
 	// Only change the dimensions if the "stretch" flag is set,
 	// indicating that the sprite has already been warped away from cast
@@ -463,6 +467,14 @@ void Channel::setCast(CastMemberID memberID) {
 	// dimensions of the sprite, -then- change the cast ID, and expect
 	// those custom dimensions to stick around.
 	_sprite->setCast(memberID, !_sprite->_stretch);
+
+	// If the new cast member is a film loop, adjust _startPoint so the sprite
+	// stays at the same visual position regardless of registration offset changes.
+	if (hasChanged && _sprite->_cast && _sprite->_cast->_type == kCastFilmLoop) {
+		Common::Rect newBbox = getBbox();
+		_sprite->_startPoint.x += oldBbox.left - newBbox.left;
+		_sprite->_startPoint.y += oldBbox.top - newBbox.top;
+	}
 
 	// Duplicate of the special cases in setClean.
 	// Maybe it makes sense to force setClean to use setCast instead?
