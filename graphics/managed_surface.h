@@ -880,7 +880,7 @@ public:
 	 * @param newHeight  The resulting height.
 	 * @param filtering  Whether or not to use bilinear filtering.
 	 */
-	ManagedSurface *scale(int16 newWidth, int16 newHeight, bool filtering = false) const;
+	ManagedSurface *scale(int16 newWidth, int16 newHeight, bool filtering = false, byte flip = 0) const;
 
 	/**
 	 * @brief Rotoscale function; this returns a transformed version of this surface after rotation and

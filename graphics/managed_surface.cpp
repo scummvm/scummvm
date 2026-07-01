@@ -306,15 +306,15 @@ void ManagedSurface::convertToInPlace(const PixelFormat &dstFormat) {
 		_innerSurface.convertToInPlace(dstFormat);
 }
 
-Graphics::ManagedSurface *ManagedSurface::scale(int16 newWidth, int16 newHeight, bool filtering) const {
+Graphics::ManagedSurface *ManagedSurface::scale(int16 newWidth, int16 newHeight, bool filtering, byte flip) const {
 	Graphics::ManagedSurface *target = new Graphics::ManagedSurface();
 
 	target->create(newWidth, newHeight, format);
 
 	if (filtering) {
-		scaleBlitBilinear((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
+		scaleBlitBilinear((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format, flip);
 	} else {
-		scaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
+		scaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format, flip);
 	}
 
 	// Copy miscellaneous properties
