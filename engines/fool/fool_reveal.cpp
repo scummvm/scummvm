@@ -33,88 +33,88 @@ namespace Fool {
 // mask reveal puzzle
 void FoolGame::revealRun() {
 	// 134:0004
-	this->fetchPuzzleData();
-	this->var_i16_c00 = 1;
-	this->arr_i16_1eb8[15] = puzzlesReadShort();
-	this->arr_i16_1eb8[16] = puzzlesReadShort();
-	this->arr_i16_1eb8[21] = puzzlesReadShort();
-	debugC(5, kDebugLoading, "%d, %d, %04x", this->arr_i16_1eb8[15], this->arr_i16_1eb8[16], this->arr_i16_1eb8[21]);
-	this->var_str_384 = puzzlesReadString();
-	this->var_str_384 = _zbasic->str(OFF(0)) + this->var_str_384 + _zbasic->str(OFF(1));
-	_zbasic->menu(8, 6, 1, this->var_str_384);
-	for (int i = 1; i <= this->arr_i16_1eb8[15]; i++) {
-		this->arr_i16_3738[i] = puzzlesReadByte();
+	fetchPuzzleData();
+	var_i16_c00 = 1;
+	arr_i16_1eb8[15] = puzzlesReadShort();
+	arr_i16_1eb8[16] = puzzlesReadShort();
+	arr_i16_1eb8[21] = puzzlesReadShort();
+	debugC(5, kDebugLoading, "%d, %d, %04x", arr_i16_1eb8[15], arr_i16_1eb8[16], arr_i16_1eb8[21]);
+	var_str_384 = puzzlesReadString();
+	var_str_384 = _zbasic->str(OFF(0)) + var_str_384 + _zbasic->str(OFF(1));
+	_zbasic->menu(8, 6, 1, var_str_384);
+	for (int i = 1; i <= arr_i16_1eb8[15]; i++) {
+		arr_i16_3738[i] = puzzlesReadByte();
 	}
 	// 134:00ce
 	// rack up polygon information
-	_toolbox->SetPort(this->var_i32_f24);
-	this->arr_i16_1eb8[20] = 0;
+	_toolbox->SetPort(var_i32_f24);
+	arr_i16_1eb8[20] = 0;
 
-	for (int i = 1; i <= this->arr_i16_1eb8[15]; i++) {
-		this->var_i16_103a = puzzlesReadShort();
+	for (int i = 1; i <= arr_i16_1eb8[15]; i++) {
+		var_i16_103a = puzzlesReadShort();
 		_revealPoly[i] = _toolbox->OpenPoly();
 		// 134:010e
-		for (int j = 5; j <= this->var_i16_103a - 1; j += 2) {
-			this->var_i16_484 = puzzlesReadShort();
-			this->var_i16_7e4 = puzzlesReadShort();
+		for (int j = 5; j <= var_i16_103a - 1; j += 2) {
+			var_i16_484 = puzzlesReadShort();
+			var_i16_7e4 = puzzlesReadShort();
 			if (j == 5) {
-				_toolbox->MoveTo(this->var_i16_7e4, this->var_i16_484 + 0xf);
+				_toolbox->MoveTo(var_i16_7e4, var_i16_484 + 0xf);
 			} else {
-				_toolbox->LineTo(this->var_i16_7e4, this->var_i16_484 + 0xf);
+				_toolbox->LineTo(var_i16_7e4, var_i16_484 + 0xf);
 			}
 			// 134:015c
 		}
 		_toolbox->ClosePoly();
-		if (i <= this->arr_i16_1eb8[16]) {
-			this->arr_i16_1eb8[20] |= _bitLUT[i - 1];
+		if (i <= arr_i16_1eb8[16]) {
+			arr_i16_1eb8[20] |= _bitLUT[i - 1];
 		}
 		// 134:01ce
 	}
 	// 134:01ea
-	_toolbox->SetPort(this->var_i32_0);
+	_toolbox->SetPort(var_i32_0);
 
-	this->arr_i16_1eb8[17] = (0x1c2 / this->arr_i16_1eb8[15]);
-	this->arr_i16_1eb8[18] = 0x100 - ((this->arr_i16_1eb8[15] * this->arr_i16_1eb8[17]) / 2);
+	arr_i16_1eb8[17] = (0x1c2 / arr_i16_1eb8[15]);
+	arr_i16_1eb8[18] = 0x100 - ((arr_i16_1eb8[15] * arr_i16_1eb8[17]) / 2);
 	Common::U32String letters = puzzlesReadString().decode(Common::kMacRoman);
-	this->zoomRect(0xb4, 0xff, 0xb6, 0x101, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x19);
-	this->zoomRect(0x9a, 0xff, 0x9c, 0x101, 0x37, 0x13, 0xff, 0x1ee, 0, kPatCopy, 0x19);
+	zoomRect(0xb4, 0xff, 0xb6, 0x101, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x19);
+	zoomRect(0x9a, 0xff, 0x9c, 0x101, 0x37, 0x13, 0xff, 0x1ee, 0, kPatCopy, 0x19);
 	// 134:02f0
-	this->arr_i16_1eb8[19] = _zbasic->decodeInt(_activePuzzleBuffer);
-	this->var_i16_1aba = this->arr_i16_1eb8[18];
+	arr_i16_1eb8[19] = _zbasic->decodeInt(_activePuzzleBuffer);
+	var_i16_1aba = arr_i16_1eb8[18];
 	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
-	for (this->var_i16_7be = 1; this->var_i16_7be <= this->arr_i16_1eb8[15]; this->var_i16_7be++) {
+	for (var_i16_7be = 1; var_i16_7be <= arr_i16_1eb8[15]; var_i16_7be++) {
 		// play a random tone and draw each of the letter buttons in sequence
-		this->playTone(
+		playTone(
 			_zbasic->rndInt(0x3e8) + 0x19,
 			0x28,
 			1
 		);
 		// 134:0352
-		_screenGrid[this->var_i16_7be].top = 0x10f;
-		_screenGrid[this->var_i16_7be].left = this->var_i16_1aba;
-		_screenGrid[this->var_i16_7be].bottom = 0x137;
-		_screenGrid[this->var_i16_7be].right = this->var_i16_1aba + this->arr_i16_1eb8[17];
+		_screenGrid[var_i16_7be].top = 0x10f;
+		_screenGrid[var_i16_7be].left = var_i16_1aba;
+		_screenGrid[var_i16_7be].bottom = 0x137;
+		_screenGrid[var_i16_7be].right = var_i16_1aba + arr_i16_1eb8[17];
 
-		this->var_i16_1aba += this->arr_i16_1eb8[17];
+		var_i16_1aba += arr_i16_1eb8[17];
 		// 134:03fc
-		_toolbox->FillRoundRect(_screenGrid[this->var_i16_7be], 0x19, 0x19, _patterns[0]);
-		_toolbox->FrameRoundRect(_screenGrid[this->var_i16_7be], 0x19, 0x19);
+		_toolbox->FillRoundRect(_screenGrid[var_i16_7be], 0x19, 0x19, _patterns[0]);
+		_toolbox->FrameRoundRect(_screenGrid[var_i16_7be], 0x19, 0x19);
 		// 134:0448
-		this->var_str_384 = _zbasic->midStr(letters, this->var_i16_7be, 1);
-		this->var_i16_7ba = _toolbox->StringWidth(this->var_str_384);
+		var_str_384 = _zbasic->midStr(letters, var_i16_7be, 1);
+		var_i16_7ba = _toolbox->StringWidth(var_str_384);
 		_toolbox->MoveTo(
-			_screenGrid[this->var_i16_7be].left + (this->arr_i16_1eb8[17] / 2) - (this->var_i16_7ba / 2),
+			_screenGrid[var_i16_7be].left + (arr_i16_1eb8[17] / 2) - (var_i16_7ba / 2),
 			0x127
 		);
-		_toolbox->DrawString(this->var_str_384);
+		_toolbox->DrawString(var_str_384);
 		// 134:04d6
-		if (this->arr_i16_1eb8[19] & _bitLUT[this->arr_i16_3738[this->var_i16_7be] - 1]) {
-			this->revealSelectButton();
+		if (arr_i16_1eb8[19] & _bitLUT[arr_i16_3738[var_i16_7be] - 1]) {
+			revealSelectButton();
 		}
 	}
 	// 134:0538
 	_stateFlags = kStateNull;
-	if (this->arr_i16_1eb8[20] == this->arr_i16_1eb8[19]) {
+	if (arr_i16_1eb8[20] == arr_i16_1eb8[19]) {
 		_activePuzzleSolved = true;
 	} else {
 		// 134:0572
@@ -128,76 +128,76 @@ void FoolGame::revealRun() {
 		// 134:057e
 		while ((_stateFlags == 0) && (!_activePuzzleSolved)) {
 			// 134:0582
-			this->getNextEvent(-1);
+			getNextEvent(-1);
 			if (_event.what == kMouseDown) {
-				this->revealOnClick();
+				revealOnClick();
 			}
-			if (this->arr_i16_1eb8[20] == this->arr_i16_1eb8[19]) {
+			if (arr_i16_1eb8[20] == arr_i16_1eb8[19]) {
 				_activePuzzleSolved = true;
 			}
 		}
 		// 134:05e2
 		if (_stateFlags == kStateUndo) {
-			this->revealReset();
+			revealReset();
 		}
 		if (_stateFlags == kStateSaveGame) {
-			_activePuzzleBuffer = _zbasic->encodeInt(this->arr_i16_1eb8[19]);
-			this->saveGame();
+			_activePuzzleBuffer = _zbasic->encodeInt(arr_i16_1eb8[19]);
+			saveGame();
 		}
 		// 134:061e
 	}
 	// 134:0648
 	if (_activePuzzleSolved) {
-		this->revealSuccess();
+		revealSuccess();
 	}
-	_activePuzzleBuffer = _zbasic->encodeInt(this->arr_i16_1eb8[19]);
+	_activePuzzleBuffer = _zbasic->encodeInt(arr_i16_1eb8[19]);
 	// 134:0678: JMP - [0x8ae]
-	for (int i = 1; i <= this->arr_i16_1eb8[15]; i++) {
+	for (int i = 1; i <= arr_i16_1eb8[15]; i++) {
 		_toolbox->KillPoly(_revealPoly[i]);
 	}
 }
 
 void FoolGame::revealOnClick() {
 	// 134:067c
-	this->var_i16_7be = 0;
-	for (int j = 1; j <= this->arr_i16_1eb8[15]; j++) {
+	var_i16_7be = 0;
+	for (int j = 1; j <= arr_i16_1eb8[15]; j++) {
 		if (_toolbox->PtInRect(_event.where, _screenGrid[j])) {
-			this->var_i16_7be = j;
-			j = this->arr_i16_1eb8[15];
+			var_i16_7be = j;
+			j = arr_i16_1eb8[15];
 		}
 	}
 	// 134:06d0
-	if (this->var_i16_7be == 0) {
+	if (var_i16_7be == 0) {
 		return;
 	}
 	// 134:06f4
-	this->revealSelectButton();
-	this->arr_i16_1eb8[19] ^= _bitLUT[this->arr_i16_3738[this->var_i16_7be]-1];
-	debugC(5, kDebugLoading, "reveal: %d, %04x, %04x", this->var_i16_7be, this->arr_i16_1eb8[19], this->arr_i16_1eb8[20]);
-	this->waitForMouseUp();
+	revealSelectButton();
+	arr_i16_1eb8[19] ^= _bitLUT[arr_i16_3738[var_i16_7be]-1];
+	debugC(5, kDebugLoading, "reveal: %d, %04x, %04x", var_i16_7be, arr_i16_1eb8[19], arr_i16_1eb8[20]);
+	waitForMouseUp();
 }
 
 void FoolGame::revealSelectButton() {
 	// 134:074a
 	// invert the button
-	_toolbox->InvertRoundRect(_screenGrid[this->var_i16_7be], 0x19, 0x19);
-	_toolbox->PenPat(_patterns[this->arr_i16_1eb8[21]]);
+	_toolbox->InvertRoundRect(_screenGrid[var_i16_7be], 0x19, 0x19);
+	_toolbox->PenPat(_patterns[arr_i16_1eb8[21]]);
 	// fill the polygon
 	_toolbox->PenMode(kPatXor);
-	_toolbox->PaintPoly(_revealPoly[this->arr_i16_3738[this->var_i16_7be]]);
+	_toolbox->PaintPoly(_revealPoly[arr_i16_3738[var_i16_7be]]);
 	_toolbox->PenNormal();
 }
 
 void FoolGame::revealReset() {
 	// 134:07bc
-	this->fillRect(0x37, 0x13, 0xff, 0x1ee, 0);
-	for (int i = 1; i <= this->arr_i16_1eb8[15]; i++) {
-		if (this->arr_i16_1eb8[19] & _bitLUT[this->arr_i16_3738[i]-1]) {
+	fillRect(0x37, 0x13, 0xff, 0x1ee, 0);
+	for (int i = 1; i <= arr_i16_1eb8[15]; i++) {
+		if (arr_i16_1eb8[19] & _bitLUT[arr_i16_3738[i]-1]) {
 			_toolbox->InvertRoundRect(_screenGrid[i], 0x19, 0x19);
 		}
 	}
 	// 134:085c
-	this->arr_i16_1eb8[19] = 0;
+	arr_i16_1eb8[19] = 0;
 	_stateFlags = kStateNull;
 }
 
@@ -206,9 +206,9 @@ void FoolGame::revealSuccess() {
 	if (_activePuzzleStatus < 0x64) {
 		_activePuzzleStatus = 0x64;
 	}
-	this->menuClickMessage();
-	this->waitForMouseUp();
-	this->flashRect(0x37, 0x13, 0xff, 0x1ee, 0xc8);
+	menuClickMessage();
+	waitForMouseUp();
+	flashRect(0x37, 0x13, 0xff, 0x1ee, 0xc8);
 }
 
 }

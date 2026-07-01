@@ -71,7 +71,7 @@ void Toolbox::DetachResource(PicHandle &handle) {
 	if (_resPicts.contains(handle)) {
 		Handle target = _resPicts[handle];
 		_resPicts.erase(handle);
-		this->DetachResource(target);
+		DetachResource(target);
 	}
 }
 
@@ -100,7 +100,7 @@ Handle Toolbox::GetResource(ResType theType, uint16 theID) {
 		int16 fileID = _resOrder[i];
 		Common::SeekableReadStream *stream = _resMap[fileID]->getResource(theType, theID);
 		if (stream) {
-			Handle result = this->NewHandle(stream->size());
+			Handle result = NewHandle(stream->size());
 			stream->read(result->data(), stream->size());
 			delete stream;
 			_resInfo[result] = { fileID, theType, theID, result, _resMap[fileID]->getResName(theType, theID) };
@@ -130,7 +130,7 @@ Handle Toolbox::GetNamedResource(ResType theType, const Common::String &name) {
 		if (resID) {
 			Common::SeekableReadStream *stream = _resMap[fileID]->getResource(theType, resID);
 			if (stream) {
-				Handle result = this->NewHandle(stream->size());
+				Handle result = NewHandle(stream->size());
 				stream->read(result->data(), stream->size());
 				delete stream;
 				_resInfo[result] = { fileID, theType, resID, result, _resMap[fileID]->getResName(theType, resID) };
@@ -171,7 +171,7 @@ void Toolbox::ReleaseResource(Handle &handle) {
 	if (_resInfo.contains(handle)) {
 		_resInfo.erase(handle);
 	}
-	this->DisposHandle(handle);
+	DisposHandle(handle);
 }
 
 void Toolbox::ReleaseResource(PicHandle &handle) {
@@ -179,7 +179,7 @@ void Toolbox::ReleaseResource(PicHandle &handle) {
 	if (_resPicts.contains(handle)) {
 		Handle target = _resPicts[handle];
 		_resPicts.erase(handle);
-		this->ReleaseResource(target);
+		ReleaseResource(target);
 	}
 	handle = nullptr;
 }

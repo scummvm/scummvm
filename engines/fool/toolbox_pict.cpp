@@ -524,7 +524,7 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 }
 
 PicHandle Toolbox::GetPicture(uint16 picID) {
-	Handle handle = this->GetResource(MKTAG('P', 'I', 'C', 'T'), picID);
+	Handle handle = GetResource(MKTAG('P', 'I', 'C', 'T'), picID);
 	PicHandle result;
 	if (handle) {
 		Common::MemoryReadStream stream(handle->data(), handle->size(), DisposeAfterUse::NO);

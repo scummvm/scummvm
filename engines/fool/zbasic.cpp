@@ -414,7 +414,7 @@ void ZBasic::midStrSet(Common::String &target, int16 expr1, int16 expr2, const C
 
 void ZBasic::openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo) {
 	if (_fileStreams.contains(fileNo)) {
-		this->close(fileNo);
+		close(fileNo);
 	}
 	Common::MacResManager resMan;
 	Common::SaveFileManager *saves = g_system->getSavefileManager();
@@ -434,7 +434,7 @@ void ZBasic::openR(int16 fileNo, const Common::U32String &fileName, uint32 lineS
 
 void ZBasic::openW(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo) {
 	if (_fileStreams.contains(fileNo)) {
-		this->close(fileNo);
+		close(fileNo);
 	}
 	Common::MacResManager resMan;
 	Common::SaveFileManager *saves = g_system->getSavefileManager();
@@ -471,7 +471,7 @@ void ZBasic::picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src) {
 }
 
 void ZBasic::put(int16 x, int16 y, BitMap &src, SourceMode mode) {
-	this->put(x, y, x+src->w, y+src->h, src, mode);
+	put(x, y, x+src->w, y+src->h, src, mode);
 }
 
 void ZBasic::put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src, SourceMode mode) {
