@@ -118,6 +118,8 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.ronLampFueled);
 	syncStateBool(s, state.seenScene3010EntryLine);
 	syncStateBool(s, state.windmillBladesMoving);
+	syncStateBool(s, state.scene3020Item31Taken);
+	syncStateBool(s, state.scene3030MachineActivated);
 	syncStateBool(s, state.seenScene3050EntryLine);
 	syncStateBool(s, state.scene3050Row3CaptionUpdated);
 	s.syncAsByte(state.scene3060SecretDoorState);
