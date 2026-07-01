@@ -111,6 +111,16 @@ protected:
 
 	Common::Array<Piece> _pieces;
 
+	// Nancy12 stores the puzzle's sounds as this many random-sound blocks, in
+	// this fixed on-disk order.
+	static const uint kNumSounds = 6;
+	static const uint kPickupSound = 0;
+	static const uint kRotateSound = 1;
+	static const uint kDropSound = 2;
+	static const uint kGoodSound = 3;
+	static const uint kBadSound = 4;
+	static const uint kCompletionSound = 5;
+
 	SoundDescription _pickupSound;
 	SoundDescription _rotateSound;
 	SoundDescription _dropSound;

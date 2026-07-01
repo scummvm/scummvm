@@ -153,14 +153,14 @@ void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 	_solveScene.readData(stream);           // 0x1cf
 	_cancelScene.readData(stream);          // 0x1e8 (ends the 513-byte blob)
 
-	// --- Six random-sound blocks: pickup, rotate, drop, good, bad, completion ---
-	RandomSoundBlock blocks[6];
-	for (uint i = 0; i < 6; ++i)
+	// --- Random-sound blocks: pickup, rotate, drop, good, bad, completion ---
+	RandomSoundBlock blocks[kNumSounds];
+	for (uint i = 0; i < kNumSounds; ++i)
 		blocks[i].readData(stream);
 
-	SoundDescription *sounds[6] = { &_pickupSound, &_rotateSound, &_dropSound,
-									&_goodPlacementSound, &_badPlacementSound, &_completionSound };
-	for (uint i = 0; i < 6; ++i) {
+	SoundDescription *sounds[kNumSounds] = { &_pickupSound, &_rotateSound, &_dropSound,
+											 &_goodPlacementSound, &_badPlacementSound, &_completionSound };
+	for (uint i = 0; i < kNumSounds; ++i) {
 		SoundDescription &s = *sounds[i];
 		s.name = blocks[i].names.empty() ? "NO SOUND" : blocks[i].names[0];
 		s.channelID = blocks[i].channel;
@@ -174,7 +174,7 @@ void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 	Common::String *goodAlts[2] = { &_goodAlt1Filename, &_goodAlt2Filename };
 	Common::String *badAlts[2]  = { &_badAlt1Filename,  &_badAlt2Filename };
 	Common::String **altSets[3] = { dropAlts, goodAlts, badAlts };
-	const uint altBlocks[3] = { 2, 3, 4 };
+	const uint altBlocks[3] = { kDropSound, kGoodSound, kBadSound };
 	for (uint i = 0; i < 3; ++i) {
 		for (uint a = 0; a < 2; ++a) {
 			const RandomSoundBlock &b = blocks[altBlocks[i]];
