@@ -381,6 +381,9 @@ protected:
 	int drawSecondaryActorFrame(byte facing, byte frame, int worldX, int worldY);
 	// Draws an actor run stream with optional depth clipping.
 	int drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
+		int spriteX, int spriteY, int minimumYExclusive, int actorWorldY, uint *nextCursor = nullptr);
+	// Draws active actor palette-remap runs used by original walking shadows.
+	int drawActorPaletteRemapRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
 		int spriteX, int spriteY, int minimumYExclusive, int actorWorldY);
 	// Runs the scene entry cutscene or default preview.
 	void runEntryCutscene();
@@ -676,6 +679,7 @@ protected:
 	Common::Array<byte> &_fullPaletteRegionMask;
 	Common::Array<byte> &_walkablePaletteMask;
 	Common::Array<byte> &_colorToActorDepthClassMap;
+	Common::Array<byte> &_presentationPaletteRemapTable;
 	Common::Array<uint16> &_actorDepthYThresholds;
 	Common::Array<uint16> &_drawActorDepthYThresholds;
 	Graphics::ManagedSurface &_screen;

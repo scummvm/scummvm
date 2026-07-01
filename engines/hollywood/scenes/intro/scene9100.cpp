@@ -30,6 +30,7 @@
 #include "graphics/surface.h"
 
 #include "hollywood/font.h"
+#include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -50,6 +51,7 @@ const uint kActorCelsPerFacing = 13;
 const uint kActorDescriptorCount = kActorFacingCount * kActorCelsPerFacing;
 const uint kActorSpriteDescriptorSize = 28;
 const uint kActorFacingRunStride = 160000;
+const uint kPresentationPaletteRemapTableSize = 256;
 const uint kI10RonActorRunChunk = 23;
 const uint kI10RonActorDescriptorChunk = 24;
 const uint kI10SueActorRunChunk = 25;
@@ -101,6 +103,9 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 	_frameDecodeBuffer.resize(kFrameDecodeBufferSize);
 	_sceneFramebuffer.resize(kFrameDecodeBufferSize);
 	_savedFramebuffer.resize(kFrameDecodeBufferSize);
+	_presentationPaletteRemapTable.resize(kPresentationPaletteRemapTableSize);
+	for (uint i = 0; i < _presentationPaletteRemapTable.size(); ++i)
+		_presentationPaletteRemapTable[i] = 0;
 	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_stage003DecodeKey.resize(kStage003DecodeKeySize);
 	_stage003Descriptors.resize(kStage003DescriptorTableSize);
@@ -226,6 +231,7 @@ bool Scene9100::load(bool dialogueBranch) {
 			!loadStage003Descriptors())
 		return false;
 	memcpy(_paletteCurrent.data(), _paletteDefault.data(), _paletteCurrent.size());
+	buildPresentationPaletteRemapTable(_paletteCurrent, _presentationPaletteRemapTable);
 
 	uint32 resourceArenaSize = 0;
 	for (uint i = 5; i <= 16; ++i)
@@ -802,52 +808,19 @@ void Scene9100::drawActorSpriteFrame(const ActorBank &bank, byte facing, byte ce
 		return;
 
 	const ActorSpriteDescriptor &descriptor = bank.descriptors[descriptorIndex];
-	uint cursor = facing * kActorFacingRunStride + descriptor.runStreamOffset;
-	if (cursor >= bank.runStreams.size())
+	const uint runBase = facing * kActorFacingRunStride;
+	if (runBase + descriptor.runStreamOffset >= bank.runStreams.size())
 		return;
 
 	const int spriteX = worldX - descriptor.anchorX;
 	const int spriteY = worldY - descriptor.anchorY;
-	for (uint runIndex = 0; runIndex < descriptor.opaqueRunCount; ++runIndex) {
-		if (cursor + 3 > bank.runStreams.size())
-			return;
-
-		const int xOffset = bank.runStreams[cursor++];
-		const int yOffset = bank.runStreams[cursor++];
-		const uint pixelCount = bank.runStreams[cursor++];
-		if (cursor + pixelCount > bank.runStreams.size())
-			return;
-
-		const int dstY = spriteY + yOffset;
-		if (dstY >= 0 && dstY < HollywoodEngine::kSceneBufferHeight) {
-			int dstX = spriteX + xOffset;
-			uint sourceOffset = 0;
-			uint copyCount = pixelCount;
-			if (dstX < 0) {
-				const uint clipped = MIN<uint>(copyCount, (uint)-dstX);
-				sourceOffset += clipped;
-				copyCount -= clipped;
-				dstX = 0;
-			}
-			if (dstX + (int)copyCount > HollywoodEngine::kSceneBufferWidth)
-				copyCount = MAX<int>(0, HollywoodEngine::kSceneBufferWidth - dstX);
-
-			if (copyCount != 0) {
-				const uint destinationOffset = dstX + dstY * HollywoodEngine::kSceneBufferWidth;
-				if (destinationOffset + copyCount <= _sceneFramebuffer.size())
-					memcpy(_sceneFramebuffer.data() + destinationOffset, bank.runStreams.data() + cursor + sourceOffset, copyCount);
-			}
-		}
-
-		cursor += pixelCount;
-	}
-
-	for (uint runIndex = 0; runIndex < descriptor.paletteRunCount; ++runIndex) {
-		if (cursor + 3 > bank.runStreams.size())
-			return;
-
-		cursor += 3;
-	}
+	const uint paletteRunCursor = skipActorRunStream(bank.runStreams,
+		descriptor.runStreamOffset, runBase, descriptor.opaqueRunCount);
+	drawActorPaletteRemapRunStream(bank.runStreams, paletteRunCursor, runBase,
+		descriptor.paletteRunCount, spriteX, spriteY, -1, _sceneFramebuffer.surface(),
+		_presentationPaletteRemapTable, nullptr);
+	drawActorRunStream(bank.runStreams, descriptor.runStreamOffset, runBase,
+		descriptor.opaqueRunCount, spriteX, spriteY, -1, _sceneFramebuffer.surface(), nullptr);
 }
 
 void Scene9100::runOpeningPrelude() {
@@ -1486,10 +1459,12 @@ void Scene9100::copyPaletteSegment(byte segmentIndex) {
 		return;
 
 	memcpy(_paletteCurrent.data(), _resourceArena.data() + sourceOffset, kPaletteSize);
+	buildPresentationPaletteRemapTable(_paletteCurrent, _presentationPaletteRemapTable);
 }
 
 void Scene9100::copyDefaultPalette() {
 	memcpy(_paletteCurrent.data(), _paletteDefault.data(), _paletteCurrent.size());
+	buildPresentationPaletteRemapTable(_paletteCurrent, _presentationPaletteRemapTable);
 }
 
 void Scene9100::revealSavedFramebufferBand(uint sweepOffset, byte bandWidth) {
