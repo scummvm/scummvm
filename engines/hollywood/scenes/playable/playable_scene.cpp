@@ -70,7 +70,15 @@ const uint16 kViewportScrollStep = 2;
 
 PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int defaultActorX, int defaultActorY,
 		byte defaultActorFacing, byte secondarySpeechTextColor, byte primarySpeechTextColor) :
+		PlayableScene(vm, PlayableSceneConfig(), randomName, defaultActorX, defaultActorY, defaultActorFacing,
+			secondarySpeechTextColor, primarySpeechTextColor) {
+}
+
+PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &config, const char *randomName,
+		int defaultActorX, int defaultActorY,
+		byte defaultActorFacing, byte secondarySpeechTextColor, byte primarySpeechTextColor) :
 		_vm(vm),
+		_config(config),
 		_resources(),
 		_sceneChunkTable(_resources.chunkTable),
 		_resourceChunkOffsets(_resources.chunkOffsets),
@@ -157,6 +165,35 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const char *randomName, int de
 		defaultActorPathStepDeltaTableSize());
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
+}
+
+PlayableSceneConfig::PlayableSceneConfig() :
+		resourceArchiveName(nullptr),
+		initialRequiredChunkCount(0),
+		arenaFirstChunk(0),
+		arenaLastChunk(0),
+		stageIndex(0),
+		debugName("Playable scene"),
+		viewportXOffset(0),
+		viewportMinXOffset(kSceneConfigUseViewportOffset),
+		viewportMaxXOffset(kSceneConfigUseViewportOffset),
+		inventoryOwnerIndex(1),
+		activeAudioChapterIndex(kSceneConfigNoAudioChapter),
+		actorBankTableEntry(0xd0),
+		actorBankSegmentCount(14),
+		actorPaletteTableEntry(0x108),
+		inventoryActionTableExtraOffset(kResource000FixedInventoryVerbTableOffset),
+		inventoryRowsOffsetIndex(0x32),
+		speechCueDescriptorTableOffset(0x5f58),
+		actorPathStepDeltaTable(defaultActorPathStepDeltaTable()),
+		actorPathStepDeltaTableSize(defaultActorPathStepDeltaTableSize()),
+		walkablePaletteMaxRegion(3),
+		musicArchiveName(kDefaultGameplayMusicArchiveName),
+		soundBank0ArchiveName(kDefaultGameplaySoundBank0ArchiveName),
+		loadActorDepthTables(true),
+		useActorDepthTest(false),
+		mainFlowFirstState(kSceneConfigNoMainFlowRangeStart),
+		mainFlowLastState(kSceneConfigNoMainFlowRangeEnd) {
 }
 
 void PlayableScene::initializeFramebuffers() {
@@ -268,64 +305,105 @@ void PlayableScene::syncActiveActorPoseToGameState() {
 	state.activeViewportXOffset = _viewportXOffset;
 }
 
+const char *PlayableScene::resourceArchiveName() const {
+	return _config.resourceArchiveName;
+}
+
+uint PlayableScene::sceneInitialRequiredChunkCount() const {
+	return _config.initialRequiredChunkCount;
+}
+
+uint PlayableScene::sceneArenaFirstChunk() const {
+	return _config.arenaFirstChunk;
+}
+
+uint PlayableScene::sceneArenaLastChunk() const {
+	return _config.arenaLastChunk;
+}
+
+uint PlayableScene::sceneStageIndex() const {
+	return _config.stageIndex;
+}
+
+const char *PlayableScene::sceneDebugName() const {
+	return _config.debugName;
+}
+
+uint16 PlayableScene::sceneViewportXOffset() const {
+	return _config.viewportXOffset;
+}
+
 uint16 PlayableScene::sceneViewportMinXOffset() const {
-	return sceneViewportXOffset();
+	if (_config.viewportMinXOffset == kSceneConfigUseViewportOffset)
+		return sceneViewportXOffset();
+	return _config.viewportMinXOffset;
 }
 
 uint16 PlayableScene::sceneViewportMaxXOffset() const {
-	return sceneViewportXOffset();
+	if (_config.viewportMaxXOffset == kSceneConfigUseViewportOffset)
+		return sceneViewportXOffset();
+	return _config.viewportMaxXOffset;
 }
 
 byte PlayableScene::inventoryOwnerIndex() const {
-	return 1;
+	return _config.inventoryOwnerIndex;
 }
 
 void PlayableScene::initializeInventoryOwnerState() {
-	_vm->gameState().initializeSueItemResourcePages();
+	GameplayState &state = _vm->gameState();
+	if (_config.inventoryOwnerIndex == 0) {
+		state.initializeRonItemResourcePages();
+		if (state.inventoryItemCountByOwner[0] == 0)
+			state.initializeRonInventoryItems();
+	} else {
+		state.initializeSueItemResourcePages();
+	}
+	if (_config.activeAudioChapterIndex != kSceneConfigNoAudioChapter)
+		state.activeAudioChapterIndex = _config.activeAudioChapterIndex;
 }
 
 uint PlayableScene::resource000ActorBankTableEntry() const {
-	return kResource000DefaultActorBankTableEntry;
+	return _config.actorBankTableEntry;
 }
 
 uint PlayableScene::resource000ActorBankSegmentCount() const {
-	return kResource000DefaultActorBankSegmentCount;
+	return _config.actorBankSegmentCount;
 }
 
 uint PlayableScene::resource000ActorPaletteTableEntry() const {
-	return kResource000DefaultActorPaletteTableEntry;
+	return _config.actorPaletteTableEntry;
 }
 
 uint32 PlayableScene::inventoryActionTableExtraOffset() const {
-	return kResource000FixedInventoryVerbTableOffset;
+	return _config.inventoryActionTableExtraOffset;
 }
 
 uint PlayableScene::resource003InventoryRowsOffsetIndex() const {
-	return kDefaultResource003InventoryRowsOffsetIndex;
+	return _config.inventoryRowsOffsetIndex;
 }
 
 uint32 PlayableScene::speechCueDescriptorTableOffset() const {
-	return kDefaultSpeechCueDescriptorTableOffset;
+	return _config.speechCueDescriptorTableOffset;
 }
 
 const byte *PlayableScene::actorPathStepDeltaTable() const {
-	return defaultActorPathStepDeltaTable();
+	return _config.actorPathStepDeltaTable;
 }
 
 uint PlayableScene::actorPathStepDeltaTableSize() const {
-	return defaultActorPathStepDeltaTableSize();
+	return _config.actorPathStepDeltaTableSize;
 }
 
 byte PlayableScene::walkablePaletteMaxRegion() const {
-	return 3;
+	return _config.walkablePaletteMaxRegion;
 }
 
 const char *PlayableScene::musicArchiveName() const {
-	return kDefaultGameplayMusicArchiveName;
+	return _config.musicArchiveName;
 }
 
 const char *PlayableScene::soundBank0ArchiveName() const {
-	return kDefaultGameplaySoundBank0ArchiveName;
+	return _config.soundBank0ArchiveName;
 }
 
 int PlayableScene::alternatePaletteResourceChunkIndex() const {
@@ -341,7 +419,7 @@ bool PlayableScene::shouldLoadInventoryActionTables() const {
 }
 
 bool PlayableScene::shouldLoadActorDepthTables() const {
-	return true;
+	return _config.loadActorDepthTables;
 }
 
 bool PlayableScene::shouldConvertSavedFramebufferFF() const {
@@ -361,7 +439,13 @@ void PlayableScene::runExitSideEffectsAfterLoop() {
 }
 
 bool PlayableScene::usesActorDepthTest() const {
-	return false;
+	return _config.useActorDepthTest;
+}
+
+bool PlayableScene::isMainFlowStateInScene(uint16 stateId) const {
+	if (_config.mainFlowFirstState > _config.mainFlowLastState)
+		return false;
+	return stateId >= _config.mainFlowFirstState && stateId <= _config.mainFlowLastState;
 }
 
 bool PlayableScene::hasCustomPreviewState() const {
@@ -513,6 +597,10 @@ bool PlayableScene::load() {
 		return false;
 
 	const char *archiveName = resourceArchiveName();
+	if (!archiveName || !archiveName[0]) {
+		warning("%s has no resource archive configured", sceneDebugName());
+		return false;
+	}
 	if (!_resources.loadChunkTable(_vm->resources(), archiveName)) {
 		warning("Failed to read %s header", archiveName);
 		return false;
