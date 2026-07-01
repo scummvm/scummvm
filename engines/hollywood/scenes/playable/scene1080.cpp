@@ -230,7 +230,7 @@ bool Scene1080::dispatchCustomSceneAction(uint16 handlerId) {
 	case 313: // Mirar platos sucios (look at dirty plates).
 		beginSecondarySpeechLine(11, 0);
 		return true;
-	case 314: // Usar objeto 0x4d con Francois (use item 0x4d with Francois).
+	case 314: // Usar globo inflado con gas con Francois (use gas-filled balloon with Francois).
 		handleFrancoisDistraction();
 		return true;
 	default:

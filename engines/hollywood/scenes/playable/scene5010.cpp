@@ -164,40 +164,40 @@ void Scene5010::runCustomEntrySequence() {
 
 bool Scene5010::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301: // Mirar salida superior (look at upper exit/sign).
+	case 301: // Mirar vagoneta (look at mine cart).
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 302: // Usar transporte de la mina (use mine transport).
+	case 302: // Usar vagoneta (use mine cart): enter mine transport.
 		enterMineTransport();
 		return true;
-	case 303: // Mirar mecanismo de la mina (look at mine mechanism).
+	case 303: // Mirar cartel "Diamond Creek" (look at Diamond Creek sign).
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 304: // Usar/abrir mecanismo bloqueado (prepare locked transport mechanism).
+	case 304: // Ir/usar tunel (go/use tunnel): prepare locked mine transport branch.
 		prepareMineTransport(true);
 		return true;
-	case 305: // Mirar estructura de la mina (look at mine structure).
+	case 305: // Mirar tunel oscuro (look at dark tunnel).
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 306: // Usar estructura de la mina (prepare locked transport mechanism, short path).
+	case 306: // Usar/entrar tunel oscuro (use/enter dark tunnel): short transport branch.
 		prepareMineTransport(false);
 		return true;
-	case 307: // Mirar estructura de la mina (look at mine structure).
+	case 307: // Mirar tunel oscuro (look at dark tunnel), duplicate hotspot.
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 308: // Mirar panel de combinacion (look at combination panel).
+	case 308: // Mirar sistema de agujas (look at switch system).
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 309: // Usar panel de combinacion (use combination panel).
+	case 309: // Usar sistema de agujas (use switch system): choose mine destination.
 		runSwitchPanel();
 		return true;
-	case 310: // Mirar panel de combinacion (look at combination panel).
+	case 310: // Mirar sistema de agujas (look at switch system), duplicate hotspot.
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 311: // Usar panel de combinacion (use combination panel).
+	case 311: // Usar sistema de agujas (use switch system), duplicate hotspot.
 		runSwitchPanel();
 		return true;
-	case 312: // Callback no-op in the original after scene action setup.
+	case 312: // Unused no-op scene action slot after setup.
 		return true;
 	default:
 		return false;

@@ -293,22 +293,22 @@ bool Scene7100::dispatchCustomSceneAction(uint16 handlerId) {
 	case 315: // Usar pulsador (use push button)
 		handleActionHandler315();
 		return true;
-	case 331: // Usar lupa con objetos de la celda (use magnifying glass with cell objects)
+	case 331: // Mirar/usar objetos colgados de la celda (look/use hanging cell objects).
 		beginSecondarySpeechLine(0x13, 0);
 		return true;
-	case 332: // Usar navaja multiusos con puerta (use multi-tool knife with door)
+	case 332: // Usar objetos varios con tablones/cables (use misc items with boards/wires).
 		beginSecondarySpeechLine(0x14, 0);
 		return true;
-	case 333: // Usar varios objetos con Ron (use several items with Ron)
+	case 333: // Mirar tablones / respuesta de Ron (look at boards / Ron response).
 		beginSecondarySpeechLine(0x15, 0);
 		return true;
-	case 334: // Usar baraja de cartas con Ron (use deck of cards with Ron)
+	case 334: // Usar objeto oxidado / idea con gancho (use rusty object / hook idea).
 		beginSecondarySpeechLine(0x16, 0);
 		return true;
-	case 335: // Usar bisturí/navaja/pintura con objetos (use scalpel/knife/paint with objects)
+	case 335: // Mirar almohada (look at pillow).
 		beginSecondarySpeechLine(0x17, 0);
 		return true;
-	case 336: // Usar pamela/frasco de perfume con objetos (use hat/perfume with objects)
+	case 336: // Mirar cables (look at wires).
 		beginSecondarySpeechLine(0x18, 0);
 		return true;
 	case 337: // Usar rata con gancho/trozo de tubería/cables (use rat with hook/pipe piece/wires)
@@ -323,28 +323,28 @@ bool Scene7100::dispatchCustomSceneAction(uint16 handlerId) {
 	case 340: // Dar objetos a Ron (give items to Ron)
 		beginSecondarySpeechLine(0x1c, 0);
 		return true;
-	case 341: // Respuesta genérica de objeto (generic item response)
+	case 341: // Usar objetos inadecuados con puerta (wrong items on door), random refusal.
 		beginSecondarySpeechLine(0x1d, (byte)_random.getRandomNumber(1));
 		return true;
-	case 342: // Respuesta genérica de objeto (generic item response)
+	case 342: // Coger/usar objeto ya innecesario (item no longer needed).
 		beginSecondarySpeechLine(0x1e, 0);
 		return true;
-	case 343: // Respuesta genérica de objeto (generic item response)
+	case 343: // Abrir puerta desde dentro (open door from inside): lock is outside.
 		beginSecondarySpeechLine(0x1f, 0);
 		return true;
-	case 344: // Respuesta genérica de objeto (generic item response)
+	case 344: // Amenazar/presionar a Ron (threaten Ron): Sue threatens if he will not help.
 		beginSecondarySpeechLine(0x20, 0);
 		return true;
-	case 345: // Respuesta genérica de objeto (generic item response)
+	case 345: // Usar baraja/juguete con Ron (use cards/toy with Ron): no time to play.
 		beginSecondarySpeechLine(0x21, 0);
 		return true;
-	case 346: // Respuesta genérica de objeto (generic item response)
+	case 346: // Usar objetos delicados de Sue (use delicate Sue items), random refusal.
 		beginSecondarySpeechLine(0x22, (byte)_random.getRandomNumber(1));
 		return true;
-	case 347: // Respuesta genérica de objeto (generic item response)
+	case 347: // Usar objetos peligrosos con Ron (use dangerous objects with Ron): refuses harm.
 		beginSecondarySpeechLine(0x23, 0);
 		return true;
-	case 348: // Respuesta genérica de objeto (generic item response)
+	case 348: // Usar violencia contra Ron/guardia (use violence): Sue refuses.
 		beginSecondarySpeechLine(0x24, 0);
 		return true;
 	case 351: // Transferencia de inventario (inventory transfer)

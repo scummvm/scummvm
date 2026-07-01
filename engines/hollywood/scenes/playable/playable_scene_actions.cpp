@@ -47,7 +47,8 @@ void PlayableScene::handleLeftClick(const GameplayLoopCursorState &state) {
 void PlayableScene::handleInventoryItemClick(const GameplayLoopCursorState &state) {
 	_skipRequested = false;
 	_vm->cursor()->leaveInteractiveMode();
-	dispatchSceneAction(state.inventoryActionHandlerId);
+	if (!dispatchGenericInventoryAction(state))
+		dispatchSceneAction(state.inventoryActionHandlerId);
 	if (!Engine::shouldQuit() && !shouldExitGameplayLoop()) {
 		_skipRequested = false;
 		_vm->cursor()->enterInteractiveMode();
@@ -146,6 +147,43 @@ void PlayableScene::processSceneRelationClick(const GameplayLoopCursorState &sta
 	if (!walkActiveActorTo(targetX, targetY, finalFacing, 0, true))
 		return;
 	dispatchSceneAction(actionRecord.actionHandlerId);
+}
+
+bool PlayableScene::dispatchGenericInventoryAction(const GameplayLoopCursorState &state) {
+	const uint16 handlerId = state.inventoryActionHandlerId;
+
+	switch (handlerId) {
+	case 310: // Usar huevo/navaja-lima con gorro de aviador (use egg/nail-file knife with aviator cap).
+		beginStaticSecondarySpeechLine(0xda, (byte)_random.getRandomNumber(1));
+		return true;
+	case 331: // Usar lupa con placa/póster/rata/etc. (use magnifying glass with cell inventory objects).
+		beginSecondarySpeechLine(0x13, 0);
+		return true;
+	case 335: // Usar bisturí/navaja multiusos con placa/póster/etc. (use cutting tools with cell inventory objects).
+		beginSecondarySpeechLine(0x17, 0);
+		return true;
+	case 336: // Dar pamela a rata (give hat to rat).
+		beginSecondarySpeechLine(0x18, 0);
+		return true;
+	case 337: // Usar/Dar placa/perfume/pintura/pintauñas/etc. con rata (use/give items with rat).
+		if (_vm->gameState().cellPlateRatProgress != 0) {
+			beginSecondarySpeechLine(0x19, 1);
+			return true;
+		}
+
+		beginSecondarySpeechLine(0x19, 0);
+		if (state.primaryInventoryItem == 0x14 || state.resolvedItem == 0x14) {
+			_vm->gameState().cellPlateRatProgress = 1;
+			_vm->gameState().cellPipesActive = false;
+			removeInventoryItem(0x14);
+			_soundBank0.playSample(1, 100);
+			if (sceneStageIndex() == 710)
+				applySceneStateToHotspotsAndPatches(0xff);
+		}
+		return true;
+	default:
+		return false;
+	}
 }
 
 void PlayableScene::dispatchSceneAction(uint16 handlerId) {
