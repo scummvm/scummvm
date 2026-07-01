@@ -285,7 +285,7 @@ bool Scene1070::dispatchCustomSceneAction(uint16 handlerId) {
 	case 320: // Mirar bola (look at ball).
 		beginSecondarySpeechLine(14, 0);
 		return true;
-	case 321: // Usar objeto 0x13 con cadena (use item 0x13 with chain).
+	case 321: // Usar serrucho con cadena (use saw with chain): releases the ball.
 		handleBallChainPickup();
 		return true;
 	default:

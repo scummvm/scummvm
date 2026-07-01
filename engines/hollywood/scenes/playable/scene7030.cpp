@@ -270,12 +270,12 @@ bool Scene7030::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene7030::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 0:
+	case 0: // Shared default/no-op action slot.
 	case 1: // Ir a Húmero/hueso/vaso/ponchera (go to Húmero/bone/glass/punch bowl)
 	case 3: // Usar objetos sin efecto en la escena (use items with no scene effect)
 	case 9: // Abrir puerta (open door)
 	case 13: // Dar objetos a Húmero (give items to Húmero)
-	case 18: // Cerrar puerta/respuesta genérica de usar objeto (close door/generic use response)
+	case 18: // Cerrar puerta / usar objeto sin efecto (close door / no-effect item use)
 	case 24: // Coger ponchera (take punch bowl)
 		return dispatchGenericSceneAction(handlerId);
 	case 301: // Ir a puerta (go to door)

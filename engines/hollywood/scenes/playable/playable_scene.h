@@ -452,6 +452,8 @@ protected:
 	void processSceneActionClick(const GameplayLoopCursorState &state);
 	// Resolves and dispatches an item-to-scene relation click.
 	void processSceneRelationClick(const GameplayLoopCursorState &state, byte itemId);
+	// Handles generic/shared inventory action handler ids before scene dispatch.
+	bool dispatchGenericInventoryAction(const GameplayLoopCursorState &state);
 	// Dispatches an action handler id to custom or generic code.
 	void dispatchSceneAction(uint16 handlerId);
 	// Handles generic/shared action handler ids.

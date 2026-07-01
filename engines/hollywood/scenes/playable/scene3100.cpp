@@ -210,7 +210,7 @@ bool Scene3100::dispatchCustomSceneAction(uint16 handlerId) {
 	case 301: // Ir a exterior de la cabaña (go outside): return to scene 3080.
 		runExitToScene3080();
 		return true;
-	case 302: // C10 hotspot: row 1 response.
+	case 302: // Mirar niña (look at girl): state-aware girl description.
 		beginSecondarySpeechLine(1, 0);
 		return true;
 	case 303: // Hablar con ocupante de la cabaña (talk to cabin occupant).
@@ -221,22 +221,22 @@ bool Scene3100::dispatchCustomSceneAction(uint16 handlerId) {
 	case 304: // Mirar ocupante/estado de la cabaña (look at cabin occupant/state).
 		beginSecondarySpeechLine(1, state.scene3100CabinState == 0 ? 0 : 1);
 		return true;
-	case 305: // Coger objeto revelado tras la conversación (take revealed object): adds item 0x39.
+	case 305: // Coger margarita revelada tras la conversacion (take revealed daisy): adds item 0x39.
 		runObjectPickup();
 		return true;
-	case 306: // C10 hotspot: row 2 response.
+	case 306: // Mirar/coger margarita (look/take daisy): flower from the girl.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 307: // C10 hotspot: row 4 response.
+	case 307: // Mirar planta (look at plant): living sap source.
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 308: // C10 hotspot: row 5 response.
+	case 308: // Mirar tronco (look at log).
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 309: // C10 hotspot: row 6 response.
+	case 309: // Mirar rio (look at river).
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 310: // Coger/intercambiar objeto en la cabaña (take/exchange object): adds item 0x38.
+	case 310: // Coger savia de la planta (take plant sap): adds item 0x38.
 		runExchangePickup();
 		return true;
 	default:

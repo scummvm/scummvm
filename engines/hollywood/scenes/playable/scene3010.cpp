@@ -204,38 +204,38 @@ bool Scene3010::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene3010::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301: // Original slot 00: scene row 1 speech.
+	case 301: // Mirar puerta del molino (look at windmill door).
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 302: // Original slot 01: short overlay, then transition toward scene 3050.
+	case 302: // Usar/abrir puerta del molino (use/open windmill door): enter scene 3050.
 		runExitToScene3050();
 		return true;
-	case 303: // Original slot 02: scene row 2, frame depends on local C01 state.
+	case 303: // Mirar aspas (look at windmill blades): blocked/stopped state-aware line.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 304: // Original slot 03: scene row 3 speech.
+	case 304: // Usar aspas/molino (use blades/windmill): Ron has no idea yet.
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 305: // Original slot 04: transition toward scene 3020.
+	case 305: // Ir a bosque/camino (go to forest/path): transition toward scene 3020.
 		beginSecondarySpeechLine(4, 0);
 		_vm->gameState().mainFlowStateId = kScene3020State;
 		return true;
-	case 306: // Original slot 05: scene row 5 speech.
+	case 306: // Mirar molino (look at windmill).
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 307: // Original slot 06: scene row 6, frame depends on local C01 state.
+	case 307: // Mirar camino/bosque (look at path/forest), state-aware.
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 308: // Original slot 07: scene row 7 speech.
+	case 308: // Mirar bosque (look at forest): dense forest.
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 309: // Original slot 08: scene row 8 speech.
+	case 309: // Coger hacha (take axe): too large to handle.
 		beginSecondarySpeechLine(8, 0);
 		return true;
-	case 310: // Original slot 09: scene row 9 speech.
+	case 310: // Mirar hacha (look at axe): Frankie's axe.
 		beginSecondarySpeechLine(9, 0);
 		return true;
-	case 311: // Original slot 10: gated transition toward scene 3040.
+	case 311: // Usar hacha con aspas/molino (use axe with blades/windmill), gated later.
 		beginSecondarySpeechLine(10, 2);
 		return true;
 	default:

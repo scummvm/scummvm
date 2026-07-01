@@ -240,72 +240,72 @@ bool Scene1020::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene1020::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301: // Return to scene 1010/right entry.
+	case 301: // Ir a camino/jardines (go to path/gardens): return to scene 1010.
 		_vm->gameState().mainFlowStateId = kScene1020ExitState1010RightEntry;
 		return true;
-	case 302: // Scene object row 1 speech.
+	case 302: // Mirar camino (look at path): leads back to the gardens.
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 303: // Scene object row 2 speech.
+	case 303: // Mirar/usar rejilla (look/use grate): too heavy until rigged.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 304: // First event flag speech/update.
+	case 304: // Mirar cinta de Sue bajo la rejilla (look at Sue's tape under grate).
 		handleSceneEventFlag0();
 		return true;
-	case 305: // Alternate resource-block pickup/event.
+	case 305: // Coger cinta de Sue (take Sue's tape): requires the grate to be raised.
 		handleSceneEventFlag0Overlay();
 		return true;
-	case 306: // Scene object row 5 speech.
+	case 306: // Mirar cinta/rail segun estado (look at tape/rail, state-aware).
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 307: // Scene object row 6 speech.
+	case 307: // Mirar rail oxidado (look at rusty rail).
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 308: // Scene object row 7 speech.
+	case 308: // Mirar gancho/cadena/barriles (look at hook/chain/barrels).
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 309: // Resource-block choice dependent speech.
+	case 309: // Usar gancho/rail (use hook/rail): response depends on hook position.
 		handleResourceBlockChoiceSpeech();
 		return true;
-	case 310: // Scene object row 9 speech.
+	case 310: // Coger/usar cuerda (take/use rope): Sue keeps it in place.
 		beginSecondarySpeechLine(9, 0);
 		return true;
-	case 311: // Scene object row 10 speech.
+	case 311: // Mirar panel de mandos (look at control panel).
 		beginSecondarySpeechLine(0x0a, 0);
 		return true;
-	case 312: // Original callback is an empty shared-table handler.
+	case 312: // Unused no-op action slot in the original table.
 		return true;
-	case 313: // Object 7/8 resource-block animation branch.
+	case 313: // Usar palancas izquierda/derecha (use left/right levers): move hook.
 		handleSceneVerb7Or8DescriptorAction();
 		return true;
-	case 314: // Scene object row 13 speech.
+	case 314: // Mirar/usar cadena (look/use chain): attached to hook and motor.
 		beginSecondarySpeechLine(0x0d, 0);
 		return true;
-	case 315: // Scene object row 14 speech.
+	case 315: // Mirar cadena/polea (look at chain/pulley).
 		beginSecondarySpeechLine(0x0e, 0);
 		return true;
-	case 316: // Alternate resource-block dependent speech.
+	case 316: // Mirar aparato roto / magnetofon roto (look at broken device/tape recorder).
 		beginSecondarySpeechLine(0x0f, _vm->gameState().scene1020AlternateResourceBlockActive ? 1 : 0);
 		return true;
-	case 317: // Scene object row 16 speech.
+	case 317: // Mirar palanca/polea (look at lever/pulley).
 		beginSecondarySpeechLine(0x10, 0);
 		return true;
-	case 318: // Scene object row 17 speech.
+	case 318: // Usar panel/palancas (use control panel/levers): points to both levers.
 		beginSecondarySpeechLine(0x11, 0);
 		return true;
-	case 319: // Scene object row 18 speech.
+	case 319: // Mirar barriles / magnetofon de Sue (look at barrels/Sue recorder).
 		beginSecondarySpeechLine(0x12, 0);
 		return true;
-	case 320: // Row 19 after forcing event flag 1.
+	case 320: // Mirar aparato roto tras identificarlo (look at broken recorder follow-up).
 		handleSpeech19AfterEventFlag1();
 		return true;
-	case 321: // Event flag 1 speech/update.
+	case 321: // Mirar magnetofon roto de Sue (look at Sue's broken recorder).
 		handleSceneEventFlag1Speech();
 		return true;
-	case 322: // Resource overlay chunk 18 state-change script.
+	case 322: // Usar cadena con rejilla (use chain with grate): attach and lift setup.
 		handleResourceOverlayChunk18StateChange();
 		return true;
-	case 323: // Resource overlay chunk 19 event script.
+	case 323: // Usar grasa/objeto con rail oxidado (use grease/item on rusty rail).
 		handleResourceOverlayChunk19EventFlag();
 		return true;
 	default:
