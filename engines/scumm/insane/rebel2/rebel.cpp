@@ -244,19 +244,15 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 	for (int i = 0; i < 10; ++i) {
 		_rebelValueCounters[i] = 0;
-		_rebelMaskCounters[i] = 0;
+		_rebelGaugeBlink[i] = 0;
 	}
 	_rebelLastCounter = 0;
 
-	for (int i = 0; i < 512; ++i)
-		_rebelGaugeSlot[i] = -1;
 	_rebelShieldGateActive = false;
 	_rebelShieldDestroyed = false;
 	_rebelReactorMode = false;
 	_rebelGaugeArmed = false;
 	_rebelLastArmedSlot = -1;
-	for (int i = 0; i < 10; ++i)
-		_rebelGaugeCleared[i] = false;
 
 	_difficulty = 1;
 	_targetLockTimer = 0;
@@ -1610,25 +1606,18 @@ int32 InsaneRebel2::processMouse() {
 
 				setBit(it->id);
 
-				// Shield hit-point gauge: if this target feeds a gauge counter, destroying it
-				// decrements that counter; the shield is destroyed when it reaches 0.
-				if (_rebelShieldGateActive && it->id >= 0 && it->id < 512 && _rebelGaugeSlot[it->id] >= 0) {
-					int slot = _rebelGaugeSlot[it->id];
-					short *counter = (slot < 10) ? &_rebelValueCounters[slot]
-					                             : &_rebelMaskCounters[slot - 10];
-					if (*counter > 0) {
-						(*counter)--;
-						_rebelLastCounter = *counter;
-						if (*counter == 0) {
-							if (slot < 10)
-								_rebelGaugeCleared[slot] = true;
-							if (!_rebelReactorMode) {
-								_rebelShieldDestroyed = true;
-								debugC(DEBUG_INSANE, "Shield destroyed (gauge slot %d depleted by target %d)", slot, it->id);
-							}
+				// Shield hit-point gauge (handler 0x26): the target's type field addresses
+				// the gauge group(s) it feeds — 100-109 directly, > 0x3ff as a bitmask —
+				// and destroying it decrements each of them.
+				if (_rebelHandler == 0x26) {
+					if (it->type >= 100 && it->type < 110) {
+						decrementGaugeGroup(it->type - 100, it->id);
+					} else if (it->type > 0x3ff) {
+						for (int slot = 1; slot <= 9; ++slot) {
+							if ((it->type & (1 << (slot - 1))) != 0)
+								decrementGaugeGroup(slot, it->id);
 						}
 					}
-					_rebelGaugeSlot[it->id] = -1;
 				}
 
 				if (it->type > 0 && it->type < 32) {

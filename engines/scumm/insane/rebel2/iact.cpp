@@ -295,32 +295,27 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 				}
 			}
 		} else if (value > 99 && value < 110) {
+			int idx = value - 100;
 			if (!isBitSet(targetId)) {
-				int idx = value - 100;
-				if (idx >= 0 && idx < 10) {
-					_rebelValueCounters[idx]++;
-					_rebelLastCounter = _rebelValueCounters[idx];
-					if (_rebelShieldGateActive && targetId >= 0 && targetId < 512) {
-						_rebelGaugeSlot[targetId] = (int8)idx;
-						_rebelGaugeArmed = true;
-						_rebelLastArmedSlot = idx;
-					}
-					debugC(DEBUG_INSANE, "IACT Opcode2: Increment VAL counter[%d] -> %d (target=%d)", value, _rebelValueCounters[idx], targetId);
-				}
+				_rebelValueCounters[idx]++;
+				debugC(DEBUG_INSANE, "IACT Opcode2: Increment counter[%d] -> %d (target=%d)", idx, _rebelValueCounters[idx], targetId);
 			}
-
+			_rebelLastCounter = _rebelValueCounters[idx];
+			if (_rebelShieldGateActive) {
+				_rebelGaugeArmed = true;
+				_rebelLastArmedSlot = idx;
+			}
 		} else if (value > 0x3ff) {
 			for (int slot = 1; slot <= 9; ++slot) {
 				if ((value & (1 << (slot - 1))) != 0) {
 					if (!isBitSet(targetId)) {
-						_rebelMaskCounters[slot]++;
-						_rebelLastCounter = _rebelMaskCounters[slot];
-						if (_rebelShieldGateActive && targetId >= 0 && targetId < 512) {
-							_rebelGaugeSlot[targetId] = (int8)(10 + slot);
-							_rebelGaugeArmed = true;
-							_rebelLastArmedSlot = 10 + slot;
-						}
-						debugC(DEBUG_INSANE, "IACT Opcode2: Increment MASK counter[%d] -> %d (target=%d)", slot, _rebelMaskCounters[slot], targetId);
+						_rebelValueCounters[slot]++;
+						debugC(DEBUG_INSANE, "IACT Opcode2: Increment counter[%d] (mask 0x%x) -> %d (target=%d)", slot, value, _rebelValueCounters[slot], targetId);
+					}
+					_rebelLastCounter = _rebelValueCounters[slot];
+					if (_rebelShieldGateActive) {
+						_rebelGaugeArmed = true;
+						_rebelLastArmedSlot = slot;
 					}
 				}
 			}
@@ -2147,13 +2142,19 @@ void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b
 	int16 w = b.readSint16LE();
 	int16 h = b.readSint16LE();
 
-	// Turret surface targets mirror their gauge group state.
+	// Turret surface targets mirror their gauge group state: hidden while the group
+	// counter sits at zero, shown while it is nonzero, with a blink-out (alternating
+	// odd/even ticks) during the 6 frames after the group is depleted.
 	if (par3 == 2 && _rebelHandler == 0x26) {
-		const int surfaceIdx = (par4 >= 100 && par4 < 110) ? (par4 - 100) : -1;
-		if (surfaceIdx >= 0 && _rebelGaugeCleared[surfaceIdx])
-			setBit(enemyId);
-		else
-			clearBit(enemyId);
+		if (par4 >= 100 && par4 < 110) {
+			const int surfaceIdx = par4 - 100;
+			if (_rebelValueCounters[surfaceIdx] == 0 && (_rebelGaugeBlink[surfaceIdx] & 1) == 0)
+				setBit(enemyId);
+			else
+				clearBit(enemyId);
+			if (_rebelGaugeBlink[surfaceIdx] != 0)
+				_rebelGaugeBlink[surfaceIdx]--;
+		}
 		return;
 	}
 

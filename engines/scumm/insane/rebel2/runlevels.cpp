@@ -296,16 +296,24 @@ void InsaneRebel2::resetLevelWaveState() {
 void InsaneRebel2::resetShieldGauge() {
 	for (int i = 0; i < 10; ++i) {
 		_rebelValueCounters[i] = 0;
-		_rebelMaskCounters[i] = 0;
+		_rebelGaugeBlink[i] = 0;
 	}
-	for (int i = 0; i < 512; ++i)
-		_rebelGaugeSlot[i] = -1;
 	_rebelLastCounter = -1;        // non-zero sentinel: gauge not yet depleted
 	_rebelShieldDestroyed = false;
 	_rebelGaugeArmed = false;
 	_rebelLastArmedSlot = -1;
-	for (int i = 0; i < 10; ++i)
-		_rebelGaugeCleared[i] = false;
+}
+
+void InsaneRebel2::decrementGaugeGroup(int slot, int targetId) {
+	_rebelValueCounters[slot]--;
+	if (_rebelValueCounters[slot] == 0) {
+		_rebelGaugeBlink[slot] = 6;
+		if (_rebelShieldGateActive && !_rebelReactorMode) {
+			_rebelShieldDestroyed = true;
+			debugC(DEBUG_INSANE, "Shield destroyed (gauge slot %d depleted by target %d)", slot, targetId);
+		}
+	}
+	_rebelLastCounter = _rebelValueCounters[slot];
 }
 
 void InsaneRebel2::resetExplosions() {
@@ -1023,6 +1031,7 @@ int InsaneRebel2::runLevel9() {
 		clearBit(0);
 		_rebelKillCounter = 0;
 		_rebelHitCounter = 0;
+		resetShieldGauge();
 
 		_rebelPhaseState = 0xfffffffe;
 

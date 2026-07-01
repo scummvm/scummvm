@@ -692,20 +692,18 @@ public:
 	int _rebelViewMode1;
 	int _rebelViewMode2;
 
+	// Turret (0x26) gauge groups, addressed by value 100-109 or bitmask > 0x3ff (bit k-1 -> slot k); surfaces show while nonzero, then blink out.
 	short _rebelValueCounters[10];
-	short _rebelMaskCounters[10];
+	short _rebelGaugeBlink[10];
 	int _rebelLastCounter;
 
-	// Shield hit-point gauge: opcode-2 sets up a per-target counter; destroying a tracked
-	// target decrements it, and the looping attack run ends when it reaches 0.
-	int8 _rebelGaugeSlot[512];
 	bool _rebelShieldGateActive;
 	bool _rebelShieldDestroyed;
 	bool _rebelReactorMode;
 	bool _rebelGaugeArmed;
 	int _rebelLastArmedSlot;
-	bool _rebelGaugeCleared[10];
 	void resetShieldGauge();
+	void decrementGaugeGroup(int slot, int targetId);
 
 	// Handler-specific shot state.
 	struct TurretShot {

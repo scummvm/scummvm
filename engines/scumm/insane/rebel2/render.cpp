@@ -2415,8 +2415,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		if (_rebelReactorMode && _rebelGaugeArmed && _rebelLastArmedSlot >= 0 &&
 		    (_player->_curVideoFlags & 0x40) != 0) {
 			const int slot = _rebelLastArmedSlot;
-			const short remaining = (slot < 10) ? _rebelValueCounters[slot]
-			                                    : _rebelMaskCounters[slot - 10];
+			const short remaining = _rebelValueCounters[slot];
 			if (remaining <= 0)
 				_rebelShieldDestroyed = true;
 		}
