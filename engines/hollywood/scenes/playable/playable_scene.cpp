@@ -1347,33 +1347,51 @@ bool PlayableScene::walkActiveActorTo(int targetX, int targetY, byte finalFacing
 	return !Engine::shouldQuit() && !_vm->isSceneRestartRequested();
 }
 
-void PlayableScene::adjustWalkTargetToFloorMask(int &targetX, int &targetY) const {
+bool PlayableScene::adjustWalkTargetToFloorMask(int &targetX, int &targetY) const {
 	if (adjustCustomWalkTargetToFloorMask(targetX, targetY))
-		return;
+		return walkableMaskAt(targetX, targetY) != 0;
 
 	if (targetX > 0x30f)
 		targetX = 0x30f;
 
 	while (targetY < 0x1df) {
-		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
-		if (isFramebufferOffsetValid(offset) && _walkablePaletteMask[savedFramebufferPixelAt(offset)] != 0)
-			return;
+		if (walkableMaskAt(targetX, targetY) != 0)
+			return true;
 		++targetY;
 	}
 
 	while (targetY > 0) {
-		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
-		if (isFramebufferOffsetValid(offset) && _walkablePaletteMask[savedFramebufferPixelAt(offset)] != 0)
-			return;
+		if (walkableMaskAt(targetX, targetY) != 0)
+			return true;
 		--targetY;
 	}
+
+	return walkableMaskAt(targetX, targetY) != 0;
 }
 
 void PlayableScene::queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
 		byte finalFacing, byte finalCel) {
+	const byte startRegion = paletteRegionAt(startX, startY);
+	const byte targetRegion = paletteRegionAt(targetX, targetY);
+	debugC(1, kDebugPath,
+		"%s queue path: start=(%d,%d) startRegion=%u initialDrawOrder=%u facing=%u cel=%u target=(%d,%d) targetRegion=%u finalFacing=%u finalCel=%u",
+		sceneDebugName(), startX, startY, startRegion, _activeActorDrawOrderMode, _activeActorFacing,
+		_activeActorCel, targetX, targetY, targetRegion, finalFacing, finalCel);
 	_pathController.queueWithPaletteRegionRouting(*this, startX, startY, targetX, targetY,
 		_activeActorDrawOrderMode, _activeActorFacing, _activeActorCel, finalFacing, finalCel,
 		kInvalidFacing, kInvalidCel, actorPathStepDeltaTable(), actorPathStepDeltaTableSize());
+	if (_actorPathFrames.empty()) {
+		debugC(1, kDebugPath, "%s queued empty path", sceneDebugName());
+		return;
+	}
+
+	const ActorPathFrame &firstFrame = _actorPathFrames.front();
+	const ActorPathFrame &lastFrame = _actorPathFrames.back();
+	debugC(1, kDebugPath,
+		"%s queued path frames=%u first=(%d,%d f=%u c=%u d=%u) last=(%d,%d f=%u c=%u d=%u)",
+		sceneDebugName(), _actorPathFrames.size(), firstFrame.worldX, firstFrame.worldY,
+		firstFrame.facing, firstFrame.cel, firstFrame.drawOrderMode, lastFrame.worldX,
+		lastFrame.worldY, lastFrame.facing, lastFrame.cel, lastFrame.drawOrderMode);
 }
 
 void PlayableScene::buildActorPathFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,
@@ -1406,6 +1424,19 @@ byte PlayableScene::paletteRegionAt(int x, int y) const {
 		return 0;
 
 	return _fullPaletteRegionMask[savedFramebufferPixelAt(offset)];
+}
+
+byte PlayableScene::walkableMaskAt(int x, int y) const {
+	if (x < 0 || y < 0 || x >= HollywoodEngine::kSceneBufferWidth || y >= HollywoodEngine::kSceneBufferHeight ||
+			_walkablePaletteMask.empty())
+		return 0;
+
+	const uint offset = y * HollywoodEngine::kSceneBufferWidth + x;
+	if (!isFramebufferOffsetValid(offset))
+		return 0;
+
+	const byte pixel = savedFramebufferPixelAt(offset);
+	return pixel < _walkablePaletteMask.size() ? _walkablePaletteMask[pixel] : 0;
 }
 
 byte PlayableScene::calculateMovementFacingForPath(int fromX, int fromY, int toX, int toY, int requestedFacing) const {
