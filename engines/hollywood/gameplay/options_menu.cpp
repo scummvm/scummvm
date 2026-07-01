@@ -43,6 +43,9 @@ const char *const kOptionsExecutableName = "MONSTERS.EXE";
 const char *const kOptionsResource000Name = "RESOURCE.000";
 const char *const kOptionsPaletteResourceType = "PALETA_OBJ_INT";
 const char *const kOptionsPaletteResourceName = "obj_pal";
+const char kOptionsQuitPromptText[] = "\xa8" "Est\xa0s seguro?";
+const char kOptionsQuitYesText[] = "S";
+const char kOptionsQuitNoText[] = "N";
 const uint kOptionsResource000HeaderByteCount = 1;
 const uint kOptionsResource000OffsetTableSize = 400;
 const uint kOptionsResource000SizeTableSize = 400;
@@ -76,6 +79,17 @@ const int kOptionsTestStatusDotX = 0x38d;
 const int kOptionsSpeechTextStatusDotX = 0x290;
 const int kOptionsSpeechVoiceStatusDotX = 0x30b;
 const int kOptionsSpeechBothStatusDotX = 0x386;
+const int kOptionsQuitButtonShift = 9;
+const int kOptionsQuitMainButtonLeft = 0x1a4;
+const int kOptionsQuitMainButtonTop = 0x0f1;
+const int kOptionsQuitMainButtonRight = 0x1ff;
+const int kOptionsQuitMainButtonBottom = 0x10c;
+const int kOptionsQuitChoiceTop = 0x188;
+const int kOptionsQuitChoiceBottom = 0x1a3;
+const int kOptionsQuitYesLeft = 0x1e4;
+const int kOptionsQuitYesRight = 0x1ff;
+const int kOptionsQuitNoLeft = 0x201;
+const int kOptionsQuitNoRight = 0x21c;
 const int kOptionsValueBarX = 0x15c;
 const int kOptionsValueBarWidth = 200;
 const int kOptionsValueBarHeight = 7;
@@ -823,9 +837,10 @@ void GameplayOptionsMenu::drawControls(Graphics::Surface &surface) {
 }
 
 void GameplayOptionsMenu::drawQuitConfirmation(Graphics::Surface &surface) {
-	drawText(surface, "Salir del juego?", 0x1ff, 0x168, kOptionsTextActiveColor, true);
-	drawText(surface, "Si", 0x1f1, 0x18c, kOptionsTextActiveColor, true);
-	drawText(surface, "No", 0x20e, 0x18c, kOptionsTextActiveColor, true);
+	drawText(surface, kOptionsQuitPromptText, 0x1ff, 0x168, kOptionsTextActiveColor, true);
+	drawQuitConfirmationBacking();
+	drawText(surface, kOptionsQuitYesText, 0x1f1, 0x18c, kOptionsTextActiveColor, true);
+	drawText(surface, kOptionsQuitNoText, 0x20e, 0x18c, kOptionsTextActiveColor, true);
 }
 
 void GameplayOptionsMenu::drawText(Graphics::Surface &surface, const Common::String &text, int globalX, int y,
@@ -841,6 +856,42 @@ void GameplayOptionsMenu::drawText(Graphics::Surface &surface, const Common::Str
 		x -= textWidth / 2;
 	font->drawString(&surface, text, x, y, textWidth, color, Graphics::kTextAlignLeft, 0,
 		false, true);
+}
+
+void GameplayOptionsMenu::drawQuitConfirmationBacking() {
+	drawQuitButtonFrame(kOptionsQuitYesLeft, kOptionsQuitYesRight);
+	drawQuitButtonFrame(kOptionsQuitNoLeft, kOptionsQuitNoRight);
+}
+
+void GameplayOptionsMenu::drawQuitButtonFrame(int globalLeft, int globalRight) {
+	const int left = globalLeft - kOptionsViewportXOffset;
+	const int top = kOptionsQuitChoiceTop;
+	const int width = globalRight - globalLeft;
+	const int height = kOptionsQuitChoiceBottom - kOptionsQuitChoiceTop;
+	const int right = left + width - 1;
+	const int bottom = top + height - 1;
+
+	for (int y = top; y <= bottom; ++y) {
+		byte *pixels = (byte *)_screen.getBasePtr(left, y);
+		for (int x = 0; x < width; ++x) {
+			if (y == top || x == 0)
+				pixels[x] = kOptionsTextDisabledColor;
+			else if (y == bottom || left + x == right)
+				pixels[x] = kOptionsStatusDotOffColor;
+		}
+	}
+}
+
+void GameplayOptionsMenu::shiftGlobalRectColors(int globalLeft, int top, int globalRight, int bottom, int delta) {
+	const int left = globalLeft - kOptionsViewportXOffset;
+	const int right = globalRight - kOptionsViewportXOffset;
+	for (int y = top; y < bottom; ++y) {
+		byte *pixels = (byte *)_screen.getBasePtr(left, y);
+		for (int x = 0; x < right - left; ++x) {
+			if (pixels[x] != 0)
+				pixels[x] = (byte)CLIP<int>((int)pixels[x] + delta, 0, 255);
+		}
+	}
 }
 
 void GameplayOptionsMenu::drawStatusDot(int globalX, int y, byte color) {
@@ -927,8 +978,11 @@ void GameplayOptionsMenu::present() {
 
 	Graphics::Surface *screenSurface = _screen.surfacePtr();
 	drawControls(*screenSurface);
-	if (_confirmQuit)
+	if (_confirmQuit) {
+		shiftGlobalRectColors(kOptionsQuitMainButtonLeft, kOptionsQuitMainButtonTop,
+			kOptionsQuitMainButtonRight, kOptionsQuitMainButtonBottom, kOptionsQuitButtonShift);
 		drawQuitConfirmation(*screenSurface);
+	}
 
 	_displayPalette.uploadFrom6Bit(_palette);
 	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
