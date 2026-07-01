@@ -42,6 +42,7 @@ public:
 	void registerGraphics() override;
 
 	void readData(Common::SeekableReadStream &stream) override;
+	void readDataNancy12(Common::SeekableReadStream &stream);
 	void execute() override;
 	void handleInput(NancyInput &input) override;
 

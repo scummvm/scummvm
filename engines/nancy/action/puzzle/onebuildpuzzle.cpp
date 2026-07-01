@@ -125,7 +125,112 @@ void OneBuildPuzzle::registerGraphics() {
 		_finalAnimOverlay.registerGraphics();
 }
 
+// Nancy12 (AR 166) reworked OneBuildPuzzle onto the shared PuzzleBase loader:
+// a fixed 513-byte header blob, followed by six variable-length "random sound"
+// blocks, then a variable-count array of the same 66-byte piece records used by
+// the older games. The piece array is no longer a fixed 20-slot block.
+void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
+	// --- PuzzleBase header blob (513 bytes) ---
+	readFilename(stream, _imageName);       // 0x00
+	_freePlacement = stream.readByte();     // 0x21
+	_canRotateAll = stream.readByte();      // 0x22
+	stream.skip(6);                         // 0x23: rotation/zone config + placement-mode byte
+	_slotTolerance = stream.readSint16LE(); // 0x29
+
+	// 0x2b..0x11f: placement-mode byte, final-animation centering rect, filler
+	// count and the home-scatter zone. None are needed by this port.
+	stream.skip(0x120 - 0x2b);
+
+	readFilename(stream, _extraSoundName);  // 0x120: final-animation atlas image
+	readRect(stream, _animRectA);           // 0x141
+	readRect(stream, _animRectB);           // 0x151
+	for (uint i = 0; i < 6; ++i)            // 0x161
+		_animLayout[i] = stream.readSint16LE();
+	_animSound1.readNormal(stream);         // 0x16d
+	_animSound2.readNormal(stream);         // 0x19e
+	_hasFinalAnim = !_animRectA.isEmpty();
+
+	_solveScene.readData(stream);           // 0x1cf
+	_cancelScene.readData(stream);          // 0x1e8 (ends the 513-byte blob)
+
+	// --- Six random-sound blocks: pickup, rotate, drop, good, bad, completion ---
+	RandomSoundBlock blocks[6];
+	for (uint i = 0; i < 6; ++i)
+		blocks[i].readData(stream);
+
+	SoundDescription *sounds[6] = { &_pickupSound, &_rotateSound, &_dropSound,
+									&_goodPlacementSound, &_badPlacementSound, &_completionSound };
+	for (uint i = 0; i < 6; ++i) {
+		SoundDescription &s = *sounds[i];
+		s.name = blocks[i].names.empty() ? "NO SOUND" : blocks[i].names[0];
+		s.channelID = blocks[i].channel;
+		s.numLoops = blocks[i].numLoops;
+		s.volume = blocks[i].volume;
+	}
+
+	// The drop/good/bad sounds pick randomly between their alternatives, which are
+	// now the extra entries of the corresponding block.
+	Common::String *dropAlts[2] = { &_dropAlt1Filename, &_dropAlt2Filename };
+	Common::String *goodAlts[2] = { &_goodAlt1Filename, &_goodAlt2Filename };
+	Common::String *badAlts[2]  = { &_badAlt1Filename,  &_badAlt2Filename };
+	Common::String **altSets[3] = { dropAlts, goodAlts, badAlts };
+	const uint altBlocks[3] = { 2, 3, 4 };
+	for (uint i = 0; i < 3; ++i) {
+		for (uint a = 0; a < 2; ++a) {
+			const RandomSoundBlock &b = blocks[altBlocks[i]];
+			*altSets[i][a] = (b.names.size() > a + 1) ? b.names[a + 1] : "NO SOUND";
+		}
+	}
+
+	// Nancy12 puzzles no longer carry inline good/bad/completion text.
+	_goodTexts.resize(3);
+	_badTexts.resize(3);
+
+	// --- Piece array (variable count) ---
+	stream.readSint16LE(); // Secondary piece count (matches numPieces in practice)
+	_numPieces = stream.readUint16LE();
+
+	_pieces.resize(_numPieces);
+	for (uint i = 0; i < _numPieces; ++i) {
+		Piece &p = _pieces[i];
+
+		// Two source rects: altSrc = at-home art, srcRect = active art.
+		Common::Rect altSrc;
+		readRect(stream, altSrc);
+		readRect(stream, p.srcRect);
+		if (p.srcRect.isEmpty())
+			p.srcRect = altSrc;
+		else if (!altSrc.isEmpty())
+			p.altSrcRect = altSrc;
+
+		readRect(stream, p.slotRect);
+		readRect(stream, p.homeRect);
+		p.defaultRotation = stream.readByte();
+		// A piece is pre-placed only when this marker is exactly 10.
+		p.isPreRotated = stream.readByte() == 10;
+	}
+
+	// Optional placement-order arrays, each present only when its flag is set.
+	_orderedPlacement = stream.readByte() != 0;
+	if (_orderedPlacement) {
+		_placementOrder.resize(_numPieces);
+		for (uint i = 0; i < _numPieces; ++i)
+			_placementOrder[i] = stream.readSint16LE();
+	}
+
+	if (stream.readByte() != 0) {
+		_legacyPlacementOrder.resize(_numPieces);
+		for (uint i = 0; i < _numPieces; ++i)
+			_legacyPlacementOrder[i] = stream.readSint16LE();
+	}
+}
+
 void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy12) {
+		readDataNancy12(stream);
+		return;
+	}
+
 	const bool isNancy10 = g_nancy->getGameType() >= kGameTypeNancy10;
 
 	readFilename(stream, _imageName);
