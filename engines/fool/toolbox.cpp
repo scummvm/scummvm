@@ -21,9 +21,11 @@
 
 #include "audio/mixer.h"
 #include "audio/softsynth/pcspk.h"
+#include "common/debug.h"
 #include "common/events.h"
 #include "common/system.h"
 
+#include "fool/detection.h"
 #include "fool/fool.h"
 #include "fool/toolbox.h"
 
@@ -189,7 +191,7 @@ void Toolbox::_pumpEvents() {
 	Common::EventManager *manager = g_system->getEventManager();
 	while (manager->pollEvent(event)) {
 		EventRecord newRecord;
-		newRecord.when = this->TickCount();
+		newRecord.when = TickCount();
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
 			_mouse = event.mouse;
@@ -307,7 +309,9 @@ uint32 Toolbox::Delay(uint32 numTicks) {
 		_updateScreen();
 		updateCount++;
 	} while (g_system->getMillis() < target);
-	//debugC(8, kDebugGraphics, "Toolbox::Delay: %d screen updates in %d ticks", updateCount, numTicks);
+	if (debugChannelSet(8, kDebugGraphics)) {
+		debugC(8, kDebugGraphics, "Toolbox::Delay: %d screen updates in %d ticks", updateCount, numTicks);
+	}
 	return (uint32)(g_system->getMillis() * 60 / 1000);
 }
 

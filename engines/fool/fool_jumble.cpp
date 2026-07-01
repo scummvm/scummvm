@@ -33,12 +33,12 @@ namespace Fool {
 void FoolGame::jumbleRun() {
 	// 130:0004
 	_activePuzzleSolved = false;
-	this->fetchPuzzleData();
+	fetchPuzzleData();
 	_jumbleSubPuzzleCount = puzzlesReadShort();
 	debugC(5, kDebugLoading, "FoolGame::jumbleRun: racking %d subpuzzles", _jumbleSubPuzzleCount);
 
 	for (_jumbleCurrentSubPuzzle = 1; _jumbleCurrentSubPuzzle <= _jumbleSubPuzzleCount; _jumbleCurrentSubPuzzle++) {
-		this->var_i16_105a = puzzlesReadShort();
+		var_i16_105a = puzzlesReadShort();
 		debugC(5, kDebugLoading, "FoolGame::jumbleRun: subpuzzle %d", _jumbleCurrentSubPuzzle);
 		// load grid information block
 		// 0x0: grid width (squares)
@@ -55,77 +55,77 @@ void FoolGame::jumbleRun() {
 		// 0xb: grid right bound (px)
 		// 0xc: grid square inner height (px)
 		// 0xd: grid square inner width (px)
-		if ((this->var_i16_105a & 0x1) == 1) {
+		if ((var_i16_105a & 0x1) == 1) {
 			for (int i = 0; i <= 0xe; i++) {
-				this->arr_i16_1eb8[i] = puzzlesReadShort();
+				arr_i16_1eb8[i] = puzzlesReadShort();
 			}
 		}
 		// 130:0066
-		this->var_i16_484 = 0;
-		this->var_i16_68c = this->arr_i16_1eb8[8];
+		var_i16_484 = 0;
+		var_i16_68c = arr_i16_1eb8[8];
 		do {
-			this->var_i16_68a = this->arr_i16_1eb8[10];
+			var_i16_68a = arr_i16_1eb8[10];
 			do {
-				this->var_i16_484++;
+				var_i16_484++;
 				_toolbox->SetRect(
-					_screenGrid[this->var_i16_484],
-					this->var_i16_68a,
-					this->var_i16_68c,
-					this->var_i16_68a + this->arr_i16_1eb8[13],
-					this->var_i16_68c + this->arr_i16_1eb8[12]
+					_screenGrid[var_i16_484],
+					var_i16_68a,
+					var_i16_68c,
+					var_i16_68a + arr_i16_1eb8[13],
+					var_i16_68c + arr_i16_1eb8[12]
 				);
 				// 130:00f6
-			} while (_zbasic->incrAndCheck(this->var_i16_68a, this->arr_i16_1eb8[11], this->arr_i16_1eb8[6]));
+			} while (_zbasic->incrAndCheck(var_i16_68a, arr_i16_1eb8[11], arr_i16_1eb8[6]));
 		// 130:0126
-		} while (_zbasic->incrAndCheck(this->var_i16_68c, this->arr_i16_1eb8[9], this->arr_i16_1eb8[7]));
+		} while (_zbasic->incrAndCheck(var_i16_68c, arr_i16_1eb8[9], arr_i16_1eb8[7]));
 		// 130:0156
-		if ((this->var_i16_105a & 0x2) == 2) {
-			this->var_i16_105c = puzzlesReadShort();
-			this->var_i16_105e = puzzlesReadShort();
-			this->var_i16_1060 = puzzlesReadShort();
+		if ((var_i16_105a & 0x2) == 2) {
+			var_i16_105c = puzzlesReadShort();
+			var_i16_105e = puzzlesReadShort();
+			var_i16_1060 = puzzlesReadShort();
 			int16 picX = puzzlesReadShort();
 			int16 picY = puzzlesReadShort();
 			int16 picID = puzzlesReadShort();
 			if (picID > 0) {
-				this->arr_i32_192c0[0] = _toolbox->GetPicture(picID);
-				_zbasic->picture(picX, picY, this->arr_i32_192c0[0]);
-				_toolbox->ReleaseResource(this->arr_i32_192c0[0]);
+				arr_i32_192c0[0] = _toolbox->GetPicture(picID);
+				_zbasic->picture(picX, picY, arr_i32_192c0[0]);
+				_toolbox->ReleaseResource(arr_i32_192c0[0]);
 			}
 		}
 		// 130:01f0
 		_jumbleGameType = puzzlesReadShort();
 		if (_jumbleGameType == 6) {
-			for (int j = 1; j <= this->arr_i16_1eb8[1]; j++) {
-				for (int i = 1; i <= this->arr_i16_1eb8[0]; i++) {
-					this->arr_i16_2f38[i*32 + j] = puzzlesReadByte();
-					this->arr_i16_3b38[i*32 + j] = 0;
+			for (int j = 1; j <= arr_i16_1eb8[1]; j++) {
+				for (int i = 1; i <= arr_i16_1eb8[0]; i++) {
+					arr_i16_2f38[i*32 + j] = puzzlesReadByte();
+					arr_i16_3b38[i*32 + j] = 0;
 				}
 			}
 		} else {
 		// 130:028a
-			for (int j = 1; j <= this->arr_i16_1eb8[1]; j++) {
-				for (int i = 1; i <= this->arr_i16_1eb8[0]; i++) {
-					this->arr_i16_2f38[i*32 + j] = 0;
-					this->arr_i16_3b38[i*32 + j] = 0;
+			for (int j = 1; j <= arr_i16_1eb8[1]; j++) {
+				for (int i = 1; i <= arr_i16_1eb8[0]; i++) {
+					arr_i16_2f38[i*32 + j] = 0;
+					arr_i16_3b38[i*32 + j] = 0;
 				}
 			}
 		}
 		// 130:0306
-		this->var_i16_103a = puzzlesReadShort();
-		if (this->var_i16_103a > 0) {
+		var_i16_103a = puzzlesReadShort();
+		if (var_i16_103a > 0) {
 			_toolbox->PenNormal();
-			_toolbox->PenPat(_patterns[this->var_i16_1060]);
-			this->var_i16_484 = 0;
-			for (int j = 1; j <= this->var_i16_103a; j++) {
-				this->var_i16_106a = puzzlesReadShort();
-				if (this->var_i16_106a == 0) {
-					this->var_i16_484 += 0x10;
+			_toolbox->PenPat(_patterns[var_i16_1060]);
+			var_i16_484 = 0;
+			for (int j = 1; j <= var_i16_103a; j++) {
+				var_i16_106a = puzzlesReadShort();
+				if (var_i16_106a == 0) {
+					var_i16_484 += 0x10;
 				} else {
 				// 130:035a
 					for (int i = 0; i <= 0xf; i++) {
-						this->var_i16_484++;
-						if (this->var_i16_106a & _bitLUT[i]) {
-							_toolbox->PaintRect(_screenGrid[this->var_i16_484]);
+						var_i16_484++;
+						if (var_i16_106a & _bitLUT[i]) {
+							_toolbox->PaintRect(_screenGrid[var_i16_484]);
 						}
 					}
 					// 130:039e
@@ -135,87 +135,87 @@ void FoolGame::jumbleRun() {
 			}
 		}
 		// 130:03ba
-		if (this->var_i16_105e == 2) {
-			this->var_i16_106c = kSrcBic;
+		if (var_i16_105e == 2) {
+			var_i16_106c = kSrcBic;
 		} else {
-			this->var_i16_106c = kSrcOr;
+			var_i16_106c = kSrcOr;
 		}
 		// 130:03d4
 		if (_jumbleGameType == 4) {
-			this->fillRect(0x63, 0xae, 0x108, 0x153, 2);
+			fillRect(0x63, 0xae, 0x108, 0x153, 2);
 		}
 		// 130:03fe
 		//if (_activePuzzleStatus <= _jumbleCurrentSubPuzzle)
-		this->_jumblePosition = 0;
-		this->var_str_1070.clear(); // was: str(168)
-		this->var_str_1170.clear(); // was: str(169)
-		this->var_i16_1270 = puzzlesReadShort();
-		for (this->var_i16_103a = 1; this->var_i16_103a <= this->var_i16_1270; this->var_i16_103a++) {
+		_jumblePosition = 0;
+		var_str_1070.clear(); // was: str(168)
+		var_str_1170.clear(); // was: str(169)
+		var_i16_1270 = puzzlesReadShort();
+		for (var_i16_103a = 1; var_i16_103a <= var_i16_1270; var_i16_103a++) {
 			Common::U32String data = puzzlesReadString().decode(Common::kMacRoman);
-			this->var_i16_1372 = data.size();
-			this->var_str_1170 += data;
+			var_i16_1372 = data.size();
+			var_str_1170 += data;
 			// 130:047e
 			if (_activePuzzleStatus > _jumbleCurrentSubPuzzle) {
-				this->var_str_1070 += data;
+				var_str_1070 += data;
 			} else {
 				// 130:04ac
 				if ((_activePuzzleStatus == _jumbleCurrentSubPuzzle) && !_activePuzzleBuffer.empty()) { // was: str(170)
 					// 130:04dc
-					this->var_str_1070 = _activePuzzleBuffer;
+					var_str_1070 = _activePuzzleBuffer;
 				} else {
 					// 130:04f0
 					if ((_jumbleGameType == 1) || (_jumbleGameType == 5)) {
 						// 130:0514
-						this->var_str_384 = data;
-						this->sub_130_25d8();
+						var_str_384 = data;
+						sub_130_25d8();
 					}
 					// 130:0528
 					if (_jumbleGameType == 2) {
-						this->var_str_384 = data;
-						this->sub_130_2790();
+						var_str_384 = data;
+						sub_130_2790();
 					}
 					// 130:0548
 					if ((_jumbleGameType == 3) || (_jumbleGameType == 6)) {
-						this->var_str_9f4 = _zbasic->space(this->var_i16_1372);
+						var_str_9f4 = _zbasic->space(var_i16_1372);
 					}
 					// 130:0580
 					// word square
 					if (_jumbleGameType == 4) {
-						this->var_str_384 = _zbasic->leftStr(data, 4);
-						this->sub_130_25d8();
-						this->var_str_1374 = this->var_str_9f4;
-						this->var_str_384 = _zbasic->rightStr(data, 4);
-						this->sub_130_25d8();
-						this->var_str_1474 = this->var_str_9f4;
-						this->var_str_9f4 = this->var_str_1374 + _zbasic->midStr(data, 5, 1) + this->var_str_1474;
+						var_str_384 = _zbasic->leftStr(data, 4);
+						sub_130_25d8();
+						var_str_1374 = var_str_9f4;
+						var_str_384 = _zbasic->rightStr(data, 4);
+						sub_130_25d8();
+						var_str_1474 = var_str_9f4;
+						var_str_9f4 = var_str_1374 + _zbasic->midStr(data, 5, 1) + var_str_1474;
 					}
 					// 130:0610
-					this->var_str_1070 += this->var_str_9f4;
+					var_str_1070 += var_str_9f4;
 				}
 			}
 			// 130:0628
-			for (this->var_i16_484 = 1; this->var_i16_484 <= this->var_i16_1372; this->var_i16_484++) {
-				this->_jumblePosition++;
-				this->arr_i16_3738[this->_jumblePosition] = puzzlesReadShort();
-				this->_jumbleSelected = ABS(this->arr_i16_3738[this->_jumblePosition]);
-				this->sub_130_20fe();
-				this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c] = this->var_i16_103a;
-				this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c] = this->_jumblePosition;
-				this->sub_130_1c6c();
-				this->var_str_d12 = _zbasic->midStr(this->var_str_1070, this->_jumblePosition, 1);
+			for (var_i16_484 = 1; var_i16_484 <= var_i16_1372; var_i16_484++) {
+				_jumblePosition++;
+				arr_i16_3738[_jumblePosition] = puzzlesReadShort();
+				_jumbleSelected = ABS(arr_i16_3738[_jumblePosition]);
+				sub_130_20fe();
+				arr_i16_2f38[var_i16_68a*32 + var_i16_68c] = var_i16_103a;
+				arr_i16_3b38[var_i16_68a*32 + var_i16_68c] = _jumblePosition;
+				sub_130_1c6c();
+				var_str_d12 = _zbasic->midStr(var_str_1070, _jumblePosition, 1);
 				// 130:06d4
 				if ((_activePuzzle <= 0x50) || (_activePuzzle == 0x55)) {
-					this->jumbleDrawLetter();
+					jumbleDrawLetter();
 				} else {
 					// 130:0700
-					this->sub_130_1e76();
+					sub_130_1e76();
 				}
 			}
 			// 130:0716
-			_zbasic->indexRawSet(puzzlesReadString(), 1, this->var_i16_103a);
+			_zbasic->indexRawSet(puzzlesReadString(), 1, var_i16_103a);
 		}
 		// 130:073e
-		this->var_i16_1576 = this->var_str_1170.size();
+		var_i16_1576 = var_str_1170.size();
 		if ((_activePuzzle == 0x51) || (_activePuzzle == 0x54)) {
 			// 130:076e
 			_toolbox->PenNormal();
@@ -239,31 +239,31 @@ void FoolGame::jumbleRun() {
 			_toolbox->PenNormal();
 		}
 		// 130:07f2
-		this->var_i16_103a = puzzlesReadShort();
-		if (this->var_i16_103a > 0) {
-			for (this->var_i16_68a = 1; this->var_i16_68a <= this->var_i16_103a; this->var_i16_68a++) {
-				this->var_i16_484 = puzzlesReadShort();
-				this->var_i16_7e4 = puzzlesReadShort();
-				this->var_str_1578 = puzzlesReadString().decode(Common::kMacRoman);
+		var_i16_103a = puzzlesReadShort();
+		if (var_i16_103a > 0) {
+			for (var_i16_68a = 1; var_i16_68a <= var_i16_103a; var_i16_68a++) {
+				var_i16_484 = puzzlesReadShort();
+				var_i16_7e4 = puzzlesReadShort();
+				var_str_1578 = puzzlesReadString().decode(Common::kMacRoman);
 				_zbasic->text(kFontFool, 0xc, 0, kSrcOr);
-				if (this->var_i16_7e4 > 0) {
-					_toolbox->MoveTo(this->var_i16_484, this->var_i16_7e4);
-					_toolbox->DrawString(this->var_str_1578);
+				if (var_i16_7e4 > 0) {
+					_toolbox->MoveTo(var_i16_484, var_i16_7e4);
+					_toolbox->DrawString(var_str_1578);
 				} else {
-					this->sub_130_2226();
+					sub_130_2226();
 				}
 			}
 		}
 		// 130:086a
-		this->var_i16_1678 = 0;
-		this->var_str_1578.clear(); // was: str(171);
+		var_i16_1678 = 0;
+		var_str_1578.clear(); // was: str(171);
 		if (_jumbleCurrentSubPuzzle == _jumbleSubPuzzleCount) {
 			// all puzzles done, load the success animation list
-			this->arr_i16_4338[0] = puzzlesReadShort();
-			if (this->arr_i16_4338[0] > 0) {
+			arr_i16_4338[0] = puzzlesReadShort();
+			if (arr_i16_4338[0] > 0) {
 				// 130:08be
-				for (int i = 1; i <= this->arr_i16_4338[0]; i++) {
-					this->arr_i16_4338[i] = puzzlesReadShort();
+				for (int i = 1; i <= arr_i16_4338[0]; i++) {
+					arr_i16_4338[i] = puzzlesReadShort();
 				}
 			}
 		}
@@ -271,13 +271,13 @@ void FoolGame::jumbleRun() {
 		if (_activePuzzleStatus <= _jumbleCurrentSubPuzzle) {
 			switch (_jumbleGameType-1) {
 			case 0:
-				this->sub_130_d2e();
+				sub_130_d2e();
 				break;
 			case 1:
-				this->jumbleRunSubstitution();
+				jumbleRunSubstitution();
 				break;
 			case 2:
-				this->sub_130_1004();
+				sub_130_1004();
 				break;
 			case 3:
 			case 4:	// word square
@@ -290,24 +290,24 @@ void FoolGame::jumbleRun() {
 				break;
 			}
 			if ((_stateFlags & kStateReturn) != 0) {
-				this->jumbleStoreState();
+				jumbleStoreState();
 				_jumbleCurrentSubPuzzle = _jumbleSubPuzzleCount;
 			} else {
 				// 130:0956
 				if (_activePuzzle <= 0x50) {
-					if ((this->var_i16_1678 > 0) && (!this->var_str_1578.empty())) { // was: str(172)
+					if ((var_i16_1678 > 0) && (!var_str_1578.empty())) { // was: str(172)
 						// 130:098c
-						this->var_str_1578.clear(); // was: str(173)
-						this->sub_130_2226();
+						var_str_1578.clear(); // was: str(173)
+						sub_130_2226();
 					}
 					// 130:09a4
 					for (int i = 1; i <= 3; i++) {
-						this->playTone(_zbasic->rndInt(0x1f4) + 0x19, 0x42, 0);
+						playTone(_zbasic->rndInt(0x1f4) + 0x19, 0x42, 0);
 					}
 					for (int j = 0; j <= 1; j++) {
-						for (int i = 1; i <= this->var_i16_1576; i++) {
-							_toolbox->Delay((0xc - (this->var_i16_1576 / 0xa))*60/1000);
-							_toolbox->InvertRect(_screenGrid[ABS(this->arr_i16_3738[i])]);
+						for (int i = 1; i <= var_i16_1576; i++) {
+							_toolbox->Delay((0xc - (var_i16_1576 / 0xa))*60/1000);
+							_toolbox->InvertRect(_screenGrid[ABS(arr_i16_3738[i])]);
 						}
 					}
 					if (_jumbleCurrentSubPuzzle == _jumbleSubPuzzleCount) {
@@ -324,71 +324,71 @@ void FoolGame::jumbleRun() {
 	}
 	// if we're here, the puzzle is solved
 	_toolbox->PenNormal();
-	this->menuClickMessage();
-	this->waitForMouseUp();
-	this->sub_128_61ec();
+	menuClickMessage();
+	waitForMouseUp();
+	sub_128_61ec();
 	// 130:0a90
 	if (_activePuzzle != 0x55) {
 		// 130:0b68
 		while ((_event.modifiers & kModMouseButtonUp) != 0) {
 			// 130:0aa0
-			if (this->arr_i16_4338[0] > 0) {
+			if (arr_i16_4338[0] > 0) {
 				// strobe the squares in the victory list
-				if (this->arr_i16_4338[0] == 1) {
+				if (arr_i16_4338[0] == 1) {
 					// originally was 0x64, lock to 200ms
-					this->var_i16_7e4 = 0xc8;
+					var_i16_7e4 = 0xc8;
 				} else {
 					// originally was 0xd, lock to 2 frames
-					this->var_i16_7e4 = 0x22;
+					var_i16_7e4 = 0x22;
 				}
-				this->var_i16_68a = 0;
+				var_i16_68a = 0;
 				do {
 					int ticks = (int)_toolbox->TickCount();
-					this->var_i16_68a++;
-					_toolbox->InvertRect(_screenGrid[this->arr_i16_4338[this->var_i16_68a]]);
+					var_i16_68a++;
+					_toolbox->InvertRect(_screenGrid[arr_i16_4338[var_i16_68a]]);
 					// mask was originally 0
-					this->getNextEvent(-1);
-					int delta = MAX(0, this->var_i16_7e4*60/1000 - ((int)_toolbox->TickCount() - ticks));
+					getNextEvent(-1);
+					int delta = MAX(0, var_i16_7e4*60/1000 - ((int)_toolbox->TickCount() - ticks));
 					_toolbox->Delay(delta);
-				} while (!((this->var_i16_68a == this->arr_i16_4338[0]) || ((_event.modifiers & kModMouseButtonUp) == 0)));
+				} while (!((var_i16_68a == arr_i16_4338[0]) || ((_event.modifiers & kModMouseButtonUp) == 0)));
 			} else {
 			// 130:0b62
 				// mask was originally 0
-				this->getNextEvent(-1);
+				getNextEvent(-1);
 			}
 		}
 	// 130:0b7a
 	} else {
 		// 130:0b7e
-		this->fillRect(0x131, 0, 0x156, 0x10e, 0x47);
+		fillRect(0x131, 0, 0x156, 0x10e, 0x47);
 		_activePuzzleSolved = false;
-		this->var_i16_bfc = 0;
+		var_i16_bfc = 0;
 		do {
-			for (int i = 1; i <= this->arr_i16_4338[0]; i++) {
+			for (int i = 1; i <= arr_i16_4338[0]; i++) {
 				_toolbox->Delay(0xd*60/1000);
-				_toolbox->InvertRect(_screenGrid[this->arr_i16_4338[i]]);
-				this->getNextEvent(0);
+				_toolbox->InvertRect(_screenGrid[arr_i16_4338[i]]);
+				getNextEvent(0);
 				if ((_event.modifiers & kModMouseButtonUp) == 0) {
 					_activePuzzleSolved = true;
 				}
 			}
 			// 130:0c14
-			if (this->var_i16_bfc == 0) {
-				this->var_i16_bfc = 1;
+			if (var_i16_bfc == 0) {
+				var_i16_bfc = 1;
 			} else {
-				this->var_i16_bfc = 0;
+				var_i16_bfc = 0;
 			}
-		} while (!((_activePuzzleSolved) && (this->var_i16_bfc == 1)));
+		} while (!((_activePuzzleSolved) && (var_i16_bfc == 1)));
 	}
 	// 130:0c4e
-	this->jumbleStoreState();
+	jumbleStoreState();
 }
 
 void FoolGame::sub_130_c56() {
 	warning(__func__);
 	// 130:0c56
-	this->jumbleStoreState();
-	this->saveGame();
+	jumbleStoreState();
+	saveGame();
 	_stateFlags = kStateNull;
 }
 
@@ -402,11 +402,11 @@ void FoolGame::jumbleStoreState() {
 		// 130:0c98
 		if (_activePuzzleStatus < 0x64) {
 			_activePuzzleStatus = _jumbleCurrentSubPuzzle;
-			if ((_jumbleGameType == 2) && (!this->var_str_1578.empty())) { // was: str(175)
-				_activePuzzleBuffer = this->var_str_1070 + _zbasic->leftStr(this->var_str_1578, this->var_i16_167a-2);
+			if ((_jumbleGameType == 2) && (!var_str_1578.empty())) { // was: str(175)
+				_activePuzzleBuffer = var_str_1070 + _zbasic->leftStr(var_str_1578, var_i16_167a-2);
 			} else {
 				// 130:0cfe
-				_activePuzzleBuffer = this->var_str_1070;
+				_activePuzzleBuffer = var_str_1070;
 			}
 			// 130:0d0e
 		} else {
@@ -422,16 +422,16 @@ void FoolGame::jumbleStoreState() {
 void FoolGame::sub_130_d2e() {
 	warning(__func__);
 	// 130:0d2e
-	this->sub_130_1426();
-	this->sub_128_61ec();
+	sub_130_1426();
+	sub_128_61ec();
 	_stateFlags = kStateNull;
-	while (((_stateFlags & kStateReturn) == 0) && (this->var_str_1070 != this->var_str_1170)) {
-		this->getNextEvent(-1);
+	while (((_stateFlags & kStateReturn) == 0) && (var_str_1070 != var_str_1170)) {
+		getNextEvent(-1);
 		if (_event.what == kMouseDown) {
-			this->jumbleOnClick();
+			jumbleOnClick();
 		}
 		if (_stateFlags == kStateSaveGame) {
-			this->sub_130_c56();
+			sub_130_c56();
 		}
 	}
 }
@@ -441,114 +441,114 @@ void FoolGame::jumbleRunSubstitution() {
 	// 130:0d90
 	// substitution cipher
 	if (!_zbasic->index(1, 1).empty()) { // was: str(177)
-		if (this->var_str_1070.size() == this->var_str_1170.size()) {
-			this->var_i16_1372 = _zbasic->index(1, 1).size();
-			this->var_str_1578 = _zbasic->space(this->var_i16_1372);
-			for (int i = 1; i<= this->var_i16_1372; i++) {
-				this->var_str_167c = _zbasic->midStr(_zbasic->index(1, 1), i, 1);
-				this->var_i16_7e4 = _zbasic->asc(_zbasic->ucase(this->var_str_167c)) - 0x40;
-				if ((this->var_i16_7e4 >= 1) && (this->var_i16_7e4 <= 0x1a)) {
-					this->var_str_d12 = _zbasic->chr(this->arr_i16_5cbc[this->var_i16_7e4] + 0x40);
+		if (var_str_1070.size() == var_str_1170.size()) {
+			var_i16_1372 = _zbasic->index(1, 1).size();
+			var_str_1578 = _zbasic->space(var_i16_1372);
+			for (int i = 1; i<= var_i16_1372; i++) {
+				var_str_167c = _zbasic->midStr(_zbasic->index(1, 1), i, 1);
+				var_i16_7e4 = _zbasic->asc(_zbasic->ucase(var_str_167c)) - 0x40;
+				if ((var_i16_7e4 >= 1) && (var_i16_7e4 <= 0x1a)) {
+					var_str_d12 = _zbasic->chr(arr_i16_5cbc[var_i16_7e4] + 0x40);
 				} else {
 					// 130:0e88
-					this->var_str_d12 = this->var_str_167c;
+					var_str_d12 = var_str_167c;
 				}
 				// 130:0e98
-				_zbasic->midStrSet(this->var_str_1578, i, 1, this->var_str_d12);
+				_zbasic->midStrSet(var_str_1578, i, 1, var_str_d12);
 			}
 
 		} else {
 			// 130:0ece
-			this->var_i16_484 = this->var_str_1070.size();
-			this->var_i16_7e4 = this->var_str_1170.size();
-			this->var_str_1578 = _zbasic->rightStr(this->var_str_1070, this->var_i16_484 - this->var_i16_7e4);
-			this->var_str_1070 = _zbasic->leftStr(this->var_str_1070, this->var_i16_7e4);
+			var_i16_484 = var_str_1070.size();
+			var_i16_7e4 = var_str_1170.size();
+			var_str_1578 = _zbasic->rightStr(var_str_1070, var_i16_484 - var_i16_7e4);
+			var_str_1070 = _zbasic->leftStr(var_str_1070, var_i16_7e4);
 
 		}
 		// 130:0f24
-		this->var_str_1578 += Common::U32String(" = ") + _zbasic->index(1, 1); // ABC = XYZ
-		this->var_i16_167a = _zbasic->instr(1, this->var_str_1578, Common::U32String("=")); // was: str(179)
-		this->sub_130_2226();
+		var_str_1578 += Common::U32String(" = ") + _zbasic->index(1, 1); // ABC = XYZ
+		var_i16_167a = _zbasic->instr(1, var_str_1578, Common::U32String("=")); // was: str(179)
+		sub_130_2226();
 	} else {
 		// 130:0f72
-		this->var_str_1578.clear(); // was: str(180);
+		var_str_1578.clear(); // was: str(180);
 	}
 	// 130:0f86
-	this->_jumblePosition = 1;
-	this->sub_130_1c1a();
-	this->sub_128_61ec();
+	_jumblePosition = 1;
+	sub_130_1c1a();
+	sub_128_61ec();
 	_stateFlags = kStateNull;
 	_keyLastPressed = 0;
 	// 130:0fa0
-	while (((_stateFlags & kStateReturn) == 0) && (this->var_str_1070 != this->var_str_1170)) {
+	while (((_stateFlags & kStateReturn) == 0) && (var_str_1070 != var_str_1170)) {
 		// 130:0fa4
-		this->getNextEvent(-1);
+		getNextEvent(-1);
 		if (_keyLastPressed != 0) {
-			this->jumbleOnKey();
+			jumbleOnKey();
 		}
 		if (_event.what == kMouseDown) {
-			this->jumbleOnClick();
+			jumbleOnClick();
 		}
 		if (_stateFlags == kStateSaveGame) {
-			this->sub_130_c56();
+			sub_130_c56();
 		}
 	}
 	// 130:0ffe
-	this->jumbleSelectSquare();
+	jumbleSelectSquare();
 }
 
 void FoolGame::sub_130_1004() {
 	warning(__func__);
 	// 130:1004
-	this->_jumblePosition = _zbasic->instr(1, this->var_str_1070, Common::U32String(" ")); // was: str(181)
-	if (this->_jumblePosition == 0) {
-		this->_jumblePosition = 1;
+	_jumblePosition = _zbasic->instr(1, var_str_1070, Common::U32String(" ")); // was: str(181)
+	if (_jumblePosition == 0) {
+		_jumblePosition = 1;
 	}
-	this->sub_130_20d2();
-	this->sub_128_61ec();
+	sub_130_20d2();
+	sub_128_61ec();
 	_stateFlags = kStateNull;
 	_keyLastPressed = 0;
 	// 130:1042
-	while (((_stateFlags & kStateReturn) == 0) && (this->var_str_1070 != this->var_str_1170)) {
-		this->getNextEvent(-1);
+	while (((_stateFlags & kStateReturn) == 0) && (var_str_1070 != var_str_1170)) {
+		getNextEvent(-1);
 		if (_keyLastPressed != 0) {
-			this->jumbleOnKey();
+			jumbleOnKey();
 		}
 		if (_event.what == kMouseDown) {
-			this->jumbleOnClick();
+			jumbleOnClick();
 		}
 		if (_stateFlags == kStateSaveGame) {
-			this->sub_130_c56();
+			sub_130_c56();
 		}
 	}
-	this->jumbleSelectSquare();
+	jumbleSelectSquare();
 }
 
 void FoolGame::jumbleRunWordSquare() {
 	warning(__func__);
 	// 130:10a6
 	// word square
-	this->sub_130_1426();
+	sub_130_1426();
 	if (_jumbleGameType != 5) {
-		this->var_str_177c = _zbasic->midStr(this->var_str_1170, 1, 1) + _zbasic->midStr(this->var_str_1170, 4, 1) + _zbasic->midStr(this->var_str_1170, 7, 1);
-		this->var_str_177c += _zbasic->midStr(this->var_str_1170, 2, 1) + _zbasic->midStr(this->var_str_1170, 5, 1) + _zbasic->midStr(this->var_str_1170, 8, 1);
-		this->var_str_177c += _zbasic->midStr(this->var_str_1170, 3, 1) + _zbasic->midStr(this->var_str_1170, 6, 1) + _zbasic->midStr(this->var_str_1170, 9, 1);
+		var_str_177c = _zbasic->midStr(var_str_1170, 1, 1) + _zbasic->midStr(var_str_1170, 4, 1) + _zbasic->midStr(var_str_1170, 7, 1);
+		var_str_177c += _zbasic->midStr(var_str_1170, 2, 1) + _zbasic->midStr(var_str_1170, 5, 1) + _zbasic->midStr(var_str_1170, 8, 1);
+		var_str_177c += _zbasic->midStr(var_str_1170, 3, 1) + _zbasic->midStr(var_str_1170, 6, 1) + _zbasic->midStr(var_str_1170, 9, 1);
 	} else {
 		// 130:1196
-		this->var_str_177c = _zbasic->midStr(this->var_str_1170, 3, 2) + _zbasic->midStr(this->var_str_1170, 1, 2) + _zbasic->midStr(this->var_str_1170, 5, 1);
-		this->var_str_177c += _zbasic->midStr(this->var_str_1170, 8, 2) + _zbasic->midStr(this->var_str_1170, 6, 2);
+		var_str_177c = _zbasic->midStr(var_str_1170, 3, 2) + _zbasic->midStr(var_str_1170, 1, 2) + _zbasic->midStr(var_str_1170, 5, 1);
+		var_str_177c += _zbasic->midStr(var_str_1170, 8, 2) + _zbasic->midStr(var_str_1170, 6, 2);
 	}
 	// 130:1212
-	this->sub_128_61ec();
+	sub_128_61ec();
 	_stateFlags = kStateNull;
 	// 130:121c
-	while (((_stateFlags & kStateReturn) == 0) && (this->var_str_1070 != this->var_str_1170) && (this->var_str_1070 != this->var_str_177c)) {
-		this->getNextEvent(-1);
+	while (((_stateFlags & kStateReturn) == 0) && (var_str_1070 != var_str_1170) && (var_str_1070 != var_str_177c)) {
+		getNextEvent(-1);
 		if (_event.what == kMouseDown) {
-			this->jumbleOnClick();
+			jumbleOnClick();
 		}
 		if (_stateFlags == kStateSaveGame) {
-			this->sub_130_c56();
+			sub_130_c56();
 		}
 	}
 }
@@ -557,61 +557,61 @@ void FoolGame::jumbleRunHiddenMessage() {
 	warning(__func__);
 	// 130:1282
 	// hidden message, change the mouse cursor
-	this->_jumblePosition = _zbasic->instr(1, this->var_str_1070, Common::U32String(" ")); // was: str(182)
-	if (this->_jumblePosition == 0) {
-		this->_jumblePosition = 1;
+	_jumblePosition = _zbasic->instr(1, var_str_1070, Common::U32String(" ")); // was: str(182)
+	if (_jumblePosition == 0) {
+		_jumblePosition = 1;
 	}
-	this->sub_130_20d2();
-	this->sub_128_61ec();
-	this->var_i16_7b2 = 0;
+	sub_130_20d2();
+	sub_128_61ec();
+	var_i16_7b2 = 0;
 	_stateFlags = kStateNull;
 	_keyLastPressed = 0;
 	_toolbox->InitCursor();
-	while (((_stateFlags & kStateReturn) == 0) && (this->var_str_1070 != this->var_str_1170)) {
+	while (((_stateFlags & kStateReturn) == 0) && (var_str_1070 != var_str_1170)) {
 		// 130:12cc
-		this->getNextEvent(-1);
+		getNextEvent(-1);
 		if (_keyLastPressed != 0) {
-			this->jumbleOnKey();
+			jumbleOnKey();
 		}
-		this->getGridFromMouse(this->var_i16_68a, this->var_i16_68c);
+		getGridFromMouse(var_i16_68a, var_i16_68c);
 		if (_event.what == kMouseDown) {
-			this->jumbleOnClick();
+			jumbleOnClick();
 		}
-		if ((this->var_i16_68a < 1) || (this->var_i16_68a > this->arr_i16_1eb8[0]) || (this->var_i16_68c < 1) || (this->var_i16_68c > this->arr_i16_1eb8[1])) {
-			this->var_i16_187c = 0;
+		if ((var_i16_68a < 1) || (var_i16_68a > arr_i16_1eb8[0]) || (var_i16_68c < 1) || (var_i16_68c > arr_i16_1eb8[1])) {
+			var_i16_187c = 0;
 		} else {
-			this->var_i16_187c = this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c];
+			var_i16_187c = arr_i16_2f38[var_i16_68a*32 + var_i16_68c];
 		}
 		// 130:139e
-		if (this->var_i16_187c != this->var_i16_7b2) {
-			if (this->var_i16_187c < 0x11) {
+		if (var_i16_187c != var_i16_7b2) {
+			if (var_i16_187c < 0x11) {
 				_toolbox->InitCursor();
 			} else {
-				_toolbox->SetCursor(_cursors[this->var_i16_187c]);
+				_toolbox->SetCursor(_cursors[var_i16_187c]);
 			}
 			// 130:13dc
-			this->var_i16_7b2 = this->var_i16_187c;
+			var_i16_7b2 = var_i16_187c;
 		}
 		// 130:13e2
-		this->var_i16_7b2 = this->var_i16_187c;
+		var_i16_7b2 = var_i16_187c;
 		if (_stateFlags == kStateSaveGame) {
-			this->sub_130_c56();
+			sub_130_c56();
 		}
 	}
 	// 130:141e
-	this->jumbleSelectSquare();
+	jumbleSelectSquare();
 	_toolbox->InitCursor();
 }
 
 void FoolGame::sub_130_1426() {
 	warning(__func__);
 	// 130:1426
-	this->var_i16_187e = 0;
-	this->var_i16_1880 = 0;
+	var_i16_187e = 0;
+	var_i16_1880 = 0;
 	if (!_zbasic->index(1, 1).empty()) { // was: str(183)
-		this->var_i16_1678 = 1;
-		this->var_str_1578 = _zbasic->index(1, 1);
-		this->sub_130_2226();
+		var_i16_1678 = 1;
+		var_str_1578 = _zbasic->index(1, 1);
+		sub_130_2226();
 	}
 	// 130:1474
 }
@@ -619,37 +619,37 @@ void FoolGame::sub_130_1426() {
 void FoolGame::jumbleOnClick() {
 	warning(__func__);
 	// 130:1476
-	this->getGridFromMouse(this->var_i16_68a, this->var_i16_68c);
-	if ((this->var_i16_68a < 1) || (this->var_i16_68a > this->arr_i16_1eb8[0]) || (this->var_i16_68c < 1) || (this->var_i16_68c > this->arr_i16_1eb8[1])) {
+	getGridFromMouse(var_i16_68a, var_i16_68c);
+	if ((var_i16_68a < 1) || (var_i16_68a > arr_i16_1eb8[0]) || (var_i16_68c < 1) || (var_i16_68c > arr_i16_1eb8[1])) {
 		// 130:14fa
 		if (_event.where.x > 0x14) {
-			this->playTone(0xf, 0x42, 0x1);
+			playTone(0xf, 0x42, 0x1);
 		}
 		return;
 	}
 	// 130:1518
-	if (this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c] < 1) {
-		this->playTone(0xf, 0x42, 0x1);
+	if (arr_i16_2f38[var_i16_68a*32 + var_i16_68c] < 1) {
+		playTone(0xf, 0x42, 0x1);
 		return;
 	}
 	// 130:1558
-	if ((_jumbleGameType == 6) && (this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c] >= 0x11)) {
-		this->playTone(0xf, 0x42, 0x1);
+	if ((_jumbleGameType == 6) && (arr_i16_2f38[var_i16_68a*32 + var_i16_68c] >= 0x11)) {
+		playTone(0xf, 0x42, 0x1);
 		return;
 	}
 	// 130:15b0
 	switch (_jumbleGameType - 1) {
 	case 0:
-		this->sub_130_172c();
+		sub_130_172c();
 		break;
 	case 1:	// the knight of wands
 	case 2:
 	case 6:
-		this->sub_130_20aa();
+		sub_130_20aa();
 		break;
 	case 3:
 	case 4:	// word square
-		this->sub_130_172c();
+		sub_130_172c();
 		break;
 	default:
 		warning("jumbleOnClick: unhandled case %d", _jumbleGameType-1);
@@ -661,16 +661,16 @@ void FoolGame::jumbleOnKey() {
 	warning(__func__);
 	// 130:15da
 	if ((_keyLastPressed == 3) || (_keyLastPressed == 0xd)) {
-		this->jumbleSelectSquare();
-		this->jumbleNextPosition();
-		this->sub_130_20d2();
+		jumbleSelectSquare();
+		jumbleNextPosition();
+		sub_130_20d2();
 		_keyLastPressed = 0;
 		return;
 	}
 	if (_keyLastPressed == 8) {
-		this->jumbleSelectSquare();
-		this->jumblePreviousPosition();
-		this->sub_130_20d2();
+		jumbleSelectSquare();
+		jumblePreviousPosition();
+		sub_130_20d2();
 		_keyLastPressed = 0;
 		return;
 	}
@@ -684,29 +684,29 @@ void FoolGame::jumbleOnKey() {
 		}
 	} else {
 		// 130:1690
-		this->var_i16_1882 = 0;
+		var_i16_1882 = 0;
 		if ((_keyLastPressed < 0x41) || (_keyLastPressed > 0x5a)) {
-			this->var_i16_1882 = 1;
+			var_i16_1882 = 1;
 		}
 		if (_keyLastPressed == 0x20) {
-			this->var_i16_1882 = 0;
+			var_i16_1882 = 0;
 		}
-		if (this->var_i16_1882 != 0)
+		if (var_i16_1882 != 0)
 			return;
 	}
 	// 130:16dc
-	this->var_str_d12 = _zbasic->chr(_keyLastPressed);
+	var_str_d12 = _zbasic->chr(_keyLastPressed);
 	// 130:16f2
 	_keyLastPressed = 0;
 	if (_jumbleGameType != 2) {
 		// 130:1706
 		if (!((_jumbleGameType == 3) || (_jumbleGameType == 6))) {
-			this->sub_130_172c();
+			sub_130_172c();
 		} else {
-			this->sub_130_201a();
+			sub_130_201a();
 		}
 	} else {
-		this->sub_130_1a16();
+		sub_130_1a16();
 	}
 }
 
@@ -714,197 +714,197 @@ void FoolGame::sub_130_172c() {
 	warning(__func__);
 	// 130:172c
 	// word square, disallow clicking the centre tile
-	if ((_jumbleGameType == 4) && (this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c] == 5)) {
-		this->jumbleClickFixedSquare();
+	if ((_jumbleGameType == 4) && (arr_i16_3b38[var_i16_68a*32 + var_i16_68c] == 5)) {
+		jumbleClickFixedSquare();
 		return;
 	}
 	// 130:1776
-	if (!((this->var_i16_1678 == this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]) && (this->var_i16_187e > 0))) {
+	if (!((var_i16_1678 == arr_i16_2f38[var_i16_68a*32 + var_i16_68c]) && (var_i16_187e > 0))) {
 		// 130:17c4
-		this->sub_130_19ac();
-		this->var_i16_187e = ABS(this->arr_i16_3738[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]]);
-		this->var_i16_1884 = this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c];
-		_toolbox->InvertRect(_screenGrid[this->var_i16_187e]);
-		this->sub_130_2178();
+		sub_130_19ac();
+		var_i16_187e = ABS(arr_i16_3738[arr_i16_3b38[var_i16_68a*32 + var_i16_68c]]);
+		var_i16_1884 = arr_i16_3b38[var_i16_68a*32 + var_i16_68c];
+		_toolbox->InvertRect(_screenGrid[var_i16_187e]);
+		sub_130_2178();
 		return;
 	}
 	// 130:1844
-	this->var_i16_1880 = ABS(this->arr_i16_3738[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]]);
-	if (this->var_i16_187e == this->var_i16_1880) {
-		this->sub_130_19ac();
+	var_i16_1880 = ABS(arr_i16_3738[arr_i16_3b38[var_i16_68a*32 + var_i16_68c]]);
+	if (var_i16_187e == var_i16_1880) {
+		sub_130_19ac();
 		return;
 	}
 	// 130:189a
-	_toolbox->InvertRect(_screenGrid[this->var_i16_1880]);
-	this->var_i16_1886 = this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c];
-	this->var_str_1374 = _zbasic->midStr(this->var_str_1070, this->var_i16_1884, 1);
-	this->var_str_1474 = _zbasic->midStr(this->var_str_1070, this->var_i16_1886, 1);
-	_zbasic->midStrSet(this->var_str_1070, this->var_i16_1884, 1, this->var_str_1474);
-	_zbasic->midStrSet(this->var_str_1070, this->var_i16_1886, 1, this->var_str_1374);
-	this->_jumbleSelected = this->var_i16_187e;
-	this->_jumblePosition = this->var_i16_1884;
-	this->var_str_d12 = this->var_str_1474;
-	this->sub_130_1c6c();
-	this->jumbleDrawLetter();
-	this->_jumbleSelected = this->var_i16_1880;
-	this->_jumblePosition = this->var_i16_1886;
-	this->var_str_d12 = this->var_str_1374;
-	this->sub_130_1c6c();
-	this->jumbleDrawLetter();
-	this->var_i16_187e = 0;
-	this->var_i16_1880 = 0;
+	_toolbox->InvertRect(_screenGrid[var_i16_1880]);
+	var_i16_1886 = arr_i16_3b38[var_i16_68a*32 + var_i16_68c];
+	var_str_1374 = _zbasic->midStr(var_str_1070, var_i16_1884, 1);
+	var_str_1474 = _zbasic->midStr(var_str_1070, var_i16_1886, 1);
+	_zbasic->midStrSet(var_str_1070, var_i16_1884, 1, var_str_1474);
+	_zbasic->midStrSet(var_str_1070, var_i16_1886, 1, var_str_1374);
+	_jumbleSelected = var_i16_187e;
+	_jumblePosition = var_i16_1884;
+	var_str_d12 = var_str_1474;
+	sub_130_1c6c();
+	jumbleDrawLetter();
+	_jumbleSelected = var_i16_1880;
+	_jumblePosition = var_i16_1886;
+	var_str_d12 = var_str_1374;
+	sub_130_1c6c();
+	jumbleDrawLetter();
+	var_i16_187e = 0;
+	var_i16_1880 = 0;
 }
 
 void FoolGame::sub_130_19ac() {
 	warning(__func__);
 	// 130:19ac
-	if (this->var_i16_187e > 0) {
-		_toolbox->InvertRect(_screenGrid[this->var_i16_187e]);
+	if (var_i16_187e > 0) {
+		_toolbox->InvertRect(_screenGrid[var_i16_187e]);
 	}
-	this->var_i16_187e = 0;
-	this->var_i16_1880 = 0;
+	var_i16_187e = 0;
+	var_i16_1880 = 0;
 }
 
 void FoolGame::jumbleClickFixedSquare() {
 	warning(__func__);
 	// 130:19da
 	// fixed tile
-	this->sub_130_19ac();
-	this->playTone(0x19, 0x64, 0);
+	sub_130_19ac();
+	playTone(0x19, 0x64, 0);
 	for (int i = 0; i <= 0x19; i++) {
 		_toolbox->InvertRect(_screenGrid[13]);
-		this->delay(1);
+		delay(1);
 	}
 }
 
 void FoolGame::sub_130_1a16() {
 	warning(__func__);
 	// 130:1a16
-	this->var_str_1374 = this->var_str_d12;
-	this->var_str_1474 = _zbasic->midStr(this->var_str_1070, this->_jumblePosition, 1);
-	if (this->var_str_1374 == this->var_str_1474)
+	var_str_1374 = var_str_d12;
+	var_str_1474 = _zbasic->midStr(var_str_1070, _jumblePosition, 1);
+	if (var_str_1374 == var_str_1474)
 		return;
 	// 130:1a5c
-	this->jumbleSelectSquare();
-	for (int16 i = 1; i <= this->var_i16_1576; i++) {
+	jumbleSelectSquare();
+	for (int16 i = 1; i <= var_i16_1576; i++) {
 		// 130:1a66
-		this->var_str_384 = _zbasic->midStr(this->var_str_1070, i, 1);
-		if ((this->var_str_384 == this->var_str_1374) || (this->var_str_384 == this->var_str_1474)) {
-			if (this->var_str_384 == this->var_str_1374) {
-				this->var_str_d12 = this->var_str_1474;
+		var_str_384 = _zbasic->midStr(var_str_1070, i, 1);
+		if ((var_str_384 == var_str_1374) || (var_str_384 == var_str_1474)) {
+			if (var_str_384 == var_str_1374) {
+				var_str_d12 = var_str_1474;
 			} else {
 				// 130:1ad8
-				this->var_str_d12 = this->var_str_1374;
+				var_str_d12 = var_str_1374;
 			}
 			// 130:1ae8
-			_zbasic->midStrSet(this->var_str_1070, i, 1, this->var_str_d12);
-			this->_jumbleSelected = ABS(this->arr_i16_3738[i]);
-			this->sub_130_1c6c();
-			this->jumbleDrawLetter();
+			_zbasic->midStrSet(var_str_1070, i, 1, var_str_d12);
+			_jumbleSelected = ABS(arr_i16_3738[i]);
+			sub_130_1c6c();
+			jumbleDrawLetter();
 		}
 		// 130:1b2e
 	}
 	// 130:1b40
-	if (!this->var_str_1578.empty()) { // was: str(184)
-		for (int16 i = 1; i <= this->var_i16_167a - 2; i++) {
-			this->var_str_d12 = _zbasic->midStr(this->var_str_1578, i, 1);
-			if ((this->var_str_d12 == this->var_str_1374) || (this->var_str_d12 == this->var_str_1474)) {
+	if (!var_str_1578.empty()) { // was: str(184)
+		for (int16 i = 1; i <= var_i16_167a - 2; i++) {
+			var_str_d12 = _zbasic->midStr(var_str_1578, i, 1);
+			if ((var_str_d12 == var_str_1374) || (var_str_d12 == var_str_1474)) {
 				// 130:1ba8
-				if (this->var_str_d12 == this->var_str_1374) {
-					this->var_str_d12 = this->var_str_1474;
+				if (var_str_d12 == var_str_1374) {
+					var_str_d12 = var_str_1474;
 				} else {
 					// 130:1bd2
-					this->var_str_d12 = this->var_str_1374;
+					var_str_d12 = var_str_1374;
 				}
 				// 130:1be2
-				_zbasic->midStrSet(this->var_str_1578, i, 1, this->var_str_d12);
+				_zbasic->midStrSet(var_str_1578, i, 1, var_str_d12);
 			}
 			// 130:1c02
 		}
-		this->sub_130_2226();
+		sub_130_2226();
 	}
 	// 130:1c1a
-	this->sub_130_1c1a();
+	sub_130_1c1a();
 }
 
 void FoolGame::sub_130_1c1a() {
 	warning(__func__);
 	// 130:1c1a
-	this->_jumbleSelected = ABS(this->arr_i16_3738[this->_jumblePosition]);
-	_toolbox->InvertRect(_screenGrid[this->_jumbleSelected]);
+	_jumbleSelected = ABS(arr_i16_3738[_jumblePosition]);
+	_toolbox->InvertRect(_screenGrid[_jumbleSelected]);
 }
 
 void FoolGame::jumbleSelectSquare() {
 	warning(__func__);
 	// 130:1c52
-	_toolbox->InvertRect(_screenGrid[this->_jumbleSelected]);
+	_toolbox->InvertRect(_screenGrid[_jumbleSelected]);
 }
 
 void FoolGame::sub_130_1c6c() {
 	warning(__func__);
 	_toolbox->PenNormal();
-	_toolbox->FillRect(_screenGrid[this->_jumbleSelected], _patterns[this->var_i16_105e]);
-	_toolbox->PenPat(_patterns[this->var_i16_105c]);
-	_toolbox->FrameRect(_screenGrid[this->_jumbleSelected]);
-	if (this->arr_i16_3738[this->_jumblePosition] >= 0) {
+	_toolbox->FillRect(_screenGrid[_jumbleSelected], _patterns[var_i16_105e]);
+	_toolbox->PenPat(_patterns[var_i16_105c]);
+	_toolbox->FrameRect(_screenGrid[_jumbleSelected]);
+	if (arr_i16_3738[_jumblePosition] >= 0) {
 		return;
 	}
 	// 130:1ce2
 	if ((_activePuzzle > 0x50) && (_activePuzzle < 0x55)) {
 		return;
 	}
-	this->arr_i16_4758[0] = _screenGrid[this->_jumbleSelected].top + 2;
-	this->arr_i16_4758[1] = _screenGrid[this->_jumbleSelected].left + 2;
-	this->arr_i16_4758[2] = _screenGrid[this->_jumbleSelected].bottom - 2;
-	this->arr_i16_4758[3] = _screenGrid[this->_jumbleSelected].right - 2;
+	arr_i16_4758[0] = _screenGrid[_jumbleSelected].top + 2;
+	arr_i16_4758[1] = _screenGrid[_jumbleSelected].left + 2;
+	arr_i16_4758[2] = _screenGrid[_jumbleSelected].bottom - 2;
+	arr_i16_4758[3] = _screenGrid[_jumbleSelected].right - 2;
 	Common::Rect temp;
-	temp.top = this->arr_i16_4758[0];
-	temp.left = this->arr_i16_4758[1];
-	temp.bottom = this->arr_i16_4758[2];
-	temp.right = this->arr_i16_4758[3];
+	temp.top = arr_i16_4758[0];
+	temp.left = arr_i16_4758[1];
+	temp.bottom = arr_i16_4758[2];
+	temp.right = arr_i16_4758[3];
 	_toolbox->FrameRect(temp);
 }
 
 void FoolGame::jumbleDrawLetter() {
 	warning(__func__);
 	// 130:1dcc
-	_zbasic->text(kFontPuzzle, this->arr_i16_1eb8[0xe], 0, this->var_i16_106c);
+	_zbasic->text(kFontPuzzle, arr_i16_1eb8[0xe], 0, var_i16_106c);
 	_toolbox->MoveTo(
-		_screenGrid[this->_jumbleSelected].left + this->arr_i16_1eb8[2],
-		_screenGrid[this->_jumbleSelected].top + this->arr_i16_1eb8[3]
+		_screenGrid[_jumbleSelected].left + arr_i16_1eb8[2],
+		_screenGrid[_jumbleSelected].top + arr_i16_1eb8[3]
 	);
-	_toolbox->DrawString(this->var_str_d12);
+	_toolbox->DrawString(var_str_d12);
 }
 
 void FoolGame::sub_130_1e5c() {
 	warning(__func__);
 	// 130:1e5c
 	_toolbox->PenNormal();
-	_toolbox->InvertRect(_screenGrid[this->_jumbleSelected]);
-	this->sub_130_1e76();
+	_toolbox->InvertRect(_screenGrid[_jumbleSelected]);
+	sub_130_1e76();
 }
 
 void FoolGame::sub_130_1e76() {
 	warning(__func__);
 	// 130:1e76
-	this->arr_i16_4758[0] = _screenGrid[this->_jumbleSelected].top + 3;
-	this->arr_i16_4758[1] = _screenGrid[this->_jumbleSelected].left + 3;
-	this->arr_i16_4758[2] = _screenGrid[this->_jumbleSelected].bottom - 3;
-	this->arr_i16_4758[3] = _screenGrid[this->_jumbleSelected].right - 3;
+	arr_i16_4758[0] = _screenGrid[_jumbleSelected].top + 3;
+	arr_i16_4758[1] = _screenGrid[_jumbleSelected].left + 3;
+	arr_i16_4758[2] = _screenGrid[_jumbleSelected].bottom - 3;
+	arr_i16_4758[3] = _screenGrid[_jumbleSelected].right - 3;
 	Common::Rect temp;
-	temp.top = this->arr_i16_4758[0];
-	temp.left = this->arr_i16_4758[1];
-	temp.bottom = this->arr_i16_4758[2];
-	temp.right = this->arr_i16_4758[3];
-	_toolbox->FillRect(temp, _patterns[this->var_i16_105e]);
-	_zbasic->text(kFontPuzzle, this->arr_i16_1eb8[0xe], 0, this->var_i16_106c);
+	temp.top = arr_i16_4758[0];
+	temp.left = arr_i16_4758[1];
+	temp.bottom = arr_i16_4758[2];
+	temp.right = arr_i16_4758[3];
+	_toolbox->FillRect(temp, _patterns[var_i16_105e]);
+	_zbasic->text(kFontPuzzle, arr_i16_1eb8[0xe], 0, var_i16_106c);
 	// 130:1f70
 	_toolbox->MoveTo(
-		_screenGrid[this->_jumbleSelected].left + this->arr_i16_1eb8[2],
-		_screenGrid[this->_jumbleSelected].top + this->arr_i16_1eb8[3]
+		_screenGrid[_jumbleSelected].left + arr_i16_1eb8[2],
+		_screenGrid[_jumbleSelected].top + arr_i16_1eb8[3]
 	);
-	_toolbox->DrawString(this->var_str_d12);
-	if (this->arr_i16_3738[this->_jumblePosition] < 0)
+	_toolbox->DrawString(var_str_d12);
+	if (arr_i16_3738[_jumblePosition] < 0)
 		return;
 	// 130:1ff4
 	_toolbox->PenNormal();
@@ -916,73 +916,73 @@ void FoolGame::sub_130_1e76() {
 void FoolGame::sub_130_201a() {
 	warning(__func__);
 	// 130:201a
-	_zbasic->midStrSet(this->var_str_1070, this->_jumblePosition, 1, this->var_str_d12);
+	_zbasic->midStrSet(var_str_1070, _jumblePosition, 1, var_str_d12);
 	if ((_activePuzzle > 0x50) && (_activePuzzle < 0x55)) {
-		this->sub_130_1e5c();
+		sub_130_1e5c();
 	} else {
 		// 130:2066
-		this->sub_130_1c6c();
-		this->jumbleDrawLetter();
+		sub_130_1c6c();
+		jumbleDrawLetter();
 	}
 	// 130:206e
-	this->jumbleNextPosition();
-	this->sub_130_20d2();
+	jumbleNextPosition();
+	sub_130_20d2();
 }
 
 void FoolGame::jumbleNextPosition() {
 	warning(__func__);
 	// 130:2078
-	this->_jumblePosition++;
-	if (this->_jumblePosition > this->var_i16_1576) {
-		this->_jumblePosition = 1;
+	_jumblePosition++;
+	if (_jumblePosition > var_i16_1576) {
+		_jumblePosition = 1;
 	}
 }
 
 void FoolGame::jumblePreviousPosition() {
 	warning(__func__);
 	// 130:2094
-	this->_jumblePosition--;
-	if (this->_jumblePosition < 1) {
-		this->_jumblePosition = this->var_i16_1576;
+	_jumblePosition--;
+	if (_jumblePosition < 1) {
+		_jumblePosition = var_i16_1576;
 	}
 }
 
 void FoolGame::sub_130_20aa() {
 	warning(__func__);
 	// 130:20aa
-	this->jumbleSelectSquare();
-	this->_jumblePosition = this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c];
-	this->sub_130_20d2();
+	jumbleSelectSquare();
+	_jumblePosition = arr_i16_3b38[var_i16_68a*32 + var_i16_68c];
+	sub_130_20d2();
 }
 
 
 void FoolGame::sub_130_20d2() {
 	warning(__func__);
 	// 130:20d2
-	this->_jumbleSelected = ABS(this->arr_i16_3738[this->_jumblePosition]);
-	this->jumbleSelectSquare();
-	this->sub_130_20fe();
-	this->sub_130_2178();
+	_jumbleSelected = ABS(arr_i16_3738[_jumblePosition]);
+	jumbleSelectSquare();
+	sub_130_20fe();
+	sub_130_2178();
 }
 
 void FoolGame::sub_130_20fe() {
 	warning(__func__);
 	// 130:20fe
-	this->var_i16_1888 = ABS(this->arr_i16_3738[this->_jumblePosition]) - 1;
-	this->var_i16_68a = (this->var_i16_1888 % this->arr_i16_1eb8[0]) + 1;
-	this->var_i16_68c = (this->var_i16_1888 / this->arr_i16_1eb8[0]) + 1;
+	var_i16_1888 = ABS(arr_i16_3738[_jumblePosition]) - 1;
+	var_i16_68a = (var_i16_1888 % arr_i16_1eb8[0]) + 1;
+	var_i16_68c = (var_i16_1888 / arr_i16_1eb8[0]) + 1;
 }
 
 void FoolGame::sub_130_2178() {
 	warning(__func__);
 	// 130:2178
-	if ((this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c] == this->var_i16_1678) || (_jumbleGameType == 2))
+	if ((arr_i16_2f38[var_i16_68a*32 + var_i16_68c] == var_i16_1678) || (_jumbleGameType == 2))
 		return;
 
-	this->var_i16_1678 = this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c];
-	if (!_zbasic->index(1, this->var_i16_1678).empty()) { // was: str(185)
-		this->var_str_1578 = _zbasic->index(1, this->var_i16_1678);
-		this->sub_130_2226();
+	var_i16_1678 = arr_i16_2f38[var_i16_68a*32 + var_i16_68c];
+	if (!_zbasic->index(1, var_i16_1678).empty()) { // was: str(185)
+		var_str_1578 = _zbasic->index(1, var_i16_1678);
+		sub_130_2226();
 	}
 	// 130:2224
 }
@@ -991,121 +991,121 @@ void FoolGame::sub_130_2226() {
 	warning(__func__);
 	// 130:2226
 	if (_activePuzzle == 0x14) { // the blacksmith
-		this->sub_130_23cc();
+		sub_130_23cc();
 		return;
 	}
 	if (_activePuzzle == 0x3c) { // the boat
-		this->sub_130_22ee();
+		sub_130_22ee();
 		return;
 	}
 	if (_activePuzzle == 0x35) { // the sentry
-		this->sub_130_24aa();
+		sub_130_24aa();
 		return;
 	}
 	if (_activePuzzle == 0x55) { // final puzzle
-		this->sub_130_2548();
+		sub_130_2548();
 		return;
 	}
 	// 130:2266
-	this->fillRect(0x124, 0x64, 0x139, 0x1ef, 0);
-	if (this->var_str_1578.empty()) // was: str(186)
+	fillRect(0x124, 0x64, 0x139, 0x1ef, 0);
+	if (var_str_1578.empty()) // was: str(186)
 		return;
 	// 130:22a0
 	_zbasic->text(kFontFool, 0xc, 0, kSrcOr);
-	this->var_i16_484 = _toolbox->StringWidth(this->var_str_1578);
-	_toolbox->MoveTo(0x127 - (this->var_i16_484 / 2), 0x133);
-	_toolbox->DrawString(this->var_str_1578);
+	var_i16_484 = _toolbox->StringWidth(var_str_1578);
+	_toolbox->MoveTo(0x127 - (var_i16_484 / 2), 0x133);
+	_toolbox->DrawString(var_str_1578);
 }
 
 void FoolGame::sub_130_22ee() {
 	warning(__func__);
 	// 130:22ee
-	this->fillRect(0x131, 0x84, 0x156, 0x17e, this->var_i16_1060);
-	if (this->var_str_1578.empty()) // was: str(187)
+	fillRect(0x131, 0x84, 0x156, 0x17e, var_i16_1060);
+	if (var_str_1578.empty()) // was: str(187)
 		return;
 	_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
-	this->var_i16_7ba = _toolbox->StringWidth(this->var_str_1578);
-	this->fillRect(0x13c, 0xf6 - (this->var_i16_7ba / 2), 0x150, 0x10a + (this->var_i16_7ba / 2), 2);
-	_toolbox->MoveTo(0x100 - (this->var_i16_7ba / 2), 0x14a);
-	_toolbox->DrawString(this->var_str_1578);
+	var_i16_7ba = _toolbox->StringWidth(var_str_1578);
+	fillRect(0x13c, 0xf6 - (var_i16_7ba / 2), 0x150, 0x10a + (var_i16_7ba / 2), 2);
+	_toolbox->MoveTo(0x100 - (var_i16_7ba / 2), 0x14a);
+	_toolbox->DrawString(var_str_1578);
 }
 
 void FoolGame::sub_130_23cc() {
 	warning(__func__);
 	// 130:23cc
-	this->fillRect(0x12c, 0x8c, 0x156, 0x186, this->var_i16_1060);
-	if (this->var_str_1578.empty()) // was: str(188)
+	fillRect(0x12c, 0x8c, 0x156, 0x186, var_i16_1060);
+	if (var_str_1578.empty()) // was: str(188)
 		return;
 	_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
-	this->var_i16_7ba = _toolbox->StringWidth(this->var_str_1578);
-	this->fillRect(0x130, 0x100 - (this->var_i16_7ba / 2), 0x144, 0x114 + (this->var_i16_7ba / 2), 2);
-	_toolbox->MoveTo(0x10a - (this->var_i16_7ba / 2), 0x13e);
-	_toolbox->DrawString(this->var_str_1578);
+	var_i16_7ba = _toolbox->StringWidth(var_str_1578);
+	fillRect(0x130, 0x100 - (var_i16_7ba / 2), 0x144, 0x114 + (var_i16_7ba / 2), 2);
+	_toolbox->MoveTo(0x10a - (var_i16_7ba / 2), 0x13e);
+	_toolbox->DrawString(var_str_1578);
 }
 
 void FoolGame::sub_130_24aa() {
 	warning(__func__);
 	// 130:24aa
-	this->fillRect(0x125, 0x20, 0x136, 0x15e, 2);
-	if (this->var_str_1578.empty()) // was: str(189)
+	fillRect(0x125, 0x20, 0x136, 0x15e, 2);
+	if (var_str_1578.empty()) // was: str(189)
 		return;
 	_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
-	this->var_i16_7ba = _toolbox->StringWidth(this->var_str_1578);
-	_toolbox->MoveTo(0xc4 - (this->var_i16_7ba / 2), 0x131);
-	_toolbox->DrawString(this->var_str_1578);
+	var_i16_7ba = _toolbox->StringWidth(var_str_1578);
+	_toolbox->MoveTo(0xc4 - (var_i16_7ba / 2), 0x131);
+	_toolbox->DrawString(var_str_1578);
 }
 
 void FoolGame::sub_130_2548() {
 	warning(__func__);
 	// 130:2548
 	_zbasic->text(kFontFool, 0xc, 0, kSrcOr);
-	this->fillRect(0x131, 0, 0x156, 0x10e, 0x47);
-	if (this->var_str_1578.empty()) // was: str(190)
+	fillRect(0x131, 0, 0x156, 0x10e, 0x47);
+	if (var_str_1578.empty()) // was: str(190)
 		return;
 
-	this->var_i16_7ba = _toolbox->StringWidth(this->var_str_1578);
-	this->fillRect(0x13e, 0xc, 0x14e, 0x16 + this->var_i16_7ba, 0);
+	var_i16_7ba = _toolbox->StringWidth(var_str_1578);
+	fillRect(0x13e, 0xc, 0x14e, 0x16 + var_i16_7ba, 0);
 	_toolbox->MoveTo(0x16, 0x14a);
-	_toolbox->DrawString(this->var_str_1578);
+	_toolbox->DrawString(var_str_1578);
 }
 
 void FoolGame::sub_130_25d8() {
 	warning(__func__);
 	// 130:25d8
 	_zbasic->unk_20();
-	this->var_i16_188a = this->var_str_384.size();
-	this->var_str_9f4 = _zbasic->space(this->var_i16_188a);
-	for (int16 i = 1; i <= this->var_i16_188a; i++) {
-		this->arr_i16_5bbc[i] = i;
+	var_i16_188a = var_str_384.size();
+	var_str_9f4 = _zbasic->space(var_i16_188a);
+	for (int16 i = 1; i <= var_i16_188a; i++) {
+		arr_i16_5bbc[i] = i;
 	}
-	this->var_i16_188c = 0;
-	for (int16 i = this->var_i16_188a; i >= 1; i--) {
+	var_i16_188c = 0;
+	for (int16 i = var_i16_188a; i >= 1; i--) {
 		do {
-			this->var_i16_7e4 = _zbasic->rndInt(i);
+			var_i16_7e4 = _zbasic->rndInt(i);
 			// 130:2640
 			if (i == 1) {
 				// 130:266e
-				if (this->arr_i16_5bbc[this->var_i16_7e4] == i) {
-					this->var_i16_188c = 1;
+				if (arr_i16_5bbc[var_i16_7e4] == i) {
+					var_i16_188c = 1;
 				}
 				break;
 			}
 			// 130:264c
-		} while (this->arr_i16_5bbc[this->var_i16_7e4] == i);
+		} while (arr_i16_5bbc[var_i16_7e4] == i);
 		// 130:2690
-		this->arr_i16_5cbc[i] = this->arr_i16_5bbc[this->var_i16_7e4];
-		for (int16 j = this->var_i16_7e4; j <= i; j++) {
-			this->arr_i16_5bbc[j] = this->arr_i16_5bbc[j+1];
+		arr_i16_5cbc[i] = arr_i16_5bbc[var_i16_7e4];
+		for (int16 j = var_i16_7e4; j <= i; j++) {
+			arr_i16_5bbc[j] = arr_i16_5bbc[j+1];
 		}
 		// 130:26f2
 	}
 	// 130:2712
-	if (this->var_i16_188c != 0) {
-		_zbasic->swapInt(this->arr_i16_5cbc[1], this->arr_i16_5cbc[2]);
+	if (var_i16_188c != 0) {
+		_zbasic->swapInt(arr_i16_5cbc[1], arr_i16_5cbc[2]);
 	}
 	// 130:273c
-	for (int16 i = 1; i <= this->var_i16_188a; i++) {
-		_zbasic->midStrSet(this->var_str_9f4, i, 1, _zbasic->midStr(this->var_str_384, this->arr_i16_5cbc[i], 1));
+	for (int16 i = 1; i <= var_i16_188a; i++) {
+		_zbasic->midStrSet(var_str_9f4, i, 1, _zbasic->midStr(var_str_384, arr_i16_5cbc[i], 1));
 	}
 }
 
@@ -1113,39 +1113,39 @@ void FoolGame::sub_130_2790() {
 	warning(__func__);
 	_zbasic->unk_20();
 	for (int16 i = 1; i <= 0x1a; i++) {
-		this->arr_i16_5bbc[i] = i;
+		arr_i16_5bbc[i] = i;
 	}
-	this->var_i16_188c = 0;
+	var_i16_188c = 0;
 	for (int16 i = 0x1a; i > 0; i--) {
 		// 130:27c4
 		do {
-			this->var_i16_7e4 = _zbasic->rndInt(i);
+			var_i16_7e4 = _zbasic->rndInt(i);
 			// 130:27d2
 			if (i == 1) {
 				// 130:2800
-				if (this->arr_i16_5bbc[this->var_i16_7e4] == i) {
+				if (arr_i16_5bbc[var_i16_7e4] == i) {
 					// 130:281c
-					this->var_i16_188c = 1;
+					var_i16_188c = 1;
 				}
 				break;
 			}
 			// 130:27de
-		} while (this->arr_i16_5bbc[this->var_i16_7e4] == i);
+		} while (arr_i16_5bbc[var_i16_7e4] == i);
 		// 130:2822
-		this->arr_i16_5cbc[i] = this->arr_i16_5bbc[this->var_i16_7e4];
-		for (int16 j = this->var_i16_7e4; j <= i; j++) {
-			this->arr_i16_5bbc[j] = this->arr_i16_5bbc[j+1];
+		arr_i16_5cbc[i] = arr_i16_5bbc[var_i16_7e4];
+		for (int16 j = var_i16_7e4; j <= i; j++) {
+			arr_i16_5bbc[j] = arr_i16_5bbc[j+1];
 		}
 	}
 	// 130:28a4
-	if (this->var_i16_188c != 0) {
-		_zbasic->swapInt(this->arr_i16_5cbc[1], this->arr_i16_5cbc[2]);
+	if (var_i16_188c != 0) {
+		_zbasic->swapInt(arr_i16_5cbc[1], arr_i16_5cbc[2]);
 	}
-	this->var_i16_188a = this->var_str_384.size();
-	this->var_str_9f4 = _zbasic->space(this->var_i16_188a);
-	for (int16 i = 1; i <= this->var_i16_188a; i++) {
-		this->var_i16_7e4 = _zbasic->asc(_zbasic->midStr(this->var_str_384, i, 1)) - 0x40;
-		_zbasic->midStrSet(this->var_str_9f4, i, 1, _zbasic->chr(this->arr_i16_5cbc[this->var_i16_7e4]+0x40));
+	var_i16_188a = var_str_384.size();
+	var_str_9f4 = _zbasic->space(var_i16_188a);
+	for (int16 i = 1; i <= var_i16_188a; i++) {
+		var_i16_7e4 = _zbasic->asc(_zbasic->midStr(var_str_384, i, 1)) - 0x40;
+		_zbasic->midStrSet(var_str_9f4, i, 1, _zbasic->chr(arr_i16_5cbc[var_i16_7e4]+0x40));
 	}
 }
 

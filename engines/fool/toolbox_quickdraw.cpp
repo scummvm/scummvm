@@ -485,7 +485,7 @@ void Toolbox::GetCPixel(int16 h, int16 v, RGBColor &cPix) {
 }
 
 Handle Toolbox::GetIcon(uint16 iconID) {
-	Handle handle = this->GetResource(MKTAG('I', 'C', 'O', 'N'), iconID);
+	Handle handle = GetResource(MKTAG('I', 'C', 'O', 'N'), iconID);
 	if (handle) {
 		return handle;
 	} else {

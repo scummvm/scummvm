@@ -53,7 +53,7 @@ void FoolGame::mazeRun() {
 			// 136:00ca
 		} while (_zbasic->incrAndCheck(var_i16_68a, arr_i16_1eb8[11], arr_i16_1eb8[6]));
 	} while (_zbasic->incrAndCheck(var_i16_68c, arr_i16_1eb8[9], arr_i16_1eb8[7]));
-	if (this->arr_i16_1eb8[20] != 0) {
+	if (arr_i16_1eb8[20] != 0) {
 		var_i32_1ac0 = _toolbox->GetPicture(arr_i16_1eb8[20]);
 		_zbasic->picture(arr_i16_1eb8[18], arr_i16_1eb8[19], var_i32_1ac0);
 	}
