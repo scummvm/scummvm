@@ -68,106 +68,37 @@ const byte kScene5010TransportPrepFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7
 };
 
+static PlayableSceneConfig scene5010Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = kScene5010ArchiveName;
+	config.initialRequiredChunkCount = kScene5010InitialRequiredChunkCount;
+	config.arenaFirstChunk = kScene5010ArenaFirstChunk;
+	config.arenaLastChunk = kScene5010ArenaLastChunk;
+	config.stageIndex = kScene5010StageIndex;
+	config.debugName = "Scene 5010";
+	config.viewportXOffset = kScene5010ViewportXOffset;
+	config.viewportMinXOffset = kScene5010ViewportMinXOffset;
+	config.viewportMaxXOffset = kScene5010ViewportMaxXOffset;
+	config.inventoryOwnerIndex = 0;
+	config.activeAudioChapterIndex = 5;
+	config.actorBankTableEntry = kScene5010ActorBankTableEntry;
+	config.actorPaletteTableEntry = kScene5010ActorPaletteTableEntry;
+	config.inventoryActionTableExtraOffset = 0;
+	config.inventoryRowsOffsetIndex = kScene5010Resource003RowsOffsetIndex;
+	config.speechCueDescriptorTableOffset = kScene5010SpeechCueDescriptorTableOffset;
+	config.actorPathStepDeltaTable = kScene5010ActorPathStepDeltaTableSet87;
+	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene5010ActorPathStepDeltaTableSet87);
+	config.walkablePaletteMaxRegion = 8;
+	config.musicArchiveName = kScene5010MusicArchiveName;
+	config.soundBank0ArchiveName = kScene5010SoundArchiveName;
+	config.mainFlowFirstState = kScene5010FirstState;
+	config.mainFlowLastState = kScene5010LastState;
+	return config;
+}
+
 Scene5010::Scene5010(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene5010", 0x263, 0x172, 4, 0xfd, 0xfb),
+		PlayableScene(vm, scene5010Config(), "scene5010", 0x263, 0x172, 4, 0xfd, 0xfb),
 		_switchLayer() {
-}
-
-const char *Scene5010::resourceArchiveName() const {
-	return kScene5010ArchiveName;
-}
-
-uint Scene5010::sceneInitialRequiredChunkCount() const {
-	return kScene5010InitialRequiredChunkCount;
-}
-
-uint Scene5010::sceneArenaFirstChunk() const {
-	return kScene5010ArenaFirstChunk;
-}
-
-uint Scene5010::sceneArenaLastChunk() const {
-	return kScene5010ArenaLastChunk;
-}
-
-uint Scene5010::sceneStageIndex() const {
-	return kScene5010StageIndex;
-}
-
-const char *Scene5010::sceneDebugName() const {
-	return "Scene 5010";
-}
-
-uint16 Scene5010::sceneViewportXOffset() const {
-	return kScene5010ViewportXOffset;
-}
-
-uint16 Scene5010::sceneViewportMinXOffset() const {
-	return kScene5010ViewportMinXOffset;
-}
-
-uint16 Scene5010::sceneViewportMaxXOffset() const {
-	return kScene5010ViewportMaxXOffset;
-}
-
-byte Scene5010::inventoryOwnerIndex() const {
-	return 0;
-}
-
-void Scene5010::initializeInventoryOwnerState() {
-	GameplayState &state = _vm->gameState();
-	state.initializeRonItemResourcePages();
-	if (state.inventoryItemCountByOwner[0] == 0)
-		state.initializeRonInventoryItems();
-	state.currentInventoryOwnerIndex = 0;
-	state.activeAudioChapterIndex = 5;
-}
-
-uint Scene5010::resource000ActorBankTableEntry() const {
-	return kScene5010ActorBankTableEntry;
-}
-
-uint Scene5010::resource000ActorPaletteTableEntry() const {
-	return kScene5010ActorPaletteTableEntry;
-}
-
-uint32 Scene5010::inventoryActionTableExtraOffset() const {
-	return 0;
-}
-
-uint Scene5010::resource003InventoryRowsOffsetIndex() const {
-	return kScene5010Resource003RowsOffsetIndex;
-}
-
-uint32 Scene5010::speechCueDescriptorTableOffset() const {
-	return kScene5010SpeechCueDescriptorTableOffset;
-}
-
-const byte *Scene5010::actorPathStepDeltaTable() const {
-	return kScene5010ActorPathStepDeltaTableSet87;
-}
-
-uint Scene5010::actorPathStepDeltaTableSize() const {
-	return ARRAYSIZE(kScene5010ActorPathStepDeltaTableSet87);
-}
-
-byte Scene5010::walkablePaletteMaxRegion() const {
-	return 8;
-}
-
-const char *Scene5010::musicArchiveName() const {
-	return kScene5010MusicArchiveName;
-}
-
-const char *Scene5010::soundBank0ArchiveName() const {
-	return kScene5010SoundArchiveName;
-}
-
-bool Scene5010::usesActorDepthTest() const {
-	return false;
-}
-
-bool Scene5010::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId >= kScene5010FirstState && stateId <= kScene5010LastState;
 }
 
 bool Scene5010::hasCustomPreviewState() const {

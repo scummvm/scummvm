@@ -190,6 +190,7 @@ PlayableSceneConfig::PlayableSceneConfig() :
 		walkablePaletteMaxRegion(3),
 		musicArchiveName(kDefaultGameplayMusicArchiveName),
 		soundBank0ArchiveName(kDefaultGameplaySoundBank0ArchiveName),
+		loadInventoryActionTables(true),
 		loadActorDepthTables(true),
 		useActorDepthTest(false),
 		mainFlowFirstState(kSceneConfigNoMainFlowRangeStart),
@@ -415,7 +416,7 @@ bool PlayableScene::isAlternatePaletteResourceActive() const {
 }
 
 bool PlayableScene::shouldLoadInventoryActionTables() const {
-	return true;
+	return _config.loadInventoryActionTables;
 }
 
 bool PlayableScene::shouldLoadActorDepthTables() const {
