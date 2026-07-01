@@ -54,7 +54,8 @@ const uint kScene6010Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene6010SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene6010FrameMillis = 75;
 const uint32 kScene6010ClipFrameMillis = 50;
-const uint kScene6010ClipDescriptorCount = 0xdb;
+const uint kScene6010ClipChunkIndex = 7;
+const uint kScene6010ClipDescriptorCount = 0xda;
 const uint kScene6010DoorRevealPrimaryDescriptorCount = 4;
 const uint kScene6010DoorRevealSecondaryDescriptorCount = 0x13;
 const uint kScene6010ExitDescriptorCount = 6;
@@ -263,10 +264,10 @@ bool Scene6010::dispatchCustomSceneAction(uint16 handlerId) {
 	case 302: // Mirar puerta/plato de cine (look at studio stage door).
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 303: // Mirar cartel del museo (look at museum sign).
+	case 303: // Mirar puerta del museo de cera (look at wax museum door/sign).
 		beginSecondarySpeechLine(3, 1);
 		return true;
-	case 304: // Usar/entrar plato (use/enter stage): plays clip or reports closed.
+	case 304: // Ir a puerta del museo de cera (go to wax museum door): reports closed until the endgame entry.
 		if (state.scene6010StudioEntryUnlocked)
 			beginSecondarySpeechLine(4, 0);
 		else
@@ -526,25 +527,21 @@ void Scene6010::runEntryCutsceneState() {
 
 void Scene6010::runStudioClipSequence(bool exitAfterPlayback) {
 	drawPlayableComposite();
-	drawClipFrameDelta(8, kScene6010ClipDescriptorCount, 0);
 	presentFrame();
 
 	Common::Array<byte> frameMap;
 	frameMap.resize(0x113);
 	for (uint i = 0; i < frameMap.size(); ++i) {
-		if (i <= 0x77)
-			frameMap[i] = (byte)i;
-		else if (i < 0xa0)
-			frameMap[i] = 0xff;
-		else if (i <= 0x102)
-			frameMap[i] = (byte)(i - 0x28);
-		else
-			frameMap[i] = 0xff;
+		frameMap[i] = 0xff;
+		if (i >= 0x10 && i <= 0x70)
+			frameMap[i] = (byte)(i - 0x10);
+		else if (i >= 0x9b)
+			frameMap[i] = (byte)(i - 0x3a);
 	}
 
-	for (uint i = 1; i < frameMap.size() && !Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++i) {
+	for (uint i = 0; i < frameMap.size() && !Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++i) {
 		if (frameMap[i] != 0xff) {
-			drawClipFrameDelta(8, kScene6010ClipDescriptorCount, frameMap[i]);
+			drawClipFrameDelta(kScene6010ClipChunkIndex, kScene6010ClipDescriptorCount, frameMap[i]);
 			presentFrame();
 		}
 		if (waitClipFrame(kScene6010ClipFrameMillis))
@@ -632,12 +629,12 @@ void Scene6010::runPendingItem69PickupOverlay() {
 	beginSecondarySpeechLine(0x0c, 1);
 	walkActiveActorTo(0x15d, 0x0ed, 1, 0, false);
 
+	GameplayState &state = _vm->gameState();
+	state.scene6011PendingItem69Visible = false;
 	runConfiguredActionOverlay(12, kScene6010PendingItem69DescriptorCount,
 		kScene6010PendingItem69FrameMap, ARRAYSIZE(kScene6010PendingItem69FrameMap),
 		kScene6010FrameMillis, kActionOverlayHideActiveActor, 7, 5);
 
-	GameplayState &state = _vm->gameState();
-	state.scene6011PendingItem69Visible = false;
 	addInventoryItem(0x69);
 	_soundBank0.playSample(1, 100);
 	beginSecondarySpeechLine(0x0c, 0);
@@ -651,6 +648,8 @@ void Scene6010::runDoorRevealOverlay() {
 		40, 13, 0x0c);
 	_vm->gameState().scene6010Item59Visible = true;
 	applySceneStateToHotspotsAndPatches(1);
+	drawPlayableComposite();
+	presentFrame();
 }
 
 void Scene6010::runExitToScene6020Overlay() {
@@ -669,6 +668,8 @@ void Scene6010::runPickupItem59Overlay() {
 	addInventoryItem(0x59);
 	_vm->gameState().scene6010Item59Visible = false;
 	applySceneStateToHotspotsAndPatches(1);
+	drawPlayableComposite();
+	presentFrame();
 	_soundBank0.playSample(1, 100);
 	beginStaticSecondarySpeechLine(0xb6, 0);
 }
