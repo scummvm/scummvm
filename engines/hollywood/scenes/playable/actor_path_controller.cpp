@@ -25,6 +25,7 @@
 #include "common/util.h"
 
 #include "hollywood/graphics.h"
+#include "hollywood/hollywood.h"
 
 #include <math.h>
 
@@ -136,6 +137,11 @@ void ActorPathController::queueWithPaletteRegionRouting(ActorPathControllerDeleg
 	if (targetRegion == 0)
 		targetRegion = currentRegion;
 
+	debugC(2, kDebugPath,
+		"ActorPath route begin: start=(%d,%d) rawStartRegion=%u currentRegion=%u target=(%d,%d) rawTargetRegion=%u targetRegion=%u initialFacing=%u initialCel=%u",
+		startX, startY, delegate.paletteRegionAt(startX, startY), currentRegion, targetX, targetY,
+		delegate.paletteRegionAt(targetX, targetY), targetRegion, initialFacing, initialCel);
+
 	if (currentRegion != targetRegion) {
 		const byte routeStartRegion = currentRegion;
 		const byte routeTargetRegion = targetRegion;
@@ -155,6 +161,10 @@ void ActorPathController::queueWithPaletteRegionRouting(ActorPathControllerDeleg
 			const ScenePoint boundary = nextRegion == targetRegion ?
 				bestPaletteRouteBoundaryPoint(state.x, state.y, targetX, targetY, currentRegion, nextRegion) :
 				nearestPaletteRouteBoundaryPoint(state.x, state.y, currentRegion, nextRegion);
+			debugC(2, kDebugPath,
+				"ActorPath route step %u: routeOffset=%u currentRegion=%u nextRegion=%u targetRegion=%u state=(%d,%d f=%u c=%u d=%u) boundary=(%d,%d)",
+				stepIndex, routeOffset, currentRegion, nextRegion, targetRegion, state.x, state.y,
+				state.facing, state.cel, state.drawOrderMode, boundary.x, boundary.y);
 
 			byte segmentFinalFacing = invalidFacing;
 			byte segmentFinalCel = invalidCel;
@@ -167,6 +177,9 @@ void ActorPathController::queueWithPaletteRegionRouting(ActorPathControllerDeleg
 			bool restoredStepDeltas = false;
 			delegate.customizeRouteSegment(currentRegion, nextRegion, state, boundary,
 				requestedFacing, restoredStepDeltas);
+			debugC(3, kDebugPath,
+				"ActorPath route step %u customization: requestedFacing=%d restoredStepDeltas=%u segmentFinalFacing=%u segmentFinalCel=%u",
+				stepIndex, requestedFacing, restoredStepDeltas, segmentFinalFacing, segmentFinalCel);
 			buildFramesBetweenPoints(state, boundary.x, boundary.y,
 				segmentFinalFacing, segmentFinalCel, requestedFacing, invalidFacing, invalidCel);
 			if (restoredStepDeltas)
@@ -181,15 +194,24 @@ void ActorPathController::queueWithPaletteRegionRouting(ActorPathControllerDeleg
 	delegate.customizeRouteFinal(currentRegion, targetRegion, state, targetX, targetY,
 		requestedFacing, restoredStepDeltas);
 	state.drawOrderMode = currentRegion;
+	debugC(2, kDebugPath,
+		"ActorPath route final: currentRegion=%u targetRegion=%u state=(%d,%d f=%u c=%u d=%u) target=(%d,%d) requestedFacing=%d finalFacing=%u finalCel=%u",
+		currentRegion, targetRegion, state.x, state.y, state.facing, state.cel, state.drawOrderMode,
+		targetX, targetY, requestedFacing, finalFacing, finalCel);
 	buildFramesBetweenPoints(state, targetX, targetY, finalFacing, finalCel, requestedFacing,
 		invalidFacing, invalidCel);
 	if (restoredStepDeltas)
 		resetStepDeltas(baseStepDeltas, baseStepDeltaCount);
+	debugC(2, kDebugPath, "ActorPath route end: frames=%u", frames.size());
 }
 
 void ActorPathController::buildFramesBetweenPoints(ActorPathBuildState &state, int targetX, int targetY,
 		byte finalFacing, byte finalCel, int requestedFacing, byte invalidFacing, byte invalidCel) {
+	const uint firstFrame = frames.size();
 	if (targetX == state.x && targetY == state.y) {
+		debugC(3, kDebugPath,
+			"ActorPath build zero-distance: pos=(%d,%d) facing=%u cel=%u finalFacing=%u finalCel=%u requestedFacing=%d",
+			state.x, state.y, state.facing, state.cel, finalFacing, finalCel, requestedFacing);
 		if (finalFacing != invalidFacing && state.facing != finalFacing) {
 			for (uint turnStep = 0; turnStep < 3 && state.facing != finalFacing; ++turnStep) {
 				const uint turnOffset = ((uint)state.facing * kPathActorFacingCount + finalFacing) * 3 + turnStep;
@@ -203,10 +225,13 @@ void ActorPathController::buildFramesBetweenPoints(ActorPathBuildState &state, i
 			state.cel = finalCel;
 		appendFrame(state);
 		state.cel = nextCel(state.cel);
+		debugC(3, kDebugPath, "ActorPath build zero-distance end: addedFrames=%u", frames.size() - firstFrame);
 		return;
 	}
 
 	const byte movementFacing = calculateMovementFacingForPath(state.x, state.y, targetX, targetY, requestedFacing);
+	const int originalX = state.x;
+	const int originalY = state.y;
 	if (state.facing != movementFacing) {
 		for (uint turnStep = 0; turnStep < 3 && state.facing != movementFacing; ++turnStep) {
 			const uint turnOffset = ((uint)state.facing * kPathActorFacingCount + movementFacing) * 3 + turnStep;
@@ -223,6 +248,9 @@ void ActorPathController::buildFramesBetweenPoints(ActorPathBuildState &state, i
 	const int principalTarget = (movementFacing == 0 || movementFacing == 3) ? targetY : targetX;
 	const uint stepCount = calculateWalkStepCountForAxisDelta(principalStart, principalTarget,
 		movementFacing, state.cel);
+	debugC(3, kDebugPath,
+		"ActorPath build segment: from=(%d,%d) target=(%d,%d) movementFacing=%u requestedFacing=%d startCel=%u stepCount=%u",
+		originalX, originalY, targetX, targetY, movementFacing, requestedFacing, state.cel, stepCount);
 
 	if (stepCount != 0) {
 		const bool verticalMovement = movementFacing == 0 || movementFacing == 3;
@@ -261,6 +289,9 @@ void ActorPathController::buildFramesBetweenPoints(ActorPathBuildState &state, i
 		state.cel = finalCel;
 	appendFrame(state);
 	state.cel = nextCel(state.cel);
+	debugC(3, kDebugPath,
+		"ActorPath build segment end: addedFrames=%u finalState=(%d,%d f=%u c=%u d=%u)",
+		frames.size() - firstFrame, state.x, state.y, state.facing, state.cel, state.drawOrderMode);
 }
 
 void ActorPathController::appendFrame(const ActorPathBuildState &state) {

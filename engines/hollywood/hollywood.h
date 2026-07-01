@@ -42,7 +42,8 @@ namespace Hollywood {
 enum HollywoodDebugChannels {
 	kDebugGeneral = 1,
 	kDebugResources,
-	kDebugScene
+	kDebugScene,
+	kDebugPath
 };
 
 class ResourceManager;

@@ -37,6 +37,7 @@ const DebugChannelDef debugFlagList[] = {
 	{Hollywood::kDebugGeneral, "general", "General debug level"},
 	{Hollywood::kDebugResources, "resources", "Resource archive loading"},
 	{Hollywood::kDebugScene, "scene", "Scene state and presentation"},
+	{Hollywood::kDebugPath, "path", "Pathfinding and actor route tracing"},
 	DEBUG_CHANNEL_END
 };
 
