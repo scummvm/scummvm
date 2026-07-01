@@ -1091,8 +1091,7 @@ public:
 			if (lastSep == String::npos)
 				lastSep = 0;
 			auto fileName = String::format("%s.%s", fullPath.c_str() + lastSep, extension.c_str());
-			_members.emplace_back(
-				new EmbeddedArchiveMember(fileName, *this, fileOffset, fileOffset + fileSize)); //-V1023
+			_members.emplace_back(new EmbeddedArchiveMember(fileName, *this, fileOffset, fileOffset + fileSize)); //-V1023
 		}
 
 		if (_file->pos() > endPosition)
