@@ -165,6 +165,7 @@ public:
 	CastMemberID _currentMouseDownCastID;
 	CastMemberID _currentMouseDownSpriteScriptID;
 	bool _currentMouseDownSpriteImmediate;
+	uint16 _currentMouseDownChannelId;	// D5+: sprite captured at mouseDown, reused for the paired mouseUp
 	uint16 _currentEditableTextChannel;
 	uint32 _lastEventTime;
 	uint32 _lastRollTime;
