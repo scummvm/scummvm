@@ -197,7 +197,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	_seqInfo.seqData = _seqInfo.seqDataPos = NULL;
 	_seqInfo.running = false;
 
-	for (int i = 0; i < NUM_UI_ICONS; i++) {
+	for (i = 0; i < NUM_UI_ICONS; i++) {
 		_uiIcon[i]._visible = false;
 		_uiIcon[i]._anim = nullptr;
 		_uiIcon[i]._x = 0;
@@ -205,7 +205,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 		_uiIcon[i]._alpha = 0.0f;
 	}
 
-	for (int i = 0; i < NUM_PROXIMITY_ICONS; i++) {
+	for (i = 0; i < NUM_PROXIMITY_ICONS; i++) {
 		_proximityIcon[i]._visible = false;
 		_proximityIcon[i]._anim = nullptr;
 		_proximityIcon[i]._x = 0;
@@ -213,7 +213,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 		_proximityIcon[i]._alpha = 0.0f;
 	}
 
-	for (int i = 0; i < NUM_INV_ICONS; i++) {
+	for (i = 0; i < NUM_INV_ICONS; i++) {
 		_invIcon[i]._visible = false;
 		_invIcon[i]._anim = nullptr;
 		_invIcon[i]._x = 0;
@@ -221,7 +221,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 		_invIcon[i]._alpha = 0.0f;
 	}
 
-	for (int i = 0; i < NUM_INV_ANIMS; i++) {
+	for (i = 0; i < NUM_INV_ANIMS; i++) {
 		char invTexFile[64];
 		Common::sprintf_s(invTexFile, "%d.tex", invIconId[i]);
 
