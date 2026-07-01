@@ -71,13 +71,14 @@ Graphics::Surface *GameState::getThumbnail(const Graphics::PixelFormat &fmt, int
 	Graphics::Surface th;
 	th.init(thumbWidth, thumbHeight, thumbnail.size() / thumbHeight, thumbnail.data(), rgb565);
 	Graphics::Surface *src = th.convertTo(fmt);
-	src->flipVertical(src->getRect());
 	if (newWidth > 0) {
 		int newHeight = newWidth * src->h / src->w;
-		auto *scaled = src->scale(newWidth, newHeight, true);
+		auto *scaled = src->scale(newWidth, newHeight, true, Graphics::FLIP_V);
 		src->free();
 		delete src;
 		return scaled;
+	} else {
+		src->flipVertical(src->getRect());
 	}
 	return src;
 }
