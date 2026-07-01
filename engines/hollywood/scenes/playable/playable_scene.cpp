@@ -1217,6 +1217,22 @@ void PlayableScene::prepareOptionsMenuPalette(Common::Array<byte> &palette) cons
 	_panelArt.applyInteractiveObjectPalette(palette);
 }
 
+Common::Path PlayableScene::optionsMenuSoundBank0ArchiveName() const {
+	return Common::Path(soundBank0ArchiveName());
+}
+
+bool PlayableScene::optionsMenuSpeechPreviewSampleId(uint16 &sampleId) const {
+	uint16 textRecordId = 0;
+	byte continuationCount = 0;
+	return getStaticSpeechCue(0, 0, textRecordId, continuationCount, sampleId);
+}
+
+void PlayableScene::suspendAudioForOptionsMenu() {
+	_speech.stop();
+	_soundBank0.stop();
+	_ambientSoundBank0.stop();
+}
+
 bool PlayableScene::shouldExitGameplayLoop() const {
 	if (_vm->isSceneRestartRequested())
 		return true;

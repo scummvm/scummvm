@@ -91,6 +91,18 @@ void GameplayLoopDelegate::prepareOptionsMenuPalette(Common::Array<byte> &palett
 	palette.clear();
 }
 
+Common::Path GameplayLoopDelegate::optionsMenuSoundBank0ArchiveName() const {
+	return Common::Path();
+}
+
+bool GameplayLoopDelegate::optionsMenuSpeechPreviewSampleId(uint16 &sampleId) const {
+	sampleId = 0;
+	return false;
+}
+
+void GameplayLoopDelegate::suspendAudioForOptionsMenu() {
+}
+
 bool GameplayLoopDelegate::shouldExitGameplayLoop() const {
 	return false;
 }
@@ -531,10 +543,16 @@ void GameplayLoop::openOptionsMenu() {
 
 	_vm->captureLastGameplayThumbnail();
 	_vm->cursor()->leaveInteractiveMode();
+	_delegate->suspendAudioForOptionsMenu();
 
 	Common::Array<byte> palette;
 	_delegate->prepareOptionsMenuPalette(palette);
 	GameplayOptionsMenu menu(_vm);
+	uint16 speechPreviewSampleId = 0;
+	const bool hasSpeechPreviewSample =
+		_delegate->optionsMenuSpeechPreviewSampleId(speechPreviewSampleId);
+	menu.setAudioContext(_delegate->optionsMenuSoundBank0ArchiveName(),
+		hasSpeechPreviewSample, speechPreviewSampleId);
 	menu.run(palette);
 	if (Engine::shouldQuit())
 		return;

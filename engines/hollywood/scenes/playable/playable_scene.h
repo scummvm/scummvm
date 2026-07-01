@@ -410,6 +410,12 @@ protected:
 	void invalidatePresentationPalette() override;
 	// Provides a palette for the ScummVM options menu.
 	void prepareOptionsMenuPalette(Common::Array<byte> &palette) const override;
+	// Provides the active scene SFX archive for options-menu test playback.
+	Common::Path optionsMenuSoundBank0ArchiveName() const override;
+	// Provides the fixed voice sample used by options-menu test playback.
+	bool optionsMenuSpeechPreviewSampleId(uint16 &sampleId) const override;
+	// Stops scene-owned speech/SFX while the options menu is open.
+	void suspendAudioForOptionsMenu() override;
 	// Tells the gameplay loop when scene state has exited.
 	bool shouldExitGameplayLoop() const override;
 	// Returns an inventory item display name for the active owner.
