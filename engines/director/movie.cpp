@@ -209,6 +209,12 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		Cast *cast = nullptr;
 		if (_casts.contains(libId)) {
 			cast = _casts.getVal(libId);
+			// The default internal cast is created before the MCsL is parsed;
+			// adopt the authored resource id and name
+			if (!isExternal) {
+				cast->_libResourceId = libResourceId;
+				cast->setCastName(name);
+			}
 		} else {
 			cast = new Cast(this, libId, false, isExternal, libResourceId);
 			cast->setCastName(name);
