@@ -213,6 +213,10 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene6010EndgameTravelExitBlocked);
 	syncStateBool(s, state.scene6011PendingItem69Visible);
 	syncStateBool(s, state.scene6010Item58Taken);
+	s.syncAsByte(state.scene2040SphinxBasePatchState);
+	s.syncAsByte(state.scene2040SphinxFaceState);
+	s.syncAsByte(state.scene2040SphinxItemRevealed);
+	s.syncAsByte(state.scene2040SphinxExitInterviewState);
 	syncStateBool(s, state.scene6020TaffyKnown);
 	syncStateBool(s, state.scene6020TaffyLeft);
 	syncStateBool(s, state.scene6030HannoverInterviewCompleted);
@@ -368,6 +372,14 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene1080FrancoisState = 0;
 	if (state.scene1090WrappedBrainState > 2)
 		state.scene1090WrappedBrainState = 0;
+	if (state.scene2040SphinxBasePatchState > 1)
+		state.scene2040SphinxBasePatchState = 0;
+	if (state.scene2040SphinxFaceState > 3)
+		state.scene2040SphinxFaceState = 0;
+	if (state.scene2040SphinxItemRevealed > 1)
+		state.scene2040SphinxItemRevealed = 0;
+	if (state.scene2040SphinxExitInterviewState > 3)
+		state.scene2040SphinxExitInterviewState = 0;
 	if (state.scene4010AlternateBackgroundState > 1)
 		state.scene4010AlternateBackgroundState = 0;
 	if (state.scene4010EntryPathSpeechState > 2)
