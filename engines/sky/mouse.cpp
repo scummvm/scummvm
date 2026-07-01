@@ -1429,10 +1429,7 @@ void Mouse::lincInvMouse(uint16 xPos, uint16 yPos) {
 	bool touched = false;
 	bool buttonHeld = (_system->getEventManager()->getButtonState() != 0); // mouseEngine() consumes the click at the end so using _mouseB would increment the timer at each click not on hold
 
-	if (buttonHeld)
-		_logicClick++;
-	else
-		_logicClick = 0;
+	_logicClick = buttonHeld;
 
 	// get list of compacts in inventory
 	objList = _skyLogic->giveInvList();
@@ -1866,10 +1863,7 @@ void Mouse::invUseOn(uint16 xPos, uint16 yPos) {
 	uint16 midX, midY;
 	bool buttonHeld = (_system->getEventManager()->getButtonState() != 0);
 
-	if (buttonHeld)
-		_logicClick++;
-	else
-		_logicClick = 0;
+	_logicClick = buttonHeld;
 
 	if (buttonHeld) {
 		itemNum = doProximityHighlights(xPos, yPos);
