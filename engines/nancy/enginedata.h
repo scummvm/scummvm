@@ -715,6 +715,7 @@ struct UIIV : public EngineData {
 	UIPopupHeader header;
 	Common::Array<Common::Rect> slotSrcRects;       // 16 entries (image coords)
 	Common::Array<Common::Rect> slotDestRects;      // 16 entries (screen coords)
+	Common::Rect slotsHotspot;                      // Nancy13+: clickable region of the item slots
 	UIButtonSlot filters[kNumFilters];              // 6 entries
 	Common::Array<Common::Rect> tabCaptionSrcRects; // 6 entries
 	Common::Rect tabCaptionDestRect;                // on-screen target
@@ -773,6 +774,20 @@ struct UIRC : public EngineData {
 	static const uint kItemRecordSize = 257;
 
 	Common::Array<ItemRecord> items;
+};
+
+// Music mix table. Introduced in Nancy 13. Each record maps a short location
+// code (e.g. "BRI", "CAM", "TUT") to the set of music / ambience tracks that
+// may play there ("TacitA"/"TacitB" are the silence variants).
+struct MMIX : public EngineData {
+	struct Record {
+		Common::String name;
+		Common::Array<Common::String> musicNames;
+	};
+
+	MMIX(Common::SeekableReadStream *chunkStream);
+
+	Common::Array<Record> records;
 };
 } // End of namespace Nancy
 

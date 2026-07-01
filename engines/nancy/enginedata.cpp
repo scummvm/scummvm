@@ -159,7 +159,10 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	s.syncAsUint16LE(captionAutoClearTime, kGameTypeNancy3);
 
 	readFilename(s, inventoryBoxIconsImageName);
-	readFilename(s, inventoryCursorsImageName);
+	// Nancy13 split the cursor sheet into two images and moved both cursor
+	// image names into the CURS chunk, so the inventory cursors name is no
+	// longer stored here.
+	readFilename(s, inventoryCursorsImageName, kGameTypeVampire, kGameTypeNancy12);
 
 	s.skip(0x4, kGameTypeVampire, kGameTypeNancy1); // inventory box icons surface w/h
 	s.skip(0x4, kGameTypeVampire, kGameTypeNancy1); // inventory cursors surface w/h
@@ -1081,6 +1084,12 @@ UIIV::UIIV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRectArray(*chunkStream, slotSrcRects, 16);
 	readRectArray(*chunkStream, slotDestRects, 16);
 
+	// Nancy13 inserted a 16-byte Rect here (before the original 2-byte field):
+	// the clickable bounding region of the inventory item slots, used as a
+	// PtInRect gate before hit-testing the individual slots.
+	if (g_nancy->getGameType() >= kGameTypeNancy13)
+		readRect(*chunkStream, slotsHotspot);
+
 	chunkStream->skip(2);
 
 	for (uint i = 0; i < kNumFilters; ++i) {
@@ -1147,6 +1156,21 @@ UIRC::UIRC(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 			readFilename(*chunkStream, rec.soundNames[i]);
 		}
 		items.push_back(rec);
+	}
+}
+
+MMIX::MMIX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	const uint16 count = chunkStream->readUint16LE();
+	records.resize(count);
+
+	for (uint16 i = 0; i < count; ++i) {
+		Record &rec = records[i];
+		readFilename(*chunkStream, rec.name);
+		const uint16 numTracks = chunkStream->readUint16LE();
+		rec.musicNames.resize(numTracks);
+		for (uint16 j = 0; j < numTracks; ++j) {
+			readFilename(*chunkStream, rec.musicNames[j]);
+		}
 	}
 }
 

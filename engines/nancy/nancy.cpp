@@ -567,8 +567,8 @@ void NancyEngine::bootGameEngine() {
 	LOAD_BOOT(UIRC)	// UI overlay element table
 
 	// Nancy 13+
-	// RCPR and RCLB chunks have been removed
-	// LOAD_BOOT(MMIX)
+	// RCPR and RCLB chunks have been removed (used in the RayCast puzzle, which has been dropped)
+	LOAD_BOOT(MMIX)	// Music mix table (location code -> music tracks)
 
 	// Nancy 14
 	// LOAD_BOOT(UICM)
@@ -768,8 +768,8 @@ void NancyEngine::populateStaticData() {
 		_staticData.numCursorTypes = 37;
 		break;
 	case kGameTypeNancy13:
-		_staticData.numItems = 50;
-		_staticData.numCursorTypes = 37;
+		_staticData.numItems = 42;
+		_staticData.numCursorTypes = 45;
 		break;
 	case kGameTypeNancy14:
 	case kGameTypeNancy15:
