@@ -263,13 +263,17 @@ void Scene1030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		return;
 	}
 
-	if (drawActiveActor && actorDrawOrderMode < 3)
-		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, -1);
+	if ((drawActiveActor || drawSecondaryActor) && actorDrawOrderMode < 3) {
+		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+	}
 
 	drawSmallForegroundActor();
 
-	if (drawActiveActor && actorDrawOrderMode >= 3)
-		drawActiveActorFrame(activeFacing, activeCel, activeWorldX, activeWorldY, -1);
+	if ((drawActiveActor || drawSecondaryActor) && actorDrawOrderMode >= 3) {
+		drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+			drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+	}
 
 	drawLargeForegroundActor();
 
