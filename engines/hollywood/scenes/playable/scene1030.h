@@ -64,6 +64,7 @@ private:
 	void finishFirstEntryActorPath();
 	void runEntryGestureSequence();
 	void runEntryOpenSequence();
+	void applyActorDepthClipForDrawOrder(byte actorDrawOrderMode);
 	void drawEntryActors();
 	void drawSmallForegroundActor();
 	void drawLargeForegroundActor();
