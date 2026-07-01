@@ -100,6 +100,12 @@ public:
 	void update3DSoundMinDistance(uint16 channelID, uint32 minDistance);
 	void update3DSoundMaxDistance(uint16 channelID, uint32 maxDistance);
 
+	// Nancy12 Set3DSoundListenerPosition (AR 168). Overrides the 3D listener
+	// position, which is otherwise taken from the scene summary. The override
+	// is cleared when a new scene is loaded.
+	void setListenerPosition(const Math::Vector3d &position);
+	void clearListenerPositionOverride();
+
 	uint32 getRate(uint16 channelID);
 	uint32 getRate(const SoundDescription &description);
 	uint32 getRate(const Common::String &chunkName);
@@ -154,6 +160,10 @@ protected:
 
 	void soundEffectMaintenance(uint16 channelID, bool force = false);
 
+	// Returns the listener position override if one is active, otherwise
+	// the scene summary's listener position
+	Math::Vector3d getListenerPosition() const;
+
 	Audio::Mixer *_mixer;
 
 	Common::Array<Channel> _channels;
@@ -164,6 +174,9 @@ protected:
 	Math::Vector3d _orientation;
 	Math::Vector3d _position;
 	uint _positionLerp = 0;
+
+	Math::Vector3d _listenerPositionOverride;
+	bool _hasListenerPositionOverride = false;
 };
 
 } // End of namespace Nancy

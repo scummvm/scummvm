@@ -106,7 +106,7 @@ void Set3DSoundListenerPosition::readData(Common::SeekableReadStream &stream) {
 }
 
 void Set3DSoundListenerPosition::execute() {
-	// TODO: forward the listener position to the sound manager.
+	g_nancy->_sound->setListenerPosition(Math::Vector3d(_posX, _posY, _posZ));
 	_isDone = true;
 }
 

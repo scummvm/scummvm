@@ -574,6 +574,24 @@ void SoundManager::update3DSoundMaxDistance(uint16 channelID, uint32 maxDistance
 	_shouldRecalculate = true;
 }
 
+void SoundManager::setListenerPosition(const Math::Vector3d &position) {
+	_listenerPositionOverride = position;
+	_hasListenerPositionOverride = true;
+	_shouldRecalculate = true;
+}
+
+void SoundManager::clearListenerPositionOverride() {
+	_hasListenerPositionOverride = false;
+}
+
+Math::Vector3d SoundManager::getListenerPosition() const {
+	if (_hasListenerPositionOverride) {
+		return _listenerPositionOverride;
+	}
+
+	return NancySceneState.getSceneSummary().listenerPosition;
+}
+
 uint32 SoundManager::getRate(uint16 channelID) {
 	if (channelID >= _channels.size())
 		return 0;
@@ -737,14 +755,15 @@ SoundManager::Channel::~Channel() {
 
 void SoundManager::soundEffectMaintenance() {
 	// Interpolate position and rotation when scene has changed to avoid audible chop in sound
-	if (_position != NancySceneState.getSceneSummary().listenerPosition && _positionLerp == 0) {
+	Math::Vector3d listenerPosition = getListenerPosition();
+	if (_position != listenerPosition && _positionLerp == 0) {
 		++_positionLerp;
 	}
 
 	if (_positionLerp > 1) {
 		++_positionLerp;
 		if (_positionLerp > 10) {
-			_position = NancySceneState.getSceneSummary().listenerPosition;
+			_position = listenerPosition;
 			_positionLerp = 0;
 		}
 	}
@@ -882,7 +901,7 @@ void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
 			(chan.playCommands & ~kPlaySequential) & (kPlaySequentialFrameAnchor | kPlayRandomPosition | kPlayMoveLinear)) {
 
 		// Interpolate position when we've changed scenes
-		Math::Vector3d listenerPos = Math::Vector3d::interpolate(_position, NancySceneState.getSceneSummary().listenerPosition, (float)_positionLerp / 10.0);
+		Math::Vector3d listenerPos = Math::Vector3d::interpolate(_position, getListenerPosition(), (float)_positionLerp / 10.0);
 		float dist = listenerPos.getDistanceTo(chan.position);
 		float volume;
 

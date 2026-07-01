@@ -1131,6 +1131,7 @@ void Scene::load(bool fromSaveFile) {
 	_inventorySoundOverrides.clear();
 
 	_timers.sceneTime = 0;
+	g_nancy->_sound->clearListenerPositionOverride();
 	g_nancy->_sound->recalculateSoundEffects();
 
 	// Increment the number of times we've visited this scene, unless we're
