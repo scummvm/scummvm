@@ -55,6 +55,89 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
+/*
+ * PlayableScene is the common runtime for rooms where the player can move an
+ * actor, inspect hotspots, use inventory, and trigger scene-specific actions.
+ * Derived scenes mostly provide resource ids, entry behavior, draw ordering,
+ * local animation channels, and custom action handlers.
+ *
+ * Scene execution has these phases:
+ *
+ * 1. Resource load
+ *    play() starts by calling load(). This resolves the scene archive, loads
+ *    the fixed framebuffer/palette/mask/metadata chunks, expands the saved
+ *    background image, loads the sprite arena, actor banks, actor palettes,
+ *    stage text, hotspot tables, panel art, music archive, and sound archive.
+ *    Resource configuration callbacks such as resourceArchiveName(),
+ *    sceneStageIndex(), sceneArenaFirstChunk(), sceneArenaLastChunk(),
+ *    resource000ActorBankTableEntry(), musicArchiveName(), and
+ *    soundBank0ArchiveName() are consulted during this phase.
+ *
+ * 2. Initial scene state
+ *    After loading, initializePreviewState() prepares the runtime state used
+ *    by both preview and gameplay. Scenes with stateful backgrounds or actors
+ *    override hasCustomPreviewState()/initializeCustomPreviewState() to place
+ *    actors, reset local animation layers, apply persistent flags, and rebuild
+ *    hotspot maps. Scenes without a custom preview use the default actor pose
+ *    from the constructor plus applySceneStateToHotspotsAndPatches(0xff).
+ *
+ * 3. Preview and entry sequence
+ *    If the scene is not being restored from a saved actor pose, play() draws
+ *    one preview frame with drawPreviewComposite(), presents it, then runs
+ *    runEntryCutscene(). A scene can override hasCustomEntrySequence() and
+ *    runCustomEntrySequence() for walking in from an exit, playing intro
+ *    speech, or running a short non-interactive sequence before input is
+ *    accepted. Entry sequences typically use runEntryPath(), speech helpers,
+ *    overlays, and normal compositing, so they should leave the actor and
+ *    persistent scene flags in the same state the gameplay loop expects.
+ *
+ * 4. Gameplay loop
+ *    runBasicGameplayLoop() owns input and repeatedly calls this object as a
+ *    GameplayLoopDelegate. prepareGameplayLoop() resets transient runtime
+ *    state, calls prepareCustomGameplayLoop(), restores a saved actor pose if
+ *    needed, and records the current actor pose for saves. Each frame,
+ *    advanceGameplayLoop() advances speech animation, calls
+ *    advanceCustomGameplayLoop(delta), updates ambient audio and viewport
+ *    scrolling, then syncs the actor pose. drawGameplayFrame() composites the
+ *    current frame and presentGameplayFrame() uploads it to the screen.
+ *
+ * 5. Frame composition
+ *    drawCutsceneComposite() and drawPlayableComposite() are the only places
+ *    that assemble a frame. The default renderer copies the mutable base
+ *    framebuffer, draws actors, and draws the active overlay. Scenes with
+ *    room-specific layer ordering override hasCustomComposite() and
+ *    drawCustomComposite() to draw animated sprite layers, foreground blocks,
+ *    occlusion patches, actors, speech actors, and overlays in the order used
+ *    by the original room.
+ *
+ * 6. Hotspots, walking, and actions
+ *    The gameplay loop resolves cursor input through the hotspot and inventory
+ *    tables loaded from the resources. Walk requests use the palette-region
+ *    route tables through ActorPathController; scenes may adjust final targets
+ *    or route segments with adjustCustomWalkTargetToFloorMask(),
+ *    customizeRouteSegment(), and customizeRouteFinal(). Once an action id is
+ *    selected, dispatchSceneAction() first gives the derived scene a chance
+ *    through dispatchCustomSceneAction(), then falls back to shared handlers in
+ *    dispatchGenericSceneAction().
+ *
+ * 7. State patches and persistence
+ *    Scene-specific flags live in GameplayState and are applied to the current
+ *    base framebuffer, palette masks, walkable mask, hotspot map, and text rows
+ *    through applySceneStateToHotspotsAndPatches(). Call this after changing a
+ *    persistent room flag or taking an object. Actor position and viewport are
+ *    synced during gameplay so saves reload to a stable playable pose; saves
+ *    taken during entry/cutscenes normally replay that entry/cutscene.
+ *
+ * 8. Speech, overlays, and side effects
+ *    Speech helpers block until the current line is finished and may drive
+ *    actor animation depending on shouldAnimatePrimarySpeechLine() and related
+ *    hooks. Action overlays are short blocking animations run through
+ *    runActionOverlay()/runConfiguredActionOverlay(); they may hide the actor,
+ *    play sounds, patch scene state on a frame, or report frame hooks through
+ *    handleActionOverlayFrameHook(). When the gameplay loop exits because the
+ *    main-flow state changed, play() can run runExitSideEffectsAfterLoop()
+ *    before the engine dispatches the next scene.
+ */
 class PlayableScene : public GameplayLoopDelegate, public DialogueMenuDelegate, public ActorPathControllerDelegate {
 public:
 	// Loads, runs, and exits a playable scene.
