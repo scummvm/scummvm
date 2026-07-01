@@ -78,6 +78,12 @@ private:
 	void runLateSceneObjectAnimation();
 	void runFinalSceneObjectAnimation();
 	void runDialogueAndMaybeEnterScene6030();
+	void initializeTaffyDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
+	void setTaffyDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
+		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
+		byte responseFrameIndex, byte disableAfterUse) const;
+	void runTaffyLookUpTransition();
+	void runTaffyFrameSequence(const byte *frames, uint frameCount);
 	void runExitToScene6010();
 	void runExitToScene6030();
 
