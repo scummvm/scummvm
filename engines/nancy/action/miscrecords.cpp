@@ -221,19 +221,10 @@ void FrameTextBox::readData(Common::SeekableReadStream &stream) {
 void FrameTextBox::execute() {
 	auto &tb = NancySceneState.getTextbox();
 	tb.clear();
-	if (!_text.empty()) {
+	if (!_text.empty())
 		tb.addTextLine(_text);
-	}
 
-	// Variant 74 opens the full-width textbox overlay that covers the taskbar
-	// buttons; the original arms a 15-second timer that drops it back to the
-	// closed strip. Variant 75 is the legacy closed/strip path.
-	if (_variant == kVariant74) {
-		tb.setFullMode(true);
-	} else {
-		tb.setFullMode(false);
-	}
-
+	tb.setFullMode(_fullMode);
 	finishExecution();
 }
 

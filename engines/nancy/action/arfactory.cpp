@@ -269,13 +269,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new ModifyListEntry(ModifyListEntry::kDelete);
 	case 73:
 		return new ModifyListEntry(ModifyListEntry::kMark);
-	case 74:	// Added in Nancy 10
-	case 75:	// Changed in Nancy 10
-		if (g_nancy->getGameType() <= kGameTypeNancy9 && type == 75) {
+	case 74:	// Nancy 10
+		return new FrameTextBox(true);
+	case 75:
+		if (g_nancy->getGameType() <= kGameTypeNancy9)
 			return new TextBoxWrite();
-		} else {
-			return new FrameTextBox(static_cast<FrameTextBox::Variant>(type));
-		}
+		return new FrameTextBox(false);
 	case 76:
 		return new TextboxClear();
 	case 77:
@@ -366,20 +365,19 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 126:
 		return new GoInvViewScene();
 	case 128:
-		// Nancy 10+
+		// Nancy10+
 		return new CellPhonePopCellSceneFromStack();
 	case 129:
-		// Nancy 10+
+		// Nancy10+
 		return new SetCellPhoneBatteryAndSignal();
 	case 130:
-		// Nancy 10+
+		// Nancy10+
 		return new ChangeCellPhoneInfo();
 	case 131:
-		// Nancy 10+
+		// Nancy10+
 		return new AddSearchLink();
 	case 132:
-		// ResourceUse ("UIResource Adjust") - adjusts a UI overlay resource (see the UIRC
-		// boot chunk) at runtime. Added in Nancy12.
+		// Nancy12+
 		return new ResourceUse();
 	case 140:
 		if (g_nancy->getGameType() >= kGameTypeNancy12)

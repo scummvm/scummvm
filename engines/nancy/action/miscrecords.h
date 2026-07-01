@@ -130,17 +130,12 @@ protected:
 // text into the new (UICO-driven) textbox
 class FrameTextBox : public ActionRecord {
 public:
-	enum Variant {
-		kVariant74 = 74,
-		kVariant75 = 75
-	};
-
-	FrameTextBox(Variant variant) : _variant(variant), _flags(0), _slot(0) {}
+	FrameTextBox(bool fullMode) : _fullMode(fullMode), _flags(0), _slot(0) {}
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	Variant _variant;
+	bool _fullMode;
 	Common::String _text;
 	int16 _flags;
 	int16 _slot;
