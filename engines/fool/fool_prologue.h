@@ -25,6 +25,8 @@
 #include "common/array.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+
+#include "fool/fool.h"
 #include "fool/toolbox.h"
 #include "graphics/surface.h"
 
@@ -40,14 +42,27 @@ enum FoolPrologueFontID : uint16 {
 	kPrologueFontSmall = 241,
 };
 
+struct Particle {
+	int16 xPos = 0;
+	int16 yPos = 0;
+	int16 size = 0;
+	int16 veloc = 0;
+};
+
+struct TreasureLine {
+	int16 xLeft = 0;
+	int16 xRight = 0;
+	int16 yPos = 0;
+};
+
 class FoolPrologue {
 public:
-	FoolPrologue() {}
+	FoolPrologue(FoolVersion version, const int *zstrOffset): _version(version), _zstrOffset(zstrOffset) {}
 	~FoolPrologue() {}
 
-	void run(bool finale);
+	void run(bool finale, const BitMap &prevWindow);
 
-	void setup(bool finale); // sub_128_004
+	void setup(bool finale, const BitMap &prevWindow); // sub_128_004
 	void copyScreenToPage(int16 screenPage); // sub_128_1ba
 	void setPortBitsToPage(int16 screenPage); // sub_128_1f4
 	void delay(int16 numTicks); // sub_128_21e
@@ -56,7 +71,7 @@ public:
 	void drawTextCenter(const Common::U32String &str, int16 x, int16 y); // sub_128_2a6
 	void fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID); // sub_128_2f0
 	void zoomClose(int16 patternID, PatternMode mode); // sub_128_354
-	void drawTreasurePhaseIn(int16 unk1); // sub_128_3ee
+	void drawTreasurePhaseIn(int16 offset, int16 count); // sub_128_3ee
 	void scanlineBlitPageToScreen(int16 screenPage, int16 left, int16 right, int16 updatePeriod); // sub_128_50a
 	void blitPageToScreen(int16 screenPage); // sub_128_610
 	void scanlineTransition(int16 patternID); // sub_128_64a
@@ -91,13 +106,15 @@ public:
 	void finaleCardRotate(); // sub_131_5038
 
 private:
+	FoolVersion _version;
+	const int *_zstrOffset;
 	Toolbox *_toolbox;
 	ZBasic *_zbasic;
 	bool _quit = false;
 
 	// last tick count
 	uint32 _tickMarker; // var_i32_2
-	int16 var_i16_6;
+	int16 _rainIndex; // var_i16_6
 	GrafPtr _grafPtrWindow; // var_i32_8
 	GrafPtr _grafPtrMenu; // var_i32_c
 
@@ -122,8 +139,6 @@ private:
 	int16 var_i16_52;
 	Common::Rect var_i16_54;
 
-	Common::Rect var_i16_5c;
-	Common::Rect var_i16_64;
 	Common::Rect var_i16_6c;
 
 	int16 var_i16_74;
@@ -132,7 +147,6 @@ private:
 
 	int16 var_i16_176;
 	int16 var_i16_180;
-	int16 var_i16_18c;
 	int16 var_i16_18e;
 
 	int16 var_i16_192;
@@ -150,24 +164,14 @@ private:
 	int16 var_i16_1b8;
 	int16 var_i16_1ba;
 
-	uint32 var_i32_1c0;
-
 	Common::U32String var_i16_1c4;
 
-	uint32 var_i32_2c4;
-	int16 var_i16_2c8;
-	int16 var_i16_2ca;
 	int16 var_i16_2cc;
 	Common::U32String var_i16_2ce;
 
 	int16 _prologueLoading; // var_i16_3ce
 	int16 _prologuePicIndex; // var_i16_3d4
 	int16 var_i16_3e6;
-
-	int16 var_i16_3ec;
-	int16 var_i16_3ee;
-
-	int16 var_i16_3fc;
 
 	// picture resource handles
 	PicHandle _pics[92] = { nullptr }; // arr_i32_0
@@ -179,6 +183,9 @@ private:
 	Common::Rect arr_i32_1c4;
 
 	int16 arr_i16_1e8[1004] = { 0 };
+
+	Particle _rain[251]; // arr_i16_1e8
+	TreasureLine _treasure[251]; // arr_i16_1e8
 
 	GrafPort _grafPortWindow; // arr_i32_9c0
 	GrafPort _grafPortMenu; // arr_i32_a8a
