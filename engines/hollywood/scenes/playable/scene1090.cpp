@@ -64,103 +64,38 @@ const byte kScene1090WrappedBrainPickupFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 };
 
+static PlayableSceneConfig scene1090Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = kScene1090ArchiveName;
+	config.initialRequiredChunkCount = kScene1090InitialRequiredChunkCount;
+	config.arenaFirstChunk = kScene1090ArenaFirstChunk;
+	config.arenaLastChunk = kScene1090ArenaLastChunk;
+	config.stageIndex = kScene1090StageIndex;
+	config.debugName = "Scene 1090";
+	config.viewportXOffset = kScene1090ViewportXOffset;
+	config.viewportMinXOffset = kScene1090ViewportMinXOffset;
+	config.viewportMaxXOffset = kScene1090ViewportMaxXOffset;
+	config.inventoryOwnerIndex = 0;
+	config.activeAudioChapterIndex = 1;
+	config.actorBankTableEntry = kScene1090ActorBankTableEntry;
+	config.actorPaletteTableEntry = kScene1090ActorPaletteTableEntry;
+	config.inventoryActionTableExtraOffset = 0;
+	config.inventoryRowsOffsetIndex = kScene1090Resource003RowsOffsetIndex;
+	config.speechCueDescriptorTableOffset = kScene1090SpeechCueDescriptorTableOffset;
+	config.actorPathStepDeltaTable = kScene1090ActorPathStepDeltaTable;
+	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene1090ActorPathStepDeltaTable);
+	config.walkablePaletteMaxRegion = 1;
+	config.musicArchiveName = kScene1090MusicArchiveName;
+	config.soundBank0ArchiveName = kScene1090SoundArchiveName;
+	config.mainFlowFirstState = kScene1090FirstState;
+	config.mainFlowLastState = kScene1090LastState;
+	return config;
+}
+
 Scene1090::Scene1090(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene1090", 0x101, 0x15b, 2, 0xfd, 0xfb),
+		PlayableScene(vm, scene1090Config(), "scene1090", 0x101, 0x15b, 2, 0xfd, 0xfb),
 		_darkPaletteResource(),
 		_darkPaletteMask() {
-}
-
-const char *Scene1090::resourceArchiveName() const {
-	return kScene1090ArchiveName;
-}
-
-uint Scene1090::sceneInitialRequiredChunkCount() const {
-	return kScene1090InitialRequiredChunkCount;
-}
-
-uint Scene1090::sceneArenaFirstChunk() const {
-	return kScene1090ArenaFirstChunk;
-}
-
-uint Scene1090::sceneArenaLastChunk() const {
-	return kScene1090ArenaLastChunk;
-}
-
-uint Scene1090::sceneStageIndex() const {
-	return kScene1090StageIndex;
-}
-
-const char *Scene1090::sceneDebugName() const {
-	return "Scene 1090";
-}
-
-uint16 Scene1090::sceneViewportXOffset() const {
-	return kScene1090ViewportXOffset;
-}
-
-uint16 Scene1090::sceneViewportMinXOffset() const {
-	return kScene1090ViewportMinXOffset;
-}
-
-uint16 Scene1090::sceneViewportMaxXOffset() const {
-	return kScene1090ViewportMaxXOffset;
-}
-
-byte Scene1090::inventoryOwnerIndex() const {
-	return 0;
-}
-
-void Scene1090::initializeInventoryOwnerState() {
-	GameplayState &state = _vm->gameState();
-	state.initializeRonItemResourcePages();
-	if (state.inventoryItemCountByOwner[0] == 0)
-		state.initializeRonInventoryItems();
-	state.currentInventoryOwnerIndex = 0;
-	state.activeAudioChapterIndex = 1;
-}
-
-uint Scene1090::resource000ActorBankTableEntry() const {
-	return kScene1090ActorBankTableEntry;
-}
-
-uint Scene1090::resource000ActorPaletteTableEntry() const {
-	return kScene1090ActorPaletteTableEntry;
-}
-
-uint32 Scene1090::inventoryActionTableExtraOffset() const {
-	return 0;
-}
-
-uint Scene1090::resource003InventoryRowsOffsetIndex() const {
-	return kScene1090Resource003RowsOffsetIndex;
-}
-
-uint32 Scene1090::speechCueDescriptorTableOffset() const {
-	return kScene1090SpeechCueDescriptorTableOffset;
-}
-
-const byte *Scene1090::actorPathStepDeltaTable() const {
-	return kScene1090ActorPathStepDeltaTable;
-}
-
-uint Scene1090::actorPathStepDeltaTableSize() const {
-	return ARRAYSIZE(kScene1090ActorPathStepDeltaTable);
-}
-
-byte Scene1090::walkablePaletteMaxRegion() const {
-	return 1;
-}
-
-const char *Scene1090::musicArchiveName() const {
-	return kScene1090MusicArchiveName;
-}
-
-const char *Scene1090::soundBank0ArchiveName() const {
-	return kScene1090SoundArchiveName;
-}
-
-bool Scene1090::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId >= kScene1090FirstState && stateId <= kScene1090LastState;
 }
 
 bool Scene1090::hasCustomPreviewState() const {
