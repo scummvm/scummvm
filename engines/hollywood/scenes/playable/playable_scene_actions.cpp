@@ -46,6 +46,8 @@ void PlayableScene::handleLeftClick(const GameplayLoopCursorState &state) {
 
 void PlayableScene::handleInventoryItemClick(const GameplayLoopCursorState &state) {
 	_skipRequested = false;
+	_lastInventoryActionItemId = state.resolvedItem;
+	_lastInventoryPrimaryItemId = state.primaryInventoryItem;
 	_vm->cursor()->leaveInteractiveMode();
 	if (!dispatchGenericInventoryAction(state))
 		dispatchSceneAction(state.inventoryActionHandlerId);
@@ -121,6 +123,8 @@ void PlayableScene::processSceneRelationClick(const GameplayLoopCursorState &sta
 	if (actionRecord.actionHandlerId == 0)
 		return;
 	_lastSceneActionItemId = itemId;
+	_lastInventoryActionItemId = 0;
+	_lastInventoryPrimaryItemId = state.primaryInventoryItem;
 
 	const SceneActionTarget target = _hotspots.actionTarget(itemId);
 	int targetX = _activeActorWorldX;

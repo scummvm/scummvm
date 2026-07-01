@@ -759,6 +759,8 @@ protected:
 	byte _activeActorCel;
 	byte _activeActorDrawOrderMode;
 	byte _lastSceneActionItemId;
+	byte _lastInventoryActionItemId;
+	byte _lastInventoryPrimaryItemId;
 	bool _skipRequested;
 };
 

@@ -83,6 +83,8 @@ struct GameplayState {
 		windmillBladesMoving = false;
 		scene3020Item31Taken = false;
 		scene3030MachineActivated = false;
+		seenScene3040EntryLine = false;
+		scene3040ConditionalObjectVisible = false;
 		seenScene3050EntryLine = false;
 		scene3050Row3CaptionUpdated = false;
 		scene3060SecretDoorState = 0;
@@ -658,6 +660,8 @@ struct GameplayState {
 	bool windmillBladesMoving;
 	bool scene3020Item31Taken;
 	bool scene3030MachineActivated;
+	bool seenScene3040EntryLine;
+	bool scene3040ConditionalObjectVisible;
 	bool seenScene3050EntryLine;
 	bool scene3050Row3CaptionUpdated;
 	byte scene3060SecretDoorState;
