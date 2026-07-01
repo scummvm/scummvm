@@ -389,15 +389,33 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		// Saves a cropped image of the screen to a bitmap/TGA file.
 		// TODO: debug-only feature, not implemented
 		return nullptr;
-	case 147:	// Nancy11
-		return new FadeSoundToSilence();
+	case 145:
+		// Nancy13 renumbered the sound-playing AR block downwards; PlaySound
+		// moved here (it was 150 up to Nancy12).
+		// TODO: verify the Nancy13 PlaySound on-disk layout matches PlaySound::readData.
+		if (g_nancy->getGameType() >= kGameTypeNancy13)
+			return new PlaySound();
+		return nullptr;
+	case 146:
+		// Nancy13: FadeSoundToSilence moved here (was 147).
+		if (g_nancy->getGameType() >= kGameTypeNancy13)
+			return new FadeSoundToSilence();
+		return nullptr;
+	case 147:
+		if (g_nancy->getGameType() >= kGameTypeNancy13)
+			return new SetVolume();			// Nancy13: SetVolume moved here (was 148)
+		return new FadeSoundToSilence();	// Nancy11
 	case 148:
+		if (g_nancy->getGameType() >= kGameTypeNancy13)
+			return new StopSound();	// Nancy13: StopSound moved here (was 154)
 		if (g_nancy->getGameType() >= kGameTypeNancy12)
 			return new SetVolume();	// Moved from 149 in Nancy12
 		// MakeScreenFile - seems to save a cropped image of the screen in a bitmap file?
 		// TODO: Used in Nancy 9, sand castle puzzle. Moved to 141 in Nancy12.
 		return nullptr;
 	case 149:
+		if (g_nancy->getGameType() >= kGameTypeNancy13)
+			return new StopSound();	// Nancy13: StopAndUnloadSound moved here (was 155)
 		if (g_nancy->getGameType() >= kGameTypeNancy12)
 			return new PlaySoundEventFlagTerse();	// Moved from 161 in Nancy12
 		else if (g_nancy->getGameType() >= kGameTypeNancy9)
@@ -454,17 +472,52 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 165:
 		return new MindPuzzle();
 	case 166:
-		// OneBuildPuzzle, moved here from 234 in Nancy12.
-		// TODO: verify the Nancy12 data layout against OneBuildPuzzle::readData
+		// OneBuildPuzzle, moved here from 234 in Nancy12
 		return new OneBuildPuzzle();
 	case 167:
 		// TODO: Nancy12 ChasePuzzle (new), not implemented
 		return nullptr;
 	case 168:
 		return new Set3DSoundListenerPosition();
+	// -- Nancy 13 new/relocated puzzles (types 169-176) --
+	case 169:
+		// StepObjectsPuzzle, new in Nancy13
+		// TODO: not yet implemented
+		return nullptr;
 	case 170:
-		// Moved to 140 in Nancy12
+		if (g_nancy->getGameType() >= kGameTypeNancy13) {
+			// WordFindPuzzle, new in Nancy13. This reuses the slot that used
+			// to hold SetPlayerClock (which itself moved to 140 in Nancy12).
+			// TODO: not yet implemented
+			return nullptr;
+		}
+		// SetPlayerClock lived here up to Nancy11; moved to 140 in Nancy12
 		return new SetPlayerClock();
+	case 171:
+		// TurningPuzzle, moved here from 209 in Nancy13.
+		if (g_nancy->getGameType() >= kGameTypeNancy13)
+			return new TurningPuzzle();
+		return nullptr;
+	case 172:
+		// BlocksPuzzle, new in Nancy13
+		// TODO: not yet implemented
+		return nullptr;
+	case 173:
+		// PegsPuzzle, new in Nancy13
+		// TODO: not yet implemented
+		return nullptr;
+	case 174:
+		// Unknown Puzzle, new in Nancy13
+		// TODO: not yet implemented
+		return nullptr;
+	case 175:
+		// Unknown Puzzle, new in Nancy13
+		// TODO: not yet implemented
+		return nullptr;
+	case 176:
+		// Unknown Puzzle, new in Nancy13
+		// TODO: not yet implemented
+		return nullptr;
 	case 200:
 		return new SoundEqualizerPuzzle();
 	case 201:
