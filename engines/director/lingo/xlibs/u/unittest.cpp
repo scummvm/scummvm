@@ -173,7 +173,7 @@ void UnitTestXObj::m_moveMouse(int nargs) {
 	ev.type = Common::EVENT_MOUSEMOVE;
 	ev.mouse = Common::Point(x, y);
 	me->_mousePos = ev.mouse;
-	g_director->_injectedEvents.push_back(ev);
+	g_system->getEventManager()->pushEvent(ev);
 	g_lingo->push(0);
 }
 
@@ -188,7 +188,7 @@ void UnitTestXObj::m_leftMouseDown(int nargs) {
 	Common::Event ev;
 	ev.type = Common::EVENT_LBUTTONDOWN;
 	ev.mouse = me->_mousePos;
-	g_director->_injectedEvents.push_back(ev);
+	g_system->getEventManager()->pushEvent(ev);
 	g_lingo->push(0);
 }
 
@@ -203,7 +203,7 @@ void UnitTestXObj::m_leftMouseUp(int nargs) {
 	Common::Event ev;
 	ev.type = Common::EVENT_LBUTTONUP;
 	ev.mouse = me->_mousePos;
-	g_director->_injectedEvents.push_back(ev);
+	g_system->getEventManager()->pushEvent(ev);
 	g_lingo->push(0);
 }
 

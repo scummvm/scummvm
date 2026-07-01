@@ -1,0 +1,60 @@
+-- Standalone regression test for the "Bewegen" (drag-tracking) half of
+-- Physikus Mechanik2's real drag-and-drop mechanism (MovieScript 3
+-- "DragDropSteuerung", used by BehaviorScript 89/94/95 on sprites 52/53).
+-- Ported verbatim (offset math unchanged) and driven end-to-end through
+-- the fixed UnitTest xlib, exactly like a real player's click-drag would.
+
+openXlib("UnitTest")
+set ut to UnitTest
+
+on pump
+  set dummy to 0
+  repeat with i = 1 to 150
+    set dummy to dummy + i
+  end repeat
+end
+
+put "sprite1 initial loc=" & (the locH of sprite 1) & "," & (the locV of sprite 1)
+set startH to the locH of sprite 1
+set startV to the locV of sprite 1
+
+-- mouseDown "picks up" the sprite at its current position
+ut(mMoveMouse, startH, startV)
+pump()
+ut(mLeftMouseDown)
+pump()
+put "mouseDown registered: " & (the mouseDown)
+
+-- Real game's Bewegen(): dxm/dym capture the offset between the sprite's
+-- origin and the initial click point, then track it live.
+set dxm to the locH of sprite 1 - the mouseH
+set dym to the locV of sprite 1 - the mouseV
+put "offset dxm=" & dxm & " dym=" & dym
+
+set steps to 0
+set targetH to startH + 60
+set targetV to startV + 40
+repeat while the mouseDown
+  set steps to steps + 1
+  if steps > 10 then
+    put "FAIL: drag loop never terminated (mouseDown stayed true forever)"
+    exit repeat
+  end if
+  set the locH of sprite 1 to the mouseH + dxm
+  set the locV of sprite 1 to the mouseV + dym
+  put "  step" && steps && ": sprite1 now at" && (the locH of sprite 1) & "," & (the locV of sprite 1)
+  if steps = 3 then
+    ut(mMoveMouse, targetH, targetV)
+  end if
+  if steps = 6 then
+    ut(mLeftMouseUp)
+  end if
+  pump()
+end repeat
+
+put "final: steps=" & steps & " sprite1 loc=" & (the locH of sprite 1) & "," & (the locV of sprite 1) & " (expected " & targetH & "," & targetV & ")"
+if (the locH of sprite 1) = targetH and (the locV of sprite 1) = targetV and steps >= 1 and steps <= 10 then
+  put "PASS: Bewegen drag loop correctly tracked mouse movement and terminated on mouseUp"
+else
+  put "FAIL: Bewegen drag loop did not behave correctly"
+end if

@@ -1,0 +1,90 @@
+-- Standalone regression test for the "Abgesetzt" (drop-detection) half of
+-- Physikus Mechanik2's real drag-and-drop puzzle mechanism (MovieScript
+-- "DragDropSteuerung", sprites 52/53, BehaviorScript 89/94/95).
+--
+-- IMPORTANT (matches real game semantics): Abgesetzt's rollOver(DropKanal)
+-- checks whether the MOUSE CURSOR is over the drop-target sprite at the
+-- moment of mouseUp -- NOT whether the dragged sprite's own rect overlaps
+-- the target. So this test positions the mouse, not the dragged sprite.
+--
+-- Note: UnitTest.mMoveMouse takes WINDOW-relative coordinates (per its own
+-- docstring), while "the mouseH"/"the mouseV" (and sprite locH/locV) are
+-- STAGE-relative -- Window::getMousePos() subtracts the window's inner
+-- letterbox offset. We probe that offset once so window-coordinate calls
+-- land on the intended stage position.
+
+openXlib("UnitTest")
+set ut to UnitTest
+
+on pump
+  set dummy to 0
+  repeat with i = 1 to 150
+    set dummy to dummy + i
+  end repeat
+end
+
+-- Probe the window->stage coordinate offset: move to a known window coord,
+-- read back the stage-relative mouseH/mouseV, and derive the delta.
+ut(mMoveMouse, 300, 300)
+pump()
+set offH to 300 - (the mouseH)
+set offV to 300 - (the mouseV)
+put "window->stage offset: offH=" & offH & " offV=" & offV
+
+put "sprite1 rect=" & (the rect of sprite 1)
+put "sprite2 rect=" & (the rect of sprite 2)
+
+set startH to the locH of sprite 1
+set startV to the locV of sprite 1
+set dragObj to DragDropSteuerung(mNew, startH, startV)
+
+-- Scenario A: mouse cursor over sprite 2 at drop time -> rollOver hit,
+-- should snap the dragged sprite onto the target's position.
+ut(mMoveMouse, (the locH of sprite 2) + offH, (the locV of sprite 2) + offV)
+pump()
+put "mouse now at stage coords: " & (the mouseH) & "," & (the mouseV)
+set pos to dragObj(Abgesetzt, 1, 2)
+put "Scenario A (mouse over target): pos=" & pos & " sprite1 loc=" & (the locH of sprite 1) & "," & (the locV of sprite 1)
+if pos = 1 and (the locH of sprite 1) = (the locH of sprite 2) and (the locV of sprite 1) = (the locV of sprite 2) then
+  put "PASS: Scenario A - drop onto target correctly detected and snapped"
+else
+  put "FAIL: Scenario A - drop onto target not handled correctly"
+end if
+
+-- Scenario B: mouse cursor far from sprite 2 -> rollOver miss, dragged
+-- sprite should return to its original (pre-drag) XPos/YPos.
+set the locH of sprite 1 to startH + 500
+set the locV of sprite 1 to startV + 500
+ut(mMoveMouse, 5 + offH, 5 + offV)
+pump()
+set pos2 to dragObj(Abgesetzt, 1, 2)
+put "Scenario B (mouse far from target): pos=" & pos2 & " sprite1 loc=" & (the locH of sprite 1) & "," & (the locV of sprite 1)
+if pos2 = 0 and (the locH of sprite 1) = startH and (the locV of sprite 1) = startV then
+  put "PASS: Scenario B - missed drop correctly returned to origin"
+else
+  put "FAIL: Scenario B - missed drop did not return to origin correctly"
+end if
+
+--
+-- Helper mirroring MovieScript 8/3 "DragDropSteuerung" verbatim (property
+-- names/behavior unchanged from the real game's decompiled source).
+factory DragDropSteuerung
+method mNew X, Y
+    property XPos, YPos
+    set XPos to X
+    set YPos to Y
+    return me
+
+-- Real game's "Abgesetzt": on drop, check rollOver against the target
+-- channel; if hit, snap in place, else return home.
+method Abgesetzt DragKanal, DropKanal
+    property XPos, YPos
+    if rollOver(DropKanal) then
+      set the locH of sprite DragKanal to the locH of sprite DropKanal
+      set the locV of sprite DragKanal to the locV of sprite DropKanal
+      return 1
+    else
+      set the locH of sprite DragKanal to XPos
+      set the locV of sprite DragKanal to YPos
+      return 0
+    end if
