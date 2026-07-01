@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-06-30 19:33+0000\n"
-"PO-Revision-Date: 2026-06-22 19:22+0000\n"
+"PO-Revision-Date: 2026-07-01 16:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -10235,28 +10235,28 @@ msgstr ""
 "Le mini-jeu Troie n'est pas encore supporté et sera ignoré pour le moment."
 
 #: engines/harvester/metaengine.cpp:33
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable gore"
-msgstr "Activer le service de stockage"
+msgstr "Activer le gore"
 
 #: engines/harvester/metaengine.cpp:34
 msgid ""
 "When disabled, the startup movie player follows the original GORE=NO "
 "censorship path."
 msgstr ""
+"Si désactivé, le lecteur de la vidéo de démarrage suit le chemin de censure "
+"d'origine GORE=NO."
 
 #: engines/harvester/metaengine.cpp:44
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Show CD change prompts"
-msgstr "Afficher le portrait des personnages"
+msgstr "Afficher les invites de changement de CD"
 
 #: engines/harvester/metaengine.cpp:45
 msgid ""
 "Display the original CD swap image and wait for a left click when the script "
 "requests disc 2 or 3."
 msgstr ""
+"Affiche l'image d'origine d'échange de CD et attend un clic gauche lorsque "
+"le script demande le disque 2 ou 3."
 
 #: engines/hdb/metaengine.cpp:44 engines/illusions/metaengine.cpp:153
 msgid "Enable cheat mode"
@@ -11192,16 +11192,12 @@ msgid "Select index"
 msgstr "Sélectionner un index"
 
 #: engines/macs2/metaengine.cpp:52
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change cursor mode"
-msgstr "Changer de mode"
+msgstr "Changer le mode du curseur"
 
 #: engines/macs2/metaengine.cpp:75
-#, fuzzy
-#| msgid "Slower game speed"
 msgid "Cycle game speed"
-msgstr "Vitesse du jeu plus lente"
+msgstr "Modifier la vitesse du jeu"
 
 #: engines/macs2/metaengine.cpp:80 engines/sherlock/metaengine.cpp:846
 #: engines/touche/metaengine.cpp:147
