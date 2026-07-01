@@ -472,7 +472,7 @@ protected:
 	// Walks the active actor to a target and optional final pose.
 	bool walkActiveActorTo(int targetX, int targetY, byte finalFacing, byte finalCel, bool cancelOnSkip = false);
 	// Applies default or scene-specific walk target adjustment.
-	void adjustWalkTargetToFloorMask(int &targetX, int &targetY) const;
+	bool adjustWalkTargetToFloorMask(int &targetX, int &targetY) const;
 	// Builds path frames using palette-region routing.
 	void queueActorPathWithPaletteRegionRouting(int startX, int startY, int targetX, int targetY,
 		byte finalFacing, byte finalCel);
@@ -488,6 +488,8 @@ protected:
 		byte currentRegion, byte targetRegion) const;
 	// Reads the palette-region id at scene coordinates.
 	byte paletteRegionAt(int x, int y) const override;
+	// Reads the walkable mask value at scene coordinates.
+	byte walkableMaskAt(int x, int y) const;
 	// Chooses actor facing for a movement vector.
 	byte calculateMovementFacingForPath(int fromX, int fromY, int toX, int toY, int requestedFacing) const;
 	// Calculates walk steps needed for one axis.

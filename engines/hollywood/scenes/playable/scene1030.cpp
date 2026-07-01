@@ -404,22 +404,51 @@ bool Scene1030::dispatchCustomSceneAction(uint16 handlerId) {
 }
 
 bool Scene1030::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const {
+	const int rawTargetX = targetX;
+	const int rawTargetY = targetY;
 	targetX = CLIP<int>(targetX, kScene1030WalkTargetMinX, kScene1030WalkTargetMaxX);
+	targetY = CLIP<int>(targetY, 0, 0x1df);
 
-	while (targetY < 0x1df) {
+	do {
+		if (targetY < 0x1df)
+			++targetY;
 		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
-		if (isFramebufferOffsetValid(offset) && _walkablePaletteMask[savedFramebufferPixelAt(offset)] != 0)
+		if (isFramebufferOffsetValid(offset) && _walkablePaletteMask[savedFramebufferPixelAt(offset)] != 0) {
+			debugC(1, kDebugPath,
+				"%s custom path adjust: raw=(%d,%d) clampedX=%d adjusted=(%d,%d) scan=down pixel=%u walk=%u region=%u",
+				sceneDebugName(), rawTargetX, rawTargetY, targetX, targetX, targetY,
+				savedFramebufferPixelAt(offset), _walkablePaletteMask[savedFramebufferPixelAt(offset)],
+				paletteRegionAt(targetX, targetY));
 			return true;
-		++targetY;
-	}
+		}
+	} while (targetY != 0x1df);
 
 	while (targetY > 0) {
 		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
-		if (isFramebufferOffsetValid(offset) && _walkablePaletteMask[savedFramebufferPixelAt(offset)] != 0)
+		if (isFramebufferOffsetValid(offset) && _walkablePaletteMask[savedFramebufferPixelAt(offset)] != 0) {
+			debugC(1, kDebugPath,
+				"%s custom path adjust: raw=(%d,%d) clampedX=%d adjusted=(%d,%d) scan=up pixel=%u walk=%u region=%u",
+				sceneDebugName(), rawTargetX, rawTargetY, targetX, targetX, targetY,
+				savedFramebufferPixelAt(offset), _walkablePaletteMask[savedFramebufferPixelAt(offset)],
+				paletteRegionAt(targetX, targetY));
 			return true;
+		}
 		--targetY;
 	}
+	if (targetY == 0) {
+		const uint offset = targetY * HollywoodEngine::kSceneBufferWidth + targetX;
+		if (isFramebufferOffsetValid(offset) && _walkablePaletteMask[savedFramebufferPixelAt(offset)] != 0) {
+			debugC(1, kDebugPath,
+				"%s custom path adjust: raw=(%d,%d) clampedX=%d adjusted=(%d,%d) scan=top pixel=%u walk=%u region=%u",
+				sceneDebugName(), rawTargetX, rawTargetY, targetX, targetX, targetY,
+				savedFramebufferPixelAt(offset), _walkablePaletteMask[savedFramebufferPixelAt(offset)],
+				paletteRegionAt(targetX, targetY));
+			return true;
+		}
+	}
 
+	debugC(1, kDebugPath, "%s custom path adjust failed to find walkable target: raw=(%d,%d) clamped=(%d,%d)",
+		sceneDebugName(), rawTargetX, rawTargetY, targetX, targetY);
 	return true;
 }
 

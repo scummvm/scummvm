@@ -72,7 +72,20 @@ void PlayableScene::processSceneActionClick(const GameplayLoopCursorState &state
 
 		int targetX = state.sceneX;
 		int targetY = state.sceneY;
-		adjustWalkTargetToFloorMask(targetX, targetY);
+		debugC(1, kDebugPath,
+			"%s path click: cursor=(%u,%u) viewport=(%u,%u) rawTarget=(%d,%d) rawRegion=%u rawWalk=%u actor=(%d,%d) actorRegion=%u actorDrawOrder=%u",
+			sceneDebugName(), state.cursorX, state.cursorY, viewportXOffset(), viewportYOffset(),
+			targetX, targetY, paletteRegionAt(targetX, targetY), walkableMaskAt(targetX, targetY),
+			_activeActorWorldX, _activeActorWorldY, paletteRegionAt(_activeActorWorldX, _activeActorWorldY),
+			_activeActorDrawOrderMode);
+		if (!adjustWalkTargetToFloorMask(targetX, targetY)) {
+			debugC(1, kDebugPath, "%s path target rejected: raw=(%u,%u)", sceneDebugName(),
+				state.sceneX, state.sceneY);
+			return;
+		}
+		debugC(1, kDebugPath, "%s path target adjusted: raw=(%u,%u) adjusted=(%d,%d) adjustedRegion=%u adjustedWalk=%u",
+			sceneDebugName(), state.sceneX, state.sceneY, targetX, targetY,
+			paletteRegionAt(targetX, targetY), walkableMaskAt(targetX, targetY));
 		walkActiveActorTo(targetX, targetY, kActionInvalidFacing, 0, true);
 		return;
 	}
