@@ -311,14 +311,25 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			// Cast script
 			// A strange quirk; if we're in a mouseDown event, Director will test
 			// at runtime to find out whatever is under the mouse and use that.
-			// If we're in a mouseUp event, Director will use whatever was
-			// discovered -at the very beginning- of the mouseDown event chain.
+			// If we're in a mouseUp event, D4-and-below Director will use whatever
+			// was discovered -at the very beginning- of the mouseDown event chain.
 			// This means e.g. the cast member can be swapped out from underneath in
 			// the mouseDown sprite script and the event passed down, which
 			// will mean the old cast member cast script does not get a mouseDown
 			// call, but it -does- get a mouseUp call.
 			// A bit unhinged, but we have a test that proves Director does this,
 			// so we have to do it too.
+			//
+			// D5+ instead re-resolves the cast script from the sprite's *current*
+			// member at mouseUp time (mirroring the kSpriteHandler D5+ path above).
+			// Games rely on this for two-member push buttons: the "armed" member's
+			// own cast-script mouseDown hover-loop swaps the sprite to a "pressed"
+			// member, and only that pressed member's cast script carries the
+			// on mouseUp action (e.g. Physikus' scanner scroll buttons SZ_R/SZ_G,
+			// SW_R/SW_G: releasing inside the button must run SZ_G's mouseUp;
+			// releasing outside leaves the actionless SZ_A member = cancel).
+			// With the mouseDown-time member pinned instead, the pressed member's
+			// handler never ran and such buttons were dead.
 			//
 			// mouseEnter and mouseLeave events should also defer to the value of channelId.
 			CastMemberID targetCast = _currentMouseDownCastID;
@@ -327,6 +338,17 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 				if (!event.channelId)
 					return;
 				Sprite *sprite = _score->getSpriteById(event.channelId);
+				targetCast = sprite->_castId;
+			} else if (((event.event == kEventMouseUp) || (event.event == kEventRightMouseUp)) &&
+					_vm->getVersion() >= 500) {
+				// D6+ tracks the sprite captured at mouseDown (_currentMouseDownChannelId);
+				// D5 falls back to the position-resolved channel.
+				uint16 upChannelId = _currentMouseDownChannelId ? _currentMouseDownChannelId : event.channelId;
+				if (!upChannelId)
+					return;
+				Sprite *sprite = _score->getSpriteById(upChannelId);
+				if (!sprite)
+					return;
 				targetCast = sprite->_castId;
 			}
 
