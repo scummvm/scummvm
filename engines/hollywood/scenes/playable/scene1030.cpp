@@ -252,6 +252,7 @@ void Scene1030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
 		byte actorDrawOrderMode) {
 	copyBaseFramebufferToSceneFramebuffer();
+	applyActorDepthClipForDrawOrder(actorDrawOrderMode);
 
 	if (_entryActorsVisible) {
 		restoreResourceSpriteLayerBackground(_leftEntryActorLayer, _baseFramebuffer);
@@ -288,6 +289,12 @@ void Scene1030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawLargeForegroundActor();
 
 	drawActionOverlayLayer();
+}
+
+void Scene1030::applyActorDepthClipForDrawOrder(byte actorDrawOrderMode) {
+	_drawActorDepthYThresholds = _actorDepthYThresholds;
+	if (_drawActorDepthYThresholds.size() > 3)
+		_drawActorDepthYThresholds[3] = actorDrawOrderMode < 3 ? 0x1e0 : 0;
 }
 
 bool Scene1030::hasCustomEntrySequence() const {
