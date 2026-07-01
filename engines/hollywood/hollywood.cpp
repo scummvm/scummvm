@@ -44,6 +44,8 @@
 #include "hollywood/scenes/playable/scene2040.h"
 #include "hollywood/scenes/playable/scene3000.h"
 #include "hollywood/scenes/playable/scene3010.h"
+#include "hollywood/scenes/playable/scene3020.h"
+#include "hollywood/scenes/playable/scene3030.h"
 #include "hollywood/scenes/playable/scene3050.h"
 #include "hollywood/scenes/playable/scene3060.h"
 #include "hollywood/scenes/playable/scene3070.h"
@@ -111,6 +113,10 @@ const int kScene2040LastState = 0x0801;
 const int kScene3000State = 3000;
 const int kScene3010FirstState = 0x0bc2;
 const int kScene3010LastState = 0x0bcb;
+const int kScene3020FirstState = 0x0bcc;
+const int kScene3020LastState = 0x0bd5;
+const int kScene3030FirstState = 0x0bd6;
+const int kScene3030LastState = 0x0bdf;
 const int kScene3050FirstState = 0x0bea;
 const int kScene3050LastState = 0x0bf3;
 const int kScene3060FirstState = 0x0bf4;
@@ -160,6 +166,8 @@ bool isImplementedGameplayState(int stateId) {
 		(stateId >= kScene2040FirstState && stateId <= kScene2040LastState) ||
 		stateId == kScene3000State ||
 		(stateId >= kScene3010FirstState && stateId <= kScene3010LastState) ||
+		(stateId >= kScene3020FirstState && stateId <= kScene3020LastState) ||
+		(stateId >= kScene3030FirstState && stateId <= kScene3030LastState) ||
 		(stateId >= kScene3050FirstState && stateId <= kScene3050LastState) ||
 		(stateId >= kScene3060FirstState && stateId <= kScene3060LastState) ||
 		(stateId >= kScene3070FirstState && stateId <= kScene3070LastState) ||
@@ -495,6 +503,22 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene3010 scene3010(this);
 			if (!scene3010.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene3020FirstState && stateId <= kScene3020LastState) {
+			handledState = true;
+			Scene3020 scene3020(this);
+			if (!scene3020.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene3030FirstState && stateId <= kScene3030LastState) {
+			handledState = true;
+			Scene3030 scene3030(this);
+			if (!scene3030.play())
 				return Common::kReadingFailed;
 			continue;
 		}
