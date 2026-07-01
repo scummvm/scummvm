@@ -442,40 +442,47 @@ class FourXMDecoder::FourXMRawVideoTrack : public FixedRateVideoTrack {
 	FourXMDecoder *_dec;
 	Common::Rational _frameRate;
 	uint _w, _h;
-	Common::ScopedPtr<Graphics::ManagedSurface> _surface;
-	Common::Array<uint16> _frameBuffer1;
-	Common::Array<uint16> _frameBuffer2;
-	Common::Array<uint16> *_frame = nullptr;
-	Common::Array<uint16> *_previousFrame = nullptr;
+	Graphics::Surface _frameBuffer1;
+	Graphics::Surface _frameBuffer2;
+	Graphics::Surface *_frame = nullptr;
+	Graphics::Surface *_previousFrame = nullptr;
 	Common::Array<int> _fullMotionOffsets;
 	Common::Array<int> _expMotionOffsets;
 	Common::Array<Raw4XMCacheEntry> _cache;
 
 public:
 	FourXMRawVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h) : _dec(dec), _frameRate(frameRate), _w(w), _h(h) {
-		_surface.reset(new Graphics::ManagedSurface());
-		_surface->create(w, h, getPixelFormat());
-		_frameBuffer1.resize(w * h);
-		_frameBuffer2.resize(w * h);
+		_frameBuffer1.create(w, h, getPixelFormat());
+		_frameBuffer2.create(w, h, getPixelFormat());
 		_frame = &_frameBuffer1;
 		_previousFrame = &_frameBuffer2;
 		_cache.resize(256);
 		FourXM::buildRawMotionTables(w, _fullMotionOffsets, _expMotionOffsets);
+
+		assert((uint)_frameBuffer1.pitch == w * 2);
+		assert((uint)_frameBuffer2.pitch == w * 2);
+	}
+
+	~FourXMRawVideoTrack() {
+		_frameBuffer1.free();
+		_frameBuffer2.free();
 	}
 
 	uint16 getWidth() const override { return _w; }
 	uint16 getHeight() const override { return _h; }
 
 	Graphics::PixelFormat getPixelFormat() const override {
-		return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+		return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	}
 
 	int getCurFrame() const override { return _dec->_curFrame; }
 	int getFrameCount() const override { return _dec->_frames.size(); }
 
 	const Graphics::Surface *decodeNextFrame() override {
+		const Graphics::Surface *frame = _previousFrame;
+
 		if (_dec->_curFrame >= _dec->_frames.size())
-			return _surface->surfacePtr();
+			return frame;
 
 		const FourXMDecoder::Frame &frameInfo = _dec->_frames[_dec->_curFrame];
 		_dec->_stream->seek(frameInfo.offset);
@@ -484,7 +491,7 @@ public:
 		if (chunkId != kRaw4XMFrameContainer || chunkSize < 8 || frameInfo.offset + chunkSize > frameInfo.end) {
 			warning("invalid raw 4XM frame at offset %" PRId64, frameInfo.offset);
 			++_dec->_curFrame;
-			return _surface->surfacePtr();
+			return frame;
 		}
 
 		Common::Array<byte> payload;
@@ -492,30 +499,29 @@ public:
 		_dec->_stream->read(payload.data(), payload.size());
 		const bool changed = decodeContainerPayload(payload.data(), payload.size(), _dec->_curFrame);
 		if (changed) {
-			copyFrameToSurface();
+			frame = _frame;
 			SWAP(_frame, _previousFrame);
 		}
 
 		++_dec->_curFrame;
-		return _surface->surfacePtr();
+		return frame;
 	}
 
 private:
 	Common::Rational getFrameRate() const override { return _frameRate; }
-
-	void copyFrameToSurface() {
-		Graphics::Surface frame;
-		frame.init(_w, _h, _w * sizeof(uint16), _frame->data(), Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
-		_surface->convertFrom(frame, getPixelFormat());
-	}
 
 	bool decodeFullFrame(const byte *payload, uint32 payloadSize) {
 		if (payloadSize < _w * _h * 2)
 			return false;
 
 		Common::MemoryReadStream fullFrameStream(payload, payloadSize);
-		for (uint i = 0; i < _w * _h; ++i)
-			(*_frame)[i] = fullFrameStream.readUint16LE();
+
+		for (uint y = 0; y < _h; ++y) {
+			auto *dst = static_cast<uint16 *>(_frame->getBasePtr(0, y));
+			for (uint x = 0; x < _w; ++x)
+				dst[x] = fullFrameStream.readUint16LE();
+		}
+
 		return true;
 	}
 
@@ -559,7 +565,8 @@ private:
 			if (subChunkId == kRaw4XMFullFrame) {
 				changed = decodeFullFrame(subPayload, subPayloadSize) || changed;
 			} else if (subChunkId == kRaw4XMDeltaFrame) {
-				changed = applyRaw4XMDelta(subPayload, subPayloadSize, _frame->data(), _previousFrame->data(), _w, _h,
+				changed = applyRaw4XMDelta(subPayload, subPayloadSize, (uint16 *)_frame->getPixels(),
+										   (const uint16 *)_previousFrame->getPixels(), _w, _h,
 										   _fullMotionOffsets, _expMotionOffsets) ||
 						  changed;
 			} else if (subChunkId == kRaw4XMCachedFrame) {
