@@ -219,6 +219,7 @@ private:
 	Common::Array<byte> _resourceArena;
 	Common::Array<byte> _resourceScratchArena;
 	Common::Array<byte> _secondaryScratchBuffer;
+	Common::Array<byte> _presentationPaletteRemapTable;
 	IndexedSurfaceBuffer _frameDecodeBuffer;
 	IndexedSurfaceBuffer _sceneFramebuffer;
 	IndexedSurfaceBuffer _savedFramebuffer;

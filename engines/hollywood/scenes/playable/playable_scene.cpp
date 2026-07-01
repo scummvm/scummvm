@@ -98,6 +98,7 @@ PlayableScene::PlayableScene(HollywoodEngine *vm, const PlayableSceneConfig &con
 		_fullPaletteRegionMask(_surfaceState.fullPaletteRegionMask),
 		_walkablePaletteMask(_surfaceState.walkablePaletteMask),
 		_colorToActorDepthClassMap(_surfaceState.colorToActorDepthClassMap),
+		_presentationPaletteRemapTable(_surfaceState.presentationPaletteRemapTable),
 		_actorDepthYThresholds(_surfaceState.actorDepthYThresholds),
 		_drawActorDepthYThresholds(_surfaceState.drawActorDepthYThresholds),
 		_screen(_surfaceState.screen),
@@ -665,6 +666,7 @@ bool PlayableScene::load() {
 			!loadStage003SceneRows())
 		return false;
 	_panelArt.applyInteractiveObjectPalette(_paletteCurrent);
+	_surfaceState.rebuildPresentationPaletteRemapTable();
 
 	if (!_hotspots.load(_paletteMask, _metadata, _stage003SmallRows))
 		return false;
@@ -1068,7 +1070,12 @@ void PlayableScene::drawActiveActorFrame(byte facing, byte cel, int worldX, int 
 	const ActiveActorSpriteDescriptor &descriptor = _activeActorDescriptors[descriptorIndex];
 	const int spriteX = worldX - descriptor.anchorX;
 	const int spriteY = worldY - descriptor.anchorY;
-	drawActorRun(_activeActorRunStreams, descriptor.runStreamOffset, facing * kActiveActorFacingRunStride,
+	const uint runBase = facing * kActiveActorFacingRunStride;
+	const uint paletteRunCursor = skipActorRunStream(_activeActorRunStreams,
+		descriptor.runStreamOffset, runBase, descriptor.opaqueRunCount);
+	drawActorPaletteRemapRun(_activeActorRunStreams, paletteRunCursor, runBase,
+		descriptor.paletteRunCount, spriteX, spriteY, minimumYExclusive, worldY);
+	drawActorRun(_activeActorRunStreams, descriptor.runStreamOffset, runBase,
 		descriptor.opaqueRunCount, spriteX, spriteY, minimumYExclusive, worldY);
 }
 
@@ -1088,7 +1095,7 @@ int PlayableScene::drawSecondaryActorFrame(byte facing, byte frame, int worldX, 
 }
 
 int PlayableScene::drawActorRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
-		int spriteX, int spriteY, int minimumYExclusive, int actorWorldY) {
+		int spriteX, int spriteY, int minimumYExclusive, int actorWorldY, uint *nextCursor) {
 	if (usesActorDepthTest()) {
 		ActorDepthTest depthTest;
 		depthTest.enabled = true;
@@ -1098,11 +1105,29 @@ int PlayableScene::drawActorRun(const Common::Array<byte> &runStreams, uint curs
 		depthTest.actorWorldY = actorWorldY;
 
 		return drawActorRunStream(runStreams, cursor, runBase, runCount, spriteX, spriteY,
-			minimumYExclusive, *_sceneFramebuffer.surfacePtr(), &depthTest);
+			minimumYExclusive, *_sceneFramebuffer.surfacePtr(), &depthTest, nextCursor);
 	}
 
 	return drawActorRunStream(runStreams, cursor, runBase, runCount, spriteX, spriteY,
-		minimumYExclusive, *_sceneFramebuffer.surfacePtr(), nullptr);
+		minimumYExclusive, *_sceneFramebuffer.surfacePtr(), nullptr, nextCursor);
+}
+
+int PlayableScene::drawActorPaletteRemapRun(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
+		int spriteX, int spriteY, int minimumYExclusive, int actorWorldY) {
+	if (usesActorDepthTest()) {
+		ActorDepthTest depthTest;
+		depthTest.enabled = true;
+		depthTest.savedFramebuffer = &_savedFramebuffer.rawSurface();
+		depthTest.colorToDepthClassMap = &_colorToActorDepthClassMap;
+		depthTest.depthYThresholds = &_drawActorDepthYThresholds;
+		depthTest.actorWorldY = actorWorldY;
+
+		return drawActorPaletteRemapRunStream(runStreams, cursor, runBase, runCount, spriteX, spriteY,
+			minimumYExclusive, *_sceneFramebuffer.surfacePtr(), _presentationPaletteRemapTable, &depthTest);
+	}
+
+	return drawActorPaletteRemapRunStream(runStreams, cursor, runBase, runCount, spriteX, spriteY,
+		minimumYExclusive, *_sceneFramebuffer.surfacePtr(), _presentationPaletteRemapTable, nullptr);
 }
 
 void PlayableScene::runEntryCutscene() {

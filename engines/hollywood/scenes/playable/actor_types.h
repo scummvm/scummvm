@@ -30,6 +30,7 @@ namespace Hollywood {
 struct ActiveActorSpriteDescriptor {
 	uint32 runStreamOffset;
 	uint32 opaqueRunCount;
+	// Header-only palette-remap runs drawn after opaque pixels; used for actor shadows.
 	uint32 paletteRunCount;
 	int16 anchorX;
 	int16 anchorY;

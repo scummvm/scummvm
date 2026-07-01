@@ -45,6 +45,7 @@ public:
 	byte savedFramebufferPixelAt(uint offset) const;
 	void setPaletteEntry6Bit(byte colorIndex, byte red, byte green, byte blue);
 	byte paletteEntryComponent6Bit(byte colorIndex, uint component) const;
+	void rebuildPresentationPaletteRemapTable();
 
 	Common::Array<byte> paletteResource;
 	Common::Array<byte> paletteCurrent;
@@ -58,6 +59,7 @@ public:
 	Common::Array<byte> fullPaletteRegionMask;
 	Common::Array<byte> walkablePaletteMask;
 	Common::Array<byte> colorToActorDepthClassMap;
+	Common::Array<byte> presentationPaletteRemapTable;
 	Common::Array<uint16> actorDepthYThresholds;
 	Common::Array<uint16> drawActorDepthYThresholds;
 	Graphics::ManagedSurface screen;

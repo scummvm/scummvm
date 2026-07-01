@@ -27,6 +27,48 @@
 
 namespace Hollywood {
 
+const uint kPaletteRemapTableSize = 256;
+const uint kPaletteTripletSize = 3;
+const uint kActorPaletteFirstColor = 0xd0;
+const uint kShadowDarkenNumerator = 3;
+const uint kShadowDarkenDenominator = 4;
+
+uint colorDistanceSquared(int redA, int greenA, int blueA, int redB, int greenB, int blueB) {
+	const int redDelta = redA - redB;
+	const int greenDelta = greenA - greenB;
+	const int blueDelta = blueA - blueB;
+	return redDelta * redDelta + greenDelta * greenDelta + blueDelta * blueDelta;
+}
+
+byte nearestDarkerPaletteColor(const Common::Array<byte> &palette, byte sourceColor) {
+	const uint sourceOffset = sourceColor * kPaletteTripletSize;
+	const uint sourceRed = palette[sourceOffset];
+	const uint sourceGreen = palette[sourceOffset + 1];
+	const uint sourceBlue = palette[sourceOffset + 2];
+	const uint targetRed = sourceRed * kShadowDarkenNumerator / kShadowDarkenDenominator;
+	const uint targetGreen = sourceGreen * kShadowDarkenNumerator / kShadowDarkenDenominator;
+	const uint targetBlue = sourceBlue * kShadowDarkenNumerator / kShadowDarkenDenominator;
+	const bool sourceUsesActorPalette = sourceColor >= kActorPaletteFirstColor;
+
+	byte bestColor = sourceColor;
+	uint bestDistance = 0xffffffffU;
+	for (uint color = 0; color < kPaletteRemapTableSize; ++color) {
+		const bool candidateUsesActorPalette = color >= kActorPaletteFirstColor;
+		if (sourceUsesActorPalette != candidateUsesActorPalette)
+			continue;
+
+		const uint candidateOffset = color * kPaletteTripletSize;
+		const uint distance = colorDistanceSquared(targetRed, targetGreen, targetBlue,
+			palette[candidateOffset], palette[candidateOffset + 1], palette[candidateOffset + 2]);
+		if (distance < bestDistance) {
+			bestDistance = distance;
+			bestColor = (byte)color;
+		}
+	}
+
+	return bestColor;
+}
+
 bool actorDepthTestEnabled(const ActorDepthTest *depthTest) {
 	return depthTest != nullptr &&
 		depthTest->enabled &&
@@ -58,7 +100,7 @@ bool actorPixelPassesDepthTest(const ActorDepthTest &depthTest, uint framebuffer
 
 int drawActorRunStream(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
 		int spriteX, int spriteY, int minimumYExclusive, Graphics::Surface &destination,
-		const ActorDepthTest *depthTest) {
+		const ActorDepthTest *depthTest, uint *nextCursor) {
 	const bool useDepthTest = actorDepthTestEnabled(depthTest);
 	if (destination.format.bytesPerPixel != 1)
 		return minimumYExclusive;
@@ -67,14 +109,20 @@ int drawActorRunStream(const Common::Array<byte> &runStreams, uint cursor, uint 
 	int lastRunY = minimumYExclusive;
 
 	for (uint runIndex = 0; runIndex < runCount; ++runIndex) {
-		if (cursor + 3 > runStreams.size())
+		if (cursor + 3 > runStreams.size()) {
+			if (nextCursor != nullptr)
+				*nextCursor = cursor - runBase;
 			return lastRunY;
+		}
 
 		const int xOffset = runStreams[cursor++];
 		const int yOffset = runStreams[cursor++];
 		const uint pixelCount = runStreams[cursor++];
-		if (cursor + pixelCount > runStreams.size())
+		if (cursor + pixelCount > runStreams.size()) {
+			if (nextCursor != nullptr)
+				*nextCursor = cursor - runBase;
 			return lastRunY;
+		}
 
 		const int dstY = spriteY + yOffset;
 		lastRunY = dstY;
@@ -110,7 +158,83 @@ int drawActorRunStream(const Common::Array<byte> &runStreams, uint cursor, uint 
 		cursor += pixelCount;
 	}
 
+	if (nextCursor != nullptr)
+		*nextCursor = cursor - runBase;
 	return lastRunY;
+}
+
+uint skipActorRunStream(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount) {
+	cursor += runBase;
+	for (uint runIndex = 0; runIndex < runCount; ++runIndex) {
+		if (cursor + 3 > runStreams.size())
+			return cursor - runBase;
+
+		cursor += 2;
+		const uint pixelCount = runStreams[cursor++];
+		if (cursor + pixelCount > runStreams.size())
+			return cursor - runBase;
+
+		cursor += pixelCount;
+	}
+
+	return cursor - runBase;
+}
+
+int drawActorPaletteRemapRunStream(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
+		int spriteX, int spriteY, int minimumYExclusive, Graphics::Surface &destination,
+		const Common::Array<byte> &paletteRemapTable, const ActorDepthTest *depthTest) {
+	const bool useDepthTest = actorDepthTestEnabled(depthTest);
+	if (destination.format.bytesPerPixel != 1 || paletteRemapTable.size() < kPaletteRemapTableSize)
+		return minimumYExclusive;
+
+	cursor += runBase;
+	int lastRunY = minimumYExclusive;
+
+	for (uint runIndex = 0; runIndex < runCount; ++runIndex) {
+		if (cursor + 3 > runStreams.size())
+			return lastRunY;
+
+		const int xOffset = runStreams[cursor++];
+		const int yOffset = runStreams[cursor++];
+		uint copyCount = runStreams[cursor++];
+
+		const int dstY = spriteY + yOffset;
+		lastRunY = dstY;
+		if (dstY <= minimumYExclusive || dstY < 0 || dstY >= HollywoodEngine::kSceneBufferHeight)
+			continue;
+
+		int dstX = spriteX + xOffset;
+		if (dstX < 0) {
+			const uint clipped = MIN<uint>(copyCount, (uint)-dstX);
+			copyCount -= clipped;
+			dstX = 0;
+		}
+		if (dstX + (int)copyCount > HollywoodEngine::kSceneBufferWidth)
+			copyCount = MAX<int>(0, HollywoodEngine::kSceneBufferWidth - dstX);
+		if (copyCount == 0 || dstX + copyCount > (uint)destination.w)
+			continue;
+
+		const uint destinationOffset = dstX + dstY * HollywoodEngine::kSceneBufferWidth;
+		byte *destinationPixels = (byte *)destination.getBasePtr(dstX, dstY);
+		for (uint i = 0; i < copyCount; ++i) {
+			if (!useDepthTest || actorPixelPassesDepthTest(*depthTest, destinationOffset + i))
+				destinationPixels[i] = paletteRemapTable[destinationPixels[i]];
+		}
+	}
+
+	return lastRunY;
+}
+
+void buildPresentationPaletteRemapTable(const Common::Array<byte> &palette, Common::Array<byte> &paletteRemapTable) {
+	paletteRemapTable.resize(kPaletteRemapTableSize);
+	if (palette.size() < kPaletteRemapTableSize * kPaletteTripletSize) {
+		for (uint i = 0; i < paletteRemapTable.size(); ++i)
+			paletteRemapTable[i] = (byte)i;
+		return;
+	}
+
+	for (uint color = 0; color < paletteRemapTable.size(); ++color)
+		paletteRemapTable[color] = nearestDarkerPaletteColor(palette, (byte)color);
 }
 
 } // End of namespace Hollywood

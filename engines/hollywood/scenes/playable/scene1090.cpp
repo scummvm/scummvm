@@ -282,6 +282,7 @@ void Scene1090::applyActiveLightResourceSet() {
 	_paletteCurrent = _paletteResource;
 	loadResource000ActorPalette(_resource000OffsetTable);
 	_panelArt.applyInteractiveObjectPalette(_paletteCurrent);
+	_surfaceState.rebuildPresentationPaletteRemapTable();
 }
 
 void Scene1090::rebuildPantryWalkableMask() {

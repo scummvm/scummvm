@@ -41,7 +41,12 @@ struct ActorDepthTest {
 
 int drawActorRunStream(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
 	int spriteX, int spriteY, int minimumYExclusive, Graphics::Surface &destination,
-	const ActorDepthTest *depthTest);
+	const ActorDepthTest *depthTest, uint *nextCursor = nullptr);
+uint skipActorRunStream(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount);
+int drawActorPaletteRemapRunStream(const Common::Array<byte> &runStreams, uint cursor, uint runBase, uint runCount,
+	int spriteX, int spriteY, int minimumYExclusive, Graphics::Surface &destination,
+	const Common::Array<byte> &paletteRemapTable, const ActorDepthTest *depthTest);
+void buildPresentationPaletteRemapTable(const Common::Array<byte> &palette, Common::Array<byte> &paletteRemapTable);
 
 } // End of namespace Hollywood
 
