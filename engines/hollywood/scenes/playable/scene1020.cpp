@@ -204,6 +204,23 @@ void Scene1020::initializeCustomPreviewState() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
 
+bool Scene1020::hasCustomComposite() const {
+	return true;
+}
+
+void Scene1020::drawCustomComposite(bool drawActiveActor, byte activeFacing, byte activeCel, int activeWorldX, int activeWorldY,
+		bool drawSecondaryActor, byte secondaryFacing, byte secondaryFrame, int secondaryWorldX, int secondaryWorldY,
+		byte actorDrawOrderMode) {
+	(void)actorDrawOrderMode;
+
+	copyBaseFramebufferToSceneFramebuffer();
+	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
+		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
+	if (_actionOverlayVisible)
+		restoreResourceSpriteLayerBackground(_actionOverlayLayer, _baseFramebufferOriginal);
+	drawActionOverlayLayer();
+}
+
 bool Scene1020::hasCustomEntrySequence() const {
 	return isFirstEntryState() || isSpecialOverlayEntryState();
 }
