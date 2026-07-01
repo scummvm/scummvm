@@ -997,11 +997,9 @@ void PhoenixVREngine::showImageOverlay(const Common::String &image, int x, int y
 		return;
 	}
 
-	uint8 r, g, b;
-	surface->format.colorToRGB(surface->getPixel(surface->w - 1, surface->h - 1), r, g, b);
-	_imageOverlay.reset(surface->convertTo(Graphics::BlendBlit::getSupportedPixelFormat()));
-	if (_imageOverlay)
-		_imageOverlay->applyColorKey(r, g, b);
+	_imageOverlay.reset(new Graphics::ManagedSurface());
+	_imageOverlay->convertFrom(*surface, _pixelFormat);
+	_imageOverlay->setTransparentColor(surface->getPixel(surface->w - 1, surface->h - 1));
 	_imageOverlayPos = Common::Point(x, y);
 }
 
@@ -1054,7 +1052,7 @@ void PhoenixVREngine::lockKey(int idx, const Common::String &warp) {
 	_lockKey[idx] = warp;
 }
 
-Graphics::Surface *PhoenixVREngine::loadSurface(const Common::String &path) {
+Graphics::ManagedSurface *PhoenixVREngine::loadSurface(const Common::String &path) {
 	Common::String filename = path;
 	Common::ScopedPtr<Common::SeekableReadStream> stream(open(path, &filename));
 	if (!stream) {
@@ -1074,16 +1072,17 @@ Graphics::Surface *PhoenixVREngine::loadSurface(const Common::String &path) {
 		warning("decoding %s failed", filename.c_str());
 		return nullptr;
 	}
-	auto *palette = dec->hasPalette() ? dec->getPalette().data() : nullptr;
-	auto *s = dec->getSurface()->convertTo(Graphics::BlendBlit::getSupportedPixelFormat(), palette);
-	if (s) {
-		byte r = 0, g = 0, b = 0;
-		s->applyColorKey(r, g, b);
-	}
+	auto *s = new Graphics::ManagedSurface();
+	s->copyFrom(*dec->getSurface());
+	if (dec->hasPalette())
+		s->setPalette(dec->getPalette().data(), 0, dec->getPalette().size());
+	// TODO: Skip conversion for surfaces with palettes?
+	s->convertToInPlace(_pixelFormat);
+	s->setTransparentColor(s->format.RGBToColor(0, 0, 0));
 	return s;
 }
 
-Graphics::Surface *PhoenixVREngine::loadCursor(const Common::String &path) {
+Graphics::ManagedSurface *PhoenixVREngine::loadCursor(const Common::String &path) {
 	if (path.empty())
 		return nullptr;
 	auto it = _cursorCache.find(path);
@@ -1180,8 +1179,8 @@ void PhoenixVREngine::renderTimer() {
 	fgSrcRect.right = fgSrcRect.left + fgSrcRect.width() * timeLeft;
 	if (!fgRect.isValidRect() || !fgSrcRect.isValidRect())
 		return;
-	_screen->blitFrom(*timerBg, bgRect.origin());
-	_screen->blitFrom(*timerFg, fgSrcRect, fgRect.origin());
+	_screen->simpleBlitFrom(*timerBg, bgRect.origin());
+	_screen->simpleBlitFrom(*timerFg, fgSrcRect, fgRect.origin());
 }
 
 void PhoenixVREngine::renderVR(float dt) {
@@ -1189,7 +1188,7 @@ void PhoenixVREngine::renderVR(float dt) {
 	if (_text) {
 		int16 x = _textRect.left + (_textRect.width() - _text->w) / 2;
 		int16 y = _textRect.top + (_textRect.height() - _text->h) / 2;
-		_screen->blitFrom(*_text, {x, y});
+		_screen->simpleBlitFrom(*_text, {x, y}, Graphics::FLIP_NONE, true);
 	}
 	renderImageOverlay();
 	renderTimer();
@@ -1197,7 +1196,7 @@ void PhoenixVREngine::renderVR(float dt) {
 
 void PhoenixVREngine::renderImageOverlay() {
 	if (_imageOverlay)
-		paint(*_imageOverlay, _imageOverlayPos);
+		_screen->simpleBlitFrom(*_imageOverlay, _imageOverlayPos);
 }
 
 void PhoenixVREngine::saveVariables() {
@@ -1411,7 +1410,7 @@ void PhoenixVREngine::tick(float dt) {
 
 	renderVR(dt);
 
-	Graphics::Surface *cursor = nullptr;
+	Graphics::ManagedSurface *cursor = nullptr;
 	auto &cursors = _cursors[_warpIdx];
 	bool anyMatched = false;
 	for (int i = 0, n = cursors.size(); i != n; ++i) {
@@ -1444,7 +1443,7 @@ void PhoenixVREngine::tick(float dt) {
 	if (!cursor)
 		cursor = loadCursor(anyMatched ? _defaultCursor[1] : _defaultCursor[0]);
 	if (cursor) {
-		paint(*cursor, _mousePos - Common::Point(cursor->w / 2, cursor->h / 2));
+		_screen->simpleBlitFrom(*cursor, _mousePos - Common::Point(cursor->w / 2, cursor->h / 2));
 	}
 }
 
@@ -1668,15 +1667,6 @@ Common::Error PhoenixVREngine::run() {
 	}
 
 	return Common::kNoError;
-}
-
-void PhoenixVREngine::paint(Graphics::Surface &src, Common::Point dst) {
-	Common::Rect srcRect = src.getRect();
-	Common::Rect clip = _screen->getBounds();
-	if (Common::Rect::getBlitRect(dst, srcRect, clip)) {
-		Common::Rect dstRect(dst.x, dst.y, dst.x + srcRect.width(), dst.y + srcRect.height());
-		_screen->blitFrom(src, srcRect, dstRect);
-	}
 }
 
 bool PhoenixVREngine::testSaveSlot(int idx) const {

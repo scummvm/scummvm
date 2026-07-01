@@ -217,9 +217,8 @@ private:
 	Common::SeekableReadStream *open(const Common::String &name, Common::String *origName = nullptr);
 	Common::SeekableReadStream *tryOpen(const Common::Path &name, Common::String *origName);
 
-	Graphics::Surface *loadSurface(const Common::String &path);
-	Graphics::Surface *loadCursor(const Common::String &path);
-	void paint(Graphics::Surface &src, Common::Point dst);
+	Graphics::ManagedSurface *loadSurface(const Common::String &path);
+	Graphics::ManagedSurface *loadCursor(const Common::String &path);
 	PointF currentVRPos() const {
 		return RectF::transform(_angleX.angle(), _angleY.angle(), _fov);
 	}
@@ -270,7 +269,7 @@ private:
 
 	Common::ScopedPtr<RegionSet> _regSet;
 
-	Common::HashMap<Common::String, Graphics::Surface *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _cursorCache;
+	Common::HashMap<Common::String, Graphics::ManagedSurface *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _cursorCache;
 
 	Common::Array<Common::Array<Common::String>> _cursors;
 	Common::String _defaultCursor[2];
@@ -303,7 +302,7 @@ private:
 
 	Common::ScopedPtr<Graphics::ManagedSurface> _text;
 	Common::Rect _textRect;
-	Common::ScopedPtr<Graphics::Surface> _imageOverlay;
+	Common::ScopedPtr<Graphics::ManagedSurface> _imageOverlay;
 	Common::Point _imageOverlayPos;
 	bool _cibleActive = false;
 	uint32 _cibleStartMillis = 0;
