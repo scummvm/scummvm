@@ -203,6 +203,16 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		Cast *cast = nullptr;
 		if (_casts.contains(libId)) {
 			cast = _casts.getVal(libId);
+			// The default internal cast is pre-created by the Movie constructor
+			// with the default resource id (1024) and no name, before the MCsL
+			// is parsed. Adopt the authored values, otherwise a movie whose
+			// internal cast is keyed at a different id (e.g. Physikus'
+			// Game/Midland.dxr, Internal = 66560) filters out every CASt member
+			// and never finds its Lctx, so none of its Lingo compiles.
+			if (!isExternal) {
+				cast->_libResourceId = libResourceId;
+				cast->setCastName(name);
+			}
 		} else {
 			cast = new Cast(this, libId, false, isExternal, libResourceId);
 			cast->setCastName(name);
