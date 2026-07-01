@@ -25,6 +25,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 #include "backends/base-backend.h"
+#include "common/frac.h"
 #include "graphics/blit.h"
 #include "graphics/dirtyrects.h"
 #include "graphics/paletteman.h"
@@ -34,7 +35,6 @@
 #include "backends/log/log.h"
 #include "backends/platform/3ds/sprite.h"
 #include "common/events.h"
-#include "common/frac.h"
 #include "common/rect.h"
 #include "common/queue.h"
 #include "common/ustr.h"
