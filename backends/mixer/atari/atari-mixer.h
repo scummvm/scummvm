@@ -32,9 +32,10 @@
 class AtariMixerManager : public MixerManager, Common::EventObserver {
 public:
 	AtariMixerManager();
-	virtual ~AtariMixerManager();
+	~AtariMixerManager() override;
 
-	virtual void init() override;
+	void init() override;
+	void deinit();
 	void update();
 
 	void suspendAudio() override;

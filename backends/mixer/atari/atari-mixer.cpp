@@ -67,19 +67,8 @@ AtariMixerManager::AtariMixerManager() : MixerManager() {
 	suspendAudio();
 
 	ConfMan.registerDefault("output_rate", DEFAULT_OUTPUT_RATE);
-	_outputRate = ConfMan.getInt("output_rate");
-	if (_outputRate <= 0)
-		_outputRate = DEFAULT_OUTPUT_RATE;
-
 	ConfMan.registerDefault("output_channels", DEFAULT_OUTPUT_CHANNELS);
-	_outputChannels = ConfMan.getInt("output_channels");
-	if (_outputChannels <= 0 || _outputChannels > 2)
-		_outputChannels = DEFAULT_OUTPUT_CHANNELS;
-
 	ConfMan.registerDefault("audio_buffer_size", DEFAULT_SAMPLES);
-	_samples = ConfMan.getInt("audio_buffer_size");
-	if (_samples <= 0)
-		_samples = DEFAULT_SAMPLES;
 
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
@@ -89,16 +78,28 @@ AtariMixerManager::~AtariMixerManager() {
 
 	g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 
-	AtariAudioShutdown();
-
-	Mfree(_atariSampleBuffer);
-	_atariSampleBuffer = _atariPhysicalSampleBuffer = _atariLogicalSampleBuffer = nullptr;
-
-	delete[] _samplesBuf;
-	_samplesBuf = nullptr;
+	deinit();
 }
 
 void AtariMixerManager::init() {
+	debug("audio init");
+
+	assert(!_mixer);
+
+	// read either from game domain or from defaults
+	// but never write back so 22050 Hz will stay even on TT/stock Falcon
+	_outputRate = ConfMan.getInt("output_rate");
+	if (_outputRate <= 0)
+		_outputRate = DEFAULT_OUTPUT_RATE;
+
+	_outputChannels = ConfMan.getInt("output_channels");
+	if (_outputChannels <= 0 || _outputChannels > 2)
+		_outputChannels = DEFAULT_OUTPUT_CHANNELS;
+
+	_samples = ConfMan.getInt("audio_buffer_size");
+	if (_samples <= 0)
+		_samples = DEFAULT_SAMPLES;
+
 	AudioSpec desired, obtained;
 
 	desired.frequency = _outputRate;
@@ -123,15 +124,9 @@ void AtariMixerManager::init() {
 	_samples = obtained.samples;
 	_downsample = (obtained.format == AudioFormatSigned8);
 
-	ConfMan.setInt("output_rate", _outputRate, Common::ConfigManager::kApplicationDomain);
-	ConfMan.setInt("output_channels", _outputChannels, Common::ConfigManager::kApplicationDomain);
-	ConfMan.setInt("audio_buffer_size", _samples, Common::ConfigManager::kApplicationDomain);
-
 	debug("setting %d Hz mixing frequency (%d-bit, %s)",
 		  _outputRate, obtained.format == AudioFormatSigned8 ? 8 : 16, _outputChannels == 1 ? "mono" : "stereo");
 	debug("sample buffer size: %d", _samples);
-
-	ConfMan.flushToDisk();
 
 	_atariSampleBuffer = (byte*)Mxalloc(obtained.size * 2, MX_STRAM);
 	if (!_atariSampleBuffer)
@@ -155,6 +150,23 @@ void AtariMixerManager::init() {
 	_mixer->setReady(true);
 
 	resumeAudio();
+}
+
+void AtariMixerManager::deinit() {
+	debug("audio deinit");
+
+	suspendAudio();
+
+	AtariAudioShutdown();
+
+	delete _mixer;
+	_mixer = nullptr;
+
+	Mfree(_atariSampleBuffer);
+	_atariSampleBuffer = _atariPhysicalSampleBuffer = _atariLogicalSampleBuffer = nullptr;
+
+	delete[] _sampleBuf;
+	_sampleBuf = nullptr;
 }
 
 void AtariMixerManager::suspendAudio() {
