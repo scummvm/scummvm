@@ -46,6 +46,12 @@ namespace Fool {
 
 struct FoolGameDescription;
 
+enum FoolVersion {
+	kFool11 = 1,
+	kFool20 = 2,
+	kFool30 = 3,
+};
+
 class FoolEngine : public Engine {
 private:
 	const FOOLGameDescription *_gameDescription;

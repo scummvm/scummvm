@@ -25,13 +25,14 @@
 #include "graphics/macgui/macwindow.h"
 
 #include "fool/fool.h"
+#include "fool/fool_game.h"
 #include "fool/fool_prologue.h"
 #include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
+#define OFF(x) (_zstrOffset[kOffsetPrologue] + (x))
+
 namespace Fool {
-
-
 
 // Based on m68k disassembly of the Fool's Errand v2.0, (c) 1988 Cliff Johnson.
 
@@ -39,7 +40,7 @@ namespace Fool {
 // v2.0 - fixes full-screen rendering on higher-resolution displays
 // v3.0 - newer ZBasic, changed a few graphics assets, removed custom menu font and sounds for compatibility
 
-void FoolPrologue::run(bool finale) {
+void FoolPrologue::run(bool finale, const BitMap &prevWindow) {
 	_toolbox = new Toolbox();
 	_zbasic = new ZBasic(_toolbox);
 
@@ -69,14 +70,14 @@ void FoolPrologue::run(bool finale) {
 	smallFOND->data()[3] = (byte)kPrologueFontSmall;
 	_toolbox->_injectFOND(exec, smallFOND->data(), smallFOND->size(), Common::String("Small Prologue"));
 
-	setup(finale);
+	setup(finale, prevWindow);
 	delete _zbasic;
 	_zbasic = nullptr;
 	delete _toolbox;
 	_toolbox = nullptr;
 }
 
-void FoolPrologue::setup(bool finale) {
+void FoolPrologue::setup(bool finale, const BitMap &prevWindow) {
 	var_i16_1aa = finale ? 2 : 1;
 
 	// 128:0004
@@ -114,10 +115,9 @@ void FoolPrologue::setup(bool finale) {
 	_patterns[4] = { { 0x88, 0x00, 0x22, 0x00, 0x88, 0x00, 0x22, 0x00 } };
 
 	// 128:017a
-	// about message
-	var_str_76 = _zbasic->str(0);
-	var_str_76 = _zbasic->str(1);
-	var_str_76 = _zbasic->str(2);
+	//var_str_76 = _zbasic->str(0);
+	//var_str_76 = _zbasic->str(1);
+	//var_str_76 = _zbasic->str(2);
 
 	// fill graphics pages with white
 	for (int16 i = 0; i < 12; i++) {
@@ -146,6 +146,11 @@ void FoolPrologue::setup(bool finale) {
 	sub_129_004();
 	if (_quit)
 		return;
+
+	if (prevWindow) {
+		_grafPtrWindow->portBits->copyFrom(*prevWindow);
+	}
+
 	var_i32_1a6 = _zbasic->mem(-1);
 	if (var_i16_1aa == 1) {
 		prologueRun();
@@ -224,30 +229,30 @@ void FoolPrologue::zoomClose(int16 patternID, PatternMode mode) {
 	_toolbox->PenNormal();
 }
 
-void FoolPrologue::drawTreasurePhaseIn(int16 unk1) {
+void FoolPrologue::drawTreasurePhaseIn(int16 offset, int16 count) {
 	// 128:03ee
-	var_i16_18c = 0x5;
-	if (var_i16_18e > 0x28) {
-		var_i16_18c = 0x8;
+	int period = 0x5;
+	if (count > 0x28) {
+		period = 0x8;
 	}
-	if (var_i16_18e > 0x50) {
-		var_i16_18c = 0xb;
+	if (count > 0x50) {
+		period = 0xb;
 	}
-	if (var_i16_18e > 0x64) {
-		var_i16_18c = 0xe;
+	if (count > 0x64) {
+		period = 0xe;
 	}
 	// 128:0428
-	for (int i = 1; i <= var_i16_18e; i++) {
+	for (int i = 1; i <= count; i++) {
 		_tickMarker = _toolbox->TickCount();
 		_toolbox->MoveTo(
-			arr_i16_1e8[i] - unk1,
-			arr_i16_1e8[i + 0x1f6] - unk1
+			_treasure[i].xLeft - offset,
+			_treasure[i].yPos - offset
 		);
 		_toolbox->LineTo(
-			arr_i16_1e8[i + 0xfb] + unk1,
-			arr_i16_1e8[i + 0x1f6] - unk1
+			_treasure[i].xRight + offset,
+			_treasure[i].yPos - offset
 		);
-		if (i % var_i16_18c == 0) {
+		if (i % period == 0) {
 			delayFromMarker(0);
 		};
 	}
@@ -257,8 +262,9 @@ void FoolPrologue::drawTreasurePhaseIn(int16 unk1) {
 void FoolPrologue::scanlineBlitPageToScreen(int16 screenPage, int16 left, int16 right, int16 updatePeriod) {
 	// 128:050a
 	var_i32_40 = arr_i32_41296[screenPage];
-	var_i16_5c.left = left;
-	var_i16_5c.right = right;
+	Common::Rect srcRect; // var_i16_5c
+	srcRect.left = left;
+	srcRect.right = right;
 	if (updatePeriod == 0) {
 		updatePeriod = 0x14;
 	}
@@ -274,9 +280,9 @@ void FoolPrologue::scanlineBlitPageToScreen(int16 screenPage, int16 left, int16 
 	// 128:0584
 	for (int i = 0; i < SCREEN_HEIGHT; i++) {
 		_tickMarker = _toolbox->TickCount();
-		var_i16_5c.top = _randScanline[i];
-		var_i16_5c.bottom = _randScanline[i] + 1;
-		_toolbox->CopyBits(var_i32_40, var_i32_32, var_i16_5c, var_i16_5c, kSrcCopy, nullptr);
+		srcRect.top = _randScanline[i];
+		srcRect.bottom = _randScanline[i] + 1;
+		_toolbox->CopyBits(var_i32_40, var_i32_32, srcRect, srcRect, kSrcCopy, nullptr);
 		if (i % updatePeriod == 0) {
 			delayFromMarker(0);
 		}
@@ -308,13 +314,14 @@ void FoolPrologue::scanlineTransition(int16 patternID) {
 void FoolPrologue::zoomTransition(int16 screenPage) {
 	// 128:06e4
 	var_i32_40 = arr_i32_41296[screenPage];
+	Common::Rect srcRect; // var_rect_5c
 	for (int i = 1; i <= 0x36; i++) {
 		_tickMarker = _toolbox->TickCount();
-		var_i16_5c.top = (SCREEN_HEIGHT/2) - (int)(i*3.33);
-		var_i16_5c.left = (SCREEN_WIDTH/2) - i*5;
-		var_i16_5c.bottom = (SCREEN_HEIGHT/2) + (int)(i*3.33);
-		var_i16_5c.right = (SCREEN_WIDTH/2) + i*5;
-		_toolbox->CopyBits(var_i32_40, var_i32_32, var_i16_5c, var_i16_5c, kSrcCopy, nullptr);
+		srcRect.top = (SCREEN_HEIGHT/2) - (int)(i*3.33);
+		srcRect.left = (SCREEN_WIDTH/2) - i*5;
+		srcRect.bottom = (SCREEN_HEIGHT/2) + (int)(i*3.33);
+		srcRect.right = (SCREEN_WIDTH/2) + i*5;
+		_toolbox->CopyBits(var_i32_40, var_i32_32, srcRect, srcRect, kSrcCopy, nullptr);
 		_toolbox->Delay(0);
 	}
 	_toolbox->CopyBits(var_i32_40, var_i32_32, var_i16_38, var_i16_38, kSrcCopy, nullptr);
@@ -382,22 +389,22 @@ void FoolPrologue::drawRainRecycle(int16 unk) {
 	do {
 		// 128:0a96
 		drawRainDrop();
-		arr_i16_1e8[var_i16_6] = arr_i16_1e8[0x2f1+var_i16_6] + arr_i16_1e8[var_i16_6];
-		arr_i16_1e8[0xfb+var_i16_6] = arr_i16_1e8[0xfb+var_i16_6] + arr_i16_1e8[0x2f1+var_i16_6];
+		_rain[_rainIndex].xPos += _rain[_rainIndex].veloc;
+		_rain[_rainIndex].yPos += _rain[_rainIndex].veloc;
 
 		// 128:0b52
-		if ((arr_i16_1e8[var_i16_6] > 0x1f4) || (arr_i16_1e8[0xfb+var_i16_6] > 0x140)) {
+		if ((_rain[_rainIndex].xPos > 0x1f4) || (_rain[_rainIndex].yPos > 0x140)) {
 		    // 128:0bae
-			arr_i16_1e8[var_i16_6] = _zbasic->rndInt(0x264) - 0xc8;
-			arr_i16_1e8[0xfb+var_i16_6] = _zbasic->rndInt(0x1ba) - 0xc8;
-			arr_i16_1e8[0x1f6+var_i16_6] = _zbasic->rndInt(0x5) + 0x1;
-			arr_i16_1e8[0x2f1+var_i16_6] = _zbasic->rndInt(0xa) + 0x19;
+			_rain[_rainIndex].xPos = _zbasic->rndInt(0x264) - 0xc8;
+			_rain[_rainIndex].yPos = _zbasic->rndInt(0x1ba) - 0xc8;
+			_rain[_rainIndex].size = _zbasic->rndInt(0x5) + 0x1;
+			_rain[_rainIndex].veloc = _zbasic->rndInt(0xa) + 0x19;
 		}
 		// 128:0c56
 		drawRainDrop();
-		var_i16_6 += 1;
-		if (var_i16_6 > 0xb5) {
-			var_i16_6 = 0;
+		_rainIndex += 1;
+		if (_rainIndex > 0xb5) {
+			_rainIndex = 0;
 			_toolbox->Delay(0);
 		}
 	} while (_tickMarker + var_i16_1a4 > _toolbox->TickCount());
@@ -599,10 +606,10 @@ void FoolPrologue::sub_129_004() {
 	var_i16_54.bottom = SCREEN_HEIGHT;
 	var_i16_54.right = SCREEN_WIDTH;
 
-	var_i32_1c0 = _zbasic->mem(-1);
+	uint32 memFree = _zbasic->mem(-1);
 
 	// 129:02fe
-	if (var_i32_1c0 < 0xd6d8) {
+	if (memFree < 0xd6d8) {
 		_toolbox->InitCursor();
 		_zbasic->get(0x0, 0x14, SCREEN_WIDTH, SCREEN_HEIGHT, arr_i32_41296[0], true);
 		_zbasic->sound(0x19, 0x64, 0xff, 0x0);
@@ -736,12 +743,20 @@ void FoolPrologue::prologueRun() {
 	prologueDrawLoadingMsg();
 	setPortBitsToPage(0xb);
 	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
-	_zbasic->picture(0x74, 0xaa, picTitle);
+	if (_version == kFool30) {
+		_zbasic->picture(0x4c, 0xc8, picTitle);
+	} else {
+		_zbasic->picture(0x74, 0xaa, picTitle);
+	}
 	_toolbox->ReleaseResource(picTitle);
 
 	// 130:007a
 	_zbasic->text(kPrologueFontSmall, 0x9, Graphics::kMacFontRegular, kSrcBic);
-	drawTextCenter(_zbasic->str(18), 0x103, 0x10d);
+	if (_version == kFool30) {
+		drawTextCenter(_zbasic->str(OFF(0)), 0x103, 0x112);
+	} else {
+		drawTextCenter(_zbasic->str(OFF(0)), 0x103, 0x10d);
+	}
 	_toolbox->SetPortBits(var_i32_32);
 	// cliffside images with lightning
 	for (int i = 1; i <= 5; i++) {
@@ -902,17 +917,19 @@ void FoolPrologue::prologueRun() {
 	// 130:062c
 	int y = 0;
 	while (y != SCREEN_HEIGHT) {
-		var_i16_5c.right = SCREEN_WIDTH;
+		Common::Rect scanline;
+		scanline.left = 0;
+		scanline.right = SCREEN_WIDTH;
 		_tickMarker = _toolbox->TickCount();
 		for (int j = 1; j < 0x7; j++) {
 			var_i16_192 = 1;
 			if (y < SCREEN_HEIGHT) {
 				y += 1;
 			}
-			var_i16_5c.top = _randScanline[y];
-			var_i16_5c.bottom = _randScanline[y] + 1;
+			scanline.top = _randScanline[y];
+			scanline.bottom = _randScanline[y] + 1;
 			// 130:068e
-			_toolbox->CopyBits(var_i32_40, var_i32_32, var_i16_5c, var_i16_5c, kSrcCopy, nullptr);
+			_toolbox->CopyBits(var_i32_40, var_i32_32, scanline, scanline, kSrcCopy, nullptr);
 		}
 		// 130:06b0
 		drawRainRecycle(1);
@@ -1145,9 +1162,9 @@ void FoolPrologue::prologueDrawLoadingMsg() {
 	_toolbox->SetPort(_grafPtrMenu);
 	_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	// "loading prologue" message
-	Common::U32String msg = _zbasic->str(19);
+	Common::U32String msg = _zbasic->str(OFF(1));
 	msg += Common::U32String::format(" %d", _prologueLoading);
-	msg += _zbasic->str(20);
+	msg += _zbasic->str(OFF(2));
 	// 130:0d70
 	// white out the contents of the top menu bar.
 	// the 7px offset on either side seems to be to avoid hitting the rounded screen corners?
@@ -1162,28 +1179,28 @@ void FoolPrologue::drawRain() {
 	// 130:0db0
 	_zbasic->unk_20();
 	_toolbox->PenMode(kPatXor);
-	var_i16_6 = 0x1;
-	while (var_i16_6 <= 0xb5) {
+	_rainIndex = 0x1;
+	while (_rainIndex <= 0xb5) {
 		// 130:0dc0
-		arr_i16_1e8[var_i16_6] = _zbasic->rndInt(0x264) - 0x64;
-		arr_i16_1e8[var_i16_6 + 0xfb] = _zbasic->rndInt(0x1ba) - 0x64;
-		arr_i16_1e8[var_i16_6 + 0x1f6] = _zbasic->rndInt(0x5) + 1;
-		arr_i16_1e8[var_i16_6 + 0x2f1] = _zbasic->rndInt(0xa) + 0x19;
+		_rain[_rainIndex].xPos = _zbasic->rndInt(0x264) - 0x64;
+		_rain[_rainIndex].yPos = _zbasic->rndInt(0x1ba) - 0x64;
+		_rain[_rainIndex].size = _zbasic->rndInt(0x5) + 1;
+		_rain[_rainIndex].veloc = _zbasic->rndInt(0xa) + 0x19;
 		// 130:0e68
 		drawRainDrop();
-		var_i16_6 += 1;
+		_rainIndex += 1;
 	}
-	var_i16_6 = 1;
+	_rainIndex = 1;
 	_toolbox->Delay(0);
 }
 
 void FoolPrologue::drawRainDrop() {
 	// 130:0e82
-	_toolbox->MoveTo(arr_i16_1e8[var_i16_6], arr_i16_1e8[var_i16_6 + 0xfb]);
+	_toolbox->MoveTo(_rain[_rainIndex].xPos, _rain[_rainIndex].yPos);
 	// 130:0ec0
 	_toolbox->LineTo(
-		arr_i16_1e8[var_i16_6] + arr_i16_1e8[var_i16_6 + 0x1f6],
-		arr_i16_1e8[var_i16_6 + 0xfb] + arr_i16_1e8[var_i16_6 + 0x1f6]
+		_rain[_rainIndex].xPos + _rain[_rainIndex].size,
+		_rain[_rainIndex].yPos + _rain[_rainIndex].size
 	);
 
 }
@@ -1201,7 +1218,7 @@ void FoolPrologue::prologueRenderNextText() {
 
 		while (var_i16_1ba > 0) {
 			// 130:0f78
-			var_i16_1ba = _zbasic->instr(var_i16_1ba, var_str_76, _zbasic->str(21));
+			var_i16_1ba = _zbasic->instr(var_i16_1ba, var_str_76, Common::U32String("^")); // was: str(21)
 			if (var_i16_1ba > 0) {
 				var_str_76.replace(var_i16_1ba-1, 1, Common::U32String("\""));
 			}

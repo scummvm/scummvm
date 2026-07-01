@@ -25,9 +25,12 @@
 
 #include "common/ustr.h"
 #include "fool/fool.h"
+#include "fool/fool_game.h"
 #include "fool/fool_prologue.h"
 #include "fool/toolbox.h"
 #include "fool/zbasic.h"
+
+#define OFF(x) (_zstrOffset[kOffsetFinale] + (x))
 
 namespace Fool {
 
@@ -121,24 +124,24 @@ void FoolPrologue::finaleRun() {
 	for (int j = 1; j <= 0xe; j++) {
 
 		// 131:030c
-		var_i16_18e = _zbasic->readDataInt();
-		for (int i = 1; i <= var_i16_18e; i++) {
+		int16 count = _zbasic->readDataInt();
+		for (int i = 1; i <= count; i++) {
 			// 131:031a
-			arr_i16_1e8[i] = _zbasic->readDataInt();
-			arr_i16_1e8[i + 0xfb] = _zbasic->readDataInt();
-			arr_i16_1e8[i + 0x1f6] = _zbasic->readDataInt();
+			_treasure[i].xLeft = _zbasic->readDataInt();
+			_treasure[i].xRight = _zbasic->readDataInt();
+			_treasure[i].yPos = _zbasic->readDataInt();
 		}
 
 		// 131:0380
 		_toolbox->PenMode(kPatXor);
-		drawTreasurePhaseIn(0x14);
-		drawTreasurePhaseIn(0xa);
-		drawTreasurePhaseIn(0x14);
-		drawTreasurePhaseIn(0x5);
-		drawTreasurePhaseIn(0xa);
-		drawTreasurePhaseIn(0x5);
+		drawTreasurePhaseIn(0x14, count);
+		drawTreasurePhaseIn(0xa, count);
+		drawTreasurePhaseIn(0x14, count);
+		drawTreasurePhaseIn(0x5, count);
+		drawTreasurePhaseIn(0xa, count);
+		drawTreasurePhaseIn(0x5, count);
 		_toolbox->PenNormal();
-		drawTreasurePhaseIn(0x0);
+		drawTreasurePhaseIn(0x0, count);
 	}
 
 	// 131:03c0
@@ -147,7 +150,7 @@ void FoolPrologue::finaleRun() {
 
 	// 131:0400
 	// well, that's that!
-	drawText(Common::U32String::format("\"%s\"", _zbasic->str(22).encode().c_str()), 0x17c, 0xb4);
+	drawText(Common::U32String::format("\"%s\"", _zbasic->str(OFF(0)).encode().c_str()), 0x17c, 0xb4);
 	delay(0x1e);
 
 	// 131:041a
@@ -228,21 +231,23 @@ void FoolPrologue::finaleRun() {
 		if (var_i16_18e < 0x41) {
 			// 131:0770
 			var_i16_18e += 1;
-			arr_i16_1e8[var_i16_18e] = _zbasic->rndInt(32);
-			arr_i16_1e8[var_i16_18e+0xfb] = _zbasic->rndInt(windHeight);
-			arr_i16_1e8[var_i16_18e+0x1f6] = _zbasic->rndInt(0xa) + 0xa;
+			_rain[var_i16_18e].xPos = _zbasic->rndInt(32);
+			_rain[var_i16_18e].yPos = _zbasic->rndInt(windHeight);
+			_rain[var_i16_18e].size = _zbasic->rndInt(0xa) + 0xa;
+			_rain[var_i16_18e].veloc = _rain[var_i16_18e].size*2;
 			finaleDrawWind(var_i16_18e);
 		}
 		// 131:07ea
 		for (int i = 1; i <= var_i16_18e; i++) {
 			finaleDrawWind(i);
-			arr_i16_1e8[i] += arr_i16_1e8[0x1f6+i]*2;
+			_rain[i].xPos += _rain[i].veloc;
 
 			// 131:0870
-			if (arr_i16_1e8[i] > SCREEN_WIDTH) {
-				arr_i16_1e8[i] = 1;
-				arr_i16_1e8[0xfb+i] = _zbasic->rndInt(windHeight);
-				arr_i16_1e8[0x1f6+i] = _zbasic->rndInt(0xa) + 0xa;
+			if (_rain[i].xPos > SCREEN_WIDTH) {
+				_rain[i].xPos = 1;
+				_rain[i].yPos = _zbasic->rndInt(windHeight);
+				_rain[i].size = _zbasic->rndInt(0xa) + 0xa;
+				_rain[i].veloc = _rain[i].size*2;
 			}
 
 			// 131:0902
@@ -360,7 +365,7 @@ void FoolPrologue::finaleRun() {
 	// 131:0e08
 	_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	// Are you still angry with me?
-	Common::U32String dialog = Common::U32String::format("\"%s\"", _zbasic->str(23).encode().c_str());
+	Common::U32String dialog = Common::U32String::format("\"%s\"", _zbasic->str(OFF(1)).encode().c_str());
 	drawText(
 		dialog,
 		0x1f4 - _toolbox->StringWidth(dialog),
@@ -398,27 +403,29 @@ void FoolPrologue::finaleRun() {
 	scanlineBlitPageToScreen(0x5, 0x64, 0x19c, 0x0);
 	delay(0x28);
 
-	var_i16_5c.left = 0x118;
-	var_i16_5c.right = 0x1d1;
-	var_i16_5c.top = 0x19;
-	var_i16_64.left = 0x118;
-	var_i16_64.right = 0x1d1;
-	var_i16_64.bottom = 0xdf;
+	Common::Rect srcRect; // var_rect_5c
+	Common::Rect dstRect; // var_rect_64
+	srcRect.left = 0x118;
+	srcRect.right = 0x1d1;
+	srcRect.top = 0x19;
+	dstRect.left = 0x118;
+	dstRect.right = 0x1d1;
+	dstRect.bottom = 0xdf;
 
 	// wadjet eye appears from horizon
 	for (int i = 0xdc; i >= 0x19; i -= 5) {
 		// 131:10de
 		_tickMarker = _toolbox->TickCount();
 		var_i32_4e->copyFrom(*arr_i32_41296[5]);
-		var_i16_64.top = i;
-		var_i16_5c.bottom = 0x19 + (0xdf - i);
+		dstRect.top = i;
+		srcRect.bottom = 0x19 + (0xdf - i);
 		// 131:1124
 		var_i32_40 = arr_i32_41296[6];
-		_toolbox->CopyBits(var_i32_40, var_i32_4e, var_i16_5c, var_i16_64, kSrcBic, nullptr);
+		_toolbox->CopyBits(var_i32_40, var_i32_4e, srcRect, dstRect, kSrcBic, nullptr);
 		var_i32_40 = arr_i32_41296[7];
-		_toolbox->CopyBits(var_i32_40, var_i32_4e, var_i16_5c, var_i16_64, kSrcOr, nullptr);
+		_toolbox->CopyBits(var_i32_40, var_i32_4e, srcRect, dstRect, kSrcOr, nullptr);
 		delayFromMarker(0x2);
-		_toolbox->CopyBits(var_i32_4e, var_i32_32, var_i16_64, var_i16_64, kSrcCopy, nullptr);
+		_toolbox->CopyBits(var_i32_4e, var_i32_32, dstRect, dstRect, kSrcCopy, nullptr);
 	}
 	_toolbox->Delay(0);
 
@@ -440,7 +447,7 @@ void FoolPrologue::finaleRun() {
 		if (i == 0x4e) {
 			_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
 			// yes, apparently so
-			drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(24).encode().c_str()), 0x1f4, 0xd2);
+			drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(OFF(2)).encode().c_str()), 0x1f4, 0xd2);
 			_zbasic->picture(0x198, 0x102, _pics[0x25]);
 		}
 		delayFromMarker(0x2);
@@ -466,20 +473,20 @@ void FoolPrologue::finaleRun() {
 	_zbasic->picture(0, 0, _pics[0x2f]);
 	_toolbox->SetPortBits(var_i32_32);
 	delayFromMarker(0xa);
-	var_i16_5c.left = 0x18b;
-	var_i16_5c.right = 0x1ef;
-	var_i16_64.left = 0x18b;
-	var_i16_64.right = 0x1ef;
+	srcRect.left = 0x18b;
+	srcRect.right = 0x1ef;
+	dstRect.left = 0x18b;
+	dstRect.right = 0x1ef;
 
 	// 131:13b8
 	// move the fool card up the screen
 	for (int i = 0xc0; i >= 0x15; i--) {
 		_tickMarker = _toolbox->TickCount();
-		var_i16_5c.top = i;
-		var_i16_5c.bottom = var_i16_5c.top + 0x96;
-		var_i16_64.top = i - 1;
-		var_i16_64.bottom = var_i16_64.top + 0x96;
-		_toolbox->CopyBits(var_i32_32, var_i32_32, var_i16_5c, var_i16_64, kSrcCopy, nullptr);
+		srcRect.top = i;
+		srcRect.bottom = srcRect.top + 0x96;
+		dstRect.top = i - 1;
+		dstRect.bottom = dstRect.top + 0x96;
+		_toolbox->CopyBits(var_i32_32, var_i32_32, srcRect, dstRect, kSrcCopy, nullptr);
 		delayFromMarker(0);
 	}
 
@@ -498,10 +505,10 @@ void FoolPrologue::finaleRun() {
 	var_i16_6c.right = SCREEN_WIDTH;
 	var_i16_6c.top = 0x50;
 	var_i16_6c.bottom = SCREEN_HEIGHT;
-	var_i16_5c.left = 0;
-	var_i16_5c.right = 0x32;
-	var_i16_5c.top = 0;
-	var_i16_5c.bottom = 0x32;
+	srcRect.left = 0;
+	srcRect.right = 0x32;
+	srcRect.top = 0;
+	srcRect.bottom = 0x32;
 	int16 bindleHeight = 0x64;
 
 	// 131:14d8
@@ -512,11 +519,11 @@ void FoolPrologue::finaleRun() {
 		_tickMarker = _toolbox->TickCount();
 		var_i32_4e->copyFrom(*arr_i32_41296[6]);
 		bindleHeight += 5 + i*2;
-		var_i16_64.left = 0x1e0;
-		var_i16_64.right = var_i16_64.left + 0x32;
-		var_i16_64.top = bindleHeight;
-		var_i16_64.bottom = var_i16_64.top + 0x32;
-		_toolbox->CopyBits(var_i32_40, var_i32_4e, var_i16_5c, var_i16_64, kSrcXor, nullptr);
+		dstRect.left = 0x1e0;
+		dstRect.right = dstRect.left + 0x32;
+		dstRect.top = bindleHeight;
+		dstRect.bottom = dstRect.top + 0x32;
+		_toolbox->CopyBits(var_i32_40, var_i32_4e, srcRect, dstRect, kSrcXor, nullptr);
 		// 131:1582
 		_toolbox->MoveTo(0x190 - i, bindleHeight - 0x1e + i*3);
 		_toolbox->LineTo(0x1f4, bindleHeight + 0xa - i);
@@ -554,7 +561,7 @@ void FoolPrologue::finaleRun() {
 	delayFromMarker(0x3c);
 	_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	// well, this won't do
-	drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(25).encode().c_str()), 0x181, 0x3c);
+	drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(OFF(3)).encode().c_str()), 0x181, 0x3c);
 
 	// 131:17c8
 	_tickMarker = _toolbox->TickCount();
@@ -570,10 +577,10 @@ void FoolPrologue::finaleRun() {
 	delay(1);
 	_zbasic->picture(0x193, 0x2d, _pics[0x31]);
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
-	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(26).encode().c_str()), 0x181, 0x3c);
+	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(OFF(4)).encode().c_str()), 0x181, 0x3c);
 	// am I to suffer this fate merely for uncovering
-	drawTextRight(_zbasic->str(27), 0x181, 0x4d);
-	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(28).encode().c_str()), 0x181, 0x5e);
+	drawTextRight(_zbasic->str(OFF(5)), 0x181, 0x4d);
+	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(OFF(6)).encode().c_str()), 0x181, 0x5e);
 	for (int16 i = 0x30; i <= 0x31; i++) {
 		_toolbox->ReleaseResource(_pics[i]);
 	}
@@ -594,13 +601,13 @@ void FoolPrologue::finaleRun() {
 	_zbasic->picture(0x193, 0x2d, _pics[0x32]);
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
 	// for if that be true
-	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(29).encode().c_str()), 0x181, 0x3c);
+	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(OFF(7)).encode().c_str()), 0x181, 0x3c);
 	// I wish you had made the challenge more difficult
-	drawTextRight(_zbasic->str(30), 0x181, 0x4d);
+	drawTextRight(_zbasic->str(OFF(8)), 0x181, 0x4d);
 	// after all, I am just a fool and I should not
-	drawTextRight(_zbasic->str(31), 0x181, 0x5e);
+	drawTextRight(_zbasic->str(OFF(9)), 0x181, 0x5e);
 	// have been able to find them so easily
-	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(32).encode().c_str()), 0x181, 0x6f);
+	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(OFF(10)).encode().c_str()), 0x181, 0x6f);
 	arr_rect_41af4.top = 6;
 	arr_rect_41af4.left = 0xd0;
 	arr_rect_41af4.bottom = 0x6c;
@@ -710,7 +717,7 @@ void FoolPrologue::finaleRun() {
 	// 131:21e0
 	_zbasic->picture(0x193, 0x2d, _pics[0x33]);
 	var_i16_1b6 = 0x14;
-	dialog = _zbasic->str(33); // be content that you still live
+	dialog = _zbasic->str(OFF(11)); // be content that you still live
 	for (int16 i = 1; i <= 0x18; i++) {
 		_tickMarker = _toolbox->TickCount();
 		_zbasic->text(kPrologueFontFool, i, 0, kSrcXor);
@@ -760,8 +767,8 @@ void FoolPrologue::finaleRun() {
 	delay(0x1e);
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
 	// well I for one am not content
-	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(34).encode().c_str()), 0x181, 0x3c);
-	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(35).encode().c_str()), 0x181, 0x4d);
+	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(OFF(12)).encode().c_str()), 0x181, 0x3c);
+	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(OFF(13)).encode().c_str()), 0x181, 0x4d);
 	drawClickMessageRightAlign();
 	waitForClick();
 	_zbasic->picture(0x193, 0x2d, _pics[0x36]);
@@ -770,20 +777,20 @@ void FoolPrologue::finaleRun() {
 	fillRect(0, 0, 0x96, 0x18b, 2);
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
 	// show me one last puzzle if you dare
-	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(36).encode().c_str()), 0x181, 0x3c);
-	drawTextRight(_zbasic->str(37), 0x181, 0x4d);
-	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(38).encode().c_str()), 0x181, 0x5e);
+	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(OFF(14)).encode().c_str()), 0x181, 0x3c);
+	drawTextRight(_zbasic->str(OFF(15)), 0x181, 0x4d);
+	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(OFF(16)).encode().c_str()), 0x181, 0x5e);
 	waitForClick();
 
 	// 131:258a
 	var_i32_40 = arr_i32_41296[5];
 
 	for (int16 i = 1; i <= 0x1a; i++) {
-		var_i16_5c.top = 0xab - (int16)(i*6.66f);
-		var_i16_5c.left = 0x100 - i*0xa;
-		var_i16_5c.bottom = 0xab + (int16)(i*6.66f);
-		var_i16_5c.right = 0x100 + i*0xa;
-		_toolbox->CopyBits(var_i32_40, var_i32_32, var_i16_5c, var_i16_5c, kSrcCopy, nullptr);
+		srcRect.top = 0xab - (int16)(i*6.66f);
+		srcRect.left = 0x100 - i*0xa;
+		srcRect.bottom = 0xab + (int16)(i*6.66f);
+		srcRect.right = 0x100 + i*0xa;
+		_toolbox->CopyBits(var_i32_40, var_i32_32, srcRect, srcRect, kSrcCopy, nullptr);
 		_toolbox->Delay(0);
 	}
 	// 131:266e
@@ -860,8 +867,8 @@ void FoolPrologue::finaleRun() {
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
 	// 131:2a22
 	// now what have I gotten myself into?
-	drawText(Common::U32String::format("\"%s", _zbasic->str(39).encode().c_str()), 0x3c, 0x2d);
-	drawText(Common::U32String::format("%s\"", _zbasic->str(40).encode().c_str()), 0x46, 0x3e);
+	drawText(Common::U32String::format("\"%s", _zbasic->str(OFF(17)).encode().c_str()), 0x3c, 0x2d);
+	drawText(Common::U32String::format("%s\"", _zbasic->str(OFF(18)).encode().c_str()), 0x46, 0x3e);
 	_tickMarker = _toolbox->TickCount();
 	for (int16 i = 6; i <= 0xa; i++) {
 		arr_i32_41296[i]->copyFrom(*arr_i32_41296[5]);
@@ -887,12 +894,12 @@ void FoolPrologue::finaleRun() {
 	_zbasic->text(kPrologueFontSmall, 0x9, 0, kSrcOr);
 	for (int16 i = 1; i <= 0xe; i++) {
 		// THEBOOKOFTHOTH
-		drawText(_zbasic->midStr(_zbasic->str(41), i, 1), arr_i16_1e8[i], arr_i16_1e8[i + 0xfb]);
+		drawText(_zbasic->midStr(_zbasic->str(OFF(19)), i, 1), arr_i16_1e8[i], arr_i16_1e8[i + 0xfb]);
 	}
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
 	// that's it! the answer is the book of thoth
-	drawText(Common::U32String::format("\"%s", _zbasic->str(42).encode().c_str()), 0x32, 0x2d);
-	drawText(Common::U32String::format("%s\"", _zbasic->str(43).encode().c_str()), 0x3c, 0x3e);
+	drawText(Common::U32String::format("\"%s", _zbasic->str(OFF(20)).encode().c_str()), 0x32, 0x2d);
+	drawText(Common::U32String::format("%s\"", _zbasic->str(OFF(21)).encode().c_str()), 0x3c, 0x3e);
 	// 131:2cf6
 	_toolbox->SetPortBits(var_i32_32);
 	delayFromMarker(0xd2);
@@ -924,18 +931,19 @@ void FoolPrologue::finaleRun() {
 	// 131:2e1a
 	_toolbox->MoveTo(0x46, 0x3e);
 	// wait, what's this?
-	_toolbox->DrawString(Common::U32String::format("\"%s\"", _zbasic->str(44).encode().c_str()));
+	_toolbox->DrawString(Common::U32String::format("\"%s\"", _zbasic->str(OFF(22)).encode().c_str()));
 	delay(0x96);
 	blitPageToScreen(0x9);
 	// 131:2e58
 	for (int16 i = 1; i <= 0xe; i++) {
-		dialog = _zbasic->midStr(_zbasic->str(45), i, 1);
+		// THEBOOKOFTHOTH
+		dialog = _zbasic->midStr(_zbasic->str(OFF(23)), i, 1);
 		for (int16 l = 0; l <= 1; l++) {
 			var_i16_18e = 0x21;
-			for (int16 j = 0; j <= 1; j++) {
-				arr_f64_41bbe[j] = arr_i16_1e8[j*0xfb + i];
-				arr_f64_41bbe[j + 2] = (arr_i16_1e8[(j+2)*0xfb + i] - arr_i16_1e8[j*0xfb + i]) / var_i16_18e;
-			}
+			arr_f64_41bbe[0] = arr_i16_1e8[i];
+			arr_f64_41bbe[2] = (arr_i16_1e8[0x1f6 + i] - arr_i16_1e8[i]) / var_i16_18e;
+			arr_f64_41bbe[1] = arr_i16_1e8[0xfb + i];
+			arr_f64_41bbe[3] = (arr_i16_1e8[0x2f1 + i] - arr_i16_1e8[0xfb + i]) / var_i16_18e;
 			// 131:2f66
 			if (l == 0) {
 				_zbasic->text(kPrologueFontSmall, 9, 0, kSrcOr);
@@ -964,8 +972,8 @@ void FoolPrologue::finaleRun() {
 	setPortBitsToPage(0xa);
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
 	// that's it! the answer is the book of thoth
-	drawText(Common::U32String::format("\"%s", _zbasic->str(46).encode().c_str()), 0x32, 0x2d);
-	drawText(Common::U32String::format("%s\"", _zbasic->str(47).encode().c_str()), 0x3c, 0x3e);
+	drawText(Common::U32String::format("\"%s", _zbasic->str(OFF(24)).encode().c_str()), 0x32, 0x2d);
+	drawText(Common::U32String::format("%s\"", _zbasic->str(OFF(25)).encode().c_str()), 0x3c, 0x3e);
 	arr_i32_41296[0xb]->copyFrom(*arr_i32_41296[0xa]);
 	setPortBitsToPage(0xb);
 	arr_rect_41af4.top = 0xa;
@@ -997,8 +1005,8 @@ void FoolPrologue::finaleRun() {
 	delayFromMarker(0x96);
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
 	// that's it! the answer is the book of thoth
-	drawText(Common::U32String::format("\"%s", _zbasic->str(48).encode().c_str()), 0x32, 0x2d);
-	drawText(Common::U32String::format("%s\"", _zbasic->str(49).encode().c_str()), 0x3c, 0x3e);
+	drawText(Common::U32String::format("\"%s", _zbasic->str(OFF(26)).encode().c_str()), 0x32, 0x2d);
+	drawText(Common::U32String::format("%s\"", _zbasic->str(OFF(27)).encode().c_str()), 0x3c, 0x3e);
 	// 131:341c
 	scanlineBlitPageToScreen(0xb, 0xb0, 0x1f6, 0);
 	scanlineBlitPageToScreen(0x5, 0xb0, 0x1f6, 0);
@@ -1030,25 +1038,25 @@ void FoolPrologue::finaleRun() {
 	_toolbox->SetPortBits(var_i32_32);
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
 	// the book of thoth?
-	drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(50).encode().c_str()), 0x1a4, 0x2d);
+	drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(OFF(28)).encode().c_str()), 0x1a4, 0x2d);
 	_tickMarker = _toolbox->TickCount();
 	arr_i32_41296[5]->copyFrom(*arr_i32_41296[4]);
 	setPortBitsToPage(5);
 	_zbasic->picture(0x171, 0xb, _pics[0x5b]);
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
 	// here is the book of thoth
-	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(51).encode().c_str()), 0x1a4, 0x2d);
-	var_i16_5c.top = wadjetY;
-	var_i16_5c.left = wadjetX;
+	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(OFF(29)).encode().c_str()), 0x1a4, 0x2d);
+	srcRect.top = wadjetY;
+	srcRect.left = wadjetX;
 
 	// 131:366e
-	var_i16_5c.bottom = wadjetY + 100;
-	var_i16_5c.right = wadjetX + 200;
+	srcRect.bottom = wadjetY + 100;
+	srcRect.right = wadjetX + 200;
 	var_i32_4e->copyFrom(*arr_i32_41296[4]);
 	var_i32_40 = arr_i32_41296[9];
-	_toolbox->CopyBits(var_i32_40, var_i32_4e, var_i16_5c, var_i16_5c, kSrcBic, 0);
+	_toolbox->CopyBits(var_i32_40, var_i32_4e, srcRect, srcRect, kSrcBic, 0);
 	var_i32_40 = arr_i32_41296[0xa];
-	_toolbox->CopyBits(var_i32_40, var_i32_4e, var_i16_5c, var_i16_5c, kSrcOr, 0);
+	_toolbox->CopyBits(var_i32_40, var_i32_4e, srcRect, srcRect, kSrcOr, 0);
 	for (int16 i = 6; i <= 8; i++) {
 		arr_i32_41296[i]->copyFrom(*var_i32_4e);
 	}
@@ -1057,49 +1065,49 @@ void FoolPrologue::finaleRun() {
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
 
 	// here is the book of thoth
-	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(52).encode().c_str()), 0x1a4, 0x2d);
+	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(OFF(30)).encode().c_str()), 0x1a4, 0x2d);
 	setPortBitsToPage(7);
 	_zbasic->picture(0x181, 0xf, _pics[0x5a]);
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
 	// and your answer is incorrect
-	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(53).encode().c_str()), 0x1a4, 0x2d);
+	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(OFF(31)).encode().c_str()), 0x1a4, 0x2d);
 	setPortBitsToPage(8);
 
 	// 131:3806
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
 	// destroy him
-	drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(54).encode().c_str()), 0x1a4, 0x2d);
+	drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(OFF(32)).encode().c_str()), 0x1a4, 0x2d);
 	_toolbox->SetPortBits(var_i32_32);
 	delayFromMarker(0xb4);
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
 
 	// the book of thoth?
-	drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(55).encode().c_str()), 0x1a4, 0x2d);
+	drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(OFF(33)).encode().c_str()), 0x1a4, 0x2d);
 	delay(0xf);
 	blitPageToScreen(0x5);
-	var_i16_5c.left = wadjetX;
-	var_i16_5c.right = wadjetX + 0xc8;
-	var_i16_64.left = wadjetX;
-	var_i16_64.right = wadjetX + 0xc8;
-	var_i16_5c.top = 0x19;
-	var_i16_64.bottom = 0xdf;
+	srcRect.left = wadjetX;
+	srcRect.right = wadjetX + 0xc8;
+	dstRect.left = wadjetX;
+	dstRect.right = wadjetX + 0xc8;
+	srcRect.top = 0x19;
+	dstRect.bottom = 0xdf;
 
 	// 131:38f4
 	// wadjet eye rises over horizon
 	for (int16 i = 0xdc; i >= 0x19; i -= 5) {
 		_tickMarker = _toolbox->TickCount();
 		var_i32_4e->copyFrom(*arr_i32_41296[5]);
-		var_i16_64.top = i;
-		var_i16_5c.bottom = 0x19 + 0xdf - i;
+		dstRect.top = i;
+		srcRect.bottom = 0x19 + 0xdf - i;
 
 		var_i32_40 = arr_i32_41296[9];
-		_toolbox->CopyBits(var_i32_40, var_i32_4e, var_i16_5c, var_i16_64, kSrcBic, 0);
+		_toolbox->CopyBits(var_i32_40, var_i32_4e, srcRect, dstRect, kSrcBic, 0);
 
 		var_i32_40 = arr_i32_41296[10];
-		_toolbox->CopyBits(var_i32_40, var_i32_4e, var_i16_5c, var_i16_64, kSrcOr, 0);
+		_toolbox->CopyBits(var_i32_40, var_i32_4e, srcRect, dstRect, kSrcOr, 0);
 		delayFromMarker(2);
 
-		_toolbox->CopyBits(var_i32_4e, var_i32_32, var_i16_64, var_i16_64, kSrcCopy, 0);
+		_toolbox->CopyBits(var_i32_4e, var_i32_32, dstRect, dstRect, kSrcCopy, 0);
 	}
 	// 131:39ba
 
@@ -1119,7 +1127,7 @@ void FoolPrologue::finaleRun() {
 
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
 	// here is the book of thoth
-	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(56).encode().c_str()), 0x1a4, 0x2d);
+	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(OFF(34)).encode().c_str()), 0x1a4, 0x2d);
 
 	delay(0xf);
 	blitPageToScreen(0x7);
@@ -1133,7 +1141,7 @@ void FoolPrologue::finaleRun() {
 	delayFromMarker(0xc8);
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
 	// and your answer is incorrect
-	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(57).encode().c_str()), 0x1a4, 0x2d);
+	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(OFF(35)).encode().c_str()), 0x1a4, 0x2d);
 	delay(0xf);
 
 	blitPageToScreen(0xa);
@@ -1170,10 +1178,10 @@ void FoolPrologue::finaleRun() {
 		if (k == 7) {
 			_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
 			// destroy him
-			drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(58).encode().c_str()), 0x1a4, 0x2d);
+			drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(OFF(36)).encode().c_str()), 0x1a4, 0x2d);
 			_zbasic->picture(0x181, 0xf, _pics[0x5a]); // angry priestess
 			// destroy him!!!
-			drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(59).encode().c_str()), 0x1a4, 0x2d);
+			drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(OFF(37)).encode().c_str()), 0x1a4, 0x2d);
 		}
 		// 131:3db8
 		if (k < 8) {
@@ -1261,10 +1269,10 @@ void FoolPrologue::finaleRun() {
 		arr_f64_41bbe[3+4] = (double)(end.right - start.right)/segs;
 
 		// 131:420a
-		var_i16_5c = start;
+		srcRect = start;
 
 		// 131:425a
-		_toolbox->CopyBits(var_i32_40, var_i32_32, var_i16_5c, var_i16_5c, kSrcCopy, 0);
+		_toolbox->CopyBits(var_i32_40, var_i32_32, srcRect, srcRect, kSrcCopy, 0);
 
 		for (int16 j = 1; j <= segs - 1; j++) {
 			_tickMarker = _toolbox->TickCount();
@@ -1272,11 +1280,11 @@ void FoolPrologue::finaleRun() {
 				arr_f64_41bbe[i] += arr_f64_41bbe[i+4];
 			}
 			// 131:42e6
-			var_i16_5c.top = (int16)arr_f64_41bbe[0];
-			var_i16_5c.left = (int16)arr_f64_41bbe[1];
-			var_i16_5c.bottom = (int16)arr_f64_41bbe[2];
-			var_i16_5c.right = (int16)arr_f64_41bbe[3];
-			_toolbox->CopyBits(var_i32_40, var_i32_32, var_i16_5c, var_i16_5c, kSrcCopy, 0);
+			srcRect.top = (int16)arr_f64_41bbe[0];
+			srcRect.left = (int16)arr_f64_41bbe[1];
+			srcRect.bottom = (int16)arr_f64_41bbe[2];
+			srcRect.right = (int16)arr_f64_41bbe[3];
+			_toolbox->CopyBits(var_i32_40, var_i32_32, srcRect, srcRect, kSrcCopy, 0);
 			delayFromMarker(0);
 			// 131:4362
 		}
@@ -1313,9 +1321,9 @@ void FoolPrologue::finaleRun() {
 	_zbasic->picture(0x1b5, 0xba, _pics[0x3c]);
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
 	// but the fool had gained the gift of wisdom
-	drawText(_zbasic->str(60), 0xd2, 0x61);
+	drawText(_zbasic->str(OFF(38)), 0xd2, 0x61);
 	// and was able to trick the high priestess
-	drawText(_zbasic->str(61), 0xd2, 0x72);
+	drawText(_zbasic->str(OFF(39)), 0xd2, 0x72);
 	drawClickMessageRightAlign();
 	_toolbox->SetPortBits(var_i32_32);
 	blitPageToScreen(0);
@@ -1326,17 +1334,17 @@ void FoolPrologue::finaleRun() {
 	// 131:45a4
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
 	// he had remembered well the words
-	drawText(_zbasic->str(62), 0xd2, 0x3f);
+	drawText(_zbasic->str(OFF(40)), 0xd2, 0x3f);
 	// of the magician
-	drawText(_zbasic->str(63), 0xd2, 0x50);
+	drawText(_zbasic->str(OFF(41)), 0xd2, 0x50);
 	// the high priestess may have learned how
-	drawText(Common::U32String::format("\"%s", _zbasic->str(64).encode().c_str()), 0xd7, 0x6d);
+	drawText(Common::U32String::format("\"%s", _zbasic->str(OFF(42)).encode().c_str()), 0xd7, 0x6d);
 	// to command the sacred book of thoth
-	drawText(_zbasic->str(65), 0xde, 0x7e);
+	drawText(_zbasic->str(OFF(43)), 0xde, 0x7e);
 	// but even she cannot force it to do
-	drawText(_zbasic->str(66), 0xde, 0x8f);
+	drawText(_zbasic->str(OFF(44)), 0xde, 0x8f);
 	// anything inherently evil
-	drawText(Common::U32String::format("%s\"", _zbasic->str(67).encode().c_str()), 0xde, 0xa0);
+	drawText(Common::U32String::format("%s\"", _zbasic->str(OFF(45)).encode().c_str()), 0xde, 0xa0);
 	// 131:46aa
 	_toolbox->SetPortBits(var_i32_32);
 	waitForClick();
@@ -1348,11 +1356,11 @@ void FoolPrologue::finaleRun() {
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
 
 	// some say that the story of the fool and his
-	drawText(_zbasic->str(68), 0xd2, 0x5c);
+	drawText(_zbasic->str(OFF(46)), 0xd2, 0x5c);
 	// adventures inspired the creation of the
-	drawText(_zbasic->str(69), 0xd2, 0x6d);
+	drawText(_zbasic->str(OFF(47)), 0xd2, 0x6d);
 	// modern day tarot deck
-	drawText(_zbasic->str(70), 0xd2, 0x7e);
+	drawText(_zbasic->str(OFF(48)), 0xd2, 0x7e);
 
 	// 131:4780
 	_toolbox->SetPortBits(var_i32_32);
@@ -1365,7 +1373,7 @@ void FoolPrologue::finaleRun() {
 	fillRect(0x12c, 0x12c, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
 	// but I doubt it
-	drawText(Common::U32String::format("\"%s\"", _zbasic->str(71).encode().c_str()), 0x184, 0xb1);
+	drawText(Common::U32String::format("\"%s\"", _zbasic->str(OFF(49)).encode().c_str()), 0x184, 0xb1);
 	// 131:4848
 	_toolbox->SetPortBits(var_i32_32);
 	waitForClick();
@@ -1452,13 +1460,13 @@ void FoolPrologue::finaleRun() {
 	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
 	_zbasic->text(kPrologueFontSmall, 9, 0, kSrcBic);
 	// the fool's errand
-	drawTextCenter(_zbasic->str(72), 0x100, 0x19 + yPic + 0x19);
+	drawTextCenter(_zbasic->str(OFF(50)), 0x100, 0x19 + yPic + 0x19);
 	// (c) 1987 by cliff johnson. all rights reserved
-	drawTextCenter(_zbasic->str(73), 0x100, 0x32 + yPic + 0x19);
+	drawTextCenter(_zbasic->str(OFF(51)), 0x100, 0x32 + yPic + 0x19);
 	// portions of this code are copyrighted 1985 zedcor inc
-	drawTextCenter(_zbasic->str(74), 0x100, 0x4b + yPic + 0x19);
+	drawTextCenter(_zbasic->str(OFF(52)), 0x100, 0x4b + yPic + 0x19);
 	// the fool's errand is a registered trademark of cliff johnson
-	drawTextCenter(_zbasic->str(75), 0x100, 0x64 + yPic + 0x19);
+	drawTextCenter(_zbasic->str(OFF(53)), 0x100, 0x64 + yPic + 0x19);
 	// 131:4c94
 	delayFromMarker(0x14);
 	_toolbox->SetPortBits(var_i32_32);
@@ -1472,10 +1480,10 @@ void FoolPrologue::finaleRun() {
 
 	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
 	// and yes, the fool will return in
-	drawTextCenter(_zbasic->str(76), 0x100, 0xa0);
+	drawTextCenter(_zbasic->str(OFF(54)), 0x100, 0xa0);
 	_zbasic->text(kPrologueFontFool, 0x18, 0, kSrcBic);
 	// the fool and his money
-	drawTextCenter(_zbasic->str(77), 0x100, 0xc8);
+	drawTextCenter(_zbasic->str(OFF(55)), 0x100, 0xc8);
 	delayFromMarker(0x14);
 	_toolbox->SetPortBits(var_i32_32);
 	blitPageToScreen(0);
@@ -1492,7 +1500,7 @@ void FoolPrologue::finaleDrawLoadingMsg() {
 	_toolbox->SetPort(_grafPtrMenu);
 	_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	// Loading Finale
-	Common::U32String str = Common::U32String::format("%s%d%%", _zbasic->str(78).encode().c_str(), _prologueLoading);
+	Common::U32String str = Common::U32String::format("%s%d%%", _zbasic->str(OFF(56)).encode().c_str(), _prologueLoading);
 	// 131:4e08
 	fillRect(0, 0, 7, 0x13, _windowWidth - 7);
 
@@ -1506,19 +1514,19 @@ void FoolPrologue::finaleDrawFoolUhOh() {
 	_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, kSrcOr);
 
 	// Uh oh . . .
-	drawText(Common::U32String::format("\"%s\"", _zbasic->str(80).encode().c_str()), 0x1ae, 0xb4);
+	drawText(Common::U32String::format("\"%s\"", _zbasic->str(OFF(58)).encode().c_str()), 0x1ae, 0xb4);
 }
 
 void FoolPrologue::finaleStartText() {
 	// 131:4e98
 	_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, kSrcXor);
-	var_i16_3fc = 0xa0;
+	int16 yStart = 0xa0;
 	// "And so the fool heeded the advice of the magician..."
-	drawText(_zbasic->str(81), 0x96, var_i16_3fc);
-	drawText(_zbasic->str(82), 0xa0, var_i16_3fc + 0xf);
-	drawText(_zbasic->str(83), 0xaa, var_i16_3fc + 0x1e);
-	drawText(_zbasic->str(84), 0xc8, var_i16_3fc + 0x2d);
-	drawText(_zbasic->str(85), 0xe6, var_i16_3fc + 0x3c);
+	drawText(_zbasic->str(OFF(59)), 0x96, yStart);
+	drawText(_zbasic->str(OFF(60)), 0xa0, yStart + 0xf);
+	drawText(_zbasic->str(OFF(61)), 0xaa, yStart + 0x1e);
+	drawText(_zbasic->str(OFF(62)), 0xc8, yStart + 0x2d);
+	drawText(_zbasic->str(OFF(63)), 0xe6, yStart + 0x3c);
 
 	drawClickMessage();
 }
@@ -1526,14 +1534,14 @@ void FoolPrologue::finaleStartText() {
 void FoolPrologue::finaleDrawWind(int16 offset) {
 	// 131:4f96
 	_toolbox->MoveTo(
-		arr_i16_1e8[offset],
-		arr_i16_1e8[offset+0xfb]
+		_rain[offset].xPos,
+		_rain[offset].yPos
 	);
 
 	// 131:4fd4
 	_toolbox->LineTo(
-		arr_i16_1e8[offset] + arr_i16_1e8[offset+0x1f6],
-		arr_i16_1e8[offset+0xfb]
+		_rain[offset].xPos + _rain[offset].size,
+		_rain[offset].yPos
 	);
 }
 
