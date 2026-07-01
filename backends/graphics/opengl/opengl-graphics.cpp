@@ -1950,8 +1950,8 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 			SWAP(rotatedWidth, rotatedHeight);
 		}
 
-		const float screenScaleFactorX = rotatedWidth / _gameScreen->getWidth();
-		const float screenScaleFactorY = rotatedHeight / _gameScreen->getHeight();
+		const float screenScaleFactorX = (float)rotatedWidth / _gameScreen->getWidth();
+		const float screenScaleFactorY = (float)rotatedHeight / _gameScreen->getHeight();
 
 		const float cursorScaleFactorX = screenScaleFactorX * _cursorScaleX;
 		const float cursorScaleFactorY = screenScaleFactorY * _cursorScaleY;
