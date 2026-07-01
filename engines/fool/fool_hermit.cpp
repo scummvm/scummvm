@@ -58,7 +58,7 @@ void FoolGame::hermitRun() {
 	if (_activePuzzleStatus > 0x64) {
 		_hermitPathStage = _activePuzzleStatus - 0x64;
 	}
-	this->thothKeyLast();
+	thothKeyLast();
 	if (_hermitPathStage == 6) {
 		_activePuzzleStatus = 0x63;
 	} else {

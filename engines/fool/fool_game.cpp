@@ -170,13 +170,13 @@ void FoolGame::foolRun() {
 	}
 
 	// Define the bitmap surfaces (normally pointers to raw memory)
-	this->arr_bmp_5dfc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
-	this->arr_bmp_b3ec = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
-	this->arr_bmp_bbbc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
-	this->arr_bmp_c38c = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
-	this->arr_bmp_fa3c = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
-	this->arr_bmp_109dc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
-	this->arr_bmp_138bc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+	arr_bmp_5dfc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+	arr_bmp_b3ec = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+	arr_bmp_bbbc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+	arr_bmp_c38c = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+	arr_bmp_fa3c = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+	arr_bmp_109dc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+	arr_bmp_138bc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 
 	// 128:0004
 	_zbasic->unk_331(0xdac0, 0);
@@ -186,16 +186,16 @@ void FoolGame::foolRun() {
 	_toolbox->SetRect(_screenClipRect, 0, MENU_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// copyright + zbasic notice
-	//this->var_str_384 = _zbasic->str(0);
-	//this->var_str_384 = _zbasic->str(1);
-	//this->var_str_384 = _zbasic->str(2);
+	//var_str_384 = _zbasic->str(0);
+	//var_str_384 = _zbasic->str(1);
+	//var_str_384 = _zbasic->str(2);
 
 	// 128:0086
 	// 128:0086: MOVEQ - 0x0,D0
 	// 128:0088: SNE - -0x98c(A5)
 	_zbasic->unk_44(0);
 
-	this->var_i16_484 = 0;
+	var_i16_484 = 0;
 
 	// 128:0096: LEA - [0x3818],A0
 	// 128:009a: MOVE.L - A0,-0x8ee(A5)
@@ -210,8 +210,8 @@ void FoolGame::foolRun() {
 	// 128:0442: JMP - [0x45e]
 	// 128:045e: JMP - [0x478]
 	// 128:0478
-	//this->var_str_69a.clear(); // was: str(6);
-	//this->var_i32_79a = &this->var_str_69a;
+	//var_str_69a.clear(); // was: str(6);
+	//var_i32_79a = &var_str_69a;
 	// 128:0496: JMP - [0x4d6]
 	// 128:04d6: JMP - [0x50a]
 	// 128:050a: JMP - [0x558]
@@ -232,31 +232,31 @@ void FoolGame::foolRun() {
 	// 128:1c46: JMP - [0x1c7a]
 
 	// 128:1c7a
-	this->sub_129_068();
-	this->var_i32_7c8 = _zbasic->mem(-1);
+	sub_129_068();
+	var_i32_7c8 = _zbasic->mem(-1);
 	// 128:1c88: JMP - [0x1ee2]
 	while (_stateFlags != kStateQuit) {
 		do {
-			this->getNextEvent(-1);
+			getNextEvent(-1);
 			if (_quit)
 				return;
 
 			if ((_event.where.y >= 0x8c) && (_event.where.y <= 0x11d)) {
-				this->var_i16_7cc = -1;
+				var_i16_7cc = -1;
 			}
 			// 128:1cbe
 			if (_event.where.y > 0x11d) {
-				this->var_i16_7cc = 1;
+				var_i16_7cc = 1;
 			}
 			// 128:1cce
 			if ((_event.where.x <= 0x8c) || (_event.where.y < 0xdc)) {
-				this->var_i16_7cc = 0;
+				var_i16_7cc = 0;
 			}
 			// 128:1cf6
-			if (this->var_i16_7cc != this->var_i16_7b2) {
-				this->var_i16_7b2 = this->var_i16_7cc;
-				if (this->var_i16_7b2 == 0) {
-					if ((this->var_i16_7ce & 2) == 0) {
+			if (var_i16_7cc != var_i16_7b2) {
+				var_i16_7b2 = var_i16_7cc;
+				if (var_i16_7b2 == 0) {
+					if ((var_i16_7ce & 2) == 0) {
 						_toolbox->InitCursor();
 					} else {
 						_toolbox->SetCursor(_cursors[0x10]);
@@ -264,12 +264,12 @@ void FoolGame::foolRun() {
 					// 128:1d42
 				} else {
 					// 128:1d46
-					if (this->var_i16_7b2 == -1) {
+					if (var_i16_7b2 == -1) {
 						// arrow pointing up
 						_toolbox->SetCursor(_cursors[0x2]);
 					}
 					// 128:1d5e
-					if (this->var_i16_7b2 == 1) {
+					if (var_i16_7b2 == 1) {
 						// arrow pointing down
 						_toolbox->SetCursor(_cursors[0x1]);
 					}
@@ -277,7 +277,7 @@ void FoolGame::foolRun() {
 			}
 			// 128:1d76
 			if (_event.what == kMouseDown) {
-				this->sub_128_1f76();
+				sub_128_1f76();
 			}
 			if ((_storyCurrentChapter == 0x10) &&
 					(_puzzleCompletionStatus[0x10] < 0x64) &&
@@ -293,45 +293,45 @@ void FoolGame::foolRun() {
 		} while (_stateFlags == 0);
 
 		if (_stateFlags & kStateReturn) {
-			this->clearStateBits(kStateReturn);
+			clearStateBits(kStateReturn);
 		}
 		if (_stateFlags & kStateSaveGame) {
-			this->saveGame();
+			saveGame();
 		}
 		if (_stateFlags & kStateNewGame) {
-			this->newGame();
+			newGame();
 		}
 		if (_stateFlags & kStateOpenGame) {
-			this->openGame();
+			openGame();
 		}
 		if (_stateFlags & kStateChapterSelect) {
-			this->menuChapterSelect();
+			menuChapterSelect();
 		}
 		if (_stateFlags & 0x200) {
-			this->sub_128_1f44();
+			sub_128_1f44();
 		}
 		if (_stateFlags & kStatePuzzleSelect) {
-			this->puzzleRun();
+			puzzleRun();
 		}
 		if (_stateFlags & kStateMetapuzzleSelect) {
-			this->metapuzzleRun();
+			metapuzzleRun();
 		}
 		if (_stateFlags & kStatePrintStory) {
-			this->printStory();
+			printStory();
 		}
 		if (_stateFlags & kStateMetapuzzleComplete) {
-			this->sub_144_004();
+			sub_144_004();
 		}
 	// 128:1ee2
 	}
 	// 128:1eec
-	this->sub_128_1f1e();
+	sub_128_1f1e();
 	_zbasic->unk_158();
 	_zbasic->unk_4();
-	_toolbox->SetPort(this->var_i32_8);
+	_toolbox->SetPort(var_i32_8);
 	fillRect(0, 0, MENU_HEIGHT, _windowWidth, 2);
 	_toolbox->_defaultMenu->setOverlayDirty(true);
-	_toolbox->SetPort(this->var_i32_0);
+	_toolbox->SetPort(var_i32_0);
 }
 
 void FoolGame::copyScreen(int16 put, BitMap &bmp) {
@@ -351,83 +351,83 @@ void FoolGame::copyScreen(int16 put, BitMap &bmp) {
 
 void FoolGame::openSaveFileDialog(const Common::U32String &title, const Common::U32String &filename) {
 	// 128:011c
-	this->var_str_384 = _zbasic->str(3);
+	var_str_384 = _zbasic->str(3);
 
-	this->var_i16_586 = 0;
+	var_i16_586 = 0;
 
-	this->copyScreen(0, this->arr_bmp_138bc);
+	copyScreen(0, arr_bmp_138bc);
 
 	// 128:015a
-	_event.where.y = this->var_i16_58 + 0x3d;
-	_event.where.x = this->var_i16_56 + 0x68;
+	_event.where.y = var_i16_58 + 0x3d;
+	_event.where.x = var_i16_56 + 0x68;
 
 	// 128:017e
-	_toolbox->SFPutFile(_event.where, title, filename, 0, this->var_sfr_5e);
-	this->sub_128_6244();
+	_toolbox->SFPutFile(_event.where, title, filename, 0, var_sfr_5e);
+	sub_128_6244();
 
-	this->copyScreen(1, this->arr_bmp_138bc);
+	copyScreen(1, arr_bmp_138bc);
 
 	// 128:01b0
-	if (this->var_sfr_5e.good == 1) {
-		this->var_str_486 = this->var_sfr_5e.fName;
-		this->var_i16_586 = this->var_sfr_5e.vRefNum;
+	if (var_sfr_5e.good == 1) {
+		var_str_486 = var_sfr_5e.fName;
+		var_i16_586 = var_sfr_5e.vRefNum;
 	}
 
 }
 
 void FoolGame::sub_128_1e4(const Common::String &osType) {
 	// 128:01e4
-	this->var_str_588 = _zbasic->str(4);
-	this->var_i16_688 = 0;
+	var_str_588 = _zbasic->str(4);
+	var_i16_688 = 0;
 
-	this->copyScreen(0, this->arr_bmp_138bc);
+	copyScreen(0, arr_bmp_138bc);
 	// 128:0218
-	_event.where.y = this->var_i16_58 + 0x3d;
-	_event.where.x = this->var_i16_56 + 0x53;
+	_event.where.y = var_i16_58 + 0x3d;
+	_event.where.x = var_i16_56 + 0x53;
 	// 128:023c
 	// get offset of bytes in string and pretend it's an OSType
-	// this->var_i32_168 = *(this->var_str_172 + 1);
+	// var_i32_168 = *(var_str_172 + 1);
 	SFTypeList typeList = { { 0 } };
 	typeList.types[0] = osType.at(0) << 24;
 	typeList.types[0] += osType.at(1) << 16;
 	typeList.types[0] += osType.at(2) << 8;
 	typeList.types[0] += osType.at(3) << 0;
 
-	_toolbox->SFGetFile(_event.where, _zbasic->str(5), 0, 1, typeList, 0, this->var_sfr_5e);
-	this->sub_128_6244();
-	this->copyScreen(1, this->arr_bmp_138bc);
+	_toolbox->SFGetFile(_event.where, _zbasic->str(5), 0, 1, typeList, 0, var_sfr_5e);
+	sub_128_6244();
+	copyScreen(1, arr_bmp_138bc);
 
-	if (this->var_sfr_5e.good == 1) {
+	if (var_sfr_5e.good == 1) {
 		// 128:02a2
-		this->var_str_588 += this->var_sfr_5e.fName;
-		this->var_i16_688 = this->var_sfr_5e.vRefNum;
+		var_str_588 += var_sfr_5e.fName;
+		var_i16_688 = var_sfr_5e.vRefNum;
 	}
 }
 
 void FoolGame::getGridFromMouse(int16 &gridX, int16 &gridY) {
 	// 128:02be
 	// convert mouse coordinates to grid coordinates
-	gridX = (_event.where.x - this->arr_i16_1eb8[4]) / (this->arr_i16_1eb8[6]);
+	gridX = (_event.where.x - arr_i16_1eb8[4]) / (arr_i16_1eb8[6]);
 
-	gridY = (_event.where.y - this->arr_i16_1eb8[5]) / (this->arr_i16_1eb8[7]);
+	gridY = (_event.where.y - arr_i16_1eb8[5]) / (arr_i16_1eb8[7]);
 }
 
 void FoolGame::sub_128_342(int16 unk2, int16 unk1) {
 	// 128:0342
-	this->var_i16_68c = unk1;
-	this->var_i16_68a = unk2;
-	if (this->var_i16_68a < 1) {
-		this->var_i16_68a = 1;
+	var_i16_68c = unk1;
+	var_i16_68a = unk2;
+	if (var_i16_68a < 1) {
+		var_i16_68a = 1;
 	}
 	// 128:035c
-	if (this->var_i16_68a > this->arr_i16_1eb8[0]) {
-		this->var_i16_68a = this->arr_i16_1eb8[0];
+	if (var_i16_68a > arr_i16_1eb8[0]) {
+		var_i16_68a = arr_i16_1eb8[0];
 	}
-	if (this->var_i16_68c < 1) {
-		this->var_i16_68c = 1;
+	if (var_i16_68c < 1) {
+		var_i16_68c = 1;
 	}
-	if (this->var_i16_68c > this->arr_i16_1eb8[1]) {
-		this->var_i16_68c = this->arr_i16_1eb8[1];
+	if (var_i16_68c > arr_i16_1eb8[1]) {
+		var_i16_68c = arr_i16_1eb8[1];
 	}
 }
 
@@ -444,43 +444,43 @@ void FoolGame::delayFromMarker(int16 numTicks) {
 	// 128:0402
 	do {
 		_toolbox->Delay(0);
-	} while (_toolbox->TickCount() < (this->var_i32_692 + numTicks));
+	} while (_toolbox->TickCount() < (var_i32_692 + numTicks));
 }
 
 int16 FoolGame::puzzlesReadByte() {
 	// 128:0428
 	// read a byte
-	int16 data = *(byte *)(&_puzzleDataBuffer->data()[this->_puzzleDataPtr]);
-	debugC(8, kDebugLoading, "Read[%04x]: %02x", this->_puzzleDataPtr, data);
-	this->_puzzleDataPtr += 1;
+	int16 data = *(byte *)(&_puzzleDataBuffer->data()[_puzzleDataPtr]);
+	debugC(8, kDebugLoading, "Read[%04x]: %02x", _puzzleDataPtr, data);
+	_puzzleDataPtr += 1;
 	return data;
 }
 
 int16 FoolGame::puzzlesReadShort() {
 	// 128:0446
 	// read a short
-	int16 data = READ_BE_INT16(&_puzzleDataBuffer->data()[this->_puzzleDataPtr]);
-	debugC(8, kDebugLoading, "Read[%04x]: %04x", this->_puzzleDataPtr, data);
-	this->_puzzleDataPtr += 2;
+	int16 data = READ_BE_INT16(&_puzzleDataBuffer->data()[_puzzleDataPtr]);
+	debugC(8, kDebugLoading, "Read[%04x]: %04x", _puzzleDataPtr, data);
+	_puzzleDataPtr += 2;
 	return data;
 }
 
 int32 FoolGame::puzzlesReadLong() {
 	// 128:0462
 	// read a long
-	int32 data = READ_BE_INT32(&_puzzleDataBuffer->data()[this->_puzzleDataPtr]);
-	debugC(8, kDebugLoading, "Read[%04x]: %08x", this->_puzzleDataPtr, data);
-	this->_puzzleDataPtr += 4;
+	int32 data = READ_BE_INT32(&_puzzleDataBuffer->data()[_puzzleDataPtr]);
+	debugC(8, kDebugLoading, "Read[%04x]: %08x", _puzzleDataPtr, data);
+	_puzzleDataPtr += 4;
 	return data;
 }
 
 Common::String FoolGame::puzzlesReadString() {
 	// 128:049a
 	// read a pascal string
-	this->var_i16_79e = *(byte *)(&_puzzleDataBuffer->data()[this->_puzzleDataPtr]);
-	Common::String result((const char *)&_puzzleDataBuffer->data()[this->_puzzleDataPtr+1], this->var_i16_79e);
-	debugC(8, kDebugLoading, "Read[%04x]: %s", this->_puzzleDataPtr, result.c_str());
-	this->_puzzleDataPtr += this->var_i16_79e + 1;
+	var_i16_79e = *(byte *)(&_puzzleDataBuffer->data()[_puzzleDataPtr]);
+	Common::String result((const char *)&_puzzleDataBuffer->data()[_puzzleDataPtr+1], var_i16_79e);
+	debugC(8, kDebugLoading, "Read[%04x]: %s", _puzzleDataPtr, result.c_str());
+	_puzzleDataPtr += var_i16_79e + 1;
 	return result;
 }
 
@@ -488,15 +488,15 @@ void FoolGame::toggleMouseCursor(bool visible) {
 	// toggle the mouse cursor off or on
 	// 128:04da
 	if (!visible) {
-		if (this->_mouseVisible) {
+		if (_mouseVisible) {
 			_toolbox->HideCursor();
 		}
 	} else {
-		if (!this->_mouseVisible) {
+		if (!_mouseVisible) {
 			_toolbox->ShowCursor();
 		}
 	}
-	this->_mouseVisible = visible;
+	_mouseVisible = visible;
 }
 
 void FoolGame::playTone(int16 freq, int16 duration, bool wait) {
@@ -516,9 +516,9 @@ void FoolGame::playTone(int16 freq, int16 duration, bool wait) {
 void FoolGame::drawPuzzleButton(const Common::U32String &symbol) {
 	// 128:055c
 	_toolbox->PenNormal();
-	_toolbox->SetRect(this->arr_rect_1910c, 0x6c, 0x127, 0x84, 0x137);
-	_toolbox->EraseRoundRect(this->arr_rect_1910c, 0x8, 0x7);
-	_toolbox->FrameRoundRect(this->arr_rect_1910c, 0x8, 0x7);
+	_toolbox->SetRect(arr_rect_1910c, 0x6c, 0x127, 0x84, 0x137);
+	_toolbox->EraseRoundRect(arr_rect_1910c, 0x8, 0x7);
+	_toolbox->FrameRoundRect(arr_rect_1910c, 0x8, 0x7);
 	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	int16 width = _toolbox->StringWidth(symbol);
 	_toolbox->MoveTo(0x78 - (width / 2), 0x133);
@@ -561,7 +561,7 @@ void FoolGame::drawTarotCard(int16 rectID, int16 deckPos, int16 type) {
 		_toolbox->PenPat(_patterns[2]);
 		_toolbox->FrameRoundRect(_screenGrid[rectID], 0xf, 0xf);
 		// 128:079e
-		_zbasic->picture(_screenGrid[rectID].left + 3, _screenGrid[rectID].top + 3, this->arr_i32_192c0[this->arr_i16_5cbc[deckPos]]);
+		_zbasic->picture(_screenGrid[rectID].left + 3, _screenGrid[rectID].top + 3, arr_i32_192c0[arr_i16_5cbc[deckPos]]);
 	}
 	// 128:0806
 	if (type == 1) {
@@ -612,25 +612,25 @@ void FoolGame::zoomRect(int16 startTop, int16 startLeft, int16 startBottom, int1
 	_toolbox->PenMode(mode);
 	// 128:0a42
 	// unrolled loop
-	this->arr_bcd_5dbc[0] = (float)(start.top);
-	this->arr_bcd_5dbc[1] = (float)(start.left);
-	this->arr_bcd_5dbc[2] = (float)(start.bottom);
-	this->arr_bcd_5dbc[3] = (float)(start.right);
-	this->arr_bcd_5dbc[4] = (float)((end.top) - (start.top))/(float)(steps);
-	this->arr_bcd_5dbc[5] = (float)((end.left) - (start.left))/(float)(steps);
-	this->arr_bcd_5dbc[6] = (float)((end.bottom) - (start.bottom))/(float)(steps);
-	this->arr_bcd_5dbc[7] = (float)((end.right) - (start.right))/(float)(steps);
+	arr_bcd_5dbc[0] = (float)(start.top);
+	arr_bcd_5dbc[1] = (float)(start.left);
+	arr_bcd_5dbc[2] = (float)(start.bottom);
+	arr_bcd_5dbc[3] = (float)(start.right);
+	arr_bcd_5dbc[4] = (float)((end.top) - (start.top))/(float)(steps);
+	arr_bcd_5dbc[5] = (float)((end.left) - (start.left))/(float)(steps);
+	arr_bcd_5dbc[6] = (float)((end.bottom) - (start.bottom))/(float)(steps);
+	arr_bcd_5dbc[7] = (float)((end.right) - (start.right))/(float)(steps);
 	// 128:0af0
 	_toolbox->PaintRect(start);
 	for (int i = 1; i < steps-1; i++) {
 		for (int j = 0; j <= 3; j++) {
-			this->arr_bcd_5dbc[j] = (float)this->arr_bcd_5dbc[j] + (float)this->arr_bcd_5dbc[j+4];
+			arr_bcd_5dbc[j] = (float)arr_bcd_5dbc[j] + (float)arr_bcd_5dbc[j+4];
 		}
 		Common::Rect temp; // arr_rect_5b92
-		temp.top = (int)this->arr_bcd_5dbc[0];
-		temp.left = (int)this->arr_bcd_5dbc[1];
-		temp.bottom = (int)this->arr_bcd_5dbc[2];
-		temp.right = (int)this->arr_bcd_5dbc[3];
+		temp.top = (int)arr_bcd_5dbc[0];
+		temp.left = (int)arr_bcd_5dbc[1];
+		temp.bottom = (int)arr_bcd_5dbc[2];
+		temp.right = (int)arr_bcd_5dbc[3];
 		// 128:0ba6
 		_toolbox->PaintRect(temp);
 		// new: force a redraw delay
@@ -643,13 +643,13 @@ void FoolGame::zoomRect(int16 startTop, int16 startLeft, int16 startBottom, int1
 
 void FoolGame::sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 	// 128:0bde
-	this->arr_i16_4758[0] = unk6;
-	this->arr_i16_4758[1] = unk5;
-	this->arr_i16_4758[2] = unk4;
-	this->arr_i16_4758[3] = unk3;
-	this->arr_i16_4758[4] = unk2;
-	this->arr_i16_4758[5] = unk1;
-	this->storyDrawZoom();
+	arr_i16_4758[0] = unk6;
+	arr_i16_4758[1] = unk5;
+	arr_i16_4758[2] = unk4;
+	arr_i16_4758[3] = unk3;
+	arr_i16_4758[4] = unk2;
+	arr_i16_4758[5] = unk1;
+	storyDrawZoom();
 }
 
 void FoolGame::getNextEvent(uint32 unk1) {
@@ -660,9 +660,9 @@ void FoolGame::getNextEvent(uint32 unk1) {
 	if (_event.what == kNullEvent)
 		_toolbox->Delay(0);
 
-	this->var_i16_78a = _toolbox->GetNextEvent(unk1, _event);
+	var_i16_78a = _toolbox->GetNextEvent(unk1, _event);
 	if ((_event.what == kMouseDown) && (_event.where.y < MENU_HEIGHT)) {
-		this->onClickMenu();
+		onClickMenu();
 	}
 	// 128:0caa
 	_toolbox->GlobalToLocal(_event.where);
@@ -670,23 +670,23 @@ void FoolGame::getNextEvent(uint32 unk1) {
 		// the original just checked the command key,
 		// non-mac PCs expect the control key to work
 		if ((_event.modifiers & (kModCommandKeyDown | kModLControlKeyDown)) == 0) {
-			this->sub_128_5f9e();
+			sub_128_5f9e();
 		} else {
-			this->onMenuKey();
+			onMenuKey();
 		}
 	}
 	// 128:0ce0
 	if ((_event.what == kAutoKey) && ((_event.modifiers & (kModCommandKeyDown | kModLControlKeyDown)) == 0)) {
-		this->sub_128_5f9e();
+		sub_128_5f9e();
 	}
 	if (_event.what == kUpdateEvt) {
-		this->onUpdateEvent();
+		onUpdateEvent();
 	}
 	if (_event.what == kDiskEvt) {
-		this->onDiskEvent();
+		onDiskEvent();
 	}
 	if ((_event.what == kScummVMQuitEvt) || (_event.what == kScummVMReturnToLauncherEvt)) {
-		this->menuQuit();
+		menuQuit();
 	}
 }
 
@@ -710,7 +710,7 @@ void FoolGame::flashRect(int16 top, int16 left, int16 bottom, int16 right, int16
 				// originally this mask was 0, but we change it here to
 				// intercept all events, and fall back to NullEvent +
 				// wait for vsync if no events were received.
-				this->var_i16_78a = _toolbox->GetNextEvent(-1, _event);
+				var_i16_78a = _toolbox->GetNextEvent(-1, _event);
 				if (_event.what == kNullEvent) {
 					_toolbox->Delay(0);
 					ticks += 1;
@@ -722,39 +722,39 @@ void FoolGame::flashRect(int16 top, int16 left, int16 bottom, int16 right, int16
 
 void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, bool beep) {
 	// 128:0dfe
-	_toolbox->SetPort(this->var_i32_4);
-	this->var_i16_7b2 = 0xa;
+	_toolbox->SetPort(var_i32_4);
+	var_i16_7b2 = 0xa;
 	_toolbox->InitCursor();
-	this->toggleMouseCursor(true);
+	toggleMouseCursor(true);
 	if (beep) {
-		this->playTone(0x19, 0x64, false);
+		playTone(0x19, 0x64, false);
 	}
 	// 128:0e46
-	this->copyScreen(0, this->arr_bmp_138bc);
+	copyScreen(0, arr_bmp_138bc);
 	_zbasic->text(font, 0xc, Graphics::kMacFontRegular, kSrcBic);
-	this->var_i16_7b4 = buttonCount*0x46;
-	this->var_i16_7b6 = 0;
+	var_i16_7b4 = buttonCount*0x46;
+	var_i16_7b6 = 0;
 	for (int i = 0; i <= lineCount; i++) {
 	// 128:0e86
-		this->var_i16_7ba = _toolbox->StringWidth(_modalText[i]);
-		if (this->var_i16_7ba > this->var_i16_7b4) {
-			this->var_i16_7b4 = this->var_i16_7ba;
+		var_i16_7ba = _toolbox->StringWidth(_modalText[i]);
+		if (var_i16_7ba > var_i16_7b4) {
+			var_i16_7b4 = var_i16_7ba;
 		}
-		this->var_i16_7b6 += 0x11;
+		var_i16_7b6 += 0x11;
 	}
 	// 128:0ed6
 	if (buttonCount >= 0) {
-		this->var_i16_7bc = 0xa4 + (this->var_i16_7b6 / 2);
-		this->var_i16_7b6 += 0x28;
+		var_i16_7bc = 0xa4 + (var_i16_7b6 / 2);
+		var_i16_7b6 += 0x28;
 	} else {
-		this->var_i16_7b6 += 0xd;
+		var_i16_7b6 += 0xd;
 	}
 	// 128:0f08
-	this->var_i16_7b4 = (this->var_i16_7b4 / 2) + 0xf;
-	this->var_i16_7b6 = (this->var_i16_7b6 / 2);
+	var_i16_7b4 = (var_i16_7b4 / 2) + 0xf;
+	var_i16_7b6 = (var_i16_7b6 / 2);
 	_toolbox->PenNormal();
 	Common::Rect bounds; // arr_rect_5b7c
-	_toolbox->SetRect(bounds, 0xf5-this->var_i16_7b4, 0xa0-this->var_i16_7b6, 0x10b+this->var_i16_7b4, 0xb6+this->var_i16_7b6);
+	_toolbox->SetRect(bounds, 0xf5-var_i16_7b4, 0xa0-var_i16_7b6, 0x10b+var_i16_7b4, 0xb6+var_i16_7b6);
 	_toolbox->PenPat(_patterns[0]);
 	_toolbox->FrameRect(bounds);
 	_toolbox->InsetRect(bounds, 1, 1);
@@ -769,10 +769,10 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 	_toolbox->InsetRect(bounds, 5, 5);
 	_toolbox->FillRect(bounds, _patterns[2]);
 	_toolbox->PenNormal();
-	int16 strY = 0xbe - this->var_i16_7b6;
+	int16 strY = 0xbe - var_i16_7b6;
 	// 128:1056
 	for (int i = 0; i <= lineCount; i++) {
-		this->drawTextCenter(_modalText[i], strY);
+		drawTextCenter(_modalText[i], strY);
 		// 128:1086
 		// 128:1086: CLR.W - -0x772(A5)
 		strY += 0x11;
@@ -789,28 +789,28 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 		Common::Rect button3 = Common::Rect(0, 0, 0, 0); // arr_rect_5b8c
 		// 128:10e2
 		if (buttonCount == 1) {
-			_toolbox->SetRect(button1, 0xe2, this->var_i16_7bc, 0x11e, this->var_i16_7bc+0x14);
+			_toolbox->SetRect(button1, 0xe2, var_i16_7bc, 0x11e, var_i16_7bc+0x14);
 			// 128:1122
 		} else if (buttonCount == 2) {
-			_toolbox->SetRect(button1, 0xbf, this->var_i16_7bc, 0xfb, this->var_i16_7bc+0x14);
-			_toolbox->SetRect(button2, 0x105, this->var_i16_7bc, 0x141, this->var_i16_7bc+0x14);
+			_toolbox->SetRect(button1, 0xbf, var_i16_7bc, 0xfb, var_i16_7bc+0x14);
+			_toolbox->SetRect(button2, 0x105, var_i16_7bc, 0x141, var_i16_7bc+0x14);
 			// 128:1182
 		} else if (buttonCount == 3) {
-			_toolbox->SetRect(button1, 0x9c, this->var_i16_7bc, 0xd8, this->var_i16_7bc+0x14);
-			_toolbox->SetRect(button2, 0xe2, this->var_i16_7bc, 0x11e, this->var_i16_7bc+0x14);
-			_toolbox->SetRect(button3, 0x128, this->var_i16_7bc, 0x164, this->var_i16_7bc+0x14);
+			_toolbox->SetRect(button1, 0x9c, var_i16_7bc, 0xd8, var_i16_7bc+0x14);
+			_toolbox->SetRect(button2, 0xe2, var_i16_7bc, 0x11e, var_i16_7bc+0x14);
+			_toolbox->SetRect(button3, 0x128, var_i16_7bc, 0x164, var_i16_7bc+0x14);
 		}
 		// 128:1208
 		if (buttonCount >= 1) {
 			_toolbox->EraseRoundRect(button1, 0xa, 0xa);
 			_toolbox->FrameRoundRect(button1, 0xa, 0xa);
-			this->var_str_172 = _modalText[(lineCount + 1)];
-			this->var_i16_30 = _toolbox->StringWidth(this->var_str_172);
+			var_str_172 = _modalText[(lineCount + 1)];
+			var_i16_30 = _toolbox->StringWidth(var_str_172);
 			// 128:1274
-			this->var_i16_30 = button1.left + ((button1.right - button1.left) / 2) - (this->var_i16_30 / 2);
+			var_i16_30 = button1.left + ((button1.right - button1.left) / 2) - (var_i16_30 / 2);
 			// 128:12d4
-			_toolbox->MoveTo(this->var_i16_30, this->var_i16_7bc + 0xe);
-			_toolbox->DrawString(this->var_str_172);
+			_toolbox->MoveTo(var_i16_30, var_i16_7bc + 0xe);
+			_toolbox->DrawString(var_str_172);
 			if (buttonCount > 1) {
 				_toolbox->InsetRect(button1, -2, -2);
 				_toolbox->PenPat(_patterns[0]);
@@ -823,30 +823,30 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 		if (buttonCount >= 2) {
 			_toolbox->EraseRoundRect(button2, 0xa, 0xa);
 			_toolbox->FrameRoundRect(button2, 0xa, 0xa);
-			this->var_str_172 = _modalText[(lineCount+2)];
-			this->var_i16_30 = _toolbox->StringWidth(this->var_str_172);
-			this->var_i16_30 = button2.left + ((button2.right - button2.left)/2) - (this->var_i16_30 / 2);
+			var_str_172 = _modalText[(lineCount+2)];
+			var_i16_30 = _toolbox->StringWidth(var_str_172);
+			var_i16_30 = button2.left + ((button2.right - button2.left)/2) - (var_i16_30 / 2);
 			// 128:1418
-			_toolbox->MoveTo(this->var_i16_30, this->var_i16_7bc + 0xe);
-			_toolbox->DrawString(this->var_str_172);
+			_toolbox->MoveTo(var_i16_30, var_i16_7bc + 0xe);
+			_toolbox->DrawString(var_str_172);
 		}
 		// 128:1432
 		if (buttonCount == 3) {
 			_toolbox->EraseRoundRect(button3, 0xa, 0xa);
 			_toolbox->FrameRoundRect(button3, 0xa, 0xa);
-			this->var_str_172 = _modalText[lineCount+3];
-			this->var_i16_30 = _toolbox->StringWidth(this->var_str_172);
-			this->var_i16_30 = (button3.left + ((button3.right - button3.left)/2)) - (this->var_i16_30/2);
+			var_str_172 = _modalText[lineCount+3];
+			var_i16_30 = _toolbox->StringWidth(var_str_172);
+			var_i16_30 = (button3.left + ((button3.right - button3.left)/2)) - (var_i16_30/2);
 
-			_toolbox->MoveTo(this->var_i16_30, this->var_i16_7bc + 0xe);
-			_toolbox->DrawString(this->var_str_172);
+			_toolbox->MoveTo(var_i16_30, var_i16_7bc + 0xe);
+			_toolbox->DrawString(var_str_172);
 		}
 		// 128:1518
-		this->sub_128_61ec();
+		sub_128_61ec();
 		_savePromptChoice = 0;
 		// 128:1522
 		do {
-			this->var_i16_7a8 = _toolbox->GetNextEvent(0xa, _event);
+			var_i16_7a8 = _toolbox->GetNextEvent(0xa, _event);
 			_toolbox->GlobalToLocal(_event.where);
 			if (_event.what == kMouseDown) {
 				// 128:154a
@@ -867,14 +867,14 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 
 				if (_savePromptChoice > 0) {
 					// 128:15d2
-					this->var_i16_30 = (_savePromptChoice - 1)*4;
+					var_i16_30 = (_savePromptChoice - 1)*4;
 					do {
 						_toolbox->InvertRoundRect(target, 0xa, 0xa);
 
 						// 128:1624
 						while ((_event.what != kMouseUp) && (_toolbox->PtInRect(_event.where, target))) {
 
-							this->var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
+							var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
 							_toolbox->GlobalToLocal(_event.where);
 							if (_event.what == kNullEvent) {
 								_toolbox->Delay(0);
@@ -884,7 +884,7 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 						_toolbox->InvertRoundRect(target, 0xa, 0xa);
 						// 128:1686
 						while ((_event.what != kMouseUp) && (!_toolbox->PtInRect(_event.where, target))) {
-							this->var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
+							var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
 							_toolbox->GlobalToLocal(_event.where);
 							if (_event.what == kNullEvent) {
 								_toolbox->Delay(0);
@@ -896,7 +896,7 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 					if (!_toolbox->PtInRect(_event.where, target)) {
 						_savePromptChoice = 0;
 					}
-					this->sub_128_61ec();
+					sub_128_61ec();
 				}
 			}
 			// 128:172c
@@ -911,9 +911,9 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 		// 128:175c
 		} while (_savePromptChoice == 0);
 
-		this->sub_128_61ec();
-		this->copyScreen(1, this->arr_bmp_138bc);
-		_toolbox->SetPort(this->var_i32_0);
+		sub_128_61ec();
+		copyScreen(1, arr_bmp_138bc);
+		_toolbox->SetPort(var_i32_0);
 	}
 	// 128:1784
 
@@ -921,28 +921,28 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 
 void FoolGame::showBehold(int16 unk2, int16 unk1, const Common::U32String &message) {
 	// behold the Nth key of thoth animation
-	this->var_i16_32 = unk1;
-	this->var_i16_30 = unk2;
-	if (this->var_i16_30 > 0) {
-		if ((_puzzleFlags[this->var_i16_30] & kFlagMenuDiamond)) {
-			_puzzleFlags[this->var_i16_30] ^= kFlagMenuDiamond;
-			_puzzleFlags[this->var_i16_30] |= kFlagMenuEnabled;
+	var_i16_32 = unk1;
+	var_i16_30 = unk2;
+	if (var_i16_30 > 0) {
+		if ((_puzzleFlags[var_i16_30] & kFlagMenuDiamond)) {
+			_puzzleFlags[var_i16_30] ^= kFlagMenuDiamond;
+			_puzzleFlags[var_i16_30] |= kFlagMenuEnabled;
 		}
 		// 128:1818
-		int menuNo = 3 + ((this->var_i16_30 - 1) / 0x10);
-		int itemNo = 1 + ((this->var_i16_30 - 1) % 0x10);
+		int menuNo = 3 + ((var_i16_30 - 1) / 0x10);
+		int itemNo = 1 + ((var_i16_30 - 1) % 0x10);
 		// add the wadjet eye next to the chapter name
-		_zbasic->menu(menuNo, itemNo, 1, _puzzleName[this->var_i16_30] + Common::U32String(" ~ ")); // was: str(9)
+		_zbasic->menu(menuNo, itemNo, 1, _puzzleName[var_i16_30] + Common::U32String(" ~ ")); // was: str(9)
 	}
 	// 128:188a
-	this->toggleMouseCursor(false);
-	_zbasic->picture(0, MENU_HEIGHT, this->var_pic_7c2);
+	toggleMouseCursor(false);
+	_zbasic->picture(0, MENU_HEIGHT, var_pic_7c2);
 	_zbasic->text(kFontFool, 0x18, Graphics::kMacFontShadow | Graphics::kMacFontOutline, kSrcBic);
 	Common::Rect rect;
 	for (int j = 0; j <= 1; j++) {
 		// 128:18c4
 		for (int i = 0; i <= 0x64; i += 4) {
-			this->var_i32_692 = _toolbox->TickCount();
+			var_i32_692 = _toolbox->TickCount();
 			_toolbox->SetRect(
 				rect,
 				(0x105 - (int)(i*2.2f)),
@@ -952,7 +952,7 @@ void FoolGame::showBehold(int16 unk2, int16 unk1, const Common::U32String &messa
 			);
 			// 128:1982
 			_toolbox->InvertRect(rect);
-			this->delayFromMarker(0);
+			delayFromMarker(0);
 		}
 		// 128:19a4
 	}
@@ -962,20 +962,20 @@ void FoolGame::showBehold(int16 unk2, int16 unk1, const Common::U32String &messa
 	_toolbox->PenMode(kPatXor);
 	_toolbox->FrameRect(rect);
 	_toolbox->PenMode(kPatCopy);
-	this->var_i16_484 = _toolbox->StringWidth(message);
+	var_i16_484 = _toolbox->StringWidth(message);
 	// 128:19ec
-	_toolbox->MoveTo(0x105 - (this->var_i16_484/2), 0x12e);
+	_toolbox->MoveTo(0x105 - (var_i16_484/2), 0x12e);
 	_toolbox->DrawString(message);
 	// loop count was 0x4d
 	for (int i = 0; i <= 0x24; i++) {
-		this->var_i32_692 = _toolbox->TickCount();
+		var_i32_692 = _toolbox->TickCount();
 		_toolbox->InvertRect(rect);
 		// this was 1, however the flashing was far too intense
-		this->delayFromMarker(8);
+		delayFromMarker(8);
 	}
 	for (int i = 1; i <= 0x24; i++) {
 		// 128:1a4c
-		this->var_i32_692 = _toolbox->TickCount();
+		var_i32_692 = _toolbox->TickCount();
 		rect.top -= (int)(i*0.4f);
 		rect.left -= (int)(i*0.1f);
 		rect.bottom += (int)(i*0.05f);
@@ -985,22 +985,22 @@ void FoolGame::showBehold(int16 unk2, int16 unk1, const Common::U32String &messa
 			rect.top = MENU_HEIGHT;
 		}
 		// 128:1bac
-		if (this->var_i16_32 == 0) {
+		if (var_i16_32 == 0) {
 			_toolbox->InvertRect(rect);
 		}
 		// 128:1bc2
-		if (this->var_i16_32 == 1) {
+		if (var_i16_32 == 1) {
 			_toolbox->FillRect(rect, _patterns[3]);
 		}
 		// 128:1be6
-		if (this->var_i16_32 == 2) {
+		if (var_i16_32 == 2) {
 			_toolbox->FillRect(rect, _patterns[0x47]);
 		}
 		// 128:1c0a
 		// was 1
-		this->delayFromMarker(2);
+		delayFromMarker(2);
 	}
-	this->toggleMouseCursor(true);
+	toggleMouseCursor(true);
 	_toolbox->PenNormal();
 }
 
@@ -1019,41 +1019,41 @@ void FoolGame::clearStateBits(uint16 bits) {
 
 void FoolGame::sub_128_1ef8() {
 	// 128:1ef8
-	_toolbox->SetPort(this->var_i32_8);
+	_toolbox->SetPort(var_i32_8);
 	fillRect(0, 0, MENU_HEIGHT, _windowWidth, 2);
-	_toolbox->SetPort(this->var_i32_0);
+	_toolbox->SetPort(var_i32_0);
 }
 
 void FoolGame::sub_128_1f1e() {
 	// 128:1f1e
 	_toolbox->InitCursor();
-	this->toggleMouseCursor(false);
-	this->sub_128_bde(1, 1, kSrcCopy, 1, 1, 1);
+	toggleMouseCursor(false);
+	sub_128_bde(1, 1, kSrcCopy, 1, 1, 1);
 }
 
 void FoolGame::sub_128_1f44() {
 	// 128:1f44
-	this->sub_128_61ec();
+	sub_128_61ec();
 	_storyCurrentPage = 0;
-	this->clearStateBits(0x200);
-	this->sub_128_5fea();
-	this->copyScreen(1, this->arr_bmp_5dfc);
-	this->storyRenderPage();
-	_toolbox->SetPort(this->var_i32_0);
+	clearStateBits(0x200);
+	sub_128_5fea();
+	copyScreen(1, arr_bmp_5dfc);
+	storyRenderPage();
+	_toolbox->SetPort(var_i32_0);
 }
 
 void FoolGame::sub_128_1f76() {
 	// 128:1f76
 	// hold down mouse on scroll
-	if (this->var_i16_7cc != 0) {
+	if (var_i16_7cc != 0) {
 		do {
-			this->var_i32_692 = _toolbox->TickCount();
-			this->sub_128_20d0();
+			var_i32_692 = _toolbox->TickCount();
+			sub_128_20d0();
 			// original was 5 ticks
-			this->delayFromMarker(10);
+			delayFromMarker(10);
 			// new: empty the event queue, so feedback is instant
 			_toolbox->FlushEvents(-1, 0);
-			this->var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
+			var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
 		} while ((_event.modifiers & kModMouseButtonUp) == 0);
 	} else {
 		// 128:1fee
@@ -1061,9 +1061,9 @@ void FoolGame::sub_128_1f76() {
 			return;
 		}
 		// 128:2042
-		if (this->var_i16_7d6 != 0) {
-			if (_toolbox->PtInRect(_event.where, this->arr_rect_1910c)) {
-				this->sub_128_2078();
+		if (var_i16_7d6 != 0) {
+			if (_toolbox->PtInRect(_event.where, arr_rect_1910c)) {
+				sub_128_2078();
 			}
 		}
 		// 128:2076
@@ -1074,11 +1074,11 @@ void FoolGame::sub_128_1f76() {
 void FoolGame::sub_128_2078() {
 	// clicking the story button
 	// 128:2078
-	_toolbox->InvertRoundRect(this->arr_rect_1910c, 0x8, 0x7);
-	this->waitForMouseUp();
-	_toolbox->InvertRoundRect(this->arr_rect_1910c, 0x8, 0x7);
-	if (_toolbox->PtInRect(_event.where, this->arr_rect_1910c)) {
-		this->sub_128_21c8();
+	_toolbox->InvertRoundRect(arr_rect_1910c, 0x8, 0x7);
+	waitForMouseUp();
+	_toolbox->InvertRoundRect(arr_rect_1910c, 0x8, 0x7);
+	if (_toolbox->PtInRect(_event.where, arr_rect_1910c)) {
+		sub_128_21c8();
 	}
 }
 
@@ -1086,7 +1086,7 @@ void FoolGame::sub_128_20d0() {
 	// 128:20d0
 	// change page on scroll
 	do {
-		_storyNextPage += this->var_i16_7cc;
+		_storyNextPage += var_i16_7cc;
 		if (_storyNextPage < 1) {
 			_storyNextPage = 1;
 			return;
@@ -1096,11 +1096,11 @@ void FoolGame::sub_128_20d0() {
 			return;
 		}
 	} while (_pageVisible[_storyNextPage] == 0);
-	this->storyRenderPage();
+	storyRenderPage();
 }
 
 void FoolGame::menuChapterSelect() {
-	this->clearStateBits(kStateChapterSelect);
+	clearStateBits(kStateChapterSelect);
 	// 128:2132
 	for (int i = _selectedMenuChapter; i <= _storyPageCount; i++) {
 		if (_selectedMenuChapter == _pageToChapter[i]) {
@@ -1111,16 +1111,16 @@ void FoolGame::menuChapterSelect() {
 	}
 	// 128:2170
 	_storyCurrentChapter = _pageToChapter[_storyNextPage];
-	if (this->var_i16_7ce & 4) {
-		this->var_i16_7ce ^= 4;
+	if (var_i16_7ce & 4) {
+		var_i16_7ce ^= 4;
 		if (_puzzleType[_storyCurrentChapter] > 0) {
 			// 128:21bc
-			this->sub_128_21c8();
+			sub_128_21c8();
 			return;
 		}
 	}
 	// 128:21c2
-	this->storyRenderPage();
+	storyRenderPage();
 }
 
 void FoolGame::sub_128_21c8() {
@@ -1135,15 +1135,15 @@ void FoolGame::sub_128_21c8() {
 void FoolGame::storyRenderPage() {
 	// 128:2202
 	if (_storyNextPage != _storyCurrentPage) {
-		if ((_pageLines[_storyNextPage] < 0xe) && (this->var_i16_7de > 0)) {
-			this->fillRect(1, kPatBic, this->var_i16_7de, 0x37, 0x11d, 0x1db);
+		if ((_pageLines[_storyNextPage] < 0xe) && (var_i16_7de > 0)) {
+			fillRect(1, kPatBic, var_i16_7de, 0x37, 0x11d, 0x1db);
 			// 128:226e
 			// grab the last N-1 lines of text from the screen
-			_zbasic->get(0x3c, 0x122 - (0xf - _pageLines[_storyNextPage]) * 0xf, 0x1d6, 0x11d, this->arr_bmp_b3ec);
-			this->var_i16_7e0 = 1;
+			_zbasic->get(0x3c, 0x122 - (0xf - _pageLines[_storyNextPage]) * 0xf, 0x1d6, 0x11d, arr_bmp_b3ec);
+			var_i16_7e0 = 1;
 		} else {
 			// 128:22d4
-			this->var_i16_7e0 = 0;
+			var_i16_7e0 = 0;
 		}
 	}
 	// 128:22da
@@ -1151,10 +1151,10 @@ void FoolGame::storyRenderPage() {
 	fillRect(0x127, 0x69, 0x138, 0x190, 0);
 	_storyCurrentChapter = _pageToChapter[_storyNextPage];
 	// if we've solved a puzzle, fill the scroll with crazy patterns
-	if ((this->var_i16_7ce & 0x8) != 0) {
-		this->var_i16_7ce ^= 0x8;
-		this->sub_128_bde(1, 0, kSrcCopy, 0, 1, 0);
-		this->sub_128_bde(1, 0, kSrcCopy, 0, 0, 0);
+	if ((var_i16_7ce & 0x8) != 0) {
+		var_i16_7ce ^= 0x8;
+		sub_128_bde(1, 0, kSrcCopy, 0, 1, 0);
+		sub_128_bde(1, 0, kSrcCopy, 0, 0, 0);
 	}
 	// 128:235e
 	if (_puzzleType[_storyCurrentChapter] > 0) {
@@ -1168,15 +1168,15 @@ void FoolGame::storyRenderPage() {
 			iconStr = Common::U32String("*"); // was: str(12)
 		}
 		// 128:23e8
-		this->drawPuzzleButton(iconStr);
+		drawPuzzleButton(iconStr);
 		// 128:23f0: CLR.W - -0x772(A5)
-		this->var_i16_7d6 = 1;
+		var_i16_7d6 = 1;
 		_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
 		_toolbox->MoveTo(0x8a, 0x133);
 		_toolbox->DrawString(_puzzleName[_storyCurrentChapter]);
 	} else {
 		// 128:2430
-		this->var_i16_7d6 = 0;
+		var_i16_7d6 = 0;
 		_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
 		_toolbox->MoveTo(0x70, 0x133);
 		_toolbox->DrawString(_puzzleName[_storyCurrentChapter]);
@@ -1190,9 +1190,9 @@ void FoolGame::storyRenderPage() {
 	if (_storyNextPage != _storyCurrentPage) {
 		_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcOr);
 		fillRect(0x2f, 0x37, 0x11f, 0x1db, 0);
-		if (this->var_i16_7e0 != 0) {
+		if (var_i16_7e0 != 0) {
 			// Paste the previous lines of text, if we copied them
-			_zbasic->put(0x3c, 0x32, this->arr_bmp_b3ec, kSrcCopy);
+			_zbasic->put(0x3c, 0x32, arr_bmp_b3ec, kSrcCopy);
 		}
 		// 128:252a
 		// y-position where the story text should start
@@ -1201,10 +1201,10 @@ void FoolGame::storyRenderPage() {
 		if (_pageLines[_storyNextPage] < 0xf) {
 			_toolbox->MoveTo(0xfa, strY-0xf);
 			_toolbox->DrawString(Common::U32String("∞")); // was: str(14)
-			this->var_i16_7de = strY - 0x1e;
+			var_i16_7de = strY - 0x1e;
 		} else {
 		// 128:25a6
-			this->var_i16_7de = strY - 0xf;
+			var_i16_7de = strY - 0xf;
 		}
 		// 128:25b6
 		// printing the story to the screen
@@ -1228,7 +1228,7 @@ void FoolGame::storyRenderPage() {
 void FoolGame::menuClickMessage() {
 	// 128:2664
 	// hide menu and replace with "click mouse to continue" message
-	_toolbox->SetPort(this->var_i32_8);
+	_toolbox->SetPort(var_i32_8);
 	fillRect(0, 7, 0x13, _windowWidth-7, 0);
 	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	Common::U32String message = Common::U32String("Click Mouse to Continue"); // was: str(15)
@@ -1236,44 +1236,44 @@ void FoolGame::menuClickMessage() {
 	_toolbox->MoveTo((_windowWidth / 2) - (width / 2), 0xf);
 	_toolbox->DrawString(message);
 	_toolbox->_defaultMenu->setOverlayDirty(true);
-	_toolbox->SetPort(this->var_i32_0);
+	_toolbox->SetPort(var_i32_0);
 }
 
 void FoolGame::sub_128_26f6() {
 	// 128:26f6
 	for (int i = 0; i <= 0x28; i++) {
-		this->arr_i16_1eb8[i] = 0;
+		arr_i16_1eb8[i] = 0;
 	}
 }
 
 void FoolGame::fetchPuzzleData() {
 	int position = _puzzleDataOffsets[_activePuzzle] - 1;
 	// record index
-	this->var_i16_484 = (int16)(position / 1000);
+	var_i16_484 = (int16)(position / 1000);
 	// offset at record
-	this->var_i16_7e4 = (int16)(position % 1000);
-	_zbasic->record(1, this->var_i16_484, this->var_i16_7e4);
-	this->_puzzleDataPtr = 0;
+	var_i16_7e4 = (int16)(position % 1000);
+	_zbasic->record(1, var_i16_484, var_i16_7e4);
+	_puzzleDataPtr = 0;
 	int length = _puzzleDataOffsets[_activePuzzle + 1] - _puzzleDataOffsets[_activePuzzle];
 	debugC(8, kDebugLoading, "fetchPuzzleData: seek puzzles to puzzle %d at position %x (rec: %d, offset: %d), length %x",
 			_activePuzzle,
 			position,
-			this->var_i16_484,
-			this->var_i16_7e4,
+			var_i16_484,
+			var_i16_7e4,
 			length
 	);
-	this->arr_bytes_109dc = _zbasic->readFile(1, length);
-	this->_puzzleDataBuffer = this->arr_bytes_109dc;
+	arr_bytes_109dc = _zbasic->readFile(1, length);
+	_puzzleDataBuffer = arr_bytes_109dc;
 
 }
 
 // new game
 void FoolGame::menuNewGame() {
 	// 128:27d6
-	this->savePrompt();
+	savePrompt();
 	if (_savePromptChoice == 3)
 		return;
-	if (this->var_i16_7ce & 1) {
+	if (var_i16_7ce & 1) {
 		setStateBits(kStateNewGame | kStateReturn);
 	} else {
 		setStateBits(kStateNewGame);
@@ -1283,65 +1283,65 @@ void FoolGame::menuNewGame() {
 
 void FoolGame::sub_128_2808() {
 	// 128:2808
-	this->var_i16_7e6 = 0;
+	var_i16_7e6 = 0;
 	// 128:280e: LEA - [0x3808],A0
 	// 128:2812: MOVE.L - A0,-0x8ee(A5)
-	_zbasic->openR(2, this->var_str_588, 0x400, this->var_i16_688);
-	this->var_str_7e8 = _zbasic->readFileStr(2, 0x11);
-	if (this->var_str_7e8 == Common::U32String("The Fool's Errand")) { // str(16)
-		this->var_i16_8e8 = _zbasic->readFileInt(2);
-		this->var_i16_8e8 = _zbasic->readFileInt(2);
-		this->var_i16_8e8 = _zbasic->readFileInt(2);
-		this->var_i16_8e8 = _zbasic->readFileInt(2);
+	_zbasic->openR(2, var_str_588, 0x400, var_i16_688);
+	var_str_7e8 = _zbasic->readFileStr(2, 0x11);
+	if (var_str_7e8 == Common::U32String("The Fool's Errand")) { // str(16)
+		var_i16_8e8 = _zbasic->readFileInt(2);
+		var_i16_8e8 = _zbasic->readFileInt(2);
+		var_i16_8e8 = _zbasic->readFileInt(2);
+		var_i16_8e8 = _zbasic->readFileInt(2);
 		for (int i = 1; i <= 0x64; i++) {
-			this->var_i16_8e8 = _zbasic->readFileInt(2);
-			this->var_i16_8e8 = _zbasic->readFileInt(2);
-			this->var_i16_8e8 = _zbasic->readFileInt(2);
-			this->var_i16_8e8 = _zbasic->readFileInt(2);
-			this->var_str_7e8 = _zbasic->readFileStr(2, this->var_i16_8e8);
+			var_i16_8e8 = _zbasic->readFileInt(2);
+			var_i16_8e8 = _zbasic->readFileInt(2);
+			var_i16_8e8 = _zbasic->readFileInt(2);
+			var_i16_8e8 = _zbasic->readFileInt(2);
+			var_str_7e8 = _zbasic->readFileStr(2, var_i16_8e8);
 		}
 		// 128:28c8
 		for (int i = 1; i <= 0x51; i++) {
-			this->var_i16_8e8 = _zbasic->readFileInt(2);
+			var_i16_8e8 = _zbasic->readFileInt(2);
 		}
 
 	} else {
 		// 128:28ec
-		this->var_i16_7e6 = 1;
+		var_i16_7e6 = 1;
 	}
 	_zbasic->close(2);
 	// 128:28f8: LEA - [0x3818],A0
 	// 128:28fc: MOVE.L - A0,-0x8ee(A5)
-	if (this->var_i16_7e6 != 0) {
-		_modalText[0] = Common::U32String::format("The file '%s' cannot be opened.", this->var_str_588.encode().c_str()); // was: str(17), str(18)
+	if (var_i16_7e6 != 0) {
+		_modalText[0] = Common::U32String::format("The file '%s' cannot be opened.", var_str_588.encode().c_str()); // was: str(17), str(18)
 		_modalText[1] = Common::U32String("Okay"); // was: str(19)
-		this->showChoiceModal(kFontChicago, 0, 1, 1);
-		this->var_str_588.clear(); // was: str(20)
-		this->var_i16_7e6 = 0;
+		showChoiceModal(kFontChicago, 0, 1, 1);
+		var_str_588.clear(); // was: str(20)
+		var_i16_7e6 = 0;
 	}
 }
 
 void FoolGame::menuOpenGame() {
 	// 128:2988
 	// File -> Open
-	this->sub_128_1e4(Common::String("FOOL")); // was: str(21)
-	if (this->var_str_588.empty()) { // was: str(22)
+	sub_128_1e4(Common::String("FOOL")); // was: str(21)
+	if (var_str_588.empty()) { // was: str(22)
 		return;
 	}
-	this->sub_128_2808();
-	if (this->var_str_588.empty()) { // was: str(23)
+	sub_128_2808();
+	if (var_str_588.empty()) { // was: str(23)
 		return;
 	}
-	this->savePrompt();
+	savePrompt();
 	// 128:29d4
 	if (_savePromptChoice != 3) {
-		if ((this->var_i16_7ce & 1) != 0) {
+		if ((var_i16_7ce & 1) != 0) {
 			setStateBits(kStateOpenGame | kStateReturn);
 		} else {
 			// 128:29fa
 			setStateBits(kStateOpenGame);
 		}
-		this->cursorWatch();
+		cursorWatch();
 	}
 }
 
@@ -1355,15 +1355,15 @@ void FoolGame::saveGameAs() {
 	// 128:2a0e
 	if (_saveFileName.empty()) { // was: str(24)
 		// 128:2a28
-		this->openSaveFileDialog(Common::U32String("Name of game?"), Common::U32String()); // was: str(25), str(26)
+		openSaveFileDialog(Common::U32String("Name of game?"), Common::U32String()); // was: str(25), str(26)
 	} else {
 		// 128:2a48
-		this->openSaveFileDialog(Common::U32String("New Name?"), _saveFileName); // was: str(27)
+		openSaveFileDialog(Common::U32String("New Name?"), _saveFileName); // was: str(27)
 	}
 	// 128:2a60
-	if (!this->var_str_486.empty()) { // was: str(28)
-		_saveFileName = this->var_str_486;
-		this->var_i16_9ec = this->var_i16_586;
+	if (!var_str_486.empty()) { // was: str(28)
+		_saveFileName = var_str_486;
+		var_i16_9ec = var_i16_586;
 		// 128:2a90
 	}
 }
@@ -1371,8 +1371,8 @@ void FoolGame::saveGameAs() {
 void FoolGame::menuSaveGameAs() {
 	// 128:2a92
 	// File -> Save As
-	this->saveGameAs();
-	if (!this->var_str_486.empty()) { // was: str(29)
+	saveGameAs();
+	if (!var_str_486.empty()) { // was: str(29)
 		setStateBits(kStateSaveGame);
 	}
 
@@ -1381,11 +1381,11 @@ void FoolGame::menuSaveGameAs() {
 // quit
 void FoolGame::menuQuit() {
 	// 128:2ab6
-	this->savePrompt();
+	savePrompt();
 	if (_savePromptChoice == 3) {
 		return;
 	}
-	if ((this->var_i16_7ce & 1) != 0) {
+	if ((var_i16_7ce & 1) != 0) {
 		setStateBits(kStateQuit | kStateReturn);
 	} else {
 		setStateBits(kStateQuit);
@@ -1395,7 +1395,7 @@ void FoolGame::menuQuit() {
 // print story
 void FoolGame::menuPrintStory() {
 	// 128:2ae8
-	if (this->var_i16_7ce & 1) {
+	if (var_i16_7ce & 1) {
 		_stateFlags = kStatePrintStory | kStateReturn;
 	} else {
 		_stateFlags = kStatePrintStory;
@@ -1413,29 +1413,29 @@ void FoolGame::printStory() {
 
 void FoolGame::newGame() {
 	// 128:2bc6
-	this->clearStateBits(kStateNewGame);
-	this->cursorWatch();
-	this->sub_128_3744();
+	clearStateBits(kStateNewGame);
+	cursorWatch();
+	sub_128_3744();
 	_saveFileName.clear(); // was: str(33);
 
-	this->var_i16_9ec = 0;
+	var_i16_9ec = 0;
 	// set up the initially visible story chapters
-	this->arr_i16_4758[0] = 0x103;
-	this->arr_i16_4758[1] = 0;
-	this->arr_i16_4758[2] = 0x1e;
-	this->arr_i16_4758[3] = 0x1fc;
-	this->arr_i16_4758[4] = (int16)0xa050;
-	this->arr_i16_4758[5] = 0x3f7;
-	this->var_i16_484 = 0;
+	arr_i16_4758[0] = 0x103;
+	arr_i16_4758[1] = 0;
+	arr_i16_4758[2] = 0x1e;
+	arr_i16_4758[3] = 0x1fc;
+	arr_i16_4758[4] = (int16)0xa050;
+	arr_i16_4758[5] = 0x3f7;
+	var_i16_484 = 0;
 	for (int j = 0; j <= 0x5; j++) {
 		// 128:2c5e
 		for (int i = 0; i <= 0xf; i++) {
-			this->var_i16_484++;
-			if (this->arr_i16_4758[j] & _bitLUT[i]) {
-				_pageVisible[this->var_i16_484] = 1;
+			var_i16_484++;
+			if (arr_i16_4758[j] & _bitLUT[i]) {
+				_pageVisible[var_i16_484] = 1;
 			} else {
 				// 128:2ca6
-				_pageVisible[this->var_i16_484] = 0;
+				_pageVisible[var_i16_484] = 0;
 			}
 			// 128:2cb6
 		}
@@ -1448,26 +1448,26 @@ void FoolGame::newGame() {
 	// 128:2cf6
 	// shuffle around the pieces of the sun's map
 	for (int i = 1; i <= 0x64; i++) {
-		this->var_i16_484 = _zbasic->rndInt(0x51);
-		this->var_i16_7e4 = _zbasic->rndInt(0x51);
-		_zbasic->swapInt(_sunMapTileID[this->var_i16_484], _sunMapTileID[this->var_i16_7e4]);
+		var_i16_484 = _zbasic->rndInt(0x51);
+		var_i16_7e4 = _zbasic->rndInt(0x51);
+		_zbasic->swapInt(_sunMapTileID[var_i16_484], _sunMapTileID[var_i16_7e4]);
 		_puzzleCompletionStatus[i] = 0;
 		_puzzleFlags[i] = kFlagMenuDisabled;
 	}
 	// 128:2d6a
-	this->var_i16_484 = 0;
+	var_i16_484 = 0;
 	for (int i = 1; i <= _storyPageCount; i++) {
-		if (_pageToChapter[i] == this->var_i16_484+1) {
+		if (_pageToChapter[i] == var_i16_484+1) {
 			// 128:2d9c
-			this->var_i16_484++;
+			var_i16_484++;
 			if (_pageVisible[i] == 1) {
-				if (_puzzleUnlockChapter[this->var_i16_484] != 0) {
-					this->var_i16_9f2 = kFlagMenuDiamond;
+				if (_puzzleUnlockChapter[var_i16_484] != 0) {
+					var_i16_9f2 = kFlagMenuDiamond;
 				} else {
-					this->var_i16_9f2 = kFlagMenuEnabled;
+					var_i16_9f2 = kFlagMenuEnabled;
 				}
 				// 128:2de2
-				_puzzleFlags[this->var_i16_484] = this->var_i16_9f2 + 4;
+				_puzzleFlags[var_i16_484] = var_i16_9f2 + 4;
 			}
 			// 128:2e02
 		}
@@ -1476,28 +1476,28 @@ void FoolGame::newGame() {
 	// 128:2e14
 	_zbasic->indexClear(0x2);
 	_storyNextPage = 1;
-	this->var_i16_7ce = 0;
+	var_i16_7ce = 0;
 	_activePuzzle = 0;
 	_sunMapRestored = 0;
-	this->var_i16_7b2 = 0;
-	this->sub_128_3032();
+	var_i16_7b2 = 0;
+	sub_128_3032();
 	// 128:2e3c
 }
 
 void FoolGame::openGame() {
 	// 128:2e3e
 	// save game loading code?
-	this->clearStateBits(kStateOpenGame);
-	this->cursorWatch();
-	this->sub_128_3744();
-	_saveFileName = this->var_str_588;
-	this->var_i16_9ec = this->var_i16_688;
-	this->var_i16_7e6 = 0;
+	clearStateBits(kStateOpenGame);
+	cursorWatch();
+	sub_128_3744();
+	_saveFileName = var_str_588;
+	var_i16_9ec = var_i16_688;
+	var_i16_7e6 = 0;
 	// FIXME: disk error handler??
 	// 128:2e68: LEA - [0x3808],A0
 	// 128:2e6c: MOVE.L - A0,-0x8ee(A5)
 	// 128:2e70: SF - 0x8,D0
-	_zbasic->openR(2, _saveFileName, 0x400, this->var_i16_9ec);
+	_zbasic->openR(2, _saveFileName, 0x400, var_i16_9ec);
 
 	Common::String magic = _zbasic->readFileStr(2, 0x11);
 	if (!magic.equals("The Fool's Errand")) {
@@ -1506,7 +1506,7 @@ void FoolGame::openGame() {
 	}
 	_storyNextPage = _zbasic->readFileInt(2);
 	_activePuzzle = _zbasic->readFileInt(2);
-	this->var_i16_7ce = _zbasic->readFileInt(2);
+	var_i16_7ce = _zbasic->readFileInt(2);
 	_sunMapRestored = _zbasic->readFileInt(2);
 	for (int i = 1; i <= 0x64; i++) {
 		_puzzleFlags[i] = _zbasic->readFileInt(2);
@@ -1529,18 +1529,18 @@ void FoolGame::openGame() {
 	debugCN(5, kDebugLoading, "\n");
 	// 128:2f84
 	_zbasic->close(2);
-	if (this->var_i16_7e6 != 0) {
+	if (var_i16_7e6 != 0) {
 		_modalText[0] = Common::U32String::format("The file '%s' cannot be opened.", _saveFileName.encode().c_str()); // was: str(34), str(35)
 		_modalText[1] = Common::U32String("Okay"); // was: str(36)
-		this->var_i16_7e6 = 0;
-		if ((this->var_i16_7ce & 1) == 0) {
+		var_i16_7e6 = 0;
+		if ((var_i16_7ce & 1) == 0) {
 			setStateBits(kStateNewGame | kStateReturn);
 		} else {
 			setStateBits(kStateNewGame);
 		}
 	} else {
 		// 128:302c
-		this->sub_128_3032();
+		sub_128_3032();
 	}
 
 }
@@ -1548,28 +1548,28 @@ void FoolGame::openGame() {
 void FoolGame::sub_128_3032() {
 	_storyCurrentChapter = 0;
 	_stateFlags = kStateNull;
-	this->var_i16_484 = 0;
-	this->var_i16_68c = 3;
+	var_i16_484 = 0;
+	var_i16_68c = 3;
 	// render chapter menu headings
 	for (int j = 3; j <= 7; j++) {
-		this->var_str_384 = Common::U32String("-") + _zbasic->chr(0x7d+j) + Common::U32String("-"); // was: str(37)
-		_zbasic->menu(j, 0, 1, this->var_str_384);
+		var_str_384 = Common::U32String("-") + _zbasic->chr(0x7d+j) + Common::U32String("-"); // was: str(37)
+		_zbasic->menu(j, 0, 1, var_str_384);
 		for (int i = 1; i <= 0x10; i++) {
-			this->var_i16_484++;
-			this->var_i16_9f2 = _puzzleFlags[this->var_i16_484] & (kFlagMenuDiamond | kFlagMenuEnabled);
-			if (_puzzleCompletionStatus[this->var_i16_484] == 0x63) {
-				this->var_str_384 = Common::U32String(" ~ "); // wadjet eye for puzzles with enchantment
+			var_i16_484++;
+			var_i16_9f2 = _puzzleFlags[var_i16_484] & (kFlagMenuDiamond | kFlagMenuEnabled);
+			if (_puzzleCompletionStatus[var_i16_484] == 0x63) {
+				var_str_384 = Common::U32String(" ~ "); // wadjet eye for puzzles with enchantment
 			} else {
 			// 128:30e4
-				this->var_str_384 = Common::U32String(" "); // was: str(40)
+				var_str_384 = Common::U32String(" "); // was: str(40)
 			}
 			// 128:30f8
-			this->var_str_9f4 = _puzzleName[this->var_i16_484] + this->var_str_384;
+			var_str_9f4 = _puzzleName[var_i16_484] + var_str_384;
 			if ((j == 3) && (i == 1)) { // add shortcut modifier for the sun's map
-				this->var_str_9f4 = Common::U32String("/M") + this->var_str_9f4;
+				var_str_9f4 = Common::U32String("/M") + var_str_9f4;
 			}
 			// 128:315e
-			_zbasic->menu(j, i, this->var_i16_9f2, this->var_str_9f4);
+			_zbasic->menu(j, i, var_i16_9f2, var_str_9f4);
 		}
 		// 128:3180
 	}
@@ -1578,7 +1578,7 @@ void FoolGame::sub_128_3032() {
 	fillRect(0x2f, 0x37, 0x11f, 0x1db, 0x0);
 	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	int16 strY = 0x3c;
-	this->var_i16_7de = 0x2d;
+	var_i16_7de = 0x2d;
 	// draw the first page of text
 	for (int i = 1; i <= 0xf; i++) {
 		// 128:31ec
@@ -1587,11 +1587,11 @@ void FoolGame::sub_128_3032() {
 		strY += 0xf;
 	}
 	// 128:3228
-	this->copyScreen(0, this->arr_bmp_5dfc);
+	copyScreen(0, arr_bmp_5dfc);
 	_storyCurrentPage = 1;
-	this->storyRenderPage();
-	if ((this->var_i16_7ce & 1) == 0) {
-		this->cursorExplodingWatch();
+	storyRenderPage();
+	if ((var_i16_7ce & 1) == 0) {
+		cursorExplodingWatch();
 	} else {
 		if ((_activePuzzle > 0) && (_activePuzzle <= 0x50)) {
 			setStateBits(kStatePuzzleSelect);
@@ -1600,7 +1600,7 @@ void FoolGame::sub_128_3032() {
 		}
 	}
 	// 128:3294
-	this->menuToggleSound();
+	menuToggleSound();
 	if (_sunMapRestored == 0) {
 		_zbasic->menu(2, 7, 0, Common::U32String());
 	} else {
@@ -1618,7 +1618,7 @@ void FoolGame::menuToggleSound() {
 
 void FoolGame::savePrompt() {
 	// 128:32fa
-	if (this->var_i16_7ce == 666) {
+	if (var_i16_7ce == 666) {
 		return;
 	}
 	_savePromptChoice = 0;
@@ -1634,12 +1634,12 @@ void FoolGame::savePrompt() {
 	_modalText[1] = Common::U32String("Yes");
 	_modalText[2] = Common::U32String("No");
 	_modalText[3] = Common::U32String("Cancel");
-	this->showChoiceModal(kFontChicago, 0, 3, 0);
+	showChoiceModal(kFontChicago, 0, 3, 0);
 	if (_savePromptChoice > 1) {
 		_saveFileName = previous;
 		return;
 	}
-	this->saveGameAs();
+	saveGameAs();
 	if (_saveFileName.empty()) { // was: str(47)
 		// 128:33da
 		_savePromptChoice = 3;
@@ -1668,38 +1668,38 @@ void FoolGame::autoSaveGame() {
 
 void FoolGame::saveGame() {
 	// write save file
-	this->clearStateBits(kStateSaveGame);
-	if (this->var_i16_7ce == 666)
+	clearStateBits(kStateSaveGame);
+	if (var_i16_7ce == 666)
 		return;
 	// 128:3548
 	if (_saveFileName.empty()) { // was: str(57)
-		this->saveGameAs();
+		saveGameAs();
 		if (_saveFileName.empty()) { // was: str(58)
 			return;
 		}
 	}
 	// 128:3580
-	if ((this->var_i16_7ce & 1) != 0) {
-		this->puzzleSaveContext();
+	if ((var_i16_7ce & 1) != 0) {
+		puzzleSaveContext();
 	}
 	// 128:3594
 	do {
 		if (!_isAutoSaving) {
-			this->cursorWatch();
+			cursorWatch();
 		}
 		// 128:3598
-		this->var_i16_7e6 = 0;
+		var_i16_7e6 = 0;
 		// 128:359e: LEA - [0x3808],A0
 		// 128:35a2: MOVE.L - A0,-0x8ee(A5)
 		_zbasic->defOpen(Common::U32String("FOOLgf87")); // str(59)
-		_zbasic->openW(2, _saveFileName, 0x400, this->var_i16_9ec);
+		_zbasic->openW(2, _saveFileName, 0x400, var_i16_9ec);
 
-		if (this->var_i16_7e6 != 0xa) {
-			this->var_str_af4 = Common::U32String("The Fool's Errand"); // str(60)
-			_zbasic->writeFileStr(2, this->var_str_af4.encode(Common::kMacRoman));
+		if (var_i16_7e6 != 0xa) {
+			var_str_af4 = Common::U32String("The Fool's Errand"); // str(60)
+			_zbasic->writeFileStr(2, var_str_af4.encode(Common::kMacRoman));
 			_zbasic->writeFileInt(2, _storyNextPage);
 			_zbasic->writeFileInt(2, _activePuzzle);
-			_zbasic->writeFileInt(2, this->var_i16_7ce);
+			_zbasic->writeFileInt(2, var_i16_7ce);
 			_zbasic->writeFileInt(2, _sunMapRestored);
 			for (int i = 1; i <= 0x64; i++) {
 				_zbasic->writeFileInt(2, _puzzleFlags[i]);
@@ -1716,11 +1716,11 @@ void FoolGame::saveGame() {
 			_zbasic->close(2);
 		}
 		// 128:36fe
-		if (this->var_i16_7e6 != 0) {
+		if (var_i16_7e6 != 0) {
 			// problem with saving
-			this->sub_128_388a();
+			sub_128_388a();
 			do {
-				this->saveGameAs();
+				saveGameAs();
 			} while (_saveFileName.empty());  // was: str(61)
 			// 128:3726: BRA - [0x3594]
 
@@ -1733,7 +1733,7 @@ void FoolGame::saveGame() {
 	// 128:372e: MOVE.L - A0,-0x8ee(A5)
 	if (_stateFlags == kStateNull) {
 		if (!_isAutoSaving) {
-			this->cursorExplodingWatchShort();
+			cursorExplodingWatchShort();
 		}
 		_toolbox->InitCursor();
 	}
@@ -1753,7 +1753,7 @@ void FoolGame::sub_128_3744() {
 void FoolGame::cursorWatch() {
 	// 128:3774
 	_toolbox->SetCursor(_cursors[3]);
-	this->var_i16_7b2 = 0xa;
+	var_i16_7b2 = 0xa;
 }
 
 void FoolGame::cursorExplodingWatch() {
@@ -1761,30 +1761,30 @@ void FoolGame::cursorExplodingWatch() {
 	for (int j = 0; j <= 1; j++) {
 		for (int i = 3; i <= 6; i++) {
 			_toolbox->SetCursor(_cursors[i]);
-			this->delay(3);
+			delay(3);
 		}
 	// 128:37c2
 	}
 	for (int i = 7; i <= 0xf; i++) {
 		_toolbox->SetCursor(_cursors[i]);
-		this->delay(4);
+		delay(4);
 	}
 
-	this->var_i16_7b2 = 0xa;
+	var_i16_7b2 = 0xa;
 }
 
 void FoolGame::cursorExplodingWatchShort() {
 	// 128:37ce
 	for (int i = 7; i <= 0xf; i++) {
 		_toolbox->SetCursor(_cursors[i]);
-		this->delay(4);
+		delay(4);
 	}
-	this->var_i16_7b2 = 0xa;
+	var_i16_7b2 = 0xa;
 }
 
 void FoolGame::sub_128_388a() {
 	// 128:388a
-	if ((this->var_i16_7e6 & 0xff) == 2) {
+	if ((var_i16_7e6 & 0xff) == 2) {
 		// problem with saving
 	}
 	warning("STUB: %s", __func__);
@@ -1794,22 +1794,22 @@ void FoolGame::puzzleRun() {
 	// 128:39a0
 	fillRect(0x127, 0x69, 0x138, 0x190, 0);
 	_stateFlags = kStateNull;
-	this->var_i16_c00 = 0;
-	this->var_i16_7d6 = 0;
-	this->var_i16_7b2 = 0xa;
+	var_i16_c00 = 0;
+	var_i16_7d6 = 0;
+	var_i16_7b2 = 0xa;
 	_activePuzzle = _storyCurrentChapter;
-	this->var_i16_7ce |= 1;
+	var_i16_7ce |= 1;
 	_toolbox->InitCursor();
-	this->copyScreen(0, this->arr_bmp_5dfc);
+	copyScreen(0, arr_bmp_5dfc);
 	// 128:39fa
-	if (this->arr_i16_15e8[_storyCurrentChapter] > 0) {
-		this->sub_128_41d8();
+	if (arr_i16_15e8[_storyCurrentChapter] > 0) {
+		sub_128_41d8();
 	}
 	// 128:3a12
-	this->puzzleSetupMenu();
-	this->sub_128_26f6();
-	this->sub_128_61ec();
-	this->puzzleLoadContext();
+	puzzleSetupMenu();
+	sub_128_26f6();
+	sub_128_61ec();
+	puzzleLoadContext();
 	// 128:3a22
 	// 128:3a38: JSR - "ZBASIC_115"
 	debugC(5, kDebugLoading, "puzzleRun: chapter 0x%x, puzzle module %d", _storyCurrentChapter, _puzzleType[_storyCurrentChapter]-1);
@@ -1818,68 +1818,68 @@ void FoolGame::puzzleRun() {
 	case 1:
 	case 2:
 	case 3:
-		this->jumbleRun();
+		jumbleRun();
 		break;
 	case 4:
-		this->wordSearchRun();
+		wordSearchRun();
 		break;
 	case 5:
-		this->jigsawRun();
+		jigsawRun();
 		break;
 	case 6:
-		this->polyominoRun();
+		polyominoRun();
 		break;
 	case 7:
-		this->revealRun();
+		revealRun();
 		break;
 	case 8:
-		this->sentenceRun();
+		sentenceRun();
 		break;
 	case 9:
-		this->mazeRun();
+		mazeRun();
 		break;
 	case 10:
-		this->jumbleRun();
+		jumbleRun();
 		break;
 	case 11:
-		this->sunMapRun();
+		sunMapRun();
 		break;
 	case 12:
-		this->cardsRun();
+		cardsRun();
 		break;
 	case 13:
-		this->highPriestessRun();
+		highPriestessRun();
 		break;
 	case 14:
-		this->deathRun();
+		deathRun();
 		break;
 	case 15:
-		this->shipsRun();
+		shipsRun();
 		break;
 	case 16:
-		this->humbugRun();
+		humbugRun();
 		break;
 	case 17:
-		this->justiceRun();
+		justiceRun();
 		break;
 	case 18:
-		this->hermitRun();
+		hermitRun();
 		break;
 	default:
 		warning("%s: broke out of switch", __func__);
 		break;
 	}
 	// 128:3a8a
-	this->sub_128_5fea();
+	sub_128_5fea();
 	if (_sunMapRestored == 1) {
 		setStateBits(0x100);
 		return;
 	}
 	// 128:3aa4
-	this->puzzleSaveContext();
+	puzzleSaveContext();
 	if ((_stateFlags & kStateQuit) == 0) {
 		_toolbox->PenNormal();
-		this->copyScreen(1, this->arr_bmp_5dfc);
+		copyScreen(1, arr_bmp_5dfc);
 		MenuHandle menu = _toolbox->GetMHandle(8);
 		_toolbox->DeleteMenu(8);
 		_toolbox->DisposeMenu(menu);
@@ -1888,7 +1888,7 @@ void FoolGame::puzzleRun() {
 	// 128:3aea
 	_zbasic->indexClear(1);
 	if (_puzzleCompletionStatus[_storyCurrentChapter] == 0x63) {
-		this->storyUnlockChapter();
+		storyUnlockChapter();
 		autoSaveGame(); // autosave on progress
 	}
 	if (_puzzleCompletionStatus[_storyCurrentChapter] == 0x64) {
@@ -1924,7 +1924,7 @@ void FoolGame::puzzleRun() {
 				}
 			}
 			// 128:3cae
-			this->var_i16_7ce |= 8;
+			var_i16_7ce |= 8;
 		} else {
 			// 128:3cc0
 			if ((_puzzleFlags[_storyCurrentChapter] & 2) != 0) {
@@ -1932,27 +1932,27 @@ void FoolGame::puzzleRun() {
 				_puzzleFlags[_storyCurrentChapter] |= 1;
 			}
 			// 128:3d3a
-			this->var_i16_484 = 3 + ((_storyCurrentChapter - 1) / 0x10);
-			this->var_i16_7e4 = 1 + ((_storyCurrentChapter - 1) % 0x10);
-			_zbasic->menu(this->var_i16_484, this->var_i16_7e4, 1, Common::U32String());
-			this->storyUnlockChapter();
+			var_i16_484 = 3 + ((_storyCurrentChapter - 1) / 0x10);
+			var_i16_7e4 = 1 + ((_storyCurrentChapter - 1) % 0x10);
+			_zbasic->menu(var_i16_484, var_i16_7e4, 1, Common::U32String());
+			storyUnlockChapter();
 		}
 		autoSaveGame();
 	}
 	// 128:3d82
-	this->var_i16_c02 = 0;
-	this->var_i16_c00 = 0;
-	_toolbox->SetPort(this->var_i32_0);
+	var_i16_c02 = 0;
+	var_i16_c00 = 0;
+	_toolbox->SetPort(var_i32_0);
 	if ((_stateFlags & (kStateQuit | kStateOpenGame | kStateNewGame)) == 0) {
-		if ((this->var_i16_7ce & 1) == 0) {
-			this->var_i16_7ce ^= 1;
+		if ((var_i16_7ce & 1) == 0) {
+			var_i16_7ce ^= 1;
 		}
 		if ((_stateFlags & kStateChapterSelect) == 0) {
-			this->storyRenderPage();
+			storyRenderPage();
 		}
 	}
 	// 128:3de0
-	this->sub_128_61ec();
+	sub_128_61ec();
 	// 128:3de4
 }
 
@@ -1961,7 +1961,7 @@ void FoolGame::storyUnlockChapter() {
 	if ((_puzzleUnlockChapter[_storyCurrentChapter] > 0) &&
 		((_puzzleFlags[_puzzleUnlockChapter[_storyCurrentChapter]] & 3) == 0)) {
 		_storyNextPage = 0;
-		this->var_i16_7ce |= 8;
+		var_i16_7ce |= 8;
 		for (int i = 1; i <= _storyPageCount; i++ ) {
 			// 128:3e56
 			if (_pageToChapter[i] == _puzzleUnlockChapter[_storyCurrentChapter]) {
@@ -1981,14 +1981,14 @@ void FoolGame::storyUnlockChapter() {
 		int16 menuNo = 3 + ((_storyCurrentChapter - 1) / 0x10);
 		int16 itemNo = 1 + ((_storyCurrentChapter - 1) % 0x10);
 		if (_puzzleUnlockChapter[_storyCurrentChapter] == 0) {
-			this->var_i16_9f2 = 1;
+			var_i16_9f2 = 1;
 			_puzzleCompletionStatus[_storyCurrentChapter] = 0x64;
 		} else {
 		// 128:3f66
-			this->var_i16_9f2 = 2;
+			var_i16_9f2 = 2;
 		}
-		_puzzleFlags[_storyCurrentChapter] |= (this->var_i16_9f2 + 4);
-		_zbasic->menu(menuNo, itemNo, this->var_i16_9f2, Common::U32String());
+		_puzzleFlags[_storyCurrentChapter] |= (var_i16_9f2 + 4);
+		_zbasic->menu(menuNo, itemNo, var_i16_9f2, Common::U32String());
 	}
 	// 128:3fb4
 }
@@ -2061,28 +2061,28 @@ void FoolGame::puzzleSaveContext() {
 void FoolGame::sub_128_41d8() {
 	// 128:41d8
 	for (int i = 0; i <= 5; i++) {
-		this->arr_i16_4758[i] = this->arr_i16_16b2[i + (this->arr_i16_15e8[_activePuzzle]*8)];
+		arr_i16_4758[i] = arr_i16_16b2[i + (arr_i16_15e8[_activePuzzle]*8)];
 	}
 	// 128:422e
 	if ((_activePuzzle == 0x34) && (_puzzleCompletionStatus[0x34] > 1)) {
 		// 128:4262
 		if (_puzzleCompletionStatus[0x34] == 2) {
-			this->arr_i16_4758[0] = 0;
-			this->arr_i16_4758[1] = 2;
-			this->arr_i16_4758[2] = 0xa;
+			arr_i16_4758[0] = 0;
+			arr_i16_4758[1] = 2;
+			arr_i16_4758[2] = 0xa;
 		}
 		// 128:42aa
 		if (_puzzleCompletionStatus[0x34] == 3) {
-			this->arr_i16_4758[0] = 0;
-			this->arr_i16_4758[1] = 3;
-			this->arr_i16_4758[2] = 0;
+			arr_i16_4758[0] = 0;
+			arr_i16_4758[1] = 3;
+			arr_i16_4758[2] = 0;
 		}
 		// 128:42f0
 		if (_puzzleCompletionStatus[0x34] >= 4) {
 			if (_sunMapRestored == 0) {
-				this->arr_i16_4758[0] = 0;
-				this->arr_i16_4758[1] = 0x47;
-				this->arr_i16_4758[2] = 0;
+				arr_i16_4758[0] = 0;
+				arr_i16_4758[1] = 0x47;
+				arr_i16_4758[2] = 0;
 			} else {
 				// 128:4346
 				return;
@@ -2092,25 +2092,25 @@ void FoolGame::sub_128_41d8() {
 	}
 	// 128:4348
 	if ((_activePuzzle == 0x17) && (_puzzleCompletionStatus[0x17] == 0x63)) {
-		this->arr_i16_4758[0] = 0;
-		this->arr_i16_4758[1] = 2;
-		this->arr_i16_4758[1] = 0xa;
+		arr_i16_4758[0] = 0;
+		arr_i16_4758[1] = 2;
+		arr_i16_4758[1] = 0xa;
 	}
 	// 128:43aa
 	if ((_activePuzzle == 0x3f) && (_puzzleCompletionStatus[0x3f] == 0x63)) {
-		this->arr_i16_4758[0] = 0;
-		this->arr_i16_4758[1] = 3;
-		this->arr_i16_4758[2] = 0;
+		arr_i16_4758[0] = 0;
+		arr_i16_4758[1] = 3;
+		arr_i16_4758[2] = 0;
 	}
 	// 128:440a
 	if (_activePuzzle == 0x48) {
 		if (_puzzleCompletionStatus[0x48] == 0x63) {
-			this->arr_i16_4758[0] = 0;
-			this->arr_i16_4758[1] = 0x47;
-			this->arr_i16_4758[2] = 0;
+			arr_i16_4758[0] = 0;
+			arr_i16_4758[1] = 0x47;
+			arr_i16_4758[2] = 0;
 		} else {
 			// 128:4462
-			this->arr_i16_4758[1] = 0x31;
+			arr_i16_4758[1] = 0x31;
 		}
 	}
 	storyDrawZoom();
@@ -2118,98 +2118,98 @@ void FoolGame::sub_128_41d8() {
 
 void FoolGame::storyDrawZoom() {
 	// 128:4472
-	if (this->arr_i16_4758[1] == 0) {
-		this->arr_i16_4758[1] = _activePuzzle;
+	if (arr_i16_4758[1] == 0) {
+		arr_i16_4758[1] = _activePuzzle;
 	}
-	if (this->arr_i16_4758[2] == 0) {
-		this->arr_i16_4758[2] = 0x8;
+	if (arr_i16_4758[2] == 0) {
+		arr_i16_4758[2] = 0x8;
 	}
-	if (this->arr_i16_4758[0] == 0) {
+	if (arr_i16_4758[0] == 0) {
 		// user clicked the puzzle button, zoom-fill with pattern
-		zoomRect(0x130, 0x76, 0x130, 0x76, MENU_HEIGHT, 0, SCREEN_HEIGHT, SCREEN_WIDTH, this->arr_i16_4758[1], (PatternMode)this->arr_i16_4758[2], 0x19);
+		zoomRect(0x130, 0x76, 0x130, 0x76, MENU_HEIGHT, 0, SCREEN_HEIGHT, SCREEN_WIDTH, arr_i16_4758[1], (PatternMode)arr_i16_4758[2], 0x19);
 		return;
 	}
 	// 128:4520
 	_toolbox->PenNormal();
-	_toolbox->PenPat(_patterns[this->arr_i16_4758[1]]);
-	_toolbox->PenMode((PatternMode)this->arr_i16_4758[2]);
-	if (this->arr_i16_4758[5] == 0) {
+	_toolbox->PenPat(_patterns[arr_i16_4758[1]]);
+	_toolbox->PenMode((PatternMode)arr_i16_4758[2]);
+	if (arr_i16_4758[5] == 0) {
 		// 128:456a
-		this->arr_i16_4758[12] = 0x1d;
-		this->arr_i16_4758[6] = 0x4;
-		this->arr_i16_4758[7] = 0x7;
+		arr_i16_4758[12] = 0x1d;
+		arr_i16_4758[6] = 0x4;
+		arr_i16_4758[7] = 0x7;
 	}
 	// 128:459a
-	if (this->arr_i16_4758[5] == 1) {
-		this->arr_i16_4758[12] = 0x2a;
-		this->arr_i16_4758[6] = 0x4;
-		this->arr_i16_4758[7] = 0x6;
+	if (arr_i16_4758[5] == 1) {
+		arr_i16_4758[12] = 0x2a;
+		arr_i16_4758[6] = 0x4;
+		arr_i16_4758[7] = 0x6;
 	}
 	// 128:45e4
-	_toolbox->PenSize(this->arr_i16_4758[7], this->arr_i16_4758[6]);
-	if ((this->arr_i16_4758[4] == 0) && (this->arr_i16_4758[5] == 0)) {
-		this->arr_i16_4758[8] = 0xa7;
-		this->arr_i16_4758[9] = 0x109;
-		this->arr_i16_4758[10] = 0xa7;
-		this->arr_i16_4758[11] = 0x109;
+	_toolbox->PenSize(arr_i16_4758[7], arr_i16_4758[6]);
+	if ((arr_i16_4758[4] == 0) && (arr_i16_4758[5] == 0)) {
+		arr_i16_4758[8] = 0xa7;
+		arr_i16_4758[9] = 0x109;
+		arr_i16_4758[10] = 0xa7;
+		arr_i16_4758[11] = 0x109;
 	}
 	// 128:467c
-	if ((this->arr_i16_4758[4] == 0) && (this->arr_i16_4758[5] == 1)) {
-		this->arr_i16_4758[8] = 0xb5;
-		this->arr_i16_4758[9] = 0x100;
-		this->arr_i16_4758[10] = 0xb5;
-		this->arr_i16_4758[11] = 0x100;
+	if ((arr_i16_4758[4] == 0) && (arr_i16_4758[5] == 1)) {
+		arr_i16_4758[8] = 0xb5;
+		arr_i16_4758[9] = 0x100;
+		arr_i16_4758[10] = 0xb5;
+		arr_i16_4758[11] = 0x100;
 	}
 	// 128:46f6
-	if (this->arr_i16_4758[4] == 1) {
-		this->arr_i16_4758[6] *= -1;
-		this->arr_i16_4758[7] *= -1;
+	if (arr_i16_4758[4] == 1) {
+		arr_i16_4758[6] *= -1;
+		arr_i16_4758[7] *= -1;
 	}
 	// 128:4754
-	if ((this->arr_i16_4758[4] == 1) && (this->arr_i16_4758[5] == 0)) {
-		this->arr_i16_4758[8] = 0x2b;
-		this->arr_i16_4758[9] = 0x31;
-		this->arr_i16_4758[10] = 0x123;
-		this->arr_i16_4758[11] = 0x1e1;
+	if ((arr_i16_4758[4] == 1) && (arr_i16_4758[5] == 0)) {
+		arr_i16_4758[8] = 0x2b;
+		arr_i16_4758[9] = 0x31;
+		arr_i16_4758[10] = 0x123;
+		arr_i16_4758[11] = 0x1e1;
 	}
 	// 128:47ce
-	if ((this->arr_i16_4758[4] == 1) && (this->arr_i16_4758[5] == 1)) {
-		this->arr_i16_4758[8] = 0x10;
-		this->arr_i16_4758[9] = -0x7;
-		this->arr_i16_4758[10] = 0x15a;
-		this->arr_i16_4758[11] = 0x207;
+	if ((arr_i16_4758[4] == 1) && (arr_i16_4758[5] == 1)) {
+		arr_i16_4758[8] = 0x10;
+		arr_i16_4758[9] = -0x7;
+		arr_i16_4758[10] = 0x15a;
+		arr_i16_4758[11] = 0x207;
 	}
 	// 128:4850
-	if ((this->arr_i16_15e8[_activePuzzle] == 0xd) || (this->arr_i16_15e8[_activePuzzle] == 0xe)) {
+	if ((arr_i16_15e8[_activePuzzle] == 0xd) || (arr_i16_15e8[_activePuzzle] == 0xe)) {
 		fillRect(0x14f, 0, SCREEN_HEIGHT, 0x7, 1);
 		fillRect(0x14f, 0x1f9, SCREEN_HEIGHT, SCREEN_WIDTH, 1);
 	}
 	// 128:48d6
-	for (int i = 0; i <= this->arr_i16_4758[12]; i++) {
-		this->arr_i16_4758[8] -= this->arr_i16_4758[6];
-		this->arr_i16_4758[9] -= this->arr_i16_4758[7];
-		this->arr_i16_4758[10] += this->arr_i16_4758[6];
-		this->arr_i16_4758[11] += this->arr_i16_4758[7];
-		if (this->arr_i16_4758[8] < 0x14) {
-			this->arr_i16_4758[8] = 0x14;
+	for (int i = 0; i <= arr_i16_4758[12]; i++) {
+		arr_i16_4758[8] -= arr_i16_4758[6];
+		arr_i16_4758[9] -= arr_i16_4758[7];
+		arr_i16_4758[10] += arr_i16_4758[6];
+		arr_i16_4758[11] += arr_i16_4758[7];
+		if (arr_i16_4758[8] < 0x14) {
+			arr_i16_4758[8] = 0x14;
 		}
 		// 128:49e2
-		if (this->arr_i16_4758[3] == 0) {
-			this->arr_i16_4758[1] += 1;
-			if (this->arr_i16_4758[1] > 0x50) {
-				this->arr_i16_4758[1] = 1;
+		if (arr_i16_4758[3] == 0) {
+			arr_i16_4758[1] += 1;
+			if (arr_i16_4758[1] > 0x50) {
+				arr_i16_4758[1] = 1;
 			}
 			// 128:4a42
-			_toolbox->PenPat(_patterns[this->arr_i16_4758[1]]);
+			_toolbox->PenPat(_patterns[arr_i16_4758[1]]);
 		}
 		// 128:4a64
 		// FIXME: These can sometimes be invalid.
 		// Create manually to avoid the assert crash in the constructor.
 		Common::Rect temp;
-		temp.left = this->arr_i16_4758[9];
-		temp.top = this->arr_i16_4758[8];
-		temp.right = this->arr_i16_4758[11];
-		temp.bottom = this->arr_i16_4758[10];
+		temp.left = arr_i16_4758[9];
+		temp.top = arr_i16_4758[8];
+		temp.right = arr_i16_4758[11];
+		temp.bottom = arr_i16_4758[10];
 		_toolbox->FrameRect(temp);
 		// add fake delay for drawing visibility
 		if ((i % 4) == 0) {
@@ -2299,34 +2299,34 @@ void FoolGame::menuAbout() {
 		modalLines = 5;
 	}
 	// 128:4e42
-	_toolbox->SetPort(this->var_i32_4);
-	this->var_i16_7b2 = 0xa;
+	_toolbox->SetPort(var_i32_4);
+	var_i16_7b2 = 0xa;
 	_toolbox->InitCursor();
-	this->toggleMouseCursor(true);
-	this->copyScreen(0, this->arr_bmp_138bc);
+	toggleMouseCursor(true);
+	copyScreen(0, arr_bmp_138bc);
 	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcOr);
-	this->var_i16_7b4 = 0;
-	this->var_i16_7b6 = 0;
-	this->var_i16_7b8 = 0;
+	var_i16_7b4 = 0;
+	var_i16_7b6 = 0;
+	var_i16_7b8 = 0;
 	for (int i = 0; i <= modalLines; i++) {
-		this->var_i16_7ba = _toolbox->StringWidth(_modalText[i]);
-		if (this->var_i16_7ba > this->var_i16_7b4) {
-			this->var_i16_7b4 = this->var_i16_7ba;
+		var_i16_7ba = _toolbox->StringWidth(_modalText[i]);
+		if (var_i16_7ba > var_i16_7b4) {
+			var_i16_7b4 = var_i16_7ba;
 		}
 		// 128:4ec4
-		this->var_i16_7b6 += 0x11;
+		var_i16_7b6 += 0x11;
 	}
 	// 128:4eda
-	this->var_i16_7b6 += 0xd;
-	this->var_i16_7b4 = (this->var_i16_7b4/2) + 0xf;
-	this->var_i16_7b6 = (this->var_i16_7b6/2);
+	var_i16_7b6 += 0xd;
+	var_i16_7b4 = (var_i16_7b4/2) + 0xf;
+	var_i16_7b6 = (var_i16_7b6/2);
 	Common::Rect bounds; // arr_rect_5b7c
 	_toolbox->SetRect(
 		bounds,
-		0xf5 - this->var_i16_7b4,
-		0x6e - this->var_i16_7b6,
-		0x10b + this->var_i16_7b4,
-		0xcf + this->var_i16_7b6
+		0xf5 - var_i16_7b4,
+		0x6e - var_i16_7b6,
+		0x10b + var_i16_7b4,
+		0xcf + var_i16_7b6
 	);
 	_toolbox->PenNormal();
 	_toolbox->PenPat(_patterns[0]);
@@ -2348,49 +2348,49 @@ void FoolGame::menuAbout() {
 	_toolbox->SetRect(
 		bounds,
 		0xb5,
-		0x82 - this->var_i16_7b6,
+		0x82 - var_i16_7b6,
 		0xd5,
-		0x82 - this->var_i16_7b6 + 0x20
+		0x82 - var_i16_7b6 + 0x20
 	);
-	_toolbox->PlotIcon(bounds, this->var_i32_c);
+	_toolbox->PlotIcon(bounds, var_i32_c);
 	// These strings don't appear in the v1.1 about box
-	_toolbox->MoveTo(0xde, 0x8c - this->var_i16_7b6);
+	_toolbox->MoveTo(0xde, 0x8c - var_i16_7b6);
 	_toolbox->DrawString(Common::U32String("the fool's errand"));  // was: str(100)
-	_toolbox->MoveTo(0xee, 0x9b - this->var_i16_7b6);
+	_toolbox->MoveTo(0xee, 0x9b - var_i16_7b6);
 	_toolbox->DrawString(Common::U32String("by Cliff Johnson")); // was: str(101)
 
 	// 128:509a
-	int16 strY = 0xbe - this->var_i16_7b6;
+	int16 strY = 0xbe - var_i16_7b6;
 	for (int i = 0; i <= modalLines; i++) {
-		this->drawTextCenter(_modalText[i], strY);
+		drawTextCenter(_modalText[i], strY);
 		strY += 0x11;
 	}
 	// 128:50f4
 	_zbasic->text(kFontSmall, 0x9, Graphics::kMacFontRegular, kSrcOr);
 	strY += 0xe;
-	this->drawTextCenter(_zbasic->str(_zstrOffset[kOffsetVersion]), strY); // version string
-	this->menuClickMessage();
-	this->waitForClick();
+	drawTextCenter(_zbasic->str(_zstrOffset[kOffsetVersion]), strY); // version string
+	menuClickMessage();
+	waitForClick();
 	_toolbox->DrawMenuBar();
-	this->copyScreen(0x1, this->arr_bmp_138bc);
-	_toolbox->SetPort(this->var_i32_0);
+	copyScreen(0x1, arr_bmp_138bc);
+	_toolbox->SetPort(var_i32_0);
 }
 
 void FoolGame::menuPrologue() {
 	// this is brand new
-	this->copyScreen(0, this->arr_bmp_138bc);
+	copyScreen(0, arr_bmp_138bc);
 	FoolPrologue fp(_version, _zstrOffset);
-	fp.run(false, this->arr_bmp_138bc);
-	this->copyScreen(1, this->arr_bmp_138bc);
+	fp.run(false, arr_bmp_138bc);
+	copyScreen(1, arr_bmp_138bc);
 	_toolbox->DrawMenuBar();
 }
 
 void FoolGame::menuFinale() {
 	// this is brand new
-	this->copyScreen(0, this->arr_bmp_138bc);
+	copyScreen(0, arr_bmp_138bc);
 	FoolPrologue fp(_version, _zstrOffset);
-	fp.run(true, this->arr_bmp_138bc);
-	this->copyScreen(1, this->arr_bmp_138bc);
+	fp.run(true, arr_bmp_138bc);
+	copyScreen(1, arr_bmp_138bc);
 	_toolbox->DrawMenuBar();
 }
 
@@ -2400,21 +2400,21 @@ void FoolGame::onClickMenu() {
 		return;
 	_event.what = kNullEvent;
 	if (_menuHidesPlayfield) {
-		this->thothHidePlayfield();
+		thothHidePlayfield();
 	}
 	uint32 menuData = _toolbox->MenuSelect(_event.where);
 	_selectedMenuID = (uint16)(menuData >> 16);
 	_selectedMenuItem = (uint16)(menuData & 0xffff);
 	if (_selectedMenuID > 0) {
 		// 128:5b8c
-		this->onMenuSelect();
+		onMenuSelect();
 		_toolbox->HiliteMenu(0);
 	}
 	// 128:5b94
 	if (_menuHidesPlayfield) {
-		this->thothShowPlayfield();
+		thothShowPlayfield();
 	}
-	this->sub_128_61ec();
+	sub_128_61ec();
 }
 
 void FoolGame::onMenuKey() {
@@ -2426,88 +2426,88 @@ void FoolGame::onMenuKey() {
 	_selectedMenuItem = (uint16)(menuData & 0xffff);
 	if (_selectedMenuID > 0) {
 		if (_menuHidesPlayfield) {
-			this->thothHidePlayfield();
+			thothHidePlayfield();
 		}
-		this->onMenuSelect();
+		onMenuSelect();
 		if (_menuHidesPlayfield) {
-			this->thothShowPlayfield();
+			thothShowPlayfield();
 		}
 		_toolbox->HiliteMenu(0);
 	}
 	// 128:5c1a
-	this->sub_128_61ec();
+	sub_128_61ec();
 }
 
 void FoolGame::onMenuSelect() {
 	_stateFlags = kStateNull;
 	if (_selectedMenuID == 1) { // Eye menu
 		if (_selectedMenuItem == 2) {
-			this->menuAbout();
+			menuAbout();
 		} else if (_selectedMenuItem == 3) {
-			this->menuPrologue();
+			menuPrologue();
 		} else if (_selectedMenuItem == 4) {
-			this->menuFinale();
+			menuFinale();
 		}
 	}
 	if (_selectedMenuID == 2) { // File menu
 		if (_selectedMenuItem == 1) {
-			this->menuNewGame();
+			menuNewGame();
 		} else if (_selectedMenuItem == 2) {
 		// 128:5c5c
-			this->menuOpenGame();
+			menuOpenGame();
 		} else if (_selectedMenuItem == 3) {
 		// 128:5c6c
-			this->menuSaveGame();
+			menuSaveGame();
 		} else if (_selectedMenuItem == 4) {
-			this->menuSaveGameAs();
+			menuSaveGameAs();
 		} else if (_selectedMenuItem == 6) {
 			_soundEnabled = !_soundEnabled;
 			// 128:5cbc
-			this->menuToggleSound();
+			menuToggleSound();
 		// 128:5cc4
 		} else if (_selectedMenuItem == 7) {
-			this->menuPrintStory();
+			menuPrintStory();
 		} else if (_selectedMenuItem == 9) {
-			this->menuQuit();
+			menuQuit();
 		}
 	}
 	// 128:5cea
 	if ((_selectedMenuID >= 3) && (_selectedMenuID <= 7)) { // Chapter menus
-		this->var_i16_e1a = 0;
+		var_i16_e1a = 0;
 		_selectedMenuChapter = _selectedMenuItem + (_selectedMenuID - 3)*0x10;
 		if ((_selectedMenuChapter == 1) && (_event.what == kKeyDown)) {
-			this->var_i16_e1a = 1;
+			var_i16_e1a = 1;
 		}
 		// 128:5d56
 		if ((_event.modifiers & kModLOptionKeyDown) != 0) {
-			this->var_i16_e1a = 1;
+			var_i16_e1a = 1;
 		} else {
 			// 128:5d74
 			do {
-				this->var_i16_7a8 = _toolbox->GetNextEvent(1 << kKeyDown, _event);
+				var_i16_7a8 = _toolbox->GetNextEvent(1 << kKeyDown, _event);
 				_toolbox->GlobalToLocal(_event.where);
 				if ((_event.modifiers & kModLOptionKeyDown) != 0) {
-					this->var_i16_e1a = 1;
+					var_i16_e1a = 1;
 				}
 			} while (_event.what != kNullEvent);
 		}
 		// 128:5dae
-		if (((this->var_i16_7ce & 1) == 0) && (this->var_i16_e1a == 0) && (_storyCurrentChapter != _selectedMenuChapter)) {
+		if (((var_i16_7ce & 1) == 0) && (var_i16_e1a == 0) && (_storyCurrentChapter != _selectedMenuChapter)) {
 			setStateBits(kStateChapterSelect);
 		}
 		// 128:5df6
-		if (((this->var_i16_7ce & 1) == 0) && (this->var_i16_e1a == 1)) {
+		if (((var_i16_7ce & 1) == 0) && (var_i16_e1a == 1)) {
 			setStateBits(kStateChapterSelect);
 
 		}
 		// 128:5e38
-		if (((this->var_i16_7ce & 1) != 0) && (this->var_i16_e1a == 0)) {
+		if (((var_i16_7ce & 1) != 0) && (var_i16_e1a == 0)) {
 			setStateBits(kStateChapterSelect | kStateReturn);
 		}
 		// 128:5e5e
-		if (((this->var_i16_7ce & 1) == 0) && (this->var_i16_e1a == 1) && (_storyCurrentChapter != _selectedMenuChapter)) {
+		if (((var_i16_7ce & 1) == 0) && (var_i16_e1a == 1) && (_storyCurrentChapter != _selectedMenuChapter)) {
 			setStateBits(kStateChapterSelect | kStateReturn);
-			this->var_i16_7ce |= 0x4;
+			var_i16_7ce |= 0x4;
 		}
 	}
 	// 128:5eaa
@@ -2517,7 +2517,7 @@ void FoolGame::onMenuSelect() {
 			setStateBits(kStateReturn);
 		}
 		// 128:5ec6
-		if ((_selectedMenuItem == 3) && (this->var_i16_c00 == 1)) {
+		if ((_selectedMenuItem == 3) && (var_i16_c00 == 1)) {
 			setStateBits(kStateUndo);
 		}
 	}
@@ -2526,24 +2526,24 @@ void FoolGame::onMenuSelect() {
 
 void FoolGame::thothHidePlayfield() {
 	// 128:5ef0
-	this->copyScreen(0, this->arr_bmp_b3ec);
-	_zbasic->picture(0, MENU_HEIGHT, this->var_pic_7c2);
+	copyScreen(0, arr_bmp_b3ec);
+	_zbasic->picture(0, MENU_HEIGHT, var_pic_7c2);
 }
 
 void FoolGame::thothShowPlayfield() {
 	// 128:5f16
 	if (_stateFlags == kStateSaveGame) {
-		if (this->arr_i16_1eb8[0] < 1) {
-			this->arr_i16_1eb8[0] = 1;
+		if (arr_i16_1eb8[0] < 1) {
+			arr_i16_1eb8[0] = 1;
 		}
 		// 128:5f4c
-		_activePuzzleBuffer = _zbasic->encodeInt(this->arr_i16_1eb8[0]);
-		this->saveGame();
+		_activePuzzleBuffer = _zbasic->encodeInt(arr_i16_1eb8[0]);
+		saveGame();
 	}
 	// 128:5f70
 	if ((_stateFlags & kStateReturn) == 0) {
-		this->waitForMouseUp();
-		this->copyScreen(1, this->arr_bmp_b3ec);
+		waitForMouseUp();
+		copyScreen(1, arr_bmp_b3ec);
 	}
 }
 
@@ -2556,7 +2556,7 @@ void FoolGame::onUpdateEvent() {
 	// 128:5fb4
 	_toolbox->BeginUpdate(*_event.windowPtr);
 	_toolbox->EndUpdate(*_event.windowPtr);
-	if ((this->var_i16_7ce & 1) != 0) {
+	if ((var_i16_7ce & 1) != 0) {
 		setStateBits(0x200 | kStateReturn);
 	} else {
 		setStateBits(0x200);
@@ -2565,31 +2565,31 @@ void FoolGame::onUpdateEvent() {
 
 void FoolGame::sub_128_5fea() {
 	if (_screenOversized) {
-		_toolbox->SetPort(this->var_i32_8);
+		_toolbox->SetPort(var_i32_8);
 		_toolbox->PenNormal();
-		fillRect(MENU_HEIGHT, 0, _windowHeight, this->var_i16_56-3, 2);
-		fillRect(MENU_HEIGHT, 0, this->var_i16_58+0x11, _windowWidth, 2);
-		fillRect(MENU_HEIGHT, this->var_i16_56+0x203, _windowHeight, _windowWidth, 2);
-		fillRect(this->var_i16_58 + 0x159, 0, _windowHeight, _windowWidth, 2);
+		fillRect(MENU_HEIGHT, 0, _windowHeight, var_i16_56-3, 2);
+		fillRect(MENU_HEIGHT, 0, var_i16_58+0x11, _windowWidth, 2);
+		fillRect(MENU_HEIGHT, var_i16_56+0x203, _windowHeight, _windowWidth, 2);
+		fillRect(var_i16_58 + 0x159, 0, _windowHeight, _windowWidth, 2);
 		Common::Rect bounds; // arr_rect_5b7c
-		_toolbox->SetRect(bounds, this->var_i16_56-2, this->var_i16_58+0x12, this->var_i16_56+0x202, this->var_i16_58+0x158);
+		_toolbox->SetRect(bounds, var_i16_56-2, var_i16_58+0x12, var_i16_56+0x202, var_i16_58+0x158);
 		_toolbox->PenPat(_patterns[1]);
 		_toolbox->FrameRect(bounds);
-		_toolbox->SetRect(bounds, this->var_i16_56-1, this->var_i16_58+0x13, this->var_i16_56+0x201, this->var_i16_58+0x157);
+		_toolbox->SetRect(bounds, var_i16_56-1, var_i16_58+0x13, var_i16_56+0x201, var_i16_58+0x157);
 		_toolbox->PenPat(_patterns[2]);
 		_toolbox->FrameRect(bounds);
 		_toolbox->_defaultMenu->setOverlayDirty(true);
-		_toolbox->SetPort(this->var_i32_0);
+		_toolbox->SetPort(var_i32_0);
 	}
 	// 128:6152
 }
 
 void FoolGame::onDiskEvent() {
 	// 128:6154
-	this->var_i16_e1c = _event.message >> 16;
-	this->var_i16_e1e = _event.message & 0xffff;
-	if (this->var_i16_e1c != 0) {
-		_zbasic->unk_11(this->var_i16_e1e);
+	var_i16_e1c = _event.message >> 16;
+	var_i16_e1e = _event.message & 0xffff;
+	if (var_i16_e1c != 0) {
+		_zbasic->unk_11(var_i16_e1e);
 	}
 }
 
@@ -2599,7 +2599,7 @@ void FoolGame::waitForMouseUp() {
 	// wait until mouse button is up
 	do {
 		// was originally a mask of 6
-		this->var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
+		var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
 		_toolbox->GlobalToLocal(_event.where);
 		if (_event.what == kNullEvent)
 			_toolbox->Delay(0);
@@ -2608,27 +2608,27 @@ void FoolGame::waitForMouseUp() {
 
 void FoolGame::waitForClick() {
 	// 128:61c2
-	this->waitForMouseUp();
+	waitForMouseUp();
 	do {
 		// was originally a mask of 2
-		this->var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
+		var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
 		_toolbox->GlobalToLocal(_event.where);
 		if (_event.what == kNullEvent)
 			_toolbox->Delay(0);
 	} while ((_event.what != kMouseDown));
-	this->waitForMouseUp();
+	waitForMouseUp();
 }
 
 
 void FoolGame::sub_128_61ec() {
 	// 128:61ec
 	do {
-		this->var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
+		var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
 		if (_event.what == kUpdateEvt) {
-			this->onUpdateEvent();
+			onUpdateEvent();
 		}
 		if (_event.what == kDiskEvt) {
-			this->onDiskEvent();
+			onDiskEvent();
 		}
 		if (_event.what == kNullEvent)
 			_toolbox->Delay(0);
@@ -2638,14 +2638,14 @@ void FoolGame::sub_128_61ec() {
 
 void FoolGame::sub_128_6244() {
 	do {
-		this->var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
+		var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
 		if (_event.what == kUpdateEvt) {
 			_toolbox->BeginUpdate(*_event.windowPtr);
 			_toolbox->EndUpdate(*_event.windowPtr);
 		}
 		// 128:6272
 		if (_event.what == kDiskEvt) {
-			this->onDiskEvent();
+			onDiskEvent();
 		}
 		_toolbox->Delay(0);
 	} while ((_event.what == kNullEvent) && ((_event.modifiers & kModMouseButtonUp) == 0));
@@ -2656,16 +2656,16 @@ void FoolGame::sub_128_6244() {
 // 128:62ae
 
 void FoolGame::sub_129_004() {
-	this->var_i16_7e6 = 0;
+	var_i16_7e6 = 0;
 	// 129:000a: LEA - 0x3ea(A5),A0
 	// 129:000e: MOVE.L - A0,-0x8ee(A5)
 	// 129:0012: SF - 0x8,D0
-	_zbasic->openR(1, Common::U32String("Fool's Puzzles"), 0x3e8, this->var_i16_e20); // was: str(110)
-	if (this->var_i16_7e6 == 0) {
-		this->var_str_e22 = Common::U32String("Fool's Puzzles"); // was: str(111)
-		this->var_i16_f22 = this->var_i16_e20;
+	_zbasic->openR(1, Common::U32String("Fool's Puzzles"), 0x3e8, var_i16_e20); // was: str(110)
+	if (var_i16_7e6 == 0) {
+		var_str_e22 = Common::U32String("Fool's Puzzles"); // was: str(111)
+		var_i16_f22 = var_i16_e20;
 		_zbasic->close(1);
-		this->var_i16_7e6 = 0;
+		var_i16_7e6 = 0;
 	}
 
 	// 129:005e: LEA - 0x3f2(A5),A0
@@ -2673,11 +2673,11 @@ void FoolGame::sub_129_004() {
 }
 
 void FoolGame::sub_129_068() {
-	this->var_i16_7ce = 666;
-	this->var_i16_372 = { 0, 0, 0 };
+	var_i16_7ce = 666;
+	var_i16_372 = { 0, 0, 0 };
 	_soundEnabled = true;
-	this->_mouseVisible = true;
-	this->toggleMouseCursor(false);
+	_mouseVisible = true;
+	toggleMouseCursor(false);
 	for (size_t i = 0; i <= 3; i++) {
 		_patterns[1].data[2*i] = 0xaa;
 		_patterns[1].data[2*i+1] = 0x55;
@@ -2696,10 +2696,10 @@ void FoolGame::sub_129_068() {
 	// 129:00fa: SUBI.L - 0x74,D0
 	// 129:0100: JSR - "PEEKWORD"
 	_windowHeight = g_engine->_wm._screenDims.height(); // window height?
-	this->var_i16_56 = (_windowWidth - SCREEN_WIDTH)/2;
-	this->var_i16_58 = (_windowHeight - SCREEN_HEIGHT)/2;
+	var_i16_56 = (_windowWidth - SCREEN_WIDTH)/2;
+	var_i16_58 = (_windowHeight - SCREEN_HEIGHT)/2;
 	// 129:0138
-	if ((this->var_i16_56 == 0) && (this->var_i16_58 == 0)) {
+	if ((var_i16_56 == 0) && (var_i16_58 == 0)) {
 		_screenOversized = false;
 	} else {
 		_screenOversized = true;
@@ -2717,9 +2717,9 @@ void FoolGame::sub_129_068() {
 	// 129:01a4: JSR - "PEEKWORD"
 	// 129:01a8: CMPI.L - 0x3fff,D0
 	if (true) {
-		this->var_i16_372 = { 0x4e20, 0x4e20, 0x4e20 };
-		_toolbox->SetCPixel(0x64, 0x64, this->var_i16_372);
-		_toolbox->GetCPixel(0x64, 0x64, this->var_i16_372);
+		var_i16_372 = { 0x4e20, 0x4e20, 0x4e20 };
+		_toolbox->SetCPixel(0x64, 0x64, var_i16_372);
+		_toolbox->GetCPixel(0x64, 0x64, var_i16_372);
 
 	}
 
@@ -2730,44 +2730,44 @@ void FoolGame::sub_129_068() {
 		fillRect(0, 0, _windowHeight, _windowWidth, 1);
 	}
 	// 129:023e
-	_toolbox->GetPort(this->var_i32_f24);
+	_toolbox->GetPort(var_i32_f24);
 
-	this->var_i32_8 = &this->arr_grafport_19042;
-	_toolbox->OpenPort(this->var_i32_8);
+	var_i32_8 = &arr_grafport_19042;
+	_toolbox->OpenPort(var_i32_8);
 	// this grafport is used for drawing on the menu bar area;
 	// on normal hardware this isn't a problem, as the changes are
 	// made directly to the screen framebuffer.
 	// in ScummVM, the window and the menu bar are widgets, with surfaces
 	// that are composed to the screen framebuffer.
 	// as such, to avoid a clash, we need to draw onto the menu bar widget.
-	this->var_i32_8->portBits = _toolbox->_defaultMenuBits;
-	this->var_i32_8->portRect = _toolbox->_defaultMenuBits->getBounds();
+	var_i32_8->portBits = _toolbox->_defaultMenuBits;
+	var_i32_8->portRect = _toolbox->_defaultMenuBits->getBounds();
 
 	// Thoth, on the other hand, expects to be able to draw to the screen.
-	this->var_i32_8_thoth = &this->arr_grafport_19042_thoth;
-	_toolbox->OpenPort(this->var_i32_8_thoth);
+	var_i32_8_thoth = &arr_grafport_19042_thoth;
+	_toolbox->OpenPort(var_i32_8_thoth);
 	_toolbox->PortSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-	_toolbox->MovePortTo(this->var_i16_56, this->var_i16_58);
+	_toolbox->MovePortTo(var_i16_56, var_i16_58);
 	_toolbox->ClipRect(_screenClipRect);
 
-	this->var_i32_4 = &this->arr_grafport_18f78;
-	_toolbox->OpenPort(this->var_i32_4);
+	var_i32_4 = &arr_grafport_18f78;
+	_toolbox->OpenPort(var_i32_4);
 	_toolbox->PortSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-	_toolbox->MovePortTo(this->var_i16_56, this->var_i16_58);
+	_toolbox->MovePortTo(var_i16_56, var_i16_58);
 	_toolbox->ClipRect(_screenClipRect);
 
-	this->var_i32_0 = &this->arr_grafport_18eae;
-	_toolbox->OpenPort(this->var_i32_0);
+	var_i32_0 = &arr_grafport_18eae;
+	_toolbox->OpenPort(var_i32_0);
 	_toolbox->PortSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-	_toolbox->MovePortTo(this->var_i16_56, this->var_i16_58);
+	_toolbox->MovePortTo(var_i16_56, var_i16_58);
 	_toolbox->ClipRect(_screenClipRect);
 
-	this->sub_128_5fea();
+	sub_128_5fea();
 	// 129:02c8
 	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1);
 
 	if (false) {
-	//if (this->var_i16_372.red + this->var_i16_372.blue + this->var_i16_372.green != 0) {
+	//if (var_i16_372.red + var_i16_372.blue + var_i16_372.green != 0) {
 		// we're in colour mode, chide the user.
 		// removed in v3.0
 		// was: str(113) to str(116)
@@ -2775,13 +2775,13 @@ void FoolGame::sub_129_068() {
 		_modalText[1] = Common::U32String("2 color black and white");
 		_modalText[2] = Common::U32String("and start the game again.");
 		_modalText[3] = Common::U32String("Okay");
-		this->showChoiceModal(kFontChicago, 2, 1, 0);
+		showChoiceModal(kFontChicago, 2, 1, 0);
 		_zbasic->unk_4();
 	}
 	// 129:0390
-	this->sub_128_61ec();
-	this->var_i32_37c = _zbasic->mem(-1);
-	if (this->var_i32_37c < 0x1d4c0) {
+	sub_128_61ec();
+	var_i32_37c = _zbasic->mem(-1);
+	if (var_i32_37c < 0x1d4c0) {
 		// not enough memory, chide the user
 		// was: str(117) to str(123)
 		_modalText[0] = Common::U32String("There is not enough available memory");
@@ -2791,106 +2791,106 @@ void FoolGame::sub_129_068() {
 		_modalText[4] = Common::U32String("for possible solutions.");
 		_modalText[5] = Common::U32String();
 		_modalText[6] = Common::U32String("Quit");
-		this->showChoiceModal(kFontChicago, 5, 1, 1);
+		showChoiceModal(kFontChicago, 5, 1, 1);
 		_zbasic->unk_4();
 	}
 	// 129:0496
-	this->var_i16_7e4 = 1;
-	this->var_str_e22.clear(); // was: str(124);
+	var_i16_7e4 = 1;
+	var_str_e22.clear(); // was: str(124);
 	_saveFileName.clear(); // was: str(125);
 
-	this->var_i16_484 = _zbasic->finderInfo(this->var_i16_7e4, this->var_str_588, this->var_i32_f28, this->var_i16_688);
+	var_i16_484 = _zbasic->finderInfo(var_i16_7e4, var_str_588, var_i32_f28, var_i16_688);
 
-	if (!this->var_str_588.empty()) { // was: str(126)
-		if (this->var_str_588 == Common::U32String("Fool's Puzzles")) { // was: str(127)
-			this->var_str_e22 = Common::U32String("Fool's Puzzles"); // was: str(128)
-			this->var_i16_f22 = this->var_i16_688;
+	if (!var_str_588.empty()) { // was: str(126)
+		if (var_str_588 == Common::U32String("Fool's Puzzles")) { // was: str(127)
+			var_str_e22 = Common::U32String("Fool's Puzzles"); // was: str(128)
+			var_i16_f22 = var_i16_688;
 		} else {
 			// 129:052e
-			this->sub_128_2808();
-			if (!this->var_str_588.empty()) { // was: str(129)
+			sub_128_2808();
+			if (!var_str_588.empty()) { // was: str(129)
 				// 129:054c
-				_saveFileName = this->var_str_588;
-				this->var_i16_9ec = this->var_i16_688;
+				_saveFileName = var_str_588;
+				var_i16_9ec = var_i16_688;
 			}
 		}
 	}
 	// 129:0562
-	this->var_i16_f2c = this->getVolRefNum(); // volume ref num
-	this->var_i16_e20 = this->var_i16_f2c;
-	if (this->var_str_e22.empty()) { // was: str(130)
-		this->sub_129_004();
+	var_i16_f2c = getVolRefNum(); // volume ref num
+	var_i16_e20 = var_i16_f2c;
+	if (var_str_e22.empty()) { // was: str(130)
+		sub_129_004();
 	}
 	// 129:058c
-	if (this->var_str_e22.empty()) { // was: str(131)
-		for (this->var_i16_f2e = 1; this->var_i16_f2e < 0x3e8; this->var_i16_f2e++) {
-			this->var_str_f30 = _zbasic->files(-this->var_i16_f2e, Common::U32String(), Common::U32String(), this->var_i16_e20); // was: str(132)
-			if ((this->var_i16_e20 == 0) || (this->var_str_f30.empty())) { // was: str(133)
-				this->var_i16_f2e = 0x3e8;
+	if (var_str_e22.empty()) { // was: str(131)
+		for (var_i16_f2e = 1; var_i16_f2e < 0x3e8; var_i16_f2e++) {
+			var_str_f30 = _zbasic->files(-var_i16_f2e, Common::U32String(), Common::U32String(), var_i16_e20); // was: str(132)
+			if ((var_i16_e20 == 0) || (var_str_f30.empty())) { // was: str(133)
+				var_i16_f2e = 0x3e8;
 			}
 			// 129:0606
-			this->sub_129_004();
-			if (!this->var_str_e22.empty()) { // was: str(134)
-				this->var_i16_f2e = 0x3e8;
+			sub_129_004();
+			if (!var_str_e22.empty()) { // was: str(134)
+				var_i16_f2e = 0x3e8;
 			}
 		}
 	}
 	// 129:0636
-	if (this->var_str_e22.empty()) { // was: str(135)
+	if (var_str_e22.empty()) { // was: str(135)
 		do {
 			_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcBic);
 			fillRect(0x17, 0x92, 0x31, 0x16e, 2);
-			//this->var_i16_7a2 = 0x28;
+			//var_i16_7a2 = 0x28;
 			// prompt to locate the fool's puzzles file
 			// 129:0690: CLR.W - -0x772(A5)
-			this->toggleMouseCursor(true);
-			this->sub_128_1e4(Common::String("PUZZ")); // was: str(137)
+			toggleMouseCursor(true);
+			sub_128_1e4(Common::String("PUZZ")); // was: str(137)
 			// 129:06a6: CLR.W - -0x772(A5)
 			fillRect(0x17, 0x92, 0x31, 0x16e, 1);
-			this->toggleMouseCursor(false);
-			if (this->var_str_588.empty()) { // was: str(138)
+			toggleMouseCursor(false);
+			if (var_str_588.empty()) { // was: str(138)
 				_zbasic->unk_4();
 			}
-			this->var_str_e22 = this->var_str_588;
-			this->var_i16_f22 = this->var_i16_688;
-		} while (this->var_str_e22 != Common::U32String("Fool's Puzzles")); // was: str(139)
+			var_str_e22 = var_str_588;
+			var_i16_f22 = var_i16_688;
+		} while (var_str_e22 != Common::U32String("Fool's Puzzles")); // was: str(139)
 	}
 	// 129:0718
-	this->setVolRefNum(this->var_i16_f22);
-	this->var_i16_1030 = _toolbox->OpenResFile(Common::Path(this->var_str_e22, ':'));
-	_toolbox->UseResFile(this->var_i16_1030);
-	this->var_i16_484 = this->setVolRefNum(this->var_i16_f2c);
+	setVolRefNum(var_i16_f22);
+	var_i16_1030 = _toolbox->OpenResFile(Common::Path(var_str_e22, ':'));
+	_toolbox->UseResFile(var_i16_1030);
+	var_i16_484 = setVolRefNum(var_i16_f2c);
 	for (int i = 0; i <= 1; i++) {
 		// scroll background
-		this->arr_i32_192c0[i] = _toolbox->GetPicture(i + 0x54);
-		PicHandle h = this->arr_i32_192c0[i];
+		arr_i32_192c0[i] = _toolbox->GetPicture(i + 0x54);
+		PicHandle h = arr_i32_192c0[i];
 		_toolbox->DetachResource(h);
 	}
 	// 129:07a2
-	_zbasic->picture(0, MENU_HEIGHT, this->arr_i32_192c0[0]);
-	_zbasic->get(0x0, 0x59, SCREEN_WIDTH, 0xb4, this->arr_bmp_5dfc);
-	_zbasic->get(0x0, 0x14f, 0x7, SCREEN_HEIGHT, this->arr_bmp_b3ec);
-	_zbasic->get(0x1f9, 0x14f, SCREEN_WIDTH, SCREEN_HEIGHT, this->arr_bmp_109dc);
+	_zbasic->picture(0, MENU_HEIGHT, arr_i32_192c0[0]);
+	_zbasic->get(0x0, 0x59, SCREEN_WIDTH, 0xb4, arr_bmp_5dfc);
+	_zbasic->get(0x0, 0x14f, 0x7, SCREEN_HEIGHT, arr_bmp_b3ec);
+	_zbasic->get(0x1f9, 0x14f, SCREEN_WIDTH, SCREEN_HEIGHT, arr_bmp_109dc);
 	// 129:0846
 	// unfurl the scroll by blitting the lower half a bunch of times
 	for (int i = 0; i <= 0x15; i++) {
-		this->var_i16_484 = _zbasic->readDataInt();
-		_zbasic->put(0, this->var_i16_484, this->arr_bmp_5dfc, kSrcCopy);
-		this->delay(2);
+		var_i16_484 = _zbasic->readDataInt();
+		_zbasic->put(0, var_i16_484, arr_bmp_5dfc, kSrcCopy);
+		delay(2);
 	}
 	// 129:0888
-	_zbasic->put(0, 0x14f, this->arr_bmp_b3ec, kSrcCopy);
-	_zbasic->put(0x1f9, 0x14f, this->arr_bmp_109dc, kSrcCopy);
-	_zbasic->picture(0x39, 0x29, this->arr_i32_192c0[1]);
+	_zbasic->put(0, 0x14f, arr_bmp_b3ec, kSrcCopy);
+	_zbasic->put(0x1f9, 0x14f, arr_bmp_109dc, kSrcCopy);
+	_zbasic->picture(0x39, 0x29, arr_i32_192c0[1]);
 
 	// 129:08ee
 	for (int i = 0; i <= 1; i++) {
-		_toolbox->ReleaseResource(this->arr_i32_192c0[i]);
+		_toolbox->ReleaseResource(arr_i32_192c0[i]);
 	}
 
 	// 129:091a
-	this->var_i32_692 = _toolbox->TickCount();
-	this->menuLoadingMessage(40);
+	var_i32_692 = _toolbox->TickCount();
+	menuLoadingMessage(40);
 
 	// load sun's map tiles
 	//byte fakePal[768];
@@ -2904,27 +2904,27 @@ void FoolGame::sub_129_068() {
 		_toolbox->DetachResource(_sunMapTilePic[i]);
 	}
 	// 129:097c
-	this->menuLoadingMessage(60);
+	menuLoadingMessage(60);
 
 	// wadjet eye
-	this->var_pic_7c2 = _toolbox->GetPicture(0x56);
-	_toolbox->DetachResource(this->var_pic_7c2);
+	var_pic_7c2 = _toolbox->GetPicture(0x56);
+	_toolbox->DetachResource(var_pic_7c2);
 	_metapuzzleWheelPic = _toolbox->GetPicture(0xac);
 	_toolbox->DetachResource(_metapuzzleWheelPic);
 	// icon of a scroll
-	this->var_i32_c = _toolbox->GetIcon(0x101);
-	_toolbox->DetachResource(this->var_i32_c);
+	var_i32_c = _toolbox->GetIcon(0x101);
+	_toolbox->DetachResource(var_i32_c);
 	// 129:09c2: SF - 0x8,D0
-	_zbasic->openR(1, Common::U32String("Fool's Puzzles"), 1000, this->var_i16_f22); // was: str(140)
-	this->var_i32_1036 = _zbasic->readFileDblInt(1);
+	_zbasic->openR(1, Common::U32String("Fool's Puzzles"), 1000, var_i16_f22); // was: str(140)
+	var_i32_1036 = _zbasic->readFileDblInt(1);
 
-	this->_puzzleDataPtr = 0;
+	_puzzleDataPtr = 0;
 
 	// read into pointer
-	this->_puzzleDataBuffer = _zbasic->readFile(1, this->var_i32_1036);
+	_puzzleDataBuffer = _zbasic->readFile(1, var_i32_1036);
 
 	// 129:0a0a
-	this->menuLoadingMessage(80);
+	menuLoadingMessage(80);
 	for (int i = 1; i <= 0x64; i++) {
 		_puzzleDataOffsets[i] = puzzlesReadLong();
 	}
@@ -2956,28 +2956,28 @@ void FoolGame::sub_129_068() {
 	}
 	// 129:0b02
 	for (int i = 1; i <= 0x51; i++) {
-		this->arr_i16_4c7c[i] = puzzlesReadByte();
+		arr_i16_4c7c[i] = puzzlesReadByte();
 	}
 	// 129:0b30
 	for (int i = 1; i <= 0xc; i++) {
 		for (int j = 0; j <= 3; j++) {
-			this->arr_i16_4d20[i*4 + j] = puzzlesReadShort();
+			arr_i16_4d20[i*4 + j] = puzzlesReadShort();
 		}
 	}
 	// 129:0b78
-	this->var_i16_103a = puzzlesReadShort();
+	var_i16_103a = puzzlesReadShort();
 	// story menu entries + endgame puzzles
-	for (int i = 1; i <= this->var_i16_103a; i++) {
+	for (int i = 1; i <= var_i16_103a; i++) {
 		_puzzleType[i] = puzzlesReadShort();
-		this->arr_i16_15e8[i] = puzzlesReadShort();
+		arr_i16_15e8[i] = puzzlesReadShort();
 		_puzzleUnlockChapter[i] = puzzlesReadShort();
 		_puzzleName[i] = puzzlesReadString().decode(Common::kMacRoman);
 	}
 	// 129:0c0a
-	this->var_i16_103a = puzzlesReadShort();
-	for (int i = 1; i <= this->var_i16_103a; i++) {
+	var_i16_103a = puzzlesReadShort();
+	for (int i = 1; i <= var_i16_103a; i++) {
 		for (int j = 0; j <= 5; j++) {
-			this->arr_i16_16b2[i*8+j] = puzzlesReadShort();
+			arr_i16_16b2[i*8+j] = puzzlesReadShort();
 		}
 	}
 	// 129:0c5e
@@ -2991,22 +2991,22 @@ void FoolGame::sub_129_068() {
 		_pageLineRanges[i*2 + 1] = puzzlesReadShort();
 	}
 	// 129:0ce0
-	this->var_i16_103a = puzzlesReadShort();
-	for (int i = 1; i <= this->var_i16_103a; i++) {
+	var_i16_103a = puzzlesReadShort();
+	for (int i = 1; i <= var_i16_103a; i++) {
 		_puzzleMenuInstructions[i*2] = puzzlesReadShort();
 		_puzzleMenuInstructions[i*2 + 1] = puzzlesReadShort();
 	}
 	// 129:0d3c
 	// story text
-	this->var_i16_103c = puzzlesReadShort();
-	this->var_i16_68a = 1;
+	var_i16_103c = puzzlesReadShort();
+	var_i16_68a = 1;
 	Common::fill(_pageLineFace, _pageLineFace + 1301, 0);
 	Common::fill(_pageLineBreak, _pageLineBreak + 1301, 0);
-	for (int i = 1; i <= this->var_i16_103c; i++) {
-		this->var_i16_103e = puzzlesReadByte();
+	for (int i = 1; i <= var_i16_103c; i++) {
+		var_i16_103e = puzzlesReadByte();
 		// indent at start of story paragraph
-		if (this->var_i16_103e & 0x8) {
-			this->var_i16_103e ^= 0x8;
+		if (var_i16_103e & 0x8) {
+			var_i16_103e ^= 0x8;
 			// 129:0d7e
 			_zbasic->indexRawSet(_zbasic->space(4).encode(Common::kMacRoman) + puzzlesReadString(), 0, i);
 		} else {
@@ -3016,38 +3016,38 @@ void FoolGame::sub_129_068() {
 		// 129:0db8
 		// 0x4 == newline
 		// 0x1 == normal formatting
-		if ((this->var_i16_103e == 1) || (this->var_i16_103e == 4)) {
+		if ((var_i16_103e == 1) || (var_i16_103e == 4)) {
 			_pageLineFace[i] = Graphics::kMacFontRegular;
 		}
 
 		// 129:0dea
 		// 0x2 = bold formatting
-		if ((this->var_i16_103e == 2) || (this->var_i16_103e == 5)) {
+		if ((var_i16_103e == 2) || (var_i16_103e == 5)) {
 			_pageLineFace[i] = Graphics::kMacFontBold;
 		}
 		// 129:0e1e
 		// 0x3 = outlined
-		if ((this->var_i16_103e == 3) || (this->var_i16_103e == 6)) {
+		if ((var_i16_103e == 3) || (var_i16_103e == 6)) {
 			_pageLineFace[i] = Graphics::kMacFontBold | Graphics::kMacFontOutline | Graphics::kMacFontShadow;
 		}
 		// 129:0e52
-		if (this->var_i16_103e > 3) {
+		if (var_i16_103e > 3) {
 			_pageLineBreak[i] = 1;
 		}
 		// 129:0e6e
 	}
 	// 129:0e80
-	this->menuLoadingMessage(100);
-	this->var_i16_103a = puzzlesReadShort();
-	for (int i = this->var_i16_103c + 1; i <= this->var_i16_103a; i++) {
+	menuLoadingMessage(100);
+	var_i16_103a = puzzlesReadShort();
+	for (int i = var_i16_103c + 1; i <= var_i16_103a; i++) {
 		_zbasic->indexRawSet(puzzlesReadString(), 0, i);
 	}
 	// 129:0ec2
 	for (int j = 1; j <= 0x50; j++) {
-		this->var_i16_1040 = 0;
+		var_i16_1040 = 0;
 		for (int i = 1; i <= _storyPageCount; i++) {
 			if (_pageToChapter[i] == j) {
-				this->var_i16_1040++;
+				var_i16_1040++;
 			}
 			// 129:0ef4
 			if (_pageToChapter[i] > j) {
@@ -3055,13 +3055,13 @@ void FoolGame::sub_129_068() {
 			}
 			// 129:0f16
 		}
-		if (this->var_i16_1040 > 1) {
-			this->var_i16_484 = 0;
+		if (var_i16_1040 > 1) {
+			var_i16_484 = 0;
 			for (int i = 1; i <= _storyPageCount; i++) {
 				if (_pageToChapter[i] == j) {
-					this->var_i16_484++;
+					var_i16_484++;
 					// - X of N
-					_pageNumberText[i] = Common::U32String::format(" - %d of %d", this->var_i16_484, this->var_i16_1040); // was: str(141), str(142)
+					_pageNumberText[i] = Common::U32String::format(" - %d of %d", var_i16_484, var_i16_1040); // was: str(141), str(142)
 				}
 				// 129:0fb6
 				if (_pageToChapter[i] > j) {
@@ -3085,12 +3085,12 @@ void FoolGame::sub_129_068() {
 	// 129:107a
 	}
 	// 129:108c
-	_toolbox->UseResFile(this->var_i16_1030);
-	this->delayFromMarker(0xc8);
-	this->var_i16_7ce = 0;
-	this->var_i16_7b2 = 0xa;
+	_toolbox->UseResFile(var_i16_1030);
+	delayFromMarker(0xc8);
+	var_i16_7ce = 0;
+	var_i16_7b2 = 0xa;
 	_toolbox->InitCursor();
-	this->toggleMouseCursor(true);
+	toggleMouseCursor(true);
 	// The menus are so different between versions, it's easiest to hardcode the v2.0 ones.
 	// Apple menu
 	_zbasic->menu(1, 0, 1, Common::U32String("~")); // wadjet eye, was: str(143)
@@ -3113,7 +3113,7 @@ void FoolGame::sub_129_068() {
 	_zbasic->menu(2, 8, 0, Common::U32String("-"));
 	_zbasic->menu(2, 9, 1, Common::U32String("/QQuit"));
 
-	this->sub_128_6244();
+	sub_128_6244();
 	// 129:11f6
 	if (_saveFileName.empty()) { // was: str(157)
 		// cold start
@@ -3121,8 +3121,8 @@ void FoolGame::sub_129_068() {
 	} else {
 		// loading a save game
 		_stateFlags = kStateOpenGame;
-		this->var_str_588 = _saveFileName;
-		this->var_i16_688 = this->var_i16_9ec;
+		var_str_588 = _saveFileName;
+		var_i16_688 = var_i16_9ec;
 	}
 	// 129:1236
 	// JMP - [0x19f6]
@@ -3132,7 +3132,7 @@ void FoolGame::sub_129_068() {
 void FoolGame::menuLoadingMessage(int16 percent) {
 	// 129:123a
 	// draw the loading text on the menu bar
-	_toolbox->SetPort(this->var_i32_8);
+	_toolbox->SetPort(var_i32_8);
 	fillRect(0, 7, 0x13, _windowWidth - 7, 0);
 	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	// Loading Game text during initial puzzle load
@@ -3141,7 +3141,7 @@ void FoolGame::menuLoadingMessage(int16 percent) {
 	_toolbox->MoveTo((_windowWidth / 2) - (width / 2), 0xe);
 	_toolbox->DrawString(message);
 	_toolbox->_defaultMenu->setOverlayDirty(true);
-	_toolbox->SetPort(this->var_i32_0);
+	_toolbox->SetPort(var_i32_0);
 	_toolbox->Delay(0);
 }
 
