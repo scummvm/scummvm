@@ -43,15 +43,15 @@ namespace Fool {
 // Offset adjustments for the ZBasic string table to align
 // across game versions
 static const int fool11ZStrOffset[] = {
-	128, 59, 81, 170, 186, 188, 192, 194, 202, 239, 258, 280, 315, 324,
+	128, 59, 81, 170, 186, 188, 192, 194, 202, 239, 258, 280, 315, 324, 13, 21
 };
 
 static const int fool20ZStrOffset[] = {
-	102, 78, 103, 191, 207, 209, 213, 215, 223, 260, 279, 301, 336, 345,
+	102, 78, 103, 191, 207, 209, 213, 215, 223, 260, 279, 301, 336, 345, 18, 22
 };
 
 static const int fool30ZStrOffset[] = {
-	97, 73, 98, 161, 177, 179, 183, 185, 193, 230, 251, 273, 308, 317,
+	97, 73, 98, 161, 177, 179, 183, 185, 193, 230, 251, 273, 308, 317, 8, 12
 };
 
 // Fool's Errand v1.1 is missing FOND data, below is taken from 2.0
@@ -2379,8 +2379,8 @@ void FoolGame::menuAbout() {
 void FoolGame::menuPrologue() {
 	// this is brand new
 	this->copyScreen(0, this->arr_bmp_138bc);
-	FoolPrologue fp;
-	fp.run(false);
+	FoolPrologue fp(_version, _zstrOffset);
+	fp.run(false, this->arr_bmp_138bc);
 	this->copyScreen(1, this->arr_bmp_138bc);
 	_toolbox->DrawMenuBar();
 }
@@ -2388,8 +2388,8 @@ void FoolGame::menuPrologue() {
 void FoolGame::menuFinale() {
 	// this is brand new
 	this->copyScreen(0, this->arr_bmp_138bc);
-	FoolPrologue fp;
-	fp.run(true);
+	FoolPrologue fp(_version, _zstrOffset);
+	fp.run(true, this->arr_bmp_138bc);
 	this->copyScreen(1, this->arr_bmp_138bc);
 	_toolbox->DrawMenuBar();
 }

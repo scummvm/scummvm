@@ -26,6 +26,7 @@
 #include "common/str.h"
 
 #include "common/ustr.h"
+#include "fool/fool.h"
 #include "fool/toolbox.h"
 
 namespace Fool {
@@ -54,12 +55,6 @@ enum FoolPuzzleFlags : uint16 {
 	kFlagMapTile = 0x08,
 };
 
-enum FoolVersion {
-	kFool11 = 1,
-	kFool20 = 2,
-	kFool30 = 3,
-};
-
 enum FoolZStrOffset : uint16 {
 	kOffsetVersion = 0,
 	kOffsetAbout,
@@ -75,6 +70,8 @@ enum FoolZStrOffset : uint16 {
 	kOffsetThoth,
 	kOffsetHumbug,
 	kOffsetJustice,
+	kOffsetPrologue,
+	kOffsetFinale,
 };
 
 enum FoolFontID : uint16 {
