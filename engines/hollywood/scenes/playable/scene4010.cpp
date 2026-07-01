@@ -108,8 +108,35 @@ const byte kScene4010Item3BFrameMap[] = {
 	9, 10, 11, 12, 13
 };
 
+static PlayableSceneConfig scene4010Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = kScene4010ArchiveName;
+	config.initialRequiredChunkCount = kScene4010InitialRequiredChunkCount;
+	config.arenaFirstChunk = kScene4010ArenaFirstChunk;
+	config.arenaLastChunk = kScene4010ArenaLastChunk;
+	config.stageIndex = kScene4010StageIndex;
+	config.debugName = "Scene 4010";
+	config.viewportXOffset = kScene4010ViewportXOffset;
+	config.viewportMaxXOffset = kScene4010ViewportMaxXOffset;
+	config.inventoryOwnerIndex = 0;
+	config.activeAudioChapterIndex = 4;
+	config.actorBankTableEntry = kScene4010ActorBankTableEntry;
+	config.actorPaletteTableEntry = kScene4010ActorPaletteTableEntry;
+	config.inventoryActionTableExtraOffset = 0;
+	config.inventoryRowsOffsetIndex = kScene4010Resource003RowsOffsetIndex;
+	config.speechCueDescriptorTableOffset = kScene4010SpeechCueDescriptorTableOffset;
+	config.actorPathStepDeltaTable = kScene4010ActorPathStepDeltaTableSetB4;
+	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene4010ActorPathStepDeltaTableSetB4);
+	config.walkablePaletteMaxRegion = 20;
+	config.musicArchiveName = kScene4010MusicArchiveName;
+	config.soundBank0ArchiveName = kScene4010SoundArchiveName;
+	config.mainFlowFirstState = kScene4010FirstState;
+	config.mainFlowLastState = kScene4010LastState;
+	return config;
+}
+
 Scene4010::Scene4010(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene4010", 0x11a, 0x18d, 1, 0xfd, 0xfb),
+		PlayableScene(vm, scene4010Config(), "scene4010", 0x11a, 0x18d, 1, 0xfd, 0xfb),
 		_roomIdleChannel(),
 		_roomIdleLayer(),
 		_normalBaseFramebuffer(),
@@ -120,103 +147,6 @@ Scene4010::Scene4010(HollywoodEngine *vm) :
 		_heckerManualSequenceActive(false) {
 	_normalBaseFramebuffer.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight,
 		Graphics::PixelFormat::createFormatCLUT8());
-}
-
-const char *Scene4010::resourceArchiveName() const {
-	return kScene4010ArchiveName;
-}
-
-uint Scene4010::sceneInitialRequiredChunkCount() const {
-	return kScene4010InitialRequiredChunkCount;
-}
-
-uint Scene4010::sceneArenaFirstChunk() const {
-	return kScene4010ArenaFirstChunk;
-}
-
-uint Scene4010::sceneArenaLastChunk() const {
-	return kScene4010ArenaLastChunk;
-}
-
-uint Scene4010::sceneStageIndex() const {
-	return kScene4010StageIndex;
-}
-
-const char *Scene4010::sceneDebugName() const {
-	return "Scene 4010";
-}
-
-uint16 Scene4010::sceneViewportXOffset() const {
-	return kScene4010ViewportXOffset;
-}
-
-uint16 Scene4010::sceneViewportMinXOffset() const {
-	return kScene4010ViewportXOffset;
-}
-
-uint16 Scene4010::sceneViewportMaxXOffset() const {
-	return kScene4010ViewportMaxXOffset;
-}
-
-byte Scene4010::inventoryOwnerIndex() const {
-	return 0;
-}
-
-void Scene4010::initializeInventoryOwnerState() {
-	GameplayState &state = _vm->gameState();
-	state.initializeRonItemResourcePages();
-	if (state.inventoryItemCountByOwner[0] == 0)
-		state.initializeRonInventoryItems();
-	state.currentInventoryOwnerIndex = 0;
-	state.activeAudioChapterIndex = 4;
-}
-
-uint Scene4010::resource000ActorBankTableEntry() const {
-	return kScene4010ActorBankTableEntry;
-}
-
-uint Scene4010::resource000ActorPaletteTableEntry() const {
-	return kScene4010ActorPaletteTableEntry;
-}
-
-uint32 Scene4010::inventoryActionTableExtraOffset() const {
-	return 0;
-}
-
-uint Scene4010::resource003InventoryRowsOffsetIndex() const {
-	return kScene4010Resource003RowsOffsetIndex;
-}
-
-uint32 Scene4010::speechCueDescriptorTableOffset() const {
-	return kScene4010SpeechCueDescriptorTableOffset;
-}
-
-const byte *Scene4010::actorPathStepDeltaTable() const {
-	return kScene4010ActorPathStepDeltaTableSetB4;
-}
-
-uint Scene4010::actorPathStepDeltaTableSize() const {
-	return ARRAYSIZE(kScene4010ActorPathStepDeltaTableSetB4);
-}
-
-byte Scene4010::walkablePaletteMaxRegion() const {
-	return 20;
-}
-
-const char *Scene4010::musicArchiveName() const {
-	return kScene4010MusicArchiveName;
-}
-
-const char *Scene4010::soundBank0ArchiveName() const {
-	return kScene4010SoundArchiveName;
-}
-
-bool Scene4010::usesActorDepthTest() const {
-	return false;
-}
-
-bool Scene4010::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId >= kScene4010FirstState && stateId <= kScene4010LastState;
 }
 
 bool Scene4010::hasCustomPreviewState() const {

@@ -90,8 +90,34 @@ const byte kScene3080BranchExchangeFrameMap[] = {
 	4, 5, 6, 7, 8
 };
 
+static PlayableSceneConfig scene3080Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = kScene3080ArchiveName;
+	config.initialRequiredChunkCount = kScene3080InitialRequiredChunkCount;
+	config.arenaFirstChunk = kScene3080ArenaFirstChunk;
+	config.arenaLastChunk = kScene3080ArenaLastChunk;
+	config.stageIndex = kScene3080StageIndex;
+	config.debugName = "Scene 3080";
+	config.viewportXOffset = kScene3080ViewportXOffset;
+	config.inventoryOwnerIndex = 0;
+	config.activeAudioChapterIndex = 3;
+	config.actorBankTableEntry = kScene3080ActorBankTableEntry;
+	config.actorPaletteTableEntry = kScene3080ActorPaletteTableEntry;
+	config.inventoryActionTableExtraOffset = 0;
+	config.inventoryRowsOffsetIndex = kScene3080Resource003RowsOffsetIndex;
+	config.speechCueDescriptorTableOffset = kScene3080SpeechCueDescriptorTableOffset;
+	config.actorPathStepDeltaTable = kScene3080ActorPathStepDeltaTable;
+	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene3080ActorPathStepDeltaTable);
+	config.walkablePaletteMaxRegion = 20;
+	config.musicArchiveName = kScene3080MusicArchiveName;
+	config.soundBank0ArchiveName = kScene3080SoundArchiveName;
+	config.mainFlowFirstState = kScene3080FirstState;
+	config.mainFlowLastState = kScene3080LastState;
+	return config;
+}
+
 Scene3080::Scene3080(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene3080", 0x150, 0x1bf, 1, 0xfd, 0xfb),
+		PlayableScene(vm, scene3080Config(), "scene3080", 0x150, 0x1bf, 1, 0xfd, 0xfb),
 		_largeChannel(),
 		_smallIdleChannel(),
 		_largeLayer(),
@@ -101,103 +127,6 @@ Scene3080::Scene3080(HollywoodEngine *vm) :
 		kScene3080LargeLayerFrameMap, ARRAYSIZE(kScene3080LargeLayerFrameMap));
 	_smallIdleLayer.configure(7, kScene3080SmallIdleDescriptorCount,
 		kScene3080SmallIdleFrameMap, ARRAYSIZE(kScene3080SmallIdleFrameMap));
-}
-
-const char *Scene3080::resourceArchiveName() const {
-	return kScene3080ArchiveName;
-}
-
-uint Scene3080::sceneInitialRequiredChunkCount() const {
-	return kScene3080InitialRequiredChunkCount;
-}
-
-uint Scene3080::sceneArenaFirstChunk() const {
-	return kScene3080ArenaFirstChunk;
-}
-
-uint Scene3080::sceneArenaLastChunk() const {
-	return kScene3080ArenaLastChunk;
-}
-
-uint Scene3080::sceneStageIndex() const {
-	return kScene3080StageIndex;
-}
-
-const char *Scene3080::sceneDebugName() const {
-	return "Scene 3080";
-}
-
-uint16 Scene3080::sceneViewportXOffset() const {
-	return kScene3080ViewportXOffset;
-}
-
-uint16 Scene3080::sceneViewportMinXOffset() const {
-	return kScene3080ViewportXOffset;
-}
-
-uint16 Scene3080::sceneViewportMaxXOffset() const {
-	return kScene3080ViewportXOffset;
-}
-
-byte Scene3080::inventoryOwnerIndex() const {
-	return 0;
-}
-
-void Scene3080::initializeInventoryOwnerState() {
-	GameplayState &state = _vm->gameState();
-	state.initializeRonItemResourcePages();
-	if (state.inventoryItemCountByOwner[0] == 0)
-		state.initializeRonInventoryItems();
-	state.currentInventoryOwnerIndex = 0;
-	state.activeAudioChapterIndex = 3;
-}
-
-uint Scene3080::resource000ActorBankTableEntry() const {
-	return kScene3080ActorBankTableEntry;
-}
-
-uint Scene3080::resource000ActorPaletteTableEntry() const {
-	return kScene3080ActorPaletteTableEntry;
-}
-
-uint32 Scene3080::inventoryActionTableExtraOffset() const {
-	return 0;
-}
-
-uint Scene3080::resource003InventoryRowsOffsetIndex() const {
-	return kScene3080Resource003RowsOffsetIndex;
-}
-
-uint32 Scene3080::speechCueDescriptorTableOffset() const {
-	return kScene3080SpeechCueDescriptorTableOffset;
-}
-
-const byte *Scene3080::actorPathStepDeltaTable() const {
-	return kScene3080ActorPathStepDeltaTable;
-}
-
-uint Scene3080::actorPathStepDeltaTableSize() const {
-	return ARRAYSIZE(kScene3080ActorPathStepDeltaTable);
-}
-
-byte Scene3080::walkablePaletteMaxRegion() const {
-	return 20;
-}
-
-const char *Scene3080::musicArchiveName() const {
-	return kScene3080MusicArchiveName;
-}
-
-const char *Scene3080::soundBank0ArchiveName() const {
-	return kScene3080SoundArchiveName;
-}
-
-bool Scene3080::usesActorDepthTest() const {
-	return false;
-}
-
-bool Scene3080::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId >= kScene3080FirstState && stateId <= kScene3080LastState;
 }
 
 bool Scene3080::hasCustomPreviewState() const {

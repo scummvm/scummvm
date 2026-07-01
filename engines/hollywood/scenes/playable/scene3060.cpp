@@ -78,8 +78,35 @@ const byte kScene3060SecretDoorRevealFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 };
 
+static PlayableSceneConfig scene3060Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = kScene3060ArchiveName;
+	config.initialRequiredChunkCount = kScene3060InitialRequiredChunkCount;
+	config.arenaFirstChunk = kScene3060ArenaFirstChunk;
+	config.arenaLastChunk = kScene3060ArenaLastChunk;
+	config.stageIndex = kScene3060StageIndex;
+	config.debugName = "Scene 3060";
+	config.viewportXOffset = 0;
+	config.inventoryOwnerIndex = 0;
+	config.activeAudioChapterIndex = 3;
+	config.actorBankTableEntry = kScene3060ActorBankTableEntry;
+	config.actorPaletteTableEntry = kScene3060ActorPaletteTableEntry;
+	config.inventoryActionTableExtraOffset = 0;
+	config.inventoryRowsOffsetIndex = kScene3060Resource003RowsOffsetIndex;
+	config.speechCueDescriptorTableOffset = kScene3060SpeechCueDescriptorTableOffset;
+	config.actorPathStepDeltaTable = kScene3060ActorPathStepDeltaTable;
+	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene3060ActorPathStepDeltaTable);
+	config.walkablePaletteMaxRegion = 20;
+	config.musicArchiveName = kScene3060MusicArchiveName;
+	config.soundBank0ArchiveName = kScene3060SoundArchiveName;
+	config.useActorDepthTest = true;
+	config.mainFlowFirstState = kScene3060EntryFromScene3050State;
+	config.mainFlowLastState = kScene3060EntryFromSecretPassageState;
+	return config;
+}
+
 Scene3060::Scene3060(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene3060", 0x22d, 0x156, 4, 0xfd, 0xfb),
+		PlayableScene(vm, scene3060Config(), "scene3060", 0x22d, 0x156, 4, 0xfd, 0xfb),
 		_frontChannel(),
 		_globeChannel(),
 		_frontLayer(),
@@ -94,104 +121,6 @@ Scene3060::Scene3060(HollywoodEngine *vm) :
 		kScene3060GlobeFrameMap, ARRAYSIZE(kScene3060GlobeFrameMap));
 	_buttonLayer.configure(7, kScene3060ButtonDescriptorCount,
 		kScene3060LeftButtonFrameMap, ARRAYSIZE(kScene3060LeftButtonFrameMap));
-}
-
-const char *Scene3060::resourceArchiveName() const {
-	return kScene3060ArchiveName;
-}
-
-uint Scene3060::sceneInitialRequiredChunkCount() const {
-	return kScene3060InitialRequiredChunkCount;
-}
-
-uint Scene3060::sceneArenaFirstChunk() const {
-	return kScene3060ArenaFirstChunk;
-}
-
-uint Scene3060::sceneArenaLastChunk() const {
-	return kScene3060ArenaLastChunk;
-}
-
-uint Scene3060::sceneStageIndex() const {
-	return kScene3060StageIndex;
-}
-
-const char *Scene3060::sceneDebugName() const {
-	return "Scene 3060";
-}
-
-uint16 Scene3060::sceneViewportXOffset() const {
-	return 0;
-}
-
-uint16 Scene3060::sceneViewportMinXOffset() const {
-	return 0;
-}
-
-uint16 Scene3060::sceneViewportMaxXOffset() const {
-	return 0;
-}
-
-byte Scene3060::inventoryOwnerIndex() const {
-	return 0;
-}
-
-void Scene3060::initializeInventoryOwnerState() {
-	GameplayState &state = _vm->gameState();
-	state.initializeRonItemResourcePages();
-	if (state.inventoryItemCountByOwner[0] == 0)
-		state.initializeRonInventoryItems();
-	state.currentInventoryOwnerIndex = 0;
-	state.activeAudioChapterIndex = 3;
-}
-
-uint Scene3060::resource000ActorBankTableEntry() const {
-	return kScene3060ActorBankTableEntry;
-}
-
-uint Scene3060::resource000ActorPaletteTableEntry() const {
-	return kScene3060ActorPaletteTableEntry;
-}
-
-uint32 Scene3060::inventoryActionTableExtraOffset() const {
-	return 0;
-}
-
-uint Scene3060::resource003InventoryRowsOffsetIndex() const {
-	return kScene3060Resource003RowsOffsetIndex;
-}
-
-uint32 Scene3060::speechCueDescriptorTableOffset() const {
-	return kScene3060SpeechCueDescriptorTableOffset;
-}
-
-const byte *Scene3060::actorPathStepDeltaTable() const {
-	return kScene3060ActorPathStepDeltaTable;
-}
-
-uint Scene3060::actorPathStepDeltaTableSize() const {
-	return ARRAYSIZE(kScene3060ActorPathStepDeltaTable);
-}
-
-byte Scene3060::walkablePaletteMaxRegion() const {
-	return 20;
-}
-
-const char *Scene3060::musicArchiveName() const {
-	return kScene3060MusicArchiveName;
-}
-
-const char *Scene3060::soundBank0ArchiveName() const {
-	return kScene3060SoundArchiveName;
-}
-
-bool Scene3060::usesActorDepthTest() const {
-	return true;
-}
-
-bool Scene3060::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId == kScene3060EntryFromScene3050State ||
-		stateId == kScene3060EntryFromSecretPassageState;
 }
 
 bool Scene3060::hasCustomPreviewState() const {

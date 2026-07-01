@@ -85,8 +85,34 @@ const byte kScene3050ForegroundActorFrameMap[] = {
 	17, 16, 10, 11, 3
 };
 
+static PlayableSceneConfig scene3050Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = kScene3050ArchiveName;
+	config.initialRequiredChunkCount = kScene3050InitialRequiredChunkCount;
+	config.arenaFirstChunk = kScene3050ArenaFirstChunk;
+	config.arenaLastChunk = kScene3050ArenaLastChunk;
+	config.stageIndex = kScene3050StageIndex;
+	config.debugName = "Scene 3050";
+	config.viewportXOffset = kScene3050ViewportXOffset;
+	config.viewportMinXOffset = kScene3050ViewportMinXOffset;
+	config.viewportMaxXOffset = kScene3050ViewportMaxXOffset;
+	config.inventoryOwnerIndex = 0;
+	config.activeAudioChapterIndex = 3;
+	config.actorBankTableEntry = kScene3050ActorBankTableEntry;
+	config.actorPaletteTableEntry = kScene3050ActorPaletteTableEntry;
+	config.inventoryActionTableExtraOffset = 0;
+	config.inventoryRowsOffsetIndex = kScene3050Resource003RowsOffsetIndex;
+	config.speechCueDescriptorTableOffset = kScene3050SpeechCueDescriptorTableOffset;
+	config.walkablePaletteMaxRegion = 20;
+	config.musicArchiveName = kScene3050MusicArchiveName;
+	config.soundBank0ArchiveName = kScene3050SoundArchiveName;
+	config.mainFlowFirstState = kScene3050FirstState;
+	config.mainFlowLastState = kScene3050LastState;
+	return config;
+}
+
 Scene3050::Scene3050(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene3050", 0x2a4, 0x19e, 5, 0xfd, 0xfb),
+		PlayableScene(vm, scene3050Config(), "scene3050", 0x2a4, 0x19e, 5, 0xfd, 0xfb),
 		_backgroundChannel(),
 		_foregroundActorChannel(),
 		_backgroundLayer(),
@@ -103,95 +129,6 @@ Scene3050::Scene3050(HollywoodEngine *vm) :
 		kScene3050BackgroundFrameMap, ARRAYSIZE(kScene3050BackgroundFrameMap));
 	_foregroundActorLayer.configure(6, kScene3050ForegroundActorDescriptorCount,
 		kScene3050ForegroundActorFrameMap, ARRAYSIZE(kScene3050ForegroundActorFrameMap));
-}
-
-const char *Scene3050::resourceArchiveName() const {
-	return kScene3050ArchiveName;
-}
-
-uint Scene3050::sceneInitialRequiredChunkCount() const {
-	return kScene3050InitialRequiredChunkCount;
-}
-
-uint Scene3050::sceneArenaFirstChunk() const {
-	return kScene3050ArenaFirstChunk;
-}
-
-uint Scene3050::sceneArenaLastChunk() const {
-	return kScene3050ArenaLastChunk;
-}
-
-uint Scene3050::sceneStageIndex() const {
-	return kScene3050StageIndex;
-}
-
-const char *Scene3050::sceneDebugName() const {
-	return "Scene 3050";
-}
-
-uint16 Scene3050::sceneViewportXOffset() const {
-	return kScene3050ViewportXOffset;
-}
-
-uint16 Scene3050::sceneViewportMinXOffset() const {
-	return kScene3050ViewportMinXOffset;
-}
-
-uint16 Scene3050::sceneViewportMaxXOffset() const {
-	return kScene3050ViewportMaxXOffset;
-}
-
-byte Scene3050::inventoryOwnerIndex() const {
-	return 0;
-}
-
-void Scene3050::initializeInventoryOwnerState() {
-	GameplayState &state = _vm->gameState();
-	state.initializeRonItemResourcePages();
-	if (state.inventoryItemCountByOwner[0] == 0)
-		state.initializeRonInventoryItems();
-	state.currentInventoryOwnerIndex = 0;
-	state.activeAudioChapterIndex = 3;
-}
-
-uint Scene3050::resource000ActorBankTableEntry() const {
-	return kScene3050ActorBankTableEntry;
-}
-
-uint Scene3050::resource000ActorPaletteTableEntry() const {
-	return kScene3050ActorPaletteTableEntry;
-}
-
-uint32 Scene3050::inventoryActionTableExtraOffset() const {
-	return 0;
-}
-
-uint Scene3050::resource003InventoryRowsOffsetIndex() const {
-	return kScene3050Resource003RowsOffsetIndex;
-}
-
-uint32 Scene3050::speechCueDescriptorTableOffset() const {
-	return kScene3050SpeechCueDescriptorTableOffset;
-}
-
-byte Scene3050::walkablePaletteMaxRegion() const {
-	return 20;
-}
-
-const char *Scene3050::musicArchiveName() const {
-	return kScene3050MusicArchiveName;
-}
-
-const char *Scene3050::soundBank0ArchiveName() const {
-	return kScene3050SoundArchiveName;
-}
-
-bool Scene3050::usesActorDepthTest() const {
-	return false;
-}
-
-bool Scene3050::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId >= kScene3050FirstState && stateId <= kScene3050LastState;
 }
 
 bool Scene3050::hasCustomPreviewState() const {

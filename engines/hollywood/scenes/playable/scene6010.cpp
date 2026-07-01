@@ -109,108 +109,40 @@ const byte kScene6010Pickup58FrameMap[] = {
 	5, 6, 7, 8, 9
 };
 
+static PlayableSceneConfig scene6010Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = kScene6010ArchiveName;
+	config.initialRequiredChunkCount = kScene6010InitialRequiredChunkCount;
+	config.arenaFirstChunk = kScene6010ArenaFirstChunk;
+	config.arenaLastChunk = kScene6010ArenaLastChunk;
+	config.stageIndex = kScene6010StageIndex;
+	config.debugName = "Scene 6010";
+	config.viewportXOffset = kScene6010ViewportXOffset;
+	config.viewportMinXOffset = kScene6010ViewportMinXOffset;
+	config.viewportMaxXOffset = kScene6010ViewportMaxXOffset;
+	config.inventoryOwnerIndex = 0;
+	config.activeAudioChapterIndex = 6;
+	config.actorBankTableEntry = kScene6010ActorBankTableEntry;
+	config.actorPaletteTableEntry = kScene6010ActorPaletteTableEntry;
+	config.inventoryActionTableExtraOffset = 0;
+	config.inventoryRowsOffsetIndex = kScene6010Resource003RowsOffsetIndex;
+	config.speechCueDescriptorTableOffset = kScene6010SpeechCueDescriptorTableOffset;
+	config.actorPathStepDeltaTable = kScene6010ActorPathStepDeltaTable;
+	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene6010ActorPathStepDeltaTable);
+	config.walkablePaletteMaxRegion = 9;
+	config.musicArchiveName = kScene6010MusicArchiveName;
+	config.soundBank0ArchiveName = kScene6010SoundArchiveName;
+	config.useActorDepthTest = true;
+	config.mainFlowFirstState = kScene6010FirstState;
+	config.mainFlowLastState = kScene6010LastState;
+	return config;
+}
+
 Scene6010::Scene6010(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene6010", 0x327, 0x1c5, 5, 0xfd, 0xfb),
+		PlayableScene(vm, scene6010Config(), "scene6010", 0x327, 0x1c5, 5, 0xfd, 0xfb),
 		_originalColorToItemMap(),
 		_temporaryPrimaryLayer(),
 		_temporarySecondaryLayer() {
-}
-
-const char *Scene6010::resourceArchiveName() const {
-	return kScene6010ArchiveName;
-}
-
-uint Scene6010::sceneInitialRequiredChunkCount() const {
-	return kScene6010InitialRequiredChunkCount;
-}
-
-uint Scene6010::sceneArenaFirstChunk() const {
-	return kScene6010ArenaFirstChunk;
-}
-
-uint Scene6010::sceneArenaLastChunk() const {
-	return kScene6010ArenaLastChunk;
-}
-
-uint Scene6010::sceneStageIndex() const {
-	return kScene6010StageIndex;
-}
-
-const char *Scene6010::sceneDebugName() const {
-	return "Scene 6010";
-}
-
-uint16 Scene6010::sceneViewportXOffset() const {
-	return kScene6010ViewportXOffset;
-}
-
-uint16 Scene6010::sceneViewportMinXOffset() const {
-	return kScene6010ViewportMinXOffset;
-}
-
-uint16 Scene6010::sceneViewportMaxXOffset() const {
-	return kScene6010ViewportMaxXOffset;
-}
-
-byte Scene6010::inventoryOwnerIndex() const {
-	return 0;
-}
-
-void Scene6010::initializeInventoryOwnerState() {
-	GameplayState &state = _vm->gameState();
-	state.initializeRonItemResourcePages();
-	if (state.inventoryItemCountByOwner[0] == 0)
-		state.initializeRonInventoryItems();
-	state.currentInventoryOwnerIndex = 0;
-	state.activeAudioChapterIndex = 6;
-}
-
-uint Scene6010::resource000ActorBankTableEntry() const {
-	return kScene6010ActorBankTableEntry;
-}
-
-uint Scene6010::resource000ActorPaletteTableEntry() const {
-	return kScene6010ActorPaletteTableEntry;
-}
-
-uint32 Scene6010::inventoryActionTableExtraOffset() const {
-	return 0;
-}
-
-uint Scene6010::resource003InventoryRowsOffsetIndex() const {
-	return kScene6010Resource003RowsOffsetIndex;
-}
-
-uint32 Scene6010::speechCueDescriptorTableOffset() const {
-	return kScene6010SpeechCueDescriptorTableOffset;
-}
-
-const byte *Scene6010::actorPathStepDeltaTable() const {
-	return kScene6010ActorPathStepDeltaTable;
-}
-
-uint Scene6010::actorPathStepDeltaTableSize() const {
-	return ARRAYSIZE(kScene6010ActorPathStepDeltaTable);
-}
-
-byte Scene6010::walkablePaletteMaxRegion() const {
-	return 9;
-}
-
-const char *Scene6010::musicArchiveName() const {
-	return kScene6010MusicArchiveName;
-}
-
-const char *Scene6010::soundBank0ArchiveName() const {
-	return kScene6010SoundArchiveName;
-}
-
-bool Scene6010::usesActorDepthTest() const {
-	return true;
-}
-
-bool Scene6010::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId >= kScene6010FirstState && stateId <= kScene6010LastState;
 }
 
 bool Scene6010::hasCustomPreviewState() const {

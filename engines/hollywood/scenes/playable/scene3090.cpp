@@ -120,8 +120,36 @@ const byte kScene3090SaxophoneFrameMap[] = {
 	10, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0
 };
 
+static PlayableSceneConfig scene3090Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = kScene3090ArchiveName;
+	config.initialRequiredChunkCount = kScene3090InitialRequiredChunkCount;
+	config.arenaFirstChunk = kScene3090ArenaFirstChunk;
+	config.arenaLastChunk = kScene3090ArenaLastChunk;
+	config.stageIndex = kScene3090StageIndex;
+	config.debugName = "Scene 3090";
+	config.viewportXOffset = kScene3090ViewportXOffset;
+	config.viewportMinXOffset = kScene3090ViewportMinXOffset;
+	config.viewportMaxXOffset = kScene3090ViewportMaxXOffset;
+	config.inventoryOwnerIndex = 0;
+	config.activeAudioChapterIndex = 3;
+	config.actorBankTableEntry = kScene3090ActorBankTableEntry;
+	config.actorPaletteTableEntry = kScene3090ActorPaletteTableEntry;
+	config.inventoryActionTableExtraOffset = 0;
+	config.inventoryRowsOffsetIndex = kScene3090Resource003RowsOffsetIndex;
+	config.speechCueDescriptorTableOffset = kScene3090SpeechCueDescriptorTableOffset;
+	config.actorPathStepDeltaTable = kScene3090ActorPathStepDeltaTable;
+	config.actorPathStepDeltaTableSize = ARRAYSIZE(kScene3090ActorPathStepDeltaTable);
+	config.walkablePaletteMaxRegion = 20;
+	config.musicArchiveName = kScene3090MusicArchiveName;
+	config.soundBank0ArchiveName = kScene3090SoundArchiveName;
+	config.mainFlowFirstState = kScene3090FirstState;
+	config.mainFlowLastState = kScene3090LastState;
+	return config;
+}
+
 Scene3090::Scene3090(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene3090", 600, 0x145, 4, 0xfd, 0xfb),
+		PlayableScene(vm, scene3090Config(), "scene3090", 600, 0x145, 4, 0xfd, 0xfb),
 		_frontChannel(),
 		_blindManChannel(),
 		_puzzleChannel(),
@@ -140,103 +168,6 @@ Scene3090::Scene3090(HollywoodEngine *vm) :
 		kScene3090BlindManFrameMap, ARRAYSIZE(kScene3090BlindManFrameMap));
 	_puzzleLayer.configure(12, kScene3090PuzzleDescriptorCount,
 		kScene3090PuzzleFrameMap, ARRAYSIZE(kScene3090PuzzleFrameMap));
-}
-
-const char *Scene3090::resourceArchiveName() const {
-	return kScene3090ArchiveName;
-}
-
-uint Scene3090::sceneInitialRequiredChunkCount() const {
-	return kScene3090InitialRequiredChunkCount;
-}
-
-uint Scene3090::sceneArenaFirstChunk() const {
-	return kScene3090ArenaFirstChunk;
-}
-
-uint Scene3090::sceneArenaLastChunk() const {
-	return kScene3090ArenaLastChunk;
-}
-
-uint Scene3090::sceneStageIndex() const {
-	return kScene3090StageIndex;
-}
-
-const char *Scene3090::sceneDebugName() const {
-	return "Scene 3090";
-}
-
-uint16 Scene3090::sceneViewportXOffset() const {
-	return kScene3090ViewportXOffset;
-}
-
-uint16 Scene3090::sceneViewportMinXOffset() const {
-	return kScene3090ViewportMinXOffset;
-}
-
-uint16 Scene3090::sceneViewportMaxXOffset() const {
-	return kScene3090ViewportMaxXOffset;
-}
-
-byte Scene3090::inventoryOwnerIndex() const {
-	return 0;
-}
-
-void Scene3090::initializeInventoryOwnerState() {
-	GameplayState &state = _vm->gameState();
-	state.initializeRonItemResourcePages();
-	if (state.inventoryItemCountByOwner[0] == 0)
-		state.initializeRonInventoryItems();
-	state.currentInventoryOwnerIndex = 0;
-	state.activeAudioChapterIndex = 3;
-}
-
-uint Scene3090::resource000ActorBankTableEntry() const {
-	return kScene3090ActorBankTableEntry;
-}
-
-uint Scene3090::resource000ActorPaletteTableEntry() const {
-	return kScene3090ActorPaletteTableEntry;
-}
-
-uint32 Scene3090::inventoryActionTableExtraOffset() const {
-	return 0;
-}
-
-uint Scene3090::resource003InventoryRowsOffsetIndex() const {
-	return kScene3090Resource003RowsOffsetIndex;
-}
-
-uint32 Scene3090::speechCueDescriptorTableOffset() const {
-	return kScene3090SpeechCueDescriptorTableOffset;
-}
-
-const byte *Scene3090::actorPathStepDeltaTable() const {
-	return kScene3090ActorPathStepDeltaTable;
-}
-
-uint Scene3090::actorPathStepDeltaTableSize() const {
-	return ARRAYSIZE(kScene3090ActorPathStepDeltaTable);
-}
-
-byte Scene3090::walkablePaletteMaxRegion() const {
-	return 20;
-}
-
-const char *Scene3090::musicArchiveName() const {
-	return kScene3090MusicArchiveName;
-}
-
-const char *Scene3090::soundBank0ArchiveName() const {
-	return kScene3090SoundArchiveName;
-}
-
-bool Scene3090::usesActorDepthTest() const {
-	return false;
-}
-
-bool Scene3090::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId >= kScene3090FirstState && stateId <= kScene3090LastState;
 }
 
 bool Scene3090::hasCustomPreviewState() const {
