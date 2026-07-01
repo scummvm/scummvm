@@ -1306,7 +1306,7 @@ void PhoenixVREngine::rollover(int textId, RolloverType type) {
 	auto numLines = static_cast<int>(lines.size());
 	auto textH = fontH * numLines;
 	debug("text %dx%d", textW, textH);
-	_text.reset(new Graphics::ManagedSurface(textW, textH, Graphics::BlendBlit::getSupportedPixelFormat()));
+	_text.reset(new Graphics::ManagedSurface(textW, textH, Graphics::PixelFormat::createFormatRGBA32()));
 	_text->clear();
 	byte r, g, b;
 	_rgb565.colorToRGB(color, r, g, b);
