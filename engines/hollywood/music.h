@@ -51,6 +51,7 @@ public:
 	~SpeechPlayer();
 
 	bool playSample(uint16 sampleId, byte volumePercent = 100);
+	void setVolume(byte volumePercent);
 	void stop();
 	bool isPlaying() const;
 	uint32 lastSampleDurationMillis() const { return _lastSampleDurationMillis; }

@@ -53,13 +53,30 @@ private:
 	void rebuildWorkingWalkableMask();
 	void resetAnimationLayers();
 	void advanceHannoverLayer(uint32 delta);
+	void advanceTaffyEntranceLayer(uint32 delta);
 	void drawForegroundBlocks(int activeWorldX, int activeWorldY);
 	void runEntryConversation();
+	void runHannoverDialogueMenu();
+	void initializeHannoverDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
+	void setHannoverDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
+		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
+		byte responseFrameIndex, byte disableAfterUse) const;
+	void beginHannoverSpeechLine(byte frameIndex, byte animationGroup = 0);
+	uint32 beginStaticHannoverSpeechLine(byte frameIndex, uint16 centerX, uint16 topY);
+	void runHannoverFrameRange(byte firstFrame, byte lastFrame, byte finalFrame, uint32 frameMillis);
+	void runHannoverFrameRangeSequence(bool alternatePose);
+	void runHannoverDeskWalkSequence();
+	void runTaffyEnteringAnimation();
 	void returnToScene6020();
 
 	TimedAnimationChannel _largeBackgroundChannel;
+	TimedAnimationChannel _taffyEntranceChannel;
 	ResourceSpriteLayer _largeBackgroundLayer;
 	ResourceSpriteLayer _smallForegroundLayer;
+	ResourceSpriteLayer _taffyEntranceLayer;
+	bool _hannoverManualSequenceActive;
+	bool _hannoverLayerSuppressed;
+	bool _taffyEntranceSequenceActive;
 };
 
 } // End of namespace Hollywood

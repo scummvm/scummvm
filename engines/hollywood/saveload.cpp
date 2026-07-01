@@ -215,6 +215,8 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene6010Item58Taken);
 	syncStateBool(s, state.scene6020TaffyKnown);
 	syncStateBool(s, state.scene6020TaffyLeft);
+	syncStateBool(s, state.scene6030HannoverInterviewCompleted);
+	s.syncAsByte(state.scene6030CoffeeState);
 	s.syncAsByte(state.scene4010AlternateBackgroundState);
 	syncStateBool(s, state.scene4010FirstEntryConversationSeen);
 	s.syncAsByte(state.scene4010EntryPathSpeechState);

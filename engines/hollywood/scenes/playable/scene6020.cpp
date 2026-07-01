@@ -70,6 +70,15 @@ const uint kScene6020DeskMagnifierHiddenChunk = 14;
 const byte kScene6020TaffyHotspotItem = 5;
 const byte kScene6020DeskMagnifierHotspotItem = 6;
 const byte kScene6020MagnifierInventoryItem = 0x5a;
+const byte kScene6020TaffyDialogueStageId = 0x62;
+const byte kScene6020TaffyDialoguePrimaryRow = 99;
+const uint kScene6020TaffyDialogueChoiceRecordCount = 10 * 10 * 7;
+const byte kScene6020DialogueTransitionEnd = 0;
+const byte kScene6020DialogueTransitionDown = 1;
+const byte kScene6020DialogueTransitionUp = 2;
+const byte kScene6020DialogueTransitionStay = 3;
+const byte kScene6020DialogueTransitionUpTwo = 4;
+const byte kScene6020DialogueNoResponseFrame = 0xff;
 
 const byte kScene6020ActorPathStepDeltaTable[] = {
 	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
@@ -121,6 +130,18 @@ const byte kScene6020RatHandoffTaffyFrames[] = {
 	0x71, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78,
 	0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81,
 	0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81
+};
+
+const byte kScene6020TaffyLookUpFrames[] = {
+	0x0c, 0x0d, 0x0e, 0x0f
+};
+
+const byte kScene6020TaffyExitIntroFrames[] = {
+	0x15, 0x15, 0x16, 0x17, 0x18, 0x50, 0x51, 0x52, 0x53
+};
+
+const byte kScene6020TaffyExitOutroFrames[] = {
+	0x59, 0x5a, 0x5b, 0x5c
 };
 
 static PlayableSceneConfig scene6020Config() {
@@ -670,7 +691,7 @@ void Scene6020::runPickupItem5E() {
 }
 
 void Scene6020::runUseItem39Overlay() {
-	if (!hasInventoryItem(0x39)) {
+	if (!hasInventoryItem(0x39) || !_vm->gameState().scene6030HannoverInterviewCompleted) {
 		dispatchGenericSceneAction(0xe7);
 		return;
 	}
@@ -679,6 +700,7 @@ void Scene6020::runUseItem39Overlay() {
 		kScene6020PickupReverseFrameMap, ARRAYSIZE(kScene6020PickupReverseFrameMap),
 		kScene6020FrameMillis, kActionOverlayKeepActiveActorVisibility);
 	removeInventoryItem(0x39);
+	_vm->gameState().scene6030CoffeeState = 1;
 	_soundBank0.playSample(1, 100);
 	beginSecondarySpeechLine(15, 0);
 }
@@ -757,15 +779,124 @@ void Scene6020::runFinalSceneObjectAnimation() {
 }
 
 void Scene6020::runDialogueAndMaybeEnterScene6030() {
+	Common::Array<DialogueChoiceRecord> records;
+	initializeTaffyDialogueRecords(records);
+
+	byte depthIndex = 0;
+	byte nodeIndex = 0;
+	bool finished = false;
 	const bool firstConversation = !_vm->gameState().scene6020TaffyKnown;
-	beginSecondarySpeechLine(0x62, firstConversation ? 0 : 1);
-	beginPrimarySpeechLine(99, firstConversation ? 0 : 1, 499, 0xbd, 0x2a, 0x3f, 0x0e);
+	beginSecondarySpeechLine(kScene6020TaffyDialogueStageId, firstConversation ? 0 : 1);
+	runTaffyLookUpTransition();
+	beginPrimarySpeechLine(kScene6020TaffyDialoguePrimaryRow, firstConversation ? 0 : 1,
+		499, 0xbd, 0x2a, 0x3f, 0x0e);
 	if (firstConversation) {
 		_vm->gameState().scene6020TaffyKnown = true;
 		applySceneStateToHotspotsAndPatches(1);
-	} else if (hasInventoryItem(0x5a)) {
-		runExitToScene6030();
 	}
+
+	while (!finished && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		DialogueMenu menu(_vm, this);
+		const byte selectedChoice = menu.choose(kScene6020TaffyDialogueStageId, records, depthIndex, nodeIndex);
+		if (selectedChoice == DialogueMenu::kCancelledChoice) {
+			beginSecondarySpeechLine(kScene6020TaffyDialogueStageId, 6);
+			beginPrimarySpeechLine(kScene6020TaffyDialoguePrimaryRow, 6,
+				499, 0xbd, 0x2a, 0x3f, 0x0e);
+			return;
+		}
+
+		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
+		if (recordIndex >= records.size())
+			break;
+
+		DialogueChoiceRecord &record = records[recordIndex];
+		beginSecondarySpeechLine(kScene6020TaffyDialogueStageId, record.playerTextRowId);
+		if (record.disableAfterUse == 3) {
+			runExitToScene6030();
+			return;
+		}
+
+		if (record.responseFrameIndex != kScene6020DialogueNoResponseFrame)
+			beginPrimarySpeechLine(kScene6020TaffyDialoguePrimaryRow, record.responseFrameIndex,
+				499, 0xbd, 0x2a, 0x3f, 0x0e);
+
+		if (record.disableAfterUse != 0)
+			record.enabled = 0;
+
+		const byte previousDepth = depthIndex;
+		switch (record.transitionMode) {
+		case kScene6020DialogueTransitionEnd:
+			finished = true;
+			break;
+		case kScene6020DialogueTransitionDown:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth + 1;
+			break;
+		case kScene6020DialogueTransitionUp:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth - 1;
+			break;
+		case kScene6020DialogueTransitionUpTwo:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth - 2;
+			break;
+		case kScene6020DialogueTransitionStay:
+		default:
+			break;
+		}
+	}
+}
+
+void Scene6020::initializeTaffyDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
+	records.clear();
+	records.resize(kScene6020TaffyDialogueChoiceRecordCount);
+
+	// DAT_0050bb30: root choices for Taffy. Choice 0 enters Hannover's office while the original
+	// one-shot late-scene guard is still clear.
+	setTaffyDialogueRecord(records, 0, 1, 0, kScene6020DialogueTransitionStay, 2, 2, 3);
+	setTaffyDialogueRecord(records, 1, 1, 0, kScene6020DialogueTransitionDown, 3, 3, 1);
+	setTaffyDialogueRecord(records, 2, 1, 0, kScene6020DialogueTransitionStay, 4, 4, 1);
+	setTaffyDialogueRecord(records, 3, 1, 0, kScene6020DialogueTransitionStay, 5, 5, 1);
+	setTaffyDialogueRecord(records, 4, 1, 0, kScene6020DialogueTransitionEnd, 6, 6, 1);
+
+	// Depth 1, node 0: follow-up choices opened by root choice 1.
+	setTaffyDialogueRecord(records, 70, 1, 0, kScene6020DialogueTransitionStay, 7, 7, 1);
+	setTaffyDialogueRecord(records, 71, 1, 0, kScene6020DialogueTransitionStay, 8, 8, 1);
+	setTaffyDialogueRecord(records, 72, 1, 0, kScene6020DialogueTransitionUp, 9, 9, 1);
+}
+
+void Scene6020::setTaffyDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
+		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
+		byte responseFrameIndex, byte disableAfterUse) const {
+	if (index >= records.size())
+		return;
+
+	DialogueChoiceRecord &record = records[index];
+	record.enabled = enabled;
+	record.nextNodeIndex = nextNodeIndex;
+	record.transitionMode = transitionMode;
+	record.playerTextRowId = playerTextRowId;
+	record.responseFrameIndex = responseFrameIndex;
+	record.disableAfterUse = disableAfterUse;
+	record.reserved = 0xff;
+}
+
+void Scene6020::runTaffyLookUpTransition() {
+	runTaffyFrameSequence(kScene6020TaffyLookUpFrames, ARRAYSIZE(kScene6020TaffyLookUpFrames));
+}
+
+void Scene6020::runTaffyFrameSequence(const byte *frames, uint frameCount) {
+	if (!frames || frameCount == 0 || !_taffyLayer.visible || _vm->gameState().scene6020TaffyLeft)
+		return;
+
+	const bool previousManualAnimation = _taffyDepartureAnimationActive;
+	_taffyDepartureAnimationActive = true;
+	for (uint i = 0; i < frameCount && !Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++i) {
+		_taffyLayer.setFrame(frames[i]);
+		if (waitSceneMillis(kScene6020FrameMillis))
+			break;
+	}
+	_taffyDepartureAnimationActive = previousManualAnimation;
 }
 
 void Scene6020::runExitToScene6010() {
@@ -773,6 +904,11 @@ void Scene6020::runExitToScene6010() {
 }
 
 void Scene6020::runExitToScene6030() {
+	runTaffyFrameSequence(kScene6020TaffyExitIntroFrames, ARRAYSIZE(kScene6020TaffyExitIntroFrames));
+	beginPrimarySpeechLineWithAnimationGroup(0x0e, 0, 499, 0xbd, 0x2a, 0x3f, 0x0e, 2);
+	beginPrimarySpeechLineWithAnimationGroup(0x0e, 1, 0x215, 0x10e, 0x2a, 0x0e, 0x3f, 2);
+	beginSecondarySpeechLine(0x0e, 2);
+	runTaffyFrameSequence(kScene6020TaffyExitOutroFrames, ARRAYSIZE(kScene6020TaffyExitOutroFrames));
 	walkActiveActorTo(0x0d3, 0x17b, 5, 0, false);
 	runConfiguredActionOverlay(8, kScene6020Chunk8DescriptorCount,
 		kScene6020SmallObjectFrameMap, ARRAYSIZE(kScene6020SmallObjectFrameMap),
