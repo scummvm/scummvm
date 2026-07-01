@@ -708,8 +708,6 @@ void Scene2030::runEntryFromSphinx() {
 	_activeActorWorldY = 0x130;
 	_activeActorFacing = 3;
 	_activeActorCel = 0;
-	drawPlayableComposite();
-	presentFrame();
 	runTransitionClip(10);
 	runEntryPath(0x226, 0x130, 3, 0x15e, 400);
 }
@@ -720,11 +718,19 @@ void Scene2030::runSphinxExitTransition() {
 }
 
 void Scene2030::runTransitionClip(uint chunkIndex) {
+	// RESOURCE.B03 transition frames are cumulative deltas; resetting to the
+	// base room background per frame drops unchanged actor pixels.
+	Graphics::ManagedSurface transitionBackground;
+	transitionBackground.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight,
+		Graphics::PixelFormat::createFormatCLUT8());
+	transitionBackground.copyRectToSurface(_baseFramebuffer.rawSurface(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+
 	uint32 frameAccumulator = 0;
 	uint32 lastMillis = g_system->getMillis();
 	byte frameIndex = 0;
 
-	drawTransitionClipFrame(chunkIndex, frameIndex);
+	drawTransitionClipFrame(chunkIndex, frameIndex, *transitionBackground.surfacePtr());
 	presentFrame();
 
 	while (frameIndex < kScene2030TransitionFinalFrame && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
@@ -742,28 +748,27 @@ void Scene2030::runTransitionClip(uint chunkIndex) {
 		while (frameAccumulator >= kScene2030TransitionFrameMillis && frameIndex < kScene2030TransitionFinalFrame) {
 			frameAccumulator -= kScene2030TransitionFrameMillis;
 			++frameIndex;
+			drawTransitionClipFrame(chunkIndex, frameIndex, *transitionBackground.surfacePtr());
 			frameDirty = true;
 		}
 
-		if (frameDirty) {
-			drawTransitionClipFrame(chunkIndex, frameIndex);
+		if (frameDirty)
 			presentFrame();
-		}
 
 		g_system->delayMillis(10);
 	}
 }
 
-void Scene2030::drawTransitionClipFrame(uint chunkIndex, byte frameIndex) {
-	copyBaseFramebufferToSceneFramebuffer();
+void Scene2030::drawTransitionClipFrame(uint chunkIndex, byte frameIndex, Graphics::Surface &transitionBackground) {
+	_sceneFramebuffer.copyRectToSurface(transitionBackground, 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
 	drawResourceSpriteLayer(_rightMerchantLayer);
 	drawResourceSpriteLayer(_leftMerchantLayer);
-	drawActiveAndSecondaryActorFrames(true, _activeActorFacing, _activeActorCel, _activeActorWorldX, _activeActorWorldY,
-		false, 0, 0, 0, 0, -1);
-	drawClipFrameDeltaToScene(chunkIndex, kScene2030TransitionDescriptorCount, frameIndex);
+	drawClipFrameDeltaToSurface(chunkIndex, kScene2030TransitionDescriptorCount, frameIndex, *_sceneFramebuffer.surfacePtr());
+	drawClipFrameDeltaToSurface(chunkIndex, kScene2030TransitionDescriptorCount, frameIndex, transitionBackground);
 }
 
-void Scene2030::drawClipFrameDeltaToScene(uint chunkIndex, uint tableEntryCount, byte frameIndex) {
+void Scene2030::drawClipFrameDeltaToSurface(uint chunkIndex, uint tableEntryCount, byte frameIndex, Graphics::Surface &destination) {
 	const uint32 frameTableOffset = _resourceChunkOffsets[chunkIndex];
 	const uint32 tableEntryOffset = frameTableOffset + ((uint32)frameIndex * 4);
 	if (tableEntryOffset + 4 > _resourceArena.size())
@@ -777,10 +782,10 @@ void Scene2030::drawClipFrameDeltaToScene(uint chunkIndex, uint tableEntryCount,
 	const uint16 firstRow = readUint16LE(_resourceArena, frameOffset);
 	const uint16 lastRow = readUint16LE(_resourceArena, frameOffset + 2);
 	uint cursor = frameOffset + 4;
-	byte *pixels = framebufferPixels(_sceneFramebuffer);
-	const uint size = framebufferByteCount();
+	byte *pixels = (byte *)destination.getPixels();
+	const uint size = destination.pitch * destination.h;
 
-	for (uint row = firstRow; row <= lastRow && row < HollywoodEngine::kSceneBufferHeight; ++row) {
+	for (uint row = firstRow; row <= lastRow && row < (uint)destination.h; ++row) {
 		if (cursor >= _resourceArena.size())
 			return;
 
@@ -791,7 +796,7 @@ void Scene2030::drawClipFrameDeltaToScene(uint chunkIndex, uint tableEntryCount,
 
 			const uint x = readUint16LE(_resourceArena, cursor);
 			const byte literalLength = _resourceArena[cursor + 2];
-			const uint destinationOffset = row * HollywoodEngine::kSceneBufferWidth + x;
+			const uint destinationOffset = row * destination.pitch + x;
 			if (destinationOffset >= size)
 				return;
 
