@@ -111,7 +111,7 @@ Disk::~Disk() {
 	_entry = 0;
 }
 
-Animation *Disk::loadAnim(const char *filename, const Graphics::PixelFormat &targetFormat) {
+Animation *Disk::loadAnim(const char *filename, Graphics::PixelFormat &targetFormat) {
 	Common::File fp;
 
 	if (!fp.open(filename))

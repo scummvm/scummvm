@@ -76,7 +76,7 @@ public:
 	void fnFlushBuffers();
 	uint32 *giveLoadedFilesList() { return _loadedFilesList; }
 	void refreshFilesList(uint32 *list);
-	Animation *loadAnim(const char *filename, const Graphics::PixelFormat &targetFormat);
+	Animation *loadAnim(const char *filename, Graphics::PixelFormat &targetFormat);
 
 protected:
 	uint8 *getFileInfo(uint16 fileNr);
