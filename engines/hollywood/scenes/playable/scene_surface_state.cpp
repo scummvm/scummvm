@@ -24,6 +24,7 @@
 #include "common/rect.h"
 #include "graphics/pixelformat.h"
 
+#include "hollywood/gameplay/actor_renderer.h"
 #include "hollywood/hollywood.h"
 
 namespace Hollywood {
@@ -37,6 +38,9 @@ void SceneSurfaceState::initialize(uint paletteSize, uint paletteMaskOriginalSiz
 	fullPaletteRegionMask.resize(paletteMaskUsedBytes);
 	walkablePaletteMask.resize(paletteMaskUsedBytes);
 	colorToActorDepthClassMap.resize(paletteMapPageSize);
+	presentationPaletteRemapTable.resize(paletteMapPageSize);
+	for (uint i = 0; i < presentationPaletteRemapTable.size(); ++i)
+		presentationPaletteRemapTable[i] = 0;
 	actorDepthYThresholds.resize(paletteRegionCount);
 	drawActorDepthYThresholds.resize(paletteRegionCount);
 	screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight,
@@ -108,6 +112,10 @@ byte SceneSurfaceState::paletteEntryComponent6Bit(byte colorIndex, uint componen
 		return 0;
 
 	return paletteCurrent[paletteOffset];
+}
+
+void SceneSurfaceState::rebuildPresentationPaletteRemapTable() {
+	buildPresentationPaletteRemapTable(paletteCurrent, presentationPaletteRemapTable);
 }
 
 } // End of namespace Hollywood

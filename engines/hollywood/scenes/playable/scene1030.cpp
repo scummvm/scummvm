@@ -509,14 +509,17 @@ void Scene1030::applyFirstEntryPalette() {
 
 	const uint32 byteCount = MIN<uint32>(_sceneChunkTable.sizes[8],
 		MIN<uint32>((uint32)kScene1030EntryPaletteByteCount, (uint32)_paletteCurrent.size()));
-	if (sourceOffset + byteCount <= _resourceArena.size())
+	if (sourceOffset + byteCount <= _resourceArena.size()) {
 		memcpy(_paletteCurrent.data(), _resourceArena.data() + sourceOffset, byteCount);
+		_surfaceState.rebuildPresentationPaletteRemapTable();
+	}
 }
 
 void Scene1030::restoreNormalPalette() {
 	const uint32 byteCount = MIN<uint32>((uint32)kScene1030EntryPaletteByteCount,
 		MIN<uint32>((uint32)_paletteResource.size(), (uint32)_paletteCurrent.size()));
 	memcpy(_paletteCurrent.data(), _paletteResource.data(), byteCount);
+	_surfaceState.rebuildPresentationPaletteRemapTable();
 }
 
 void Scene1030::runFirstEntryConversation() {
