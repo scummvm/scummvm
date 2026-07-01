@@ -174,6 +174,10 @@ struct GameplayState {
 		scene6010EndgameTravelExitBlocked = false;
 		scene6011PendingItem69Visible = false;
 		scene6010Item58Taken = false;
+		scene2040SphinxBasePatchState = 0;
+		scene2040SphinxFaceState = 0;
+		scene2040SphinxItemRevealed = 0;
+		scene2040SphinxExitInterviewState = 0;
 		scene6020TaffyKnown = false;
 		scene6020TaffyLeft = false;
 		scene6030HannoverInterviewCompleted = false;
@@ -742,6 +746,10 @@ struct GameplayState {
 	bool scene6010EndgameTravelExitBlocked;
 	bool scene6011PendingItem69Visible;
 	bool scene6010Item58Taken;
+	byte scene2040SphinxBasePatchState;
+	byte scene2040SphinxFaceState;
+	byte scene2040SphinxItemRevealed;
+	byte scene2040SphinxExitInterviewState;
 	bool scene6020TaffyKnown;
 	bool scene6020TaffyLeft;
 	bool scene6030HannoverInterviewCompleted;
