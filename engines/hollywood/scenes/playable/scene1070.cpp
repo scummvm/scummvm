@@ -48,14 +48,27 @@ const uint32 kScene1070SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene1070FrameMillis = 75;
 const uint32 kScene1070BackFrameMillis = 60;
 const uint32 kScene1070IdleFrameMillis = 125;
+const uint32 kScene1070GhostSequenceFrameMillis = 65;
+const uint32 kScene1070GhostSpecialFrameMillis = 50;
+const uint32 kScene1070SpencerAmbientFrameMillis = 250;
+const uint32 kScene1070SpencerLongFrameMillis = 65;
+const uint32 kScene1070SpencerTransitionFrameMillis = 75;
 const uint kScene1070BackDescriptorCount = 0x14;
 const uint kScene1070GhostDescriptorCount = 0x12;
 const uint kScene1070SpencerDescriptorCount = 0x19;
 const uint kScene1070MicrophoneDescriptorCount = 0x0c;
 const uint kScene1070MicrophoneStandDescriptorCount = 0x0d;
 const uint kScene1070BallDescriptorCount = 0x0b;
+const uint kScene1070TravelUnlockDescriptorCount = 0x11;
 const byte kScene1070SpencerSpeechGroup = 1;
 const byte kScene1070GhostSpeechGroup = 2;
+const byte kScene1070SpencerDialogueStageId = 0x60;
+const byte kScene1070SpencerPrimaryDialogueRow = 0x61;
+const byte kScene1070QuasimodoDialogueStageId = 0x62;
+const byte kScene1070QuasimodoPrimaryDialogueRow = 99;
+const uint kScene1070DialogueChoiceRecordCount = 10 * 10 * 7;
+const byte kScene1070DialogueNoResponseFrame = 0xff;
+const byte kScene1070TravelUnlockDestinationId = 6;
 const byte kScene1070FirstAmbientSoundCue = 0x1c;
 const byte kScene1070AmbientSoundCueCount = 6;
 const byte kScene1070FirstAmbientMusicCue = 0x0b;
@@ -85,10 +98,10 @@ const byte kScene1070GhostFrameMap[] = {
 };
 
 const byte kScene1070SpencerFrameMap[] = {
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 9, 8, 7, 6,
-	5, 4, 3, 2, 1, 0, 10, 11, 12, 13, 14, 14, 15, 16, 17, 18,
-	10, 19, 20, 21, 22, 23, 22, 21, 22, 23, 22, 21, 22, 23, 22, 21,
-	20, 19, 10, 24, 14, 13, 12, 11, 10, 10
+	10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 9, 8, 7,
+	6, 5, 4, 3, 2, 1, 0, 10, 11, 12, 13, 14, 14, 15, 16, 17,
+	18, 10, 19, 20, 21, 22, 23, 22, 21, 22, 23, 22, 21, 22, 23, 22,
+	21, 20, 19, 10, 24, 14, 13, 12, 11, 10, 10
 };
 
 const byte kScene1070MicrophoneFrameMap[] = {
@@ -103,6 +116,13 @@ const byte kScene1070BallFrameMap[] = {
 	10, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 1, 0,
 	1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 3, 4,
 	5, 6, 7, 8, 9, 10
+};
+
+const byte kScene1070TravelUnlockFrameMap[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+	12, 13, 14, 15, 12, 13, 14, 15, 12, 13, 14, 15,
+	12, 13, 14, 15, 12, 13, 14, 15, 12, 16, 11, 10,
+	9, 8, 7, 6, 5, 4, 3, 2, 1, 0
 };
 
 static PlayableSceneConfig scene1070Config() {
@@ -136,14 +156,21 @@ static PlayableSceneConfig scene1070Config() {
 Scene1070::Scene1070(HollywoodEngine *vm) :
 		PlayableScene(vm, scene1070Config(), "scene1070", 0x0aa, 0x1b3, 2, 0xfd, 0xfb),
 		_backLayerChannel(),
-		_ghostChannel(),
-		_spencerChannel(),
+		_ghostIdleChannel(),
+		_ghostSequenceChannel(),
+		_ghostSpecialChannel(),
+		_spencerAmbientChannel(),
+		_spencerIdleChannel(),
+		_spencerLongChannel(),
+		_spencerTransitionChannel(),
 		_backLayer(),
 		_ghostLayer(),
 		_spencerLayer(),
 		_backLayerMode(0),
 		_ghostMode(0),
-		_spencerMode(0) {
+		_spencerMode(0),
+		_spencerAmbientState(0),
+		_suppressRandomLayerStarts(false) {
 	_backLayer.configure(9, kScene1070BackDescriptorCount,
 		kScene1070BackFrameMap, ARRAYSIZE(kScene1070BackFrameMap));
 	_ghostLayer.configure(10, kScene1070GhostDescriptorCount,
@@ -214,6 +241,7 @@ bool Scene1070::advanceCustomGameplayLoop(uint32 delta) {
 	if (_primaryDialogueSpeechActive)
 		advancePrimaryDialogueSpeechFrame(delta);
 	else {
+		advanceSpencerAmbientTrigger(delta);
 		advanceGhostLayer(delta);
 		advanceSpencerLayer(delta);
 	}
@@ -231,8 +259,7 @@ bool Scene1070::dispatchCustomSceneAction(uint16 handlerId) {
 			_vm->gameState().mainFlowStateId = kScene1070ExitStateNext;
 		return true;
 	case 303: // Mirar puerta (look at door).
-		if (!_vm->gameState().scene1070DoorOpened)
-			beginSecondarySpeechLine(1, 0);
+		beginSecondarySpeechLine(1, _vm->gameState().scene1070DoorOpened ? 1 : 0);
 		return true;
 	case 304: // Usar/abrir puerta (use/open door).
 		beginSecondarySpeechLine(2, 0);
@@ -368,17 +395,24 @@ AmbientAudioProfile Scene1070::ambientAudioProfile() const {
 
 void Scene1070::resetAnimationLayers() {
 	_backLayerChannel.reset(0, kScene1070BackFrameMillis);
-	_ghostChannel.reset(0, kScene1070IdleFrameMillis);
-	_spencerChannel.reset(0, kScene1070IdleFrameMillis);
+	_ghostIdleChannel.reset(0, kScene1070IdleFrameMillis);
+	_ghostSequenceChannel.reset(0, kScene1070GhostSequenceFrameMillis);
+	_ghostSpecialChannel.reset(0, kScene1070GhostSpecialFrameMillis);
+	_spencerAmbientChannel.reset(0, kScene1070SpencerAmbientFrameMillis);
+	_spencerIdleChannel.reset(0, kScene1070IdleFrameMillis);
+	_spencerLongChannel.reset(0, kScene1070SpencerLongFrameMillis);
+	_spencerTransitionChannel.reset(0, kScene1070SpencerTransitionFrameMillis);
 	_backLayer.reset(_vm->gameState().scene1070ChainRemoved ? 0x18 : 0);
 	_ghostLayer.reset(0);
-	_spencerLayer.reset(0x1c);
+	_spencerLayer.reset(_vm->gameState().scene1070SpiritBlockingHotspot ? 0x16 : 0);
 	_backLayer.visible = true;
 	_ghostLayer.visible = true;
 	_spencerLayer.visible = true;
 	_backLayerMode = 0;
 	_ghostMode = 0;
-	_spencerMode = 0;
+	_spencerMode = _vm->gameState().scene1070SpiritBlockingHotspot ? 2 : 0;
+	_spencerAmbientState = 0;
+	_suppressRandomLayerStarts = false;
 }
 
 void Scene1070::advanceBackLayer(uint32 delta) {
@@ -394,54 +428,267 @@ void Scene1070::advanceBackLayer(uint32 delta) {
 	}
 }
 
-void Scene1070::advanceGhostLayer(uint32 delta) {
-	const uint frameCount = _ghostChannel.consumeFrames(delta);
+void Scene1070::advanceSpencerAmbientTrigger(uint32 delta) {
+	if (_suppressRandomLayerStarts)
+		return;
+
+	const uint frameCount = _spencerAmbientChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
-		if (_ghostMode == 0) {
-			if (_random.getRandomNumber(14) == 0) {
-				_ghostLayer.setFrame(0x0e);
+		if (_spencerAmbientState == 2) {
+			if (_spencerMode == 0) {
+				_spencerAmbientState = 1;
+				_spencerMode = 4;
+				_spencerLayer.setFrame(0x17);
+			}
+		} else if (_spencerAmbientState == 3) {
+			if (_ghostMode != 4) {
+				_spencerAmbientState = 0;
 				_ghostMode = 1;
-			} else if (_random.getRandomNumber(19) == 0) {
-				_ghostLayer.setFrame(0x20);
-				_ghostMode = 2;
-			}
-		} else if (_ghostMode == 1) {
-			if (_ghostLayer.frameIndex < 0x0f)
-				_ghostLayer.setFrame(_ghostLayer.frameIndex + 1);
-			else {
 				_ghostLayer.setFrame(0);
-				_ghostMode = 0;
 			}
-		} else if (_ghostLayer.frameIndex < 0x2f) {
-			_ghostLayer.setFrame(_ghostLayer.frameIndex + 1);
-		} else {
-			_ghostLayer.setFrame(0);
-			_ghostMode = 0;
+		} else if (_random.getRandomNumber(19) == 1 &&
+				((_ghostMode == 2 && _spencerMode == 0) ||
+				(_ghostMode == 0 && _spencerMode == 5))) {
+			if (_spencerAmbientState != 0) {
+				_spencerAmbientState = 0;
+				_ghostMode = 1;
+				_ghostLayer.setFrame(0);
+				_spencerMode = 6;
+				_spencerLayer.setFrame(0x35);
+			} else {
+				_spencerAmbientState = 1;
+				_ghostMode = 3;
+				_ghostLayer.setFrame(10);
+				_spencerMode = 4;
+				_spencerLayer.setFrame(0x17);
+			}
 		}
 	}
 }
 
-void Scene1070::advanceSpencerLayer(uint32 delta) {
-	const uint frameCount = _spencerChannel.consumeFrames(delta);
+void Scene1070::advanceGhostLayer(uint32 delta) {
+	uint frameCount = _ghostIdleChannel.consumeFrames(delta);
 	for (uint i = 0; i < frameCount; ++i) {
-		if (_spencerMode == 0) {
-			if (_random.getRandomNumber(14) == 0) {
-				_spencerLayer.setFrame(0x33);
-				_spencerMode = 1;
+		if (_ghostMode != 0 && _ghostMode != 2)
+			continue;
+
+		byte nextFrame = _ghostLayer.frameIndex;
+		if (_ghostMode == 2) {
+			do {
+				nextFrame = 5 + _random.getRandomNumber(4);
+			} while (nextFrame == _ghostLayer.frameIndex);
+			_ghostLayer.setFrame(nextFrame);
+		}
+
+		if (_ghostMode == 0 && !_suppressRandomLayerStarts) {
+			if (_ghostLayer.frameIndex == 0x2f) {
+				_ghostLayer.setFrame(0);
+			} else if (_random.getRandomNumber(14) == 0) {
+				_ghostLayer.setFrame(0x2f);
 			} else if (_random.getRandomNumber(19) == 0) {
-				_spencerLayer.setFrame(0x21);
-				_spencerMode = 2;
+				_ghostMode = 4;
+				_ghostLayer.setFrame(0x0e);
 			}
-		} else if (_spencerMode == 1) {
-			_spencerLayer.setFrame(0x1c);
-			_spencerMode = 0;
-		} else if (_spencerLayer.frameIndex < 0x32) {
-			_spencerLayer.setFrame(_spencerLayer.frameIndex + 1);
-		} else {
-			_spencerLayer.setFrame(0x1c);
-			_spencerMode = 0;
 		}
 	}
+
+	frameCount = _ghostSequenceChannel.consumeFrames(delta);
+	for (uint i = 0; i < frameCount; ++i) {
+		if (_ghostMode == 1) {
+			if (_ghostLayer.frameIndex < 4) {
+				_ghostLayer.setFrame(_ghostLayer.frameIndex + 1);
+			} else {
+				_ghostMode = 2;
+			}
+		} else if (_ghostMode == 3) {
+			if (_ghostLayer.frameIndex < 0x0e) {
+				_ghostLayer.setFrame(_ghostLayer.frameIndex + 1);
+			} else {
+				_ghostMode = 0;
+				_ghostLayer.setFrame(0);
+			}
+		}
+	}
+
+	frameCount = _ghostSpecialChannel.consumeFrames(delta);
+	for (uint i = 0; i < frameCount; ++i) {
+		if (_ghostMode != 4)
+			continue;
+
+		if (_ghostLayer.frameIndex < 0x2e)
+			_ghostLayer.setFrame(_ghostLayer.frameIndex + 1);
+		else
+			_ghostMode = 0;
+	}
+}
+
+void Scene1070::advanceSpencerLayer(uint32 delta) {
+	uint frameCount = _spencerIdleChannel.consumeFrames(delta);
+	for (uint i = 0; i < frameCount; ++i) {
+		if (_spencerMode != 0 && _spencerMode != 5)
+			continue;
+
+		if (_spencerMode == 5) {
+			byte nextFrame = _spencerLayer.frameIndex;
+			do {
+				nextFrame = 0x1c + _random.getRandomNumber(4);
+			} while (nextFrame == _spencerLayer.frameIndex);
+			_spencerLayer.setFrame(nextFrame);
+		}
+
+		if (_spencerMode == 0 && !_suppressRandomLayerStarts) {
+			if (_spencerLayer.frameIndex == 0x34) {
+				_spencerLayer.setFrame(0);
+			} else if (_random.getRandomNumber(14) == 0) {
+				_spencerLayer.setFrame(0x34);
+			} else if (_random.getRandomNumber(29) == 0) {
+				if (_random.getRandomBit() == 0) {
+					_spencerMode = 1;
+					_spencerLayer.setFrame(0x0c);
+					_ghostMode = 3;
+					_ghostLayer.setFrame(10);
+				} else {
+					_spencerMode = 7;
+					_spencerLayer.setFrame(0x21);
+				}
+			}
+		}
+	}
+
+	frameCount = _spencerLongChannel.consumeFrames(delta);
+	for (uint i = 0; i < frameCount; ++i) {
+		if (_spencerMode == 2 && _random.getRandomNumber(99) == 0) {
+			_spencerMode = 3;
+			_spencerLayer.setFrame(1);
+			_spencerAmbientState = 0;
+			_ghostMode = 1;
+			_ghostLayer.setFrame(0);
+			updateSpiritBlockingHotspot(false);
+		}
+
+		if (_spencerMode == 4) {
+			if (_spencerLayer.frameIndex < 0x1b)
+				_spencerLayer.setFrame(_spencerLayer.frameIndex + 1);
+			else
+				_spencerMode = 5;
+		}
+
+		if (_spencerMode == 6) {
+			if (_spencerLayer.frameIndex < 0x39) {
+				_spencerLayer.setFrame(_spencerLayer.frameIndex + 1);
+			} else {
+				_spencerMode = 0;
+				_spencerLayer.setFrame(0);
+			}
+		}
+	}
+
+	frameCount = _spencerTransitionChannel.consumeFrames(delta);
+	for (uint i = 0; i < frameCount; ++i) {
+		if (_spencerMode == 1) {
+			if (_spencerLayer.frameIndex < 0x16) {
+				_spencerLayer.setFrame(_spencerLayer.frameIndex + 1);
+			} else {
+				_spencerMode = 2;
+				updateSpiritBlockingHotspot(true);
+			}
+		}
+
+		if (_spencerMode == 3) {
+			if (_spencerLayer.frameIndex < 0x0b) {
+				_spencerLayer.setFrame(_spencerLayer.frameIndex + 1);
+			} else {
+				_spencerMode = 0;
+				_spencerLayer.setFrame(0);
+				updateSpiritBlockingHotspot(false);
+			}
+		}
+
+		if (_spencerMode == 7) {
+			if (_spencerLayer.frameIndex < 0x33)
+				_spencerLayer.setFrame(_spencerLayer.frameIndex + 1);
+			else
+				_spencerMode = 0;
+		}
+	}
+}
+
+void Scene1070::updateSpiritBlockingHotspot(bool blocked) {
+	GameplayState &state = _vm->gameState();
+	if (state.scene1070SpiritBlockingHotspot == blocked)
+		return;
+
+	state.scene1070SpiritBlockingHotspot = blocked;
+	applySceneStateToHotspotsAndPatches(2);
+}
+
+bool Scene1070::hasActiveCharacterAnimation() const {
+	return _ghostMode != 0 || _spencerMode != 0;
+}
+
+void Scene1070::settleCharacterAnimations() {
+	_suppressRandomLayerStarts = true;
+
+	while (hasActiveCharacterAnimation() && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (_ghostMode == 2) {
+			_ghostMode = 3;
+			_ghostLayer.setFrame(9);
+		}
+		if (_spencerMode == 2) {
+			_spencerMode = 3;
+			_spencerLayer.setFrame(1);
+			updateSpiritBlockingHotspot(false);
+		}
+		if (_spencerMode == 5) {
+			_spencerMode = 6;
+			_spencerLayer.setFrame(0x34);
+		}
+
+		if (waitSceneMillis(10))
+			break;
+	}
+
+	_suppressRandomLayerStarts = false;
+}
+
+void Scene1070::waitForGhostMode(byte mode) {
+	while (_ghostMode != mode && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (waitSceneMillis(10))
+			break;
+	}
+}
+
+void Scene1070::waitForSpencerMode(byte mode) {
+	while (_spencerMode != mode && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (waitSceneMillis(10))
+			break;
+	}
+}
+
+void Scene1070::beginSpencerPrimarySpeechLine(byte frameIndex, byte openFrame) {
+	_suppressRandomLayerStarts = true;
+	_spencerMode = 4;
+	_spencerLayer.setFrame(openFrame);
+	waitForSpencerMode(5);
+	beginPrimarySpeechLineWithAnimationGroup(kScene1070SpencerPrimaryDialogueRow, frameIndex,
+		0x0f1, 0x0b8, 0x3f, 0x0d, 0x0d, kScene1070SpencerSpeechGroup);
+	_spencerMode = 6;
+	_spencerLayer.setFrame(0x35);
+	waitForSpencerMode(0);
+	_suppressRandomLayerStarts = false;
+}
+
+void Scene1070::beginQuasimodoPrimarySpeechLine(byte frameIndex) {
+	_suppressRandomLayerStarts = true;
+	_ghostMode = 1;
+	_ghostLayer.setFrame(0);
+	waitForGhostMode(2);
+	beginPrimarySpeechLineWithAnimationGroup(kScene1070QuasimodoPrimaryDialogueRow, frameIndex,
+		0x0a9, 0x0c8, 0x20, 0x3f, 0, kScene1070GhostSpeechGroup);
+	_ghostMode = 3;
+	_ghostLayer.setFrame(9);
+	waitForGhostMode(0);
+	_suppressRandomLayerStarts = false;
 }
 
 void Scene1070::drawForegroundBlocks(int activeWorldX, int activeWorldY) {
@@ -480,23 +727,230 @@ void Scene1070::copyStageSmallRow(byte sourceRow, byte destinationRow) {
 }
 
 void Scene1070::runSpencerConversation() {
+	Common::Array<DialogueChoiceRecord> records;
+	initializeSpencerDialogueRecords(records);
+
 	GameplayState &state = _vm->gameState();
 	const byte line = state.seenScene1070SpencerConversation ? 1 : 0;
-	beginSecondarySpeechLine(0x60, line);
-	beginPrimarySpeechLineWithAnimationGroup(0x61, line, 0x0f1, 0x0b8,
-		0x3f, 0x0d, 0x0d, kScene1070SpencerSpeechGroup);
+	beginSecondarySpeechLine(kScene1070SpencerDialogueStageId, line);
+	settleCharacterAnimations();
+	beginSpencerPrimarySpeechLine(line, 0x17);
 	state.seenScene1070SpencerConversation = true;
-	if (state.scene1070SpencerDialogueState < 3)
-		++state.scene1070SpencerDialogueState;
+
+	byte depthIndex = 0;
+	byte nodeIndex = 0;
+	bool finished = false;
+	while (!finished && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		DialogueMenu menu(_vm, this);
+		const byte selectedChoice = menu.choose(kScene1070SpencerDialogueStageId,
+			records, depthIndex, nodeIndex);
+		if (selectedChoice == DialogueMenu::kCancelledChoice) {
+			beginSecondarySpeechLine(kScene1070SpencerDialogueStageId, 7);
+			beginSpencerPrimarySpeechLine(7, 0x16);
+			return;
+		}
+
+		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
+		if (recordIndex >= records.size())
+			break;
+
+		DialogueChoiceRecord &record = records[recordIndex];
+		beginSecondarySpeechLine(kScene1070SpencerDialogueStageId, record.playerTextRowId);
+		if (record.responseFrameIndex != kScene1070DialogueNoResponseFrame)
+			beginSpencerPrimarySpeechLine(record.responseFrameIndex, 0x16);
+
+		handleSpencerDialogueEffect(record.disableAfterUse, records, recordIndex);
+
+		const byte previousDepth = depthIndex;
+		switch (record.transitionMode) {
+		case 0:
+			finished = true;
+			break;
+		case 1:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth + 1;
+			break;
+		case 2:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth - 1;
+			break;
+		case 4:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth - 2;
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void Scene1070::runQuasimodoConversation() {
+	Common::Array<DialogueChoiceRecord> records;
+	initializeQuasimodoDialogueRecords(records);
+
 	GameplayState &state = _vm->gameState();
 	const byte line = state.seenScene1070QuasimodoConversation ? 1 : 0;
-	beginSecondarySpeechLine(0x62, line);
-	beginPrimarySpeechLineWithAnimationGroup(0x63, line, 0x0a9, 0x0c8,
-		0x20, 0x3f, 0, kScene1070GhostSpeechGroup);
+	beginSecondarySpeechLine(kScene1070QuasimodoDialogueStageId, line);
+	settleCharacterAnimations();
+	beginQuasimodoPrimarySpeechLine(line);
 	state.seenScene1070QuasimodoConversation = true;
+
+	byte depthIndex = 0;
+	byte nodeIndex = 0;
+	bool finished = false;
+	while (!finished && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		DialogueMenu menu(_vm, this);
+		const byte selectedChoice = menu.choose(kScene1070QuasimodoDialogueStageId,
+			records, depthIndex, nodeIndex);
+		if (selectedChoice == DialogueMenu::kCancelledChoice) {
+			beginSecondarySpeechLine(kScene1070QuasimodoDialogueStageId, 5);
+			beginQuasimodoPrimarySpeechLine(5);
+			return;
+		}
+
+		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
+		if (recordIndex >= records.size())
+			break;
+
+		DialogueChoiceRecord &record = records[recordIndex];
+		beginSecondarySpeechLine(kScene1070QuasimodoDialogueStageId, record.playerTextRowId);
+		if (record.responseFrameIndex != kScene1070DialogueNoResponseFrame)
+			beginQuasimodoPrimarySpeechLine(record.responseFrameIndex);
+
+		if (record.disableAfterUse == 1)
+			record.enabled = 0;
+		if (record.disableAfterUse == 2)
+			_vm->gameState().mainFlowStateId = 0x03fd;
+
+		const byte previousDepth = depthIndex;
+		switch (record.transitionMode) {
+		case 0:
+			finished = true;
+			break;
+		case 1:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth + 1;
+			break;
+		case 2:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth - 1;
+			break;
+		case 4:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = previousDepth - 2;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void Scene1070::initializeSpencerDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
+	records.clear();
+	records.resize(kScene1070DialogueChoiceRecordCount);
+
+	// g_abA07SpencerDialogueChoiceRecords: root choices.
+	setDialogueRecord(records, 0, 1, 0, 1, 2, 2, 1);
+	setDialogueRecord(records, 1, 1, 1, 1, 4, 4, 2);
+	setDialogueRecord(records, 2, 0, 0, 3, 5, 5, 4);
+	setDialogueRecord(records, 3, 0, 1, 1, 6, 6, 1);
+	setDialogueRecord(records, 4, 1, 0, 0, 7, 7, 1);
+
+	// Depth 1, node 0: follow-up after root choice 0.
+	setDialogueRecord(records, 70, 1, 0, 2, 3, kScene1070DialogueNoResponseFrame, 0);
+
+	// Depth 1, node 1: follow-up after root choice 1.
+	setDialogueRecord(records, 77, 1, 1, 3, 8, 8, 1);
+	setDialogueRecord(records, 78, 1, 1, 3, 9, 9, 1);
+	setDialogueRecord(records, 79, 1, 1, 3, 10, 10, 1);
+	setDialogueRecord(records, 80, 1, 1, 3, 11, 11, 3);
+	setDialogueRecord(records, 81, 1, 1, 3, 13, 13, 5);
+	setDialogueRecord(records, 82, 1, 0, 2, 12, 12, 0);
+
+	const byte progress = _vm->gameState().scene1070SpencerDialogueState;
+	if (progress != 0)
+		records[3].enabled = 1;
+	if (progress == 2)
+		records[2].enabled = 1;
+}
+
+void Scene1070::initializeQuasimodoDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
+	records.clear();
+	records.resize(kScene1070DialogueChoiceRecordCount);
+	GameplayState &state = _vm->gameState();
+
+	// g_abA07QuasimodoDialogueChoiceRecords: root choices.
+	setDialogueRecord(records, 0, 1, 0, 3, 2, 2, 1);
+	setDialogueRecord(records, 1, 1, 0, 1, 3, 3, 1);
+	setDialogueRecord(records, 2, 1, 1, 1, 4, 4, 1);
+	setDialogueRecord(records, 3, 1, 0, 0, 5, 5, 1);
+
+	// Depth 1, node 0: follow-up after root choice 1.
+	setDialogueRecord(records, 70, 1, 0, 2, 6, 6, 0);
+
+	// Depth 1, node 1: follow-up after root choice 2.
+	setDialogueRecord(records, 77, 1, 1, 3, 7, 7, 1);
+	setDialogueRecord(records, 78, 0, 0, 1, 8, 8, 1);
+	setDialogueRecord(records, 79, 1, 1, 3, 9, 9, 1);
+	setDialogueRecord(records, 80, 1, 0, 2, 10, 10, 1);
+	if (state.scene1020ResourceBlockChoiceState == 2 &&
+			state.scene1020ResourceBlockVariantState == 1 &&
+			!state.scene1020AlternateResourceBlockActive)
+		records[78].enabled = 1;
+
+	// Depth 2, node 0: branch after the completed scene1020 resource-block puzzle.
+	setDialogueRecord(records, 140, 1, 0, 1, 11, 11, 0);
+	setDialogueRecord(records, 210, 1, 0, 0, 12, 12, 2);
+}
+
+void Scene1070::setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
+		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
+		byte responseFrameIndex, byte disableAfterUse) const {
+	if (index >= records.size())
+		return;
+
+	DialogueChoiceRecord &record = records[index];
+	record.enabled = enabled;
+	record.nextNodeIndex = nextNodeIndex;
+	record.transitionMode = transitionMode;
+	record.playerTextRowId = playerTextRowId;
+	record.responseFrameIndex = responseFrameIndex;
+	record.disableAfterUse = disableAfterUse;
+	record.reserved = 0xff;
+}
+
+void Scene1070::handleSpencerDialogueEffect(byte effect, Common::Array<DialogueChoiceRecord> &records,
+		uint recordIndex) {
+	if (effect == 0)
+		return;
+
+	if (recordIndex < records.size())
+		records[recordIndex].enabled = 0;
+
+	GameplayState &state = _vm->gameState();
+	if (effect == 2 && state.scene1070SpencerDialogueState == 0) {
+		state.scene1070SpencerDialogueState = 1;
+		records[3].enabled = 1;
+	} else if (effect == 3 && state.scene1070SpencerDialogueState == 1) {
+		state.scene1070SpencerDialogueState = 2;
+		records[2].enabled = 1;
+	} else if (effect == 4 && state.scene1070SpencerDialogueState == 2) {
+		state.scene1070SpencerDialogueState = 3;
+		runSpencerTravelUnlockEffect();
+	} else if (effect == 5 && !state.scene1070SpencerExtraFlag) {
+		state.scene1070SpencerExtraFlag = true;
+	}
+}
+
+void Scene1070::runSpencerTravelUnlockEffect() {
+	if (_vm->gameState().hasTravelScreenDestination(kScene1070TravelUnlockDestinationId))
+		return;
+
+	runConfiguredActionOverlay(16, kScene1070TravelUnlockDescriptorCount,
+		kScene1070TravelUnlockFrameMap, ARRAYSIZE(kScene1070TravelUnlockFrameMap),
+		kScene1070FrameMillis, kActionOverlayHideActiveActor);
+	_soundBank0.playSample(1, 100);
+	_vm->gameState().unlockTravelScreenDestination(kScene1070TravelUnlockDestinationId);
 }
 
 void Scene1070::handleMicrophonePickup() {
