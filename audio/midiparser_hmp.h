@@ -25,21 +25,23 @@
 #include "audio/midiparser_smf.h"
 
 /**
- * MIDI parser for the HMI SOS format HMP.
+ * MIDI parser for the HMI SOS formats HMI and HMP.
  * 
  * Implementation is incomplete. Currently only the track chunks are read and
- * played back. Not implented yet: device track mapping, branching, callbacks, etc.
+ * played back. Not implemented yet: device track mapping, branching, callbacks, etc.
  */
 class MidiParser_HMP : public MidiParser_SMF {
 protected:
 	enum class HmpVersion {
-		VERSION_1,
-		VERSION_013195
+		VERSION_HMI,
+		VERSION_HMP_1,
+		VERSION_HMP_013195
 	};
 
-	static const char HMP_HEADER[];
-	static const char HMP_HEADER_VERSION_1[];
-	static const char HMP_HEADER_VERSION_013195[];
+	static const char HEADER_HMI[];
+	static const char HEADER_HMP[];
+	static const char HEADER_HMP_VERSION_1[];
+	static const char HEADER_HMP_VERSION_013195[];
 
 	uint32 readDelta(const byte *&data) override;
 
@@ -62,6 +64,11 @@ protected:
 	uint8 _restoreControllers[128];
 	uint32 _callbackPointer;
 	uint32 _callbackSegment;
+
+	// Read a word from the data with a length that is correct for the specified
+	// version (i.e. 2 bytes for HMI, 4 bytes for HMP)
+	uint32 readWord(const byte *&data, HmpVersion version);
+	uint32 readWord(Common::SeekableReadStream *stream, HmpVersion version);
 };
 
 #endif

@@ -24,12 +24,13 @@
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 
-const char MidiParser_HMP::HMP_HEADER[] = "HMIMIDIP";
-const char MidiParser_HMP::HMP_HEADER_VERSION_1[] = "\x00\x00\x00\x00\x00\x00";
-const char MidiParser_HMP::HMP_HEADER_VERSION_013195[] = "013195";
+const char MidiParser_HMP::HEADER_HMI[] = "HMIMIDIR";
+const char MidiParser_HMP::HEADER_HMP[] = "HMIMIDIP";
+const char MidiParser_HMP::HEADER_HMP_VERSION_1[] = "\x00\x00\x00\x00\x00\x00";
+const char MidiParser_HMP::HEADER_HMP_VERSION_013195[] = "013195";
 
 MidiParser_HMP::MidiParser_HMP(int8 source) : MidiParser_SMF(source) {
-	_version = HmpVersion::VERSION_1;
+	_version = HmpVersion::VERSION_HMP_1;
 	_branchOffset = 0;
 	_songLength = 0;
 	memset(_channelPriorities, 0, sizeof(_channelPriorities));
@@ -57,62 +58,60 @@ bool MidiParser_HMP::loadMusic(const byte *data, uint32 size) {
 	const byte *pos = data;
 
 	// Process header
-	if (memcmp(pos, HMP_HEADER, 8)) {
-		warning("Could not find HMIMIDIP header in HMP data");
+	if (memcmp(pos, HEADER_HMI, 7)) {
+		warning("Could not find HMIMIDI header in HMI/HMP data");
 		return false;
 	}
-	pos += 8;
 	_version = determineVersion(pos);
-	// Skip version and padding bytes
-	pos += 24;
+	bool isHmi = _version == HmpVersion::VERSION_HMI;
 
-	_branchOffset = READ_LE_UINT32(pos);
-	// Skip 3 reserved dwords
-	pos += 16;
+	// Skip signature, version, length and padding bytes
+	pos += isHmi ? 26 : 32;
+
+	if (isHmi) {
+		_branchOffset = 0;
+	} else {
+		_branchOffset = readWord(pos, _version);
+		// Skip 3 reserved dwords
+		pos += 12;
+	}
+
 	_numTracks = 1;
-	_numSubtracks[0] = READ_LE_UINT32(pos);
-	pos += 4;
+	_numSubtracks[0] = readWord(pos, _version);
 	// Doesn't seem like this field is actually used...
-	//uint32 ppqn = READ_LE_UINT32(pos);
+	//uint32 ppqn = readWord(pos, _version);
 	_ppqn = 60;
-	pos += 4;
-	uint32 bpm = READ_LE_UINT32(pos);
+	pos += isHmi ? 2 : 4;
+	uint32 bpm = readWord(pos, _version);
 	setTempo(60000000 / bpm);
-	pos += 4;
-	_songLength = READ_LE_UINT32(pos);
-	pos += 4;
+	_songLength = readWord(pos, _version);
 
 	for (int i = 0; i < 16; i++) {
-		_channelPriorities[i] = READ_LE_UINT32(pos);
-		pos += 4;
+		_channelPriorities[i] = readWord(pos, _version);
 	}
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 32; j++) {
-			_deviceTrackMappings[j][i] = READ_LE_UINT32(pos);
-			pos += 4;
+			_deviceTrackMappings[j][i] = readWord(pos, _version);
 		}
 	}
-	if (_version == HmpVersion::VERSION_013195) {
+	if (_version == HmpVersion::VERSION_HMP_013195) {
 		Common::copy(pos, pos + 128, _restoreControllers);
 		pos += 128;
 	}
 
-	_callbackPointer = READ_LE_UINT32(pos);
-	pos += 4;
-	_callbackSegment = READ_LE_UINT32(pos);
-	pos += 4;
+	_callbackPointer = readWord(pos, _version);
+	_callbackSegment = readWord(pos, _version);
 
 	// Read the tracks
 	for (uint currTrack = 0; currTrack < _numSubtracks[0]; currTrack++) {
-		//uint32 chunkNumber = READ_LE_UINT32(pos);
-		pos += 4;
-		uint32 chunkSize = READ_LE_UINT32(pos);
-		pos += 4;
-		//uint32 trackNumber = READ_LE_UINT32(pos);
-		pos += 4;
+		//uint32 chunkNumber = readWord(pos, _version);
+		pos += isHmi ? 2 : 4;
+		uint32 chunkSize = readWord(pos, _version);
+		//uint32 trackNumber = readWord(pos, _version);
+		pos += isHmi ? 2 : 4;
 
 		_tracks[0][currTrack] = pos;
-		pos += chunkSize - 12;
+		pos += (chunkSize - (isHmi ? 6 : 12));
 	}
 
 	// TODO Read branching data
@@ -124,27 +123,42 @@ int32 MidiParser_HMP::determineDataSize(Common::SeekableReadStream *stream) {
 	int64 startPos = stream->pos();
 
 	// Process header
-	if (strcmp(stream->readString('\x00', 8).c_str(), HMP_HEADER)) {
+	byte signatureBytes[14] = {0};
+	stream->readMultipleLE(*signatureBytes);
+	if (memcmp(signatureBytes, HEADER_HMI, 7)) {
 		return -1;
 	}
-	byte versionBytes[6] = {0};
-	stream->readMultipleLE(*versionBytes);
-	HmpVersion version = determineVersion(versionBytes);
-	stream->skip(18);
+	HmpVersion version = determineVersion(signatureBytes);
+	bool isHmi = version == HmpVersion::VERSION_HMI;
+	if (isHmi) {
+		stream->skip(12);
+	} else {
+		stream->skip(18);
+		// TODO Figure out size of branching data
+		//uint32 branchOffset = stream->readUint32LE();
+		stream->skip(4);
+		stream->skip(12);
+	}
 
-	// TODO Figure out size of branching data
-	//uint32 branchOffset = stream->readUint32LE();
-	stream->skip(4);
-	stream->skip(12);
-
-	uint32 numTracks = stream->readUint32LE();
-	stream->skip(version == HmpVersion::VERSION_013195 ? 852 : 724);
+	uint32 numTracks = readWord(stream, version);
+	// Skip over the rest of the header
+	switch (version) {
+		case HmpVersion::VERSION_HMI:
+			stream->skip(362);
+			break;
+		case HmpVersion::VERSION_HMP_1:
+			stream->skip(724);
+			break;
+		case HmpVersion::VERSION_HMP_013195:
+			stream->skip(852);
+			break;
+	}
 
 	// Read tracks
 	for (uint currTrack = 0; currTrack < numTracks; currTrack++) {
-		stream->skip(4);
-		uint32 chunkSize = stream->readUint32LE();
-		stream->skip(chunkSize - 8);
+		stream->skip(isHmi ? 2 : 4);
+		uint32 chunkSize = readWord(stream, version);
+		stream->skip(chunkSize - (isHmi ? 4 : 8));
 	}
 
 	// stream should now be at the end of the HMP data
@@ -153,14 +167,40 @@ int32 MidiParser_HMP::determineDataSize(Common::SeekableReadStream *stream) {
 }
 
 MidiParser_HMP::HmpVersion MidiParser_HMP::determineVersion(const byte *pos) {
-	if (!memcmp(pos, HMP_HEADER_VERSION_1, 6)) {
-		return HmpVersion::VERSION_1;
-	} else if (!memcmp(pos, HMP_HEADER_VERSION_013195, 6)) {
-		return HmpVersion::VERSION_013195;
+	if (!memcmp(pos, HEADER_HMI, 8)) {
+		return HmpVersion::VERSION_HMI;
+	} else if (memcmp(pos, HEADER_HMP, 8)) {
+		warning("Unknown HMI/HMP signature '%c%c%c%c%c%c%c%c' - assuming HMP version 1", pos[0], pos[1], pos[2], pos[3], pos[4], pos[5], pos[6], pos[7]);
+		return HmpVersion::VERSION_HMP_1;
+	}
+	pos += 8;
+
+	if (!memcmp(pos, HEADER_HMP_VERSION_1, 6)) {
+		return HmpVersion::VERSION_HMP_1;
+	} else if (!memcmp(pos, HEADER_HMP_VERSION_013195, 6)) {
+		return HmpVersion::VERSION_HMP_013195;
 	} else {
 		warning("Unknown HMP version '%c%c%c%c%c%c' - assuming version 1", pos[0], pos[1], pos[2], pos[3], pos[4], pos[5]);
-		return HmpVersion::VERSION_1;
+		return HmpVersion::VERSION_HMP_1;
 	}
+}
+
+uint32 MidiParser_HMP::readWord(const byte*& data, MidiParser_HMP::HmpVersion version) {
+	uint32 result;
+	if (version == HmpVersion::VERSION_HMI) {
+		result = READ_LE_UINT16(data);
+		data += 2;
+	} else {
+		result = READ_LE_UINT32(data);
+		data += 4;
+	}
+	return result;
+}
+
+uint32 MidiParser_HMP::readWord(Common::SeekableReadStream *stream, MidiParser_HMP::HmpVersion version) {
+	if (version == HmpVersion::VERSION_HMI)
+		return stream->readUint16LE();
+	return stream->readUint32LE();
 }
 
 MidiParser *MidiParser::createParser_HMP(int8 source) { return new MidiParser_HMP(source); }
