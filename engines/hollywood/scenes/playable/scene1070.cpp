@@ -509,7 +509,7 @@ void Scene1070::handleMicrophonePickup() {
 		ARRAYSIZE(kScene1070MicrophoneFrameMap), kScene1070FrameMillis, 5, 7);
 	addInventoryItem(0x23);
 	_soundBank0.playSample(1, 100);
-	dispatchGenericSceneAction(22);
+	dispatchGenericSceneAction(21);
 }
 
 void Scene1070::handleMicStandPickup() {
@@ -522,7 +522,7 @@ void Scene1070::handleMicStandPickup() {
 		ARRAYSIZE(kScene1070MicrophoneStandFrameMap), kScene1070FrameMillis, 6, 6);
 	addInventoryItem(0x24);
 	_soundBank0.playSample(1, 100);
-	dispatchGenericSceneAction(22);
+	dispatchGenericSceneAction(21);
 }
 
 void Scene1070::handleBallChainPickup() {

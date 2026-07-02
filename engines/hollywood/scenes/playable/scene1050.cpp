@@ -599,7 +599,7 @@ void Scene1050::runDialogueEffectTen() {
 
 void Scene1050::runTravelUnlockEffect(byte travelSlotId) {
 	(void)travelSlotId;
-	dispatchGenericSceneAction(22);
+	beginStaticSecondarySpeechLine(0xdb, 0);
 	_soundBank0.playSampleLooping(0x32, 25);
 	runOverlaySequence(13, kScene1050TravelOverlayDescriptorCount, kScene1050TravelFrameMap,
 		ARRAYSIZE(kScene1050TravelFrameMap), kScene1050FrameMillis);
