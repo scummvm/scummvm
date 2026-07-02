@@ -55,6 +55,7 @@ extern const char *const kStandardActionEE;
 extern const char *const kStandardActionCut;
 extern const char *const kStandardActionCopy;
 extern const char *const kStandardActionPaste;
+extern const char *const kStandardActionToggleHotspots;
 
 } //namespace Common
 

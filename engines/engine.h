@@ -22,7 +22,9 @@
 #ifndef ENGINES_ENGINE_H
 #define ENGINES_ENGINE_H
 
+#include "common/array.h"
 #include "common/error.h"
+#include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/language.h"
@@ -51,6 +53,9 @@ class WriteStream;
 namespace GUI {
 class Debugger;
 class Dialog;
+}
+namespace Graphics {
+struct HotspotInfo;
 }
 
 /**
@@ -181,6 +186,25 @@ protected:
 	const Common::String _targetName;
 
 	int32 _activeEnhancements = kEnhGameBreakingBugFixes;
+
+	/**
+	 * Flag for whether hotspots should be displayed
+	 */
+	bool _showHotspots;
+
+	/**
+	 * Flag to force one redraw after hotspots are shown (e.g. after button press
+	 * re-enables the overlay), so engines that cache dirty state don't skip the
+	 * first render after the overlay was hidden.
+	 */
+	bool _hotspotForceRedraw;
+
+	/**
+	 * Mouse cursor visibility from before hotspots were shown. While hotspots
+	 * are displayed the cursor is hidden (otherwise it leaves trails over the
+	 * overlay), and this remembers the state to restore afterwards.
+	 */
+	bool _hotspotPrevCursorVisible;
 
 private:
 	/**
@@ -509,10 +533,47 @@ protected:
 	 */
 	virtual void pauseEngineIntern(bool pause);
 
+	/**
+	 * Get information about all hotspots that should be displayed.
+	 *
+	 * Engines should override this method to populate the hotspots array
+	 * with hotspot information in game screen coordinates.
+	 *
+	 * @param hotspots Array to be filled with hotspot information
+	 */
+	virtual void getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots);
+
+	/**
+	 * Draw hotspot markers on the screen using the overlay.
+	 *
+	 * Default implementation calls getHotspotPositions() and draws semi-transparent
+	 * circles, automatically converting from game coordinates to overlay coordinates.
+	 */
+	virtual void drawHotspots();
+
+	/**
+	 * Returns whether hotspot markers need to be re-rendered this frame.
+	 *
+	 * The default implementation always returns true. Engines may override
+	 * this to return false when hotspot positions have not changed (e.g. no
+	 * object state change, no screen pan), avoiding an unnecessary overlay
+	 * redraw.
+	 *
+	 * @return true if hotspots should be re-rendered, false to skip
+	 */
+	virtual bool hotspotDirty() const;
+
 	 /** @} */
 
 
 public:
+
+	/**
+	 * Set whether hotspots should be displayed.
+	 *
+	 * @param show true to show hotspots, false to hide them
+	 */
+	virtual void showHotspots(bool show);
 
 	/**
 	 * Request the engine to quit.

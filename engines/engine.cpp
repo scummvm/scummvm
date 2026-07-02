@@ -60,6 +60,8 @@
 #include "graphics/fontman.h"
 #include "graphics/paletteman.h"
 #include "graphics/pixelformat.h"
+#include "graphics/font.h"
+#include "graphics/hotspot_renderer.h"
 #include "image/bmp.h"
 
 #include "common/text-to-speech.h"
@@ -154,7 +156,10 @@ Engine::Engine(OSystem *syst)
 		_mainMenuDialog(NULL),
 		_debugger(NULL),
 		_autosaveInterval(ConfMan.getInt("autosave_period")),
-		_lastAutosaveTime(_system->getMillis()) {
+		_lastAutosaveTime(_system->getMillis()),
+		_showHotspots(false),
+		_hotspotForceRedraw(false),
+		_hotspotPrevCursorVisible(false) {
 
 	g_engine = this;
 	_quitRequested = false;
@@ -740,6 +745,73 @@ void Engine::resumeEngine() {
 void Engine::pauseEngineIntern(bool pause) {
 	// By default, just (un)pause all digital sounds
 	_mixer->pauseAll(pause);
+}
+
+void Engine::showHotspots(bool show) {
+	bool wasShowing = _showHotspots;
+	_showHotspots = show;
+
+	if (show) {
+		_hotspotForceRedraw = true;
+		if (!wasShowing)
+			_hotspotPrevCursorVisible = CursorMan.showMouse(false);
+	} else {
+		if (wasShowing)
+			CursorMan.showMouse(_hotspotPrevCursorVisible);
+		if (g_system->isOverlayVisible())
+			g_system->hideOverlay();
+	}
+}
+
+void Engine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) {
+}
+
+bool Engine::hotspotDirty() const {
+	return true;
+}
+
+void Engine::drawHotspots() {
+	if (!_showHotspots)
+		return;
+
+	if (!hotspotDirty() && !_hotspotForceRedraw)
+		return;
+	_hotspotForceRedraw = false;
+
+	Common::Array<Graphics::HotspotInfo> hotspots;
+	getHotspotPositions(hotspots);
+
+	if (hotspots.empty())
+		return;
+
+	int16 gameWidth = g_system->getWidth();
+	int16 gameHeight = g_system->getHeight();
+	int16 overlayWidth = g_system->getOverlayWidth();
+	int16 overlayHeight = g_system->getOverlayHeight();
+	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();
+
+	if (!g_system->isOverlayVisible())
+		g_system->showOverlay(false);
+
+	g_system->clearOverlay();
+
+	Graphics::Surface overlayBuffer;
+	overlayBuffer.create(overlayWidth, overlayHeight, overlayFormat);
+	g_system->grabOverlay(overlayBuffer);
+
+	bool showText = ConfMan.getBool("show_hotspot_text");
+	if (!ConfMan.hasKey("show_hotspot_text"))
+		showText = true;
+
+	int markerType = ConfMan.getInt("hotspot_marker");
+
+	Graphics::HotspotRenderer renderer;
+	renderer.render(&overlayBuffer, hotspots, gameWidth, gameHeight,
+		overlayWidth, overlayHeight, overlayFormat,
+		(Graphics::MarkerShape)markerType, showText);
+
+	g_system->copyRectToOverlay(overlayBuffer.getPixels(), overlayBuffer.pitch, 0, 0, overlayWidth, overlayHeight);
+	overlayBuffer.free();
 }
 
 void Engine::openMainMenuDialog() {
