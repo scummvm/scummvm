@@ -215,6 +215,11 @@ struct GameplayState {
 		seenScene4060EntryLine = false;
 		scene4060SherilynDialogueIntroSeen = false;
 		scene4060DialogueProgressCounter = 0;
+		scene4070DraculaStage = 0;
+		seenScene4070EntryLine = false;
+		scene4070TrophyBaseOpened = false;
+		scene4070FrankiePartIndex = 0;
+		scene4070SlimmingTreatmentApplied = false;
 		seenScene5010EntryLine = false;
 		scene5010MineTransportState = 0;
 		scene5010MineTransportReady = false;
@@ -813,6 +818,11 @@ struct GameplayState {
 	bool seenScene4060EntryLine;
 	bool scene4060SherilynDialogueIntroSeen;
 	byte scene4060DialogueProgressCounter;
+	byte scene4070DraculaStage;
+	bool seenScene4070EntryLine;
+	bool scene4070TrophyBaseOpened;
+	byte scene4070FrankiePartIndex;
+	bool scene4070SlimmingTreatmentApplied;
 	bool seenScene5010EntryLine;
 	byte scene5010MineTransportState;
 	bool scene5010MineTransportReady;
