@@ -293,16 +293,20 @@ void InsaneRebel2::resetLevelWaveState() {
 	_rebelWaveState = 0;
 }
 
-void InsaneRebel2::resetShieldGauge() {
+void InsaneRebel2::resetGaugeCounters() {
 	for (int i = 0; i < 10; ++i) {
 		_rebelValueCounters[i] = 0;
 		_rebelGaugeBlink[i] = 0;
 	}
+	_rebelLastCounter = -1;        // non-zero sentinel: gauge not yet depleted
+}
+
+void InsaneRebel2::resetShieldGauge() {
+	resetGaugeCounters();
 	for (int i = 0; i < 15; ++i) {
 		_turretShakeRingX[i] = 0;
 		_turretShakeRingY[i] = 0;
 	}
-	_rebelLastCounter = -1;        // non-zero sentinel: gauge not yet depleted
 	_rebelShieldDestroyed = false;
 	_rebelGaugeArmed = false;
 	_rebelLastArmedSlot = -1;
@@ -743,15 +747,17 @@ int InsaneRebel2::runLevel4() {
 		}
 
 		debugC(DEBUG_INSANE, "Level 4 death");
-		playLevelDeathVariant(4, 1, _deathFrame);
-		if (_vm->shouldQuit())
-			return kLevelQuit;
-
+		// The death video only plays on the retry path; the last life goes
+		// straight to the game-over cinematic.
 		_playerLives--;
 		if (_playerLives <= 0) {
 			playLevelGameOver(4);
 			return kLevelGameOver;
 		}
+
+		playLevelDeathVariant(4, 1, _deathFrame);
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		playLevelRetry(4);
 		if (_vm->shouldQuit())
@@ -949,7 +955,7 @@ int InsaneRebel2::runLevel7() {
 		// Right fork: continue into the alternate corridor segment (0x40 =
 		// continuation, so the ship position carries over instead of recentering).
 		if (_level7TookRightFork && _playerShield > 0) {
-			if (!playLevelSegment("LEV07/07PLAYB.SAN", 0x68))
+			if (!playLevelSegment("LEV07/07PLAYB.SAN", 0x468))
 				return kLevelQuit;
 		}
 
@@ -963,7 +969,7 @@ int InsaneRebel2::runLevel7() {
 		// Death cinematic depends on which corridor side the player died on
 		// (the original keys 07DIE_B/07DIE_A on DAT_0047ab8c), independent of
 		// the fork frame; taking the right fork implies the right side.
-		const bool diedOnRight = _level7TookRightFork || (_flyShipScreenX > 0xd4);
+		const bool diedOnRight = _level7TookRightFork || (_flyShipScreenX + _smoothedVelocity > 0xd4);
 		debugC(DEBUG_INSANE, "Level 7 death at frame %d, right=%d", _deathFrame, diedOnRight);
 		if (diedOnRight) {
 			playCinematic("LEV07/07DIE_B.SAN");

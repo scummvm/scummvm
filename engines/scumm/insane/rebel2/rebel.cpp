@@ -560,6 +560,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 	_currentPhase = 1;
 	_deathFrame = 0;
+	_rebelDeathCause = 0;
 	_skipSectionRequested = false;
 
 	_vm->_system->getEventManager()->getEventDispatcher()->registerObserver(this, 1, false);

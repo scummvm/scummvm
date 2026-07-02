@@ -363,6 +363,7 @@ public:
 
 	int _currentPhase;
 	int _deathFrame;
+	int _rebelDeathCause;   // 0 = enemy shot, 1 = direct hit, 2 = collision; picks the death video
 	bool _skipSectionRequested;
 
 	// Resources and fonts.
@@ -641,6 +642,7 @@ public:
 	void renderHandler7WarningCues(byte *renderBitmap, int pitch, int width, int height, int32 curFrame, uint16 warningMask);
 	void updateLevel7Fork(int32 curFrame);
 	void updateLevel15TypeSwitch(int32 curFrame);
+	void updateLevel9WaveReset(int32 curFrame);
 
 	int16 _playerDamage;
 	int16 _playerShield;
@@ -707,6 +709,7 @@ public:
 	bool _rebelReactorMode;
 	bool _rebelGaugeArmed;
 	int _rebelLastArmedSlot;
+	void resetGaugeCounters();
 	void resetShieldGauge();
 	void decrementGaugeGroup(int slot, int targetId);
 

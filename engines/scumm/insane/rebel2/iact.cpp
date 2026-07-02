@@ -396,6 +396,7 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 				}
 
 				if (shouldDamage) {
+					_rebelDeathCause = 1;
 					if (applyPlayerDamage(directHitDamage)) {
 						debugC(DEBUG_INSANE, "DIRECT HIT damage from enemy %d. par3=%d par4=%d damage=%d total=%d",
 							srcId, par3, par4, directHitDamage, _playerDamage);
@@ -419,6 +420,7 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 			debugC(DEBUG_INSANE, "Opcode3: probability=%d roll=%d (need roll < prob)", probability, roll);
 
 			if (roll < probability) {
+				_rebelDeathCause = 0;
 				int damageAmount = (params.shotDamage >= 0) ? params.shotDamage : 0;
 				if (applyPlayerDamage(damageAmount)) {
 					debugC(DEBUG_INSANE, "PROBABILISTIC damage from enemy %d. Damage=%d total=%d",

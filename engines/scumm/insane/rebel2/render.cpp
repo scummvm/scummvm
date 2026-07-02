@@ -1580,6 +1580,7 @@ void InsaneRebel2::checkCollisionZones(byte *renderBitmap, int pitch, int width,
 			}
 
 			if (collision) {
+				_rebelDeathCause = 2;
 				int collisionDamage = (dparams.dodgeDamage >= 0) ? dparams.dodgeDamage : 0;
 
 				if (applyPlayerDamage(collisionDamage)) {
@@ -2159,7 +2160,7 @@ void InsaneRebel2::updateLevel7Fork(int32 curFrame) {
 		return;
 
 	_level7ForkActive = false;
-	if (_flyShipScreenX > 0xd4) {
+	if (_flyShipScreenX + _smoothedVelocity > 0xd4) {
 		_level7TookRightFork = true;
 		_vm->_smushVideoShouldFinish = true;
 	}
@@ -2170,6 +2171,12 @@ void InsaneRebel2::updateLevel15TypeSwitch(int32 curFrame) {
 	// Tracked as a flag because the turret opcode-6 rewrites _rebelLevelType every frame.
 	if (_selectedLevel == 15 && curFrame >= 0x21e)
 		_level15SecondHalf = true;
+}
+
+void InsaneRebel2::updateLevel9WaveReset(int32 curFrame) {
+	// 09PLAY re-arms its gauge groups per wave; the counters clear between waves.
+	if (_selectedLevel == 9 && (curFrame == 0x19f || curFrame == 0x352))
+		resetGaugeCounters();
 }
 
 void InsaneRebel2::renderPostRenderMenuCursor(byte *renderBitmap, int pitch, int width, int height) {
@@ -2461,6 +2468,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	updatePostRenderDeath();
 	updateLevel7Fork(curFrame);
 	updateLevel15TypeSwitch(curFrame);
+	updateLevel9WaveReset(curFrame);
 
 	// End the looping attack-run segment once the shield/reactor is destroyed.
 	if (_rebelShieldGateActive) {

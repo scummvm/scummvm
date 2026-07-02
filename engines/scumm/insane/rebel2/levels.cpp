@@ -693,7 +693,10 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 		return (getRandomVariant(2) == 0) ? "B" : "A";
 
 	case 9:
-		return "A";
+		// Picked by what killed the player: shot -> A, direct hit -> C, collision -> B.
+		if (_rebelDeathCause == 0)
+			return "A";
+		return (_rebelDeathCause == 1) ? "C" : "B";
 
 	case 10:
 		return "";
