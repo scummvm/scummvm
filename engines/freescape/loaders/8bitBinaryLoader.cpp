@@ -747,6 +747,10 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 			name = name + char(readField(file, 8));
 			i++;
 		}
+
+		// The 16-bit renderer keeps the hardware background black; the sky nibble is 8-bit legacy data.
+		if (isDark() && (isAmiga() || isAtariST()))
+			skyColor = 0;
 	} else if (isCastle()) {
 		byte idx = readField(file, 8);
 		if (isAmiga() || isAtariST())
