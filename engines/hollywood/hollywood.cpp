@@ -269,7 +269,8 @@ HollywoodEngine::HollywoodEngine(OSystem *syst, const ADGameDescription *gameDes
 		_gameState(),
 		_lastGameplayThumbnail(),
 		_lastGameplayThumbnailValid(false),
-		_sceneRestartRequested(false) {
+		_sceneRestartRequested(false),
+		_canSave(false) {
 }
 
 HollywoodEngine::~HollywoodEngine() {
