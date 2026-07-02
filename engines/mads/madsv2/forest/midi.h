@@ -22,7 +22,8 @@
 #ifndef MADS_FOREST_MIDI_H
 #define MADS_FOREST_MIDI_H
 
-#include "audio/midiplayer.h"
+#include "audio/mididrv_ms.h"
+#include "audio/midiparser.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -30,21 +31,39 @@ namespace Forest {
 
 extern bool midi_playing;
 
-class MidiPlayer : public Audio::MidiPlayer {
-private:
-	// MidiDriver_BASE interface implementation
-	void send(uint32 b) override;
-
+class MidiPlayer {
 public:
-	MidiPlayer() : Audio::MidiPlayer() {}
-	~MidiPlayer() override {}
+	MidiPlayer();
+	~MidiPlayer();
 
-	void play(const char *name);
+	int open();
+	void load(Common::SeekableReadStream *in, int64 size = -1);
+	void play();
+	void pause(bool pause);
+	void stop();
+
+	void setLoop(bool loop);
+	bool isPlaying();
+
+	void syncSoundSettings();
+
+private:
+	Common::Mutex _mutex;
+	MidiDriver_Multisource *_driver;
+	MusicType _deviceType;
+
+	MidiParser *_parser;
+	byte *_data;
+
+	bool _paused;
+
+protected:
+	static void onTimer(void *data);
 };
 
 extern void midi_play(const char *name);
 extern void midi_stop();
-inline void midi_loop() {}
+extern void midi_loop();
 
 } // namespace Forest
 } // namespace MADSV2

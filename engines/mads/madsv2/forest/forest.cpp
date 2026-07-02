@@ -85,10 +85,24 @@ Common::Error ForestEngine::run() {
 			SearchMan.add("mpslabs", arch);
 	}
 
+	_midiPlayer.open();
+
 	// Run the game
 	Forest::forest_main();
 
 	return Common::kNoError;
+}
+
+void ForestEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	_midiPlayer.syncSoundSettings();
+}
+
+void ForestEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+
+	_midiPlayer.pause(pause);
 }
 
 void ForestEngine::global_init_code() {
