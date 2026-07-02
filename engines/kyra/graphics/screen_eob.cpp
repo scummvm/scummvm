@@ -86,7 +86,7 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_gfxX = _gfxY = 0;
 	_gfxCol = 0;
 	_dsTempPage = 0;
-	_shpBuffer = _convertHiColorBuffer = 0;
+	_shpBuffer = _hiColorConvertBuffer = 0;
 	_dsDiv = 0;
 	_dsRem = 0;
 	_dsScaleTrans = 0;
@@ -113,7 +113,7 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 Screen_EoB::~Screen_EoB() {
 	delete[] _dsTempPage;
 	delete[] _shpBuffer;
-	delete[] _convertHiColorBuffer;
+	delete[] _hiColorConvertBuffer;
 	delete[] _cgaScaleTable;
 	delete[] _egaDitheringTable;
 	delete[] _egaDitheringTempPage;
@@ -135,7 +135,7 @@ bool Screen_EoB::init() {
 
 		if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 			_shpBuffer = new uint8[SCREEN_H * SCREEN_W];
-			_convertHiColorBuffer = new uint8[SCREEN_H * SCREEN_W];
+			_hiColorConvertBuffer = new uint8[SCREEN_H * SCREEN_W];
 			enableHiColorMode(true);
 			setFontStyles(FID_SJIS_FNT, Font::kStyleFat);
 			_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(_sjisFontShared);
@@ -172,7 +172,7 @@ bool Screen_EoB::init() {
 			sega_setTextBuffer(0, 0);
 		}
 
-		_useShapeShading = (_bytesPerPixel != 2 && !_isAmiga && !_isSegaCD && !_use16ColorMode && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering;
+		_useShapeShading = (_internalBytesPerPixel != 2 && !_isAmiga && !_isSegaCD && !_use16ColorMode && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering;
 
 		static const char *cpsExt[] = { "CPS", "EGA", "SHP", "BIN" };
 		int ci = 0;
@@ -229,14 +229,14 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 
 	int mouseW = (shape[2] << 3);
 	int mouseH = (shape[3]);
-	int colorKey = (_renderMode == Common::kRenderCGA) ? 0 : (_bytesPerPixel == 2 ? _cursorColorKey16Bit : _cursorColorKey);
+	int colorKey = (_renderMode == Common::kRenderCGA) ? 0 : (_internalBytesPerPixel == 2 ? _cursorColorKey16Bit : _cursorColorKey);
 
 	int scaleFactor = _vm->gameFlags().useHiRes ? 2 : 1;
 	int bpp = _useHiColorScreen ? 2 : 1;
 
 	uint8 *cursor = new uint8[mouseW * scaleFactor * bpp * mouseH * scaleFactor];
 
-	if (_bytesPerPixel == 2) {
+	if (_internalBytesPerPixel == 2) {
 		for (int s = mouseW * scaleFactor * bpp * mouseH * scaleFactor; s; s -= 2)
 			*(uint16*)(cursor + s - 2) = colorKey;
 	} else {
@@ -289,7 +289,7 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 
 	// Convert color key to 16 bit after drawing the mouse cursor.
 	// The cursor has been converted to 16 bit in scale2x().
-	colorKey = _16bitConversionPalette ? _16bitConversionPalette[colorKey] : colorKey;
+	colorKey = _hiColorConversionPalette ? _hiColorConversionPalette[colorKey] : colorKey;
 	Graphics::PixelFormat pixelFormat = _system->getScreenFormat();
 
 	CursorMan.replaceCursor(cursor, mouseW * scaleFactor, mouseH * scaleFactor, x * scaleFactor, y * scaleFactor, colorKey, &pixelFormat);
@@ -505,7 +505,7 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 	if (convertToPage == -1)
 		return;
 
-	if (_16bitPalette)
+	if (_hiColorNativePalettes)
 		convertToHiColor(destPage);
 
 	if (convertToPage == 2 && _renderMode == Common::kRenderCGA) {
@@ -551,9 +551,17 @@ void Screen_EoB::convertPage(int srcPage, int dstPage, const uint8 *cgaMapping) 
 }
 
 void Screen_EoB::setScreenPalette(const Palette &pal) {
-	if (_bytesPerPixel == 2) {
+	if (_internalBytesPerPixel == 2) {
+		assert(_hiColorNativePalettes);
 		for (int i = 0; i < 4; i++)
-			createFadeTable16bit((const uint16*)(pal.getData()), &_16bitPalette[i * 256], 0, i * 85);
+			createHiColorFadeTable((const uint16 *)(pal.getData()), &_hiColorNativePalettes[i << 8], 0, i * 85);
+	} else if (_outputPixelFormat.bytesPerPixel > 1) {
+		assert(_hiColorConversionPalette);
+		_screenPalette->copy(pal);
+		for (int i = 0; i < pal.getNumColors(); ++i)
+			_hiColorConversionPalette[i] = _outputPixelFormat.RGBToColor(pal[i * 3] * 0xFF / 0x3F, pal[i * 3 + 1] * 0xFF / 0x3F, pal[i * 3 + 2] * 0xFF / 0x3F);
+		// The whole Surface has to be converted again after each palette change
+		_forceFullUpdate = true;
 	} else if (_useHiResEGADithering && pal.getNumColors() != 16) {
 		generateEGADitheringTable(pal);
 	} else if (_isSegaCD || (_renderMode == Common::kRenderEGA && pal.getNumColors() == 16)) {
@@ -590,7 +598,7 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 	if (_use16ColorMode || (_renderMode == Common::kRenderEGA && !_useHiResEGADithering))
 		encode8bit = false;
 
-	if (_bytesPerPixel == 2 && encode8bit) {
+	if (_internalBytesPerPixel == 2 && encode8bit) {
 		shapesize = h * (w << 3) + 4;
 		shp = new uint8[shapesize]();
 		uint8 *dst = shp;
@@ -812,18 +820,18 @@ void Screen_EoB::drawT1Shape(uint8 pageNum, const byte *t1data, int x, int y, in
 		addDirtyRect(rX, rY, rW, rH);
 
 	int dH = rH;
-	uint8 *dstL = getPagePtr(pageNum) + rY * _bytesPerPixel * SCREEN_W;
+	uint8 *dstL = getPagePtr(pageNum) + rY * _internalBytesPerPixel * SCREEN_W;
 	src += dY * width;
 
 	while (dH--) {
 		const uint8 *src2 = src + dX;
-		uint8 *dst = dstL + rX * _bytesPerPixel;
+		uint8 *dst = dstL + rX * _internalBytesPerPixel;
 
-		for (int i = 0; i < rW; i++, src2++, dst += _bytesPerPixel)
+		for (int i = 0; i < rW; i++, src2++, dst += _internalBytesPerPixel)
 			if (*src2)
 				drawShapeSetPixel(dst, *src2);
 
-		dstL += SCREEN_W * _bytesPerPixel;
+		dstL += SCREEN_W * _internalBytesPerPixel;
 		src += width;
 	}
 }
@@ -852,7 +860,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 	}
 	va_end(args);
 
-	dst += (_dsX1 << (2 + _bytesPerPixel));
+	dst += (_dsX1 << (2 + _internalBytesPerPixel));
 	int16 dX = x - (_dsX1 << 3);
 	int16 dY = y;
 	int16 dW = _dsX2 - _dsX1;
@@ -924,7 +932,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 			marginRight = w2 - marginLeft - width;
 		}
 
-		dst += (dY * SCREEN_W * _bytesPerPixel + dX * _bytesPerPixel);
+		dst += (dY * SCREEN_W * _internalBytesPerPixel + dX * _internalBytesPerPixel);
 		uint8 *dstL = dst;
 
 		if (pageNum == 0 || pageNum == 1)
@@ -972,7 +980,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 				}
 			}
 
-			dst -= xpos * _bytesPerPixel;
+			dst -= xpos * _internalBytesPerPixel;
 			xpos += width;
 
 			while (xpos > 0) {
@@ -982,15 +990,15 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 
 				if (m) {
 					drawShapeSetPixel(dst, c);
-					dst += _bytesPerPixel;
+					dst += _internalBytesPerPixel;
 					xpos--;
 				} else if (pixelsPerByte) {
 					uint8 len = (flags & 1) ? src[1] : src[0];
-					dst += len * _bytesPerPixel;
+					dst += len * _internalBytesPerPixel;
 					xpos -= len;
 					src += pixelStep;
 				} else {
-					dst += _bytesPerPixel;
+					dst += _internalBytesPerPixel;
 					xpos--;
 				}
 			}
@@ -1020,7 +1028,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 				} while (xpos > 0);
 			}
 
-			dstL += SCREEN_W * _bytesPerPixel;
+			dstL += SCREEN_W * _internalBytesPerPixel;
 			dst = dstL;
 			if (flags & 1)
 				src = src2 + 1;
@@ -1088,7 +1096,7 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 		if (d < width)
 			width = d;
 
-		dst += (dY * SCREEN_W * _bytesPerPixel + dX * _bytesPerPixel);
+		dst += (dY * SCREEN_W * _internalBytesPerPixel + dX * _internalBytesPerPixel);
 
 		if (pageNum == 0 || pageNum == 1)
 			addDirtyRect(rX, rY, rW, rH);
@@ -1137,11 +1145,11 @@ void Screen_EoB::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 				uint8 col = (pixelsPerByte == 2) ? pal[(in >> shift) & pixelPackingMask] : (*dst & ((trans >> shift) & (pixelPackingMask))) | pal[(in >> shift) & pixelPackingMask];
 				if (col || pixelsPerByte == 4)
 					drawShapeSetPixel(dst, col);
-				dst += _bytesPerPixel;
+				dst += _internalBytesPerPixel;
 				shift = ((shift - (pixelStep * pixelPacking)) & 7);
 			}
 			src += lineSrcStep;
-			dst += (pitch * _bytesPerPixel);
+			dst += (pitch * _internalBytesPerPixel);
 		}
 	}
 }
@@ -1220,7 +1228,7 @@ const uint8 *Screen_EoB::generateShapeOverlay(const uint8 *shp, const uint8 *fad
 	if (*shp != 2)
 		return 0;
 
-	if (_bytesPerPixel == 2) {
+	if (_internalBytesPerPixel == 2) {
 		setFadeTable(fadingTable);
 		setShapeFadingLevel(1);
 		return 0;
@@ -1307,7 +1315,7 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 				if (py > ymax)
 					py = ymax;
 				if (posWithinRect(px, py, rX1, rY1, rX2, rY2)) {
-					if (_bytesPerPixel == 2)
+					if (_internalBytesPerPixel == 2)
 						setPagePixel16bit(0, px, py, ptr6[i]);
 					else
 						setPagePixel(0, px, py, ptr6[i]);
@@ -1464,7 +1472,7 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 			for (int ii = numElements - 1; ii >= 0; ii--) {
 				int16 px = CLIP((xCoords[ii] >> 6) + cx, 0, SCREEN_W - 1);
 				int16 py = CLIP((yCoords[ii] >> 6) + cy, 0, SCREEN_H - 1);
-				if (_bytesPerPixel == 2)
+				if (_internalBytesPerPixel == 2)
 					setPagePixel16bit(0, px, py, pixBackup[ii]);
 				else
 					setPagePixel(0, px, py, pixBackup[ii]);
@@ -1609,11 +1617,11 @@ int Screen_EoB::getRectSize(int w, int h) {
 
 void Screen_EoB::setFadeTable(const uint8 *table) {
 	_dsShapeFadingTable = table;
-	if (_bytesPerPixel == 2)
-		memcpy(&_16bitPalette[0x100], table, 512);
+	if (_internalBytesPerPixel == 2)
+		memcpy(&_hiColorNativePalettes[0x100], table, 512);
 }
 
-void Screen_EoB::createFadeTable(const uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight) {
+void Screen_EoB::createColorFadeTable(const uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight) {
 	if (!palData)
 		return;
 
@@ -1627,7 +1635,7 @@ void Screen_EoB::createFadeTable(const uint8 *palData, uint8 *dst, uint8 rootCol
 	*dst++ = 0;
 	weight >>= 1;
 
-	for (uint8 i = 1; i; i++) {
+	for (int i = 1; i < 256; ++i) {
 		uint16 tmp = (uint16)((*src - r) * weight) << 1;
 		tr = *src++ - ((tmp >> 8) & 0xFF);
 		tmp = (uint16)((*src - g) * weight) << 1;
@@ -1639,7 +1647,7 @@ void Screen_EoB::createFadeTable(const uint8 *palData, uint8 *dst, uint8 rootCol
 		uint16 v = 0xFFFF;
 		uint8 col = rootColor;
 
-		for (uint8 ii = 1; ii; ii++) {
+		for (int ii = 1; ii < 256; ++ii) {
 			int a = *d++ - tr;
 			int t = a * a;
 			a = *d++ - tg;
@@ -1656,26 +1664,24 @@ void Screen_EoB::createFadeTable(const uint8 *palData, uint8 *dst, uint8 rootCol
 	}
 }
 
-void Screen_EoB::createFadeTable16bit(const uint16 *palData, uint16 *dst, uint16 rootColor, uint8 weight) {
-	rootColor = palData[rootColor];
-	uint8 r8 = (rootColor & 0x1f);
-	uint8 g8 = (rootColor & 0x3E0) >> 5;
-	uint8 b8 = (rootColor & 0x7C00) >> 10;
+void Screen_EoB::createHiColorFadeTable(const uint16 *palData, uint16 *dst, uint8 rootColor, uint8 weight) {
+	const Graphics::PixelFormat originalFormat(2, 5, 5, 5, 0, 5, 10, 0, 0);
+	uint8 r = 0, b = 0, g = 0;
+	originalFormat.colorToRGB(palData[rootColor], r, g, b);
 
-	int root_r = r8 << 4;
-	int root_g = g8 << 4;
-	int root_b = b8 << 4;
+	int root_r = r << 1;
+	int root_g = g << 1;
+	int root_b = b << 1;
 
-	*dst++ = palData[0];
+	originalFormat.colorToRGB(palData[0], r, g, b);
+	*dst++ = _outputPixelFormat.RGBToColor(r, g, b);
 
-	for (uint8 i = 1; i; i++) {
-		r8 = (palData[i] & 0x1f);
-		g8 = (palData[i] & 0x3E0) >> 5;
-		b8 = (palData[i] & 0x7C00) >> 10;
+	for (int i = 1; i < 256; ++i) {
+		originalFormat.colorToRGB(palData[i], r, g, b);
 
-		int red = r8 << 4;
-		int green = g8 << 4;
-		int blue = b8 << 4;
+		int red = r << 1;
+		int green = g << 1;
+		int blue = b << 1;
 
 		if (red > root_r) {
 			red -= weight;
@@ -1707,11 +1713,11 @@ void Screen_EoB::createFadeTable16bit(const uint16 *palData, uint16 *dst, uint16
 				blue = root_b;
 		}
 
-		r8 = red >> 4;
-		g8 = green >> 4;
-		b8 = blue >> 4;
+		r = red >> 1;
+		g = green >> 1;
+		b = blue >> 1;
 
-		*dst++ = (b8 << 10) | (g8 << 5) | r8;
+		*dst++ = _outputPixelFormat.RGBToColor(r, g, b);
 	}
 }
 
@@ -1824,8 +1830,8 @@ void Screen_EoB::ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW
 }
 
 void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 col) {
-	if (_bytesPerPixel == 2) {
-		*(uint16*)dst = _16bitPalette[(_dsShapeFadingLevel << 8) + col];
+	if (_internalBytesPerPixel == 2) {
+		*(uint16*)dst = _hiColorNativePalettes[(_dsShapeFadingLevel << 8) + col];
 		return;
 	} else if (_useShapeShading) {
 		if (_dsBackgroundFading) {
@@ -1904,7 +1910,7 @@ bool Screen_EoB::posWithinRect(int posX, int posY, int x1, int y1, int x2, int y
 void Screen_EoB::setPagePixel16bit(int pageNum, int x, int y, uint16 color) {
 	assert(pageNum < SCREEN_PAGE_NUM);
 	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
-	assert(_bytesPerPixel == 2);
+	assert(_internalBytesPerPixel == 2);
 
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, 1, 1);

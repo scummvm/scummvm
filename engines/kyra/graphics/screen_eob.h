@@ -102,8 +102,8 @@ public:
 	int getRectSize(int w, int h) override;
 
 	void setFadeTable(const uint8 *table);
-	void createFadeTable(const uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
-	void createFadeTable16bit(const uint16 *palData, uint16 *dst, uint16 rootColor, uint8 weight);
+	void createColorFadeTable(const uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
+	void createHiColorFadeTable(const uint16 *palData, uint16 *dst, uint8 rootColor, uint8 weight);
 
 	const uint16 *getCGADitheringTable(int index);
 	const uint8 *getEGADitheringTable();
@@ -189,7 +189,7 @@ private:
 
 	uint8 *_dsTempPage;
 	uint8 *_shpBuffer;
-	uint8 *_convertHiColorBuffer;
+	uint8 *_hiColorConvertBuffer;
 
 	uint16 *_cgaDitheringTables[2];
 	const uint8 *_cgaMappingDefault;

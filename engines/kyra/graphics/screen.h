@@ -31,6 +31,7 @@
 #include "common/stream.h"
 #include "common/ptr.h"
 #include "common/error.h"
+#include "graphics/pixelformat.h"
 
 class OSystem;
 
@@ -813,8 +814,8 @@ public:
 	// can well afford the 20 lines of extra code.
 	void crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
 
-	uint16 *get16bitPalette() { return _16bitPalette; }
-	void set16bitShadingLevel(int lvl) { _16bitShadingLevel = lvl; }
+	uint16 *get16bitPalette() { return _hiColorNativePalettes; }
+	void set16bitShadingLevel(int lvl) { _hiColorShadingLevel = lvl; }
 
 protected:
 	void resetPagePtrsAndBuffers(int pageSize);
@@ -872,12 +873,13 @@ protected:
 	bool _useShapeShading;
 	bool _4bitPixelPacking;
 	bool _useHiResEGADithering;
+	Graphics::PixelFormat _outputPixelFormat;
 	bool _useHiColorScreen;
 	bool _isAmiga;
 	bool _useAmigaExtraColors;
 	bool _isSegaCD;
 	Common::RenderMode _renderMode;
-	int _bytesPerPixel;
+	int _internalBytesPerPixel;
 	int _screenPageSize;
 	const int _screenHeight;
 	int _yTransOffs;
@@ -886,11 +888,11 @@ protected:
 	Common::Array<Palette *> _palettes;
 	Palette *_internFadePalette;
 
-	uint16 shade16bitColor(uint16 col);
+	uint16 shadeRGBColor(uint16 col);
 
-	uint16 *_16bitPalette;
-	uint16 *_16bitConversionPalette;
-	uint8 _16bitShadingLevel;
+	uint16 *_hiColorNativePalettes;
+	uint16 *_hiColorConversionPalette;
+	uint8 _hiColorShadingLevel;
 
 	uint8 *_animBlockPtr;
 	int _animBlockSize;

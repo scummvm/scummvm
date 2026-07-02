@@ -62,37 +62,37 @@ void Screen_EoB::decodeSHP(const uint8 *data, int dstPage) {
 }
 
 void Screen_EoB::convertToHiColor(int page) {
-	if (!_16bitPalette)
+	if (!_hiColorNativePalettes)
 		return;
 	uint16 *dst = (uint16 *)getPagePtr(page);
-	memcpy(_convertHiColorBuffer, dst, SCREEN_H * SCREEN_W);
-	uint8 *src = _convertHiColorBuffer;
+	memcpy(_hiColorConvertBuffer, dst, SCREEN_H * SCREEN_W);
+	const uint8 *src = _hiColorConvertBuffer;
 	for (int s = SCREEN_H * SCREEN_W; s; --s)
-		*dst++ = _16bitPalette[*src++];
+		*dst++ = _hiColorNativePalettes[*src++];
 }
 
 void Screen_EoB::shadeRect(int x1, int y1, int x2, int y2, int shadingLevel) {
-	if (!_16bitPalette)
+	if (!_hiColorNativePalettes)
 		return;
 
-	int l = _16bitShadingLevel;
-	_16bitShadingLevel = shadingLevel;
+	int l = _hiColorShadingLevel;
+	_hiColorShadingLevel = shadingLevel;
 
 	if (_curPage == 0 || _curPage == 1)
 		addDirtyRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 
-	uint16 *dst = (uint16*)(getPagePtr(_curPage) + y1 * SCREEN_W * _bytesPerPixel + x1 * _bytesPerPixel);
+	uint16 *dst = (uint16*)(getPagePtr(_curPage) + y1 * SCREEN_W * _internalBytesPerPixel + x1 * _internalBytesPerPixel);
 
 	for (; y1 < y2; ++y1) {
 		uint16 *ptr = dst;
 		for (int i = 0; i < x2 - x1; i++) {
-			*ptr = shade16bitColor(*ptr);
+			*ptr = shadeRGBColor(*ptr);
 			ptr++;
 		}
 		dst += SCREEN_W;
 	}
 
-	_16bitShadingLevel = l;
+	_hiColorShadingLevel = l;
 }
 
 SJISFontLarge::SJISFontLarge(Common::SharedPtr<Graphics::FontSJIS> &font) : SJISFont(font, 0, false, false, 0) {

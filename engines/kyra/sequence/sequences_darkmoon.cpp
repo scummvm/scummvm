@@ -1844,7 +1844,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 		if (_vm->_flags.platform != Common::kPlatformAmiga && _vm->_configRenderMode != Common::kRenderCGA && _vm->_configRenderMode != Common::kRenderEGA) {
 			uint8 *pal = _vm->resource()->fileData("PALETTE1.PAL", 0);
 			for (int i = 0; i < 7; i++)
-				_screen->createFadeTable(pal, _fadingTables[i], 18, (i + 1) * 36);
+				_screen->createColorFadeTable(pal, _fadingTables[i], 18, (i + 1) * 36);
 			delete[] pal;
 		}
 	}

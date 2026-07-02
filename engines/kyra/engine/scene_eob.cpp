@@ -206,11 +206,11 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 
 		if (_flags.platform == Common::kPlatformFMTowns) {
 			uint16 *src = (uint16*)_screen->getPalette(0).getData();
-			_screen->createFadeTable16bit(src, (uint16*)_greenFadingTable, 4, 75);
-			_screen->createFadeTable16bit(src, (uint16*)_blackFadingTable, 12, 200);
-			_screen->createFadeTable16bit(src, (uint16*)_blueFadingTable, 10, 85);
-			_screen->createFadeTable16bit(src, (uint16*)_lightBlueFadingTable, 11, 125);
-			_screen->createFadeTable16bit(src, (uint16*)_greyFadingTable, 0, 85);
+			_screen->createHiColorFadeTable(src, (uint16*)_greenFadingTable, 4, 75);
+			_screen->createHiColorFadeTable(src, (uint16*)_blackFadingTable, 12, 200);
+			_screen->createHiColorFadeTable(src, (uint16*)_blueFadingTable, 10, 85);
+			_screen->createHiColorFadeTable(src, (uint16*)_lightBlueFadingTable, 11, 125);
+			_screen->createHiColorFadeTable(src, (uint16*)_greyFadingTable, 0, 85);
 			_screen->setScreenPalette(_screen->getPalette(0));
 		} else if (_configRenderMode != Common::kRenderCGA && _flags.platform != Common::kPlatformAmiga && _flags.platform != Common::kPlatformSegaCD && !(_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformPC98)) {
 			Palette backupPal(256);
@@ -218,13 +218,13 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 			_screen->getPalette(0).fill(224, 32, 0x3F);
 			uint8 *src = _screen->getPalette(0).getData();
 
-			_screen->createFadeTable(src, _greenFadingTable, 4, 75);
-			_screen->createFadeTable(src, _blackFadingTable, 12, 200);
-			_screen->createFadeTable(src, _blueFadingTable, 10, 85);
-			_screen->createFadeTable(src, _lightBlueFadingTable, 11, 125);
+			_screen->createColorFadeTable(src, _greenFadingTable, 4, 75);
+			_screen->createColorFadeTable(src, _blackFadingTable, 12, 200);
+			_screen->createColorFadeTable(src, _blueFadingTable, 10, 85);
+			_screen->createColorFadeTable(src, _lightBlueFadingTable, 11, 125);
 
 			_screen->getPalette(0).copy(backupPal, 224, 32, 224);
-			_screen->createFadeTable(src, _greyFadingTable, 12, 85);
+			_screen->createColorFadeTable(src, _greyFadingTable, 12, 85);
 			_screen->setFadeTable(_greyFadingTable);
 			if (_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA)
 				_screen->setScreenPalette(_screen->getPalette(0));
@@ -634,8 +634,8 @@ void EoBCoreEngine::drawSceneShapes(int start, int end, int drawFlags) {
 		if (_shpDmX2 <= _shpDmX1)
 			continue;
 
-		if (drawFlags & 0x01)
-			drawDecorations(t);
+		//if (drawFlags & 0x01)
+			//drawDecorations(t);
 
 		if ((drawFlags & 0x02) && _visibleBlocks[t]->drawObjects)
 			drawBlockItems(t);
