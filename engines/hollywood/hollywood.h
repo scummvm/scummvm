@@ -81,6 +81,8 @@ public:
 	bool copyLastGameplayThumbnail(Graphics::Surface &thumbnail) const;
 	bool isSceneRestartRequested() const { return _sceneRestartRequested; }
 	void clearSceneRestartRequest() { _sceneRestartRequested = false; }
+	bool canSave() const { return _canSave; }
+	void setCanSave(bool canSave) { _canSave = canSave; }
 
 	enum {
 		kScreenWidth = 640,
@@ -105,6 +107,7 @@ private:
 	Graphics::Surface _lastGameplayThumbnail;
 	bool _lastGameplayThumbnailValid;
 	bool _sceneRestartRequested;
+	bool _canSave;
 };
 
 } // End of namespace Hollywood
