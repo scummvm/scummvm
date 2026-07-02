@@ -35,6 +35,17 @@ public:
 	Scene8010(HollywoodEngine *vm);
 
 private:
+	struct FishermanQuizEntry {
+		byte promptStage;
+		byte promptRow;
+		byte promptSuffixStage;
+		byte promptSuffixRow;
+		byte menuStage;
+		byte menuRow;
+		byte menuSuffixStage;
+		byte menuSuffixRow;
+	};
+
 	bool hasCustomPreviewState() const override;
 	void initializeCustomPreviewState() override;
 	bool hasCustomComposite() const override;
@@ -66,8 +77,14 @@ private:
 	void runTravelScreenAction();
 	void applyFishermanNameTextPatch();
 	void setActiveActorPose(int x, int y, byte facing);
-	void initializeFishermanQuizChoices(byte targetLineIndex);
+	void initializeFishermanQuizData(byte targetLineIndex);
 	Common::String composeFishermanQuizChoice(byte firstStage, byte firstRow, byte secondStage, byte secondRow) const;
+	Common::String composeFishermanGeneratedPromptLine(byte promptLineIndex) const;
+	uint16 fishermanQuizFragmentVoiceSampleId(const FishermanQuizEntry &entry, byte fragmentIndex) const;
+	bool waitFishermanQuizFragmentVoices(const FishermanQuizEntry &entry, uint32 fallbackMillis);
+	bool runFishermanGeneratedPrimarySpeechLine(byte promptLineIndex);
+	void runFishermanGeneratedPromptSpeech();
+	void runFishermanSelectedAnswerSpeech(byte selectedLine);
 	byte chooseFishermanQuizLine();
 	void updateFishermanQuizMenuHover(DialogueMenuState &state);
 	byte fishermanQuizMenuLineAt(uint16 cursorY, const DialogueMenuState &state) const;
@@ -78,7 +95,10 @@ private:
 	ResourceSpriteLayer _boatLayer;
 	TimedAnimationChannel _fishermanChannel;
 	TimedAnimationChannel _boatChannel;
+	FishermanQuizEntry _fishermanQuizEntries[8];
+	FishermanQuizEntry _fishermanQuizFinalEntry;
 	Common::String _fishermanQuizChoiceText[8];
+	byte _fishermanQuizChoiceEntryIndex[8];
 	byte _fishermanState;
 	byte _fishermanRepeatCount;
 	bool _fishermanQuizAlternatePattern;

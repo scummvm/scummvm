@@ -33,12 +33,14 @@ const char *const kScene8000MusicArchiveName = "RESOURCE.M08";
 const char *const kScene8000SoundArchiveName = "RESOURCE.S08";
 const uint16 kScene8000MusicCueId = 0x000b;
 const uint16 kScene8000NextState = 0x1f4a;
-const uint32 kScene8000FrameMillis = 75;
-const uint32 kScene8000MainSpriteMillis = 60;
-const uint32 kScene8000SecondarySpriteMillis = 1000;
+const uint32 kScene8000SecondMillis = 1000;
+const uint32 kScene8000MainSpriteMillis = 75;
+const uint32 kScene8000SecondarySpriteMillis = 60;
 const uint kScene8000EndTick = 0x31;
 const uint kScene8000PatchTick = 3;
 const uint kScene8000BackgroundRefreshTick = 8;
+const byte kScene8000SecondaryCompleteFrame = 0x2a;
+const uint kScene8000NearEndTickAfterSecondaryComplete = 0x2f;
 const uint kScene8000MainDescriptorCount = 0x18;
 const uint kScene8000SecondaryDescriptorCount = 0x2a;
 
@@ -52,7 +54,7 @@ const byte kScene8000SecondaryFrameMap[] = {
 	9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
 	19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
 	29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
-	39, 40
+	39, 40, 41
 };
 
 Scene8000::Scene8000(HollywoodEngine *vm) :
@@ -109,7 +111,7 @@ void Scene8000::runPresentation() {
 	_vm->gameState().currentAmbientMusicCueId = kScene8000MusicCueId;
 	_soundBank0.playSample(0x1e, 100, true);
 
-	uint32 frameAccumulator = 0;
+	uint32 secondAccumulator = 0;
 	uint32 mainAccumulator = 0;
 	uint32 secondaryAccumulator = 0;
 	uint32 lastMillis = g_system->getMillis();
@@ -122,12 +124,12 @@ void Scene8000::runPresentation() {
 		const uint32 now = g_system->getMillis();
 		const uint32 delta = now - lastMillis;
 		lastMillis = now;
-		frameAccumulator += delta;
+		secondAccumulator += delta;
 		mainAccumulator += delta;
 		secondaryAccumulator += delta;
 
-		while (frameAccumulator >= kScene8000FrameMillis && _tick < kScene8000EndTick) {
-			frameAccumulator -= kScene8000FrameMillis;
+		while (secondAccumulator >= kScene8000SecondMillis && _tick < kScene8000EndTick) {
+			secondAccumulator -= kScene8000SecondMillis;
 			++_tick;
 			if (_tick == kScene8000PatchTick) {
 				_patchVisible = true;
@@ -148,11 +150,17 @@ void Scene8000::runPresentation() {
 			frameDirty = true;
 		}
 
-		while (_secondaryVisible && secondaryAccumulator >= kScene8000SecondarySpriteMillis) {
+		while (secondaryAccumulator >= kScene8000SecondarySpriteMillis) {
 			secondaryAccumulator -= kScene8000SecondarySpriteMillis;
-			if (_secondaryFrame + 1 < ARRAYSIZE(kScene8000SecondaryFrameMap))
+			if (!_secondaryVisible)
+				continue;
+
+			if (_secondaryFrame < kScene8000SecondaryCompleteFrame) {
 				++_secondaryFrame;
-			frameDirty = true;
+				if (_secondaryFrame == kScene8000SecondaryCompleteFrame)
+					_tick = kScene8000NearEndTickAfterSecondaryComplete;
+				frameDirty = true;
+			}
 		}
 
 		if (frameDirty) {
