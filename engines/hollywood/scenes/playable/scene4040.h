@@ -41,15 +41,30 @@ private:
 		byte actorDrawOrderMode) override;
 	bool hasCustomEntrySequence() const override;
 	void runCustomEntrySequence() override;
+	bool prepareCustomGameplayLoop() override;
+	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
+	void applyScenePaletteOverride();
+	void resetBackgroundLayers();
+	void drawBackgroundLayers();
+	void advanceBackgroundLayers(uint32 delta);
+	void advanceRandomBackgroundTick();
+	bool isRandomBackgroundHoldFrame(byte frameIndex) const;
 	void runStairReturnToDungeon();
 	void takeCandil();
 	void drawForegroundBlocks(int activeWorldY);
 	void removeColorMapItem(byte itemId);
 	void replaceColorMapItem(byte sourceItem, byte destinationItem);
+
+	TimedAnimationChannel _cyclicBackgroundChannel;
+	TimedAnimationChannel _randomBackgroundChannel;
+	ResourceSpriteLayer _cyclicBackgroundLayer;
+	ResourceSpriteLayer _randomBackgroundLayer;
+	byte _randomBackgroundState;
+	byte _randomBackgroundRepeatCount;
 };
 
 } // End of namespace Hollywood
