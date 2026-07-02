@@ -70,7 +70,6 @@ bool ConResource::isMouseOver(uint32 mouseX, uint32 mouseY) {
 
 void ConResource::drawToScreen(bool doMask) {
 	uint8 *screenPos = _y * GAME_SCREEN_WIDTH + _x + _screen;
-	uint8 *updatePos = screenPos;
 
 	if (!_spriteData)
 		return;
