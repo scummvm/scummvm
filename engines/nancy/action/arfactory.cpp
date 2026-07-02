@@ -37,6 +37,7 @@
 #include "engines/nancy/action/puzzle/assemblypuzzle.h"
 #include "engines/nancy/action/puzzle/bballpuzzle.h"
 #include "engines/nancy/action/puzzle/beadpuzzle.h"
+#include "engines/nancy/action/puzzle/boardgamepuzzle.h"
 #include "engines/nancy/action/puzzle/bulpuzzle.h"
 #include "engines/nancy/action/puzzle/bombpuzzle.h"
 #include "engines/nancy/action/puzzle/cardgamepuzzle.h"
@@ -467,8 +468,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		// TODO: Nancy12 MirrorLightPuzzle (new), not implemented
 		return nullptr;
 	case 164:
-		// TODO: Nancy12 BoardGamePuzzle (new), not implemented
-		return nullptr;
+		return new BoardGamePuzzle();
 	case 165:
 		return new MindPuzzle();
 	case 166:
