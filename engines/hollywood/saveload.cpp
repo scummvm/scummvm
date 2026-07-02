@@ -229,6 +229,8 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene6020TaffyLeft);
 	syncStateBool(s, state.scene6030HannoverInterviewCompleted);
 	s.syncAsByte(state.scene6030CoffeeState);
+	syncStateBool(s, state.seenScene8010EntryLine);
+	s.syncAsByte(state.scene8010FishermanConversationState);
 	s.syncAsByte(state.scene4010AlternateBackgroundState);
 	syncStateBool(s, state.scene4010FirstEntryConversationSeen);
 	s.syncAsByte(state.scene4010EntryPathSpeechState);
@@ -415,6 +417,8 @@ void HollywoodEngine::normalizeLoadedGameState() {
 	}
 	if (state.scene6010DoorActionState > 3)
 		state.scene6010DoorActionState = 0;
+	if (state.scene8010FishermanConversationState > 2)
+		state.scene8010FishermanConversationState = 0;
 }
 
 } // End of namespace Hollywood

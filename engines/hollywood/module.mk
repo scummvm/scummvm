@@ -71,6 +71,8 @@ MODULE_OBJS = \
 	scenes/playable/scene7080.o \
 	scenes/playable/scene7090.o \
 	scenes/playable/scene7100.o \
+	scenes/playable/scene8000.o \
+	scenes/playable/scene8010.o \
 	scenes/playable/scene_resources.o \
 	scenes/playable/scene_surface_state.o \
 	scenes/playable/scene_text_store.o \
