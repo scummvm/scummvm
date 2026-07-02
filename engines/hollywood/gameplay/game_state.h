@@ -209,6 +209,12 @@ struct GameplayState {
 		scene4040CandilTaken = false;
 		seenScene4050EntryLine = false;
 		scene4050PatchState = 0;
+		scene4060CardStage = 0;
+		scene4060SecondCardStage = 0;
+		scene4060ForegroundState = 0;
+		seenScene4060EntryLine = false;
+		scene4060SherilynDialogueIntroSeen = false;
+		scene4060DialogueProgressCounter = 0;
 		seenScene5010EntryLine = false;
 		scene5010MineTransportState = 0;
 		scene5010MineTransportReady = false;
@@ -801,6 +807,12 @@ struct GameplayState {
 	bool scene4040CandilTaken;
 	bool seenScene4050EntryLine;
 	byte scene4050PatchState;
+	byte scene4060CardStage;
+	byte scene4060SecondCardStage;
+	byte scene4060ForegroundState;
+	bool seenScene4060EntryLine;
+	bool scene4060SherilynDialogueIntroSeen;
+	byte scene4060DialogueProgressCounter;
 	bool seenScene5010EntryLine;
 	byte scene5010MineTransportState;
 	bool scene5010MineTransportReady;

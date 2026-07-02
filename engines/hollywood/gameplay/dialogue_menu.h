@@ -33,13 +33,14 @@ class HollywoodEngine;
 struct DialogueChoiceRecord {
 	DialogueChoiceRecord();
 
-	byte enabled;
+	byte enabled; // Visible in the menu.
 	byte nextNodeIndex;
 	byte transitionMode;
 	byte playerTextRowId;
 	byte responseFrameIndex;
 	byte disableAfterUse;
 	byte reserved;
+	byte selectable; // Clickable/selectable when visible.
 };
 
 struct DialogueMenuLine {
@@ -48,6 +49,7 @@ struct DialogueMenuLine {
 	Common::String text;
 	byte choiceIndex;
 	bool firstLineOfChoice;
+	bool selectable;
 };
 
 struct DialogueMenuState {
@@ -92,8 +94,8 @@ private:
 	};
 
 	bool build(byte stageId, const Common::Array<DialogueChoiceRecord> &records,
-		byte depthIndex, byte nodeIndex, byte &enabledChoiceCount);
-	void appendWrappedChoiceText(byte choiceIndex, const Common::String &text);
+		byte depthIndex, byte nodeIndex, byte &selectableChoiceCount);
+	void appendWrappedChoiceText(byte choiceIndex, const Common::String &text, bool selectable);
 	bool pollEvents(bool &selected, bool &cancelled);
 	void updateHoverFromCursor();
 	byte lineAt(uint16 cursorY) const;
