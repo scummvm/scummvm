@@ -334,7 +334,6 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 		_("Enable visual markers and labels for interactive objects"),
 		kEnableHotspotsCmd
 	);
-	_enableHotspotsCheckbox->setState(hotspotsEnabled);
 
 	_hotspotMarkerPopUpDesc = new StaticTextWidget(miscContainer,
 			"GameOptions_Misc_Container.HotspotMarkerPopupDesc", _("Hotspot marker:"));
@@ -355,6 +354,8 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	);
 	_showHotspotTextCheckbox->setState(showHotspotText);
 	_showHotspotTextCheckbox->setEnabled(hotspotsEnabled);
+
+	_enableHotspotsCheckbox->setState(hotspotsEnabled);
 
 	//
 	// 10) The Achievements & The Statistics tabs
