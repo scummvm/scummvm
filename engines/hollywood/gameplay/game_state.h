@@ -130,6 +130,7 @@ struct GameplayState {
 		scene3100DialogueCounter = 0;
 		scene3100Item38Taken = false;
 		scene3100Item39Taken = false;
+		seenScene1010EntryLine = false;
 		seenScene1020EntryLine = false;
 		scene1020ResourceBlockChoiceState = 0;
 		scene1020ResourceBlockVariantState = 0;
@@ -706,6 +707,7 @@ struct GameplayState {
 	byte scene3100DialogueCounter;
 	bool scene3100Item38Taken;
 	bool scene3100Item39Taken;
+	bool seenScene1010EntryLine;
 	bool seenScene1020EntryLine;
 	byte scene1020ResourceBlockChoiceState;
 	byte scene1020ResourceBlockVariantState;
