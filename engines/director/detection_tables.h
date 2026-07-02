@@ -5610,10 +5610,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 								 "OPERA/SPRINT.DXR", "d:9415903c9259c67731d24a70d9d9e1e0", 694758, 400),
 	MACGAME2_l("operafatal", "", "OPERA FATAL",		 "r:f5033f237ad1b1639fc46d01a82ac380", 285310,
 								 "Opera/SPRINT.Dxr", "f:7055a0b9f2385f9b78f55494c8a010d4", 479518, Common::IT_ITA, 404),
-	// From bugreport #13466
-	// Windows version is identical to regular Windows version
-	MACGAME2("operafatal", "Hybrid release", "OPERA FATAL",		 "f5033f237ad1b1639fc46d01a82ac380", 285310,
-											 "Opera/SPRINT.Dxr", "26c83c0cac1d40e91487e3a142d29733", 479390, 404),
+	// From bugreport #13466, Italian hybrid Mac/Win CD
+	MACGAME2_l("operafatal", "Hybrid release", "OPERA FATAL",		 "f5033f237ad1b1639fc46d01a82ac380", 285310,
+											 "Opera/SPRINT.Dxr", "26c83c0cac1d40e91487e3a142d29733", 479390, Common::IT_ITA, 404),
+	WINGAME2_l("operafatal", "",	 "OPERA.EXE",		 "t:1708e82d4b297a1e74fe683f86521dc4", 697739,
+								 "OPERA/SPRINT.DXR", "d:26c83c0cac1d40e91487e3a142d29733", 479390, Common::IT_ITA, 400),
 
 	MACDEMO1("orgotto", "Demo", "ORGOTTO",	   "r:0c7bbb4b24823e5ab871cb4c1d6f3710", 484095, 404),
 	WINDEMO1("orgotto", "Demo", "ORGOTTO.EXE", "t:46a65dad38808f407277b933b707289e", 760137, 404),
