@@ -27,6 +27,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
+#include "common/algorithm.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/system.h"
@@ -291,7 +292,7 @@ bool MediaManager::playMusic(const Common::String &path) {
 	if (path.empty() || !g_system || !g_system->getMixer())
 		return false;
 
-	const Common::String normalizedPath = _resources.normalizeResourcePath(path);
+	Common::String normalizedPath = _resources.normalizeResourcePath(path);
 	if (_musicPath.equalsIgnoreCase(normalizedPath) &&
 			g_system->getMixer()->isSoundHandleActive(_musicHandle)) {
 		return true;
@@ -307,7 +308,7 @@ bool MediaManager::playMusic(const Common::String &path) {
 	stopMusic();
 	g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
 		Audio::makeLoopingAudioStream(audioStream, 0));
-	_musicPath = normalizedPath;
+	_musicPath = Common::move(normalizedPath);
 	return true;
 }
 
@@ -342,7 +343,7 @@ bool MediaManager::playSound(const Common::String &path) {
 	if (path.empty() || !g_system || !g_system->getMixer())
 		return false;
 
-	const Common::String normalizedPath = _resources.normalizeResourcePath(path);
+	Common::String normalizedPath = _resources.normalizeResourcePath(path);
 	for (int i = 0; i < ARRAYSIZE(_soundPaths); ++i) {
 		if (_soundPaths[i].equalsIgnoreCase(normalizedPath)) {
 			stopSoundHandle(_soundHandles[i]);
@@ -362,7 +363,7 @@ bool MediaManager::playSound(const Common::String &path) {
 
 	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType,
 		&_soundHandles[_soundSlotIndex], audioStream);
-	_soundPaths[_soundSlotIndex] = normalizedPath;
+	_soundPaths[_soundSlotIndex] = Common::move(normalizedPath);
 	return true;
 }
 

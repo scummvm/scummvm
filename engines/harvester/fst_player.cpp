@@ -24,6 +24,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/mixer.h"
+#include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/events.h"
@@ -509,7 +510,7 @@ bool FstPlayer::play(const Common::String &path) {
 		}
 
 		if (frameHasPalette) {
-			savedMoviePalette = framePalette;
+			savedMoviePalette = Common::move(framePalette);
 			haveSavedMoviePalette = true;
 		}
 

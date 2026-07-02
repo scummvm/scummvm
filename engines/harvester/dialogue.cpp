@@ -21,6 +21,7 @@
 
 #include "harvester/dialogue.h"
 
+#include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/events.h"
@@ -356,7 +357,7 @@ static void wrapDialogueTextLikeNative(const Graphics::Font &font, bool usesCft,
 
 	const int wrapCharsPerLine = width / MAX<int>(1, font.getCharWidth(' ') - 1);
 	if (wrapCharsPerLine <= 0) {
-		lines.push_back(wrappedText);
+		lines.push_back(Common::move(wrappedText));
 		return;
 	}
 
@@ -386,7 +387,7 @@ static void wrapDialogueTextLikeNative(const Graphics::Font &font, bool usesCft,
 	Common::String line;
 	for (uint i = 0; i < wrappedText.size(); ++i) {
 		if (wrappedText[i] == '\n') {
-			lines.push_back(line);
+			lines.push_back(Common::move(line));
 			line.clear();
 			continue;
 		}
@@ -395,7 +396,7 @@ static void wrapDialogueTextLikeNative(const Graphics::Font &font, bool usesCft,
 	}
 
 	if (!line.empty() || lines.empty())
-		lines.push_back(line);
+		lines.push_back(Common::move(line));
 }
 
 static void splitDialogueMenuLine(const Common::String &line, Common::Array<Common::String> &parts) {
@@ -406,7 +407,7 @@ static void splitDialogueMenuLine(const Common::String &line, Common::Array<Comm
 	Common::String token;
 	for (uint i = 0; i < line.size(); ++i) {
 		if (line[i] == '/') {
-			parts.push_back(token);
+			parts.push_back(Common::move(token));
 			token.clear();
 			continue;
 		}
@@ -414,7 +415,7 @@ static void splitDialogueMenuLine(const Common::String &line, Common::Array<Comm
 		token += line[i];
 	}
 
-	parts.push_back(token);
+	parts.push_back(Common::move(token));
 }
 
 static void logDialogueMenuItems(const char *label, int sourceLineIndex,
@@ -1199,7 +1200,7 @@ private:
 			}
 			option.rowCount = MAX<int>(1, option.wrappedLines.size());
 			totalRows += option.rowCount;
-			options.push_back(option);
+			options.push_back(Common::move(option));
 
 			explicitLines.clear();
 			optionText.clear();
@@ -1222,15 +1223,15 @@ private:
 
 				Common::String optionLine = segmentText.substr(digitEnd + 1);
 				optionLine.trim();
-				explicitLines.push_back(optionLine);
 				optionText = optionLine;
+				explicitLines.push_back(Common::move(optionLine));
 				return;
 			}
 
-			explicitLines.push_back(segmentText);
 			if (!optionText.empty())
 				optionText += ' ';
 			optionText += segmentText;
+			explicitLines.push_back(Common::move(segmentText));
 		};
 
 		for (uint i = 0; i < responseLine.size(); ++i) {
