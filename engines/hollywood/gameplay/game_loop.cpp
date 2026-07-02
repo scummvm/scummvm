@@ -219,7 +219,12 @@ bool GameplayLoop::pollEvents() {
 			Engine::quitGame();
 			return true;
 		case Common::EVENT_MAINMENU:
-			_vm->openMainMenuDialog();
+			{
+				const bool previousCanSave = _vm->canSave();
+				_vm->setCanSave(true);
+				_vm->openMainMenuDialog();
+				_vm->setCanSave(previousCanSave);
+			}
 			if (_vm->isSceneRestartRequested())
 				return true;
 			_delegate->invalidatePresentationPalette();
@@ -553,7 +558,12 @@ void GameplayLoop::openOptionsMenu() {
 		_delegate->optionsMenuSpeechPreviewSampleId(speechPreviewSampleId);
 	menu.setAudioContext(_delegate->optionsMenuSoundBank0ArchiveName(),
 		hasSpeechPreviewSample, speechPreviewSampleId);
-	menu.run(palette);
+	{
+		const bool previousCanSave = _vm->canSave();
+		_vm->setCanSave(true);
+		menu.run(palette);
+		_vm->setCanSave(previousCanSave);
+	}
 	if (Engine::shouldQuit())
 		return;
 	if (_vm->isSceneRestartRequested())

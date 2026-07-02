@@ -47,7 +47,7 @@ bool HollywoodEngine::canLoadGameStateCurrently(Common::U32String *) {
 }
 
 bool HollywoodEngine::canSaveGameStateCurrently(Common::U32String *) {
-	return isImplementedGameplayState(_gameState.mainFlowStateId);
+	return isImplementedGameplayState(_gameState.mainFlowStateId) && canSave();
 }
 
 Common::Error HollywoodEngine::loadGameStream(Common::SeekableReadStream *stream) {
@@ -76,6 +76,9 @@ Common::Error HollywoodEngine::loadGameStream(Common::SeekableReadStream *stream
 }
 
 Common::Error HollywoodEngine::saveGameStream(Common::WriteStream *stream, bool) {
+	if (!canSaveGameStateCurrently())
+		return Common::Error(Common::kWritingFailed, "Cannot save while a Hollywood Monsters scene action is running");
+
 	Common::Serializer s(nullptr, stream);
 	s.syncVersion(kSaveVersion);
 	Common::Error result = syncGameStream(s);
