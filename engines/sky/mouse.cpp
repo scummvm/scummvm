@@ -314,8 +314,9 @@ void Mouse::mouseEngineIBASS() {
 	case INVENTORY_USE_ON:
 		invUseOn(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
 		break;
-
 	case TEXT_CHOOSER:
+		break;
+	case INV_TEMP_EXAMINE:
 		break;
 	}
 	_mouseB = 0;
