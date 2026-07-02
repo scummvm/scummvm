@@ -120,6 +120,22 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		_modifierState = event.kbd.flags;
 		break;
 
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		if (event.customType == Common::kEngineActionHotspotToggle && g_engine) {
+			if (ConfMan.getBool("enable_hotspots")) {
+				g_engine->showHotspots(true);
+			}
+		}
+		break;
+
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		if (event.customType == Common::kEngineActionHotspotToggle && g_engine) {
+			if (ConfMan.getBool("enable_hotspots")) {
+				g_engine->showHotspots(false);
+			}
+		}
+		break;
+
 	case Common::EVENT_MOUSEMOVE:
 		_mousePos = event.mouse;
 		break;
