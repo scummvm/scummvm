@@ -46,6 +46,8 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.net.nsd.NsdManager;
+import android.net.nsd.NsdServiceInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -161,6 +163,11 @@ public class ScummVMActivity extends Activity {
 
 	private PluginBroadcastReceiver _pluginBroadcastReceiver = null;
 
+	private static final int MY_PERMISSION_LOCAL_NETWORK = 200;
+	private Object localNetSyncObject;
+	private boolean localNetResult;
+	private NsdManager.RegistrationListener nsdRegistrationListener = null;
+
 	// Set to true in onDestroy
 	// This avoids that when C++ terminates we call finish() a second time
 	// This second finish causes termination when we are launched again
@@ -216,7 +223,13 @@ public class ScummVMActivity extends Activity {
 
 							// This is deprecated and we show the keyboard just below
 							//_inputManager.toggleSoftInputFromWindow(_main_surface.getWindowToken(), InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
-							_inputManager.showSoftInput(_main_surface, InputMethodManager.SHOW_IMPLICIT);
+							int flags = 0;
+							if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) {
+								@SuppressWarnings("deprecation")
+								final int flag = InputMethodManager.SHOW_IMPLICIT;
+								flags = flag;
+							}
+							_inputManager.showSoftInput(_main_surface, flags);
 							getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 						} else {
 							if (_screenKeyboard != null) {
@@ -539,7 +552,13 @@ public class ScummVMActivity extends Activity {
 						getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 						// TODO do we need this instead?
 						// _inputManager.hideSoftInputFromWindow(_main_surface.getWindowToken(), 0);
-						_inputManager.hideSoftInputFromWindow(_main_surface.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+						int flags = 0;
+						if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) {
+							@SuppressWarnings("deprecation")
+							final int flag = InputMethodManager.HIDE_IMPLICIT_ONLY;
+							flags = flag;
+						}
+						_inputManager.hideSoftInputFromWindow(_main_surface.getWindowToken(), flags);
 
 						CompatHelpers.HideSystemStatusBar.hide(getWindow());
 						//Log.d(ScummVM.LOG_TAG, "showScreenKeyboardWithoutTextInputField - captureMouse(true)");
@@ -883,6 +902,87 @@ public class ScummVMActivity extends Activity {
 			Log.d(ScummVM.LOG_TAG, "Current activity Intent is: " + data);
 			if (target != null) {
 				ShortcutCreatorActivity.pushShortcut(ScummVMActivity.this, target, intent);
+			}
+		}
+
+		@Override
+		protected void notifyHTTPService(int localPort, boolean minimal) {
+			final NsdManager nsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
+
+			if (nsdRegistrationListener != null) {
+				nsdManager.unregisterService(nsdRegistrationListener);
+				nsdRegistrationListener = null;
+			}
+
+			if (localPort < 0) {
+				return;
+			}
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CINNAMON_BUN &&
+				checkPermission(Manifest.permission.ACCESS_LOCAL_NETWORK, Process.myPid(), Process.myUid()) != PackageManager.PERMISSION_GRANTED) {
+				Log.d(ScummVM.LOG_TAG, "Requesting local network permission");
+				final String[] PERMISSIONS = {
+					Manifest.permission.ACCESS_LOCAL_NETWORK,
+				};
+				if (localNetSyncObject == null) {
+					localNetSyncObject = new Object();
+				}
+				synchronized (localNetSyncObject) {
+					localNetResult = false;
+					requestPermissions(PERMISSIONS, MY_PERMISSION_LOCAL_NETWORK);
+					try {
+						localNetSyncObject.wait();
+					} catch (InterruptedException e) {
+						Log.d(ScummVM.LOG_TAG, "Warning: interrupted while waiting for local network permission");
+						return;
+					}
+					if (!localNetResult) {
+						Log.d(ScummVM.LOG_TAG, "Local network permission denied");
+						runOnUiThread(new Runnable() {
+							public void run() {
+								Toast.makeText(ScummVMActivity.this, getResources().getString(R.string.local_net_permission_denied), Toast.LENGTH_LONG).show();
+							}
+						});
+						return;
+					}
+				}
+			}
+
+			if (!minimal) {
+				// Don't publish our service if we are running in minimal mode (OAuth stuff)
+				nsdRegistrationListener = new NsdManager.RegistrationListener() {
+					@Override
+					public void onRegistrationFailed(NsdServiceInfo nsdServiceInfo, int i) {
+						Log.d(ScummVM.LOG_TAG, "HTTP service registration failed: " + i);
+					}
+
+					@Override
+					public void onServiceRegistered(NsdServiceInfo nsdServiceInfo) {
+						Log.d(ScummVM.LOG_TAG, "HTTP service registered");
+					}
+
+					@Override
+					public void onServiceUnregistered(NsdServiceInfo nsdServiceInfo) {
+						Log.d(ScummVM.LOG_TAG, "HTTP service unregistered");
+					}
+
+					@Override
+					public void onUnregistrationFailed(NsdServiceInfo nsdServiceInfo, int i) {
+						Log.d(ScummVM.LOG_TAG, "HTTP service unregistration failed: " + i);
+					}
+				};
+
+				final String serviceName = getResources().getString(R.string.http_service_description);
+
+				final NsdServiceInfo serviceInfo = new NsdServiceInfo();
+				serviceInfo.setServiceName(serviceName);
+				serviceInfo.setServiceType("_http._tcp.");
+				serviceInfo.setPort(localPort);
+
+				nsdManager.registerService(
+					serviceInfo,
+					NsdManager.PROTOCOL_DNS_SD,
+					nsdRegistrationListener);
 			}
 		}
 
@@ -1348,6 +1448,18 @@ public class ScummVMActivity extends Activity {
 				// permission denied! We won't be able to make use of functionality depending on this permission.
 				Toast.makeText(this, "Until permission is granted, it might be impossible to write to some locations!", Toast.LENGTH_SHORT)
 					.show();
+			}
+		} else if (requestCode == MY_PERMISSION_LOCAL_NETWORK) {
+			boolean result = true;
+			for (int grantResult : grantResults) {
+				if (grantResult != PackageManager.PERMISSION_GRANTED) {
+					result = false;
+					break;
+				}
+			}
+			synchronized(localNetSyncObject) {
+				localNetResult = result;
+				localNetSyncObject.notifyAll();
 			}
 		}
 	}

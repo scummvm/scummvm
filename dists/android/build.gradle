@@ -1,5 +1,5 @@
 plugins {
-	id('com.android.application') version '9.0.0'
+	id('com.android.application') version '9.2.1'
 }
 
 // Load our source dependent properties
@@ -18,7 +18,7 @@ android {
 
     //targetSdkVersion defaults to compileSdk
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
     ndkVersion = "23.2.8568313"
     enableKotlin = false
@@ -131,5 +131,5 @@ android {
 }
 
 dependencies {
-    implementation "androidx.annotation:annotation:1.9.1"
+    implementation "androidx.annotation:annotation:1.10.0"
 }
