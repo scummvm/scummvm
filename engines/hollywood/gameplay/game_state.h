@@ -187,6 +187,8 @@ struct GameplayState {
 		scene6020TaffyLeft = false;
 		scene6030HannoverInterviewCompleted = false;
 		scene6030CoffeeState = 0;
+		seenScene8010EntryLine = false;
+		scene8010FishermanConversationState = 0;
 		scene4010AlternateBackgroundState = 0;
 		scene4010FirstEntryConversationSeen = false;
 		scene4010EntryPathSpeechState = 0;
@@ -764,6 +766,8 @@ struct GameplayState {
 	bool scene6020TaffyLeft;
 	bool scene6030HannoverInterviewCompleted;
 	byte scene6030CoffeeState;
+	bool seenScene8010EntryLine;
+	byte scene8010FishermanConversationState;
 	byte scene4010AlternateBackgroundState;
 	bool scene4010FirstEntryConversationSeen;
 	byte scene4010EntryPathSpeechState;

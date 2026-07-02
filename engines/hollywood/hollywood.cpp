@@ -73,6 +73,8 @@
 #include "hollywood/scenes/playable/scene7080.h"
 #include "hollywood/scenes/playable/scene7090.h"
 #include "hollywood/scenes/playable/scene7100.h"
+#include "hollywood/scenes/playable/scene8000.h"
+#include "hollywood/scenes/playable/scene8010.h"
 #include "hollywood/resource.h"
 
 #include "audio/mixer.h"
@@ -147,6 +149,9 @@ const int kScene6020FirstState = 0x1784;
 const int kScene6020LastState = 0x178d;
 const int kScene6030FirstState = 0x178e;
 const int kScene6030LastState = 0x1797;
+const int kScene8000State = 8000;
+const int kScene8010FirstState = 0x1f4a;
+const int kScene8010LastState = 0x1f4b;
 const int kTravelScreenSelectionState = 0xffff;
 const int kScene9101State = 0x238d;
 
@@ -189,6 +194,8 @@ bool isImplementedGameplayState(int stateId) {
 		(stateId >= kScene6010FirstState && stateId <= kScene6010LastState) ||
 		(stateId >= kScene6020FirstState && stateId <= kScene6020LastState) ||
 		(stateId >= kScene6030FirstState && stateId <= kScene6030LastState) ||
+		stateId == kScene8000State ||
+		(stateId >= kScene8010FirstState && stateId <= kScene8010LastState) ||
 		stateId == kTravelScreenSelectionState ||
 		stateId == 7000 ||
 		(stateId >= 0x1b62 && stateId <= 0x1b6b) ||
@@ -231,6 +238,8 @@ int gameplayStateForBootParam(int bootParam) {
 		return kScene3100FirstState;
 	if (bootParam == 3110)
 		return kScene3110FirstState;
+	if (bootParam == 8010)
+		return kScene8010FirstState;
 
 	return bootParam;
 }
@@ -659,6 +668,22 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene6030 scene6030(this);
 			if (!scene6030.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId == kScene8000State) {
+			handledState = true;
+			Scene8000 scene8000(this);
+			if (!scene8000.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene8010FirstState && stateId <= kScene8010LastState) {
+			handledState = true;
+			Scene8010 scene8010(this);
+			if (!scene8010.play())
 				return Common::kReadingFailed;
 			continue;
 		}
