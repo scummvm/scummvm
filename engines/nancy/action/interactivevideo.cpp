@@ -116,7 +116,7 @@ void InteractiveVideo::handleInput(NancyInput &input) {
 		return;
 	}
 
-	int curFrame = _movieAR->_decoder->getCurFrame();
+	int curFrame = _movieAR->_decoder.getCurFrame();
 	if (curFrame < 0) {
 		return;
 	}

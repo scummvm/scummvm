@@ -23,7 +23,7 @@
 #define NANCY_ACTION_CONVERSATION_H
 
 #include "engines/nancy/action/actionrecord.h"
-#include "engines/nancy/video.h"
+#include "engines/nancy/movieplayer.h"
 
 namespace Nancy {
 namespace Action {
@@ -153,7 +153,7 @@ protected:
 	uint _videoFormat = kLargeVideoFormat;
 	uint16 _firstFrame = 0;
 	int16 _lastFrame = 0;
-	AVFDecoder _decoder;
+	MoviePlayer _decoder;
 };
 
 class ConversationCelLoader;

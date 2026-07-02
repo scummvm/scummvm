@@ -25,8 +25,8 @@
 
 #include "audio/audiostream.h"
 #include "image/bmp.h"
-#include "video/bink_decoder.h"
 
+#include "engines/nancy/movieplayer.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/console.h"
 #include "engines/nancy/resource.h"
@@ -76,31 +76,20 @@ NancyConsole::~NancyConsole() {}
 void NancyConsole::postEnter() {
 	GUI::Debugger::postEnter();
 	if (!_videoFile.empty()) {
-		Common::Path withExt = _videoFile;
-		Video::VideoDecoder *dec = new AVFDecoder();
+		MoviePlayer player;
 
-		if (!dec->loadFile(withExt.append(".avf"))) {
-			// No AVF found, try Bink
-			delete dec;
-			dec = new Video::BinkDecoder();
-
-			if (!dec->loadFile(withExt.append(".bik"))) {
-				debugPrintf("Failed to load video '%s'\n", _videoFile.toString(Common::Path::kNativeSeparator).c_str());
-				delete dec;
-				dec = nullptr;
-			}
-		}
-
-		if (dec) {
+		if (!player.loadFile(_videoFile)) {
+			debugPrintf("Failed to load video '%s'\n", _videoFile.toString(Common::Path::kNativeSeparator).c_str());
+		} else {
 			Graphics::ManagedSurface surf;
 
 			if (!_paletteFile.empty()) {
 				GraphicsManager::loadSurfacePalette(surf, _paletteFile);
 			}
 
-			dec->start();
+			player.start();
 			Common::EventManager *ev = g_system->getEventManager();
-			while (!g_nancy->shouldQuit() && !dec->endOfVideo()) {
+			while (!g_nancy->shouldQuit() && !player.endOfVideo()) {
 				Common::Event event;
 				if (ev->pollEvent(event)) {
 					if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END && event.customType == InputManager::kNancyActionLeftClick) {
@@ -108,8 +97,8 @@ void NancyConsole::postEnter() {
 					}
 				}
 
-				if (dec->needsUpdate()) {
-					const Graphics::Surface *frame = dec->decodeNextFrame();
+				if (player.needsUpdate()) {
+					const Graphics::Surface *frame = player.decodeNextFrame();
 					if (frame) {
 						GraphicsManager::copyToManaged(*frame, surf, !_paletteFile.empty());
 						g_nancy->_graphics->debugDrawToScreen(surf);
@@ -124,7 +113,6 @@ void NancyConsole::postEnter() {
 
 		_videoFile.clear();
 		_paletteFile.clear();
-		delete dec;
 	}
 
 	if (!_imageFile.empty()) {

@@ -26,7 +26,7 @@
 #include "common/singleton.h"
 
 #include "engines/nancy/sound.h"
-#include "engines/nancy/video.h"
+#include "engines/nancy/movieplayer.h"
 
 #include "engines/nancy/state/state.h"
 
@@ -68,7 +68,7 @@ protected:
 		void playVideo() { _decoder.start(); }
 		void unloadVideo() { _decoder.close(); }
 
-		AVFDecoder _decoder;
+		MoviePlayer _decoder;
 	private:
 	};
 

@@ -673,7 +673,7 @@ bool ConversationSound::ConversationFlags::isSatisfied() const {
 }
 
 void ConversationVideo::init() {
-	if (!_decoder.loadFile(Common::Path(_videoName + ".avf"))) {
+	if (!_decoder.loadFile(Common::Path(_videoName))) {
 		error("Couldn't load video file %s", _videoName.c_str());
 	}
 

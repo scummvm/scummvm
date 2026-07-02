@@ -25,10 +25,7 @@
 #include "common/ptr.h"
 
 #include "engines/nancy/action/actionrecord.h"
-
-namespace Video {
-class VideoDecoder;
-}
+#include "engines/nancy/movieplayer.h"
 
 namespace Nancy {
 namespace Action {
@@ -98,7 +95,6 @@ public:
 	Common::Path _paletteName;
 	Common::Path _bitmapOverlayName;
 
-	uint16 _videoType = kVideoPlaytypeAVF;
 	uint16 _videoFormat = kLargeVideoFormat;
 	uint16 _videoSceneChange = kMovieNoSceneChange;
 	byte _playerCursorAllowed = kPlayerCursorAllowed;
@@ -114,7 +110,7 @@ public:
 	SceneChangeDescription _sceneChange;
 	Common::Array<SecondaryVideoDescription> _videoDescs;
 
-	Common::ScopedPtr<Video::VideoDecoder> _decoder;
+	MoviePlayer _decoder;
 
 	// Random-movie state (only populated when _isRandom).
 	bool _isRandom = false;
@@ -153,9 +149,6 @@ protected:
 	// needed for SecondaryVideoDescription::readData.
 	void readRandomMovieData(Common::Serializer &ser, Common::SeekableReadStream &stream);
 	void readRandomSequence(Common::Serializer &ser, RandomSequence &seq);
-
-	// (Re)create _decoder as an AVFDecoder or BinkDecoder matching _videoType.
-	void resetDecoder();
 
 	// Apply a RandomSequence's playback config to the PSM flat fields
 	// and reload the decoder. Returns true on success.

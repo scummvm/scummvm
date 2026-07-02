@@ -173,7 +173,7 @@ void Map::MapViewport::loadVideo(const Common::Path &filename, const Common::Pat
 		_decoder.close();
 	}
 
-	if (!_decoder.loadFile(filename.append(".avf"))) {
+	if (!_decoder.loadFile(filename)) {
 		error("Couldn't load video file %s", filename.toString().c_str());
 	}
 

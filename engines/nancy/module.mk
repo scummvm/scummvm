@@ -98,6 +98,7 @@ MODULE_OBJS = \
   font.o \
   graphics.o \
   iff.o \
+  movieplayer.o \
   input.o \
   metaengine.o \
   nancy.o \

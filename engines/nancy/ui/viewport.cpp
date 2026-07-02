@@ -32,7 +32,6 @@
 #include "engines/nancy/ui/viewport.h"
 
 #include "common/config-manager.h"
-#include "video/bink_decoder.h"
 
 namespace Nancy {
 namespace UI {
@@ -219,39 +218,14 @@ void Viewport::handleInput(NancyInput &input) {
 }
 
 void Viewport::loadVideo(const Common::Path &filename, uint frameNr, uint verticalScroll, byte panningType, uint16 format, const Common::Path &palette) {
-	if (_decoder->isVideoLoaded()) {
-		_decoder->close();
+	if (_decoder.isVideoLoaded()) {
+		_decoder.close();
 	}
 
-	Common::String suffix;
-
-	if (_videoType == kVideoPlaytypeAVF) {
-		suffix = ".avf";
-
-		if (!Common::File::exists(filename.append(".avf"))) {
-			if (Common::File::exists(filename.append(".bik"))) {
-				suffix = ".bik";
-				_videoType = kVideoPlaytypeBink;
-				_decoder.reset(new Video::BinkDecoder());
-			} else {
-				error("Couldn't load video file %s.avf or %s.bik", filename.toString().c_str(), filename.toString().c_str());
-			}
-		}
-	} else {
-		suffix = ".bik";
-		if (!Common::File::exists(filename.append(".bik"))) {
-			if (Common::File::exists(filename.append(".avf"))) {
-				suffix = ".avf";
-				_videoType = kVideoPlaytypeAVF;
-				_decoder.reset(new AVFDecoder());
-			} else {
-				error("Couldn't load video file %s.avf or %s.bik", filename.toString().c_str(), filename.toString().c_str());
-			}
-		}
-	}
-
-	if (!_decoder->loadFile(filename.append(suffix))) {
-		error("Couldn't load video file %s", filename.toString().c_str());
+	// The scene video uses the bidirectional AVF frame cache so scrubbing in
+	// both directions is fast; the player selects AVF/Bink by which file exists.
+	if (!_decoder.loadFile(filename, true)) {
+		error("Couldn't load video file %s.avf or %s.bik", filename.toString().c_str(), filename.toString().c_str());
 	}
 
 	_videoFormat = format;
@@ -273,23 +247,10 @@ void Viewport::loadVideo(const Common::Path &filename, uint frameNr, uint vertic
 }
 
 void Viewport::setFrame(uint frameNr) {
-	assert(frameNr < _decoder->getFrameCount());
+	assert(frameNr < (uint)_decoder.getFrameCount());
 
-	const Graphics::Surface *newFrame;
-
-	if (_videoType == kVideoPlaytypeAVF) {
-		AVFDecoder *decoder = dynamic_cast<AVFDecoder *>(_decoder.get());
-		if (!decoder)
-			error("Viewport::setFrame(): Decoder is not an AVFDecoder");
-		newFrame = decoder->decodeFrame(frameNr);
-		decoder->seek(frameNr); // Seek to take advantage of caching
-	} else {
-		Video::BinkDecoder *decoder = dynamic_cast<Video::BinkDecoder *>(_decoder.get());
-		if (!decoder)
-			error("Viewport::setFrame(): Decoder is not a BinkDecoder");
-		decoder->seekToFrame(frameNr); // Seek to take advantage of caching
-		newFrame = decoder->decodeNextFrame();
-	}
+	// The player returns the frame using the format-appropriate cached path.
+	const Graphics::Surface *newFrame = _decoder.decodeNextFrame(frameNr);
 
 	// Format 1 uses quarter-size images, while format 2 uses full-size ones
 	// Videos in TVD are always upside-down

@@ -24,7 +24,7 @@
 
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/video.h"
+#include "engines/nancy/movieplayer.h"
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
@@ -92,7 +92,7 @@ protected:
 
 	Graphics::ManagedSurface _fullFrame;
 	HoverState _hoverState = kNoHover;
-	AVFDecoder _decoder;
+	MoviePlayer _decoder;
 	int _currentViewportFrame = -1;
 	int _currentViewportScroll = -1;
 	bool _isInFrame = false;

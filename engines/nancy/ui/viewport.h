@@ -23,7 +23,8 @@
 #define NANCY_UI_VIEWPORT_H
 
 #include "engines/nancy/time.h"
-#include "engines/nancy/video.h"
+#include "engines/nancy/commontypes.h"
+#include "engines/nancy/movieplayer.h"
 
 #include "engines/nancy/renderobject.h"
 
@@ -48,10 +49,9 @@ public:
 		_videoFormat(kLargeVideoFormat),
 		_stickyCursorPos(-1, -1),
 		_panningType(kPanNone),
-		_decoder(new AVFDecoder(AVFDecoder::kLoadBidirectional)),
 		_autoMove(false) {}
 
-	virtual ~Viewport() { _decoder->close(); _fullFrame.free(); }
+	virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
 
 	void init() override;
 	void handleInput(NancyInput &input);
@@ -66,7 +66,7 @@ public:
 	void scrollUp(uint delta);
 	void scrollDown(uint delta);
 
-	uint16 getFrameCount() const { return _decoder->isVideoLoaded() ? _decoder->getFrameCount() : 0; }
+	uint16 getFrameCount() const { return _decoder.getFrameCount(); }
 	uint16 getCurFrame() const { return _currentFrame; }
 	uint16 getCurVerticalScroll() const { return _drawSurface.getOffsetFromOwner().y; }
 	uint16 getMaxScroll() const;
@@ -88,8 +88,7 @@ protected:
 
 	byte _panningType;
 
-	Common::ScopedPtr<Video::VideoDecoder> _decoder;
-	uint16 _videoType = kVideoPlaytypeAVF;
+	MoviePlayer _decoder;
 	uint16 _currentFrame;
 	uint16 _videoFormat;
 	Graphics::ManagedSurface _fullFrame;

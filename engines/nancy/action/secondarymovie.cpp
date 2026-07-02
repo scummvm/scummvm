@@ -44,13 +44,6 @@ PlaySecondaryMovie::PlaySecondaryMovie(bool isRandom)
 	}
 }
 
-void PlaySecondaryMovie::resetDecoder() {
-	if (_videoType == kVideoPlaytypeAVF) {
-		_decoder.reset(new AVFDecoder());
-	} else {
-		_decoder.reset(new Video::BinkDecoder());
-	}
-}
 
 PlaySecondaryMovie::~PlaySecondaryMovie() {
 	if (NancySceneState.getActiveMovie() == this) {
@@ -123,7 +116,6 @@ void PlaySecondaryMovie::readRandomMovieData(Common::Serializer &ser, Common::Se
 			_videoName = src.name;
 			_firstFrame = src.startFrame;
 			_lastFrame = src.lastFrame;
-			_videoType = kVideoPlaytypeBink;
 			_videoFormat = kLargeVideoFormat;
 			_videoSceneChange = kMovieNoSceneChange;
 			_playerCursorAllowed = (byte)_randomPlayerCursorAllowed;
@@ -145,20 +137,9 @@ bool PlaySecondaryMovie::activateRandomSequence(int index) {
 	_firstFrame = src.startFrame;
 	_lastFrame = src.lastFrame;
 
-	// Reload the decoder with the new movie. The original engine
-	// auto-detects AVF vs Bink from disk; we honour the existing
-	// _videoType but fall back to the other if needed.
-	resetDecoder();
-
-	Common::Path withExt = _videoName.append(_videoType == kVideoPlaytypeAVF ? ".avf" : ".bik");
-	if (!_decoder->loadFile(withExt)) {
-		_videoType = _videoType == kVideoPlaytypeAVF ? kVideoPlaytypeBink : kVideoPlaytypeAVF;
-		resetDecoder();
-		withExt = _videoName.append(_videoType == kVideoPlaytypeAVF ? ".avf" : ".bik");
-		if (!_decoder->loadFile(withExt)) {
-			warning("PlayRandomMovie: couldn't load %s", _videoName.toString().c_str());
-			return false;
-		}
+	if (!_decoder.loadFile(_videoName)) {
+		warning("PlayRandomMovie: couldn't load %s", _videoName.toString().c_str());
+		return false;
 	}
 
 	_isFinished = false;
@@ -205,9 +186,7 @@ int PlaySecondaryMovie::rollNextSequence() {
 		_randomPauseEndTime = g_system->getMillis() + (uint32)MAX<int32>(0, pauseMs);
 		_randomChainState = kRandomPaused;
 		setVisible(false);
-		if (_decoder) {
-			_decoder->pauseVideo(true);
-		}
+		_decoder.pauseVideo(true);
 		return -1;
 	}
 
@@ -243,7 +222,7 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	readFilename(ser, _paletteName, kGameTypeVampire, kGameTypeVampire);
 	readFilename(ser, _bitmapOverlayName, kGameTypeVampire, kGameTypeNancy9);
 
-	ser.syncAsUint16LE(_videoType, kGameTypeNancy7);
+	ser.skip(2, kGameTypeNancy7);	// videoType
 	ser.skip(2, kGameTypeVampire, kGameTypeNancy9); // videoPlaySource
 	ser.syncAsUint16LE(_videoFormat);
 	if (g_nancy->getGameType() >= kGameTypeNancy10)
@@ -300,12 +279,8 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 }
 
 void PlaySecondaryMovie::init() {
-	if (!_decoder) {
-		resetDecoder();
-	}
-
-	if (!_decoder->isVideoLoaded()) {
-		if (!_decoder->loadFile(_videoName.append(_videoType == kVideoPlaytypeAVF ? ".avf" : ".bik"))) {
+	if (!_decoder.isVideoLoaded()) {
+		if (!_decoder.loadFile(_videoName)) {
 			error("Couldn't load video file %s", _videoName.toString().c_str());
 		}
 
@@ -330,11 +305,7 @@ void PlaySecondaryMovie::init() {
 }
 
 void PlaySecondaryMovie::onPause(bool pause) {
-	if (!_decoder) {
-		resetDecoder();
-	}
-
-	_decoder->pauseVideo(pause);
+	_decoder.pauseVideo(pause);
 	RenderActionRecord::onPause(pause);
 }
 
@@ -361,7 +332,7 @@ void PlaySecondaryMovie::execute() {
 			// Sync audio and video. This is mostly relevant for some nancy2 scenes, as the
 			// devs stopped using the built-in movie sound around nancy4. The 12 ms
 			// difference is roughly how long it takes for a single execution of the main game loop
-			((AVFDecoder *)_decoder.get())->addFrameTime(12);
+			_decoder.addFrameTime(12);
 		}
 
 		if (_playerCursorAllowed == kNoPlayerCursorAllowed) {
@@ -375,7 +346,7 @@ void PlaySecondaryMovie::execute() {
 
 		_state = kRun;
 
-		if (Common::Rect(_decoder->getWidth(), _decoder->getHeight()) == NancySceneState.getViewport().getBounds()) {
+		if (Common::Rect(_decoder.getWidth(), _decoder.getHeight()) == NancySceneState.getViewport().getBounds()) {
 			g_nancy->_graphics->suppressNextDraw();
 			break;
 		}
@@ -432,18 +403,18 @@ void PlaySecondaryMovie::execute() {
 		// another action record, but doesn't do so, because updateGraphics() gets called after all
 		// action record execution. Instead, the movie's own scene change (which is inexplicably enabled)
 		// gets triggered, and teleports the player to the wrong place instead of making them lose the game
-		if (!_decoder->isPlaying() && _isVisible && !_isFinished) {
-			_decoder->start();
+		if (!_decoder.isPlaying() && _isVisible && !_isFinished) {
+			_decoder.start();
 
 			if (_playDirection == kPlayMovieReverse) {
-				_decoder->setRate(-_decoder->getRate());
-				_decoder->seekToFrame(_lastFrame);
+				_decoder.setRate(-_decoder.getRate());
+				_decoder.seekToFrame(_lastFrame);
 			} else {
-				_decoder->seekToFrame(_firstFrame);
+				_decoder.seekToFrame(_firstFrame);
 			}
 		}
 
-		if (_decoder->needsUpdate()) {
+		if (_decoder.needsUpdate()) {
 			uint descID = 0;
 
 			for (uint i = 0; i < _videoDescs.size(); ++i) {
@@ -452,24 +423,24 @@ void PlaySecondaryMovie::execute() {
 				}
 			}
 
-			GraphicsManager::copyToManaged(*_decoder->decodeNextFrame(), _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
+			GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
 			_drawSurface.create(_fullFrame, _videoDescs[descID].srcRect);
 			moveTo(_videoDescs[descID].destRect);
 
 			_needsRedraw = true;
 
 			for (auto &f : _frameFlags) {
-				if (_decoder->getCurFrame() == f.frameID) {
+				if (_decoder.getCurFrame() == f.frameID) {
 					NancySceneState.setEventFlag(f.flagDesc);
 				}
 			}
 		}
 
-		if ((_decoder->getCurFrame() == _lastFrame && _playDirection == kPlayMovieForward) ||
-			(_decoder->getCurFrame() == _firstFrame && _playDirection == kPlayMovieReverse) ||
-			_decoder->endOfVideo()) {
+		if ((_decoder.getCurFrame() == _lastFrame && _playDirection == kPlayMovieForward) ||
+			(_decoder.getCurFrame() == _firstFrame && _playDirection == kPlayMovieReverse) ||
+			_decoder.endOfVideo()) {
 
-			_decoder->pauseVideo(true);
+			_decoder.pauseVideo(true);
 			_isFinished = true;
 
 			if (_isRandom) {
@@ -507,8 +478,8 @@ void PlaySecondaryMovie::execute() {
 		// Allow looping
 		if (!_isDone) {
 			_isFinished = false;
-			_decoder->seek(0);
-			_decoder->pauseVideo(false);
+			_decoder.seek(0);
+			_decoder.pauseVideo(false);
 		} else if (_playerCursorAllowed == kNoPlayerCursorAllowed) {
 			// The movie finished and isn't looping, so restore the cursor now.
 			// WORKAROUND: Don't restore the cursor for Nancy 8, scenes 5420 - 5422
