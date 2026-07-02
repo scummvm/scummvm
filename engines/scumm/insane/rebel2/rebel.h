@@ -538,6 +538,7 @@ public:
 		int id;
 		int type;
 		Common::Rect rect;
+		int velX, velY;   // last per-frame motion, feeds the death explosion drift
 		bool active;
 		bool destroyed;
 		int explosionFrame;
@@ -584,6 +585,7 @@ public:
 		int width, height;
 		int counter;
 		int scale;
+		int dx, dy;   // carries the victim's last motion (flight buffer space)
 		bool active;
 	};
 
@@ -593,7 +595,7 @@ public:
 	};
 
 	Explosion _explosions[5];
-	void spawnExplosion(int x, int y, int objectHalfWidth);
+	void spawnExplosion(int x, int y, int objectHalfWidth, int dx = 0, int dy = 0);
 
 	// Collision zones registered by IACT opcode 5.
 	struct CollisionZone {

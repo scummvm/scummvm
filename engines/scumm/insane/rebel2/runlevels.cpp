@@ -350,6 +350,8 @@ void InsaneRebel2::resetExplosions() {
 		_explosions[i].width = 0;
 		_explosions[i].height = 0;
 		_explosions[i].scale = 0;
+		_explosions[i].dx = 0;
+		_explosions[i].dy = 0;
 	}
 }
 

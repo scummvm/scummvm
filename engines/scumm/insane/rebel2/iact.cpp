@@ -2171,6 +2171,8 @@ void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b
 	Common::List<enemy>::iterator it;
 	for (it = _enemies.begin(); it != _enemies.end(); ++it) {
 		if (it->id == enemyId) {
+			it->velX = x - it->rect.left;
+			it->velY = y - it->rect.top;
 			it->rect = Common::Rect(x, y, x + w, y + h);
 			it->type = par4;
 			// IACT bit state is authoritative; clear stale destruction state here.
@@ -2190,6 +2192,8 @@ void InsaneRebel2::initEnemyStruct(int id, int32 x, int32 y, int32 w, int32 h, b
 	e.id = id;
 	e.type = type;
 	e.rect = Common::Rect(x, y, x + w, y + h);
+	e.velX = 0;
+	e.velY = 0;
 	e.active = active;
 	e.destroyed = destroyed;
 	e.explosionFrame = explosionFrame;

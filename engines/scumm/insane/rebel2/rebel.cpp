@@ -1597,7 +1597,7 @@ int32 InsaneRebel2::processMouse() {
 				if (_rebelHandler != 8 && _rebelHandler != 25) {
 					spawnExplosion((it->rect.left + it->rect.right) / 2,
 								   (it->rect.top + it->rect.bottom) / 2,
-								   explosionHalfWidth);
+								   explosionHalfWidth, it->velX, it->velY);
 				} else if (_rebelHandler == 8 && it->type == 0) {
 					spawnExplosion((it->rect.left + it->rect.right) / 2,
 								   (it->rect.top + it->rect.bottom) / 2,

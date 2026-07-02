@@ -457,7 +457,7 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 	debugC(DEBUG_INSANE, "No FOBJ found in embedded SAN userId=%d", userId);
 }
 
-void InsaneRebel2::spawnExplosion(int x, int y, int objectHalfWidth) {
+void InsaneRebel2::spawnExplosion(int x, int y, int objectHalfWidth, int dx, int dy) {
 	for (int i = 0; i < 5; i++) {
 		if (!_explosions[i].active || _explosions[i].counter <= 0) {
 			_explosions[i].active = true;
@@ -465,6 +465,8 @@ void InsaneRebel2::spawnExplosion(int x, int y, int objectHalfWidth) {
 			_explosions[i].x = x;
 			_explosions[i].y = y;
 			_explosions[i].scale = objectHalfWidth;
+			_explosions[i].dx = dx;
+			_explosions[i].dy = dy;
 			break;
 		}
 	}
@@ -3826,14 +3828,24 @@ void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int widt
 	if (!_smush_iconsNut)
 		return;
 
+	const bool renderHiRes = isHiRes() && width >= 640 && height >= 400;
+
 	for (int i = 0; i < 5; i++) {
 		if (!_explosions[i].active)
 			continue;
 
-		int screenX = _explosions[i].x;
-		int screenY = _explosions[i].y;
+		// Explosions live in raw flight-buffer coordinates: keep them moving
+		// with the victim's last motion and project into the presented window
+		// with the current perspective every frame.
+		_explosions[i].x += _explosions[i].dx;
+		_explosions[i].y += _explosions[i].dy;
+		Common::Point p = getHandler7ProjectedPointFor(_explosions[i].x, _explosions[i].y);
+		if (renderHiRes) {
+			p.x += _hiResPresentationViewX;
+			p.y += _hiResPresentationViewY;
+		}
 		renderExplosionFrame(renderBitmap, pitch, width, height, _explosions[i],
-			screenX, screenY, kExplosionAdvanceAfterDraw, true);
+			p.x, p.y, kExplosionAdvanceBeforeDraw, true);
 	}
 
 	if (_hitCooldown != 0) {
@@ -3841,7 +3853,6 @@ void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int widt
 
 		int numChars = _smush_iconsNut->getNumChars();
 		int spriteIndex = 0x15 - _hitCooldown;
-		const bool renderHiRes = isHiRes() && width >= 640 && height >= 400;
 		const int nativeViewX = renderHiRes ? _hiResPresentationViewX : _viewX;
 		const int nativeViewY = renderHiRes ? _hiResPresentationViewY : _viewY;
 
