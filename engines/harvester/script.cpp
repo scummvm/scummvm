@@ -644,7 +644,7 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 	const int playerCombatLoadout = _playerCombatLoadout;
 	const bool playerControlPaused = _playerControlPaused;
 
-	_data = reloadedData;
+	_data = Common::move(reloadedData);
 	decode();
 	parseTownRecords(resources);
 	resetRuntimeState();
