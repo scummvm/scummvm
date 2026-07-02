@@ -207,7 +207,7 @@ void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
 
 	_videoDescs.resize(numVideoDescs);
 	for (uint i = 0; i < numVideoDescs; ++i) {
-		_videoDescs[i].readData(stream);
+		_videoDescs[i].readData(stream, true);
 	}
 
 	// Nancy 10+ stores the record's dependency block right after the video

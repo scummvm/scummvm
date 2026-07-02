@@ -312,17 +312,6 @@ void PlaySecondaryMovie::onPause(bool pause) {
 void PlaySecondaryMovie::execute() {
 	switch (_state) {
 	case kBegin:
-		// HACK: In Nancy 10, scene 2987, there are two PlaySecondaryMovie records that play
-		// the same video, but have no dependencies. The first video leads to the losing scene,
-		// while the second one leads to the winning scene. Since none of the two records has a
-		// dependency, the first one will always be executed. It seems like there should be
-		// a check to prevent the first record from being executed, but it wasn't possible to
-		// find it. Don't start the first record for now, so that the second one can be
-		// executed and the player can proceed.
-		// TODO: Find out what the original engine does in this case, and implement it properly.
-		if (g_nancy->getGameType() == kGameTypeNancy10 && _videoSceneChange == kMovieSceneChange && _sceneChange.sceneID == 2989)
-			return;
-
 		init();
 		registerGraphics();
 		g_nancy->_sound->loadSound(_sound);

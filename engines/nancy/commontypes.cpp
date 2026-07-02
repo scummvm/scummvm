@@ -128,12 +128,16 @@ void MultiEventFlagDescription::execute() {
 	}
 }
 
-void SecondaryVideoDescription::readData(Common::SeekableReadStream &stream) {
+void SecondaryVideoDescription::readData(Common::SeekableReadStream &stream, bool hasTrailingRects) {
 	frameID = stream.readUint16LE();
 	readRect(stream, srcRect);
 	readRect(stream, destRect);
-	if (g_nancy->getGameType() <= kGameTypeNancy10)
-		stream.skip(0x20);
+	// PlaySecondaryVideo keeps the two trailing rects in every game, while
+	// PlaySecondaryMovie only has them up to Nancy 9 and dropped them afterwards.
+	if (hasTrailingRects || g_nancy->getGameType() <= kGameTypeNancy9) {
+		stream.skip(16);
+		stream.skip(16);
+	}
 }
 
 void SoundEffectDescription::readData(Common::SeekableReadStream &stream) {

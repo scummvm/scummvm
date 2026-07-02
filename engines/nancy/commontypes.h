@@ -210,7 +210,7 @@ struct SecondaryVideoDescription {
 	Common::Rect destRect;
 	// 2 unknown/empty rects
 
-	void readData(Common::SeekableReadStream &stream);
+	void readData(Common::SeekableReadStream &stream, bool hasTrailingRects = false);
 };
 
 // Describes set of effects that can be applied to sounds.
