@@ -361,102 +361,106 @@ void MacFontManager::loadFonts(const Common::Path &fileName) {
 	loadFonts(&fontFile);
 }
 
+void MacFontManager::loadMacFont(Common::MacResManager *fontFile, const Common::String &family, Common::SeekableReadStream *fond) {
+	int familySlant = parseSlant(family);
+
+	Common::String familyName = cleanFontName(family);
+
+	Graphics::MacFontFamily *fontFamily = new MacFontFamily(familyName);
+	fontFamily->load(*fond);
+
+	Common::Array<Graphics::MacFontFamily::AsscEntry> *assoc = fontFamily->getAssocTable();
+
+	bool fontFamilyUsed = false;
+
+	for (uint i = 0; i < assoc->size(); i++) {
+		debugC(5, kDebugLevelMacGUI, "size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant,
+								(*assoc)[i]._fontID);
+
+		Common::SeekableReadStream *fontstream;
+		MacFont *macfont;
+		Graphics::MacFONTFont *font;
+
+		fontstream = fontFile->getResource(MKTAG('N', 'F', 'N', 'T'), (*assoc)[i]._fontID);
+
+		if (!fontstream)
+			fontstream = fontFile->getResource(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID);
+
+#ifdef USE_FREETYPE2
+		if (!fontstream) {
+			// The sfnt resource should be just a copy of a TTF
+			fontstream = fontFile->getResource(MKTAG('s', 'f', 'n', 't'), (*assoc)[i]._fontID);
+			Common::String fontName = Common::String::format("%s-%d-0", familyName.c_str(), (*assoc)[i]._fontStyle | familySlant);
+			_ttfData[fontName] = fontstream;
+			continue;
+		}
+#endif
+
+		if (!fontstream) {
+			if ((*assoc)[i]._fontSize == 0) {
+				warning("MacFontManager: Detected possible TrueType FontID %d, but no TrueType support detected", (*assoc)[i]._fontID);
+			} else {
+				warning("MacFontManager: Unknown FontId: %d", (*assoc)[i]._fontID);
+			}
+			continue;
+		}
+
+		fontFamilyUsed = true;
+
+		font = new Graphics::MacFONTFont;
+		font->loadFont(*fontstream, fontFamily, (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant);
+
+		delete fontstream;
+
+		Common::String name = fontFamily->getName();
+
+		if (!_fontIds.contains(name)) {
+			int id = fontFamily->getFontFamilyId();
+
+			FontInfo *info = new FontInfo;
+			info->name = fontFamily->getName();
+			if (id >= 0x4000) {
+				info->lang = Common::JA_JPN;
+				info->encoding = Common::kWindows932;
+			} else {
+				info->encoding = Common::kMacRoman;
+			}
+
+			_fontIds[name] = id;
+			_fontInfo[id] = info;
+		}
+
+		Common::String fontName = Common::String::format("%s-%d-%d", familyName.c_str(), (*assoc)[i]._fontStyle | familySlant, (*assoc)[i]._fontSize);
+
+		macfont = new MacFont(_fontIds.getValOrDefault(familyName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant);
+		macfont->setName(fontName);
+
+		FontMan.assignFontToName(fontName, font);
+		macfont->setFont(font, false);
+		if (_fontRegistry.contains(fontName)) {
+			warning("MacFontManager: Overwriting font %s", fontName.c_str());
+			delete _fontRegistry.getVal(fontName);
+		}
+		_fontRegistry.setVal(fontName, macfont);
+
+		debugC(5, kDebugLevelMacGUI, " %s", fontName.c_str());
+	}
+
+	if (fontFamilyUsed)
+		_fontFamilies.push_back(fontFamily);
+	else
+		delete fontFamily;
+}
+
 void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
-	Common::MacResIDArray fonts = fontFile->getResIDArray(MKTAG('F','O','N','D'));
+	Common::MacResIDArray fonts = fontFile->getResIDArray(MKTAG('F', 'O', 'N', 'D'));
 	if (fonts.size() > 0) {
 		for (auto &curFont : fonts) {
 			Common::SeekableReadStream *fond = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), curFont);
 
-			Common::String familyName = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), curFont);
-			int familySlant = parseSlant(familyName);
-
-			familyName = cleanFontName(familyName);
-
-			Graphics::MacFontFamily *fontFamily = new MacFontFamily(familyName);
-			fontFamily->load(*fond);
-
-			Common::Array<Graphics::MacFontFamily::AsscEntry> *assoc = fontFamily->getAssocTable();
-
-			bool fontFamilyUsed = false;
-
-			for (uint i = 0; i < assoc->size(); i++) {
-				debugC(5, kDebugLevelMacGUI, "size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant,
-										(*assoc)[i]._fontID);
-
-				Common::SeekableReadStream *fontstream;
-				MacFont *macfont;
-				Graphics::MacFONTFont *font;
-
-				fontstream = fontFile->getResource(MKTAG('N', 'F', 'N', 'T'), (*assoc)[i]._fontID);
-
-				if (!fontstream)
-					fontstream = fontFile->getResource(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID);
-
-#ifdef USE_FREETYPE2
-				if (!fontstream) {
-					// The sfnt resource should be just a copy of a TTF
-					fontstream = fontFile->getResource(MKTAG('s', 'f', 'n', 't'), (*assoc)[i]._fontID);
-					Common::String fontName = Common::String::format("%s-%d-0", familyName.c_str(), (*assoc)[i]._fontStyle | familySlant);
-					_ttfData[fontName] = fontstream;
-					continue;
-				}
-#endif
-
-				if (!fontstream) {
-					if ((*assoc)[i]._fontSize == 0) {
-						warning("MacFontManager: Detected possible TrueType FontID %d, but no TrueType support detected", (*assoc)[i]._fontID);
-					} else {
-						warning("MacFontManager: Unknown FontId: %d", (*assoc)[i]._fontID);
-					}
-					continue;
-				}
-
-				fontFamilyUsed = true;
-
-				font = new Graphics::MacFONTFont;
-				font->loadFont(*fontstream, fontFamily, (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant);
-
-				delete fontstream;
-
-				Common::String name = fontFamily->getName();
-
-				if (!_fontIds.contains(name)) {
-					int id = fontFamily->getFontFamilyId();
-
-					FontInfo *info = new FontInfo;
-					info->name = fontFamily->getName();
-					if (id >= 0x4000) {
-						info->lang = Common::JA_JPN;
-						info->encoding = Common::kWindows932;
-					} else {
-						info->encoding = Common::kMacRoman;
-					}
-
-					_fontIds[name] = id;
-					_fontInfo[id] = info;
-				}
-
-				Common::String fontName = Common::String::format("%s-%d-%d", familyName.c_str(), (*assoc)[i]._fontStyle | familySlant, (*assoc)[i]._fontSize);
-
-				macfont = new MacFont(_fontIds.getValOrDefault(familyName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant);
-
-				FontMan.assignFontToName(fontName, font);
-				macfont->setFont(font, false);
-				if (_fontRegistry.contains(fontName)) {
-					warning("MacFontManager: Overwriting font %s", fontName.c_str());
-					delete _fontRegistry.getVal(fontName);
-				}
-				_fontRegistry.setVal(fontName, macfont);
-
-				debugC(5, kDebugLevelMacGUI, " %s", fontName.c_str());
-			}
-
+			Common::String family = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), curFont);
+			loadMacFont(fontFile, family, fond);
 			delete fond;
-
-			if (fontFamilyUsed)
-				_fontFamilies.push_back(fontFamily);
-			else
-				delete fontFamily;
 		}
 	}
 }
@@ -501,63 +505,63 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 		if (lang == Common::JA_JPN && !_japaneseFontsLoaded) {
 			loadJapaneseFonts();
 		}
+	}
 
-		if (macFont->getName().empty()) {
-			name = getFontName(macFont->getId(), macFont->getSize(), macFont->getSlant());
-			macFont->setName(name);
-		}
+	if (macFont->getName().empty()) {
+		name = getFontName(macFont->getId(), macFont->getSize(), macFont->getSlant());
+		macFont->setName(name);
+	}
 
-		if (_fontRegistry.contains(macFont->getName()))
-			return _fontRegistry[macFont->getName()]->getFont();
+	if (_fontRegistry.contains(macFont->getName()))
+		return _fontRegistry[macFont->getName()]->getFont();
 
-		if (!_fontRegistry.contains(macFont->getName())) {
-			int id = macFont->getId();
+	if (!_fontRegistry.contains(macFont->getName())) {
+		int id = macFont->getId();
 
-			if (_fontInfo.contains(id) && _winFontRegistry.contains(_fontInfo.getVal(id)->name)) {
-				font = _winFontRegistry.getVal(_fontInfo.getVal(id)->name);
-				const Graphics::WinFont *winfont = (const Graphics::WinFont *)font;
+		if (_fontInfo.contains(id) && _winFontRegistry.contains(_fontInfo.getVal(id)->name)) {
+			font = _winFontRegistry.getVal(_fontInfo.getVal(id)->name);
+			const Graphics::WinFont *winfont = (const Graphics::WinFont *)font;
 
-				if (winfont->getFontSizeInPointsAtDPI(72) != macFont->getSize()) {
-					Common::String fullFontName = Common::String::format("%s-%d-%d", winfont->getName().c_str(), winfont->getStyle(), winfont->getFontSizeInPointsAtDPI(72));
+			if (winfont->getFontSizeInPointsAtDPI(72) != macFont->getSize()) {
+				Common::String fullFontName = Common::String::format("%s-%d-%d", winfont->getName().c_str(), winfont->getStyle(), winfont->getFontSizeInPointsAtDPI(72));
 
-					if (_winFontRegistry.contains(fullFontName)) {
-						font = _winFontRegistry.getVal(fullFontName);
-					} else {
-						// Generate a scaledFont
-						Graphics::WinFont *scaledWinFont = WinFont::scaleFont(winfont, macFont->getSize());
-						if (scaledWinFont) {
-							debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont(): Generated scaled winFont %s", fullFontName.c_str());
+				if (_winFontRegistry.contains(fullFontName)) {
+					font = _winFontRegistry.getVal(fullFontName);
+				} else {
+					// Generate a scaledFont
+					Graphics::WinFont *scaledWinFont = WinFont::scaleFont(winfont, macFont->getSize());
+					if (scaledWinFont) {
+						debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont(): Generated scaled winFont %s", fullFontName.c_str());
 
-							// register font generated for reuse
-							_winFontRegistry.setVal(fullFontName, scaledWinFont);
+						// register font generated for reuse
+						_winFontRegistry.setVal(fullFontName, scaledWinFont);
 
-							font = scaledWinFont;
-						}
+						font = scaledWinFont;
 					}
 				}
 			}
 		}
+	}
 
-		if (!font) {
-			if (!_fontRegistry.contains(macFont->getName())) {
-				// Let's try to generate name
-				if (macFont->getSlant() != kMacFontRegular) {
-					name = getFontName(macFont->getId(), macFont->getSize(), macFont->getSlant(), true);
-					macFont->setName(name);
-				}
-
-				if (!_fontRegistry.contains(macFont->getName()))
-					generateFontSubstitute(*macFont);
+	if (!font) {
+		if (!_fontRegistry.contains(macFont->getName())) {
+			// Let's try to generate name
+			if (macFont->getSlant() != kMacFontRegular) {
+				name = getFontName(macFont->getId(), macFont->getSize(), macFont->getSlant(), true);
+				macFont->setName(name);
 			}
 
-			font = FontMan.getFontByName(macFont->getName());
+			if (!_fontRegistry.contains(macFont->getName()))
+				generateFontSubstitute(*macFont);
 		}
 
-		if (!font) {
-			debugC(1, kDebugLevelMacGUI, "Cannot load font '%s'", macFont->getName().c_str());
+		font = FontMan.getFontByName(macFont->getName());
+	}
 
-			font = FontMan.getFontByName(MacFont(kMacFontSystem, 12).getName());
-		}
+	if (!font) {
+		debugC(1, kDebugLevelMacGUI, "Cannot load font '%s'", macFont->getName().c_str());
+
+		font = FontMan.getFontByName(MacFont(kMacFontSystem, 12).getName());
 	}
 
 #ifdef USE_FREETYPE2

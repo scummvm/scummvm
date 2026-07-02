@@ -567,8 +567,12 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 		bitmapOffset += 2;
 	if (slant & kMacFontItalic)
 		bitmapOffset += (data._fRectHeight - 1) / SLANTDEEP;
-	if (slant & kMacFontShadow)
-		bitmapOffset++;
+	if (slant & kMacFontShadow) {
+		if (slant & kMacFontOutline)
+			bitmapOffset += 2;
+		else
+			bitmapOffset += 3;
+	}
 
 	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
@@ -640,11 +644,17 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 		if (slant & kMacFontOutline) {
 			tmpSurf.fillRect(Common::Rect(tmpSurf.w, tmpSurf.h), 0);
 			makeOutline(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
+			if (slant & kMacFontShadow) {
+				// An approximation of how QuickDraw renders outline | shadow text.
+				// FIXME: Real QuickDraw goes to greater lengths in filling the gaps
+				// (e.g. gap at the base of A, center of hollow letters like O)
+				makeShadow(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
+				makeShadow(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
+			}
 			srcSurf.copyFrom(tmpSurf);
-		}
-
-		if (slant & kMacFontShadow) {
+		} else if (slant & kMacFontShadow) {
 			tmpSurf.fillRect(Common::Rect(tmpSurf.w, tmpSurf.h), 0);
+			makeOutline(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
 			makeShadow(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
 			srcSurf.copyFrom(tmpSurf);
 		}
@@ -797,7 +807,6 @@ static void makeUnderLine(Surface *src, MacGlyph *glyph, int ascent) {
 
 static void makeShadow(Surface *src, Surface *dst, MacGlyph *glyph, int height) {
 	// makeShadow looks like just the outLine font with one more shadow at right-most edge and lowest edge
-	makeOutline(src, dst, glyph, height);
 	glyph->bitmapWidth++;
 	glyph->width++;
 

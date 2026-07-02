@@ -264,6 +264,14 @@ public:
 	uint32 getResLength(uint32 typeID, uint16 resID);
 
 	/**
+	 * Get the resource ID from a MacBinary file
+	 * @param typeID FourCC of the type
+	 * @param filename file name of the resource
+	 * @return The resource ID for a matching resource
+	 */
+	uint16 getResID(uint32 typeID, const Common::String &filename);
+
+	/**
 	 * Get the size of the data portion of the resource fork
 	 * @return The size of the data portion of the resource fork
 	 */

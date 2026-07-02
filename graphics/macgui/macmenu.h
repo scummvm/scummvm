@@ -128,6 +128,7 @@ public:
 	void loadMenuResource(Common::MacResManager *resFork, uint16 id);
 	void loadMenuBarResource(Common::MacResManager *resFork, uint16 id);
 	void createSubMenuFromString(int id, const char *string, int commandId);
+	void appendMenu(MacMenuSubMenu *submenu, const Common::String &string, int commandId);
 	void clearSubMenu(int id);
 
 	MacMenuSubMenu *getSubmenu(MacMenuSubMenu *submenu, int index);
@@ -148,6 +149,8 @@ public:
 
 	bool isVisible() { return _isVisible; }
 	void setVisible(bool visible, bool silent = false) override { _isVisible = visible; _contentIsDirty = true; }
+
+	void setFont(uint16 fontID, uint16 fontSize);
 
 	void printMenu(int level = 0, MacMenuSubMenu *submenu = nullptr);
 
@@ -170,6 +173,7 @@ public:
 
 	int getLastSelectedMenuItem() { return _lastActiveItem; };
 	int getLastSelectedSubmenuItem() { return _lastActiveSubItem; };
+	void getMenuShortCut(uint16 key, int &menuItem, int &submenuItem);
 
 	void renderSubmenu(MacMenuSubMenu *menu, bool recursive = true);
 
@@ -177,14 +181,16 @@ public:
 
 	int getDropdownItemHeight() { return _menuDropdownItemHeight; }
 
+	void setOverlayDirty(bool dirty) { _overlayDirty = dirty; _contentIsDirty |= dirty; }
+
 	Common::Array<MacMenuSubMenu *> _menustack;
 
 protected:
 	Common::Rect _bbox;
-	ManagedSurface _screen;
 	ItemArray _items;
 	bool _isVisible;
 	bool _dimensionsDirty;
+	bool _overlayDirty;
 	int _menuDropdownItemHeight;
 
 	int _activeItem;
@@ -225,6 +231,8 @@ private:
 	MacMenuItem *findMenuItem(int menuId, int itemId);
 
 
+	uint16 _fontID;
+	uint16 _fontSize;
 	const Font *_font;
 	Font *_loadedFont;
 

@@ -33,7 +33,7 @@
 namespace Graphics {
 
 MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor) :
-	MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment), _pd(Graphics::MacPlotData(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, bgcolor, true)) {
+	MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment), _pd(Graphics::MacPlotData(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, {1, 1}, bgcolor, true)) {
 
 	_buttonType = buttonType;
 	init();
@@ -143,7 +143,7 @@ bool MacButton::draw(bool forceRedraw) {
 
 	MacText::draw();
 	Common::Rect r(_dims.width() - 1, _dims.height() - 1);
-	Graphics::MacPlotData pd(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, 0);
+	Graphics::MacPlotData pd(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, {1, 1}, 0);
 
 	Primitives &primitives = _wm->getDrawPrimitives();
 

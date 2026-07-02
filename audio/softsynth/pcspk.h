@@ -29,6 +29,8 @@
 
 namespace Audio {
 
+#define PCSPK_DEFAULT_VOLUME 20
+
 class PCSpeakerStream;
 
 class PCSpeaker {
@@ -49,7 +51,7 @@ public:
 	 *
 	 *  If length is negative, play until told to stop.
 	 */
-	void play(WaveForm wave, int freq, int32 length);
+	void play(WaveForm wave, int freq, int32 length, byte volume = PCSPK_DEFAULT_VOLUME);
 
 	/**
 	 * Queue the specified playback instruction. It will be executed when all
@@ -71,7 +73,7 @@ public:
 	 * @param lengthus The length in microseconds for which to play the
 	 * waveform.
 	 */
-	void playQueue(WaveForm wave, float freq, uint32 lengthus);
+	void playQueue(WaveForm wave, float freq, uint32 lengthus, byte volume = PCSPK_DEFAULT_VOLUME);
 	/** Stop the currently playing note after delay ms. */
 	void stop(int32 delay = 0);
 
@@ -90,8 +92,9 @@ protected:
 		PCSpeaker::WaveForm waveForm;
 		float frequency;
 		uint32 length;
+		byte volume;
 
-		Command(PCSpeaker::WaveForm waveForm, float frequency, uint32 length);
+		Command(PCSpeaker::WaveForm waveForm, float frequency, uint32 length, byte volume = PCSPK_DEFAULT_VOLUME);
 	};
 
 public:
@@ -102,7 +105,7 @@ public:
 	 *
 	 *  If length is negative, play until told to stop.
 	 */
-	void play(PCSpeaker::WaveForm wave, int freq, int32 length);
+	void play(PCSpeaker::WaveForm wave, int freq, int32 length, byte volume = PCSPK_DEFAULT_VOLUME);
 	/**
 	 * Queue the specified playback instruction. It will be executed when all
 	 * previously queued instructions have finished. Use this method for
@@ -116,14 +119,14 @@ public:
 	 * Use isPlaying to check if all queued instructions have finished playing.
 	 * This will return true even if the current instruction is "playing"
 	 * silence.
-	 * 
+	 *
 	 * @param wave The waveform to use. For PC speaker, use square wave or
 	 * silence.
 	 * @param freq The frequency (in Hertz) to play.
 	 * @param lengthus The length in microseconds for which to play the
 	 * waveform.
 	 */
-	void playQueue(PCSpeaker::WaveForm wave, float freq, uint32 lengthus);
+	void playQueue(PCSpeaker::WaveForm wave, float freq, uint32 lengthus, byte volume = PCSPK_DEFAULT_VOLUME);
 	/** Stop the currently playing note after delay ms. */
 	void stop(int32 delay = 0);
 

@@ -742,7 +742,7 @@ void AboutDialog::paint() {
 	Common::Rect volBox(0, 0, volume * kVolWidth / 256, 12);
 	volBox.moveTo(_bbox.left + (_bbox.width() - kVolWidth) / 2, _bbox.bottom - 32);
 
-	Graphics::MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);
+	Graphics::MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, {1, 1}, _wm->_colorBlack, false);
 	primitives.drawFilledRect1(volBox, kColorBlack, &pd);
 	primitives.drawRect1(_volBbox, kColorBlack, &pd);
 }

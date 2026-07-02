@@ -394,8 +394,8 @@ public:
 
 	bool isDirty() override { return _borderIsDirty || _contentIsDirty; }
 
-	void setBorderDirty(bool dirty) { _borderIsDirty = true; }
-	void setContentDirty(bool dirty) { _contentIsDirty = true; }
+	void setBorderDirty(bool dirty) { _borderIsDirty = dirty; }
+	void setContentDirty(bool dirty) { _contentIsDirty = dirty; }
 	void resizeBorderSurface();
 
 	void setMode(uint32 mode) { _mode = mode; }
