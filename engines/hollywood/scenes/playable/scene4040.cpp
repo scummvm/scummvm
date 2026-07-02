@@ -46,12 +46,16 @@ const uint kScene4040ActorPaletteTableEntry = 0x00cc;
 const uint kScene4040Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene4040SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene4040FrameMillis = 75;
+const uint kScene4040CyclicBackgroundChunk = 8;
+const uint kScene4040RandomBackgroundChunk = 13;
 const uint kScene4040StairOverlayChunk = 9;
 const uint kScene4040StairOverlayDescriptorCount = 0x3e;
+const uint kScene4040BackgroundDescriptorCount = 0x1a;
 const uint kScene4040CandilOverlayChunk = 14;
 const uint kScene4040CandilOverlayDescriptorCount = 9;
 const byte kScene4040CandilItem = 0x3c;
 const byte kScene4040CandilSceneItem = 8;
+const byte kScene4040PaletteOverrideColor = 0xfb;
 
 const byte kScene4040ActorPathStepDeltaTableSetB4[] = {
 	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
@@ -107,7 +111,13 @@ PlayableSceneConfig scene4040Config() {
 }
 
 Scene4040::Scene4040(HollywoodEngine *vm) :
-		PlayableScene(vm, scene4040Config(), "scene4040", 0x192, 0x0171, 2, 0xfd, 0xfb) {
+		PlayableScene(vm, scene4040Config(), "scene4040", 0x192, 0x0171, 2, 0xfd, 0xfb),
+		_cyclicBackgroundChannel(),
+		_randomBackgroundChannel(),
+		_cyclicBackgroundLayer(),
+		_randomBackgroundLayer(),
+		_randomBackgroundState(0),
+		_randomBackgroundRepeatCount(0) {
 }
 
 bool Scene4040::hasCustomPreviewState() const {
@@ -116,6 +126,8 @@ bool Scene4040::hasCustomPreviewState() const {
 
 void Scene4040::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
+	applyScenePaletteOverride();
+	resetBackgroundLayers();
 	_activeActorWorldX = 0x192;
 	_activeActorWorldY = 0x0171;
 	_activeActorFacing = 2;
@@ -133,6 +145,11 @@ void Scene4040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
+	drawBackgroundLayers();
+	if (_actionOverlayVisible) {
+		drawActionOverlayLayer();
+		return;
+	}
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	drawForegroundBlocks(activeWorldY);
@@ -149,6 +166,17 @@ void Scene4040::runCustomEntrySequence() {
 		beginSecondarySpeechLine(0, 0);
 		state.seenScene4040EntryLine = true;
 	}
+}
+
+bool Scene4040::prepareCustomGameplayLoop() {
+	applyScenePaletteOverride();
+	resetBackgroundLayers();
+	return true;
+}
+
+bool Scene4040::advanceCustomGameplayLoop(uint32 delta) {
+	advanceBackgroundLayers(delta);
+	return false;
 }
 
 bool Scene4040::dispatchCustomSceneAction(uint16 handlerId) {
@@ -199,6 +227,7 @@ bool Scene4040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	restoreBaseFramebufferFromOriginal();
 	memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
+	applyScenePaletteOverride();
 
 	if (_vm->gameState().scene4040CandilTaken) {
 		removeColorMapItem(kScene4040CandilSceneItem);
@@ -213,6 +242,124 @@ bool Scene4040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 AmbientAudioProfile Scene4040::ambientAudioProfile() const {
 	return createRandomAmbientAudioProfile(0x0b, 3, 20, 1, 0x0b, 5, 100, 50);
+}
+
+void Scene4040::applyScenePaletteOverride() {
+	setPaletteEntry6Bit(kScene4040PaletteOverrideColor, 0, 0x11, 0);
+}
+
+void Scene4040::resetBackgroundLayers() {
+	_cyclicBackgroundLayer.configure(kScene4040CyclicBackgroundChunk, kScene4040BackgroundDescriptorCount, nullptr, 0);
+	_cyclicBackgroundLayer.visible = true;
+	_cyclicBackgroundLayer.setFrame(0);
+	_cyclicBackgroundChannel.reset(0, kScene4040FrameMillis);
+
+	_randomBackgroundLayer.configure(kScene4040RandomBackgroundChunk, kScene4040BackgroundDescriptorCount, nullptr, 0);
+	_randomBackgroundLayer.visible = true;
+	_randomBackgroundLayer.setFrame(0);
+	_randomBackgroundChannel.reset(0, kScene4040FrameMillis);
+	_randomBackgroundState = 0;
+	_randomBackgroundRepeatCount = 0;
+}
+
+void Scene4040::drawBackgroundLayers() {
+	drawResourceSpriteLayer(_randomBackgroundLayer);
+	drawResourceSpriteLayer(_cyclicBackgroundLayer);
+}
+
+void Scene4040::advanceBackgroundLayers(uint32 delta) {
+	const uint cyclicFrameCount = _cyclicBackgroundChannel.consumeFrames(delta);
+	for (uint frame = 0; frame < cyclicFrameCount; ++frame) {
+		if (_cyclicBackgroundChannel.frameIndex == 0x19)
+			_cyclicBackgroundChannel.frameIndex = 0;
+		else
+			++_cyclicBackgroundChannel.frameIndex;
+		_cyclicBackgroundLayer.setFrame(_cyclicBackgroundChannel.frameIndex);
+	}
+
+	const uint randomFrameCount = _randomBackgroundChannel.consumeFrames(delta);
+	for (uint frame = 0; frame < randomFrameCount; ++frame)
+		advanceRandomBackgroundTick();
+}
+
+void Scene4040::advanceRandomBackgroundTick() {
+	byte frameIndex = _randomBackgroundChannel.frameIndex;
+
+	switch (_randomBackgroundState) {
+	case 0:
+		if (_random.getRandomNumber(14) == 0) {
+			_randomBackgroundState = _random.getRandomBit() ? 2 : 1;
+			_randomBackgroundRepeatCount = (byte)_random.getRandomNumber(9);
+		}
+		break;
+	case 1:
+		if (frameIndex == 0x19) {
+			frameIndex = 0;
+		} else {
+			if (_randomBackgroundRepeatCount != 0) {
+				if (frameIndex < 0x0e) {
+					++frameIndex;
+				} else if (_random.getRandomBit()) {
+					_randomBackgroundState = 3;
+					_randomBackgroundRepeatCount = 0;
+					++frameIndex;
+					break;
+				} else {
+					_randomBackgroundState = 2;
+					frameIndex = 0x0d;
+				}
+				--_randomBackgroundRepeatCount;
+			}
+			if (_randomBackgroundRepeatCount == 0) {
+				if (isRandomBackgroundHoldFrame(frameIndex))
+					++frameIndex;
+				else
+					_randomBackgroundState = 0;
+			}
+		}
+		break;
+	case 2:
+		if (_randomBackgroundRepeatCount != 0) {
+			if (frameIndex == 0) {
+				frameIndex = 1;
+				_randomBackgroundState = 1;
+			} else {
+				--frameIndex;
+			}
+			--_randomBackgroundRepeatCount;
+		}
+		if (_randomBackgroundRepeatCount == 0) {
+			if (isRandomBackgroundHoldFrame(frameIndex))
+				--frameIndex;
+			else
+				_randomBackgroundState = 0;
+		}
+		break;
+	case 3:
+		if (frameIndex < 0x18)
+			++frameIndex;
+		else
+			_randomBackgroundState = 4;
+		break;
+	case 4:
+		if (_random.getRandomNumber(19) == 0) {
+			frameIndex = 0x19;
+			_randomBackgroundState = 1;
+			_randomBackgroundRepeatCount = (byte)_random.getRandomNumber(14);
+		}
+		break;
+	default:
+		_randomBackgroundState = 0;
+		break;
+	}
+
+	_randomBackgroundChannel.frameIndex = frameIndex;
+	_randomBackgroundLayer.setFrame(frameIndex);
+}
+
+bool Scene4040::isRandomBackgroundHoldFrame(byte frameIndex) const {
+	return frameIndex == 1 || frameIndex == 3 || frameIndex == 6 ||
+		frameIndex == 8 || frameIndex == 0x0b || frameIndex == 0x0d;
 }
 
 void Scene4040::runStairReturnToDungeon() {
