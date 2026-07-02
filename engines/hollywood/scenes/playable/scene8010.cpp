@@ -60,6 +60,13 @@ const uint kScene8010TransitionDescriptorCount = 0x87;
 const byte kScene8010PrimarySpeechBaseFrame = 0x17;
 const byte kScene8010PrimarySpeechRestFrame = 0x17;
 const byte kScene8010PrimarySpeechIdleBlinkFrame = 0x1b;
+const uint16 kScene8010FishermanSpeechCenterX = 0x00fa;
+const uint16 kScene8010FishermanSpeechTopY = 0x0104;
+const byte kScene8010FishermanSpeechRed = 0x3f;
+const byte kScene8010FishermanSpeechGreen = 0x0d;
+const byte kScene8010FishermanSpeechBlue = 0x0d;
+const byte kScene8010InvalidPrimarySpeechGroup = 0xff;
+const byte kScene8010DefaultPrimarySpeechFrame = 7;
 const uint16 kScene8010FishermanPlayerSpeechRow = 0x62;
 const uint16 kScene8010FishermanResponseSpeechRow = 0x63;
 const byte kScene8010FishermanQuizMenuStage = 0xfe;
@@ -67,6 +74,10 @@ const uint32 kScene8010QuizMenuTickMillis = 10;
 const uint32 kScene8010QuizMenuLineHeight = 0x15;
 const uint16 kScene8010QuizMenuHoverTopBaseY = 0x1d3;
 const uint16 kScene8010QuizMenuHoverBottomY = 0x1d5;
+const uint32 kScene8010GeneratedSpeechMinMillis = 1200;
+const uint32 kScene8010GeneratedSpeechLineMillis = 1100;
+const uint32 kScene8010SelectedAnswerMinMillis = 900;
+const uint32 kScene8010SelectedAnswerLineMillis = 900;
 
 const byte kScene8010FishermanFrameMap[] = {
 	0, 23, 1, 2, 3, 4, 5, 6,
@@ -88,17 +99,6 @@ const byte kScene8010FishermanQuizLinePermutation[] = {
 	4, 2, 7, 0, 6, 5, 1, 3,
 	5, 3, 4, 2, 7, 0, 6, 1,
 	6, 5, 1, 4, 3, 2, 0, 7
-};
-
-struct Scene8010FishermanQuizEntry {
-	byte promptStage;
-	byte promptRow;
-	byte promptSuffixStage;
-	byte promptSuffixRow;
-	byte menuStage;
-	byte menuRow;
-	byte menuSuffixStage;
-	byte menuSuffixRow;
 };
 
 PlayableSceneConfig scene8010Config() {
@@ -188,7 +188,9 @@ bool Scene8010::prepareCustomGameplayLoop() {
 }
 
 bool Scene8010::advanceCustomGameplayLoop(uint32 delta) {
-	if (!_primaryDialogueSpeechActive)
+	if (_primaryDialogueSpeechActive)
+		advancePrimaryDialogueSpeechFrame(delta);
+	else
 		advanceFishermanIdle(delta);
 	advanceBoatLoop(delta);
 	updateAmbientAudioAndMusicCues(delta);
@@ -490,7 +492,7 @@ void Scene8010::runFirstEntry() {
 
 	if (!_vm->gameState().seenScene8010EntryLine) {
 		_vm->gameState().seenScene8010EntryLine = true;
-		beginSecondarySpeechLine(1, 0);
+		beginSecondarySpeechLine(0, 0);
 	}
 }
 
@@ -565,65 +567,101 @@ void Scene8010::setActiveActorPose(int x, int y, byte facing) {
 	presentFrame();
 }
 
-void Scene8010::initializeFishermanQuizChoices(byte targetLineIndex) {
-	Scene8010FishermanQuizEntry entries[8];
-	bool usedGroupA[12];
-	bool usedGroupB[12];
+void Scene8010::initializeFishermanQuizData(byte targetLineIndex) {
+	bool usedShortPrompt[6];
+	bool usedPromptPrefix[12];
+	bool usedPromptSuffix[12];
+	bool usedFinalPrompt[6];
+	bool usedFinalSuffix[12];
 	bool usedMenuPrefix[16];
 	bool usedMenuSuffix[16];
-	memset(usedGroupA, 0, sizeof(usedGroupA));
-	memset(usedGroupB, 0, sizeof(usedGroupB));
+	memset(usedShortPrompt, 0, sizeof(usedShortPrompt));
+	memset(usedPromptPrefix, 0, sizeof(usedPromptPrefix));
+	memset(usedPromptSuffix, 0, sizeof(usedPromptSuffix));
+	memset(usedFinalPrompt, 0, sizeof(usedFinalPrompt));
+	memset(usedFinalSuffix, 0, sizeof(usedFinalSuffix));
 	memset(usedMenuPrefix, 0, sizeof(usedMenuPrefix));
 	memset(usedMenuSuffix, 0, sizeof(usedMenuSuffix));
 
 	if (!_fishermanQuizAlternatePattern) {
-		entries[0].promptStage = 0x54;
-		entries[0].promptRow = randomUnusedRow(0, 6, usedGroupA, ARRAYSIZE(usedGroupA));
-		entries[0].promptSuffixStage = 0x50;
-		entries[0].promptSuffixRow = randomUnusedRow(0, 12, usedGroupB, ARRAYSIZE(usedGroupB));
-		entries[0].menuStage = 0x56;
-		entries[0].menuRow = randomUnusedRow(8, 8, usedMenuPrefix, ARRAYSIZE(usedMenuPrefix));
-		entries[0].menuSuffixStage = 0x57;
-		entries[0].menuSuffixRow = randomUnusedRow(0, 16, usedMenuSuffix, ARRAYSIZE(usedMenuSuffix));
+		_fishermanQuizEntries[0].promptStage = 0x54;
+		_fishermanQuizEntries[0].promptRow = randomUnusedRow(0, 6, usedShortPrompt,
+			ARRAYSIZE(usedShortPrompt));
+		_fishermanQuizEntries[0].promptSuffixStage = 0x50;
+		_fishermanQuizEntries[0].promptSuffixRow = randomUnusedRow(0, 12, usedPromptSuffix,
+			ARRAYSIZE(usedPromptSuffix));
+		_fishermanQuizEntries[0].menuStage = 0x56;
+		_fishermanQuizEntries[0].menuRow = randomUnusedRow(8, 8, usedMenuPrefix, ARRAYSIZE(usedMenuPrefix));
+		_fishermanQuizEntries[0].menuSuffixStage = 0x57;
+		_fishermanQuizEntries[0].menuSuffixRow = randomUnusedRow(0, 16, usedMenuSuffix, ARRAYSIZE(usedMenuSuffix));
 
-		for (uint i = 1; i < ARRAYSIZE(entries); ++i) {
-			entries[i].promptStage = 0x53;
-			entries[i].promptRow = randomUnusedRow(0, 12, usedGroupA, ARRAYSIZE(usedGroupA));
-			entries[i].promptSuffixStage = 0x50;
-			entries[i].promptSuffixRow = randomUnusedRow(0, 12, usedGroupB, ARRAYSIZE(usedGroupB));
-			entries[i].menuStage = 0x56;
-			entries[i].menuRow = randomUnusedRow(8, 8, usedMenuPrefix, ARRAYSIZE(usedMenuPrefix));
-			entries[i].menuSuffixStage = 0x57;
-			entries[i].menuSuffixRow = randomUnusedRow(0, 16, usedMenuSuffix, ARRAYSIZE(usedMenuSuffix));
+		for (uint i = 1; i < ARRAYSIZE(_fishermanQuizEntries); ++i) {
+			_fishermanQuizEntries[i].promptStage = 0x53;
+			_fishermanQuizEntries[i].promptRow = randomUnusedRow(0, 12, usedPromptPrefix,
+				ARRAYSIZE(usedPromptPrefix));
+			_fishermanQuizEntries[i].promptSuffixStage = 0x50;
+			_fishermanQuizEntries[i].promptSuffixRow = randomUnusedRow(0, 12, usedPromptSuffix,
+				ARRAYSIZE(usedPromptSuffix));
+			_fishermanQuizEntries[i].menuStage = 0x56;
+			_fishermanQuizEntries[i].menuRow = randomUnusedRow(8, 8, usedMenuPrefix, ARRAYSIZE(usedMenuPrefix));
+			_fishermanQuizEntries[i].menuSuffixStage = 0x57;
+			_fishermanQuizEntries[i].menuSuffixRow = randomUnusedRow(0, 16, usedMenuSuffix, ARRAYSIZE(usedMenuSuffix));
 		}
+
+		_fishermanQuizFinalEntry.promptStage = 0x55;
+		_fishermanQuizFinalEntry.promptRow = randomUnusedRow(0, 6, usedFinalPrompt, ARRAYSIZE(usedFinalPrompt));
+		_fishermanQuizFinalEntry.promptSuffixStage = 0x52;
+		_fishermanQuizFinalEntry.promptSuffixRow = randomUnusedRow(0, 12, usedFinalSuffix, ARRAYSIZE(usedFinalSuffix));
+		_fishermanQuizFinalEntry.menuStage = 0x56;
+		_fishermanQuizFinalEntry.menuRow = randomUnusedRow(0, 8, usedMenuPrefix, ARRAYSIZE(usedMenuPrefix));
+		_fishermanQuizFinalEntry.menuSuffixStage = 0x57;
+		_fishermanQuizFinalEntry.menuSuffixRow = randomUnusedRow(0, 16, usedMenuSuffix, ARRAYSIZE(usedMenuSuffix));
+		_fishermanQuizAlternatePattern = true;
 	} else {
-		entries[0].promptStage = 0x54;
-		entries[0].promptRow = randomUnusedRow(0, 6, usedGroupA, ARRAYSIZE(usedGroupA));
-		entries[0].promptSuffixStage = 0x52;
-		entries[0].promptSuffixRow = randomUnusedRow(0, 12, usedGroupB, ARRAYSIZE(usedGroupB));
-		entries[0].menuStage = 0x56;
-		entries[0].menuRow = randomUnusedRow(0, 8, usedMenuPrefix, ARRAYSIZE(usedMenuPrefix));
-		entries[0].menuSuffixStage = 0x57;
-		entries[0].menuSuffixRow = randomUnusedRow(0, 16, usedMenuSuffix, ARRAYSIZE(usedMenuSuffix));
+		_fishermanQuizEntries[0].promptStage = 0x54;
+		_fishermanQuizEntries[0].promptRow = randomUnusedRow(0, 6, usedShortPrompt,
+			ARRAYSIZE(usedShortPrompt));
+		_fishermanQuizEntries[0].promptSuffixStage = 0x52;
+		_fishermanQuizEntries[0].promptSuffixRow = randomUnusedRow(0, 12, usedPromptSuffix,
+			ARRAYSIZE(usedPromptSuffix));
+		_fishermanQuizEntries[0].menuStage = 0x56;
+		_fishermanQuizEntries[0].menuRow = randomUnusedRow(0, 8, usedMenuPrefix, ARRAYSIZE(usedMenuPrefix));
+		_fishermanQuizEntries[0].menuSuffixStage = 0x57;
+		_fishermanQuizEntries[0].menuSuffixRow = randomUnusedRow(0, 16, usedMenuSuffix, ARRAYSIZE(usedMenuSuffix));
 
-		for (uint i = 1; i < ARRAYSIZE(entries); ++i) {
-			entries[i].promptStage = 0x51;
-			entries[i].promptRow = randomUnusedRow(0, 12, usedGroupA, ARRAYSIZE(usedGroupA));
-			entries[i].promptSuffixStage = 0x52;
-			entries[i].promptSuffixRow = randomUnusedRow(0, 12, usedGroupB, ARRAYSIZE(usedGroupB));
-			entries[i].menuStage = 0x56;
-			entries[i].menuRow = randomUnusedRow(0, 8, usedMenuPrefix, ARRAYSIZE(usedMenuPrefix));
-			entries[i].menuSuffixStage = 0x57;
-			entries[i].menuSuffixRow = randomUnusedRow(0, 16, usedMenuSuffix, ARRAYSIZE(usedMenuSuffix));
+		for (uint i = 1; i < ARRAYSIZE(_fishermanQuizEntries); ++i) {
+			_fishermanQuizEntries[i].promptStage = 0x51;
+			_fishermanQuizEntries[i].promptRow = randomUnusedRow(0, 12, usedPromptPrefix,
+				ARRAYSIZE(usedPromptPrefix));
+			_fishermanQuizEntries[i].promptSuffixStage = 0x52;
+			_fishermanQuizEntries[i].promptSuffixRow = randomUnusedRow(0, 12, usedPromptSuffix,
+				ARRAYSIZE(usedPromptSuffix));
+			_fishermanQuizEntries[i].menuStage = 0x56;
+			_fishermanQuizEntries[i].menuRow = randomUnusedRow(0, 8, usedMenuPrefix, ARRAYSIZE(usedMenuPrefix));
+			_fishermanQuizEntries[i].menuSuffixStage = 0x57;
+			_fishermanQuizEntries[i].menuSuffixRow = randomUnusedRow(0, 16, usedMenuSuffix, ARRAYSIZE(usedMenuSuffix));
 		}
+
+		_fishermanQuizFinalEntry.promptStage = 0x55;
+		_fishermanQuizFinalEntry.promptRow = randomUnusedRow(0, 6, usedFinalPrompt, ARRAYSIZE(usedFinalPrompt));
+		_fishermanQuizFinalEntry.promptSuffixStage = 0x50;
+		_fishermanQuizFinalEntry.promptSuffixRow = randomUnusedRow(0, 12, usedFinalSuffix, ARRAYSIZE(usedFinalSuffix));
+		_fishermanQuizFinalEntry.menuStage = 0x56;
+		_fishermanQuizFinalEntry.menuRow = randomUnusedRow(8, 8, usedMenuPrefix, ARRAYSIZE(usedMenuPrefix));
+		_fishermanQuizFinalEntry.menuSuffixStage = 0x57;
+		_fishermanQuizFinalEntry.menuSuffixRow = randomUnusedRow(0, 16, usedMenuSuffix, ARRAYSIZE(usedMenuSuffix));
+		_fishermanQuizAlternatePattern = false;
 	}
 
 	for (uint line = 0; line < ARRAYSIZE(_fishermanQuizChoiceText); ++line) {
 		const uint permutationIndex = (uint)targetLineIndex * ARRAYSIZE(_fishermanQuizChoiceText) + line;
 		const byte answerIndex = kScene8010FishermanQuizLinePermutation[permutationIndex];
+		_fishermanQuizChoiceEntryIndex[line] = answerIndex;
 		_fishermanQuizChoiceText[line] =
-			composeFishermanQuizChoice(entries[answerIndex].menuStage, entries[answerIndex].menuRow,
-				entries[answerIndex].menuSuffixStage, entries[answerIndex].menuSuffixRow);
+			composeFishermanQuizChoice(_fishermanQuizEntries[answerIndex].menuStage,
+				_fishermanQuizEntries[answerIndex].menuRow,
+				_fishermanQuizEntries[answerIndex].menuSuffixStage,
+				_fishermanQuizEntries[answerIndex].menuSuffixRow);
 	}
 }
 
@@ -634,6 +672,161 @@ Common::String Scene8010::composeFishermanQuizChoice(byte firstStage, byte first
 		text += " ";
 	text += PlayableScene::dialogueMenuText(secondStage, secondRow);
 	return text;
+}
+
+Common::String Scene8010::composeFishermanGeneratedPromptLine(byte promptLineIndex) const {
+	const FishermanQuizEntry &entry = promptLineIndex < ARRAYSIZE(_fishermanQuizEntries) ?
+		_fishermanQuizEntries[promptLineIndex] : _fishermanQuizFinalEntry;
+
+	Common::String text = PlayableScene::dialogueMenuText(entry.promptStage, entry.promptRow);
+	const Common::String promptSuffix = PlayableScene::dialogueMenuText(entry.promptSuffixStage, entry.promptSuffixRow);
+	if (!promptSuffix.empty()) {
+		if (!text.empty() && promptLineIndex >= 1 && promptLineIndex <= 7)
+			text += "...";
+		text += promptSuffix;
+	}
+
+	const Common::String menuPrefix = PlayableScene::dialogueMenuText(entry.menuStage, entry.menuRow);
+	if (!menuPrefix.empty()) {
+		if (!text.empty())
+			text += " ";
+		text += menuPrefix;
+	}
+
+	const Common::String menuSuffix = PlayableScene::dialogueMenuText(entry.menuSuffixStage, entry.menuSuffixRow);
+	if (!menuSuffix.empty()) {
+		if (!text.empty())
+			text += " ";
+		text += menuSuffix;
+	}
+
+	if (!text.empty())
+		text += promptLineIndex < 7 ? "..." : ".";
+	return text;
+}
+
+uint16 Scene8010::fishermanQuizFragmentVoiceSampleId(const FishermanQuizEntry &entry, byte fragmentIndex) const {
+	byte stage = 0;
+	byte row = 0;
+	switch (fragmentIndex) {
+	case 0:
+		stage = entry.promptStage;
+		row = entry.promptRow;
+		break;
+	case 1:
+		stage = entry.promptSuffixStage;
+		row = entry.promptSuffixRow;
+		break;
+	case 2:
+		stage = entry.menuStage;
+		row = entry.menuRow;
+		break;
+	case 3:
+		stage = entry.menuSuffixStage;
+		row = entry.menuSuffixRow;
+		break;
+	default:
+		return 0;
+	}
+
+	uint16 textRecordId = 0;
+	byte continuationCount = 0;
+	uint16 voiceSampleId = 0;
+	if (!getStage003Cue(stage, row, textRecordId, continuationCount, voiceSampleId))
+		return 0;
+	return voiceSampleId;
+}
+
+bool Scene8010::waitFishermanQuizFragmentVoices(const FishermanQuizEntry &entry, uint32 fallbackMillis) {
+	bool playedAny = false;
+	for (byte fragment = 0; fragment < 4 && !Engine::shouldQuit(); ++fragment) {
+		const uint16 voiceSampleId = fishermanQuizFragmentVoiceSampleId(entry, fragment);
+		const bool started = voiceSampleId != 0 && _speech.playSample(voiceSampleId, 100);
+		if (!started)
+			continue;
+
+		playedAny = true;
+		const uint32 duration = MAX<uint32>(_speech.lastSampleDurationMillis(), 250);
+		if (waitForSpeechOrDelay(duration, false)) {
+			_speech.stop();
+			return true;
+		}
+	}
+
+	if (!playedAny)
+		return waitForSpeechOrDelay(fallbackMillis, false);
+
+	return Engine::shouldQuit();
+}
+
+bool Scene8010::runFishermanGeneratedPrimarySpeechLine(byte promptLineIndex) {
+	const FishermanQuizEntry &entry = promptLineIndex < ARRAYSIZE(_fishermanQuizEntries) ?
+		_fishermanQuizEntries[promptLineIndex] : _fishermanQuizFinalEntry;
+	const Common::String text = composeFishermanGeneratedPromptLine(promptLineIndex);
+	if (text.empty())
+		return false;
+
+	setPaletteEntry6Bit(0xfb, kScene8010FishermanSpeechRed, kScene8010FishermanSpeechGreen,
+		kScene8010FishermanSpeechBlue);
+	_primarySpeechOverlay.visible = true;
+	_primarySpeechOverlay.colorIndex = 0xfb;
+	wrapActorSpeechText(text, kScene8010FishermanSpeechCenterX, _primarySpeechOverlay.lines);
+	calculateSpeechOverlayBounds(_primarySpeechOverlay, kScene8010FishermanSpeechCenterX,
+		kScene8010FishermanSpeechTopY, true, _activeActorWorldY);
+
+	const byte baseFrame = primarySpeechAnimationBaseFrame(0);
+	_speechController.startPrimaryDialogueSpeech(0, baseFrame);
+	primarySpeechAnimationStarted(0, baseFrame);
+	setPrimarySpeechAnimationFrame(0, baseFrame);
+
+	const uint32 duration = MAX<uint32>(kScene8010GeneratedSpeechMinMillis,
+		_primarySpeechOverlay.lines.size() * kScene8010GeneratedSpeechLineMillis);
+	const bool interrupted = waitFishermanQuizFragmentVoices(entry, duration);
+
+	_speech.stop();
+	setPrimarySpeechAnimationFrame(0, baseFrame);
+	_speechController.stopPrimaryDialogueSpeech(kScene8010InvalidPrimarySpeechGroup,
+		kScene8010DefaultPrimarySpeechFrame);
+	_primarySpeechOverlay.visible = false;
+	_primarySpeechOverlay.lines.clear();
+	primarySpeechAnimationRestored(0, baseFrame);
+	return interrupted;
+}
+
+void Scene8010::runFishermanGeneratedPromptSpeech() {
+	for (byte promptLine = 0; promptLine <= ARRAYSIZE(_fishermanQuizEntries) && !Engine::shouldQuit();
+			++promptLine) {
+		if (runFishermanGeneratedPrimarySpeechLine(promptLine))
+			break;
+	}
+}
+
+void Scene8010::runFishermanSelectedAnswerSpeech(byte selectedLine) {
+	if (selectedLine >= ARRAYSIZE(_fishermanQuizChoiceText))
+		return;
+
+	Common::String text = _fishermanQuizChoiceText[selectedLine];
+	if (text.empty())
+		return;
+	text += ".";
+
+	_speechOverlay.visible = true;
+	_speechOverlay.colorIndex = 0xfd;
+	wrapActorSpeechText(text, _activeActorWorldX, _speechOverlay.lines);
+	calculateSecondarySpeechBounds(_activeActorWorldX, _activeActorWorldY);
+	_speechController.prepareSecondaryActorSpeech();
+
+	const uint32 duration = MAX<uint32>(kScene8010SelectedAnswerMinMillis,
+		_speechOverlay.lines.size() * kScene8010SelectedAnswerLineMillis);
+	const byte entryIndex = _fishermanQuizChoiceEntryIndex[selectedLine];
+	if (entryIndex < ARRAYSIZE(_fishermanQuizEntries))
+		waitFishermanQuizFragmentVoices(_fishermanQuizEntries[entryIndex], duration);
+	else
+		waitForSpeechOrDelay(duration, false);
+
+	_speech.stop();
+	_speechOverlay.visible = false;
+	_speechOverlay.lines.clear();
 }
 
 byte Scene8010::chooseFishermanQuizLine() {
@@ -750,13 +943,15 @@ bool Scene8010::runFishermanQuiz() {
 	for (byte round = 0; round < 3 && !Engine::shouldQuit(); ++round) {
 		const byte targetLine = randomUnusedRow(0, ARRAYSIZE(usedTargetLines), usedTargetLines,
 			ARRAYSIZE(usedTargetLines));
-		initializeFishermanQuizChoices(targetLine);
+		initializeFishermanQuizData(targetLine);
+		runFishermanGeneratedPromptSpeech();
 		const byte selectedLine = chooseFishermanQuizLine();
 		if (selectedLine == 0xff) {
 			beginSecondarySpeechLine(kScene8010FishermanPlayerSpeechRow, 9);
 			return false;
 		}
 
+		runFishermanSelectedAnswerSpeech(selectedLine);
 		if (selectedLine != targetLine) {
 			beginPrimarySpeechLine(kScene8010FishermanResponseSpeechRow, 6, 0x00fa, 0x0104, 0x0d, 0x0d, 0x3f);
 			return false;
