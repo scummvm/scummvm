@@ -45,12 +45,14 @@ DialogueChoiceRecord::DialogueChoiceRecord() :
 		playerTextRowId(0),
 		responseFrameIndex(0),
 		disableAfterUse(0),
-		reserved(0) {
+		reserved(0),
+		selectable(1) {
 }
 
 DialogueMenuLine::DialogueMenuLine() :
 		choiceIndex(0),
-		firstLineOfChoice(false) {
+		firstLineOfChoice(false),
+		selectable(true) {
 }
 
 DialogueMenuState::DialogueMenuState() :
@@ -66,6 +68,8 @@ void DialogueMenuState::clear() {
 
 byte DialogueMenuState::choiceForLine(byte lineIndex) const {
 	if (lineIndex >= lines.size())
+		return 0xff;
+	if (!lines[lineIndex].selectable)
 		return 0xff;
 
 	return lines[lineIndex].choiceIndex;
@@ -84,15 +88,21 @@ byte DialogueMenu::choose(byte stageId, const Common::Array<DialogueChoiceRecord
 	if (!_vm || !_delegate)
 		return kCancelledChoice;
 
-	byte enabledChoiceCount = 0;
-	if (!build(stageId, records, depthIndex, nodeIndex, enabledChoiceCount))
+	byte selectableChoiceCount = 0;
+	if (!build(stageId, records, depthIndex, nodeIndex, selectableChoiceCount))
 		return kCancelledChoice;
 
 	if (_state.lineCount == 0)
 		return kCancelledChoice;
 
-	if (enabledChoiceCount < 2)
-		return _state.choiceForLine(0);
+	if (selectableChoiceCount < 2) {
+		for (byte lineIndex = 0; lineIndex < _state.lineCount; ++lineIndex) {
+			const byte choiceIndex = _state.choiceForLine(lineIndex);
+			if (choiceIndex != 0xff)
+				return choiceIndex;
+		}
+		return kCancelledChoice;
+	}
 
 	_vm->cursor()->enterInteractiveMode();
 	_vm->cursor()->updatePosition(g_system->getEventManager()->getMousePos());
@@ -139,9 +149,9 @@ byte DialogueMenu::choose(byte stageId, const Common::Array<DialogueChoiceRecord
 }
 
 bool DialogueMenu::build(byte stageId, const Common::Array<DialogueChoiceRecord> &records,
-		byte depthIndex, byte nodeIndex, byte &enabledChoiceCount) {
+		byte depthIndex, byte nodeIndex, byte &selectableChoiceCount) {
 	_state.clear();
-	enabledChoiceCount = 0;
+	selectableChoiceCount = 0;
 
 	if (depthIndex >= kMaxDepthCount || nodeIndex >= kNodesPerDepth)
 		return false;
@@ -159,8 +169,10 @@ bool DialogueMenu::build(byte stageId, const Common::Array<DialogueChoiceRecord>
 		if (record.enabled == 0)
 			continue;
 
-		++enabledChoiceCount;
-		appendWrappedChoiceText(choiceIndex, _delegate->dialogueMenuText(stageId, record.playerTextRowId));
+		if (record.selectable != 0)
+			++selectableChoiceCount;
+		appendWrappedChoiceText(choiceIndex, _delegate->dialogueMenuText(stageId, record.playerTextRowId),
+			record.selectable != 0);
 		if (_state.lineCount >= kMaxVisibleLines)
 			break;
 	}
@@ -168,7 +180,7 @@ bool DialogueMenu::build(byte stageId, const Common::Array<DialogueChoiceRecord>
 	return true;
 }
 
-void DialogueMenu::appendWrappedChoiceText(byte choiceIndex, const Common::String &text) {
+void DialogueMenu::appendWrappedChoiceText(byte choiceIndex, const Common::String &text, bool selectable) {
 	if (text.empty() || _state.lineCount >= kMaxVisibleLines)
 		return;
 
@@ -208,6 +220,7 @@ void DialogueMenu::appendWrappedChoiceText(byte choiceIndex, const Common::Strin
 		line.text = Common::String(source + cursor, end - cursor);
 		line.choiceIndex = choiceIndex;
 		line.firstLineOfChoice = firstLine;
+		line.selectable = selectable;
 		_state.lines.push_back(line);
 		_state.lineCount = (byte)_state.lines.size();
 
@@ -256,7 +269,8 @@ bool DialogueMenu::pollEvents(bool &selected, bool &cancelled) {
 
 void DialogueMenu::updateHoverFromCursor() {
 	const byte lineIndex = lineAt(_vm->cursor()->surfaceY());
-	if (lineIndex == 0xff || lineIndex >= _state.lineCount) {
+	if (lineIndex == 0xff || lineIndex >= _state.lineCount ||
+			(lineIndex < _state.lines.size() && !_state.lines[lineIndex].selectable)) {
 		_state.highlightedLineIndex = 0xff;
 		return;
 	}
