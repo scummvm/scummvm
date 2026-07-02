@@ -257,6 +257,11 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.seenScene4060EntryLine);
 	syncStateBool(s, state.scene4060SherilynDialogueIntroSeen);
 	s.syncAsByte(state.scene4060DialogueProgressCounter);
+	s.syncAsByte(state.scene4070DraculaStage);
+	syncStateBool(s, state.seenScene4070EntryLine);
+	syncStateBool(s, state.scene4070TrophyBaseOpened);
+	s.syncAsByte(state.scene4070FrankiePartIndex);
+	syncStateBool(s, state.scene4070SlimmingTreatmentApplied);
 	syncStateBool(s, state.seenScene5010EntryLine);
 	s.syncAsByte(state.scene5010MineTransportState);
 	syncStateBool(s, state.scene5010MineTransportReady);
@@ -448,6 +453,10 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene4060SecondCardStage = 0;
 	if (state.scene4060ForegroundState > 1)
 		state.scene4060ForegroundState = 0;
+	if (state.scene4070DraculaStage > 4)
+		state.scene4070DraculaStage = 0;
+	if (state.scene4070FrankiePartIndex > 3)
+		state.scene4070FrankiePartIndex = 3;
 }
 
 } // End of namespace Hollywood
