@@ -79,9 +79,9 @@ private:
 	void setActiveActorPose(int x, int y, byte facing);
 	void initializeFishermanQuizData(byte targetLineIndex);
 	Common::String composeFishermanQuizChoice(byte firstStage, byte firstRow, byte secondStage, byte secondRow) const;
-	Common::String composeFishermanGeneratedPromptLine(byte promptLineIndex) const;
+	void composeFishermanGeneratedPromptLines(byte promptLineIndex, Common::Array<Common::String> &lines) const;
 	uint16 fishermanQuizFragmentVoiceSampleId(const FishermanQuizEntry &entry, byte fragmentIndex) const;
-	bool waitFishermanQuizFragmentVoices(const FishermanQuizEntry &entry, uint32 fallbackMillis);
+	bool waitFishermanQuizFragmentVoices(const FishermanQuizEntry &entry, byte firstFragment, uint32 fallbackMillis);
 	bool runFishermanGeneratedPrimarySpeechLine(byte promptLineIndex);
 	void runFishermanGeneratedPromptSpeech();
 	void runFishermanSelectedAnswerSpeech(byte selectedLine);
