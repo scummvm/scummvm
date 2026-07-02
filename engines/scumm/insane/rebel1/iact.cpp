@@ -1498,8 +1498,12 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 			_damageFlags |= 0x20;
 	}
 
-	if (_health >= 0 && _health < kMaxHealth && (_frameCounter & 0x1F) == 0) {
-		_health++;
+	// Health regeneration + survival bonus every 32 frames (UpdatePeriodicScoreAndHealth)
+	if ((_frameCounter & 0x1F) == 0) {
+		if (_health >= 0 && _health < kMaxHealth)
+			_health++;
+		if (_health >= 0)
+			_score += _tuning.time;
 	}
 
 	if (!_noDamage && _damageFlags != 0 && _health >= 0 && _deathTimer < 1) {
