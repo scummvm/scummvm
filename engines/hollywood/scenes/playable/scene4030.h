@@ -22,7 +22,12 @@
 #ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE4030_H
 #define HOLLYWOOD_SCENES_PLAYABLE_SCENE4030_H
 
+#include "hollywood/scenes/playable/animation_channels.h"
 #include "hollywood/scenes/playable/playable_scene.h"
+
+namespace Graphics {
+class ManagedSurface;
+}
 
 namespace Hollywood {
 
@@ -41,11 +46,20 @@ private:
 		byte actorDrawOrderMode) override;
 	bool hasCustomEntrySequence() const override;
 	void runCustomEntrySequence() override;
+	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void initializeSpriteLayers();
+	void advanceBackgroundAnimations(uint32 delta);
+	void advanceLeftPropLayer(uint frameCount);
+	void advanceRightPropLayer(uint frameCount);
+	void runTowerTransitionToScene4040();
+	void drawTowerTransitionFrame(const Common::Array<byte> &clipData, byte progressIndex,
+		Graphics::ManagedSurface &transitionBackground);
+	void drawClipFrameDeltaToSurface(const Common::Array<byte> &clipData, uint tableEntryCount,
+		byte frameIndex, Graphics::ManagedSurface &destination);
 	void takeRope();
 	void talkToSkeleton();
 	void takeBone();
@@ -56,6 +70,9 @@ private:
 
 	ResourceSpriteLayer _leftPropLayer;
 	ResourceSpriteLayer _rightPropLayer;
+	TimedAnimationChannel _leftPropChannel;
+	TimedAnimationChannel _rightPropChannel;
+	byte _rightPropState;
 };
 
 } // End of namespace Hollywood
