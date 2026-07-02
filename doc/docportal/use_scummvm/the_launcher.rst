@@ -21,7 +21,7 @@ The games list
 
 The pane on the left, when the Launcher is in list view, shows the games list, which shows all the games that have been added to ScummVM. The games list usually offers some additional information about each game, such as original platform and language. To highlight any game on the list, type the first letter(s) of its title, or click on it.
 
-In grid view, all game icons are in the pane below the buttons, and show the game artwork. See :ref:`Update Icons <updateicons>` for information on how to update these. Use the **Icons per row** slider at the bottom of the page to change the size of the icons. Click on a game to select it. Click on the play icon in the pop-up menu to start the game, the gear icon to open the Game Options menu, or the export icon to load a saved game. 
+In grid view, all game icons are in the pane above the buttons, and show the game artwork. See :ref:`Update Icons <updateicons>` for information on how to update these. Use the **Icons per row** slider at the bottom of the page to change the size of the icons. Click on a game to select it. Click on the play icon in the pop-up menu to start the game, the gear icon to open the Game Options menu, or the export icon to load a saved game. 
 
 .. figure:: ../images/Launcher/launcher_popup.png
 
@@ -42,7 +42,7 @@ The grouping menu
 
 .. _group:
 
-To the right of the search box is the grouping menu. Use this menu to group games in alphabetical order, or by engine, series, publisher, language or platform. Hide or show groups of games by clicking on the black arrow to the left of each group heading. 
+To the right of the search box is the grouping menu. Use this menu to group games in alphabetical order, or by engine, series, publisher, language, platform or year. Hide or show groups of games by clicking on the black arrow to the left of each group heading. 
 
 .. figure:: ../images/Launcher/launcher_list_group.png
    
@@ -52,7 +52,7 @@ To the right of the search box is the grouping menu. Use this menu to group game
 The buttons
 ************************
 
-To the right of the games list in list view, or above the games list in grid view, there are a number of buttons. Their functions are as follows:
+To the right of the games list in list view, or below the games list in grid view, there are a number of buttons. Their functions are as follows:
 
 Start (list view only)
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -90,6 +90,22 @@ Global Options
 ^^^^^^^^^^^^^^^^^^^^
 
 Opens the global settings window. Use this window to define global game settings, as well as change a number of the ScummVM Launcher settings. For more information, see the :doc:`../use_scummvm/how_to_settings` page.
+
+Help
+^^^^
+Clicking this button (or the **?** icon in the top left corner) opens a built-in reference window containing several tabs to assist users directly within the Launcher.
+
+.. figure:: ../images/Launcher/help_built-in_reference_window.png
+
+   The Built-in reference window after clicking Help or ? on Windows.
+
+* **General:** Provides a brief overview of what ScummVM is and provides links to resources for legally obtaining supported games.
+* **Cloud:** Displays step-by-step visual instructions for connecting ScummVM to cloud storage services.
+* **Keyboard:** Lists a comprehensive table of default keyboard shortcuts for controlling the engine, display, and audio.
+
+.. note::
+
+   Depending on your platform, there could be additional tabs with platform-specific support information.
 
 About
 ^^^^^^^^^^
@@ -134,16 +150,23 @@ Options
 
 Opens a dialog which provides some gameplay options, such as sound volume, subtitle and keymap settings.
 
+Game Help
+^^^^^^^^^
+
+Display game-specific help if any, usually the keyboard shortcuts. Note that this is not available for all games; refer to the :doc:`../settings/keymaps` tab for keyboard shortcuts.
+
+.. figure:: ../images/Launcher/game_help_window.png
+
+   The Game Help pop-up Window.
+
+Help
+^^^^
+Opens a built-in reference window. This functions exactly like the Help button in the main Launcher.
 
 About
 ^^^^^^^^^^^
 
 Displays the ScummVM **About** dialog. This is also available from the Launcher.
-
-Help
-^^^^^^
-
-Displays a list of keyboard shortcuts for the game. Note that this is not available for all games; refer to the :doc:`../settings/keymaps` tab for keyboard shortcuts.
 
 Return to Launcher
 ^^^^^^^^^^^^^^^^^^^^^
