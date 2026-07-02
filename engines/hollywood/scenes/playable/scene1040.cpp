@@ -364,7 +364,7 @@ void Scene1040::handleCordPickup() {
 	applySceneStateToHotspotsAndPatches(2);
 	addInventoryItem(0x1b);
 	_soundBank0.playSample(1, 100);
-	dispatchGenericSceneAction(22);
+	dispatchGenericSceneAction(21);
 }
 
 void Scene1040::handleBalloonPickup() {
@@ -377,7 +377,7 @@ void Scene1040::handleBalloonPickup() {
 	applySceneStateToHotspotsAndPatches(3);
 	addInventoryItem(0x1c);
 	_soundBank0.playSample(1, 100);
-	dispatchGenericSceneAction(22);
+	dispatchGenericSceneAction(21);
 }
 
 void Scene1040::handleGorillaCordSetup() {
