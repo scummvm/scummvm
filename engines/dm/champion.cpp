@@ -305,11 +305,11 @@ void ChampionMan::applyModifiersToStatistics(Champion *champ, int16 slotIndex, i
 	if (((thingType == kDMThingTypeWeapon) || (thingType == kDMThingTypeArmour))
 		&& (slotIndex >= kDMSlotReadyHand) && (slotIndex <= kDMSlotQuiverLine1_1)) {
 		if (thingType == kDMThingTypeWeapon) {
-			Weapon *weapon = (Weapon *)_vm->_dungeonMan->getThingData(thing);
+			Weapon *weapon = _vm->_dungeonMan->getWeapon(thing);
 			cursed = weapon->getCursed();
 		} else {
 			// k6_ArmourThingType
-			Armour *armour = (Armour *)_vm->_dungeonMan->getThingData(thing);
+			Armour *armour = _vm->_dungeonMan->getArmour(thing);
 			cursed = armour->getCursed();
 		}
 
@@ -545,7 +545,6 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 	IconIndice iconIndex = objMan.getIconIndex(thing);
 	bool isInventoryChampion = (_vm->indexToOrdinal(champIndex) == invMan._inventoryChampionOrdinal);
 	applyModifiersToStatistics(champ, slotIndex, iconIndex, 1, thing);
-	uint16 *rawObjPtr = dunMan.getThingData(thing);
 
 	if (slotIndex < kDMSlotHead) {
 		if (slotIndex == kDMSlotActionHand) {
@@ -554,13 +553,13 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 				menuMan.clearActingChampion();
 
 			if ((iconIndex >= kDMIconIndiceScrollOpen) && (iconIndex <= kDMIconIndiceScrollClosed)) {
-				((Scroll *)rawObjPtr)->setClosed(false);
+				dunMan.getScroll(thing)->setClosed(false);
 				drawChangedObjectIcons();
 			}
 		}
 
 		if (iconIndex == kDMIconIndiceWeaponTorchUnlit) {
-			((Weapon *)rawObjPtr)->setLit(true);
+			dunMan.getWeapon(thing)->setLit(true);
 			invMan.setDungeonViewPalette();
 			drawChangedObjectIcons();
 		} else if (isInventoryChampion && (slotIndex == kDMSlotActionHand) &&
@@ -569,12 +568,12 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 		}
 	} else if (slotIndex == kDMSlotNeck) {
 		if ((iconIndex >= kDMIconIndiceJunkIllumuletUnequipped) && (iconIndex <= kDMIconIndiceJunkIllumuletEquipped)) {
-			((Junk *)rawObjPtr)->setChargeCount(1);
+			dunMan.getJunk(thing)->setChargeCount(1);
 			_party._magicalLightAmount += _lightPowerToLightAmount[2];
 			invMan.setDungeonViewPalette();
 			iconIndex = (IconIndice)(iconIndex + 1);
 		} else if ((iconIndex >= kDMIconIndiceJunkJewelSymalUnequipped) && (iconIndex <= kDMIconIndiceJunkJewelSymalEquipped)) {
-			((Junk *)rawObjPtr)->setChargeCount(1);
+			dunMan.getJunk(thing)->setChargeCount(1);
 			iconIndex = (IconIndice)(iconIndex + 1);
 		}
 	}
@@ -687,14 +686,13 @@ Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex)
 	// Remove object modifiers
 	applyModifiersToStatistics(curChampion, slotIndex, curIconIndex, -1, curThing);
 
-	Weapon *curWeapon = (Weapon *)dungeon.getThingData(curThing);
 	if (slotIndex == kDMSlotNeck) {
 		if ((curIconIndex >= kDMIconIndiceJunkIllumuletUnequipped) && (curIconIndex <= kDMIconIndiceJunkIllumuletEquipped)) {
-			((Junk *)curWeapon)->setChargeCount(0);
+			dungeon.getJunk(curThing)->setChargeCount(0);
 			_party._magicalLightAmount -= _lightPowerToLightAmount[2];
 			inventory.setDungeonViewPalette();
 		} else if ((curIconIndex >= kDMIconIndiceJunkJewelSymalUnequipped) && (curIconIndex <= kDMIconIndiceJunkJewelSymalEquipped)) {
-			((Junk *)curWeapon)->setChargeCount(0);
+			dungeon.getJunk(curThing)->setChargeCount(0);
 		}
 	}
 
@@ -709,13 +707,13 @@ Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex)
 				_vm->_menuMan->clearActingChampion();
 
 			if ((curIconIndex >= kDMIconIndiceScrollOpen) && (curIconIndex <= kDMIconIndiceScrollClosed)) {
-				((Scroll *)curWeapon)->setClosed(true);
+				dungeon.getScroll(curThing)->setClosed(true);
 				drawChangedObjectIcons();
 			}
 		}
 
 		if ((curIconIndex >= kDMIconIndiceWeaponTorchUnlit) && (curIconIndex <= kDMIconIndiceWeaponTorchLit)) {
-			curWeapon->setLit(false);
+			dungeon.getWeapon(curThing)->setLit(false);
 			inventory.setDungeonViewPalette();
 			drawChangedObjectIcons();
 		}
@@ -857,8 +855,8 @@ int16 ChampionMan::getWoundDefense(int16 champIndex, uint16 woundIndex) {
 	for (int16 slotIndex = kDMSlotReadyHand; slotIndex <= kDMSlotActionHand; slotIndex++) {
 		Thing curThing = curChampion->_slots[slotIndex];
 		if (curThing.getType() == kDMThingTypeArmour) {
-			ArmourInfo *armorInfo = (ArmourInfo *)dungeon.getThingData(curThing);
-			armorInfo = &dungeon._armourInfos[((Armour *)armorInfo)->getType()];
+			Armour *armour = dungeon.getArmour(curThing);
+			ArmourInfo *armorInfo = &dungeon._armourInfos[armour->getType()];
 			if (getFlag(armorInfo->_attributes, kDMArmourAttributeShield))
 				armorShieldDefense += ((getStrength(champIndex, slotIndex) + dungeon.getArmourDefense(armorInfo, useSharpDefense)) * woundDefenseFactor[woundIndex]) >> ((slotIndex == woundIndex) ? 4 : 5);
 		}
@@ -872,8 +870,8 @@ int16 ChampionMan::getWoundDefense(int16 champIndex, uint16 woundIndex) {
 	if (woundIndex > kDMSlotActionHand) {
 		Thing curThing = curChampion->_slots[woundIndex];
 		if (curThing.getType() == kDMThingTypeArmour) {
-			ArmourInfo *armourInfo = (ArmourInfo *)dungeon.getThingData(curThing);
-			woundDefense += dungeon.getArmourDefense(&dungeon._armourInfos[((Armour *)armourInfo)->getType()], useSharpDefense);
+			Armour *armour = dungeon.getArmour(curThing);
+			woundDefense += dungeon.getArmourDefense(&dungeon._armourInfos[armour->getType()], useSharpDefense);
 		}
 	}
 
@@ -1511,7 +1509,7 @@ void ChampionMan::championKill(uint16 champIndex) {
 	Thing unusedThing = dungeon.getUnusedThing(kDMMaskChampionBones | kDMThingTypeJunk);
 	uint16 curCell = 0;
 	if (unusedThing != _vm->_thingNone) {
-		Junk *L0966_ps_Junk = (Junk *)dungeon.getThingData(unusedThing);
+		Junk *L0966_ps_Junk = dungeon.getJunk(unusedThing);
 		L0966_ps_Junk->setType(kDMJunkTypeBones);
 		L0966_ps_Junk->setDoNotDiscard(true);
 		L0966_ps_Junk->setChargeCount(champIndex);

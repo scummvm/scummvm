@@ -257,28 +257,19 @@ bool Console::Cmd_gimme(int argc, const char** argv) {
 	requestedItemName.deleteLastChar();
 
 	for (int16 thingType = 0; thingType < 16; ++thingType) { // 16 number of item types
-		uint16 *thingDataArray = _vm->_dungeonMan->_thingData[thingType];
-		uint16 thingTypeSize = _vm->_dungeonMan->_thingDataWordCount[thingType];
 		uint16 thingCount = _vm->_dungeonMan->_dungeonFileHeader._thingCounts[thingType];
 
 		Thing dummyThing(0);
 		dummyThing.setType(thingType);
 		for (int16 thingIndex = 0; thingIndex < thingCount; ++thingIndex) {
 			dummyThing.setIndex(thingIndex);
-			uint16 *rawType = _vm->_dungeonMan->getThingData(dummyThing);
-			if (rawType[0] == _vm->_thingNone.toUint16())
+			if (_vm->_dungeonMan->getNextThing(dummyThing) == _vm->_thingNone)
 				continue;
 			int16 iconIndex = _vm->_objectMan->getIconIndex(dummyThing);
 			if (iconIndex >= 0 && iconIndex < kDMObjectNameCount) {
 				const char *displayName = _vm->_objectMan->_objectNames[iconIndex];
 				if (cstrEquals(displayName, requestedItemName.c_str())) {
-					uint16 *newThingData = new uint16[(thingCount + 1) * thingTypeSize];
-					memcpy(newThingData, thingDataArray, sizeof(uint16) * thingTypeSize * thingCount);
-					delete[] thingDataArray;
-					for (uint16 i = 0; i < thingTypeSize; ++i)
-						newThingData[thingCount * thingTypeSize + i] = newThingData[thingIndex * thingTypeSize + i];
-					_vm->_dungeonMan->_dungeonFileHeader._thingCounts[thingType]++;
-					_vm->_dungeonMan->_thingData[thingType] = newThingData;
+					_vm->_dungeonMan->duplicateThing(dummyThing);
 					dummyThing.setIndex(thingCount);
 					_vm->_championMan->addObjectInSlot((ChampionIndex)0, dummyThing, (ChampionSlot)29);
 					debugPrintf("Item gimmed to the first champion, last slot\n");

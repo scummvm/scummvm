@@ -281,7 +281,7 @@ void InventoryMan::closeChest() {
 	bool processFirstChestSlot = true;
 	if (_openChest == _vm->_thingNone)
 		return;
-	Container *container = (Container *)dunMan.getThingData(_openChest);
+	Container *container = dunMan.getContainer(_openChest);
 	_openChest = _vm->_thingNone;
 	container->getSlot() = _vm->_thingEndOfList;
 	Thing prevThing;
@@ -292,7 +292,7 @@ void InventoryMan::closeChest() {
 
 			if (processFirstChestSlot) {
 				processFirstChestSlot = false;
-				*dunMan.getThingData(thing) = _vm->_thingEndOfList.toUint16();
+				*dunMan.getNextThingPtr(thing) = _vm->_thingEndOfList;
 				container->getSlot() = prevThing = thing;
 			} else {
 				dunMan.linkThingToList(thing, prevThing, kDMMapXNotOnASquare, 0);
@@ -494,13 +494,12 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	if (_vm->_pressingEye || _vm->_pressingMouth)
 		closeChest();
 
-	uint16 *rawThingPtr = dungeon.getThingData(thingToDraw);
 	drawPanelObjectDescriptionString("\f"); // form feed
 	ThingType thingType = thingToDraw.getType();
 	if (thingType == kDMThingTypeScroll)
-		drawPanelScroll((Scroll *)rawThingPtr);
+		drawPanelScroll(dungeon.getScroll(thingToDraw));
 	else if (thingType == kDMThingTypeContainer)
-		openAndDrawChest(thingToDraw, (Container *)rawThingPtr, pressingEye);
+		openAndDrawChest(thingToDraw, dungeon.getContainer(thingToDraw), pressingEye);
 	else {
 		IconIndice iconIndex = objMan.getIconIndex(thingToDraw);
 		dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxPanelEmpty),
@@ -514,10 +513,10 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			switch (_vm->getGameLanguage()) { // localized
 			case Common::FR_FRA:
 				// Fix original bug dur to a cut&paste error: string was concatenated then overwritten by the name
-				str = Common::String::format("%s %s", objMan._objectNames[iconIndex], champMan._champions[((Junk *)rawThingPtr)->getChargeCount()]._name);
+				str = Common::String::format("%s %s", objMan._objectNames[iconIndex], champMan._champions[dungeon.getJunk(thingToDraw)->getChargeCount()]._name);
 				break;
 			default: // German and English versions are the same
-				str = Common::String::format("%s %s", champMan._champions[((Junk *)rawThingPtr)->getChargeCount()]._name, objMan._objectNames[iconIndex]);
+				str = Common::String::format("%s %s", champMan._champions[dungeon.getJunk(thingToDraw)->getChargeCount()]._name, objMan._objectNames[iconIndex]);
 				break;
 			}
 
@@ -525,7 +524,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		} else if ((thingType == kDMThingTypePotion)
 				   && (iconIndex != kDMIconIndicePotionWaterFlask)
 				   && (champMan.getSkillLevel((ChampionIndex)_vm->ordinalToIndex(_inventoryChampionOrdinal), kDMSkillPriest) > 1)) {
-			str = ('_' + ((Potion *)rawThingPtr)->getPower() / 40);
+			str = ('_' + dungeon.getPotion(thingToDraw)->getPower() / 40);
 			str += " ";
 			str += objMan._objectNames[iconIndex];
 			descString = str;
@@ -544,7 +543,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		switch (thingType) {
 		case kDMThingTypeWeapon: {
 			potentialAttribMask = kDMDescriptionMaskCursed | kDMDescriptionMaskPoisoned | kDMDescriptionMaskBroken;
-			Weapon *weapon = (Weapon *)rawThingPtr;
+			Weapon *weapon = dungeon.getWeapon(thingToDraw);
 			actualAttribMask = (weapon->getCursed() << 3) | (weapon->getPoisoned() << 1) | (weapon->getBroken() << 2);
 			if ((iconIndex >= kDMIconIndiceWeaponTorchUnlit)
 				&& (iconIndex <= kDMIconIndiceWeaponTorchLit)
@@ -567,13 +566,13 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		}
 		case kDMThingTypeArmour: {
 			potentialAttribMask = kDMDescriptionMaskCursed | kDMDescriptionMaskBroken;
-			Armour *armour = (Armour *)rawThingPtr;
+			Armour *armour = dungeon.getArmour(thingToDraw);
 			actualAttribMask = (armour->getCursed() << 3) | (armour->getBroken() << 2);
 			break;
 		}
 		case kDMThingTypePotion: {
 			potentialAttribMask = kDMDescriptionMaskConsumable;
-			Potion *potion = (Potion *)rawThingPtr;
+			Potion *potion = dungeon.getPotion(thingToDraw);
 			actualAttribMask = dungeon._objectInfos[kDMObjectInfoIndexFirstPotion + potion->getType()].getAllowedSlots();
 			break;
 		}
@@ -584,7 +583,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 				const char *descStringDE[4] = {"(LEER)", "(FAST LEER)", "(FAST VOLL)", "(VOLL)"};
 				const char *descStringFR[4] = {"(VIDE)", "(PRESQUE VIDE)", "(PRESQUE PLEINE)", "(PLEINE)"};
 
-				Junk *junk = (Junk *)rawThingPtr;
+				Junk *junk = dungeon.getJunk(thingToDraw);
 				switch (_vm->getGameLanguage()) { // localized
 				case Common::DE_DEU:
 					descString = descStringDE[junk->getChargeCount()];
@@ -622,7 +621,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 
 				drawPanelObjectDescriptionString(str.c_str());
 			} else {
-				Junk *junk = (Junk *)rawThingPtr;
+				Junk *junk = dungeon.getJunk(thingToDraw);
 				potentialAttribMask = kDMDescriptionMaskConsumable;
 				actualAttribMask = dungeon._objectInfos[kDMObjectInfoIndexFirstJunk + junk->getType()].getAllowedSlots();
 			}
@@ -705,7 +704,7 @@ void InventoryMan::setDungeonViewPalette() {
 				Thing slotThing = curChampion->_slots[slotIndex];
 				if ((_vm->_objectMan->getObjectType(slotThing) >= kDMIconIndiceWeaponTorchUnlit) &&
 					(_vm->_objectMan->getObjectType(slotThing) <= kDMIconIndiceWeaponTorchLit)) {
-					Weapon *curWeapon = (Weapon *)dungeon.getThingData(slotThing);
+					Weapon *curWeapon = dungeon.getWeapon(slotThing);
 					*curTorchLightPower = curWeapon->getChargeCount();
 				} else {
 					*curTorchLightPower = 0;
@@ -775,7 +774,7 @@ void InventoryMan::decreaseTorchesLightPower() {
 		while (slotIndex--) {
 			int16 iconIndex = _vm->_objectMan->getIconIndex(curChampion->_slots[slotIndex]);
 			if ((iconIndex >= kDMIconIndiceWeaponTorchUnlit) && (iconIndex <= kDMIconIndiceWeaponTorchLit)) {
-				Weapon *curWeapon = (Weapon *)dungeon.getThingData(curChampion->_slots[slotIndex]);
+				Weapon *curWeapon = dungeon.getWeapon(curChampion->_slots[slotIndex]);
 				if (curWeapon->getChargeCount()) {
 					if (curWeapon->setChargeCount(curWeapon->getChargeCount() - 1) == 0) {
 						curWeapon->setDoNotDiscard(false);
@@ -928,9 +927,9 @@ void InventoryMan::clickOnMouth() {
 	uint16 handThingWeight = dungeon.getObjectWeight(handThing);
 	uint16 championIndex = _vm->ordinalToIndex(_inventoryChampionOrdinal);
 	Champion *curChampion = &championMan._champions[championIndex];
-	Junk *junkData = (Junk *)dungeon.getThingData(handThing);
 	bool removeObjectFromLeaderHand;
 	if ((iconIndex >= kDMIconIndiceJunkWater) && (iconIndex <= kDMIconIndiceJunkWaterSkin)) {
+		Junk *junkData = dungeon.getJunk(handThing);
 		if (!(junkData->getChargeCount()))
 			return;
 
@@ -940,7 +939,7 @@ void InventoryMan::clickOnMouth() {
 	} else if (handThingType == kDMThingTypePotion)
 		removeObjectFromLeaderHand = false;
 	else {
-		junkData->setNextThing(_vm->_thingNone);
+		*dungeon.getNextThingPtr(handThing) = _vm->_thingNone;
 		removeObjectFromLeaderHand = true;
 	}
 	_vm->_eventMan->showMouse();
@@ -948,16 +947,17 @@ void InventoryMan::clickOnMouth() {
 		championMan.getObjectRemovedFromLeaderHand();
 
 	if (handThingType == kDMThingTypePotion) {
-		uint16 potionPower = ((Potion *)junkData)->getPower();
+		Potion *potion = dungeon.getPotion(handThing);
+		uint16 potionPower = potion->getPower();
 		uint16 counter = ((511 - potionPower) / (32 + (potionPower + 1) / 8)) >> 1;
 		uint16 adjustedPotionPower = (potionPower / 25) + 8; /* Value between 8 and 18 */
 
-		switch (((Potion *)junkData)->getType()) {
+		switch (potion->getType()) {
 		case kDMPotionTypeRos:
 			adjustStatisticCurrentValue(curChampion, kDMStatDexterity, adjustedPotionPower);
 			break;
 		case kDMPotionTypeKu:
-			adjustStatisticCurrentValue(curChampion, kDMStatStrength, (((Potion *)junkData)->getPower() / 35) + 5); /* Value between 5 and 12 */
+			adjustStatisticCurrentValue(curChampion, kDMStatStrength, (potion->getPower() / 35) + 5); /* Value between 5 and 12 */
 			break;
 		case kDMPotionTypeDane:
 			adjustStatisticCurrentValue(curChampion, kDMStatWisdom, adjustedPotionPower);
@@ -995,7 +995,7 @@ void InventoryMan::clickOnMouth() {
 			}
 			break;
 		case kDMPotionTypeVi: {
-			uint16 healWoundIterationCount = MAX(1, (((Potion *)junkData)->getPower() / 42));
+			uint16 healWoundIterationCount = MAX(1, (potion->getPower() / 42));
 			curChampion->_currHealth += curChampion->_maxHealth / counter;
 			uint16 wounds = curChampion->_wounds;
 			if (wounds) { /* If the champion is wounded */
@@ -1016,7 +1016,7 @@ void InventoryMan::clickOnMouth() {
 		default:
 			break;
 		}
-		((Potion *)junkData)->setType(kDMPotionTypeEmptyFlask);
+		potion->setType(kDMPotionTypeEmptyFlask);
 	} else if ((iconIndex >= kDMIconIndiceJunkApple) && (iconIndex < kDMIconIndiceJunkIronKey))
 		curChampion->_food = MIN(curChampion->_food + foodAmounts[iconIndex - kDMIconIndiceJunkApple], 2048);
 
