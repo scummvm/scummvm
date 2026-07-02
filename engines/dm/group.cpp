@@ -1811,7 +1811,7 @@ void GroupMan::addAllActiveGroups() {
 						break;
 					}
 					curThing = dungeon.getNextThing(curThing);
-				} while (curThing != _vm->_thingEndOfList);
+				} while (curThing != _vm->_thingEndOfList && curThing != _vm->_thingNone);
 			}
 		}
 	}
