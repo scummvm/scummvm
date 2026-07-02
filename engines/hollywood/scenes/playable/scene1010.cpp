@@ -225,7 +225,10 @@ void Scene1010::runCustomEntrySequence() {
 	_activeActorCel = 0;
 	drawPlayableComposite();
 	presentFrame();
-	beginSecondarySpeechLine(0, 0);
+	if (!_vm->gameState().seenScene1010EntryLine) {
+		_vm->gameState().seenScene1010EntryLine = true;
+		beginSecondarySpeechLine(0, 0);
+	}
 }
 
 bool Scene1010::prepareCustomGameplayLoop() {

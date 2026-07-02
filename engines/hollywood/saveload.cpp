@@ -169,6 +169,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.scene3100DialogueCounter);
 	syncStateBool(s, state.scene3100Item38Taken);
 	syncStateBool(s, state.scene3100Item39Taken);
+	syncStateBool(s, state.seenScene1010EntryLine);
 	syncStateBool(s, state.seenScene1020EntryLine);
 	s.syncAsByte(state.scene1020ResourceBlockChoiceState);
 	s.syncAsByte(state.scene1020ResourceBlockVariantState);
