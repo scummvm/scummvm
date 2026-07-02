@@ -72,6 +72,7 @@ public:
 	Object *checkCollisionRay(const Math::Ray &ray, int raySize, bool skipTransparent = false);
 	bool checkInSight(const Math::Ray &ray, float maxDistance);
 	Math::Vector3d separateFromWall(const Math::Vector3d &position);
+	Math::Vector3d separateCameraFromWall(const Math::Vector3d &eye, float separation);
 	ObjectArray checkCollisions(const Math::AABB &boundingBox);
 	bool checkIfPlayerWasCrushed(const Math::AABB &boundingBox);
 	Math::Vector3d resolveCollisions(Math::Vector3d const &lastPosition, Math::Vector3d const &newPosition, int playerHeight);

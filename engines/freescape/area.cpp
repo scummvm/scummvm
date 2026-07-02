@@ -836,6 +836,47 @@ Math::Vector3d Area::separateFromWall(const Math::Vector3d &_position) {
 	return position;
 }
 
+// Render-only: nudge the eye at least `separation` away from wall sides so they never cross the near plane.
+Math::Vector3d Area::separateCameraFromWall(const Math::Vector3d &eye, float separation) {
+	Math::Vector3d cam = eye;
+	for (int pass = 0; pass < 4; pass++) { // corners: leaving one wall's band can enter another's
+		bool adjusted = false;
+		for (auto &obj : _drawableObjects) {
+			if (obj->isDestroyed() || obj->isInvisible() || !obj->isGeometric())
+				continue;
+			const Math::AABB &box = ((GeometricObject *)obj)->_boundingBox;
+			if (!box.isValid())
+				continue;
+			Math::Vector3d mn = box.getMin();
+			Math::Vector3d mx = box.getMax();
+			if (cam.y() <= mn.y() || cam.y() >= mx.y()) // only walls at eye level can clip the view
+				continue;
+
+			float dx = cam.x() - CLIP<float>(cam.x(), mn.x(), mx.x());
+			float dz = cam.z() - CLIP<float>(cam.z(), mn.z(), mx.z());
+			float dist = sqrtf(dx * dx + dz * dz);
+			if (dist >= separation)
+				continue;
+
+			if (dist > 0.0001f) { // in the band: push straight out
+				cam.x() += dx / dist * (separation - dist);
+				cam.z() += dz / dist * (separation - dist);
+			} else { // inside the footprint: eject through the nearest side
+				float left = cam.x() - mn.x(), right = mx.x() - cam.x();
+				float back = cam.z() - mn.z(), front = mx.z() - cam.z();
+				if (MIN(left, right) <= MIN(back, front))
+					cam.x() += (left < right) ? -(left + separation) : (right + separation);
+				else
+					cam.z() += (back < front) ? -(back + separation) : (front + separation);
+			}
+			adjusted = true;
+		}
+		if (!adjusted)
+			break;
+	}
+	return cam;
+}
+
 Math::Vector3d Area::resolveCollisions(const Math::Vector3d &lastPosition_, const Math::Vector3d &newPosition_, int playerHeight) {
 	Math::Vector3d position = newPosition_;
 	Math::Vector3d lastPosition = lastPosition_;

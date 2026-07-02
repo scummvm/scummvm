@@ -563,6 +563,7 @@ public:
 	int _shootingFrames;
 	GeometricObject *_delayedShootObject;
 	void drawFrame();
+	Math::Vector3d getCameraRenderPosition();
 	void drawFrameStereo(int farClipPlane);
 
 	// Red/blue anaglyph 3D ("two eyes") effect, toggled with the 3 key.
