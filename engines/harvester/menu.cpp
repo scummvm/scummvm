@@ -21,6 +21,7 @@
 
 #include "harvester/menu.h"
 
+#include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/events.h"
@@ -285,22 +286,22 @@ static bool loadMenuTextConfig(HarvesterEngine &engine, RoomMenuTextConfig &conf
 		const Common::String key = Common::String::format("options_menu_%u", i + 1);
 		Common::String value;
 		if (loadRawMenuValue(data, key.c_str(), value) && !value.empty())
-			config.optionItems[i] = value;
+			config.optionItems[i] = Common::move(value);
 		else if (menu.getKey(key, kMenuSectionName, value) && !value.empty())
-			config.optionItems[i] = value;
+			config.optionItems[i] = Common::move(value);
 	}
 
 	Common::String value;
 	if (menu.getKey("yes", kMenuSectionName, value) && !value.empty())
-		config.yesLabel = value;
+		config.yesLabel = Common::move(value);
 	if (menu.getKey("no", kMenuSectionName, value) && !value.empty())
-		config.noLabel = value;
+		config.noLabel = Common::move(value);
 	if (menu.getKey("click", kMenuSectionName, value) && !value.empty())
-		config.clickLabel = value;
+		config.clickLabel = Common::move(value);
 	if (loadRawMenuValue(data, "newgame", value) && !value.empty())
-		config.newGamePrompt = value;
+		config.newGamePrompt = Common::move(value);
 	if (loadRawMenuValue(data, "quitgame", value) && !value.empty())
-		config.quitGamePrompt = value;
+		config.quitGamePrompt = Common::move(value);
 
 	return true;
 }
@@ -484,13 +485,13 @@ static void splitMenuConfigLines(const Common::String &text, Common::Array<Commo
 	Common::String currentLine;
 	for (uint i = 0; i < text.size(); ++i) {
 		if (text[i] == '/') {
-			lines.push_back(currentLine);
+			lines.push_back(Common::move(currentLine));
 			currentLine.clear();
 			continue;
 		}
 		currentLine += text[i];
 	}
-	lines.push_back(currentLine);
+	lines.push_back(Common::move(currentLine));
 }
 
 static void renderOptionsMenuScreen(HarvesterEngine &engine, const IndexedBitmap &backdrop,
@@ -899,7 +900,7 @@ Common::Error MenuSystem::showGameOverBackdrop(Flow &flow) {
 		return Common::kReadingFailed;
 	}
 
-	_mainMenuBackdrop = backdrop;
+	_mainMenuBackdrop = Common::move(backdrop);
 	memcpy(_mainMenuBackdropPalette, palette, sizeof(_mainMenuBackdropPalette));
 	_hasMainMenuBackdrop = true;
 	flow.resetCursorAnimationSequence();

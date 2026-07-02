@@ -21,6 +21,7 @@
 
 #include "harvester/room_interaction.h"
 
+#include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
 #include "harvester/art.h"
@@ -178,7 +179,7 @@ Common::Error RoomInteractionProcessor::handleInteractionResult(const Interactio
 			return exitError;
 
 		// Native CHANGE_ROOM queues a room handoff for the live loop instead of nesting.
-		_pendingRoomChange = resolvedTransitionTarget;
+		_pendingRoomChange = Common::move(resolvedTransitionTarget);
 		didTransition = true;
 	} else if (!interaction.nextRoomName.empty()) {
 		Common::Error exitError = _callbacks.runRoomExitCommands();

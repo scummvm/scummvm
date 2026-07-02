@@ -23,6 +23,7 @@
 
 #include "harvester/flow.h"
 
+#include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/endian.h"
@@ -802,7 +803,7 @@ bool loadRoomSceneResources(const RoomSetupState &state, ResourceManager &resour
 	for (const ObjectRecord &object : state.activeObjects)
 		queueSceneObject("active", object, sceneObjects);
 
-	scene.sceneObjects = sceneObjects;
+	scene.sceneObjects = Common::move(sceneObjects);
 	for (const AnimRecord &anim : state.roomAnimations) {
 		if (shouldDisplaySceneAnimation(anim))
 			scene.sceneAnimations.push_back(anim);
@@ -1460,9 +1461,9 @@ bool Flow::loadQuickTips() {
 		if (ch == '\r')
 			continue;
 		if (ch == '\n') {
-			const Common::String trimmed = trimAsciiLine(currentLine);
+			Common::String trimmed = trimAsciiLine(currentLine);
 			if (!trimmed.empty())
-				_quickTips.push_back(trimmed);
+				_quickTips.push_back(Common::move(trimmed));
 			currentLine.clear();
 			continue;
 		}
@@ -1470,9 +1471,9 @@ bool Flow::loadQuickTips() {
 		currentLine += ch;
 	}
 
-	const Common::String trimmed = trimAsciiLine(currentLine);
+	Common::String trimmed = trimAsciiLine(currentLine);
 	if (!trimmed.empty())
-		_quickTips.push_back(trimmed);
+		_quickTips.push_back(Common::move(trimmed));
 
 	debugC(1, kDebugGeneral, "Harvester: loaded %u quick tips from '%s'", (uint)_quickTips.size(), kQuickTipsPath);
 	return true;
@@ -1501,7 +1502,7 @@ bool Flow::loadMenuItems() {
 		Common::String key = Common::String::format("main_menu_%u", i);
 		Common::String value;
 		if (menu.getKey(key, kMenuSectionName, value) && !value.empty())
-			_menuItems.push_back(value);
+			_menuItems.push_back(Common::move(value));
 	}
 
 	debugC(1, kDebugGeneral, "Harvester: loaded %u startup menu items from '%s'", (uint)_menuItems.size(), kMenuPath);
@@ -1789,7 +1790,7 @@ bool Flow::takeQueuedDialogueInteraction(InteractionResult &interaction) {
 	if (!_hasQueuedDialogueInteraction)
 		return false;
 
-	interaction = _queuedDialogueInteraction;
+	interaction = Common::move(_queuedDialogueInteraction);
 	_queuedDialogueInteraction = InteractionResult();
 	_hasQueuedDialogueInteraction = false;
 	return true;
@@ -1810,7 +1811,7 @@ bool Flow::takeQueuedDebugInteraction(InteractionResult &interaction) {
 	if (!_hasQueuedDebugInteraction)
 		return false;
 
-	interaction = _queuedDebugInteraction;
+	interaction = Common::move(_queuedDebugInteraction);
 	_queuedDebugInteraction = InteractionResult();
 	_hasQueuedDebugInteraction = false;
 	return true;

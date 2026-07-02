@@ -23,6 +23,7 @@
 
 #include "harvester/runtime_entity.h"
 
+#include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/system.h"
@@ -171,7 +172,7 @@ bool Entity::loadBitmapResource(ResourceManager &resources, const Common::String
 	memcpy(frame.pixels.data(), data.data() + 12, pixelCount);
 
 	_frames.clear();
-	_frames.push_back(frame);
+	_frames.push_back(Common::move(frame));
 	_baseFrames = _frames;
 	_resourcePath = path;
 	_currentFrame = 0;
@@ -764,7 +765,7 @@ void EntityManager::clearSceneEntities(bool preserveGlobalTimers) {
 
 		delete entity;
 	}
-	_sceneEntities = preservedEntities;
+	_sceneEntities = Common::move(preservedEntities);
 	_expiredTimerNames.clear();
 	_timerPauseDepth = 0;
 }

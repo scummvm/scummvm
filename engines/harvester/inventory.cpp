@@ -21,6 +21,7 @@
 
 #include "harvester/inventory.h"
 
+#include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "graphics/blit.h"
@@ -311,7 +312,7 @@ bool InventorySystem::refresh() {
 
 		if (isExitObject(inventoryObject)) {
 			visual.bounds = getHotspotBounds(inventoryObject);
-			_items.push_back(visual);
+			_items.push_back(Common::move(visual));
 			continue;
 		}
 
@@ -321,7 +322,7 @@ bool InventorySystem::refresh() {
 			if (isStatusObject(inventoryObject)) {
 				visual.bounds = Common::Rect(visual.object.currentX, visual.object.currentY,
 					visual.object.currentX + visual.bitmap.width, visual.object.currentY + visual.bitmap.height);
-				_items.push_back(visual);
+				_items.push_back(Common::move(visual));
 				continue;
 			}
 
@@ -341,13 +342,13 @@ bool InventorySystem::refresh() {
 		}
 
 		if (isStatusObject(inventoryObject)) {
-			_items.push_back(visual);
 			debugLogInventoryVisual(visual, spritePath);
+			_items.push_back(Common::move(visual));
 			continue;
 		}
 
-		_items.push_back(visual);
 		debugLogInventoryVisual(visual, spritePath);
+		_items.push_back(Common::move(visual));
 	}
 
 	if (_selectedItemName.empty())
