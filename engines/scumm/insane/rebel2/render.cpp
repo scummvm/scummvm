@@ -500,7 +500,8 @@ void InsaneRebel2::spawnShot(int x, int y) {
 void InsaneRebel2::spawnTurretShot(int x, int y) {
 	for (int i = 0; i < 2; i++) {
 		if (_turretShots[i].counter == 0) {
-			playSfx((_rebelLevelType == 5) ? 0 : 7, 127, 0);
+			// Ship type 5 (the turbolaser levels 13-15) fires TBLAST, the rest BLAST.
+			playSfx((_rebelLevelType == 5) ? 7 : 0, 127, 0);
 
 			_turretShots[i].counter = getShotMaxDuration();
 			_turretShots[i].seqNum = _turretShotSeqCounter;
@@ -2165,9 +2166,10 @@ void InsaneRebel2::updateLevel7Fork(int32 curFrame) {
 }
 
 void InsaneRebel2::updateLevel15TypeSwitch(int32 curFrame) {
-	// From frame 0x21e level 15 uses the type-0x10 difficulty column; runLevel15 resets to 0xf per attempt.
+	// From frame 0x21e level 15 uses the type-0x10 difficulty column; runLevel15 resets per attempt.
+	// Tracked as a flag because the turret opcode-6 rewrites _rebelLevelType every frame.
 	if (_selectedLevel == 15 && curFrame >= 0x21e)
-		_rebelLevelType = 0x10;
+		_level15SecondHalf = true;
 }
 
 void InsaneRebel2::renderPostRenderMenuCursor(byte *renderBitmap, int pitch, int width, int height) {
@@ -3006,10 +3008,10 @@ void InsaneRebel2::renderStatusBarSprites(byte *renderBitmap, int pitch, int wid
 	int numSprites = _smush_cockpitNut->getNumChars();
 	const int statusScale = isHiRes() ? 2 : getRebel2IndicatorScale(width, height);
 
-	// Critical-damage warning beep every 25 gameplay frames; volume depends on the level type.
+	// Critical-damage warning beep every 25 gameplay frames; volume depends on the difficulty row.
 	if (_rebelHandler != 0 && _playerDamage > 170 && (curFrame % 25) == 0) {
 		int alertVolume;
-		switch (_rebelLevelType) {
+		switch (getDifficultyRow()) {
 		case 1: case 11: case 12:
 			alertVolume = 40;
 			break;

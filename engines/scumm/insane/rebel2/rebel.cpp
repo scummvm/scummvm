@@ -191,6 +191,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_enemies.clear();
 	_rebelHandler = 0;
 	_rebelLevelType = 0;
+	_level15SecondHalf = false;
 	_rebelStatusBarSprite = 0;
 	_introCursorPushed = false;
 
@@ -1281,29 +1282,26 @@ const InsaneRebel2::LevelDifficultyParams InsaneRebel2::kDifficultyTable[6][17] 
 	},
 };
 
-InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams() const {
-	int diff = CLIP(_difficulty, 0, 5);
-	int lvIdx = 0;
-
+int InsaneRebel2::getDifficultyRow() const {
 	// Index mapping reconstructed from level handlers:
 	//   Lv1->0, Lv2->1, Lv3->2, Lv4->3, Lv5->4,
 	//   Lv6A->5, Lv6B->6, Lv7->7 ... Lv14->14, Lv15A->15, Lv15B->16.
 	// Our Level 6 phase flow sets _currentPhase to 1/2 accordingly.
-	// Level 15 switches to type 0x10 at frame 0x21e (updateLevel15TypeSwitch).
-	if (_selectedLevel <= 0) {
-		lvIdx = CLIP((int)_rebelLevelType, 0, 16);
-	} else if (_selectedLevel <= 5) {
-		lvIdx = _selectedLevel - 1;
-	} else if (_selectedLevel == 6) {
-		lvIdx = (_currentPhase >= 2) ? 6 : 5;
-	} else if (_selectedLevel <= 14) {
-		lvIdx = _selectedLevel;
-	} else { // _selectedLevel == 15
-		lvIdx = (_rebelLevelType >= 0x10) ? 16 : 15;
-	}
+	// Level 15 hardens at frame 0x21e (updateLevel15TypeSwitch). Do not key on
+	// _rebelLevelType here: the turret opcode-6 overwrites it with the ship type.
+	if (_selectedLevel <= 0)
+		return CLIP((int)_rebelLevelType, 0, 16);
+	if (_selectedLevel <= 5)
+		return _selectedLevel - 1;
+	if (_selectedLevel == 6)
+		return (_currentPhase >= 2) ? 6 : 5;
+	if (_selectedLevel <= 14)
+		return _selectedLevel;
+	return _level15SecondHalf ? 16 : 15;   // _selectedLevel == 15
+}
 
-	lvIdx = CLIP(lvIdx, 0, 16);
-	return kDifficultyTable[diff][lvIdx];
+InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams() const {
+	return kDifficultyTable[CLIP(_difficulty, 0, 5)][getDifficultyRow()];
 }
 
 bool InsaneRebel2::applyPlayerDamage(int damage) {

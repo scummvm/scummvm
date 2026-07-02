@@ -1791,6 +1791,7 @@ int InsaneRebel2::runLevel15() {
 		_rebelHitCounter = 0;
 
 		_rebelLevelType = 0xf;
+		_level15SecondHalf = false;
 
 		if (!playLevelSegment("LEV15/15PLAY.SAN", 0x28))
 			return kLevelQuit;
