@@ -68,6 +68,7 @@ Area::Area(uint16 areaID_, uint16 areaFlags_, ObjectMap *objectsByID_, ObjectMap
 	_isCastle = isCastle_;
 
 	_scale = 0;
+	_hasSyntheticFloor = false;
 	_skyColor = 255;
 	_groundColor = 255;
 	_usualBackgroundColor = 255;
@@ -1021,6 +1022,7 @@ void Area::addGroupFromArea(int16 id, Area *global) {
 
 
 void Area::addFloor() {
+	_hasSyntheticFloor = true;
 	int id = 0;
 	assert(!_objectsByID->contains(id));
 	Common::Array<uint8> *gColors = new Common::Array<uint8>;
@@ -1071,6 +1073,9 @@ void Area::changeObjectID(uint16 objectID, uint16 newObjectID) {
 
 
 bool Area::isOutside() {
+	// Castle outdoor areas are exactly the ones that get the synthetic floor (Wilderness and Courtyard).
+	if (_isCastle)
+		return _hasSyntheticFloor;
 	return _skyColor < 255 && _groundColor < 255;
 }
 

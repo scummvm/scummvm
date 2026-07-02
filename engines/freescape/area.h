@@ -135,6 +135,7 @@ private:
 
 	uint16 _areaID;
 	uint16 _areaFlags;
+	bool _hasSyntheticFloor;
 	ObjectMap *_objectsByID;
 	ObjectMap *_entrancesByID;
 	ObjectArray _drawableObjects;
