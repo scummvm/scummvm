@@ -21,6 +21,7 @@
 
 #include "harvester/harvester.h"
 
+#include "common/algorithm.h"
 #include "common/serializer.h"
 #include "harvester/detection.h"
 #include "harvester/flow.h"
@@ -229,7 +230,7 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 	}
 	s.syncBytes(dialogueStateBlob.data(), dialogueStateSize);
 	if (s.isLoading()) {
-		_pendingLoadedDialogueStateBlob = dialogueStateBlob;
+		_pendingLoadedDialogueStateBlob = Common::move(dialogueStateBlob);
 		_pendingLoadedDialogueStateBlobVersion = s.getVersion();
 	}
 	if (s.err())
@@ -240,10 +241,11 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 			return Common::kReadingFailed;
 		if (!prepareLoadedRoomDisc(*this, roomState, restoredDisc))
 			return Common::kReadingFailed;
-		_currentSaveRoomState = roomState;
-		_pendingLoadedSaveRoomState = roomState;
-		_pendingLoadedDisc = roomState.discNumber;
+		const int pendingLoadedDisc = roomState.discNumber;
 		logStartupSaveRoomState("loaded", roomState);
+		_currentSaveRoomState = roomState;
+		_pendingLoadedSaveRoomState = Common::move(roomState);
+		_pendingLoadedDisc = pendingLoadedDisc;
 	}
 	return Common::kNoError;
 }
