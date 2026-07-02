@@ -706,7 +706,10 @@ Common::Error DgdsEngine::run() {
 
 			dumpFrame(_compositionBuffer, "comp-before-ads");
 
-			if (shouldRunScripts && (!_inventory->isOpen() || (_inventory->isZoomVisible() && getGameId() != GID_WILLY)))
+			// Pause the room animation while a Willy Beamish CD conversation animates the
+			// talking actor over the room, or that actor is drawn twice (bug #16583).
+			bool conversationAnimating = _scene->isConversationAnimating();
+			if (shouldRunScripts && (!_inventory->isOpen() || (_inventory->isZoomVisible() && getGameId() != GID_WILLY)) && !conversationAnimating)
 				_adsInterp->run();
 
 			if (_inventory->isOpen()) {

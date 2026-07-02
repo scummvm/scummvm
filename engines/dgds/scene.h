@@ -323,6 +323,8 @@ public:
 	bool loadTalkDataAndSetFlags(uint16 talknum, uint16 headnum);
 	void drawAndUpdateHeads(Graphics::ManagedSurface &dst);
 	bool hasVisibleHead() const;
+	// A Willy Beamish CD conversation is animating the talking actor over the room this frame.
+	bool isConversationAnimating() { return _conversation.isForDlg(getVisibleDialog()) && _conversation.isRunningNonExclusiveScript(); }
 
 	// dragon-specific scene ops
 	void addAndShowTiredDialog();

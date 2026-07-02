@@ -149,6 +149,11 @@ public:
 	void loadData(uint16 num, uint16 num2, int16 sub, bool haveHeadData);
 	bool isForDlg(const Dialog *dlg) const;
 	bool isFinished() const { return _finished; }
+	// True while a non-exclusive (over-the-room) CDS conversation is playing.  The room's own
+	// animation of the talking actor is paused while this is true (bug #16583).
+	bool isRunningNonExclusiveScript() const {
+		return _ttmScript.get() != nullptr && !_haveHeadData;
+	}
 	void clear();
 
 	DgdsRect _drawRect;
@@ -164,7 +169,7 @@ private:
 	uint32 _nextExecMs;
 
 	bool runScriptFrame(int16 frameNum);
-	void checkAndRunScript();
+	void checkAndRunScript(bool advanceTiming);
 	void incrementFrame();
 	bool isScriptRunning();
 	void pumpMessages();
