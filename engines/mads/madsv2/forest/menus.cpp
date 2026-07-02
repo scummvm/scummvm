@@ -29,6 +29,7 @@
 #include "mads/madsv2/core/mem.h"
 #include "mads/madsv2/core/quote.h"
 #include "mads/madsv2/core/text.h"
+#include "mads/madsv2/forest/extra.h"
 #include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/mads/quotes.h"
 #include "mads/madsv2/forest/menus.h"
@@ -304,7 +305,9 @@ static void global_menu_main() {
 	}
 
 	popup_dialog_destroy();
-	sprite_draw(series_list[6], 2, &scr_inter, 1, 264);
+
+	// Redraw the door icon in the user interface as closed
+	sprite_draw(series_list[3], 1, &scr_inter, DOOR_X, DOOR_Y);
 	buffer_rect_copy_2(scr_inter, scr_live, 168, 0, 168, 156, 152, 44);
 }
 
