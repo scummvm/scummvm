@@ -262,6 +262,12 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene4070TrophyBaseOpened);
 	s.syncAsByte(state.scene4070FrankiePartIndex);
 	syncStateBool(s, state.scene4070SlimmingTreatmentApplied);
+	s.syncAsByte(state.scene4080PaletteMapState);
+	s.syncAsByte(state.scene4080PendingPaletteMapPromotion);
+	s.syncAsByte(state.scene4080SidePatchState);
+	s.syncAsByte(state.scene4080PassagePatchState);
+	s.syncAsByte(state.scene4080TextVariantState);
+	s.syncAsByte(state.scene4080Resource13PatchState);
 	syncStateBool(s, state.seenScene5010EntryLine);
 	s.syncAsByte(state.scene5010MineTransportState);
 	syncStateBool(s, state.scene5010MineTransportReady);
@@ -457,6 +463,18 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene4070DraculaStage = 0;
 	if (state.scene4070FrankiePartIndex > 3)
 		state.scene4070FrankiePartIndex = 3;
+	if (state.scene4080PaletteMapState > 2)
+		state.scene4080PaletteMapState = 1;
+	if (state.scene4080PendingPaletteMapPromotion > 2)
+		state.scene4080PendingPaletteMapPromotion = 0;
+	if (state.scene4080SidePatchState > 1)
+		state.scene4080SidePatchState = 0;
+	if (state.scene4080PassagePatchState > 2)
+		state.scene4080PassagePatchState = 1;
+	if (state.scene4080TextVariantState > 2)
+		state.scene4080TextVariantState = 0;
+	if (state.scene4080Resource13PatchState > 1)
+		state.scene4080Resource13PatchState = 0;
 }
 
 } // End of namespace Hollywood

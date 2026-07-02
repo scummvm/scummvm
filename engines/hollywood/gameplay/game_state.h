@@ -220,6 +220,12 @@ struct GameplayState {
 		scene4070TrophyBaseOpened = false;
 		scene4070FrankiePartIndex = 0;
 		scene4070SlimmingTreatmentApplied = false;
+		scene4080PaletteMapState = 1;
+		scene4080PendingPaletteMapPromotion = 0;
+		scene4080SidePatchState = 0;
+		scene4080PassagePatchState = 1;
+		scene4080TextVariantState = 0;
+		scene4080Resource13PatchState = 0;
 		seenScene5010EntryLine = false;
 		scene5010MineTransportState = 0;
 		scene5010MineTransportReady = false;
@@ -823,6 +829,12 @@ struct GameplayState {
 	bool scene4070TrophyBaseOpened;
 	byte scene4070FrankiePartIndex;
 	bool scene4070SlimmingTreatmentApplied;
+	byte scene4080PaletteMapState;
+	byte scene4080PendingPaletteMapPromotion;
+	byte scene4080SidePatchState;
+	byte scene4080PassagePatchState;
+	byte scene4080TextVariantState;
+	byte scene4080Resource13PatchState;
 	bool seenScene5010EntryLine;
 	byte scene5010MineTransportState;
 	bool scene5010MineTransportReady;
