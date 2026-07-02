@@ -44,7 +44,7 @@ const uint16 kScene4010EntryFromLeftSideState = 0x0fac;
 const uint16 kScene4010ExitState4020 = 0x0fb4;
 const uint16 kScene4010ViewportXOffset = 0x0068;
 const uint16 kScene4010ViewportMaxXOffset = 0x00b8;
-const uint kScene4010ActorBankTableEntry = 0x0038;
+const uint kScene4010ActorBankTableEntry = 0x0000;
 const uint kScene4010ActorPaletteTableEntry = 0x00cc;
 const uint kScene4010Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene4010SpeechCueDescriptorTableOffset = 0x1135;
@@ -76,6 +76,15 @@ const byte kScene4010ActorPathStepDeltaTableSetB4[] = {
 	5, 3, 3, 5, 0, 5, 5, 2, 0, 5, 2, 7,
 	8, 13, 13, 6, 8, 6, 14, 11, 11, 9, 7, 13,
 	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
+};
+
+const byte kScene4010ActorPathStepDeltaTableSet87[] = {
+	6, 1, 1, 3, 3, 3, 7, 1, 0, 0, 4, 3,
+	3, 2, 8, 6, 6, 7, 6, 4, 10, 3, 2, 9,
+	8, 8, 7, 5, 10, 6, 10, 10, 4, 6, 4, 10,
+	4, 3, 3, 4, 0, 4, 4, 2, 0, 4, 2, 5,
+	6, 10, 10, 4, 6, 4, 10, 8, 8, 7, 5, 10,
+	6, 4, 10, 3, 2, 9, 3, 2, 8, 6, 6, 7
 };
 
 const byte kScene4010RoomIdleFrameMap[] = {
@@ -746,7 +755,8 @@ void Scene4010::runProgressiveExitSpeech() {
 	if (state.scene4010ProgressiveExitSpeechState > 1) {
 		runConfiguredActionOverlay(16, kScene4010ExitOverlayDescriptorCount,
 			kScene4010ExitOverlayFrameMap, ARRAYSIZE(kScene4010ExitOverlayFrameMap),
-			kScene4010OverlayFrameMillis, kActionOverlayHideActiveActor, -1, 0, 11, 0x27);
+			kScene4010OverlayFrameMillis, kActionOverlayHideActiveActor, -1, 0, 11, 0x27,
+			100, -1, 0, false, 1);
 		state.mainFlowStateId = kScene4010ExitState4020;
 	}
 	if (state.scene4010ProgressiveExitSpeechState < 3)
@@ -886,8 +896,8 @@ void Scene4010::replaceColorMapItem(byte sourceItem, byte destinationItem) {
 void Scene4010::copyStepDeltas(uint firstOffset, uint lastOffset) {
 	for (uint offset = firstOffset; offset <= lastOffset &&
 			offset < _actorPathStepDeltas.size() &&
-			offset < ARRAYSIZE(kScene4010ActorPathStepDeltaTableSetB4); ++offset) {
-		_actorPathStepDeltas[offset] = kScene4010ActorPathStepDeltaTableSetB4[offset];
+			offset < ARRAYSIZE(kScene4010ActorPathStepDeltaTableSet87); ++offset) {
+		_actorPathStepDeltas[offset] = kScene4010ActorPathStepDeltaTableSet87[offset];
 	}
 }
 

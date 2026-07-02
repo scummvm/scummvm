@@ -39,7 +39,7 @@ const uint16 kScene4020LastState = 0x0fb5;
 const uint16 kScene4010ReturnState = 0x0fac;
 const uint16 kScene4030FirstState = 0x0fbe;
 const uint16 kScene4020ViewportXOffset = 0x0080;
-const uint kScene4020ActorBankTableEntry = 0x0038;
+const uint kScene4020ActorBankTableEntry = 0x0000;
 const uint kScene4020ActorPaletteTableEntry = 0x00cc;
 const uint kScene4020Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene4020SpeechCueDescriptorTableOffset = 0x1135;
@@ -62,9 +62,18 @@ const byte kScene4020ActorPathStepDeltaTableSetB4[] = {
 	8, 5, 14, 3, 2, 12, 4, 2, 11, 8, 8, 9
 };
 
+const byte kScene4020ActorPathStepDeltaTableSet87[] = {
+	6, 1, 1, 3, 3, 3, 7, 1, 0, 0, 4, 3,
+	3, 2, 8, 6, 6, 7, 6, 4, 10, 3, 2, 9,
+	8, 8, 7, 5, 10, 6, 10, 10, 4, 6, 4, 10,
+	4, 3, 3, 4, 0, 4, 4, 2, 0, 4, 2, 5,
+	6, 10, 10, 4, 6, 4, 10, 8, 8, 7, 5, 10,
+	6, 4, 10, 3, 2, 9, 3, 2, 8, 6, 6, 7
+};
+
 const byte kScene4020ReturnFromD03FrameMap[] = {
-	0, 11, 10, 9, 8, 7, 6, 5, 4, 3,
-	2, 1, 0, 0
+	12, 11, 10, 9, 8, 7, 6, 5, 4, 3,
+	2, 1, 0
 };
 
 const byte kScene4020EnterD03FrameMap[] = {
@@ -293,13 +302,12 @@ void Scene4020::runEntryFromScene4010() {
 
 void Scene4020::runEntryFromScene4030() {
 	setActiveActorPose(0x265, 0x117, 4);
-	drawPlayableComposite();
-	presentFrame();
 
 	runConfiguredActionOverlay(kScene4020GateTransitionChunk, kScene4020GateTransitionDescriptorCount,
 		kScene4020ReturnFromD03FrameMap, ARRAYSIZE(kScene4020ReturnFromD03FrameMap),
 		kScene4020FrameMillis, kActionOverlayHideActiveActor);
-	setActiveActorPose(0x265, 0x117, 4);
+	setActiveActorPose(0x265, 0x117, 5);
+	walkActiveActorTo(0x265, 0x117, 4, 0, false);
 }
 
 void Scene4020::runExitToScene4030() {
@@ -310,7 +318,7 @@ void Scene4020::runExitToScene4030() {
 
 	runConfiguredActionOverlay(kScene4020GateTransitionChunk, kScene4020GateTransitionDescriptorCount,
 		kScene4020EnterD03FrameMap, ARRAYSIZE(kScene4020EnterD03FrameMap),
-		kScene4020FrameMillis, kActionOverlayHideActiveActor);
+		kScene4020FrameMillis, kActionOverlayHideActiveActor, -1, 0, -1, 0, 100, -1, 0, false, 1);
 	_vm->gameState().mainFlowStateId = kScene4030FirstState;
 }
 
@@ -338,8 +346,8 @@ void Scene4020::useKeyOnGateMechanism() {
 void Scene4020::copyStepDeltas(uint firstOffset, uint lastOffset) {
 	for (uint offset = firstOffset; offset <= lastOffset &&
 			offset < _actorPathStepDeltas.size() &&
-			offset < ARRAYSIZE(kScene4020ActorPathStepDeltaTableSetB4); ++offset) {
-		_actorPathStepDeltas[offset] = kScene4020ActorPathStepDeltaTableSetB4[offset];
+			offset < ARRAYSIZE(kScene4020ActorPathStepDeltaTableSet87); ++offset) {
+		_actorPathStepDeltas[offset] = kScene4020ActorPathStepDeltaTableSet87[offset];
 	}
 }
 
