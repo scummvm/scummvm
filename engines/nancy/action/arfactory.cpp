@@ -53,6 +53,7 @@
 #include "engines/nancy/action/puzzle/mazechasepuzzle.h"
 #include "engines/nancy/action/puzzle/memorypuzzle.h"
 #include "engines/nancy/action/puzzle/mindpuzzle.h"
+#include "engines/nancy/action/puzzle/mirrorlightpuzzle.h"
 #include "engines/nancy/action/puzzle/mouselightpuzzle.h"
 #include "engines/nancy/action/puzzle/multibuildpuzzle.h"
 #include "engines/nancy/action/puzzle/onebuildpuzzle.h"
@@ -465,8 +466,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		// TODO: Nancy12 - new puzzle (reuses the AT_DRIVING_PUZZLE debug string), not implemented
 		return nullptr;
 	case 163:
-		// TODO: Nancy12 MirrorLightPuzzle (new), not implemented
-		return nullptr;
+		return new MirrorLightPuzzle();
 	case 164:
 		return new BoardGamePuzzle();
 	case 165:

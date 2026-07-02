@@ -3,6 +3,7 @@ MODULE := engines/nancy
 MODULE_OBJS = \
   action/actionmanager.o \
   action/actionrecord.o \
+  action/actionzone.o \
   action/arfactory.o \
   action/autotext.o \
   action/datarecords.o \
@@ -36,6 +37,7 @@ MODULE_OBJS = \
   action/puzzle/matchpuzzle.o \
   action/puzzle/memorypuzzle.o \
   action/puzzle/mindpuzzle.o \
+  action/puzzle/mirrorlightpuzzle.o \
   action/puzzle/mouselightpuzzle.o \
   action/puzzle/multibuildpuzzle.o \
   action/puzzle/onebuildpuzzle.o \
