@@ -280,16 +280,16 @@ bool PlayableScene::dispatchGenericSceneAction(uint16 handlerId) {
 	case 18: // Generic bad idea/refusal condition.
 		beginStaticSecondarySpeechLine(0x11, (byte)_random.getRandomNumber(1));
 		return true;
-	case 19: // Keep item for later; it may be useful.
+	case 19: // Sue pickup/useful-line slot.
 		beginStaticSecondarySpeechLine(0x12, (byte)_random.getRandomNumber(2));
 		return true;
 	case 20: // Wrong time for this action.
 		beginStaticSecondarySpeechLine(0x13, 0);
 		return true;
-	case 21: // Wrong place for this action.
+	case 21: // Generic pickup/confirmation line.
 		beginStaticSecondarySpeechLine(0x14, 0);
 		return true;
-	case 22: // Action completed.
+	case 22: // Wrong-time/occasion line; not a pickup confirmation.
 		beginStaticSecondarySpeechLine(0x15, 0);
 		return true;
 	case 23: // Generic no-reason/no-result action.
