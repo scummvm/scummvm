@@ -158,7 +158,8 @@ Engine::Engine(OSystem *syst)
 		_autosaveInterval(ConfMan.getInt("autosave_period")),
 		_lastAutosaveTime(_system->getMillis()),
 		_showHotspots(false),
-		_hotspotForceRedraw(false) {
+		_hotspotForceRedraw(false),
+		_hotspotPrevCursorVisible(false) {
 
 	g_engine = this;
 	_quitRequested = false;
@@ -747,12 +748,19 @@ void Engine::pauseEngineIntern(bool pause) {
 }
 
 void Engine::showHotspots(bool show) {
+	bool wasShowing = _showHotspots;
 	_showHotspots = show;
 
-	if (show)
+	if (show) {
 		_hotspotForceRedraw = true;
-	else if (g_system->isOverlayVisible())
-		g_system->hideOverlay();
+		if (!wasShowing)
+			_hotspotPrevCursorVisible = CursorMan.showMouse(false);
+	} else {
+		if (wasShowing)
+			CursorMan.showMouse(_hotspotPrevCursorVisible);
+		if (g_system->isOverlayVisible())
+			g_system->hideOverlay();
+	}
 }
 
 void Engine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) {

@@ -199,6 +199,13 @@ protected:
 	 */
 	bool _hotspotForceRedraw;
 
+	/**
+	 * Mouse cursor visibility from before hotspots were shown. While hotspots
+	 * are displayed the cursor is hidden (otherwise it leaves trails over the
+	 * overlay), and this remembers the state to restore afterwards.
+	 */
+	bool _hotspotPrevCursorVisible;
+
 private:
 	/**
 	 * The associated metaengine
