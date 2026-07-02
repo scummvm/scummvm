@@ -1169,8 +1169,8 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 		int16 mapY = _vm->_dungeonMan->_partyMapY + _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
 
 		if (_vm->_championMan->_leaderEmptyHanded) {
-			Junk *junkPtr = (Junk*)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
-			if ((((Door*)junkPtr)->hasButton()) && _vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
+			Door *doorPtr = _vm->_dungeonMan->getDoor(_vm->_dungeonMan->getSquareFirstThing(mapX, mapY));
+			if (doorPtr && (doorPtr->hasButton()) && _vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
 				_vm->_stopWaitingForPlayerInput = true;
 				_vm->_sound->requestPlay(kDMSoundIndexSwitch, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
 				_vm->_moveSens->addEvent(kDMEventTypeDoor, mapX, mapY, kDMCellNorthWest, kDMSensorEffectToggle, _vm->_gameTime + 1);
@@ -1194,7 +1194,6 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 		}
 	} else {
 		Thing thingHandObject = _vm->_championMan->_leaderHandObject;
-		Junk *junkPtr = (Junk*)_vm->_dungeonMan->getThingData(thingHandObject);
 		if (_vm->_dungeonMan->_squareAheadElement == kDMElementTypeWall) {
 			for (uint16 currViewCell = kDMViewCellFronLeft; currViewCell < kDMViewCellFrontRight + 1; currViewCell++) {
 				if (boxObjectPiles[currViewCell].isPointInside(posX, posY)) {
@@ -1210,9 +1209,9 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 						uint16 iconIdx = _vm->_objectMan->getIconIndex(thingHandObject);
 						uint16 weight = _vm->_dungeonMan->getObjectWeight(thingHandObject);
 						if ((iconIdx >= kDMIconIndiceJunkWater) && (iconIdx <= kDMIconIndiceJunkWaterSkin))
-							junkPtr->setChargeCount(3); /* Full */
+							_vm->_dungeonMan->getJunk(thingHandObject)->setChargeCount(3); /* Full */
 						else if (iconIdx == kDMIconIndicePotionEmptyFlask)
-							((Potion*)junkPtr)->setType(kDMPotionTypeWaterFlask);
+							_vm->_dungeonMan->getPotion(thingHandObject)->setType(kDMPotionTypeWaterFlask);
 						else {
 							commandProcessType80ClickInDungeonViewTouchFrontWall();
 							return;
@@ -1279,7 +1278,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	Thing thing = dunMan.getSquareFirstThing(mapX, mapY);
 	for (;;) { // infinite
 		if (thing.getType() == kDMThingTypeSensor) {
-			((Sensor*)dunMan.getThingData(thing))->setTypeDisabled();
+			dunMan.getSensor(thing)->setTypeDisabled();
 			break;
 		}
 		thing = dunMan.getNextThing(thing);
@@ -1364,7 +1363,7 @@ void EventManager::processType80_clickInDungeonView_grabLeaderHandObject(uint16 
 		Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
 		if ((groupThing != _vm->_thingEndOfList) &&
 			!_vm->_moveSens->isLevitating(groupThing) &&
-			_vm->_groupMan->getCreatureOrdinalInCell((Group*)_vm->_dungeonMan->getThingData(groupThing), _vm->normalizeModulo4(viewCell + _vm->_dungeonMan->_partyDir))) {
+			_vm->_groupMan->getCreatureOrdinalInCell(_vm->_dungeonMan->getGroup(groupThing), _vm->normalizeModulo4(viewCell + _vm->_dungeonMan->_partyDir))) {
 			return; /* It is not possible to grab an object on floor if there is a non levitating creature on its cell */
 		}
 	}
@@ -1397,7 +1396,7 @@ void EventManager::clickInDungeonViewDropLeaderHandObject(uint16 viewCell) {
 	Thing removedThing = _vm->_championMan->getObjectRemovedFromLeaderHand();
 	_vm->_moveSens->getMoveResult(_vm->thingWithNewCell(removedThing, currCell), kDMMapXNotOnASquare, 0, mapX, mapY);
 	if (droppingIntoAnAlcove && _vm->_dungeonMan->_isFacingViAltar && (_vm->_objectMan->getIconIndex(removedThing) == kDMIconIndiceJunkChampionBones)) {
-		Junk *removedJunk = (Junk*)_vm->_dungeonMan->getThingData(removedThing);
+		Junk *removedJunk = _vm->_dungeonMan->getJunk(removedThing);
 		TimelineEvent newEvent;
 		newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 1);
 		newEvent._type = kDMEventTypeViAltarRebirth;

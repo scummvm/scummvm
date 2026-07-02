@@ -308,7 +308,7 @@ void Timeline::processTimeline() {
 			case kDMEventTypeRemoveFluxcage:
 				if (!_vm->_gameWon) {
 					_vm->_dungeonMan->unlinkThingFromList(Thing(newEvent._Cu._slot), Thing(0), newEvent._Bu._location._mapX, newEvent._Bu._location._mapY);
-					Explosion *explosion = (Explosion *)_vm->_dungeonMan->getThingData(Thing(newEvent._Cu._slot));
+					Explosion *explosion = _vm->_dungeonMan->getExplosion(Thing(newEvent._Cu._slot));
 					explosion->setNextThing(_vm->_thingNone);
 				}
 				break;
@@ -392,7 +392,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 	event->_mapTime++;
 	int16 sensorEffect = event->_Cu.A._effect;
 	if (sensorEffect == kDMSensorEffectClear) {
-		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
+		Door *curDoor = _vm->_dungeonMan->getDoor(_vm->_dungeonMan->getSquareFirstThing(mapX, mapY));
 		bool verticalDoorFl = curDoor->opensVertically();
 		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX)
 		 && (mapY == _vm->_dungeonMan->_partyMapY) && (doorState != kDMDoorStateOpen)) {
@@ -414,7 +414,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 		uint16 creatureAttributes;
 		if ((groupThing != _vm->_thingEndOfList) && !getFlag((creatureAttributes = _vm->_dungeonMan->getCreatureAttributes(groupThing)), kDMCreatureMaskNonMaterial)) {
 			if (doorState >= (verticalDoorFl ? CreatureInfo::getHeight(creatureAttributes) : 1)) { /* Creature height or 1 */
-				if (_vm->_groupMan->getDamageAllCreaturesOutcome((Group *)_vm->_dungeonMan->getThingData(groupThing), mapX, mapY, 5, true) != kDMKillOutcomeAllCreaturesInGroup)
+				if (_vm->_groupMan->getDamageAllCreaturesOutcome(_vm->_dungeonMan->getGroup(groupThing), mapX, mapY, 5, true) != kDMKillOutcomeAllCreaturesInGroup)
 					_vm->_groupMan->processEvents29to41(mapX, mapY, kDMEventTypeCreateReactionDangerOnSquare, 0);
 
 				int16 nextState = (int16)doorState - 1;
@@ -547,7 +547,7 @@ void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 			_vm->_moveSens->getMoveResult(curThing, mapX, mapY, mapX, mapY);
 
 		if (curThingType == kDMThingTypeProjectile) {
-			Projectile *projectile = (Projectile *)_vm->_dungeonMan->getThingData(curThing);
+			Projectile *projectile = _vm->_dungeonMan->getProjectile(curThing);
 			TimelineEvent *newEvent;
 			newEvent = &_events[projectile->_eventIndex];
 			newEvent->_Cu._projectile.setMapX(_vm->_moveSens->_moveResultMapX);
@@ -593,13 +593,13 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 	while (curThing != _vm->_thingEndOfList) {
 		int16 curThingType = curThing.getType();
 		if ((curThingType == kDMstringTypeText) && (curThing.getCell() == event->_Cu.A._cell)) {
-			TextString *textString = (TextString *)_vm->_dungeonMan->getThingData(curThing);
+			TextString *textString = _vm->_dungeonMan->getTextString(curThing);
 			if (event->_Cu.A._effect == kDMSensorEffectToggle)
 				textString->setVisible(!textString->isVisible());
 			else
 				textString->setVisible(event->_Cu.A._effect == kDMSensorEffectSet);
 		} else if (curThingType == kDMThingTypeSensor) {
-			Sensor *curThingSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
+			Sensor *curThingSensor = _vm->_dungeonMan->getSensor(curThing);
 			uint16 curSensorType = curThingSensor->getType();
 			uint16 curSensorData = curThingSensor->getData();
 			if (curSensorType == kDMSensorWallCountdown) {
@@ -723,7 +723,7 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 	while (curThing != _vm->_thingEndOfList) {
 		int16 curThingType = curThing.getType();
 		if (curThingType == kDMstringTypeText) {
-			TextString *textString = (TextString *)_vm->_dungeonMan->getThingData(curThing);
+			TextString *textString = _vm->_dungeonMan->getTextString(curThing);
 			bool textCurrentlyVisible = textString->isVisible();
 			if (event->_Cu.A._effect == kDMSensorEffectToggle)
 				textString->setVisible(!textCurrentlyVisible);
@@ -735,7 +735,7 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 				_vm->_textMan->printMessage(kDMColorWhite, _vm->_stringBuildBuffer);
 			}
 		} else if (curThingType == kDMThingTypeSensor) {
-			Sensor *curSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
+			Sensor *curSensor = _vm->_dungeonMan->getSensor(curThing);
 			if (curSensor->getType() == kDMSensorFloorGroupGenerator) {
 				int16 creatureCount = curSensor->getAttrValue();
 				if (getFlag(creatureCount, kDMMaskRandomizeGeneratedCreatureCount))
@@ -789,7 +789,7 @@ T0252001:
 	} else {
 		if (!randomDirectionMoveRetried) {
 			randomDirectionMoveRetried = true;
-			Group *group = (Group *)_vm->_dungeonMan->getThingData(Thing(event->_Cu._slot));
+			Group *group = _vm->_dungeonMan->getGroup(Thing(event->_Cu._slot));
 			if ((group->_type == kDMCreatureTypeLordChaos) && !_vm->getRandomNumber(4)) {
 				switch (_vm->getRandomNumber(4)) {
 				case 0:
@@ -820,7 +820,7 @@ void Timeline::procesEventEnableGroupGenerator(TimelineEvent *event) {
 	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(event->_Bu._location._mapX, event->_Bu._location._mapY);
 	while (curThing != _vm->_thingNone) {
 		if ((curThing.getType()) == kDMThingTypeSensor) {
-			Sensor *curSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
+			Sensor *curSensor = _vm->_dungeonMan->getSensor(curThing);
 			if (curSensor->getType() == kDMSensorDisabled) {
 				curSensor->setDatAndTypeWithOr(kDMSensorFloorGroupGenerator);
 				return;
@@ -950,7 +950,7 @@ T0255002:
 			if ((curThing.getCell() == cell) && (curThing.getType() == kDMThingTypeJunk)) {
 				int16 iconIndex = _vm->_objectMan->getIconIndex(curThing);
 				if (iconIndex == kDMIconIndiceJunkChampionBones) {
-					Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(curThing);
+					Junk *junkData = _vm->_dungeonMan->getJunk(curThing);
 					if (junkData->getChargeCount() == championIndex) {
 						_vm->_dungeonMan->unlinkThingFromList(curThing, Thing(0), mapX, mapY); /* BUG0_25 When a champion dies, no bones object is created so it is not possible to bring the champion back to life at an altar of Vi. Each time a champion is brought back to life, the bones object is removed from the dungeon but it is not marked as unused and thus becomes an orphan. After a large number of champion deaths, all JUNK things are exhausted and the game cannot create any more. This also affects the creation of JUNK things dropped by some creatures when they die (Screamer, Rockpile, Magenta Worm, Pain Rat, Red Dragon) */
 						junkData->setNextThing(_vm->_thingNone);

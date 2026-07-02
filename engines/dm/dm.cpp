@@ -921,7 +921,7 @@ void DMEngine::fuseSequence() {
 	lordChaosMapX += _dirIntoStepCountEast[_dungeonMan->_partyDir];
 	lordChaosMapY += _dirIntoStepCountNorth[_dungeonMan->_partyDir];
 	Thing lordChaosThing = _groupMan->groupGetThing(lordChaosMapX, lordChaosMapY);
-	Group *lordGroup = (Group*)_dungeonMan->getThingData(lordChaosThing);
+	Group *lordGroup = _dungeonMan->getGroup(lordChaosThing);
 	lordGroup->_health[0] = 10000;
 	_dungeonMan->setGroupCells(lordGroup, kDMCreatureTypeSingleCenteredCreature, _dungeonMan->_partyMapIndex);
 	_dungeonMan->setGroupDirections(lordGroup, returnOppositeDir(_dungeonMan->_partyDir), _dungeonMan->_partyMapIndex);
@@ -934,7 +934,7 @@ void DMEngine::fuseSequence() {
 		Thing curThing = _dungeonMan->getSquareFirstObject(fluxCageMapX, fluxcageMapY);
 		while (curThing != _thingEndOfList) {
 			if (curThing.getType() == kDMThingTypeExplosion) {
-				Explosion *curExplosion = (Explosion*)_dungeonMan->getThingData(curThing);
+				Explosion *curExplosion = _dungeonMan->getExplosion(curThing);
 				if (curExplosion->getType() == kDMExplosionTypeFluxcage) {
 					_dungeonMan->unlinkThingFromList(curThing, Thing(0), fluxCageMapX, fluxcageMapY);
 					curExplosion->setNextThing(_thingNone);
