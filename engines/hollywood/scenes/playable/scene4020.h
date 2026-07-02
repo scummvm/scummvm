@@ -19,23 +19,19 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE4030_H
-#define HOLLYWOOD_SCENES_PLAYABLE_SCENE4030_H
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE4020_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE4020_H
 
 #include "hollywood/scenes/playable/animation_channels.h"
 #include "hollywood/scenes/playable/playable_scene.h"
-
-namespace Graphics {
-class ManagedSurface;
-}
 
 namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene4030 : public PlayableScene {
+class Scene4020 : public PlayableScene {
 public:
-	Scene4030(HollywoodEngine *vm);
+	Scene4020(HollywoodEngine *vm);
 
 private:
 	bool hasCustomPreviewState() const override;
@@ -48,33 +44,26 @@ private:
 	void runCustomEntrySequence() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
-	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
+	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
-	void initializeSpriteLayers();
-	void advanceBackgroundAnimations(uint32 delta);
-	void advanceLeftPropLayer(uint frameCount);
-	void advanceRightPropLayer(uint frameCount);
-	void runTowerTransitionToScene4040();
-	void drawTowerTransitionFrame(const Common::Array<byte> &clipData, byte progressIndex,
-		Graphics::ManagedSurface &transitionBackground);
-	void drawClipFrameDeltaToSurface(const Common::Array<byte> &clipData, uint tableEntryCount,
-		byte frameIndex, Graphics::ManagedSurface &destination);
-	void takeRope();
-	void talkToSkeleton();
-	void takeBone();
-	void installImprovisedLever();
-	void updateIronMaidenMechanism();
-	void removeColorMapItem(byte itemId);
-	void replaceColorMapItem(byte sourceItem, byte destinationItem);
+	void initializeIdleLayer();
+	void advanceIdleLayer(uint32 delta);
+	void setActiveActorPose(int x, int y, byte facing);
+	void runEntryFromScene4010();
+	void runEntryFromScene4030();
+	void runExitToScene4030();
+	void useKeyOnGateMechanism();
+	void copyStepDeltas(uint firstOffset, uint lastOffset);
 
-	ResourceSpriteLayer _leftPropLayer;
-	ResourceSpriteLayer _rightPropLayer;
-	TimedAnimationChannel _leftPropChannel;
-	TimedAnimationChannel _rightPropChannel;
-	byte _rightPropState;
+	ResourceSpriteLayer _idleLayer;
+	TimedAnimationChannel _idleChannel;
 };
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE4030_H
+#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE4020_H

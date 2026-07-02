@@ -241,6 +241,8 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.scene4010Item3APickupState);
 	s.syncAsByte(state.scene4010Item3BPickupState);
 	syncStateBool(s, state.scene4010DestinationUnlocked);
+	syncStateBool(s, state.seenScene4020FallReactionLine);
+	syncStateBool(s, state.scene4020GateUnlocked);
 	syncStateBool(s, state.seenScene4030EntryLine);
 	syncStateBool(s, state.scene4030RopeTaken);
 	s.syncAsByte(state.scene4030BoneState);

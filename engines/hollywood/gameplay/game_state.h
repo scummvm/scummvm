@@ -199,6 +199,8 @@ struct GameplayState {
 		scene4010Item3APickupState = 0;
 		scene4010Item3BPickupState = 0;
 		scene4010DestinationUnlocked = false;
+		seenScene4020FallReactionLine = false;
+		scene4020GateUnlocked = false;
 		seenScene4030EntryLine = false;
 		scene4030RopeTaken = false;
 		scene4030BoneState = 0;
@@ -787,6 +789,8 @@ struct GameplayState {
 	byte scene4010Item3APickupState;
 	byte scene4010Item3BPickupState;
 	bool scene4010DestinationUnlocked;
+	bool seenScene4020FallReactionLine;
+	bool scene4020GateUnlocked;
 	bool seenScene4030EntryLine;
 	bool scene4030RopeTaken;
 	byte scene4030BoneState;

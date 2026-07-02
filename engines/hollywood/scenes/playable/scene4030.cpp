@@ -21,6 +21,9 @@
 
 #include "hollywood/scenes/playable/scene4030.h"
 
+#include "common/system.h"
+#include "graphics/managed_surface.h"
+
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -46,6 +49,7 @@ const uint kScene4030ActorPaletteTableEntry = 0x00cc;
 const uint kScene4030Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene4030SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene4030FrameMillis = 75;
+const uint32 kScene4030PropFrameMillis = 75;
 const uint kScene4030LeftPropDescriptorCount = 0x1a;
 const uint kScene4030RightPropDescriptorCount = 0x18;
 const uint kScene4030RopePickupChunk = 20;
@@ -56,6 +60,14 @@ const uint kScene4030BonePickupChunk = 19;
 const uint kScene4030BonePickupDescriptorCount = 0x0c;
 const uint kScene4030LeverInstallChunk = 16;
 const uint kScene4030LeverInstallDescriptorCount = 0x0c;
+const uint kScene4030TowerTransitionClipChunk = 6;
+// The outbound callback literal in MONSTERS.EXE is 0xb3, but the shipped
+// full-game RESOURCE.D03 chunk 6 has a 0xb1-entry delta table; 0xb1/0xb2
+// are payload. The valid 0xb1 clip is the return-to-D03 direction, so the
+// 4030 -> 4040 transition renders its cumulative states in reverse order.
+const uint kScene4030TowerTransitionClipDescriptorCount = 0xb1;
+const byte kScene4030TowerTransitionFinalFrameIndex = 0xda;
+const byte kScene4030TowerTransitionLastValidClipFrame = 0xb0;
 const int kScene4030EntryWorldX = 0x02c0;
 const int kScene4030EntryWorldY = 0x0196;
 const byte kScene4030EntryFacing = 2;
@@ -107,6 +119,25 @@ const byte kScene4030EntryOverlayFrameMap[] = {
 	7, 7, 6, 5, 4, 3, 2, 1, 0
 };
 
+const byte kScene4030RightPropFrameRemap[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+	9, 10, 9, 10, 11, 12, 13, 14, 15, 16,
+	17, 18, 19, 20, 21, 22, 23
+};
+
+byte towerTransitionResourceFrameForProgress(byte progressIndex) {
+	if (progressIndex <= 0x6f)
+		return progressIndex;
+	if (progressIndex <= 0x98)
+		return 0x70;
+	const byte mappedFrame = progressIndex - 0x28;
+	return MIN<byte>(mappedFrame, kScene4030TowerTransitionLastValidClipFrame);
+}
+
+byte towerTransitionProgressForOutboundFrame(byte frameIndex) {
+	return (byte)(kScene4030TowerTransitionFinalFrameIndex - frameIndex);
+}
+
 PlayableSceneConfig scene4030Config() {
 	PlayableSceneConfig config;
 	config.resourceArchiveName = kScene4030ArchiveName;
@@ -140,7 +171,10 @@ Scene4030::Scene4030(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4030Config(), "scene4030", kScene4030EntryWorldX, kScene4030EntryWorldY,
 			kScene4030EntryFacing, 0xfd, 0xfb),
 		_leftPropLayer(),
-		_rightPropLayer() {
+		_rightPropLayer(),
+		_leftPropChannel(),
+		_rightPropChannel(),
+		_rightPropState(0) {
 }
 
 bool Scene4030::hasCustomPreviewState() const {
@@ -202,14 +236,14 @@ void Scene4030::runCustomEntrySequence() {
 		presentFrame();
 		runConfiguredActionOverlay(kScene4030EntryOverlayChunk, kScene4030EntryOverlayDescriptorCount,
 			kScene4030EntryOverlayFrameMap, ARRAYSIZE(kScene4030EntryOverlayFrameMap),
-			kScene4030FrameMillis, kActionOverlayKeepActiveActorVisibility);
+			kScene4030FrameMillis, kActionOverlayHideActiveActor);
 
 		if (!state.seenScene4030EntryLine) {
 			_activeActorFacing = kScene4030EntrySpeechFacing;
 			_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 			drawPlayableComposite();
 			presentFrame();
-			beginSecondarySpeechLine(1, 1);
+			beginSecondarySpeechLine(1, 0);
 			state.seenScene4030EntryLine = true;
 		}
 		return;
@@ -219,10 +253,16 @@ void Scene4030::runCustomEntrySequence() {
 	presentFrame();
 }
 
+bool Scene4030::advanceCustomGameplayLoop(uint32 delta) {
+	advanceBackgroundAnimations(delta);
+	updateAmbientAudioAndMusicCues(delta);
+	return true;
+}
+
 bool Scene4030::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 301: // Transicion automatica a torreon (automatic transition to tower).
-		_vm->gameState().mainFlowStateId = kScene4040FirstState;
+		runTowerTransitionToScene4040();
 		return true;
 	case 302: // Mirar corredor (look at corridor): identifies the dungeon.
 		beginSecondarySpeechLine(1, 0);
@@ -354,11 +394,195 @@ void Scene4030::initializeSpriteLayers() {
 	_leftPropLayer.visible = true;
 	_leftPropLayer.setFrame(0);
 	_leftPropLayer.hasPreviousDescriptor = false;
+	_leftPropChannel.reset(0, kScene4030PropFrameMillis);
 
-	_rightPropLayer.configure(8, kScene4030RightPropDescriptorCount, nullptr, 0);
+	_rightPropLayer.configure(8, kScene4030RightPropDescriptorCount,
+		kScene4030RightPropFrameRemap, ARRAYSIZE(kScene4030RightPropFrameRemap));
 	_rightPropLayer.visible = true;
 	_rightPropLayer.setFrame(0);
 	_rightPropLayer.hasPreviousDescriptor = false;
+	_rightPropChannel.reset(0, kScene4030PropFrameMillis);
+	_rightPropState = 0;
+}
+
+void Scene4030::advanceBackgroundAnimations(uint32 delta) {
+	const uint leftFrameCount = _leftPropChannel.consumeFrames(delta);
+	if (leftFrameCount != 0)
+		advanceLeftPropLayer(leftFrameCount);
+
+	const uint rightFrameCount = _rightPropChannel.consumeFrames(delta);
+	if (rightFrameCount != 0)
+		advanceRightPropLayer(rightFrameCount);
+}
+
+void Scene4030::advanceLeftPropLayer(uint frameCount) {
+	for (uint i = 0; i < frameCount; ++i) {
+		const byte nextFrame = _leftPropLayer.frameIndex == 0x19 ? 0 : _leftPropLayer.frameIndex + 1;
+		_leftPropLayer.setFrame(nextFrame);
+	}
+	_leftPropChannel.frameIndex = _leftPropLayer.frameIndex;
+}
+
+void Scene4030::advanceRightPropLayer(uint frameCount) {
+	for (uint i = 0; i < frameCount; ++i) {
+		switch (_rightPropState) {
+		case 0:
+			if (_rightPropLayer.frameIndex < 10)
+				_rightPropLayer.setFrame(_rightPropLayer.frameIndex + 1);
+			else
+				_rightPropState = 1;
+			break;
+		case 1:
+			if (_random.getRandomNumber(0x18) == 0) {
+				_rightPropState = 2;
+			} else if (_random.getRandomNumber(0x27) == 0) {
+				_rightPropLayer.setFrame(0x0d);
+				_rightPropState = 3;
+			}
+			break;
+		case 2:
+			if (_rightPropLayer.frameIndex < 0x0c) {
+				_rightPropLayer.setFrame(_rightPropLayer.frameIndex + 1);
+			} else {
+				_rightPropLayer.setFrame(10);
+				_rightPropState = 1;
+			}
+			break;
+		case 3:
+			if (_rightPropLayer.frameIndex < 0x1a)
+				_rightPropLayer.setFrame(_rightPropLayer.frameIndex + 1);
+			else
+				_rightPropState = 4;
+			break;
+		case 4:
+			if (_random.getRandomNumber(0x27) == 0) {
+				_rightPropLayer.setFrame(0);
+				_rightPropState = 0;
+			}
+			break;
+		default:
+			_rightPropLayer.setFrame(0);
+			_rightPropState = 0;
+			break;
+		}
+	}
+	_rightPropChannel.frameIndex = _rightPropLayer.frameIndex;
+}
+
+void Scene4030::runTowerTransitionToScene4040() {
+	Common::Array<byte> clipData;
+	if (!loadVariableChunk(kScene4030TowerTransitionClipChunk, clipData)) {
+		_vm->gameState().mainFlowStateId = kScene4040FirstState;
+		return;
+	}
+
+	Graphics::ManagedSurface transitionBackground;
+	transitionBackground.create(HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight,
+		Graphics::PixelFormat::createFormatCLUT8());
+	transitionBackground.copyRectToSurface(_baseFramebuffer.rawSurface(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+
+	for (uint frameIndex = 0; frameIndex <= kScene4030TowerTransitionFinalFrameIndex &&
+			!Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frameIndex) {
+		if (frameIndex != 0) {
+			advanceBackgroundAnimations(kScene4030FrameMillis);
+			updateAmbientAudioAndMusicCues(kScene4030FrameMillis);
+		}
+
+		drawTowerTransitionFrame(clipData, towerTransitionProgressForOutboundFrame((byte)frameIndex),
+			transitionBackground);
+		presentFrame();
+
+		uint32 remaining = kScene4030FrameMillis;
+		while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+			if (pollEvents(true)) {
+				remaining = 0;
+				frameIndex = kScene4030TowerTransitionFinalFrameIndex;
+				break;
+			}
+
+			const uint32 slice = MIN<uint32>(remaining, 10);
+			g_system->delayMillis(slice);
+			remaining -= slice;
+		}
+	}
+
+	_vm->gameState().mainFlowStateId = kScene4040FirstState;
+}
+
+void Scene4030::drawTowerTransitionFrame(const Common::Array<byte> &clipData, byte progressIndex,
+		Graphics::ManagedSurface &transitionBackground) {
+	transitionBackground.copyRectToSurface(_baseFramebuffer.rawSurface(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+
+	byte previousResourceFrame = 0xff;
+	for (uint progress = 0; progress <= progressIndex; ++progress) {
+		const byte resourceFrame = towerTransitionResourceFrameForProgress((byte)progress);
+		if (resourceFrame == previousResourceFrame)
+			continue;
+
+		drawClipFrameDeltaToSurface(clipData, kScene4030TowerTransitionClipDescriptorCount,
+			resourceFrame, transitionBackground);
+		previousResourceFrame = resourceFrame;
+	}
+
+	_sceneFramebuffer.copyRectToSurface(transitionBackground.rawSurface(), 0, 0,
+		Common::Rect(0, 0, HollywoodEngine::kSceneBufferWidth, HollywoodEngine::kSceneBufferHeight));
+	drawResourceSpriteLayer(_leftPropLayer);
+	drawResourceSpriteLayer(_rightPropLayer);
+}
+
+void Scene4030::drawClipFrameDeltaToSurface(const Common::Array<byte> &clipData, uint tableEntryCount,
+		byte frameIndex, Graphics::ManagedSurface &destination) {
+	const uint32 tableEntryOffset = (uint32)frameIndex * 4;
+	if (tableEntryOffset + 4 > clipData.size())
+		return;
+
+	const uint32 frameOffset = ((uint32)tableEntryCount * 4) + readUint32LE(clipData, tableEntryOffset);
+	if (frameOffset + 4 > clipData.size())
+		return;
+
+	const uint16 firstRow = readUint16LE(clipData, frameOffset);
+	const uint16 lastRow = readUint16LE(clipData, frameOffset + 2);
+	uint cursor = frameOffset + 4;
+	byte *pixels = framebufferPixels(destination);
+	const uint size = framebufferByteCount();
+
+	for (uint row = firstRow; row <= lastRow && row < HollywoodEngine::kSceneBufferHeight; ++row) {
+		if (cursor >= clipData.size())
+			return;
+
+		byte runCount = clipData[cursor++];
+		for (; runCount != 0; --runCount) {
+			if (cursor + 3 > clipData.size())
+				return;
+
+			const uint x = readUint16LE(clipData, cursor);
+			const byte literalLength = clipData[cursor + 2];
+			const uint destinationOffset = row * HollywoodEngine::kSceneBufferWidth + x;
+			if (destinationOffset >= size)
+				return;
+
+			if (literalLength == 0) {
+				if (cursor + 5 > clipData.size())
+					return;
+
+				const byte fillValue = clipData[cursor + 3];
+				const uint fillLength = clipData[cursor + 4];
+				cursor += 5;
+				if (destinationOffset + fillLength <= size)
+					memset(pixels + destinationOffset, fillValue, fillLength);
+			} else {
+				const uint literalOffset = cursor + 3;
+				if (literalOffset + literalLength > clipData.size())
+					return;
+
+				if (destinationOffset + literalLength <= size)
+					memcpy(pixels + destinationOffset, clipData.data() + literalOffset, literalLength);
+				cursor = literalOffset + literalLength;
+			}
+		}
+	}
 }
 
 void Scene4030::takeRope() {
@@ -371,7 +595,7 @@ void Scene4030::takeRope() {
 	state.scene4030RopeTaken = true;
 	runConfiguredActionOverlay(kScene4030RopePickupChunk, kScene4030RopePickupDescriptorCount,
 		kScene4030RopePickupFrameMap, ARRAYSIZE(kScene4030RopePickupFrameMap),
-		kScene4030FrameMillis, kActionOverlayKeepActiveActorVisibility, 4, 4);
+		kScene4030FrameMillis, kActionOverlayHideActiveActor, 4, 4);
 	addInventoryItem(kScene4030RopeItem);
 	_soundBank0.playSample(1, 100);
 }
@@ -383,7 +607,7 @@ void Scene4030::talkToSkeleton() {
 		state.scene4030BoneState = 1;
 		runConfiguredActionOverlay(kScene4030BoneRevealChunk, kScene4030BoneRevealDescriptorCount,
 			kScene4030BoneRevealFrameMap, ARRAYSIZE(kScene4030BoneRevealFrameMap),
-			kScene4030FrameMillis, kActionOverlayKeepActiveActorVisibility, 9, 3, 2, 0x3a, 25);
+			kScene4030FrameMillis, kActionOverlayHideActiveActor, 9, 3, 2, 0x3a, 25);
 		applySceneStateToHotspotsAndPatches(3);
 		beginSecondarySpeechLine(20, 1);
 		return;
@@ -402,7 +626,7 @@ void Scene4030::takeBone() {
 	state.scene4030BoneState = 2;
 	runConfiguredActionOverlay(kScene4030BonePickupChunk, kScene4030BonePickupDescriptorCount,
 		kScene4030BonePickupFrameMap, ARRAYSIZE(kScene4030BonePickupFrameMap),
-		kScene4030FrameMillis, kActionOverlayKeepActiveActorVisibility, 7, 3);
+		kScene4030FrameMillis, kActionOverlayHideActiveActor, 7, 3);
 	addInventoryItem(kScene4030BoneItem);
 	_soundBank0.playSample(1, 100);
 }
@@ -421,7 +645,7 @@ void Scene4030::installImprovisedLever() {
 	state.scene4030LeverInstalled = true;
 	runConfiguredActionOverlay(kScene4030LeverInstallChunk, kScene4030LeverInstallDescriptorCount,
 		kScene4030LeverInstallFrameMap, ARRAYSIZE(kScene4030LeverInstallFrameMap),
-		kScene4030FrameMillis, kActionOverlayKeepActiveActorVisibility, 9, 2);
+		kScene4030FrameMillis, kActionOverlayHideActiveActor, 9, 2);
 	removeInventoryItem(kScene4030LeverItem);
 	_soundBank0.playSample(1, 100);
 	beginSecondarySpeechLine(22, 0);
