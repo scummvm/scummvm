@@ -117,6 +117,9 @@ enum EventType {
 	EVENT_FOCUS_GAINED = 36,
 	EVENT_FOCUS_LOST = 37,
 
+	/** Toggle hotspot display. */
+	EVENT_TOGGLE_HOTSPOTS = 38,
+
 	/**
 	 * We reserve some event ids for custom events.
 	 * 
@@ -127,6 +130,15 @@ enum EventType {
 	 */
 	EVENT_USER_FIRST_AVAILABLE = 1000,
 	EVENT_USER_LAST_AVAILABLE = 9999
+};
+
+/**
+ * Custom engine action types for EVENT_CUSTOM_ENGINE_ACTION_START/END.
+ * These are used by cross-engine features. Values start at 20000 to avoid
+ * clashing with engine-specific custom action ids, which start from 0.
+ */
+enum EngineAction {
+	kEngineActionHotspotToggle = 20000
 };
 
 const int16 JOYAXIS_MIN = -32768;
