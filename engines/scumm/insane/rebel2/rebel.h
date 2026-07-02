@@ -456,7 +456,7 @@ public:
 	void renderGameplayPostFrame(byte *renderBitmap, int pitch, int width, int height,
 								 int videoWidth, int videoHeight, int statusBarY, int32 curFrame);
 	void updateGameplayDamageEffects(byte *renderBitmap, int pitch, int width, int height);
-	void updateGameplayDamageRecovery(int32 curFrame);
+	void updateGameplayTimedTick(int32 curFrame);
 	void checkGameplayPostRenderCollisions(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);
 
 	void renderTurretHudOverlays(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);

@@ -2290,15 +2290,22 @@ void InsaneRebel2::updateGameplayDamageEffects(byte *renderBitmap, int pitch, in
 	}
 }
 
-void InsaneRebel2::updateGameplayDamageRecovery(int32 curFrame) {
-	// timed score tick in the same slot and does not reduce damage.
-	if ((_rebelHandler != 0x26 && _rebelHandler != 8 && _rebelHandler != 7) ||
-			(curFrame & 0xf) != 0 || _playerDamage <= 0) {
+void InsaneRebel2::updateGameplayTimedTick(int32 curFrame) {
+	// Every 16th frame the handlers score timePoints and recover one point of
+	// damage; the cover handler (25) scores without recovering.
+	if ((curFrame & 0xf) != 0)
 		return;
-	}
+	if (_rebelHandler != 7 && _rebelHandler != 8 && _rebelHandler != 25 && _rebelHandler != 0x26)
+		return;
 
-	_playerDamage--;
-	_playerShield = 255 - _playerDamage;
+	const int16 timePoints = getDifficultyParams().timePoints;
+	if (timePoints > 0)
+		addScore(timePoints);
+
+	if (_rebelHandler != 25 && _playerDamage > 0) {
+		_playerDamage--;
+		_playerShield = 255 - _playerDamage;
+	}
 }
 
 void InsaneRebel2::checkGameplayPostRenderCollisions(byte *renderBitmap, int pitch, int width, int height, int32 curFrame) {
@@ -2389,7 +2396,7 @@ void InsaneRebel2::renderGameplayPostFrame(byte *renderBitmap, int pitch, int wi
 
 	updateGameplayDamageEffects(renderBitmap, pitch, width, height);
 	checkGameplayPostRenderCollisions(renderBitmap, pitch, width, height, curFrame);
-	updateGameplayDamageRecovery(curFrame);
+	updateGameplayTimedTick(curFrame);
 
 	renderCrosshair(renderBitmap, pitch, width, height);
 
