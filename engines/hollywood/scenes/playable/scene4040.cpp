@@ -35,6 +35,7 @@ const uint kScene4040ArenaFirstChunk = 5;
 const uint kScene4040ArenaLastChunk = 15;
 const uint kScene4040StageIndex = 404;
 const uint16 kScene4040FirstState = 0x0fc8;
+const uint16 kScene4040ReturnFromUpperExitState = 0x0fc9;
 const uint16 kScene4040LastState = 0x0fd1;
 const uint16 kScene4030ReturnState = 0x0fbf;
 const uint16 kScene4050FirstState = 0x0fd2;
@@ -46,6 +47,11 @@ const uint kScene4040ActorPaletteTableEntry = 0x00cc;
 const uint kScene4040Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene4040SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene4040FrameMillis = 75;
+const int kScene4040UpperExitReturnStartX = 0x028a;
+const int kScene4040UpperExitReturnStartY = 0x0128;
+const byte kScene4040UpperExitReturnFacing = 1;
+const int kScene4040UpperExitReturnTargetX = 0x024b;
+const int kScene4040UpperExitReturnTargetY = 0x014a;
 const uint kScene4040CyclicBackgroundChunk = 8;
 const uint kScene4040RandomBackgroundChunk = 13;
 const uint kScene4040StairOverlayChunk = 9;
@@ -128,9 +134,15 @@ void Scene4040::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	applyScenePaletteOverride();
 	resetBackgroundLayers();
-	_activeActorWorldX = 0x192;
-	_activeActorWorldY = 0x0171;
-	_activeActorFacing = 2;
+	if (_vm->gameState().mainFlowStateId == kScene4040ReturnFromUpperExitState) {
+		_activeActorWorldX = kScene4040UpperExitReturnStartX;
+		_activeActorWorldY = kScene4040UpperExitReturnStartY;
+		_activeActorFacing = kScene4040UpperExitReturnFacing;
+	} else {
+		_activeActorWorldX = 0x192;
+		_activeActorWorldY = 0x0171;
+		_activeActorFacing = 2;
+	}
 	_activeActorCel = 0;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 }
@@ -162,6 +174,11 @@ bool Scene4040::hasCustomEntrySequence() const {
 
 void Scene4040::runCustomEntrySequence() {
 	GameplayState &state = _vm->gameState();
+	if (state.mainFlowStateId == kScene4040ReturnFromUpperExitState) {
+		runReturnFromUpperExitEntry();
+		return;
+	}
+
 	if (_vm->gameState().mainFlowStateId == kScene4040FirstState && !state.seenScene4040EntryLine) {
 		beginSecondarySpeechLine(0, 0);
 		state.seenScene4040EntryLine = true;
@@ -360,6 +377,12 @@ void Scene4040::advanceRandomBackgroundTick() {
 bool Scene4040::isRandomBackgroundHoldFrame(byte frameIndex) const {
 	return frameIndex == 1 || frameIndex == 3 || frameIndex == 6 ||
 		frameIndex == 8 || frameIndex == 0x0b || frameIndex == 0x0d;
+}
+
+void Scene4040::runReturnFromUpperExitEntry() {
+	runEntryPath(kScene4040UpperExitReturnStartX, kScene4040UpperExitReturnStartY,
+		kScene4040UpperExitReturnFacing, kScene4040UpperExitReturnTargetX,
+		kScene4040UpperExitReturnTargetY);
 }
 
 void Scene4040::runStairReturnToDungeon() {
