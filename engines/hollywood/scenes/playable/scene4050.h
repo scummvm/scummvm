@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE4040_H
-#define HOLLYWOOD_SCENES_PLAYABLE_SCENE4040_H
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE4050_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE4050_H
 
 #include "hollywood/scenes/playable/playable_scene.h"
 
@@ -28,9 +28,9 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene4040 : public PlayableScene {
+class Scene4050 : public PlayableScene {
 public:
-	Scene4040(HollywoodEngine *vm);
+	Scene4050(HollywoodEngine *vm);
 
 private:
 	bool hasCustomPreviewState() const override;
@@ -45,29 +45,34 @@ private:
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	bool shouldDrawSecondaryActorInPlayableComposite() const override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
-	void applyScenePaletteOverride();
-	void resetBackgroundLayers();
-	void drawBackgroundLayers();
-	void advanceBackgroundLayers(uint32 delta);
-	void advanceRandomBackgroundTick();
-	bool isRandomBackgroundHoldFrame(byte frameIndex) const;
-	void runReturnFromUpperExitEntry();
-	void runStairReturnToDungeon();
-	void takeCandil();
-	void drawForegroundBlocks(int activeWorldY);
-	void removeColorMapItem(byte itemId);
-	void replaceColorMapItem(byte sourceItem, byte destinationItem);
+	void resetAnimationLayers();
+	void restoreSceneObjectPaletteRange();
+	void drawSceneLayers();
+	void advanceBackgroundLayer(uint32 delta);
+	void advanceFlagPalette(uint32 delta);
+	void rotateFlagPalette();
+	void advanceRonLayer(uint32 delta);
+	void setRonResourceFrame(byte frameIndex);
+	void beginRonResourceSpeechLine(uint16 rowIndex, byte frameIndex);
+	void runRonResourceFrameSequence(byte firstFrame, byte lastFrame, byte soundFrame, byte soundId);
+	void useLongRopeOnLedge();
+	void useSceneRope();
+	void applyPatchStateColorMap(byte patchState);
+	bool resourceDescriptorBounds(uint chunkIndex, uint16 descriptorCount, uint16 descriptorIndex,
+		int &left, int &top, int &width, int &bottom) const;
 
-	TimedAnimationChannel _cyclicBackgroundChannel;
-	TimedAnimationChannel _randomBackgroundChannel;
-	ResourceSpriteLayer _cyclicBackgroundLayer;
-	ResourceSpriteLayer _randomBackgroundLayer;
-	byte _randomBackgroundState;
-	byte _randomBackgroundRepeatCount;
+	TimedAnimationChannel _backgroundChannel;
+	TimedAnimationChannel _flagPaletteChannel;
+	TimedAnimationChannel _ronSpeechChannel;
+	TimedAnimationChannel _ronIdleChannel;
+	ResourceSpriteLayer _backgroundLayer;
+	ResourceSpriteLayer _ronLayer;
+	bool _ronManualSequenceActive;
 };
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE4040_H
+#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE4050_H
