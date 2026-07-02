@@ -65,11 +65,68 @@ unsigned reverseBits(unsigned value, unsigned n) {
 }
 
 uint32 YCbCr2RGB(const Graphics::PixelFormat &format, int16 y, int16 cb, int16 cr) {
-	int r = clip(y + ((cr * 91881 + 32768) >> 16));
-	int g = clip(y - ((cb * 22553 + cr * 46801 + 32768) >> 16));
-	int b = clip(y + ((cb * 116129 + 32768) >> 16));
+	int r = clip(y + (cr << 4) / 10);
+	int g = clip(y - cb / 3 - (cr * 8) / 10);
+	int b = clip(y + cb * 2);
 
 	return format.RGBToColor(r, g, b);
+}
+
+void putRGB565DitheredBlock(Graphics::Surface &pic, int dstX, int dstY, int16 block[3][64]) {
+	int64 r[64], g[64], b[64];
+	for (int i = 0; i < 64; ++i) {
+		const int64 yFixed = static_cast<int64>(block[0][i] + 128) << 16;
+		r[i] = yFixed + ((block[2][i] << 4) / 10 << 16);
+		g[i] = yFixed + ((-block[1][i] / 3 - (block[2][i] * 8) / 10) << 16);
+		b[i] = yFixed + (block[1][i] * 2 << 16);
+	}
+
+	const int dstPitch = pic.pitch / pic.format.bytesPerPixel;
+	uint16 *dstPixels = static_cast<uint16 *>(pic.getBasePtr(dstX, dstY));
+
+	for (int y = 0; y < 8; ++y) {
+		const bool reverse = (y & 1) != 0;
+		for (int x = reverse ? 7 : 0; reverse ? x >= 0 : x < 8; reverse ? --x : ++x) {
+			const int index = y * 8 + x;
+			r[index] = CLIP<int64>(r[index], 0, 0xff0000);
+			g[index] = CLIP<int64>(g[index], 0, 0xff0000);
+			b[index] = CLIP<int64>(b[index], 0, 0xff0000);
+
+			dstPixels[y * dstPitch + x] = ((r[index] >> 8) & 0xf800) | ((g[index] >> 13) & 0x07e0) | ((b[index] >> 19) & 0x001f);
+
+			const int64 redError = r[index] - (r[index] & 0xfff80000);
+			const int64 greenError = g[index] - (g[index] & 0xfffc0000);
+			const int64 blueError = b[index] - (b[index] & 0xfff80000);
+
+			auto spread = [&](int dstIndex, int weight) {
+				r[dstIndex] += (redError * weight) >> 4;
+				g[dstIndex] += (greenError * weight) >> 4;
+				b[dstIndex] += (blueError * weight) >> 4;
+			};
+
+			if (!reverse) {
+				if (x < 7)
+					spread(index + 1, 7);
+				if (y < 7) {
+					if (x > 0)
+						spread(index + 7, 3);
+					spread(index + 8, 5);
+					if (x < 7)
+						spread(index + 9, 1);
+				}
+			} else {
+				if (x > 0)
+					spread(index - 1, 7);
+				if (y < 7) {
+					if (x < 7)
+						spread(index + 9, 3);
+					spread(index + 8, 5);
+					if (x > 0)
+						spread(index + 7, 1);
+				}
+			}
+		}
+	}
 }
 
 uint32 debugRegionColor(const Graphics::PixelFormat &format, float phase) {
@@ -151,10 +208,8 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 	Common::BitStreamMemoryStream dcMs(dcPtr, dcSize);
 	Common::BitStreamMemory8MSB acBs(&acMs), dcBs(&dcMs);
 
-	const auto dstPitch = pic.pitch / pic.format.bytesPerPixel - 8;
-	unsigned numBlocks = prefix ? prefix->size() : ((pic.w + 7) / 8) * ((pic.h + 7) / 8);
-	for (uint blockIdx = 0; blockIdx < numBlocks; ++blockIdx) {
-		int16 block[3][64] = {};
+	auto decodeBlock = [&](int16 block[3][64]) {
+		Common::fill(&block[0][0], &block[0][0] + 3 * 64, 0);
 		for (unsigned channel = 0; channel != 3; ++channel) {
 			int16 *ac = block[channel];
 			int8 dc8 = static_cast<int8>(reverseBits(dcBs.getBits<8>(), 8));
@@ -182,6 +237,80 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 
 			Video::FourXM::idct(ac, 4);
 		}
+	};
+
+	if (!prefix && pic.format.bytesPerPixel == 2 && ((pic.w == 256 && pic.h == 6144) || (pic.w == 640 && pic.h == 480))) {
+		const int bandSize = pic.w * 8;
+		Common::Array<int64> red, green, blue, nextRed, nextGreen, nextBlue;
+		red.resize(bandSize);
+		green.resize(bandSize);
+		blue.resize(bandSize);
+		nextRed.resize(bandSize);
+		nextGreen.resize(bandSize);
+		nextBlue.resize(bandSize);
+
+		for (int dstY = 0; dstY < pic.h; dstY += 8) {
+			for (int dstX = 0; dstX < pic.w; dstX += 8) {
+				int16 block[3][64];
+				decodeBlock(block);
+				for (int y = 0; y < 8; ++y) {
+					for (int x = 0; x < 8; ++x) {
+						const int src = y * 8 + x;
+						const int dst = y * pic.w + dstX + x;
+						const int64 yFixed = static_cast<int64>(block[0][src] + 128) << 16;
+						red[dst] += yFixed + ((block[2][src] << 4) / 10 << 16);
+						green[dst] += yFixed + ((-block[1][src] / 3 - (block[2][src] * 8) / 10) << 16);
+						blue[dst] += yFixed + (block[1][src] * 2 << 16);
+					}
+				}
+			}
+
+			for (int y = 0; y < 8; ++y) {
+				uint16 *dstPixels = static_cast<uint16 *>(pic.getBasePtr(0, dstY + y));
+				for (int x = 0; x < pic.w; ++x) {
+					const int index = y * pic.w + x;
+					red[index] = CLIP<int64>(red[index], 0, 0xff0000);
+					green[index] = CLIP<int64>(green[index], 0, 0xff0000);
+					blue[index] = CLIP<int64>(blue[index], 0, 0xff0000);
+
+					dstPixels[x] = ((red[index] >> 8) & 0xf800) | ((green[index] >> 13) & 0x07e0) | ((blue[index] >> 19) & 0x001f);
+					if (x == pic.w - 1)
+						continue;
+
+					const int64 redError = (red[index] - (red[index] & 0xf80000)) >> 1;
+					const int64 greenError = (green[index] - (green[index] & 0xfc0000)) >> 1;
+					const int64 blueError = (blue[index] - (blue[index] & 0xf80000)) >> 1;
+					red[index + 1] += redError;
+					green[index + 1] += greenError;
+					blue[index + 1] += blueError;
+
+					if (y == 7) {
+						nextRed[x] += redError;
+						nextGreen[x] += greenError;
+						nextBlue[x] += blueError;
+					} else {
+						red[index + pic.w] += redError;
+						green[index + pic.w] += greenError;
+						blue[index + pic.w] += blueError;
+					}
+				}
+			}
+
+			red.swap(nextRed);
+			green.swap(nextGreen);
+			blue.swap(nextBlue);
+			Common::fill(nextRed.begin(), nextRed.end(), 0);
+			Common::fill(nextGreen.begin(), nextGreen.end(), 0);
+			Common::fill(nextBlue.begin(), nextBlue.end(), 0);
+		}
+		return;
+	}
+
+	const auto dstPitch = pic.pitch / pic.format.bytesPerPixel - 8;
+	unsigned numBlocks = prefix ? prefix->size() : ((pic.w + 7) / 8) * ((pic.h + 7) / 8);
+	for (uint blockIdx = 0; blockIdx < numBlocks; ++blockIdx) {
+		int16 block[3][64];
+		decodeBlock(block);
 		int dstY;
 		int dstX;
 		if (prefix) {
@@ -209,17 +338,7 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 			}
 		} break;
 		case 2: {
-			auto *dstPixel = static_cast<uint16 *>(pic.getBasePtr(dstX, dstY));
-			uint srcIdx = 0;
-			for (uint by = 0; by < 8; ++by, dstPixel += dstPitch) {
-				for (uint bx = 0; bx < 8; ++bx, ++srcIdx) {
-					int16 y = block[0][srcIdx];
-					int16 cb = block[1][srcIdx];
-					int16 cr = block[2][srcIdx];
-
-					*dstPixel++ = YCbCr2RGB(pic.format, y + 128, cb, cr);
-				}
-			}
+			putRGB565DitheredBlock(pic, dstX, dstY, block);
 		} break;
 		}
 	}
@@ -566,14 +685,7 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float d
 			}
 		}
 	} else {
-		switch (screen->format.bytesPerPixel) {
-		case 2:
-			renderVR<uint16>(screen, ax, ay, fov, dt, regSet);
-			break;
-		case 4:
-			renderVR<uint32>(screen, ax, ay, fov, dt, regSet);
-			break;
-		}
+		renderVR<uint16>(screen, ax, ay, fov, dt, regSet);
 	}
 }
 
