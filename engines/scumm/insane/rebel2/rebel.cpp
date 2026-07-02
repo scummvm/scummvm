@@ -246,6 +246,10 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_rebelValueCounters[i] = 0;
 		_rebelGaugeBlink[i] = 0;
 	}
+	for (int i = 0; i < 15; ++i) {
+		_turretShakeRingX[i] = 0;
+		_turretShakeRingY[i] = 0;
+	}
 	_rebelLastCounter = 0;
 
 	_rebelShieldGateActive = false;

@@ -1587,7 +1587,12 @@ void InsaneRebel2::checkCollisionZones(byte *renderBitmap, int pitch, int width,
 				}
 				if (!_noDamage)
 					initDamageFlash();
-				playSfx(1, 127, CLIP(((cx1 + cx2 + cx3 + cx4) / 4) * -4, -127, 127));
+				const int hitAvgX = (cx1 + cx2 + cx3 + cx4) / 4;
+				const int hitAvgY = (cy1 + cy2 + cy3 + cy4) / 4;
+				playSfx(1, 127, CLIP(hitAvgX * -4, -127, 127));
+				// The amplified impulse enters the shake ring and decays over the next 14 frames.
+				_turretShakeRingX[14] = (int16)(CLIP(hitAvgX, -0x2b, 0x2b) * 8);
+				_turretShakeRingY[14] = (int16)(CLIP(hitAvgY, -0x19, 0x19) * 8);
 			} else {
 				if (dparams.dodgePoints > 0) {
 					addScore(dparams.dodgePoints);
@@ -2105,6 +2110,30 @@ void InsaneRebel2::updatePostRenderScroll(int width, int height) {
 	Common::Point aimPos = getGameplayAimPoint();
 	_viewX = (aimPos.x * maxScrollX) / viewportWidth;
 	_viewY = (aimPos.y * maxScrollY) / viewportHeight;
+
+	if (_rebelHandler == 0x26) {
+		// Dodge-fail view shake: the hit impulse travels a 15-slot weighted ring
+		// and nudges the scroll, with a +-5 jitter while the damage flash runs.
+		static const int16 kShakeWeights[14] = { 1, 1, 2, 2, 3, 3, 4, 8, 14, 16, 16, 14, 12, 6 };
+		int shakeX = 0, shakeY = 0, weightSum = 2;
+		for (int i = 0; i < 14; i++) {
+			_turretShakeRingX[i] = _turretShakeRingX[i + 1];
+			_turretShakeRingY[i] = _turretShakeRingY[i + 1];
+			shakeX += _turretShakeRingX[i] * kShakeWeights[i];
+			shakeY += _turretShakeRingY[i] * kShakeWeights[i];
+			weightSum += kShakeWeights[i];
+		}
+		_turretShakeRingX[14] = 0;
+		_turretShakeRingY[14] = 0;
+		shakeX /= weightSum;
+		shakeY /= weightSum;
+		if (_damageFlashCounter > 0) {
+			shakeX += _vm->_rnd.getRandomNumber(9) - 5;
+			shakeY += _vm->_rnd.getRandomNumber(9) - 5;
+		}
+		_viewX = CLIP<int>(_viewX + shakeX, 0, maxScrollX);
+		_viewY = CLIP<int>(_viewY + shakeY, 0, maxScrollY);
+	}
 
 	_player->setScrollOffset(_viewX, _viewY);
 }

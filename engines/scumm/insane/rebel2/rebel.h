@@ -698,6 +698,10 @@ public:
 	short _rebelGaugeBlink[10];
 	int _rebelLastCounter;
 
+	// Turret dodge-fail view-shake impulses, ring-filtered into the scroll offset.
+	int16 _turretShakeRingX[15];
+	int16 _turretShakeRingY[15];
+
 	bool _rebelShieldGateActive;
 	bool _rebelShieldDestroyed;
 	bool _rebelReactorMode;
