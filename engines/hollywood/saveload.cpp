@@ -251,6 +251,12 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene4040CandilTaken);
 	syncStateBool(s, state.seenScene4050EntryLine);
 	s.syncAsByte(state.scene4050PatchState);
+	s.syncAsByte(state.scene4060CardStage);
+	s.syncAsByte(state.scene4060SecondCardStage);
+	s.syncAsByte(state.scene4060ForegroundState);
+	syncStateBool(s, state.seenScene4060EntryLine);
+	syncStateBool(s, state.scene4060SherilynDialogueIntroSeen);
+	s.syncAsByte(state.scene4060DialogueProgressCounter);
 	syncStateBool(s, state.seenScene5010EntryLine);
 	s.syncAsByte(state.scene5010MineTransportState);
 	syncStateBool(s, state.scene5010MineTransportReady);
@@ -436,6 +442,12 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene8010FishermanConversationState = 0;
 	if (state.scene8020ForegroundObjectState > 2)
 		state.scene8020ForegroundObjectState = 0;
+	if (state.scene4060CardStage > 2)
+		state.scene4060CardStage = 0;
+	if (state.scene4060SecondCardStage > 2)
+		state.scene4060SecondCardStage = 0;
+	if (state.scene4060ForegroundState > 1)
+		state.scene4060ForegroundState = 0;
 }
 
 } // End of namespace Hollywood
