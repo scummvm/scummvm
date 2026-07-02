@@ -248,3 +248,8 @@ Left
 
 Right
 	*keymap_engine-default_RIGHT*
+
+.. _hotspots:
+
+Show hotspots
+	*keymap_engine-default_HOTS*
