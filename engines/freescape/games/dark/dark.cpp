@@ -926,6 +926,9 @@ void DarkEngine::drawHorizontalCompass(int x, int y, float angle, uint32 front, 
 		uint8 r, g, b;
 		_gfx->selectColorFromFourColorPalette(3, r, g, b);
 		green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+	} else if (isSpectrum()) {
+		// The ZX HUD uses a single ink color for all the text, including the compass.
+		green = front;
 	}
 
 	int delta = (angle - 180) / 5.5;
