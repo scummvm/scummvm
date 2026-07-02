@@ -877,6 +877,7 @@ public:
 	static const LevelDifficultyParams kDifficultyTable[6][17];
 
 	LevelDifficultyParams getDifficultyParams() const;
+	int16 getWaveBudgetBase(int phase) const;
 
 	void addScore(int points);
 	void renderScoreHUD(byte *renderBitmap, int pitch, int width, int height, int statusBarY);

@@ -316,6 +316,23 @@ void InsaneRebel2::decrementGaugeGroup(int slot, int targetId) {
 	_rebelLastCounter = _rebelValueCounters[slot];
 }
 
+int16 InsaneRebel2::getWaveBudgetBase(int phase) const {
+	// Per-phase wave budgets share the tail columns (rollRate..driftRate) of the
+	// previous level-type row with the flight movement rates.
+	const LevelDifficultyParams &p =
+		kDifficultyTable[CLIP(_difficulty, 0, 5)][CLIP(_rebelLevelType - 1, 0, 16)];
+	switch (phase) {
+	case 1:
+		return p.rollRate;
+	case 2:
+		return p.liftRate;
+	case 3:
+		return p.slideRate;
+	default:
+		return p.driftRate;
+	}
+}
+
 void InsaneRebel2::resetExplosions() {
 	for (uint i = 0; i < ARRAYSIZE(_explosions); ++i) {
 		_explosions[i].active = false;
@@ -370,8 +387,6 @@ void InsaneRebel2::resetHandler7FlightState() {
 }
 
 int InsaneRebel2::runLevel2() {
-	const int16 kLevel2BudgetBase[3] = { 3, 3, 3 };
-
 	int bonusCount = 0;
 	int totalKills = 0;
 	int totalMisses = 0;
@@ -395,7 +410,7 @@ int InsaneRebel2::runLevel2() {
 
 		resetLevelPhaseState(false);
 
-		int16 budget = kLevel2BudgetBase[0] + _vm->_rnd.getRandomNumber(2);
+		int16 budget = getWaveBudgetBase(1) + _vm->_rnd.getRandomNumber(2);
 
 		debugC(DEBUG_INSANE, "Level 2 Phase 1 - playing 02P01_A.SAN (background) budget=%d", budget);
 		if (!playLevelSegment("LEV02/P1/02P01_A.SAN", 0x28))
@@ -444,7 +459,7 @@ int InsaneRebel2::runLevel2() {
 		_currentPhase = 2;
 		resetLevelPhaseState(true);
 
-		budget = kLevel2BudgetBase[1] + _vm->_rnd.getRandomNumber(2);
+		budget = getWaveBudgetBase(2) + _vm->_rnd.getRandomNumber(2);
 
 		_rebelHandler = 8;
 
@@ -510,7 +525,7 @@ int InsaneRebel2::runLevel2() {
 		resetLevelPhaseState(true);
 		prevWaveState = 0;
 
-		budget = kLevel2BudgetBase[2] + _vm->_rnd.getRandomNumber(2);
+		budget = getWaveBudgetBase(3) + _vm->_rnd.getRandomNumber(2);
 
 		_rebelHandler = 8;
 
@@ -1120,8 +1135,6 @@ int InsaneRebel2::runLevel11() {
 	int totalMisses = 0;
 	int prevPhaseState = 0;
 
-	const int16 kLevel11BudgetBase[4] = { 3, 3, 3, 3 };
-
 	playCinematic("LEV11/11CUT.SAN");
 	if (_vm->shouldQuit())
 		return kLevelQuit;
@@ -1140,7 +1153,7 @@ int InsaneRebel2::runLevel11() {
 
 		resetLevelPhaseState(false);
 
-		int16 budget = kLevel11BudgetBase[0] + _vm->_rnd.getRandomNumber(2);
+		int16 budget = getWaveBudgetBase(1) + _vm->_rnd.getRandomNumber(2);
 
 		debugC(DEBUG_INSANE, "Level 11 Phase 1 - playing 11P01_A.SAN budget=%d", budget);
 		if (!playLevelSegment("LEV11/P1/11P01_A.SAN", 0x28))
@@ -1196,7 +1209,7 @@ int InsaneRebel2::runLevel11() {
 		_currentPhase = 2;
 		resetLevelPhaseState(true);
 
-		budget = kLevel11BudgetBase[1] + _vm->_rnd.getRandomNumber(2);
+		budget = getWaveBudgetBase(2) + _vm->_rnd.getRandomNumber(2);
 		_rebelHandler = 8;
 
 		debugC(DEBUG_INSANE, "Level 11 Phase 2 - playing 11P02_A.SAN budget=%d", budget);
@@ -1248,7 +1261,7 @@ int InsaneRebel2::runLevel11() {
 		resetLevelPhaseState(true);
 		prevPhaseState = 0;
 
-		budget = kLevel11BudgetBase[2] + _vm->_rnd.getRandomNumber(2);
+		budget = getWaveBudgetBase(3) + _vm->_rnd.getRandomNumber(2);
 		_rebelHandler = 8;
 
 		debugC(DEBUG_INSANE, "Level 11 Phase 3 first half - playing 11P03_A.SAN budget=%d", budget);
@@ -1323,7 +1336,7 @@ int InsaneRebel2::runLevel11() {
 
 		_rebelHandler = 8;
 
-		budget = kLevel11BudgetBase[3] + _vm->_rnd.getRandomNumber(2);
+		// The phase-3 budget carries into the second half; no new roll.
 
 		debugC(DEBUG_INSANE, "Level 11 Phase 3 second half - playing 11P03_G.SAN budget=%d", budget);
 		if (!playLevelSegment("LEV11/P3/11P03_G.SAN", 0x28))
@@ -1392,8 +1405,6 @@ int InsaneRebel2::runLevel11() {
 }
 
 int InsaneRebel2::runLevel12() {
-	const int16 kLevel12BudgetBase[4] = { 3, 4, 4, 4 };
-
 	playCinematic("LEV12/12CUT.SAN");
 	if (_vm->shouldQuit())
 		return kLevelQuit;
@@ -1409,7 +1420,7 @@ int InsaneRebel2::runLevel12() {
 
 		resetLevelPhaseState(false);
 
-		int16 budget = kLevel12BudgetBase[0] + _vm->_rnd.getRandomNumber(2);
+		int16 budget = getWaveBudgetBase(1) + _vm->_rnd.getRandomNumber(2);
 
 		debugC(DEBUG_INSANE, "Level 12 Phase 1 - init 12P05.SAN budget=%d", budget);
 		if (!playLevelSegment("LEV12/12P05.SAN", 0x28, false))
@@ -1456,7 +1467,7 @@ int InsaneRebel2::runLevel12() {
 		_currentPhase = 2;
 		resetLevelWaveState();
 
-		budget = kLevel12BudgetBase[1] + _vm->_rnd.getRandomNumber(3);
+		budget = getWaveBudgetBase(2) + _vm->_rnd.getRandomNumber(3);
 
 		debugC(DEBUG_INSANE, "Level 12 Phase 2 - init 12P06.SAN budget=%d", budget);
 		if (!playLevelSegment("LEV12/12P06.SAN", 0x428, false))
@@ -1513,7 +1524,7 @@ int InsaneRebel2::runLevel12() {
 		_currentPhase = 3;
 		resetLevelWaveState();
 
-		budget = kLevel12BudgetBase[2] + _vm->_rnd.getRandomNumber(3);
+		budget = getWaveBudgetBase(3) + _vm->_rnd.getRandomNumber(3);
 
 		debugC(DEBUG_INSANE, "Level 12 Phase 3 - init 12P07.SAN budget=%d", budget);
 		if (!playLevelSegment("LEV12/12P07.SAN", 0x428, false))
@@ -1567,7 +1578,7 @@ int InsaneRebel2::runLevel12() {
 		_currentPhase = 4;
 		resetLevelWaveState();
 
-		budget = kLevel12BudgetBase[3] + _vm->_rnd.getRandomNumber(3);
+		budget = getWaveBudgetBase(4) + _vm->_rnd.getRandomNumber(3);
 
 		debugC(DEBUG_INSANE, "Level 12 Phase 4 - init 12P08.SAN budget=%d", budget);
 		if (!playLevelSegment("LEV12/12P08.SAN", 0x428, false))
