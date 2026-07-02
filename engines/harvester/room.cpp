@@ -2268,7 +2268,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			return "none";
 		}
 	};
-	auto handleCombatInteraction = [&](InteractionResult interaction) -> Common::Error {
+	auto handleCombatInteraction = [&](const InteractionResult &interaction) -> Common::Error {
 		bool didTransition = false;
 		Common::Error interactionError =
 			interactionProcessor.handleInteractionResult(interaction, didTransition, Common::String());
