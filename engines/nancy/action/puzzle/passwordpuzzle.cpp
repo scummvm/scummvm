@@ -118,8 +118,15 @@ void PasswordPuzzle::execute() {
 
 				bool solvedCurrentInput = false;
 				if (correctAnswers.size()) {
+					// The original accepts the input if a correct answer appears
+					// as a case-insensitive substring of what the player typed
+					// (e.g. answer "Xoc" is matched by typing "Lady Xoc").
+					Common::String inputLower = activeField;
+					inputLower.toLowercase();
 					for (uint i = 0; i < correctAnswers.size(); ++i) {
-						if (activeField.equalsIgnoreCase(correctAnswers[i])) {
+						Common::String answerLower = correctAnswers[i];
+						answerLower.toLowercase();
+						if (inputLower.contains(answerLower)) {
 							solvedCurrentInput = true;
 							break;
 						}
