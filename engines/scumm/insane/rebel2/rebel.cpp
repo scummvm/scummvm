@@ -1326,6 +1326,7 @@ void InsaneRebel2::addScore(int points) {
 		int newMilestone = (_playerScore + points) / threshold;
 		if (oldMilestone < newMilestone) {
 			_playerLives++;
+			playSfx(5, 127, 0);
 			debugC(DEBUG_INSANE, "BONUS LIFE! Score crossed %d threshold. Lives=%d", threshold, _playerLives);
 		}
 	}

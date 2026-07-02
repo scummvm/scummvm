@@ -1587,6 +1587,7 @@ void InsaneRebel2::checkCollisionZones(byte *renderBitmap, int pitch, int width,
 				}
 				if (!_noDamage)
 					initDamageFlash();
+				playSfx(1, 127, CLIP(((cx1 + cx2 + cx3 + cx4) / 4) * -4, -127, 127));
 			} else {
 				if (dparams.dodgePoints > 0) {
 					addScore(dparams.dodgePoints);
@@ -2976,6 +2977,23 @@ void InsaneRebel2::renderStatusBarSprites(byte *renderBitmap, int pitch, int wid
 	int numSprites = _smush_cockpitNut->getNumChars();
 	const int statusScale = isHiRes() ? 2 : getRebel2IndicatorScale(width, height);
 
+	// Critical-damage warning beep every 25 gameplay frames; volume depends on the level type.
+	if (_rebelHandler != 0 && _playerDamage > 170 && (curFrame % 25) == 0) {
+		int alertVolume;
+		switch (_rebelLevelType) {
+		case 1: case 11: case 12:
+			alertVolume = 40;
+			break;
+		case 2: case 3: case 5: case 6: case 7: case 9: case 10: case 13:
+			alertVolume = 63;
+			break;
+		default:
+			alertVolume = 127;
+			break;
+		}
+		playSfx(3, alertVolume, 0);
+	}
+
 	if (numSprites > 1) {
 		renderNutSprite(renderBitmap, pitch, width, height,
 			_viewX, statusBarY + _viewY, _smush_cockpitNut, 1);
@@ -4199,6 +4217,9 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 	}
 
 	if (targetLocked) {
+		// A fresh lock (timer fully decayed) pings LOCKON, panned by crosshair X.
+		if (_rebelHandler == 0x26 && _targetLockTimer == 0 && (getDifficultyParams().flags & 2) == 0)
+			playSfx(4, 127, CLIP(aimPos.x - 160, -127, 127));
 		_targetLockTimer = 7;
 	} else if (_targetLockTimer > 0) {
 		_targetLockTimer--;

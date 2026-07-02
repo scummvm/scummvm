@@ -1169,6 +1169,7 @@ int InsaneRebel2::runLevel11() {
 				uint16 waveSelect = waveEnd.creditedBits;
 
 				if ((_rebelPhaseState & 0x10) != 0 && (prevPhaseState & 0x10) == 0) {
+					playAuxSfx(3, 127, 0);
 				}
 				prevPhaseState = _rebelPhaseState;
 
@@ -1277,6 +1278,7 @@ int InsaneRebel2::runLevel11() {
 					return kLevelQuit;
 
 				if ((_rebelPhaseState & 0x0e) == 0x0e && (prevPhaseState & 0x0e) != 0x0e) {
+					playAuxSfx(3, 127, 0);
 				}
 				prevPhaseState = _rebelPhaseState;
 

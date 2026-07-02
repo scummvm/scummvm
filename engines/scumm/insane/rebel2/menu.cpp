@@ -663,6 +663,7 @@ int InsaneRebel2::runChapterSelect() {
 				}
 			}
 			_passwordInput.clear();
+			playSfx(3, 127, 0);
 			debugC(DEBUG_INSANE, "Password rejected for chapter %d", _chapterSelection + 1);
 		}
 	}
