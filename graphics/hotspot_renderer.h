@@ -96,11 +96,17 @@ public:
 
 private:
 	enum {
-		kMarkerSize = 10,  ///< Size of square and crosshair markers
-		kGlowSize = 3,     ///< Size of glow effect around markers and text
-		kPointRadius = 3,  ///< Radius of point marker
-		kLineThickness = 1 ///< Thickness of lines for markers and text boxes
+		kBaseMarkerSize = 10,  ///< Size of square and crosshair markers at 1x scale
+		kBaseGlowSize = 3,     ///< Size of glow effect around markers and text at 1x scale
+		kBasePointRadius = 3,  ///< Radius of point marker at 1x scale
+		kBaseLineThickness = 1 ///< Thickness of lines for markers and text boxes at 1x scale
 	};
+
+	float _sizeScale;   ///< Overlay/game scale factor applied to marker geometry
+	int _markerSize;    ///< Scaled size of square and crosshair markers
+	int _glowSize;      ///< Scaled size of glow effect around markers and text
+	int _pointRadius;   ///< Scaled radius of point marker
+	int _lineThickness; ///< Scaled thickness of lines for markers and text boxes
 
 	void drawMarker(Surface *surface, int x, int y, const PixelFormat &format, MarkerShape markerShape);
 	void drawCrosshairMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
