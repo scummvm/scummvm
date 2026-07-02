@@ -64,7 +64,7 @@
 
 namespace Director {
 
-Cast::Cast(Movie *movie, uint16 castLibID, bool isShared, bool isExternal, uint16 libResourceId) {
+Cast::Cast(Movie *movie, uint16 castLibID, bool isShared, bool isExternal, uint32 libResourceId) {
 	_movie = movie;
 	_vm = _movie->getVM();
 	_lingo = _vm->getLingo();
@@ -449,18 +449,24 @@ bool Cast::loadConfig() {
 
 	_unk1 = stream->readSint16();
 
-	// Warning for post-D7 movies (unk1 is stageColorG and stageColorB post-D7)
-	if (humanVer >= 700)
-		warning("STUB: Cast::loadConfig: 16 bit unk1 read instead of two 8 bit stageColorG and stageColorB. Read value: %04x", _unk1);
+	// D7+: hi byte = stageColorG, lo byte = stageColorB; raw value kept for checksum/save
+	if (humanVer >= 700) {
+		_D7stageColorG = (_unk1 >> 8) & 0xFF;
+		_D7stageColorB = _unk1 & 0xFF;
+	}
 
 	_commentFont = stream->readUint16();
 	_commentSize = stream->readUint16();
 	_commentStyle = stream->readUint16();
 	_stageColor = stream->readUint16();
 
-	// Warning for post-D7 movies (stageColor is isStageColorRGB and stageColorR post-D7)
-	if (humanVer >= 700)
-		warning("STUB: Cast::loadConfig: 16 bit stageColor read instead of two 8 bit isStageColorRGB and stageColorR. Read value: %04x", _stageColor);
+	// D7+: hi byte = stageColorIsRGB, lo byte = stageColorR (palette index when not RGB)
+	if (humanVer >= 700) {
+		_D7stageColorIsRGB = (_stageColor >> 8) & 0xFF;
+		_D7stageColorR = _stageColor & 0xFF;
+		debugC(1, kDebugLoading, "Cast::loadConfig(): D7 stage color: isRGB %d, R %d, G %d, B %d",
+			_D7stageColorIsRGB, _D7stageColorR, _D7stageColorG, _D7stageColorB);
+	}
 
 	_bitdepth = stream->readUint16();
 
@@ -600,7 +606,8 @@ bool Cast::loadConfig() {
 	}
 
 	if (_movieDepth != _vm->_colorDepth) {
-		warning("STUB: loadConfig(): Movie bit depth is %d, but set to %d", _movieDepth, _vm->_colorDepth);
+		// Not a defect: graphics are converted to the engine's color depth
+		debugC(1, kDebugLoading, "Cast::loadConfig(): Movie bit depth is %d, engine color depth is %d", _movieDepth, _vm->_colorDepth);
 	}
 
 	delete stream;
@@ -807,7 +814,7 @@ void Cast::loadCast() {
 
 	// External casts only have one library ID, so instead
 	// we use the movie's mapping.
-	uint16 libResourceId = _isExternal ? 1024 : _libResourceId;
+	uint32 libResourceId = _isExternal ? 1024 : _libResourceId;
 
 	if (cast.size() > 0) {
 		debugC(2, kDebugLoading, "****** Loading CASt resources for libId %d (%s), resourceId %d", _castLibID, _castName.c_str(), libResourceId);
@@ -1177,10 +1184,8 @@ uint32 Cast::computeChecksum() {
 	check -= (int8)_readRate + 9;
 	check -= _lightswitch + 10;
 
-	if (humanVer < 700)
-		check += _unk1 + 11;
-	else
-		warning("STUB: skipped using stageColorG, stageColorB for post-D7 movie in checksum calulation");
+	// Same in every version (D7+ reinterprets the field, the checksum doesn't)
+	check += _unk1 + 11;
 
 	check *= _commentFont + 12;
 	check += _commentSize + 13;
@@ -1190,10 +1195,8 @@ uint32 Cast::computeChecksum() {
 	else
 		check *= _commentStyle + 14;
 
-	if (humanVer < 700)
-		check += _stageColor + 15;
-	else
-		check += (uint8)(_stageColor & 0xFF) + 15;	// Taking lower 8 bits to take into account stageColorR
+	// Same in every version
+	check += _stageColor + 15;
 
 
 	check += _bitdepth + 16;
@@ -2135,11 +2138,10 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		}
 	}
 
-	// For SoundCastMember, read the flags in the CastInfo
-	if (_version >= kFileVer400 && _version < kFileVer700 && member->_type == kCastSound) {
+	// For SoundCastMember, looping = play-once bit (flags & 16) cleared.
+	// The info block was fully consumed by loadInfoEntries() above
+	if (_version >= kFileVer400 && member->_type == kCastSound) {
 		((SoundCastMember *)member)->_looping = castInfo.flags & 16 ? 0 : 1;
-	} else if (_version >= kFileVer700 && member->_type == kCastSound) {
-		warning("STUB: Cast::loadCastInfo(): Sound cast member info not yet supported for version v%d (%d)", humanVersion(_version), _version);
 	}
 
 	// For PaletteCastMember, run load() as we need it right now

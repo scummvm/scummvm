@@ -88,7 +88,7 @@ void SoundCastMember::load() {
 			tag = MKTAG('S', 'N', 'D', ' ');
 			sndId = (uint16)(_castId + _cast->_castIDoffset);
 		}
-	} else if (_cast->_version >= kFileVer600 && _cast->_version < kFileVer700) {
+	} else if (_cast->_version >= kFileVer600 && _cast->_version < kFileVer800) {
 		for (auto &it : _children) {
 			if (it.tag == MKTAG('s', 'n', 'd', ' ')) {
 				sndId = it.index;
@@ -143,7 +143,7 @@ void SoundCastMember::load() {
 		}
 
 	} else {
-		warning("STUB: SoundCastMember::SoundCastMember(): Sounds not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
+		warning("STUB: SoundCastMember::load(): Sounds not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 	}
 
 

@@ -1307,7 +1307,14 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		return nullptr;
 	}
 
-	uint32 codeStoreSize = functionsOffset - codeStoreOffset;
+	if (codeStoreOffset > (uint32)stream.size()) {
+		warning("Lscr code store offset 0x%x is out of bounds (size 0x%x)", codeStoreOffset, (uint32)stream.size());
+		return nullptr;
+	}
+
+	// D7+ may place the function table before the bytecode, so the code store
+	// must span the whole chunk, not [codeStoreOffset, functionsOffset)
+	uint32 codeStoreSize = (uint32)stream.size() - codeStoreOffset;
 	stream.seek(codeStoreOffset);
 	byte *codeStore = (byte *)malloc(codeStoreSize);
 	stream.read(codeStore, codeStoreSize);
@@ -1746,8 +1753,12 @@ void LingoArchive::addNamesV4(Common::SeekableReadStreamEndian &stream) {
 	uint16 offset = stream.readUint16();
 	uint16 count = stream.readUint16();
 
-	if ((uint32)stream.size() != size) {
-		warning("Lnam content missing");
+	// D7+ `size` may not match the stream length; validate offsets instead of bailing
+	if ((uint32)stream.size() != size)
+		debugC(1, kDebugCompile, "addNamesV4: Lnam size %u != stream size %u, proceeding", size, (uint32)stream.size());
+
+	if (offset > stream.size()) {
+		warning("Lnam names offset 0x%x out of bounds (size 0x%x)", offset, (uint32)stream.size());
 		return;
 	}
 
@@ -1756,6 +1767,10 @@ void LingoArchive::addNamesV4(Common::SeekableReadStreamEndian &stream) {
 	names.clear();
 
 	for (uint16 i = 0; i < count; i++) {
+		if (stream.eos() || (uint32)stream.pos() >= (uint32)stream.size()) {
+			warning("addNamesV4: ran out of data after %d of %d names", i, count);
+			break;
+		}
 		Common::String name = stream.readPascalString();
 
 		names.push_back(name);
