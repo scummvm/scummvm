@@ -101,6 +101,14 @@ const byte kScene8010FishermanQuizLinePermutation[] = {
 	6, 5, 1, 4, 3, 2, 0, 7
 };
 
+static void appendFishermanPromptFragment(Common::String &text, const Common::String &fragment) {
+	if (fragment.empty())
+		return;
+	if (!text.empty())
+		text += " ";
+	text += fragment;
+}
+
 PlayableSceneConfig scene8010Config() {
 	PlayableSceneConfig config;
 	config.resourceArchiveName = kScene8010ArchiveName;
@@ -199,37 +207,37 @@ bool Scene8010::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene8010::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301: // Hablar con pescador / Graeme McDundee (talk to fisherman): clan interview branch.
+	case 301: // Hablar con pescador/Graeme McDundee (talk to fisherman/Graeme): clan quiz conversation.
 		runFishermanConversation();
 		return true;
-	case 302: // Coger pescador (take fisherman): stress joke.
+	case 302: // Mirar pescador (look at fisherman): stress/Graeme introduction response.
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 303: // Coger barca (take boat): boat is too small.
+	case 303: // Mirar barca (look at boat): small boat.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 304: // Mirar barca (look at boat): old small boat.
+	case 304: // Usar barca (use boat): boat cannot hold Ron's weight.
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 305: // Coger ruinas (take ruins): cannot take the abbey ruins.
+	case 305: // Mirar ruinas (look at ruins): old abbey.
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 306: // Ir a ruinas / hidroavion transition callback: enter scene 8020.
+	case 306: // Ir a alto del acantilado (go to cliff top): enter scene 8020.
 		runExitToScene8020();
 		return true;
-	case 307: // Coger alto del acantilado (take cliff top): distant viewpoint.
+	case 307: // Mirar alto del acantilado (look at cliff top): good lake viewpoint.
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 308: // Coger lago (take lake): no monster visible.
+	case 308: // Mirar lago (look at lake): monster is not visible.
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 309: // Dar barca (give boat): generic boat/lake refusal.
+	case 309: // Ir a ruinas (go to ruins): nothing interesting there.
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 310: // Dar alto del acantilado (give cliff top): Nessie danger refusal.
+	case 310: // Ir a lago (go to lake): Nessie danger refusal.
 		beginSecondarySpeechLine(8, 0);
 		return true;
-	case 311: // Return to destination selector.
+	case 311: // Ir a hidroavión (go to seaplane): return to destination selector.
 		runTravelScreenAction();
 		return true;
 	default:
@@ -674,35 +682,36 @@ Common::String Scene8010::composeFishermanQuizChoice(byte firstStage, byte first
 	return text;
 }
 
-Common::String Scene8010::composeFishermanGeneratedPromptLine(byte promptLineIndex) const {
+void Scene8010::composeFishermanGeneratedPromptLines(byte promptLineIndex,
+		Common::Array<Common::String> &lines) const {
+	lines.clear();
 	const FishermanQuizEntry &entry = promptLineIndex < ARRAYSIZE(_fishermanQuizEntries) ?
 		_fishermanQuizEntries[promptLineIndex] : _fishermanQuizFinalEntry;
 
-	Common::String text = PlayableScene::dialogueMenuText(entry.promptStage, entry.promptRow);
+	const Common::String prompt = PlayableScene::dialogueMenuText(entry.promptStage, entry.promptRow);
 	const Common::String promptSuffix = PlayableScene::dialogueMenuText(entry.promptSuffixStage, entry.promptSuffixRow);
-	if (!promptSuffix.empty()) {
-		if (!text.empty() && promptLineIndex >= 1 && promptLineIndex <= 7)
-			text += "...";
-		text += promptSuffix;
-	}
-
 	const Common::String menuPrefix = PlayableScene::dialogueMenuText(entry.menuStage, entry.menuRow);
-	if (!menuPrefix.empty()) {
-		if (!text.empty())
-			text += " ";
-		text += menuPrefix;
-	}
-
 	const Common::String menuSuffix = PlayableScene::dialogueMenuText(entry.menuSuffixStage, entry.menuSuffixRow);
-	if (!menuSuffix.empty()) {
-		if (!text.empty())
-			text += " ";
-		text += menuSuffix;
+
+	Common::String firstLine = promptLineIndex >= 1 && promptLineIndex <= 7 ? "..." : "";
+	firstLine += prompt;
+	if (prompt.size() + promptSuffix.size() < 0x33) {
+		appendFishermanPromptFragment(firstLine, promptSuffix);
+		if (!firstLine.empty())
+			lines.push_back(firstLine);
+	} else {
+		if (!firstLine.empty())
+			lines.push_back(firstLine);
+		if (!promptSuffix.empty())
+			lines.push_back(promptSuffix);
 	}
 
-	if (!text.empty())
-		text += promptLineIndex < 7 ? "..." : ".";
-	return text;
+	Common::String finalLine = menuPrefix;
+	appendFishermanPromptFragment(finalLine, menuSuffix);
+	if (!finalLine.empty())
+		finalLine += promptLineIndex < 7 ? "..." : ".";
+	if (!finalLine.empty())
+		lines.push_back(finalLine);
 }
 
 uint16 Scene8010::fishermanQuizFragmentVoiceSampleId(const FishermanQuizEntry &entry, byte fragmentIndex) const {
@@ -737,9 +746,10 @@ uint16 Scene8010::fishermanQuizFragmentVoiceSampleId(const FishermanQuizEntry &e
 	return voiceSampleId;
 }
 
-bool Scene8010::waitFishermanQuizFragmentVoices(const FishermanQuizEntry &entry, uint32 fallbackMillis) {
+bool Scene8010::waitFishermanQuizFragmentVoices(const FishermanQuizEntry &entry, byte firstFragment,
+		uint32 fallbackMillis) {
 	bool playedAny = false;
-	for (byte fragment = 0; fragment < 4 && !Engine::shouldQuit(); ++fragment) {
+	for (byte fragment = firstFragment; fragment < 4 && !Engine::shouldQuit(); ++fragment) {
 		const uint16 voiceSampleId = fishermanQuizFragmentVoiceSampleId(entry, fragment);
 		const bool started = voiceSampleId != 0 && _speech.playSample(voiceSampleId, 100);
 		if (!started)
@@ -762,15 +772,16 @@ bool Scene8010::waitFishermanQuizFragmentVoices(const FishermanQuizEntry &entry,
 bool Scene8010::runFishermanGeneratedPrimarySpeechLine(byte promptLineIndex) {
 	const FishermanQuizEntry &entry = promptLineIndex < ARRAYSIZE(_fishermanQuizEntries) ?
 		_fishermanQuizEntries[promptLineIndex] : _fishermanQuizFinalEntry;
-	const Common::String text = composeFishermanGeneratedPromptLine(promptLineIndex);
-	if (text.empty())
+	Common::Array<Common::String> lines;
+	composeFishermanGeneratedPromptLines(promptLineIndex, lines);
+	if (lines.empty())
 		return false;
 
 	setPaletteEntry6Bit(0xfb, kScene8010FishermanSpeechRed, kScene8010FishermanSpeechGreen,
 		kScene8010FishermanSpeechBlue);
 	_primarySpeechOverlay.visible = true;
 	_primarySpeechOverlay.colorIndex = 0xfb;
-	wrapActorSpeechText(text, kScene8010FishermanSpeechCenterX, _primarySpeechOverlay.lines);
+	_primarySpeechOverlay.lines = lines;
 	calculateSpeechOverlayBounds(_primarySpeechOverlay, kScene8010FishermanSpeechCenterX,
 		kScene8010FishermanSpeechTopY, true, _activeActorWorldY);
 
@@ -781,7 +792,7 @@ bool Scene8010::runFishermanGeneratedPrimarySpeechLine(byte promptLineIndex) {
 
 	const uint32 duration = MAX<uint32>(kScene8010GeneratedSpeechMinMillis,
 		_primarySpeechOverlay.lines.size() * kScene8010GeneratedSpeechLineMillis);
-	const bool interrupted = waitFishermanQuizFragmentVoices(entry, duration);
+	const bool interrupted = waitFishermanQuizFragmentVoices(entry, 0, duration);
 
 	_speech.stop();
 	setPrimarySpeechAnimationFrame(0, baseFrame);
@@ -820,7 +831,7 @@ void Scene8010::runFishermanSelectedAnswerSpeech(byte selectedLine) {
 		_speechOverlay.lines.size() * kScene8010SelectedAnswerLineMillis);
 	const byte entryIndex = _fishermanQuizChoiceEntryIndex[selectedLine];
 	if (entryIndex < ARRAYSIZE(_fishermanQuizEntries))
-		waitFishermanQuizFragmentVoices(_fishermanQuizEntries[entryIndex], duration);
+		waitFishermanQuizFragmentVoices(_fishermanQuizEntries[entryIndex], 2, duration);
 	else
 		waitForSpeechOrDelay(duration, false);
 

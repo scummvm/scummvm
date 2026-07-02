@@ -75,6 +75,7 @@
 #include "hollywood/scenes/playable/scene7100.h"
 #include "hollywood/scenes/playable/scene8000.h"
 #include "hollywood/scenes/playable/scene8010.h"
+#include "hollywood/scenes/playable/scene8020.h"
 #include "hollywood/resource.h"
 
 #include "audio/mixer.h"
@@ -152,6 +153,7 @@ const int kScene6030LastState = 0x1797;
 const int kScene8000State = 8000;
 const int kScene8010FirstState = 0x1f4a;
 const int kScene8010LastState = 0x1f4b;
+const int kScene8020State = 0x1f54;
 const int kTravelScreenSelectionState = 0xffff;
 const int kScene9101State = 0x238d;
 
@@ -196,6 +198,7 @@ bool isImplementedGameplayState(int stateId) {
 		(stateId >= kScene6030FirstState && stateId <= kScene6030LastState) ||
 		stateId == kScene8000State ||
 		(stateId >= kScene8010FirstState && stateId <= kScene8010LastState) ||
+		stateId == kScene8020State ||
 		stateId == kTravelScreenSelectionState ||
 		stateId == 7000 ||
 		(stateId >= 0x1b62 && stateId <= 0x1b6b) ||
@@ -240,6 +243,8 @@ int gameplayStateForBootParam(int bootParam) {
 		return kScene3110FirstState;
 	if (bootParam == 8010)
 		return kScene8010FirstState;
+	if (bootParam == 8020)
+		return kScene8020State;
 
 	return bootParam;
 }
@@ -684,6 +689,14 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene8010 scene8010(this);
 			if (!scene8010.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId == kScene8020State) {
+			handledState = true;
+			Scene8020 scene8020(this);
+			if (!scene8020.play())
 				return Common::kReadingFailed;
 			continue;
 		}
