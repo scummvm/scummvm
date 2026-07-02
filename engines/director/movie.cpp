@@ -51,6 +51,7 @@ Movie::Movie(Window *window) {
 	_lastClickedSpriteId = 0;
 	_currentSpriteNum = 0;
 	_currentEditableTextChannel = 0;
+	_currentMouseDownChannelId = 0;
 	_lastEventTime = _vm->getMacTicks();
 	_lastKeyTime = _lastEventTime;
 	_lastClickTime = _lastEventTime;
@@ -167,12 +168,26 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		int pathSize = stream.readByte();
 		Common::String path = stream.readString('\0', pathSize);
 		stream.readByte(); // null
-		if (pathSize > 1)
-			stream.readUint16();
+		if (pathSize > 1) {
+			// The field separating a non-empty (external) cast path from the
+			// member-range/resource-id records is a single byte in D7, but a
+			// 16-bit field in D5/D6. Reading the wrong width shifts every
+			// following cast-lib entry by one byte, corrupting the name, member
+			// range and resource id of any library listed after an external one
+			// (e.g. an internal cast that follows an external .cxt).
+			if (g_director->getVersion() >= 700)
+				stream.readByte();
+			else
+				stream.readUint16();
+		}
 		uint16 minMember = stream.readUint16();
 		uint16 maxMember = stream.readUint16();
-		stream.readUint16();
-		uint16 libResourceId = stream.readUint16();
+		// libResourceId is a 32-bit field: the chunk-map resource index of the
+		// cast library's config. In large movies it can exceed 0xFFFF (e.g.
+		// 0x00010402 = 66562), so it must be read as a full uint32 — reading it
+		// as uint16 truncates the high word and makes distinct libraries alias
+		// the same id (causing a union cast-load with overwritten members).
+		uint32 libResourceId = stream.readUint32();
 		uint16 libId = i + 1;
 		debugC(5, kDebugLoading, "Movie::loadCastLibMapping: name: %s, path: %s, minMember: %d, maxMember: %d, libResourceId: %d, libId: %d", utf8ToPrintable(name).c_str(), utf8ToPrintable(path).c_str(), minMember, maxMember, libResourceId, libId);
 		Common::SharedPtr<Archive> castArchive = _movieArchive;
@@ -188,6 +203,16 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		Cast *cast = nullptr;
 		if (_casts.contains(libId)) {
 			cast = _casts.getVal(libId);
+			// The default internal cast is pre-created by the Movie constructor
+			// with the default resource id (1024) and no name, before the MCsL
+			// is parsed. Adopt the authored values, otherwise a movie whose
+			// internal cast is keyed at a different id (e.g. Physikus'
+			// Game/Midland.dxr, Internal = 66560) filters out every CASt member
+			// and never finds its Lctx, so none of its Lingo compiles.
+			if (!isExternal) {
+				cast->_libResourceId = libResourceId;
+				cast->setCastName(name);
+			}
 		} else {
 			cast = new Cast(this, libId, false, isExternal, libResourceId);
 			cast->setCastName(name);
@@ -483,7 +508,7 @@ bool Movie::loadCastLibFrom(uint16 libId, Common::Path &filename) {
 		return false;
 	}
 
-	uint16 libResourceId = 1024;
+	uint32 libResourceId = 1024;
 	Common::String name;
 	if (_casts.contains(libId)) {
 		Cast *cast = _casts[libId];
@@ -531,7 +556,7 @@ Cast *Movie::getCast(CastMemberID memberID) {
 	return nullptr;
 }
 
-Cast *Movie::getCastByLibResourceID(int libresourceID) {
+Cast *Movie::getCastByLibResourceID(uint32 libresourceID) {
 	for (auto it : _casts) {
 		if (it._value->_libResourceId == libresourceID) {
 			debugC(3, kDebugSaving, "Movie::getCastByLibResourceID: Found cast with libresourceID: %d", libresourceID);

@@ -20,8 +20,11 @@
  */
 
 #include "common/system.h"
+#include "common/savefile.h"
+#include "common/formats/ini-file.h"
 
 #include "director/director.h"
+#include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
@@ -190,6 +193,7 @@ namespace Director {
 const char *BudAPIXtra::xlibName = "BudAPI";
 const XlibFileDesc BudAPIXtra::fileNames[] = {
 	{ "budapi",   nullptr },
+	{ "budapi32", nullptr },
 	{ nullptr,        nullptr },
 };
 
@@ -247,6 +251,8 @@ static BuiltinProto xlibBuiltins[] = {
 	{ "baFreeCursor", BudAPIXtra::m_baFreeCursor, 0, 0, 500, HBLTIN },
 	{ "baSetVolume", BudAPIXtra::m_baSetVolume, 2, 2, 500, HBLTIN },
 	{ "baGetVolume", BudAPIXtra::m_baGetVolume, 1, 1, 500, HBLTIN },
+	{ "baDiskList", BudAPIXtra::m_baDiskList, 0, 0, 500, HBLTIN },
+	{ "baEjectDisk", BudAPIXtra::m_baEjectDisk, 1, 1, 500, HBLTIN },
 	{ "baInstallFont", BudAPIXtra::m_baInstallFont, 2, 2, 500, HBLTIN },
 	{ "baKeyIsDown", BudAPIXtra::m_baKeyIsDown, 1, 1, 500, HBLTIN },
 	{ "baKeyBeenPressed", BudAPIXtra::m_baKeyBeenPressed, 1, 1, 500, HBLTIN },
@@ -377,17 +383,97 @@ XOBJSTUB(BudAPIXtra::m_baCpuInfo, 0)
 XOBJSTUB(BudAPIXtra::m_baDiskInfo, 0)
 XOBJSTUB(BudAPIXtra::m_baMemoryInfo, 0)
 XOBJSTUB(BudAPIXtra::m_baFindApp, 0)
-XOBJSTUB(BudAPIXtra::m_baReadIni, 0)
-XOBJSTUB(BudAPIXtra::m_baWriteIni, 0)
+void BudAPIXtra::m_baReadIni(int nargs) {
+	// baReadIni(section, key, default, iniFile) reads a Windows INI entry.
+	// Mirrors GetPrivateProfileString: section and key match case-insensitively
+	// and the supplied default is returned when the file, section or key is
+	// missing. The game derives runtime settings (e.g. _Lautstaerke from
+	// [general] VolSound) from this, so a stubbed 0 return silenced all audio.
+	//
+	// The game treats this file as read/write persistent state (settings,
+	// savegame slots), so -- like FileIO's xlib and BudAPI's own writer
+	// below -- prefer the ScummVM save sandbox (mangled with savePrefix(),
+	// matching what m_baWriteIni() persists to) over the game/CD directory,
+	// which ScummVM otherwise treats as read-only and which a real Windows
+	// install would never see written back to anyway. Fall back to a
+	// bundled file via findPath() only for a value never written yet.
+	ARGNUMCHECK(4);
+	Common::String iniFile = g_lingo->pop().asString();
+	Common::String defaultVal = g_lingo->pop().asString();
+	Common::String key = g_lingo->pop().asString();
+	Common::String section = g_lingo->pop().asString();
+
+	Common::String saveName = savePrefix() + lastPathComponent(iniFile, g_director->_dirSeparator);
+	Common::INIFile ini;
+	ini.allowNonEnglishCharacters();
+	Common::String value;
+	if (ini.loadFromSaveFile(saveName) && ini.getKey(key, section, value)) {
+		g_lingo->push(Datum(value));
+		return;
+	}
+
+	Common::Path resolved = findPath(iniFile);
+	if (!resolved.empty()) {
+		Common::INIFile bundled;
+		bundled.allowNonEnglishCharacters();
+		if (bundled.loadFromFile(resolved) && bundled.getKey(key, section, value)) {
+			g_lingo->push(Datum(value));
+			return;
+		}
+	}
+	g_lingo->push(Datum(defaultVal));
+}
+void BudAPIXtra::m_baWriteIni(int nargs) {
+	// baWriteIni(section, key, value, iniFile) writes a Windows INI entry.
+	// Always persist to the ScummVM save sandbox via SaveFileManager (same
+	// mangled name m_baReadIni() above checks first), never to a real path
+	// resolved by findPath(): that mixed a SearchMan-relative result with
+	// Common::INIFile::saveToFile(), which writes via DumpFile straight to
+	// the OS filesystem -- for a bare relative name that lands in whatever
+	// the process's current working directory happens to be, not the game
+	// or save directory, so the value was never seen again by baReadIni()
+	// (silently discarding e.g. save-game and settings data).
+	ARGNUMCHECK(4);
+	Common::String iniFile = g_lingo->pop().asString();
+	Common::String value = g_lingo->pop().asString();
+	Common::String key = g_lingo->pop().asString();
+	Common::String section = g_lingo->pop().asString();
+
+	Common::String saveName = savePrefix() + lastPathComponent(iniFile, g_director->_dirSeparator);
+	Common::INIFile ini;
+	ini.allowNonEnglishCharacters();
+	ini.loadFromSaveFile(saveName);
+	ini.setKey(key, section, value);
+	g_lingo->push(Datum(ini.saveToSaveFile(saveName) ? 1 : 0));
+}
 XOBJSTUB(BudAPIXtra::m_baFlushIni, 0)
-XOBJSTUB(BudAPIXtra::m_baReadRegString, 0)
+void BudAPIXtra::m_baReadRegString(int nargs) {
+	// baReadRegString(keyName, value, default, branch). ScummVM has no Windows
+	// registry, so return the caller-supplied default rather than a numeric 0.
+	ARGNUMCHECK(4);
+	/* branch  */ g_lingo->pop();
+	Common::String defaultVal = g_lingo->pop().asString();
+	/* value   */ g_lingo->pop();
+	/* keyName */ g_lingo->pop();
+	g_lingo->push(Datum(defaultVal));
+}
 XOBJSTUB(BudAPIXtra::m_baWriteRegString, 0)
 XOBJSTUB(BudAPIXtra::m_baReadRegNumber, 0)
 XOBJSTUB(BudAPIXtra::m_baWriteRegNumber, 0)
 XOBJSTUB(BudAPIXtra::m_baDeleteReg, 0)
 XOBJSTUB(BudAPIXtra::m_baRegKeyList, 0)
 XOBJSTUB(BudAPIXtra::m_baRegValueList, 0)
-XOBJSTUB(BudAPIXtra::m_baSoundCard, 0)
+void BudAPIXtra::m_baSoundCard(int nargs) {
+	// baSoundCard() -> 1 if a sound card is installed, else 0.
+	// The original boot Lingo (Intro.dxr) does, on Windows (machineType 256):
+	//   if the machineType = 256 then set _SoundSchalter to baSoundCard()
+	// _SoundSchalter then gates ALL chapter narration (on Audioint: if
+	// _SoundSchalter then puppetSound(...)) and some frame-hold timing. A 0
+	// here silently mutes chapters. ScummVM always provides a mixer, so a
+	// sound card is effectively always present.
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(1));
+}
 XOBJSTUB(BudAPIXtra::m_baFontInstalled, 0)
 XOBJSTUB(BudAPIXtra::m_baFontList, 0)
 XOBJSTUB(BudAPIXtra::m_baFontStyleList, 0)
@@ -436,7 +522,48 @@ XOBJSTUB(BudAPIXtra::m_baPrinterInfo, 0)
 XOBJSTUB(BudAPIXtra::m_baSetPrinter, 0)
 XOBJSTUB(BudAPIXtra::m_baRefreshDesktop, 0)
 XOBJSTUB(BudAPIXtra::m_baFileAge, 0)
-XOBJSTUB(BudAPIXtra::m_baFileExists, 0)
+void BudAPIXtra::m_baFileExists(int nargs) {
+	// baFileExists(string fileName) -> 1 if the file is reachable, else 0.
+	// The game passes Windows-style CD paths (e.g. _Cd1Root & "CDNr1.rup");
+	// findPath() resolves them against the current folder and search paths,
+	// matching by last path component when the absolute prefix is unknown.
+	Common::String path;
+	for (int i = 0; i < nargs; i++) {
+		Datum d = g_lingo->pop();
+		if (i == nargs - 1)
+			path = d.asString();
+	}
+
+	// Games use this to detect a previously-written persistent ini/rup file
+	// (e.g. Physikus checks baFileExists(_Root & "Physicus.rup") to decide
+	// whether to bootstrap defaults). Those files are written by
+	// baWriteIni() into the SaveFileManager sandbox, not the game
+	// directory, so check there too -- otherwise this always reports
+	// "missing" post-write, sending the game back through its
+	// default-bootstrap path (which computes a different, inconsistent
+	// ini filename) every subsequent run.
+	Common::String saveName = savePrefix() + lastPathComponent(path, g_director->_dirSeparator);
+	Common::SaveFileManager *saves = g_system->getSavefileManager();
+	if (!saves->listSavefiles(saveName).empty()) {
+		g_lingo->push(Datum(1));
+		return;
+	}
+
+	g_lingo->push(Datum(findPath(path, true, true, false).empty() ? 0 : 1));
+}
+void BudAPIXtra::m_baDiskList(int nargs) {
+	// No removable-volume concept under ScummVM. Return an empty list so the
+	// callers' count()/repeat loops (e.g. VolumeAuswerfen) are no-ops.
+	g_lingo->dropStack(nargs);
+	Datum result;
+	result.type = ARRAY;
+	result.u.farr = new FArray();
+	g_lingo->push(result);
+}
+void BudAPIXtra::m_baEjectDisk(int nargs) {
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum(0));
+}
 XOBJSTUB(BudAPIXtra::m_baFolderExists, 0)
 XOBJSTUB(BudAPIXtra::m_baCreateFolder, 0)
 XOBJSTUB(BudAPIXtra::m_baDeleteFolder, 0)

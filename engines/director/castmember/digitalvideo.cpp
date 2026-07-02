@@ -433,6 +433,12 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 		}
 	}
 
+	// A zero-sized sprite bbox (e.g. a video sprite not yet positioned/sized)
+	// has nothing to render; creating a 0-dimension widget would later divide
+	// by zero in the scaler and read out of bounds in the ink blitter.
+	if (bbox.width() <= 0 || bbox.height() <= 0)
+		return nullptr;
+
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow()->getMacWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
 	_channel = channel;
@@ -533,6 +539,16 @@ void DigitalVideoCastMember::setStopTime(int stamp) {
 		return;
 
 	_channel->_stopTime = stamp;
+
+	// A stamp of 0 means "play to the natural end" in Director.
+	// Do NOT pass 0ms to setEndTime() – the VideoDecoder interprets that as
+	// "end immediately" because every getNextFrameStartTime() >= 0 satisfies
+	// the videoEndTimeReached condition, causing endOfVideo() to return true
+	// before a single frame is shown.
+	if (stamp <= 0) {
+		debugC(2, kDebugImages, "DigitalVideoCastMember::setStopTime(): stamp=0 – ignoring (play to natural end)");
+		return;
+	}
 
 	Audio::Timestamp dur = _video->getDuration();
 

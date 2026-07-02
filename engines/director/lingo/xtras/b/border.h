@@ -19,38 +19,31 @@
  *
  */
 
-#ifndef DIRECTOR_CASTMEMBER_XTRA_H
-#define DIRECTOR_CASTMEMBER_XTRA_H
-
-#include "director/castmember/castmember.h"
+#ifndef DIRECTOR_LINGO_XTRAS_B_BORDER_H
+#define DIRECTOR_LINGO_XTRAS_B_BORDER_H
 
 namespace Director {
 
-class XtraCastMember : public CastMember {
+class BorderXtraObject : public Object<BorderXtraObject> {
 public:
-	XtraCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
-	XtraCastMember(Cast *cast, uint16 castId, XtraCastMember &source);
+	BorderXtraObject(ObjectType objType);
 
-	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new XtraCastMember(cast, castId, *this)); }
-
-	bool isQuickTimeVideo() const;
-	bool isQuickTimeLooping() const;
-	bool isTextXtra() const;
-	bool isFontXtra() const;
-
-	bool hasField(int field) override;
-	Datum getField(int field) override;
-	void setField(int field, const Datum &value) override;
-
-	Common::String formatInfo() override;
-
-	uint32 getCastDataSize() override;
-	void writeCastData(Common::SeekableWriteStream *writeStream) override;
-
-private:
-	Common::String _xtraSymbol;
-	Common::Array<byte> _xtraData;
+	bool hasProp(const Common::String &propName) override;
+	Datum getProp(const Common::String &propName) override;
 };
+
+namespace BorderXtra {
+
+extern const char *xlibName;
+extern const XlibFileDesc fileNames[];
+
+void open(ObjectType type, const Common::Path &path);
+void close(ObjectType type);
+
+void m_new(int nargs);
+void m_register(int nargs);
+
+} // End of namespace BorderXtra
 
 } // End of namespace Director
 

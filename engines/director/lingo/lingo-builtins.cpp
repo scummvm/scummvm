@@ -1016,7 +1016,13 @@ void LB::b_count(int nargs) {
 		result.u.i = list.u.obj->getPropCount();
 		break;
 	default:
-		TYPECHECK3(list, ARRAY, PARRAY, OBJECT);
+		// count() of a genuinely VOID/unset value degrades to 0 rather than
+		// aborting Lingo (e.g. an absent CD-drive list in Physikus). Other
+		// unsupported types still warn so real type errors stay visible.
+		if (list.type != VOID)
+			warning("b_count: unsupported list type %s; returning 0", list.type2str());
+		result.u.i = 0;
+		break;
 	}
 
 	g_lingo->push(result);
@@ -1204,15 +1210,39 @@ void LB::b_getAt(int nargs) {
 	case ARRAY:
 	case POINT:
 	case RECT:
-		ARRBOUNDSCHECK(index, list);
+		if (list.u.farr->arr.empty()) {
+			// Empty list: degrade to VOID like b_getLast, e.g. Physikus indexing
+			// an empty CD-drive list when no CD-ROM volume is detected.
+			g_lingo->pushVoid();
+			break;
+		}
+		if (index - 1 < 0 || index > (int)list.u.farr->arr.size()) {
+			// Genuine out-of-bounds on a non-empty list: raise the Lingo error
+			// (matches real Director and the scummvmAssertError tests), then
+			// still push VOID so a caller expecting a return value (e.g. `set
+			// x to getAt(...)`) doesn't abort the handler mid-frame.
+			g_lingo->lingoError("b_getAt: index out of bounds (%d of %d)", index, list.u.farr->arr.size());
+			g_lingo->pushVoid();
+			break;
+		}
 		g_lingo->push(list.u.farr->arr[index - 1]);
 		break;
 	case PARRAY:
-		ARRBOUNDSCHECK(index, list);
+		if (list.u.parr->arr.empty()) {
+			g_lingo->pushVoid();
+			break;
+		}
+		if (index - 1 < 0 || index > (int)list.u.parr->arr.size()) {
+			g_lingo->lingoError("b_getAt: index out of bounds (%d of %d)", index, list.u.parr->arr.size());
+			g_lingo->pushVoid();
+			break;
+		}
 		g_lingo->push(list.u.parr->arr[index - 1].v);
 		break;
 	default:
-		TYPECHECK4(list, ARRAY, PARRAY, POINT, RECT);
+		warning("b_getAt: unsupported list type %s; returning VOID", list.type2str());
+		g_lingo->pushVoid();
+		break;
 	}
 }
 
@@ -1928,7 +1958,11 @@ void LB::b_xtra(int nargs) {
 			}
 		}
 	}
-	g_lingo->lingoError("Xtra not found: %s", d.asString().c_str());
+	// The game may reference an Xtra we don't implement (e.g. the custom
+	// "Border"/budapi Xtras shipped with Director 7 titles such as Physikus).
+	// Degrade gracefully by returning VOID instead of aborting Lingo execution.
+	warning("b_xtra: Xtra not found: %s", d.asString().c_str());
+	g_lingo->push(Datum());
 }
 
 ///////////////////

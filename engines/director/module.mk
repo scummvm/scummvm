@@ -28,6 +28,7 @@ MODULE_OBJS = \
 	types.o \
 	util.o \
 	window.o \
+	xmed.o \
 	castmember/castmember.o \
 	castmember/bitmap.o \
 	castmember/digitalvideo.o \
@@ -189,6 +190,7 @@ MODULE_OBJS = \
 	lingo/xlibs/x/xwin.o \
 	lingo/xlibs/y/yasix.o \
 	lingo/xtras/b/budapi.o \
+	lingo/xtras/b/border.o \
 	lingo/xtras/a/audio.o \
 	lingo/xtras/d/directsound.o \
 	lingo/xtras/d/displayres.o \

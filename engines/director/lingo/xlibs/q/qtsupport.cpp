@@ -68,6 +68,7 @@ const char *QTSupport::xlibName = "QuickTimeSupport";
 const XlibFileDesc QTSupport::fileNames[] = {
 	{ "QuickTime Asset",	nullptr },
 	{ "QTASSET",			nullptr },
+	{ "QT3Asset",			nullptr },	// QuickTime 3 Asset Xtra (e.g. Physikus, Chemicus)
 	{ nullptr,		nullptr },
 };
 

@@ -42,6 +42,7 @@
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/stxt.h"
+#include "director/xmed.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/bitmap.h"
 #include "director/castmember/digitalvideo.h"
@@ -64,7 +65,7 @@
 
 namespace Director {
 
-Cast::Cast(Movie *movie, uint16 castLibID, bool isShared, bool isExternal, uint16 libResourceId) {
+Cast::Cast(Movie *movie, uint16 castLibID, bool isShared, bool isExternal, uint32 libResourceId) {
 	_movie = movie;
 	_vm = _movie->getVM();
 	_lingo = _vm->getLingo();
@@ -123,6 +124,9 @@ Cast::~Cast() {
 		delete it._value;
 
 	for (auto &it : _loadedRTE2s)
+		delete it._value;
+
+	for (auto &it : _loadedXMEDs)
 		delete it._value;
 
 	delete _loadedCast;
@@ -449,18 +453,29 @@ bool Cast::loadConfig() {
 
 	_unk1 = stream->readSint16();
 
-	// Warning for post-D7 movies (unk1 is stageColorG and stageColorB post-D7)
-	if (humanVer >= 700)
-		warning("STUB: Cast::loadConfig: 16 bit unk1 read instead of two 8 bit stageColorG and stageColorB. Read value: %04x", _unk1);
+	// In D7 and later the 16-bit field at offset 18 is two 8-bit stage-color
+	// components: stageColorG (high byte) and stageColorB (low byte). _unk1
+	// keeps the raw 16-bit value for the VWCF checksum and round-trip save.
+	if (humanVer >= 700) {
+		_D7stageColorG = (_unk1 >> 8) & 0xFF;
+		_D7stageColorB = _unk1 & 0xFF;
+	}
 
 	_commentFont = stream->readUint16();
 	_commentSize = stream->readUint16();
 	_commentStyle = stream->readUint16();
 	_stageColor = stream->readUint16();
 
-	// Warning for post-D7 movies (stageColor is isStageColorRGB and stageColorR post-D7)
-	if (humanVer >= 700)
-		warning("STUB: Cast::loadConfig: 16 bit stageColor read instead of two 8 bit isStageColorRGB and stageColorR. Read value: %04x", _stageColor);
+	// In D7 and later the 16-bit field at offset 26 is a stageColorIsRGB flag
+	// (high byte) and stageColorR (low byte). For the common non-RGB case
+	// stageColorR is the palette index, which equals the low byte of the raw
+	// _stageColor used by the renderer, checksum and save.
+	if (humanVer >= 700) {
+		_D7stageColorIsRGB = (_stageColor >> 8) & 0xFF;
+		_D7stageColorR = _stageColor & 0xFF;
+		debugC(1, kDebugLoading, "Cast::loadConfig(): D7 stage color: isRGB %d, R %d, G %d, B %d",
+			_D7stageColorIsRGB, _D7stageColorR, _D7stageColorG, _D7stageColorB);
+	}
 
 	_bitdepth = stream->readUint16();
 
@@ -600,7 +615,10 @@ bool Cast::loadConfig() {
 	}
 
 	if (_movieDepth != _vm->_colorDepth) {
-		warning("STUB: loadConfig(): Movie bit depth is %d, but set to %d", _movieDepth, _vm->_colorDepth);
+		// The engine renders at its configured color depth (e.g. 32-bit true
+		// color) and converts movie graphics as needed, so an authored movie
+		// depth differing from the engine's is expected, not a defect.
+		debugC(1, kDebugLoading, "Cast::loadConfig(): Movie bit depth is %d, engine color depth is %d", _movieDepth, _vm->_colorDepth);
 	}
 
 	delete stream;
@@ -807,7 +825,7 @@ void Cast::loadCast() {
 
 	// External casts only have one library ID, so instead
 	// we use the movie's mapping.
-	uint16 libResourceId = _isExternal ? 1024 : _libResourceId;
+	uint32 libResourceId = _isExternal ? 1024 : _libResourceId;
 
 	if (cast.size() > 0) {
 		debugC(2, kDebugLoading, "****** Loading CASt resources for libId %d (%s), resourceId %d", _castLibID, _castName.c_str(), libResourceId);
@@ -889,6 +907,19 @@ void Cast::loadCast() {
 		r = _castArchive->getResource(MKTAG('R','T','E','2'), iterator);
 		debugC(3, kDebugText, "RTE2: id %d", iterator - _castIDoffset);
 		_loadedRTE2s.setVal(iterator, new RTE2(this, *r, iterator));
+		delete r;
+	}
+
+	// Director 7+ Xtra cast members (e.g. the "Text" Asset Xtra) keep their
+	// media in an XMED child resource. Decode them so the owning cast member
+	// can render its text.
+	Common::Array<uint16> xmed = _castArchive->getResourceIDList(MKTAG('X','M','E','D'));
+	debugC(2, kDebugLoading, "****** Loading %d XMED resources", xmed.size());
+
+	for (auto &iterator : xmed) {
+		r = _castArchive->getResource(MKTAG('X','M','E','D'), iterator);
+		debugC(3, kDebugText, "XMED: id %d", iterator - _castIDoffset);
+		_loadedXMEDs.setVal(iterator, new XMED(this, *r));
 		delete r;
 	}
 
@@ -1177,10 +1208,10 @@ uint32 Cast::computeChecksum() {
 	check -= (int8)_readRate + 9;
 	check -= _lightswitch + 10;
 
-	if (humanVer < 700)
-		check += _unk1 + 11;
-	else
-		warning("STUB: skipped using stageColorG, stageColorB for post-D7 movie in checksum calulation");
+	// The 16-bit value at offset 18 (preD7field11, or stageColorG/stageColorB
+	// in D7+) enters the checksum the same way in every version, verified
+	// against D7 (fileVer 1406) VWCF resources.
+	check += _unk1 + 11;
 
 	check *= _commentFont + 12;
 	check += _commentSize + 13;
@@ -1190,10 +1221,9 @@ uint32 Cast::computeChecksum() {
 	else
 		check *= _commentStyle + 14;
 
-	if (humanVer < 700)
-		check += _stageColor + 15;
-	else
-		check += (uint8)(_stageColor & 0xFF) + 15;	// Taking lower 8 bits to take into account stageColorR
+	// The 16-bit value at offset 26 (stageColor, or stageColorIsRGB/stageColorR
+	// in D7+) enters the checksum the same way in every version.
+	check += _stageColor + 15;
 
 
 	check += _bitdepth + 16;
@@ -1624,10 +1654,36 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastTransition (id=%d, %d children)",  id, res->children.size());
 		target = new TransitionCastMember(this, id, castStream, _version);
 		break;
-	case kCastXtra:
+	case kCastXtra: {
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastXtra (id=%d, %d children)",  id, res->children.size());
-		target = new XtraCastMember(this, id, castStream, _version);
+		XtraCastMember *xtra = new XtraCastMember(this, id, castStream, _version);
+		if (xtra->isQuickTimeVideo()) {
+			// Director 7+ stores QuickTime videos as "quickTimeMedia" Xtra cast
+			// members rather than classic digital video members. Promote them to a
+			// DigitalVideoCastMember so the existing video playback and Lingo
+			// property machinery (duration, movieTime, movieRate, ...) works. The
+			// linked .mov path is resolved from the cast member info at load time.
+			debugC(3, kDebugLoading, "Cast::loadCastData(): promoting QuickTime Xtra (id=%d) to digital video", id);
+			bool qtLooping = xtra->isQuickTimeLooping();
+			delete xtra;
+			DigitalVideoCastMember *dv = new DigitalVideoCastMember(this, id);
+			dv->_qtmovie = true;
+			dv->_looping = qtLooping;
+			target = dv;
+		} else if (xtra->isTextXtra()) {
+			// Director 7+ stores rich text fields as "text" Asset Xtra cast
+			// members whose string lives in an XMED child resource. Promote them
+			// to a TextCastMember so the regular text rendering, widget and Lingo
+			// machinery apply. The text, rect and styling are filled in lazily by
+			// TextCastMember::load() from the decoded XMED.
+			debugC(3, kDebugLoading, "Cast::loadCastData(): promoting Text Xtra (id=%d) to text cast member", id);
+			delete xtra;
+			target = new TextCastMember(this, id, _version);
+		} else {
+			target = xtra;
+		}
 		break;
+	}
 	default:
 		warning("BUILDBOT: STUB: Cast::loadCastData(): Unhandled cast type: %d [%s] (id=%d, %d children)! This will be missing from the movie and may cause problems", castType, tag2str(castType), id, res->children.size());
 		// also don't try and read the strings... we don't know what this item is.
@@ -2008,7 +2064,8 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		// fallthrough
 	case 12:
 		if (castInfo.strings[12].len) {
-			Common::hexdump(castInfo.strings[12].data, castInfo.strings[12].len);
+			if (debugChannelSet(5, kDebugLoading))
+				Common::hexdump(castInfo.strings[12].data, castInfo.strings[12].len);
 			ci->xtraRect.top = READ_BE_INT32(castInfo.strings[12].data);
 			ci->xtraRect.left = READ_BE_INT32(castInfo.strings[12].data + 4);
 			ci->xtraRect.bottom = READ_BE_INT32(castInfo.strings[12].data + 8);
@@ -2026,7 +2083,8 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		// fallthrough
 	case 10:
 		if (castInfo.strings[10].len) {
-			Common::hexdump(castInfo.strings[10].data, castInfo.strings[10].len);
+			if (debugChannelSet(5, kDebugLoading))
+				Common::hexdump(castInfo.strings[10].data, castInfo.strings[10].len);
 			ci->xtraDisplayName = castInfo.strings[10].readString(false); // C string
 			dumpS = Common::String::format("xtraDisplayName: '%s', ", ci->xtraDisplayName.c_str()) + dumpS;
 		}
@@ -2135,11 +2193,14 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		}
 	}
 
-	// For SoundCastMember, read the flags in the CastInfo
-	if (_version >= kFileVer400 && _version < kFileVer700 && member->_type == kCastSound) {
+	// For SoundCastMember, read the looping flag from the CastInfo. The
+	// play-once bit (flags & 16) is version-independent: verified against D7
+	// (fileVer 1406) sound members, where one-shot effects ("switch",
+	// "Schalter") set it and ambient loops ("Regenloop") clear it. The info
+	// block is fully consumed by loadInfoEntries() above, so nothing is read
+	// from the stream here.
+	if (_version >= kFileVer400 && member->_type == kCastSound) {
 		((SoundCastMember *)member)->_looping = castInfo.flags & 16 ? 0 : 1;
-	} else if (_version >= kFileVer700 && member->_type == kCastSound) {
-		warning("STUB: Cast::loadCastInfo(): Sound cast member info not yet supported for version v%d (%d)", humanVersion(_version), _version);
 	}
 
 	// For PaletteCastMember, run load() as we need it right now

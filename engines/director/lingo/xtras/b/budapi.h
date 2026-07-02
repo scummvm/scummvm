@@ -172,6 +172,8 @@ void m_baRegister(int nargs);
 void m_baSaveRegistration(int nargs);
 void m_baGetRegistration(int nargs);
 void m_baFunctions(int nargs);
+void m_baDiskList(int nargs);
+void m_baEjectDisk(int nargs);
 
 } // End of namespace BudAPIXtra
 

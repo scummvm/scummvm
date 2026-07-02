@@ -425,6 +425,9 @@ bool Score::isWaitingForNextFrame() {
 		if (movieChannel->isActiveVideo() && movieChannel->_movieRate != 0.0 && !goingTo) {
 			keepWaiting = true;
 		} else {
+			debugC(5, kDebugEvents, "Score::isWaitingForNextFrame(): video-wait ch%d done: active=%d rate=%g goingTo=%d",
+				_waitForVideoChannel, movieChannel->isActiveVideo(),
+				movieChannel->_movieRate, goingTo ? 1 : 0);
 			_waitForVideoChannel = 0;
 		}
 	} else if (g_system->getMillis() < _nextFrameTime) {
@@ -502,6 +505,16 @@ void Score::updateCurrentFrame() {
 		// Load the current sprite information into the _currentFrame data store.
 		// This copies in the frame data and updates _curFrameNumber.
 		loadFrame(nextFrameNumberToLoad, true);
+
+		// Auto-puppeting (latched when a Lingo script changes a sprite
+		// property such as its member/ink/loc) lasts only until the playback
+		// head moves to another frame; the score then reasserts control.
+		// Manual puppetSprite is NOT affected. Without this reset the latch
+		// (e.g. kAPCast set by an animation in one room) would persist and make
+		// the channel ignore the next room's score data, leaving the previous
+		// scene's sprite drawn over the new one. (Director in a Nutshell, p.15.)
+		for (uint ch = 0; ch < _channels.size(); ch++)
+			_channels[ch]->_sprite->_autoPuppet = kAPNone;
 
 		// Finally, update the channels and buffer any dirty rectangles.
 		// This will ignore any channel data that is overridden with the puppet flag.
@@ -2000,7 +2013,8 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version,
 
 				Common::MemoryReadStreamEndian *stream1 = getSpriteDetailsStream(i);
 				if (stream1) {
-					stream1->hexdump(stream1->size());
+					if (debugChannelSet(2, kDebugLoading))
+						stream1->hexdump(stream1->size());
 					delete stream1;
 				}
 			}

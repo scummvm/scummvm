@@ -286,6 +286,19 @@ bool Channel::isDirty(Sprite *nextSprite) {
 	bool isDirtyFlag = _widgetDirty ||
 		(_sprite->_cast && _sprite->_cast->isModified());
 
+	// D6+: the per-frame sprite-details index selects the behavior set and
+	// the sprite's start/end frame range. It can change while the visible
+	// cast member stays identical (e.g. returning to a menu frame after a
+	// dialog that ran killScriptInstances, or a puppeted sprite whose
+	// behaviors were killed while looping on the same frame via
+	// `go(the frame)`). This is internal engine bookkeeping, not an
+	// authored/visual property, so it must be checked even when puppeted --
+	// otherwise a puppeted sprite's _behaviors/_startFrame/_endFrame can be
+	// cleared once by killScriptInstances() and never restored, permanently
+	// killing the sprite's interactivity (mouseDown never dispatches again).
+	if (g_director->getVersion() >= 600 && _sprite)
+		isDirtyFlag |= _sprite->_spriteListIdx != nextSprite->_spriteListIdx;
+
 	if (_sprite && !_sprite->_puppet && !_sprite->_autoPuppet) {
 		// When puppet is set, the overall dirty flag should be set when sprite is
 		// modified.
@@ -522,6 +535,25 @@ void Channel::setClean(Sprite *nextSprite, bool partial) {
 		if (_sprite->_puppet || _sprite->_autoPuppet || (!nextSprite->isQDShape() && partial)) {
 			// Updating scripts, etc. does not require a full re-render
 			_sprite->_scriptId = nextSprite->_scriptId;
+
+			// D6+: refresh behavior-set bookkeeping even for puppeted sprites.
+			// killScriptInstances() can wipe a puppeted sprite's _behaviors and
+			// frame range when the frame loops on itself; without restoring
+			// them here, the sprite permanently loses mouse-event dispatch
+			// since _puppet/_autoPuppet otherwise skip replaceSprite() below.
+			if (g_director->getVersion() >= 600) {
+				_sprite->_spriteListIdx = nextSprite->_spriteListIdx;
+				_sprite->_spriteInfo = nextSprite->_spriteInfo;
+				_sprite->_behaviors = nextSprite->_behaviors;
+				// createScriptInstances() gates on the CHANNEL's _startFrame/
+				// _endFrame (not the sprite's), and killScriptInstances()
+				// leaves these at -1 once killed. Only replaceSprite() (skipped
+				// here for puppets) normally restores them from _spriteInfo, so
+				// do it here too or the channel's script instance -- and thus
+				// its mouseDown dispatch -- never comes back.
+				_startFrame = _sprite->_spriteInfo.startFrame;
+				_endFrame = _sprite->_spriteInfo.endFrame;
+			}
 		} else {
 			previousCastId = _sprite->_castId;
 			replaceSprite(nextSprite);

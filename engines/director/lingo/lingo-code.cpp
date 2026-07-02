@@ -838,16 +838,21 @@ Datum LC::divData(Datum &d1, Datum &d2) {
 		return LC::mapBinaryOp(LC::divData, d1, d2);
 	}
 
-	if ((d2.type == INT && d2.u.i == 0) ||
-			(d2.type == FLOAT && d2.u.f == 0.0)) {
-		g_lingo->lingoError("LC::divData(): division by zero");
-		d2 = Datum(1);
-	}
-
 	int alignedType = g_lingo->getAlignedType(d1, d2, false);
 
 	if (g_director->getVersion() < 400)	// pre-D4 is INT-only
 		alignedType = INT;
+
+	// Guard against division by zero based on the *resolved* divisor value
+	// rather than its raw Datum type. getAlignedType() folds VOID and numeric
+	// strings into INT/FLOAT, so a divisor such as `the duration of member "x"`
+	// for a missing cast member (VOID) or a non-numeric string slips past a
+	// type-only check and the integer division below would raise SIGFPE.
+	// Director itself flags a script error and treats the divisor as 1.
+	if ((alignedType == FLOAT) ? (d2.asFloat() == 0.0) : (d2.asInt() == 0)) {
+		g_lingo->lingoError("LC::divData(): division by zero");
+		d2 = Datum(1);
+	}
 
 	Datum res;
 	if (alignedType == FLOAT) {
@@ -855,10 +860,6 @@ Datum LC::divData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() / d2.asInt());
 	} else {
-		int denom = d2.asInt();
-		if (denom == 0) {
-			g_lingo->lingoError("LC::divData(): division by zero");
-		}
 		res = Datum(d1.asInt() / d2.asInt());
 		warning("LC::divData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}

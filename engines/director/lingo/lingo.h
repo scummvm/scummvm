@@ -488,6 +488,7 @@ public:
 	int _traceLoad; // internal Director verbosity level
 	bool _updateMovieEnabled;
 	bool _romanLingo;
+	Common::String _soundDevice; // D7+ "the soundDevice"; ScummVM has one output, stored to round-trip
 
 	Datum getTheEntity(int entity, Datum &id, int field);
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);

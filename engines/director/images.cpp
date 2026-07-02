@@ -347,6 +347,12 @@ void copyStretchImg(const Graphics::Surface *srcSurface, Graphics::Surface *targ
 		// Source area is nonexistant
 		return;
 	}
+	if ((targetRect.width() <= 0) || (targetRect.height() <= 0)) {
+		// Target area is empty (e.g. a sprite bbox not yet sized). Nothing to
+		// draw, and scaling into a zero dimension would divide by zero in the
+		// nearest-neighbour scaler (Graphics::scaleNN: (srcW << 16) / dstW).
+		return;
+	}
 
 	Graphics::Surface *temp1 = nullptr;
 	Graphics::Surface *temp2 = nullptr;

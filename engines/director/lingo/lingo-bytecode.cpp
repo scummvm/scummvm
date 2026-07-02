@@ -1156,7 +1156,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 			debugC(5, kDebugLoading, "%d: %s", i, name);
 			_assemblyContext->setProp(name, Datum(), true);
 		} else {
-			warning("Property %d has unknown name id %d, skipping define", i, index);
+			debugC(1, kDebugCompile, "Property %d has unknown name id %d, skipping define", i, index);
 		}
 	}
 
@@ -1182,7 +1182,10 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 				debugC(5, kDebugLoading, "%d: %s (already defined)", i, name);
 			}
 		} else {
-			warning("Global %d has unknown name id %d, skipping define", i, index);
+			// Out-of-range name IDs occur in degenerate/empty D7 script slots
+			// (e.g. CDWechsel.dxr). ProjectorRays skips these silently via its
+			// validName() check, so treat it as a debug note, not a warning.
+			debugC(1, kDebugCompile, "Global %d has unknown name id %d, skipping define", i, index);
 		}
 	}
 
@@ -1307,7 +1310,17 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		return nullptr;
 	}
 
-	uint32 codeStoreSize = functionsOffset - codeStoreOffset;
+	if (codeStoreOffset > (uint32)stream.size()) {
+		warning("Lscr code store offset 0x%x is out of bounds (size 0x%x)", codeStoreOffset, (uint32)stream.size());
+		return nullptr;
+	}
+
+	// The bytecode and per-handler name arrays are addressed by absolute offsets
+	// within the script chunk. In D4-D6 the code store precedes the function
+	// table, but in D7+ (e.g. Director 7.0.2 / Physikus) the function table can
+	// precede the bytecode, so the code store must span the whole chunk body,
+	// not just [codeStoreOffset, functionsOffset). (matches ProjectorRays)
+	uint32 codeStoreSize = (uint32)stream.size() - codeStoreOffset;
 	stream.seek(codeStoreOffset);
 	byte *codeStore = (byte *)malloc(codeStoreSize);
 	stream.read(codeStore, codeStoreSize);
@@ -1746,8 +1759,15 @@ void LingoArchive::addNamesV4(Common::SeekableReadStreamEndian &stream) {
 	uint16 offset = stream.readUint16();
 	uint16 count = stream.readUint16();
 
-	if ((uint32)stream.size() != size) {
-		warning("Lnam content missing");
+	// Some Director 7+ name tables report a `size` that does not match the
+	// resource stream length (it excludes padding / counts only the names data).
+	// ProjectorRays ignores this field, so don't bail here; only validate the
+	// offset and guard each read against the end of the stream.
+	if ((uint32)stream.size() != size)
+		debugC(1, kDebugCompile, "addNamesV4: Lnam size %u != stream size %u, proceeding", size, (uint32)stream.size());
+
+	if (offset > stream.size()) {
+		warning("Lnam names offset 0x%x out of bounds (size 0x%x)", offset, (uint32)stream.size());
 		return;
 	}
 
@@ -1756,6 +1776,10 @@ void LingoArchive::addNamesV4(Common::SeekableReadStreamEndian &stream) {
 	names.clear();
 
 	for (uint16 i = 0; i < count; i++) {
+		if (stream.eos() || (uint32)stream.pos() >= (uint32)stream.size()) {
+			warning("addNamesV4: ran out of data after %d of %d names", i, count);
+			break;
+		}
 		Common::String name = stream.readPascalString();
 
 		names.push_back(name);

@@ -311,14 +311,25 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			// Cast script
 			// A strange quirk; if we're in a mouseDown event, Director will test
 			// at runtime to find out whatever is under the mouse and use that.
-			// If we're in a mouseUp event, Director will use whatever was
-			// discovered -at the very beginning- of the mouseDown event chain.
+			// If we're in a mouseUp event, D4-and-below Director will use whatever
+			// was discovered -at the very beginning- of the mouseDown event chain.
 			// This means e.g. the cast member can be swapped out from underneath in
 			// the mouseDown sprite script and the event passed down, which
 			// will mean the old cast member cast script does not get a mouseDown
 			// call, but it -does- get a mouseUp call.
 			// A bit unhinged, but we have a test that proves Director does this,
 			// so we have to do it too.
+			//
+			// D5+ instead re-resolves the cast script from the sprite's *current*
+			// member at mouseUp time (mirroring the kSpriteHandler D5+ path above).
+			// Games rely on this for two-member push buttons: the "armed" member's
+			// own cast-script mouseDown hover-loop swaps the sprite to a "pressed"
+			// member, and only that pressed member's cast script carries the
+			// on mouseUp action (e.g. Physikus' scanner scroll buttons SZ_R/SZ_G,
+			// SW_R/SW_G: releasing inside the button must run SZ_G's mouseUp;
+			// releasing outside leaves the actionless SZ_A member = cancel).
+			// With the mouseDown-time member pinned instead, the pressed member's
+			// handler never ran and such buttons were dead.
 			//
 			// mouseEnter and mouseLeave events should also defer to the value of channelId.
 			CastMemberID targetCast = _currentMouseDownCastID;
@@ -327,6 +338,17 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 				if (!event.channelId)
 					return;
 				Sprite *sprite = _score->getSpriteById(event.channelId);
+				targetCast = sprite->_castId;
+			} else if (((event.event == kEventMouseUp) || (event.event == kEventRightMouseUp)) &&
+					_vm->getVersion() >= 500) {
+				// D6+ tracks the sprite captured at mouseDown (_currentMouseDownChannelId);
+				// D5 falls back to the position-resolved channel.
+				uint16 upChannelId = _currentMouseDownChannelId ? _currentMouseDownChannelId : event.channelId;
+				if (!upChannelId)
+					return;
+				Sprite *sprite = _score->getSpriteById(upChannelId);
+				if (!sprite)
+					return;
 				targetCast = sprite->_castId;
 			}
 
@@ -588,6 +610,20 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		case kEventMouseUpOutSide:	// D6+
 		case kEventMouseWithin:		// D6+
 			if (_vm->getVersion() >= 600) {
+				// D5+: mouseUp/rightMouseUp should target whichever sprite captured
+				// the paired mouseDown, not whatever sprite the cursor currently
+				// resolves to. A sprite's own mouseDown handler can legitimately
+				// resize a *different*, higher-channel sprite's hit-test bbox while
+				// the button is held (e.g. a shared two-button hover-highlight
+				// graphic) -- without capture, that resize can steal the mouseUp
+				// dispatch away from the sprite that was actually pressed.
+				if (event == kEventMouseUp || event == kEventRightMouseUp) {
+					if (_currentMouseDownChannelId != 0)
+						pointedSpriteId = _currentMouseDownChannelId;
+				} else if (event == kEventMouseDown || event == kEventRightMouseDown) {
+					_currentMouseDownChannelId = pointedSpriteId;
+				}
+
 				if (pointedSpriteId != 0) {
 					Channel *channel = _score->getChannelById(pointedSpriteId);
 
@@ -633,7 +669,31 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 		case kEventOpenWindow:  		// D5
 		case kEventCloseWindow:  		// D5
 		case kEventZoomWindow:  		// D5
-			queue.push(LingoEvent(event, eventId, kMovieHandler, false, pos, channelId));
+			{
+				// Queue every movie script that handles this event, in cast order,
+				// then the shared cast. Director runs them in sequence: the next
+				// one executes only if the previous called `pass`. Mirrors the
+				// enumeration in resolveScriptEvent() (kMovieHandler) so the first
+				// script chosen is unchanged, but `pass` can now reach the rest.
+				// passByDefault is false: a movie script that doesn't call `pass`
+				// stops the chain (the same-eventId successors are swallowed).
+				for (auto &cast : _casts) {
+					LingoArchive *archive = cast._value->_lingoArchive;
+					if (!archive)
+						continue;
+					for (auto &it : archive->scriptContexts[kMovieScript]) {
+						if (it._value->_eventHandlers.contains(event))
+							queue.push(LingoEvent(event, eventId, kMovieScript, false, CastMemberID(it._key, cast._key), pos));
+					}
+				}
+				LingoArchive *sharedArchive = getSharedLingoArch();
+				if (sharedArchive) {
+					for (auto &it : sharedArchive->scriptContexts[kMovieScript]) {
+						if (it._value->_eventHandlers.contains(event))
+							queue.push(LingoEvent(event, eventId, kMovieScript, false, CastMemberID(it._key, DEFAULT_CAST_LIB), pos));
+					}
+				}
+			}
 			break;
 
 		default:
@@ -681,6 +741,17 @@ void Movie::broadcastEvent(LEvent event) {
 			queueEvent(queue, event, i);
 		}
 	}
+
+	// The per-sprite queueing above only reaches sprite behaviors: within each
+	// sprite's event group the sprite handler runs first and (because the last
+	// behavior is queued with passByDefault=false) marks the event handled, which
+	// swallows the cast/frame/movie handlers that share its eventId. As a result a
+	// frame script's `on prepareFrame` (and the movie script's) would never run.
+	// Queue one more pass with no sprite target so the frame and movie handlers are
+	// resolved with a fresh eventId, exactly like enterFrame/exitFrame reach them
+	// via processEvent().
+	queueEvent(queue, event, 0);
+
 	_vm->setCurrentWindow(this->getWindow());
 	_lingo->processEvents(queue, false);
 }

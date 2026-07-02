@@ -105,7 +105,7 @@ public:
 	DirectorEngine *getVM() const { return _vm; }
 	Cast *getCast() const { return _casts.getValOrDefault(DEFAULT_CAST_LIB, nullptr); }
 	Cast *getCast(CastMemberID memberID);
-	Cast *getCastByLibResourceID(int libresourceID);
+	Cast *getCastByLibResourceID(uint32 libresourceID);
 	Cast *getSharedCast() const { return _sharedCast; }
 	const Common::HashMap<int, Cast *> *getCasts() const { return &_casts; }
 	Score *getScore() const { return _score; }
@@ -165,6 +165,7 @@ public:
 	CastMemberID _currentMouseDownCastID;
 	CastMemberID _currentMouseDownSpriteScriptID;
 	bool _currentMouseDownSpriteImmediate;
+	uint16 _currentMouseDownChannelId;	// D5+: sprite captured at mouseDown, reused for the paired mouseUp
 	uint16 _currentEditableTextChannel;
 	uint32 _lastEventTime;
 	uint32 _lastRollTime;

@@ -769,7 +769,11 @@ int MacFontManager::getFamilyId(int newId, int newSlant) {
 	if (_fontInfo.contains(newId + newSlant)) {
 		return newId + newSlant;
 	}
-	warning("MacFontManager::getFamilyId(): No font with slant %d found, setting to kMacFontRegular", newSlant);
+	// A missing slant variant is an expected, graceful fallback (we render the
+	// regular face): many fonts — substitutes and non-FOND fonts in particular
+	// — have no separate slanted family registered. Log at debug level instead
+	// of spamming a warning on every styled run of such a font.
+	debugC(1, kDebugLevelMacGUI, "MacFontManager::getFamilyId(): No font with slant %d found, setting to kMacFontRegular", newSlant);
 	return newId;
 }
 

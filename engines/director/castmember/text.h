@@ -34,6 +34,9 @@ class TextCastMember : public CastMember {
 public:
 	TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, uint8 flags1 = 0, bool asButton = false);
 	TextCastMember(Cast *cast, uint16 castId, TextCastMember &source);
+	// Used when promoting a Director 7+ "Text" Asset Xtra (XMED-backed) to a
+	// text cast member. The text and styling are loaded lazily in load().
+	TextCastMember(Cast *cast, uint16 castId, uint16 version);
 
 	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new TextCastMember(cast, castId, *this)); }
 

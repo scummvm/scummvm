@@ -158,6 +158,7 @@
 #include "director/lingo/xlibs/y/yasix.h"
 #include "director/lingo/xtras/a/audio.h"
 #include "director/lingo/xtras/b/budapi.h"
+#include "director/lingo/xtras/b/border.h"
 #include "director/lingo/xtras/d/directsound.h"
 #include "director/lingo/xtras/d/displayres.h"
 #include "director/lingo/xtras/d/datetime.h"
@@ -267,6 +268,7 @@ static const struct XLibProto {
 	XLIBDEF(BarakeObj,			kXObj,			400),	// D4
 	XLIBDEF(BatQT,				kXObj,			400),	// D4
 	XLIBDEF(BIMXObj,			kXObj,			400),	// D4
+	XLIBDEF(BorderXtra,			kXtraObj,		500),	// D5
 	XLIBDEF(BlitPictXObj,		kXObj,			400),	// D4
 	XLIBDEF(BlockTheDrawingXObj,			kXObj,					400),	// D4
 	XLIBDEF(BudAPIXtra,			kXtraObj,					500),	// D5
