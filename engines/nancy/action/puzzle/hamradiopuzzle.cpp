@@ -311,9 +311,14 @@ void HamRadioPuzzle::execute() {
 					break;
 				}
 
-				// Morse code is incorrect
+				// Morse code is invalid (unrecognized, or Send pressed without any
+				// dots/dashes). Play the "bad letter" sound, whose caption reads
+				// "Invalid Character", and stop here: falling through to the textbox
+				// refresh below would immediately overwrite that caption.
 				if (!foundCorrect) {
+					_curMorseString.clear();
 					_badLetterSound.loadAndPlay();
+					break;
 				}
 			}
 
