@@ -207,6 +207,8 @@ struct GameplayState {
 		scene4030LeverInstalled = false;
 		seenScene4040EntryLine = false;
 		scene4040CandilTaken = false;
+		seenScene4050EntryLine = false;
+		scene4050PatchState = 0;
 		seenScene5010EntryLine = false;
 		scene5010MineTransportState = 0;
 		scene5010MineTransportReady = false;
@@ -797,6 +799,8 @@ struct GameplayState {
 	bool scene4030LeverInstalled;
 	bool seenScene4040EntryLine;
 	bool scene4040CandilTaken;
+	bool seenScene4050EntryLine;
+	byte scene4050PatchState;
 	bool seenScene5010EntryLine;
 	byte scene5010MineTransportState;
 	bool scene5010MineTransportReady;

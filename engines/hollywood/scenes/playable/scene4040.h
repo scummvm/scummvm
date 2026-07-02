@@ -53,6 +53,7 @@ private:
 	void advanceBackgroundLayers(uint32 delta);
 	void advanceRandomBackgroundTick();
 	bool isRandomBackgroundHoldFrame(byte frameIndex) const;
+	void runReturnFromUpperExitEntry();
 	void runStairReturnToDungeon();
 	void takeCandil();
 	void drawForegroundBlocks(int activeWorldY);
