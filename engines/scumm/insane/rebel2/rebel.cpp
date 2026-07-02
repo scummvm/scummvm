@@ -1285,7 +1285,7 @@ InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams() const {
 	//   Lv1->0, Lv2->1, Lv3->2, Lv4->3, Lv5->4,
 	//   Lv6A->5, Lv6B->6, Lv7->7 ... Lv14->14, Lv15A->15, Lv15B->16.
 	// Our Level 6 phase flow sets _currentPhase to 1/2 accordingly.
-	// Level 15 phase switch to 16 is currently approximated by _currentPhase >= 2.
+	// Level 15 switches to type 0x10 at frame 0x21e (updateLevel15TypeSwitch).
 	if (_selectedLevel <= 0) {
 		lvIdx = CLIP((int)_rebelLevelType, 0, 16);
 	} else if (_selectedLevel <= 5) {
@@ -1295,7 +1295,7 @@ InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams() const {
 	} else if (_selectedLevel <= 14) {
 		lvIdx = _selectedLevel;
 	} else { // _selectedLevel == 15
-		lvIdx = (_currentPhase >= 2) ? 16 : 15;
+		lvIdx = (_rebelLevelType >= 0x10) ? 16 : 15;
 	}
 
 	lvIdx = CLIP(lvIdx, 0, 16);

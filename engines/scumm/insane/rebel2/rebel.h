@@ -640,6 +640,7 @@ public:
 	void checkHandler7BoundaryZones(uint16 &warningMask);
 	void renderHandler7WarningCues(byte *renderBitmap, int pitch, int width, int height, int32 curFrame, uint16 warningMask);
 	void updateLevel7Fork(int32 curFrame);
+	void updateLevel15TypeSwitch(int32 curFrame);
 
 	int16 _playerDamage;
 	int16 _playerShield;

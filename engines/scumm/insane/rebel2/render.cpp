@@ -629,8 +629,16 @@ void InsaneRebel2::spawnSpaceShot(int x, int y) {
 			playSfx(6, 127, 0);
 
 			_spaceShots[i].counter = getShotMaxDuration();
+			// Shots are stored in presentation-window space (the projection without
+			// the scroll/crop offset), like the original; spawning happens before the
+			// frame's presentation pass, so strip the offset the projection baked in
+			// and let renderSpaceLaserShots apply the current frame's one.
 			Common::Point projected = getHandler7ProjectedPoint();
 			Common::Point target = getHandler7ShotTargetPoint();
+			projected.x -= _viewX;
+			projected.y -= _viewY;
+			target.x -= _viewX;
+			target.y -= _viewY;
 			int tableIndex = CLIP<int>(_shipDirectionIndex, 0, 34);
 
 			_spaceShots[i].targetX = target.x;
@@ -2126,6 +2134,12 @@ void InsaneRebel2::updateLevel7Fork(int32 curFrame) {
 	}
 }
 
+void InsaneRebel2::updateLevel15TypeSwitch(int32 curFrame) {
+	// From frame 0x21e level 15 uses the type-0x10 difficulty column; runLevel15 resets to 0xf per attempt.
+	if (_selectedLevel == 15 && curFrame >= 0x21e)
+		_rebelLevelType = 0x10;
+}
+
 void InsaneRebel2::renderPostRenderMenuCursor(byte *renderBitmap, int pitch, int width, int height) {
 	static const byte kRa2MenuCursor[] = {
 		 0,  0,  1,  1,  1,  1,  1,
@@ -2407,6 +2421,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	updatePostRenderScroll(width, height);
 	updatePostRenderDeath();
 	updateLevel7Fork(curFrame);
+	updateLevel15TypeSwitch(curFrame);
 
 	// End the looping attack-run segment once the shield/reactor is destroyed.
 	if (_rebelShieldGateActive) {
@@ -3980,6 +3995,13 @@ void InsaneRebel2::renderVehicleLaserShots(byte *renderBitmap, int pitch, int wi
 void InsaneRebel2::renderSpaceLaserShots(byte *renderBitmap, int pitch, int width, int height) {
 	int16 maxDuration = getShotMaxDuration();
 
+	// Shots are stored in presentation-window space; convert with the offset the
+	// current frame's presentation actually consumed (drawLaserBeam subtracts it
+	// back in high-res, the low-res paths draw into the scrolled/warped buffer).
+	const bool renderHiRes = isHiRes() && width >= 640 && height >= 400;
+	const int16 nativeViewX = renderHiRes ? _hiResPresentationViewX : _viewX;
+	const int16 nativeViewY = renderHiRes ? _hiResPresentationViewY : _viewY;
+
 	for (int i = 0; i < 2; i++) {
 		if (_spaceShots[i].counter <= 0)
 			continue;
@@ -3987,12 +4009,12 @@ void InsaneRebel2::renderSpaceLaserShots(byte *renderBitmap, int pitch, int widt
 		int16 pan = ((_spaceShots[i].targetX - 160) * (2 - _spaceShots[i].counter)) / 2;
 		pan = CLIP<int16>(pan, -127, 127);
 
-		int16 targetX = _spaceShots[i].targetX;
-		int16 targetY = _spaceShots[i].targetY;
-		int16 leftGunX = _spaceShots[i].leftGunX;
-		int16 leftGunY = _spaceShots[i].leftGunY;
-		int16 rightGunX = _spaceShots[i].rightGunX;
-		int16 rightGunY = _spaceShots[i].rightGunY;
+		int16 targetX = _spaceShots[i].targetX + nativeViewX;
+		int16 targetY = _spaceShots[i].targetY + nativeViewY;
+		int16 leftGunX = _spaceShots[i].leftGunX + nativeViewX;
+		int16 leftGunY = _spaceShots[i].leftGunY + nativeViewY;
+		int16 rightGunX = _spaceShots[i].rightGunX + nativeViewX;
+		int16 rightGunY = _spaceShots[i].rightGunY + nativeViewY;
 		int16 progress = maxDuration - _spaceShots[i].counter;
 
 		drawLaserBeam(renderBitmap, pitch, width, height,
