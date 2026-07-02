@@ -323,14 +323,9 @@ static bool parseDebugCommandArgs(int argc, const char **argv, CommandRecord &co
 
 	command.opcodeName = argv[1];
 	uint positionalArgIndex = 0;
-	bool sawChain = false;
 	for (int i = 2; i < argc; ++i) {
 		const Common::String token = argv[i];
 		if (token.equalsIgnoreCase("CHAIN")) {
-			if (sawChain) {
-				errorMessage = "CHAIN may only be specified once";
-				return false;
-			}
 			if (i + 1 >= argc) {
 				errorMessage = "CHAIN requires an action tag";
 				return false;
@@ -340,8 +335,7 @@ static bool parseDebugCommandArgs(int argc, const char **argv, CommandRecord &co
 				return false;
 			}
 			command.arg4 = argv[i + 1];
-			sawChain = true;
-			break;
+			return true;
 		}
 
 		// Positional args map directly onto the startup command fields, with arg4 also

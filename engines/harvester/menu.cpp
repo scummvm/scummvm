@@ -967,12 +967,17 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 		roomMenuItems);
 	int selectedItem = roomMenuItems.empty() ? -1 : 0;
 	bool needsRedraw = true;
-	bool shouldCloseMenu = false;
 	flow.resetCursorAnimationSequence();
 
-	auto activateSelectedItem = [&]() -> Common::Error {
+	struct RoomMenuActivationResult {
+		Common::Error error;
+		bool closeMenu;
+
+		RoomMenuActivationResult(Common::Error e, bool c) : error(e), closeMenu(c) {}
+	};
+	auto activateSelectedItem = [&]() -> RoomMenuActivationResult {
 		if (selectedItem < 0 || selectedItem >= (int)roomMenuItems.size())
-			return Common::kNoError;
+			return RoomMenuActivationResult(Common::kNoError, false);
 
 		const Common::String &item = roomMenuItems[selectedItem];
 		if (item.equalsIgnoreCase("NEW GAME")) {
@@ -983,70 +988,67 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 			Common::Error confirmError = runConfirmPrompt(
 				backdrop, palette, paletteBrightness, flow, config.newGamePrompt, confirmed);
 			if (confirmError.getCode() != Common::kNoError)
-				return confirmError;
+				return RoomMenuActivationResult(confirmError, false);
 			needsRedraw = true;
 			if (confirmed) {
 				flow.requestNewGameRestart();
-				shouldCloseMenu = true;
+				return RoomMenuActivationResult(Common::kNoError, true);
 			}
-			return Common::kNoError;
+			return RoomMenuActivationResult(Common::kNoError, false);
 		}
 
 		if (item.equalsIgnoreCase("LOAD GAME")) {
 			bool loadedGame = false;
 			Common::Error loadError = runLoadGameMenu(palette, paletteBrightness, flow, loadedGame);
 			if (loadError.getCode() != Common::kNoError)
-				return loadError;
+				return RoomMenuActivationResult(loadError, false);
 			needsRedraw = true;
-			if (loadedGame)
-				shouldCloseMenu = true;
-			return Common::kNoError;
+			return RoomMenuActivationResult(Common::kNoError, loadedGame);
 		}
 
 		if (item.equalsIgnoreCase("OPTIONS")) {
 			Common::Error optionsError = runOptionsMenu(backdrop, palette, paletteBrightness, flow);
 			if (optionsError.getCode() != Common::kNoError)
-				return optionsError;
+				return RoomMenuActivationResult(optionsError, false);
 			needsRedraw = true;
-			return Common::kNoError;
+			return RoomMenuActivationResult(Common::kNoError, false);
 		}
 
 		if (item.equalsIgnoreCase("HELP")) {
 			Common::Error helpError = runHelpScreen(palette, paletteBrightness, flow);
 			if (helpError.getCode() != Common::kNoError)
-				return helpError;
+				return RoomMenuActivationResult(helpError, false);
 			needsRedraw = true;
-			return Common::kNoError;
+			return RoomMenuActivationResult(Common::kNoError, false);
 		}
 
 		if (item.equalsIgnoreCase("SAVE GAME")) {
 			bool savedGame = false;
 			Common::Error saveError = runSaveGameMenu(palette, paletteBrightness, flow, savedGame);
 			if (saveError.getCode() != Common::kNoError)
-				return saveError;
+				return RoomMenuActivationResult(saveError, false);
 			if (savedGame) {
 				// Native exits the in-room ESC menu after a successful save and restores the room view.
 				Common::Error restoreError = restoreRoomBackdropAfterSave(
 					backdrop, palette, paletteBrightness, flow);
 				if (restoreError.getCode() != Common::kNoError)
-					return restoreError;
-				shouldCloseMenu = true;
-				return Common::kNoError;
+					return RoomMenuActivationResult(restoreError, false);
+				return RoomMenuActivationResult(Common::kNoError, true);
 			}
 			needsRedraw = true;
-			return Common::kNoError;
+			return RoomMenuActivationResult(Common::kNoError, false);
 		}
 
 		if (item.equalsIgnoreCase("QUIT GAME")) {
 			Common::Error quitError = runQuitGameConfirm(backdrop, palette, paletteBrightness, flow);
 			if (quitError.getCode() != Common::kNoError)
-				return quitError;
+				return RoomMenuActivationResult(quitError, false);
 			needsRedraw = true;
-			return Common::kNoError;
+			return RoomMenuActivationResult(Common::kNoError, false);
 		}
 
 		debug(1, "Harvester: room menu item '%s' selected but not implemented", item.c_str());
-		return Common::kNoError;
+		return RoomMenuActivationResult(Common::kNoError, false);
 	};
 
 	while (!_engine.shouldQuit()) {
@@ -1085,11 +1087,10 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 					needsRedraw = true;
 				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 						event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
-					shouldCloseMenu = false;
-					Common::Error activateError = activateSelectedItem();
-					if (activateError.getCode() != Common::kNoError)
-						return activateError;
-					if (shouldCloseMenu)
+					RoomMenuActivationResult activationResult = activateSelectedItem();
+					if (activationResult.error.getCode() != Common::kNoError)
+						return activationResult.error;
+					if (activationResult.closeMenu)
 						return Common::kNoError;
 				}
 				break;
@@ -1101,11 +1102,10 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 				if (selectedItem == -1)
 					break;
 
-				shouldCloseMenu = false;
-				Common::Error activateError = activateSelectedItem();
-				if (activateError.getCode() != Common::kNoError)
-					return activateError;
-				if (shouldCloseMenu)
+				RoomMenuActivationResult activationResult = activateSelectedItem();
+				if (activationResult.error.getCode() != Common::kNoError)
+					return activationResult.error;
+				if (activationResult.closeMenu)
 					return Common::kNoError;
 				break;
 			}

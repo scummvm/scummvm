@@ -2371,19 +2371,19 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		auto isKillableMonster = [&](const MonsterRecord *monster) {
 			return monster && monster->active && monster->visible && monster->currentHitPoints > 0;
 		};
-		auto selectMonsterEntity = [&](MonsterRecord *monster) -> Entity * {
-			Entity *entity = monster ? findSceneRuntimeEntity(monster->monsterName) : nullptr;
+		auto selectMonsterEntity = [&](const MonsterRecord &monster) -> Entity * {
+			Entity *entity = findSceneRuntimeEntity(monster.monsterName);
 			return (entity && entity->isVisible()) ? entity : nullptr;
 		};
 		auto resolveKillTarget = [&]() -> MonsterRecord * {
 			if (playerState.attackTargetClassId == kRuntimeEntityClassMonster) {
 				MonsterRecord *monster = findRoomMonsterRecordByName(playerState.attackTargetName);
-				if (isKillableMonster(monster) && selectMonsterEntity(monster))
+				if (isKillableMonster(monster) && selectMonsterEntity(*monster))
 					return monster;
 			}
 
 			if (MonsterRecord *monster = findMonsterTargetAtPoint(_mousePos)) {
-				if (isKillableMonster(monster) && selectMonsterEntity(monster))
+				if (isKillableMonster(monster) && selectMonsterEntity(*monster))
 					return monster;
 			}
 
@@ -2391,7 +2391,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				for (uint i = 0; i < scene.state.roomMonsters.size() && i < monsterCombatStates.size(); ++i) {
 					MonsterRecord &monster = scene.state.roomMonsters[i];
 					const RoomMonsterCombatState &combatState = monsterCombatStates[i];
-					if (!combatState.attackActive || !isKillableMonster(&monster) || !selectMonsterEntity(&monster))
+					if (!combatState.attackActive || !isKillableMonster(&monster) || !selectMonsterEntity(monster))
 						continue;
 					if (!combatState.attackTargetName.empty() &&
 							playerState.entity->getName().equalsIgnoreCase(combatState.attackTargetName)) {
@@ -2411,7 +2411,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				if (!isKillableMonster(&monster))
 					continue;
 
-				Entity *entity = selectMonsterEntity(&monster);
+				Entity *entity = selectMonsterEntity(monster);
 				if (!entity)
 					continue;
 
@@ -2429,7 +2429,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		};
 
 		MonsterRecord *monster = resolveKillTarget();
-		Entity *monsterEntity = selectMonsterEntity(monster);
+		Entity *monsterEntity = monster ? selectMonsterEntity(*monster) : nullptr;
 		if (!monster || !monsterEntity) {
 			debugC(1, kDebugCombat,
 				"Harvester: debug combat kill skipped reason='no active monster' cursor=(%d,%d)",
@@ -2773,7 +2773,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		if (playerState.attackTargetClassId == kRuntimeEntityClassMonster)
 			monster = findRoomMonsterRecordByName(playerState.attackTargetName);
 		Entity *monsterEntity = monster ? findSceneRuntimeEntity(monster->monsterName) : nullptr;
-		if (!monster || !monsterEntity || !playerAttackCanReachTarget(monsterEntity, monster ? monster->engageDistance : 0)) {
+		if (!monster || !monsterEntity || !playerAttackCanReachTarget(monsterEntity, monster->engageDistance)) {
 			if (!Player::isProjectileCombatLoadout(playerState.combatLoadout)) {
 				monster = findOverlappingMonsterTarget();
 			} else if (playerState.attackTargetClassId < 0) {
