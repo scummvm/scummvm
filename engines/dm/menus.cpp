@@ -668,7 +668,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			if (unusedObject == _vm->_thingNone)
 				break;
 
-			Junk *junkData = (Junk *)dungeon.getThingData(unusedObject);
+			Junk *junkData = dungeon.getJunk(unusedObject);
 			junkData->setType(kDMJunkTypeZokathra);
 			ChampionSlot slotIndex;
 			if (curChampion->_slots[kDMSlotReadyHand] == _vm->_thingNone)
@@ -823,7 +823,7 @@ Potion *MenuMan::getEmptyFlaskInHand(Champion *champ, Thing *potionThing) {
 		Thing curThing = champ->_slots[slotIndex];
 		if ((curThing != _vm->_thingNone) && (_vm->_objectMan->getIconIndex(curThing) == kDMIconIndicePotionEmptyFlask)) {
 			*potionThing = curThing;
-			return (Potion *)dungeon.getThingData(curThing);
+			return dungeon.getPotion(curThing);
 		}
 	}
 	return nullptr;
@@ -1083,7 +1083,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 
-	Weapon *weaponInHand = (Weapon *)dungeon.getThingData(curChampion->_slots[kDMSlotActionHand]);
+	Thing slotActionThing = curChampion->_slots[kDMSlotActionHand];
 
 	int16 nextMapX = dungeon._partyMapX;
 	int16 nextMapY = dungeon._partyMapY;
@@ -1177,6 +1177,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 			break;
 		}
 
+		Weapon *weaponInHand = dungeon.getWeapon(slotActionThing);
 		WeaponInfo *weaponInfoActionHand = &dungeon._weaponInfos[weaponInHand->getType()];
 		WeaponInfo *weaponInfoReadyHand = dungeon.getWeaponInfo(curChampion->_slots[kDMSlotReadyHand]);
 		int16 actionHandWeaponClass = weaponInfoActionHand->_class;
@@ -1327,14 +1328,14 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		break;
 	case kDMActionFreezeLife: {
 		int16 freezeTicks;
-		if (weaponInHand->getType() == (int)kDMJunkTypeMagicalBoxBlue) {
+		if (slotActionThing.getType() == kDMThingTypeJunk && dungeon.getJunk(slotActionThing)->getType() == kDMJunkTypeMagicalBoxBlue) {
 			freezeTicks = 30;
 			championMan.getObjectRemovedFromSlot(champIndex, kDMSlotActionHand);
-			weaponInHand->setNextThing(_vm->_thingNone);
-		} else if (weaponInHand->getType() == (int)kDMJunkTypeMagicalBoxGreen) {
+			dungeon.getJunk(slotActionThing)->setNextThing(_vm->_thingNone);
+		} else if (slotActionThing.getType() == kDMThingTypeJunk && dungeon.getJunk(slotActionThing)->getType() == kDMJunkTypeMagicalBoxGreen) {
 			freezeTicks = 125;
 			championMan.getObjectRemovedFromSlot(champIndex, kDMSlotActionHand);
-			weaponInHand->setNextThing(_vm->_thingNone);
+			dungeon.getJunk(slotActionThing)->setNextThing(_vm->_thingNone);
 		} else {
 			freezeTicks = 70;
 			decrementCharges(curChampion);
@@ -1396,23 +1397,25 @@ void MenuMan::setChampionDirectionToPartyDirection(Champion *champ) {
 
 void MenuMan::decrementCharges(Champion *champ) {
 	Thing slotActionThing = champ->_slots[kDMSlotActionHand];
-	Junk *slotActionData = (Junk *)_vm->_dungeonMan->getThingData(slotActionThing);
 	switch (slotActionThing.getType()) {
-	case kDMThingTypeWeapon:
-		if (((Weapon *)slotActionData)->getChargeCount()) {
-			((Weapon *)slotActionData)->setChargeCount(((Weapon *)slotActionData)->getChargeCount() - 1);
-		}
+	case kDMThingTypeWeapon: {
+		Weapon *w = _vm->_dungeonMan->getWeapon(slotActionThing);
+		if (w->getChargeCount())
+			w->setChargeCount(w->getChargeCount() - 1);
 		break;
-	case kDMThingTypeArmour:
-		if (((Armour *)slotActionData)->getChargeCount()) {
-			((Armour *)slotActionData)->setChargeCount(((Armour *)slotActionData)->getChargeCount() - 1);
-		}
+	}
+	case kDMThingTypeArmour: {
+		Armour *a = _vm->_dungeonMan->getArmour(slotActionThing);
+		if (a->getChargeCount())
+			a->setChargeCount(a->getChargeCount() - 1);
 		break;
-	case kDMThingTypeJunk:
-		if (slotActionData->getChargeCount()) {
-			slotActionData->setChargeCount(slotActionData->getChargeCount() - 1);
-		}
+	}
+	case kDMThingTypeJunk: {
+		Junk *j = _vm->_dungeonMan->getJunk(slotActionThing);
+		if (j->getChargeCount())
+			j->setChargeCount(j->getChargeCount() - 1);
 		break;
+	}
 	default:
 		break;
 	}
@@ -1546,7 +1549,7 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 		if ((_vm->_objectMan->getIconIndex(champ->_slots[kDMSlotActionHand]) == kDMIconIndiceWeaponVorpalBlade) || (actionIndex == kDMActionDisrupt)) {
 			setFlag(actionHitProbability, kDMActionMaskHitNonMaterialCreatures);
 		}
-		_actionDamage = _vm->_groupMan->getMeleeActionDamage(champ, champIndex, (Group *)dungeon.getThingData(_actionTargetGroupThing), _vm->ordinalToIndex(targetCreatureOrdinal), targetMapX, targetMapY, actionHitProbability, actionDamageFactor, skillIndex);
+		_actionDamage = _vm->_groupMan->getMeleeActionDamage(champ, champIndex, dungeon.getGroup(_actionTargetGroupThing), _vm->ordinalToIndex(targetCreatureOrdinal), targetMapX, targetMapY, actionHitProbability, actionDamageFactor, skillIndex);
 		return true;
 	}
 
@@ -1590,7 +1593,7 @@ bool MenuMan::isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, in
 	}
 
 	frightAmount += championMan.getSkillLevel(champIndex, kDMSkillInfluence);
-	Group *targetGroup = (Group *)dungeon.getThingData(_actionTargetGroupThing);
+	Group *targetGroup = dungeon.getGroup(_actionTargetGroupThing);
 	CreatureInfo *creatureInfo = &dungeon._creatureInfos[targetGroup->_type];
 	uint16 fearResistance = creatureInfo->getFearResistance();
 	if ((fearResistance > _vm->getRandomNumber(frightAmount)) || (fearResistance == kDMImmuneToFear)) {
@@ -1752,14 +1755,13 @@ void MenuMan::setActionList(ActionSet *actionSet) {
 int16 MenuMan::getActionObjectChargeCount() {
 	ChampionMan &championMan = *_vm->_championMan;
 	Thing slotActionThing = championMan._champions[_vm->ordinalToIndex(championMan._actingChampionOrdinal)]._slots[kDMSlotActionHand];
-	Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(slotActionThing);
 	switch (slotActionThing.getType()) {
 	case kDMThingTypeWeapon:
-		return ((Weapon *)junkData)->getChargeCount();
+		return _vm->_dungeonMan->getWeapon(slotActionThing)->getChargeCount();
 	case kDMThingTypeArmour:
-		return ((Armour *)junkData)->getChargeCount();
+		return _vm->_dungeonMan->getArmour(slotActionThing)->getChargeCount();
 	case kDMThingTypeJunk:
-		return junkData->getChargeCount();
+		return _vm->_dungeonMan->getJunk(slotActionThing)->getChargeCount();
 	default:
 		return 1;
 	}

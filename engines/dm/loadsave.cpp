@@ -387,9 +387,106 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 		file->writeUint16BE(_dungeonMan->_dungeonTextData[i]);
 
 	// save _g284_thingData
-	for (uint16 thingIndex = 0; thingIndex < 16; ++thingIndex)
-		for (uint16 i = 0; i < _dungeonMan->_thingDataWordCount[thingIndex] * _dungeonMan->_dungeonFileHeader._thingCounts[thingIndex]; ++i)
-			file->writeUint16BE(_dungeonMan->_thingData[thingIndex][i]);
+	for (uint16 thingIndex = 0; thingIndex < 16; ++thingIndex) {
+		uint16 count = _dungeonMan->_dungeonFileHeader._thingCounts[thingIndex];
+		for (uint16 i = 0; i < count; ++i) {
+			switch (thingIndex) {
+			case kDMThingTypeDoor: {
+				Door &door = _dungeonMan->_doors[i];
+				file->writeUint16BE(door._nextThing.toUint16());
+				file->writeUint16BE(door._attributes);
+				break;
+			}
+			case kDMThingTypeTeleporter: {
+				Teleporter &tele = _dungeonMan->_teleporters[i];
+				file->writeUint16BE(tele._nextThing.toUint16());
+				file->writeUint16BE(tele._attributes);
+				file->writeUint16BE(tele._destMapIndex);
+				break;
+			}
+			case kDMstringTypeText: {
+				TextString &text = _dungeonMan->_textStrings[i];
+				file->writeUint16BE(text._nextThing.toUint16());
+				file->writeUint16BE(text._textDataRef);
+				break;
+			}
+			case kDMThingTypeSensor: {
+				Sensor &sens = _dungeonMan->_sensors[i];
+				file->writeUint16BE(sens._nextThing.toUint16());
+				file->writeUint16BE(sens._datAndType);
+				file->writeUint16BE(sens._attributes);
+				file->writeUint16BE(sens._action);
+				break;
+			}
+			case kDMThingTypeGroup: {
+				Group &grp = _dungeonMan->_groups[i];
+				file->writeUint16BE(grp._nextThing.toUint16());
+				file->writeUint16BE(grp._slot.toUint16());
+				file->writeUint16BE((uint16)grp._type);
+				file->writeUint16BE(grp._cells);
+				file->writeUint16BE(grp._health[0]);
+				file->writeUint16BE(grp._health[1]);
+				file->writeUint16BE(grp._health[2]);
+				file->writeUint16BE(grp._health[3]);
+				file->writeUint16BE(grp._flags);
+				break;
+			}
+			case kDMThingTypeWeapon: {
+				Weapon &weap = _dungeonMan->_weapons[i];
+				file->writeUint16BE(weap._nextThing.toUint16());
+				file->writeUint16BE(weap._desc);
+				break;
+			}
+			case kDMThingTypeArmour: {
+				Armour &arm = _dungeonMan->_armours[i];
+				file->writeUint16BE(arm._nextThing.toUint16());
+				file->writeUint16BE(arm._attributes);
+				break;
+			}
+			case kDMThingTypeScroll: {
+				Scroll &scr = _dungeonMan->_scrolls[i];
+				file->writeUint16BE(scr._nextThing.toUint16());
+				file->writeUint16BE(scr._attributes);
+				break;
+			}
+			case kDMThingTypePotion: {
+				Potion &pot = _dungeonMan->_potions[i];
+				file->writeUint16BE(pot._nextThing.toUint16());
+				file->writeUint16BE(pot._attributes);
+				break;
+			}
+			case kDMThingTypeContainer: {
+				Container &cont = _dungeonMan->_containers[i];
+				file->writeUint16BE(cont._nextThing.toUint16());
+				file->writeUint16BE(cont._slot.toUint16());
+				file->writeUint16BE(cont._type);
+				file->writeUint16BE(0); // unused 4th word
+				break;
+			}
+			case kDMThingTypeJunk: {
+				Junk &jnk = _dungeonMan->_junks[i];
+				file->writeUint16BE(jnk._nextThing.toUint16());
+				file->writeUint16BE(jnk._attributes);
+				break;
+			}
+			case kDMThingTypeProjectile: {
+				Projectile &proj = _dungeonMan->_projectiles[i];
+				file->writeUint16BE(proj._nextThing.toUint16());
+				file->writeUint16BE(proj._slot.toUint16());
+				file->writeUint16BE(proj._kineticEnergy);
+				file->writeUint16BE(proj._attack);
+				file->writeUint16BE(proj._eventIndex);
+				break;
+			}
+			case kDMThingTypeExplosion: {
+				Explosion &expl = _dungeonMan->_explosions[i];
+				file->writeUint16BE(expl._nextThing.toUint16());
+				file->writeUint16BE(expl._attributes);
+				break;
+			}
+			}
+		}
+	}
 
 	// save _g276_dungeonRawMapData
 	for (uint32 i = 0; i < _dungeonMan->_dungeonFileHeader._rawMapDataSize; ++i)
