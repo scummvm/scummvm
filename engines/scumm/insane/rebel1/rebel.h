@@ -336,6 +336,8 @@ private:
 	int16 _inputAxisDeltaX;
 	int16 _avgInputX;
 	int16 _avgInputY;
+	int16 _op0BDigitalAxisX;   // parked D-pad/keyboard position for the 0x0B levels
+	int16 _op0BDigitalAxisY;
 	int16 _joystickAxisX;
 	int16 _joystickAxisY;
 	uint32 _lastJoystickAxisEventTime;

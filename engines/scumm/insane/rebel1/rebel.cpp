@@ -255,6 +255,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_inputAxisDeltaX = 0;
 	_avgInputX = 0;
 	_avgInputY = 0;
+	_op0BDigitalAxisX = 0;
+	_op0BDigitalAxisY = 0;
 	_joystickAxisX = 0;
 	_joystickAxisY = 0;
 	_lastJoystickAxisEventTime = 0;

@@ -200,12 +200,51 @@ inline bool hasLevel2AsteroidImpact(uint16 frameCounter, int16 perspectiveX, int
 	switch (frameCounter) {
 	case 0x0071:
 	case 0x0271:
-		return perspectiveX >= 0x28;
+	case 0x02DD:
+		return perspectiveX <= 0x28;
 	case 0x011E:
-		return perspectiveY >= 0x1F;
+		return perspectiveY <= 0x1F;
 	case 0x01E1:
 	case 0x02ED:
-		return perspectiveX > 0x17;
+		return perspectiveX >= 0x18;
+	default:
+		return false;
+	}
+}
+
+// Level 6 counterpart of hasLevel2AsteroidImpact (scheduled asteroid passes).
+inline bool hasLevel6AsteroidImpact(uint16 frameCounter, int16 perspectiveX, int16 perspectiveY) {
+	switch (frameCounter) {
+	case 0x006A:
+	case 0x011C:
+	case 0x0563:
+		return perspectiveX >= 0x18;
+	case 0x008B:
+	case 0x00FD:
+	case 0x016F:
+	case 0x0222:
+	case 0x02EB:
+		return perspectiveX <= 0x28;
+	case 0x0144:
+	case 0x04FF:
+		return perspectiveX <= 0x28 && perspectiveY <= 0x1F;
+	case 0x01DE:
+	case 0x0492:
+		return perspectiveX >= 8;
+	case 0x024A:
+		return perspectiveY <= 0x26;
+	case 0x0318:
+		return perspectiveY < 0x0F;
+	case 0x0397:
+		return perspectiveX >= 0x18 && perspectiveY <= 0x1F;
+	case 0x0405:
+		return perspectiveX > 0x28;
+	case 0x0462:
+		return perspectiveY <= 0x1F;
+	case 0x04F1:
+		return perspectiveY >= 0x0F && perspectiveX <= 0x28;
+	case 0x0617:
+		return perspectiveX > 0x28 || perspectiveX < 8 || perspectiveY > 0x1F || perspectiveY < 0x0F;
 	default:
 		return false;
 	}
@@ -254,6 +293,7 @@ inline bool isLevel6DamageLatch(uint16 code) {
 	case 0x0009:
 	case 0x000D:
 	case 0x000F:
+	case 0x001A:
 	case 0x0028:
 		return true;
 	default:
@@ -416,44 +456,6 @@ inline bool isLevel14Phase2DamageLatch(uint16 code) {
 	case 0x0010:
 	case 0x0012:
 		return true;
-	default:
-		return false;
-	}
-}
-
-inline bool hasLevel6PerspectiveHazard(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
-	switch (frame) {
-	case 0x006A:
-	case 0x00FD:
-	case 0x011C:
-	case 0x0563:
-		return perspectiveX < 0x18;
-	case 0x0144:
-		return perspectiveX < 0x29 && perspectiveY < 0x20;
-	case 0x016F:
-	case 0x0222:
-	case 0x02EB:
-		return perspectiveX < 0x29;
-	case 0x01DE:
-	case 0x0492:
-		return perspectiveX < 8;
-	case 0x024A:
-		return perspectiveY < 0x27;
-	case 0x0318:
-		return perspectiveY < 0x0F;
-	case 0x0397:
-		return perspectiveX < 0x18 && perspectiveY < 0x20;
-	case 0x0405:
-		return perspectiveX > 0x28;
-	case 0x0462:
-		return perspectiveY < 0x20;
-	case 0x04F1:
-		return perspectiveX < 0x29 && perspectiveY >= 0x0F;
-	case 0x04FF:
-		return perspectiveX < 0x29 && perspectiveY < 0x20;
-	case 0x0617:
-		return !(perspectiveX > 7 && perspectiveX < 0x29 &&
-			perspectiveY > 0x0E && perspectiveY < 0x20);
 	default:
 		return false;
 	}
@@ -957,11 +959,23 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		(_vm->getActionState(kScummActionInsaneUp) ? 1 : 0) -
 		(_vm->getActionState(kScummActionInsaneDown) ? 1 : 0);
 
+	const bool op0BDigitalPosition = (effectiveOpcode == 0x0B);
+
 	if (joyX != 0 || joyY != 0) {
 		_activeInputSource = kInputSourceJoystickDigital;
 
 		if (usedJoystick)
 			*usedJoystick = true;
+
+		if (op0BDigitalPosition) {
+			// The D-pad moves a persistent position (the original steers with an absolute device), so parked edge dodges stay reachable.
+			const int stepY = (_optControlsYFlip ? -joyY : joyY) * kRA1ControlPadAxisStep;
+			_op0BDigitalAxisX = CLIP<int16>(_op0BDigitalAxisX + joyX * kRA1ControlPadAxisStep, -0xA0, 0xA0);
+			_op0BDigitalAxisY = CLIP<int16>(_op0BDigitalAxisY + stepY, -kRA1Op0BVerticalAxisMax, kRA1Op0BVerticalAxisMax);
+			inputX = _op0BDigitalAxisX;
+			inputY = _op0BDigitalAxisY;
+			return;
+		}
 
 		inputX = joyX * kRA1ControlPadAxisStep;
 		inputY = joyY * kRA1ControlPadAxisStep;
@@ -996,11 +1010,13 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJ
 		if (usedJoystick)
 			*usedJoystick = true;
 
-		inputX = 0;
-		inputY = 0;
-
-		if (_optControlsYFlip)
-			inputY = -inputY;
+		if (op0BDigitalPosition) {
+			inputX = _op0BDigitalAxisX;
+			inputY = _op0BDigitalAxisY;
+		} else {
+			inputX = 0;
+			inputY = 0;
+		}
 
 		return;
 	}
@@ -1477,7 +1493,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 			_damageFlags |= 0x80;
 	}
 
-	if (_currentLevel == 5 && hasLevel6PerspectiveHazard((uint16)_frameCounter, _perspectiveX, _perspectiveY))
+	if (_currentLevel == 5 && hasLevel6AsteroidImpact((uint16)_gameCounter, _perspectiveX, _perspectiveY))
 		_damageFlags |= 0x20;
 	if (level15FinalPhase && hasLevel15FinalSweepDamage((uint16)_gameCounter, _perspectiveX))
 		_damageFlags |= 0x20;
@@ -1487,6 +1503,7 @@ void InsaneRebel1::updateGameOp0BPhysics() {
 		if (level2AsteroidHit)
 			_damageFlags |= 0x20;
 	}
+
 
 	bool level8WalkerPlayerHit = false;
 	if (_currentLevel == 7) {
@@ -1972,6 +1989,8 @@ void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
 	_liftSmooth = 0;
 	_posAccumX = 0;
 	_posAccumY = 0;
+	_op0BDigitalAxisX = 0;
+	_op0BDigitalAxisY = 0;
 	memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
 	memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
 	memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
