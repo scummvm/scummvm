@@ -65,6 +65,8 @@ public:
 public:
 	MADSV2Engine(OSystem *syst, const MADSGameDescription *gameDesc);
 	~MADSV2Engine() override;
+	void initializePath(const Common::FSNode &gamePath) override;
+
 	void readConfigFile();
 
 	Graphics::Screen *getScreen() const {

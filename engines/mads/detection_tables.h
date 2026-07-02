@@ -178,6 +178,21 @@ static const MADSGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Return of the Phantom CD Installer
+		{
+			"phantom",
+			"CD Installer",
+			AD_ENTRY2s("mpslabs.001", "6f891664a0b09a00e45eaa3ee9b24669", 633998, "mpslabs.idx", "156a856072f4eb66b1f9b337358225e9", 4048),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE | ADGF_CD | GF_INSTALLER,
+			GUIO3(GUIO_NOMIDI, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ORIGINAL_SAVELOAD)
+		},
+		GType_Phantom,
+		0
+	},
+
+	{
 		// Return of the Phantom DOS English Demo
 		{
 			"phantom",
@@ -226,12 +241,12 @@ static const MADSGameDescription gameDescriptions[] = {
 		// Dragonsphere Microprose DOS English
 		{
 			"dragonsphere",
-			0,
+			"CD Installer",
 			AD_ENTRY2s("mpslabs.001", "0d2143364be8e12b9807e111ffbe4fb5", 771220,
 				"mpslabs.idx", "db604f6e665516c59bebe60b404abe44", 4636),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			GF_INSTALLER | ADGF_UNSTABLE,
+			ADGF_UNSTABLE | ADGF_CD | GF_INSTALLER,
 			GUIO3(GUIO_NOMIDI, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 		GType_Dragonsphere,

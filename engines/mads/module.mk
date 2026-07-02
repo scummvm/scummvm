@@ -96,6 +96,7 @@ MODULE_OBJS += \
 	madsv2/core/mcga.o \
 	madsv2/core/mem.o \
 	madsv2/core/mouse.o \
+	madsv2/core/mps_archive.o \
 	madsv2/core/object.o \
 	madsv2/core/pack.o \
 	madsv2/core/pal.o \

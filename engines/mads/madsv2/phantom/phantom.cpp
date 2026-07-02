@@ -29,6 +29,7 @@
 #include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/core/mps_archive.h"
 #include "mads/madsv2/core/object.h"
 #include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/screen.h"
@@ -55,6 +56,13 @@ Common::Error PhantomEngine::run() {
 
 	// Create a debugger console
 	setDebugger(new Console());
+
+	// Set up to read mpslabs installer archive if needed
+	if (_gameDescription->desc.flags & GF_INSTALLER) {
+		MpsArchive *arch = MpsArchive::open();
+		if (arch)
+			SearchMan.add("mpslabs", arch);
+	}
 
 	// Set up sound manager
 	_soundManager = new PhantomSoundManager(_mixer, _soundFlag);

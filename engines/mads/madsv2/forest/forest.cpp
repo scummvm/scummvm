@@ -30,6 +30,7 @@
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/matte.h"
+#include "mads/madsv2/core/mps_archive.h"
 #include "mads/madsv2/core/object.h"
 #include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/rail.h"
@@ -79,7 +80,7 @@ Common::Error ForestEngine::run() {
 
 	// Set up to read mpslabs installer archive if needed
 	if (_gameDescription->desc.flags & GF_INSTALLER) {
-		Common::Archive *arch = MpsInstaller::open("MPSLABS");
+		MpsArchive *arch = MpsArchive::open();
 		if (arch)
 			SearchMan.add("mpslabs", arch);
 	}
