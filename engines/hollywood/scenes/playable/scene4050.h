@@ -58,6 +58,7 @@ private:
 	void setRonResourceFrame(byte frameIndex);
 	void beginRonResourceSpeechLine(uint16 rowIndex, byte frameIndex);
 	void runRonResourceFrameSequence(byte firstFrame, byte lastFrame, byte soundFrame, byte soundId);
+	void runD09ReturnTransitionSequence();
 	void useLongRopeOnLedge();
 	void useSceneRope();
 	void applyPatchStateColorMap(byte patchState);
@@ -70,6 +71,7 @@ private:
 	TimedAnimationChannel _ronIdleChannel;
 	ResourceSpriteLayer _backgroundLayer;
 	ResourceSpriteLayer _ronLayer;
+	ResourceSpriteLayer _d09ReturnTransitionLayer;
 	bool _ronManualSequenceActive;
 };
 
