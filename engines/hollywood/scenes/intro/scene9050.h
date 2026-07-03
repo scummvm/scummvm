@@ -25,15 +25,15 @@
 #include "common/array.h"
 #include "common/random.h"
 
-#include "hollywood/graphics.h"
 #include "hollywood/music.h"
-#include "hollywood/resource.h"
+#include "hollywood/scenes/intro/intro_resource_set.h"
+#include "hollywood/scenes/intro/intro_scene.h"
 
 namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene9050 {
+class Scene9050 : public IntroSceneBase {
 public:
 	Scene9050(HollywoodEngine *vm);
 
@@ -52,16 +52,24 @@ private:
 	bool loadResourceI05Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
 	bool loadResourceI05ArenaChunk(uint archiveIndex, uint localChunkIndex);
 	bool loadResourceI08BlinkAssets();
+	bool loadResourceI07FinalAssets();
 
 	void runResourceI06AnimatedPresentation();
 	void initializeResourceI06AnimatedPresentation();
+	bool runResourceI06ScrollInterlude();
+	bool runResourceI06SpriteInterlude();
+	bool runResourceI06Interlude(bool runScriptedSpriteSequence);
+	void initializeResourceI06Interlude();
 	void copyResourceI06ScrolledBaseFrame();
 	void presentResourceI06AnimatedFrame();
 	void drawResourceI06AnimatedFrame(byte chunkIndex, byte frameIndex);
 	void advanceResourceI06Timers(uint32 millis);
+	void advanceResourceI06InterludeTimers(uint32 millis, bool runScriptedSpriteSequence);
 	void advanceResourceI06Scroll();
+	void advanceResourceI06InterludeScroll(bool runScriptedSpriteSequence);
 	void advanceResourceI06SecondarySprite();
 	void advanceResourceI06PrimarySprite();
+	void advanceResourceI06InterludePrimarySprite(bool runScriptedSpriteSequence);
 	void advanceResourceI06VerticalBob();
 	void advanceResourceI06PalettePulse();
 	void markResourceI06CompositeDirty();
@@ -77,46 +85,32 @@ private:
 	void restoreAndDrawResourceDescriptorFrame(byte localChunkIndex, byte descriptorCount, byte descriptorIndex, bool drawFrame);
 	bool runResourceI08BlinkSequence();
 	bool waitResourceI08BlinkLoop(uint32 millis);
+	bool runResourceI07FinalAnimation();
 	bool waitSceneCounterPast(uint threshold);
 
-	void revealSavedFramebufferBand(uint sweepOffset, byte bandWidth);
-	void clearSceneFramebufferBand(uint sweepOffset, byte bandWidth);
-	void presentFrame();
-
-	bool pollEvents();
-	bool delay(uint32 millis);
-	void stopAudio();
+	void stopAudio() override;
 
 	enum {
-		kFrameBufferSize = 0x78000,
-		kResourceChunkCount = 40,
 		kI05EntriesPerSegment = 6,
 		kI06RequiredChunkCount = 6,
 		kI08RequiredChunkCount = 3,
+		kI07RequiredChunkCount = 3,
 		kI06AnimatedFrameDescriptorCount = 0x1f,
 		kI05InterClipFrameDescriptorCount = 10,
 		kI08BlinkFrameDescriptorCount = 2,
+		kI07FinalFrameDescriptorCount = 0x15,
 		kI06InitialBaseScrollOffset = 0xc0,
 		kI06SequenceDoneFrame = 0x17f,
+		kI06InterludeStartFrame = 0x80,
+		kI06InterludeDoneFrame = 0x1ff,
 		kI06FrameCounterWrap = 0x27f
 	};
 
-	HollywoodEngine *_vm;
 	MusicPlayer _music;
 	Common::RandomSource _random;
-	ResourceChunkTable _i05ChunkTable;
-	ResourceChunkTable _i06ChunkTable;
-	ResourceChunkTable _i08ChunkTable;
-	uint32 _resourceChunkOffsets[kResourceChunkCount];
+	IntroResourceSet _resources;
 	Common::Array<byte> _paletteResource;
-	Common::Array<byte> _paletteCurrent;
-	Common::Array<byte> _resourceArena;
-	IndexedSurfaceBuffer _sceneFramebuffer;
-	IndexedSurfaceBuffer _savedFramebuffer;
 	IndexedSurfaceBuffer _clipBaseFramebuffer;
-	Graphics::ManagedSurface _screen;
-	Palette6Bit _displayPalette;
-	uint32 _resourceArenaCursor;
 	uint32 _i05ClipFrameAccumulator;
 	uint32 _i05InterClipAccumulator;
 	uint32 _i08BlinkAccumulator;
@@ -147,7 +141,6 @@ private:
 	bool _i06CompositeForceDirty;
 	bool _i06PaletteDirty;
 	bool _i06SequenceFinished;
-	bool _skipRequested;
 };
 
 } // End of namespace Hollywood

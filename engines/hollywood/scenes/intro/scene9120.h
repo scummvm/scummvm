@@ -25,15 +25,15 @@
 #include "common/array.h"
 #include "common/random.h"
 
-#include "hollywood/graphics.h"
 #include "hollywood/music.h"
-#include "hollywood/resource.h"
+#include "hollywood/scenes/intro/intro_resource_set.h"
+#include "hollywood/scenes/intro/intro_scene.h"
 
 namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene9120 {
+class Scene9120 : public IntroSceneBase {
 public:
 	Scene9120(HollywoodEngine *vm);
 
@@ -59,16 +59,14 @@ private:
 	void clearViewportCurtainBand(uint sweepOffset, byte bandWidth);
 	void copySavedRunToScene(int sourceY, int destinationY, int x, int width);
 	void clearSceneRun(int destinationY, int x, int width);
-	void presentFrame();
 
-	bool pollEvents();
-	bool delay(uint32 millis);
-	void stopAudio();
+	uint presentRowOffset() const override;
+	uint presentXOffset() const override;
+	void stopAudio() override;
 
 	enum {
 		kFrameBufferSize = 0x78000,
 		kScene9120FramebufferSize = 0xeb000,
-		kResourceChunkCount = 40,
 		kI12RequiredChunkCount = 10,
 		kScene9120InitialYOffset = 0x1cc,
 		kScene9120TimedOverlayTicks = 0x181,
@@ -81,21 +79,12 @@ private:
 		kScene9120SmallAnimDescriptorCount = 3
 	};
 
-	HollywoodEngine *_vm;
 	MusicPlayer *_music;
 	SoundBank0Player _soundBank0;
 	Common::RandomSource _random;
-	ResourceChunkTable _i12ChunkTable;
-	uint32 _resourceChunkOffsets[kResourceChunkCount];
+	IntroResourceSet _resources;
 	Common::Array<byte> _paletteResource;
-	Common::Array<byte> _paletteCurrent;
-	Common::Array<byte> _resourceArena;
-	IndexedSurfaceBuffer _sceneFramebuffer;
-	IndexedSurfaceBuffer _savedFramebuffer;
 	IndexedSurfaceBuffer _descriptorBackground;
-	Graphics::ManagedSurface _screen;
-	Palette6Bit _displayPalette;
-	uint32 _resourceArenaCursor;
 	uint32 _overlayAccumulator;
 	uint32 _scrollAccumulator;
 	uint32 _actorBobAccumulator;
@@ -108,7 +97,6 @@ private:
 	byte _smallAnimSequenceState;
 	byte _smallAnimFrame;
 	bool _viewportDirty;
-	bool _skipRequested;
 };
 
 } // End of namespace Hollywood
