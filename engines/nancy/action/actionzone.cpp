@@ -59,8 +59,9 @@ void ActionZone::readData(Common::SeekableReadStream &stream) {
 	case 0x13:
 		readSpecialEffect(stream);
 		break;
-	case 0x0b:
-		stream.skip(3);		// int16 + byte (plain, no peek)
+	case 0x0b:				// collision zone: event-flag id + on/off
+		tailId = stream.readSint16LE();
+		tailFlag = stream.readByte();
 		break;
 	case 0x0e:
 		stream.skip(2);		// int16
@@ -80,9 +81,10 @@ void ActionZone::readData(Common::SeekableReadStream &stream) {
 	case 2:
 		stream.skip(24);	// Rect + int32 + int16 + int16
 		break;
-	case 0x0c:
+	case 0x0c:				// trigger zone: special effect + target scene id + flag
 		readSpecialEffect(stream);
-		stream.skip(3);		// int16 + byte
+		tailId = stream.readSint16LE();
+		tailFlag = stream.readByte();
 		break;
 	case 0x15:
 		readSpecialEffect(stream);

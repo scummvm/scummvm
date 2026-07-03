@@ -63,6 +63,12 @@ struct ActionZone {
 	int32 specialEffect[5] = {};
 	byte specialEffectFlag = 0;
 
+	// int16 + byte trailer carried by the collision (0x0b) and trigger (0x0c)
+	// subtypes. For 0x0b it is an event-flag id + on/off; for 0x0c it is a target
+	// scene id + a flag. Left at their defaults for the other subtypes.
+	int16 tailId = 0;
+	byte tailFlag = 0;
+
 	// OverlayZone subtypes (0x0d / 0x16)
 	Common::String overlayName;
 	Common::Array<Common::Rect> overlaySrcRects;
