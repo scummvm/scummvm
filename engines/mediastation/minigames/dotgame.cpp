@@ -76,14 +76,14 @@ void DotGameActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType)
 ScriptValue DotGameActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
 	switch (methodId) {
-	case kDotGameResetMethod: {
+	case kMinigameResetMethod: {
 		ARGCOUNTCHECK(1);
 		int16 targetDot = static_cast<int16>(args[0].asFloat());
 		doReset(targetDot);
 		break;
 	}
 
-	case kDotGameShowMethod:
+	case kMinigameActivateMethod:
 		ARGCOUNTCHECK(0);
 		if (!_isVisible) {
 			_isVisible = true;
@@ -93,7 +93,7 @@ ScriptValue DotGameActor::callMethod(BuiltInMethod methodId, Common::Array<Scrip
 		}
 		break;
 
-	case kDotGameHideMethod:
+	case kMinigameDeactivateMethod:
 		ARGCOUNTCHECK(0);
 		if (_isVisible) {
 			_isVisible = false;
@@ -259,10 +259,10 @@ void DotGameActor::doHit() {
 
 	bool allDotsCompleted = (_totalDots - 1 == _currentDotIndex);
 	if (allDotsCompleted) {
-		callMethod(kDotGameHideMethod, emptyArgs);
+		callMethod(kMinigameDeactivateMethod, emptyArgs);
 		_currentDotIndex = 0;
 		_animationProgress = 100;
-		runScriptResponseIfExists(kDotGameCompleteEvent);
+		runScriptResponseIfExists(kMinigameSuccessEvent);
 	} else {
 		updateHelpers();
 		activateHelpers();
@@ -328,7 +328,7 @@ void DotGameActor::loadIsComplete() {
 	if (_isVisible) {
 		_isVisible = false;
 		Common::Array<ScriptValue> emptyArgs;
-		callMethod(kDotGameHideMethod, emptyArgs);
+		callMethod(kMinigameDeactivateMethod, emptyArgs);
 	}
 
 	SpatialEntity::loadIsComplete();

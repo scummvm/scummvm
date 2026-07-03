@@ -309,11 +309,18 @@ enum BuiltInMethod {
 	kStopLoadMethod = 0x168,
 	kIsRectInMemoryMethod = 0x16A,
 
-	// DOT GAME ACTOR METHODS.
-	kDotGameResetMethod = 0xE2,
-	kDotGameShowMethod = 0xE3,
-	kDotGameHideMethod = 0xE4,
+	// MINIGAME ACTOR METHODS.
+	kMinigameResetMethod = 0xE2,
+	kMinigameActivateMethod = 0xE3,
+	kMinigameDeactivateMethod = 0xE4,
 	kDotGameHitMethod = 0xE5,
+
+	// STALKING ACTOR METHODS.
+	kStalkingStartZazuLookingMethod = 0xDF,
+	kStalkingStopZazuLookingMethod = 0xE0,
+	kStalkingGetZazuLookDirectionMethod = 0xE1,
+	kStalkingEnableAudio = 0xE7,
+	kStalkingDisableAudio = 0xE8,
 };
 const char *builtInMethodToStr(BuiltInMethod method);
 
@@ -341,7 +348,9 @@ enum EventType {
 	kMovieAbortEvent = 0x15,
 	kMovieFailureEvent = 0x16,
 	kSpriteMovieEndEvent = 0x17,
-	kDotGameCompleteEvent = 0x18,
+	kMinigameSuccessEvent = 0x18,
+	kMinigameDefeatEvent = 0x19,
+	kMinigameCrouchedEvent = 0x1A,
 	kScreenExitEvent = 0x1B,
 	kPathStepEvent = 0x1C,
 	kSoundStoppedEvent = 0x1D,

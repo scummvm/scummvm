@@ -476,14 +476,24 @@ const char *builtInMethodToStr(BuiltInMethod method) {
 		return "StopLoad";
 	case kIsRectInMemoryMethod:
 		return "IsRectInMemory";
-	case kDotGameResetMethod:
-		return "DotGameReset";
-	case kDotGameShowMethod:
-		return "DotGameShow";
-	case kDotGameHideMethod:
-		return "DotGameHide";
+	case kMinigameResetMethod:
+		return "MinigameReset";
+	case kMinigameActivateMethod:
+		return "MinigameActivate";
+	case kMinigameDeactivateMethod:
+		return "MinigameDeactivate";
 	case kDotGameHitMethod:
 		return "DotGameHit";
+	case kStalkingStartZazuLookingMethod:
+		return "StalkingSetLookOn";
+	case kStalkingStopZazuLookingMethod:
+		return "StalkingSetLookOff";
+	case kStalkingGetZazuLookDirectionMethod:
+		return "StalkingGetLookDirection";
+	case kStalkingEnableAudio:
+		return "StalkingEnableAudio";
+	case kStalkingDisableAudio:
+		return "StalkingDisableAudio";
 	default:
 		return "UNKNOWN";
 	}
@@ -537,8 +547,12 @@ const char *eventTypeToStr(EventType type) {
 		return "MovieFailure";
 	case kSpriteMovieEndEvent:
 		return "SpriteMovieEnd";
-	case kDotGameCompleteEvent:
-		return "DotGameComplete";
+	case kMinigameSuccessEvent:
+		return "MinigameSuccess";
+	case kMinigameDefeatEvent:
+		return "MinigameDefeat";
+	case kMinigameCrouchedEvent:
+		return "MinigameCrouched";
 	case kScreenExitEvent:
 		return "ScreenExit";
 	case kPathStepEvent:

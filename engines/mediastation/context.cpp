@@ -44,6 +44,7 @@
 #include "mediastation/actors/font.h"
 #include "mediastation/actors/text.h"
 #include "mediastation/minigames/dotgame.h"
+#include "mediastation/minigames/stalkingzazu.h"
 
 namespace MediaStation {
 
@@ -133,6 +134,10 @@ void ImtGod::readCreateActorData(Chunk &chunk) {
 
 	case kActorTypeSprite:
 		actor = new SpriteMovieActor();
+		break;
+
+	case kActorTypeStalkingZazu:
+		actor = new StalkingZazuActor();
 		break;
 
 	case kActorTypeCanvas:

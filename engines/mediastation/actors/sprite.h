@@ -79,6 +79,10 @@ public:
 	virtual void onEvent(const ActorEvent &event) override;
 	virtual void timerEvent(const TimerEvent &event) override;
 
+	bool activateNextFrame();
+	bool activatePreviousFrame();
+	void setCurrentClip(uint clipId);
+
 private:
 	const uint DEFAULT_FORWARD_CLIP_ID = 0x4B0;
 	const uint DEFAULT_BACKWARD_CLIP_ID = 0x4B1;
@@ -96,10 +100,6 @@ private:
 
 	void play();
 	void stop();
-	void setCurrentClip(uint clipId);
-
-	bool activateNextFrame();
-	bool activatePreviousFrame();
 
 	void dirtyIfVisible();
 	void setCurrentFrameToInitial();

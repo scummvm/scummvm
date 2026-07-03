@@ -44,17 +44,17 @@ public:
 	virtual void timerEvent(const TimerEvent &event) override;
 	virtual void soundPlayStateChanged(SoundPlayState state, SoundStopReason why) override;
 
+	void start();
+	void stop();
+	void pause();
+	void resume(bool restart);
+
 private:
 	ImtStreamFeed *_streamFeed = nullptr;
 	bool _isLoadedFromChunk = false;
 	bool _discardAfterUse = false;
 	SoundPlayState _playState = kSoundPlayStateStopped;
 	AudioSequence _sequence;
-
-	void start();
-	void stop();
-	void pause();
-	void resume(bool restart);
 
 	void openStream();
 };

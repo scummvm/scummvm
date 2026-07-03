@@ -52,8 +52,8 @@ const char *actorTypeToStr(ActorType type) {
 		return "Cursor";
 	case kActorTypeSprite:
 		return "Sprite";
-	case kActorTypeLKZazu:
-		return "LKZazu";
+	case kActorTypeStalkingZazu:
+		return "StalkingZazu";
 	case kActorTypeDotGame:
 		return "DotGame";
 	case kActorTypeDocument:
@@ -557,7 +557,7 @@ void SpatialEntity::moveTo(int16 x, int16 y) {
 	debugC(3, kDebugGraphics, "[%s] %s: (%d, %d) -> (%d, %d)", debugName(), __func__,
 		_originalBoundingBox.origin().x, _originalBoundingBox.origin().y, x, y);
 
-	if (dest == _boundingBox.origin()) {
+	if (dest == _originalBoundingBox.origin()) {
 		// We aren't actually moving anywhere.
 		return;
 	}
@@ -583,7 +583,7 @@ void SpatialEntity::moveToCentered(int16 x, int16 y) {
 }
 
 void SpatialEntity::setBounds(const Common::Rect &bounds) {
-	if (_boundingBox == bounds) {
+	if (_originalBoundingBox == bounds) {
 		// We aren't actually moving anywhere.
 		return;
 	}

@@ -42,6 +42,7 @@ const DebugChannelDef MediaStationMetaEngineDetection::debugFlagList[] = {
 	{ MediaStation::kDebugEvents, "events", "Events processing" },
 	{ MediaStation::kDebugLoading, "loading", "File loading" },
 	{ MediaStation::kDebugSpriteMovie, "spritemovie", "Sprite movie debug level" },
+	{ MediaStation::kDebugMinigame, "minigame", "Hardcoded minigames" },
 	DEBUG_CHANNEL_END
 };
 

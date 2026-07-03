@@ -47,7 +47,7 @@ enum ActorType {
 	kActorTypeImage = 0x0007, // IMG
 	kActorTypeHotspot = 0x000b, // HSP
 	kActorTypeSprite = 0x000e, // SPR
-	kActorTypeLKZazu = 0x000f,
+	kActorTypeStalkingZazu = 0x000f,
 	kActorTypeDotGame = 0x0010,
 	kActorTypeDocument = 0x0011,
 	kActorTypeDiskImage = 0x001d,
@@ -154,6 +154,19 @@ enum ActorHeaderSectionType {
 	kActorHeaderDotGameSpeed = 0x0517,
 	kActorHeaderDotGameLineThickness = 0x0518,
 	kActorHeaderDotGameColor = 0x0519,
+
+	// STALKING ZAZU FIELDS.
+	kActorHeaderStalkingZazuSpriteId = 0x03ec,
+	kActorHeaderStalkingZazuDirections = 0x03ed,
+	kActorHeaderStalkingZazuField = 0x03ee,
+	kActorHeaderStalkingZazuObstacleActorId = 0x03ef,
+	kActorHeaderStalkingZazuUnkX = 0x03f0,
+	kActorHeaderStalkingZazuUnkY = 0x03f1,
+	kActorHeaderStalkingZazuUnkSound1 = 0x03f2,
+	kActorHeaderStalkingZazuUnkSound2 = 0x03f3,
+	kActorHeaderStalkingZazuAudioEnabled = 0x03f4,
+	kActorHeaderStalkingZazuObstaclesToShow = 0x03f5,
+	kActorHeaderStalkingZazuUnkPoint = 0x03f6,
 };
 
 enum CylindricalWrapMode : int;
@@ -282,6 +295,8 @@ public:
 	virtual Common::Rect getBbox() const { return _boundingBox; }
 	int zIndex() const { return _zIndex; }
 	void moveTo(int16 x, int16 y);
+	void moveToCentered(int16 x, int16 y);
+	void setZIndex(int zIndex);
 
 	virtual void currentMousePosition(Common::Point &point);
 	virtual void invalidateMouse();
@@ -325,9 +340,7 @@ protected:
 	bool _hasTransparency = false;
 	StageActor *_parentStage = nullptr;
 
-	void moveToCentered(int16 x, int16 y);
 	void setBounds(const Common::Rect &bounds);
-	void setZIndex(int zIndex);
 	virtual void setMousePosition(int16 x, int16 y);
 
 	virtual void setDissolveFactor(double dissolveFactor);

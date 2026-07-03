@@ -40,6 +40,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	minigames/dotgame.o \
 	minigames/sophie.o \
+	minigames/stalkingzazu.o \
 	profile.o
 
 # This module can be built as a plugin
