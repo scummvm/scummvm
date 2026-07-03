@@ -241,14 +241,20 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 			CastMemberID scriptId;
 			bool immediate = false;
 			Common::String initializerParams;
-			// mouseUp events seem to check the frame script ID from the original mouseDown event
-			// In Director 5 and above, we always generate event for the actual sprite under the mouse
-			if (((event.event == kEventMouseUp) || (event.event == kEventRightMouseUp)) && _vm->getVersion() < 500) {
+			// Before D4, mouseUp goes to the mouseDown sprite; from D4 on it goes
+			// to the sprite under the mouse at release (see T_EVNT21 in D4-unit).
+			if (((event.event == kEventMouseUp) || (event.event == kEventRightMouseUp)) && _vm->getVersion() < 400) {
 				scriptId = _currentMouseDownSpriteScriptID;
 				immediate = _currentMouseDownSpriteImmediate;
 			} else {
 				if (!event.channelId)
 					return;
+
+				// clickOn must reflect the release sprite so drop-target scripts
+				// can identify the channel
+				if ((event.event == kEventMouseUp || event.event == kEventRightMouseUp) && event.channelId)
+					_lastClickedSpriteId = event.channelId;
+
 				Frame *currentFrame = _score->_currentFrame;
 				assert(currentFrame != nullptr);
 				Sprite *sprite = _score->getSpriteById(event.channelId);
