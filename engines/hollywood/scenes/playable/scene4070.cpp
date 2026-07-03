@@ -599,6 +599,8 @@ void Scene4070::runSlimmingTreatmentSequence() {
 	}
 	clearScriptLayer();
 	state.scene4070SlimmingTreatmentApplied = true;
+	if (state.scene4010PillboxPickupState == 0)
+		state.scene4010PillboxPickupState = 1;
 	_draculaLayer.setFrame(kScene4070DraculaIdleFrame);
 }
 

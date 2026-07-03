@@ -47,6 +47,7 @@ private:
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
+	bool bridgeOpened() const;
 	void resetBackgroundLayer();
 	void advanceBackgroundLayer(uint32 delta);
 	void advanceBackgroundTick();
@@ -55,13 +56,17 @@ private:
 	void runExitToScene4010();
 	void takeItem46();
 	void runAlternateStateSequence();
+	void runBridgeOpeningOverlay();
 	void patchActionMovementModes();
 
 	ResourceSpriteLayer _backgroundLayer;
+	ResourceSpriteLayer _bridgeMainLayer;
+	ResourceSpriteLayer _bridgeShakeLayer;
 	TimedAnimationChannel _backgroundChannel;
 	byte _backgroundSequence;
 	byte _backgroundFrameInSequence;
 	byte _backgroundRepeatCounter;
+	bool _bridgeSequenceActive;
 	SoundBank0Player _ambientLoopSound;
 	byte _lastAmbientLoopCue;
 };

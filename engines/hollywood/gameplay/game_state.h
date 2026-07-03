@@ -150,7 +150,7 @@ struct GameplayState {
 		scene1050SuitcaseTaken = false;
 		scene1050TalkedToCloakroomAttendant = false;
 		scene1050JackLookedAt = false;
-		scene1050CloakroomSecretMentioned = false;
+		scene1050CharlieBogWerewolfClueHeard = false;
 		seenScene1060EntryLine = false;
 		scene1060FlyDoctorState = 0;
 		seenScene1060DoctorConversation = false;
@@ -197,7 +197,7 @@ struct GameplayState {
 		scene4010EntryPathSpeechState = 0;
 		scene4010ProgressiveExitSpeechState = 0;
 		scene4010Item3APickupState = 0;
-		scene4010Item3BPickupState = 0;
+		scene4010PillboxPickupState = 0;
 		scene4010DestinationUnlocked = false;
 		seenScene4020FallReactionLine = false;
 		scene4020GateUnlocked = false;
@@ -768,7 +768,7 @@ struct GameplayState {
 	bool scene1050SuitcaseTaken;
 	bool scene1050TalkedToCloakroomAttendant;
 	bool scene1050JackLookedAt;
-	bool scene1050CloakroomSecretMentioned;
+	bool scene1050CharlieBogWerewolfClueHeard;
 	bool seenScene1060EntryLine;
 	byte scene1060FlyDoctorState;
 	bool seenScene1060DoctorConversation;
@@ -815,7 +815,7 @@ struct GameplayState {
 	byte scene4010EntryPathSpeechState;
 	byte scene4010ProgressiveExitSpeechState;
 	byte scene4010Item3APickupState;
-	byte scene4010Item3BPickupState;
+	byte scene4010PillboxPickupState;
 	bool scene4010DestinationUnlocked;
 	bool seenScene4020FallReactionLine;
 	bool scene4020GateUnlocked;
