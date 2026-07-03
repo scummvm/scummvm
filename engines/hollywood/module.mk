@@ -19,6 +19,8 @@ MODULE_OBJS = \
 	resource.o \
 	saveload.o \
 	scenes/chapter_intro_scene.o \
+	scenes/intro/intro_resource_set.o \
+	scenes/intro/intro_scene.o \
 	scenes/intro/scene1000.o \
 	scenes/intro/scene9000.o \
 	scenes/intro/scene9010.o \
