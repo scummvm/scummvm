@@ -108,6 +108,14 @@ Channel& Channel::operator=(const Channel &channel) {
 
 
 Channel::~Channel() {
+	// A digital video cast member can outlive this channel.
+	if (_sprite && _sprite->_cast && _sprite->_cast->_type == kCastDigitalVideo) {
+		DigitalVideoCastMember *video = (DigitalVideoCastMember *)_sprite->_cast;
+		if (video->_channel == this) {
+			video->setChannel(nullptr);
+		}
+	}
+
 	if (_widget) {
 		delete _widget;
 	}
