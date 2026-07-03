@@ -85,6 +85,11 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 		ser.syncAsUint16LE(numElements);
 	}
 
+	// Nancy 11 bumped the base ordering puzzle's element cap from 15 to 16
+	if (_puzzleType == kOrdering && g_nancy->getGameType() >= kGameTypeNancy11) {
+		maxNumElements = 16;
+	}
+
 	switch (_puzzleType) {
 	case kOrderItems :
 		ser.syncAsByte(_hasSecondState);
