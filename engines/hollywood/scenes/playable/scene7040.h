@@ -28,24 +28,24 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
+// Saved GameplayState fields read:
+// mainFlowStateId, reviewedFrankensteinNote, seenJosephGuestListGreeting,
+// officeStatueActionProgress, officeNotePickupState, openedOfficeClosetDoor,
+// currentInventoryOwnerIndex.
+// Saved GameplayState fields written:
+// mainFlowStateId, reviewedFrankensteinNote, seenJosephGuestListGreeting,
+// officeStatueActionProgress, frankensteinNoteOverlayMode,
+// officeNotePickupState, openedOfficeClosetDoor.
 class Scene7040 : public PlayableScene {
 public:
 	Scene7040(HollywoodEngine *vm);
 
 private:
-	const char *resourceArchiveName() const override;
-	uint sceneInitialRequiredChunkCount() const override;
-	uint sceneArenaFirstChunk() const override;
-	uint sceneArenaLastChunk() const override;
-	uint sceneStageIndex() const override;
-	const char *sceneDebugName() const override;
-	uint16 sceneViewportXOffset() const override;
 	int alternatePaletteResourceChunkIndex() const override;
 	bool isAlternatePaletteResourceActive() const override;
 	bool shouldConvertSavedFramebufferFF() const override;
 	bool shouldRunExitSideEffectsAfterLoop() const override;
 	void runExitSideEffectsAfterLoop() override;
-	bool isMainFlowStateInScene(uint16 stateId) const override;
 	bool hasCustomPreviewState() const override;
 	void initializeCustomPreviewState() override;
 	bool hasCustomComposite() const override;

@@ -85,8 +85,23 @@ const byte kScene7030Route6StepDeltas[] = {
 	5, 5, 5, 6, 2, 3, 4, 8, 10, 6, 3, 5
 };
 
+static PlayableSceneConfig scene7030Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = kScene7030ArchiveName;
+	config.initialRequiredChunkCount = kScene7030InitialRequiredChunkCount;
+	config.arenaFirstChunk = kScene7030ArenaFirstChunk;
+	config.arenaLastChunk = kScene7030ArenaLastChunk;
+	config.stageIndex = kScene7030StageIndex;
+	config.debugName = "Scene 7030";
+	config.viewportXOffset = kScene7030ViewportXOffset;
+	config.useActorDepthTest = true;
+	config.mainFlowFirstState = kScene7030FirstState;
+	config.mainFlowLastState = kScene7030LastState;
+	return config;
+}
+
 Scene7030::Scene7030(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene7030", 0x1fa, 0x142, 4, 0xfd, 0xfb),
+		PlayableScene(vm, scene7030Config(), "scene7030", 0x1fa, 0x142, 4, 0xfd, 0xfb),
 		_chunk5FrameIndex(1),
 		_chunk6IdleFrameA(0),
 		_chunk6IdleFrameB(4),
@@ -101,42 +116,6 @@ Scene7030::Scene7030(HollywoodEngine *vm) :
 		_chunk5TimerAccumulator(0),
 		_chunk6TimerAccumulator(0),
 		_chunk5FrameMillis(kScene7030Chunk5FrameMillis) {
-}
-
-const char *Scene7030::resourceArchiveName() const {
-	return kScene7030ArchiveName;
-}
-
-uint Scene7030::sceneInitialRequiredChunkCount() const {
-	return kScene7030InitialRequiredChunkCount;
-}
-
-uint Scene7030::sceneArenaFirstChunk() const {
-	return kScene7030ArenaFirstChunk;
-}
-
-uint Scene7030::sceneArenaLastChunk() const {
-	return kScene7030ArenaLastChunk;
-}
-
-uint Scene7030::sceneStageIndex() const {
-	return kScene7030StageIndex;
-}
-
-const char *Scene7030::sceneDebugName() const {
-	return "Scene 7030";
-}
-
-uint16 Scene7030::sceneViewportXOffset() const {
-	return kScene7030ViewportXOffset;
-}
-
-bool Scene7030::usesActorDepthTest() const {
-	return true;
-}
-
-bool Scene7030::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId >= kScene7030FirstState && stateId <= kScene7030LastState;
 }
 
 bool Scene7030::hasCustomPreviewState() const {

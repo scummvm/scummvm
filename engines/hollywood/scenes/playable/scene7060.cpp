@@ -91,46 +91,28 @@ const byte kScene7060ShortExitFrameMap[] = {
 	0, 9, 8, 7
 };
 
+static PlayableSceneConfig scene7060Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = "RESOURCE.G06";
+	config.initialRequiredChunkCount = kScene7060InitialRequiredChunkCount;
+	config.arenaFirstChunk = kScene7060ArenaFirstChunk;
+	config.arenaLastChunk = kScene7060ArenaLastChunk;
+	config.stageIndex = kScene7060StageIndex;
+	config.debugName = "Scene 7060";
+	config.viewportXOffset = kScene7060ViewportXOffset;
+	config.mainFlowFirstState = kScene7060FirstState;
+	config.mainFlowLastState = 0x1b9d;
+	return config;
+}
+
 Scene7060::Scene7060(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene7060", kScene7060EntryFromG04TargetX, kScene7060EntryFromG04TargetY,
+		PlayableScene(vm, scene7060Config(), "scene7060", kScene7060EntryFromG04TargetX, kScene7060EntryFromG04TargetY,
 			kScene7060EntryFromG04Facing, 0xfd, 0xfb),
 		_chunk8FrameIndex(3),
 		_chunk6RandomIdlePaused(false),
 		_colorMapItem8Promoted(false) {
 	_chunk6Animation.configure(kScene7060Chunk6FrameMillis, 1, 2, 3, 0x16, 0x0e, 0x31);
 	initializeChunk6FrameMap();
-}
-
-const char *Scene7060::resourceArchiveName() const {
-	return "RESOURCE.G06";
-}
-
-uint Scene7060::sceneInitialRequiredChunkCount() const {
-	return kScene7060InitialRequiredChunkCount;
-}
-
-uint Scene7060::sceneArenaFirstChunk() const {
-	return kScene7060ArenaFirstChunk;
-}
-
-uint Scene7060::sceneArenaLastChunk() const {
-	return kScene7060ArenaLastChunk;
-}
-
-uint Scene7060::sceneStageIndex() const {
-	return kScene7060StageIndex;
-}
-
-const char *Scene7060::sceneDebugName() const {
-	return "Scene 7060";
-}
-
-uint16 Scene7060::sceneViewportXOffset() const {
-	return kScene7060ViewportXOffset;
-}
-
-bool Scene7060::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId >= kScene7060FirstState && stateId <= 0x1b9d;
 }
 
 bool Scene7060::hasCustomPreviewState() const {

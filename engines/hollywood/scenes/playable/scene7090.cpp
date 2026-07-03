@@ -64,42 +64,24 @@ const byte kScene7090GatedActionFrameMap[] = {
 	12, 13, 14, 15, 16, 17, 18, 19, 20, 21
 };
 
+static PlayableSceneConfig scene7090Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = "RESOURCE.G09";
+	config.initialRequiredChunkCount = kScene7090InitialRequiredChunkCount;
+	config.arenaFirstChunk = kScene7090ArenaFirstChunk;
+	config.arenaLastChunk = kScene7090ArenaLastChunk;
+	config.stageIndex = kScene7090StageIndex;
+	config.debugName = "Scene 7090";
+	config.viewportXOffset = kScene7090ViewportXOffset;
+	config.mainFlowFirstState = kScene7090FirstState;
+	config.mainFlowLastState = kScene7090LastState;
+	return config;
+}
+
 Scene7090::Scene7090(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene7090", kScene7090EntryX, kScene7090EntryY,
+		PlayableScene(vm, scene7090Config(), "scene7090", kScene7090EntryX, kScene7090EntryY,
 			kScene7090EntryFacing, 0xfd, 0xfb),
 		_prePatchChunk7Visible(false) {
-}
-
-const char *Scene7090::resourceArchiveName() const {
-	return "RESOURCE.G09";
-}
-
-uint Scene7090::sceneInitialRequiredChunkCount() const {
-	return kScene7090InitialRequiredChunkCount;
-}
-
-uint Scene7090::sceneArenaFirstChunk() const {
-	return kScene7090ArenaFirstChunk;
-}
-
-uint Scene7090::sceneArenaLastChunk() const {
-	return kScene7090ArenaLastChunk;
-}
-
-uint Scene7090::sceneStageIndex() const {
-	return kScene7090StageIndex;
-}
-
-const char *Scene7090::sceneDebugName() const {
-	return "Scene 7090";
-}
-
-uint16 Scene7090::sceneViewportXOffset() const {
-	return kScene7090ViewportXOffset;
-}
-
-bool Scene7090::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId >= kScene7090FirstState && stateId <= kScene7090LastState;
 }
 
 bool Scene7090::hasCustomPreviewState() const {
