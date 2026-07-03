@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE8020_H
-#define HOLLYWOOD_SCENES_PLAYABLE_SCENE8020_H
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE2050_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE2050_H
 
 #include "hollywood/scenes/playable/playable_scene.h"
 
@@ -29,14 +29,18 @@ namespace Hollywood {
 class HollywoodEngine;
 
 // Saved GameplayState fields read:
-// seenScene8020EntryLine, scene8020ForegroundObjectState,
-// scene8020SecondaryObjectVisible.
+// mainFlowStateId, ronLampFueled, scene2050EntrySpeechState,
+// scene2050MuralPuzzleState, scene2050SealRevealed,
+// scene2050LabyrinthLampReady, egyptSealPuzzleProgress,
+// egyptLabyrinthPositionIndex.
 // Saved GameplayState fields written:
-// mainFlowStateId, activeActorPoseValid, seenScene8020EntryLine,
-// scene8020ForegroundObjectState, scene8020SecondaryObjectVisible.
-class Scene8020 : public PlayableScene {
+// mainFlowStateId, ronLampFueled, scene2050EntrySpeechState,
+// scene2050MuralPuzzleState, scene2050SealRevealed,
+// scene2050LabyrinthLampReady, egyptSealPuzzleProgress,
+// egyptLabyrinthPositionIndex.
+class Scene2050 : public PlayableScene {
 public:
-	Scene8020(HollywoodEngine *vm);
+	Scene2050(HollywoodEngine *vm);
 
 private:
 	bool hasCustomPreviewState() const override;
@@ -50,30 +54,42 @@ private:
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
-	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
-	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
 
-	void resetForegroundLayer();
-	void advanceForegroundLayer(uint32 delta);
-	bool isWalkableAt(int x, int y) const;
-	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
-	void runExitToScene8010();
-	void runPickupInventoryItem6cSequence();
-	void runPickupInventoryItem5dSequence();
-	void runRemoveInventoryItem6cSequence();
-	void runForegroundTransformationSequence();
-	void runForegroundFrameSequence(byte firstFrame, byte lastFrame);
+	void resetAmbientLayer();
+	void advanceAmbientLayer(uint32 delta);
+	void runEntryFromSphinxInterior();
+	void runEntryFromLabyrinthReturn();
+	void runGoToLabyrinth();
+	void runLongLabyrinthWalkClip();
+	void runLookLabyrinth();
+	void runMuralSubscreenAction();
+	void runLosaSealMuralAction();
+	void runMuralClipForward();
+	void runMuralClipBackward();
+	void runMuralPuzzleSubscreen();
+	void runSealDiscoverySequence();
+	void drawRawSceneChunk(uint chunkIndex);
+	bool initializeMuralTilePermutation(uint chunkIndex);
+	void setMuralTilePermutationSolved();
+	void drawMuralTileGrid(uint chunkIndex);
+	void drawMuralSelectionHighlight(byte tileId);
+	byte muralTileAtScreenPoint(int16 x, int16 y) const;
+	void handleMuralTileClick(byte tileId, bool &done);
+	bool isMuralPuzzleSolved() const;
+	uint muralTileMismatchScore(const byte *rawFrame, byte visibleTileId, byte sourceTileId) const;
+	void copyMuralTile(byte visibleTileId, byte sourceTileId, const byte *rawFrame, byte *destination);
+	void copyStageSmallRow(byte destinationRow, byte sourceRow);
 
-	ResourceSpriteLayer _foregroundLayer;
-	TimedAnimationChannel _foregroundChannel;
-	Common::Array<byte> _originalColorToItemMap;
-	byte _foregroundAnimationState;
-	byte _foregroundRepeatCount;
-	bool _foregroundSequenceLocked;
+	TimedAnimationChannel _ambientChannel;
+	ResourceSpriteLayer _ambientLayer;
+	byte _muralTilePermutation[49];
+	bool _muralPermutationInitialized;
+	byte _muralPermutationChunkIndex;
+	byte _muralSelectedTile;
 };
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE8020_H
+#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE2050_H

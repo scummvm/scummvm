@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE8020_H
-#define HOLLYWOOD_SCENES_PLAYABLE_SCENE8020_H
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE2070_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE2070_H
 
 #include "hollywood/scenes/playable/playable_scene.h"
 
@@ -29,14 +29,15 @@ namespace Hollywood {
 class HollywoodEngine;
 
 // Saved GameplayState fields read:
-// seenScene8020EntryLine, scene8020ForegroundObjectState,
-// scene8020SecondaryObjectVisible.
+// mainFlowStateId, egyptSealPuzzleProgress, scene2070EntryProgress,
+// scene2070SealExitPatchState, scene2070InnerPassagePatchState,
+// scene2070HiddenItemPatchState.
 // Saved GameplayState fields written:
-// mainFlowStateId, activeActorPoseValid, seenScene8020EntryLine,
-// scene8020ForegroundObjectState, scene8020SecondaryObjectVisible.
-class Scene8020 : public PlayableScene {
+// mainFlowStateId, egyptSealPuzzleProgress, scene2070EntryProgress,
+// scene2070SealExitPatchState, scene2070HiddenItemPatchState.
+class Scene2070 : public PlayableScene {
 public:
-	Scene8020(HollywoodEngine *vm);
+	Scene2070(HollywoodEngine *vm);
 
 private:
 	bool hasCustomPreviewState() const override;
@@ -53,27 +54,23 @@ private:
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
-	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
 
 	void resetForegroundLayer();
 	void advanceForegroundLayer(uint32 delta);
-	bool isWalkableAt(int x, int y) const;
-	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
-	void runExitToScene8010();
-	void runPickupInventoryItem6cSequence();
-	void runPickupInventoryItem5dSequence();
-	void runRemoveInventoryItem6cSequence();
-	void runForegroundTransformationSequence();
-	void runForegroundFrameSequence(byte firstFrame, byte lastFrame);
+	void runEntryFromLabyrinth();
+	void runEntryFromRightPassage();
+	void runEntryPathWithFinalFacing(int startX, int startY, byte startFacing,
+		int targetX, int targetY, byte finalFacing, byte finalCel);
+	void runSealMemoryEffect();
+	void runAnimatedInventoryStateChange();
+	void drawClipFrameDelta(byte chunkIndex, uint tableEntryCount, byte frameIndex);
+	void rebuildWalkableMask();
+	void setColorMapItem(byte sourceItem, byte destinationItem);
 
-	ResourceSpriteLayer _foregroundLayer;
 	TimedAnimationChannel _foregroundChannel;
-	Common::Array<byte> _originalColorToItemMap;
-	byte _foregroundAnimationState;
-	byte _foregroundRepeatCount;
-	bool _foregroundSequenceLocked;
+	ResourceSpriteLayer _foregroundLayer;
 };
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE8020_H
+#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE2070_H

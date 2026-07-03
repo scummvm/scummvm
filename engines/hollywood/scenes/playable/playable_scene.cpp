@@ -233,8 +233,10 @@ byte PlayableScene::savedFramebufferPixelAt(uint offset) const {
 }
 
 bool PlayableScene::play() {
-	if (!load())
+	if (!load()) {
+		warning("%s load failed before gameplay loop", sceneDebugName());
 		return false;
+	}
 
 	const bool resumeGameplayPose = hasSavedActiveActorPoseForCurrentState();
 	initializePreviewState();
@@ -591,39 +593,74 @@ bool PlayableScene::load() {
 	initializeInventoryOwnerState();
 	_vm->gameState().currentInventoryOwnerIndex = inventoryOwnerIndex();
 
-	if (!loadResource000RuntimeTables(_resource000OffsetTable, _resource000SizeTable) ||
-			!loadResource000ActorBank(_resource000OffsetTable, _resource000SizeTable))
-		return false;
-	if (shouldLoadInventoryActionTables() &&
-			!loadResource000InventoryActionTables(_resource000OffsetTable))
-		return false;
-	if (!_panelArt.load())
-		return false;
-
 	const char *archiveName = resourceArchiveName();
+	debugC(1, kDebugResources, "%s load begin: state=0x%04x archive=%s stage=%u actorBankEntry=0x%04x actorPaletteEntry=0x%04x",
+		sceneDebugName(), _vm->gameState().mainFlowStateId,
+		archiveName != nullptr ? archiveName : "<none>", sceneStageIndex(),
+		resource000ActorBankTableEntry(), resource000ActorPaletteTableEntry());
+
+	if (!loadResource000RuntimeTables(_resource000OffsetTable, _resource000SizeTable)) {
+		warning("%s load failed: RESOURCE.000 runtime tables", sceneDebugName());
+		return false;
+	}
+	if (!loadResource000ActorBank(_resource000OffsetTable, _resource000SizeTable)) {
+		warning("%s load failed: RESOURCE.000 actor bank entry 0x%04x", sceneDebugName(),
+			resource000ActorBankTableEntry());
+		return false;
+	}
+	if (shouldLoadInventoryActionTables() &&
+			!loadResource000InventoryActionTables(_resource000OffsetTable)) {
+		warning("%s load failed: RESOURCE.000 inventory action tables", sceneDebugName());
+		return false;
+	}
+	if (!_panelArt.load()) {
+		warning("%s load failed: bottom panel art", sceneDebugName());
+		return false;
+	}
+
 	if (!archiveName || !archiveName[0]) {
 		warning("%s has no resource archive configured", sceneDebugName());
 		return false;
 	}
 	if (!_resources.loadChunkTable(_vm->resources(), archiveName)) {
 		warning("Failed to read %s header", archiveName);
+		warning("%s load failed: %s chunk table", sceneDebugName(), archiveName);
 		return false;
 	}
 
-	if (!_resources.validateRequiredChunks(archiveName, sceneDebugName(), sceneInitialRequiredChunkCount()))
+	if (!_resources.validateRequiredChunks(archiveName, sceneDebugName(), sceneInitialRequiredChunkCount())) {
+		warning("%s load failed: %s required chunk validation", sceneDebugName(), archiveName);
 		return false;
+	}
 
-	if (!loadFixedChunk(0, _baseFramebuffer, kFrameBufferSize) ||
-			!loadFixedChunk(1, _paletteResource, kPaletteSize) ||
-			!loadVariableChunk(2, _fillRuns) ||
-			!loadVariableChunk(3, _paletteMask) ||
-			!loadVariableChunk(4, _metadata))
+	if (!loadFixedChunk(0, _baseFramebuffer, kFrameBufferSize)) {
+		warning("%s load failed: %s chunk 0 framebuffer", sceneDebugName(), archiveName);
 		return false;
+	}
+	if (!loadFixedChunk(1, _paletteResource, kPaletteSize)) {
+		warning("%s load failed: %s chunk 1 palette", sceneDebugName(), archiveName);
+		return false;
+	}
+	if (!loadVariableChunk(2, _fillRuns)) {
+		warning("%s load failed: %s chunk 2 fill runs", sceneDebugName(), archiveName);
+		return false;
+	}
+	if (!loadVariableChunk(3, _paletteMask)) {
+		warning("%s load failed: %s chunk 3 palette mask", sceneDebugName(), archiveName);
+		return false;
+	}
+	if (!loadVariableChunk(4, _metadata)) {
+		warning("%s load failed: %s chunk 4 metadata", sceneDebugName(), archiveName);
+		return false;
+	}
 
 	const int alternatePaletteChunkIndex = alternatePaletteResourceChunkIndex();
 	if (alternatePaletteChunkIndex >= 0 && isAlternatePaletteResourceActive()) {
-		if (!loadFixedChunk((uint)alternatePaletteChunkIndex, _paletteResource, kPaletteSize))
+		if (!loadFixedChunk((uint)alternatePaletteChunkIndex, _paletteResource, kPaletteSize)) {
+			warning("%s load failed: %s alternate palette chunk %d", sceneDebugName(),
+				archiveName, alternatePaletteChunkIndex);
 			return false;
+		}
 	}
 
 	_baseFramebufferOriginal.copyFrom(_baseFramebuffer);
@@ -633,10 +670,14 @@ bool PlayableScene::load() {
 		warning("%s chunk 3 is shorter than the scene palette mask table", resourceArchiveName());
 		return false;
 	}
-	if (shouldLoadActorDepthTables() && !initializeActorDepthTables())
+	if (shouldLoadActorDepthTables() && !initializeActorDepthTables()) {
+		warning("%s load failed: actor depth tables", sceneDebugName());
 		return false;
-	if (!initializeScenePathTables())
+	}
+	if (!initializeScenePathTables()) {
+		warning("%s load failed: path tables", sceneDebugName());
 		return false;
+	}
 
 	uint32 arenaSize = 0;
 	for (uint i = sceneArenaFirstChunk(); i <= sceneArenaLastChunk(); ++i) {
@@ -650,8 +691,10 @@ bool PlayableScene::load() {
 	for (uint i = sceneArenaFirstChunk(); i <= sceneArenaLastChunk(); ++i) {
 		if (!shouldLoadArenaChunk(i))
 			continue;
-		if (!loadArenaChunk(i))
+		if (!loadArenaChunk(i)) {
+			warning("%s load failed: %s arena chunk %u", sceneDebugName(), archiveName, i);
 			return false;
+		}
 	}
 
 	memset(framebufferPixels(_savedFramebuffer), 0, framebufferByteCount());
@@ -664,14 +707,22 @@ bool PlayableScene::load() {
 		}
 	}
 	memcpy(_paletteCurrent.data(), _paletteResource.data(), _paletteCurrent.size());
-	if (!loadResource000ActorPalette(_resource000OffsetTable) ||
-			!loadStage003SceneRows())
+	if (!loadResource000ActorPalette(_resource000OffsetTable)) {
+		warning("%s load failed: RESOURCE.000 actor palette entry 0x%04x", sceneDebugName(),
+			resource000ActorPaletteTableEntry());
 		return false;
+	}
+	if (!loadStage003SceneRows()) {
+		warning("%s load failed: RESOURCE.003 stage %u rows", sceneDebugName(), sceneStageIndex());
+		return false;
+	}
 	_panelArt.applyInteractiveObjectPalette(_paletteCurrent);
 	_surfaceState.rebuildPresentationPaletteRemapTable();
 
-	if (!_hotspots.load(_paletteMask, _metadata, _stage003SmallRows))
+	if (!_hotspots.load(_paletteMask, _metadata, _stage003SmallRows)) {
+		warning("%s load failed: hotspot table", sceneDebugName());
 		return false;
+	}
 
 	resetViewportFromScene();
 
@@ -712,7 +763,9 @@ bool PlayableScene::loadResource000ActorBank(const Common::Array<byte> &offsetTa
 	const uint segmentCount = resource000ActorBankSegmentCount();
 	if (tableEntry + 4 > offsetTable.size() ||
 			tableEntry + segmentCount * 4 > sizeTable.size()) {
-		warning("%s actor bank table entries are out of range", kResource000Name);
+		warning("%s %s actor bank table entries are out of range: tableEntry=0x%04x segments=%u offsetTableSize=%u sizeTableSize=%u",
+			sceneDebugName(), kResource000Name, tableEntry, segmentCount,
+			(uint)offsetTable.size(), (uint)sizeTable.size());
 		return false;
 	}
 
@@ -724,9 +777,13 @@ bool PlayableScene::loadResource000ActorBank(const Common::Array<byte> &offsetTa
 
 	const uint32 actorBankOffset = readUint32LE(offsetTable, tableEntry);
 	if (actorBankOffset > (uint32)file.size()) {
-		warning("%s actor bank offset is out of range", kResource000Name);
+		warning("%s %s actor bank offset is out of range: tableEntry=0x%04x offset=%u fileSize=%u",
+			sceneDebugName(), kResource000Name, tableEntry, actorBankOffset, (uint)file.size());
 		return false;
 	}
+
+	debugC(1, kDebugResources, "%s loading %s actor bank: tableEntry=0x%04x offset=%u segments=%u",
+		sceneDebugName(), kResource000Name, tableEntry, actorBankOffset, segmentCount);
 
 	file.seek(actorBankOffset);
 	memset(_activeActorRunStreams.data(), 0, _activeActorRunStreams.size());
@@ -734,24 +791,33 @@ bool PlayableScene::loadResource000ActorBank(const Common::Array<byte> &offsetTa
 
 	for (uint segment = 0; segment < segmentCount; ++segment) {
 		const uint32 segmentSize = readUint32LE(sizeTable, tableEntry + segment * 4);
+		const uint32 segmentFileOffset = (uint32)file.pos();
+		debugC(2, kDebugResources, "%s %s actor bank segment %u: fileOffset=%u size=%u",
+			sceneDebugName(), kResource000Name, segment, segmentFileOffset, segmentSize);
 		if (segment <= 5) {
 			if (segmentSize > kActiveActorFacingRunStride) {
-				warning("%s actor active run segment %u is too large", kResource000Name, segment);
+				warning("%s %s actor active run segment %u is too large: tableEntry=0x%04x fileOffset=%u size=%u limit=%u",
+					sceneDebugName(), kResource000Name, segment, tableEntry, segmentFileOffset,
+					segmentSize, (uint)kActiveActorFacingRunStride);
 				return false;
 			}
 			if (file.read(_activeActorRunStreams.data() + segment * kActiveActorFacingRunStride, segmentSize) != segmentSize) {
-				warning("Failed to read %s actor active run segment %u", kResource000Name, segment);
+				warning("%s failed to read %s actor active run segment %u: tableEntry=0x%04x fileOffset=%u size=%u",
+					sceneDebugName(), kResource000Name, segment, tableEntry, segmentFileOffset, segmentSize);
 				return false;
 			}
 		} else if (segment == 6) {
 			if (segmentSize % kActiveActorDescriptorSize != 0) {
-				warning("%s actor active descriptors have invalid size", kResource000Name);
+				warning("%s %s actor active descriptors have invalid size: tableEntry=0x%04x fileOffset=%u size=%u descriptorSize=%u",
+					sceneDebugName(), kResource000Name, tableEntry, segmentFileOffset,
+					segmentSize, (uint)kActiveActorDescriptorSize);
 				return false;
 			}
 			Common::Array<byte> descriptors;
 			descriptors.resize(segmentSize);
 			if (file.read(descriptors.data(), descriptors.size()) != descriptors.size()) {
-				warning("Failed to read %s actor active descriptors", kResource000Name);
+				warning("%s failed to read %s actor active descriptors: tableEntry=0x%04x fileOffset=%u size=%u",
+					sceneDebugName(), kResource000Name, tableEntry, segmentFileOffset, segmentSize);
 				return false;
 			}
 			const uint descriptorCount = MIN<uint>(_activeActorDescriptors.size(), descriptors.size() / kActiveActorDescriptorSize);
@@ -768,22 +834,28 @@ bool PlayableScene::loadResource000ActorBank(const Common::Array<byte> &offsetTa
 		} else if (segment <= 12) {
 			const uint facing = segment - 7;
 			if (segmentSize > kSecondaryActorFacingRunStride) {
-				warning("%s actor secondary run segment %u is too large", kResource000Name, facing);
+				warning("%s %s actor secondary run segment %u is too large: tableEntry=0x%04x fileOffset=%u size=%u limit=%u",
+					sceneDebugName(), kResource000Name, facing, tableEntry, segmentFileOffset,
+					segmentSize, (uint)kSecondaryActorFacingRunStride);
 				return false;
 			}
 			if (file.read(_secondaryActorRunStreams.data() + facing * kSecondaryActorFacingRunStride, segmentSize) != segmentSize) {
-				warning("Failed to read %s actor secondary run segment %u", kResource000Name, facing);
+				warning("%s failed to read %s actor secondary run segment %u: tableEntry=0x%04x fileOffset=%u size=%u",
+					sceneDebugName(), kResource000Name, facing, tableEntry, segmentFileOffset, segmentSize);
 				return false;
 			}
 		} else {
 			if (segmentSize % kSecondaryActorDescriptorSize != 0) {
-				warning("%s actor secondary descriptors have invalid size", kResource000Name);
+				warning("%s %s actor secondary descriptors have invalid size: tableEntry=0x%04x fileOffset=%u size=%u descriptorSize=%u",
+					sceneDebugName(), kResource000Name, tableEntry, segmentFileOffset,
+					segmentSize, (uint)kSecondaryActorDescriptorSize);
 				return false;
 			}
 			Common::Array<byte> descriptors;
 			descriptors.resize(segmentSize);
 			if (file.read(descriptors.data(), descriptors.size()) != descriptors.size()) {
-				warning("Failed to read %s actor secondary descriptors", kResource000Name);
+				warning("%s failed to read %s actor secondary descriptors: tableEntry=0x%04x fileOffset=%u size=%u",
+					sceneDebugName(), kResource000Name, tableEntry, segmentFileOffset, segmentSize);
 				return false;
 			}
 			const uint descriptorCount = MIN<uint>(_secondaryActorDescriptors.size(), descriptors.size() / kSecondaryActorDescriptorSize);

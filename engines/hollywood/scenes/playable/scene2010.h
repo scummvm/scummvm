@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE8020_H
-#define HOLLYWOOD_SCENES_PLAYABLE_SCENE8020_H
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE2010_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE2010_H
 
 #include "hollywood/scenes/playable/playable_scene.h"
 
@@ -29,14 +29,14 @@ namespace Hollywood {
 class HollywoodEngine;
 
 // Saved GameplayState fields read:
-// seenScene8020EntryLine, scene8020ForegroundObjectState,
-// scene8020SecondaryObjectVisible.
+// mainFlowStateId, scene2010EntryLineSeen, scene2010LongSequenceFirstSpeechSeen,
+// scene2010B02EntranceUsed, scene2010TravelReturnSpeechState, ronTapeRecorderState.
 // Saved GameplayState fields written:
-// mainFlowStateId, activeActorPoseValid, seenScene8020EntryLine,
-// scene8020ForegroundObjectState, scene8020SecondaryObjectVisible.
-class Scene8020 : public PlayableScene {
+// mainFlowStateId, scene2010EntryLineSeen, scene2010LongSequenceFirstSpeechSeen,
+// scene2010B02EntranceUsed, scene2010TravelReturnSpeechState, ronTapeRecorderState.
+class Scene2010 : public PlayableScene {
 public:
-	Scene8020(HollywoodEngine *vm);
+	Scene2010(HollywoodEngine *vm);
 
 private:
 	bool hasCustomPreviewState() const override;
@@ -47,33 +47,24 @@ private:
 		byte actorDrawOrderMode) override;
 	bool hasCustomEntrySequence() const override;
 	void runCustomEntrySequence() override;
-	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
-	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
+	bool customizeRouteSegment(byte currentRegion, byte nextRegion, const ActorPathBuildState &state,
+		const ScenePoint &boundary, int &requestedFacing, bool &restoredStepDeltas) override;
+	bool customizeRouteFinal(byte currentRegion, byte targetRegion, const ActorPathBuildState &state,
+		int targetX, int targetY, int &requestedFacing, bool &restoredStepDeltas) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
-	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
 
-	void resetForegroundLayer();
-	void advanceForegroundLayer(uint32 delta);
-	bool isWalkableAt(int x, int y) const;
-	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
-	void runExitToScene8010();
-	void runPickupInventoryItem6cSequence();
-	void runPickupInventoryItem5dSequence();
-	void runRemoveInventoryItem6cSequence();
-	void runForegroundTransformationSequence();
-	void runForegroundFrameSequence(byte firstFrame, byte lastFrame);
-
-	ResourceSpriteLayer _foregroundLayer;
-	TimedAnimationChannel _foregroundChannel;
-	Common::Array<byte> _originalColorToItemMap;
-	byte _foregroundAnimationState;
-	byte _foregroundRepeatCount;
-	bool _foregroundSequenceLocked;
+	void rebuildWalkableMask();
+	void copyStageSmallRow(byte sourceRow, byte destinationRow);
+	void copyStepDeltasFromB4(uint targetFirstOffset, uint targetLastOffset, uint sourceFirstOffset);
+	void runEntryFromMarket();
+	void runEntryFromB02();
+	void runPatchedEntrySequence();
+	void runLongSequenceToScene2100();
 };
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE8020_H
+#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE2010_H

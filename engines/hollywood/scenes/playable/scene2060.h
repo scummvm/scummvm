@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE8020_H
-#define HOLLYWOOD_SCENES_PLAYABLE_SCENE8020_H
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE2060_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE2060_H
 
 #include "hollywood/scenes/playable/playable_scene.h"
 
@@ -29,14 +29,12 @@ namespace Hollywood {
 class HollywoodEngine;
 
 // Saved GameplayState fields read:
-// seenScene8020EntryLine, scene8020ForegroundObjectState,
-// scene8020SecondaryObjectVisible.
+// mainFlowStateId, egyptLabyrinthPositionIndex, egyptSealPuzzleProgress.
 // Saved GameplayState fields written:
-// mainFlowStateId, activeActorPoseValid, seenScene8020EntryLine,
-// scene8020ForegroundObjectState, scene8020SecondaryObjectVisible.
-class Scene8020 : public PlayableScene {
+// mainFlowStateId, egyptLabyrinthPositionIndex.
+class Scene2060 : public PlayableScene {
 public:
-	Scene8020(HollywoodEngine *vm);
+	Scene2060(HollywoodEngine *vm);
 
 private:
 	bool hasCustomPreviewState() const override;
@@ -53,27 +51,33 @@ private:
 	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
-	void handleActionOverlayFrameHook(byte hookId, uint frame) override;
 
-	void resetForegroundLayer();
-	void advanceForegroundLayer(uint32 delta);
-	bool isWalkableAt(int x, int y) const;
-	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
-	void runExitToScene8010();
-	void runPickupInventoryItem6cSequence();
-	void runPickupInventoryItem5dSequence();
-	void runRemoveInventoryItem6cSequence();
-	void runForegroundTransformationSequence();
-	void runForegroundFrameSequence(byte firstFrame, byte lastFrame);
+	void installSceneActorBank();
+	void copyPassageTextRows();
+	void rebuildScenePaletteRemapTable();
+	void remapWallPresentationPalette();
+	byte remapScenePaletteColor(byte color, uint steps) const;
+	bool prepareGuideEffectForCurrentMazePosition();
+	void playGuideEffectIfPrepared();
+	void restoreGuideBackgroundRect();
+	void drawGuideLayer();
+	bool guideCenterForFrame(byte direction, byte frameIndex, int &centerX, int &centerY) const;
+	void rebuildWalkableMask();
+	void runEntryPathAndGuide(int startX, int startY, byte startFacing, int targetX, int targetY);
+	void runEntryPathWithInitialDrawOrder(int startX, int startY, byte startFacing, byte initialDrawOrder,
+		int targetX, int targetY);
+	void moveThroughPassage(int delta, uint16 nextState);
+	void transitionToCurrentMazeState();
 
-	ResourceSpriteLayer _foregroundLayer;
-	TimedAnimationChannel _foregroundChannel;
-	Common::Array<byte> _originalColorToItemMap;
-	byte _foregroundAnimationState;
-	byte _foregroundRepeatCount;
-	bool _foregroundSequenceLocked;
+	bool _sceneActorBankInstalled;
+	Common::Array<byte> _scenePaletteRemapTable;
+	bool _guideEffectPrepared;
+	bool _guideEffectActive;
+	byte _guideDirection;
+	byte _guideFrameIndex;
+	byte _guideFrameCount;
 };
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE8020_H
+#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE2060_H
