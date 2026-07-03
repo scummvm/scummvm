@@ -32,10 +32,6 @@
 #include "audio/fmopl.h"
 #include "audio/nfmopl.h"
 
-#ifdef ATARI
-#include <hwinfo.h>
-#endif
-
 #include <nfmoplshadowregs.h>
 
 #ifndef RELEASE_BUILD
@@ -135,11 +131,6 @@ namespace RealChip {
 OPL::OPL(Config::OplType type, NfmOPL::OplDevice deviceType) : _type(type), _deviceType(deviceType), _activeReg(0), _initialized(false), _useBuffer(NFM_ENABLE_BUFFERED_OUTPUT), _incapableDevice(false) {
 #if NFM_ENABLE_LOGS
 	debug("NfmOPL::RealChip create");
-	debug("Requesting hardware info");
-#endif
-
-#ifdef ATARI
-	Supexec(scOsUpdateHardwareInfo);
 #endif
 
 	// defaults
@@ -283,6 +274,7 @@ OPL::~OPL() {
 		_oplReset = nullptr;
 
 		(void)nfDestroyInterface(&_iface);
+		(void)nfDeinit();
 
 		_incapableDevice = false;
 		_useBuffer = false;
@@ -457,11 +449,6 @@ namespace EmulatedChip {
 OPL::OPL(Config::OplType type, enum NfmOPL::OplDevice deviceType): _type(type), _rate(0), _deviceType(deviceType), _activeReg(0), _initialized(false), _useBuffer(NFM_ENABLE_BUFFERED_OUTPUT), _incapableDevice(false) {
 #if NFM_ENABLE_LOGS
 	debug("NfmOPL::EmulatedChip create");
-	debug("Requesting hardware info");
-#endif
-
-#ifdef ATARI
-	Supexec(scOsUpdateHardwareInfo);
 #endif
 	
 	// defaults
@@ -537,7 +524,7 @@ OPL::~OPL() {
 		_generateAudioStream = nullptr;
 
 		(void)nfDestroyInterface(&_iface);
-
+		(void)nfDeinit();
 		_incapableDevice = false;
 		_useBuffer = false;
 		_initialized = false;

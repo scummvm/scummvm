@@ -61,7 +61,7 @@ class OPL : public ::OPL::OPL, public Audio::RealChip {
 private:
 	Config::OplType _type;
 	OplDevice _deviceType;
-	sOplInterface _iface;
+	sFmInterface _iface;
 	funcPtrOplWrite _oplWrite;
 	funcPtrOplWrite _oplEnqueWrite;
 	funcPtrOplFlush _oplFlush;
@@ -95,7 +95,7 @@ class OPL : public ::OPL::OPL, public Audio::EmulatedChip {
 private:
 	Config::OplType _type;
 	OplDevice _deviceType;
-	sOplInterface _iface;
+	sFmInterface _iface;
 	funcPtrOplWrite _oplWrite;
 	funcPtrOplWrite _oplEnqueWrite;
 	funcPtrOplFlush _oplFlush;
