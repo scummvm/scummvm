@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/file.h"
+#include "common/str.h"
 
 #include "hollywood/graphics.h"
 #include "hollywood/music.h"
@@ -40,6 +41,29 @@ public:
 	bool play();
 
 private:
+	struct PopupDescriptor {
+		uint16 textRecordId;
+		byte continuationCount;
+		uint16 voiceSampleId;
+	};
+
+	struct SpeechTextStyle {
+		uint16 centerX;
+		uint16 topY;
+		byte colorIndex;
+		byte red;
+		byte green;
+		byte blue;
+	};
+
+	struct SubtitleOverlay {
+		bool visible;
+		byte colorIndex;
+		uint16 centerX;
+		uint16 topY;
+		Common::Array<Common::String> lines;
+	};
+
 	bool playScene9010();
 	bool playScene9030();
 
@@ -55,7 +79,6 @@ private:
 	bool readI02StreamFrame(Common::File &file);
 	void setI02PaletteFrame(uint frameIndex);
 	void drawResourceBlockList(const Common::Array<byte> &blockList);
-	uint16 getScene9010SpeechSample(byte descriptorIndex) const;
 	byte nextTalkingFrameVariant();
 
 	void drawCharacterFrame(byte frameIndex);
@@ -66,6 +89,16 @@ private:
 	bool fadeInPalette(uint32 stepMillis);
 	bool fadeOutPalette(uint32 stepMillis);
 	void presentFrame(uint rowOffset = 0, uint xOffset = 0);
+	void beginSubtitle(const PopupDescriptor &popup, uint segmentIndex);
+	void clearSubtitle();
+	void drawSubtitleOverlay();
+	void wrapActorSpeechText(const Common::String &text, uint16 anchorSceneX, Common::Array<Common::String> &lines) const;
+	Common::String getStage003LargeTextRecord(uint16 recordId) const;
+	uint actorSpeechTextWidth(const Common::String &text) const;
+	void calculatePrimarySubtitleBounds(const Common::Array<Common::String> &lines,
+		const SpeechTextStyle &speechTextStyle, uint16 &centerX, uint16 &topY) const;
+	PopupDescriptor getStage003PopupDescriptor(byte descriptorIndex) const;
+	SpeechTextStyle getCurrentSpeechTextStyle() const;
 
 	void clearFinalSweepBand(uint rowOffset, uint sweepOffset, byte bandWidth);
 	void clearSceneFramebufferRun(int y, int x, int width);
@@ -83,8 +116,12 @@ private:
 		kSceneFramebufferSize = 0x100000,
 		kPaletteSize = 0x300,
 		kStage003DescriptorTableSize = 0x186a0,
+		kStage003SmallRowSize = 0x29,
+		kStage003LargeRowSize = 0x141,
+		kStage003LargeRowBaseIndex = 500,
 		kCharacterFrameDescriptorCount = 17,
-		kFrameDescriptorSize = 14
+		kFrameDescriptorSize = 14,
+		kOriginalSpeechLineHeight = 20
 	};
 
 	HollywoodEngine *_vm;
@@ -100,7 +137,10 @@ private:
 	IndexedSurfaceBuffer _sceneFramebuffer;
 	Graphics::ManagedSurface _screen;
 	Palette6Bit _displayPalette;
+	Common::Array<byte> _stage003DecodeKey;
 	Common::Array<byte> _stage003Descriptors;
+	Common::Array<byte> _stage003LargeRows;
+	SubtitleOverlay _subtitle;
 	bool _skipRequested;
 	bool _alternatePoseActive;
 	byte _characterFrameIndex;
