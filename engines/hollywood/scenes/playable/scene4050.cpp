@@ -36,8 +36,10 @@ const uint kScene4050ArenaLastChunk = 11;
 const uint kScene4050StageIndex = 405;
 const uint16 kScene4050FirstState = 0x0fd2;
 const uint16 kScene4050LastState = 0x0fdb;
+const uint16 kScene4050D09ReturnTransitionState = 0x0fd3;
 const uint16 kScene4040ReturnState = 0x0fc9;
 const uint16 kScene4060FirstState = 0x0fdc;
+const uint16 kScene4090ReturnState = 0x0ffb;
 const int kScene4050RonWorldX = 0x0173;
 const int kScene4050RonWorldY = 0x013a;
 const byte kScene4050RonFacing = 3;
@@ -55,6 +57,8 @@ const uint kScene4050RonDescriptorCount = 0x1d;
 const uint kScene4050PatchState1Chunk = 8;
 const uint kScene4050PatchState2Chunk = 9;
 const uint kScene4050ExitPatchChunk = 10;
+const uint kScene4050D09ReturnTransitionChunk = 11;
+const uint kScene4050D09ReturnTransitionDescriptorCount = 0x15;
 const uint kScene4050SceneObjectPaletteFirstColor = 0xb0;
 const uint kScene4050SceneObjectPaletteLastColor = 0xcf;
 const byte kScene4050LongRopeItem = 0x6b;
@@ -64,6 +68,12 @@ const byte kScene4050PatchStateWindowReached = 2;
 const byte kScene4050RonIdleBlinkFrame = 4;
 const byte kScene4050RonSpeechFrameCount = 4;
 const byte kScene4050TextColor = 0xfd;
+
+const byte kScene4050D09ReturnTransitionFrameMap[] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+	16, 17, 18, 19, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9,
+	8, 7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 1, 0, 1, 0
+};
 
 const byte kScene4050ActorPathStepDeltaTableSetB4[] = {
 	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
@@ -113,6 +123,7 @@ Scene4050::Scene4050(HollywoodEngine *vm) :
 		_ronIdleChannel(),
 		_backgroundLayer(),
 		_ronLayer(),
+		_d09ReturnTransitionLayer(),
 		_ronManualSequenceActive(false) {
 }
 
@@ -160,6 +171,11 @@ bool Scene4050::hasCustomEntrySequence() const {
 }
 
 void Scene4050::runCustomEntrySequence() {
+	if (_vm->gameState().mainFlowStateId == kScene4050D09ReturnTransitionState) {
+		runD09ReturnTransitionSequence();
+		return;
+	}
+
 	_activeActorWorldX = kScene4050RonWorldX;
 	_activeActorWorldY = kScene4050RonWorldY;
 	_activeActorFacing = kScene4050RonFacing;
@@ -279,6 +295,12 @@ void Scene4050::resetAnimationLayers() {
 	_ronLayer.configure(kScene4050RonChunk, kScene4050RonDescriptorCount, nullptr, 0);
 	_ronLayer.visible = true;
 	_ronLayer.setFrame(0);
+	_d09ReturnTransitionLayer.configure(kScene4050D09ReturnTransitionChunk,
+		kScene4050D09ReturnTransitionDescriptorCount,
+		kScene4050D09ReturnTransitionFrameMap,
+		ARRAYSIZE(kScene4050D09ReturnTransitionFrameMap));
+	_d09ReturnTransitionLayer.visible = false;
+	_d09ReturnTransitionLayer.setFrame(0);
 	_ronSpeechChannel.reset(0, kScene4050RonSpeechFrameMillis);
 	_ronIdleChannel.reset(0, kScene4050RonSpeechFrameMillis);
 	_ronManualSequenceActive = false;
@@ -299,6 +321,7 @@ void Scene4050::restoreSceneObjectPaletteRange() {
 
 void Scene4050::drawSceneLayers() {
 	drawResourceSpriteLayer(_backgroundLayer);
+	drawResourceSpriteLayer(_d09ReturnTransitionLayer);
 	drawResourceSpriteLayer(_ronLayer);
 }
 
@@ -392,6 +415,31 @@ void Scene4050::runRonResourceFrameSequence(byte firstFrame, byte lastFrame, byt
 			break;
 	}
 	_ronManualSequenceActive = false;
+}
+
+void Scene4050::runD09ReturnTransitionSequence() {
+	resetAnimationLayers();
+	_backgroundLayer.setFrame(0);
+	_ronLayer.visible = false;
+	_d09ReturnTransitionLayer.visible = true;
+	_d09ReturnTransitionLayer.setFrame(0);
+	drawPlayableComposite();
+	presentFrame();
+
+	GameplayState &state = _vm->gameState();
+	const byte lastFrame = state.scene4090AlternateAnimationSet == 0 ? 0x2e : 0x1a;
+	_soundBank0.playSampleLooping(0x30, 100);
+	for (byte frame = 0; frame <= lastFrame && frame < ARRAYSIZE(kScene4050D09ReturnTransitionFrameMap) &&
+			!Engine::shouldQuit(); ++frame) {
+		_d09ReturnTransitionLayer.setFrame(frame);
+		if (waitSceneMillis(kScene4050RonFrameMillis))
+			break;
+	}
+	_soundBank0.stop();
+
+	state.scene4090AlternateAnimationSet = 1;
+	state.mainFlowStateId = kScene4090ReturnState;
+	state.activeActorPoseValid = false;
 }
 
 void Scene4050::useLongRopeOnLedge() {

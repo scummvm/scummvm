@@ -268,6 +268,15 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.scene4080PassagePatchState);
 	s.syncAsByte(state.scene4080TextVariantState);
 	s.syncAsByte(state.scene4080Resource13PatchState);
+	syncStateBool(s, state.seenScene4090InitialGreeting);
+	s.syncAsByte(state.scene4090AlternateAnimationSet);
+	syncStateBool(s, state.seenScene4090Chunk8RevealDialogue);
+	s.syncAsByte(state.scene4090FinalCutsceneState);
+	syncStateBool(s, state.seenScene4090FinalCutsceneDialogue);
+	syncStateBool(s, state.seenScene4100EntryLine);
+	syncStateBool(s, state.scene4110Item46Taken);
+	syncStateBool(s, state.scene4110AlternateSceneState);
+	syncStateBool(s, state.scene4110PostAlternateFlag);
 	syncStateBool(s, state.seenScene5010EntryLine);
 	s.syncAsByte(state.scene5010MineTransportState);
 	syncStateBool(s, state.scene5010MineTransportReady);
@@ -475,6 +484,10 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene4080TextVariantState = 0;
 	if (state.scene4080Resource13PatchState > 1)
 		state.scene4080Resource13PatchState = 0;
+	if (state.scene4090AlternateAnimationSet > 1)
+		state.scene4090AlternateAnimationSet = 0;
+	if (state.scene4090FinalCutsceneState > 1)
+		state.scene4090FinalCutsceneState = 0;
 }
 
 } // End of namespace Hollywood
