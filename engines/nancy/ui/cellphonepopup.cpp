@@ -1251,16 +1251,25 @@ Common::Rect CellPhonePopup::directoryRowRect(uint visibleIndex) const {
 	const Common::Rect &ws = _uiclData->welcomeScreen.destRect;
 	const int pitch = rowPitch();
 
+	// The web / email lists render under the zoomed (keypad-hidden) chrome,
+	// where the LCD extends into the wider emailListContainer. Use that as
+	// the right bound so long entries aren't clipped to the narrow
+	// keypad-mode screen; the directory list keeps the small LCD.
+	const Common::Rect &lcd =
+		(isZoomedChromeState() && !_uiclData->emailListContainer.isEmpty())
+			? _uiclData->emailListContainer
+			: ws;
+
 	// Row text spans from just right of the arrow cursor to a margin
-	// inside the LCD's right edge (the -30 the original applies).
+	// inside the LCD's right edge.
 	int xLeftScreen, xRightScreen;
 	if (!cursor.isEmpty()) {
 		xLeftScreen  = cursor.right + 5;
-		xRightScreen = ws.right - 30;
+		xRightScreen = lcd.right - 30;
 	} else {
 		const Common::Rect &arrow = _uiclData->dirArrowSrc;
 		xLeftScreen  = ws.left + arrow.width() + 4;
-		xRightScreen = ws.right - 2;
+		xRightScreen = lcd.right - 2;
 	}
 
 	const int yTopScreen = rowTopScreen() + (int)visibleIndex * pitch;
