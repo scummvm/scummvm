@@ -30,9 +30,13 @@
 #include "kyra/graphics/screen_eob_segacd.h"
 
 #include "backends/keymapper/keymapper.h"
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/savefile.h"
 #include "graphics/scaler.h"
+#include "graphics/surface.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
 
 namespace Kyra {
 
@@ -643,6 +647,15 @@ void EoBCoreEngine::gui_drawCharacterStatsPage() {
 }
 
 void EoBCoreEngine::gui_drawCompass(bool force) {
+	// Non-original: with the mini-map HUD on, the map takes the compass' place
+	// (it is north-up with a party arrow, so it carries the same information).
+	// Every path that would repaint the compass repaints the map instead.
+	if (_automapHudOn && _configAutomap && _flags.platform != Common::kPlatformSegaCD) {
+		automapDrawMini();
+		_compassDirection = _currentDirection;
+		return;
+	}
+
 	if (_currentDirection == _compassDirection && !force)
 		return;
 
@@ -4970,6 +4983,940 @@ const uint8 GUI_EoB::_highlightColorTableAmiga[] = { 0x13, 0x0B, 0x12, 0x0A, 0x1
 const uint8 GUI_EoB::_highlightColorTablePC98[] = { 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x00 };
 
 const uint8 GUI_EoB::_highlightColorTableSegaCD[] = { 0x3D, 0x3D, 0x3D, 0x3E, 0x3E, 0x3E, 0x3F, 0x3F, 0x3F, 0x3E, 0x3E, 0x3E, 0x00 };
+
+// Automap (non-original): a north-up map of the 32x32 level grid (block = (y<<5)|x),
+// drawn over the 3D view and toggled with Tab.
+
+// Forget all collected automap data (new game, party transfer, before a load).
+void EoBCoreEngine::automapReset() {
+	memset(_automapVisited, 0, sizeof(_automapVisited));
+	memset(_automapSeen, 0, sizeof(_automapSeen));
+	_automapNotes.clear();
+	_automapIcons.clear();
+	_automapAutoInfo.clear();
+	_automapTeleLinks.clear();
+	_automapDoorBits.clear();
+	_automapSelectedBlock = 0xFFFF;
+	_automapHoverBlock = 0xFFFF;
+}
+
+void EoBCoreEngine::automapMarkSeenFromCurrent() {
+	// Mark the cells in the line of sight ahead (not side cells), up to the first wall.
+	const int dir = _currentDirection;
+	uint16 block = _currentBlock;
+	for (int depth = 1; depth <= 2; ++depth) {
+		// Passability via the neighbour's facing wall (walls[dir ^ 2]), as movement uses.
+		const uint16 nb = calcNewBlockPosition(block, dir);
+		if (!(_wllWallFlags[_levelBlockProperties[nb].walls[dir ^ 2]] & 1))
+			break;
+		block = nb;
+		automapMarkSeen(block);
+	}
+}
+
+static void automapFillTri(Graphics::Surface &s, int ax, int ay, int bx, int by, int cx, int cy, uint32 color);
+
+// Comma-separated names of the items currently on `block`. "" if none.
+Common::String EoBCoreEngine::automapLiveItems(uint16 block) const {
+	if (block >= 1024)
+		return Common::String();
+	Common::String out;
+	const uint16 head = _levelBlockProperties[block].drawObjects;
+	uint16 o = head;
+	int guard = 0;
+	while (o && guard++ < 64) {
+		const EoBItem *it = &_items[o];
+		const char *nm = _itemNames[it->nameUnid];
+		if (nm && *nm) {
+			if (!out.empty())
+				out += ", ";
+			out += nm;
+		}
+		o = it->next;
+		if (o == head) // the floor list is circular
+			break;
+	}
+	return out;
+}
+
+// On arrival, flag a teleporter pad. Stairs/destinations are learned in automapTagTransition.
+void EoBCoreEngine::automapCollectCellInfo(uint16 block) {
+	if (_currentLevel >= 20 || block >= 1024)
+		return;
+	const uint32 k = automapNoteKey(block);
+	if (_automapIcons.contains(k)) // already classified (e.g. as stairs)
+		return;
+	for (int d = 0; d < 4; ++d) {
+		if (_levelBlockProperties[block].walls[d] == _teleporterWallId) {
+			_automapIcons[k] = kAmTeleport;
+			if (!_automapAutoInfo.contains(k))
+				_automapAutoInfo[k] = "Teleporter";
+			break;
+		}
+	}
+}
+
+// On a script-driven level change, tag the cell we left with a stairs/teleport
+// glyph and a "to level N" note (deeper level = down).
+void EoBCoreEngine::automapTagTransition(int fromLevel, uint16 fromBlock, int toLevel) {
+	if (fromLevel < 0 || fromLevel >= 20 || fromBlock >= 1024)
+		return;
+	const uint32 k = ((uint32)fromLevel << 16) | fromBlock;
+	uint8 icon;
+	Common::String info;
+	if (toLevel > fromLevel) {
+		icon = kAmStairsDown;
+		info = Common::String::format("Down to level %d", toLevel);
+	} else if (toLevel < fromLevel) {
+		icon = kAmStairsUp;
+		info = Common::String::format("Up to level %d", toLevel);
+	} else {
+		icon = kAmTeleport;
+		info = Common::String::format("Teleport to level %d", toLevel);
+	}
+	_automapIcons[k] = icon;
+	_automapAutoInfo[k] = info;
+}
+
+// A script moved the party within the level: pair the source and destination pads
+// with a shared letter (learned only by actually using the teleporter).
+void EoBCoreEngine::automapLinkTeleport(uint16 fromBlock, uint16 toBlock) {
+	if (_currentLevel >= 20 || fromBlock >= 1024 || toBlock >= 1024 || fromBlock == toBlock)
+		return;
+	const uint32 kf = automapNoteKey(fromBlock);
+	const uint32 kt = automapNoteKey(toBlock);
+	int id = -1;
+	if (_automapTeleLinks.contains(kf))
+		id = _automapTeleLinks[kf];
+	else if (_automapTeleLinks.contains(kt))
+		id = _automapTeleLinks[kt];
+	if (id < 0) {
+		// First unused pair letter on this level.
+		for (Common::HashMap<uint32, uint8>::const_iterator it = _automapTeleLinks.begin(); it != _automapTeleLinks.end(); ++it) {
+			if ((int)(it->_key >> 16) == _currentLevel)
+				id = MAX<int>(id, it->_value);
+		}
+		if (++id > 25) // out of letters: keep the plain glyph
+			return;
+	}
+	_automapTeleLinks[kf] = _automapTeleLinks[kt] = (uint8)id;
+	if (!_automapIcons.contains(kf))
+		_automapIcons[kf] = kAmTeleport;
+	if (!_automapIcons.contains(kt))
+		_automapIcons[kt] = kAmTeleport;
+	const Common::String info = Common::String::format("Teleport %c", 'A' + id);
+	_automapAutoInfo[kf] = info;
+	_automapAutoInfo[kt] = info;
+}
+
+void EoBCoreEngine::automapDrawIcon(Graphics::Surface &surf, int sx, int sy, int cell, uint8 icon, uint32 color) const {
+	const int cx = sx + cell / 2;
+	const int cy = sy + cell / 2;
+	const int r = MAX(2, cell / 3);
+	switch (icon) {
+	case kAmStairsDown:
+		automapFillTri(surf, cx - r, cy - r, cx + r, cy - r, cx, cy + r, color);
+		break;
+	case kAmStairsUp:
+		automapFillTri(surf, cx - r, cy + r, cx + r, cy + r, cx, cy - r, color);
+		break;
+	case kAmTeleport:
+		surf.frameRect(Common::Rect(cx - r, cy - r, cx + r, cy + r), color);
+		surf.frameRect(Common::Rect(cx - r + 1, cy - r + 1, cx + r - 1, cy + r - 1), color);
+		break;
+	default:
+		break;
+	}
+}
+
+// Scaled text: render at native font size, then nearest-neighbour upscale.
+static void automapDrawBigString(Graphics::Surface &dst, const Graphics::Font *font,
+		const Common::String &text, int x, int y, int w, uint32 color, int scale,
+		Graphics::TextAlign align = Graphics::kTextAlignCenter) {
+	if (!font || text.empty() || scale < 1)
+		return;
+	const int tw = font->getStringWidth(text);
+	const int th = font->getFontHeight();
+	if (tw <= 0 || th <= 0)
+		return;
+
+	if (scale == 1) {
+		font->drawString(&dst, text, x, y, w, color, align);
+		return;
+	}
+
+	// The overlay may be 16- or 32-bit; index pixels by byte width.
+	const int bpp = dst.format.bytesPerPixel;
+	if (bpp != 2 && bpp != 4) { // unexpected depth: fall back to native size
+		font->drawString(&dst, text, x, y, w, color, align);
+		return;
+	}
+
+	// Render onto a zeroed scratch surface so inked pixels are distinguishable.
+	Graphics::Surface tmp;
+	tmp.create(tw, th, dst.format);
+	tmp.fillRect(Common::Rect(0, 0, tw, th), 0);
+	font->drawString(&tmp, text, 0, 0, tw, color, Graphics::kTextAlignLeft);
+
+	const int dw = tw * scale;
+	int dx = x + (w - dw) / 2; // center (default)
+	if (align == Graphics::kTextAlignLeft)
+		dx = x;
+	else if (align == Graphics::kTextAlignRight)
+		dx = x + w - dw;
+	if (dx < x)
+		dx = x;
+	for (int sy = 0; sy < th; ++sy) {
+		const byte *src = (const byte *)tmp.getBasePtr(0, sy);
+		for (int sx = 0; sx < tw; ++sx) {
+			const uint32 c = (bpp == 2) ? ((const uint16 *)src)[sx] : ((const uint32 *)src)[sx];
+			if (c == 0) // transparent background pixel
+				continue;
+			const int px = dx + sx * scale;
+			const int py = y + sy * scale;
+			dst.fillRect(Common::Rect(px, py, px + scale, py + scale), c);
+		}
+	}
+	tmp.free();
+}
+
+void EoBCoreEngine::automapToggle() {
+	_automapFullOpen = !_automapFullOpen;
+	if (_automapFullOpen) {
+		_automapSelectedBlock = _currentBlock;
+		_automapHoverBlock = 0xFFFF;
+		// inGUI=true => getMousePos() is in overlay coords, matching the drawn grid.
+		_system->showOverlay(true);
+	} else {
+		_system->hideOverlay();
+		_sceneUpdateRequired = true; // repaint the dungeon the overlay hid
+	}
+}
+
+// M: mini-map in the compass slot (the map is north-up with a party arrow, so it
+// covers the compass' job). The state is a config setting, so it survives restarts.
+void EoBCoreEngine::automapToggleHud() {
+	if (_flags.platform == Common::kPlatformSegaCD)
+		return; // the SegaCD play field is rendered through its own tile pipeline
+	_automapHudOn = !_automapHudOn;
+	ConfMan.setBool("automap_hud", _automapHudOn);
+	if (_automapHudOn) {
+		const int cp = _screen->setCurPage(0);
+		gui_drawCompass(true); // the compass hook draws the mini-map now
+		_screen->setCurPage(cp);
+	} else {
+		// Restore the play-field bitmap (and thus the compass) under the mini-map.
+		gui_drawPlayField(false);
+		gui_drawAllCharPortraitsWithStats();
+		_sceneUpdateRequired = true;
+	}
+	_screen->updateScreen();
+}
+
+// Solid triangle by scanlines (party arrow).
+static void automapFillTri(Graphics::Surface &s, int ax, int ay, int bx, int by, int cx, int cy, uint32 color) {
+	// Sort vertices by y.
+	if (ay > by) { SWAP(ax, bx); SWAP(ay, by); }
+	if (ay > cy) { SWAP(ax, cx); SWAP(ay, cy); }
+	if (by > cy) { SWAP(bx, cx); SWAP(by, cy); }
+	if (cy == ay)
+		return;
+
+	for (int y = ay; y <= cy; ++y) {
+		int xLong = ax + (cx - ax) * (y - ay) / (cy - ay);
+		int xShort = (y < by)
+			? (by == ay ? ax : ax + (bx - ax) * (y - ay) / (by - ay))
+			: (cy == by ? bx : bx + (cx - bx) * (y - by) / (cy - by));
+		int x0 = MIN(xLong, xShort);
+		int x1 = MAX(xLong, xShort);
+		s.hLine(x0, y, x1, color);
+	}
+}
+
+// Geometry shared by drawing and click hit-testing (so clicks hit the drawn cell).
+EoBCoreEngine::AutomapLayout EoBCoreEngine::automapLayout() const {
+	const int ow = _system->getOverlayWidth();
+	const int oh = _system->getOverlayHeight();
+	AutomapLayout l;
+
+	// Stone frame around the overlay, a side panel on the right, and a parchment map
+	// inset filling the rest; the 32x32 grid is centred with a footer strip below.
+	l.frame = CLIP<int>(oh / 36, 8, 28);
+	const int gap = MAX(4, l.frame / 2);
+	l.sideW = MAX(150, ow / 4);
+
+	const int inX = l.frame, inY = l.frame;
+	const int inW = ow - 2 * l.frame, inH = oh - 2 * l.frame;
+
+	l.mapX = inX;
+	l.mapY = inY;
+	l.mapW = inW - l.sideW - gap;
+	l.mapH = inH;
+	l.sideX = inX + l.mapW + gap;
+	l.sideY = inY;
+	l.sideH = inH;
+
+	const int mpad = MAX(8, l.mapW / 40);
+	const int footStrip = MAX(18, oh / 22);
+	const int availW = l.mapW - 2 * mpad;
+	const int availH = l.mapH - 2 * mpad - footStrip;
+	l.cell = MAX(2, MIN(availW / 32, availH / 32));
+	const int grid = l.cell * 32;
+	l.offX = l.mapX + (l.mapW - grid) / 2;
+	l.offY = l.mapY + mpad + (availH - grid) / 2;
+	l.footY = l.mapY + l.mapH - footStrip;
+
+	const int spad = MAX(6, l.sideW / 12);
+	l.plX = l.sideX + spad;
+	l.plY = l.sideY + spad;
+	l.plW = l.sideW - 2 * spad;
+	l.plH = MAX(30, oh / 8);
+	return l;
+}
+
+// Area name for the plaque, indexed by internal level number (EOB has no names in
+// its data). EOB2's numbering is offset (the forest is level 4); the names were
+// derived from each LEVELn.INF's wall-set/palette, not walkthrough play-order.
+Common::String EoBCoreEngine::automapLevelName() const {
+	static const char *const eob1[12] = {
+		"Upper Sewers", "Middle Sewers", "Lower Sewers",
+		"Dwarven Ruins I", "Dwarven Camp", "Dwarven Ruins III",
+		"Upper Drow", "Drow Outcasts", "Lower Drow",
+		"Mantis Hive", "Xanathar Sanctum", "Xanathar's Lair"
+	};
+	static const char *const eob2[16] = {
+		"Catacombs I", "Catacombs II", "Catacombs III", "Forest",
+		"Darkmoon Temple", "Temple Mezzanine", "Silver Tower I", "Silver Tower II",
+		"Silver Tower III", "Azure Tower I", "Azure Tower II", "Azure Tower III",
+		"Azure Tower IV", "Azure Tower V", "Crimson Tower I", "Crimson Tower II"
+	};
+	const int idx = _currentLevel - 1;
+	const char *name = nullptr;
+	if (_flags.gameID == GI_EOB1) {
+		if (idx >= 0 && idx < 12)
+			name = eob1[idx];
+	} else if (_flags.gameID == GI_EOB2) {
+		if (idx >= 0 && idx < 16)
+			name = eob2[idx];
+	}
+	if (name)
+		return Common::String(name);
+	return Common::String::format("Level %d", _currentLevel);
+}
+
+// Move the selection cursor (Shift+arrows), clamped to the grid. Like the mouse
+// path, the cursor only lands on discovered cells - otherwise the selection frame
+// would sit on empty parchment where N silently does nothing.
+void EoBCoreEngine::automapMoveSelection(int dx, int dy) {
+	const uint16 cur = (_automapSelectedBlock != 0xFFFF) ? _automapSelectedBlock : _currentBlock;
+	const int bx = CLIP<int>((cur & 0x1F) + dx, 0, 31);
+	const int by = CLIP<int>((cur >> 5) + dy, 0, 31);
+	const uint16 dest = (by << 5) | bx;
+	if (automapIsVisited(dest) || automapIsSeen(dest))
+		_automapSelectedBlock = dest;
+}
+
+// Discovered grid cell under the mouse, 0xFFFF when outside or still unexplored.
+uint16 EoBCoreEngine::automapBlockAtMouse() const {
+	const Common::Point p = _eventMan->getMousePos();
+	const AutomapLayout l = automapLayout();
+	if (p.x < l.offX || p.y < l.offY)
+		return 0xFFFF;
+	const int bx = (p.x - l.offX) / l.cell;
+	const int by = (p.y - l.offY) / l.cell;
+	if (bx >= 32 || by >= 32)
+		return 0xFFFF;
+	const uint16 block = (by << 5) | bx;
+	return (automapIsVisited(block) || automapIsSeen(block)) ? block : 0xFFFF;
+}
+
+// A click selects the cell (editing is a separate step, N), so the map can be browsed.
+void EoBCoreEngine::automapHandleClick() {
+	const uint16 block = automapBlockAtMouse();
+	if (block != 0xFFFF)
+		_automapSelectedBlock = block;
+}
+
+// Note editor for the selected cell. Disables the game keymap so letters arrive as
+// raw ASCII (as GUI_EoB::getTextInput does); Enter saves (empty deletes), Esc cancels.
+void EoBCoreEngine::automapEditNote() {
+	uint16 block = (_automapSelectedBlock != 0xFFFF) ? _automapSelectedBlock : _currentBlock;
+	if (!(automapIsVisited(block) || automapIsSeen(block)))
+		return;
+	_automapSelectedBlock = block;
+
+	Common::Keymap *km = _eventMan->getKeymapper()->getKeymap(kKeymapName);
+	km->setEnabled(false);
+
+	const uint32 key = automapNoteKey(block);
+	_automapEditBuffer = _automapNotes.contains(key) ? _automapNotes[key] : Common::String();
+	_automapEditing = true;
+
+	const uint kMaxLen = 40;
+	bool done = false, cancel = false;
+	bool redraw = true;
+	uint32 caretPhase = 0xFFFFFFFF;
+	while (!done && !shouldQuit()) {
+		// Redraw only after a keystroke or when the blinking caret flips phase.
+		const uint32 phase = (_system->getMillis() / 400) & 1;
+		if (redraw || phase != caretPhase) {
+			automapDraw();
+			caretPhase = phase;
+			redraw = false;
+		}
+		updateInput();
+		for (Common::List<KyraEngine_v1::Event>::const_iterator e = _eventList.begin(); e != _eventList.end(); ++e) {
+			if (e->event.type != Common::EVENT_KEYDOWN)
+				continue;
+			redraw = true;
+			const Common::KeyCode kc = e->event.kbd.keycode;
+			const uint16 asc = e->event.kbd.ascii;
+			if (kc == Common::KEYCODE_RETURN || kc == Common::KEYCODE_KP_ENTER)
+				done = true;
+			else if (kc == Common::KEYCODE_ESCAPE)
+				done = cancel = true;
+			else if (kc == Common::KEYCODE_BACKSPACE) {
+				if (!_automapEditBuffer.empty())
+					_automapEditBuffer.deleteLastChar();
+			} else if (asc >= 32 && asc < 127 && _automapEditBuffer.size() < kMaxLen) {
+				_automapEditBuffer += (char)asc;
+			}
+		}
+		_eventList.clear();
+		_system->delayMillis(12);
+	}
+
+	if (!cancel) {
+		_automapEditBuffer.trim();
+		if (_automapEditBuffer.empty())
+			_automapNotes.erase(key);
+		else
+			_automapNotes[key] = _automapEditBuffer;
+	}
+
+	_automapEditing = false;
+	_automapEditBuffer.clear();
+	km->setEnabled(true);
+}
+
+// Sparse two-tone speckle to fake stone/paper grain (overwrites pixels, no blend).
+static void automapNoise(Graphics::Surface &s, int x0, int y0, int w, int h, uint32 cA, uint32 cB, uint32 seed) {
+	if (w <= 0 || h <= 0 || x0 < 0 || y0 < 0 || x0 + w > s.w || y0 + h > s.h)
+		return;
+	const int bpp = s.format.bytesPerPixel;
+	if (bpp != 2 && bpp != 4)
+		return;
+	uint32 st = seed | 1u;
+	for (int y = 0; y < h; ++y) {
+		byte *row = (byte *)s.getBasePtr(x0, y0 + y);
+		for (int x = 0; x < w; ++x) {
+			st = st * 1664525u + 1013904223u;
+			const uint32 v = st >> 24; // 0..255
+			if (v < 26) {
+				const uint32 c = (v & 1u) ? cA : cB;
+				if (bpp == 2)
+					((uint16 *)row)[x] = (uint16)c;
+				else
+					((uint32 *)row)[x] = c;
+			}
+		}
+	}
+}
+
+static void automapBevel(Graphics::Surface &s, const Common::Rect &r, uint32 hi, uint32 lo) {
+	s.hLine(r.left, r.top, r.right - 1, hi);
+	s.vLine(r.left, r.top, r.bottom - 1, hi);
+	s.hLine(r.left, r.bottom - 1, r.right - 1, lo);
+	s.vLine(r.right - 1, r.top, r.bottom - 1, lo);
+}
+
+static void automapRivet(Graphics::Surface &s, int x, int y, int sz, uint32 dark, uint32 mid, uint32 hi) {
+	s.fillRect(Common::Rect(x - sz, y - sz, x + sz + 1, y + sz + 1), dark);
+	s.fillRect(Common::Rect(x - sz + 1, y - sz + 1, x + sz, y + sz), mid);
+	const int q = MAX(1, sz / 2);
+	s.fillRect(Common::Rect(x - sz + 1, y - sz + 1, x - sz + 1 + q, y - sz + 1 + q), hi);
+}
+
+static int automapFit(const Graphics::Font *f, const Common::String &str, int maxW, int maxSc) {
+	int sc = MAX(1, maxSc);
+	while (sc > 1 && f && f->getStringWidth(str) * sc > maxW)
+		--sc;
+	return sc;
+}
+
+void EoBCoreEngine::automapDraw() {
+	automapMarkVisited(_currentBlock);
+
+	const int ow = _system->getOverlayWidth();
+	const int oh = _system->getOverlayHeight();
+	const Graphics::PixelFormat fmt = _system->getOverlayFormat();
+	const AutomapLayout L = automapLayout();
+
+	// "Stone tablet" palette: opaque grey stone + aged parchment (names self-explain).
+	const uint32 cStone     = fmt.RGBToColor(0x54, 0x56, 0x5e);
+	const uint32 cStoneDark = fmt.RGBToColor(0x3c, 0x3e, 0x45);
+	const uint32 cStoneEdge = fmt.RGBToColor(0x23, 0x25, 0x2a);
+	const uint32 cStoneHi   = fmt.RGBToColor(0x6b, 0x6e, 0x78);
+	const uint32 cRivet     = fmt.RGBToColor(0xc2, 0xc5, 0xcd);
+	const uint32 cPaper     = fmt.RGBToColor(0xd6, 0xbf, 0x94);
+	const uint32 cPaperHi   = fmt.RGBToColor(0xe2, 0xcd, 0xa4);
+	const uint32 cPaperLo   = fmt.RGBToColor(0xc4, 0xab, 0x78);
+	const uint32 cPaperEdge = fmt.RGBToColor(0xa9, 0x8b, 0x56);
+	const uint32 cInk       = fmt.RGBToColor(0x3a, 0x2a, 0x18);
+	const uint32 cInkSoft   = fmt.RGBToColor(0x7a, 0x60, 0x38);
+	const uint32 cFloor     = fmt.RGBToColor(0xbb, 0x9c, 0x5e); // a touch darker than paper
+	const uint32 cFloorSeen = fmt.RGBToColor(0xc7, 0xb1, 0x80);
+	const uint32 cGrid      = fmt.RGBToColor(0x8a, 0x70, 0x38);
+	const uint32 cWall      = fmt.RGBToColor(0x2c, 0x1e, 0x10);
+	const uint32 cWallSeen  = fmt.RGBToColor(0x8a, 0x73, 0x4a);
+	const uint32 cDoor      = fmt.RGBToColor(0x7a, 0x4a, 0x1c);
+	const uint32 cStair     = fmt.RGBToColor(0x3f, 0x7a, 0x3a);
+	const uint32 cTele      = fmt.RGBToColor(0x5a, 0x3f, 0x8a);
+	const uint32 cLever     = fmt.RGBToColor(0x9a, 0x2d, 0x2d);
+	const uint32 cNiche     = fmt.RGBToColor(0x8a, 0x5a, 0x1c);
+	const uint32 cNote      = fmt.RGBToColor(0x2f, 0x4d, 0x8f); // "pen ink" blue, distinct from the brown marks
+	const uint32 cParty     = fmt.RGBToColor(0xa8, 0x28, 0x1c);
+	const uint32 cPartyEdge = fmt.RGBToColor(0x5a, 0x14, 0x0e);
+	const uint32 cSel       = fmt.RGBToColor(0xe8, 0xb8, 0x30); // gold frame (per mockup), not another red
+	const uint32 cPlaqueBg  = fmt.RGBToColor(0x1c, 0x1a, 0x16);
+	const uint32 cPlaqueEd  = fmt.RGBToColor(0x0d, 0x0c, 0x0a);
+	const uint32 cGold      = fmt.RGBToColor(0xf0, 0xc8, 0x50);
+	const uint32 cGoldDim   = fmt.RGBToColor(0xb8, 0x92, 0x3a);
+	const uint32 cPanelTxt  = fmt.RGBToColor(0xd8, 0xc8, 0xa8);
+
+	const Graphics::Font *bigFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	const int fh = bigFont ? bigFont->getFontHeight() : 8;
+	const int sc = CLIP<int>(oh / 320, 1, 3); // base side-panel text scale
+	const int mpad = MAX(8, L.mapW / 40);
+
+	// (Re)build the cached chrome on an overlay resize or pixel-format change
+	// (free() zeroes w/h, so an empty surface never matches).
+	if (_automapBg.w != ow || _automapBg.h != oh || _automapBg.format != fmt) {
+		_automapBg.free();
+		_automapBg.create(ow, oh, fmt);
+		_automapFrame.free();
+		_automapFrame.create(ow, oh, fmt);
+		Graphics::Surface &bg = _automapBg;
+
+		bg.fillRect(Common::Rect(0, 0, ow, oh), cStone);
+		automapNoise(bg, 0, 0, ow, oh, cStoneHi, cStoneEdge, 0x9e3779b9u);
+		automapBevel(bg, Common::Rect(0, 0, ow, oh), cStoneHi, cStoneEdge);
+		automapBevel(bg, Common::Rect(2, 2, ow - 2, oh - 2), cStone, cStoneEdge);
+		const int rv = MAX(2, L.frame / 4);
+		const int ri = L.frame / 2;
+		automapRivet(bg, ri, ri, rv, cStoneEdge, cStoneHi, cRivet);
+		automapRivet(bg, ow - ri, ri, rv, cStoneEdge, cStoneHi, cRivet);
+		automapRivet(bg, ri, oh - ri, rv, cStoneEdge, cStoneHi, cRivet);
+		automapRivet(bg, ow - ri, oh - ri, rv, cStoneEdge, cStoneHi, cRivet);
+
+		const Common::Rect mr(L.mapX, L.mapY, L.mapX + L.mapW, L.mapY + L.mapH);
+		bg.fillRect(mr, cPaperEdge);
+		bg.fillRect(Common::Rect(mr.left + 2, mr.top + 2, mr.right - 2, mr.bottom - 2), cPaper);
+		automapNoise(bg, mr.left + 2, mr.top + 2, L.mapW - 4, L.mapH - 4, cPaperHi, cPaperLo, 0x85ebca6bu);
+		bg.frameRect(Common::Rect(mr.left + 2, mr.top + 2, mr.right - 2, mr.bottom - 2), cInkSoft);
+		bg.frameRect(Common::Rect(mr.left + 5, mr.top + 5, mr.right - 5, mr.bottom - 5), cInk);
+		bg.hLine(L.mapX + mpad, L.footY, L.mapX + L.mapW - mpad, cInkSoft);
+
+		const Common::Rect sr(L.sideX, L.sideY, L.sideX + L.sideW, L.sideY + L.sideH);
+		bg.fillRect(sr, cStoneDark);
+		automapNoise(bg, sr.left, sr.top, L.sideW, L.sideH, cStoneHi, cStoneEdge, 0xc2b2ae35u);
+		automapBevel(bg, sr, cStoneEdge, cStoneHi); // sunken: dark top/left
+
+		// Plaque face only; its text is drawn per frame.
+		bg.fillRect(Common::Rect(L.plX, L.plY, L.plX + L.plW, L.plY + L.plH), cPlaqueEd);
+		bg.fillRect(Common::Rect(L.plX + 2, L.plY + 2, L.plX + L.plW - 2, L.plY + L.plH - 2), cPlaqueBg);
+
+		const int lx = L.plX, colW = L.plW;
+		const int rowH = fh * sc + MAX(4, sc * 4);
+		int cyy = L.plY + L.plH + MAX(8, sc * 6);
+
+		automapDrawBigString(bg, bigFont, "- LEGEND -", lx, cyy, colW, cGoldDim, sc);
+		cyy += fh * sc + MAX(4, sc * 3);
+		bg.hLine(lx, cyy, lx + colW - 1, cStoneHi);
+		bg.hLine(lx, cyy + 1, lx + colW - 1, cStoneEdge);
+		cyy += MAX(6, sc * 4);
+
+		// Legend rows are drawn with the same primitives as the map cells, on mini
+		// paper swatches, so what the player compares against matches the map. The
+		// double-slot rows show both variants (stairs up/down, pad/paired, lever/niche).
+		static const char *const legendLbl[9] = {
+			"Explored", "Glimpsed", "Party", "Stairs", "Teleporter", "Door", "Lever / Niche", "Loot", "Note"
+		};
+		const int isz = MAX(8, fh * sc);
+		const int slotGap = MAX(2, sc);
+		const int wt2 = MAX(1, isz / 5); // mini wall thickness
+		const int panelBottom = L.sideY + L.sideH - MAX(6, L.sideW / 12);
+		for (int i = 0; i < 9; ++i) {
+			if (cyy + rowH > panelBottom)
+				break; // tiny window: drop the tail rather than draw past the panel
+			const int iy = cyy;
+			const int slots = (i == 3 || i == 4 || i == 6) ? 2 : 1;
+			for (int s = 0; s < slots; ++s) {
+				const int ix = lx + s * (isz + slotGap);
+				bg.fillRect(Common::Rect(ix, iy, ix + isz, iy + isz), (i == 1) ? cFloorSeen : cFloor);
+				switch (i) {
+				case 0: // explored: grid corner like a visited cell
+					bg.hLine(ix, iy, ix + isz - 1, cGrid);
+					bg.vLine(ix, iy, iy + isz - 1, cGrid);
+					break;
+				case 1: // glimpsed: paler floor, dim wall
+					bg.fillRect(Common::Rect(ix, iy, ix + isz, iy + wt2), cWallSeen);
+					break;
+				case 2:
+					automapFillTri(bg, ix + isz / 2, iy + 1, ix + isz - 1, iy + isz - 1, ix + 1, iy + isz - 1, cParty);
+					break;
+				case 3: // stairs up / down
+					if (s == 0)
+						automapFillTri(bg, ix + 1, iy + isz - 1, ix + isz - 1, iy + isz - 1, ix + isz / 2, iy + 1, cStair);
+					else
+						automapFillTri(bg, ix + 1, iy + 1, ix + isz - 1, iy + 1, ix + isz / 2, iy + isz - 1, cStair);
+					break;
+				case 4: // teleporter pad; used pads pair up and show a letter instead
+					if (s == 0) {
+						bg.frameRect(Common::Rect(ix + 1, iy + 1, ix + isz - 1, iy + isz - 1), cTele);
+						bg.frameRect(Common::Rect(ix + 2, iy + 2, ix + isz - 2, iy + isz - 2), cTele);
+					} else if (bigFont && fh <= isz) {
+						automapDrawBigString(bg, bigFont, "A", ix, iy + (isz - fh) / 2, isz, cTele, 1);
+					}
+					break;
+				case 5: // door leaf across the cell
+					bg.fillRect(Common::Rect(ix + 1, iy + (isz - wt2) / 2, ix + isz - 1, iy + (isz - wt2) / 2 + wt2 + 1), cDoor);
+					break;
+				case 6: { // lever / niche: pip on the carrying wall edge
+					const int ps = MAX(2, isz / 3);
+					bg.fillRect(Common::Rect(ix + (isz - ps) / 2, iy, ix + (isz + ps) / 2, iy + ps), (s == 0) ? cLever : cNiche);
+					break;
+				}
+				case 7: { // loot dot, bottom-left like the map
+					const int ls2 = MAX(2, isz / 3);
+					bg.fillRect(Common::Rect(ix + 1, iy + isz - ls2 - 1, ix + 1 + ls2, iy + isz - 1), cGold);
+					break;
+				}
+				default: { // note dot, top-right corner like the map
+					const int ds = MAX(2, isz / 3);
+					bg.fillRect(Common::Rect(ix + isz - ds, iy, ix + isz, iy + ds), cNote);
+					break;
+				}
+				}
+			}
+			const int iconW = 2 * isz + slotGap; // fixed two-slot column keeps labels aligned
+			const int tx = lx + iconW + MAX(4, sc * 2);
+			const int tw = colW - iconW - MAX(4, sc * 2);
+			const int lsc = automapFit(bigFont, legendLbl[i], tw, sc);
+			automapDrawBigString(bg, bigFont, legendLbl[i], tx, iy + (isz - fh * lsc) / 2, tw, cPanelTxt, lsc, Graphics::kTextAlignLeft);
+			cyy += rowH;
+		}
+
+		// KEYS: a single N chip (the rest is hinted in the empty footer strip).
+		const int chipPad = MAX(2, sc * 2);
+		const int chipH = fh * sc + chipPad;
+		const int keysH = MAX(6, sc * 5) + fh * sc + MAX(4, sc * 3) + 2 + MAX(6, sc * 4) + chipH;
+		if (cyy + keysH <= panelBottom) {
+			cyy += MAX(6, sc * 5);
+			automapDrawBigString(bg, bigFont, "- KEYS -", lx, cyy, colW, cGoldDim, sc);
+			cyy += fh * sc + MAX(4, sc * 3);
+			bg.hLine(lx, cyy, lx + colW - 1, cStoneHi);
+			bg.hLine(lx, cyy + 1, lx + colW - 1, cStoneEdge);
+			cyy += MAX(6, sc * 4);
+			const int chipW = (bigFont ? bigFont->getStringWidth("N") * sc : 6 * sc) + chipPad * 2;
+			bg.fillRect(Common::Rect(lx, cyy, lx + chipW, cyy + chipH), cPlaqueEd);
+			bg.fillRect(Common::Rect(lx + 1, cyy + 1, lx + chipW - 1, cyy + chipH - 1), cPlaqueBg);
+			automapDrawBigString(bg, bigFont, "N", lx, cyy + chipPad / 2, chipW, cGold, sc);
+			automapDrawBigString(bg, bigFont, "Add note", lx + chipW + MAX(4, sc * 3), cyy + (chipH - fh * sc) / 2,
+				colW - chipW - MAX(4, sc * 3), cPanelTxt, sc, Graphics::kTextAlignLeft);
+		}
+	}
+
+	// Per frame: copy the chrome into the reused surface, then draw dynamics on top.
+	Graphics::Surface &surf = _automapFrame;
+	surf.copyRectToSurface(_automapBg, 0, 0, Common::Rect(0, 0, ow, oh));
+
+	const int cell = L.cell;
+	const int offX = L.offX;
+	const int offY = L.offY;
+	const int wt = MAX(2, cell / 5); // wall bar thickness
+
+	for (int by = 0; by < 32; ++by) {
+		for (int bx = 0; bx < 32; ++bx) {
+			const uint16 block = (by << 5) | bx;
+			const bool visited = automapIsVisited(block);
+			const bool seen = !visited && automapIsSeen(block);
+			if (!visited && !seen)
+				continue;
+
+			const int sx = offX + bx * cell;
+			const int sy = offY + by * cell;
+
+			// A side is a wall only where the party can't step (neighbour's facing wall, dir^2).
+			bool wall[4];
+			for (int d = 0; d < 4; ++d)
+				wall[d] = !automapSideOpen(block, d);
+
+			// Cache the door bits: an open door loses its wall flag mid-animation but
+			// should still draw as a door.
+			const LevelBlockProperty *bp = &_levelBlockProperties[block];
+			const uint32 bkey = automapNoteKey(block);
+			uint8 dbits = _automapDoorBits.contains(bkey) ? _automapDoorBits[bkey] : 0;
+			if (automapDoorNS(bp))
+				dbits |= 1;
+			if (automapDoorEW(bp))
+				dbits |= 2;
+			if (dbits)
+				_automapDoorBits[bkey] = dbits;
+			const bool doorNS = (dbits & 1) != 0;
+			const bool doorEW = (dbits & 2) != 0;
+			if (doorNS)
+				wall[0] = wall[2] = false;
+			if (doorEW)
+				wall[1] = wall[3] = false;
+
+			surf.fillRect(Common::Rect(sx, sy, sx + cell, sy + cell), visited ? cFloor : cFloorSeen);
+			if (visited) {
+				surf.hLine(sx, sy, sx + cell - 1, cGrid);
+				surf.vLine(sx, sy, sy + cell - 1, cGrid);
+			}
+			const uint32 wc = visited ? cWall : cWallSeen;
+			if (wall[0]) surf.fillRect(Common::Rect(sx, sy, sx + cell, sy + wt), wc);
+			if (wall[1]) surf.fillRect(Common::Rect(sx + cell - wt, sy, sx + cell, sy + cell), wc);
+			if (wall[2]) surf.fillRect(Common::Rect(sx, sy + cell - wt, sx + cell, sy + cell), wc);
+			if (wall[3]) surf.fillRect(Common::Rect(sx, sy, sx + wt, sy + cell), wc);
+
+			if (doorNS || doorEW) {
+				const int dt = MAX(2, wt + 1);
+				const int dm = MAX(1, cell / 5);
+				const int dcx = sx + cell / 2, dcy = sy + cell / 2;
+				if (doorNS)
+					surf.fillRect(Common::Rect(sx + dm, dcy - dt / 2, sx + cell - dm, dcy - dt / 2 + dt), cDoor);
+				if (doorEW)
+					surf.fillRect(Common::Rect(dcx - dt / 2, sy + dm, dcx - dt / 2 + dt, sy + cell - dm), cDoor);
+			}
+
+			// Special-wall pip on the carrying side (skip door types 5/6; 10 = niche).
+			for (int d = 0; d < 4; ++d) {
+				const uint8 st = _specialWallTypes[bp->walls[d]];
+				if (st == 0 || st == 5 || st == 6)
+					continue;
+				const uint32 pcol = (st == 10) ? cNiche : cLever;
+				const int ps = MAX(2, cell / 4);
+				int px, py;
+				switch (d) {
+				case 0:  px = sx + cell / 2 - ps / 2; py = sy; break;
+				case 1:  px = sx + cell - ps;         py = sy + cell / 2 - ps / 2; break;
+				case 2:  px = sx + cell / 2 - ps / 2; py = sy + cell - ps; break;
+				default: px = sx;                     py = sy + cell / 2 - ps / 2; break;
+				}
+				surf.fillRect(Common::Rect(px, py, px + ps, py + ps), pcol);
+			}
+
+			// Paired teleporters show a matching letter on both ends (replacing the
+			// glyph); when the cell is too small for the font, keep the glyph.
+			const bool linkLetter = _automapTeleLinks.contains(bkey) && bigFont && fh + 2 <= cell;
+			if (_automapIcons.contains(bkey) && !linkLetter) {
+				const uint8 ic = _automapIcons[bkey];
+				uint32 col = (ic == kAmTeleport) ? cTele : cStair;
+				if (!visited)
+					col = cWallSeen;
+				automapDrawIcon(surf, sx, sy, cell, ic, col);
+			}
+			if (linkLetter) {
+				automapDrawBigString(surf, bigFont, Common::String::format("%c", 'A' + (_automapTeleLinks[bkey] % 26)),
+					sx, sy + (cell - fh) / 2, cell, visited ? cTele : cWallSeen, 1);
+			}
+
+			if (_automapNotes.contains(bkey)) {
+				const int ds = MAX(2, cell / 3);
+				surf.fillRect(Common::Rect(sx + cell - ds, sy, sx + cell, sy + ds), cNote);
+			}
+
+			// Loot dot (bottom-left): items lying on this cell, read live.
+			if (bp->drawObjects && !automapLiveItems(block).empty()) {
+				const int ls = MAX(2, cell / 4);
+				surf.fillRect(Common::Rect(sx + 1, sy + cell - ls - 1, sx + 1 + ls, sy + cell - 1), cGold);
+			}
+		}
+	}
+
+	if (_automapSelectedBlock != 0xFFFF) {
+		const int sx = offX + (_automapSelectedBlock & 0x1F) * cell;
+		const int sy = offY + (_automapSelectedBlock >> 5) * cell;
+		surf.frameRect(Common::Rect(sx, sy, sx + cell, sy + cell), cSel);
+		surf.frameRect(Common::Rect(sx + 1, sy + 1, sx + cell - 1, sy + cell - 1), cSel);
+	}
+
+	const int mx = offX + (_currentBlock & 0x1F) * cell;
+	const int my = offY + (_currentBlock >> 5) * cell;
+	const int cx = mx + cell / 2;
+	const int cyp = my + cell / 2;
+	const int r = MAX(2, cell / 2 - MAX(1, cell / 6));
+	const int b = MAX(2, r * 3 / 4);
+	int tipX, tipY, l1X, l1Y, l2X, l2Y;
+	switch (_currentDirection) {
+	case 1:  tipX = cx + r; tipY = cyp; l1X = cx - b; l1Y = cyp - b; l2X = cx - b; l2Y = cyp + b; break;
+	case 2:  tipX = cx; tipY = cyp + r; l1X = cx - b; l1Y = cyp - b; l2X = cx + b; l2Y = cyp - b; break;
+	case 3:  tipX = cx - r; tipY = cyp; l1X = cx + b; l1Y = cyp - b; l2X = cx + b; l2Y = cyp + b; break;
+	default: tipX = cx; tipY = cyp - r; l1X = cx - b; l1Y = cyp + b; l2X = cx + b; l2Y = cyp + b; break;
+	}
+	automapFillTri(surf, tipX, tipY, l1X, l1Y, l2X, l2Y, cPartyEdge);
+	const int gx = (tipX + l1X + l2X) / 3, gy = (tipY + l1Y + l2Y) / 3;
+	automapFillTri(surf,
+		tipX + (gx - tipX) / 4, tipY + (gy - tipY) / 4,
+		l1X + (gx - l1X) / 4, l1Y + (gy - l1Y) / 4,
+		l2X + (gx - l2X) / 4, l2Y + (gy - l2Y) / 4, cParty);
+
+	// Plaque text: area name over coords, in two size-fitted bands so they never overlap.
+	if (bigFont) {
+		const uint16 cb = (_automapHoverBlock != 0xFFFF) ? _automapHoverBlock
+			: ((_automapSelectedBlock != 0xFFFF) ? _automapSelectedBlock : _currentBlock);
+		const Common::String lvl = automapLevelName();
+		const Common::String crd = Common::String::format("X %d   Y %d", cb & 0x1F, cb >> 5);
+		const int pm = MAX(3, sc * 2);
+		const int innerW = L.plW - 2 * pm;
+		const int innerH = L.plH - 2 * pm;
+		const int gap = MAX(2, innerH / 12);
+		const int lvlBand = (innerH - gap) * 6 / 10; // level gets ~60%, coords ~40%
+		const int crdBand = (innerH - gap) - lvlBand;
+		const int lvlSc = automapFit(bigFont, lvl, innerW, MAX(1, lvlBand / fh));
+		const int crdSc = automapFit(bigFont, crd, innerW, MAX(1, crdBand / fh));
+		const int lvlY = L.plY + pm + (lvlBand - fh * lvlSc) / 2;
+		const int crdY = L.plY + pm + lvlBand + gap + (crdBand - fh * crdSc) / 2;
+		automapDrawBigString(surf, bigFont, lvl, L.plX, lvlY, L.plW, cGold, lvlSc);
+		automapDrawBigString(surf, bigFont, crd, L.plX, crdY, L.plW, cPanelTxt, crdSc);
+	}
+
+	// Footer: the selected cell's note / auto-info (the KEYS panel documents N).
+	if (bigFont) {
+		Common::String foot;
+		if (_automapEditing) {
+			const char *caret = ((_system->getMillis() / 400) & 1) ? "_" : " ";
+			foot = Common::String("Note: ") + _automapEditBuffer + caret;
+		} else {
+			// The hovered cell's info previews in the footer; otherwise the selected one's.
+			const uint16 ib = (_automapHoverBlock != 0xFFFF) ? _automapHoverBlock : _automapSelectedBlock;
+			if (ib != 0xFFFF) {
+				// A note must not hide what the map learned: show note, auto-info
+				// and floor items together.
+				const uint32 ik = automapNoteKey(ib);
+				if (_automapNotes.contains(ik))
+					foot = _automapNotes[ik];
+				if (_automapAutoInfo.contains(ik))
+					foot = foot.empty() ? _automapAutoInfo[ik] : foot + " - " + _automapAutoInfo[ik];
+				const Common::String items = automapLiveItems(ib);
+				if (!items.empty())
+					foot = foot.empty() ? items : foot + " - " + items;
+			}
+		}
+		uint32 footCol = cInk;
+		if (foot.empty()) {
+			// Idle footer doubles as the key hint (keeps the side panel to just N).
+			foot = "Click a cell - N note - SPACE find party - M mini-map";
+			footCol = cInkSoft;
+		}
+		{
+			const int footH = (L.mapY + L.mapH) - L.footY;
+			const int fpad = MAX(2, footH / 6);
+			const int maxFsc = MAX(1, (footH - 2 * fpad) / fh);
+			const int fw = L.mapW - 2 * mpad;
+			const int fsc = MIN(automapFit(bigFont, foot, fw, sc), maxFsc);
+			const int fy = L.footY + (footH - fh * fsc) / 2;
+			automapDrawBigString(surf, bigFont, foot, L.mapX + mpad, fy, fw, footCol, fsc, Graphics::kTextAlignLeft);
+		}
+	}
+
+	_system->copyRectToOverlay(surf.getPixels(), surf.pitch, 0, 0, ow, oh);
+	_system->updateScreen();
+}
+
+// Mini-map HUD (toggled with M): an 11x11 window around the party drawn over the
+// compass dome in palette colors while the game runs on. Reached only through
+// gui_drawCompass(), so every path that repaints the compass repaints the map.
+void EoBCoreEngine::automapDrawMini() {
+	if (_currentLevel < 1 || _currentLevel >= 20)
+		return;
+	automapMarkVisited(_currentBlock);
+
+	const KyraRpgGUISettings::Colors &c = guiSettings()->colors;
+	const uint8 colFloor = (c.fill >= 0) ? (uint8)c.fill : c.frame2;
+	const uint8 colSeen  = c.frame2;
+	const uint8 colWall  = c.guiColorWhite; // bright wall outlines keep the cell grid readable
+	const uint8 colDoor  = c.guiColorBrown;
+	const uint8 colParty = c.guiColorLightRed;
+	const uint8 colTick  = c.guiColorWhite;
+	const uint8 colStair = c.guiColorLightGreen;
+	const uint8 colTele  = c.guiColorLightBlue;
+	const uint8 colNote  = c.guiColorYellow;
+
+	// An opaque panel lined up with the surrounding chrome: from the movement-arrow
+	// block (ends at x=66, see the button defs) to the view port's right edge
+	// (x=175), and from the view port's bottom row down over the whole compass dome
+	// incl. the needle mount. Staying below y=120 keeps it clear of view-port blits.
+	const int cell = 4, radiusX = 12, radiusY = 5;
+	// The ZH_TWN text box starts at y=170, so don't reach under it there.
+	const int bw = 108, bh = (_flags.lang == Common::ZH_TWN) ? 50 : 56;
+	const int bx0 = 68;
+	const int by0 = 120;
+	const int x0 = bx0 + (bw - (2 * radiusX + 1) * cell) / 2;
+	const int y0 = by0 + (bh - (2 * radiusY + 1) * cell) / 2;
+	const int px = _currentBlock & 0x1F, py = _currentBlock >> 5;
+
+	// Draw to the current page, exactly like the compass shapes this replaces
+	// (gui_drawPlayField composes on page 2, the scene path draws on page 0).
+	const int pg = _screen->_curPage;
+	gui_drawBox(bx0, by0, bw, bh, c.frame1, c.frame2, c.guiColorBlack);
+
+	for (int dy = -radiusY; dy <= radiusY; ++dy) {
+		for (int dx = -radiusX; dx <= radiusX; ++dx) {
+			const int bx = px + dx, by = py + dy;
+			if (bx < 0 || bx > 31 || by < 0 || by > 31)
+				continue;
+			const uint16 block = (by << 5) | bx;
+			const bool visited = automapIsVisited(block);
+			if (!visited && !automapIsSeen(block))
+				continue;
+			const int sx = x0 + (dx + radiusX) * cell;
+			const int sy = y0 + (dy + radiusY) * cell;
+			_screen->fillRect(sx, sy, sx + cell - 1, sy + cell - 1, visited ? colFloor : colSeen, pg);
+
+			// Same wall/door tests as the full map, at 1px scale.
+			const LevelBlockProperty *bp = &_levelBlockProperties[block];
+			const bool doorNS = automapDoorNS(bp);
+			const bool doorEW = automapDoorEW(bp);
+			for (int d = 0; d < 4; ++d) {
+				if (((d == 0 || d == 2) && doorNS) || ((d == 1 || d == 3) && doorEW))
+					continue;
+				if (automapSideOpen(block, d))
+					continue;
+				switch (d) {
+				case 0:  _screen->fillRect(sx, sy, sx + cell - 1, sy, colWall, pg); break;
+				case 1:  _screen->fillRect(sx + cell - 1, sy, sx + cell - 1, sy + cell - 1, colWall, pg); break;
+				case 2:  _screen->fillRect(sx, sy + cell - 1, sx + cell - 1, sy + cell - 1, colWall, pg); break;
+				default: _screen->fillRect(sx, sy, sx, sy + cell - 1, colWall, pg); break;
+				}
+			}
+			if (doorNS)
+				_screen->fillRect(sx, sy + cell / 2, sx + cell - 1, sy + cell / 2, colDoor, pg);
+			if (doorEW)
+				_screen->fillRect(sx + cell / 2, sy, sx + cell / 2, sy + cell - 1, colDoor, pg);
+
+			const uint32 bkey = automapNoteKey(block);
+			if (_automapIcons.contains(bkey)) {
+				const uint8 icol = (_automapIcons[bkey] == kAmTeleport) ? colTele : colStair;
+				_screen->fillRect(sx + 1, sy + 1, sx + cell - 2, sy + cell - 2, icol, pg);
+			} else if (_automapNotes.contains(bkey)) {
+				_screen->fillRect(sx + 1, sy + 1, sx + cell - 2, sy + cell - 2, colNote, pg);
+			}
+		}
+	}
+
+	// Party cell, with a facing tick on the leading edge.
+	const int psx = x0 + radiusX * cell, psy = y0 + radiusY * cell;
+	_screen->fillRect(psx, psy, psx + cell - 1, psy + cell - 1, colParty, pg);
+	switch (_currentDirection) {
+	case 1:  _screen->fillRect(psx + cell - 1, psy + 1, psx + cell - 1, psy + cell - 2, colTick, pg); break;
+	case 2:  _screen->fillRect(psx + 1, psy + cell - 1, psx + cell - 2, psy + cell - 1, colTick, pg); break;
+	case 3:  _screen->fillRect(psx, psy + 1, psx, psy + cell - 2, colTick, pg); break;
+	default: _screen->fillRect(psx + 1, psy, psx + cell - 2, psy, colTick, pg); break;
+	}
+}
 
 } // End of namespace Kyra
 
