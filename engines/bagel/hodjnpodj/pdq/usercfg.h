@@ -49,7 +49,6 @@ protected:
 	virtual bool OnCommand(WPARAM, LPARAM) override;
 	virtual bool OnInitDialog() override;
 	void PutDlgData();
-	void GetDlgData();
 	void DispSpeed();
 	void DispShown();
 	void ClearDialogImage();

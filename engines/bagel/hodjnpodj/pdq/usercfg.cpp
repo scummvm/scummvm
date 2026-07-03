@@ -83,22 +83,6 @@ void CUserCfgDlg::PutDlgData() {
 	m_pNamesButton->SetCheck(m_bShowNames);
 }
 
-
-void CUserCfgDlg::GetDlgData() {
-	m_nGameSpeed = m_pSpeedScroll->GetScrollPos();
-	m_nShown = m_pShownScroll->GetScrollPos();
-
-	m_bRandomLetters = true;
-	if (pFixedButton->GetCheck() == 1)
-		m_bRandomLetters = false;
-
-	m_bShowNames = false;
-	if (m_pNamesButton->GetCheck() == 1) {
-		m_bShowNames = true;
-	}
-}
-
-
 bool CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	/*
 	* respond to user
@@ -427,8 +411,6 @@ void CUserCfgDlg::ClearDialogImage() {
 	CDC *pDC;
 
 	if (m_bShouldSave) {
-		GetDlgData();
-
 		WritePrivateProfileString(INI_SECTION, "RandomLetters",
 		                          m_bRandomLetters ? "Yes" : "No", INI_FILENAME);
 		WritePrivateProfileString(INI_SECTION, "NumStartingLetters",

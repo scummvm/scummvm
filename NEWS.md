@@ -10,6 +10,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      devices.
    - Switched Nuked-OPL3 AdLib emulator to Nuked-OPL3-fast fork.
 
+ Bagel:
+   - Fix saving options for Hodj n' Podj's Th Gesng Gme.
+
  GLK:
    - Fixed saved font selections not being applied correctly in some games.
    - Added support for loading ZX Spectrum games directly from TAP/TZX tape images.
