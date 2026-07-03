@@ -205,14 +205,14 @@ bool Scene1030::hasCustomPreviewState() const {
 
 void Scene1030::initializeCustomPreviewState() {
 	GameplayState &state = _vm->gameState();
-	const bool firstEntryConversationPending = isFirstEntryState() && !state.seenScene1030EntryConversation;
+	const bool firstEntryConversationPending = isFirstEntryState() && !state.scene1030EntryConversationSeen;
 
 	initializeDefaultPreviewState();
 	_largeForegroundChannel.reset(0, kScene1030ForegroundFrameMillis);
 	_smallForegroundChannel.reset(0, kScene1030SmallForegroundTickMillis);
-	_largeForegroundLayer.reset(state.seenScene1030EntryConversation ? 0x1c : 0);
+	_largeForegroundLayer.reset(state.scene1030EntryConversationSeen ? 0x1c : 0);
 	_largeForegroundLayer.visible = true;
-	_largeForegroundMode = state.seenScene1030EntryConversation ? 1 : 0;
+	_largeForegroundMode = state.scene1030EntryConversationSeen ? 1 : 0;
 	_smallForegroundLayer.reset(0);
 	_smallForegroundLayer.visible = false;
 	_smallForegroundTickCount = 0;
@@ -230,7 +230,7 @@ void Scene1030::initializeCustomPreviewState() {
 		_activeActorWorldX = kScene1030LeftEntryTargetX;
 		_activeActorWorldY = kScene1030LeftEntryTargetY;
 		_activeActorFacing = kScene1030LeftEntryFacing;
-	} else if (state.seenScene1030EntryConversation) {
+	} else if (state.scene1030EntryConversationSeen) {
 		_activeActorWorldX = kScene1030ReturnEntryTargetX;
 		_activeActorWorldY = kScene1030ReturnEntryTargetY;
 		_activeActorFacing = kScene1030ReturnEntryFacing;
@@ -264,7 +264,7 @@ void Scene1030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	}
 
 	restoreResourceSpriteLayerBackground(_largeForegroundLayer, _baseFramebuffer);
-	_smallForegroundLayer.visible = _vm->gameState().scene1030PatchState == 1;
+	_smallForegroundLayer.visible = _vm->gameState().scene1030TablePickupState == 1;
 	restoreResourceSpriteLayerBackground(_smallForegroundLayer, _baseFramebuffer);
 
 	if (_actionOverlayVisible) {
@@ -310,7 +310,7 @@ void Scene1030::runCustomEntrySequence() {
 		return;
 	}
 
-	if (state.seenScene1030EntryConversation) {
+	if (state.scene1030EntryConversationSeen) {
 		runEntryPath(kScene1030ReturnEntryStartX, kScene1030ReturnEntryStartY,
 			kScene1030ReturnEntryFacing, kScene1030ReturnEntryTargetX, kScene1030ReturnEntryTargetY);
 		return;
@@ -520,7 +520,7 @@ void Scene1030::handleActionOverlayFrameHook(byte hookId, uint frame) {
 		return;
 
 	GameplayState &state = _vm->gameState();
-	state.scene1030PatchState = hookId;
+	state.scene1030TablePickupState = hookId;
 	if (hookId == 2) {
 		_smallForegroundLayer.reset(0);
 		_smallForegroundLayer.visible = false;
@@ -536,7 +536,7 @@ AmbientAudioProfile Scene1030::ambientAudioProfile() const {
 }
 
 void Scene1030::applyFirstEntryPalette() {
-	if (_vm->gameState().seenScene1030EntryConversation || !_sceneChunkTable.isValidChunk(8))
+	if (_vm->gameState().scene1030EntryConversationSeen || !_sceneChunkTable.isValidChunk(8))
 		return;
 
 	const uint32 sourceOffset = _resourceChunkOffsets[8];
@@ -593,7 +593,7 @@ void Scene1030::runFirstEntryConversation() {
 	_rightEntryActorLayer.visible = false;
 	_largeForegroundLayer.setFrame(0x1c);
 	_largeForegroundMode = 1;
-	state.seenScene1030EntryConversation = true;
+	state.scene1030EntryConversationSeen = true;
 	drawPlayableComposite();
 	presentFrame();
 	beginSecondarySpeechLine(0, 0);
@@ -682,7 +682,7 @@ void Scene1030::drawEntryActors() {
 }
 
 void Scene1030::drawSmallForegroundActor() {
-	_smallForegroundLayer.visible = _vm->gameState().scene1030PatchState == 1;
+	_smallForegroundLayer.visible = _vm->gameState().scene1030TablePickupState == 1;
 	drawResourceSpriteLayer(_smallForegroundLayer);
 }
 
@@ -733,7 +733,7 @@ void Scene1030::advanceLargeForegroundActor(uint32 delta) {
 }
 
 void Scene1030::advanceSmallForegroundActor(uint32 delta) {
-	if (_vm->gameState().scene1030PatchState != 1)
+	if (_vm->gameState().scene1030TablePickupState != 1)
 		return;
 
 	const uint frameCount = _smallForegroundChannel.consumeFrames(delta);
@@ -760,8 +760,8 @@ void Scene1030::runPickupOverlay(uint chunkIndex, uint descriptorCount, const by
 
 void Scene1030::handleSceneEventFlag0() {
 	GameplayState &state = _vm->gameState();
-	if (!state.scene1030EventFlag0) {
-		state.scene1030EventFlag0 = true;
+	if (!state.scene1030SleepingDrunkInspected) {
+		state.scene1030SleepingDrunkInspected = true;
 		applySceneStateToHotspotsAndPatches(2);
 		beginSecondarySpeechLine(3, 0);
 		return;
@@ -824,7 +824,7 @@ void Scene1030::applyPatchStateColorMaps() {
 			_colorToActorDepthClassMap.size() < kScenePaletteMapPageSize)
 		return;
 
-	const byte patchState = MIN<byte>(_vm->gameState().scene1030PatchState, 3);
+	const byte patchState = MIN<byte>(_vm->gameState().scene1030TablePickupState, 3);
 	for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
 		const byte originalItem = _paletteMaskOriginal[kSceneColorToItemMap + i];
 		const byte originalDepth = _paletteMaskOriginal[kSceneColorToActorDepthClassMap + i];

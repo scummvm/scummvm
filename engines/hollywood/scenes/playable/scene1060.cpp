@@ -260,9 +260,9 @@ bool Scene1060::hasCustomEntrySequence() const {
 void Scene1060::runCustomEntrySequence() {
 	if (_vm->gameState().mainFlowStateId == kScene1060FirstState) {
 		runEntryPath(0x064, 0x1b3, 2, 0x0aa, 0x1b3);
-		if (!_vm->gameState().seenScene1060EntryLine) {
+		if (!_vm->gameState().scene1060EntryLineSeen) {
 			beginSecondarySpeechLine(0, 0);
-			_vm->gameState().seenScene1060EntryLine = true;
+			_vm->gameState().scene1060EntryLineSeen = true;
 		}
 	} else {
 		runEntryPath(0x2fb, 0x1b3, 4, 0x28c, 0x1b3);
@@ -361,18 +361,18 @@ bool Scene1060::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 	GameplayState &state = _vm->gameState();
-	_flyDoctorLayer.chunkIndex = state.scene1060FlyDoctorState == 2 ? 14 : 6;
+	_flyDoctorLayer.chunkIndex = state.scene1060DrFlyState == 2 ? 14 : 6;
 
-	if (state.scene1060FlyDoctorState == 1)
+	if (state.scene1060DrFlyState == 1)
 		copyStageSmallRow(10, 7);
 
-	if (state.scene1060FlyDoctorState == 2)
+	if (state.scene1060DrFlyState == 2)
 		replaceColorMapItem(7, 4);
 
 	if (state.scene1060PartyRemainsState == 1)
 		replaceColorMapItem(8, 3);
 
-	if (state.scene1060FlyDoctorState < 2 && !state.scene1060FlySlimeHotspotActive)
+	if (state.scene1060DrFlyState < 2 && !state.scene1060FlySlimeHotspotActive)
 		replaceColorMapItem(7, 4);
 
 	if (state.scene1060PocketPaperTaken)
@@ -422,7 +422,7 @@ void Scene1060::handleActionOverlayFrameHook(byte hookId, uint frame) {
 		return;
 
 	GameplayState &state = _vm->gameState();
-	state.scene1060FlyDoctorState = 2;
+	state.scene1060DrFlyState = 2;
 	state.scene1060FlySlimeHotspotActive = false;
 	applySceneStateToHotspotsAndPatches(1);
 }
@@ -441,7 +441,7 @@ void Scene1060::resetAnimationLayers() {
 	_largeBackgroundLayer.reset(juniorIdleFrame());
 	_invisibleManLayer.reset(0);
 	_flyDoctorLayer.reset(0);
-	_flyDoctorLayer.chunkIndex = state.scene1060FlyDoctorState == 2 ? 14 : 6;
+	_flyDoctorLayer.chunkIndex = state.scene1060DrFlyState == 2 ? 14 : 6;
 	_smallLoopLayer.reset(0);
 	_smallTriggerLayer.reset(0);
 	_largeBackgroundLayer.visible = true;
@@ -604,7 +604,7 @@ void Scene1060::advanceFlyDoctorIdle(uint32 delta) {
 
 void Scene1060::advanceFlySlimeDrip(uint32 delta) {
 	GameplayState &state = _vm->gameState();
-	if (state.scene1060FlyDoctorState >= 2) {
+	if (state.scene1060DrFlyState >= 2) {
 		if (_flyDoctorLayer.frameIndex > kScene1060FlyDoctorIdleFrameCount - 1)
 			_flyDoctorLayer.setFrame(0);
 		return;
@@ -810,10 +810,10 @@ void Scene1060::runDrMoscaConversation() {
 	bool finished = false;
 
 	beginSecondarySpeechLine(kScene1060DrMoscaDialogueStageId,
-		state.seenScene1060DoctorConversation ? 1 : 0);
+		state.scene1060DrFlyConversationSeen ? 1 : 0);
 	prepareDrMoscaConversation();
-	beginDrMoscaPrimarySpeech(state.seenScene1060DoctorConversation ? 1 : 0);
-	state.seenScene1060DoctorConversation = true;
+	beginDrMoscaPrimarySpeech(state.scene1060DrFlyConversationSeen ? 1 : 0);
+	state.scene1060DrFlyConversationSeen = true;
 
 	while (!finished && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		DialogueMenu menu(_vm, this);
@@ -871,10 +871,10 @@ void Scene1060::runInvisibleManConversation() {
 	bool finished = false;
 
 	beginSecondarySpeechLine(kScene1060InvisibleManDialogueStageId,
-		state.seenScene1060InvisibleManConversation ? 1 : 0);
+		state.scene1060InvisibleManConversationSeen ? 1 : 0);
 	prepareInvisibleManConversation();
-	beginInvisibleManPrimarySpeech(state.seenScene1060InvisibleManConversation ? 1 : 0, true);
-	state.seenScene1060InvisibleManConversation = true;
+	beginInvisibleManPrimarySpeech(state.scene1060InvisibleManConversationSeen ? 1 : 0, true);
+	state.scene1060InvisibleManConversationSeen = true;
 
 	while (!finished && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		DialogueMenu menu(_vm, this);
@@ -1095,7 +1095,7 @@ void Scene1060::runPocketPaperPickupSequence() {
 
 void Scene1060::handleFlySlimePickup() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene1060FlyDoctorState == 2 || hasInventoryItem(0x22))
+	if (state.scene1060DrFlyState == 2 || hasInventoryItem(0x22))
 		return;
 
 	if (!state.scene1060FlySlimeHotspotActive || _flyDoctorLayer.frameIndex > kScene1060FlySlimeLastPickupFrame) {
@@ -1109,8 +1109,8 @@ void Scene1060::handleFlySlimePickup() {
 		kScene1060FrameMillis, kActionOverlayHideActiveActor, -1, 0, -1, 0, 100,
 		kScene1060FlySlimePickupStateFrame, kScene1060FlySlimePickupHook);
 	_flySlimePickupSequenceActive = false;
-	if (state.scene1060FlyDoctorState != 2) {
-		state.scene1060FlyDoctorState = 2;
+	if (state.scene1060DrFlyState != 2) {
+		state.scene1060DrFlyState = 2;
 		state.scene1060FlySlimeHotspotActive = false;
 		applySceneStateToHotspotsAndPatches(1);
 	}
@@ -1121,9 +1121,9 @@ void Scene1060::handleFlySlimePickup() {
 
 void Scene1060::handlePocketPaperLook() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene1060FlyDoctorState == 0) {
+	if (state.scene1060DrFlyState == 0) {
 		beginSecondarySpeechLine(9, 0);
-		state.scene1060FlyDoctorState = 1;
+		state.scene1060DrFlyState = 1;
 		applySceneStateToHotspotsAndPatches(1);
 		return;
 	}

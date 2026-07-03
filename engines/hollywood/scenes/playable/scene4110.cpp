@@ -54,7 +54,7 @@ const uint kScene4110AlternatePatchChunk = 7;
 const uint kScene4110AlternateFinalPatchChunk = 8;
 const uint kScene4110BackgroundChunk = 9;
 const uint kScene4110BackgroundDescriptorCount = 10;
-const byte kScene4110InventoryItem46 = 0x46;
+const byte kScene4110LetterItem = 0x46;
 const byte kScene4110BridgeShakeStartFrame = 10;
 const byte kScene4110BridgeShakeMiddleFrame = 12;
 const byte kScene4110BridgeShakeEndFrame = 11;
@@ -251,8 +251,8 @@ bool Scene4110::dispatchCustomSceneAction(uint16 handlerId) {
 	case 304: // Usar obstaculo/salida del pasillo (use corridor obstruction/exit).
 		beginConditionalSpeechLine(10, 0, 2, 0);
 		return true;
-	case 305: // Coger objeto 0x46 (take item 0x46).
-		takeItem46();
+	case 305: // Coger carta (take letter): item 0x46.
+		takeLetter();
 		return true;
 	case 306: // Mirar objeto del pasillo (look at corridor object).
 		beginSecondarySpeechLine(4, 0);
@@ -311,7 +311,7 @@ AmbientAudioProfile Scene4110::ambientAudioProfile() const {
 
 bool Scene4110::bridgeOpened() const {
 	const GameplayState &state = _vm->gameState();
-	return state.scene4110AlternateSceneState || state.scene4010AlternateBackgroundState != 0;
+	return state.scene4110BridgeOpened || state.scene4010AlternateBackgroundState != 0;
 }
 
 void Scene4110::resetBackgroundLayer() {
@@ -389,9 +389,9 @@ void Scene4110::runExitToScene4010() {
 	state.mainFlowStateId = kScene4010EntryFromRightSideState;
 }
 
-void Scene4110::takeItem46() {
+void Scene4110::takeLetter() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4110Item46Taken || hasInventoryItem(kScene4110InventoryItem46)) {
+	if (state.scene4110LetterTaken || hasInventoryItem(kScene4110LetterItem)) {
 		beginSecondarySpeechLine(3, 1);
 		return;
 	}
@@ -401,9 +401,9 @@ void Scene4110::takeItem46() {
 		kScene4110PickupFrameMap, ARRAYSIZE(kScene4110PickupFrameMap),
 		kScene4110FrameMillis, kActionOverlayHideActiveActor, -1, 0, -1, 0, 100,
 		-1, 0, true, 1, ARRAYSIZE(kScene4110PickupFrameMap));
-	addInventoryItem(kScene4110InventoryItem46);
+	addInventoryItem(kScene4110LetterItem);
 	_soundBank0.playSample(1, 100);
-	state.scene4110Item46Taken = true;
+	state.scene4110LetterTaken = true;
 	applySceneStateToHotspotsAndPatches(0);
 }
 
@@ -435,8 +435,7 @@ void Scene4110::runAlternateStateSequence() {
 	state.scene4010EntryPathSpeechState = 1;
 	if (state.scene4010Item3APickupState == 0)
 		state.scene4010Item3APickupState = 1;
-	state.scene4110AlternateSceneState = true;
-	state.scene4110PostAlternateFlag = true;
+	state.scene4110BridgeOpened = true;
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
@@ -496,7 +495,7 @@ void Scene4110::runBridgeOpeningOverlay() {
 }
 
 void Scene4110::patchActionMovementModes() {
-	if (_vm->gameState().scene4110Item46Taken)
+	if (_vm->gameState().scene4110LetterTaken)
 		_hotspots.setVerbMovementModeByGlobalRecordIndex(0x13, 0);
 	if (bridgeOpened())
 		_hotspots.setVerbMovementModeByGlobalRecordIndex(0x35, 0);

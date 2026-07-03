@@ -178,7 +178,7 @@ bool Scene3020::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(0, 0);
 		return true;
 	case 303: // Coger maza (take mace): pickup inventory item 0x31.
-		runPickupItem31();
+		runPickupMace();
 		return true;
 	case 304: // Ir a claro/maquinaria (go to next forest area): transition to scene 3030.
 		_vm->gameState().mainFlowStateId = kScene3030State;
@@ -240,7 +240,7 @@ bool Scene3020::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
 		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
-		if (_vm->gameState().scene3020Item31Taken) {
+		if (_vm->gameState().scene3020MaceTaken) {
 			if (_sceneChunkTable.isValidChunk(8))
 				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
 			removeTakenItemHotspots();
@@ -295,7 +295,7 @@ void Scene3020::advanceLoopingLayer(uint32 delta) {
 void Scene3020::drawForegroundBlocks(int activeWorldY) {
 	uint chunkIndex = 5;
 	if (activeWorldY < 0x125)
-		chunkIndex = _vm->gameState().scene3020Item31Taken ? 6 : 10;
+		chunkIndex = _vm->gameState().scene3020MaceTaken ? 6 : 10;
 
 	if (_sceneChunkTable.isValidChunk(chunkIndex))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);
@@ -370,8 +370,8 @@ void Scene3020::drawDescriptorTransitionFrame(const Common::Array<byte> &clipDat
 	drawStripSpriteFrame(clipData, 0, 0, descriptorCount, frameIndex, _sceneFramebuffer);
 }
 
-void Scene3020::runPickupItem31() {
-	if (_vm->gameState().scene3020Item31Taken) {
+void Scene3020::runPickupMace() {
+	if (_vm->gameState().scene3020MaceTaken) {
 		beginSecondarySpeechLine(1, 0);
 		return;
 	}
@@ -379,7 +379,7 @@ void Scene3020::runPickupItem31() {
 	runConfiguredActionOverlay(9, kScene3020PickupDescriptorCount,
 		kScene3020PickupFrameMap, ARRAYSIZE(kScene3020PickupFrameMap),
 		kScene3020PickupFrameMillis, kActionOverlayHideActiveActor, 7, 1);
-	_vm->gameState().scene3020Item31Taken = true;
+	_vm->gameState().scene3020MaceTaken = true;
 	applySceneStateToHotspotsAndPatches(1);
 	addInventoryItem(kScene3020PickupInventoryItem);
 	_soundBank0.playSample(1, 100);

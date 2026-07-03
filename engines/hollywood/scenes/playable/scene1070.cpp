@@ -731,11 +731,11 @@ void Scene1070::runSpencerConversation() {
 	initializeSpencerDialogueRecords(records);
 
 	GameplayState &state = _vm->gameState();
-	const byte line = state.seenScene1070SpencerConversation ? 1 : 0;
+	const byte line = state.scene1070SpencerConversationSeen ? 1 : 0;
 	beginSecondarySpeechLine(kScene1070SpencerDialogueStageId, line);
 	settleCharacterAnimations();
 	beginSpencerPrimarySpeechLine(line, 0x17);
-	state.seenScene1070SpencerConversation = true;
+	state.scene1070SpencerConversationSeen = true;
 
 	byte depthIndex = 0;
 	byte nodeIndex = 0;
@@ -789,11 +789,11 @@ void Scene1070::runQuasimodoConversation() {
 	initializeQuasimodoDialogueRecords(records);
 
 	GameplayState &state = _vm->gameState();
-	const byte line = state.seenScene1070QuasimodoConversation ? 1 : 0;
+	const byte line = state.scene1070QuasimodoConversationSeen ? 1 : 0;
 	beginSecondarySpeechLine(kScene1070QuasimodoDialogueStageId, line);
 	settleCharacterAnimations();
 	beginQuasimodoPrimarySpeechLine(line);
-	state.seenScene1070QuasimodoConversation = true;
+	state.scene1070QuasimodoConversationSeen = true;
 
 	byte depthIndex = 0;
 	byte nodeIndex = 0;
@@ -867,7 +867,7 @@ void Scene1070::initializeSpencerDialogueRecords(Common::Array<DialogueChoiceRec
 	setDialogueRecord(records, 81, 1, 1, 3, 13, 13, 5);
 	setDialogueRecord(records, 82, 1, 0, 2, 12, 12, 0);
 
-	const byte progress = _vm->gameState().scene1070SpencerDialogueState;
+	const byte progress = _vm->gameState().scene1070SpencerTravelClueProgress;
 	if (progress != 0)
 		records[3].enabled = 1;
 	if (progress == 2)
@@ -893,12 +893,12 @@ void Scene1070::initializeQuasimodoDialogueRecords(Common::Array<DialogueChoiceR
 	setDialogueRecord(records, 78, 0, 0, 1, 8, 8, 1);
 	setDialogueRecord(records, 79, 1, 1, 3, 9, 9, 1);
 	setDialogueRecord(records, 80, 1, 0, 2, 10, 10, 1);
-	if (state.scene1020ResourceBlockChoiceState == 2 &&
-			state.scene1020ResourceBlockVariantState == 1 &&
-			!state.scene1020AlternateResourceBlockActive)
+	if (state.scene1020HookPositionState == 2 &&
+			state.scene1020ChainAttachedToGrate == 1 &&
+			!state.scene1020GrateRaised)
 		records[78].enabled = 1;
 
-	// Depth 2, node 0: branch after the completed scene1020 resource-block puzzle.
+	// Depth 2, node 0: branch after Ron attaches the chain to the scene1020 grate.
 	setDialogueRecord(records, 140, 1, 0, 1, 11, 11, 0);
 	setDialogueRecord(records, 210, 1, 0, 0, 12, 12, 2);
 }
@@ -928,17 +928,15 @@ void Scene1070::handleSpencerDialogueEffect(byte effect, Common::Array<DialogueC
 		records[recordIndex].enabled = 0;
 
 	GameplayState &state = _vm->gameState();
-	if (effect == 2 && state.scene1070SpencerDialogueState == 0) {
-		state.scene1070SpencerDialogueState = 1;
+	if (effect == 2 && state.scene1070SpencerTravelClueProgress == 0) {
+		state.scene1070SpencerTravelClueProgress = 1;
 		records[3].enabled = 1;
-	} else if (effect == 3 && state.scene1070SpencerDialogueState == 1) {
-		state.scene1070SpencerDialogueState = 2;
+	} else if (effect == 3 && state.scene1070SpencerTravelClueProgress == 1) {
+		state.scene1070SpencerTravelClueProgress = 2;
 		records[2].enabled = 1;
-	} else if (effect == 4 && state.scene1070SpencerDialogueState == 2) {
-		state.scene1070SpencerDialogueState = 3;
+	} else if (effect == 4 && state.scene1070SpencerTravelClueProgress == 2) {
+		state.scene1070SpencerTravelClueProgress = 3;
 		runSpencerTravelUnlockEffect();
-	} else if (effect == 5 && !state.scene1070SpencerExtraFlag) {
-		state.scene1070SpencerExtraFlag = true;
 	}
 }
 
