@@ -64,8 +64,22 @@ const byte kScene7050Chunk11PickupItem10FrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
 };
 
+static PlayableSceneConfig scene7050Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = "RESOURCE.G05";
+	config.initialRequiredChunkCount = 12;
+	config.arenaFirstChunk = 5;
+	config.arenaLastChunk = 11;
+	config.stageIndex = 705;
+	config.debugName = "Scene 7050";
+	config.viewportXOffset = 0x68;
+	config.mainFlowFirstState = 0x1b8a;
+	config.mainFlowLastState = 0x1b8a;
+	return config;
+}
+
 Scene7050::Scene7050(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene7050", 0x0a1, 0x158, 2, 0xfd, 0xfb),
+		PlayableScene(vm, scene7050Config(), "scene7050", 0x0a1, 0x158, 2, 0xfd, 0xfb),
 		_cloakroomAttendantRepeatCount(0),
 		_cloakroomAttendantLayer() {
 	_cloakroomAttendantAnimation.configure(kScene7050FrameMillis, 1, 5, 6, 0x0e, 0x0e, 0x31);
@@ -73,38 +87,6 @@ Scene7050::Scene7050(HollywoodEngine *vm) :
 	_cloakroomAttendantLayer.configure(7, kScene7050Chunk7DescriptorCount,
 		kScene7050Chunk7FrameMap, ARRAYSIZE(kScene7050Chunk7FrameMap));
 	_cloakroomAttendantLayer.visible = true;
-}
-
-const char *Scene7050::resourceArchiveName() const {
-	return "RESOURCE.G05";
-}
-
-uint Scene7050::sceneInitialRequiredChunkCount() const {
-	return 12;
-}
-
-uint Scene7050::sceneArenaFirstChunk() const {
-	return 5;
-}
-
-uint Scene7050::sceneArenaLastChunk() const {
-	return 11;
-}
-
-uint Scene7050::sceneStageIndex() const {
-	return 705;
-}
-
-const char *Scene7050::sceneDebugName() const {
-	return "Scene 7050";
-}
-
-uint16 Scene7050::sceneViewportXOffset() const {
-	return 0x68;
-}
-
-bool Scene7050::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId == 0x1b8a;
 }
 
 bool Scene7050::hasCustomPreviewState() const {

@@ -90,8 +90,25 @@ const byte kScene7010Route3To2StepDeltas[] = {
 	4, 8, 10, 6, 3, 5, 5, 5, 5, 6, 2, 3
 };
 
+static PlayableSceneConfig scene7010Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = kScene7010ArchiveName;
+	config.initialRequiredChunkCount = kScene7010InitialRequiredChunkCount;
+	config.arenaFirstChunk = kScene7010ArenaFirstChunk;
+	config.arenaLastChunk = kScene7010ArenaLastChunk;
+	config.stageIndex = kScene7010StageIndex;
+	config.debugName = "Scene 7010";
+	config.viewportXOffset = kScene7010ViewportXOffset;
+	config.viewportMaxXOffset = kScene7010ViewportMaxXOffset;
+	config.loadInventoryActionTables = false;
+	config.loadActorDepthTables = false;
+	config.mainFlowFirstState = kScene7010FirstState;
+	config.mainFlowLastState = kScene7010LastState;
+	return config;
+}
+
 Scene7010::Scene7010(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene7010", 0x184, 0x1c6, 1, 0xfd, 0xfb),
+		PlayableScene(vm, scene7010Config(), "scene7010", 0x184, 0x1c6, 1, 0xfd, 0xfb),
 		_chunk8FrameIndex(0),
 		_chunk9AmbientOverlayFrameIndex(0),
 		_chunk9AmbientDecisionCounter(0),
@@ -115,50 +132,6 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 		_chunk8TimerAccumulator(0),
 		_chunk10TimerAccumulator(0),
 		_dialogueOverlayTimerAccumulator(0) {
-}
-
-const char *Scene7010::resourceArchiveName() const {
-	return kScene7010ArchiveName;
-}
-
-uint Scene7010::sceneInitialRequiredChunkCount() const {
-	return kScene7010InitialRequiredChunkCount;
-}
-
-uint Scene7010::sceneArenaFirstChunk() const {
-	return kScene7010ArenaFirstChunk;
-}
-
-uint Scene7010::sceneArenaLastChunk() const {
-	return kScene7010ArenaLastChunk;
-}
-
-uint Scene7010::sceneStageIndex() const {
-	return kScene7010StageIndex;
-}
-
-const char *Scene7010::sceneDebugName() const {
-	return "Scene 7010";
-}
-
-uint16 Scene7010::sceneViewportXOffset() const {
-	return kScene7010ViewportXOffset;
-}
-
-uint16 Scene7010::sceneViewportMaxXOffset() const {
-	return kScene7010ViewportMaxXOffset;
-}
-
-bool Scene7010::shouldLoadInventoryActionTables() const {
-	return false;
-}
-
-bool Scene7010::shouldLoadActorDepthTables() const {
-	return false;
-}
-
-bool Scene7010::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId >= kScene7010FirstState && stateId <= kScene7010LastState;
 }
 
 bool Scene7010::hasCustomPreviewState() const {

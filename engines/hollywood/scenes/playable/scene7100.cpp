@@ -106,8 +106,22 @@ const byte kScene7100TransferFrameMap[] = {
 	0, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0
 };
 
+static PlayableSceneConfig scene7100Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = "RESOURCE.G10";
+	config.initialRequiredChunkCount = kScene7100InitialRequiredChunkCount;
+	config.arenaFirstChunk = kScene7100ArenaFirstChunk;
+	config.arenaLastChunk = kScene7100ArenaLastChunk;
+	config.stageIndex = kScene7100StageIndex;
+	config.debugName = "Scene 7100";
+	config.viewportXOffset = kScene7100ViewportXOffset;
+	config.mainFlowFirstState = kScene7100FirstState;
+	config.mainFlowLastState = kScene7100LastState;
+	return config;
+}
+
 Scene7100::Scene7100(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene7100", kScene7100EntryX, kScene7100EntryY,
+		PlayableScene(vm, scene7100Config(), "scene7100", kScene7100EntryX, kScene7100EntryY,
 			kScene7100EntryFacing, 0xfd, 0xfb),
 		_primaryTimerAccumulator(0),
 		_environmentTimerAccumulator(0),
@@ -116,38 +130,6 @@ Scene7100::Scene7100(HollywoodEngine *vm) :
 		_primaryAltFrame(0),
 		_environmentState(2),
 		_environmentFrame(0) {
-}
-
-const char *Scene7100::resourceArchiveName() const {
-	return "RESOURCE.G10";
-}
-
-uint Scene7100::sceneInitialRequiredChunkCount() const {
-	return kScene7100InitialRequiredChunkCount;
-}
-
-uint Scene7100::sceneArenaFirstChunk() const {
-	return kScene7100ArenaFirstChunk;
-}
-
-uint Scene7100::sceneArenaLastChunk() const {
-	return kScene7100ArenaLastChunk;
-}
-
-uint Scene7100::sceneStageIndex() const {
-	return kScene7100StageIndex;
-}
-
-const char *Scene7100::sceneDebugName() const {
-	return "Scene 7100";
-}
-
-uint16 Scene7100::sceneViewportXOffset() const {
-	return kScene7100ViewportXOffset;
-}
-
-bool Scene7100::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId >= kScene7100FirstState && stateId <= kScene7100LastState;
 }
 
 bool Scene7100::hasCustomPreviewState() const {

@@ -28,19 +28,15 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
+// Saved GameplayState fields read:
+// spokenToCloakroomAttendant, cloakroomRagVisible.
+// Saved GameplayState fields written:
+// mainFlowStateId, spokenToCloakroomAttendant, cloakroomRagVisible.
 class Scene7050 : public PlayableScene {
 public:
 	Scene7050(HollywoodEngine *vm);
 
 private:
-	const char *resourceArchiveName() const override;
-	uint sceneInitialRequiredChunkCount() const override;
-	uint sceneArenaFirstChunk() const override;
-	uint sceneArenaLastChunk() const override;
-	uint sceneStageIndex() const override;
-	const char *sceneDebugName() const override;
-	uint16 sceneViewportXOffset() const override;
-	bool isMainFlowStateInScene(uint16 stateId) const override;
 	bool hasCustomPreviewState() const override;
 	void initializeCustomPreviewState() override;
 	bool hasCustomComposite() const override;

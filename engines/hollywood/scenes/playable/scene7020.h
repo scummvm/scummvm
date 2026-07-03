@@ -28,6 +28,10 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
+// Saved GameplayState fields read:
+// None.
+// Saved GameplayState fields written:
+// mainFlowStateId.
 class Scene7020 : public PlayableScene {
 public:
 	Scene7020(HollywoodEngine *vm);
@@ -35,16 +39,6 @@ public:
 	bool play();
 
 private:
-	const char *resourceArchiveName() const override;
-	uint sceneInitialRequiredChunkCount() const override;
-	uint sceneArenaFirstChunk() const override;
-	uint sceneArenaLastChunk() const override;
-	uint sceneStageIndex() const override;
-	const char *sceneDebugName() const override;
-	uint16 sceneViewportXOffset() const override;
-	bool shouldLoadInventoryActionTables() const override;
-	bool isMainFlowStateInScene(uint16 stateId) const override;
-	bool usesActorDepthTest() const override;
 	bool hasCustomPreviewState() const override;
 	void initializeCustomPreviewState() override;
 	bool hasCustomComposite() const override;

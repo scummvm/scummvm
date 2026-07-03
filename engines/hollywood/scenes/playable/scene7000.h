@@ -26,6 +26,16 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
+// Saved GameplayState fields read:
+// None.
+// Saved GameplayState fields written:
+// mainFlowStateId, activeAudioChapterIndex, currentInventoryOwnerIndex,
+// currentAmbientMusicCueId, inventoryItemCountByOwner,
+// inventoryFirstVisibleSlotByOwner, inventorySlotItemIdByOwner,
+// inventoryItemSlotByOwnerAndItemId, inventoryItemResourcePageByOwnerAndItemId,
+// fixedInventoryVerbHandlerIdsByItemAndStrip,
+// dialogueRelationMode1HandlerIdsByItemPair,
+// dialogueRelationMode2HandlerIdsByItemPair, sueInventoryInitialized.
 class Scene7000 {
 public:
 	Scene7000(HollywoodEngine *vm);
