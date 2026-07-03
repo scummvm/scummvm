@@ -652,6 +652,87 @@ protected:
 	void drawSceneShapes(int start = 0, int end = 18, int drawFlags = 0xFF);
 	void drawDecorations(int index);
 
+	// Automap (non-original): a north-up map toggled with Tab. "Visited" cells were
+	// walked, "seen" cells only glimpsed (drawn dimmer); one bit each, per level.
+	void automapSetBit(uint8 (&bits)[20][128], uint16 block) {
+		if (_currentLevel < 20 && block < 1024)
+			bits[_currentLevel][block >> 3] |= (1 << (block & 7));
+	}
+	bool automapGetBit(const uint8 (&bits)[20][128], uint16 block) const {
+		return _currentLevel < 20 && block < 1024 && (bits[_currentLevel][block >> 3] & (1 << (block & 7)));
+	}
+	void automapMarkVisited(uint16 block) { automapSetBit(_automapVisited, block); }
+	bool automapIsVisited(uint16 block) const { return automapGetBit(_automapVisited, block); }
+	void automapMarkSeen(uint16 block) { automapSetBit(_automapSeen, block); }
+	bool automapIsSeen(uint16 block) const { return automapGetBit(_automapSeen, block); }
+	// True when the party can step off `block` in direction `d` (the neighbour's
+	// facing wall, dir^2, is passable) - the wall/movement test the map draws with.
+	bool automapSideOpen(uint16 block, int d) {
+		const uint16 nb = calcNewBlockPosition(block, d);
+		return (_wllWallFlags[_levelBlockProperties[nb].walls[d ^ 2]] & 1) != 0;
+	}
+	// A door leaf sits on both walls of its passage axis, so test either wall of the
+	// pair (N/S = walls 0,2; E/W = walls 1,3). Live state only - open doors animate.
+	bool automapDoorNS(const LevelBlockProperty *bp) const { return (_wllWallFlags[bp->walls[0]] & 8) || (_wllWallFlags[bp->walls[2]] & 8); }
+	bool automapDoorEW(const LevelBlockProperty *bp) const { return (_wllWallFlags[bp->walls[1]] & 8) || (_wllWallFlags[bp->walls[3]] & 8); }
+	void automapMarkSeenFromCurrent();
+	void automapReset();
+	void automapToggle();    // Tab / Esc: fullscreen map overlay
+	void automapToggleHud(); // M: mini-map in place of the compass (persisted in ConfMan)
+	void automapDraw();
+	void automapDrawMini();
+
+	// Geometry shared by drawing and click hit-testing.
+	struct AutomapLayout {
+		int cell;
+		int offX, offY;                 // top-left of the 32x32 grid (mouse hit-test)
+		int frame;                      // stone frame thickness
+		int mapX, mapY, mapW, mapH;     // parchment region (map + footer strip)
+		int sideX, sideY, sideW, sideH; // stone side panel (plaque, legend, keys)
+		int plX, plY, plW, plH;         // level/coords plaque inside the side panel
+		int footY;                      // top of the selected-note footer strip
+	};
+	AutomapLayout automapLayout() const;
+	// Area name for the plaque; falls back to "Level N" where unknown.
+	Common::String automapLevelName() const;
+	uint32 automapNoteKey(uint16 block) const { return ((uint32)_currentLevel << 16) | block; }
+	// Per-cell map notes (non-original): free text, keyed per level. Click selects, N edits.
+	uint16 automapBlockAtMouse() const;
+	void automapHandleClick();
+	void automapEditNote();
+
+	// Auto-collected per-cell info (separate from manual notes): a glyph code plus a
+	// short description, learned by observation. Floor items are read live, not stored.
+	enum AutomapIcon { kAmNone = 0, kAmStairsDown = 1, kAmStairsUp = 2, kAmTeleport = 3 };
+	void automapCollectCellInfo(uint16 block);
+	void automapTagTransition(int fromLevel, uint16 fromBlock, int toLevel);
+	void automapLinkTeleport(uint16 fromBlock, uint16 toBlock);
+	Common::String automapLiveItems(uint16 block) const;
+	void automapDrawIcon(Graphics::Surface &surf, int sx, int sy, int cell, uint8 icon, uint32 color) const;
+	// Cached static chrome, rebuilt only on overlay resize; _automapFrame is the
+	// reused per-frame compositing surface (so the draw loop allocates nothing).
+	Graphics::Surface _automapBg;
+	Graphics::Surface _automapFrame;
+
+	uint8 _automapVisited[20][128];
+	uint8 _automapSeen[20][128];
+	bool _automapFullOpen; // fullscreen map overlay shown (modal)
+	bool _automapHudOn;    // mini-map drawn in the compass slot (non-modal)
+	Common::HashMap<uint32, Common::String> _automapNotes;
+	Common::HashMap<uint32, uint8> _automapIcons;
+	Common::HashMap<uint32, Common::String> _automapAutoInfo;
+	// Teleporter pads paired by use (same letter on both ends), keyed like the notes.
+	Common::HashMap<uint32, uint8> _automapTeleLinks;
+	uint16 _automapSelectedBlock;
+	uint16 _automapHoverBlock; // cell under the mouse (transient); its info shows in the footer
+	uint32 _automapNextRefresh; // next passive redraw (live floor items etc.); input redraws at once
+	bool _automapEditing;
+	Common::String _automapEditBuffer;
+	// Transient per-cell door bits (1 = N/S leaf, 2 = E/W), so an open door (which
+	// loses its wall flag while animating) still draws. Rebuilt each draw, not saved.
+	Common::HashMap<uint32, uint8> _automapDoorBits;
+	void automapMoveSelection(int dx, int dy);
+
 	int calcNewBlockPositionAndTestPassability(uint16 curBlock, uint16 direction);
 	void notifyBlockNotPassable();
 	void increaseStepsCounter();
@@ -857,6 +938,7 @@ protected:
 	bool _configADDRuleEnhancements;
 	bool _configEnhancedReload;
 	bool _configNPCPatch;
+	bool _configAutomap; // non-original: in-game automap overlay enabled (opt-out)
 
 	Graphics::Surface _thumbNail;
 
