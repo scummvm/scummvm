@@ -5639,7 +5639,7 @@ if test "$_nfm" = auto ; then
 #include <nfmcore.h>
 #include <nfmutil.h>
 
-sOplInterface gOplIf;
+sFmInterface gOplIf;
 
 int main(void)
 {
