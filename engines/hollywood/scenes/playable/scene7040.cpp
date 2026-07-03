@@ -132,8 +132,22 @@ const byte kScene7040Chunk18PickupItem0FFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 };
 
+static PlayableSceneConfig scene7040Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = "RESOURCE.G04";
+	config.initialRequiredChunkCount = 20;
+	config.arenaFirstChunk = 5;
+	config.arenaLastChunk = 18;
+	config.stageIndex = 704;
+	config.debugName = "Scene 7040";
+	config.viewportXOffset = 0xc8;
+	config.mainFlowFirstState = 0x1b80;
+	config.mainFlowLastState = 0x1b89;
+	return config;
+}
+
 Scene7040::Scene7040(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene7040", 0x14a, 0x139, 1, 0xfd, 0xfb),
+		PlayableScene(vm, scene7040Config(), "scene7040", 0x14a, 0x139, 1, 0xfd, 0xfb),
 		_chunk12FrameIndex(0),
 		_chunk14ActionFrameIndex(0),
 		_chunk14AltFrameIndex(0),
@@ -147,34 +161,6 @@ Scene7040::Scene7040(HollywoodEngine *vm) :
 	_preItemIdleAnimation.configure(kScene7040Chunk11FrameMillis, 0, 1, 0, 6, 0x0e, 0x31);
 	_postItemAnimation.reset(1, kScene7040Chunk16FrameMillis);
 	_chunk17Animation.reset(0, kScene7040Chunk17FrameMillis);
-}
-
-const char *Scene7040::resourceArchiveName() const {
-	return "RESOURCE.G04";
-}
-
-uint Scene7040::sceneInitialRequiredChunkCount() const {
-	return 20;
-}
-
-uint Scene7040::sceneArenaFirstChunk() const {
-	return 5;
-}
-
-uint Scene7040::sceneArenaLastChunk() const {
-	return 18;
-}
-
-uint Scene7040::sceneStageIndex() const {
-	return 704;
-}
-
-const char *Scene7040::sceneDebugName() const {
-	return "Scene 7040";
-}
-
-uint16 Scene7040::sceneViewportXOffset() const {
-	return 0xc8;
 }
 
 int Scene7040::alternatePaletteResourceChunkIndex() const {
@@ -191,10 +177,6 @@ bool Scene7040::shouldConvertSavedFramebufferFF() const {
 
 bool Scene7040::shouldRunExitSideEffectsAfterLoop() const {
 	return true;
-}
-
-bool Scene7040::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId >= 0x1b80 && stateId <= 0x1b89;
 }
 
 bool Scene7040::hasCustomPreviewState() const {

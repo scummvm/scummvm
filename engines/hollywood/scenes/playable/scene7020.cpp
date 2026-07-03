@@ -61,8 +61,24 @@ const byte kScene7020Chunk7RevealFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7
 };
 
+static PlayableSceneConfig scene7020Config() {
+	PlayableSceneConfig config;
+	config.resourceArchiveName = "RESOURCE.G02";
+	config.initialRequiredChunkCount = kScene7020InitialRequiredChunkCount;
+	config.arenaFirstChunk = kScene7020ArenaFirstChunk;
+	config.arenaLastChunk = kScene7020ArenaLastChunk;
+	config.stageIndex = kScene7020StageIndex;
+	config.debugName = "Scene 7020";
+	config.viewportXOffset = kScene7020ViewportXOffset;
+	config.loadInventoryActionTables = false;
+	config.useActorDepthTest = true;
+	config.mainFlowFirstState = kScene7020State;
+	config.mainFlowLastState = kScene7020State;
+	return config;
+}
+
 Scene7020::Scene7020(HollywoodEngine *vm) :
-		PlayableScene(vm, "scene7020", kScene7020SueTargetX, kScene7020SueTargetY,
+		PlayableScene(vm, scene7020Config(), "scene7020", kScene7020SueTargetX, kScene7020SueTargetY,
 			kScene7020SueDialogueFacing, 0xfd, 0xfb),
 		_chunk6FrameMapIndex(0),
 		_primaryPoseMode(0),
@@ -89,46 +105,6 @@ bool Scene7020::play() {
 	_ambientSoundBank0.stop();
 	if (!Engine::shouldQuit() && !_vm->isSceneRestartRequested())
 		_vm->gameState().mainFlowStateId = kScene7020ExitState9101;
-	return true;
-}
-
-const char *Scene7020::resourceArchiveName() const {
-	return "RESOURCE.G02";
-}
-
-uint Scene7020::sceneInitialRequiredChunkCount() const {
-	return kScene7020InitialRequiredChunkCount;
-}
-
-uint Scene7020::sceneArenaFirstChunk() const {
-	return kScene7020ArenaFirstChunk;
-}
-
-uint Scene7020::sceneArenaLastChunk() const {
-	return kScene7020ArenaLastChunk;
-}
-
-uint Scene7020::sceneStageIndex() const {
-	return kScene7020StageIndex;
-}
-
-const char *Scene7020::sceneDebugName() const {
-	return "Scene 7020";
-}
-
-uint16 Scene7020::sceneViewportXOffset() const {
-	return kScene7020ViewportXOffset;
-}
-
-bool Scene7020::shouldLoadInventoryActionTables() const {
-	return false;
-}
-
-bool Scene7020::isMainFlowStateInScene(uint16 stateId) const {
-	return stateId == kScene7020State;
-}
-
-bool Scene7020::usesActorDepthTest() const {
 	return true;
 }
 
