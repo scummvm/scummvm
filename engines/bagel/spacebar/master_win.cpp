@@ -19,6 +19,8 @@
  *
  */
 
+#include "base/version.h"
+
 #include "bagel/spacebar/master_win.h"
 #include "bagel/spacebar/baglib/zoom_pda.h"
 #include "bagel/spacebar/computer.h"
@@ -46,7 +48,7 @@ namespace SpaceBar {
 
 static const char *GetBuildVersion() {
 #ifdef RELEASE_BUILD
-	return buildString("Version: %s", SCUMMVM_VERSION);
+	return buildString("Version: %s", gScummVMVersion);
 #else
 	return buildString("Version: %s, %s", __DATE__, __TIME__);
 #endif
