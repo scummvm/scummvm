@@ -376,12 +376,10 @@ static void handle_anim_beard() {
 
 static void process_conv_wise() {
 	int you_trig_flag = false;
-	int me_trig_flag  = false;
 
 	if (player_verb == conv049_polyquiz_b_b) {
 		conv_hold();
 		you_trig_flag      = true;
-		me_trig_flag       = true;
 		local->wise_action = GIVE;
 	}
 
@@ -389,7 +387,6 @@ static void process_conv_wise() {
 		*conv_my_next_start         = conv049_recheck;
 		conv_abort();
 		you_trig_flag               = true;
-		me_trig_flag                = true;
 		player.commands_allowed     = false;
 		player_walk(PLAYER_X_FROM_204, PLAYER_Y_FROM_204, FACING_EAST);
 		player_walk_trigger(ROOM_203_NEW_ROOM);

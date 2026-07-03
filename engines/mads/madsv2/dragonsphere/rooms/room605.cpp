@@ -638,7 +638,6 @@ static void room_605_parser() {
 	int was_rat_removed;
 	int are_any_inorganic;
 	int are_any_organic;
-	int temp;
 	int stuff_still_here = false;
 
 	if (player_said_1(wave) ||
@@ -743,7 +742,6 @@ static void room_605_parser() {
 	}
 
 	if (kernel.trigger == ROOM_605_FLUID_LEFT) {
-		temp = seq[fx_fluid_left];
 		seq[fx_fluid_left] = kernel_seq_pingpong(ss[fx_fluid_left], false, 7, 0, 0, 0);
 		kernel_seq_depth(seq[fx_fluid_left], 5);
 		kernel_seq_range(seq[fx_fluid_left], 16, KERNEL_LAST);
@@ -752,7 +750,6 @@ static void room_605_parser() {
 	}
 
 	if (kernel.trigger == ROOM_605_FLUID_RIGHT) {
-		temp = seq[fx_fluid_right];
 		seq[fx_fluid_right] = kernel_seq_pingpong(ss[fx_fluid_right], false, 7, 0, 0, 0);
 		kernel_seq_depth(seq[fx_fluid_right], 5);
 		kernel_seq_range(seq[fx_fluid_right], 16, KERNEL_LAST);

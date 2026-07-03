@@ -568,7 +568,6 @@ static void room_206_pre_parser() {
 
 static void process_conv_lady() {
 	int you_trig_flag = false;
-	int me_trig_flag  = false;
 
 	if (player_verb == conv053_thanks_only || player_verb == conv053_restart_only) {
 		global[perform_displacements] = true;
@@ -577,21 +576,18 @@ static void process_conv_lady() {
 	if (player_verb == conv053_story_b_b) {
 		conv_hold();
 		you_trig_flag      = true;
-		me_trig_flag       = true;
 		local->lady_action = GET_UP;
 	}
 
 	if (player_verb == conv053_thanks_b_b) {
 		conv_hold();
 		you_trig_flag      = true;
-		me_trig_flag       = true;
 		local->lady_action = SIT_DOWN;
 	}
 
 	if (player_verb == conv053_focus_b_b) {
 		conv_hold();
 		you_trig_flag      = true;
-		me_trig_flag       = true;
 		local->lady_action = GIVE;
 	}
 

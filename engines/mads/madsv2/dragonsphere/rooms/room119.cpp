@@ -465,12 +465,7 @@ static void room_119_daemon() {
 }
 
 static void process_conversation_king() {
-	int you_trig_flag = false;
-	int me_trig_flag = false;
-
 	if (player_verb == conv035_exit_b_b) {
-		me_trig_flag = true;
-		you_trig_flag = true;
 		if (!kernel.trigger) {
 			conv_me_trigger(ROOM_119_LEAVE_ROOM);
 		}

@@ -491,7 +491,6 @@ static void global_menu_difficulty() {
 static void global_menu_cdrom() {
 	int initial_1, initial_2;
 	int former_speech;
-	int former_text;
 	PopupItem *speech_item;
 	PopupItem *text_item;
 	PopupItem *done_button, *cancel_button;
@@ -508,7 +507,6 @@ static void global_menu_cdrom() {
 	popup_blank(2);
 
 	former_speech = config_file.speech_flag;
-	former_text = config_file.show_speech_boxes;
 
 	initial_1 = config_file.speech_flag ? 0 : 1;
 	initial_2 = config_file.show_speech_boxes ? 0 : 1;

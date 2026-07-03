@@ -386,7 +386,6 @@ static void animate() {
 	AnimFile anim_in;
 	int count, series_ctr, ctr;
 	int soundLoadFlag = 0;
-	bool foundSound;
 	int imageIndex;
 	static int packIndex = 0;
 
@@ -446,8 +445,6 @@ static void animate() {
 
 	for (count = 0; count < anim_count && !error_code; ++count) {
 		MADS_FORMAT(buf, anim_list[count].name);
-
-		foundSound = false;
 
 		if (!has_sound_file) {
 			if (anim_get_sound_info(buf, sound_file_name, &soundLoadFlag))

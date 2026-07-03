@@ -83,8 +83,6 @@ void section_6_walker() {
 }
 
 void section_6_interface() {
-	RGBcolor text_color = { 43, 29, 15 };
-
 	Common::strcpy_s(kernel.interface, kernel_interface_name(6));
 	pal_change_color(INTER_MESSAGE_COLOR, 56, 47, 32);
 }

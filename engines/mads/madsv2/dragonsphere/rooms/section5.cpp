@@ -87,8 +87,6 @@ void section_5_walker() {
 }
 
 void section_5_interface() {
-	RGBcolor text_color = { 43, 29, 15 };
-
 	if (new_room >= 501 && new_room < 601) {
 		Common::strcpy_s(kernel.interface, kernel_interface_name(4));
 	} else {

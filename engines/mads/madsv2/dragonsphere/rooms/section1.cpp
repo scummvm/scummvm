@@ -125,7 +125,6 @@ void section_1_walker() {
 
 void section_1_interface() {
 	int interface;
-	RGBcolor text_color = { 43, 29, 15 };
 
 	if (new_room == 116) {
 		interface = 2;

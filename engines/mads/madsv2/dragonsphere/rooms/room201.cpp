@@ -1807,7 +1807,6 @@ static void room_201_daemon() {
 
 static void process_conv_king_guards() {
 	int you_trig_flag = false;
-	int me_trig_flag = false;
 
 	if (player_verb == conv047_prebribe_giver) {
 		if (!kernel.trigger) {
@@ -1833,7 +1832,6 @@ static void process_conv_king_guards() {
 	if (player_verb == conv047_give_b_b) { /* first time around */
 		*conv_my_next_start = conv047_postbribe;
 		you_trig_flag = true;
-		me_trig_flag = true;
 		local->activate_timer = true;
 		conv_abort();
 	}
@@ -1841,7 +1839,6 @@ static void process_conv_king_guards() {
 	if (player_verb == conv047_exit_i_i) {
 		*conv_my_next_start = conv047_protect;
 		you_trig_flag = true;
-		me_trig_flag = true;
 		conv_abort();
 		player.commands_allowed = false;
 		local->guard_right_action = UNHALT;
@@ -1861,7 +1858,6 @@ static void process_conv_king_guards() {
 	if (player_verb == conv047_give_d_d) {
 		*conv_my_next_start = conv047_usesame;
 		you_trig_flag = true;
-		me_trig_flag = true;
 		local->activate_timer = true;
 		conv_abort();
 	}
@@ -1870,7 +1866,6 @@ static void process_conv_king_guards() {
 		*conv_my_next_start = conv047_heythere;
 		conv_abort();
 		you_trig_flag = true;
-		me_trig_flag = true;
 		local->guard_right_action = KILL;
 		player.commands_allowed = false;
 	}
@@ -1879,7 +1874,6 @@ static void process_conv_king_guards() {
 		*conv_my_next_start = conv047_protect;
 		local->guard_left_action = GIVE_NOTHING;
 		you_trig_flag = true;
-		me_trig_flag = true;
 		conv_abort();
 		player.commands_allowed = false;
 		local->guard_right_action = UNHALT;
@@ -1888,7 +1882,6 @@ static void process_conv_king_guards() {
 	if (player_verb == conv047_exit_k_k) {
 		*conv_my_next_start = conv047_protect;
 		you_trig_flag = true;
-		me_trig_flag = true;
 		conv_abort();
 		player_walk(PLAYER_X_FROM_120, PLAYER_Y_FROM_120, FACING_WEST);
 		/* player.walking = true; */
@@ -1910,7 +1903,6 @@ static void process_conv_king_guards() {
 	if (player_verb == conv047_exit_d_d) {
 		*conv_my_next_start = conv047_heythere;
 		you_trig_flag = true;
-		me_trig_flag = true;
 		conv_abort();
 		player.commands_allowed = false;
 		local->guard_left_action = DUMP_ANIMS;
@@ -1920,7 +1912,6 @@ static void process_conv_king_guards() {
 	if (player_verb == conv047_exit_f_f) {
 		*conv_my_next_start = conv047_askback;
 		you_trig_flag = true;
-		me_trig_flag = true;
 		conv_abort();
 		player.commands_allowed = false;
 		local->guard_left_action = DUMP_ANIMS;
@@ -1932,7 +1923,6 @@ static void process_conv_king_guards() {
 		*conv_my_next_start = conv047_protect;
 		local->guard_left_action = GIVE_NOTHING;
 		you_trig_flag = true;
-		me_trig_flag = true;
 		conv_abort();
 		player.commands_allowed = false;
 	}
@@ -1942,7 +1932,6 @@ static void process_conv_king_guards() {
 		conv_abort();
 		local->guard_left_action = GIVE_NOTHING;
 		you_trig_flag = true;
-		me_trig_flag = true;
 		player.commands_allowed = false;
 	}
 
@@ -1968,12 +1957,10 @@ static void process_conv_king_guards() {
 
 static void process_conv_pid_guards() {
 	int you_trig_flag = false;
-	int me_trig_flag = false;
 
 	if (player_verb == conv054_death_b_b) {
 		conv_abort();
 		you_trig_flag = true;
-		me_trig_flag = true;
 		local->guard_right_action = KILL;
 		player.commands_allowed = false;
 	}
@@ -1982,7 +1969,6 @@ static void process_conv_pid_guards() {
 		local->death_timer = 0;
 		local->clock = 0;
 		you_trig_flag = true;
-		me_trig_flag = true;
 		local->activate_timer = true;
 	}
 
@@ -1990,13 +1976,11 @@ static void process_conv_pid_guards() {
 		conv_hold();
 		local->pid_action = DRINK;
 		you_trig_flag = true;
-		me_trig_flag = true;
 	}
 
 	if (player_verb == conv054_offer_b_b) {
 		local->pid_action = HAND_TO_LEFT;
 		you_trig_flag = true;
-		me_trig_flag = true;
 		conv_abort();
 		player.commands_allowed = false;
 	}
@@ -2004,7 +1988,6 @@ static void process_conv_pid_guards() {
 	if (player_verb == conv054_exit_b_b) {
 		*conv_my_next_start = conv054_restart;
 		you_trig_flag = true;
-		me_trig_flag = true;
 		conv_abort();
 		kernel_abort_animation(aa[2]);
 
@@ -2013,13 +1996,11 @@ static void process_conv_pid_guards() {
 		local->guard_right_action = UNHALT;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 		player_walk(PLAYER_X_FROM_120, PLAYER_Y_FROM_120, FACING_WEST);
-		/* player.walking = true; */
 
 		global[pre_room] = 201;
 		if (global[dragon_my_scene] < global[dragon_high_scene]) {
 			global[dragon_my_scene]++;
 			player.walk_off_edge_to_room = 111;
-			/* local->cut_scene = true; */
 		} else {
 			player.walk_off_edge_to_room = 120;
 		}
