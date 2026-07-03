@@ -133,9 +133,9 @@ bool Scene1090::hasCustomEntrySequence() const {
 void Scene1090::runCustomEntrySequence() {
 	GameplayState &state = _vm->gameState();
 	runEntryPath(0x101, 0x15b, 2, 0x101, 0x15b);
-	if (!state.seenScene1090EntryLine) {
+	if (!state.scene1090EntryLineSeen) {
 		beginSecondarySpeechLine(0, 0);
-		state.seenScene1090EntryLine = true;
+		state.scene1090EntryLineSeen = true;
 	}
 	drawPlayableComposite();
 	presentFrame();

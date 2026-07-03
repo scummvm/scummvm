@@ -28,6 +28,10 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
+// Saved GameplayState fields read:
+// mainFlowStateId, scene3040EntryLineSeen, scene3040HiddenObjectVisible.
+// Saved GameplayState fields written:
+// mainFlowStateId, scene3040EntryLineSeen, scene3040HiddenObjectVisible.
 class Scene3040 : public PlayableScene {
 public:
 	Scene3040(HollywoodEngine *vm);
@@ -52,11 +56,11 @@ private:
 	void advanceLoopingLayer(uint32 delta);
 	void advanceForegroundActorLayer(uint32 delta);
 	void drawLooseResourceSpriteLayer(const ResourceSpriteLayer &layer);
-	void updateConditionalObjectHotspots();
+	void updateHiddenObjectHotspots();
 	void runExitToScene3010();
 	void runInventoryPatchAction();
 	void runForegroundActionFrames(byte firstFrame, byte lastFrame, int patchFrame = -1);
-	void applyConditionalObjectPatch();
+	void applyHiddenObjectPatch();
 	byte selectedInventoryItemForPatchAction() const;
 
 	TimedAnimationChannel _loopChannel;

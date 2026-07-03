@@ -209,9 +209,9 @@ void Scene1040::runCustomEntrySequence() {
 	}
 
 	runEntryPath(0x0d8, 0x1a1, 5, 0x193, 0x170);
-	if (!_vm->gameState().seenScene1040EntryLine) {
+	if (!_vm->gameState().scene1040EntryLineSeen) {
 		beginSecondarySpeechLine(0, 0);
-		_vm->gameState().seenScene1040EntryLine = true;
+		_vm->gameState().scene1040EntryLineSeen = true;
 	}
 }
 
@@ -229,7 +229,7 @@ bool Scene1040::advanceCustomGameplayLoop(uint32 delta) {
 bool Scene1040::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 301: // Mirar puerta (look at door): state-dependent line.
-		beginSecondarySpeechLine(1, _vm->gameState().scene1040DoorOpened ? 1 : 0);
+		beginSecondarySpeechLine(1, _vm->gameState().scene1040CloakroomDoorOpened ? 1 : 0);
 		return true;
 	case 302: // Usar/abrir puerta (use/open door): enter cloakroom.
 		runDoorToCloakroomAction();
@@ -296,7 +296,7 @@ bool Scene1040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	GameplayState &state = _vm->gameState();
 	if (_paletteMaskOriginal.size() >= kSceneColorToItemMap + kScenePaletteMapPageSize &&
 			_paletteMask.size() >= kSceneColorToItemMap + kScenePaletteMapPageSize) {
-		const byte cordState = MIN<byte>(state.scene1040CordState, 2);
+		const byte cordState = MIN<byte>(state.scene1040GorillaCordState, 2);
 		for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
 			const byte originalItem = _paletteMaskOriginal[kSceneColorToItemMap + i];
 			byte item = originalItem;
@@ -319,9 +319,9 @@ bool Scene1040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		}
 	}
 
-	if (state.scene1040CordState == 1 && _sceneChunkTable.isValidChunk(13))
+	if (state.scene1040GorillaCordState == 1 && _sceneChunkTable.isValidChunk(13))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[13], _baseFramebuffer);
-	else if (state.scene1040CordState >= 2 && _sceneChunkTable.isValidChunk(14))
+	else if (state.scene1040GorillaCordState >= 2 && _sceneChunkTable.isValidChunk(14))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[14], _baseFramebuffer);
 
 	if (state.scene1040BalloonTaken && _sceneChunkTable.isValidChunk(10))
@@ -344,13 +344,13 @@ void Scene1040::runDoorToCloakroomAction() {
 	runOverlaySequence(8, kScene1040DoorOverlayDescriptorCount, kScene1040DoorFrameMap,
 		ARRAYSIZE(kScene1040DoorFrameMap), kScene1040FrameMillis);
 	_soundBank0.playSample(3, 100);
-	_vm->gameState().scene1040DoorOpened = true;
+	_vm->gameState().scene1040CloakroomDoorOpened = true;
 	_vm->gameState().mainFlowStateId = kScene1040ExitState1050;
 }
 
 void Scene1040::handleCordPickup() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene1040CordState == 0) {
+	if (state.scene1040GorillaCordState == 0) {
 		beginSecondarySpeechLine(3, 0);
 		return;
 	}
@@ -360,7 +360,7 @@ void Scene1040::handleCordPickup() {
 
 	runOverlaySequence(12, kScene1040CordOverlayDescriptorCount, kScene1040CordFrameMap,
 		ARRAYSIZE(kScene1040CordFrameMap), kScene1040FrameMillis, 0, 2);
-	state.scene1040CordState = 2;
+	state.scene1040GorillaCordState = 2;
 	applySceneStateToHotspotsAndPatches(2);
 	addInventoryItem(0x1b);
 	_soundBank0.playSample(1, 100);
@@ -382,11 +382,11 @@ void Scene1040::handleBalloonPickup() {
 
 void Scene1040::handleGorillaCordSetup() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene1040CordState == 1) {
+	if (state.scene1040GorillaCordState == 1) {
 		beginSecondarySpeechLine(13, 1);
 		return;
 	}
-	if (state.scene1040CordState >= 2)
+	if (state.scene1040GorillaCordState >= 2)
 		return;
 
 	_soundBank0.playSampleLooping(0x23, 75);
@@ -395,7 +395,7 @@ void Scene1040::handleGorillaCordSetup() {
 		kScene1040FrameMillis);
 	_soundBank0.stop();
 	beginSecondarySpeechLine(13, 0);
-	state.scene1040CordState = 1;
+	state.scene1040GorillaCordState = 1;
 	applySceneStateToHotspotsAndPatches(2);
 }
 
@@ -413,7 +413,7 @@ void Scene1040::drawForegroundBlocks(int activeWorldY) {
 	if (activeWorldY >= kScene1040ForegroundYThreshold)
 		return;
 
-	const uint chunkIndex = _vm->gameState().scene1040CordState < 2 ? 6 : 15;
+	const uint chunkIndex = _vm->gameState().scene1040GorillaCordState < 2 ? 6 : 15;
 	if (_sceneChunkTable.isValidChunk(chunkIndex))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);
 }
@@ -446,7 +446,7 @@ void Scene1040::advanceGorillaAnimation(uint32 delta) {
 void Scene1040::setCordActionTarget() {
 	ScenePoint interactionPoint;
 	ScenePoint approachPoint;
-	if (_vm->gameState().scene1040CordState == 1) {
+	if (_vm->gameState().scene1040GorillaCordState == 1) {
 		interactionPoint.x = 0x23f;
 		interactionPoint.y = 0x16f;
 	} else {

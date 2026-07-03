@@ -262,9 +262,9 @@ void Scene4070::runCustomEntrySequence() {
 
 	runEntryPath(kScene4070EntryStartX, kScene4070EntryStartY, kScene4070EntryFacing,
 		kScene4070EntryTargetX, kScene4070EntryTargetY);
-	if (!_vm->gameState().seenScene4070EntryLine) {
+	if (!_vm->gameState().scene4070EntryLineSeen) {
 		beginSecondarySpeechLine(0, 0);
-		_vm->gameState().seenScene4070EntryLine = true;
+		_vm->gameState().scene4070EntryLineSeen = true;
 	}
 }
 
@@ -533,7 +533,7 @@ void Scene4070::runTrophyBaseOpenAction() {
 
 void Scene4070::runFrankiePartGrantSequence() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4070FrankiePartIndex >= ARRAYSIZE(kScene4070FrankiePartItems)) {
+	if (state.scene4070FrankiePartsGranted >= ARRAYSIZE(kScene4070FrankiePartItems)) {
 		beginSecondarySpeechLine(4, 4);
 		return;
 	}
@@ -556,10 +556,10 @@ void Scene4070::runFrankiePartGrantSequence() {
 	}
 	clearScriptLayer();
 
-	addInventoryItem(kScene4070FrankiePartItems[state.scene4070FrankiePartIndex]);
+	addInventoryItem(kScene4070FrankiePartItems[state.scene4070FrankiePartsGranted]);
 	_soundBank0.playSample(1, 100);
-	beginSecondarySpeechLine(0x16, (byte)(state.scene4070FrankiePartIndex * 2 + 1));
-	++state.scene4070FrankiePartIndex;
+	beginSecondarySpeechLine(0x16, (byte)(state.scene4070FrankiePartsGranted * 2 + 1));
+	++state.scene4070FrankiePartsGranted;
 }
 
 void Scene4070::runSlimmingTreatmentSequence() {

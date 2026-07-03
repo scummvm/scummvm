@@ -298,9 +298,9 @@ void Scene3010::drawForegroundBlocks(int activeWorldY) {
 
 void Scene3010::runEntryFromChapterStart() {
 	runEntryPath(0x13d, 0x1df, 1, 0x160, 0x1ca);
-	if (!_vm->gameState().seenScene3010EntryLine) {
+	if (!_vm->gameState().scene3010EntryLineSeen) {
 		beginSecondarySpeechLine(0, 0);
-		_vm->gameState().seenScene3010EntryLine = true;
+		_vm->gameState().scene3010EntryLineSeen = true;
 	}
 }
 

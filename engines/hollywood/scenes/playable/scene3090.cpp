@@ -196,7 +196,7 @@ void Scene3090::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	_frontLayer.chunkIndex = _vm->gameState().scene3090WindowSequenceState == 0 ? 9 : 10;
+	_frontLayer.chunkIndex = _vm->gameState().scene3090WindowOpenSequenceState == 0 ? 9 : 10;
 	drawResourceSpriteLayer(_frontLayer);
 	if (_puzzleLayer.visible)
 		drawResourceSpriteLayer(_puzzleLayer);
@@ -213,9 +213,9 @@ bool Scene3090::hasCustomEntrySequence() const {
 
 void Scene3090::runCustomEntrySequence() {
 	runEntryPath(600, 0x145, 4, 600, 0x145);
-	if (!_vm->gameState().seenScene3090EntryLine) {
+	if (!_vm->gameState().scene3090EntryLineSeen) {
 		beginSecondarySpeechLine(0, 0);
-		_vm->gameState().seenScene3090EntryLine = true;
+		_vm->gameState().scene3090EntryLineSeen = true;
 	}
 }
 
@@ -244,7 +244,7 @@ bool Scene3090::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(1, 0);
 		return true;
 	case 302: // Mirar libro / diario secreto (look at book / secret diary).
-		beginSecondarySpeechLine(2, state.scene3090BlindManPuzzleStage == 0 ? 0 : 1);
+		beginSecondarySpeechLine(2, state.scene3090SecretDiaryPuzzleStage == 0 ? 0 : 1);
 		return true;
 	case 303: // Hablar con hombre ciego (talk to blind man).
 		runBlindManConversation();
@@ -254,16 +254,16 @@ bool Scene3090::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(3, 0);
 		return true;
 	case 305: // Mirar ventana (look at window).
-		beginSecondarySpeechLine(4, state.scene3090WindowSequenceState == 0 ? 1 : 0);
+		beginSecondarySpeechLine(4, state.scene3090WindowOpenSequenceState == 0 ? 1 : 0);
 		return true;
 	case 306: // Abrir ventana (open window).
-		if (state.scene3090WindowSequenceState == 0)
+		if (state.scene3090WindowOpenSequenceState == 0)
 			beginSecondarySpeechLine(5, 0);
 		else
 			dispatchGenericSceneAction(20);
 		return true;
 	case 307: // Cerrar ventana (close window).
-		dispatchGenericSceneAction(state.scene3090WindowSequenceState == 0 ? 12 : 20);
+		dispatchGenericSceneAction(state.scene3090WindowOpenSequenceState == 0 ? 12 : 20);
 		return true;
 	case 308: // Ir a exterior (go outside): return to the brook outside the cabin.
 		runExitToScene3080();
@@ -327,24 +327,24 @@ bool Scene3090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 		const GameplayState &state = _vm->gameState();
-		if (state.scene3090BlindManPuzzleStage < 2) {
+		if (state.scene3090SecretDiaryPuzzleStage < 2) {
 			if (!state.scene3090BlindManPlayingSaxophone) {
 				removeColorMapItem(8);
-			} else if (state.scene3090PuzzleProgress < 9) {
+			} else if (state.scene3090SecretDiaryPuzzleProgress < 9) {
 				removeColorMapItem(1);
 			} else {
 				removeColorMapItem(1);
 				replaceColorMapItemFromOriginal(8, 1);
 			}
 		}
-		if (state.scene3090BlindManPuzzleStage == 1)
+		if (state.scene3090SecretDiaryPuzzleStage == 1)
 			copySmallTextRow(kScene3090SecretDiarySourceRow, kScene3090BookDestinationRow);
-		if (state.scene3090BlindManPuzzleStage == 2) {
+		if (state.scene3090SecretDiaryPuzzleStage == 2) {
 			removeColorMapItem(1);
 			removeColorMapItem(8);
 		}
 
-		if (state.scene3090WindowSequenceState == 0) {
+		if (state.scene3090WindowOpenSequenceState == 0) {
 			if (_sceneChunkTable.isValidChunk(6))
 				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _baseFramebuffer);
 			replaceActorPaletteClassFromOriginal(4, 2);
@@ -392,11 +392,11 @@ void Scene3090::resetAnimationLayers() {
 	_frontChannel.reset(0, kScene3090FrontFrameMillis);
 	const byte blindManFrame = state.scene3090BlindManPlayingSaxophone ? 0x2b : 7;
 	_blindManChannel.reset(blindManFrame, kScene3090BlindManFrameMillis);
-	const byte puzzleFrame = (byte)(state.scene3090PuzzleProgress * 3);
+	const byte puzzleFrame = (byte)(state.scene3090SecretDiaryPuzzleProgress * 3);
 	_puzzleChannel.reset(puzzleFrame, kScene3090PuzzleFrameMillis);
 	_frontLayer.visible = true;
 	_blindManLayer.visible = true;
-	_puzzleLayer.visible = state.scene3090BlindManPuzzleStage < 2;
+	_puzzleLayer.visible = state.scene3090SecretDiaryPuzzleStage < 2;
 	_frontLayer.reset(0);
 	_blindManLayer.reset(blindManFrame);
 	_puzzleLayer.reset(puzzleFrame);
@@ -464,7 +464,7 @@ void Scene3090::advanceFrontLayer(uint32 delta) {
 	const uint frameCount = _frontChannel.consumeFrames(delta);
 	for (uint frame = 0; frame < frameCount; ++frame) {
 		_frontChannel.frameIndex = _frontChannel.frameIndex == 25 ? 0 : _frontChannel.frameIndex + 1;
-		_frontLayer.chunkIndex = _vm->gameState().scene3090WindowSequenceState == 0 ? 9 : 10;
+		_frontLayer.chunkIndex = _vm->gameState().scene3090WindowOpenSequenceState == 0 ? 9 : 10;
 		_frontLayer.setFrame(_frontChannel.frameIndex);
 	}
 }
@@ -551,36 +551,36 @@ void Scene3090::advancePuzzleLayer(uint32 delta) {
 				_puzzleChannel.frameIndex = 0;
 				_puzzleLayerTriggered = false;
 			}
-		} else if (state.scene3090PuzzleProgress < 9) {
+		} else if (state.scene3090SecretDiaryPuzzleProgress < 9) {
 			++_puzzleChannel.frameIndex;
-			if ((uint)state.scene3090PuzzleProgress * 3 + 3 == _puzzleChannel.frameIndex) {
-				++state.scene3090PuzzleProgress;
+			if ((uint)state.scene3090SecretDiaryPuzzleProgress * 3 + 3 == _puzzleChannel.frameIndex) {
+				++state.scene3090SecretDiaryPuzzleProgress;
 				_puzzleLayerTriggered = false;
 				applySceneStateToHotspotsAndPatches(1);
 			}
-		} else if (state.scene3090WindowSequenceState == 0) {
+		} else if (state.scene3090WindowOpenSequenceState == 0) {
 			++_puzzleChannel.frameIndex;
 			if (_puzzleChannel.frameIndex == 0x1e) {
 				_puzzleChannel.frameIndex = 0x1b;
 				_puzzleLayerTriggered = false;
 			}
-		} else if (state.scene3090WindowSequenceState == 1) {
+		} else if (state.scene3090WindowOpenSequenceState == 1) {
 			if (_puzzleChannel.frameIndex < 0x29) {
 				++_puzzleChannel.frameIndex;
 			} else {
 				_puzzleLayerTriggered = false;
-				state.scene3090BlindManPuzzleStage = 2;
+				state.scene3090SecretDiaryPuzzleStage = 2;
 				state.scene3080FrankensteinDiaryRevealed = true;
 				applySceneStateToHotspotsAndPatches(1);
 			}
 		}
-		_puzzleLayer.visible = state.scene3090BlindManPuzzleStage < 2;
+		_puzzleLayer.visible = state.scene3090SecretDiaryPuzzleStage < 2;
 		_puzzleLayer.setFrame(_puzzleChannel.frameIndex);
 	}
 }
 
 void Scene3090::triggerPuzzleLayer() {
-	if (_vm->gameState().scene3090BlindManPuzzleStage < 2) {
+	if (_vm->gameState().scene3090SecretDiaryPuzzleStage < 2) {
 		_puzzleLayerTriggered = true;
 		_puzzleLayer.visible = true;
 	}
@@ -602,10 +602,10 @@ void Scene3090::runBlindManConversation() {
 	_blindManConversationActive = true;
 	_vm->gameplayMusic()->stop();
 
-	if (!state.scene3090TalkedToBlindMan) {
+	if (!state.scene3090BlindManConversationSeen) {
 		beginSecondarySpeechLine(kScene3090DialogueStageId, 0);
 		beginBlindManResponse(1);
-		state.scene3090TalkedToBlindMan = true;
+		state.scene3090BlindManConversationSeen = true;
 	} else {
 		beginSecondarySpeechLine(kScene3090DialogueStageId, 1);
 		beginBlindManResponse(2);
@@ -634,8 +634,8 @@ void Scene3090::runBlindManConversation() {
 
 		if (record.disableAfterUse != 0)
 			record.enabled = 0;
-		if (record.disableAfterUse == 3 && state.scene3090BlindManPuzzleStage == 0) {
-			state.scene3090BlindManPuzzleStage = 1;
+		if (record.disableAfterUse == 3 && state.scene3090SecretDiaryPuzzleStage == 0) {
+			state.scene3090SecretDiaryPuzzleStage = 1;
 			applySceneStateToHotspotsAndPatches(1);
 			if (records.size() > 0x1f8)
 				records[0x1f8].enabled = 1;
@@ -676,7 +676,7 @@ void Scene3090::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 	setDialogueRecord(records, 1, 1, 0, 1, 3, 4, 1);
 	setDialogueRecord(records, 2, _vm->gameState().scene3090DialogueMentionedBlindManLaxative ? 1 : 0, 1, 1, 4, 5, 1);
 	setDialogueRecord(records, 3, 1, 2, 1, 5, 6, 1);
-	setDialogueRecord(records, 4, _vm->gameState().scene3090BlindManPuzzleStage != 0 ? 1 : 0, 3, 1, 6, 7, 1);
+	setDialogueRecord(records, 4, _vm->gameState().scene3090SecretDiaryPuzzleStage != 0 ? 1 : 0, 3, 1, 6, 7, 1);
 	setDialogueRecord(records, 5, 1, 0, 3, 22, 23, 2);
 	setDialogueRecord(records, 6, 1, 0, 0, 7, 8, 0);
 
@@ -777,8 +777,8 @@ void Scene3090::runUseStrawInFireplace() {
 	beginPrimarySpeechLine(10, 1, kScene3090PrimarySpeechCenterX, kScene3090PrimarySpeechTopY,
 		kScene3090PrimarySpeechRed, kScene3090PrimarySpeechGreen, kScene3090PrimarySpeechBlue);
 	endBlindManSpeechAnimation();
-	state.scene3080WindowPatchActive = true;
-	state.scene3090WindowSequenceState = 1;
+	state.scene3080WindowOpened = true;
+	state.scene3090WindowOpenSequenceState = 1;
 	_puzzleChannel.frameIndex = 0x1b;
 	_puzzleLayer.setFrame(_puzzleChannel.frameIndex);
 	_puzzleLayerTriggered = true;
@@ -804,7 +804,7 @@ void Scene3090::runSaxophoneHandoff() {
 	state.currentAmbientMusicCueId = 0x11;
 	_blindManChannel.frameIndex = 0x2b;
 	_blindManLayer.setFrame(_blindManChannel.frameIndex);
-	_puzzleChannel.frameIndex = (byte)(state.scene3090PuzzleProgress * 3);
+	_puzzleChannel.frameIndex = (byte)(state.scene3090SecretDiaryPuzzleProgress * 3);
 	_puzzleLayer.setFrame(_puzzleChannel.frameIndex);
 	applySceneStateToHotspotsAndPatches(1);
 }

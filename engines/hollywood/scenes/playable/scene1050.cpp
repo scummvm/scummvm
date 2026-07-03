@@ -263,7 +263,7 @@ bool Scene1050::dispatchCustomSceneAction(uint16 handlerId) {
 		applySceneStateToHotspotsAndPatches(1);
 		return true;
 	case 304: // Mirar tipo del guardarropa (look at cloakroom attendant).
-		beginSecondarySpeechLine(2, _vm->gameState().scene1050TalkedToCloakroomAttendant ? 1 : 0);
+		beginSecondarySpeechLine(2, _vm->gameState().scene1050CloakroomAttendantConversationSeen ? 1 : 0);
 		return true;
 	case 305: // Coger chaqueta (take jacket).
 		beginSecondarySpeechLine(3, 0);
@@ -316,7 +316,7 @@ bool Scene1050::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	if (state.scene1050SuitcaseTaken && _sceneChunkTable.isValidChunk(11))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[11], _baseFramebuffer);
 
-	if (state.scene1050TalkedToCloakroomAttendant)
+	if (state.scene1050CloakroomAttendantConversationSeen)
 		copyStageSmallRow(7, 2);
 
 	rebuildWalkablePaletteMask();
@@ -361,11 +361,11 @@ void Scene1050::runCloakroomAttendantConversation() {
 	byte nodeIndex = 0;
 	bool finished = false;
 	GameplayState &state = _vm->gameState();
-	const bool firstConversation = !state.scene1050TalkedToCloakroomAttendant;
+	const bool firstConversation = !state.scene1050CloakroomAttendantConversationSeen;
 
 	beginSecondarySpeechLine(kScene1050DialogueStageId, firstConversation ? 0 : 1);
 	beginCloakroomAttendantSpeechLine(firstConversation ? 0 : 1, _random.getRandomBit() != 0);
-	state.scene1050TalkedToCloakroomAttendant = true;
+	state.scene1050CloakroomAttendantConversationSeen = true;
 	applySceneStateToHotspotsAndPatches(1);
 
 	while (!finished && !Engine::shouldQuit()) {

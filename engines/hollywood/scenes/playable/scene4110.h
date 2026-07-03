@@ -28,6 +28,12 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
+// Saved GameplayState fields read:
+// mainFlowStateId, scene4010AlternateBackgroundState, scene4010EntryPathSpeechState,
+// scene4010Item3APickupState, scene4110LetterTaken, scene4110BridgeOpened.
+// Saved GameplayState fields written:
+// mainFlowStateId, scene4010AlternateBackgroundState, scene4010EntryPathSpeechState,
+// scene4010Item3APickupState, scene4110LetterTaken, scene4110BridgeOpened.
 class Scene4110 : public PlayableScene {
 public:
 	Scene4110(HollywoodEngine *vm);
@@ -54,7 +60,7 @@ private:
 	void updateAmbientLoopSound();
 	void beginConditionalSpeechLine(uint16 falseRow, byte falseFrame, uint16 trueRow, byte trueFrame);
 	void runExitToScene4010();
-	void takeItem46();
+	void takeLetter();
 	void runAlternateStateSequence();
 	void runBridgeOpeningOverlay();
 	void patchActionMovementModes();

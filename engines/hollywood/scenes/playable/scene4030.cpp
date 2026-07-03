@@ -238,13 +238,13 @@ void Scene4030::runCustomEntrySequence() {
 			kScene4030EntryOverlayFrameMap, ARRAYSIZE(kScene4030EntryOverlayFrameMap),
 			kScene4030FrameMillis, kActionOverlayHideActiveActor);
 
-		if (!state.seenScene4030EntryLine) {
+		if (!state.scene4030InitialEntryLineSeen) {
 			_activeActorFacing = kScene4030EntrySpeechFacing;
 			_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 			drawPlayableComposite();
 			presentFrame();
 			beginSecondarySpeechLine(1, 0);
-			state.seenScene4030EntryLine = true;
+			state.scene4030InitialEntryLineSeen = true;
 		}
 		return;
 	}
@@ -322,7 +322,7 @@ bool Scene4030::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(16, 0);
 		return true;
 	case 322: // Mirar agujero (look at hole): spring state.
-		beginSecondarySpeechLine(18, _vm->gameState().scene4030LeverInstalled ? 1 : 0);
+		beginSecondarySpeechLine(18, _vm->gameState().scene4030ImprovisedLeverInstalled ? 1 : 0);
 		return true;
 	case 323: // Usar agujero/resorte (use hole/spring): iron maiden mechanism.
 		updateIronMaidenMechanism();
@@ -362,7 +362,7 @@ bool Scene4030::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[17], _baseFramebuffer);
 	}
 
-	if (state.scene4030BoneState == 1) {
+	if (state.scene4030LooseBoneState == 1) {
 		if (_sceneChunkTable.isValidChunk(10))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[10], _baseFramebuffer);
 	} else {
@@ -371,7 +371,7 @@ bool Scene4030::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[11], _baseFramebuffer);
 	}
 
-	if (state.scene4030LeverInstalled) {
+	if (state.scene4030ImprovisedLeverInstalled) {
 		replaceColorMapItem(kScene4030LeverSceneItem, 3);
 		if (_sceneChunkTable.isValidChunk(16))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[16], _baseFramebuffer);
@@ -602,9 +602,9 @@ void Scene4030::takeRope() {
 
 void Scene4030::talkToSkeleton() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4030BoneState == 0) {
+	if (state.scene4030LooseBoneState == 0) {
 		beginSecondarySpeechLine(20, 0);
-		state.scene4030BoneState = 1;
+		state.scene4030LooseBoneState = 1;
 		runConfiguredActionOverlay(kScene4030BoneRevealChunk, kScene4030BoneRevealDescriptorCount,
 			kScene4030BoneRevealFrameMap, ARRAYSIZE(kScene4030BoneRevealFrameMap),
 			kScene4030FrameMillis, kActionOverlayHideActiveActor, 9, 3, 2, 0x3a, 25);
@@ -618,12 +618,12 @@ void Scene4030::talkToSkeleton() {
 
 void Scene4030::takeBone() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4030BoneState != 1) {
+	if (state.scene4030LooseBoneState != 1) {
 		beginSecondarySpeechLine(21, 0);
 		return;
 	}
 
-	state.scene4030BoneState = 2;
+	state.scene4030LooseBoneState = 2;
 	runConfiguredActionOverlay(kScene4030BonePickupChunk, kScene4030BonePickupDescriptorCount,
 		kScene4030BonePickupFrameMap, ARRAYSIZE(kScene4030BonePickupFrameMap),
 		kScene4030FrameMillis, kActionOverlayHideActiveActor, 7, 3);
@@ -634,15 +634,15 @@ void Scene4030::takeBone() {
 void Scene4030::installImprovisedLever() {
 	GameplayState &state = _vm->gameState();
 	if (!hasInventoryItem(kScene4030LeverItem)) {
-		beginSecondarySpeechLine(18, state.scene4030LeverInstalled ? 1 : 0);
+		beginSecondarySpeechLine(18, state.scene4030ImprovisedLeverInstalled ? 1 : 0);
 		return;
 	}
-	if (state.scene4030LeverInstalled) {
+	if (state.scene4030ImprovisedLeverInstalled) {
 		beginSecondarySpeechLine(22, 0);
 		return;
 	}
 
-	state.scene4030LeverInstalled = true;
+	state.scene4030ImprovisedLeverInstalled = true;
 	runConfiguredActionOverlay(kScene4030LeverInstallChunk, kScene4030LeverInstallDescriptorCount,
 		kScene4030LeverInstallFrameMap, ARRAYSIZE(kScene4030LeverInstallFrameMap),
 		kScene4030FrameMillis, kActionOverlayHideActiveActor, 9, 2);
@@ -652,7 +652,7 @@ void Scene4030::installImprovisedLever() {
 }
 
 void Scene4030::updateIronMaidenMechanism() {
-	if (!_vm->gameState().scene4030LeverInstalled) {
+	if (!_vm->gameState().scene4030ImprovisedLeverInstalled) {
 		beginSecondarySpeechLine(6, 0);
 		return;
 	}
