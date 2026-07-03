@@ -37,7 +37,7 @@ const uint kScene4070ArenaLastChunk = 15;
 const uint kScene4070StageIndex = 407;
 const uint16 kScene4070FirstState = 0x0fe6;
 const uint16 kScene4070LastState = 0x0fef;
-const uint16 kScene4080FirstState = 0x0ff0;
+const uint16 kScene4100EntryFromScene4070State = 0x1008;
 const int kScene4070EntryStartX = 0x03a7;
 const int kScene4070EntryStartY = 0x013a;
 const byte kScene4070EntryFacing = 4;
@@ -475,7 +475,7 @@ void Scene4070::beginDraculaSpeechLine(uint16 rowIndex, byte frameIndex) {
 }
 
 void Scene4070::runCorridorExit() {
-	_vm->gameState().mainFlowStateId = kScene4080FirstState;
+	_vm->gameState().mainFlowStateId = kScene4100EntryFromScene4070State;
 }
 
 void Scene4070::runTrophyBaseOpenAction() {
