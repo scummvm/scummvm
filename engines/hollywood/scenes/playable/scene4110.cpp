@@ -217,11 +217,11 @@ bool Scene4110::dispatchCustomSceneAction(uint16 handlerId) {
 	case 302: // Mirar salida/estatua segun estado (look at exit/statue depending on state).
 		beginSecondarySpeechLine(1, _vm->gameState().scene4110AlternateSceneState ? 1 : 0);
 		return true;
-	case 303: // Mirar obstaculo del pasillo (look at corridor obstruction).
-		beginConditionalSpeechLine(2, 0, 2, 0);
+	case 303: // Mirar obstaculo/salida del pasillo (look at corridor obstruction/exit).
+		beginConditionalSpeechLine(2, 0, 7, 0);
 		return true;
-	case 304: // Usar obstaculo del pasillo (use corridor obstruction), blocked after alternate gate.
-		beginSecondarySpeechLine(2, 0);
+	case 304: // Usar obstaculo/salida del pasillo (use corridor obstruction/exit).
+		beginConditionalSpeechLine(10, 0, 2, 0);
 		return true;
 	case 305: // Coger objeto 0x46 (take item 0x46).
 		takeItem46();

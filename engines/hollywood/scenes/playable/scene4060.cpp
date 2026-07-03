@@ -36,7 +36,7 @@ const uint kScene4060StageIndex = 406;
 const uint16 kScene4060FirstState = 0x0fdc;
 const uint16 kScene4060ReturnState = 0x0fdd;
 const uint16 kScene4060LastState = 0x0fe5;
-const uint16 kScene4100FirstState = 0x1005;
+const uint16 kScene4100EntryFromScene4060State = 0x1005;
 const int kScene4060EntryRonWorldX = 0x0064;
 const int kScene4060EntryRonWorldY = 0x0145;
 const byte kScene4060EntryRonFacing = 2;
@@ -658,7 +658,7 @@ void Scene4060::runExitToNextRoom() {
 		kScene4060ExitOverlayFrameMap, ARRAYSIZE(kScene4060ExitOverlayFrameMap),
 		kScene4060FrameMillis, kActionOverlayHideActiveActor);
 	_soundBank0.playSample(3, 100);
-	_vm->gameState().mainFlowStateId = kScene4100FirstState;
+	_vm->gameState().mainFlowStateId = kScene4100EntryFromScene4060State;
 }
 
 void Scene4060::runFirstCardStage() {
