@@ -63,6 +63,9 @@
 #include "hollywood/scenes/playable/scene4060.h"
 #include "hollywood/scenes/playable/scene4070.h"
 #include "hollywood/scenes/playable/scene4080.h"
+#include "hollywood/scenes/playable/scene4090.h"
+#include "hollywood/scenes/playable/scene4100.h"
+#include "hollywood/scenes/playable/scene4110.h"
 #include "hollywood/scenes/playable/scene5000.h"
 #include "hollywood/scenes/playable/scene5010.h"
 #include "hollywood/scenes/playable/scene6000.h"
@@ -161,6 +164,12 @@ const int kScene4070FirstState = 0x0fe6;
 const int kScene4070LastState = 0x0fef;
 const int kScene4080FirstState = 0x0ff0;
 const int kScene4080LastState = 0x0ff0;
+const int kScene4090FirstState = 0x0ffa;
+const int kScene4090LastState = 0x1003;
+const int kScene4100FirstState = 0x1004;
+const int kScene4100LastState = 0x100d;
+const int kScene4110FirstState = 0x100e;
+const int kScene4110LastState = 0x1017;
 const int kScene5000State = 5000;
 const int kScene5010FirstState = 0x1392;
 const int kScene5010LastState = 0x139b;
@@ -218,6 +227,9 @@ bool isImplementedGameplayState(int stateId) {
 		(stateId >= kScene4060FirstState && stateId <= kScene4060LastState) ||
 		(stateId >= kScene4070FirstState && stateId <= kScene4070LastState) ||
 		(stateId >= kScene4080FirstState && stateId <= kScene4080LastState) ||
+		(stateId >= kScene4090FirstState && stateId <= kScene4090LastState) ||
+		(stateId >= kScene4100FirstState && stateId <= kScene4100LastState) ||
+		(stateId >= kScene4110FirstState && stateId <= kScene4110LastState) ||
 		stateId == kScene5000State ||
 		(stateId >= kScene5010FirstState && stateId <= kScene5010LastState) ||
 		stateId == kScene6000State ||
@@ -283,6 +295,12 @@ int gameplayStateForBootParam(int bootParam) {
 		return kScene4070FirstState;
 	if (bootParam == 4080)
 		return kScene4080FirstState;
+	if (bootParam == 4090)
+		return kScene4090FirstState;
+	if (bootParam == 4100)
+		return kScene4100FirstState;
+	if (bootParam == 4110)
+		return kScene4110FirstState;
 	if (bootParam == 8010)
 		return kScene8010FirstState;
 	if (bootParam == 8020)
@@ -723,6 +741,30 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene4080 scene4080(this);
 			if (!scene4080.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene4090FirstState && stateId <= kScene4090LastState) {
+			handledState = true;
+			Scene4090 scene4090(this);
+			if (!scene4090.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene4100FirstState && stateId <= kScene4100LastState) {
+			handledState = true;
+			Scene4100 scene4100(this);
+			if (!scene4100.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene4110FirstState && stateId <= kScene4110LastState) {
+			handledState = true;
+			Scene4110 scene4110(this);
+			if (!scene4110.play())
 				return Common::kReadingFailed;
 			continue;
 		}

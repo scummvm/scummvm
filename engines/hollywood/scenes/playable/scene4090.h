@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE4050_H
-#define HOLLYWOOD_SCENES_PLAYABLE_SCENE4050_H
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE4090_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE4090_H
 
 #include "hollywood/scenes/playable/playable_scene.h"
 
@@ -28,9 +28,9 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene4050 : public PlayableScene {
+class Scene4090 : public PlayableScene {
 public:
-	Scene4050(HollywoodEngine *vm);
+	Scene4090(HollywoodEngine *vm);
 
 private:
 	bool hasCustomPreviewState() const override;
@@ -44,37 +44,36 @@ private:
 	bool prepareCustomGameplayLoop() override;
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
+	bool adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) const override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
-	bool shouldDrawSecondaryActorInPlayableComposite() const override;
+	bool shouldConvertSavedFramebufferFF() const override;
 	AmbientAudioProfile ambientAudioProfile() const override;
+	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 
 	void resetAnimationLayers();
-	void restoreSceneObjectPaletteRange();
-	void drawSceneLayers();
-	void advanceBackgroundLayer(uint32 delta);
-	void advanceFlagPalette(uint32 delta);
-	void rotateFlagPalette();
-	void advanceRonLayer(uint32 delta);
-	void setRonResourceFrame(byte frameIndex);
-	void beginRonResourceSpeechLine(uint16 rowIndex, byte frameIndex);
-	void runRonResourceFrameSequence(byte firstFrame, byte lastFrame, byte soundFrame, byte soundId);
-	void runD09ReturnTransitionSequence();
-	void useLongRopeOnLedge();
-	void useSceneRope();
-	void applyPatchStateColorMap(byte patchState);
-	bool resourceDescriptorBounds(uint chunkIndex, uint16 descriptorCount, uint16 descriptorIndex,
-		int &left, int &top, int &width, int &bottom) const;
+	void drawForegroundLayers(int activeWorldY);
+	void rememberOriginalColorMap();
+	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
+	void setSmallRowText(byte row, const char *text);
+	void clearScriptLayers();
+	bool presentScriptFrame(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
+		byte frameIndex, bool hideActiveActor);
+	bool waitScriptFrame(uint32 frameMillis);
+	void runDoorExit();
+	void runOrganRevealSequence();
+	void runCoffinSwapSequence();
+	void runFinalCutscene();
 
-	TimedAnimationChannel _backgroundChannel;
-	TimedAnimationChannel _flagPaletteChannel;
-	TimedAnimationChannel _ronSpeechChannel;
-	TimedAnimationChannel _ronIdleChannel;
-	ResourceSpriteLayer _backgroundLayer;
-	ResourceSpriteLayer _ronLayer;
-	ResourceSpriteLayer _d09ReturnTransitionLayer;
-	bool _ronManualSequenceActive;
+	ResourceSpriteLayer _scriptLayer;
+	ResourceSpriteLayer _chunk8Layer;
+	ResourceSpriteLayer _chunk12Layer;
+	ResourceSpriteLayer _chunk13Layer;
+	TimedAnimationChannel _chunk12Channel;
+	Common::Array<byte> _originalColorToItemMap;
+	bool _scriptHidesActiveActor;
 };
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE4050_H
+#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE4090_H
