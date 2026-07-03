@@ -213,8 +213,8 @@ bool Scene3050::dispatchCustomSceneAction(uint16 handlerId) {
 		return true;
 	case 304: // Mirar sala (look at room): identifies it as biblioteca (library).
 		beginSecondarySpeechLine(1, 2);
-		if (!state.scene3050Row3CaptionUpdated) {
-			state.scene3050Row3CaptionUpdated = true;
+		if (!state.scene3050LibraryCaptionRevealed) {
+			state.scene3050LibraryCaptionRevealed = true;
 			applySceneStateToHotspotsAndPatches(0);
 		}
 		return true;
@@ -257,7 +257,7 @@ bool Scene3050::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	if (selector == 0 || selector == 0xff) {
 		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
 		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
-		if (_vm->gameState().scene3050Row3CaptionUpdated)
+		if (_vm->gameState().scene3050LibraryCaptionRevealed)
 			copyCaptionRow(kScene3050CaptionSourceRow, kScene3050CaptionDestinationRow);
 		rebuildWalkableMask();
 		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
@@ -481,9 +481,9 @@ void Scene3050::runEntryFromScene3010() {
 	runEntryPath(0x388, 0x1c6, 5, 0x2a4, 0x19e);
 	_activeActorFacing = 5;
 	_activeActorCel = 0;
-	if (!_vm->gameState().seenScene3050EntryLine) {
+	if (!_vm->gameState().scene3050EntryLineSeen) {
 		beginSecondarySpeechLine(0, 0);
-		_vm->gameState().seenScene3050EntryLine = true;
+		_vm->gameState().scene3050EntryLineSeen = true;
 	}
 }
 

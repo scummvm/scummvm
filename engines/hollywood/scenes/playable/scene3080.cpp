@@ -177,7 +177,7 @@ void Scene3080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
 	if (activeWorldY <= 0x165) {
-		const uint chunkIndex = _vm->gameState().scene3080WindowPatchActive ? 16 : 6;
+		const uint chunkIndex = _vm->gameState().scene3080WindowOpened ? 16 : 6;
 		if (_sceneChunkTable.isValidChunk(chunkIndex))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);
 	}
@@ -218,7 +218,7 @@ bool Scene3080::dispatchCustomSceneAction(uint16 handlerId) {
 		state.mainFlowStateId = kScene3010EntryFromScene3080State;
 		return true;
 	case 302: // Ir a puerta de la cabaña (go to cabin door): enter scene 3100.
-		state.scene3080DoorSeen = true;
+		state.scene3080CabinDoorVisited = true;
 		state.mainFlowStateId = kScene3100State;
 		return true;
 	case 303: // Ir a camino del riachuelo (go to brook path): enter scene 3090.
@@ -231,7 +231,7 @@ bool Scene3080::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(2, 0);
 		return true;
 	case 306: // Mirar camino/puerta (look at path/door), changes after door visit.
-		beginSecondarySpeechLine(3, state.scene3080DoorSeen ? 1 : 0);
+		beginSecondarySpeechLine(3, state.scene3080CabinDoorVisited ? 1 : 0);
 		return true;
 	case 307: // Mirar camino del riachuelo (look at brook path).
 		beginSecondarySpeechLine(4, 0);
@@ -246,16 +246,16 @@ bool Scene3080::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(7, 0);
 		return true;
 	case 311: // Mirar ventana (look at window).
-		beginSecondarySpeechLine(8, state.scene3080WindowPatchActive ? 0 : 1);
+		beginSecondarySpeechLine(8, state.scene3080WindowOpened ? 0 : 1);
 		return true;
 	case 312: // Abrir ventana (open window).
-		if (!state.scene3080WindowPatchActive)
+		if (!state.scene3080WindowOpened)
 			beginSecondarySpeechLine(9, 0);
 		else
 			dispatchGenericSceneAction(9);
 		return true;
 	case 313: // Cerrar ventana (close window).
-		if (!state.scene3080WindowPatchActive)
+		if (!state.scene3080WindowOpened)
 			dispatchGenericSceneAction(12);
 		else
 			dispatchGenericSceneAction(20);
@@ -282,9 +282,9 @@ bool Scene3080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 		removeColorMapItem(6);
 		restoreOrRemoveDiaryHotspot();
-		if (_vm->gameState().scene3080WindowPatchActive && _sceneChunkTable.isValidChunk(15))
+		if (_vm->gameState().scene3080WindowOpened && _sceneChunkTable.isValidChunk(15))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[15], _baseFramebuffer);
-		if (_vm->gameState().scene3080StickTaken) {
+		if (_vm->gameState().scene3080BranchTaken) {
 			if (_sceneChunkTable.isValidChunk(8))
 				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
 			removeColorMapItem(8);
@@ -339,7 +339,7 @@ void Scene3080::removeColorMapItem(byte itemId) {
 
 void Scene3080::restoreOrRemoveDiaryHotspot() {
 	const GameplayState &state = _vm->gameState();
-	if (state.scene3080FrankensteinDiaryRevealed && !state.scene3080DiaryTaken) {
+	if (state.scene3080FrankensteinDiaryRevealed && !state.scene3080FrankensteinDiaryTaken) {
 		if (_sceneChunkTable.isValidChunk(11))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[11], _baseFramebuffer);
 	} else {
@@ -352,8 +352,8 @@ void Scene3080::restoreOrRemoveDiaryHotspot() {
 void Scene3080::advanceLargeLayer(uint32 delta) {
 	const uint frameCount = _largeChannel.consumeFrames(delta);
 	for (uint frame = 0; frame < frameCount; ++frame) {
-		const byte firstFrame = _vm->gameState().scene3080SmokeAlternateFrames ? 8 : 0;
-		const byte lastFrame = _vm->gameState().scene3080SmokeAlternateFrames ? 15 : 7;
+		const byte firstFrame = _vm->gameState().scene3080ChimneySmokeAnimationChanged ? 8 : 0;
+		const byte lastFrame = _vm->gameState().scene3080ChimneySmokeAnimationChanged ? 15 : 7;
 		if (_largeChannel.frameIndex < firstFrame || _largeChannel.frameIndex >= lastFrame)
 			_largeChannel.frameIndex = firstFrame;
 		else
@@ -398,9 +398,9 @@ void Scene3080::advanceSmallIdleLayer(uint32 delta) {
 
 void Scene3080::runEntryFromForest() {
 	runEntryPath(0x0b4, 0x1df, 1, 0x150, 0x1bf);
-	if (!_vm->gameState().seenScene3080EntryLine) {
+	if (!_vm->gameState().scene3080EntryLineSeen) {
 		beginSecondarySpeechLine(0, 0);
-		_vm->gameState().seenScene3080EntryLine = true;
+		_vm->gameState().scene3080EntryLineSeen = true;
 	}
 }
 
@@ -414,12 +414,12 @@ void Scene3080::runEntryFromBrook() {
 
 void Scene3080::runDiaryPickup() {
 	GameplayState &state = _vm->gameState();
-	if (!state.scene3080FrankensteinDiaryRevealed || state.scene3080DiaryTaken) {
+	if (!state.scene3080FrankensteinDiaryRevealed || state.scene3080FrankensteinDiaryTaken) {
 		beginSecondarySpeechLine(6, 0);
 		return;
 	}
 
-	state.scene3080DiaryTaken = true;
+	state.scene3080FrankensteinDiaryTaken = true;
 	state.scene3080FrankensteinDiaryRevealed = false;
 	runConfiguredActionOverlay(10, kScene3080DiaryOverlayDescriptorCount,
 		kScene3080DiaryOverlayFrameMap, ARRAYSIZE(kScene3080DiaryOverlayFrameMap),
@@ -431,12 +431,12 @@ void Scene3080::runDiaryPickup() {
 
 void Scene3080::runStickPickup() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene3080StickTaken) {
+	if (state.scene3080BranchTaken) {
 		beginSecondarySpeechLine(10, 0);
 		return;
 	}
 
-	state.scene3080StickTaken = true;
+	state.scene3080BranchTaken = true;
 	runConfiguredActionOverlay(9, kScene3080StickOverlayDescriptorCount,
 		kScene3080StickOverlayFrameMap, ARRAYSIZE(kScene3080StickOverlayFrameMap),
 		kScene3080OverlayFrameMillis, kActionOverlayHideActiveActor, 7, 4, 7, 1);
@@ -455,7 +455,7 @@ void Scene3080::runBranchExchangeOverlay() {
 
 void Scene3080::drawForegroundBlocks(int activeWorldY) {
 	(void)activeWorldY;
-	const uint chunkIndex = _vm->gameState().scene3080StickTaken ? 5 : 13;
+	const uint chunkIndex = _vm->gameState().scene3080BranchTaken ? 5 : 13;
 	if (_sceneChunkTable.isValidChunk(chunkIndex))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);
 }

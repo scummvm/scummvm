@@ -395,8 +395,8 @@ bool Scene4060::dispatchCustomSceneAction(uint16 handlerId) {
 		runFirstCardStage();
 		return true;
 	case 306: // Mirar cuadro (look at picture): row 5, state-aware picture/card-trick response.
-		if (state.scene4060CardStage == kScene4060CardStateMirrorInstalled)
-			beginSecondarySpeechLine(5, state.scene4060ForegroundState == 0 ? 1 : 2);
+		if (state.scene4060PictureCardStage == kScene4060CardStateMirrorInstalled)
+			beginSecondarySpeechLine(5, state.scene4060SherilynSheetWon == 0 ? 1 : 2);
 		else
 			beginSecondarySpeechLine(5, 0);
 		return true;
@@ -413,9 +413,9 @@ bool Scene4060::dispatchCustomSceneAction(uint16 handlerId) {
 		runSecondCardStage();
 		return true;
 	case 311: // Mirar frasco (look at bottle): row 9, first call marks perfume/card prompt seen.
-		if (state.scene4060SecondCardStage == 0) {
+		if (state.scene4060PerfumeBottleCardStage == 0) {
 			beginSecondarySpeechLine(9, 0);
-			state.scene4060SecondCardStage = kScene4060SecondCardStatePrompted;
+			state.scene4060PerfumeBottleCardStage = kScene4060SecondCardStatePrompted;
 			applySceneStateToHotspotsAndPatches(1);
 		} else {
 			beginSecondarySpeechLine(9, 1);
@@ -438,7 +438,7 @@ bool Scene4060::dispatchCustomSceneAction(uint16 handlerId) {
 		runSherilynCardDialogue();
 		return true;
 	case 317: // Mirar vampiresa/Sherilyn (look at vampiress/Sherilyn): row 14, state-aware clothing response.
-		beginSecondarySpeechLine(14, state.scene4060ForegroundState == 0 ? 0 : 1);
+		beginSecondarySpeechLine(14, state.scene4060SherilynSheetWon == 0 ? 0 : 1);
 		return true;
 	case 318: // Usar cuadro/item 0x40 con alcayata (use picture with hook): row 16, refuses to rehang it.
 		beginSecondarySpeechLine(16, 0);
@@ -477,7 +477,7 @@ bool Scene4060::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 	GameplayState &state = _vm->gameState();
-	const byte cardState = MIN<byte>(state.scene4060CardStage, kScene4060CardStateMirrorInstalled);
+	const byte cardState = MIN<byte>(state.scene4060PictureCardStage, kScene4060CardStateMirrorInstalled);
 	if (cardState == kScene4060CardStateFirstWon && _sceneChunkTable.isValidChunk(kScene4060FirstCardPatchChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4060FirstCardPatchChunk], _baseFramebuffer);
 	else if (cardState == kScene4060CardStateMirrorInstalled && _sceneChunkTable.isValidChunk(kScene4060MirrorInstalledPatchChunk))
@@ -486,9 +486,9 @@ bool Scene4060::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 
 	if (cardState == kScene4060CardStateMirrorInstalled)
 		copySmallTextRow(3, 10);
-	if (state.scene4060SecondCardStage == kScene4060SecondCardStatePrompted)
+	if (state.scene4060PerfumeBottleCardStage == kScene4060SecondCardStatePrompted)
 		copySmallTextRow(6, 11);
-	if (state.scene4060SecondCardStage == kScene4060SecondCardStateWon) {
+	if (state.scene4060PerfumeBottleCardStage == kScene4060SecondCardStateWon) {
 		if (_sceneChunkTable.isValidChunk(kScene4060SecondCardPatchChunk))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4060SecondCardPatchChunk], _baseFramebuffer);
 		replaceColorMapItem(6, 0);
@@ -554,7 +554,7 @@ void Scene4060::resetForegroundLayer() {
 }
 
 void Scene4060::configureForegroundLayerForState() {
-	const bool foregroundState = _vm->gameState().scene4060ForegroundState != 0;
+	const bool foregroundState = _vm->gameState().scene4060SherilynSheetWon != 0;
 	_foregroundLayer.configure(foregroundState ? kScene4060ForegroundState1Chunk : kScene4060ForegroundState0Chunk,
 		foregroundState ? kScene4060ForegroundState1DescriptorCount : kScene4060ForegroundState0DescriptorCount,
 		foregroundState ? kScene4060ForegroundState1FrameMap : kScene4060ForegroundState0FrameMap,
@@ -564,7 +564,7 @@ void Scene4060::configureForegroundLayerForState() {
 }
 
 void Scene4060::setForegroundScrollStep(byte step) {
-	const uint frameMapSize = _vm->gameState().scene4060ForegroundState != 0 ?
+	const uint frameMapSize = _vm->gameState().scene4060SherilynSheetWon != 0 ?
 		ARRAYSIZE(kScene4060ForegroundState1FrameMap) : ARRAYSIZE(kScene4060ForegroundState0FrameMap);
 	if (step >= frameMapSize)
 		step = 0;
@@ -594,7 +594,7 @@ void Scene4060::advanceForegroundLayer(uint32 delta) {
 			continue;
 		}
 
-		const byte longEndStep = _vm->gameState().scene4060ForegroundState == 0 ?
+		const byte longEndStep = _vm->gameState().scene4060SherilynSheetWon == 0 ?
 			kScene4060ForegroundState0LongEndStep : kScene4060ForegroundState1LongEndStep;
 		if (_foregroundScrollStep < longEndStep) {
 			setForegroundScrollStep((byte)(_foregroundScrollStep + 1));
@@ -636,9 +636,9 @@ void Scene4060::runFirstEntrySequence() {
 		kScene4060EntryOverlayFrameMap, ARRAYSIZE(kScene4060EntryOverlayFrameMap),
 		kScene4060FrameMillis, kActionOverlayKeepActiveActorVisibility);
 
-	if (!_vm->gameState().seenScene4060EntryLine) {
+	if (!_vm->gameState().scene4060EntryLineSeen) {
 		beginSecondarySpeechLine(0, 0);
-		_vm->gameState().seenScene4060EntryLine = true;
+		_vm->gameState().scene4060EntryLineSeen = true;
 	}
 }
 
@@ -663,15 +663,15 @@ void Scene4060::runExitToNextRoom() {
 
 void Scene4060::runFirstCardStage() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4060CardStage == kScene4060CardStateMirrorInstalled) {
-		beginSecondarySpeechLine(4, state.scene4060ForegroundState == 0 ? 0 : 1);
+	if (state.scene4060PictureCardStage == kScene4060CardStateMirrorInstalled) {
+		beginSecondarySpeechLine(4, state.scene4060SherilynSheetWon == 0 ? 0 : 1);
 		return;
 	}
 
 	runConfiguredActionOverlay(kScene4060FirstCardOverlayChunk, kScene4060FirstCardOverlayDescriptorCount,
 		kScene4060FirstCardFrameMap, ARRAYSIZE(kScene4060FirstCardFrameMap),
 		kScene4060FrameMillis, kActionOverlayKeepActiveActorVisibility, -1, 0, -1, 0, 100, 6, 1);
-	state.scene4060CardStage = kScene4060CardStateFirstWon;
+	state.scene4060PictureCardStage = kScene4060CardStateFirstWon;
 	applySceneStateToHotspotsAndPatches(0);
 	addInventoryItem(kScene4060FirstWonCardItem);
 	_soundBank0.playSample(1, 100);
@@ -679,13 +679,13 @@ void Scene4060::runFirstCardStage() {
 
 void Scene4060::runSecondCardStage() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4060SecondCardStage == 0)
+	if (state.scene4060PerfumeBottleCardStage == 0)
 		beginSecondarySpeechLine(9, 0);
 
 	runConfiguredActionOverlay(kScene4060SecondCardOverlayChunk, kScene4060SecondCardOverlayDescriptorCount,
 		kScene4060SecondCardFrameMap, ARRAYSIZE(kScene4060SecondCardFrameMap),
 		kScene4060FrameMillis, kActionOverlayKeepActiveActorVisibility, -1, 0, -1, 0, 100, 5, 2);
-	state.scene4060SecondCardStage = kScene4060SecondCardStateWon;
+	state.scene4060PerfumeBottleCardStage = kScene4060SecondCardStateWon;
 	applySceneStateToHotspotsAndPatches(1);
 	addInventoryItem(kScene4060SecondWonCardItem);
 	_soundBank0.playSample(1, 100);
@@ -693,7 +693,7 @@ void Scene4060::runSecondCardStage() {
 
 void Scene4060::runInstallMirrorStage() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4060DialogueProgressCounter == 0) {
+	if (state.scene4060SherilynPokerProgressCounter == 0) {
 		beginSecondarySpeechLine(0x11, 0);
 		return;
 	}
@@ -702,7 +702,7 @@ void Scene4060::runInstallMirrorStage() {
 	runConfiguredActionOverlay(kScene4060FirstCardOverlayChunk, kScene4060FirstCardOverlayDescriptorCount,
 		kScene4060InstallMirrorFrameMap, ARRAYSIZE(kScene4060InstallMirrorFrameMap),
 		kScene4060FrameMillis, kActionOverlayKeepActiveActorVisibility, -1, 0, -1, 0, 100, 7, 3);
-	state.scene4060CardStage = kScene4060CardStateMirrorInstalled;
+	state.scene4060PictureCardStage = kScene4060CardStateMirrorInstalled;
 	applySceneStateToHotspotsAndPatches(0);
 	removeInventoryItem(kScene4060MirrorItem);
 	_soundBank0.playSample(1, 100);
@@ -785,11 +785,11 @@ void Scene4060::initializeSherilynCardDialogueRecords(Common::Array<DialogueChoi
 		setDialogueRecord(records, kScene4060DialogueSeedRecords[i]);
 
 	const GameplayState &state = _vm->gameState();
-	if (state.scene4060ForegroundState == 0) {
+	if (state.scene4060SherilynSheetWon == 0) {
 		records[0].enabled = 1;
 		if (hasInventoryItem(0x48))
 			records[210].enabled = 1;
-		if (state.scene4060DialogueProgressCounter == 0)
+		if (state.scene4060SherilynPokerProgressCounter == 0)
 			records[70].enabled = 1;
 		else
 			records[2].enabled = 1;
@@ -802,7 +802,7 @@ void Scene4060::initializeSherilynCardDialogueRecords(Common::Array<DialogueChoi
 }
 
 void Scene4060::runSherilynDialogueProgressReplay() {
-	const byte progress = MIN<byte>(_vm->gameState().scene4060DialogueProgressCounter,
+	const byte progress = MIN<byte>(_vm->gameState().scene4060SherilynPokerProgressCounter,
 		kScene4060MaxDialogueProgressCounter);
 	for (byte frame = 0; frame < progress && !Engine::shouldQuit(); ++frame)
 		beginSherilynSpeechLine(0x61, frame, false);
@@ -810,16 +810,16 @@ void Scene4060::runSherilynDialogueProgressReplay() {
 
 void Scene4060::runSherilynDialogueTransition() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4060DialogueProgressCounter < kScene4060MaxDialogueProgressCounter)
-		++state.scene4060DialogueProgressCounter;
+	if (state.scene4060SherilynPokerProgressCounter < kScene4060MaxDialogueProgressCounter)
+		++state.scene4060SherilynPokerProgressCounter;
 
-	const bool finalRewardBranch = state.scene4060CardStage > kScene4060CardStateFirstWon;
+	const bool finalRewardBranch = state.scene4060PictureCardStage > kScene4060CardStateFirstWon;
 	runSherilynPokerTransitionAnimation(finalRewardBranch);
 
 	if (finalRewardBranch) {
 		addInventoryItem(kScene4060DialogueRewardItem);
 		_soundBank0.playSample(1, 100);
-		state.scene4060ForegroundState = 1;
+		state.scene4060SherilynSheetWon = 1;
 		applySceneStateToHotspotsAndPatches(2);
 		beginSherilynSpeechLine(0x0f, 3);
 		beginSecondarySpeechLine(0x0f, 4);

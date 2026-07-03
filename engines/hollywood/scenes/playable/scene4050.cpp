@@ -187,11 +187,11 @@ void Scene4050::runCustomEntrySequence() {
 	presentFrame();
 
 	GameplayState &state = _vm->gameState();
-	if (state.seenScene4050EntryLine)
+	if (state.scene4050EntryLineSeen)
 		return;
 
 	beginRonResourceSpeechLine(1, 0);
-	state.seenScene4050EntryLine = true;
+	state.scene4050EntryLineSeen = true;
 }
 
 bool Scene4050::prepareCustomGameplayLoop() {
@@ -226,13 +226,13 @@ bool Scene4050::dispatchCustomSceneAction(uint16 handlerId) {
 		beginRonResourceSpeechLine(4, 0);
 		return true;
 	case 306: // Mirar cuerda (look at rope), state-aware.
-		beginRonResourceSpeechLine(5, state.scene4050PatchState == kScene4050PatchStateRopeAttached ? 0 : 1);
+		beginRonResourceSpeechLine(5, state.scene4050RopeSwingState == kScene4050PatchStateRopeAttached ? 0 : 1);
 		return true;
 	case 307: // Usar cuerda (use rope): swing toward the window once attached.
 		useSceneRope();
 		return true;
 	case 308: // Mirar ventana (look at window), state-aware.
-		beginRonResourceSpeechLine(7, state.scene4050PatchState < kScene4050PatchStateWindowReached ? 0 : 1);
+		beginRonResourceSpeechLine(7, state.scene4050RopeSwingState < kScene4050PatchStateWindowReached ? 0 : 1);
 		return true;
 	case 309: // Usar ventana (use window): cannot reach it directly.
 		beginRonResourceSpeechLine(6, 2);
@@ -260,7 +260,7 @@ bool Scene4050::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	if (_vm->gameState().scene4010AlternateBackgroundState != 0 && _sceneChunkTable.isValidChunk(5))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _baseFramebuffer);
 
-	const byte patchState = MIN<byte>(_vm->gameState().scene4050PatchState, kScene4050PatchStateWindowReached);
+	const byte patchState = MIN<byte>(_vm->gameState().scene4050RopeSwingState, kScene4050PatchStateWindowReached);
 	if (patchState == kScene4050PatchStateRopeAttached && _sceneChunkTable.isValidChunk(kScene4050PatchState1Chunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4050PatchState1Chunk], _baseFramebuffer);
 	else if (patchState == kScene4050PatchStateWindowReached && _sceneChunkTable.isValidChunk(kScene4050PatchState2Chunk))
@@ -427,7 +427,7 @@ void Scene4050::runD09ReturnTransitionSequence() {
 	presentFrame();
 
 	GameplayState &state = _vm->gameState();
-	const byte lastFrame = state.scene4090AlternateAnimationSet == 0 ? 0x2e : 0x1a;
+	const byte lastFrame = state.scene4090WideCoffinVariant == 0 ? 0x2e : 0x1a;
 	_soundBank0.playSampleLooping(0x30, 100);
 	for (byte frame = 0; frame <= lastFrame && frame < ARRAYSIZE(kScene4050D09ReturnTransitionFrameMap) &&
 			!Engine::shouldQuit(); ++frame) {
@@ -451,14 +451,14 @@ void Scene4050::useLongRopeOnLedge() {
 	runRonResourceFrameSequence(4, 0x11, 6, 0x2d);
 	removeInventoryItem(kScene4050LongRopeItem);
 	_soundBank0.playSample(1, 100);
-	_vm->gameState().scene4050PatchState = kScene4050PatchStateRopeAttached;
+	_vm->gameState().scene4050RopeSwingState = kScene4050PatchStateRopeAttached;
 	applySceneStateToHotspotsAndPatches(1);
 	beginRonResourceSpeechLine(8, 2);
 }
 
 void Scene4050::useSceneRope() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4050PatchState == kScene4050PatchStateWindowReached) {
+	if (state.scene4050RopeSwingState == kScene4050PatchStateWindowReached) {
 		beginRonResourceSpeechLine(6, 2);
 		return;
 	}
@@ -467,7 +467,7 @@ void Scene4050::useSceneRope() {
 	if (_sceneChunkTable.isValidChunk(kScene4050ExitPatchChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4050ExitPatchChunk], _baseFramebuffer);
 	runRonResourceFrameSequence(0x11, 0x1b, 0x17, 0x2e);
-	state.scene4050PatchState = kScene4050PatchStateWindowReached;
+	state.scene4050RopeSwingState = kScene4050PatchStateWindowReached;
 	state.mainFlowStateId = kScene4060FirstState;
 }
 

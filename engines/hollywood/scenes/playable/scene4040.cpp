@@ -179,9 +179,9 @@ void Scene4040::runCustomEntrySequence() {
 		return;
 	}
 
-	if (_vm->gameState().mainFlowStateId == kScene4040FirstState && !state.seenScene4040EntryLine) {
+	if (_vm->gameState().mainFlowStateId == kScene4040FirstState && !state.scene4040EntryLineSeen) {
 		beginSecondarySpeechLine(0, 0);
-		state.seenScene4040EntryLine = true;
+		state.scene4040EntryLineSeen = true;
 	}
 }
 

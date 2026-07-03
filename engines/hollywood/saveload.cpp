@@ -119,99 +119,98 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.ronWalletOpened);
 	syncStateBool(s, state.ronPendingMabusePillsInMagnetPillbox);
 	syncStateBool(s, state.ronLampFueled);
-	syncStateBool(s, state.seenScene3010EntryLine);
+	syncStateBool(s, state.scene3010EntryLineSeen);
 	syncStateBool(s, state.windmillBladesMoving);
-	syncStateBool(s, state.scene3020Item31Taken);
+	syncStateBool(s, state.scene3020MaceTaken);
 	syncStateBool(s, state.scene3030MachineActivated);
-	syncStateBool(s, state.seenScene3040EntryLine);
-	syncStateBool(s, state.scene3040ConditionalObjectVisible);
-	syncStateBool(s, state.seenScene3050EntryLine);
-	syncStateBool(s, state.scene3050Row3CaptionUpdated);
-	s.syncAsByte(state.scene3060SecretDoorState);
+	syncStateBool(s, state.scene3040EntryLineSeen);
+	syncStateBool(s, state.scene3040HiddenObjectVisible);
+	syncStateBool(s, state.scene3050EntryLineSeen);
+	syncStateBool(s, state.scene3050LibraryCaptionRevealed);
+	s.syncAsByte(state.scene3060SecretDoorRevealState);
 	s.syncAsByte(state.scene3060GlobeFrame);
-	s.syncAsByte(state.scene3060GlobePuzzleSlot);
-	s.syncAsByte(state.scene3060LastGlobeButton);
-	s.syncBytes(state.scene3060GlobePuzzleHistory, sizeof(state.scene3060GlobePuzzleHistory));
-	s.syncAsByte(state.scene3060TitleFlags);
-	syncStateBool(s, state.scene3060GlobeButtonsKnown);
-	syncStateBool(s, state.seenScene3070EntryLine);
-	syncStateBool(s, state.scene3070PatchDoorOpen);
-	s.syncAsByte(state.scene3070Item9PatchState);
-	syncStateBool(s, state.scene3070Item10Visible);
-	syncStateBool(s, state.scene3070Item32Taken);
-	syncStateBool(s, state.scene3070Row3Alternate);
-	syncStateBool(s, state.scene3070Row12Alternate);
-	syncStateBool(s, state.scene3070BackLayerAlternateFrames);
-	syncStateBool(s, state.scene3070ForegroundAlternate);
-	syncStateBool(s, state.scene3070WindowPatchActive);
-	syncStateBool(s, state.seenScene3070InterludeCutscene);
+	s.syncAsByte(state.scene3060GlobePuzzleRunIndex);
+	s.syncAsByte(state.scene3060LastGlobePuzzleButton);
+	s.syncBytes(state.scene3060GlobePuzzleRuns, sizeof(state.scene3060GlobePuzzleRuns));
+	s.syncAsByte(state.scene3060InspectedTitleFlags);
+	syncStateBool(s, state.scene3060GlobeButtonsDiscovered);
+	syncStateBool(s, state.scene3070EntryLineSeen);
+	syncStateBool(s, state.scene3070DrawerOpen);
+	s.syncAsByte(state.scene3070SurgicalNeedleThreadState);
+	s.syncAsByte(state.scene3070FrankensteinBodyState);
+	syncStateBool(s, state.scene3070SurgicalNeedleThreadTaken);
+	syncStateBool(s, state.scene3070OperatingTableAlternateDescription);
+	syncStateBool(s, state.scene3070FrankensteinRevivalAlternateResponse);
+	syncStateBool(s, state.scene3070MachineRunning);
+	syncStateBool(s, state.scene3070OperatingTableForegroundAlternate);
+	syncStateBool(s, state.scene3070WindowForegroundPatchActive);
+	syncStateBool(s, state.scene3070InterludeCutsceneSeen);
 	syncStateBool(s, state.scene3070InterludeUnlocked);
 	syncStateBool(s, state.scene3070LateCutscenePlayed);
-	syncStateBool(s, state.seenScene3080EntryLine);
-	syncStateBool(s, state.scene3080DoorSeen);
+	syncStateBool(s, state.scene3080EntryLineSeen);
+	syncStateBool(s, state.scene3080CabinDoorVisited);
 	syncStateBool(s, state.scene3080FrankensteinDiaryRevealed);
-	syncStateBool(s, state.scene3080DiaryTaken);
-	syncStateBool(s, state.scene3080WindowPatchActive);
-	syncStateBool(s, state.scene3080StickTaken);
-	syncStateBool(s, state.scene3080SmokeAlternateFrames);
-	syncStateBool(s, state.seenScene3090EntryLine);
-	s.syncAsByte(state.scene3090BlindManPuzzleStage);
-	s.syncAsByte(state.scene3090WindowSequenceState);
+	syncStateBool(s, state.scene3080FrankensteinDiaryTaken);
+	syncStateBool(s, state.scene3080WindowOpened);
+	syncStateBool(s, state.scene3080BranchTaken);
+	syncStateBool(s, state.scene3080ChimneySmokeAnimationChanged);
+	syncStateBool(s, state.scene3090EntryLineSeen);
+	s.syncAsByte(state.scene3090SecretDiaryPuzzleStage);
+	s.syncAsByte(state.scene3090WindowOpenSequenceState);
 	syncStateBool(s, state.scene3090BlindManPlayingSaxophone);
 	syncStateBool(s, state.scene3090SaltShakerTaken);
 	syncStateBool(s, state.scene3090DowsingRodTaken);
-	syncStateBool(s, state.scene3090TalkedToBlindMan);
-	s.syncAsByte(state.scene3090PuzzleProgress);
+	syncStateBool(s, state.scene3090BlindManConversationSeen);
+	s.syncAsByte(state.scene3090SecretDiaryPuzzleProgress);
 	syncStateBool(s, state.scene3090DialogueMentionedBlindManLaxative);
-	syncStateBool(s, state.seenScene3100EntrySequence);
-	s.syncAsByte(state.scene3100CabinState);
-	syncStateBool(s, state.scene3100ObjectVisible);
-	s.syncAsByte(state.scene3100DialogueCounter);
-	syncStateBool(s, state.scene3100Item38Taken);
-	syncStateBool(s, state.scene3100Item39Taken);
-	syncStateBool(s, state.seenScene1010EntryLine);
-	syncStateBool(s, state.seenScene1020EntryLine);
-	s.syncAsByte(state.scene1020ResourceBlockChoiceState);
-	s.syncAsByte(state.scene1020ResourceBlockVariantState);
-	syncStateBool(s, state.scene1020AlternateResourceBlockActive);
-	syncStateBool(s, state.scene1020EventFlag0);
-	syncStateBool(s, state.scene1020EventFlag1);
-	syncStateBool(s, state.scene1020EventFlag2);
-	syncStateBool(s, state.scene1020EventFlag3);
-	syncStateBool(s, state.seenScene1030EntryConversation);
-	s.syncAsByte(state.scene1030PatchState);
-	syncStateBool(s, state.scene1030EventFlag0);
+	syncStateBool(s, state.scene3100CabinVisited);
+	s.syncAsByte(state.scene3100GirlConversationState);
+	syncStateBool(s, state.scene3100DaisyVisible);
+	s.syncAsByte(state.scene3100GirlDialogueRepeatCounter);
+	syncStateBool(s, state.scene3100SapSyringeTaken);
+	syncStateBool(s, state.scene3100DaisyTaken);
+	syncStateBool(s, state.scene1010EntryLineSeen);
+	syncStateBool(s, state.scene1020EntryLineSeen);
+	s.syncAsByte(state.scene1020HookPositionState);
+	s.syncAsByte(state.scene1020ChainAttachedToGrate);
+	syncStateBool(s, state.scene1020GrateRaised);
+	syncStateBool(s, state.scene1020SueTapeVisible);
+	syncStateBool(s, state.scene1020BrokenRecorderIdentified);
+	syncStateBool(s, state.scene1020RustyRailGreased);
+	syncStateBool(s, state.scene1020SueTapeNoticed);
+	syncStateBool(s, state.scene1030EntryConversationSeen);
+	s.syncAsByte(state.scene1030TablePickupState);
+	syncStateBool(s, state.scene1030SleepingDrunkInspected);
 	syncStateBool(s, state.scene1030ShrinkingManNamed);
-	syncStateBool(s, state.seenScene1040EntryLine);
-	syncStateBool(s, state.scene1040DoorOpened);
-	s.syncAsByte(state.scene1040CordState);
+	syncStateBool(s, state.scene1040EntryLineSeen);
+	syncStateBool(s, state.scene1040CloakroomDoorOpened);
+	s.syncAsByte(state.scene1040GorillaCordState);
 	syncStateBool(s, state.scene1040BalloonTaken);
 	syncStateBool(s, state.scene1050SuitcaseTaken);
-	syncStateBool(s, state.scene1050TalkedToCloakroomAttendant);
+	syncStateBool(s, state.scene1050CloakroomAttendantConversationSeen);
 	syncStateBool(s, state.scene1050JackLookedAt);
 	s.syncBytes(state.travelScreenSlotIds, sizeof(state.travelScreenSlotIds));
 	syncStateBool(s, state.ronTravelScreenUnlocked);
 	s.syncAsByte(state.travelScreenCurrentChapterId);
 	syncStateBool(s, state.scene1050CharlieBogWerewolfClueHeard);
-	syncStateBool(s, state.seenScene1060EntryLine);
-	s.syncAsByte(state.scene1060FlyDoctorState);
-	syncStateBool(s, state.seenScene1060DoctorConversation);
+	syncStateBool(s, state.scene1060EntryLineSeen);
+	s.syncAsByte(state.scene1060DrFlyState);
+	syncStateBool(s, state.scene1060DrFlyConversationSeen);
 	syncStateBool(s, state.scene1060PocketPaperTaken);
-	syncStateBool(s, state.seenScene1060InvisibleManConversation);
+	syncStateBool(s, state.scene1060InvisibleManConversationSeen);
 	s.syncAsByte(state.scene1060PartyRemainsState);
 	syncStateBool(s, state.scene1060FlySlimeHotspotActive);
 	syncStateBool(s, state.scene1070DoorOpened);
 	syncStateBool(s, state.scene1070ChainRemoved);
 	syncStateBool(s, state.scene1070SpiritBlockingHotspot);
-	syncStateBool(s, state.seenScene1070QuasimodoConversation);
-	syncStateBool(s, state.seenScene1070SpencerConversation);
-	s.syncAsByte(state.scene1070SpencerDialogueState);
+	syncStateBool(s, state.scene1070QuasimodoConversationSeen);
+	syncStateBool(s, state.scene1070SpencerConversationSeen);
+	s.syncAsByte(state.scene1070SpencerTravelClueProgress);
 	syncStateBool(s, state.scene1070MicrophoneStandTaken);
 	syncStateBool(s, state.scene1070MicrophoneTaken);
-	syncStateBool(s, state.scene1070SpencerExtraFlag);
-	syncStateBool(s, state.seenScene1080EntryLine);
-	s.syncAsByte(state.scene1080FrancoisState);
-	syncStateBool(s, state.seenScene1090EntryLine);
+	syncStateBool(s, state.scene1080EntryLineSeen);
+	s.syncAsByte(state.scene1080FrancoisProgressState);
+	syncStateBool(s, state.scene1090EntryLineSeen);
 	syncStateBool(s, state.scene1090LightsOn);
 	s.syncAsByte(state.scene1090WrappedBrainState);
 	syncStateBool(s, state.scene6010StudioEntryUnlocked);
@@ -241,42 +240,41 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.scene4010Item3APickupState);
 	s.syncAsByte(state.scene4010PillboxPickupState);
 	syncStateBool(s, state.scene4010DestinationUnlocked);
-	syncStateBool(s, state.seenScene4020FallReactionLine);
+	syncStateBool(s, state.scene4020FallReactionLineSeen);
 	syncStateBool(s, state.scene4020GateUnlocked);
-	syncStateBool(s, state.seenScene4030EntryLine);
+	syncStateBool(s, state.scene4030InitialEntryLineSeen);
 	syncStateBool(s, state.scene4030RopeTaken);
-	s.syncAsByte(state.scene4030BoneState);
-	syncStateBool(s, state.scene4030LeverInstalled);
-	syncStateBool(s, state.seenScene4040EntryLine);
+	s.syncAsByte(state.scene4030LooseBoneState);
+	syncStateBool(s, state.scene4030ImprovisedLeverInstalled);
+	syncStateBool(s, state.scene4040EntryLineSeen);
 	syncStateBool(s, state.scene4040CandilTaken);
-	syncStateBool(s, state.seenScene4050EntryLine);
-	s.syncAsByte(state.scene4050PatchState);
-	s.syncAsByte(state.scene4060CardStage);
-	s.syncAsByte(state.scene4060SecondCardStage);
-	s.syncAsByte(state.scene4060ForegroundState);
-	syncStateBool(s, state.seenScene4060EntryLine);
+	syncStateBool(s, state.scene4050EntryLineSeen);
+	s.syncAsByte(state.scene4050RopeSwingState);
+	s.syncAsByte(state.scene4060PictureCardStage);
+	s.syncAsByte(state.scene4060PerfumeBottleCardStage);
+	s.syncAsByte(state.scene4060SherilynSheetWon);
+	syncStateBool(s, state.scene4060EntryLineSeen);
 	syncStateBool(s, state.scene4060SherilynDialogueIntroSeen);
-	s.syncAsByte(state.scene4060DialogueProgressCounter);
+	s.syncAsByte(state.scene4060SherilynPokerProgressCounter);
 	s.syncAsByte(state.scene4070DraculaStage);
-	syncStateBool(s, state.seenScene4070EntryLine);
+	syncStateBool(s, state.scene4070EntryLineSeen);
 	syncStateBool(s, state.scene4070TrophyBaseOpened);
-	s.syncAsByte(state.scene4070FrankiePartIndex);
+	s.syncAsByte(state.scene4070FrankiePartsGranted);
 	syncStateBool(s, state.scene4070SlimmingTreatmentApplied);
-	s.syncAsByte(state.scene4080PaletteMapState);
-	s.syncAsByte(state.scene4080PendingPaletteMapPromotion);
-	s.syncAsByte(state.scene4080SidePatchState);
-	s.syncAsByte(state.scene4080PassagePatchState);
-	s.syncAsByte(state.scene4080TextVariantState);
-	s.syncAsByte(state.scene4080Resource13PatchState);
-	syncStateBool(s, state.seenScene4090InitialGreeting);
-	s.syncAsByte(state.scene4090AlternateAnimationSet);
-	syncStateBool(s, state.seenScene4090Chunk8RevealDialogue);
-	s.syncAsByte(state.scene4090FinalCutsceneState);
-	syncStateBool(s, state.seenScene4090FinalCutsceneDialogue);
-	syncStateBool(s, state.seenScene4100EntryLine);
-	syncStateBool(s, state.scene4110Item46Taken);
-	syncStateBool(s, state.scene4110AlternateSceneState);
-	syncStateBool(s, state.scene4110PostAlternateFlag);
+	s.syncAsByte(state.scene4080GwendolynState);
+	s.syncAsByte(state.scene4080GwendolynStateTransition);
+	s.syncAsByte(state.scene4080CoffinShiftedState);
+	s.syncAsByte(state.scene4080OilBottleState);
+	s.syncAsByte(state.scene4080GwendolynNameState);
+	s.syncAsByte(state.scene4080GominolaVisibleState);
+	syncStateBool(s, state.scene4090InitialGreetingSeen);
+	s.syncAsByte(state.scene4090WideCoffinVariant);
+	syncStateBool(s, state.scene4090OrganRevealDialogueSeen);
+	s.syncAsByte(state.scene4090FinalCutsceneCompleted);
+	syncStateBool(s, state.scene4090FinalCutsceneDialogueSeen);
+	syncStateBool(s, state.scene4100EntryLineSeen);
+	syncStateBool(s, state.scene4110LetterTaken);
+	syncStateBool(s, state.scene4110BridgeOpened);
 	syncStateBool(s, state.seenScene5010EntryLine);
 	s.syncAsByte(state.scene5010MineTransportState);
 	syncStateBool(s, state.scene5010MineTransportReady);
@@ -363,34 +361,36 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.humeroBarrierState = 1;
 	if (state.punchBowlGlassPatchState > 2)
 		state.punchBowlGlassPatchState = 1;
-	if (state.scene1020ResourceBlockChoiceState > 2)
-		state.scene1020ResourceBlockChoiceState = 0;
-	if (state.scene1020ResourceBlockVariantState > 1)
-		state.scene1020ResourceBlockVariantState = 0;
-	if (state.scene1030PatchState > 3)
-		state.scene1030PatchState = 0;
-	if (state.scene1040CordState > 2)
-		state.scene1040CordState = 0;
-	if (state.scene3060SecretDoorState > 1)
-		state.scene3060SecretDoorState = 0;
+	if (state.scene1020HookPositionState > 2)
+		state.scene1020HookPositionState = 0;
+	if (state.scene1020ChainAttachedToGrate > 1)
+		state.scene1020ChainAttachedToGrate = 0;
+	if (state.scene1030TablePickupState > 3)
+		state.scene1030TablePickupState = 0;
+	if (state.scene1040GorillaCordState > 2)
+		state.scene1040GorillaCordState = 0;
+	if (state.scene3060SecretDoorRevealState > 1)
+		state.scene3060SecretDoorRevealState = 0;
 	if (state.scene3060GlobeFrame >= 0x1e)
 		state.scene3060GlobeFrame = 0;
-	if (state.scene3060GlobePuzzleSlot > 3)
-		state.scene3060GlobePuzzleSlot = 3;
-	if (state.scene3060LastGlobeButton > 2)
-		state.scene3060LastGlobeButton = 0;
-	if (state.scene3070Item9PatchState > 2)
-		state.scene3070Item9PatchState = 0;
-	if (state.scene3090BlindManPuzzleStage > 2)
-		state.scene3090BlindManPuzzleStage = 0;
-	if (state.scene3090WindowSequenceState > 2)
-		state.scene3090WindowSequenceState = 0;
-	if (state.scene3090PuzzleProgress > 9)
-		state.scene3090PuzzleProgress = 9;
-	if (state.scene3100CabinState > 2)
-		state.scene3100CabinState = 0;
-	if (state.scene3100DialogueCounter > 9)
-		state.scene3100DialogueCounter = 9;
+	if (state.scene3060GlobePuzzleRunIndex > 3)
+		state.scene3060GlobePuzzleRunIndex = 3;
+	if (state.scene3060LastGlobePuzzleButton > 2)
+		state.scene3060LastGlobePuzzleButton = 0;
+	if (state.scene3070SurgicalNeedleThreadState > 2)
+		state.scene3070SurgicalNeedleThreadState = 0;
+	if (state.scene3070FrankensteinBodyState > 2)
+		state.scene3070FrankensteinBodyState = 0;
+	if (state.scene3090SecretDiaryPuzzleStage > 2)
+		state.scene3090SecretDiaryPuzzleStage = 0;
+	if (state.scene3090WindowOpenSequenceState > 2)
+		state.scene3090WindowOpenSequenceState = 0;
+	if (state.scene3090SecretDiaryPuzzleProgress > 9)
+		state.scene3090SecretDiaryPuzzleProgress = 9;
+	if (state.scene3100GirlConversationState > 2)
+		state.scene3100GirlConversationState = 0;
+	if (state.scene3100GirlDialogueRepeatCounter > 9)
+		state.scene3100GirlDialogueRepeatCounter = 9;
 	if (state.travelScreenSlotIds[0] > 6)
 		state.travelScreenSlotIds[0] = 0;
 	if (state.travelScreenSlotIds[1] > 6)
@@ -411,14 +411,14 @@ void HollywoodEngine::normalizeLoadedGameState() {
 	}
 	if (state.travelScreenCurrentChapterId > 9)
 		state.travelScreenCurrentChapterId = 0;
-	if (state.scene1060FlyDoctorState > 2)
-		state.scene1060FlyDoctorState = 0;
+	if (state.scene1060DrFlyState > 2)
+		state.scene1060DrFlyState = 0;
 	if (state.scene1060PartyRemainsState > 1)
 		state.scene1060PartyRemainsState = 0;
-	if (state.scene1070SpencerDialogueState > 3)
-		state.scene1070SpencerDialogueState = 0;
-	if (state.scene1080FrancoisState > 2)
-		state.scene1080FrancoisState = 0;
+	if (state.scene1070SpencerTravelClueProgress > 3)
+		state.scene1070SpencerTravelClueProgress = 0;
+	if (state.scene1080FrancoisProgressState > 2)
+		state.scene1080FrancoisProgressState = 0;
 	if (state.scene1090WrappedBrainState > 2)
 		state.scene1090WrappedBrainState = 0;
 	if (state.scene2040SphinxBasePatchState > 1)
@@ -439,8 +439,8 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene4010Item3APickupState = 0;
 	if (state.scene4010PillboxPickupState > 2)
 		state.scene4010PillboxPickupState = 0;
-	if (state.scene4050PatchState > 2)
-		state.scene4050PatchState = 0;
+	if (state.scene4050RopeSwingState > 2)
+		state.scene4050RopeSwingState = 0;
 	if (state.scene5010MineTransportState > 4)
 		state.scene5010MineTransportState = 0;
 	if (state.scene5010SwitchRow > 2)
@@ -462,32 +462,32 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene8010FishermanConversationState = 0;
 	if (state.scene8020ForegroundObjectState > 2)
 		state.scene8020ForegroundObjectState = 0;
-	if (state.scene4060CardStage > 2)
-		state.scene4060CardStage = 0;
-	if (state.scene4060SecondCardStage > 2)
-		state.scene4060SecondCardStage = 0;
-	if (state.scene4060ForegroundState > 1)
-		state.scene4060ForegroundState = 0;
+	if (state.scene4060PictureCardStage > 2)
+		state.scene4060PictureCardStage = 0;
+	if (state.scene4060PerfumeBottleCardStage > 2)
+		state.scene4060PerfumeBottleCardStage = 0;
+	if (state.scene4060SherilynSheetWon > 1)
+		state.scene4060SherilynSheetWon = 0;
 	if (state.scene4070DraculaStage > 4)
 		state.scene4070DraculaStage = 0;
-	if (state.scene4070FrankiePartIndex > 3)
-		state.scene4070FrankiePartIndex = 3;
-	if (state.scene4080PaletteMapState > 2)
-		state.scene4080PaletteMapState = 1;
-	if (state.scene4080PendingPaletteMapPromotion > 2)
-		state.scene4080PendingPaletteMapPromotion = 0;
-	if (state.scene4080SidePatchState > 1)
-		state.scene4080SidePatchState = 0;
-	if (state.scene4080PassagePatchState > 2)
-		state.scene4080PassagePatchState = 1;
-	if (state.scene4080TextVariantState > 2)
-		state.scene4080TextVariantState = 0;
-	if (state.scene4080Resource13PatchState > 1)
-		state.scene4080Resource13PatchState = 0;
-	if (state.scene4090AlternateAnimationSet > 1)
-		state.scene4090AlternateAnimationSet = 0;
-	if (state.scene4090FinalCutsceneState > 1)
-		state.scene4090FinalCutsceneState = 0;
+	if (state.scene4070FrankiePartsGranted > 3)
+		state.scene4070FrankiePartsGranted = 3;
+	if (state.scene4080GwendolynState > 2)
+		state.scene4080GwendolynState = 1;
+	if (state.scene4080GwendolynStateTransition > 2)
+		state.scene4080GwendolynStateTransition = 0;
+	if (state.scene4080CoffinShiftedState > 1)
+		state.scene4080CoffinShiftedState = 0;
+	if (state.scene4080OilBottleState > 2)
+		state.scene4080OilBottleState = 1;
+	if (state.scene4080GwendolynNameState > 2)
+		state.scene4080GwendolynNameState = 0;
+	if (state.scene4080GominolaVisibleState > 1)
+		state.scene4080GominolaVisibleState = 0;
+	if (state.scene4090WideCoffinVariant > 1)
+		state.scene4090WideCoffinVariant = 0;
+	if (state.scene4090FinalCutsceneCompleted > 1)
+		state.scene4090FinalCutsceneCompleted = 0;
 }
 
 } // End of namespace Hollywood

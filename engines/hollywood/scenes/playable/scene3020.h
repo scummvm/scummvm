@@ -28,6 +28,10 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
+// Saved GameplayState fields read:
+// mainFlowStateId, windmillBladesMoving, scene3020MaceTaken.
+// Saved GameplayState fields written:
+// mainFlowStateId, scene3020MaceTaken.
 class Scene3020 : public PlayableScene {
 public:
 	Scene3020(HollywoodEngine *vm);
@@ -58,7 +62,7 @@ private:
 	void runEntryFromScene3030();
 	void runDescriptorTransitionClip(uint chunkIndex, uint descriptorCount, byte finalFrameIndex);
 	void drawDescriptorTransitionFrame(const Common::Array<byte> &clipData, uint descriptorCount, byte frameIndex);
-	void runPickupItem31();
+	void runPickupMace();
 
 	TimedAnimationChannel _loopChannel;
 	ResourceSpriteLayer _loopLayer;

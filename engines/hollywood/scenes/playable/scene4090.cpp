@@ -233,25 +233,25 @@ void Scene4090::runCustomEntrySequence() {
 	if (state.mainFlowStateId == kScene4090FirstState) {
 		_activeActorWorldX = kScene4090DefaultActorX;
 		_activeActorWorldY = kScene4090DefaultActorY;
-		_activeActorFacing = state.seenScene4090InitialGreeting ? kScene4090DefaultActorFacing : 1;
+		_activeActorFacing = state.scene4090InitialGreetingSeen ? kScene4090DefaultActorFacing : 1;
 		_activeActorCel = 0;
 		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 		drawPlayableComposite();
 		presentFrame();
-		if (!state.seenScene4090InitialGreeting) {
+		if (!state.scene4090InitialGreetingSeen) {
 			beginSecondarySpeechLine(0, 0);
-			state.seenScene4090InitialGreeting = true;
+			state.scene4090InitialGreetingSeen = true;
 		}
 		return;
 	}
 
 	runEntryPath(kScene4090ReturnEntryStartX, kScene4090ReturnEntryStartY, 1,
 		kScene4090ReturnEntryTargetX, kScene4090ReturnEntryTargetY);
-	if (state.scene4090AlternateAnimationSet == 0) {
+	if (state.scene4090WideCoffinVariant == 0) {
 		beginSecondarySpeechLine(8, 7);
 	} else {
 		beginSecondarySpeechLine(8, 8);
-		state.scene4090FinalCutsceneState = 1;
+		state.scene4090FinalCutsceneCompleted = 1;
 	}
 }
 
@@ -292,7 +292,7 @@ bool Scene4090::dispatchCustomSceneAction(uint16 handlerId) {
 		runCoffinSwapSequence();
 		return true;
 	case 306: // Mirar ataud (look at coffin): normal/wide coffin description.
-		beginSecondarySpeechLine(5, _vm->gameState().scene4090AlternateAnimationSet != 0 ? 1 : 0);
+		beginSecondarySpeechLine(5, _vm->gameState().scene4090WideCoffinVariant != 0 ? 1 : 0);
 		return true;
 	case 307: // Coger partitura (take sheet music): Ron refuses to take it.
 		beginSecondarySpeechLine(6, 0);
@@ -340,7 +340,7 @@ bool Scene4090::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
-	if (_vm->gameState().scene4090AlternateAnimationSet != 0) {
+	if (_vm->gameState().scene4090WideCoffinVariant != 0) {
 		if (_sceneChunkTable.isValidChunk(kScene4090AlternatePatchChunk))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4090AlternatePatchChunk], _baseFramebuffer);
 		setSmallRowText(3, kScene4090WideCoffinName);
@@ -378,7 +378,7 @@ void Scene4090::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 	if (mappedFrameOffset >= ARRAYSIZE(kScene4090FinalPrimarySpeechFrameMap))
 		return;
 
-	const uint finalBaseChunk = _vm->gameState().scene4090AlternateAnimationSet != 0 ?
+	const uint finalBaseChunk = _vm->gameState().scene4090WideCoffinVariant != 0 ?
 		kScene4090FinalVariantAlternateBaseChunk : kScene4090FinalVariantBaseChunk;
 	_scriptLayer.configure(finalBaseChunk, kScene4090FinalCloseDescriptorCount, nullptr, 0);
 	_scriptLayer.visible = true;
@@ -474,9 +474,9 @@ void Scene4090::runDoorExit() {
 
 void Scene4090::runOrganRevealSequence() {
 	GameplayState &state = _vm->gameState();
-	if (!state.seenScene4090Chunk8RevealDialogue) {
+	if (!state.scene4090OrganRevealDialogueSeen) {
 		beginSecondarySpeechLine(3, 0);
-		state.seenScene4090Chunk8RevealDialogue = true;
+		state.scene4090OrganRevealDialogueSeen = true;
 	} else {
 		beginSecondarySpeechLine(3, 2);
 	}
@@ -535,7 +535,7 @@ void Scene4090::runOrganRevealSequence() {
 
 void Scene4090::runCoffinSwapSequence() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4090AlternateAnimationSet != 0) {
+	if (state.scene4090WideCoffinVariant != 0) {
 		beginSecondarySpeechLine(4, 3);
 		return;
 	}
@@ -545,13 +545,13 @@ void Scene4090::runCoffinSwapSequence() {
 
 void Scene4090::runFinalCutscene() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4090FinalCutsceneState != 0) {
+	if (state.scene4090FinalCutsceneCompleted != 0) {
 		beginStaticSecondarySpeechLine(0x50, 1);
 		return;
 	}
 
 	walkActiveActorTo(0x0166, 0x0171, 1, 0, false);
-	if (!state.seenScene4090FinalCutsceneDialogue)
+	if (!state.scene4090FinalCutsceneDialogueSeen)
 		beginSecondarySpeechLine(8, 0);
 
 	_chunk12Layer.visible = true;
@@ -597,7 +597,7 @@ void Scene4090::runFinalCutscene() {
 	}
 
 	clearScriptLayers();
-	if (!state.seenScene4090FinalCutsceneDialogue) {
+	if (!state.scene4090FinalCutsceneDialogueSeen) {
 		beginSecondarySpeechLine(8, 1);
 		beginSecondarySpeechLine(8, 2);
 	}
@@ -615,7 +615,7 @@ void Scene4090::runFinalCutscene() {
 	drawPlayableComposite();
 	presentFrame();
 
-	const uint finalBaseChunk = state.scene4090AlternateAnimationSet != 0 ?
+	const uint finalBaseChunk = state.scene4090WideCoffinVariant != 0 ?
 		kScene4090FinalVariantAlternateBaseChunk : kScene4090FinalVariantBaseChunk;
 	for (byte frame = 0; frame < ARRAYSIZE(kScene4090FinalOpenFrameMap) && !Engine::shouldQuit(); ++frame) {
 		if (presentScriptFrame(finalBaseChunk + 1, kScene4090FinalOpenDescriptorCount,
@@ -632,10 +632,10 @@ void Scene4090::runFinalCutscene() {
 			break;
 	}
 
-	if (!state.seenScene4090FinalCutsceneDialogue) {
+	if (!state.scene4090FinalCutsceneDialogueSeen) {
 		beginPrimarySpeechLineWithAnimationGroup(8, 3, 0x02c8, 0x0099, 0x0a, 0x19, 0x3f,
 			kScene4090FinalPrimarySpeechNormalGroup);
-		state.seenScene4090FinalCutsceneDialogue = true;
+		state.scene4090FinalCutsceneDialogueSeen = true;
 	} else {
 		beginPrimarySpeechLineWithAnimationGroup(8, 4, 0x02c8, 0x0099, 0x0a, 0x19, 0x3f,
 			kScene4090FinalPrimarySpeechNormalGroup);
@@ -654,7 +654,7 @@ void Scene4090::runFinalCutscene() {
 		if (waitScriptFrame(kScene4090FastFrameMillis))
 			break;
 	}
-	if (state.scene4090AlternateAnimationSet != 0) {
+	if (state.scene4090WideCoffinVariant != 0) {
 		beginPrimarySpeechLineWithAnimationGroup(8, 6, 0x02c8, 0x0099, 0x0a, 0x19, 0x3f,
 			kScene4090FinalPrimarySpeechAlternateGroup);
 	} else {

@@ -28,6 +28,16 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
+// Saved GameplayState fields read:
+// mainFlowStateId, scene3060SecretDoorRevealState, scene3060GlobeFrame,
+// scene3060GlobePuzzleRunIndex, scene3060LastGlobePuzzleButton,
+// scene3060GlobePuzzleRuns, scene3060InspectedTitleFlags,
+// scene3060GlobeButtonsDiscovered.
+// Saved GameplayState fields written:
+// mainFlowStateId, scene3060SecretDoorRevealState, scene3060GlobeFrame,
+// scene3060GlobePuzzleRunIndex, scene3060LastGlobePuzzleButton,
+// scene3060GlobePuzzleRuns, scene3060InspectedTitleFlags,
+// scene3060GlobeButtonsDiscovered.
 class Scene3060 : public PlayableScene {
 public:
 	Scene3060(HollywoodEngine *vm);

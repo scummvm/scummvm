@@ -143,7 +143,7 @@ void Scene1080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	if (_vm->gameState().scene1080FrancoisState < 2)
+	if (_vm->gameState().scene1080FrancoisProgressState < 2)
 		drawResourceSpriteLayer(_francoisLayer);
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
@@ -160,9 +160,9 @@ void Scene1080::runCustomEntrySequence() {
 	GameplayState &state = _vm->gameState();
 	if (state.mainFlowStateId == kScene1080FirstState) {
 		runEntryPath(0x157, 0x0b4, 2, 0x1d3, 0x15c);
-		if (!state.seenScene1080EntryLine) {
+		if (!state.scene1080EntryLineSeen) {
 			beginSecondarySpeechLine(0, 0);
-			state.seenScene1080EntryLine = true;
+			state.scene1080EntryLineSeen = true;
 		}
 	} else {
 		runEntryPath(0x1fd, 0x14d, 4, 0x1fd, 0x14d);
@@ -180,7 +180,7 @@ bool Scene1080::advanceCustomGameplayLoop(uint32 delta) {
 	advanceForegroundLayer(delta);
 	if (_primaryDialogueSpeechActive)
 		advancePrimaryDialogueSpeechFrame(delta);
-	else if (_vm->gameState().scene1080FrancoisState < 2)
+	else if (_vm->gameState().scene1080FrancoisProgressState < 2)
 		advanceFrancoisLayer(delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
@@ -195,7 +195,7 @@ bool Scene1080::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(1, 0);
 		return true;
 	case 303: // Ir a despensa (go to pantry).
-		if (_vm->gameState().scene1080FrancoisState >= 2)
+		if (_vm->gameState().scene1080FrancoisProgressState >= 2)
 			_vm->gameState().mainFlowStateId = kScene1080ExitStatePantry;
 		else
 			beginSecondarySpeechLine(2, 0);
@@ -250,7 +250,7 @@ bool Scene1080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	rebuildKitchenWalkableMask();
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
 
-	if (_vm->gameState().scene1080FrancoisState >= 2) {
+	if (_vm->gameState().scene1080FrancoisProgressState >= 2) {
 		ScenePoint point;
 		point.x = 0x02b9;
 		point.y = 0x0123;
@@ -287,7 +287,7 @@ void Scene1080::resetAnimationLayers() {
 	_foregroundLayer.reset(0);
 	_francoisLayer.reset(0);
 	_foregroundLayer.visible = true;
-	_francoisLayer.visible = _vm->gameState().scene1080FrancoisState < 2;
+	_francoisLayer.visible = _vm->gameState().scene1080FrancoisProgressState < 2;
 	_foregroundMode = 0;
 	_francoisMode = 0;
 }
@@ -338,7 +338,7 @@ void Scene1080::drawForegroundBlocks(int activeWorldX, int activeWorldY) {
 }
 
 void Scene1080::rebuildKitchenWalkableMask() {
-	const bool francoisGone = _vm->gameState().scene1080FrancoisState >= 2;
+	const bool francoisGone = _vm->gameState().scene1080FrancoisProgressState >= 2;
 	for (uint i = 0; i < _walkablePaletteMask.size(); ++i) {
 		const byte originalRegion = _paletteMaskOriginal[i];
 		byte region = originalRegion;
@@ -359,7 +359,7 @@ void Scene1080::applyKitchenItemMap() {
 			_paletteMask.size() < kSceneColorToItemMap + kScenePaletteMapPageSize)
 		return;
 
-	const bool francoisGone = _vm->gameState().scene1080FrancoisState >= 2;
+	const bool francoisGone = _vm->gameState().scene1080FrancoisProgressState >= 2;
 	for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
 		const byte originalItem = _paletteMaskOriginal[kSceneColorToItemMap + i];
 		byte item = originalItem;
@@ -380,17 +380,17 @@ void Scene1080::applyKitchenItemMap() {
 
 void Scene1080::runFrancoisConversation() {
 	GameplayState &state = _vm->gameState();
-	const byte frame = state.scene1080FrancoisState == 0 ? 0 : 1;
+	const byte frame = state.scene1080FrancoisProgressState == 0 ? 0 : 1;
 	beginSecondarySpeechLine(0x62, frame);
 	beginPrimarySpeechLineWithAnimationGroup(99, frame, 0x022e, 0x0084,
 		0x0d, 0x32, 0x3a, kScene1080FrancoisSpeechGroup);
-	if (state.scene1080FrancoisState == 0)
-		state.scene1080FrancoisState = 1;
+	if (state.scene1080FrancoisProgressState == 0)
+		state.scene1080FrancoisProgressState = 1;
 }
 
 void Scene1080::handleFrancoisDistraction() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene1080FrancoisState >= 2)
+	if (state.scene1080FrancoisProgressState >= 2)
 		return;
 
 	beginSecondarySpeechLine(12, 0);
@@ -401,7 +401,7 @@ void Scene1080::handleFrancoisDistraction() {
 		removeInventoryItem(0x4d);
 	if (!hasInventoryItem(0x1c))
 		addInventoryItem(0x1c);
-	state.scene1080FrancoisState = 2;
+	state.scene1080FrancoisProgressState = 2;
 	_francoisLayer.visible = false;
 	applySceneStateToHotspotsAndPatches(1);
 }

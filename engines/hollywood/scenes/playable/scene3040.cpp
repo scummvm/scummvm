@@ -48,8 +48,8 @@ const uint32 kScene3040ForegroundFrameMillis = 75;
 const uint32 kScene3040ForegroundIdleFrameMillis = 150;
 const uint kScene3040ForegroundActorDescriptorCount = 0x14;
 const uint kScene3040LoopDescriptorCount = 8;
-const byte kScene3040ConditionalObjectItemId = 3;
-const byte kScene3040ConditionalPatchChunk = 7;
+const byte kScene3040HiddenObjectItemId = 3;
+const byte kScene3040HiddenObjectPatchChunk = 7;
 
 const byte kScene3040ForegroundFrameMap[] = {
 	0, 1, 2, 1, 4, 5, 6, 7, 8, 9,
@@ -177,9 +177,9 @@ void Scene3040::runCustomEntrySequence() {
 	drawPlayableComposite();
 	presentFrame();
 
-	if (!_vm->gameState().seenScene3040EntryLine) {
+	if (!_vm->gameState().scene3040EntryLineSeen) {
 		beginSecondarySpeechLine(1, 0);
-		_vm->gameState().seenScene3040EntryLine = true;
+		_vm->gameState().scene3040EntryLineSeen = true;
 	}
 }
 
@@ -226,7 +226,7 @@ bool Scene3040::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		restoreBaseFramebufferFromOriginal();
 		memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
 		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
-		updateConditionalObjectHotspots();
+		updateHiddenObjectHotspots();
 		rebuildWalkableMask();
 		_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
 	}
@@ -310,20 +310,20 @@ void Scene3040::drawLooseResourceSpriteLayer(const ResourceSpriteLayer &layer) {
 		layer.descriptorCount, layer.descriptorIndex(), _sceneFramebuffer);
 }
 
-void Scene3040::updateConditionalObjectHotspots() {
+void Scene3040::updateHiddenObjectHotspots() {
 	if (_paletteMaskOriginal.size() < kSceneColorToItemMap + kScenePaletteMapPageSize ||
 			_paletteMask.size() < kSceneColorToItemMap + kScenePaletteMapPageSize)
 		return;
 
 	for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
-		if (_paletteMaskOriginal[kSceneColorToItemMap + i] == kScene3040ConditionalObjectItemId) {
+		if (_paletteMaskOriginal[kSceneColorToItemMap + i] == kScene3040HiddenObjectItemId) {
 			_paletteMask[kSceneColorToItemMap + i] =
-				_vm->gameState().scene3040ConditionalObjectVisible ? kScene3040ConditionalObjectItemId : 0;
+				_vm->gameState().scene3040HiddenObjectVisible ? kScene3040HiddenObjectItemId : 0;
 		}
 	}
 
-	if (_vm->gameState().scene3040ConditionalObjectVisible)
-		applyConditionalObjectPatch();
+	if (_vm->gameState().scene3040HiddenObjectVisible)
+		applyHiddenObjectPatch();
 }
 
 void Scene3040::runExitToScene3010() {
@@ -339,7 +339,7 @@ void Scene3040::runInventoryPatchAction() {
 	if (inventoryItem != 0)
 		removeInventoryItem(inventoryItem);
 
-	_vm->gameState().scene3040ConditionalObjectVisible = true;
+	_vm->gameState().scene3040HiddenObjectVisible = true;
 	applySceneStateToHotspotsAndPatches(1);
 	_soundBank0.playSample(1, 100);
 	drawPlayableComposite();
@@ -352,7 +352,7 @@ void Scene3040::runForegroundActionFrames(byte firstFrame, byte lastFrame, int p
 			!_vm->isSceneRestartRequested(); ++frame) {
 		_foregroundActorLayer.setFrame(frame);
 		if (patchFrame >= 0 && frame == patchFrame) {
-			_vm->gameState().scene3040ConditionalObjectVisible = true;
+			_vm->gameState().scene3040HiddenObjectVisible = true;
 			applySceneStateToHotspotsAndPatches(1);
 		}
 		if (waitSceneMillis(kScene3040ForegroundFrameMillis))
@@ -361,9 +361,9 @@ void Scene3040::runForegroundActionFrames(byte firstFrame, byte lastFrame, int p
 	_foregroundActionActive = false;
 }
 
-void Scene3040::applyConditionalObjectPatch() {
-	if (_sceneChunkTable.isValidChunk(kScene3040ConditionalPatchChunk))
-		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene3040ConditionalPatchChunk], _baseFramebuffer);
+void Scene3040::applyHiddenObjectPatch() {
+	if (_sceneChunkTable.isValidChunk(kScene3040HiddenObjectPatchChunk))
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene3040HiddenObjectPatchChunk], _baseFramebuffer);
 }
 
 byte Scene3040::selectedInventoryItemForPatchAction() const {

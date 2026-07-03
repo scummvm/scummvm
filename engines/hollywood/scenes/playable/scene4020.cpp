@@ -294,9 +294,9 @@ void Scene4020::runEntryFromScene4010() {
 	presentFrame();
 
 	walkActiveActorTo(0xce, 0x195, 0xff, 0, false);
-	if (!_vm->gameState().seenScene4020FallReactionLine) {
+	if (!_vm->gameState().scene4020FallReactionLineSeen) {
 		beginSecondarySpeechLine(0, 0);
-		_vm->gameState().seenScene4020FallReactionLine = true;
+		_vm->gameState().scene4020FallReactionLineSeen = true;
 	}
 }
 

@@ -249,7 +249,7 @@ void Scene4080::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 
 	copyBaseFramebufferToSceneFramebuffer();
 	if (_scriptLayer.visible) {
-		const uint foregroundChunk = _vm->gameState().scene4080SidePatchState != 0 ?
+		const uint foregroundChunk = _vm->gameState().scene4080CoffinShiftedState != 0 ?
 			kScene4080SideForegroundChunk : kScene4080PaletteForegroundChunk;
 
 		if (activeWorldY < kScene4080ForegroundActorThresholdY) {
@@ -298,16 +298,16 @@ void Scene4080::runCustomEntrySequence() {
 	applySceneStateToHotspotsAndPatches(0xff);
 
 	_soundBank0.playSample(5, 100);
-	_palettePatchLayer.setFrame(_vm->gameState().scene4080PaletteMapState != 0 ? 1 : 0);
+	_palettePatchLayer.setFrame(_vm->gameState().scene4080GwendolynState != 0 ? 1 : 0);
 	_foregroundFlickerLayer.setFrame(0);
 	drawPlayableComposite();
 	presentFrame();
 
 	GameplayState &state = _vm->gameState();
-	if (state.scene4080PendingPaletteMapPromotion == 0) {
-		if (state.scene4080PaletteMapState == 1)
+	if (state.scene4080GwendolynStateTransition == 0) {
+		if (state.scene4080GwendolynState == 1)
 			beginSecondarySpeechLine(0, 0);
-		state.scene4080PendingPaletteMapPromotion = 1;
+		state.scene4080GwendolynStateTransition = 1;
 	}
 }
 
@@ -335,7 +335,7 @@ bool Scene4080::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(2, 0);
 		return true;
 	case 304: // Abrir ventana (open window): broken unless Gwendolyn branch redirects.
-		if (_vm->gameState().scene4080PaletteMapState != 0)
+		if (_vm->gameState().scene4080GwendolynState != 0)
 			beginSecondarySpeechLine(20, 0);
 		else
 			beginSecondarySpeechLine(3, 0);
@@ -344,15 +344,15 @@ bool Scene4080::dispatchCustomSceneAction(uint16 handlerId) {
 		runSidePatchSequence();
 		return true;
 	case 306: // Coger ataud (take coffin): state-aware coffin/steak setup line.
-		if (_vm->gameState().scene4080PaletteMapState != 0)
+		if (_vm->gameState().scene4080GwendolynState != 0)
 			beginSecondarySpeechLine(4, 0);
-		else if (_vm->gameState().scene4080SidePatchState != 0)
+		else if (_vm->gameState().scene4080CoffinShiftedState != 0)
 			beginSecondarySpeechLine(4, 2);
 		else
 			beginSecondarySpeechLine(4, 1);
 		return true;
 	case 307: // Mirar ataud (look at coffin): wide/narrow coffin variant.
-		beginSecondarySpeechLine(5, _vm->gameState().scene4080SidePatchState == 0 ? 0 : 1);
+		beginSecondarySpeechLine(5, _vm->gameState().scene4080CoffinShiftedState == 0 ? 0 : 1);
 		return true;
 	case 308: // Mirar carne (look at meat): steak description.
 		beginSecondarySpeechLine(6, 0);
@@ -361,9 +361,9 @@ bool Scene4080::dispatchCustomSceneAction(uint16 handlerId) {
 		runBottlePickupSequence();
 		return true;
 	case 310: // Mirar botella (look at bottle): reveal/rename oil bottle if still present.
-		if (_vm->gameState().scene4080PassagePatchState == 1) {
+		if (_vm->gameState().scene4080OilBottleState == 1) {
 			beginSecondarySpeechLine(7, 0);
-			_vm->gameState().scene4080PassagePatchState = 2;
+			_vm->gameState().scene4080OilBottleState = 2;
 			applySceneStateToHotspotsAndPatches(0xff);
 		} else {
 			beginSecondarySpeechLine(7, 1);
@@ -388,7 +388,7 @@ bool Scene4080::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(12, 0);
 		return true;
 	case 317: // Mirar vampiresa/Gwendolyn (look at Gwendolyn): state-aware description/dialogue.
-		if (_vm->gameState().scene4080PaletteMapState == 2)
+		if (_vm->gameState().scene4080GwendolynState == 2)
 			beginSecondarySpeechLine(23, 0);
 		else
 			beginSecondarySpeechLine(13, 0);
@@ -455,12 +455,12 @@ bool Scene4080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 	GameplayState &state = _vm->gameState();
-	if (state.scene4080PendingPaletteMapPromotion == 2) {
-		state.scene4080PendingPaletteMapPromotion = 0;
-		state.scene4080PaletteMapState = 2;
+	if (state.scene4080GwendolynStateTransition == 2) {
+		state.scene4080GwendolynStateTransition = 0;
+		state.scene4080GwendolynState = 2;
 	}
 
-	if (state.scene4080PaletteMapState == 0) {
+	if (state.scene4080GwendolynState == 0) {
 		if (_sceneChunkTable.isValidChunk(kScene4080PaletteState0PatchChunk))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4080PaletteState0PatchChunk], _baseFramebuffer);
 		replaceColorMapItemFromOriginal(8, 3);
@@ -471,7 +471,7 @@ bool Scene4080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		replaceColorMapItemFromOriginal(11, 0);
 		replaceColorMapItemFromOriginal(12, 0);
 		replaceColorMapItemFromOriginal(15, 0);
-	} else if (state.scene4080PaletteMapState == 1) {
+	} else if (state.scene4080GwendolynState == 1) {
 		replaceColorMapItemFromOriginal(11, 8);
 		replaceColorMapItemFromOriginal(14, 8);
 		replaceColorMapItemFromOriginal(15, 8);
@@ -489,7 +489,7 @@ bool Scene4080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		replaceColorMapItemFromOriginal(16, 8);
 	}
 
-	if (state.scene4080SidePatchState == 0) {
+	if (state.scene4080CoffinShiftedState == 0) {
 		if (_sceneChunkTable.isValidChunk(kScene4080BaseSidePatchChunk))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4080BaseSidePatchChunk], _baseFramebuffer);
 	} else {
@@ -498,20 +498,20 @@ bool Scene4080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		copySmallTextRow(3, 12);
 	}
 
-	if (state.scene4080PassagePatchState == 0) {
+	if (state.scene4080OilBottleState == 0) {
 		if (_sceneChunkTable.isValidChunk(kScene4080PassagePatchChunk))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4080PassagePatchChunk], _baseFramebuffer);
 		replaceColorMapItemFromOriginal(5, 0);
-	} else if (state.scene4080PassagePatchState == 2) {
+	} else if (state.scene4080OilBottleState == 2) {
 		copySmallTextRow(5, 11);
 	}
 
-	if (state.scene4080TextVariantState == 1)
+	if (state.scene4080GwendolynNameState == 1)
 		copySmallTextRow(8, 13);
-	else if (state.scene4080TextVariantState == 2)
+	else if (state.scene4080GwendolynNameState == 2)
 		copySmallTextRow(8, 14);
 
-	if (state.scene4080Resource13PatchState != 0) {
+	if (state.scene4080GominolaVisibleState != 0) {
 		if (_sceneChunkTable.isValidChunk(kScene4080VisibleGominolaPatchChunk))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4080VisibleGominolaPatchChunk], _baseFramebuffer);
 		replaceColorMapItemFromOriginal(10, 10);
@@ -530,7 +530,7 @@ bool Scene4080::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 AmbientAudioProfile Scene4080::ambientAudioProfile() const {
 	AmbientAudioProfile profile =
 		createRandomAmbientAudioProfile(0x0f, 8, 8, 25, 0x0b, 5, 100, 50);
-	if (_vm->gameState().scene4080PaletteMapState != 0)
+	if (_vm->gameState().scene4080GwendolynState != 0)
 		profile.soundMode = kAmbientSoundNone;
 	return profile;
 }
@@ -554,7 +554,7 @@ void Scene4080::primarySpeechAnimationRestored(byte animationGroup, byte baseFra
 
 void Scene4080::resetAnimationLayers() {
 	configurePalettePatchLayerForState();
-	_palettePatchLayer.setFrame(_vm->gameState().scene4080PaletteMapState != 0 ?
+	_palettePatchLayer.setFrame(_vm->gameState().scene4080GwendolynState != 0 ?
 		kScene4080GwendolynBaseFrame : 0);
 	_palettePatchChannel.reset(_palettePatchLayer.frameIndex, kScene4080FrameMillis);
 	_foregroundFlickerLayer.configure(kScene4080ForegroundFlickerChunk, kScene4080ForegroundFlickerDescriptorCount,
@@ -566,7 +566,7 @@ void Scene4080::resetAnimationLayers() {
 }
 
 void Scene4080::configurePalettePatchLayerForState() {
-	const byte paletteMapState = _vm->gameState().scene4080PaletteMapState;
+	const byte paletteMapState = _vm->gameState().scene4080GwendolynState;
 	if (paletteMapState == 1) {
 		_palettePatchLayer.configure(kScene4080PalettePatchState1Chunk, kScene4080PalettePatchState1DescriptorCount,
 			kScene4080PalettePatchState1FrameMap, ARRAYSIZE(kScene4080PalettePatchState1FrameMap));
@@ -584,12 +584,12 @@ void Scene4080::configurePalettePatchLayerForState() {
 }
 
 void Scene4080::advancePalettePatchLayer(uint32 delta) {
-	if (_vm->gameState().scene4080PaletteMapState == 0 || _primaryDialogueSpeechActive)
+	if (_vm->gameState().scene4080GwendolynState == 0 || _primaryDialogueSpeechActive)
 		return;
 
 	const uint frameCount = _palettePatchChannel.consumeFrames(delta);
 	for (uint frame = 0; frame < frameCount; ++frame) {
-		const byte paletteMapState = _vm->gameState().scene4080PaletteMapState;
+		const byte paletteMapState = _vm->gameState().scene4080GwendolynState;
 		byte nextFrame = _palettePatchLayer.frameIndex;
 		if (paletteMapState == 1) {
 			if (nextFrame > 0x18)
@@ -626,7 +626,7 @@ void Scene4080::advanceForegroundFlickerLayer(uint32 delta) {
 }
 
 void Scene4080::drawSceneLayers(int activeWorldY) {
-	const uint foregroundChunk = _vm->gameState().scene4080SidePatchState != 0 ?
+	const uint foregroundChunk = _vm->gameState().scene4080CoffinShiftedState != 0 ?
 		kScene4080SideForegroundChunk : kScene4080PaletteForegroundChunk;
 	if (_sceneChunkTable.isValidChunk(foregroundChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[foregroundChunk], _sceneFramebuffer);
@@ -689,11 +689,11 @@ void Scene4080::runCorridorExit() {
 
 void Scene4080::runSidePatchSequence() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4080PaletteMapState != 0) {
+	if (state.scene4080GwendolynState != 0) {
 		beginSecondarySpeechLine(4, 0);
 		return;
 	}
-	if (state.scene4080SidePatchState != 0) {
+	if (state.scene4080CoffinShiftedState != 0) {
 		beginSecondarySpeechLine(4, 2);
 		return;
 	}
@@ -707,7 +707,7 @@ void Scene4080::runSidePatchSequence() {
 			break;
 	}
 	clearScriptLayer();
-	state.scene4080SidePatchState = 1;
+	state.scene4080CoffinShiftedState = 1;
 	applySceneStateToHotspotsAndPatches(0xff);
 	beginSecondarySpeechLine(4, 3);
 }
@@ -725,7 +725,7 @@ void Scene4080::runBottlePickupSequence() {
 		0, ARRAYSIZE(kScene4080BottlePickupFrameMap));
 	addInventoryItem(kScene4080OilBottleItem);
 	_soundBank0.playSample(1, 100);
-	_vm->gameState().scene4080PassagePatchState = 0;
+	_vm->gameState().scene4080OilBottleState = 0;
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
@@ -738,7 +738,7 @@ void Scene4080::runGominolaPickupSequence() {
 	dispatchGenericSceneAction(21);
 	for (byte frame = 0; frame < ARRAYSIZE(kScene4080GominolaPickupFrameMap) && !Engine::shouldQuit(); ++frame) {
 		if (frame == 7) {
-			_vm->gameState().scene4080Resource13PatchState = 0;
+			_vm->gameState().scene4080GominolaVisibleState = 0;
 			applySceneStateToHotspotsAndPatches(0xff);
 		}
 		if (presentScriptFrame(kScene4080GominolaPickupChunk, kScene4080GominolaPickupDescriptorCount,
@@ -783,14 +783,14 @@ void Scene4080::runUseMabusePillsOnFoodBags() {
 	clearScriptLayer();
 	removeInventoryItem(kScene4080MabusePillsItem);
 	_soundBank0.playSample(1, 100);
-	_vm->gameState().scene4080PendingPaletteMapPromotion = 2;
+	_vm->gameState().scene4080GwendolynStateTransition = 2;
 	applySceneStateToHotspotsAndPatches(0xff);
 	beginSecondarySpeechLine(19, 0);
 }
 
 void Scene4080::runUseStakeOnGwendolyn() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4080PaletteMapState == 1) {
+	if (state.scene4080GwendolynState == 1) {
 		beginSecondarySpeechLine(18, 3);
 		return;
 	}
@@ -802,7 +802,7 @@ void Scene4080::runUseStakeOnGwendolyn() {
 	beginSecondarySpeechLine(18, 1);
 	for (byte frame = 0; frame < ARRAYSIZE(kScene4080StakeSequenceFrameMap) && !Engine::shouldQuit(); ++frame) {
 		if (frame == 0x1d) {
-			state.scene4080PaletteMapState = 0;
+			state.scene4080GwendolynState = 0;
 			_soundBank0.playSample(0x18, 100);
 			configurePalettePatchLayerForState();
 		} else if (frame == 0x20) {
@@ -816,13 +816,13 @@ void Scene4080::runUseStakeOnGwendolyn() {
 	}
 	clearScriptLayer();
 	_soundBank0.playSample(0x1b, 100);
-	state.scene4080Resource13PatchState = 1;
+	state.scene4080GominolaVisibleState = 1;
 	applySceneStateToHotspotsAndPatches(0xff);
 	beginSecondarySpeechLine(18, 2);
 }
 
 void Scene4080::runGwendolynScriptedReply(uint16 secondaryRow) {
-	if (_vm->gameState().scene4080PaletteMapState == 2) {
+	if (_vm->gameState().scene4080GwendolynState == 2) {
 		beginSecondarySpeechLine(23, 0);
 		return;
 	}
@@ -841,17 +841,17 @@ void Scene4080::runGwendolynScriptedReply(uint16 secondaryRow) {
 
 void Scene4080::runGwendolynDialogue() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4080PaletteMapState == 2) {
+	if (state.scene4080GwendolynState == 2) {
 		beginSecondarySpeechLine(23, 0);
 		return;
 	}
 
-	if (state.scene4080TextVariantState == 0) {
+	if (state.scene4080GwendolynNameState == 0) {
 		beginSecondarySpeechLine(98, 0);
 		beginGwendolynSpeechLine(99, 0);
 		beginSecondarySpeechLine(98, 1);
 		beginGwendolynSpeechLine(99, 1);
-		state.scene4080TextVariantState = 1;
+		state.scene4080GwendolynNameState = 1;
 		applySceneStateToHotspotsAndPatches(0xff);
 	} else {
 		beginSecondarySpeechLine(98, 2);
@@ -887,8 +887,8 @@ void Scene4080::runGwendolynDialogue() {
 				records[140].enabled = 0;
 				records[141].enabled = 0;
 			}
-			if (state.scene4080TextVariantState == 1) {
-				state.scene4080TextVariantState = 2;
+			if (state.scene4080GwendolynNameState == 1) {
+				state.scene4080GwendolynNameState = 2;
 				applySceneStateToHotspotsAndPatches(0xff);
 			}
 		}

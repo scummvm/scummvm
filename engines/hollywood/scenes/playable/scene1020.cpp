@@ -230,9 +230,9 @@ void Scene1020::runCustomEntrySequence() {
 	if (isFirstEntryState()) {
 		runEntryPath(kScene1020RightEntryStartX, kScene1020RightEntryStartY,
 			kScene1020RightEntryFacing, kScene1020RightEntryTargetX, kScene1020RightEntryTargetY);
-		if (!state.seenScene1020EntryLine) {
+		if (!state.scene1020EntryLineSeen) {
 			beginSecondarySpeechLine(0, 0);
-			state.seenScene1020EntryLine = true;
+			state.scene1020EntryLineSeen = true;
 		}
 		return;
 	}
@@ -302,7 +302,7 @@ bool Scene1020::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(0x0e, 0);
 		return true;
 	case 316: // Mirar aparato roto / magnetofon roto (look at broken device/tape recorder).
-		beginSecondarySpeechLine(0x0f, _vm->gameState().scene1020AlternateResourceBlockActive ? 1 : 0);
+		beginSecondarySpeechLine(0x0f, _vm->gameState().scene1020GrateRaised ? 1 : 0);
 		return true;
 	case 317: // Mirar palanca/polea (look at lever/pulley).
 		beginSecondarySpeechLine(0x10, 0);
@@ -345,10 +345,10 @@ bool Scene1020::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	_hotspots.load(_paletteMask, _metadata, _stage003SmallRows);
 
 	GameplayState &state = _vm->gameState();
-	if (!state.scene1020AlternateResourceBlockActive) {
+	if (!state.scene1020GrateRaised) {
 		ScenePoint interactionPoint;
 		ScenePoint approachPoint;
-		if (state.scene1020ResourceBlockChoiceState == 0) {
+		if (state.scene1020HookPositionState == 0) {
 			interactionPoint.x = 0x11e;
 			interactionPoint.y = 0x14d;
 			approachPoint.x = 0x11d;
@@ -362,7 +362,7 @@ bool Scene1020::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		_hotspots.setActionTarget(5, interactionPoint, approachPoint);
 	}
 
-	if (state.scene1020EventFlag1) {
+	if (state.scene1020BrokenRecorderIdentified) {
 		_hotspots.setVerbMovementModeByGlobalRecordIndex(99, 0);
 		_hotspots.setVerbMovementModeByGlobalRecordIndex(100, 0);
 	}
@@ -395,7 +395,7 @@ bool Scene1020::customizeRouteFinal(byte currentRegion, byte targetRegion, const
 
 void Scene1020::applyResourceBlockBackground() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene1020AlternateResourceBlockActive) {
+	if (state.scene1020GrateRaised) {
 		if (shouldLoadArenaChunk(6))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _baseFramebuffer);
 		if (shouldLoadArenaChunk(11))
@@ -406,8 +406,8 @@ void Scene1020::applyResourceBlockBackground() {
 	if (shouldLoadArenaChunk(5))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _baseFramebuffer);
 
-	const byte choice = MIN<byte>(state.scene1020ResourceBlockChoiceState, 2);
-	const byte variant = MIN<byte>(state.scene1020ResourceBlockVariantState, 1);
+	const byte choice = MIN<byte>(state.scene1020HookPositionState, 2);
+	const byte variant = MIN<byte>(state.scene1020ChainAttachedToGrate, 1);
 	const uint chunkIndex = 7 + choice + variant;
 	if (chunkIndex <= kScene1020ArenaLastChunk && shouldLoadArenaChunk(chunkIndex))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _baseFramebuffer);
@@ -420,13 +420,13 @@ void Scene1020::applySceneColorMapRules(byte selector) {
 		return;
 
 	GameplayState &state = _vm->gameState();
-	const byte choice = MIN<byte>(state.scene1020ResourceBlockChoiceState, 2);
-	const byte variant = MIN<byte>(state.scene1020ResourceBlockVariantState, 1);
+	const byte choice = MIN<byte>(state.scene1020HookPositionState, 2);
+	const byte variant = MIN<byte>(state.scene1020ChainAttachedToGrate, 1);
 	for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
 		const byte originalItem = _paletteMaskOriginal[kSceneColorToItemMap + i];
 		byte item = originalItem;
 
-		if (state.scene1020AlternateResourceBlockActive) {
+		if (state.scene1020GrateRaised) {
 			if (originalItem == 5 || originalItem == 0x0d || originalItem == 0x10)
 				item = 1;
 			else if (originalItem == 0x0e || originalItem == 0x0f)
@@ -456,7 +456,7 @@ void Scene1020::applySceneColorMapRules(byte selector) {
 				item = 1;
 		}
 
-		if (state.scene1020AlternateResourceBlockActive) {
+		if (state.scene1020GrateRaised) {
 			if (originalItem == 6 || originalItem == 0x0f)
 				item = 0;
 		} else if (variant == 0) {
@@ -466,13 +466,13 @@ void Scene1020::applySceneColorMapRules(byte selector) {
 			item = 6;
 		}
 
-		if (state.scene1020AlternateResourceBlockActive && (originalItem == 2 || originalItem == 9))
+		if (state.scene1020GrateRaised && (originalItem == 2 || originalItem == 9))
 			item = 0;
 
-		if (state.scene1020EventFlag0) {
+		if (state.scene1020SueTapeVisible) {
 			if (originalItem == 3)
 				item = 3;
-		} else if (state.scene1020AlternateResourceBlockActive) {
+		} else if (state.scene1020GrateRaised) {
 			if (originalItem == 3)
 				item = 0;
 		} else if (originalItem == 3) {
@@ -482,11 +482,11 @@ void Scene1020::applySceneColorMapRules(byte selector) {
 		_paletteMask[kSceneColorToItemMap + i] = item;
 	}
 
-	if (state.scene1020AlternateResourceBlockActive && shouldLoadArenaChunk(12))
+	if (state.scene1020GrateRaised && shouldLoadArenaChunk(12))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[12], _baseFramebuffer);
-	if (state.scene1020EventFlag0 && state.scene1020AlternateResourceBlockActive && shouldLoadArenaChunk(13))
+	if (state.scene1020SueTapeVisible && state.scene1020GrateRaised && shouldLoadArenaChunk(13))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[13], _baseFramebuffer);
-	if (state.scene1020EventFlag1)
+	if (state.scene1020BrokenRecorderIdentified)
 		copyStageSmallRow(13, 12);
 }
 
@@ -523,9 +523,9 @@ void Scene1020::runOverlaySequenceWithActor(uint overlayChunkIndex, uint overlay
 
 void Scene1020::handleSceneEventFlag0() {
 	GameplayState &state = _vm->gameState();
-	if (!state.scene1020EventFlag0) {
-		state.scene1020EventFlag0 = true;
-		state.scene1020EventFlag3 = true;
+	if (!state.scene1020SueTapeVisible) {
+		state.scene1020SueTapeVisible = true;
+		state.scene1020SueTapeNoticed = true;
 		applySceneStateToHotspotsAndPatches(4);
 		beginSecondarySpeechLine(3, 0);
 		return;
@@ -536,7 +536,7 @@ void Scene1020::handleSceneEventFlag0() {
 
 void Scene1020::handleSceneEventFlag0Overlay() {
 	GameplayState &state = _vm->gameState();
-	if (!state.scene1020AlternateResourceBlockActive) {
+	if (!state.scene1020GrateRaised) {
 		beginSecondarySpeechLine(4, 0);
 		return;
 	}
@@ -546,13 +546,13 @@ void Scene1020::handleSceneEventFlag0Overlay() {
 		ARRAYSIZE(kScene1020Chunk22PickupFrameMap), kScene1020OverlayFrameMillis, 8);
 	addInventoryItem(0x16);
 	_soundBank0.playSample(1, 100);
-	state.scene1020EventFlag0 = false;
+	state.scene1020SueTapeVisible = false;
 	applySceneStateToHotspotsAndPatches(4);
 }
 
 void Scene1020::handleResourceBlockChoiceSpeech() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene1020ResourceBlockChoiceState < 2)
+	if (state.scene1020HookPositionState < 2)
 		beginSecondarySpeechLine(0x11, 0);
 	else
 		beginSecondarySpeechLine(8, 2);
@@ -560,13 +560,13 @@ void Scene1020::handleResourceBlockChoiceSpeech() {
 
 void Scene1020::handleSceneVerb7Or8DescriptorAction() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene1020AlternateResourceBlockActive) {
+	if (state.scene1020GrateRaised) {
 		dispatchGenericSceneAction(20);
 		return;
 	}
 
 	if (_lastSceneActionItemId == 8) {
-		if (state.scene1020ResourceBlockChoiceState == 0) {
+		if (state.scene1020HookPositionState == 0) {
 			runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ForwardFrameMap,
 				ARRAYSIZE(kScene1020Chunk14ForwardFrameMap), kScene1020OverlayFrameMillis);
 			runOverlaySequence(15, kScene1020ActionChunk15DescriptorCount, kScene1020Chunk15PingPongFrameMap,
@@ -574,17 +574,17 @@ void Scene1020::handleSceneVerb7Or8DescriptorAction() {
 			runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ReverseFrameMap,
 				ARRAYSIZE(kScene1020Chunk14ReverseFrameMap), kScene1020OverlayFrameMillis);
 			beginSecondarySpeechLine(8, 2);
-		} else if (state.scene1020ResourceBlockChoiceState == 1) {
+		} else if (state.scene1020HookPositionState == 1) {
 			runOverlaySequenceWithActor(14, kScene1020ActionChunk14DescriptorCount,
 				kScene1020Chunk14ForwardFrameMap, ARRAYSIZE(kScene1020Chunk14ForwardFrameMap),
 				17, kScene1020ActionChunk17DescriptorCount,
 				kScene1020Chunk17ForwardFrameMap, ARRAYSIZE(kScene1020Chunk17ForwardFrameMap));
-			state.scene1020ResourceBlockChoiceState = 2;
+			state.scene1020HookPositionState = 2;
 			applySceneStateToHotspotsAndPatches(1);
 			runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ReverseFrameMap,
 				ARRAYSIZE(kScene1020Chunk14ReverseFrameMap), kScene1020OverlayFrameMillis);
 			beginStaticSecondarySpeechLine(0x35, 0);
-		} else if (state.scene1020ResourceBlockVariantState == 0) {
+		} else if (state.scene1020ChainAttachedToGrate == 0) {
 			beginSecondarySpeechLine(8, 2);
 		} else {
 			runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ForwardFrameMap,
@@ -599,14 +599,14 @@ void Scene1020::handleSceneVerb7Or8DescriptorAction() {
 	if (_lastSceneActionItemId != 7)
 		return;
 
-	if (state.scene1020ResourceBlockChoiceState != 0) {
+	if (state.scene1020HookPositionState != 0) {
 		beginSecondarySpeechLine(8, 2);
 		return;
 	}
 
 	runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ForwardFrameMap,
 		ARRAYSIZE(kScene1020Chunk14ForwardFrameMap), kScene1020OverlayFrameMillis);
-	if (!state.scene1020EventFlag2) {
+	if (!state.scene1020RustyRailGreased) {
 		runOverlaySequence(16, kScene1020ActionChunk16DescriptorCount, kScene1020Chunk16AlternatingFrameMap,
 			ARRAYSIZE(kScene1020Chunk16AlternatingFrameMap), kScene1020OverlayFrameMillis);
 		runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ReverseFrameMap,
@@ -617,7 +617,7 @@ void Scene1020::handleSceneVerb7Or8DescriptorAction() {
 
 	runOverlaySequence(16, kScene1020ActionChunk16DescriptorCount, kScene1020Chunk16ForwardFrameMap,
 		ARRAYSIZE(kScene1020Chunk16ForwardFrameMap), kScene1020OverlayFrameMillis);
-	state.scene1020ResourceBlockChoiceState = 1;
+	state.scene1020HookPositionState = 1;
 	applySceneStateToHotspotsAndPatches(1);
 	runOverlaySequence(14, kScene1020ActionChunk14DescriptorCount, kScene1020Chunk14ReverseFrameMap,
 		ARRAYSIZE(kScene1020Chunk14ReverseFrameMap), kScene1020OverlayFrameMillis);
@@ -626,8 +626,8 @@ void Scene1020::handleSceneVerb7Or8DescriptorAction() {
 
 void Scene1020::handleSceneEventFlag1Speech() {
 	GameplayState &state = _vm->gameState();
-	if (!state.scene1020EventFlag1) {
-		state.scene1020EventFlag1 = true;
+	if (!state.scene1020BrokenRecorderIdentified) {
+		state.scene1020BrokenRecorderIdentified = true;
 		applySceneStateToHotspotsAndPatches(5);
 		beginSecondarySpeechLine(0x14, 0);
 		return;
@@ -637,14 +637,14 @@ void Scene1020::handleSceneEventFlag1Speech() {
 }
 
 void Scene1020::handleSpeech19AfterEventFlag1() {
-	if (!_vm->gameState().scene1020EventFlag1)
+	if (!_vm->gameState().scene1020BrokenRecorderIdentified)
 		handleSceneEventFlag1Speech();
 	beginSecondarySpeechLine(0x13, 0);
 }
 
 void Scene1020::handleResourceOverlayChunk18StateChange() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene1020ResourceBlockChoiceState < 2) {
+	if (state.scene1020HookPositionState < 2) {
 		beginSecondarySpeechLine(0x15, 0);
 		return;
 	}
@@ -653,14 +653,14 @@ void Scene1020::handleResourceOverlayChunk18StateChange() {
 		ARRAYSIZE(kScene1020Chunk18StateChangeFrameMap), kScene1020OverlayFrameMillis, 0x22);
 	removeInventoryItem(0x1e);
 	_soundBank0.playSample(1, 100);
-	state.scene1020ResourceBlockVariantState = 1;
+	state.scene1020ChainAttachedToGrate = 1;
 	applySceneStateToHotspotsAndPatches(2);
 	beginSecondarySpeechLine(0x15, 2);
 }
 
 void Scene1020::handleResourceOverlayChunk19EventFlag() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene1020EventFlag2) {
+	if (state.scene1020RustyRailGreased) {
 		beginSecondarySpeechLine(0x16, 1);
 		return;
 	}
@@ -668,7 +668,7 @@ void Scene1020::handleResourceOverlayChunk19EventFlag() {
 	beginSecondarySpeechLine(0x16, 0);
 	runOverlaySequence(19, kScene1020ActionChunk19DescriptorCount, kScene1020Chunk19EventFrameMap,
 		ARRAYSIZE(kScene1020Chunk19EventFrameMap), kScene1020OverlayFrameMillis);
-	state.scene1020EventFlag2 = true;
+	state.scene1020RustyRailGreased = true;
 }
 
 AmbientAudioProfile Scene1020::ambientAudioProfile() const {

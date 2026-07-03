@@ -159,7 +159,7 @@ void Scene3070::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawResourceSpriteLayer(_backLayer);
 	drawActionOverlayLayer();
 	if (activeWorldY <= 0x165) {
-		const uint chunkIndex = _vm->gameState().scene3070ForegroundAlternate ? 13 : 5;
+		const uint chunkIndex = _vm->gameState().scene3070OperatingTableForegroundAlternate ? 13 : 5;
 		if (_sceneChunkTable.isValidChunk(chunkIndex))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);
 	}
@@ -210,7 +210,7 @@ bool Scene3070::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(2, 0);
 		return true;
 	case 304: // Mirar mesa de operaciones (look at operating table), state-aware.
-		beginSecondarySpeechLine(3, state.scene3070Row3Alternate ? 1 : 0);
+		beginSecondarySpeechLine(3, state.scene3070OperatingTableAlternateDescription ? 1 : 0);
 		return true;
 	case 305: // Mirar mesa (look at table): dusty table / surgical thread clue.
 		beginSecondarySpeechLine(4, 0);
@@ -225,12 +225,12 @@ bool Scene3070::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(7, 0);
 		return true;
 	case 309: // Mirar cajon / aguja e hilo quirurgicos (look at drawer / surgical needle and thread).
-		if (!state.scene3070PatchDoorOpen) {
+		if (!state.scene3070DrawerOpen) {
 			beginSecondarySpeechLine(8, 0);
-		} else if (state.scene3070Item9PatchState < 2) {
+		} else if (state.scene3070SurgicalNeedleThreadState < 2) {
 			beginSecondarySpeechLine(8, 1);
-			if (state.scene3070Item9PatchState == 0) {
-				state.scene3070Item9PatchState = 1;
+			if (state.scene3070SurgicalNeedleThreadState == 0) {
+				state.scene3070SurgicalNeedleThreadState = 1;
 				applySceneStateToHotspotsAndPatches(5);
 			}
 		} else {
@@ -256,7 +256,7 @@ bool Scene3070::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(11, 0);
 		return true;
 	case 316: // Usar/animar Frankenstein (use/revive Frankenstein), state-aware.
-		beginSecondarySpeechLine(12, state.scene3070Row12Alternate ? 1 : 0);
+		beginSecondarySpeechLine(12, state.scene3070FrankensteinRevivalAlternateResponse ? 1 : 0);
 		return true;
 	default:
 		return false;
@@ -270,17 +270,17 @@ bool Scene3070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 		const GameplayState &state = _vm->gameState();
-		if (state.scene3070PatchDoorOpen) {
+		if (state.scene3070DrawerOpen) {
 			if (_sceneChunkTable.isValidChunk(7))
 				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[7], _baseFramebuffer);
-			replaceColorMapItemFromOriginal(9, state.scene3070Item9PatchState == 1 ? 9 : 8);
+			replaceColorMapItemFromOriginal(9, state.scene3070SurgicalNeedleThreadState == 1 ? 9 : 8);
 		} else {
 			if (_sceneChunkTable.isValidChunk(8))
 				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[8], _baseFramebuffer);
 			replaceColorMapItemFromOriginal(9, 8);
 		}
 
-		if (state.scene3070Item10Visible) {
+		if (state.scene3070FrankensteinBodyState != 0) {
 			if (_sceneChunkTable.isValidChunk(18))
 				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[18], _baseFramebuffer);
 			if (_sceneChunkTable.isValidChunk(17))
@@ -290,7 +290,7 @@ bool Scene3070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 			removeColorMapItem(10);
 		}
 
-		if (state.scene3070Item32Taken)
+		if (state.scene3070SurgicalNeedleThreadTaken)
 			removeColorMapItem(9);
 
 		rebuildWalkableMask();
@@ -354,8 +354,8 @@ void Scene3070::replaceColorMapItemFromOriginal(byte sourceItem, byte destinatio
 void Scene3070::advanceBackLayer(uint32 delta) {
 	const uint frameCount = _backChannel.consumeFrames(delta);
 	for (uint frame = 0; frame < frameCount; ++frame) {
-		const byte firstFrame = _vm->gameState().scene3070BackLayerAlternateFrames ? 8 : 0;
-		const byte lastFrame = _vm->gameState().scene3070BackLayerAlternateFrames ? 15 : 7;
+		const byte firstFrame = _vm->gameState().scene3070MachineRunning ? 8 : 0;
+		const byte lastFrame = _vm->gameState().scene3070MachineRunning ? 15 : 7;
 		if (_backChannel.frameIndex < firstFrame || _backChannel.frameIndex >= lastFrame)
 			_backChannel.frameIndex = firstFrame;
 		else
@@ -397,9 +397,9 @@ void Scene3070::advanceSmallIdleLayer(uint32 delta) {
 void Scene3070::runEntryFromSecretPassage() {
 	runEntryPath(0x2fe, 0x133, 5, 0x23f, 0x192);
 	_activeActorFacing = 5;
-	if (!_vm->gameState().seenScene3070EntryLine) {
+	if (!_vm->gameState().scene3070EntryLineSeen) {
 		beginSecondarySpeechLine(0, 0);
-		_vm->gameState().seenScene3070EntryLine = true;
+		_vm->gameState().scene3070EntryLineSeen = true;
 	}
 }
 
@@ -408,8 +408,8 @@ void Scene3070::runEntryFromOtherSide() {
 	runEntryPath(0x0dc, 0x1b6, 1, 0x24a, 0x13d);
 	_activeActorFacing = 5;
 
-	if (!state.seenScene3070InterludeCutscene) {
-		state.seenScene3070InterludeCutscene = true;
+	if (!state.scene3070InterludeCutsceneSeen) {
+		state.scene3070InterludeCutsceneSeen = true;
 		beginSecondarySpeechLine(0x0d, 2);
 		runInterludeCutscene();
 		beginSecondarySpeechLine(0x0d, 3);
@@ -440,7 +440,7 @@ void Scene3070::runInterludeCutscene() {
 
 void Scene3070::runDoorPatchOverlay(bool open) {
 	GameplayState &state = _vm->gameState();
-	if (state.scene3070PatchDoorOpen == open) {
+	if (state.scene3070DrawerOpen == open) {
 		dispatchGenericSceneAction(open ? 20 : 12);
 		return;
 	}
@@ -448,13 +448,13 @@ void Scene3070::runDoorPatchOverlay(bool open) {
 	runConfiguredActionOverlay(9, kScene3070PatchOverlayDescriptorCount,
 		kScene3070PatchOverlayFrameMap, ARRAYSIZE(kScene3070PatchOverlayFrameMap),
 		kScene3070OverlayFrameMillis, kActionOverlayHideActiveActor);
-	state.scene3070PatchDoorOpen = open;
+	state.scene3070DrawerOpen = open;
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
 void Scene3070::runItemPatchPickup() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene3070Item32Taken) {
+	if (state.scene3070SurgicalNeedleThreadTaken) {
 		beginSecondarySpeechLine(8, 2);
 		return;
 	}
@@ -462,8 +462,8 @@ void Scene3070::runItemPatchPickup() {
 	runConfiguredActionOverlay(9, kScene3070PatchOverlayDescriptorCount,
 		kScene3070ItemPatchPickupFrameMap, ARRAYSIZE(kScene3070ItemPatchPickupFrameMap),
 		kScene3070OverlayFrameMillis, kActionOverlayHideActiveActor);
-	state.scene3070Item9PatchState = 2;
-	state.scene3070Item32Taken = true;
+	state.scene3070SurgicalNeedleThreadState = 2;
+	state.scene3070SurgicalNeedleThreadTaken = true;
 	applySceneStateToHotspotsAndPatches(0xff);
 	addInventoryItem(0x32);
 	_soundBank0.playSample(1, 100);
@@ -471,7 +471,7 @@ void Scene3070::runItemPatchPickup() {
 
 void Scene3070::drawForegroundBlocks(int activeWorldY, byte actorDrawOrderMode) {
 	if (activeWorldY < 0x179) {
-		const uint chunkIndex = _vm->gameState().scene3070WindowPatchActive ? 16 : 6;
+		const uint chunkIndex = _vm->gameState().scene3070WindowForegroundPatchActive ? 16 : 6;
 		if (_sceneChunkTable.isValidChunk(chunkIndex))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[chunkIndex], _sceneFramebuffer);
 	}

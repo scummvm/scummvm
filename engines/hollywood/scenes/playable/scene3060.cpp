@@ -200,34 +200,34 @@ bool Scene3060::dispatchCustomSceneAction(uint16 handlerId) {
 		beginSecondarySpeechLine(0, 0);
 		return true;
 	case 303: // Ir a puerta secreta / cuadro central (go to secret passage).
-		if (state.scene3060SecretDoorState != 0)
+		if (state.scene3060SecretDoorRevealState != 0)
 			runEntryPath(_activeActorWorldX, _activeActorWorldY, _activeActorFacing, 0x1aa, 0x161);
 		state.mainFlowStateId = kScene3070State;
 		return true;
 	case 304: // Mirar puerta secreta / cuadro central (look at secret door / painting).
-		beginSecondarySpeechLine(1, state.scene3060SecretDoorState != 0 ? 0 : 1);
+		beginSecondarySpeechLine(1, state.scene3060SecretDoorRevealState != 0 ? 0 : 1);
 		return true;
 	case 305: // Coger cuadro/libros/título (take painting/books/title): fixed refusal.
 		beginSecondarySpeechLine(3, 0);
 		return true;
 	case 306: // Mirar cuadro superior izquierdo (look at upper-left painting/certificate).
 		beginSecondarySpeechLine(4, 0);
-		state.scene3060TitleFlags |= 1;
+		state.scene3060InspectedTitleFlags |= 1;
 		applySceneStateToHotspotsAndPatches(1);
 		return true;
 	case 307: // Mirar cuadro superior derecho (look at upper-right painting/certificate).
 		beginSecondarySpeechLine(5, 0);
-		state.scene3060TitleFlags |= 2;
+		state.scene3060InspectedTitleFlags |= 2;
 		applySceneStateToHotspotsAndPatches(1);
 		return true;
 	case 308: // Mirar cuadro inferior izquierdo (look at lower-left painting/certificate).
 		beginSecondarySpeechLine(6, 0);
-		state.scene3060TitleFlags |= 4;
+		state.scene3060InspectedTitleFlags |= 4;
 		applySceneStateToHotspotsAndPatches(1);
 		return true;
 	case 309: // Mirar libros (look at books).
 		beginSecondarySpeechLine(7, 0);
-		state.scene3060TitleFlags |= 8;
+		state.scene3060InspectedTitleFlags |= 8;
 		applySceneStateToHotspotsAndPatches(1);
 		return true;
 	case 310: // Mirar bola del mundo (look at globe).
@@ -238,7 +238,7 @@ bool Scene3060::dispatchCustomSceneAction(uint16 handlerId) {
 		return true;
 	case 312: // Usar bola del mundo (use globe): enables the button controls.
 		beginSecondarySpeechLine(10, 0);
-		state.scene3060GlobeButtonsKnown = true;
+		state.scene3060GlobeButtonsDiscovered = true;
 		applySceneStateToHotspotsAndPatches(5);
 		return true;
 	case 313: // Mirar botón izquierdo / estante detail (look at left-button area).
@@ -274,7 +274,7 @@ bool Scene3060::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		updateTitleCaptionRows();
 		updateGlobeButtonDefaultStrips();
 
-		if (_vm->gameState().scene3060SecretDoorState != 0 &&
+		if (_vm->gameState().scene3060SecretDoorRevealState != 0 &&
 				_sceneChunkTable.isValidChunk(9))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[9], _baseFramebuffer);
 
@@ -340,7 +340,7 @@ void Scene3060::copySmallRow(byte sourceRow, byte destinationRow) {
 }
 
 void Scene3060::updateTitleCaptionRows() {
-	const byte flags = _vm->gameState().scene3060TitleFlags;
+	const byte flags = _vm->gameState().scene3060InspectedTitleFlags;
 	for (byte index = 0; index < 4; ++index) {
 		if ((flags & (1 << index)) != 0)
 			copySmallRow(12, (byte)(3 + index));
@@ -352,7 +352,7 @@ void Scene3060::promoteSecretDoorHotspots() {
 			_paletteMask.size() < kSceneColorToItemMap + kScenePaletteMapPageSize)
 		return;
 
-	const bool revealed = _vm->gameState().scene3060SecretDoorState != 0;
+	const bool revealed = _vm->gameState().scene3060SecretDoorRevealState != 0;
 	for (uint i = 0; i < kScenePaletteMapPageSize; ++i) {
 		const byte originalItem = _paletteMaskOriginal[kSceneColorToItemMap + i];
 		if (!revealed) {
@@ -368,7 +368,7 @@ void Scene3060::promoteSecretDoorHotspots() {
 }
 
 void Scene3060::updateGlobeButtonDefaultStrips() {
-	if (!_vm->gameState().scene3060GlobeButtonsKnown ||
+	if (!_vm->gameState().scene3060GlobeButtonsDiscovered ||
 			_metadata.size() < kSceneItemDefaultStrip + HollywoodEngine::kSceneItemCount)
 		return;
 
@@ -427,33 +427,33 @@ void Scene3060::runEntryFromSecretPassage() {
 void Scene3060::recordGlobeButton(byte button) {
 	GameplayState &state = _vm->gameState();
 	byte repeatCount = 1;
-	if (state.scene3060LastGlobeButton == button) {
-		const uint pairOffset = (uint)state.scene3060GlobePuzzleSlot * 2 + 1;
-		if (pairOffset < sizeof(state.scene3060GlobePuzzleHistory))
-			repeatCount = (byte)(state.scene3060GlobePuzzleHistory[pairOffset] + 1);
+	if (state.scene3060LastGlobePuzzleButton == button) {
+		const uint pairOffset = (uint)state.scene3060GlobePuzzleRunIndex * 2 + 1;
+		if (pairOffset < sizeof(state.scene3060GlobePuzzleRuns))
+			repeatCount = (byte)(state.scene3060GlobePuzzleRuns[pairOffset] + 1);
 	} else {
-		state.scene3060GlobePuzzleSlot = (byte)((state.scene3060GlobePuzzleSlot + 1) & 3);
+		state.scene3060GlobePuzzleRunIndex = (byte)((state.scene3060GlobePuzzleRunIndex + 1) & 3);
 	}
 
-	const uint pairOffset = (uint)state.scene3060GlobePuzzleSlot * 2;
-	if (pairOffset + 1 < sizeof(state.scene3060GlobePuzzleHistory)) {
-		state.scene3060GlobePuzzleHistory[pairOffset] = button;
-		state.scene3060GlobePuzzleHistory[pairOffset + 1] = repeatCount;
+	const uint pairOffset = (uint)state.scene3060GlobePuzzleRunIndex * 2;
+	if (pairOffset + 1 < sizeof(state.scene3060GlobePuzzleRuns)) {
+		state.scene3060GlobePuzzleRuns[pairOffset] = button;
+		state.scene3060GlobePuzzleRuns[pairOffset + 1] = repeatCount;
 	}
-	state.scene3060LastGlobeButton = button;
+	state.scene3060LastGlobePuzzleButton = button;
 }
 
 void Scene3060::resetGlobePuzzleHistory() {
 	GameplayState &state = _vm->gameState();
-	state.scene3060GlobePuzzleSlot = 3;
-	state.scene3060LastGlobeButton = 0;
-	for (uint i = 0; i < sizeof(state.scene3060GlobePuzzleHistory); ++i)
-		state.scene3060GlobePuzzleHistory[i] = 0;
+	state.scene3060GlobePuzzleRunIndex = 3;
+	state.scene3060LastGlobePuzzleButton = 0;
+	for (uint i = 0; i < sizeof(state.scene3060GlobePuzzleRuns); ++i)
+		state.scene3060GlobePuzzleRuns[i] = 0;
 }
 
 bool Scene3060::matchesGlobePuzzle() const {
 	const GameplayState &state = _vm->gameState();
-	const byte *history = state.scene3060GlobePuzzleHistory;
+	const byte *history = state.scene3060GlobePuzzleRuns;
 	return history[0] == 1 && history[1] == 5 &&
 		history[2] == 2 && history[3] == 2 &&
 		history[4] == 1 && history[5] == 3 &&
@@ -462,7 +462,7 @@ bool Scene3060::matchesGlobePuzzle() const {
 
 void Scene3060::runGlobeButtonSequence(byte button, const byte *frameMap, uint frameMapSize, int globeDelta) {
 	GameplayState &state = _vm->gameState();
-	if (state.scene3060SecretDoorState != 0) {
+	if (state.scene3060SecretDoorRevealState != 0) {
 		beginSecondarySpeechLine(14, 1);
 		return;
 	}
@@ -489,7 +489,7 @@ void Scene3060::runGlobeButtonSequence(byte button, const byte *frameMap, uint f
 
 void Scene3060::runRedButtonSequence() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene3060SecretDoorState != 0) {
+	if (state.scene3060SecretDoorRevealState != 0) {
 		beginSecondarySpeechLine(14, 1);
 		return;
 	}
@@ -515,7 +515,7 @@ void Scene3060::runSecretDoorReveal() {
 	runConfiguredActionOverlay(8, kScene3060SecretDoorDescriptorCount,
 		kScene3060SecretDoorRevealFrameMap, ARRAYSIZE(kScene3060SecretDoorRevealFrameMap),
 		kScene3060ButtonFrameMillis, kActionOverlayShowActiveActor, 7, 0);
-	_vm->gameState().scene3060SecretDoorState = 1;
+	_vm->gameState().scene3060SecretDoorRevealState = 1;
 	resetGlobePuzzleHistory();
 	applySceneStateToHotspotsAndPatches(0);
 	beginSecondarySpeechLine(14, 0);

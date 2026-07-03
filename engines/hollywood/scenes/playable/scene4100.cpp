@@ -168,9 +168,9 @@ void Scene4100::runCustomEntrySequence() {
 		_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 		drawPlayableComposite();
 		presentFrame();
-		if (!state.seenScene4100EntryLine) {
+		if (!state.scene4100EntryLineSeen) {
 			beginSecondarySpeechLine(1, 0);
-			state.seenScene4100EntryLine = true;
+			state.scene4100EntryLineSeen = true;
 		}
 		break;
 	case 0x1006:

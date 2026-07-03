@@ -163,7 +163,7 @@ void Scene3100::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	if (_vm->gameState().scene3100CabinState < 2)
+	if (_vm->gameState().scene3100GirlConversationState < 2)
 		drawResourceSpriteLayer(_cabinLayer);
 	else
 		drawResourceSpriteLayer(_alternateLayer);
@@ -179,7 +179,7 @@ bool Scene3100::hasCustomEntrySequence() const {
 }
 
 void Scene3100::runCustomEntrySequence() {
-	if (_vm->gameState().seenScene3100EntrySequence && hasSavedActiveActorPoseForCurrentState()) {
+	if (_vm->gameState().scene3100CabinVisited && hasSavedActiveActorPoseForCurrentState()) {
 		restoreActiveActorPoseFromGameState();
 		drawPlayableComposite();
 		presentFrame();
@@ -188,7 +188,7 @@ void Scene3100::runCustomEntrySequence() {
 
 	runEntryPath(800, 0x1d6, 5, 0x276, 0x1c2);
 	_activeActorFacing = 5;
-	_vm->gameState().seenScene3100EntrySequence = true;
+	_vm->gameState().scene3100CabinVisited = true;
 }
 
 bool Scene3100::prepareCustomGameplayLoop() {
@@ -219,7 +219,7 @@ bool Scene3100::dispatchCustomSceneAction(uint16 handlerId) {
 		_cabinLayer.setFrame(5);
 		return true;
 	case 304: // Mirar ocupante/estado de la cabaña (look at cabin occupant/state).
-		beginSecondarySpeechLine(1, state.scene3100CabinState == 0 ? 0 : 1);
+		beginSecondarySpeechLine(1, state.scene3100GirlConversationState == 0 ? 0 : 1);
 		return true;
 	case 305: // Coger margarita revelada tras la conversacion (take revealed daisy): adds item 0x39.
 		runObjectPickup();
@@ -251,9 +251,9 @@ bool Scene3100::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 		const GameplayState &state = _vm->gameState();
-		if (state.scene3100CabinState == 2)
+		if (state.scene3100GirlConversationState == 2)
 			removeColorMapItem(2);
-		if (state.scene3100ObjectVisible && !state.scene3100Item39Taken) {
+		if (state.scene3100DaisyVisible && !state.scene3100DaisyTaken) {
 			if (_sceneChunkTable.isValidChunk(9))
 				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[9], _baseFramebuffer);
 			replaceColorMapItemFromOriginal(3, 3);
@@ -262,7 +262,7 @@ bool Scene3100::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[10], _baseFramebuffer);
 			removeColorMapItem(3);
 		}
-		if (state.scene3100Item38Taken)
+		if (state.scene3100SapSyringeTaken)
 			removeColorMapItem(8);
 
 		rebuildWalkableMask();
@@ -288,7 +288,7 @@ AmbientAudioProfile Scene3100::ambientAudioProfile() const {
 
 void Scene3100::resetAnimationLayers() {
 	const GameplayState &state = _vm->gameState();
-	const byte cabinFrame = state.scene3100CabinState < 2 ? 6 : 15;
+	const byte cabinFrame = state.scene3100GirlConversationState < 2 ? 6 : 15;
 	_cabinChannel.reset(cabinFrame, kScene3100CabinFrameMillis);
 	_alternateChannel.reset(15, kScene3100AlternateFrameMillis);
 	_cabinLayer.visible = true;
@@ -330,7 +330,7 @@ void Scene3100::replaceColorMapItemFromOriginal(byte sourceItem, byte destinatio
 
 void Scene3100::advanceCabinLayers(uint32 delta) {
 	GameplayState &state = _vm->gameState();
-	if (state.scene3100CabinState < 2) {
+	if (state.scene3100GirlConversationState < 2) {
 		const uint frameCount = _cabinChannel.consumeFrames(delta);
 		for (uint frame = 0; frame < frameCount; ++frame) {
 			if (_cabinChannel.frameIndex < 6 || _cabinChannel.frameIndex >= 15)
@@ -368,19 +368,19 @@ void Scene3100::runCabinConversation() {
 	bool finished = false;
 	_vm->gameplayMusic()->stop();
 
-	if (state.scene3100CabinState == 0) {
+	if (state.scene3100GirlConversationState == 0) {
 		beginSecondarySpeechLine(kScene3100DialogueStageId, 0);
 		beginCabinPrimaryResponse(0);
 		beginSecondarySpeechLine(kScene3100DialogueStageId, 1);
 		beginCabinPrimaryResponse(1);
-		state.scene3100CabinState = 1;
+		state.scene3100GirlConversationState = 1;
 	} else {
 		beginSecondarySpeechLine(kScene3100DialogueStageId, 2);
 		beginCabinPrimaryResponse(2);
 	}
 
-	if (state.scene3100DialogueCounter != 0 && records.size() > 2)
-		records[2].responseFrameIndex = state.scene3100DialogueCounter + 10;
+	if (state.scene3100GirlDialogueRepeatCounter != 0 && records.size() > 2)
+		records[2].responseFrameIndex = state.scene3100GirlDialogueRepeatCounter + 10;
 
 	while (!finished && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		DialogueMenu menu(_vm, this);
@@ -405,9 +405,9 @@ void Scene3100::runCabinConversation() {
 		if (record.disableAfterUse == 1)
 			record.enabled = 0;
 		if (record.disableAfterUse == 2) {
-			if (state.scene3100DialogueCounter < 9) {
-				const byte previousCounter = state.scene3100DialogueCounter;
-				state.scene3100DialogueCounter++;
+			if (state.scene3100GirlDialogueRepeatCounter < 9) {
+				const byte previousCounter = state.scene3100GirlDialogueRepeatCounter;
+				state.scene3100GirlDialogueRepeatCounter++;
 				record.responseFrameIndex = previousCounter + 0x0b;
 			} else {
 				record.transitionMode = 0;
@@ -482,8 +482,8 @@ void Scene3100::runConversationResolutionSequence() {
 	runConfiguredActionOverlay(8, 0x0b, kScene3100ResolutionFrameMap,
 		ARRAYSIZE(kScene3100ResolutionFrameMap), kScene3100OverlayFrameMillis,
 		kActionOverlayShowActiveActor, -1, 0, 5, 0x19);
-	state.scene3100CabinState = 2;
-	state.scene3100ObjectVisible = true;
+	state.scene3100GirlConversationState = 2;
+	state.scene3100DaisyVisible = true;
 	_alternateChannel.frameIndex = 15;
 	_alternateLayer.setFrame(15);
 	applySceneStateToHotspotsAndPatches(0xff);
@@ -492,7 +492,7 @@ void Scene3100::runConversationResolutionSequence() {
 
 void Scene3100::runObjectPickup() {
 	GameplayState &state = _vm->gameState();
-	if (!state.scene3100ObjectVisible || state.scene3100Item39Taken) {
+	if (!state.scene3100DaisyVisible || state.scene3100DaisyTaken) {
 		beginSecondarySpeechLine(2, 0);
 		return;
 	}
@@ -501,8 +501,8 @@ void Scene3100::runObjectPickup() {
 		kScene3100ObjectPickupFrameMap, ARRAYSIZE(kScene3100ObjectPickupFrameMap),
 		kScene3100OverlayFrameMillis, kActionOverlayHideActiveActor,
 		7, 1, 7, 1);
-	state.scene3100ObjectVisible = false;
-	state.scene3100Item39Taken = true;
+	state.scene3100DaisyVisible = false;
+	state.scene3100DaisyTaken = true;
 	applySceneStateToHotspotsAndPatches(1);
 	addInventoryItem(kScene3100PickupItem39);
 	_soundBank0.playSample(1, 100);
@@ -511,7 +511,7 @@ void Scene3100::runObjectPickup() {
 
 void Scene3100::runExchangePickup() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene3100Item38Taken) {
+	if (state.scene3100SapSyringeTaken) {
 		beginSecondarySpeechLine(7, 0);
 		return;
 	}
@@ -520,7 +520,7 @@ void Scene3100::runExchangePickup() {
 	runConfiguredActionOverlay(7, kScene3100ExchangeOverlayDescriptorCount,
 		kScene3100ExchangePickupFrameMap, ARRAYSIZE(kScene3100ExchangePickupFrameMap),
 		kScene3100OverlayFrameMillis, kActionOverlayHideActiveActor);
-	state.scene3100Item38Taken = true;
+	state.scene3100SapSyringeTaken = true;
 	applySceneStateToHotspotsAndPatches(8);
 	addInventoryItem(kScene3100PickupItem38);
 	removeInventoryItem(8);
