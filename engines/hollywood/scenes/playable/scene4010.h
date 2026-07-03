@@ -30,6 +30,16 @@ namespace Hollywood {
 
 class HollywoodEngine;
 
+// Saved GameplayState fields read:
+// mainFlowStateId, scene4010AlternateBackgroundState, scene4010FirstEntryConversationSeen,
+// scene4010EntryPathSpeechState, scene4010ProgressiveExitSpeechState,
+// scene4010Item3APickupState, scene4010PillboxPickupState,
+// scene4010DestinationUnlocked, scene1050CharlieBogWerewolfClueHeard,
+// scene4070SlimmingTreatmentApplied.
+// Saved GameplayState fields written:
+// mainFlowStateId, scene4010FirstEntryConversationSeen, scene4010EntryPathSpeechState,
+// scene4010ProgressiveExitSpeechState, scene4010Item3APickupState,
+// scene4010PillboxPickupState, scene4010DestinationUnlocked.
 class Scene4010 : public PlayableScene {
 public:
 	Scene4010(HollywoodEngine *vm);
@@ -81,9 +91,8 @@ private:
 	void runProgressiveExitSpeech();
 	void takeAnimatedItem3A();
 	void handlePendingItem3A();
-	void takeGenericItem0C();
 	void unlockDestinationFromRoomAction();
-	void takeAnimatedItem3B();
+	void takePillbox();
 	void ensureNormalBaseFramebuffer();
 	void applyD01BackgroundForCurrentState();
 	void copySmallRow(uint sourceOffset, uint destinationOffset);

@@ -192,7 +192,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncBytes(state.travelScreenSlotIds, sizeof(state.travelScreenSlotIds));
 	syncStateBool(s, state.ronTravelScreenUnlocked);
 	s.syncAsByte(state.travelScreenCurrentChapterId);
-	syncStateBool(s, state.scene1050CloakroomSecretMentioned);
+	syncStateBool(s, state.scene1050CharlieBogWerewolfClueHeard);
 	syncStateBool(s, state.seenScene1060EntryLine);
 	s.syncAsByte(state.scene1060FlyDoctorState);
 	syncStateBool(s, state.seenScene1060DoctorConversation);
@@ -239,7 +239,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.scene4010EntryPathSpeechState);
 	s.syncAsByte(state.scene4010ProgressiveExitSpeechState);
 	s.syncAsByte(state.scene4010Item3APickupState);
-	s.syncAsByte(state.scene4010Item3BPickupState);
+	s.syncAsByte(state.scene4010PillboxPickupState);
 	syncStateBool(s, state.scene4010DestinationUnlocked);
 	syncStateBool(s, state.seenScene4020FallReactionLine);
 	syncStateBool(s, state.scene4020GateUnlocked);
@@ -437,8 +437,8 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene4010ProgressiveExitSpeechState = 0;
 	if (state.scene4010Item3APickupState > 3)
 		state.scene4010Item3APickupState = 0;
-	if (state.scene4010Item3BPickupState > 2)
-		state.scene4010Item3BPickupState = 0;
+	if (state.scene4010PillboxPickupState > 2)
+		state.scene4010PillboxPickupState = 0;
 	if (state.scene4050PatchState > 2)
 		state.scene4050PatchState = 0;
 	if (state.scene5010MineTransportState > 4)

@@ -571,7 +571,7 @@ void Scene1050::handleDialogueEffect(byte effectId) {
 		}
 		break;
 	case 5:
-		state.scene1050CloakroomSecretMentioned = true;
+		state.scene1050CharlieBogWerewolfClueHeard = true;
 		break;
 	case 10:
 		runDialogueEffectTen();

@@ -38,12 +38,18 @@ private:
 	bool hasCustomEntrySequence() const override;
 	void runCustomEntrySequence() override;
 	bool prepareCustomGameplayLoop() override;
+	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void applyD10PaletteDimming();
+	void resetPaletteCycle();
+	void advancePaletteCycle(uint32 delta);
+	void rotatePaletteCycle();
 	void runDoorTransition(uint chunkIndex, uint descriptorCount, uint16 targetState);
+
+	TimedAnimationChannel _paletteCycleChannel;
 };
 
 } // End of namespace Hollywood

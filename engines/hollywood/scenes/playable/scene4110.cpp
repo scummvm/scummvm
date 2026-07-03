@@ -45,6 +45,7 @@ const uint kScene4110Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene4110SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene4110FrameMillis = 75;
 const uint32 kScene4110BackgroundFrameMillis = 75;
+const uint32 kScene4110BridgeShakeFrameMillis = 25;
 const uint kScene4110PickupChunk = 5;
 const uint kScene4110PickupDescriptorCount = 0x0c;
 const uint kScene4110AlternateOverlayChunk = 6;
@@ -54,6 +55,14 @@ const uint kScene4110AlternateFinalPatchChunk = 8;
 const uint kScene4110BackgroundChunk = 9;
 const uint kScene4110BackgroundDescriptorCount = 10;
 const byte kScene4110InventoryItem46 = 0x46;
+const byte kScene4110BridgeShakeStartFrame = 10;
+const byte kScene4110BridgeShakeMiddleFrame = 12;
+const byte kScene4110BridgeShakeEndFrame = 11;
+const byte kScene4110BridgeShakeRepeatCount = 40;
+const byte kScene4110BridgeShakeStartOverlayFrame = 0x1a;
+const byte kScene4110BridgeSoundOverlayFrame = 0x1c;
+const byte kScene4110BridgeSoundCue = 0x31;
+const byte kScene4110BridgeFinalSoundCue = 0x3b;
 
 const byte kScene4110ActorPathStepDeltaTableSetB4[] = {
 	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
@@ -118,13 +127,20 @@ static PlayableSceneConfig scene4110Config() {
 Scene4110::Scene4110(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4110Config(), "scene4110", 0x0118, 0x0180, 2, 0xfd, 0xfb),
 		_backgroundLayer(),
+		_bridgeMainLayer(),
+		_bridgeShakeLayer(),
 		_backgroundChannel(),
 		_backgroundSequence(0),
 		_backgroundFrameInSequence(0),
 		_backgroundRepeatCounter(0),
+		_bridgeSequenceActive(false),
 		_ambientLoopSound(),
 		_lastAmbientLoopCue(0xff) {
 	_backgroundLayer.configure(kScene4110BackgroundChunk, kScene4110BackgroundDescriptorCount,
+		nullptr, 0);
+	_bridgeMainLayer.configure(kScene4110AlternateOverlayChunk, kScene4110AlternateOverlayDescriptorCount,
+		kScene4110AlternateFrameMap, ARRAYSIZE(kScene4110AlternateFrameMap));
+	_bridgeShakeLayer.configure(kScene4110AlternateOverlayChunk, kScene4110AlternateOverlayDescriptorCount,
 		nullptr, 0);
 	_ambientLoopSound.setArchive(Common::Path(kScene4110SoundArchiveName));
 }
@@ -162,7 +178,19 @@ void Scene4110::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
+	restoreResourceSpriteLayerBackground(_backgroundLayer, _baseFramebuffer);
+
+	if (_bridgeSequenceActive) {
+		restoreResourceSpriteLayerBackground(_bridgeShakeLayer, _baseFramebuffer);
+		restoreResourceSpriteLayerBackground(_bridgeMainLayer, _baseFramebuffer);
+		drawResourceSpriteLayer(_bridgeShakeLayer);
+		drawResourceSpriteLayer(_backgroundLayer);
+		drawResourceSpriteLayer(_bridgeMainLayer);
+		return;
+	}
+
 	if (_actionOverlayVisible) {
+		restoreResourceSpriteLayerBackground(_actionOverlayLayer, _baseFramebuffer);
 		drawActionOverlayLayer();
 		drawResourceSpriteLayer(_backgroundLayer);
 		if (!_hideActiveActor) {
@@ -209,13 +237,13 @@ bool Scene4110::advanceCustomGameplayLoop(uint32 delta) {
 bool Scene4110::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
 	case 301: // Ir a salida hacia laboratorio de Hecker (go to Hecker lab exit) or blocked line.
-		if (_vm->gameState().scene4110AlternateSceneState)
+		if (bridgeOpened())
 			runExitToScene4010();
 		else
 			beginSecondarySpeechLine(0, 0);
 		return true;
 	case 302: // Mirar salida/estatua segun estado (look at exit/statue depending on state).
-		beginSecondarySpeechLine(1, _vm->gameState().scene4110AlternateSceneState ? 1 : 0);
+		beginSecondarySpeechLine(1, bridgeOpened() ? 1 : 0);
 		return true;
 	case 303: // Mirar obstaculo/salida del pasillo (look at corridor obstruction/exit).
 		beginConditionalSpeechLine(2, 0, 7, 0);
@@ -267,7 +295,7 @@ bool Scene4110::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	memcpy(_paletteMask.data(), _paletteMaskOriginal.data(), _paletteMask.size());
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
-	if (_vm->gameState().scene4110AlternateSceneState &&
+	if (bridgeOpened() &&
 			_sceneChunkTable.isValidChunk(kScene4110AlternateFinalPatchChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4110AlternateFinalPatchChunk], _baseFramebuffer);
 
@@ -281,9 +309,19 @@ AmbientAudioProfile Scene4110::ambientAudioProfile() const {
 	return createRandomAmbientAudioProfile(0x0f, 8, 25, 25, 0x0b, 5, 100, 50);
 }
 
+bool Scene4110::bridgeOpened() const {
+	const GameplayState &state = _vm->gameState();
+	return state.scene4110AlternateSceneState || state.scene4010AlternateBackgroundState != 0;
+}
+
 void Scene4110::resetBackgroundLayer() {
 	_backgroundLayer.visible = true;
 	_backgroundLayer.reset(0);
+	_bridgeMainLayer.visible = false;
+	_bridgeMainLayer.reset(0);
+	_bridgeShakeLayer.visible = false;
+	_bridgeShakeLayer.reset(kScene4110BridgeShakeStartFrame);
+	_bridgeSequenceActive = false;
 	_backgroundChannel.reset(0, kScene4110BackgroundFrameMillis);
 	_backgroundSequence = 0;
 	_backgroundFrameInSequence = 0;
@@ -334,15 +372,21 @@ void Scene4110::updateAmbientLoopSound() {
 }
 
 void Scene4110::beginConditionalSpeechLine(uint16 falseRow, byte falseFrame, uint16 trueRow, byte trueFrame) {
-	if (_vm->gameState().scene4110AlternateSceneState)
+	if (bridgeOpened())
 		beginSecondarySpeechLine(trueRow, trueFrame);
 	else
 		beginSecondarySpeechLine(falseRow, falseFrame);
 }
 
 void Scene4110::runExitToScene4010() {
+	GameplayState &state = _vm->gameState();
+	state.scene4010AlternateBackgroundState = 1;
+	if (state.scene4010EntryPathSpeechState == 0)
+		state.scene4010EntryPathSpeechState = 1;
+	if (state.scene4010Item3APickupState == 0)
+		state.scene4010Item3APickupState = 1;
 	walkActiveActorTo(0x0253, 0x00f2, 0xff, 0);
-	_vm->gameState().mainFlowStateId = kScene4010EntryFromRightSideState;
+	state.mainFlowStateId = kScene4010EntryFromRightSideState;
 }
 
 void Scene4110::takeItem46() {
@@ -365,7 +409,7 @@ void Scene4110::takeItem46() {
 
 void Scene4110::runAlternateStateSequence() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene4110AlternateSceneState) {
+	if (bridgeOpened()) {
 		beginSecondarySpeechLine(7, 0);
 		return;
 	}
@@ -375,10 +419,7 @@ void Scene4110::runAlternateStateSequence() {
 	drawPlayableComposite();
 	presentFrame();
 
-	runConfiguredActionOverlay(kScene4110AlternateOverlayChunk, kScene4110AlternateOverlayDescriptorCount,
-		kScene4110AlternateFrameMap, ARRAYSIZE(kScene4110AlternateFrameMap),
-		kScene4110FrameMillis, kActionOverlayKeepActiveActorVisibility, -1, 0, 0x1c, 0x31, 100,
-		-1, 0, true, 1, ARRAYSIZE(kScene4110AlternateFrameMap));
+	runBridgeOpeningOverlay();
 
 	if (_sceneChunkTable.isValidChunk(kScene4110AlternateFinalPatchChunk))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene4110AlternateFinalPatchChunk], _baseFramebuffer);
@@ -390,15 +431,74 @@ void Scene4110::runAlternateStateSequence() {
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	walkActiveActorTo(0x01e6, 0x011c, 5, 0);
 
+	state.scene4010AlternateBackgroundState = 1;
+	state.scene4010EntryPathSpeechState = 1;
+	if (state.scene4010Item3APickupState == 0)
+		state.scene4010Item3APickupState = 1;
 	state.scene4110AlternateSceneState = true;
 	state.scene4110PostAlternateFlag = true;
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
+void Scene4110::runBridgeOpeningOverlay() {
+	_bridgeSequenceActive = true;
+	_bridgeMainLayer.visible = true;
+	_bridgeMainLayer.reset(0);
+	_bridgeShakeLayer.visible = true;
+	_bridgeShakeLayer.reset(kScene4110BridgeShakeStartFrame);
+	drawPlayableComposite();
+	presentFrame();
+
+	uint mainFrame = 0;
+	uint32 mainFrameAccumulator = 0;
+	uint32 shakeFrameMillis = kScene4110BridgeShakeFrameMillis;
+	byte shakeFrame = kScene4110BridgeShakeStartFrame;
+	byte shakeRepeatCounter = 0;
+
+	while (mainFrame < ARRAYSIZE(kScene4110AlternateFrameMap) - 1 || shakeRepeatCounter != 0) {
+		if (waitSceneMillis(shakeFrameMillis))
+			break;
+
+		if (mainFrame < ARRAYSIZE(kScene4110AlternateFrameMap) - 1) {
+			mainFrameAccumulator += shakeFrameMillis;
+			while (mainFrameAccumulator >= kScene4110FrameMillis &&
+					mainFrame < ARRAYSIZE(kScene4110AlternateFrameMap) - 1) {
+				mainFrameAccumulator -= kScene4110FrameMillis;
+				++mainFrame;
+				_bridgeMainLayer.setFrame((byte)mainFrame);
+				if (mainFrame == kScene4110BridgeShakeStartOverlayFrame)
+					shakeRepeatCounter = kScene4110BridgeShakeRepeatCount;
+				if (mainFrame == kScene4110BridgeSoundOverlayFrame)
+					_soundBank0.playSample(kScene4110BridgeSoundCue, 100);
+			}
+		}
+
+		if (shakeRepeatCounter != 0) {
+			if (shakeFrame == kScene4110BridgeShakeStartFrame) {
+				shakeFrame = kScene4110BridgeShakeMiddleFrame;
+			} else if (shakeFrame == kScene4110BridgeShakeMiddleFrame) {
+				shakeFrame = kScene4110BridgeShakeEndFrame;
+			} else {
+				shakeFrame = kScene4110BridgeShakeStartFrame;
+				if (shakeRepeatCounter == 15)
+					_soundBank0.playSample(kScene4110BridgeFinalSoundCue, 100);
+				--shakeRepeatCounter;
+				if (shakeRepeatCounter < 7)
+					shakeFrameMillis += 7;
+			}
+			_bridgeShakeLayer.setFrame(shakeFrame);
+		}
+	}
+
+	_bridgeSequenceActive = false;
+	_bridgeMainLayer.visible = false;
+	_bridgeShakeLayer.visible = false;
+}
+
 void Scene4110::patchActionMovementModes() {
 	if (_vm->gameState().scene4110Item46Taken)
 		_hotspots.setVerbMovementModeByGlobalRecordIndex(0x13, 0);
-	if (_vm->gameState().scene4110AlternateSceneState)
+	if (bridgeOpened())
 		_hotspots.setVerbMovementModeByGlobalRecordIndex(0x35, 0);
 }
 
