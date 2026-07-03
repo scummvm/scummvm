@@ -85,6 +85,7 @@ protected:
 	void drawMirror(uint index);
 	void rotateMirror(uint index, bool clockwise);
 	void traceBeam();
+	void drawBeamGlow();
 	void redraw();
 };
 

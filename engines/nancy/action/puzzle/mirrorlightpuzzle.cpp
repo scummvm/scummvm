@@ -34,16 +34,18 @@ namespace Nancy {
 namespace Action {
 
 // TODO - open items for this puzzle:
-//  - Win/exit scene progression: the "solved" event flag is set outside the
-//    puzzle data (not embedded here) and is still unidentified, so the scene
-//    may not advance after a win.
-//  - No exit/cancel path: how the player quits an unsolved puzzle is unknown.
-//  - Win presentation: only a static lit-bulb overlay is drawn; the original
-//    plays a bulb-lights-up animation with a sound cue - neither is wired up.
+//  - Win/exit is fully EXTERNAL: the record has no scene-change of its own (its
+//    scene-change vtable slot is null) and writes no scene state, so the scene
+//    itself watches for the solved state and transitions. The exact signal (an
+//    event flag?) is still unidentified, so on solve we just finishExecution and
+//    the scene may not advance. The player's quit/cancel path is likewise unknown.
+//  - Win presentation: the original lights the bulb via a per-zone movie
+//    animation (loaded by the movie loader at init); we draw a single static
+//    overlay frame with no sound instead.
 //  - Detector zone is chosen heuristically (any non-boundary zone away from the
-//    source); the true detector zone is unconfirmed.
-//  - Mirror rotation step (2 deg/click) and the glowing light-ray rendering are
-//    approximations, not the original's exact behaviour.
+//    source); the precise detector is the tiny boundary zone inside the bulb.
+//  - Mirror rotation step (2 deg/click) approximates the original's exact
+//    per-click amount.
 
 void MirrorLightPuzzle::readData(Common::SeekableReadStream &stream) {
 	// 65-byte base header.
@@ -157,7 +159,13 @@ void MirrorLightPuzzle::traceBeam() {
 		}
 
 		if (hit != -1) {
-			_beamPath.push_back(p);
+			// Bounce at the mirror's centre (not the edge where the beam entered),
+			// so the beam visually meets each mirror at its middle.
+			const Common::Rect &mr = _mirrors[hit].destRect;
+			px = (mr.left + mr.right) / 2.0;
+			py = (mr.top + mr.bottom) / 2.0;
+			_beamPath.push_back(Common::Point((int16)px, (int16)py));
+
 			// Reflect about the mirror's surface normal (its stored angle).
 			double nx = cos(_mirrors[hit].angle);
 			double ny = -sin(_mirrors[hit].angle);
@@ -187,6 +195,94 @@ void MirrorLightPuzzle::traceBeam() {
 	_beamPath.push_back(Common::Point((int16)(px + 0.5), (int16)(py + 0.5)));
 }
 
+void MirrorLightPuzzle::drawBeamGlow() {
+	if (_beamPath.size() < 2) {
+		return;
+	}
+
+	const int w = _drawSurface.w;
+	const int h = _drawSurface.h;
+	// A soft Gaussian profile reads as a fuzzy, translucent light ray. peak is the
+	// additive intensity at the beam centre (well under 255 so the room shows
+	// through); sigma controls how quickly it fades; R clips the faint tail.
+	const int R = MAX<int>(4, _glowRadius + _glowRadius / 2);
+	const int R2 = R * R;
+	const double sigma = MAX<double>(1.5, _glowRadius / 2.0);
+	const double twoSigma2 = 2.0 * sigma * sigma;
+	const int peak = 110;
+
+	// Accumulate the max glow intensity per pixel (so overlapping stamps don't
+	// over-brighten), then composite once.
+	Common::Array<byte> intensity(w * h, 0);
+	for (uint s = 1; s < _beamPath.size(); ++s) {
+		const Common::Point &p0 = _beamPath[s - 1];
+		const Common::Point &p1 = _beamPath[s];
+		int dx = p1.x - p0.x;
+		int dy = p1.y - p0.y;
+		int len = MAX<int>(1, (int)sqrt((double)(dx * dx + dy * dy)));
+		for (int i = 0; i <= len; ++i) {
+			int cx = p0.x + dx * i / len;
+			int cy = p0.y + dy * i / len;
+			for (int oy = -R; oy <= R; ++oy) {
+				for (int ox = -R; ox <= R; ++ox) {
+					int px = cx + ox;
+					int py = cy + oy;
+					if (px < 0 || py < 0 || px >= w || py >= h) {
+						continue;
+					}
+					int d2 = ox * ox + oy * oy;
+					if (d2 > R2) {
+						continue;
+					}
+					int val = (int)(peak * exp(-(double)d2 / twoSigma2));
+					if (val <= 0) {
+						continue;
+					}
+					byte &acc = intensity[py * w + px];
+					if (val > acc) {
+						acc = (byte)val;
+					}
+				}
+			}
+		}
+	}
+
+	const Graphics::ManagedSurface &bg = NancySceneState.getViewport().getBackground();
+	const Graphics::PixelFormat &fmt = _drawSurface.format;
+	uint32 transColor = _drawSurface.getTransparentColor();
+
+	for (int y = 0; y < h; ++y) {
+		for (int x = 0; x < w; ++x) {
+			int inten = intensity[y * w + x];
+			if (inten == 0) {
+				continue;
+			}
+
+			// Skip actual mirror-sprite pixels (the mirror faces stay clean), but
+			// still glow over the transparent parts of a mirror's bounding box.
+			// Mirrors are the only thing drawn before the glow, so any opaque
+			// pixel here is a mirror pixel.
+			uint32 under = _drawSurface.getPixel(x, y);
+			if (under != transColor) {
+				continue;
+			}
+
+			// Glow over the scene background behind the beam.
+			byte r, g, b;
+			if (x < bg.w && y < bg.h) {
+				bg.format.colorToRGB(bg.getPixel(x, y), r, g, b);
+			} else {
+				r = g = b = 0;
+			}
+
+			r = (byte)MIN<int>(255, r + inten);
+			g = (byte)MIN<int>(255, g + inten);
+			b = (byte)MIN<int>(255, b + inten);
+			_drawSurface.setPixel(x, y, fmt.RGBToColor(r, g, b));
+		}
+	}
+}
+
 void MirrorLightPuzzle::redraw() {
 	_drawSurface.clear(g_nancy->_graphics->getTransColor());
 
@@ -195,34 +291,9 @@ void MirrorLightPuzzle::redraw() {
 		drawMirror(i);
 	}
 
-	// The beam as a round radial falloff (dim green-white outer -> bright white
-	// core) to read as glowing light. TODO: the original composites actual
-	// glowing light-ray sprites; a soft/additive glow is a follow-up.
-	if (_beamPath.size() >= 2) {
-		int t = MAX<int>(2, _glowRadius);
-		uint32 colors[3] = {
-			_drawSurface.format.RGBToColor(90, 120, 90),	// outer haze
-			_drawSurface.format.RGBToColor(180, 210, 180),	// mid glow
-			_drawSurface.format.RGBToColor(255, 255, 255)	// core
-		};
-		int bands[3] = { t, t / 2, MAX<int>(1, t / 4) };
-		// Outer band first so brighter bands land on top.
-		for (int band = 0; band < 3; ++band) {
-			int r = bands[band];
-			for (uint i = 1; i < _beamPath.size(); ++i) {
-				const Common::Point &p0 = _beamPath[i - 1];
-				const Common::Point &p1 = _beamPath[i];
-				for (int oy = -r; oy <= r; ++oy) {
-					for (int ox = -r; ox <= r; ++ox) {
-						if (ox * ox + oy * oy > r * r) {
-							continue;
-						}
-						_drawSurface.drawLine(p0.x + ox, p0.y + oy, p1.x + ox, p1.y + oy, colors[band]);
-					}
-				}
-			}
-		}
-	}
+	// The beam, composited additively over the mirrors and scene background so it
+	// reads as glowing light rather than flat lines.
+	drawBeamGlow();
 
 	// Once solved, light up the detector overlay (the bulb graphic).
 	if (_solved) {
