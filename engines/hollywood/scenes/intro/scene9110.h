@@ -26,15 +26,15 @@
 #include "common/random.h"
 #include "common/str.h"
 
-#include "hollywood/graphics.h"
 #include "hollywood/music.h"
-#include "hollywood/resource.h"
+#include "hollywood/scenes/intro/intro_resource_set.h"
+#include "hollywood/scenes/intro/intro_scene.h"
 
 namespace Hollywood {
 
 class HollywoodEngine;
 
-class Scene9110 {
+class Scene9110 : public IntroSceneBase {
 public:
 	Scene9110(HollywoodEngine *vm);
 
@@ -103,18 +103,14 @@ private:
 	void calculatePrimarySubtitleBounds(const Common::Array<Common::String> &lines,
 		const SpeechTextStyle &speechTextStyle, uint16 &centerX, uint16 &topY) const;
 
-	void revealSavedFramebufferBand(uint sweepOffset, byte bandWidth);
-	void clearSceneFramebufferBand(uint sweepOffset, byte bandWidth);
-	void presentFrame();
+	void drawFrameOverlays() override;
 
-	bool pollEvents();
-	void stopAudio();
+	void stopAudio() override;
 
 	PopupDescriptor getStage003PopupDescriptor(uint16 rowIndex, byte frameIndex) const;
 
 	enum {
 		kFrameBufferSize = 0x78000,
-		kResourceChunkCount = 40,
 		kI11RequiredChunkCount = 4,
 		kI11Chunk2DescriptorCount = 15,
 		kI11Chunk3DescriptorCount = 8,
@@ -128,25 +124,16 @@ private:
 		kOriginalSpeechLineHeight = 20
 	};
 
-	HollywoodEngine *_vm;
 	MusicPlayer *_music;
 	SpeechPlayer _speech;
 	Common::RandomSource _random;
-	ResourceChunkTable _i11ChunkTable;
-	uint32 _resourceChunkOffsets[kResourceChunkCount];
+	IntroResourceSet _resources;
 	Common::Array<byte> _paletteResource;
-	Common::Array<byte> _paletteCurrent;
-	Common::Array<byte> _resourceArena;
 	IndexedSurfaceBuffer _baseFramebuffer;
-	IndexedSurfaceBuffer _sceneFramebuffer;
-	IndexedSurfaceBuffer _savedFramebuffer;
-	Graphics::ManagedSurface _screen;
-	Palette6Bit _displayPalette;
 	Common::Array<byte> _stage003DecodeKey;
 	Common::Array<byte> _stage003Descriptors;
 	Common::Array<byte> _stage003LargeRows;
 	SubtitleOverlay _subtitle;
-	uint32 _resourceArenaCursor;
 	uint32 _mouthAccumulator;
 	uint32 _chunk3Accumulator;
 	uint32 _idleAccumulator;
@@ -158,7 +145,6 @@ private:
 	byte _chunk3Frame;
 	byte _chunk2CycleDirection;
 	byte _lastMouthVariant;
-	bool _skipRequested;
 };
 
 } // End of namespace Hollywood

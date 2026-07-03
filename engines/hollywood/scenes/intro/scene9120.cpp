@@ -21,8 +21,6 @@
 
 #include "hollywood/scenes/intro/scene9120.h"
 
-#include "common/debug.h"
-#include "common/events.h"
 #include "common/system.h"
 
 #include "hollywood/graphics.h"
@@ -35,11 +33,11 @@ const uint16 kScene9120MusicCueId = 0x000c;
 const uint16 kScene9120OverlaySoundId = 0x001a;
 
 Scene9120::Scene9120(HollywoodEngine *vm) :
-		_vm(vm),
+		IntroSceneBase(vm, "Scene 9120", kScene9120FramebufferSize, kFrameBufferSize),
 		_music(vm->introMusic()),
 		_soundBank0(),
 		_random("hollywood_scene9120"),
-		_resourceArenaCursor(0),
+		_resources(),
 		_overlayAccumulator(0),
 		_scrollAccumulator(0),
 		_actorBobAccumulator(0),
@@ -51,19 +49,10 @@ Scene9120::Scene9120(HollywoodEngine *vm) :
 		_actorBobDelta(1),
 		_smallAnimSequenceState(0),
 		_smallAnimFrame(0),
-		_viewportDirty(false),
-		_skipRequested(false) {
-	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
+		_viewportDirty(false) {
 	_paletteResource.resize(kPaletteSize);
-	_paletteCurrent.resize(kPaletteSize);
-	_sceneFramebuffer.resize(kScene9120FramebufferSize);
-	_savedFramebuffer.resize(kFrameBufferSize);
 	_descriptorBackground.resize(kFrameBufferSize);
-	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	memset(_paletteResource.data(), 0, _paletteResource.size());
-	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
-	memset(_sceneFramebuffer.data(), 0, _sceneFramebuffer.size());
-	memset(_savedFramebuffer.data(), 0, _savedFramebuffer.size());
 	memset(_descriptorBackground.data(), 0, _descriptorBackground.size());
 }
 
@@ -124,16 +113,12 @@ bool Scene9120::play() {
 }
 
 bool Scene9120::loadResourceI12Assets() {
-	if (!_vm->resources()->readChunkTable(Common::Path(kI12ArchiveName), _i12ChunkTable)) {
-		warning("Failed to read %s header", kI12ArchiveName);
+	if (!_resources.loadChunkTable(_vm->resources(), kI12ArchiveName))
 		return false;
-	}
 
 	for (uint i = 0; i < kI12RequiredChunkCount; ++i) {
-		if (!_i12ChunkTable.isValidChunk(i)) {
-			warning("%s is missing required Scene 9120 chunk %u", kI12ArchiveName, i);
+		if (!_resources.validateChunk(kI12ArchiveName, _debugName, i))
 			return false;
-		}
 	}
 
 	if (!loadResourceI12Chunk(0, _sceneFramebuffer, kScene9120FramebufferSize) ||
@@ -142,12 +127,9 @@ bool Scene9120::loadResourceI12Assets() {
 
 	uint32 resourceArenaSize = 0;
 	for (uint i = 2; i < kI12RequiredChunkCount; ++i)
-		resourceArenaSize += _i12ChunkTable.sizes[i];
+		resourceArenaSize += _resources.chunkTable.sizes[i];
 
-	_resourceArena.resize(resourceArenaSize);
-	memset(_resourceArena.data(), 0, _resourceArena.size());
-	_resourceArenaCursor = 0;
-	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
+	_resources.allocateArena(resourceArenaSize);
 
 	for (uint i = 2; i < kI12RequiredChunkCount; ++i) {
 		if (!loadResourceI12ArenaChunk(i))
@@ -166,71 +148,15 @@ bool Scene9120::loadResourceI12Assets() {
 }
 
 bool Scene9120::loadResourceI12Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI12ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kI12ArchiveName, index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit its fixed destination", kI12ArchiveName, index);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kI12ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", kI12ArchiveName, index, (uint)stream->size());
-	return true;
+	return _resources.loadFixedChunk(_vm->resources(), kI12ArchiveName, _debugName, index, destination, fixedSize);
 }
 
 bool Scene9120::loadResourceI12Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI12ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kI12ArchiveName, index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit its fixed destination", kI12ArchiveName, index);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kI12ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", kI12ArchiveName, index, (uint)stream->size());
-	return true;
+	return _resources.loadFixedChunk(_vm->resources(), kI12ArchiveName, _debugName, index, destination, fixedSize);
 }
 
 bool Scene9120::loadResourceI12ArenaChunk(uint index) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI12ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kI12ArchiveName, index);
-		return false;
-	}
-
-	if (_resourceArenaCursor + stream->size() > _resourceArena.size()) {
-		warning("%s chunk %u does not fit the Scene 9120 arena", kI12ArchiveName, index);
-		return false;
-	}
-
-	_resourceChunkOffsets[index] = _resourceArenaCursor;
-	if (stream->read(_resourceArena.data() + _resourceArenaCursor, stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kI12ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s arena chunk %u: offset=%u size=%u",
-		kI12ArchiveName, index, _resourceArenaCursor, (uint)stream->size());
-	_resourceArenaCursor += stream->size();
-	return true;
+	return _resources.loadArenaChunk(_vm->resources(), kI12ArchiveName, _debugName, index, index);
 }
 
 void Scene9120::runTimedOverlayPhase() {
@@ -253,7 +179,7 @@ void Scene9120::runTimedOverlayPhase() {
 			if (chunkIndex != 0) {
 				if ((chunkIndex & 1) == 0)
 					_soundBank0.playSample(kScene9120OverlaySoundId, 100);
-				drawTimedOverlayChunk(_resourceChunkOffsets[chunkIndex]);
+				drawTimedOverlayChunk(_resources.chunkOffsets[chunkIndex]);
 			}
 		}
 
@@ -353,14 +279,14 @@ void Scene9120::advanceSmallAnimation() {
 
 void Scene9120::restoreAndDrawResourceDescriptorFrame(byte localChunkIndex, byte descriptorCount, byte descriptorIndex,
 		bool drawFrame) {
-	if (localChunkIndex >= kResourceChunkCount)
+	if (localChunkIndex >= IntroResourceSet::kResourceChunkCount)
 		return;
 
-	const uint32 baseOffset = _resourceChunkOffsets[localChunkIndex];
-	restoreSpriteBackground(_resourceArena, baseOffset, 0, descriptorCount, descriptorIndex,
+	const uint32 baseOffset = _resources.chunkOffsets[localChunkIndex];
+	restoreSpriteBackground(_resources.arena, baseOffset, 0, descriptorCount, descriptorIndex,
 		_descriptorBackground.surface(), _sceneFramebuffer.surface());
 	if (drawFrame)
-		drawStripSpriteFrame(_resourceArena, baseOffset, 0, descriptorCount, descriptorIndex, _sceneFramebuffer.surface());
+		drawStripSpriteFrame(_resources.arena, baseOffset, 0, descriptorCount, descriptorIndex, _sceneFramebuffer.surface());
 }
 
 byte Scene9120::getTimedOverlayChunk(uint tickIndex) const {
@@ -401,26 +327,26 @@ void Scene9120::clearActiveViewport() {
 }
 
 void Scene9120::drawTimedOverlayChunk(uint32 baseOffset) {
-	if (baseOffset + 2 > _resourceArena.size())
+	if (baseOffset + 2 > _resources.arena.size())
 		return;
 
-	const uint16 blockCount = readUint16LE(_resourceArena, baseOffset);
+	const uint16 blockCount = readUint16LE(_resources.arena, baseOffset);
 	uint cursor = baseOffset + 2;
 	for (uint blockIndex = 0; blockIndex < blockCount; ++blockIndex) {
-		if (cursor + 6 > _resourceArena.size())
+		if (cursor + 6 > _resources.arena.size())
 			return;
 
-		const uint32 packedDestination = readUint32LE(_resourceArena, cursor);
-		const uint16 size = readUint16LE(_resourceArena, cursor + 4);
+		const uint32 packedDestination = readUint32LE(_resources.arena, cursor);
+		const uint16 size = readUint16LE(_resources.arena, cursor + 4);
 		cursor += 6;
 
-		if (cursor + size > _resourceArena.size())
+		if (cursor + size > _resources.arena.size())
 			return;
 
 		const uint32 destinationOffset = ((packedDestination >> 16) + _yOffset) * HollywoodEngine::kSceneBufferWidth +
 			(packedDestination & 0xffff) + 0x2800;
 		if (destinationOffset + size <= _sceneFramebuffer.size())
-			memcpy(_sceneFramebuffer.data() + destinationOffset, _resourceArena.data() + cursor, size);
+			memcpy(_sceneFramebuffer.data() + destinationOffset, _resources.arena.data() + cursor, size);
 
 		cursor += size;
 	}
@@ -503,48 +429,12 @@ void Scene9120::clearSceneRun(int destinationY, int x, int width) {
 	memset(_sceneFramebuffer.data() + destinationOffset, 0, width);
 }
 
-void Scene9120::presentFrame() {
-	presentIndexedFrame(_sceneFramebuffer.surface(), _paletteCurrent, _screen, _displayPalette, _yOffset, _xOffset);
+uint Scene9120::presentRowOffset() const {
+	return _yOffset;
 }
 
-bool Scene9120::pollEvents() {
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RETURN_TO_LAUNCHER:
-			Engine::quitGame();
-			stopAudio();
-			return true;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-					event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_SPACE) {
-				_skipRequested = true;
-				stopAudio();
-				return true;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
-	return false;
-}
-
-bool Scene9120::delay(uint32 millis) {
-	uint32 remaining = millis;
-	while (remaining != 0 && !_skipRequested && !Engine::shouldQuit()) {
-		if (pollEvents())
-			return true;
-
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		remaining -= slice;
-	}
-
-	return _skipRequested || Engine::shouldQuit();
+uint Scene9120::presentXOffset() const {
+	return _xOffset;
 }
 
 void Scene9120::stopAudio() {

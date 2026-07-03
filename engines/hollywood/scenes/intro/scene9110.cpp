@@ -23,7 +23,6 @@
 
 #include "common/config-manager.h"
 #include "common/debug.h"
-#include "common/events.h"
 #include "common/file.h"
 #include "common/system.h"
 #include "graphics/pixelformat.h"
@@ -46,11 +45,11 @@ const uint kScene9110Chunk3Interval = 75;
 const uint kScene9110MusicFadeInterval = 50;
 
 Scene9110::Scene9110(HollywoodEngine *vm) :
-		_vm(vm),
+		IntroSceneBase(vm, "Scene 9110"),
 		_music(vm->introMusic()),
 		_speech(),
 		_random("hollywood_scene9110"),
-		_resourceArenaCursor(0),
+		_resources(),
 		_mouthAccumulator(0),
 		_chunk3Accumulator(0),
 		_idleAccumulator(0),
@@ -61,15 +60,9 @@ Scene9110::Scene9110(HollywoodEngine *vm) :
 		_chunk2CycleFrame(6),
 		_chunk3Frame(0),
 		_chunk2CycleDirection(0),
-		_lastMouthVariant(0xff),
-		_skipRequested(false) {
-	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
+		_lastMouthVariant(0xff) {
 	_paletteResource.resize(kPaletteSize);
-	_paletteCurrent.resize(kPaletteSize);
 	_baseFramebuffer.resize(kFrameBufferSize);
-	_sceneFramebuffer.resize(kFrameBufferSize);
-	_savedFramebuffer.resize(kFrameBufferSize);
-	_screen.create(HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 	_stage003DecodeKey.resize(kStage003DecodeKeySize);
 	_stage003Descriptors.resize(kStage003DescriptorTableSize);
 	_subtitle.visible = false;
@@ -120,16 +113,12 @@ bool Scene9110::load() {
 }
 
 bool Scene9110::loadResourceI11Assets() {
-	if (!_vm->resources()->readChunkTable(Common::Path(kI11ArchiveName), _i11ChunkTable)) {
-		warning("Failed to read %s header", kI11ArchiveName);
+	if (!_resources.loadChunkTable(_vm->resources(), kI11ArchiveName))
 		return false;
-	}
 
 	for (uint i = 0; i < kI11RequiredChunkCount; ++i) {
-		if (!_i11ChunkTable.isValidChunk(i)) {
-			warning("%s is missing required Scene 9110 chunk %u", kI11ArchiveName, i);
+		if (!_resources.validateChunk(kI11ArchiveName, _debugName, i))
 			return false;
-		}
 	}
 
 	if (!loadResourceI11Chunk(0, _baseFramebuffer, kFrameBufferSize) ||
@@ -138,12 +127,9 @@ bool Scene9110::loadResourceI11Assets() {
 
 	uint32 resourceArenaSize = 0;
 	for (uint i = 2; i < kI11RequiredChunkCount; ++i)
-		resourceArenaSize += _i11ChunkTable.sizes[i];
+		resourceArenaSize += _resources.chunkTable.sizes[i];
 
-	_resourceArena.resize(resourceArenaSize);
-	memset(_resourceArena.data(), 0, _resourceArena.size());
-	_resourceArenaCursor = 0;
-	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
+	_resources.allocateArena(resourceArenaSize);
 
 	for (uint i = 2; i < kI11RequiredChunkCount; ++i) {
 		if (!loadResourceI11ArenaChunk(i))
@@ -157,71 +143,15 @@ bool Scene9110::loadResourceI11Assets() {
 }
 
 bool Scene9110::loadResourceI11Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI11ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kI11ArchiveName, index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit its fixed destination", kI11ArchiveName, index);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kI11ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", kI11ArchiveName, index, (uint)stream->size());
-	return true;
+	return _resources.loadFixedChunk(_vm->resources(), kI11ArchiveName, _debugName, index, destination, fixedSize);
 }
 
 bool Scene9110::loadResourceI11Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI11ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kI11ArchiveName, index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit its fixed destination", kI11ArchiveName, index);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kI11ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", kI11ArchiveName, index, (uint)stream->size());
-	return true;
+	return _resources.loadFixedChunk(_vm->resources(), kI11ArchiveName, _debugName, index, destination, fixedSize);
 }
 
 bool Scene9110::loadResourceI11ArenaChunk(uint index) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->resources()->createChunkReadStream(Common::Path(kI11ArchiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", kI11ArchiveName, index);
-		return false;
-	}
-
-	if (_resourceArenaCursor + stream->size() > _resourceArena.size()) {
-		warning("%s chunk %u does not fit the Scene 9110 arena", kI11ArchiveName, index);
-		return false;
-	}
-
-	_resourceChunkOffsets[index] = _resourceArenaCursor;
-	if (stream->read(_resourceArena.data() + _resourceArenaCursor, stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", kI11ArchiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s arena chunk %u: offset=%u size=%u",
-		kI11ArchiveName, index, _resourceArenaCursor, (uint)stream->size());
-	_resourceArenaCursor += stream->size();
-	return true;
+	return _resources.loadArenaChunk(_vm->resources(), kI11ArchiveName, _debugName, index, index);
 }
 
 bool Scene9110::loadStage003Descriptors() {
@@ -429,10 +359,10 @@ void Scene9110::presentComposite() {
 }
 
 void Scene9110::drawDescriptorFrame(byte localChunkIndex, byte descriptorCount, byte descriptorIndex) {
-	if (localChunkIndex >= kResourceChunkCount)
+	if (localChunkIndex >= IntroResourceSet::kResourceChunkCount)
 		return;
 
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[localChunkIndex], 0,
+	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[localChunkIndex], 0,
 		descriptorCount, descriptorIndex, _sceneFramebuffer.surface());
 }
 
@@ -586,97 +516,8 @@ void Scene9110::calculatePrimarySubtitleBounds(const Common::Array<Common::Strin
 	topY = (uint16)MAX<int>(0, MIN<int>(adjustedTopY, HollywoodEngine::kScreenHeight - 1));
 }
 
-void Scene9110::revealSavedFramebufferBand(uint sweepOffset, byte bandWidth) {
-	const int innerWidth = HollywoodEngine::kScreenWidth - (2 * (int)sweepOffset);
-	if (innerWidth <= 0)
-		return;
-
-	const int combinedInset = sweepOffset + bandWidth;
-	const int middleHeight = HollywoodEngine::kScreenHeight - (2 * combinedInset);
-	const int leftInset = sweepOffset;
-
-	for (uint row = 0; row < bandWidth; ++row) {
-		copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(), sweepOffset + row, leftInset, innerWidth);
-		copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(),
-			(HollywoodEngine::kScreenHeight - bandWidth - sweepOffset) + row, leftInset, innerWidth);
-	}
-
-	if (middleHeight > 0) {
-		const int middleRightX = sweepOffset + innerWidth - bandWidth;
-		for (int row = 0; row < middleHeight; ++row) {
-			const int y = combinedInset + row;
-			copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(), y, leftInset, bandWidth);
-			copySurfaceRun(_savedFramebuffer.surface(), _sceneFramebuffer.surface(), y, middleRightX, bandWidth);
-		}
-	}
-}
-
-void Scene9110::clearSceneFramebufferBand(uint sweepOffset, byte bandWidth) {
-	const int innerWidth = HollywoodEngine::kScreenWidth - (2 * (int)sweepOffset);
-	if (innerWidth <= 0)
-		return;
-
-	const int combinedInset = sweepOffset + bandWidth;
-	const int middleHeight = HollywoodEngine::kScreenHeight - (2 * combinedInset);
-	const int leftInset = sweepOffset;
-
-	for (uint row = 0; row < bandWidth; ++row) {
-		clearSurfaceRun(_sceneFramebuffer.surface(), sweepOffset + row, leftInset, innerWidth);
-		clearSurfaceRun(_sceneFramebuffer.surface(),
-			(HollywoodEngine::kScreenHeight - bandWidth - sweepOffset) + row, leftInset, innerWidth);
-	}
-
-	if (middleHeight > 0) {
-		const int middleRightX = sweepOffset + innerWidth - bandWidth;
-		for (int row = 0; row < middleHeight; ++row) {
-			const int y = combinedInset + row;
-			clearSurfaceRun(_sceneFramebuffer.surface(), y, leftInset, bandWidth);
-			clearSurfaceRun(_sceneFramebuffer.surface(), y, middleRightX, bandWidth);
-		}
-	}
-}
-
-void Scene9110::presentFrame() {
-	_displayPalette.uploadFrom6Bit(_paletteCurrent);
-
-	for (uint y = 0; y < HollywoodEngine::kScreenHeight; ++y) {
-		const uint sourceOffset = y * HollywoodEngine::kSceneBufferWidth;
-		memcpy(_screen.getBasePtr(0, y),
-			_sceneFramebuffer.data() + sourceOffset,
-			HollywoodEngine::kScreenWidth);
-	}
-
+void Scene9110::drawFrameOverlays() {
 	drawSubtitleOverlay();
-
-	g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0,
-		HollywoodEngine::kScreenWidth, HollywoodEngine::kScreenHeight);
-	g_system->updateScreen();
-}
-
-bool Scene9110::pollEvents() {
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RETURN_TO_LAUNCHER:
-			Engine::quitGame();
-			stopAudio();
-			return true;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-					event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_SPACE) {
-				_skipRequested = true;
-				stopAudio();
-				return true;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
-	return false;
 }
 
 void Scene9110::stopAudio() {
