@@ -47,6 +47,9 @@ const uint kScene4100ActorPaletteTableEntry = 0x00cc;
 const uint kScene4100Resource003RowsOffsetIndex = 0x0000;
 const uint32 kScene4100SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene4100FrameMillis = 75;
+const uint32 kScene4100PaletteCycleMillis = 300;
+const byte kScene4100PaletteCycleFirstColor = 0xa8;
+const byte kScene4100PaletteCycleLastColor = 0xaf;
 const uint kScene4100DoorOverlayChunk = 6;
 const uint kScene4100DoorOverlayDescriptorCount = 3;
 const uint kScene4100CorridorOverlayChunk = 7;
@@ -106,6 +109,7 @@ bool Scene4100::hasCustomPreviewState() const {
 void Scene4100::initializeCustomPreviewState() {
 	initializeDefaultPreviewState();
 	applyD10PaletteDimming();
+	resetPaletteCycle();
 	applySceneStateToHotspotsAndPatches(0xff);
 
 	const uint16 stateId = _vm->gameState().mainFlowStateId;
@@ -147,6 +151,7 @@ bool Scene4100::hasCustomEntrySequence() const {
 
 void Scene4100::runCustomEntrySequence() {
 	applyD10PaletteDimming();
+	resetPaletteCycle();
 	applySceneStateToHotspotsAndPatches(0xff);
 
 	GameplayState &state = _vm->gameState();
@@ -198,8 +203,14 @@ void Scene4100::runCustomEntrySequence() {
 
 bool Scene4100::prepareCustomGameplayLoop() {
 	applyD10PaletteDimming();
+	resetPaletteCycle();
 	applySceneStateToHotspotsAndPatches(0xff);
 	return true;
+}
+
+bool Scene4100::advanceCustomGameplayLoop(uint32 delta) {
+	advancePaletteCycle(delta);
+	return false;
 }
 
 bool Scene4100::dispatchCustomSceneAction(uint16 handlerId) {
@@ -278,6 +289,29 @@ void Scene4100::applyD10PaletteDimming() {
 		const byte blue = _paletteResource[offset + 2] > 4 ? _paletteResource[offset + 2] - 4 : 0;
 		setPaletteEntry6Bit(color, red, green, blue);
 	}
+}
+
+void Scene4100::resetPaletteCycle() {
+	_paletteCycleChannel.reset(0, kScene4100PaletteCycleMillis);
+}
+
+void Scene4100::advancePaletteCycle(uint32 delta) {
+	const uint frameCount = _paletteCycleChannel.consumeFrames(delta);
+	for (uint frame = 0; frame < frameCount; ++frame)
+		rotatePaletteCycle();
+}
+
+void Scene4100::rotatePaletteCycle() {
+	const uint lastOffset = kScene4100PaletteCycleLastColor * 3;
+	if (_paletteCurrent.size() <= lastOffset + 2)
+		return;
+
+	byte saved[3];
+	memcpy(saved, &_paletteCurrent[lastOffset], sizeof(saved));
+	for (uint color = kScene4100PaletteCycleLastColor; color > kScene4100PaletteCycleFirstColor; --color)
+		memcpy(&_paletteCurrent[color * 3], &_paletteCurrent[(color - 1) * 3], sizeof(saved));
+	memcpy(&_paletteCurrent[kScene4100PaletteCycleFirstColor * 3], saved, sizeof(saved));
+	invalidatePresentationPalette();
 }
 
 void Scene4100::runDoorTransition(uint chunkIndex, uint descriptorCount, uint16 targetState) {

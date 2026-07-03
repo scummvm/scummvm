@@ -42,6 +42,7 @@ const uint16 kScene4010LastState = 0x0fb3;
 const uint16 kScene4010EntryFromRightSideState = 0x0fab;
 const uint16 kScene4010EntryFromLeftSideState = 0x0fac;
 const uint16 kScene4010ExitState4020 = 0x0fb4;
+const uint16 kScene4010ExitState4110 = 0x100f;
 const uint16 kScene4010ViewportXOffset = 0x0068;
 const uint16 kScene4010ViewportMaxXOffset = 0x00b8;
 const uint kScene4010ActorBankTableEntry = 0x0000;
@@ -55,11 +56,11 @@ const uint kScene4010RoomIdleDescriptorCount = 0x14;
 const uint kScene4010ExitOverlayDescriptorCount = 0x13;
 const uint kScene4010Item3AOverlayDescriptorCount = 0x0e;
 const uint kScene4010DestinationOverlayDescriptorCount = 0x11;
-const uint kScene4010Item3BOverlayDescriptorCount = 0x0d;
+const uint kScene4010PillboxOverlayDescriptorCount = 0x0d;
 const uint kScene4010HeckerDialogueChoiceRecordCount = 211;
-const byte kScene4010Item0C = 0x0c;
 const byte kScene4010Item3A = 0x3a;
-const byte kScene4010Item3B = 0x3b;
+const byte kScene4010PillboxItem = 0x3b;
+const byte kScene4010AustraliaDestinationId = 4;
 const byte kScene4010HeckerSpeechGroup = 0;
 const byte kScene4010HeckerDialogueStageId = 0x62;
 const byte kScene4010HeckerDialogueResponseRow = 99;
@@ -112,7 +113,7 @@ const byte kScene4010DestinationFrameMap[] = {
 	0
 };
 
-const byte kScene4010Item3BFrameMap[] = {
+const byte kScene4010PillboxFrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
 	9, 10, 11, 12, 13
 };
@@ -223,17 +224,19 @@ bool Scene4010::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene4010::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301: // Usar puente levadizo levantado (use raised drawbridge): no effect outside.
-		if (!alternateBackgroundActive())
+	case 301: // Ir a puente levadizo (go to drawbridge), or return from the opened-bridge view.
+		if (alternateBackgroundActive())
+			_vm->gameState().mainFlowStateId = kScene4010ExitState4110;
+		else
 			beginSecondarySpeechLine(0, 0);
 		return true;
-	case 302: // Mirar puente levadizo / entrada (look at drawbridge/entrance), state-aware.
+	case 302: // Mirar puente levadizo (look at drawbridge), state-aware.
 		beginD01SpeechLine(1, 0, 1);
 		return true;
 	case 303: // Usar puente levadizo (use drawbridge): still raised.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 304: // Usar puente/ventana or mirar foso in alternate room (state-aware).
+	case 304: // Abrir puente levadizo (open drawbridge), state-aware.
 		if (alternateBackgroundActive())
 			beginSecondarySpeechLine(7, 0);
 		else
@@ -242,47 +245,50 @@ bool Scene4010::dispatchCustomSceneAction(uint16 handlerId) {
 	case 305: // Mirar ventana (look at window): too far to see.
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 306: // Mirar objeto brillante (look at shiny object): too far to reach.
+	case 306: // Usar/cerrar ventana (use/close window): too far to reach.
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 307: // Ir/saltar al foso (go/jump into moat): progressive exit to scene 4020.
+	case 307: // Ir a foso (go to moat): progressive exit to scene 4020.
 		runProgressiveExitSpeech();
 		return true;
 	case 308: // Mirar foso (look at moat): state-aware moat response.
 		beginSecondarySpeechLine(7, _vm->gameState().scene4010ProgressiveExitSpeechState < 2 ? 0 : 1);
 		return true;
-	case 309: // Hablar con profesor Hecker (talk to Professor Hecker).
+	case 309: // Hablar con viejo algo trastornado / Dr. Hecker (talk to disturbed old man / Dr. Hecker).
 		if (alternateBackgroundActive())
 			beginSecondarySpeechLine(10, 0);
 		else
 			runHeckerDialogue();
 		return true;
-	case 310: // Mirar coche / puente desde dentro (look at car/drawbridge), state-aware.
+	case 310: // Intentar coger viejo algo trastornado / Dr. Hecker (try to take Dr. Hecker): refusal.
 		beginD01SpeechLine(8, 0, 1);
 		return true;
-	case 311: // Mirar viejo trastornado / Dr. Hecker (look at old man / Dr. Hecker).
+	case 311: // Mirar viejo algo trastornado / Dr. Hecker (look at disturbed old man / Dr. Hecker).
 		beginD01SpeechLine(9, 0, 1);
 		return true;
-	case 312: // Hablar/mirar viejo or coche alternate response (state-aware).
+	case 312: // Patched old-man/car response: talk suggestion outside, blocked car inside.
 		if (alternateBackgroundActive())
 			beginSecondarySpeechLine(8, 1);
 		else
 			beginSecondarySpeechLine(11, 0);
 		return true;
-	case 313: // Coger camafeo de Samarkanda (take Samarkanda cameo): item 0x3a.
+	case 313: // Coger objeto brillante / camafeo de Samarkanda (take shiny object / Samarkanda cameo).
 		takeAnimatedItem3A();
 		return true;
-	case 314: // Mirar camafeo de Samarkanda (look at Samarkanda cameo), state-aware.
+	case 314: // Mirar objeto brillante / camafeo de Samarkanda (look at shiny object / Samarkanda cameo).
 		handlePendingItem3A();
 		return true;
-	case 315: // Coger postal / objeto brillante compartido (take postcard/shiny item): item 0x0c.
-		takeGenericItem0C();
+	case 315: // Coger postal (take postal letter): trapped under the bridge.
+		beginSecondarySpeechLine(14, 0);
 		return true;
-	case 316: // Usar coche (use car): unlock castle travel destination with required item.
+	case 316: // Mirar postal (look postal letter): unlock Australia destination when the clue is known.
 		unlockDestinationFromRoomAction();
 		return true;
 	case 317: // Coger pastillero (take pillbox): item 0x3b.
-		takeAnimatedItem3B();
+		takePillbox();
+		return true;
+	case 318: // Mirar pastillero (look pillbox): thrown out the window by the count.
+		beginSecondarySpeechLine(16, 0);
 		return true;
 	default:
 		return false;
@@ -343,6 +349,9 @@ bool Scene4010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 	GameplayState &state = _vm->gameState();
+	if (state.scene4070SlimmingTreatmentApplied && state.scene4010PillboxPickupState == 0)
+		state.scene4010PillboxPickupState = 1;
+
 	if (selector == 0 || selector == 0xff) {
 		if (alternateBackgroundActive()) {
 			copySmallRow(0x171, 0x29);
@@ -379,7 +388,7 @@ bool Scene4010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		}
 	}
 	if (selector == 5 || selector == 0xff) {
-		if (state.scene4010Item3BPickupState == 1) {
+		if (state.scene4010PillboxPickupState == 1) {
 			if (_sceneChunkTable.isValidChunk(10))
 				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[10], _baseFramebuffer);
 		} else {
@@ -543,6 +552,7 @@ void Scene4010::runEntryFromRightSide() {
 	runEntryPath(0x02c4, 0x00f3, 4, state.scene4010EntryPathSpeechState < 2 ? 0x0238 : 0x011d,
 		state.scene4010EntryPathSpeechState < 2 ? 0x0111 : 0x017d);
 	if (state.scene4010EntryPathSpeechState < 2) {
+		beginStaticSecondarySpeechLine(0xd0, 0);
 		runEntryPath(0x0238, 0x0111, 4, 0x00f5, 0x0169);
 		beginSecondarySpeechLine(1, 10);
 		state.scene4010EntryPathSpeechState = 2;
@@ -765,11 +775,12 @@ void Scene4010::runProgressiveExitSpeech() {
 
 void Scene4010::takeAnimatedItem3A() {
 	GameplayState &state = _vm->gameState();
+	if (state.scene4010Item3APickupState == 0 || state.scene4010Item3APickupState == 3 ||
+			hasInventoryItem(kScene4010Item3A))
+		return;
+
 	if (state.scene4010Item3APickupState == 1) {
 		beginSecondarySpeechLine(13, 0);
-		state.scene4010Item3APickupState = 2;
-		applySceneStateToHotspotsAndPatches(3);
-		return;
 	}
 
 	beginSecondarySpeechLine(12, 0);
@@ -783,6 +794,9 @@ void Scene4010::takeAnimatedItem3A() {
 
 void Scene4010::handlePendingItem3A() {
 	GameplayState &state = _vm->gameState();
+	if (state.scene4010Item3APickupState == 0)
+		return;
+
 	if (state.scene4010Item3APickupState == 1) {
 		beginSecondarySpeechLine(13, 0);
 		state.scene4010Item3APickupState = 2;
@@ -793,16 +807,14 @@ void Scene4010::handlePendingItem3A() {
 	beginSecondarySpeechLine(13, 1);
 }
 
-void Scene4010::takeGenericItem0C() {
-	if (!hasInventoryItem(kScene4010Item0C)) {
-		addInventoryItem(kScene4010Item0C);
-		_soundBank0.playSample(1, 100);
-	}
-}
-
 void Scene4010::unlockDestinationFromRoomAction() {
 	GameplayState &state = _vm->gameState();
-	if (!hasInventoryItem(0x03)) {
+	if (state.hasTravelScreenDestination(kScene4010AustraliaDestinationId))
+		state.scene4010DestinationUnlocked = true;
+	else if (state.scene4010DestinationUnlocked)
+		state.scene4010DestinationUnlocked = false;
+
+	if (!state.scene1050CharlieBogWerewolfClueHeard) {
 		beginSecondarySpeechLine(15, 0);
 		return;
 	}
@@ -816,18 +828,23 @@ void Scene4010::unlockDestinationFromRoomAction() {
 		kScene4010DestinationFrameMap, ARRAYSIZE(kScene4010DestinationFrameMap),
 		kScene4010OverlayFrameMillis, kActionOverlayHideActiveActor, -1, 0, 20, 0, 0, -1, 0,
 		true, 0, ARRAYSIZE(kScene4010DestinationFrameMap));
-	state.unlockTravelScreenDestination(4);
-	state.scene4010DestinationUnlocked = true;
-	_soundBank0.playSample(1, 100);
+	if (state.unlockTravelScreenDestination(kScene4010AustraliaDestinationId) ||
+			state.hasTravelScreenDestination(kScene4010AustraliaDestinationId)) {
+		state.scene4010DestinationUnlocked = true;
+		_soundBank0.playSample(1, 100);
+	}
 }
 
-void Scene4010::takeAnimatedItem3B() {
+void Scene4010::takePillbox() {
 	GameplayState &state = _vm->gameState();
-	state.scene4010Item3BPickupState = 2;
-	runConfiguredActionOverlay(12, kScene4010Item3BOverlayDescriptorCount,
-		kScene4010Item3BFrameMap, ARRAYSIZE(kScene4010Item3BFrameMap),
+	if (state.scene4010PillboxPickupState != 1 || hasInventoryItem(kScene4010PillboxItem))
+		return;
+
+	state.scene4010PillboxPickupState = 2;
+	runConfiguredActionOverlay(12, kScene4010PillboxOverlayDescriptorCount,
+		kScene4010PillboxFrameMap, ARRAYSIZE(kScene4010PillboxFrameMap),
 		kScene4010OverlayFrameMillis, kActionOverlayHideActiveActor, 6, 5);
-	addInventoryItem(kScene4010Item3B);
+	addInventoryItem(kScene4010PillboxItem);
 	_soundBank0.playSample(1, 100);
 	dispatchGenericSceneAction(21);
 }
