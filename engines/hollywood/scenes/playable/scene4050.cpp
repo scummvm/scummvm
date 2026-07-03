@@ -437,7 +437,6 @@ void Scene4050::runD09ReturnTransitionSequence() {
 	}
 	_soundBank0.stop();
 
-	state.scene4090AlternateAnimationSet = 1;
 	state.mainFlowStateId = kScene4090ReturnState;
 	state.activeActorPoseValid = false;
 }
