@@ -44,7 +44,7 @@ namespace Rooms {
 
 static Scratch scratch;
 
-void room_302_init(void) {
+void room_302_init() {
 	/* =================== Load sprite series ==================== */
 
 	ss[fx_blue_frame] = kernel_load_series(kernel_name('p', 0), false);
@@ -80,7 +80,7 @@ void room_302_init(void) {
 	section_3_music();
 }
 
-void room_302_pre_parser(void) {
+void room_302_pre_parser() {
 	if (player_said_2(exit_to, catwalk)) {
 		if (inter_point_x > 160) {
 			player.walk_off_edge_to_room = 301;
@@ -90,7 +90,7 @@ void room_302_pre_parser(void) {
 	}
 }
 
-void room_302_parser(void) {
+void room_302_parser() {
 	int count = 0;
 
 	if (player_said_2(take, blue_frame) &&
@@ -232,7 +232,7 @@ done:
 	;
 }
 
-void room_302_preload(void) {
+void room_302_preload() {
 	room_init_code_pointer = room_302_init;
 	room_pre_parser_code_pointer = room_302_pre_parser;
 	room_parser_code_pointer = room_302_parser;

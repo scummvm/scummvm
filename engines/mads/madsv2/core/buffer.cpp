@@ -393,10 +393,14 @@ int buffer_legal(const Buffer &walk, int orig_wrap,
 	word legality = LEGAL;
 	word currently_illegal = false;
 
-	if (walk.data == NULL)                                return legality;
-	if (x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0)          return legality;
-	if (x1 >= orig_wrap || x2 >= orig_wrap)              return legality;
-	if (y1 >= walk.y || y2 >= walk.y)                 return legality;
+	if (walk.data == NULL)
+		return legality;
+	if (x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0)
+		return legality;
+	if (x1 >= orig_wrap || x2 >= orig_wrap)
+		return legality;
+	if (y1 >= walk.y || y2 >= walk.y)
+		return legality;
 
 	int delta_y = y2 - y1;
 	int y_sign = walk.x;
@@ -418,7 +422,7 @@ int buffer_legal(const Buffer &walk, int orig_wrap,
 	int y_count = delta_y + 1;
 
 	byte *ptr = walk.data + y1 * walk.x + (x1 / 8);
-	uint bit_pos = 8 - (x1 % 8);  // cl: 1=MSB side, 8=LSB side
+	uint bit_pos = 8 - (x1 % 8);
 
 	for (int col = x_count; col > 0; col--) {
 		dAccum += y_count;
@@ -465,7 +469,7 @@ int buffer_legal(const Buffer &walk, int orig_wrap,
 /**
  * Advance the pattern accumulator one step.
  */
-static void pattern_math(void) {
+static void pattern_math() {
 	word bx = accum;
 	accum += pattern_control_value;
 	bx = (bx >> 9) | (bx << 7);  // ror 9

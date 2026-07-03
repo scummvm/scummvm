@@ -38,7 +38,6 @@ int cycling_threshold;
 int total_cycle_colors;
 
 long cycle_timing[COLOR_MAX_CYCLES];
-//static RGBcolor temp_color;
 
 void cycle_init(CycleListPtr new_cycle_list, int activate) {
 	int count;
@@ -64,7 +63,7 @@ void cycle_init(CycleListPtr new_cycle_list, int activate) {
 	cycling_active = activate;
 }
 
-void cycle_colors(void) {
+void cycle_colors() {
 	int num;
 	int first;
 	int count;

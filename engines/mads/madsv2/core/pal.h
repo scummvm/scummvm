@@ -92,8 +92,8 @@ extern int pal_manager_colors;
  */
 extern void pal_init(int reserve_bottom, int reserve_top);
 
-extern void pal_lock(void);
-extern void pal_unlock(void);
+extern void pal_lock();
+extern void pal_unlock();
 
 /**
  * Given a color list, allocates all its colors in the global palette.
@@ -154,8 +154,8 @@ extern void pal_shadow_sort(ShadowListPtr shadow, ColorListPtr list);
  */
 extern void pal_init_shadow(ShadowListPtr shadow, ColorListPtr new_list);
 extern void pal_activate_shadow(ShadowListPtr shadow);
-extern int pal_get_flags(void);
-extern int pal_get_colors(void);
+extern int pal_get_flags();
+extern int pal_get_colors();
 extern void pal_interface(Palette &fixpal);
 extern void pal_white(Palette &fixpal);
 extern void pal_grey(Palette &fixpal, int base_color, int num_colors,

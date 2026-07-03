@@ -34,9 +34,6 @@
 namespace MADS {
 namespace MADSV2 {
 
-
-#define anim_file_version   "3.02"      /* Animate definition file version */
-
 /* Flags to be passed to anim_load().  Note that all PAL_MAP... flags */
 /* can be passed through as well.                                     */
 
@@ -210,7 +207,7 @@ struct SegmentBuf {
 	word   sprite_change_target[AA_MAX_CHANGES];
 };
 
-typedef struct SegmentBuf Segment;
+typedef SegmentBuf Segment;
 typedef Segment *SegmentPtr;
 
 
@@ -229,7 +226,7 @@ struct ImageEditBuf {
 	byte scale;
 };
 
-typedef struct ImageEditBuf ImageEdit;
+typedef ImageEditBuf ImageEdit;
 typedef ImageEdit *ImageEditPtr;
 
 struct ImageInter {
@@ -259,7 +256,7 @@ struct MessageBuf {
 	char *text;
 };
 
-typedef struct MessageBuf Message;
+typedef MessageBuf Message;
 typedef Message *MessagePtr;
 
 
@@ -274,7 +271,7 @@ struct FrameEditBuf {
 	int8 yank_y;
 };
 
-typedef struct FrameEditBuf FrameEdit;
+typedef FrameEditBuf FrameEdit;
 typedef FrameEdit *FrameEditPtr;
 
 
@@ -369,7 +366,7 @@ struct AnimDefBuf {
 };
 
 
-typedef struct AnimDefBuf AnimDef;
+typedef AnimDefBuf AnimDef;
 typedef AnimDef *AnimDefPtr;
 
 /* aa file header */

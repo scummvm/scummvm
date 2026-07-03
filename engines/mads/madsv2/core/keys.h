@@ -29,19 +29,6 @@ namespace MADS {
 namespace MADSV2 {
 
 /* keystroke defines */
-#if 0
-#define key_status_1            (byte *) 0x00400017 /* key status 1 */
-#define key_status_2            (byte *) 0x00400018 /* key status 2 */
-
-#define KS1_INSERT              0x80    /* Insert state      */
-#define KS1_CAPSLOCK            0x40    /* Caps Lock state   */
-#define KS1_NUMLOCK             0x20    /* Num Lock state    */
-#define KS1_SCROLLLOCK          0x10    /* Scroll Lock state */
-#define KS1_ALT                 0x08    /* Alt key state     */
-#define KS1_CTRL                0x04    /* Ctrl key state    */
-#define KS1_LEFTSHIFT           0x02    /* Left shift state  */
-#define KS1_RIGHTSHIFT          0x01    /* Right shift state */
-#endif
 
 #define left_key                Common::KEYCODE_LEFT
 #define right_key               Common::KEYCODE_RIGHT
@@ -207,7 +194,7 @@ struct KeyBuffer {
 	int len;
 };
 
-typedef struct KeyBuffer *KeyPtr;
+typedef KeyBuffer *KeyPtr;
 
 extern word keys_special_button;
 

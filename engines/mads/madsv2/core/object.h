@@ -32,9 +32,6 @@
 namespace MADS {
 namespace MADSV2 {
 
-
-#define OBJECT_FILE_VERSION     "4.0"   /* Object DEF file format version */
-
 #define OBJECT_MAX_VERBS        5
 #define OBJECT_MAX_QUALITIES    4
 
@@ -47,11 +44,11 @@ namespace MADSV2 {
 #define OBJECT_GREY_STEPS       16
 
 
-typedef struct {
+struct HagVerb {
 	char name[VC_MAXWORDLEN + 1];
 	byte verb_type;
 	byte prep_type;
-} HagVerb;
+};
 
 
 /* Format for storing objects on disk */
@@ -72,7 +69,7 @@ struct FileObjectBuf {
 	/* char short_name[OBJECT_SHORT_NAME_LEN + 1]; */
 };
 
-typedef struct FileObjectBuf FileObject;
+typedef FileObjectBuf FileObject;
 typedef FileObject *FileObjectPtr;
 
 struct ObjectBuf {
@@ -90,7 +87,7 @@ struct ObjectBuf {
 	void synchronize(Common::Serializer &s);
 };
 
-typedef struct ObjectBuf Object;
+typedef ObjectBuf Object;
 typedef Object *ObjectPtr;
 
 
@@ -100,8 +97,8 @@ extern int       num_objects;
 extern int object_ems_handle;
 
 
-extern int object_load(void);
-extern void object_unload(void);
+extern int object_load();
+extern void object_unload();
 
 extern int object_named(int vocab_id);
 extern int object_is_here(int object_id);

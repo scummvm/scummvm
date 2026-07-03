@@ -593,8 +593,6 @@ void color_buffer_list_to_main(ColorListPtr color_list, Buffer *scan_buf) {
 	for (int r = 0; r < row; r++) {
 		for (int c = 0; c < col; c++) {
 			byte pixel = scan_ptr[c];
-			// Original: ax = pixel, bx = pixel*2, ax = pixel*4,
-			//           bx = pixel*2 + pixel*4 = pixel*6
 			int offset = (int)pixel * 6;
 			scan_ptr[c] = table_x16[offset];
 		}

@@ -1342,7 +1342,7 @@ op2_set_vol:
 			{
 				/* "call near ptr aAsoundDriverAn+33h" - the target is a no-op. */
 				pSrc++;
-				/* (void)*pSrc; */
+				/* ()*pSrc; */
 				ch = _activeChannelPtr;
 				ch->_pSrc += 2;
 				goto dispatch;

@@ -516,7 +516,7 @@ done:
 	;
 }
 
-static void inter_show_scrollbar(void) {
+static void inter_show_scrollbar() {
 	if (scrollbar_active > 0) {
 		inter_show_word(STROKE_SCROLL, scrollbar_active);
 	}
@@ -527,7 +527,7 @@ static void inter_show_scrollbar(void) {
 /**
  * Writes the current inventory list to the interface work buffer.
  */
-static void inter_show_all_inven(void) {
+static void inter_show_all_inven() {
 	int count;
 
 	for (count = first_inven; (count < (first_inven + inter_columns)) && (count < inven_num_objects); count++) {
@@ -540,7 +540,7 @@ static void inter_show_all_inven(void) {
  * Writes the current list of object-specific verbs to the interface
  * work buffer.
  */
-static void inter_show_all_actions(void) {
+static void inter_show_all_actions() {
 	int count;
 
 	if (active_inven >= 0) {
@@ -565,7 +565,7 @@ static void inter_show_all_actions(void) {
 	}
 }
 
-static void inter_show_all_dialog(void) {
+static void inter_show_all_dialog() {
 	int count;
 
 	for (count = 0; count < inter_columns; count++) {
@@ -575,7 +575,7 @@ static void inter_show_all_dialog(void) {
 	}
 }
 
-void inter_prepare_background(void) {
+void inter_prepare_background() {
 	int count;
 
 	inter_auxiliary_click = false;
@@ -597,7 +597,7 @@ void inter_prepare_background(void) {
 	}
 }
 
-static void inter_refresh(void) {
+static void inter_refresh() {
 	// int count;
 	// for (count = 0; count < (int)image_inter_marker; count++) {
 	// if (image_inter_list[count].segment_id == INTER_SPINNING_OBJECT) {
@@ -612,7 +612,7 @@ static void inter_refresh(void) {
 	inter_prepare_background();
 }
 
-void inter_reset_dialog(void) {
+void inter_reset_dialog() {
 	int count;
 
 	for (count = 0; count < inter_columns; count++) {
@@ -704,7 +704,7 @@ static void inter_image(int x1, int y1, int xs, int ys) {
 #endif
 }
 
-static void inter_scrollbar_refresh(void) {
+static void inter_scrollbar_refresh() {
 	int x1, y1, xs, ys;
 
 	x1 = inter_scroll_x1;
@@ -838,7 +838,7 @@ void inter_set_active_inven(int new_active) {
 	}
 }
 
-static void inter_purge_inven_stroke(void) {
+static void inter_purge_inven_stroke() {
 	left_inven = -1;
 	mouse_init_cycle();
 	stroke_type = STROKE_NONE;
@@ -961,7 +961,7 @@ static void inter_spot_correct(int *x1, int *y1, int *x2, int *y2, int xs, int y
 	*y2 = *y1 + ys - 1;
 }
 
-void inter_setup_hotspots(void) {
+void inter_setup_hotspots() {
 	int count;
 	int x1, y1, xs, ys;
 	int x2, y2;
@@ -1033,7 +1033,7 @@ void inter_setup_hotspots(void) {
 /**
  * Handles up/down "dragging" for inventory list.
  */
-static void inter_drag_check(void) {
+static void inter_drag_check() {
 	long timing_level;
 	long current_time;
 
@@ -1066,7 +1066,7 @@ static void inter_drag_check(void) {
  * Determines which word is being picked off the screen, and makes
  * it active.
  */
-static void inter_select_word(void) {
+static void inter_select_word() {
 	int x1, y1, x2, y2;
 	int junk;
 	int max_x, max_y;
@@ -1251,7 +1251,7 @@ static void inter_select_word(void) {
 	}
 }
 
-static void inter_scroll_bar(void) {
+static void inter_scroll_bar() {
 	int junk;
 	int y, new_first_inven;
 	long now_time;
@@ -1333,7 +1333,7 @@ done:
 	;
 }
 
-void inter_init_sentence(void) {
+void inter_init_sentence() {
 	inter_awaiting = AWAITING_COMMAND;
 
 	inter_command_source = STROKE_NONE;
@@ -1382,7 +1382,7 @@ static void inter_add_word_to_sentence(int vocab_id, int capitalize) {
  * Puts together a string for the current sentence, based on the
  * information currently available.
  */
-static void inter_compile_sentence(void) {
+static void inter_compile_sentence() {
 	int prep_special;
 	int verb;
 	int len;
@@ -1535,7 +1535,7 @@ done:
  * Analyzes the potential effect of the current stroke on the sentence --
  * w/ the proviso that the stroke is not yet finished.
  */
-static void inter_analyze_stroke(void) {
+static void inter_analyze_stroke() {
 	if ((stroke_type == STROKE_COMMAND) || (stroke_type == STROKE_ACTION)) {
 		if ((inter_awaiting != AWAITING_COMMAND) && (picked_word >= 0)) {
 			if (!((stroke_type == inter_recent_command_source) && (picked_word == inter_recent_command) && ((inter_awaiting == AWAITING_THIS) || (stroke_type == STROKE_ACTION)))) {
@@ -1671,7 +1671,7 @@ done:
  * Determines the final effect of a stroke on the sentence, after
  * that stroke has been completed.
  */
-static void inter_complete_stroke(void) {
+static void inter_complete_stroke() {
 	int demand_abort;
 
 	demand_abort = false;
@@ -1817,7 +1817,7 @@ done:
  * advancing segment counters and changing matteing lists when
  * appropriate.
  */
-static void inter_background_animation(void) {
+static void inter_background_animation() {
 	int count, count2;
 	int temp;
 	int prob_check;
@@ -1890,7 +1890,7 @@ done:
 	;
 }
 
-void inter_spinning_object(void) {
+void inter_spinning_object() {
 	int count;
 
 	if ((inter_input_mode == INTER_CONVERSATION) ||
@@ -1926,7 +1926,7 @@ done:
 	;
 }
 
-void inter_turn_off_object(void) {
+void inter_turn_off_object() {
 	if (inter_object_series >= 0) {
 		if (g_engine->getGameID() == GType_Forest)
 			Forest::delete_sprite_in_interface(inter_object_series);
@@ -1954,7 +1954,7 @@ void inter_turn_off_object(void) {
 	if (inter_input_mode == INTER_BUILDING_SENTENCES) inter_refresh();
 }
 
-int inter_allocate_objects(void) {
+int inter_allocate_objects() {
 	int  error_flag = true;
 
 	if (!inter_spinning_objects) goto done;
@@ -1974,14 +1974,14 @@ done:
 	return error_flag;
 }
 
-void inter_deallocate_objects(void) {
+void inter_deallocate_objects() {
 	if (inter_objects_block != NULL) {
 		mem_free(inter_objects_block);
 		inter_objects_block = NULL;
 	}
 }
 
-void inter_screen_update(void) {
+void inter_screen_update() {
 	if (kernel_mode == KERNEL_ACTIVE_CODE) {
 		if (inter_input_mode == INTER_BUILDING_SENTENCES) {
 			matte_inter_frame(!kernel.fx, kernel.fx);

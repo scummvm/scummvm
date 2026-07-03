@@ -193,11 +193,11 @@ struct Scratch {        /* Room local variables */
 #define NEW_ROOM_FROM_103_Y   96
 
 
-extern void room_104_init(void);
-extern void room_104_daemon(void);
-extern void room_104_pre_parser(void);
-extern void room_104_parser(void);
-extern void room_104_preload(void);
+extern void room_104_init();
+extern void room_104_daemon();
+extern void room_104_pre_parser();
+extern void room_104_parser();
+extern void room_104_preload();
 
 } // namespace Rooms
 } // namespace Phantom

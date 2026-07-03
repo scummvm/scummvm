@@ -1206,8 +1206,8 @@ void conv_start(ConvData *convData, Conv *convIn) {
 void conv_get(int convNum) {
 	char fname[40];
 	int free_slot = -1;
-	int error_occurred = -1;   // matches original si: -1 = error, 0 = success
-	int stage_error   = 0;     // which stage failed (1/2/3); used as data2 in error_report
+	int error_occurred = -1;
+	int stage_error   = 0;	// which stage failed (1/2/3); used as data2 in error_report
 
 	// Find first free slot (stops as soon as one is found, matching original loop)
 	for (int i = 0; i < CONV_MAX_DATA; ++i) {

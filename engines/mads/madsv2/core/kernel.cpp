@@ -43,7 +43,6 @@
 #include "mads/madsv2/core/keys.h"
 #include "mads/madsv2/core/pack.h"
 #include "mads/madsv2/core/room.h"
-#include "mads/madsv2/core/demo.h"
 #include "mads/madsv2/core/xms.h"
 #include "mads/madsv2/core/lock.h"
 #include "mads/madsv2/core/tile.h"

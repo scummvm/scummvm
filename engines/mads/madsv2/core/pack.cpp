@@ -232,7 +232,7 @@ done:
 }
 
 
-word pack_raw_copy(void) {
+word pack_raw_copy() {
 	word result = CMP_NO_ERROR;
 	word read_this_time;
 	word read_back;
@@ -300,7 +300,7 @@ word pack_a_packet(int packing_flag, int explode_mode) {
 	return (result);
 }
 
-static void pack_activate(void) {
+static void pack_activate() {
 	if (pack_special_function)
 		pack_special_function();
 }
@@ -453,7 +453,7 @@ done:
 }
 
 
-int pack_check(void) {
+int pack_check() {
 	dialog_declare_ok(dialog);
 	ItemPtr none_item, zip_item = nullptr, pfab_item = nullptr, default_item;
 	int result;
@@ -509,14 +509,14 @@ done:
 	return (result);
 }
 
-void pack_enable_zip(void) {
+void pack_enable_zip() {
 	pack_strategy = PACK_ZIP;
 	pack_zip_enabled = true;
 	pack_implode_routine = implode;
 	pack_explode_routine = explode;
 }
 
-void pack_enable_pfab(void) {
+void pack_enable_pfab() {
 	pack_strategy = PACK_PFAB;
 	pack_pfab_enabled = true;
 	pack_pFABcomp_routine = pFABcomp;
@@ -525,7 +525,7 @@ void pack_enable_pfab(void) {
 	pack_pFABexp2_routine = pFABexp2;
 }
 
-void pack_enable_pfab_explode(void) {
+void pack_enable_pfab_explode() {
 	pack_strategy = PACK_PFAB;
 	pack_pfab_enabled = true;
 	pack_pFABcomp_routine = NULL;
@@ -534,7 +534,7 @@ void pack_enable_pfab_explode(void) {
 	pack_pFABexp2_routine = pFABexp2;
 }
 
-void pack_enable_zip_explode(void) {
+void pack_enable_zip_explode() {
 	pack_strategy = PACK_ZIP;
 	pack_zip_enabled = true;
 	pack_implode_routine = NULL;

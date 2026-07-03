@@ -77,14 +77,14 @@ void ObjectBuf::synchronize(Common::Serializer &s) {
 }
 
 
-void object_unload(void) {
+void object_unload() {
 	if (object != NULL) {
 		mem_free(object);
 		object = NULL;
 	}
 }
 
-int object_load(void) {
+int object_load() {
 	int count;
 	int error_flag = true;
 	long mem_to_get;

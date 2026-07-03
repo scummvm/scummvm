@@ -30,12 +30,10 @@ namespace MADSV2 {
 #define lib_version          "4.35"
 #define lib_date             "10-Aug-93"
 
-#ifndef lib_data_segment
 extern char mads_dev_lib_version[5];
 extern char mads_dev_lib_date[11];
-#endif
 
-void lib_show_version(void);
+void lib_show_version();
 
 } // namespace MADSV2
 } // namespace MADS

@@ -711,7 +711,7 @@ void window_trap_output(WindowPtr window,
 	window_server_installed = true;
 }
 
-void window_restore_output(void) {
+void window_restore_output() {
 	window_server_installed = false;
 }
 

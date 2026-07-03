@@ -27,15 +27,15 @@
 namespace MADS {
 namespace MADSV2 {
 
-byte upcaseb(byte inp);
+extern byte upcaseb(byte inp);
 
-int  upcasei(int inp);
+extern int  upcasei(int inp);
 
-int xtoi(char *string);
+extern int xtoi(char *string);
 
-int btoi(char *string);
+extern int btoi(char *string);
 
-int stoi(char *string);
+extern int stoi(char *string);
 
 } // namespace MADSV2
 } // namespace MADS

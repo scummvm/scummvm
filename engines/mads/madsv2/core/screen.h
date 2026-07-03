@@ -79,41 +79,38 @@ extern Window     screen_active;
 /**
  * Sets # of lines in VGA text mode
  */
-void  screen_set_size(short numlines);
+extern void screen_set_size(short numlines);
 
 /**
  * Sets uniform color & character for specified line
  */
-void screen_wipe_line(short ul_x, short ul_y, short len, short wipe_color, byte wipe_char);
+extern void screen_wipe_line(short ul_x, short ul_y, short len, short wipe_color, byte wipe_char);
 
-short screen_out(const char *outstring, short strcolor, short selcolor, short str_x, short str_y);
-short screen_put(const char *outstring, short strcolor, short selcolor, short str_x, short str_y);
-void  screen_set_colors(int normal_color, int hilite_color);
-void  screen_set_line_width(int line_width);
+extern short screen_out(const char *outstring, short strcolor, short selcolor, short str_x, short str_y);
+extern short screen_put(const char *outstring, short strcolor, short selcolor, short str_x, short str_y);
+extern void screen_set_colors(int normal_color, int hilite_color);
+extern void screen_set_line_width(int line_width);
 
-/* DO NOT USE */
-//short screen_show(const char *outstring, short locx, short locy);
+extern short screen_show_line(const char *outstring, short locx, short locy);
+extern short screen_write(const char *outstring);
+extern short screen_write_line(const char *outstring);
+extern void screen_clear(int clear_color);
+extern void screen_dominant_mode(int dominant_mode);
+extern void screen_init(int video_mode);
+extern void screen_init_dual(int mono_left);
+extern void screen_shutdown_dual(int clear_flag);
+extern void screen_init_graphics(int which_mode);
+extern void screen_shutdown_graphics(int clear_flag);
+extern void screen_show_spot(const char *message, int wx, int wy, int class_, int num);
 
-short screen_show_line(const char *outstring, short locx, short locy);
-short screen_write(const char *outstring);
-short screen_write_line(const char *outstring);
-void  screen_clear(int clear_color);
-void  screen_dominant_mode(int dominant_mode);
-void  screen_init(int video_mode);
-void  screen_init_dual(int mono_left);
-void  screen_shutdown_dual(int clear_flag);
-void  screen_init_graphics(int which_mode);
-void  screen_shutdown_graphics(int clear_flag);
-void  screen_show_spot(const char *message, int wx, int wy, int class_, int num);
+extern int screen_printf(int x, int y, const char *string, ...);
+extern int screen_print(const char *string, ...);
 
-int screen_printf(int x, int y, const char *string, ...);
-int screen_print(const char *string, ...);
-
-void screen_init_text(int which_mode);
-void screen_shutdown_text(int clear_flag);
-void screen_save(void);
-void screen_restore(void);
-short screen_show_wide(const char *outstring, short locx, short locy, short width);
+extern void screen_init_text(int which_mode);
+extern void screen_shutdown_text(int clear_flag);
+extern void screen_save();
+extern void screen_restore();
+extern short screen_show_wide(const char *outstring, short locx, short locy, short width);
 
 } // namespace MADSV2
 } // namespace MADS

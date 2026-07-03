@@ -138,7 +138,7 @@ struct CompWork {
 /**
  * Required size of work_buff.  Paragraph-align to match original.
  */
-static unsigned comp_work_size(void) {
+static unsigned comp_work_size() {
 	return (unsigned)(sizeof(CompWork) + 15u);
 }
 

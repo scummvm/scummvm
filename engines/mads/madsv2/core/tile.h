@@ -28,7 +28,6 @@
 namespace MADS {
 namespace MADSV2 {
 
-
 #define DEFAULT_TILE_X          20
 #define DEFAULT_TILE_Y          12
 
@@ -57,9 +56,9 @@ struct TileResource {
 	void load(Common::SeekableReadStream *src);
 };
 
-typedef struct {
+struct Tile {
 	int32 file_offset;
-} Tile;
+};
 
 struct TileMapHeader {
 	int16 tile_type;              /* Type of tile                     */

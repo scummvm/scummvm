@@ -135,11 +135,11 @@ void screen_shutdown_text(int clear_flag) {
 	warning("TODO: screen_shutdown_text");
 }
 
-void screen_save(void) {
+void screen_save() {
 	warning("TODO: screen_save");
 }
 
-void screen_restore(void) {
+void screen_restore() {
 	warning("TODO: screen_restore");
 }
 

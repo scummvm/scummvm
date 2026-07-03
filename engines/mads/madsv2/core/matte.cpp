@@ -1064,7 +1064,7 @@ void matte_frame(int special_effect, int full_screen) {
 }
 
 
-int matte_allocate_inter_image(void) {
+int matte_allocate_inter_image() {
 	int result;
 
 	if (image_inter_marker >= IMAGE_INTER_LIST_SIZE) {
@@ -1080,7 +1080,7 @@ int matte_allocate_inter_image(void) {
 }
 
 
-void matte_refresh_inter(void) {
+void matte_refresh_inter() {
 	int id;
 
 	id = matte_allocate_inter_image();

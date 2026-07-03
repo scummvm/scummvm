@@ -81,7 +81,7 @@ typedef unsigned short word;
   *   as the data, keeping si pointing into [1..EXP_RBLEN] (mirrors assembly SI
   *   pointing into RBuff[0..RBlen-1], with the guard word sitting just below).
   */
-typedef struct {
+struct ExpState {
 	word(*read_buff) (char *buf, word *size);
 	word(*write_buff)(char *buf, word *size);
 
@@ -103,7 +103,7 @@ typedef struct {
 	 */
 	byte   flat[EXP_LEMPEL + EXP_WBLEN];
 	int    di;          /* write index into flat[], starts at EXP_LEMPEL */
-} ExpState;
+};
 
 /**
  * Fill the read buffer.
@@ -410,7 +410,7 @@ word explode(
  /* Packet buffer: Huffman word (2 bytes) + up to 128 data bytes */
 #define IMP_PKTMAX (2 + 128)
 
-typedef struct {
+struct ImpState {
 	word(*read_buff) (char *buf, word *size);
 	word(*write_buff)(char *buf, word *size);
 
@@ -453,7 +453,7 @@ typedef struct {
 	 */
 	word   hash[IMP_LEMPEL + 1 + IMP_HASH];
 	word   undo[IMP_LEMPEL + 1];
-} ImpState;
+};
 
 /* ---- I/O helpers ---- */
 

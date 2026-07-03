@@ -52,7 +52,7 @@ int himem_ems_preloaded = 0;
 int himem_xms_preloaded = 0;
 
 
-int himem_activate_directory(void) {
+int himem_activate_directory() {
 	int error_flag = false;
 
 	if (himem_directory_allocation == MEM_EMS) {
@@ -155,7 +155,7 @@ done:
 	return id;
 }
 
-int himem_directory_setup(void) {
+int himem_directory_setup() {
 	int  error_flag = true;
 	int  count;
 	long dir_size = 0;
@@ -207,7 +207,7 @@ done:
 }
 
 
-void himem_shutdown(void) {
+void himem_shutdown() {
 	int count;
 
 	if (!himem_activate_directory()) {
@@ -229,7 +229,7 @@ void himem_shutdown(void) {
 	ems_shutdown();
 }
 
-void himem_startup(void) {
+void himem_startup() {
 	ems_detect();
 	ems_paging_setup();
 

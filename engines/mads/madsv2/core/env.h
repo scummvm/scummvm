@@ -74,7 +74,7 @@ extern long env_concat_file_size; /* Size of last concat file opened */
 extern char env_null[7];
 
 
-extern int env_verify(void);
+extern int env_verify();
 extern Common::SeekableReadStream *env_open(const char *file_path, const char *options = "rb");
 extern int env_exist(const char *file_name);
 extern long env_get_file_size(Common::SeekableReadStream *handle);
@@ -92,41 +92,41 @@ extern char *env_get(char *target, const char *env);
  * to the next variable in the environment list (if pointer is
  * to a null string, the end of the list has been reached).
  */
-char *env_next(char *variable);
+extern char *env_next(char *variable);
 
 /**
  * Given a pointer to an environment, returns a pointer to one
  * byte after the end of the entire environment.
  */
-char *env_find_end(char *environment);
+extern char *env_find_end(char *environment);
 
 /**
  * Given a pointer to the start of an environment, returns the
  * size in bytes of that environment.
  */
-int env_size(char *environment);
+extern int env_size(char *environment);
 
-int env_free(char *environment);
+extern int env_free(char *environment);
 
 /**
  * Given a pointer to an environment and a variable, returns a
  * pointer to that variable name in the environment.  Returns
  * NULL if no match found.
  */
-char *env_find(char *environment, const char *variable);
+extern char *env_find(char *environment, const char *variable);
 
 /**
  * Given an environment and a variable name, deletes that
  * variable from the environment table.
  */
-void env_delete(char *environment, const char *variable);
+extern void env_delete(char *environment, const char *variable);
 
 /**
  * Given a pointer to an environment, a variable name, and a value,
  * inserts that variable into the environment table with the
  * designated value.  Returns 0 for success, -1 for failure.
  */
-int env_insert(char *environment, const char *variable, const char *value);
+extern int env_insert(char *environment, const char *variable, const char *value);
 
 } // namespace MADSV2
 } // namespace MADS

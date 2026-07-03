@@ -29,8 +29,6 @@
 namespace MADS {
 namespace MADSV2 {
 
-#define sprite_file_version   "3.02"
-
 #define misc_largest_block            misc[0]
 /* LONG ... uses misc[1] also */
 #define misc_is_a_walker              misc[2]
@@ -68,21 +66,17 @@ namespace MADSV2 {
 				/*  -- Would explode color list crap --     */
 				/*  -- SS_SKIP must not = COLOR_TRANSPARENT */
 
-
 #define SPRITE_COLOR_TABLE_SIZE       252
 
 #define MAX_SECONDARY         16      /* Maximum secondary walker sequences */
 
-
-
-
-	/* Legal values for x->source_type */
+/* Legal values for x->source_type */
 #define         SS_LBM          1       /* Source file is one frame LBM */
 #define         SS_LBM_MULT     2       /* Source file is several LBMs  */
 #define         SS_ANM          3       /* Source file is an .ANM file  */
 #define         SS_FLI          4       /* Source file is a .FLI file   */
 
-	/* Legal values for x->base_mode */
+/* Legal values for x->base_mode */
 #define         SS_FIRSTFRAME   1       /* If relative to first frame of ANM */
 #define         SS_STATICLBM    2       /* If relative to an LBM */
 #define         SS_BACKCOL      3       /* If relative to background color */
@@ -90,9 +84,7 @@ namespace MADSV2 {
 #define         SS_PANNING_ANM  5       /* Relative to panning ANM */
 #define         SS_PANNING_FLI  6       /* Relative to panning FLI */
 
-
 /* STRUCTURES FOR ALL SPRITE LEVELS           */
-
 struct WalkerInfo {
 	uint16  num_primary;                   /* Number of primary sequence frames */
 	uint16  num_secondary;                 /* Number of secondary sequences     */
@@ -112,23 +104,22 @@ struct WalkerInfo {
 typedef WalkerInfo *WalkerInfoPtr;
 
 
-
 /* DEVELOP TIME STRUCTURES (.DSS Files)       */
 
 /* Develop-time definition of a single sprite */
 
-typedef struct {
+struct HagSprite {
 	char name[9];           /* Sprite name */
 	int x, y;               /* Sprite location */
 	int xs, ys;             /* Size of sprite  */
-} HagSprite;
+};
 
 typedef HagSprite *HagSpritePtr;
 
 
 /* Develop-time definition of a sprite series */
 
-typedef struct {
+struct HagSeries {
 	char name[80];                      /* Name        */
 	char desc[80];                      /* Description */
 
@@ -162,7 +153,7 @@ typedef struct {
 	ColorList color_list;               /* Series master color list */
 
 	HagSprite index[1];                 /* Sprites */
-} HagSeries;
+};
 
 typedef HagSeries *HagSeriesPtr;
 
@@ -218,7 +209,7 @@ typedef FileSeries *FileSeriesPtr;
 
 /* Global paging information for a stream-loaded sprite series */
 
-typedef struct {
+struct SpritePageInfo {
 	byte paging_source;         /* Is source EMS, XMS, or hard disk? */
 	byte packing_mode;          /* Type of compression involved      */
 	Common::SeekableReadStream *handle; /* File handle for hard disk load    */
@@ -228,35 +219,35 @@ typedef struct {
 	int  ems_page_offset;       /* EMS page offset of current read   */
 	int  xms_handle;            /* XMS handle for preloaded sprites  */
 	long xms_offset;            /* XMS offset for current read       */
-} SpritePageInfo;
+};
 
 typedef SpritePageInfo *SpritePageInfoPtr;
 
 
 /* Sprite-specific paging informatio for stream-loaded series */
 
-typedef struct {
+struct SpritePageTable {
 	long file_offset;           /* Offset in file for sprite's data   */
 	long memory_needed;         /* Amount of memory needed for sprite */
-} SpritePageTable;
+};
 
 typedef SpritePageTable *SpritePageTablePtr;
 
 
 /* Runtime memory structure for an individual sprite */
 
-typedef struct {
+struct Sprite {
 	byte *data;             /* Pointer to sprite's actual data */
 	int  x, y;                  /* Home position on screen         */
 	int  xs, ys;                /* Sprite box size                 */
-} Sprite;
+};
 
 typedef Sprite *SpritePtr;
 
 
 /* Runtime memory structure for a sprite series */
 
-typedef struct {
+struct Series {
 	int  delta_series;          /* Flag if series is a delta series         */
 	int  base_mode;             /* Series base mode optimization scheme     */
 
@@ -277,7 +268,7 @@ typedef struct {
 	WalkerInfoPtr walker;       /* Pointer to walker information    ,if any */
 
 	Sprite index[1];            /* Individual sprite records begin here     */
-} Series;
+};
 
 typedef Series *SeriesPtr;
 
@@ -295,38 +286,38 @@ typedef Series *SeriesPtr;
 
 
 extern byte *sprite_force_memory;
-extern long      sprite_force_size;
+extern long sprite_force_size;
 extern int sprite_error;
 
 
-void sprite_draw(SeriesPtr series, int id, Buffer *buf, int target_x, int target_y);
-void sprite_draw_scaled(SeriesPtr series, int id, Buffer *buf,
+extern void sprite_draw(SeriesPtr series, int id, Buffer *buf, int target_x, int target_y);
+extern void sprite_draw_scaled(SeriesPtr series, int id, Buffer *buf,
 	int target_x, int target_y, int scale_factor);
-void sprite_draw_3d_scaled(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
+extern void sprite_draw_3d_scaled(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
 	int target_x, int target_y, int target_depth, int scale_factor);
-void sprite_draw_3d_big(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
+extern void sprite_draw_3d_big(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
 	int target_x, int target_y, int target_depth, int view_port_x, int view_port_y);
-void sprite_draw_3d_scaled_big(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
+extern void sprite_draw_3d_scaled_big(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
 	int target_x, int target_y, int target_depth, int scale_factor,
 	int view_port_x, int view_port_y);
-void sprite_draw_3d_x16(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
+extern void sprite_draw_3d_x16(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
 	int target_x, int target_y, int target_depth);
-void sprite_draw_3d_scaled_x16(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
+extern void sprite_draw_3d_scaled_x16(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
 	int target_x, int target_y, int target_depth, int scale_factor);
-void sprite_draw_3d_big_x16(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
+extern void sprite_draw_3d_big_x16(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
 	int target_x, int target_y, int target_depth, int view_port_x, int view_port_y);
-void sprite_draw_3d_scaled_big_x16(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
+extern void sprite_draw_3d_scaled_big_x16(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
 	int target_x, int target_y, int target_depth, int scale_factor,
 	int view_port_x, int view_port_y);
-void sprite_draw_x16(SeriesPtr series, int id, Buffer *buf, int target_x, int target_y);
-void sprite_draw_interface(SeriesPtr series, int id, Buffer *buf, int target_x, int target_y);
-void sprite_draw_3d_scaled_to_attr(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
+extern void sprite_draw_x16(SeriesPtr series, int id, Buffer *buf, int target_x, int target_y);
+extern void sprite_draw_interface(SeriesPtr series, int id, Buffer *buf, int target_x, int target_y);
+extern void sprite_draw_3d_scaled_to_attr(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
 	int target_x, int target_y, int target_depth, int scale_factor,
 	int view_port_x, int view_port_y);
-void sprite_draw_3d_scaled_mono(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
+extern void sprite_draw_3d_scaled_mono(SeriesPtr series, int id, Buffer *buf, Buffer *attr,
 	int target_x, int target_y, int target_depth, int scale_factor, byte color);
-SeriesPtr sprite_series_load(const char *filename, int load_flags);
-void sprite_get_scaled_matte(SeriesPtr series, int id, int target_x, int target_y,
+extern SeriesPtr sprite_series_load(const char *filename, int load_flags);
+extern void sprite_get_scaled_matte(SeriesPtr series, int id, int target_x, int target_y,
 	int scale_factor, SpritePtr matte);
 
 /**
@@ -348,13 +339,13 @@ word sprite_pack_line_rle(byte *target, Buffer *source, byte *palette_map, byte 
 word sprite_pack_line_irle(byte *target, Buffer *source,
 	byte *palette_map, byte transparent, int x1, int x2, int y);
 
-void sprite_set_bounds(HagSpritePtr sprite, int x, int y, int xs, int ys);
+extern void sprite_set_bounds(HagSpritePtr sprite, int x, int y, int xs, int ys);
 
 /**
  * Given a foreground buffer and a background buffer, merges
  * background image into transparent areas of foreground image.
  */
-void sprite_merge_background(Buffer *source, Buffer *background, byte transparent);
+extern void sprite_merge_background(Buffer *source, Buffer *background, byte transparent);
 
 /**
  * Finds differences between "source" and "delta" buffers.  When pixels
@@ -363,7 +354,7 @@ void sprite_merge_background(Buffer *source, Buffer *background, byte transparen
  * to show changes.  "sprite"'s boundaries are set to conform to minimum
  * rectangle needed to contain all changes.
  */
-void sprite_delta_compute(HagSpritePtr sprite, Buffer *source, Buffer *delta);
+extern void sprite_delta_compute(HagSpritePtr sprite, Buffer *source, Buffer *delta);
 
 /**
  * Compares "source" and "delta" buffers.  If a pixel is the same,
@@ -371,7 +362,7 @@ void sprite_delta_compute(HagSpritePtr sprite, Buffer *source, Buffer *delta);
  * "source" pixel is copied to "delta" pixel, which prepares the delta
  * buffer for use on next round.
  */
-void sprite_remove_non_delta(Buffer *source, Buffer *delta, byte transparent);
+extern void sprite_remove_non_delta(Buffer *source, Buffer *delta, byte transparent);
 
 /**
  * Given sprite, packs it and writes it to buffer target.
@@ -380,13 +371,13 @@ void sprite_remove_non_delta(Buffer *source, Buffer *delta, byte transparent);
 long sprite_pack_image(byte *target, FileSpritePtr sprite, Buffer *source,
 	byte *palette_map, byte transparent);
 
-void sprite_color_translate(SeriesPtr series, ColorListPtr list);
-void sprite_single_color_translate(SeriesPtr series, int id);
-int sprite_data_load(SeriesPtr series, int id, byte *target);
+extern void sprite_color_translate(SeriesPtr series, ColorListPtr list);
+extern void sprite_single_color_translate(SeriesPtr series, int id);
+extern int sprite_data_load(SeriesPtr series, int id, byte *target);
 
-void dont_frag_the_palette();
-void go_ahead_and_frag_the_palette();
-void sprite_free(SeriesPtr *series, int free_memory);
+extern void dont_frag_the_palette();
+extern void go_ahead_and_frag_the_palette();
+extern void sprite_free(SeriesPtr *series, int free_memory);
 
 extern void init_sprite();
 

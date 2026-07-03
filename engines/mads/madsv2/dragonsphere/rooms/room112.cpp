@@ -59,7 +59,7 @@ static Scratch scratch;
 #define ROOM_112_DONE_UNHEALING    62
 
 
-static void room_112_init(void) {
+static void room_112_init() {
 	viewing_at_y = ((video_y - display_y) >> 1);
 	kernel_init_dialog();  /* clear interface */
 	kernel_set_interface_mode(INTER_LIMITED_SENTENCES);

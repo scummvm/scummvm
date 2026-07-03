@@ -55,11 +55,11 @@ typedef byte PaletteMap[256][3];        /* An entire Mcga palette #2 */
 
 #define pal_color(p,i,c)  (*(((byte *)&p[i])+c))
 
-typedef struct {                        /* Video buffer structure         */
+struct Buffer {                        /* Video buffer structure         */
 	int y;                                /* Wrap value for buffer (y size) */
 	int x;                                /* X size of buffer               */
 	byte *data;                       /* Pointer to actual data         */
-} Buffer;
+};
 
 #define far_string(v,s)   char _based(_segname("FARSTRING")) v[] = s;
 

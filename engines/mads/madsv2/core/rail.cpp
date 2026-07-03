@@ -142,7 +142,7 @@ void rail_add_node(int id, int x, int y) {
 	rail_connect_node(id);
 }
 
-void rail_connect_all_nodes(void) {
+void rail_connect_all_nodes() {
 	int count;
 
 	for (count = 0; count < ROOM_MAX_RAILS + 2; count++) {

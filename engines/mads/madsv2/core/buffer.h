@@ -113,49 +113,49 @@ extern bool buffer_rect_copy_2(const Buffer &from, Buffer &unto,
 /**
  * Given X and Y, sets pixel to color C
  */
-void buffer_put_pixel(Buffer &buf, word x, word y, byte c);
+extern void buffer_put_pixel(Buffer &buf, word x, word y, byte c);
 
 /**
  * Given X and Y, gets the pixel at that position.
  */
-byte buffer_get_pixel(const Buffer &buf, word x, word y);
+extern byte buffer_get_pixel(const Buffer &buf, word x, word y);
 
 /**
  * Given starting and ending points on the X axis, and the constant
  * Y value, draws a line in the given color on the live MCGA screen.
  */
-void buffer_hline(Buffer &buf, word x1, word x2, word y, byte color);
+extern void buffer_hline(Buffer &buf, word x1, word x2, word y, byte color);
 
 /**
  * Given starting and ending points on the Y axis, and the constant
  * X value, draws a line in the given color on the live MCGA screen.
  */
-void buffer_vline(Buffer &buf, word x, word y1, word y2, byte color);
+extern void buffer_vline(Buffer &buf, word x, word y1, word y2, byte color);
 
 /**
  * Draws outside edge of retangle given home and size along both axis.
  */
-void buffer_draw_box(Buffer &buf, word x1, word y1, word x2, word y2, byte color);
+extern void buffer_draw_box(Buffer &buf, word x1, word y1, word x2, word y2, byte color);
 
 /**
  * Draws a horizontal line by xoring/inverting the existing pixels
  */
-void buffer_hline_xor(Buffer &buf, int x1, int x2, int y);
+extern void buffer_hline_xor(Buffer &buf, int x1, int x2, int y);
 
 /**
  * Draws a vertical line by xoring/inverting the existing pixels
  */
-void buffer_vline_xor(Buffer &buf, int x, int y1, int y2);
+extern void buffer_vline_xor(Buffer &buf, int x, int y1, int y2);
 
 /**
  * Draws a cross-hairs at the specified x, y
  */
-void buffer_draw_crosshair(Buffer &buf, int x, int y);
+extern void buffer_draw_crosshair(Buffer &buf, int x, int y);
 
 /**
  * Draws a box using pixel xor inversion
  */
-void buffer_draw_box_xor(Buffer &buf, int x1, int y1, int x2, int y2);
+extern void buffer_draw_box_xor(Buffer &buf, int x1, int y1, int x2, int y2);
 
 /**
  * Scans the two buffers.  Locations that are not the same on both buffers
@@ -222,7 +222,7 @@ extern void buffer_line_xor(Buffer target, int x1, int y1, int x2, int y2);
  */
 extern int buffer_legal(const Buffer &walk, int orig_wrap, int x1, int y1, int x2, int y2);
 
-word buffer_rect_fill_pattern(Buffer target, int ul_x, int ul_y, int size_x, int size_y,
+extern word buffer_rect_fill_pattern(Buffer target, int ul_x, int ul_y, int size_x, int size_y,
 	int base_x, int base_y, int base_xs, byte value1, byte value2,
 	word start_accum, word note_line);
 
@@ -236,14 +236,14 @@ word buffer_rect_fill_pattern(Buffer target, int ul_x, int ul_y, int size_x, int
 extern bool buffer_rect_fill_swap(Buffer target, int ul_x, int ul_y,
 	int size_x, int size_y, byte value1, byte value2);
 
-void buffer_peel_horiz(Buffer *target, int peel);
+extern void buffer_peel_horiz(Buffer *target, int peel);
 
-void buffer_peel_vert(Buffer *target, int peel,
+extern void buffer_peel_vert(Buffer *target, int peel,
 	byte *work_memory, long work_size);
 
-int  buffer_to_disk(Buffer *source, int x, int y,
+extern int buffer_to_disk(Buffer *source, int x, int y,
 	int xs, int ys);
-void buffer_from_disk(Buffer *source, int buffer_id,
+extern void buffer_from_disk(Buffer *source, int buffer_id,
 	int keep_flag, int x, int y, int xs, int ys);
 
 extern bool buffer_to_ems(Buffer *source, int page_handle,
@@ -251,9 +251,9 @@ extern bool buffer_to_ems(Buffer *source, int page_handle,
 extern bool buffer_from_ems(Buffer *source, int page_handle,
 	int target_ems_handle, int x, int y, int xs, int ys);
 
-int  buffer_preserve(Buffer *source, int flags,
+extern int buffer_preserve(Buffer *source, int flags,
 	int source_ems_handle, int x, int y, int xs, int ys);
-void buffer_restore(Buffer *source, int preserve_handle,
+extern void buffer_restore(Buffer *source, int preserve_handle,
 	int target_ems_handle, int x, int y, int xs, int ys);
 
 extern bool buffer_rect_translate(Buffer from, Buffer unto,

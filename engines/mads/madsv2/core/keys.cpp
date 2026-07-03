@@ -57,7 +57,7 @@ int keys_get() {
 	return g_engine->getKey();
 }
 
-void keys_flush(void) {
+void keys_flush() {
 	g_engine->flushKeys();
 }
 

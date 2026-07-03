@@ -78,10 +78,10 @@ struct WindowBox {
 	byte *storage;
 };
 
-typedef struct WindowBox Window;
+typedef WindowBox Window;
 typedef Window *WindowPtr;
 
-typedef struct {
+struct ScrollBar {
 	WindowPtr window;
 	int vertical;
 	int side;
@@ -91,7 +91,7 @@ typedef struct {
 	long max_value;
 	long scroll_value;
 	long page_value;
-} ScrollBar;
+};
 
 typedef ScrollBar *ScrollBarPtr;
 
@@ -191,7 +191,7 @@ extern void window_trap_output(WindowPtr window, void (*(any_char_routine))(),
 /**
  * Restores the traditional DOS int 29 functionality.
  */
-extern void window_restore_output(void);
+extern void window_restore_output();
 
 extern void window_define(WindowPtr window, int x1, int y1, int x2, int y2,
 	int color, int shadow, int save);
@@ -202,8 +202,8 @@ extern void window_wipe_line(WindowPtr window, int yy);
 extern int window_printf(WindowPtr window, int x, int y, const char *string, ...);
 extern void window_clear(WindowPtr window);
 extern int window_show_color(WindowPtr window, const char *text, int xx, int yy, int color);
-extern void window_10_install(void);
-extern void window_10_remove(void);
+extern void window_10_install();
+extern void window_10_remove();
 
 } // namespace MADSV2
 } // namespace MADS

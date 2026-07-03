@@ -41,11 +41,11 @@ namespace Phantom {
 
 #define MENU_HIGH_SPRITE        15
 
-typedef struct {
+struct MenuItem {
 	int handle;           /* Sprite series handle */
 	int active;           /* Menu item is active  */
 	int status;           /* Current status       */
-} MenuItem;
+};
 
 extern bool new_background;
 extern int selected_item;

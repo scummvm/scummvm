@@ -44,21 +44,21 @@ namespace MADSV2 {
 #define         EMS_DIRECTORY_ADDRESS   2048
 
 
-typedef struct {
+struct EmsDirectory {
 	byte flag;
 	byte level;
 	char list[14];
 	long size;
 	int num_packets;
 	long packet_size[PACK_MAX_LIST_LENGTH];
-} EmsDirectory;
+};
 
 
-typedef struct {
+struct EmsPtr {
 	int handle;         /* EMS block handle         */
 	int page_marker;    /* Page marker in EMS block */
 	int page_offset;    /* Offset within the page   */
-} EmsPtr;
+};
 
 
 extern bool ems_driver;			/* Flag if EMS driver is installed      */

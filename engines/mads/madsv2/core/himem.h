@@ -31,7 +31,7 @@ namespace MADSV2 {
 
 #define         HIMEM_MAX_RESIDENT        150
 
-typedef struct {
+struct HimemDirectory {
 	byte memory_type;                           /* Memory type       */
 	byte ems_page_handle;                       /* EMS paging info   */
 	byte level;                                 /* Preload level     */
@@ -40,7 +40,7 @@ typedef struct {
 	long size;                                  /* Size in bytes     */
 	int num_packets;                            /* Number of packets */
 	long packet_size[PACK_MAX_LIST_LENGTH];     /* Sizes of packets  */
-} HimemDirectory;
+};
 
 
 extern byte himem_preload_ems_disabled;

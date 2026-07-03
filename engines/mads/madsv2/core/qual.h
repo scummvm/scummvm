@@ -27,15 +27,11 @@
 namespace MADS {
 namespace MADSV2 {
 
-#define qual_version "3.01"
-#define qual_date    "28-Oct-91"
-
-
 struct QualBuf {
 	word id;
 	word pointer;
 };
-typedef struct QualBuf Qual;
+typedef QualBuf Qual;
 
 
 #define QU_MAXWORDS             800     /* Maximum words in vocabulary */
@@ -64,7 +60,7 @@ extern int qual_allocation;
 extern int qual_words;
 extern char *qual;
 
-int        qual_destroy(void);
+int        qual_destroy();
 
 int        qual_load(int allocation_flag);
 int        qual_get_code(char *inp);
@@ -79,15 +75,15 @@ char *qual_select_word(char *out,
 	char *prompt,
 	char *default_word);
 
-void       qual_maint(void);
+void       qual_maint();
 
-int        qual_build(void);
+int        qual_build();
 
-void       qual_unload_active(void);
-void       qual_init_active(void);
+void       qual_unload_active();
+void       qual_init_active();
 int        qual_active_id(word id);
 int        qual_make_active(word id);
-int        qual_load_active(void);
+int        qual_load_active();
 
 extern char *qual_text;
 extern word qual_active;

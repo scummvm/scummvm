@@ -81,7 +81,7 @@ static Scratch scratch;
 #define UP_LADDER_Y          30
 
 
-static void room_114_init(void) {
+static void room_114_init() {
 	/* Load sprite series */
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
@@ -308,7 +308,7 @@ static void room_114_daemon() {
 	}
 }
 
-static void room_114_pre_parser(void) {
+static void room_114_pre_parser() {
 	if (player_said_2(walk_down, passageway_to_west)) {
 		player.walk_off_edge_to_room = 115;
 	}

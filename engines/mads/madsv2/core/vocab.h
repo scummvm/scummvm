@@ -66,7 +66,7 @@ extern word vocab_active;
 extern word vocab_list_id[VOCAB_MAX_ACTIVE];
 extern word vocab_list_pointer[VOCAB_MAX_ACTIVE];
 
-extern int vocab_destroy(void);
+extern int vocab_destroy();
 extern int vocab_load(int allocation_flag);
 extern int vocab_get_code(char *inp);
 extern char *vocab_get_word(char *out, int inp);
@@ -83,13 +83,13 @@ extern int vocab_write_file(const char *last_word);
 extern int vocab_add_word(const char *inp);
 extern void vocab_report_error(int number);
 extern char *vocab_select_word(char *out, const char *prompt, const char *default_word);
-extern void vocab_maint(void);
-extern int vocab_build(void);
-extern void vocab_unload_active(void);
-extern void vocab_init_active(void);
+extern void vocab_maint();
+extern int vocab_build();
+extern void vocab_unload_active();
+extern void vocab_init_active();
 extern int vocab_active_id(word id);
 extern int vocab_make_active(int id);
-extern int vocab_load_active(void);
+extern int vocab_load_active();
 extern char *vocab_string(int vocab_id);
 
 extern void init_vocab();

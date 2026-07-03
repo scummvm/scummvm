@@ -180,7 +180,7 @@ done:
 	}
 }
 
-static void stop_series(void) {
+static void stop_series() {
 	int count;
 
 	for (count = NUM_MENU_ITEMS - 1; count >= 0; count--) {
@@ -188,7 +188,7 @@ static void stop_series(void) {
 	}
 }
 
-static void start_hotspots(void) {
+static void start_hotspots() {
 	int count;
 	int x1, x2, y1, y2;
 	int xs, ys;
@@ -211,7 +211,7 @@ static void start_hotspots(void) {
 	hspot_add(156, 77, 170, 83, 2, EYE_HOTSPOT + 1, mcga_mode);
 }
 
-static void process_menu(void) {
+static void process_menu() {
 	int myspot;
 
 	myspot = hspot_which(mouse_x, mouse_y - viewing_at_y, mcga_mode);
@@ -236,7 +236,7 @@ static void process_menu(void) {
 	}
 }
 
-static void process_sprites(void) {
+static void process_sprites() {
 	int count;
 	int sprite;
 	int series;
@@ -384,7 +384,7 @@ done:
 	}
 }
 
-void menu_control(void) {
+void menu_control() {
 	int fx;
 	int mykey;
 	int last_frame = -1;

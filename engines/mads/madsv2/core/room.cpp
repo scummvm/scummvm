@@ -647,7 +647,7 @@ static void room_buffer_invert(Buffer *buffer, byte *work, int granularity) {
 	}
 }
 
-int room_invert(void) {
+int room_invert() {
 	int error_flag = true;
 	int count;
 	int x1, x2;

@@ -27,20 +27,20 @@
 namespace MADS {
 namespace MADSV2 {
 
-typedef struct {
+struct Heap {
 	byte module;		/* Identifier for heap module   */
 	byte destruct;		/* Flag if can be destroyed     */
 	char *base;			/* Base memory pointer for heap */
 	char *marker;		/* Pointer to free area         */
 	long base_size;		/* Original size of the heap    */
 	long size;			/* Free space remaining         */
-} Heap;
+};
 
-int heap_create(Heap *heap, int module_id, long heap_size, const char *heap_name);
-void heap_destroy(Heap *heap);
-void heap_declare(Heap *heap, int module_id, char *buffer, long heap_size);
+extern int heap_create(Heap *heap, int module_id, long heap_size, const char *heap_name);
+extern void heap_destroy(Heap *heap);
+extern void heap_declare(Heap *heap, int module_id, char *buffer, long heap_size);
 
-void *heap_get(Heap *heap, long size);
+extern void *heap_get(Heap *heap, long size);
 
 } // namespace MADSV2
 } // namespace MADS

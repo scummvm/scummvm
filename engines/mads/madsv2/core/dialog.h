@@ -145,7 +145,7 @@ struct DialogItem {
 	char *prompt;                     /* Item prompt/string          */
 };
 
-typedef struct DialogItem Item;
+typedef DialogItem Item;
 typedef Item *ItemPtr;
 
 struct DialogList {
@@ -161,7 +161,7 @@ struct DialogList {
 	short max_elements;
 };
 
-typedef struct DialogList List;
+typedef DialogList List;
 typedef List *ListPtr;
 
 struct DialogBox {
@@ -213,7 +213,7 @@ struct DialogBox {
 	long string_space_remaining;           /* Amount of string space left */
 };
 
-typedef struct DialogBox Dialog;
+typedef DialogBox Dialog;
 typedef Dialog *DialogPtr;
 
 #define StringMode(x)   (((x).type == DD_I_STRING) || ((x).type == DD_I_FILENAME) || ((x).type == DD_I_LISTBASED))

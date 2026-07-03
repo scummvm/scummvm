@@ -75,18 +75,18 @@ extern char global_release_copyright[];
 extern int16 global[];
 extern int global_list_size;
 
-void global_init_code(void);
-void global_daemon_code(void);
-void global_pre_parser_code(void);
-void global_parser_code(void);
-void global_error_code(void);
-void global_room_init(void);
-void global_verb_filter(void);
-void global_sound_driver(void);
-void global_section_constructor(void);
-void global_write_config_file(void);
-void global_load_config_parameters(void);
-void global_unload_config_parameters(void);
+extern void global_init_code();
+extern void global_daemon_code();
+extern void global_pre_parser_code();
+extern void global_parser_code();
+extern void global_error_code();
+extern void global_room_init();
+extern void global_verb_filter();
+extern void global_sound_driver();
+extern void global_section_constructor();
+extern void global_write_config_file();
+extern void global_load_config_parameters();
+extern void global_unload_config_parameters();
 
 extern void init_global();
 

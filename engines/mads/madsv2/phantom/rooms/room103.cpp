@@ -90,7 +90,7 @@ void room_103_adjust_rails(int variant) {
 	}
 }
 
-void room_103_init(void) {
+void room_103_init() {
 	int prompt_x;
 	int prompt_y;
 	int prompt_facing;
@@ -442,7 +442,7 @@ void room_103_init(void) {
 	section_1_music();
 }
 
-static void climb_stairs_right(void) {
+static void climb_stairs_right() {
 	int stairs_reset_frame;
 
 	if (kernel_anim[aa[3]].frame != local->stairs_frame) {
@@ -469,7 +469,7 @@ static void climb_stairs_right(void) {
 	}
 }
 
-static void decend_stairs_right(void) {
+static void decend_stairs_right() {
 	int stairs_reset_frame;
 
 	if (kernel_anim[aa[4]].frame != local->stairs_frame) {
@@ -490,7 +490,7 @@ static void decend_stairs_right(void) {
 	}
 }
 
-static void climb_stairs_left(void) {
+static void climb_stairs_left() {
 	int stairs_reset_frame;
 
 	if (kernel_anim[aa[5]].frame != local->stairs_frame) {
@@ -517,7 +517,7 @@ static void climb_stairs_left(void) {
 	}
 }
 
-static void decend_stairs_left(void) {
+static void decend_stairs_left() {
 	int stairs_reset_frame;
 
 	if (kernel_anim[aa[6]].frame != local->stairs_frame) {
@@ -538,7 +538,7 @@ static void decend_stairs_left(void) {
 	}
 }
 
-static void handle_animation_jacques(void) {
+static void handle_animation_jacques() {
 	int random;
 	int jacques_reset_frame;
 
@@ -704,7 +704,7 @@ static void handle_animation_jacques(void) {
 	}
 }
 
-void room_103_daemon(void) {
+void room_103_daemon() {
 	int temp;  /* for synching purposes */
 
 	if (local->anim_0_running) {
@@ -841,7 +841,7 @@ void room_103_daemon(void) {
 	}
 }
 
-static void process_conv_jacques(void) {
+static void process_conv_jacques() {
 	int quit_converse = false;
 	int16 *value_1;
 
@@ -936,7 +936,7 @@ static void process_conv_jacques(void) {
 	local->jacques_talk_count = 0;
 }
 
-void room_103_pre_parser(void) {
+void room_103_pre_parser() {
 	if (player_said_2(open, door)) {
 		player.need_to_walk = true;
 	}
@@ -1063,7 +1063,7 @@ void room_103_pre_parser(void) {
 	}
 }
 
-void room_103_parser(void) {
+void room_103_parser() {
 	int temp;  /* for synching purposes */
 
 	if (player_said_2(open, door_to_pit)) {
@@ -1735,7 +1735,7 @@ done:
 }
 
 
-void room_103_preload(void) {
+void room_103_preload() {
 	room_init_code_pointer       = room_103_init;
 	room_pre_parser_code_pointer = room_103_pre_parser;
 	room_parser_code_pointer     = room_103_parser;

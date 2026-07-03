@@ -41,7 +41,7 @@ namespace Rooms {
 
 static Scratch scratch;
 
-void room_408_init(void) {
+void room_408_init() {
 	int web;
 
 	global_catacombs_init();
@@ -187,7 +187,7 @@ void room_408_init(void) {
 	section_4_music();
 }
 
-void room_408_pre_parser(void) {
+void room_408_pre_parser() {
 	local->frame_is_here = false;
 	local->frame_here_for_taking = false;
 
@@ -234,7 +234,7 @@ void room_408_pre_parser(void) {
 	}
 }
 
-void room_408_parser(void) {
+void room_408_parser() {
 	int web;
 
 	if (player_said_1(put) && player_said_1(floor)) {
@@ -518,13 +518,13 @@ done:
 	;
 }
 
-void room_408_daemon(void) {
+void room_408_daemon() {
 	if (kernel.trigger == ROOM_408_SHOW_TEXT) {
 		text_show(text_000_31);
 	}
 }
 
-void room_408_preload(void) {
+void room_408_preload() {
 	room_init_code_pointer = room_408_init;
 	room_pre_parser_code_pointer = room_408_pre_parser;
 	room_parser_code_pointer = room_408_parser;

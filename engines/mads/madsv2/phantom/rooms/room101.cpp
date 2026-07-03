@@ -39,7 +39,7 @@ namespace Rooms {
 
 static Scratch scratch;
 
-void room_101_init(void) {
+void room_101_init() {
 	kernel.disable_fastwalk = true;
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
@@ -153,7 +153,7 @@ void room_101_init(void) {
 }
 
 
-static void handle_animation_000(void) {
+static void handle_animation_000() {
 	int random;
 	int reset_frame;
 
@@ -243,7 +243,7 @@ static void handle_animation_000(void) {
 
 
 
-static void handle_animation_001(void) {
+static void handle_animation_001() {
 	int random;
 	int reset_frame;
 
@@ -359,7 +359,7 @@ static void handle_animation_001(void) {
 
 
 
-void room_101_daemon(void) {
+void room_101_daemon() {
 	/* =============== Goto conversation functions =============== */
 
 	if (local->anim_0_running) {
@@ -416,7 +416,7 @@ void room_101_daemon(void) {
 	}
 }
 
-static void process_conversation_0(void) {
+static void process_conversation_0() {
 	conv_me_trigger(ROOM_101_CONV0_MAKE_BRIE_WALK);
 
 	if (kernel.trigger == ROOM_101_CONV0_MAKE_BRIE_WALK) {
@@ -427,7 +427,7 @@ static void process_conversation_0(void) {
 
 
 
-static void process_conversation_1(void) {
+static void process_conversation_1() {
 	int you_trig_flag = false;
 
 	if ((player_verb >= conv001_speech_talk) &&
@@ -504,7 +504,7 @@ static void process_conversation_1(void) {
 
 
 
-void room_101_pre_parser(void) {
+void room_101_pre_parser() {
 	if (player_said_2(exit_to, orchestra_pit)) {
 		if ((global[brie_talk_status] == AFTER_CONVS_0_AND_1) || (local->start_walking)) {
 			player.walk_off_edge_to_room = 102;
@@ -536,7 +536,7 @@ void room_101_pre_parser(void) {
 }
 
 
-void room_101_parser(void) {
+void room_101_parser() {
 	if (conv_control.running == CONV_BRIE_MOTIONS_TO_RAOUL) {
 		process_conversation_0();
 		goto handled;
@@ -629,7 +629,7 @@ done:
 	;
 }
 
-void room_101_preload(void) {
+void room_101_preload() {
 	room_init_code_pointer = room_101_init;
 	room_pre_parser_code_pointer = room_101_pre_parser;
 	room_parser_code_pointer = room_101_parser;

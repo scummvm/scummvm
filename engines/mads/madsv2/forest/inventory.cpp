@@ -86,7 +86,7 @@ static int inventory_get_item(int num) {
 	return -1;
 }
 
-static void kernel_load_interface(void) {
+static void kernel_load_interface() {
 	char temp_buf[80];
 	char *mark;
 

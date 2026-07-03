@@ -76,10 +76,10 @@ namespace MADSV2 {
 #define TEXT_UPPER_AND_LOWER    2
 #define TEXT_AS_IS              3
 
-typedef struct {
+struct Text {
 	word length;
 	char text[1];
-} Text;
+};
 
 
 struct TextDirectory {

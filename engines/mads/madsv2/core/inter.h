@@ -164,7 +164,7 @@ struct VerbBuf {
 
 	void synchronize(Common::Serializer &s);
 };
-typedef struct VerbBuf Verb;
+typedef VerbBuf Verb;
 
 extern AnimInterPtr inter_anim;         /* Background animation script    */
 
@@ -276,13 +276,13 @@ extern void (*inter_object_routine)();
  * inter_prepare_background()
  * Writes all relevant words to the interface work buffer.
  */
-extern void inter_prepare_background(void);
+extern void inter_prepare_background();
 /*
  * inter_setup_hotspots()
  * Sets up the hotspot list for the interface module.  Hotspots only
  * need to be set up once for each room.
  */
-extern void inter_setup_hotspots(void);
+extern void inter_setup_hotspots();
 /*
  * inter_set_active_inven()
  * Picks a new active object from the inventory list.  This involves
@@ -311,7 +311,7 @@ extern void inter_move_object(int object_id, int location);
  * inter_init_sentence()
  * Begins accepting a new sentence.
  */
-extern void inter_init_sentence(void);
+extern void inter_init_sentence();
 /*
  * inter_main_loop()
  * The main interface loop.  Called by run-time kernel to perform one
@@ -322,14 +322,14 @@ extern void inter_init_sentence(void);
  */
 extern void inter_main_loop(int allow_input);
 
-extern void inter_screen_update(void);
+extern void inter_screen_update();
 
-extern void inter_turn_off_object(void);
+extern void inter_turn_off_object();
 extern void inter_spin_object(int object_id);
-extern int  inter_allocate_objects(void);
-extern void inter_deallocate_objects(void);
+extern int  inter_allocate_objects();
+extern void inter_deallocate_objects();
 
-extern void inter_reset_dialog(void);
+extern void inter_reset_dialog();
 extern int inter_add_dialog(char *string, int result);
 
 extern int inter_load_background(const char *name, Buffer *target);

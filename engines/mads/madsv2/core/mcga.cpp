@@ -137,7 +137,7 @@ void mcga_retrace() {
 	g_engine->getScreen()->update();
 }
 
-void mcga_compute_retrace_parameters(void) {
+void mcga_compute_retrace_parameters() {
 	mcga_setpal(&master_palette);
 
 	// On original hardware this function also measured how many palette

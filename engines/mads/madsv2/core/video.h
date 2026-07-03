@@ -29,27 +29,27 @@ namespace MADSV2 {
 
 extern byte video_mode;
 
-void video_init(int mode, int set_mode);
+extern void video_init(int mode, int set_mode);
 
-void video_update(Buffer *from, int from_x, int from_y,
+extern void video_update(Buffer *from, int from_x, int from_y,
 	int unto_x, int unto_y,
 	int size_x, int size_y);
 
-void video_flush_ega(int start_y, int size_y);
+extern void video_flush_ega(int start_y, int size_y);
 
 
 
 /* Mode-specific versions */
 
-void video_update_vga(Buffer *from, int from_x, int from_y,
+extern void video_update_vga(Buffer *from, int from_x, int from_y,
 	int unto_x, int unto_y,
 	int size_x, int size_y);
 
-void video_update_ega(Buffer *from, int from_x, int from_y,
+extern void video_update_ega(Buffer *from, int from_x, int from_y,
 	int unto_x, int unto_y,
 	int size_x, int size_y);
 
-void video_update_tandy(Buffer *from, int from_x, int from_y,
+extern void video_update_tandy(Buffer *from, int from_x, int from_y,
 	int unto_x, int unto_y,
 	int size_x, int size_y);
 

@@ -3018,7 +3018,7 @@ ItemPtr dialog_execute(DialogPtr dialog, ItemPtr active_item, ItemPtr default_bu
 	return item;
 }
 
-DialogPtr dialog_create_default(void) {
+DialogPtr dialog_create_default() {
 	return(dialog_create(NULL, DD_CENTER, DD_CENTER, DD_AUTO,
 		DD_DEFAULT, DD_DEFAULT, DD_DEFAULT));
 }
@@ -3332,7 +3332,7 @@ int dialog_get_number(DialogPtr dialog, ItemPtr item) {
 void dialog_trap_critical() {
 }
 
-void dialog_restore_critical(void) {
+void dialog_restore_critical() {
 }
 
 void init_dialog() {

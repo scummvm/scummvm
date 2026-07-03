@@ -140,7 +140,7 @@ extern int error_scan(char *target, const char *name, int number);
 extern void error_dump_file(const char *file_name);
 extern void error_break_point(int data1, int data2);
 extern void error_watch_point(char *message, long data1, long data2);
-extern void error_check_memory(void);
+extern void error_check_memory();
 extern void error_file_point(char *message, long data1, long data2);
 extern void error_entry(char *name, char *message);
 extern void error_exit(char *name, char *message);

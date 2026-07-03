@@ -38,7 +38,7 @@ int camera_old_x_target = 0;/* For saving/restoring game */
 int camera_old_y_target = 0;
 
 
-void camera_init_default(void) {
+void camera_init_default() {
 	camera_x.panning = false;
 	camera_y.panning = false;
 

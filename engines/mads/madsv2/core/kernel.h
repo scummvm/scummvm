@@ -142,10 +142,10 @@ namespace MADSV2 {
 #define KERNEL_STARTUP_CURSOR         0x0200
 #define KERNEL_STARTUP_CURSOR_SHOW    0x0100
 #define KERNEL_STARTUP_VOCAB          0x0080
-//#define KERNEL_STARTUP_INTERFACE      0x0040
+#define KERNEL_STARTUP_INTERFACE      0x0040
 #define KERNEL_STARTUP_ALL_FLAGS      0xffc0
 
-typedef struct {
+struct Sequence {
 	byte active_flag;                   /* Sequence is active */
 
 	byte series_id;                     /* Series list handle */
@@ -188,12 +188,12 @@ typedef struct {
 	long base_time;                     /* Clock time of next scheduled update */
 
 	Image last_image;                   /* Copy of last image entered          */
-} Sequence;
+};
 
 typedef Sequence *SequencePtr;
 
 
-typedef struct {
+struct KernelMessage {
 	word flags;                         /* Message flags                        */
 	byte sequence_id;                   /* Attached sequence number             */
 	byte segment_id;                    /* Animation segment id                 */
@@ -211,12 +211,12 @@ typedef struct {
 	byte trigger_dest;                  /* Type of code to activate for trigger */
 	int  trigger_words[3];              /* Vocabulary words for reactivating parser code */
 	char *message;                  /* Pointer to message text              */
-} KernelMessage;
+};
 
 typedef KernelMessage *KernelMessagePtr;
 
 
-typedef struct {
+struct KernelDynamicHotSpot {
 	byte flags;
 	int auto_sequence;
 	int x, y, xs, ys;
@@ -230,13 +230,13 @@ typedef struct {
 	byte syntax;
 	int8 auto_anim;
 	byte auto_segment[KERNEL_DYNAMIC_MAX_SEGMENTS];
-} KernelDynamicHotSpot;
+};
 
 typedef KernelDynamicHotSpot *KernelDynamicHotSpotPtr;
 
 
 
-typedef struct {
+struct Animation {
 	AnimPtr anim;                       /* Animation pointer                    */
 	int     repeat;                     /* Animation should repeat continuously */
 	int     cycled;                     /* Animation has cycled back to start   */
@@ -259,10 +259,10 @@ typedef struct {
 	int     dynamic_hotspot;            /* Attached dynamic hotspot             */
 
 	int     last_frame;                 /* Most recent frame viewed             */
-} Animation;
+};
 
 
-typedef struct {
+struct Kernel {
 	long clock;                 /* Current game timing clock        */
 	byte fx;                    /* Special FX for this frame        */
 
@@ -302,8 +302,7 @@ typedef struct {
 
 	byte player_tracking;       /* Flag if tracking player location     */
 	byte disable_fastwalk;      /* Flag if fastwalk disabled            */
-
-} Kernel;
+};
 
 
 struct KernelGame {

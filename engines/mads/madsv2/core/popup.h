@@ -102,7 +102,7 @@ namespace MADSV2 {
 
 
 
-typedef struct {
+struct BoxParam {
 	SeriesPtr series;           /* Sprite series for popup box */
 
 	char name[16];              /* Sprite series name          */
@@ -142,11 +142,9 @@ typedef struct {
 	int menu_text_y_offset;
 	int menu_text_x_bonus;      /* Bonus offsets when selected        */
 	int menu_text_y_bonus;
+};
 
-} BoxParam;
-
-
-typedef struct {
+struct Box {
 	int active;
 
 	int base_x, base_y;         /* Box base screen location       */
@@ -196,8 +194,7 @@ typedef struct {
 	long request_y_size;
 
 	int icon_center;
-
-} Box;
+};
 
 
 /* Item types defined so */
@@ -208,15 +205,9 @@ typedef struct {
 #define ITEM_SPRITE           4       /* Static sprite  */
 #define ITEM_MENU             5       /* Menu item      */
 
-/*
-#define ITEM_CHECKBOX         5
-#define ITEM_RADIO            6
-#define ITEM_STRING           7
-*/
 
-
-typedef struct {
-	char *data;             /* Heap pointer for buffer space */
+struct PopupBuffer {
+	char *data;                 /* Heap pointer for buffer space */
 	int max_length;             /* Buffer max string width       */
 	int width;                  /* Buffer width in pixels        */
 	int base_x;                 /* Buffer base position          */
@@ -224,7 +215,7 @@ typedef struct {
 	int cursor;                 /* Buffer cursor location        */
 	int select_base;
 	int select_target;
-} PopupBuffer;
+};
 
 
 #define SCROLL_AXIS_HORIZONTAL        0
@@ -233,7 +224,7 @@ typedef struct {
 #define SCROLL_STATUS_UP              0x80
 #define SCROLL_STATUS_DOWN            0x40
 
-typedef struct {
+struct PopupScrollBar {
 	int axis;
 
 	int status;
@@ -248,11 +239,9 @@ typedef struct {
 	int thumb_base;
 	int thumb_item;
 	int thumb_size;
+};
 
-} PopupScrollBar;
-
-
-typedef struct {
+struct PopupList {
 	int box_x, box_y;           /* Size of box around list */
 	int box_xs, box_ys;
 
@@ -276,14 +265,12 @@ typedef struct {
 
 	PopupScrollBar scroll;      /* ScrollBar info            */
 
-	/* ItemPtr   attached_string;  */
-
-	char *data;             /* List string data          */
+	char *data;                 /* List string data          */
 
 	long double_clock;          /* Double click clock        */
 	int  double_element;        /* Double click element      */
 
-} PopupList;
+};
 
 #define POPUP_DOUBLE_CLICK_THRESHOLD  20
 
@@ -354,7 +341,7 @@ struct PopupItem {
 #define POPUP_STATUS_BUTTON   0x0001  /* Popup button row in use      */
 
 
-typedef struct {
+struct Popup {
 	Heap heap;                  /* Popup heap space         */
 
 	word status;                /* Popup status flags       */
@@ -392,7 +379,7 @@ typedef struct {
 	int16 num_items;              /* Number of items in popup */
 
 	PopupItem *item;        /* Item list                */
-} Popup;
+};
 
 
 extern Box text_box;
@@ -413,37 +400,36 @@ extern BoxParam box_param;
 
 extern void init_popup();
 
-int  popup_create(int horiz_pieces, int x, int y);
-void popup_add_icon(SeriesPtr series, int id, int center);
-int  popup_draw(int save_screen, int depth_code);
-void popup_destroy(void);
+extern int popup_create(int horiz_pieces, int x, int y);
+extern void popup_add_icon(SeriesPtr series, int id, int center);
+extern int popup_draw(int save_screen, int depth_code);
+extern void popup_destroy();
 
-void popup_next_line(void);
-void popup_set_ask(void);
-void popup_add_string(const char *string);
-void popup_write_string(const char *string);
-void popup_bar(void);
-void popup_underline(void);
-void popup_downpixel(void);
-void popup_tab(int tab_level);
-void popup_center_string(const char *string, int underline);
+extern void popup_next_line();
+extern void popup_set_ask();
+extern void popup_add_string(const char *string);
+extern void popup_write_string(const char *string);
+extern void popup_bar();
+extern void popup_underline();
+extern void popup_downpixel();
+extern void popup_tab(int tab_level);
+extern void popup_center_string(const char *string, int underline);
 
-int  popup_and_wait(int save_screen);
-int  popup_and_dont_wait(int save_screen);
+extern int popup_and_wait(int save_screen);
+extern int popup_and_dont_wait(int save_screen);
 
-void popup_update_ask(char *string, int maxlen);
-int  popup_ask_string(char *target, int maxlen, int save_screen);
-int  popup_ask_number(long *value, int maxlen, int save_screen);
+extern void popup_update_ask(char *string, int maxlen);
+extern int popup_ask_string(char *target, int maxlen, int save_screen);
+extern int popup_ask_number(long *value, int maxlen, int save_screen);
 
+extern int popup_estimate_pieces(int maxlen);
+extern int popup_get_string(char *target, const char *top, const char *left, int maxlen);
+extern int popup_get_long(long *value, const char *top, const char *left, int maxlen);
+extern int popup_get_number(int16 *value, const char *top, const char *left, int maxlen);
 
-int popup_estimate_pieces(int maxlen);
-int popup_get_string(char *target, const char *top, const char *left, int maxlen);
-int popup_get_long(long *value, const char *top, const char *left, int maxlen);
-int popup_get_number(int16 *value, const char *top, const char *left, int maxlen);
+extern int popup_alert(int width, const char *message_line, ...);
 
-int popup_alert(int width, const char *message_line, ...);
-
-int popup_box_load(void);
+extern int popup_box_load();
 
 /*
  * popup_dialog_create()
@@ -462,30 +448,30 @@ Popup *popup_dialog_create(void *memory, long heap_size, int max_items);
  *
  * @return 
  */
-Popup *popup_dialog_destroy(void);
+extern Popup *popup_dialog_destroy();
 
-PopupItem *popup_button(const char *prompt, int x);
-PopupItem *popup_cancel_button(const char *prompt);
-PopupItem *popup_message(const char *prompt, int x, int y);
-PopupItem *popup_execute(void);
+extern PopupItem *popup_button(const char *prompt, int x);
+extern PopupItem *popup_cancel_button(const char *prompt);
+extern PopupItem *popup_message(const char *prompt, int x, int y);
+extern PopupItem *popup_execute();
 
-PopupItem *popup_savelist(char *data, char *empty_string,
+extern PopupItem *popup_savelist(char *data, char *empty_string,
 	int elements, int element_offset, int element_max_length,
 	int pixel_width, int rows, int accept_input, int default_element);
 
-void popup_blank(int num_lines);
-void popup_blank_line(void);
-void popup_width_force(int width);
+extern void popup_blank(int num_lines);
+extern void popup_blank_line();
+extern void popup_width_force(int width);
 
 
-void popup_menu_option(PopupItem *item, char *option);
-PopupItem *popup_menu(const char *prompt,
+extern void popup_menu_option(PopupItem *item, char *option);
+extern PopupItem *popup_menu(const char *prompt,
 	int x, int y, int pixel_width,
 	int off_center_x,
 	int elements, int element_max_length,
 	int default_element);
 
-PopupItem *popup_sprite(SeriesPtr series, int sprite, int x, int y);
+extern PopupItem *popup_sprite(SeriesPtr series, int sprite, int x, int y);
 
 } // namespace MADSV2
 } // namespace MADS

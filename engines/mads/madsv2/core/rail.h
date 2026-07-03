@@ -39,7 +39,7 @@ extern struct Rail *rail_base;
 
 extern void rail_add_node(int id, int x, int y);
 extern void rail_connect_node(int id);
-extern void rail_connect_all_nodes(void);
+extern void rail_connect_all_nodes();
 extern void rail_disconnect_line(int from, int unto);
 extern void rail_disconnect_node(int id);
 

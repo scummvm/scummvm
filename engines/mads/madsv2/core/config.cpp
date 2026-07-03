@@ -100,7 +100,7 @@ void global_load_config_parameters() {
 	}
 }
 
-void global_unload_config_parameters(void) {
+void global_unload_config_parameters() {
 	config_file.interface_hotspots = inter_report_hotspots ? INTERFACE_BRAINDEAD : INTERFACE_MACINTOSH;
 
 	config_file.panning_speed = kernel_panning_speed;

@@ -76,7 +76,7 @@ namespace MADSV2 {
 
 /* Develop-time structure for hotspots (.HOT files) */
 
-typedef struct HotEdit {
+struct HotSpotEdit {
 	int ul_x, ul_y, lr_x, lr_y;         /* Hotspot screen coordinates   */
 	int feet_x, feet_y;                 /* Walk-to target for player    */
 	byte facing;                        /* Direction player should face */
@@ -85,7 +85,7 @@ typedef struct HotEdit {
 	byte syntax;                        /* Word syntax                  */
 	char vocab[VC_MAXWORDLEN + 1];        /* Vocabulary name of hotspot   */
 	char verb[VC_MAXWORDLEN + 1];         /* Vocabulary default verb name */
-} HotSpotEdit;
+};
 
 typedef HotSpotEdit *HotEditPtr;
 
@@ -126,18 +126,18 @@ typedef Rail *RailPtr;
 
 /* Room artwork definition structure (.ART files) */
 
-typedef struct {
+struct RoomArt {
 	int xs;                             /* Size of picture (follows this... */
 	int ys;                             /* ...structure in the .ART file)   */
 	ColorList color_list;               /* List of colors used in picture   */
 	CycleList cycle_list;               /* List of color cycling ranges     */
-} RoomArt;
+};
 typedef RoomArt *RoomArtPtr;
 
 
 /* Room picture definition structure (.PCT files) */
 
-typedef struct {
+struct RoomPict {
 	int id;                                          /* Room id         */
 	int picture_id;                                  /* Room picture id */
 	int format;                                      /* Attribute format*/
@@ -157,7 +157,7 @@ typedef struct {
 	ColorList color_list;       /* Room's color list                    */
 
 	CycleList cycle_list;       /* Room's color cycling information     */
-} RoomPict;
+};
 
 typedef RoomPict RoomPictPtr;
 
@@ -277,7 +277,7 @@ extern void room_himem_preload(int room, int level);
 extern RoomPtr room_dummy_init(int xs, int ys);
 extern int room_picture_load(int room_id, Buffer *picture, int load_flags);
 extern void room_resolve_base(char *base, char *file, int id, const char *base_path);
-extern int room_invert(void);
+extern int room_invert();
 
 extern void init_room();
 

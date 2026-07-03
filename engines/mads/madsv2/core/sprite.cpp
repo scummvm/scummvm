@@ -1165,7 +1165,7 @@ done:
 }
 
 
-void dont_frag_the_palette(void) {
+void dont_frag_the_palette() {
 	/* this will tell sprite_free to not execute pal_deallocate. This will */
 	/* make it so the colors are not freed and you won't get the */
 	/* palette fragging. */
@@ -1173,7 +1173,7 @@ void dont_frag_the_palette(void) {
 	kidney = true;
 }
 
-void go_ahead_and_frag_the_palette(void) {
+void go_ahead_and_frag_the_palette() {
 	kidney = false;
 }
 

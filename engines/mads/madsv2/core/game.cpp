@@ -50,7 +50,6 @@
 #include "mads/madsv2/core/error.h"
 #include "mads/madsv2/core/popup.h"
 #include "mads/madsv2/core/object.h"
-#include "mads/madsv2/core/demo.h"
 #include "mads/madsv2/core/himem.h"
 #include "mads/madsv2/core/lock.h"
 #include "mads/madsv2/core/magic.h"

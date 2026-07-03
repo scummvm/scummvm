@@ -34,7 +34,7 @@ namespace MADSV2 {
 #define LOADER_XMS      2       /* File being read from xms  */
 
 
-typedef struct {
+struct Load {
 	int open;                   /* Open status (true = open)             */
 	int reading;                /* Read/Write status (true = reading)    */
 	byte mode;                  /* Access mode (LOADER_EMS/LOADER_DISK)  */
@@ -47,7 +47,7 @@ typedef struct {
 	long decompress_size;       /* Decompressed size of file             */
 	int pack_list_marker;       /* Packing list marker                   */
 	PackList pack;              /* Packing list                          */
-} Load;
+};
 
 typedef Load *LoadHandle;
 

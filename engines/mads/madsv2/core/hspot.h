@@ -34,14 +34,14 @@ namespace MADSV2 {
 #define HS_DEATH        -1      /* Used for marking spots to be killed */
 #define HS_STACK_SIZE   5       /* Size of stack */
 
-typedef struct {
+struct Spot {
 	int ul_x, ul_y;  /* Upper Left      */
 	int lr_x, lr_y;  /* Lower Right     */
 	int _class;      /* Clasification   */
 	int num;        /* Spot number     */
 	int video_mode; /* Spot video mode */
 	int active;     /* TRUE if active  */
-} Spot;
+};
 
 #define         HS_SIZE         16      /* Size of above structure */
 

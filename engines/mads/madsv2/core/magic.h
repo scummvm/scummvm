@@ -42,11 +42,11 @@ namespace MADSV2 {
 #define MAGIC_SWAP_BACKGROUND 0
 #define MAGIC_SWAP_FOREGROUND 1
 
-typedef struct {
+struct MagicGrey {
 	byte intensity;
 	byte map_color;
 	word accum[3];
-} MagicGrey;
+};
 
 typedef MagicGrey *MagicGreyPtr;
 
@@ -61,8 +61,8 @@ extern int magic_special_center_y;
 extern void magic_get_grey_values(Palette *pal, byte *grey_value,
 	int base_color, int num_colors);
 extern void magic_grey_palette(Palette *pal);
-/*
- * magic_grey_popularity()
+
+/**
  * Given a "grey_list" containing "num_colors" grey values (0-63),
  * produces a 64-byte "grey_table" containing the number of grey
  * values of each intensity level.
@@ -82,8 +82,8 @@ extern void magic_fade_to_grey(Palette pal, byte *map_pointer,
 	int tick_delay, int steps);
 extern void magic_fade_from_grey(RGBcolor *pal, Palette target, int base_color,
 	int num_colors, int base_grey, int num_greys, int tick_delay, int steps);
-/*
- * magic_screen_change_corner()
+
+/**
  * Picture-to-picture transition in which one of the screen
  * corners is pulled diagonally across the screen to bring in
  * the new view.
@@ -102,8 +102,8 @@ extern void magic_fade_from_grey(RGBcolor *pal, Palette target, int base_color,
 extern void magic_screen_change_corner(Buffer *new_screen, Palette pal, int corner_id,
 	int buffer_base_x, int buffer_base_y, int screen_base_x, int screen_base_y,
 	int thru_black, int set_palette, int tick_delay);
+
 /*
- * magic_screen_change_edge()
  * Picture-to-picture transition in which the new picture sweeps
  * in from either the right or left edge.
  *
@@ -121,8 +121,8 @@ extern void magic_screen_change_corner(Buffer *new_screen, Palette pal, int corn
 extern void magic_screen_change_edge(Buffer *new_screen, Palette pal, int edge_id,
 	int buffer_base_x, int buffer_base_y, int screen_base_x, int screen_base_y,
 	int thru_black, int set_palette, int tick_delay);
-/*
- * magic_screen_change_circle()
+
+/**
  * Picture-to-picture transition in which the new picture is
  * brought in with either expanding or contracting concentric
  * circles.

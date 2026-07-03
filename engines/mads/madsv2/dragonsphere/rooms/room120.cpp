@@ -162,7 +162,7 @@ static void room_120_init() {
 	section_1_music();
 }
 
-static void generate_path(void) {
+static void generate_path() {
 	if (local->highlighting == words_Gran_Callahach) {
 		if (global[pre_room] == 110) { /* Gran Callahach */
 			local->path_0[0] = ' ';

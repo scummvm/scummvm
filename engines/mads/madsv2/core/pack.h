@@ -243,11 +243,11 @@ extern void pack_set_special_buffer(byte *buffer_address,
  *
  * @return 
  */
-extern int pack_check(void);
-extern void pack_enable_zip(void);
-extern void pack_enable_pfab(void);
-extern void pack_enable_pfab_explode(void);
-extern void pack_enable_zip_explode(void);
+extern int pack_check();
+extern void pack_enable_zip();
+extern void pack_enable_pfab();
+extern void pack_enable_pfab_explode();
+extern void pack_enable_zip_explode();
 extern long pack_rle(byte *target, byte *source, word source_size);
 extern word pack_write_ems(char *buffer, word *mysize);
 

@@ -65,9 +65,9 @@ struct Scratch {        /* Room local variables */
 #define WALK_TO_Y_FROM_106    75
 
 
-extern void room_107_init(void);
-extern void room_107_parser(void);
-extern void room_107_preload(void);
+extern void room_107_init();
+extern void room_107_parser();
+extern void room_107_preload();
 
 } // namespace Rooms
 } // namespace Phantom

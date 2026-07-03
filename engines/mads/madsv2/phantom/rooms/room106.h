@@ -151,11 +151,11 @@ struct Scratch {        /* Room local variables */
 #define DYN_FLOOR_2_WALK_TO_Y 109
 
 
-extern void room_106_init(void);
-extern void room_106_daemon(void);
-extern void room_106_pre_parser(void);
-extern void room_106_parser(void);
-extern void room_106_preload(void);
+extern void room_106_init();
+extern void room_106_daemon();
+extern void room_106_pre_parser();
+extern void room_106_parser();
+extern void room_106_preload();
 
 } // namespace Rooms
 } // namespace Phantom

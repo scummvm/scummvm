@@ -35,7 +35,7 @@ namespace Rooms {
 
 static Scratch scratch;
 
-void room_250_init(void) {
+void room_250_init() {
 	viewing_at_y = ((video_y - display_y) >> 1);
 
 	player.commands_allowed = false;
@@ -56,7 +56,7 @@ void room_250_init(void) {
 }
 
 
-void room_250_daemon(void) {
+void room_250_daemon() {
 	int score;
 	int id;
 	int y;
@@ -129,7 +129,7 @@ void room_250_daemon(void) {
 	}
 }
 
-void room_250_preload(void) {
+void room_250_preload() {
 	room_init_code_pointer = room_250_init;
 	room_pre_parser_code_pointer = NULL;
 	room_parser_code_pointer = NULL;

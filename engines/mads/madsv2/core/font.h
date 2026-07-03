@@ -39,7 +39,7 @@ struct FontBuf {
 	byte *data[FONT_SIZE];
 };
 
-typedef struct FontBuf Font;
+typedef FontBuf Font;
 typedef Font *FontPtr;
 
 extern byte font_colors[4];

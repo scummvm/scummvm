@@ -83,11 +83,11 @@ int mem_adjust_impl(void *&target, long size) {
 	return 0;
 }
 
-void mem_save_free(void) {
+void mem_save_free() {
 	// No implementation
 }
 
-void mem_restore_free(void) {
+void mem_restore_free() {
 	// No implementation
 }
 
@@ -95,7 +95,7 @@ long mem_conv_get_avail() {
 	return 999999;
 }
 
-long mem_get_avail(void) {
+long mem_get_avail() {
 	return 999999;
 }
 

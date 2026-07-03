@@ -45,7 +45,7 @@ void cursor_set_mode(int my_type) {
 	// No implementation
 }
 
-void cursor_toggle_insert(void) {
+void cursor_toggle_insert() {
 	if (cursor_mode == CURSOR_OVERWRITE) {
 		cursor_set_mode(CURSOR_INSERT);
 	} else {

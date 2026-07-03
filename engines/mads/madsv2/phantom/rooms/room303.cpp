@@ -46,7 +46,7 @@ namespace Rooms {
 
 static Scratch scratch;
 
-void room_303_init(void) {
+void room_303_init() {
 	local->anim_0_running = false;
 	local->frame_guard = false;
 
@@ -117,7 +117,7 @@ void room_303_init(void) {
 	section_3_music();
 }
 
-void room_303_pre_parser(void) {
+void room_303_pre_parser() {
 	if (player_said_2(exit_to, catwalk)) {
 		if (!global[right_door_is_open_504]) {
 			if (inter_point_x > 160) {
@@ -133,7 +133,7 @@ void room_303_pre_parser(void) {
 	}
 }
 
-void room_303_parser(void) {
+void room_303_parser() {
 	if (((player_said_2(take, large_note)) && (object_is_here(large_note))) || ((kernel.trigger > 0) && kernel.trigger < 3)) {
 		switch (kernel.trigger) {
 		case (0):
@@ -315,7 +315,7 @@ done:
 	;
 }
 
-void room_303_daemon(void) {
+void room_303_daemon() {
 	if (kernel.trigger == ROOM_303_DONE_CLIMBING_UP) {
 		player.x = CLIMB_X;
 		player.y = CLIMB_Y;
@@ -336,7 +336,7 @@ void room_303_daemon(void) {
 	}
 }
 
-void room_303_preload(void) {
+void room_303_preload() {
 	room_init_code_pointer = room_303_init;
 	room_pre_parser_code_pointer = room_303_pre_parser;
 	room_parser_code_pointer = room_303_parser;

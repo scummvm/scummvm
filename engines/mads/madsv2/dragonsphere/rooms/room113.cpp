@@ -412,7 +412,7 @@ static void handle_animation_seal() {
 	}
 }
 
-static void room_113_daemon(void) {
+static void room_113_daemon() {
 	if (local->anim_0_running) {
 		handle_animation_seal();
 	}

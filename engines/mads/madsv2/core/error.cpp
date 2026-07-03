@@ -222,7 +222,7 @@ done:
 	;
 }
 
-void error_check_memory(void) {
+void error_check_memory() {
 	if (mem_last_alloc_failed) {
 		error_report(ERROR_NO_MORE_MEMORY, ERROR, mem_last_alloc_loader,
 			mem_last_alloc_size, mem_last_alloc_avail);

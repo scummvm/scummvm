@@ -42,7 +42,7 @@ namespace MADSV2 {
 #define CAMERA_DEFAULT_Y_OFF_CENTER     80
 
 
-typedef struct {
+struct Camera {
 	int pans;                     /* Flag if camera can pan in this room */
 	int panning;                  /* Flag if camera now panning          */
 	int pan_mode;                 /* Panning mode (CAMERA_PLAYER, etc.)  */
@@ -55,7 +55,7 @@ typedef struct {
 	int pan_direction;            /* Pan initial direction               */
 	long pan_clock;               /* Pan clock for next update           */
 	int pan_this_frame;           /* Flag if panned this frame           */
-} Camera;
+};
 
 
 extern Camera camera_x;        /* Horizontal panning camera */

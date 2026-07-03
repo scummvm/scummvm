@@ -122,34 +122,27 @@ extern int work_screen_ems_handle;      /* Work screen in EMS        */
 extern TileMapHeader picture_map, depth_map;      /* Tile maps         */
 extern TileResource  picture_resource, depth_resource; /* Tile resources    */
 
+extern void matte_init(int init_series);
+extern int matte_map_work_screen();
 
 
+extern void matte_frame(int special_effect, int full_screen);
 
-void matte_init(int init_series);
-int  matte_map_work_screen(void);
+extern int matte_load_series(const char *name, int load_flags, int bonus_series_number);
+extern void matte_deallocate_series(int id, int free_memory);
+extern int matte_allocate_series(SeriesPtr series, int bonus_series_number);
 
+extern int matte_add_message(FontPtr font, char *text, int x, int y,
+	int message_color, int auto_spacing);
+extern void matte_clear_message(int handle);
 
-void matte_frame(int special_effect, int full_screen);
+extern int matte_allocate_image();
 
-//void matte_init_series(void);
-int  matte_load_series(const char *name, int load_flags, int bonus_series_number);
-void matte_deallocate_series(int id, int free_memory);
-int  matte_allocate_series(SeriesPtr series,
-	int bonus_series_number);
+extern void matte_refresh_work();
 
-//void matte_init_messages(void);
-int  matte_add_message(FontPtr font, char *text,
-	int x, int y, int message_color,
-	int auto_spacing);
-void matte_clear_message(int handle);
-
-int matte_allocate_image(void);
-
-void matte_refresh_work(void);
-
-void matte_inter_frame(int update_live, int clear_chaff);
-int  matte_allocate_inter_image(void);
-void matte_refresh_inter(void);
+extern void matte_inter_frame(int update_live, int clear_chaff);
+extern int matte_allocate_inter_image();
+extern void matte_refresh_inter();
 
 extern void init_matte();
 

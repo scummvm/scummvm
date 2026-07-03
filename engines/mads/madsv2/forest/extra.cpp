@@ -55,13 +55,13 @@ void clear_selected_item() {
 	buffer_rect_copy_2(scr_inter_orig, scr_live, 138, 0, 138, 156, 55, 42);
 }
 
-void solve_me_selected(void) {
+void solve_me_selected() {
 	global[walker_converse_state] = -1;
 	open_interface(CANDLE_FLY);
 	game_exec_function(room_parser_code_pointer);
 }
 
-void door_selected(void) {
+void door_selected() {
 	open_interface(DOOR_FLY);
 	kernel.activate_menu = GAME_MAIN_MENU;
 }

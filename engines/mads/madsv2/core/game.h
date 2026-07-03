@@ -227,31 +227,31 @@ extern int  report_version;
 extern int art_hags_are_on_hd;
 
 extern void game_save_name(int id);
-extern void game_set_camera_speed(void);
+extern void game_set_camera_speed();
 
 /**
  * Execute a function-pointer routine.
  */
 extern void game_exec_function(void (*(target))());
 
-extern void game_debugger_reset(void);
-extern void game_debugger(void);
+extern void game_debugger_reset();
+extern void game_debugger();
 
 /**
  * Sets up for the main menu routines to run--this mainly involves
  * getting enough memory to hold the save directory and menu heap.
  */
 
-extern void game_menu_setup(void);
+extern void game_menu_setup();
 
 /**
  * Tells the menu structures to bite down hard.
  */
-extern void game_menu_shutdown(void);
+extern void game_menu_shutdown();
 
 extern int  main_cheating_key(int mykey);
 extern int  main_normal_key(int mykey);
-extern int  main_copy_verify(void);
+extern int  main_copy_verify();
 extern void game_cold_data_init();
 
 /**

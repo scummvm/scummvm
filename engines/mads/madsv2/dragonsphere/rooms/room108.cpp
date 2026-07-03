@@ -276,7 +276,7 @@ static void room_108_daemon() {
 	}
 }
 
-static void room_108_pre_parser(void) {
+static void room_108_pre_parser() {
 	if (player_said_1(doorway_to_cell) && player.need_to_walk) {
 		if (!player_said_1(walk_through)) {
 			player.need_to_walk = false;
@@ -288,7 +288,7 @@ static void room_108_pre_parser(void) {
 	}
 }
 
-static void room_108_parser(void) {
+static void room_108_parser() {
 	int temp;
 
 	if (player.look_around) {

@@ -140,13 +140,13 @@ void room_301_init() {
 	section_3_music();
 }
 
-void room_301_pre_parser(void) {
+void room_301_pre_parser() {
 	if (player_said_2(exit_to, catwalk_over_house)) {
 		player.walk_off_edge_to_room = 302;
 	}
 }
 
-void room_301_parser(void) {
+void room_301_parser() {
 	if (player_said_2(climb_down, circular_staircase)) {
 		switch (kernel.trigger) {
 		case 0:
@@ -336,7 +336,7 @@ done:
 	;
 }
 
-void room_301_daemon(void) {
+void room_301_daemon() {
 	if (global[done_brie_conv_203] == YES_AND_CHASE) {
 		if ((picture_view_x < 320) && (player.x < 350)) {
 			player_cancel_command();
@@ -388,7 +388,7 @@ void room_301_daemon(void) {
 	}
 }
 
-void room_301_preload(void) {
+void room_301_preload() {
 	room_init_code_pointer = room_301_init;
 	room_pre_parser_code_pointer = room_301_pre_parser;
 	room_parser_code_pointer = room_301_parser;

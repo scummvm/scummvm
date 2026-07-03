@@ -678,7 +678,7 @@ void room_607_synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(local->prevent);
 }
 
-void room_607_preload(void) {
+void room_607_preload() {
 	room_init_code_pointer = room_607_init;
 	room_pre_parser_code_pointer = room_607_pre_parser;
 	room_parser_code_pointer = room_607_parser;

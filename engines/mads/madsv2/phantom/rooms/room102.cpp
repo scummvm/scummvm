@@ -37,7 +37,7 @@ namespace Rooms {
 
 static Scratch scratch;
 
-void room_102_init(void) {
+void room_102_init() {
 	int death_x = 0;
 	int death_y = 0;
 	int death_scale = 0;
@@ -127,7 +127,7 @@ void room_102_init(void) {
 }
 
 
-void room_102_daemon(void) {
+void room_102_daemon() {
 	if (kernel.trigger == ROOM_102_DOOR_CLOSES) {
 		seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, 4);
 		kernel_seq_depth(seq[fx_door], 14);
@@ -146,7 +146,7 @@ void room_102_daemon(void) {
 }
 
 
-void room_102_pre_parser(void) {
+void room_102_pre_parser() {
 	if ((player_said_2(open, orchestra_door)) ||
 	    (player_said_2(push, orchestra_door))) {
 		player_walk(FRONT_OF_DOOR_X, FRONT_OF_DOOR_Y, FACING_EAST);
@@ -154,7 +154,7 @@ void room_102_pre_parser(void) {
 }
 
 
-void room_102_parser(void) {
+void room_102_parser() {
 	if (player_said_2(walk_down, aisle)) {
 		new_room = 101;
 		goto handled;
@@ -295,7 +295,7 @@ done:
 	;
 }
 
-void room_102_preload(void) {
+void room_102_preload() {
 	room_init_code_pointer = room_102_init;
 	room_pre_parser_code_pointer = room_102_pre_parser;
 	room_parser_code_pointer = room_102_parser;
