@@ -181,6 +181,7 @@ public:
 	Window *getCurrentWindow() const { return _currentWindow; }
 	Window *getOrCreateWindow(Common::String &name);
 	void forgetWindow(Window *window);
+	bool isWindowRegistered(Window *window) const;
 	void setCurrentWindow(Window *window);
 	Window *getCursorWindow() const { return _cursorWindow; }
 	void setCursorWindow(Window *window) { _cursorWindow = window; }
