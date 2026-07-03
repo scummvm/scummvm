@@ -112,9 +112,12 @@ Movie::~Movie() {
 		g_director->_allOpenResFiles.remove(_cast->getArchive()->getPathName());
 	}
 
-	delete _cast;
-	delete _sharedCast;
 	delete _score;
+
+	for (auto &it : _casts) {
+		delete it._value;
+	}
+	delete _sharedCast;
 }
 
 void Movie::setArchive(Common::SharedPtr<Archive> archive) {

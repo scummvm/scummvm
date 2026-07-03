@@ -569,6 +569,7 @@ void Window::loadNewSharedCast(Cast *previousSharedCast) {
 		// Clear those previous widget pointers
 		previousSharedCast->releaseCastMemberWidget();
 		_currentMovie->_sharedCast = previousSharedCast;
+		previousSharedCast->setMovie(_currentMovie);
 
 		debugC(1, kDebugLoading, "Skipping loading already loaded shared cast, path: %s", previousSharedCastPath.toString(Common::Path::kNativeSeparator).c_str());
 		return;
@@ -609,6 +610,9 @@ bool Window::loadNextMovie() {
 	if (_currentMovie) {
 		previousSharedCast = _currentMovie->getSharedCast();
 		_currentMovie->_sharedCast = nullptr;
+		if (previousSharedCast) {
+			previousSharedCast->setMovie(nullptr);
+		}
 	}
 
 	if (_currentMovie) {
