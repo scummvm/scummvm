@@ -164,6 +164,9 @@ LingoState::~LingoState() {
 		if (callstack[i]->retContext) {
 			callstack[i]->retContext->decRefCount();
 		}
+		if (callstack[i]->retWindow) {
+			callstack[i]->retWindow->decRefCount();
+		}
 		delete callstack[i];
 	}
 	if (localVars)
@@ -401,6 +404,7 @@ void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint1
 
 	ScriptContext *sc = g_lingo->_compiler->compileLingo(code, this, type, CastMemberID(id, cast->_castLibID), contextName, false, preprocFlags);
 	if (sc) {
+		sc->setCast(cast);
 		scriptContexts[type][id] = sc;
 		sc->incRefCount();
 	}

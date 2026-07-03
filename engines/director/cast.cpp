@@ -97,6 +97,11 @@ Cast::Cast(Movie *movie, uint16 castLibID, bool isShared, bool isExternal, uint1
 }
 
 Cast::~Cast() {
+	for (auto &it : _liveScriptContexts) {
+		it._key->_cast = nullptr;
+	}
+	_liveScriptContexts.clear();
+
 	for (auto &it : _loadedStxts)
 		delete it._value;
 
@@ -1813,6 +1818,7 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 				// Those scripts need to be cleaned up on ~LingoArchive
 				script->setOnlyInLctxContexts();
 			}
+			script->setCast(this);
 		}
 	} else {
 		error("Cast::loadLingoContext: unsupported Director version v%d (%d)", humanVersion(_version), _version);

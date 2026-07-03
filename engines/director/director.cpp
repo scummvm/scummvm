@@ -218,6 +218,18 @@ void DirectorEngine::forgetWindow(Window *window) {
 	_windowsToForget.push_back(window);
 }
 
+bool DirectorEngine::isWindowRegistered(Window *window) const {
+	if (window == _stage) {
+		return true;
+	}
+	for (auto &it : _windowList) {
+		if (it == window) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void DirectorEngine::setCurrentWindow(Window *window) {
 	if (_currentWindow == window)
 		return;

@@ -24,6 +24,7 @@
 #include "graphics/macgui/mactext.h"
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/movie.h"
 #include "director/window.h"
 #include "director/lingo/lingo-ast.h"
@@ -586,9 +587,26 @@ ScriptContext::ScriptContext(const ScriptContext &sc) : Object<ScriptContext>(sc
 
 	_id = sc._id;
 	_castLibHint = sc._castLibHint;
+	setCast(sc._cast);
 }
 
 ScriptContext::~ScriptContext() {
+	if (_cast) {
+		_cast->unregisterScriptContext(this);
+	}
+}
+
+void ScriptContext::setCast(Cast *cast) {
+	if (_cast == cast) {
+		return;
+	}
+	if (_cast) {
+		_cast->unregisterScriptContext(this);
+	}
+	_cast = cast;
+	if (_cast) {
+		_cast->registerScriptContext(this);
+	}
 }
 
 Common::String ScriptContext::asString() {
