@@ -213,6 +213,16 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene1090EntryLineSeen);
 	syncStateBool(s, state.scene1090LightsOn);
 	s.syncAsByte(state.scene1090WrappedBrainState);
+	syncStateBool(s, state.scene2010EntryLineSeen);
+	syncStateBool(s, state.scene2010LongSequenceFirstSpeechSeen);
+	syncStateBool(s, state.scene2010B02EntranceUsed);
+	s.syncAsByte(state.scene2010TravelReturnSpeechState);
+	syncStateBool(s, state.scene2020EntryLineSeen);
+	syncStateBool(s, state.scene2020PrincessGone);
+	s.syncAsByte(state.scene2020TigerToothState);
+	syncStateBool(s, state.scene2020HatPresent);
+	syncStateBool(s, state.scene2020SunglassesPresent);
+	syncStateBool(s, state.scene2020PrincessConversationSeen);
 	syncStateBool(s, state.scene6010StudioEntryUnlocked);
 	syncStateBool(s, state.scene6010Item59Visible);
 	s.syncAsByte(state.scene6010DoorActionState);
@@ -224,6 +234,16 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.scene2040SphinxFaceState);
 	s.syncAsByte(state.scene2040SphinxItemRevealed);
 	s.syncAsByte(state.scene2040SphinxExitInterviewState);
+	s.syncAsByte(state.scene2050EntrySpeechState);
+	s.syncAsByte(state.scene2050MuralPuzzleState);
+	syncStateBool(s, state.scene2050SealRevealed);
+	syncStateBool(s, state.scene2050LabyrinthLampReady);
+	s.syncAsByte(state.egyptSealPuzzleProgress);
+	s.syncAsByte(state.egyptLabyrinthPositionIndex);
+	s.syncAsByte(state.scene2070EntryProgress);
+	s.syncAsByte(state.scene2070SealExitPatchState);
+	s.syncAsByte(state.scene2070InnerPassagePatchState);
+	s.syncAsByte(state.scene2070HiddenItemPatchState);
 	syncStateBool(s, state.scene6020TaffyKnown);
 	syncStateBool(s, state.scene6020TaffyLeft);
 	syncStateBool(s, state.scene6030HannoverInterviewCompleted);
@@ -421,6 +441,10 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene1080FrancoisProgressState = 0;
 	if (state.scene1090WrappedBrainState > 2)
 		state.scene1090WrappedBrainState = 0;
+	if (state.scene2010TravelReturnSpeechState > 2)
+		state.scene2010TravelReturnSpeechState = 0;
+	if (state.scene2020TigerToothState > 2)
+		state.scene2020TigerToothState = 0;
 	if (state.scene2040SphinxBasePatchState > 1)
 		state.scene2040SphinxBasePatchState = 0;
 	if (state.scene2040SphinxFaceState > 3)
@@ -429,6 +453,22 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene2040SphinxItemRevealed = 0;
 	if (state.scene2040SphinxExitInterviewState > 3)
 		state.scene2040SphinxExitInterviewState = 0;
+	if (state.scene2050EntrySpeechState > 2)
+		state.scene2050EntrySpeechState = 0;
+	if (state.scene2050MuralPuzzleState > 3)
+		state.scene2050MuralPuzzleState = 0;
+	if (state.egyptSealPuzzleProgress > 2)
+		state.egyptSealPuzzleProgress = 0;
+	if (state.egyptLabyrinthPositionIndex >= 0x48 && state.egyptLabyrinthPositionIndex != 0xff)
+		state.egyptLabyrinthPositionIndex = 0x2a;
+	if (state.scene2070EntryProgress > 2)
+		state.scene2070EntryProgress = 0;
+	if (state.scene2070SealExitPatchState > 1)
+		state.scene2070SealExitPatchState = 0;
+	if (state.scene2070InnerPassagePatchState > 1)
+		state.scene2070InnerPassagePatchState = 0;
+	if (state.scene2070HiddenItemPatchState > 1)
+		state.scene2070HiddenItemPatchState = 0;
 	if (state.scene4010AlternateBackgroundState > 1)
 		state.scene4010AlternateBackgroundState = 0;
 	if (state.scene4010EntryPathSpeechState > 2)

@@ -40,8 +40,13 @@
 #include "hollywood/scenes/playable/scene1080.h"
 #include "hollywood/scenes/playable/scene1090.h"
 #include "hollywood/scenes/playable/scene2000.h"
+#include "hollywood/scenes/playable/scene2010.h"
+#include "hollywood/scenes/playable/scene2020.h"
 #include "hollywood/scenes/playable/scene2030.h"
 #include "hollywood/scenes/playable/scene2040.h"
+#include "hollywood/scenes/playable/scene2050.h"
+#include "hollywood/scenes/playable/scene2060.h"
+#include "hollywood/scenes/playable/scene2070.h"
 #include "hollywood/scenes/playable/scene3000.h"
 #include "hollywood/scenes/playable/scene3010.h"
 #include "hollywood/scenes/playable/scene3020.h"
@@ -121,10 +126,20 @@ const int kScene1080LastState = 0x0441;
 const int kScene1090FirstState = 0x0442;
 const int kScene1090LastState = 0x044b;
 const int kScene2000State = 2000;
+const int kScene2010FirstState = 0x07da;
+const int kScene2010LastState = 0x07dc;
+const int kScene2020FirstState = 0x07e4;
+const int kScene2020LastState = 0x07ed;
 const int kScene2030FirstState = 0x07ee;
 const int kScene2030LastState = 0x07f7;
 const int kScene2040FirstState = 0x07f8;
 const int kScene2040LastState = 0x0801;
+const int kScene2050FirstState = 0x0802;
+const int kScene2050LastState = 0x0803;
+const int kScene2060FirstState = 0x080c;
+const int kScene2060LastState = 0x0811;
+const int kScene2070FirstState = 0x0816;
+const int kScene2070LastState = 0x0817;
 const int kScene3000State = 3000;
 const int kScene3010FirstState = 0x0bc2;
 const int kScene3010LastState = 0x0bcb;
@@ -204,8 +219,13 @@ bool isImplementedGameplayState(int stateId) {
 		(stateId >= kScene1080FirstState && stateId <= kScene1080LastState) ||
 		(stateId >= kScene1090FirstState && stateId <= kScene1090LastState) ||
 		stateId == kScene2000State ||
+		(stateId >= kScene2010FirstState && stateId <= kScene2010LastState) ||
+		(stateId >= kScene2020FirstState && stateId <= kScene2020LastState) ||
 		(stateId >= kScene2030FirstState && stateId <= kScene2030LastState) ||
 		(stateId >= kScene2040FirstState && stateId <= kScene2040LastState) ||
+		(stateId >= kScene2050FirstState && stateId <= kScene2050LastState) ||
+		(stateId >= kScene2060FirstState && stateId <= kScene2060LastState) ||
+		(stateId >= kScene2070FirstState && stateId <= kScene2070LastState) ||
 		stateId == kScene3000State ||
 		(stateId >= kScene3010FirstState && stateId <= kScene3010LastState) ||
 		(stateId >= kScene3020FirstState && stateId <= kScene3020LastState) ||
@@ -271,8 +291,18 @@ int gameplayStateForBootParam(int bootParam) {
 		return 0x03f4;
 	if (bootParam == 3070)
 		return kScene3070FirstState;
+	if (bootParam == 2010)
+		return kScene2010FirstState;
+	if (bootParam == 2020)
+		return kScene2020FirstState;
 	if (bootParam == 2040)
 		return kScene2040FirstState;
+	if (bootParam == 2050)
+		return kScene2050FirstState;
+	if (bootParam == 2060)
+		return kScene2060FirstState + 2;
+	if (bootParam == 2070)
+		return kScene2070FirstState;
 	if (bootParam == 3040)
 		return kScene3040State;
 	if (bootParam == 3090)
@@ -307,6 +337,20 @@ int gameplayStateForBootParam(int bootParam) {
 		return kScene8020State;
 
 	return bootParam;
+}
+
+void prepareGameplayStateForBootParam(GameplayState &state, int bootParam) {
+	switch (bootParam) {
+	case 2070:
+		// Direct B07 boots bypass the chamber/maze setup. Match the normal
+		// path where Ron solved the seal puzzle and reached the maze exit.
+		state.egyptSealPuzzleProgress = 1;
+		state.egyptLabyrinthPositionIndex = 0x47;
+		state.scene2050LabyrinthLampReady = true;
+		break;
+	default:
+		break;
+	}
 }
 
 byte configVolumeToOptionsLevel(int volume) {
@@ -448,8 +492,10 @@ Common::Error HollywoodEngine::run() {
 		Scene7000 scene7000(this);
 		if (!scene7000.play())
 			return Common::kReadingFailed;
-		if (bootToGameplayScene && bootParam != 7000)
+		if (bootToGameplayScene && bootParam != 7000) {
 			gameState().mainFlowStateId = (uint16)gameplayStateForBootParam(bootParam);
+			prepareGameplayStateForBootParam(gameState(), bootParam);
+		}
 	}
 
 	bool handledState = true;
@@ -561,6 +607,22 @@ Common::Error HollywoodEngine::run() {
 			continue;
 		}
 
+		if (stateId >= kScene2010FirstState && stateId <= kScene2010LastState) {
+			handledState = true;
+			Scene2010 scene2010(this);
+			if (!scene2010.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene2020FirstState && stateId <= kScene2020LastState) {
+			handledState = true;
+			Scene2020 scene2020(this);
+			if (!scene2020.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
 		if (stateId >= kScene2030FirstState && stateId <= kScene2030LastState) {
 			handledState = true;
 			Scene2030 scene2030(this);
@@ -573,6 +635,30 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene2040 scene2040(this);
 			if (!scene2040.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene2050FirstState && stateId <= kScene2050LastState) {
+			handledState = true;
+			Scene2050 scene2050(this);
+			if (!scene2050.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene2060FirstState && stateId <= kScene2060LastState) {
+			handledState = true;
+			Scene2060 scene2060(this);
+			if (!scene2060.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene2070FirstState && stateId <= kScene2070LastState) {
+			handledState = true;
+			Scene2070 scene2070(this);
+			if (!scene2070.play())
 				return Common::kReadingFailed;
 			continue;
 		}
