@@ -456,6 +456,39 @@ void CardGamePuzzle::execute() {
 	// The deal/match slide animations and the voiced lines come in a later stage.
 }
 
+// A column is playable while the player (side 1) owns one or two cards in it - a column they are
+// building but have not yet completed. Depending on the scene the click target is either the bottom
+// button row or the player's own cards in the tableau.
+int CardGamePuzzle::columnUnderMouse(const Common::Point &mousePos) const {
+	if (usesColumnButtons()) {
+		for (int col = 0; col < (int)_numCols; ++col) {
+			if (_board[1].colCount[col] <= 0 || _board[1].colCount[col] >= 3) {
+				continue;
+			}
+
+			Common::Rect button = NancySceneState.getViewport().convertViewportToScreen(_columnButtons[col]);
+			if (button.contains(mousePos)) {
+				return col;
+			}
+		}
+	} else {
+		for (int row = 0; row < _numRows; ++row) {
+			for (int col = 0; col < (int)_numCols; ++col) {
+				if (_board[1].grid[row][col] != 1 || _board[1].colCount[col] >= 3) {
+					continue;
+				}
+
+				Common::Rect card = NancySceneState.getViewport().convertViewportToScreen(_faceDownSrc[row * kMaxCols + col]);
+				if (card.contains(mousePos)) {
+					return col;
+				}
+			}
+		}
+	}
+
+	return -1;
+}
+
 void CardGamePuzzle::handleInput(NancyInput &input) {
 	if (_state != kRun || _awaitingEnd) {
 		return;
@@ -475,46 +508,27 @@ void CardGamePuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	int opponent = _currentTurn ^ 1;
-
-	for (int col = 0; col < (int)_numCols; ++col) {
-		Common::Rect button = NancySceneState.getViewport().convertViewportToScreen(_columnButtons[col]);
-		if (!button.contains(input.mousePos)) {
-			continue;
-		}
-
-		// A column is playable only while the opponent still holds a card in it
-		bool hasTarget = false;
-		for (int row = 0; row < _numRows; ++row) {
-			if (_board[opponent].grid[row][col] == 1) {
-				hasTarget = true;
-				break;
-			}
-		}
-
-		if (!hasTarget) {
-			return;
-		}
-
-		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
-
-		if (input.input & NancyInput::kLeftMouseButtonUp) {
-			bool before[kMaxRows][kMaxCols];
-			for (int r = 0; r < kMaxRows; ++r)
-				for (int c = 0; c < kMaxCols; ++c)
-					before[r][c] = (_board[1].grid[r][c] == 1);
-
-			playVoice(_moveVoiceName);
-			playColumn(col);
-			finishMove();
-
-			// finishMove may have ended the game (kActionTrigger); only animate if still playing
-			if (_state == kRun) {
-				startMoveAnimation(before);
-			}
-		}
-
+	int col = columnUnderMouse(input.mousePos);
+	if (col == -1) {
 		return;
+	}
+
+	g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+
+	if (input.input & NancyInput::kLeftMouseButtonUp) {
+		bool before[kMaxRows][kMaxCols];
+		for (int r = 0; r < kMaxRows; ++r)
+			for (int c = 0; c < kMaxCols; ++c)
+				before[r][c] = (_board[1].grid[r][c] == 1);
+
+		playVoice(_moveVoiceName);
+		playColumn(col);
+		finishMove();
+
+		// finishMove may have ended the game (kActionTrigger); only animate if still playing
+		if (_state == kRun) {
+			startMoveAnimation(before);
+		}
 	}
 }
 

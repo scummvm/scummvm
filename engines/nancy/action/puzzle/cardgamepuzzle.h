@@ -63,6 +63,11 @@ protected:
 
 	bool dealOne(int player); // draw a card from the deck to a side; false if the deck is empty
 	void drawBoard();
+	// True when the scene has a bottom button row (the player clicks those); false when it doesn't,
+	// in which case the player clicks their own cards in the tableau directly.
+	bool usesColumnButtons() const { return _columnButtons[0].top != _columnButtons[0].bottom; }
+	// The column the player is pointing at (owning 1-2 cards in it), or -1 if none is under the mouse.
+	int columnUnderMouse(const Common::Point &mousePos) const;
 	// Current side takes every opponent card in the given column; returns true if a card moved.
 	bool playColumn(int col);
 	int aiPickColumn();       // the AI's column choice, or -1 if it has no productive move
