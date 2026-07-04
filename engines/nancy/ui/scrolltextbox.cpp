@@ -128,8 +128,10 @@ void ScrollTextBox::drawContent() {
 	_textHighlightSurface.fillRect(Common::Rect(0, 0, _textHighlightSurface.w, _textHighlightSurface.h), transColor);
 
 	Common::Rect textBounds(0, 0, _fullSurface.w, _fullSurface.h);
-	textBounds.top  += _tboxData->scrollbarDefaultPos.y;
-	textBounds.left += _tboxData->scrollbarDefaultPos.x;
+	// The text's inset within the text area is the line-start X cursor. There is
+	// no vertical inset — the first line starts at the top of the text area, so
+	// don't add scrollbarDefaultPos (which is the scrollbar's gutter position).
+	textBounds.left += _tboxData->lineStartXCursor;
 
 	// Narration/caption text uses the (white) highlight font, not the (cyan)
 	// conversation body font that the ConversationPopup uses.

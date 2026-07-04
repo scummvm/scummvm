@@ -282,7 +282,7 @@ TBOX::TBOX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	defaultTextColor = chunkStream->readUint16LE();
 
 	if (g_nancy->getGameType() >= kGameTypeNancy10) {
-		chunkStream->skip(2);	// line-start X cursor
+		lineStartXCursor = chunkStream->readUint16LE();	// text left inset
 		chunkStream->skip(2);	// bottom margin
 		chunkStream->skip(2);	// unused
 		chunkStream->skip(2);	// initial color (we use the AR for this)
