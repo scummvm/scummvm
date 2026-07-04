@@ -70,6 +70,7 @@ private:
 	void advanceAmbientLayer(uint32 delta);
 	void advanceForegroundActorIdle(uint32 delta);
 	void advanceForegroundActorDialoguePose(uint32 delta);
+	void normalizeLinkedPassageState();
 	void runEntryFromScene2070();
 	void runEntryFromScene2090();
 	void runEntryPathWithFinalFacing(int startX, int startY, byte startFacing,
@@ -106,6 +107,7 @@ private:
 	ResourceSpriteLayer _foregroundActorLayer;
 	byte _foregroundActorIdleState;
 	byte _foregroundActorIdleDelay;
+	bool _foregroundActorManualSequenceActive;
 };
 
 } // End of namespace Hollywood

@@ -277,6 +277,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.scene2080DialogueBranchAIndex);
 	s.syncAsByte(state.scene2080DialogueBranchBIndex);
 	s.syncAsByte(state.scene2080DialogueTerminalIndex);
+	syncStateBool(s, state.scene2090EntryLineSeen);
 	syncStateBool(s, state.scene6020TaffyKnown);
 	syncStateBool(s, state.scene6020TaffyLeft);
 	syncStateBool(s, state.scene6030HannoverInterviewCompleted);
