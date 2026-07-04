@@ -169,7 +169,8 @@ Scene2080::Scene2080(HollywoodEngine *vm) :
 		_ambientLayer(),
 		_foregroundActorLayer(),
 		_foregroundActorIdleState(0),
-		_foregroundActorIdleDelay(0) {
+		_foregroundActorIdleDelay(0),
+		_foregroundActorManualSequenceActive(false) {
 	_ambientLayer.configure(kScene2080AmbientChunk, kScene2080AmbientDescriptorCount,
 		kScene2080AmbientFrameMap, ARRAYSIZE(kScene2080AmbientFrameMap));
 	_foregroundActorLayer.configure(kScene2080ForegroundActorChunk, kScene2080ForegroundActorDescriptorCount,
@@ -181,6 +182,7 @@ bool Scene2080::hasCustomPreviewState() const {
 }
 
 void Scene2080::initializeCustomPreviewState() {
+	normalizeLinkedPassageState();
 	initializeDefaultPreviewState();
 	resetAnimationLayers();
 	applySceneStateToHotspotsAndPatches(0xff);
@@ -226,6 +228,7 @@ bool Scene2080::hasCustomEntrySequence() const {
 }
 
 void Scene2080::runCustomEntrySequence() {
+	normalizeLinkedPassageState();
 	if (_vm->gameState().mainFlowStateId == kScene2080LastState)
 		runEntryFromScene2090();
 	else
@@ -233,6 +236,7 @@ void Scene2080::runCustomEntrySequence() {
 }
 
 bool Scene2080::prepareCustomGameplayLoop() {
+	normalizeLinkedPassageState();
 	return true;
 }
 
@@ -240,7 +244,7 @@ bool Scene2080::advanceCustomGameplayLoop(uint32 delta) {
 	advanceAmbientLayer(delta);
 	if (_primaryDialogueSpeechActive)
 		advancePrimaryDialogueSpeechFrame(delta);
-	else
+	else if (!_foregroundActorManualSequenceActive)
 		advanceForegroundActorIdle(delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
@@ -429,6 +433,7 @@ void Scene2080::resetAnimationLayers() {
 	_foregroundActorLayer.reset(1);
 	_foregroundActorIdleState = 0;
 	_foregroundActorIdleDelay = 0;
+	_foregroundActorManualSequenceActive = false;
 }
 
 void Scene2080::advanceAmbientLayer(uint32 delta) {
@@ -500,6 +505,15 @@ void Scene2080::advanceForegroundActorDialoguePose(uint32 delta) {
 	}
 }
 
+void Scene2080::normalizeLinkedPassageState() {
+	GameplayState &state = _vm->gameState();
+
+	// The original foreground actor exit opens the return passage in B07.
+	// Do not infer the reverse: Hecker must remain talkable while his scene state says he is present.
+	if (state.scene2080ForegroundState == 0)
+		state.scene2070InnerPassagePatchState = 1;
+}
+
 void Scene2080::runEntryFromScene2070() {
 	resetAnimationLayers();
 	runEntryPathWithFinalFacing(0x064, 0x130, 2, 0x168, 0x143,
@@ -552,6 +566,7 @@ void Scene2080::runEntryPathWithFinalFacing(int startX, int startY, byte startFa
 }
 
 void Scene2080::openForegroundActorForSpeech() {
+	_foregroundActorManualSequenceActive = true;
 	_foregroundActorLayer.visible = true;
 	while (_foregroundActorLayer.frameIndex < kScene2080ForegroundActorOpenFrame &&
 			!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
@@ -559,15 +574,18 @@ void Scene2080::openForegroundActorForSpeech() {
 		if (waitSceneMillis(kScene2080FrameMillis))
 			break;
 	}
+	_foregroundActorManualSequenceActive = false;
 }
 
 void Scene2080::closeForegroundActorAfterSpeech() {
+	_foregroundActorManualSequenceActive = true;
 	while (_foregroundActorLayer.frameIndex > kScene2080ForegroundActorRestFrame &&
 			!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
 		_foregroundActorLayer.setFrame(_foregroundActorLayer.frameIndex - 1);
 		if (waitSceneMillis(kScene2080FrameMillis))
 			break;
 	}
+	_foregroundActorManualSequenceActive = false;
 	_foregroundActorIdleState = 2;
 	_foregroundActorIdleDelay = (byte)_random.getRandomNumber(0x13);
 }

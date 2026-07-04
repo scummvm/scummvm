@@ -280,6 +280,8 @@ bool Scene2070::adjustCustomWalkTargetToFloorMask(int &targetX, int &targetY) co
 }
 
 bool Scene2070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
+	(void)selector;
+
 	if (_paletteMaskOriginal.empty())
 		return true;
 
@@ -288,45 +290,43 @@ bool Scene2070::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 	memcpy(_fullPaletteRegionMask.data(), _paletteMaskOriginal.data(), _fullPaletteRegionMask.size());
 
 	const GameplayState &state = _vm->gameState();
-	if ((selector == 1 || selector == 0xff) && state.scene2070SealExitPatchState != 0) {
+	if (state.scene2070SealExitPatchState != 0) {
 		if (_sceneChunkTable.isValidChunk(5))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[5], _baseFramebuffer);
 	}
 
-	if (selector == 2 || selector == 0xff) {
-		if (state.scene2070InnerPassagePatchState == 0) {
-			for (uint color = 0; color < kScenePaletteMapPageSize; ++color) {
-				if (_fullPaletteRegionMask[color] > 3)
-					_fullPaletteRegionMask[color] = 1;
-				if (_paletteMask[kSceneColorToItemMap + color] == 6)
-					_paletteMask[kSceneColorToItemMap + color] = 0;
-				if (_paletteMask[kSceneColorToItemMap + color] == 8)
-					_paletteMask[kSceneColorToItemMap + color] = 5;
-				if (_paletteMask[kSceneColorToItemMap + color] == 9)
-					_paletteMask[kSceneColorToItemMap + color] = 4;
-			}
-			if (_routeSteps.size() > 0x1b5)
-				_routeSteps[0x1b5] = 2;
-			if (_routeSteps.size() > 0x331)
-				_routeSteps[0x331] = 1;
-			if (_actorDepthYThresholds.size() > 3) {
-				_actorDepthYThresholds[3] = 0;
-				_drawActorDepthYThresholds[3] = 0;
-			}
-		} else {
-			if (_sceneChunkTable.isValidChunk(6))
-				drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _baseFramebuffer);
-			for (uint color = 0; color < kScenePaletteMapPageSize; ++color) {
-				if (_fullPaletteRegionMask[color] == 8)
-					_fullPaletteRegionMask[color] = 0;
-				if (_paletteMask[kSceneColorToItemMap + color] == 8 ||
-						_paletteMask[kSceneColorToItemMap + color] == 9)
-					_paletteMask[kSceneColorToItemMap + color] = 0;
-			}
+	if (state.scene2070InnerPassagePatchState == 0) {
+		for (uint color = 0; color < kScenePaletteMapPageSize; ++color) {
+			if (_fullPaletteRegionMask[color] > 3)
+				_fullPaletteRegionMask[color] = 1;
+			if (_paletteMask[kSceneColorToItemMap + color] == 6)
+				_paletteMask[kSceneColorToItemMap + color] = 0;
+			if (_paletteMask[kSceneColorToItemMap + color] == 8)
+				_paletteMask[kSceneColorToItemMap + color] = 5;
+			if (_paletteMask[kSceneColorToItemMap + color] == 9)
+				_paletteMask[kSceneColorToItemMap + color] = 4;
+		}
+		if (_routeSteps.size() > 0x1b5)
+			_routeSteps[0x1b5] = 2;
+		if (_routeSteps.size() > 0x331)
+			_routeSteps[0x331] = 1;
+		if (_actorDepthYThresholds.size() > 3) {
+			_actorDepthYThresholds[3] = 0;
+			_drawActorDepthYThresholds[3] = 0;
+		}
+	} else {
+		if (_sceneChunkTable.isValidChunk(6))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _baseFramebuffer);
+		for (uint color = 0; color < kScenePaletteMapPageSize; ++color) {
+			if (_fullPaletteRegionMask[color] == 8)
+				_fullPaletteRegionMask[color] = 0;
+			if (_paletteMask[kSceneColorToItemMap + color] == 8 ||
+					_paletteMask[kSceneColorToItemMap + color] == 9)
+				_paletteMask[kSceneColorToItemMap + color] = 0;
 		}
 	}
 
-	if ((selector == 3 || selector == 0xff) && state.scene2070HiddenItemPatchState == 0) {
+	if (state.scene2070HiddenItemPatchState == 0) {
 		setColorMapItem(7, 0);
 		if (state.scene2070InnerPassagePatchState != 0 && _sceneChunkTable.isValidChunk(9))
 			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[9], _baseFramebuffer);

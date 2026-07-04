@@ -48,6 +48,7 @@
 #include "hollywood/scenes/playable/scene2060.h"
 #include "hollywood/scenes/playable/scene2070.h"
 #include "hollywood/scenes/playable/scene2080.h"
+#include "hollywood/scenes/playable/scene2090.h"
 #include "hollywood/scenes/playable/scene3000.h"
 #include "hollywood/scenes/playable/scene3010.h"
 #include "hollywood/scenes/playable/scene3020.h"
@@ -143,6 +144,8 @@ const int kScene2070FirstState = 0x0816;
 const int kScene2070LastState = 0x0817;
 const int kScene2080FirstState = 0x0820;
 const int kScene2080LastState = 0x0821;
+const int kScene2090FirstState = 0x082a;
+const int kScene2090LastState = 0x082b;
 const int kScene3000State = 3000;
 const int kScene3010FirstState = 0x0bc2;
 const int kScene3010LastState = 0x0bcb;
@@ -230,6 +233,7 @@ bool isImplementedGameplayState(int stateId) {
 		(stateId >= kScene2060FirstState && stateId <= kScene2060LastState) ||
 		(stateId >= kScene2070FirstState && stateId <= kScene2070LastState) ||
 		(stateId >= kScene2080FirstState && stateId <= kScene2080LastState) ||
+		(stateId >= kScene2090FirstState && stateId <= kScene2090LastState) ||
 		stateId == kScene3000State ||
 		(stateId >= kScene3010FirstState && stateId <= kScene3010LastState) ||
 		(stateId >= kScene3020FirstState && stateId <= kScene3020LastState) ||
@@ -309,6 +313,8 @@ int gameplayStateForBootParam(int bootParam) {
 		return kScene2070FirstState;
 	if (bootParam == 2080)
 		return kScene2080FirstState;
+	if (bootParam == 2090)
+		return kScene2090FirstState;
 	if (bootParam == 3040)
 		return kScene3040State;
 	if (bootParam == 3090)
@@ -355,6 +361,7 @@ void prepareGameplayStateForBootParam(GameplayState &state, int bootParam) {
 		state.scene2050LabyrinthLampReady = true;
 		break;
 	case 2080:
+	case 2090:
 		state.egyptSealPuzzleProgress = 2;
 		state.egyptLabyrinthPositionIndex = 0x47;
 		state.scene2050LabyrinthLampReady = true;
@@ -685,6 +692,14 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene2080 scene2080(this);
 			if (!scene2080.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene2090FirstState && stateId <= kScene2090LastState) {
+			handledState = true;
+			Scene2090 scene2090(this);
+			if (!scene2090.play())
 				return Common::kReadingFailed;
 			continue;
 		}
