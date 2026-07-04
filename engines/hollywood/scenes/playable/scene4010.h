@@ -77,11 +77,13 @@ private:
 	void setActiveActorPose(int x, int y, byte facing);
 	void setHeckerFrame(byte frameIndex);
 	void runHeckerFrameSequence(const byte *frames, uint frameCount);
+	void waitForHeckerIdlePose();
 	void runHeckerDialoguePoseStart();
 	void runHeckerRandomResponsePoseStart();
 	void runHeckerResponsePoseEnd();
 	void finishHeckerDialoguePose();
 	void beginD01SpeechLine(uint16 rowIndex, byte normalFrame, byte alternateFrame = 0xff);
+	void beginSecondarySpeechLineAndEnterHeckerPose(uint16 rowIndex, byte frameIndex);
 	void beginHeckerSpeechLine(byte frameIndex);
 	void runHeckerDialogue();
 	void initializeHeckerDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
