@@ -29,6 +29,7 @@
 #include "mads/madsv2/phantom/mads/sounds.h"
 #include "mads/madsv2/phantom/rooms/section1.h"
 #include "mads/madsv2/phantom/rooms/room102.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -48,7 +49,8 @@ void room_102_init() {
 	/* =================== Load Sprite Series ==================== */
 
 	ss[fx_door]  = kernel_load_series(kernel_name('x', 0), false);
-	ss[fx_death] = kernel_load_series("*RAL86", false);
+	if (!g_engine->isDemo())
+		ss[fx_death] = kernel_load_series("*RAL86", false);
 
 
 	/* =========== If in 1993, put chandelier here =============== */
@@ -155,7 +157,7 @@ void room_102_pre_parser() {
 
 
 void room_102_parser() {
-	if (player_said_2(walk_down, aisle)) {
+	if (player_said_2(walk_down, aisle) || player_said_2(walk_up, aisle)) {
 		new_room = 101;
 		goto handled;
 	}
@@ -163,7 +165,10 @@ void room_102_parser() {
 	if ((player_said_2(walk_through, orchestra_door)) ||
 	    (player_said_2(push, orchestra_door)) ||
 	    (player_said_2(open, orchestra_door))) {
-		if (local->anim_0_running) {
+		if (g_engine->isDemo()) {
+			popup_alert(26, DEMO_MSG, nullptr);
+
+		} else if (local->anim_0_running) {
 			kernel_timing_trigger(QUARTER_SECOND, ROOM_102_TRY_AGAIN);
 			player.commands_allowed = false;
 

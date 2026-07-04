@@ -29,6 +29,7 @@ namespace MADSV2 {
 namespace Phantom {
 
 namespace Rooms {
+
 // Section preloads
 extern void section_1_preload();
 extern void section_2_preload();
@@ -91,6 +92,8 @@ extern void room_505_synchronize(Common::Serializer &s);
 extern void room_506_synchronize(Common::Serializer &s);
 
 } // namespace Rooms
+
+const char *DEMO_MSG = "That command is not available in the demo version";
 
 void global_section_constructor() {
 	section_preload_code_pointer = NULL;

@@ -275,6 +275,7 @@ enum {
 #define FUGUE_B_MINOR             3
 #define FUGUE_C_MINOR             4
 
+extern const char *DEMO_MSG;
 
 extern void global_section_constructor();
 extern void sync_room(Common::Serializer &s);

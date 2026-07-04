@@ -37,6 +37,7 @@
 #include "mads/madsv2/phantom/mads/text.h"
 #include "mads/madsv2/phantom/rooms/section2.h"
 #include "mads/madsv2/phantom/rooms/room202.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -55,6 +56,9 @@ void set_chandelier_positions() {
 	int x;
 	int y;
 	int xs;
+
+	if (g_engine->isDemo())
+		return;
 
 	center = picture_view_x + (video_x >> 1);
 
@@ -414,15 +418,18 @@ void room_202_init() {
 
 	/* =================== Load conversations ======================== */
 
-	conv_get(CONV_USHER_17);
-	conv_get(CONV_DEGAS_9);
+	if (!g_engine->isDemo()) {
+		conv_get(CONV_USHER_17);
+		conv_get(CONV_DEGAS_9);
+	}
 
 
 	/* =================== Load Sprite Series ======================= */
 
 	ss[fx_take_9]       = kernel_load_series("*RDR_9", false);
 	ss[fx_left_door]    = kernel_load_series(kernel_name('x', 0), false);
-	ss[fx_chandelier_0] = kernel_load_series(kernel_name('f', 0), false);
+	if (!g_engine->isDemo())
+		ss[fx_chandelier_0] = kernel_load_series(kernel_name('f', 0), false);
 
 
 	if (global[ticket_people_here] == USHER_AND_SELLER) {
@@ -802,6 +809,11 @@ void room_202_parser() {
 	}
 
 	if (player_said_2(walk_through, left_door) || player_said_2(open, left_door)) {
+		if (g_engine->isDemo()) {
+			popup_alert(26, DEMO_MSG, nullptr);
+			goto handled;
+		}
+
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
@@ -854,7 +866,12 @@ void room_202_parser() {
 	}
 
 	if (player_said_2(walk_through, left_archway)) {
-		new_room = 201;
+		if (g_engine->isDemo()) {
+			popup_alert(26, DEMO_MSG, nullptr);
+		} else {
+			new_room = 201;
+		}
+
 		goto handled;
 	}
 
@@ -864,12 +881,20 @@ void room_202_parser() {
 	}
 
 	if (player_said_2(walk_through, middle_door)) {
-		new_room = 204;
+		if (g_engine->isDemo()) {
+			popup_alert(26, DEMO_MSG, nullptr);
+		} else {
+			new_room = 204;
+		}
 		goto handled;
 	}
 
 	if (player_said_2(walk_through, right_door)) {
-		new_room = 205;
+		if (g_engine->isDemo()) {
+			popup_alert(26, DEMO_MSG, nullptr);
+		} else {
+			new_room = 205;
+		}
 		goto handled;
 	}
 
