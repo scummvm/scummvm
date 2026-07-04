@@ -64,9 +64,7 @@ const uint32 kSueEntryPathDurationMillis = 3600;
 const byte kI10ForegroundFrameRemap[] = {
 	0, 31, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 13,
 	32, 33, 34, 35, 14, 15, 16, 16, 17, 18, 19, 29, 20, 21, 22, 23,
-	23, 24, 25, 26, 30, 22, 21, 20, 16, 0, 0, 0, 0, 1, 2, 3,
-	0, 4, 5, 5, 6, 7, 8, 5, 4, 0, 0, 0, 0, 1, 2, 3,
-	2, 1, 0, 0
+	23, 24, 25, 26, 30, 22, 21, 20, 16
 };
 
 const Scene9100::SpeechTextStyle kDeskPrimaryBlueSpeech = { 0x78, 0xb9, kPrimarySpeechTextColor, 0x00, 0x26, 0x3f, true };
@@ -86,7 +84,10 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 		_lastTalkingFrameMillis(0),
 		_foregroundActorFrame(0),
 		_foregroundTalkBaseFrame(15),
-		_clockFrame(32),
+		_clockChunk7Frame(0x2c),
+		_clockChunk8Frame(0x30),
+		_clockChunk9Frame(0x20),
+		_clockChunk7CarryGate(4),
 		_talkingFrame(0),
 		_lastTalkingFrameVariant(0xff),
 		_deskPrimaryActorFrame(0),
@@ -122,6 +123,7 @@ bool Scene9100::play() {
 
 	memcpy(_sceneFramebuffer.data(), _frameDecodeBuffer.data(), _frameDecodeBuffer.size());
 	runEntryActorAnimations();
+	_clockVisible = true;
 	drawInitialForegroundFrame();
 	memcpy(_savedFramebuffer.data(), _sceneFramebuffer.data(), _sceneFramebuffer.size());
 	memset(_sceneFramebuffer.data(), 0, _sceneFramebuffer.size());
@@ -660,7 +662,7 @@ void Scene9100::runRonEntryConversation() {
 			if (dirty) {
 				memcpy(_sceneFramebuffer.data(), baseFramebuffer.data(), _sceneFramebuffer.size());
 				if (clockDirty)
-					drawClockFrame((byte)((_clockFrame + 1) % kI10ClockDescriptorCount));
+					advanceClockFrame();
 				drawForegroundActorFrame(foregroundFrame);
 				drawRonEntryPathFrame(pathElapsed, kRonEntryPathDurationMillis);
 				presentFrame();
@@ -843,6 +845,7 @@ void Scene9100::runOpeningPrelude() {
 	}
 
 	runConversationStep(0, 1, kTalkingOverlayNone, 0, false, true, kRonSecondarySpeech);
+	_foregroundTalkBaseFrame = 23;
 	runRonEntryConversation();
 }
 
@@ -851,7 +854,7 @@ void Scene9100::runCinematicSequence() {
 		{ 2, 0, 3, kTalkingOverlayBase320000, 0, true, false, kInsetWhiteSpeech },
 		{ 1, 1, 0, kTalkingOverlayBase0, 1, false, false, kInsetBlueSpeech },
 		{ 2, 1, 1, kTalkingOverlayBase320000, 0, false, false, kInsetWhiteSpeech },
-		{ 4, 1, 2, kTalkingOverlayNone, 0, false, false, kDeskPrimaryBlueSpeech },
+		{ 4, 1, 2, kTalkingOverlayNone, 0, false, true, kDeskPrimaryBlueSpeech },
 		{ 2, 1, 3, kTalkingOverlayBase320000, 0, true, false, kInsetWhiteSpeech },
 		{ 1, 1, 4, kTalkingOverlayBase0, 1, false, false, kInsetBlueSpeech },
 		{ 2, 1, 5, kTalkingOverlayBase320000, 0, false, false, kInsetWhiteSpeech },
@@ -863,7 +866,7 @@ void Scene9100::runCinematicSequence() {
 		{ 2, 1, 11, kTalkingOverlayBase320000, 0, false, false, kInsetWhiteSpeech },
 		{ 3, 1, 12, kTalkingOverlayBase640000, 1, false, false, kInsetSueSpeech },
 		{ 2, 1, 13, kTalkingOverlayBase320000, 1, false, false, kInsetWhiteSpeech },
-		{ 4, 1, 14, kTalkingOverlayNone, 0, false, false, kDeskPrimaryBlueSpeech },
+		{ 4, 1, 14, kTalkingOverlayNone, 0, false, true, kDeskPrimaryBlueSpeech },
 		{ 3, 1, 15, kTalkingOverlayBase640000, 0, true, false, kInsetSueSpeech }
 	};
 
@@ -874,9 +877,15 @@ void Scene9100::runCinematicSequence() {
 			return;
 
 		applyBackgroundMode(kSteps[i]);
+		if (kSteps[i].textBankIndex == 1 && kSteps[i].descriptorIndex == 2)
+			runForegroundPoseToDialogueState();
+		else if (kSteps[i].textBankIndex == 1 && kSteps[i].descriptorIndex == 14)
+			_foregroundTalkBaseFrame = 0x17;
 		runConversationStep(kSteps[i].textBankIndex, kSteps[i].descriptorIndex,
 			kSteps[i].talkingOverlayBase, kSteps[i].talkingOverlayVariant, kSteps[i].animateForegroundActor, false,
 			kSteps[i].speechTextStyle);
+		if (kSteps[i].textBankIndex == 1 && kSteps[i].descriptorIndex == 2)
+			runForegroundPoseBackToDeskIdle();
 	}
 }
 
@@ -888,7 +897,10 @@ void Scene9100::initializeDialogueBranchOfficeState() {
 	_deskSecondaryActorFrame = 0;
 	_deskPrimaryActorVisible = true;
 	_deskSecondaryActorVisible = false;
-	_clockFrame = 8;
+	_clockChunk7Frame = 0x33;
+	_clockChunk8Frame = 0x13;
+	_clockChunk9Frame = 8;
+	_clockChunk7CarryGate = 1;
 	_clockVisible = true;
 	copyDefaultPalette();
 	drawOfficeCompositeLayers();
@@ -1241,7 +1253,11 @@ void Scene9100::drawPersistentDeskActors() {
 void Scene9100::drawOfficeCompositeLayers() {
 	drawForegroundActorLayer();
 	drawPersistentDeskActors();
-	drawClockLayer(false);
+	drawClockLayers(false);
+}
+
+void Scene9100::syncOfficeRestoreBaseFromSaved() {
+	memcpy(_frameDecodeBuffer.data(), _savedFramebuffer.data(), _frameDecodeBuffer.size());
 }
 
 void Scene9100::animateForegroundFrames(byte firstFrame, byte lastFrame) {
@@ -1271,20 +1287,39 @@ void Scene9100::animateDeskSecondaryStaticFrames(byte firstFrame, byte lastFrame
 	}
 }
 
-void Scene9100::drawClockFrame(byte frameIndex) {
-	_clockFrame = frameIndex % kI10ClockDescriptorCount;
+void Scene9100::advanceClockFrame() {
 	_clockVisible = true;
-	drawClockLayer(true);
+	const byte oldChunk7Frame = _clockChunk7Frame;
+	const byte oldChunk8Frame = _clockChunk8Frame;
+	const byte oldChunk9Frame = _clockChunk9Frame;
+	_clockChunk9Frame = (_clockChunk9Frame + 1) % kI10ClockDescriptorCount;
+	if (_clockChunk9Frame == 0) {
+		_clockChunk8Frame = (_clockChunk8Frame + 1) % kI10ClockDescriptorCount;
+		if (_clockChunk7CarryGate == 5) {
+			_clockChunk7Frame = (_clockChunk7Frame + 1) % kI10ClockDescriptorCount;
+			_clockChunk7CarryGate = 0;
+		}
+	}
+	restoreClockLayerBackgrounds(oldChunk7Frame, oldChunk8Frame, oldChunk9Frame);
+	restoreClockLayerBackgrounds(_clockChunk7Frame, _clockChunk8Frame, _clockChunk9Frame);
 	drawOfficeCompositeLayers();
 }
 
-void Scene9100::drawClockLayer(bool restoreBackground) {
+void Scene9100::restoreClockLayerBackgrounds(byte chunk7Frame, byte chunk8Frame, byte chunk9Frame) {
+	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[7], 0, kI10ClockDescriptorCount, chunk7Frame);
+	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[8], 0, kI10ClockDescriptorCount, chunk8Frame);
+	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[9], 0, kI10ClockDescriptorCount, chunk9Frame);
+}
+
+void Scene9100::drawClockLayers(bool restoreBackground) {
 	if (!_clockVisible)
 		return;
 
 	if (restoreBackground)
-		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[9], 0, kI10ClockDescriptorCount, _clockFrame);
-	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[9], 0, kI10ClockDescriptorCount, _clockFrame);
+		restoreClockLayerBackgrounds(_clockChunk7Frame, _clockChunk8Frame, _clockChunk9Frame);
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[7], 0, kI10ClockDescriptorCount, _clockChunk7Frame);
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[8], 0, kI10ClockDescriptorCount, _clockChunk8Frame);
+	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[9], 0, kI10ClockDescriptorCount, _clockChunk9Frame);
 }
 
 void Scene9100::drawTalkingOverlay(TalkingOverlayBase talkingOverlayBase, byte frameIndex, byte talkingOverlayVariant) {
@@ -1409,7 +1444,7 @@ void Scene9100::expandFillRunsToSavedFramebuffer() {
 }
 
 void Scene9100::restoreOfficeFrameAndPresent() {
-	memcpy(_frameDecodeBuffer.data(), _savedFramebuffer.data(), _frameDecodeBuffer.size());
+	syncOfficeRestoreBaseFromSaved();
 	expandFillRunsToSavedFramebuffer();
 	memcpy(_sceneFramebuffer.data(), _frameDecodeBuffer.data(), _sceneFramebuffer.size());
 	drawForegroundActorFrame(_foregroundActorFrame);
@@ -1609,7 +1644,7 @@ bool Scene9100::delayFrame(uint32 millis, TalkingOverlayBase talkingOverlayBase,
 		bool dirty = false;
 		if (animateClock && now - _lastClockFrameMillis >= 1000) {
 			_lastClockFrameMillis = now;
-			drawClockFrame((byte)((_clockFrame + 1) % kI10ClockDescriptorCount));
+			advanceClockFrame();
 			dirty = true;
 		}
 		if (talkingOverlayBase != kTalkingOverlayNone && now - _lastTalkingFrameMillis >= 125) {
