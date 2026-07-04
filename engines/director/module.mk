@@ -28,8 +28,8 @@ MODULE_OBJS = \
 	types.o \
 	util.o \
 	window.o \
-	castmember/castmember.o \
 	castmember/bitmap.o \
+	castmember/castmember.o \
 	castmember/digitalvideo.o \
 	castmember/filmloop.o \
 	castmember/movie.o \
@@ -70,10 +70,11 @@ MODULE_OBJS = \
 	lingo/xlibs/b/batqt.o \
 	lingo/xlibs/b/bimxobj.o \
 	lingo/xlibs/b/blitpict.o \
+	lingo/xlibs/b/blockthedrawingxobj.o \
 	lingo/xlibs/c/cdromxobj.o \
 	lingo/xlibs/c/closebleedwindowxcmd.o \
-	lingo/xlibs/c/colorxobj.o \
 	lingo/xlibs/c/colorcursorxobj.o \
+	lingo/xlibs/c/colorxobj.o \
 	lingo/xlibs/c/consumer.o \
 	lingo/xlibs/c/cursorxobj.o \
 	lingo/xlibs/d/darkenscreen.o \
@@ -100,6 +101,7 @@ MODULE_OBJS = \
 	lingo/xlibs/f/findfolder.o \
 	lingo/xlibs/f/findsys.o \
 	lingo/xlibs/f/findwin.o \
+	lingo/xlibs/f/flushmousexfcn.o \
 	lingo/xlibs/f/flushxobj.o \
 	lingo/xlibs/f/fplayxobj.o \
 	lingo/xlibs/f/fsutil.o \
@@ -107,7 +109,8 @@ MODULE_OBJS = \
 	lingo/xlibs/g/getscreenrectsxfcn.o \
 	lingo/xlibs/g/getscreensizexfcn.o \
 	lingo/xlibs/g/getsoundinlevel.o \
-	lingo/xtras/g/glu32.o \
+	lingo/xlibs/g/getsoundxfcn.o \
+	lingo/xlibs/g/getuinfo.o \
 	lingo/xlibs/g/gpid.o \
 	lingo/xlibs/h/henry.o \
 	lingo/xlibs/h/hitmap.o \
@@ -121,6 +124,7 @@ MODULE_OBJS = \
 	lingo/xlibs/l/listdev.o \
 	lingo/xlibs/m/maniacbg.o \
 	lingo/xlibs/m/mapnavigatorxobj.o \
+	lingo/xlibs/m/mazexobj.o \
 	lingo/xlibs/m/memcheckxobj.o \
 	lingo/xlibs/m/memoryxobj.o \
 	lingo/xlibs/m/misc.o \
@@ -133,23 +137,15 @@ MODULE_OBJS = \
 	lingo/xlibs/m/movieidxxobj.o \
 	lingo/xlibs/m/movutils.o \
 	lingo/xlibs/m/msfile.o \
-	lingo/xlibs/m/mystisle.o \
-	lingo/xlibs/b/blockthedrawingxobj.o \
-	lingo/xlibs/m/mazexobj.o \
 	lingo/xlibs/m/myfolder.o \
-	lingo/xlibs/g/getuinfo.o \
-	lingo/xlibs/g/getsoundxfcn.o \
-	lingo/xlibs/f/flushmousexfcn.o \
+	lingo/xlibs/m/mystisle.o \
 	lingo/xlibs/o/openbleedwindowxcmd.o \
-	lingo/xlibs/s/stagectl.o \
- 	lingo/xlibs/p/playsoundmoviexobj.o \
- 	lingo/xlibs/s/savenrestorexobj.o \
- 	lingo/xlibs/t/temnotaxobj.o \
 	lingo/xlibs/o/orthoplayxobj.o \
 	lingo/xlibs/p/paco.o \
 	lingo/xlibs/p/palxobj.o \
 	lingo/xlibs/p/panel.o \
 	lingo/xlibs/p/pharaohs.o \
+	lingo/xlibs/p/playsoundmoviexobj.o \
 	lingo/xlibs/p/popupmenuxobj.o \
 	lingo/xlibs/p/porta.o \
 	lingo/xlibs/p/prefpath.o \
@@ -163,12 +159,15 @@ MODULE_OBJS = \
 	lingo/xlibs/q/quicktime.o \
 	lingo/xlibs/r/registercomponent.o \
 	lingo/xlibs/r/remixxcmd.o \
+	lingo/xlibs/s/savenrestorexobj.o \
 	lingo/xlibs/s/serialportxobj.o \
 	lingo/xlibs/s/smallutil.o \
 	lingo/xlibs/s/soundjam.o \
 	lingo/xlibs/s/spacemgr.o \
+	lingo/xlibs/s/stagectl.o \
 	lingo/xlibs/s/stagetc.o \
 	lingo/xlibs/s/syscolor.o \
+	lingo/xlibs/t/temnotaxobj.o \
 	lingo/xlibs/t/tengu.o \
 	lingo/xlibs/u/unittest.o \
 	lingo/xlibs/v/valkyrie.o \
@@ -180,8 +179,8 @@ MODULE_OBJS = \
 	lingo/xlibs/v/voyagerxsound.o \
 	lingo/xlibs/w/widget.o \
 	lingo/xlibs/w/window.o \
-	lingo/xlibs/w/winxobj.o \
 	lingo/xlibs/w/wininfo.o \
+	lingo/xlibs/w/winxobj.o \
 	lingo/xlibs/x/xcmdglue.o \
 	lingo/xlibs/x/xio.o \
 	lingo/xlibs/x/xplayanim.o \
@@ -189,30 +188,31 @@ MODULE_OBJS = \
 	lingo/xlibs/x/xsoundxfcn.o \
 	lingo/xlibs/x/xwin.o \
 	lingo/xlibs/y/yasix.o \
-	lingo/xtras/b/budapi.o \
 	lingo/xtras/a/audio.o \
+	lingo/xtras/b/budapi.o \
+	lingo/xtras/d/datetime.o \
 	lingo/xtras/d/directsound.o \
 	lingo/xtras/d/displayres.o \
 	lingo/xtras/f/filextra.o \
+	lingo/xtras/f/filextra4.o \
 	lingo/xtras/g/getdir.o \
+	lingo/xtras/g/glu32.o \
 	lingo/xtras/k/keypoll.o \
 	lingo/xtras/m/masterapp.o \
 	lingo/xtras/m/mui.o \
-	lingo/xtras/d/datetime.o \
 	lingo/xtras/n/netlingo.o \
-	lingo/xtras/f/filextra4.o \
 	lingo/xtras/o/openurl.o \
 	lingo/xtras/o/oscheck.o \
 	lingo/xtras/p/paintx.o \
-	lingo/xtras/s/setmouse.o \
 	lingo/xtras/q/qtvrxtra.o \
 	lingo/xtras/r/registryreader.o \
 	lingo/xtras/r/rtk.o \
 	lingo/xtras/s/scrnutil.o \
+	lingo/xtras/s/setmouse.o \
 	lingo/xtras/s/smacker.o \
-	lingo/xtras/s/staytoonedhall.o \
 	lingo/xtras/s/staytoonedball.o \
 	lingo/xtras/s/staytoonedglop.o \
+	lingo/xtras/s/staytoonedhall.o \
 	lingo/xtras/s/staytoonedhigh.o \
 	lingo/xtras/s/staytoonedober.o \
 	lingo/xtras/s/staytoonedtoon.o \
