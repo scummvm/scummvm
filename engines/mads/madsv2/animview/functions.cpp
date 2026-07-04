@@ -80,11 +80,20 @@ void add_anim(const char *name) {
  */
 void flag_parse(const char *param) {
 	switch (tolower(*param++)) {
+	case 'j':
+		wait_for_music_at_end = true;
+		break;
+
 	case 'o':
 		// Specify opening special effect
 		assert(anim_count < MAX_ANIM);
 		if (*param == ':')
 			anim_list[anim_count].fx = atoi(param + 1);
+		break;
+
+	case 'p':
+		// Switch MADS path mode to CONCAT
+		concat_mode = 1;
 		break;
 
 	case 'r':

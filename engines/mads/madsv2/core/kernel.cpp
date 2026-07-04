@@ -907,9 +907,6 @@ int kernel_seq_pingpong(int series_id, int mirror,
 int kernel_seq_pingpong_scroll(int series_id, int mirror,
 		word ticks, word interval_ticks, word start_ticks, int expire) {
 	int depth = 0;
-	SpritePtr sprite;
-
-	sprite = &series_list[series_id]->index[0];
 
 	return kernel_seq_add(series_id, mirror, 1, 0, 0, AA_PINGPONG, 1,
 		depth, 100, true, 0, 0, ticks, interval_ticks,

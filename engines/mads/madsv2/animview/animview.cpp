@@ -68,12 +68,12 @@ int imageFrame;
 CycleList anim_cycle_list;
 bool has_cycles;
 int currentViewX, currentViewY;
+int concat_mode;
 
 static const byte FX_TIMES[16] = {
 	0, 110, 110, 64, 64, 64, 64, 64, 64, 64, 64, 0, 0, 0
 };
 
-static int concat_mode;
 static bool has_sound_file;
 static char sound_file_name[80];
 static TileMapHeader picture_map, depth_map;
@@ -96,7 +96,7 @@ static bool hasAnimInited;
 static int runVal1, runVal2, runVal3;
 static int runVal12;
 static int error_code;
-static bool wait_for_music_at_end;
+bool wait_for_music_at_end;
 
 /**
  * Initializes animview global variables

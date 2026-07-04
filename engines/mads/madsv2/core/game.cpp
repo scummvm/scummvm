@@ -198,7 +198,7 @@ void game_cold_data_init() {
 	kernel.cursor_y[0] = display_y >> 1;
 	kernel.cursor_y[1] = inter_base_y + 5;
 
-	game.difficulty = -1;
+	game.difficulty = g_engine->isDemo() ? 0 : -1;
 
 	kernel.paused = false;
 	kernel.cause_pause = false;

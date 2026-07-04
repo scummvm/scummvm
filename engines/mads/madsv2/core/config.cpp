@@ -24,6 +24,7 @@
 #include "mads/madsv2/core/env.h"
 #include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -69,7 +70,8 @@ void read_config_file() {
 	config_file.show_speech_boxes = ConfMan.getBool("show_speech_boxes");
 	config_file.original_save_load = ConfMan.getBool("original_menus");
 
-	game.difficulty = ConfMan.getInt("difficulty");
+	if (ConfMan.hasKey("difficulty") && !g_engine->isDemo())
+		game.difficulty = ConfMan.getInt("difficulty");
 }
 
 void write_config_file() {

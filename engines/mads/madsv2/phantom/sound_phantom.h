@@ -29,11 +29,14 @@ namespace MADSV2 {
 namespace Phantom {
 
 class PhantomSoundManager : public SoundManager {
+private:
+	bool _isDemo;
+
 protected:
 	void loadDriver(int sectionNum) override;
 
 public:
-	PhantomSoundManager(Audio::Mixer *mixer, bool &soundFlag) : SoundManager(mixer, soundFlag) {
+	PhantomSoundManager(Audio::Mixer *mixer, bool &soundFlag, bool isDemo) : SoundManager(mixer, soundFlag), _isDemo(isDemo) {
 	}
 	~PhantomSoundManager() override {
 	}
@@ -381,6 +384,49 @@ private:
 public:
 	ASound9(Audio::Mixer *mixer, OPL::OPL *opl);
 	~ASound9() override {
+	}
+	int command(int commandId, int param) override;
+};
+
+class ASoundDemo : public ASound {
+private:
+	typedef int (ASoundDemo:: *CommandPtr)();
+	int command0();
+	int command1();
+	int command2();
+	int command3();
+	int command4();
+	int command5();
+	int command6();
+	int command7();
+	int command8();
+	int command9();
+	int command10();
+	int command11();
+	int command12();
+	int command13();
+	int command14();
+	int command15();
+	int command16();
+	int command17();
+	int command18();
+	int command19();
+	int command20();
+	int command21();
+	int command22();
+	int command23();
+	int command24();
+	int command25();
+	int command26();
+	int command27();
+	int command28();
+	int command29();
+
+	static const CommandPtr _commandList[30];
+
+public:
+	ASoundDemo(Audio::Mixer *mixer, OPL::OPL *opl);
+	~ASoundDemo() override {
 	}
 	int command(int commandId, int param) override;
 };
