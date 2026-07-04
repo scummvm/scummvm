@@ -30,12 +30,14 @@ class HollywoodEngine;
 
 // Saved GameplayState fields read:
 // mainFlowStateId, ronLampFueled, scene2050EntrySpeechState,
-// scene2050MuralPuzzleState, scene2050SealRevealed,
+// scene2050MuralPuzzleState, scene2050MuralTilePermutation,
+// scene2050SealRevealed,
 // scene2050LabyrinthLampReady, egyptSealPuzzleProgress,
 // egyptLabyrinthPositionIndex.
 // Saved GameplayState fields written:
 // mainFlowStateId, ronLampFueled, scene2050EntrySpeechState,
-// scene2050MuralPuzzleState, scene2050SealRevealed,
+// scene2050MuralPuzzleState, scene2050MuralTilePermutation,
+// scene2050SealRevealed,
 // scene2050LabyrinthLampReady, egyptSealPuzzleProgress,
 // egyptLabyrinthPositionIndex.
 class Scene2050 : public PlayableScene {
@@ -72,19 +74,20 @@ private:
 	void runSealDiscoverySequence();
 	void drawRawSceneChunk(uint chunkIndex);
 	bool initializeMuralTilePermutation(uint chunkIndex);
+	bool isSavedMuralTilePermutationValid() const;
+	void randomizeMuralTilePermutation();
 	void setMuralTilePermutationSolved();
 	void drawMuralTileGrid(uint chunkIndex);
 	void drawMuralSelectionHighlight(byte tileId);
 	byte muralTileAtScreenPoint(int16 x, int16 y) const;
 	void handleMuralTileClick(byte tileId, bool &done);
 	bool isMuralPuzzleSolved() const;
-	uint muralTileMismatchScore(const byte *rawFrame, byte visibleTileId, byte sourceTileId) const;
+	uint solvedMuralTileCount() const;
 	void copyMuralTile(byte visibleTileId, byte sourceTileId, const byte *rawFrame, byte *destination);
 	void copyStageSmallRow(byte destinationRow, byte sourceRow);
 
 	TimedAnimationChannel _ambientChannel;
 	ResourceSpriteLayer _ambientLayer;
-	byte _muralTilePermutation[49];
 	bool _muralPermutationInitialized;
 	byte _muralPermutationChunkIndex;
 	byte _muralSelectedTile;

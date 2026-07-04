@@ -42,6 +42,26 @@ void syncUint16Table(Common::Serializer &s, uint16 *values, uint count) {
 		s.syncAsUint16LE(values[i]);
 }
 
+bool isBytePermutationValid(const byte *values, uint count) {
+	bool seen[GameplayState::kScene2050MuralTilePermutationSize];
+	memset(seen, 0, sizeof(seen));
+
+	for (uint i = 1; i < count; ++i) {
+		const byte value = values[i];
+		if (value == 0 || value >= count || seen[value])
+			return false;
+		seen[value] = true;
+	}
+
+	return true;
+}
+
+void setIdentityBytePermutation(byte *values, uint count) {
+	values[0] = 0;
+	for (uint i = 1; i < count; ++i)
+		values[i] = (byte)i;
+}
+
 bool HollywoodEngine::canLoadGameStateCurrently(Common::U32String *) {
 	return _gameState.mainFlowStateId != 0;
 }
@@ -117,6 +137,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.multiToolKnifeState);
 	s.syncAsByte(state.ronTapeRecorderState);
 	syncStateBool(s, state.ronWalletOpened);
+	s.syncAsUint16LE(state.ronEgyptianMoneyAmount);
 	syncStateBool(s, state.ronPendingMabusePillsInMagnetPillbox);
 	syncStateBool(s, state.ronLampFueled);
 	syncStateBool(s, state.scene3010EntryLineSeen);
@@ -223,6 +244,8 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene2020HatPresent);
 	syncStateBool(s, state.scene2020SunglassesPresent);
 	syncStateBool(s, state.scene2020PrincessConversationSeen);
+	s.syncAsByte(state.scene2030ScarabOfferState);
+	s.syncAsByte(state.scene2030MerchantItem2AOfferState);
 	syncStateBool(s, state.scene6010StudioEntryUnlocked);
 	syncStateBool(s, state.scene6010Item59Visible);
 	s.syncAsByte(state.scene6010DoorActionState);
@@ -236,6 +259,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.scene2040SphinxExitInterviewState);
 	s.syncAsByte(state.scene2050EntrySpeechState);
 	s.syncAsByte(state.scene2050MuralPuzzleState);
+	s.syncBytes(state.scene2050MuralTilePermutation, sizeof(state.scene2050MuralTilePermutation));
 	syncStateBool(s, state.scene2050SealRevealed);
 	syncStateBool(s, state.scene2050LabyrinthLampReady);
 	s.syncAsByte(state.egyptSealPuzzleProgress);
@@ -445,6 +469,10 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene2010TravelReturnSpeechState = 0;
 	if (state.scene2020TigerToothState > 2)
 		state.scene2020TigerToothState = 0;
+	if (state.scene2030ScarabOfferState > 2)
+		state.scene2030ScarabOfferState = 0;
+	if (state.scene2030MerchantItem2AOfferState > 2)
+		state.scene2030MerchantItem2AOfferState = 0;
 	if (state.scene2040SphinxBasePatchState > 1)
 		state.scene2040SphinxBasePatchState = 0;
 	if (state.scene2040SphinxFaceState > 3)
@@ -459,6 +487,14 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene2050MuralPuzzleState = 0;
 	if (state.egyptSealPuzzleProgress > 2)
 		state.egyptSealPuzzleProgress = 0;
+	if (!isBytePermutationValid(state.scene2050MuralTilePermutation,
+			GameplayState::kScene2050MuralTilePermutationSize)) {
+		if (state.scene2050MuralPuzzleState >= 2 || state.egyptSealPuzzleProgress != 0)
+			setIdentityBytePermutation(state.scene2050MuralTilePermutation,
+				GameplayState::kScene2050MuralTilePermutationSize);
+		else
+			memset(state.scene2050MuralTilePermutation, 0, sizeof(state.scene2050MuralTilePermutation));
+	}
 	if (state.egyptLabyrinthPositionIndex >= 0x48 && state.egyptLabyrinthPositionIndex != 0xff)
 		state.egyptLabyrinthPositionIndex = 0x2a;
 	if (state.scene2070EntryProgress > 2)
