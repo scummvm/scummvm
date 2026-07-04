@@ -57,6 +57,7 @@ const byte kScene2050LampInventoryItem = 0x3c;
 const byte kScene2050LosaSmallRow = 6;
 const byte kScene2050SelloSmallRow = 7;
 const uint kScene2050LabyrinthGoToGlobalRecord = 0x29;
+const uint kScene2050MuralSolvedTilePaletteMapChunk = 7;
 const uint kScene2050MuralTileCount = 48;
 const uint kScene2050MuralGridColumns = 6;
 const uint kScene2050MuralGridRows = 8;
@@ -66,6 +67,10 @@ const int kScene2050MuralGridY = 0x21;
 const int kScene2050MuralTileSize = 0x32;
 const int kScene2050MuralTileStep = 0x34;
 const byte kScene2050MuralHighlightColor = 0xf0;
+const byte kScene2050MuralTileSelectSound = 0x25;
+const byte kScene2050MuralTileLockedSound = 0x26;
+const byte kScene2050MuralTileSwapSound = 0x27;
+const byte kScene2050MuralTileImprovedSound = 0x28;
 
 const byte kScene2050ActorPathStepDeltaTable[] = {
 	8, 1, 1, 4, 4, 3, 10, 1, 0, 0, 5, 4,
@@ -148,7 +153,6 @@ Scene2050::Scene2050(HollywoodEngine *vm) :
 		_muralPermutationInitialized(false),
 		_muralPermutationChunkIndex(0),
 		_muralSelectedTile(0) {
-	memset(_muralTilePermutation, 0, sizeof(_muralTilePermutation));
 	_ambientLayer.configure(10, kScene2050AmbientDescriptorCount,
 		kScene2050AmbientFrameMap, ARRAYSIZE(kScene2050AmbientFrameMap));
 }
@@ -396,6 +400,7 @@ void Scene2050::runLosaSealMuralAction() {
 	runMuralClipBackward();
 
 	if (state.scene2050MuralPuzzleState == 1) {
+		state.scene2050MuralPuzzleState = 0;
 		beginSecondarySpeechLine(7, 0);
 		return;
 	}
@@ -404,6 +409,8 @@ void Scene2050::runLosaSealMuralAction() {
 		state.egyptSealPuzzleProgress = 1;
 		runSealDiscoverySequence();
 	}
+	if (state.scene2050MuralPuzzleState == 3)
+		state.scene2050MuralPuzzleState = 2;
 }
 
 void Scene2050::runMuralClipForward() {
@@ -523,24 +530,11 @@ bool Scene2050::initializeMuralTilePermutation(uint chunkIndex) {
 	if (_muralPermutationInitialized && _muralPermutationChunkIndex == chunkIndex)
 		return true;
 
-	const uint32 baseOffset = _resourceChunkOffsets[chunkIndex];
-	if (baseOffset + framebufferByteCount() > _resourceArena.size())
-		return false;
-
-	const byte *rawFrame = _resourceArena.data() + baseOffset;
-	for (uint visibleTile = 1; visibleTile <= kScene2050MuralTileCount; ++visibleTile) {
-		uint bestScore = 0xffffffff;
-		byte bestSourceTile = (byte)visibleTile;
-		for (uint sourceTile = 1; sourceTile <= kScene2050MuralTileCount; ++sourceTile) {
-			const uint score = muralTileMismatchScore(rawFrame, (byte)visibleTile, (byte)sourceTile);
-			if (score < bestScore) {
-				bestScore = score;
-				bestSourceTile = (byte)sourceTile;
-				if (score == 0)
-					break;
-			}
-		}
-		_muralTilePermutation[visibleTile] = bestSourceTile;
+	if (_vm->gameState().scene2050MuralPuzzleState >= 2 ||
+			_vm->gameState().egyptSealPuzzleProgress != 0) {
+		setMuralTilePermutationSolved();
+	} else if (!isSavedMuralTilePermutationValid()) {
+		randomizeMuralTilePermutation();
 	}
 
 	_muralPermutationInitialized = true;
@@ -548,9 +542,62 @@ bool Scene2050::initializeMuralTilePermutation(uint chunkIndex) {
 	return true;
 }
 
-void Scene2050::setMuralTilePermutationSolved() {
+bool Scene2050::isSavedMuralTilePermutationValid() const {
+	bool seen[GameplayState::kScene2050MuralTilePermutationSize];
+	memset(seen, 0, sizeof(seen));
+
+	const byte *permutation = _vm->gameState().scene2050MuralTilePermutation;
+	for (uint tile = 1; tile <= kScene2050MuralTileCount; ++tile) {
+		const byte sourceTile = permutation[tile];
+		if (sourceTile == 0 || sourceTile > kScene2050MuralTileCount || seen[sourceTile])
+			return false;
+		seen[sourceTile] = true;
+	}
+
+	return true;
+}
+
+void Scene2050::randomizeMuralTilePermutation() {
+	byte *permutation = _vm->gameState().scene2050MuralTilePermutation;
+
+	for (uint restart = 0; restart < 128; ++restart) {
+		bool used[GameplayState::kScene2050MuralTilePermutationSize];
+		memset(permutation, 0, sizeof(_vm->gameState().scene2050MuralTilePermutation));
+		memset(used, 0, sizeof(used));
+
+		bool complete = true;
+		for (uint tile = 1; tile <= kScene2050MuralTileCount; ++tile) {
+			byte candidate = 0;
+			bool foundCandidate = false;
+			for (uint attempt = 0; attempt < 512; ++attempt) {
+				candidate = (byte)(_random.getRandomNumber(kScene2050MuralTileCount - 1) + 1);
+				if (candidate != tile && !used[candidate]) {
+					foundCandidate = true;
+					break;
+				}
+			}
+			if (!foundCandidate) {
+				complete = false;
+				break;
+			}
+			permutation[tile] = candidate;
+			used[candidate] = true;
+		}
+
+		if (complete)
+			return;
+	}
+
+	permutation[0] = 0;
 	for (uint tile = 1; tile <= kScene2050MuralTileCount; ++tile)
-		_muralTilePermutation[tile] = (byte)tile;
+		permutation[tile] = (byte)(tile == kScene2050MuralTileCount ? 1 : tile + 1);
+}
+
+void Scene2050::setMuralTilePermutationSolved() {
+	byte *permutation = _vm->gameState().scene2050MuralTilePermutation;
+	for (uint tile = 1; tile <= kScene2050MuralTileCount; ++tile)
+		permutation[tile] = (byte)tile;
+	permutation[0] = 0;
 	_muralPermutationInitialized = true;
 	_muralPermutationChunkIndex = 0xff;
 }
@@ -565,8 +612,9 @@ void Scene2050::drawMuralTileGrid(uint chunkIndex) {
 		return;
 
 	const byte *rawFrame = _resourceArena.data() + baseOffset;
+	const byte *permutation = _vm->gameState().scene2050MuralTilePermutation;
 	for (uint tile = 1; tile <= kScene2050MuralTileCount; ++tile)
-		copyMuralTile((byte)tile, _muralTilePermutation[tile], rawFrame, pixels);
+		copyMuralTile((byte)tile, permutation[tile], rawFrame, pixels);
 
 	if (_muralSelectedTile != 0)
 		drawMuralSelectionHighlight(_muralSelectedTile);
@@ -620,14 +668,15 @@ void Scene2050::handleMuralTileClick(byte tileId, bool &done) {
 		return;
 
 	GameplayState &state = _vm->gameState();
-	if (state.scene2050MuralPuzzleState != 0 && _muralTilePermutation[tileId] == tileId) {
-		_soundBank0.playSample(0x26, 50);
+	byte *permutation = state.scene2050MuralTilePermutation;
+	if (state.scene2050MuralPuzzleState != 0 && permutation[tileId] == tileId) {
+		_soundBank0.playSample(kScene2050MuralTileLockedSound, 50);
 		return;
 	}
 
 	if (_muralSelectedTile == 0) {
 		_muralSelectedTile = tileId;
-		_soundBank0.playSample(0x25, 100);
+		_soundBank0.playSample(kScene2050MuralTileSelectSound, 100);
 		drawMuralTileGrid((state.scene2050MuralPuzzleState == 1 ||
 			state.scene2050MuralPuzzleState == 3) ? 14 : 13);
 		presentFrame();
@@ -637,10 +686,14 @@ void Scene2050::handleMuralTileClick(byte tileId, bool &done) {
 	const byte firstTile = _muralSelectedTile;
 	_muralSelectedTile = 0;
 	if (firstTile != tileId) {
-		SWAP(_muralTilePermutation[firstTile], _muralTilePermutation[tileId]);
-		_soundBank0.playSample(0x27, 50);
+		const uint solvedBefore = solvedMuralTileCount();
+		SWAP(permutation[firstTile], permutation[tileId]);
+		_soundBank0.playSample(kScene2050MuralTileSwapSound, 50);
+		if (solvedMuralTileCount() > solvedBefore)
+			_soundBank0.playSample(kScene2050MuralTileImprovedSound, 100);
 		if (isMuralPuzzleSolved()) {
 			state.scene2050MuralPuzzleState = state.scene2050MuralPuzzleState == 0 ? 2 : 3;
+			setMuralTilePermutationSolved();
 			done = true;
 			return;
 		}
@@ -652,37 +705,23 @@ void Scene2050::handleMuralTileClick(byte tileId, bool &done) {
 }
 
 bool Scene2050::isMuralPuzzleSolved() const {
+	const byte *permutation = _vm->gameState().scene2050MuralTilePermutation;
 	for (uint tile = 1; tile <= kScene2050MuralTileCount; ++tile) {
-		if (_muralTilePermutation[tile] != tile)
+		if (permutation[tile] != tile)
 			return false;
 	}
 
 	return true;
 }
 
-uint Scene2050::muralTileMismatchScore(const byte *rawFrame, byte visibleTileId, byte sourceTileId) const {
-	const uint visibleIndex = visibleTileId - 1;
-	const uint sourceIndex = sourceTileId - 1;
-	const int visibleX = kScene2050MuralVisibleGridX +
-		(visibleIndex % kScene2050MuralGridColumns) * kScene2050MuralTileStep;
-	const int visibleY = kScene2050MuralGridY +
-		(visibleIndex / kScene2050MuralGridColumns) * kScene2050MuralTileStep;
-	const int sourceX = kScene2050MuralSourceGridX +
-		(sourceIndex % kScene2050MuralGridColumns) * kScene2050MuralTileStep;
-	const int sourceY = kScene2050MuralGridY +
-		(sourceIndex / kScene2050MuralGridColumns) * kScene2050MuralTileStep;
-
-	uint score = 0;
-	for (int y = 0; y < kScene2050MuralTileSize; ++y) {
-		const byte *visible = rawFrame + (visibleY + y) * HollywoodEngine::kSceneBufferWidth + visibleX;
-		const byte *source = rawFrame + (sourceY + y) * HollywoodEngine::kSceneBufferWidth + sourceX;
-		for (int x = 0; x < kScene2050MuralTileSize; ++x) {
-			if (visible[x] != source[x])
-				++score;
-		}
+uint Scene2050::solvedMuralTileCount() const {
+	uint count = 0;
+	const byte *permutation = _vm->gameState().scene2050MuralTilePermutation;
+	for (uint tile = 1; tile <= kScene2050MuralTileCount; ++tile) {
+		if (permutation[tile] == tile)
+			++count;
 	}
-
-	return score;
+	return count;
 }
 
 void Scene2050::copyMuralTile(byte visibleTileId, byte sourceTileId, const byte *rawFrame, byte *destination) {
@@ -700,11 +739,22 @@ void Scene2050::copyMuralTile(byte visibleTileId, byte sourceTileId, const byte 
 		(sourceIndex % kScene2050MuralGridColumns) * kScene2050MuralTileStep;
 	const int sourceY = kScene2050MuralGridY +
 		(sourceIndex / kScene2050MuralGridColumns) * kScene2050MuralTileStep;
+	const bool remapSolvedTile = _vm->gameState().scene2050MuralPuzzleState != 0 &&
+		sourceTileId == visibleTileId &&
+		_sceneChunkTable.isValidChunk(kScene2050MuralSolvedTilePaletteMapChunk) &&
+		_sceneChunkTable.sizes[kScene2050MuralSolvedTilePaletteMapChunk] >= kScenePaletteMapPageSize;
+	const byte *paletteMap = remapSolvedTile ?
+		_resourceArena.data() + _resourceChunkOffsets[kScene2050MuralSolvedTilePaletteMapChunk] : nullptr;
 
 	for (int y = 0; y < kScene2050MuralTileSize; ++y) {
-		memcpy(destination + (visibleY + y) * HollywoodEngine::kSceneBufferWidth + visibleX,
-			rawFrame + (sourceY + y) * HollywoodEngine::kSceneBufferWidth + sourceX,
-			kScene2050MuralTileSize);
+		const byte *source = rawFrame + (sourceY + y) * HollywoodEngine::kSceneBufferWidth + sourceX;
+		byte *target = destination + (visibleY + y) * HollywoodEngine::kSceneBufferWidth + visibleX;
+		if (!paletteMap) {
+			memcpy(target, source, kScene2050MuralTileSize);
+			continue;
+		}
+		for (int x = 0; x < kScene2050MuralTileSize; ++x)
+			target[x] = paletteMap[source[x]];
 	}
 }
 

@@ -36,6 +36,7 @@ struct GameplayState {
 		kInventoryVisibleSlotCount = 16,
 		kTravelScreenSlotCount = 8,
 		kTravelScreenDisabledSlot = 0xff,
+		kScene2050MuralTilePermutationSize = 49,
 		kFixedInventoryActionTableEntryCount = kInventoryOwnerSlotStride * kInventoryVerbCount + 1,
 		kInventoryItemRelationTableEntryCount = kInventoryOwnerSlotStride * kInventoryOwnerSlotStride
 	};
@@ -74,6 +75,7 @@ struct GameplayState {
 		multiToolKnifeState = 0;
 		ronTapeRecorderState = 0;
 		ronWalletOpened = false;
+		ronEgyptianMoneyAmount = 0;
 		ronPendingMabusePillsInMagnetPillbox = false;
 		ronLampFueled = false;
 		initializeTravelScreenSlots();
@@ -181,6 +183,8 @@ struct GameplayState {
 		scene2020HatPresent = true;
 		scene2020SunglassesPresent = true;
 		scene2020PrincessConversationSeen = false;
+		scene2030ScarabOfferState = 0;
+		scene2030MerchantItem2AOfferState = 0;
 		scene6010StudioEntryUnlocked = true;
 		scene6010Item59Visible = false;
 		scene6010DoorActionState = 0;
@@ -194,6 +198,7 @@ struct GameplayState {
 		scene2040SphinxExitInterviewState = 0;
 		scene2050EntrySpeechState = 0;
 		scene2050MuralPuzzleState = 0;
+		memset(scene2050MuralTilePermutation, 0, sizeof(scene2050MuralTilePermutation));
 		scene2050SealRevealed = false;
 		scene2050LabyrinthLampReady = false;
 		egyptSealPuzzleProgress = 0;
@@ -711,6 +716,7 @@ struct GameplayState {
 	byte multiToolKnifeState;
 	byte ronTapeRecorderState;
 	bool ronWalletOpened;
+	uint16 ronEgyptianMoneyAmount;
 	bool ronPendingMabusePillsInMagnetPillbox;
 	bool ronLampFueled;
 	byte travelScreenSlotIds[kTravelScreenSlotCount];
@@ -817,6 +823,8 @@ struct GameplayState {
 	bool scene2020HatPresent;
 	bool scene2020SunglassesPresent;
 	bool scene2020PrincessConversationSeen;
+	byte scene2030ScarabOfferState;
+	byte scene2030MerchantItem2AOfferState;
 	bool scene6010StudioEntryUnlocked;
 	bool scene6010Item59Visible;
 	byte scene6010DoorActionState;
@@ -830,6 +838,7 @@ struct GameplayState {
 	byte scene2040SphinxExitInterviewState;
 	byte scene2050EntrySpeechState;
 	byte scene2050MuralPuzzleState;
+	byte scene2050MuralTilePermutation[kScene2050MuralTilePermutationSize];
 	bool scene2050SealRevealed;
 	bool scene2050LabyrinthLampReady;
 	byte egyptSealPuzzleProgress;

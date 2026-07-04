@@ -856,6 +856,7 @@ void dispatchRonInventoryAction(HollywoodEngine *vm, GameplayLoopDelegate *deleg
 			break;
 		}
 		gameState.addInventoryItem(owner, 0x29);
+		gameState.ronEgyptianMoneyAmount += 0x23;
 		playRonInventoryChange(delegate);
 		gameState.ronWalletOpened = true;
 		beginRonSpeechLine(delegate, 0xca, 0);

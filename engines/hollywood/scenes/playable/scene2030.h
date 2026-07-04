@@ -69,8 +69,19 @@ private:
 	void runTransitionClip(uint chunkIndex);
 	void drawTransitionClipFrame(uint chunkIndex, byte frameIndex, Graphics::Surface &transitionBackground);
 	void drawClipFrameDeltaToSurface(uint chunkIndex, uint tableEntryCount, byte frameIndex, Graphics::Surface &destination);
-	void runMerchantShopPlaceholder();
+	void runMerchantShopDialogue();
+	void initializeMerchantShopDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
+	void setMerchantShopDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
+		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
+		byte responseFrameIndex, byte disableAfterUse, byte reserved) const;
+	uint16 merchantShopProductPrice(byte productRowId) const;
+	void runLeftMerchantPurchase(byte productRowId);
+	void subtractEgyptianMoney(uint16 amount);
 	void runRightMerchantTalkSequence();
+	void runRightStallTradeOverlay();
+	void runRightMerchantBuyItemOverlay();
+	void runRightMerchantSaleSequence(byte soldItemId, uint16 moneyAmount, byte merchantFrameIndex, byte secondaryFrameIndex);
+	void addEgyptianMoney(uint16 amount);
 
 	TimedAnimationChannel _leftMerchantChannel;
 	TimedAnimationChannel _rightMerchantChannel;

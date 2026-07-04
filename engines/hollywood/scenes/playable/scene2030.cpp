@@ -23,6 +23,7 @@
 
 #include "common/system.h"
 
+#include "hollywood/gameplay/dialogue_menu.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -50,12 +51,27 @@ const uint32 kScene2030SpeechCueDescriptorTableOffset = 0x1135;
 const uint32 kScene2030LeftMerchantFrameMillis = 300;
 const uint32 kScene2030RightMerchantFrameMillis = 125;
 const uint32 kScene2030MerchantCalloutCheckMillis = 75;
+const uint32 kScene2030OverlayFrameMillis = 75;
 const uint32 kScene2030TransitionFrameMillis = 60;
 const uint kScene2030LeftMerchantDescriptorCount = 0x1c;
 const uint kScene2030RightMerchantDescriptorCount = 0x1e;
 const uint kScene2030TransitionDescriptorCount = 0x8c;
+const uint kScene2030RightMerchantTradeDescriptorCount = 0x0c;
+const uint kScene2030LeftMerchantPurchaseDescriptorCount = 0x0c;
 const byte kScene2030TransitionFinalFrame = 0x8b;
 const byte kScene2030PrimarySpeechTextColor = 0xfb;
+const byte kScene2030ShopDialogueStageId = 0x62;
+const byte kScene2030ShopPrimaryRow = 99;
+const uint kScene2030ShopDialogueChoiceRecordCount = 10 * 10 * 7;
+const byte kScene2030MoneyItem = 0x29;
+const byte kScene2030ScarabItem = 0x2b;
+const byte kScene2030MerchantItem2A = 0x2a;
+const byte kScene2030RightMerchantSaleItemA = 0x49;
+const byte kScene2030RightMerchantSaleItemB = 0x3f;
+const uint16 kScene2030ScarabPrice = 0x00fa;
+const uint16 kScene2030MerchantItem2APrice = 0x0352;
+const uint16 kScene2030RightMerchantSaleValueA = 0x02bc;
+const uint16 kScene2030RightMerchantSaleValueB = 0x0190;
 
 enum Scene2030MerchantState {
 	kScene2030MerchantIdle = 0,
@@ -103,6 +119,20 @@ const byte kScene2030RightMerchantFrameMap[] = {
 	3, 4, 5, 6, 7, 13, 14, 15, 16, 17, 18, 19,
 	20, 21, 22, 23, 22, 21, 20, 24, 25, 26, 27, 28,
 	13, 0, 0, 0, 0, 0, 0, 0
+};
+
+const byte kScene2030RightStallTradeFrameMap[] = {
+	10, 10, 9, 8, 9, 10, 11
+};
+
+const byte kScene2030RightMerchantBuyFrameMap[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
+	9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+};
+
+const byte kScene2030LeftMerchantPurchaseFrameMap[] = {
+	10, 10, 9, 8, 7, 6, 5, 4, 4, 4,
+	4, 4, 5, 6, 7, 8, 9, 10, 11
 };
 
 static PlayableSceneConfig scene2030Config() {
@@ -247,8 +277,8 @@ bool Scene2030::dispatchCustomSceneAction(uint16 handlerId) {
 	case 303: // Ir a piramide (go to pyramid): transition toward scene 2010.
 		_vm->gameState().mainFlowStateId = kScene2030PyramidExitState;
 		return true;
-	case 304: // Hablar con mercader (talk to merchant): shop dialogue tree, partially restored.
-		runMerchantShopPlaceholder();
+	case 304: // Hablar con mercader izquierdo (talk to left merchant): shop dialogue and purchases.
+		runMerchantShopDialogue();
 		return true;
 	case 305: // Mirar mercader (look at merchant): Suki's nose comparison.
 		beginSecondarySpeechLine(1, 0);
@@ -274,17 +304,11 @@ bool Scene2030::dispatchCustomSceneAction(uint16 handlerId) {
 		runMerchantPrimarySpeechLine(9, (byte)(_random.getRandomNumber(1) + 1), true);
 		closeMerchantAfterInteraction(true);
 		return true;
-	case 312: // Comprar articulo del mercader (buy merchant item 0x2b), not fully implemented.
-		beginSecondarySpeechLine(9, 7);
-		openMerchantForInteraction(true);
-		runMerchantPrimarySpeechLine(9, 4, true);
-		closeMerchantAfterInteraction(true);
+	case 312: // Vender objeto 0x49 al mercader derecho (sell item 0x49 to right merchant): grants money.
+		runRightMerchantSaleSequence(kScene2030RightMerchantSaleItemA, kScene2030RightMerchantSaleValueA, 4, 5);
 		return true;
-	case 313: // Comprar articulo del mercader (buy merchant item 0x2a), not fully implemented.
-		beginSecondarySpeechLine(9, 7);
-		openMerchantForInteraction(true);
-		runMerchantPrimarySpeechLine(9, 3, true);
-		closeMerchantAfterInteraction(true);
+	case 313: // Vender sabana/item 0x3f al mercader derecho (sell sheet/item 0x3f to right merchant): grants money.
+		runRightMerchantSaleSequence(kScene2030RightMerchantSaleItemB, kScene2030RightMerchantSaleValueB, 3, 6);
 		return true;
 	case 314: // Ir a avioneta (go to airplane): open travel destination selector.
 		_vm->gameState().requestTravelScreenSelection(2);
@@ -822,11 +846,151 @@ void Scene2030::drawClipFrameDeltaToSurface(uint chunkIndex, uint tableEntryCoun
 	}
 }
 
-void Scene2030::runMerchantShopPlaceholder() {
-	beginSecondarySpeechLine(0x62, 0);
+void Scene2030::runMerchantShopDialogue() {
+	Common::Array<DialogueChoiceRecord> records;
+	initializeMerchantShopDialogueRecords(records);
+
+	beginSecondarySpeechLine(kScene2030ShopDialogueStageId, 0);
 	openMerchantForInteraction(false);
-	runMerchantPrimarySpeechLine(99, 0, false);
+	runMerchantPrimarySpeechLine(kScene2030ShopPrimaryRow, 0, false);
+
+	byte selectedProduct = 0;
+	byte depthIndex = 0;
+	byte nodeIndex = 0;
+	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		DialogueMenu menu(_vm, this);
+		const byte selectedChoice = menu.choose(kScene2030ShopDialogueStageId, records, depthIndex, nodeIndex);
+		if (selectedChoice == DialogueMenu::kCancelledChoice) {
+			beginSecondarySpeechLine(kScene2030ShopDialogueStageId, 3);
+			runMerchantPrimarySpeechLine(kScene2030ShopPrimaryRow, 3, false);
+			break;
+		}
+
+		const uint recordIndex = ((uint)nodeIndex + (uint)depthIndex * 10) * 7 + selectedChoice;
+		if (recordIndex >= records.size())
+			break;
+
+		DialogueChoiceRecord &record = records[recordIndex];
+		beginSecondarySpeechLine(kScene2030ShopDialogueStageId, record.playerTextRowId);
+		if (record.responseFrameIndex != 0xff)
+			runMerchantPrimarySpeechLine(kScene2030ShopPrimaryRow, record.responseFrameIndex, false);
+
+		if (record.disableAfterUse != 0)
+			record.enabled = 0;
+		if (record.disableAfterUse == 2) {
+			selectedProduct = record.playerTextRowId;
+			records[71].enabled = merchantShopProductPrice(selectedProduct) <=
+				_vm->gameState().ronEgyptianMoneyAmount ? 1 : 0;
+		}
+		if (record.disableAfterUse == 3)
+			runLeftMerchantPurchase(selectedProduct);
+
+		switch (record.transitionMode) {
+		case 0:
+			closeMerchantAfterInteraction(false);
+			return;
+		case 1:
+			nodeIndex = record.nextNodeIndex;
+			++depthIndex;
+			break;
+		case 2:
+			nodeIndex = record.nextNodeIndex;
+			if (depthIndex != 0)
+				--depthIndex;
+			break;
+		case 3:
+			break;
+		case 4:
+			nodeIndex = record.nextNodeIndex;
+			depthIndex = depthIndex > 1 ? (byte)(depthIndex - 2) : 0;
+			break;
+		default:
+			closeMerchantAfterInteraction(false);
+			return;
+		}
+	}
+
 	closeMerchantAfterInteraction(false);
+}
+
+void Scene2030::initializeMerchantShopDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
+	records.resize(kScene2030ShopDialogueChoiceRecordCount);
+	setMerchantShopDialogueRecord(records, 0, 1, 0, 1, 1, 1, 2, 0xff);
+	setMerchantShopDialogueRecord(records, 1, 1, 0, 1, 2, 2, 2, 0xff);
+	setMerchantShopDialogueRecord(records, 2, 1, 0, 1, 7, 6, 2, 0xff);
+	setMerchantShopDialogueRecord(records, 3, 1, 0, 3, 8, 7, 1, 0xff);
+	setMerchantShopDialogueRecord(records, 4, 1, 0, 1, 9, 8, 2, 0xff);
+	setMerchantShopDialogueRecord(records, 5, 1, 0, 0, 3, 3, 0, 0);
+	setMerchantShopDialogueRecord(records, 70, 1, 0, 0, 4, 4, 1, 0xff);
+	setMerchantShopDialogueRecord(records, 71, 0, 0, 0, 5, 5, 3, 0xff);
+	setMerchantShopDialogueRecord(records, 72, 1, 0, 0, 6, 3, 1, 0xff);
+
+	const GameplayState &state = _vm->gameState();
+	if (state.scene2030ScarabOfferState != 1) {
+		records[0].enabled = 0;
+		records[4].enabled = 0;
+	}
+	if (state.scene2030MerchantItem2AOfferState != 1)
+		records[1].enabled = 0;
+}
+
+void Scene2030::setMerchantShopDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
+		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
+		byte responseFrameIndex, byte disableAfterUse, byte reserved) const {
+	if (index >= records.size())
+		return;
+
+	DialogueChoiceRecord &record = records[index];
+	record.enabled = enabled;
+	record.nextNodeIndex = nextNodeIndex;
+	record.transitionMode = transitionMode;
+	record.playerTextRowId = playerTextRowId;
+	record.responseFrameIndex = responseFrameIndex;
+	record.disableAfterUse = disableAfterUse;
+	record.reserved = reserved;
+}
+
+uint16 Scene2030::merchantShopProductPrice(byte productRowId) const {
+	switch (productRowId) {
+	case 1:
+		return kScene2030ScarabPrice;
+	case 2:
+		return kScene2030MerchantItem2APrice;
+	default:
+		return 0xffff;
+	}
+}
+
+void Scene2030::runLeftMerchantPurchase(byte productRowId) {
+	const uint16 price = merchantShopProductPrice(productRowId);
+	if (price == 0xffff || _vm->gameState().ronEgyptianMoneyAmount < price)
+		return;
+
+	runHiddenActorActionOverlay(8, kScene2030LeftMerchantPurchaseDescriptorCount,
+		kScene2030LeftMerchantPurchaseFrameMap, ARRAYSIZE(kScene2030LeftMerchantPurchaseFrameMap),
+		kScene2030OverlayFrameMillis);
+
+	GameplayState &state = _vm->gameState();
+	if (productRowId == 1) {
+		addInventoryItem(kScene2030ScarabItem);
+		state.scene2030ScarabOfferState = 2;
+	} else if (productRowId == 2) {
+		addInventoryItem(kScene2030MerchantItem2A);
+		state.scene2030MerchantItem2AOfferState = 2;
+	}
+	subtractEgyptianMoney(price);
+	_soundBank0.playSample(1, 100);
+}
+
+void Scene2030::subtractEgyptianMoney(uint16 amount) {
+	GameplayState &state = _vm->gameState();
+	if (amount >= state.ronEgyptianMoneyAmount) {
+		state.ronEgyptianMoneyAmount = 0;
+		removeInventoryItem(kScene2030MoneyItem);
+		return;
+	}
+
+	state.ronEgyptianMoneyAmount -= amount;
 }
 
 void Scene2030::runRightMerchantTalkSequence() {
@@ -839,6 +1003,48 @@ void Scene2030::runRightMerchantTalkSequence() {
 	runMerchantPrimarySpeechLine(8, 5, true);
 	beginSecondarySpeechLine(8, 6);
 	closeMerchantAfterInteraction(true);
+}
+
+void Scene2030::runRightStallTradeOverlay() {
+	runHiddenActorActionOverlay(7, kScene2030RightMerchantTradeDescriptorCount,
+		kScene2030RightStallTradeFrameMap, ARRAYSIZE(kScene2030RightStallTradeFrameMap),
+		kScene2030OverlayFrameMillis);
+}
+
+void Scene2030::runRightMerchantBuyItemOverlay() {
+	runHiddenActorActionOverlay(7, kScene2030RightMerchantTradeDescriptorCount,
+		kScene2030RightMerchantBuyFrameMap, ARRAYSIZE(kScene2030RightMerchantBuyFrameMap),
+		kScene2030OverlayFrameMillis);
+}
+
+void Scene2030::runRightMerchantSaleSequence(byte soldItemId, uint16 moneyAmount, byte merchantFrameIndex, byte secondaryFrameIndex) {
+	if (!hasInventoryItem(soldItemId)) {
+		beginSecondarySpeechLine(9, 0);
+		openMerchantForInteraction(true);
+		runMerchantPrimarySpeechLine(9, (byte)(_random.getRandomNumber(1) + 1), true);
+		closeMerchantAfterInteraction(true);
+		return;
+	}
+
+	beginSecondarySpeechLine(9, 7);
+	openMerchantForInteraction(true);
+	runRightStallTradeOverlay();
+	runMerchantPrimarySpeechLine(9, merchantFrameIndex, true);
+	beginSecondarySpeechLine(9, secondaryFrameIndex);
+	runRightMerchantBuyItemOverlay();
+	addEgyptianMoney(moneyAmount);
+	removeInventoryItem(soldItemId);
+	_soundBank0.playSample(1, 100);
+	closeMerchantAfterInteraction(true);
+}
+
+void Scene2030::addEgyptianMoney(uint16 amount) {
+	GameplayState &state = _vm->gameState();
+	if (state.ronEgyptianMoneyAmount == 0 && !hasInventoryItem(kScene2030MoneyItem))
+		addInventoryItem(kScene2030MoneyItem);
+
+	const uint32 total = (uint32)state.ronEgyptianMoneyAmount + amount;
+	state.ronEgyptianMoneyAmount = (uint16)MIN<uint32>(total, 0xffff);
 }
 
 } // End of namespace Hollywood
