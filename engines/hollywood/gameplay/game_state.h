@@ -216,6 +216,7 @@ struct GameplayState {
 		scene2080DialogueBranchAIndex = 0;
 		scene2080DialogueBranchBIndex = 0;
 		scene2080DialogueTerminalIndex = 0;
+		scene2090EntryLineSeen = false;
 		scene6020TaffyKnown = false;
 		scene6020TaffyLeft = false;
 		scene6030HannoverInterviewCompleted = false;
@@ -865,6 +866,7 @@ struct GameplayState {
 	byte scene2080DialogueBranchAIndex;
 	byte scene2080DialogueBranchBIndex;
 	byte scene2080DialogueTerminalIndex;
+	bool scene2090EntryLineSeen;
 	bool scene6020TaffyKnown;
 	bool scene6020TaffyLeft;
 	bool scene6030HannoverInterviewCompleted;
