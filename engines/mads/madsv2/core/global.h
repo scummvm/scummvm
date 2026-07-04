@@ -65,7 +65,7 @@ constexpr int NO  = 0;
 
 constexpr int walker_timing                   = 0;   /* Stop walker timing (long) */
 constexpr int walker_timing_2                 = 1;
-
+constexpr int player_hyperwalked              = 3;
 
 extern char global_release_name[];
 extern char global_release_version[];

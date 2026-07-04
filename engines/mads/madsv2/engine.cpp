@@ -348,7 +348,7 @@ int MADSV2Engine::getKey() {
 
 	if (!_keyEvents.empty()) {
 		Common::KeyState ks = _keyEvents.pop();
-		return ks.ascii ? ks.ascii : (ks.flags << 16) | ks.keycode;
+		return ks.ascii && (ks.flags == 0) ? ks.ascii : (ks.flags << 16) | ks.keycode;
 	}
 
 	return 0;

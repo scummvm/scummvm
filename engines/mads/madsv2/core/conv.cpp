@@ -913,7 +913,7 @@ static int conv_generate_menu(ConvData *convData, Conv *convIn) {
 	}
 
 	kernel_set_interface_mode(INTER_CONVERSATION);
-	player.commands_allowed = -1;
+	player.commands_allowed = true;
 	return 2;
 }
 

@@ -55,7 +55,7 @@ struct Player {
 	int frame_delay;              /* Tick delay between player frames        */
 	int center_of_gravity;        /* Center of gravity displacement          */
 
-	int walk_freedom;             /* Player can always walk anywhere         */
+	bool walk_freedom;            /* Player can always walk anywhere         */
 
 	int walk_anywhere;            /* Player can walk anywhere                */
 
@@ -69,9 +69,9 @@ struct Player {
 	int prepare_walk_x;           /* Destination preparing to walk to        */
 	int prepare_walk_y;
 
-	int commands_allowed;         /* Flag if accepting player input          */
-	int walker_visible;           /* Flag if player's sprite is visible      */
-	int walker_previously_visible;/* Flag if player's sprite was visible     */
+	bool commands_allowed;        /* Flag if accepting player input          */
+	bool walker_visible;          /* Flag if player's sprite is visible      */
+	bool walker_previously_visible;/* Flag if player's sprite was visible     */
 	int series_base;              /* Lowest series list handle for walker    */
 	int16 available[8];           /* Flag if series are available or mirrored*/
 	int facing;                   /* Player's current directional facing     */
@@ -131,7 +131,7 @@ struct Player {
 	byte walker_is_loaded;        /* Flag if walker is loaded                */
 	byte walker_must_reload;      /* Flag if walker must reload              */
 
-	int walker_been_visible;      /* Flag if has been visible this room      */
+	bool walker_been_visible;     /* Flag if has been visible this room      */
 
 	byte force_series;            /* Flag to force player series             */
 
@@ -139,7 +139,7 @@ struct Player {
 	byte walk_trigger_dest;       /* Type of code to activate for trigger    */
 	int walk_trigger_words[3];    /* Vocabulary words for reactivating parser*/
 
-	int enable_at_target;         /* Enable commands at walk target          */
+	bool enable_at_target;        /* Enable commands at walk target          */
 
 	void synchronize(Common::Serializer &s);
 };

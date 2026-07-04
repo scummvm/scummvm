@@ -382,7 +382,7 @@ static void room_304_daemon() {
 		case 9:
 			global[walker_converse_state] = 0;
 			close_interface(CANDLE_FLY);
-			player.commands_allowed = -1;
+			player.commands_allowed = true;
 			if (config_file.forest1)
 				kernel_timing_trigger(1, 107);
 			break;

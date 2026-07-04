@@ -38,15 +38,16 @@ void keys_remove() {
 }
 
 int keys_check_install() {
-	error("TODO: keys_check_install");
+	// No implementation in ScummVM
+	return true;
 }
 
 void keys_enable() {
-	error("TODO: keys_enable");
+	// No implementation in ScummVM
 }
 
 void keys_disable() {
-	error("TODO: keys_disable");
+	// No implementation in ScummVM
 }
 
 int keys_any() {

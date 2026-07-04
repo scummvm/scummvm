@@ -129,7 +129,7 @@ static void room_221_init1() {
 		global[g133] = 0;
 		global[g143] = 0;
 		restore_player();
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		return;
 	case 211:
 		aa[1] = kernel_run_animation(kernel_name('b', 1), 101);
@@ -149,7 +149,7 @@ static void room_221_init1() {
 		kernel_reset_animation(scratch._9c, 2);
 		global[g133] = 0;
 		global[g143] = 0;
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		return;
 	}
 }
@@ -500,7 +500,7 @@ static void room_221_daemon() {
 			kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
 			global[g133] = 0;
 			global[g143] = 0;
-			player.commands_allowed = -1;
+			player.commands_allowed = true;
 		}
 		break;
 
@@ -597,7 +597,7 @@ static void room_221_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
 		global[g133] = 0;
 		global[g143] = 0;
-		player.commands_allowed = -1;
+		player.commands_allowed = true;
 		break;
 
 	default:

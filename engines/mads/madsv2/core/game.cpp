@@ -103,10 +103,10 @@ void (*game_emergency_save)() = NULL;
 
 int debugger = false;
 int debugger_state = DEBUGGER_MAIN;
-int debugger_matte_before = false;
+bool debugger_matte_before = false;
 int debugger_memory_skip = 0;        /* For paging up/down      */
-int debugger_memory_all = false;    /* Not showing ALL memory  */
-int debugger_memory_keywait = false;    /* Not waiting for memory  */
+bool debugger_memory_all = false;    /* Not showing ALL memory  */
+bool debugger_memory_keywait = false;    /* Not waiting for memory  */
 void (*debugger_reset)() = NULL;     /* Debugger reset routine  */
 void (*debugger_update)() = NULL;     /* Debugger update routine */
 int selected_intro = false;
@@ -506,7 +506,6 @@ int game_parse_keystroke(int mykey) {
 	char temp_buf[80], temp_buf_2[80];
 
 	if (kernel.cheating == (byte)kernel_cheating_allowed) {
-
 		mykey = main_cheating_key(mykey);
 
 		switch (mykey) {
@@ -519,10 +518,10 @@ int game_parse_keystroke(int mykey) {
 			break;
 
 		case ctrl_d_key:
-			// temp = game.difficulty;
-			// if (!popup_get_number (&temp, "CHANGE DIFFICULTY FACTOR", "New Factor:", 3)) {
-			  // game.difficulty = (byte)temp;
-			// }
+			temp = game.difficulty;
+			if (!popup_get_number (&temp, "CHANGE DIFFICULTY FACTOR", "New Factor:", 3)) {
+				game.difficulty = (byte)temp;
+			}
 			break;
 
 		case ctrl_e_key:
@@ -578,7 +577,6 @@ int game_parse_keystroke(int mykey) {
 					move_target = object[move_object].location;
 					popup_get_number(&move_target, "MOVE OBJ TO", "Loc:", 3);
 					inter_move_object(move_object, move_target);
-					// kernel.force_restart = true;
 				}
 			}
 			break;
@@ -590,26 +588,25 @@ int game_parse_keystroke(int mykey) {
 		case ctrl_r_key:
 			kernel_panning_speed = (kernel_panning_speed + 1) % 3;
 			game_set_camera_speed();
+
 			switch (kernel_panning_speed) {
 			case PANNING_INSTANT:
-				// popup_alert (22, "Pan INS", NULL);
+				popup_alert(22, "Panning = INSTANT.", NULL);
 				break;
 
 			case PANNING_MEDIUM:
-				// popup_alert (22, "Pan MEDIUM.", NULL);
+				popup_alert(22, "Panning = MEDIUM.", NULL);
 				break;
 
 			case PANNING_SMOOTH:
 			default:
-				// popup_alert (22, "Panning = SMOOTH.", NULL);
+				popup_alert(22, "Panning = SMOOTH.", NULL);
 				break;
 			}
 			break;
 
-			// case ctrl_r_key:
-			// box_param.font_spacing = 1 - box_param.font_spacing;
-			// break;
 		case ctrl_t_key:
+		case alt_t_key:
 			popup_get_number(&new_room, "TELEPORT", "New Room:", 3);
 			kernel.teleported_in = (byte)(mykey == ctrl_t_key);
 			break;
@@ -629,10 +626,11 @@ int game_parse_keystroke(int mykey) {
 			break;
 
 		case ctrl_w_key:
-			// popup_get_string (player.series_name, "WALKER SERIES", "Series:", 8);
-			// player.force_series = (byte)strlen(player.series_name);
-			// if (!scumm_stricmp(player.series_name, "NULL")) player.series_name[0] = 0;
-			// kernel.force_restart = true;
+			popup_get_string (player.series_name, "WALKER SERIES", "Series:", 8);
+			player.force_series = (byte)strlen(player.series_name);
+			if (!scumm_stricmp(player.series_name, "NULL"))
+				player.series_name[0] = 0;
+			kernel.force_restart = true;
 			break;
 
 		case ctrl_z_key:
@@ -640,9 +638,8 @@ int game_parse_keystroke(int mykey) {
 			break;
 
 		case alt_b_key:
-			// if (!popup_get_string (box_param.name, "POPUP BOX SERIES", "Series:", 16)) {
-			  // kernel.force_restart = true;
-			// }
+			if (!popup_get_string (box_param.name, "POPUP BOX SERIES", "Series:", 16))
+				kernel.force_restart = true;
 			break;
 
 		case ctrl_y_key:
@@ -676,13 +673,6 @@ int game_parse_keystroke(int mykey) {
 		case alt_p_key:
 			debugger = true;
 			debugger_state = DEBUGGER_PALETTE;
-			mem_manager_update = NULL;
-			pal_manager_update = debugger_update;
-			break;
-
-		case alt_t_key:
-			debugger = true;
-			debugger_state = DEBUGGER_STATE;
 			mem_manager_update = NULL;
 			pal_manager_update = debugger_update;
 			break;
@@ -732,23 +722,24 @@ int game_parse_keystroke(int mykey) {
 			break;
 
 		case alt_a_key:
-			//       if (debugger_watch < DEBUGGER_MAX_WATCH) {
-			// temp = -1;
-			// if (debugger_watch > 0) temp = debugger_watch_index[debugger_watch - 1];
-			// if (!popup_get_number (&temp, "ADD GLOBAL WATCH", "Variable #:", 3)) {
-			// if ((temp >= 0) && (temp < 500)) {
-			// for (count = 0; count < debugger_watch; count++) {
-			// if (debugger_watch_index[count] == temp) {
-			// temp = -1;
-			// }
-			// }
-			//
-			// if (temp > 0) {
-			// debugger_watch_index[debugger_watch++] = temp;
-			// }
-			// }
-			// }
-			// }
+			if (debugger_watch < DEBUGGER_MAX_WATCH) {
+				temp = -1;
+				if (debugger_watch > 0)
+					temp = debugger_watch_index[debugger_watch - 1];
+				if (!popup_get_number(&temp, "ADD GLOBAL WATCH", "Variable #:", 3)) {
+					if ((temp >= 0) && (temp < 500)) {
+						for (count = 0; count < debugger_watch; count++) {
+							if (debugger_watch_index[count] == temp) {
+								temp = -1;
+							}
+						}
+
+						if (temp > 0) {
+							debugger_watch_index[debugger_watch++] = temp;
+						}
+					}
+				}
+			}
 			break;
 
 		case alt_e_key:
@@ -803,13 +794,14 @@ int game_parse_keystroke(int mykey) {
 			break;
 
 		case alt_w_key:
-			// player.walk_freedom  = !player.walk_freedom;
-			// player.walk_anywhere = player.walk_freedom;
-			// if (player.walk_freedom) {
-			  // popup_alert (26, "Player walks anywhere.", NULL);
-			// } else {
-			  // popup_alert (26, "Player walk restricted.", NULL);
-			// }
+			player.walk_freedom  = !player.walk_freedom;
+			player.walk_anywhere = player.walk_freedom;
+
+			if (player.walk_freedom) {
+				popup_alert(26, "Player walks anywhere.", NULL);
+			} else {
+				popup_alert(26, "Player walk restricted.", NULL);
+			}
 			break;
 
 		case alt_v_key:
@@ -842,8 +834,11 @@ int game_parse_keystroke(int mykey) {
 		case ctrl_c_key:
 			kernel.mouse_cursor_point = (byte)(!kernel.mouse_cursor_point);
 			break;
-#if 0
+
 		case ctrl_s_key:
+			if (g_engine->getGameID() != GType_Forest)
+				break;
+
 			Common::strcpy_s(temp_buf, "d322u001");
 
 			if (!popup_get_string(temp_buf, "Speech Play", "File:", 14)) {
@@ -853,8 +848,7 @@ int game_parse_keystroke(int mykey) {
 
 				// if exist RAC file
 				if (env_exist(temp_buf_2)) {
-					digi_play(temp_buf, 1);
-					digi_trigger_dialog = false;
+					Forest::digi_play(temp_buf, 1);
 
 				} else {
 					Common::strcpy_s(temp_buf_2, "*");
@@ -863,8 +857,7 @@ int game_parse_keystroke(int mykey) {
 
 					// if exist RAW
 					if (env_exist(temp_buf_2)) {
-						digi_play(temp_buf, 1);
-						digi_trigger_dialog = false;
+						Forest::digi_play(temp_buf, 1);
 
 					} else {
 						popup_alert(22, temp_buf, "does not exist!", NULL);
@@ -872,7 +865,7 @@ int game_parse_keystroke(int mykey) {
 				}
 			}
 			break;
-#endif
+
 		case alt_f1_key:
 			if (room->front_y > room->back_y) room->front_y--;
 			kernel_room_bound_dif = room->front_y - room->back_y;
@@ -888,7 +881,8 @@ int game_parse_keystroke(int mykey) {
 			kernel_room_scale_dif = room->front_scale - room->back_scale;
 			break;
 
-		case alt_f4_key:
+		// Was Alt+F4 in original, but obviously can't use that in Windows builds
+		case ctrl_f4_key:
 			room->front_scale++;
 			kernel_room_scale_dif = room->front_scale - room->back_scale;
 			break;
@@ -977,7 +971,11 @@ int game_parse_keystroke(int mykey) {
 	}
 
 	if (kernel.cheating < (byte)kernel_cheating_allowed) {
-		if (mykey == (kernel_cheating_password[kernel.cheating] - '@')) {
+		// Check for entering cheat sequence. The original did it using Control+key sequence,
+		// but in ScummVM I'm allowing it to be done with or without ctrl key being pressed.
+		// Since Ctrl+M, for example, is intercepted for mouse lock, so the Once Upon a Forest
+		// 'LLAMA' cheat sequence couldn't otherwise be entered
+		if (toupper(mykey & 0xffff) == kernel_cheating_password[kernel.cheating]) {
 			kernel.cheating++;
 			mykey = 0;
 			if (kernel.cheating >= (byte)kernel_cheating_allowed) {
@@ -992,7 +990,7 @@ int game_parse_keystroke(int mykey) {
 
 	switch (mykey) {
 	case space_key:
-		global[3] = true;  // player_hyperwalked
+		global[player_hyperwalked] = true;
 		if (!kernel.paused) {
 			if (player.walking && (new_room == room_id) && (player.walk_off_edge == 0)) {
 				if (!kernel.disable_fastwalk || (kernel.cheating == (byte)kernel_cheating_allowed)) {
@@ -1098,18 +1096,6 @@ int game_parse_keystroke(int mykey) {
 			NULL);
 		break;
 
-		// case I_key:
-		// case B_key:
-		// case i_key:
-		// case b_key:
-		  // if (room_id != 199 && section_id != 9 &&
-			  // player.commands_allowed &&
-			  // !kernel.trigger &&
-			  // inter_input_mode == INTER_LIMITED_SENTENCES &&
-	//          !global[2]) {*/  /* inventory_is_displayed
-			// display_inventory();
-		  // }
-		  // break;
 	case 0:
 		break;
 

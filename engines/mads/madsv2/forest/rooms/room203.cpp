@@ -1014,7 +1014,7 @@ static void room_203_anim7() {
 	local->_aa = -1;
 	player.walker_visible = true;
 	kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
-	player.commands_allowed = -1;
+	player.commands_allowed = true;
 	kernel_flip_hotspot(words_abigail, true);
 	kernel_flip_hotspot(words_russel, true);
 	kernel_flip_hotspot(words_edgar, true);

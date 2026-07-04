@@ -190,10 +190,10 @@ extern void (*game_emergency_save)();
 
 extern int debugger;
 extern int debugger_state;
-extern int debugger_matte_before;
+extern bool debugger_matte_before;
 extern int debugger_memory_skip;
-extern int debugger_memory_all;
-extern int debugger_memory_keywait;
+extern bool debugger_memory_all;
+extern bool debugger_memory_keywait;
 extern void (*debugger_reset)();      /* Debugger reset routine  */
 extern void (*debugger_update)();     /* Debugger update routine */
 
