@@ -22,19 +22,28 @@
 #ifndef HOLLYWOOD_RESOURCE_H
 #define HOLLYWOOD_RESOURCE_H
 
+#include "common/array.h"
+#include "common/file.h"
 #include "common/path.h"
 #include "common/stream.h"
 #include "common/types.h"
 
 #include "hollywood/hollywood.h"
 
+namespace Graphics {
+class ManagedSurface;
+}
+
 namespace Hollywood {
+
+class IndexedSurfaceBuffer;
 
 struct ResourceChunkTable {
 	uint32 offsets[HollywoodEngine::kResourceChunkCount];
 	uint32 sizes[HollywoodEngine::kResourceChunkCount];
 
 	void clear();
+	bool load(Common::SeekableReadStream &stream);
 	bool isValidChunk(uint index) const;
 };
 
@@ -76,9 +85,40 @@ class ResourceManager {
 public:
 	bool readChunkTable(const Common::Path &fileName, ResourceChunkTable &table) const;
 	Common::SeekableReadStream *createChunkReadStream(const Common::Path &fileName, uint index) const;
+};
+
+// Keeps a RESOURCE.* archive open and reads chunks through its parsed table.
+class ChunkArchive {
+public:
+	ChunkArchive();
+
+	bool open(const Common::Path &fileName);
+	void close();
+	bool isOpen() const { return _open; }
+
+	const Common::Path &fileName() const { return _fileName; }
+	const ResourceChunkTable &chunkTable() const { return _chunkTable; }
+	bool isValidChunk(uint index) const { return _chunkTable.isValidChunk(index); }
+	uint32 chunkSize(uint index) const;
+	uint32 totalChunkSize(uint firstChunk, uint lastChunk) const;
+
+	bool readFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize,
+		const char *debugName);
+	bool readFixedChunk(uint index, Graphics::ManagedSurface &destination, uint fixedSize,
+		const char *debugName);
+	bool readFixedChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize,
+		const char *debugName);
+	bool readVariableChunk(uint index, Common::Array<byte> &destination);
+	bool readChunkTo(uint index, Common::Array<byte> &destination, uint32 destinationOffset);
 
 private:
-	bool readChunkTable(Common::SeekableReadStream &stream, ResourceChunkTable &table) const;
+	bool chunkBounds(uint index, uint32 &offset, uint32 &size) const;
+	bool readChunkBytes(uint index, byte *destination, uint32 destinationSize);
+
+	Common::File _file;
+	Common::Path _fileName;
+	ResourceChunkTable _chunkTable;
+	bool _open;
 };
 
 } // End of namespace Hollywood

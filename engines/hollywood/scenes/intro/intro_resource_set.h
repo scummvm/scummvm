@@ -29,29 +29,25 @@
 
 namespace Hollywood {
 
-class ResourceManager;
-
 // Owns the currently loaded intro archive table and decode arena.
 class IntroResourceSet {
 public:
 	IntroResourceSet();
 
 	void clearChunkOffsets();
-	bool loadChunkTable(ResourceManager *resources, const char *archiveName);
+	bool loadChunkTable(const char *archiveName);
 	bool validateChunk(const char *archiveName, const char *debugName, uint index) const;
 	bool validateChunkRange(const char *archiveName, const char *debugName, uint firstChunk, uint lastChunk) const;
 	uint32 totalChunkSize(uint firstChunk, uint lastChunk) const;
 	void allocateArena(uint32 byteCount);
 
-	bool loadFixedChunk(ResourceManager *resources, const char *archiveName, const char *debugName,
+	bool loadFixedChunk(const char *debugName,
 		uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadFixedChunk(ResourceManager *resources, const char *archiveName, const char *debugName,
+	bool loadFixedChunk(const char *debugName,
 		uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
-	bool loadVariableChunk(ResourceManager *resources, const char *archiveName,
-		uint index, Common::Array<byte> &destination);
-	bool loadArenaChunk(ResourceManager *resources, const char *archiveName, const char *debugName,
-		uint archiveIndex, uint localChunkIndex);
-	bool loadArenaChunkAlias(ResourceManager *resources, const char *archiveName, const char *debugName,
+	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
+	bool loadArenaChunk(const char *debugName, uint archiveIndex, uint localChunkIndex);
+	bool loadArenaChunkAlias(const char *debugName,
 		uint sourceIndex, uint aliasIndex, uint targetIndex);
 
 	enum {
@@ -62,6 +58,9 @@ public:
 	uint32 chunkOffsets[kResourceChunkCount];
 	Common::Array<byte> arena;
 	uint32 arenaCursor;
+
+private:
+	ChunkArchive _archive;
 };
 
 } // End of namespace Hollywood

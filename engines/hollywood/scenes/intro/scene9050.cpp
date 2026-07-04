@@ -215,20 +215,20 @@ bool Scene9050::play() {
 	return result;
 }
 
-bool Scene9050::loadResourceChunk(const char *archiveName, uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_vm->resources(), archiveName, _debugName, index, destination, fixedSize);
+bool Scene9050::loadResourceChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
+	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
 }
 
-bool Scene9050::loadResourceChunk(const char *archiveName, uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_vm->resources(), archiveName, _debugName, index, destination, fixedSize);
+bool Scene9050::loadResourceChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
+	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
 }
 
-bool Scene9050::loadResourceArenaChunk(const char *archiveName, uint archiveIndex, uint localChunkIndex) {
-	return _resources.loadArenaChunk(_vm->resources(), archiveName, _debugName, archiveIndex, localChunkIndex);
+bool Scene9050::loadResourceArenaChunk(uint archiveIndex, uint localChunkIndex) {
+	return _resources.loadArenaChunk(_debugName, archiveIndex, localChunkIndex);
 }
 
 bool Scene9050::loadResourceI06Assets() {
-	if (!_resources.loadChunkTable(_vm->resources(), kI06ArchiveName))
+	if (!_resources.loadChunkTable(kI06ArchiveName))
 		return false;
 
 	for (uint i = 0; i < kI06RequiredChunkCount; ++i) {
@@ -250,11 +250,11 @@ bool Scene9050::loadResourceI06Assets() {
 }
 
 bool Scene9050::loadResourceI06Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return loadResourceChunk(kI06ArchiveName, index, destination, fixedSize);
+	return loadResourceChunk(index, destination, fixedSize);
 }
 
 bool Scene9050::loadResourceI06ArenaChunk(uint index) {
-	return loadResourceArenaChunk(kI06ArchiveName, index, index);
+	return loadResourceArenaChunk(index, index);
 }
 
 bool Scene9050::loadResourceI05ClipSegment(byte segmentId) {
@@ -263,7 +263,7 @@ bool Scene9050::loadResourceI05ClipSegment(byte segmentId) {
 		return false;
 	}
 
-	if (!_resources.loadChunkTable(_vm->resources(), kI05ArchiveName))
+	if (!_resources.loadChunkTable(kI05ArchiveName))
 		return false;
 
 	const uint baseIndex = ((uint)segmentId - 1) * kI05EntriesPerSegment;
@@ -297,19 +297,19 @@ bool Scene9050::loadResourceI05ClipSegment(byte segmentId) {
 }
 
 bool Scene9050::loadResourceI05Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return loadResourceChunk(kI05ArchiveName, index, destination, fixedSize);
+	return loadResourceChunk(index, destination, fixedSize);
 }
 
 bool Scene9050::loadResourceI05Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	return loadResourceChunk(kI05ArchiveName, index, destination, fixedSize);
+	return loadResourceChunk(index, destination, fixedSize);
 }
 
 bool Scene9050::loadResourceI05ArenaChunk(uint archiveIndex, uint localChunkIndex) {
-	return loadResourceArenaChunk(kI05ArchiveName, archiveIndex, localChunkIndex);
+	return loadResourceArenaChunk(archiveIndex, localChunkIndex);
 }
 
 bool Scene9050::loadResourceI08BlinkAssets() {
-	if (!_resources.loadChunkTable(_vm->resources(), kI08ArchiveName))
+	if (!_resources.loadChunkTable(kI08ArchiveName))
 		return false;
 
 	for (uint i = 0; i < kI08RequiredChunkCount; ++i) {
@@ -319,18 +319,18 @@ bool Scene9050::loadResourceI08BlinkAssets() {
 
 	_resources.allocateArena(_resources.chunkTable.sizes[2]);
 
-	if (!loadResourceChunk(kI08ArchiveName, 0, _clipBaseFramebuffer, kFrameBufferSize))
+	if (!loadResourceChunk(0, _clipBaseFramebuffer, kFrameBufferSize))
 		return false;
-	if (!loadResourceChunk(kI08ArchiveName, 1, _paletteResource, kPaletteSize))
+	if (!loadResourceChunk(1, _paletteResource, kPaletteSize))
 		return false;
-	if (!loadResourceArenaChunk(kI08ArchiveName, 2, 2))
+	if (!loadResourceArenaChunk(2, 2))
 		return false;
 
 	return true;
 }
 
 bool Scene9050::loadResourceI07FinalAssets() {
-	if (!_resources.loadChunkTable(_vm->resources(), kI07ArchiveName))
+	if (!_resources.loadChunkTable(kI07ArchiveName))
 		return false;
 
 	for (uint i = 0; i < kI07RequiredChunkCount; ++i) {
@@ -340,11 +340,11 @@ bool Scene9050::loadResourceI07FinalAssets() {
 
 	_resources.allocateArena(_resources.chunkTable.sizes[2]);
 
-	if (!loadResourceChunk(kI07ArchiveName, 0, _clipBaseFramebuffer, kFrameBufferSize))
+	if (!loadResourceChunk(0, _clipBaseFramebuffer, kFrameBufferSize))
 		return false;
-	if (!loadResourceChunk(kI07ArchiveName, 1, _paletteResource, kPaletteSize))
+	if (!loadResourceChunk(1, _paletteResource, kPaletteSize))
 		return false;
-	if (!loadResourceArenaChunk(kI07ArchiveName, 2, 2))
+	if (!loadResourceArenaChunk(2, 2))
 		return false;
 
 	return true;

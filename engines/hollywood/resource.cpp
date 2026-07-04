@@ -21,8 +21,12 @@
 
 #include "hollywood/resource.h"
 
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/substream.h"
+#include "graphics/managed_surface.h"
+
+#include "hollywood/graphics.h"
 
 namespace Hollywood {
 
@@ -31,6 +35,23 @@ void ResourceChunkTable::clear() {
 		offsets[i] = 0;
 		sizes[i] = 0;
 	}
+}
+
+bool ResourceChunkTable::load(Common::SeekableReadStream &stream) {
+	clear();
+
+	if (stream.size() < HollywoodEngine::kResourceChunkCount * 8)
+		return false;
+
+	if (!stream.seek(0))
+		return false;
+	for (int i = 0; i < HollywoodEngine::kResourceChunkCount; ++i)
+		offsets[i] = stream.readUint32LE();
+
+	for (int i = 0; i < HollywoodEngine::kResourceChunkCount; ++i)
+		sizes[i] = stream.readUint32LE();
+
+	return !stream.err();
 }
 
 bool ResourceChunkTable::isValidChunk(uint index) const {
@@ -44,7 +65,7 @@ bool ResourceManager::readChunkTable(const Common::Path &fileName, ResourceChunk
 		return false;
 	}
 
-	return readChunkTable(file, table);
+	return table.load(file);
 }
 
 Common::SeekableReadStream *ResourceManager::createChunkReadStream(const Common::Path &fileName, uint index) const {
@@ -58,7 +79,7 @@ Common::SeekableReadStream *ResourceManager::createChunkReadStream(const Common:
 	}
 
 	ResourceChunkTable table;
-	if (!readChunkTable(*file, table) || !table.isValidChunk(index)) {
+	if (!table.load(*file) || !table.isValidChunk(index)) {
 		delete file;
 		return nullptr;
 	}
@@ -74,20 +95,201 @@ Common::SeekableReadStream *ResourceManager::createChunkReadStream(const Common:
 	return new Common::SeekableSubReadStream(file, begin, end, DisposeAfterUse::YES);
 }
 
-bool ResourceManager::readChunkTable(Common::SeekableReadStream &stream, ResourceChunkTable &table) const {
-	table.clear();
+ChunkArchive::ChunkArchive() :
+		_file(),
+		_fileName(),
+		_chunkTable(),
+		_open(false) {
+	_chunkTable.clear();
+}
 
-	if (stream.size() < HollywoodEngine::kResourceChunkCount * 8)
+bool ChunkArchive::open(const Common::Path &fileName) {
+	close();
+
+	_fileName = fileName;
+	if (!_file.open(fileName)) {
+		_chunkTable.clear();
+		return false;
+	}
+
+	if (!_chunkTable.load(_file)) {
+		close();
+		return false;
+	}
+
+	_open = true;
+	return true;
+}
+
+void ChunkArchive::close() {
+	_file.close();
+	_fileName = Common::Path();
+	_chunkTable.clear();
+	_open = false;
+}
+
+uint32 ChunkArchive::chunkSize(uint index) const {
+	if (!_chunkTable.isValidChunk(index))
+		return 0;
+
+	return _chunkTable.sizes[index];
+}
+
+uint32 ChunkArchive::totalChunkSize(uint firstChunk, uint lastChunk) const {
+	uint32 byteCount = 0;
+	for (uint i = firstChunk; i <= lastChunk && i < HollywoodEngine::kResourceChunkCount; ++i)
+		byteCount += _chunkTable.sizes[i];
+	return byteCount;
+}
+
+bool ChunkArchive::readFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize,
+		const char *debugName) {
+	uint32 chunkOffset = 0;
+	uint32 byteCount = 0;
+	const Common::String archiveName = _fileName.toString();
+	if (!chunkBounds(index, chunkOffset, byteCount)) {
+		warning("Failed to open %s chunk %u", archiveName.c_str(), index);
+		return false;
+	}
+
+	if (byteCount > fixedSize || destination.size() < fixedSize) {
+		warning("%s chunk %u does not fit its fixed %s destination",
+			archiveName.c_str(), index, debugName);
+		return false;
+	}
+
+	memset(destination.data(), 0, destination.size());
+	if (!readChunkBytes(index, destination.data(), destination.size())) {
+		warning("Failed to read %s chunk %u", archiveName.c_str(), index);
+		return false;
+	}
+
+	debugC(1, kDebugResources, "Loaded %s fixed chunk %u: offset=%u size=%u",
+		archiveName.c_str(), index, chunkOffset, (uint)byteCount);
+	return true;
+}
+
+bool ChunkArchive::readFixedChunk(uint index, Graphics::ManagedSurface &destination, uint fixedSize,
+		const char *debugName) {
+	uint32 chunkOffset = 0;
+	uint32 byteCount = 0;
+	const Common::String archiveName = _fileName.toString();
+	if (!chunkBounds(index, chunkOffset, byteCount)) {
+		warning("Failed to open %s chunk %u", archiveName.c_str(), index);
+		return false;
+	}
+
+	const uint destinationSize = destination.pitch * destination.h;
+	if (byteCount > fixedSize || destinationSize < fixedSize) {
+		warning("%s chunk %u does not fit its fixed %s destination",
+			archiveName.c_str(), index, debugName);
+		return false;
+	}
+
+	memset(destination.getPixels(), 0, destinationSize);
+	if (!readChunkBytes(index, (byte *)destination.getPixels(), destinationSize)) {
+		warning("Failed to read %s chunk %u", archiveName.c_str(), index);
+		return false;
+	}
+
+	debugC(1, kDebugResources, "Loaded %s fixed chunk %u: offset=%u size=%u",
+		archiveName.c_str(), index, chunkOffset, (uint)byteCount);
+	return true;
+}
+
+bool ChunkArchive::readFixedChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize,
+		const char *debugName) {
+	uint32 chunkOffset = 0;
+	uint32 byteCount = 0;
+	const Common::String archiveName = _fileName.toString();
+	if (!chunkBounds(index, chunkOffset, byteCount)) {
+		warning("Failed to open %s chunk %u", archiveName.c_str(), index);
+		return false;
+	}
+
+	if (byteCount > fixedSize || destination.size() < fixedSize) {
+		warning("%s chunk %u does not fit its fixed %s destination",
+			archiveName.c_str(), index, debugName);
+		return false;
+	}
+
+	memset(destination.data(), 0, destination.size());
+	if (!readChunkBytes(index, destination.data(), destination.size())) {
+		warning("Failed to read %s chunk %u", archiveName.c_str(), index);
+		return false;
+	}
+
+	debugC(1, kDebugResources, "Loaded %s fixed chunk %u: offset=%u size=%u",
+		archiveName.c_str(), index, chunkOffset, (uint)byteCount);
+	return true;
+}
+
+bool ChunkArchive::readVariableChunk(uint index, Common::Array<byte> &destination) {
+	uint32 chunkOffset = 0;
+	uint32 byteCount = 0;
+	const Common::String archiveName = _fileName.toString();
+	if (!chunkBounds(index, chunkOffset, byteCount)) {
+		warning("Failed to open %s chunk %u", archiveName.c_str(), index);
+		return false;
+	}
+
+	destination.resize(byteCount);
+	if (!readChunkBytes(index, destination.data(), destination.size())) {
+		warning("Failed to read %s chunk %u", archiveName.c_str(), index);
+		return false;
+	}
+
+	debugC(1, kDebugResources, "Loaded %s variable chunk %u: offset=%u size=%u",
+		archiveName.c_str(), index, chunkOffset, (uint)byteCount);
+	return true;
+}
+
+bool ChunkArchive::readChunkTo(uint index, Common::Array<byte> &destination, uint32 destinationOffset) {
+	uint32 chunkOffset = 0;
+	uint32 byteCount = 0;
+	const Common::String archiveName = _fileName.toString();
+	if (!chunkBounds(index, chunkOffset, byteCount)) {
+		warning("Failed to open %s chunk %u", archiveName.c_str(), index);
+		return false;
+	}
+	(void)chunkOffset;
+
+	if (destinationOffset > destination.size() || byteCount > destination.size() - destinationOffset) {
+		warning("%s chunk %u does not fit destination buffer", archiveName.c_str(), index);
+		return false;
+	}
+
+	if (!readChunkBytes(index, destination.data() + destinationOffset, destination.size() - destinationOffset)) {
+		warning("Failed to read %s chunk %u", archiveName.c_str(), index);
+		return false;
+	}
+
+	return true;
+}
+
+bool ChunkArchive::chunkBounds(uint index, uint32 &offset, uint32 &size) const {
+	offset = 0;
+	size = 0;
+
+	if (!_open || !_chunkTable.isValidChunk(index))
 		return false;
 
-	stream.seek(0);
-	for (int i = 0; i < HollywoodEngine::kResourceChunkCount; ++i)
-		table.offsets[i] = stream.readUint32LE();
+	const uint32 fileSize = (uint32)_file.size();
+	offset = _chunkTable.offsets[index];
+	size = _chunkTable.sizes[index];
+	return offset <= fileSize && size <= fileSize - offset;
+}
 
-	for (int i = 0; i < HollywoodEngine::kResourceChunkCount; ++i)
-		table.sizes[i] = stream.readUint32LE();
+bool ChunkArchive::readChunkBytes(uint index, byte *destination, uint32 destinationSize) {
+	uint32 offset = 0;
+	uint32 byteCount = 0;
+	if (!chunkBounds(index, offset, byteCount) || byteCount > destinationSize)
+		return false;
 
-	return !stream.err();
+	if (!_file.seek(offset))
+		return false;
+
+	return _file.read(destination, byteCount) == byteCount;
 }
 
 } // End of namespace Hollywood

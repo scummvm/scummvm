@@ -622,7 +622,7 @@ bool PlayableScene::load() {
 		warning("%s has no resource archive configured", sceneDebugName());
 		return false;
 	}
-	if (!_resources.loadChunkTable(_vm->resources(), archiveName)) {
+	if (!_resources.loadChunkTable(archiveName)) {
 		warning("Failed to read %s header", archiveName);
 		warning("%s load failed: %s chunk table", sceneDebugName(), archiveName);
 		return false;
@@ -951,21 +951,19 @@ bool PlayableScene::loadStage003SceneRows() {
 }
 
 bool PlayableScene::loadFixedChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_vm->resources(), resourceArchiveName(), sceneDebugName(),
-		index, destination, fixedSize);
+	return _resources.loadFixedChunk(sceneDebugName(), index, destination, fixedSize);
 }
 
 bool PlayableScene::loadFixedChunk(uint index, Graphics::ManagedSurface &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_vm->resources(), resourceArchiveName(), sceneDebugName(),
-		index, destination, fixedSize);
+	return _resources.loadFixedChunk(sceneDebugName(), index, destination, fixedSize);
 }
 
 bool PlayableScene::loadVariableChunk(uint index, Common::Array<byte> &destination) {
-	return _resources.loadVariableChunk(_vm->resources(), resourceArchiveName(), index, destination);
+	return _resources.loadVariableChunk(index, destination);
 }
 
 bool PlayableScene::loadArenaChunk(uint index) {
-	return _resources.loadArenaChunk(_vm->resources(), resourceArchiveName(), sceneDebugName(), index);
+	return _resources.loadArenaChunk(sceneDebugName(), index);
 }
 
 bool PlayableScene::initializeActorDepthTables() {
