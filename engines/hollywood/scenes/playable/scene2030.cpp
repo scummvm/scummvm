@@ -304,10 +304,10 @@ bool Scene2030::dispatchCustomSceneAction(uint16 handlerId) {
 		runMerchantPrimarySpeechLine(9, (byte)(_random.getRandomNumber(1) + 1), true);
 		closeMerchantAfterInteraction(true);
 		return true;
-	case 312: // Vender objeto 0x49 al mercader derecho (sell item 0x49 to right merchant): grants money.
+	case 312: // Vender calcetín remendado al mercader derecho (sell patched sock to right merchant): grants money.
 		runRightMerchantSaleSequence(kScene2030RightMerchantSaleItemA, kScene2030RightMerchantSaleValueA, 4, 5);
 		return true;
-	case 313: // Vender sabana/item 0x3f al mercader derecho (sell sheet/item 0x3f to right merchant): grants money.
+	case 313: // Vender camisón de Sherilyn al mercader derecho (sell Sherilyn nightgown): grants money.
 		runRightMerchantSaleSequence(kScene2030RightMerchantSaleItemB, kScene2030RightMerchantSaleValueB, 3, 6);
 		return true;
 	case 314: // Ir a avioneta (go to airplane): open travel destination selector.
