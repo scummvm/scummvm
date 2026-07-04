@@ -95,6 +95,7 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 		_clockVisible(false),
 		_deskPrimaryActorVisible(false),
 		_deskSecondaryActorVisible(false),
+		_dialogueBranch(false),
 		_subtitle(),
 		_skipRequested(false) {
 	memset(_resourceChunkOffsets, 0, sizeof(_resourceChunkOffsets));
@@ -103,6 +104,7 @@ Scene9100::Scene9100(HollywoodEngine *vm) :
 	_frameDecodeBuffer.resize(kFrameDecodeBufferSize);
 	_sceneFramebuffer.resize(kFrameDecodeBufferSize);
 	_savedFramebuffer.resize(kFrameDecodeBufferSize);
+	_cleanOfficeBaseFramebuffer.resize(kFrameDecodeBufferSize);
 	_presentationPaletteRemapTable.resize(kPresentationPaletteRemapTableSize);
 	for (uint i = 0; i < _presentationPaletteRemapTable.size(); ++i)
 		_presentationPaletteRemapTable[i] = 0;
@@ -202,6 +204,7 @@ bool Scene9100::playDialogueBranch() {
 }
 
 bool Scene9100::load(bool dialogueBranch) {
+	_dialogueBranch = dialogueBranch;
 	if (!_vm->resources()->readChunkTable(Common::Path(kI10ArchiveName), _i10ChunkTable)) {
 		warning("Failed to read %s header", kI10ArchiveName);
 		return false;
@@ -231,6 +234,7 @@ bool Scene9100::load(bool dialogueBranch) {
 			!loadVariableChunk(2, _sceneFillRuns) ||
 			!loadStage003Descriptors())
 		return false;
+	memcpy(_cleanOfficeBaseFramebuffer.data(), _frameDecodeBuffer.data(), _cleanOfficeBaseFramebuffer.size());
 	memcpy(_paletteCurrent.data(), _paletteDefault.data(), _paletteCurrent.size());
 	buildPresentationPaletteRemapTable(_paletteCurrent, _presentationPaletteRemapTable);
 
@@ -718,7 +722,7 @@ void Scene9100::runSueEntrySequence() {
 
 	animateForegroundFrames(27, 31);
 	_foregroundTalkBaseFrame = 32;
-	runConversationStep(1, 6, kTalkingOverlayNone, 0, true, false, kDeskPrimaryBlueSpeech);
+	runConversationStep(1, 6, kTalkingOverlayNone, 0, true, true, kDeskPrimaryBlueSpeech);
 	if (_skipRequested || Engine::shouldQuit())
 		return;
 
@@ -728,7 +732,7 @@ void Scene9100::runSueEntrySequence() {
 	animateDeskPrimaryStaticFrames(0, 2);
 	drawOfficeCompositeLayers();
 	presentFrame();
-	runConversationStep(1, 7, kTalkingOverlayNone, 0, false, false, kSueSecondarySpeech);
+	runConversationStep(1, 7, kTalkingOverlayNone, 0, false, true, kSueSecondarySpeech);
 	if (_skipRequested || Engine::shouldQuit())
 		return;
 
@@ -877,12 +881,13 @@ void Scene9100::runCinematicSequence() {
 			return;
 
 		applyBackgroundMode(kSteps[i]);
+		const bool animateClock = kSteps[i].backgroundMode == 4;
 		if (kSteps[i].textBankIndex == 1 && kSteps[i].descriptorIndex == 2)
 			runForegroundPoseToDialogueState();
 		else if (kSteps[i].textBankIndex == 1 && kSteps[i].descriptorIndex == 14)
 			_foregroundTalkBaseFrame = 0x17;
 		runConversationStep(kSteps[i].textBankIndex, kSteps[i].descriptorIndex,
-			kSteps[i].talkingOverlayBase, kSteps[i].talkingOverlayVariant, kSteps[i].animateForegroundActor, false,
+			kSteps[i].talkingOverlayBase, kSteps[i].talkingOverlayVariant, kSteps[i].animateForegroundActor, animateClock,
 			kSteps[i].speechTextStyle);
 		if (kSteps[i].textBankIndex == 1 && kSteps[i].descriptorIndex == 2)
 			runForegroundPoseBackToDeskIdle();
@@ -1289,9 +1294,6 @@ void Scene9100::animateDeskSecondaryStaticFrames(byte firstFrame, byte lastFrame
 
 void Scene9100::advanceClockFrame() {
 	_clockVisible = true;
-	const byte oldChunk7Frame = _clockChunk7Frame;
-	const byte oldChunk8Frame = _clockChunk8Frame;
-	const byte oldChunk9Frame = _clockChunk9Frame;
 	_clockChunk9Frame = (_clockChunk9Frame + 1) % kI10ClockDescriptorCount;
 	if (_clockChunk9Frame == 0) {
 		_clockChunk8Frame = (_clockChunk8Frame + 1) % kI10ClockDescriptorCount;
@@ -1300,15 +1302,16 @@ void Scene9100::advanceClockFrame() {
 			_clockChunk7CarryGate = 0;
 		}
 	}
-	restoreClockLayerBackgrounds(oldChunk7Frame, oldChunk8Frame, oldChunk9Frame);
-	restoreClockLayerBackgrounds(_clockChunk7Frame, _clockChunk8Frame, _clockChunk9Frame);
+	restoreClockAreaBackground();
 	drawOfficeCompositeLayers();
 }
 
-void Scene9100::restoreClockLayerBackgrounds(byte chunk7Frame, byte chunk8Frame, byte chunk9Frame) {
-	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[7], 0, kI10ClockDescriptorCount, chunk7Frame);
-	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[8], 0, kI10ClockDescriptorCount, chunk8Frame);
-	restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[9], 0, kI10ClockDescriptorCount, chunk9Frame);
+void Scene9100::restoreClockAreaBackground() {
+	for (byte frame = 0; frame < kI10ClockDescriptorCount; ++frame) {
+		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[7], 0, kI10ClockDescriptorCount, frame);
+		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[8], 0, kI10ClockDescriptorCount, frame);
+		restoreSpriteBackground(_resourceArena, _resourceChunkOffsets[9], 0, kI10ClockDescriptorCount, frame);
+	}
 }
 
 void Scene9100::drawClockLayers(bool restoreBackground) {
@@ -1316,7 +1319,7 @@ void Scene9100::drawClockLayers(bool restoreBackground) {
 		return;
 
 	if (restoreBackground)
-		restoreClockLayerBackgrounds(_clockChunk7Frame, _clockChunk8Frame, _clockChunk9Frame);
+		restoreClockAreaBackground();
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[7], 0, kI10ClockDescriptorCount, _clockChunk7Frame);
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[8], 0, kI10ClockDescriptorCount, _clockChunk8Frame);
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[9], 0, kI10ClockDescriptorCount, _clockChunk9Frame);
@@ -1427,6 +1430,40 @@ void Scene9100::drawResourceBlockListToBuffer(uint32 baseOffset, IndexedSurfaceB
 	}
 }
 
+void Scene9100::restoreResourceBlockListFromCleanOfficeBase(uint32 baseOffset, IndexedSurfaceBuffer &destination) {
+	if (baseOffset + 2 > _resourceArena.size())
+		return;
+
+	const uint16 blockCount = readUint16(_resourceArena, baseOffset);
+	uint cursor = baseOffset + 2;
+	for (uint blockIndex = 0; blockIndex < blockCount; ++blockIndex) {
+		if (cursor + 6 > _resourceArena.size())
+			return;
+
+		const uint32 packedDestination = readUint32(_resourceArena, cursor);
+		const uint16 size = readUint16(_resourceArena, cursor + 4);
+		cursor += 6;
+
+		const uint x = packedDestination & 0xffff;
+		const uint y = (packedDestination >> 16) & 0xffff;
+		const uint targetOffset = x + y * HollywoodEngine::kSceneBufferWidth;
+		if (cursor + size > _resourceArena.size() ||
+				targetOffset + size > destination.size() ||
+				targetOffset + size > _cleanOfficeBaseFramebuffer.size())
+			return;
+
+		memcpy(destination.data() + targetOffset, _cleanOfficeBaseFramebuffer.data() + targetOffset, size);
+		cursor += size;
+	}
+}
+
+void Scene9100::removeInitialOfficeTitlePatch(IndexedSurfaceBuffer &destination) {
+	if (_dialogueBranch)
+		return;
+
+	restoreResourceBlockListFromCleanOfficeBase(_resourceChunkOffsets[16], destination);
+}
+
 void Scene9100::expandFillRunsToSavedFramebuffer() {
 	uint destinationOffset = 0;
 	uint sourceOffset = 0;
@@ -1445,6 +1482,7 @@ void Scene9100::expandFillRunsToSavedFramebuffer() {
 
 void Scene9100::restoreOfficeFrameAndPresent() {
 	syncOfficeRestoreBaseFromSaved();
+	removeInitialOfficeTitlePatch(_frameDecodeBuffer);
 	expandFillRunsToSavedFramebuffer();
 	memcpy(_sceneFramebuffer.data(), _frameDecodeBuffer.data(), _sceneFramebuffer.size());
 	drawForegroundActorFrame(_foregroundActorFrame);
@@ -1453,8 +1491,10 @@ void Scene9100::restoreOfficeFrameAndPresent() {
 }
 
 void Scene9100::applyBackgroundMode(const CinematicStep &step) {
-	if (step.copyFrameToSavedBefore)
+	if (step.copyFrameToSavedBefore) {
 		memcpy(_savedFramebuffer.data(), _frameDecodeBuffer.data(), _savedFramebuffer.size());
+		removeInitialOfficeTitlePatch(_savedFramebuffer);
+	}
 
 	switch (step.backgroundMode) {
 	case 1:

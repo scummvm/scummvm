@@ -158,7 +158,7 @@ private:
 	void animateDeskPrimaryStaticFrames(byte firstFrame, byte lastFrame);
 	void animateDeskSecondaryStaticFrames(byte firstFrame, byte lastFrame);
 	void advanceClockFrame();
-	void restoreClockLayerBackgrounds(byte chunk7Frame, byte chunk8Frame, byte chunk9Frame);
+	void restoreClockAreaBackground();
 	void drawClockLayers(bool restoreBackground);
 	void drawTalkingOverlay(TalkingOverlayBase talkingOverlayBase, byte frameIndex, byte talkingOverlayVariant);
 	void drawStripSpriteFrame(const Common::Array<byte> &resource, uint32 baseOffset, uint32 descriptorTableOffset, uint16 descriptorCount, uint16 descriptorIndex);
@@ -166,6 +166,8 @@ private:
 	void applyResourceSpanPatchToFrameDecodeBuffer(uint32 baseOffset);
 	void drawResourceBlockListToSceneFramebuffer(uint32 baseOffset);
 	void drawResourceBlockListToBuffer(uint32 baseOffset, IndexedSurfaceBuffer &destination);
+	void restoreResourceBlockListFromCleanOfficeBase(uint32 baseOffset, IndexedSurfaceBuffer &destination);
+	void removeInitialOfficeTitlePatch(IndexedSurfaceBuffer &destination);
 	void expandFillRunsToSavedFramebuffer();
 	void restoreOfficeFrameAndPresent();
 	void applyBackgroundMode(const CinematicStep &step);
@@ -225,6 +227,7 @@ private:
 	IndexedSurfaceBuffer _frameDecodeBuffer;
 	IndexedSurfaceBuffer _sceneFramebuffer;
 	IndexedSurfaceBuffer _savedFramebuffer;
+	IndexedSurfaceBuffer _cleanOfficeBaseFramebuffer;
 	Graphics::ManagedSurface _screen;
 	Palette6Bit _displayPalette;
 	Common::Array<byte> _stage003DecodeKey;
@@ -250,6 +253,7 @@ private:
 	bool _clockVisible;
 	bool _deskPrimaryActorVisible;
 	bool _deskSecondaryActorVisible;
+	bool _dialogueBranch;
 	bool _skipRequested;
 };
 
