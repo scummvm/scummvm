@@ -64,6 +64,30 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO4(GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA, GUIO_RENDEREGA)
 	},
 
+	// Amiga EU "Kult" build.
+	{
+		"chamber",
+		"Amiga",
+		AD_ENTRY2s("FOND.BIN", "a838b23a9fa5d25f88a02dee95307996", 32000,
+		           "6.BIN",    "t:926c11afce55dc08e1bb15b1253fd677", 10702),
+		Common::UNK_LANG, // EU EN/FR/DE
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_RENDERAMIGA)
+	},
+
+	// Amiga US "Chamber" (Draconian) build.
+	{
+		"chamber",
+		"Amiga",
+		AD_ENTRY2s("FOND.BIN", "a838b23a9fa5d25f88a02dee95307996", 32000,
+		           "6.BIN",    "t:3eb1d3f844593949697540de3e74f74a", 16046),
+		Common::EN_USA,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_RENDERAMIGA)
+	},
+
 	AD_TABLE_END_MARKER
 };
 } // End of namespace Chamber
