@@ -1424,7 +1424,7 @@ void DungeonMan::decodeText(char *destString, size_t maxSize, Thing thing, int16
 		{0,   0,  0,  0, 0, 0, 0, 0}
 	};
 
-	TextString &textString = *getTextString(thing);
+	TextString &textString = *getTextString(thing.getIndex());
 	if ((textString.isVisible()) || (type & kDMMaskDecodeEvenIfInvisible)) {
 		type &= ~kDMMaskDecodeEvenIfInvisible;
 		char sepChar;
