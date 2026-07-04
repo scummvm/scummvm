@@ -94,8 +94,10 @@ private:
 		uint32 chunkSize, uint tableEntryCount, byte frameIndex);
 	void drawClipFrameDelta(byte chunkIndex, uint tableEntryCount, byte frameIndex);
 	void playDeltaClipFromResource(const Common::Array<byte> &resource, uint32 frameTableOffset,
-		uint32 chunkSize, uint tableEntryCount, uint frameCount, uint32 frameMillis);
-	void playDeltaClip(byte chunkIndex, uint tableEntryCount, uint frameCount, uint32 frameMillis);
+		uint32 chunkSize, uint tableEntryCount, uint frameCount, uint32 frameMillis, uint firstFrame = 0);
+	void playDeltaClip(byte chunkIndex, uint tableEntryCount, uint frameCount, uint32 frameMillis,
+		uint firstFrame = 0);
+	bool waitTransitionFrameMillis(uint32 millis);
 	void copySmallRow(uint sourceOffset, uint destinationOffset);
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
 	void setHotspotInteractionY(byte itemId, int16 y);
