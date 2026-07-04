@@ -415,6 +415,10 @@ bool HollywoodEngine::copyLastGameplayThumbnail(Graphics::Surface &thumbnail) co
 	return true;
 }
 
+bool HollywoodEngine::subtitlesEnabled() const {
+	return _gameState.actorSpeechTextMode != 0;
+}
+
 Common::Error HollywoodEngine::run() {
 	setDebugger(new Console(this));
 
@@ -1034,7 +1038,7 @@ void HollywoodEngine::syncSoundSettings() {
 	const bool musicMuted = ConfMan.getBool("music_mute");
 	const bool sfxMuted = ConfMan.getBool("sfx_mute");
 	const bool speechMuted = ConfMan.getBool("speech_mute");
-	bool subtitlesEnabled = ConfMan.getBool("subtitles");
+	bool subtitlesEnabled = !ConfMan.hasKey("subtitles") || ConfMan.getBool("subtitles");
 	if (speechMuted && !subtitlesEnabled) {
 		ConfMan.setBool("subtitles", true);
 		subtitlesEnabled = true;
