@@ -23,13 +23,12 @@
 
 #include "common/debug.h"
 #include "common/path.h"
-#include "common/ptr.h"
-#include "common/stream.h"
 
 namespace Hollywood {
 
 IntroResourceSet::IntroResourceSet() :
-		arenaCursor(0) {
+		arenaCursor(0),
+		_archive() {
 	chunkTable.clear();
 	clearChunkOffsets();
 }
@@ -38,13 +37,14 @@ void IntroResourceSet::clearChunkOffsets() {
 	memset(chunkOffsets, 0, sizeof(chunkOffsets));
 }
 
-bool IntroResourceSet::loadChunkTable(ResourceManager *resources, const char *archiveName) {
-	if (!resources->readChunkTable(Common::Path(archiveName), chunkTable)) {
+bool IntroResourceSet::loadChunkTable(const char *archiveName) {
+	if (!_archive.open(Common::Path(archiveName))) {
 		warning("Failed to read %s header", archiveName);
 		chunkTable.clear();
 		return false;
 	}
 
+	chunkTable = _archive.chunkTable();
 	return true;
 }
 
@@ -68,10 +68,7 @@ bool IntroResourceSet::validateChunkRange(const char *archiveName, const char *d
 }
 
 uint32 IntroResourceSet::totalChunkSize(uint firstChunk, uint lastChunk) const {
-	uint32 byteCount = 0;
-	for (uint i = firstChunk; i <= lastChunk; ++i)
-		byteCount += chunkTable.sizes[i];
-	return byteCount;
+	return _archive.totalChunkSize(firstChunk, lastChunk);
 }
 
 void IntroResourceSet::allocateArena(uint32 byteCount) {
@@ -81,132 +78,77 @@ void IntroResourceSet::allocateArena(uint32 byteCount) {
 	clearChunkOffsets();
 }
 
-bool IntroResourceSet::loadFixedChunk(ResourceManager *resources, const char *archiveName,
-		const char *debugName, uint index, Common::Array<byte> &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(resources->createChunkReadStream(Common::Path(archiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", archiveName, index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit its fixed %s destination", archiveName, index, debugName);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", archiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", archiveName, index, (uint)stream->size());
-	return true;
+bool IntroResourceSet::loadFixedChunk(const char *debugName,
+		uint index, Common::Array<byte> &destination, uint fixedSize) {
+	return _archive.readFixedChunk(index, destination, fixedSize, debugName);
 }
 
-bool IntroResourceSet::loadFixedChunk(ResourceManager *resources, const char *archiveName,
-		const char *debugName, uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(resources->createChunkReadStream(Common::Path(archiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", archiveName, index);
-		return false;
-	}
-
-	if (stream->size() > fixedSize || destination.size() < fixedSize) {
-		warning("%s chunk %u does not fit its fixed %s destination", archiveName, index, debugName);
-		return false;
-	}
-
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", archiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s chunk %u: size=%u", archiveName, index, (uint)stream->size());
-	return true;
+bool IntroResourceSet::loadFixedChunk(const char *debugName,
+		uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
+	return _archive.readFixedChunk(index, destination, fixedSize, debugName);
 }
 
-bool IntroResourceSet::loadVariableChunk(ResourceManager *resources, const char *archiveName,
-		uint index, Common::Array<byte> &destination) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(resources->createChunkReadStream(Common::Path(archiveName), index));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", archiveName, index);
-		return false;
-	}
-
-	destination.resize(stream->size());
-	memset(destination.data(), 0, destination.size());
-	if (stream->read(destination.data(), stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", archiveName, index);
-		return false;
-	}
-
-	debugC(1, kDebugResources, "Loaded %s variable chunk %u: size=%u", archiveName, index, (uint)stream->size());
-	return true;
+bool IntroResourceSet::loadVariableChunk(uint index, Common::Array<byte> &destination) {
+	return _archive.readVariableChunk(index, destination);
 }
 
-bool IntroResourceSet::loadArenaChunk(ResourceManager *resources, const char *archiveName,
-		const char *debugName, uint archiveIndex, uint localChunkIndex) {
+bool IntroResourceSet::loadArenaChunk(const char *debugName, uint archiveIndex, uint localChunkIndex) {
+	const Common::String archiveName = _archive.fileName().toString();
 	if (localChunkIndex >= kResourceChunkCount) {
 		warning("%s chunk %u cannot be loaded into invalid %s local slot %u",
-			archiveName, archiveIndex, debugName, localChunkIndex);
+			archiveName.c_str(), archiveIndex, debugName, localChunkIndex);
 		return false;
 	}
 
-	Common::ScopedPtr<Common::SeekableReadStream> stream(resources->createChunkReadStream(Common::Path(archiveName), archiveIndex));
-	if (!stream) {
-		warning("Failed to open %s chunk %u", archiveName, archiveIndex);
+	if (!_archive.isValidChunk(archiveIndex)) {
+		warning("Failed to open %s chunk %u", archiveName.c_str(), archiveIndex);
 		return false;
 	}
 
-	if (arenaCursor + stream->size() > arena.size()) {
-		warning("%s chunk %u does not fit the %s resource arena", archiveName, archiveIndex, debugName);
+	const uint32 chunkSize = _archive.chunkSize(archiveIndex);
+	if (arenaCursor > arena.size() || chunkSize > arena.size() - arenaCursor) {
+		warning("%s chunk %u does not fit the %s resource arena", archiveName.c_str(), archiveIndex, debugName);
 		return false;
 	}
 
 	chunkOffsets[localChunkIndex] = arenaCursor;
-	if (stream->read(arena.data() + arenaCursor, stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s chunk %u", archiveName, archiveIndex);
+	if (!_archive.readChunkTo(archiveIndex, arena, arenaCursor))
 		return false;
-	}
 
 	debugC(1, kDebugResources, "Loaded %s arena chunk %u as local chunk %u: offset=%u size=%u",
-		archiveName, archiveIndex, localChunkIndex, arenaCursor, (uint)stream->size());
-	arenaCursor += stream->size();
+		archiveName.c_str(), archiveIndex, localChunkIndex, arenaCursor, (uint)chunkSize);
+	arenaCursor += chunkSize;
 	return true;
 }
 
-bool IntroResourceSet::loadArenaChunkAlias(ResourceManager *resources, const char *archiveName,
-		const char *debugName, uint sourceIndex, uint aliasIndex, uint targetIndex) {
+bool IntroResourceSet::loadArenaChunkAlias(const char *debugName, uint sourceIndex, uint aliasIndex, uint targetIndex) {
+	const Common::String archiveName = _archive.fileName().toString();
 	if (aliasIndex >= kResourceChunkCount || targetIndex >= kResourceChunkCount) {
 		warning("%s chunk %u cannot be aliased to invalid %s slot %u/%u",
-			archiveName, sourceIndex, debugName, aliasIndex, targetIndex);
+			archiveName.c_str(), sourceIndex, debugName, aliasIndex, targetIndex);
 		return false;
 	}
 
-	Common::ScopedPtr<Common::SeekableReadStream> stream(resources->createChunkReadStream(Common::Path(archiveName), sourceIndex));
-	if (!stream) {
-		warning("Failed to open %s branch chunk %u", archiveName, sourceIndex);
+	if (!_archive.isValidChunk(sourceIndex)) {
+		warning("Failed to open %s branch chunk %u", archiveName.c_str(), sourceIndex);
 		return false;
 	}
 
 	const uint32 destinationOffset = chunkOffsets[targetIndex];
-	const uint32 requiredSize = destinationOffset + stream->size();
+	const uint32 chunkSize = _archive.chunkSize(sourceIndex);
+	const uint32 requiredSize = destinationOffset + chunkSize;
 	if (requiredSize > arena.size()) {
 		const uint oldSize = arena.size();
 		arena.resize(requiredSize);
 		memset(arena.data() + oldSize, 0, arena.size() - oldSize);
 	}
 
-	if (stream->read(arena.data() + destinationOffset, stream->size()) != (uint32)stream->size()) {
-		warning("Failed to read %s branch chunk %u", archiveName, sourceIndex);
+	if (!_archive.readChunkTo(sourceIndex, arena, destinationOffset))
 		return false;
-	}
 
 	chunkOffsets[aliasIndex] = destinationOffset;
 	debugC(1, kDebugResources, "Loaded %s branch chunk %u as arena chunk %u: offset=%u size=%u",
-		archiveName, sourceIndex, aliasIndex, destinationOffset, (uint)stream->size());
+		archiveName.c_str(), sourceIndex, aliasIndex, destinationOffset, (uint)chunkSize);
 	return true;
 }
 

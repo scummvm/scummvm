@@ -113,7 +113,7 @@ bool Scene9120::play() {
 }
 
 bool Scene9120::loadResourceI12Assets() {
-	if (!_resources.loadChunkTable(_vm->resources(), kI12ArchiveName))
+	if (!_resources.loadChunkTable(kI12ArchiveName))
 		return false;
 
 	for (uint i = 0; i < kI12RequiredChunkCount; ++i) {
@@ -148,15 +148,15 @@ bool Scene9120::loadResourceI12Assets() {
 }
 
 bool Scene9120::loadResourceI12Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_vm->resources(), kI12ArchiveName, _debugName, index, destination, fixedSize);
+	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
 }
 
 bool Scene9120::loadResourceI12Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_vm->resources(), kI12ArchiveName, _debugName, index, destination, fixedSize);
+	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
 }
 
 bool Scene9120::loadResourceI12ArenaChunk(uint index) {
-	return _resources.loadArenaChunk(_vm->resources(), kI12ArchiveName, _debugName, index, index);
+	return _resources.loadArenaChunk(_debugName, index, index);
 }
 
 void Scene9120::runTimedOverlayPhase() {
