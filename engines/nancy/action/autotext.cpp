@@ -195,16 +195,20 @@ void Autotext::execute() {
 
 		const Font *font = g_nancy->_graphics->getFont(_fontID);
 		assert(font);
+		uint d = (font->getFontHeight() + 1) / 2 + 1;
 
-		// The original indents the text within the surface by twice the width
-		// of a lowercase 'o' on the left, and once on top
-		uint indent = font->getStringWidth("o");
-		textBounds.top += indent;
-		textBounds.left += indent * 2;
+		textBounds.top += d + 1;
+		textBounds.left += d;
 
 		// Original engine uses a particular value in the TBOX chunk in all
 		// text rendering, including Autotext
 		auto *tbox = GetEngineData(TBOX);
+
+		if (g_nancy->getGameType() >= kGameTypeNancy10 && _surfaceID < 3) {
+			// Nancy 10+ viewport autotext aligns the first line flush with the
+			// wrapped lines instead of hanging-indenting it
+			textBounds.left = tbox->leftOffset;
+		}
 
 		drawAllText(textBounds, tbox->leftOffset - textBounds.left, _fontID, _fontID);
 		surfBounds = Common::Rect(_fullSurface.w, _drawnTextHeight);
