@@ -188,22 +188,22 @@ bool Scene2090::advanceCustomGameplayLoop(uint32 delta) {
 
 bool Scene2090::dispatchCustomSceneAction(uint16 handlerId) {
 	switch (handlerId) {
-	case 301: // Original B09 callback slot 01: scene-local response row 1.
+	case 301: // Ir a escalera (go to stairs): approach the altar steps.
 		beginSecondarySpeechLine(1, 0);
 		return true;
-	case 302: // Original B09 callback slot 02: scene-local response row 2.
+	case 302: // Mirar escalera (look at stairs): marble and gold description.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 303: // Ir atras hacia B08 (go back to B08): animated return to scene 2080.
+	case 303: // Ir atras hacia B08 (go back to B08): animated return to the sarcophagus chamber.
 		runBackTransitionToScene2080();
 		return true;
-	case 304: // Original B09 callback slot 04: scene-local response row 3.
+	case 304: // Ir a entrada (go to entrance): describes the connection to the sarcophagus chamber.
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 305: // Interactuar con guardia/cortina (interact with guard/curtain): inventory-gated finale.
+	case 305: // Mirar entrada/altar ritual (look at entrance): checks princess hair and Nile pollen.
 		runGuardOrCurtainInteraction();
 		return true;
-	case 306: // Original B09 callback slot 06: scene-local response row 5.
+	case 306: // Usar pergamino too early (use scroll early): wait for the right moment.
 		beginSecondarySpeechLine(5, 0);
 		return true;
 	default:

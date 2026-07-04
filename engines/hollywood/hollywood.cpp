@@ -49,6 +49,8 @@
 #include "hollywood/scenes/playable/scene2070.h"
 #include "hollywood/scenes/playable/scene2080.h"
 #include "hollywood/scenes/playable/scene2090.h"
+#include "hollywood/scenes/playable/scene2100.h"
+#include "hollywood/scenes/playable/scene2110.h"
 #include "hollywood/scenes/playable/scene3000.h"
 #include "hollywood/scenes/playable/scene3010.h"
 #include "hollywood/scenes/playable/scene3020.h"
@@ -146,6 +148,10 @@ const int kScene2080FirstState = 0x0820;
 const int kScene2080LastState = 0x0821;
 const int kScene2090FirstState = 0x082a;
 const int kScene2090LastState = 0x082b;
+const int kScene2100FirstState = 0x0834;
+const int kScene2100LastState = 0x083d;
+const int kScene2110FirstState = 0x083e;
+const int kScene2110LastState = 0x083f;
 const int kScene3000State = 3000;
 const int kScene3010FirstState = 0x0bc2;
 const int kScene3010LastState = 0x0bcb;
@@ -234,6 +240,8 @@ bool isImplementedGameplayState(int stateId) {
 		(stateId >= kScene2070FirstState && stateId <= kScene2070LastState) ||
 		(stateId >= kScene2080FirstState && stateId <= kScene2080LastState) ||
 		(stateId >= kScene2090FirstState && stateId <= kScene2090LastState) ||
+		(stateId >= kScene2100FirstState && stateId <= kScene2100LastState) ||
+		(stateId >= kScene2110FirstState && stateId <= kScene2110LastState) ||
 		stateId == kScene3000State ||
 		(stateId >= kScene3010FirstState && stateId <= kScene3010LastState) ||
 		(stateId >= kScene3020FirstState && stateId <= kScene3020LastState) ||
@@ -315,6 +323,10 @@ int gameplayStateForBootParam(int bootParam) {
 		return kScene2080FirstState;
 	if (bootParam == 2090)
 		return kScene2090FirstState;
+	if (bootParam == 2100)
+		return kScene2100FirstState;
+	if (bootParam == 2110)
+		return kScene2110FirstState;
 	if (bootParam == 3040)
 		return kScene3040State;
 	if (bootParam == 3090)
@@ -362,12 +374,16 @@ void prepareGameplayStateForBootParam(GameplayState &state, int bootParam) {
 		break;
 	case 2080:
 	case 2090:
+	case 2100:
+	case 2110:
 		state.egyptSealPuzzleProgress = 2;
 		state.egyptLabyrinthPositionIndex = 0x47;
 		state.scene2050LabyrinthLampReady = true;
 		state.scene2070EntryProgress = 2;
 		state.scene2070SealExitPatchState = 1;
 		state.scene2070InnerPassagePatchState = 1;
+		state.scene2080ForegroundState = 0;
+		state.scene2090EntryLineSeen = true;
 		break;
 	default:
 		break;
@@ -700,6 +716,22 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene2090 scene2090(this);
 			if (!scene2090.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene2100FirstState && stateId <= kScene2100LastState) {
+			handledState = true;
+			Scene2100 scene2100(this);
+			if (!scene2100.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene2110FirstState && stateId <= kScene2110LastState) {
+			handledState = true;
+			Scene2110 scene2110(this);
+			if (!scene2110.play())
 				return Common::kReadingFailed;
 			continue;
 		}

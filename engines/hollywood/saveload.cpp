@@ -271,13 +271,23 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene2080EntryLineSeen);
 	s.syncAsByte(state.scene2080ForegroundState);
 	syncStateBool(s, state.scene2080ExitBackSequenceSeen);
-	s.syncAsByte(state.scene2080InventoryExchangeState);
+	s.syncAsByte(state.scene2080PrincessHairSearchState);
 	syncStateBool(s, state.scene2080FirstRow09LookSeen);
 	syncStateBool(s, state.scene2080DialogueBranchBUnlocked);
 	s.syncAsByte(state.scene2080DialogueBranchAIndex);
 	s.syncAsByte(state.scene2080DialogueBranchBIndex);
 	s.syncAsByte(state.scene2080DialogueTerminalIndex);
 	syncStateBool(s, state.scene2090EntryLineSeen);
+	syncStateBool(s, state.scene2100RaStaffTaken);
+	syncStateBool(s, state.scene2100PassageOpen);
+	s.syncAsByte(state.scene2100MummyBranchState);
+	syncStateBool(s, state.scene2100MummyGreetingSeen);
+	s.syncAsByte(state.scene2100MummyDialogueClueStage);
+	syncStateBool(s, state.scene2100AfterlifeBranchUnlocked);
+	syncStateBool(s, state.scene2100MarketBranchUnlocked);
+	syncStateBool(s, state.scene2110EntryLineSeen);
+	s.syncAsByte(state.scene2110TreasureGrantIndex);
+	syncStateBool(s, state.scene2110TreasureGranted);
 	syncStateBool(s, state.scene6020TaffyKnown);
 	syncStateBool(s, state.scene6020TaffyLeft);
 	syncStateBool(s, state.scene6030HannoverInterviewCompleted);
@@ -517,14 +527,20 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene2070HiddenItemPatchState = 0;
 	if (state.scene2080ForegroundState > 2)
 		state.scene2080ForegroundState = 2;
-	if (state.scene2080InventoryExchangeState > 2)
-		state.scene2080InventoryExchangeState = 0;
+	if (state.scene2080PrincessHairSearchState > 2)
+		state.scene2080PrincessHairSearchState = 0;
 	if (state.scene2080DialogueBranchAIndex > 2)
 		state.scene2080DialogueBranchAIndex = 0;
 	if (state.scene2080DialogueBranchBIndex > 2)
 		state.scene2080DialogueBranchBIndex = 0;
 	if (state.scene2080DialogueTerminalIndex > 2)
 		state.scene2080DialogueTerminalIndex = 0;
+	if (state.scene2100MummyBranchState > 2)
+		state.scene2100MummyBranchState = 0;
+	if (state.scene2100MummyDialogueClueStage > 2)
+		state.scene2100MummyDialogueClueStage = 0;
+	if (state.scene2110TreasureGrantIndex > 3)
+		state.scene2110TreasureGrantIndex = 3;
 	if (state.scene4010AlternateBackgroundState > 1)
 		state.scene4010AlternateBackgroundState = 0;
 	if (state.scene4010EntryPathSpeechState > 2)
