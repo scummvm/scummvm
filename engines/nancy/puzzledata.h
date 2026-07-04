@@ -301,6 +301,29 @@ struct UIResourceData : public PuzzleData {
 	Common::Array<int32> values;
 };
 
+// Nancy 10+ taskbar button-disable overrides, set by AR 29 (ControlUIItems).
+// A disable can span a range of scenes set from an earlier scene's AR, so the
+// override has to persist across saves for the button to stay disabled after a
+// load into a scene that doesn't itself re-run the AR.
+struct TaskbarData : public PuzzleData {
+	static const uint kNumButtons = 6;
+
+	struct Override {
+		bool active = false;
+		int16 startScene = -1;
+		int16 endScene = -1;
+		uint16 clickSoundMode = 0;
+	};
+
+	TaskbarData() {}
+	virtual ~TaskbarData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('T', 'S', 'K', 'B'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Override overrides[kNumButtons];
+};
+
 PuzzleData *makePuzzleData(const uint32 tag);
 
 } // End of namespace Nancy

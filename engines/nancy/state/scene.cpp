@@ -890,6 +890,14 @@ void Scene::synchronize(Common::Serializer &ser) {
 				pd->synchronize(ser);
 			}
 		}
+
+		// Restore the taskbar disable overrides now that the persisted
+		// TaskbarData is available. A disable can be set from an earlier
+		// scene's AR that won't re-run here, so it has to come from the save.
+		if (_taskbar && g_nancy->getGameType() >= kGameTypeNancy10) {
+			_taskbar->syncFromPuzzleData();
+			_taskbar->updateNotificationStates(_sceneState.currentScene.sceneID);
+		}
 	}
 
 	_isRunningAd = false;

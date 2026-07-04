@@ -26,6 +26,7 @@
 #include "engines/nancy/font.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
+#include "engines/nancy/puzzledata.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/sound.h"
 
@@ -244,6 +245,7 @@ void Taskbar::setDisabledRange(uint buttonIndex, int16 startScene, int16 endScen
 	_overrides[buttonIndex].active = true;
 	_overrides[buttonIndex].startScene = startScene;
 	_overrides[buttonIndex].endScene = endScene;
+	persistOverride(buttonIndex);
 
 	if ((int)buttonIndex != _hoveredButton) {
 		drawButton(buttonIndex, restingState(buttonIndex));
@@ -256,6 +258,7 @@ void Taskbar::clearButtonOverride(uint buttonIndex) {
 	}
 	_overrides[buttonIndex].active = false;
 	_overrides[buttonIndex].clickSoundMode = kClickSoundDefault;
+	persistOverride(buttonIndex);
 
 	if ((int)buttonIndex != _hoveredButton) {
 		drawButton(buttonIndex, restingState(buttonIndex));
@@ -267,6 +270,34 @@ void Taskbar::setClickSoundMode(uint buttonIndex, uint mode) {
 		return;
 	}
 	_overrides[buttonIndex].clickSoundMode = mode;
+	persistOverride(buttonIndex);
+}
+
+void Taskbar::persistOverride(uint index) {
+	if (index >= TASK::kNumButtons || index >= TaskbarData::kNumButtons) {
+		return;
+	}
+	TaskbarData *data = (TaskbarData *)NancySceneState.getPuzzleData(TaskbarData::getTag());
+	if (!data) {
+		return;
+	}
+	data->overrides[index].active = _overrides[index].active;
+	data->overrides[index].startScene = _overrides[index].startScene;
+	data->overrides[index].endScene = _overrides[index].endScene;
+	data->overrides[index].clickSoundMode = (uint16)_overrides[index].clickSoundMode;
+}
+
+void Taskbar::syncFromPuzzleData() {
+	TaskbarData *data = (TaskbarData *)NancySceneState.getPuzzleData(TaskbarData::getTag());
+	if (!data) {
+		return;
+	}
+	for (uint i = 0; i < TASK::kNumButtons && i < TaskbarData::kNumButtons; ++i) {
+		_overrides[i].active = data->overrides[i].active;
+		_overrides[i].startScene = data->overrides[i].startScene;
+		_overrides[i].endScene = data->overrides[i].endScene;
+		_overrides[i].clickSoundMode = data->overrides[i].clickSoundMode;
+	}
 }
 
 void Taskbar::updateNotificationStates(int16 currentSceneID) {

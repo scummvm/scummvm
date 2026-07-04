@@ -390,6 +390,15 @@ void UIResourceData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+void TaskbarData::synchronize(Common::Serializer &ser) {
+	for (uint i = 0; i < kNumButtons; ++i) {
+		ser.syncAsByte(overrides[i].active);
+		ser.syncAsSint16LE(overrides[i].startScene);
+		ser.syncAsSint16LE(overrides[i].endScene);
+		ser.syncAsUint16LE(overrides[i].clickSoundMode);
+	}
+}
+
 PuzzleData *makePuzzleData(const uint32 tag) {
 	switch(tag) {
 	case SliderPuzzleData::getTag():
@@ -424,6 +433,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new TimerData();
 	case UIResourceData::getTag():
 		return new UIResourceData();
+	case TaskbarData::getTag():
+		return new TaskbarData();
 	default:
 		return nullptr;
 	}

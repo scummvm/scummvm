@@ -64,6 +64,11 @@ public:
 	// sprite. Call after a scene change so the range check kicks in.
 	void updateNotificationStates(int16 currentSceneID);
 
+	// Restore the disable overrides from the persisted TaskbarData chunk.
+	// Called after a save is loaded so a scene-ranged disable set by an
+	// earlier scene's AR survives the load.
+	void syncFromPuzzleData();
+
 	// Set a disabled button's rejection-sound mode, from ControlUIItems (AR 29).
 	void setClickSoundMode(uint buttonIndex, uint mode);
 
@@ -106,6 +111,8 @@ private:
 
 	void drawButton(uint index, ButtonState state);
 	ButtonState restingState(uint index) const;
+	// Mirror one button's override into the persisted TaskbarData chunk.
+	void persistOverride(uint index);
 	// True when the button currently accepts hover/click (not disabled).
 	bool isButtonActive(uint index) const;
 
