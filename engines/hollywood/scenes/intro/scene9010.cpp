@@ -21,7 +21,6 @@
 
 #include "hollywood/scenes/intro/scene9010.h"
 
-#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -671,7 +670,7 @@ void Scene9010::presentFrame(uint rowOffset, uint xOffset) {
 
 void Scene9010::beginSubtitle(const PopupDescriptor &popup, uint segmentIndex) {
 	clearSubtitle();
-	if (!ConfMan.getBool("subtitles"))
+	if (!_vm->subtitlesEnabled())
 		return;
 	if (!_vm->font() || !_vm->font()->isLoaded()) {
 		debugC(1, kDebugScene, "Skipping scene 9010 subtitle text record %u: Hollywood font is not loaded",
