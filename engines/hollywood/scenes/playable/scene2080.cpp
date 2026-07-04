@@ -538,7 +538,7 @@ void Scene2080::runEntryFromScene2090() {
 			presentFrame();
 			playDeltaClipFromResource(clipData, 0, clipData.size(),
 				kScene2080ReturnEntryClipDescriptorCount,
-				kScene2080ReturnEntryClipDescriptorCount, kScene2080ClipFrameMillis);
+				kScene2080ReturnEntryClipDescriptorCount, kScene2080ClipFrameMillis, 1);
 		}
 	}
 
@@ -874,7 +874,8 @@ void Scene2080::runForwardExitToScene2090() {
 	runConfiguredActionOverlay(kScene2080ForwardExitOverlayChunk,
 		kScene2080ForwardExitOverlayDescriptorCount,
 		kScene2080ForwardExitOverlayFrameMap, ARRAYSIZE(kScene2080ForwardExitOverlayFrameMap),
-		kScene2080FrameMillis, kActionOverlayHideActiveActor, -1, 0, 6, 0x11);
+		kScene2080FrameMillis, kActionOverlayHideActiveActor, -1, 0, 6, 0x11,
+		100, -1, 0, true, 1);
 
 	_soundBank0.playSample(0x12, 100);
 	playDeltaClip(kScene2080ForwardExitClipChunk, kScene2080ForwardExitClipDescriptorCount,
@@ -995,24 +996,39 @@ void Scene2080::drawClipFrameDelta(byte chunkIndex, uint tableEntryCount, byte f
 }
 
 void Scene2080::playDeltaClipFromResource(const Common::Array<byte> &resource, uint32 frameTableOffset,
-		uint32 chunkSize, uint tableEntryCount, uint frameCount, uint32 frameMillis) {
-	for (uint frame = 0; frame < frameCount && !Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frame) {
-		drawPlayableComposite();
+		uint32 chunkSize, uint tableEntryCount, uint frameCount, uint32 frameMillis, uint firstFrame) {
+	for (uint frame = firstFrame; frame < frameCount && !Engine::shouldQuit() &&
+			!_vm->isSceneRestartRequested(); ++frame) {
 		drawClipFrameDeltaFromResource(resource, frameTableOffset, chunkSize, tableEntryCount, (byte)frame);
 		presentFrame();
-		if (waitSceneMillis(frameMillis))
+		if (waitTransitionFrameMillis(frameMillis))
 			break;
 	}
 }
 
-void Scene2080::playDeltaClip(byte chunkIndex, uint tableEntryCount, uint frameCount, uint32 frameMillis) {
-	for (uint frame = 0; frame < frameCount && !Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frame) {
-		drawPlayableComposite();
+void Scene2080::playDeltaClip(byte chunkIndex, uint tableEntryCount, uint frameCount, uint32 frameMillis,
+		uint firstFrame) {
+	for (uint frame = firstFrame; frame < frameCount && !Engine::shouldQuit() &&
+			!_vm->isSceneRestartRequested(); ++frame) {
 		drawClipFrameDelta(chunkIndex, tableEntryCount, (byte)frame);
 		presentFrame();
-		if (waitSceneMillis(frameMillis))
+		if (waitTransitionFrameMillis(frameMillis))
 			break;
 	}
+}
+
+bool Scene2080::waitTransitionFrameMillis(uint32 millis) {
+	uint32 remaining = millis;
+	while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (pollEvents(true))
+			return true;
+
+		const uint32 slice = MIN<uint32>(remaining, 10);
+		g_system->delayMillis(slice);
+		remaining -= slice;
+	}
+
+	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
 }
 
 void Scene2080::copySmallRow(uint sourceOffset, uint destinationOffset) {

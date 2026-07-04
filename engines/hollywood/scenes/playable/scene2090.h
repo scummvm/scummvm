@@ -70,7 +70,9 @@ private:
 	void drawClipFrameDeltaFromResource(const Common::Array<byte> &resource, uint32 frameTableOffset,
 		uint32 chunkSize, uint tableEntryCount, byte frameIndex);
 	void drawClipFrameDelta(byte chunkIndex, uint tableEntryCount, byte frameIndex);
-	void playDeltaClip(byte chunkIndex, uint tableEntryCount, uint frameCount, uint32 frameMillis);
+	void playDeltaClip(byte chunkIndex, uint tableEntryCount, uint frameCount, uint32 frameMillis,
+		uint firstFrame = 0);
+	bool waitTransitionFrameMillis(uint32 millis);
 
 	ResourceSpriteLayer _foregroundLayer;
 };

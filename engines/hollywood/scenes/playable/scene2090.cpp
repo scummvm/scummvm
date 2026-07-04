@@ -317,7 +317,7 @@ void Scene2090::runEntryFromScene2080() {
 	drawClipFrameDelta(kScene2090EntryClipChunk, kScene2090EntryClipDescriptorCount, 0);
 	presentFrame();
 	playDeltaClip(kScene2090EntryClipChunk, kScene2090EntryClipDescriptorCount,
-		kScene2090EntryClipDescriptorCount, kScene2090FrameMillis);
+		kScene2090EntryClipDescriptorCount, kScene2090FrameMillis, 1);
 	_soundBank0.stop();
 
 	runEntryPathWithFinalFacing(0x152, 0x194, 4, 0x116, 0x1ab, kScene2090InvalidFacing, 0);
@@ -543,14 +543,29 @@ void Scene2090::drawClipFrameDelta(byte chunkIndex, uint tableEntryCount, byte f
 		_sceneChunkTable.sizes[chunkIndex], tableEntryCount, frameIndex);
 }
 
-void Scene2090::playDeltaClip(byte chunkIndex, uint tableEntryCount, uint frameCount, uint32 frameMillis) {
-	for (uint frame = 0; frame < frameCount && !_vm->isSceneRestartRequested(); ++frame) {
-		drawPlayableComposite();
+void Scene2090::playDeltaClip(byte chunkIndex, uint tableEntryCount, uint frameCount, uint32 frameMillis,
+		uint firstFrame) {
+	for (uint frame = firstFrame; frame < frameCount && !Engine::shouldQuit() &&
+			!_vm->isSceneRestartRequested(); ++frame) {
 		drawClipFrameDelta(chunkIndex, tableEntryCount, (byte)frame);
 		presentFrame();
-		if (waitSceneMillis(frameMillis))
+		if (waitTransitionFrameMillis(frameMillis))
 			break;
 	}
+}
+
+bool Scene2090::waitTransitionFrameMillis(uint32 millis) {
+	uint32 remaining = millis;
+	while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (pollEvents(true))
+			return true;
+
+		const uint32 slice = MIN<uint32>(remaining, 10);
+		g_system->delayMillis(slice);
+		remaining -= slice;
+	}
+
+	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
 }
 
 } // End of namespace Hollywood
