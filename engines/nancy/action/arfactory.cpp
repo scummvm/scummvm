@@ -53,6 +53,7 @@
 #include "engines/nancy/action/puzzle/mazechasepuzzle.h"
 #include "engines/nancy/action/puzzle/memorypuzzle.h"
 #include "engines/nancy/action/puzzle/mindpuzzle.h"
+#include "engines/nancy/action/puzzle/minigolfpuzzle.h"
 #include "engines/nancy/action/puzzle/mirrorlightpuzzle.h"
 #include "engines/nancy/action/puzzle/mouselightpuzzle.h"
 #include "engines/nancy/action/puzzle/multibuildpuzzle.h"
@@ -457,13 +458,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new HintSystem();
 	case 161:
 		// PlaySoundEventFlagTerse moved to 149 in Nancy12; this slot was reused for a new puzzle.
-		// TODO: Nancy12 MinigolfPuzzle (new), not implemented
 		if (g_nancy->getGameType() >= kGameTypeNancy12)
-			return nullptr;
+			return new MinigolfPuzzle();
 		return new PlaySoundEventFlagTerse();
 	// -- Nancy 12 new puzzles/action records --
 	case 162:
-		// TODO: Nancy12 - new puzzle (reuses the AT_DRIVING_PUZZLE debug string), not implemented
+		// TODO: Nancy12 - sewing machine puzzle.
 		return nullptr;
 	case 163:
 		return new MirrorLightPuzzle();
