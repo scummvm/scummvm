@@ -476,7 +476,7 @@ void View1::drawCurrentSpeaker(Graphics::ManagedSurface &s) {
 	delete rightPortrait;
 }
 
-void View1::renderString(uint16 x, uint16 y, Common::String s) {
+void View1::renderString(uint16 x, uint16 y, const Common::String &s) {
 	Graphics::ManagedSurface surf = getSurface();
 	uint16 currentX = x;
 	uint16 currentY = y;

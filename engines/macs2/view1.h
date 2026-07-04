@@ -304,7 +304,7 @@ private:
 
 	void showStringBox(const Common::StringArray &sa);
 
-	void renderString(uint16 x, uint16 y, Common::String s);
+	void renderString(uint16 x, uint16 y, const Common::String &s);
 	void renderString(const Common::Point pos, const Common::String &s);
 	void renderStringWithFont(uint16 x, uint16 y, const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs);
 	int measureStringWithFont(const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs);
