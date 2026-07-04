@@ -293,82 +293,85 @@ static void room_101_anim1() {
 			aainfo[6]._val3 = 10;
 			digi_play_build(101, 'b', 1, 1);
 			scratch._aa = 1;
-			return;
+			break;
 		}
 		if (frame == 6) {
-			if (aainfo[6]._val3 != 10) return;
+			if (aainfo[6]._val3 != 10) break;
 			aainfo[6]._frame = 2;
 			kernel_reset_animation(aa[6], 2);
-			return;
+			break;
 		}
 		if (frame == 10) {
-			if (aainfo[6]._val3 != 9) return;
+			if (aainfo[6]._val3 != 9) break;
 			aainfo[6]._frame = 6;
 			kernel_reset_animation(aa[6], 6);
-			return;
+			break;
 		}
 		if (frame == 14) {
-			if (aainfo[6]._val3 != 12) return;
+			if (aainfo[6]._val3 != 12) break;
 			aainfo[6]._frame = 13;
 			kernel_reset_animation(aa[6], 13);
 		}
-		return;
+		break;
 
 	case 4:
 		if (frame == 10) {
 			aainfo[6]._val3 = 9;
 			digi_play_build(101, 'r', 2, 1);
 			scratch._aa = 10;
-			return;
+			break;
 		}
 		if (frame == 15) {
-			if (aainfo[6]._val3 != 9) return;
+			if (aainfo[6]._val3 != 9) break;
 			aainfo[6]._frame = 11;
 			kernel_reset_animation(aa[6], 11);
 		}
-		return;
+		break;
 
 	case 6:
 		if (frame == 7) {
 			aainfo[6]._val3 = 11;
 			digi_play_build(101, 'e', 1, 1);
 			scratch._aa = 20;
-			return;
+			break;
 		}
 		if (frame == 12) {
-			if (aainfo[6]._val3 != 11) return;
+			if (aainfo[6]._val3 != 11) break;
 			aainfo[6]._frame = 8;
 			kernel_reset_animation(aa[6], 8);
 		}
-		return;
+		break;
 
 	case 9:
 		if (frame == 28) {
 			aainfo[6]._val3 = 10;
 			digi_play_build(101, 'b', 3, 1);
 			scratch._aa = 30;
-			return;
+			break;
 		}
 		if (frame == 30) {
-			if (aainfo[6]._val3 != 10) return;
+			if (aainfo[6]._val3 != 10) break;
 			aainfo[6]._frame = 29;
 			kernel_reset_animation(aa[6], 29);
 		}
-		return;
+		break;
 
 	case 10:
 		if (frame == 88) {
 			aainfo[6]._val3 = 10;
 			digi_play_build(101, 'b', 4, 1);
 			scratch._aa = 40;
-			return;
+			break;
 		}
 		if (frame == 94) {
-			if (aainfo[6]._val3 != 10) return;
+			if (aainfo[6]._val3 != 10) break;
 			aainfo[6]._frame = 90;
 			kernel_reset_animation(aa[6], 90);
 		}
-		return;
+		break;
+
+	default:
+		break;
 	}
 }
 
@@ -507,34 +510,45 @@ static void room_101_anim9() {
 	int16 frame = kernel_anim[aa[9]].frame;
 	if (frame != aainfo[9]._frame) {
 		aainfo[9]._frame = frame;
-		if (frame == 99) {
-			digi_play_build(101, 'r', 3, 1);
+
+		switch (frame) {
+		case 1:
+			digi_play_build(101, 'c', 1, 1);
+			scratch._b4 = 1;
+			break;
+
+		case 67:
+			digi_play_build(101, 'e', 5, 1);
+			scratch._b4 = 67;
+			break;
+
+		case 99:
 			scratch._b4 = 99;
-		} else if (frame < 99) {
-			if (frame == 1) {
-				digi_play_build(101, 'c', 1, 1);
-				scratch._b4 = 1;
-			} else if (frame == 67) {
-				digi_play_build(101, 'e', 5, 1);
-				scratch._b4 = 67;
-			}
-		} else {
-			if (frame == 135) {
-				digi_play_build(101, 'm', 1, 1);
-				scratch._b4 = 135;
-			} else if (frame == 163) {
-				digi_play_build(101, 'b', 6, 1);
-				scratch._b4 = 163;
-			} else if (frame == 205) {
-				dont_frag_the_palette();
-				kernel_abort_animation(aa[9]);
-				aainfo[9]._active = 0;
-				stop_speech_on_run_animation = false;
-				aa[10] = kernel_run_animation(kernel_name('I', 3), 0);
-				aainfo[10]._active = -1;
-				kernel_synch(KERNEL_ANIM, aa[10], KERNEL_ANIM, aa[9]);
-				kernel_timing_trigger(1, 113);
-			}
+			break;
+
+		case 135:
+			digi_play_build(101, 'm', 1, 1);
+			scratch._b4 = 135;
+			break;
+
+		case 163:
+			digi_play_build(101, 'b', 6, 1);
+			scratch._b4 = 163;
+			break;
+
+		case 205:
+			dont_frag_the_palette();
+			kernel_abort_animation(aa[9]);
+			aainfo[9]._active = 0;
+			stop_speech_on_run_animation = false;
+			aa[10] = kernel_run_animation(kernel_name('I', 3), 0);
+			aainfo[10]._active = -1;
+			kernel_synch(KERNEL_ANIM, aa[10], KERNEL_ANIM, aa[9]);
+			kernel_timing_trigger(1, 113);
+			break;
+
+		default:
+			break;
 		}
 	}
 
