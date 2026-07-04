@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-04 16:10+0000\n"
-"PO-Revision-Date: 2026-06-27 05:22+0000\n"
+"PO-Revision-Date: 2026-07-04 18:22+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -9704,10 +9704,8 @@ msgid "The Troy minigame is not supported yet. Skipping"
 msgstr "El minijoc Troy encara no està suportat. Omet"
 
 #: engines/harvester/metaengine.cpp:33
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable gore"
-msgstr "Habilita l'emmagatzematge"
+msgstr "Habilita el gore"
 
 #: engines/harvester/metaengine.cpp:34
 msgid ""
@@ -9716,10 +9714,8 @@ msgid ""
 msgstr ""
 
 #: engines/harvester/metaengine.cpp:44
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Show CD change prompts"
-msgstr "Mostra retrats de personatges"
+msgstr "Mostra les indicacions de canvi de CD"
 
 #: engines/harvester/metaengine.cpp:45
 msgid ""
@@ -10645,16 +10641,12 @@ msgid "Select index"
 msgstr "Seleccioneu un índex"
 
 #: engines/macs2/metaengine.cpp:52
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change cursor mode"
-msgstr "Canvia el mode"
+msgstr "Canvia el mode del cursor"
 
 #: engines/macs2/metaengine.cpp:75
-#, fuzzy
-#| msgid "Slower game speed"
 msgid "Cycle game speed"
-msgstr "Velocitat de joc més lenta"
+msgstr "Alterna velocitats del joc"
 
 #: engines/macs2/metaengine.cpp:80 engines/sherlock/metaengine.cpp:846
 #: engines/touche/metaengine.cpp:147
