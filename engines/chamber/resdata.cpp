@@ -277,8 +277,12 @@ ResEntry_t res_texts_amiga[] = {
 Load strings data (commands/names)
 */
 int16 loadVepciData() {
-	if (g_vm->getPlatform() == Common::kPlatformAmiga)
+	if (g_vm->getPlatform() == Common::kPlatformAmiga) {
+		// US embeds these banks in the exe (loaded by loadAmigaStaticData())
+		if (g_vm->getLanguage() == Common::EN_USA)
+			return 1;
 		return loadFilesList(res_texts_amiga);
+	}
 	return loadFilesList(res_texts);
 }
 
@@ -328,8 +332,11 @@ ResEntry_t res_desci_amiga[] = {
 Load strings data (obj. descriptions)
 */
 int16 loadDesciData(void) {
-	if (g_vm->getPlatform() == Common::kPlatformAmiga)
+	if (g_vm->getPlatform() == Common::kPlatformAmiga) {
+		if (g_vm->getLanguage() == Common::EN_USA)
+			return 1;
 		return loadFilesList(res_desci_amiga);
+	}
 	while (!loadFilesList(res_desci))
 		askDisk2();
 	return 1;
@@ -349,8 +356,11 @@ ResEntry_t res_diali_amiga[] = {
 Load strings data (dialogs)
 */
 int16 loadDialiData(void) {
-	if (g_vm->getPlatform() == Common::kPlatformAmiga)
+	if (g_vm->getPlatform() == Common::kPlatformAmiga) {
+		if (g_vm->getLanguage() == Common::EN_USA)
+			return 1;
 		return loadFilesList(res_diali_amiga);
+	}
 	while (!loadFilesList(res_diali))
 		askDisk2();
 	return 1;
