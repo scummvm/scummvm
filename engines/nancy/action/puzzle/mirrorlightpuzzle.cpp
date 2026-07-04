@@ -33,17 +33,11 @@
 namespace Nancy {
 namespace Action {
 
-// TODO - open items for this puzzle:
-//  - Win/exit is fully EXTERNAL: the record has no scene-change of its own (its
-//    scene-change vtable slot is null) and writes no scene state, so the scene
-//    itself watches for the solved state and transitions. The exact signal (an
-//    event flag?) is still unidentified, so on solve we just finishExecution and
-//    the scene may not advance. The player's quit/cancel path is likewise unknown.
+// TODO - open items for this puzzle (mostly cosmetic):
 //  - Win presentation: the original lights the bulb via a per-zone movie
 //    animation (loaded by the movie loader at init); we draw a single static
 //    overlay frame with no sound instead.
-//  - Detector zone is chosen heuristically (any non-boundary zone away from the
-//    source); the precise detector is the tiny boundary zone inside the bulb.
+//  - The player's quit/cancel path (leaving an unsolved puzzle) is unknown.
 //  - Mirror rotation step (2 deg/click) approximates the original's exact
 //    per-click amount.
 
@@ -121,7 +115,6 @@ void MirrorLightPuzzle::traceBeam() {
 	// fixed 75deg mirror heads to the top-right mirror).
 	const double kStep = 1.0;
 	const int kMaxSteps = 20000;
-	const byte kZoneBoundary = 0x14;
 
 	double a = (double)_beamAngle * (M_PI / 180.0);
 	double dx = cos(a);
@@ -176,17 +169,10 @@ void MirrorLightPuzzle::traceBeam() {
 			continue;
 		}
 
-		// Reaching a detector zone (any non-boundary zone away from the source)
-		// solves the puzzle. TODO: confirm which zone is the true detector.
-		for (uint i = 0; i < _zones.size(); ++i) {
-			const ActionZone &z = _zones[i];
-			if (z.type != kZoneBoundary && !z.rect.isEmpty() &&
-					!z.rect.contains(origin) && z.rect.contains(p)) {
-				_solved = true;
-				break;
-			}
-		}
-		if (_solved) {
+		// Reaching the detector zone (the SpecialEffect zone at the bulb) solves
+		// the puzzle.
+		if (!_detectorRect.isEmpty() && _detectorRect.contains(p)) {
+			_solved = true;
 			_beamPath.push_back(p);
 			return;
 		}
@@ -341,6 +327,16 @@ void MirrorLightPuzzle::init() {
 	g_nancy->_resource->loadImage(_imageName, _image);
 	_image.setTransparentColor(_drawSurface.getTransparentColor());
 
+	// The detector zone carries a SpecialEffect whose id is the win scene (same
+	// semantics as MinigolfPuzzle's sink zone). Its rect is the beam target.
+	for (uint i = 0; i < _zones.size(); ++i) {
+		if (_zones[i].specialEffectId >= 1000) {
+			_detectorRect = _zones[i].rect;
+			_winScene.sceneID = _zones[i].specialEffectId;
+			break;
+		}
+	}
+
 	traceBeam();
 	redraw();
 }
@@ -363,10 +359,10 @@ void MirrorLightPuzzle::execute() {
 		}
 		break;
 	case kActionTrigger:
-		// TODO: the win/exit scene transitions are driven externally (an event
-		// flag the puzzle sets on solve + separate scene ARs), not embedded here.
-		// The solved event flag is still unidentified, so the scene may not
-		// advance yet; for now just release the record.
+		// The detector zone's SpecialEffect id is the win scene.
+		if (_solved && _winScene.sceneID >= 1000 && _winScene.sceneID != kNoScene) {
+			NancySceneState.changeScene(_winScene);
+		}
 		finishExecution();
 		break;
 	}

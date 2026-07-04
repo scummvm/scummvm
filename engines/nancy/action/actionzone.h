@@ -60,8 +60,10 @@ struct ActionZone {
 	// special-effect subtypes when the effect byte is not the 0xff terminator).
 	uint16 specialEffectId = 0;
 	bool hasSpecialEffect = false;
-	int32 specialEffect[5] = {};
-	byte specialEffectFlag = 0;
+	byte seType = 0;				// 1 = blackout, 2 = cross-dissolve, 3 = through-black
+	uint16 seTotalTime = 0;
+	uint16 seFadeToBlackTime = 0;
+	Common::Rect seRect;
 
 	// int16 + byte trailer carried by the collision (0x0b) and trigger (0x0c)
 	// subtypes. For 0x0b it is an event-flag id + on/off; for 0x0c it is a target

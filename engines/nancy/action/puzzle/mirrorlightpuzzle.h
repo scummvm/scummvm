@@ -73,6 +73,11 @@ protected:
 
 	Common::Array<ActionZone> _zones;
 
+	// Derived from the detector zone (the SpecialEffect zone at the bulb): its
+	// rect is the target the beam must reach, its specialEffectId is the win scene.
+	Common::Rect _detectorRect;
+	SceneChangeDescription _winScene;
+
 	// Runtime state
 	int16 _pickedUpMirror = -1;
 	bool _solved = false;

@@ -86,9 +86,9 @@ void ActionZone::readData(Common::SeekableReadStream &stream) {
 		tailId = stream.readSint16LE();
 		tailFlag = stream.readByte();
 		break;
-	case 0x15:
+	case 0x15:				// special effect + a trailing int32 (purpose unconfirmed)
 		readSpecialEffect(stream);
-		stream.skip(4);		// int32
+		stream.skip(4);
 		break;
 	case 0x0d:				// OverlayZone
 		readOverlayZone(stream);
@@ -103,22 +103,22 @@ void ActionZone::readData(Common::SeekableReadStream &stream) {
 	}
 }
 
-// Special Effect block: an int16 id, then a byte. If the byte is the 0xff
-// terminator the effect is absent; otherwise it is the first byte of an embedded
-// 21-byte SpecialEffect record (5 int32 + 1 byte).
+// Special Effect block: an int16 id (a target scene on transition zones), then the
+// effect type byte. If the type is the 0xff terminator the effect is absent;
+// otherwise a 21-byte SpecialEffect record follows (type + totalTime +
+// fadeToBlackTime + Rect), matching the standalone SpecialEffect action record.
 void ActionZone::readSpecialEffect(Common::SeekableReadStream &stream) {
 	specialEffectId = stream.readUint16LE();
-	byte b = stream.readByte();
-	if (b == 0xff) {
+	seType = stream.readByte();
+	if (seType == 0xff) {
+		seType = 0;
 		return;
 	}
 
-	stream.seek(-1, SEEK_CUR);
 	hasSpecialEffect = true;
-	for (int i = 0; i < 5; ++i) {
-		specialEffect[i] = stream.readSint32LE();
-	}
-	specialEffectFlag = stream.readByte();
+	seTotalTime = stream.readUint16LE();
+	seFadeToBlackTime = stream.readUint16LE();
+	readRect(stream, seRect);
 }
 
 void ActionZone::readOverlayZone(Common::SeekableReadStream &stream) {
