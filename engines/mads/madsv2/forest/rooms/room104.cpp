@@ -162,7 +162,7 @@ static void room_104_init1() {
 		aainfo[count]._frame = -1;
 	}
 
-	aa[6] = kernel_run_animation(kernel_name('s', 1), 0);
+	aa[6] = kernel_run_animation(kernel_name('I', 1), 0);
 	aainfo[6]._active = -1;
 }
 
@@ -883,7 +883,7 @@ static void room_104_daemon() {
 		break;
 	}
 
-	if (flags[4] != -3 && flags[4] != 5) {
+	if (flags[2] != -3 && flags[2] != 5) {
 		global_anim1(4, scratch._9a, global[g131], &global[g132]);
 		global_anim2(4, scratch._9c, global[g141], &global[g142]);
 	}
