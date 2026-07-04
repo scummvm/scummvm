@@ -442,13 +442,17 @@ void ConversationSound::execute() {
 }
 
 void ConversationSound::addConditionalDialogue() {
+	// We adjust the base label for Nancy 11 event flags, which can be
+	// larger than 1000.
+	int16 baseLabel = g_nancy->getGameType() >= kGameTypeNancy11 ? 1000 : 0;
+
 	for (const auto &res : g_nancy->getStaticData().conditionalDialogue[_conditionalResponseCharacterID]) {
 		bool isSatisfied = true;
 
 		for (const auto &cond : res.conditions) {
 			switch (cond.type) {
 			case (byte)StaticDataConditionType::kEvent :
-				if (!NancySceneState.getEventFlag(cond.label, cond.flag)) {
+				if (!NancySceneState.getEventFlag(baseLabel + cond.label, cond.flag)) {
 					isSatisfied = false;
 				}
 
@@ -508,6 +512,10 @@ void ConversationSound::addConditionalDialogue() {
 }
 
 void ConversationSound::addGoodbye() {
+	// We adjust the base label for Nancy 11 event flags, which can be
+	// larger than 1000.
+	int16 baseLabel = g_nancy->getGameType() >= kGameTypeNancy11 ? 1000 : 0;
+
 	auto &res = g_nancy->getStaticData().goodbyes[_goodbyeResponseCharacterID];
 	_responses.push_back(ResponseStruct());
 	ResponseStruct &newResponse = _responses.back();
@@ -538,7 +546,7 @@ void ConversationSound::addGoodbye() {
 			for (const auto &cond : sc.conditions) {
 				switch (cond.type) {
 				case (byte)StaticDataConditionType::kEvent :
-					if (!NancySceneState.getEventFlag(cond.label, cond.flag)) {
+					if (!NancySceneState.getEventFlag(baseLabel + cond.label, cond.flag)) {
 						isSatisfied = false;
 					}
 
