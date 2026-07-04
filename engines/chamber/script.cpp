@@ -3710,9 +3710,7 @@ uint16 CMD_E_PsiZoneScan(void) {
 	w = room_bounds_rect.ex - room_bounds_rect.sx;
 	h = room_bounds_rect.ey - room_bounds_rect.sy;
 
-	/*room coords are in 4-pixel blocks; EGA is 1 byte/pixel so the scan line
-	  spans w*4 bytes, while CGA packs 4 pixels/byte and spans w bytes*/
-	if (g_vm->_videoMode == Common::kRenderEGA)
+	if (isEgaLikeRenderer())
 		w *= 4;
 
 	for (y = room_bounds_rect.sy; h; y++, h--) {
@@ -4496,6 +4494,9 @@ uint16 RunScript(byte *code) {
 	script_ptr = code;
 	while (script_ptr != script_end_ptr) {
 		byte opcode = *script_ptr;
+
+		if (gDebugLevel >= 9) // TEMP headless debug trace, remove
+			debug("scr %04X: %02X", (uint16)((script_ptr - templ_data) & 0xFFFF), opcode);
 
 #ifdef DEBUG_SCRIPT
 		{
