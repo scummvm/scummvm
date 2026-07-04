@@ -7,7 +7,7 @@ ScummVM needs access to the data files for each game. A list of required data fi
 
 .. note::
 
-    For ease of use, you can create a dedicated games folder into which folder containing game files can be copied. The resulting directory structure will look somewhat like this::
+    For ease of use, you can create a dedicated games folder into which the folders containing game files can be copied. The resulting directory structure will look somewhat like this::
 
         ScummVM Games
         |-- Day of the Tentacle
@@ -20,11 +20,17 @@ ScummVM needs access to the data files for each game. A list of required data fi
 
 
 
-For games on floppies or CDs, if the data files are accessible, the external media can be accessed directly by ScummVM. Alternatively, copy the game files to a folder as described above. If the data files are not accessible, run the installer on the platform the game was designed for, to extract the game files.
+For games on floppies or CDs, if the data files are accessible, the external media can be accessed directly by ScummVM. Alternatively, copy the game files to a folder as described above.
 
-For games downloaded from digital distributors or from various `freeware sources <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games#Freeware_Games>`__ run the installer to extract the data files, or if the data files are supplied as a zip file, extract the files.
+**Working with installers and archives**
 
-For macOS or Linux users without access to a Windows machine, you can get the data files from games that only have Windows installers. Use `Wine <https://www.winehq.org/>`_ to run the Windows installer. Alternatively, for GOG.com games, use `innoextract <https://constexpr.org/innoextract/>`_ to unpack game files from the installer without actually running it.
+For many modern engines, ScummVM can now load game data directly from the original installer files or tape images (such as ZX Spectrum TAP/TZX files) without requiring manual extraction. 
+
+If your specific game engine does not support this yet, or the data files are otherwise inaccessible, you will need to extract them:
+
+* Run the installer on the platform the game was designed for.
+* For games downloaded from digital distributors or from various `freeware sources <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games#Freeware_Games>`__, run the installer to extract the data files, or if the data files are supplied as a zip file, extract the files.
+* For macOS or Linux users without access to a Windows machine, use `Wine <https://www.winehq.org/>`_ to run the Windows installer. Alternatively, for GOG.com games, use `innoextract <https://constexpr.org/innoextract/>`_ to unpack game files from the installer without actually running it.
 
 
 .. tip::

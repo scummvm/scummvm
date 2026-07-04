@@ -30,7 +30,7 @@ Filenames in Japanese games are encoded in a way that is unique to Apple. The re
 
 Macintosh also allowed special characters to be used that are disallowed in filenames on other platforms.
 
-ScummVM runs on a wide variety of platforms and not all those platforms can store Japanese filenames or other special characters, such as non-ascii characters. ScummVM uses `punycode <https://en.wikipedia.org/wiki/Punycode>`_ to handle file names that would otherwise not be supported. Punycode converts all non-ascii characters to a special format. If the original file name had special characters, the new file name will start with ``xn--``,for example, ``xn--Icon-ja6e``.
+ScummVM runs on a wide variety of platforms and not all those platforms can store Japanese filenames or other special characters, such as non-ascii characters. ScummVM uses `punycode <https://en.wikipedia.org/wiki/Punycode>`_ to handle file names that would otherwise not be supported. Punycode converts all non-ascii characters to a special format. If the original file name had special characters, the new file name will start with ``xn--``, for example, ``xn--Icon-ja6e``.
 
 Files that contain prohibited characters are always puny-encoded.
 
@@ -77,7 +77,7 @@ Creating the ISO image
 
         Unmount the disk if needed:
         - By default disks are mounted when they are inserted, and they need to be unmounted so that you can create the ISO file.
-        - HFS is no longer supported on macOS 10.15 and above, therefore those disk cannot be mounted and do not need to be unmounted.
+        - HFS is no longer supported on macOS 10.15 and above, therefore those disks cannot be mounted and do not need to be unmounted.
 
         .. code-block::
 
@@ -260,7 +260,7 @@ This mode is specific to macOS. It will traverse a directory, find all the resou
 
 Options:
 
-* ``--punyencode``: encodes all filename characters as punycode, select this when your platform doesn't support UTF-8 filenames
+* ``--punycode``: encodes all filename characters as punycode, select this when your platform doesn't support UTF-8 filenames
 
 .. note::
 
@@ -314,7 +314,7 @@ There are other ways to access HFS and HFS+ media on Windows, macOS, and Linux. 
            1. Install hfsutils using the software manager. On Debian-based distributions, use ``sudo apt install hfsutils``.
            2. Find the game disc by running ``sudo fdisk -l`` and finding the one with type ``Apple HFS/HFS+``. In this example, this is ``/dev/fd0``.
            3. Mount the HFS volume by running ``hmount /dev/fd0``
-           4. List the files and directories on the HFS media using ``hls``, change the working directory on the HFS media using ``hcd`` and copy files using ``hcopy``. The ``hcopy`` commands take options to indicate if the files should be converted to macbinary (``-m``) or copied as a raw file (``-r``). For example ``hcopy -m "PP Disk 1:PP Data:JMP PP Resources" "pegasus/JMP PP Resources"``.
+           4. List the files and directories on the HFS media using ``hls``, change the working directory on the HFS media using ``hcd`` and copy files using ``hcopy``. The ``hcopy`` command takes options to indicate if the files should be converted to macbinary (``-m``) or copied as a raw file (``-r``). For example ``hcopy -m "PP Disk 1:PP Data:JMP PP Resources" "pegasus/JMP PP Resources"``.
            5. Unmount the HFS media with ``humount /dev/fd0``
 
 
