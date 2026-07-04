@@ -47,6 +47,7 @@
 #include "hollywood/scenes/playable/scene2050.h"
 #include "hollywood/scenes/playable/scene2060.h"
 #include "hollywood/scenes/playable/scene2070.h"
+#include "hollywood/scenes/playable/scene2080.h"
 #include "hollywood/scenes/playable/scene3000.h"
 #include "hollywood/scenes/playable/scene3010.h"
 #include "hollywood/scenes/playable/scene3020.h"
@@ -140,6 +141,8 @@ const int kScene2060FirstState = 0x080c;
 const int kScene2060LastState = 0x0811;
 const int kScene2070FirstState = 0x0816;
 const int kScene2070LastState = 0x0817;
+const int kScene2080FirstState = 0x0820;
+const int kScene2080LastState = 0x0821;
 const int kScene3000State = 3000;
 const int kScene3010FirstState = 0x0bc2;
 const int kScene3010LastState = 0x0bcb;
@@ -226,6 +229,7 @@ bool isImplementedGameplayState(int stateId) {
 		(stateId >= kScene2050FirstState && stateId <= kScene2050LastState) ||
 		(stateId >= kScene2060FirstState && stateId <= kScene2060LastState) ||
 		(stateId >= kScene2070FirstState && stateId <= kScene2070LastState) ||
+		(stateId >= kScene2080FirstState && stateId <= kScene2080LastState) ||
 		stateId == kScene3000State ||
 		(stateId >= kScene3010FirstState && stateId <= kScene3010LastState) ||
 		(stateId >= kScene3020FirstState && stateId <= kScene3020LastState) ||
@@ -303,6 +307,8 @@ int gameplayStateForBootParam(int bootParam) {
 		return kScene2060FirstState + 2;
 	if (bootParam == 2070)
 		return kScene2070FirstState;
+	if (bootParam == 2080)
+		return kScene2080FirstState;
 	if (bootParam == 3040)
 		return kScene3040State;
 	if (bootParam == 3090)
@@ -347,6 +353,14 @@ void prepareGameplayStateForBootParam(GameplayState &state, int bootParam) {
 		state.egyptSealPuzzleProgress = 1;
 		state.egyptLabyrinthPositionIndex = 0x47;
 		state.scene2050LabyrinthLampReady = true;
+		break;
+	case 2080:
+		state.egyptSealPuzzleProgress = 2;
+		state.egyptLabyrinthPositionIndex = 0x47;
+		state.scene2050LabyrinthLampReady = true;
+		state.scene2070EntryProgress = 2;
+		state.scene2070SealExitPatchState = 1;
+		state.scene2070InnerPassagePatchState = 1;
 		break;
 	default:
 		break;
@@ -663,6 +677,14 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene2070 scene2070(this);
 			if (!scene2070.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene2080FirstState && stateId <= kScene2080LastState) {
+			handledState = true;
+			Scene2080 scene2080(this);
+			if (!scene2080.play())
 				return Common::kReadingFailed;
 			continue;
 		}

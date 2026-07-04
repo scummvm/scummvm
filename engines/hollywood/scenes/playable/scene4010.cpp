@@ -57,11 +57,14 @@ const uint kScene4010ExitOverlayDescriptorCount = 0x13;
 const uint kScene4010Item3AOverlayDescriptorCount = 0x0e;
 const uint kScene4010DestinationOverlayDescriptorCount = 0x11;
 const uint kScene4010PillboxOverlayDescriptorCount = 0x0d;
-const uint kScene4010HeckerDialogueChoiceRecordCount = 211;
+const uint kScene4010HeckerDialogueChoiceRecordCount = 700;
 const byte kScene4010Item3A = 0x3a;
 const byte kScene4010PillboxItem = 0x3b;
 const byte kScene4010AustraliaDestinationId = 4;
 const byte kScene4010HeckerSpeechGroup = 0;
+const byte kScene4010InvalidPrimarySpeechGroup = 0xff;
+const byte kScene4010DefaultPrimarySpeechFrame = 7;
+const byte kScene4010PrimarySpeechTextColor = 0xfb;
 const byte kScene4010HeckerDialogueStageId = 0x62;
 const byte kScene4010HeckerDialogueResponseRow = 99;
 const uint16 kScene4010HeckerSpeechCenterX = 0x0154;
@@ -591,13 +594,29 @@ void Scene4010::runHeckerFrameSequence(const byte *frames, uint frameCount) {
 	_heckerManualSequenceActive = false;
 }
 
+void Scene4010::waitForHeckerIdlePose() {
+	for (uint i = 0; i < 96 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++i) {
+		if (_heckerAnimationState == 0 || _heckerAnimationState == 6 ||
+				_heckerAnimationState == 8)
+			return;
+		if (waitSceneMillis(kScene4010RoomIdleFrameMillis))
+			return;
+	}
+}
+
 void Scene4010::runHeckerDialoguePoseStart() {
 	if (_heckerAnimationState == 8) {
 		_heckerAnimationState = 6;
 		return;
 	}
 
-	const byte frames[] = { 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d };
+	waitForHeckerIdlePose();
+	if (_heckerAnimationState == 8) {
+		_heckerAnimationState = 6;
+		return;
+	}
+
+	const byte frames[] = { 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e };
 	runHeckerFrameSequence(frames, ARRAYSIZE(frames));
 	_heckerAnimationState = 6;
 }
@@ -619,7 +638,7 @@ void Scene4010::runHeckerResponsePoseEnd() {
 	if (!_heckerAlternateSpeechPose)
 		return;
 
-	const byte frames[] = { 0x18, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e };
+	const byte frames[] = { 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e };
 	runHeckerFrameSequence(frames, ARRAYSIZE(frames));
 }
 
@@ -631,7 +650,7 @@ void Scene4010::finishHeckerDialoguePose() {
 		return;
 	}
 
-	const byte frames[] = { 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0 };
+	const byte frames[] = { 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0 };
 	runHeckerFrameSequence(frames, ARRAYSIZE(frames));
 	_heckerAnimationState = 0;
 }
@@ -641,11 +660,75 @@ void Scene4010::beginD01SpeechLine(uint16 rowIndex, byte normalFrame, byte alter
 	beginSecondarySpeechLine(rowIndex, frame);
 }
 
+void Scene4010::beginSecondarySpeechLineAndEnterHeckerPose(uint16 rowIndex, byte frameIndex) {
+	const uint32 startMillis = g_system->getMillis();
+	const bool started = startSecondarySpeechLine(rowIndex, frameIndex);
+	const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
+		MAX<uint32>(1200, (uint32)_speechOverlay.lines.size() * 1100);
+
+	runHeckerDialoguePoseStart();
+
+	while (!Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		const bool speechActive = _speech.isPlaying();
+		const uint32 elapsed = g_system->getMillis() - startMillis;
+		if (!speechActive && elapsed >= duration)
+			break;
+
+		const uint32 slice = speechActive ? 50 : MIN<uint32>(50, duration - elapsed);
+		if (waitSceneMillis(slice))
+			break;
+	}
+
+	_speech.stop();
+	clearSpeechOverlay();
+}
+
 void Scene4010::beginHeckerSpeechLine(byte frameIndex) {
-	beginPrimarySpeechLineWithAnimationGroup(kScene4010HeckerDialogueResponseRow, frameIndex,
-		kScene4010HeckerSpeechCenterX, kScene4010HeckerSpeechTopY,
-		kScene4010HeckerSpeechRed, kScene4010HeckerSpeechGreen,
-		kScene4010HeckerSpeechBlue, kScene4010HeckerSpeechGroup);
+	uint16 textRecordId = 0;
+	byte continuationCount = 0;
+	uint16 voiceSampleId = 0;
+	if (!getStage003Cue(kScene4010HeckerDialogueResponseRow, frameIndex, textRecordId,
+			continuationCount, voiceSampleId))
+		return;
+
+	setPaletteEntry6Bit(kScene4010PrimarySpeechTextColor, kScene4010HeckerSpeechRed,
+		kScene4010HeckerSpeechGreen, kScene4010HeckerSpeechBlue);
+
+	const byte baseFrame = primarySpeechAnimationBaseFrame(kScene4010HeckerSpeechGroup);
+	_speechController.startPrimaryDialogueSpeech(kScene4010HeckerSpeechGroup, baseFrame);
+	primarySpeechAnimationStarted(kScene4010HeckerSpeechGroup, baseFrame);
+	setPrimarySpeechAnimationFrame(kScene4010HeckerSpeechGroup, baseFrame);
+
+	const byte lineCount = MAX<byte>(1, continuationCount);
+	for (byte part = 0; part < lineCount && !Engine::shouldQuit() &&
+			!_vm->isSceneRestartRequested(); ++part) {
+		const Common::String text = getResource003LargeTextRecord(textRecordId + part);
+		if (text.empty())
+			continue;
+
+		_primarySpeechOverlay.visible = true;
+		_primarySpeechOverlay.colorIndex = kScene4010PrimarySpeechTextColor;
+		wrapActorSpeechText(text, kScene4010HeckerSpeechCenterX, _primarySpeechOverlay.lines);
+		calculateSpeechOverlayBounds(_primarySpeechOverlay, kScene4010HeckerSpeechCenterX,
+			kScene4010HeckerSpeechTopY, true, _activeActorWorldY);
+
+		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
+		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
+		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
+			MAX<uint32>(1200, _primarySpeechOverlay.lines.size() * 1100);
+		const bool interrupted = waitForSpeechOrDelay(duration, false);
+
+		_speech.stop();
+		_primarySpeechOverlay.visible = false;
+		_primarySpeechOverlay.lines.clear();
+		if (interrupted)
+			break;
+	}
+
+	setPrimarySpeechAnimationFrame(kScene4010HeckerSpeechGroup, baseFrame);
+	_speechController.stopPrimaryDialogueSpeech(kScene4010InvalidPrimarySpeechGroup,
+		kScene4010DefaultPrimarySpeechFrame);
+	primarySpeechAnimationRestored(kScene4010HeckerSpeechGroup, baseFrame);
 }
 
 void Scene4010::runHeckerDialogue() {
@@ -658,15 +741,13 @@ void Scene4010::runHeckerDialogue() {
 	bool finished = false;
 
 	if (state.scene4010EntryPathSpeechState == 0) {
-		beginSecondarySpeechLine(kScene4010HeckerDialogueStageId, 0);
-		runHeckerDialoguePoseStart();
+		beginSecondarySpeechLineAndEnterHeckerPose(kScene4010HeckerDialogueStageId, 0);
 		beginHeckerSpeechLine(0);
 		runHeckerResponsePoseEnd();
 		state.scene4010EntryPathSpeechState = 1;
 		applySceneStateToHotspotsAndPatches(2);
 	} else {
-		beginSecondarySpeechLine(kScene4010HeckerDialogueStageId, 1);
-		runHeckerDialoguePoseStart();
+		beginSecondarySpeechLineAndEnterHeckerPose(kScene4010HeckerDialogueStageId, 1);
 		beginHeckerSpeechLine(1);
 		runHeckerResponsePoseEnd();
 	}
@@ -756,6 +837,7 @@ void Scene4010::setHeckerDialogueRecord(Common::Array<DialogueChoiceRecord> &rec
 	record.responseFrameIndex = responseFrameIndex;
 	record.disableAfterUse = disableAfterUse;
 	record.reserved = 0xff;
+	record.selectable = enabled != 0;
 }
 
 void Scene4010::runProgressiveExitSpeech() {
