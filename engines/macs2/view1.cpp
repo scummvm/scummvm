@@ -28,6 +28,7 @@
 #include "engines/enhancements.h"
 #include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
+#include "graphics/scaler/aspect.h"
 #include "macs2/debugtools.h"
 #include "macs2/detection.h"
 #include "macs2/gameobjects.h"
@@ -115,6 +116,28 @@ void buildFadedPalette(byte *colors, const byte *sourcePalette, int fadeValue) {
 			faded = 0;
 		colors[i] = (faded * 259 + 33) >> 6; // 6-bit to 8-bit
 	}
+}
+
+static Common::Point cursorReplaceHotspot(uint16 width, uint16 height) {
+	const uint scale = MAX(1u, g_system->getScaleFactor());
+	const int hotX = (int)width / (2 * (int)scale);
+	int hotY = (int)height / (2 * (int)scale);
+
+	if (g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
+		const int target = (int)height / 2;
+		int bestHotY = hotY;
+		int bestErr = ABS(real2Aspect(bestHotY * (int)scale) - target);
+		for (int candidate = 0; candidate <= (int)height; candidate++) {
+			const int err = ABS(real2Aspect(candidate * (int)scale) - target);
+			if (err < bestErr) {
+				bestErr = err;
+				bestHotY = candidate;
+			}
+		}
+		hotY = bestHotY;
+	}
+
+	return Common::Point(hotX, hotY);
 }
 
 } // namespace
@@ -362,7 +385,10 @@ void View1::updateCursor(const byte *palette) {
 		rgbaCursor[i] = rgbaCursorFormat.RGBToColor(paletteEntry[0], paletteEntry[1], paletteEntry[2]);
 	}
 
-	CursorMan.replaceCursor(rgbaCursor.data(), width, height, width >> 1, height >> 1, 0, &rgbaCursorFormat);
+	// adjustViewportToMouse (1008:3de3): interaction center = mouse; draw at center - half.
+	// getMousePos() is the center; compensate hotspot for SurfaceSdl rHot scaling (see above).
+	const Common::Point hotspot = cursorReplaceHotspot(width, height);
+	CursorMan.replaceCursor(rgbaCursor.data(), width, height, hotspot.x, hotspot.y, 0, &rgbaCursorFormat);
 	// Enable a cursor palette so the backend won't re-blit the cursor on
 	// every screen palette change. The macs2 engine uses RGBA cursors with
 	// baked-in palette colors, so the cursor palette content is irrelevant -
