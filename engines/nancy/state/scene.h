@@ -322,6 +322,10 @@ private:
 	UI::Taskbar *_taskbar;
 	Time _buttonPressActivationTime;
 
+	// A clicked MENU/HELP taskbar button whose state change is deferred until
+	// its click sound finishes playing (see handleInput). -1 = none pending.
+	int _pendingTaskbarButton;
+
 	UI::ViewportOrnaments *_viewportOrnaments;
 	UI::TextboxOrnaments *_textboxOrnaments;
 	UI::InventoryBoxOrnaments *_inventoryBoxOrnaments;

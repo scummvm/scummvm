@@ -125,6 +125,7 @@ Scene::Scene() :
 		_menuButton(nullptr),
 		_helpButton(nullptr),
 		_taskbar(nullptr),
+		_pendingTaskbarButton(-1),
 		_viewportOrnaments(nullptr),
 		_textboxOrnaments(nullptr),
 		_inventoryBoxOrnaments(nullptr),
@@ -1412,30 +1413,43 @@ void Scene::handleInput() {
 	// buttons, so they should not receive hover/clicks).
 	if (!_activeMovie) {
 		if (_taskbar && !_textbox.isFullMode()) {
-			_taskbar->handleInput(input);
+			// MENU and HELP leave gameplay entirely, which would cut off the
+			// taskbar click sound. The original defers the transition until that
+			// sound finishes, so we hold the click here and only switch state
+			// once the button's click sound has stopped playing.
+			if (_pendingTaskbarButton != -1) {
+				auto *taskData = GetEngineData(TASK);
+				if (!taskData || !g_nancy->_sound->isSoundPlaying(taskData->buttons[_pendingTaskbarButton].button.clickSound)) {
+					NancyState::NancyState target = _pendingTaskbarButton == kTaskButtonMenu ? NancyState::kMainMenu : NancyState::kHelp;
+					_pendingTaskbarButton = -1;
+					requestStateChange(target);
+				}
+			} else {
+				_taskbar->handleInput(input);
 
-			int clicked = _taskbar->getClickedButton();
-			switch (clicked) {
-			case kTaskButtonMenu:
-				requestStateChange(NancyState::kMainMenu);
-				break;
-			case kTaskButtonInventory:
-				_inventoryPopup.toggle();
-				break;
-			case kTaskButtonNotebook:
-				_notebookPopup.toggle();
-				break;
-			case kTaskButtonCellphone:
-				_cellPhonePopup.toggle();
-				break;
-			case -1:
-				break;
-			default:
-				// HELP is always the last taskbar button. Its index shifts from
-				// 4 to 5 in Nancy12, where a non-clickable coin purse occupies slot
-				// 4 (and never reports a click), so match it as the fall-through.
-				requestStateChange(NancyState::kHelp);
-				break;
+				int clicked = _taskbar->getClickedButton();
+				switch (clicked) {
+				case kTaskButtonMenu:
+					_pendingTaskbarButton = kTaskButtonMenu;
+					break;
+				case kTaskButtonInventory:
+					_inventoryPopup.toggle();
+					break;
+				case kTaskButtonNotebook:
+					_notebookPopup.toggle();
+					break;
+				case kTaskButtonCellphone:
+					_cellPhonePopup.toggle();
+					break;
+				case -1:
+					break;
+				default:
+					// HELP is always the last taskbar button. Its index shifts from
+					// 4 to 5 in Nancy12, where a non-clickable coin purse occupies slot
+					// 4 (and never reports a click), so match it as the fall-through.
+					_pendingTaskbarButton = clicked;
+					break;
+				}
 			}
 		}
 
