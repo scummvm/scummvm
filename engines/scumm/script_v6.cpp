@@ -3770,17 +3770,17 @@ void ScummEngine_v6::o6_animateActorApplyEnhancements(int &act, int &anim) {
 
 void ScummEngine_v6::o6_getRandomNumberApplyEnhancements(int &randMaxVal) {
 	// WORKAROUND bug #15036: In Sam & Max, an additionnal message exists for the
-	// answering machine in the office (see Trac#15036), but script 7-205 never
-	// triggers it.  It's not voiced in the talkie release, so it may have been
-	// intentionnaly left out.  It's not going to feel out of place when playing
-	// the floppy release, though, since nothing but the intro is voiced, there;
-	// so give users the choice to restore it for this particular release.
+	// answering machine in the office, but script 7-205 never triggers it.  It's
+	// not voiced in the talkie release, so it may have been intentionnaly left
+	// out.  It's not going to feel out of place when playing the floppy release,
+	// though, since nothing but the intro is voiced, there; so give users the
+	// choice to restore it for this particular release.
 	if (enhancementEnabled(kEnhRestoredContent) && _game.id == GID_SAMNMAX &&
 		_currentRoom == 7 && currentScriptSlotIs(205) &&
 		strcmp(_game.variant, "Floppy") == 0) {
 		const bool answeringMachineHasNewMsg = (readVar(230) != 0);
-		// When choosing a random answering machine message, give a chance
-		// for the 5th one to be be chosen as well.
+		// When choosing a message for the answering machine, let the
+		// "Snork!" one appear as well.
 		if (answeringMachineHasNewMsg && randMaxVal == 4)
 			randMaxVal++;
 	}
