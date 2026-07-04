@@ -36,7 +36,7 @@ namespace Action {
 // Nancy 10 TODOs:
 //  - completion-animation playback (data read, never rendered)
 //  - _retainState save/restore via a PuzzleData entry
-//  - 4th cursor id, 7 × 33-byte string slots, per-piece reserved rect
+//  - 4th cursor id, 7 × 33-byte string slots
 void MultiBuildPuzzle::init() {
 	g_nancy->_resource->loadImage(_primaryImageName, _primaryImage);
 	_primaryImage.setTransparentColor(_drawSurface.getTransparentColor());
@@ -157,15 +157,18 @@ void MultiBuildPuzzle::readData(Common::SeekableReadStream &stream) {
 		if (i < _numPieces) {
 			Piece &p = _pieces[i];
 			if (isNancy10) {
-				stream.skip(16); // TODO: leading reserved rect, empty in cake puzzle.
+				// Same rect order as Nancy 9, with placedDstRect appended.
+				// srcRect is empty when the unplaced piece is baked into the
+				// scene overlay (cake mixing) and non-empty when it must be
+				// rendered live at rest (plant potting).
 				readRect(stream, p.srcRect);
+				readRect(stream, p.homeRect);
 				readRect(stream, p.altSrcRect);
 				readRect(stream, p.cuSrcRect);
 				readRect(stream, p.placedDstRect);
 				p.counterByte  = stream.readByte();
 				p.mustPlace    = stream.readByte();
 				p.mustNotPlace = stream.readByte();
-				p.homeRect = p.srcRect;
 			} else {
 				readRect(stream, p.srcRect);
 				readRect(stream, p.homeRect);
@@ -798,10 +801,13 @@ void MultiBuildPuzzle::updatePieceRender(int pieceIdx) {
 	bool isSelected = (!_isDragging && pieceIdx == _selectedPiece);
 	bool isDragging  = (_isDragging  && pieceIdx == _pickedUpPiece);
 
-	// Nancy 10: at-rest pieces are baked into the primary overlay; placed
-	// pieces hide too when the completion animation will cover them.
+	// Nancy 10+: a piece with no source rect is baked into the scene overlay
+	// at rest (cake mixing) and must stay hidden. Placed pieces also hide when
+	// a completion animation will cover them. Pieces that do carry a source
+	// rect (plant potting) render normally at rest.
 	if (g_nancy->getGameType() >= kGameTypeNancy10 && !isDragging && !isSelected) {
-		if (!p.isPlaced || _hasAnimImage) {
+		bool bakedAtRest = !p.isPlaced && p.srcRect.isEmpty();
+		if (bakedAtRest || (p.isPlaced && _hasAnimImage)) {
 			p.setVisible(false);
 			p.moveTo(p.gameRect);
 			return;
