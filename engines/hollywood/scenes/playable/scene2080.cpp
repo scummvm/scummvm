@@ -65,10 +65,10 @@ const byte kScene2080ForegroundExitChunk = 6;
 const byte kScene2080ForegroundExitDescriptorCount = 0x21;
 const byte kScene2080ForwardExitOverlayChunk = 7;
 const byte kScene2080ForwardExitOverlayDescriptorCount = 6;
-const byte kScene2080InventoryExchangeFirstChunk = 8;
-const byte kScene2080InventoryExchangeFirstDescriptorCount = 0x0c;
-const byte kScene2080InventoryExchangeSecondChunk = 9;
-const byte kScene2080InventoryExchangeSecondDescriptorCount = 0x0d;
+const byte kScene2080PrincessHairSearchFirstChunk = 8;
+const byte kScene2080PrincessHairSearchFirstDescriptorCount = 0x0c;
+const byte kScene2080PrincessHairSearchSecondChunk = 9;
+const byte kScene2080PrincessHairSearchSecondDescriptorCount = 0x0d;
 const byte kScene2080AmbientChunk = 10;
 const byte kScene2080AmbientDescriptorCount = 0x1a;
 const byte kScene2080ForegroundLeftChunk = 11;
@@ -76,8 +76,7 @@ const byte kScene2080ForwardExitClipChunk = 12;
 const byte kScene2080ForwardExitClipDescriptorCount = 0x14;
 const byte kScene2080ReturnEntryClipChunk = 14;
 const byte kScene2080ReturnEntryClipDescriptorCount = 0x15;
-const byte kScene2080ExchangeSourceInventoryItem = 0x0c;
-const byte kScene2080ExchangeResultInventoryItem = 0x0d;
+const byte kScene2080PrincessHairInventoryItem = 0x2e;
 const uint kScene2080ExitBackRecordIndex = 9;
 
 enum Scene2080OverlayHook {
@@ -113,14 +112,14 @@ const byte kScene2080ForegroundExitFrameMap[] = {
 	24, 25, 26, 27, 28, 29, 30, 31, 32
 };
 
-const byte kScene2080InventoryExchangeFirstFrameMap[] = {
+const byte kScene2080PrincessHairSearchFirstFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
 	11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
 	11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
 	9, 8, 7, 6, 5, 4, 3, 2, 1, 0
 };
 
-const byte kScene2080InventoryExchangeSecondFrameMap[] = {
+const byte kScene2080PrincessHairSearchSecondFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
 };
 
@@ -129,8 +128,8 @@ static_assert(ARRAYSIZE(kScene2080ForegroundActorFrameMap) == 0x10, "Scene 2080 
 static_assert(ARRAYSIZE(kScene2080AmbientFrameMap) == 0x1a, "Scene 2080 ambient frame map size changed");
 static_assert(ARRAYSIZE(kScene2080ForwardExitOverlayFrameMap) == 13, "Scene 2080 forward exit overlay frame map size changed");
 static_assert(ARRAYSIZE(kScene2080ForegroundExitFrameMap) == 0x21, "Scene 2080 foreground exit frame map size changed");
-static_assert(ARRAYSIZE(kScene2080InventoryExchangeFirstFrameMap) == 0x2c, "Scene 2080 inventory exchange first frame map size changed");
-static_assert(ARRAYSIZE(kScene2080InventoryExchangeSecondFrameMap) == 0x0c, "Scene 2080 inventory exchange second frame map size changed");
+static_assert(ARRAYSIZE(kScene2080PrincessHairSearchFirstFrameMap) == 0x2c, "Scene 2080 princess hair search first frame map size changed");
+static_assert(ARRAYSIZE(kScene2080PrincessHairSearchSecondFrameMap) == 0x0c, "Scene 2080 princess hair search second frame map size changed");
 
 static PlayableSceneConfig scene2080Config() {
 	PlayableSceneConfig config;
@@ -265,7 +264,7 @@ bool Scene2080::dispatchCustomSceneAction(uint16 handlerId) {
 	GameplayState &state = _vm->gameState();
 
 	switch (handlerId) {
-	case 301: // Ir a escena B07 (go back): blocked by foreground actor, otherwise returns to scene 2070.
+	case 301: // Ir a puerta (go to door): Hecker blocks return until the curse conversation is resolved.
 		if (state.scene2080ForegroundState != 0) {
 			beginSecondarySpeechLine(1, 0);
 			return true;
@@ -278,44 +277,44 @@ bool Scene2080::dispatchCustomSceneAction(uint16 handlerId) {
 		}
 		state.mainFlowStateId = kScene2070ReturnState;
 		return true;
-	case 302: // Mirar/usar objeto B08 accion 302: state-aware scene row 2.
+	case 302: // Mirar puerta (look at door): first-man-through warning, then Hecker has crossed it.
 		beginSecondarySpeechLine(2, state.scene2080ForegroundState != 0 ? 0 : 1);
 		return true;
-	case 303: // Hablar con actor de primer plano (talk to foreground actor): dialogue tree.
+	case 303: // Hablar con arqueólogo/Gunther Hecker (talk to archaeologist): curse dialogue tree.
 		runForegroundDialogue();
 		return true;
-	case 304: // Mirar/usar objeto B08 accion 304: state-aware scene row 3.
+	case 304: // Mirar arqueólogo/Gunther Hecker (look at archaeologist): before/after he identifies himself.
 		beginSecondarySpeechLine(3, state.scene2080ForegroundState < 2 ? 0 : 1);
 		return true;
-	case 305: // Ir a siguiente sala B09 (go forward): animated transition to scene 2090.
+	case 305: // Coger/usar bastón hotspot (staff): animated transition to the altar scene after Hecker leaves.
 		runForwardExitToScene2090();
 		return true;
-	case 306: // Mirar/usar objeto B08 accion 306: scene speech row 4.
+	case 306: // Mirar bastón (look at staff): Hecker is holding it tightly.
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 307: // Mirar/usar objeto dependiente del intercambio: scene row 5, variant 0/1.
-		beginSecondarySpeechLine(5, state.scene2080InventoryExchangeState == 0 ? 0 : 1);
+	case 307: // Mirar sarcófago de Amesis-Huni (look at sarcophagus): empty/princess variant.
+		beginSecondarySpeechLine(5, state.scene2080PrincessHairSearchState == 0 ? 0 : 1);
 		return true;
-	case 308: // Mirar/usar objeto B08 accion 308: scene speech row 6.
+	case 308: // Usar sarcófago (use sarcophagus): Ron refuses to get inside.
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 309: // Mirar/usar objeto B08 accion 309: scene speech row 7.
+	case 309: // Mirar sarcófago (look at side sarcophagus): preserved for centuries.
 		beginSecondarySpeechLine(7, 0);
 		return true;
-	case 310: // Mirar/usar objeto B08 accion 310: scene speech row 8.
+	case 310: // Mirar jeroglífico (look at hieroglyphic): Ron cannot read it.
 		beginSecondarySpeechLine(8, 0);
 		return true;
-	case 311: // Mirar objeto con respuesta primera/repetida: scene row 9.
+	case 311: // Mirar abertura (look at opening): first look wonders what is above; repeated look names Karnak.
 		beginSecondarySpeechLine(9, state.scene2080FirstRow09LookSeen ? 1 : 0);
 		state.scene2080FirstRow09LookSeen = true;
 		return true;
-	case 312: // Mirar/usar objeto B08 accion 312: scene speech row 10.
+	case 312: // Usar abertura (use opening): Ron cannot reach it.
 		beginSecondarySpeechLine(10, 0);
 		return true;
-	case 313: // Usar objeto de inventario en B08: exchange item 0x0c for 0x0d.
-		runInventoryExchange();
+	case 313: // Usar lupa con sarcófago central (use magnifying glass): finds Amesis-Huni's hair.
+		runCentralSarcophagusHairSearch();
 		return true;
-	case 314: // Mirar/coger objeto B08 accion 314: scene speech row 11.
+	case 314: // Usar lupa con sarcófago lateral (use magnifying glass): no special interest response.
 		beginSecondarySpeechLine(11, 0);
 		return true;
 	default:
@@ -734,7 +733,7 @@ void Scene2080::runForegroundDialogue() {
 				records[0].enabled = 1;
 				records[0].selectable = 1;
 			}
-			state.scene2080InventoryExchangeState = 1;
+			state.scene2080PrincessHairSearchState = 1;
 		} else if (record.disableAfterUse == 3) {
 			if (records.size() > 2) {
 				records[2].enabled = 1;
@@ -798,7 +797,7 @@ void Scene2080::initializeForegroundDialogueRecords(Common::Array<DialogueChoice
 	setDialogueRecord(records, 213, 1, 0, 0, 21, 10, 1, 0xff);
 	setDialogueRecord(records, 214, 1, 0, 0, 6, 6, 1, 0xff);
 
-	if (state.scene2080InventoryExchangeState != 0) {
+	if (state.scene2080PrincessHairSearchState != 0) {
 		records[0].enabled = 1;
 		records[0].selectable = 1;
 		records[1].disableAfterUse = 1;
@@ -871,6 +870,11 @@ void Scene2080::runPostForegroundDialogueEffect() {
 }
 
 void Scene2080::runForwardExitToScene2090() {
+	if (_vm->gameState().scene2080ForegroundState != 0) {
+		beginSecondarySpeechLine(4, 0);
+		return;
+	}
+
 	runConfiguredActionOverlay(kScene2080ForwardExitOverlayChunk,
 		kScene2080ForwardExitOverlayDescriptorCount,
 		kScene2080ForwardExitOverlayFrameMap, ARRAYSIZE(kScene2080ForwardExitOverlayFrameMap),
@@ -883,34 +887,32 @@ void Scene2080::runForwardExitToScene2090() {
 	_vm->gameState().mainFlowStateId = kScene2090FirstState;
 }
 
-void Scene2080::runInventoryExchange() {
+void Scene2080::runCentralSarcophagusHairSearch() {
 	GameplayState &state = _vm->gameState();
-	if (state.scene2080InventoryExchangeState == 0) {
+	if (state.scene2080PrincessHairSearchState == 0) {
 		beginSecondarySpeechLine(11, 0);
 		return;
 	}
-	if (state.scene2080InventoryExchangeState == 2) {
+	if (state.scene2080PrincessHairSearchState == 2) {
 		beginSecondarySpeechLine(11, 4);
 		return;
 	}
 
 	beginSecondarySpeechLine(11, 1);
-	runConfiguredActionOverlay(kScene2080InventoryExchangeFirstChunk,
-		kScene2080InventoryExchangeFirstDescriptorCount,
-		kScene2080InventoryExchangeFirstFrameMap, ARRAYSIZE(kScene2080InventoryExchangeFirstFrameMap),
+	runConfiguredActionOverlay(kScene2080PrincessHairSearchFirstChunk,
+		kScene2080PrincessHairSearchFirstDescriptorCount,
+		kScene2080PrincessHairSearchFirstFrameMap, ARRAYSIZE(kScene2080PrincessHairSearchFirstFrameMap),
 		kScene2080FrameMillis, kActionOverlayHideActiveActor);
 	beginSecondarySpeechLine(11, 2);
-	runConfiguredActionOverlay(kScene2080InventoryExchangeSecondChunk,
-		kScene2080InventoryExchangeSecondDescriptorCount,
-		kScene2080InventoryExchangeSecondFrameMap, ARRAYSIZE(kScene2080InventoryExchangeSecondFrameMap),
+	runConfiguredActionOverlay(kScene2080PrincessHairSearchSecondChunk,
+		kScene2080PrincessHairSearchSecondDescriptorCount,
+		kScene2080PrincessHairSearchSecondFrameMap, ARRAYSIZE(kScene2080PrincessHairSearchSecondFrameMap),
 		kScene2080FrameMillis, kActionOverlayHideActiveActor);
 
-	if (hasInventoryItem(kScene2080ExchangeSourceInventoryItem))
-		removeInventoryItem(kScene2080ExchangeSourceInventoryItem);
-	if (!hasInventoryItem(kScene2080ExchangeResultInventoryItem))
-		addInventoryItem(kScene2080ExchangeResultInventoryItem);
+	if (!hasInventoryItem(kScene2080PrincessHairInventoryItem))
+		addInventoryItem(kScene2080PrincessHairInventoryItem);
 	_soundBank0.playSample(1, 100);
-	state.scene2080InventoryExchangeState = 2;
+	state.scene2080PrincessHairSearchState = 2;
 	beginSecondarySpeechLine(11, 3);
 }
 

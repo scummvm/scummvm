@@ -32,14 +32,14 @@ class HollywoodEngine;
 // mainFlowStateId, scene2070InnerPassagePatchState,
 // scene2070HiddenItemPatchState, scene2080EntryLineSeen,
 // scene2080ForegroundState, scene2080ExitBackSequenceSeen,
-// scene2080InventoryExchangeState, scene2080FirstRow09LookSeen,
+// scene2080PrincessHairSearchState, scene2080FirstRow09LookSeen,
 // scene2080DialogueBranchBUnlocked, scene2080DialogueBranchAIndex,
 // scene2080DialogueBranchBIndex, scene2080DialogueTerminalIndex.
 // Saved GameplayState fields written:
 // mainFlowStateId, scene2070InnerPassagePatchState,
 // scene2070HiddenItemPatchState, scene2080EntryLineSeen,
 // scene2080ForegroundState, scene2080ExitBackSequenceSeen,
-// scene2080InventoryExchangeState, scene2080FirstRow09LookSeen,
+// scene2080PrincessHairSearchState, scene2080FirstRow09LookSeen,
 // scene2080DialogueBranchBUnlocked.
 class Scene2080 : public PlayableScene {
 public:
@@ -89,7 +89,7 @@ private:
 	void runForegroundActorExitOverlay();
 	void runPostForegroundDialogueEffect();
 	void runForwardExitToScene2090();
-	void runInventoryExchange();
+	void runCentralSarcophagusHairSearch();
 	void drawClipFrameDeltaFromResource(const Common::Array<byte> &resource, uint32 frameTableOffset,
 		uint32 chunkSize, uint tableEntryCount, byte frameIndex);
 	void drawClipFrameDelta(byte chunkIndex, uint tableEntryCount, byte frameIndex);

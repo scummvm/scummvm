@@ -263,10 +263,10 @@ bool Scene2020::dispatchCustomSceneAction(uint16 handlerId) {
 	case 312: // Mirar gafas de sol (look at sunglasses): changes after the tooth puzzle starts.
 		beginSecondarySpeechLine(9, _vm->gameState().scene2020TigerToothState == 0 ? 0 : 1);
 		return true;
-	case 313: // Usar carne con tigre (use steak with tiger): distracts the tiger and consumes item 0x45.
+	case 313: // Usar carne/filete con tigre (use steak with tiger): distracts the tiger and consumes the steak.
 		runSteakOnTigerSequence();
 		return true;
-	case 314: // Usar objeto del laboratorio con tigre (use lab item 0x11 with tiger): exposes the tiger tooth.
+	case 314: // Usar filete "durillo" con tigre (use tough steak with tiger): exposes the tiger tooth.
 		runLabItemOnTigerSequence();
 		return true;
 	default:

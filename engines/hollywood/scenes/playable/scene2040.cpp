@@ -217,45 +217,45 @@ bool Scene2040::dispatchCustomSceneAction(uint16 handlerId) {
 	case 302: // Ir al interior de la esfinge (go inside sphinx): gated forward exit.
 		runExitToInterior();
 		return true;
-	case 303: // Unused no-op scene action slot.
+	case 303: // Mirar pasadizo (look at passage): no special response.
 		return true;
-	case 304: // Mirar hueco/ranura de la esfinge (look at sphinx slot), state-dependent.
+	case 304: // Mirar montañita de arena (look at sand mound): changes after planting.
 		if (state.scene2040SphinxFaceState == 1)
 			beginSecondarySpeechLine(1, 0);
 		else if (state.scene2040SphinxFaceState == 2)
 			beginSecondarySpeechLine(1, 1);
 		return true;
-	case 305: // Mirar esfinge/fachada (look at sphinx facade).
+	case 305: // Mirar hendidura (look at slot): triangular slot exposed in the sand.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 306: // Mirar estatua/relieve de la esfinge (look at sphinx relief).
+	case 306: // Coger planta del Nilo (take Nile plant): Ron will not take the whole plant.
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 307: // Mirar objeto de piedra (look at stone object).
+	case 307: // Mirar planta del Nilo (look at Nile plant): fast-growing plant response.
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 308: // Coger objeto de piedra (take stone object).
+	case 308: // Coger flor del Nilo (take Nile flower): pickup after the plant grows.
 		runStonePickup();
 		return true;
-	case 309: // Mirar objeto de piedra tras cogerlo (look at stone object after pickup).
+	case 309: // Mirar flor del Nilo (look at Nile flower): already collected response.
 		beginSecondarySpeechLine(5, 0);
 		return true;
-	case 310: // Mirar entrada/lateral de la esfinge (look at sphinx side/entrance).
+	case 310: // Mirar pata de la esfinge (look at sphinx paw): paws covered with sand.
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 311: // Mirar/usar zona de la nariz de la esfinge (look/use sphinx nose), already changed.
+	case 311: // Usar pala con pata de la esfinge izquierda (use shovel on left paw): already changed.
 		beginSecondarySpeechLine(7, 1);
 		return true;
-	case 312: // Usar objeto 0x26 en la base de la esfinge (use item 0x26): opens the sphinx base.
+	case 312: // Usar colmillo de tigre en hendidura (use tiger tooth in slot): opens the sphinx base.
 		runBaseOpeningSequence();
 		return true;
-	case 313: // Usar ojo/pieza brillante en la esfinge (use eye-like item): exchange item 0x52 for item 0x1a.
+	case 313: // Usar ponchera en montañita de arena (use bowl on sand mound): updates the bowl inventory state.
 		runEyeExchangeSequence();
 		return true;
-	case 314: // Usar escarabajo en la esfinge (use scarab): opens the next sphinx state.
+	case 314: // Usar semillas en montañita de arena (use seeds on sand mound): grows the Nile plant.
 		runScarabPlacementSequence();
 		return true;
-	case 315: // Usar/coger nariz de la esfinge (use/take sphinx nose): long face animation.
+	case 315: // Usar pala con pata de la esfinge derecha (use shovel on right paw): long sphinx face animation.
 		runSphinxNoseSequence();
 		return true;
 	default:

@@ -202,53 +202,53 @@ bool Scene2070::dispatchCustomSceneAction(uint16 handlerId) {
 	GameplayState &state = _vm->gameState();
 
 	switch (handlerId) {
-	case 301: // Ir a laberinto/camara (go back): returns to B06 unless the seal route has been solved.
+	case 301: // Ir a laberinto (go to labyrinth): returns to B06 unless the seal route has been solved.
 		state.mainFlowStateId = state.egyptSealPuzzleProgress == 2 ?
 			kScene2050LabyrinthReturnState : kScene2060RightPassageState;
 		return true;
-	case 302: // Mirar/usar objeto B07 accion 302: scene speech row 2.
+	case 302: // Mirar laberinto (look at labyrinth): Ron says the maze was no match for him.
 		beginSecondarySpeechLine(2, 0);
 		return true;
-	case 303: // Mirar/usar objeto B07 accion 303: scene speech row 3.
+	case 303: // Coger antorcha (take torch): Ron says he will not need it.
 		beginSecondarySpeechLine(3, 0);
 		return true;
-	case 304: // Mirar/usar objeto B07 accion 304: scene speech row 4.
+	case 304: // Mirar antorcha (look at torch): ancient torch still burning.
 		beginSecondarySpeechLine(4, 0);
 		return true;
-	case 305: // Mirar/usar objeto con estado de salida: scene speech row 5, variant 0/1.
+	case 305: // Mirar agujero (look at hole): before/after the scarab opens the mechanism.
 		beginSecondarySpeechLine(5, state.scene2070SealExitPatchState != 0 ? 1 : 0);
 		return true;
-	case 306: // Mirar/usar objeto B07 accion 306: scene speech row 6.
+	case 306: // Mirar sello (look at seal): second sacred labyrinth seal.
 		beginSecondarySpeechLine(6, 0);
 		return true;
-	case 307: // Ir a salida del sello (go to seal exit): enter the next B08 scene.
+	case 307: // Ir a puerta (go to door): enter the next B08 seal chamber.
 		state.mainFlowStateId = kScene2080FirstState;
 		return true;
-	case 308: // Mirar/usar objeto con estado de salida: scene speech row 7, variant 0/1.
+	case 308: // Mirar puerta (look at door): closed/open variant.
 		beginSecondarySpeechLine(7, state.scene2070SealExitPatchState != 0 ? 1 : 0);
 		return true;
-	case 309: // Mirar/usar objeto bloqueado/desbloqueado: scene row 7 or shared row 8.
+	case 309: // Abrir puerta (open door): blocked until the seal mechanism has opened it.
 		if (state.scene2070SealExitPatchState == 0)
 			beginSecondarySpeechLine(7, 0);
 		else
 			beginStaticSecondarySpeechLine(8, 0);
 		return true;
-	case 310: // Mirar/usar objeto bloqueado/desbloqueado: shared row 11 or row 19.
+	case 310: // Cerrar puerta (close door): impossible before/after the mechanism changes the chamber.
 		if (state.scene2070SealExitPatchState == 0)
 			beginStaticSecondarySpeechLine(0x0b, 0);
 		else
 			beginStaticSecondarySpeechLine(0x13, (byte)_random.getRandomNumber(1));
 		return true;
-	case 311: // Mirar/usar objeto B07 accion 311: scene speech row 8.
+	case 311: // Hablar con Gunther Hecker (talk to Gunther Hecker): joke about the curse.
 		beginSecondarySpeechLine(8, 0);
 		return true;
-	case 312: // Mirar/usar objeto B07 accion 312: scene speech row 9.
+	case 312: // Mirar Gunther Hecker (look at Gunther Hecker): he is tough enough.
 		beginSecondarySpeechLine(9, 0);
 		return true;
-	case 313: // Usar objeto de inventario en B07: overlay, then hide item 7 patch.
+	case 313: // Coger navaja (take pocket knife): pickup overlay grants the pocket knife.
 		runAnimatedInventoryStateChange();
 		return true;
-	case 314: // Coger/mirar objeto B07 accion 314: scene speech row 11.
+	case 314: // Mirar navaja (look at pocket knife): multi-purpose knife description.
 		beginSecondarySpeechLine(11, 0);
 		return true;
 	default:
