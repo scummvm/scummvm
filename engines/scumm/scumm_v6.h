@@ -494,7 +494,6 @@ protected:
 
 	/* V6 Enhancements */
 	void o6_animateActorApplyEnhancements(int &act, int &anim);
-	void o6_getRandomNumberApplyEnhancements(int &randMaxVal);
 
 	byte VAR_VIDEONAME;
 	byte VAR_RANDOM_NR;
