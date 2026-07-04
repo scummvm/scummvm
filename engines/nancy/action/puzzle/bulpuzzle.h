@@ -48,6 +48,9 @@ protected:
 	void movePiece(bool player);
 	void reset(bool capture);
 
+	// Nancy 11: drive the computer opponent's roll/pass during its turn
+	void doAiTurn();
+
 	// Nancy 11: pick (and optionally play) a random clip from one of the per-player voice tables
 	Common::String pickVoiceLine(int player, int table);
 	void playVoiceLine(int player, int table);
@@ -111,10 +114,10 @@ protected:
 	uint16 _solveSoundDelay = 0;
 	SoundDescription _solveSound;
 
-	SceneChangeWithFlag _exitScene; // also when losing
+	SceneChangeWithFlag _exitScene; // when losing (Nancy 11 shares the win scene, set apart by the flag)
 	uint16 _loseSoundDelay = 0;
 	SoundDescription _loseSound;
-	FlagDescription _loseFlag2; // nancy11: event flag set when the player gives up rather than loses
+	SceneChangeWithFlag _giveUpScene; // nancy11: separate scene reached by giving up via the exit hotspot
 	Common::Rect _exitHotspot;
 
 	// Nancy 11 voice clips: two players, seven tables each (entry counts 1,1,4,4,4,4,4).
@@ -124,6 +127,11 @@ protected:
 	SoundDescription _voiceSound;
 	int _prevSide = -1;
 	bool _gaveUp = false;
+
+	// Nancy 11: when true the opponent is computer-controlled and takes its own turns
+	bool _playAgainstComputer = false;
+	// Nancy 11: the computer passes strategically (based on piece positions) rather than randomly
+	bool _aiPassStrategy = false;
 
 	Graphics::ManagedSurface _image;
 
