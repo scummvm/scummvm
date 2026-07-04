@@ -716,7 +716,11 @@ bool MultiBuildPuzzle::updateSolveFlags() {
 	for (uint i = 0; i < _numPieces; ++i) {
 		if (_pieces[i].placeCount > 0 && _pieces[i].mustNotPlace > 0)
 			return false;
-		if (_pieces[i].placeCount != _pieces[i].mustPlace)
+		// mustPlace is an exact required count only when non-zero. A zero
+		// mustPlace means the piece has no count requirement (e.g. cake
+		// cooking, where the win rule is just "place enough good ingredients
+		// and no bad ones"); placing it must not fail the check.
+		if (_pieces[i].mustPlace > 0 && _pieces[i].placeCount != _pieces[i].mustPlace)
 			return false;
 	}
 

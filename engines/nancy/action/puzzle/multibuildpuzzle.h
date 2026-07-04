@@ -66,7 +66,7 @@ protected:
 		Common::Rect cuSrcRect;   // Source in closeup image
 		Common::Rect placedDstRect; // Nancy 10: placement destination on screen
 		uint8 counterByte = 0;    // Non-zero: respawns on placement; doesn't count toward solve
-		uint8 mustPlace = 0;      // Required placement count (exact match for solve). 0/1 in Nancy 9; arbitrary in Nancy 10+ (e.g. cake mixing recipe quantities)
+		uint8 mustPlace = 0;      // Exact required placement count, checked only when non-zero (0 = no count requirement). 0/1 in Nancy 9; recipe quantities in cake mixing; 0 for all pieces in cake cooking
 		uint8 mustNotPlace = 0;   // Non-zero: placing this fails the solution check
 		uint8 placeCount = 0;     // Runtime: number of times this piece (or any clone of it) has been placed
 
