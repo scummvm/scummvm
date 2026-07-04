@@ -377,7 +377,6 @@ EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 	_primaryKeyboardInput = nullptr;
 	_secondaryKeyboardInput = nullptr;
 	_ignoreMouseMovements = false;
-	warning("_g587_hideMousePointerRequestCount should start with value 1");
 	_hideMousePointerRequestCount = 0;
 	_mouseButtonStatus = 0;
 	_highlightScreenBox.setToZero();
