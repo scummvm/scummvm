@@ -1042,6 +1042,21 @@ void Script::ScriptExecutor::scriptMoveObject() {
 		_stream->seek(0, SEEK_END);
 	}
 
+	// Binary (1008:aa83): when runtime data exists, sync target/finalDest to the new
+	// object position so a subsequent waitForWalk completes immediately.
+	if (object->_dataOffset != 0) {
+		GameObject::StoredWalkRuntime &s = object->_storedWalkRuntime;
+		s.valid = true;
+		s.targetPosition = object->_position;
+		s.pathFinalDestination = object->_position;
+		s.currentPathIndex = 0;
+		s.path.clear();
+		s.stepDeltaX = 0;
+		s.stepDeltaY = 0;
+		s.stepError = 0;
+		s.stepDirectionSet = false;
+	}
+
 	currentView->rebuildCharacterLookupTable();
 }
 
@@ -1314,16 +1329,15 @@ ExecutionResult Script::ScriptExecutor::scriptWaitForWalk() {
 		endBuffering(_lastOpcodeTriggeredSkip);
 		return ExecutionResult::ScriptFinished;
 	}
-	// Original checks runtime+0x231 (frozen/attached flag) -> error 0x1F
-	if (walkObject->_hasBoundsAttachment) {
-		setScriptError(0x1F);
+	// Binary (1008:db56 opcode 0x11): object+0x0A runtime must exist; no on-screen Character required.
+	if (walkObject->_dataOffset == 0) {
+		setScriptError(2);
 		endBuffering(_lastOpcodeTriggeredSkip);
 		return ExecutionResult::ScriptFinished;
 	}
-	View1 *currentView = (View1 *)_engine->findView("View1");
-	Character *c = currentView->getCharacterByIndex(objectID);
-	if (c == nullptr) {
-		setScriptError(2);
+	// Original checks runtime+0x231 (frozen/attached flag) -> error 0x1F
+	if (walkObject->_hasBoundsAttachment) {
+		setScriptError(0x1F);
 		endBuffering(_lastOpcodeTriggeredSkip);
 		return ExecutionResult::ScriptFinished;
 	}

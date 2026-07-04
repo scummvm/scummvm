@@ -1663,14 +1663,21 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 					_savedCursorMode = g_engine->_scriptExecutor->_cursorMode;
 					openOriginalSaveLoadPanel();
 				} else {
+					// Binary save/load path saves cursor then sets PanelCursor (0x19).
+					_savedCursorMode = g_engine->_scriptExecutor->_cursorMode;
+					g_engine->setCursorMode(Script::MouseMode::PanelCursor);
 					g_engine->openMainMenuDialog();
+					updateCursor();
 				}
 			}
 			return true;
 		}
 
-		// From handleInput (1008:e8bf): right-click when not executing
+		// From handleInput (1008:e8bf): right-click when not executing and cursor != Disabled
 		// opens the action bar at the mouse position.
+		if (g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Disabled) {
+			return true;
+		}
 		if (_uiPanelState != kUiPanelActionBar) {
 			openMainMenu(msg._pos);
 		} else {
@@ -1710,6 +1717,14 @@ bool View1::handlePanelRelease(const MouseUpMessage &msg) {
 
 	if (_uiPanelState == kUiPanelNone || _clickedButtonIndex == 0) {
 		return false;
+	}
+
+	// Binary handleInput (1008:e8bf): action bar/inventory panel release is only handled
+	// when g_wScriptIsExecuting==0 and g_wCursorMode!=0x1A. Save/load (state 4) still
+	// closes during script execution.
+	if (g_engine->_scriptExecutor->isExecuting() &&
+		_uiPanelState != kUiPanelSaveLoad) {
+		return true;
 	}
 
 	const UiPanelState previousState = _uiPanelState;
@@ -1823,6 +1838,15 @@ bool View1::msgAction(const ActionMessage &msg) {
 		debug("Game speed mode: %u", g_engine->_gameSpeedMode);
 		return true;
 	case Macs2::kMacs2ActionOpenGMM:
+		// Binary has no GMM; mirror save/load panel cursor handling when a script wait is active.
+		if (g_engine->_scriptExecutor->isExecuting()) {
+			if (g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Disabled) {
+				_savedCursorMode = g_engine->_scriptExecutor->_cursorMode;
+				g_engine->setCursorMode(Script::MouseMode::PanelCursor);
+			}
+		} else if (g_engine->_scriptExecutor->_cursorMode == Script::MouseMode::Disabled) {
+			return true;
+		}
 		g_engine->openMainMenuDialog();
 		updateCursor();
 		return true;
@@ -2158,6 +2182,7 @@ bool View1::tick() {
 					executor->_walkTargetObjectIndex = 0;
 				} else {
 					Character *c = getCharacterByIndex(walkTarget);
+					bool walkComplete = false;
 					if (c != nullptr) {
 						Common::Point pos = c->getPosition();
 						// Binary: walkAlongPath guarantees pos == finalDest on arrival.
@@ -2169,18 +2194,29 @@ bool View1::tick() {
 								c->_motionProgress == 0) {
 								c->_motionTargetVerticalOffset = walkObject->_verticalOffsetScale;
 							}
-							bool verticalOk = !c->hasPendingVerticalMotion();
-							if (verticalOk) {
-								if (!executor->_pickupInProgress) {
-									executor->_walkTargetObjectIndex = 0;
-									g_engine->runScriptExecutor();
-								} else if (c->_gameObject->_orientation != 0x11) {
-									// Binary: pickup in progress, trigger pickup animation.
-									// Save current orientation so it can be restored after pickup.
-									c->_previousOrientation = c->_gameObject->_orientation;
-									c->_gameObject->_orientation = 0x11;
-								}
+							walkComplete = !c->hasPendingVerticalMotion();
+						}
+					} else if (walkObject->_storedWalkRuntime.valid) {
+						// Binary gameTick (1008:e752): polls object table pos vs runtime finalDest;
+						// no on-screen Character is required (e.g. after moveObject to another scene).
+						const GameObject::StoredWalkRuntime &rt = walkObject->_storedWalkRuntime;
+						if (walkObject->_position.x == rt.pathFinalDestination.x &&
+							walkObject->_position.y == rt.pathFinalDestination.y) {
+							if ((int16)rt.motionTargetVerticalOffset < 0 ||
+								rt.motionTargetVerticalOffset == walkObject->_verticalOffsetScale) {
+								walkComplete = true;
 							}
+						}
+					}
+					if (walkComplete) {
+						if (!executor->_pickupInProgress) {
+							executor->_walkTargetObjectIndex = 0;
+							g_engine->runScriptExecutor();
+						} else if (c != nullptr && c->_gameObject->_orientation != 0x11) {
+							// Binary: pickup in progress, trigger pickup animation.
+							// Save current orientation so it can be restored after pickup.
+							c->_previousOrientation = c->_gameObject->_orientation;
+							c->_gameObject->_orientation = 0x11;
 						}
 					}
 				}
