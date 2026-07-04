@@ -405,7 +405,7 @@ void CellPhonePopup::drawChrome() {
 	// latter; the original swaps to it for browser/list/email-content
 	// modes so the LCD can extend down into the keypad area.
 	const Common::Rect &chromeSrc =
-		isZoomedChromeState() && !_uiclData->fullEmptyScreenSrc.isEmpty()
+		isZoomedChromeState() && !isHelpContentView() && !_uiclData->fullEmptyScreenSrc.isEmpty()
 			? _uiclData->fullEmptyScreenSrc
 			: _uiclData->header.normalSrcRect;
 	_drawSurface.blitFrom(_overlayImage, chromeSrc, Common::Point(0, 0));
@@ -511,7 +511,14 @@ void CellPhonePopup::drawScreenContent() {
 			drawHeading(*_contentHeading);
 		}
 		drawContentView();
-		drawDirectoryArrows();
+		// The help page is a static small-window blurb with no scroll arrows;
+		// browser / email articles keep the big-screen arrows. Help shows the
+		// Back button in the lower ribbon (returns to the main screen).
+		if (!isHelpContentView()) {
+			drawDirectoryArrows();
+		} else {
+			drawBackLabel();
+		}
 		break;
 	}
 
@@ -816,12 +823,12 @@ void CellPhonePopup::drawContentView() {
 		return;
 	}
 
-	// Content view runs under the zoomed-in chrome (drawChrome blits
-	// fullEmptyScreenSrc for kContentView), so the keypad is no longer
-	// visible underneath and we can render into the larger LCD area
-	// that emailListContainer defines.
+	// Browser / email articles run under the zoomed-in chrome (drawChrome
+	// blits fullEmptyScreenSrc), so the keypad is no longer visible underneath
+	// and we render into the larger LCD area that emailListContainer defines.
+	// The help page keeps the regular chrome, so it renders into the small LCD.
 	const Common::Rect &ws =
-		_uiclData->emailListContainer.isEmpty()
+		(isHelpContentView() || _uiclData->emailListContainer.isEmpty())
 			? _uiclData->welcomeScreen.destRect
 			: _uiclData->emailListContainer;
 	const int lcdLeft = ws.left - _screenPosition.left;
@@ -993,7 +1000,9 @@ void CellPhonePopup::drawWelcomeScreen() {
 }
 
 void CellPhonePopup::drawBackLabel() {
-	const UICL::ThreeRectWidget &back = _uiclData->subButtons[2];
+	// subButtons[0] (original CUIButton 0x10) is the Back button that returns a
+	// sub-screen to the main view; it sits at the left of the lower ribbon.
+	const UICL::ThreeRectWidget &back = _uiclData->subButtons[0];
 	if (back.srcRectIdle.isEmpty() || back.destRect.isEmpty()) {
 		return;
 	}
@@ -1002,6 +1011,16 @@ void CellPhonePopup::drawBackLabel() {
 	_drawSurface.blitFrom(_spritesImage, back.srcRectIdle,
 							Common::Point(back.destRect.left - chunkOrigin.x,
 											back.destRect.top - chunkOrigin.y));
+}
+
+Common::Rect CellPhonePopup::backButtonHitRect() const {
+	// Popup-local hit rect for the Back button (subButtons[0]).
+	Common::Rect r = _uiclData->subButtons[0].destRect;
+	if (r.isEmpty()) {
+		return r;
+	}
+	r.translate(-_screenPosition.left, -_screenPosition.top);
+	return r;
 }
 
 const UICL::ThreeRectWidget &CellPhonePopup::scrollUpButton() const {
@@ -1786,7 +1805,10 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 			}
 		}
 
-		const Common::Rect backHit = backLabelHitRect();
+		// Help draws a real Back button (subButtons[0]); hit-test it so the
+		// visible button and the hotspot line up. Browser / email articles keep
+		// using the wider ribbon-area hotspot.
+		const Common::Rect backHit = isHelpContentView() ? backButtonHitRect() : backLabelHitRect();
 		const Common::Point popupMouse(chunkMouse.x - _screenPosition.left,
 										chunkMouse.y - _screenPosition.top);
 		const bool overUpDown =

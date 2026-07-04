@@ -138,6 +138,14 @@ private:
 				_screenState == kContentView;
 	}
 
+	// The help "?" page reuses the content-view state, but unlike browser /
+	// email articles the original renders it in the regular (keypad-visible)
+	// chrome and the small LCD, not the zoomed full-screen variant.
+	bool isHelpContentView() const {
+		return _screenState == kContentView && _uiclData &&
+				_contentHeading == &_uiclData->helpHeading;
+	}
+
 	// True for screens that hide the status icons and "?" button so the
 	// top bar shows only the section heading and the up arrow.
 	bool isSubScreenState() const {
@@ -185,6 +193,8 @@ private:
 	bool isContactVisible(const UICL::Contact &c) const;
 	// Popup-local rect of the Back hotspot in directory mode.
 	Common::Rect backLabelHitRect() const;
+	// Popup-local rect of the visible Back button (subButtons[0]).
+	Common::Rect backButtonHitRect() const;
 	// Move the directory selection by delta, scrolling as needed.
 	void moveDirectorySelection(int delta);
 
