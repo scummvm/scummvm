@@ -197,7 +197,7 @@ enum InkType {
 
 // ID matches up to the fake cast member ID used by EventScript
 enum LEvent {
-	kEventPrepareMovie, // 0
+	kEventPrepareMovie = 0, // 0
 	kEventStartMovie,
 	kEventStepMovie,
 	kEventStopMovie,
@@ -479,6 +479,7 @@ const char *castType2str(CastType type);
 const char *spriteType2str(SpriteType type);
 const char *inkType2str(InkType type);
 const char *symbolType2str(SymbolType type);
+const char *leventType2str(LEvent type);
 Common::String objectType2str(int fl);
 Common::String paletteType2str(PaletteType value);
 Common::String textAlignType2str(TextAlignType value);

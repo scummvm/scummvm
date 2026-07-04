@@ -161,6 +161,63 @@ const char *symbolType2str(SymbolType type) {
 	return "<unknown>";
 }
 
+const char *const leventType[] = {
+	"prepareMovie",
+	"startMovie",
+	"stepMovie",
+	"stopMovie",
+
+	"new",
+	"beginSprite",
+	"endSprite",
+
+	"none",
+	"generic",
+	"enterFrame",
+	"prepareFrame",
+	"idle",
+	"stepFrame",
+	"exitFrame",
+	"timeout",
+
+	"activateWindow",
+	"deactivateWindow",
+	"moveWindow",
+	"resizeWindow",
+	"openWindow",
+	"closeWindow",
+	"zoomWindow",
+
+	"keyUp",
+	"keyDown",
+	"mouseUp",
+	"mouseDown",
+	"rightMouseUp",
+	"rightMouseDown",
+	"mouseEnter",
+	"mouseLeave",
+	"mouseUpOutSide",
+	"mouseWithin",
+
+	"atartUp",
+
+	"menuCallback",
+
+	"getBehaviorDescription",
+	"getPropertyDescriptionList",
+	"runPropertyDialog",
+
+	"cuePassed",
+};
+
+const char *leventType2str(LEvent type) {
+	if (type <= kEventCuePassed)
+		return leventType[type];
+
+	warning("BUILDBOT: Unknown leventType: %d", type);
+	return "<unknown>";
+}
+
 #define defFlag(x) { x, #x }
 
 struct FlagsList {
