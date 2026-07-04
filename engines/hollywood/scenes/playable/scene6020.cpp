@@ -530,10 +530,8 @@ bool Scene6020::loadTaffyDepartureResource() {
 
 	Common::Array<byte> ratHandoffChunk;
 	Common::Array<byte> walkOffChunk;
-	if (!_resources.loadVariableChunk(_vm->resources(), kScene6020ArchiveName,
-			kScene6020RatHandoffChunkIndex, ratHandoffChunk) ||
-			!_resources.loadVariableChunk(_vm->resources(), kScene6020ArchiveName,
-			kScene6020WalkOffChunkIndex, walkOffChunk))
+	if (!_resources.loadVariableChunk(kScene6020RatHandoffChunkIndex, ratHandoffChunk) ||
+			!_resources.loadVariableChunk(kScene6020WalkOffChunkIndex, walkOffChunk))
 		return false;
 
 	_taffyDepartureResource.resize(ratHandoffChunk.size() + walkOffChunk.size());

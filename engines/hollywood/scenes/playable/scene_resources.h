@@ -33,32 +33,31 @@ class ManagedSurface;
 
 namespace Hollywood {
 
-class ResourceManager;
-
 // Owns scene archive chunks and generic chunk loading helpers.
 class SceneResources {
 public:
 	SceneResources();
 
 	void clearChunkOffsets();
-	bool loadChunkTable(ResourceManager *resources, const char *archiveName);
+	bool loadChunkTable(const char *archiveName);
 	bool validateRequiredChunks(const char *archiveName, const char *sceneDebugName, uint requiredChunkCount) const;
 	void allocateArena(uint32 byteCount);
 
-	bool loadFixedChunk(ResourceManager *resources, const char *archiveName, const char *sceneDebugName,
+	bool loadFixedChunk(const char *sceneDebugName,
 		uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadFixedChunk(ResourceManager *resources, const char *archiveName, const char *sceneDebugName,
+	bool loadFixedChunk(const char *sceneDebugName,
 		uint index, Graphics::ManagedSurface &destination, uint fixedSize);
-	bool loadVariableChunk(ResourceManager *resources, const char *archiveName,
-		uint index, Common::Array<byte> &destination);
-	bool loadArenaChunk(ResourceManager *resources, const char *archiveName, const char *sceneDebugName,
-		uint index);
+	bool loadVariableChunk(uint index, Common::Array<byte> &destination);
+	bool loadArenaChunk(const char *sceneDebugName, uint index);
 
 	ResourceChunkTable chunkTable;
 	uint32 chunkOffsets[HollywoodEngine::kResourceChunkCount];
 	uint32 arenaCursor;
 	Common::Array<byte> arena;
 	Common::Array<byte> metadata;
+
+private:
+	ChunkArchive _archive;
 };
 
 } // End of namespace Hollywood

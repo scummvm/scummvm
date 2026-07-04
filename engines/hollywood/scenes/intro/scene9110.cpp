@@ -113,7 +113,7 @@ bool Scene9110::load() {
 }
 
 bool Scene9110::loadResourceI11Assets() {
-	if (!_resources.loadChunkTable(_vm->resources(), kI11ArchiveName))
+	if (!_resources.loadChunkTable(kI11ArchiveName))
 		return false;
 
 	for (uint i = 0; i < kI11RequiredChunkCount; ++i) {
@@ -143,15 +143,15 @@ bool Scene9110::loadResourceI11Assets() {
 }
 
 bool Scene9110::loadResourceI11Chunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_vm->resources(), kI11ArchiveName, _debugName, index, destination, fixedSize);
+	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
 }
 
 bool Scene9110::loadResourceI11Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize) {
-	return _resources.loadFixedChunk(_vm->resources(), kI11ArchiveName, _debugName, index, destination, fixedSize);
+	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
 }
 
 bool Scene9110::loadResourceI11ArenaChunk(uint index) {
-	return _resources.loadArenaChunk(_vm->resources(), kI11ArchiveName, _debugName, index, index);
+	return _resources.loadArenaChunk(_debugName, index, index);
 }
 
 bool Scene9110::loadStage003Descriptors() {

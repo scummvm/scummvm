@@ -40,9 +40,9 @@ public:
 	bool play();
 
 private:
-	bool loadResourceChunk(const char *archiveName, uint index, Common::Array<byte> &destination, uint fixedSize);
-	bool loadResourceChunk(const char *archiveName, uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
-	bool loadResourceArenaChunk(const char *archiveName, uint archiveIndex, uint localChunkIndex);
+	bool loadResourceChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
+	bool loadResourceChunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
+	bool loadResourceArenaChunk(uint archiveIndex, uint localChunkIndex);
 
 	bool loadResourceI06Assets();
 	bool loadResourceI06Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
