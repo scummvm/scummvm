@@ -30,7 +30,6 @@ const DebugChannelDef Macs2MetaEngineDetection::debugFlagList[] = {
 	{Macs2::kDebugInput, "Input", "Input debug level"},
 	{Macs2::kDebugScan, "Scan", "Scan for unrecognised games"},
 	{Macs2::kDebugScript, "Script", "Enable debug script dump"},
-	{Macs2::kDebugImGui, "imgui", "Show ImGui debug window (if available)"},
 	DEBUG_CHANNEL_END};
 
 Macs2MetaEngineDetection::Macs2MetaEngineDetection() : AdvancedMetaEngineDetection(Macs2::gameDescriptions,

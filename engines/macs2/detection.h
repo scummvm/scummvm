@@ -32,8 +32,7 @@ enum Macs2DebugChannels {
 	kDebugScan = 1 << 2,
 	kDebugFilePath = 1 << 3,
 	kDebugInput = 1 << 4,
-	kDebugImGui = 1 << 5,
-	kDebugScript = 1 << 6,
+	kDebugScript = 1 << 5,
 };
 
 enum Macs2Action {
