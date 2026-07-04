@@ -43,6 +43,9 @@ void Autotext::readData(Common::SeekableReadStream &stream) {
 	Common::Path imageName;
 	readFilename(stream, imageName);
 
+	// Nancy 10 raised the image slot array from 5 to 10 entries
+	uint maxImages = g_nancy->getGameType() <= kGameTypeNancy9 ? 5 : 10;
+
 	uint16 numImages = stream.readUint16LE();
 	if (numImages) {
 		for (uint i = 0; i < numImages; ++i) {
@@ -54,7 +57,14 @@ void Autotext::readData(Common::SeekableReadStream &stream) {
 
 		setImageName(imageName);
 	}
-	stream.skip((5 - numImages) * (2 + 16));
+	stream.skip((maxImages - numImages) * (2 + 16));
+
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		// Placement descriptor used to blit viewport surfaces (0-2) onscreen
+		_placementMode = stream.readUint16LE();
+		readRect(stream, _viewportDest);
+		readRect(stream, _viewportSrc);
+	}
 
 	readExtraData(stream);
 }
@@ -185,10 +195,12 @@ void Autotext::execute() {
 
 		const Font *font = g_nancy->_graphics->getFont(_fontID);
 		assert(font);
-		uint d = (font->getFontHeight() + 1) / 2 + 1;
 
-		textBounds.top += d + 1;
-		textBounds.left += d;
+		// The original indents the text within the surface by twice the width
+		// of a lowercase 'o' on the left, and once on top
+		uint indent = font->getStringWidth("o");
+		textBounds.top += indent;
+		textBounds.left += indent * 2;
 
 		// Original engine uses a particular value in the TBOX chunk in all
 		// text rendering, including Autotext
@@ -196,6 +208,21 @@ void Autotext::execute() {
 
 		drawAllText(textBounds, tbox->leftOffset - textBounds.left, _fontID, _fontID);
 		surfBounds = Common::Rect(_fullSurface.w, _drawnTextHeight);
+
+		// Viewport surfaces (0-2) are placed onscreen by the AutoText record itself.
+		// Journal surfaces (3+) are drawn by the notebook UI instead.
+		if (_selfDisplay && _surfaceID < 3 && !_viewportRender && !_viewportDest.isEmpty()) {
+			Common::Rect src = _viewportSrc;
+			src.clip(surf.getBounds());
+
+			_viewportRender = new AutotextRender(_placementMode);
+			_viewportRender->_drawSurface.create(surf, src);
+			_viewportRender->moveTo(_viewportDest);
+			_viewportRender->setTransparent(_transparency == kPlayOverlayTransparent);
+			_viewportRender->setVisible(true);
+			_viewportRender->init();
+			_viewportRender->registerGraphics();
+		}
 	}
 
 	_isDone = true;
