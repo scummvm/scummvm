@@ -28,54 +28,56 @@ The following steps explain how to add a game to ScummVM, and assume you have ac
 
 2. In the Launcher window, click **Add Game**. This opens a file browser; either the system file browser or the ScummVM file browser.
 
-.. image:: ../images/Launcher/add_game.png
+   .. figure:: ../images/Launcher/add_game.png
 
-To add multiple games at once, click the expander arrow next to **Add Game**, and select **Mass Add**.
+   To add multiple games at once, click the expander arrow next to **Add Game**, and select **Mass Add**.
 
-.. image:: ../images/Launcher/mass_add.png
+   .. figure:: ../images/Launcher/mass_add.png
 
 3.  Use the file browser to locate the folder containing the game data files. For the ScummVM file browser: Double click on a folder to open it, and use **Go up** to go back up one level. Highlight the folder by clicking on it, and then click **Choose**
 
-.. image:: ../images/Launcher/choose_game_directory.png
-   :class: with-shadow
+   .. figure:: ../images/Launcher/choose_game_directory.png
 
-.. note::
+   .. note::
 
-   The **Use Native file browser**  option in the :doc:`Misc <../settings/misc>` tab of the global settings controls whether ScummVM uses the system file browser, or its own file browser.
+      The **Use native system file browser**  option in the :doc:`GUI <../settings/gui>` tab of the global settings controls whether ScummVM uses the system file browser, or its own file browser.
 
-If you are using **Mass Add**, select **Yes** to run the mass game detector. A dialog opens to advise which games were added to the games list.
+   If you are using **Mass Add**, select **Yes** to run the mass game detector. A dialog opens to advise which games were added to the games list.
 
-.. image:: ../images/Launcher/mass_add_confirm.png
+   .. figure:: ../images/Launcher/mass_add_confirm.png
 
-.. image:: ../images/Launcher/mass_add_success.png
+   .. figure:: ../images/Launcher/mass_add_success.png
 
 
-Sometimes, ScummVM detects multiple versions of a single game. In this case, highlight the correct version and click **Choose** to continue.
+   Sometimes, ScummVM detects multiple versions of a single game. In this case, highlight the correct version and click **Choose** to continue.
 
-.. figure:: ../images/Launcher/choose_version.png
+   .. figure:: ../images/Launcher/choose_version.png
 
-.. caution::
+   .. caution::
 
-   If you are using **Mass Add**, ScummVM adds all versions of a game.
+      If you are using **Mass Add**, ScummVM adds all versions of a game.
 
-If you are adding an unknown version of a game, ScummVM is not able to add the game to the games list. An error message appears to warn you that the game has not been added.
+   If you are adding an unknown version of a game, ScummVM is not able to add the game to the games list. An error message appears to warn you that the game has not been added.
 
 4. The **Game Options** window opens to allow configuration of various settings for the game. These can be reconfigured at any time, but for now everything should be OK at the default settings. Any settings changed here override the global settings. Click **Ok**.
 
-.. image:: ../images/Launcher/game_settings.png
-   :class: with-shadow
+   .. figure:: ../images/Launcher/game_settings.png
 
-.. note::
+   .. note::
 
-   The **Game Options** window does not open when **Mass Add** is used.
+      The **Game Options** window does not open when **Mass Add** is used.
 
 5. Games are now ready to play! To play, either double-click on the game in the games list, or highlight the game by clicking on it, and then click **Start**. In grid view, either double-click on a game to start it, or select the game and click the play icon in the pop-up window.
 
-.. image:: ../images/Launcher/start_game.png
-   :class: with-shadow
+   .. figure:: ../images/Launcher/start_game.png
 
-Games can also be launched directly from the command line. For more information, see the `Command line options <../advanced_topics/command_line>`_ page.
+Games can also be launched directly from the command line. For more information, see the :doc:`Command line interface <../advanced_topics/command_line>` page.
 
+.. tip::
+    You can now use standard multiselect commands (like holding ``Ctrl`` or ``Shift`` while clicking) to select multiple games in the launcher list at once. This is especially useful if you want to use the **Remove Game** button to quickly clear several games from your list simultaneously!
+
+   .. figure:: ../images/Launcher/multi_select.png
+   
 A note about copyright
 ==============================
 
