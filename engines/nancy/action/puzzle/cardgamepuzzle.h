@@ -61,17 +61,20 @@ protected:
 
 	Common::String getRecordTypeName() const override { return "CardGamePuzzle"; }
 
-	bool dealOne(int player); // draw a card from the deck to a side; false if the deck is empty
+	int dealOne(int player);  // draw a card from the deck to a side; returns its column, or -1 if the deck is empty
 	void drawBoard();
 	// True when the scene has a bottom button row (the player clicks those); false when it doesn't,
 	// in which case the player clicks their own cards in the tableau directly.
 	bool usesColumnButtons() const { return _columnButtons[0].top != _columnButtons[0].bottom; }
 	// The column the player is pointing at (owning 1-2 cards in it), or -1 if none is under the mouse.
 	int columnUnderMouse(const Common::Point &mousePos) const;
-	// Current side takes every opponent card in the given column; returns true if a card moved.
-	bool playColumn(int col);
-	int aiPickColumn();       // the AI's column choice, or -1 if it has no productive move
-	void finishMove();        // draw a card, pass the turn, run the AI, detect the end of the game
+	bool hasPlayableColumn(int side) const; // whether a side holds any incomplete rank it can ask for
+	// One "ask" (Go Fish): the side asks the opponent for a rank. If the opponent holds it, take every
+	// card of that rank (scoring a set at three) and ask again; otherwise draw a card ("go fish").
+	// Returns true if the same side should ask again.
+	bool askForColumn(int side, int askedCol);
+	int aiPickColumn();       // the AI's chosen rank to ask for, or -1 if it holds no incomplete rank
+	void runAiTurn();         // the AI asks repeatedly until its turn ends, then detects game over
 	void endGame();
 	// Compare side 1's grid against a pre-move snapshot and start sliding the changed cards.
 	void startMoveAnimation(const bool beforeGrid[kMaxRows][kMaxCols]);

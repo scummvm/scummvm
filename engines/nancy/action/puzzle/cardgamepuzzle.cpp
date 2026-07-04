@@ -120,9 +120,9 @@ void CardGamePuzzle::readData(Common::SeekableReadStream &stream) {
 // Deal a single card to the given side: pick a random still-available cell from the shared deck
 // and place it in that side's column, capping the column. While more than a row's worth of cards
 // remain on the table, columns are kept below 3 so the opening deal stays spread out.
-bool CardGamePuzzle::dealOne(int player) {
+int CardGamePuzzle::dealOne(int player) {
 	if (_deckRemaining < 1) {
-		return false;
+		return -1;
 	}
 
 	bool allowFull = _deckRemaining <= _numCols;
@@ -141,11 +141,11 @@ bool CardGamePuzzle::dealOne(int player) {
 			}
 			_availMap[row][col] = 0;
 			--_deckRemaining;
-			return true;
+			return col;
 		}
 	}
 
-	return false;
+	return -1;
 }
 
 void CardGamePuzzle::drawBoard() {
@@ -197,102 +197,109 @@ void CardGamePuzzle::drawBoard() {
 	_needsRedraw = true;
 }
 
-// The current side takes every card the opponent still holds in this column (each transfers at its
-// own grid cell). Owning all three cells of a column scores a set.
-bool CardGamePuzzle::playColumn(int col) {
-	int mover = _currentTurn;
-	int opponent = mover ^ 1;
-	bool moved = false;
-
-	for (int row = 0; row < _numRows; ++row) {
-		if (_board[opponent].grid[row][col] == 1) {
-			_board[opponent].grid[row][col] = 0;
-			_board[opponent].colCount[col]--;
-			_board[mover].grid[row][col] = 1;
-			_board[mover].colCount[col]++;
-			moved = true;
+bool CardGamePuzzle::hasPlayableColumn(int side) const {
+	for (int col = 0; col < (int)_numCols; ++col) {
+		if (_board[side].colCount[col] > 0 && _board[side].colCount[col] < 3) {
+			return true;
 		}
 	}
 
-	if (moved && _board[mover].colCount[col] >= 3 && !_board[mover].colComplete[col]) {
-		_board[mover].colComplete[col] = 1;
-		_board[mover].score++;
-		playVoice(mover == 1 ? _playerScoredVoiceName : _enemyScoredVoiceName);
-	} else if (moved && col < kMaxCols) {
-		// A card-specific line for the played column (silent in scenes that don't use them)
-		playVoice(_matchVoice[mover][col]);
-	}
-
-	return moved;
+	return false;
 }
 
-// The AI (the side to move) looks for a column where the opponent still has a card to take,
-// preferring columns it is already building (>=2, then >=1 of its own), and avoiding repeating its
-// last pick. Returns -1 if it has no productive steal available.
-int CardGamePuzzle::aiPickColumn() {
-	int mover = _currentTurn;
-	int opponent = mover ^ 1;
+// One Go Fish "ask": the side asks the opponent for the given rank. If the opponent holds any cards
+// of it, they all transfer (owning three scores a set) and the side asks again. Otherwise the side
+// draws a card from the deck; the turn then passes, unless the draw-again rule applies and it drew
+// the rank it asked for. Ends the game if the deck runs out on a draw.
+bool CardGamePuzzle::askForColumn(int side, int askedCol) {
+	int opponent = side ^ 1;
+	bool took = false;
 
-	Common::Array<int> strong, ownSome, any;
-	for (int col = 0; col < (int)_numCols; ++col) {
-		bool opponentHas = false;
-		for (int row = 0; row < _numRows; ++row) {
-			if (_board[opponent].grid[row][col] == 1) {
-				opponentHas = true;
-				break;
-			}
+	for (int row = 0; row < _numRows; ++row) {
+		if (_board[opponent].grid[row][askedCol] == 1) {
+			_board[opponent].grid[row][askedCol] = 0;
+			_board[opponent].colCount[askedCol]--;
+			_board[side].grid[row][askedCol] = 1;
+			_board[side].colCount[askedCol]++;
+			took = true;
 		}
-		if (!opponentHas || col == _lastAiColumn) {
+	}
+
+	if (took) {
+		if (_board[side].colCount[askedCol] >= 3 && !_board[side].colComplete[askedCol]) {
+			_board[side].colComplete[askedCol] = 1;
+			_board[side].score++;
+			playVoice(side == 1 ? _playerScoredVoiceName : _enemyScoredVoiceName);
+		} else if (askedCol < kMaxCols) {
+			// A rank-specific line for the taken cards (silent in scenes that don't use them)
+			playVoice(_matchVoice[side][askedCol]);
+		}
+
+		return true; // the opponent had the rank: ask again
+	}
+
+	// Go fish
+	int drawnCol = dealOne(side);
+	if (drawnCol == -1) {
+		endGame();
+		return false;
+	}
+
+	return (_switchTurnRule != 0 && drawnCol == askedCol);
+}
+
+// The AI asks for a rank it already holds one or two of, preferring ranks where it holds two (so a
+// take completes the set) and avoiding immediately repeating its previous rank. Returns -1 if it
+// holds no incomplete rank to ask for.
+int CardGamePuzzle::aiPickColumn() {
+	Common::Array<int> strong, any;
+	for (int col = 0; col < (int)_numCols; ++col) {
+		int count = _board[0].colCount[col];
+		if (count <= 0 || count >= 3 || col == _lastAiColumn) {
 			continue;
 		}
 
 		any.push_back(col);
-		if (_board[mover].colCount[col] >= 1) {
-			ownSome.push_back(col);
-		}
-		if (_board[mover].colCount[col] >= 2) {
+		if (count >= 2) {
 			strong.push_back(col);
 		}
 	}
 
-	const Common::Array<int> &pool = !strong.empty() ? strong : (!ownSome.empty() ? ownSome : any);
-	if (pool.empty()) {
-		return -1;
+	const Common::Array<int> &pool = !strong.empty() ? strong : any;
+	if (!pool.empty()) {
+		return pool[g_nancy->_randomSource->getRandomNumber(pool.size() - 1)];
 	}
 
-	return pool[g_nancy->_randomSource->getRandomNumber(pool.size() - 1)];
+	// The last-asked rank is the only one left: allow repeating it.
+	for (int col = 0; col < (int)_numCols; ++col) {
+		if (_board[0].colCount[col] > 0 && _board[0].colCount[col] < 3) {
+			return col;
+		}
+	}
+
+	return -1;
 }
 
-// After a side plays a column it draws a card from the deck, then the turn passes. When the player
-// has moved, the AI immediately takes its turn. The game ends once the deck is exhausted.
-void CardGamePuzzle::finishMove() {
-	dealOne(_currentTurn);
-	drawBoard();
+// The AI (side 0) takes its whole turn at once: it keeps asking as long as each ask grants another
+// turn, then control returns to the player. The game ends once a draw finds the deck exhausted.
+void CardGamePuzzle::runAiTurn() {
+	_lastAiColumn = -1;
 
-	if (_deckRemaining < 1) {
-		endGame();
-		return;
-	}
-
-	_currentTurn ^= 1;
-
-	if (_currentTurn == 0) {
-		// AI turn
+	for (int guard = 0; !_gameOver && guard < 1000; ++guard) {
 		int col = aiPickColumn();
-		if (col != -1) {
-			_lastAiColumn = col;
-			playColumn(col);
+		if (col == -1) {
+			// Nothing to ask for: go fish and end the turn.
+			if (dealOne(0) == -1) {
+				endGame();
+			}
+			break;
 		}
 
-		dealOne(_currentTurn);
-		drawBoard();
-
-		if (_deckRemaining < 1) {
-			endGame();
-			return;
+		bool goAgain = askForColumn(0, col);
+		_lastAiColumn = col;
+		if (!goAgain) {
+			break;
 		}
-
-		_currentTurn = 1;
 	}
 }
 
@@ -352,6 +359,19 @@ void CardGamePuzzle::updateGraphics() {
 	if (_gameOver && _awaitingEnd && g_nancy->getTotalPlayTime() >= _endWaitUntil) {
 		_awaitingEnd = false;
 		_state = kActionTrigger;
+		return;
+	}
+
+	// If it becomes the player's turn but they hold no rank they can ask for, they must go fish and
+	// pass, so the AI takes over. This resolves a turn the player could otherwise never act on.
+	if (_state == kRun && !_gameOver && !_awaitingEnd && _currentTurn == 1 && !hasPlayableColumn(1)) {
+		if (dealOne(1) == -1) {
+			endGame();
+		} else if (!_gameOver) {
+			runAiTurn();
+		}
+
+		drawBoard();
 	}
 }
 
@@ -410,6 +430,13 @@ void CardGamePuzzle::execute() {
 	if (_state == kBegin) {
 		init();
 		registerGraphics();
+
+		// When the AI is dealt the opening move, it plays out its turn before the player's first ask.
+		if (_startPlayer == 0 && !_gameOver) {
+			runAiTurn();
+			_currentTurn = 1;
+		}
+
 		drawBoard();
 		_state = kRun;
 	} else if (_state == kActionTrigger) {
@@ -522,12 +549,18 @@ void CardGamePuzzle::handleInput(NancyInput &input) {
 				before[r][c] = (_board[1].grid[r][c] == 1);
 
 		playVoice(_moveVoiceName);
-		playColumn(col);
-		finishMove();
+		bool goAgain = askForColumn(1, col);
 
-		// finishMove may have ended the game (kActionTrigger); only animate if still playing
-		if (_state == kRun) {
+		// A failed ask (go fish) ends the player's turn, so the AI plays out its whole turn before
+		// control returns. A successful ask keeps the turn: the player just asks again.
+		if (_state == kRun && !_gameOver && !goAgain) {
+			runAiTurn();
+		}
+
+		if (_state == kRun && !_gameOver) {
 			startMoveAnimation(before);
+		} else {
+			drawBoard();
 		}
 	}
 }
