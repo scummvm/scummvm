@@ -20,6 +20,7 @@
  */
 
 #include "common/error.h"
+#include "common/file.h"
 #include "common/system.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -103,7 +104,31 @@ Graphics::Surface *loadSplash(const char *filename) {
 	return surface;
 }
 
+// TEMP headless debug helper, remove: dump current screen+palette as PPM
+void debugDumpScreen(const char *tag) {
+	if (gDebugLevel < 9)
+		return;
+	static int n = 0;
+	Graphics::Surface *s = g_system->lockScreen();
+	byte pal[768];
+	g_system->getPaletteManager()->grabPalette(pal, 0, 256);
+	Common::DumpFile f;
+	if (f.open(Common::Path(Common::String::format("/tmp/chamber_dbg/%03d_%s.ppm", n++, tag)))) {
+		f.writeString(Common::String::format("P6\n%d %d\n255\n", s->w, s->h));
+		for (int y = 0; y < s->h; y++)
+			for (int x = 0; x < s->w; x++) {
+				byte c = *(const byte *)s->getBasePtr(x, y);
+				f.writeByte(pal[c * 3]);
+				f.writeByte(pal[c * 3 + 1]);
+				f.writeByte(pal[c * 3 + 2]);
+			}
+	}
+	g_system->unlockScreen();
+}
+
 uint16 benchmarkCpu(void) {
+	if (gDebugLevel >= 9) // TEMP headless debug stub, remove
+		return 1000;
 	byte t;
 	uint16 cycles = 0;
 	for (t = script_byte_vars.timer_ticks; t == script_byte_vars.timer_ticks;) ;
@@ -304,6 +329,20 @@ Common::Error ChamberEngine::init() {
 	if (getPlatform() == Common::kPlatformAmiga) {
 		// Amiga title: static resources (incl. palette) live in KULT, load them first
 		loadAmigaStaticData();
+		if (getLanguage() == Common::EN_USA) {
+			splash = ega_loadFond("INTRO.PIA");
+			if (splash) {
+				g_vm->_renderer->colorSelect(AMIGA_NUM_PALETTES - 1);
+				g_vm->_renderer->backBufferToRealFull();
+				// Splash wraps ega_backbuffer: the surface does not own its pixels
+				delete splash;
+				splash = nullptr;
+				clearKeyboard();
+				readKeyboardChar();
+				if (_shouldQuit)
+					return Common::kNoError;
+			}
+		}
 		splash = ega_loadFond("PRES.BIN");
 		if (!splash) {
 			_shouldQuit = true;

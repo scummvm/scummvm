@@ -35,20 +35,33 @@ namespace Chamber {
 const byte *amiga_palette_table = nullptr;
 const byte *amiga_room_palette_table = nullptr;
 
-// Static resources are sliced straight out of the EU KULT executable
 struct AmigaResEnt {
 	const char *name;
 	byte **buffer;
-	uint32 offset;
+	uint32 offset;    // EU "Kult (M3)"
 	uint32 size;
+	uint32 offsetUS;  // US "Chamber" (Draconian)
+	uint32 sizeUS;
 };
 
 #define AMIGA_PAL_OFFSET 40896
+#define AMIGA_PAL_OFFSET_US 41010
 
 // Each room takes a shared base and drops its own 5-word delta over slots 1..5
 #define AMIGA_ROOM_PAL_OFFSET 40268
+#define AMIGA_ROOM_PAL_OFFSET_US 40362
 #define AMIGA_ROOM_DELTA_OFFSET 40068
+#define AMIGA_ROOM_DELTA_OFFSET_US 40162
 #define AMIGA_NUM_ROOM_PALETTES 20
+
+// The US build ships no VERBE/MOTSE/DESCE/DIALE text files; the English banks
+// are embedded in the exe (in this order, right after ANICO). EU keeps them as
+// separate files because it is multilingual.
+#define AMIGA_DIALE_OFFSET_US  82656
+#define AMIGA_DESCE_OFFSET_US  92296
+#define AMIGA_VERBE_OFFSET_US 102746
+#define AMIGA_MOTSE_OFFSET_US 104066
+#define AMIGA_MOTSE_END_US    105166
 
 static const byte *amiga_room_delta_table = nullptr;
 
@@ -73,20 +86,32 @@ static const uint16 amiga_room_base_pal[16] = {
 };
 
 static AmigaResEnt amiga_res[] = {
-	{ "SOUCO.BIN", &souco_data,  37724,   424 },
-	{ "ZONES.BIN", &zones_data,  43250,  9014 },
-	{ "TEMPL.BIN", &templ_data,  52318, 27336 },
-	{ "MURSM.BIN", &mursm_data,  79654,    76 },
-	{ "ANIMA.BIN", &anima_data,  79730,  2046 },
-	{ "ANICO.BIN", &anico_data,  81776,   667 },
-	{ "ARPLA.BIN", &arpla_data, 105612,  8024 },
-	{ "CARAC.BIN", &carpc_data, 113636,   384 },
-	{ "GAUSS.BIN", &gauss_data, 114148,  2880 },
-	{ "ALEAT.BIN", &aleat_data, 117028,   256 },
-	{ "ICONE.BIN", &icone_data, 117284,  2752 },
-	{ "LUTIN.BIN", &lutin_data, 120036,  2800 },
+	//   name          buffer         EU off  EU sz   US off  US sz
+	{ "SOUCO.BIN", &souco_data,  37724,   424,  37818,   424 },
+	{ "ZONES.BIN", &zones_data,  43250,  9014,  43428,  9014 },
+	{ "TEMPL.BIN", &templ_data,  52318, 27336,  52496, 27370 },
+	{ "MURSM.BIN", &mursm_data,  79654,    76,  79866,    76 },
+	{ "ANIMA.BIN", &anima_data,  79730,  2046,  79942,  2046 },
+	{ "ANICO.BIN", &anico_data,  81776,   667,  81988,   667 },
+	{ "ARPLA.BIN", &arpla_data, 105612,  8024, 105166,  8024 },
+	{ "CARAC.BIN", &carpc_data, 113636,   384, 113190,   384 },
+	{ "GAUSS.BIN", &gauss_data, 114148,  2880, 113702,  2880 },
+	{ "ALEAT.BIN", &aleat_data, 117028,   256, 116582,   256 },
+	{ "ICONE.BIN", &icone_data, 117284,  2752, 116838,  2752 },
+	{ "LUTIN.BIN", &lutin_data, 120036,  2800, 119594,  2800 },
 };
 static const int kAmigaNumRes = sizeof(amiga_res) / sizeof(amiga_res[0]);
+
+// Copy an exe-embedded text bank into its fixed engine buffer, clamped to the
+// buffer size and to the space up to the next bank so we never overrun either.
+static void copyAmigaText(byte *dst, uint32 bufMax, const byte *raw, uint32 sz, uint32 off, uint32 next) {
+	uint32 n = next - off;
+	if (n > bufMax)
+		n = bufMax;
+	if (off + n > sz)
+		return;
+	memcpy(dst, raw + off, n);
+}
 
 int16 loadAmigaStaticData() {
 	// Safe to call more than once: it runs both before the title splash (to make
@@ -113,17 +138,31 @@ int16 loadAmigaStaticData() {
 	delete[] g_vm->_pxiData;
 	g_vm->_pxiData = raw;
 
+	// The US "Chamber" build uses a different exe with its own offset column
+	const bool isUS = g_vm->getLanguage() == Common::EN_USA;
+
 	for (int i = 0; i < kAmigaNumRes; i++) {
-		if (amiga_res[i].offset + amiga_res[i].size > sz) {
+		uint32 off = isUS ? amiga_res[i].offsetUS : amiga_res[i].offset;
+		uint32 rsz = isUS ? amiga_res[i].sizeUS : amiga_res[i].size;
+		if (off + rsz > sz) {
 			warning("loadAmigaStaticData(): %s past EOF", amiga_res[i].name);
 			return 0;
 		}
-		*amiga_res[i].buffer = raw + amiga_res[i].offset;
+		*amiga_res[i].buffer = raw + off;
 	}
 
-	amiga_palette_table = raw + AMIGA_PAL_OFFSET;
-	amiga_room_palette_table = raw + AMIGA_ROOM_PAL_OFFSET;
-	amiga_room_delta_table = raw + AMIGA_ROOM_DELTA_OFFSET;
+	amiga_palette_table = raw + (isUS ? AMIGA_PAL_OFFSET_US : AMIGA_PAL_OFFSET);
+	amiga_room_palette_table = raw + (isUS ? AMIGA_ROOM_PAL_OFFSET_US : AMIGA_ROOM_PAL_OFFSET);
+	amiga_room_delta_table = raw + (isUS ? AMIGA_ROOM_DELTA_OFFSET_US : AMIGA_ROOM_DELTA_OFFSET);
+
+	// The US build has no VERBE/MOTSE/DESCE/DIALE files; slice the embedded
+	// English banks out of the exe into the buffers loadFile() would have filled.
+	if (isUS) {
+		copyAmigaText(diali_data, RES_DIALI_MAX, raw, sz, AMIGA_DIALE_OFFSET_US, AMIGA_DESCE_OFFSET_US);
+		copyAmigaText(desci_data, RES_DESCI_MAX, raw, sz, AMIGA_DESCE_OFFSET_US, AMIGA_VERBE_OFFSET_US);
+		copyAmigaText(vepci_data, RES_VEPCI_MAX, raw, sz, AMIGA_VERBE_OFFSET_US, AMIGA_MOTSE_OFFSET_US);
+		copyAmigaText(motsi_data, RES_MOTSI_MAX, raw, sz, AMIGA_MOTSE_OFFSET_US, AMIGA_MOTSE_END_US);
+	}
 
 	// Amiga glyphs sit one bit too high, shift them back into the low nibble
 	for (uint32 i = 0; i < 384; i++)
