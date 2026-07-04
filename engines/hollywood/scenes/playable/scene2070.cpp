@@ -466,6 +466,7 @@ void Scene2070::runAnimatedInventoryStateChange() {
 		kScene2070InventoryOverlayFrameMap, ARRAYSIZE(kScene2070InventoryOverlayFrameMap),
 		kScene2070OverlayFrameMillis);
 
+	addInventoryItem(0x2d);
 	_soundBank0.playSample(1, 100);
 	_vm->gameState().scene2070HiddenItemPatchState = 0;
 	applySceneStateToHotspotsAndPatches(3);
