@@ -2521,10 +2521,19 @@ void SurfaceSdlGraphicsManager::undrawMouse() {
 	_mouseNextRect.x = virtualCursor.x + _gameScreenShakeXOffset;
 	_mouseNextRect.y = virtualCursor.y + _gameScreenShakeYOffset;
 
-	_mouseNextRect.w = _mouseCurState.rW;
-	_mouseNextRect.h = _mouseCurState.rH;
-	_mouseNextRect.x -= _mouseCurState.rHotX;
-	_mouseNextRect.y -= _mouseCurState.rHotY;
+	if (!_overlayInGUI) {
+		// The game cursor rect is kept in virtual coordinates: drawMouse()
+		// scales and aspect-corrects it, so subtract the virtual hotspot here
+		_mouseNextRect.w = _mouseCurState.vW;
+		_mouseNextRect.h = _mouseCurState.vH;
+		_mouseNextRect.x -= _mouseCurState.vHotX;
+		_mouseNextRect.y -= _mouseCurState.vHotY;
+	} else {
+		_mouseNextRect.w = _mouseCurState.rW;
+		_mouseNextRect.h = _mouseCurState.rH;
+		_mouseNextRect.x -= _mouseCurState.rHotX;
+		_mouseNextRect.y -= _mouseCurState.rHotY;
+	}
 
 	if (!_cursorVisible || !_mouseSurface) {
 		_mouseNextRect.x = _mouseNextRect.y = _mouseNextRect.w = _mouseNextRect.h = 0;
@@ -2535,14 +2544,14 @@ void SurfaceSdlGraphicsManager::undrawMouse() {
 	// alpha-blended cursors will happily blend into themselves if the surface
 	// under the cursor is not reset first
 	//
-	// The mouse is undrawn using real coordinates, i.e. they have already
-	// been scaled and aspect-ratio corrected.
+	// The mouse is undrawn using virtual coordinates, i.e. they may be
+	// scaled and aspect-ratio corrected.
 
 	if (_mouseLastRect.w != 0 && _mouseLastRect.h != 0)
-		addDirtyRect(_mouseLastRect.x, _mouseLastRect.y, _mouseLastRect.w, _mouseLastRect.h, true);
+		addDirtyRect(_mouseLastRect.x, _mouseLastRect.y, _mouseLastRect.w, _mouseLastRect.h, _overlayInGUI);
 
 	if (_mouseNextRect.w != 0 && _mouseNextRect.h != 0)
-		addDirtyRect(_mouseNextRect.x, _mouseNextRect.y, _mouseNextRect.w, _mouseNextRect.h, true);
+		addDirtyRect(_mouseNextRect.x, _mouseNextRect.y, _mouseNextRect.w, _mouseNextRect.h, _overlayInGUI);
 }
 
 void SurfaceSdlGraphicsManager::drawMouse() {
