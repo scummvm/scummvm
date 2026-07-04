@@ -133,7 +133,7 @@ static void main_cold_data_init() {
 	player.walker_visible = true;
 	player.scaling_velocity = true;
 
-	Common::strcpy_s(kernel_cheating_password, "WIDECHEW");
+	Common::strcpy_s(kernel_cheating_password, "FAREWELLAGA");
 	kernel_cheating_allowed = strlen(kernel_cheating_password);
 
 	kernel.cheating = gDebugLevel == 9 ? kernel_cheating_allowed : 0;
