@@ -169,10 +169,10 @@ void DMEngine::saveGame() {
 		_dialog->dialogDraw(nullptr, nullptr, "SAVE AND PLAY", "SAVE AND QUIT", "CANCEL", "LOAD", false, false, false);
 		break;
 	case Common::DE_DEU:
-		_dialog->dialogDraw(nullptr, nullptr, "SICHERN/SPIEL", "SICHERN/ENDEN", "WIDERRUFEN", "LOAD", false, false, false);
+		_dialog->dialogDraw(nullptr, nullptr, "SICHERN/SPIEL", "SICHERN/ENDEN", "WIDERRUFEN", "LADEN", false, false, false);
 		break;
 	case Common::FR_FRA:
-		_dialog->dialogDraw(nullptr, nullptr, "GARDER/JOUER", "GARDER/SORTIR", "ANNULLER", "LOAD", false, false, false);
+		_dialog->dialogDraw(nullptr, nullptr, "GARDER/JOUER", "GARDER/SORTIR", "ANNULLER", "CHARGER", false, false, false);
 		break;
 	}
 
