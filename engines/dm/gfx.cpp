@@ -3724,7 +3724,7 @@ T0115129_DrawProjectiles:
 					if (flipHorizontal || flipVertical) {
 						AL_4_normalizdByteWidth = getNormalizedByteWidth(byteWidth);
 						if (bitmapRedBanana != _tmpBitmap) {
-							memcpy(_tmpBitmap, bitmapRedBanana, sizeof(byte) * AL_4_normalizdByteWidth * heightRedEagle);
+							memcpy(_tmpBitmap, bitmapRedBanana, sizeof(byte) * AL_4_normalizdByteWidth * 2 * heightRedEagle);
 							bitmapRedBanana = _tmpBitmap;
 						}
 						if (flipVertical)
@@ -3881,7 +3881,7 @@ T0115200_DrawExplosion:
 
 				byteWidth = getNormalizedByteWidth(byteWidth);
 				if (flipHorizontal || flipVertical) {
-					memcpy(_tmpBitmap, bitmapRedBanana, sizeof(byte) * byteWidth * heightRedEagle);
+					memcpy(_tmpBitmap, bitmapRedBanana, sizeof(byte) * byteWidth * 2 * heightRedEagle);
 					bitmapRedBanana = _tmpBitmap;
 				}
 
