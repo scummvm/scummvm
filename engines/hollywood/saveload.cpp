@@ -227,6 +227,7 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene1070QuasimodoConversationSeen);
 	syncStateBool(s, state.scene1070SpencerConversationSeen);
 	s.syncAsByte(state.scene1070SpencerTravelClueProgress);
+	syncStateBool(s, state.scene1070SpencerCocktailRecipeLearned);
 	syncStateBool(s, state.scene1070MicrophoneStandTaken);
 	syncStateBool(s, state.scene1070MicrophoneTaken);
 	syncStateBool(s, state.scene1080EntryLineSeen);
@@ -376,6 +377,18 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene5080StairDoorBarrierSeen);
 	syncStateBool(s, state.scene5080StairDoorConstructionSeen);
 	syncStateBool(s, state.scene5090EntryLineSeen);
+	syncStateBool(s, state.scene5100EntryLineSeen);
+	syncStateBool(s, state.scene5100ButtonsUnlocked);
+	syncStateBool(s, state.scene5110IntroSeen);
+	syncStateBool(s, state.scene5110UnderwearTaken);
+	s.syncAsByte(state.scene5110BottleState);
+	s.syncAsByte(state.scene5110SalonTransformState);
+	syncStateBool(s, state.scene5110ElevatorTransitionSeen);
+	syncStateBool(s, state.scene5110MirrorTaken);
+	s.syncAsByte(state.scene5110JacuzziInspectionState);
+	syncStateBool(s, state.scene5110WerewolfDialogueChoiceUnlocked);
+	syncStateBool(s, state.scene5120TongsTaken);
+	s.syncAsByte(state.scene5120CocktailState);
 	syncStateBool(s, state.reviewedFrankensteinNote);
 	s.syncAsByte(state.frankensteinNoteOverlayMode);
 	s.syncAsByte(state.hannoverCourtyardDialogueState);
@@ -592,6 +605,14 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene5050PickupIndex = 3;
 	if (state.scene5070AviatorCapState > 2)
 		state.scene5070AviatorCapState = 1;
+	if (state.scene5110BottleState > 2)
+		state.scene5110BottleState = 0;
+	if (state.scene5110SalonTransformState > 4)
+		state.scene5110SalonTransformState = 0;
+	if (state.scene5110JacuzziInspectionState > 2)
+		state.scene5110JacuzziInspectionState = 0;
+	if (state.scene5120CocktailState > 3)
+		state.scene5120CocktailState = 0;
 	if (state.scene5010SwitchRow > 2)
 		state.scene5010SwitchRow = 0;
 	if (state.scene5010SwitchColumn > 2)
