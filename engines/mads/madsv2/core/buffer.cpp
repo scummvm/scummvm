@@ -781,7 +781,8 @@ void buffer_restore(Buffer *source, int preserve_handle, int target_ems_handle, 
 	case BUFFER_PRESERVED_CONVENTIONAL:
 		buffer_rect_copy_2(buffer_preserve_conventional, *source,
 			0, 0, x, y, xs, ys);
-		if (!buffer_restore_keep_flag) buffer_free(&buffer_preserve_conventional);
+		if (!buffer_restore_keep_flag)
+			buffer_free(&buffer_preserve_conventional);
 		break;
 
 	case BUFFER_PRESERVED_DISK:
@@ -794,7 +795,7 @@ void buffer_restore(Buffer *source, int preserve_handle, int target_ems_handle, 
 	case BUFFER_PRESERVED_DISK - 7:
 	case BUFFER_PRESERVED_DISK - 8:
 	case BUFFER_PRESERVED_DISK - 9:
-		buffer_from_disk(source, neg(preserve_handle - BUFFER_PRESERVED_DISK), buffer_restore_keep_flag, x, y, xs, ys);
+		buffer_from_disk(source, neg(preserve_handle - BUFFER_PRESERVED_DISK), x, y, xs, ys);
 		break;
 
 	case BUFFER_NOT_PRESERVED:
@@ -937,7 +938,7 @@ done:
 	return buffer_id;
 }
 
-void buffer_from_disk(Buffer *source, int buffer_id, int keep_flag, int x, int y, int xs, int ys) {
+void buffer_from_disk(Buffer *source, int buffer_id, int x, int y, int xs, int ys) {
 	Common::InSaveFile *handle = nullptr;
 	byte *scan;
 	int count;
@@ -955,13 +956,8 @@ void buffer_from_disk(Buffer *source, int buffer_id, int keep_flag, int x, int y
 	}
 
 done:
-	if (handle != NULL) {
+	if (handle != NULL)
 		delete handle;
-		if (!keep_flag) {
-			buffer_tracking[buffer_id] = 0;
-			remove(file_name);
-		}
-	}
 }
 
 } // namespace MADSV2

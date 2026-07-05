@@ -241,10 +241,8 @@ extern void buffer_peel_horiz(Buffer *target, int peel);
 extern void buffer_peel_vert(Buffer *target, int peel,
 	byte *work_memory, long work_size);
 
-extern int buffer_to_disk(Buffer *source, int x, int y,
-	int xs, int ys);
-extern void buffer_from_disk(Buffer *source, int buffer_id,
-	int keep_flag, int x, int y, int xs, int ys);
+extern int buffer_to_disk(Buffer *source, int x, int y, int xs, int ys);
+extern void buffer_from_disk(Buffer *source, int buffer_id, int x, int y, int xs, int ys);
 
 extern bool buffer_to_ems(Buffer *source, int page_handle,
 	int source_ems_handle, int x, int y, int xs, int ys);
