@@ -26,6 +26,7 @@
 
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/scenes/resource_delta_clip_player.h"
 
 namespace Hollywood {
 
@@ -902,56 +903,9 @@ void Scene9050::runResourceI05Clip(byte segmentId, byte lastFrameIndex, bool fad
 }
 
 void Scene9050::drawResourceI05ClipFrameDelta(byte lastFrameIndex, byte frameIndex) {
-	const uint32 frameTableOffset = _resources.chunkOffsets[3];
-	const uint32 tableEntryOffset = frameTableOffset + ((uint32)frameIndex * 4);
-	if (tableEntryOffset + 4 > _resources.arena.size())
-		return;
-
-	const uint32 frameOffset = frameTableOffset + ((uint32)lastFrameIndex * 4) +
-		readUint32LE(_resources.arena, tableEntryOffset);
-	if (frameOffset + 4 > _resources.arena.size())
-		return;
-
-	const uint16 firstRow = readUint16LE(_resources.arena, frameOffset);
-	const uint16 lastRow = readUint16LE(_resources.arena, frameOffset + 2);
-	uint cursor = frameOffset + 4;
-
-	for (uint row = firstRow; row <= lastRow && row < HollywoodEngine::kSceneBufferHeight; ++row) {
-		if (cursor >= _resources.arena.size())
-			return;
-
-		byte runCount = _resources.arena[cursor++];
-		for (; runCount != 0; --runCount) {
-			if (cursor + 3 > _resources.arena.size())
-				return;
-
-			const uint x = readUint16LE(_resources.arena, cursor);
-			const byte literalLength = _resources.arena[cursor + 2];
-			const uint destinationOffset = row * HollywoodEngine::kSceneBufferWidth + x;
-			if (destinationOffset >= _sceneFramebuffer.size())
-				return;
-
-			if (literalLength == 0) {
-				if (cursor + 5 > _resources.arena.size())
-					return;
-
-				const byte fillValue = _resources.arena[cursor + 3];
-				const uint fillLength = _resources.arena[cursor + 4];
-				cursor += 5;
-				if (destinationOffset + fillLength <= _sceneFramebuffer.size())
-					memset(_sceneFramebuffer.data() + destinationOffset, fillValue, fillLength);
-			} else {
-				const uint literalOffset = cursor + 3;
-				if (literalOffset + literalLength > _resources.arena.size())
-					return;
-
-				if (destinationOffset + literalLength <= _sceneFramebuffer.size())
-					memcpy(_sceneFramebuffer.data() + destinationOffset,
-						_resources.arena.data() + literalOffset, literalLength);
-				cursor = literalOffset + literalLength;
-			}
-		}
-	}
+	ResourceDeltaClipPlayer::drawFrame(_resources.arena, _resources.chunkOffsets[3],
+		_resources.chunkTable.sizes[3], lastFrameIndex, frameIndex, _sceneFramebuffer.data(),
+		_sceneFramebuffer.size());
 }
 
 bool Scene9050::waitResourceI05ClipHold() {

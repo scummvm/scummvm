@@ -34,6 +34,7 @@
 #include "hollywood/gameplay/travel_screen.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/scenes/resource_delta_clip_player.h"
 
 namespace Hollywood {
 
@@ -1131,6 +1132,58 @@ void PlayableScene::drawActionOverlayLayer() {
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_actionOverlayChunkIndex], 0,
 			_actionOverlayDescriptorCount, _actionOverlayFrameIndex, _sceneFramebuffer);
 	}
+}
+
+void PlayableScene::drawClipFrameDeltaFromResource(const Common::Array<byte> &resource,
+		uint32 frameTableOffset, uint32 chunkSize, uint tableEntryCount, byte frameIndex) {
+	ResourceDeltaClipPlayer::drawFrame(resource, frameTableOffset, chunkSize, tableEntryCount,
+		frameIndex, framebufferPixels(_sceneFramebuffer), framebufferByteCount());
+}
+
+void PlayableScene::drawClipFrameDelta(uint chunkIndex, uint tableEntryCount, byte frameIndex) {
+	if (!_sceneChunkTable.isValidChunk(chunkIndex))
+		return;
+
+	drawClipFrameDeltaFromResource(_resourceArena, _resourceChunkOffsets[chunkIndex],
+		_sceneChunkTable.sizes[chunkIndex], tableEntryCount, frameIndex);
+}
+
+void PlayableScene::playDeltaClipFromResource(const Common::Array<byte> &resource,
+		uint32 frameTableOffset, uint32 chunkSize, uint tableEntryCount, uint frameCount,
+		uint32 frameMillis, uint firstFrame) {
+	for (uint frame = firstFrame; frame < frameCount && !Engine::shouldQuit() &&
+			!_vm->isSceneRestartRequested(); ++frame) {
+		drawClipFrameDeltaFromResource(resource, frameTableOffset, chunkSize, tableEntryCount,
+			(byte)frame);
+		presentFrame();
+		if (waitDeltaClipFrameMillis(frameMillis))
+			break;
+	}
+}
+
+void PlayableScene::playDeltaClip(uint chunkIndex, uint tableEntryCount, uint frameCount,
+		uint32 frameMillis, uint firstFrame) {
+	for (uint frame = firstFrame; frame < frameCount && !Engine::shouldQuit() &&
+			!_vm->isSceneRestartRequested(); ++frame) {
+		drawClipFrameDelta(chunkIndex, tableEntryCount, (byte)frame);
+		presentFrame();
+		if (waitDeltaClipFrameMillis(frameMillis))
+			break;
+	}
+}
+
+bool PlayableScene::waitDeltaClipFrameMillis(uint32 millis) {
+	uint32 remaining = millis;
+	while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+		if (pollEvents(true))
+			return true;
+
+		const uint32 slice = MIN<uint32>(remaining, 10);
+		g_system->delayMillis(slice);
+		remaining -= slice;
+	}
+
+	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
 }
 
 void PlayableScene::drawActiveActorFrame(byte facing, byte cel, int worldX, int worldY, int minimumYExclusive) {

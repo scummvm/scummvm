@@ -61,8 +61,6 @@ private:
 	void runEntryFromRight();
 	void runEntryCutsceneState();
 	void runStudioClipSequence(bool exitAfterPlayback);
-	void drawClipFrameDelta(uint chunkIndex, uint tableEntryCount, byte frameIndex);
-	bool waitClipFrame(uint32 millis);
 	void runPendingItem69PickupOverlay();
 	void runDoorRevealOverlay();
 	void runExitToScene6020Overlay();

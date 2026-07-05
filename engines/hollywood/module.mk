@@ -19,6 +19,7 @@ MODULE_OBJS = \
 	resource.o \
 	saveload.o \
 	scenes/chapter_intro_scene.o \
+	scenes/resource_delta_clip_player.o \
 	scenes/intro/intro_resource_set.o \
 	scenes/intro/intro_scene.o \
 	scenes/intro/intro_text.o \

@@ -26,6 +26,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/scenes/resource_delta_clip_player.h"
 
 namespace Hollywood {
 
@@ -388,55 +389,9 @@ void Scene3030::drawDeltaTransitionFrame(const Common::Array<byte> &clipData, ui
 
 void Scene3030::drawClipFrameDeltaToSurface(const Common::Array<byte> &clipData, uint tableEntryCount,
 		byte frameIndex, Graphics::Surface &destination) {
-	const uint32 tableEntryOffset = (uint32)frameIndex * 4;
-	if (tableEntryOffset + 4 > clipData.size())
-		return;
-
-	const uint32 frameOffset = ((uint32)tableEntryCount * 4) + readUint32LE(clipData, tableEntryOffset);
-	if (frameOffset + 4 > clipData.size())
-		return;
-
-	const uint16 firstRow = readUint16LE(clipData, frameOffset);
-	const uint16 lastRow = readUint16LE(clipData, frameOffset + 2);
-	uint cursor = frameOffset + 4;
-	byte *pixels = (byte *)destination.getPixels();
-	const uint size = destination.pitch * destination.h;
-
-	for (uint row = firstRow; row <= lastRow && row < (uint)destination.h; ++row) {
-		if (cursor >= clipData.size())
-			return;
-
-		byte runCount = clipData[cursor++];
-		for (; runCount != 0; --runCount) {
-			if (cursor + 3 > clipData.size())
-				return;
-
-			const uint x = readUint16LE(clipData, cursor);
-			const byte literalLength = clipData[cursor + 2];
-			const uint destinationOffset = row * destination.pitch + x;
-			if (destinationOffset >= size)
-				return;
-
-			if (literalLength == 0) {
-				if (cursor + 5 > clipData.size())
-					return;
-
-				const byte fillValue = clipData[cursor + 3];
-				const uint fillLength = clipData[cursor + 4];
-				cursor += 5;
-				if (destinationOffset + fillLength <= size)
-					memset(pixels + destinationOffset, fillValue, fillLength);
-			} else {
-				const uint literalOffset = cursor + 3;
-				if (literalOffset + literalLength > clipData.size())
-					return;
-
-				if (destinationOffset + literalLength <= size)
-					memcpy(pixels + destinationOffset, clipData.data() + literalOffset, literalLength);
-				cursor = literalOffset + literalLength;
-			}
-		}
-	}
+	ResourceDeltaClipPlayer::drawFrame(clipData, 0, clipData.size(), tableEntryCount,
+		frameIndex, (byte *)destination.getPixels(), destination.w, destination.h,
+		destination.pitch, destination.pitch * destination.h);
 }
 
 void Scene3030::runMachineActivationSequence() {

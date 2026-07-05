@@ -63,7 +63,6 @@ private:
 		int targetX, int targetY, byte finalFacing, byte finalCel);
 	void runSealMemoryEffect();
 	void runAnimatedInventoryStateChange();
-	void drawClipFrameDelta(byte chunkIndex, uint tableEntryCount, byte frameIndex);
 	void rebuildWalkableMask();
 	void setColorMapItem(byte sourceItem, byte destinationItem);
 

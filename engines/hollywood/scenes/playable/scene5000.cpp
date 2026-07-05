@@ -25,6 +25,7 @@
 
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/scenes/resource_delta_clip_player.h"
 
 namespace Hollywood {
 
@@ -163,56 +164,9 @@ void Scene5000::drawPresentationFrame(bool drawSprite) {
 }
 
 void Scene5000::drawClipFrameDeltaToBackground(byte frameIndex) {
-	const uint32 frameTableOffset = _resourceChunkOffsets[4];
-	const uint32 tableEntryOffset = frameTableOffset + ((uint32)frameIndex * 4);
-	if (tableEntryOffset + 4 > _resourceArena.size())
-		return;
-
-	const uint32 frameOffset = frameTableOffset + ((uint32)kScene5000ClipDescriptorCount * 4) +
-		readUint32LE(_resourceArena, tableEntryOffset);
-	if (frameOffset + 4 > _resourceArena.size())
-		return;
-
-	const uint16 firstRow = readUint16LE(_resourceArena, frameOffset);
-	const uint16 lastRow = readUint16LE(_resourceArena, frameOffset + 2);
-	uint cursor = frameOffset + 4;
-	byte *pixels = _presentationBackground.data();
-
-	for (uint row = firstRow; row <= lastRow && row < HollywoodEngine::kSceneBufferHeight; ++row) {
-		if (cursor >= _resourceArena.size())
-			return;
-
-		byte runCount = _resourceArena[cursor++];
-		for (; runCount != 0; --runCount) {
-			if (cursor + 3 > _resourceArena.size())
-				return;
-
-			const uint x = readUint16LE(_resourceArena, cursor);
-			const byte literalLength = _resourceArena[cursor + 2];
-			const uint destinationOffset = row * HollywoodEngine::kSceneBufferWidth + x;
-			if (destinationOffset >= _presentationBackground.size())
-				return;
-
-			if (literalLength == 0) {
-				if (cursor + 5 > _resourceArena.size())
-					return;
-
-				const byte fillValue = _resourceArena[cursor + 3];
-				const uint fillLength = _resourceArena[cursor + 4];
-				cursor += 5;
-				if (destinationOffset + fillLength <= _presentationBackground.size())
-					memset(pixels + destinationOffset, fillValue, fillLength);
-			} else {
-				const uint literalOffset = cursor + 3;
-				if (literalOffset + literalLength > _resourceArena.size())
-					return;
-
-				if (destinationOffset + literalLength <= _presentationBackground.size())
-					memcpy(pixels + destinationOffset, _resourceArena.data() + literalOffset, literalLength);
-				cursor = literalOffset + literalLength;
-			}
-		}
-	}
+	ResourceDeltaClipPlayer::drawFrame(_resourceArena, _resourceChunkOffsets[4],
+		_chunkTable.sizes[4], kScene5000ClipDescriptorCount, frameIndex,
+		_presentationBackground.data(), _presentationBackground.size());
 }
 
 void Scene5000::advanceSpriteFrame() {
