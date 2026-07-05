@@ -60,7 +60,6 @@ uint32 LoaderReadStream::read(void *dataPtr, uint32 dataSize) {
 	return dataSize;
 }
 
-
 int loader_open(LoadHandle handle, const char *filename, const char *options, int flags) {
 	int error_flag = true;
 	int found_himem = -1;
@@ -123,15 +122,7 @@ int loader_open(LoadHandle handle, const char *filename, const char *options, in
 				handle->decompress_size += handle->pack.strategy[count].size;
 			}
 		} else {
-#ifdef TODO
-			handle->pack.num_records = 0;
-			handle->pack.strategy[0].type = (byte)flags;
-			Common::strcpy_s(handle->pack.id_string, PACK_ID_STRING);
-			if (!fileio_fwrite_f(&handle->pack, sizeof(PackList), 1, handle->handle)) goto done;
-			handle->decompress_size = 0;
-#else
-			error("TODO: open for writing");
-#endif
+			error("Open for writing not supported in ScummVM");
 		}
 
 #ifndef disable_statistics
@@ -165,15 +156,9 @@ int loader_close(LoadHandle handle) {
 			handle->ems_page_marker = -1;
 			handle->ems_page_offset = EMS_PAGE_SIZE;
 			handle->xms_offset = 0;
-			// if (ems_paging_active) ems_unmap_all();
 		} else {
 			if (!handle->reading) {
-#ifdef TODO
-				handle->handle->seek(0);
-				error_flag = !fileio_fwrite_f(&handle->pack, sizeof(PackList), 1, handle->handle);
-#else
-				error("TODO: loader_close for writing");
-#endif
+				error("loader_close for writing not supported in ScummVM");
 			}
 
 			delete handle->handle;
@@ -220,7 +205,6 @@ long loader_read(void *target, long record_size, long record_count, LoadHandle h
 	} else if (handle->mode == LOADER_XMS) {
 		result = 0;
 
-		// printf ("Reading (%d) at %ld for size %ld\n", handle->xms_handle, handle->xms_offset, total_size);
 		if (xms_copy(total_size,
 			handle->xms_handle, (XMS)handle->xms_offset,
 			MEM_CONV, target)) goto done;
@@ -325,7 +309,7 @@ long loader_write(void *target, long record_size, long record_count, LoadHandle 
 
 	handle->decompress_size += total_size;
 
-	return (result / record_size);
+	return result / record_size;
 }
 
 long loader_write_2(Common::WriteStream *source_handle, long total_size, LoadHandle handle) {

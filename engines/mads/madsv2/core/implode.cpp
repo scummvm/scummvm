@@ -21,6 +21,7 @@
 
 #include "common/textconsole.h"
 #include "mads/madsv2/core/implode.h"
+#include "mads/madsv2/core/general.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -40,13 +41,6 @@ namespace MADSV2 {
  *   - 16-bit wraparound arithmetic preserved where it matters (hash indices,
  *     Qlen/Qoff calculations, GetHuff bit pump).
  */
-
-#include <string.h>
-#include <stdint.h>
-#include "implode.h"    /* extern declarations + CMP_* defines */
-
-typedef unsigned char  byte;
-typedef unsigned short word;
 
 /* =========================================================================
  *  EXPLODE

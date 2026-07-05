@@ -162,7 +162,6 @@ void magic_map_to_grey_ramp(Palette *pal,
 		}
 	}
 
-	// pal_pointer = (byte *) &(((RGBcolor *) pal)[base_grey]);
 	pal_pointer = ((byte *) pal + (base_grey * 3));
 	for (greys = 0; greys < num_greys; greys++) {
 		for (color = 0; color < 3; color++) {
@@ -181,7 +180,6 @@ void magic_map_to_grey_ramp(Palette *pal,
 	}
 }
 
-
 void magic_grey_ramp_palette(Palette pal, int num_greys) {
 	int base_grey;
 	int base_color, num_colors;
@@ -198,7 +196,6 @@ void magic_grey_ramp_palette(Palette pal, int num_greys) {
 		pal[count] = pal[magic_map[count].map_color];
 	}
 }
-
 
 void magic_fade_to_grey(Palette pal, byte *map_pointer,
 	int base_color, int num_colors,
@@ -218,9 +215,7 @@ void magic_fade_to_grey(Palette pal, byte *map_pointer,
 	byte *pal_index;
 	char *signs;
 	MagicGrey *magic_map;
-	// Palette temp_pal;
-	// char signs[256][3];
-	// MagicGrey magic_map[256];
+
 	memory_needed = (sizeof(Palette) << 1) + (sizeof(MagicGrey) << 8);
 
 	if (timer_low_semaphore) {
@@ -258,8 +253,6 @@ void magic_fade_to_grey(Palette pal, byte *map_pointer,
 			dif = (intensity - pal_color(pal, count, color));
 			*(pal_index + (color << 8) + count) = (byte)abs(dif);
 			*(signs + (color << 8) + count) = (char)sgn(dif);
-			// pal_color(temp_pal,count,color) = (byte)abs(dif);
-			// signs[count][color] = (char)sgn(dif);
 		}
 	}
 
@@ -270,11 +263,10 @@ void magic_fade_to_grey(Palette pal, byte *map_pointer,
 			index = count - base_color;
 			for (color = 0; color < 3; color++) {
 				magic_map[index].accum[color] += *(pal_index + (color << 8) + count);
-				// magic_map[index].accum[color] += pal_color(temp_pal, count, color);
+
 				while (magic_map[index].accum[color] >= (word)steps) {
 					magic_map[index].accum[color] -= steps;
 					pal_color(pal, count, color) += *(signs + (color << 8) + count);
-					// pal_color(pal,count,color) += signs[count][color];
 				}
 			}
 		}
@@ -318,9 +310,7 @@ void magic_fade_from_grey(RGBcolor *pal, Palette target,
 	byte *pal_index;
 	char *signs;
 	MagicGrey *magic_map;
-	// Palette temp_pal;
-	// char signs[256][3];
-	// MagicGrey magic_map[256];
+
 	memory_needed = (sizeof(Palette) << 1) + (sizeof(MagicGrey) << 8);
 
 	if (timer_low_semaphore) {
@@ -359,9 +349,7 @@ void magic_fade_from_grey(RGBcolor *pal, Palette target,
 			}
 			dif = (pal_color(target, count, color) - intensity);
 			*(pal_index + (count * 3) + color) = (byte)abs(dif);
-			// pal_color(pal_index,count,color) = (byte)abs(dif);
 			*(signs + (color << 8) + count) = (char)sgn(dif);
-			// signs[count][color] = (char)sgn(dif);
 			magic_map[index].accum[color] = 0;
 		}
 	}
@@ -373,12 +361,10 @@ void magic_fade_from_grey(RGBcolor *pal, Palette target,
 			index = count - base_color;
 			for (color = 0; color < 3; color++) {
 				magic_map[index].accum[color] += *(pal_index + (count * 3) + color);
-				// magic_map[index].accum[color] += pal_color(pal_index ,count, color);
+
 				while (magic_map[index].accum[color] >= (word)steps) {
 					magic_map[index].accum[color] -= steps;
 					*((byte *)pal + (count * 3) + color) += *(signs + (color << 8) + count);
-					// (((byte *)&pal[count])+color) += *(signs + (color << 8) + count);
-					// (((byte *)&pal[count])+color) += signs[count][color];
 				}
 			}
 		}
@@ -396,7 +382,6 @@ done:
 		if (work_memory != NULL) mem_free(work_memory);
 	}
 }
-
 
 void magic_screen_change_corner(Buffer *new_screen, Palette pal,
 	int corner_id,
@@ -500,12 +485,6 @@ void magic_screen_change_corner(Buffer *new_screen, Palette pal,
 						*vx + buffer_base_x, y1 + buffer_base_y,
 						*vx + screen_base_x, y1 + screen_base_y,
 						1, size_y);
-#ifdef sixteen_colors
-					if (video_mode == ega_mode) {
-						video_flush_ega(y1 + screen_base_y,
-							y1 + screen_base_y + size_y - 1);
-					}
-#endif
 				}
 			} else {
 				buffer_rect_fill(scr_live,
@@ -543,10 +522,8 @@ void magic_screen_change_corner(Buffer *new_screen, Palette pal,
 			x, y);
 	}
 
-
 	mouse_show();
 }
-
 
 void magic_screen_change_edge(Buffer *new_screen, Palette pal,
 	int edge_id,
@@ -615,11 +592,6 @@ void magic_screen_change_edge(Buffer *new_screen, Palette pal,
 						at_x + buffer_base_x, y1 + buffer_base_y,
 						at_x + screen_base_x, y1 + screen_base_y,
 						1, size_y);
-#ifdef sixteen_colors
-					if (video_mode == ega_mode) {
-						video_flush_ega(y1 + screen_base_y, y1 + screen_base_y + size_y - 1);
-					}
-#endif
 				}
 			} else {
 				buffer_rect_fill(scr_live,
@@ -649,7 +621,6 @@ void magic_screen_change_edge(Buffer *new_screen, Palette pal,
 
 	mouse_show();
 }
-
 
 void magic_screen_change_circle(Buffer *new_screen, Palette pal,
 	int inward_flag,
@@ -774,12 +745,6 @@ void magic_screen_change_circle(Buffer *new_screen, Palette pal,
 											x1 + buffer_base_x, this_y + buffer_base_y,
 											x1 + screen_base_x, this_y + screen_base_y,
 											xs, 1);
-#ifdef sixteen_colors
-										if (video_mode == ega_mode) {
-											video_flush_ega(this_y + screen_base_y,
-												this_y + screen_base_y);
-										}
-#endif
 									}
 								} else {
 									buffer_rect_fill(scr_live,
@@ -864,7 +829,6 @@ void magic_shrink_buffer(Buffer *from, Buffer *unto) {
 	} while (y_count != 0);
 }
 
-
 int  magic_shrinking_buffer(Buffer *source, Buffer *rear,
 	int grow_flag,
 	int buffer_base_x, int buffer_base_y,
@@ -933,12 +897,6 @@ int  magic_shrinking_buffer(Buffer *source, Buffer *rear,
 				at_x + screen_base_x, at_y + screen_base_y,
 				size_x, size_y);
 
-#ifdef sixteen_colors
-			if (video_mode == ega_mode) {
-				video_flush_ega(at_y + screen_base_y, at_y + screen_base_y + size_y - 1);
-			}
-#endif
-
 			do {
 				now_timing = timer_read_600();
 			} while (now_timing < (base_timing + tick_delay));
@@ -946,7 +904,6 @@ int  magic_shrinking_buffer(Buffer *source, Buffer *rear,
 
 		}
 	} else {
-
 		last_size_y = y;
 		last_size_x = x;
 		last_at_y = 0;
@@ -996,11 +953,6 @@ int  magic_shrinking_buffer(Buffer *source, Buffer *rear,
 					last_to_x - (dif_x - 1), last_at_y,
 					dif_x, last_size_y);
 
-#ifdef sixteen_colors
-				if (video_mode == ega_mode) {
-					video_flush_ega(last_at_y, last_to_y);
-				}
-#endif
 			} else {
 				buffer_rect_fill(scr_live, last_at_x, last_at_y,
 					dif_x, last_size_y, 0);
@@ -1029,19 +981,19 @@ int  magic_shrinking_buffer(Buffer *source, Buffer *rear,
 	error_flag = false;
 
 done:
-	if (bonus.data != NULL) buffer_free(&bonus);
-	if (shrink.data != NULL) buffer_free(&shrink);
-	if (extra.data != NULL) buffer_free(&extra);
+	if (bonus.data != NULL)
+		buffer_free(&bonus);
+	if (shrink.data != NULL)
+		buffer_free(&shrink);
+	if (extra.data != NULL)
+		buffer_free(&extra);
 
 	mouse_show();
 
-	return (error_flag);
+	return error_flag;
 }
 
-
-void magic_swap_me_in_the_dark_baby(byte *swap,
-	RGBcolor *pal,
-	int start) {
+void magic_swap_me_in_the_dark_baby(byte *swap, RGBcolor *pal, int start) {
 	int static_start;
 	int count;
 	byte *static_list;
@@ -1067,13 +1019,10 @@ void magic_swap_me_in_the_dark_baby(byte *swap,
 	}
 }
 
-
-void magic_swap_foreground(byte *background_table,
-	Palette background_palette) {
+void magic_swap_foreground(byte *background_table, Palette background_palette) {
 	int     count;
 	byte *old_palette;
 	byte    swap_table[256];
-	// Palette old_palette;
 	long    memory_needed;
 	byte *work_memory = NULL;
 	Heap    magic_heap;
@@ -1114,14 +1063,12 @@ void magic_swap_foreground(byte *background_table,
 
 done:
 	if (!timer_low_semaphore) {
-		if (work_memory != NULL) mem_free(work_memory);
+		if (work_memory != NULL)
+			mem_free(work_memory);
 	}
 }
 
-int magic_closest_color(RGBcolor *match_color,
-	byte *list,
-	int list_wrap,
-	int list_length) {
+int magic_closest_color(RGBcolor *match_color, byte *list, int list_wrap, int list_length) {
 	int best_color = 0;
 	int this_color = 0;
 	int best_diff = 0x7fff;
@@ -1140,6 +1087,7 @@ int magic_closest_color(RGBcolor *match_color,
 			best_diff = diff;
 		}
 	}
+
 	return best_color;
 }
 

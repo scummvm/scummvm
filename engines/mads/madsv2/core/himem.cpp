@@ -84,7 +84,7 @@ int himem_get_directory_entry(int id) {
 	error_flag = false;
 
 done:
-	return (error_flag);
+	return error_flag;
 }
 
 int himem_put_directory_entry(int id) {

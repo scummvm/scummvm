@@ -63,13 +63,6 @@ void *mem_get(long size) {
 	return (mem_get_name(size, "$sys$"));
 }
 
-void mem_get_block_name(byte *block, char *block_name) {
-	// TODO: See if the block_name is needed. If so, we'll need to simulate the
-	// original by allocating extra space to store it
-	error("TODO: mem_get_block_name");
-}
-
-
 bool mem_free(void *memory_block) {
 	free(memory_block);
 	return false;

@@ -208,12 +208,10 @@ int object_examine(int number, long message, int speech) {
 	int num_colors;
 	int cycling_save;
 	int y_base;
-	//int x_size;// , y_size;
 	int count;
 	int refresh_flag;
 	int object_preserve_handle;
 	byte map[256];
-	//SeriesPtr object_series = NULL;
 	RGBcolor top_eight[8];
 
 	// Wait cursor
@@ -304,38 +302,20 @@ int object_examine(int number, long message, int speech) {
 
 	video_update(&scr_main, 0, 0, 0, 0, video_x, video_y);
 
-	if (refresh_flag) mouse_refresh_done();
+	if (refresh_flag)
+		mouse_refresh_done();
 	mouse_thaw();
 
 	mcga_setpal(&master_palette);
-
-	// Load the object series
-	// object_series = sprite_series_load (sprite_name, PAL_MAP_BACKGROUND);
 	matte_map_work_screen();
 
-	// Now set the palette to include the colors for this series.
-	// mcga_setpal (&master_palette);
 	y_base = OBJECT_VIEW_OFFSET;
 
-	// Draw the object sprite on the screen
-	// if (object_series != NULL) {
-	// x_size = object_series->index[0].xs;
-	// y_size = object_series->index[0].ys;
-	// x_base = (video_x >> 1) - (x_size >> 1);
-	// sprite_draw  (object_series, 1, &scr_main, x_base, y_base);
-	//
-	// mouse_hide();
-	//
-	// video_update (&scr_main, x_base, y_base, x_base, y_base, x_size, y_size);
-	//
-	// mouse_show();
-	//
-	// y_base += y_size;
-	// }
 	y_base += OBJECT_VIEW_OFFSET;
 
 	if (message) {
 		text_saves_screen = false;
+
 		memcpy(&cycling_palette[248].r, &master_palette[248].r, 8 * sizeof(RGBcolor));
 
 		if (speech) {
@@ -422,30 +402,26 @@ int object_examine(int number, long message, int speech) {
 		restored_screen = true;
 	}
 
-	// done:
-	  // Turn color cycling back on.
+	// Turn color cycling back on.
 	memcpy(&cycling_palette[248].r, top_eight, 8 * sizeof(RGBcolor));
 	mcga_setpal_range(&cycling_palette, 248, 8);
 
 	cycling_active = cycling_save;
 
-	// Don't forget to reload the attribute screen which we wrote all
-	// over.
+	// Don't forget to reload the attribute screen which we wrote all over.
 	sprite_force_memory = NULL;
-
 
 	if (room_load_variant(room_id, room_variant, NULL, room,
 		&scr_depth, &scr_walk, &scr_special,
 		&depth_map, &depth_resource, -1)) {
 		error_report(ERROR_VARIANT_LOAD_FAILURE, WARNING, MODULE_OBJECT, room_load_error, (room_id * 10) + room_variant);
 	}
+
 	tile_pan(&depth_map, picture_view_x, picture_view_y);
-
 	kernel_force_refresh();
-
 	inter_spin_object(inven[active_inven]);
 
-	return (restored_screen);
+	return restored_screen;
 }
 
 void init_object() {

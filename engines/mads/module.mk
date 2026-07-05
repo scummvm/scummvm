@@ -88,7 +88,6 @@ MODULE_OBJS += \
 	madsv2/core/inter.o \
 	madsv2/core/kernel.o \
 	madsv2/core/keys.o \
-	madsv2/core/lbm.o \
 	madsv2/core/lib.o \
 	madsv2/core/loader.o \
 	madsv2/core/magic.o \

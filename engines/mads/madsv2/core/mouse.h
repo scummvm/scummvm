@@ -82,7 +82,6 @@ extern int mouse_refresh_view_port();
 extern void mouse_refresh_done();
 extern void mouse_disable_scale();
 extern void mouse_hard_cursor_mode(int mode, Palette *mypal);
-extern const byte *mouse_get_stack();
 
 /**
  * Returns true if the mouse is in the specified box

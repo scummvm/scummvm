@@ -638,7 +638,7 @@ done:
 	if (sprite != NULL) mem_free(sprite);
 	if ((target != NULL) && (target != (SeriesPtr)sprite_force_memory) && (result == NULL)) mem_free(target);
 
-	return (result);
+	return result;
 }
 
 void sprite_get_scaled_matte(SeriesPtr series, int id, int target_x, int target_y,
@@ -1160,7 +1160,7 @@ ok:
 
 done:
 	if (decompress_buffer != NULL) mem_free(decompress_buffer);
-	return (error_flag);
+	return error_flag;
 }
 
 void dont_frag_the_palette() {

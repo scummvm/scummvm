@@ -27,7 +27,6 @@
 #include "mads/madsv2/core/mouse.h"
 #include "mads/madsv2/core/font.h"
 #include "mads/madsv2/core/pal.h"
-#include "mads/madsv2/core/lbm.h"
 #include "mads/madsv2/core/keys.h"
 #include "mads/madsv2/core/mcga.h"
 #include "mads/madsv2/core/vocab.h"

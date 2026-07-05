@@ -85,16 +85,9 @@ inline int mem_adjust(T *&target, long size) {
 extern void mem_save_free();
 extern void mem_restore_free();
 
-/**
- * Returns the string label of the memory block
- */
-extern void mem_get_block_name(byte *block, char *block_name);
-
 extern long mem_get_avail();
 extern long mem_conv_get_avail();
 extern void mem_set_video_mode(int mode);
-
-extern long mem_program_block();
 
 } // namespace MADSV2
 } // namespace MADS

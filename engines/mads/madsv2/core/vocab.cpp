@@ -60,7 +60,7 @@ int vocab_destroy() {
 		result = false;
 	}
 
-	return (result);
+	return result;
 }
 
 static int vocab_count(Common::SeekableReadStream *handle) {
@@ -209,7 +209,7 @@ int vocab_load(int allocation_flag) {
 
 	if ((result < 0) && (vocab != NULL)) mem_free(vocab);
 
-	return (result);
+	return result;
 }
 
 int vocab_get_code(char *my_word) {
@@ -237,7 +237,7 @@ int vocab_get_code(char *my_word) {
 			}
 		}
 	}
-	return (result);
+	return result;
 }
 
 char *vocab_get_word(char *word_buf, int word_code) {
@@ -406,7 +406,7 @@ char *vocab_select_word(char *out, const char *prompt, const char *default_word)
 		result = NULL;
 	}
 
-	return (result);
+	return result;
 }
 
 void vocab_sort() {

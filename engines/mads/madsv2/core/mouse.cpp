@@ -242,10 +242,6 @@ void mouse_disable_scale() {
 void mouse_hard_cursor_mode(int mode, Palette *mypal) {
 }
 
-const byte *mouse_get_stack() {
-	error("TODO: mouse_get_stack");
-}
-
 void mouse_hard_cursor_mode(int mode, Palette mypal) {
 }
 

@@ -51,7 +51,6 @@
 #include "mads/madsv2/core/popup.h"
 #include "mads/madsv2/core/object.h"
 #include "mads/madsv2/core/himem.h"
-#include "mads/madsv2/core/lock.h"
 #include "mads/madsv2/core/magic.h"
 #include "mads/madsv2/core/btype.h"
 #include "mads/madsv2/core/pack.h"

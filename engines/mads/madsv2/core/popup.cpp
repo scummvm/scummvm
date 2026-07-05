@@ -1102,7 +1102,7 @@ int popup_get_string(char *target, const char *top, const char *left, int maxlen
 		result = popup_ask_string(target, maxlen, true);
 	}
 
-	return (result);
+	return result;
 }
 
 int popup_get_long(long *value, const char *top, const char *left, int maxlen) {
@@ -1130,7 +1130,7 @@ int popup_get_number(int16 *value, const char *top, const char *left, int maxlen
 	if (!result) {
 		*value = (int)temp;
 	}
-	return (result);
+	return result;
 }
 
 int popup_alert(int width, const char *message_line, ...) {
@@ -1410,7 +1410,7 @@ done:
 	if ((block != NULL) && (result != (Popup *)block)) {
 		mem_free(block);
 	}
-	return (result);
+	return result;
 }
 
 Popup *popup_dialog_destroy() {
@@ -1704,7 +1704,7 @@ static PopupItem *popup_next_item(PopupItem *item, int activate, int any_non_but
 	}
 
 done:
-	return (result);
+	return result;
 }
 
 static PopupItem *popup_last_item(PopupItem *item, int activate, int any_non_button) {
@@ -1746,7 +1746,7 @@ static PopupItem *popup_last_item(PopupItem *item, int activate, int any_non_but
 	}
 
 done:
-	return (result);
+	return result;
 }
 
 static int popup_in_item(PopupItem *item) {

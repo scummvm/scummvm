@@ -36,23 +36,17 @@
 #include "mads/madsv2/core/timer.h"
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/engine.h"
-
-#define word_align_mattes
+#include "mads/madsv2/core/video.h"
+#include "mads/madsv2/core/anim.h"
+#include "mads/madsv2/core/matte.h"
 #ifndef disable_error_check
 #include "mads/madsv2/core/error.h"
 #endif
 
-#include "mads/madsv2/core/video.h"
-#include "mads/madsv2/core/anim.h"
-#include "mads/madsv2/core/matte.h"
-
-#ifdef show_mattes
-#include "mads/madsv2/core/screen.h"
-#include "mads/madsv2/core/keys.h"
-#endif
-
 namespace MADS {
 namespace MADSV2 {
+
+#define word_align_mattes
 
 /* Global data structures */
 
@@ -595,7 +589,6 @@ static void matte_special_effect(int special_effect, int full_screen) {
 			work_screen->x, work_screen->y);
 
 		matte_quick_from_black(&special_pal[0].r, 1);
-		//magic_fade_from_grey(special_pal, master_palette, 0, 256, 0, 1, 1, 16);
 		break;
 
 	case MATTE_FX_CORNER_LOWER_LEFT:
@@ -674,10 +667,6 @@ void matte_frame(int special_effect, int full_screen) {
 	Image *image2;
 	Message *message;
 	SpritePtr  sprite;
-#ifdef show_mattes
-	char temp_buf[80];
-	int count;
-#endif
 
 	// Make sure work buffer is mapped into the page frame
 	matte_map_work_screen();
@@ -730,12 +719,10 @@ void matte_frame(int special_effect, int full_screen) {
 	for (id = image_marker; id < FIRST_MESSAGE_MATTE; id++) {
 		matte->valid = false;
 		matte++;
-		// matte_list[id].valid = false;
 	}
 
 	message = message_list;
 	for (id = 0; id < MESSAGE_LIST_SIZE; id++) {
-		// index = id + FIRST_MESSAGE_MATTE;
 		if ((message->status < 0) && message->active) {
 			matte->changed = true;
 			make_message_matte(id, matte);
@@ -757,13 +744,11 @@ void matte_frame(int special_effect, int full_screen) {
 			if (matte->valid) {
 
 				if ((matte->xs > 0) && (matte->ys > 0)) {
-
 					buffer_rect_copy_2(scr_orig, scr_work,
 						matte->x + picture_map.pan_offset_x,
 						matte->y + picture_map.pan_offset_y,
 						matte->x, matte->y,
 						matte->xs, matte->ys);
-
 				}
 			}
 
@@ -935,28 +920,19 @@ void matte_frame(int special_effect, int full_screen) {
 				matte = matte_list;
 
 				for (id = 0; id < MATTE_LIST_SIZE; id++) {
-
 					// Get next matte
-#ifdef show_mattes
-					sprintf(temp_buf, "(%d, %d) => (%d, %d)   valid: %d   changed: %d      ",
-						matte->x, matte->y, matte->xs, matte->ys, matte->valid, matte->changed);
-					screen_show(temp_buf, 0, id);
-#endif
 
 					// Ignore empty mattes, or images which did not change
 					if (matte->valid && matte->changed && (matte->xs > 0) && (matte->ys > 0)) {
-
 						video_update(&scr_work,
 							matte->x, matte->y,
 							matte->x + viewing_at_x,
 							matte->y + viewing_at_y,
 							matte->xs, matte->ys);
-
 					}
 
 					matte++;
 				}
-
 			} else {
 				video_update(&scr_work,
 					0, 0,
@@ -965,21 +941,11 @@ void matte_frame(int special_effect, int full_screen) {
 					video_x, display_y);
 			}
 
-#ifdef sixteen_colors
-			if (video_mode == ega_mode) {
-				beware_the_mouse = mouse_refresh_view_port();  // Prepare cursor overlay
-				video_flush_ega(viewing_at_y, scr_work.y);  // Update the EGA screen
-			}
-#endif
 		} else {
 			matte_special_effect(special_effect, full_screen);
 			sound_queue_flush();
 		}
 	}
-
-#ifdef show_mattes
-	keys_get();
-#endif
 
 	if (beware_the_mouse) {
 		mouse_refresh_done();  // Remove cursor image from work buffer
@@ -1014,7 +980,6 @@ void matte_frame(int special_effect, int full_screen) {
 	}
 }
 
-
 int matte_allocate_inter_image() {
 	int result;
 
@@ -1027,9 +992,8 @@ int matte_allocate_inter_image() {
 		result = image_inter_marker++;
 	}
 
-	return (result);
+	return result;
 }
-
 
 void matte_refresh_inter() {
 	int id;
@@ -1038,7 +1002,6 @@ void matte_refresh_inter() {
 	image_inter_list[id].flags = IMAGE_REFRESH;
 	image_inter_list[id].segment_id = (byte)-1;
 }
-
 
 static void make_inter_matte(ImageInterPtr image, MattePtr matte) {
 	SpritePtr sprite;
@@ -1079,8 +1042,6 @@ static void make_inter_matte(ImageInterPtr image, MattePtr matte) {
 	bound_matte(matte, xs, ys, scr_inter.x, scr_inter.y);
 }
 
-
-
 void matte_inter_frame(int update_live, int clear_chaff) {
 	int id;
 	int x, y;
@@ -1095,16 +1056,11 @@ void matte_inter_frame(int update_live, int clear_chaff) {
 	MattePtr i_am_the_dog_master = NULL;
 	ImageInter *image;
 	ImageInter *image2;
-#ifdef show_mattes
-	char temp_buf[80];
-	int count;
-#endif
 
 	// Make sure work buffer is mapped into the page frame
 	matte_map_work_screen();
 
-	// Before performing erasures, make a matte for each potential erasure
-	// image.
+	// Before performing erasures, make a matte for each potential erasure image.
 	image = image_inter_list;
 	matte = matte_inter_list;
 	for (id = 0; id < (int)image_inter_marker; id++) {
@@ -1151,6 +1107,7 @@ void matte_inter_frame(int update_live, int clear_chaff) {
 				}
 			}
 		}
+
 		matte++;
 		image++;
 	}
@@ -1202,12 +1159,12 @@ void matte_inter_frame(int update_live, int clear_chaff) {
 				}
 			}
 		}
+
 		image++;
 		matte++;
 	}
 
 	if (update_live) {
-
 		// Finally, run through our combined matte list, and update any
 		// areas of the screen flagged as "changed" by copying from the
 		// work screen to the live video screen.
@@ -1222,13 +1179,7 @@ void matte_inter_frame(int update_live, int clear_chaff) {
 
 		matte = matte_inter_list;
 		for (id = 0; id < (int)image_inter_marker; id++) {
-
 			// Get next matte
-#ifdef show_mattes
-			sprintf(temp_buf, "(%d, %d) => (%d, %d)   valid: %d   changed: %d      ",
-				matte->x, matte->y, matte->xs, matte->ys, matte->valid, matte->changed);
-			screen_show(temp_buf, 0, id);
-#endif
 
 			// Ignore empty mattes, or images which did not change
 			if (matte->valid && matte->changed && (matte->xs > 0) && (matte->ys > 0)) {
@@ -1242,17 +1193,6 @@ void matte_inter_frame(int update_live, int clear_chaff) {
 
 			matte++;
 		}
-
-#ifdef sixteen_colors
-		if (video_mode == ega_mode) {
-			beware_the_mouse = mouse_refresh_view_port();  // Prepare cursor overlay
-			video_flush_ega(inter_viewing_at_y, scr_inter.y);  // Update the EGA screen
-		}
-#endif
-
-#ifdef show_mattes
-		keys_get();
-#endif
 
 		if (beware_the_mouse) {
 			mouse_refresh_done();  // Remove cursor image from work buffer
@@ -1286,6 +1226,7 @@ void matte_inter_frame(int update_live, int clear_chaff) {
 		}
 		image++;
 	}
+
 	image_inter_marker = new_marker;
 }
 

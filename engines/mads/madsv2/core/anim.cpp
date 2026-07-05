@@ -28,7 +28,6 @@
 #include "mads/madsv2/core/room.h"
 #include "mads/madsv2/core/color.h"
 #include "mads/madsv2/core/fileio.h"
-#include "mads/madsv2/core/lbm.h"
 #include "mads/madsv2/core/buffer.h"
 #include "mads/madsv2/core/matte.h"
 #include "mads/madsv2/core/inter.h"
