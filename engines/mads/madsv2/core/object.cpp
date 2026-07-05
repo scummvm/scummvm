@@ -39,6 +39,7 @@
 #include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/popup.h"
 #include "mads/madsv2/core/room.h"
+#include "mads/madsv2/core/speech.h"
 #include "mads/madsv2/core/sprite.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/core/tile.h"
@@ -335,27 +336,22 @@ int object_examine(int number, long message, int speech) {
 
 	if (message) {
 		text_saves_screen = false;
-		// text_default_y    = y_base;
-		// for (count = 0; count < (popup_num_colors - 1); count++) {
-		// popup_colors[count] -= object_extra_colors;
-		// }
 		memcpy(&cycling_palette[248].r, &master_palette[248].r, 8 * sizeof(RGBcolor));
 
-		// pl    if (speech) {
-		// if (speech_system_active && speech_on) {
-		// speech_play (object_speech_resource, speech);
-		// }
-		// }
+		if (speech) {
+			if (speech_system_active && speech_on) {
+				speech_play (object_speech_resource, speech);
+			}
+		}
+
 		text_show(message);
 
-		// pl    if (speech && speech_system_active && speech_on) {
-		// speech_all_off();
-		// }
-			// for (count = 0; count < (popup_num_colors - 1); count++) {
-			// popup_colors[count] += object_extra_colors;
-			// }
+		if (speech && speech_system_active && speech_on) {
+			speech_all_off();
+		}
+
 		text_saves_screen = true;
-		// text_default_y    = POPUP_CENTER;
+
 	} else {
 		keys_get();
 	}
