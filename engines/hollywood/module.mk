@@ -21,13 +21,18 @@ MODULE_OBJS = \
 	scenes/chapter_intro_scene.o \
 	scenes/intro/intro_resource_set.o \
 	scenes/intro/intro_scene.o \
+	scenes/intro/intro_text.o \
 	scenes/intro/scene1000.o \
 	scenes/intro/scene9000.o \
 	scenes/intro/scene9010.o \
+	scenes/intro/scene9030.o \
 	scenes/intro/scene9050.o \
+	scenes/intro/scene9090.o \
 	scenes/intro/scene9100.o \
 	scenes/intro/scene9110.o \
 	scenes/intro/scene9120.o \
+	scenes/intro/scene9130.o \
+	scenes/intro/scene9150.o \
 	scenes/playable/actor_path_controller.o \
 	scenes/playable/action_overlay_player.o \
 	scenes/playable/scene1010.o \
@@ -88,6 +93,7 @@ MODULE_OBJS = \
 	scenes/playable/scene5100.o \
 	scenes/playable/scene5110.o \
 	scenes/playable/scene5120.o \
+	scenes/playable/scene5130.o \
 	scenes/playable/scene6000.o \
 	scenes/playable/scene6010.o \
 	scenes/playable/scene6020.o \
