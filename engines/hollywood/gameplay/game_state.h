@@ -308,6 +308,13 @@ struct GameplayState {
 		scene5060RockTaken = false;
 		scene5070ShovelTaken = false;
 		scene5070AviatorCapState = 1;
+		scene5080EntryLineSeen = false;
+		scene5080PassageUnlocked = false;
+		scene5080AlternatePassageSide = false;
+		scene5080BookTaken = false;
+		scene5080StairDoorBarrierSeen = false;
+		scene5080StairDoorConstructionSeen = false;
+		scene5090EntryLineSeen = false;
 		reviewedFrankensteinNote = false;
 		frankensteinNoteOverlayMode = 0;
 		hannoverCourtyardDialogueState = 0;
@@ -987,6 +994,13 @@ struct GameplayState {
 	bool scene5060RockTaken;
 	bool scene5070ShovelTaken;
 	byte scene5070AviatorCapState;
+	bool scene5080EntryLineSeen;
+	bool scene5080PassageUnlocked;
+	bool scene5080AlternatePassageSide;
+	bool scene5080BookTaken;
+	bool scene5080StairDoorBarrierSeen;
+	bool scene5080StairDoorConstructionSeen;
+	bool scene5090EntryLineSeen;
 	bool reviewedFrankensteinNote;
 	byte frankensteinNoteOverlayMode;
 	byte hannoverCourtyardDialogueState;

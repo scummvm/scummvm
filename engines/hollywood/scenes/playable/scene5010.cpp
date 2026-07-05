@@ -453,6 +453,9 @@ void Scene5010::ensureMineDestinationTable() {
 			value = (byte)(_random.getRandomNumber(8) + 2);
 		} while (usedValues[value]);
 
+		// Value 5 maps to state 0x13ba/5050. In the original this is not the
+		// playable trophy room entry: scene 5050 immediately runs the cart
+		// bounce-back transition. The playable entry is 0x13bb from Karl's hole.
 		usedValues[value] = true;
 		state.scene5010DestinationStateBySwitchSlot[slot] = (uint16)(5000 + value * 10);
 	}
