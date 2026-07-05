@@ -232,8 +232,7 @@ void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 }
 
 bool Scene7010::shouldDrawSecondaryActorInPlayableComposite() const {
-	// Junior is RESOURCE.G01 chunk 8; secondary speech should only add text.
-	return false;
+	return _speechOverlay.visible && !_actionOverlayVisible;
 }
 
 bool Scene7010::hasCustomEntrySequence() const {
