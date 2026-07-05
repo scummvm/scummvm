@@ -170,7 +170,7 @@ void FoolGame::foolRun() {
 	}
 
 	// Define the bitmap surfaces (normally pointers to raw memory)
-	arr_bmp_5dfc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+	_scrollPage = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 	arr_bmp_b3ec = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 	arr_bmp_bbbc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 	arr_bmp_c38c = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
@@ -304,6 +304,11 @@ void FoolGame::foolRun() {
 		if (_stateFlags & kStateOpenGame) {
 			openGame();
 		}
+		// this branch was originally on the end, but we
+		// want to kick back to the story afterward
+		if (_stateFlags & kStateMetapuzzleComplete) {
+			metapuzzleComplete();
+		}
 		if (_stateFlags & kStateChapterSelect) {
 			menuChapterSelect();
 		}
@@ -318,9 +323,6 @@ void FoolGame::foolRun() {
 		}
 		if (_stateFlags & kStatePrintStory) {
 			printStory();
-		}
-		if (_stateFlags & kStateMetapuzzleComplete) {
-			sub_144_004();
 		}
 	// 128:1ee2
 	}
@@ -1037,7 +1039,7 @@ void FoolGame::sub_128_1f44() {
 	_storyCurrentPage = 0;
 	clearStateBits(0x200);
 	sub_128_5fea();
-	copyScreen(1, arr_bmp_5dfc);
+	copyScreen(1, _scrollPage);
 	storyRenderPage();
 	_toolbox->SetPort(var_i32_0);
 }
@@ -1480,7 +1482,7 @@ void FoolGame::newGame() {
 	_activePuzzle = 0;
 	_sunMapRestored = 0;
 	var_i16_7b2 = 0;
-	sub_128_3032();
+	menuSetup();
 	// 128:2e3c
 }
 
@@ -1540,12 +1542,12 @@ void FoolGame::openGame() {
 		}
 	} else {
 		// 128:302c
-		sub_128_3032();
+		menuSetup();
 	}
 
 }
 
-void FoolGame::sub_128_3032() {
+void FoolGame::menuSetup() {
 	_storyCurrentChapter = 0;
 	_stateFlags = kStateNull;
 	var_i16_484 = 0;
@@ -1587,7 +1589,7 @@ void FoolGame::sub_128_3032() {
 		strY += 0xf;
 	}
 	// 128:3228
-	copyScreen(0, arr_bmp_5dfc);
+	copyScreen(0, _scrollPage);
 	_storyCurrentPage = 1;
 	storyRenderPage();
 	if ((var_i16_7ce & 1) == 0) {
@@ -1606,6 +1608,8 @@ void FoolGame::sub_128_3032() {
 	} else {
 		_zbasic->menu(2, 7, 1, Common::U32String());
 	}
+	// new: enable the "Show Finale" about menu option if game is finished
+	_zbasic->menu(1, 4, (_puzzleCompletionStatus[0x55] >= 0x64) ? 1 : 0, Common::U32String());
 }
 
 void FoolGame::menuToggleSound() {
@@ -1800,7 +1804,7 @@ void FoolGame::puzzleRun() {
 	_activePuzzle = _storyCurrentChapter;
 	var_i16_7ce |= 1;
 	_toolbox->InitCursor();
-	copyScreen(0, arr_bmp_5dfc);
+	copyScreen(0, _scrollPage);
 	// 128:39fa
 	if (arr_i16_15e8[_storyCurrentChapter] > 0) {
 		sub_128_41d8();
@@ -1879,7 +1883,7 @@ void FoolGame::puzzleRun() {
 	puzzleSaveContext();
 	if ((_stateFlags & kStateQuit) == 0) {
 		_toolbox->PenNormal();
-		copyScreen(1, arr_bmp_5dfc);
+		copyScreen(1, _scrollPage);
 		MenuHandle menu = _toolbox->GetMHandle(8);
 		_toolbox->DeleteMenu(8);
 		_toolbox->DisposeMenu(menu);
@@ -2288,7 +2292,8 @@ void FoolGame::menuAbout() {
 			modalLines = 7;
 		}
 		// 128:4dc0
-	} else {
+	} else if (_puzzleCompletionStatus[0x55] < 0x64) {
+		// metapuzzle not solved
 		// 128:4dc4
 		// The sun's map is restored.
 		_modalText[2] = _zbasic->str(aboutOff+18);
@@ -2297,6 +2302,13 @@ void FoolGame::menuAbout() {
 		_modalText[4] = _zbasic->str(aboutOff+20);
 		_modalText[5] = _zbasic->str(aboutOff+21);
 		modalLines = 5;
+	} else {
+		// new: metapuzzle solved
+		// The sun's map is restored.
+		_modalText[2] = _zbasic->str(aboutOff+18);
+		_modalText[3] = _zbasic->str(aboutOff+19);
+		_modalText[4] = Common::U32String("The Book of Thoth is solved.");
+		modalLines = 4;
 	}
 	// 128:4e42
 	_toolbox->SetPort(var_i32_4);
@@ -2868,14 +2880,14 @@ void FoolGame::sub_129_068() {
 	}
 	// 129:07a2
 	_zbasic->picture(0, MENU_HEIGHT, arr_i32_192c0[0]);
-	_zbasic->get(0x0, 0x59, SCREEN_WIDTH, 0xb4, arr_bmp_5dfc);
+	_zbasic->get(0x0, 0x59, SCREEN_WIDTH, 0xb4, _scrollPage);
 	_zbasic->get(0x0, 0x14f, 0x7, SCREEN_HEIGHT, arr_bmp_b3ec);
 	_zbasic->get(0x1f9, 0x14f, SCREEN_WIDTH, SCREEN_HEIGHT, arr_bmp_109dc);
 	// 129:0846
 	// unfurl the scroll by blitting the lower half a bunch of times
 	for (int i = 0; i <= 0x15; i++) {
 		var_i16_484 = _zbasic->readDataInt();
-		_zbasic->put(0, var_i16_484, arr_bmp_5dfc, kSrcCopy);
+		_zbasic->put(0, var_i16_484, _scrollPage, kSrcCopy);
 		delay(2);
 	}
 	// 129:0888
@@ -3098,7 +3110,7 @@ void FoolGame::sub_129_068() {
 	_zbasic->menu(1, 2, 1, Common::U32String("/FAbout Fool's Errand"));
 	// this is brand new
 	_zbasic->menu(1, 3, 1, Common::U32String("Show Prologue"));
-	_zbasic->menu(1, 4, 1, Common::U32String("Show Finale"));
+	_zbasic->menu(1, 4, 0, Common::U32String("Show Finale"));
 	_zbasic->menu(1, 5, 0, Common::U32String("-"));
 
 	// File menu
@@ -3146,11 +3158,10 @@ void FoolGame::menuLoadingMessage(int16 percent) {
 }
 
 
-void FoolGame::sub_144_004() {
+void FoolGame::metapuzzleComplete() {
 	// 144:0004
-	_toolbox->ReleaseResource(var_pic_7c2);
+	//_toolbox->ReleaseResource(var_pic_7c2);
 	var_i32_7c8 = _zbasic->mem(-1);
-	_stateFlags = kStateQuit;
 	if (!_screenOversized) {
 		_toolbox->SetPort(var_i32_8);
 		fillRect(0, 0, MENU_HEIGHT, SCREEN_WIDTH, 0x47);
@@ -3173,7 +3184,9 @@ void FoolGame::sub_144_004() {
 		_toolbox->SetPort(var_i32_0);
 	}
 	// 144:0082
-	_zbasic->get(1, var_i16_42+1, SCREEN_WIDTH, SCREEN_HEIGHT-1, arr_bmp_5dfc);
+	// original used _scrollPage for the screen capture,
+	// on the grounds that the game was about to exit
+	_zbasic->get(1, var_i16_42+1, SCREEN_WIDTH, SCREEN_HEIGHT-1, arr_bmp_bbbc);
 	for (int16 i = 0xa; i <= 0xf0; i += 0xa) {
 		var_i32_692 = _toolbox->TickCount();
 		_zbasic->put(
@@ -3181,7 +3194,7 @@ void FoolGame::sub_144_004() {
 			var_i16_42 + (int16)(i*0.6f),
 			SCREEN_WIDTH - i,
 			SCREEN_HEIGHT - (int16)(i*0.6f),
-			arr_bmp_5dfc, kSrcCopy);
+			arr_bmp_bbbc, kSrcCopy);
 		// 144:015a
 		delayFromMarker(0xf);
 	}
@@ -3199,7 +3212,10 @@ void FoolGame::sub_144_004() {
 			var_i16_44 + (int16)(i*0.7f)
 		);
 		_toolbox->InvertRect(temp);
-		delayFromMarker(1);
+		// fudge to avoid flickering
+		if ((i % 5) == 0) {
+			delayFromMarker(1);
+		}
 	}
 	// 144:0238
 	for (int16 i = 0; i <= 0xe; i++) {
@@ -3219,20 +3235,38 @@ void FoolGame::sub_144_004() {
 	_modalText[3] = Common::U32String();
 	_modalText[4] = Common::U32String("Congratulations!");
 	_modalText[5] = Common::U32String("You may now view the finale.");
-	_modalText[7] = Common::U32String("Okay");
-	showChoiceModal(kFontFool, 6, 1, 0);
-	if (!_screenOversized) {
-		_toolbox->ClearMenuBar();
-		_toolbox->DrawMenuBar();
-	}
-	sub_128_1f1e();
-	toggleMouseCursor(true);
+	_modalText[6] = Common::U32String("Okay");
+	showChoiceModal(kFontFool, 5, 1, 0);
+
+	//if (!_screenOversized) {
+	//	_toolbox->ClearMenuBar();
+	//	_toolbox->DrawMenuBar();
+	//}
+	//sub_128_1f1e();
+	//toggleMouseCursor(true);
+
 	// 144:03e2
 	// write the finale file to the disk. we don't need to do this
 	//if (_saveFileName.empty()) {
 	//	sub_144_5ca();
 	//}
 	//sub_144_406();
+
+	// kick back to the start of the story
+	clearStateBits(kStateMetapuzzleComplete);
+	setStateBits(kStateChapterSelect);
+	_selectedMenuChapter = 1;
+	// enable the Show Finale menu choice
+	_zbasic->menu(1, 4, 1, Common::U32String());
+	menuFinale();
+	// cleanup that's usually at the end of metapuzzleRun, but
+	// delayed so the screen buffer is still full of
+	// book of thoth
+	MenuHandle menu = _toolbox->GetMHandle(8);
+	_toolbox->DeleteMenu(8);
+	_toolbox->DisposeMenu(menu);
+	_toolbox->DrawMenuBar();
+	copyScreen(1, _scrollPage);
 }
 
 };

@@ -41,7 +41,7 @@ void FoolGame::metapuzzleRun() {
 	} else {
 		// 138:0024
 		var_i16_7ce |= 1;
-		copyScreen(0, arr_bmp_5dfc);
+		copyScreen(0, _scrollPage);
 		fillRect(0x127, 0x69, 0x138, 0x190, 0);
 		fillRect(1, kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
 		fillRect(0x14, 0x67, SCREEN_HEIGHT, 0x1b1, 2);
@@ -93,7 +93,7 @@ void FoolGame::metapuzzleRun() {
 		_toolbox->DeleteMenu(8);
 		_toolbox->DisposeMenu(menu);
 		_toolbox->DrawMenuBar();
-		copyScreen(1, arr_bmp_5dfc);
+		copyScreen(1, _scrollPage);
 		if ((_stateFlags & (kStateNewGame | kStateOpenGame | kStateQuit)) == 0) {
 			if ((var_i16_7ce & 1) != 0) {
 				var_i16_7ce ^= 1;
@@ -168,7 +168,8 @@ void FoolGame::sub_138_21e() {
 	// any progress is good progress
 	autoSaveGame();
 	if ((_activePuzzle == 0x55) && (_puzzleCompletionStatus[0x55] == 0x64)) {
-		_stateFlags = kStateMetapuzzleComplete | kStateQuit | kStateReturn;
+		//_stateFlags = kStateMetapuzzleComplete | kStateQuit | kStateReturn;
+		_stateFlags = kStateMetapuzzleComplete | kStateReturn;
 	}
 	if (_stateFlags <= 1) {
 		_stateFlags = kStateNull;
