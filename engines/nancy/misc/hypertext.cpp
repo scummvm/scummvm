@@ -76,6 +76,10 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 
 	_numDrawnLines = 0;
 
+	if (_recordMarkHotspots) {
+		_markHotspots.clear();
+	}
+
 	if (!_imageName.empty()) {
 		g_nancy->_resource->loadImage(_imageName, image);
 	}
@@ -350,6 +354,10 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 
 						// For now we do not check if we need to go to new line; neither does the original
 						_fullSurface.blitFrom(g_nancy->_graphics->_object0, markSrc, markDest);
+
+						if (_recordMarkHotspots) {
+							_markHotspots.push_back(markDest);
+						}
 
 						horizontalOffset += markDest.width() + 2;
 						break;

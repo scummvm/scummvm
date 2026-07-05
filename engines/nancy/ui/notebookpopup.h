@@ -42,6 +42,7 @@ public:
 
 	void init() override;
 	void registerGraphics() override;
+	void updateGraphics() override;
 	void handleInput(NancyInput &input);
 
 	void open();
@@ -66,12 +67,19 @@ private:
 	void drawBackground();
 	void drawTabs();
 	void drawTab(uint index, bool drawHover = false);
+	// Blit the active tab's title image ("CASE JOURNAL" / "TASKS") into the
+	// header strip above the text area.
+	void drawCaption();
 	void drawContent();
 	// Paint foreground widgets (close button, scrollbar) on top of the
 	// already-drawn background + content layers.
 	void drawForeground();
 	void drawCloseButton(bool hovered);
 	void drawScrollbar(UIButtonState state);
+
+	// Play a popup button's click sound (close X and the tab buttons), like the
+	// inventory popup. Falls back to the shared button-click slot in the header.
+	void playButtonClickSound(const UIButtonRecord &button);
 
 	// Returns the on-popup-surface bounding rect of the slider thumb at
 	// the current scroll position (in popup-local coords).
@@ -84,6 +92,16 @@ private:
 	// Populate HypertextParser's text-line list with the active tab's
 	// entries.
 	void buildTextLines();
+
+	// Tasklist checkboxes. Rebuild the popup-local hit rects for the clickable
+	// (unchecked) checkboxes from the mark hotspots recorded during drawContent.
+	void buildCheckboxRects(const Common::Rect &localTextRect, int scrollY, int visibleH);
+	// Check off a task if its completion event flag is set, else play the
+	// "not finished yet" line.
+	void toggleCheckbox(uint entryIndex);
+	// Play a random checkbox voice line: actionable = "finished with that",
+	// !actionable = "can't check that off yet".
+	void playCheckboxSound(bool actionable);
 
 	const UINB *_uinbData;
 
@@ -99,6 +117,18 @@ private:
 	bool _scrollbarDragging = false;
 	bool _scrollbarHovered = false;
 	int _scrollbarGrabOffset = 0;
+
+	// Deferred "I'm finished with that" voice: checking a task off plays an
+	// immediate click, then this fires the spoken line a beat later (0 = none).
+	uint32 _completeVoiceTime = 0;
+
+	// Tasklist checkboxes: popup-local hit rects for the clickable (unchecked)
+	// boxes and the task-entry index each maps to. Rebuilt every drawContent().
+	Common::Array<Common::Rect> _checkboxRects;
+	Common::Array<uint> _checkboxEntryIndices;
+	// Task-entry index for each mark buildTextLines emits, in draw order, so
+	// the recorded mark hotspots can be mapped back to their entries.
+	Common::Array<uint> _markEntryIndices;
 
 	// journalEntries HashMap keys: _surfaceID = 3 holds task entries,
 	// _surfaceID = 4 holds journal entries.

@@ -19,6 +19,9 @@
  *
  */
 
+#include "common/random.h"
+#include "common/system.h"
+
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/font.h"
 #include "engines/nancy/graphics.h"
@@ -93,6 +96,7 @@ void NotebookPopup::init() {
 
 	drawBackground();
 	drawTabs();
+	drawCaption();
 	drawContent();
 	drawForeground();
 
@@ -104,6 +108,14 @@ void NotebookPopup::init() {
 
 void NotebookPopup::registerGraphics() {
 	RenderObject::registerGraphics();
+}
+
+void NotebookPopup::updateGraphics() {
+	// Fire the deferred "I'm finished with that" line once its delay elapses.
+	if (_completeVoiceTime != 0 && g_system->getMillis() >= _completeVoiceTime) {
+		_completeVoiceTime = 0;
+		playCheckboxSound(true);
+	}
 }
 
 void NotebookPopup::open() {
@@ -219,6 +231,21 @@ void NotebookPopup::drawTabs() {
 	_needsRedraw = true;
 }
 
+void NotebookPopup::drawCaption() {
+	if ((uint)_activeTab >= _uinbData->tabCaptionSrcRects.size()) {
+		return;
+	}
+	const Common::Rect &spr = _uinbData->tabCaptionSrcRects[_activeTab];
+	if (spr.isEmpty() || _uinbData->tabCaptionDestRect.isEmpty()) {
+		return;
+	}
+
+	// Use the same game-frame-aware conversion as the tabs / close button so
+	// the caption lines up with them when the popup overlays the game frame.
+	const Common::Rect dstLocal = toPopupLocal(_uinbData->tabCaptionDestRect, false);
+	_drawSurface.blitFrom(_overlayImage, spr, Common::Point(dstLocal.left, dstLocal.top));
+}
+
 void NotebookPopup::drawTab(uint index, bool drawHover) {
 	const UIButtonSlot &tab = _uinbData->tabs[index];
 	if (!tab.enabled)
@@ -310,11 +337,27 @@ void NotebookPopup::handleInput(NancyInput &input) {
 		if (overClose) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				playButtonClickSound(closeBtn);
 				input.eatMouseInput();
 				close();
 				return;
 			}
 		}
+	}
+
+	// Tasklist checkboxes: an unchecked box gets a hotspot cursor and, on
+	// click, either checks off (event flag satisfied) or plays the rejection
+	// line. Checked before the tabs since the boxes sit inside the text area.
+	for (uint k = 0; k < _checkboxRects.size(); ++k) {
+		if (!_checkboxRects[k].contains(localMouse)) {
+			continue;
+		}
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			toggleCheckbox(_checkboxEntryIndices[k]);
+			input.eatMouseInput();
+		}
+		return;
 	}
 
 	// Tab hover + click. Mirrors the inventory popup's filter-tab
@@ -361,12 +404,7 @@ void NotebookPopup::handleInput(NancyInput &input) {
 				_scrollPos = 0.0f;
 				_scrollbarDragging = false;
 
-				// Play the page-flip sound (first slot of either
-				// actionable or no-action set; both have 3 alternates).
-				const Common::Path &soundName = _uinbData->noActionClickSounds[0];
-				if (!soundName.empty()) {
-					g_nancy->_sound->playSound(soundName.toString());
-				}
+				playButtonClickSound(tab.button);
 
 				refreshContent();
 			}
@@ -389,6 +427,7 @@ void NotebookPopup::refreshContent() {
 	// always sit visually above the text layer.
 	drawBackground();
 	drawTabs();
+	drawCaption();
 	drawContent();
 	drawForeground();
 }
@@ -442,12 +481,14 @@ void NotebookPopup::buildTextLines() {
 			}
 			if (markValue >= 1 && markValue <= 5) {
 				body = Common::String::format("<%u>", markValue) + body;
+				// Record which entry this mark belongs to so the recorded
+				// mark hotspots (in the same draw order) map back to entries.
+				_markEntryIndices.push_back((uint)i);
 			}
 		}
 
-		if (i > 0) {
-			body += "<n>";
-		}
+		// Entries concatenate directly; each entry's text already ends with its
+		// own newline, so an extra <n> here would double the inter-entry gap.
 		combined += body;
 	}
 
@@ -461,13 +502,21 @@ void NotebookPopup::drawContent() {
 		return;
 	}
 
-	// textRect from UINB is in chunk coords (relative to normalDestRect);
-	// convert to popup-local for the on-surface blit destination.
-	Common::Rect localTextRect = _uinbData->textRect;
-	localTextRect.translate(-_uinbData->header.normalDestRect.left,
-							-_uinbData->header.normalDestRect.top);
+	// Convert the text rect to popup-local with the same game-frame-aware
+	// conversion the tabs / close button use, so text and caption stay aligned
+	// with them when the popup overlays the game frame.
+	const Common::Rect localTextRect = toPopupLocal(_uinbData->textRect, false);
 
 	HypertextParser::clear();
+	_checkboxRects.clear();
+	_checkboxEntryIndices.clear();
+	_markEntryIndices.clear();
+
+	// Only the Tasklist has clickable checkboxes; record their glyph rects.
+	const UIButtonSlot &activeTab = _uinbData->tabs[_activeTab];
+	const bool tasksTab = activeTab.enabled && activeTab.id != 1;
+	_recordMarkHotspots = tasksTab;
+
 	buildTextLines();
 
 	// Chunk's textRect already provides top padding from the chrome.
@@ -495,7 +544,108 @@ void NotebookPopup::drawContent() {
 	_drawSurface.blitFrom(_fullSurface, srcSlice,
 							Common::Point(localTextRect.left, localTextRect.top));
 
+	if (tasksTab) {
+		buildCheckboxRects(localTextRect, scrollY, visibleH);
+	}
+
 	_needsRedraw = true;
+}
+
+void NotebookPopup::buildCheckboxRects(const Common::Rect &localTextRect, int scrollY, int visibleH) {
+	JournalData *journalData = (JournalData *)NancySceneState.getPuzzleData(JournalData::getTag());
+	if (!journalData || !journalData->journalEntries.contains(kNotebookTabTasks)) {
+		return;
+	}
+	const Common::Array<JournalData::Entry> &entries = journalData->journalEntries[kNotebookTabTasks];
+
+	const Common::Rect visibleWindow(localTextRect.left, localTextRect.top,
+										localTextRect.left + localTextRect.width(),
+										localTextRect.top + visibleH);
+
+	const uint count = MIN(_markHotspots.size(), _markEntryIndices.size());
+	for (uint k = 0; k < count; ++k) {
+		const uint entryIndex = _markEntryIndices[k];
+		// Only unchecked boxes (mark 7) are clickable.
+		if (entryIndex >= entries.size() || entries[entryIndex].mark != 7) {
+			continue;
+		}
+
+		// Mark rects are in _fullSurface coords; map to popup-local (offset by
+		// the text rect, minus the scroll) and widen the hit area to the right.
+		Common::Rect box = _markHotspots[k];
+		box.translate(localTextRect.left, localTextRect.top - scrollY);
+		box.right += 20;
+
+		const Common::Rect clipped = box.findIntersectingRect(visibleWindow);
+		if (clipped.isEmpty()) {
+			continue;
+		}
+		_checkboxRects.push_back(clipped);
+		_checkboxEntryIndices.push_back(entryIndex);
+	}
+}
+
+void NotebookPopup::toggleCheckbox(uint entryIndex) {
+	JournalData *journalData = (JournalData *)NancySceneState.getPuzzleData(JournalData::getTag());
+	if (!journalData || !journalData->journalEntries.contains(kNotebookTabTasks)) {
+		return;
+	}
+	Common::Array<JournalData::Entry> &entries = journalData->journalEntries[kNotebookTabTasks];
+	if (entryIndex >= entries.size() || entries[entryIndex].mark != 7) {
+		return;
+	}
+
+	// For a clickable task, sceneID doubles as the completion event-flag index
+	// (-1 = no requirement). The box can be checked off only once that flag is
+	// set; otherwise Nancy says she isn't finished yet.
+	const int16 flag = (int16)entries[entryIndex].sceneID;
+	const bool canComplete = (flag == -1) || NancySceneState.getEventFlag(flag, g_nancy->_true);
+	if (canComplete) {
+		entries[entryIndex].mark = 8;
+		refreshContent();
+		// A check-off plays an immediate click, then Nancy's spoken line a beat
+		// later (deferred so the two cues don't step on each other).
+		playButtonClickSound(_uinbData->header.secondaryButton);
+		_completeVoiceTime = g_system->getMillis() + 400;
+	} else {
+		playCheckboxSound(false);
+	}
+}
+
+void NotebookPopup::playButtonClickSound(const UIButtonRecord &button) {
+	SoundDescription sound = button.clickSound;
+	if (sound.name.empty() || sound.name.equalsIgnoreCase("NO SOUND")) {
+		// Fall back to the header's shared button-click slot (2; 0/1 = open/close).
+		sound = _uinbData->header.sounds[2];
+	}
+	if (sound.name.empty() || sound.name.equalsIgnoreCase("NO SOUND")) {
+		return;
+	}
+	g_nancy->_sound->loadSound(sound);
+	g_nancy->_sound->playSound(sound);
+}
+
+void NotebookPopup::playCheckboxSound(bool actionable) {
+	const Common::Path *set = actionable ? _uinbData->actionableClickSounds
+										 : _uinbData->noActionClickSounds;
+
+	// Pick a random variant, falling back to any valid one.
+	const uint start = g_nancy->_randomSource->getRandomNumber(UINB::kNumPageSoundsPerSet - 1);
+	for (uint n = 0; n < UINB::kNumPageSoundsPerSet; ++n) {
+		const Common::String name = set[(start + n) % UINB::kNumPageSoundsPerSet].toString();
+		if (name.empty() || name.equalsIgnoreCase("NO SOUND")) {
+			continue;
+		}
+		// The names are raw filenames; play them on the checkbox sound's
+		// channel / volume, taken from the close button's click sound (the
+		// header sound slots are all "NO SOUND" for the notebook).
+		SoundDescription sound = _uinbData->header.secondaryButton.clickSound;
+		sound.name = name;
+		sound.numLoops = 1;
+		g_nancy->_sound->loadSound(sound);
+		g_nancy->_sound->playSound(sound);
+		return;
+	}
 }
 
 } // End of namespace UI
