@@ -580,6 +580,21 @@ protected:
 	// Draws the currently active action overlay layer.
 	void drawActionOverlayLayer();
 
+	// Resource Delta Clips
+	// Draws one resource delta frame directly over the current scene framebuffer.
+	void drawClipFrameDeltaFromResource(const Common::Array<byte> &resource, uint32 frameTableOffset,
+		uint32 chunkSize, uint tableEntryCount, byte frameIndex);
+	// Draws one resource delta frame from a loaded scene-arena chunk.
+	void drawClipFrameDelta(uint chunkIndex, uint tableEntryCount, byte frameIndex);
+	// Plays a resource delta frame range from caller-owned data.
+	void playDeltaClipFromResource(const Common::Array<byte> &resource, uint32 frameTableOffset,
+		uint32 chunkSize, uint tableEntryCount, uint frameCount, uint32 frameMillis, uint firstFrame = 0);
+	// Plays a resource delta frame range from a loaded scene-arena chunk.
+	void playDeltaClip(uint chunkIndex, uint tableEntryCount, uint frameCount, uint32 frameMillis,
+		uint firstFrame = 0);
+	// Waits for a delta clip frame while pumping only skip/quit/menu events.
+	bool waitDeltaClipFrameMillis(uint32 millis);
+
 	// Speech Playback
 	// Runs a scene-local secondary speech line.
 	void beginSecondarySpeechLine(uint16 rowIndex, byte frameIndex);

@@ -67,12 +67,6 @@ private:
 		int speechTriggerFrame = -1, uint16 speechRow = 0, byte speechFrame = 0);
 	void waitForStartedSpeechAndClear(uint32 fallbackMillis);
 	void runCurtainClearToBlack();
-	void drawClipFrameDeltaFromResource(const Common::Array<byte> &resource, uint32 frameTableOffset,
-		uint32 chunkSize, uint tableEntryCount, byte frameIndex);
-	void drawClipFrameDelta(byte chunkIndex, uint tableEntryCount, byte frameIndex);
-	void playDeltaClip(byte chunkIndex, uint tableEntryCount, uint frameCount, uint32 frameMillis,
-		uint firstFrame = 0);
-	bool waitTransitionFrameMillis(uint32 millis);
 
 	ResourceSpriteLayer _foregroundLayer;
 };

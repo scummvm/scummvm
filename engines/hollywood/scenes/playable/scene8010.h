@@ -73,8 +73,6 @@ private:
 	void advanceFishermanIdle(uint32 delta);
 	void advanceBoatLoop(uint32 delta);
 	void drawTransitionClip(uint chunkIndex);
-	void drawClipFrameDelta(uint chunkIndex, uint tableEntryCount, byte frameIndex);
-	bool waitTransitionFrame();
 	void runFirstEntry();
 	void runReturnEntryTransition();
 	void runFishermanConversation();
