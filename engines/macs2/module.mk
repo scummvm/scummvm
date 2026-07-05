@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	saveload.o \
 	scriptexecutor.o \
+	scummui.o \
 	view1.o
 
 ifdef USE_IMGUI

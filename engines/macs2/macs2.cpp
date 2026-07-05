@@ -33,6 +33,7 @@
 #include "common/types.h"
 #include "common/util.h"
 #include "engines/util.h"
+#include "engines/enhancements.h"
 #include "gameobjects.h"
 #include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
@@ -1119,6 +1120,23 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 	return result;
 }
 
+void Macs2Engine::nextCursorMode() {
+	switch (_scriptExecutor->_cursorMode) {
+	case Script::MouseMode::Talk:
+		setCursorMode(Script::MouseMode::Look);
+		break;
+	case Script::MouseMode::Look:
+		setCursorMode(Script::MouseMode::Use);
+		break;
+	case Script::MouseMode::Use:
+		setCursorMode(Script::MouseMode::Walk);
+		break;
+	default:
+		setCursorMode(Script::MouseMode::Talk);
+		break;
+	}
+}
+
 void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 	// setCursorMode (1008:3ea5): when the cursor image changes, keep the hotspot
 	// fixed on screen by compensating for the old/new image half-extents, clamp,
@@ -1135,26 +1153,42 @@ void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 		halfH = _imageResources[index]._height / 2;
 	};
 
+	auto isGameplayVerb = [](Script::MouseMode mode) {
+		return mode == Script::MouseMode::Talk || mode == Script::MouseMode::Look ||
+			   mode == Script::MouseMode::Use || mode == Script::MouseMode::Walk;
+	};
+
+	View1 *view = (View1 *)findView("View1");
+	const bool scummVerbUI = view && view->hasScummVerbUI();
+
 	uint16 oldHalfW = 0, oldHalfH = 0, newHalfW = 0, newHalfH = 0;
 	cursorHalfSize(oldMode, oldHalfW, oldHalfH);
 
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
-	mouse.x += oldHalfW;
-	mouse.y += oldHalfH;
+	const bool mouseInUiPanel = scummVerbUI && mouse.y >= kGameHeight;
 
 	_scriptExecutor->_cursorMode = newMode;
 
-	cursorHalfSize(newMode, newHalfW, newHalfH);
-	mouse.x -= newHalfW;
-	mouse.y -= newHalfH;
+	// Keep the pointer on the verb/inventory panel when selecting verbs there, and
+	// skip hotspot compensation when the SCUMM UI shows the same walk cursor for all verbs.
+	if (!mouseInUiPanel && !(scummVerbUI && isGameplayVerb(oldMode) && isGameplayVerb(newMode))) {
+		mouse.x += oldHalfW;
+		mouse.y += oldHalfH;
 
-	mouse.x = CLIP<int>(mouse.x, (int)newHalfW, kScreenWidthLast - (int)newHalfW);
-	mouse.y = CLIP<int>(mouse.y, (int)newHalfH, kGameHeightLast - (int)newHalfH);
-	g_system->warpMouse(mouse.x, mouse.y);
+		cursorHalfSize(newMode, newHalfW, newHalfH);
+		mouse.x -= newHalfW;
+		mouse.y -= newHalfH;
+
+		const int maxY = scummVerbUI ? (kScreenHeightLast - (int)newHalfH)
+									: (kGameHeightLast - (int)newHalfH);
+		mouse.x = CLIP<int>(mouse.x, (int)newHalfW, kScreenWidthLast - (int)newHalfW);
+		mouse.y = CLIP<int>(mouse.y, (int)newHalfH, maxY);
+		g_system->warpMouse(mouse.x, mouse.y);
+	}
 
 	_clipRectDirty = true;
 
-	if (View1 *view = (View1 *)findView("View1"))
+	if (view)
 		view->updateCursor();
 
 	if (cursorVisible)
@@ -1760,8 +1794,8 @@ Common::Error Macs2Engine::run() {
 		loadTranslation();
 	}
 
-	// Initialize graphics mode
-	initGraphics(kScreenWidth, kGameHeight);
+	// Initialize graphics mode (taller framebuffer when SCUMM verb UI is enabled)
+	initGraphics(kScreenWidth, enhancementEnabled(kEnhUIUX) ? kScreenHeight : kGameHeight);
 
 	CursorMan.showMouse(false);
 

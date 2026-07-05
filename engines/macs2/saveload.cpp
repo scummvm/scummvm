@@ -841,7 +841,9 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		// the per-object loop could populate their runtime walk/draw/dirty state.
 		// Do NOT recreate them here - that would discard the loaded fields.
 		view1->rebuildCharacterLookupTable();
-		view1->setInventorySource(GameObjects::instance().getProtagonistObject());
+		view1->refreshProtagonistInventoryAfterLoad(actorIndex);
+		view1->_uiPanelState = View1::kUiPanelNone;
+		view1->ensureScummVerbUI();
 
 		// Restore UseInventory cursor image after load.
 		// The cursor slot is only populated when clicking an inventory item in the panel;
@@ -865,6 +867,7 @@ Common::Error Macs2Engine::syncGame(Common::Serializer &s) {
 		} else {
 			view1->startFadingWithSpeed(8);
 		}
+		view1->presentFrame();
 	}
 
 	return Common::kNoError;

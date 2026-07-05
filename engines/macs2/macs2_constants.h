@@ -30,6 +30,11 @@ static constexpr int kScreenWidthLast = kScreenWidth - 1;
 static constexpr int kGameHeight      = 200;
 static constexpr int kGameHeightLast  = kGameHeight - 1;
 
+// SCUMM-style verb/inventory strip (kEnhUIUX enhancement only).
+static constexpr int kUIHeight       = 64;
+static constexpr int kScreenHeight   = kGameHeight + kUIHeight;
+static constexpr int kScreenHeightLast = kScreenHeight - 1;
+
 } // namespace Macs2
 
 #endif // MACS2_CONSTANTS_H
