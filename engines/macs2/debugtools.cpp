@@ -1988,6 +1988,7 @@ static void showObjectScriptsWindow() {
 }
 
 static void showSoundWindow();
+static void showDebugToolbarWindow();
 
 bool shouldDrawPathfindingOverlay() {
 	return _showPathfindingOverlay;
@@ -2012,7 +2013,34 @@ void onImGuiRender() {
 	}
 	ImGui::GetIO().ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
 
-	if (ImGui::BeginMainMenuBar()) {
+	showDebugToolbarWindow();
+	showScriptWindow();
+	showObjectScriptsWindow();
+	showBreakpointsWindow();
+	showVariablesWindow();
+	showCharactersWindow();
+	drawHoveredObjectOverlay();
+	showAnimViewerWindow();
+	showInventoryWindow();
+	showAnimationsWindow();
+	showSceneMapsWindow();
+	showImageResourcesWindow();
+	showDebugOutputWindow();
+	showTextLogWindow();
+	showSoundWindow();
+}
+
+static void showDebugToolbarWindow() {
+	// Movable toolbar window instead of BeginMainMenuBar(), which reserves the full
+	// viewport width and intercepts clicks along the top edge of the game view.
+	ImGui::SetNextWindowPos(ImVec2(8.0f, 8.0f), ImGuiCond_FirstUseEver);
+	const ImGuiWindowFlags flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse;
+	if (!ImGui::Begin("MACS2 Debug", nullptr, flags)) {
+		ImGui::End();
+		return;
+	}
+
+	if (ImGui::BeginMenuBar()) {
 		if (ImGui::BeginMenu("Debug")) {
 			ImGui::MenuItem("Script", NULL, &_showScript);
 			ImGui::MenuItem("Object Scripts", NULL, &_showObjectScripts);
@@ -2047,21 +2075,25 @@ void onImGuiRender() {
 			for (const auto &ch : channels) {
 				bool enabled = debugChannelSet(-1, ch.flag);
 				if (ImGui::MenuItem(ch.name, NULL, enabled)) {
-					if (enabled)
+					if (enabled) {
 						DebugMan.disableDebugChannel(ch.flag);
-					else
+					} else {
 						DebugMan.enableDebugChannel(ch.flag);
+					}
 				}
 			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Speed")) {
-			if (ImGui::MenuItem("Normal", NULL, g_engine->_gameSpeedMode == 0))
+			if (ImGui::MenuItem("Normal", NULL, g_engine->_gameSpeedMode == 0)) {
 				g_engine->_gameSpeedMode = 0;
-			if (ImGui::MenuItem("Fast", NULL, g_engine->_gameSpeedMode == 1))
+			}
+			if (ImGui::MenuItem("Fast", NULL, g_engine->_gameSpeedMode == 1)) {
 				g_engine->_gameSpeedMode = 1;
-			if (ImGui::MenuItem("Slow", NULL, g_engine->_gameSpeedMode == 2))
+			}
+			if (ImGui::MenuItem("Slow", NULL, g_engine->_gameSpeedMode == 2)) {
 				g_engine->_gameSpeedMode = 2;
+			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Tools")) {
@@ -2070,50 +2102,58 @@ void onImGuiRender() {
 				ImGui::MenuItem("Auto-click (simulate repeated clicks)", NULL, &toolsView->_autoclickActive);
 			}
 			ImGui::Separator();
-			if (ImGui::MenuItem("Quick Start (Scene 6)"))
+			if (ImGui::MenuItem("Quick Start (Scene 6)")) {
 				g_engine->changeScene(0x6);
+			}
 			ImGui::Separator();
 			static int sceneInput = 1;
 			ImGui::SetNextItemWidth(60);
 			ImGui::InputInt("##scn", &sceneInput, 1, 10);
 			ImGui::SameLine();
 			if (ImGui::MenuItem("Change Scene")) {
-				if (sceneInput > 0 && sceneInput <= 512)
+				if (sceneInput > 0 && sceneInput <= 512) {
 					g_engine->changeScene((uint32)sceneInput);
+				}
 			}
 			ImGui::Separator();
-			if (ImGui::MenuItem("Run Script Executor"))
+			if (ImGui::MenuItem("Run Script Executor")) {
 				g_engine->runScriptExecutor(true);
+			}
 			static int dosSaveSlot = 0;
 			ImGui::SetNextItemWidth(60);
 			ImGui::InputInt("##dosslot", &dosSaveSlot, 1, 1);
-			if (dosSaveSlot < 0)
+			if (dosSaveSlot < 0) {
 				dosSaveSlot = 0;
-			if (dosSaveSlot > 9)
+			}
+			if (dosSaveSlot > 9) {
 				dosSaveSlot = 9;
+			}
 			ImGui::SameLine();
 			if (ImGui::MenuItem("Save to original DOS slot (SAVEGAME.N)")) {
 				Common::Error err = g_engine->saveOriginalGameState(dosSaveSlot);
-				if (err.getCode() != Common::kNoError)
+				if (err.getCode() != Common::kNoError) {
 					warning("Failed to write original DOS save SAVEGAME.%d", dosSaveSlot);
-				else
+				} else {
 					debug("Wrote original DOS save SAVEGAME.%d", dosSaveSlot);
+				}
 			}
 			static int dosLoadSlot = 0;
 			ImGui::SetNextItemWidth(60);
 			ImGui::InputInt("##dosloadslot", &dosLoadSlot, 1, 1);
-			if (dosLoadSlot < 0)
+			if (dosLoadSlot < 0) {
 				dosLoadSlot = 0;
-			if (dosLoadSlot > 9)
+			}
+			if (dosLoadSlot > 9) {
 				dosLoadSlot = 9;
+			}
 			ImGui::SameLine();
 			if (ImGui::MenuItem("Load original DOS slot (SAVEGAME.N)")) {
-				// loadGameState slots 100..109 map to original DOS SAVEGAME.0..9
 				Common::Error err = g_engine->loadGameState(100 + dosLoadSlot);
-				if (err.getCode() != Common::kNoError)
+				if (err.getCode() != Common::kNoError) {
 					warning("Failed to load original DOS save SAVEGAME.%d", dosLoadSlot);
-				else
+				} else {
 					debug("Loaded original DOS save SAVEGAME.%d", dosLoadSlot);
+				}
 			}
 			if (ImGui::MenuItem("Reset Background + Fade")) {
 				View1 *view = (View1 *)g_engine->findView("View1");
@@ -2129,12 +2169,15 @@ void onImGuiRender() {
 					if (view->isInventorySourceProtagonist()) {
 						const uint16 currentScene = Scenes::instance()._currentSceneIndex;
 						for (GameObject *obj : GameObjects::instance()._objects) {
-							if (obj == nullptr)
+							if (obj == nullptr) {
 								continue;
-							if ((int16)obj->_sceneIndex < 0 || obj->_sceneIndex != currentScene)
+							}
+							if ((int16)obj->_sceneIndex < 0 || obj->_sceneIndex != currentScene) {
 								continue;
-							if (0x13 >= obj->_blobs.size() || obj->_blobs[0x13].empty())
+							}
+							if (0x13 >= obj->_blobs.size() || obj->_blobs[0x13].empty()) {
 								continue;
+							}
 							view->transferInventoryItem(view->_activeInventoryItem, obj);
 							view->_activeInventoryItem = nullptr;
 							view->setInventorySource(view->_inventorySource);
@@ -2149,25 +2192,13 @@ void onImGuiRender() {
 			}
 			ImGui::EndMenu();
 		}
-		ImGui::Text("| Scene: %d | Speed: %s", Scenes::instance()._currentSceneIndex,
+		ImGui::Separator();
+		ImGui::Text("Scene: %d | Speed: %s", Scenes::instance()._currentSceneIndex,
 					g_engine->_gameSpeedMode == 0 ? "Normal" : (g_engine->_gameSpeedMode == 1 ? "Fast" : "Slow"));
-		ImGui::EndMainMenuBar();
+		ImGui::EndMenuBar();
 	}
 
-	showScriptWindow();
-	showObjectScriptsWindow();
-	showBreakpointsWindow();
-	showVariablesWindow();
-	showCharactersWindow();
-	drawHoveredObjectOverlay();
-	showAnimViewerWindow();
-	showInventoryWindow();
-	showAnimationsWindow();
-	showSceneMapsWindow();
-	showImageResourcesWindow();
-	showDebugOutputWindow();
-	showTextLogWindow();
-	showSoundWindow();
+	ImGui::End();
 }
 
 static void showSoundWindow() {
