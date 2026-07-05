@@ -24,25 +24,17 @@
 
 class EventsTestSuite : public CxxTest::TestSuite {
 public:
-	void test_engine_action_hotspot_toggle() {
-		TS_ASSERT_EQUALS(Common::kEngineActionHotspotToggle, 20000);
+	void test_hotspots_show_event() {
+		Common::Event event;
+		event.type = Common::EVENT_HOTSPOTS_SHOW;
+
+		TS_ASSERT_EQUALS(event.type, Common::EVENT_HOTSPOTS_SHOW);
 	}
 
-	void test_custom_engine_action_event() {
+	void test_hotspots_hide_event() {
 		Common::Event event;
-		event.type = Common::EVENT_CUSTOM_ENGINE_ACTION_START;
-		event.customType = Common::kEngineActionHotspotToggle;
+		event.type = Common::EVENT_HOTSPOTS_HIDE;
 
-		TS_ASSERT_EQUALS(event.type, Common::EVENT_CUSTOM_ENGINE_ACTION_START);
-		TS_ASSERT_EQUALS(event.customType, Common::kEngineActionHotspotToggle);
-	}
-
-	void test_custom_engine_action_end_event() {
-		Common::Event event;
-		event.type = Common::EVENT_CUSTOM_ENGINE_ACTION_END;
-		event.customType = Common::kEngineActionHotspotToggle;
-
-		TS_ASSERT_EQUALS(event.type, Common::EVENT_CUSTOM_ENGINE_ACTION_END);
-		TS_ASSERT_EQUALS(event.customType, Common::kEngineActionHotspotToggle);
+		TS_ASSERT_EQUALS(event.type, Common::EVENT_HOTSPOTS_HIDE);
 	}
 };

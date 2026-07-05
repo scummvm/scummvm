@@ -377,6 +377,9 @@ EventType Keymapper::convertStartToEnd(EventType type) {
 	case EVENT_CUSTOM_ENGINE_ACTION_START:
 		result = EVENT_CUSTOM_ENGINE_ACTION_END;
 		break;
+	case EVENT_HOTSPOTS_SHOW:
+		result = EVENT_HOTSPOTS_HIDE;
+		break;
 	default:
 		break;
 	}
