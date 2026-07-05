@@ -83,6 +83,41 @@ bool inflateZlibInstallShield(byte *dst, uint dstLen, const byte *src, uint srcL
 	return true;
 }
 
+class SeekableDeobfuscationReadStream : public SeekableReadStream {
+protected:
+	DisposablePtr<SeekableReadStream> _parentStream;
+
+public:
+	SeekableDeobfuscationReadStream(SeekableReadStream *parentStream)
+		: _parentStream(parentStream, DisposeAfterUse::YES) {
+		assert(parentStream);
+	}
+
+	bool err() const override { return _parentStream->err(); }
+	void clearErr() override { _parentStream->clearErr(); }
+
+	bool eos() const override { return _parentStream->eos(); }
+
+	int64 pos() const override { return _parentStream->pos(); }
+	int64 size() const override { return _parentStream->size(); }
+	bool seek(int64 offset, int whence = SEEK_SET) { return _parentStream->seek(offset, whence); }
+
+#define ror8(x,n)   (((x) >> ((int)(n))) | ((x) << (8 - (int)(n))))
+
+	uint32 read(void *dataPtr, uint32 dataSize) override {
+		uint32 seed = _parentStream->pos();
+		uint32 res = _parentStream->read(dataPtr, dataSize);
+
+		byte *ptr = (byte *)dataPtr;
+
+		for (uint32 i = 0; i < dataSize; i++) {
+			ptr[i] = ror8(ptr[i] ^ 0xD5, 2) - ((seed + i) % 0x47);
+		}
+
+		return res;
+	}
+};
+
 class InstallShieldCabinet : public Archive {
 public:
 	InstallShieldCabinet();
@@ -133,6 +168,7 @@ private:
 
 	Path getHeaderName() const;
 	Path getVolumeName(uint volume) const;
+	SeekableReadStream *createReadStreamForMemberHelper(const Path &path) const;
 };
 
 InstallShieldCabinet::InstallShieldCabinet() : _version(0), _archive(nullptr) {
@@ -351,12 +387,17 @@ SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const Path &
 	if (!_map.contains(path))
 		return nullptr;
 
-	const FileEntry &entry = _map[path];
+	SeekableReadStream *stream = createReadStreamForMemberHelper(path);
 
-	if (entry.flags & kObfuscated) {
-		warning("Cannot extract obfuscated file %s", path.toString().c_str());
-		return nullptr;
-	}
+	const FileEntry &entry = _map[path];
+	if (entry.flags & kObfuscated)
+		stream = new SeekableDeobfuscationReadStream(stream);
+
+	return stream;
+}
+
+SeekableReadStream *InstallShieldCabinet::createReadStreamForMemberHelper(const Path &path) const {
+	const FileEntry &entry = _map[path];
 
 	ScopedPtr<SeekableReadStream> stream;
 	if (_archive) {
@@ -449,7 +490,7 @@ bool InstallShieldCabinet::readVolumeHeader(SeekableReadStream *volumeStream, In
 		return false;
 	}
 
-	// We support cabinet versions 5 - 13, but do not deobfuscate obfuscated files
+	// We support cabinet versions 5 - 13
 
 	uint32 magicBytes = volumeStream->readUint32LE();
 	int shift = magicBytes >> 24;
