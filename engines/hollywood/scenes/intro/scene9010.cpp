@@ -33,7 +33,6 @@ namespace Hollywood {
 
 const char *const kI01ArchiveName = "RESOURCE.I01";
 const char *const kI02ArchiveName = "RESOURCE.I02";
-const char *const kI03ArchiveName = "RESOURCE.I03";
 const char *const kStage003ArchiveName = "RESOURCE.003";
 const uint16 kPostIntroMusicCueId = 0x000e;
 const uint kStage003DecodeKeySize = 0x141;
@@ -79,16 +78,7 @@ Scene9010::Scene9010(HollywoodEngine *vm) :
 }
 
 bool Scene9010::play() {
-	if (!playScene9010())
-		return false;
-
-	if (!_skipRequested && !Engine::shouldQuit() && !playScene9030())
-		return false;
-
-	stopAudio();
-	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
-	presentFrame();
-	return true;
+	return playScene9010();
 }
 
 bool Scene9010::playScene9010() {
@@ -123,36 +113,6 @@ bool Scene9010::playScene9010() {
 
 	if (!playI02Animation())
 		return _skipRequested || Engine::shouldQuit();
-
-	return true;
-}
-
-bool Scene9010::playScene9030() {
-	if (!loadI03Scene())
-		return false;
-
-	presentFrame();
-	if (delay(5000))
-		return true;
-
-	uint32 elapsedRevealMillis = 0;
-	uint rowOffset = 0;
-	while (elapsedRevealMillis < 6000 && !_skipRequested && !Engine::shouldQuit()) {
-		if (rowOffset < 0x118) {
-			rowOffset += 4;
-			presentFrame(rowOffset);
-		}
-		if (delay(50))
-			return true;
-		elapsedRevealMillis += 50;
-	}
-
-	for (uint sweepOffset = 0; sweepOffset < 240 && !_skipRequested && !Engine::shouldQuit(); sweepOffset += 20) {
-		clearFinalSweepBand(0x118, sweepOffset, 0x14);
-		presentFrame(0x118);
-		if (delay(50))
-			return true;
-	}
 
 	return true;
 }
@@ -292,53 +252,6 @@ bool Scene9010::loadStage003Descriptors() {
 	}
 
 	debugC(1, kDebugResources, "Loaded %s stage 901 descriptors at offset=%u", kStage003ArchiveName, stageOffset);
-	return true;
-}
-
-bool Scene9010::loadI03Scene() {
-	Common::File file;
-	if (!file.open(Common::Path(kI03ArchiveName))) {
-		warning("Failed to open %s", kI03ArchiveName);
-		return false;
-	}
-
-	if (file.size() < 0x140) {
-		warning("%s is too small", kI03ArchiveName);
-		return false;
-	}
-
-	file.seek(0xa0);
-	const uint32 sceneByteCount = file.readUint32LE();
-	const uint32 paletteByteCount = file.readUint32LE();
-	if (sceneByteCount == 0 || sceneByteCount > _sceneFramebuffer.size() ||
-			0x140 + sceneByteCount + paletteByteCount > (uint32)file.size()) {
-		warning("%s has invalid scene span: scene=%u palette=%u", kI03ArchiveName, sceneByteCount, paletteByteCount);
-		return false;
-	}
-
-	file.seek(0x140);
-	if (kFrameDecodeBufferSize + sceneByteCount > _sceneFramebuffer.size()) {
-		warning("%s scene does not fit appended scene buffer", kI03ArchiveName);
-		return false;
-	}
-
-	if (file.read(_sceneFramebuffer.data() + kFrameDecodeBufferSize, sceneByteCount) != sceneByteCount) {
-		warning("Failed to read %s scene", kI03ArchiveName);
-		return false;
-	}
-
-	if (paletteByteCount != 0) {
-		if (paletteByteCount > _paletteSource.size()) {
-			warning("%s palette is too large: %u", kI03ArchiveName, paletteByteCount);
-			return false;
-		}
-		if (file.read(_paletteSource.data(), paletteByteCount) != paletteByteCount) {
-			warning("Failed to read %s palette", kI03ArchiveName);
-			return false;
-		}
-	}
-
-	debugC(1, kDebugResources, "Loaded %s scene=%u palette=%u", kI03ArchiveName, sceneByteCount, paletteByteCount);
 	return true;
 }
 
@@ -827,42 +740,6 @@ Scene9010::SpeechTextStyle Scene9010::getCurrentSpeechTextStyle() const {
 		return SpeechTextStyle{0x0e0, 0x108, kScene9010SpeechTextColor, 0x20, 0x3f, 0x3f};
 
 	return SpeechTextStyle{0x0c8, 0x106, kScene9010SpeechTextColor, 0x20, 0x3f, 0x3f};
-}
-
-void Scene9010::clearFinalSweepBand(uint rowOffset, uint sweepOffset, byte bandWidth) {
-	const int innerWidth = HollywoodEngine::kScreenWidth - (2 * (int)sweepOffset);
-	if (innerWidth <= 0)
-		return;
-
-	const int combinedInset = sweepOffset + bandWidth;
-	const int middleHeight = HollywoodEngine::kScreenHeight - (2 * combinedInset);
-	const int leftInset = sweepOffset;
-
-	for (uint row = 0; row < bandWidth; ++row) {
-		clearSceneFramebufferRun(rowOffset + sweepOffset + row, leftInset, innerWidth);
-		clearSceneFramebufferRun(rowOffset + (HollywoodEngine::kScreenHeight - bandWidth - sweepOffset) + row, leftInset, innerWidth);
-	}
-
-	if (middleHeight > 0) {
-		const int middleLeftX = leftInset;
-		const int middleRightX = sweepOffset + innerWidth - bandWidth;
-		for (int row = 0; row < middleHeight; ++row) {
-			const int y = rowOffset + combinedInset + row;
-			clearSceneFramebufferRun(y, middleLeftX, bandWidth);
-			clearSceneFramebufferRun(y, middleRightX, bandWidth);
-		}
-	}
-}
-
-void Scene9010::clearSceneFramebufferRun(int y, int x, int width) {
-	if (width <= 0 || y < 0 || x < 0)
-		return;
-
-	const uint offset = x + y * HollywoodEngine::kSceneBufferWidth;
-	if (offset + width > _sceneFramebuffer.size())
-		return;
-
-	memset(&_sceneFramebuffer[offset], 0, width);
 }
 
 bool Scene9010::pollEvents() {

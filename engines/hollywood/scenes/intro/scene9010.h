@@ -39,6 +39,9 @@ public:
 	Scene9010(HollywoodEngine *vm);
 
 	bool play();
+	bool skipRequested() const { return _skipRequested; }
+	const IndexedSurfaceBuffer &transitionFramebuffer() const { return _sceneFramebuffer; }
+	const Common::Array<byte> &transitionPalette() const { return _paletteCurrent; }
 
 private:
 	struct PopupDescriptor {
@@ -65,13 +68,11 @@ private:
 	};
 
 	bool playScene9010();
-	bool playScene9030();
 
 	bool loadScene9010Resources();
 	bool loadI01Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
 	bool loadI01Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
 	bool loadStage003Descriptors();
-	bool loadI03Scene();
 
 	bool runPoseTransition(bool targetAlternatePose);
 	bool playSpeechExchange(byte descriptorIndex);
@@ -99,9 +100,6 @@ private:
 		const SpeechTextStyle &speechTextStyle, uint16 &centerX, uint16 &topY) const;
 	PopupDescriptor getStage003PopupDescriptor(byte descriptorIndex) const;
 	SpeechTextStyle getCurrentSpeechTextStyle() const;
-
-	void clearFinalSweepBand(uint rowOffset, uint sweepOffset, byte bandWidth);
-	void clearSceneFramebufferRun(int y, int x, int width);
 
 	bool pollEvents();
 	bool delay(uint32 millis);

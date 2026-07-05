@@ -26,10 +26,14 @@
 #include "hollywood/scenes/intro/scene1000.h"
 #include "hollywood/scenes/intro/scene9000.h"
 #include "hollywood/scenes/intro/scene9010.h"
+#include "hollywood/scenes/intro/scene9030.h"
 #include "hollywood/scenes/intro/scene9050.h"
+#include "hollywood/scenes/intro/scene9090.h"
 #include "hollywood/scenes/intro/scene9100.h"
 #include "hollywood/scenes/intro/scene9110.h"
 #include "hollywood/scenes/intro/scene9120.h"
+#include "hollywood/scenes/intro/scene9130.h"
+#include "hollywood/scenes/intro/scene9150.h"
 #include "hollywood/scenes/playable/scene1010.h"
 #include "hollywood/scenes/playable/scene1020.h"
 #include "hollywood/scenes/playable/scene1030.h"
@@ -88,6 +92,7 @@
 #include "hollywood/scenes/playable/scene5100.h"
 #include "hollywood/scenes/playable/scene5110.h"
 #include "hollywood/scenes/playable/scene5120.h"
+#include "hollywood/scenes/playable/scene5130.h"
 #include "hollywood/scenes/playable/scene6000.h"
 #include "hollywood/scenes/playable/scene6010.h"
 #include "hollywood/scenes/playable/scene6020.h"
@@ -230,6 +235,8 @@ const int kScene5110FirstState = 0x13f6;
 const int kScene5110LastState = 0x13ff;
 const int kScene5120FirstState = 0x1400;
 const int kScene5120LastState = 0x1409;
+const int kScene5130FirstState = 0x140a;
+const int kScene5130LastState = 0x1413;
 const int kScene6000State = 6000;
 const int kScene6010FirstState = 0x177a;
 const int kScene6010LastState = 0x1783;
@@ -242,10 +249,13 @@ const int kScene8010FirstState = 0x1f4a;
 const int kScene8010LastState = 0x1f4b;
 const int kScene8020State = 0x1f54;
 const int kTravelScreenSelectionState = 0xffff;
+const int kScene9090State = 0x2382;
 const int kScene9101State = 0x238d;
+const int kScene9130State = 0x23aa;
+const int kScene9150State = 0x23be;
 
 bool isImplementedIntroSceneNumber(int sceneNumber) {
-	return sceneNumber == 9000 || sceneNumber == 9010 || sceneNumber == 9050 ||
+	return sceneNumber == 9000 || sceneNumber == 9010 || sceneNumber == 9030 || sceneNumber == 9050 ||
 		sceneNumber == 9100 || sceneNumber == 9110 || sceneNumber == 9120;
 }
 
@@ -309,6 +319,7 @@ bool isImplementedGameplayState(int stateId) {
 		(stateId >= kScene5100FirstState && stateId <= kScene5100LastState) ||
 		(stateId >= kScene5110FirstState && stateId <= kScene5110LastState) ||
 		(stateId >= kScene5120FirstState && stateId <= kScene5120LastState) ||
+		(stateId >= kScene5130FirstState && stateId <= kScene5130LastState) ||
 		stateId == kScene6000State ||
 		(stateId >= kScene6010FirstState && stateId <= kScene6010LastState) ||
 		(stateId >= kScene6020FirstState && stateId <= kScene6020LastState) ||
@@ -317,6 +328,9 @@ bool isImplementedGameplayState(int stateId) {
 		(stateId >= kScene8010FirstState && stateId <= kScene8010LastState) ||
 		stateId == kScene8020State ||
 		stateId == kTravelScreenSelectionState ||
+		stateId == kScene9090State ||
+		stateId == kScene9130State ||
+		stateId == kScene9150State ||
 		stateId == 7000 ||
 		(stateId >= 0x1b62 && stateId <= 0x1b6b) ||
 		stateId == 0x1b6c ||
@@ -390,6 +404,8 @@ int gameplayStateForBootParam(int bootParam) {
 		return kScene5110FirstState;
 	if (bootParam == 5120)
 		return kScene5120FirstState;
+	if (bootParam == 5130)
+		return kScene5130FirstState;
 	if (bootParam == 3040)
 		return kScene3040State;
 	if (bootParam == 3090)
@@ -447,6 +463,10 @@ void prepareGameplayStateForBootParam(GameplayState &state, int bootParam) {
 		state.scene2070InnerPassagePatchState = 1;
 		state.scene2080ForegroundState = 0;
 		state.scene2090EntryLineSeen = true;
+		break;
+	case 5130:
+		state.scene1070SpencerCocktailRecipeLearned = true;
+		state.scene5110SalonTransformState = 2;
 		break;
 	default:
 		break;
@@ -564,6 +584,17 @@ Common::Error HollywoodEngine::run() {
 		if (shouldRunSceneForBootParam(bootParam, 9010, bootSceneReached)) {
 			Scene9010 scene9010(this);
 			if (!scene9010.play())
+				return Common::kReadingFailed;
+
+			if (!scene9010.skipRequested() &&
+					shouldRunSceneForBootParam(bootParam, 9030, bootSceneReached)) {
+				Scene9030 scene9030(this, &scene9010.transitionFramebuffer(), &scene9010.transitionPalette());
+				if (!scene9030.play())
+					return Common::kReadingFailed;
+			}
+		} else if (shouldRunSceneForBootParam(bootParam, 9030, bootSceneReached)) {
+			Scene9030 scene9030(this);
+			if (!scene9030.play())
 				return Common::kReadingFailed;
 		}
 
@@ -1095,6 +1126,14 @@ Common::Error HollywoodEngine::run() {
 			continue;
 		}
 
+		if (stateId >= kScene5130FirstState && stateId <= kScene5130LastState) {
+			handledState = true;
+			Scene5130 scene5130(this);
+			if (!scene5130.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
 		if (stateId == kScene6000State) {
 			handledState = true;
 			Scene6000 scene6000(this);
@@ -1147,6 +1186,30 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene8020 scene8020(this);
 			if (!scene8020.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId == kScene9090State) {
+			handledState = true;
+			Scene9090 scene9090(this);
+			if (!scene9090.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId == kScene9130State) {
+			handledState = true;
+			Scene9130 scene9130(this);
+			if (!scene9130.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId == kScene9150State) {
+			handledState = true;
+			Scene9150 scene9150(this);
+			if (!scene9150.play())
 				return Common::kReadingFailed;
 			continue;
 		}
