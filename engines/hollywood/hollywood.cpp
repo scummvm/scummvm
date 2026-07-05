@@ -77,6 +77,12 @@
 #include "hollywood/scenes/playable/scene4110.h"
 #include "hollywood/scenes/playable/scene5000.h"
 #include "hollywood/scenes/playable/scene5010.h"
+#include "hollywood/scenes/playable/scene5020.h"
+#include "hollywood/scenes/playable/scene5030.h"
+#include "hollywood/scenes/playable/scene5040.h"
+#include "hollywood/scenes/playable/scene5050.h"
+#include "hollywood/scenes/playable/scene5060.h"
+#include "hollywood/scenes/playable/scene5070.h"
 #include "hollywood/scenes/playable/scene6000.h"
 #include "hollywood/scenes/playable/scene6010.h"
 #include "hollywood/scenes/playable/scene6020.h"
@@ -200,6 +206,16 @@ const int kScene4110LastState = 0x1017;
 const int kScene5000State = 5000;
 const int kScene5010FirstState = 0x1392;
 const int kScene5010LastState = 0x139b;
+const int kScene5020State = 0x139c;
+const int kScene5030FirstState = 0x13a6;
+const int kScene5030LastState = 0x13af;
+const int kScene5040FirstState = 0x13b0;
+const int kScene5040LastState = 0x13b9;
+const int kScene5050FirstState = 0x13ba;
+const int kScene5050LastState = 0x13c3;
+const int kScene5060FirstState = 0x13c4;
+const int kScene5060LastState = 0x13cd;
+const int kScene5070State = 0x13ce;
 const int kScene6000State = 6000;
 const int kScene6010FirstState = 0x177a;
 const int kScene6010LastState = 0x1783;
@@ -268,6 +284,12 @@ bool isImplementedGameplayState(int stateId) {
 		(stateId >= kScene4110FirstState && stateId <= kScene4110LastState) ||
 		stateId == kScene5000State ||
 		(stateId >= kScene5010FirstState && stateId <= kScene5010LastState) ||
+		stateId == kScene5020State ||
+		(stateId >= kScene5030FirstState && stateId <= kScene5030LastState) ||
+		(stateId >= kScene5040FirstState && stateId <= kScene5040LastState) ||
+		(stateId >= kScene5050FirstState && stateId <= kScene5050LastState) ||
+		(stateId >= kScene5060FirstState && stateId <= kScene5060LastState) ||
+		stateId == kScene5070State ||
 		stateId == kScene6000State ||
 		(stateId >= kScene6010FirstState && stateId <= kScene6010LastState) ||
 		(stateId >= kScene6020FirstState && stateId <= kScene6020LastState) ||
@@ -327,6 +349,18 @@ int gameplayStateForBootParam(int bootParam) {
 		return kScene2100FirstState;
 	if (bootParam == 2110)
 		return kScene2110FirstState;
+	if (bootParam == 5020)
+		return kScene5020State;
+	if (bootParam == 5030)
+		return kScene5030FirstState;
+	if (bootParam == 5040)
+		return kScene5040FirstState;
+	if (bootParam == 5050)
+		return kScene5050FirstState + 1;
+	if (bootParam == 5060)
+		return kScene5060FirstState;
+	if (bootParam == 5070)
+		return kScene5070State;
 	if (bootParam == 3040)
 		return kScene3040State;
 	if (bootParam == 3090)
@@ -940,6 +974,54 @@ Common::Error HollywoodEngine::run() {
 			handledState = true;
 			Scene5010 scene5010(this);
 			if (!scene5010.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId == kScene5020State) {
+			handledState = true;
+			Scene5020 scene5020(this);
+			if (!scene5020.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene5030FirstState && stateId <= kScene5030LastState) {
+			handledState = true;
+			Scene5030 scene5030(this);
+			if (!scene5030.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene5040FirstState && stateId <= kScene5040LastState) {
+			handledState = true;
+			Scene5040 scene5040(this);
+			if (!scene5040.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene5050FirstState && stateId <= kScene5050LastState) {
+			handledState = true;
+			Scene5050 scene5050(this);
+			if (!scene5050.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId >= kScene5060FirstState && stateId <= kScene5060LastState) {
+			handledState = true;
+			Scene5060 scene5060(this);
+			if (!scene5060.play())
+				return Common::kReadingFailed;
+			continue;
+		}
+
+		if (stateId == kScene5070State) {
+			handledState = true;
+			Scene5070 scene5070(this);
+			if (!scene5070.play())
 				return Common::kReadingFailed;
 			continue;
 		}

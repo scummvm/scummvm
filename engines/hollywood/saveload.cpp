@@ -349,6 +349,26 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene5010DestinationTableInitialized);
 	syncUint16Table(s, state.scene5010DestinationStateBySwitchSlot,
 		ARRAYSIZE(state.scene5010DestinationStateBySwitchSlot));
+	syncStateBool(s, state.scene5020ExplosivesCrateIdentified);
+	syncStateBool(s, state.scene5020WoodenPlankTaken);
+	syncStateBool(s, state.scene5030EntryLineSeen);
+	s.syncAsByte(state.scene5030DeckOfCardsState);
+	syncStateBool(s, state.scene5030MusiciansNamed);
+	syncStateBool(s, state.scene5040EntryLineSeen);
+	s.syncAsByte(state.scene5040MineGalleryState);
+	syncStateBool(s, state.scene5040LooseObjectTaken);
+	syncStateBool(s, state.scene5040OldSockTaken);
+	s.syncAsByte(state.scene5040DialState);
+	syncStateBool(s, state.scene5040KarlDialogueIntroSeen);
+	s.syncAsByte(state.scene5040SpecialTransitionState);
+	syncStateBool(s, state.scene5050EntryLineSeen);
+	syncStateBool(s, state.scene5050TrophyBoxTaken);
+	s.syncAsByte(state.scene5050PickupIndex);
+	syncStateBool(s, state.scene5060EntryLineSeen);
+	syncStateBool(s, state.scene5060GasSmelled);
+	syncStateBool(s, state.scene5060RockTaken);
+	syncStateBool(s, state.scene5070ShovelTaken);
+	s.syncAsByte(state.scene5070AviatorCapState);
 	syncStateBool(s, state.reviewedFrankensteinNote);
 	s.syncAsByte(state.frankensteinNoteOverlayMode);
 	s.syncAsByte(state.hannoverCourtyardDialogueState);
@@ -555,6 +575,16 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene4050RopeSwingState = 0;
 	if (state.scene5010MineTransportState > 4)
 		state.scene5010MineTransportState = 0;
+	if (state.scene5040MineGalleryState > 2)
+		state.scene5040MineGalleryState = 0;
+	if (state.scene5040DialState > 4)
+		state.scene5040DialState = 0;
+	if (state.scene5040SpecialTransitionState > 2)
+		state.scene5040SpecialTransitionState = 0;
+	if (state.scene5050PickupIndex > 3)
+		state.scene5050PickupIndex = 3;
+	if (state.scene5070AviatorCapState > 2)
+		state.scene5070AviatorCapState = 1;
 	if (state.scene5010SwitchRow > 2)
 		state.scene5010SwitchRow = 0;
 	if (state.scene5010SwitchColumn > 2)
@@ -568,6 +598,8 @@ void HollywoodEngine::normalizeLoadedGameState() {
 			state.scene5010DestinationTableInitialized = false;
 		}
 	}
+	if (state.scene5030DeckOfCardsState > 2)
+		state.scene5030DeckOfCardsState = 0;
 	if (state.scene6010DoorActionState > 3)
 		state.scene6010DoorActionState = 0;
 	if (state.scene8010FishermanConversationState > 2)
