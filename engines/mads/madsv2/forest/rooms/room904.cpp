@@ -93,7 +93,7 @@ static void room_904_init() {
 	global[g009] = -1;
 	viewing_at_y = 22;
 	aainfo[1]._val3 = 0;
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 
 	ss[6] = kernel_load_series("*main0", 0);
 	ss[8] = kernel_load_series("*main1", 0);
@@ -263,7 +263,7 @@ static void room_904_daemon() {
 		case 1:
 			// Credits
 			midi_stop();
-			global[player_score] = 0;
+			global[play_background_sounds] = 0;
 			global[g016] = -1;
 			global[g102] = -1;
 			new_room = 510;
@@ -291,7 +291,7 @@ static void room_904_daemon() {
 		case 4:
 			// Play Intro
 			room_904_setup_objects();
-			global[player_score] = 0;
+			global[play_background_sounds] = 0;
 			midi_stop();
 			flags[0] = -4;
 			global[g016] = -1;

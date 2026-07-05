@@ -80,7 +80,7 @@ static void room_501_anim5();
 static void room_501_init() {
 	midi_stop();
 	global[g009] = 0;
-	global[player_score] = -1;
+	global[play_background_sounds] = -1;
 	scratch._a6 = -1;
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
@@ -109,9 +109,9 @@ static void room_501_init1() {
 	global[g131] = 0;
 	global[g141] = 0;
 	scratch._9c = kernel_run_animation_disp('r', 4, 0);
-	kernel_position_anim(scratch._9c, 132, 127, 49, 7);
+	extra_change_animation(scratch._9c, 132, 127, 49, 7);
 	scratch._9a = kernel_run_animation_disp('e', 2, 0);
-	kernel_position_anim(scratch._9a, 112, 127, 49, 7);
+	extra_change_animation(scratch._9a, 112, 127, 49, 7);
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 79;
@@ -491,7 +491,7 @@ static void room_501_daemon() {
 		kernel_reset_animation(scratch._9a, 1);
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
-		global[player_score] = -1;
+		global[play_background_sounds] = -1;
 		player.commands_allowed = true;
 		break;
 
@@ -511,7 +511,7 @@ static void room_501_daemon() {
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			scratch._a0 = kernel_run_animation_write(0);
 			kernel_reset_animation(scratch._a0, 4);
-			kernel_position_anim(scratch._a0, 112, 127, 49, 7);
+			extra_change_animation(scratch._a0, 112, 127, 49, 7);
 			global[walker_converse_now] = 1;
 			global[g007] = 2;
 			kernel_synch(KERNEL_ANIM, scratch._a0, KERNEL_NOW, 0);
@@ -560,7 +560,7 @@ static void room_501_parser() {
 	}
 
 	if (player_parse(words_look_at, words_snapdragon, 0)) {
-		global[player_score] = 0;
+		global[play_background_sounds] = 0;
 		digi_stop(3);
 		player.commands_allowed = false;
 		global[g135] = -1;
@@ -570,7 +570,7 @@ static void room_501_parser() {
 	}
 
 	if (player_parse(words_look_at, words_snapdragon2, 0)) {
-		global[player_score] = 0;
+		global[play_background_sounds] = 0;
 		digi_stop(3);
 		player.commands_allowed = false;
 		global[g135] = -1;
@@ -580,7 +580,7 @@ static void room_501_parser() {
 	}
 
 	if (player_parse(words_look_at, words_primrose, 0)) {
-		global[player_score] = 0;
+		global[play_background_sounds] = 0;
 		digi_stop(3);
 		player.commands_allowed = false;
 		global[g135] = -1;

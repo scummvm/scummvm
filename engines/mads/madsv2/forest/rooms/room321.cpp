@@ -78,9 +78,9 @@ static void room_321_init1() {
 	global[g141] = 0;
 
 	scratch._9c = kernel_run_animation_disp('r', 6, 0);
-	kernel_position_anim(scratch._9c, 83, 131, 92, 6);
+	extra_change_animation(scratch._9c, 83, 131, 92, 6);
 	scratch._9a = kernel_run_animation_disp('e', 6, 0);
-	kernel_position_anim(scratch._9a, 109, 139, 94, 5);
+	extra_change_animation(scratch._9a, 109, 139, 94, 5);
 
 	aa[4] = kernel_run_animation(kernel_name('L', 5), 104);
 	aainfo[4]._active = -1;
@@ -711,7 +711,7 @@ static void room_321_daemon() {
 			room_321_anim2();
 			kernel_flip_hotspot(words_reeds, false);
 			inter_move_object(6, PLAYER);
-			global[player_score] = -1;
+			global[play_background_sounds] = -1;
 			player.commands_allowed = true;
 		} else if (scratch._a6 == 2) {
 			dont_frag_the_palette();
@@ -728,7 +728,7 @@ static void room_321_daemon() {
 			if (!player_has(pebbles))
 				inter_move_object(pebbles, PLAYER);
 			global[g068] = -1;
-			global[player_score] = -1;
+			global[play_background_sounds] = -1;
 			player.commands_allowed = true;
 		}
 		break;
@@ -779,7 +779,7 @@ static void room_321_parser() {
 	}
 
 	if (player_parse(words_look_at, words_chicory, 0)) {
-		global[player_score] = 0;
+		global[play_background_sounds] = 0;
 		digi_stop(3);
 		player.commands_allowed = false;
 		global[g135] = -1;
@@ -789,7 +789,7 @@ static void room_321_parser() {
 	}
 
 	if (player_parse(words_look_at, words_foxglove, 0)) {
-		global[player_score] = 0;
+		global[play_background_sounds] = 0;
 		digi_stop(3);
 		player.commands_allowed = false;
 		global[g135] = -1;
@@ -800,11 +800,11 @@ static void room_321_parser() {
 
 	if (player_parse(words_pick_up, words_reeds, 0)) {
 		global[g154] = 2;
-		global[player_score] = 0;
+		global[play_background_sounds] = 0;
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		scratch._9e = kernel_run_animation_talk('b', 1, 0);
-		kernel_position_anim(scratch._9e, player.x, player.y, player.scale, player.depth);
+		extra_change_animation(scratch._9e, player.x, player.y, player.scale, player.depth);
 		kernel_synch(KERNEL_ANIM, scratch._9e, KERNEL_PLAYER, 0);
 		digi_play_build_ii('b', 3, 1);
 		scratch._a8 = 400;
@@ -814,11 +814,11 @@ static void room_321_parser() {
 
 	if (player_parse(words_pick_up, words_pebbles, 0)) {
 		global[g154] = 2;
-		global[player_score] = 0;
+		global[play_background_sounds] = 0;
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		scratch._9e = kernel_run_animation_talk('b', 3, 0);
-		kernel_position_anim(scratch._9e, player.x, player.y, player.scale, player.depth);
+		extra_change_animation(scratch._9e, player.x, player.y, player.scale, player.depth);
 		kernel_synch(KERNEL_ANIM, scratch._9e, KERNEL_PLAYER, 0);
 		digi_play_build_ii('b', 3, 1);
 		scratch._a8 = 300;

@@ -106,7 +106,7 @@ static void room_401_anim_state(int16 state) {
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 		player.commands_allowed = true;
 		player.walker_visible = true;
-		if (config_file.forest1) {
+		if (config_file.misc2) {
 			digi_stop(1);
 			kernel_timing_trigger(1, 106);
 		}
@@ -207,7 +207,7 @@ static void room_401_anim2() {
 					result = 22;
 				} else if (frame < 25) {
 					if (frame == 15) {
-						if (!global[g066])
+						if (!global[phineas_status])
 							digi_play_build(401, 'r', 1, 1);
 						else
 							digi_play_build(401, 'r', 2, 1);
@@ -229,7 +229,7 @@ static void room_401_anim2() {
 					} else if (frame == 32) {
 						result = 29;
 					} else if (frame == 35) {
-						if (config_file.forest1)
+						if (config_file.misc2)
 							kernel_timing_trigger(1, 106);
 					}
 				}
@@ -369,9 +369,9 @@ static void room_401_init1() {
 	global[g141] = 0;
 
 	scratch._9c = kernel_run_animation_disp('r', 3, 0);
-	kernel_position_anim(scratch._9c, 228, 132, 82, 4);
+	extra_change_animation(scratch._9c, 228, 132, 82, 4);
 	scratch._9a = kernel_run_animation_disp('e', 2, 0);
-	kernel_position_anim(scratch._9a, 252, 115, 76, 7);
+	extra_change_animation(scratch._9a, 252, 115, 76, 7);
 
 	if (previous_room != KERNEL_RESTORING_GAME && previous_room != 199) {
 		player_demand_facing(7);
@@ -436,11 +436,11 @@ static void room_401_init() {
 	scratch._a2 = -1;
 	midi_stop();
 
-	if (!flags[31] || !global[g066])
+	if (!flags[31] || !global[phineas_status])
 		kernel_flip_hotspot(words_room_404, false);
 
 	kernel_timing_trigger(1, 106);
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	scratch._98 = 0;
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
@@ -471,7 +471,7 @@ static void room_401_daemon() {
 		global[walker_converse_state] = 0;
 		close_interface(CANDLE_FLY);
 		player.commands_allowed = true;
-		if (config_file.forest1)
+		if (config_file.misc2)
 			kernel_timing_trigger(1, 106);
 		break;
 

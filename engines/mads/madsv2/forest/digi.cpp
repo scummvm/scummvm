@@ -31,7 +31,8 @@ namespace MADSV2 {
 namespace Forest {
 
 int digi_val2;
-int digi_timing_index;
+int digi_trigger_effect;
+bool digi_trigger_dialog = false;
 bool digi_flag1, digi_flag2;
 
 DigiPlayer::DigiPlayer(Audio::Mixer *mixer) : _mixer(mixer) {
@@ -40,7 +41,7 @@ DigiPlayer::DigiPlayer(Audio::Mixer *mixer) : _mixer(mixer) {
 	_channels[2]._triggerId = 9;
 
 	digi_val2 = 0;
-	digi_timing_index = 0;
+	digi_trigger_effect = 0;
 	digi_flag1 = digi_flag2 = false;
 }
 

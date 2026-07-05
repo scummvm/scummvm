@@ -103,7 +103,7 @@ static void room_199_init1() {
 }
 
 static void room_199_init() {
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	global[g009] = -1;
 	global_midi_play(7);
 

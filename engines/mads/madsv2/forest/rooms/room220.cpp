@@ -61,7 +61,7 @@ static Scratch scratch;
 
 
 static void room_220_init() {
-	global[player_score] = -1;
+	global[play_background_sounds] = -1;
 	global[g009] = -1;
 	global_midi_play(10);
 	viewing_at_y = 22;

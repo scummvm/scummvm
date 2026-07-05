@@ -72,7 +72,7 @@ static void room_221_init1();
 static void room_221_init() {
 	scratch._a0 = 0;
 	midi_stop();
-	global[player_score] = -1;
+	global[play_background_sounds] = -1;
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		if (previous_room != 199) {
@@ -102,9 +102,9 @@ static void room_221_init1() {
 	global[g141] = 0;
 
 	scratch._9c = kernel_run_animation_disp('r', 6, 0);
-	kernel_position_anim(scratch._9c, 122, 137, 100, 3);
+	extra_change_animation(scratch._9c, 122, 137, 100, 3);
 	scratch._9a = kernel_run_animation_disp('e', 4, 0);
-	kernel_position_anim(scratch._9a, 183, 135, 100, 3);
+	extra_change_animation(scratch._9a, 183, 135, 100, 3);
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 150;

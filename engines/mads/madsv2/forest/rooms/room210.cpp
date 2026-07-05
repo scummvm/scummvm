@@ -76,10 +76,10 @@ static void room_210_init1() {
 	global[g141] = 0;
 
 	scratch._a4 = kernel_run_animation_disp('r', 9, 0);
-	kernel_position_anim(scratch._a4, 147, 155, 80, 1);
+	extra_change_animation(scratch._a4, 147, 155, 80, 1);
 
 	scratch._a2 = kernel_run_animation_disp('e', 7, 0);
-	kernel_position_anim(scratch._a2, 95, 155, 80, 1);
+	extra_change_animation(scratch._a2, 95, 155, 80, 1);
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 120;
@@ -154,7 +154,7 @@ static void room_210_init1() {
 static void room_210_init() {
 	midi_stop();
 	scratch._a8 = -1;
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	// TODO: identify word_7130E — used as an index to select which 16-bit half of
 	// global.walker_timing to zero: global[walker_timing + word_7130E] = 0
 	global[walker_timing] = 0;
@@ -385,13 +385,13 @@ static void room_210_daemon() {
 		case 3:
 			aainfo[8]._frame = 12;
 			kernel_reset_animation(aa[8], 12);
-			if (config_file.forest1 != 0) kernel_timing_trigger(1, 109);
+			if (config_file.misc2 != 0) kernel_timing_trigger(1, 109);
 			break;
 		case 4:
 			global[walker_converse_state] = 0;
 			close_interface(CANDLE_FLY);
 			player.commands_allowed = true;
-			if (config_file.forest1 != 0) kernel_timing_trigger(1, 109);
+			if (config_file.misc2 != 0) kernel_timing_trigger(1, 109);
 			break;
 		}
 		scratch._a6 = 0;

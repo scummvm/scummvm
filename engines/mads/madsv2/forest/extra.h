@@ -79,12 +79,10 @@ extern void do_interface();
 
 extern void stamp_sprite_to_interface(int x, int y, int sprite, int series);
 extern void delete_sprite_in_interface(int series);
-extern void extra_change_animation(int handle, int x, int y, byte scale, byte depth);
-extern void extra_shift_animation(int handle, int x, int y, byte scale);
-extern void extra_blank_knothole();
 extern void inter_update_series(int series_id);
 extern void open_interface(InterfaceButton button);
 extern void close_interface(InterfaceButton button);
+extern void extra_change_animation(int handle, int x, int y, int scale, int depth);
 
 } // namespace Forest
 } // namespace MADSV2

@@ -78,7 +78,7 @@ static Scratch scratch;
 static void room_101_init1() {
 	global[g009] = -1;
 	viewing_at_y = 22;
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	player.walker_visible = false;
 	player.commands_allowed = false;
 	mouse_hide();
@@ -97,7 +97,7 @@ static void room_101_init1() {
 
 static void room_101_init2() {
 	player.commands_allowed = false;
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 
 	ss[3] = kernel_load_series(kernel_name('p', 7), 0);
 	seq[3] = kernel_seq_stamp(ss[3], 0, -1);
@@ -109,9 +109,9 @@ static void room_101_init2() {
 	global[g141] = 0;
 
 	scratch._russell = kernel_run_animation_disp('r', 3, 0);
-	kernel_position_anim(scratch._russell, 123, 134, 69, 7);
+	extra_change_animation(scratch._russell, 123, 134, 69, 7);
 	scratch._edgar = kernel_run_animation_disp('e', 1, 0);
-	kernel_position_anim(scratch._edgar, 194, 145, 75, 4);
+	extra_change_animation(scratch._edgar, 194, 145, 75, 4);
 
 	global[g009] = -1;
 	global_midi_play(8);
@@ -130,16 +130,16 @@ static void room_101_init2() {
 
 static void room_101_init3() {
 	player.commands_allowed = false;
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	global[g009] = 0;
 	midi_stop();
 	global[g131] = 0;
 	global[g141] = 0;
 
 	scratch._russell = kernel_run_animation_disp('r', 3, 0);
-	kernel_position_anim(scratch._russell, 123, 134, 69, 7);
+	extra_change_animation(scratch._russell, 123, 134, 69, 7);
 	scratch._edgar = kernel_run_animation_disp('e', 1, 0);
-	kernel_position_anim(scratch._edgar, 194, 145, 75, 4);
+	extra_change_animation(scratch._edgar, 194, 145, 75, 4);
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 96;
@@ -749,7 +749,7 @@ static void room_101_daemon() {
 			global[g154] = 2;
 			player.commands_allowed = false;
 			scratch._a8 = kernel_run_animation_talk('b', 7, 0);
-			kernel_position_anim(scratch._a8, player.x, player.y, player.scale, player.depth);
+			extra_change_animation(scratch._a8, player.x, player.y, player.scale, player.depth);
 			scratch._b2 = -1;
 			kernel_synch(KERNEL_ANIM, scratch._a8, KERNEL_PLAYER, 0);
 			digi_play_build_ii('b', 2, 1);
@@ -760,7 +760,7 @@ static void room_101_daemon() {
 			player.commands_allowed = false;
 			player.walker_visible = false;
 			scratch._a8 = kernel_run_animation_talk('b', 6, 0);
-			kernel_position_anim(scratch._a8, player.x, player.y, player.scale, player.depth);
+			extra_change_animation(scratch._a8, player.x, player.y, player.scale, player.depth);
 			scratch._b2 = -1;
 			kernel_synch(KERNEL_ANIM, scratch._a8, KERNEL_PLAYER, 0);
 			digi_play_build_ii('b', 1, 1);
@@ -773,7 +773,7 @@ static void room_101_daemon() {
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			global[g154] = 2;
 			scratch._a8 = kernel_run_animation_talk('b', 4, 0);
-			kernel_position_anim(scratch._a8, player.x, player.y, player.scale, player.depth);
+			extra_change_animation(scratch._a8, player.x, player.y, player.scale, player.depth);
 			scratch._b2 = -1;
 			kernel_synch(KERNEL_ANIM, scratch._a8, KERNEL_PLAYER, 0);
 			digi_play_build_ii('b', 2, 1);

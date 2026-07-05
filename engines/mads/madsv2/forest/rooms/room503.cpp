@@ -136,7 +136,7 @@ static void room_503_init() {
 }
 
 static void room_503_init1() {
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	player.walker_visible = false;
 	player.commands_allowed = false;
 
@@ -189,7 +189,7 @@ static void room_503_init1() {
 
 static void room_503_init2() {
 	viewing_at_y = 22;
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	player.walker_visible = false;
 	player.commands_allowed = false;
 	mouse_hide();
@@ -199,7 +199,7 @@ static void room_503_init2() {
 }
 
 static void room_503_init3() {
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	player.walker_visible = false;
 	player.commands_allowed = false;
 

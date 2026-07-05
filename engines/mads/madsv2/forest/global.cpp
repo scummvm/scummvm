@@ -20,27 +20,40 @@
  */
 
 #include "common/textconsole.h"
-#include "mads/madsv2/forest/digi.h"
-#include "mads/madsv2/core/object.h"
-#include "mads/madsv2/core/player.h"
-#include "mads/madsv2/core/text.h"
+#include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/error.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/core/kernel.h"
-#include "mads/madsv2/forest/midi.h"
+#include "mads/madsv2/core/object.h"
 #include "mads/madsv2/core/pal.h"
+#include "mads/madsv2/core/player.h"
+#include "mads/madsv2/core/text.h"
+#include "mads/madsv2/forest/digi.h"
+#include "mads/madsv2/forest/midi.h"
 #include "mads/madsv2/forest/mads/words.h"
-#include "mads/madsv2/forest/global.h"
 #include "mads/madsv2/forest/extra.h"
+#include "mads/madsv2/forest/global.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace Forest {
 
+#define MOVE_YOUR_BUTT_TIMEOUT 3600
+
 int16 flags[40];
-bool room_203_flag;
 bool inv_enable_command;
+
+long noise_clock;
+long noise_timer;
+int noise_length = -1;
+int last_bird_sound = -1;
+bool lets_get_a_move_on_anim = true;
+int move_your_butt_anim_handle = -1;
+bool move_your_butt_enabled = true;
+long move_your_butt_timer;
+long move_your_butt_clock;
+int move_your_butt_anim_frame = -1;
 
 namespace Rooms {
 
@@ -93,6 +106,19 @@ extern void room_903_synchronize(Common::Serializer &s);
 extern void room_904_synchronize(Common::Serializer &s);
 
 } // namespace Rooms
+
+void global_init() {
+	noise_clock = 0;
+	noise_timer = 0;
+	noise_length = -1;
+	last_bird_sound = -1;
+	lets_get_a_move_on_anim = true;
+	move_your_butt_anim_handle = -1;
+	move_your_butt_enabled = true;
+	move_your_butt_timer = 0;
+	move_your_butt_clock = 0;
+	move_your_butt_anim_frame = -1;
+}
 
 void global_section_constructor() {
 	section_preload_code_pointer = NULL;
@@ -197,7 +223,6 @@ void global_section_interface() {
 	Common::strcpy_s(kernel.interface, kernel_interface_name(0));
 	pal_change_color(254, 56, 47, 32);
 }
-
 
 static void global_anim1_1(int arg_0, int arg_2, int16 *arg_4) {
 	if (kernel_anim[arg_0].frame == *arg_4)
@@ -907,7 +932,7 @@ void global_room_init() {
 	global[g151] = -1;
 	global[g152] = -1;
 	global[g153] = -1;
-	room_203_flag = true;
+	lets_get_a_move_on_anim = true;
 	global[g131] = 0;
 	global[g130] = 0;
 	global[g135] = 0;
@@ -1109,6 +1134,220 @@ void global_anim3(int handle, int16 *frame) {
 	if (var_2 >= 0) {
 		kernel_reset_animation(handle, var_2);
 		*frame = var_2;
+	}
+}
+
+static void do_looping_sounds() {
+	switch (room_id) {
+	case 304:
+		// do water trickle
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
+		kernel_timing_trigger(1, 107);  // PLAY_MORE_TRICKLE
+		break;
+
+	case 305:
+		// do bird crowd
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
+		kernel_timing_trigger(1, 109);  // DO_CROWD
+		break;
+
+	case 306:
+		if (global[phineas_status] <= PHIN_IS_IN_CONTROL_AGAIN) {
+			// bird crowd talking
+			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
+			kernel_timing_trigger(1, 117);  // DO_CROWD
+		} else {
+			// water flowing
+			kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
+			kernel_timing_trigger(1, 118);  // DO_WATER
+		}
+		break;
+
+	case 401:
+		// do dragon noise
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
+		kernel_timing_trigger(1, 106);  // DRAGON_NOISE
+		break;
+
+	case 403:
+		// do water noise
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
+		kernel_timing_trigger(1, 105);  // WATER
+		break;
+
+	case 404:
+		// do dragon noise
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
+		kernel_timing_trigger(1, 110);  // DRAGON_NOISE
+		break;
+
+	case 405:
+		// do dragon noise
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
+		kernel_timing_trigger(1, 106);  // DRAGON_NOISE
+		break;
+
+	case 210:
+		// rush MORE_RUSH_RUSH
+		kernel.trigger_setup_mode = KERNEL_TRIGGER_DAEMON;
+		kernel_timing_trigger(1, 109);  // MORE_RUSH_RUSH
+		break;
+
+	}
+}
+
+void global_game_main_loop() {
+	static char temp_buf_2[20];
+	static char temp_buf_3[20];
+	static char temp_buf_4[20];
+	int yy;
+	long dif;
+
+	// Please play the damn targets
+	if (global[play_background_sounds]) {
+		// This is for the background sound efx
+		dif = kernel.clock - noise_clock;
+		if ((dif >= 0) && (dif <= 4)) {
+			noise_timer += dif;
+		} else {
+			noise_timer += 1;
+		}
+
+		noise_clock = kernel.clock;
+
+		if (noise_length == -1) {
+			if (room_id == 220 || room_id == 221 || room_id == 307 || room_id == 322 || room_id == 420 ||
+				room_id == 308 || room_id == 204 || room_id == 211) {
+				// Night time
+				noise_length = imath_random(50, 80);
+
+			} else {
+				// Day time
+				noise_length = imath_random(150, 220);
+			}
+		}
+
+		if (noise_timer >= (noise_length + global[perform_displacements])) {
+			if (room_id == 220 || room_id == 221 || room_id == 307 || room_id == 322 || room_id == 420 ||
+				room_id == 308 || room_id == 204 || room_id == 211) {
+				// Night time
+				digi_trigger_effect = false;
+				digi_play_build(220, '_', 5, 2);
+			} else {
+				// Day time
+
+				// Pick a new bird sound. Don't repeat identical sounds
+				do {
+					yy = imath_random(1, 6);
+				} while (yy == last_bird_sound);
+				last_bird_sound = (byte)yy;
+
+				digi_trigger_effect = false;
+
+				switch (yy) {
+				case 1: digi_play_build(321, '_', 500, 2); break;
+				case 2: digi_play_build(321, '_', 501, 2); break;
+				case 3: digi_play_build(321, '_', 502, 2); break;
+				case 4: digi_play_build(321, '_', 503, 2); break;
+				case 5: digi_play_build(321, '_', 504, 2); break;
+				case 6: digi_play_build(321, '_', 505, 2); break;
+				}
+			}
+
+			noise_length = -1;
+			noise_timer = 0;
+		}
+	}
+
+	if (player.walker_visible && player.commands_allowed && section_id != 9 && lets_get_a_move_on_anim &&
+		!player.walking && !player.need_to_walk && move_your_butt_anim_handle == -1) {
+		move_your_butt_enabled = true;
+	} else {
+		move_your_butt_enabled = false;
+		move_your_butt_timer = 0;
+	}
+
+	if (move_your_butt_enabled) {
+		// This is for the background sound efx
+		dif = kernel.clock - move_your_butt_clock;
+		if ((dif >= 0) && (dif <= 4)) {
+			move_your_butt_timer += dif;
+		} else {
+			move_your_butt_timer += 1;
+		}
+		move_your_butt_clock = kernel.clock;
+
+		if (move_your_butt_timer >= MOVE_YOUR_BUTT_TIMEOUT) {
+			player.commands_allowed = false;
+			player.walker_visible = false;
+			player.clock = kernel.clock;
+			move_your_butt_anim_handle = kernel_run_animation("*b_2t", 0);
+			extra_change_animation(move_your_butt_anim_handle, player.x, player.y, player.scale, player.depth);
+			kernel_synch(KERNEL_ANIM, move_your_butt_anim_handle, KERNEL_NOW, 0);
+
+			switch (player.facing) {
+			case 8:
+				kernel_reset_animation(move_your_butt_anim_handle, 21);
+				break;
+
+			case 9:
+				kernel_reset_animation(move_your_butt_anim_handle, 22);
+				break;
+
+			case 6:
+				kernel_reset_animation(move_your_butt_anim_handle, 23);
+				break;
+
+			case 7:
+				kernel_reset_animation(move_your_butt_anim_handle, 26);
+				break;
+
+			case 4:
+				kernel_reset_animation(move_your_butt_anim_handle, 27);
+				break;
+
+			default:
+				kernel_reset_animation(move_your_butt_anim_handle, 24);
+				break;
+			}
+
+			do_looping_sounds();
+		}
+	}
+
+	if (move_your_butt_anim_handle != -1) {
+		if (kernel_anim[move_your_butt_anim_handle].frame != move_your_butt_anim_frame) {
+			move_your_butt_anim_frame = kernel_anim[move_your_butt_anim_handle].frame;
+
+			switch (move_your_butt_anim_frame) {
+			case 24:  // ab in a 2
+			case 28:  // ab in a 2
+				// AB we need to keep moving, michelle needs those herbs
+				digi_trigger_dialog = false;
+				digi_play_build_ii('b', 4, 1);
+				kernel_reset_animation(move_your_butt_anim_handle, 0);
+				move_your_butt_anim_frame = 0;
+				break;
+
+			case 20:
+				// end of talking
+				// end AB we need to keep moving, michelle needs those herbs
+				dont_frag_the_palette();
+				kernel_abort_animation(move_your_butt_anim_handle);
+				move_your_butt_anim_handle = -1;
+
+				move_your_butt_timer = 0;
+				player.walker_visible = true;
+				player.commands_allowed = true;
+				kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
+				player_demand_facing(FACING_SOUTH);
+
+				if (config_file.misc2) {
+					do_looping_sounds();
+				}
+				break;
+			}
+		}
 	}
 }
 

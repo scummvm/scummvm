@@ -82,9 +82,9 @@ static void room_322_init1() {
 
 	if (previous_room != 308 && previous_room != 301) {
 		scratch._a6 = kernel_run_animation_disp('r', 9, 0);
-		kernel_position_anim(scratch._a6, 18, 130, 95, 3);
+		extra_change_animation(scratch._a6, 18, 130, 95, 3);
 		scratch._a4 = kernel_run_animation_disp('e', 6, 0);
-		kernel_position_anim(scratch._a4, 71, 81, 87, 7);
+		extra_change_animation(scratch._a4, 71, 81, 87, 7);
 	} else {
 		scratch._a4 = -1;
 	}
@@ -441,7 +441,7 @@ static void room_322_daemon() {
 			scratch._b4 = -1;
 			scratch._aa = 0;
 			scratch._a8 = kernel_run_animation_point(1, 104);
-			kernel_position_anim(scratch._a8, player.x, player.y, player.scale, player.depth);
+			extra_change_animation(scratch._a8, player.x, player.y, player.scale, player.depth);
 			kernel_synch(KERNEL_ANIM, scratch._a8, KERNEL_NOW, 0);
 		} else if (scratch._b4 == 41) {
 			dont_frag_the_palette();
@@ -449,7 +449,7 @@ static void room_322_daemon() {
 			scratch._b4 = -1;
 			scratch._aa = 0;
 			scratch._a8 = kernel_run_animation_point(3, 105);
-			kernel_position_anim(scratch._a8, player.x, player.y, player.scale, player.depth);
+			extra_change_animation(scratch._a8, player.x, player.y, player.scale, player.depth);
 			kernel_synch(KERNEL_ANIM, scratch._a8, KERNEL_NOW, 0);
 		}
 		break;
@@ -622,13 +622,13 @@ static void room_322_daemon() {
 			scratch._a6 = kernel_run_animation_disp('r', 9, 0);
 			global[g141] = -1;
 			global[g143] = 0;
-			kernel_position_anim(scratch._a6, 18, 130, 95, 3);
+			extra_change_animation(scratch._a6, 18, 130, 95, 3);
 			kernel_reset_animation(scratch._a6, 1);
 			kernel_synch(KERNEL_ANIM, scratch._a6, KERNEL_NOW, 0);
 			scratch._a4 = kernel_run_animation_disp('e', 6, 0);
 			global[g131] = -1;
 			global[g133] = 0;
-			kernel_position_anim(scratch._a4, 71, 81, 87, 7);
+			extra_change_animation(scratch._a4, 71, 81, 87, 7);
 		}
 		kernel_reset_animation(scratch._a4, 1);
 		kernel_synch(KERNEL_ANIM, scratch._a4, KERNEL_NOW, 0);
@@ -736,7 +736,7 @@ static void room_322_parser() {
 		player.walker_visible = false;
 		player.commands_allowed = false;
 		scratch._ae = kernel_run_animation_talk('b', 2, 0);
-		kernel_position_anim(scratch._ae, player.x, player.y, player.scale, player.depth);
+		extra_change_animation(scratch._ae, player.x, player.y, player.scale, player.depth);
 		kernel_synch(KERNEL_ANIM, scratch._ae, KERNEL_PLAYER, 0);
 		digi_play_build_ii('b', 1, 1);
 		scratch._b4 = 41;
@@ -750,7 +750,7 @@ static void room_322_parser() {
 		player.walker_visible = false;
 		player.commands_allowed = false;
 		scratch._ae = kernel_run_animation_talk('b', 1, 0);
-		kernel_position_anim(scratch._ae, player.x, player.y, player.scale, player.depth);
+		extra_change_animation(scratch._ae, player.x, player.y, player.scale, player.depth);
 		kernel_synch(KERNEL_ANIM, scratch._ae, KERNEL_PLAYER, 0);
 		digi_play_build_ii('b', 1, 1);
 		scratch._b4 = 4;

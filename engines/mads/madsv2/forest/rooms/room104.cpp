@@ -86,7 +86,7 @@ static void room_104_anim8();
 
 static void room_104_init() {
 	scratch._a0 = -1;
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 
 	for (int count = 0; count < 10; count++) {
 		aainfo[count]._active = 0;
@@ -149,7 +149,7 @@ static void room_104_init() {
 }
 
 static void room_104_init1() {
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	global[g009] = -1;
 	global_midi_play(8);
 	viewing_at_y = 22;
@@ -167,7 +167,7 @@ static void room_104_init1() {
 }
 
 static void room_104_init2() {
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	global[g009] = 0;
 	midi_stop();
 	viewing_at_y = 22;
@@ -191,9 +191,9 @@ static void room_104_init3() {
 	global[g141] = 0;
 
 	scratch._9c = kernel_run_animation_disp('r', 4, 0);
-	kernel_position_anim(scratch._9c, 265, 111, 87, 14);
+	extra_change_animation(scratch._9c, 265, 111, 87, 14);
 	scratch._9a = kernel_run_animation_disp('e', 4, 0);
-	kernel_position_anim(scratch._9a, 248, 137, 94, 3);
+	extra_change_animation(scratch._9a, 248, 137, 94, 3);
 
 	aa[4] = kernel_run_animation(kernel_name('C', 1), 0);
 	aainfo[4]._active = -1;

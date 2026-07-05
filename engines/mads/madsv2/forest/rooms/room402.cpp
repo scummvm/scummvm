@@ -90,9 +90,9 @@ static void room_402_init1() {
 	global[g141] = 0;
 
 	scratch._9c = kernel_run_animation_disp('r', 1, 0);
-	kernel_position_anim(scratch._9c, 71, 128, 63, 5);
+	extra_change_animation(scratch._9c, 71, 128, 63, 5);
 	scratch._9a = kernel_run_animation_disp('e', 2, 0);
-	kernel_position_anim(scratch._9a, 112, 131, 65, 5);
+	extra_change_animation(scratch._9a, 112, 131, 65, 5);
 
 	if (previous_room != KERNEL_RESTORING_GAME && previous_room != 199) {
 		player_demand_facing(3);
@@ -128,7 +128,7 @@ static void room_402_init1() {
 		aainfo[1]._frame = 0;
 		scratch._98 = 20;
 		room_402_init2();
-		global[player_score] = 0;
+		global[play_background_sounds] = 0;
 		return;
 	case 1:
 		aa[1] = kernel_run_animation(kernel_name('L', 2), 103);
@@ -167,14 +167,14 @@ static void room_402_init1() {
 		return;
 	}
 
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	global_midi_play(15);
 }
 
 static void room_402_init() {
 	scratch._90 = 0;
 	scratch._a0 = 0;
-	global[player_score] = -1;
+	global[play_background_sounds] = -1;
 
 	if (previous_room == 403) {
 		global[g009] = 0;
@@ -371,8 +371,8 @@ static void room_402_anim_state() {
 		global[g083] = 3;
 		kernel_flip_hotspot(words_room_403, true);
 		kernel_flip_hotspot(words_room_401, true);
-		kernel_position_anim(scratch._9c, 71, 128, 63, 5);
-		kernel_position_anim(scratch._9a, 112, 131, 65, 5);
+		extra_change_animation(scratch._9c, 71, 128, 63, 5);
+		extra_change_animation(scratch._9a, 112, 131, 65, 5);
 		global[g131] = -1;
 		global[g141] = -1;
 		kernel_reset_animation(scratch._9a, 1);
@@ -388,7 +388,7 @@ static void room_402_anim_state() {
 		player.commands_allowed = true;
 		global[walker_converse_state] = 0;
 		close_interface(CANDLE_FLY);
-		global[player_score] = -1;
+		global[play_background_sounds] = -1;
 		break;
 	case 20:
 		aa[1] = kernel_run_animation(kernel_name('L', 1), 103);
@@ -613,7 +613,7 @@ static void room_402_anim2() {
 		int16 frame = aainfo[1]._frame;
 		if (frame == 57) {
 			global_midi_play(10);
-			global[player_score] = 0;
+			global[play_background_sounds] = 0;
 		} else if (frame < 57) {
 			if (frame == 37) {
 				if (flags[27] != 1)

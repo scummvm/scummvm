@@ -77,7 +77,7 @@ static void room_420_anim2() {
 			if (cur == 24) {
 				scratch._8e = 24;
 				aainfo[1]._val3 = 11;
-				if (global[g066] == 2 || global[g066] == 3)
+				if (global[phineas_status] == 2 || global[phineas_status] == 3)
 					digi_play_build(420, 'e', 1, 1);
 				else
 					digi_play_build(420, 'e', 1, 2);
@@ -193,7 +193,7 @@ static void room_420_anim4() {
 static void room_420_init() {
     flags[31] = 1;
     midi_stop();
-    global[player_score] = -1;
+    global[play_background_sounds] = -1;
     global[g009] = 0;
     player.walker_visible = false;
     player.commands_allowed = false;

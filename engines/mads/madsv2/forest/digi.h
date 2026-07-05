@@ -77,7 +77,8 @@ public:
 };
 
 extern int digi_val2;
-extern int digi_timing_index;
+extern int digi_trigger_effect;
+extern bool digi_trigger_dialog;
 extern bool digi_flag1, digi_flag2;
 
 extern void digi_play(const char *name, int slot);

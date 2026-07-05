@@ -84,20 +84,20 @@ static void room_203_init1() {
 		object_set_quality(5, 0, -1);
 		object_set_quality(8, 0, -1);
 		scratch._a0 = kernel_run_animation_disp('r', 1, 0);
-		kernel_position_anim(scratch._a0, 132, 133, 88, 6);
+		extra_change_animation(scratch._a0, 132, 133, 88, 6);
 		scratch._9e = kernel_run_animation_disp('e', 3, 0);
-		kernel_position_anim(scratch._9e, 105, 137, 90, 5);
+		extra_change_animation(scratch._9e, 105, 137, 90, 5);
 		player.x = 91;
 		player.y = 124;
 		player.facing = 3;
 	} else {
 		object_set_quality(5, 0, 0);
 		object_set_quality(8, 0, 0);
-		room_203_flag = 0;
+		lets_get_a_move_on_anim = false;
 		scratch._a0 = kernel_run_animation_disp('r', 9, 0);
-		kernel_position_anim(scratch._a0, 110, 153, 98, 2);
+		extra_change_animation(scratch._a0, 110, 153, 98, 2);
 		scratch._9e = kernel_run_animation_disp('e', 9, 0);
-		kernel_position_anim(scratch._9e, 86, 148, 96, 3);
+		extra_change_animation(scratch._9e, 86, 148, 96, 3);
 		player.x = 70;
 		player.y = 130;
 		player.facing = 9;
@@ -187,7 +187,7 @@ static void room_203_init() {
 		global[g046] = 0;
 
 	scratch._a6 = 5;
-	global[player_score] = -1;
+	global[play_background_sounds] = -1;
 	global[g009] = -1;
 	kernel_flip_hotspot(words_abi_bubble, false);
 	kernel_flip_hotspot(words_all_bubble, false);
@@ -1351,9 +1351,9 @@ static void room_203_daemon() {
 			dont_frag_the_palette();
 			kernel_abort_animation(local->_a0);
 			local->_a0 = kernel_run_animation_disp('r', 1, 0);
-			kernel_position_anim(local->_a0, 132, 133, 88, 6);
+			extra_change_animation(local->_a0, 132, 133, 88, 6);
 			local->_9e = kernel_run_animation_disp('e', 3, 0);
-			kernel_position_anim(local->_9e, 105, 137, 90, 5);
+			extra_change_animation(local->_9e, 105, 137, 90, 5);
 			global[walker_converse_state] = 0;
 			close_interface(CANDLE_FLY);
 			clear_selected_item();
@@ -1381,7 +1381,7 @@ static void room_203_daemon() {
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			player.commands_allowed = true;
 			player.walker_visible = true;
-			room_203_flag = true;
+			lets_get_a_move_on_anim = true;
 			break;
 
 		case 15:
@@ -1770,7 +1770,7 @@ static void room_203_parser() {
 			global[g154] = 2;
 			player.walker_visible = false;
 			scratch._a2 = kernel_run_animation_talk('b', 7, 0);
-			kernel_position_anim(scratch._a2, player.x, player.y, player.scale, player.depth);
+			extra_change_animation(scratch._a2, player.x, player.y, player.scale, player.depth);
 			scratch._b4 = -1;
 			kernel_synch(KERNEL_ANIM, scratch._a2, KERNEL_PLAYER, 0);
 			digi_play_build_ii('b', 1, 1);

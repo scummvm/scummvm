@@ -2901,19 +2901,6 @@ void kernel_translate_anim(int handle, int delta_x, int delta_y, int delta_scale
 	}
 }
 
-void kernel_position_anim(int handle, int x, int y, int scale, int depth) {
-	Animation &k_anim = kernel_anim[handle];
-	Anim *anim = k_anim.anim;
-
-	for (int count = 0; count < anim->num_frames; ++count) {
-		Image &image = anim->image[count];
-		image.x = x;
-		image.y = y;
-		image.scale = scale;
-		image.depth = depth;
-	}
-}
-
 void init_kernel() {
 	memset(room_state, 0, sizeof(room_state));
 	video_mode = 0;

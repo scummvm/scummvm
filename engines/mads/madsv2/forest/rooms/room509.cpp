@@ -61,12 +61,12 @@ static void room_509_anim5();
 static void room_509_init() {
 	global[g101] = -1;
 	mouse_hide();
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	global[g009] = -1;
 	global_midi_play(15);
 	global[g009] = -1;
 	viewing_at_y = 22;
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	player.walker_visible = false;
 	player.commands_allowed = false;
 

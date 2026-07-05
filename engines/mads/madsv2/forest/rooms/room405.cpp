@@ -73,9 +73,9 @@ static void room_405_init1() {
 	global[g141] = 0;
 
 	scratch._9c = kernel_run_animation_disp('r', 7, 0);
-	kernel_position_anim(scratch._9c, 308, 152, 69, 1);
+	extra_change_animation(scratch._9c, 308, 152, 69, 1);
 	scratch._9a = kernel_run_animation_disp('e', 7, 0);
-	kernel_position_anim(scratch._9a, 284, 154, 69, 1);
+	extra_change_animation(scratch._9a, 284, 154, 69, 1);
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 246;
@@ -123,7 +123,7 @@ static void room_405_init1() {
 }
 
 static void room_405_init() {
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	global[g009] = -1;
 
 	aa[7] = kernel_run_animation(kernel_name('N', 1), 105);
@@ -280,7 +280,7 @@ static void room_405_daemon() {
 			global[walker_converse_state] = 0;
 			close_interface(CANDLE_FLY);
 			player.commands_allowed = true;
-			if (config_file.forest1)
+			if (config_file.misc2)
 				kernel_timing_trigger(1, 106);
 		}
 		break;
@@ -340,7 +340,7 @@ static void room_405_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
 		player.commands_allowed = true;
-		if (config_file.forest1)
+		if (config_file.misc2)
 			kernel_timing_trigger(1, 106);
 		break;
 
@@ -365,7 +365,7 @@ static void room_405_daemon() {
 			global[g143] = 0;
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			player.commands_allowed = true;
-			if (config_file.forest1)
+			if (config_file.misc2)
 				kernel_timing_trigger(1, 106);
 		}
 		break;
@@ -377,7 +377,7 @@ static void room_405_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
 		global[g143] = 0;
 		player.commands_allowed = true;
-		if (config_file.forest1)
+		if (config_file.misc2)
 			kernel_timing_trigger(1, 106);
 		break;
 
@@ -388,7 +388,7 @@ static void room_405_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
 		player.commands_allowed = true;
-		if (config_file.forest1)
+		if (config_file.misc2)
 			kernel_timing_trigger(1, 106);
 		break;
 
@@ -406,7 +406,7 @@ static void room_405_daemon() {
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			global[g082] = 1;
 			player.commands_allowed = true;
-			if (config_file.forest1)
+			if (config_file.misc2)
 				kernel_timing_trigger(1, 106);
 		}
 		break;
@@ -422,7 +422,7 @@ static void room_405_daemon() {
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 		scratch._9e = kernel_run_animation_write(0);
 		kernel_reset_animation(scratch._9e, 41);
-		kernel_position_anim(scratch._9e, 284, 154, 69, 1);
+		extra_change_animation(scratch._9e, 284, 154, 69, 1);
 		global[walker_converse_now] = 1;
 		global[g007] = 7;
 		kernel_synch(KERNEL_ANIM, scratch._9e, KERNEL_NOW, 0);

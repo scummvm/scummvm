@@ -175,7 +175,7 @@ static void room_510_anim2() {
 			digi_play_build(510, 'e', 1, 1);
 			scratch._8e = 63;
 		} else if (aa_frame == 131) {
-			if (config_file.forest1)
+			if (config_file.misc2)
 				digi_stop(1);
 			scratch._90 = 133;
 			digi_play_build(510, '_', 3, 2);
@@ -238,7 +238,7 @@ static void room_510_anim3() {
 }
 
 static void room_510_init() {
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	global[g009] = 0;
 	scratch._96 = 0;
 	scratch._98 = 670;

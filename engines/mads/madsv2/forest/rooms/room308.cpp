@@ -76,7 +76,7 @@ static void room_308_anim1() {
 
 	switch (cur) {
 	case 40:
-		global[player_score] = 0;
+		global[play_background_sounds] = 0;
 		break;
 	case 56:
 	case 84:
@@ -160,7 +160,7 @@ static void room_308_anim4() {
 
 	bool in_e72 = (cur == 1 || cur == 5) ||
 	              (cur >= 10 && cur <= 58 && cur % 4 == 2);
-	if (in_e72 && (config_file.forest1 == 0 || (cur != 10 && cur != 14))) {
+	if (in_e72 && (config_file.misc2 == 0 || (cur != 10 && cur != 14))) {
 		digi_initial_volume(60);
 		digi_play_build(308, '_', 1, 2);
 	}
@@ -231,7 +231,7 @@ static void room_308_anim8() {
 		aainfo[9]._val3 = 0;
 		kernel_synch(KERNEL_ANIM, aa[9], KERNEL_NOW, 0);
 
-		global[player_score] = -1;
+		global[play_background_sounds] = -1;
 		return;
 	}
 	if (cur > 57)
@@ -853,7 +853,7 @@ static void room_308_anim22() {
 		inter_move_object(forked_stick, NOWHERE);
 		inter_move_object(lily_pad, PLAYER);
 		inter_move_object(stick, PLAYER);
-		global[player_score] = -1;
+		global[play_background_sounds] = -1;
 		new_room = 401;
 	}
 }
@@ -878,7 +878,7 @@ static void room_308_anim23() {
 		object_set_quality(forked_stick, -1, -1);
 		inter_move_object(lily_pad, PLAYER);
 		inter_move_object(stick, PLAYER);
-		global[player_score] = -1;
+		global[play_background_sounds] = -1;
 		if (global[g064] != 0)
 			new_room = 322;
 		else
@@ -1148,7 +1148,7 @@ static void room_308_daemon() {
 			aainfo[3]._active = -1;
 			kernel_synch(KERNEL_ANIM, aa[3], KERNEL_NOW, 0);
 		} else {
-			global[player_score] = -1;
+			global[play_background_sounds] = -1;
 			aa[4] = kernel_run_animation(kernel_name('t', 6), 104);
 			aainfo[4]._active = -1;
 			kernel_synch(KERNEL_ANIM, aa[4], KERNEL_NOW, 0);
@@ -1171,7 +1171,7 @@ static void room_308_daemon() {
 		object_set_quality(forked_stick, -1, -1);
 		inter_move_object(lily_pad, PLAYER);
 		inter_move_object(stick, PLAYER);
-		global[player_score] = -1;
+		global[play_background_sounds] = -1;
 		if (global[g064] != 0)
 			new_room = 322;
 		else
@@ -1212,7 +1212,7 @@ static void room_308_daemon() {
 	case 112:
 		inter_move_object(lily_pad, PLAYER);
 		inter_move_object(stick, PLAYER);
-		global[player_score] = -1;
+		global[play_background_sounds] = -1;
 		new_room = 401;
 		break;
 

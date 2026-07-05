@@ -77,10 +77,10 @@ static void room_306_init1() {
 	if (previous_room == KERNEL_RESTORING_GAME) {
 		scratch.xaa = -1;
 		scratch.x9c = kernel_run_animation_disp('r', 6, 0);
-		kernel_position_anim(scratch.x9c, 63, 134, 91, 3);
+		extra_change_animation(scratch.x9c, 63, 134, 91, 3);
 		global[g143] = 1;
 		scratch.x9a = kernel_run_animation_disp('e', 2, 0);
-		kernel_position_anim(scratch.x9a, 88, 122, 86, 5);
+		extra_change_animation(scratch.x9a, 88, 122, 86, 5);
 		global[g133] = 1;
 		global[g131] = -1;
 		global[g141] = -1;
@@ -105,9 +105,9 @@ static void room_306_init1() {
 		global[g131] = 0;
 		global[g141] = 0;
 		scratch.x9c = kernel_run_animation_disp('r', 6, 0);
-		kernel_position_anim(scratch.x9c, 63, 134, 91, 3);
+		extra_change_animation(scratch.x9c, 63, 134, 91, 3);
 		scratch.x9a = kernel_run_animation_disp('e', 2, 0);
-		kernel_position_anim(scratch.x9a, 88, 122, 86, 5);
+		extra_change_animation(scratch.x9a, 88, 122, 86, 5);
 		global[g131] = -1;
 		global[g141] = -1;
 		kernel_reset_animation(scratch.x9a, 2);
@@ -119,7 +119,7 @@ static void room_306_init1() {
 		player.walker_visible = true;
 	}
 
-	if (global[g066] == 3)
+	if (global[phineas_status] == 3)
 		return;
 
 	aa[4] = kernel_run_animation(kernel_name('t', 5), 0);
@@ -127,11 +127,11 @@ static void room_306_init1() {
 	aainfo[4]._val3 = 3;
 	aa[2] = kernel_run_animation(kernel_name('s', 1), 0);
 	aainfo[2]._active = -1;
-	aainfo[2]._val3 = (global[g066] == 0) ? 4 : 3;
+	aainfo[2]._val3 = (global[phineas_status] == 0) ? 4 : 3;
 	aa[5] = kernel_run_animation(kernel_name('t', 7), 0);
 	aainfo[5]._active = -1;
 	aainfo[5]._val3 = 1;
-	if (global[g066] == 0) {
+	if (global[phineas_status] == 0) {
 		aa[7] = kernel_run_animation(kernel_name('t', 2), 0);
 		aainfo[7]._active = -1;
 		aainfo[7]._val3 = 4;
@@ -146,10 +146,10 @@ static void room_306_init2() {
 	if (previous_room == KERNEL_RESTORING_GAME) {
 		scratch.xaa = -1;
 		scratch.x9c = kernel_run_animation_disp('r', 6, 0);
-		kernel_position_anim(scratch.x9c, 63, 134, 91, 3);
+		extra_change_animation(scratch.x9c, 63, 134, 91, 3);
 		global[g143] = 1;
 		scratch.x9a = kernel_run_animation_disp('e', 2, 0);
-		kernel_position_anim(scratch.x9a, 88, 122, 86, 5);
+		extra_change_animation(scratch.x9a, 88, 122, 86, 5);
 		global[g133] = 1;
 		global[g131] = -1;
 		global[g141] = -1;
@@ -174,9 +174,9 @@ static void room_306_init2() {
 		global[g131] = 0;
 		global[g141] = 0;
 		scratch.x9c = kernel_run_animation_disp('r', 6, 0);
-		kernel_position_anim(scratch.x9c, 63, 134, 91, 3);
+		extra_change_animation(scratch.x9c, 63, 134, 91, 3);
 		scratch.x9a = kernel_run_animation_disp('e', 2, 0);
-		kernel_position_anim(scratch.x9a, 88, 122, 86, 5);
+		extra_change_animation(scratch.x9a, 88, 122, 86, 5);
 		player.x = 116;
 		player.y = 130;
 		player.facing = 4;
@@ -191,7 +191,7 @@ static void room_306_init2() {
 		player.walker_visible = true;
 	}
 
-	if (global[g066] == 3)
+	if (global[phineas_status] == 3)
 		return;
 
 	aa[8] = kernel_run_animation(kernel_name('y', 1), 0);
@@ -208,7 +208,7 @@ static void room_306_init2() {
 	aainfo[4]._val3 = 3;
 	aa[2] = kernel_run_animation(kernel_name('s', 1), 0);
 	aainfo[2]._active = -1;
-	aainfo[2]._val3 = (global[g066] == 0) ? 4 : 3;
+	aainfo[2]._val3 = (global[phineas_status] == 0) ? 4 : 3;
 	aa[5] = kernel_run_animation(kernel_name('t', 7), 0);
 	aainfo[5]._active = -1;
 	aainfo[5]._val3 = 1;
@@ -219,9 +219,9 @@ static void room_306_init3() {
 	global[g131] = 0;
 	global[g141] = 0;
 	scratch.x9c = kernel_run_animation_disp('r', 6, 0);
-	kernel_position_anim(scratch.x9c, 63, 134, 91, 3);
+	extra_change_animation(scratch.x9c, 63, 134, 91, 3);
 	scratch.x9a = kernel_run_animation_disp('e', 2, 0);
-	kernel_position_anim(scratch.x9a, 88, 122, 86, 5);
+	extra_change_animation(scratch.x9a, 88, 122, 86, 5);
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 116;
@@ -275,7 +275,7 @@ static void room_306_init() {
 	scratch.xae = -1;
 	scratch.xa4 = 0;
 
-	if (global[g066] >= 2)
+	if (global[phineas_status] >= 2)
 		kernel_flip_hotspot(words_brown, false);
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
@@ -312,20 +312,20 @@ static void room_306_init() {
 		break;
 	}
 
-	switch (global[g066]) {
+	switch (global[phineas_status]) {
 	case 0:
 	case 1:
 		scratch.xa0 = 30;
 		kernel_timing_trigger(1, 117);
-		global[player_score] = 0;
+		global[play_background_sounds] = 0;
 		break;
 	case 2:
 		kernel_timing_trigger(10, 110);
-		global[player_score] = 0;
+		global[play_background_sounds] = 0;
 		break;
 	case 3:
 		kernel_timing_trigger(1, 118);
-		global[player_score] = -1;
+		global[play_background_sounds] = -1;
 		break;
 	default:
 		break;
@@ -350,7 +350,7 @@ static void room_306_anim7() {
 	if (cur != aainfo[6]._frame) {
 		aainfo[6]._frame = cur;
 		if (cur == 12) {
-			if (global[g066] == 3) {
+			if (global[phineas_status] == 3) {
 				digi_play_build_ii('b', 4, 1);
 				scratch.x9e = 90;
 				aainfo[6]._val3 = 12;
@@ -365,7 +365,7 @@ static void room_306_anim7() {
 			aainfo[6]._active = 0;
 			scratch.xaa = 666;
 			scratch.x9c = kernel_run_animation_disp('r', 6, 0);
-			kernel_position_anim(scratch.x9c, 63, 134, 91, 3);
+			extra_change_animation(scratch.x9c, 63, 134, 91, 3);
 			global[g141] = -1;
 			kernel_reset_animation(scratch.x9c, 2);
 			kernel_synch(KERNEL_ANIM, scratch.x9c, KERNEL_NOW, 0);
@@ -373,21 +373,21 @@ static void room_306_anim7() {
 			if (!player.been_here_before) {
 				scratch.xac = kernel_run_animation_write(0);
 				kernel_reset_animation(scratch.xac, 4);
-				kernel_position_anim(scratch.xac, 88, 122, 86, 5);
+				extra_change_animation(scratch.xac, 88, 122, 86, 5);
 				global[walker_converse_now] = 1;
 				global[g007] = 2;
 				kernel_synch(KERNEL_ANIM, scratch.xac, KERNEL_NOW, 0);
 			} else {
 				scratch.xaa = -1;
 				scratch.x9a = kernel_run_animation_disp('e', 2, 0);
-				kernel_position_anim(scratch.x9a, 88, 122, 86, 5);
+				extra_change_animation(scratch.x9a, 88, 122, 86, 5);
 				global[g131] = -1;
 				kernel_reset_animation(scratch.x9a, 2);
 				kernel_synch(KERNEL_ANIM, scratch.x9a, KERNEL_NOW, 0);
 				global[g133] = 0;
 				player.commands_allowed = true;
 			}
-			if (global[g066] != 3) {
+			if (global[phineas_status] != 3) {
 				scratch.xa0 = 30;
 				kernel_timing_trigger(1, 117);
 			} else {
@@ -404,7 +404,7 @@ static void room_306_anim7() {
 				case 6:  result = imath_random(13, 18); break;
 				case 7:
 					result = 6;
-					if (global[g066] == 3)
+					if (global[phineas_status] == 3)
 						aainfo[6]._val3 = 12;
 					break;
 				case 8:
@@ -591,8 +591,8 @@ static void room_306_anim4() {
 		dont_frag_the_palette();
 		kernel_abort_animation(aa[3]);
 		aainfo[3]._active = 0;
-		global[g066] = 3;
-		global[player_score] = -1;
+		global[phineas_status] = 3;
+		global[play_background_sounds] = -1;
 		kernel_timing_trigger(1, 118);
 		aainfo[6]._val3 = 7;
 	} else if (cur == 1 || cur == 5) {
@@ -663,7 +663,7 @@ static void room_306_anim10() {
 	if (cur == 28) {
 		kernel_abort_animation(aa[9]);
 		aainfo[9]._active = 0;
-		global[g066] = 1;
+		global[phineas_status] = 1;
 		aainfo[6]._val3 = 13;
 	} else if (cur == 15) {
 		digi_initial_volume(scratch.xa0);
@@ -686,8 +686,8 @@ static void room_306_daemon() {
 			global[walker_converse_state] = 0;
 			close_interface(CANDLE_FLY);
 			player.commands_allowed = true;
-			if (config_file.forest1 != 0) {
-				if (global[g066] == 3) {
+			if (config_file.misc2 != 0) {
+				if (global[phineas_status] == 3) {
 					kernel_timing_trigger(1, 118);
 				} else {
 					scratch.xa0 = 30;
@@ -698,7 +698,7 @@ static void room_306_daemon() {
 			switch (scratch.x9e) {
 			case 100:
 				kernel_timing_trigger(20, 113);
-				global[player_score] = -1;
+				global[play_background_sounds] = -1;
 				break;
 
 			case 2000:
@@ -709,8 +709,8 @@ static void room_306_daemon() {
 				kernel_synch(KERNEL_ANIM, scratch.x9a, KERNEL_NOW, 0);
 				global[g133] = 0;
 				player.commands_allowed = true;
-				if (config_file.forest1 != 0) {
-					if (global[g066] == 3) {
+				if (config_file.misc2 != 0) {
+					if (global[phineas_status] == 3) {
 						kernel_timing_trigger(1, 118);
 					} else {
 						scratch.xa0 = 30;
@@ -733,8 +733,8 @@ static void room_306_daemon() {
 				scratch.xa2 = 0;
 				scratch.x9e = -1;
 				player.commands_allowed = true;
-				if (config_file.forest1 != 0) {
-					if (global[g066] == 3) {
+				if (config_file.misc2 != 0) {
+					if (global[phineas_status] == 3) {
 						kernel_timing_trigger(1, 118);
 					} else {
 						scratch.xa0 = 30;
@@ -753,13 +753,13 @@ static void room_306_daemon() {
 		kernel_reset_animation(scratch.x9a, 0);
 		global[g133] = 1;
 		scratch.xa6 = kernel_run_animation_talk('e', 3, 0);
-		kernel_position_anim(scratch.xa6, 88, 122, 86, 5);
+		extra_change_animation(scratch.xa6, 88, 122, 86, 5);
 		global[g156] = 2;
 		kernel_synch(KERNEL_ANIM, scratch.xa6, KERNEL_ANIM, scratch.x9a);
 		digi_play_build(306, 'e', 1, 1);
 		scratch.x9e = 2000;
 		scratch.xa2 = -1;
-		if (global[g066] == 3) {
+		if (global[phineas_status] == 3) {
 			kernel_timing_trigger(1, 118);
 		} else {
 			kernel_timing_trigger(1, 117);
@@ -777,7 +777,7 @@ static void room_306_daemon() {
 		kernel_abort_animation(scratch.xac);
 		scratch.xac = -1;
 		scratch.x9a = kernel_run_animation_disp('e', 2, 0);
-		kernel_position_anim(scratch.x9a, 88, 122, 86, 5);
+		extra_change_animation(scratch.x9a, 88, 122, 86, 5);
 		global[g131] = -1;
 		kernel_reset_animation(scratch.x9a, 2);
 		kernel_synch(KERNEL_ANIM, scratch.x9a, KERNEL_NOW, 0);
@@ -791,8 +791,8 @@ static void room_306_daemon() {
 	case 100:
 		kernel_abort_animation(aa[0]);
 		aainfo[0]._active = 0;
-		if (config_file.forest1 != 0) {
-			if (global[g066] == 3) {
+		if (config_file.misc2 != 0) {
+			if (global[phineas_status] == 3) {
 				kernel_timing_trigger(1, 118);
 			} else {
 				scratch.xa0 = 30;
@@ -819,8 +819,8 @@ static void room_306_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch.x9c, KERNEL_NOW, 0);
 		global[g143] = 0;
 		player.commands_allowed = true;
-		if (config_file.forest1 != 0) {
-			if (global[g066] == 3) {
+		if (config_file.misc2 != 0) {
+			if (global[phineas_status] == 3) {
 				kernel_timing_trigger(1, 118);
 			} else {
 				scratch.xa0 = 30;
@@ -904,14 +904,14 @@ static void room_306_daemon() {
 		break;
 
 	case 117:
-		if (global[g066] <= 1 && scratch.xa4 == 0) {
+		if (global[phineas_status] <= 1 && scratch.xa4 == 0) {
 			digi_initial_volume(scratch.xa0);
 			digi_play_build(305, '_', 1, 3);
 		}
 		break;
 
 	case 118:
-		if (global[g066] == 3) {
+		if (global[phineas_status] == 3) {
 			digi_initial_volume(15);
 			digi_play_build(306, '_', 2, 3);
 			digi_val2 = -1;
@@ -968,13 +968,13 @@ static void room_306_parser() {
 		player.commands_allowed = false;
 		player.walker_visible = false;
 		scratch.xa8 = kernel_run_animation_talk('b', 9, 0);
-		kernel_position_anim(scratch.xa8, player.x, player.y, player.scale, player.depth);
+		extra_change_animation(scratch.xa8, player.x, player.y, player.scale, player.depth);
 		global[g154] = 2;
 		kernel_synch(KERNEL_ANIM, scratch.xa8, KERNEL_PLAYER, 0);
 		digi_play_build(306, 'b', 1, 1);
 		scratch.x9e = 2500;
 		scratch.xa2 = -1;
-		if (config_file.forest1 == 0) {
+		if (config_file.misc2 == 0) {
 			kernel.trigger_setup_mode = 1;
 			kernel_timing_trigger(1, 117);
 		}

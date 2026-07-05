@@ -79,9 +79,9 @@ static void room_403_init1() {
 	global[g141] = 0;
 
 	scratch._9c = kernel_run_animation_disp('r', 1, 0);
-	kernel_position_anim(scratch._9c, 159, 99, 81, 12);
+	extra_change_animation(scratch._9c, 159, 99, 81, 12);
 	scratch._9a = kernel_run_animation_disp('e', 3, 0);
-	kernel_position_anim(scratch._9a, 129, 98, 81, 12);
+	extra_change_animation(scratch._9a, 129, 98, 81, 12);
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 104;
@@ -139,7 +139,7 @@ static void room_403_init() {
 	scratch._a2 = -1;
 	midi_stop();
 	global[g009] = 0;
-	global[player_score] = -1;
+	global[play_background_sounds] = -1;
 	kernel_timing_trigger(1, 105);
 
 	if (object_is_here(13)) {
@@ -460,7 +460,7 @@ static void room_403_daemon() {
 			global[walker_converse_state] = 0;
 			close_interface(CANDLE_FLY);
 			player.commands_allowed = true;
-			if (config_file.forest1 != 0)
+			if (config_file.misc2 != 0)
 				kernel_timing_trigger(1, 105);
 		} else if (scratch._a4 == 300) {
 			kernel_abort_animation(scratch._9e);
@@ -564,7 +564,7 @@ static void room_403_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
 		player.commands_allowed = true;
-		if (config_file.forest1 != 0)
+		if (config_file.misc2 != 0)
 			kernel_timing_trigger(1, 105);
 		break;
 
@@ -582,7 +582,7 @@ static void room_403_daemon() {
 		global[g143] = 0;
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 		player.commands_allowed = true;
-		if (config_file.forest1 != 0)
+		if (config_file.misc2 != 0)
 			kernel_timing_trigger(1, 105);
 		break;
 
@@ -593,7 +593,7 @@ static void room_403_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9c, KERNEL_NOW, 0);
 		global[g143] = 0;
 		player.commands_allowed = true;
-		if (config_file.forest1 != 0)
+		if (config_file.misc2 != 0)
 			kernel_timing_trigger(1, 105);
 		break;
 
@@ -604,7 +604,7 @@ static void room_403_daemon() {
 		kernel_synch(KERNEL_ANIM, scratch._9a, KERNEL_NOW, 0);
 		global[g133] = 0;
 		player.commands_allowed = true;
-		if (config_file.forest1 != 0)
+		if (config_file.misc2 != 0)
 			kernel_timing_trigger(1, 105);
 		break;
 
@@ -622,7 +622,7 @@ static void room_403_daemon() {
 			inter_move_object(sturdy_stick, PLAYER);
 			clear_selected_item();
 			player.commands_allowed = true;
-			if (config_file.forest1 != 0)
+			if (config_file.misc2 != 0)
 				kernel_timing_trigger(1, 105);
 		} else if (scratch._a2 == 2) {
 			kernel_abort_animation(aa[5]);
@@ -637,7 +637,7 @@ static void room_403_daemon() {
 			kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 			kernel_flip_hotspot(words_eyebright, false);
 			player.commands_allowed = true;
-			if (config_file.forest1 != 0)
+			if (config_file.misc2 != 0)
 				kernel_timing_trigger(1, 105);
 		}
 		break;
@@ -653,7 +653,7 @@ static void room_403_daemon() {
 		kernel_synch(KERNEL_PLAYER, 0, KERNEL_NOW, 0);
 		scratch._a8 = kernel_run_animation_write(0);
 		kernel_reset_animation(scratch._a8, 3);
-		kernel_position_anim(scratch._a8, 129, 98, 81, 12);
+		extra_change_animation(scratch._a8, 129, 98, 81, 12);
 		global[walker_converse_now] = 1;
 		global[g007] = 3;
 		kernel_synch(KERNEL_ANIM, scratch._a8, KERNEL_NOW, 0);
@@ -760,7 +760,7 @@ static void room_403_parser() {
 		player.walker_visible = false;
 		player.commands_allowed = false;
 		scratch._9e = kernel_run_animation_talk('b', 2, 0);
-		kernel_position_anim(scratch._9e, player.x, player.y, player.scale, player.depth);
+		extra_change_animation(scratch._9e, player.x, player.y, player.scale, player.depth);
 		kernel_synch(KERNEL_ANIM, scratch._9e, KERNEL_PLAYER, 0);
 		digi_play_build_ii('b', 1, 1);
 		scratch._a4 = 400;
@@ -776,7 +776,7 @@ static void room_403_parser() {
 		player.walker_visible = false;
 		player.commands_allowed = false;
 		scratch._9e = kernel_run_animation_talk('b', 4, 0);
-		kernel_position_anim(scratch._9e, player.x, player.y, player.scale, player.depth);
+		extra_change_animation(scratch._9e, player.x, player.y, player.scale, player.depth);
 		kernel_synch(KERNEL_ANIM, scratch._9e, KERNEL_PLAYER, 0);
 		digi_play_build_ii('b', 1, 1);
 		scratch._a4 = 300;

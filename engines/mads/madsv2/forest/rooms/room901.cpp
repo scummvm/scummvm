@@ -38,7 +38,7 @@ namespace Rooms {
 
 static void room_901_init() {
 	global[g009] = 0;
-	global[player_score] = 0;
+	global[play_background_sounds] = 0;
 	player.walker_visible = false;
 	viewing_at_y = 22;
 	mouse_hide();

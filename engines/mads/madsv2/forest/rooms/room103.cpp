@@ -71,7 +71,7 @@ static void room_103_init() {
 		aainfo[count]._val4 = 0;
 	}
 
-	global[player_score] = -1;
+	global[play_background_sounds] = -1;
 	global[g009] = -1;
 	viewing_at_y = 22;
 	player.walker_visible = false;
@@ -299,7 +299,7 @@ static void room_103_anim3() {
 			break;
 		case 85:
 			scratch._90 = -1;
-			global[player_score] = 0;
+			global[play_background_sounds] = 0;
 			midi_stop();
 			aainfo[2]._val3 = 13;
 			aainfo[2]._frame = 92;

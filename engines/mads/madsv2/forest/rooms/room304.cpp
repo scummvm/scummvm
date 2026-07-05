@@ -64,10 +64,10 @@ static void room_304_init1() {
 	global[g141] = 0;
 
 	scratch._9c = kernel_run_animation_disp('r', 3, 0);
-	kernel_position_anim(scratch._9c, 60, 136, 93, 3);
+	extra_change_animation(scratch._9c, 60, 136, 93, 3);
 
 	scratch._9a = kernel_run_animation_disp('e', 9, 0);
-	kernel_position_anim(scratch._9a, 87, 150, 98, 3);
+	extra_change_animation(scratch._9a, 87, 150, 98, 3);
 
 	if (global[g064]) {
 		kernel_flip_hotspot(words_paint_can, false);
@@ -133,7 +133,7 @@ static void room_304_init() {
 
 static void room_304_finish() {
 	player.commands_allowed = true;
-	if (config_file.forest1)
+	if (config_file.misc2)
 		kernel_timing_trigger(1, 107);
 }
 
@@ -383,7 +383,7 @@ static void room_304_daemon() {
 			global[walker_converse_state] = 0;
 			close_interface(CANDLE_FLY);
 			player.commands_allowed = true;
-			if (config_file.forest1)
+			if (config_file.misc2)
 				kernel_timing_trigger(1, 107);
 			break;
 		default:

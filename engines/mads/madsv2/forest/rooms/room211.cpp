@@ -53,7 +53,7 @@ static Scratch scratch;
 
 static void room_211_init() {
 	midi_stop();
-	global[player_score] = -1;
+	global[play_background_sounds] = -1;
 	viewing_at_y = 22;
 	global[g009] = 0;
 	player.walker_visible = false;

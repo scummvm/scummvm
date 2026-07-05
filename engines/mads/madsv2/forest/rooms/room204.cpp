@@ -73,9 +73,9 @@ static void room_204_init1() {
 	global[g131] = 0;
 	global[g141] = 0;
 	local->_9c = kernel_run_animation_disp('r', 2, 0);
-	kernel_position_anim(local->_9c, 171, 116, 73, 8);
+	extra_change_animation(local->_9c, 171, 116, 73, 8);
 	local->_9a = kernel_run_animation_disp('e', 3, 0);
-	kernel_position_anim(local->_9a, 148, 120, 76, 7);
+	extra_change_animation(local->_9a, 148, 120, 76, 7);
 
 	if (previous_room != KERNEL_RESTORING_GAME) {
 		player.x = 194;
@@ -128,7 +128,7 @@ static void room_204_init1() {
 }
 
 static void room_204_init() {
-	global[player_score] = -1;
+	global[play_background_sounds] = -1;
 	midi_stop();
 	local->_a8 = 0;
 	local->_a6 = -1;
@@ -487,9 +487,9 @@ trigger_100:
 		aainfo[1]._active = -1;
 		global[g155] = 2;
 		local->_a0 = kernel_run_animation_talk('r', 2, 0);
-		kernel_position_anim(local->_a0, 171, 116, 73, 8);
+		extra_change_animation(local->_a0, 171, 116, 73, 8);
 		local->_a2 = kernel_run_animation_talk('e', 3, 0);
-		kernel_position_anim(local->_a2, 148, 120, 76, 7);
+		extra_change_animation(local->_a2, 148, 120, 76, 7);
 		kernel_synch(3, local->_a2, 3, local->_9a);
 		kernel_synch(3, local->_a0, 3, local->_9c);
 		kernel_synch(3, local->_9e, 2, 0);
@@ -522,7 +522,7 @@ trigger_103:
 	global[g133] = 0;
 	kernel_flip_hotspot(words_vine_weed, true);
 	inter_move_object(vine_weed, PLAYER);
-	global[player_score] = -1;
+	global[play_background_sounds] = -1;
 	player.commands_allowed = true;
 
 bottom:
@@ -580,7 +580,7 @@ static void room_204_parser() {
 		player.commands_allowed = 0;
 		player.walker_visible = 0;
 		local->_9e = kernel_run_animation_talk('b', 9, 0);
-		kernel_position_anim(local->_9e, player.x, player.y, player.scale, player.depth);
+		extra_change_animation(local->_9e, player.x, player.y, player.scale, player.depth);
 		kernel_synch(3, local->_9e, 2, 0);
 		digi_play_build_ii('b', 1, 1);
 		local->_a4 = 400;

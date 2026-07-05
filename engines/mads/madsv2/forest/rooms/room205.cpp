@@ -71,9 +71,9 @@ static void room_205_init1() {
 	global[g131] = 0;
 	global[g141] = 0;
 	scratch._9c = kernel_run_animation_disp('r', 9, 0);
-	kernel_position_anim(scratch._9c, 76, 130, 62, 5);
+	extra_change_animation(scratch._9c, 76, 130, 62, 5);
 	scratch._9a = kernel_run_animation_disp('e', 9, 0);
-	kernel_position_anim(scratch._9a, 120, 138, 74, 4);
+	extra_change_animation(scratch._9a, 120, 138, 74, 4);
 
 	if (previous_room == KERNEL_RESTORING_GAME) {
 		global[g131] = -1;
@@ -90,7 +90,7 @@ static void room_205_init1() {
 	player.facing = 3;
 
 	if (previous_room == 101) {
-		global[player_score] = 0;
+		global[play_background_sounds] = 0;
 		global[g009] = 0;
 		digi_stop(3);
 		midi_stop();
@@ -348,9 +348,9 @@ static void room_205_daemon() {
 			global[g133] = 1;
 			global[g156] = 0;
 			scratch._a2 = kernel_run_animation_talk('e', 9, 0);
-			kernel_position_anim(scratch._a2, 120, 138, 74, 4);
+			extra_change_animation(scratch._a2, 120, 138, 74, 4);
 			scratch._9e = kernel_run_animation_talk('b', 2, 0);
-			kernel_position_anim(scratch._9e, player.x, player.y, player.scale, player.depth);
+			extra_change_animation(scratch._9e, player.x, player.y, player.scale, player.depth);
 			kernel_synch(KERNEL_ANIM, scratch._a2, KERNEL_ANIM, scratch._9a);
 			kernel_synch(KERNEL_ANIM, scratch._9e, KERNEL_PLAYER, 0);
 			digi_play_build(205, 'b', 1, 1);

@@ -24,6 +24,7 @@
 
 #include "common/serializer.h"
 #include "mads/madsv2/core/vocabh.h"
+#include "mads/madsv2/forest/extra.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -40,7 +41,7 @@ enum {
 	g007                      =   7,
 	g008                      =   8,
 	g009                      =   9,
-	player_score              =  10,  /* player's score of the game   */
+	play_background_sounds    =  10,  /* Play environmental sounds */
 	player_score_flags        =  11,  /* 16 flags for checking if player increased score */
 	dont_load_walker          =  12,  /* if T, will not load walker in section code */
 	perform_displacements     =  13,  /* if T, will do displacements */
@@ -96,7 +97,7 @@ enum {
 	tunnel_exit_3_opened      =  63,
 	g064                      =  64,
 	g065                      =  65,
-	g066                      =  66,
+	phineas_status            =  66,
 	g067                      =  67,
 	g068                      =  68,
 	g069                      =  69,
@@ -243,6 +244,9 @@ enum {
 	g210                      = 210
 };
 
+// phineas_status
+#define PHIN_IS_IN_CONTROL_AGAIN 2
+
 struct AnimationInfo {
 	int16 _active;
 	int16 _frame;
@@ -255,9 +259,10 @@ struct AnimationInfo {
 };
 
 extern int16 flags[40];
-extern bool room_203_flag;
+extern bool lets_get_a_move_on_anim;
 extern bool inv_enable_command;
 
+extern void global_init();
 extern void global_section_constructor();
 extern void sync_room(Common::Serializer &s);
 extern void global_section_walker();
@@ -270,6 +275,7 @@ extern void global_anim2(int arg_0, int arg_2, int arg_4, int16 *arg_6);
 extern void global_anim3(int handle, int16 *frame);
 extern void global_midi_play(int num);
 extern void global_daemon_code();
+extern void global_game_main_loop();
 
 } // namespace Forest
 } // namespace MADSV2
