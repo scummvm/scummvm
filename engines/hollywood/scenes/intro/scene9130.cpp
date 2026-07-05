@@ -28,6 +28,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/scenes/resource_delta_clip_player.h"
 
 namespace Hollywood {
 
@@ -178,57 +179,9 @@ void Scene9130::runClipAndDialogue() {
 }
 
 void Scene9130::drawClipFrame(byte frameIndex) {
-	const uint32 frameTableOffset = _resources.chunkOffsets[kScene9130ClipChunk];
-	const uint32 tableEntryOffset = frameTableOffset + ((uint32)frameIndex * 4);
-	if (tableEntryOffset + 4 > _resources.arena.size())
-		return;
-
-	const uint32 frameOffset = frameTableOffset + ((uint32)kScene9130ClipFrameCount * 4) +
-		readUint32LE(_resources.arena, tableEntryOffset);
-	if (frameOffset + 4 > _resources.arena.size())
-		return;
-
-	const uint16 firstRow = readUint16LE(_resources.arena, frameOffset);
-	const uint16 lastRow = readUint16LE(_resources.arena, frameOffset + 2);
-	uint cursor = frameOffset + 4;
-	byte *pixels = _sceneFramebuffer.data();
-	const uint size = _sceneFramebuffer.size();
-
-	for (uint row = firstRow; row <= lastRow && row < HollywoodEngine::kSceneBufferHeight; ++row) {
-		if (cursor >= _resources.arena.size())
-			return;
-
-		byte runCount = _resources.arena[cursor++];
-		for (; runCount != 0; --runCount) {
-			if (cursor + 3 > _resources.arena.size())
-				return;
-
-			const uint x = readUint16LE(_resources.arena, cursor);
-			const byte literalLength = _resources.arena[cursor + 2];
-			const uint destinationOffset = row * HollywoodEngine::kSceneBufferWidth + x;
-			if (destinationOffset >= size)
-				return;
-
-			if (literalLength == 0) {
-				if (cursor + 5 > _resources.arena.size())
-					return;
-
-				const byte fillValue = _resources.arena[cursor + 3];
-				const uint fillLength = _resources.arena[cursor + 4];
-				cursor += 5;
-				if (destinationOffset + fillLength <= size)
-					memset(pixels + destinationOffset, fillValue, fillLength);
-			} else {
-				const uint literalOffset = cursor + 3;
-				if (literalOffset + literalLength > _resources.arena.size())
-					return;
-
-				if (destinationOffset + literalLength <= size)
-					memcpy(pixels + destinationOffset, _resources.arena.data() + literalOffset, literalLength);
-				cursor = literalOffset + literalLength;
-			}
-		}
-	}
+	ResourceDeltaClipPlayer::drawFrame(_resources.arena, _resources.chunkOffsets[kScene9130ClipChunk],
+		_resources.chunkTable.sizes[kScene9130ClipChunk], kScene9130ClipFrameCount,
+		frameIndex, _sceneFramebuffer.data(), _sceneFramebuffer.size());
 }
 
 void Scene9130::maybeStartNextSpeechLine() {

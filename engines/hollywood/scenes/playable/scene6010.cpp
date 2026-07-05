@@ -544,7 +544,7 @@ void Scene6010::runStudioClipSequence(bool exitAfterPlayback) {
 			drawClipFrameDelta(kScene6010ClipChunkIndex, kScene6010ClipDescriptorCount, frameMap[i]);
 			presentFrame();
 		}
-		if (waitClipFrame(kScene6010ClipFrameMillis))
+		if (waitDeltaClipFrameMillis(kScene6010ClipFrameMillis))
 			break;
 	}
 
@@ -554,75 +554,6 @@ void Scene6010::runStudioClipSequence(bool exitAfterPlayback) {
 	}
 
 	walkActiveActorTo(0x227, 0x19b, 0xff, 0, false);
-}
-
-void Scene6010::drawClipFrameDelta(uint chunkIndex, uint tableEntryCount, byte frameIndex) {
-	if (!_sceneChunkTable.isValidChunk(chunkIndex))
-		return;
-
-	const uint32 frameTableOffset = _resourceChunkOffsets[chunkIndex];
-	const uint32 tableEntryOffset = frameTableOffset + ((uint32)frameIndex * 4);
-	if (tableEntryOffset + 4 > _resourceArena.size())
-		return;
-
-	const uint32 frameOffset = frameTableOffset + ((uint32)tableEntryCount * 4) +
-		readUint32LE(_resourceArena, tableEntryOffset);
-	if (frameOffset + 4 > _resourceArena.size())
-		return;
-
-	const uint16 firstRow = readUint16LE(_resourceArena, frameOffset);
-	const uint16 lastRow = readUint16LE(_resourceArena, frameOffset + 2);
-	uint cursor = frameOffset + 4;
-	byte *pixels = framebufferPixels(_sceneFramebuffer);
-	const uint size = framebufferByteCount();
-
-	for (uint row = firstRow; row <= lastRow && row < HollywoodEngine::kSceneBufferHeight; ++row) {
-		if (cursor >= _resourceArena.size())
-			return;
-
-		byte runCount = _resourceArena[cursor++];
-		for (; runCount != 0; --runCount) {
-			if (cursor + 3 > _resourceArena.size())
-				return;
-
-			const uint x = readUint16LE(_resourceArena, cursor);
-			const byte literalLength = _resourceArena[cursor + 2];
-			const uint destinationOffset = row * HollywoodEngine::kSceneBufferWidth + x;
-			if (destinationOffset >= size)
-				return;
-
-			if (literalLength == 0) {
-				if (cursor + 5 > _resourceArena.size())
-					return;
-
-				const byte fillValue = _resourceArena[cursor + 3];
-				const uint fillLength = _resourceArena[cursor + 4];
-				cursor += 5;
-				if (destinationOffset + fillLength <= size)
-					memset(pixels + destinationOffset, fillValue, fillLength);
-			} else {
-				const uint literalOffset = cursor + 3;
-				if (literalOffset + literalLength > _resourceArena.size())
-					return;
-
-				if (destinationOffset + literalLength <= size)
-					memcpy(pixels + destinationOffset, _resourceArena.data() + literalOffset, literalLength);
-				cursor = literalOffset + literalLength;
-			}
-		}
-	}
-}
-
-bool Scene6010::waitClipFrame(uint32 millis) {
-	uint32 remaining = millis;
-	while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
-		if (pollEvents(true))
-			return true;
-		const uint32 slice = MIN<uint32>(remaining, 10);
-		g_system->delayMillis(slice);
-		remaining -= slice;
-	}
-	return Engine::shouldQuit() || _vm->isSceneRestartRequested();
 }
 
 void Scene6010::runPendingItem69PickupOverlay() {
