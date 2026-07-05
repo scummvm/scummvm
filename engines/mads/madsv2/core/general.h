@@ -43,7 +43,7 @@ typedef uint16  word;            /* generic 16 bit data */
 struct RGBcolor {
 	byte r, g, b;
 
-	static constexpr int SIZE = 3;
+	static constexpr size_t SIZE = 3;
 	inline void load(Common::SeekableReadStream *src) {
 		r = src->readByte();
 		g = src->readByte();

@@ -40,7 +40,7 @@ struct Image {
 	byte depth;
 	byte scale;
 
-	static constexpr int SIZE = 2 + 1 + 1 + 2 + 2 + 2 + 1 + 1;
+	static constexpr size_t SIZE = 2 + 1 + 1 + 2 + 2 + 2 + 1 + 1;
 	void load(Common::SeekableReadStream *src);
 };
 

@@ -45,7 +45,7 @@ struct CopyProt {
 	int16 word_number;
 	char say[20];
 
-	static constexpr int SIZE = 1 + 2 + 2 + 2 + 20;
+	static constexpr size_t SIZE = 1 + 2 + 2 + 2 + 20;
 	void load(Common::SeekableReadStream *src);
 };
 

@@ -45,7 +45,7 @@ struct SpeechDir {
 	int32 size = 0;
 	int32 offset = 0;
 
-	static constexpr int SIZE = 2 + 2 + 2 + 2 + 2 + 4 + 4;
+	static constexpr size_t SIZE = 2 + 2 + 2 + 2 + 2 + 4 + 4;
 	void load(Common::SeekableReadStream *src);
 };
 

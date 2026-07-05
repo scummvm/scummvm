@@ -67,7 +67,7 @@ struct Color {
 	byte cycle;         /* Color cycling handle        */
 	byte group;         /* Color grouping flags        */
 
-	static constexpr int SIZE = 1 + 1 + 1 + 1 + 1 + 1;
+	static constexpr size_t SIZE = 1 + 1 + 1 + 1 + 1 + 1;
 	void load(Common::SeekableReadStream *src);
 };
 
@@ -80,7 +80,7 @@ struct ColorList {
 	uint16 num_colors;
 	Color table[COLOR_MAX_USER_COLORS];
 
-	static constexpr int SIZE = 2 + (Color::SIZE * COLOR_MAX_USER_COLORS);
+	static constexpr size_t SIZE = 2 + (Color::SIZE * COLOR_MAX_USER_COLORS);
 	bool load(Load &load_handle, int size);
 	void load(Common::SeekableReadStream *src);
 };
@@ -96,7 +96,7 @@ struct Cycle {
 	byte first_palette_color;           /* First color in final palette  */
 	byte ticks;                         /* 60/s ticks between cycles     */
 
-	static constexpr int SIZE = 1 + 1 + 1 + 1;
+	static constexpr size_t SIZE = 1 + 1 + 1 + 1;
 	void synchronize(Common::Serializer &s);
 };
 
@@ -109,7 +109,7 @@ struct CycleList {
 	int16 num_cycles;
 	Cycle table[COLOR_MAX_CYCLES];
 
-	static constexpr int SIZE = 2 + (Cycle::SIZE * COLOR_MAX_CYCLES);
+	static constexpr size_t SIZE = 2 + (Cycle::SIZE * COLOR_MAX_CYCLES);
 	void synchronize(Common::Serializer &s);
 	void load(Common::SeekableReadStream *src) {
 		Common::Serializer s(src, nullptr);
@@ -128,7 +128,7 @@ struct ShadowList {
 	uint16 num_shadow_colors;
 	int shadow_color[COLOR_MAX_SHADOW_COLORS];
 
-	static constexpr int SIZE = 2 + (2 * COLOR_MAX_SHADOW_COLORS);
+	static constexpr size_t SIZE = 2 + (2 * COLOR_MAX_SHADOW_COLORS);
 	void load(Common::SeekableReadStream *src);
 };
 

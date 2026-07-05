@@ -96,7 +96,7 @@ struct WalkerInfo {
 	byte   frame_rate;                    /* Frame rate for walker             */
 	byte   center_of_gravity;             /* Center of gravity displacement    */
 
-	static constexpr int SIZE = 2 + 2 + (2 + 2 + 2) * MAX_SECONDARY + 2 + 1 + 1;
+	static constexpr size_t SIZE = 2 + 2 + (2 + 2 + 2) * MAX_SECONDARY + 2 + 1 + 1;
 	void load(Load &load_handle);
 	void load(Common::SeekableReadStream *src);
 };
@@ -169,7 +169,7 @@ struct FileSprite {
 	int16 x, y;
 	int16 xs, ys;
 
-	static constexpr int SIZE = 4 + 4 + 2 + 2 + 2 + 2;
+	static constexpr size_t SIZE = 4 + 4 + 2 + 2 + 2 + 2;
 	void load(Common::SeekableReadStream *src);
 };
 

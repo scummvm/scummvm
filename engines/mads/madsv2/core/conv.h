@@ -69,7 +69,7 @@ struct ConvNode {
 	int16 field_6;
 	int16 field_8;
 
-	static constexpr int SIZE = 2 * 5;
+	static constexpr size_t SIZE = 2 * 5;
 	void load(Common::SeekableReadStream *src);
 };
 
@@ -79,7 +79,7 @@ struct ConvDialog {
 	int16 script_offset;
 	int16 script_size;
 
-	static constexpr int SIZE = 2 * 4;
+	static constexpr size_t SIZE = 2 * 4;
 	void load(Common::SeekableReadStream *src);
 };
 
@@ -90,7 +90,7 @@ struct ConvScriptParams {
 	int16 param1;
 	int16 param2;
 
-	static constexpr int SIZE = 2 + 1 + 1 + 2 + 2;
+	static constexpr size_t SIZE = 2 + 1 + 1 + 2 + 2;
 	void load(Common::SeekableReadStream *src);
 };
 
@@ -101,7 +101,7 @@ struct ConvVariable {
 	int16 val = 0, type = 0;
 	int16 *ptr;
 
-	static constexpr int SIZE = 2 * 3;
+	static constexpr size_t SIZE = 2 * 3;
 	void load(Common::SeekableReadStream *src);
 	void save(Common::WriteStream *dest) const;
 };
@@ -133,7 +133,7 @@ struct Conv {
 	Common::Array<byte> scripts;
 	Common::Array<uint16> textLines;
 
-	static constexpr int SIZE = (2 * 7 + 16 * 5 + 2 * 5 + 14 + 4 + 4) +
+	static constexpr size_t SIZE = (2 * 7 + 16 * 5 + 2 * 5 + 14 + 4 + 4) +
 		// Padding for pointers in original structure
 		4 * 6;
 	void load(Common::SeekableReadStream *src);
@@ -163,7 +163,7 @@ struct ConvData {
 	Common::Array<uint16> entryFlags;
 	Common::Array<ConvVariable> variables;
 
-	static constexpr int SIZE = 2 * 10 + 2 * 10 * 5 + 2 * 3;
+	static constexpr size_t SIZE = 2 * 10 + 2 * 10 * 5 + 2 * 3;
 	void load(Common::SeekableReadStream *src);
 	void save(Common::WriteStream *dest) const;
 };

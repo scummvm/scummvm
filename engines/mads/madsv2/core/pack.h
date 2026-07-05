@@ -88,7 +88,7 @@ struct PackStrategy {
 	long compressed_size;
 
 	void load(Common::SeekableReadStream *src);
-	static constexpr int SIZE = 1 + 1 + 4 + 4;
+	static constexpr size_t SIZE = 1 + 1 + 4 + 4;
 };
 
 typedef PackStrategy *PackStrategyPtr;
@@ -101,7 +101,7 @@ struct PackList {
 	PackStrategy strategy[PACK_MAX_LIST_LENGTH];
 
 	bool load(Common::SeekableReadStream *src);
-	static constexpr int SIZE = PACK_HEADER + PackStrategy::SIZE * PACK_MAX_LIST_LENGTH;
+	static constexpr size_t SIZE = PACK_HEADER + PackStrategy::SIZE * PACK_MAX_LIST_LENGTH;
 };
 
 typedef PackList *PackListPtr;

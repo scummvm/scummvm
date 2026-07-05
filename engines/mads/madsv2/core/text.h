@@ -87,7 +87,7 @@ struct TextDirectory {
 	uint32 file_offset;
 	word length;
 
-	static constexpr int SIZE = 4 + 4 + 2;
+	static constexpr size_t SIZE = 4 + 4 + 2;
 	void load(Common::SeekableReadStream *src) {
 		src->readMultipleLE(id, file_offset, length);
 	}
