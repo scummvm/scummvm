@@ -755,7 +755,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM | GF_COMPRESSED,
 			NANCY8_GUIOPTIONS
 		},
 		kGameTypeNancy10
