@@ -27,6 +27,7 @@
 #include "common/types.h"
 
 #include "hollywood/music.h"
+#include "hollywood/scenes/playable/animation_layers.h"
 #include "hollywood/scenes/playable/scene_resources.h"
 #include "hollywood/scenes/playable/scene_surface_state.h"
 #include "hollywood/scenes/playable/scene_text_store.h"
@@ -60,8 +61,11 @@ private:
 	bool selectedRecipeIsCorrect() const;
 	void applySuccessDrinkPalette();
 	void applyFailureDrinkPalette();
+	void resetAnimationLayers();
+	void updateAnimationLayerFrames();
 	void drawFrame();
-	void drawSpriteLayer(uint chunkIndex, uint descriptorCount, byte descriptorIndex);
+	void drawTransientLayers(const TransientLayerCompositor &compositor);
+	void drawSpriteLayer(const ResourceSpriteLayer &layer);
 	void drawDrinkStrip();
 	void presentFrame();
 	void drawSpeechOverlay();
@@ -85,6 +89,7 @@ private:
 	SpeechOverlay _speechOverlay;
 	SpeechPlayer _speech;
 	SoundBank0Player _soundBank0;
+	TransientLayerCompositor _animationLayers;
 	byte _selectedDrinks[3];
 	byte _selectedDrinkCount;
 	byte _currentDrinkId;

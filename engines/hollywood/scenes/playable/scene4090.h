@@ -73,10 +73,8 @@ private:
 	void runCoffinSwapSequence();
 	void runFinalCutscene();
 
-	ResourceSpriteLayer _scriptLayer;
-	ResourceSpriteLayer _chunk8Layer;
-	ResourceSpriteLayer _chunk12Layer;
-	ResourceSpriteLayer _chunk13Layer;
+	TransientLayerCompositor _ambientLayers;
+	TransientLayerCompositor _scriptLayers;
 	TimedAnimationChannel _chunk12Channel;
 	Common::Array<byte> _originalColorToItemMap;
 	bool _scriptHidesActiveActor;

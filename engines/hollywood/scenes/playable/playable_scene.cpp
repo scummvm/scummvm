@@ -1122,6 +1122,11 @@ void PlayableScene::drawResourceSpriteLayer(const ResourceSpriteLayer &layer) {
 		layer.descriptorCount, layer.descriptorIndex(), _sceneFramebuffer);
 }
 
+void PlayableScene::drawTransientLayers(const TransientLayerCompositor &compositor) {
+	for (uint i = 0; i < compositor.layerCount(); ++i)
+		drawResourceSpriteLayer(compositor.layer(i));
+}
+
 void PlayableScene::drawActionOverlayLayer() {
 	if (_actionOverlayLayer.visible) {
 		drawResourceSpriteLayer(_actionOverlayLayer);
