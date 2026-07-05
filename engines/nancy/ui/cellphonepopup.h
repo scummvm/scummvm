@@ -110,7 +110,10 @@ private:
 	void drawDirectoryList();
 	void drawDirectoryArrows();
 	void drawWelcomeScreen();
-	void drawBackLabel();
+	// Blit a sub-button's idle sprite at its chunk dest (used for the visible
+	// Back buttons: subButtons[0] on the help page, subButtons[7] in the
+	// zoomed email / browser content view).
+	void drawBackButton(uint subButtonIndex);
 
 	// Generic list renderer used by web / email modes.
 	void drawLinkList();
@@ -157,6 +160,13 @@ private:
 	void resetDialPad();
 	void enterScreenState(ScreenState newState);
 	void appendDigit(byte slotIndex);
+	// Play a dial-pad key's DTMF tone. The name is a raw sound filename, so it
+	// is played through the phone's call-sound channel rather than the common
+	// (boot-registered) sound table.
+	void playDialPadSound(const Common::String &name);
+	// Play a popup button's click sound (the close X), like the inventory
+	// popup. Falls back to the shared button-click slot in the popup header.
+	void playButtonClickSound(const UIButtonRecord &button);
 	bool playSoundIfPresent(const Common::Path &soundName);
 	bool callSoundIsStillPlaying() const;
 	void triggerContactCallSceneChange(uint contactIndex);
@@ -193,8 +203,8 @@ private:
 	bool isContactVisible(const UICL::Contact &c) const;
 	// Popup-local rect of the Back hotspot in directory mode.
 	Common::Rect backLabelHitRect() const;
-	// Popup-local rect of the visible Back button (subButtons[0]).
-	Common::Rect backButtonHitRect() const;
+	// Popup-local rect of a visible Back sub-button (subButtons[index]).
+	Common::Rect backButtonHitRect(uint subButtonIndex) const;
 	// Move the directory selection by delta, scrolling as needed.
 	void moveDirectorySelection(int delta);
 

@@ -410,7 +410,10 @@ void CellPhonePopup::drawChrome() {
 			: _uiclData->header.normalSrcRect;
 	_drawSurface.blitFrom(_overlayImage, chromeSrc, Common::Point(0, 0));
 	drawCloseButton(_closeButtonHovered);
-	if (!isSubScreenState()) {
+	// The help "?" button lives on the dialer face only. The original hides
+	// it once a call is being placed (the connecting / "We're sorry" screens)
+	// and on every sub-screen that shows its own heading.
+	if (_screenState == kWelcome || _screenState == kDialing) {
 		drawHelpButton(0);
 	}
 	_needsRedraw = true;
@@ -511,14 +514,11 @@ void CellPhonePopup::drawScreenContent() {
 			drawHeading(*_contentHeading);
 		}
 		drawContentView();
-		// The help page is a static small-window blurb with no scroll arrows;
-		// browser / email articles keep the big-screen arrows. Help shows the
-		// Back button in the lower ribbon (returns to the main screen).
-		if (!isHelpContentView()) {
-			drawDirectoryArrows();
-		} else {
-			drawBackLabel();
-		}
+		// Help's Back sits in the lower ribbon (subButtons[0]); the zoomed
+		// articles' Back sits at the bottom of the screen (subButtons[7]).
+		// drawDirectoryArrows() blits whichever scroll pair applies.
+		drawDirectoryArrows();
+		drawBackButton(isHelpContentView() ? 0 : 7);
 		break;
 	}
 
@@ -835,7 +835,11 @@ void CellPhonePopup::drawContentView() {
 	const int lcdTop  = ws.top  - _screenPosition.top;
 	const int lcdW    = ws.width();
 	const int lcdH    = ws.height();
-	const int textTop = 22;                 // clear the heading sprite
+	// The email / browser heading sits inside the zoomed LCD, so the article
+	// text starts below it. The help page's heading is in the title-bar strip
+	// above the small LCD, so its text starts flush with the LCD top (matching
+	// the original's "Help info in small window" placement).
+	const int textTop = isHelpContentView() ? 2 : 22;
 	const int viewH   = MAX(0, lcdH - textTop);
 	const int rowH    = MAX(font->getFontHeight() + 1, 12);
 
@@ -999,10 +1003,11 @@ void CellPhonePopup::drawWelcomeScreen() {
 											ws.destRect.top - chunkOrigin.y));
 }
 
-void CellPhonePopup::drawBackLabel() {
+void CellPhonePopup::drawBackButton(uint subButtonIndex) {
 	// subButtons[0] (original CUIButton 0x10) is the Back button that returns a
-	// sub-screen to the main view; it sits at the left of the lower ribbon.
-	const UICL::ThreeRectWidget &back = _uiclData->subButtons[0];
+	// sub-screen to the main view; subButtons[7] (0x17) is the equivalent Back
+	// button at the bottom of the zoomed email / browser content view.
+	const UICL::ThreeRectWidget &back = _uiclData->subButtons[subButtonIndex];
 	if (back.srcRectIdle.isEmpty() || back.destRect.isEmpty()) {
 		return;
 	}
@@ -1013,9 +1018,9 @@ void CellPhonePopup::drawBackLabel() {
 											back.destRect.top - chunkOrigin.y));
 }
 
-Common::Rect CellPhonePopup::backButtonHitRect() const {
-	// Popup-local hit rect for the Back button (subButtons[0]).
-	Common::Rect r = _uiclData->subButtons[0].destRect;
+Common::Rect CellPhonePopup::backButtonHitRect(uint subButtonIndex) const {
+	// Popup-local hit rect for a Back sub-button.
+	Common::Rect r = _uiclData->subButtons[subButtonIndex].destRect;
 	if (r.isEmpty()) {
 		return r;
 	}
@@ -1024,15 +1029,15 @@ Common::Rect CellPhonePopup::backButtonHitRect() const {
 }
 
 const UICL::ThreeRectWidget &CellPhonePopup::scrollUpButton() const {
-	// Directory uses subButtons[1]; search / email / browser content all
-	// use subButtons[5] (which sits above the taller list LCD area).
-	return _screenState == kDirectory
+	// Directory and help both scroll with the small-LCD arrow pair
+	// (subButtons[1]/[2]); the zoomed email / browser articles use [5]/[6].
+	return (_screenState == kDirectory || isHelpContentView())
 		? _uiclData->subButtons[1]
 		: _uiclData->subButtons[5];
 }
 
 const UICL::ThreeRectWidget &CellPhonePopup::scrollDownButton() const {
-	return _screenState == kDirectory
+	return (_screenState == kDirectory || isHelpContentView())
 		? _uiclData->subButtons[2]
 		: _uiclData->subButtons[6];
 }
@@ -1109,6 +1114,45 @@ void CellPhonePopup::appendDigit(byte slotIndex) {
 	}
 	_dialedNumber += (char)('0' + slotIndex);
 	enterScreenState(kDialing);
+
+	// Auto-dial without a Talk press: a leading '1' is a full 11-digit number;
+	// anything else is a 7-digit local number that dials as soon as it matches
+	// a contact (or reaches 7 digits, ringing through to "We're sorry").
+	if (_noSignal) {
+		return;
+	}
+	const bool longDistance = (_dialedNumber[0] == '1');
+	if (longDistance) {
+		if (_dialedNumber.size() >= 11) {
+			enterScreenState(kPlaceCall);
+		}
+	} else if (findContactByDialBuffer() != -1 || _dialedNumber.size() >= 7) {
+		enterScreenState(kPlaceCall);
+	}
+}
+
+void CellPhonePopup::playDialPadSound(const Common::String &name) {
+	if (name.empty() || name.equalsIgnoreCase("NO SOUND")) {
+		return;
+	}
+	// Dial-pad tones are raw sound filenames, so play them through the phone's
+	// call-sound channel (a single, non-looping cue) instead of the common
+	// sound table, which only holds boot-registered sounds.
+	SoundDescription sound = _uiclData->callSoundTemplate;
+	sound.name = name;
+	sound.numLoops = 1;
+	g_nancy->_sound->loadSound(sound);
+	g_nancy->_sound->playSound(sound);
+}
+
+void CellPhonePopup::playButtonClickSound(const UIButtonRecord &button) {
+	SoundDescription sound = button.clickSound;
+	if (sound.name.empty() || sound.name.equalsIgnoreCase("NO SOUND"))
+		return;
+
+	sound.numLoops = 1;
+	g_nancy->_sound->loadSound(sound);
+	g_nancy->_sound->playSound(sound);
 }
 
 bool CellPhonePopup::playSoundIfPresent(const Common::Path &soundName) {
@@ -1526,6 +1570,7 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		if (overClose) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				playButtonClickSound(closeBtn);
 				input.eatMouseInput();
 				close();
 				return;
@@ -1541,7 +1586,9 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 
 	const Common::Point chunkMouse = mouseToChunkCoords(input.mousePos);
 
-	// Light the up/down arrows on hover in any state that uses them.
+	// Light the up/down arrows on hover in any state that uses them (directory,
+	// link lists, and the content view — help included, which scrolls via the
+	// small-LCD arrow pair).
 	const bool arrowsActive = _screenState == kDirectory || isLinkListMode() ||
 								_screenState == kContentView;
 	const bool overUp = arrowsActive &&
@@ -1782,6 +1829,8 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 			}
 		}
 
+		// scrollUpButton()/scrollDownButton() return the right pair for help
+		// (subButtons[1]/[2]) or the zoomed articles ([5]/[6]).
 		const Common::Rect &upDst = scrollUpButton().destRect;
 		const Common::Rect &downDst = scrollDownButton().destRect;
 
@@ -1804,15 +1853,16 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 				return;
 			}
 		}
-
-		// Help draws a real Back button (subButtons[0]); hit-test it so the
-		// visible button and the hotspot line up. Browser / email articles keep
-		// using the wider ribbon-area hotspot.
-		const Common::Rect backHit = isHelpContentView() ? backButtonHitRect() : backLabelHitRect();
-		const Common::Point popupMouse(chunkMouse.x - _screenPosition.left,
-										chunkMouse.y - _screenPosition.top);
 		const bool overUpDown =
 			upDst.contains(chunkMouse) || downDst.contains(chunkMouse);
+
+		// Help draws its Back button in the lower ribbon (subButtons[0]); the
+		// zoomed email / browser view draws it at the bottom of the screen
+		// (subButtons[7]). Hit-test the matching button so it lines up with the
+		// visible sprite.
+		const Common::Rect backHit = backButtonHitRect(isHelpContentView() ? 0 : 7);
+		const Common::Point popupMouse(chunkMouse.x - _screenPosition.left,
+										chunkMouse.y - _screenPosition.top);
 		if (!overUpDown && !backHit.isEmpty() && backHit.contains(popupMouse)) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
@@ -1831,6 +1881,7 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			playDialPadSound(_uiclData->dialPadSlots[12].soundName);
 			if (!_noSignal) {
 				if (_screenState == kDirectory) {
 					const int contactIdx =
@@ -1872,9 +1923,7 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			const UICL::DialPadSlot &slot = _uiclData->dialPadSlots[newHovered];
 
-			if (!slot.soundName.empty()) {
-				g_nancy->_sound->playSound(slot.soundName);
-			}
+			playDialPadSound(slot.soundName);
 
 			if (newHovered < 10) {
 				if (_screenState == kDirectory || isLinkListMode()) {
