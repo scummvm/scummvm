@@ -79,7 +79,6 @@ extern void hspot_wipe();
 extern int hspot_key(int key);
 extern int hspot_begin(int x, int y, int class_, int num, int hotkey);
 extern int hspot_end();
-extern void hspot_dummy();
 
 /**
  * Given X,Y returns the hotspot the coordinates fall into.

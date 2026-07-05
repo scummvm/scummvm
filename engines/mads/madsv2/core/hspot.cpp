@@ -97,7 +97,6 @@ void hspot_pack() {
 	numspots = unto;
 }
 
-
 int hspot_remove(int class_, int num) {
 	int a, cleared;
 
@@ -147,7 +146,6 @@ void hspot_wipe() {
 	hotkeys[max_hot_spots] = -1;
 }
 
-
 int hspot_key(int key) {
 	int result = -1;
 	int count;
@@ -161,7 +159,6 @@ int hspot_key(int key) {
 	return result;
 }
 
-
 int hspot_begin(int x, int y, int class_, int num, int hotkey) {
 	cursor_set_follow(true);
 	cursor_set_pos(x, y);
@@ -171,7 +168,6 @@ int hspot_begin(int x, int y, int class_, int num, int hotkey) {
 	hotkeys[num] = hotkey;
 	return (x);
 }
-
 
 int hspot_end() {
 	int x, y;
@@ -183,11 +179,6 @@ int hspot_end() {
 
 	cursor_set_follow(false);
 	return (x);
-}
-
-
-void hspot_dummy() {
-
 }
 
 int hspot_which(int coord_x, int coord_y, int video_mode) {

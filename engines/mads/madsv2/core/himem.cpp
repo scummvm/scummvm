@@ -150,8 +150,10 @@ int himem_resident(const char *filename) {
 	}
 
 done:
-	if (id >= 0) himem_get_directory_entry(id);
-	if (himem_xms_directory != NULL) mem_free(himem_xms_directory);
+	if (id >= 0)
+		himem_get_directory_entry(id);
+	if (himem_xms_directory != NULL)
+		mem_free(himem_xms_directory);
 	return id;
 }
 

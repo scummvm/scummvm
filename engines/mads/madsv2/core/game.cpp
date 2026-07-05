@@ -217,7 +217,6 @@ void game_cold_data_init() {
 	magic_high_fade_bound = 251;
 }
 
-
 static int scan_past(const char **myscan, char scan) {
 	int found = false;
 
@@ -235,7 +234,7 @@ static int scan_past(const char **myscan, char scan) {
 
 void flag_parse(const char **myscan) {
 	long mem_max;
-	// long mem_avail;
+
 	if (kernel.cheating == (byte)kernel_cheating_forbidden) {
 		if (scumm_stricmp(*myscan, kernel_cheating_password) == 0) {
 			kernel.cheating = (byte)kernel_cheating_allowed;
@@ -253,19 +252,11 @@ void flag_parse(const char **myscan) {
 		}
 		break;
 
-		// case 'A':
-		// if (scan_past(myscan, ':')) {
-		// abort_value = atoi(*myscan);
-		// scan_past(myscan, 0);
-		// }
-		// break;
 	case 'C':
 		if (scan_past(myscan, ':')) {
 			kernel.sound_card = **myscan;
 			if (scan_past(myscan, ',')) {
-				// pl sound_board_address = xtoi(*myscan);
 				if (scan_past(myscan, ',')) {
-					// pl sound_board_type  = xtoi(*myscan);
 					scan_past(myscan, 0);
 				}
 			}
@@ -314,31 +305,14 @@ void flag_parse(const char **myscan) {
 
 	case 'K':
 		inter_report_hotspots = true;
-		// config_file.interface_hotspots = INTERFACE_BRAINDEAD;
-		// inter_report_hotspots = !inter_report_hotspots;
-		break;
-
-	case 'L':
-#ifdef debug_enable_logfiles
-		logfile_enabled = true;
-#endif
 		break;
 
 	case 'M':
 		if (scan_past(myscan, ':')) {
 			mem_max = atol(*myscan);
 			mem_get_name(mem_max, "$HIDE$");
-			// mem_avail = mem_get_avail() - mem_program_block();
-			// if (mem_avail > mem_max) {
-			// mem_get_name(mem_avail - mem_max, "$HIDE$");
-			// }
 			scan_past(myscan, 0);
 		}
-		break;
-
-	case 'O':
-		// config_file.inventory_mode = INVENTORY_SQUAT;
-		// inter_spinning_objects = false;
 		break;
 
 	case 'P':
@@ -381,10 +355,6 @@ void flag_parse(const char **myscan) {
 
 	case 'V':
 		report_version = true;
-		break;
-
-	case 'Y':
-		// lock_hash_value = 0;
 		break;
 
 	case 'Z':
@@ -442,15 +412,11 @@ void show_version() {
 	echo(global_release_copyright, false);
 	echo(" by Sanctuary Woods Multimedia Corp.", true);
 	echo(" ", true);
-	// echo ("  FOR INTERNAL USE ONLY", true);
-	// echo (" ", true);
 }
-
 
 void show_logo() {
 	show_version();
 }
-
 
 void problem() {
 	debug("\nA slight problem . . .\n\n");
@@ -466,15 +432,11 @@ static void game_fix_save_name() {
 	Common::strcat_s(save_game_buf, ".SAV");
 }
 
-
 void game_save_name(int id) {
 	Common::strcpy_s(save_game_buf, save_game_key);
 	env_catint(save_game_buf, id, 3);
 	game_fix_save_name();
 }
-
-
-
 
 static void game_player_status() {
 	char work_buf[80];
@@ -488,8 +450,6 @@ static void game_player_status() {
 
 	popup_alert(20, "PLAYER GRAPHICS STATUS", "  ", temp_buf_3, NULL);
 }
-
-
 
 int game_parse_keystroke(int mykey) {
 	int count;
@@ -521,10 +481,6 @@ int game_parse_keystroke(int mykey) {
 			if (!popup_get_number (&temp, "CHANGE DIFFICULTY FACTOR", "New Factor:", 3)) {
 				game.difficulty = (byte)temp;
 			}
-			break;
-
-		case ctrl_e_key:
-			mcga_shakes = 350;
 			break;
 
 		case ctrl_f_key:
@@ -1112,8 +1068,6 @@ int game_parse_keystroke(int mykey) {
 	return (unpause >= 2);
 }
 
-
-
 void game_pause_mode() {
 	int mykey = -1;
 	long clock_save;
@@ -1141,8 +1095,6 @@ void game_pause_mode() {
 
 	kernel.paused = false;
 }
-
-
 
 void game_error_service() {
 	if (inter_spinning_objects || inter_animation_running) {
@@ -1210,9 +1162,7 @@ void game_control() {
 			game.going = false;
 			force_chain = true;
 			game_restore_flag = false;
-			// new_room    = 804;
-			// global_init_code();
-			// global[copy_protect_failed] = true;
+
 			error_report(ERROR_COPY_PROTECTION, SEVERE, MODULE_LOCK, 0, 0);
 		} else if (result == COPY_ESCAPE) {
 			game.going = false;
@@ -1274,7 +1224,6 @@ void game_control() {
 		Forest::int_sprite[Forest::fx_int_journal] = -1;
 
 	while (game.going) {
-
 		// Start up next section
 		kernel_mode = KERNEL_SECTION_PRELOAD;
 
@@ -1311,10 +1260,6 @@ void game_control() {
 			quote_emergency = false;
 			// vocab_emergency = false;
 			game_wait_cursor();
-
-#ifdef demo
-			demo_verify();
-#endif
 
 			kernel.quotes = NULL;
 
@@ -1394,9 +1339,7 @@ void game_control() {
 			for (count = 0; count < master_shadow->num_shadow_colors; count++) {
 				color = PAL_FORCE_SHADOW + count;
 				color_status[color] = 0;
-				// error_watch_point ("color_status", count, 0);
 			}
-
 
 			game.going = (byte)!kernel_room_startup(new_room, kernel_initial_variant, kernel.interface, false);
 
@@ -1430,13 +1373,10 @@ void game_control() {
 
 			// Use a graphics fade in for room transition
 			if (kernel_screen_fade == SCREEN_FADE_SMOOTH) {
-				// kernel.fx = MATTE_FX_CIRCLE_OUT_SLOW;
 				kernel.fx = MATTE_FX_FADE_THRU_BLACK;
 			} else if (kernel_screen_fade == SCREEN_FADE_FAST) {
-				// kernel.fx = MATTE_FX_CIRCLE_OUT_SLOW;
 				kernel.fx = MATTE_FX_FAST_THRU_BLACK;
 			} else {
-				// kernel.fx = MATTE_FX_CIRCLE_OUT_SLOW;
 				kernel.fx = MATTE_FX_FAST_AND_FANCY;
 			}
 
@@ -1504,7 +1444,7 @@ void game_control() {
 
 			ems_paging_mode(EMS_PAGING_SYSTEM);
 
-			if ((quote_emergency /* || vocab_emergency */) && !game_any_emergency) {
+			if (quote_emergency && !game_any_emergency) {
 				room_id = previous_room;
 				game_any_emergency = true;
 			} else {
@@ -1582,7 +1522,6 @@ void game_control() {
 
 		game_wait_cursor();
 
-		// pl kernel_unload_sound_driver();
 		// Shut down current section
 		kernel_section_shutdown();
 
@@ -1623,7 +1562,6 @@ static void game_system_maintenance() {
 
 	if (section_id != 9 && room_id != 199) {
 		if (((mouse_status & 3) == 3) && player.commands_allowed) {
-			// kernel.force_restart = true;
 			kernel.activate_menu = GAME_MAIN_MENU;
 			inter_init_sentence();
 			inter_sentence_ready = false;
@@ -1665,19 +1603,10 @@ static void game_daemon_code() {
  * player.need_to_walk to false.
  */
 static void game_handle_preparse() {
-	// if (global[4] >= 0 || global[5]) player.command_ready = true;
-	// if (global[4] >= 0 || global[5]) player.command_error = false;
-	// if (global[4] >= 0 ) player.command_ready = true;
-	// if (global[4] >= 0 ) player.command_error = false;
 	if ((inter_input_mode == INTER_BUILDING_SENTENCES) ||
-		(inter_input_mode == INTER_LIMITED_SENTENCES)) {
+			(inter_input_mode == INTER_LIMITED_SENTENCES)) {
 		kernel.trigger_setup_mode = KERNEL_TRIGGER_PREPARSE;
 
-		// if (global[4] >= 0) {
-		  // player_verb = -1;
-		  // player_main_noun = -1;
-		  // player_second_noun = -1;
-		// }
 		global_pre_parser_code();
 		game_exec_function(section_pre_parser_code_pointer);
 		game_exec_function(room_pre_parser_code_pointer);
@@ -1687,8 +1616,6 @@ static void game_handle_preparse() {
 		}
 	}
 }
-
-
 
 /**
  * Handles incoming player commands -- they are filtered down through
@@ -2152,26 +2079,6 @@ static void game_main_loop() {
 		temp_message = kernel_message_add(temp_buf, 5, 5, 515, 1, 0, 0);
 	}
 
-	// if (kernel.memory_tracking) {
-	  // Common::strcpy_s (temp_buf_2, "(Mem: ");
-	  // ltoa (mem_get_avail(), &temp_buf_2[6], 10);
-	  // Common::strcat_s (temp_buf_2, ") ");
-	  // temp_message_2 = kernel_message_add (temp_buf_2, 315, 5, 515, 1, 0, KERNEL_MESSAGE_RIGHT);
-	// }
-	// if (kernel.player_tracking) {
-	  // Common::strcpy_s (temp_buf_3, "(Plyr: ");
-	  // mads_itoa (player.x, &temp_buf_3[strlen(temp_buf_3)], 10);
-	  // Common::strcat_s (temp_buf_3, ",");
-	  // mads_itoa (player.y, &temp_buf_3[strlen(temp_buf_3)], 10);
-	  // Common::strcat_s (temp_buf_3, ")");
-	  // yy = 5;
-	  // if (kernel.mouse_cursor_point) yy += 15;
-	  // temp_message_3 = kernel_message_add (temp_buf_3, 5, yy, 515, 1, 0, 0);
-	  // Common::strcpy_s (temp_buf_4, "Scale %");
-	  // mads_itoa (player.scale, &temp_buf_4[strlen(temp_buf_4)], 10);
-	  // yy += 15;
-	  // temp_message_4 = kernel_message_add (temp_buf_4, 5, yy, 515, 1, 0, 0);
-	// }
 	// Update any messages
 	if (!kernel.trigger) {
 		if (kernel.force_restart || (new_room != room_id)) kernel_message_purge();
@@ -2214,11 +2121,10 @@ static void game_main_loop() {
 		kernel_message_delete(temp_message_4);
 	}
 
-	if (kernel.cause_pause || kernel.frame_by_frame) game_pause_mode();
+	if (kernel.cause_pause || kernel.frame_by_frame)
+		game_pause_mode();
 
 skip_frame:
-
-	// if (mcga_shakes) mcga_shake();
 	if (kernel.fx) {
 		cycling_active = true;
 	}

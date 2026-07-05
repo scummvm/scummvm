@@ -35,7 +35,6 @@ extern int  mcga_retrace_max_bytes;
 
 extern word mcga_palette_update;
 extern int  mcga_palette_fast;
-extern word mcga_shakes;
 
 /**
  * Given X and Y, sets pixel to color C
@@ -72,8 +71,6 @@ extern void mcga_retrace();
 extern void mcga_setpal_range(Palette *pal, int first_color, int num_colors);
 
 extern void mcga_compute_retrace_parameters();
-
-extern void mcga_shake();
 
 extern void mcga_reset();
 

@@ -469,14 +469,6 @@ static word imp_rb_refill(ImpState *s) {
 
 /**
  * Read one byte from the input.  Returns -1 (as int) on EOF.
- * Assembly pattern (inside Fabrice loop):
- * dec RBcnt; jnz Gin; call implode_RBin; or ax,ax; jz Zin; jmp @B
- * Gin: mov bx,RBptr; inc RBptr; mov al,[bx]
- * RBcnt starts at 1 after init; first dec makes it 0, triggering refill.
- * After refill: RBcnt = bytes_read + 1.
- *
- * @param s		State
- * @return	Next byte
  */
 static int imp_get_byte(ImpState *s) {
 	for (;;) {
@@ -493,10 +485,7 @@ static int imp_get_byte(ImpState *s) {
 
 /**
  * Flush the write (output) buffer.
- * Resets wb_ptr and wb_cnt.  Assembly version:
- * WBcnt = WBlen, compute bytes = WBptr - &WBuff, reset WBptr = &WBuff
- *
- * @param s		State
+ * Resets wb_ptr and wb_cnt.
  */
 static void imp_wb_flush(ImpState *s) {
 	word bytes = (word)(s->wb_ptr - s->wb);
@@ -554,11 +543,6 @@ static void imp_packet(ImpState *s) {
 
 /**
  * Emit one Huffman control bit.
- * Assembly:
- * or al,al; jz @F
- * mov ax,Huffbit; or Huffman,ax    (set bit if val != 0)
- * @@: shl Huffbit,1; jnz @F; call Packet   (flush when bit overflows 16-bit)
- *
  * @param s		State
  * @param val	Value
  */
@@ -574,7 +558,6 @@ static void imp_huff1(ImpState *s, int val) {
 
 /**
  * Append one raw data byte to the current packet buffer.
- * Assembly: mov di,Huffptr; inc Huffptr; mov [di],al
  *
  * @param s		State
  * @param val	Value
@@ -587,11 +570,6 @@ static void imp_push1(ImpState *s, byte val) {
 
 /**
  * Hash key computation.
- * Assembly (in Link and Match):
- * mov si, word ptr Lempel[di]   ; 16-bit word at lempel[di]
- * and si, HASH-1                ; mask to [0..IMP_HASH-1]
- * add si, LEMPEL+1              ; shift into key-table region
- * shl si, 1                     ; convert to byte offset
  * Result is a BYTE OFFSET into hash[] pointing at the key root slot.
  * In C we use a WORD index = si>>1 into the hash[] word array.
  *
@@ -606,14 +584,6 @@ static inline int imp_hash_key_idx(ImpState *s, int pos) {
 
 /**
  * Insert lempel[di] at the root of its hash chain.
- * Assembly (byte-offset based):
- * si = key byte offset  (= hash_key_idx * 2)
- * di2 = di * 2
- * bx = Hash[si>>1]       ; old root byte-offset
- * Hash[di2>>1] = bx      ; di's next = old root
- * Hash[si>>1]  = di2     ; new root  = di
- * UnDo[bx>>1]  = di2     ; old root back-ptr = di
- * UnDo[di2>>1] = si      ; di back-ptr = key slot
  * All values stored are BYTE OFFSETS (position << 1), with NIL = 0x4000.
  * We store them directly as word values in hash[]/undo[] word arrays,
  * using word-index = byte-offset >> 1 to access them.
@@ -636,12 +606,6 @@ static void imp_link(ImpState *s, int di) {
 
 /**
  * Remove lempel[si] from its hash chain.
- * Assembly:
- * si2 = si << 1
- * bx = UnDo[si2>>1]          ; the slot that currently holds si2
- * if bx != NIL:
- * Hash[bx>>1] = NIL        ; remove si2 from that slot
- * UnDo[si2>>1] = NIL
  *
  * @param s		State
  * @param si	Index
@@ -659,22 +623,6 @@ static void imp_unlink(ImpState *s, int si) {
  * Find the longest matching string and insert lempel[di] into
  * the hash table.  Sets s->qlen and s->qoff.
  * Entry: di = current encode position (ring index, not DS offset).
- * The assembly proc adds offset(Lempel) to get DS-relative pointers for
- * string comparison.  In C we just index s->lempel[] directly.
- * The Ziv[] shadow array (s->lempel[IMP_LEMPEL .. IMP_LEMPEL+IMP_ZIV])
- * mirrors s->lempel[0..IMP_ZIV-1], so repe cmpsb can cross the ring
- * boundary without explicit wraparound -- comparisons starting near the
- * end of lempel[] continue into the shadow without going out of bounds.
- * AX encodes "remaining CX after repe cmpsb":
- * AX = ZIV-1 initially   (no match found yet)
- * AX = 0                 (ZIV-1 chars matched after hash char = ZIV total)
- * AX = 0xFFFF (-1 uint16) set by can1 for a full match (je from repe cmpsb)
- * Qlen = (uint16)(ZIV - AX) - 1  (wraps correctly for AX=0xFFFF -> Qlen=ZIV)
- * Qoff = -(( (di - best_pos/2) & (IMP_LEMPEL-1) ))
- * where best_pos is the BYTE OFFSET of the best candidate.
- * Match also links lempel[di] into the hash table (same as Link but
- * inlined at the end of can2, so it does NOT call imp_link separately
- * before the first Match call -- Fabrice calls Match before the main loop).
  *
  * @param s		State
  * @param di	Value
@@ -792,12 +740,6 @@ static void imp_fabrice(ImpState *s) {
 	// Also mirror the first ZIV-1 of them into the Ziv shadow at
 	// lempel[IMP_LEMPEL .. IMP_LEMPEL + ZIV - 2].
 	//
-	// Assembly:
-	//   di = offset Ziv - ZIV  (= Lempel + LEMPEL - ZIV in DS-relative)
-	//   cx = ZIV
-	// Loop1: dec RBcnt; jnz @F; call implode_RBin; jz GotZIV; jmp Loop1
-	// @@:    mov si,RBptr; inc RBptr; movsb; loop Loop1
-	//
 	// In flat C: write to lempel[IMP_LEMPEL - ZIV + i], and also to
 	// lempel[IMP_LEMPEL + i] for i < ZIV-1 (the Ziv shadow).
 	di = IMP_LEMPEL - IMP_ZIV;  // ring index: encode ptr starts here
@@ -827,12 +769,6 @@ static void imp_fabrice(ImpState *s) {
 		int save_si = si;
 
 		// Decide encoding type.
-		//
-		// Assembly:
-		//   cmp ax, 2; jb DoLit   => Qlen < 2: literal
-		//   ja DoMov               => Qlen > 2: copy
-		//   ; Qlen == 2:
-		//   cmp Qoff, -100h; jg DoMov   => Qoff > -256: copy; else literal
 		int qlen = (int)(int16_t)s->qlen;  // treat as signed for comparison
 		int qoff = (int)s->qoff;
 
@@ -852,13 +788,7 @@ static void imp_fabrice(ImpState *s) {
 				// Code: <00XY>, offset_byte.
 				// XY encodes Qlen-2 as 2 bits: bit1=(enc>>1)&1, bit0=enc&1.
 				// Offset byte = -(Qoff) = positive offset magnitude.
-				//
-				// Assembly:
-				//   Huff1(0); Huff1(0)
-				//   mov ax,Qlen; dec ax; dec ax; push ax
-				//   and al,2; Huff1(al)   (= bit1 of enc)
-				//   pop ax; and al,1; Huff1(al)  (= bit0 of enc)
-				//   mov ax,Qoff; call push1  (low byte = -offset)
+
 				imp_huff1(s, 0);
 				int enc = qlen - 2;  // 0..3
 				imp_huff1(s, (enc >> 1) & 1);  // bit1
@@ -882,16 +812,7 @@ static void imp_fabrice(ImpState *s) {
 				// But "Far5" label handles Qlen>5 OR Qoff<=-255.
 				// For Qlen==2 and Qoff<=-256 we already went to DoLit.
 				// So here Qlen >= 2 and (Qlen > 5 OR Qoff <= -256 OR Qlen==2 case not reached).
-				//
-				// Assembly Far5:
-				//   Huff1(1)
-				//   mov ax,Qoff; push1(al)         [low byte of offset]
-				//   mov al,ah; shl al,3             [high byte, shifted up 3]
-				//   mov bx,Qlen; cmp bx,9; ja Far9
-				//   dec bx; dec bx; or al,bl; push1(al)  [length in low 3 bits]
-				// Far9: (LongCopy, Qlen > 9)
-				//   push1(al)          [high byte with length=0]
-				//   mov ax,bx; dec ax; push1(al)   [Qlen-1 as aux byte]
+
 				imp_huff1(s, 1);
 				imp_push1(s, (byte)(qoff & 0xFF));  // offset low byte
 				byte hi = (byte)(((qoff >> 8) & 0xFF) << 3);  // hi byte, length field = 0
@@ -907,10 +828,6 @@ static void imp_fabrice(ImpState *s) {
 		}
 
 		// Cont: bookkeeping after emitting the code.
-		//
-		// Assembly:
-		//   sub Delta, Qlen; jge Zok
-		// @@: inc ParaZ; add Delta,10h; cmp Delta,0; jl @B
 		s->delta -= (int16_t)s->qlen;
 		while (s->delta < 0) {
 			s->paraz++;
@@ -935,14 +852,6 @@ static void imp_fabrice(ImpState *s) {
 
 		// Restore DI and SI, then advance through the input by Qlen characters,
 		// maintaining the hash dictionary.
-		//
-		// Assembly (Loop2):
-		//   call Link     ; add lempel[di] to dict  (skipped on first iteration
-		//   call UnLink   ;   via the "jmp short @F" before Loop2)
-		//   ; read next character into lempel[si]
-		//   if si < ZIV-1: also write lempel[LEMPEL+si] (Ziv shadow)
-		//   inc si; inc di; and si,LEMPEL-1; and di,LEMPEL-1
-		//   dec Qlen; jnz Loop2
 		//
 		// Note: on the FIRST iteration we skip Link (jump to UnLink directly)
 		// because the current di was already linked by Match().
