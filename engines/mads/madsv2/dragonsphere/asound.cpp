@@ -1261,8 +1261,8 @@ op2_set_vol:
 			}
 
 			default:
-				/* Unknown sub-opcode: no _pSrc advance (def_10EAC). */
-				goto dispatch;
+				/* Unknown sub-opcode */
+				goto note_event;
 			}
 		}
 
@@ -1642,7 +1642,7 @@ op2_set_vol:
 		}
 
 		/* Unknown group: skip. */
-		goto dispatch;
+		goto note_event;
 	}
 
 note_event:

@@ -29,11 +29,15 @@ namespace MADSV2 {
 namespace Dragonsphere {
 
 class DragonSoundManager : public SoundManager {
+private:
+	bool _isDemo;
+
 protected:
 	void loadDriver(int sectionNum) override;
 
 public:
-	DragonSoundManager(Audio::Mixer *mixer, bool &soundFlag) : SoundManager(mixer, soundFlag) {
+	DragonSoundManager(Audio::Mixer *mixer, bool &soundFlag, bool isDemo) :
+		SoundManager(mixer, soundFlag), _isDemo(isDemo) {
 	}
 	~DragonSoundManager() override {
 	}
@@ -465,6 +469,57 @@ public:
 	int command(int commandId, int param) override;
 };
 
+/**
+ * ASoundDemo1  (asound.dr1 [demo], _dataOffset = 0x23e0, _dataSize = 0x4900)
+ *
+ * Dispatch table layout (four tables collapsed to flat [93]):
+ *   commands0:  commands  0– 8  (base=0,    max=8)
+ *   commands16: command   16    (base=0x10, max=0x10, 1 entry)
+ *   commands24: commands 24–43  (base=0x18, max=0x2B; slots 28,29,44 = no-op)
+ *   commands64: commands 64–92  (base=0x40, max=0x5C; slots 64–89 = no-op)
+ */
+class ASoundDemo1 : public ASound {
+private:
+	typedef int (ASoundDemo1::*CommandPtr)();
+	static const CommandPtr _commandList[93];
+
+	void loadCommand16();
+	void loadCommand30();
+	void loadCommand31();
+	void loadCommand32();
+	void loadCommand33();
+	void loadCommand34();
+	void loadCommand35();
+	void loadCommand36();
+	void loadCommand37();
+	void loadCommand38();
+	void loadCommand39();
+	void loadCommand40();
+	void loadCommand41();
+	void loadCommand42();
+	void loadCommand43();
+	void loadCommand92();
+
+	int command0(); int command1(); int command2(); int command3();
+	int command4(); int command5(); int command6(); int command7();
+	int command8();
+
+	int command16();
+
+	int command24(); int command25(); int command26(); int command27();
+	int command30(); int command31(); int command32(); int command33();
+	int command34(); int command35(); int command36(); int command37();
+	int command38(); int command39(); int command40(); int command41();
+	int command42(); int command43();
+
+	int command90(); int command91(); int command92();
+
+public:
+	ASoundDemo1(Audio::Mixer *mixer, OPL::OPL *opl);
+	~ASoundDemo1() override {}
+	int command(int commandId, int param) override;
+};
+
 class ASound9 : public ASound {
 private:
 	typedef int (ASound9:: *CommandPtr)();
@@ -511,6 +566,60 @@ private:
 public:
 	ASound9(Audio::Mixer *mixer, OPL::OPL *opl);
 	~ASound9() override {}
+	int command(int commandId, int param) override;
+};
+
+/**
+ * ASoundDemo9  (asound.dr9 [demo], _dataOffset = 0x23a0, _dataSize = 0x62b0)
+ *
+ * Dispatch table layout (flat [51]):
+ *   commands0:     commands  0– 8  (base=0,    max=8)
+ *   commands16_24: command   16    (base=0x10, max=0x10, 1 entry; also
+ *                  reused directly for command 24 - shared handler)
+ *   commands24:    commands 25–29, 34–50 (base=0x18/0x22; slots 30,31 = no-op)
+ *     - command28_32 is shared between commands 28 and 32
+ *     - command29_33 is shared between commands 29 and 33
+ *     (commands 32/33 are redirected to 28/29 by index-correction code
+ *     outside the array, not via separate array slots)
+ *   commands 64+ are unreachable (dispatcher upper bound is 0 for that range)
+ */
+class ASoundDemo9 : public ASound {
+private:
+	typedef int (ASoundDemo9::*CommandPtr)();
+	static const CommandPtr _commandList[51];
+
+	// Deferred loader callbacks (void, Pattern B)
+	void loadCommand28();
+	void loadCommand29();
+	void loadCommand34();
+	void loadCommand35();
+	void loadCommand36();
+	void loadCommand37();
+	void loadCommand38();
+	void loadCommand39();
+	void loadCommand40();
+	void loadCommand41();
+	void loadCommand42();
+
+	int command0(); int command1(); int command2(); int command3();
+	int command4(); int command5(); int command6(); int command7();
+	int command8();
+
+	int command16();
+
+	int command25(); int command26(); int command27();
+	int command28_32();
+	int command29_33();
+
+	int command34(); int command35(); int command36(); int command37();
+	int command38(); int command39(); int command40(); int command41();
+	int command42(); int command43(); int command44(); int command45();
+	int command46(); int command47(); int command48(); int command49();
+	int command50();
+
+public:
+	ASoundDemo9(Audio::Mixer *mixer, OPL::OPL *opl);
+	~ASoundDemo9() override {}
 	int command(int commandId, int param) override;
 };
 

@@ -34,6 +34,7 @@
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/rooms/section1.h"
 #include "mads/madsv2/dragonsphere/rooms/room113.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -418,7 +419,9 @@ static void room_113_daemon() {
 	}
 
 	if (kernel.trigger == ROOM_113_RESTART) {
-		if (game.difficulty == EASY_MODE) {
+		if (g_engine->isDemo()) {
+			// Demo doesn't have any text display
+		} else if (game.difficulty == EASY_MODE) {
 			text_show(11336);
 		} else {
 			text_show(45);

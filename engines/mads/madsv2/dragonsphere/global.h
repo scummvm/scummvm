@@ -257,6 +257,8 @@ enum {
 #define GRAPES_GROWING                  1  /* is for global[grapes_have_grown] in 411 */
 #define GRAPES_GROWN                    2
 
+extern const char *DEMO_MSG;
+
 extern void global_section_constructor();
 extern void sync_room(Common::Serializer &s);
 

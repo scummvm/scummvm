@@ -42,17 +42,26 @@ void DragonSoundManager::validate() {
 		nullptr,
 		"379fcc9af2142f15a3e7166eee6dd49d"
 	};
+	static const char *const MD5_DEMO[] = {
+		"c4fc9e9d7e2392c69ea7b3ca997e832d",
+		nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr,
+		"21432c2dd055d0d505ede8fecc77b29a"
+	};
 
 	for (int i = 1; i <= 9; ++i) {
 		if (i == 7 || i == 8)
 			continue;
+		if (_isDemo && i != 1 && i != 9)
+			continue;
+
 		Common::Path filename(Common::String::format("asound.dr%d", i));
 		if (!f.open(filename))
 			error("Could not process - %s", filename.toString().c_str());
 		Common::String md5str = Common::computeStreamMD5AsString(f, 8192);
 		f.close();
 
-		if (md5str != MD5[i - 1])
+		if (md5str != (_isDemo ? MD5_DEMO[i - 1] : MD5[i - 1]))
 			error("Invalid sound file - %s", filename.toString().c_str());
 	}
 }
@@ -60,7 +69,10 @@ void DragonSoundManager::validate() {
 void DragonSoundManager::loadDriver(int sectionNumber) {
 	switch (sectionNumber) {
 	case 1:
-		_driver = new ASound1(_mixer, _opl);
+		if (_isDemo)
+			_driver = new ASoundDemo1(_mixer, _opl);
+		else
+			_driver = new ASound1(_mixer, _opl);
 		break;
 	case 2:
 		_driver = new ASound2(_mixer, _opl);
@@ -78,7 +90,10 @@ void DragonSoundManager::loadDriver(int sectionNumber) {
 		_driver = new ASound6(_mixer, _opl);
 		break;
 	case 9:
-		_driver = new ASound9(_mixer, _opl);
+		if (_isDemo)
+			_driver = new ASoundDemo9(_mixer, _opl);
+		else
+			_driver = new ASound9(_mixer, _opl);
 		break;
 	default:
 		_driver = nullptr;
@@ -3057,6 +3072,872 @@ int ASound9::command63() {
 	playSound(0x66EC);
 	return 0;
 }
+
+/*-----------------------------------------------------------------------*/
+/* ASoundDemo1  (asound.dr1 [demo])                                       *
+ *-----------------------------------------------------------------------*/
+
+const ASoundDemo1::CommandPtr ASoundDemo1::_commandList[93] = {
+	// commands 0-8  (commands0)
+	&ASoundDemo1::command0,  &ASoundDemo1::command1,  &ASoundDemo1::command2,  &ASoundDemo1::command3,
+	&ASoundDemo1::command4,  &ASoundDemo1::command5,  &ASoundDemo1::command6,  &ASoundDemo1::command7,
+	&ASoundDemo1::command8,
+	// 9-15 absent
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	// command 16  (commands16)
+	&ASoundDemo1::command16,
+	// 17-23 absent
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	// commands 24-27, 28-29 = no-op, commands 30-43, 44 = no-op  (commands24)
+	&ASoundDemo1::command24, &ASoundDemo1::command25, &ASoundDemo1::command26, &ASoundDemo1::command27,
+	nullptr,                 nullptr,
+	&ASoundDemo1::command30, &ASoundDemo1::command31, &ASoundDemo1::command32, &ASoundDemo1::command33,
+	&ASoundDemo1::command34, &ASoundDemo1::command35, &ASoundDemo1::command36, &ASoundDemo1::command37,
+	&ASoundDemo1::command38, &ASoundDemo1::command39, &ASoundDemo1::command40, &ASoundDemo1::command41,
+	&ASoundDemo1::command42, &ASoundDemo1::command43,
+	nullptr,
+	// 45-63 absent
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	nullptr, nullptr, nullptr, nullptr, nullptr,
+	// commands 64-89 = no-op, commands 90-92  (commands64)
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	nullptr, nullptr, nullptr, nullptr, nullptr,
+	&ASoundDemo1::command90, &ASoundDemo1::command91, &ASoundDemo1::command92
+};
+
+ASoundDemo1::ASoundDemo1(Audio::Mixer *mixer, OPL::OPL *opl)
+		: ASound(mixer, opl, "asound.dr1", 0x23e0, 0x4900) {
+	auto samplesStream = getDataStream(0x1dc);
+	for (int i = 0; i < 182; ++i)
+		_samples.push_back(AdlibSample(samplesStream));
+}
+
+int ASoundDemo1::command(int commandId, int param) {
+	if (commandId > 92 || !_commandList[commandId])
+		return 0;
+	return (this->*_commandList[commandId])();
+}
+
+// commands 0-8: delegate to base ASound
+int ASoundDemo1::command0() { return ASound::command0(); }
+int ASoundDemo1::command1() { return ASound::command1(); }
+int ASoundDemo1::command2() { return ASound::command2(); }
+int ASoundDemo1::command3() { return ASound::command3(); }
+int ASoundDemo1::command4() { return ASound::command4(); }
+int ASoundDemo1::command5() { return ASound::command5(); }
+int ASoundDemo1::command6() { return ASound::command6(); }
+int ASoundDemo1::command7() { return ASound::command7(); }
+int ASoundDemo1::command8() { return ASound::command8(); }
+
+// ---------------------------------------------------------------------------
+// command16 - no isSoundActive guard; if music channels are busy, defer via
+// callback, otherwise load immediately. Loads channels 0-6.
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand16() {
+	resetCallbackTimer(0x90);
+	ASound::command1();
+	_channels[0]->load(loadData(0x2BC6));
+	_channels[1]->load(loadData(0x2C74));
+	_channels[2]->load(loadData(0x2CEC));
+	_channels[3]->load(loadData(0x2D68));
+	_channels[4]->load(loadData(0x2DC0));
+	_channels[5]->load(loadData(0x2DE7));
+	_channels[6]->load(loadData(0x2E07));
+}
+
+int ASoundDemo1::command16() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand16));
+	else
+		loadCommand16();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// commands 25-27 - sound effects via findFreeChannelFull
+// ---------------------------------------------------------------------------
+int ASoundDemo1::command25() {
+	findFreeChannelFull(loadData(0x4575));
+	findFreeChannelFull(loadData(0x45A1));
+	return 0;
+}
+
+int ASoundDemo1::command26() {
+	findFreeChannelFull(loadData(0x45CF));
+	return 0;
+}
+
+int ASoundDemo1::command27() {
+	findFreeChannelFull(loadData(0x45DB));
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command30 - isMusicChannelsActive guard, deferred callback, load ch0-5
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand30() {
+	resetCallbackTimer(0xB0);
+	ASound::command1();
+	_channels[0]->load(loadData(0x2F2A));
+	_channels[1]->load(loadData(0x2F73));
+	_channels[2]->load(loadData(0x2FD5));
+	_channels[3]->load(loadData(0x2FFF));
+	_channels[4]->load(loadData(0x302F));
+	_channels[5]->load(loadData(0x303E));
+}
+
+int ASoundDemo1::command30() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand30));
+	else
+		loadCommand30();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command31 - isMusicChannelsActive guard, deferred callback, load ch0-5.
+// Note: command1() is called before resetCallbackTimer here (reversed order
+// vs command30/command16).
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand31() {
+	ASound::command1();
+	resetCallbackTimer(0xB0);
+	_channels[0]->load(loadData(0x304E));
+	_channels[1]->load(loadData(0x30F4));
+	_channels[2]->load(loadData(0x3156));
+	_channels[3]->load(loadData(0x3191));
+	_channels[4]->load(loadData(0x3210));
+	_channels[5]->load(loadData(0x3228));
+}
+
+int ASoundDemo1::command31() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand31));
+	else
+		loadCommand31();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command32 - isMusicChannelsActive guard, deferred callback, load ch0-5
+// (channels 3-5 load from non-sequential data offsets)
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand32() {
+	resetCallbackTimer(0x50);
+	ASound::command1();
+	_channels[0]->load(loadData(0x32AC));
+	_channels[1]->load(loadData(0x32FE));
+	_channels[2]->load(loadData(0x3387));
+	_channels[3]->load(loadData(0x32EF));
+	_channels[4]->load(loadData(0x3371));
+	_channels[5]->load(loadData(0x3448));
+}
+
+int ASoundDemo1::command32() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand32));
+	else
+		loadCommand32();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command33 - isMusicChannelsActive guard, deferred callback, load ch0-5
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand33() {
+	resetCallbackTimer(0x60);
+	ASound::command1();
+	_channels[0]->load(loadData(0x3A7E));
+	_channels[1]->load(loadData(0x3B16));
+	_channels[2]->load(loadData(0x3B9C));
+	_channels[3]->load(loadData(0x3BE7));
+	_channels[4]->load(loadData(0x3C1E));
+	_channels[5]->load(loadData(0x3C34));
+}
+
+int ASoundDemo1::command33() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand33));
+	else
+		loadCommand33();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command34 - isMusicChannelsActive guard, deferred callback, load ch0-5
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand34() {
+	resetCallbackTimer(0x80);
+	ASound::command1();
+	_channels[0]->load(loadData(0x40FE));
+	_channels[1]->load(loadData(0x41C2));
+	_channels[2]->load(loadData(0x42B1));
+	_channels[3]->load(loadData(0x4345));
+	_channels[4]->load(loadData(0x43B5));
+	_channels[5]->load(loadData(0x43C4));
+}
+
+int ASoundDemo1::command34() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand34));
+	else
+		loadCommand34();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command35 - isMusicChannelsActive guard, deferred callback, load ch0-5
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand35() {
+	resetCallbackTimer(0xC0);
+	ASound::command1();
+	_channels[0]->load(loadData(0x43E8));
+	_channels[1]->load(loadData(0x444B));
+	_channels[2]->load(loadData(0x44B6));
+	_channels[3]->load(loadData(0x44C5));
+	_channels[4]->load(loadData(0x44D6));
+	_channels[5]->load(loadData(0x44E0));
+}
+
+int ASoundDemo1::command35() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand35));
+	else
+		loadCommand35();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command36 - isMusicChannelsActive guard, deferred callback, load ch0-5.
+// Note: command1() is called before resetCallbackTimer here (reversed order
+// vs command33-35).
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand36() {
+	ASound::command1();
+	resetCallbackTimer(0x60);
+	_channels[0]->load(loadData(0x1906));
+	_channels[1]->load(loadData(0x19ED));
+	_channels[2]->load(loadData(0x1AC8));
+	_channels[3]->load(loadData(0x1BF8));
+	_channels[4]->load(loadData(0x1CE4));
+	_channels[5]->load(loadData(0x1CFC));
+}
+
+int ASoundDemo1::command36() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand36));
+	else
+		loadCommand36();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command37 - isMusicChannelsActive guard, deferred callback, load ch0-5
+// (command1() before resetCallbackTimer, as in command36)
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand37() {
+	ASound::command1();
+	resetCallbackTimer(0xB0);
+	_channels[0]->load(loadData(0x1D40));
+	_channels[1]->load(loadData(0x1D95));
+	_channels[2]->load(loadData(0x1DF7));
+	_channels[3]->load(loadData(0x1E51));
+	_channels[4]->load(loadData(0x1E60));
+	_channels[5]->load(loadData(0x1E6F));
+}
+
+int ASoundDemo1::command37() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand37));
+	else
+		loadCommand37();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command38 - isMusicChannelsActive guard, deferred callback, load ch0-5
+// (resetCallbackTimer before command1(), as in command33-35)
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand38() {
+	resetCallbackTimer(0xA8);
+	ASound::command1();
+	_channels[0]->load(loadData(0x1E7E));
+	_channels[1]->load(loadData(0x1FF7));
+	_channels[2]->load(loadData(0x21AD));
+	_channels[3]->load(loadData(0x2476));
+	_channels[4]->load(loadData(0x269E));
+	_channels[5]->load(loadData(0x293B));
+}
+
+int ASoundDemo1::command38() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand38));
+	else
+		loadCommand38();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command39 - isMusicChannelsActive guard, deferred callback, load ch0-5
+// (channels 2-5 load from non-sequential data offsets)
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand39() {
+	resetCallbackTimer(0x90);
+	ASound::command1();
+	_channels[0]->load(loadData(0x2972));
+	_channels[1]->load(loadData(0x29DF));
+	_channels[2]->load(loadData(0x2BB7));
+	_channels[3]->load(loadData(0x2A56));
+	_channels[4]->load(loadData(0x2B36));
+	_channels[5]->load(loadData(0x2B8A));
+}
+
+int ASoundDemo1::command39() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand39));
+	else
+		loadCommand39();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command40 - isMusicChannelsActive guard, deferred callback, load ch0-6
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand40() {
+	resetCallbackTimer(0x90);
+	ASound::command1();
+	_channels[0]->load(loadData(0x17D6));
+	_channels[1]->load(loadData(0x180C));
+	_channels[2]->load(loadData(0x183F));
+	_channels[3]->load(loadData(0x1880));
+	_channels[4]->load(loadData(0x18B2));
+	_channels[5]->load(loadData(0x18CD));
+	_channels[6]->load(loadData(0x18E3));
+}
+
+int ASoundDemo1::command40() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand40));
+	else
+		loadCommand40();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command41 - isMusicChannelsActive guard, deferred callback, load ch0-5
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand41() {
+	resetCallbackTimer(0x50);
+	ASound::command1();
+	_channels[0]->load(loadData(0x3C44));
+	_channels[1]->load(loadData(0x3CB1));
+	_channels[2]->load(loadData(0x3CCD));
+	_channels[3]->load(loadData(0x3CE9));
+	_channels[4]->load(loadData(0x3CF6));
+	_channels[5]->load(loadData(0x3D03));
+}
+
+int ASoundDemo1::command41() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand41));
+	else
+		loadCommand41();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command42 - isMusicChannelsActive guard, deferred callback, load ch0-5.
+// Uses resetCallbackTimerEx: counter=0x60, period=0xE0 (asymmetric).
+// (channels 2 and 5 load from non-sequential data offsets)
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand42() {
+	resetCallbackTimerEx(0x60, 0xE0);
+	ASound::command1();
+	_channels[0]->load(loadData(0x3D10));
+	_channels[1]->load(loadData(0x3D66));
+	_channels[2]->load(loadData(0x40EE));
+	_channels[3]->load(loadData(0x3DED));
+	_channels[4]->load(loadData(0x3F7C));
+	_channels[5]->load(loadData(0x4053));
+}
+
+int ASoundDemo1::command42() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand42));
+	else
+		loadCommand42();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command43 - isMusicChannelsActive guard, deferred callback, load ch0-5
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand43() {
+	resetCallbackTimer(0x60);
+	ASound::command1();
+	_channels[0]->load(loadData(0x347A));
+	_channels[1]->load(loadData(0x35BB));
+	_channels[2]->load(loadData(0x36A8));
+	_channels[3]->load(loadData(0x37B5));
+	_channels[4]->load(loadData(0x38A5));
+	_channels[5]->load(loadData(0x3A4D));
+}
+
+int ASoundDemo1::command43() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand43));
+	else
+		loadCommand43();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command24 - sound effects via findFreeChannelFull
+// ---------------------------------------------------------------------------
+int ASoundDemo1::command24() {
+	findFreeChannelFull(loadData(0x4514));
+	findFreeChannelFull(loadData(0x4547));
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// commands 90-91 - sound effects via findFreeChannelFull
+// ---------------------------------------------------------------------------
+int ASoundDemo1::command90() {
+	findFreeChannelFull(loadData(0x3236));
+	findFreeChannelFull(loadData(0x3260));
+	return 0;
+}
+
+int ASoundDemo1::command91() {
+	findFreeChannelFull(loadData(0x326B));
+	findFreeChannelFull(loadData(0x32A1));
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command92 - isMusicChannelsActive guard, deferred callback, load ch0-5
+// ---------------------------------------------------------------------------
+void ASoundDemo1::loadCommand92() {
+	resetCallbackTimer(0x54);
+	ASound::command1();
+	_channels[0]->load(loadData(0x2E16));
+	_channels[1]->load(loadData(0x2E62));
+	_channels[2]->load(loadData(0x2EA9));
+	_channels[3]->load(loadData(0x2ED2));
+	_channels[4]->load(loadData(0x2EF5));
+	_channels[5]->load(loadData(0x2F1C));
+}
+
+int ASoundDemo1::command92() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo1, loadCommand92));
+	else
+		loadCommand92();
+	return 0;
+}
+
+/*-----------------------------------------------------------------------*/
+/* ASoundDemo9  (asound.dr9 [demo])                                       *
+ *-----------------------------------------------------------------------*/
+
+const ASoundDemo9::CommandPtr ASoundDemo9::_commandList[51] = {
+	// commands 0-8  (commands0)
+	&ASoundDemo9::command0,  &ASoundDemo9::command1,  &ASoundDemo9::command2,  &ASoundDemo9::command3,
+	&ASoundDemo9::command4,  &ASoundDemo9::command5,  &ASoundDemo9::command6,  &ASoundDemo9::command7,
+	&ASoundDemo9::command8,
+	// 9-15 absent
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	// command 16  (commands16_24)
+	&ASoundDemo9::command16,
+	// 17-23 absent
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	// command 24 = shared with command16
+	&ASoundDemo9::command16,
+	// commands 25-29  (commands24)
+	&ASoundDemo9::command25, &ASoundDemo9::command26, &ASoundDemo9::command27,
+	&ASoundDemo9::command28_32, &ASoundDemo9::command29_33,
+	// 30-31 absent
+	nullptr, nullptr,
+	// commands 32-33 = shared with commands 28/29
+	&ASoundDemo9::command28_32, &ASoundDemo9::command29_33,
+	// commands 34-50
+	&ASoundDemo9::command34, &ASoundDemo9::command35, &ASoundDemo9::command36, &ASoundDemo9::command37,
+	&ASoundDemo9::command38, &ASoundDemo9::command39, &ASoundDemo9::command40, &ASoundDemo9::command41,
+	&ASoundDemo9::command42, &ASoundDemo9::command43, &ASoundDemo9::command44, &ASoundDemo9::command45,
+	&ASoundDemo9::command46, &ASoundDemo9::command47, &ASoundDemo9::command48, &ASoundDemo9::command49,
+	&ASoundDemo9::command50
+};
+
+ASoundDemo9::ASoundDemo9(Audio::Mixer *mixer, OPL::OPL *opl)
+		: ASound(mixer, opl, "asound.dr9", 0x23a0, 0x62b0) {
+	auto samplesStream = getDataStream(0x1dc);
+	for (int i = 0; i < 182; ++i)
+		_samples.push_back(AdlibSample(samplesStream));
+}
+
+int ASoundDemo9::command(int commandId, int param) {
+	if (commandId > 50 || !_commandList[commandId])
+		return 0;
+	return (this->*_commandList[commandId])();
+}
+
+// commands 0-8: delegate to base ASound
+int ASoundDemo9::command0() { return ASound::command0(); }
+int ASoundDemo9::command1() { return ASound::command1(); }
+int ASoundDemo9::command2() { return ASound::command2(); }
+int ASoundDemo9::command3() { return ASound::command3(); }
+int ASoundDemo9::command4() { return ASound::command4(); }
+int ASoundDemo9::command5() { return ASound::command5(); }
+int ASoundDemo9::command6() { return ASound::command6(); }
+int ASoundDemo9::command7() { return ASound::command7(); }
+int ASoundDemo9::command8() { return ASound::command8(); }
+
+// ---------------------------------------------------------------------------
+// commands 16, 25-27 - sound effects via findFreeChannelFull
+// ---------------------------------------------------------------------------
+int ASoundDemo9::command16() {
+	findFreeChannelFull(loadData(0x5EC6));
+	findFreeChannelFull(loadData(0x5EF9));
+	return 0;
+}
+
+int ASoundDemo9::command25() {
+	findFreeChannelFull(loadData(0x5F27));
+	findFreeChannelFull(loadData(0x5F53));
+	return 0;
+}
+
+int ASoundDemo9::command26() { findFreeChannelFull(loadData(0x5F81)); return 0; }
+int ASoundDemo9::command27() { findFreeChannelFull(loadData(0x5F8D)); return 0; }
+
+// ---------------------------------------------------------------------------
+// command28_32 - isMusicChannelsActive guard, deferred callback, load ch0-5,8
+// (shared handler for commands 28 and 32)
+// ---------------------------------------------------------------------------
+void ASoundDemo9::loadCommand28() {
+	ASound::command1();
+	resetCallbackTimerEx(0x62, 0x54);
+	_channels[0]->load(loadData(0x1938));
+	_channels[1]->load(loadData(0x1972));
+	_channels[2]->load(loadData(0x1A2C));
+	_channels[3]->load(loadData(0x1A64));
+	_channels[4]->load(loadData(0x1B9E));
+	_channels[5]->load(loadData(0x1D5C));
+	_channels[8]->load(loadData(0x1C90));
+}
+
+int ASoundDemo9::command28_32() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo9, loadCommand28));
+	else
+		loadCommand28();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command29_33 - isMusicChannelsActive guard, deferred callback, load ch0-8
+// (shared handler for commands 29 and 33; non-sequential channel order)
+// ---------------------------------------------------------------------------
+void ASoundDemo9::loadCommand29() {
+	ASound::command1();
+	resetCallbackTimerEx(0x62, 0x54);
+	_channels[0]->load(loadData(0x2B10));
+	_channels[1]->load(loadData(0x2B7F));
+	_channels[2]->load(loadData(0x2BC5));
+	_channels[4]->load(loadData(0x2D3F));
+	_channels[5]->load(loadData(0x2D9F));
+	_channels[6]->load(loadData(0x2F0A));
+	_channels[3]->load(loadData(0x2FF3));
+	_channels[7]->load(loadData(0x3000));
+	_channels[8]->load(loadData(0x2C83));
+}
+
+int ASoundDemo9::command29_33() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo9, loadCommand29));
+	else
+		loadCommand29();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command34 - isMusicChannelsActive guard, deferred callback, load ch0-2,8,4-6
+// ---------------------------------------------------------------------------
+void ASoundDemo9::loadCommand34() {
+	ASound::command1();
+	resetCallbackTimer(0x38);
+	_channels[0]->load(loadData(0x300E));
+	_channels[1]->load(loadData(0x3204));
+	_channels[2]->load(loadData(0x3409));
+	_channels[8]->load(loadData(0x360A));
+	_channels[4]->load(loadData(0x3789));
+	_channels[5]->load(loadData(0x388C));
+	_channels[6]->load(loadData(0x38D7));
+}
+
+int ASoundDemo9::command34() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo9, loadCommand34));
+	else
+		loadCommand34();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command35 - isMusicChannelsActive guard, deferred callback, load ch0-3,8,5-6
+// ---------------------------------------------------------------------------
+void ASoundDemo9::loadCommand35() {
+	ASound::command1();
+	resetCallbackTimer(0x50);
+	_channels[0]->load(loadData(0x3924));
+	_channels[1]->load(loadData(0x396F));
+	_channels[2]->load(loadData(0x39B6));
+	_channels[3]->load(loadData(0x3A7A));
+	_channels[8]->load(loadData(0x3AEA));
+	_channels[5]->load(loadData(0x3C01));
+	_channels[6]->load(loadData(0x3C97));
+}
+
+int ASoundDemo9::command35() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo9, loadCommand35));
+	else
+		loadCommand35();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command36 - isMusicChannelsActive guard, deferred callback, load ch0-5,8
+// ---------------------------------------------------------------------------
+void ASoundDemo9::loadCommand36() {
+	ASound::command1();
+	resetCallbackTimer(0x28);
+	_channels[0]->load(loadData(0x3DFE));
+	_channels[1]->load(loadData(0x3E8F));
+	_channels[2]->load(loadData(0x3F0B));
+	_channels[3]->load(loadData(0x3F41));
+	_channels[4]->load(loadData(0x422F));
+	_channels[5]->load(loadData(0x42F1));
+	_channels[8]->load(loadData(0x4299));
+}
+
+int ASoundDemo9::command36() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo9, loadCommand36));
+	else
+		loadCommand36();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command37 - isMusicChannelsActive guard, deferred callback, load ch0-4,8,5
+// ---------------------------------------------------------------------------
+void ASoundDemo9::loadCommand37() {
+	ASound::command1();
+	resetCallbackTimer(0x50);
+	_channels[0]->load(loadData(0x4334));
+	_channels[1]->load(loadData(0x43C3));
+	_channels[2]->load(loadData(0x4453));
+	_channels[3]->load(loadData(0x449A));
+	_channels[4]->load(loadData(0x452E));
+	_channels[8]->load(loadData(0x453C));
+	_channels[5]->load(loadData(0x4618));
+}
+
+int ASoundDemo9::command37() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo9, loadCommand37));
+	else
+		loadCommand37();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command38 - isMusicChannelsActive guard, deferred callback, load ch0-4,8,6
+// (ch3 reuses the same data offset as command36's ch3)
+// ---------------------------------------------------------------------------
+void ASoundDemo9::loadCommand38() {
+	ASound::command1();
+	resetCallbackTimer(0x28);
+	_channels[0]->load(loadData(0x476C));
+	_channels[1]->load(loadData(0x47F9));
+	_channels[2]->load(loadData(0x4879));
+	_channels[3]->load(loadData(0x3F41));
+	_channels[4]->load(loadData(0x48AF));
+	_channels[8]->load(loadData(0x4911));
+	_channels[6]->load(loadData(0x495D));
+}
+
+int ASoundDemo9::command38() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo9, loadCommand38));
+	else
+		loadCommand38();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command39 - isMusicChannelsActive guard, deferred callback, load ch0-5,8
+// ---------------------------------------------------------------------------
+void ASoundDemo9::loadCommand39() {
+	ASound::command1();
+	resetCallbackTimer(0x28);
+	_channels[0]->load(loadData(0x499A));
+	_channels[1]->load(loadData(0x4A2F));
+	_channels[2]->load(loadData(0x4AC3));
+	_channels[3]->load(loadData(0x4BBF));
+	_channels[4]->load(loadData(0x5059));
+	_channels[5]->load(loadData(0x511B));
+	_channels[8]->load(loadData(0x50F1));
+}
+
+int ASoundDemo9::command39() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo9, loadCommand39));
+	else
+		loadCommand39();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command40 - isMusicChannelsActive guard, deferred callback, load ch0-2,8,4-6
+// (ch0-2 reuse the same data offsets as command34's ch0-2)
+// ---------------------------------------------------------------------------
+void ASoundDemo9::loadCommand40() {
+	ASound::command1();
+	resetCallbackTimer(0x38);
+	_channels[0]->load(loadData(0x300E));
+	_channels[1]->load(loadData(0x3204));
+	_channels[2]->load(loadData(0x3409));
+	_channels[8]->load(loadData(0x521A));
+	_channels[4]->load(loadData(0x5327));
+	_channels[5]->load(loadData(0x53DF));
+	_channels[6]->load(loadData(0x5439));
+}
+
+int ASoundDemo9::command40() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo9, loadCommand40));
+	else
+		loadCommand40();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command41 - isMusicChannelsActive guard, deferred callback, load ch0-2,8,4-6
+// ---------------------------------------------------------------------------
+void ASoundDemo9::loadCommand41() {
+	ASound::command1();
+	resetCallbackTimer(0x54);
+	_channels[0]->load(loadData(0x1D6A));
+	_channels[1]->load(loadData(0x1E74));
+	_channels[2]->load(loadData(0x22ED));
+	_channels[8]->load(loadData(0x2465));
+	_channels[4]->load(loadData(0x25C2));
+	_channels[5]->load(loadData(0x26A2));
+	_channels[6]->load(loadData(0x292C));
+}
+
+int ASoundDemo9::command41() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo9, loadCommand41));
+	else
+		loadCommand41();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command42 - isMusicChannelsActive guard, deferred callback, load ch0-3,8,4-6
+// ---------------------------------------------------------------------------
+void ASoundDemo9::loadCommand42() {
+	ASound::command1();
+	resetCallbackTimerEx(0xA8, 0x50);
+	_channels[0]->load(loadData(0x1DBC));
+	_channels[1]->load(loadData(0x1EBF));
+	_channels[2]->load(loadData(0x2366));
+	_channels[3]->load(loadData(0x1E1E));
+	_channels[8]->load(loadData(0x250E));
+	_channels[4]->load(loadData(0x25F9));
+	_channels[5]->load(loadData(0x2785));
+	_channels[6]->load(loadData(0x29C9));
+}
+
+int ASoundDemo9::command42() {
+	if (isMusicChannelsActive())
+		scheduleCallback(MAKE_CALLBACK(ASoundDemo9, loadCommand42));
+	else
+		loadCommand42();
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command44 - cancels any pending deferred callback (no loads, no fade)
+// ---------------------------------------------------------------------------
+int ASoundDemo9::command44() {
+	scheduleCallback(nullptr);
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command43 - no isMusicChannelsActive guard; always loads immediately.
+// load ch0-7 (no ch8)
+// ---------------------------------------------------------------------------
+int ASoundDemo9::command43() {
+	ASound::command1();
+	resetCallbackTimer(0x60);
+	_channels[0]->load(loadData(0x55EE));
+	_channels[1]->load(loadData(0x564D));
+	_channels[2]->load(loadData(0x5699));
+	_channels[3]->load(loadData(0x596B));
+	_channels[4]->load(loadData(0x5981));
+	_channels[5]->load(loadData(0x598E));
+	_channels[6]->load(loadData(0x599B));
+	_channels[7]->load(loadData(0x59A6));
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// commands 45-46 - sound effects via findFreeChannel (lower pool)
+// ---------------------------------------------------------------------------
+int ASoundDemo9::command45() {
+	findFreeChannel(loadData(0x5498));
+	findFreeChannel(loadData(0x54F8));
+	return 0;
+}
+
+int ASoundDemo9::command46() {
+	findFreeChannel(loadData(0x5543));
+	findFreeChannel(loadData(0x5598));
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// command47 - no guard, no callback reset; load ch0-8 (all 9 channels)
+// ---------------------------------------------------------------------------
+int ASoundDemo9::command47() {
+	ASound::command1();
+	_channels[0]->load(loadData(0x59B4));
+	_channels[1]->load(loadData(0x5A3B));
+	_channels[2]->load(loadData(0x5A87));
+	_channels[3]->load(loadData(0x5BAE));
+	_channels[4]->load(loadData(0x5C95));
+	_channels[5]->load(loadData(0x5D57));
+	_channels[6]->load(loadData(0x5E69));
+	_channels[7]->load(loadData(0x5E76));
+	_channels[8]->load(loadData(0x5DB5));
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// commands 48-50 - sound effects via findFreeChannel (lower pool)
+// ---------------------------------------------------------------------------
+int ASoundDemo9::command48() { findFreeChannel(loadData(0x5E84)); return 0; }
+int ASoundDemo9::command49() { findFreeChannel(loadData(0x5E8E)); return 0; }
+int ASoundDemo9::command50() { findFreeChannel(loadData(0x5E98)); return 0; }
 
 } // namespace Dragonsphere
 } // namespace MADSV2

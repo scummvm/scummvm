@@ -34,6 +34,7 @@
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/rooms/section1.h"
 #include "mads/madsv2/dragonsphere/rooms/room106.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -229,8 +230,8 @@ static void room_106_init() {
 
 		seq[fx_fire_sconce] = kernel_seq_forward(ss[fx_fire_sconce], false, 7, 0, 0, 0);
 
-		if (previous_room == 107 || previous_room == 118 ||
-			previous_room == 111) {
+		if (previous_room == 107 || previous_room == 118 || previous_room == 111 ||
+				previous_room == 110) {
 			seq[fx_door_104] = kernel_seq_stamp(ss[fx_door_104], false, KERNEL_FIRST);
 			kernel_seq_depth(seq[fx_door_104], 8);
 			seq[fx_door_105] = kernel_seq_stamp(ss[fx_door_105], false, KERNEL_FIRST);
@@ -241,7 +242,8 @@ static void room_106_init() {
 			kernel_seq_depth(seq[fx_door_104], 8);
 		}
 
-		if (previous_room == 105) {      /* Player comes from Ballroom  */
+		if (previous_room == 105) {
+			/* Player comes from Ballroom  */
 			seq[fx_door_104] = kernel_seq_stamp(ss[fx_door_104], false, KERNEL_FIRST);
 			kernel_seq_depth(seq[fx_door_104], 8);
 			seq[fx_door_105] = kernel_seq_stamp(ss[fx_door_105], false, KERNEL_LAST);
@@ -262,7 +264,8 @@ static void room_106_init() {
 				player_walk(MAC_CONV_X, MAC_CONV_Y, FACING_NORTHWEST);
 			}
 
-		} else if (previous_room == 118) {      /* Player comes from Courtyard */
+		} else if (previous_room == 118 || previous_room == 110) {
+			/* Player comes from Courtyard, or Outside Castle in the demo */
 			local->prevent = true;
 
 			if (player.been_here_before) {
@@ -277,12 +280,14 @@ static void room_106_init() {
 					MAC_CONV_X, MAC_CONV_Y, FACING_NORTHWEST, true);
 			}
 
-		} else if (previous_room == 107) {      /* Player comes from Council Chamber */
+		} else if (previous_room == 107) {
+			/* Player comes from Council Chamber */
 			player.x = START_X_ROOM_107;
 			player.y = START_Y_ROOM_107;
 			player.facing = FACING_NORTHWEST;
 
-		} else if (previous_room == 614) {      /* Cut scene */
+		} else if (previous_room == 614) {
+			/* Cut scene */
 			conv_get(CONV_34_CUT_SCENE);
 
 			kernel_init_dialog();  /* clear interface */
@@ -333,7 +338,8 @@ static void room_106_init() {
 				player.facing = FACING_NORTHEAST;
 			}
 
-		} else if (previous_room != KERNEL_RESTORING_GAME) { /* Player comes from Meeting Chamber rm104 */
+		} else if (previous_room != KERNEL_RESTORING_GAME) {
+			/* Player comes from Meeting Chamber rm104 */
 			seq[fx_door_105] = kernel_seq_stamp(ss[fx_door_105], false, KERNEL_FIRST);
 			kernel_seq_depth(seq[fx_door_105], 8);
 			player_walk(WALK_TO_X_FROM_104, WALK_TO_Y_FROM_104, FACING_SOUTH);
@@ -1089,7 +1095,7 @@ static void room_106_pre_parser() {
 
 	if (player_said_2(walk_through, door_to_courtyard) || player_said_2(open, door_to_courtyard) ||
 		player_said_2(pull, door_to_courtyard)) {
-		player.walk_off_edge_to_room = 118;
+		player.walk_off_edge_to_room = g_engine->isDemo() ? 110 : 118;
 	}
 
 	if ((player_said_1(look_at) || player_said_1(look)) && player_said_1(Dragonsphere)) {
@@ -1163,6 +1169,11 @@ static void room_106_parser() {
 
 	if (player_said_2(walk_through, door_to_meeting_room) || player_said_2(open, door_to_meeting_room) ||
 		player_said_2(pull, door_to_meeting_room)) {
+		if (g_engine->isDemo()) {
+			popup_alert(24, DEMO_MSG, nullptr);
+			goto handled;
+		}
+
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
@@ -1228,6 +1239,11 @@ static void room_106_parser() {
 
 	if (player_said_2(walk_through, door_to_ballroom) || player_said_2(open, door_to_ballroom) ||
 		player_said_2(pull, door_to_ballroom)) {
+		if (g_engine->isDemo()) {
+			popup_alert(24, DEMO_MSG, nullptr);
+			goto handled;
+		}
+
 		switch (kernel.trigger) {
 		case 0:
 			player.commands_allowed = false;
@@ -1293,6 +1309,11 @@ static void room_106_parser() {
 
 	if (player_said_2(walk_through, door_to_council_room) || player_said_2(open, door_to_council_room) ||
 		player_said_2(pull, door_to_council_room)) {
+		if (g_engine->isDemo()) {
+			popup_alert(24, DEMO_MSG, nullptr);
+			goto handled;
+		}
+
 		new_room = 107;
 		goto handled;
 	}

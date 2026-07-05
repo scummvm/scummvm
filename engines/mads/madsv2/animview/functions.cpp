@@ -79,9 +79,14 @@ void add_anim(const char *name) {
  * Parses a flag from an animation line in the resource file
  */
 void flag_parse(const char *param) {
-	switch (tolower(*param++)) {
+	char c = tolower(*param++);
+	switch (c) {
 	case 'j':
 		wait_for_music_at_end = true;
+		break;
+
+	case 'k':
+		// Toggle whether keypress jumps to end. Not implemented in ScummVM
 		break;
 
 	case 'o':
@@ -133,7 +138,7 @@ void flag_parse(const char *param) {
 		break;
 
 	default:
-		error("Unsupported animview flag - %c", *param);
+		error("Unsupported animview flag - %c", c);
 		break;
 	}
 }

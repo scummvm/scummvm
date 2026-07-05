@@ -34,6 +34,7 @@
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/rooms/section1.h"
 #include "mads/madsv2/dragonsphere/rooms/room110.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -2240,6 +2241,7 @@ static void room_110_pre_parser() {
 		player_cancel_command();
 		local->activate_timer = false;
 		global[pre_room] = 110;
+
 		if (global[dragon_my_scene] < global[dragon_high_scene]) {
 			global[dragon_my_scene]++;
 			new_room = 111;
@@ -2256,9 +2258,12 @@ static void room_110_pre_parser() {
 				conv_run(CONV_GUARD_CASTLE);
 				player_cancel_command();
 			} else {
-				player.walk_off_edge_to_room = 118;
+				player.walk_off_edge_to_room = g_engine->isDemo() ? 106 : 118;
 			}
 		}
+
+		if (g_engine->isDemo() && player_said_2(walk_down, road_to_east))
+			return;
 
 		if (!player_said_2(walk_down, road_to_east) && local->cut_scene) {
 			local->cut_scene = false;
@@ -2388,6 +2393,11 @@ static void room_110_parser() {
 
 	if (conv_control.running == CONV_GUARD_HEAL) {
 		handle_conv_guard_heal();
+		goto handled;
+	}
+
+	if (g_engine->isDemo() && player_said_2(walk_down, road_to_east)) {
+		popup_alert(24, DEMO_MSG, nullptr);
 		goto handled;
 	}
 

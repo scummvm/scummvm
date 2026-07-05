@@ -107,6 +107,8 @@ extern void room_909_synchronize(Common::Serializer &s);
 
 } // namespace Rooms
 
+const char *DEMO_MSG = "NOT AVAILABLE IN DEMO VERSION";
+
 void global_section_constructor() {
 	section_preload_code_pointer = NULL;
 	section_room_constructor = NULL;

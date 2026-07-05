@@ -30,6 +30,7 @@
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/rooms/section1.h"
 #include "mads/madsv2/dragonsphere/mads/sounds.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -126,7 +127,10 @@ void section_1_walker() {
 void section_1_interface() {
 	int interface;
 
-	if (new_room == 116) {
+	if (g_engine->isDemo()) {
+		interface = 0;
+
+	} else if (new_room == 116) {
 		interface = 2;
 
 	} else if (new_room == 110) {

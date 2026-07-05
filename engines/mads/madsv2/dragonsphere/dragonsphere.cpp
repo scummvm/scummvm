@@ -72,7 +72,7 @@ Common::Error DragonsphereEngine::run() {
 	}
 
 	// Set up sound manager
-	_soundManager = new DragonSoundManager(_mixer, _soundFlag);
+	_soundManager = new DragonSoundManager(_mixer, _soundFlag, isDemo());
 	_soundManager->validate();
 
 	// Run the game
