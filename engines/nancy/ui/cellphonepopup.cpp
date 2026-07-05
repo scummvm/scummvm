@@ -1004,9 +1004,8 @@ void CellPhonePopup::drawWelcomeScreen() {
 }
 
 void CellPhonePopup::drawBackButton(uint subButtonIndex) {
-	// subButtons[0] (original CUIButton 0x10) is the Back button that returns a
-	// sub-screen to the main view; subButtons[7] (0x17) is the equivalent Back
-	// button at the bottom of the zoomed email / browser content view.
+	// subButtons[0] is the Back button in the lower ribbon (help / sub-screens);
+	// subButtons[7] is the Back button at the bottom of the zoomed content view.
 	const UICL::ThreeRectWidget &back = _uiclData->subButtons[subButtonIndex];
 	if (back.srcRectIdle.isEmpty() || back.destRect.isEmpty()) {
 		return;

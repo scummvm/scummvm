@@ -686,9 +686,9 @@ struct UICL : public EngineData {
 	uint16 fontId1 = 0;
 	uint16 fontId2 = 0;
 
-	Common::Path outgoingRingSound;           // Process case 2 (post-dial ring)
-	Common::Path pickupSound;                 // Process cases 0/4 (call connect)
-	Common::Path invalidNumberSound;          // Process case 7 (try again)
+	Common::Path outgoingRingSound;           // post-dial ring
+	Common::Path pickupSound;                 // call connect
+	Common::Path invalidNumberSound;          // try again
 
 	uint16 contactCount = 0;
 	Common::Array<Contact> contacts;
