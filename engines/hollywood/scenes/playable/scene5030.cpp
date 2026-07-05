@@ -49,6 +49,10 @@ const byte kScene5030MineCartSoundFrame = 0x28;
 const uint kScene5030Chunk8DescriptorCount = 0x1a;
 const uint kScene5030Chunk9DescriptorCount = 0x17;
 const uint kScene5030Chunk10DescriptorCount = 0x0d;
+const uint kScene5030MineCartEntryLayer = 0;
+const uint kScene5030Chunk8Layer = 1;
+const uint kScene5030Chunk9Layer = 2;
+const uint kScene5030Chunk10Layer = 3;
 const byte kScene5030DeckOfCardsItem = 0x48;
 const byte kScene5030UnderpantsItem = 0x53;
 const byte kScene5030TakenSceneItemId = 6;
@@ -158,16 +162,14 @@ Scene5030::Scene5030(HollywoodEngine *vm) :
 		_chunk8Channel(),
 		_chunk9Channel(),
 		_chunk10Channel(),
-		_mineCartEntryLayer(),
-		_chunk8Layer(),
-		_chunk9Layer(),
-		_chunk10Layer() {
-	_mineCartEntryLayer.configure(5, kScene5030MineCartEntryDescriptorCount, nullptr, 0);
-	_chunk8Layer.configure(8, kScene5030Chunk8DescriptorCount,
+		_animationLayers() {
+	_animationLayers.configureLayer(kScene5030MineCartEntryLayer, 5,
+		kScene5030MineCartEntryDescriptorCount, nullptr, 0, false);
+	_animationLayers.configureLayer(kScene5030Chunk8Layer, 8, kScene5030Chunk8DescriptorCount,
 		kScene5030Chunk8FrameMap, ARRAYSIZE(kScene5030Chunk8FrameMap));
-	_chunk9Layer.configure(9, kScene5030Chunk9DescriptorCount,
+	_animationLayers.configureLayer(kScene5030Chunk9Layer, 9, kScene5030Chunk9DescriptorCount,
 		kScene5030Chunk9FrameMap, ARRAYSIZE(kScene5030Chunk9FrameMap));
-	_chunk10Layer.configure(10, kScene5030Chunk10DescriptorCount,
+	_animationLayers.configureLayer(kScene5030Chunk10Layer, 10, kScene5030Chunk10DescriptorCount,
 		kScene5030Chunk10FrameMap, ARRAYSIZE(kScene5030Chunk10FrameMap));
 }
 
@@ -197,20 +199,20 @@ void Scene5030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	(void)actorDrawOrderMode;
 
 	copyBaseFramebufferToSceneFramebuffer();
-	if (_mineCartEntryLayer.visible) {
-		drawResourceSpriteLayer(_mineCartEntryLayer);
-		drawResourceSpriteLayer(_chunk10Layer);
-		drawResourceSpriteLayer(_chunk9Layer);
-		drawResourceSpriteLayer(_chunk8Layer);
+	if (_animationLayers.layerVisible(kScene5030MineCartEntryLayer)) {
+		drawResourceSpriteLayer(_animationLayers.layer(kScene5030MineCartEntryLayer));
+		drawResourceSpriteLayer(_animationLayers.layer(kScene5030Chunk10Layer));
+		drawResourceSpriteLayer(_animationLayers.layer(kScene5030Chunk9Layer));
+		drawResourceSpriteLayer(_animationLayers.layer(kScene5030Chunk8Layer));
 		drawActionOverlayLayer();
 		return;
 	}
 
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
-	drawResourceSpriteLayer(_chunk9Layer);
-	drawResourceSpriteLayer(_chunk10Layer);
-	drawResourceSpriteLayer(_chunk8Layer);
+	drawResourceSpriteLayer(_animationLayers.layer(kScene5030Chunk9Layer));
+	drawResourceSpriteLayer(_animationLayers.layer(kScene5030Chunk10Layer));
+	drawResourceSpriteLayer(_animationLayers.layer(kScene5030Chunk8Layer));
 	if (_sceneChunkTable.isValidChunk(6))
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
 	if (_sceneChunkTable.isValidChunk(7))
@@ -249,13 +251,13 @@ bool Scene5030::prepareCustomGameplayLoop() {
 }
 
 bool Scene5030::advanceCustomGameplayLoop(uint32 delta) {
-	advanceLayer(_chunk8Channel, _chunk8Layer, ARRAYSIZE(kScene5030Chunk8FrameMap), delta);
+	advanceLayer(_chunk8Channel, kScene5030Chunk8Layer, ARRAYSIZE(kScene5030Chunk8FrameMap), delta);
 	if (_primaryDialogueSpeechActive)
 		advancePrimaryDialogueSpeechFrame(delta);
 	if (!_primaryDialogueSpeechActive || _primaryDialogueSpeechGroup != kScene5030VanessaSpeechGroup)
-		advanceLayer(_chunk9Channel, _chunk9Layer, kScene5030ScoutPlayingFrameCount, delta);
+		advanceLayer(_chunk9Channel, kScene5030Chunk9Layer, kScene5030ScoutPlayingFrameCount, delta);
 	if (!_primaryDialogueSpeechActive || _primaryDialogueSpeechGroup != kScene5030GladysSpeechGroup)
-		advanceLayer(_chunk10Channel, _chunk10Layer, kScene5030ScoutPlayingFrameCount, delta);
+		advanceLayer(_chunk10Channel, kScene5030Chunk10Layer, kScene5030ScoutPlayingFrameCount, delta);
 	updateAmbientAudioAndMusicCues(delta);
 	return true;
 }
@@ -335,22 +337,22 @@ void Scene5030::resetAnimationLayers() {
 	_chunk8Channel.reset(0, kScene5030FrameMillis);
 	_chunk9Channel.reset(0, kScene5030FrameMillis);
 	_chunk10Channel.reset(0, kScene5030FrameMillis);
-	_chunk8Layer.visible = true;
-	_chunk9Layer.visible = true;
-	_chunk10Layer.visible = true;
-	_mineCartEntryLayer.visible = false;
-	_chunk8Layer.reset(0);
-	_chunk9Layer.reset(0);
-	_chunk10Layer.reset(0);
+	_animationLayers.setLayerVisible(kScene5030MineCartEntryLayer, false);
+	_animationLayers.setLayerVisible(kScene5030Chunk8Layer, true);
+	_animationLayers.setLayerFramePreservingVisibility(kScene5030Chunk8Layer, 0);
+	_animationLayers.setLayerVisible(kScene5030Chunk9Layer, true);
+	_animationLayers.setLayerFramePreservingVisibility(kScene5030Chunk9Layer, 0);
+	_animationLayers.setLayerVisible(kScene5030Chunk10Layer, true);
+	_animationLayers.setLayerFramePreservingVisibility(kScene5030Chunk10Layer, 0);
 }
 
-void Scene5030::advanceLayer(TimedAnimationChannel &channel, ResourceSpriteLayer &layer, uint frameCount, uint32 delta) {
+void Scene5030::advanceLayer(TimedAnimationChannel &channel, uint layerIndex, uint frameCount, uint32 delta) {
 	const uint consumedFrames = channel.consumeFrames(delta);
 	for (uint i = 0; i < consumedFrames; ++i) {
-		byte nextFrame = (byte)(layer.frameIndex + 1);
+		byte nextFrame = (byte)(_animationLayers.layerFrame(layerIndex) + 1);
 		if (nextFrame >= frameCount)
 			nextFrame = 0;
-		layer.setFrame(nextFrame);
+		_animationLayers.setLayerFrame(layerIndex, nextFrame);
 	}
 }
 
@@ -360,11 +362,11 @@ void Scene5030::runMineCartEntryAnimation() {
 
 	const bool previousHideActiveActor = _hideActiveActor;
 	_hideActiveActor = true;
-	_mineCartEntryLayer.visible = true;
-	_mineCartEntryLayer.reset(0);
+	_animationLayers.setLayerVisible(kScene5030MineCartEntryLayer, true);
+	_animationLayers.setLayerFramePreservingVisibility(kScene5030MineCartEntryLayer, 0);
 
 	for (uint frame = 0; frame < ARRAYSIZE(kScene5030MineCartEntryDelayBuckets) && !Engine::shouldQuit(); ++frame) {
-		_mineCartEntryLayer.setFrame((byte)frame);
+		_animationLayers.setLayerFrame(kScene5030MineCartEntryLayer, (byte)frame);
 		if (frame == kScene5030MineCartSoundFrame)
 			_soundBank0.playSample(0x16, 100);
 
@@ -374,7 +376,7 @@ void Scene5030::runMineCartEntryAnimation() {
 			break;
 	}
 
-	_mineCartEntryLayer.visible = false;
+	_animationLayers.setLayerVisible(kScene5030MineCartEntryLayer, false);
 	_hideActiveActor = previousHideActiveActor;
 	drawPlayableComposite();
 	presentFrame();
@@ -394,10 +396,10 @@ byte Scene5030::primarySpeechAnimationBaseFrame(byte animationGroup) const {
 void Scene5030::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) {
 	switch (animationGroup) {
 	case kScene5030VanessaSpeechGroup:
-		_chunk9Layer.setFrame(frameIndex);
+		_animationLayers.setLayerFrame(kScene5030Chunk9Layer, frameIndex);
 		break;
 	case kScene5030GladysSpeechGroup:
-		_chunk10Layer.setFrame(frameIndex);
+		_animationLayers.setLayerFrame(kScene5030Chunk10Layer, frameIndex);
 		break;
 	default:
 		break;

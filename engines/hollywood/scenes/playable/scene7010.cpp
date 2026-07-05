@@ -45,6 +45,15 @@ const uint16 kScene7010ExitState7030 = 0x1b76;
 const uint16 kScene7010Chunk8DescriptorCount = 0x16;
 const uint16 kScene7010Chunk9DescriptorCount = 2;
 const uint16 kScene7010Chunk10DescriptorCount = 0x10;
+const uint16 kScene7010Chunk11DescriptorCount = 0x25;
+const uint16 kScene7010Chunk14DescriptorCount = 0x20;
+const uint16 kScene7010Chunk15DescriptorCount = 0x17;
+const uint16 kScene7010DialogueOverlayMode1DescriptorCount = 3;
+const uint16 kScene7010DialogueOverlayMode2DescriptorCount = 0x1b;
+const uint kScene7010DialogueOverlayLayer = 0;
+const uint kScene7010Chunk14Layer = 1;
+const uint kScene7010Chunk11Layer = 2;
+const uint kScene7010Chunk15Layer = 0;
 const byte kScene7010AmbientMusicCueWithoutChunk9 = 0x0f;
 const byte kScene7010SueEntryFacing = 1;
 const byte kScene7010SueEntryFinalCel = 0;
@@ -116,14 +125,8 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 		_chunk10IdleFrameB(8),
 		_chunk10IdleFrameC(4),
 		_chunk10IdleFrameD(0x0c),
-		_chunk11FrameIndex(0),
-		_chunk14FrameIndex(0),
-		_chunk15FrameIndex(0),
 		_dialogueOverlayFrameIndex(0),
 		_dialogueOverlayMode(0),
-		_chunk11Visible(false),
-		_chunk14Visible(false),
-		_chunk15Visible(false),
 		_chunk8SpecialSequenceActive(false),
 		_chunk10IdlePairAAltPhase(false),
 		_chunk10IdlePairBAltPhase(false),
@@ -131,7 +134,9 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 		_chunk10IdlePairBTicksRemaining(16),
 		_chunk8TimerAccumulator(0),
 		_chunk10TimerAccumulator(0),
-		_dialogueOverlayTimerAccumulator(0) {
+		_dialogueOverlayTimerAccumulator(0),
+		_backTransientLayers(),
+		_frontTransientLayers() {
 }
 
 bool Scene7010::hasCustomPreviewState() const {
@@ -145,15 +150,10 @@ void Scene7010::initializeCustomPreviewState() {
 	_chunk10IdleFrameB = 8;
 	_chunk10IdleFrameC = 4;
 	_chunk10IdleFrameD = 0x0c;
-	_chunk11FrameIndex = 0;
-	_chunk14FrameIndex = 0;
-	_chunk15FrameIndex = 0;
 	_dialogueOverlayFrameIndex = 0;
 	_dialogueOverlayMode = 0;
 	_primaryLeftSpeechLastFrame = 0;
-	_chunk11Visible = false;
-	_chunk14Visible = false;
-	_chunk15Visible = false;
+	resetTransientOverlayLayers();
 	_chunk8SpecialSequenceActive = false;
 	_chunk10IdlePairAAltPhase = _random.getRandomNumber(1) != 0;
 	_chunk10IdlePairBAltPhase = _random.getRandomNumber(1) != 0;
@@ -183,9 +183,7 @@ void Scene7010::initializeCustomPreviewState() {
 	_sceneStateFlags[4] = 1;
 	_sceneStateFlags[5] = _vm->gameState().hannoverCourtyardDialogueState;
 	_sceneStateFlags[6] = _vm->gameState().hannoverCourtyardFollowUpSeen ? 1 : 0;
-	_dialogueOverlayMode = _sceneStateFlags[1];
-	if (_dialogueOverlayMode != 0)
-		_dialogueOverlayFrameIndex = 0;
+	setDialogueOverlayMode(_sceneStateFlags[1], 0);
 	applySceneStateToHotspotsAndPatches(0xff);
 }
 
@@ -207,19 +205,7 @@ void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[10], 0,
 		kScene7010Chunk10DescriptorCount, _chunk10IdleFrameD, _sceneFramebuffer);
 
-	if (_dialogueOverlayMode == 1)
-		drawMappedSpriteFrame(12, 3, kScene7010DialogueOverlayMode1FrameMap,
-			ARRAYSIZE(kScene7010DialogueOverlayMode1FrameMap), _dialogueOverlayFrameIndex);
-	else if (_dialogueOverlayMode == 2)
-		drawMappedSpriteFrame(16, 0x1b, kScene7010DialogueOverlayMode2FrameMap,
-			ARRAYSIZE(kScene7010DialogueOverlayMode2FrameMap), _dialogueOverlayFrameIndex);
-
-	if (_chunk14Visible)
-		drawMappedSpriteFrame(14, 0x20, kScene7010Chunk14FrameMap, ARRAYSIZE(kScene7010Chunk14FrameMap),
-			_chunk14FrameIndex);
-	if (_chunk11Visible)
-		drawMappedSpriteFrame(11, 0x25, kScene7010Chunk11FrameMap, ARRAYSIZE(kScene7010Chunk11FrameMap),
-			_chunk11FrameIndex);
+	drawTransientLayers(_backTransientLayers);
 
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -242,9 +228,7 @@ void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 			kScene7010Chunk9DescriptorCount, _chunk9AmbientOverlayFrameIndex, _sceneFramebuffer);
 	}
 
-	if (_chunk15Visible)
-		drawMappedSpriteFrame(15, 0x17, kScene7010Chunk15FrameMap, ARRAYSIZE(kScene7010Chunk15FrameMap),
-			_chunk15FrameIndex);
+	drawTransientLayers(_frontTransientLayers);
 }
 
 bool Scene7010::shouldDrawSecondaryActorInPlayableComposite() const {
@@ -417,12 +401,9 @@ bool Scene7010::prepareCustomGameplayLoop() {
 	_activeActorCel = kScene7010SueEntryFinalCel;
 	_activeActorDrawOrderMode = paletteRegionAt(_activeActorWorldX, _activeActorWorldY);
 	_secondaryActorFrame = 0;
-	_chunk11Visible = false;
-	_chunk14Visible = false;
-	_chunk15Visible = false;
+	resetTransientOverlayLayers();
 	_chunk8SpecialSequenceActive = false;
-	_dialogueOverlayMode = 0;
-	_dialogueOverlayFrameIndex = 0;
+	setDialogueOverlayMode(0, 0);
 	_chunk8TimerAccumulator = 0;
 	_chunk10TimerAccumulator = 0;
 	_dialogueOverlayTimerAccumulator = 0;
@@ -634,9 +615,9 @@ void Scene7010::advanceDialogueOverlay(uint32 delta) {
 	while (_dialogueOverlayTimerAccumulator >= kScene7010DialogueOverlayFrameMillis) {
 		_dialogueOverlayTimerAccumulator -= kScene7010DialogueOverlayFrameMillis;
 		if (_dialogueOverlayMode == 1) {
-			_dialogueOverlayFrameIndex = _dialogueOverlayFrameIndex == 3 ? 0 : _dialogueOverlayFrameIndex + 1;
+			setDialogueOverlayFrame(_dialogueOverlayFrameIndex == 3 ? 0 : _dialogueOverlayFrameIndex + 1);
 		} else {
-			_dialogueOverlayFrameIndex = _dialogueOverlayFrameIndex == 0x1b ? 5 : _dialogueOverlayFrameIndex + 1;
+			setDialogueOverlayFrame(_dialogueOverlayFrameIndex == 0x1b ? 5 : _dialogueOverlayFrameIndex + 1);
 		}
 	}
 }
@@ -670,7 +651,7 @@ void Scene7010::handleActionSlot03DialogueSequence() {
 
 	beginSecondarySpeechLine(_sceneStateFlags[4] == 1 ? 3 : 4, _sceneStateFlags[4] == 1 ? 1 : 2);
 	walkActiveActorTo(0x298, 0x1af, 1, 0);
-	_chunk11Visible = true;
+	setChunk11Visible(true);
 	runChunk11FrameRange(0, 0x0e);
 	beginPrimarySpeechLine(99, _sceneStateFlags[4] == 1 ? 0 : 2, 0x302, 0xe3, 0x28, 0x16, 0x0b);
 	runChunk11FrameRange(0x12, 0x16);
@@ -697,7 +678,7 @@ void Scene7010::handleActionSlot03DialogueSequence() {
 		}
 	}
 	walkActiveActorTo(0x17b, 0x1b2, 0xff, 0);
-	_chunk11Visible = false;
+	setChunk11Visible(false);
 	if (_sceneStateFlags[4] == 1)
 		_sceneStateFlags[4] = 2;
 	else
@@ -780,27 +761,27 @@ void Scene7010::runChunk8HideSequence() {
 }
 
 void Scene7010::runChunk11FrameRange(byte startFrame, byte endFrame) {
-	_chunk11Visible = true;
+	setChunk11Visible(true);
 	for (byte frame = startFrame; frame <= endFrame && !Engine::shouldQuit(); ++frame) {
-		_chunk11FrameIndex = frame;
+		setChunk11Frame(frame);
 		waitSceneMillis(kScene7010Chunk8FrameMillis);
 	}
 }
 
 void Scene7010::runChunk14FrameRange(byte startFrame, byte endFrame) {
-	_chunk14Visible = true;
-	_chunk11Visible = false;
+	setChunk14Visible(true);
+	setChunk11Visible(false);
 	for (byte frame = startFrame; frame <= endFrame && !Engine::shouldQuit(); ++frame) {
-		_chunk14FrameIndex = frame;
+		setChunk14Frame(frame);
 		waitSceneMillis(kScene7010Chunk8FrameMillis);
 	}
-	_chunk14Visible = false;
+	setChunk14Visible(false);
 }
 
 void Scene7010::runChunk15ItemSequence() {
-	_chunk15Visible = true;
+	setChunk15Visible(true);
 	for (byte frame = 0; frame <= 0x17 && !Engine::shouldQuit(); ++frame) {
-		_chunk15FrameIndex = frame;
+		setChunk15Frame(frame);
 		if (frame == 10) {
 			beginPrimarySpeechLine(6, 1, 0x20e, 0x109, 0x3f, 0x28, 0x32);
 			beginPrimarySpeechLine(6, 2, 0x20e, 0x109, 0x3f, 0x28, 0x32);
@@ -809,23 +790,88 @@ void Scene7010::runChunk15ItemSequence() {
 		}
 		waitSceneMillis(kScene7010Chunk8FrameMillis);
 	}
-	_chunk15Visible = false;
+	setChunk15Visible(false);
 }
 
 void Scene7010::runDialogueOverlayFrames(byte startFrame, byte endFrame, byte finalMode) {
 	// Mode 1 is the persistent Frankenstein-note overlay from G04.
 	// Mode 2 is the active note transition; mode 0 clears it after the bone is used.
-	_dialogueOverlayMode = 2;
 	_sceneStateFlags[1] = 2;
 	_vm->gameState().frankensteinNoteOverlayMode = 2;
+	setDialogueOverlayMode(2, startFrame);
 	for (byte frame = startFrame; frame <= endFrame && !Engine::shouldQuit(); ++frame) {
-		_dialogueOverlayFrameIndex = frame;
+		setDialogueOverlayFrame(frame);
 		waitSceneMillis(kScene7010DialogueOverlayFrameMillis);
 	}
-	_dialogueOverlayMode = finalMode;
 	_sceneStateFlags[1] = finalMode;
 	_vm->gameState().frankensteinNoteOverlayMode = finalMode;
-	_dialogueOverlayFrameIndex = finalMode == 0 ? 0 : endFrame;
+	setDialogueOverlayMode(finalMode, finalMode == 0 ? 0 : endFrame);
+}
+
+void Scene7010::resetTransientOverlayLayers() {
+	_backTransientLayers.clear();
+	_backTransientLayers.configureLayer(kScene7010DialogueOverlayLayer, 12,
+		kScene7010DialogueOverlayMode1DescriptorCount, kScene7010DialogueOverlayMode1FrameMap,
+		ARRAYSIZE(kScene7010DialogueOverlayMode1FrameMap), false);
+	_backTransientLayers.configureLayer(kScene7010Chunk14Layer, 14, kScene7010Chunk14DescriptorCount,
+		kScene7010Chunk14FrameMap, ARRAYSIZE(kScene7010Chunk14FrameMap), false);
+	_backTransientLayers.configureLayer(kScene7010Chunk11Layer, 11, kScene7010Chunk11DescriptorCount,
+		kScene7010Chunk11FrameMap, ARRAYSIZE(kScene7010Chunk11FrameMap), false);
+	_frontTransientLayers.clear();
+	_frontTransientLayers.configureLayer(kScene7010Chunk15Layer, 15, kScene7010Chunk15DescriptorCount,
+		kScene7010Chunk15FrameMap, ARRAYSIZE(kScene7010Chunk15FrameMap), false);
+}
+
+void Scene7010::setDialogueOverlayMode(byte mode, byte frameIndex) {
+	_dialogueOverlayMode = mode;
+	_dialogueOverlayFrameIndex = frameIndex;
+
+	if (mode == 1) {
+		_backTransientLayers.configureLayer(kScene7010DialogueOverlayLayer, 12,
+			kScene7010DialogueOverlayMode1DescriptorCount, kScene7010DialogueOverlayMode1FrameMap,
+			ARRAYSIZE(kScene7010DialogueOverlayMode1FrameMap));
+		_backTransientLayers.setLayerFrame(kScene7010DialogueOverlayLayer, frameIndex);
+		return;
+	}
+
+	if (mode == 2) {
+		_backTransientLayers.configureLayer(kScene7010DialogueOverlayLayer, 16,
+			kScene7010DialogueOverlayMode2DescriptorCount, kScene7010DialogueOverlayMode2FrameMap,
+			ARRAYSIZE(kScene7010DialogueOverlayMode2FrameMap));
+		_backTransientLayers.setLayerFrame(kScene7010DialogueOverlayLayer, frameIndex);
+		return;
+	}
+
+	_backTransientLayers.setLayerVisible(kScene7010DialogueOverlayLayer, false);
+}
+
+void Scene7010::setDialogueOverlayFrame(byte frameIndex) {
+	_dialogueOverlayFrameIndex = frameIndex;
+	_backTransientLayers.setLayerFrame(kScene7010DialogueOverlayLayer, frameIndex);
+}
+
+void Scene7010::setChunk11Visible(bool visible) {
+	_backTransientLayers.setLayerVisible(kScene7010Chunk11Layer, visible);
+}
+
+void Scene7010::setChunk11Frame(byte frameIndex) {
+	_backTransientLayers.setLayerFrame(kScene7010Chunk11Layer, frameIndex);
+}
+
+void Scene7010::setChunk14Visible(bool visible) {
+	_backTransientLayers.setLayerVisible(kScene7010Chunk14Layer, visible);
+}
+
+void Scene7010::setChunk14Frame(byte frameIndex) {
+	_backTransientLayers.setLayerFrame(kScene7010Chunk14Layer, frameIndex);
+}
+
+void Scene7010::setChunk15Visible(bool visible) {
+	_frontTransientLayers.setLayerVisible(kScene7010Chunk15Layer, visible);
+}
+
+void Scene7010::setChunk15Frame(byte frameIndex) {
+	_frontTransientLayers.setLayerFrame(kScene7010Chunk15Layer, frameIndex);
 }
 
 } // End of namespace Hollywood

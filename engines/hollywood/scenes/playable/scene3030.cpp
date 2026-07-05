@@ -51,6 +51,8 @@ const uint32 kScene3030TransitionFrameMillis = 75;
 const uint kScene3030LoopDescriptorCount = 0x0c;
 const uint kScene3030MachineEffectDescriptorCount = 0x19;
 const uint kScene3030MachineActionDescriptorCount = 0x0c;
+const uint kScene3030MachineEffectLayer = 0;
+const uint kScene3030MachineActionLayer = 1;
 const uint kScene3030EntryTransitionChunk = 12;
 const uint kScene3030EntryTransitionTableEntryCount = 0x20;
 const byte kScene3030EntryTransitionFinalFrame = 0x1f;
@@ -106,15 +108,10 @@ Scene3030::Scene3030(HollywoodEngine *vm) :
 		PlayableScene(vm, scene3030Config(), "scene3030", 0x110, 0x18a, 2, 0xfd, 0xfb),
 		_loopChannel(),
 		_loopLayer(),
-		_machineEffectLayer(),
-		_machineActionLayer(),
+		_machineLayers(),
 		_machineSequenceActive(false) {
 	_loopLayer.configure(6, kScene3030LoopDescriptorCount,
 		kScene3030LoopFrameMap, ARRAYSIZE(kScene3030LoopFrameMap));
-	_machineEffectLayer.configure(9, kScene3030MachineEffectDescriptorCount,
-		kScene3030MachineEffectFrameMap, ARRAYSIZE(kScene3030MachineEffectFrameMap));
-	_machineActionLayer.configure(10, kScene3030MachineActionDescriptorCount,
-		kScene3030MachineActionFrameMap, ARRAYSIZE(kScene3030MachineActionFrameMap));
 }
 
 bool Scene3030::hasCustomPreviewState() const {
@@ -146,8 +143,7 @@ void Scene3030::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	if (_vm->gameState().windmillBladesMoving)
 		drawResourceSpriteLayer(_loopLayer);
 	if (_machineSequenceActive) {
-		drawResourceSpriteLayer(_machineEffectLayer);
-		drawResourceSpriteLayer(_machineActionLayer);
+		drawTransientLayers(_machineLayers);
 		drawForegroundBlocks();
 		return;
 	}
@@ -266,10 +262,11 @@ void Scene3030::resetAnimationLayers() {
 	_loopChannel.reset(0, kScene3030LoopFrameMillis);
 	_loopLayer.visible = true;
 	_loopLayer.reset(0);
-	_machineEffectLayer.visible = false;
-	_machineActionLayer.visible = false;
-	_machineEffectLayer.reset(0);
-	_machineActionLayer.reset(0);
+	_machineLayers.clear();
+	_machineLayers.configureLayer(kScene3030MachineEffectLayer, 9, kScene3030MachineEffectDescriptorCount,
+		kScene3030MachineEffectFrameMap, ARRAYSIZE(kScene3030MachineEffectFrameMap), false);
+	_machineLayers.configureLayer(kScene3030MachineActionLayer, 10, kScene3030MachineActionDescriptorCount,
+		kScene3030MachineActionFrameMap, ARRAYSIZE(kScene3030MachineActionFrameMap), false);
 	_machineSequenceActive = false;
 }
 
@@ -407,20 +404,20 @@ void Scene3030::runMachineActivationSequence() {
 
 	beginSecondarySpeechLine(11, 0);
 	_machineSequenceActive = true;
-	_machineEffectLayer.visible = false;
-	_machineActionLayer.visible = true;
+	_machineLayers.setLayerVisible(kScene3030MachineEffectLayer, false);
+	_machineLayers.setLayerVisible(kScene3030MachineActionLayer, true);
 
 	uint machineEffectFrame = 0;
 	for (uint frame = 0; frame < ARRAYSIZE(kScene3030MachineActionFrameMap) && !Engine::shouldQuit(); ++frame) {
-		_machineActionLayer.setFrame(frame);
+		_machineLayers.setLayerFrame(kScene3030MachineActionLayer, (byte)frame);
 		if (frame == 15) {
 			_soundBank0.playSample(0x1d, 100);
 			state.scene3030MachineActivated = true;
 			applySceneStateToHotspotsAndPatches(0);
 		}
 		if (frame >= 15 && machineEffectFrame < ARRAYSIZE(kScene3030MachineEffectFrameMap)) {
-			_machineEffectLayer.visible = true;
-			_machineEffectLayer.setFrame(machineEffectFrame);
+			_machineLayers.setLayerVisible(kScene3030MachineEffectLayer, true);
+			_machineLayers.setLayerFrame(kScene3030MachineEffectLayer, (byte)machineEffectFrame);
 			if (machineEffectFrame == 5)
 				state.windmillBladesMoving = true;
 			++machineEffectFrame;
@@ -431,16 +428,16 @@ void Scene3030::runMachineActivationSequence() {
 	}
 
 	while (machineEffectFrame < ARRAYSIZE(kScene3030MachineEffectFrameMap) && !Engine::shouldQuit()) {
-		_machineEffectLayer.visible = true;
-		_machineEffectLayer.setFrame(machineEffectFrame++);
+		_machineLayers.setLayerVisible(kScene3030MachineEffectLayer, true);
+		_machineLayers.setLayerFrame(kScene3030MachineEffectLayer, (byte)machineEffectFrame++);
 		drawMachineSequenceFrame();
 		if (waitSceneMillis(kScene3030MachineFrameMillis))
 			break;
 	}
 
 	_machineSequenceActive = false;
-	_machineEffectLayer.visible = false;
-	_machineActionLayer.visible = false;
+	_machineLayers.setLayerVisible(kScene3030MachineEffectLayer, false);
+	_machineLayers.setLayerVisible(kScene3030MachineActionLayer, false);
 	removeInventoryItem(kScene3030RequiredInventoryItem);
 	addInventoryItem(kScene3030ResultInventoryItem);
 	_soundBank0.playSample(1, 100);

@@ -142,8 +142,7 @@ static PlayableSceneConfig scene6010Config() {
 Scene6010::Scene6010(HollywoodEngine *vm) :
 		PlayableScene(vm, scene6010Config(), "scene6010", 0x327, 0x1c5, 5, 0xfd, 0xfb),
 		_originalColorToItemMap(),
-		_temporaryPrimaryLayer(),
-		_temporarySecondaryLayer() {
+		_temporaryOverlayLayers() {
 }
 
 bool Scene6010::hasCustomPreviewState() const {
@@ -183,7 +182,7 @@ void Scene6010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		byte actorDrawOrderMode) {
 	copyBaseFramebufferToSceneFramebuffer();
 	updateSceneDepthThresholds(actorDrawOrderMode, activeWorldX, activeWorldY);
-	drawTemporaryOverlayLayers();
+	drawTransientLayers(_temporaryOverlayLayers);
 	drawActionOverlayLayer();
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -216,8 +215,7 @@ void Scene6010::runCustomEntrySequence() {
 }
 
 bool Scene6010::prepareCustomGameplayLoop() {
-	_temporaryPrimaryLayer.visible = false;
-	_temporarySecondaryLayer.visible = false;
+	_temporaryOverlayLayers.clear();
 	return true;
 }
 
@@ -628,42 +626,34 @@ void Scene6010::runLayeredOverlay(uint primaryChunkIndex, uint primaryDescriptor
 		uint secondaryChunkIndex, uint secondaryDescriptorCount,
 		const byte *secondaryFrameMap, uint secondaryFrameMapSize,
 		uint32 frameMillis, int soundFrame, byte soundId) {
-	_temporaryPrimaryLayer.configure(primaryChunkIndex, (uint16)primaryDescriptorCount,
-		primaryFrameMap, primaryFrameMapSize);
-	_temporaryPrimaryLayer.visible = primaryFrameMap != nullptr && primaryFrameMapSize != 0;
+	_temporaryOverlayLayers.clear();
+	uint secondaryLayer = TransientLayerCompositor::kInvalidLayer;
 	if (secondaryFrameMap != nullptr && secondaryFrameMapSize != 0) {
-		_temporarySecondaryLayer.configure(secondaryChunkIndex, (uint16)secondaryDescriptorCount,
-			secondaryFrameMap, secondaryFrameMapSize);
-		_temporarySecondaryLayer.visible = true;
-	} else {
-		_temporarySecondaryLayer.visible = false;
+		secondaryLayer = _temporaryOverlayLayers.addLayer(secondaryChunkIndex,
+			(uint16)secondaryDescriptorCount, secondaryFrameMap, secondaryFrameMapSize);
 	}
+	const uint primaryLayer = primaryFrameMap != nullptr && primaryFrameMapSize != 0 ?
+		_temporaryOverlayLayers.addLayer(primaryChunkIndex, (uint16)primaryDescriptorCount,
+			primaryFrameMap, primaryFrameMapSize) :
+		TransientLayerCompositor::kInvalidLayer;
 
-	const uint frameCount = MAX<uint>(primaryFrameMapSize, secondaryFrameMapSize);
+	const uint frameCount = _temporaryOverlayLayers.frameCount();
 	const bool previousHideActor = _hideActiveActor;
 	_hideActiveActor = true;
 	for (uint frame = 0; frame < frameCount && !Engine::shouldQuit() && !_vm->isSceneRestartRequested(); ++frame) {
-		if (_temporaryPrimaryLayer.visible)
-			_temporaryPrimaryLayer.setFrame((byte)MIN<uint>(frame, primaryFrameMapSize - 1));
-		if (_temporarySecondaryLayer.visible)
-			_temporarySecondaryLayer.setFrame((byte)MIN<uint>(frame, secondaryFrameMapSize - 1));
+		if (primaryLayer != TransientLayerCompositor::kInvalidLayer)
+			_temporaryOverlayLayers.setLayerFrameClamped(primaryLayer, frame);
+		if (secondaryLayer != TransientLayerCompositor::kInvalidLayer)
+			_temporaryOverlayLayers.setLayerFrameClamped(secondaryLayer, frame);
 		if (soundFrame >= 0 && (int)frame == soundFrame)
 			_soundBank0.playSample(soundId, 80);
 		if (waitSceneMillis(frameMillis))
 			break;
 	}
 	_hideActiveActor = previousHideActor;
-	_temporaryPrimaryLayer.visible = false;
-	_temporarySecondaryLayer.visible = false;
+	_temporaryOverlayLayers.clear();
 	drawPlayableComposite();
 	presentFrame();
-}
-
-void Scene6010::drawTemporaryOverlayLayers() {
-	if (_temporarySecondaryLayer.visible)
-		drawResourceSpriteLayer(_temporarySecondaryLayer);
-	if (_temporaryPrimaryLayer.visible)
-		drawResourceSpriteLayer(_temporaryPrimaryLayer);
 }
 
 } // End of namespace Hollywood

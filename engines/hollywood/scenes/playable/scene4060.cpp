@@ -58,10 +58,12 @@ const uint kScene4060SecondCardPatchChunk = 5;
 const uint kScene4060ForegroundMidPatchChunk = 20;
 const uint kScene4060PokerTableTransitionChunk = 13;
 const uint kScene4060PokerTableTransitionDescriptorCount = 0x1b;
+const uint kScene4060PokerTableTransitionLayer = 0;
 const uint kScene4060PokerOverlayChunk = 14;
 const uint kScene4060PokerOverlayDescriptorCount = 0x0b;
 const uint kScene4060PokerRewardOverlayChunk = 17;
 const uint kScene4060PokerRewardOverlayDescriptorCount = 0x0c;
+const uint kScene4060PokerOverlayTransitionLayer = 1;
 const uint kScene4060EntryOverlayChunk = 19;
 const uint kScene4060EntryOverlayDescriptorCount = 4;
 const uint kScene4060ExitOverlayChunk = 15;
@@ -280,15 +282,11 @@ Scene4060::Scene4060(HollywoodEngine *vm) :
 		PlayableScene(vm, scene4060Config(), "scene4060", kScene4060EntryRonWorldX, kScene4060EntryRonWorldY,
 			kScene4060EntryRonFacing, 0xfd, 0xfb),
 		_foregroundLayer(),
-		_pokerTableLayer(),
-		_pokerOverlayLayer(),
+		_pokerTransitionLayers(),
 		_foregroundChannel(),
 		_foregroundScrollStep(0),
 		_foregroundLongAnimationActive(false),
-		_pokerTransitionVisible(false),
 		_sherilynSpeechPoseMode(kScene4060SherilynSpeechPoseNone) {
-	_pokerTableLayer.configure(kScene4060PokerTableTransitionChunk, kScene4060PokerTableTransitionDescriptorCount,
-		nullptr, 0);
 }
 
 bool Scene4060::hasCustomPreviewState() const {
@@ -325,8 +323,8 @@ void Scene4060::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 	copyBaseFramebufferToSceneFramebuffer();
 	configureForegroundLayerForState();
 
-	if (_pokerTransitionVisible) {
-		drawPokerTransitionLayers();
+	if (_pokerTransitionLayers.visible()) {
+		drawTransientLayers(_pokerTransitionLayers);
 		drawSceneForegroundBlocks(activeWorldY);
 		return;
 	}
@@ -574,7 +572,7 @@ void Scene4060::setForegroundScrollStep(byte step) {
 }
 
 void Scene4060::advanceForegroundLayer(uint32 delta) {
-	if (_pokerTransitionVisible)
+	if (_pokerTransitionLayers.visible())
 		return;
 
 	if (_sherilynSpeechPoseMode != kScene4060SherilynSpeechPoseNone || _primaryDialogueSpeechActive)
@@ -607,11 +605,6 @@ void Scene4060::advanceForegroundLayer(uint32 delta) {
 
 void Scene4060::drawForegroundTableLayer() {
 	drawResourceSpriteLayer(_foregroundLayer);
-}
-
-void Scene4060::drawPokerTransitionLayers() {
-	drawResourceSpriteLayer(_pokerTableLayer);
-	drawResourceSpriteLayer(_pokerOverlayLayer);
 }
 
 void Scene4060::drawSceneForegroundBlocks(int activeWorldY) {
@@ -896,15 +889,12 @@ void Scene4060::runSherilynPokerTransitionAnimation(bool finalRewardBranch) {
 
 bool Scene4060::presentPokerTransitionFrame(byte tableFrame, uint overlayChunk, uint overlayDescriptorCount,
 		byte overlayFrame) {
-	_pokerTransitionVisible = true;
-	_pokerTableLayer.visible = true;
-	_pokerTableLayer.setFrame(tableFrame);
-	if (_pokerOverlayLayer.chunkIndex != overlayChunk ||
-			_pokerOverlayLayer.descriptorCount != overlayDescriptorCount) {
-		_pokerOverlayLayer.configure(overlayChunk, overlayDescriptorCount, nullptr, 0);
-	}
-	_pokerOverlayLayer.visible = true;
-	_pokerOverlayLayer.setFrame(overlayFrame);
+	_pokerTransitionLayers.configureLayer(kScene4060PokerTableTransitionLayer,
+		kScene4060PokerTableTransitionChunk, kScene4060PokerTableTransitionDescriptorCount, nullptr, 0);
+	_pokerTransitionLayers.setLayerFrame(kScene4060PokerTableTransitionLayer, tableFrame);
+	_pokerTransitionLayers.configureLayer(kScene4060PokerOverlayTransitionLayer, overlayChunk,
+		(uint16)overlayDescriptorCount, nullptr, 0);
+	_pokerTransitionLayers.setLayerFrame(kScene4060PokerOverlayTransitionLayer, overlayFrame);
 
 	drawPlayableComposite();
 	presentFrame();
@@ -912,9 +902,7 @@ bool Scene4060::presentPokerTransitionFrame(byte tableFrame, uint overlayChunk, 
 }
 
 void Scene4060::clearPokerTransitionLayers() {
-	_pokerTransitionVisible = false;
-	_pokerTableLayer.visible = false;
-	_pokerOverlayLayer.visible = false;
+	_pokerTransitionLayers.clear();
 }
 
 void Scene4060::beginSherilynSpeechLine(uint16 rowIndex, byte frameIndex, bool allowAlternatePose) {

@@ -68,6 +68,24 @@ const uint kScene5130DrinkStripY = 0x76;
 const uint kScene5130DrinkStripWidth = 0x68;
 const uint kScene5130DrinkStripHeight = 0x10;
 const uint kScene5130DrinkStripRows = 0x6180 / kScene5130DrinkStripWidth;
+const uint kScene5130IntroLayer = 0;
+const uint kScene5130TapLayer = 1;
+const uint kScene5130ChangeLayer = 2;
+const uint kScene5130LiquidLayer = 3;
+const uint kScene5130MixLayer = 4;
+const uint kScene5130PourLayer = 5;
+const uint kScene5130IntroChunk = 4;
+const uint kScene5130IntroDescriptorCount = 0x3a;
+const uint kScene5130TapChunk = 5;
+const uint kScene5130TapDescriptorCount = 0x10;
+const uint kScene5130ChangeChunk = 6;
+const uint kScene5130ChangeDescriptorCount = 0x0e;
+const uint kScene5130LiquidChunk = 7;
+const uint kScene5130LiquidDescriptorCount = 0x0e;
+const uint kScene5130MixChunk = 8;
+const uint kScene5130MixDescriptorCount = 0x13;
+const uint kScene5130PourChunk = 9;
+const uint kScene5130PourDescriptorCount = 0x1a;
 
 const byte kScene5130TapFrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9, 9, 9, 9, 9,
@@ -120,6 +138,7 @@ Scene5130::Scene5130(HollywoodEngine *vm) :
 		_speechOverlay(),
 		_speech(),
 		_soundBank0(),
+		_animationLayers(),
 		_selectedDrinks(),
 		_selectedDrinkCount(0),
 		_currentDrinkId(1),
@@ -250,6 +269,7 @@ void Scene5130::runIntroAnimation() {
 	_drinkStripRow = 0;
 	_pourVisible = false;
 	_hoverActionId = 0;
+	resetAnimationLayers();
 
 	setPaletteEntry6Bit(0xd0, 0, 0, 0);
 	setPaletteEntry6Bit(0xd1, 0, 0, 0);
@@ -442,26 +462,52 @@ void Scene5130::applyFailureDrinkPalette() {
 		blue < 0x0d ? 0 : (byte)(blue - 0x0c));
 }
 
+void Scene5130::resetAnimationLayers() {
+	_animationLayers.clear();
+	_animationLayers.configureLayer(kScene5130IntroLayer, kScene5130IntroChunk,
+		kScene5130IntroDescriptorCount, nullptr, 0);
+	_animationLayers.configureLayer(kScene5130TapLayer, kScene5130TapChunk,
+		kScene5130TapDescriptorCount, kScene5130TapFrameMap, ARRAYSIZE(kScene5130TapFrameMap));
+	_animationLayers.configureLayer(kScene5130ChangeLayer, kScene5130ChangeChunk,
+		kScene5130ChangeDescriptorCount, kScene5130ChangeFrameMap, ARRAYSIZE(kScene5130ChangeFrameMap));
+	_animationLayers.configureLayer(kScene5130LiquidLayer, kScene5130LiquidChunk,
+		kScene5130LiquidDescriptorCount, kScene5130LiquidFrameMap, ARRAYSIZE(kScene5130LiquidFrameMap));
+	_animationLayers.configureLayer(kScene5130MixLayer, kScene5130MixChunk,
+		kScene5130MixDescriptorCount, kScene5130MixFrameMap, ARRAYSIZE(kScene5130MixFrameMap));
+	_animationLayers.configureLayer(kScene5130PourLayer, kScene5130PourChunk,
+		kScene5130PourDescriptorCount, nullptr, 0, false);
+}
+
+void Scene5130::updateAnimationLayerFrames() {
+	_animationLayers.setLayerFramePreservingVisibility(kScene5130IntroLayer, _introFrame);
+	_animationLayers.setLayerFramePreservingVisibility(kScene5130TapLayer, _tapFrame);
+	_animationLayers.setLayerFramePreservingVisibility(kScene5130ChangeLayer, _changeFrame);
+	_animationLayers.setLayerFramePreservingVisibility(kScene5130LiquidLayer, _liquidFrame);
+	_animationLayers.setLayerFramePreservingVisibility(kScene5130MixLayer, _mixFrame);
+	_animationLayers.setLayerVisible(kScene5130PourLayer, _pourVisible);
+	_animationLayers.setLayerFramePreservingVisibility(kScene5130PourLayer, _pourFrame);
+}
+
 void Scene5130::drawFrame() {
 	_surface.copyBaseFramebufferToSceneFramebuffer();
-	drawSpriteLayer(4, 0x3a, _introFrame);
-	drawSpriteLayer(5, 0x10, kScene5130TapFrameMap[_tapFrame]);
-	drawSpriteLayer(6, 0x0e, kScene5130ChangeFrameMap[_changeFrame]);
-	drawSpriteLayer(7, 0x0e, kScene5130LiquidFrameMap[_liquidFrame]);
-	drawSpriteLayer(8, 0x13, kScene5130MixFrameMap[_mixFrame]);
-	if (_pourVisible)
-		drawSpriteLayer(9, 0x1a, _pourFrame);
+	updateAnimationLayerFrames();
+	drawTransientLayers(_animationLayers);
 	drawDrinkStrip();
 }
 
-void Scene5130::drawSpriteLayer(uint chunkIndex, uint descriptorCount, byte descriptorIndex) {
-	if (chunkIndex >= HollywoodEngine::kResourceChunkCount ||
-			!_resources.chunkTable.isValidChunk(chunkIndex) ||
-			descriptorIndex >= descriptorCount)
+void Scene5130::drawTransientLayers(const TransientLayerCompositor &compositor) {
+	for (uint i = 0; i < compositor.layerCount(); ++i)
+		drawSpriteLayer(compositor.layer(i));
+}
+
+void Scene5130::drawSpriteLayer(const ResourceSpriteLayer &layer) {
+	if (!layer.visible || layer.chunkIndex >= HollywoodEngine::kResourceChunkCount ||
+			!_resources.chunkTable.isValidChunk(layer.chunkIndex) ||
+			layer.descriptorIndex() >= layer.descriptorCount)
 		return;
 
-	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[chunkIndex], 0, descriptorCount,
-		descriptorIndex, _surface.sceneFramebuffer);
+	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[layer.chunkIndex], 0, layer.descriptorCount,
+		layer.descriptorIndex(), _surface.sceneFramebuffer);
 }
 
 void Scene5130::drawDrinkStrip() {

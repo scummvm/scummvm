@@ -65,9 +65,9 @@ private:
 	void runBridgeOpeningOverlay();
 	void patchActionMovementModes();
 
-	ResourceSpriteLayer _backgroundLayer;
-	ResourceSpriteLayer _bridgeMainLayer;
-	ResourceSpriteLayer _bridgeShakeLayer;
+	TransientLayerCompositor _backgroundLayers;
+	TransientLayerCompositor _bridgeBackLayers;
+	TransientLayerCompositor _bridgeFrontLayers;
 	TimedAnimationChannel _backgroundChannel;
 	byte _backgroundSequence;
 	byte _backgroundFrameInSequence;

@@ -56,7 +56,7 @@ private:
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
 
 	void resetAnimationLayers();
-	void advanceLayer(TimedAnimationChannel &channel, ResourceSpriteLayer &layer, uint frameCount, uint32 delta);
+	void advanceLayer(TimedAnimationChannel &channel, uint layerIndex, uint frameCount, uint32 delta);
 	void runMineCartEntryAnimation();
 	void runExitToMineSwitches();
 	void runDeckOfCardsAction();
@@ -79,10 +79,7 @@ private:
 	TimedAnimationChannel _chunk8Channel;
 	TimedAnimationChannel _chunk9Channel;
 	TimedAnimationChannel _chunk10Channel;
-	ResourceSpriteLayer _mineCartEntryLayer;
-	ResourceSpriteLayer _chunk8Layer;
-	ResourceSpriteLayer _chunk9Layer;
-	ResourceSpriteLayer _chunk10Layer;
+	TransientLayerCompositor _animationLayers;
 };
 
 } // End of namespace Hollywood

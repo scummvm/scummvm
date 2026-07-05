@@ -64,18 +64,23 @@ private:
 	void runChunk6FrameRange(byte firstFrame, byte lastFrame, byte finalPoseMode);
 	void runChunk7RevealFramesThenHold();
 	void blackOutScenePalette();
+	void resetTransientOverlayLayers();
+	void setChunk6Visible(bool visible);
+	void setChunk6Frame(byte frameMapIndex);
+	void setChunk7Visible(bool visible);
+	void setChunk7Frame(byte frameIndex);
+	byte chunk7Frame() const;
 
 	Common::Array<byte> _owner0SpeechCueDescriptors;
 	Common::Array<byte> _owner0SmallRows;
 	Common::Array<byte> _owner0LargeRows;
 	byte _chunk6FrameMapIndex;
 	byte _primaryPoseMode;
-	byte _chunk7FrameIndex;
-	bool _chunk6Visible;
-	bool _chunk7RevealVisible;
 	bool _drawChunk7OverlayInsteadOfActor;
 	uint32 _chunk7TimerAccumulator;
 	uint32 _primaryTimerAccumulator;
+	TransientLayerCompositor _backTransientLayers;
+	TransientLayerCompositor _actorReplacementLayers;
 };
 
 } // End of namespace Hollywood

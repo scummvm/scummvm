@@ -71,11 +71,9 @@ private:
 		uint secondaryChunkIndex, uint secondaryDescriptorCount,
 		const byte *secondaryFrameMap, uint secondaryFrameMapSize,
 		uint32 frameMillis, int soundFrame = -1, byte soundId = 0);
-	void drawTemporaryOverlayLayers();
 
 	Common::Array<byte> _originalColorToItemMap;
-	ResourceSpriteLayer _temporaryPrimaryLayer;
-	ResourceSpriteLayer _temporarySecondaryLayer;
+	TransientLayerCompositor _temporaryOverlayLayers;
 };
 
 } // End of namespace Hollywood

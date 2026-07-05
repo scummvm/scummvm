@@ -577,6 +577,8 @@ protected:
 	void restoreResourceSpriteLayerBackground(const ResourceSpriteLayer &layer, const Graphics::Surface &background);
 	// Draws the current frame of a resource sprite layer.
 	void drawResourceSpriteLayer(const ResourceSpriteLayer &layer);
+	// Draws an ordered stack of temporary resource sprite layers.
+	void drawTransientLayers(const TransientLayerCompositor &compositor);
 	// Draws the currently active action overlay layer.
 	void drawActionOverlayLayer();
 

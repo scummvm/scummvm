@@ -65,7 +65,6 @@ private:
 	void setForegroundScrollStep(byte step);
 	void advanceForegroundLayer(uint32 delta);
 	void drawForegroundTableLayer();
-	void drawPokerTransitionLayers();
 	void drawSceneForegroundBlocks(int activeWorldY);
 	void runFirstEntrySequence();
 	void runReturnEntrySequence();
@@ -90,12 +89,10 @@ private:
 	void copySmallTextRow(byte destinationRow, byte sourceRow);
 
 	ResourceSpriteLayer _foregroundLayer;
-	ResourceSpriteLayer _pokerTableLayer;
-	ResourceSpriteLayer _pokerOverlayLayer;
+	TransientLayerCompositor _pokerTransitionLayers;
 	TimedAnimationChannel _foregroundChannel;
 	byte _foregroundScrollStep;
 	bool _foregroundLongAnimationActive;
-	bool _pokerTransitionVisible;
 	byte _sherilynSpeechPoseMode;
 };
 
