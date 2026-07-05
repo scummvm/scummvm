@@ -133,7 +133,7 @@ Common::KeymapArray ToucheMetaEngine::initKeymaps(const char *target) const {
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionToggleHotspots, _("Show hotspots"));
-	act->setCustomEngineActionEvent(Common::kEngineActionHotspotToggle);
+	act->setEvent(Common::EVENT_HOTSPOTS_SHOW);
 	act->addDefaultInputMapping("h");
 	gameKeyMap->addAction(act);
 
