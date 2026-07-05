@@ -134,7 +134,7 @@ void speech_all_off() {
 }
 
 void speech_sample_rate(int rate) {
-	// TODO: implement speech_sample_rate
+	// No implementation in ScummVM
 }
 
 void speech_go() {
@@ -170,7 +170,6 @@ void global_speech_go(int id) {
 	if (speech_system_active && speech_on) {
 		if (global_speech_ready == id) {
 			speech_all_off();
-			//speech_sample_rate(speech_main_buffer.sample_rate);
 			speech_go();
 		} else {
 			global_speech(id);

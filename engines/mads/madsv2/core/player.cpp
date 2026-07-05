@@ -509,7 +509,7 @@ void player_set_image() {
 
 	depth = 1;
 	effective_y = player.y;
-	// effective_y = MIN (effective_y, display_y - 1);
+
 	for (count = 1; count < 15; count++) {
 		if (effective_y <= room->depth_table[depth]) {
 			depth = (byte)(count + 1);
@@ -922,9 +922,6 @@ void player_start_walking(int walk_x, int walk_y, int walk_facing) {
 	int from_x, from_y;
 	int unto_x, unto_y;
 	int temp_stack_pointer;
-#ifdef show_rails
-	Buffer scr_live = { video_y, video_x, mcga_video };
-#endif
 
 	player_clear_stop_walkers();
 	player_set_base_frame_rate();
@@ -938,21 +935,6 @@ void player_start_walking(int walk_x, int walk_y, int walk_facing) {
 	allow_one_illegal = attr_walk(&scr_walk, walk_x, walk_y);
 
 	rail_check_path(allow_one_illegal);
-
-#ifdef show_rails
-	from_x = player.x;
-	from_y = player.y;
-	temp_stack_pointer = rail_solution_stack_pointer;
-	while (temp_stack_pointer) {
-		temp_stack_pointer--;
-		unto_x = room->rail[rail_solution_stack[temp_stack_pointer]].x;
-		unto_y = room->rail[rail_solution_stack[temp_stack_pointer]].y;
-		buffer_line(scr_live, from_x, from_y, unto_x, unto_y, 3);
-		from_x = unto_x;
-		from_y = unto_y;
-		if (kernel.frame_by_frame) keys_get();
-	}
-#endif
 
 	from_x = player.x;
 	from_y = player.y;

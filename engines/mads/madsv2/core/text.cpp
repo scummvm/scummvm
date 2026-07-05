@@ -461,7 +461,7 @@ int text_show(long id) {
 			} else if (*scan == TEXT_CLOSE_COMMAND) {
 				if (brackets_on) {
 					*cmd = 0;
-					// mads_strupr(command_buf);
+
 					if (text_compare(command_buf, text_command_center, &more)) {
 						center = true;
 					} else if (text_compare(command_buf, text_command_title, &more)) {

@@ -367,7 +367,6 @@ SeriesPtr sprite_series_load(const char *filename, int load_flags) {
 	SpritePageInfoPtr  page_info;
 	SpritePageTablePtr page_table;
 	ColorListPtr color_list = NULL;
-	/* ColorList color_list; */
 	Load load_handle;
 
 	mem_last_alloc_loader = MODULE_SPRITE_LOADER;

@@ -449,12 +449,11 @@ void window_title(WindowPtr window, const char *title, int title_color, int back
 	begin_x = center_x - ((strlen(title) + 2) / 2);
 
 	Common::strcpy_s(temp, " ");
-	// temp[0] = (byte)((title_color == background_color) ? right_join : ' ');
+
 	begin_x = screen_put(temp, title_color, title_color, begin_x, window->ul_y);
 
 	begin_x = screen_put(title, title_color, title_color, begin_x, window->ul_y);
 
-	// temp[0] = (byte)((title_color == background_color) ? left_join : ' ');
 	begin_x = screen_put(temp, title_color, title_color, begin_x, window->ul_y);
 
 	mouse_show();

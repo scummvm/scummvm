@@ -202,7 +202,7 @@ void popup_next_line() {
 	}
 
 	box->text_x = 0;
-	// box->dont_add_space = false;
+
 	if (box->text_y >= POPUP_MAX_LINES) {
 		error_report(ERROR_POPUP_TOO_MANY_LINES, ERROR, MODULE_POPUP, box->text_y, POPUP_MAX_LINES);
 	}
@@ -319,7 +319,7 @@ void popup_write_string(const char *string) {
 		box->dont_add_space = stop_on_hyphen;
 
 		len = strlen(word2Str);
-		width = font_string_width(box_param.font, word2Str, POPUP_SPACING);	 // - POPUP_SPACING
+		width = font_string_width(box_param.font, word2Str, POPUP_SPACING);
 
 		if (((box->text_x + len) > box->text_width) || ((box->cursor_x + width) > box->text_xs)) {
 			popup_next_line();
@@ -1925,7 +1925,7 @@ static int popup_button_draw(PopupItem *item) {
 
 	selected = (popup->active_item == item) && (item->status & ITEM_STATUS_ACTIVE) != 0;
 
-	if (selected /* && (POPUP_DIALOG_BUTTON_COLOR_1 == POPUP_DIALOG_BUTTON_COLOR_2) */) {
+	if (selected) {
 		buffer_rect_fill(scr_main, item->x, item->y, item->xs, 1, POPUP_DIALOG_TEXT_COLOR);
 		buffer_rect_fill(scr_main, item->x, item->y, 1, item->ys, POPUP_DIALOG_TEXT_COLOR);
 		buffer_rect_fill(scr_main, item->x, item->y + item->ys, item->xs + 1, 1, POPUP_DIALOG_TEXT_COLOR);
@@ -1938,7 +1938,6 @@ static int popup_button_draw(PopupItem *item) {
 		popup_mouse_refresh_2(refresh);
 	}
 
-	// color = selected ? POPUP_ASK_COLOR : POPUP_TEXT_COLOR;
 	if (popup->active_item->type == ITEM_BUTTON) {
 		big_button = (item == popup->active_item);
 	} else {
@@ -1984,9 +1983,6 @@ static int popup_button_draw(PopupItem *item) {
 
 	return 0;
 }
-
-
-
 
 
 static int popup_button_mouse(PopupItem *item) {
@@ -2671,18 +2667,7 @@ static int popup_savelist_draw(PopupItem *item) {
 
 	// Basic box
 	popup_double_box_2(item->x, item->y, item->xs, item->ys, color, color2);
-	// buffer_rect_fill (scr_main, item->x, item->y,
-	// item->xs, 1,
-	// color);
-	// buffer_rect_fill (scr_main, item->x, item->y,
-	// 1, item->ys,
-	// color);
-	// buffer_rect_fill (scr_main, item->x + item->xs - 1, item->y,
-	// 1, item->ys,
-	// color);
-	// buffer_rect_fill (scr_main, item->x, item->y + item->ys - 1,
-	// item->xs, 1,
-	// color);
+
 	// Number list
 	buffer_rect_fill(scr_main, list->extra_x + list->extra_xs - 2, list->extra_y,
 		1, list->extra_ys, color);

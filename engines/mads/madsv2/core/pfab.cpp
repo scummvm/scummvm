@@ -62,10 +62,6 @@ namespace MADSV2 {
  * Back-references are negative offsets into that buffer.
  */
 
-#include "pfab.h"
-#include <stddef.h>
-#include <string.h>
-
  /* -------------------------------------------------------------------------
   * Compile-time constants (must match compressor and decompressor)
   * ---------------------------------------------------------------------- */
