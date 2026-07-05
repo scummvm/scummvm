@@ -1,0 +1,71 @@
+-- ============================================================================
+-- getOne() / getPos() ARRAY & PARRAY comparison -- version behaviour check
+-- ============================================================================
+--
+-- Purpose: confirm how Director's getOne(list, value) and getPos(list, value)
+-- match a value that is itself a list / property list.
+--
+--   * Director 4 and 5 : match by OBJECT IDENTITY  -> a freshly built,
+--                        value-equal list never matches.
+--   * Director 6 and 7 : match by CONTENTS (element-wise, recursive; strings
+--                        stay case-sensitive) -> a value-equal list matches
+--                        even when freshly built.
+--
+-- Mirrors ScummVM's LC::eqDataStrict (engines/director/lingo/lingo-code.cpp),
+-- which switches behaviour at getVersion() >= 600.
+--
+-- HOW TO RUN
+--   Message Window : type each "put ..." line and read the result. Variables
+--                    (e.g. "sub") persist between lines in the Message Window.
+--   .DIR movie     : paste the "on testArrayVersioning" handler into a movie
+--                    script, then type  testArrayVersioning  in the Message
+--                    Window. Use this if the Message Window loses variables.
+--
+-- Results below confirmed on real Director 4/5/6/7 (2026-07-04); see the
+-- accompanying array-getpos-version-results.md matrix.
+-- Annotation format:  -- <D4> / <D5> / <D6> / <D7>
+-- ============================================================================
+
+
+-- --- version-dependent: identity (D4/D5) vs contents (D6/D7) ---
+put getPos([[13, 14], [20, 5], [7, 7]], [20, 5])
+-- 0 / 0 / 2 / 2
+put getOne([#a, #b, [1, 2, 3]], [1, 2, 3])
+-- 0 / 0 / 3 / 3
+put getPos([#x: [1, 2], #y: [3, 4]], [3, 4])
+-- 0 / 0 / 2 / 2
+put getPos([[1, [2, 3]], [4, [5, 6]]], [4, [5, 6]])   -- nested / recursive
+-- 0 / 0 / 2 / 2
+
+-- --- controls: identical in every version ---
+set sub to [1, 2, 3]
+put getOne([#a, #b, sub], sub)          -- same object reference
+-- 3 / 3 / 3 / 3
+put getPos([5, 10, 15], 10)             -- scalar value
+-- 2 / 2 / 2 / 2
+put getPos([[13, 14], [20, 5], [7, 7]], [99, 99])   -- not found
+-- 0 / 0 / 0 / 0
+
+-- --- getOne/getPos compare STRINGS case-sensitively (unlike rest of Director) ---
+put getOne([#a, "urgh", "URGH"], "URGH")   -- exact case
+-- 3 / 3 / 3 / 3
+put getOne([#a, "urgh"], "URGH")           -- case mismatch
+-- 0 / 0 / 0 / 0
+
+
+-- ============================================================================
+-- .DIR fallback: movie-script handler (type  testArrayVersioning  to run it)
+-- ============================================================================
+on testArrayVersioning
+  put "--- getOne/getPos ARRAY compare (D4/D5 = identity, D6+ = contents) ---"
+  put "A1 getPos coord [20,5]  =>" && getPos([[13, 14], [20, 5], [7, 7]], [20, 5])
+  put "A2 getOne [1,2,3]       =>" && getOne([#a, #b, [1, 2, 3]], [1, 2, 3])
+  put "A3 getPos parray [3,4]  =>" && getPos([#x: [1, 2], #y: [3, 4]], [3, 4])
+  put "A4 getPos nested        =>" && getPos([[1, [2, 3]], [4, [5, 6]]], [4, [5, 6]])
+  set sub to [1, 2, 3]
+  put "C1 same object (=>3)    =>" && getOne([#a, #b, sub], sub)
+  put "C2 scalar 10 (=>2)      =>" && getPos([5, 10, 15], 10)
+  put "C3 not found (=>0)      =>" && getPos([[13, 14], [20, 5], [7, 7]], [99, 99])
+  put "S1 case exact (=>3)     =>" && getOne([#a, "urgh", "URGH"], "URGH")
+  put "S2 case mismatch (=>0)  =>" && getOne([#a, "urgh"], "URGH")
+end
