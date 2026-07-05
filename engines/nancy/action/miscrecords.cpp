@@ -374,7 +374,7 @@ void ChangeCellPhoneInfo::execute() {
 }
 
 void CellPhonePopCellSceneFromStack::readData(Common::SeekableReadStream &stream) {
-	_sceneChange.readData(stream);
+	_sceneChange.sceneID = stream.readUint16LE();
 }
 
 void CellPhonePopCellSceneFromStack::execute() {
