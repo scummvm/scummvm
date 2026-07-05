@@ -2135,6 +2135,9 @@ void LB::b_idleLoadDone(int nargs) {
 
 void LB::b_pass(int nargs) {
 	g_lingo->_passEvent = true;
+
+	// Director's `pass` stops the current handler
+	g_lingo->_abort = true;
 }
 
 void LB::b_pause(int nargs) {
