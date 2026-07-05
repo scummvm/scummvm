@@ -312,9 +312,10 @@ void Scene1090::applyWrappedBrainPatch() {
 }
 
 void Scene1090::runSwitchAction() {
-	runConfiguredActionOverlay(8, kScene1090SwitchDescriptorCount, kScene1090SwitchFrameMap,
-		ARRAYSIZE(kScene1090SwitchFrameMap), kScene1090FrameMillis,
-		kActionOverlayHideActiveActor, -1, 0, -1, 0, 100, 5, kScene1090LightSwitchHook);
+	runActionOverlay(ActionOverlaySpec(8, kScene1090SwitchDescriptorCount,
+		kScene1090SwitchFrameMap, ARRAYSIZE(kScene1090SwitchFrameMap), kScene1090FrameMillis)
+		.hideActor()
+		.hookAt(5, kScene1090LightSwitchHook));
 }
 
 void Scene1090::revealWrappedBrain() {

@@ -303,9 +303,9 @@ void Scene4020::runEntryFromScene4010() {
 void Scene4020::runEntryFromScene4030() {
 	setActiveActorPose(0x265, 0x117, 4);
 
-	runConfiguredActionOverlay(kScene4020GateTransitionChunk, kScene4020GateTransitionDescriptorCount,
-		kScene4020ReturnFromD03FrameMap, ARRAYSIZE(kScene4020ReturnFromD03FrameMap),
-		kScene4020FrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(kScene4020GateTransitionChunk, kScene4020GateTransitionDescriptorCount,
+		kScene4020ReturnFromD03FrameMap, ARRAYSIZE(kScene4020ReturnFromD03FrameMap), kScene4020FrameMillis)
+		.hideActor());
 	setActiveActorPose(0x265, 0x117, 5);
 	walkActiveActorTo(0x265, 0x117, 4, 0, false);
 }
@@ -316,9 +316,11 @@ void Scene4020::runExitToScene4030() {
 		return;
 	}
 
-	runConfiguredActionOverlay(kScene4020GateTransitionChunk, kScene4020GateTransitionDescriptorCount,
-		kScene4020EnterD03FrameMap, ARRAYSIZE(kScene4020EnterD03FrameMap),
-		kScene4020FrameMillis, kActionOverlayHideActiveActor, -1, 0, -1, 0, 100, -1, 0, false, 1);
+	runActionOverlay(ActionOverlaySpec(kScene4020GateTransitionChunk, kScene4020GateTransitionDescriptorCount,
+		kScene4020EnterD03FrameMap, ARRAYSIZE(kScene4020EnterD03FrameMap), kScene4020FrameMillis)
+		.hideActor()
+		.noRedrawAtEnd()
+		.startAt(1));
 	_vm->gameState().mainFlowStateId = kScene4030FirstState;
 }
 
@@ -332,10 +334,10 @@ void Scene4020::useKeyOnGateMechanism() {
 		return;
 	}
 
-	runConfiguredActionOverlay(kScene4020KeyMechanismChunk, kScene4020KeyMechanismDescriptorCount,
-		kScene4020KeyMechanismFrameMap, ARRAYSIZE(kScene4020KeyMechanismFrameMap),
-		kScene4020FrameMillis, kActionOverlayHideActiveActor, -1, 0, -1, 0, 100,
-		-1, kScene4020KeyMechanismHook);
+	runActionOverlay(ActionOverlaySpec(kScene4020KeyMechanismChunk, kScene4020KeyMechanismDescriptorCount,
+		kScene4020KeyMechanismFrameMap, ARRAYSIZE(kScene4020KeyMechanismFrameMap), kScene4020FrameMillis)
+		.hideActor()
+		.hookEveryFrame(kScene4020KeyMechanismHook));
 	_soundBank0.stop();
 	removeInventoryItem(kScene4020KeyItem);
 	_soundBank0.playSample(1, 100);

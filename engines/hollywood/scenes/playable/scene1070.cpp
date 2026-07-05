@@ -948,9 +948,9 @@ void Scene1070::runSpencerTravelUnlockEffect() {
 	if (_vm->gameState().hasTravelScreenDestination(kScene1070TravelUnlockDestinationId))
 		return;
 
-	runConfiguredActionOverlay(16, kScene1070TravelUnlockDescriptorCount,
-		kScene1070TravelUnlockFrameMap, ARRAYSIZE(kScene1070TravelUnlockFrameMap),
-		kScene1070FrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(16, kScene1070TravelUnlockDescriptorCount,
+		kScene1070TravelUnlockFrameMap, ARRAYSIZE(kScene1070TravelUnlockFrameMap), kScene1070FrameMillis)
+		.hideActor());
 	_soundBank0.playSample(1, 100);
 	_vm->gameState().unlockTravelScreenDestination(kScene1070TravelUnlockDestinationId);
 }
@@ -1000,8 +1000,10 @@ void Scene1070::handleBallChainPickup() {
 
 void Scene1070::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame, byte patchSelector) {
-	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
-		kActionOverlayHideActiveActor, patchFrame, patchSelector);
+	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+		frameMap, frameMapSize, frameMillis)
+		.hideActor()
+		.patchAt(patchFrame, patchSelector));
 }
 
 } // End of namespace Hollywood

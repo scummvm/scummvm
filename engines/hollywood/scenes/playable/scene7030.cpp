@@ -502,8 +502,10 @@ void Scene7030::advanceChunk6IdleFrames() {
 void Scene7030::runPunchBowlPatchOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int statePatchFrame) {
 	const byte hookId = statePatchFrame >= 0 ? kScene7030PunchBowlGlassPatchHook : 0;
-	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
-		kActionOverlayHideActiveActor, -1, 0, -1, 0, 100, statePatchFrame, hookId);
+	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+		frameMap, frameMapSize, frameMillis)
+		.hideActor()
+		.hookAt(statePatchFrame, hookId));
 }
 
 void Scene7030::handleActionOverlayFrameHook(byte hookId, uint frame) {

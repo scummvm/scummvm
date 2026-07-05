@@ -475,10 +475,9 @@ void Scene5120::runAlternateEntrySequence() {
 
 void Scene5120::runElevatorDoorClip(bool opening) {
 	_soundBank0.playSample(0x1d, 100);
-	runConfiguredActionOverlay(8, kScene5120ElevatorDescriptorCount,
-		opening ? kScene5120ElevatorOpenFrameMap : kScene5120ElevatorCloseFrameMap,
-		ARRAYSIZE(kScene5120ElevatorOpenFrameMap), kScene5120FrameMillis,
-		kActionOverlayKeepActiveActorVisibility);
+	runActionOverlay(ActionOverlaySpec(8, kScene5120ElevatorDescriptorCount,
+		opening ? kScene5120ElevatorOpenFrameMap : kScene5120ElevatorCloseFrameMap, ARRAYSIZE(kScene5120ElevatorOpenFrameMap), kScene5120FrameMillis)
+		.keepActorVisibility());
 }
 
 void Scene5120::runElevatorReturnSequence() {
@@ -506,10 +505,10 @@ void Scene5120::runTongsPickup() {
 		return;
 	}
 
-	runConfiguredActionOverlay(10, kScene5120TongsPickupDescriptorCount,
-		kScene5120TongsPickupFrameMap, ARRAYSIZE(kScene5120TongsPickupFrameMap),
-		kScene5120FrameMillis, kActionOverlayHideActiveActor,
-		-1, 0, -1, 0, 100, 10, kScene5120PatchTongs);
+	runActionOverlay(ActionOverlaySpec(10, kScene5120TongsPickupDescriptorCount,
+		kScene5120TongsPickupFrameMap, ARRAYSIZE(kScene5120TongsPickupFrameMap), kScene5120FrameMillis)
+		.hideActor()
+		.hookAt(10, kScene5120PatchTongs));
 	state.scene5120TongsTaken = true;
 	applySceneStateToHotspotsAndPatches(1);
 	addInventoryItem(kScene5120TongsInventoryItem);
@@ -535,9 +534,9 @@ void Scene5120::runCocktailFillPillbox() {
 	}
 
 	beginSecondarySpeechLine(25, 0);
-	runConfiguredActionOverlay(21, kScene5120PillboxFillDescriptorCount,
-		kScene5120PillboxFillFrameMap, ARRAYSIZE(kScene5120PillboxFillFrameMap),
-		kScene5120FrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(21, kScene5120PillboxFillDescriptorCount,
+		kScene5120PillboxFillFrameMap, ARRAYSIZE(kScene5120PillboxFillFrameMap), kScene5120FrameMillis)
+		.hideActor());
 	state.scene5120CocktailState = 3;
 	applySceneStateToHotspotsAndPatches(2);
 	removeInventoryItem(pillboxItem);
@@ -558,22 +557,22 @@ void Scene5120::runFilmProjectorSequence() {
 		return;
 	}
 
-	runConfiguredActionOverlay(18, kScene5120ProjectorInstallDescriptorCount,
-		kScene5120ProjectorInstallFrameMap, ARRAYSIZE(kScene5120ProjectorInstallFrameMap),
-		kScene5120FrameMillis, kActionOverlayKeepActiveActorVisibility);
+	runActionOverlay(ActionOverlaySpec(18, kScene5120ProjectorInstallDescriptorCount,
+		kScene5120ProjectorInstallFrameMap, ARRAYSIZE(kScene5120ProjectorInstallFrameMap), kScene5120FrameMillis)
+		.keepActorVisibility());
 	removeInventoryItem(kScene5120FilmInventoryItem);
 	_soundBank0.playSample(1, 100);
 	beginSecondarySpeechLine(26, 0);
 
-	runConfiguredActionOverlay(17, kScene5120ProjectorFirstDescriptorCount,
-		kScene5120ProjectorFirstFrameMap, ARRAYSIZE(kScene5120ProjectorFirstFrameMap),
-		kScene5120FrameMillis, kActionOverlayKeepActiveActorVisibility);
+	runActionOverlay(ActionOverlaySpec(17, kScene5120ProjectorFirstDescriptorCount,
+		kScene5120ProjectorFirstFrameMap, ARRAYSIZE(kScene5120ProjectorFirstFrameMap), kScene5120FrameMillis)
+		.keepActorVisibility());
 	state.scene5110SalonTransformState = MAX<byte>(state.scene5110SalonTransformState, 2);
 	applySceneStateToHotspotsAndPatches(0xff);
 	resetTransformedRoomLayers();
-	runConfiguredActionOverlay(19, kScene5120ProjectorSecondDescriptorCount,
-		kScene5120ProjectorSecondFrameMap, ARRAYSIZE(kScene5120ProjectorSecondFrameMap),
-		kScene5120FrameMillis, kActionOverlayKeepActiveActorVisibility);
+	runActionOverlay(ActionOverlaySpec(19, kScene5120ProjectorSecondDescriptorCount,
+		kScene5120ProjectorSecondFrameMap, ARRAYSIZE(kScene5120ProjectorSecondFrameMap), kScene5120FrameMillis)
+		.keepActorVisibility());
 	beginSecondarySpeechLine(26, 2);
 }
 

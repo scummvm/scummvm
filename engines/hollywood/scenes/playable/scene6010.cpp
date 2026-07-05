@@ -631,9 +631,10 @@ void Scene6010::runPendingItem69PickupOverlay() {
 
 	GameplayState &state = _vm->gameState();
 	state.scene6011PendingItem69Visible = false;
-	runConfiguredActionOverlay(12, kScene6010PendingItem69DescriptorCount,
-		kScene6010PendingItem69FrameMap, ARRAYSIZE(kScene6010PendingItem69FrameMap),
-		kScene6010FrameMillis, kActionOverlayHideActiveActor, 7, 5);
+	runActionOverlay(ActionOverlaySpec(12, kScene6010PendingItem69DescriptorCount,
+		kScene6010PendingItem69FrameMap, ARRAYSIZE(kScene6010PendingItem69FrameMap), kScene6010FrameMillis)
+		.hideActor()
+		.patchAt(7, 5));
 
 	addInventoryItem(0x69);
 	_soundBank0.playSample(1, 100);
@@ -653,10 +654,10 @@ void Scene6010::runDoorRevealOverlay() {
 }
 
 void Scene6010::runExitToScene6020Overlay() {
-	runConfiguredActionOverlay(9, kScene6010ExitDescriptorCount,
-		kScene6010ExitFrameMap, ARRAYSIZE(kScene6010ExitFrameMap),
-		kScene6010FrameMillis, kActionOverlayHideActiveActor, -1, 0,
-		ARRAYSIZE(kScene6010ExitFrameMap) - 1, 3);
+	runActionOverlay(ActionOverlaySpec(9, kScene6010ExitDescriptorCount,
+		kScene6010ExitFrameMap, ARRAYSIZE(kScene6010ExitFrameMap), kScene6010FrameMillis)
+		.hideActor()
+		.soundAt(ARRAYSIZE(kScene6010ExitFrameMap) - 1, 3));
 	_vm->gameState().scene6010ExitOverlayPlayed = true;
 	_vm->gameState().mainFlowStateId = kScene6020State;
 }

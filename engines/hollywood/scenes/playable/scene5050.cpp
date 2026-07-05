@@ -202,9 +202,9 @@ void Scene5050::runSpecialTransitionToMineSwitches() {
 	for (uint i = 0; i < frameMap.size(); ++i)
 		frameMap[i] = (byte)i;
 
-	runConfiguredActionOverlay(7, kScene5050SpecialTransitionDescriptorCount,
-		frameMap.data(), frameMap.size(), kScene5050SpecialFrameMillis,
-		kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(7, kScene5050SpecialTransitionDescriptorCount,
+		frameMap.data(), frameMap.size(), kScene5050SpecialFrameMillis)
+		.hideActor());
 
 	GameplayState &state = _vm->gameState();
 	state.scene5010MineTransportState = 3;
@@ -219,10 +219,10 @@ void Scene5050::runExitToMineSwitches() {
 
 void Scene5050::runTrophyBoxPickup() {
 	GameplayState &state = _vm->gameState();
-	runConfiguredActionOverlay(8, kScene5050PickupOverlayDescriptorCount,
-		kScene5050PickupFrameMap, ARRAYSIZE(kScene5050PickupFrameMap),
-		kScene5050FrameMillis, kActionOverlayHideActiveActor,
-		-1, 0, 0x18, 1);
+	runActionOverlay(ActionOverlaySpec(8, kScene5050PickupOverlayDescriptorCount,
+		kScene5050PickupFrameMap, ARRAYSIZE(kScene5050PickupFrameMap), kScene5050FrameMillis)
+		.hideActor()
+		.soundAt(0x18, 1));
 
 	if (state.scene5050TrophyBoxTaken) {
 		beginSecondarySpeechLine(5, 0);

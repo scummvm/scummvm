@@ -133,8 +133,8 @@ class HollywoodEngine;
  *    Speech helpers block until the current line is finished and may drive
  *    actor animation depending on shouldAnimatePrimarySpeechLine() and related
  *    hooks. Action overlays are short blocking animations run through
- *    runActionOverlay()/runConfiguredActionOverlay(); they may hide the actor,
- *    play sounds, patch scene state on a frame, or report frame hooks through
+ *    ActionOverlaySpec and runActionOverlay(); they may hide the actor, play
+ *    sounds, patch scene state on a frame, or report frame hooks through
  *    handleActionOverlayFrameHook(). When the gameplay loop exits because the
  *    main-flow state changed, play() can run runExitSideEffectsAfterLoop()
  *    before the engine dispatches the next scene.
@@ -531,21 +531,14 @@ protected:
 	// Runs an action overlay with default options.
 	void runActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis);
-	// Runs an action overlay with actor visibility, sounds, and hooks.
-	void runActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, const ActionOverlayOptions &options);
+	// Runs an action overlay from a named specification.
+	void runActionOverlay(const ActionOverlaySpec &spec);
 	// Runs an overlay while hiding the active actor.
 	void runHiddenActorActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis);
 	// Runs an overlay while forcing the active actor visible.
 	void runVisibleActorActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis);
-	// Runs an overlay with common actor visibility, patch, sound, and hook options.
-	void runConfiguredActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
-		uint frameMapSize, uint32 frameMillis, ActionOverlayActorVisibility actorVisibility,
-		int statePatchFrame = -1, byte statePatchSelector = 0, int soundFrame = -1,
-		byte soundId = 0, byte soundVolumePercent = 100, int hookFrame = -1, byte hookId = 0,
-		bool redrawAtEnd = true, uint firstFrame = 0, uint endFrame = 0);
 
 	// Speech Animation Hooks
 	// Maps a primary dialogue animation group to a base frame.

@@ -562,13 +562,11 @@ void Scene2100::runRaStaffPickup() {
 	GameplayState &state = _vm->gameState();
 	state.scene2100RaStaffTaken = true;
 
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayHideActiveActor;
-	options.statePatchFrame = 5;
-	options.statePatchSelector = 1;
-	runActionOverlay(kScene2100PickupChunk, kScene2100PickupDescriptorCount,
+	runActionOverlay(ActionOverlaySpec(kScene2100PickupChunk, kScene2100PickupDescriptorCount,
 		kScene2100PickupFrameMap, ARRAYSIZE(kScene2100PickupFrameMap),
-		kScene2100FrameMillis, options);
+		kScene2100FrameMillis)
+		.hideActor()
+		.patchAt(5, 1));
 
 	applySceneStateToHotspotsAndPatches(1);
 	if (!hasInventoryItem(kScene2100RaStaffItem))

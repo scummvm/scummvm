@@ -62,6 +62,97 @@ struct ActionOverlayOptions {
 	byte hookId;
 };
 
+// Named specification for a temporary action overlay and its timed side effects.
+struct ActionOverlaySpec {
+	ActionOverlaySpec(uint newChunkIndex, uint newDescriptorCount,
+			const byte *newFrameMap, uint newFrameMapSize, uint32 newFrameMillis) :
+			chunkIndex(newChunkIndex),
+			descriptorCount(newDescriptorCount),
+			frameMap(newFrameMap),
+			frameMapSize(newFrameMapSize),
+			frameMillis(newFrameMillis),
+			options() {
+	}
+
+	ActionOverlaySpec &keepActorVisibility() {
+		options.actorVisibility = kActionOverlayKeepActiveActorVisibility;
+		return *this;
+	}
+
+	ActionOverlaySpec &actorVisibility(ActionOverlayActorVisibility visibility) {
+		options.actorVisibility = visibility;
+		return *this;
+	}
+
+	ActionOverlaySpec &showActor() {
+		options.actorVisibility = kActionOverlayShowActiveActor;
+		return *this;
+	}
+
+	ActionOverlaySpec &hideActor() {
+		options.actorVisibility = kActionOverlayHideActiveActor;
+		return *this;
+	}
+
+	ActionOverlaySpec &patchAt(int frame, byte selector) {
+		options.statePatchFrame = frame;
+		options.statePatchSelector = selector;
+		return *this;
+	}
+
+	ActionOverlaySpec &soundAt(int frame, byte soundId, byte volumePercent = 100) {
+		options.soundFrame = frame;
+		options.soundId = soundId;
+		options.soundVolumePercent = volumePercent;
+		return *this;
+	}
+
+	ActionOverlaySpec &hookAt(int frame, byte hookId) {
+		options.hookFrame = frame;
+		options.hookId = hookId;
+		return *this;
+	}
+
+	ActionOverlaySpec &hookEveryFrame(byte hookId) {
+		options.hookFrame = -1;
+		options.hookId = hookId;
+		return *this;
+	}
+
+	ActionOverlaySpec &noRedrawAtEnd() {
+		options.redrawAtEnd = false;
+		return *this;
+	}
+
+	ActionOverlaySpec &redrawAtEnd(bool redraw) {
+		options.redrawAtEnd = redraw;
+		return *this;
+	}
+
+	ActionOverlaySpec &startAt(uint firstFrame) {
+		options.firstFrame = firstFrame;
+		return *this;
+	}
+
+	ActionOverlaySpec &endAt(uint endFrame) {
+		options.endFrame = endFrame;
+		return *this;
+	}
+
+	ActionOverlaySpec &frameRange(uint firstFrame, uint endFrame) {
+		options.firstFrame = firstFrame;
+		options.endFrame = endFrame;
+		return *this;
+	}
+
+	uint chunkIndex;
+	uint descriptorCount;
+	const byte *frameMap;
+	uint frameMapSize;
+	uint32 frameMillis;
+	ActionOverlayOptions options;
+};
+
 } // End of namespace Hollywood
 
 #endif

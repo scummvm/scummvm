@@ -412,9 +412,10 @@ void Scene7050::handleActionSlot01ReturnToG04() {
 
 void Scene7050::handleActionSlot10PickupItem10() {
 	dispatchGenericSceneAction(19);
-	runConfiguredActionOverlay(11, kScene7050Chunk11DescriptorCount, kScene7050Chunk11PickupItem10FrameMap,
-		ARRAYSIZE(kScene7050Chunk11PickupItem10FrameMap), kScene7050FrameMillis,
-		kActionOverlayHideActiveActor, -1, 0, -1, 0, 100, 4, kScene7050CloakroomRagPickupHook);
+	runActionOverlay(ActionOverlaySpec(11, kScene7050Chunk11DescriptorCount,
+		kScene7050Chunk11PickupItem10FrameMap, ARRAYSIZE(kScene7050Chunk11PickupItem10FrameMap), kScene7050FrameMillis)
+		.hideActor()
+		.hookAt(4, kScene7050CloakroomRagPickupHook));
 	addInventoryItem(0x10);
 	_soundBank0.playSample(1, 100);
 }

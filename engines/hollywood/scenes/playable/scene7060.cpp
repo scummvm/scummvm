@@ -580,8 +580,10 @@ void Scene7060::beginPrimaryDialogueSpeech(byte frameIndex) {
 
 void Scene7060::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int soundFrame, byte soundId) {
-	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
-		kActionOverlayHideActiveActor, -1, 0, soundFrame, soundId);
+	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+		frameMap, frameMapSize, frameMillis)
+		.hideActor()
+		.soundAt(soundFrame, soundId));
 }
 
 void Scene7060::handleSpeechRow04Variant() {
@@ -617,9 +619,10 @@ void Scene7060::handleShortExitToState7071() {
 }
 
 void Scene7060::handleChunk7PickupItem11() {
-	runConfiguredActionOverlay(7, kScene7060Chunk7DescriptorCount, kScene7060Chunk7PickupItem11FrameMap,
-		ARRAYSIZE(kScene7060Chunk7PickupItem11FrameMap), kScene7060OverlayFrameMillis,
-		kActionOverlayHideActiveActor, -1, 0, -1, 0, 100, 4, kScene7060PickupItem11Hook);
+	runActionOverlay(ActionOverlaySpec(7, kScene7060Chunk7DescriptorCount,
+		kScene7060Chunk7PickupItem11FrameMap, ARRAYSIZE(kScene7060Chunk7PickupItem11FrameMap), kScene7060OverlayFrameMillis)
+		.hideActor()
+		.hookAt(4, kScene7060PickupItem11Hook));
 	addInventoryItem(0x11);
 	_soundBank0.playSample(1, 100);
 }
@@ -656,9 +659,10 @@ void Scene7060::handleUseItem0DOnMachine() {
 	beginPrimaryDialogueSpeech(2);
 	beginSecondarySpeechLine(12, 3);
 
-	runConfiguredActionOverlay(7, kScene7060Chunk7DescriptorCount, kScene7060Chunk7UseItem0DFrameMap,
-		ARRAYSIZE(kScene7060Chunk7UseItem0DFrameMap), kScene7060OverlayFrameMillis,
-		kActionOverlayHideActiveActor, -1, 0, -1, 0, 100, 4, kScene7060UseItem0DHook);
+	runActionOverlay(ActionOverlaySpec(7, kScene7060Chunk7DescriptorCount,
+		kScene7060Chunk7UseItem0DFrameMap, ARRAYSIZE(kScene7060Chunk7UseItem0DFrameMap), kScene7060OverlayFrameMillis)
+		.hideActor()
+		.hookAt(4, kScene7060UseItem0DHook));
 
 	removeInventoryItem(0x0d);
 	_soundBank0.playSample(1, 100);

@@ -492,10 +492,10 @@ void Scene2040::runSphinxNoseSequence() {
 	}
 
 	if (_sceneChunkTable.isValidChunk(17)) {
-		runConfiguredActionOverlay(17, kScene2040SphinxNoseDescriptorCount,
-			kScene2040SphinxNoseFrameMap, ARRAYSIZE(kScene2040SphinxNoseFrameMap),
-			kScene2040SlowOverlayFrameMillis, kActionOverlayHideActiveActor,
-			-1, 0, 17, 0x2c, 50);
+		runActionOverlay(ActionOverlaySpec(17, kScene2040SphinxNoseDescriptorCount,
+			kScene2040SphinxNoseFrameMap, ARRAYSIZE(kScene2040SphinxNoseFrameMap), kScene2040SlowOverlayFrameMillis)
+			.hideActor()
+			.soundAt(17, 0x2c, 50));
 	}
 
 	state.scene2040SphinxFaceState = 1;
@@ -522,10 +522,10 @@ void Scene2040::runEyeExchangeSequence() {
 	if (state.scene2040SphinxFaceState != 2)
 		return;
 
-	runConfiguredActionOverlay(14, kScene2040EyeExchangeFirstDescriptorCount,
-		kScene2040EyeExchangeFirstFrameMap, ARRAYSIZE(kScene2040EyeExchangeFirstFrameMap),
-		kScene2040SlowOverlayFrameMillis, kActionOverlayHideActiveActor,
-		-1, 0, 8, 0x20);
+	runActionOverlay(ActionOverlaySpec(14, kScene2040EyeExchangeFirstDescriptorCount,
+		kScene2040EyeExchangeFirstFrameMap, ARRAYSIZE(kScene2040EyeExchangeFirstFrameMap), kScene2040SlowOverlayFrameMillis)
+		.hideActor()
+		.soundAt(8, 0x20));
 	removeInventoryItem(0x52);
 	addInventoryItem(0x1a);
 	walkActiveActorTo(0x210, 0x172, 1, 0, false);

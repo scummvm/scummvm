@@ -381,25 +381,19 @@ void Scene2010::runPatchedEntrySequence() {
 
 void Scene2010::runLongSequenceToScene2100() {
 	if (_sceneChunkTable.isValidChunk(5)) {
-		ActionOverlayOptions options;
-		options.actorVisibility = kActionOverlayHideActiveActor;
-		options.soundFrame = 10;
-		options.soundId = 0x0b;
-		options.soundVolumePercent = 100;
-		runActionOverlay(5, kScene2010FirstOverlayDescriptorCount,
+		runActionOverlay(ActionOverlaySpec(5, kScene2010FirstOverlayDescriptorCount,
 			kScene2010FirstOverlayFrameMap, ARRAYSIZE(kScene2010FirstOverlayFrameMap),
-			kScene2010OverlayFrameMillis, options);
+			kScene2010OverlayFrameMillis)
+			.hideActor()
+			.soundAt(10, 0x0b));
 	}
 
 	if (_sceneChunkTable.isValidChunk(6)) {
-		ActionOverlayOptions options;
-		options.actorVisibility = kActionOverlayHideActiveActor;
-		options.soundFrame = 0;
-		options.soundId = 0x0c;
-		options.soundVolumePercent = 100;
-		runActionOverlay(6, kScene2010SecondOverlayDescriptorCount,
+		runActionOverlay(ActionOverlaySpec(6, kScene2010SecondOverlayDescriptorCount,
 			kScene2010SecondOverlayFrameMap, ARRAYSIZE(kScene2010SecondOverlayFrameMap),
-			kScene2010OverlayFrameMillis, options);
+			kScene2010OverlayFrameMillis)
+			.hideActor()
+			.soundAt(0, 0x0c));
 	}
 
 	if (_sceneChunkTable.isValidChunk(7)) {

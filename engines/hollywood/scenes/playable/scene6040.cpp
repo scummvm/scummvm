@@ -321,18 +321,19 @@ void Scene6040::runPaintCanPickup() {
 	}
 
 	state.scene6040PaintCanTaken = true;
-	runConfiguredActionOverlay(11, kScene6040PaintOverlayDescriptorCount,
-		kScene6040PaintPickupFrameMap, ARRAYSIZE(kScene6040PaintPickupFrameMap),
-		kScene6040FrameMillis, kActionOverlayHideActiveActor, 5, 1);
+	runActionOverlay(ActionOverlaySpec(11, kScene6040PaintOverlayDescriptorCount,
+		kScene6040PaintPickupFrameMap, ARRAYSIZE(kScene6040PaintPickupFrameMap), kScene6040FrameMillis)
+		.hideActor()
+		.patchAt(5, 1));
 	addInventoryItem(kScene6040PaintInventoryItem);
 	_soundBank0.playSample(1, 100);
 	dispatchGenericSceneAction(21);
 }
 
 void Scene6040::runWireInspectionAnimation() {
-	runConfiguredActionOverlay(10, kScene6040WireOverlayDescriptorCount,
-		kScene6040WireInspectFrameMap, ARRAYSIZE(kScene6040WireInspectFrameMap),
-		kScene6040FrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(10, kScene6040WireOverlayDescriptorCount,
+		kScene6040WireInspectFrameMap, ARRAYSIZE(kScene6040WireInspectFrameMap), kScene6040FrameMillis)
+		.hideActor());
 	beginSecondarySpeechLine(10, 0);
 }
 
@@ -345,9 +346,10 @@ void Scene6040::runCutWireWithTool() {
 
 	beginSecondarySpeechLine(12, 0);
 	state.scene6040WireState = 2;
-	runConfiguredActionOverlay(10, kScene6040WireOverlayDescriptorCount,
-		kScene6040WireCutFrameMap, ARRAYSIZE(kScene6040WireCutFrameMap),
-		kScene6040FrameMillis, kActionOverlayHideActiveActor, 19, 2);
+	runActionOverlay(ActionOverlaySpec(10, kScene6040WireOverlayDescriptorCount,
+		kScene6040WireCutFrameMap, ARRAYSIZE(kScene6040WireCutFrameMap), kScene6040FrameMillis)
+		.hideActor()
+		.patchAt(19, 2));
 	removeInventoryItem(kScene6040LooseWireInventoryItem);
 	addInventoryItem(kScene6040CutWireInventoryItem);
 	_soundBank0.playSample(1, 100);
@@ -361,9 +363,10 @@ void Scene6040::runWirePickup() {
 	}
 
 	state.scene6040WireState = 1;
-	runConfiguredActionOverlay(10, kScene6040WireOverlayDescriptorCount,
-		kScene6040WirePickupFrameMap, ARRAYSIZE(kScene6040WirePickupFrameMap),
-		kScene6040FrameMillis, kActionOverlayHideActiveActor, 6, 2);
+	runActionOverlay(ActionOverlaySpec(10, kScene6040WireOverlayDescriptorCount,
+		kScene6040WirePickupFrameMap, ARRAYSIZE(kScene6040WirePickupFrameMap), kScene6040FrameMillis)
+		.hideActor()
+		.patchAt(6, 2));
 	addInventoryItem(kScene6040LooseWireInventoryItem);
 	_soundBank0.playSample(1, 100);
 	dispatchGenericSceneAction(21);

@@ -466,10 +466,10 @@ void Scene8020::runPickupInventoryItem6cSequence() {
 	_foregroundRepeatCount = 0;
 	_soundBank0.stop();
 
-	runConfiguredActionOverlay(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
-		kScene8020Pickup6cFrameMap, ARRAYSIZE(kScene8020Pickup6cFrameMap),
-		kScene8020FrameMillis, kActionOverlayHideActiveActor, -1, 0, -1, 0, 100,
-		3, kScene8020OverlayHookPickup6c);
+	runActionOverlay(ActionOverlaySpec(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
+		kScene8020Pickup6cFrameMap, ARRAYSIZE(kScene8020Pickup6cFrameMap), kScene8020FrameMillis)
+		.hideActor()
+		.hookAt(3, kScene8020OverlayHookPickup6c));
 
 	addInventoryItem(kScene8020InventoryItem6c);
 	_soundBank0.playSample(1, 100);
@@ -478,10 +478,10 @@ void Scene8020::runPickupInventoryItem6cSequence() {
 }
 
 void Scene8020::runPickupInventoryItem5dSequence() {
-	runConfiguredActionOverlay(kScene8020InventoryItem5dOverlayChunk, kScene8020InventoryItem5dOverlayDescriptorCount,
-		kScene8020Pickup5dFrameMap, ARRAYSIZE(kScene8020Pickup5dFrameMap),
-		kScene8020FrameMillis, kActionOverlayHideActiveActor, -1, 0, -1, 0, 100,
-		6, kScene8020OverlayHookPickup5d);
+	runActionOverlay(ActionOverlaySpec(kScene8020InventoryItem5dOverlayChunk, kScene8020InventoryItem5dOverlayDescriptorCount,
+		kScene8020Pickup5dFrameMap, ARRAYSIZE(kScene8020Pickup5dFrameMap), kScene8020FrameMillis)
+		.hideActor()
+		.hookAt(6, kScene8020OverlayHookPickup5d));
 
 	addInventoryItem(kScene8020InventoryItem5d);
 	_soundBank0.playSample(1, 100);
@@ -491,10 +491,10 @@ void Scene8020::runPickupInventoryItem5dSequence() {
 }
 
 void Scene8020::runRemoveInventoryItem6cSequence() {
-	runConfiguredActionOverlay(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
-		kScene8020Reverse6cFrameMap, ARRAYSIZE(kScene8020Reverse6cFrameMap),
-		kScene8020FrameMillis, kActionOverlayHideActiveActor, -1, 0, -1, 0, 100,
-		4, kScene8020OverlayHookRemove6c);
+	runActionOverlay(ActionOverlaySpec(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
+		kScene8020Reverse6cFrameMap, ARRAYSIZE(kScene8020Reverse6cFrameMap), kScene8020FrameMillis)
+		.hideActor()
+		.hookAt(4, kScene8020OverlayHookRemove6c));
 
 	removeInventoryItem(kScene8020InventoryItem6c);
 	_soundBank0.playSample(1, 100);
@@ -507,10 +507,10 @@ void Scene8020::runForegroundTransformationSequence() {
 	beginSecondarySpeechLine(8, 1);
 	walkActiveActorTo(0x118, 0x00eb, 5, 0, false);
 
-	runConfiguredActionOverlay(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
-		kScene8020Reverse6cFrameMap, ARRAYSIZE(kScene8020Reverse6cFrameMap),
-		kScene8020FrameMillis, kActionOverlayHideActiveActor, -1, 0, -1, 0, 100,
-		4, kScene8020OverlayHookRemove6c);
+	runActionOverlay(ActionOverlaySpec(kScene8020InventoryItem6cOverlayChunk, kScene8020InventoryItemOverlayDescriptorCount,
+		kScene8020Reverse6cFrameMap, ARRAYSIZE(kScene8020Reverse6cFrameMap), kScene8020FrameMillis)
+		.hideActor()
+		.hookAt(4, kScene8020OverlayHookRemove6c));
 
 	_foregroundAnimationState = 2;
 	_foregroundRepeatCount = 4;

@@ -719,10 +719,10 @@ void Scene4080::runBottlePickupSequence() {
 	}
 
 	dispatchGenericSceneAction(21);
-	runConfiguredActionOverlay(kScene4080BottlePickupChunk, kScene4080BottlePickupDescriptorCount,
-		kScene4080BottlePickupFrameMap, ARRAYSIZE(kScene4080BottlePickupFrameMap),
-		kScene4080FrameMillis, kActionOverlayHideActiveActor, -1, 0, -1, 0, 100, -1, 0, true,
-		0, ARRAYSIZE(kScene4080BottlePickupFrameMap));
+	runActionOverlay(ActionOverlaySpec(kScene4080BottlePickupChunk, kScene4080BottlePickupDescriptorCount,
+		kScene4080BottlePickupFrameMap, ARRAYSIZE(kScene4080BottlePickupFrameMap), kScene4080FrameMillis)
+		.hideActor()
+		.endAt(ARRAYSIZE(kScene4080BottlePickupFrameMap)));
 	addInventoryItem(kScene4080OilBottleItem);
 	_soundBank0.playSample(1, 100);
 	_vm->gameState().scene4080OilBottleState = 0;
@@ -759,10 +759,10 @@ void Scene4080::runSteakPickupSequence() {
 	}
 
 	beginSecondarySpeechLine(17, 0);
-	runConfiguredActionOverlay(kScene4080SteakPickupChunk, kScene4080SteakPickupDescriptorCount,
-		kScene4080SteakPickupFrameMap, ARRAYSIZE(kScene4080SteakPickupFrameMap),
-		kScene4080FrameMillis, kActionOverlayHideActiveActor, -1, 0, -1, 0, 100, -1, 0, true,
-		0, ARRAYSIZE(kScene4080SteakPickupFrameMap));
+	runActionOverlay(ActionOverlaySpec(kScene4080SteakPickupChunk, kScene4080SteakPickupDescriptorCount,
+		kScene4080SteakPickupFrameMap, ARRAYSIZE(kScene4080SteakPickupFrameMap), kScene4080FrameMillis)
+		.hideActor()
+		.endAt(ARRAYSIZE(kScene4080SteakPickupFrameMap)));
 	addInventoryItem(kScene4080SteakItem);
 	_soundBank0.playSample(1, 100);
 }

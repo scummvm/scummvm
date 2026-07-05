@@ -201,9 +201,10 @@ void Scene5040::runCustomEntrySequence() {
 		runMineCartEntryClip();
 		walkActiveActorTo(0x238, 0x145, 5, 0, false);
 		beginSecondarySpeechLine(8, 0);
-		runConfiguredActionOverlay(15, 0x0e, kScene5040Chunk15FrameMap,
-			ARRAYSIZE(kScene5040Chunk15FrameMap), kScene5040FrameMillis,
-			kActionOverlayHideActiveActor, 6, 6, -1, 0, 100, -1, 0, true);
+		runActionOverlay(ActionOverlaySpec(15, 0x0e,
+			kScene5040Chunk15FrameMap, ARRAYSIZE(kScene5040Chunk15FrameMap), kScene5040FrameMillis)
+			.hideActor()
+			.patchAt(6, 6));
 		addInventoryItem(kScene5040KarlPrizeItem);
 		_soundBank0.playSample(1, 100);
 		state.scene5040SpecialTransitionState = 2;
@@ -536,9 +537,10 @@ void Scene5040::runMineCartEntryClip() {
 	for (uint i = 0; i < frameMap.size(); ++i)
 		frameMap[i] = (byte)i;
 
-	runConfiguredActionOverlay(17, kScene5040MineCartDescriptorCount,
-		frameMap.data(), frameMap.size(), kScene5040MineCartFrameMillis,
-		kActionOverlayHideActiveActor, -1, 0, 0x32, 0x16);
+	runActionOverlay(ActionOverlaySpec(17, kScene5040MineCartDescriptorCount,
+		frameMap.data(), frameMap.size(), kScene5040MineCartFrameMillis)
+		.hideActor()
+		.soundAt(0x32, 0x16));
 }
 
 void Scene5040::runExitToMineSwitches() {

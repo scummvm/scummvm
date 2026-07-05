@@ -448,9 +448,9 @@ void Scene3070::runDoorPatchOverlay(bool open) {
 		return;
 	}
 
-	runConfiguredActionOverlay(9, kScene3070PatchOverlayDescriptorCount,
-		kScene3070PatchOverlayFrameMap, ARRAYSIZE(kScene3070PatchOverlayFrameMap),
-		kScene3070OverlayFrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(9, kScene3070PatchOverlayDescriptorCount,
+		kScene3070PatchOverlayFrameMap, ARRAYSIZE(kScene3070PatchOverlayFrameMap), kScene3070OverlayFrameMillis)
+		.hideActor());
 	state.scene3070DrawerOpen = open;
 	applySceneStateToHotspotsAndPatches(0xff);
 }
@@ -462,9 +462,9 @@ void Scene3070::runItemPatchPickup() {
 		return;
 	}
 
-	runConfiguredActionOverlay(9, kScene3070PatchOverlayDescriptorCount,
-		kScene3070ItemPatchPickupFrameMap, ARRAYSIZE(kScene3070ItemPatchPickupFrameMap),
-		kScene3070OverlayFrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(9, kScene3070PatchOverlayDescriptorCount,
+		kScene3070ItemPatchPickupFrameMap, ARRAYSIZE(kScene3070ItemPatchPickupFrameMap), kScene3070OverlayFrameMillis)
+		.hideActor());
 	state.scene3070SurgicalNeedleThreadState = 2;
 	state.scene3070SurgicalNeedleThreadTaken = true;
 	applySceneStateToHotspotsAndPatches(0xff);

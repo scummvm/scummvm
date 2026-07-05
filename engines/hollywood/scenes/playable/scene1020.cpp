@@ -508,8 +508,10 @@ void Scene1020::runOverlaySequence(uint chunkIndex, uint descriptorCount, const 
 		return;
 	}
 
-	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
-		kActionOverlayShowActiveActor, patchFrame, 0xff);
+	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+		frameMap, frameMapSize, frameMillis)
+		.showActor()
+		.patchAt(patchFrame, 0xff));
 }
 
 void Scene1020::runOverlaySequenceWithActor(uint overlayChunkIndex, uint overlayDescriptorCount,

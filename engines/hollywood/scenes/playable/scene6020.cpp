@@ -620,9 +620,9 @@ void Scene6020::runEntryFromScene6030() {
 }
 
 void Scene6020::runSmallObjectAnimation() {
-	runConfiguredActionOverlay(8, kScene6020Chunk8DescriptorCount,
-		kScene6020SmallObjectFrameMap, ARRAYSIZE(kScene6020SmallObjectFrameMap),
-		kScene6020FrameMillis, kActionOverlayKeepActiveActorVisibility);
+	runActionOverlay(ActionOverlaySpec(8, kScene6020Chunk8DescriptorCount,
+		kScene6020SmallObjectFrameMap, ARRAYSIZE(kScene6020SmallObjectFrameMap), kScene6020FrameMillis)
+		.keepActorVisibility());
 	beginSecondarySpeechLine(2, 0);
 }
 
@@ -635,9 +635,10 @@ void Scene6020::runPickupItem5A() {
 	if (_taffyAnimationState != 3)
 		return;
 
-	runConfiguredActionOverlay(15, kScene6020Chunk15DescriptorCount,
-		kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap),
-		kScene6020FrameMillis, kActionOverlayKeepActiveActorVisibility, 6, 2);
+	runActionOverlay(ActionOverlaySpec(15, kScene6020Chunk15DescriptorCount,
+		kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap), kScene6020FrameMillis)
+		.keepActorVisibility()
+		.patchAt(6, 2));
 	_taffyDeskMagnifierHidden = true;
 	addInventoryItem(kScene6020MagnifierInventoryItem);
 	applySceneStateToHotspotsAndPatches(2);
@@ -651,9 +652,10 @@ void Scene6020::runPickupItem5B() {
 		return;
 	}
 
-	runConfiguredActionOverlay(10, kScene6020Chunk10DescriptorCount,
-		kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap),
-		kScene6020FrameMillis, kActionOverlayKeepActiveActorVisibility, 4, 3);
+	runActionOverlay(ActionOverlaySpec(10, kScene6020Chunk10DescriptorCount,
+		kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap), kScene6020FrameMillis)
+		.keepActorVisibility()
+		.patchAt(4, 3));
 	addInventoryItem(0x5b);
 	applySceneStateToHotspotsAndPatches(3);
 	_soundBank0.playSample(1, 100);
@@ -670,18 +672,19 @@ void Scene6020::runPickupItem5E() {
 	}
 
 	if (!_vm->gameState().scene6020TaffyLeft) {
-		runConfiguredActionOverlay(9, kScene6020Chunk9DescriptorCount,
-			kScene6020PickupShortFrameMap, ARRAYSIZE(kScene6020PickupShortFrameMap),
-			kScene6020FrameMillis, kActionOverlayKeepActiveActorVisibility);
+		runActionOverlay(ActionOverlaySpec(9, kScene6020Chunk9DescriptorCount,
+			kScene6020PickupShortFrameMap, ARRAYSIZE(kScene6020PickupShortFrameMap), kScene6020FrameMillis)
+			.keepActorVisibility());
 		beginPrimarySpeechLine(12, 0, 499, 0xbd, 0x2a, 0x3f, 0x0e);
 		beginSecondarySpeechLine(12, 1);
 		beginPrimarySpeechLine(12, 2, 499, 0xbd, 0x2a, 0x3f, 0x0e);
 		return;
 	}
 
-	runConfiguredActionOverlay(9, kScene6020Chunk9DescriptorCount,
-		kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap),
-		kScene6020FrameMillis, kActionOverlayKeepActiveActorVisibility, 6, 4);
+	runActionOverlay(ActionOverlaySpec(9, kScene6020Chunk9DescriptorCount,
+		kScene6020PickupForwardFrameMap, ARRAYSIZE(kScene6020PickupForwardFrameMap), kScene6020FrameMillis)
+		.keepActorVisibility()
+		.patchAt(6, 4));
 	addInventoryItem(0x5e);
 	applySceneStateToHotspotsAndPatches(4);
 	_soundBank0.playSample(1, 100);
@@ -694,9 +697,9 @@ void Scene6020::runUseItem39Overlay() {
 		return;
 	}
 
-	runConfiguredActionOverlay(11, kScene6020Chunk11DescriptorCount,
-		kScene6020PickupReverseFrameMap, ARRAYSIZE(kScene6020PickupReverseFrameMap),
-		kScene6020FrameMillis, kActionOverlayKeepActiveActorVisibility);
+	runActionOverlay(ActionOverlaySpec(11, kScene6020Chunk11DescriptorCount,
+		kScene6020PickupReverseFrameMap, ARRAYSIZE(kScene6020PickupReverseFrameMap), kScene6020FrameMillis)
+		.keepActorVisibility());
 	removeInventoryItem(0x39);
 	_vm->gameState().scene6030CoffeeState = 1;
 	_soundBank0.playSample(1, 100);
@@ -766,9 +769,9 @@ void Scene6020::runLateSceneObjectAnimation() {
 		return;
 	}
 
-	runConfiguredActionOverlay(16, kScene6020Chunk16DescriptorCount,
-		kScene6020LateSceneObjectFrameMap, ARRAYSIZE(kScene6020LateSceneObjectFrameMap),
-		kScene6020FrameMillis, kActionOverlayKeepActiveActorVisibility);
+	runActionOverlay(ActionOverlaySpec(16, kScene6020Chunk16DescriptorCount,
+		kScene6020LateSceneObjectFrameMap, ARRAYSIZE(kScene6020LateSceneObjectFrameMap), kScene6020FrameMillis)
+		.keepActorVisibility());
 	beginSecondarySpeechLine(18, 1);
 }
 
@@ -908,10 +911,10 @@ void Scene6020::runExitToScene6030() {
 	beginSecondarySpeechLine(0x0e, 2);
 	runTaffyFrameSequence(kScene6020TaffyExitOutroFrames, ARRAYSIZE(kScene6020TaffyExitOutroFrames));
 	walkActiveActorTo(0x0d3, 0x17b, 5, 0, false);
-	runConfiguredActionOverlay(8, kScene6020Chunk8DescriptorCount,
-		kScene6020SmallObjectFrameMap, ARRAYSIZE(kScene6020SmallObjectFrameMap),
-		kScene6020FrameMillis, kActionOverlayKeepActiveActorVisibility,
-		-1, 0, ARRAYSIZE(kScene6020SmallObjectFrameMap) - 1, 3);
+	runActionOverlay(ActionOverlaySpec(8, kScene6020Chunk8DescriptorCount,
+		kScene6020SmallObjectFrameMap, ARRAYSIZE(kScene6020SmallObjectFrameMap), kScene6020FrameMillis)
+		.keepActorVisibility()
+		.soundAt(ARRAYSIZE(kScene6020SmallObjectFrameMap) - 1, 3));
 	_vm->gameState().mainFlowStateId = kScene6030EntryState;
 }
 

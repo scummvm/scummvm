@@ -651,10 +651,10 @@ void Scene2020::runHatPickup() {
 		return;
 	}
 
-	runConfiguredActionOverlay(12, kScene2020PickupDescriptorCount,
-		kScene2020PickupFrameMap, ARRAYSIZE(kScene2020PickupFrameMap),
-		kScene2020OverlayFrameMillis, kActionOverlayHideActiveActor,
-		-1, 0, -1, 0, 100, 3, kScene2020HatPickupPatchHook);
+	runActionOverlay(ActionOverlaySpec(12, kScene2020PickupDescriptorCount,
+		kScene2020PickupFrameMap, ARRAYSIZE(kScene2020PickupFrameMap), kScene2020OverlayFrameMillis)
+		.hideActor()
+		.hookAt(3, kScene2020HatPickupPatchHook));
 	state.scene2020HatPresent = false;
 	applySceneStateToHotspotsAndPatches(0xff);
 	addInventoryItem(kScene2020HatInventoryItem);
@@ -673,10 +673,10 @@ void Scene2020::runSunglassesPickup() {
 		return;
 	}
 
-	runConfiguredActionOverlay(12, kScene2020PickupDescriptorCount,
-		kScene2020PickupFrameMap, ARRAYSIZE(kScene2020PickupFrameMap),
-		kScene2020OverlayFrameMillis, kActionOverlayHideActiveActor,
-		-1, 0, -1, 0, 100, 3, kScene2020SunglassesPickupPatchHook);
+	runActionOverlay(ActionOverlaySpec(12, kScene2020PickupDescriptorCount,
+		kScene2020PickupFrameMap, ARRAYSIZE(kScene2020PickupFrameMap), kScene2020OverlayFrameMillis)
+		.hideActor()
+		.hookAt(3, kScene2020SunglassesPickupPatchHook));
 	state.scene2020SunglassesPresent = false;
 	applySceneStateToHotspotsAndPatches(0xff);
 	addInventoryItem(kScene2020SunglassesInventoryItem);
@@ -690,10 +690,10 @@ void Scene2020::runTigerToothPickup() {
 		return;
 	}
 
-	runConfiguredActionOverlay(18, kScene2020TigerToothPickupDescriptorCount,
-		kScene2020TigerToothPickupFrameMap, ARRAYSIZE(kScene2020TigerToothPickupFrameMap),
-		kScene2020OverlayFrameMillis, kActionOverlayHideActiveActor,
-		-1, 0, -1, 0, 100, 7, kScene2020TigerToothPickupPatchHook);
+	runActionOverlay(ActionOverlaySpec(18, kScene2020TigerToothPickupDescriptorCount,
+		kScene2020TigerToothPickupFrameMap, ARRAYSIZE(kScene2020TigerToothPickupFrameMap), kScene2020OverlayFrameMillis)
+		.hideActor()
+		.hookAt(7, kScene2020TigerToothPickupPatchHook));
 	_vm->gameState().scene2020TigerToothState = 2;
 	applySceneStateToHotspotsAndPatches(2);
 	addInventoryItem(kScene2020TigerToothInventoryItem);
@@ -719,10 +719,10 @@ void Scene2020::runLabItemOnTigerSequence() {
 }
 
 void Scene2020::runTigerItemOverlaySequence() {
-	runConfiguredActionOverlay(14, kScene2020TigerItemOverlayDescriptorCount,
-		kScene2020TigerItemOverlayFrameMap, ARRAYSIZE(kScene2020TigerItemOverlayFrameMap),
-		kScene2020OverlayFrameMillis, kActionOverlayHideActiveActor,
-		-1, 0, 8, 0x2a);
+	runActionOverlay(ActionOverlaySpec(14, kScene2020TigerItemOverlayDescriptorCount,
+		kScene2020TigerItemOverlayFrameMap, ARRAYSIZE(kScene2020TigerItemOverlayFrameMap), kScene2020OverlayFrameMillis)
+		.hideActor()
+		.soundAt(8, 0x2a));
 	_tigerAnimationState = 0;
 	_tigerLayer.setFrame(0);
 }

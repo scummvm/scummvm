@@ -405,8 +405,10 @@ void Scene1040::runGorillaExitBackToBanquetRoom() {
 
 void Scene1040::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame, byte patchSelector) {
-	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
-		kActionOverlayHideActiveActor, patchFrame, patchSelector);
+	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+		frameMap, frameMapSize, frameMillis)
+		.hideActor()
+		.patchAt(patchFrame, patchSelector));
 }
 
 void Scene1040::drawForegroundBlocks(int activeWorldY) {
