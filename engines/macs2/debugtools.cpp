@@ -1495,15 +1495,15 @@ static void showSceneMapsWindow() {
 				// Draw pathfinding point nodes and connections
 				for (int i = 0; i < 16; i++) {
 					PathfindingPoint &pt = g_engine->pathfindingPoints[i];
-					if (pt._position.x >= 0 && pt._position.x < 320 && pt._position.y >= 0 && pt._position.y < 200) {
+					if (pt._position.x >= 0 && pt._position.x < kScreenWidth && pt._position.y >= 0 && pt._position.y < kGameHeight) {
 						// Draw cross at node
 						for (int d = -2; d <= 2; d++) {
 							int px = pt._position.x + d, py = pt._position.y;
-							if (px >= 0 && px < 320)
+							if (px >= 0 && px < kScreenWidth)
 								overlayComposite.setPixel(px, py, 0xFF);
 							px = pt._position.x;
 							py = pt._position.y + d;
-							if (py >= 0 && py < 200)
+							if (py >= 0 && py < kGameHeight)
 								overlayComposite.setPixel(px, py, 0xFF);
 						}
 						// Draw connections
@@ -1570,8 +1570,8 @@ static void showSceneMapsWindow() {
 			ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*surface->surfacePtr(), g_engine->_pal, 256);
 			if (texId) {
 				ImVec2 avail = ImGui::GetContentRegionAvail();
-				float scale = MIN(avail.x / 320.0f, avail.y / 200.0f);
-				ImGui::Image(texId, ImVec2(320.0f * scale, 200.0f * scale));
+				float scale = MIN(avail.x / (float)kScreenWidth, avail.y / (float)kGameHeight);
+				ImGui::Image(texId, ImVec2((float)kScreenWidth * scale, (float)kGameHeight * scale));
 
 				// Draw node IDs on the pathfinding overlay
 				if (selectedTab == 2) {
@@ -1579,7 +1579,7 @@ static void showSceneMapsWindow() {
 					ImVec2 imgOrigin = ImGui::GetItemRectMin();
 					for (int i = 0; i < 16; i++) {
 						PathfindingPoint &pt = g_engine->pathfindingPoints[i];
-						if (pt._position.x >= 0 && pt._position.x < 320 && pt._position.y >= 0 && pt._position.y < 200) {
+						if (pt._position.x >= 0 && pt._position.x < kScreenWidth && pt._position.y >= 0 && pt._position.y < kGameHeight) {
 							char buf[4];
 							snprintf(buf, sizeof(buf), "%d", i);
 							ImVec2 pos(imgOrigin.x + pt._position.x * scale + 4, imgOrigin.y + pt._position.y * scale - 4);
@@ -1665,7 +1665,7 @@ static void showSceneMapsWindow() {
 				ImVec2 mousePos = ImGui::GetMousePos();
 				int mx = (int)((mousePos.x - imgPos.x) / scale);
 				int my = (int)((mousePos.y - imgPos.y) / scale);
-				if (mx >= 0 && mx < 320 && my >= 0 && my < 200 && ImGui::IsItemHovered()) {
+				if (mx >= 0 && mx < kScreenWidth && my >= 0 && my < kGameHeight && ImGui::IsItemHovered()) {
 					uint8 val = surface->getPixel(mx, my);
 					if (val >= 0xC8 && val <= 0xEF) {
 						uint16 overrideResult;
@@ -1774,10 +1774,10 @@ static void showImageResourcesWindow() {
 		ImGui::Separator();
 		static Graphics::ManagedSurface imgSurface;
 		if (!g_engine->_imageResources.empty()) {
-			// Layout all image resources into a 320-wide surface
+			// Layout all image resources into a kScreenWidth-wide surface
 			uint16 x = 0, y = 0, maxH = 0, totalH = 0;
 			for (const AnimFrame &f : g_engine->_imageResources) {
-				if (x + f._width > 320) {
+				if (x + f._width > kScreenWidth) {
 					y += maxH;
 					x = 0;
 					maxH = 0;
@@ -1789,15 +1789,15 @@ static void showImageResourcesWindow() {
 			if (totalH == 0)
 				totalH = 1;
 
-			if (imgSurface.w != 320 || imgSurface.h != (int)totalH)
-				imgSurface.create(320, totalH, Graphics::PixelFormat::createFormatCLUT8());
-			imgSurface.fillRect(Common::Rect(320, totalH), 0);
+			if (imgSurface.w != kScreenWidth || imgSurface.h != (int)totalH)
+				imgSurface.create(kScreenWidth, totalH, Graphics::PixelFormat::createFormatCLUT8());
+			imgSurface.fillRect(Common::Rect(kScreenWidth, totalH), 0);
 
 			x = 0;
 			y = 0;
 			maxH = 0;
 			for (const AnimFrame &f : g_engine->_imageResources) {
-				if (x + f._width > 320) {
+				if (x + f._width > kScreenWidth) {
 					y += maxH;
 					x = 0;
 					maxH = 0;
@@ -1817,10 +1817,10 @@ static void showImageResourcesWindow() {
 			ImTextureID texId = (ImTextureID)(intptr_t)g_system->getImGuiTexture(*imgSurface.surfacePtr(), g_engine->_pal, 256);
 			if (texId) {
 				ImVec2 avail = ImGui::GetContentRegionAvail();
-				float scale = MIN(avail.x / 320.0f, avail.y / (float)totalH);
+				float scale = MIN(avail.x / (float)kScreenWidth, avail.y / (float)totalH);
 				if (scale < 1.0f)
 					scale = 1.0f;
-				ImGui::Image(texId, ImVec2(320.0f * scale, (float)totalH * scale));
+				ImGui::Image(texId, ImVec2((float)kScreenWidth * scale, (float)totalH * scale));
 			}
 		}
 	}

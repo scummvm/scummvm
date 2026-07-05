@@ -281,13 +281,13 @@ void ScriptExecutor::scriptChangeAnimation() {
 uint16 ScriptExecutor::getAreaAtPoint(uint16 x, uint16 y) {
 	// getAreaAtPoint (1008:101d). Reads the pathfinding map pixel and applies
 	// the area override table at sceneData + value*5 + 0x4EA8.
-	if (x >= 320 || y >= 200 || _engine->_pathfindingMap.w == 0) {
+	if (x >= kScreenWidth || y >= kGameHeight || _engine->_pathfindingMap.w == 0) {
 		return 0;
 	}
 	uint16 result = _engine->_pathfindingMap.getPixel(x, y);
-	if (result > 199 && result < 0xFA) {
+	if (result >= AREA_OVERRIDE_MIN && result < 250) {
 		uint16 overrideValue = _engine->getPathfindingOverride2(result);
-		if (overrideValue > 199) {
+		if (overrideValue >= AREA_OVERRIDE_MIN) {
 			result = overrideValue;
 		}
 	}

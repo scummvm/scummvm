@@ -24,6 +24,7 @@
 #include "graphics/screen.h"
 #include "macs2/detection.h"
 #include "macs2/macs2.h"
+#include "macs2/macs2_constants.h"
 #include "macs2/view1.h"
 
 namespace Macs2 {
@@ -238,7 +239,7 @@ void Events::addKeypress(const Common::KeyCode kc) {
 
 /*------------------------------------------------------------------------*/
 
-Bounds::Bounds(Common::Rect &innerBounds) : _bounds(0, 0, 320, 200),
+Bounds::Bounds(Common::Rect &innerBounds) : _bounds(0, 0, kScreenWidth, kGameHeight),
 											_innerBounds(innerBounds),
 											left(_bounds.left), top(_bounds.top),
 											right(_bounds.right), bottom(_bounds.bottom) {

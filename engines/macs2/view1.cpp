@@ -405,7 +405,7 @@ void View1::drawDarkRectangle(uint16 x, uint16 y, uint16 width, uint16 height) {
 			const uint16 currentY = y + yOffset;
 			const uint8 currentValue = (uint8)s.getPixel(currentX, currentY);
 			const uint8 newValue = g_engine->_panelRemapTable[currentValue];
-			if (currentX < 320 && currentY < 200)
+			if (currentX < kScreenWidth && currentY < kGameHeight)
 				s.setPixel(currentX, currentY, newValue);
 		}
 	}
@@ -636,9 +636,9 @@ void View1::drawPathfindingPoints(Graphics::ManagedSurface &s) {
 		return;
 	}
 	const Common::Array<uint8> &overlay = c->_pathfindingOverlay;
-	for (int y = 0; y < 200; y++) {
-		for (int x = 0; x < 320; x++) {
-			const uint8 currentValue = overlay[y * 320 + x];
+	for (int y = 0; y < kGameHeight; y++) {
+		for (int x = 0; x < kScreenWidth; x++) {
+			const uint8 currentValue = overlay[y * kScreenWidth + x];
 			if (currentValue != 0) {
 				s.setPixel(x, y, currentValue);
 			}
@@ -707,11 +707,11 @@ void View1::openMainMenu(Common::Point clickedPosition) {
 		upperLeft.y = 0;
 	}
 	// Binary openActionBarAtPosition (1008:3fba): clamp to screen bounds.
-	if ((int)(upperLeft.x + panelSize.x) >= 320) {
-		upperLeft.x = 320 - panelSize.x - 1;
+	if ((int)(upperLeft.x + panelSize.x) >= kScreenWidth) {
+		upperLeft.x = kScreenWidth - panelSize.x - 1;
 	}
-	if ((int)(upperLeft.y + panelSize.y) >= 200) {
-		upperLeft.y = 200 - panelSize.y - 1;
+	if ((int)(upperLeft.y + panelSize.y) >= kGameHeight) {
+		upperLeft.y = kGameHeight - panelSize.y - 1;
 	}
 
 	_mainMenuRect = Common::Rect(upperLeft, upperLeft + panelSize);
@@ -1417,7 +1417,7 @@ bool View1::handleActionBarClick(const MouseDownMessage &msg) {
 }
 
 bool View1::handleHelpClick(const MouseDownMessage &msg) {
-	Common::Rect screenRect(320, 200);
+	Common::Rect screenRect(kScreenWidth, kGameHeight);
 	if (screenRect.contains(msg._pos)) {
 		uint8 depth = g_engine->_depthMap.getPixel(msg._pos.x, msg._pos.y);
 		if (depth > 0 && depth < 0xFA) {
@@ -2390,8 +2390,8 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 
 			int shadingTableOffset = 0;
 			if (g_engine->_shadowMap.w > 0) {
-				const int sx = CLIP<int>(charX, 0, 319);
-				const int sy = CLIP<int>(charY, 0, 199);
+				const int sx = CLIP<int>(charX, 0, kScreenWidthLast);
+				const int sy = CLIP<int>(charY, 0, kGameHeightLast);
 				shadingTableOffset = MIN<int>(g_engine->_shadowMap.getPixel(sx, sy), 0x20);
 			}
 
@@ -2451,7 +2451,7 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 			if (current != nullptr && DebugMan.isDebugChannelEnabled(kDebugGraphics)) {
 				Common::String number = Common::String::format("%u", obj->_orientation);
 				renderString(current->getPosition(), number.c_str());
-				Common::Rect screenRect(0, 0, 320, 200);
+				Common::Rect screenRect(0, 0, kScreenWidth, kGameHeight);
 				if (screenRect.contains(current->getPosition()))
 					surface->setPixel(current->getPosition().x, current->getPosition().y, 0xFF);
 			}
@@ -2667,7 +2667,7 @@ void View1::drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, ui
 			uint8 val = data[currentY * width + currentX];
 			if (val != 0) {
 				if (clippingRect.contains(x + currentX, y + currentY)) {
-					if (x + currentX < 320 && y + currentY < 200)
+					if (x + currentX < kScreenWidth && y + currentY < kGameHeight)
 						s.setPixel(x + currentX, y + currentY, val);
 				}
 			}
@@ -2968,7 +2968,7 @@ void View1::drawImageResources(Graphics::ManagedSurface &s) {
 	uint16 y = 0;
 	uint16 currentMaxHeight = 0;
 	for (AnimFrame &current : g_engine->_imageResources) {
-		if (x + current._width > 320) {
+		if (x + current._width > kScreenWidth) {
 			y += currentMaxHeight;
 			x = 0;
 			currentMaxHeight = 0;
@@ -3048,7 +3048,7 @@ uint16 View1::getHitObjectID(const Common::Point &pos) const {
 			continue;
 
 		const uint8 characterDepth = currentCharacter->getPosition().y;
-		if (pos.x >= 0 && pos.x < 320 && pos.y >= 0 && pos.y < 200) {
+		if (pos.x >= 0 && pos.x < kScreenWidth && pos.y >= 0 && pos.y < kGameHeight) {
 			const uint8 bgDepth = g_engine->_depthMap.getPixel(pos.x, pos.y);
 			if (bgDepth >= characterDepth)
 				continue;
@@ -3139,7 +3139,7 @@ bool Character::isWalkable(const Common::Point &p) const {
 }
 
 Character::Character() {
-	_pathfindingOverlay = Common::Array<uint8>(320 * 200, 0);
+	_pathfindingOverlay = Common::Array<uint8>(kScreenWidth * kGameHeight, 0);
 }
 
 bool Character::calculatePath(Common::Point target) {

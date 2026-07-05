@@ -66,20 +66,20 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::MemoryRea
 	stream->seek(offs);
 
 	Graphics::ManagedSurface result;
-	result.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	result.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
 
-	// Max RLE row size: 320 pixels uncompressed = 320 bytes, but with escape sequences
+	// Max RLE row size: kScreenWidth pixels uncompressed, but with escape sequences
 	// the encoded form could be slightly larger. 1024 is more than sufficient.
 	uint8 *data = new uint8[1024];
 
-	for (int y = 0; y < 200; y++) {
+	for (int y = 0; y < kGameHeight; y++) {
 		uint16 length = stream->readUint16LE();
 		stream->read(data, length);
 		// Signed, matching the original decodeRLERows (1008:0666): a final RLE run that
 		// overshoots the row width drives this negative and terminates the row. Using an
 		// unsigned counter here underflows and runs away, over-reading the encoded data and
 		// corrupting this row and every row after it (spurious walkability values).
-		int16 remainingPixels = 320;
+		int16 remainingPixels = kScreenWidth;
 		uint8 *dataPointer = data;
 		uint16 x = 0;
 		while (remainingPixels > 0) {
@@ -95,7 +95,7 @@ Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::MemoryRea
 				dataPointer++;
 				const uint8 &encodedValue = dataPointer[0];
 				dataPointer++;
-				for (int i = 0; i < runlength && x < 320; i++) {
+				for (int i = 0; i < runlength && x < kScreenWidth; i++) {
 					result.setPixel(x++, y, encodedValue);
 				}
 				remainingPixels -= runlength;
@@ -277,11 +277,11 @@ void Macs2Engine::readResourceFile() {
 	// is loaded before the game loop processes any input.
 	// The original allocates the 0x75E0-byte scene data buffer (which includes space for
 	// all RLE-decoded maps) before calling changeScene. Create the surfaces here.
-	_sceneBackground.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-	_depthMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-	_pathfindingMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-	_shadowMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-	_hotspotMap.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	_sceneBackground.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
+	_depthMap.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
+	_pathfindingMap.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
+	_shadowMap.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
+	_hotspotMap.create(kScreenWidth, kGameHeight, Graphics::PixelFormat::createFormatCLUT8());
 	changeScene(Scenes::instance()._currentSceneIndex);
 }
 
@@ -477,7 +477,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 		_fileStream->seek(sceneTableEntry2 + 0x3C0, SEEK_SET);
 		uint32 mapOffset = _fileStream->readUint32LE();
 		if (mapOffset != 0 && mapOffset < (uint32)_fileStream->size()) {
-			// Validate it's actually RLE data for a 320-wide image (row len typically 50-320)
+			// Validate it's actually RLE data for a kScreenWidth-wide image
 			_fileStream->seek(mapOffset, SEEK_SET);
 			uint16 rowLen = _fileStream->readUint16LE();
 			if (rowLen >= 50 && rowLen <= 640) {
@@ -492,11 +492,11 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 
 	uint8 data[0x320];
 
-	for (int y = 0; y < 200; y++) {
+	for (int y = 0; y < kGameHeight; y++) {
 		// TODO: Use the proper read function, it seems to be available
 		uint16 length = _fileStream->readUint16LE();
 		_fileStream->read(data, length);
-		int16 remainingPixels = 320; // signed: see readRLEImage (matches decodeRLERows 1008:0666)
+		int16 remainingPixels = kScreenWidth; // signed: see readRLEImage (matches decodeRLERows 1008:0666)
 		uint8 *dataPointer = data;
 		uint16 x = 0;
 		while (remainingPixels > 0) {
@@ -512,7 +512,7 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 				dataPointer++;
 				const uint8 &encodedValue = dataPointer[0];
 				dataPointer++;
-				for (int i = 0; i < runlength && x < 320; i++) {
+				for (int i = 0; i < runlength && x < kScreenWidth; i++) {
 					_sceneBackground.setPixel(x++, y, encodedValue);
 				}
 				remainingPixels -= runlength;
@@ -776,13 +776,13 @@ bool Macs2Engine::findGlyph(char c, GlyphData &out) const {
 
 // getWalkabilityAt (1008:0e8c)
 // Params: (param_1=y, param_2=x)
-// Bounds: x<0 || x>=320 || y<0 || y>=200 -> return 0
+// Bounds: x<0 || x>=kScreenWidth || y<0 || y>=kGameHeight -> return 0
 // Lookup: scene[y*4 + 0x2017] -> row pointer, then byte at [rowPtr + x]
 // Values 0xC8..0xEF: override range - checks scene[value*5 + 0x4EA5]:
 //   If override disabled (flag==0): returns 0xFF
 //   If override enabled (flag!=0): returns scene[value*5 + 0x4EA6]
 uint16 Macs2Engine::getWalkabilityAt(int16 y, int16 x) {
-	if (x < 0 || x >= 320 || y < 0 || y >= 200 || _pathfindingMap.w == 0) {
+	if (x < 0 || x >= kScreenWidth || y < 0 || y >= kGameHeight || _pathfindingMap.w == 0) {
 		return 0;
 	}
 	uint16 value = _pathfindingMap.getPixel(x, y);
@@ -810,7 +810,7 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 		if (isWalkabilityWalkable(w) && (*pTargetY - (int16)w >= savedY)) {
 			break;
 		}
-		if (*pTargetY >= 199) {
+		if (*pTargetY >= kGameHeightLast) {
 			break;
 		}
 		*pTargetY = *pTargetY + 1;
@@ -818,19 +818,19 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 
 	// Phase 2: Continue scanning to bottom for best depth match
 	int16 scanY = *pTargetY;
-	while (scanY <= 199) {
+	while (scanY <= kGameHeightLast) {
 		uint16 w = getWalkabilityAt(scanY, *pTargetX);
 		if (scanY - (int16)w == savedY) {
 			*pTargetY = scanY;
 		}
-		if (scanY == 199) {
+		if (scanY == kGameHeightLast) {
 			break;
 		}
 		scanY++;
 	}
 
 	// Phase 3: If at screen bottom and still non-walkable, scan upward
-	if (*pTargetY == 199) {
+	if (*pTargetY == kGameHeightLast) {
 		uint16 w = getWalkabilityAt(*pTargetY, *pTargetX);
 		if (isWalkabilityBlocking(w)) {
 			while (isWalkabilityBlocking(w) && *pTargetY > 0) {
@@ -859,7 +859,7 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 				uint16 w2 = getWalkabilityAt(*pTargetY, *pTargetX);
 				if (isWalkabilityWalkable(w2))
 					break;
-				if (*pTargetX >= 319)
+				if (*pTargetX >= kScreenWidthLast)
 					break;
 				*pTargetX = *pTargetX + 1;
 			}
@@ -1148,8 +1148,8 @@ void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 	mouse.x -= newHalfW;
 	mouse.y -= newHalfH;
 
-	mouse.x = CLIP<int>(mouse.x, (int)newHalfW, 319 - (int)newHalfW);
-	mouse.y = CLIP<int>(mouse.y, (int)newHalfH, 199 - (int)newHalfH);
+	mouse.x = CLIP<int>(mouse.x, (int)newHalfW, kScreenWidthLast - (int)newHalfW);
+	mouse.y = CLIP<int>(mouse.y, (int)newHalfH, kGameHeightLast - (int)newHalfH);
 	g_system->warpMouse(mouse.x, mouse.y);
 
 	_clipRectDirty = true;
@@ -1174,7 +1174,7 @@ void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
 uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) {
 	uint16 result = 0;
 	// TODO: Abstract the screen sizes
-	if (p.x < 0 || p.x >= 320 || p.y < 0 || p.y >= 200 || _hotspotMap.w == 0) {
+	if (p.x < 0 || p.x >= kScreenWidth || p.y < 0 || p.y >= kGameHeight || _hotspotMap.w == 0) {
 		return result;
 	}
 
@@ -1760,8 +1760,8 @@ Common::Error Macs2Engine::run() {
 		loadTranslation();
 	}
 
-	// Initialize 320x200 paletted graphics mode
-	initGraphics(320, 200);
+	// Initialize graphics mode
+	initGraphics(kScreenWidth, kGameHeight);
 
 	CursorMan.showMouse(false);
 

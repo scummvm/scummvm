@@ -39,6 +39,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "macs2/events.h"
+#include "macs2/macs2_constants.h"
 #include "macs2/scriptexecutor.h"
 
 namespace Macs2 {
@@ -227,8 +228,8 @@ struct PathfindingAreaOverride {
 
 // Area override table at scene+0x4EA8 (indexed by pathfinding value 0xC8..0xEF)
 // Set by opcode 0x4D, read by getAreaAtPoint (1008:101d)
-#define AREA_OVERRIDE_MIN 0xC8
-#define AREA_OVERRIDE_MAX 0xEF
+#define AREA_OVERRIDE_MIN 200
+#define AREA_OVERRIDE_MAX 239
 #define AREA_OVERRIDE_COUNT (AREA_OVERRIDE_MAX - AREA_OVERRIDE_MIN + 1)
 
 class Macs2Engine : public Engine, public Events {
