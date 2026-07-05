@@ -1120,10 +1120,38 @@ int Macs2Engine::computeMinCostToReachable(int nodeIndex, int prevNode, uint16 a
 }
 
 void Macs2Engine::setCursorMode(Script::MouseMode newMode) {
-	// setCursorMode (1008:3ea5): binary adjusts top-left by old/new half-extents.
+	// setCursorMode (1008:3ea5): when the cursor image changes, keep the hotspot
+	// fixed on screen by compensating for the old/new image half-extents, clamp,
+	// refresh the cursor graphic, and flag the clip rect dirty.
+	const Script::MouseMode oldMode = _scriptExecutor->_cursorMode;
 	const bool cursorVisible = CursorMan.isVisible();
 
+	auto cursorHalfSize = [this](Script::MouseMode mode, uint16 &halfW, uint16 &halfH) {
+		halfW = halfH = 0;
+		const int index = (int)mode - 1;
+		if (index < 0 || index >= (int)_imageResources.size())
+			return;
+		halfW = _imageResources[index]._width / 2;
+		halfH = _imageResources[index]._height / 2;
+	};
+
+	uint16 oldHalfW = 0, oldHalfH = 0, newHalfW = 0, newHalfH = 0;
+	cursorHalfSize(oldMode, oldHalfW, oldHalfH);
+
+	Common::Point mouse = g_system->getEventManager()->getMousePos();
+	mouse.x += oldHalfW;
+	mouse.y += oldHalfH;
+
 	_scriptExecutor->_cursorMode = newMode;
+
+	cursorHalfSize(newMode, newHalfW, newHalfH);
+	mouse.x -= newHalfW;
+	mouse.y -= newHalfH;
+
+	mouse.x = CLIP<int>(mouse.x, (int)newHalfW, 319 - (int)newHalfW);
+	mouse.y = CLIP<int>(mouse.y, (int)newHalfH, 199 - (int)newHalfH);
+	g_system->warpMouse(mouse.x, mouse.y);
+
 	_clipRectDirty = true;
 
 	if (View1 *view = (View1 *)findView("View1"))
