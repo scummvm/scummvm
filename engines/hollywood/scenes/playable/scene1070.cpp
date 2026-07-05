@@ -872,6 +872,8 @@ void Scene1070::initializeSpencerDialogueRecords(Common::Array<DialogueChoiceRec
 		records[3].enabled = 1;
 	if (progress == 2)
 		records[2].enabled = 1;
+	if (_vm->gameState().scene1070SpencerCocktailRecipeLearned)
+		records[81].enabled = 0;
 }
 
 void Scene1070::initializeQuasimodoDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
@@ -937,6 +939,8 @@ void Scene1070::handleSpencerDialogueEffect(byte effect, Common::Array<DialogueC
 	} else if (effect == 4 && state.scene1070SpencerTravelClueProgress == 2) {
 		state.scene1070SpencerTravelClueProgress = 3;
 		runSpencerTravelUnlockEffect();
+	} else if (effect == 5) {
+		state.scene1070SpencerCocktailRecipeLearned = true;
 	}
 }
 
