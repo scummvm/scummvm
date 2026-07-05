@@ -38,7 +38,7 @@ namespace Action {
 //		- KeypadPuzzleTerse: Same as above, but data format is shorter, and supports up to 100 buttons
 class OrderingPuzzle : public RenderActionRecord {
 public:
-	enum SolveState { kNotSolved, kPlaySound, kWaitForSound };
+	enum SolveState { kNotSolved, kPlaySound, kWaitForSound, kStageBlink };
 	enum PuzzleType { kOrdering, kPiano, kOrderItems, kKeypad, kKeypadTerse };
 	OrderingPuzzle(PuzzleType type) : RenderActionRecord(7), _puzzleType(type) {}
 	virtual ~OrderingPuzzle() {}
@@ -58,6 +58,9 @@ protected:
 	void setToSecondState(uint id);
 	void popUp(uint id);
 	void clearAllElements();
+	void drawStageDisplay();
+	bool enteredKeysMatchStage() const;
+	bool enteredKeysMatchDangerRecipe() const;
 
 	Common::Path _imageName;
 	bool _hasSecondState = false;
@@ -80,6 +83,24 @@ protected:
 	Common::Array<Common::Array<uint16> > _stageSequences;
 	Common::Array<bool> _stageCheckOrder;
 	int _currentStage = 0;
+
+	// Nancy 11 recipe keypad (the alchemy keypad) display: each solved stage adds its small symbol
+	// to a vertical list, and the current stage's symbol is shown large. Both are sprites in the
+	// puzzle image, indexed by stage.
+	Common::Array<Common::Rect> _mixedListSrcs;
+	Common::Array<Common::Rect> _mixedListDests;
+	Common::Array<Common::Rect> _currentRecipeSrcs;
+	Common::Array<Common::Rect> _currentRecipeDests;
+	bool _stageDisplayBlink = false;
+	bool _stageSymbolVisible = true;
+	Time _stageBlinkEndTime;
+	Time _stageBlinkNextToggle;
+
+	// Lethal ingredient combinations: entering one and pressing the cauldron mixes a deadly potion
+	// and jumps to _deathScene (the explosion).
+	Common::Array<Common::Array<uint16> > _dangerRecipes;
+	SceneChangeWithFlag _deathScene;
+	bool _stageDeath = false;
 
 	uint16 _specialCursor1Id = CursorManager::kHotspot;
 	Common::Rect _specialCursor1Dest;
