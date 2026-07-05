@@ -329,9 +329,11 @@ void Scene7090::handleGatedAction() {
 		kScene7090GatedActionTargetFacing, 0);
 
 	_prePatchChunk7Visible = true;
-	runConfiguredActionOverlay(10, kScene7090Chunk10DescriptorCount, kScene7090GatedActionFrameMap,
-		ARRAYSIZE(kScene7090GatedActionFrameMap), kScene7090FrameMillis,
-		kActionOverlayHideActiveActor, -1, 0, -1, 0, 100, -1, kScene7090GatedActionHook, false);
+	runActionOverlay(ActionOverlaySpec(10, kScene7090Chunk10DescriptorCount,
+		kScene7090GatedActionFrameMap, ARRAYSIZE(kScene7090GatedActionFrameMap), kScene7090FrameMillis)
+		.hideActor()
+		.hookEveryFrame(kScene7090GatedActionHook)
+		.noRedrawAtEnd());
 	_prePatchChunk7Visible = false;
 
 	state.movedBedroomArmor = true;

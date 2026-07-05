@@ -1104,10 +1104,10 @@ void Scene1060::handleFlySlimePickup() {
 	}
 
 	_flySlimePickupSequenceActive = true;
-	runConfiguredActionOverlay(10, kScene1060FlySlimePickupDescriptorCount,
-		kScene1060FlySlimePickupFrameMap, ARRAYSIZE(kScene1060FlySlimePickupFrameMap),
-		kScene1060FrameMillis, kActionOverlayHideActiveActor, -1, 0, -1, 0, 100,
-		kScene1060FlySlimePickupStateFrame, kScene1060FlySlimePickupHook);
+	runActionOverlay(ActionOverlaySpec(10, kScene1060FlySlimePickupDescriptorCount,
+		kScene1060FlySlimePickupFrameMap, ARRAYSIZE(kScene1060FlySlimePickupFrameMap), kScene1060FrameMillis)
+		.hideActor()
+		.hookAt(kScene1060FlySlimePickupStateFrame, kScene1060FlySlimePickupHook));
 	_flySlimePickupSequenceActive = false;
 	if (state.scene1060DrFlyState != 2) {
 		state.scene1060DrFlyState = 2;
@@ -1132,8 +1132,10 @@ void Scene1060::handlePocketPaperLook() {
 
 void Scene1060::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame, byte patchSelector) {
-	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
-		kActionOverlayHideActiveActor, patchFrame, patchSelector);
+	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+		frameMap, frameMapSize, frameMillis)
+		.hideActor()
+		.patchAt(patchFrame, patchSelector));
 }
 
 } // End of namespace Hollywood

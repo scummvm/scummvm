@@ -382,10 +382,10 @@ void Scene5110::runUnderwearPickup() {
 		return;
 	}
 
-	runConfiguredActionOverlay(12, kScene5110PickupDescriptorCount,
-		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap),
-		kScene5110FrameMillis, kActionOverlayHideActiveActor,
-		-1, 0, -1, 0, 100, 6, kScene5110PatchUnderwear);
+	runActionOverlay(ActionOverlaySpec(12, kScene5110PickupDescriptorCount,
+		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
+		.hideActor()
+		.hookAt(6, kScene5110PatchUnderwear));
 	state.scene5110UnderwearTaken = true;
 	applySceneStateToHotspotsAndPatches(1);
 	addInventoryItem(kScene5110UnderwearInventoryItem);
@@ -409,10 +409,10 @@ void Scene5110::runBottlePickup() {
 	}
 
 	beginSecondarySpeechLine(3, 1);
-	runConfiguredActionOverlay(6, kScene5110PickupDescriptorCount,
-		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap),
-		kScene5110FrameMillis, kActionOverlayHideActiveActor,
-		-1, 0, -1, 0, 100, 6, kScene5110PatchBottle);
+	runActionOverlay(ActionOverlaySpec(6, kScene5110PickupDescriptorCount,
+		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
+		.hideActor()
+		.hookAt(6, kScene5110PatchBottle));
 	state.scene5110BottleState = 2;
 	applySceneStateToHotspotsAndPatches(2);
 	addInventoryItem(kScene5110BottleInventoryItem);
@@ -498,10 +498,10 @@ void Scene5110::runMirrorPickup() {
 		return;
 	}
 
-	runConfiguredActionOverlay(14, kScene5110PickupDescriptorCount,
-		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap),
-		kScene5110FrameMillis, kActionOverlayHideActiveActor,
-		-1, 0, -1, 0, 100, 6, kScene5110PatchMirror);
+	runActionOverlay(ActionOverlaySpec(14, kScene5110PickupDescriptorCount,
+		kScene5110PickupFrameMap, ARRAYSIZE(kScene5110PickupFrameMap), kScene5110FrameMillis)
+		.hideActor()
+		.hookAt(6, kScene5110PatchMirror));
 	state.scene5110MirrorTaken = true;
 	applySceneStateToHotspotsAndPatches(5);
 	addInventoryItem(kScene5110MirrorInventoryItem);

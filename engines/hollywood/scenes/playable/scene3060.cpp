@@ -495,12 +495,11 @@ void Scene3060::runRedButtonSequence() {
 	}
 
 	_globeSpinDelta = -1;
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayShowActiveActor;
-	options.hookId = 1;
-	runActionOverlay(7, kScene3060ButtonDescriptorCount,
+	runActionOverlay(ActionOverlaySpec(7, kScene3060ButtonDescriptorCount,
 		kScene3060RedButtonFrameMap, ARRAYSIZE(kScene3060RedButtonFrameMap),
-		kScene3060RedButtonFrameMillis, options);
+		kScene3060RedButtonFrameMillis)
+		.showActor()
+		.hookEveryFrame(1));
 	_globeSpinDelta = 0;
 
 	if (matchesGlobePuzzle()) {
@@ -512,9 +511,10 @@ void Scene3060::runRedButtonSequence() {
 
 void Scene3060::runSecretDoorReveal() {
 	_soundBank0.playSample(0x10, 100);
-	runConfiguredActionOverlay(8, kScene3060SecretDoorDescriptorCount,
-		kScene3060SecretDoorRevealFrameMap, ARRAYSIZE(kScene3060SecretDoorRevealFrameMap),
-		kScene3060ButtonFrameMillis, kActionOverlayShowActiveActor, 7, 0);
+	runActionOverlay(ActionOverlaySpec(8, kScene3060SecretDoorDescriptorCount,
+		kScene3060SecretDoorRevealFrameMap, ARRAYSIZE(kScene3060SecretDoorRevealFrameMap), kScene3060ButtonFrameMillis)
+		.showActor()
+		.patchAt(7, 0));
 	_vm->gameState().scene3060SecretDoorRevealState = 1;
 	resetGlobePuzzleHistory();
 	applySceneStateToHotspotsAndPatches(0);

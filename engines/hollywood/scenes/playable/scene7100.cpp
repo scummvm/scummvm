@@ -505,8 +505,11 @@ void Scene7100::drawEnvironmentOverlayAfterForeground() {
 void Scene7100::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis, int patchFrame, byte patchSelector, int soundFrame, byte soundId) {
 	const int statePatchFrame = patchSelector != 0xff ? patchFrame : -1;
-	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
-		kActionOverlayHideActiveActor, statePatchFrame, patchSelector, soundFrame, soundId);
+	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+		frameMap, frameMapSize, frameMillis)
+		.hideActor()
+		.patchAt(statePatchFrame, patchSelector)
+		.soundAt(soundFrame, soundId));
 }
 
 void Scene7100::handleG10DialogueStub() {
@@ -560,9 +563,11 @@ void Scene7100::handlePickupItem16() {
 		kScene7100FrameMillis, 0x1e, 2);
 	walkActiveActorTo(0x168, 0x198, 4, 0);
 
-	runConfiguredActionOverlay(8, kScene7100Chunk8DescriptorCount, kScene7100Chunk8ScriptFrameMap,
-		ARRAYSIZE(kScene7100Chunk8ScriptFrameMap), kScene7100FrameMillis,
-		kActionOverlayHideActiveActor, -1, 0, 0x0e, 0x16, 100, -1, 0, false);
+	runActionOverlay(ActionOverlaySpec(8, kScene7100Chunk8DescriptorCount,
+		kScene7100Chunk8ScriptFrameMap, ARRAYSIZE(kScene7100Chunk8ScriptFrameMap), kScene7100FrameMillis)
+		.hideActor()
+		.soundAt(0x0e, 0x16)
+		.noRedrawAtEnd());
 
 	beginSecondarySpeechLine(0x1a, 1);
 	_environmentState = 4;

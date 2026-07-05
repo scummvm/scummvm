@@ -421,9 +421,11 @@ void Scene3080::runDiaryPickup() {
 
 	state.scene3080FrankensteinDiaryTaken = true;
 	state.scene3080FrankensteinDiaryRevealed = false;
-	runConfiguredActionOverlay(10, kScene3080DiaryOverlayDescriptorCount,
-		kScene3080DiaryOverlayFrameMap, ARRAYSIZE(kScene3080DiaryOverlayFrameMap),
-		kScene3080OverlayFrameMillis, kActionOverlayHideActiveActor, 7, 2, 7, 1);
+	runActionOverlay(ActionOverlaySpec(10, kScene3080DiaryOverlayDescriptorCount,
+		kScene3080DiaryOverlayFrameMap, ARRAYSIZE(kScene3080DiaryOverlayFrameMap), kScene3080OverlayFrameMillis)
+		.hideActor()
+		.patchAt(7, 2)
+		.soundAt(7, 1));
 	addInventoryItem(0x33);
 	applySceneStateToHotspotsAndPatches(2);
 	beginSecondarySpeechLine(5, 0);
@@ -437,18 +439,21 @@ void Scene3080::runStickPickup() {
 	}
 
 	state.scene3080BranchTaken = true;
-	runConfiguredActionOverlay(9, kScene3080StickOverlayDescriptorCount,
-		kScene3080StickOverlayFrameMap, ARRAYSIZE(kScene3080StickOverlayFrameMap),
-		kScene3080OverlayFrameMillis, kActionOverlayHideActiveActor, 7, 4, 7, 1);
+	runActionOverlay(ActionOverlaySpec(9, kScene3080StickOverlayDescriptorCount,
+		kScene3080StickOverlayFrameMap, ARRAYSIZE(kScene3080StickOverlayFrameMap), kScene3080OverlayFrameMillis)
+		.hideActor()
+		.patchAt(7, 4)
+		.soundAt(7, 1));
 	addInventoryItem(0x35);
 	applySceneStateToHotspotsAndPatches(4);
 	dispatchGenericSceneAction(21);
 }
 
 void Scene3080::runBranchExchangeOverlay() {
-	runConfiguredActionOverlay(14, kScene3080BranchExchangeDescriptorCount,
-		kScene3080BranchExchangeFrameMap, ARRAYSIZE(kScene3080BranchExchangeFrameMap),
-		kScene3080OverlayFrameMillis, kActionOverlayHideActiveActor, -1, 0, 8, 0x1b);
+	runActionOverlay(ActionOverlaySpec(14, kScene3080BranchExchangeDescriptorCount,
+		kScene3080BranchExchangeFrameMap, ARRAYSIZE(kScene3080BranchExchangeFrameMap), kScene3080OverlayFrameMillis)
+		.hideActor()
+		.soundAt(8, 0x1b));
 	removeInventoryItem(0x58);
 	addInventoryItem(0x34);
 }

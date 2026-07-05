@@ -715,8 +715,10 @@ void Scene1050::runSynchronizedOverlaySequence(uint chunkIndex, uint descriptorC
 
 void Scene1050::runOverlaySequence(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis, int patchFrame) {
-	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
-		kActionOverlayHideActiveActor, patchFrame, 0xff);
+	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+		frameMap, frameMapSize, frameMillis)
+		.hideActor()
+		.patchAt(patchFrame, 0xff));
 }
 
 void Scene1050::advanceSmallOverlay(uint32 delta) {

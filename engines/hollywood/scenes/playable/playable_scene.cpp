@@ -1590,18 +1590,17 @@ void PlayableScene::presentDialogueMenuFrame(const DialogueMenuState &state) {
 
 void PlayableScene::runActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
 		uint32 frameMillis) {
-	ActionOverlayOptions options;
-	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, options);
+	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis));
 }
 
-void PlayableScene::runActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap, uint frameMapSize,
-		uint32 frameMillis, const ActionOverlayOptions &options) {
+void PlayableScene::runActionOverlay(const ActionOverlaySpec &spec) {
+	const ActionOverlayOptions &options = spec.options;
 	const bool previousHideActiveActor = _actionOverlayPlayer.applyActorVisibility(options.actorVisibility);
-	_actionOverlayPlayer.begin(chunkIndex, descriptorCount, frameMap, frameMapSize);
+	_actionOverlayPlayer.begin(spec.chunkIndex, spec.descriptorCount, spec.frameMap, spec.frameMapSize);
 
-	const uint firstFrame = MIN<uint>(options.firstFrame, frameMapSize);
-	const uint requestedEndFrame = options.endFrame == 0 ? frameMapSize : options.endFrame;
-	const uint cappedEndFrame = MIN<uint>(requestedEndFrame, frameMapSize);
+	const uint firstFrame = MIN<uint>(options.firstFrame, spec.frameMapSize);
+	const uint requestedEndFrame = options.endFrame == 0 ? spec.frameMapSize : options.endFrame;
+	const uint cappedEndFrame = MIN<uint>(requestedEndFrame, spec.frameMapSize);
 	for (uint frame = firstFrame; frame < cappedEndFrame && !Engine::shouldQuit(); ++frame) {
 		_actionOverlayPlayer.setFrame(frame);
 		if (options.statePatchFrame >= 0 && (int)frame == options.statePatchFrame)
@@ -1610,7 +1609,7 @@ void PlayableScene::runActionOverlay(uint chunkIndex, uint descriptorCount, cons
 			_soundBank0.playSample(options.soundId, options.soundVolumePercent);
 		if (options.hookId != 0 && (options.hookFrame < 0 || (int)frame == options.hookFrame))
 			handleActionOverlayFrameHook(options.hookId, frame);
-		if (waitSceneMillis(frameMillis))
+		if (waitSceneMillis(spec.frameMillis))
 			break;
 	}
 	_actionOverlayPlayer.finish(previousHideActiveActor);
@@ -1623,33 +1622,12 @@ void PlayableScene::runActionOverlay(uint chunkIndex, uint descriptorCount, cons
 
 void PlayableScene::runHiddenActorActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis) {
-	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
-		kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis).hideActor());
 }
 
 void PlayableScene::runVisibleActorActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
 		uint frameMapSize, uint32 frameMillis) {
-	runConfiguredActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis,
-		kActionOverlayShowActiveActor);
-}
-
-void PlayableScene::runConfiguredActionOverlay(uint chunkIndex, uint descriptorCount, const byte *frameMap,
-		uint frameMapSize, uint32 frameMillis, ActionOverlayActorVisibility actorVisibility,
-		int statePatchFrame, byte statePatchSelector, int soundFrame, byte soundId,
-		byte soundVolumePercent, int hookFrame, byte hookId, bool redrawAtEnd, uint firstFrame, uint endFrame) {
-	ActionOverlayOptions options;
-	options.actorVisibility = actorVisibility;
-	options.statePatchFrame = statePatchFrame;
-	options.statePatchSelector = statePatchSelector;
-	options.soundFrame = soundFrame;
-	options.soundId = soundId;
-	options.soundVolumePercent = soundVolumePercent;
-	options.hookFrame = hookFrame;
-	options.hookId = hookId;
-	options.redrawAtEnd = redrawAtEnd;
-	options.firstFrame = firstFrame;
-	options.endFrame = endFrame;
-	runActionOverlay(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis, options);
+	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount, frameMap, frameMapSize, frameMillis).showActor());
 }
 
 byte PlayableScene::primarySpeechAnimationBaseFrame(byte animationGroup) const {
