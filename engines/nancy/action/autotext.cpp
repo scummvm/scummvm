@@ -59,8 +59,10 @@ void Autotext::readData(Common::SeekableReadStream &stream) {
 	}
 	stream.skip((maxImages - numImages) * (2 + 16));
 
-	if (g_nancy->getGameType() >= kGameTypeNancy10) {
-		// Placement descriptor used to blit viewport surfaces (0-2) onscreen
+	if (g_nancy->getGameType() >= kGameTypeNancy10 && _hasPlacementDescriptor) {
+		// Placement descriptor used to blit viewport surfaces (0-2) onscreen.
+		// Only plain Autotext records carry this; TextScroll handles its own
+		// placement and omits it from the chunk.
 		_placementMode = stream.readUint16LE();
 		readRect(stream, _viewportDest);
 		readRect(stream, _viewportSrc);

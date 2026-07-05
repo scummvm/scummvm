@@ -76,7 +76,9 @@ protected:
 
 	Common::Array<uint16> _hotspotScenes;
 
-	// Nancy 10+ placement descriptor for viewport surfaces (0-2)
+	// Nancy 10+ placement descriptor for viewport surfaces (0-2).
+	// Absent from TextScroll records, which place themselves.
+	bool _hasPlacementDescriptor = true;
 	uint16 _placementMode = 0;
 	Common::Rect _viewportDest;
 	Common::Rect _viewportSrc;

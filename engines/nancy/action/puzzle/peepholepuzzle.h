@@ -82,7 +82,7 @@ protected:
 // on the fly and replaces the TextScroll/AutotextEntryList
 class TextScroll : public Autotext, public PeepholePuzzle {
 public:
-	TextScroll(bool isEntryList) : _isEntryList(isEntryList) { _selfDisplay = false; }
+	TextScroll(bool isEntryList) : _isEntryList(isEntryList) { _selfDisplay = false; _hasPlacementDescriptor = false; }
 
 	void init() override;
 	void execute() override { PeepholePuzzle::execute(); }
