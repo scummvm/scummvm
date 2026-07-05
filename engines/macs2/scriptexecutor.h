@@ -433,6 +433,9 @@ public:
 	void setRepeatRunFlag(bool val) { _repeatRunFlag = val; }
 	uint32 getVariableValue(int index) const;
 
+	// Plate / walk debugging: log actor position, area, walkability, script waits.
+	void debugLogActorWalkState(const char *context);
+
 	// Computes the read-only runtime value for a type 0xFF special
 	// (FF:value), inlined in scriptReadValue in the original binary
 	uint32 getSpecialValue(uint16 value);

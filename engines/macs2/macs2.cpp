@@ -807,7 +807,7 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 	// Condition: walkability >= 200 OR (targetY - walkability) < savedY
 	while (true) {
 		uint16 w = getWalkabilityAt(*pTargetY, savedX);
-		if (w < 200 && (*pTargetY - (int16)w >= savedY)) {
+		if (isWalkabilityWalkable(w) && (*pTargetY - (int16)w >= savedY)) {
 			break;
 		}
 		if (*pTargetY >= 199) {
@@ -832,8 +832,8 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 	// Phase 3: If at screen bottom and still non-walkable, scan upward
 	if (*pTargetY == 199) {
 		uint16 w = getWalkabilityAt(*pTargetY, *pTargetX);
-		if (w >= 200) {
-			while (w >= 200 && *pTargetY > 0) {
+		if (isWalkabilityBlocking(w)) {
+			while (isWalkabilityBlocking(w) && *pTargetY > 0) {
 				*pTargetY = *pTargetY - 1;
 				w = getWalkabilityAt(*pTargetY, *pTargetX);
 			}
@@ -842,13 +842,13 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 
 	// Phase 4: If still non-walkable, scan X toward character
 	uint16 w = getWalkabilityAt(*pTargetY, *pTargetX);
-	if (w >= 200) {
+	if (isWalkabilityBlocking(w)) {
 		*pTargetX = savedX;
 		*pTargetY = savedY;
 		if (charX < *pTargetX) {
 			while (true) {
 				uint16 w2 = getWalkabilityAt(*pTargetY, *pTargetX);
-				if (w2 < 200)
+				if (isWalkabilityWalkable(w2))
 					break;
 				if (*pTargetX <= 0)
 					break;
@@ -857,7 +857,7 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 		} else {
 			while (true) {
 				uint16 w2 = getWalkabilityAt(*pTargetY, *pTargetX);
-				if (w2 < 200)
+				if (isWalkabilityWalkable(w2))
 					break;
 				if (*pTargetX >= 319)
 					break;
@@ -866,7 +866,7 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 		}
 		// Phase 5: If all failed, fall back to character position
 		uint16 w2 = getWalkabilityAt(*pTargetY, *pTargetX);
-		if (w2 >= 200) {
+		if (isWalkabilityBlocking(w2)) {
 			*pTargetX = charX;
 			*pTargetY = charY;
 		}
@@ -875,44 +875,44 @@ void Macs2Engine::snapToWalkablePosition(int16 *pTargetY, int16 *pTargetX, int16
 	// Phase 6: Gradient-based wall push
 	int16 pushX = 0;
 	int16 pushY = 0;
-	if (getWalkabilityAt(*pTargetY, *pTargetX + 1) >= 200)
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX + 1)))
 		pushX--;
-	if (getWalkabilityAt(*pTargetY, *pTargetX - 1) >= 200)
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX - 1)))
 		pushX++;
-	if (getWalkabilityAt(*pTargetY + 1, *pTargetX) >= 200)
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY + 1, *pTargetX)))
 		pushY--;
-	if (getWalkabilityAt(*pTargetY - 1, *pTargetX) >= 200)
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY - 1, *pTargetX)))
 		pushY++;
-	if (getWalkabilityAt(*pTargetY, *pTargetX + 2) >= 200)
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX + 2)))
 		pushX--;
-	if (getWalkabilityAt(*pTargetY, *pTargetX - 2) >= 200)
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY, *pTargetX - 2)))
 		pushX++;
-	if (getWalkabilityAt(*pTargetY + 2, *pTargetX) >= 200)
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY + 2, *pTargetX)))
 		pushY--;
-	if (getWalkabilityAt(*pTargetY - 2, *pTargetX) >= 200)
+	if (isWalkabilityBlocking(getWalkabilityAt(*pTargetY - 2, *pTargetX)))
 		pushY++;
 
 	while (pushX != 0 || pushY != 0) {
 		if (pushX < 0) {
-			if (getWalkabilityAt(*pTargetY, *pTargetX - 1) < 200) {
+			if (isWalkabilityWalkable(getWalkabilityAt(*pTargetY, *pTargetX - 1))) {
 				*pTargetX = *pTargetX - 1;
 			}
 			pushX++;
 		}
 		if (pushX > 0) {
-			if (getWalkabilityAt(*pTargetY, *pTargetX + 1) < 200) {
+			if (isWalkabilityWalkable(getWalkabilityAt(*pTargetY, *pTargetX + 1))) {
 				*pTargetX = *pTargetX + 1;
 			}
 			pushX--;
 		}
 		if (pushY < 0) {
-			if (getWalkabilityAt(*pTargetY - 1, *pTargetX) < 200) {
+			if (isWalkabilityWalkable(getWalkabilityAt(*pTargetY - 1, *pTargetX))) {
 				*pTargetY = *pTargetY - 1;
 			}
 			pushY++;
 		}
 		if (pushY > 0) {
-			if (getWalkabilityAt(*pTargetY + 1, *pTargetX) < 200) {
+			if (isWalkabilityWalkable(getWalkabilityAt(*pTargetY + 1, *pTargetX))) {
 				*pTargetY = *pTargetY + 1;
 			}
 			pushY--;
@@ -987,11 +987,11 @@ bool Macs2Engine::isPathWalkable(int16 y1, int16 x1, int16 y2, int16 x2) {
 		}
 
 		if (absDx > absDy && steppedX) {
-			if (getWalkabilityAt(curY, curX) >= 0xC8)
+			if (isWalkabilityBlocking(getWalkabilityAt(curY, curX)))
 				result = false;
 		}
 		if (absDx <= absDy && !steppedX) {
-			if (getWalkabilityAt(curY, curX) >= 0xC8)
+			if (isWalkabilityBlocking(getWalkabilityAt(curY, curX)))
 				result = false;
 		}
 	} while (curX != x1 || curY != y1);

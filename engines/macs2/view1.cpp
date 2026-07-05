@@ -1559,7 +1559,7 @@ bool View1::handleInput(const MouseDownMessage &msg) {
 			protagonist->_path.clear();
 
 			const bool directPath = g_engine->isPathWalkable(target.y, target.x, charPos.y, charPos.x);
-			if (directPath || g_engine->getWalkabilityAt(target.y, target.x) >= 200) {
+			if (directPath || Macs2Engine::isWalkabilityBlocking(g_engine->getWalkabilityAt(target.y, target.x))) {
 				protagonist->_targetPosition = target;
 			} else {
 				const bool found = protagonist->calculatePath(target);
@@ -2184,6 +2184,8 @@ bool View1::tick() {
 					}
 					if (walkComplete) {
 						if (!executor->_pickupInProgress) {
+							debugC(kDebugScript, "waitForWalk complete obj=%u", walkTarget);
+							executor->debugLogActorWalkState("waitForWalk complete");
 							executor->_walkTargetObjectIndex = 0;
 							g_engine->runScriptExecutor();
 						} else if (c != nullptr && c->_gameObject->_orientation != 0x11) {
@@ -2197,6 +2199,8 @@ bool View1::tick() {
 			} else if (executor->_waitForPcmSound) {
 				drawSceneUpdate();
 				if (!g_engine->isCurrentSoundPlaying()) {
+					debugC(kDebugScript, "waitForSound complete");
+					executor->debugLogActorWalkState("waitForSound complete");
 					executor->_waitForPcmSound = false;
 					g_engine->runScriptExecutor();
 				}
@@ -2216,6 +2220,8 @@ bool View1::tick() {
 		} else {
 			drawSceneUpdate();
 			if (executor->getFrameWaitCounter() == 0) {
+				debugC(kDebugScript, "frameWait complete");
+				executor->debugLogActorWalkState("frameWait complete");
 				executor->endFrameWait();
 				g_engine->runScriptExecutor();
 			}
@@ -2376,7 +2382,7 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 			int16 walkabilityOffset = 0;
 			if (g_engine->_pathfindingMap.w > 0) {
 				walkabilityOffset = g_engine->getWalkabilityAt(charY, charX);
-				if (walkabilityOffset >= 200)
+				if (Macs2Engine::isWalkabilityBlocking((uint16)walkabilityOffset))
 					walkabilityOffset = 0;
 			}
 			if (obj->_verticalOffsetScale != 0)
@@ -2453,10 +2459,24 @@ void View1::drawAllCharacters(Graphics::ManagedSurface *surface, bool fullUpdate
 	}
 
 	// Binary drawAllCharacters tail: movement-finished repeat run (opcode 0x27 area checks).
-	if (fullUpdate && g_engine->_movementFinishedFlag && !executor->isScriptWaitDeferred()) {
-		executor->_isRepeatRun = true;
-		g_engine->runScriptExecutor();
-		executor->_isRepeatRun = false;
+	if (fullUpdate && g_engine->_movementFinishedFlag) {
+		if (executor->isScriptWaitDeferred()) {
+			debugC(kDebugScript,
+				   "repeatRun deferred: walkWait=%u frameWait=%u soundWait=%d musicWait=%d adlibWait=%d",
+				   executor->_walkTargetObjectIndex, executor->getFrameWaitCounter(),
+				   executor->_waitForPcmSound ? 1 : 0, executor->_waitForMusicControl ? 1 : 0,
+				   executor->_waitForAdlibReady ? 1 : 0);
+		} else {
+			const Common::Point actorPos = executor->getCharPosition();
+			const uint16 area = executor->getAreaAtPoint(actorPos.x, actorPos.y);
+			debugC(kDebugScript, "repeatRun start: actor=(%d,%d) areaRepeatRun=%u var[122]=%u",
+				   actorPos.x, actorPos.y, area, executor->getVariableValue(122));
+			executor->debugLogActorWalkState("repeatRun start");
+			executor->_isRepeatRun = true;
+			g_engine->runScriptExecutor();
+			executor->_isRepeatRun = false;
+			executor->debugLogActorWalkState("repeatRun end");
+		}
 	}
 }
 
@@ -3110,27 +3130,12 @@ bool Character::HandleWalkability(Character *c) {
 	return true;
 }
 
-uint8 Character::lookupWalkability(const Common::Point &p) const {
-	Common::Rect screenRect(320, 200);
-	if (!screenRect.contains(p)) {
-		return 0x00;
-	}
-	uint32 value = g_engine->_pathfindingMap.getPixel(p.x, p.y);
-	// Values 0xC8..0xEF use the pathfinding override table (opcode 0x12)
-	if (value >= 0xC8 && value <= 0xEF) {
-		uint16 overrideResult;
-		if (g_engine->getPathfindingOverride(value, overrideResult)) {
-			return (uint8)overrideResult;
-		}
-		// Override not active - return non-walkable
-		return 0xFF;
-	}
-	return (uint8)value;
+uint16 Character::lookupWalkability(const Common::Point &p) const {
+	return g_engine->getWalkabilityAt((int16)p.y, (int16)p.x);
 }
 
 bool Character::isWalkable(const Common::Point &p) const {
-	uint8 walkability = lookupWalkability(p);
-	return walkability < 0xC8;
+	return Macs2Engine::isWalkabilityWalkable(lookupWalkability(p));
 }
 
 Character::Character() {
@@ -3288,7 +3293,7 @@ void Character::setPosition(const Common::Point &newPosition) {
 
 uint16 Character::getVerticalOffset() const {
 	uint16 result = g_engine->getWalkabilityAt(getPosition());
-	if (result >= 0xC8) {
+	if (Macs2Engine::isWalkabilityBlocking(result)) {
 		result = 0;
 	}
 
@@ -3451,7 +3456,7 @@ void Character::startPickup(Macs2::GameObject *object) {
 	_path.clear();
 
 	bool directPath = g_engine->isPathWalkable(destY, destX, current.y, current.x);
-	if (!directPath && g_engine->getWalkabilityAt(destY, destX) < 200) {
+	if (!directPath && Macs2Engine::isWalkabilityWalkable(g_engine->getWalkabilityAt(destY, destX))) {
 		calculatePath(Common::Point(destX, destY));
 	}
 
@@ -3686,45 +3691,52 @@ void Character::update() {
 			}
 			// Walkability check - binary uses getWalkabilityAt(posY, posX) >= 0xC8
 			if (!isWalkable(pos)) {
+				const uint16 tileArea = g_engine->_scriptExecutor->getAreaAtPoint(pos.x, pos.y);
+				if (tileArea >= 210 && tileArea <= 215) {
+					debugC(kDebugPath,
+						   "walk blocked on plate area %u at (%d,%d) walk=%u int16=%d target=(%d,%d)",
+						   tileArea, pos.x, pos.y, lookupWalkability(pos), (int16)lookupWalkability(pos),
+						   _targetPosition.x, _targetPosition.y);
+				}
 				// Revert position
 				pos = savedPos;
 				// Wall-sliding: build push vector from ±1 and ±2 samples
 				int pushX = 0, pushY = 0;
-				if (lookupWalkability(Common::Point(pos.x + 1, pos.y)) >= 200)
+				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x + 1, pos.y))))
 					pushX--;
-				if (lookupWalkability(Common::Point(pos.x - 1, pos.y)) >= 200)
+				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x - 1, pos.y))))
 					pushX++;
-				if (lookupWalkability(Common::Point(pos.x, pos.y + 1)) >= 200)
+				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y + 1))))
 					pushY--;
-				if (lookupWalkability(Common::Point(pos.x, pos.y - 1)) >= 200)
+				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y - 1))))
 					pushY++;
-				if (lookupWalkability(Common::Point(pos.x + 2, pos.y)) >= 200)
+				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x + 2, pos.y))))
 					pushX--;
-				if (lookupWalkability(Common::Point(pos.x - 2, pos.y)) >= 200)
+				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x - 2, pos.y))))
 					pushX++;
-				if (lookupWalkability(Common::Point(pos.x, pos.y + 2)) >= 200)
+				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y + 2))))
 					pushY--;
-				if (lookupWalkability(Common::Point(pos.x, pos.y - 2)) >= 200)
+				if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(Common::Point(pos.x, pos.y - 2))))
 					pushY++;
 				// Apply push vector
 				while (pushX != 0 || pushY != 0) {
 					if (pushX < 0) {
-						if (lookupWalkability(Common::Point(pos.x - 1, pos.y)) < 200)
+						if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x - 1, pos.y))))
 							pos.x--;
 						pushX++;
 					}
 					if (pushX > 0) {
-						if (lookupWalkability(Common::Point(pos.x + 1, pos.y)) < 200)
+						if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x + 1, pos.y))))
 							pos.x++;
 						pushX--;
 					}
 					if (pushY < 0) {
-						if (lookupWalkability(Common::Point(pos.x, pos.y - 1)) < 200)
+						if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x, pos.y - 1))))
 							pos.y--;
 						pushY++;
 					}
 					if (pushY > 0) {
-						if (lookupWalkability(Common::Point(pos.x, pos.y + 1)) < 200)
+						if (Macs2Engine::isWalkabilityWalkable(lookupWalkability(Common::Point(pos.x, pos.y + 1))))
 							pos.y++;
 						pushY--;
 					}
@@ -3740,6 +3752,17 @@ void Character::update() {
 
 	// Binary (2280): if pixelsMoved != walkSpeed -> revert and cancel
 	if (pixelsMoved != walkSpeed) {
+		const uint16 tileArea = g_engine->_scriptExecutor->getAreaAtPoint(pos.x, pos.y);
+		if (tileArea >= 210 && tileArea <= 215) {
+			debugC(kDebugPath,
+				   "walk cancelled pixelsMoved=%d walkSpeed=%d at (%d,%d) area=%u walk=%u finalDest=(%d,%d)",
+				   pixelsMoved, walkSpeed, pos.x, pos.y, tileArea, lookupWalkability(pos),
+				   _pathFinalDestination.x, _pathFinalDestination.y);
+		} else if (Macs2Engine::isWalkabilityBlocking(lookupWalkability(pos))) {
+			debugC(kDebugPath,
+				   "walk cancelled (non-walkable) pixelsMoved=%d walkSpeed=%d at (%d,%d) walk=%u",
+				   pixelsMoved, walkSpeed, pos.x, pos.y, lookupWalkability(pos));
+		}
 		pos = savedPos;
 		_targetPosition = pos;
 		_pathFinalDestination = pos;

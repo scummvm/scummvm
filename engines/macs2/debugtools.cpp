@@ -1673,7 +1673,7 @@ static void showSceneMapsWindow() {
 						if (overrideActive)
 							ImGui::SetTooltip("(%d, %d) = %u (0x%02X) [override zone → %u = %s]",
 											  mx, my, val, val, overrideResult,
-											  overrideResult < 0xC8 ? "WALKABLE" : "non-walkable");
+											  Macs2Engine::isWalkabilityWalkable(overrideResult) ? "WALKABLE" : "non-walkable");
 						else
 							ImGui::SetTooltip("(%d, %d) = %u (0x%02X) [override zone, DISABLED → non-walkable]",
 											  mx, my, val, val);

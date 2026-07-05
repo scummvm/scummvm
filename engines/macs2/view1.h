@@ -80,7 +80,7 @@ private:
 	bool HandleWalkability(Character *c);
 
 	// fn0037_0E8C proc
-	uint8 lookupWalkability(const Common::Point &p) const;
+	uint16 lookupWalkability(const Common::Point &p) const;
 
 public:
 	Character();
