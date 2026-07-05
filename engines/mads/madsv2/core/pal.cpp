@@ -33,7 +33,6 @@
 namespace MADS {
 namespace MADSV2 {
 
-
 extern int kidney;
 
 Palette master_palette;             /* Main global palette for program   */
@@ -261,7 +260,6 @@ static int pal_get_new_flag() {
 done:
 	return (return_code);
 }
-
 
 static int pal_free_colors(int *first_free) {
 	int free_colors, count;
@@ -514,15 +512,9 @@ int pal_allocate(ColorListPtr new_list, ShadowListPtr shadow_list, int pal_flags
 	pal_exec(pal_manager_update, 2);
 
 done:
-#ifdef palette_dumps
-	pal_dump();
-#endif
 	return return_code;
 }
 
-/**
- * Returns number of available flags - checksum use
- */
 int pal_get_flags() {
 	int a, out;
 
@@ -533,9 +525,6 @@ int pal_get_flags() {
 	return(out);
 }
 
-/*
- * Returns number of colors available in palette
- */
 int pal_get_colors() {
 	int a, out;
 
@@ -569,8 +558,6 @@ void pal_interface(Palette &fixpal) {
 	fixpal[6].g = 21;
 }
 
-
-
 void pal_white(Palette &fixpal) {
 	int count;
 	byte num[4] = { 0, 21, 42, 63 };
@@ -581,7 +568,6 @@ void pal_white(Palette &fixpal) {
 		fixpal[count].b = num[count];
 	}
 }
-
 
 void pal_grey(Palette &fixpal, int base_color, int num_colors,
 	int low_grey, int high_grey) {
@@ -606,7 +592,6 @@ void pal_grey(Palette &fixpal, int base_color, int num_colors,
 		}
 	}
 }
-
 
 int pal_get_color(RGBcolor color, int color_handle, int override_reserved, int *color_number) {
 	int count;

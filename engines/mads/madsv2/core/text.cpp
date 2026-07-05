@@ -187,7 +187,6 @@ static void text_copy_string(char **mark, char *string) {
 		(*mark)++;
 }
 
-
 static void text_copy_vocab(char **mark, int vocab_id, char *alternative) {
 	char *my_string;
 
@@ -330,8 +329,6 @@ done:
 	;
 }
 
-
-
 static void text_choice(char **source, char **dest) {
 	int index;
 	int index_value;
@@ -365,8 +362,6 @@ static void text_choice(char **source, char **dest) {
 
 	text_copy_string(dest, temp_buf);
 }
-
-
 
 static void text_icon(char *my_text, SeriesPtr *icon, int *id) {
 	char name[80];

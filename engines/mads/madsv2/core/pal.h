@@ -154,7 +154,15 @@ extern void pal_shadow_sort(ShadowListPtr shadow, ColorListPtr list);
  */
 extern void pal_init_shadow(ShadowListPtr shadow, ColorListPtr new_list);
 extern void pal_activate_shadow(ShadowListPtr shadow);
+
+/**
+ * Returns number of available flags - checksum use
+ */
 extern int pal_get_flags();
+
+/**
+ * Returns number of colors available in palette
+ */
 extern int pal_get_colors();
 extern void pal_interface(Palette &fixpal);
 extern void pal_white(Palette &fixpal);

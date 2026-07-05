@@ -169,7 +169,7 @@ static int player_scaling_factor(int y) {
 
 	scale = MIN(100, scale);
 
-	return (scale);
+	return scale;
 }
 
 /**
@@ -177,7 +177,8 @@ static int player_scaling_factor(int y) {
  */
 static void player_set_base_frame_rate() {
 	player.frame_delay = series_list[player.series_base + player.series]->walker->frame_rate;
-	if (!player.frame_delay) player.frame_delay = 6;
+	if (!player.frame_delay)
+		player.frame_delay = 6;
 }
 
 void player_new_stop_walker() {

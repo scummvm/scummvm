@@ -261,7 +261,6 @@ extern int room_load_variant(int id, int variant, const char *base_path, RoomPtr
 	TileResource *depth_resource, int depth_ems_handle);
 extern void room_dump_attribute(Buffer *depth, Buffer *walk, Buffer *special,
 	TileMapHeader *depth_map);
-extern int room_compile_hotspots(int id, int compression);
 extern HotPtr room_load_hotspots(int id, int *num_spots);
 
 /**

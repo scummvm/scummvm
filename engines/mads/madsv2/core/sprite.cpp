@@ -1163,7 +1163,6 @@ done:
 	return (error_flag);
 }
 
-
 void dont_frag_the_palette() {
 	/* this will tell sprite_free to not execute pal_deallocate. This will */
 	/* make it so the colors are not freed and you won't get the */

@@ -726,7 +726,6 @@ static unsigned long fab_explode(ExpIO *io) {
 	return io->out_count;
 }
 
-
 /* =========================================================================
  *  pFABexp0  --  file-to-file decompressor  (PFABEXP0.ASM)
  *
@@ -759,7 +758,6 @@ word pFABexp0(ReadFn read_buff, WriteFn write_buff, char *work_buff) {
 	return 0;  // CMP_NO_ERROR
 }
 
-
 /* =========================================================================
  *  pFABexp1  --  file-to-memory decompressor  (PFABEXP1.ASM)
  *
@@ -791,7 +789,6 @@ word pFABexp1(ReadFn read_buff, char *write_buf, char *work_buff) {
 
 	return 0;
 }
-
 
 word pFABexp2(byte *read_buf, byte *write_buf, char *work_buff) {
 	if (!work_buff)

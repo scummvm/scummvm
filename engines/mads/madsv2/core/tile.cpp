@@ -512,7 +512,6 @@ done:
 	return error_flag;
 }
 
-
 int tile_buffer(Buffer *target, TileResource *tile_resource,
 		TileMapHeader *map, int tile_x, int tile_y) {
 	int default_value;
@@ -567,7 +566,6 @@ int tile_buffer(Buffer *target, TileResource *tile_resource,
 	return false;
 }
 
-
 void tile_map_free(TileMapHeader *map) {
 	if (map != NULL) {
 		if (map->resource != NULL) {
@@ -581,10 +579,7 @@ void tile_map_free(TileMapHeader *map) {
 	}
 }
 
-
-void tile_pan(TileMapHeader *tile_map,
-	int           x,
-	int           y) {
+void tile_pan(TileMapHeader *tile_map, int x, int y) {
 	int tile_x, offset_x;
 	int tile_y, offset_y;
 
@@ -621,12 +616,7 @@ done:
 	;
 }
 
-
-int tile_fake_map(int tile_type,
-	TileMapHeader *tile_map,
-	Buffer *buffer,
-	int           x,
-	int           y) {
+int tile_fake_map(int tile_type, TileMapHeader *tile_map, Buffer *buffer, int x, int y) {
 	int error_flag = true;
 
 	tile_map->tile_type = tile_type;

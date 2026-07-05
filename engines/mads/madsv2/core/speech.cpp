@@ -54,7 +54,6 @@ void SpeechDir::load(Common::SeekableReadStream *src) {
 	src->readMultipleLE(field0, compression, field4, field6, field8, size, offset);
 }
 
-
 void speech_init() {
 	speech_system_active = true;
 }

@@ -266,10 +266,6 @@ char *vocab_get_word(char *word_buf, int word_code) {
 	return result;
 }
 
-int vocab_write_file(const char *last_word) {
-	error("TODO: vocab_write_file");
-}
-
 void vocab_report_error(int number) {
 	char temp_buf_1[80], temp_buf_2[80];
 	int dos_flag;
@@ -351,7 +347,6 @@ void vocab_report_error(int number) {
 	}
 }
 
-
 char *vocab_select_word(char *out, const char *prompt, const char *default_word) {
 	dialog_declare(dialog);
 	char *result;
@@ -414,7 +409,6 @@ char *vocab_select_word(char *out, const char *prompt, const char *default_word)
 	return (result);
 }
 
-
 void vocab_sort() {
 	char temp_buf[VC_MAXWORDLEN + 2];
 	int any_changes;
@@ -450,141 +444,6 @@ static bool check_for_caps(const char *string) {
 	}
 
 	return any_caps;
-}
-
-
-void vocab_maint_exec() {
-	DialogPtr dialog;
-	char temp_buf[80];
-	char word_buf[VC_MAXWORDLEN + 2];
-	int editing_vocab;
-	int vocab_howmany;
-	int vocab_address;
-	int vocab_rows;
-	int vocab_code;
-	int vocab_count;
-	int write_error;
-	ItemPtr word_item, add_item, del_item, line_item, sort_item, exit_item, result_item;
-
-	Common::sprintf_s(temp_buf, "MADS Vocabulary Maintenance Utility Version %s", vocab_version);
-
-	word_buf[0] = 0;
-
-	write_error = false;
-
-	editing_vocab = true;
-
-	while (editing_vocab && (!write_error)) {
-
-		vocab_howmany = (vocab_words - vocab_first_soft) + 1;
-		vocab_address = (vocab_first_soft - 1) * (VC_MAXWORDLEN + 1);
-
-		vocab_rows = screen_max_y - 18;
-
-		dialog = dialog_create(NULL, DD_CENTER, 3, DD_AUTO, DD_DEFAULT,
-			DD_DEFAULT, DD_DEFAULT);
-
-		dialog_center_message(dialog, temp_buf);
-		dialog_add_blank(dialog);
-
-		word_item = dialog_add_listbased(dialog, DD_IX_LEFT, DD_IY_AUTOFILL,
-			"~Word: ", word_buf, VC_MAXWORDLEN,
-			"~Vocabulary List:", vocab + vocab_address,
-			vocab_howmany, VC_MAXWORDLEN + 1, VC_MAXWORDLEN,
-			vocab_rows, 64 / VC_MAXWORDLEN);
-
-		add_item = dialog_left_button(dialog, " ~Add ");
-		del_item = dialog_left_button(dialog, "~Delete");
-		sort_item = dialog_left_button(dialog, "~Sort");
-
-		if (screen_max_y == 50) {
-			line_item = dialog_left_button(dialog, "25 ~Lines");
-		} else {
-			line_item = dialog_left_button(dialog, "50 ~Lines");
-		}
-
-		exit_item = dialog_add_button(dialog, DD_IX_RIGHT, DD_IY_BUTTON, " Exit ");
-		dialog->cancel_item = exit_item;
-
-		result_item = dialog_execute(dialog, word_item, add_item, NULL);
-
-		if (result_item == exit_item) {
-
-			editing_vocab = false;
-
-		} else if (result_item == sort_item) {
-
-			vocab_sort();
-			write_error = vocab_write_file(NULL);
-			if (write_error) {
-				vocab_report_error(write_error);
-			}
-
-		} else if (result_item == line_item) {
-
-			mouse_hide();
-
-			if (screen_max_y == 25) {
-				screen_set_size(50);
-			} else {
-				screen_set_size(25);
-			}
-
-			screen_clear(background);
-
-			mouse_show();
-
-		} else {
-
-			Common::strcpy_s(word_buf, dialog_read_list(dialog, word_item));
-			// _fstrlwr (word_buf);
-			fileio_purge_trailing_spaces(word_buf);
-
-			vocab_code = vocab_get_code(word_buf);
-
-			if (result_item != del_item) {
-				if (vocab_code > 0) {
-					vocab_report_error(VC_ERR_WORDALREADYEXISTS);
-				} else {
-					if (vocab_words >= VC_MAXWORDS) {
-						vocab_report_error(VC_ERR_TOOMANYWORDS);
-					} else {
-						if (strlen(word_buf) > 0) {
-							if (check_for_caps(word_buf) && (!(env_privileges & MADS_PRIV_SYSTEM))) {
-								dialog_alert_ok("Cannot add capitalized words",
-									"at this privilege level.",
-									word_buf, NULL);
-							} else {
-								vocab_address = vocab_words * (VC_MAXWORDLEN + 1);
-								Common::strcpy_s(vocab + vocab_address, 65536, word_buf);
-								vocab_words++;
-								write_error = vocab_write_file(NULL);
-								if (write_error) {
-									vocab_report_error(write_error);
-								}
-							}
-						}
-					}
-				}
-			} else {
-				if (vocab_code == 0) {
-					vocab_report_error(VC_ERR_NOSUCHWORD);
-				} else {
-					vocab_address = (vocab_code - 1) * (VC_MAXWORDLEN + 1);
-					vocab_count = (vocab_words - vocab_code) * (VC_MAXWORDLEN + 1);
-					if (vocab_count > 0) {
-						memcpy(vocab + vocab_address, vocab + vocab_address + VC_MAXWORDLEN + 1, vocab_count);
-					}
-					vocab_words--;
-					write_error = vocab_write_file(NULL);
-					if (write_error) {
-						vocab_report_error(write_error);
-					}
-				}
-			}
-		}
-		dialog_destroy_persist(dialog);
-	}
 }
 
 void vocab_unload_active() {

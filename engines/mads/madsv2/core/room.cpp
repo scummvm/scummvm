@@ -353,10 +353,6 @@ done:
 	return error_flag;
 }
 
-int room_compile_hotspots(int id, int compression) {
-	error("TODO: room_compile_hotspots");
-}
-
 HotPtr room_load_hotspots(int id, int *num_spots) {
 	HotPtr spots;
 	HotPtr result = NULL;

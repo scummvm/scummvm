@@ -71,23 +71,9 @@ extern int vocab_load(int allocation_flag);
 extern int vocab_get_code(char *inp);
 extern char *vocab_get_word(char *out, int inp);
 
-/**
- * Writes the main vocabulary file to disk.
- *
- * "last_word" is a pointer to a bonus word to be added to the
- * end of the list as it is written out; if last_word is NULL,
- * then no bonus word is written.
- */
-extern int vocab_write_file(const char *last_word);
-
-extern int vocab_add_word(const char *inp);
 extern void vocab_report_error(int number);
 extern char *vocab_select_word(char *out, const char *prompt, const char *default_word);
-extern void vocab_maint();
-extern int vocab_build();
 extern void vocab_unload_active();
-extern void vocab_init_active();
-extern int vocab_active_id(word id);
 extern int vocab_make_active(int id);
 extern int vocab_load_active();
 extern char *vocab_string(int vocab_id);

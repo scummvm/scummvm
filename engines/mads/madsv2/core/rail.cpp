@@ -154,7 +154,6 @@ void rail_connect_all_nodes() {
 	}
 }
 
-
 /**
  * Used for recursively determing walk path between room rail nodes
  * @param node_id		Node currently being evaluated
