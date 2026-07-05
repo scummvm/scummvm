@@ -39,6 +39,7 @@ const uint kScene7060ArenaFirstChunk = 5;
 const uint kScene7060ArenaLastChunk = 10;
 const uint kScene7060StageIndex = 706;
 const uint16 kScene7060ViewportXOffset = 0x50;
+const uint16 kScene7060ViewportMaxXOffset = 0x100;
 const int kScene7060EntryFromG04StartX = 0x3b0;
 const int kScene7060EntryFromG04StartY = 0x18d;
 const byte kScene7060EntryFromG04Facing = 4;
@@ -51,8 +52,9 @@ const uint16 kScene7060Chunk6DescriptorCount = 0x36;
 const uint16 kScene7060Chunk7DescriptorCount = 0x0e;
 const uint16 kScene7060Chunk8DescriptorCount = 4;
 const uint16 kScene7060Chunk9And10DescriptorCount = 10;
-const uint32 kScene7060Chunk6FrameMillis = 75;
+const uint32 kScene7060Chunk6FrameMillis = 100;
 const uint32 kScene7060OverlayFrameMillis = 100;
+const uint32 kScene7060KeyPickupWindowMultiplier = 2;
 const byte kScene7060DialogueStageId = 0x62;
 const byte kScene7060DialoguePrimaryRow = 99;
 const uint16 kScene7060DialoguePrimaryCenterX = 0x0d2;
@@ -100,6 +102,8 @@ static PlayableSceneConfig scene7060Config() {
 	config.stageIndex = kScene7060StageIndex;
 	config.debugName = "Scene 7060";
 	config.viewportXOffset = kScene7060ViewportXOffset;
+	config.viewportMinXOffset = kScene7060ViewportXOffset;
+	config.viewportMaxXOffset = kScene7060ViewportMaxXOffset;
 	config.mainFlowFirstState = kScene7060FirstState;
 	config.mainFlowLastState = 0x1b9d;
 	return config;
@@ -121,6 +125,7 @@ bool Scene7060::hasCustomPreviewState() const {
 
 void Scene7060::initializeCustomPreviewState() {
 	initializeChunk6FrameMap();
+	applyChunk6FrameMapForInventoryState();
 	_chunk6Animation.channel.frameMillis = kScene7060Chunk6FrameMillis;
 	_chunk6Animation.reset();
 	_chunk8FrameIndex = 3;
@@ -205,8 +210,10 @@ void Scene7060::runCustomEntrySequence() {
 bool Scene7060::prepareCustomGameplayLoop() {
 	_chunk6Animation.channel.resetTimer();
 	_chunk6Animation.channel.frameMillis = kScene7060Chunk6FrameMillis;
-	if (_chunk6FrameMap.empty())
+	if (_chunk6FrameMap.empty()) {
 		initializeChunk6FrameMap();
+		applyChunk6FrameMapForInventoryState();
+	}
 	setColorMapItem8Promoted(false);
 	return true;
 }
@@ -373,6 +380,23 @@ void Scene7060::initializeChunk6FrameMap() {
 	memcpy(_chunk6FrameMap.data(), kScene7060Chunk6FrameMap, _chunk6FrameMap.size());
 }
 
+void Scene7060::applyChunk6FrameMapForInventoryState() {
+	if (hasInventoryItem(0x11))
+		applyChunk6KeyTakenFrameMap();
+}
+
+void Scene7060::applyChunk6KeyTakenFrameMap() {
+	if (_chunk6FrameMap.size() <= 70)
+		return;
+
+	// Ghidra: HandleG06Chunk7PickupItem11 mutates these global frame-map bytes.
+	// Reapply it on scene reload when item 0x11 is already in Sue's inventory.
+	_chunk6FrameMap[33] = _chunk6FrameMap[58];
+	_chunk6FrameMap[37] = _chunk6FrameMap[62];
+	_chunk6FrameMap[41] = _chunk6FrameMap[66];
+	_chunk6FrameMap[45] = _chunk6FrameMap[70];
+}
+
 void Scene7060::rebuildWalkableMask() {
 	memcpy(_walkablePaletteMask.data(), _fullPaletteRegionMask.data(), _walkablePaletteMask.size());
 	for (uint i = 0; i < _walkablePaletteMask.size(); ++i) {
@@ -399,13 +423,26 @@ void Scene7060::advanceChunk6IdleAndMachineFrame(uint32 delta) {
 	while (channel.consumeFrame()) {
 		switch (_chunk6Animation.state) {
 		case 0:
+			if (!_chunk6RandomIdlePaused && _random.getRandomNumber(0x31) == 0) {
+				_chunk6Animation.setStateAndFrame(2, 3);
+			} else if (!_chunk6RandomIdlePaused && _random.getRandomNumber(0x0e) == 0) {
+				_chunk6Animation.setStateAndFrame(1, 2);
+			}
+			break;
 		case 1:
+			_chunk6Animation.reset();
+			break;
 		case 2:
-			_chunk6Animation.advanceTick(_random, !_chunk6RandomIdlePaused);
+			if (channel.frameIndex == 0x16)
+				_chunk6Animation.reset();
+			else
+				++channel.frameIndex;
 			break;
 		case 3:
 			if (channel.frameIndex == 0x20) {
 				_chunk6Animation.setStateAndFrame(4, 0x21);
+				// Intentional usability deviation: the original key pickup window is short.
+				channel.frameMillis = kScene7060OverlayFrameMillis * kScene7060KeyPickupWindowMultiplier;
 				setColorMapItem8Promoted(true);
 			} else {
 				++channel.frameIndex;
@@ -413,11 +450,11 @@ void Scene7060::advanceChunk6IdleAndMachineFrame(uint32 delta) {
 			break;
 		case 4:
 			if (channel.frameIndex == 0x23)
-				channel.frameMillis = _vm->gameState().labMachineSpeed * 2 + 100;
+				channel.frameMillis = (_vm->gameState().labMachineSpeed * 2 + 100) *
+					kScene7060KeyPickupWindowMultiplier;
 			if (channel.frameIndex == 0x2c) {
 				_chunk6Animation.setStateAndFrame(5, 0x2d);
 				channel.frameMillis = kScene7060OverlayFrameMillis;
-				_vm->gameState().labMachineSpeed = 0x0c;
 				setColorMapItem8Promoted(false);
 			} else {
 				++channel.frameIndex;
@@ -425,14 +462,12 @@ void Scene7060::advanceChunk6IdleAndMachineFrame(uint32 delta) {
 			break;
 		case 5:
 			if (channel.frameIndex == 0x31) {
-				_vm->gameState().labMachineSpeed = 9;
 				channel.frameMillis = kScene7060OverlayFrameMillis;
 			}
 			if (channel.frameIndex >= 0x35 && channel.frameIndex <= 0x38)
 				_chunk8FrameIndex = channel.frameIndex - 0x35;
 			if (channel.frameIndex == 0x39) {
 				_chunk6Animation.setStateAndFrame(6, 0x47);
-				_vm->gameState().labMachineSpeed = 0x0c;
 			} else {
 				++channel.frameIndex;
 			}
@@ -444,7 +479,6 @@ void Scene7060::advanceChunk6IdleAndMachineFrame(uint32 delta) {
 				_soundBank0.playSample(0x0f, 100);
 			if (channel.frameIndex == 0x4d) {
 				_chunk6Animation.reset();
-				_vm->gameState().labMachineSpeed = 0x0c;
 				channel.frameMillis = kScene7060OverlayFrameMillis;
 			} else {
 				++channel.frameIndex;
@@ -572,7 +606,11 @@ void Scene7060::runDialogueMenuRow98() {
 }
 
 void Scene7060::beginPrimaryDialogueSpeech(byte frameIndex) {
-	beginPrimarySpeechLine(kScene7060DialoguePrimaryRow, frameIndex,
+	beginPrimaryBrunoSpeechLine(kScene7060DialoguePrimaryRow, frameIndex);
+}
+
+void Scene7060::beginPrimaryBrunoSpeechLine(uint16 rowIndex, byte frameIndex) {
+	beginPrimarySpeechLine(rowIndex, frameIndex,
 		kScene7060DialoguePrimaryCenterX, kScene7060DialoguePrimaryTopY,
 		kScene7060DialoguePrimaryRed, kScene7060DialoguePrimaryGreen,
 		kScene7060DialoguePrimaryBlue);
@@ -624,6 +662,7 @@ void Scene7060::handleChunk7PickupItem11() {
 		.hideActor()
 		.hookAt(4, kScene7060PickupItem11Hook));
 	addInventoryItem(0x11);
+	applyChunk6KeyTakenFrameMap();
 	_soundBank0.playSample(1, 100);
 }
 
@@ -656,7 +695,7 @@ void Scene7060::handleUseItem0DOnMachine() {
 
 	beginSecondarySpeechLine(12, state.labMachineSpeed != 0x0c ? 1 : 0);
 	waitForMachineIdleBeforeDialogue();
-	beginPrimaryDialogueSpeech(2);
+	beginPrimaryBrunoSpeechLine(0x0c, 2);
 	beginSecondarySpeechLine(12, 3);
 
 	runActionOverlay(ActionOverlaySpec(7, kScene7060Chunk7DescriptorCount,
@@ -673,12 +712,7 @@ void Scene7060::handleActionOverlayFrameHook(byte hookId, uint frame) {
 	(void)frame;
 
 	if (hookId == kScene7060PickupItem11Hook) {
-		if (_chunk6FrameMap.size() > 70) {
-			_chunk6FrameMap[33] = _chunk6FrameMap[58];
-			_chunk6FrameMap[37] = _chunk6FrameMap[62];
-			_chunk6FrameMap[41] = _chunk6FrameMap[66];
-			_chunk6FrameMap[45] = _chunk6FrameMap[70];
-		}
+		applyChunk6KeyTakenFrameMap();
 		setColorMapItem8Promoted(false);
 	} else if (hookId == kScene7060UseItem0DHook) {
 		_chunk6Animation.setStateAndFrame(3, 0x1c);
