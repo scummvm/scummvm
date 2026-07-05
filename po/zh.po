@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-04 16:10+0000\n"
+"POT-Creation-Date: 2026-07-05 20:12+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -10706,6 +10706,10 @@ msgstr "更改模式"
 #| msgid "Options"
 msgid "Open options menu"
 msgstr "選項"
+
+#: engines/macs2/metaengine.cpp:85
+msgid "Help / map"
+msgstr ""
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
 msgid "The game is using unsupported engine"

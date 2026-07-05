@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-04 16:10+0000\n"
+"POT-Creation-Date: 2026-07-05 20:12+0000\n"
 "PO-Revision-Date: 2026-04-23 00:22+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -11351,6 +11351,10 @@ msgstr "Χαμηλότερη ταχύτητα παιχνιδιού"
 #: engines/touche/metaengine.cpp:147
 msgid "Open options menu"
 msgstr "Άνοιγμα μενού επιλογών"
+
+#: engines/macs2/metaengine.cpp:85
+msgid "Help / map"
+msgstr ""
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
 msgid "The game is using unsupported engine"

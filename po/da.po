@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-04 16:10+0000\n"
+"POT-Creation-Date: 2026-07-05 20:12+0000\n"
 "PO-Revision-Date: 2023-09-07 17:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -11298,6 +11298,10 @@ msgstr "Vis muse markør"
 #, fuzzy
 msgid "Open options menu"
 msgstr "~R~etur til oversigt"
+
+#: engines/macs2/metaengine.cpp:85
+msgid "Help / map"
+msgstr ""
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
 #, fuzzy

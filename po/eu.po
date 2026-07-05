@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-04 16:10+0000\n"
+"POT-Creation-Date: 2026-07-05 20:12+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -11324,6 +11324,10 @@ msgstr "Saguaren kurtsorea erakutsi"
 #, fuzzy
 msgid "Open options menu"
 msgstr "It~z~uli abiarazlera"
+
+#: engines/macs2/metaengine.cpp:85
+msgid "Help / map"
+msgstr ""
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
 #, fuzzy

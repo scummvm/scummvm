@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-04 16:10+0000\n"
+"POT-Creation-Date: 2026-07-05 20:12+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -11263,6 +11263,10 @@ msgstr "Mostrar créditos do jogo"
 #, fuzzy
 msgid "Open options menu"
 msgstr "~M~enu principal"
+
+#: engines/macs2/metaengine.cpp:85
+msgid "Help / map"
+msgstr ""
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
 #, fuzzy

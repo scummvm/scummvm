@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-04 16:10+0000\n"
+"POT-Creation-Date: 2026-07-05 20:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -10141,6 +10141,10 @@ msgstr ""
 #: engines/macs2/metaengine.cpp:80 engines/sherlock/metaengine.cpp:846
 #: engines/touche/metaengine.cpp:147
 msgid "Open options menu"
+msgstr ""
+
+#: engines/macs2/metaengine.cpp:85
+msgid "Help / map"
 msgstr ""
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
