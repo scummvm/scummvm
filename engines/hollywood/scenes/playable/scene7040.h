@@ -96,17 +96,21 @@ private:
 	void runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame);
 	void applyChunk14ActionSideEffects(byte frameIndex);
 	void applyChunk14AltSideEffects(byte frameIndex);
+	void resetTransientOverlayLayers();
+	void setChunk12OverlayVisible(bool visible);
+	void setChunk12OverlayFrame(byte frameIndex);
+	void setChunk14ActionVisible(bool visible);
+	void setChunk14ActionFrame(byte frameIndex);
+	void configureChunk14AltLayer(uint chunkIndex, bool visible);
+	void setChunk14AltVisible(bool visible);
+	void setChunk14AltFrame(byte frameIndex);
+	uint chunk14AltChunkIndex() const;
 
-	byte _chunk12FrameIndex;
-	byte _chunk14ActionFrameIndex;
-	byte _chunk14AltFrameIndex;
-	byte _chunk14AltChunkIndex;
 	byte _postItemIdleState;
-	bool _chunk12OverlayVisible;
-	bool _chunk14ActionVisible;
-	bool _chunk14AltVisible;
 	byte _primarySpeechLeadInTicks;
 	byte _primarySpeechLastMouthFrameOffset;
+	TransientLayerCompositor _backTransientLayers;
+	TransientLayerCompositor _frontTransientLayers;
 	RandomIdleAnimation _preItemIdleAnimation;
 	TimedAnimationChannel _postItemAnimation;
 	TimedAnimationChannel _chunk17Animation;

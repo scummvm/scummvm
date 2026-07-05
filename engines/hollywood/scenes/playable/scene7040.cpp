@@ -86,6 +86,9 @@ const byte kScene7040ActionSpeechGroupB = 4;
 const byte kScene7040FrankieSpeechGroupA = 5;
 const byte kScene7040FrankieSpeechGroupB = 6;
 const byte kScene7040PrimarySpeechFrameCount = 5;
+const uint kScene7040Chunk12Layer = 0;
+const uint kScene7040Chunk14ActionLayer = 0;
+const uint kScene7040Chunk14AltLayer = 1;
 const byte kScene7040JosephNormalSpeechBaseFrame = 7;
 const byte kScene7040JosephRevealSpeechBaseFrameA = 0x12;
 const byte kScene7040JosephRevealSpeechBaseFrameB = 0x1a;
@@ -148,16 +151,11 @@ static PlayableSceneConfig scene7040Config() {
 
 Scene7040::Scene7040(HollywoodEngine *vm) :
 		PlayableScene(vm, scene7040Config(), "scene7040", 0x14a, 0x139, 1, 0xfd, 0xfb),
-		_chunk12FrameIndex(0),
-		_chunk14ActionFrameIndex(0),
-		_chunk14AltFrameIndex(0),
-		_chunk14AltChunkIndex(14),
 		_postItemIdleState(0),
-		_chunk12OverlayVisible(false),
-		_chunk14ActionVisible(false),
-		_chunk14AltVisible(false),
 		_primarySpeechLeadInTicks(0),
-		_primarySpeechLastMouthFrameOffset(0) {
+		_primarySpeechLastMouthFrameOffset(0),
+		_backTransientLayers(),
+		_frontTransientLayers() {
 	_preItemIdleAnimation.configure(kScene7040Chunk11FrameMillis, 0, 1, 0, 6, 0x0e, 0x31);
 	_postItemAnimation.reset(1, kScene7040Chunk16FrameMillis);
 	_chunk17Animation.reset(0, kScene7040Chunk17FrameMillis);
@@ -190,17 +188,11 @@ void Scene7040::initializeCustomPreviewState() {
 	_actionOverlayChunkIndex = 0;
 	_actionOverlayDescriptorCount = 0;
 	_actionOverlayFrameIndex = 0;
-	_chunk12FrameIndex = 0;
-	_chunk14ActionFrameIndex = 0;
-	_chunk14AltFrameIndex = 0;
-	_chunk14AltChunkIndex = 14;
 	_postItemIdleState = 0;
 	_preItemIdleAnimation.reset();
 	_postItemAnimation.reset(1, kScene7040Chunk16FrameMillis);
 	_chunk17Animation.reset(0, kScene7040Chunk17FrameMillis);
-	_chunk12OverlayVisible = false;
-	_chunk14ActionVisible = false;
-	_chunk14AltVisible = false;
+	resetTransientOverlayLayers();
 	_primarySpeechLeadInTicks = 0;
 	_primarySpeechLastMouthFrameOffset = 0;
 	_hideActiveActor = false;
@@ -240,28 +232,12 @@ void Scene7040::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[16], 0,
 			kScene7040Chunk16DescriptorCount, frame, _sceneFramebuffer);
 	} else {
-		if (_chunk12OverlayVisible) {
-			drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[12], 0,
-				kScene7040Chunk12DescriptorCount, _chunk12FrameIndex, _sceneFramebuffer);
-		}
+		drawTransientLayers(_backTransientLayers);
 		const byte frame = _preItemIdleAnimation.channel.frameIndex < ARRAYSIZE(kScene7040Chunk11FrameMap) ?
 			kScene7040Chunk11FrameMap[_preItemIdleAnimation.channel.frameIndex] : 0;
 		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[11], 0,
 			kScene7040Chunk11DescriptorCount, frame, _sceneFramebuffer);
-		if (_chunk14ActionVisible) {
-			const byte actionFrame = _chunk14ActionFrameIndex < ARRAYSIZE(kScene7040Chunk14ActionFrameMap) ?
-				kScene7040Chunk14ActionFrameMap[_chunk14ActionFrameIndex] : 0;
-			drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[14], 0,
-				kScene7040Chunk14ActionDescriptorCount, actionFrame, _sceneFramebuffer);
-		}
-		if (_chunk14AltVisible) {
-			const byte altFrame = _chunk14AltFrameIndex < ARRAYSIZE(kScene7040Chunk14AltFrameMap) ?
-				kScene7040Chunk14AltFrameMap[_chunk14AltFrameIndex] : 0;
-			if (_chunk14AltChunkIndex < HollywoodEngine::kResourceChunkCount) {
-				drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[_chunk14AltChunkIndex], 0,
-					kScene7040Chunk14AltDescriptorCount, altFrame, _sceneFramebuffer);
-			}
-		}
+		drawTransientLayers(_frontTransientLayers);
 	}
 
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
@@ -353,10 +329,7 @@ bool Scene7040::shouldStopJosephGuestListGreeting() {
 }
 
 bool Scene7040::prepareCustomGameplayLoop() {
-	_chunk12OverlayVisible = false;
-	_chunk14ActionVisible = false;
-	_chunk14AltVisible = false;
-	_chunk14AltChunkIndex = 14;
+	resetTransientOverlayLayers();
 	return true;
 }
 
@@ -476,14 +449,13 @@ void Scene7040::setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIn
 	switch (animationGroup) {
 	case kScene7040ActionSpeechGroupA:
 	case kScene7040ActionSpeechGroupB:
-		_chunk14ActionVisible = true;
-		_chunk14ActionFrameIndex = frameIndex;
+		setChunk14ActionVisible(true);
+		setChunk14ActionFrame(frameIndex);
 		break;
 	case kScene7040FrankieSpeechGroupA:
 	case kScene7040FrankieSpeechGroupB:
-		_chunk14AltVisible = true;
-		_chunk14AltChunkIndex = 15;
-		_chunk14AltFrameIndex = frameIndex;
+		configureChunk14AltLayer(15, true);
+		setChunk14AltFrame(frameIndex);
 		break;
 	default:
 		_preItemIdleAnimation.setFrame(frameIndex);
@@ -673,7 +645,7 @@ void Scene7040::handleActionSlot02MajorHotspotAction() {
 		return;
 	}
 
-	_chunk12OverlayVisible = true;
+	setChunk12OverlayVisible(true);
 	if (state.officeStatueActionProgress == 2) {
 		runActionOverlay(ActionOverlaySpec(13, kScene7040Chunk13DescriptorCount,
 			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis)
@@ -682,7 +654,7 @@ void Scene7040::handleActionSlot02MajorHotspotAction() {
 			.endAt(0x2d));
 		_soundBank0.playSample(0x15, 100);
 		runMajorHotspotFrankensteinBranch();
-		_chunk12OverlayVisible = true;
+		setChunk12OverlayVisible(true);
 		runActionOverlay(ActionOverlaySpec(13, kScene7040Chunk13DescriptorCount,
 			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis)
 			.hideActor()
@@ -695,7 +667,7 @@ void Scene7040::handleActionSlot02MajorHotspotAction() {
 			.soundAt(0x2c, 0x15)
 			.noRedrawAtEnd());
 	}
-	_chunk12OverlayVisible = false;
+	setChunk12OverlayVisible(false);
 
 	runMajorHotspotReturnPath(state.officeStatueActionProgress == 2 ? 4 : 5);
 	switch (state.officeStatueActionProgress) {
@@ -903,13 +875,13 @@ void Scene7040::initializeDialogueRecords(Common::Array<DialogueChoiceRecord> &r
 void Scene7040::runMajorHotspotFrankensteinBranch() {
 	const bool previousHideActiveActor = _hideActiveActor;
 	const byte previousPreItemIdleState = _preItemIdleAnimation.state;
-	const byte previousAltChunkIndex = _chunk14AltChunkIndex;
+	const uint previousAltChunkIndex = chunk14AltChunkIndex();
 	_hideActiveActor = true;
 	_preItemIdleAnimation.state = 3;
-	_chunk12OverlayVisible = true;
-	_chunk12FrameIndex = 0;
-	_chunk14ActionVisible = true;
-	_chunk14AltVisible = false;
+	setChunk12OverlayVisible(true);
+	setChunk12OverlayFrame(0);
+	setChunk14ActionVisible(true);
+	setChunk14AltVisible(false);
 
 	runChunk14ActionRange(0, 0x10);
 	beginPrimarySpeechLineWithAnimationGroup(3, 0, 0x154, 0x5f, 0x20, 0, 0x3f,
@@ -923,15 +895,15 @@ void Scene7040::runMajorHotspotFrankensteinBranch() {
 	beginPrimarySpeechLineWithAnimationGroup(3, 2, 0x16d, 0x69, 0x20, 0, 0x3f,
 		kScene7040ActionSpeechGroupB);
 	runChunk14ActionRange(0x6f, 0x7c);
-	_chunk14ActionVisible = false;
-	_chunk12OverlayVisible = false;
-	_chunk12FrameIndex = 0;
+	setChunk14ActionVisible(false);
+	setChunk12OverlayVisible(false);
+	setChunk12OverlayFrame(0);
 
-	_chunk14AltChunkIndex = 15;
+	configureChunk14AltLayer(15, false);
 	runChunk11Range(0x0b, 0x12);
 	beginPrimarySpeechLineWithAnimationGroup(3, 3, 0x1a9, 0x82, 0x3f, 0x32, 0x0c,
 		kScene7040JosephRevealSpeechGroupA);
-	_chunk14AltVisible = true;
+	setChunk14AltVisible(true);
 	runChunk14AltRange(15, 0, 0x14);
 	beginPrimarySpeechLineWithAnimationGroup(3, 4, 0x136, 0x6e, 0x0a, 0x3f, 0,
 		kScene7040FrankieSpeechGroupA);
@@ -949,15 +921,15 @@ void Scene7040::runMajorHotspotFrankensteinBranch() {
 	beginPrimarySpeechLineWithAnimationGroup(3, 8, 0x14f, 0x73, 0x0a, 0x3f, 0,
 		kScene7040FrankieSpeechGroupB);
 	runChunk14AltRange(15, 0x25, 0x3f);
-	_chunk14AltVisible = false;
-	_chunk14AltChunkIndex = previousAltChunkIndex;
+	setChunk14AltVisible(false);
+	configureChunk14AltLayer(previousAltChunkIndex, false);
 	beginPrimarySpeechLineWithAnimationGroup(3, 9, 0x1c2, 0x73, 0x3f, 0x32, 0x0c,
 		kScene7040JosephNormalSpeechGroup);
 
 	_preItemIdleAnimation.setFrame(0);
-	_chunk14ActionVisible = false;
-	_chunk14AltVisible = false;
-	_chunk12OverlayVisible = false;
+	setChunk14ActionVisible(false);
+	setChunk14AltVisible(false);
+	setChunk12OverlayVisible(false);
 	_preItemIdleAnimation.state = previousPreItemIdleState;
 	_hideActiveActor = previousHideActiveActor;
 }
@@ -986,21 +958,20 @@ void Scene7040::runChunk11Range(byte firstFrame, byte endFrame) {
 }
 
 void Scene7040::runChunk14ActionRange(byte firstFrame, byte endFrame) {
-	_chunk14ActionVisible = true;
+	setChunk14ActionVisible(true);
 	for (uint frame = firstFrame; frame < endFrame && !Engine::shouldQuit(); ++frame) {
 		applyChunk14ActionSideEffects((byte)frame);
-		_chunk14ActionFrameIndex = (byte)MIN<uint>(frame + 1, ARRAYSIZE(kScene7040Chunk14ActionFrameMap) - 1);
+		setChunk14ActionFrame((byte)MIN<uint>(frame + 1, ARRAYSIZE(kScene7040Chunk14ActionFrameMap) - 1));
 		if (waitSceneMillis(kScene7040Chunk14FrameMillis))
 			break;
 	}
 }
 
 void Scene7040::runChunk14AltRange(uint chunkIndex, byte firstFrame, byte endFrame) {
-	_chunk14AltVisible = true;
-	_chunk14AltChunkIndex = (byte)chunkIndex;
+	configureChunk14AltLayer(chunkIndex, true);
 	for (uint frame = firstFrame; frame < endFrame && !Engine::shouldQuit(); ++frame) {
 		applyChunk14AltSideEffects((byte)frame);
-		_chunk14AltFrameIndex = (byte)MIN<uint>(frame + 1, ARRAYSIZE(kScene7040Chunk14AltFrameMap) - 1);
+		setChunk14AltFrame((byte)MIN<uint>(frame + 1, ARRAYSIZE(kScene7040Chunk14AltFrameMap) - 1));
 		if (waitSceneMillis(kScene7040Chunk14FrameMillis))
 			break;
 	}
@@ -1010,24 +981,24 @@ void Scene7040::applyChunk14ActionSideEffects(byte frameIndex) {
 	switch (frameIndex) {
 	case 0:
 		_soundBank0.playSample(3, 100);
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 1;
+		setChunk12OverlayVisible(true);
+		setChunk12OverlayFrame(1);
 		break;
 	case 1:
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 2;
+		setChunk12OverlayVisible(true);
+		setChunk12OverlayFrame(2);
 		break;
 	case 8:
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 1;
+		setChunk12OverlayVisible(true);
+		setChunk12OverlayFrame(1);
 		break;
 	case 9:
 		_soundBank0.playSample(4, 100);
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 0;
+		setChunk12OverlayVisible(true);
+		setChunk12OverlayFrame(0);
 		break;
 	case 0x0a:
-		_chunk12OverlayVisible = false;
+		setChunk12OverlayVisible(false);
 		break;
 	case 0x22:
 		_soundBank0.playSample(0x16, 50);
@@ -1049,29 +1020,75 @@ void Scene7040::applyChunk14AltSideEffects(byte frameIndex) {
 		break;
 	case 0x37:
 		_soundBank0.playSample(3, 100);
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 1;
+		setChunk12OverlayVisible(true);
+		setChunk12OverlayFrame(1);
 		break;
 	case 0x38:
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 2;
+		setChunk12OverlayVisible(true);
+		setChunk12OverlayFrame(2);
 		break;
 	case 0x3d:
 		_soundBank0.playSample(3, 100);
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 1;
+		setChunk12OverlayVisible(true);
+		setChunk12OverlayFrame(1);
 		break;
 	case 0x3e:
 		_soundBank0.playSample(4, 100);
-		_chunk12OverlayVisible = true;
-		_chunk12FrameIndex = 0;
+		setChunk12OverlayVisible(true);
+		setChunk12OverlayFrame(0);
 		break;
 	case 0x3f:
-		_chunk12OverlayVisible = false;
+		setChunk12OverlayVisible(false);
 		break;
 	default:
 		break;
 	}
+}
+
+void Scene7040::resetTransientOverlayLayers() {
+	_backTransientLayers.clear();
+	_backTransientLayers.configureLayer(kScene7040Chunk12Layer, 12, kScene7040Chunk12DescriptorCount,
+		nullptr, 0, false);
+	_frontTransientLayers.clear();
+	_frontTransientLayers.configureLayer(kScene7040Chunk14ActionLayer, 14, kScene7040Chunk14ActionDescriptorCount,
+		kScene7040Chunk14ActionFrameMap, ARRAYSIZE(kScene7040Chunk14ActionFrameMap), false);
+	configureChunk14AltLayer(14, false);
+}
+
+void Scene7040::setChunk12OverlayVisible(bool visible) {
+	_backTransientLayers.setLayerVisible(kScene7040Chunk12Layer, visible);
+}
+
+void Scene7040::setChunk12OverlayFrame(byte frameIndex) {
+	_backTransientLayers.setLayerFrame(kScene7040Chunk12Layer, frameIndex);
+}
+
+void Scene7040::setChunk14ActionVisible(bool visible) {
+	_frontTransientLayers.setLayerVisible(kScene7040Chunk14ActionLayer, visible);
+}
+
+void Scene7040::setChunk14ActionFrame(byte frameIndex) {
+	_frontTransientLayers.setLayerFrame(kScene7040Chunk14ActionLayer, frameIndex);
+}
+
+void Scene7040::configureChunk14AltLayer(uint chunkIndex, bool visible) {
+	_frontTransientLayers.configureLayer(kScene7040Chunk14AltLayer, chunkIndex,
+		kScene7040Chunk14AltDescriptorCount, kScene7040Chunk14AltFrameMap,
+		ARRAYSIZE(kScene7040Chunk14AltFrameMap), visible);
+}
+
+void Scene7040::setChunk14AltVisible(bool visible) {
+	_frontTransientLayers.setLayerVisible(kScene7040Chunk14AltLayer, visible);
+}
+
+void Scene7040::setChunk14AltFrame(byte frameIndex) {
+	_frontTransientLayers.setLayerFrame(kScene7040Chunk14AltLayer, frameIndex);
+}
+
+uint Scene7040::chunk14AltChunkIndex() const {
+	if (!_frontTransientLayers.hasLayer(kScene7040Chunk14AltLayer))
+		return 14;
+	return _frontTransientLayers.layer(kScene7040Chunk14AltLayer).chunkIndex;
 }
 
 void Scene7040::runExitSideEffectsAfterLoop() {

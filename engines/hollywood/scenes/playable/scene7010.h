@@ -78,6 +78,15 @@ private:
 	void runChunk14FrameRange(byte startFrame, byte endFrame);
 	void runChunk15ItemSequence();
 	void runDialogueOverlayFrames(byte startFrame, byte endFrame, byte finalMode);
+	void resetTransientOverlayLayers();
+	void setDialogueOverlayMode(byte mode, byte frameIndex);
+	void setDialogueOverlayFrame(byte frameIndex);
+	void setChunk11Visible(bool visible);
+	void setChunk11Frame(byte frameIndex);
+	void setChunk14Visible(bool visible);
+	void setChunk14Frame(byte frameIndex);
+	void setChunk15Visible(bool visible);
+	void setChunk15Frame(byte frameIndex);
 
 	byte _chunk8FrameIndex;
 	byte _chunk9AmbientOverlayFrameIndex;
@@ -86,14 +95,8 @@ private:
 	byte _chunk10IdleFrameB;
 	byte _chunk10IdleFrameC;
 	byte _chunk10IdleFrameD;
-	byte _chunk11FrameIndex;
-	byte _chunk14FrameIndex;
-	byte _chunk15FrameIndex;
 	byte _dialogueOverlayFrameIndex;
 	byte _dialogueOverlayMode;
-	bool _chunk11Visible;
-	bool _chunk14Visible;
-	bool _chunk15Visible;
 	bool _chunk8SpecialSequenceActive;
 	bool _chunk10IdlePairAAltPhase;
 	bool _chunk10IdlePairBAltPhase;
@@ -102,6 +105,8 @@ private:
 	uint32 _chunk8TimerAccumulator;
 	uint32 _chunk10TimerAccumulator;
 	uint32 _dialogueOverlayTimerAccumulator;
+	TransientLayerCompositor _backTransientLayers;
+	TransientLayerCompositor _frontTransientLayers;
 };
 
 } // End of namespace Hollywood
