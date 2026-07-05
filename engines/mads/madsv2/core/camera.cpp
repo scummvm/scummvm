@@ -122,6 +122,7 @@ static int camera_pan(Camera *camera, int *picture_view, int *player_loc,
 				}
 			}
 		} else {
+			assert(player_loc);
 
 			if (!camera->panning) {
 				low_edge = *picture_view + camera->pan_on_tolerance;

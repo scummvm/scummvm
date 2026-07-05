@@ -130,9 +130,12 @@ void ConvVariable::load(Common::SeekableReadStream *src) {
 			break;
 		case PTRTYPE_CONV_CONTROL:
 			if (val >= 0 && val < 20) {
-				// Index into one of the sequential 5 element arrays:
+				// Index into one of the four 5-element arrays in turn:
 				// speaker_frame[5], x[5], y[5], width[5]
-				ptr = conv_control.speaker_frame + val;
+				int16 *const fieldArrays[] = {
+					conv_control.speaker_frame, conv_control.x, conv_control.y, conv_control.width
+				};
+				ptr = &fieldArrays[val / CONV_MAX_DATA][val % CONV_MAX_DATA];
 			} else if (val == 20) {
 				ptr = &conv_control.speaker_val;
 			} else {
@@ -596,7 +599,7 @@ static void conv_generate_text(Conv *convIn, ConvData * /*convData*/,
 
 		// Size and position the popup from the current speaker's slot data.
 		int horiz_pieces = popup_estimate_pieces(conv_control.width[person]);
-		popup_create(horiz_pieces,
+		(void)popup_create(horiz_pieces,
 			conv_control.x[person],
 			conv_control.y[person]);
 
@@ -815,10 +818,10 @@ static int16 conv_param_evaluate(ConvScriptParams *params) {
 		result = param1 * param2;
 		break;
 	case CONV_OP_DIV:
-		result = param1 / param2;
+		result = param2 ? param1 / param2 : 0;
 		break;
 	case CONV_OP_MOD:
-		result = param1 % param2;
+		result = param2 ? param1 % param2 : 0;
 		break;
 	case CONV_OP_GE:
 		result = (param1 >= param2) ? 1 : 0;
@@ -1187,7 +1190,7 @@ void conv_start(ConvData *convData, Conv *convIn) {
 	// Resolve the byte-offset sub-array pointers stored in the ConvData block
 	conv_imports = convData->imports.empty() ? nullptr : &convData->imports[0];
 	conv_entry_flags = convData->entryFlags.empty() ? nullptr : & convData->entryFlags[0];
-	conv_varsDataPtr = convData->variables.empty() ? nullptr : & convData->variables[0];
+	conv_varsDataPtr = &convData->variables[0];
 
 	// conv_vars0ValPtr -> variables[0].val (skips the isPtr field)
 	conv_vars0ValPtr   = &conv_varsDataPtr[0].val;
@@ -1290,12 +1293,18 @@ void conv_run(int convId) {
 
 	// Bind conv variables 2–22 to live ConvControl fields.
 	// Variable 2 maps to speaker_val (not contiguous with the arrays below).
-	// Variables 3–22 map to speaker_frame[5], x[5], y[5], width[5] — 20
-	// consecutive int16s — so a single pointer walk replaces 20 separate calls.
+	// Variables 3–22 map to speaker_frame[5], x[5], y[5], width[5] in turn.
 	conv_set_variable(2, &conv_control.speaker_val);
-	int16 *p = conv_control.speaker_frame;
-	for (int i = 3; i <= 22; ++i, ++p)
-		conv_set_variable(i, p);
+
+	int16 *const fieldArrays[] = {
+		conv_control.speaker_frame, conv_control.x, conv_control.y, conv_control.width
+	};
+
+	int varIdx = 3;
+	for (int16 *field : fieldArrays) {
+		for (int j = 0; j < CONV_MAX_DATA; ++j)
+			conv_set_variable(varIdx++, &field[j]);
+	}
 
 	// Load speaker portrait series for each declared speaker
 	for (idx = 0; idx < conv[slot]->speaker_count; ++idx) {
