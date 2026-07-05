@@ -76,6 +76,10 @@ public:
 	// if none. Cleared on the next call to handleInput().
 	int getClickedButton() const { return _clickedButton; }
 
+	// Grey out and disable every taskbar button while a popup (inventory /
+	// notebook / cellphone / conversation) is open, matching the original.
+	void setPopupLockout(bool locked);
+
 private:
 	enum ButtonState {
 		kButtonIdle         = 0,
@@ -138,6 +142,8 @@ private:
 	ButtonState _buttonStates[6];
 	ButtonOverride _overrides[6];
 	bool _notifications[6][kNumNotificationSubCategories];
+	// True while a popup is open: every button renders disabled and ignores input.
+	bool _popupLockout = false;
 };
 
 } // End of namespace UI

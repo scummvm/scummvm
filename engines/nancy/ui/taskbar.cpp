@@ -128,6 +128,10 @@ Taskbar::ButtonState Taskbar::restingState(uint index) const {
 	if (index >= TASK::kNumButtons) {
 		return kButtonIdle;
 	}
+	// While a popup is open every button is disabled.
+	if (_popupLockout) {
+		return kButtonDisabled;
+	}
 	if (!_enabled[index]) {
 		return kButtonDisabled;
 	}
@@ -200,6 +204,26 @@ void Taskbar::toggleButton(uint index, bool enabled) {
 	_enabled[index] = enabled;
 	if ((int)index != _hoveredButton) {
 		drawButton(index, restingState(index));
+	}
+}
+
+void Taskbar::setPopupLockout(bool locked) {
+	if (_popupLockout == locked) {
+		return;
+	}
+	_popupLockout = locked;
+
+	// Repaint every button in its new resting state (all disabled while locked,
+	// back to idle/badge when the popup closes) and drop any lingering hover.
+	_hoveredButton = -1;
+	auto *taskData = GetEngineData(TASK);
+	if (!taskData) {
+		return;
+	}
+	for (uint i = 0; i < TASK::kNumButtons; ++i) {
+		if (isButtonSlotUsed(taskData->buttons[i])) {
+			drawButton(i, restingState(i));
+		}
 	}
 }
 

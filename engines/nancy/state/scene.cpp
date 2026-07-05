@@ -1420,7 +1420,18 @@ void Scene::handleInput() {
 	// skipped while the textbox is in open mode (it visually covers the
 	// buttons, so they should not receive hover/clicks).
 	if (!_activeMovie) {
-		if (_taskbar && !_textbox.isFullMode()) {
+		// While a Nancy 10+ popup (inventory / notebook / cellphone /
+		// conversation) is open, the original disables the entire taskbar —
+		// every button, including MENU and HELP. Skip the taskbar input so it
+		// neither hovers nor reacts to clicks until the popup is closed.
+		const bool popupOpen = g_nancy->getGameType() >= kGameTypeNancy10 &&
+								!activePopupConfinement().isEmpty();
+		if (_taskbar) {
+			// Grey out the whole taskbar while a popup is open (matches the
+			// original); restored automatically once the popup closes.
+			_taskbar->setPopupLockout(popupOpen);
+		}
+		if (_taskbar && !_textbox.isFullMode() && !popupOpen) {
 			// MENU and HELP leave gameplay entirely, which would cut off the
 			// taskbar click sound. The original defers the transition until that
 			// sound finishes, so we hold the click here and only switch state
