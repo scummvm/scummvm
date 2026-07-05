@@ -57,6 +57,8 @@ struct GameplayState {
 		activeAudioChapterIndex = 0;
 		currentInventoryOwnerIndex = 0;
 		currentAmbientMusicCueId = 0;
+		scene9140ReturnStateId = 1000;
+		scene9140VariantIndex = 0;
 		for (uint owner = 0; owner < kInventoryOwnerCount; ++owner) {
 			inventoryItemCountByOwner[owner] = 0;
 			inventoryFirstVisibleSlotByOwner[owner] = 0;
@@ -232,6 +234,13 @@ struct GameplayState {
 		scene6020TaffyLeft = false;
 		scene6030HannoverInterviewCompleted = false;
 		scene6030CoffeeState = 0;
+		scene6040EntryLineSeen = false;
+		scene6040PaintCanTaken = false;
+		scene6040WireState = 0;
+		scene6050MuseumInteriorUnlocked = false;
+		scene6050GuardPresent = true;
+		scene6050GuardAllowsEntry = false;
+		scene6050DisplayCaseOpened = false;
 		seenScene8010EntryLine = false;
 		scene8010FishermanConversationState = 0;
 		seenScene8020EntryLine = false;
@@ -760,6 +769,8 @@ struct GameplayState {
 	byte activeAudioChapterIndex;
 	byte currentInventoryOwnerIndex;
 	byte currentAmbientMusicCueId;
+	uint16 scene9140ReturnStateId;
+	byte scene9140VariantIndex;
 	byte inventoryItemCountByOwner[kInventoryOwnerCount];
 	byte inventoryFirstVisibleSlotByOwner[kInventoryOwnerCount];
 	byte inventorySlotItemIdByOwner[kInventoryOwnerCount][kInventoryOwnerSlotStride];
@@ -932,6 +943,13 @@ struct GameplayState {
 	bool scene6020TaffyLeft;
 	bool scene6030HannoverInterviewCompleted;
 	byte scene6030CoffeeState;
+	bool scene6040EntryLineSeen;
+	bool scene6040PaintCanTaken;
+	byte scene6040WireState;
+	bool scene6050MuseumInteriorUnlocked;
+	bool scene6050GuardPresent;
+	bool scene6050GuardAllowsEntry;
+	bool scene6050DisplayCaseOpened;
 	bool seenScene8010EntryLine;
 	byte scene8010FishermanConversationState;
 	bool seenScene8020EntryLine;

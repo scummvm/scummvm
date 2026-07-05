@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE3070_H
-#define HOLLYWOOD_SCENES_PLAYABLE_SCENE3070_H
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE6040_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE6040_H
 
 #include "hollywood/scenes/playable/playable_scene.h"
 
@@ -29,21 +29,14 @@ namespace Hollywood {
 class HollywoodEngine;
 
 // Saved GameplayState fields read:
-// mainFlowStateId, scene3070EntryLineSeen, scene3070DrawerOpen,
-// scene3070SurgicalNeedleThreadState, scene3070FrankensteinBodyState,
-// scene3070SurgicalNeedleThreadTaken, scene3070OperatingTableAlternateDescription,
-// scene3070FrankensteinRevivalAlternateResponse, scene3070MachineRunning,
-// scene3070OperatingTableForegroundAlternate, scene3070WindowForegroundPatchActive,
-// scene3070InterludeCutsceneSeen.
+// mainFlowStateId, scene6040EntryLineSeen, scene6040PaintCanTaken,
+// scene6040WireState.
 // Saved GameplayState fields written:
-// mainFlowStateId, scene3070EntryLineSeen, scene3070DrawerOpen,
-// scene3070SurgicalNeedleThreadState, scene3070SurgicalNeedleThreadTaken,
-// scene3070InterludeCutsceneSeen, scene3070InterludeUnlocked,
-// scene3070LateCutscenePlayed, scene9140VariantIndex,
-// scene9140ReturnStateId.
-class Scene3070 : public PlayableScene {
+// mainFlowStateId, scene6040EntryLineSeen, scene6040PaintCanTaken,
+// scene6040WireState.
+class Scene6040 : public PlayableScene {
 public:
-	Scene3070(HollywoodEngine *vm);
+	Scene6040(HollywoodEngine *vm);
 
 private:
 	bool hasCustomPreviewState() const override;
@@ -61,26 +54,22 @@ private:
 	AmbientAudioProfile ambientAudioProfile() const override;
 
 	void resetAnimationLayers();
-	void rebuildWalkableMask();
-	void removeColorMapItem(byte itemId);
+	void advanceToggleLayer(TimedAnimationChannel &channel, ResourceSpriteLayer &layer, uint32 delta);
+	void drawForegroundBlocks(int activeWorldY);
+	void runPaintCanPickup();
+	void runWireInspectionAnimation();
+	void runCutWireWithTool();
+	void runWirePickup();
+	void rememberOriginalColorMap();
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
-	void advanceBackLayer(uint32 delta);
-	void advanceSmallIdleLayer(uint32 delta);
-	void runEntryFromSecretPassage();
-	void runEntryFromOtherSide();
-	void runLateCutsceneBranch();
-	void runInterludeCutscene();
-	void runDoorPatchOverlay(bool open);
-	void runItemPatchPickup();
-	void drawForegroundBlocks(int activeWorldY, byte actorDrawOrderMode);
 
-	TimedAnimationChannel _backChannel;
-	TimedAnimationChannel _smallIdleChannel;
-	ResourceSpriteLayer _backLayer;
-	ResourceSpriteLayer _smallIdleLayer;
-	byte _smallIdleMode;
+	Common::Array<byte> _originalColorToItemMap;
+	TimedAnimationChannel _leftToggleChannel;
+	TimedAnimationChannel _rightToggleChannel;
+	ResourceSpriteLayer _leftToggleLayer;
+	ResourceSpriteLayer _rightToggleLayer;
 };
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE3070_H
+#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE6040_H

@@ -32,7 +32,11 @@ MODULE_OBJS = \
 	scenes/intro/scene9110.o \
 	scenes/intro/scene9120.o \
 	scenes/intro/scene9130.o \
+	scenes/intro/scene9140.o \
 	scenes/intro/scene9150.o \
+	scenes/intro/scene9160.o \
+	scenes/intro/scene9170.o \
+	scenes/intro/scene9180.o \
 	scenes/playable/actor_path_controller.o \
 	scenes/playable/action_overlay_player.o \
 	scenes/playable/scene1010.o \
@@ -98,6 +102,8 @@ MODULE_OBJS = \
 	scenes/playable/scene6010.o \
 	scenes/playable/scene6020.o \
 	scenes/playable/scene6030.o \
+	scenes/playable/scene6040.o \
+	scenes/playable/scene6050.o \
 	scenes/playable/scene7000.o \
 	scenes/playable/scene7010.o \
 	scenes/playable/scene7020.o \

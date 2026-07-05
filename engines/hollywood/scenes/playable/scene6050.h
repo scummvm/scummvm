@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE3070_H
-#define HOLLYWOOD_SCENES_PLAYABLE_SCENE3070_H
+#ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE6050_H
+#define HOLLYWOOD_SCENES_PLAYABLE_SCENE6050_H
 
 #include "hollywood/scenes/playable/playable_scene.h"
 
@@ -29,21 +29,14 @@ namespace Hollywood {
 class HollywoodEngine;
 
 // Saved GameplayState fields read:
-// mainFlowStateId, scene3070EntryLineSeen, scene3070DrawerOpen,
-// scene3070SurgicalNeedleThreadState, scene3070FrankensteinBodyState,
-// scene3070SurgicalNeedleThreadTaken, scene3070OperatingTableAlternateDescription,
-// scene3070FrankensteinRevivalAlternateResponse, scene3070MachineRunning,
-// scene3070OperatingTableForegroundAlternate, scene3070WindowForegroundPatchActive,
-// scene3070InterludeCutsceneSeen.
+// mainFlowStateId, scene6050MuseumInteriorUnlocked, scene6050GuardPresent,
+// scene6050GuardAllowsEntry, scene6050DisplayCaseOpened.
 // Saved GameplayState fields written:
-// mainFlowStateId, scene3070EntryLineSeen, scene3070DrawerOpen,
-// scene3070SurgicalNeedleThreadState, scene3070SurgicalNeedleThreadTaken,
-// scene3070InterludeCutsceneSeen, scene3070InterludeUnlocked,
-// scene3070LateCutscenePlayed, scene9140VariantIndex,
-// scene9140ReturnStateId.
-class Scene3070 : public PlayableScene {
+// mainFlowStateId, scene6050MuseumInteriorUnlocked, scene6050GuardAllowsEntry,
+// scene6050DisplayCaseOpened.
+class Scene6050 : public PlayableScene {
 public:
-	Scene3070(HollywoodEngine *vm);
+	Scene6050(HollywoodEngine *vm);
 
 private:
 	bool hasCustomPreviewState() const override;
@@ -58,29 +51,39 @@ private:
 	bool advanceCustomGameplayLoop(uint32 delta) override;
 	bool dispatchCustomSceneAction(uint16 handlerId) override;
 	bool applyCustomSceneStateToHotspotsAndPatches(byte selector) override;
+	bool shouldAnimatePrimarySpeechLine() const override;
+	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
+	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
+	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
 	AmbientAudioProfile ambientAudioProfile() const override;
 
-	void resetAnimationLayers();
-	void rebuildWalkableMask();
-	void removeColorMapItem(byte itemId);
+	void resetGuardLayer();
+	void advanceGuardIdleLayer(uint32 delta);
+	void runGuardFrameRange(byte firstFrame, byte lastFrame, int step, byte finalFrame);
+	void runGuardLookUpTransition();
+	void runGuardLookDownTransition();
+	void beginGuardSpeechLine(byte frameIndex);
+	void runGuardDialogue();
+	void initializeGuardDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
+	void setGuardDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
+		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
+		byte responseFrameIndex, byte disableAfterUse) const;
+	void runInteriorBlockedByGuard();
+	void runMuseumInteriorUnlockSequence();
+	void runDisplayCasePickup();
+	void runExitAuthorizationSequence();
+	void rememberOriginalColorMap();
 	void replaceColorMapItemFromOriginal(byte sourceItem, byte destinationItem);
-	void advanceBackLayer(uint32 delta);
-	void advanceSmallIdleLayer(uint32 delta);
-	void runEntryFromSecretPassage();
-	void runEntryFromOtherSide();
-	void runLateCutsceneBranch();
-	void runInterludeCutscene();
-	void runDoorPatchOverlay(bool open);
-	void runItemPatchPickup();
-	void drawForegroundBlocks(int activeWorldY, byte actorDrawOrderMode);
+	void rebuildMuseumWalkableMask();
 
-	TimedAnimationChannel _backChannel;
-	TimedAnimationChannel _smallIdleChannel;
-	ResourceSpriteLayer _backLayer;
-	ResourceSpriteLayer _smallIdleLayer;
-	byte _smallIdleMode;
+	Common::Array<byte> _originalColorToItemMap;
+	TimedAnimationChannel _guardChannel;
+	ResourceSpriteLayer _guardLayer;
+	byte _guardAnimationState;
+	bool _guardManualSequenceActive;
+	bool _guardConversationActive;
 };
 
 } // End of namespace Hollywood
 
-#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE3070_H
+#endif // HOLLYWOOD_SCENES_PLAYABLE_SCENE6050_H

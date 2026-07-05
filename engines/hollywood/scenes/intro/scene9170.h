@@ -1,0 +1,104 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef HOLLYWOOD_SCENES_INTRO_SCENE9170_H
+#define HOLLYWOOD_SCENES_INTRO_SCENE9170_H
+
+#include "hollywood/music.h"
+#include "hollywood/scenes/intro/intro_resource_set.h"
+#include "hollywood/scenes/intro/intro_scene.h"
+#include "hollywood/scenes/intro/intro_text.h"
+
+namespace Hollywood {
+
+class HollywoodEngine;
+
+class Scene9170 : public IntroSceneBase {
+public:
+	Scene9170(HollywoodEngine *vm);
+
+	bool play();
+
+private:
+	struct SubtitleOverlay {
+		bool visible;
+		byte colorIndex;
+		uint16 centerX;
+		uint16 topY;
+		Common::Array<Common::String> lines;
+	};
+
+	bool load();
+	bool loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize);
+	bool loadArenaChunk(uint index);
+	void runSequence();
+	void buildInitialStaticFrame();
+	void switchToLowerRoomFrame();
+	void addBlockListToStatic(uint chunkIndex, int yOffset);
+	void copyBaseToStaticAtYOffset(int yOffset);
+	void clearStaticRows(int yOffset, int rowCount);
+	void composeFrame();
+	void drawSpriteChannel(uint chunkIndex, uint descriptorCount, const byte *frameMap,
+		uint frameMapSize, byte frameIndex);
+	void scrollByTable(const byte *table, uint tableSize, bool add);
+	void scrollTo(uint targetRowOffset, int step);
+	void waitWithComposite(uint32 millis);
+	void fadeInPalette();
+	void fadeOutPalette();
+	void runSpeechLine(byte rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
+		byte red, byte green, byte blue, byte speakerGroup);
+	void runSpeechCue(uint16 textRecordId, byte continuationCount, uint16 voiceSampleId,
+		uint16 centerX, uint16 topY, byte speakerGroup);
+	void advanceSpeechAnimation(byte speakerGroup);
+	void advanceIdleAnimation(byte speakerGroup);
+	void runEventOverlayFrames();
+	void runShake();
+	uint presentRowOffset() const override;
+	void stopAudio() override;
+	void clearSubtitle();
+	void drawFrameOverlays() override;
+	void wrapSubtitleText(const Common::String &text, uint16 anchorSceneX,
+		Common::Array<Common::String> &lines) const;
+	uint subtitleTextWidth(const Common::String &text) const;
+
+	IntroResourceSet _resources;
+	MusicPlayer _music;
+	SpeechPlayer _speech;
+	SoundBank0Player _sound;
+	IntroTextStore _text;
+	Common::Array<byte> _paletteResource;
+	IndexedSurfaceBuffer _baseFramebuffer;
+	IndexedSurfaceBuffer _staticFramebuffer;
+	SubtitleOverlay _subtitle;
+	uint _rowOffset;
+	bool _upperActorsEnabled;
+	bool _lowerActorsEnabled;
+	bool _eventOverlayVisible;
+	byte _upperFrames[3];
+	byte _lowerFrame;
+	byte _effectFrame;
+	byte _eventFrame;
+	uint _animationStep;
+};
+
+} // End of namespace Hollywood
+
+#endif // HOLLYWOOD_SCENES_INTRO_SCENE9170_H
