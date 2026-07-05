@@ -35,9 +35,8 @@ class HollywoodEngine;
 // scene5040SpecialTransitionState.
 // Saved GameplayState fields written:
 // mainFlowStateId, scene5010MineTransportState, scene5040EntryLineSeen,
-// scene5040MineGalleryState, scene5040LooseObjectTaken,
-// scene5040OldSockTaken, scene5040DialState, scene5040KarlDialogueIntroSeen,
-// scene5040SpecialTransitionState.
+// scene5040MineGalleryState, scene5040DialState,
+// scene5040KarlDialogueIntroSeen, scene5040SpecialTransitionState.
 class Scene5040 : public PlayableScene {
 public:
 	Scene5040(HollywoodEngine *vm);
@@ -58,15 +57,19 @@ private:
 	AmbientAudioProfile ambientAudioProfile() const override;
 	byte primarySpeechAnimationBaseFrame(byte animationGroup) const override;
 	void setPrimarySpeechAnimationFrame(byte animationGroup, byte frameIndex) override;
+	void primarySpeechAnimationStarted(byte animationGroup, byte baseFrame) override;
+	void primarySpeechAnimationRestored(byte animationGroup, byte baseFrame) override;
 
 	void resetAnimationLayers();
 	void advanceKarlLayer(uint32 delta);
 	void runMineCartEntryClip();
 	void runExitToMineSwitches();
+	void runExitToMineHole();
 	void runKarlConversation();
-	void runLooseObjectPickup();
-	void runOldSockPickup();
-	void runSpecialMineExitWithWand();
+	void runMineBoxLook();
+	void runPatchedSockPickup();
+	void runMineKeyPickup();
+	void runSpecialMineExitWithMagneticPillbox();
 	void initializeKarlDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
 	void setKarlDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
 		byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
@@ -80,8 +83,8 @@ private:
 	TimedAnimationChannel _karlIdleChannel;
 	ResourceSpriteLayer _karlLayer;
 	byte _karlIdleFrame;
-	byte _karlIdleEndFrame;
-	bool _karlIdleActive;
+	byte _karlIdleMode;
+	byte _karlStrikeRepeatCount;
 };
 
 } // End of namespace Hollywood
