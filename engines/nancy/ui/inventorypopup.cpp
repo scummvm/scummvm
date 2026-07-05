@@ -281,6 +281,15 @@ void InventoryPopup::setActiveFilterIndex(uint index) {
 	_activeFilterIndex = index;
 }
 
+void InventoryPopup::playButtonClickSound(const UIButtonRecord &button) {
+	SoundDescription sound = button.clickSound;
+	if (sound.name.empty() || sound.name.equalsIgnoreCase("NO SOUND"))
+		return;
+
+	g_nancy->_sound->loadSound(sound);
+	g_nancy->_sound->playSound(sound);
+}
+
 void InventoryPopup::drawSlot(uint slotIndex, int16 itemId) {
 	if (slotIndex >= _uiivData->slotDestRects.size())
 		return;
@@ -386,6 +395,7 @@ void InventoryPopup::handleInput(NancyInput &input) {
 		if (overClose) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				playButtonClickSound(closeBtn);
 				input.eatMouseInput();
 				close();
 				return;
@@ -489,6 +499,7 @@ void InventoryPopup::handleInput(NancyInput &input) {
 		drawFilterTab(i, true);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			playButtonClickSound(filter.button);
 			setActiveFilterIndex(i);
 			_currentPage = 0;
 			_scrollPos = 0.0f;

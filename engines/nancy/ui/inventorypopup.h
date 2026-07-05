@@ -86,6 +86,12 @@ private:
 	void rebuildVisibleList();
 	void setActiveFilterIndex(uint index);
 
+	// Play a popup button's click sound (the filter tabs and the close X),
+	// mirroring the original's per-CUIButton click cue. Falls back to the
+	// shared button-click slot in the popup header when the button carries no
+	// sound of its own.
+	void playButtonClickSound(const UIButtonRecord &button);
+
 	// Apply the current scrollbar position to the page index, clamping
 	// to the number of pages required by the active filter.
 	void updatePageFromScroll();
