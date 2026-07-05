@@ -82,6 +82,11 @@ Common::KeymapArray Macs2MetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("F5");
 	engineKeyMap->addAction(act);
 
+	act = new Action("HELP", _("Help / map"));
+	act->setCustomEngineActionEvent(kMacs2ActionHelp);
+	act->addDefaultInputMapping("F1");
+	engineKeyMap->addAction(act);
+
 	return Keymap::arrayOf(engineKeyMap);
 }
 

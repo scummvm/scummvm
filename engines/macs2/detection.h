@@ -44,6 +44,7 @@ enum Macs2Action {
 	kMacs2ActionMenu,
 	kMacs2ActionGameSpeed,
 	kMacs2ActionOpenGMM,
+	kMacs2ActionHelp,
 };
 
 extern const PlainGameDescriptor macs2Games[];

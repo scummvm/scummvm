@@ -263,7 +263,7 @@ int View1::findInventoryItem(const GameObject *item) {
 	return -1;
 }
 
-Character *View1::getCharacterByIndex(uint16 index) {
+Character *View1::getCharacterByIndex(uint16 index) const {
 	if (index > 0 && index <= kMaxSceneObjects) {
 		Character *c = _characterByObjectIndex[index];
 		if (c != nullptr && c->_gameObject != nullptr && c->_gameObject->_index == index)
@@ -1823,6 +1823,13 @@ bool View1::msgAction(const ActionMessage &msg) {
 		}
 		g_engine->openMainMenuDialog();
 		updateCursor();
+		return true;
+	case Macs2::kMacs2ActionHelp:
+		if (!_helpButtonDisabled && _currentMode != ViewMode::VM_HELP &&
+			!g_engine->_scriptExecutor->isExecuting() &&
+			g_engine->_scriptExecutor->_cursorMode != Script::MouseMode::Disabled) {
+			enterMapMode();
+		}
 		return true;
 	default:
 		break;

@@ -481,7 +481,7 @@ public:
 
 	void transferInventoryItem(GameObject *item, GameObject *targetContainer);
 
-	Character *getCharacterByIndex(uint16 index);
+	Character *getCharacterByIndex(uint16 index) const;
 	void rebuildCharacterLookupTable() const;
 
 	int getCharacterArrayIndex(const Character *c) const;
