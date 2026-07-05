@@ -214,7 +214,8 @@ private:
 	uint16 _frameCtr;
 	uint8 _voiceCtr;
 	int16 _destX, _destY;
-	uint16 _destHotspotId;
+	uint16 _destHotspotId;     // 0: walking to a coordinate, 0xffff: invalid sentinel, else: room-exit hotspot
+	uint16 _walkToHotspotId;   // hotspot being approached for interaction; exempt from block-avoidance
 	uint16 _blockedOffset;
 	uint8 _exitCtr;
 	bool _walkFlag;
@@ -299,6 +300,7 @@ public:
 	int8 talkX() const { return _talkX; }
 	int8 talkY() const { return _talkY; }
 	uint16 destHotspotId() const { return _destHotspotId; }
+	uint16 walkToHotspot() const { return _walkToHotspotId; }
 	uint16 blockedOffset() const { return _blockedOffset; }
 	uint8 exitCtr() const { return _exitCtr; }
 	bool walkFlag() const { return _walkFlag; }
@@ -332,6 +334,7 @@ public:
 	void setPosition(int16 newX, int16 newY);
 	void setDestPosition(int16 newX, int16 newY) { _destX = newX; _destY = newY; }
 	void setDestHotspot(uint16 id) { _destHotspotId = id; }
+	void setWalkToHotspot(uint16 id) { _walkToHotspotId = id; }
 	void setExitCtr(uint8 value) { _exitCtr = value; }
 	BlockedState blockedState() const {
 		assert(_data);
