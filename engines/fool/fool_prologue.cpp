@@ -78,7 +78,7 @@ void FoolPrologue::run(bool finale, const BitMap &prevWindow) {
 }
 
 void FoolPrologue::setup(bool finale, const BitMap &prevWindow) {
-	var_i16_1aa = finale ? 2 : 1;
+	_mode = finale ? 2 : 1;
 
 	// 128:0004
 	_zbasic->coordinateWindow();
@@ -90,19 +90,19 @@ void FoolPrologue::setup(bool finale, const BitMap &prevWindow) {
 	// b54 must be the 1-bit screen buffer
 	// 41296 is an array of pointers to screen pages within the buffer
 	for (int i = 0; i < 16; i++) {
-		arr_i32_1e3fc[i] = BitMap(new Graphics::ManagedSurface());
-		arr_i32_1e3fc[i]->create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+		_cardSlices[i] = BitMap(new Graphics::ManagedSurface());
+		_cardSlices[i]->create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	}
 	for (int i = 0; i < 12; i++) {
-		//arr_i32_41296[i] = &arr_i32_b54[SCREEN_PAGE_SIZE*i];
-		arr_i32_41296[i] = BitMap(new Graphics::ManagedSurface());
-		arr_i32_41296[i]->create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+		//_screenPages[i] = &arr_i32_b54[SCREEN_PAGE_SIZE*i];
+		_screenPages[i] = BitMap(new Graphics::ManagedSurface());
+		_screenPages[i]->create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	}
-	arr_i32_3bca4 = BitMap(new Graphics::ManagedSurface());
-	arr_i32_3bca4->create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
+	_foolSlice = BitMap(new Graphics::ManagedSurface());
+	_foolSlice->create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 
 	// 128:0066
-	var_i32_4e = arr_i32_41296[11];
+	_bgPage = _screenPages[11];
 	// 128:0078
 	// pattern buffer
 	_patterns[0] = { { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }; // solid white
@@ -143,7 +143,7 @@ void FoolPrologue::setup(bool finale, const BitMap &prevWindow) {
 	// JMP 0xa88
 	// JMP 0xc8a
 	// 128:0c8a
-	sub_129_004();
+	setupWindow();
 	if (_quit)
 		return;
 
@@ -151,15 +151,15 @@ void FoolPrologue::setup(bool finale, const BitMap &prevWindow) {
 		_grafPtrWindow->portBits->copyFrom(*prevWindow);
 	}
 
-	var_i32_1a6 = _zbasic->mem(-1);
-	if (var_i16_1aa == 1) {
+	_zbasic->mem(-1);
+	if (_mode == 1) {
 		prologueRun();
-		var_i32_1a6 = _zbasic->mem(-1);
+		_zbasic->mem(-1);
 	}
 	// 128:0cb0
-	if (var_i16_1aa == 2) {
+	if (_mode == 2) {
 		finaleRun();
-		var_i32_1a6 = _zbasic->mem(-1);
+		_zbasic->mem(-1);
 	}
 	// 128:0cc8
 	//_zbasic->unk4(); // exit command?
@@ -168,14 +168,14 @@ void FoolPrologue::setup(bool finale, const BitMap &prevWindow) {
 
 void FoolPrologue::copyScreenToPage(int16 screenPage) {
 	// 128:01ba
-	var_i32_40 = arr_i32_41296[screenPage];
-	_toolbox->CopyBits(var_i32_32, var_i32_40, var_i16_38, var_i16_38, kSrcCopy, nullptr);
+	_srcPage = _screenPages[screenPage];
+	_toolbox->CopyBits(_dstPage, _srcPage, _pageRect, _pageRect, kSrcCopy, nullptr);
 }
 
 void FoolPrologue::setPortBitsToPage(int16 screenPage) {
 	// 128:01f4
-	var_i32_40 = arr_i32_41296[screenPage];
-	_toolbox->SetPortBits(var_i32_40);
+	_srcPage = _screenPages[screenPage];
+	_toolbox->SetPortBits(_srcPage);
 }
 
 void FoolPrologue::delay(int16 numTicks) {
@@ -261,7 +261,7 @@ void FoolPrologue::drawTreasurePhaseIn(int16 offset, int16 count) {
 
 void FoolPrologue::scanlineBlitPageToScreen(int16 screenPage, int16 left, int16 right, int16 updatePeriod) {
 	// 128:050a
-	var_i32_40 = arr_i32_41296[screenPage];
+	_srcPage = _screenPages[screenPage];
 	Common::Rect srcRect; // var_i16_5c
 	srcRect.left = left;
 	srcRect.right = right;
@@ -282,7 +282,7 @@ void FoolPrologue::scanlineBlitPageToScreen(int16 screenPage, int16 left, int16 
 		_tickMarker = _toolbox->TickCount();
 		srcRect.top = _randScanline[i];
 		srcRect.bottom = _randScanline[i] + 1;
-		_toolbox->CopyBits(var_i32_40, var_i32_32, srcRect, srcRect, kSrcCopy, nullptr);
+		_toolbox->CopyBits(_srcPage, _dstPage, srcRect, srcRect, kSrcCopy, nullptr);
 		if (i % updatePeriod == 0) {
 			delayFromMarker(0);
 		}
@@ -291,8 +291,8 @@ void FoolPrologue::scanlineBlitPageToScreen(int16 screenPage, int16 left, int16 
 
 void FoolPrologue::blitPageToScreen(int16 screenPage) {
 	// 128:0610
-	var_i32_40 = arr_i32_41296[screenPage];
-	_toolbox->CopyBits(var_i32_40, var_i32_32, var_i16_38, var_i16_38, kSrcCopy, nullptr);
+	_srcPage = _screenPages[screenPage];
+	_toolbox->CopyBits(_srcPage, _dstPage, _pageRect, _pageRect, kSrcCopy, nullptr);
 }
 
 void FoolPrologue::scanlineTransition(int16 patternID) {
@@ -313,7 +313,7 @@ void FoolPrologue::scanlineTransition(int16 patternID) {
 
 void FoolPrologue::zoomTransition(int16 screenPage) {
 	// 128:06e4
-	var_i32_40 = arr_i32_41296[screenPage];
+	_srcPage = _screenPages[screenPage];
 	Common::Rect srcRect; // var_rect_5c
 	for (int i = 1; i <= 0x36; i++) {
 		_tickMarker = _toolbox->TickCount();
@@ -321,10 +321,10 @@ void FoolPrologue::zoomTransition(int16 screenPage) {
 		srcRect.left = (SCREEN_WIDTH/2) - i*5;
 		srcRect.bottom = (SCREEN_HEIGHT/2) + (int)(i*3.33);
 		srcRect.right = (SCREEN_WIDTH/2) + i*5;
-		_toolbox->CopyBits(var_i32_40, var_i32_32, srcRect, srcRect, kSrcCopy, nullptr);
+		_toolbox->CopyBits(_srcPage, _dstPage, srcRect, srcRect, kSrcCopy, nullptr);
 		_toolbox->Delay(0);
 	}
-	_toolbox->CopyBits(var_i32_40, var_i32_32, var_i16_38, var_i16_38, kSrcCopy, nullptr);
+	_toolbox->CopyBits(_srcPage, _dstPage, _pageRect, _pageRect, kSrcCopy, nullptr);
 	_toolbox->Delay(0);
 }
 
@@ -382,9 +382,8 @@ void FoolPrologue::drawText(const Common::U32String &str, int16 x, int16 y) {
 	_toolbox->DrawString(str);
 }
 
-void FoolPrologue::drawRainRecycle(int16 unk) {
+void FoolPrologue::drawRainRecycle(int16 ticks) {
 	// 128:0a8c
-	var_i16_1a4 = unk;
 	_toolbox->PenMode(kPatXor);
 	do {
 		// 128:0a96
@@ -407,7 +406,7 @@ void FoolPrologue::drawRainRecycle(int16 unk) {
 			_rainIndex = 0;
 			_toolbox->Delay(0);
 		}
-	} while (_tickMarker + var_i16_1a4 > _toolbox->TickCount());
+	} while (_tickMarker + ticks > _toolbox->TickCount());
 	_toolbox->Delay(0);
 }
 
@@ -450,7 +449,7 @@ void FoolPrologue::waitForClick() {
 	waitForMouseUp();
 	while (true) {
 		// was: 2
-		var_i16_1ba = _toolbox->GetNextEvent(-1, _event);
+		_toolbox->GetNextEvent(-1, _event);
 		if (_event.what == kMouseDown)
 			break;
 		if ((_event.what == kScummVMQuitEvt) || (_event.what == kScummVMReturnToLauncherEvt)) {
@@ -467,7 +466,7 @@ void FoolPrologue::waitForClick() {
 void FoolPrologue::waitForMouseUp() {
 	// 128:0e80
 	while (true) {
-		var_i16_1ba = (int)_toolbox->GetNextEvent(-1, _event);
+		_toolbox->GetNextEvent(-1, _event);
 		if (_event.what == kUpdateEvt) {
 			onUpdateEvent();
 		}
@@ -491,15 +490,15 @@ void FoolPrologue::waitForMouseUp() {
 
 void FoolPrologue::onUpdateEvent() {
 	// 128:0ed2
-	_toolbox->BeginUpdate(var_window_24);
-	_toolbox->EndUpdate(var_window_24);
+	_toolbox->BeginUpdate(_windowRecord);
+	_toolbox->EndUpdate(_windowRecord);
 }
 
 void FoolPrologue::onDiskEvent() {
 	// 128:0ee0
 	// done by using PEEKWORD into fixed offsets of the window pointer
-	//var_i16_1bc = &var_window_24; // +0
-	//var_i16_1be = &var_window_24; // +2
+	//var_i16_1bc = &_windowRecord; // +0
+	//var_i16_1be = &_windowRecord; // +2
 	//_zbasic->unk11(var_i16_1be);
 }
 
@@ -526,7 +525,8 @@ void FoolPrologue::onDiskEvent() {
 // - Rect screenBits.bounds = 0x76
 // LONGINT randSeed = 0x7e
 
-void FoolPrologue::sub_129_004() {
+void FoolPrologue::setupWindow() {
+	// 129:0004
 	// get the screen width and height from QuickDraw
 	// 0x0004: MOVE.L - 0x904,D0
 	// 0x000a: JSR - "PEEKLONG"   # current A5
@@ -564,54 +564,44 @@ void FoolPrologue::sub_129_004() {
 	_grafPtrWindow = &_grafPortWindow;
 	_toolbox->OpenPort(_grafPtrWindow);
 
+	Common::Rect temp;
 	if ((_windowWidth != SCREEN_WIDTH || _windowHeight != SCREEN_HEIGHT)) {
 		// 129:013a
 		fillRect(MENU_HEIGHT, 0, _windowHeight, _windowWidth, 2);
-		_toolbox->SetRect(arr_i16_1bc, _windowLeft - 2, _windowTop - 2, _windowLeft + SCREEN_WIDTH + 2, _windowTop + SCREEN_HEIGHT + 2);
+		_toolbox->SetRect(temp, _windowLeft - 2, _windowTop - 2, _windowLeft + SCREEN_WIDTH + 2, _windowTop + SCREEN_HEIGHT + 2);
 		_toolbox->PenPat(_patterns[1]);
-		_toolbox->FrameRect(arr_i16_1bc);
+		_toolbox->FrameRect(temp);
 	}
 
 	// 129:01b0
 	_toolbox->SetPort(_grafPtrWindow);
 	_toolbox->PortSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	_toolbox->MovePortTo(_windowLeft, _windowTop);
-	_toolbox->SetRect(arr_i16_1bc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	_toolbox->ClipRect(arr_i16_1bc);
+	_toolbox->SetRect(temp, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	_toolbox->ClipRect(temp);
 
 	// 129:01f2
 	if (_windowHeight == SCREEN_HEIGHT) {
-		_toolbox->SetRect(arr_i16_1bc, 0, MENU_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
-		_toolbox->FillRect(arr_i16_1bc, _patterns[1]);
+		_toolbox->SetRect(temp, 0, MENU_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
+		_toolbox->FillRect(temp, _patterns[1]);
 	} else {
-		_toolbox->SetRect(arr_i16_1bc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-		_toolbox->FillRect(arr_i16_1bc, _patterns[1]);
+		_toolbox->SetRect(temp, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		_toolbox->FillRect(temp, _patterns[1]);
 	}
 
 	// 129:026c
-	var_i32_32 = _grafPtrWindow->portBits;
-	var_i16_36 = 0x40;
-	var_i16_38.top = -_windowTop;
-	var_i16_38.left = -_windowLeft;
-	var_i16_38.bottom = _windowTop + SCREEN_HEIGHT;
-	var_i16_38.right = _windowLeft + SCREEN_WIDTH;
-	var_i16_44 = 0x40;
-	var_i16_46.top = 0x0;
-	var_i16_46.left = 0x0;
-	var_i16_46.bottom = SCREEN_HEIGHT;
-	var_i16_46.right = SCREEN_WIDTH;
-	var_i16_52 = 0x40;
-	var_i16_54.top = 0x0;
-	var_i16_54.left  = 0x0;
-	var_i16_54.bottom = SCREEN_HEIGHT;
-	var_i16_54.right = SCREEN_WIDTH;
+	_dstPage = _grafPtrWindow->portBits;
+	_pageRect.top = -_windowTop;
+	_pageRect.left = -_windowLeft;
+	_pageRect.bottom = _windowTop + SCREEN_HEIGHT;
+	_pageRect.right = _windowLeft + SCREEN_WIDTH;
 
 	uint32 memFree = _zbasic->mem(-1);
 
 	// 129:02fe
 	if (memFree < 0xd6d8) {
 		_toolbox->InitCursor();
-		_zbasic->get(0x0, 0x14, SCREEN_WIDTH, SCREEN_HEIGHT, arr_i32_41296[0], true);
+		_zbasic->get(0x0, 0x14, SCREEN_WIDTH, SCREEN_HEIGHT, _screenPages[0], true);
 		_zbasic->sound(0x19, 0x64, 0xff, 0x0);
 		fillRect(0x46, 0x64, 0xdc, 0x19c, 2);
 		fillRect(0x4b, 0x69, 0xd7, 0x197, 1);
@@ -629,12 +619,11 @@ void FoolPrologue::sub_129_004() {
 		if (_quit)
 			return;
 
-		_zbasic->put(0x0, 0x14, arr_i32_41296[0], kSrcCopy);
-		var_i16_1aa = 0;
+		_zbasic->put(0x0, 0x14, _screenPages[0], kSrcCopy);
+		_mode = 0;
 
 	} else {
 		// 129:04a0
-		var_i16_180 = 1;
 		// this next blob of code is for determining whether to
 		// open the prologue or the finale.
 		// both are in the same EXE, however the finale is accessed
@@ -643,7 +632,8 @@ void FoolPrologue::sub_129_004() {
 		// we don't need to worry about files as we add a start trigger
 		// in the game's menu.
 		/*
-		var_i16_1aa = 1;
+		//var_i16_180 = 1;
+		_mode = 1;
 		// 180 == number, possibly file number
 		// 1c4 == string
 		// 2c4 == unused
@@ -675,16 +665,16 @@ void FoolPrologue::sub_129_004() {
 			// 129:0582
 			if ((var_i16_2ce == var_str_76) &&
 				var_i16_2cc == 0) {
-				var_i16_1aa = 2;
+				_mode = 2;
 			} else {
-				var_i16_1aa = 0;
+				_mode = 0;
 			}
 		}
 		*/
 		// 129:05a6
 		if (testColour.red + testColour.blue + testColour.green != 0) {
 			_toolbox->InitCursor();
-			_zbasic->get(0x0, 0x14, SCREEN_WIDTH, SCREEN_HEIGHT, arr_i32_41296[0], true);
+			_zbasic->get(0x0, 0x14, SCREEN_WIDTH, SCREEN_HEIGHT, _screenPages[0], true);
 			_zbasic->sound(0x19, 0x64, 0xff, 0x00);
 			fillRect(0x64, 0x82, 0xdc, 0x17e, 2);
 			fillRect(0x69, 0x87, 0xd7, 0x179, 1);
@@ -696,15 +686,15 @@ void FoolPrologue::sub_129_004() {
 			drawTextCenter(_zbasic->str(14), 0x100, 0x96);
 
 			// if this is the finale
-			drawTextCenter(var_i16_1aa == 2 ? _zbasic->str(16): _zbasic->str(15), 0x100, 0xaa);
+			drawTextCenter(_mode == 2 ? _zbasic->str(16): _zbasic->str(15), 0x100, 0xaa);
 
 			drawTextCenter(_zbasic->str(17), 0x100, 0xcb);
 			// 129:0730
 			waitForClick();
 			if (_quit)
 				return;
-			_zbasic->put(0x0, 0x14, arr_i32_41296[0], kSrcCopy);
-			var_i16_1aa = 0;
+			_zbasic->put(0x0, 0x14, _screenPages[0], kSrcCopy);
+			_mode = 0;
 		} else {
 			// 129:075c
 			waitForMouseUp();
@@ -714,9 +704,9 @@ void FoolPrologue::sub_129_004() {
 	}
 }
 
-void FoolPrologue::sub_129_764() {
+void FoolPrologue::unk1() {
 	// 129:0764
-	var_i16_2cc = 1;
+	// var_i16_2cc = 1;
 	_zbasic->unk_130(0);
 }
 
@@ -725,7 +715,7 @@ void FoolPrologue::prologueRun() {
 	_prologueLoading = 5;
 	_prologuePicIndex = 0;
 	prologueDrawLoadingMsg();
-	var_i16_18e = SCREEN_HEIGHT;
+	//var_i16_18e = SCREEN_HEIGHT;
 	// fill a buffer with random screen y-positions, to use for the scanline transition
 	shuffleScanlines();
 
@@ -757,7 +747,7 @@ void FoolPrologue::prologueRun() {
 	} else {
 		drawTextCenter(_zbasic->str(OFF(0)), 0x103, 0x10d);
 	}
-	_toolbox->SetPortBits(var_i32_32);
+	_toolbox->SetPortBits(_dstPage);
 	// cliffside images with lightning
 	for (int i = 1; i <= 5; i++) {
 		prologueBufferNextPicture();
@@ -777,7 +767,7 @@ void FoolPrologue::prologueRun() {
 
 	// 130:015c
 	for (int i = 3; i <= 5; i++) {
-		arr_i32_41296[i]->copyFrom(*arr_i32_41296[7]);
+		_screenPages[i]->copyFrom(*_screenPages[7]);
 	}
 	// high priestess skull
 	prologueBufferNextPicture();
@@ -789,7 +779,7 @@ void FoolPrologue::prologueRun() {
 	// high priestess face
 	prologueBufferNextPicture();
 
-	arr_i32_41296[1]->copyFrom(*arr_i32_41296[0]);
+	_screenPages[1]->copyFrom(*_screenPages[0]);
 	setPortBitsToPage(1);
 
 	// 130:0202
@@ -809,16 +799,12 @@ void FoolPrologue::prologueRun() {
 		// priestess shooting lightning
 		prologueBufferNextPicture();
 
-		if (j == 9) {
-			var_i16_74 = 0;
-		} else {
-			var_i16_74 = 0x81;
-		}
+		int16 xPos = (j == 9) ? 0 : 0x81;
 
 		// 130:029a
 		setPortBitsToPage(j - 6);
 		_zbasic->picture(0, 0, _pics[j]);
-		_zbasic->picture(var_i16_74, 0x96, _pics[j - 6]);
+		_zbasic->picture(xPos, 0x96, _pics[j - 6]);
 		_toolbox->ReleaseResource(_pics[j]);
 		_toolbox->ReleaseResource(_pics[j - 6]);
 	}
@@ -838,7 +824,7 @@ void FoolPrologue::prologueRun() {
 
 	// fool looking up at sun
 	_pics[0x48] = _toolbox->GetPicture(0x48);
-	_toolbox->SetPortBits(var_i32_32);
+	_toolbox->SetPortBits(_dstPage);
 
 	// 130:0380
 	if ((_windowWidth == SCREEN_WIDTH) && (_windowHeight == SCREEN_HEIGHT)) {
@@ -866,42 +852,45 @@ void FoolPrologue::prologueRun() {
 	// animate rain
 	drawRain();
 
-	_toolbox->SetRect(arr_i16_1bc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	_toolbox->SetRect(arr_i32_1c4, 0, 0x96, SCREEN_WIDTH, 0x118);
+	Common::Rect temp1; // arr_rect_1bc
+	Common::Rect temp2; // arr_rect_1c4
+	_toolbox->SetRect(temp1, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	_toolbox->SetRect(temp2, 0, 0x96, SCREEN_WIDTH, 0x118);
 
 	// 130:043c
 	for (int i = 1; i <= 2; i++) {
 		_tickMarker = _toolbox->TickCount();
 		drawRainRecycle(0xb4);
+		// 130:0456
 		_tickMarker = _toolbox->TickCount();
-		_toolbox->InvertRect(arr_i16_1bc);
+		_toolbox->InvertRect(temp1);
 		delayFromMarker(1);
-		_toolbox->InvertRect(arr_i16_1bc);
-		// 130:04ca
+		_toolbox->InvertRect(temp1);
+		_tickMarker = _toolbox->TickCount();
+		_srcPage = _screenPages[8];
+		// 130:049e
+		_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, kSrcCopy, nullptr);
+		drawRainRecycle(4);
+
 		for (int j = 0; j <= 3; j++) {
+			// 130:04ca
 			_tickMarker = _toolbox->TickCount();
-			var_i32_40 = arr_i32_41296[8];
-			// 130:049e
-			_toolbox->CopyBits(var_i32_40, var_i32_32, arr_i32_1c4, arr_i32_1c4, kSrcCopy, nullptr);
-			drawRainRecycle(4);
-			var_i16_192 = 0;
-			_tickMarker = _toolbox->TickCount();
-			var_i32_40 = arr_i32_41296[3];
-			_toolbox->CopyBits(var_i32_40, var_i32_32, arr_i32_1c4, arr_i32_1c4, kSrcCopy, nullptr);
+			_srcPage = _screenPages[3];
+			_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, kSrcCopy, nullptr);
 			drawRainRecycle(5);
 			// 130:0518
 			_tickMarker = _toolbox->TickCount();
-			var_i32_40 = arr_i32_41296[4];
-			_toolbox->CopyBits(var_i32_40, var_i32_32, arr_i32_1c4, arr_i32_1c4, kSrcCopy, nullptr);
+			_srcPage = _screenPages[4];
+			_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, kSrcCopy, nullptr);
 			drawRainRecycle(5);
 			_tickMarker = _toolbox->TickCount();
-			var_i32_40 = arr_i32_41296[5];
-			_toolbox->CopyBits(var_i32_40, var_i32_32, arr_i32_1c4, arr_i32_1c4, kSrcCopy, nullptr);
+			_srcPage = _screenPages[5];
+			_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, kSrcCopy, nullptr);
 			drawRainRecycle(5);
 		}
 		// 130:05b6
-		var_i32_40 = arr_i32_41296[7];
-		_toolbox->CopyBits(var_i32_40, var_i32_32, arr_i32_1c4, arr_i32_1c4, kSrcCopy, nullptr);
+		_srcPage = _screenPages[7];
+		_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, kSrcCopy, nullptr);
 
 	}
 
@@ -910,7 +899,7 @@ void FoolPrologue::prologueRun() {
 	drawRain();
 	_tickMarker = _toolbox->TickCount();
 	drawRainRecycle(0xb4);
-	var_i32_40 = arr_i32_41296[1];
+	_srcPage = _screenPages[1];
 
 	// scanline fade in priestess face
 
@@ -922,14 +911,13 @@ void FoolPrologue::prologueRun() {
 		scanline.right = SCREEN_WIDTH;
 		_tickMarker = _toolbox->TickCount();
 		for (int j = 1; j < 0x7; j++) {
-			var_i16_192 = 1;
 			if (y < SCREEN_HEIGHT) {
 				y += 1;
 			}
 			scanline.top = _randScanline[y];
 			scanline.bottom = _randScanline[y] + 1;
 			// 130:068e
-			_toolbox->CopyBits(var_i32_40, var_i32_32, scanline, scanline, kSrcCopy, nullptr);
+			_toolbox->CopyBits(_srcPage, _dstPage, scanline, scanline, kSrcCopy, nullptr);
 		}
 		// 130:06b0
 		drawRainRecycle(1);
@@ -943,16 +931,16 @@ void FoolPrologue::prologueRun() {
 	// 130:06d4
 	for (int i = 1; i <= 4; i++) {
 		_tickMarker = _toolbox->TickCount();
-		_toolbox->InvertRect(arr_i16_1bc);
+		_toolbox->InvertRect(temp1);
 		drawRainRecycle(0x2);
 	}
 	// 130:0704
 	_tickMarker = _toolbox->TickCount();
-	_toolbox->InvertRect(arr_i16_1bc);
+	_toolbox->InvertRect(temp1);
 	drawRainRecycle(0xf);
 
 	_tickMarker = _toolbox->TickCount();
-	_toolbox->InvertRect(arr_i16_1bc);
+	_toolbox->InvertRect(temp1);
 	drawRainRecycle(0x78);
 
 	// cut to shot of cliff
@@ -963,15 +951,15 @@ void FoolPrologue::prologueRun() {
 	_tickMarker = _toolbox->TickCount();
 	drawRainRecycle(0xb4);
 
-	_toolbox->SetRect(arr_i32_1c4, 0, 0, 0x150, 0x96);
+	_toolbox->SetRect(temp2, 0, 0, 0x150, 0x96);
 
 	// priestess zap
 	// 130:0778
 	for (int j = 0; j <= 8; j++) {
 		for (int i = 3; i <= 5; i++) {
 			_tickMarker = _toolbox->TickCount();
-			var_i32_40 = arr_i32_41296[i];
-			_toolbox->CopyBits(var_i32_40, var_i32_32, arr_i32_1c4, arr_i32_1c4, kSrcCopy, nullptr);
+			_srcPage = _screenPages[i];
+			_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, kSrcCopy, nullptr);
 			drawRainRecycle(3);
 		}
 	}
@@ -979,12 +967,13 @@ void FoolPrologue::prologueRun() {
 	// cut to closeup of priestess mid-zap
 	// 130:07ec
 	blitPageToScreen(6);
-	_toolbox->SetRect(arr_i16_1bc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	for (int i = 0; i <= 0x2d; i++) {
+	Common::Rect temp;
+	_toolbox->SetRect(temp, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	for (int i = 0; i <= 41; i++) { // was: 45
 		_tickMarker = _toolbox->TickCount();
 		// limit flashing to WCAG recommendation of 6/second
 		if (((i % 10) == 0) || ((i % 10) == 2)) {
-			_toolbox->InvertRect(arr_i16_1bc);
+			_toolbox->InvertRect(temp);
 		}
 		delayFromMarker(1);
 	}
@@ -1028,21 +1017,21 @@ void FoolPrologue::prologueRun() {
 	drawClickMessage();
 	// 130:0934
 	for (int i = 2; i <= 5; i++) {
-		arr_i32_41296[i]->copyFrom(*arr_i32_41296[1]);
+		_screenPages[i]->copyFrom(*_screenPages[1]);
 	}
 	// 130:0978
 	// draw the sun pulsing to pages 1-5
 	for (int i = 1; i <= 5; i++) {
 		setPortBitsToPage(i);
 		_toolbox->PenPat(_patterns[1]);
-		_toolbox->SetRect(arr_i16_1bc, 0x3c, 0x3c, 0x8c, 0x8c);
-		_toolbox->FrameOval(arr_i16_1bc);
+		_toolbox->SetRect(temp1, 0x3c, 0x3c, 0x8c, 0x8c);
+		_toolbox->FrameOval(temp1);
 		_toolbox->PenPat(_patterns[4]);
 		// 130:09d0
-		_toolbox->InsetRect(arr_i16_1bc, -i, -i);
+		_toolbox->InsetRect(temp1, -i, -i);
 		for (int j = 2; j <= 0xd; j++) {
-			_toolbox->InsetRect(arr_i16_1bc, -j, -j);
-			_toolbox->FrameOval(arr_i16_1bc);
+			_toolbox->InsetRect(temp1, -j, -j);
+			_toolbox->FrameOval(temp1);
 		}
 	}
 	// 130:0a42
@@ -1050,7 +1039,7 @@ void FoolPrologue::prologueRun() {
 	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0);
 	_zbasic->picture(0x166, 0x77, _pics[0x11]);
 	drawClickMessage();
-	arr_i32_41296[7]->copyFrom(*arr_i32_41296[6]);
+	_screenPages[7]->copyFrom(*_screenPages[6]);
 	prologueRenderNextText();
 	_toolbox->ReleaseResource(_pics[0x11]);
 	setPortBitsToPage(7);
@@ -1059,11 +1048,11 @@ void FoolPrologue::prologueRun() {
 	prologueRenderNextText();
 	_toolbox->ReleaseResource(_pics[0x12]);
 	setPortBitsToPage(8);
-	arr_i32_41296[8]->copyFrom(*arr_i32_41296[7]);
+	_screenPages[8]->copyFrom(*_screenPages[7]);
 	fillRect(0x73, 0x163, 0xfa, 0x1e0, 0);
 	_zbasic->picture(0x16d, 0x80, _pics[0x48]);
 	_toolbox->ReleaseResource(_pics[0x48]);
-	_toolbox->SetPortBits(var_i32_32);
+	_toolbox->SetPortBits(_dstPage);
 
 	// 130:0b74
 	delayFromMarker(0xd2);
@@ -1082,39 +1071,39 @@ void FoolPrologue::prologueRun() {
 	if (_quit)
 		return;
 	// 130:0b98
-	var_i16_74 = 0;
-	var_i16_192 = 1;
+	int16 pageIndex = 0;
+	int16 increment = 1;
 	while (_event.what != kMouseDown) {
 		// 130:0ba4
 		_tickMarker = _toolbox->TickCount();
-		var_i16_74 += var_i16_192;
+		pageIndex += increment;
 		// 130:0bbe
-		if (var_i16_74 == 0x5) {
-			var_i16_192 = -1;
+		if (pageIndex == 0x5) {
+			increment = -1;
 		}
-		if (var_i16_74 == 1) {
-			var_i16_192 = 1;
+		if (pageIndex == 1) {
+			increment = 1;
 		}
-		blitPageToScreen(var_i16_74);
+		blitPageToScreen(pageIndex);
 		delayFromMarker(0xa);
 		// 130:0bee
-		var_i16_1ba = _toolbox->GetNextEvent(2, _event);
+		_toolbox->GetNextEvent(2, _event);
 	}
 	while (!((_event.what == kNullEvent) && (_event.modifiers & kModMouseButtonUp))) {
 		// 130:0c0c
 		_tickMarker = _toolbox->TickCount();
-		var_i16_74 += var_i16_192;
+		pageIndex += increment;
 		// 130:0c26
-		if (var_i16_74 == 0x5) {
-			var_i16_192 = -1;
+		if (pageIndex == 0x5) {
+			increment = -1;
 		}
-		if (var_i16_74 == 1) {
-			var_i16_192 = 1;
+		if (pageIndex == 1) {
+			increment = 1;
 		}
-		blitPageToScreen(var_i16_74);
+		blitPageToScreen(pageIndex);
 		delayFromMarker(0xa);
 		// 130:0c56
-		var_i16_1ba = _toolbox->GetNextEvent(-1, _event);
+		_toolbox->GetNextEvent(-1, _event);
 		if (_event.what == kUpdateEvt) {
 			onUpdateEvent();
 		}
@@ -1210,22 +1199,22 @@ void FoolPrologue::prologueRenderNextText() {
 	int16 count = _zbasic->readDataInt();
 	for (int i = 1; i <= count; i++) {
 		// 130:0f56
-		var_i16_176 = _zbasic->readDataInt();
-		var_i16_180 = _zbasic->readDataInt();
-		var_str_76 = _zbasic->readDataStr();
-		var_i16_1ba = 1;
+		int16 xPos = _zbasic->readDataInt();
+		int16 yPos = _zbasic->readDataInt();
+		Common::U32String text = _zbasic->readDataStr();
+		int16 caratPos = 1;
 		// JMP 0xfc2
 
-		while (var_i16_1ba > 0) {
+		while (caratPos > 0) {
 			// 130:0f78
-			var_i16_1ba = _zbasic->instr(var_i16_1ba, var_str_76, Common::U32String("^")); // was: str(21)
-			if (var_i16_1ba > 0) {
-				var_str_76.replace(var_i16_1ba-1, 1, Common::U32String("\""));
+			caratPos = _zbasic->instr(caratPos, text, Common::U32String("^")); // was: str(21)
+			if (caratPos > 0) {
+				text.replace(caratPos - 1, 1, Common::U32String("\""));
 			}
 		}
 		// 130:0fc8
 		_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, kSrcOr);
-		drawText(var_str_76, var_i16_176, var_i16_180);
+		drawText(text, xPos, yPos);
 	}
 }
 

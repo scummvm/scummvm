@@ -49,6 +49,13 @@ struct Particle {
 	int16 veloc = 0;
 };
 
+struct Line {
+	int16 xStart = 0;
+	int16 yStart = 0;
+	int16 xEnd = 0;
+	int16 yEnd = 0;
+};
+
 struct TreasureLine {
 	int16 xLeft = 0;
 	int16 xRight = 0;
@@ -78,7 +85,7 @@ public:
 	void zoomTransition(int16 screenPage); // sub_128_6e4
 	void zoomFlash(int16 startTop, int16 startLeft, int16 startBottom, int16 startRight, int16 endTop, int16 endLeft, int16 endBottom, int16 endRight, int16 steps); // sub_128_800
 	void drawText(const Common::U32String &str, int16 x, int16 y); // sub_128_a6c
-	void drawRainRecycle(int16 unk); // sub_128_a8c
+	void drawRainRecycle(int16 ticks); // sub_128_a8c
 	void shuffleScanlines(); // sub_128_ccc
 	void drawClickMessage(); // sub_128_de2
 	void drawClickMessageRightAlign(); // sub_128_e1c
@@ -87,8 +94,8 @@ public:
 	void onUpdateEvent(); // sub_128_ed2
 	void onDiskEvent(); // sub_128_ee0
 
-	void sub_129_004();
-	void sub_129_764();
+	void setupWindow(); // sub_129_004
+	void unk1(); // sub_129_764
 
 	void prologueRun(); // sub_130_004
 	void prologueBufferNextPicture(); // sub_130_cea
@@ -125,64 +132,24 @@ private:
 
 	EventRecord _event; // var_ev_22
 
-	WindowRecord var_window_24;
+	WindowRecord _windowRecord; // var_window_24
 
-	BitMap var_i32_32;
+	BitMap _dstPage; // var_i32_32
 
-	int16 var_i16_36;
-	Common::Rect var_i16_38;
-	BitMap var_i32_40;
-	int16 var_i16_44;
-	Common::Rect var_i16_46;
-	BitMap var_i32_4e;
-
-	int16 var_i16_52;
-	Common::Rect var_i16_54;
-
-	Common::Rect var_i16_6c;
-
-	int16 var_i16_74;
-
-	Common::U32String var_str_76;
-
-	int16 var_i16_176;
-	int16 var_i16_180;
-	int16 var_i16_18e;
-
-	int16 var_i16_192;
-
-	int16 var_i16_1a4;
-	uint32 var_i32_1a6;
+	Common::Rect _pageRect; // var_rect_38
+	BitMap _srcPage; // var_i32_40
+	BitMap _bgPage; // var_i32_4e
 
 	// 1 for prologue, 2 for finale
-	int16 var_i16_1aa;
-	byte *var_i32_1ac;
-	byte *var_i32_1b0;
-
-	int16 var_i16_1b4;
-	int16 var_i16_1b6;
-	int16 var_i16_1b8;
-	int16 var_i16_1ba;
-
-	Common::U32String var_i16_1c4;
-
-	int16 var_i16_2cc;
-	Common::U32String var_i16_2ce;
+	int16 _mode; // var_i16_1aa
 
 	int16 _prologueLoading; // var_i16_3ce
 	int16 _prologuePicIndex; // var_i16_3d4
-	int16 var_i16_3e6;
 
 	// picture resource handles
 	PicHandle _pics[92] = { nullptr }; // arr_i32_0
 
 	Pattern _patterns[5]; // arr_pat_194
-
-
-	Common::Rect arr_i16_1bc;
-	Common::Rect arr_i32_1c4;
-
-	int16 arr_i16_1e8[1004] = { 0 };
 
 	Particle _rain[251]; // arr_i16_1e8
 	TreasureLine _treasure[251]; // arr_i16_1e8
@@ -190,21 +157,15 @@ private:
 	GrafPort _grafPortWindow; // arr_i32_9c0
 	GrafPort _grafPortMenu; // arr_i32_a8a
 
-	BitMap arr_i32_1e3fc[16];
+	BitMap _cardSlices[16]; // arr_i32_1e3fc
 
-	BitMap arr_i32_3bca4;
+	BitMap _foolSlice; // arr_i32_3bca4
 
-	BitMap arr_i32_41296[12];
+	BitMap _screenPages[12]; // arr_i32_41296
 
 	int16 _randScanline[SCREEN_HEIGHT] = { 0 }; // arr_i16_412ea
 
-	int16 arr_i16_41af4[32];
-	Common::Rect arr_rect_41af4;
-	Common::Rect arr_i16_41afc;
-	int16 arr_i16_41b04[3];
-	Common::Rect arr_i16_41b0a;
-
-	double arr_f64_41bbe[16] = { 0 };
+	int16 _cardLines[32]; // arr_i16_41af4
 
 };
 
