@@ -39,7 +39,8 @@ class HollywoodEngine;
 // mainFlowStateId, scene3070EntryLineSeen, scene3070DrawerOpen,
 // scene3070SurgicalNeedleThreadState, scene3070SurgicalNeedleThreadTaken,
 // scene3070InterludeCutsceneSeen, scene3070InterludeUnlocked,
-// scene3070LateCutscenePlayed.
+// scene3070LateCutscenePlayed, scene9140VariantIndex,
+// scene9140ReturnStateId.
 class Scene3070 : public PlayableScene {
 public:
 	Scene3070(HollywoodEngine *vm);

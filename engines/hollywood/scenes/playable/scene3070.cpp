@@ -427,8 +427,11 @@ void Scene3070::runLateCutsceneBranch() {
 	beginPrimarySpeechLine(0x0d, 8, 0x212, 0x09e, 0x20, 0x00, 0x3f);
 	beginPrimarySpeechLine(0x0d, 9, 0x212, 0x09e, 0x20, 0x00, 0x3f);
 	beginSecondarySpeechLine(0x0d, 10);
-	_vm->gameState().scene3070LateCutscenePlayed = true;
-	_vm->gameState().mainFlowStateId = kScene3070LaterUnimplementedCutsceneState;
+	GameplayState &state = _vm->gameState();
+	state.scene3070LateCutscenePlayed = true;
+	state.scene9140VariantIndex = 3;
+	state.scene9140ReturnStateId = 6000;
+	state.mainFlowStateId = kScene3070LaterUnimplementedCutsceneState;
 }
 
 void Scene3070::runInterludeCutscene() {

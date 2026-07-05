@@ -122,6 +122,8 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(state.activeAudioChapterIndex);
 	s.syncAsByte(state.currentInventoryOwnerIndex);
 	s.syncAsByte(state.currentAmbientMusicCueId);
+	s.syncAsUint16LE(state.scene9140ReturnStateId);
+	s.syncAsByte(state.scene9140VariantIndex);
 	s.syncBytes(state.inventoryItemCountByOwner, sizeof(state.inventoryItemCountByOwner));
 	s.syncBytes(state.inventoryFirstVisibleSlotByOwner, sizeof(state.inventoryFirstVisibleSlotByOwner));
 	s.syncBytes(&state.inventorySlotItemIdByOwner[0][0], sizeof(state.inventorySlotItemIdByOwner));
@@ -293,6 +295,13 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene6020TaffyLeft);
 	syncStateBool(s, state.scene6030HannoverInterviewCompleted);
 	s.syncAsByte(state.scene6030CoffeeState);
+	syncStateBool(s, state.scene6040EntryLineSeen);
+	syncStateBool(s, state.scene6040PaintCanTaken);
+	s.syncAsByte(state.scene6040WireState);
+	syncStateBool(s, state.scene6050MuseumInteriorUnlocked);
+	syncStateBool(s, state.scene6050GuardPresent);
+	syncStateBool(s, state.scene6050GuardAllowsEntry);
+	syncStateBool(s, state.scene6050DisplayCaseOpened);
 	syncStateBool(s, state.seenScene8010EntryLine);
 	s.syncAsByte(state.scene8010FishermanConversationState);
 	syncStateBool(s, state.seenScene8020EntryLine);
@@ -473,6 +482,8 @@ void HollywoodEngine::normalizeLoadedGameState() {
 		state.scene1030TablePickupState = 0;
 	if (state.scene1040GorillaCordState > 2)
 		state.scene1040GorillaCordState = 0;
+	if (state.scene6040WireState > 2)
+		state.scene6040WireState = 0;
 	if (state.scene3060SecretDoorRevealState > 1)
 		state.scene3060SecretDoorRevealState = 0;
 	if (state.scene3060GlobeFrame >= 0x1e)

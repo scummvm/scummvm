@@ -1,0 +1,621 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "hollywood/scenes/intro/scene9170.h"
+
+#include "common/debug.h"
+#include "common/system.h"
+
+#include "hollywood/font.h"
+#include "hollywood/gameplay/game_state.h"
+#include "hollywood/graphics.h"
+#include "hollywood/hollywood.h"
+
+namespace Hollywood {
+
+const char *const kScene9170ArchiveName = "RESOURCE.I17";
+const char *const kScene9170TextArchiveName = "RESOURCE.003";
+const char *const kScene9170MusicArchiveName = "RESOURCE.M09";
+const uint kScene9170StageIndex = 921;
+const uint16 kScene9170NextState = 0x23c8;
+const uint16 kScene9170MusicCueId = 0x000c;
+const uint kScene9170TallFramebufferSize = 0x100000;
+const byte kScene9170BlueSpeechColor = 0xfb;
+const uint kScene9170SpeechFrameMillis = 125;
+const uint kScene9170ScrollFrameMillis = 50;
+const uint kScene9170EffectFrameMillis = 60;
+const int kScene9170SpeechLineHeight = 20;
+
+const byte kScene9170UpperFrameMaps[3][5] = {
+	{ 0, 1, 2, 3, 4 },
+	{ 5, 6, 7, 8, 9 },
+	{ 10, 11, 12, 13, 14 }
+};
+
+const byte kScene9170LowerFrameMap[] = {
+	0, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8
+};
+
+const byte kScene9170EffectFrameMap[] = {
+	0, 1, 2, 3, 4, 5, 4, 3, 2, 1
+};
+
+const byte kScene9170EventFrameMap[] = {
+	0, 1, 2, 3
+};
+
+const byte kScene9170ScrollDownA[] = {
+	4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 40, 40, 36, 32, 28, 24, 20, 16, 12, 8, 4
+};
+
+const byte kScene9170ScrollUpA[] = {
+	4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 40, 40, 40, 40, 40, 60,
+	60, 40, 40, 40, 40, 40, 40, 36, 32, 28, 24, 20, 16, 12, 8, 4
+};
+
+const byte kScene9170ScrollDownB[] = {
+	4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 40, 40, 24, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 40, 36, 32, 28, 24, 20, 16, 12, 8, 4
+};
+
+const byte kScene9170ScrollUpB[] = {
+	4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 24, 40, 40, 40, 36, 32, 28, 24, 20, 16, 12, 8, 4
+};
+
+Scene9170::Scene9170(HollywoodEngine *vm) :
+		IntroSceneBase(vm, "Scene 9170", kScene9170TallFramebufferSize, kFrameBufferSize),
+		_resources(),
+		_music(),
+		_speech(),
+		_sound(),
+		_text(),
+		_paletteResource(),
+		_baseFramebuffer(),
+		_staticFramebuffer(),
+		_subtitle(),
+		_rowOffset(0),
+		_upperActorsEnabled(false),
+		_lowerActorsEnabled(false),
+		_eventOverlayVisible(false),
+		_lowerFrame(0),
+		_effectFrame(0),
+		_eventFrame(0),
+		_animationStep(0) {
+	_paletteResource.resize(kPaletteSize);
+	_baseFramebuffer.resize(kFrameBufferSize);
+	_staticFramebuffer.resize(kScene9170TallFramebufferSize);
+	_subtitle.visible = false;
+	_subtitle.colorIndex = kScene9170BlueSpeechColor;
+	_subtitle.centerX = 0;
+	_subtitle.topY = 0;
+	_upperFrames[0] = _upperFrames[1] = _upperFrames[2] = 0;
+}
+
+bool Scene9170::play() {
+	if (!load())
+		return false;
+
+	runSequence();
+
+	stopAudio();
+	clearSubtitle();
+	fadeOutPalette();
+	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
+	composeFrame();
+	presentFrame();
+
+	if (!Engine::shouldQuit())
+		_vm->gameState().mainFlowStateId = kScene9170NextState;
+
+	return true;
+}
+
+bool Scene9170::load() {
+	if (!_resources.loadChunkTable(kScene9170ArchiveName))
+		return false;
+
+	if (!_resources.validateChunkRange(kScene9170ArchiveName, _debugName, 0, 8))
+		return false;
+
+	if (!loadChunk(0, _paletteResource, kPaletteSize))
+		return false;
+
+	_resources.allocateArena(_resources.totalChunkSize(1, 8));
+	for (uint i = 1; i <= 8; ++i) {
+		if (!loadArenaChunk(i))
+			return false;
+	}
+
+	if (!_text.loadStage(kScene9170TextArchiveName, _debugName, kScene9170StageIndex))
+		return false;
+
+	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
+	return true;
+}
+
+bool Scene9170::loadChunk(uint index, Common::Array<byte> &destination, uint fixedSize) {
+	return _resources.loadFixedChunk(_debugName, index, destination, fixedSize);
+}
+
+bool Scene9170::loadArenaChunk(uint index) {
+	return _resources.loadArenaChunk(_debugName, index, index);
+}
+
+void Scene9170::runSequence() {
+	buildInitialStaticFrame();
+	_music.setArchive(Common::Path(kScene9170MusicArchiveName));
+	_music.playMusicCue(kScene9170MusicCueId, 50);
+
+	_rowOffset = 0;
+	addBlockListToStatic(2, 0);
+	composeFrame();
+	fadeInPalette();
+	waitWithComposite(7000);
+
+	scrollByTable(kScene9170ScrollDownA, ARRAYSIZE(kScene9170ScrollDownA), true);
+	_upperActorsEnabled = true;
+	_lowerActorsEnabled = false;
+	composeFrame();
+	presentFrame();
+
+	for (byte frameIndex = 0; frameIndex < 6 && !_skipRequested && !Engine::shouldQuit(); ++frameIndex) {
+		runSpeechLine(1, frameIndex, 0x0e8, 0x0cc, 0x20, 0x30, 0x3f, 0);
+		runSpeechLine(2, frameIndex, 0x145, 0x09a, 0x20, 0x30, 0x3f, 1);
+		if (frameIndex < 5)
+			runSpeechLine(3, frameIndex, 0x194, 0x0ce, 0x20, 0x30, 0x3f, 2);
+		else
+			runSpeechLine(3, frameIndex, 0x140, 0x08c, 0x20, 0x30, 0x3f, 5);
+	}
+	runSpeechLine(3, 5, 0x140, 0x08c, 0x20, 0x30, 0x3f, 5);
+
+	for (uint i = 0; i < ARRAYSIZE(kScene9170ScrollUpA) && !_skipRequested && !Engine::shouldQuit(); ++i) {
+		_rowOffset = _rowOffset > kScene9170ScrollUpA[i] ? _rowOffset - kScene9170ScrollUpA[i] : 0;
+		if (i == 0x0f)
+			switchToLowerRoomFrame();
+		composeFrame();
+		presentFrame();
+		if (delay(kScene9170ScrollFrameMillis))
+			return;
+	}
+
+	_lowerActorsEnabled = true;
+	_upperActorsEnabled = false;
+	_lowerFrame = 2;
+	_effectFrame = 0;
+	waitWithComposite(2000);
+	runSpeechLine(4, 0, 0x128, 0x0c2, 0x3f, 0x20, 0x3f, 3);
+	waitWithComposite(2000);
+	runEventOverlayFrames();
+
+	clearStaticRows(0x1e0, HollywoodEngine::kScreenHeight);
+	addBlockListToStatic(4, 0x220);
+	_rowOffset = 0x220;
+	runShake();
+	_rowOffset = 0;
+	runSpeechLine(4, 1, 0x128, 0x0c2, 0x3f, 0x20, 0x3f, 3);
+	waitWithComposite(1000);
+	scrollByTable(kScene9170ScrollDownB, ARRAYSIZE(kScene9170ScrollDownB), true);
+	waitWithComposite(3000);
+	scrollByTable(kScene9170ScrollUpB, ARRAYSIZE(kScene9170ScrollUpB), false);
+	runSpeechLine(4, 2, 0x128, 0x0c2, 0x3f, 0x20, 0x3f, 3);
+	waitWithComposite(2000);
+	scrollTo(0x140, 4);
+	waitWithComposite(3000);
+
+	_lowerFrame = 7;
+	composeFrame();
+	presentFrame();
+	scrollTo(0x0a0, -4);
+	waitWithComposite(1000);
+	runSpeechLine(4, 3, 0x128, 0x0c2, 0x3f, 0x20, 0x3f, 4);
+	waitWithComposite(2000);
+	scrollTo(0x140, 4);
+}
+
+void Scene9170::buildInitialStaticFrame() {
+	_staticFramebuffer.clear(0);
+	_baseFramebuffer.clear(0);
+	drawResourceBlockList(_resources.arena, _resources.chunkOffsets[3], _baseFramebuffer.surface());
+	copyBaseToStaticAtYOffset(0x1e0);
+
+	_upperActorsEnabled = true;
+	_lowerActorsEnabled = false;
+	_eventOverlayVisible = false;
+	_upperFrames[0] = _upperFrames[1] = _upperFrames[2] = 0;
+	_lowerFrame = 0;
+	_effectFrame = 0;
+	_eventFrame = 0;
+}
+
+void Scene9170::switchToLowerRoomFrame() {
+	_baseFramebuffer.clear(0);
+	drawResourceBlockList(_resources.arena, _resources.chunkOffsets[1], _baseFramebuffer.surface());
+	copyBaseToStaticAtYOffset(_rowOffset);
+	_upperActorsEnabled = false;
+	_lowerActorsEnabled = true;
+	_eventOverlayVisible = false;
+	_lowerFrame = 0;
+	_effectFrame = 0;
+	composeFrame();
+	presentFrame();
+
+	clearStaticRows(0x1e0, HollywoodEngine::kScreenHeight);
+	_rowOffset = 0x1e0;
+	addBlockListToStatic(2, 0x1e0);
+}
+
+void Scene9170::addBlockListToStatic(uint chunkIndex, int yOffset) {
+	if (chunkIndex >= IntroResourceSet::kResourceChunkCount)
+		return;
+	drawResourceBlockList(_resources.arena, _resources.chunkOffsets[chunkIndex],
+		_staticFramebuffer.surface(), yOffset);
+}
+
+void Scene9170::copyBaseToStaticAtYOffset(int yOffset) {
+	for (int row = 0; row < HollywoodEngine::kScreenHeight; ++row) {
+		const int destinationRow = row + yOffset;
+		if (destinationRow < 0 || destinationRow >= _staticFramebuffer.surface().h)
+			continue;
+		memcpy(_staticFramebuffer.data() + destinationRow * HollywoodEngine::kSceneBufferWidth,
+			_baseFramebuffer.data() + row * HollywoodEngine::kSceneBufferWidth,
+			HollywoodEngine::kSceneBufferWidth);
+	}
+}
+
+void Scene9170::clearStaticRows(int yOffset, int rowCount) {
+	for (int row = 0; row < rowCount; ++row) {
+		const int destinationRow = yOffset + row;
+		if (destinationRow < 0 || destinationRow >= _staticFramebuffer.surface().h)
+			continue;
+		memset(_staticFramebuffer.data() + destinationRow * HollywoodEngine::kSceneBufferWidth,
+			0, HollywoodEngine::kSceneBufferWidth);
+	}
+}
+
+void Scene9170::composeFrame() {
+	memcpy(_sceneFramebuffer.data(), _staticFramebuffer.data(), _staticFramebuffer.size());
+
+	if (_upperActorsEnabled) {
+		for (uint i = 0; i < 3; ++i)
+			drawSpriteChannel(8, 0x0f, kScene9170UpperFrameMaps[i],
+				ARRAYSIZE(kScene9170UpperFrameMaps[i]), _upperFrames[i]);
+	}
+
+	if (_lowerActorsEnabled) {
+		drawSpriteChannel(6, 9, kScene9170LowerFrameMap, ARRAYSIZE(kScene9170LowerFrameMap), _lowerFrame);
+		drawSpriteChannel(5, 6, kScene9170EffectFrameMap, ARRAYSIZE(kScene9170EffectFrameMap), _effectFrame);
+		if (_eventOverlayVisible)
+			drawSpriteChannel(7, 4, kScene9170EventFrameMap, ARRAYSIZE(kScene9170EventFrameMap), _eventFrame);
+	}
+}
+
+void Scene9170::drawSpriteChannel(uint chunkIndex, uint descriptorCount, const byte *frameMap,
+		uint frameMapSize, byte frameIndex) {
+	if (chunkIndex >= IntroResourceSet::kResourceChunkCount || frameMapSize == 0)
+		return;
+
+	const byte mappedFrame = frameMap[MIN<uint>(frameIndex, frameMapSize - 1)];
+	const int yOffset = (_rowOffset == 0x0a0 || _rowOffset == 0x140) ? 0 : (int)_rowOffset;
+	drawStripSpriteFrame(_resources.arena, _resources.chunkOffsets[chunkIndex], 0,
+		descriptorCount, mappedFrame, _sceneFramebuffer.surface(), yOffset);
+}
+
+void Scene9170::scrollByTable(const byte *table, uint tableSize, bool add) {
+	for (uint i = 0; i < tableSize && !_skipRequested && !Engine::shouldQuit(); ++i) {
+		if (pollEvents())
+			return;
+		if (add)
+			_rowOffset += table[i];
+		else
+			_rowOffset = _rowOffset > table[i] ? _rowOffset - table[i] : 0;
+		composeFrame();
+		presentFrame();
+		if (delay(kScene9170ScrollFrameMillis))
+			return;
+	}
+}
+
+void Scene9170::scrollTo(uint targetRowOffset, int step) {
+	if (step == 0)
+		return;
+
+	while (_rowOffset != targetRowOffset && !_skipRequested && !Engine::shouldQuit()) {
+		if (pollEvents())
+			return;
+		if (step > 0)
+			_rowOffset = MIN<uint>(targetRowOffset, _rowOffset + step);
+		else
+			_rowOffset = _rowOffset > (uint)-step ? _rowOffset - (uint)-step : 0;
+		composeFrame();
+		presentFrame();
+		if (delay(kScene9170ScrollFrameMillis))
+			return;
+	}
+}
+
+void Scene9170::waitWithComposite(uint32 millis) {
+	uint32 elapsed = 0;
+	uint32 animationElapsed = 0;
+	while (elapsed < millis && !_skipRequested && !Engine::shouldQuit()) {
+		if (pollEvents())
+			return;
+		if (animationElapsed >= kScene9170EffectFrameMillis) {
+			animationElapsed %= kScene9170EffectFrameMillis;
+			advanceIdleAnimation(3);
+		}
+		composeFrame();
+		presentFrame();
+		const uint32 slice = MIN<uint32>(millis - elapsed, 10);
+		g_system->delayMillis(slice);
+		elapsed += slice;
+		animationElapsed += slice;
+	}
+}
+
+void Scene9170::fadeInPalette() {
+	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
+	for (int threshold = 0x3f; threshold > 0 && !_skipRequested && !Engine::shouldQuit(); --threshold) {
+		for (uint color = 0; color < 256; ++color) {
+			for (uint component = 0; component < 3; ++component) {
+				const uint offset = color * 3 + component;
+				if (_paletteResource[offset] >= threshold && _paletteCurrent[offset] < _paletteResource[offset])
+					++_paletteCurrent[offset];
+			}
+		}
+		presentFrame();
+		if (delay(10))
+			return;
+	}
+	memcpy(_paletteCurrent.data(), _paletteResource.data(), _paletteCurrent.size());
+	presentFrame();
+}
+
+void Scene9170::fadeOutPalette() {
+	for (byte threshold = 1; threshold < 0x40 && !_skipRequested && !Engine::shouldQuit(); ++threshold) {
+		for (uint i = 0; i < _paletteResource.size(); ++i) {
+			if (_paletteResource[i] >= threshold)
+				_paletteCurrent[i] = _paletteCurrent[i] == 0 ? 0 : _paletteCurrent[i] - 1;
+		}
+		presentFrame();
+		if (delay(10))
+			return;
+	}
+}
+
+void Scene9170::runSpeechLine(byte rowIndex, byte frameIndex, uint16 centerX, uint16 topY,
+		byte red, byte green, byte blue, byte speakerGroup) {
+	uint16 textRecordId = 0;
+	byte continuationCount = 0;
+	uint16 voiceSampleId = 0;
+	if (!_text.getStageCue(rowIndex, frameIndex, textRecordId, continuationCount, voiceSampleId))
+		return;
+
+	_paletteCurrent[kScene9170BlueSpeechColor * 3] = red;
+	_paletteCurrent[kScene9170BlueSpeechColor * 3 + 1] = green;
+	_paletteCurrent[kScene9170BlueSpeechColor * 3 + 2] = blue;
+	runSpeechCue(textRecordId, continuationCount, voiceSampleId, centerX, topY, speakerGroup);
+}
+
+void Scene9170::runSpeechCue(uint16 textRecordId, byte continuationCount, uint16 voiceSampleId,
+		uint16 centerX, uint16 topY, byte speakerGroup) {
+	const byte lineCount = MAX<byte>(1, continuationCount);
+	for (byte part = 0; part < lineCount && !_skipRequested && !Engine::shouldQuit(); ++part) {
+		const Common::String text = _text.largeTextRecord(textRecordId + part);
+		if (!text.empty()) {
+			_subtitle.visible = true;
+			_subtitle.colorIndex = kScene9170BlueSpeechColor;
+			_subtitle.centerX = centerX;
+			_subtitle.topY = topY;
+			wrapSubtitleText(text, centerX, _subtitle.lines);
+		}
+
+		const uint16 sampleId = voiceSampleId == 0 ? 0 : voiceSampleId + part;
+		const bool started = sampleId != 0 && _speech.playSample(sampleId, 100);
+		const uint32 duration = started ? MAX<uint32>(_speech.lastSampleDurationMillis(), 750) :
+			MAX<uint32>(1200, _subtitle.lines.size() * 1100);
+		uint32 elapsed = 0;
+		uint32 speechElapsed = 0;
+		uint32 effectElapsed = 0;
+		_animationStep = 0;
+		while (elapsed < duration && !_skipRequested && !Engine::shouldQuit()) {
+			if (pollEvents())
+				return;
+
+			if (speechElapsed >= kScene9170SpeechFrameMillis) {
+				speechElapsed %= kScene9170SpeechFrameMillis;
+				advanceSpeechAnimation(speakerGroup);
+			}
+			if (effectElapsed >= kScene9170EffectFrameMillis) {
+				effectElapsed %= kScene9170EffectFrameMillis;
+				advanceIdleAnimation(speakerGroup);
+			}
+
+			composeFrame();
+			presentFrame();
+			const uint32 slice = MIN<uint32>(duration - elapsed, 10);
+			g_system->delayMillis(slice);
+			elapsed += slice;
+			speechElapsed += slice;
+			effectElapsed += slice;
+		}
+
+		switch (speakerGroup) {
+		case 0:
+			_upperFrames[0] = 0;
+			break;
+		case 1:
+			_upperFrames[1] = 0;
+			break;
+		case 2:
+			_upperFrames[2] = 0;
+			break;
+		case 3:
+			_lowerFrame = 2;
+			break;
+		case 4:
+			_lowerFrame = 7;
+			break;
+		case 5:
+			_upperFrames[0] = _upperFrames[1] = _upperFrames[2] = 0;
+			break;
+		default:
+			break;
+		}
+		clearSubtitle();
+		composeFrame();
+		presentFrame();
+	}
+}
+
+void Scene9170::advanceSpeechAnimation(byte speakerGroup) {
+	++_animationStep;
+	const byte frame = _animationStep % 5;
+	switch (speakerGroup) {
+	case 0:
+		_upperFrames[0] = frame;
+		break;
+	case 1:
+		_upperFrames[1] = frame;
+		break;
+	case 2:
+		_upperFrames[2] = frame;
+		break;
+	case 3:
+		_lowerFrame = 2 + frame;
+		break;
+	case 4:
+		_lowerFrame = 7 + frame;
+		break;
+	case 5:
+		_upperFrames[0] = _upperFrames[1] = _upperFrames[2] = frame;
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene9170::advanceIdleAnimation(byte speakerGroup) {
+	if (_lowerActorsEnabled) {
+		_effectFrame = (_effectFrame + 1) % ARRAYSIZE(kScene9170EffectFrameMap);
+		if (speakerGroup == 3 || speakerGroup == 4)
+			return;
+		_lowerFrame = _lowerFrame == 0 ? 1 : 0;
+	}
+}
+
+void Scene9170::runEventOverlayFrames() {
+	_eventOverlayVisible = true;
+	for (byte frame = 0; frame < ARRAYSIZE(kScene9170EventFrameMap) && !_skipRequested && !Engine::shouldQuit(); ++frame) {
+		_eventFrame = frame;
+		composeFrame();
+		presentFrame();
+		if (delay(kScene9170SpeechFrameMillis))
+			return;
+	}
+	_eventOverlayVisible = false;
+	_eventFrame = 0;
+}
+
+void Scene9170::runShake() {
+	_sound.playSample(0x1e, 100);
+	for (uint i = 0; i < 0x32 && !_skipRequested && !Engine::shouldQuit(); ++i) {
+		if (pollEvents())
+			return;
+		composeFrame();
+		presentFrame();
+		if (delay(20))
+			return;
+	}
+}
+
+uint Scene9170::presentRowOffset() const {
+	return _rowOffset;
+}
+
+void Scene9170::stopAudio() {
+	_speech.stop();
+	_sound.stop();
+	_music.stop();
+}
+
+void Scene9170::clearSubtitle() {
+	_subtitle.visible = false;
+	_subtitle.lines.clear();
+}
+
+void Scene9170::drawFrameOverlays() {
+	if (!_subtitle.visible || !_vm->font() || !_vm->font()->isLoaded())
+		return;
+
+	HollywoodFont *font = _vm->font();
+	font->setShadowColor(0);
+	for (uint lineIndex = 0; lineIndex < _subtitle.lines.size(); ++lineIndex) {
+		const Common::String &line = _subtitle.lines[lineIndex];
+		const int lineWidth = subtitleTextWidth(line);
+		int x = (int)_subtitle.centerX - (lineWidth >> 1);
+		if (x < 0)
+			x = 0;
+		if (x + lineWidth > HollywoodEngine::kScreenWidth)
+			x = MAX<int>(0, HollywoodEngine::kScreenWidth - lineWidth);
+		const int y = (int)_subtitle.topY + lineIndex * kScene9170SpeechLineHeight;
+		font->drawString(_screen.surfacePtr(), line, x, y, lineWidth, _subtitle.colorIndex,
+			Graphics::kTextAlignLeft, 0, false, true);
+	}
+}
+
+void Scene9170::wrapSubtitleText(const Common::String &text, uint16 anchorSceneX,
+		Common::Array<Common::String> &lines) const {
+	lines.clear();
+	if (text.empty())
+		return;
+
+	uint maxChars = anchorSceneX < 0xa0 || HollywoodEngine::kScreenWidth - anchorSceneX < 0xa0 ? 0x24 : 0x32;
+	const char *source = text.c_str();
+	const uint textLength = text.size();
+	uint cursor = 0;
+	while (cursor < textLength && lines.size() < 10) {
+		uint end = textLength;
+		if (cursor + maxChars < textLength) {
+			end = cursor + maxChars;
+			while (end > cursor && (byte)source[end] != 0x20 && source[end] != 0)
+				--end;
+			while (end > cursor && (byte)source[end - 1] == 0x20)
+				--end;
+			if (end == cursor)
+				end = MIN<uint>(textLength, cursor + maxChars);
+		}
+		lines.push_back(Common::String(source + cursor, end - cursor));
+		cursor = end;
+		while (cursor < textLength && (byte)source[cursor] == 0x20)
+			++cursor;
+		maxChars = maxChars > 2 ? maxChars - 2 : 1;
+	}
+}
+
+uint Scene9170::subtitleTextWidth(const Common::String &text) const {
+	if (!_vm->font() || !_vm->font()->isLoaded())
+		return 0;
+
+	return _vm->font()->getStringWidth(text) + 2;
+}
+
+} // End of namespace Hollywood
