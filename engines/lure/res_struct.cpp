@@ -1129,6 +1129,11 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 			// Entry is skipped if hotspot not present or is executing hotspot script
 			continue;
 
+		// Don't treat the hotspot we're deliberately walking up to as an obstacle
+		if (charHotspot->walkToHotspot() == hotspot->hotspotId()) {
+			continue;
+		}
+
 		// Scan through the pause list to see if there's a record for the
 		// calling character and the impinging list entry
 		bool foundEntry = false;

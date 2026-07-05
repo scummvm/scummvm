@@ -56,6 +56,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_destX = res->startX;
 	_destY = res->startY;
 	_destHotspotId = 0;
+	_walkToHotspotId = 0;
 	_frameWidth = res->width;
 	_frameStartsUsed = false;
 	_height = res->height;
@@ -101,6 +102,7 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	_override = nullptr;
 	_colorOffset = 0;
 	_destHotspotId = character->hotspotId();
+	_walkToHotspotId = 0;
 	_blockedOffset = 0;
 	_exitCtr = 0;
 	_voiceCtr = 0;
@@ -172,6 +174,7 @@ Hotspot::Hotspot(): _pathFinder(nullptr) {
 	_override = nullptr;
 	_colorOffset = 0;
 	_destHotspotId = 0;
+	_walkToHotspotId = 0;
 	_blockedOffset = 0;
 	_exitCtr = 0;
 	_voiceCtr = 0;
@@ -492,6 +495,7 @@ void Hotspot::walkTo(int16 endPosX, int16 endPosY, uint16 destHotspot) {
 	_destX = endPosX;
 	_destY = endPosY;
 	_destHotspotId = destHotspot;
+	_walkToHotspotId = 0;
 	currentActions().addFront(START_WALKING, _roomNumber);
 }
 
@@ -606,6 +610,7 @@ void Hotspot::setRandomDest() {
 	else
 		currentActions().top().setAction(START_WALKING);
 	_walkFlag = true;
+	setWalkToHotspot(0);
 
 	// Try up to 20 times to find an unoccupied destination
 	for (int tryCtr = 0; tryCtr < 20; ++tryCtr) {
@@ -1100,6 +1105,7 @@ bool Hotspot::characterWalkingCheck(uint16 id) {
 	int16 xp, yp;
 	bool altFlag;
 	HotspotData *hotspot;
+	uint16 walkToHotspotId = 0;
 
 	// Note that several invalid hotspot Ids are used to identify special walk to
 	// coordinates used throughout the game
@@ -1137,6 +1143,7 @@ bool Hotspot::characterWalkingCheck(uint16 id) {
 			yp = hotspot->walkY & 0x7fff;
 			altFlag = (hotspot->walkY & 0x8000) != 0;
 		}
+		walkToHotspotId = id;
 		break;
 	}
 
@@ -1146,6 +1153,7 @@ bool Hotspot::characterWalkingCheck(uint16 id) {
 			((((y() + heightCopy()) >> 3) - 1) != (yp >> 3))) {
 			// Walk to the specified destination
 			walkTo(xp, yp);
+			setWalkToHotspot(walkToHotspotId);
 			return true;
 		} else {
 			return false;
@@ -1156,6 +1164,7 @@ bool Hotspot::characterWalkingCheck(uint16 id) {
 	if ((ABS(x() - xp) >= 8) ||
 		(ABS(y() + heightCopy() - yp - 1) >= 19)) {
 		walkTo(xp, yp);
+		setWalkToHotspot(walkToHotspotId);
 		return true;
 	}
 
