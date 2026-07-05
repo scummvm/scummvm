@@ -1702,7 +1702,6 @@ void ScummEngine_v6::o6_loadRoomWithEgo() {
 
 void ScummEngine_v6::o6_getRandomNumber() {
 	int rnd = _rnd.getRandomNumber(0x7fff);
-	int max = pop();
 	rnd = rnd % (pop() + 1);
 	if (VAR_RANDOM_NR != 0xFF)
 		VAR(VAR_RANDOM_NR) = rnd;
