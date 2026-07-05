@@ -510,6 +510,30 @@ void View1::renderString(const Common::Point pos, const Common::String &s) {
 	renderString(pos.x, pos.y, s);
 }
 
+void View1::renderStringTo(uint16 x, uint16 y, const Common::String &s, Graphics::ManagedSurface &surf) {
+	uint16 currentX = x;
+	uint16 currentY = y;
+
+	uint16 widestGlyph = 1;
+	for (auto iter = s.begin(); iter != s.end(); iter++) {
+		GlyphData data;
+		if (g_engine->findGlyph(*iter, data)) {
+			widestGlyph = MAX(widestGlyph, data._width);
+		}
+	}
+
+	for (auto iter = s.begin(); iter != s.end(); iter++) {
+		GlyphData data;
+		const bool found = g_engine->findGlyph(*iter, data);
+		if (found) {
+			drawSprite(currentX, currentY, data, surf, false);
+			currentX += data._width + 1;
+		} else {
+			currentX += widestGlyph;
+		}
+	}
+}
+
 int View1::measureStringWithFont(const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs) {
 	int width = 0;
 	uint16 widestGlyph = 1;
@@ -533,6 +557,11 @@ int View1::measureStringWithFont(const Common::String &s, const GlyphData *glyph
 
 void View1::renderStringWithFont(uint16 x, uint16 y, const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs) {
 	Graphics::ManagedSurface surf = getSurface();
+	renderStringWithFontTo(x, y, s, glyphs, numGlyphs, surf);
+}
+
+void View1::renderStringWithFontTo(uint16 x, uint16 y, const Common::String &s, const GlyphData *glyphs,
+								   uint16 numGlyphs, Graphics::ManagedSurface &surf) {
 	uint16 currentX = x;
 	uint16 widestGlyph = 1;
 	for (uint i = 0; i < numGlyphs; i++) {
@@ -2684,6 +2713,49 @@ void View1::drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, ui
 
 void View1::drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s) {
 	drawSpriteClipped(x, y, clippingRect, sprite._width, sprite._height, sprite._data.data(), s);
+}
+
+void View1::drawSpriteFitted(const Common::Rect &bounds, const Sprite &sprite, Graphics::ManagedSurface &s, uint16 inset) {
+	if (sprite._width == 0 || sprite._height == 0 || sprite._data.empty())
+		return;
+
+	const Common::Rect inner(bounds.left + inset, bounds.top + inset,
+							 bounds.right - inset, bounds.bottom - inset);
+	if (inner.width() <= 0 || inner.height() <= 0)
+		return;
+
+	const int destW = inner.width();
+	const int destH = inner.height();
+	const int scaleW = (destW * 256) / sprite._width;
+	const int scaleH = (destH * 256) / sprite._height;
+	const int scale = MIN(scaleW, scaleH);
+	if (scale <= 0)
+		return;
+
+	const int drawW = MAX(1, (sprite._width * scale) / 256);
+	const int drawH = MAX(1, (sprite._height * scale) / 256);
+	const int startX = inner.left + (destW - drawW) / 2;
+	const int startY = inner.top + (destH - drawH) / 2;
+
+	for (int dy = 0; dy < drawH; dy++) {
+		const int srcY = (dy * sprite._height) / drawH;
+		const int py = startY + dy;
+		if (py < inner.top || py >= inner.bottom)
+			continue;
+
+		for (int dx = 0; dx < drawW; dx++) {
+			const int srcX = (dx * sprite._width) / drawW;
+			const uint8 val = sprite._data[srcY * sprite._width + srcX];
+			if (val == 0)
+				continue;
+
+			const int px = startX + dx;
+			if (px < inner.left || px >= inner.right || px < 0 || px >= s.w || py < 0 || py >= s.h)
+				continue;
+
+			s.setPixel(px, py, val);
+		}
+	}
 }
 
 static byte applyShadingTable(byte color, int shadingTableOffset) {

@@ -306,7 +306,10 @@ private:
 
 	void renderString(uint16 x, uint16 y, const Common::String &s);
 	void renderString(const Common::Point pos, const Common::String &s);
+	void renderStringTo(uint16 x, uint16 y, const Common::String &s, Graphics::ManagedSurface &surf);
 	void renderStringWithFont(uint16 x, uint16 y, const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs);
+	void renderStringWithFontTo(uint16 x, uint16 y, const Common::String &s, const GlyphData *glyphs,
+								uint16 numGlyphs, Graphics::ManagedSurface &surf);
 	int measureStringWithFont(const Common::String &s, const GlyphData *glyphs, uint16 numGlyphs);
 
 	Common::Array<Common::Rect> _mainMenuButtonLocations;
@@ -322,6 +325,7 @@ private:
 
 	void drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, uint16 width, uint16 height, const byte *const data, Graphics::ManagedSurface &s);
 	void drawSpriteClipped(uint16 x, uint16 y, Common::Rect &clippingRect, const Sprite &sprite, Graphics::ManagedSurface &s);
+	void drawSpriteFitted(const Common::Rect &bounds, const Sprite &sprite, Graphics::ManagedSurface &s, uint16 inset = 6);
 
 	// Binary sortObjectListByY (1008:8cf2) + buildSortedObjectList (1008:8c5a):
 	// scan 512 objects, collect current-scene indices at 0xFAC, quicksort by Y.
