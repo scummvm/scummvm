@@ -3706,6 +3706,11 @@ uint16 CMD_E_PsiZoneScan(void) {
 
 	IFGM_PlaySample(26);
 
+	// On Amiga the scan tints the whole room green for its duration: the exe
+	// ships a dedicated green stone-ramp delta (19) that no room ever uses
+	if (g_vm->_videoMode == Common::kRenderAmiga)
+		amigaApplyRoomPalette(19);
+
 	offs = g_vm->_renderer->calcXY_p(room_bounds_rect.sx, room_bounds_rect.sy);
 	w = room_bounds_rect.ex - room_bounds_rect.sx;
 	h = room_bounds_rect.ey - room_bounds_rect.sy;
@@ -3713,12 +3718,14 @@ uint16 CMD_E_PsiZoneScan(void) {
 	if (isEgaLikeRenderer())
 		w *= 4;
 
+	byte inv = isEgaLikeRenderer() ? 0x0F : 0xFF;
+
 	for (y = room_bounds_rect.sy; h; y++, h--) {
 		spot_t *spot;
-		for (x = 0; x < w; x++) frontbuffer[offs + x] = ~frontbuffer[offs + x];
+		for (x = 0; x < w; x++) frontbuffer[offs + x] ^= inv;
 		g_vm->_renderer->blitToScreen(offs, w, 1);
 		waitVBlank();
-		for (x = 0; x < w; x++) frontbuffer[offs + x] = ~frontbuffer[offs + x];
+		for (x = 0; x < w; x++) frontbuffer[offs + x] ^= inv;
 		g_vm->_renderer->blitToScreen(offs, w, 1);
 
 		for (spot = zone_spots; spot != zone_spots_end; spot++) {
@@ -3734,6 +3741,10 @@ uint16 CMD_E_PsiZoneScan(void) {
 		if ((offs & g_vm->_line_offset) == 0)
 			offs += g_vm->_screenBPL;
 	}
+
+	// Bring back the room's own palette once the scan is over
+	if (g_vm->_videoMode == Common::kRenderAmiga)
+		amigaApplyRoomPalette(script_byte_vars.palette_index);
 
 	restoreScreenOfSpecialRoom();
 
