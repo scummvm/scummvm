@@ -603,6 +603,9 @@ void FoolPrologue::finaleRun() {
 	// 131:19be
 	drawClickMessageRightAlign();
 	waitForClick();
+	if (_quit)
+		return;
+
 	drawClickMessageRightAlign();
 	fillRect(0, 0, 0x96, 0x18b, 2);
 	_zbasic->picture(0x193, 0x2d, _pics[0x32]);
@@ -676,13 +679,15 @@ void FoolPrologue::finaleRun() {
 	_toolbox->SetPortBits(_dstPage);
 	drawClickMessageRightAlign();
 	waitForClick();
+	if (_quit)
+		return;
 
 	// 131:1e18
 	// card gets vivisected
 	fillRect(0, 0, 0x96, 0x18b, 2);
 	fillRect(0x12c, 0x15e, 0x156, 0x200, 2);
 	int16 cardSliceOffset = 0;
-	Particle cardSliceShift[15];
+	Particle cardSliceShift[16];
 	for (int16 i = 0xa; i <= 0x96; i += 0xa) {
 		_zbasic->get(
 			0x190,
@@ -782,6 +787,9 @@ void FoolPrologue::finaleRun() {
 	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(OFF(13)).encode().c_str()), 0x181, 0x4d);
 	drawClickMessageRightAlign();
 	waitForClick();
+	if (_quit)
+		return;
+
 	_zbasic->picture(0x193, 0x2d, _pics[0x36]);
 
 	// 131:24da
@@ -792,6 +800,8 @@ void FoolPrologue::finaleRun() {
 	drawTextRight(_zbasic->str(OFF(15)), 0x181, 0x4d);
 	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(OFF(16)).encode().c_str()), 0x181, 0x5e);
 	waitForClick();
+	if (_quit)
+		return;
 
 	// 131:258a
 	_srcPage = _screenPages[5];
@@ -921,6 +931,9 @@ void FoolPrologue::finaleRun() {
 	delayFromMarker(0xd2);
 	drawClickMessageRightAlign();
 	waitForClick();
+	if (_quit)
+		return;
+
 	drawClickMessageRightAlign();
 	blitPageToScreen(6);
 	delay(3);
@@ -1362,6 +1375,8 @@ void FoolPrologue::finaleRun() {
 	// 131:46aa
 	_toolbox->SetPortBits(_dstPage);
 	waitForClick();
+	if (_quit)
+		return;
 	blitPageToScreen(0);
 	copyScreenToPage(0);
 	setPortBitsToPage(0);
@@ -1379,6 +1394,8 @@ void FoolPrologue::finaleRun() {
 	// 131:4780
 	_toolbox->SetPortBits(_dstPage);
 	waitForClick();
+	if (_quit)
+		return;
 	blitPageToScreen(0);
 	copyScreenToPage(0);
 	setPortBitsToPage(0);
@@ -1391,6 +1408,8 @@ void FoolPrologue::finaleRun() {
 	// 131:4848
 	_toolbox->SetPortBits(_dstPage);
 	waitForClick();
+	if (_quit)
+		return;
 	blitPageToScreen(0);
 	_tickMarker = _toolbox->TickCount();
 	setPortBitsToPage(0);

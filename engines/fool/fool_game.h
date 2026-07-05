@@ -143,7 +143,7 @@ public:
 	void newGame(); // sub_128_2bc6
 	void openGame(); // sub_128_2e3e
 
-	void sub_128_3032();
+	void menuSetup(); // sub_128_3032
 	void menuToggleSound(); // sub_128_32c8
 	void savePrompt(); // sub_128_32fa
 	void autoSaveGame();
@@ -442,7 +442,7 @@ public:
 	void straightPathClearText(); // sub_143_890
 	void straightPathSuccess(); // sub_143_8b0
 
-	void sub_144_004();
+	void metapuzzleComplete(); // sub_144_004
 
 
 private:
@@ -765,7 +765,7 @@ private:
 	int16 arr_i16_5cbc[128];
 	int16 _mazeInvItemCount[128]; // arr_i16_5cbc
 	float arr_bcd_5dbc[8];
-	BitMap arr_bmp_5dfc; // 22000, close to a screen page
+	BitMap _scrollPage; // arr_bmp_5dfc 22000, close to a screen page
 	BitMap _jigsawPieces[128];
 	Common::Point _humbugTrail[0xa43];
 	BitMap arr_bmp_b3ec;

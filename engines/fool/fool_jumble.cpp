@@ -23,7 +23,6 @@
 #include "fool/fool_game.h"
 #include "fool/toolbox.h"
 #include "fool/zbasic.h"
-#include <climits>
 
 namespace Fool {
 
