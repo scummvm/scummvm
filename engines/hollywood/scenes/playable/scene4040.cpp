@@ -386,9 +386,9 @@ void Scene4040::runReturnFromUpperExitEntry() {
 }
 
 void Scene4040::runStairReturnToDungeon() {
-	runConfiguredActionOverlay(kScene4040StairOverlayChunk, kScene4040StairOverlayDescriptorCount,
-		kScene4040StairOverlayFrameMap, ARRAYSIZE(kScene4040StairOverlayFrameMap),
-		kScene4040FrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(kScene4040StairOverlayChunk, kScene4040StairOverlayDescriptorCount,
+		kScene4040StairOverlayFrameMap, ARRAYSIZE(kScene4040StairOverlayFrameMap), kScene4040FrameMillis)
+		.hideActor());
 	_vm->gameState().mainFlowStateId = kScene4030ReturnState;
 }
 
@@ -401,9 +401,10 @@ void Scene4040::takeCandil() {
 
 	beginSecondarySpeechLine(8, 0);
 	state.scene4040CandilTaken = true;
-	runConfiguredActionOverlay(kScene4040CandilOverlayChunk, kScene4040CandilOverlayDescriptorCount,
-		kScene4040CandilFrameMap, ARRAYSIZE(kScene4040CandilFrameMap),
-		kScene4040FrameMillis, kActionOverlayKeepActiveActorVisibility, 4, 1);
+	runActionOverlay(ActionOverlaySpec(kScene4040CandilOverlayChunk, kScene4040CandilOverlayDescriptorCount,
+		kScene4040CandilFrameMap, ARRAYSIZE(kScene4040CandilFrameMap), kScene4040FrameMillis)
+		.keepActorVisibility()
+		.patchAt(4, 1));
 	addInventoryItem(kScene4040CandilItem);
 	_soundBank0.playSample(1, 100);
 }

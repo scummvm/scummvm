@@ -397,10 +397,10 @@ void Scene4110::takeLetter() {
 	}
 
 	beginSecondarySpeechLine(3, 0);
-	runConfiguredActionOverlay(kScene4110PickupChunk, kScene4110PickupDescriptorCount,
-		kScene4110PickupFrameMap, ARRAYSIZE(kScene4110PickupFrameMap),
-		kScene4110FrameMillis, kActionOverlayHideActiveActor, -1, 0, -1, 0, 100,
-		-1, 0, true, 1, ARRAYSIZE(kScene4110PickupFrameMap));
+	runActionOverlay(ActionOverlaySpec(kScene4110PickupChunk, kScene4110PickupDescriptorCount,
+		kScene4110PickupFrameMap, ARRAYSIZE(kScene4110PickupFrameMap), kScene4110FrameMillis)
+		.hideActor()
+		.frameRange(1, ARRAYSIZE(kScene4110PickupFrameMap)));
 	addInventoryItem(kScene4110LetterItem);
 	_soundBank0.playSample(1, 100);
 	state.scene4110LetterTaken = true;

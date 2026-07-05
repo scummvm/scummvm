@@ -479,9 +479,10 @@ void Scene3100::beginCabinPrimaryResponse(byte frameIndex) {
 void Scene3100::runConversationResolutionSequence() {
 	GameplayState &state = _vm->gameState();
 	beginSecondarySpeechLine(kScene3100DialogueStageId, 0x0b);
-	runConfiguredActionOverlay(8, 0x0b, kScene3100ResolutionFrameMap,
-		ARRAYSIZE(kScene3100ResolutionFrameMap), kScene3100OverlayFrameMillis,
-		kActionOverlayShowActiveActor, -1, 0, 5, 0x19);
+	runActionOverlay(ActionOverlaySpec(8, 0x0b,
+		kScene3100ResolutionFrameMap, ARRAYSIZE(kScene3100ResolutionFrameMap), kScene3100OverlayFrameMillis)
+		.showActor()
+		.soundAt(5, 0x19));
 	state.scene3100GirlConversationState = 2;
 	state.scene3100DaisyVisible = true;
 	_alternateChannel.frameIndex = 15;
@@ -497,10 +498,11 @@ void Scene3100::runObjectPickup() {
 		return;
 	}
 
-	runConfiguredActionOverlay(11, kScene3100ObjectOverlayDescriptorCount,
-		kScene3100ObjectPickupFrameMap, ARRAYSIZE(kScene3100ObjectPickupFrameMap),
-		kScene3100OverlayFrameMillis, kActionOverlayHideActiveActor,
-		7, 1, 7, 1);
+	runActionOverlay(ActionOverlaySpec(11, kScene3100ObjectOverlayDescriptorCount,
+		kScene3100ObjectPickupFrameMap, ARRAYSIZE(kScene3100ObjectPickupFrameMap), kScene3100OverlayFrameMillis)
+		.hideActor()
+		.patchAt(7, 1)
+		.soundAt(7, 1));
 	state.scene3100DaisyVisible = false;
 	state.scene3100DaisyTaken = true;
 	applySceneStateToHotspotsAndPatches(1);
@@ -517,9 +519,9 @@ void Scene3100::runExchangePickup() {
 	}
 
 	beginSecondarySpeechLine(7, 0);
-	runConfiguredActionOverlay(7, kScene3100ExchangeOverlayDescriptorCount,
-		kScene3100ExchangePickupFrameMap, ARRAYSIZE(kScene3100ExchangePickupFrameMap),
-		kScene3100OverlayFrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(7, kScene3100ExchangeOverlayDescriptorCount,
+		kScene3100ExchangePickupFrameMap, ARRAYSIZE(kScene3100ExchangePickupFrameMap), kScene3100OverlayFrameMillis)
+		.hideActor());
 	state.scene3100SapSyringeTaken = true;
 	applySceneStateToHotspotsAndPatches(8);
 	addInventoryItem(kScene3100PickupItem38);

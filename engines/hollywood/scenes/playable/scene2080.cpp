@@ -844,12 +844,11 @@ void Scene2080::setDialogueRecord(Common::Array<DialogueChoiceRecord> &records, 
 
 void Scene2080::runForegroundActorExitOverlay() {
 	_foregroundActorLayer.visible = false;
-	ActionOverlayOptions options;
-	options.actorVisibility = kActionOverlayKeepActiveActorVisibility;
-	options.hookId = kScene2080ForegroundExitSoundHook;
-	runActionOverlay(kScene2080ForegroundExitChunk, kScene2080ForegroundExitDescriptorCount,
+	runActionOverlay(ActionOverlaySpec(kScene2080ForegroundExitChunk, kScene2080ForegroundExitDescriptorCount,
 		kScene2080ForegroundExitFrameMap, ARRAYSIZE(kScene2080ForegroundExitFrameMap),
-		kScene2080FrameMillis, options);
+		kScene2080FrameMillis)
+		.keepActorVisibility()
+		.hookEveryFrame(kScene2080ForegroundExitSoundHook));
 
 	GameplayState &state = _vm->gameState();
 	state.scene2080ForegroundState = 0;
@@ -875,11 +874,11 @@ void Scene2080::runForwardExitToScene2090() {
 		return;
 	}
 
-	runConfiguredActionOverlay(kScene2080ForwardExitOverlayChunk,
-		kScene2080ForwardExitOverlayDescriptorCount,
-		kScene2080ForwardExitOverlayFrameMap, ARRAYSIZE(kScene2080ForwardExitOverlayFrameMap),
-		kScene2080FrameMillis, kActionOverlayHideActiveActor, -1, 0, 6, 0x11,
-		100, -1, 0, true, 1);
+	runActionOverlay(ActionOverlaySpec(kScene2080ForwardExitOverlayChunk, kScene2080ForwardExitOverlayDescriptorCount,
+		kScene2080ForwardExitOverlayFrameMap, ARRAYSIZE(kScene2080ForwardExitOverlayFrameMap), kScene2080FrameMillis)
+		.hideActor()
+		.soundAt(6, 0x11)
+		.startAt(1));
 
 	_soundBank0.playSample(0x12, 100);
 	playDeltaClip(kScene2080ForwardExitClipChunk, kScene2080ForwardExitClipDescriptorCount,
@@ -899,15 +898,13 @@ void Scene2080::runCentralSarcophagusHairSearch() {
 	}
 
 	beginSecondarySpeechLine(11, 1);
-	runConfiguredActionOverlay(kScene2080PrincessHairSearchFirstChunk,
-		kScene2080PrincessHairSearchFirstDescriptorCount,
-		kScene2080PrincessHairSearchFirstFrameMap, ARRAYSIZE(kScene2080PrincessHairSearchFirstFrameMap),
-		kScene2080FrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(kScene2080PrincessHairSearchFirstChunk, kScene2080PrincessHairSearchFirstDescriptorCount,
+		kScene2080PrincessHairSearchFirstFrameMap, ARRAYSIZE(kScene2080PrincessHairSearchFirstFrameMap), kScene2080FrameMillis)
+		.hideActor());
 	beginSecondarySpeechLine(11, 2);
-	runConfiguredActionOverlay(kScene2080PrincessHairSearchSecondChunk,
-		kScene2080PrincessHairSearchSecondDescriptorCount,
-		kScene2080PrincessHairSearchSecondFrameMap, ARRAYSIZE(kScene2080PrincessHairSearchSecondFrameMap),
-		kScene2080FrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(kScene2080PrincessHairSearchSecondChunk, kScene2080PrincessHairSearchSecondDescriptorCount,
+		kScene2080PrincessHairSearchSecondFrameMap, ARRAYSIZE(kScene2080PrincessHairSearchSecondFrameMap), kScene2080FrameMillis)
+		.hideActor());
 
 	if (!hasInventoryItem(kScene2080PrincessHairInventoryItem))
 		addInventoryItem(kScene2080PrincessHairInventoryItem);

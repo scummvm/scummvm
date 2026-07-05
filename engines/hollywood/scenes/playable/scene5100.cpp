@@ -275,32 +275,34 @@ AmbientAudioProfile Scene5100::ambientAudioProfile() const {
 
 void Scene5100::runFirstEntryClip() {
 	const Common::Array<byte> frameMap = sequentialFrameMap(kScene5100FirstEntryDescriptorCount);
-	runConfiguredActionOverlay(8, kScene5100FirstEntryDescriptorCount,
-		frameMap.data(), frameMap.size(), kScene5100FrameMillis,
-		kActionOverlayHideActiveActor, -1, 0, 0x1a, 0x16);
+	runActionOverlay(ActionOverlaySpec(8, kScene5100FirstEntryDescriptorCount,
+		frameMap.data(), frameMap.size(), kScene5100FrameMillis)
+		.hideActor()
+		.soundAt(0x1a, 0x16));
 }
 
 void Scene5100::runReturnEntryClip() {
-	runConfiguredActionOverlay(9, kScene5100ReturnEntryDescriptorCount,
-		kScene5100ReturnEntryFrameMap, ARRAYSIZE(kScene5100ReturnEntryFrameMap),
-		kScene5100FrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(9, kScene5100ReturnEntryDescriptorCount,
+		kScene5100ReturnEntryFrameMap, ARRAYSIZE(kScene5100ReturnEntryFrameMap), kScene5100FrameMillis)
+		.hideActor());
 }
 
 void Scene5100::runElevatorOpenClip() {
 	_soundBank0.playSample(0x1d, 100);
-	runConfiguredActionOverlay(7, kScene5100ElevatorDoorDescriptorCount,
-		kScene5100ElevatorCloseFrameMap, ARRAYSIZE(kScene5100ElevatorCloseFrameMap),
-		kScene5100FrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(7, kScene5100ElevatorDoorDescriptorCount,
+		kScene5100ElevatorCloseFrameMap, ARRAYSIZE(kScene5100ElevatorCloseFrameMap), kScene5100FrameMillis)
+		.hideActor());
 }
 
 void Scene5100::runElevatorButtonTransition(uint16 nextState) {
 	_soundBank0.playSample(0x1d, 100);
-	runConfiguredActionOverlay(7, kScene5100ElevatorDoorDescriptorCount,
-		kScene5100ElevatorOpenFrameMap, ARRAYSIZE(kScene5100ElevatorOpenFrameMap),
-		kScene5100FrameMillis, kActionOverlayHideActiveActor);
-	runConfiguredActionOverlay(9, kScene5100ReturnEntryDescriptorCount,
-		kScene5100TransitionFrameMap, ARRAYSIZE(kScene5100TransitionFrameMap),
-		kScene5100FrameMillis, kActionOverlayHideActiveActor, -1, 0, 0, 0x1e);
+	runActionOverlay(ActionOverlaySpec(7, kScene5100ElevatorDoorDescriptorCount,
+		kScene5100ElevatorOpenFrameMap, ARRAYSIZE(kScene5100ElevatorOpenFrameMap), kScene5100FrameMillis)
+		.hideActor());
+	runActionOverlay(ActionOverlaySpec(9, kScene5100ReturnEntryDescriptorCount,
+		kScene5100TransitionFrameMap, ARRAYSIZE(kScene5100TransitionFrameMap), kScene5100FrameMillis)
+		.hideActor()
+		.soundAt(0, 0x1e));
 	_vm->gameState().scene5100ButtonsUnlocked = true;
 	_vm->gameState().mainFlowStateId = nextState;
 }

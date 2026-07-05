@@ -225,17 +225,18 @@ AmbientAudioProfile Scene5090::ambientAudioProfile() const {
 }
 
 void Scene5090::runEntryClip() {
-	runConfiguredActionOverlay(5, kScene5090EntryDescriptorCount,
-		kScene5090EntryFrameMap, ARRAYSIZE(kScene5090EntryFrameMap),
-		kScene5090FrameMillis, kActionOverlayHideActiveActor, -1, 0, 1, 0x16);
+	runActionOverlay(ActionOverlaySpec(5, kScene5090EntryDescriptorCount,
+		kScene5090EntryFrameMap, ARRAYSIZE(kScene5090EntryFrameMap), kScene5090FrameMillis)
+		.hideActor()
+		.soundAt(1, 0x16));
 }
 
 void Scene5090::runReturnToMineSwitches() {
 	walkActiveActorTo(0x054, 0x068, 0xff, 0, false);
 	_soundBank0.playSample(0x15, 100);
-	runConfiguredActionOverlay(5, kScene5090ReturnDescriptorCount,
-		kScene5090ReturnFrameMap, ARRAYSIZE(kScene5090ReturnFrameMap),
-		kScene5090FrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(5, kScene5090ReturnDescriptorCount,
+		kScene5090ReturnFrameMap, ARRAYSIZE(kScene5090ReturnFrameMap), kScene5090FrameMillis)
+		.hideActor());
 	_vm->gameState().mainFlowStateId = kScene5010ReturnState;
 }
 
@@ -250,9 +251,9 @@ void Scene5090::runFillWaterContainer() {
 	}
 
 	beginSecondarySpeechLine(3, 0);
-	runConfiguredActionOverlay(7, kScene5090WaterFillDescriptorCount,
-		kScene5090WaterFillFrameMap, ARRAYSIZE(kScene5090WaterFillFrameMap),
-		kScene5090FrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(7, kScene5090WaterFillDescriptorCount,
+		kScene5090WaterFillFrameMap, ARRAYSIZE(kScene5090WaterFillFrameMap), kScene5090FrameMillis)
+		.hideActor());
 	removeInventoryItem(kScene5090EmptyWaterContainerItem);
 	addInventoryItem(kScene5090FilledWaterContainerItem);
 	_soundBank0.playSample(1, 100);

@@ -315,10 +315,10 @@ void Scene4100::rotatePaletteCycle() {
 }
 
 void Scene4100::runDoorTransition(uint chunkIndex, uint descriptorCount, uint16 targetState) {
-	runConfiguredActionOverlay(chunkIndex, descriptorCount,
-		kScene4100DoorFrameMap, ARRAYSIZE(kScene4100DoorFrameMap),
-		kScene4100FrameMillis, kActionOverlayHideActiveActor, -1, 0, -1, 0, 100,
-		-1, 0, true, 1, ARRAYSIZE(kScene4100DoorFrameMap));
+	runActionOverlay(ActionOverlaySpec(chunkIndex, descriptorCount,
+		kScene4100DoorFrameMap, ARRAYSIZE(kScene4100DoorFrameMap), kScene4100FrameMillis)
+		.hideActor()
+		.frameRange(1, ARRAYSIZE(kScene4100DoorFrameMap)));
 	_soundBank0.playSample(3, 100);
 	_vm->gameState().mainFlowStateId = targetState;
 }

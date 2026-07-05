@@ -675,22 +675,25 @@ void Scene7040::handleActionSlot02MajorHotspotAction() {
 
 	_chunk12OverlayVisible = true;
 	if (state.officeStatueActionProgress == 2) {
-		runConfiguredActionOverlay(13, kScene7040Chunk13DescriptorCount,
-			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap),
-			kScene7040Chunk14FrameMillis, kActionOverlayHideActiveActor,
-			-1, 0, -1, 0, 100, -1, 0, false, 0, 0x2d);
+		runActionOverlay(ActionOverlaySpec(13, kScene7040Chunk13DescriptorCount,
+			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis)
+			.hideActor()
+			.noRedrawAtEnd()
+			.endAt(0x2d));
 		_soundBank0.playSample(0x15, 100);
 		runMajorHotspotFrankensteinBranch();
 		_chunk12OverlayVisible = true;
-		runConfiguredActionOverlay(13, kScene7040Chunk13DescriptorCount,
-			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap),
-			kScene7040Chunk14FrameMillis, kActionOverlayHideActiveActor,
-			-1, 0, -1, 0, 100, -1, 0, false, 0x35, ARRAYSIZE(kScene7040MajorHotspotFrameMap));
+		runActionOverlay(ActionOverlaySpec(13, kScene7040Chunk13DescriptorCount,
+			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis)
+			.hideActor()
+			.noRedrawAtEnd()
+			.frameRange(0x35, ARRAYSIZE(kScene7040MajorHotspotFrameMap)));
 	} else {
-		runConfiguredActionOverlay(13, kScene7040Chunk13DescriptorCount,
-			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap),
-			kScene7040Chunk14FrameMillis, kActionOverlayHideActiveActor, -1, 0, 0x2c, 0x15,
-			100, -1, 0, false);
+		runActionOverlay(ActionOverlaySpec(13, kScene7040Chunk13DescriptorCount,
+			kScene7040MajorHotspotFrameMap, ARRAYSIZE(kScene7040MajorHotspotFrameMap), kScene7040Chunk14FrameMillis)
+			.hideActor()
+			.soundAt(0x2c, 0x15)
+			.noRedrawAtEnd());
 	}
 	_chunk12OverlayVisible = false;
 

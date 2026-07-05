@@ -632,9 +632,9 @@ void Scene4060::runFirstEntrySequence() {
 	presentFrame();
 
 	_soundBank0.playSample(0x31, 100);
-	runConfiguredActionOverlay(kScene4060EntryOverlayChunk, kScene4060EntryOverlayDescriptorCount,
-		kScene4060EntryOverlayFrameMap, ARRAYSIZE(kScene4060EntryOverlayFrameMap),
-		kScene4060FrameMillis, kActionOverlayKeepActiveActorVisibility);
+	runActionOverlay(ActionOverlaySpec(kScene4060EntryOverlayChunk, kScene4060EntryOverlayDescriptorCount,
+		kScene4060EntryOverlayFrameMap, ARRAYSIZE(kScene4060EntryOverlayFrameMap), kScene4060FrameMillis)
+		.keepActorVisibility());
 
 	if (!_vm->gameState().scene4060EntryLineSeen) {
 		beginSecondarySpeechLine(0, 0);
@@ -654,9 +654,9 @@ void Scene4060::runReturnEntrySequence() {
 }
 
 void Scene4060::runExitToNextRoom() {
-	runConfiguredActionOverlay(kScene4060ExitOverlayChunk, kScene4060ExitOverlayDescriptorCount,
-		kScene4060ExitOverlayFrameMap, ARRAYSIZE(kScene4060ExitOverlayFrameMap),
-		kScene4060FrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(kScene4060ExitOverlayChunk, kScene4060ExitOverlayDescriptorCount,
+		kScene4060ExitOverlayFrameMap, ARRAYSIZE(kScene4060ExitOverlayFrameMap), kScene4060FrameMillis)
+		.hideActor());
 	_soundBank0.playSample(3, 100);
 	_vm->gameState().mainFlowStateId = kScene4100EntryFromScene4060State;
 }
@@ -668,9 +668,10 @@ void Scene4060::runFirstCardStage() {
 		return;
 	}
 
-	runConfiguredActionOverlay(kScene4060FirstCardOverlayChunk, kScene4060FirstCardOverlayDescriptorCount,
-		kScene4060FirstCardFrameMap, ARRAYSIZE(kScene4060FirstCardFrameMap),
-		kScene4060FrameMillis, kActionOverlayKeepActiveActorVisibility, -1, 0, -1, 0, 100, 6, 1);
+	runActionOverlay(ActionOverlaySpec(kScene4060FirstCardOverlayChunk, kScene4060FirstCardOverlayDescriptorCount,
+		kScene4060FirstCardFrameMap, ARRAYSIZE(kScene4060FirstCardFrameMap), kScene4060FrameMillis)
+		.keepActorVisibility()
+		.hookAt(6, 1));
 	state.scene4060PictureCardStage = kScene4060CardStateFirstWon;
 	applySceneStateToHotspotsAndPatches(0);
 	addInventoryItem(kScene4060FirstWonCardItem);
@@ -682,9 +683,10 @@ void Scene4060::runSecondCardStage() {
 	if (state.scene4060PerfumeBottleCardStage == 0)
 		beginSecondarySpeechLine(9, 0);
 
-	runConfiguredActionOverlay(kScene4060SecondCardOverlayChunk, kScene4060SecondCardOverlayDescriptorCount,
-		kScene4060SecondCardFrameMap, ARRAYSIZE(kScene4060SecondCardFrameMap),
-		kScene4060FrameMillis, kActionOverlayKeepActiveActorVisibility, -1, 0, -1, 0, 100, 5, 2);
+	runActionOverlay(ActionOverlaySpec(kScene4060SecondCardOverlayChunk, kScene4060SecondCardOverlayDescriptorCount,
+		kScene4060SecondCardFrameMap, ARRAYSIZE(kScene4060SecondCardFrameMap), kScene4060FrameMillis)
+		.keepActorVisibility()
+		.hookAt(5, 2));
 	state.scene4060PerfumeBottleCardStage = kScene4060SecondCardStateWon;
 	applySceneStateToHotspotsAndPatches(1);
 	addInventoryItem(kScene4060SecondWonCardItem);
@@ -699,9 +701,10 @@ void Scene4060::runInstallMirrorStage() {
 	}
 
 	beginSecondarySpeechLine(0x11, 1);
-	runConfiguredActionOverlay(kScene4060FirstCardOverlayChunk, kScene4060FirstCardOverlayDescriptorCount,
-		kScene4060InstallMirrorFrameMap, ARRAYSIZE(kScene4060InstallMirrorFrameMap),
-		kScene4060FrameMillis, kActionOverlayKeepActiveActorVisibility, -1, 0, -1, 0, 100, 7, 3);
+	runActionOverlay(ActionOverlaySpec(kScene4060FirstCardOverlayChunk, kScene4060FirstCardOverlayDescriptorCount,
+		kScene4060InstallMirrorFrameMap, ARRAYSIZE(kScene4060InstallMirrorFrameMap), kScene4060FrameMillis)
+		.keepActorVisibility()
+		.hookAt(7, 3));
 	state.scene4060PictureCardStage = kScene4060CardStateMirrorInstalled;
 	applySceneStateToHotspotsAndPatches(0);
 	removeInventoryItem(kScene4060MirrorItem);

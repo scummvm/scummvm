@@ -412,9 +412,9 @@ void Scene5010::enterMineTransport() {
 		ensureMineDestinationTable();
 	}
 
-	runConfiguredActionOverlay(8, kScene5010TransportPrepDescriptorCount,
-		kScene5010TransportPrepFrameMap, ARRAYSIZE(kScene5010TransportPrepFrameMap),
-		kScene5010FrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(8, kScene5010TransportPrepDescriptorCount,
+		kScene5010TransportPrepFrameMap, ARRAYSIZE(kScene5010TransportPrepFrameMap), kScene5010FrameMillis)
+		.hideActor());
 
 	state.scene5010MineCartDeparted = true;
 	applySceneStateToHotspotsAndPatches(6);
@@ -423,9 +423,10 @@ void Scene5010::enterMineTransport() {
 	frameMap.resize(kScene5010TransportDepartDescriptorCount);
 	for (uint i = 0; i < frameMap.size(); ++i)
 		frameMap[i] = (byte)i;
-	runConfiguredActionOverlay(16, kScene5010TransportDepartDescriptorCount,
-		frameMap.data(), frameMap.size(), kScene5010FrameMillis,
-		kActionOverlayHideActiveActor, -1, 0, 0x1e, 0x15);
+	runActionOverlay(ActionOverlaySpec(16, kScene5010TransportDepartDescriptorCount,
+		frameMap.data(), frameMap.size(), kScene5010FrameMillis)
+		.hideActor()
+		.soundAt(0x1e, 0x15));
 
 	state.mainFlowStateId = mineDestinationForCurrentSwitch();
 }

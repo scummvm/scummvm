@@ -348,9 +348,10 @@ AmbientAudioProfile Scene5080::ambientAudioProfile() const {
 
 void Scene5080::runMineCartEntryClip() {
 	const Common::Array<byte> frameMap = sequentialFrameMap(kScene5080EntryDescriptorCount);
-	runConfiguredActionOverlay(5, kScene5080EntryDescriptorCount,
-		frameMap.data(), frameMap.size(), kScene5080FrameMillis,
-		kActionOverlayHideActiveActor, -1, 0, 0x3c, 0x16);
+	runActionOverlay(ActionOverlaySpec(5, kScene5080EntryDescriptorCount,
+		frameMap.data(), frameMap.size(), kScene5080FrameMillis)
+		.hideActor()
+		.soundAt(0x3c, 0x16));
 }
 
 void Scene5080::runExitToMineSwitches() {
@@ -366,9 +367,9 @@ void Scene5080::runBookPickup() {
 		return;
 	}
 
-	runConfiguredActionOverlay(7, kScene5080BookPickupDescriptorCount,
-		kScene5080BookPickupFrameMap, ARRAYSIZE(kScene5080BookPickupFrameMap),
-		kScene5080FrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(7, kScene5080BookPickupDescriptorCount,
+		kScene5080BookPickupFrameMap, ARRAYSIZE(kScene5080BookPickupFrameMap), kScene5080FrameMillis)
+		.hideActor());
 	addInventoryItem(kScene5080BookInventoryItem);
 	_soundBank0.playSample(1, 100);
 	state.scene5080BookTaken = true;
@@ -376,9 +377,9 @@ void Scene5080::runBookPickup() {
 }
 
 void Scene5080::runSofaOverlaySpeech() {
-	runConfiguredActionOverlay(8, kScene5080SofaDescriptorCount,
-		kScene5080SofaFrameMap, ARRAYSIZE(kScene5080SofaFrameMap),
-		kScene5080FrameMillis, kActionOverlayHideActiveActor);
+	runActionOverlay(ActionOverlaySpec(8, kScene5080SofaDescriptorCount,
+		kScene5080SofaFrameMap, ARRAYSIZE(kScene5080SofaFrameMap), kScene5080FrameMillis)
+		.hideActor());
 	beginSecondarySpeechLine(3, 0);
 }
 
