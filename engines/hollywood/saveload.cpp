@@ -369,6 +369,13 @@ Common::Error HollywoodEngine::syncGameStream(Common::Serializer &s) {
 	syncStateBool(s, state.scene5060RockTaken);
 	syncStateBool(s, state.scene5070ShovelTaken);
 	s.syncAsByte(state.scene5070AviatorCapState);
+	syncStateBool(s, state.scene5080EntryLineSeen);
+	syncStateBool(s, state.scene5080PassageUnlocked);
+	syncStateBool(s, state.scene5080AlternatePassageSide);
+	syncStateBool(s, state.scene5080BookTaken);
+	syncStateBool(s, state.scene5080StairDoorBarrierSeen);
+	syncStateBool(s, state.scene5080StairDoorConstructionSeen);
+	syncStateBool(s, state.scene5090EntryLineSeen);
 	syncStateBool(s, state.reviewedFrankensteinNote);
 	s.syncAsByte(state.frankensteinNoteOverlayMode);
 	s.syncAsByte(state.hannoverCourtyardDialogueState);

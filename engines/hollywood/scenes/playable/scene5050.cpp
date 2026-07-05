@@ -134,6 +134,8 @@ bool Scene5050::hasCustomEntrySequence() const {
 
 void Scene5050::runCustomEntrySequence() {
 	if (_vm->gameState().mainFlowStateId == kScene5050FirstState) {
+		// State 0x13ba is the mine-switch bounce-back path. The trophy room is
+		// intentionally only playable from state 0x13bb, reached through Karl's hole.
 		runSpecialTransitionToMineSwitches();
 		return;
 	}
