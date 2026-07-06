@@ -541,9 +541,10 @@ void OrderingPuzzle::execute() {
 				}
 			}
 
-			if (_puzzleType == kKeypad && _needButtonToCheckSuccess) {
-				// KeypadPuzzle moves to the "success" scene regardless whether the puzzle was solved or not,
-				// provided the check button is pressed.
+			if ((_puzzleType == kKeypad || _puzzleType == kKeypadTerse) && _needButtonToCheckSuccess) {
+				// KeypadPuzzle and KeypadTersePuzzle move to the "success" scene regardless whether the
+				// puzzle was solved or not, provided the check button is pressed. (e.g. the Nancy 11 Betty
+				// automaton keypad, where a red button confirms the entry.)
 				if (_checkButtonPressed) {
 					if (!g_nancy->_sound->isSoundPlaying(_pushDownSound)) {
 						if (solved) {
