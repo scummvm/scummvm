@@ -90,6 +90,7 @@ char *env_catint(char *out, int value, int digits) {
 
 	for (mark = strlen(out) - digits; (unsigned)mark < strlen(out); mark++) {
 		if (value >= power) {
+			assert(power != 0);
 			digit = value / power;
 			value = value - (digit * power);
 			out[mark] += digit;
@@ -359,9 +360,7 @@ Common::SeekableReadStream *env_open(const char *filename, const char *options) 
 
 			if (fileio_exist(load_file)) {
 				Common::File *f = new Common::File();
-				f->open(load_file);
-
-				if (handle == NULL) {
+				if (!f->open(load_file)) {
 					delete f;
 					goto done;
 				}
