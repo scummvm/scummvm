@@ -21,6 +21,8 @@
 
 #include "base/plugins.h"
 
+#include "common/file.h"
+
 #include "engines/advancedDetector.h"
 #include "engines/game.h"
 
@@ -71,9 +73,146 @@ const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
+static const ADGameDescription fallbackWindowsDescription = {
+	"hollywood",
+	"",
+	AD_ENTRY1(nullptr, nullptr),
+	Common::UNK_LANG,
+	Common::kPlatformWindows,
+	ADGF_UNSTABLE,
+	GUIO1(GUIO_NOMIDI)
+};
+
+static const ADGameDescription fallbackDosDescription = {
+	"hollywood",
+	"Unknown DOS version",
+	AD_ENTRY1(nullptr, nullptr),
+	Common::UNK_LANG,
+	Common::kPlatformDOS,
+	ADGF_UNSTABLE,
+	GUIO1(GUIO_NOMIDI)
+};
+
+static const ADFileBasedFallback fileBasedFallback[] = {
+	{ &fallbackDosDescription, { "MONSTERS.EXE", "RESOURCE.000", "RESOURCE.003", "RESOURCE.004", nullptr } },
+	{ nullptr, { nullptr } }
+};
+
+enum Resource000FallbackEntry {
+	kFallbackOptionsFramebufferEntry = 0x2a,
+	kFallbackInventoryPagesEntry = 0x2b,
+	kFallbackBottomPanelEntry = 0x2c,
+	kFallbackDialoguePanelEntry = 0x2f,
+	kFallbackObjectPaletteEntry = 0x31
+};
+
+const uint kFallbackResource000HeaderByteCount = 1;
+const uint kFallbackResource000OffsetTableSize = 400;
+const uint kFallbackResource000SizeTableSize = 400;
+const uint kFallbackOptionsFramebufferSize = 0x78000;
+const uint kFallbackMinimumInventoryPagesSize = 0x7e000;
+const uint kFallbackMinimumBottomPanelSize = 0x41d8;
+const uint kFallbackMinimumDialoguePanelSourceSize = 45 * 1024;
+const uint kFallbackObjectPaletteSize = 0x60;
+
+bool readResource000Entry(Common::File &file, uint entryIndex, uint32 &offset, uint32 &size) {
+	const uint offsetTablePosition = kFallbackResource000HeaderByteCount + entryIndex * 4;
+	const uint sizeTablePosition = kFallbackResource000HeaderByteCount +
+		kFallbackResource000OffsetTableSize + entryIndex * 4;
+	if (sizeTablePosition + 4 > (uint32)file.size())
+		return false;
+
+	file.seek(offsetTablePosition);
+	offset = file.readUint32LE();
+	file.seek(sizeTablePosition);
+	size = file.readUint32LE();
+
+	return !file.err() && size != 0 && offset <= (uint32)file.size() &&
+		size <= (uint32)file.size() - offset;
+}
+
+bool hasResource000Entry(Common::File &file, uint entryIndex, uint32 minimumSize) {
+	uint32 offset = 0;
+	uint32 size = 0;
+	return readResource000Entry(file, entryIndex, offset, size) && size >= minimumSize;
+}
+
+bool hasValidResource000StartupLayout(const AdvancedMetaEngineBase::FileMap &allFiles) {
+	if (!allFiles.contains("RESOURCE.000"))
+		return false;
+
+	Common::File file;
+	if (!file.open(allFiles["RESOURCE.000"]))
+		return false;
+
+	const uint32 startupTablesSize = kFallbackResource000HeaderByteCount +
+		kFallbackResource000OffsetTableSize + kFallbackResource000SizeTableSize;
+	if ((uint32)file.size() < startupTablesSize)
+		return false;
+
+	if (!hasResource000Entry(file, kFallbackOptionsFramebufferEntry, kFallbackOptionsFramebufferSize))
+		return false;
+	if (!hasResource000Entry(file, kFallbackInventoryPagesEntry, kFallbackMinimumInventoryPagesSize))
+		return false;
+	if (!hasResource000Entry(file, kFallbackBottomPanelEntry, kFallbackMinimumBottomPanelSize))
+		return false;
+	if (!hasResource000Entry(file, kFallbackDialoguePanelEntry, kFallbackMinimumDialoguePanelSourceSize))
+		return false;
+	if (!hasResource000Entry(file, kFallbackObjectPaletteEntry, kFallbackObjectPaletteSize))
+		return false;
+
+	return true;
+}
+
+Common::Platform detectExecutablePlatform(const AdvancedMetaEngineBase::FileMap &allFiles) {
+	if (!allFiles.contains("MONSTERS.EXE"))
+		return Common::kPlatformUnknown;
+
+	Common::File file;
+	if (!file.open(allFiles["MONSTERS.EXE"]) || file.size() < 0x40)
+		return Common::kPlatformUnknown;
+
+	file.seek(0);
+	const byte mzHeader[2] = { file.readByte(), file.readByte() };
+	if (mzHeader[0] != 'M' || mzHeader[1] != 'Z')
+		return Common::kPlatformUnknown;
+
+	file.seek(0x3c);
+	const uint32 peHeaderOffset = file.readUint32LE();
+	if (peHeaderOffset + 4 <= (uint32)file.size()) {
+		file.seek(peHeaderOffset);
+		if (file.readByte() == 'P' && file.readByte() == 'E' &&
+				file.readByte() == 0 && file.readByte() == 0)
+			return Common::kPlatformWindows;
+	}
+
+	return Common::kPlatformDOS;
+}
+
 class HollywoodMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
 	HollywoodMetaEngineDetection() : AdvancedMetaEngineDetection(Hollywood::gameDescriptions, plainGameDescriptors) {
+		_flags = kADFlagPreferFallbackDetection;
+	}
+
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist,
+			ADDetectedGameExtraInfo **extra) const override {
+		ADDetectedGame game = detectGameFilebased(allFiles, Hollywood::fileBasedFallback);
+		if (!game.desc)
+			return ADDetectedGame();
+
+		if (!hasValidResource000StartupLayout(allFiles))
+			return ADDetectedGame();
+
+		const Common::Platform platform = detectExecutablePlatform(allFiles);
+		if (platform == Common::kPlatformWindows)
+			game.desc = &Hollywood::fallbackWindowsDescription;
+		else if (platform == Common::kPlatformDOS)
+			game.desc = &Hollywood::fallbackDosDescription;
+		else
+			return ADDetectedGame();
+
+		return game;
 	}
 
 	const char *getName() const override {

@@ -61,6 +61,7 @@ Scene9010::Scene9010(HollywoodEngine *vm) :
 		_alternatePoseActive(false),
 		_characterFrameIndex(0),
 		_lastTalkingFrameVariant(0xff),
+		_i02FramePayloadFormat(kI02FramePayloadUnknown),
 		_scene9010FadeCountdown(63),
 		_scene9010FadeComplete(false),
 		_scene9010FadeAccumulator(0) {
@@ -137,11 +138,28 @@ bool Scene9010::loadScene9010Resources() {
 			!loadStage003Descriptors())
 		return false;
 
-	if (_i02PaletteTable.size() < 21 * kPaletteSize || _i02FramePayload.size() != 0x4bb42) {
+	if (!validateI02AnimationResources()) {
 		warning("%s has invalid I02 animation resources", kI01ArchiveName);
 		return false;
 	}
 
+	return true;
+}
+
+bool Scene9010::validateI02AnimationResources() {
+	if (_i02PaletteTable.size() < kPaletteSize || _i02FramePayload.empty())
+		return false;
+
+	_i02FramePayloadFormat = detectI02FramePayloadFormat(_i02FramePayload);
+	if (_i02FramePayloadFormat == kI02FramePayloadUnknown) {
+		warning("%s chunk 4 has unknown I02 frame payload format: size=%u",
+			kI01ArchiveName, (uint)_i02FramePayload.size());
+		return false;
+	}
+
+	debugC(1, kDebugResources, "Detected %s I02 frame payload format %u: paletteFrames=%u payloadSize=%u",
+		kI01ArchiveName, (uint)_i02FramePayloadFormat, (uint)(_i02PaletteTable.size() / kPaletteSize),
+		(uint)_i02FramePayload.size());
 	return true;
 }
 
@@ -337,33 +355,96 @@ bool Scene9010::playI02Animation() {
 	memset(_paletteCurrent.data(), 0, _paletteCurrent.size());
 	presentFrame();
 
-	drawResourceBlockList(_i02FramePayload);
+	drawI02FramePayload(_i02FramePayload);
 	setI02PaletteFrame(0);
 	presentFrame();
 
 	if (delay(3000))
 		return false;
 
+	ResourceChunkTable i02ChunkTable;
+	const uint chunkedFrameCount = detectI02ChunkedFrameCount(i02ChunkTable);
+	if (chunkedFrameCount != 0) {
+		for (uint frameIndex = 0; frameIndex < chunkedFrameCount && !_skipRequested &&
+				!Engine::shouldQuit(); ++frameIndex) {
+			if (!loadI02ChunkedFrame(frameIndex))
+				return false;
+
+			setI02PaletteFrame(frameIndex + 1);
+			drawI02FramePayload(_i02FramePayload);
+			presentFrame();
+
+			if (delay(50))
+				return false;
+		}
+
+		return true;
+	}
+
 	Common::File file;
 	if (!file.open(Common::Path(kI02ArchiveName))) {
 		warning("Failed to open %s", kI02ArchiveName);
 		return false;
 	}
-	if (file.size() != (int64)(_i02FramePayload.size() * 20)) {
-		warning("%s has unexpected stream size: %lld", kI02ArchiveName, (long long)file.size());
+	if (_i02FramePayload.empty() || file.size() <= 0 ||
+			(uint32)file.size() % _i02FramePayload.size() != 0) {
+		warning("%s has unexpected raw stream size: %lld payloadSize=%u",
+			kI02ArchiveName, (long long)file.size(), (uint)_i02FramePayload.size());
 		return false;
 	}
 
-	for (uint frameIndex = 1; frameIndex < 21 && !_skipRequested && !Engine::shouldQuit(); ++frameIndex) {
+	const uint rawFrameCount = (uint32)file.size() / _i02FramePayload.size();
+	for (uint frameIndex = 0; frameIndex < rawFrameCount && !_skipRequested &&
+			!Engine::shouldQuit(); ++frameIndex) {
 		if (!readI02StreamFrame(file))
 			return false;
 
-		setI02PaletteFrame(frameIndex);
-		drawResourceBlockList(_i02FramePayload);
+		setI02PaletteFrame(frameIndex + 1);
+		drawI02FramePayload(_i02FramePayload);
 		presentFrame();
 
 		if (delay(50))
 			return false;
+	}
+
+	return true;
+}
+
+uint Scene9010::detectI02ChunkedFrameCount(ResourceChunkTable &chunkTable) const {
+	Common::File file;
+	if (!file.open(Common::Path(kI02ArchiveName)))
+		return 0;
+
+	if (!chunkTable.load(file))
+		return 0;
+
+	uint frameCount = 0;
+	const uint32 fileSize = (uint32)file.size();
+	for (uint index = 0; index < HollywoodEngine::kResourceChunkCount; ++index) {
+		const uint32 offset = chunkTable.offsets[index];
+		const uint32 size = chunkTable.sizes[index];
+		if (size == 0)
+			break;
+		if (offset > fileSize || size > fileSize - offset)
+			return 0;
+		++frameCount;
+	}
+
+	return frameCount;
+}
+
+bool Scene9010::loadI02ChunkedFrame(uint frameIndex) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		_vm->resources()->createChunkReadStream(Common::Path(kI02ArchiveName), frameIndex));
+	if (!stream) {
+		warning("Failed to open %s chunk %u", kI02ArchiveName, frameIndex);
+		return false;
+	}
+
+	_i02FramePayload.resize(stream->size());
+	if (stream->read(_i02FramePayload.data(), _i02FramePayload.size()) != _i02FramePayload.size()) {
+		warning("Failed to read %s chunk %u", kI02ArchiveName, frameIndex);
+		return false;
 	}
 
 	return true;
@@ -382,12 +463,96 @@ bool Scene9010::readI02StreamFrame(Common::File &file) {
 }
 
 void Scene9010::setI02PaletteFrame(uint frameIndex) {
-	const uint offset = frameIndex * kPaletteSize;
-	if (offset + kPaletteSize > _i02PaletteTable.size())
+	const uint paletteFrameCount = _i02PaletteTable.size() / kPaletteSize;
+	if (paletteFrameCount == 0)
 		return;
 
+	frameIndex = MIN<uint>(frameIndex, paletteFrameCount - 1);
+	const uint offset = frameIndex * kPaletteSize;
 	memcpy(_paletteSource.data(), _i02PaletteTable.data() + offset, kPaletteSize);
 	memcpy(_paletteCurrent.data(), _paletteSource.data(), kPaletteSize);
+}
+
+Scene9010::I02FramePayloadFormat Scene9010::detectI02FramePayloadFormat(
+		const Common::Array<byte> &payload) const {
+	if (isValidI02BlockListFrame(payload))
+		return kI02FramePayloadBlockList;
+	if (payload.size() == kRawScreenFrameSize)
+		return kI02FramePayloadScreenRows;
+	if (payload.size() == kRawSceneFrameSize)
+		return kI02FramePayloadSceneRows;
+	return kI02FramePayloadUnknown;
+}
+
+bool Scene9010::isValidI02BlockListFrame(const Common::Array<byte> &payload) const {
+	if (payload.size() < 2)
+		return false;
+
+	const uint16 blockCount = readUint16(payload, 0);
+	uint cursor = 2;
+	for (uint blockIndex = 0; blockIndex < blockCount; ++blockIndex) {
+		if (cursor + 6 > payload.size())
+			return false;
+
+		const uint32 destination = readUint32(payload, cursor);
+		const uint16 size = readUint16(payload, cursor + 4);
+		cursor += 6;
+
+		const uint x = destination & 0xffff;
+		const uint y = (destination >> 16) & 0xffff;
+		const uint destinationOffset = x + y * HollywoodEngine::kSceneBufferWidth;
+		if (cursor + size > payload.size() || destinationOffset + size > _sceneFramebuffer.size())
+			return false;
+
+		cursor += size;
+	}
+
+	return cursor <= payload.size();
+}
+
+void Scene9010::drawI02FramePayload(const Common::Array<byte> &payload) {
+	I02FramePayloadFormat format = _i02FramePayloadFormat;
+	if (format == kI02FramePayloadUnknown)
+		format = detectI02FramePayloadFormat(payload);
+	else if ((format == kI02FramePayloadBlockList && !isValidI02BlockListFrame(payload)) ||
+			(format == kI02FramePayloadScreenRows && payload.size() != kRawScreenFrameSize) ||
+			(format == kI02FramePayloadSceneRows && payload.size() != kRawSceneFrameSize))
+		format = detectI02FramePayloadFormat(payload);
+
+	switch (format) {
+	case kI02FramePayloadBlockList:
+		drawResourceBlockList(payload);
+		break;
+	case kI02FramePayloadScreenRows:
+		drawRawI02ScreenRows(payload);
+		break;
+	case kI02FramePayloadSceneRows:
+		drawRawI02SceneRows(payload);
+		break;
+	default:
+		warning("%s frame has unknown I02 payload format: size=%u", kI02ArchiveName,
+			(uint)payload.size());
+		break;
+	}
+}
+
+void Scene9010::drawRawI02ScreenRows(const Common::Array<byte> &payload) {
+	if (payload.size() < kRawScreenFrameSize)
+		return;
+
+	for (uint row = 0; row < HollywoodEngine::kScreenHeight; ++row) {
+		const uint sourceOffset = row * HollywoodEngine::kScreenWidth;
+		const uint destinationOffset = row * HollywoodEngine::kSceneBufferWidth;
+		memcpy(_sceneFramebuffer.data() + destinationOffset, payload.data() + sourceOffset,
+			HollywoodEngine::kScreenWidth);
+	}
+}
+
+void Scene9010::drawRawI02SceneRows(const Common::Array<byte> &payload) {
+	if (payload.size() < kRawSceneFrameSize)
+		return;
+
+	memcpy(_sceneFramebuffer.data(), payload.data(), kRawSceneFrameSize);
 }
 
 void Scene9010::drawResourceBlockList(const Common::Array<byte> &blockList) {
