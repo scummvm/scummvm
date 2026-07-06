@@ -110,4 +110,4 @@ void Toolbox::TextSize(uint16 size) {
 	}
 }
 
-} // namespace Fool
+} // End of namespace Fool

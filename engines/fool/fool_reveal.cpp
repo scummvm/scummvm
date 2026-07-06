@@ -211,4 +211,4 @@ void FoolGame::revealSuccess() {
 	flashRect(0x37, 0x13, 0xff, 0x1ee, 0xc8);
 }
 
-}
+} // End of namespace Fool

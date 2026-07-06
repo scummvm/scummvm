@@ -3269,4 +3269,4 @@ void FoolGame::metapuzzleComplete() {
 	copyScreen(1, _scrollPage);
 }
 
-};
+} // End of namespace Fool

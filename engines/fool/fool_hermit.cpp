@@ -81,4 +81,4 @@ void FoolGame::hermitRun() {
 	// 142:1404
 }
 
-}
+} // End of namespace Fool

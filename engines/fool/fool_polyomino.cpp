@@ -531,5 +531,4 @@ void FoolGame::polyominoStoreState() {
 }
 
 
-
-};
+} // End of namespace Fool

@@ -638,4 +638,4 @@ PicHandle Toolbox::OpenPicture(const Common::Rect &picFrame) {
 
 
 
-} // namespace Fool
+} // End of namespace Fool

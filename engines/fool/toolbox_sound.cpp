@@ -74,4 +74,4 @@ int16 Toolbox::GetSoundVol() {
 }
 
 
-} // namespace Fool
+} // End of namespace Fool

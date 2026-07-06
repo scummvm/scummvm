@@ -214,4 +214,4 @@ void FoolGame::straightPathSuccess() {
 }
 
 
-}
+} // End of namespace Fool

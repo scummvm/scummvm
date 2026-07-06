@@ -358,4 +358,4 @@ uint32 Toolbox::TickCount() {
 }
 
 
-} // namespace Fool
+} // End of namespace Fool

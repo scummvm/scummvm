@@ -245,4 +245,4 @@ void FoolGame::humbugShowThoth() {
 	// 142:0850
 }
 
-}
+} // End of namespace Fool

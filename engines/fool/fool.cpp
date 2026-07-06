@@ -31,7 +31,6 @@
 #include "fool/fool_game.h"
 #include "fool/fool_prologue.h"
 #include "fool/detection.h"
-#include "fool/console.h"
 #include "fool/toolbox.h"
 
 namespace Fool {
@@ -56,9 +55,6 @@ Common::String FoolEngine::getGameId() const {
 
 Common::Error FoolEngine::run() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-	// Set the engine's debugger console
-	setDebugger(new Console());
 
 	_screen.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	_wm.setScreen(&_screen);

@@ -206,4 +206,4 @@ void Toolbox::UseResFile(int16 refNum) {
 }
 
 
-} // namespace Fool
+} // End of namespace Fool

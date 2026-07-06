@@ -1149,4 +1149,4 @@ void FoolGame::sub_130_2790() {
 }
 
 
-}
+} // End of namespace Fool

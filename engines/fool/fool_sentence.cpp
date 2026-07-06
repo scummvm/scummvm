@@ -328,4 +328,4 @@ void FoolGame::sentenceSuccess() {
 }
 
 
-}
+} // End of namespace Fool

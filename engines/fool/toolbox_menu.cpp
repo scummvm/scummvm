@@ -272,4 +272,4 @@ void Toolbox::SetItem(MenuHandle &theMenu, uint16 item, const Common::U32String 
 }
 
 
-} // namespace Fool
+} // End of namespace Fool

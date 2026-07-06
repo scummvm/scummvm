@@ -13,10 +13,8 @@
    this software. If not, see
    <http://creativecommons.org/publicdomain/zero/1.0/>.
  */
+#include "common/system.h"
 #include "fool/siphash/halfsip.h"
-#include <assert.h>
-#include <stddef.h>
-#include <stdint.h>
 
 /* default: SipHash-2-4 */
 #ifndef cROUNDS
