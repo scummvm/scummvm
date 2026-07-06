@@ -164,6 +164,7 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 		_paletteFadeTemporary[i] = 0;
 
 	_refreshDungeonViewPaleteRequested = false;
+	_doNotDrawFluxcagesDuringEndgame = false;
 
 	initConstants();
 }
