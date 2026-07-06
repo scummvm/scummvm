@@ -938,6 +938,7 @@ void DMEngine::fuseSequence() {
 				if (curExplosion->getType() == kDMExplosionTypeFluxcage) {
 					_dungeonMan->unlinkThingFromList(curThing, Thing(0), fluxCageMapX, fluxcageMapY);
 					curExplosion->setNextThing(_thingNone);
+					curThing = _dungeonMan->getSquareFirstObject(fluxCageMapX, fluxcageMapY);
 					continue;
 				}
 			}
