@@ -27,6 +27,7 @@
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
+#include "hollywood/scenes/resource_delta_clip_player.h"
 
 namespace Hollywood {
 
@@ -48,6 +49,9 @@ const uint16 kScene7010Chunk10DescriptorCount = 0x10;
 const uint16 kScene7010Chunk11DescriptorCount = 0x25;
 const uint16 kScene7010Chunk14DescriptorCount = 0x20;
 const uint16 kScene7010Chunk15DescriptorCount = 0x17;
+const uint16 kScene7010EmbeddedClipFirstChunk = 19;
+const uint16 kScene7010EmbeddedClipLastChunk = 21;
+const uint16 kScene7010EmbeddedClipFrameCount = 0x0c;
 const uint16 kScene7010DialogueOverlayMode1DescriptorCount = 3;
 const uint16 kScene7010DialogueOverlayMode2DescriptorCount = 0x1b;
 const uint kScene7010DialogueOverlayLayer = 0;
@@ -69,10 +73,13 @@ const uint32 kScene7010ActorPathFrameMillis = 60;
 const uint32 kScene7010SecondaryActorFrameMillis = 150;
 const uint32 kScene7010Chunk8FrameMillis = 75;
 const uint32 kScene7010Chunk10FrameMillis = 125;
+const uint32 kScene7010EmbeddedClipFrameMillis = 60;
 const uint32 kScene7010DialogueOverlayFrameMillis = 60;
+const uint32 kScene7010EmbeddedClipPaletteOffset = 0x4bb42;
+const uint32 kScene7010EmbeddedClipFrameTableOffset = 0x4be42;
 const byte kScene7010Chunk8FrameMap[] = {
 	0, 1, 2, 3, 4, 5, 6, 5, 7, 8, 9, 10, 11, 12, 13, 21,
-	9, 8, 7, 0, 14, 15
+	9, 8, 7, 0, 14, 15, 16, 17, 18, 19, 20
 };
 const byte kScene7010Chunk11FrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
@@ -120,7 +127,6 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 		PlayableScene(vm, scene7010Config(), "scene7010", 0x184, 0x1c6, 1, 0xfd, 0xfb),
 		_chunk8FrameIndex(0),
 		_chunk9AmbientOverlayFrameIndex(0),
-		_chunk9AmbientDecisionCounter(0),
 		_chunk10IdleFrameA(0),
 		_chunk10IdleFrameB(8),
 		_chunk10IdleFrameC(4),
@@ -162,7 +168,6 @@ void Scene7010::initializeCustomPreviewState() {
 	_primaryDialogueSpeechGroup = 0xff;
 	_chunk10IdlePairATicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
 	_chunk10IdlePairBTicksRemaining = (byte)(_random.getRandomNumber(0x18) + 10);
-	_chunk9AmbientDecisionCounter = 0;
 	_chunk8TimerAccumulator = 0;
 	_chunk10TimerAccumulator = 0;
 	_secondaryActorTimerAccumulator = 0;
@@ -206,6 +211,23 @@ void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 		kScene7010Chunk10DescriptorCount, _chunk10IdleFrameD, _sceneFramebuffer);
 
 	drawTransientLayers(_backTransientLayers);
+
+	if (_actionOverlayVisible) {
+		const byte chunk8DescriptorIndex = _chunk8FrameIndex < ARRAYSIZE(kScene7010Chunk8FrameMap) ?
+			kScene7010Chunk8FrameMap[_chunk8FrameIndex] : 0;
+		drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[8], 0,
+			kScene7010Chunk8DescriptorCount, chunk8DescriptorIndex, _sceneFramebuffer);
+
+		if (!_chunk8SpecialSequenceActive &&
+				_vm->gameState().currentAmbientMusicCueId != kScene7010AmbientMusicCueWithoutChunk9) {
+			drawStripSpriteFrame(_resourceArena, _resourceChunkOffsets[9], 0,
+				kScene7010Chunk9DescriptorCount, _chunk9AmbientOverlayFrameIndex, _sceneFramebuffer);
+		}
+
+		drawActionOverlayLayer();
+		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
+		return;
+	}
 
 	drawActiveAndSecondaryActorFrames(drawActiveActor, activeFacing, activeCel, activeWorldX, activeWorldY,
 		drawSecondaryActor, secondaryFacing, secondaryFrame, secondaryWorldX, secondaryWorldY, -1);
@@ -410,19 +432,24 @@ bool Scene7010::prepareCustomGameplayLoop() {
 }
 
 bool Scene7010::advanceCustomGameplayLoop(uint32 delta) {
+	updateG01AmbientAudioAndMusicCues(delta);
+
 	if (_primaryLeftSpeechActive && _primarySpeechOverlay.visible) {
 		_primaryLeftSpeechTimerAccumulator += delta;
 		while (_primaryLeftSpeechTimerAccumulator >= kScene7010Chunk10FrameMillis) {
 			advancePrimaryLeftSpeechFrame();
 			_primaryLeftSpeechTimerAccumulator -= kScene7010Chunk10FrameMillis;
 		}
-	} else {
+	} else if (!_chunk8SpecialSequenceActive) {
 		_primaryLeftSpeechTimerAccumulator = 0;
 		_chunk8TimerAccumulator += delta;
 		while (_chunk8TimerAccumulator >= kScene7010Chunk8FrameMillis) {
 			advanceChunk8Cycle();
 			_chunk8TimerAccumulator -= kScene7010Chunk8FrameMillis;
 		}
+	} else {
+		_primaryLeftSpeechTimerAccumulator = 0;
+		_chunk8TimerAccumulator = 0;
 	}
 
 	_chunk10TimerAccumulator += delta;
@@ -562,10 +589,21 @@ void Scene7010::advanceChunk8Cycle() {
 	if (_chunk9AmbientOverlayFrameIndex == 1) {
 		_chunk9AmbientOverlayFrameIndex = 0;
 	} else {
-		++_chunk9AmbientDecisionCounter;
-		if ((_chunk9AmbientDecisionCounter % 5) == 0)
+		if (_random.getRandomNumber(4) == 0)
 			_chunk9AmbientOverlayFrameIndex = 1;
 	}
+}
+
+void Scene7010::updateG01AmbientAudioAndMusicCues(uint32 delta) {
+	const byte previousCue = _vm->gameState().currentAmbientMusicCueId;
+	updateAmbientAudioAndMusicCues(delta);
+	const byte currentCue = _vm->gameState().currentAmbientMusicCueId;
+	if (currentCue == previousCue)
+		return;
+
+	_chunk8FrameIndex = currentCue == kScene7010AmbientMusicCueWithoutChunk9 ? 0x14 : 0;
+	_chunk9AmbientOverlayFrameIndex = 0;
+	_chunk8TimerAccumulator = 0;
 }
 
 void Scene7010::advanceChunk10IdleFrames() {
@@ -778,18 +816,88 @@ void Scene7010::runChunk14FrameRange(byte startFrame, byte endFrame) {
 }
 
 void Scene7010::runChunk15ItemSequence() {
-	setChunk15Visible(true);
-	for (byte frame = 0; frame <= 0x17 && !Engine::shouldQuit(); ++frame) {
-		setChunk15Frame(frame);
+	const bool previousHideActiveActor = _actionOverlayPlayer.applyActorVisibility(kActionOverlayHideActiveActor);
+	_actionOverlayPlayer.begin(15, kScene7010Chunk15DescriptorCount,
+		kScene7010Chunk15FrameMap, ARRAYSIZE(kScene7010Chunk15FrameMap));
+
+	for (byte frame = 1; frame <= 0x17 && !Engine::shouldQuit(); ++frame) {
+		_actionOverlayPlayer.setFrame(frame);
+		if (waitSceneMillis(kScene7010Chunk8FrameMillis))
+			break;
 		if (frame == 10) {
 			beginPrimarySpeechLine(6, 1, 0x20e, 0x109, 0x3f, 0x28, 0x32);
 			beginPrimarySpeechLine(6, 2, 0x20e, 0x109, 0x3f, 0x28, 0x32);
 			runDialogueOverlayFrames(0, 5, 2);
 			beginPrimarySpeechLine(6, 3, 0x20e, 0x109, 0x3f, 0x28, 0x32);
 		}
-		waitSceneMillis(kScene7010Chunk8FrameMillis);
 	}
-	setChunk15Visible(false);
+
+	_actionOverlayPlayer.setFrame(0);
+	runEmbeddedClipChunk19Sequence();
+	_actionOverlayPlayer.finish(previousHideActiveActor);
+}
+
+void Scene7010::runEmbeddedClipChunk19Sequence() {
+	Common::Array<byte> clipData;
+	for (uint chunkIndex = kScene7010EmbeddedClipFirstChunk;
+			chunkIndex <= kScene7010EmbeddedClipLastChunk; ++chunkIndex) {
+		Common::Array<byte> chunkData;
+		if (!loadVariableChunk(chunkIndex, chunkData)) {
+			warning("Scene 7010 failed to load embedded doghouse clip chunk %u",
+				chunkIndex);
+			return;
+		}
+
+		const uint oldSize = clipData.size();
+		clipData.resize(oldSize + chunkData.size());
+		memcpy(clipData.data() + oldSize, chunkData.data(), chunkData.size());
+	}
+
+	const uint32 paletteEnd = kScene7010EmbeddedClipPaletteOffset + 0x300;
+	const uint32 frameTableEnd = kScene7010EmbeddedClipFrameTableOffset +
+		(uint32)kScene7010EmbeddedClipFrameCount * 4;
+	if (clipData.size() < paletteEnd || clipData.size() < frameTableEnd) {
+		warning("Scene 7010 embedded doghouse clip chunks %u..%u are too small: %u bytes",
+			kScene7010EmbeddedClipFirstChunk, kScene7010EmbeddedClipLastChunk,
+			clipData.size());
+		return;
+	}
+
+	const Common::Array<byte> savedPalette = _paletteCurrent;
+	memset(framebufferPixels(_sceneFramebuffer), 0, framebufferByteCount());
+	drawResourceBlockList(clipData, 0, _sceneFramebuffer);
+
+	const uint paletteByteCount = MIN<uint>(_paletteCurrent.size(), 0x300);
+	memcpy(_paletteCurrent.data(), clipData.data() + kScene7010EmbeddedClipPaletteOffset,
+		paletteByteCount);
+	presentFrame();
+
+	for (byte frame = 0; frame < kScene7010EmbeddedClipFrameCount && !Engine::shouldQuit() &&
+			!_vm->isSceneRestartRequested(); ++frame) {
+		const uint32 deltaChunkSize = clipData.size() - kScene7010EmbeddedClipFrameTableOffset;
+		ResourceDeltaClipPlayer::drawFrame(clipData, kScene7010EmbeddedClipFrameTableOffset,
+			deltaChunkSize, kScene7010EmbeddedClipFrameCount, frame,
+			framebufferPixels(_sceneFramebuffer), framebufferByteCount());
+		presentFrame();
+
+		uint32 remaining = kScene7010EmbeddedClipFrameMillis;
+		while (remaining != 0 && !Engine::shouldQuit() && !_vm->isSceneRestartRequested()) {
+			if (pollEvents(true)) {
+				remaining = 0;
+				break;
+			}
+			const uint32 slice = MIN<uint32>(remaining, 10);
+			g_system->delayMillis(slice);
+			updateG01AmbientAudioAndMusicCues(slice);
+			remaining -= slice;
+		}
+		if (_skipRequested)
+			break;
+	}
+
+	_paletteCurrent = savedPalette;
+	drawPlayableComposite();
+	presentFrame();
 }
 
 void Scene7010::runDialogueOverlayFrames(byte startFrame, byte endFrame, byte finalMode) {
