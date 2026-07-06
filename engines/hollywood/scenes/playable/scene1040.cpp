@@ -56,6 +56,8 @@ const uint kScene1040BalloonOverlayDescriptorCount = 0x0d;
 const uint kScene1040CordOverlayDescriptorCount = 0x19;
 const uint kScene1040GorillaCordOverlayDescriptorCount = 0x10;
 const int kScene1040ForegroundYThreshold = 0x15f;
+const byte kScene1040CordSetupSoundHook = 1;
+const byte kScene1040CordPickupPatchHook = 2;
 const byte kScene1040FirstAmbientSoundCue = 0x25;
 const byte kScene1040AmbientSoundCueCount = 7;
 const byte kScene1040FirstAmbientMusicCue = 0x0b;
@@ -340,6 +342,22 @@ AmbientAudioProfile Scene1040::ambientAudioProfile() const {
 		kScene1040AmbientMusicProbabilityModulus);
 }
 
+void Scene1040::handleActionOverlayFrameHook(byte hookId, uint frame) {
+	if (hookId == kScene1040CordPickupPatchHook) {
+		if (frame == 0 && _sceneChunkTable.isValidChunk(14))
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[14], _baseFramebuffer);
+		return;
+	}
+
+	if (hookId != kScene1040CordSetupSoundHook)
+		return;
+
+	if (frame == 8)
+		_soundBank0.playSampleLooping(0x23, 75);
+	else if (frame == 28)
+		_soundBank0.stop();
+}
+
 void Scene1040::runDoorToCloakroomAction() {
 	runOverlaySequence(8, kScene1040DoorOverlayDescriptorCount, kScene1040DoorFrameMap,
 		ARRAYSIZE(kScene1040DoorFrameMap), kScene1040FrameMillis);
@@ -358,8 +376,10 @@ void Scene1040::handleCordPickup() {
 	if (hasInventoryItem(0x1b))
 		return;
 
-	runOverlaySequence(12, kScene1040CordOverlayDescriptorCount, kScene1040CordFrameMap,
-		ARRAYSIZE(kScene1040CordFrameMap), kScene1040FrameMillis, 0, 2);
+	runActionOverlay(ActionOverlaySpec(12, kScene1040CordOverlayDescriptorCount,
+		kScene1040CordFrameMap, ARRAYSIZE(kScene1040CordFrameMap), kScene1040FrameMillis)
+		.hideActor()
+		.hookAt(0, kScene1040CordPickupPatchHook));
 	state.scene1040GorillaCordState = 2;
 	applySceneStateToHotspotsAndPatches(2);
 	addInventoryItem(0x1b);
@@ -389,10 +409,11 @@ void Scene1040::handleGorillaCordSetup() {
 	if (state.scene1040GorillaCordState >= 2)
 		return;
 
-	_soundBank0.playSampleLooping(0x23, 75);
-	runOverlaySequence(11, kScene1040GorillaCordOverlayDescriptorCount,
+	runActionOverlay(ActionOverlaySpec(11, kScene1040GorillaCordOverlayDescriptorCount,
 		kScene1040GorillaCordSetupFrameMap, ARRAYSIZE(kScene1040GorillaCordSetupFrameMap),
-		kScene1040FrameMillis);
+		kScene1040FrameMillis)
+		.hideActor()
+		.hookEveryFrame(kScene1040CordSetupSoundHook));
 	_soundBank0.stop();
 	beginSecondarySpeechLine(13, 0);
 	state.scene1040GorillaCordState = 1;
