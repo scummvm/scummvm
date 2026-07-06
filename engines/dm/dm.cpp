@@ -658,7 +658,7 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 				championMirrorBox._rect.top += 48;
 				championMirrorBox._rect.bottom += 48;
 				championPortraitBox._rect.top += 48;
-				championPortraitBox._rect.top += 48;
+				championPortraitBox._rect.bottom += 48;
 			}
 			_displayMan->startEndFadeToPalette(_displayMan->_paletteTopAndBottomScreen);
 			_engineShouldQuit = true;
