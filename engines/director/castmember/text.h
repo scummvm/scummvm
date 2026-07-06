@@ -50,7 +50,7 @@ public:
 	void updateFromWidget(Graphics::MacWidget *widget, bool spriteEditable) override;
 	Graphics::TextAlign getAlignment();
 
-	uint32 getBackColor() override { return _bgcolor; }
+	uint32 getBackColor() override;
 	void setBackColor(uint32 bgCol) override;
 	uint32 getForeColor() override { return _fgcolor; }
 	uint32 getForeColor(int start, int end);
@@ -136,6 +136,7 @@ private:
 
 	uint32 _bgcolor;
 	uint32 _fgcolor;
+	bool _bgColorSet;
 };
 
 } // End of namespace Director
