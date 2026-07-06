@@ -65,7 +65,7 @@ void readUISlider(Common::SeekableReadStream &stream, UISliderRecord &dst);
 void readUIPopupHeader(Common::SeekableReadStream &stream, UIPopupHeader &dst);
 void readUIButtonSlot(Common::SeekableReadStream &stream, UIButtonSlot &dst);
 
-Common::String getTextFromCaseInsensitiveKey(Common::HashMap<Common::String, Common::String> texts, Common::String &key);
+Common::String getTextFromCaseInsensitiveKey(Common::HashMap<Common::String, Common::String> texts, const Common::String &key);
 
 // Abstract base class used for loading data that would take too much time in a single frame
 class DeferredLoader {
