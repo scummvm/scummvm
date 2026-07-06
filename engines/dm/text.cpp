@@ -137,6 +137,9 @@ void TextMan::printMessage(Color color, const char *string, bool printWithScroll
 }
 
 void TextMan::createNewRow() {
+	while (_isScrolling)
+		_vm->delay(10);
+
 	if (_messageAreaCursorRow == 3) {
 		isTextScrolling(&_textScroller, true);
 		memset(_bitmapMessageAreaNewRow, kDMColorBlack, 320 * 7);
