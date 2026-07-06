@@ -218,6 +218,23 @@ const char *leventType2str(LEvent type) {
 	return "<unknown>";
 }
 
+const char *const eventHandlerSourceType[] = {
+	"NoneHandler",
+	"PrimaryHandler",
+	"SpriteHandler",
+	"CastHandler",
+	"FrameHandler",
+	"MovieHandler",
+};
+
+const char *eventHandlerSourceType2str(EventHandlerSourceType type) {
+	if (type <= kMovieHandler)
+		return eventHandlerSourceType[type];
+
+	warning("BUILDBOT: Unknown EventHandlerSourceType: %d", type);
+	return "<unknown>";
+}
+
 #define defFlag(x) { x, #x }
 
 struct FlagsList {
