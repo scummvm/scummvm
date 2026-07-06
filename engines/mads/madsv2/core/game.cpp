@@ -310,7 +310,6 @@ void flag_parse(const char **myscan) {
 	case 'M':
 		if (scan_past(myscan, ':')) {
 			mem_max = atol(*myscan);
-			mem_get_name(mem_max, "$HIDE$");
 			scan_past(myscan, 0);
 		}
 		break;
@@ -2285,7 +2284,7 @@ static void game_global_update() {
 
 	debugger_name("4", 23);
 
-	for (count = 0; count < 220; count += 10) {
+	for (count = 0; count < GLOBAL_LIST_SIZE; count += 10) {
 		screen_printf(0, (count / 10) + 2, "%4d => %04x  %04x  %04x  %04x  %04x  %04x  %04x  %04x  %04x  %04x",
 			count,
 			global[count],
@@ -2453,7 +2452,6 @@ static void game_matte() {
 					Common::sprintf_s(sprite_buf, "%d", image_list[count].sprite_id);
 				}
 			} else {
-				series_id = -1;
 				Common::strcpy_s(name_buf, "sys");
 				Common::strcpy_s(sprite_buf, " ");
 			}
