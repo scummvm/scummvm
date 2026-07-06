@@ -59,7 +59,9 @@ public:
 private:
 	bool loadBottomPanelBuffer();
 	bool loadDialogueMenuPanelBuffer();
+	bool loadDialogueMenuPanelBufferFromResource000();
 	bool loadObjectPalette();
+	bool loadObjectPaletteFromResource000();
 	bool loadInventoryItemTilePage(byte pageIndex, Common::Array<byte> &page) const;
 	void copySavedCaptionBand(Graphics::Surface &surface, const Graphics::Surface &savedFramebuffer,
 		uint16 viewportXOffset, uint16 viewportYOffset, uint16 screenY) const;

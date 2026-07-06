@@ -46,6 +46,8 @@ const uint kPanelResource000OffsetTableSize = 400;
 const uint kPanelResource000SizeTableSize = 400;
 const uint kPanelInventoryItemPagesResourceEntry = 0x2b;
 const uint kPanelStartupResourceEntry = 0x2c;
+const uint kPanelDialogueMenuResource000Entry = 0x2f;
+const uint kPanelObjectPaletteResource000Entry = 0x31;
 const uint kPanelStartupPrecedingBlockCount = 3;
 const uint kPanelBottomBufferWidth = 640;
 const uint kPanelBottomBufferRows = 0xbd;
@@ -223,36 +225,99 @@ bool GameplayPanelArt::loadBottomPanelBuffer() {
 
 bool GameplayPanelArt::loadDialogueMenuPanelBuffer() {
 	Common::ScopedPtr<Common::WinResources> exe(Common::WinResources::createFromEXE(Common::Path(kPanelExecutableName)));
-	if (!exe)
-		return false;
+	if (exe) {
+		Common::ScopedPtr<Common::SeekableReadStream> stream(exe->getResource(
+			Common::WinResourceID(kPanelDialogueMenuResourceType),
+			Common::WinResourceID(kPanelDialogueMenuResourceName)));
+		if (stream && stream->size() >= kPanelDialogueMenuResourceSize) {
+			_dialogueMenuPanelBuffer.resize(kPanelDialogueMenuResourceSize);
+			return stream->read(_dialogueMenuPanelBuffer.data(), _dialogueMenuPanelBuffer.size()) ==
+				_dialogueMenuPanelBuffer.size();
+		}
+	}
 
-	Common::ScopedPtr<Common::SeekableReadStream> stream(exe->getResource(
-		Common::WinResourceID(kPanelDialogueMenuResourceType),
-		Common::WinResourceID(kPanelDialogueMenuResourceName)));
-	if (!stream || stream->size() < kPanelDialogueMenuResourceSize) {
-		warning("Failed to load Hollywood dialogue panel resource %s/%s from %s",
-			kPanelDialogueMenuResourceType, kPanelDialogueMenuResourceName, kPanelExecutableName);
+	return loadDialogueMenuPanelBufferFromResource000();
+}
+
+bool GameplayPanelArt::loadDialogueMenuPanelBufferFromResource000() {
+	Common::File file;
+	if (!file.open(Common::Path(kPanelResource000Name))) {
+		warning("Failed to open %s for Hollywood dialogue panel art", kPanelResource000Name);
+		return false;
+	}
+
+	const uint tableOffset = kPanelResource000HeaderByteCount + kPanelDialogueMenuResource000Entry * 4;
+	if ((uint32)file.size() < tableOffset + 4) {
+		warning("%s is too small for Hollywood dialogue panel table entry", kPanelResource000Name);
+		return false;
+	}
+
+	file.seek(tableOffset);
+	const uint32 panelOffset = file.readUint32LE();
+	const uint32 sourceByteCount = (kPanelDialogueMenuTopRows + kPanelDialogueMenuLineRows +
+		kPanelDialogueMenuBottomRows - 1) * kPanelResourceSourceStride + kPanelBottomBufferWidth;
+	if (panelOffset > (uint32)file.size() || sourceByteCount > (uint32)file.size() - panelOffset) {
+		warning("%s dialogue panel art has invalid bounds", kPanelResource000Name);
 		return false;
 	}
 
 	_dialogueMenuPanelBuffer.resize(kPanelDialogueMenuResourceSize);
-	return stream->read(_dialogueMenuPanelBuffer.data(), _dialogueMenuPanelBuffer.size()) ==
-		_dialogueMenuPanelBuffer.size();
+	file.seek(panelOffset);
+	for (uint row = 0; row < kPanelDialogueMenuTopRows + kPanelDialogueMenuLineRows +
+			kPanelDialogueMenuBottomRows; ++row) {
+		byte *destination = _dialogueMenuPanelBuffer.data() + row * kPanelBottomBufferWidth;
+		if (file.read(destination, kPanelBottomBufferWidth) != kPanelBottomBufferWidth) {
+			warning("Failed to read Hollywood dialogue panel row %u", row);
+			return false;
+		}
+		if (row + 1 < kPanelDialogueMenuTopRows + kPanelDialogueMenuLineRows +
+				kPanelDialogueMenuBottomRows)
+			file.seek(kPanelResourceSourceStride - kPanelBottomBufferWidth, SEEK_CUR);
+	}
+
+	return true;
 }
 
 bool GameplayPanelArt::loadObjectPalette() {
 	Common::ScopedPtr<Common::WinResources> exe(Common::WinResources::createFromEXE(Common::Path(kPanelExecutableName)));
-	if (!exe)
+	if (exe) {
+		Common::ScopedPtr<Common::SeekableReadStream> stream(exe->getResource(
+			Common::WinResourceID(kPanelPaletteResourceType), Common::WinResourceID(kPanelPaletteResourceName)));
+		if (stream && stream->size() >= kPanelObjectPaletteSize) {
+			_objectPaletteTriples.resize(kPanelObjectPaletteSize);
+			return stream->read(_objectPaletteTriples.data(), _objectPaletteTriples.size()) ==
+				_objectPaletteTriples.size();
+		}
+	}
+
+	return loadObjectPaletteFromResource000();
+}
+
+bool GameplayPanelArt::loadObjectPaletteFromResource000() {
+	Common::File file;
+	if (!file.open(Common::Path(kPanelResource000Name)))
 		return false;
 
-	Common::ScopedPtr<Common::SeekableReadStream> stream(exe->getResource(
-		Common::WinResourceID(kPanelPaletteResourceType), Common::WinResourceID(kPanelPaletteResourceName)));
-	if (!stream || stream->size() < kPanelObjectPaletteSize)
+	const uint offsetTableOffset = kPanelResource000HeaderByteCount + kPanelObjectPaletteResource000Entry * 4;
+	const uint sizeTableOffset = kPanelResource000HeaderByteCount + kPanelResource000OffsetTableSize +
+		kPanelObjectPaletteResource000Entry * 4;
+	if ((uint32)file.size() < sizeTableOffset + 4)
+		return false;
+
+	file.seek(offsetTableOffset);
+	const uint32 paletteOffset = file.readUint32LE();
+	file.seek(sizeTableOffset);
+	const uint32 paletteSize = file.readUint32LE();
+	if (paletteSize < kPanelObjectPaletteObjectOnlySize ||
+			paletteOffset > (uint32)file.size() ||
+			kPanelObjectPaletteObjectOnlySize > (uint32)file.size() - paletteOffset)
 		return false;
 
 	_objectPaletteTriples.resize(kPanelObjectPaletteSize);
-	return stream->read(_objectPaletteTriples.data(), _objectPaletteTriples.size()) ==
-		_objectPaletteTriples.size();
+	memset(_objectPaletteTriples.data(), 0, _objectPaletteTriples.size());
+	file.seek(paletteOffset);
+	return file.read(_objectPaletteTriples.data(), kPanelObjectPaletteObjectOnlySize) ==
+		kPanelObjectPaletteObjectOnlySize;
 }
 
 bool GameplayPanelArt::loadInventoryItemTilePage(byte pageIndex, Common::Array<byte> &page) const {

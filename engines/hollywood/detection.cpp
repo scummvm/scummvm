@@ -55,6 +55,19 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 
+	// Spanish DOS CD full game, MONSTERS directory from the CD.
+	{
+		"hollywood",
+		nullptr,
+		AD_ENTRY3s("MONSTERS.EXE", "54a1e8749448e08086a1929510ec4b6a", 2513867,
+			"RESOURCE.000", "bf580b6b3eedf45e427bb83ab29ccd21", 4320424,
+			"RESOURCE.003", "352126965c51832ce970faece65cc2f8", 9444153),
+		Common::ES_ESP,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
+
 	AD_TABLE_END_MARKER
 };
 
