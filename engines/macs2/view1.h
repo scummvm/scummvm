@@ -114,7 +114,7 @@ public:
 
 	Common::Point getPosition() const;
 	void setPosition(const Common::Point &newPosition);
-	Macs2::GameObject *_gameObject;
+	Macs2::GameObject *_gameObject = nullptr;
 
 	uint16 getVerticalOffset() const;
 
