@@ -625,7 +625,7 @@ struct GameplayState {
 		inventoryItemSlotByOwnerAndItemId[owner][1] = 1;
 		inventoryItemSlotByOwnerAndItemId[owner][2] = 3;
 		inventoryItemSlotByOwnerAndItemId[owner][5] = 4;
-		inventoryItemSlotByOwnerAndItemId[owner][9] = 2;
+		inventoryItemSlotByOwnerAndItemId[owner][7] = 2;
 		inventoryItemCountByOwner[owner] = 4;
 		inventoryFirstVisibleSlotByOwner[owner] = firstVisibleInventorySlotForCount(4);
 		sueInventoryInitialized = true;
@@ -633,16 +633,33 @@ struct GameplayState {
 	}
 
 	bool hasInventoryItem(byte owner, byte itemId) const {
-		if (owner >= kInventoryOwnerCount || itemId >= kInventoryOwnerSlotStride)
-			return false;
+		return inventorySlotForItem(owner, itemId) != 0;
+	}
 
-		return inventoryItemSlotByOwnerAndItemId[owner][itemId] != 0;
+	byte inventorySlotForItem(byte owner, byte itemId) const {
+		if (owner >= kInventoryOwnerCount || itemId == 0 || itemId >= kInventoryOwnerSlotStride)
+			return 0;
+
+		const byte itemCount = MIN<byte>(inventoryItemCountByOwner[owner], kInventoryLastSlot);
+		for (byte slot = kInventoryFirstSlot; slot <= itemCount; ++slot) {
+			if (inventorySlotItemIdByOwner[owner][slot] == itemId)
+				return slot;
+		}
+
+		return 0;
 	}
 
 	void addInventoryItem(byte owner, byte itemId) {
-		if (owner >= kInventoryOwnerCount || itemId >= kInventoryOwnerSlotStride ||
-				hasInventoryItem(owner, itemId) ||
-				inventoryItemCountByOwner[owner] >= kInventoryLastSlot)
+		if (owner >= kInventoryOwnerCount || itemId == 0 || itemId >= kInventoryOwnerSlotStride)
+			return;
+
+		const byte existingSlot = inventorySlotForItem(owner, itemId);
+		if (existingSlot != 0) {
+			inventoryItemSlotByOwnerAndItemId[owner][itemId] = existingSlot;
+			return;
+		}
+
+		if (inventoryItemCountByOwner[owner] >= kInventoryLastSlot)
 			return;
 
 		const byte slot = (byte)(inventoryItemCountByOwner[owner] + 1);
@@ -682,7 +699,9 @@ struct GameplayState {
 		if (owner >= kInventoryOwnerCount || itemId >= kInventoryOwnerSlotStride)
 			return;
 
-		const byte slot = inventoryItemSlotByOwnerAndItemId[owner][itemId];
+		byte slot = inventoryItemSlotByOwnerAndItemId[owner][itemId];
+		if (slot >= kInventoryOwnerSlotStride || inventorySlotItemIdByOwner[owner][slot] != itemId)
+			slot = inventorySlotForItem(owner, itemId);
 		if (slot == 0)
 			return;
 
@@ -696,10 +715,13 @@ struct GameplayState {
 		if (owner >= kInventoryOwnerCount)
 			return;
 
+		for (uint itemId = 0; itemId < kInventoryOwnerSlotStride; ++itemId)
+			inventoryItemSlotByOwnerAndItemId[owner][itemId] = 0;
+
 		byte writeSlot = kInventoryFirstSlot;
 		for (byte readSlot = kInventoryFirstSlot; readSlot <= inventoryItemCountByOwner[owner]; ++readSlot) {
 			const byte itemId = inventorySlotItemIdByOwner[owner][readSlot];
-			if (itemId == 0)
+			if (itemId == 0 || itemId >= kInventoryOwnerSlotStride)
 				continue;
 
 			inventorySlotItemIdByOwner[owner][writeSlot] = itemId;

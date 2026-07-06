@@ -33,7 +33,6 @@ namespace Hollywood {
 const uint16 kScene7090FirstState = 0x1bb2;
 const uint16 kScene7090LastState = 0x1bbb;
 const uint16 kScene7090BackToG07State = 0x1ba0;
-const uint16 kScene7090ExitToG10State = 0x1bbc;
 const uint kScene7090InitialRequiredChunkCount = 11;
 const uint kScene7090ArenaFirstChunk = 5;
 const uint kScene7090ArenaLastChunk = 10;
@@ -188,7 +187,6 @@ bool Scene7090::dispatchCustomSceneAction(uint16 handlerId) {
 		return true;
 	case 306: // Mirar mesa (look at table)
 		beginSecondarySpeechLine(5, 0);
-		_vm->gameState().mainFlowStateId = kScene7090ExitToG10State;
 		return true;
 	case 307: // Mirar archivadores (look at filing cabinets)
 		beginSecondarySpeechLine(6, 0);
