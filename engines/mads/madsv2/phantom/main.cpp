@@ -305,7 +305,7 @@ void phantom_main() {
 				AnimView::animview_main("@demodisk");
 				selected_item = 0;
 			} else {
-				AnimView::animview_main(g_engine->isDemo() ? "@demodisk" : "@phantom");
+				AnimView::animview_main("@phantom");
 				selected_item = -1;
 			}
 			break;
