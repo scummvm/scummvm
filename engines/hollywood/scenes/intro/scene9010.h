@@ -67,18 +67,33 @@ private:
 		Common::Array<Common::String> lines;
 	};
 
+	enum I02FramePayloadFormat {
+		kI02FramePayloadUnknown,
+		kI02FramePayloadBlockList,
+		kI02FramePayloadScreenRows,
+		kI02FramePayloadSceneRows
+	};
+
 	bool playScene9010();
 
 	bool loadScene9010Resources();
 	bool loadI01Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
 	bool loadI01Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
 	bool loadStage003Descriptors();
+	bool validateI02AnimationResources();
 
 	bool runPoseTransition(bool targetAlternatePose);
 	bool playSpeechExchange(byte descriptorIndex);
 	bool playI02Animation();
+	uint detectI02ChunkedFrameCount(ResourceChunkTable &chunkTable) const;
+	bool loadI02ChunkedFrame(uint frameIndex);
 	bool readI02StreamFrame(Common::File &file);
 	void setI02PaletteFrame(uint frameIndex);
+	I02FramePayloadFormat detectI02FramePayloadFormat(const Common::Array<byte> &payload) const;
+	bool isValidI02BlockListFrame(const Common::Array<byte> &payload) const;
+	void drawI02FramePayload(const Common::Array<byte> &payload);
+	void drawRawI02ScreenRows(const Common::Array<byte> &payload);
+	void drawRawI02SceneRows(const Common::Array<byte> &payload);
 	void drawResourceBlockList(const Common::Array<byte> &blockList);
 	byte nextTalkingFrameVariant();
 
@@ -113,6 +128,8 @@ private:
 		kFrameDecodeBufferSize = 0x78000,
 		kSceneFramebufferSize = 0x100000,
 		kPaletteSize = 0x300,
+		kRawScreenFrameSize = HollywoodEngine::kScreenWidth * HollywoodEngine::kScreenHeight,
+		kRawSceneFrameSize = HollywoodEngine::kSceneBufferWidth * HollywoodEngine::kSceneBufferHeight,
 		kStage003DescriptorTableSize = 0x186a0,
 		kStage003SmallRowSize = 0x29,
 		kStage003LargeRowSize = 0x141,
@@ -131,6 +148,7 @@ private:
 	Common::Array<byte> _resourceArena;
 	Common::Array<byte> _i02PaletteTable;
 	Common::Array<byte> _i02FramePayload;
+	I02FramePayloadFormat _i02FramePayloadFormat;
 	IndexedSurfaceBuffer _frameDecodeBuffer;
 	IndexedSurfaceBuffer _sceneFramebuffer;
 	Graphics::ManagedSurface _screen;

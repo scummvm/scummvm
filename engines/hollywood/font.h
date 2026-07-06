@@ -55,6 +55,7 @@ private:
 	const GlyphDescriptor *getGlyph(uint32 chr) const;
 	bool loadCharacterMap(const Common::Path &exeName);
 	void loadFallbackCharacterMap();
+	bool isValidCharacterMap(const Common::Array<byte> &characterMap) const;
 	bool readPeDataAtVa(const Common::Path &exeName, uint32 virtualAddress, Common::Array<byte> &destination) const;
 
 	Common::Array<byte> _characterMap;
