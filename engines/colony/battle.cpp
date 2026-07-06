@@ -544,7 +544,7 @@ void ColonyEngine::battleBackdrop() {
 		int blue = (i * 16);
 		if (blue > 255)
 			blue = 255;
-		uint32 color = (0xFF << 24) | (0 << 16) | (0 << 8) | blue;
+		uint32 color = (0xFFu << 24) | (0 << 16) | (0 << 8) | blue;
 		Common::Rect band(_screenR.left, bandTop, _screenR.right, bandBottom);
 		_gfx->fillRect(band, color);
 	}

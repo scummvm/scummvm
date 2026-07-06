@@ -545,6 +545,10 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 	const int xind2 = xnew >> 8;
 	const int yind2 = ynew >> 8;
 
+	// Outside the 32x32 map: treat as a solid wall (CID 1653420, 1653428)
+	if (xind2 < 0 || xind2 > 31 || yind2 < 0 || yind2 > 31)
+		return -1;
+
 	if (xind2 == pobject->xindex) {
 		if (yind2 == pobject->yindex) {
 			if (pobject == &_me) {
