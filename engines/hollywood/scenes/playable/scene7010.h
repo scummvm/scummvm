@@ -77,7 +77,9 @@ private:
 	void runChunk11FrameRange(byte startFrame, byte endFrame);
 	void runChunk14FrameRange(byte startFrame, byte endFrame);
 	void runChunk15ItemSequence();
+	void runEmbeddedClipChunk19Sequence();
 	void runDialogueOverlayFrames(byte startFrame, byte endFrame, byte finalMode);
+	void updateG01AmbientAudioAndMusicCues(uint32 delta);
 	void resetTransientOverlayLayers();
 	void setDialogueOverlayMode(byte mode, byte frameIndex);
 	void setDialogueOverlayFrame(byte frameIndex);
@@ -90,7 +92,6 @@ private:
 
 	byte _chunk8FrameIndex;
 	byte _chunk9AmbientOverlayFrameIndex;
-	byte _chunk9AmbientDecisionCounter;
 	byte _chunk10IdleFrameA;
 	byte _chunk10IdleFrameB;
 	byte _chunk10IdleFrameC;
