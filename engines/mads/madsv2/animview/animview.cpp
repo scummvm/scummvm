@@ -78,7 +78,6 @@ static const byte FX_TIMES[16] = {
 
 static bool has_sound_file;
 static char sound_file_name[80];
-static TileMapHeader picture_map, depth_map;
 static TileResource picture_res, depth_res;
 static Buffer scr_work_orig;
 static Room *room;
