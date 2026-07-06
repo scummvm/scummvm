@@ -168,11 +168,11 @@ void actionsMenu(byte **pinfo) {
 
 		/*draw dot explosion animation*/
 		drawSpriteN(24, act_dot_rects[choice].sx, act_dot_rects[choice].sy, SCREENBUFFER);
-		for (i = 0; i < 0xFFF; i++) ; /*TODO: weak delay*/
+		for (i = 0; i < 0xFFF; i++) {} /*TODO: weak delay*/
 		drawSpriteN(2, act_dot_rects[choice].sx, act_dot_rects[choice].sy, SCREENBUFFER);
-		for (i = 0; i < 0xFFF; i++) ; /*TODO: weak delay*/
+		for (i = 0; i < 0xFFF; i++) {} /*TODO: weak delay*/
 		drawSpriteN(25, act_dot_rects[choice].sx, act_dot_rects[choice].sy, SCREENBUFFER);
-		for (i = 0; i < 0xFFF; i++) ; /*TODO: weak delay*/
+		for (i = 0; i < 0xFFF; i++) {} /*TODO: weak delay*/
 	}
 	g_vm->_renderer->restoreBackupImage(SCREENBUFFER);
 

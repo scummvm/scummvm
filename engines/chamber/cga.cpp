@@ -229,9 +229,6 @@ void CGARenderer::blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {
 	int16 startX_bytes = dx / 4;
 	int16 endX_bytes = (dx + w + 3) / 4;
 
-	if (endX_bytes > 80)
-		endX_bytes = 80;
-
 	for (int y = startY; y < endY; y++) {
 		uint16 bank = (y % 2) * 8192;
 		uint16 line = (y / 2) * 80;
@@ -1664,7 +1661,6 @@ void cga_ZoomInplace(zoom_t *params, byte tw, byte th, byte *source, byte *targe
 
 		/*right partial pixel*/
 		target[ofs] = (source[ofs] & ~(0xFF << (sc * 2))) | (pix << (sc * 2));
-		ofs++;
 		params->fw++;
 
 		/*ofs -= params->fw;*/

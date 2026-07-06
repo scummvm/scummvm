@@ -1921,11 +1921,6 @@ uint16 SCR_23_HidePortrait(void) {
 	index = *script_ptr++;
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
-	if (right_button) {
-		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
-		return 0;
-	}
-
 	g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
 
 	return 0;
@@ -2464,7 +2459,7 @@ uint16 SCR_46_DeProfundisLowerHook(void) {
 	script_ptr++;
 
 	/*draw Hook*/
-	sprofs = getPuzzlSprite(96, 140 / 4, 18, &w, &h, &ofs);
+	getPuzzlSprite(96, 140 / 4, 18, &w, &h, &ofs);
 
 	h = 1;
 	y = 15;
@@ -3007,7 +3002,7 @@ static void AnimSaucer(void) {
 		height_prev = height_new;
 
 		waitVBlank();
-		for (i = delay; i--;) ; /*TODO: weak delay*/
+		for (i = delay; i--;) {} /*TODO: weak delay*/
 		delay += 500;
 	}
 }
