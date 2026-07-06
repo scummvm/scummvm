@@ -64,6 +64,8 @@ const uint kScene7010Chunk14Layer = 1;
 const uint kScene7010Chunk11Layer = 2;
 const uint kScene7010Chunk15Layer = 0;
 const byte kScene7010AmbientMusicCueWithoutChunk9 = 0x0f;
+const byte kScene7010SueInventoryOwner = 1;
+const byte kScene7010HannoverBusinessCardItem = 9;
 const byte kScene7010SueEntryFacing = 1;
 const byte kScene7010SueEntryFinalCel = 0;
 const int kScene7010SueEntryStartX = 0x16b;
@@ -79,6 +81,7 @@ const uint32 kScene7010SecondaryActorFrameMillis = 150;
 const uint32 kScene7010Chunk8FrameMillis = 75;
 const uint32 kScene7010Chunk10FrameMillis = 125;
 const uint32 kScene7010Chunk11SpeechFrameMillis = 125;
+const uint32 kScene7010Chunk14WindowFrameMillis = 60;
 const uint32 kScene7010EmbeddedClipFrameMillis = 60;
 const uint32 kScene7010DialogueOverlayFrameMillis = 60;
 const uint32 kScene7010EmbeddedClipPaletteOffset = 0x4bb42;
@@ -206,10 +209,13 @@ void Scene7010::initializeCustomPreviewState() {
 	_hideActiveActor = false;
 	memset(_inventoryItems, 0, sizeof(_inventoryItems));
 	memset(_sceneStateFlags, 0, sizeof(_sceneStateFlags));
+	GameplayState &state = _vm->gameState();
 	_sceneStateFlags[1] = _vm->gameState().frankensteinNoteOverlayMode;
-	_sceneStateFlags[4] = 1;
-	_sceneStateFlags[5] = _vm->gameState().hannoverCourtyardDialogueState;
-	_sceneStateFlags[6] = _vm->gameState().hannoverCourtyardFollowUpSeen ? 1 : 0;
+	// Original G01 flag 4 gates the one-time Hannover business-card handoff.
+	_sceneStateFlags[4] = state.hasInventoryItem(kScene7010SueInventoryOwner,
+		kScene7010HannoverBusinessCardItem) ? 2 : 1;
+	_sceneStateFlags[5] = state.hannoverCourtyardDialogueState;
+	_sceneStateFlags[6] = state.hannoverCourtyardFollowUpSeen ? 1 : 0;
 	setDialogueOverlayMode(_sceneStateFlags[1], 0);
 	applySceneStateToHotspotsAndPatches(0xff);
 }
@@ -760,7 +766,7 @@ void Scene7010::handleActionSlot03DialogueSequence() {
 
 		if (_sceneStateFlags[5] != 0) {
 			beginHannoverPrimarySpeechLine(10, 0);
-			runChunk14FrameRange(0, 0x18);
+			runChunk14FrameRange(0, 0x18, true);
 			if (_sceneStateFlags[6] == 0) {
 				beginSecondarySpeechLine(0x62, 0x0b);
 				beginHannoverPrimarySpeechLine(0x0b, 0);
@@ -769,7 +775,7 @@ void Scene7010::handleActionSlot03DialogueSequence() {
 			}
 			if (_sceneStateFlags[5] == 2) {
 				beginHannoverPrimarySpeechLine(0x0c, 0);
-				runChunk14FrameRange(0x19, 0x26);
+				runChunk14FrameRange(0x19, 0x38, false);
 				walkActiveActorTo(0x298, 0x1af, 4, 0);
 				beginSecondarySpeechLine(0x62, 0x0c);
 				walkActiveActorTo(0x3b0, 0x1a9, 0xff, 0);
@@ -1040,19 +1046,21 @@ void Scene7010::runChunk13Item09PickupOverlaySequence() {
 	}
 
 	_actionOverlayPlayer.finish(previousHideActiveActor);
-	if (!hasInventoryItem(9))
-		addInventoryItem(9);
+	if (!hasInventoryItem(kScene7010HannoverBusinessCardItem))
+		addInventoryItem(kScene7010HannoverBusinessCardItem);
 	_soundBank0.playSample(1, 100);
 }
 
-void Scene7010::runChunk14FrameRange(byte startFrame, byte endFrame) {
+void Scene7010::runChunk14FrameRange(byte startFrame, byte endFrame, bool restoreChunk11AtEnd) {
 	setChunk14Visible(true);
 	setChunk11Visible(false);
 	for (byte frame = startFrame; frame <= endFrame && !Engine::shouldQuit(); ++frame) {
 		setChunk14Frame(frame);
-		waitSceneMillis(kScene7010Chunk8FrameMillis);
+		waitSceneMillis(kScene7010Chunk14WindowFrameMillis);
 	}
 	setChunk14Visible(false);
+	if (restoreChunk11AtEnd)
+		setChunk11Visible(true);
 }
 
 void Scene7010::runChunk15ItemSequence() {
