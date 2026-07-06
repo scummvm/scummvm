@@ -267,16 +267,15 @@ void dragonsphere_main() {
 			// Exit
 			return;
 
-		case 5:
-			// Demo
-			AnimView::animview_main("@demodisk");
-			selected_item = 0;
-			break;
-
 		default:
 			// Credits
-			TextView::textview_main("credits");
-			selected_item = -1;
+			if (g_engine->isDemo()) {
+				AnimView::animview_main("@demodisk");
+				selected_item = 0;
+			} else {
+				TextView::textview_main("credits");
+				selected_item = -1;
+			}
 			break;
 		}
 	}
