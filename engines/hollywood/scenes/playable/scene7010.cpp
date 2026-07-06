@@ -252,6 +252,8 @@ void Scene7010::drawCustomComposite(bool drawActiveActor, byte activeFacing, byt
 				kScene7010Chunk9DescriptorCount, _chunk9AmbientOverlayFrameIndex, _sceneFramebuffer);
 		}
 
+		// G01 restores chunk-15's dirty rect before drawing the next action frame.
+		restoreResourceSpriteLayerBackground(_actionOverlayLayer, _baseFramebuffer);
 		drawActionOverlayLayer();
 		drawResourceBlockList(_resourceArena, _resourceChunkOffsets[6], _sceneFramebuffer);
 		return;
