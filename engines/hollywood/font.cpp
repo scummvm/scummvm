@@ -215,6 +215,10 @@ bool HollywoodFont::loadCharacterMap(const Common::Path &exeName) {
 		debugC(1, kDebugResources, "Using built-in Hollywood font character map; %s is not a PE resource source",
 			exeName.toString().c_str());
 		loadFallbackCharacterMap();
+	} else if (!isValidCharacterMap(_characterMap)) {
+		warning("Ignoring invalid Hollywood font character map in %s; using built-in map",
+			exeName.toString().c_str());
+		loadFallbackCharacterMap();
 	}
 
 	return true;
@@ -223,6 +227,27 @@ bool HollywoodFont::loadCharacterMap(const Common::Path &exeName) {
 void HollywoodFont::loadFallbackCharacterMap() {
 	_characterMap.resize(kCharacterMapSize);
 	memcpy(_characterMap.data(), kFallbackSpanishCharacterMap, kCharacterMapSize);
+}
+
+bool HollywoodFont::isValidCharacterMap(const Common::Array<byte> &characterMap) const {
+	if (characterMap.size() != kCharacterMapSize || characterMap[' '] != kFontSpaceGlyph)
+		return false;
+
+	bool seenGlyphs[256] = {};
+	uint distinctGlyphCount = 0;
+	const char *const requiredGlyphs = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,!?";
+	for (const char *chr = requiredGlyphs; *chr; ++chr) {
+		const byte glyphId = characterMap[(byte)*chr];
+		if (glyphId == kFontSpaceGlyph || glyphId == kFontUnsupportedGlyph)
+			return false;
+
+		if (!seenGlyphs[glyphId]) {
+			seenGlyphs[glyphId] = true;
+			++distinctGlyphCount;
+		}
+	}
+
+	return distinctGlyphCount >= 60;
 }
 
 bool HollywoodFont::readPeDataAtVa(const Common::Path &exeName, uint32 virtualAddress, Common::Array<byte> &destination) const {
