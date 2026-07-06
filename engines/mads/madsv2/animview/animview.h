@@ -54,6 +54,7 @@ extern bool has_cycles;
 extern int currentViewX, currentViewY;
 extern int concat_mode;
 extern bool wait_for_music_at_end;
+extern bool stop_music_at_end;
 
 // Main animview function
 extern void animview_main(const char *resName);

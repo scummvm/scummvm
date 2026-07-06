@@ -81,6 +81,10 @@ void add_anim(const char *name) {
 void flag_parse(const char *param) {
 	char c = tolower(*param++);
 	switch (c) {
+	case 'd':
+		stop_music_at_end = true;
+		break;
+
 	case 'j':
 		wait_for_music_at_end = true;
 		break;
