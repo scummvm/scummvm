@@ -373,4 +373,4 @@ void FoolGame::sunMapRevealPiece() {
 }
 
 
-}
+} // End of namespace Fool

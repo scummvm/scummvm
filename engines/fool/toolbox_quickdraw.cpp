@@ -847,4 +847,4 @@ void Toolbox::ShowPen() {
 }
 
 
-} // namespace Fool
+} // End of namespace Fool

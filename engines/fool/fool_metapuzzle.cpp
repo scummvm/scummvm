@@ -467,4 +467,4 @@ void FoolGame::metapuzzleOnShift() {
 	sub_128_61ec();
 }
 
-}
+} // End of namespace Fool

@@ -402,5 +402,4 @@ void FoolGame::wordSearchSuccess() {
 }
 
 
-
-};
+} // End of namespace Fool

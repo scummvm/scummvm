@@ -73,4 +73,4 @@ void Toolbox::SFPutFile(const Common::Point &where, const Common::U32String &pro
 	reply.good = !fileName.empty() ? 1 : 0;
 }
 
-} // namespace Fool
+} // End of namespace Fool

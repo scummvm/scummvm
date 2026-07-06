@@ -418,4 +418,4 @@ void FoolGame::jigsawSuccess() {
 	waitForClick();
 }
 
-};
+} // End of namespace Fool

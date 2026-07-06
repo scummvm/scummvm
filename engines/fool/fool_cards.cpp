@@ -704,5 +704,4 @@ void FoolGame::sub_139_1d3e() {
 	flashRect(0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0xc8);
 }
 
-
-};
+} // End of namespace Fool

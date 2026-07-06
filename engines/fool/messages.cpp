@@ -38,4 +38,4 @@ MouseMessage::MouseMessage(Common::EventType type,
 	}
 }
 
-} // namespace Fool
+} // End of namespace Fool

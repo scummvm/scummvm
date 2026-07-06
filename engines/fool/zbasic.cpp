@@ -848,4 +848,4 @@ void ZBasic::setMenuFont(uint16 font, uint16 size) {
 	_menu->setFont(font, size);
 }
 
-} // namespace Fool
+} // End of namespace Fool

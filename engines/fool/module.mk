@@ -32,7 +32,6 @@ MODULE_OBJS = \
 	toolbox_sound.o \
 	toolbox_text.o \
 	zbasic.o \
-	console.o \
 	messages.o \
 	metaengine.o \
 	utils.o

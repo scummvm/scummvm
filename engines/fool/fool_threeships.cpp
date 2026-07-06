@@ -242,4 +242,4 @@ void FoolGame::sub_128_5a6c() {
 	delayFromMarker(0);
 }
 
-}
+} // End of namespace Fool

@@ -219,4 +219,4 @@ void FoolGame::deathDrawZoom() {
 }
 
 
-}
+} // End of namespace Fool

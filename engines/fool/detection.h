@@ -33,8 +33,8 @@ struct FOOLGameDescription {
 };
 
 enum FoolDebugChannels {
-	kDebugGraphics = 1 << 0,
-	kDebugLoading  = 1 << 1,
+	kDebugGraphics = 1,
+	kDebugLoading,
 };
 
 extern const PlainGameDescriptor foolGames[];

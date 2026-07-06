@@ -271,4 +271,4 @@ void FoolGame::justiceResetGrid() {
 	zoomRect(0xec, 0x154, 0x11e, 0x186, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x1a);
 }
 
-}
+} // End of namespace Fool

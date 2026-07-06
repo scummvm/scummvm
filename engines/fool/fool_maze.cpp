@@ -1577,4 +1577,4 @@ void FoolGame::sub_136_3a70() {
 	// 136:3c72
 }
 
-}
+} // End of namespace Fool
