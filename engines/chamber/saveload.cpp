@@ -33,7 +33,7 @@
 
 namespace Chamber {
 
-static const byte kSaveVersion = 1;
+static const byte kSaveVersion = 2;
 
 // Serializes a pointer as a byte offset from base; 0xFFFF represents null
 template<typename T>
@@ -81,12 +81,23 @@ Common::Error ChamberEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	if (!s.syncVersion(kSaveVersion))
 		return Common::Error(Common::kReadingFailed, "Save from a newer engine version");
 	syncGameStream(s);
+	bool backbufferRestored = false;
+	if (s.getVersion() >= 2) {
+		s.syncAsByte(zone_palette);
+		byte mode = 0;
+		s.syncAsByte(mode);
+		s.syncBytes(backbuffer, sizeof(backbuffer));
+		backbufferRestored = (mode == (byte)_videoMode);
+	}
 	if (s.err())
 		return Common::kReadingFailed;
 	// Prevent door transition animation from firing on load (mirrors restartGame behavior)
 	script_byte_vars.cur_spot_flags = 0xFF;
-	memset(backbuffer, 0, sizeof(backbuffer));
-	drawRoomStatics();
+	if (!backbufferRestored) {
+		memset(backbuffer, 0, sizeof(backbuffer));
+		drawRoomStatics();
+	}
+	selectPalette();
 	backupSpotsImages();
 	drawPersons();
 	_renderer->backBufferToRealFull();
@@ -98,6 +109,10 @@ Common::Error ChamberEngine::saveGameStream(Common::WriteStream *stream, bool is
 	Common::Serializer s(nullptr, stream);
 	s.syncVersion(kSaveVersion);
 	syncGameStream(s);
+	s.syncAsByte(zone_palette);
+	byte mode = (byte)_videoMode;
+	s.syncAsByte(mode);
+	s.syncBytes(backbuffer, sizeof(backbuffer));
 	if (s.err())
 		return Common::kWritingFailed;
 	return Common::kNoError;

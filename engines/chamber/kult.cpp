@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/error.h"
 #include "common/file.h"
 #include "common/system.h"
@@ -579,6 +580,12 @@ Common::Error ChamberEngine::execute() {
 
 	/* Initialize cursor backup */
 	processInput();
+
+	if (ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") >= 0) {
+		int slot = ConfMan.getInt("save_slot");
+		ConfMan.set("save_slot", "-1");
+		loadGameState(slot);
+	}
 
 #ifdef DEBUG_ENDING
 	script_byte_vars.game_paused = 5;
