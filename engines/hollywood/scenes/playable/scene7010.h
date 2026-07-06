@@ -22,6 +22,7 @@
 #ifndef HOLLYWOOD_SCENES_PLAYABLE_SCENE7010_H
 #define HOLLYWOOD_SCENES_PLAYABLE_SCENE7010_H
 
+#include "hollywood/gameplay/dialogue_menu.h"
 #include "hollywood/scenes/playable/playable_scene.h"
 
 namespace Hollywood {
@@ -72,9 +73,21 @@ private:
 	void handleActionSlot06FrankensteinNoteSequence();
 	void handleActionSlot07DialogueAndReturn();
 	void handleActionSlot08CommonSpeech();
+	void runHannoverDialogueMenuRow98();
+	void initializeHannoverDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const;
+	void setHannoverDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
+		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
+		byte responseFrameIndex, byte disableAfterUse) const;
+	bool applyHannoverDialogueTransition(const DialogueChoiceRecord &record, byte &depthIndex, byte &nodeIndex) const;
+	void beginHannoverPrimarySpeechLine(byte frameIndex, byte poseVariant);
+	void advanceHannoverPrimarySpeechFrame(uint32 delta);
 	void runChunk8RevealSequence();
 	void runChunk8HideSequence();
 	void runChunk11FrameRange(byte startFrame, byte endFrame);
+	void runChunk11MidFrames();
+	void runChunk11ReturnFrames();
+	void runChunk11ExtendedFrames();
+	void runChunk13Item09PickupOverlaySequence();
 	void runChunk14FrameRange(byte startFrame, byte endFrame);
 	void runChunk15ItemSequence();
 	void runEmbeddedClipChunk19Sequence();
@@ -98,13 +111,17 @@ private:
 	byte _chunk10IdleFrameD;
 	byte _dialogueOverlayFrameIndex;
 	byte _dialogueOverlayMode;
+	byte _chunk11RightSpeechPoseVariant;
+	byte _chunk11RightSpeechLastRandomFrame;
 	bool _chunk8SpecialSequenceActive;
+	bool _chunk11RightSpeechActive;
 	bool _chunk10IdlePairAAltPhase;
 	bool _chunk10IdlePairBAltPhase;
 	byte _chunk10IdlePairATicksRemaining;
 	byte _chunk10IdlePairBTicksRemaining;
 	uint32 _chunk8TimerAccumulator;
 	uint32 _chunk10TimerAccumulator;
+	uint32 _chunk11RightSpeechTimerAccumulator;
 	uint32 _dialogueOverlayTimerAccumulator;
 	TransientLayerCompositor _backTransientLayers;
 	TransientLayerCompositor _frontTransientLayers;
