@@ -1629,11 +1629,22 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		drawScreenContent();
 	}
 
+	// The keypad is only on screen in the non-zoomed chrome (welcome / dialing /
+	// directory / help), so its slots are only interactive there. The zoomed
+	// web / email / browser views hide the keypad but keep the slots' dest rects
+	// covering that now-blank area, so without this guard hovering or clicking
+	// there would light the underlying key sprites and even switch to dialing.
+	const bool keypadVisible = !isZoomedChromeState() || isHelpContentView();
+
 	// Depress the dial-pad key under the cursor while the mouse button is held;
 	// clear it on release (this runs before the click handlers so the depressed
 	// sprite isn't left behind once the key's action redraws the screen).
+	// Skip when the cursor is over a scroll arrow: the arrows overlap the dial
+	// pad geometrically (e.g. the down arrow sits over the "#" key), so pressing
+	// one would otherwise light the underlying key sprite.
 	int newPressed = -1;
-	if ((input.input & (NancyInput::kLeftMouseButtonDown | NancyInput::kLeftMouseButtonHeld)) &&
+	if (keypadVisible && !overUp && !overDown &&
+			(input.input & (NancyInput::kLeftMouseButtonDown | NancyInput::kLeftMouseButtonHeld)) &&
 			!(input.input & NancyInput::kLeftMouseButtonUp)) {
 		for (uint i = 0; i < UICL::kNumDialPadSlots; ++i) {
 			if (_uiclData->dialPadSlots[i].destRect.contains(chunkMouse)) {
@@ -1923,8 +1934,9 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 	}
 
 	// Call/talk button. Checked before the dial-pad loop so an overlapping
-	// slot can't eat it. The Talk key is dial-pad slot 12.
-	if (_uiclData->dialPadSlots[12].destRect.contains(chunkMouse)) {
+	// slot can't eat it. The Talk key is dial-pad slot 12. Only live while the
+	// keypad is on screen (skipped in the zoomed web / email / browser views).
+	if (keypadVisible && _uiclData->dialPadSlots[12].destRect.contains(chunkMouse)) {
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
@@ -1957,11 +1969,13 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 	//   13     - web mode (TODO)
 	//   14     - directory toggle
 	int newHovered = -1;
-	for (uint i = 0; i < UICL::kNumDialPadSlots; ++i) {
-		const UICL::DialPadSlot &slot = _uiclData->dialPadSlots[i];
-		if (slot.destRect.contains(chunkMouse)) {
-			newHovered = (int)i;
-			break;
+	if (keypadVisible) {
+		for (uint i = 0; i < UICL::kNumDialPadSlots; ++i) {
+			const UICL::DialPadSlot &slot = _uiclData->dialPadSlots[i];
+			if (slot.destRect.contains(chunkMouse)) {
+				newHovered = (int)i;
+				break;
+			}
 		}
 	}
 	_hoveredSlot = newHovered;
