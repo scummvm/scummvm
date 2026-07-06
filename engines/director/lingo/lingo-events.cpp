@@ -134,7 +134,9 @@ void Movie::resolveScriptEvent(LingoEvent &event) {
 		else
 			spriteId = _score->getMouseSpriteIDFromPos(event.mousePos);
 
-		debugC(3, kDebugEvents, "Movie::resolveScriptEvent(%s): pos: [%d, %d], spriteId: %d", leventType2str(event.event), event.mousePos.x, event.mousePos.y, spriteId);
+		debugC(3, kDebugEvents, "Movie::resolveScriptEvent(%s): id: %d sourceType: %s, handlerType: %s, pos: [%d, %d], spriteId: %d",
+			leventType2str(event.event), event.eventId, scriptType2str(event.scriptType),
+			eventHandlerSourceType2str(event.eventHandlerSourceType), event.mousePos.x, event.mousePos.y, spriteId);
 
 		if (event.event == kEventMouseDown || event.event == kEventRightMouseDown) {
 			_lastClickedSpriteId = spriteId; // the clickOn

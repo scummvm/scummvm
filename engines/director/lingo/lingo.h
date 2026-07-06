@@ -289,6 +289,9 @@ struct LingoEvent {
 		mousePos = mp;
 		behaviorIndex = bi;
 		scriptInstance = nullptr;
+
+		debugC(7, kDebugEvents, "LingoEvent: event=%s, eventId=%d, scriptType=%d, passByDefault=%d, scriptId=(%d,%d), mousePos=(%d,%d), behaviorIndex=%d",
+			leventType2str(event), eventId, scriptType, passByDefault, scriptId.member, scriptId.castLib, mousePos.x, mousePos.y, behaviorIndex);
 	}
 
 	LingoEvent(LEvent e, int ei, EventHandlerSourceType ehst, bool pass, Common::Point mp = Common::Point(-1, -1), uint16 ci = 0, int bi = -1) {
@@ -302,6 +305,9 @@ struct LingoEvent {
 		mousePos = mp;
 		behaviorIndex = bi;
 		scriptInstance = nullptr;
+
+		debugC(7, kDebugEvents, "LingoEvent: event=%s, eventId=%d, eventHandlerSourceType=%s, passByDefault=%d, channelId=%d, mousePos=(%d,%d), behaviorIndex=%d",
+			leventType2str(event), eventId, eventHandlerSourceType2str(eventHandlerSourceType), passByDefault, channelId, mousePos.x, mousePos.y, behaviorIndex);
 	}
 };
 

@@ -199,7 +199,7 @@ const char *const leventType[] = {
 	"mouseUpOutSide",
 	"mouseWithin",
 
-	"atartUp",
+	"startUp",
 
 	"menuCallback",
 
