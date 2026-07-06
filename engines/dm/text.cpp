@@ -107,7 +107,6 @@ void TextMan::printLineFeed() {
 
 void TextMan::printMessage(Color color, const char *string, bool printWithScroll) {
 	uint16 characterIndex;
-	Common::String wrkString;
 
 	while (*string) {
 		if (*string == '\n') { /* New line */
@@ -122,12 +121,12 @@ void TextMan::printMessage(Color color, const char *string, bool printWithScroll
 				printString(color, " "); // I'm not sure if this is like the original
 			}
 		} else {
+			Common::String wrkString;
 			characterIndex = 0;
 			do {
 				wrkString += *string++;
 				characterIndex++;
 			} while (*string && (*string != ' ') && (*string != '\n')); /* End of string, space or New line */
-			wrkString += '\0';
 			if (_messageAreaCursorColumn + characterIndex > 53) {
 				_messageAreaCursorColumn = 2;
 				createNewRow();
