@@ -118,6 +118,10 @@ void NotebookPopup::updateGraphics() {
 	}
 }
 
+int16 NotebookPopup::getPrepSceneID() const {
+	return _uinbData ? (int16)_uinbData->header.linkbackScene : (int16)kNoScene;
+}
+
 void NotebookPopup::open() {
 	if (_isVisible)
 		return;

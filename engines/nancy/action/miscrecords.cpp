@@ -302,9 +302,10 @@ void UIPopupPrepScene::readData(Common::SeekableReadStream &stream) {
 }
 
 void UIPopupPrepScene::execute() {
-	// TODO: finish this
-
-	debug("UIPopupPrepScene: UIType=%d, signalValue=%d", _uiType, _signalValue);
+	// Terminates a UI prep scene chain: the entry-adding ARs in the prep
+	// scene(s) have run, so signal the scene to restore the pre-open scene and
+	// open the (now populated) popup. A no-op if no prep is currently running.
+	NancySceneState.finishUIPrepScene();
 
 	finishExecution();
 }

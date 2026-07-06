@@ -291,6 +291,51 @@ void Scene::popScene(bool inventory) {
 	}
 }
 
+void Scene::startUIPrepScene(int16 uiType, int16 prepSceneID) {
+	if (_uiPrep.active || (uint16)prepSceneID == kNoScene) {
+		return;
+	}
+
+	_uiPrep.active = true;
+	_uiPrep.uiType = uiType;
+	_uiPrep.returnScene = _sceneState.currentScene;
+	_uiPrep.startMillis = g_system->getMillis();
+
+	SceneChangeDescription desc;
+	desc.sceneID = (uint16)prepSceneID;
+	desc.frameID = 0;
+	desc.verticalOffset = 0;
+	changeScene(desc);
+}
+
+void Scene::finishUIPrepScene() {
+	if (!_uiPrep.active) {
+		return;
+	}
+
+	_uiPrep.active = false;
+
+	// Restore the scene we were in when the popup was opened, keeping its sound.
+	SceneChangeDescription ret = _uiPrep.returnScene;
+	ret.continueSceneSound = kContinueSceneSound;
+	changeScene(ret);
+
+	// Open the popup whose prep scene just populated its content.
+	switch (_uiPrep.uiType) {
+	case kUITypeInventory:
+		_inventoryPopup.open();
+		break;
+	case kUITypeNotebook:
+		_notebookPopup.open();
+		break;
+	case kUITypeCellphone:
+		_cellPhonePopup.open();
+		break;
+	default:
+		break;
+	}
+}
+
 void Scene::setPlayerTime(Time time, byte relative) {
 	if (relative == kRelativeClockBump) {
 		// Relative, add the specified time to current playerTime
@@ -1100,7 +1145,10 @@ void Scene::load(bool fromSaveFile) {
 		_sceneState.currentScene.paletteID = 0;
 	}
 
-	if (_sceneState.summary.videoFile != "NO_ART_SCENE") {
+	// "NO_ART_SCENE" and (Nancy 11+) "POPUP_PREP_SCENE" are videoless sentinel
+	// scenes that carry only logic ARs; they have no viewport art to load.
+	if (_sceneState.summary.videoFile != "NO_ART_SCENE" &&
+			_sceneState.summary.videoFile != "POPUP_PREP_SCENE") {
 		const Common::Path palettePath = !_sceneState.summary.palettes.empty() ?
 			_sceneState.summary.palettes[(byte)_sceneState.currentScene.paletteID] :
 			Common::Path();
@@ -1321,6 +1369,19 @@ Common::Rect Scene::activePopupConfinement() const {
 }
 
 void Scene::handleInput() {
+	// While a UI prep scene is running the player shouldn't be able to interact
+	// with the (hidden, videoless) prep scenes. Swallow all input until the
+	// prep's UIPopupPrepScene AR finishes it. A safety timeout guards against a
+	// prep scene that never reaches its terminator so the game can't lock up.
+	if (_uiPrep.active) {
+		if (g_system->getMillis() - _uiPrep.startMillis > 5000) {
+			warning("UI prep scene did not finish within timeout; aborting");
+			finishUIPrepScene();
+		}
+		g_nancy->_input->getInput();
+		return;
+	}
+
 	NancyInput input = g_nancy->_input->getInput();
 
 	// Warp the mouse below the inactive zone during dialogue scenes
@@ -1454,9 +1515,19 @@ void Scene::handleInput() {
 				case kTaskButtonInventory:
 					_inventoryPopup.toggle();
 					break;
-				case kTaskButtonNotebook:
-					_notebookPopup.toggle();
+				case kTaskButtonNotebook: {
+					// Nancy 11+ populates the notebook lazily: opening it first
+					// runs a hidden prep scene (header.linkbackScene) whose ARs
+					// add the journal / task entries. Games without a prep scene
+					// (linkbackScene == kNoScene, e.g. Nancy 10) just toggle.
+					const int16 prepScene = _notebookPopup.getPrepSceneID();
+					if (!_notebookPopup.isVisible() && (uint16)prepScene != kNoScene) {
+						startUIPrepScene(kUITypeNotebook, prepScene);
+					} else {
+						_notebookPopup.toggle();
+					}
 					break;
+				}
 				case kTaskButtonCellphone:
 					_cellPhonePopup.toggle();
 					break;

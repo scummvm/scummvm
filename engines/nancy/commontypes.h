@@ -50,6 +50,14 @@ static const int8 kEvNoEvent						= -1;
 static const int8 kFrNoFrame						= -1;
 static const uint16 kNoScene						= 9999;
 
+// Taskbar popup UI types. Shared by ControlUIItems (AR 29), UIPopupPrepScene
+// (AR 32) and the Scene UI-prep-scene machinery.
+enum UIType {
+	kUITypeInventory = 1,
+	kUITypeNotebook  = 2,
+	kUITypeCellphone = 3
+};
+
 // Inventory items use types
 static const byte kInvItemUseThenLose				= 0;
 static const byte kInvItemKeepAlways				= 1;

@@ -49,6 +49,11 @@ public:
 	void close();
 	void toggle() { if (_isVisible) close(); else open(); }
 
+	// Nancy 11+ lazily populates the notebook via a hidden "prep scene" run when
+	// it opens. Returns that scene ID (UINB header.linkbackScene), or kNoScene
+	// (9999) for games without one (e.g. Nancy 10), which populate inline.
+	int16 getPrepSceneID() const;
+
 	// Re-render the active tab's text content into the text rect.
 	// Called automatically on open() and on tab switch; Scene also
 	// invokes it after a ModifyListEntry AR runs while the popup is open.

@@ -148,12 +148,6 @@ protected:
 // (inventory / notebook / cellphone) is enabled.
 class ControlUIItems : public ActionRecord {
 public:
-	enum UIType {
-		kUITypeInventory = 1,
-		kUITypeNotebook  = 2,
-		kUITypeCellphone = 3
-	};
-
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
