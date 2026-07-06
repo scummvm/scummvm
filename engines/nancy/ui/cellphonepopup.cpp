@@ -277,9 +277,8 @@ void CellPhonePopup::startIncomingCall(const SceneChangeDescription &scene) {
 }
 
 void CellPhonePopup::close() {
-	if (!_isVisible) {
+	if (!_isVisible)
 		return;
-	}
 
 	if (!_callSound.name.empty()) {
 		g_nancy->_sound->stopSound(_callSound);
@@ -289,11 +288,6 @@ void CellPhonePopup::close() {
 	_hasPendingCallScene = false;
 
 	setVisible(false);
-
-	if (!_uiclData->header.sounds[1].name.empty()) {
-		g_nancy->_sound->loadSound(_uiclData->header.sounds[1]);
-		g_nancy->_sound->playSound(_uiclData->header.sounds[1]);
-	}
 }
 
 void CellPhonePopup::updateGraphics() {
@@ -1149,7 +1143,6 @@ void CellPhonePopup::playButtonClickSound(const UIButtonRecord &button) {
 	if (sound.name.empty() || sound.name.equalsIgnoreCase("NO SOUND"))
 		return;
 
-	sound.numLoops = 1;
 	g_nancy->_sound->loadSound(sound);
 	g_nancy->_sound->playSound(sound);
 }

@@ -141,11 +141,6 @@ void NotebookPopup::close() {
 		return;
 
 	setVisible(false);
-
-	if (!_uinbData->header.sounds[1].name.empty()) {
-		g_nancy->_sound->loadSound(_uinbData->header.sounds[1]);
-		g_nancy->_sound->playSound(_uinbData->header.sounds[1]);
-	}
 }
 
 void NotebookPopup::drawBackground() {
@@ -614,13 +609,9 @@ void NotebookPopup::toggleCheckbox(uint entryIndex) {
 
 void NotebookPopup::playButtonClickSound(const UIButtonRecord &button) {
 	SoundDescription sound = button.clickSound;
-	if (sound.name.empty() || sound.name.equalsIgnoreCase("NO SOUND")) {
-		// Fall back to the header's shared button-click slot (2; 0/1 = open/close).
-		sound = _uinbData->header.sounds[2];
-	}
-	if (sound.name.empty() || sound.name.equalsIgnoreCase("NO SOUND")) {
+	if (sound.name.empty() || sound.name.equalsIgnoreCase("NO SOUND"))
 		return;
-	}
+
 	g_nancy->_sound->loadSound(sound);
 	g_nancy->_sound->playSound(sound);
 }
