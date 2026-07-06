@@ -674,74 +674,68 @@ DialogPtr dialog_create(DialogPtr dialog, int ul_x, int ul_y, int width,
 	mouse_callback = NULL;
 	page_callback = NULL;
 
-	if (dialog != NULL) {
-
+	if (dialog->string_space == NULL) {
+		dialog->status |= DD_DYNAMICSTRINGS;
+		dialog->string_space = (char *)mem_get(dialog_string_space);
+		dialog->string_space_remaining = dialog_string_space;
 		if (dialog->string_space == NULL) {
-			dialog->status |= DD_DYNAMICSTRINGS;
-			dialog->string_space = (char *)mem_get(dialog_string_space);
-			dialog->string_space_remaining = dialog_string_space;
-			if (dialog->string_space == NULL) {
-				dialog_error = DD_ERR_NOMOREMEMORY;
-				if (dialog->status & DD_DYNAMIC) {
-					mem_free(dialog);
-				}
-				dialog = NULL;
+			dialog_error = DD_ERR_NOMOREMEMORY;
+			if (dialog->status & DD_DYNAMIC) {
+				mem_free(dialog);
 			}
+			return nullptr;
 		}
-
-		if (normal_color == DD_DEFAULT) {
-			dialog->normal_color = dialog_default_normal;
-		} else {
-			dialog->normal_color = normal_color;
-		}
-
-		if (select_color == DD_DEFAULT) {
-			dialog->select_color = dialog_default_select;
-		} else {
-			dialog->select_color = select_color;
-		}
-
-		if (hilite_color == DD_DEFAULT) {
-			if (screen_video_mode == mono_text_mode) {
-				dialog->hilite_color = dialog_default_select;
-			} else {
-				dialog->hilite_color = dialog_default_hilite;
-			}
-		} else {
-			dialog->hilite_color = hilite_color;
-		}
-
-		dialog->width = width;
-
-		window_set(&dialog->window, ul_x, ul_y, ul_x + width + 1, ul_y);
-
-		dialog->base_x = ul_x + 1;
-		dialog->base_y = ul_y + 1;
-
-		dialog->num_items = 0;
-		dialog->fill_marker = 0;
-		dialog->active_button = dialog->active_item = 0;
-
-		dialog->cursor_x = dialog->cursor_y = 0;
-
-		dialog->button_left = 1;
-		dialog->button_right = 0;
-
-		dialog->buffers_allocated = 0;
-		dialog->lists_allocated = 0;
-
-		dialog->callback = NULL;
-		dialog->checkbox_callback = NULL;
-
-		dialog->cancel_item = NULL;
-		dialog->path_item = NULL;
-		dialog->default_item = NULL;
-
-		dialog->string_marker = dialog->string_space;
-
-	} else {
-		dialog_error = DD_ERR_NOMOREMEMORY;
 	}
+
+	if (normal_color == DD_DEFAULT) {
+		dialog->normal_color = dialog_default_normal;
+	} else {
+		dialog->normal_color = normal_color;
+	}
+
+	if (select_color == DD_DEFAULT) {
+		dialog->select_color = dialog_default_select;
+	} else {
+		dialog->select_color = select_color;
+	}
+
+	if (hilite_color == DD_DEFAULT) {
+		if (screen_video_mode == mono_text_mode) {
+			dialog->hilite_color = dialog_default_select;
+		} else {
+			dialog->hilite_color = dialog_default_hilite;
+		}
+	} else {
+		dialog->hilite_color = hilite_color;
+	}
+
+	dialog->width = width;
+
+	window_set(&dialog->window, ul_x, ul_y, ul_x + width + 1, ul_y);
+
+	dialog->base_x = ul_x + 1;
+	dialog->base_y = ul_y + 1;
+
+	dialog->num_items = 0;
+	dialog->fill_marker = 0;
+	dialog->active_button = dialog->active_item = 0;
+
+	dialog->cursor_x = dialog->cursor_y = 0;
+
+	dialog->button_left = 1;
+	dialog->button_right = 0;
+
+	dialog->buffers_allocated = 0;
+	dialog->lists_allocated = 0;
+
+	dialog->callback = NULL;
+	dialog->checkbox_callback = NULL;
+
+	dialog->cancel_item = NULL;
+	dialog->path_item = NULL;
+	dialog->default_item = NULL;
+
+	dialog->string_marker = dialog->string_space;
 
 	return  dialog;
 }
