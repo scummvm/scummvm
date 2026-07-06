@@ -54,7 +54,8 @@ const uint kScene1040GorillaDescriptorCount = 8;
 const uint kScene1040DoorOverlayDescriptorCount = 4;
 const uint kScene1040BalloonOverlayDescriptorCount = 0x0d;
 const uint kScene1040CordOverlayDescriptorCount = 0x19;
-const uint kScene1040GorillaCordOverlayDescriptorCount = 0x10;
+const uint kScene1040GorillaCordOverlayChunk = 0x10;
+const uint kScene1040GorillaCordOverlayDescriptorCount = 0x0b;
 const int kScene1040ForegroundYThreshold = 0x15f;
 const byte kScene1040CordSetupSoundHook = 1;
 const byte kScene1040CordPickupPatchHook = 2;
@@ -409,7 +410,8 @@ void Scene1040::handleGorillaCordSetup() {
 	if (state.scene1040GorillaCordState >= 2)
 		return;
 
-	runActionOverlay(ActionOverlaySpec(11, kScene1040GorillaCordOverlayDescriptorCount,
+	runActionOverlay(ActionOverlaySpec(kScene1040GorillaCordOverlayChunk,
+		kScene1040GorillaCordOverlayDescriptorCount,
 		kScene1040GorillaCordSetupFrameMap, ARRAYSIZE(kScene1040GorillaCordSetupFrameMap),
 		kScene1040FrameMillis)
 		.hideActor()
