@@ -51,6 +51,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 
 	_bgcolor = 0;
 	_fgcolor = 0xff;
+	_bgColorSet = false;
 
 	_textFlags = 0;
 	_scroll = 0;
@@ -153,7 +154,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		_buttonType = static_cast<ButtonType>(stream.readUint16BE() - 1);
 	}
 
-	_bgcolor = g_director->_wm->findBestColor(_bgpalinfo1 & 0xff, _bgpalinfo2 & 0xff, _bgpalinfo3 & 0xff);
+	// _bgcolor is derived lazily in getBackColor(); keep only _bgpalinfo here.
 
 	_modified = true;
 }
@@ -199,6 +200,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, TextCastMember &source
 	_rtext = source._rtext;
 
 	_bgcolor = source._bgcolor;
+	_bgColorSet = source._bgColorSet;
 	_fgcolor = source._fgcolor;
 }
 
@@ -206,8 +208,10 @@ void TextCastMember::setColors(uint32 *fgcolor, uint32 *bgcolor) {
 	if (fgcolor)
 		_fgcolor = *fgcolor;
 
-	if (bgcolor)
+	if (bgcolor) {
 		_bgcolor = *bgcolor;
+		_bgColorSet = true;
+	}
 
 	// if we want to keep the format unchanged, then we need to modify _ftext as well
 	Graphics::MacText *target = getWidget();
@@ -232,7 +236,14 @@ Graphics::TextAlign TextCastMember::getAlignment() {
 
 void TextCastMember::setBackColor(uint32 bgCol) {
 	_bgcolor = bgCol;
+	_bgColorSet = true;
 	_modified = true;
+}
+
+uint32 TextCastMember::getBackColor() {
+	if (!_bgColorSet)
+		_bgcolor = g_director->_wm->findBestColor(_bgpalinfo1 & 0xff, _bgpalinfo2 & 0xff, _bgpalinfo3 & 0xff);
+	return _bgcolor;
 }
 
 uint32 TextCastMember::getForeColor(int start, int end) {
