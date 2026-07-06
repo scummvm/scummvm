@@ -53,6 +53,8 @@ public:
 
 private:
 	void clear();
+	bool loadFromExecutableResources();
+	bool loadFallbackCursorGroups();
 	void installCurrentFrame();
 
 	Common::Array<Graphics::WinCursorGroup *> _cursorGroups;

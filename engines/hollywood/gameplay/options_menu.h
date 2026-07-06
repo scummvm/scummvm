@@ -74,6 +74,7 @@ private:
 	bool load();
 	bool loadMenuFramebuffer();
 	bool loadObjectPalette();
+	bool loadObjectPaletteFromResource000();
 	void preparePalette(const Common::Array<byte> &basePalette);
 	void pollEvents(bool &done);
 	void handleKeyDown(uint16 keycode, bool &done);

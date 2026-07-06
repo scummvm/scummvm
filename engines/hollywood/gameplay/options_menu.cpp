@@ -50,6 +50,7 @@ const uint kOptionsResource000HeaderByteCount = 1;
 const uint kOptionsResource000OffsetTableSize = 400;
 const uint kOptionsResource000SizeTableSize = 400;
 const uint kOptionsFramebufferEntry = 0x2a;
+const uint kOptionsObjectPaletteResource000Entry = 0x31;
 const uint kOptionsFramebufferSize = 0x78000;
 const uint kOptionsViewportXOffset = 0x180;
 const uint kOptionsObjectPaletteOffset = 0x210;
@@ -216,17 +217,44 @@ bool GameplayOptionsMenu::loadMenuFramebuffer() {
 
 bool GameplayOptionsMenu::loadObjectPalette() {
 	Common::ScopedPtr<Common::WinResources> exe(Common::WinResources::createFromEXE(Common::Path(kOptionsExecutableName)));
-	if (!exe)
+	if (exe) {
+		Common::ScopedPtr<Common::SeekableReadStream> stream(exe->getResource(
+			Common::WinResourceID(kOptionsPaletteResourceType), Common::WinResourceID(kOptionsPaletteResourceName)));
+		if (stream && stream->size() >= kOptionsObjectPaletteSize) {
+			_objectPaletteTriples.resize(kOptionsObjectPaletteSize);
+			return stream->read(_objectPaletteTriples.data(), _objectPaletteTriples.size()) ==
+				_objectPaletteTriples.size();
+		}
+	}
+
+	return loadObjectPaletteFromResource000();
+}
+
+bool GameplayOptionsMenu::loadObjectPaletteFromResource000() {
+	Common::File file;
+	if (!file.open(Common::Path(kOptionsResource000Name)))
 		return false;
 
-	Common::ScopedPtr<Common::SeekableReadStream> stream(exe->getResource(
-		Common::WinResourceID(kOptionsPaletteResourceType), Common::WinResourceID(kOptionsPaletteResourceName)));
-	if (!stream || stream->size() < kOptionsObjectPaletteSize)
+	const uint offsetTableOffset = kOptionsResource000HeaderByteCount + kOptionsObjectPaletteResource000Entry * 4;
+	const uint sizeTableOffset = kOptionsResource000HeaderByteCount + kOptionsResource000OffsetTableSize +
+		kOptionsObjectPaletteResource000Entry * 4;
+	if ((uint32)file.size() < sizeTableOffset + 4)
+		return false;
+
+	file.seek(offsetTableOffset);
+	const uint32 paletteOffset = file.readUint32LE();
+	file.seek(sizeTableOffset);
+	const uint32 paletteSize = file.readUint32LE();
+	if (paletteSize < kOptionsObjectPalettePanelSize ||
+			paletteOffset > (uint32)file.size() ||
+			kOptionsObjectPalettePanelSize > (uint32)file.size() - paletteOffset)
 		return false;
 
 	_objectPaletteTriples.resize(kOptionsObjectPaletteSize);
-	return stream->read(_objectPaletteTriples.data(), _objectPaletteTriples.size()) ==
-		_objectPaletteTriples.size();
+	memset(_objectPaletteTriples.data(), 0, _objectPaletteTriples.size());
+	file.seek(paletteOffset);
+	return file.read(_objectPaletteTriples.data(), kOptionsObjectPalettePanelSize) ==
+		kOptionsObjectPalettePanelSize;
 }
 
 void GameplayOptionsMenu::preparePalette(const Common::Array<byte> &basePalette) {
