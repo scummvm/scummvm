@@ -2147,6 +2147,7 @@ static void kernel_message_update(KernelMessagePtr my_message) {
 	yy = 0;
 
 	if (my_message->flags & KERNEL_MESSAGE_ANIM) {
+		assert(imgList);
 		xx = imgList[image].x - picture_view_x;
 		yy = imgList[image].y - picture_view_y;
 	}
@@ -2394,10 +2395,13 @@ int  kernel_dynamic_consecutive(int id) {
 		}
 	}
 
-	if (id >= 0) scan = -1;
+	if (id >= 0) {
+		warning("kernel_dynamic_consecutive(%d) - could not find id", id);
+		scan = 0;
+	}
 
 done:
-	return (scan);
+	return scan;
 }
 
 void kernel_refresh_dynamic() {
@@ -2613,6 +2617,7 @@ void kernel_random_messages_init(int max_messages_at_once,
 		my_quote = va_arg(marker, int);
 	}
 
+	va_end(marker);
 	kernel_random_purge();
 }
 

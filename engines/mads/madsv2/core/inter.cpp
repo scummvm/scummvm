@@ -420,7 +420,7 @@ done:
 static void inter_show_word(int class_, int id) {
 	int x, y, junk;
 	int word_id = 0;
-	char temp_buf[80];
+	char temp_buf[80] = { 0 };
 	int write_it = true;
 
 	if (!inter_get_spot(class_, id, &x, &y, &junk, &junk)) {

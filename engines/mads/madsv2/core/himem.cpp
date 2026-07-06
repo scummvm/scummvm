@@ -140,9 +140,7 @@ int himem_resident(const char *filename) {
 	}
 
 	for (count = 0; (count < HIMEM_MAX_RESIDENT) && (id < 0); count++) {
-		if (himem_directory[count].memory_type == MEM_NONE) {
-			if (filename == NULL) id = count;
-		} else {
+		if (himem_directory[count].memory_type != MEM_NONE) {
 			if (scumm_stricmp(mark, himem_directory[count].list) == 0) {
 				id = count;
 			}

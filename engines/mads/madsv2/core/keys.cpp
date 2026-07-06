@@ -78,7 +78,7 @@ int keys_read_buffer(KeyPtr key_buf) {
 	if (key_buf->len > 0) {
 		myval = key_buf->buf[0];
 		key_buf->len--;
-		memcpy(key_buf->buf, key_buf->buf + 1, (key_buf->len * sizeof(int)));
+		memmove(key_buf->buf, key_buf->buf + 1, (key_buf->len * sizeof(int)));
 
 		return myval;
 	} else {
@@ -97,7 +97,7 @@ int keys_append_buffer(KeyPtr key_buf, int newchar) {
 
 int keys_insert_buffer(KeyPtr key_buf, int newchar, int before) {
 	if ((key_buf->len < KEYS_MAX_BUF_CHARS) && (before < key_buf->len) && (before > 0)) {
-		memcpy(key_buf->buf + before + 1, key_buf->buf + before, (key_buf->len - before) * sizeof(int));
+		memmove(key_buf->buf + before + 1, key_buf->buf + before, (key_buf->len - before) * sizeof(int));
 		key_buf->buf[before] = newchar;
 		return (before + 1);
 	} else {
