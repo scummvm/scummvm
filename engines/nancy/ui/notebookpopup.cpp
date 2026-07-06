@@ -350,8 +350,11 @@ void NotebookPopup::handleInput(NancyInput &input) {
 		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			toggleCheckbox(_checkboxEntryIndices[k]);
-			input.eatMouseInput();
 		}
+		// Swallow the input (as the popup does for its other widgets) so the
+		// viewport / action manager behind the popup don't override the hotspot
+		// cursor we just set.
+		input.eatMouseInput();
 		return;
 	}
 
