@@ -661,8 +661,8 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 				championPortraitBox._rect.bottom += 48;
 			}
 			_displayMan->startEndFadeToPalette(_displayMan->_paletteTopAndBottomScreen);
+			_eventMan->waitForMouseOrKeyActivity();
 			_engineShouldQuit = true;
-			return;
 		}
 T0444017:
 		_displayMan->fillScreen(kDMColorBlack);
