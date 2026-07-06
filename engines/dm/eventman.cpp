@@ -661,6 +661,7 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 			break;
 		}
 		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 			_vm->_engineShouldQuit = true;
 			break;
 		default:
@@ -1438,7 +1439,7 @@ void EventManager::drawSleepScreen() {
 void EventManager::discardAllInput() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event) && !_vm->_engineShouldQuit) {
-		if (event.type == Common::EVENT_QUIT)
+		if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RETURN_TO_LAUNCHER)
 			_vm->_engineShouldQuit = true;
 	}
 	_commandQueue.clear();
@@ -1649,6 +1650,7 @@ void EventManager::waitForMouseOrKeyActivity() {
 		if (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
 				_vm->_engineShouldQuit = true;
 			case Common::EVENT_KEYDOWN: // Intentional fall through
 			case Common::EVENT_LBUTTONDOWN:
