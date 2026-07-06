@@ -111,9 +111,12 @@ private:
 	void drawDirectoryArrows();
 	void drawWelcomeScreen();
 	// Blit a sub-button's idle sprite at its chunk dest (used for the visible
-	// Back buttons: subButtons[0] on the help page, subButtons[7] in the
-	// zoomed email / browser content view).
+	// Back buttons: subButtons[0] on the help / directory / online screens,
+	// subButtons[7] in the zoomed email / browser content view).
 	void drawBackButton(uint subButtonIndex);
+	// Blit the lit key sprite of the currently held dial-pad slot over its
+	// dest rect, so keypad keys visually depress while pressed.
+	void drawPressedDialKey();
 
 	// Generic list renderer used by web / email modes.
 	void drawLinkList();
@@ -236,6 +239,13 @@ private:
 	int _resolvedContact = -1;
 
 	int _hoveredSlot = -1;
+
+	// Dial-pad slot currently held down (shows the lit / depressed key), or -1.
+	int _pressedSlot = -1;
+
+	// A call queued by auto-dial / Talk, waiting for the key's DTMF tone to
+	// finish before entering kPlaceCall (see updateGraphics).
+	bool _autoDialPending = false;
 
 	// First visible deduplicated contact, and the active row within the page.
 	uint _directoryScroll = 0;
