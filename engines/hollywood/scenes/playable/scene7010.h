@@ -88,7 +88,7 @@ private:
 	void runChunk11ReturnFrames();
 	void runChunk11ExtendedFrames();
 	void runChunk13Item09PickupOverlaySequence();
-	void runChunk14FrameRange(byte startFrame, byte endFrame);
+	void runChunk14FrameRange(byte startFrame, byte endFrame, bool restoreChunk11AtEnd);
 	void runChunk15ItemSequence();
 	void runEmbeddedClipChunk19Sequence();
 	void runDialogueOverlayFrames(byte startFrame, byte endFrame, byte finalMode);
