@@ -213,7 +213,7 @@ void PlaySoundCC::readCCText(Common::SeekableReadStream &stream, Common::String 
 		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
 		assert(autotext);
 
-		out = getTextFromCaseInsensitiveKey(autotext->texts, key);
+		out = autotext->texts.getValOrDefault(key, "");
 	}
 }
 

@@ -186,7 +186,7 @@ void ConversationSound::readTerseCaptionText(Common::SeekableReadStream &stream)
 	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
 	assert(convo);
 
-	_text = getTextFromCaseInsensitiveKey(convo->texts, key);
+	_text = convo->texts.getValOrDefault(key, "");
 }
 
 void ConversationSound::readTerseResponseText(Common::SeekableReadStream &stream, ResponseStruct &response) {
@@ -196,7 +196,7 @@ void ConversationSound::readTerseResponseText(Common::SeekableReadStream &stream
 	const CVTX *convo = (const CVTX *)g_nancy->getEngineData("CONVO");
 	assert(convo);
 
-	response.text = getTextFromCaseInsensitiveKey(convo->texts, key);
+	response.text = convo->texts.getValOrDefault(key, "");
 }
 
 void ConversationSound::execute() {

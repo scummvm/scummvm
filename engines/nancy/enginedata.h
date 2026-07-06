@@ -480,7 +480,7 @@ struct ImageChunk : public EngineData {
 struct CVTX : public EngineData {
 	CVTX(Common::SeekableReadStream *chunkStream);
 
-	Common::HashMap<Common::String, Common::String> texts;
+	Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> texts;
 };
 
 struct TABL : public EngineData {

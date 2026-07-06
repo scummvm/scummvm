@@ -471,7 +471,7 @@ void NotebookPopup::buildTextLines() {
 	Common::String combined;
 	for (int i = (int)entries.size() - 1; i >= 0; --i) {
 		Common::String stringID = entries[i].stringID;
-		Common::String body = getTextFromCaseInsensitiveKey(autotext->texts, stringID);
+		Common::String body = autotext->texts.getValOrDefault(stringID, "");
 
 		if (surfaceID == kNotebookTabTasks && entries[i].mark != 0) {
 			uint16 markValue = entries[i].mark;

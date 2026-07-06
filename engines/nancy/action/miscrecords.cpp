@@ -119,7 +119,7 @@ static void readTextboxText(Common::SeekableReadStream &stream, Common::String &
 		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
 		assert(autotext);
 
-		out = getTextFromCaseInsensitiveKey(autotext->texts, stringID);
+		out = autotext->texts.getValOrDefault(stringID, "");
 	} else if (size > 0) {
 		char *buf = new char[size];
 		stream.read(buf, size);

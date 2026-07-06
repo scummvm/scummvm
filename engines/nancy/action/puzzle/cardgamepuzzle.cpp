@@ -463,7 +463,7 @@ void CardGamePuzzle::showSubtitle(const Common::String &soundName) {
 		return;
 	}
 
-	Common::String text = getTextFromCaseInsensitiveKey(autotext->texts, soundName);
+	Common::String text = autotext->texts.getValOrDefault(soundName, "");
 	if (!text.empty()) {
 		NancySceneState.getTextbox().clear();
 		NancySceneState.getTextbox().addTextLine(text);

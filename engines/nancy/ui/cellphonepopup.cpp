@@ -791,7 +791,7 @@ void CellPhonePopup::drawLinkList() {
 		}
 
 		Common::String lookupKey = list[absolute].key;
-		Common::String rowText = getTextFromCaseInsensitiveKey(autotext->texts, lookupKey);
+		Common::String rowText = autotext->texts.getValOrDefault(lookupKey, "");
 
 		// Single-line draw — drop every <n> markup so they don't render as
 		// literal "<n>" glyphs and crowd the row.
@@ -859,7 +859,7 @@ void CellPhonePopup::drawContentView() {
 
 	// Render the engine's hypertext markup into a tall scratch surface,
 	// then blit a vertically-scrolled window of it into the LCD.
-	const Common::String renderText = getTextFromCaseInsensitiveKey(autotext->texts, _contentKey);
+	const Common::String renderText = autotext->texts.getValOrDefault(_contentKey, "");
 
 	// Find this page in the UIBW chunk (browser pages only); its hotspot
 	// records are the per-page image table the article references.
