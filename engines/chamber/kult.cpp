@@ -427,10 +427,13 @@ Common::Error ChamberEngine::init() {
 		c = 'E';
 	} else {
 		/* Load language selection screen */
-		if (!loadSplash("DRAP.BIN")) {
+		Graphics::Surface *drap = loadSplash("DRAP.BIN");
+		if (!drap) {
 			_shouldQuit = true;
 			return Common::kNoError;
 		}
+		drap->free();
+		delete drap;
 
 		/* Wait for a keypress and show the language selection screen */
 		clearKeyboard();
@@ -512,8 +515,12 @@ Common::Error ChamberEngine::init() {
 		// Early intro screens set no palette of their own; apply the room palette now
 		amigaApplyRoomPalette(0);
 	} else {
-		while (!loadFond() || !loadSpritesData() || !loadPersData())
+		Graphics::Surface *fond;
+		while (!(fond = loadFond()) || !loadSpritesData() || !loadPersData()) {
+			delete fond;
 			askDisk2();
+		}
+		delete fond;
 	}
 
 	/*TODO: is this necessary?*/
