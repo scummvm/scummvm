@@ -206,7 +206,8 @@ DMEngine::~DMEngine() {
 bool DMEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsLoadingDuringRuntime);
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsReturnToLauncher);
 }
 
 Common::Error DMEngine::loadGameState(int slot) {
