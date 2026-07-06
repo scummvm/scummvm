@@ -1505,8 +1505,10 @@ uint16 SCR_26_GameOver(void) {
 	script_byte_vars.zone_index = 135;
 
 	/*reload background*/
-	while (!loadFond())
+	Graphics::Surface *fond;
+	while (!(fond = loadFond()))
 		askDisk2();
+	delete fond;
 
 	jaggedZoom(backbuffer, frontbuffer);
 
@@ -3031,18 +3033,25 @@ void theEnd(void) {
 		}
 		while(buttons == 0);
 
-		while (!loadFond())
+		Graphics::Surface *fond;
+		while (!(fond = loadFond()))
 			askDisk2();
+		delete fond;
 		jaggedZoom(backbuffer, frontbuffer);
 		g_vm->_renderer->backBufferToRealFull();
 	} else if (g_vm->getPlatform() == Common::kPlatformAmiga) {
-		while (!ega_loadFond("PRES.BIN"))
+		Graphics::Surface *fond;
+		while (!(fond = ega_loadFond("PRES.BIN")))
 			askDisk2();
+		delete fond;
 		g_vm->_renderer->colorSelect(AMIGA_NUM_PALETTES - 1);
 		g_vm->_renderer->backBufferToRealFull();
 	} else {
-		while (!loadSplash("PRES.BIN"))
+		Graphics::Surface *splash;
+		while (!(splash = loadSplash("PRES.BIN")))
 			askDisk2();
+		splash->free();
+		delete splash;
 		g_vm->_renderer->backBufferToRealFull();
 	}
 }
@@ -4266,8 +4275,6 @@ uint16 CMD_21_VortTalk(void) {
 
 	if (script_byte_vars.rand_value >= 85)
 		num = 6;
-	else if (script_byte_vars.rand_value >= 170)
-		num = 7;
 	else
 		num = 35;
 

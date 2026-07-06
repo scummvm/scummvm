@@ -226,9 +226,6 @@ void CGARenderer::blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {
 	int16 startY = dy;
 	int16 endY = dy + h;
 
-	if (endY > 200)
-		endY = 200;
-
 	int16 startX_bytes = dx / 4;
 	int16 endX_bytes = (dx + w + 3) / 4;
 

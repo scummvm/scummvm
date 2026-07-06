@@ -953,8 +953,6 @@ void drawRoomStatics(void) {
 			doors_list[doorcount++] = aptr - 3; /*TODO: check for list overflow?*/
 			if (doorcount == script_byte_vars.cur_spot_idx)
 				continue;
-			if (script_byte_vars.zone_room == 32 && index == 91 && (script_byte_vars.bvar_27 & 8))
-				continue;   /*TODO: error? index may never be that high here*/
 		}
 		/*draw decor object*/
 		drawRoomStaticObject(aptr, &x, &y, &w, &h);
