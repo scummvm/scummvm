@@ -24,6 +24,7 @@
 #include "common/debug.h"
 #include "common/system.h"
 
+#include "hollywood/gameplay/dialogue_menu.h"
 #include "hollywood/gameplay/game_state.h"
 #include "hollywood/graphics.h"
 #include "hollywood/hollywood.h"
@@ -47,13 +48,17 @@ const uint16 kScene7010Chunk8DescriptorCount = 0x16;
 const uint16 kScene7010Chunk9DescriptorCount = 2;
 const uint16 kScene7010Chunk10DescriptorCount = 0x10;
 const uint16 kScene7010Chunk11DescriptorCount = 0x25;
+const uint16 kScene7010Chunk13DescriptorCount = 0x0d;
 const uint16 kScene7010Chunk14DescriptorCount = 0x20;
 const uint16 kScene7010Chunk15DescriptorCount = 0x17;
+const uint kScene7010HannoverDialogueChoiceRecordCount = 10 * 10 * 7;
 const uint16 kScene7010EmbeddedClipFirstChunk = 19;
 const uint16 kScene7010EmbeddedClipLastChunk = 21;
 const uint16 kScene7010EmbeddedClipFrameCount = 0x0c;
 const uint16 kScene7010DialogueOverlayMode1DescriptorCount = 3;
 const uint16 kScene7010DialogueOverlayMode2DescriptorCount = 0x1b;
+const uint kScene7010CourtyardPatchState1Chunk = 17;
+const uint kScene7010CourtyardPatchState2Chunk = 18;
 const uint kScene7010DialogueOverlayLayer = 0;
 const uint kScene7010Chunk14Layer = 1;
 const uint kScene7010Chunk11Layer = 2;
@@ -73,6 +78,7 @@ const uint32 kScene7010ActorPathFrameMillis = 60;
 const uint32 kScene7010SecondaryActorFrameMillis = 150;
 const uint32 kScene7010Chunk8FrameMillis = 75;
 const uint32 kScene7010Chunk10FrameMillis = 125;
+const uint32 kScene7010Chunk11SpeechFrameMillis = 125;
 const uint32 kScene7010EmbeddedClipFrameMillis = 60;
 const uint32 kScene7010DialogueOverlayFrameMillis = 60;
 const uint32 kScene7010EmbeddedClipPaletteOffset = 0x4bb42;
@@ -86,6 +92,9 @@ const byte kScene7010Chunk11FrameMap[] = {
 	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 20, 19, 18, 13, 12,
 	11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 35, 13, 26, 27,
 	28, 29, 30, 31, 32, 33, 34, 13, 36
+};
+const byte kScene7010Chunk13FrameMap[] = {
+	0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
 };
 const byte kScene7010Chunk14FrameMap[] = {
 	0, 0, 1, 2, 3, 4, 5, 6, 7, 7, 7, 7, 7, 7, 7, 7,
@@ -105,6 +114,11 @@ const byte kScene7010DialogueOverlayMode2FrameMap[] = {
 const byte kScene7010Route3To2StepDeltas[] = {
 	4, 8, 10, 6, 3, 5, 5, 5, 5, 6, 2, 3
 };
+const byte kScene7010DialogueTransitionEnd = 0;
+const byte kScene7010DialogueTransitionDown = 1;
+const byte kScene7010DialogueTransitionUp = 2;
+const byte kScene7010DialogueTransitionStay = 3;
+const byte kScene7010DialogueTransitionUpTwo = 4;
 
 static PlayableSceneConfig scene7010Config() {
 	PlayableSceneConfig config;
@@ -133,13 +147,17 @@ Scene7010::Scene7010(HollywoodEngine *vm) :
 		_chunk10IdleFrameD(0x0c),
 		_dialogueOverlayFrameIndex(0),
 		_dialogueOverlayMode(0),
+		_chunk11RightSpeechPoseVariant(0),
+		_chunk11RightSpeechLastRandomFrame(0),
 		_chunk8SpecialSequenceActive(false),
+		_chunk11RightSpeechActive(false),
 		_chunk10IdlePairAAltPhase(false),
 		_chunk10IdlePairBAltPhase(false),
 		_chunk10IdlePairATicksRemaining(10),
 		_chunk10IdlePairBTicksRemaining(16),
 		_chunk8TimerAccumulator(0),
 		_chunk10TimerAccumulator(0),
+		_chunk11RightSpeechTimerAccumulator(0),
 		_dialogueOverlayTimerAccumulator(0),
 		_backTransientLayers(),
 		_frontTransientLayers() {
@@ -158,9 +176,12 @@ void Scene7010::initializeCustomPreviewState() {
 	_chunk10IdleFrameD = 0x0c;
 	_dialogueOverlayFrameIndex = 0;
 	_dialogueOverlayMode = 0;
+	_chunk11RightSpeechPoseVariant = 0;
+	_chunk11RightSpeechLastRandomFrame = 0;
 	_primaryLeftSpeechLastFrame = 0;
 	resetTransientOverlayLayers();
 	_chunk8SpecialSequenceActive = false;
+	_chunk11RightSpeechActive = false;
 	_chunk10IdlePairAAltPhase = _random.getRandomNumber(1) != 0;
 	_chunk10IdlePairBAltPhase = _random.getRandomNumber(1) != 0;
 	_primaryLeftSpeechActive = false;
@@ -171,6 +192,7 @@ void Scene7010::initializeCustomPreviewState() {
 	_chunk8TimerAccumulator = 0;
 	_chunk10TimerAccumulator = 0;
 	_secondaryActorTimerAccumulator = 0;
+	_chunk11RightSpeechTimerAccumulator = 0;
 	_dialogueOverlayTimerAccumulator = 0;
 	_primaryLeftSpeechTimerAccumulator = 0;
 	_primaryDialogueSpeechTimerAccumulator = 0;
@@ -424,9 +446,11 @@ bool Scene7010::prepareCustomGameplayLoop() {
 	_secondaryActorFrame = 0;
 	resetTransientOverlayLayers();
 	_chunk8SpecialSequenceActive = false;
+	_chunk11RightSpeechActive = false;
 	setDialogueOverlayMode(0, 0);
 	_chunk8TimerAccumulator = 0;
 	_chunk10TimerAccumulator = 0;
+	_chunk11RightSpeechTimerAccumulator = 0;
 	_dialogueOverlayTimerAccumulator = 0;
 	return true;
 }
@@ -440,8 +464,17 @@ bool Scene7010::advanceCustomGameplayLoop(uint32 delta) {
 			advancePrimaryLeftSpeechFrame();
 			_primaryLeftSpeechTimerAccumulator -= kScene7010Chunk10FrameMillis;
 		}
+	} else if (_chunk11RightSpeechActive && _primarySpeechOverlay.visible) {
+		_primaryLeftSpeechTimerAccumulator = 0;
+		advanceHannoverPrimarySpeechFrame(delta);
+		_chunk8TimerAccumulator += delta;
+		while (_chunk8TimerAccumulator >= kScene7010Chunk8FrameMillis) {
+			advanceChunk8Cycle();
+			_chunk8TimerAccumulator -= kScene7010Chunk8FrameMillis;
+		}
 	} else if (!_chunk8SpecialSequenceActive) {
 		_primaryLeftSpeechTimerAccumulator = 0;
+		_chunk11RightSpeechTimerAccumulator = 0;
 		_chunk8TimerAccumulator += delta;
 		while (_chunk8TimerAccumulator >= kScene7010Chunk8FrameMillis) {
 			advanceChunk8Cycle();
@@ -449,6 +482,7 @@ bool Scene7010::advanceCustomGameplayLoop(uint32 delta) {
 		}
 	} else {
 		_primaryLeftSpeechTimerAccumulator = 0;
+		_chunk11RightSpeechTimerAccumulator = 0;
 		_chunk8TimerAccumulator = 0;
 	}
 
@@ -564,6 +598,18 @@ bool Scene7010::applyCustomSceneStateToHotspotsAndPatches(byte selector) {
 		// promotes it to 2. The pre-walk branch for value 0 is not reachable
 		// in normal gameplay, so bodegas/edificio dispatches in place.
 		_hotspots.setVerbMovementModeByGlobalRecordIndex(0x19, 0);
+	}
+
+	if (selector == 5 || selector == 0xff) {
+		// Original G01 flag 5 patches the mansion window after the Hannover bedroom state changes.
+		restoreBaseFramebufferFromOriginal();
+		if (_sceneStateFlags[5] == 1) {
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene7010CourtyardPatchState1Chunk],
+				_baseFramebuffer);
+		} else if (_sceneStateFlags[5] == 2) {
+			drawResourceBlockList(_resourceArena, _resourceChunkOffsets[kScene7010CourtyardPatchState2Chunk],
+				_baseFramebuffer);
+		}
 	}
 	return true;
 }
@@ -690,30 +736,60 @@ void Scene7010::handleActionSlot03DialogueSequence() {
 	walkActiveActorTo(0x298, 0x1af, 1, 0);
 	setChunk11Visible(true);
 	runChunk11FrameRange(0, 0x0e);
-	beginPrimarySpeechLine(99, _sceneStateFlags[4] == 1 ? 0 : 2, 0x302, 0xe3, 0x28, 0x16, 0x0b);
-	runChunk11FrameRange(0x12, 0x16);
-	beginPrimarySpeechLine(99, _sceneStateFlags[4] == 1 ? 1 : 4, 0x2ee, 0xe8, 0x28, 0x16, 0x0b);
-	runChunk11FrameRange(0x1a, 0x1e);
-	if (_sceneStateFlags[5] != 0) {
-		beginPrimarySpeechLine(99, 10, 0x302, 0xe3, 0x28, 0x16, 0x0b);
-		runChunk14FrameRange(0, 0x18);
-		if (_sceneStateFlags[6] == 0) {
-			beginSecondarySpeechLine(0x62, 0x0b);
-			beginPrimarySpeechLine(99, 0x0b, 0x302, 0xe3, 0x28, 0x16, 0x0b);
-			_sceneStateFlags[6] = 1;
-			state.hannoverCourtyardFollowUpSeen = true;
+
+	if (_sceneStateFlags[4] == 1) {
+		beginHannoverPrimarySpeechLine(0, 0);
+		beginSecondarySpeechLine(0x62, 0);
+		runChunk11MidFrames();
+		beginHannoverPrimarySpeechLine(1, 1);
+		runChunk11ReturnFrames();
+		runHannoverDialogueMenuRow98();
+		beginHannoverPrimarySpeechLine(7, 0);
+		runChunk11ExtendedFrames();
+		beginSecondarySpeechLine(0x62, 8);
+		runChunk11MidFrames();
+		beginHannoverPrimarySpeechLine(3, 1);
+		runChunk11ReturnFrames();
+		beginSecondarySpeechLine(0x62, 9);
+		runChunk11MidFrames();
+		beginHannoverPrimarySpeechLine(8, 1);
+	} else {
+		beginHannoverPrimarySpeechLine(2, 0);
+		beginSecondarySpeechLine(0x62, 1);
+		beginHannoverPrimarySpeechLine(3, 0);
+
+		if (_sceneStateFlags[5] != 0) {
+			beginHannoverPrimarySpeechLine(10, 0);
+			runChunk14FrameRange(0, 0x18);
+			if (_sceneStateFlags[6] == 0) {
+				beginSecondarySpeechLine(0x62, 0x0b);
+				beginHannoverPrimarySpeechLine(0x0b, 0);
+				_sceneStateFlags[6] = 1;
+				state.hannoverCourtyardFollowUpSeen = true;
+			}
+			if (_sceneStateFlags[5] == 2) {
+				beginHannoverPrimarySpeechLine(0x0c, 0);
+				runChunk14FrameRange(0x19, 0x26);
+				walkActiveActorTo(0x298, 0x1af, 4, 0);
+				beginSecondarySpeechLine(0x62, 0x0c);
+				walkActiveActorTo(0x3b0, 0x1a9, 0xff, 0);
+				_vm->gameplayMusic()->stop();
+				state.mainFlowStateId = kScene7010ExitState7020;
+				return;
+			}
 		}
-		if (_sceneStateFlags[5] == 2) {
-			beginPrimarySpeechLine(99, 0x0c, 0x302, 0xe3, 0x28, 0x16, 0x0b);
-			runChunk14FrameRange(0x19, 0x26);
-			walkActiveActorTo(0x298, 0x1af, 4, 0);
-			beginSecondarySpeechLine(0x62, 0x0c);
-			walkActiveActorTo(0x3b0, 0x1a9, 0xff, 0);
-			_vm->gameplayMusic()->stop();
-			state.mainFlowStateId = kScene7010ExitState7020;
-			return;
-		}
+
+		runChunk11MidFrames();
+		beginHannoverPrimarySpeechLine(4, 1);
+		runChunk11ReturnFrames();
+		runHannoverDialogueMenuRow98();
+		beginHannoverPrimarySpeechLine(6, 0);
+		beginSecondarySpeechLine(0x62, 10);
+		runChunk11MidFrames();
+		beginHannoverPrimarySpeechLine(9, 1);
 	}
+
+	runChunk11ReturnFrames();
 	walkActiveActorTo(0x17b, 0x1b2, 0xff, 0);
 	setChunk11Visible(false);
 	if (_sceneStateFlags[4] == 1)
@@ -779,6 +855,128 @@ void Scene7010::handleActionSlot08CommonSpeech() {
 	beginSecondarySpeechLine(9, 0);
 }
 
+void Scene7010::runHannoverDialogueMenuRow98() {
+	Common::Array<DialogueChoiceRecord> records;
+	initializeHannoverDialogueRecords(records);
+
+	byte depthIndex = 0;
+	byte nodeIndex = 0;
+	bool finished = false;
+
+	while (!finished && !Engine::shouldQuit()) {
+		DialogueMenu menu(_vm, this);
+		const byte selectedChoice = menu.choose(0x62, records, depthIndex, nodeIndex);
+		if (selectedChoice == DialogueMenu::kCancelledChoice) {
+			beginSecondarySpeechLine(0x62, 5);
+			return;
+		}
+
+		const uint recordIndex = ((uint)depthIndex * 10 + nodeIndex) * 7 + selectedChoice;
+		if (recordIndex >= records.size())
+			break;
+
+		DialogueChoiceRecord &record = records[recordIndex];
+		beginSecondarySpeechLine(0x62, record.playerTextRowId);
+		if (record.responseFrameIndex != 0 && record.responseFrameIndex != 0xff) {
+			runChunk11MidFrames();
+			beginHannoverPrimarySpeechLine(record.responseFrameIndex, 1);
+			runChunk11ReturnFrames();
+		}
+
+		if (record.disableAfterUse == 1)
+			record.enabled = 0;
+		finished = applyHannoverDialogueTransition(record, depthIndex, nodeIndex);
+	}
+}
+
+void Scene7010::initializeHannoverDialogueRecords(Common::Array<DialogueChoiceRecord> &records) const {
+	records.clear();
+	records.resize(kScene7010HannoverDialogueChoiceRecordCount);
+
+	// DAT_00512088: Sue's row-98 Hannover courtyard dialogue menu.
+	setHannoverDialogueRecord(records, 0, 1, 0, kScene7010DialogueTransitionDown, 2, 5, 1);
+	setHannoverDialogueRecord(records, 1, 1, 0, kScene7010DialogueTransitionEnd, 3, 0, 1);
+	setHannoverDialogueRecord(records, 2, 1, 0, kScene7010DialogueTransitionEnd, 4, 0, 1);
+	setHannoverDialogueRecord(records, 3, 1, 0, kScene7010DialogueTransitionEnd, 5, 0, 1);
+
+	// Depth 1, node 0: follow-up choices after the first root topic.
+	setHannoverDialogueRecord(records, 70, 1, 0, kScene7010DialogueTransitionEnd, 6, 0, 1);
+	setHannoverDialogueRecord(records, 71, 1, 0, kScene7010DialogueTransitionEnd, 7, 0, 1);
+}
+
+void Scene7010::setHannoverDialogueRecord(Common::Array<DialogueChoiceRecord> &records, uint index,
+		byte enabled, byte nextNodeIndex, byte transitionMode, byte playerTextRowId,
+		byte responseFrameIndex, byte disableAfterUse) const {
+	if (index >= records.size())
+		return;
+
+	DialogueChoiceRecord &record = records[index];
+	record.enabled = enabled;
+	record.nextNodeIndex = nextNodeIndex;
+	record.transitionMode = transitionMode;
+	record.playerTextRowId = playerTextRowId;
+	record.responseFrameIndex = responseFrameIndex;
+	record.disableAfterUse = disableAfterUse;
+	record.reserved = 0xff;
+	record.selectable = 1;
+}
+
+bool Scene7010::applyHannoverDialogueTransition(const DialogueChoiceRecord &record, byte &depthIndex, byte &nodeIndex) const {
+	const byte previousDepth = depthIndex;
+	switch (record.transitionMode) {
+	case kScene7010DialogueTransitionEnd:
+		return true;
+	case kScene7010DialogueTransitionDown:
+		nodeIndex = record.nextNodeIndex;
+		depthIndex = previousDepth + 1;
+		break;
+	case kScene7010DialogueTransitionUp:
+		nodeIndex = record.nextNodeIndex;
+		depthIndex = previousDepth == 0 ? 0 : (byte)(previousDepth - 1);
+		break;
+	case kScene7010DialogueTransitionUpTwo:
+		nodeIndex = record.nextNodeIndex;
+		depthIndex = previousDepth > 1 ? (byte)(previousDepth - 2) : 0;
+		break;
+	case kScene7010DialogueTransitionStay:
+	default:
+		break;
+	}
+
+	return false;
+}
+
+void Scene7010::beginHannoverPrimarySpeechLine(byte frameIndex, byte poseVariant) {
+	_chunk11RightSpeechPoseVariant = poseVariant;
+	_chunk11RightSpeechLastRandomFrame = 0xff;
+	_chunk11RightSpeechTimerAccumulator = 0;
+	_chunk11RightSpeechActive = true;
+	setChunk11Frame(poseVariant == 0 ? 0x0e : 0x16);
+
+	beginPrimarySpeechLine(99, frameIndex, poseVariant == 0 ? 0x302 : 0x2ee,
+		poseVariant == 0 ? 0xe3 : 0xe8, 0x28, 0x16, 0x0b);
+
+	_chunk11RightSpeechActive = false;
+	_chunk11RightSpeechTimerAccumulator = 0;
+	setChunk11Frame(poseVariant == 0 ? 0x0e : 0x16);
+}
+
+void Scene7010::advanceHannoverPrimarySpeechFrame(uint32 delta) {
+	_chunk11RightSpeechTimerAccumulator += delta;
+	while (_chunk11RightSpeechTimerAccumulator >= kScene7010Chunk11SpeechFrameMillis) {
+		_chunk11RightSpeechTimerAccumulator -= kScene7010Chunk11SpeechFrameMillis;
+
+		byte nextFrame = _chunk11RightSpeechLastRandomFrame;
+		for (uint attempt = 0; attempt < 8 && nextFrame == _chunk11RightSpeechLastRandomFrame; ++attempt)
+			nextFrame = (byte)_random.getRandomNumber(4);
+		if (nextFrame == _chunk11RightSpeechLastRandomFrame)
+			nextFrame = (byte)((_chunk11RightSpeechLastRandomFrame + 1) % 5);
+
+		_chunk11RightSpeechLastRandomFrame = nextFrame;
+		setChunk11Frame((_chunk11RightSpeechPoseVariant == 0 ? 0x0e : 0x16) + nextFrame);
+	}
+}
+
 void Scene7010::runChunk8RevealSequence() {
 	_chunk8SpecialSequenceActive = true;
 	_chunk8FrameIndex = 7;
@@ -803,6 +1001,48 @@ void Scene7010::runChunk11FrameRange(byte startFrame, byte endFrame) {
 		setChunk11Frame(frame);
 		waitSceneMillis(kScene7010Chunk8FrameMillis);
 	}
+}
+
+void Scene7010::runChunk11MidFrames() {
+	runChunk11FrameRange(0x12, 0x16);
+	_chunk11RightSpeechPoseVariant = 1;
+}
+
+void Scene7010::runChunk11ReturnFrames() {
+	runChunk11FrameRange(0x1a, 0x1e);
+	setChunk11Frame(0x0e);
+	_chunk11RightSpeechPoseVariant = 0;
+}
+
+void Scene7010::runChunk11ExtendedFrames() {
+	for (byte frame = 0x2d; frame <= 0x37 && !Engine::shouldQuit(); ++frame) {
+		if (frame == 0x33) {
+			runChunk13Item09PickupOverlaySequence();
+			setChunk11Frame(0x33);
+		}
+		setChunk11Frame(frame);
+		waitSceneMillis(kScene7010Chunk8FrameMillis);
+	}
+	setChunk11Frame(0x0e);
+}
+
+void Scene7010::runChunk13Item09PickupOverlaySequence() {
+	const bool previousHideActiveActor = _actionOverlayPlayer.applyActorVisibility(kActionOverlayHideActiveActor);
+	_actionOverlayPlayer.begin(13, kScene7010Chunk13DescriptorCount,
+		kScene7010Chunk13FrameMap, ARRAYSIZE(kScene7010Chunk13FrameMap));
+
+	for (byte frame = 1; frame < ARRAYSIZE(kScene7010Chunk13FrameMap) && !Engine::shouldQuit(); ++frame) {
+		if (frame == 5)
+			setChunk11Frame(0x38);
+		_actionOverlayPlayer.setFrame(frame);
+		if (waitSceneMillis(kScene7010Chunk8FrameMillis))
+			break;
+	}
+
+	_actionOverlayPlayer.finish(previousHideActiveActor);
+	if (!hasInventoryItem(9))
+		addInventoryItem(9);
+	_soundBank0.playSample(1, 100);
 }
 
 void Scene7010::runChunk14FrameRange(byte startFrame, byte endFrame) {
