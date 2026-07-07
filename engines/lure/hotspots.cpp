@@ -1721,8 +1721,14 @@ void Hotspot::doTalkTo(HotspotData *hotspot) {
 		}
 	}
 
+	// Only start a conversation if the character actually has one defined for the
+	// current talk index.
+	uint16 talkId = getTalkId(hotspot);
+	if (talkId == 0)
+		return;
+
 	// Start talking with character
-	startTalk(hotspot, getTalkId(hotspot));
+	startTalk(hotspot, talkId);
 }
 
 void Hotspot::doTell(HotspotData *hotspot) {
