@@ -353,6 +353,31 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 	return _displayString;
 }
 
+const char *FontSurface::fitToWidth(const char *s, int maxWidth) {
+	const char *strSave = _displayString;
+
+	for (;;) {
+		// Measure the rendered width of the string
+		_displayString = s;
+		int total = 0;
+		while (*_displayString && !getNextCharWidth(total)) {
+		}
+
+		// writeString wraps once its running position reaches the right
+		// edge, so the text only fits if it stays strictly narrower
+		if (total < maxWidth || !*s)
+			break;
+
+		// Too wide, so drop the leading character and remeasure
+		_displayString = s;
+		getNextChar();
+		s = _displayString;
+	}
+
+	_displayString = strSave;
+	return s;
+}
+
 void FontSurface::writeCharacter(uint16_t c, const Common::Rect &clipRect) {
 	Justify justify = _fontJustify;
 	_fontJustify = JUSTIFY_NONE;

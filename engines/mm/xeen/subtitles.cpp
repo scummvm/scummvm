@@ -24,12 +24,16 @@
 #include "mm/xeen/subtitles.h"
 #include "mm/xeen/events.h"
 #include "mm/xeen/files.h"
+#include "mm/xeen/screen.h"
 #include "mm/xeen/xeen.h"
 
 namespace MM {
 namespace Xeen {
 
 static const char *SUBTITLE_LINE = "\f35\x3""c\v190\t000%s";
+
+// Bounds of the subtitle box (box.vga frame 0, an opaque 255x11 panel)
+static constexpr Common::Rect SUBTITLE_BOX(Common::Point(36, 189), 255, 11);
 
 Subtitles::Subtitles() : _lineNum(-1), _boxSprites(nullptr), _lineEnd(0), _lineSize(0) {
 }
@@ -145,19 +149,24 @@ void Subtitles::show() {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (timeElapsed() && (_lineEnd != _lineSize || !ttsMan || !ttsMan->isSpeaking())) {
 			_lineEnd = (_lineEnd + 1) % (_lineSize + 1);
-			int count;
-			if (Common::RU_RUS == g_vm->getLanguage())
-				count = MAX(_lineEnd - 36, 0);
-			else
-				count = MAX(_lineEnd - 40, 0);
+			int count = MAX(_lineEnd - 40, 0);
 
 			// Get the portion of the line to display
 			char buffer[1000];
 			strncpy(buffer, _lines[_lineNum].c_str() + count, _lineEnd - count);
 			buffer[_lineEnd - count] = '\0';
 
+			// The character-based cap above doesn't bound the pixel width of
+			// the variable-width font, so drop further leading characters
+			// until the text fits within the subtitle box, whose opaque
+			// interior then erases the previous text on each redraw. The
+			// text is centered on the screen, so it stays inside the box as
+			// long as it doesn't reach the box's left edge
+			const char *text = windows[0].fitToWidth(buffer,
+				2 * (SCREEN_WIDTH / 2 - SUBTITLE_BOX.left));
+
 			// Form the display line
-			_displayLine = Common::String::format(SUBTITLE_LINE, buffer);
+			_displayLine = Common::String::format(SUBTITLE_LINE, text);
 			markTime();
 		}
 
@@ -165,10 +174,15 @@ void Subtitles::show() {
 		if (!_boxSprites)
 			// Not already loaded, so load it
 			_boxSprites = new SpriteResource("box.vga");
-		_boxSprites->draw(0, 0, Common::Point(36, 189));
+		_boxSprites->draw(0, 0, Common::Point(SUBTITLE_BOX.left, SUBTITLE_BOX.top));
 
 		// Write the subtitle line
 		windows[0].writeString(_displayLine, false);
+
+		// The subtitles are redrawn more often than the scenes showing them
+		// redraw the screen, so always push the whole box out, so that a
+		// partially drawn line never lingers over a more recent one
+		windows[0].addDirtyRect(SUBTITLE_BOX);
 
 		if (_lineEnd == 0 && (!ttsMan || !ttsMan->isSpeaking()))
 			reset();
