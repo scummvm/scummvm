@@ -4140,6 +4140,21 @@ void HotspotTickHandlers::npcRoomChange(Hotspot &h) {
 	RoomExitCoordinates &coords = res.coordinateList().getEntry(srcRoom);
 	RoomExitCoordinateData &exitData = coords.getData(destRoom);
 
+	// If the routing to an intermediate next-hop room leads straight back to srcRoom,
+	// the target is unreachable (routing cycle); give up and stay put in the current room.
+	uint16 nextHop = exitData.roomNumber & 0xff;
+	if ((nextHop != 0) && (nextHop != destRoom)) {
+		RoomExitCoordinates& nextHopCoords = res.coordinateList().getEntry(nextHop);
+		RoomExitCoordinateData& nextHopExitData = nextHopCoords.getData(destRoom);
+		uint16 backHop = nextHopExitData.roomNumber & 0xff;
+
+		if (backHop == srcRoom) {
+			h.currentActions().top().setRoomNumber(h.roomNumber());
+			h.setExitCtr(0);
+			return;
+		}
+	}
+
 	if (h.hotspotId() != RATPOUCH_ID) {
 		// Count up the number of characters in the room
 		HotspotList &list = res.activeHotspots();
