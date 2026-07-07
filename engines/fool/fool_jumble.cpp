@@ -19,9 +19,9 @@
  *
  */
 
-#include "fool/fool.h"
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -135,9 +135,9 @@ void FoolGame::jumbleRun() {
 		}
 		// 130:03ba
 		if (var_i16_105e == 2) {
-			var_i16_106c = kSrcBic;
+			var_i16_106c = Graphics::MacToolbox::kSrcBic;
 		} else {
-			var_i16_106c = kSrcOr;
+			var_i16_106c = Graphics::MacToolbox::kSrcOr;
 		}
 		// 130:03d4
 		if (_jumbleGameType == 4) {
@@ -244,7 +244,7 @@ void FoolGame::jumbleRun() {
 				var_i16_484 = puzzlesReadShort();
 				var_i16_7e4 = puzzlesReadShort();
 				var_str_1578 = puzzlesReadString().decode(Common::kMacRoman);
-				_zbasic->text(kFontFool, 0xc, 0, kSrcOr);
+				_zbasic->text(kFontFool, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 				if (var_i16_7e4 > 0) {
 					_toolbox->MoveTo(var_i16_484, var_i16_7e4);
 					_toolbox->DrawString(var_str_1578);
@@ -329,7 +329,7 @@ void FoolGame::jumbleRun() {
 	// 130:0a90
 	if (_activePuzzle != 0x55) {
 		// 130:0b68
-		while ((_event.modifiers & kModMouseButtonUp) != 0) {
+		while ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) != 0) {
 			// 130:0aa0
 			if (arr_i16_4338[0] > 0) {
 				// strobe the squares in the victory list
@@ -349,7 +349,7 @@ void FoolGame::jumbleRun() {
 					getNextEvent(-1);
 					int delta = MAX(0, var_i16_7e4*60/1000 - ((int)_toolbox->TickCount() - ticks));
 					_toolbox->Delay(delta);
-				} while (!((var_i16_68a == arr_i16_4338[0]) || ((_event.modifiers & kModMouseButtonUp) == 0)));
+				} while (!((var_i16_68a == arr_i16_4338[0]) || ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0)));
 			} else {
 			// 130:0b62
 				// mask was originally 0
@@ -367,7 +367,7 @@ void FoolGame::jumbleRun() {
 				_toolbox->Delay(0xd*60/1000);
 				_toolbox->InvertRect(_screenGrid[arr_i16_4338[i]]);
 				getNextEvent(0);
-				if ((_event.modifiers & kModMouseButtonUp) == 0) {
+				if ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0) {
 					_activePuzzleSolved = true;
 				}
 			}
@@ -426,7 +426,7 @@ void FoolGame::sub_130_d2e() {
 	_stateFlags = kStateNull;
 	while (((_stateFlags & kStateReturn) == 0) && (var_str_1070 != var_str_1170)) {
 		getNextEvent(-1);
-		if (_event.what == kMouseDown) {
+		if (_event.what == Graphics::MacToolbox::kMouseDown) {
 			jumbleOnClick();
 		}
 		if (_stateFlags == kStateSaveGame) {
@@ -485,7 +485,7 @@ void FoolGame::jumbleRunSubstitution() {
 		if (_keyLastPressed != 0) {
 			jumbleOnKey();
 		}
-		if (_event.what == kMouseDown) {
+		if (_event.what == Graphics::MacToolbox::kMouseDown) {
 			jumbleOnClick();
 		}
 		if (_stateFlags == kStateSaveGame) {
@@ -513,7 +513,7 @@ void FoolGame::sub_130_1004() {
 		if (_keyLastPressed != 0) {
 			jumbleOnKey();
 		}
-		if (_event.what == kMouseDown) {
+		if (_event.what == Graphics::MacToolbox::kMouseDown) {
 			jumbleOnClick();
 		}
 		if (_stateFlags == kStateSaveGame) {
@@ -543,7 +543,7 @@ void FoolGame::jumbleRunWordSquare() {
 	// 130:121c
 	while (((_stateFlags & kStateReturn) == 0) && (var_str_1070 != var_str_1170) && (var_str_1070 != var_str_177c)) {
 		getNextEvent(-1);
-		if (_event.what == kMouseDown) {
+		if (_event.what == Graphics::MacToolbox::kMouseDown) {
 			jumbleOnClick();
 		}
 		if (_stateFlags == kStateSaveGame) {
@@ -573,7 +573,7 @@ void FoolGame::jumbleRunHiddenMessage() {
 			jumbleOnKey();
 		}
 		getGridFromMouse(var_i16_68a, var_i16_68c);
-		if (_event.what == kMouseDown) {
+		if (_event.what == Graphics::MacToolbox::kMouseDown) {
 			jumbleOnClick();
 		}
 		if ((var_i16_68a < 1) || (var_i16_68a > arr_i16_1eb8[0]) || (var_i16_68c < 1) || (var_i16_68c > arr_i16_1eb8[1])) {
@@ -908,7 +908,7 @@ void FoolGame::sub_130_1e76() {
 	// 130:1ff4
 	_toolbox->PenNormal();
 	_toolbox->PenPat(_patterns[1]);
-	_toolbox->PenMode(kPatBic);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatBic);
 	_toolbox->PaintRect(temp);
 }
 
@@ -1010,7 +1010,7 @@ void FoolGame::sub_130_2226() {
 	if (var_str_1578.empty()) // was: str(186)
 		return;
 	// 130:22a0
-	_zbasic->text(kFontFool, 0xc, 0, kSrcOr);
+	_zbasic->text(kFontFool, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 	var_i16_484 = _toolbox->StringWidth(var_str_1578);
 	_toolbox->MoveTo(0x127 - (var_i16_484 / 2), 0x133);
 	_toolbox->DrawString(var_str_1578);
@@ -1022,7 +1022,7 @@ void FoolGame::sub_130_22ee() {
 	fillRect(0x131, 0x84, 0x156, 0x17e, var_i16_1060);
 	if (var_str_1578.empty()) // was: str(187)
 		return;
-	_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
+	_zbasic->text(kFontFool, 0xc, 0, Graphics::MacToolbox::kSrcBic);
 	var_i16_7ba = _toolbox->StringWidth(var_str_1578);
 	fillRect(0x13c, 0xf6 - (var_i16_7ba / 2), 0x150, 0x10a + (var_i16_7ba / 2), 2);
 	_toolbox->MoveTo(0x100 - (var_i16_7ba / 2), 0x14a);
@@ -1035,7 +1035,7 @@ void FoolGame::sub_130_23cc() {
 	fillRect(0x12c, 0x8c, 0x156, 0x186, var_i16_1060);
 	if (var_str_1578.empty()) // was: str(188)
 		return;
-	_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
+	_zbasic->text(kFontFool, 0xc, 0, Graphics::MacToolbox::kSrcBic);
 	var_i16_7ba = _toolbox->StringWidth(var_str_1578);
 	fillRect(0x130, 0x100 - (var_i16_7ba / 2), 0x144, 0x114 + (var_i16_7ba / 2), 2);
 	_toolbox->MoveTo(0x10a - (var_i16_7ba / 2), 0x13e);
@@ -1048,7 +1048,7 @@ void FoolGame::sub_130_24aa() {
 	fillRect(0x125, 0x20, 0x136, 0x15e, 2);
 	if (var_str_1578.empty()) // was: str(189)
 		return;
-	_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
+	_zbasic->text(kFontFool, 0xc, 0, Graphics::MacToolbox::kSrcBic);
 	var_i16_7ba = _toolbox->StringWidth(var_str_1578);
 	_toolbox->MoveTo(0xc4 - (var_i16_7ba / 2), 0x131);
 	_toolbox->DrawString(var_str_1578);
@@ -1057,7 +1057,7 @@ void FoolGame::sub_130_24aa() {
 void FoolGame::sub_130_2548() {
 	warning(__func__);
 	// 130:2548
-	_zbasic->text(kFontFool, 0xc, 0, kSrcOr);
+	_zbasic->text(kFontFool, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 	fillRect(0x131, 0, 0x156, 0x10e, 0x47);
 	if (var_str_1578.empty()) // was: str(190)
 		return;

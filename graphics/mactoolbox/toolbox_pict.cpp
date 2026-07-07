@@ -26,18 +26,14 @@
 #include "common/stream.h"
 #include "common/system.h"
 
-#include "fool/detection.h"
-#include "graphics/cursor.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/managed_surface.h"
-#include "graphics/pixelformat.h"
-#include "image/pict.h"
 
-#include "fool/fool.h"
-#include "fool/toolbox.h"
-#include "fool/utils.h"
+#include "graphics/mactoolbox/toolbox.h"
+#include "graphics/mactoolbox/utils.h"
 
-namespace Fool {
+namespace Graphics {
+namespace MacToolbox {
 
 void Toolbox::ClosePicture() {
 	ShowPen();
@@ -59,15 +55,15 @@ void Toolbox::_drawBitsRect(Common::SeekableReadStream &stream, const Common::Re
 	Common::Rect dstRect = readRect(stream);
 
 	SourceMode mode = (SourceMode)stream.readUint16BE();
-	pixMap.bounds.debugPrintC(5, kDebugGraphics, "Toolbox::_drawPackBitsRect: bounds");
-	srcRect.debugPrintC(5, kDebugGraphics, "Toolbox::_drawPackBitsRect: srcRect");
-	dstRect.debugPrintC(5, kDebugGraphics, "Toolbox::_drawPackBitsRect: dstRect");
-	picFrame.debugPrintC(5, kDebugGraphics, "Toolbox::_drawPackBitsRect: picFrame");
+	pixMap.bounds.debugPrintC(5, kDebugLevelMacToolbox, "Toolbox::_drawPackBitsRect: bounds");
+	srcRect.debugPrintC(5, kDebugLevelMacToolbox, "Toolbox::_drawPackBitsRect: srcRect");
+	dstRect.debugPrintC(5, kDebugLevelMacToolbox, "Toolbox::_drawPackBitsRect: dstRect");
+	picFrame.debugPrintC(5, kDebugLevelMacToolbox, "Toolbox::_drawPackBitsRect: picFrame");
 
 	if (pixMap._isBitMap) {
 		BitMap result = readBitsRectMono(stream, pixMap, compressed);
 
-		const BitMap intermediate(createRemappedSurface(result->surfacePtr(), nullptr, 0));
+		const BitMap intermediate(createRemappedSurface(_wm, result->surfacePtr(), nullptr, 0));
 		// source rect needs to be in bitmap coordinates
 		srcRect.translate(-pixMap.bounds.left, -pixMap.bounds.top);
 
@@ -107,10 +103,10 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 
 	Common::MemoryReadStream stream(myPicture->picData.data(), myPicture->picData.size(), DisposeAfterUse::NO);
 
-	dstRect.debugPrintC(5, kDebugGraphics, "Toolbox::DrawPicture: drawing at ");
+	dstRect.debugPrintC(5, kDebugLevelMacToolbox, "Toolbox::DrawPicture: drawing at ");
 
-	if (debugChannelSet(8, kDebugGraphics)) {
-		debugC(8, kDebugGraphics, "Toolbox::DrawPicture: image contents");
+	if (debugChannelSet(8, kDebugLevelMacToolbox)) {
+		debugC(8, kDebugLevelMacToolbox, "Toolbox::DrawPicture: image contents");
 		stream.hexdump(stream.size());
 	}
 
@@ -153,7 +149,7 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 		else
 			op = stream.readByte();
 
-		debugC(5, kDebugGraphics, "Toolbox::DrawPicture: [%04x] opcode %04x", (uint32_t)pos, op);
+		debugC(5, kDebugLevelMacToolbox, "Toolbox::DrawPicture: [%04x] opcode %04x", (uint32_t)pos, op);
 
 		switch (op) {
 		case kOpNOP:
@@ -638,4 +634,5 @@ PicHandle Toolbox::OpenPicture(const Common::Rect &picFrame) {
 
 
 
-} // End of namespace Fool
+} // End of namespace MacToolbox
+} // End of namespace Graphics

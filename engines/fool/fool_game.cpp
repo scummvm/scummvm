@@ -23,10 +23,12 @@
 #include "common/memstream.h"
 #include "common/ustr.h"
 #include "common/util.h"
+#include "graphics/mactoolbox/toolbox.h"
+#include "gui/filebrowser-dialog.h"
+
 #include "fool/fool.h"
 #include "fool/fool_game.h"
 #include "fool/fool_prologue.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -88,15 +90,30 @@ static const byte fondSmall[] = {
 	0, 0, 0, 1, 0, 0, 0, 9, 0, 0, 126, 9
 };
 
+Common::String getFileNameFromModal(bool save, const Common::String &suggested, const Common::String &title) {
+	Common::String prefix = g_engine->getGameId() + '-';
+	Common::String mask = prefix + "*";
+	GUI::FileBrowserDialog browser(title.c_str(), "fool", save ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str(), suggested.c_str());
+	if (browser.runModal() <= 0) {
+		return Common::String();
+	}
+	Common::String result = browser.getResult();
+	if (!result.empty() && !result.hasPrefixIgnoreCase(prefix))
+		result = prefix + result;
+	return result;
+}
+
 void FoolGame::run() {
-	_toolbox = new Toolbox();
+	_toolbox = new Toolbox(&g_engine->_wm);
 	_zbasic = new ZBasic(_toolbox);
 
+	_toolbox->_setFileModalCallback(getFileNameFromModal);
+
 	Common::MacFinderInfo finfo;
-	if (_toolbox->GetFInfo(Common::U32String("The Fool's Errand"), 0, finfo) == kNoErr) {
+	if (_toolbox->GetFInfo(Common::U32String("The Fool's Errand"), 0, finfo) == Graphics::MacToolbox::kNoErr) {
 		_zbasic->loadProgram(Common::Path("The Fool's Errand", ':'));
 	// v1.0 filename ends with "tm"
-	} else if (_toolbox->GetFInfo(Common::U32String("xn--The Fool's Errand-306j"), 0, finfo) == kNoErr) {
+	} else if (_toolbox->GetFInfo(Common::U32String("xn--The Fool's Errand-306j"), 0, finfo) == Graphics::MacToolbox::kNoErr) {
 		_zbasic->loadProgram(Common::Path("xn--The Fool's Errand-306j", ':'));
 	} else {
 		error("FoolGame::run: Fool's Errand program not found");
@@ -276,7 +293,7 @@ void FoolGame::foolRun() {
 				}
 			}
 			// 128:1d76
-			if (_event.what == kMouseDown) {
+			if (_event.what == Graphics::MacToolbox::kMouseDown) {
 				sub_128_1f76();
 			}
 			if ((_storyCurrentChapter == 0x10) &&
@@ -347,7 +364,7 @@ void FoolGame::copyScreen(int16 put, BitMap &bmp) {
 
 	// 128:00e6
 	if (put == 1) {
-		_zbasic->put(0, 0, bmp, kSrcCopy);
+		_zbasic->put(0, 0, bmp, Graphics::MacToolbox::kSrcCopy);
 	}
 }
 
@@ -389,7 +406,7 @@ void FoolGame::sub_128_1e4(const Common::String &osType) {
 	// 128:023c
 	// get offset of bytes in string and pretend it's an OSType
 	// var_i32_168 = *(var_str_172 + 1);
-	SFTypeList typeList = { { 0 } };
+	Graphics::MacToolbox::SFTypeList typeList = { { 0 } };
 	typeList.types[0] = osType.at(0) << 24;
 	typeList.types[0] += osType.at(1) << 16;
 	typeList.types[0] += osType.at(2) << 8;
@@ -521,7 +538,7 @@ void FoolGame::drawPuzzleButton(const Common::U32String &symbol) {
 	_toolbox->SetRect(arr_rect_1910c, 0x6c, 0x127, 0x84, 0x137);
 	_toolbox->EraseRoundRect(arr_rect_1910c, 0x8, 0x7);
 	_toolbox->FrameRoundRect(arr_rect_1910c, 0x8, 0x7);
-	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 	int16 width = _toolbox->StringWidth(symbol);
 	_toolbox->MoveTo(0x78 - (width / 2), 0x133);
 	_toolbox->DrawString(symbol);
@@ -529,14 +546,14 @@ void FoolGame::drawPuzzleButton(const Common::U32String &symbol) {
 
 int16 FoolGame::getVolRefNum() {
 	// 128:05fe
-	ParamBlockRec pb;
+	Graphics::MacToolbox::ParamBlockRec pb;
 	_toolbox->PBGetVol(pb);
 	return pb.ioVRefNum;
 }
 
 OSErr FoolGame::setVolRefNum(int16 volRefNum) {
 	// 128:064c
-	ParamBlockRec pb;
+	Graphics::MacToolbox::ParamBlockRec pb;
 	pb.ioVRefNum = volRefNum;
 	return _toolbox->PBSetVol(pb);
 }
@@ -571,7 +588,7 @@ void FoolGame::drawTarotCard(int16 rectID, int16 deckPos, int16 type) {
 		_toolbox->PaintRoundRect(_screenGrid[rectID], 0xc, 0xc);
 	}
 	if (type == 2) {
-		_toolbox->PenMode(kPatOr);
+		_toolbox->PenMode(Graphics::MacToolbox::kPatOr);
 		_toolbox->PenPat(_patterns[1]);
 		_toolbox->PaintRoundRect(_screenGrid[rectID], 0xc, 0xc);
 	}
@@ -659,35 +676,35 @@ void FoolGame::getNextEvent(uint32 unk1) {
 
 	// This function is usually called at the start of an event processing loop,
 	// so yield to the event pump/display update when necessary.
-	if (_event.what == kNullEvent)
+	if (_event.what == Graphics::MacToolbox::kNullEvent)
 		_toolbox->Delay(0);
 
 	var_i16_78a = _toolbox->GetNextEvent(unk1, _event);
-	if ((_event.what == kMouseDown) && (_event.where.y < MENU_HEIGHT)) {
+	if ((_event.what == Graphics::MacToolbox::kMouseDown) && (_event.where.y < MENU_HEIGHT)) {
 		onClickMenu();
 	}
 	// 128:0caa
 	_toolbox->GlobalToLocal(_event.where);
-	if (_event.what == kKeyDown) {
+	if (_event.what == Graphics::MacToolbox::kKeyDown) {
 		// the original just checked the command key,
 		// non-mac PCs expect the control key to work
-		if ((_event.modifiers & (kModCommandKeyDown | kModLControlKeyDown)) == 0) {
+		if ((_event.modifiers & (Graphics::MacToolbox::kModCommandKeyDown | Graphics::MacToolbox::kModLControlKeyDown)) == 0) {
 			sub_128_5f9e();
 		} else {
 			onMenuKey();
 		}
 	}
 	// 128:0ce0
-	if ((_event.what == kAutoKey) && ((_event.modifiers & (kModCommandKeyDown | kModLControlKeyDown)) == 0)) {
+	if ((_event.what == Graphics::MacToolbox::kAutoKey) && ((_event.modifiers & (Graphics::MacToolbox::kModCommandKeyDown | Graphics::MacToolbox::kModLControlKeyDown)) == 0)) {
 		sub_128_5f9e();
 	}
-	if (_event.what == kUpdateEvt) {
+	if (_event.what == Graphics::MacToolbox::kUpdateEvt) {
 		onUpdateEvent();
 	}
-	if (_event.what == kDiskEvt) {
+	if (_event.what == Graphics::MacToolbox::kDiskEvt) {
 		onDiskEvent();
 	}
-	if ((_event.what == kScummVMQuitEvt) || (_event.what == kScummVMReturnToLauncherEvt)) {
+	if ((_event.what == Graphics::MacToolbox::kScummVMQuitEvt) || (_event.what == Graphics::MacToolbox::kScummVMReturnToLauncherEvt)) {
 		menuQuit();
 	}
 }
@@ -700,7 +717,7 @@ void FoolGame::flashRect(int16 top, int16 left, int16 bottom, int16 right, int16
 	bounds.left = left;
 	bounds.bottom = bottom;
 	bounds.right = right;
-	while (_event.modifiers & kModMouseButtonUp) {
+	while (_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) {
 		// 128:0d94
 		do {
 			// FIXME: Flashing far too intense
@@ -713,12 +730,12 @@ void FoolGame::flashRect(int16 top, int16 left, int16 bottom, int16 right, int16
 				// intercept all events, and fall back to NullEvent +
 				// wait for vsync if no events were received.
 				var_i16_78a = _toolbox->GetNextEvent(-1, _event);
-				if (_event.what == kNullEvent) {
+				if (_event.what == Graphics::MacToolbox::kNullEvent) {
 					_toolbox->Delay(0);
 					ticks += 1;
 				}
-			} while (!((ticks >= (millis*60/1000)) || ((_event.modifiers & kModMouseButtonUp) == 0)));
-		} while ((_event.modifiers & kModMouseButtonUp) != 0);
+			} while (!((ticks >= (millis*60/1000)) || ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0)));
+		} while ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) != 0);
 	}
 }
 
@@ -733,7 +750,7 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 	}
 	// 128:0e46
 	copyScreen(0, arr_bmp_138bc);
-	_zbasic->text(font, 0xc, Graphics::kMacFontRegular, kSrcBic);
+	_zbasic->text(font, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
 	var_i16_7b4 = buttonCount*0x46;
 	var_i16_7b6 = 0;
 	for (int i = 0; i <= lineCount; i++) {
@@ -782,7 +799,7 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 	// 128:10a0
 	if (buttonCount != 0) {
 		_toolbox->PenNormal();
-		_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
+		_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 
 		// 128:10c0
 		// loop to zero out three button rects
@@ -850,7 +867,7 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 		do {
 			var_i16_7a8 = _toolbox->GetNextEvent(0xa, _event);
 			_toolbox->GlobalToLocal(_event.where);
-			if (_event.what == kMouseDown) {
+			if (_event.what == Graphics::MacToolbox::kMouseDown) {
 				// 128:154a
 				_savePromptChoice = 0;
 				Common::Rect target;
@@ -874,26 +891,26 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 						_toolbox->InvertRoundRect(target, 0xa, 0xa);
 
 						// 128:1624
-						while ((_event.what != kMouseUp) && (_toolbox->PtInRect(_event.where, target))) {
+						while ((_event.what != Graphics::MacToolbox::kMouseUp) && (_toolbox->PtInRect(_event.where, target))) {
 
 							var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
 							_toolbox->GlobalToLocal(_event.where);
-							if (_event.what == kNullEvent) {
+							if (_event.what == Graphics::MacToolbox::kNullEvent) {
 								_toolbox->Delay(0);
 							}
 						}
 
 						_toolbox->InvertRoundRect(target, 0xa, 0xa);
 						// 128:1686
-						while ((_event.what != kMouseUp) && (!_toolbox->PtInRect(_event.where, target))) {
+						while ((_event.what != Graphics::MacToolbox::kMouseUp) && (!_toolbox->PtInRect(_event.where, target))) {
 							var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
 							_toolbox->GlobalToLocal(_event.where);
-							if (_event.what == kNullEvent) {
+							if (_event.what == Graphics::MacToolbox::kNullEvent) {
 								_toolbox->Delay(0);
 							}
 						}
 						// 128:16ea
-					} while (_event.what != kMouseUp);
+					} while (_event.what != Graphics::MacToolbox::kMouseUp);
 
 					if (!_toolbox->PtInRect(_event.where, target)) {
 						_savePromptChoice = 0;
@@ -902,13 +919,13 @@ void FoolGame::showChoiceModal(uint16 font, int16 lineCount, int16 buttonCount, 
 				}
 			}
 			// 128:172c
-			if (_event.what == kKeyDown) {
+			if (_event.what == Graphics::MacToolbox::kKeyDown) {
 				_keyLastPressed = _event.message & 0xff;
 				if (_keyLastPressed == 0xd) {
 					_savePromptChoice = 1;
 				}
 			}
-			if (_event.what == kNullEvent)
+			if (_event.what == Graphics::MacToolbox::kNullEvent)
 				_toolbox->Delay(0);
 		// 128:175c
 		} while (_savePromptChoice == 0);
@@ -939,7 +956,7 @@ void FoolGame::showBehold(int16 unk2, int16 unk1, const Common::U32String &messa
 	// 128:188a
 	toggleMouseCursor(false);
 	_zbasic->picture(0, MENU_HEIGHT, var_pic_7c2);
-	_zbasic->text(kFontFool, 0x18, Graphics::kMacFontShadow | Graphics::kMacFontOutline, kSrcBic);
+	_zbasic->text(kFontFool, 0x18, Graphics::kMacFontShadow | Graphics::kMacFontOutline, Graphics::MacToolbox::kSrcBic);
 	Common::Rect rect;
 	for (int j = 0; j <= 1; j++) {
 		// 128:18c4
@@ -961,9 +978,9 @@ void FoolGame::showBehold(int16 unk2, int16 unk1, const Common::U32String &messa
 	// 128:19b2
 	_toolbox->PenNormal();
 	_toolbox->PaintRect(rect);
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	_toolbox->FrameRect(rect);
-	_toolbox->PenMode(kPatCopy);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatCopy);
 	var_i16_484 = _toolbox->StringWidth(message);
 	// 128:19ec
 	_toolbox->MoveTo(0x105 - (var_i16_484/2), 0x12e);
@@ -1030,7 +1047,7 @@ void FoolGame::sub_128_1f1e() {
 	// 128:1f1e
 	_toolbox->InitCursor();
 	toggleMouseCursor(false);
-	sub_128_bde(1, 1, kSrcCopy, 1, 1, 1);
+	sub_128_bde(1, 1, Graphics::MacToolbox::kSrcCopy, 1, 1, 1);
 }
 
 void FoolGame::sub_128_1f44() {
@@ -1056,7 +1073,7 @@ void FoolGame::sub_128_1f76() {
 			// new: empty the event queue, so feedback is instant
 			_toolbox->FlushEvents(-1, 0);
 			var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
-		} while ((_event.modifiers & kModMouseButtonUp) == 0);
+		} while ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0);
 	} else {
 		// 128:1fee
 		if ((_storyCurrentChapter == 0x10) && (_puzzleCompletionStatus[0x10] < 0x64) && (_event.where.y > 0x113) && (_event.where.x < 0x8c)) {
@@ -1138,7 +1155,7 @@ void FoolGame::storyRenderPage() {
 	// 128:2202
 	if (_storyNextPage != _storyCurrentPage) {
 		if ((_pageLines[_storyNextPage] < 0xe) && (var_i16_7de > 0)) {
-			fillRect(1, kPatBic, var_i16_7de, 0x37, 0x11d, 0x1db);
+			fillRect(1, Graphics::MacToolbox::kPatBic, var_i16_7de, 0x37, 0x11d, 0x1db);
 			// 128:226e
 			// grab the last N-1 lines of text from the screen
 			_zbasic->get(0x3c, 0x122 - (0xf - _pageLines[_storyNextPage]) * 0xf, 0x1d6, 0x11d, arr_bmp_b3ec);
@@ -1155,8 +1172,8 @@ void FoolGame::storyRenderPage() {
 	// if we've solved a puzzle, fill the scroll with crazy patterns
 	if ((var_i16_7ce & 0x8) != 0) {
 		var_i16_7ce ^= 0x8;
-		sub_128_bde(1, 0, kSrcCopy, 0, 1, 0);
-		sub_128_bde(1, 0, kSrcCopy, 0, 0, 0);
+		sub_128_bde(1, 0, Graphics::MacToolbox::kSrcCopy, 0, 1, 0);
+		sub_128_bde(1, 0, Graphics::MacToolbox::kSrcCopy, 0, 0, 0);
 	}
 	// 128:235e
 	if (_puzzleType[_storyCurrentChapter] > 0) {
@@ -1173,28 +1190,28 @@ void FoolGame::storyRenderPage() {
 		drawPuzzleButton(iconStr);
 		// 128:23f0: CLR.W - -0x772(A5)
 		var_i16_7d6 = 1;
-		_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
+		_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 		_toolbox->MoveTo(0x8a, 0x133);
 		_toolbox->DrawString(_puzzleName[_storyCurrentChapter]);
 	} else {
 		// 128:2430
 		var_i16_7d6 = 0;
-		_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
+		_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 		_toolbox->MoveTo(0x70, 0x133);
 		_toolbox->DrawString(_puzzleName[_storyCurrentChapter]);
 	}
 	// 128:2468
 	if (!_pageNumberText[_storyNextPage].empty()) { // was: str(13)
-		_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcOr);
+		_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 		_toolbox->DrawString(_pageNumberText[_storyNextPage]);
 	}
 	// 128:24be
 	if (_storyNextPage != _storyCurrentPage) {
-		_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcOr);
+		_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 		fillRect(0x2f, 0x37, 0x11f, 0x1db, 0);
 		if (var_i16_7e0 != 0) {
 			// Paste the previous lines of text, if we copied them
-			_zbasic->put(0x3c, 0x32, arr_bmp_b3ec, kSrcCopy);
+			_zbasic->put(0x3c, 0x32, arr_bmp_b3ec, Graphics::MacToolbox::kSrcCopy);
 		}
 		// 128:252a
 		// y-position where the story text should start
@@ -1232,7 +1249,7 @@ void FoolGame::menuClickMessage() {
 	// hide menu and replace with "click mouse to continue" message
 	_toolbox->SetPort(var_i32_8);
 	fillRect(0, 7, 0x13, _windowWidth-7, 0);
-	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 	Common::U32String message = Common::U32String("Click Mouse to Continue"); // was: str(15)
 	int16 width = _toolbox->StringWidth(message);
 	_toolbox->MoveTo((_windowWidth / 2) - (width / 2), 0xf);
@@ -1578,7 +1595,7 @@ void FoolGame::menuSetup() {
 	// 128:318e
 	fillRect(0x1e, 0x37, 0x32, 0xc8, 0);
 	fillRect(0x2f, 0x37, 0x11f, 0x1db, 0x0);
-	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 	int16 strY = 0x3c;
 	var_i16_7de = 0x2d;
 	// draw the first page of text
@@ -2316,7 +2333,7 @@ void FoolGame::menuAbout() {
 	_toolbox->InitCursor();
 	toggleMouseCursor(true);
 	copyScreen(0, arr_bmp_138bc);
-	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 	var_i16_7b4 = 0;
 	var_i16_7b6 = 0;
 	var_i16_7b8 = 0;
@@ -2378,7 +2395,7 @@ void FoolGame::menuAbout() {
 		strY += 0x11;
 	}
 	// 128:50f4
-	_zbasic->text(kFontSmall, 0x9, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(kFontSmall, 0x9, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 	strY += 0xe;
 	drawTextCenter(_zbasic->str(_zstrOffset[kOffsetVersion]), strY); // version string
 	menuClickMessage();
@@ -2410,7 +2427,7 @@ void FoolGame::onClickMenu() {
 	// 128:5b30
 	if (_menuDisabled)
 		return;
-	_event.what = kNullEvent;
+	_event.what = Graphics::MacToolbox::kNullEvent;
 	if (_menuHidesPlayfield) {
 		thothHidePlayfield();
 	}
@@ -2487,21 +2504,21 @@ void FoolGame::onMenuSelect() {
 	if ((_selectedMenuID >= 3) && (_selectedMenuID <= 7)) { // Chapter menus
 		var_i16_e1a = 0;
 		_selectedMenuChapter = _selectedMenuItem + (_selectedMenuID - 3)*0x10;
-		if ((_selectedMenuChapter == 1) && (_event.what == kKeyDown)) {
+		if ((_selectedMenuChapter == 1) && (_event.what == Graphics::MacToolbox::kKeyDown)) {
 			var_i16_e1a = 1;
 		}
 		// 128:5d56
-		if ((_event.modifiers & kModLOptionKeyDown) != 0) {
+		if ((_event.modifiers & Graphics::MacToolbox::kModLOptionKeyDown) != 0) {
 			var_i16_e1a = 1;
 		} else {
 			// 128:5d74
 			do {
-				var_i16_7a8 = _toolbox->GetNextEvent(1 << kKeyDown, _event);
+				var_i16_7a8 = _toolbox->GetNextEvent(1 << Graphics::MacToolbox::kKeyDown, _event);
 				_toolbox->GlobalToLocal(_event.where);
-				if ((_event.modifiers & kModLOptionKeyDown) != 0) {
+				if ((_event.modifiers & Graphics::MacToolbox::kModLOptionKeyDown) != 0) {
 					var_i16_e1a = 1;
 				}
-			} while (_event.what != kNullEvent);
+			} while (_event.what != Graphics::MacToolbox::kNullEvent);
 		}
 		// 128:5dae
 		if (((var_i16_7ce & 1) == 0) && (var_i16_e1a == 0) && (_storyCurrentChapter != _selectedMenuChapter)) {
@@ -2613,9 +2630,9 @@ void FoolGame::waitForMouseUp() {
 		// was originally a mask of 6
 		var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
 		_toolbox->GlobalToLocal(_event.where);
-		if (_event.what == kNullEvent)
+		if (_event.what == Graphics::MacToolbox::kNullEvent)
 			_toolbox->Delay(0);
-	} while ((_event.modifiers & kModMouseButtonUp) == 0);
+	} while ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0);
 }
 
 void FoolGame::waitForClick() {
@@ -2625,9 +2642,9 @@ void FoolGame::waitForClick() {
 		// was originally a mask of 2
 		var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
 		_toolbox->GlobalToLocal(_event.where);
-		if (_event.what == kNullEvent)
+		if (_event.what == Graphics::MacToolbox::kNullEvent)
 			_toolbox->Delay(0);
-	} while ((_event.what != kMouseDown));
+	} while ((_event.what != Graphics::MacToolbox::kMouseDown));
 	waitForMouseUp();
 }
 
@@ -2636,31 +2653,31 @@ void FoolGame::sub_128_61ec() {
 	// 128:61ec
 	do {
 		var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
-		if (_event.what == kUpdateEvt) {
+		if (_event.what == Graphics::MacToolbox::kUpdateEvt) {
 			onUpdateEvent();
 		}
-		if (_event.what == kDiskEvt) {
+		if (_event.what == Graphics::MacToolbox::kDiskEvt) {
 			onDiskEvent();
 		}
-		if (_event.what == kNullEvent)
+		if (_event.what == Graphics::MacToolbox::kNullEvent)
 			_toolbox->Delay(0);
-	} while (!((_event.what == kNullEvent) && (_event.modifiers & kModMouseButtonUp)));
+	} while (!((_event.what == Graphics::MacToolbox::kNullEvent) && (_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp)));
 	_keyLastPressed = 0;
 }
 
 void FoolGame::sub_128_6244() {
 	do {
 		var_i16_7a8 = _toolbox->GetNextEvent(-1, _event);
-		if (_event.what == kUpdateEvt) {
+		if (_event.what == Graphics::MacToolbox::kUpdateEvt) {
 			_toolbox->BeginUpdate(*_event.windowPtr);
 			_toolbox->EndUpdate(*_event.windowPtr);
 		}
 		// 128:6272
-		if (_event.what == kDiskEvt) {
+		if (_event.what == Graphics::MacToolbox::kDiskEvt) {
 			onDiskEvent();
 		}
 		_toolbox->Delay(0);
-	} while ((_event.what == kNullEvent) && ((_event.modifiers & kModMouseButtonUp) == 0));
+	} while ((_event.what == Graphics::MacToolbox::kNullEvent) && ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0));
 	// SEGMENT_RETURN
 }
 
@@ -2850,7 +2867,7 @@ void FoolGame::sub_129_068() {
 	// 129:0636
 	if (var_str_e22.empty()) { // was: str(135)
 		do {
-			_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcBic);
+			_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
 			fillRect(0x17, 0x92, 0x31, 0x16e, 2);
 			//var_i16_7a2 = 0x28;
 			// prompt to locate the fool's puzzles file
@@ -2887,12 +2904,12 @@ void FoolGame::sub_129_068() {
 	// unfurl the scroll by blitting the lower half a bunch of times
 	for (int i = 0; i <= 0x15; i++) {
 		var_i16_484 = _zbasic->readDataInt();
-		_zbasic->put(0, var_i16_484, _scrollPage, kSrcCopy);
+		_zbasic->put(0, var_i16_484, _scrollPage, Graphics::MacToolbox::kSrcCopy);
 		delay(2);
 	}
 	// 129:0888
-	_zbasic->put(0, 0x14f, arr_bmp_b3ec, kSrcCopy);
-	_zbasic->put(0x1f9, 0x14f, arr_bmp_109dc, kSrcCopy);
+	_zbasic->put(0, 0x14f, arr_bmp_b3ec, Graphics::MacToolbox::kSrcCopy);
+	_zbasic->put(0x1f9, 0x14f, arr_bmp_109dc, Graphics::MacToolbox::kSrcCopy);
 	_zbasic->picture(0x39, 0x29, arr_i32_192c0[1]);
 
 	// 129:08ee
@@ -3146,7 +3163,7 @@ void FoolGame::menuLoadingMessage(int16 percent) {
 	// draw the loading text on the menu bar
 	_toolbox->SetPort(var_i32_8);
 	fillRect(0, 7, 0x13, _windowWidth - 7, 0);
-	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 	// Loading Game text during initial puzzle load
 	Common::U32String message = Common::U32String::format("Loading Game - %d%%", percent); // was: str(158)
 	int16 width = _toolbox->StringWidth(message);
@@ -3194,7 +3211,7 @@ void FoolGame::metapuzzleComplete() {
 			var_i16_42 + (int16)(i*0.6f),
 			SCREEN_WIDTH - i,
 			SCREEN_HEIGHT - (int16)(i*0.6f),
-			arr_bmp_bbbc, kSrcCopy);
+			arr_bmp_bbbc, Graphics::MacToolbox::kSrcCopy);
 		// 144:015a
 		delayFromMarker(0xf);
 	}

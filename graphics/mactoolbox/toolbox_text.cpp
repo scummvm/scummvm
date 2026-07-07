@@ -24,11 +24,11 @@
 #include "graphics/managed_surface.h"
 #include "graphics/pixelformat.h"
 
-#include "fool/fool.h"
-#include "fool/toolbox.h"
-#include "fool/utils.h"
+#include "graphics/mactoolbox/toolbox.h"
+#include "graphics/mactoolbox/utils.h"
 
-namespace Fool {
+namespace Graphics {
+namespace MacToolbox {
 
 void Toolbox::DrawChar(Common::u32char_type_t ch) {
 	warning("STUB: Toolbox::DrawChar");
@@ -37,8 +37,8 @@ void Toolbox::DrawChar(Common::u32char_type_t ch) {
 void Toolbox::DrawString(const Common::U32String &s) {
 	if (_port) {
 		Common::String macString = s.encode(Common::kMacRoman);
-		debugC(5, kDebugGraphics, "Toolbox::DrawString: (%d, %d) %s\n", _port->pnLoc.x, _port->pnLoc.y, s.encode().c_str());
-		Graphics::MacFontRun fontRun(&g_engine->_wm, _port->txFont, _port->txFace, _port->txSize, 0, 0, 0);
+		debugC(5, kDebugLevelMacToolbox, "Toolbox::DrawString: (%d, %d) %s\n", _port->pnLoc.x, _port->pnLoc.y, s.encode().c_str());
+		Graphics::MacFontRun fontRun(_wm, _port->txFont, _port->txFace, _port->txSize, 0, 0, 0);
 		const Graphics::Font *font = fontRun.getFont();
 		Common::Rect bbox = font->getBoundingBox(macString);
 		BitMap buffer(new Graphics::ManagedSurface(bbox.width(), bbox.height(), Graphics::PixelFormat::createFormatCLUT8()));
@@ -57,7 +57,7 @@ void Toolbox::DrawString(const Common::U32String &s) {
 		destPos.x += _port->portRect.left;
 		destPos.y += _port->portRect.top;
 
-		Common::Rect result = blitMono(buffer, _port->portBits, mask, destPos, _port->txMode);
+		Common::Rect result = blitMono(buffer, _port->portBits, mask, destPos, _port->txMode, _wm->_colorBlack, _wm->_colorWhite);
 		if (_port->portBits == _defaultBits) {
 			_defaultWindow->addDirtyRect(result);
 			_defaultWindow->setDirty(true);
@@ -78,9 +78,9 @@ void Toolbox::DrawString(const Common::U32String &s) {
 uint16 Toolbox::StringWidth(const Common::U32String &s) {
 	if (_port) {
 		Common::String macString = s.encode(Common::kMacRoman);
-		Graphics::MacFontRun fontRun(&g_engine->_wm, _port->txFont, _port->txFace, _port->txSize, 0, 0, 0);
+		Graphics::MacFontRun fontRun(_wm, _port->txFont, _port->txFace, _port->txSize, 0, 0, 0);
 		uint16 result = fontRun.getFont()->getStringWidth(macString);
-		debugC(5, kDebugGraphics, "Toolbox::StringWidth: %s -> %d", s.encode().c_str(), result);
+		debugC(5, kDebugLevelMacToolbox, "Toolbox::StringWidth: %s -> %d", s.encode().c_str(), result);
 		return result;
 	}
 	return 0;
@@ -110,4 +110,5 @@ void Toolbox::TextSize(uint16 size) {
 	}
 }
 
-} // End of namespace Fool
+} // End of namespace MacToolbox
+} // End of namespace Graphics

@@ -19,9 +19,9 @@
  *
  */
 
-#include "fool/fool.h"
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -160,7 +160,7 @@ void FoolGame::mazeRun() {
 		while ((_stateFlags == kStateNull) && (!_activePuzzleSolved)) {
 			// 136:06fe
 			getNextEvent(-1);
-			if ((_event.modifiers & kModMouseButtonUp) == 0) {
+			if ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0) {
 				mazeOnClick();
 			}
 			if (_mazePlayerX == 0x19) {
@@ -240,7 +240,7 @@ void FoolGame::mazeFlashWall() {
 	_toolbox->PenNormal();
 	_toolbox->PenSize(5, 5);
 	if (arr_i16_1eb8[21] == 0) {
-		_toolbox->PenMode(kPatXor);
+		_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 		switch (_mazePlayerDirection-1) {
 		case 0:
 			mazeAddWallLeft();
@@ -499,7 +499,7 @@ void FoolGame::mazePrintMessage() {
 	}
 	fillRect(0x136, 0, SCREEN_HEIGHT, SCREEN_WIDTH, var_i16_1ac4);
 	if (!var_str_1ce2.empty()) { // was: str(OFF(7))
-		_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
+		_zbasic->text(kFontFool, 0xc, 0, Graphics::MacToolbox::kSrcBic);
 		int16 width = _toolbox->StringWidth(var_str_1ce2);
 		fillRect(0x13b, 0xf1 - (width / 2), 0x14f, 0x10f + (width / 2), 2);
 		drawTextCenter(var_str_1ce2.decode(Common::kMacRoman), 0x149);
@@ -578,9 +578,9 @@ void FoolGame::mazeDrawLetter() {
 		var_i16_1dea = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 2, 2));
 		var_i16_106e = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 4, 2));
 		if (var_i16_1dea == var_i16_1574) {
-			var_src_1dee = kSrcOr;
+			var_src_1dee = Graphics::MacToolbox::kSrcOr;
 		} else {
-			var_src_1dee = kSrcBic;
+			var_src_1dee = Graphics::MacToolbox::kSrcBic;
 		}
 		// 136:11ce
 		arr_i16_4338[var_i16_1dea] = var_i16_106e;
@@ -594,10 +594,10 @@ void FoolGame::mazeDrawLetter() {
 		var_i16_106e = arr_i16_4338[var_i16_1dea];
 		arr_i16_4338[var_i16_1dea] = 0;
 		if (var_i16_1dea == var_i16_1574) {
-			var_src_1dee = kSrcBic;
+			var_src_1dee = Graphics::MacToolbox::kSrcBic;
 		} else {
 			// 136:126a
-			var_src_1dee = kSrcOr;
+			var_src_1dee = Graphics::MacToolbox::kSrcOr;
 		}
 	}
 	// 136:1270
@@ -605,10 +605,10 @@ void FoolGame::mazeDrawLetter() {
 		var_i16_1dea = var_i16_1574;
 		var_i16_106e = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 2, 2));
 		if (var_i16_1dea == var_i16_1574) {
-			var_src_1dee = kSrcOr;
+			var_src_1dee = Graphics::MacToolbox::kSrcOr;
 		} else {
 			// 136:12cc
-			var_src_1dee = kSrcBic;
+			var_src_1dee = Graphics::MacToolbox::kSrcBic;
 		}
 		// 136:12d2
 		arr_i16_4338[var_i16_1dea] = var_i16_106e;
@@ -826,7 +826,7 @@ void FoolGame::sub_136_19d2() {
 	warning(__func__);
 	// 136:19d2
 	_toolbox->PenNormal();
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	_toolbox->PenSize(6, 6);
 	var_i16_1de4 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 1, 2));
 	var_i16_1de4 = var_i16_1de4 * 2 - 1;
@@ -920,7 +920,7 @@ void FoolGame::mazeThornsGetScroll() {
 	mazeLoadTone(7);
 	_toolbox->PenNormal();
 	_toolbox->PenSize(4, 4);
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	// 136:1eb0
 	if (var_i16_1e00 == 1) {
 		arr_i16_4758[0] = 0x14;
@@ -1430,7 +1430,7 @@ void FoolGame::mazeLoadState() {
 	var_i16_1de4 = _zbasic->decodeInt(_zbasic->midStr(_activePuzzleBuffer, var_i16_1f0a, 2));
 	var_i16_1f0a += 2;
 	if (var_i16_1de4 > 0) {
-		_zbasic->text(kFontPuzzle, 0xc, 0, kSrcBic);
+		_zbasic->text(kFontPuzzle, 0xc, 0, Graphics::MacToolbox::kSrcBic);
 		for (int16 i = 1; i <= var_i16_1de4; i++) {
 			var_i16_1dea = _zbasic->decodeInt(_zbasic->midStr(_activePuzzleBuffer, var_i16_1f0a, 2));
 			var_i16_1f0a += 2;
@@ -1540,7 +1540,7 @@ void FoolGame::sub_136_3a70() {
 		// 136:3b0e
 		for (int16 j = 0; j <= 1; j++) {
 			if (j == 1) {
-				_toolbox->PenMode(kNotPatOr);
+				_toolbox->PenMode(Graphics::MacToolbox::kNotPatOr);
 				_toolbox->PenPat(_patterns[1]);
 			}
 			// 136:3b32

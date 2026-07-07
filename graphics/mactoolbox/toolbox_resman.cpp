@@ -22,21 +22,21 @@
 #include "common/memstream.h"
 #include "common/system.h"
 
-#include "fool/fool.h"
-#include "fool/toolbox.h"
+#include "graphics/mactoolbox/toolbox.h"
 
-namespace Fool {
+namespace Graphics {
+namespace MacToolbox {
 
 void Toolbox::_injectFOND(int16 resID, const byte *data, const size_t size, const Common::String &name) {
 	if (_resMap.contains(resID)) {
 		Common::MemoryReadStream stream(data, size);
-		g_engine->_wm._fontMan->loadMacFont(_resMap[resID].get(), name, &stream);
+		_wm->_fontMan->loadMacFont(_resMap[resID].get(), name, &stream);
 	}
 }
 
 void Toolbox::_loadFonts(int16 resID) {
 	if (_resMap.contains(resID)) {
-		g_engine->_wm._fontMan->loadFonts(_resMap[resID].get());
+		_wm->_fontMan->loadFonts(_resMap[resID].get());
 	}
 }
 
@@ -206,4 +206,5 @@ void Toolbox::UseResFile(int16 refNum) {
 }
 
 
-} // End of namespace Fool
+} // End of namespace MacToolbox
+} // End of namespace Graphics

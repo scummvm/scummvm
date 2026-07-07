@@ -19,9 +19,9 @@
  *
  */
 
-#include "fool/fool.h"
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -45,7 +45,7 @@ void FoolGame::shipsRun() {
 	var_i16_d08 = _zbasic->rndInt(5) + 5;
 	var_i16_d0a = _zbasic->rndInt(5) - 0xa;
 	for (int16 i = 0; i <= 5; i++) {
-		_zbasic->put(arr_rect_1910c.left, arr_rect_1910c.top, arr_bmp_bbbc, kSrcCopy);
+		_zbasic->put(arr_rect_1910c.left, arr_rect_1910c.top, arr_bmp_bbbc, Graphics::MacToolbox::kSrcCopy);
 		_toolbox->OffsetRect(arr_rect_1910c, var_i16_d08, var_i16_d0a);
 		sub_128_5a6c();
 	}
@@ -76,7 +76,7 @@ void FoolGame::shipsRun() {
 	if (_activePuzzleSolved) {
 		waitForMouseUp();
 		playTone(0x14, 0x64, 0);
-		_zbasic->put(arr_rect_1910c.left, arr_rect_1910c.top, arr_bmp_bbbc, kSrcCopy);
+		_zbasic->put(arr_rect_1910c.left, arr_rect_1910c.top, arr_bmp_bbbc, Graphics::MacToolbox::kSrcCopy);
 		_event.where.x += 5;
 		_event.where.y -= 5;
 		if (_activePuzzleStatus < 0x64) {
@@ -119,7 +119,7 @@ void FoolGame::shipsRun() {
 				SCREEN_HEIGHT,
 				SCREEN_WIDTH,
 				2,
-				kPatCopy,
+				Graphics::MacToolbox::kPatCopy,
 				0x42
 			);
 			// behold the 1st key of thoth
@@ -161,7 +161,7 @@ void FoolGame::sub_128_55ac() {
 	}
 	// 128:56a0
 	for (var_i16_68a = 0; var_i16_68a <= 0x5; var_i16_68a++) {
-		_zbasic->put(arr_rect_1910c.left, arr_rect_1910c.top, arr_bmp_bbbc, kSrcCopy);
+		_zbasic->put(arr_rect_1910c.left, arr_rect_1910c.top, arr_bmp_bbbc, Graphics::MacToolbox::kSrcCopy);
 		_toolbox->OffsetRect(arr_rect_1910c, var_i16_d08, var_i16_d0a);
 		sub_128_5a6c();
 	}
@@ -178,7 +178,7 @@ void FoolGame::sub_128_57a2() {
 	var_str_d12 = _zbasic->ucase(_zbasic->chr(_keyLastPressed));
 	if (_zbasic->instr(1, _zbasic->str(OFF(2)), var_str_d12) > 0) { // NESW
 		// 128:57e0
-		_zbasic->put(arr_rect_1910c.left, arr_rect_1910c.top, arr_bmp_bbbc, kSrcCopy);
+		_zbasic->put(arr_rect_1910c.left, arr_rect_1910c.top, arr_bmp_bbbc, Graphics::MacToolbox::kSrcCopy);
 		var_i16_d08 = 0;
 		var_i16_d0a = 0;
 		if (var_str_d12 == _zbasic->str(OFF(3))) { // N
@@ -238,7 +238,7 @@ void FoolGame::sub_128_5a6c() {
 	//Common::fill(fakePal+3, fakePal+768, 0x00);
 	//arr_bmp_bbbc->rawSurface().debugPrint(5, 0, 0,0, 0, -1, 160, fakePal);
 	_toolbox->EraseRoundRect(arr_rect_1910c, 8, 7);
-	_zbasic->put(arr_rect_1910c.left, arr_rect_1910c.top, arr_bmp_b3ec, kSrcXor);
+	_zbasic->put(arr_rect_1910c.left, arr_rect_1910c.top, arr_bmp_b3ec, Graphics::MacToolbox::kSrcXor);
 	delayFromMarker(0);
 }
 

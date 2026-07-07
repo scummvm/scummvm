@@ -19,10 +19,9 @@
  *
  */
 
-#include "fool/detection.h"
-#include "fool/fool.h"
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -142,9 +141,9 @@ void FoolGame::wordSearchRun() {
 	_toolbox->PenNormal();
 	var_str_384 = var_str_188e;
 	wordSearchDrawFooter();
-	_zbasic->text(kFontPuzzle, arr_i16_1eb8[0xe], Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(kFontPuzzle, arr_i16_1eb8[0xe], Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 	_toolbox->PenPat(_patterns[1]);
-	_toolbox->PenMode(kPatBic);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatBic);
 	_zbasic->unk_20();
 	// 131:04e0
 	for (int j = 1; j <= arr_i16_1eb8[1]; j++) {
@@ -281,7 +280,7 @@ void FoolGame::wordSearchOnClick() {
 	// found a word, update the screen
 	_toolbox->PenNormal();
 	_toolbox->PenPat(_patterns[1]);
-	_toolbox->PenMode(kPatBic);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatBic);
 	// for every letter in the word
 	for (int i = 1; i <= var_i16_1a94; i++) {
 		// play a tone
@@ -329,7 +328,7 @@ void FoolGame::wordSearchBadSelect() {
 void FoolGame::wordSearchDrawFooter() {
 	// 131:0d22
 	fillRect(0x13b, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
-	_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
+	_zbasic->text(kFontFool, 0xc, 0, Graphics::MacToolbox::kSrcBic);
 	drawTextCenter(var_str_384, 0x152);
 }
 
@@ -375,8 +374,8 @@ void FoolGame::wordSearchSuccess() {
 		_activePuzzleStatus = 0x64;
 	}
 	// 131:0f52
-	fillRect(1, kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
-	_zbasic->text(kFontPuzzle, arr_i16_1eb8[0xe], 0, kSrcOr);
+	fillRect(1, Graphics::MacToolbox::kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
+	_zbasic->text(kFontPuzzle, arr_i16_1eb8[0xe], 0, Graphics::MacToolbox::kSrcOr);
 	for (int j = 1; j <= arr_i16_1eb8[1]; j++) {
 		for (int i = 1; i <= arr_i16_1eb8[0]; i++) {
 			if (arr_i16_2f38[i*32 + j] != 0) {

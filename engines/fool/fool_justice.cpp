@@ -19,9 +19,9 @@
  *
  */
 
-#include "fool/fool.h"
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -46,7 +46,7 @@ void FoolGame::justiceRun() {
 			return;
 		} else {
 			// 142:08a2
-			zoomRect(0xec, 0x154, 0x11e, 0x186, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x1a);
+			zoomRect(0xec, 0x154, 0x11e, 0x186, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, Graphics::MacToolbox::kPatCopy, 0x1a);
 			_activePuzzleStatus = 0x63;
 			// behold the 3rd key of thoth
 			showBehold(0x3f, 1, _zbasic->str(OFF(0)));
@@ -58,7 +58,7 @@ void FoolGame::justiceRun() {
 		_zbasic->menu(8, 1, 1, _zbasic->str(OFF(2))); // return to scroll
 		thothKey3rd();
 		if (_activePuzzleSolved) {
-			zoomRect(0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0xa2, 0xff, 0xac, 0x10e, 2, kPatXor, 0x19);
+			zoomRect(0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0xa2, 0xff, 0xac, 0x10e, 2, Graphics::MacToolbox::kPatXor, 0x19);
 		}
 	}
 	// 142:098a
@@ -218,7 +218,7 @@ void FoolGame::justiceOnClick() {
 
 void FoolGame::justiceZoom() {
 	// 142:0f58
-	zoomRect(0x130, 0x76, 0x130, 0x76, 0x1a, 0x82, 0x128, 0x190, 1, kPatXor, 0x19);
+	zoomRect(0x130, 0x76, 0x130, 0x76, 0x1a, 0x82, 0x128, 0x190, 1, Graphics::MacToolbox::kPatXor, 0x19);
 }
 
 void FoolGame::justiceDrawBlock(int16 gridIndex) {
@@ -228,7 +228,7 @@ void FoolGame::justiceDrawBlock(int16 gridIndex) {
 	_toolbox->PenNormal();
 	_toolbox->FillRoundRect(_screenGrid[gridIndex], 0x1e, 0x1e, _patterns[0]);
 	_toolbox->FrameRoundRect(_screenGrid[gridIndex], 0x1e, 0x1e);
-	_zbasic->text(kFontChicago, 0xc, 0, kSrcOr);
+	_zbasic->text(kFontChicago, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 	Common::U32String label = _zbasic->index(1, gridIndex + 0x19);
 	int16 width = _toolbox->StringWidth(label);
 	// 142:1056
@@ -268,7 +268,7 @@ void FoolGame::justiceResetGrid() {
 		_toolbox->FillRect(_screenGrid[i], _patterns[2]);
 	}
 	// 142:126e
-	zoomRect(0xec, 0x154, 0x11e, 0x186, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x1a);
+	zoomRect(0xec, 0x154, 0x11e, 0x186, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, Graphics::MacToolbox::kNotPatXor, 0x1a);
 }
 
 } // End of namespace Fool

@@ -19,9 +19,10 @@
  *
  */
 
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool.h"
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -45,7 +46,7 @@ void FoolGame::humbugRun() {
 		}
 		// 142:004e
 		_activePuzzleStatus = 0x63;
-		zoomRect(0x137, 0xc6, 0x147, 0xdd, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x19);
+		zoomRect(0x137, 0xc6, 0x147, 0xdd, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, Graphics::MacToolbox::kPatCopy, 0x19);
 		// behold the 2nd key of thoth
 		showBehold(0x17, 0, _zbasic->str(OFF(0)));
 	}
@@ -76,7 +77,7 @@ void FoolGame::humbugPlayTrail() {
 	// 142:0166
 	fetchPuzzleData();
 	toggleMouseCursor(false);
-	_zbasic->text(kFontChicago, 0xc, 0, kSrcOr);
+	_zbasic->text(kFontChicago, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 	drawPuzzleButton(_zbasic->str(OFF(5))); // ~
 	// eye button
 	_zbasic->get(0x6c, 0x127, 0x84, 0x137, arr_bmp_b3ec);
@@ -87,7 +88,7 @@ void FoolGame::humbugPlayTrail() {
 			_humbugTrail[i].x,
 			_humbugTrail[i].y,
 			arr_bmp_b3ec,
-			kSrcCopy
+			Graphics::MacToolbox::kSrcCopy
 		);
 		// Simulate slow draw speed
 		if ((i % 42) == 0)
@@ -99,7 +100,7 @@ void FoolGame::humbugPlayTrail() {
 		_humbugTrail[_humbugTrailIndex].x,
 		_humbugTrail[_humbugTrailIndex].y,
 		arr_bmp_b3ec,
-		kSrcCopy
+		Graphics::MacToolbox::kSrcCopy
 	);
 	_humbugTrailIndex = 1;
 	_stateFlags = kStateNull;
@@ -154,7 +155,7 @@ void FoolGame::humbugMoveMouse() {
 				_humbugTrail[index].x,
 				_humbugTrail[index].y,
 				arr_bmp_b3ec,
-				kSrcCopy
+				Graphics::MacToolbox::kSrcCopy
 			);
 			// 142:051c
 		} while (_zbasic->incrAndCheck(index, var_i16_1a9c, incr));
@@ -172,7 +173,7 @@ void FoolGame::humbugMoveMouse() {
 				_humbugTrail[i].x,
 				_humbugTrail[i].y,
 				arr_bmp_b3ec,
-				kSrcCopy
+				Graphics::MacToolbox::kSrcCopy
 			);
 			// 142:05c8
 		}
@@ -186,7 +187,7 @@ void FoolGame::humbugMoveMouse() {
 
 void FoolGame::humbugSuccess() {
 	// 142:05f2
-	zoomRect(0x137, 0xc6, 0x147, 0xdd, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x19);
+	zoomRect(0x137, 0xc6, 0x147, 0xdd, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, Graphics::MacToolbox::kNotPatXor, 0x19);
 }
 
 void FoolGame::humbugShowThoth() {
@@ -197,7 +198,7 @@ void FoolGame::humbugShowThoth() {
 	if (_activePuzzleSolved) {
 		// 142:066e
 		_toolbox->PenNormal();
-		_zbasic->text(kFontLarge, 0x18, 0x19, kSrcBic);
+		_zbasic->text(kFontLarge, 0x18, 0x19, Graphics::MacToolbox::kSrcBic);
 		for (int16 i = 1; i <= 4; i++) {
 			Common::Rect temp;
 			temp.top = arr_i16_2f38[i*32];
@@ -217,13 +218,13 @@ void FoolGame::humbugShowThoth() {
 			_toolbox->DrawString(idStr);
 		}
 		// 142:07ca
-		_zbasic->text(kFontChicago, 0xc, 0, kSrcOr);
+		_zbasic->text(kFontChicago, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 		waitForMouseUp();
 		menuClickMessage();
 
 		int16 tickCounter = 0;
 		int16 idCounter = 0;
-		while (_event.modifiers & kModMouseButtonUp) {
+		while (_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) {
 			// 142:07f8
 			getNextEvent(-1); // was: 0
 			tickCounter++;

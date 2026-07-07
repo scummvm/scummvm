@@ -22,12 +22,12 @@
 
 #include "common/str.h"
 #include "common/str-enc.h"
-
 #include "common/ustr.h"
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool.h"
 #include "fool/fool_game.h"
 #include "fool/fool_prologue.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 #define OFF(x) (_zstrOffset[kOffsetFinale] + (x))
@@ -135,7 +135,7 @@ void FoolPrologue::finaleRun() {
 		}
 
 		// 131:0380
-		_toolbox->PenMode(kPatXor);
+		_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 		drawTreasurePhaseIn(0x14, count);
 		drawTreasurePhaseIn(0xa, count);
 		drawTreasurePhaseIn(0x14, count);
@@ -148,7 +148,7 @@ void FoolPrologue::finaleRun() {
 
 	// 131:03c0
 	delay(0x1e);
-	_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 
 	// 131:0400
 	// well, that's that!
@@ -177,13 +177,13 @@ void FoolPrologue::finaleRun() {
 	_tickMarker = _toolbox->TickCount();
 
 	_srcPage = _screenPages[5];
-	_toolbox->CopyBits(_dstPage, _srcPage, _pageRect, _pageRect, kSrcCopy, nullptr);
+	_toolbox->CopyBits(_dstPage, _srcPage, _pageRect, _pageRect, Graphics::MacToolbox::kSrcCopy, nullptr);
 	setPortBitsToPage(5);
 	fillRect(0xaa, 0x177, 0xb9, 0x200, 0);
 	finaleDrawFoolUhOh();
 
 	// 131:0538
-	_toolbox->CopyBits(_dstPage, _bgPage, _pageRect, _pageRect, kSrcCopy, nullptr);
+	_toolbox->CopyBits(_dstPage, _bgPage, _pageRect, _pageRect, Graphics::MacToolbox::kSrcCopy, nullptr);
 	_toolbox->SetPortBits(_bgPage);
 
 	// 131:0554
@@ -193,13 +193,13 @@ void FoolPrologue::finaleRun() {
 
 	// 131:05b0
 	setPortBitsToPage(6);
-	_toolbox->CopyBits(_bgPage, _srcPage, _pageRect, _pageRect, kSrcOr, nullptr);
+	_toolbox->CopyBits(_bgPage, _srcPage, _pageRect, _pageRect, Graphics::MacToolbox::kSrcOr, nullptr);
 	setPortBitsToPage(7);
-	_toolbox->CopyBits(_bgPage, _srcPage, _pageRect, _pageRect, kSrcOr, nullptr);
+	_toolbox->CopyBits(_bgPage, _srcPage, _pageRect, _pageRect, Graphics::MacToolbox::kSrcOr, nullptr);
 	setPortBitsToPage(8);
-	_toolbox->CopyBits(_bgPage, _srcPage, _pageRect, _pageRect, kSrcOr, nullptr);
+	_toolbox->CopyBits(_bgPage, _srcPage, _pageRect, _pageRect, Graphics::MacToolbox::kSrcOr, nullptr);
 	setPortBitsToPage(9);
-	_toolbox->CopyBits(_bgPage, _srcPage, _pageRect, _pageRect, kSrcOr, nullptr);
+	_toolbox->CopyBits(_bgPage, _srcPage, _pageRect, _pageRect, Graphics::MacToolbox::kSrcOr, nullptr);
 
 	// 131:0630
 	// tree morphing into priestess
@@ -219,7 +219,7 @@ void FoolPrologue::finaleRun() {
 
 	// the wind picks up
 	_toolbox->PenNormal();
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	_zbasic->unk_20();
 
 	// 131:0730
@@ -290,7 +290,7 @@ void FoolPrologue::finaleRun() {
 	// horrible flashing fool duplication spree
 	for (int i = 1; i <= 0x63; i++) {
 		_tickMarker = _toolbox->TickCount();
-		_zbasic->put(_zbasic->rndInt(0x1ca), _zbasic->rndInt(0xfc), _foolSlice, (i % 2) ? kSrcCopy : kNotSrcCopy);
+		_zbasic->put(_zbasic->rndInt(0x1ca), _zbasic->rndInt(0xfc), _foolSlice, (i % 2) ? Graphics::MacToolbox::kSrcCopy : Graphics::MacToolbox::kNotSrcCopy);
 		// limit flashing to WCAG recommendation
 		if ((i % 10) == 0) {
 			_toolbox->InvertRect(temp);
@@ -311,7 +311,7 @@ void FoolPrologue::finaleRun() {
 		// 131:0b54
 		xPos = _zbasic->rndInt(0x1ca);
 		yPos = _zbasic->rndInt(0xfc);
-		_zbasic->put(xPos, yPos, _foolSlice, kSrcCopy);
+		_zbasic->put(xPos, yPos, _foolSlice, Graphics::MacToolbox::kSrcCopy);
 		_toolbox->Delay(0);
 	}
 
@@ -367,7 +367,7 @@ void FoolPrologue::finaleRun() {
 	delay(0x3c);
 
 	// 131:0e08
-	_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
+	_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
 	// Are you still angry with me?
 	Common::U32String dialog = Common::U32String::format("\"%s\"", _zbasic->str(OFF(1)).encode().c_str());
 	drawText(
@@ -425,11 +425,11 @@ void FoolPrologue::finaleRun() {
 		srcRect.bottom = 0x19 + (0xdf - i);
 		// 131:1124
 		_srcPage = _screenPages[6];
-		_toolbox->CopyBits(_srcPage, _bgPage, srcRect, dstRect, kSrcBic, nullptr);
+		_toolbox->CopyBits(_srcPage, _bgPage, srcRect, dstRect, Graphics::MacToolbox::kSrcBic, nullptr);
 		_srcPage = _screenPages[7];
-		_toolbox->CopyBits(_srcPage, _bgPage, srcRect, dstRect, kSrcOr, nullptr);
+		_toolbox->CopyBits(_srcPage, _bgPage, srcRect, dstRect, Graphics::MacToolbox::kSrcOr, nullptr);
 		delayFromMarker(0x2);
-		_toolbox->CopyBits(_bgPage, _dstPage, dstRect, dstRect, kSrcCopy, nullptr);
+		_toolbox->CopyBits(_bgPage, _dstPage, dstRect, dstRect, Graphics::MacToolbox::kSrcCopy, nullptr);
 	}
 	_toolbox->Delay(0);
 
@@ -440,7 +440,7 @@ void FoolPrologue::finaleRun() {
 	_zbasic->picture(0x18f, 0xc0, _pics[0x2b]); // fool card
 	_toolbox->SetPortBits(_dstPage);
 	_toolbox->PenNormal();
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	_toolbox->PenSize(0x5, 0x5);
 
 	// 131:1208
@@ -449,7 +449,7 @@ void FoolPrologue::finaleRun() {
 		_toolbox->MoveTo(0x172, 0x33);
 		_toolbox->LineTo(i, 0x14a);
 		if (i == 0x4e) {
-			_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
+			_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
 			// yes, apparently so
 			drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(OFF(2)).encode().c_str()), 0x1f4, 0xd2);
 			_zbasic->picture(0x198, 0x102, _pics[0x25]);
@@ -490,7 +490,7 @@ void FoolPrologue::finaleRun() {
 		srcRect.bottom = srcRect.top + 0x96;
 		dstRect.top = i - 1;
 		dstRect.bottom = dstRect.top + 0x96;
-		_toolbox->CopyBits(_dstPage, _dstPage, srcRect, dstRect, kSrcCopy, nullptr);
+		_toolbox->CopyBits(_dstPage, _dstPage, srcRect, dstRect, Graphics::MacToolbox::kSrcCopy, nullptr);
 		delayFromMarker(0);
 	}
 
@@ -503,7 +503,7 @@ void FoolPrologue::finaleRun() {
 	_zbasic->picture(0x193, 0x2d, _pics[0x2e]);
 	copyScreenToPage(0x6);
 	_toolbox->PenNormal();
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	_toolbox->PenSize(0x3, 0x3);
 
 	Common::Rect bindleRect; // var_i16_6c
@@ -529,17 +529,17 @@ void FoolPrologue::finaleRun() {
 		dstRect.right = dstRect.left + 0x32;
 		dstRect.top = bindleHeight;
 		dstRect.bottom = dstRect.top + 0x32;
-		_toolbox->CopyBits(_srcPage, _bgPage, srcRect, dstRect, kSrcXor, nullptr);
+		_toolbox->CopyBits(_srcPage, _bgPage, srcRect, dstRect, Graphics::MacToolbox::kSrcXor, nullptr);
 		// 131:1582
 		_toolbox->MoveTo(0x190 - i, bindleHeight - 0x1e + i*3);
 		_toolbox->LineTo(0x1f4, bindleHeight + 0xa - i);
-		_toolbox->CopyBits(_bgPage, _dstPage, bindleRect, bindleRect, kSrcCopy, nullptr);
+		_toolbox->CopyBits(_bgPage, _dstPage, bindleRect, bindleRect, Graphics::MacToolbox::kSrcCopy, nullptr);
 		delayFromMarker(0x1);
 	}
 
 	_toolbox->SetPortBits(_dstPage);
 	_toolbox->PenNormal();
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	// 131:1606
 	Particle splash[251];
 	for (int j = 0; j <= 1; j++) {
@@ -566,7 +566,7 @@ void FoolPrologue::finaleRun() {
 	}
 
 	delayFromMarker(0x3c);
-	_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
+	_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
 	// well, this won't do
 	drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(OFF(3)).encode().c_str()), 0x181, 0x3c);
 
@@ -583,7 +583,7 @@ void FoolPrologue::finaleRun() {
 	_zbasic->picture(0x193, 0x2d, _pics[0x30]);
 	delay(1);
 	_zbasic->picture(0x193, 0x2d, _pics[0x31]);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcBic);
 	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(OFF(4)).encode().c_str()), 0x181, 0x3c);
 	// am I to suffer this fate merely for uncovering
 	drawTextRight(_zbasic->str(OFF(5)), 0x181, 0x4d);
@@ -609,7 +609,7 @@ void FoolPrologue::finaleRun() {
 	drawClickMessageRightAlign();
 	fillRect(0, 0, 0x96, 0x18b, 2);
 	_zbasic->picture(0x193, 0x2d, _pics[0x32]);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcBic);
 	// for if that be true
 	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(OFF(7)).encode().c_str()), 0x181, 0x3c);
 	// I wish you had made the challenge more difficult
@@ -643,7 +643,7 @@ void FoolPrologue::finaleRun() {
 	circleMid[3+4] = (float)(circleEnd.right - circleStart.right) / steps;
 	// 131:1c24
 	_toolbox->PenPat(_patterns[1]);
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	// pre-draw the puzzle circles coming off the high priestess' head
 	for (int16 j = 6; j <= 9; j++) {
 		_screenPages[j]->copyFrom(*_screenPages[j - 1]);
@@ -711,9 +711,9 @@ void FoolPrologue::finaleRun() {
 		_tickMarker = _toolbox->TickCount();
 		for (int16 i = 0xa; i <= 0x96; i += 0xa) {
 			int16 index = i / 0xa;
-			_zbasic->put(cardSliceShift[index].xPos, i + 0xa, _cardSlices[index], kNotSrcXor);
+			_zbasic->put(cardSliceShift[index].xPos, i + 0xa, _cardSlices[index], Graphics::MacToolbox::kNotSrcXor);
 			cardSliceShift[index].xPos -= cardSliceShift[index].veloc*j;
-			_zbasic->put(cardSliceShift[index].xPos, i + 0xa, _cardSlices[index], kSrcCopy);
+			_zbasic->put(cardSliceShift[index].xPos, i + 0xa, _cardSlices[index], Graphics::MacToolbox::kSrcCopy);
 			// 131:2062
 		}
 		// 131:2072
@@ -723,9 +723,9 @@ void FoolPrologue::finaleRun() {
 		_tickMarker = _toolbox->TickCount();
 		for (int16 i = 0xa; i <= 0x96; i += 0xa) {
 			int16 index = i / 0xa;
-			_zbasic->put(cardSliceShift[index].xPos, i + 0xa, _cardSlices[index], kNotSrcXor);
+			_zbasic->put(cardSliceShift[index].xPos, i + 0xa, _cardSlices[index], Graphics::MacToolbox::kNotSrcXor);
 			cardSliceShift[index].xPos += cardSliceShift[index].veloc*j;
-			_zbasic->put(cardSliceShift[index].xPos, i + 0xa, _cardSlices[index], kSrcCopy);
+			_zbasic->put(cardSliceShift[index].xPos, i + 0xa, _cardSlices[index], Graphics::MacToolbox::kSrcCopy);
 		}
 		delayFromMarker(2);
 	}
@@ -736,7 +736,7 @@ void FoolPrologue::finaleRun() {
 	dialog = _zbasic->str(OFF(11)); // be content that you still live
 	for (int16 i = 1; i <= 0x18; i++) {
 		_tickMarker = _toolbox->TickCount();
-		_zbasic->text(kPrologueFontFool, i, 0, kSrcXor);
+		_zbasic->text(kPrologueFontFool, i, 0, Graphics::MacToolbox::kSrcXor);
 		yPos += i;
 		drawText(dialog, 5 + i*2, yPos);
 		delayFromMarker(3);
@@ -748,7 +748,7 @@ void FoolPrologue::finaleRun() {
 	_toolbox->SetRect(temp, 0, 0, SCREEN_WIDTH, 0xdf);
 	_toolbox->InvertRect(temp);
 	_toolbox->SetRect(temp, 0, 0xdf, SCREEN_WIDTH, SCREEN_HEIGHT);
-	_toolbox->PenMode(kPatOr);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatOr);
 	_toolbox->PenPat(_patterns[1]);
 	_toolbox->PaintRect(temp);
 	// 131:2316
@@ -781,7 +781,7 @@ void FoolPrologue::finaleRun() {
 	// 131:2422
 	_zbasic->picture(0x193, 0x2d, _pics[0x35]);
 	delay(0x1e);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcBic);
 	// well I for one am not content
 	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(OFF(12)).encode().c_str()), 0x181, 0x3c);
 	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(OFF(13)).encode().c_str()), 0x181, 0x4d);
@@ -794,7 +794,7 @@ void FoolPrologue::finaleRun() {
 
 	// 131:24da
 	fillRect(0, 0, 0x96, 0x18b, 2);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcBic);
 	// show me one last puzzle if you dare
 	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(OFF(14)).encode().c_str()), 0x181, 0x3c);
 	drawTextRight(_zbasic->str(OFF(15)), 0x181, 0x4d);
@@ -811,11 +811,11 @@ void FoolPrologue::finaleRun() {
 		srcRect.left = 0x100 - i*0xa;
 		srcRect.bottom = 0xab + (int16)(i*6.66f);
 		srcRect.right = 0x100 + i*0xa;
-		_toolbox->CopyBits(_srcPage, _dstPage, srcRect, srcRect, kSrcCopy, nullptr);
+		_toolbox->CopyBits(_srcPage, _dstPage, srcRect, srcRect, Graphics::MacToolbox::kSrcCopy, nullptr);
 		_toolbox->Delay(0);
 	}
 	// 131:266e
-	_toolbox->CopyBits(_srcPage, _dstPage, _pageRect, _pageRect, kSrcCopy, nullptr);
+	_toolbox->CopyBits(_srcPage, _dstPage, _pageRect, _pageRect, Graphics::MacToolbox::kSrcCopy, nullptr);
 	Common::Rect eye1, eye2;
 	_toolbox->SetRect(eye1, 0xae, 0x8c, 0xb6, 0x94);
 	_toolbox->SetRect(eye2, 0x151, 0x86, 0x159, 0x8e);
@@ -836,7 +836,7 @@ void FoolPrologue::finaleRun() {
 	// 131:27a2
 	copyScreenToPage(5);
 	_toolbox->SetRect(temp, 0xd0, 6, 0x133, 0x6c);
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	_toolbox->PenSize(3, 3);
 	int16 endAngle = 10;
 	for (int16 i = 355; i >= 180; i -= 5) {
@@ -889,7 +889,7 @@ void FoolPrologue::finaleRun() {
 	delay(0x48);
 	blitPageToScreen(6);
 	delay(0x1e);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 	// 131:2a22
 	// now what have I gotten myself into?
 	drawText(Common::U32String::format("\"%s", _zbasic->str(OFF(17)).encode().c_str()), 0x3c, 0x2d);
@@ -917,12 +917,12 @@ void FoolPrologue::finaleRun() {
 		smears[i].yEnd = _zbasic->readDataInt();
 	}
 	// 131:2c02
-	_zbasic->text(kPrologueFontSmall, 0x9, 0, kSrcOr);
+	_zbasic->text(kPrologueFontSmall, 0x9, 0, Graphics::MacToolbox::kSrcOr);
 	for (int16 i = 1; i <= 0xe; i++) {
 		// THEBOOKOFTHOTH
 		drawText(_zbasic->midStr(_zbasic->str(OFF(19)), i, 1), smears[i].xStart, smears[i].yStart);
 	}
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 	// that's it! the answer is the book of thoth
 	drawText(Common::U32String::format("\"%s", _zbasic->str(OFF(20)).encode().c_str()), 0x32, 0x2d);
 	drawText(Common::U32String::format("%s\"", _zbasic->str(OFF(21)).encode().c_str()), 0x3c, 0x3e);
@@ -956,7 +956,7 @@ void FoolPrologue::finaleRun() {
 		_pics[i] = _toolbox->GetPicture(i);
 	}
 	delayFromMarker(0x96);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 	// 131:2e1a
 	_toolbox->MoveTo(0x46, 0x3e);
 	// wait, what's this?
@@ -976,11 +976,11 @@ void FoolPrologue::finaleRun() {
 			smearMid[3] = (float)(smears[i].yEnd - smears[i].yStart) / steps;
 			// 131:2f66
 			if (l == 0) {
-				_zbasic->text(kPrologueFontSmall, 9, 0, kSrcOr);
+				_zbasic->text(kPrologueFontSmall, 9, 0, Graphics::MacToolbox::kSrcOr);
 				drawText(dialog, smears[i].xStart, smears[i].yStart);
 			}
 			// 131:2fc4
-			_zbasic->text(kPrologueFontSmall, 0x9, 0, kSrcXor);
+			_zbasic->text(kPrologueFontSmall, 0x9, 0, Graphics::MacToolbox::kSrcXor);
 			for (int16 k = 1; k <= steps-1; k++) {
 				smearMid[0] += smearMid[0 + 2];
 				int16 x = (int16)smearMid[0];
@@ -989,7 +989,7 @@ void FoolPrologue::finaleRun() {
 				// 131:3078
 				drawText(dialog, x, y);
 			}
-			_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+			_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 			drawText(dialog, smears[i].xEnd, smears[i].yEnd);
 			delay(1);
 		}
@@ -1000,7 +1000,7 @@ void FoolPrologue::finaleRun() {
 	_tickMarker = _toolbox->TickCount();
 	copyScreenToPage(0xa);
 	setPortBitsToPage(0xa);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcBic);
 	// that's it! the answer is the book of thoth
 	drawText(Common::U32String::format("\"%s", _zbasic->str(OFF(24)).encode().c_str()), 0x32, 0x2d);
 	drawText(Common::U32String::format("%s\"", _zbasic->str(OFF(25)).encode().c_str()), 0x3c, 0x3e);
@@ -1033,7 +1033,7 @@ void FoolPrologue::finaleRun() {
 	// 131:339c
 	_toolbox->SetPortBits(_dstPage);
 	delayFromMarker(0x96);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcBic);
 	// that's it! the answer is the book of thoth
 	drawText(Common::U32String::format("\"%s", _zbasic->str(OFF(26)).encode().c_str()), 0x32, 0x2d);
 	drawText(Common::U32String::format("%s\"", _zbasic->str(OFF(27)).encode().c_str()), 0x3c, 0x3e);
@@ -1066,14 +1066,14 @@ void FoolPrologue::finaleRun() {
 	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0);
 	_zbasic->picture(wadjetX, wadjetY, _pics[0x2a]); // wadjet eye
 	_toolbox->SetPortBits(_dstPage);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcXor);
 	// the book of thoth?
 	drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(OFF(28)).encode().c_str()), 0x1a4, 0x2d);
 	_tickMarker = _toolbox->TickCount();
 	_screenPages[5]->copyFrom(*_screenPages[4]);
 	setPortBitsToPage(5);
 	_zbasic->picture(0x171, 0xb, _pics[0x5b]);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcXor);
 	// here is the book of thoth
 	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(OFF(29)).encode().c_str()), 0x1a4, 0x2d);
 	srcRect.top = wadjetY;
@@ -1084,32 +1084,32 @@ void FoolPrologue::finaleRun() {
 	srcRect.right = wadjetX + 200;
 	_bgPage->copyFrom(*_screenPages[4]);
 	_srcPage = _screenPages[9];
-	_toolbox->CopyBits(_srcPage, _bgPage, srcRect, srcRect, kSrcBic, 0);
+	_toolbox->CopyBits(_srcPage, _bgPage, srcRect, srcRect, Graphics::MacToolbox::kSrcBic, 0);
 	_srcPage = _screenPages[0xa];
-	_toolbox->CopyBits(_srcPage, _bgPage, srcRect, srcRect, kSrcOr, 0);
+	_toolbox->CopyBits(_srcPage, _bgPage, srcRect, srcRect, Graphics::MacToolbox::kSrcOr, 0);
 	for (int16 i = 6; i <= 8; i++) {
 		_screenPages[i]->copyFrom(*_bgPage);
 	}
 	setPortBitsToPage(6);
 	_zbasic->picture(0x171, 0xb, _pics[0x5b]);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcXor);
 
 	// here is the book of thoth
 	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(OFF(30)).encode().c_str()), 0x1a4, 0x2d);
 	setPortBitsToPage(7);
 	_zbasic->picture(0x181, 0xf, _pics[0x5a]);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcXor);
 	// and your answer is incorrect
 	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(OFF(31)).encode().c_str()), 0x1a4, 0x2d);
 	setPortBitsToPage(8);
 
 	// 131:3806
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcXor);
 	// destroy him
 	drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(OFF(32)).encode().c_str()), 0x1a4, 0x2d);
 	_toolbox->SetPortBits(_dstPage);
 	delayFromMarker(0xb4);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcXor);
 
 	// the book of thoth?
 	drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(OFF(33)).encode().c_str()), 0x1a4, 0x2d);
@@ -1131,13 +1131,13 @@ void FoolPrologue::finaleRun() {
 		srcRect.bottom = 0x19 + 0xdf - i;
 
 		_srcPage = _screenPages[9];
-		_toolbox->CopyBits(_srcPage, _bgPage, srcRect, dstRect, kSrcBic, 0);
+		_toolbox->CopyBits(_srcPage, _bgPage, srcRect, dstRect, Graphics::MacToolbox::kSrcBic, 0);
 
 		_srcPage = _screenPages[10];
-		_toolbox->CopyBits(_srcPage, _bgPage, srcRect, dstRect, kSrcOr, 0);
+		_toolbox->CopyBits(_srcPage, _bgPage, srcRect, dstRect, Graphics::MacToolbox::kSrcOr, 0);
 		delayFromMarker(2);
 
-		_toolbox->CopyBits(_bgPage, _dstPage, dstRect, dstRect, kSrcCopy, 0);
+		_toolbox->CopyBits(_bgPage, _dstPage, dstRect, dstRect, Graphics::MacToolbox::kSrcCopy, 0);
 	}
 	// 131:39ba
 
@@ -1155,7 +1155,7 @@ void FoolPrologue::finaleRun() {
 	_screenPages[10]->copyFrom(*_screenPages[8]);
 	delayFromMarker(0x3c);
 
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcXor);
 	// here is the book of thoth
 	drawTextRight(Common::U32String::format("\"%s", _zbasic->str(OFF(34)).encode().c_str()), 0x1a4, 0x2d);
 
@@ -1169,7 +1169,7 @@ void FoolPrologue::finaleRun() {
 
 	_pics[0x47] = _toolbox->GetPicture(0x47);
 	delayFromMarker(0xc8);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcXor);
 	// and your answer is incorrect
 	drawTextRight(Common::U32String::format("%s\"", _zbasic->str(OFF(35)).encode().c_str()), 0x1a4, 0x2d);
 	delay(0xf);
@@ -1206,7 +1206,7 @@ void FoolPrologue::finaleRun() {
 		}
 		// 131:3d0c
 		if (k == 7) {
-			_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcXor);
+			_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcXor);
 			// destroy him
 			drawTextRight(Common::U32String::format("\"%s\"", _zbasic->str(OFF(36)).encode().c_str()), 0x1a4, 0x2d);
 			_zbasic->picture(0x181, 0xf, _pics[0x5a]); // angry priestess
@@ -1233,7 +1233,7 @@ void FoolPrologue::finaleRun() {
 	// 131:3e6c
 	_toolbox->PenPat(_patterns[2]);
 	_toolbox->PenSize(5, 5);
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	int16 beamX = 0xe5;
 	int16 beamY = 0x58;
 	for (int16 i = 1; i <= 0x13; i++) {
@@ -1299,7 +1299,7 @@ void FoolPrologue::finaleRun() {
 		srcRect = start;
 
 		// 131:425a
-		_toolbox->CopyBits(_srcPage, _dstPage, srcRect, srcRect, kSrcCopy, 0);
+		_toolbox->CopyBits(_srcPage, _dstPage, srcRect, srcRect, Graphics::MacToolbox::kSrcCopy, 0);
 
 		for (int16 j = 1; j <= steps - 1; j++) {
 			_tickMarker = _toolbox->TickCount();
@@ -1311,12 +1311,12 @@ void FoolPrologue::finaleRun() {
 			srcRect.left = (int16)mid[1];
 			srcRect.bottom = (int16)mid[2];
 			srcRect.right = (int16)mid[3];
-			_toolbox->CopyBits(_srcPage, _dstPage, srcRect, srcRect, kSrcCopy, 0);
+			_toolbox->CopyBits(_srcPage, _dstPage, srcRect, srcRect, Graphics::MacToolbox::kSrcCopy, 0);
 			delayFromMarker(0);
 			// 131:4362
 		}
 		// 131:4376
-		_toolbox->CopyBits(_srcPage, _dstPage, _pageRect, _pageRect, kSrcCopy, 0);
+		_toolbox->CopyBits(_srcPage, _dstPage, _pageRect, _pageRect, Graphics::MacToolbox::kSrcCopy, 0);
 
 	}
 	// 131:439a
@@ -1346,7 +1346,7 @@ void FoolPrologue::finaleRun() {
 	copyScreenToPage(0);
 	setPortBitsToPage(0);
 	_zbasic->picture(0x1b5, 0xba, _pics[0x3c]);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 	// but the fool had gained the gift of wisdom
 	drawText(_zbasic->str(OFF(38)), 0xd2, 0x61);
 	// and was able to trick the high priestess
@@ -1359,7 +1359,7 @@ void FoolPrologue::finaleRun() {
 	fillRect(0, 0xc8, 0xa5, SCREEN_WIDTH, 0);
 
 	// 131:45a4
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 	// he had remembered well the words
 	drawText(_zbasic->str(OFF(40)), 0xd2, 0x3f);
 	// of the magician
@@ -1382,7 +1382,7 @@ void FoolPrologue::finaleRun() {
 	setPortBitsToPage(0);
 	_zbasic->picture(0x1c4, 0xb3, _pics[0x3e]);
 	fillRect(0, 0xc8, 0xa5, SCREEN_WIDTH, 0);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 
 	// some say that the story of the fool and his
 	drawText(_zbasic->str(OFF(46)), 0xd2, 0x5c);
@@ -1402,7 +1402,7 @@ void FoolPrologue::finaleRun() {
 	_zbasic->picture(0x1be, 0xb4, _pics[0x3f]);
 	fillRect(0, 0xc8, 0x96, SCREEN_WIDTH, 0);
 	fillRect(0x12c, 0x12c, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcOr);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 	// but I doubt it
 	drawText(Common::U32String::format("\"%s\"", _zbasic->str(OFF(49)).encode().c_str()), 0x184, 0xb1);
 	// 131:4848
@@ -1463,7 +1463,7 @@ void FoolPrologue::finaleRun() {
 		for (int16 i = 1; i <= textCount; i++) {
 			int16 textSize = _zbasic->readDataInt();
 			Common::U32String label = _zbasic->readDataStr();
-			_zbasic->text(kPrologueFontFool, textSize, 0, kSrcBic);
+			_zbasic->text(kPrologueFontFool, textSize, 0, Graphics::MacToolbox::kSrcBic);
 			if (textSize == 0xc) {
 				yOffset += 0x19;
 			} else {
@@ -1491,7 +1491,7 @@ void FoolPrologue::finaleRun() {
 	_srcPage = _screenPages[0];
 	_toolbox->SetPortBits(_srcPage);
 	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
-	_zbasic->text(kPrologueFontSmall, 9, 0, kSrcBic);
+	_zbasic->text(kPrologueFontSmall, 9, 0, Graphics::MacToolbox::kSrcBic);
 	// the fool's errand
 	drawTextCenter(_zbasic->str(OFF(50)), 0x100, 0x19 + yPic + 0x19);
 	// (c) 1987 by cliff johnson. all rights reserved
@@ -1511,10 +1511,10 @@ void FoolPrologue::finaleRun() {
 	_toolbox->SetPortBits(_srcPage);
 	fillRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
 
-	_zbasic->text(kPrologueFontFool, 0xc, 0, kSrcBic);
+	_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcBic);
 	// and yes, the fool will return in
 	drawTextCenter(_zbasic->str(OFF(54)), 0x100, 0xa0);
-	_zbasic->text(kPrologueFontFool, 0x18, 0, kSrcBic);
+	_zbasic->text(kPrologueFontFool, 0x18, 0, Graphics::MacToolbox::kSrcBic);
 	// the fool and his money
 	drawTextCenter(_zbasic->str(OFF(55)), 0x100, 0xc8);
 	delayFromMarker(0x14);
@@ -1531,7 +1531,7 @@ void FoolPrologue::finaleDrawLoadingMsg() {
 	// FIXME: we don't share the menu surface here yet
 	return;
 	_toolbox->SetPort(_grafPtrMenu);
-	_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(0, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 	// Loading Finale
 	Common::U32String str = Common::U32String::format("%s%d%%", _zbasic->str(OFF(56)).encode().c_str(), _prologueLoading);
 	// 131:4e08
@@ -1544,7 +1544,7 @@ void FoolPrologue::finaleDrawLoadingMsg() {
 
 void FoolPrologue::finaleDrawFoolUhOh() {
 	// 131:4e48
-	_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 
 	// Uh oh . . .
 	drawText(Common::U32String::format("\"%s\"", _zbasic->str(OFF(58)).encode().c_str()), 0x1ae, 0xb4);
@@ -1552,7 +1552,7 @@ void FoolPrologue::finaleDrawFoolUhOh() {
 
 void FoolPrologue::finaleStartText() {
 	// 131:4e98
-	_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, kSrcXor);
+	_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcXor);
 	int16 yStart = 0xa0;
 	// "And so the fool heeded the advice of the magician..."
 	drawText(_zbasic->str(OFF(59)), 0x96, yStart);
@@ -1582,7 +1582,7 @@ void FoolPrologue::finaleCardRotate() {
 	// 131:5038
 	_toolbox->PenNormal();
 	_toolbox->PenPat(_patterns[1]);
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	int16 steps = 0x21;
 	float cardLinesMid[16] = { 0 }; // arr_f64_41bbe
 	for (int16 i = 0; i <= 7; i++) {

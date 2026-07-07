@@ -19,9 +19,9 @@
  *
  */
 
-#include "fool/fool.h"
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -76,12 +76,12 @@ void FoolGame::revealRun() {
 	arr_i16_1eb8[17] = (0x1c2 / arr_i16_1eb8[15]);
 	arr_i16_1eb8[18] = 0x100 - ((arr_i16_1eb8[15] * arr_i16_1eb8[17]) / 2);
 	Common::U32String letters = puzzlesReadString().decode(Common::kMacRoman);
-	zoomRect(0xb4, 0xff, 0xb6, 0x101, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x19);
-	zoomRect(0x9a, 0xff, 0x9c, 0x101, 0x37, 0x13, 0xff, 0x1ee, 0, kPatCopy, 0x19);
+	zoomRect(0xb4, 0xff, 0xb6, 0x101, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, Graphics::MacToolbox::kPatCopy, 0x19);
+	zoomRect(0x9a, 0xff, 0x9c, 0x101, 0x37, 0x13, 0xff, 0x1ee, 0, Graphics::MacToolbox::kPatCopy, 0x19);
 	// 134:02f0
 	arr_i16_1eb8[19] = _zbasic->decodeInt(_activePuzzleBuffer);
 	var_i16_1aba = arr_i16_1eb8[18];
-	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 	for (var_i16_7be = 1; var_i16_7be <= arr_i16_1eb8[15]; var_i16_7be++) {
 		// play a random tone and draw each of the letter buttons in sequence
 		playTone(
@@ -129,7 +129,7 @@ void FoolGame::revealRun() {
 		while ((_stateFlags == 0) && (!_activePuzzleSolved)) {
 			// 134:0582
 			getNextEvent(-1);
-			if (_event.what == kMouseDown) {
+			if (_event.what == Graphics::MacToolbox::kMouseDown) {
 				revealOnClick();
 			}
 			if (arr_i16_1eb8[20] == arr_i16_1eb8[19]) {
@@ -183,7 +183,7 @@ void FoolGame::revealSelectButton() {
 	_toolbox->InvertRoundRect(_screenGrid[var_i16_7be], 0x19, 0x19);
 	_toolbox->PenPat(_patterns[arr_i16_1eb8[21]]);
 	// fill the polygon
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	_toolbox->PaintPoly(_revealPoly[arr_i16_3738[var_i16_7be]]);
 	_toolbox->PenNormal();
 }

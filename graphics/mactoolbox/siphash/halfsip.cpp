@@ -14,7 +14,7 @@
    <http://creativecommons.org/publicdomain/zero/1.0/>.
  */
 #include "common/system.h"
-#include "fool/siphash/halfsip.h"
+#include "graphics/mactoolbox/siphash/halfsip.h"
 
 /* default: SipHash-2-4 */
 #ifndef cROUNDS
@@ -69,7 +69,8 @@
 #define TRACE
 #endif
 
-namespace Fool {
+namespace Graphics {
+namespace MacToolbox {
 
 /*
     Computes a SipHash value
@@ -165,4 +166,5 @@ int halfsiphash(const void *in, const size_t inlen, const void *k, uint8_t *out,
     return 0;
 }
 
-} // namespace Fool
+} // namespace MacToolbox
+} // namespace Graphics

@@ -19,9 +19,9 @@
  *
  */
 
-#include "fool/fool.h"
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -32,7 +32,7 @@ namespace Fool {
 void FoolGame::sunMapRun() {
 	// 137:0004
 	var_i16_c00 = 1;
-	fillRect(1, kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
+	fillRect(1, Graphics::MacToolbox::kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
 	arr_i16_1eb8[0] = 9;
 	arr_i16_1eb8[1] = 9;
 	arr_i16_1eb8[4] = 0x4b;
@@ -87,7 +87,7 @@ void FoolGame::sunMapRun() {
 	while (((_stateFlags & kStateReturn) == 0) && (!_activePuzzleSolved)) {
 		while ((_stateFlags == kStateNull) && (!_activePuzzleSolved)) {
 			getNextEvent(-1);
-			if (_event.what == kMouseDown) {
+			if (_event.what == Graphics::MacToolbox::kMouseDown) {
 				sunMapOnClick();
 			}
 		}
@@ -137,7 +137,7 @@ void FoolGame::sunMapOnClick() {
 	_zbasic->menu(8, 3, 0, Common::U32String());
 	_toolbox->PenNormal();
 	_toolbox->PenSize(3, 3);
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	arr_i16_4758[0] = var_i16_68a;
 	arr_i16_4758[1] = var_i16_68c;
 	if (_puzzleFlags[_sunMapTileID[arr_i16_2f38[var_i16_68a*32 + var_i16_68c]]] & kFlagMapTile) {
@@ -191,7 +191,7 @@ void FoolGame::sunMapDragSelect() {
 		delay(2);
 		_toolbox->FrameRect(Common::Rect(arr_i16_4758[12], arr_i16_4758[11], arr_i16_4758[14], arr_i16_4758[13]));
 		delay(1);
-	} while (_event.what != kMouseUp);
+	} while (_event.what != Graphics::MacToolbox::kMouseUp);
 	// 137:087e
 }
 
@@ -247,7 +247,7 @@ void FoolGame::sunMapMoveSelected() {
 		delay(2);
 		_toolbox->FrameRect(arr_rect_4776);
 		delay(1);
-	} while (_event.what != kMouseDown);
+	} while (_event.what != Graphics::MacToolbox::kMouseDown);
 }
 
 void FoolGame::sunMapUndoMove() {

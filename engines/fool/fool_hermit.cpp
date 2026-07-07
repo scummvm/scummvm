@@ -19,9 +19,10 @@
  *
  */
 
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool.h"
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {

@@ -15,13 +15,15 @@
    <http://creativecommons.org/publicdomain/zero/1.0/>.
  */
 
-#ifndef FOOL_SIPHASH_HALFSIP_H
-#define FOOL_SIPHASH_HALFSIP_H
+#ifndef GRAPHICS_MACTOOLBOX_SIPHASH_HALFSIP_H
+#define GRAPHICS_MACTOOLBOX_SIPHASH_HALFSIP_H
 
-namespace Fool {
+namespace Graphics {
+namespace MacToolbox {
 
 int halfsiphash(const void* in, const size_t inlen, const void* k, uint8_t* out, const size_t outlen);
 
-};
+}
+}
 
 #endif // FOOL_SIPHASH_HALFSIP_H

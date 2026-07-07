@@ -19,9 +19,9 @@
  *
  */
 
-#include "fool/fool.h"
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -127,7 +127,7 @@ void FoolGame::highPriestessRun() {
 	var_i16_68a = 1;
 	for (int16 i = 1; i <= 0x155; i++) {
 		_zbasic->get(1, i, SCREEN_WIDTH, i + 1, arr_bmp_fa3c);
-		_zbasic->put(_zbasic->rndInt(0x14) - 0xa, i, arr_bmp_fa3c, kSrcCopy);
+		_zbasic->put(_zbasic->rndInt(0x14) - 0xa, i, arr_bmp_fa3c, Graphics::MacToolbox::kSrcCopy);
 		if (i % 2 == 0) {
 			_toolbox->Delay(0);
 		}
@@ -159,7 +159,7 @@ void FoolGame::highPriestessRun() {
 			}
 		}
 		// 140:03f0
-		_zbasic->text(kFontLarge, 0x18, 0x10, kSrcBic);
+		_zbasic->text(kFontLarge, 0x18, 0x10, Graphics::MacToolbox::kSrcBic);
 		drawTextCenter(_zbasic->str(OFF(3)), 0x96); // you cannot claim
 		drawTextCenter(_zbasic->str(OFF(4)), 0xb9); // the book of thoth
 		drawTextCenter(_zbasic->str(OFF(5)), 0xdc); // so easily
@@ -185,7 +185,7 @@ void FoolGame::thoth99Enchantments() {
 		arr_i16_1eb8[0] = 1;
 	}
 	if (arr_i16_1eb8[0] == 0x63) {
-		_zbasic->text(kFontLarge, 0x18, 0x10, kSrcBic);
+		_zbasic->text(kFontLarge, 0x18, 0x10, Graphics::MacToolbox::kSrcBic);
 		drawTextCenter(_zbasic->str(OFF(7)), 0xaf); // you dare to challenge
 		drawTextCenter(_zbasic->str(OFF(8)), 0xd2); // the high priestess
 		delay(0xb4);
@@ -202,7 +202,7 @@ void FoolGame::thoth99Enchantments() {
 	copyScreen(0, arr_bmp_b3ec);
 	for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
 		_toolbox->PenSize(5, 5);
-		_toolbox->PenMode(kPatXor);
+		_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 		for (int16 j = 0; j <= 1; j++) {
 			_toolbox->MoveTo(0x104, 0xa2);
 			_toolbox->LineTo(_screenGrid[i].left + 0x14, _screenGrid[i].top + 0x14);
@@ -287,7 +287,7 @@ void FoolGame::thoth99Enchantments() {
 		}
 		do {
 			getNextEvent(-1);
-			if ((_event.modifiers & kModMouseButtonUp) == 0) {
+			if ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0) {
 				sub_140_c4c();
 			}
 			// 140:0934
@@ -327,7 +327,7 @@ void FoolGame::thothDrawEnchantment() {
 	_toolbox->PenNormal();
 	_toolbox->EraseRoundRect(_screenGrid[arr_i16_1eb8[2]], 0x14, 0x14);
 	_toolbox->FrameRoundRect(_screenGrid[arr_i16_1eb8[2]], 0x14, 0x14);
-	_zbasic->text(kFontChicago, 0xc, 0, kSrcOr);
+	_zbasic->text(kFontChicago, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 	Common::U32String label = Common::U32String::format(" %d ", arr_i16_1eb8[2]); // was: str(OFF(10))
 	int16 width = _toolbox->StringWidth(label);
 	// 140:0bd2
@@ -355,7 +355,7 @@ void FoolGame::sub_140_c4c() {
 			_screenGrid[var_i16_484].left,
 			_screenGrid[var_i16_484].bottom,
 			_screenGrid[var_i16_484].right,
-			0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatXor, 0xd
+			0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, Graphics::MacToolbox::kPatXor, 0xd
 		);
 		arr_i16_1eb8[1] = 0;
 		sub_140_e3c();
@@ -453,7 +453,7 @@ void FoolGame::thothKey1st() {
 	}
 	// 140:1346
 	_toolbox->PenSize(5, 5);
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	_event.where = Common::Point(0, 0);
 	// 140:139a
 	while (!(
@@ -474,7 +474,7 @@ void FoolGame::thothKey1st() {
 	_toolbox->PenNormal();
 	if ((var_i16_7ce & 2) == 0) {
 		_stateFlags = kStateReturn;
-		zoomRect(0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0xa2, 0xff, 0xac, 0x10e, 1, kPatXor, 0x19);
+		zoomRect(0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0xa2, 0xff, 0xac, 0x10e, 1, Graphics::MacToolbox::kPatXor, 0x19);
 		delay(0x3c);
 		_activePuzzleSolved = false;
 	} else {
@@ -642,11 +642,11 @@ void FoolGame::sub_140_15fc() {
 			// 140:173a
 			if (var_i16_103a < 4) {
 				var_i16_2330 = 2;
-				var_i16_1dee = kPatXor;
+				var_i16_1dee = Graphics::MacToolbox::kPatXor;
 			} else {
 				// 140:1756
 				var_i16_2330 = 3;
-				var_i16_1dee = kPatCopy;
+				var_i16_1dee = Graphics::MacToolbox::kPatCopy;
 			}
 			// 140:1762
 			zoomRect(
@@ -815,7 +815,7 @@ void FoolGame::thothKey3rdOnClick() {
 		var_i16_1de6 = 3;
 	}
 	// 140:1d26
-	while ((_event.modifiers & kModMouseButtonUp) == 0) {
+	while ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0) {
 		// 140:1d2a
 		// was: 0
 		getNextEvent(-1);
@@ -838,7 +838,7 @@ void FoolGame::thothKey3rdOnClick() {
 		_toolbox->FillRect(area, _patterns[arr_i16_2f38[var_i16_1de6*32+ var_i16_103a]]);
 		// 140:1e2e
 		if ((area.left <= 0) && (area.top <= 0x14) && (area.right >= SCREEN_WIDTH) && (area.bottom >= SCREEN_HEIGHT)) {
-			_event.modifiers = kModMouseButtonUp;
+			_event.modifiers = Graphics::MacToolbox::kModMouseButtonUp;
 		}
 		// 140:1eae
 	}
@@ -943,7 +943,7 @@ void FoolGame::thothKeyLast() {
 
 void FoolGame::thothKeyLastOnClick() {
 	// 140:22b8
-	while (((_event.modifiers & kModMouseButtonUp) == 0) && (var_i16_1de6 != (arr_i16_3b38[0x20 + _hermitPathStage] + 1))) {
+	while (((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0) && (var_i16_1de6 != (arr_i16_3b38[0x20 + _hermitPathStage] + 1))) {
 		// 140:22bc
 		getNextEvent(-1); // was: 0
 		getGridFromMouse(var_i16_68a, var_i16_68c);
@@ -977,7 +977,7 @@ void FoolGame::thothKeyLastOnClick() {
 void FoolGame::thothBadSelect() {
 	// 140:24ae
 	playTone(0x14, 0x64, 0x0);
-	while ((_event.modifiers & kModMouseButtonUp) == 0) {
+	while ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0) {
 		// 140:24c4
 		getNextEvent(-1);
 		var_i16_484 = _zbasic->rndInt(0x50);
@@ -1078,7 +1078,7 @@ void FoolGame::hermitScreenBehold() {
 		_activePuzzleSolved = true;
 	} else {
 		// 140:290c
-		zoomRect(0x14, 0xc8, 0x14, 0x138, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x21);
+		zoomRect(0x14, 0xc8, 0x14, 0x138, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, Graphics::MacToolbox::kPatCopy, 0x21);
 		// behold the last key of thoth
 		showBehold(0x48, 2, _zbasic->str(OFF(22)));
 	}

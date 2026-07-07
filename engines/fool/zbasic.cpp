@@ -27,11 +27,9 @@
 #include "common/stream.h"
 #include "common/tokenizer.h"
 #include "common/ustr.h"
-#include "graphics/managed_surface.h"
 
 #include "fool/fool.h"
 #include "fool/detection.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -40,14 +38,14 @@ void menuCommandsCallback(int action, Common::String &text, void *data) {
 	// unused
 }
 
-ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
+ZBasic::ZBasic(Graphics::MacToolbox::Toolbox *toolbox) : _toolbox(toolbox) {
 	_memPool = new Common::MemoryPool(sizeof(int));
 
 	_window = g_engine->_wm.addWindow(false, false, false);
 	_window->disableBorder();
 	_window->resize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	_toolbox->_defaultWindow = _window;
-	_toolbox->_defaultBits = BitMap(new Graphics::ManagedSurface());
+	_toolbox->_defaultBits = Graphics::MacToolbox::BitMap(new Graphics::ManagedSurface());
 	_toolbox->_defaultBits->copyFrom(*_window->getWindowSurface());
 	_window->setSurface(_toolbox->_defaultBits.get(), DisposeAfterUse::NO);
 
@@ -58,7 +56,7 @@ ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
 		_menu->setCommandsCallback(menuCommandsCallback, nullptr);
 
 		_toolbox->_defaultMenu = _menu;
-		_toolbox->_defaultMenuBits = BitMap(new Graphics::ManagedSurface());
+		_toolbox->_defaultMenuBits = Graphics::MacToolbox::BitMap(new Graphics::ManagedSurface());
 		_toolbox->_defaultMenuBits->copyFrom(*_menu->getWindowSurface());
 		_menu->setSurface(_toolbox->_defaultMenuBits.get(), DisposeAfterUse::NO);
 	} else {
@@ -67,7 +65,7 @@ ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
 		_toolbox->_defaultMenu = _menu;
 		// we don't get the surface for directly manipulating the menu, but so far we don't need it
 	}
-	_defaultPort = new GrafPort;
+	_defaultPort = new Graphics::MacToolbox::GrafPort;
 	_toolbox->OpenPort(_defaultPort);
 	_toolbox->SetPort(_defaultPort);
 
@@ -78,7 +76,7 @@ ZBasic::~ZBasic() {
 	_window = nullptr;
 	_toolbox->_defaultWindow = nullptr;
 
-	GrafPtr test;
+	Graphics::MacToolbox::GrafPtr test;
 	_toolbox->GetPort(test);
 	if (test == _defaultPort) {
 		_toolbox->SetPort(nullptr);
@@ -96,7 +94,7 @@ void ZBasic::loadProgram(const Common::Path &path) {
 		warning("ZBasic::loadProgram: unable to open %s", path.toString(':').c_str());
 		return;
 	}
-	Handle scotRes = _toolbox->GetResource(MKTAG('S', 'C', 'O', 'T'), 1);
+	Graphics::MacToolbox::Handle scotRes = _toolbox->GetResource(MKTAG('S', 'C', 'O', 'T'), 1);
 	if (!scotRes) {
 		warning("ZBasic::loadProgram: could not find SCOT chunk");
 		return;
@@ -250,8 +248,8 @@ void ZBasic::defOpen(const Common::U32String &str) {
 	_fileCreator = str.substr(4, 4).encode(Common::kMacRoman);
 }
 
-void ZBasic::get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest, bool preserveDims) {
-	GrafPtr port;
+void ZBasic::get(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::MacToolbox::BitMap &dest, bool preserveDims) {
+	Graphics::MacToolbox::GrafPtr port;
 	_toolbox->GetPort(port);
 	Common::Rect srcRect(x1, y1, x2, y2);
 	Common::Rect dstRect(srcRect.width(), srcRect.height());
@@ -266,7 +264,7 @@ void ZBasic::get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest, bool pres
 	} else {
 		dest->create(dstRect.width(), dstRect.height());
 	}
-	_toolbox->CopyBits(port->portBits, dest, srcRect, dstRect, kSrcCopy, nullptr);
+	_toolbox->CopyBits(port->portBits, dest, srcRect, dstRect, Graphics::MacToolbox::kSrcCopy, nullptr);
 }
 
 int16 ZBasic::instr(int16 expression, const Common::U32String &string1, const Common::U32String &string2) {
@@ -306,7 +304,7 @@ uint32 ZBasic::mem(int16 index) {
 
 void ZBasic::menu(uint16 menuNo, uint16 itemNo, uint16 state, const Common::U32String &title) {
 	debugC(5, kDebugLoading, "ZBasic::menu: menuNo %d, itemNo %d, state %d, title \"%s\"", menuNo, itemNo, state, title.encode().c_str());
-	MenuHandle handle = _toolbox->GetMHandle(menuNo);
+	Graphics::MacToolbox::MenuHandle handle = _toolbox->GetMHandle(menuNo);
 	if (!handle) {
 		handle = _toolbox->NewMenu(menuNo, Common::U32String());
 	}
@@ -447,7 +445,7 @@ void ZBasic::openW(int16 fileNo, const Common::U32String &fileName, uint32 lineS
 	_fileLineSize[fileNo] = lineSize;
 }
 
-void ZBasic::picture(int16 x, int16 y, PicHandle &src) {
+void ZBasic::picture(int16 x, int16 y, Graphics::MacToolbox::PicHandle &src) {
 	if (!src) {
 		warning("ZBasic::picture: Empty handle");
 		return;
@@ -466,18 +464,18 @@ void ZBasic::picture(int16 x, int16 y, PicHandle &src) {
 	//warning("did something stupid");
 }
 
-void ZBasic::picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src) {
+void ZBasic::picture(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::MacToolbox::PicHandle &src) {
 	warning("STUB: ZBasic::picture");
 }
 
-void ZBasic::put(int16 x, int16 y, BitMap &src, SourceMode mode) {
+void ZBasic::put(int16 x, int16 y, Graphics::MacToolbox::BitMap &src, Graphics::MacToolbox::SourceMode mode) {
 	put(x, y, x+src->w, y+src->h, src, mode);
 }
 
-void ZBasic::put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src, SourceMode mode) {
+void ZBasic::put(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::MacToolbox::BitMap &src, Graphics::MacToolbox::SourceMode mode) {
 	debugC(8, kDebugGraphics, "ZBasic::put: %p -> (%d, %d) (%d, %d)", (void *)src.get(), x1, y1, x2, y2);
 	Common::Rect destRect(x1, y1, x2, y2);
-	GrafPtr port;
+	Graphics::MacToolbox::GrafPtr port;
 	_toolbox->GetPort(port);
 	_toolbox->CopyBits(src, port->portBits, src->getBounds(), destRect, mode, nullptr);
 }
@@ -526,11 +524,11 @@ Common::U32String ZBasic::readDataStr() {
 	return result;
 }
 
-Handle ZBasic::readFile(int16 fileNo, uint32 length) {
+Graphics::MacToolbox::Handle ZBasic::readFile(int16 fileNo, uint32 length) {
 	if (!_fileStreams.contains(fileNo)) {
 		error("ZBasic::readFile: unknown fileNo %d", fileNo);
 	}
-	Handle result(new Common::Array<byte>());
+	Graphics::MacToolbox::Handle result(new Common::Array<byte>());
 	result->resize(length);
 	uint32 newLen = _fileStreams[fileNo]->read(result->data(), length);
 	if (newLen != length) {
@@ -645,7 +643,7 @@ void ZBasic::swapStr(Common::U32String &a, Common::U32String &b) {
 }
 
 
-void ZBasic::text(uint16 font, uint16 size, uint16 face, SourceMode mode) {
+void ZBasic::text(uint16 font, uint16 size, uint16 face, Graphics::MacToolbox::SourceMode mode) {
 	_toolbox->TextFont(font);
 	_toolbox->TextSize(size);
 	_toolbox->TextFace(face);
@@ -675,7 +673,7 @@ void ZBasic::sound(int16 frequency, int32 duration, int16 volume, int16 voice) {
 	// to program the 4-tone synthesizer.
 	// Without this, out of the box ZBasic seems to use
 	// square wave output.
-	SWSynthRec record;
+	Graphics::MacToolbox::SWSynthRec record;
 	if (frequency == 0)
 		return;
 	record.triplets.push_back({ (uint16)(783360/frequency),  MIN(MAX((uint16)volume, (uint16)0), (uint16)255), (uint16)(duration*60/1000) });

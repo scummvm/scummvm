@@ -25,11 +25,10 @@
 #include "common/events.h"
 #include "common/system.h"
 
-#include "fool/detection.h"
-#include "fool/fool.h"
-#include "fool/toolbox.h"
+#include "graphics/mactoolbox/toolbox.h"
 
-namespace Fool {
+namespace Graphics {
+namespace MacToolbox {
 
 static const struct MacKeyCodeMapping {
 	Common::KeyCode scummvm;
@@ -161,7 +160,8 @@ static const struct MacKeyCodeMapping {
 
 
 
-Toolbox::Toolbox() {
+Toolbox::Toolbox(Graphics::MacWindowManager *wm) : _wm(wm) {
+	_fileModalCallback = nullptr;
 	_frameLimiter = new Graphics::FrameLimiter(g_system, 60, false);
 	for (const MacKeyCodeMapping *k = MackeyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++) {
 		_keyMap[k->scummvm] = k->mac;
@@ -295,7 +295,7 @@ void Toolbox::_pumpEvents() {
 }
 
 void Toolbox::_updateScreen() {
-	g_engine->_wm.draw();
+	_wm->draw();
 	_frameLimiter->delayBeforeSwap();
 	g_system->updateScreen();
 	_frameLimiter->startFrame();
@@ -309,8 +309,8 @@ uint32 Toolbox::Delay(uint32 numTicks) {
 		_updateScreen();
 		updateCount++;
 	} while (g_system->getMillis() < target);
-	if (debugChannelSet(8, kDebugGraphics)) {
-		debugC(8, kDebugGraphics, "Toolbox::Delay: %d screen updates in %d ticks", updateCount, numTicks);
+	if (debugChannelSet(8, kDebugLevelMacToolbox)) {
+		debugC(8, kDebugLevelMacToolbox, "Toolbox::Delay: %d screen updates in %d ticks", updateCount, numTicks);
 	}
 	return (uint32)(g_system->getMillis() * 60 / 1000);
 }
@@ -358,4 +358,5 @@ uint32 Toolbox::TickCount() {
 }
 
 
-} // End of namespace Fool
+} // End of namespace MacToolbox
+} // End of namespace Graphics

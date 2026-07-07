@@ -25,10 +25,10 @@
 #include "common/array.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "graphics/surface.h"
+#include "graphics/mactoolbox/toolbox.h"
 
 #include "fool/fool.h"
-#include "fool/toolbox.h"
-#include "graphics/surface.h"
 
 
 namespace Fool {
@@ -115,7 +115,7 @@ public:
 private:
 	FoolVersion _version;
 	const int *_zstrOffset;
-	Toolbox *_toolbox;
+	Graphics::MacToolbox::Toolbox *_toolbox;
 	ZBasic *_zbasic;
 	bool _quit = false;
 
