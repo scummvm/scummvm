@@ -1787,6 +1787,8 @@ bool Logic::fnChooser(uint32 a, uint32 b, uint32 c) {
 	if (p == _scriptVariables + TEXT1)
 		return true;
 
+	_skyMouse->setTextChooserMode();
+
 	_compact->logic = L_CHOOSE; // player frozen until choice made
 	fnAddHuman(0, 0, 0); // bring back mouse
 
