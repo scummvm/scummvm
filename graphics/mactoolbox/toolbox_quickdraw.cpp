@@ -23,10 +23,7 @@
 #include "common/memstream.h"
 #include "common/system.h"
 
-#include "fool/detection.h"
-#include "graphics/cursor.h"
 #include "graphics/macgui/macwindowmanager.h"
-#include "graphics/managed_surface.h"
 
 #include "graphics/mactoolbox/toolbox.h"
 #include "graphics/mactoolbox/utils.h"
@@ -41,7 +38,7 @@ void Toolbox::BackPat(const Pattern &pat) {
 }
 
 void Toolbox::BeginUpdate(WindowRecord &theWindow) {
-	warning("STUB: Toolbox::BeginUpdate");
+	debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::BeginUpdate");
 }
 
 void Toolbox::ClosePoly() {
@@ -68,7 +65,7 @@ void Toolbox::ClosePoly() {
 }
 
 void Toolbox::ClipRect(Common::Rect &r) {
-	warning("STUB: Toolbox::ClipRect");
+	debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::ClipRect");
 }
 
 void Toolbox::CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn) {
@@ -77,28 +74,28 @@ void Toolbox::CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rec
 
 void Toolbox::_copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn) {
 	if (!_port) {
-		warning("Toolbox::_copyBits: empty port");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::_copyBits: empty port");
 		return;
 	}
 
 	if (!srcBits) {
-		warning("Toolbox::_copyBits: empty srcBits handle");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::_copyBits: empty srcBits handle");
 		return;
 	}
 
 	if (!dstBits) {
-		warning("Toolbox::_copyBits: empty dstBits handle");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::_copyBits: empty dstBits handle");
 		return;
 	}
 	if (maskRgn) {
-		warning("Toolbox::_copyBits: maskRgn unimplemented");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::_copyBits: maskRgn unimplemented");
 	}
 	if (!srcRect.isValidRect()) {
-		warning("Toolbox::_copyBits: invalid src rectangle");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::_copyBits: invalid src rectangle");
 		return;
 	}
 	if (!dstRect.isValidRect()) {
-		warning("Toolbox::_copyBits: invalid dst rectangle");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::_copyBits: invalid dst rectangle");
 		return;
 	}
 
@@ -143,21 +140,6 @@ void Toolbox::_copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBi
 	_addDirtyRect(dstBits, result);
 }
 
-// maybe the better way of refactoring this would be to fork the Primitives
-// object from MacWindowManager and make one that uses GrafPort as a state store?
-// as it stands, all the operations fall back to calling DrawPoint over and over again,
-// which can touch the same pixel multiple times.
-// this is a problem for all the xor blend modes.
-// we could have it so that the draw commands check a mask before drawing again, and it
-// gets reset after every op. this would be pretty inefficient; e.g. in fools errand most
-// of the time is spent drawing to the screen or to a screen-sized buffer.
-
-// steps:
-// - create intermediate surface
-// - draw to intermediate surface using MacPlotData
-// - blit to target with blitMono
-// - add to target dirty rect list
-
 void Toolbox::EraseOval(const Common::Rect &r) {
 	if (_port) {
 		_drawOval(r, _port->bkPat, kPatCopy, false, _port->fgColor, _port->bkColor);
@@ -196,7 +178,7 @@ void Toolbox::EraseRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ova
 }
 
 void Toolbox::EndUpdate(WindowRecord &theWindow) {
-	warning("STUB: Toolbox::EndUpdate");
+	debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::EndUpdate");
 }
 
 void Toolbox::_addDirtyRect(const BitMap &dest, const Common::Rect &rect) {
@@ -212,7 +194,7 @@ void Toolbox::_addDirtyRect(const BitMap &dest, const Common::Rect &rect) {
 
 void Toolbox::_drawOval(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor) {
 	if ((!r.isValidRect()) || r.isEmpty()) {
-		warning("Toolbox::_drawOval: invalid rect %d %d %d %d", r.left, r.top, r.right, r.bottom);
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::_drawOval: invalid rect %d %d %d %d", r.left, r.top, r.right, r.bottom);
 		return;
 	}
 	if (_port && _port->pnVis == 0) {
@@ -248,11 +230,11 @@ void Toolbox::_drawOval(const Common::Rect &r, const Pattern &pat, PatternMode m
 
 void Toolbox::_drawPoly(const PolyHandle &poly, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor) {
 	if (!poly) {
-		warning("_drawPoly: Polygon data not found, skipping");
+		debugC(0, kDebugLevelMacToolbox, "_drawPoly: Polygon data not found, skipping");
 		return;
 	}
 	if (poly->polyPoints.size() < 2) {
-		warning("_drawPoly: need at least 2 points");
+		debugC(0, kDebugLevelMacToolbox, "_drawPoly: need at least 2 points");
 		return;
 	}
 	if (_port && _port->pnVis == 0) {
@@ -313,7 +295,7 @@ void Toolbox::_drawPoly(const PolyHandle &poly, const Pattern &pat, PatternMode 
 
 void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor) {
 	if ((!r.isValidRect()) || r.isEmpty()) {
-		warning("Toolbox::_drawRect: invalid rect %d %d %d %d", r.left, r.top, r.right, r.bottom);
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::_drawRect: invalid rect %d %d %d %d", r.left, r.top, r.right, r.bottom);
 		return;
 	}
 	if (_port && _port->pnVis == 0) {
@@ -356,7 +338,7 @@ void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode m
 
 void Toolbox::_drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor, uint16 ovalWidth, uint16 ovalHeight) {
 	if ((!r.isValidRect()) || r.isEmpty()) {
-		warning("Toolbox::_drawRoundRect: invalid rect %d %d %d %d", r.left, r.top, r.right, r.bottom);
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::_drawRoundRect: invalid rect %d %d %d %d", r.left, r.top, r.right, r.bottom);
 		return;
 	}
 	if (_port && _port->pnVis == 0) {
@@ -379,7 +361,7 @@ void Toolbox::_drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternM
 		destRect.bottom -= penSize.y - 1;
 
 		if (ovalWidth != ovalHeight) {
-			warning("Toolbox::_drawRoundRect: different corner diameters not supported");
+			debugC(0, kDebugLevelMacToolbox, "Toolbox::_drawRoundRect: different corner diameters not supported");
 		}
 		pm.drawRoundRect(destRect, ovalHeight/2, fgColor, !frame, &pd);
 
@@ -439,7 +421,7 @@ void Toolbox::FillRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 oval
 }
 
 void Toolbox::FrameArc(const Common::Rect &r, int16 startAngle, int16 arcAngle) {
-	warning("STUB: Toolbox::FrameArc");
+	debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::FrameArc");
 }
 
 void Toolbox::FrameOval(const Common::Rect &r) {
@@ -480,7 +462,7 @@ void Toolbox::FrameRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ova
 }
 
 void Toolbox::GetCPixel(int16 h, int16 v, RGBColor &cPix) {
-	warning("STUB: Toolbox::GetCPixel");
+	debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::GetCPixel");
 }
 
 Handle Toolbox::GetIcon(uint16 iconID) {
@@ -488,7 +470,7 @@ Handle Toolbox::GetIcon(uint16 iconID) {
 	if (handle) {
 		return handle;
 	} else {
-		warning("Toolbox::GetIcon: failed to load ICON id %d", iconID);
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::GetIcon: failed to load ICON id %d", iconID);
 	}
 
 	return nullptr;
@@ -682,7 +664,7 @@ void Toolbox::OpenPort(GrafPtr port) {
 	// source: QuickDraw Routines I-163
 	port->portBits = _defaultBits;
 	port->portRect = Common::Rect(_wm->getWidth(), _wm->getHeight());
-	port->visRgn = RgnHandle(new Region({ 1, Common::Rect( 0, 0, _wm->getWidth(), _wm->getHeight() ) }));
+	port->visRgn = RgnHandle(new Region({ 1, Common::Rect( 0, 0, _wm->getWidth(), _wm->getHeight() ), Common::Array<int16>() }));
 	port->fgColor = _wm->_colorBlack;
 	port->bkColor = _wm->_colorWhite;
 	_port = port;
@@ -764,7 +746,7 @@ void Toolbox::PenSize(uint16 width, uint16 height) {
 
 void Toolbox::PlotIcon(const Common::Rect &theRect, const Handle &theIcon) {
 	if (!theIcon) {
-		warning("Toolbox::PlotIcon: empty handle");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::PlotIcon: empty handle");
 		return;
 	}
 	if (_port) {
@@ -791,7 +773,7 @@ bool Toolbox::PtInRect(const Common::Point &pt, const Common::Rect &r) {
 }
 
 void Toolbox::SetCPixel(int16 h, int16 v, const RGBColor &cPix) {
-	warning("STUB: Toolbox::SetCPixel");
+	debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::SetCPixel");
 }
 
 void Toolbox::SetCursor(const Common::SharedPtr<Cursor> &crsr) {

@@ -19,9 +19,6 @@
  *
  */
 
-#include "common/system.h"
-#include "common/savefile.h"
-
 #include "graphics/mactoolbox/toolbox.h"
 
 namespace Graphics {
@@ -37,12 +34,12 @@ OSErr Toolbox::GetFInfo(const Common::U32String &fileName, int16 vRefNum, Common
 }
 
 OSErr Toolbox::PBGetVol(ParamBlockRec &paramBlock) {
-	warning("STUB: Toolbox::PBGetVol");
+	debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::PBGetVol");
 	return 0;
 }
 
 OSErr Toolbox::PBSetVol(ParamBlockRec &paramBlock) {
-	warning("STUB: Toolbox::PBSetVol");
+	debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::PBSetVol");
 	return 0;
 }
 
@@ -51,7 +48,7 @@ void Toolbox::SFGetFile(const Common::Point &where, const Common::U32String &pro
 		Common::String fileName = _fileModalCallback(false, Common::String(), prompt.encode());
 		reply.fName = fileName;
 	} else {
-		warning("Toolbox::SFGetFile: file modal callback not set");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::SFGetFile: file modal callback not set");
 		reply.fName.clear();
 	}
 	reply.good = !reply.fName.empty() ? 1 : 0;
@@ -61,7 +58,7 @@ void Toolbox::SFPutFile(const Common::Point &where, const Common::U32String &pro
 	if (_fileModalCallback) {
 		reply.fName = _fileModalCallback(true, origName.encode(), prompt.encode());
 	} else {
-		warning("Toolbox::SFPutFile: file modal callback not set");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::SFPutFile: file modal callback not set");
 		reply.fName.clear();
 	}
 	reply.good = !reply.fName.empty() ? 1 : 0;

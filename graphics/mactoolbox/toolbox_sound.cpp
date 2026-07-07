@@ -19,7 +19,6 @@
  *
  */
 
-#include "audio/audiostream.h"
 #include "audio/softsynth/pcspk.h"
 
 
@@ -33,10 +32,10 @@ namespace MacToolbox {
 
 void Toolbox::StartSound(SynthPtr synthRec, uint32 numBytes, ProcPtr completionRtn) {
 	if (!synthRec) {
-		warning("Toolbox::startSound: record not found");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::startSound: record not found");
 		return;
 	}
-	bool synch = completionRtn == -1;
+	bool synch = completionRtn == (ProcPtr)-1;
 	if (synthRec->mode == swMode) {
 		SWSynthRec *rec = static_cast<SWSynthRec *>(synthRec);
 		for (auto &it : rec->triplets) {
@@ -48,7 +47,7 @@ void Toolbox::StartSound(SynthPtr synthRec, uint32 numBytes, ProcPtr completionR
 			}
 		}
 	} else {
-		warning("Toolbox::startSound: unimplemented synth mode %d", synthRec->mode);
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::startSound: unimplemented synth mode %d", synthRec->mode);
 		return;
 	}
 }
@@ -62,11 +61,11 @@ bool Toolbox::SoundDone() {
 }
 
 void Toolbox::SetSoundVol(int16 level) {
-	warning("STUB: Toolbox::SetSoundVol");
+	debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::SetSoundVol");
 }
 
 int16 Toolbox::GetSoundVol() {
-	warning("STUB: Toolbox::GetSoundVol");
+	debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::GetSoundVol");
 	return 7;
 }
 
