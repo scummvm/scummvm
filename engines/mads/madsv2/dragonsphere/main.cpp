@@ -220,12 +220,16 @@ void dragonsphere_main() {
 		env_search_mode = ENV_SEARCH_CONCAT_FILES;
 
 	if (ConfMan.getBool("start_game") || ConfMan.hasKey("save_slot"))
+		// Start the game
 		selected_item = 0;
 	else if (g_engine->isDemo())
-		selected_item = 5;
+		// Demo
+		selected_item = 9;
 	else if (ConfMan.getBool("start_intro"))
+		// Show the intro directly
 		selected_item = 3;
 	else
+		// Show the title screen
 		selected_item = -1;
 
 	while (!g_engine->shouldQuit()) {
@@ -267,15 +271,16 @@ void dragonsphere_main() {
 			// Exit
 			return;
 
+		case 9:
+			// Demo
+			AnimView::animview_main("@demodisk");
+			selected_item = 0;
+			break;
+
 		default:
 			// Credits
-			if (g_engine->isDemo()) {
-				AnimView::animview_main("@demodisk");
-				selected_item = 0;
-			} else {
-				TextView::textview_main("credits");
-				selected_item = -1;
-			}
+			TextView::textview_main("credits");
+			selected_item = -1;
 			break;
 		}
 	}

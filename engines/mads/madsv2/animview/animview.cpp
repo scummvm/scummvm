@@ -452,13 +452,14 @@ static void animate() {
 				goto done;
 
 			Common::String name(sound_file_name);
-			has_sound_file = !name.empty() && Common::isDigit(name.lastChar());
+			has_sound_file = !name.empty();
 			found_sound = true;
 		}
 
 		if ((!stop_music_at_end || found_sound) && !g_engine->_soundManager->isLoaded()) {
 			// Initialize the sound driver
-			int section = sound_file_name[strlen(sound_file_name) - 1] - '0';
+			char ext = sound_file_name[strlen(sound_file_name) - 1];
+			int section = (g_engine->isDemo() && !Common::isDigit(ext)) ? 1 : ext - '0';
 			g_engine->_soundManager->init(section);
 		}
 

@@ -264,7 +264,10 @@ void phantom_main() {
 
 	if (ConfMan.getBool("start_game") || ConfMan.hasKey("save_slot"))
 		selected_item = 0;
-	else if (g_engine->isDemo() || ConfMan.getBool("start_intro"))
+	else if (g_engine->isDemo())
+		// Demo
+		selected_item = 9;
+	else if (ConfMan.getBool("start_intro"))
 		// Show the intro
 		selected_item = 3;
 	else
@@ -300,19 +303,18 @@ void phantom_main() {
 			return;
 
 		case 3:
-			// Show the intro
-			if (g_engine->isDemo()) {
-				AnimView::animview_main("@demodisk");
-				selected_item = 0;
-			} else {
-				AnimView::animview_main("@phantom");
-				selected_item = -1;
-			}
+			AnimView::animview_main("@phantom");
+			selected_item = -1;
 			break;
 
 		case 4:
 			// Exit
 			return;
+
+		case 9:
+			AnimView::animview_main("@demodisk");
+			selected_item = 0;
+			break;
 
 		default:
 			// Credits
