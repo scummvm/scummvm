@@ -2541,14 +2541,11 @@ void ChampionMan::renameChampion(Champion *champ) {
 						curCharacter = '\b';
 						break;
 					}
-#if 0
-					if ((mousePos.x < 107) || (mousePos.x > 215) || (mousePos.y < 116) || (mousePos.y > 144)) {/* Coordinates of table of all other characters */
-						//goto T0281023;
-					}
-					if (!((mousePos.x + 4) % 10) || (!((mousePos.y + 5) % 10) && ((mousePos.x < 207) || (mousePos.y != 135)))) {
-						//goto T0281023;
-					}
-#endif
+					if ((mousePos.x < 107) || (mousePos.x > 215) || (mousePos.y < 116) || (mousePos.y > 144))
+						/* Coordinates of table of all other characters */
+						continue; //goto T0281023;
+					if (!((mousePos.x + 4) % 10) || (!((mousePos.y + 5) % 10) && ((mousePos.x < 207) || (mousePos.y != 135))))
+						continue; //goto T0281023;
 					curCharacter = 'A' + (11 * ((mousePos.y - 116) / 10)) + ((mousePos.x - 107) / 10);
 					if ((curCharacter == 86) || (curCharacter == 97)) {
 						// The 'Return' button occupies two cells in the table
