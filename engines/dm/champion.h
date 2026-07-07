@@ -566,8 +566,8 @@ public:
 	void dropAllObjects(uint16 champIndex); // @ F0318_CHAMPION_DropAllObjects
 	void unpoison(int16 champIndex); // @ F0323_CHAMPION_Unpoison
 	void applyTimeEffects(); // @ F0331_CHAMPION_ApplyTimeEffects_CPSF
-	void savePartyPart2(Common::OutSaveFile *file);
-	void loadPartyPart2(Common::InSaveFile *file);
+	void savePartyPart2(Common::WriteStream *file);
+	void loadPartyPart2(Common::SeekableReadStream *file);
 
 	Box _boxChampionIcons[4];
 	Color _championColor[4];

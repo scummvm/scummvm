@@ -53,66 +53,12 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override {
 		return
-			(f == kSupportsListSaves) ||
 			(f == kSupportsLoadingDuringStartup) ||
-			(f == kSavesSupportThumbnail) ||
-			(f == kSavesSupportMetaInfo) ||
-			(f == kSimpleSavesNames) ||
-			(f == kSavesSupportCreationDate);
+			(checkExtendedSaves(f) && f != kSimpleSavesNames);
 	}
 
 	int getMaximumSaveSlot() const override { return 99; }
 
-	SaveStateList listSaves(const char *target) const override {
-		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-		SaveGameHeader header;
-		Common::String pattern = target;
-		pattern += ".###";
-
-		Common::StringArray filenames = saveFileMan->listSavefiles(pattern.c_str());
-
-		SaveStateList saveList;
-
-		for (const auto &filename : filenames) {
-			// Obtain the last 3 digits of the filename, since they correspond to the save slot
-			int slotNum = atoi(filename.c_str() + filename.size() - 3);
-
-			if ((slotNum >= 0) && (slotNum <= 999)) {
-				Common::InSaveFile *in = saveFileMan->openForLoading(filename.c_str());
-				if (in) {
-					if (DM::readSaveGameHeader(in, &header))
-						saveList.push_back(SaveStateDescriptor(this, slotNum, header._descr.getDescription()));
-					delete in;
-				}
-			}
-		}
-
-		// Sort saves based on slot number.
-		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-		return saveList;
-	}
-
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
-		Common::String filename = Common::String::format("%s.%03u", target, slot);
-		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
-
-		if (in) {
-			DM::SaveGameHeader header;
-
-			bool successfulRead = DM::readSaveGameHeader(in, &header);
-			delete in;
-
-			if (successfulRead) {
-				SaveStateDescriptor desc(this, slot, header._descr.getDescription());
-
-				return header._descr;
-			}
-		}
-
-		return SaveStateDescriptor();
-	}
-
-	bool removeSaveState(const char *target, int slot) const override { return false; }
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 

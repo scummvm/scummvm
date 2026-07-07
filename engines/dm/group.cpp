@@ -2108,7 +2108,7 @@ void GroupMan::fuseAction(uint16 mapX, uint16 mapY) {
 	}
 }
 
-void GroupMan::saveActiveGroupPart(Common::OutSaveFile *file) {
+void GroupMan::saveActiveGroupPart(Common::WriteStream *file) {
 	for (uint16 i = 0; i < _maxActiveGroupCount; ++i) {
 		ActiveGroup *group = &_activeGroups[i];
 		file->writeUint16BE(group->_groupThingIndex);
@@ -2127,7 +2127,7 @@ void GroupMan::saveActiveGroupPart(Common::OutSaveFile *file) {
 	}
 }
 
-void GroupMan::loadActiveGroupPart(Common::InSaveFile *file) {
+void GroupMan::loadActiveGroupPart(Common::SeekableReadStream *file) {
 	for (uint16 i = 0; i < _maxActiveGroupCount; ++i) {
 		ActiveGroup *group = &_activeGroups[i];
 		group->_groupThingIndex = file->readUint16BE();

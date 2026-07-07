@@ -971,7 +971,7 @@ T0255002:
 	}
 }
 
-void Timeline::saveEventsPart(Common::OutSaveFile *file) {
+void Timeline::saveEventsPart(Common::WriteStream *file) {
 	for (uint16 i = 0; i < _eventMaxCount; ++i) {
 		TimelineEvent *event = &_events[i];
 		file->writeSint32BE(event->_mapTime);
@@ -984,12 +984,12 @@ void Timeline::saveEventsPart(Common::OutSaveFile *file) {
 	}
 }
 
-void Timeline::saveTimelinePart(Common::OutSaveFile *file) {
+void Timeline::saveTimelinePart(Common::WriteStream *file) {
 	for (uint16 i = 0; i < _eventMaxCount; ++i)
 		file->writeUint16BE(_timeline[i]);
 }
 
-void Timeline::loadEventsPart(Common::InSaveFile *file) {
+void Timeline::loadEventsPart(Common::SeekableReadStream *file) {
 	for (uint16 i = 0; i < _eventMaxCount; ++i) {
 		TimelineEvent *event = &_events[i];
 		event->_mapTime = file->readSint32BE();
@@ -1002,7 +1002,7 @@ void Timeline::loadEventsPart(Common::InSaveFile *file) {
 	}
 }
 
-void Timeline::loadTimelinePart(Common::InSaveFile *file) {
+void Timeline::loadTimelinePart(Common::SeekableReadStream *file) {
 	for (uint16 i = 0; i < _eventMaxCount; ++i)
 		_timeline[i] = file->readUint16BE();
 }

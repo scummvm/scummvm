@@ -663,7 +663,7 @@ public:
 	void resetThing(Thing thing);
 
 	// TODO: this does stuff other than load the file!
-	void loadDungeonFile(Common::InSaveFile *file);	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
+	void loadDungeonFile(Common::SeekableReadStream *file);	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
 	void setCurrentMapAndPartyMap(uint16 mapIndex); // @ F0174_DUNGEON_SetCurrentMapAndPartyMap
 
 	bool isWallOrnAnAlcove(int16 wallOrnIndex); // @ F0149_DUNGEON_IsWallOrnamentAnAlcove
