@@ -528,16 +528,25 @@ int room_picture_load(int roomId, Buffer *picture, int load_flags) {
 
 	load_handle.open = false;
 
+	// Open up the art file
 	env_get_level_path(temp_buf, ROOM, ".ART", 0, roomId);
 	if (loader_open(&load_handle, temp_buf, "rb", true)) {
 		room_load_error = 1;
 		goto done;
 	}
 
-	if (!loader_read(&art, sizeof(RoomArt), 1, &load_handle)) {
-		room_load_error = 2;
-		goto done;
+	// Read it's contents
+	{
+		byte buffer[RoomArt::SIZE];
+		if (!loader_read(buffer, RoomArt::SIZE, 1, &load_handle)) {
+			room_load_error = 2;
+			goto done;
+		}
+
+		Common::MemoryReadStream src(buffer, RoomArt::SIZE);
+		art.load(&src);
 	}
+
 
 	xs = art.xs;
 	ys = art.ys;

@@ -127,8 +127,8 @@ typedef Rail *RailPtr;
 /* Room artwork definition structure (.ART files) */
 
 struct RoomArt {
-	int xs;                             /* Size of picture (follows this... */
-	int ys;                             /* ...structure in the .ART file)   */
+	int16 xs;                           /* Size of picture (follows this... */
+	int16 ys;                           /* ...structure in the .ART file)   */
 	ColorList color_list;               /* List of colors used in picture   */
 	CycleList cycle_list;               /* List of color cycling ranges     */
 
