@@ -166,6 +166,8 @@ Animation *Disk::loadAnim(const char *filename, Graphics::PixelFormat &targetFor
 }
 
 bool Disk::fileExists(uint16 fileNr) {
+	if (SkyEngine::isIbass())
+		return (getEntry(fileNr) != NULL);
 	return (getFileInfo(fileNr) != NULL);
 }
 
