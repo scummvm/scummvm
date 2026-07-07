@@ -230,6 +230,14 @@ bool DMEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _canLoadFromGMM;
 }
 
+bool DMEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	return true;
+}
+
+Common::String DMEngine::getSaveStateName(int slot) const {
+	return getMetaEngine()->getSavegameFile(slot, _targetName.c_str());
+}
+
 void DMEngine::delay(uint16 verticalBlank) {
 	for (uint16 i = 0; i < verticalBlank * 2; ++i) {
 		_eventMan->processInput();

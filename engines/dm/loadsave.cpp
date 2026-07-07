@@ -41,17 +41,7 @@
 
 namespace DM {
 
-LoadgameResult DMEngine::loadgame(int16 slot) {
-	if (slot >= 0)
-		_gameMode = kDMModeLoadSavedGame;
-
-	if (slot == -1 && _gameMode == kDMModeLoadSavedGame)
-		return kDMLoadgameFailure;
-
-	bool fadePalette = true;
-	Common::String fileName;
-	Common::SaveFileManager *saveFileManager = nullptr;
-	Common::InSaveFile *file = nullptr;
+Common::Error DMEngine::loadGameStream(Common::SeekableReadStream *file) {
 
 	struct {
 		SaveTarget _saveTarget;
@@ -61,69 +51,86 @@ LoadgameResult DMEngine::loadgame(int16 slot) {
 		uint16 _dungeonId;
 	} dmSaveHeader;
 
+	dmSaveHeader._saveTarget = (SaveTarget)file->readSint32BE();
+	dmSaveHeader._saveVersion = file->readSint32BE();
+	dmSaveHeader._saveFormat = (OriginalSaveFormat)file->readSint32BE();
+	dmSaveHeader._savePlatform = (OriginalSavePlatform)file->readSint32BE();
+
+	// Skip _gameId, which was useless
+	file->readSint32BE();
+	dmSaveHeader._dungeonId = file->readUint16BE();
+
+	_gameTime = file->readSint32BE();
+	// G0349_ul_LastRandomNumber = L1371_s_GlobalData.LastRandomNumber;
+	_championMan->_partyChampionCount = file->readUint16BE();
+	_dungeonMan->_partyMapX = file->readSint16BE();
+	_dungeonMan->_partyMapY = file->readSint16BE();
+	_dungeonMan->_partyDir = (Direction)file->readUint16BE();
+	_dungeonMan->_partyMapIndex = file->readByte();
+	_championMan->_leaderIndex = (ChampionIndex)file->readSint16BE();
+	_championMan->_magicCasterChampionIndex = (ChampionIndex)file->readSint16BE();
+	_timeline->_eventCount = file->readUint16BE();
+	_timeline->_firstUnusedEventIndex = file->readUint16BE();
+	_timeline->_eventMaxCount = file->readUint16BE();
+	_groupMan->_currActiveGroupCount = file->readUint16BE();
+	_projexpl->_lastCreatureAttackTime = file->readSint32BE();
+	_projexpl->_lastPartyMovementTime = file->readSint32BE();
+	_disabledMovementTicks = file->readSint16BE();
+	_projectileDisableMovementTicks = file->readSint16BE();
+	_lastProjectileDisabledMovementDirection = file->readSint16BE();
+	uint16 handVal = file->readUint16BE();
+	_championMan->_leaderHandObject = (handVal == 0) ? _thingNone : Thing(handVal);
+	_groupMan->_maxActiveGroupCount = file->readUint16BE();
+	if (!_restartGameRequest) {
+		_timeline->initTimeline();
+		_groupMan->initActiveGroups();
+	}
+
+	_groupMan->loadActiveGroupPart(file);
+	_championMan->loadPartyPart2(file);
+	_timeline->loadEventsPart(file);
+	_timeline->loadTimelinePart(file);
+
+	// read sentinel
+	uint32 sentinel = file->readUint32BE();
+	if (sentinel != 0x6f85e3d3) {
+		warning("Savegame is corrupted (sentinel mismatch)");
+		return Common::kReadingFailed;
+	}
+
+	_dungeonId = dmSaveHeader._dungeonId;
+
+	if (file->err())
+		return Common::kReadingFailed;
+
+	return Common::kNoError;
+}
+
+LoadgameResult DMEngine::loadgame(int16 slot) {
+	if (slot >= 0)
+		_gameMode = kDMModeLoadSavedGame;
+
+	if (slot == -1 && _gameMode == kDMModeLoadSavedGame)
+		return kDMLoadgameFailure;
+
+	bool fadePalette = true;
+	Common::InSaveFile *file = nullptr;
+
 	if (_gameMode != kDMModeLoadSavedGame) {
 		//L1366_B_FadePalette = !F0428_DIALOG_RequireGameDiskInDrive_NoDialogDrawn(C0_DO_NOT_FORCE_DIALOG_DM_CSB, true);
 		_restartGameAllowed = false;
 		_championMan->_partyChampionCount = 0;
 		_championMan->_leaderHandObject = _thingNone;
 	} else {
-		fileName = getSavefileName(slot);
-		saveFileManager = _system->getSavefileManager();
-		file = saveFileManager->openForLoading(fileName);
+		file = _system->getSavefileManager()->openForLoading(getSaveStateName(slot));
+		if (!file)
+			return kDMLoadgameFailure;
 
-		SaveGameHeader header;
-		if (!readSaveGameHeader(file, &header)) {
+		Common::Error err = loadGameStream(file);
+		if (err.getCode() != Common::kNoError) {
 			delete file;
 			return kDMLoadgameFailure;
 		}
-
-		warning("MISSING CODE: missing check for matching format and platform in save in f435_loadgame");
-
-		dmSaveHeader._saveTarget = (SaveTarget)file->readSint32BE();
-		dmSaveHeader._saveVersion = file->readSint32BE();
-		dmSaveHeader._saveFormat = (OriginalSaveFormat)file->readSint32BE();
-		dmSaveHeader._savePlatform = (OriginalSavePlatform)file->readSint32BE();
-
-		// Skip _gameId, which was useless
-		file->readSint32BE();
-		dmSaveHeader._dungeonId = file->readUint16BE();
-
-		_gameTime = file->readSint32BE();
-		// G0349_ul_LastRandomNumber = L1371_s_GlobalData.LastRandomNumber;
-		_championMan->_partyChampionCount = file->readUint16BE();
-		_dungeonMan->_partyMapX = file->readSint16BE();
-		_dungeonMan->_partyMapY = file->readSint16BE();
-		_dungeonMan->_partyDir = (Direction)file->readUint16BE();
-		_dungeonMan->_partyMapIndex = file->readByte();
-		_championMan->_leaderIndex = (ChampionIndex)file->readSint16BE();
-		_championMan->_magicCasterChampionIndex = (ChampionIndex)file->readSint16BE();
-		_timeline->_eventCount = file->readUint16BE();
-		_timeline->_firstUnusedEventIndex = file->readUint16BE();
-		_timeline->_eventMaxCount = file->readUint16BE();
-		_groupMan->_currActiveGroupCount = file->readUint16BE();
-		_projexpl->_lastCreatureAttackTime = file->readSint32BE();
-		_projexpl->_lastPartyMovementTime = file->readSint32BE();
-		_disabledMovementTicks = file->readSint16BE();
-		_projectileDisableMovementTicks = file->readSint16BE();
-		_lastProjectileDisabledMovementDirection = file->readSint16BE();
-		uint16 handVal = file->readUint16BE();
-		_championMan->_leaderHandObject = (handVal == 0) ? _thingNone : Thing(handVal);
-		_groupMan->_maxActiveGroupCount = file->readUint16BE();
-		if (!_restartGameRequest) {
-			_timeline->initTimeline();
-			_groupMan->initActiveGroups();
-		}
-
-		_groupMan->loadActiveGroupPart(file);
-		_championMan->loadPartyPart2(file);
-		_timeline->loadEventsPart(file);
-		_timeline->loadTimelinePart(file);
-
-		// read sentinel
-		uint32 sentinel = file->readUint32BE();
-		assert(sentinel == 0x6f85e3d3);
-
-		_dungeonId = dmSaveHeader._dungeonId;
 	}
 
 	_dungeonMan->loadDungeonFile(file);
@@ -226,7 +233,8 @@ void DMEngine::saveGame() {
 				_championMan->_champions[_championMan->_leaderIndex]._load -= champHandObjWeight;
 			}
 
-			if (!writeCompleteSaveFile(saveSlot, saveDescription, saveAndPlayChoice)) {
+			Common::Error saveErr = saveGameState(saveSlot, saveDescription);
+			if (saveErr.getCode() != Common::kNoError) {
 				_dialog->dialogDraw(nullptr, "Unable to open file for saving", "OK", nullptr, nullptr, nullptr, false, false, false);
 				_dialog->getChoice(1, kDMDialogCommandSetViewport, 0, kDMDialogChoiceNone);
 			}
@@ -256,44 +264,11 @@ Common::String DMEngine::getSavefileName(uint16 slot) {
 #define SAVEGAME_ID       MKTAG('D', 'M', '2', '1')
 #define SAVEGAME_VERSION  1
 
-void DMEngine::writeSaveGameHeader(Common::OutSaveFile *out, const Common::String& saveName) {
-	out->writeUint32BE(SAVEGAME_ID);
-
-	// Write version
-	out->writeByte(SAVEGAME_VERSION);
-
-	// Write savegame name
-	out->writeString(saveName);
-	out->writeByte(0);
-
-	// Save the game thumbnail
-	if (_saveThumbnail)
-		out->write(_saveThumbnail->getData(), _saveThumbnail->size());
-	else
-		Graphics::saveThumbnail(*out);
-
-	// Creation date/time
-	TimeDate curTime;
-	_system->getTimeAndDate(curTime);
-
-	uint32 saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
-	uint16 saveTime = ((curTime.tm_hour & 0xFF) << 8) | ((curTime.tm_min) & 0xFF);
-	uint32 playTime = getTotalPlayTime() / 1000;
-
-	out->writeUint32BE(saveDate);
-	out->writeUint16BE(saveTime);
-	out->writeUint32BE(playTime);
+Common::Error DMEngine::saveGameStream(Common::WriteStream *file, bool isAutosave) {
+	return writeCompleteSaveFile(file);
 }
 
-bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescription, int16 saveAndPlayChoice) {
-	Common::String savefileName = getSavefileName(saveSlot);
-	Common::SaveFileManager *saveFileManager = _system->getSavefileManager();
-	Common::OutSaveFile *file = saveFileManager->openForSaving(savefileName);
-
-	if (!file)
-		return false;
-
-	writeSaveGameHeader(file, saveDescription);
+Common::Error DMEngine::writeCompleteSaveFile(Common::WriteStream *file) {
 
 	file->writeSint32BE(_gameVersion->_saveTargetToWrite);
 	file->writeSint32BE(1); // save version
@@ -493,59 +468,10 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	for (uint32 i = 0; i < _dungeonMan->_dungeonFileHeader._rawMapDataSize; ++i)
 		file->writeByte(_dungeonMan->_dungeonRawMapData[i]);
 
-	file->flush();
-	file->finalize();
-	delete file;
+	if (file->err())
+		return Common::kWritingFailed;
 
-	return true;
-}
-
-WARN_UNUSED_RESULT bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader *header, bool skipThumbnail) {
-	uint32 id = in->readUint32BE();
-
-	// Check if it's a valid ScummVM savegame
-	if (id != SAVEGAME_ID)
-		return false;
-
-	// Read in the version
-	header->_version = in->readByte();
-
-	// Check that the save version isn't newer than this binary
-	if (header->_version > SAVEGAME_VERSION)
-		return false;
-
-	// Read in the save name
-	Common::String saveName;
-	char ch;
-	while ((ch = (char)in->readByte()) != '\0')
-		saveName += ch;
-	header->_descr.setDescription(saveName);
-
-	// Get the thumbnail
-	Graphics::Surface *thumbnail;
-	if (!Graphics::loadThumbnail(*in, thumbnail, skipThumbnail)) {
-		return false;
-	}
-	header->_descr.setThumbnail(thumbnail);
-
-	uint32 saveDate = in->readUint32BE();
-	uint16 saveTime = in->readUint16BE();
-	uint32 playTime = in->readUint32BE();
-
-	int day = (saveDate >> 24) & 0xFF;
-	int month = (saveDate >> 16) & 0xFF;
-	int year = saveDate & 0xFFFF;
-	header->_descr.setSaveDate(year, month, day);
-
-	int hour = (saveTime >> 8) & 0xFF;
-	int minutes = saveTime & 0xFF;
-	header->_descr.setSaveTime(hour, minutes);
-
-	header->_descr.setPlayTime(playTime * 1000);
-	if (g_engine)
-		g_engine->setTotalPlayTime(playTime * 1000);
-
-	return true;
+	return Common::kNoError;
 }
 
 }

@@ -1736,7 +1736,7 @@ void ChampionMan::applyTimeEffects() {
 	drawAllChampionStates();
 }
 
-void ChampionMan::savePartyPart2(Common::OutSaveFile *file) {
+void ChampionMan::savePartyPart2(Common::WriteStream *file) {
 	for (uint16 i = 0; i < 4; ++i) {
 		Champion *champ = &_champions[i];
 		file->writeUint16BE(champ->_attributes);
@@ -1798,7 +1798,7 @@ void ChampionMan::savePartyPart2(Common::OutSaveFile *file) {
 	file->writeByte(party._event71Count_Invisibility);
 }
 
-void ChampionMan::loadPartyPart2(Common::InSaveFile *file) {
+void ChampionMan::loadPartyPart2(Common::SeekableReadStream *file) {
 	for (uint16 i = 0; i < 4; ++i) {
 		Champion *champ = &_champions[i];
 		champ->_attributes = file->readUint16BE();

@@ -242,8 +242,8 @@ public:
 	uint16 isLordChaosOnSquare(int16 mapX, int16 mapY); // @ F0222_GROUP_IsLordChaosOnSquare
 	bool isFluxcageOnSquare(int16 mapX, int16 mapY); // @ F0221_GROUP_IsFluxcageOnSquare
 	void fuseAction(uint16 mapX, uint16 mapY); // @ F0225_GROUP_FuseAction
-	void saveActiveGroupPart(Common::OutSaveFile *file);
-	void loadActiveGroupPart(Common::InSaveFile *file);
+	void saveActiveGroupPart(Common::WriteStream *file);
+	void loadActiveGroupPart(Common::SeekableReadStream *file);
 };
 }
 

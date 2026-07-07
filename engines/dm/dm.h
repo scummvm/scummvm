@@ -165,10 +165,6 @@ public:
 
 #define CALL_MEMBER_FN(object, ptrToMember)  ((object).*(ptrToMember))
 
-struct SaveGameHeader {
-	byte _version;
-	SaveStateDescriptor _descr;
-};
 
 class DMEngine : public Engine {
 private:
@@ -179,8 +175,9 @@ private:
 	void gameloop(); // @ F0002_MAIN_GameLoop_CPSDF
 	void initConstants();
 	Common::String getSavefileName(uint16 slot);
-	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
-	bool writeCompleteSaveFile(int16 slot, Common::String &desc, int16 saveAndPlayChoice);
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error writeCompleteSaveFile(Common::WriteStream *file);
 	void drawEntrance(); // @ F0439_STARTEND_DrawEntrance
 	void fuseSequenceUpdate(); // @ F0445_STARTEND_FuseSequenceUpdate
 	void processEntrance(); // @ F0441_STARTEND_ProcessEntrance
@@ -194,6 +191,8 @@ public:
 
 	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	Common::String getSaveStateName(int slot) const override;
 
 	bool isDemo() const;
 
@@ -297,7 +296,6 @@ public:
 	Thing _thingParty;				 // @ C0xFFFF_THING_PARTY
 };
 
-WARN_UNUSED_RESULT bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader *header, bool skipThumbnail = true);
 
 } // End of namespace DM
 

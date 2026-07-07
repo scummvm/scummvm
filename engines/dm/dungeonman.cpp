@@ -537,7 +537,7 @@ void DungeonMan::decompressDungeonFile() {
 	f.close();
 }
 
-void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
+void DungeonMan::loadDungeonFile(Common::SeekableReadStream *file) {
 	static const byte additionalThingCounts[16] = { // @ G0236_auc_Graphic559_AdditionalThingCounts{
 		0,    /* Door */
 		0,    /* Teleporter */
