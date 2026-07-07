@@ -19,11 +19,9 @@
  *
  */
 
-#include "graphics/managed_surface.h"
+#include "graphics/mactoolbox/toolbox.h"
 
-#include "fool/fool.h"
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -43,7 +41,7 @@ void FoolGame::metapuzzleRun() {
 		var_i16_7ce |= 1;
 		copyScreen(0, _scrollPage);
 		fillRect(0x127, 0x69, 0x138, 0x190, 0);
-		fillRect(1, kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
+		fillRect(1, Graphics::MacToolbox::kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
 		fillRect(0x14, 0x67, SCREEN_HEIGHT, 0x1b1, 2);
 		var_i16_484 = 0;
 		for (int16 j = 0x1a; j <= 0x132; j += 0x23) {
@@ -69,10 +67,10 @@ void FoolGame::metapuzzleRun() {
 		if (_event.what == 1) {
 			metapuzzleOnClick();
 		}
-		if ((_event.modifiers & (kModLOptionKeyDown | kModMouseButtonUp)) == (kModLOptionKeyDown | kModMouseButtonUp)) {
+		if ((_event.modifiers & (Graphics::MacToolbox::kModLOptionKeyDown | Graphics::MacToolbox::kModMouseButtonUp)) == (Graphics::MacToolbox::kModLOptionKeyDown | Graphics::MacToolbox::kModMouseButtonUp)) {
 			metapuzzleOnOption();
 		}
-		if ((_event.modifiers & (kModLShiftKeyDown | kModMouseButtonUp)) == (kModLShiftKeyDown | kModMouseButtonUp)) {
+		if ((_event.modifiers & (Graphics::MacToolbox::kModLShiftKeyDown | Graphics::MacToolbox::kModMouseButtonUp)) == (Graphics::MacToolbox::kModLShiftKeyDown | Graphics::MacToolbox::kModMouseButtonUp)) {
 			metapuzzleOnShift();
 		}
 		if (_activePuzzle != 0) {
@@ -154,7 +152,7 @@ void FoolGame::sub_138_21e() {
 		straightPathRun();
 	}
 	if (_activePuzzle == 0x57) {
-		zoomRect(arr_i16_4d20[28], arr_i16_4d20[0x1c+1], arr_i16_4d20[0x1c+2], arr_i16_4d20[0x1c+3], 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kPatXor, 0x1a);
+		zoomRect(arr_i16_4d20[28], arr_i16_4d20[0x1c+1], arr_i16_4d20[0x1c+2], arr_i16_4d20[0x1c+3], 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, Graphics::MacToolbox::kPatXor, 0x1a);
 		mazeRun();
 	}
 	// 138:0334
@@ -199,7 +197,7 @@ void FoolGame::metapuzzleSetupMenu() {
 void FoolGame::metapuzzleWheel() {
 	// 138:049e
 	for (int16 i = 1; i <= 2; i++) {
-		zoomRect(arr_i16_4d20[0x30], arr_i16_4d20[0x30 + 1], arr_i16_4d20[0x30 + 2], arr_i16_4d20[0x30 + 3], 0x6e, 7, 0x100, 0x5d, 0x1, kPatXor, 0x1a);
+		zoomRect(arr_i16_4d20[0x30], arr_i16_4d20[0x30 + 1], arr_i16_4d20[0x30 + 2], arr_i16_4d20[0x30 + 3], 0x6e, 7, 0x100, 0x5d, 0x1, Graphics::MacToolbox::kPatXor, 0x1a);
 	}
 	_zbasic->picture(6, 0x6d, _metapuzzleWheelPic);
 	menuClickMessage();
@@ -211,7 +209,7 @@ void FoolGame::metapuzzleSecretCode() {
 	var_i16_c00 = 1;
 	for (int16 i = 1; i <= 2; i++) {
 		var_i16_68c = _activePuzzle - 0x50;
-		zoomRect(arr_i16_4d20[var_i16_68c*4], arr_i16_4d20[var_i16_68c*4+1], arr_i16_4d20[var_i16_68c*4+2], arr_i16_4d20[var_i16_68c*4+3], 0x122, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kPatXor, 0x1a);
+		zoomRect(arr_i16_4d20[var_i16_68c*4], arr_i16_4d20[var_i16_68c*4+1], arr_i16_4d20[var_i16_68c*4+2], arr_i16_4d20[var_i16_68c*4+3], 0x122, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, Graphics::MacToolbox::kPatXor, 0x1a);
 	}
 	if (_activePuzzle == 0x58) {
 		_metapuzzleSecretGoal = _zbasic->str(OFF(4)); // treasure name
@@ -302,7 +300,7 @@ void FoolGame::metapuzzleSecretCodeDrawText() {
 	if (!((_keyLastPressed >= 0x41) && (_keyLastPressed <= 0x5a))) {
 		return;
 	}
-	_zbasic->text(kFontLarge, 0x18, 0x19, kSrcBic);
+	_zbasic->text(kFontLarge, 0x18, 0x19, Graphics::MacToolbox::kSrcBic);
 	_metapuzzleSecretCodeCount++;
 	if (_metapuzzleSecretCodeSpaceOffset == _metapuzzleSecretCodeCount) {
 		if (_zbasic->leftStr(_metapuzzleSecretGoal, _metapuzzleSecretCodeSpaceOffset - 1) == _metapuzzleSecretBuffer) {
@@ -323,7 +321,7 @@ void FoolGame::metapuzzleSecretCodeDrawText() {
 
 void FoolGame::sub_138_9c4() {
 	// 138:09c4
-	_zbasic->text(kFontLarge, 0x18, 0x19, kSrcBic);
+	_zbasic->text(kFontLarge, 0x18, 0x19, Graphics::MacToolbox::kSrcBic);
 	Common::Rect temp;
 	temp.top = arr_i16_1eb8[0];
 	temp.left = arr_i16_1eb8[1];
@@ -349,7 +347,7 @@ void FoolGame::metapuzzleSecretCodeReset() {
 	temp.bottom = arr_i16_1eb8[2];
 	temp.right = arr_i16_1eb8[3];
 	_toolbox->FillRect(temp, _patterns[2]);
-	_zbasic->text(kFontFool, 0xc, 0, kSrcBic);
+	_zbasic->text(kFontFool, 0xc, 0, Graphics::MacToolbox::kSrcBic);
 	var_str_384 = _zbasic->str(OFF(15)); // if you know which is which, enter the letters you wish to switch
 	drawTextCenter(var_str_384, 0x140);
 	_metapuzzleSecretBuffer.clear(); // was: str(OFF(16))
@@ -387,7 +385,7 @@ void FoolGame::metapuzzleOnShift() {
 		return;
 	}
 	var_i16_200e = 0;
-	while ((_event.modifiers & kModLShiftKeyDown) != 0) {
+	while ((_event.modifiers & Graphics::MacToolbox::kModLShiftKeyDown) != 0) {
 		getNextEvent(-1); // was: 0
 		if ((_event.where.x >= 0x6e) && (_event.where.y >= 0x1a) && (_event.where.x <= 0x1a8) && (_event.where.y <= SCREEN_HEIGHT)) {
 			// 138:0c04
@@ -426,7 +424,7 @@ void FoolGame::metapuzzleOnShift() {
 					var_str_384 = _zbasic->str(OFF(17)); // the book of thoth
 				}
 				// 138:0d9e
-				_zbasic->text(kFontChicago, 0xc, 0, kSrcOr);
+				_zbasic->text(kFontChicago, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 				var_i16_30 = _toolbox->StringWidth(var_str_384);
 				_toolbox->MoveTo((_windowWidth / 2) - (var_i16_30 / 2), 0xf);
 				_toolbox->DrawString(var_str_384);
@@ -435,7 +433,7 @@ void FoolGame::metapuzzleOnShift() {
 				var_i16_200e = _selectedMenuChapter;
 			}
 			// 138:0dfc
-			if ((_event.modifiers & kModMouseButtonUp) == 0) {
+			if ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0) {
 				if (_selectedMenuChapter != 0x51) {
 					setStateBits(kStateChapterSelect | kStateReturn);
 					return;

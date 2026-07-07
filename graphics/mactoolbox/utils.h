@@ -20,14 +20,15 @@
  *
  */
 
-#ifndef FOOL_UTILS_H
-#define FOOL_UTILS_H
+#ifndef GRAPHICS_MACTOOLBOX_UTILS_H
+#define GRAPHICS_MACTOOLBOX_UTILS_H
 
 #include "graphics/managed_surface.h"
 
-#include "fool/toolbox.h"
+#include "graphics/mactoolbox/toolbox.h"
 
-namespace Fool {
+namespace Graphics {
+namespace MacToolbox {
 
 Common::Rect readRect(Common::SeekableReadStream &stream);
 Common::Point readPoint(Common::SeekableReadStream &stream);
@@ -37,11 +38,12 @@ Pattern readPattern(Common::SeekableReadStream &stream);
 PixMap readPixMap(Common::SeekableReadStream &stream, bool hasBaseAddr);
 BitMap readBitsRectMono(Common::SeekableReadStream &stream, PixMap &pixMap, bool compressed);
 
-Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const Common::Point &dstPos, SourceMode mode);
-Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const Common::Point &dstPos, PatternMode mode);
+Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const Common::Point &dstPos, SourceMode mode, uint32 black, uint32 white);
+Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const Common::Point &dstPos, PatternMode mode, uint32 black, uint32 white);
 
-Graphics::ManagedSurface *createRemappedSurface(const Graphics::Surface *surface, const byte *palette, uint colorCount);
+Graphics::ManagedSurface *createRemappedSurface(Graphics::MacWindowManager *wm, const Graphics::Surface *surface, const byte *palette, uint colorCount);
 
-} // End of namespace Fool
+} // End of namespace MacToolbox
+} // End of namespace Graphics
 
-#endif // FOOL_UTILS_H
+#endif // GRAPHICS_MACTOOLBOX_UTILS_H

@@ -21,15 +21,12 @@
 
 #include "audio/audiostream.h"
 #include "audio/softsynth/pcspk.h"
-#include "common/system.h"
-#include "common/savefile.h"
 
-#include "gui/filebrowser-dialog.h"
 
-#include "fool/fool.h"
-#include "fool/toolbox.h"
+#include "graphics/mactoolbox/toolbox.h"
 
-namespace Fool {
+namespace Graphics {
+namespace MacToolbox {
 
 // FIXME: This sound code is incredibly basic, only providing
 // an interface for the square wave synthesiser.
@@ -74,4 +71,5 @@ int16 Toolbox::GetSoundVol() {
 }
 
 
-} // End of namespace Fool
+} // End of namespace MacToolbox
+} // End of namespace Graphics

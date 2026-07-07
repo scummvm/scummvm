@@ -25,13 +25,13 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "engines/util.h"
+#include "graphics/mactoolbox/toolbox.h"
 #include "graphics/palette.h"
 
 #include "fool/fool.h"
 #include "fool/fool_game.h"
 #include "fool/fool_prologue.h"
 #include "fool/detection.h"
-#include "fool/toolbox.h"
 
 namespace Fool {
 

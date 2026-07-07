@@ -19,11 +19,9 @@
  *
  */
 
-#include "graphics/managed_surface.h"
+#include "graphics/mactoolbox/toolbox.h"
 
-#include "fool/fool.h"
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -71,7 +69,7 @@ void FoolGame::straightPathRun() {
 		_straightPathGoal += _zbasic->indexRaw(1, i);
 		// 143:0276
 	}
-	_zbasic->text(kFontPuzzle, arr_i16_1eb8[14], 0, kSrcOr);
+	_zbasic->text(kFontPuzzle, arr_i16_1eb8[14], 0, Graphics::MacToolbox::kSrcOr);
 	_zbasic->unk_20();
 	// 143:02b6
 	for (int16 j = 0; j <= arr_i16_1eb8[1]; j++) {
@@ -106,7 +104,7 @@ void FoolGame::straightPathRun() {
 		// 143:0500
 		while ((_stateFlags == kStateNull) && (!_activePuzzleSolved)) {
 			getNextEvent(-1);
-			if (_event.what == kMouseDown) {
+			if (_event.what == Graphics::MacToolbox::kMouseDown) {
 				straightPathOnClick();
 			}
 			if ((_keyLastPressed == 3) || (_keyLastPressed == 0xd)) {
@@ -186,7 +184,7 @@ void FoolGame::straightPathReset() {
 void FoolGame::straightPathDrawText() {
 	// 143:0864
 	straightPathClearText();
-	_zbasic->text(kFontLarge, 0x18, 0x18, kSrcBic);
+	_zbasic->text(kFontLarge, 0x18, 0x18, Graphics::MacToolbox::kSrcBic);
 	drawTextCenter(_activePuzzleBuffer, 0x148);
 }
 
@@ -197,7 +195,7 @@ void FoolGame::straightPathClearText() {
 
 void FoolGame::straightPathSuccess() {
 	// 143:08b0
-	_toolbox->PenMode(kPatBic);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatBic);
 	_toolbox->PenPat(_patterns[1]);
 	for (int16 j = 1; j <= arr_i16_1eb8[1]; j++) {
 		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {

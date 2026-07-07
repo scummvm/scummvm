@@ -22,10 +22,10 @@
 #include "common/tokenizer.h"
 #include "graphics/macgui/macmenu.h"
 
-#include "fool/detection.h"
-#include "fool/toolbox.h"
+#include "graphics/mactoolbox/toolbox.h"
 
-namespace Fool {
+namespace Graphics {
+namespace MacToolbox {
 
 void Toolbox::AppendMenu(MenuHandle &theMenu, const Common::U32String &data) {
 	if (!theMenu) {
@@ -33,7 +33,7 @@ void Toolbox::AppendMenu(MenuHandle &theMenu, const Common::U32String &data) {
 		return;
 	}
 
-	debugC(5, kDebugLoading, "Toolbox::AppendMenu: menuID %d, data \"%s\"", theMenu->menuID, data.encode().c_str());
+	debugC(5, kDebugLevelMacToolbox, "Toolbox::AppendMenu: menuID %d, data \"%s\"", theMenu->menuID, data.encode().c_str());
 
 	if (_defaultMenu) {
 		Graphics::MacMenuSubMenu *sub = _defaultMenu->getSubmenu(nullptr, theMenu->menuID-1);
@@ -85,7 +85,7 @@ uint16 Toolbox::CountMItems(MenuHandle &theMenu) {
 }
 
 void Toolbox::DeleteMenu(uint16 menuID) {
-	debugC(5, kDebugLoading, "Toolbox::DeleteMenu: menuID %d", menuID);
+	debugC(5, kDebugLevelMacToolbox, "Toolbox::DeleteMenu: menuID %d", menuID);
 	if (_menu.contains(menuID)) {
 		_menu.erase(menuID);
 	}
@@ -272,4 +272,5 @@ void Toolbox::SetItem(MenuHandle &theMenu, uint16 item, const Common::U32String 
 }
 
 
-} // End of namespace Fool
+} // End of namespace MacToolbox
+} // End of namespace Graphics

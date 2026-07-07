@@ -27,13 +27,12 @@
 #include "graphics/cursor.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/managed_surface.h"
-#include "image/pict.h"
 
-#include "fool/fool.h"
-#include "fool/toolbox.h"
-#include "fool/utils.h"
+#include "graphics/mactoolbox/toolbox.h"
+#include "graphics/mactoolbox/utils.h"
 
-namespace Fool {
+namespace Graphics {
+namespace MacToolbox {
 
 void Toolbox::BackPat(const Pattern &pat) {
 	if (_port) {
@@ -140,7 +139,7 @@ void Toolbox::_copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBi
 			clipDstRect.bottom += clipSrcRect.bottom - srcRect.bottom;
 		}
 	}
-	Common::Rect result = blitMono(subsrc, dstBits, mask, Common::Point(clipDstRect.left, clipDstRect.top), mode);
+	Common::Rect result = blitMono(subsrc, dstBits, mask, Common::Point(clipDstRect.left, clipDstRect.top), mode, _wm->_colorBlack, _wm->_colorWhite);
 	_addDirtyRect(dstBits, result);
 }
 
@@ -229,7 +228,7 @@ void Toolbox::_drawOval(const Common::Rect &r, const Pattern &pat, PatternMode m
 		// Only use a different pen size in frame mode, otherwise small filled shapes appear wrong
 		Common::Point penSize = frame ? _port->pnSize : Common::Point(1, 1);
 		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, penSize, bkColor);
-		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
+		Graphics::Primitives &pm = _wm->getDrawPrimitives();
 		// For thicker outlines, the shape should be adjusted inward
 		Common::Rect destRect = intermediate->getBounds();
 		destRect.right -= penSize.x;
@@ -242,7 +241,7 @@ void Toolbox::_drawOval(const Common::Rect &r, const Pattern &pat, PatternMode m
 		//Common::fill(fakePal+3, fakePal+768, 0x00);
 		//mask->rawSurface().debugPrint(5, 0, 0, 0, 0, -1, 512, fakePal);
 
-		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode);
+		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode, _wm->_colorBlack, _wm->_colorWhite);
 		_addDirtyRect(_port->portBits, dstRect);
 	}
 }
@@ -274,7 +273,7 @@ void Toolbox::_drawPoly(const PolyHandle &poly, const Pattern &pat, PatternMode 
 		destPos.y += _port->portRect.top;
 
 		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, _port->pnSize, bkColor);
-		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
+		Graphics::Primitives &pm = _wm->getDrawPrimitives();
 
 		Common::Point origin(bbox.left, bbox.top);
 
@@ -290,21 +289,21 @@ void Toolbox::_drawPoly(const PolyHandle &poly, const Pattern &pat, PatternMode 
 			for (auto &it : poly->polyPoints) {
 				polyX.push_back(it.x - origin.x);
 				polyY.push_back(it.y - origin.y);
-				debugC(5, kDebugGraphics, "Toolbox::_drawPoly: (%d, %d)", it.x - bbox.left, it.y - bbox.top);
+				debugC(5, kDebugLevelMacToolbox, "Toolbox::_drawPoly: (%d, %d)", it.x - bbox.left, it.y - bbox.top);
 			}
 			pm.drawPolygonScan(polyX.data(), polyY.data(), poly->polyPoints.size(), destRect, fgColor, &pd);
 		}
 
 
-		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode);
+		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode, _wm->_colorBlack, _wm->_colorWhite);
 
-		if (debugChannelSet(5, kDebugGraphics)) {
+		if (debugChannelSet(5, kDebugLevelMacToolbox)) {
 			//byte fakePal[768];
 			//Common::fill(fakePal, fakePal+3, 0xff);
 			//Common::fill(fakePal+3, fakePal+768, 0x00);
 			//mask->rawSurface().debugPrint(5, 0, 0, 0, 0, -1, 512, fakePal);
 
-			debugC(5, kDebugGraphics, "Toolbox::_drawPoly: dstRect (%d, %d) %dx%d, pattern %s, mode %d, frame %d, fgColor %08x, bkColor %08x", dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), pat.format().c_str(), mode, frame, fgColor, bkColor);
+			debugC(5, kDebugLevelMacToolbox, "Toolbox::_drawPoly: dstRect (%d, %d) %dx%d, pattern %s, mode %d, frame %d, fgColor %08x, bkColor %08x", dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), pat.format().c_str(), mode, frame, fgColor, bkColor);
 		}
 
 		_addDirtyRect(_port->portBits, dstRect);
@@ -334,7 +333,7 @@ void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode m
 		// Only use a different pen size in frame mode, otherwise small filled shapes appear wrong
 		Common::Point penSize = frame ? _port->pnSize : Common::Point(1, 1);
 		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, penSize, bkColor);
-		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
+		Graphics::Primitives &pm = _wm->getDrawPrimitives();
 		// For thicker outlines, the shape should be adjusted inward
 		Common::Rect destRect = intermediate->getBounds();
 		destRect.right -= penSize.x - 1;
@@ -345,10 +344,10 @@ void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode m
 		} else {
 			pm.drawFilledRect(destRect, fgColor, &pd);
 		}
-		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode);
+		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode, _wm->_colorBlack, _wm->_colorWhite);
 
-		if (debugChannelSet(5, kDebugGraphics)) {
-			debugC(5, kDebugGraphics, "Toolbox::_drawRect: dstRect (%d, %d) %dx%d, pattern %s, mode %d, frame %d, fgColor %08x, bkColor %08x", dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), pat.format().c_str(), mode, frame, fgColor, bkColor);
+		if (debugChannelSet(5, kDebugLevelMacToolbox)) {
+			debugC(5, kDebugLevelMacToolbox, "Toolbox::_drawRect: dstRect (%d, %d) %dx%d, pattern %s, mode %d, frame %d, fgColor %08x, bkColor %08x", dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), pat.format().c_str(), mode, frame, fgColor, bkColor);
 		}
 
 		_addDirtyRect(_port->portBits, dstRect);
@@ -373,7 +372,7 @@ void Toolbox::_drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternM
 		// Only use a different pen size in frame mode, otherwise small filled shapes appear wrong
 		Common::Point penSize = frame ? _port->pnSize : Common::Point(1, 1);
 		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, penSize, bkColor);
-		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
+		Graphics::Primitives &pm = _wm->getDrawPrimitives();
 		// For thicker outlines, the shape should be adjusted inward
 		Common::Rect destRect = intermediate->getBounds();
 		destRect.right -= penSize.x - 1;
@@ -384,10 +383,10 @@ void Toolbox::_drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternM
 		}
 		pm.drawRoundRect(destRect, ovalHeight/2, fgColor, !frame, &pd);
 
-		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode);
+		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode, _wm->_colorBlack, _wm->_colorWhite);
 
-		if (debugChannelSet(5, kDebugGraphics)) {
-			debugC(5, kDebugGraphics, "Toolbox::_drawRoundRect: dstRect (%d, %d) %dx%d, pattern %s, mode %d, frame %d, fgColor %08x, bkColor %08x, ovalWidth %d, ovalHeight %d", dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), pat.format().c_str(), mode, frame, fgColor, bkColor, ovalWidth, ovalHeight);
+		if (debugChannelSet(5, kDebugLevelMacToolbox)) {
+			debugC(5, kDebugLevelMacToolbox, "Toolbox::_drawRoundRect: dstRect (%d, %d) %dx%d, pattern %s, mode %d, frame %d, fgColor %08x, bkColor %08x, ovalWidth %d, ovalHeight %d", dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), pat.format().c_str(), mode, frame, fgColor, bkColor, ovalWidth, ovalHeight);
 		}
 
 		_addDirtyRect(_port->portBits, dstRect);
@@ -508,7 +507,7 @@ void Toolbox::GlobalToLocal(Common::Point &pt) {
 
 void Toolbox::HideCursor() {
 	_cursorLevel--;
-	g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorOff);
+	_wm->replaceCursor(Graphics::MacGUIConstants::kMacCursorOff);
 }
 
 void Toolbox::HidePen() {
@@ -519,7 +518,7 @@ void Toolbox::HidePen() {
 
 void Toolbox::InitCursor() {
 	_cursorLevel = 0;
-	g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+	_wm->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
 	if (_cursor) {
 		_cursor = nullptr;
 	}
@@ -539,7 +538,7 @@ void Toolbox::InvertOval(const Common::Rect &r) {
 	if (_port) {
 		// set pattern to full black
 		Pattern pat({0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
-		_drawOval(r, pat, kPatXor, false, g_engine->_wm._colorBlack, g_engine->_wm._colorWhite);
+		_drawOval(r, pat, kPatXor, false, _wm->_colorBlack, _wm->_colorWhite);
 		if (_port->picSave) {
 			_port->picSave->pushOpRect(kOpInvertOval, r);
 		}
@@ -550,7 +549,7 @@ void Toolbox::InvertPoly(const PolyHandle &poly) {
 	if (_port) {
 		// set pattern to full black
 		Pattern pat({0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
-		_drawPoly(poly, pat, kPatXor, false, g_engine->_wm._colorBlack, g_engine->_wm._colorWhite);
+		_drawPoly(poly, pat, kPatXor, false, _wm->_colorBlack, _wm->_colorWhite);
 		if (_port->picSave) {
 			_port->picSave->pushOpPoly(kOpInvertPoly, poly);
 		}
@@ -561,7 +560,7 @@ void Toolbox::InvertRect(const Common::Rect &r) {
 	if (_port) {
 		// set pattern to full black
 		Pattern pat({0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
-		_drawRect(r, pat, kPatXor, false, g_engine->_wm._colorBlack, g_engine->_wm._colorWhite);
+		_drawRect(r, pat, kPatXor, false, _wm->_colorBlack, _wm->_colorWhite);
 		if (_port->picSave) {
 			_port->picSave->pushOpRect(kOpInvertRect, r);
 		}
@@ -572,7 +571,7 @@ void Toolbox::InvertRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ov
 	if (_port) {
 		// set pattern to full black
 		Pattern pat({0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
-		_drawRoundRect(r, pat, kPatXor, false, g_engine->_wm._colorBlack, g_engine->_wm._colorWhite, ovalWidth, ovalHeight);
+		_drawRoundRect(r, pat, kPatXor, false, _wm->_colorBlack, _wm->_colorWhite, ovalWidth, ovalHeight);
 		if (_port->picSave) {
 			_port->picSave->pushOpPoint(kOpOvSize, Common::Point(ovalWidth, ovalHeight));
 			_port->picSave->pushOpRect(kOpInvertRRect, r);
@@ -612,14 +611,14 @@ void Toolbox::LineTo(int16 h, int16 v) {
 		Graphics::MacPatterns macpat({_port->pnPat.data});
 
 		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, _port->pnSize, _port->bkColor);
-		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
+		Graphics::Primitives &pm = _wm->getDrawPrimitives();
 		pm.drawLine(startPos.x, startPos.y, endPos.x, endPos.y, _port->fgColor, &pd);
 
-		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, _port->pnMode);
+		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, _port->pnMode, _wm->_colorBlack, _wm->_colorWhite);
 		_addDirtyRect(_port->portBits, dstRect);
 
-		if (debugChannelSet(5, kDebugGraphics)) {
-			debugC(5, kDebugGraphics, "Toolbox::LineTo: startPos(%d, %d), endPos(%d, %d), dstRect (%d, %d) %dx%d, pattern %s, mode %d, fgColor %08x, bkColor %08x", _port->pnLoc.x, _port->pnLoc.y, h, v, dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), _port->pnPat.format().c_str(), _port->pnMode, _port->fgColor, _port->bkColor);
+		if (debugChannelSet(5, kDebugLevelMacToolbox)) {
+			debugC(5, kDebugLevelMacToolbox, "Toolbox::LineTo: startPos(%d, %d), endPos(%d, %d), dstRect (%d, %d) %dx%d, pattern %s, mode %d, fgColor %08x, bkColor %08x", _port->pnLoc.x, _port->pnLoc.y, h, v, dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), _port->pnPat.format().c_str(), _port->pnMode, _port->fgColor, _port->bkColor);
 		}
 
 	}
@@ -682,10 +681,10 @@ PolyHandle Toolbox::OpenPoly() {
 void Toolbox::OpenPort(GrafPtr port) {
 	// source: QuickDraw Routines I-163
 	port->portBits = _defaultBits;
-	port->portRect = Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT);
-	port->visRgn = RgnHandle(new Region({ 1, Common::Rect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) }));
-	port->fgColor = g_engine->_wm._colorBlack;
-	port->bkColor = g_engine->_wm._colorWhite;
+	port->portRect = Common::Rect(_wm->getWidth(), _wm->getHeight());
+	port->visRgn = RgnHandle(new Region({ 1, Common::Rect( 0, 0, _wm->getWidth(), _wm->getHeight() ) }));
+	port->fgColor = _wm->_colorBlack;
+	port->bkColor = _wm->_colorWhite;
 	_port = port;
 	//port->clipRgn
 }
@@ -775,7 +774,7 @@ void Toolbox::PlotIcon(const Common::Rect &theRect, const Handle &theIcon) {
 		pm._isBitMap = true;
 		Common::MemoryReadStream stream(theIcon->data(), theIcon->size());
 		BitMap result = readBitsRectMono(stream, pm, false);
-		const BitMap intermediate(createRemappedSurface(result->surfacePtr(), nullptr, 0));
+		const BitMap intermediate(createRemappedSurface(_wm, result->surfacePtr(), nullptr, 0));
 		CopyBits(intermediate, _port->portBits, result->getBounds(), theRect, kSrcCopy, nullptr);
 	}
 }
@@ -798,7 +797,7 @@ void Toolbox::SetCPixel(int16 h, int16 v, const RGBColor &cPix) {
 void Toolbox::SetCursor(const Common::SharedPtr<Cursor> &crsr) {
 	_cursor = crsr;
 	if (_cursorLevel == 0)
-		g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorCustom, crsr.get());
+		_wm->replaceCursor(Graphics::MacGUIConstants::kMacCursorCustom, crsr.get());
 }
 
 void Toolbox::SetOrigin(int16 h, int16 v) {
@@ -833,9 +832,9 @@ void Toolbox::ShowCursor() {
 		_cursorLevel++;
 	if (_cursorLevel == 0) {
 		if (_cursor) {
-			g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorCustom, _cursor.get());
+			_wm->replaceCursor(Graphics::MacGUIConstants::kMacCursorCustom, _cursor.get());
 		} else {
-			g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+			_wm->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
 		}
 	}
 }
@@ -847,4 +846,5 @@ void Toolbox::ShowPen() {
 }
 
 
-} // End of namespace Fool
+} // End of namespace MacToolbox
+} // End of namespace Graphics

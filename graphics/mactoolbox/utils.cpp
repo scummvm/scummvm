@@ -20,11 +20,11 @@
  */
 
 #include "common/memstream.h"
-#include "fool/fool.h"
-#include "fool/toolbox.h"
-#include "fool/utils.h"
+#include "graphics/mactoolbox/toolbox.h"
+#include "graphics/mactoolbox/utils.h"
 
-namespace Fool {
+namespace Graphics {
+namespace MacToolbox {
 
 Common::Rect readRect(Common::SeekableReadStream &stream) {
 	Common::Rect result;
@@ -55,8 +55,8 @@ PolyHandle readPolygon(Common::SeekableReadStream &stream) {
 Region readRegion(Common::SeekableReadStream &stream) {
 	Region region;
 	region.rgnSize = stream.readUint16BE();
-	if (debugChannelSet(8, kDebugGraphics)) {
-		debugC(8, kDebugGraphics, "readRegion: region data");
+	if (debugChannelSet(8, kDebugLevelMacToolbox)) {
+		debugC(8, kDebugLevelMacToolbox, "readRegion: region data");
 		stream.hexdump(region.rgnSize - 2);
 	}
 	if (stream.size() - stream.pos() < region.rgnSize - 2) {
@@ -175,15 +175,13 @@ BitMap readBitsRectMono(Common::SeekableReadStream &stream, PixMap &pixMap, bool
 	}
 	return result;
 }
-Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const Common::Point &dstPos, SourceMode mode) {
+Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const Common::Point &dstPos, SourceMode mode, uint32 black, uint32 white) {
 	Common::Rect dstRect = src->getBounds();
 	dstRect.moveTo(dstPos);
 	dstRect.clip(dst->getBounds());
 	Common::Rect srcRect = dstRect;
 	srcRect.translate(-dstPos.x, -dstPos.y);
 
-	uint32 black = g_engine->_wm._colorBlack;
-	uint32 white = g_engine->_wm._colorWhite;
 	if (mode == kSrcCopy && !mask) {
 		// fast blit
 		dst->simpleBlitFrom(*src, srcRect, Common::Point(srcRect.left + dstPos.x, srcRect.top + dstPos.y));
@@ -238,17 +236,17 @@ Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const 
 	return dstRect;
 }
 
-Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const Common::Point &dstPos, PatternMode mode) {
+Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const Common::Point &dstPos, PatternMode mode, uint32 black, uint32 white) {
 	if ((mode >= 8) && (mode < 16)) {
 		// If the mode is one of the source transfer modes (or negative), no drawing is performed.
 		// Source: Inside Macintosh I-170
-		return blitMono(src, dst, mask, dstPos, (SourceMode)((int)mode & 0x7));
+		return blitMono(src, dst, mask, dstPos, (SourceMode)((int)mode & 0x7), black, white);
 	}
 	warning("blitMono: Called with an invalid PatternMode, ignoring");
 	return Common::Rect();
 }
 
-Graphics::ManagedSurface *createRemappedSurface(const Graphics::Surface *surface, const byte *palette, uint colorCount) {
+Graphics::ManagedSurface *createRemappedSurface(Graphics::MacWindowManager *wm, const Graphics::Surface *surface, const byte *palette, uint colorCount) {
 	Graphics::ManagedSurface *s = new Graphics::ManagedSurface();
 	s->create(surface->w, surface->h, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -272,7 +270,7 @@ Graphics::ManagedSurface *createRemappedSurface(const Graphics::Surface *surface
 
 		uint32 c;
 
-		c = g_engine->_wm.findBestColor(r, g, b);
+		c = wm->findBestColor(r, g, b);
 		paletteMap[i] = c;
 	}
 
@@ -286,7 +284,7 @@ Graphics::ManagedSurface *createRemappedSurface(const Graphics::Surface *surface
 			for (int x = 0; x < s->w; x++) {
 				uint color = surface->getPixel(x, y);
 				if (color > colorCount)
-					color = g_engine->_wm._colorBlack;
+					color = wm->_colorBlack;
 				else
 					color = paletteMap[color];
 
@@ -302,4 +300,5 @@ Graphics::ManagedSurface *createRemappedSurface(const Graphics::Surface *surface
 
 
 
-} // End of namespace Fool
+} // End of namespace MacToolbox
+} // End of namespace Graphics

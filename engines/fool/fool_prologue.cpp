@@ -23,11 +23,11 @@
 #include "common/str.h"
 #include "common/str-enc.h"
 #include "graphics/macgui/macwindow.h"
+#include "graphics/mactoolbox/toolbox.h"
 
 #include "fool/fool.h"
 #include "fool/fool_game.h"
 #include "fool/fool_prologue.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 #define OFF(x) (_zstrOffset[kOffsetPrologue] + (x))
@@ -41,15 +41,15 @@ namespace Fool {
 // v3.0 - newer ZBasic, changed a few graphics assets, removed custom menu font and sounds for compatibility
 
 void FoolPrologue::run(bool finale, const BitMap &prevWindow) {
-	_toolbox = new Toolbox();
+	_toolbox = new Toolbox(&g_engine->_wm);
 	_zbasic = new ZBasic(_toolbox);
 
 	Common::MacFinderInfo finfo;
-	if (_toolbox->GetFInfo(Common::U32String("Prologue - Finale"), 0, finfo) == kNoErr) {
+	if (_toolbox->GetFInfo(Common::U32String("Prologue - Finale"), 0, finfo) == Graphics::MacToolbox::kNoErr) {
 		_zbasic->loadProgram(Common::Path("Prologue - Finale", ':'));
-	} else if (_toolbox->GetFInfo(Common::U32String("Prologue-Finale"), 0, finfo) == kNoErr) {
+	} else if (_toolbox->GetFInfo(Common::U32String("Prologue-Finale"), 0, finfo) == Graphics::MacToolbox::kNoErr) {
 		_zbasic->loadProgram(Common::Path("Prologue-Finale", ':'));
-	} else if (_toolbox->GetFInfo(Common::U32String("Prologue & Finale"), 0, finfo) == kNoErr) {
+	} else if (_toolbox->GetFInfo(Common::U32String("Prologue & Finale"), 0, finfo) == Graphics::MacToolbox::kNoErr) {
 		_zbasic->loadProgram(Common::Path("Prologue & Finale", ':'));
 	} else {
 		error("FoolGame::run: Prologue - Finale program not found");
@@ -169,7 +169,7 @@ void FoolPrologue::setup(bool finale, const BitMap &prevWindow) {
 void FoolPrologue::copyScreenToPage(int16 screenPage) {
 	// 128:01ba
 	_srcPage = _screenPages[screenPage];
-	_toolbox->CopyBits(_dstPage, _srcPage, _pageRect, _pageRect, kSrcCopy, nullptr);
+	_toolbox->CopyBits(_dstPage, _srcPage, _pageRect, _pageRect, Graphics::MacToolbox::kSrcCopy, nullptr);
 }
 
 void FoolPrologue::setPortBitsToPage(int16 screenPage) {
@@ -282,7 +282,7 @@ void FoolPrologue::scanlineBlitPageToScreen(int16 screenPage, int16 left, int16 
 		_tickMarker = _toolbox->TickCount();
 		srcRect.top = _randScanline[i];
 		srcRect.bottom = _randScanline[i] + 1;
-		_toolbox->CopyBits(_srcPage, _dstPage, srcRect, srcRect, kSrcCopy, nullptr);
+		_toolbox->CopyBits(_srcPage, _dstPage, srcRect, srcRect, Graphics::MacToolbox::kSrcCopy, nullptr);
 		if (i % updatePeriod == 0) {
 			delayFromMarker(0);
 		}
@@ -292,7 +292,7 @@ void FoolPrologue::scanlineBlitPageToScreen(int16 screenPage, int16 left, int16 
 void FoolPrologue::blitPageToScreen(int16 screenPage) {
 	// 128:0610
 	_srcPage = _screenPages[screenPage];
-	_toolbox->CopyBits(_srcPage, _dstPage, _pageRect, _pageRect, kSrcCopy, nullptr);
+	_toolbox->CopyBits(_srcPage, _dstPage, _pageRect, _pageRect, Graphics::MacToolbox::kSrcCopy, nullptr);
 }
 
 void FoolPrologue::scanlineTransition(int16 patternID) {
@@ -321,10 +321,10 @@ void FoolPrologue::zoomTransition(int16 screenPage) {
 		srcRect.left = (SCREEN_WIDTH/2) - i*5;
 		srcRect.bottom = (SCREEN_HEIGHT/2) + (int)(i*3.33);
 		srcRect.right = (SCREEN_WIDTH/2) + i*5;
-		_toolbox->CopyBits(_srcPage, _dstPage, srcRect, srcRect, kSrcCopy, nullptr);
+		_toolbox->CopyBits(_srcPage, _dstPage, srcRect, srcRect, Graphics::MacToolbox::kSrcCopy, nullptr);
 		_toolbox->Delay(0);
 	}
-	_toolbox->CopyBits(_srcPage, _dstPage, _pageRect, _pageRect, kSrcCopy, nullptr);
+	_toolbox->CopyBits(_srcPage, _dstPage, _pageRect, _pageRect, Graphics::MacToolbox::kSrcCopy, nullptr);
 	_toolbox->Delay(0);
 }
 
@@ -341,7 +341,7 @@ void FoolPrologue::zoomFlash(int16 startTop, int16 startLeft, int16 startBottom,
 	end.bottom = endBottom;
 	end.right = endRight;
 	_toolbox->PenNormal();
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 
 	// 128:08bc
 	double buffer[16] = { 0 }; // arr_f64_41bbe
@@ -384,7 +384,7 @@ void FoolPrologue::drawText(const Common::U32String &str, int16 x, int16 y) {
 
 void FoolPrologue::drawRainRecycle(int16 ticks) {
 	// 128:0a8c
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	do {
 		// 128:0a96
 		drawRainDrop();
@@ -432,14 +432,14 @@ void FoolPrologue::shuffleScanlines() {
 
 void FoolPrologue::drawClickMessage() {
 	// 128:0de2
-	_zbasic->text(kPrologueFontSmall, 0x9, Graphics::kMacFontRegular, kSrcXor);
+	_zbasic->text(kPrologueFontSmall, 0x9, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcXor);
 	// Click Mouse to Continue
 	drawText(_zbasic->str(3), 5, 0x151);
 }
 
 void FoolPrologue::drawClickMessageRightAlign() {
 	// 128:0e1c
-	_zbasic->text(kPrologueFontSmall, 0x9, Graphics::kMacFontRegular, kSrcXor);
+	_zbasic->text(kPrologueFontSmall, 0x9, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcXor);
 	// Click Mouse to Continue
 	drawTextRight(_zbasic->str(4), 0x1fb, 0x154);
 }
@@ -450,14 +450,14 @@ void FoolPrologue::waitForClick() {
 	while (true) {
 		// was: 2
 		_toolbox->GetNextEvent(-1, _event);
-		if (_event.what == kMouseDown)
+		if (_event.what == Graphics::MacToolbox::kMouseDown)
 			break;
-		if ((_event.what == kScummVMQuitEvt) || (_event.what == kScummVMReturnToLauncherEvt)) {
+		if ((_event.what == Graphics::MacToolbox::kScummVMQuitEvt) || (_event.what == Graphics::MacToolbox::kScummVMReturnToLauncherEvt)) {
 			_quit = true;
 			return;
 		}
 		// wait until next redraw
-		if (_event.what == kNullEvent)
+		if (_event.what == Graphics::MacToolbox::kNullEvent)
 			_toolbox->Delay(0);
 	}
 	waitForMouseUp();
@@ -467,23 +467,23 @@ void FoolPrologue::waitForMouseUp() {
 	// 128:0e80
 	while (true) {
 		_toolbox->GetNextEvent(-1, _event);
-		if (_event.what == kUpdateEvt) {
+		if (_event.what == Graphics::MacToolbox::kUpdateEvt) {
 			onUpdateEvent();
 		}
-		if (_event.what == kDiskEvt) {
+		if (_event.what == Graphics::MacToolbox::kDiskEvt) {
 			onDiskEvent();
 		}
-		if (_event.what == kScummVMQuitEvt || _event.what == kScummVMReturnToLauncherEvt) {
+		if (_event.what == Graphics::MacToolbox::kScummVMQuitEvt || _event.what == Graphics::MacToolbox::kScummVMReturnToLauncherEvt) {
 			_quit = true;
 			return;
 		}
 		// keep looping until mouse is seen as up??
 		// see I-252
-		if ((_event.modifiers & kModMouseButtonUp) && (_event.what == kNullEvent)) {
+		if ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) && (_event.what == Graphics::MacToolbox::kNullEvent)) {
 			break;
 		}
 		// wait until next redraw
-		if (_event.what == kNullEvent)
+		if (_event.what == Graphics::MacToolbox::kNullEvent)
 			_toolbox->Delay(0);
 	}
 }
@@ -608,7 +608,7 @@ void FoolPrologue::setupWindow() {
 
 		// 129:0386
 		fillRect(0x50, 0x6e, 0xd2, 0x192, 2);
-		_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcBic);
+		_zbasic->text(0, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
 		// "not enough memory" message
 		drawTextCenter(_zbasic->str(6), 0x100, 0x64);
 		drawTextCenter(_zbasic->str(7), 0x100, 0x78);
@@ -619,7 +619,7 @@ void FoolPrologue::setupWindow() {
 		if (_quit)
 			return;
 
-		_zbasic->put(0x0, 0x14, _screenPages[0], kSrcCopy);
+		_zbasic->put(0x0, 0x14, _screenPages[0], Graphics::MacToolbox::kSrcCopy);
 		_mode = 0;
 
 	} else {
@@ -680,7 +680,7 @@ void FoolPrologue::setupWindow() {
 			fillRect(0x69, 0x87, 0xd7, 0x179, 1);
 			fillRect(0x6e, 0x8c, 0xd2, 0x174, 2);
 			// 129:0662
-			_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcBic);
+			_zbasic->text(0, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
 			// "set your monitor to black and white" message"
 			drawTextCenter(_zbasic->str(13), 0x100, 0x82);
 			drawTextCenter(_zbasic->str(14), 0x100, 0x96);
@@ -693,7 +693,7 @@ void FoolPrologue::setupWindow() {
 			waitForClick();
 			if (_quit)
 				return;
-			_zbasic->put(0x0, 0x14, _screenPages[0], kSrcCopy);
+			_zbasic->put(0x0, 0x14, _screenPages[0], Graphics::MacToolbox::kSrcCopy);
 			_mode = 0;
 		} else {
 			// 129:075c
@@ -741,7 +741,7 @@ void FoolPrologue::prologueRun() {
 	_toolbox->ReleaseResource(picTitle);
 
 	// 130:007a
-	_zbasic->text(kPrologueFontSmall, 0x9, Graphics::kMacFontRegular, kSrcBic);
+	_zbasic->text(kPrologueFontSmall, 0x9, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
 	if (_version == kFool30) {
 		drawTextCenter(_zbasic->str(OFF(0)), 0x103, 0x112);
 	} else {
@@ -869,28 +869,28 @@ void FoolPrologue::prologueRun() {
 		_tickMarker = _toolbox->TickCount();
 		_srcPage = _screenPages[8];
 		// 130:049e
-		_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, kSrcCopy, nullptr);
+		_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, Graphics::MacToolbox::kSrcCopy, nullptr);
 		drawRainRecycle(4);
 
 		for (int j = 0; j <= 3; j++) {
 			// 130:04ca
 			_tickMarker = _toolbox->TickCount();
 			_srcPage = _screenPages[3];
-			_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, kSrcCopy, nullptr);
+			_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, Graphics::MacToolbox::kSrcCopy, nullptr);
 			drawRainRecycle(5);
 			// 130:0518
 			_tickMarker = _toolbox->TickCount();
 			_srcPage = _screenPages[4];
-			_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, kSrcCopy, nullptr);
+			_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, Graphics::MacToolbox::kSrcCopy, nullptr);
 			drawRainRecycle(5);
 			_tickMarker = _toolbox->TickCount();
 			_srcPage = _screenPages[5];
-			_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, kSrcCopy, nullptr);
+			_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, Graphics::MacToolbox::kSrcCopy, nullptr);
 			drawRainRecycle(5);
 		}
 		// 130:05b6
 		_srcPage = _screenPages[7];
-		_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, kSrcCopy, nullptr);
+		_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, Graphics::MacToolbox::kSrcCopy, nullptr);
 
 	}
 
@@ -917,7 +917,7 @@ void FoolPrologue::prologueRun() {
 			scanline.top = _randScanline[y];
 			scanline.bottom = _randScanline[y] + 1;
 			// 130:068e
-			_toolbox->CopyBits(_srcPage, _dstPage, scanline, scanline, kSrcCopy, nullptr);
+			_toolbox->CopyBits(_srcPage, _dstPage, scanline, scanline, Graphics::MacToolbox::kSrcCopy, nullptr);
 		}
 		// 130:06b0
 		drawRainRecycle(1);
@@ -959,7 +959,7 @@ void FoolPrologue::prologueRun() {
 		for (int i = 3; i <= 5; i++) {
 			_tickMarker = _toolbox->TickCount();
 			_srcPage = _screenPages[i];
-			_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, kSrcCopy, nullptr);
+			_toolbox->CopyBits(_srcPage, _dstPage, temp2, temp2, Graphics::MacToolbox::kSrcCopy, nullptr);
 			drawRainRecycle(3);
 		}
 	}
@@ -1073,7 +1073,7 @@ void FoolPrologue::prologueRun() {
 	// 130:0b98
 	int16 pageIndex = 0;
 	int16 increment = 1;
-	while (_event.what != kMouseDown) {
+	while (_event.what != Graphics::MacToolbox::kMouseDown) {
 		// 130:0ba4
 		_tickMarker = _toolbox->TickCount();
 		pageIndex += increment;
@@ -1089,7 +1089,7 @@ void FoolPrologue::prologueRun() {
 		// 130:0bee
 		_toolbox->GetNextEvent(2, _event);
 	}
-	while (!((_event.what == kNullEvent) && (_event.modifiers & kModMouseButtonUp))) {
+	while (!((_event.what == Graphics::MacToolbox::kNullEvent) && (_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp))) {
 		// 130:0c0c
 		_tickMarker = _toolbox->TickCount();
 		pageIndex += increment;
@@ -1104,10 +1104,10 @@ void FoolPrologue::prologueRun() {
 		delayFromMarker(0xa);
 		// 130:0c56
 		_toolbox->GetNextEvent(-1, _event);
-		if (_event.what == kUpdateEvt) {
+		if (_event.what == Graphics::MacToolbox::kUpdateEvt) {
 			onUpdateEvent();
 		}
-		if (_event.what == kDiskEvt) {
+		if (_event.what == Graphics::MacToolbox::kDiskEvt) {
 			onDiskEvent();
 		}
 	}
@@ -1128,7 +1128,7 @@ void FoolPrologue::prologueRun() {
 
 	// zoom to close
 
-	zoomClose(1, kPatCopy);
+	zoomClose(1, Graphics::MacToolbox::kPatCopy);
 	// 130:0ce6
 	// JMP 1002
 	// _zbasic->pushOldCodeResource(0x82);
@@ -1149,7 +1149,7 @@ void FoolPrologue::prologueDrawLoadingMsg() {
 	return;
 	// 130:0d28
 	_toolbox->SetPort(_grafPtrMenu);
-	_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(0, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 	// "loading prologue" message
 	Common::U32String msg = _zbasic->str(OFF(1));
 	msg += Common::U32String::format(" %d", _prologueLoading);
@@ -1167,7 +1167,7 @@ void FoolPrologue::prologueDrawLoadingMsg() {
 void FoolPrologue::drawRain() {
 	// 130:0db0
 	_zbasic->unk_20();
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	_rainIndex = 0x1;
 	while (_rainIndex <= 0xb5) {
 		// 130:0dc0
@@ -1213,7 +1213,7 @@ void FoolPrologue::prologueRenderNextText() {
 			}
 		}
 		// 130:0fc8
-		_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, kSrcOr);
+		_zbasic->text(kPrologueFontFool, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 		drawText(text, xPos, yPos);
 	}
 }

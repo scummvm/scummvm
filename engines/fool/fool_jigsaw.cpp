@@ -19,11 +19,10 @@
  *
  */
 
+#include "graphics/mactoolbox/toolbox.h"
 #include "graphics/managed_surface.h"
 
-#include "fool/fool.h"
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -106,7 +105,7 @@ void FoolGame::jigsawRun() {
 				_screenGrid[i].left,
 				_screenGrid[i].top,
 				_jigsawPieces[arr_i16_3738[i]],
-				kSrcCopy
+				Graphics::MacToolbox::kSrcCopy
 			);
 		// 132:0452
 		}
@@ -126,7 +125,7 @@ void FoolGame::jigsawRun() {
 		while ((_stateFlags == kStateNull) && !_activePuzzleSolved) {
 			// 132:0488
 			getNextEvent(-1);
-			if (_event.what == kMouseDown) {
+			if (_event.what == Graphics::MacToolbox::kMouseDown) {
 				jigsawOnClick();
 			}
 		}
@@ -159,7 +158,7 @@ void FoolGame::jigsawOnClick() {
 	_zbasic->menu(8, 3, 0, Common::U32String());
 	_toolbox->PenNormal();
 	_toolbox->PenSize(3, 3);
-	_toolbox->PenMode(kPatXor);
+	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 	// 132:05c4
 	arr_i16_4758[0] = var_i16_68a;
 	arr_i16_4758[1] = var_i16_68c;
@@ -221,7 +220,7 @@ void FoolGame::jigsawDragSelect() {
 		delay(2);
 		_toolbox->FrameRect(temp);
 		delay(1);
-	} while (_event.what != kMouseUp);
+	} while (_event.what != Graphics::MacToolbox::kMouseUp);
 }
 
 void FoolGame::jigsawMoveSelected() {
@@ -281,7 +280,7 @@ void FoolGame::jigsawMoveSelected() {
 		_toolbox->FrameRect(arr_rect_4776);
 		delay(1);
 	}
-	while (!((_event.what == kMouseDown) && (_event.where.y > 0x14)));
+	while (!((_event.what == Graphics::MacToolbox::kMouseDown) && (_event.where.y > 0x14)));
 }
 
 void FoolGame::jigsawCancelSelect() {
@@ -348,7 +347,7 @@ void FoolGame::jigsawDropSelected() {
 				_screenGrid[arr_i16_2f38[i*32 + j]].left,
 				_screenGrid[arr_i16_2f38[i*32 + j]].top,
 				_jigsawPieces[arr_i16_3738[arr_i16_2f38[i*32 + j]]],
-				kSrcCopy
+				Graphics::MacToolbox::kSrcCopy
 			);
 		}
 	}
@@ -367,7 +366,7 @@ void FoolGame::jigsawDropSelected() {
 					_screenGrid[arr_i16_2f38[i*32+j]].left,
 					_screenGrid[arr_i16_2f38[i*32+j]].top,
 					_jigsawPieces[arr_i16_3738[arr_i16_2f38[i*32 + j]]],
-					kSrcCopy
+					Graphics::MacToolbox::kSrcCopy
 				);
 			}
 			// 132:134a

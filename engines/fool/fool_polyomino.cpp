@@ -19,9 +19,9 @@
  *
  */
 
-#include "fool/fool.h"
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -88,7 +88,7 @@ void FoolGame::polyominoRun() {
 	}
 	// 133:0228
 	_toolbox->SetPort(var_i32_f24);
-	_zbasic->text(kFontPuzzle, 0x18, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(kFontPuzzle, 0x18, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 
 	// for each polyomino
 	for (int j = 1; j <= arr_i16_1eb8[0x10]; j++) {
@@ -160,9 +160,9 @@ void FoolGame::polyominoRun() {
 		// 133:0476: JSR - "PICTURE_ON"
 		// picture handle 0: XOR text + polyomino
 		PicHandle handle = _toolbox->OpenPicture(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-		_toolbox->PenMode(kPatXor);
+		_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
 		if (var_i16_103a >= 3) {
-			_toolbox->TextMode(kSrcXor);
+			_toolbox->TextMode(Graphics::MacToolbox::kSrcXor);
 			for (int i = 1; i <= var_i16_103a; i += 3) {
 				_toolbox->MoveTo(arr_i16_3738[i], arr_i16_3738[i+1]);
 				var_str_384 = _zbasic->chr(arr_i16_3738[i+2]);

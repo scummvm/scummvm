@@ -28,8 +28,7 @@
 #include "common/stream.h"
 #include "common/ustr.h"
 #include "graphics/macgui/macwindow.h"
-
-#include "fool/toolbox.h"
+#include "graphics/mactoolbox/toolbox.h"
 
 namespace Fool {
 
@@ -207,13 +206,13 @@ private:
 	uint32 _dataPtr;
 	Common::Array<Common::SharedPtr<ZBasicDatum>> _stringTable;
 
-	Toolbox *_toolbox;
+	Graphics::MacToolbox::Toolbox *_toolbox;
 	Common::MemoryPool *_memPool;
 	int16 _fileId = -1;
 	Graphics::MacWindow *_window;
 	Graphics::MacMenu *_menu;
 
-	GrafPtr _defaultPort;
+	Graphics::MacToolbox::GrafPtr _defaultPort;
 
 	Common::HashMap<int16, Common::SharedPtr<Common::SeekableReadStream>> _fileStreams;
 	Common::HashMap<int16, Common::SharedPtr<Common::SeekableWriteStream>> _fileWriteStreams;
@@ -225,7 +224,7 @@ private:
 
 public:
 
-	ZBasic(Toolbox *toolbox);
+	ZBasic(Graphics::MacToolbox::Toolbox *toolbox);
 	~ZBasic();
 
 	void loadProgram(const Common::Path &path);
@@ -241,11 +240,11 @@ public:
 	void close(int16 fileNo);
 	void coordinateWindow();
 	void defOpen(const Common::U32String &str);
-	void get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest, bool preserveDims = false);
+	void get(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::MacToolbox::BitMap &dest, bool preserveDims = false);
 	int16 instr(int16 expression, const Common::U32String &string1, const Common::U32String &string2);
 	int16 instr(int16 expression, const Common::String &string1, const Common::String &string2);
 	Common::U32String files(int16 expression, const Common::U32String &prompt, const Common::U32String &defaultFilename, int16 &volume);
-	int finderInfo(int16 &count, Common::U32String &var, OSType &type, uint16 volume);
+	int finderInfo(int16 &count, Common::U32String &var, Graphics::MacToolbox::OSType &type, uint16 volume);
 	bool maybe();
 	uint32 mem(int16 index);
 	void menu(uint16 menuNo, uint16 itemNo, uint16 state, const Common::U32String &title);
@@ -259,14 +258,14 @@ public:
 	void midStrSet(Common::String &target, int16 expr1, int16 expr2, const Common::String &src);
 	void openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
 	void openW(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
-	void picture(int16 x, int16 y, PicHandle &src);
-	void picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src);
-	void put(int16 x, int16 y, BitMap &src, SourceMode mode);
-	void put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src, SourceMode mode);
+	void picture(int16 x, int16 y, Graphics::MacToolbox::PicHandle &src);
+	void picture(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::MacToolbox::PicHandle &src);
+	void put(int16 x, int16 y, Graphics::MacToolbox::BitMap &src, Graphics::MacToolbox::SourceMode mode);
+	void put(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::MacToolbox::BitMap &src, Graphics::MacToolbox::SourceMode mode);
 	int16 readDataInt();
 	int32 readDataDblInt();
 	Common::U32String readDataStr();
-	Handle readFile(int16 fileNo, uint32 length);
+	Graphics::MacToolbox::Handle readFile(int16 fileNo, uint32 length);
 	uint32 readFile(int16 fileNo, byte *dest, uint32 length);
 	int32 readFileDblInt(int16 fileNo);
 	int16 readFileInt(int16 fileNo);
@@ -277,7 +276,7 @@ public:
 	Common::U32String space(int16 count);
 	void swapInt(int16 &a, int16 &b);
 	void swapStr(Common::U32String &a, Common::U32String &b);
-	void text(uint16 font, uint16 size, uint16 face, SourceMode mode);
+	void text(uint16 font, uint16 size, uint16 face, Graphics::MacToolbox::SourceMode mode);
 	void window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type);
 	void writeFileStr(int16 fileNo, const Common::String &str);
 	void writeFileInt(int16 fileNo, int16 data);

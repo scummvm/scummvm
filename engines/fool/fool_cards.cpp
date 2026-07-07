@@ -19,9 +19,10 @@
  *
  */
 
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool.h"
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -125,7 +126,7 @@ void FoolGame::cardsRun() {
 		while (_stateFlags == 0) {
 			// 139:046e
 			getNextEvent(-1);
-			if ((_event.modifiers & kModMouseButtonUp) == 0) {
+			if ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0) {
 				cardsOnClick();
 			}
 			if (var_i16_2014 != 0) {
@@ -186,13 +187,13 @@ void FoolGame::cardsDrawTable() {
 	drawTarotCard(1, 4, 0);
 	drawTarotCard(2, 5, 0);
 	drawTarotCard(3, 6, 0);
-	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
+	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
 	// 139:061a
 	drawTextCenter(_zbasic->str(OFF(0)), 0xc3); // Select a card above
 	drawTextCenter(_zbasic->str(OFF(1)), 0xd4); // or
 	_toolbox->FillRoundRect(arr_rect_4338, 0xa, 0xa, _patterns[0]);
 	_toolbox->FrameRoundRect(arr_rect_4338, 0xa, 0xa);
-	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	_zbasic->text(kFontChicago, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcOr);
 	drawTextCenter(_zbasic->str(OFF(2)), 0xe9); // Yield
 	var_i16_2016 = 1;
 	var_i16_2010 = 1;
@@ -278,13 +279,13 @@ void FoolGame::cardsOnClick() {
 		sub_128_61ec();
 		// original code has the font ID as 1... maybe there's a fallback?
 		// this was intended to be Small
-		_zbasic->text(kFontSmall, 9, Graphics::kMacFontRegular, kSrcBic);
+		_zbasic->text(kFontSmall, 9, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
 		drawTextCenter(_zbasic->str(OFF(3)), strY); // (click mouse to continue)
 		var_i16_2014 = 0;
 		_stateFlags = 0;
 		while ((_stateFlags == 0) && (var_i16_2014 == 0)) {
 			getNextEvent(-1);
-			if (_event.what == kMouseUp) {
+			if (_event.what == Graphics::MacToolbox::kMouseUp) {
 				var_i16_2014 = 1;
 			}
 			if (_stateFlags == kStateSaveGame) {
@@ -388,7 +389,7 @@ void FoolGame::cardsOpponentYields() {
 	playTone(0x19, 0x64, 0x1);
 	var_i16_2012 = -CARDS_YIELD_PENALTY;
 	cardsDrawScores();
-	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
+	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
 	drawTextCenter(_zbasic->str(OFF(4)), 0xc4); // The Old Man yields
 }
 
@@ -514,7 +515,7 @@ void FoolGame::cardsRevealHands() {
 	// 139:1344
 	var_i16_2322 = (var_i16_2322 / 2) + 0x14;
 	fillRect(0x2e, 0x100 - var_i16_2322, 0x9a, 0x100 + var_i16_2322, 2);
-	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
+	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
 	drawTextCenter(var_str_384, 0x46);
 	drawTextCenter(var_str_167c, 0x64);
 	drawTextCenter(_zbasic->str(OFF(16)), 0x78); // beats
@@ -657,7 +658,7 @@ void FoolGame::sub_139_19da() {
 
 void FoolGame::cardsDrawScores() {
 	// 139:1b12
-	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, kSrcBic);
+	_zbasic->text(kFontFool, 0xc, Graphics::kMacFontRegular, Graphics::MacToolbox::kSrcBic);
 	arr_i16_1eb8[var_i16_2016 + 4] += var_i16_2012;
 	if (arr_i16_1eb8[5] < CARDS_MIN_SCORE) {
 		arr_i16_1eb8[5] = CARDS_MIN_SCORE;

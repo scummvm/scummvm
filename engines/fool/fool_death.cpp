@@ -19,14 +19,13 @@
  *
  */
 
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool.h"
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
-
-
 
 // Death challenge
 void FoolGame::deathRun() {
@@ -35,7 +34,7 @@ void FoolGame::deathRun() {
 	drawPuzzleButton(Common::U32String("~")); // was: str(334)
 	_toolbox->InvertRect(arr_rect_1910c);
 	_zbasic->get(0x6c, 0x127, 0x84, 0x137, arr_bmp_b3ec);
-	_zbasic->put(0x6c, 0x127, arr_bmp_c38c, kSrcCopy);
+	_zbasic->put(0x6c, 0x127, arr_bmp_c38c, Graphics::MacToolbox::kSrcCopy);
 	deathDrawZoom();
 	fillRect(0x14f, 0, 0x156, 0x7, 0x2);
 	fillRect(0x14f, 0x1f9, 0x156, 0x200, 2);
@@ -45,7 +44,7 @@ void FoolGame::deathRun() {
 	_deathBlackEye.right = 0x1a8;
 	// 141:0122
 	_zbasic->get(_deathBlackEye.left, _deathBlackEye.top, _deathBlackEye.right, _deathBlackEye.bottom, arr_bmp_bbbc);
-	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_b3ec, kSrcCopy);
+	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_b3ec, Graphics::MacToolbox::kSrcCopy);
 	_event.where.y = 0x14;
 	// JMP 0x3c2
 	while (true) {
@@ -98,12 +97,12 @@ void FoolGame::deathRun() {
 			// 141:02fa
 			do {
 				getNextEvent(0);
-				if (((_event.modifiers & kModMouseButtonUp) == 0) &&
+				if (((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) == 0) &&
 					_toolbox->PtInRect(_event.where, arr_rect_1910c)) {
 					// JMP 0x9a2
 					// 141:09a2
 					deathDrawWhiteEye();
-					_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_bbbc, kSrcCopy);
+					_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_bbbc, Graphics::MacToolbox::kSrcCopy);
 					deathDrawZoom();
 					if (_activePuzzleStatus < 0x64) {
 						_activePuzzleStatus = 0x64;
@@ -117,7 +116,7 @@ void FoolGame::deathRun() {
 		// 141:035a
 		// mouse moved out from menu, zap the white eye
 		_toolbox->PenNormal();
-		_toolbox->PenMode(kNotPatXor);
+		_toolbox->PenMode(Graphics::MacToolbox::kNotPatXor);
 		_toolbox->PenPat(_patterns[1]);
 		_toolbox->PenSize(0x17, 0x10);
 		for (int i = 0; i <= 5; i++) {
@@ -135,7 +134,7 @@ void FoolGame::deathRun() {
 
 void FoolGame::deathMoveBlackEye() {
 	// 141:03ca
-	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_b3ec, kSrcCopy);
+	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_b3ec, Graphics::MacToolbox::kSrcCopy);
 	var_i16_68a = _event.where.x - 0xc - _deathBlackEye.left;
 	var_i16_68c = _event.where.y - 8 - _deathBlackEye.top;
 	// 141:0452
@@ -151,7 +150,7 @@ void FoolGame::deathMoveBlackEye() {
 	if (var_i16_68a > 6) {
 		var_i16_68a = 6;
 	}
-	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_b3ec, kSrcCopy);
+	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_b3ec, Graphics::MacToolbox::kSrcCopy);
 	// 141:04ce
 	Common::Rect newPos; // arr_rect_1ec0
 	newPos.top = _deathBlackEye.top + var_i16_68c;
@@ -159,7 +158,7 @@ void FoolGame::deathMoveBlackEye() {
 	newPos.bottom = _deathBlackEye.bottom + var_i16_68c;
 	newPos.right = _deathBlackEye.right + var_i16_68a;
 
-	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_b3ec, kSrcCopy);
+	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_b3ec, Graphics::MacToolbox::kSrcCopy);
 	// 141:05a2
 	if (newPos.top < 0x14) {
 		newPos.top = 0x14;
@@ -179,15 +178,15 @@ void FoolGame::deathMoveBlackEye() {
 		newPos.left = 0x1e8;
 		newPos.right = 0x200;
 	}
-	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_b3ec, kSrcCopy);
+	_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_b3ec, Graphics::MacToolbox::kSrcCopy);
 	// 141:06bc
 	if (!((_deathBlackEye.top == newPos.top) &&
 		((_deathBlackEye.left == newPos.left)))) {
 		// 141:0722
-		_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_bbbc, kSrcCopy);
+		_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_bbbc, Graphics::MacToolbox::kSrcCopy);
 		_deathBlackEye = newPos;
 		_zbasic->get(_deathBlackEye.left, _deathBlackEye.top, _deathBlackEye.right, _deathBlackEye.bottom, arr_bmp_bbbc);
-		_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_b3ec, kSrcCopy);
+		_zbasic->put(_deathBlackEye.left, _deathBlackEye.top, arr_bmp_b3ec, Graphics::MacToolbox::kSrcCopy);
 		delay(1);
 	}
 	// 141:0880
@@ -196,7 +195,7 @@ void FoolGame::deathMoveBlackEye() {
 void FoolGame::deathDrawWhiteEye() {
 	// 141:0882
 	if (_deathWhiteEyeNeedsDraw) {
-		_zbasic->put(0x6c, 0x127, arr_bmp_c38c, kSrcCopy);
+		_zbasic->put(0x6c, 0x127, arr_bmp_c38c, Graphics::MacToolbox::kSrcCopy);
 	}
 	// 141:08b0
 	_deathWhiteEyeNeedsDraw = false;
@@ -206,16 +205,16 @@ void FoolGame::deathCaught() {
 	// 141:08b8
 	deathDrawWhiteEye();
 	toggleMouseCursor(false);
-	zoomRect(_deathBlackEye.top, _deathBlackEye.left, _deathBlackEye.bottom, _deathBlackEye.right, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x19);
+	zoomRect(_deathBlackEye.top, _deathBlackEye.left, _deathBlackEye.bottom, _deathBlackEye.right, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, Graphics::MacToolbox::kNotPatXor, 0x19);
 	toggleMouseCursor(true);
 }
 
 void FoolGame::deathDrawZoom() {
 	// 141:0934
 	for (int i = 1; i <= 2; i++) {
-		zoomRect(0x130, 0x76, 0x130, 0x76, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x1a);
+		zoomRect(0x130, 0x76, 0x130, 0x76, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, Graphics::MacToolbox::kNotPatXor, 0x1a);
 	}
-	fillRect(1, kNotPatXor, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
+	fillRect(1, Graphics::MacToolbox::kNotPatXor, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
 }
 
 

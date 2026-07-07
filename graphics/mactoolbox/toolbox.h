@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef FOOL_TOOLBOX_H
-#define FOOL_TOOLBOX_H
+#ifndef GRAPHICS_MACTOOLBOX_MACTOOLBOX_H
+#define GRAPHICS_MACTOOLBOX_MACTOOLBOX_H
 
 #include "common/bitstream.h"
 #include "common/hashmap.h"
@@ -31,19 +31,19 @@
 
 #include "audio/mixer.h"
 #include "graphics/cursor.h"
-#include "image/pict.h"
 #include "graphics/framelimiter.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/mactoolbox/siphash/halfsip.h"
 
-#include "fool/siphash/halfsip.h"
 
 namespace Audio {
 class PCSpeakerStream;
 }
 
-namespace Fool {
+namespace Graphics {
+namespace MacToolbox {
 
 struct RGBColor {
 	uint16 red;
@@ -273,29 +273,31 @@ typedef Common::SharedPtr<Picture> PicHandle;
 typedef uint32 ResType;
 typedef size_t Size;
 
-};
+}; // namespace MacToolbox
+}; // namespace Graphics
 
 template<>
-struct Common::Hash<Fool::Handle> {
-	uint operator()(const Fool::Handle& h) const {
+struct Common::Hash<Graphics::MacToolbox::Handle> {
+	uint operator()(const Graphics::MacToolbox::Handle& h) const {
 		void *target = h.get();
 		uint result;
-		Fool::halfsiphash((const void *)&target, sizeof(intptr_t), "TBHANDLE", (byte *)&result, sizeof(uint));
+		Graphics::MacToolbox::halfsiphash((const void *)&target, sizeof(intptr_t), "TBHANDLE", (byte *)&result, sizeof(uint));
 		return result;
 	}
 };
 
 template<>
-struct Common::Hash<Fool::PicHandle> {
-	uint operator()(const Fool::PicHandle& h) const {
+struct Common::Hash<Graphics::MacToolbox::PicHandle> {
+	uint operator()(const Graphics::MacToolbox::PicHandle& h) const {
 		void *target = h.get();
 		uint result;
-		Fool::halfsiphash((const void *)&target, sizeof(intptr_t), "TBHANDLE", (byte *)&result, sizeof(uint));
+		Graphics::MacToolbox::halfsiphash((const void *)&target, sizeof(intptr_t), "TBHANDLE", (byte *)&result, sizeof(uint));
 		return result;
 	}
 };
 
-namespace Fool {
+namespace Graphics {
+namespace MacToolbox {
 
 // TYPE BOOLEAN: int16
 // TYPE INTEGER: int16
@@ -562,11 +564,13 @@ struct SWSynthRec : SynthRec {
 	Common::Array<Tone> triplets;
 };
 
+typedef Common::String (*FileModalCallback)(bool save, const Common::String &suggested, const Common::String &title);
+
 class Toolbox {
 
 public:
 	// Compatibility shim for the Macintosh Toolbox/QuickDraw API.
-	Toolbox();
+	Toolbox(Graphics::MacWindowManager *wm);
 	~Toolbox();
 
 	Graphics::MacWindow *_defaultWindow;
@@ -1316,7 +1320,11 @@ public:
 
 	void _loadFonts(int16 resID);
 
+	void _setFileModalCallback(FileModalCallback callback) { _fileModalCallback = callback; }
+
 private:
+	Graphics::MacWindowManager *_wm;
+
 	Common::HashMap<int16, Common::SharedPtr<Common::MacResManager>> _resMap;
 	Common::Array<int16> _resOrder;
 	int16 _nextResId = 1;
@@ -1337,6 +1345,8 @@ private:
 
 	GrafPtr _port = nullptr;
 
+	FileModalCallback _fileModalCallback;
+
 	void _pumpEvents();
 	void _updateScreen();
 	void _drawOval(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor);
@@ -1348,6 +1358,7 @@ private:
 	void _addDirtyRect(const BitMap &dest, const Common::Rect &rect);
 };
 
-} // namespace Fool
+} // namespace MacToolbox
+} // namespace Graphics
 
 #endif

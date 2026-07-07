@@ -19,10 +19,9 @@
  *
  */
 
-#include "fool/detection.h"
-#include "fool/fool.h"
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool_game.h"
-#include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
 namespace Fool {
@@ -113,7 +112,7 @@ void FoolGame::sentenceRun() {
 	// 135:0520
 	do {
 		getNextEvent(-1);
-		if (_event.what == kMouseDown) {
+		if (_event.what == Graphics::MacToolbox::kMouseDown) {
 			sentenceOnClick();
 		}
 		// 135:0538
@@ -191,18 +190,18 @@ void FoolGame::sentenceOnClick() {
 	if (buttonsRemaining) {
 		return;
 	}
-	_zbasic->text(kFontChicago, 0xc, 0, kSrcBic);
+	_zbasic->text(kFontChicago, 0xc, 0, Graphics::MacToolbox::kSrcBic);
 	drawTextCenter(_zbasic->str(OFF(4)), 0x124); // click mouse to reset puzzle
 
 	waitForMouseUp();
 	var_i16_1abc = 1;
-	_stateFlags = kNullEvent;
+	_stateFlags = Graphics::MacToolbox::kNullEvent;
 	// 135:07a0
-	while ((_event.modifiers & kModMouseButtonUp) && (_stateFlags == kNullEvent)) {
+	while ((_event.modifiers & Graphics::MacToolbox::kModMouseButtonUp) && (_stateFlags == Graphics::MacToolbox::kNullEvent)) {
 		getNextEvent(-1);
 	}
 	// 135:07c8
-	if (_stateFlags == kNullEvent) {
+	if (_stateFlags == Graphics::MacToolbox::kNullEvent) {
 		sentenceUndo();
 	}
 }
@@ -267,7 +266,7 @@ void FoolGame::sentenceUndo() {
 
 void FoolGame::sentenceDrawButton(int16 gridIndex) {
 	// 135:0a34
-	_zbasic->text(kFontChicago, 0xc, 0, kSrcOr);
+	_zbasic->text(kFontChicago, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 	Common::U32String buf = Common::U32String::format("%d", gridIndex) + _zbasic->str(OFF(6)); // ' '
 	int16 width = _toolbox->StringWidth(buf);
 	_toolbox->FillOval(_screenGrid[gridIndex], _patterns[0]);
@@ -278,7 +277,7 @@ void FoolGame::sentenceDrawButton(int16 gridIndex) {
 
 void FoolGame::sentenceDrawBuffer() {
 	// 135:0b16
-	_zbasic->text(kFontLarge, 0x18, 0, kSrcOr);
+	_zbasic->text(kFontLarge, 0x18, 0, Graphics::MacToolbox::kSrcOr);
 	int16 width = _toolbox->StringWidth(_sentenceBuffer);
 	if (width < arr_i16_1eb8[4]) {
 		width = arr_i16_1eb8[4];

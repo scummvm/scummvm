@@ -22,25 +22,10 @@
 #include "common/system.h"
 #include "common/savefile.h"
 
-#include "gui/filebrowser-dialog.h"
+#include "graphics/mactoolbox/toolbox.h"
 
-#include "fool/fool.h"
-#include "fool/toolbox.h"
-
-namespace Fool {
-
-Common::String getFileNameFromModal(bool save, const Common::String &suggested, const Common::String &title) {
-	Common::String prefix = g_engine->getGameId() + '-';
-	Common::String mask = prefix + "*";
-	GUI::FileBrowserDialog browser(title.c_str(), "fool", save ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str(), suggested.c_str());
-	if (browser.runModal() <= 0) {
-		return Common::String();
-	}
-	Common::String result = browser.getResult();
-	if (!result.empty() && !result.hasPrefixIgnoreCase(prefix))
-		result = prefix + result;
-	return result;
-}
+namespace Graphics {
+namespace MacToolbox {
 
 OSErr Toolbox::GetFInfo(const Common::U32String &fileName, int16 vRefNum, Common::MacFinderInfo &fndrInfo) {
 	Common::MacResManager resMan;
@@ -62,15 +47,25 @@ OSErr Toolbox::PBSetVol(ParamBlockRec &paramBlock) {
 }
 
 void Toolbox::SFGetFile(const Common::Point &where, const Common::U32String &prompt, ProcPtr fileFilter, int16 numTypes, const SFTypeList &typeList, const ProcPtr &dlgHook, SFReply &reply) {
-	Common::String fileName = getFileNameFromModal(false, Common::String(), prompt.encode());
-	reply.fName = fileName;
-	reply.good = !fileName.empty() ? 1 : 0;
+	if (_fileModalCallback) {
+		Common::String fileName = _fileModalCallback(false, Common::String(), prompt.encode());
+		reply.fName = fileName;
+	} else {
+		warning("Toolbox::SFGetFile: file modal callback not set");
+		reply.fName.clear();
+	}
+	reply.good = !reply.fName.empty() ? 1 : 0;
 }
 
 void Toolbox::SFPutFile(const Common::Point &where, const Common::U32String &prompt, const Common::U32String &origName, const ProcPtr &dlgHook, SFReply &reply) {
-	Common::String fileName = getFileNameFromModal(true, origName.encode(), prompt.encode());
-	reply.fName = fileName;
-	reply.good = !fileName.empty() ? 1 : 0;
+	if (_fileModalCallback) {
+		reply.fName = _fileModalCallback(true, origName.encode(), prompt.encode());
+	} else {
+		warning("Toolbox::SFPutFile: file modal callback not set");
+		reply.fName.clear();
+	}
+	reply.good = !reply.fName.empty() ? 1 : 0;
 }
 
-} // End of namespace Fool
+} // End of namespace MacToolbox
+} // End of namespace Graphics

@@ -24,14 +24,33 @@
 
 #include "common/rect.h"
 #include "common/str.h"
-
 #include "common/ustr.h"
+#include "graphics/mactoolbox/toolbox.h"
+
 #include "fool/fool.h"
-#include "fool/toolbox.h"
 
 namespace Fool {
 
 class ZBasic;
+
+using Graphics::MacToolbox::BitMap;
+using Graphics::MacToolbox::Cursor;
+using Graphics::MacToolbox::EventRecord;
+using Graphics::MacToolbox::Handle;
+using Graphics::MacToolbox::GrafPort;
+using Graphics::MacToolbox::GrafPtr;
+using Graphics::MacToolbox::MenuHandle;
+using Graphics::MacToolbox::OSErr;
+using Graphics::MacToolbox::OSType;
+using Graphics::MacToolbox::Pattern;
+using Graphics::MacToolbox::PatternMode;
+using Graphics::MacToolbox::PicHandle;
+using Graphics::MacToolbox::PolyHandle;
+using Graphics::MacToolbox::RGBColor;
+using Graphics::MacToolbox::SFReply;
+using Graphics::MacToolbox::SourceMode;
+using Graphics::MacToolbox::Toolbox;
+using Graphics::MacToolbox::WindowRecord;
 
 enum FoolStateBits : uint16 {
 	kStateNull = 0x00,
