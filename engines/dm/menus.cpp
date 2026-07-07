@@ -154,7 +154,7 @@ MenuMan::MenuMan(DMEngine *vm) : _vm(vm) {
 	_actionList.resetToZero();
 	_bitmapSpellAreaLine = new byte[96 * 12];
 	_bitmapSpellAreaLines = new byte[3 * 96 * 12];
-	_actionTargetGroupThing = Thing(0);
+	_actionTargetGroupThing = Thing(0xFFFF);
 	_actionCount = 0;
 
 	initConstants();

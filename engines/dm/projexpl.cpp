@@ -54,7 +54,7 @@ void ProjExpl::createProjectile(Thing thing, int16 mapX, int16 mapY, uint16 cell
 	projectilePtr->_slot = thing;
 	projectilePtr->_kineticEnergy = MIN((int16)kineticEnergy, (int16)255);
 	projectilePtr->_attack = attack;
-	_vm->_dungeonMan->linkThingToList(projectileThing, Thing(0), mapX, mapY); /* Projectiles are added on the square and not 'moved' onto the square. In the case of a projectile launcher sensor, this means that the new projectile traverses the square in front of the launcher without any trouble: there is no impact if it is a wall, the projectile direction is not changed if it is a teleporter. Impacts with creatures and champions are still processed */
+	_vm->_dungeonMan->linkThingToList(projectileThing, Thing(0xFFFF), mapX, mapY); /* Projectiles are added on the square and not 'moved' onto the square. In the case of a projectile launcher sensor, this means that the new projectile traverses the square in front of the launcher without any trouble: there is no impact if it is a wall, the projectile direction is not changed if it is a teleporter. Impacts with creatures and champions are still processed */
 	TimelineEvent newEvent;
 	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 1);
 	if (_createLauncherProjectile)
@@ -228,7 +228,7 @@ T0217044:
 		potion->_nextThing = _vm->_thingNone;
 		projectileThingData->_slot = explosionThing;
 	}
-	_vm->_dungeonMan->unlinkThingFromList(projectileThing, Thing(0), projectileMapX, projectileMapY);
+	_vm->_dungeonMan->unlinkThingFromList(projectileThing, Thing(0xFFFF), projectileMapX, projectileMapY);
 	projectileDelete(projectileThing, curGroupSlot, projectileMapX, projectileMapY);
 	return true;
 }
@@ -312,7 +312,7 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 	} else if (explThing != _vm->_thingExplSmoke)
 		_vm->_sound->requestPlay(kDMSoundIndexSpell, projectileMapX, projectileMapY, kDMSoundModePlayIfPrioritized);
 
-	_vm->_dungeonMan->linkThingToList(unusedThing, Thing(0), projectileMapX, projectileMapY);
+	_vm->_dungeonMan->linkThingToList(unusedThing, Thing(0xFFFF), projectileMapX, projectileMapY);
 	TimelineEvent newEvent;
 	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + ((explThing == _vm->_thingExplRebirthStep1) ? 5 : 1));
 	newEvent._type = kDMEventTypeExplosion;
@@ -415,7 +415,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 
 		uint16 stepEnergy = curEvent->_Cu._projectile.getStepEnergy();
 		if (projectile->_kineticEnergy <= stepEnergy) {
-			_vm->_dungeonMan->unlinkThingFromList(projectileThingNewCell = projectileThing, Thing(0), destinationMapX, destinationMapY);
+			_vm->_dungeonMan->unlinkThingFromList(projectileThingNewCell = projectileThing, Thing(0xFFFF), destinationMapX, destinationMapY);
 			projectileDelete(projectileThingNewCell, nullptr, destinationMapX, destinationMapY);
 			return;
 		}
@@ -462,8 +462,8 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 		if ((Square(_vm->_dungeonMan->getSquare(destinationMapX, destinationMapY)).getType() == kDMElementTypeDoor) && hasProjectileImpactOccurred(kDMElementTypeDoor, destinationMapX, destinationMapY, projectileNewCell, projectileThing))
 			return;
 
-		_vm->_dungeonMan->unlinkThingFromList(projectileThingNewCell, Thing(0), destinationMapX, destinationMapY);
-		_vm->_dungeonMan->linkThingToList(projectileThingNewCell, Thing(0), destinationMapX, destinationMapY);
+		_vm->_dungeonMan->unlinkThingFromList(projectileThingNewCell, Thing(0xFFFF), destinationMapX, destinationMapY);
+		_vm->_dungeonMan->linkThingToList(projectileThingNewCell, Thing(0xFFFF), destinationMapX, destinationMapY);
 	}
 
 	// This code is from CSB20. The projectiles move at the same speed on all maps instead of moving slower on maps other than the party map */
@@ -562,7 +562,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 		newEvent._mapTime++;
 		_vm->_timeline->addEventGetEventIndex(&newEvent);
 	} else {
-		_vm->_dungeonMan->unlinkThingFromList(Thing(event->_Cu._slot), Thing(0), mapX, mapY);
+		_vm->_dungeonMan->unlinkThingFromList(Thing(event->_Cu._slot), Thing(0xFFFF), mapX, mapY);
 		explosion->setNextThing(_vm->_thingNone);
 	}
 }

@@ -132,7 +132,7 @@ public:
 	uint16 _cells;
 	uint16 _health[4];
 	uint16 _flags;
-	Group() : _nextThing(0), _slot(0), _type((CreatureType)0), _cells(0), _flags(0) {
+	Group() : _nextThing(0xFFFF), _slot(0xFFFF), _type((CreatureType)0), _cells(0), _flags(0) {
 		_health[0] = _health[1] = _health[2] = _health[3] = 0;
 	}
 

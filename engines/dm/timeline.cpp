@@ -307,7 +307,7 @@ void Timeline::processTimeline() {
 				break;
 			case kDMEventTypeRemoveFluxcage:
 				if (!_vm->_gameWon) {
-					_vm->_dungeonMan->unlinkThingFromList(Thing(newEvent._Cu._slot), Thing(0), newEvent._Bu._location._mapX, newEvent._Bu._location._mapY);
+					_vm->_dungeonMan->unlinkThingFromList(Thing(newEvent._Cu._slot), Thing(0xFFFF), newEvent._Bu._location._mapX, newEvent._Bu._location._mapY);
 					Explosion *explosion = _vm->_dungeonMan->getExplosion(Thing(newEvent._Cu._slot));
 					explosion->setNextThing(_vm->_thingNone);
 				}
@@ -679,7 +679,7 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 		if (firstProjectileAssociatedThing == _vm->_thingNone) /* BUG0_19 The game crashes when an object launcher sensor is triggered. _vm->_none should be _vm->_endOfList */
 			return;
 
-		_vm->_dungeonMan->unlinkThingFromList(firstProjectileAssociatedThing, Thing(0), mapX, mapY); /* The object is removed without triggering any sensor effects */
+		_vm->_dungeonMan->unlinkThingFromList(firstProjectileAssociatedThing, Thing(0xFFFF), mapX, mapY); /* The object is removed without triggering any sensor effects */
 		if (!launchSingleProjectile) {
 			secondProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 			while (secondProjectileAssociatedThing != _vm->_thingNone) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. _vm->_none should be _vm->_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game */
@@ -952,7 +952,7 @@ T0255002:
 				if (iconIndex == kDMIconIndiceJunkChampionBones) {
 					Junk *junkData = _vm->_dungeonMan->getJunk(curThing);
 					if (junkData->getChargeCount() == championIndex) {
-						_vm->_dungeonMan->unlinkThingFromList(curThing, Thing(0), mapX, mapY); /* BUG0_25 When a champion dies, no bones object is created so it is not possible to bring the champion back to life at an altar of Vi. Each time a champion is brought back to life, the bones object is removed from the dungeon but it is not marked as unused and thus becomes an orphan. After a large number of champion deaths, all JUNK things are exhausted and the game cannot create any more. This also affects the creation of JUNK things dropped by some creatures when they die (Screamer, Rockpile, Magenta Worm, Pain Rat, Red Dragon) */
+						_vm->_dungeonMan->unlinkThingFromList(curThing, Thing(0xFFFF), mapX, mapY); /* BUG0_25 When a champion dies, no bones object is created so it is not possible to bring the champion back to life at an altar of Vi. Each time a champion is brought back to life, the bones object is removed from the dungeon but it is not marked as unused and thus becomes an orphan. After a large number of champion deaths, all JUNK things are exhausted and the game cannot create any more. This also affects the creation of JUNK things dropped by some creatures when they die (Screamer, Rockpile, Magenta Worm, Pain Rat, Red Dragon) */
 						junkData->setNextThing(_vm->_thingNone);
 						event->_mapTime += 1;
 						goto T0255002;

@@ -448,7 +448,7 @@ DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_dungeonFileHeader._squareFirstThingCount = 0;
 
 	for (uint16 i = 0; i < 5; ++i)
-		_pileTopObject[i] = Thing(0);
+		_pileTopObject[i] = Thing(0xFFFF);
 	for (uint16 i = 0; i < 2; ++i)
 		_currMapDoorInfo[i].resetToZero();
 	for (uint16 i = 0; i < 16; i++)
@@ -776,7 +776,8 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 			case kDMThingTypeGroup: {
 				Group &grp = _groups[i];
 				grp._nextThing = Thing(dunDataStream->readUint16BE());
-				grp._slot = Thing(dunDataStream->readUint16BE());
+				uint16 slotVal = dunDataStream->readUint16BE();
+				grp._slot = (slotVal == 0) ? _vm->_thingNone : Thing(slotVal);
 				if (!file) {
 					grp._type = (CreatureType)dunDataStream->readByte();
 					grp._cells = dunDataStream->readByte();
@@ -818,7 +819,8 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 			case kDMThingTypeContainer: {
 				Container &cont = _containers[i];
 				cont._nextThing = Thing(dunDataStream->readUint16BE());
-				cont._slot = Thing(dunDataStream->readUint16BE());
+				uint16 slotVal = dunDataStream->readUint16BE();
+				cont._slot = (slotVal == 0) ? _vm->_thingNone : Thing(slotVal);
 				cont._type = dunDataStream->readUint16BE();
 				dunDataStream->readUint16BE(); // unused 4th word
 				break;
@@ -832,7 +834,8 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 			case kDMThingTypeProjectile: {
 				Projectile &proj = _projectiles[i];
 				proj._nextThing = Thing(dunDataStream->readUint16BE());
-				proj._slot = Thing(dunDataStream->readUint16BE());
+				uint16 slotVal = dunDataStream->readUint16BE();
+				proj._slot = (slotVal == 0) ? _vm->_thingNone : Thing(slotVal);
 				if (!file) {
 					proj._kineticEnergy = dunDataStream->readByte();
 					proj._attack = dunDataStream->readByte();
@@ -1816,7 +1819,7 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 									groupMan.groupDelete(currMapX, currMapY);
 								} else {
 									projExpl.projectileDeleteEvent(squareThing);
-									unlinkThingFromList(squareThing, Thing(0), currMapX, currMapY);
+									unlinkThingFromList(squareThing, Thing(0xFFFF), currMapX, currMapY);
 									projExpl.projectileDelete(squareThing, nullptr, currMapX, currMapY);
 								}
 								break;
