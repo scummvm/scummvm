@@ -185,7 +185,7 @@ Scene::Animation &Scene::Animation::operator=(std::nullptr_t) {
 }
 
 int Scene::Animation::getCurrentFrame() const {
-	error("TODO: Animation::getCurrentFrame");
+	return _currentFrame;
 }
 
 void Scene::Animation::setNextFrameTimer(long time) {
