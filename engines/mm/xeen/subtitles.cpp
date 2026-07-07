@@ -147,8 +147,15 @@ void Subtitles::show() {
 		reset();
 	} else {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-		if (timeElapsed() && (_lineEnd != _lineSize || !ttsMan || !ttsMan->isSpeaking())) {
-			_lineEnd = (_lineEnd + 1) % (_lineSize + 1);
+		bool speaking = sound.isSoundPlaying() || (ttsMan && ttsMan->isSpeaking());
+
+		if (timeElapsed() && (_lineEnd != _lineSize || !speaking)) {
+			// Advance the reveal. The original reveals one character per
+			// interval, which was tuned for the English lines; localized
+			// lines can be much longer, so scale the step with the length
+			// to keep long lines from lagging behind the voice
+			int step = 1 + _lineSize / 100;
+			_lineEnd = (_lineEnd == _lineSize) ? 0 : MIN(_lineEnd + step, _lineSize);
 			int count = MAX(_lineEnd - 40, 0);
 
 			// Get the portion of the line to display
@@ -184,7 +191,7 @@ void Subtitles::show() {
 		// partially drawn line never lingers over a more recent one
 		windows[0].addDirtyRect(SUBTITLE_BOX);
 
-		if (_lineEnd == 0 && (!ttsMan || !ttsMan->isSpeaking()))
+		if (_lineEnd == 0 && !speaking)
 			reset();
 	}
 }
