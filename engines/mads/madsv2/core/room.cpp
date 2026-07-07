@@ -74,10 +74,17 @@ void RoomFile::load(Common::SeekableReadStream *src) {
 	shadow.load(src);
 }
 
-void HotSpot::load(Common::SeekableReadStream *src) {
+void HotSpot::load(Common::SeekableReadStream *src, bool isRexNebular) {
 	src->readMultipleLE(ul_x, ul_y, lr_x, lr_y, feet_x, feet_y,
-		facing, prep, active, cursor_number, syntax);
-	src->skip(1);
+		facing, prep, active, cursor_number);
+
+	if (isRexNebular) {
+		syntax = 0;
+	} else {
+		syntax = src->readByte();
+		src->skip(1);
+	}
+
 	src->readMultipleLE(vocab, verb);
 }
 
@@ -400,7 +407,8 @@ HotPtr room_load_hotspots(int id, int *num_spots) {
 
 	// Read in the hotspot list
 	{
-		size_t bytes_to_read = num_to_read * HotSpot::SIZE;
+		size_t bytes_to_read = num_to_read * (g_engine->getGameID() == GType_RexNebular ?
+			HotSpot::SIZE - 2 : HotSpot::SIZE);
 		byte *buffer = (byte *)malloc(bytes_to_read);
 		if (!loader_read(buffer, bytes_to_read, 1, &load_handle)) {
 			free(buffer);
@@ -409,7 +417,7 @@ HotPtr room_load_hotspots(int id, int *num_spots) {
 
 		Common::MemoryReadStream src(buffer, bytes_to_read);
 		for (int i = 0; i < num_to_read; ++i)
-			spots[i].load(&src);
+			spots[i].load(&src, g_engine->getGameID() == GType_RexNebular);
 
 		free(buffer);
 	}

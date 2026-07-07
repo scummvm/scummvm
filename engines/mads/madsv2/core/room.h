@@ -105,7 +105,7 @@ struct HotSpot {
 	int16 verb;                           /* Vocabulary id of default verb */
 
 	static constexpr size_t SIZE = 6 * 2 + (5 * 1) + 1 + 2 + 2;
-	void load(Common::SeekableReadStream *src);
+	void load(Common::SeekableReadStream *src, bool isRexNebular);
 };
 
 typedef HotSpot *HotPtr;
