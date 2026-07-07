@@ -288,6 +288,10 @@ void View1::closeInventory() {
 }
 
 void View1::setInventorySource(GameObject *newInventorySource) {
+	if (newInventorySource == nullptr) {
+		warning("Tried to set inventory source to a null object");
+		return;
+	}
 	_inventorySource = newInventorySource;
 	// Rebuild inventory list from all objects whose SceneIndex matches.
 	// Binary (syncInventoryObjectList at 1008:071e) checks: object.sceneIndex == actorIndex + 0x400.
