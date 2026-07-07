@@ -79,9 +79,26 @@ void CardGamePuzzle::readData(Common::SeekableReadStream &stream) {
 	for (uint i = 0; i < _faceDownSrc.size(); ++i)
 		readRect(stream, _faceDownSrc[i]);
 
-	// 0x993: deal animation params + frames, then the voiced-line block (0xba3..0x1304, 33-byte
-	// name slots, per-side blocks 0x33d apart). Pull out the few lines we play; skip the rest.
-	stream.skip(0xbc4 - 0x993);                    // deal animation params + frames
+	// 0x993: per-turn hand-delivery animation (automaton variant), player (side 1) then Betty (side 0):
+	// {u16 frameCount, u16, u32 delay, 15 frame src rects, 1 delivery dest}. Empty in the grid variant.
+	_dealFrameCount[1] = stream.readUint16LE();    // 0x993
+	stream.skip(2);                                // 0x995
+	_dealFrameDelay[1] = stream.readUint32LE();    // 0x997
+	_dealFrames[1].resize(15);                     // 0x99b
+	for (uint i = 0; i < _dealFrames[1].size(); ++i)
+		readRect(stream, _dealFrames[1][i]);
+	readRect(stream, _deliverDest[1]);             // 0xa8b
+	_dealFrameCount[0] = stream.readUint16LE();    // 0xa9b
+	stream.skip(2);                                // 0xa9d
+	_dealFrameDelay[0] = stream.readUint32LE();    // 0xa9f
+	_dealFrames[0].resize(15);                     // 0xaa3
+	for (uint i = 0; i < _dealFrames[0].size(); ++i)
+		readRect(stream, _dealFrames[0][i]);
+	readRect(stream, _deliverDest[0]);             // 0xb93
+
+	// 0xba3: deal SFX name slot, then the voiced-line block (0xba3..0x1304, 33-byte name slots, per-
+	// side blocks 0x33d apart). Pull out the few lines we play; skip the rest.
+	stream.skip(0xbc4 - 0xba3);                    // deal SFX name
 	readFilename(stream, _moveVoiceName);          // 0xbc4
 	readFilename(stream, _dealVoiceName);          // 0xbe5
 	stream.skip(0xc2b - 0xc06);                    // 0xc06 deal SFX (alt)
@@ -200,6 +217,13 @@ void CardGamePuzzle::drawBoard() {
 			Common::Point(_turnHighlightDest[_currentTurn].left, _turnHighlightDest[_currentTurn].top));
 	}
 
+	// Automaton variant: the mover's hand-delivery sprite for the current frame.
+	if (_handAnimActive && _handFrame < _dealFrames[_handAnimSide].size()) {
+		const Common::Rect &src = _dealFrames[_handAnimSide][_handFrame];
+		const Common::Rect &dest = _deliverDest[_handAnimSide];
+		_drawSurface.blitFrom(_image, src, Common::Point(dest.left, dest.top));
+	}
+
 	_needsRedraw = true;
 }
 
@@ -267,6 +291,14 @@ void CardGamePuzzle::resolveAsk() {
 		if (drawnCol == -1) {
 			endGame();
 		}
+	}
+
+	// Automaton variant: the mover's hand delivers the card, cycling alongside the answer and slide.
+	if (_dealFrameCount[_mover] > 0) {
+		_handAnimActive = true;
+		_handAnimSide = _mover;
+		_handFrame = 0;
+		_handNextFrame = g_nancy->getTotalPlayTime() + _dealFrameDelay[_mover];
 	}
 
 	startMoveAnimation(before);
@@ -389,20 +421,34 @@ void CardGamePuzzle::startMoveAnimation(const bool beforeGrid[kMaxRows][kMaxCols
 }
 
 void CardGamePuzzle::updateGraphics() {
-	// Step any in-progress card slide first; the turn stays parked until it finishes.
-	if (_animating) {
-		if (g_nancy->getTotalPlayTime() < _animNextStep) {
-			return;
-		}
+	// Step any in-progress animations first; the turn stays parked until they finish. The card slide
+	// and the automaton hand-delivery sprite run on their own timers, concurrently.
+	uint32 now = g_nancy->getTotalPlayTime();
+	bool changed = false;
 
+	if (_animating && now >= _animNextStep) {
 		--_animStep;
-		_animNextStep = g_nancy->getTotalPlayTime() + _moveAnimDelay;
-
+		_animNextStep = now + _moveAnimDelay;
 		if (_animStep <= 0) {
 			_animating = false;
 		}
+		changed = true;
+	}
 
+	if (_handAnimActive && now >= _handNextFrame) {
+		++_handFrame;
+		_handNextFrame = now + _dealFrameDelay[_handAnimSide];
+		if (_handFrame >= _dealFrameCount[_handAnimSide]) {
+			_handAnimActive = false;
+		}
+		changed = true;
+	}
+
+	if (changed) {
 		drawBoard();
+	}
+
+	if (_animating || _handAnimActive) {
 		return;
 	}
 
@@ -500,6 +546,7 @@ void CardGamePuzzle::init() {
 	_gaveUp = false;
 	_animating = false;
 	_animStep = 0;
+	_handAnimActive = false;
 	_awaitingEnd = false;
 
 	// Opening deal: _dealRounds cards to each side, alternating

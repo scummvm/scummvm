@@ -110,6 +110,14 @@ protected:
 	uint16 _moveAnimDelta = 0;
 	uint32 _moveAnimDelay = 0;
 
+	// Automaton (Betty) variant: each turn a hand-delivery sprite is frame-cycled at a fixed slot,
+	// per side. Indexed by side (1 = player @0x993/0x99b/0xa8b, 0 = Betty @0xa9b/0xaa3/0xb93). The
+	// grid-vs-human variant leaves these empty (frame count 0), so the animation is simply skipped.
+	uint16 _dealFrameCount[2] = {};
+	uint32 _dealFrameDelay[2] = {};
+	Common::Array<Common::Rect> _dealFrames[2]; // hand-sprite frame src rects, by side
+	Common::Rect _deliverDest[2];               // where the hand sprite is drawn, by side
+
 	// Outcome scenes (data+0x1304 / 0x1320). The win block has two scene ids that share one set of
 	// transition params (frame/scroll/sound), held in _winScene; the id is chosen by the result.
 	uint16 _winSceneStartPlayer = 0; // data+0x1304
@@ -168,6 +176,12 @@ protected:
 	int _animStep = 0;
 	uint32 _animNextStep = 0;
 	bool _animating = false;
+
+	// The mover's hand-delivery sprite, cycled once per turn (automaton variant only).
+	bool _handAnimActive = false;
+	int _handAnimSide = 1;
+	uint16 _handFrame = 0;
+	uint32 _handNextFrame = 0;
 };
 
 } // End of namespace Action
