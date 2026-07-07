@@ -173,11 +173,17 @@ int room_load_depth(Load *load_handle, Buffer *depth, Room *room_info, int varia
 
 	byte *destP = buffer_pointer(depth, 0, 0);
 	byte *endP = destP + depth->x * depth->y;
-
 	byte runLength, runValue;
-	while (destP < endP && loader_read(&runLength, 1, 1, load_handle) == 1 && runLength > 0) {
-		if (loader_read(&runValue, 1, 1, load_handle) != 1)
+
+	// The data is encoded as a sequence of run lengths of given values
+	LoaderReadStream src(load_handle);
+
+	while (destP < endP) {
+		runLength = src.readByte();
+		if (!runLength)
 			break;
+
+		runValue = src.readByte();
 
 		// Write out the run length
 		Common::fill(destP, MIN(endP, destP + runLength), runValue);

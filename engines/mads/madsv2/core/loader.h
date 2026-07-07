@@ -22,6 +22,7 @@
 #ifndef MADS_CORE_LOADER_H
 #define MADS_CORE_LOADER_H
 
+#include "common/memstream.h"
 #include "common/stream.h"
 #include "mads/madsv2/core/general.h"
 #include "mads/madsv2/core/pack.h"
@@ -56,17 +57,27 @@ typedef Load *LoadHandle;
  */
 class LoaderReadStream : public Common::SeekableReadStream {
 private:
-	LoadHandle _load;
-public:
-	LoaderReadStream(LoadHandle load) : _load(load) {}
-	~LoaderReadStream() override {
-	}
+	Common::MemoryReadStream *_data;
 
-	int64 pos() const override { return 0; }
-	int64 size() const override { return 0; }
-	bool seek(int64 offset, int whence = SEEK_SET) override { return false; }
-	bool eos() const override { return false; }
-	uint32 read(void *dataPtr, uint32 dataSize) override;
+public:
+	LoaderReadStream(LoadHandle load);
+	~LoaderReadStream() override;
+
+	int64 pos() const override {
+		return _data->pos();
+	}
+	int64 size() const override {
+		return _data->size();
+	}
+	bool seek(int64 offset, int whence = SEEK_SET) override {
+		return _data->seek(offset, whence);
+	}
+	bool eos() const override {
+		return _data->eos();
+	}
+	uint32 read(void *dataPtr, uint32 dataSize) override {
+		return _data->read(dataPtr, dataSize);
+	}
 };
 
 
