@@ -640,8 +640,7 @@ void OrderingPuzzle::execute() {
 		g_nancy->_sound->stopSound(_solveSound);
 
 		if (_stageDeath) {
-			NancySceneState.changeScene(_deathScene._sceneChange);
-			NancySceneState.setEventFlag(_deathScene._flag);
+			_deathScene.execute();
 		} else if (_solveState == kNotSolved) {
 			_exitScene.execute();
 		} else {
