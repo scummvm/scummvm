@@ -143,8 +143,8 @@ void Subtitles::show() {
 		reset();
 	} else {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-		if (timeElapsed() && (_lineEnd != _lineSize - 1 || !ttsMan || !ttsMan->isSpeaking())) {
-			_lineEnd = (_lineEnd + 1) % _lineSize;
+		if (timeElapsed() && (_lineEnd != _lineSize || !ttsMan || !ttsMan->isSpeaking())) {
+			_lineEnd = (_lineEnd + 1) % (_lineSize + 1);
 			int count;
 			if (Common::RU_RUS == g_vm->getLanguage())
 				count = MAX(_lineEnd - 36, 0);
