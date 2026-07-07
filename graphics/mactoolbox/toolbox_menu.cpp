@@ -38,7 +38,7 @@ void Toolbox::AppendMenu(MenuHandle &theMenu, const Common::U32String &data) {
 	if (_defaultMenu) {
 		Graphics::MacMenuSubMenu *sub = _defaultMenu->getSubmenu(nullptr, theMenu->menuID-1);
 		if (!sub) {
-			warning("Toolbox::AppendMenu: menu ID %d not found, skipping", theMenu->menuID);
+			debugC(0, kDebugLevelMacToolbox, "Toolbox::AppendMenu: menu ID %d not found, skipping", theMenu->menuID);
 			return;
 		}
 		_defaultMenu->appendMenu(sub, data.encode(Common::kMacRoman), 0);
@@ -52,11 +52,11 @@ void Toolbox::AppendMenu(MenuHandle &theMenu, const Common::U32String &data) {
 
 void Toolbox::CheckItem(MenuHandle &theMenu, uint16 item, bool checked) {
 	if (!theMenu) {
-		warning("Toolbox::CheckItem: empty menu handle");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::CheckItem: empty menu handle");
 		return;
 	}
 	if (theMenu->menuData.size() < (uint)(item)) {
-		warning("Toolbox::CheckItem: item %d out of range for menu %d", item, theMenu->menuID);
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::CheckItem: item %d out of range for menu %d", item, theMenu->menuID);
 		return;
 	}
 	if (_defaultMenu) {
@@ -98,11 +98,11 @@ void Toolbox::DeleteMenu(uint16 menuID) {
 
 void Toolbox::DisableItem(MenuHandle &theMenu, uint16 item) {
 	if (!theMenu) {
-		warning("Toolbox::DisableItem: empty menu handle");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::DisableItem: empty menu handle");
 		return;
 	}
 	if (theMenu->menuData.size() < (uint)(item)) {
-		warning("Toolbox::DisableItem: item %d out of range for menu %d", item, theMenu->menuID);
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::DisableItem: item %d out of range for menu %d", item, theMenu->menuID);
 		return;
 	}
 	if (_defaultMenu) {
@@ -129,11 +129,11 @@ void Toolbox::DrawMenuBar() {
 
 void Toolbox::EnableItem(MenuHandle &theMenu, uint16 item) {
 	if (!theMenu) {
-		warning("Toolbox::EnableItem: empty menu handle");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::EnableItem: empty menu handle");
 		return;
 	}
 	if (theMenu->menuData.size() < (uint)(item)) {
-		warning("Toolbox::EnableItem: item %d out of range for menu %d", item, theMenu->menuID);
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::EnableItem: item %d out of range for menu %d", item, theMenu->menuID);
 		return;
 	}
 	if (_defaultMenu) {
@@ -174,7 +174,7 @@ void Toolbox::HiliteMenu(uint16 menuID) {
 		}
 		_defaultMenu->setDirty(true);
 	}
-	warning("STUB: Toolbox::HiliteMenu %d", menuID);
+	debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::HiliteMenu %d", menuID);
 }
 
 uint32 Toolbox::MenuKey(char ch) {
@@ -219,7 +219,7 @@ uint32 Toolbox::MenuSelect(const Common::Point &startPt) {
 	}
 	// we've eaten a ton of events, fix the mouseUp modifier
 	_modifiers |= kModMouseButtonUp;
-	warning("Toolbox::MenuSelect: %08x", result);
+	debugC(0, kDebugLevelMacToolbox, "Toolbox::MenuSelect: %08x", result);
 	return result;
 }
 
@@ -235,7 +235,7 @@ MenuHandle Toolbox::NewMenu(uint16 menuID, const Common::U32String &menuTitle) {
 		_defaultMenu->clearSubMenu(menuID-1);
 		Graphics::MacMenuItem *item = _defaultMenu->getMenuItem(menuID-1);
 		if (!item) {
-			warning("NewMenu: new menu didn't add for some reason??");
+			debugC(0, kDebugLevelMacToolbox, "NewMenu: new menu didn't add for some reason??");
 		} else {
 			item->text = menuTitle.encode(Common::kMacRoman);
 			item->unicode = false;
@@ -247,7 +247,7 @@ MenuHandle Toolbox::NewMenu(uint16 menuID, const Common::U32String &menuTitle) {
 
 void Toolbox::SetItem(MenuHandle &theMenu, uint16 item, const Common::U32String &itemString) {
 	if (!theMenu) {
-		warning("Toolbox::SetItem: empty menu handle");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::SetItem: empty menu handle");
 		return;
 	}
 	if (theMenu->menuData.size() < (uint)(item + 1)) {
@@ -257,7 +257,7 @@ void Toolbox::SetItem(MenuHandle &theMenu, uint16 item, const Common::U32String 
 	if (_defaultMenu) {
 		Graphics::MacMenuSubMenu *submenu = _defaultMenu->getSubmenu(nullptr, theMenu->menuID-1);
 		if (!submenu) {
-			warning("Toolbox::SetItem: menu ID %d not found", theMenu->menuID);
+			debugC(0, kDebugLevelMacToolbox, "Toolbox::SetItem: menu ID %d not found", theMenu->menuID);
 			return;
 		}
 		if (item == 0) {

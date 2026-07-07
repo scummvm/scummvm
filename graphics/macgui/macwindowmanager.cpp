@@ -874,6 +874,7 @@ void MacDrawPrimitives<T>::drawPolygonScan(const int *polyX, const int *polyY, i
 		j = npoints - 1;
 
 		for (i = 0; i < npoints; i++) {
+			// this line has been changed so the alignment is on the left
 			if ((polyY[i] <= pixelY && polyY[j] > pixelY) || (polyY[j] <= pixelY && polyY[i] > pixelY)) {
 				nodeX[nodes++] = (int)(polyX[i] + (double)(pixelY - polyY[i]) / (double)(polyY[j]-polyY[i]) *
 														(double)(polyX[j] - polyX[i]) + 0.5);

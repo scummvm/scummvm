@@ -21,8 +21,6 @@
 
 #include "common/debug.h"
 #include "common/memstream.h"
-#include "common/scummsys.h"
-#include "common/str-enc.h"
 #include "common/stream.h"
 #include "common/system.h"
 
@@ -39,7 +37,7 @@ void Toolbox::ClosePicture() {
 	ShowPen();
 	if (_port) {
 		if (!_port->picSave) {
-			warning("Toolbox::ClosePicture: picture not open");
+			debugC(0, kDebugLevelMacToolbox, "Toolbox::ClosePicture: picture not open");
 			return;
 		}
 		_port->picSave->pushOp(kOpEndPic);
@@ -75,29 +73,29 @@ void Toolbox::_drawBitsRect(Common::SeekableReadStream &stream, const Common::Re
 		//result->rawSurface().debugPrint(5, 0, 0, 0, 0, -1, 128, fakePal);
 		CopyBits(intermediate, _port->portBits, srcRect, dstRect, mode, nullptr);
 	} else {
-		warning("Toolbox::_drawBitsRect: PixMaps unsupported");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::_drawBitsRect: PixMaps unsupported");
 	}
 }
 
 
 void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 	if (!_port) {
-		warning("Toolbox::DrawPicture: no graphics port");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::DrawPicture: no graphics port");
 		return;
 	}
 
 	if (!myPicture) {
-		warning("Toolbox::DrawPicture: handle is empty");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::DrawPicture: handle is empty");
 		return;
 	}
 
 	if ((dstRect.width() != myPicture->picFrame.width()) ||
 		(dstRect.height() != myPicture->picFrame.height())) {
-		warning("Toolbox::DrawPicture: mismatched dimensions not supported");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::DrawPicture: mismatched dimensions not supported");
 	}
 
 	if (myPicture->picData.size() < 2) {
-		warning("Toolbox::DrawPicture: no image data!");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::DrawPicture: no image data!");
 		return;
 	}
 
@@ -113,14 +111,14 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 
 	uint16 version = stream.readUint16BE();
 	if ((version != kOpVersion1) && (version != kOpVersion2)) {
-		warning("Toolbox::DrawPicture: cannot find PICT version opcode");
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::DrawPicture: cannot find PICT version opcode");
 		return;
 	}
 
 	if (version == kOpVersion2) {
 		uint16 header = stream.readUint16BE();
 		if (header != kOpHeaderOp) {
-			warning("Toolbox::DrawPicture: cannot find PICT header opcode");
+			debugC(0, kDebugLevelMacToolbox, "Toolbox::DrawPicture: cannot find PICT header opcode");
 			return;
 		}
 		// we don't use the header yet
@@ -155,7 +153,7 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 		case kOpNOP:
 			break;
 		case kOpClip:
-			warning("STUB: Toolbox::DrawPicture: clip");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: clip");
 			readRegion(stream);
 			break;
 		case kOpBkPat:
@@ -171,7 +169,7 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 			TextMode((SourceMode)stream.readUint16BE());
 			break;
 		case kOpSpExtra:
-			warning("STUB: Toolbox::DrawPicture: spExtra");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: spExtra");
 			stream.skip(4);
 			break;
 		case kOpPnSize:
@@ -209,49 +207,49 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 			_port->bkColor = stream.readUint32BE();
 			break;
 		case kOpTxRatio:
-			warning("STUB: Toolbox::DrawPicture: txRatio");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: txRatio");
 			readPoint(stream);
 			readPoint(stream);
 			break;
 		case kOpVersion2:
 			break;
 		case kOpBkPixPat:
-			warning("STUB: Toolbox::DrawPicture: bkPixPat (struct unsupported)");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: bkPixPat (struct unsupported)");
 			break;
 		case kOpPnPixPat:
-			warning("STUB: Toolbox::DrawPicture: pnPixPat (struct unsupported)");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: pnPixPat (struct unsupported)");
 			break;
 		case kOpFillPixPat:
-			warning("STUB: Toolbox::DrawPicture: fillPixPat (struct unsupported)");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: fillPixPat (struct unsupported)");
 			break;
 		case kOpPnLocHFrac:
-			warning("STUB: Toolbox::DrawPicture: pnLocHFrac");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: pnLocHFrac");
 			stream.skip(2);
 			break;
 		case kOpChExtra:
-			warning("STUB: Toolbox::DrawPicture: chExtra");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: chExtra");
 			stream.skip(2);
 			break;
 		case kOpRGBFgCol:
-			warning("STUB: Toolbox::DrawPicture: rgbFgCol");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: rgbFgCol");
 			stream.skip(6);
 			break;
 		case kOpRGBBkCol:
-			warning("STUB: Toolbox::DrawPicture: rgbBkCol");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: rgbBkCol");
 			stream.skip(6);
 			break;
 		case kOpHiliteMode:
-			warning("STUB: Toolbox::DrawPicture: hiliteMode");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: hiliteMode");
 			break;
 		case kOpHiliteColor:
-			warning("STUB: Toolbox::DrawPicture: hiliteColor");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: hiliteColor");
 			stream.skip(6);
 			break;
 		case kOpDefHilite:
-			warning("STUB: Toolbox::DrawPicture: defHilite");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: defHilite");
 			break;
 		case kOpColor:
-			warning("STUB: Toolbox::DrawPicture: color");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: color");
 			stream.skip(6);
 			break;
 		case kOpLine:
@@ -321,7 +319,7 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 			}
 			break;
 		case kOpFontName:
-			warning("STUB: Toolbox::DrawPicture: fontName");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: fontName");
 			stream.skip(5);
 			stream.readPascalString(false);
 			break;
@@ -474,7 +472,7 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 			_drawBitsRect(stream, myPicture->picFrame, false);
 			break;
 		case kOpBitsRgn:
-			warning("STUB: Toolbox::DrawPicture: bitsRgn, aborting");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: bitsRgn, aborting");
 			endPic = true;
 			break;
 
@@ -482,18 +480,18 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 			_drawBitsRect(stream, myPicture->picFrame, true);
 			break;
 		case kOpPackBitsRgn:
-			warning("STUB: Toolbox::DrawPicture: packBitsRgn, aborting");
+			debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: packBitsRgn, aborting");
 			endPic = true;
 			break;
 
 
 		case kOpShortComment:
-			//warning("STUB: Toolbox::DrawPicture: shortComment");
+			//debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: shortComment");
 			stream.readUint16BE();
 			break;
 		case kOpLongComment:
 			{
-				//warning("STUB: Toolbox::DrawPicture: longComment");
+				//debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawPicture: longComment");
 				stream.readUint16BE();
 				int size = stream.readUint16BE();
 				stream.skip(size);
@@ -505,7 +503,7 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 			break;
 
 		default:
-			warning("Toolbox::DrawPicture: unsupported opcode %04x", op);
+			debugC(0, kDebugLevelMacToolbox, "Toolbox::DrawPicture: unsupported opcode %04x", op);
 		}
 		// if version 2, align to nearest word
 		if (version == kOpVersion2)
@@ -624,7 +622,7 @@ PicHandle Toolbox::OpenPicture(const Common::Rect &picFrame) {
 
 	if (_port) {
 		if (_port->picSave) {
-			warning("Toolbox::OpenPicture: last picture not closed, overwriting");
+			debugC(0, kDebugLevelMacToolbox, "Toolbox::OpenPicture: last picture not closed, overwriting");
 		}
 		_port->picSave = result;
 	}

@@ -20,7 +20,6 @@
  */
 
 #include "graphics/macgui/mactext-canvas.h"
-#include "graphics/macgui/mactext.h"
 #include "graphics/managed_surface.h"
 #include "graphics/pixelformat.h"
 
@@ -31,7 +30,7 @@ namespace Graphics {
 namespace MacToolbox {
 
 void Toolbox::DrawChar(Common::u32char_type_t ch) {
-	warning("STUB: Toolbox::DrawChar");
+	debugC(0, kDebugLevelMacToolbox, "STUB: Toolbox::DrawChar");
 }
 
 void Toolbox::DrawString(const Common::U32String &s) {

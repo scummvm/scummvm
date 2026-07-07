@@ -19,7 +19,8 @@
  *
  */
 
-#include "common/memstream.h"
+#include "common/debug.h"
+
 #include "graphics/mactoolbox/toolbox.h"
 #include "graphics/mactoolbox/utils.h"
 
@@ -60,7 +61,7 @@ Region readRegion(Common::SeekableReadStream &stream) {
 		stream.hexdump(region.rgnSize - 2);
 	}
 	if (stream.size() - stream.pos() < region.rgnSize - 2) {
-		warning("readRegion: not enough data to match size");
+		debugC(0, kDebugLevelMacToolbox, "readRegion: not enough data to match size");
 	}
 	region.rgnBBox = readRect(stream);
 	for (int i = 10; i < region.rgnSize; i+=2) {
@@ -113,7 +114,7 @@ BitMap readBitsRectMono(Common::SeekableReadStream &stream, PixMap &pixMap, bool
 		Common::BitStream8MSB bs(stream);
 		// rows are word-aligned
 		int overflowBits = (pixMap.bounds.width() % 16 == 0) ? 0 : (16 - (pixMap.bounds.width() % 16));
-		debugC(5, kDebugLevelGGraphics, "readBitsRectMono: width %d, overflow %d", pixMap.bounds.width(), overflowBits);
+		debugC(5, kDebugLevelMacToolbox, "readBitsRectMono: width %d, overflow %d", pixMap.bounds.width(), overflowBits);
 
 		for (int y = pixMap.bounds.top; y < pixMap.bounds.bottom; y++) {
 			int yPos = y - pixMap.bounds.top;
@@ -157,8 +158,8 @@ BitMap readBitsRectMono(Common::SeekableReadStream &stream, PixMap &pixMap, bool
 				readBytes += bufLen;
 			}
 
-			Common::MemoryReadStream ms(rowBuf, bufLen);
-			Common::BitStream8MSB bs(ms);
+			Common::BitStreamMemoryStream ms(rowBuf, bufLen);
+			Common::BitStreamMemory8MSB bs(ms);
 
 			for (int i = 0; i < 8 * bufLen; i++) {
 				int xPos = x;
@@ -242,7 +243,7 @@ Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const 
 		// Source: Inside Macintosh I-170
 		return blitMono(src, dst, mask, dstPos, (SourceMode)((int)mode & 0x7), black, white);
 	}
-	warning("blitMono: Called with an invalid PatternMode, ignoring");
+	debugC(0, kDebugLevelMacToolbox, "blitMono: Called with an invalid PatternMode, ignoring");
 	return Common::Rect();
 }
 
