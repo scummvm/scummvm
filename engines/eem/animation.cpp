@@ -43,6 +43,8 @@ void decodeAnmFrameRLE(const byte *src, uint srcSize, byte *dst, uint dstSize) {
 
 			if ((n & 0x8000) == 0) {
 				// Skip n bytes — preserves previous-frame pixels.
+				if (n >= (uint)(dstEnd - dst))
+					break;
 				dst += n;
 			} else if ((n & 0x4000) == 0) {
 				// Long literal copy: (n & 0x7FFF) bytes from src to dst.
@@ -74,7 +76,10 @@ void decodeAnmFrameRLE(const byte *src, uint srcSize, byte *dst, uint dstSize) {
 				*dst++ = *src++;
 		} else {
 			// Short skip: (op & 0x7F) bytes — preserves previous-frame pixels.
-			dst += op & 0x7F;
+			const uint skip = op & 0x7F;
+			if (skip >= (uint)(dstEnd - dst))
+				break;
+			dst += skip;
 		}
 	}
 }

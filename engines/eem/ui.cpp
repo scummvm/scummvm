@@ -950,10 +950,10 @@ bool animateCaseSelectionReveal(EEMEngine *vm, const Picture *caseBg,
 								bool haveRevealPic, const Animation *kdAnim,
 								bool haveKdAnim, int kdAnimX, int kdAnimY,
 								uint book) {
-	if (!haveRevealPic || !revealPic || revealPic->surface.empty())
+	if (!vm || !haveRevealPic || !revealPic || revealPic->surface.empty())
 		return false;
 
-	const int steps = vm && vm->isFloppy()
+	const int steps = vm->isFloppy()
 		? revealPic->surface.w : revealPic->surface.h;
 	for (int i = 1; i <= steps; i++) {
 		if (pumpQuitEvents(vm))
@@ -963,7 +963,7 @@ bool animateCaseSelectionReveal(EEMEngine *vm, const Picture *caseBg,
 		scratch.clear();
 		if (haveCaseBg && caseBg)
 			scratch.simpleBlitFrom(caseBg->surface);
-		if (vm && vm->isFloppy()) {
+		if (vm->isFloppy()) {
 			blitMaskedPicRightReveal(scratch, *revealPic,
 									  vm->scaleX(kCaseSelectionRevealX),
 									  vm->scaleY(kCaseSelectionRevealY), i);

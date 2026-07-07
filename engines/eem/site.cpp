@@ -1463,12 +1463,12 @@ void SiteScreen::renderStaticDrops(uint siteNum) {
 }
 
 void SiteScreen::renderFloppyDrops(uint siteNum) {
-	if (!_mystery)
+	if (!_mystery || !_vm)
 		return;
 	const byte *site = _mystery->siteData(siteNum);
 	if (!site)
 		return;
-	const bool mac = _vm && _vm->isMacintosh();
+	const bool mac = _vm->isMacintosh();
 	const uint16 dropsOff = READ_LE_UINT16(site);
 	const byte *drops = _mystery->blobAt(dropsOff);
 	if (!drops)
@@ -1502,13 +1502,13 @@ void SiteScreen::renderFloppyDrops(uint siteNum) {
 }
 
 void SiteScreen::renderAnimatedDrops(uint siteNum, uint32 tickMs) {
-	if (!_mystery)
+	if (!_mystery || !_vm)
 		return;
 
-	if (_vm && _vm->isMacintosh())
+	if (_vm->isMacintosh())
 		return;
 
-	if (_vm && _vm->isFloppy()) {
+	if (_vm->isFloppy()) {
 		const byte *siteAnim = _mystery->floppySiteAnimData(siteNum);
 		if (!siteAnim)
 			return;
@@ -1850,6 +1850,8 @@ byte currentWhitePaletteIndex(byte fallback) {
 void SiteScreen::renderHotspots(uint siteNum) {
 	if (ConfMan.getBool("hide_highlight_boxes"))
 		return;
+	if (!_vm || !_mystery)
+		return;
 
 	const byte *spots = _mystery->hotspots(siteNum);
 	const uint16 count = _mystery->hotspotCount(siteNum);
@@ -1871,10 +1873,9 @@ void SiteScreen::renderHotspots(uint siteNum) {
 	// don't inherit the first site's seen state after travel/reload).
 	// Floppy = 8-byte plain rect only; searched state is derived by
 	// walking the dialog record list, like `_HotspotSearched_Floppy`.
-	const bool compact = _vm &&
-		(_vm->isFloppy() || (_mystery && _mystery->usesCompactMacData()));
-	const bool floppy = _vm && _vm->isFloppy();
-	const bool mac = _vm && _vm->isMacintosh();
+	const bool compact = _vm->isFloppy() || _mystery->usesCompactMacData();
+	const bool floppy = _vm->isFloppy();
+	const bool mac = _vm->isMacintosh();
 	const uint stride = compact ? 8 : 14;
 	// The floppy SITEPALS has at least one searchable site where 0xFF is
 	// yellow. The CD corrected that palette data; for floppy, draw with an
@@ -1931,15 +1932,16 @@ void SiteScreen::renderHotspots(uint siteNum) {
 }
 
 int SiteScreen::hotspotAtPoint(uint siteNum, int x, int y) const {
+	if (!_vm || !_mystery)
+		return -1;
 	const byte *spots = _mystery->hotspots(siteNum);
 	const uint16 count = _mystery->hotspotCount(siteNum);
 	if (!spots)
 		return -1;
 
-	const bool compact = _vm &&
-		(_vm->isFloppy() || (_mystery && _mystery->usesCompactMacData()));
+	const bool compact = _vm->isFloppy() || _mystery->usesCompactMacData();
 	const uint stride = compact ? 8 : 14;
-	const bool mac = _vm && _vm->isMacintosh();
+	const bool mac = _vm->isMacintosh();
 	for (uint i = 0; i < count; i++) {
 		const byte *r = spots + i * stride;
 		Common::Rect rect;
@@ -1952,8 +1954,9 @@ int SiteScreen::hotspotAtPoint(uint siteNum, int x, int y) const {
 // CD hotspot row +0xc..d: cursor id for `_SwitchMouse` (EEM1 ships 0; EEM2
 // uses 2/3 examine, etc.). Floppy rows are 8-byte rects with no cursor field.
 int SiteScreen::hotspotCursorId(uint siteNum, int idx) const {
-	if (idx < 0 || (_vm && (_vm->isFloppy() ||
-		(_mystery && _mystery->usesCompactMacData()))))
+	if (idx < 0 || !_vm || !_mystery)
+		return 0;
+	if (_vm->isFloppy() || _mystery->usesCompactMacData())
 		return 0;
 	const byte *spots = _mystery->hotspots(siteNum);
 	if (!spots || (uint)idx >= _mystery->hotspotCount(siteNum))

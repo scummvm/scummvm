@@ -330,7 +330,7 @@ bool Mystery::load(uint num, Common::RandomSource *rng, bool macintosh) {
 		f.close();
 	}
 
-	_data = staging;
+	_data = Common::move(staging);
 	_number = num;
 	_isFloppy = false;
 	_isMacintosh = false;
