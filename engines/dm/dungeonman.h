@@ -336,7 +336,7 @@ class Door {
 public:
 	Thing _nextThing;
 	uint16 _attributes;
-	Door() : _nextThing(0), _attributes(0) {}
+	Door() : _nextThing(0xFFFF), _attributes(0) {}
 	Thing getNextThing() { return _nextThing; }
 	bool isMeleeDestructible() { return (_attributes >> 8) & 1; }
 	bool isMagicDestructible() { return (_attributes >> 7) & 1; }
@@ -351,7 +351,7 @@ public:
 	Thing _nextThing;
 	uint16 _attributes;
 	uint16 _destMapIndex;
-	Teleporter() : _nextThing(0), _attributes(0), _destMapIndex(0) {}
+	Teleporter() : _nextThing(0xFFFF), _attributes(0), _destMapIndex(0) {}
 	Thing getNextThing() { return _nextThing; }
 	bool isAudible() { return (_attributes >> 15) & 1; }
 	TeleporterScope getScope() { return (TeleporterScope)((_attributes >> 13) & 3); }
@@ -366,7 +366,7 @@ class TextString {
 public:
 	Thing _nextThing;
 	uint16 _textDataRef;
-	TextString() : _nextThing(0), _textDataRef(0) {}
+	TextString() : _nextThing(0xFFFF), _textDataRef(0) {}
 
 	Thing getNextThing() { return _nextThing; }
 	uint16 getWordOffset() { return _textDataRef >> 3; }
@@ -380,7 +380,7 @@ public:
 	uint16 _datAndType;
 	uint16 _attributes; // A
 	uint16 _action; // B
-	Sensor() : _nextThing(0), _datAndType(0), _attributes(0), _action(0) {}
+	Sensor() : _nextThing(0xFFFF), _datAndType(0), _attributes(0), _action(0) {}
 
 	Thing getNextThing() { return _nextThing; }
 	void setNextThing(Thing thing) { _nextThing = thing; }
@@ -416,7 +416,7 @@ class Weapon {
 public:
 	Thing _nextThing;
 	uint16 _desc;
-	Weapon() : _nextThing(0), _desc(0) {}
+	Weapon() : _nextThing(0xFFFF), _desc(0) {}
 
 	WeaponType getType() { return (WeaponType)(_desc & 0x7F); }
 	void setType(uint16 val) { _desc = (_desc & ~0x7F) | (val & 0x7F); }
@@ -443,7 +443,7 @@ class Armour {
 public:
 	Thing _nextThing;
 	uint16 _attributes;
-	Armour() : _nextThing(0), _attributes(0) {}
+	Armour() : _nextThing(0xFFFF), _attributes(0) {}
 
 	ArmourType getType() { return (ArmourType)(_attributes & 0x7F); }
 	Thing getNextThing() { return _nextThing; }
@@ -460,7 +460,7 @@ class Scroll {
 public:
 	Thing _nextThing;
 	uint16 _attributes;
-	Scroll() : _nextThing(0), _attributes(0) {}
+	Scroll() : _nextThing(0xFFFF), _attributes(0) {}
 	void set(Thing next, uint16 attribs) {
 		_nextThing = next;
 		_attributes = attribs;
@@ -480,7 +480,7 @@ class Potion {
 public:
 	Thing _nextThing;
 	uint16 _attributes;
-	Potion() : _nextThing(0), _attributes(0) {}
+	Potion() : _nextThing(0xFFFF), _attributes(0) {}
 
 	PotionType getType() { return (PotionType)((_attributes >> 8) & 0x7F); }
 	void setType(PotionType val) { _attributes = (_attributes & ~(0x7F << 8)) | ((val & 0x7F) << 8); }
@@ -495,7 +495,7 @@ public:
 	Thing _nextThing;
 	Thing _slot;
 	uint16 _type;
-	Container() : _nextThing(0), _slot(0), _type(0) {}
+	Container() : _nextThing(0xFFFF), _slot(0xFFFF), _type(0) {}
 
 	uint16 getType() { return (_type >> 1) & 0x3; }
 	Thing &getSlot() { return _slot; }
@@ -506,7 +506,7 @@ class Junk {
 public:
 	Thing _nextThing;
 	uint16 _attributes;
-	Junk() : _nextThing(0), _attributes(0) {}
+	Junk() : _nextThing(0xFFFF), _attributes(0) {}
 
 	JunkType getType() { return (JunkType)(_attributes & 0x7F); }
 	void setType(uint16 val) { _attributes = (_attributes & ~0x7F) | (val & 0x7F); }
@@ -527,7 +527,7 @@ public:
 	uint16 _kineticEnergy;
 	uint16 _attack;
 	uint16 _eventIndex;
-	Projectile() : _nextThing(0), _slot(0), _kineticEnergy(0), _attack(0), _eventIndex(0) {}
+	Projectile() : _nextThing(0xFFFF), _slot(0xFFFF), _kineticEnergy(0), _attack(0), _eventIndex(0) {}
 
 }; // @ PROJECTILE
 
@@ -535,7 +535,7 @@ class Explosion {
 public:
 	Thing _nextThing;
 	uint16 _attributes;
-	Explosion() : _nextThing(0), _attributes(0) {}
+	Explosion() : _nextThing(0xFFFF), _attributes(0) {}
 
 	Thing getNextThing() { return _nextThing; }
 	Thing setNextThing(Thing val) { return _nextThing = val; }

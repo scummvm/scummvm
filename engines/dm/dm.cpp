@@ -119,7 +119,7 @@ int16 DMEngine::getDistance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2) 
 
 DMEngine::DMEngine(OSystem *syst, const DMADGameDescription *desc) :
 			Engine(syst), _console(nullptr), _gameVersion(desc),
-			_thingNone(0), _thingEndOfList(0xFFFE), _thingFirstExplosion(0xFF80),
+			_thingNone(0xFFFF), _thingEndOfList(0xFFFE), _thingFirstExplosion(0xFF80),
 			_thingExplFireBall(0xFF80), _thingExplSlime(0xFF81), _thingExplLightningBolt(0xFF82),
 			_thingExplHarmNonMaterial(0xFF83), _thingExplOpenDoor(0xFF84), _thingExplPoisonBolt(0xFF86),
 			_thingExplPoisonCloud(0xFF87), _thingExplSmoke(0xFFA8), _thingExplFluxcage(0xFFB2),
@@ -937,7 +937,7 @@ void DMEngine::fuseSequence() {
 			if (curThing.getType() == kDMThingTypeExplosion) {
 				Explosion *curExplosion = _dungeonMan->getExplosion(curThing);
 				if (curExplosion->getType() == kDMExplosionTypeFluxcage) {
-					_dungeonMan->unlinkThingFromList(curThing, Thing(0), fluxCageMapX, fluxcageMapY);
+					_dungeonMan->unlinkThingFromList(curThing, Thing(0xFFFF), fluxCageMapX, fluxcageMapY);
 					curExplosion->setNextThing(_thingNone);
 					curThing = _dungeonMan->getSquareFirstObject(fluxCageMapX, fluxcageMapY);
 					continue;

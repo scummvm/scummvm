@@ -171,7 +171,7 @@ ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {
 	}
 	_partyChampionCount = 0;
 	_partyDead = false;
-	_leaderHandObject = Thing(0);
+	_leaderHandObject = Thing(0xFFFF);
 	_leaderIndex = kDMChampionNone;
 	_candidateChampionOrdinal = 0;
 	_partyIsSleeping = false;
@@ -1806,8 +1806,10 @@ void ChampionMan::loadPartyPart2(Common::InSaveFile *file) {
 		for (uint16 y = 0; y < 7; ++y)
 			for (uint16 x = 0; x < 3; ++x)
 				champ->_statistics[y][x] = file->readByte();
-		for (uint16 j = 0; j < 30; ++j)
-			champ->_slots[j] = Thing(file->readUint16BE());
+		for (uint16 j = 0; j < 30; ++j) {
+			uint16 val = file->readUint16BE();
+			champ->_slots[j] = (val == 0) ? _vm->_thingNone : Thing(val);
+		}
 		for (uint16 j = 0; j < 20; ++j) {
 			champ->_skills[j]._temporaryExperience = file->readSint16BE();
 			champ->_skills[j]._experience = file->readSint32BE();

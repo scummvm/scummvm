@@ -136,7 +136,7 @@ class Thing {
 public:
 	uint16 _data;
 
-	Thing() : _data(0) {}
+	Thing() : _data(0xFFFF) {}
 	explicit Thing(uint16 d) { set(d); }
 
 	void set(uint16 d) {

@@ -1272,7 +1272,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	for (uint16 slotIndex = kDMSlotReadyHand; slotIndex < kDMSlotChest1; slotIndex++) {
 		Thing thing = champ->getSlot((ChampionSlot)slotIndex);
 		if (thing != _vm->_thingNone) {
-			_vm->_dungeonMan->unlinkThingFromList(thing, Thing(0), mapX, mapY);
+			_vm->_dungeonMan->unlinkThingFromList(thing, Thing(0xFFFF), mapX, mapY);
 		}
 	}
 	Thing thing = dunMan.getSquareFirstThing(mapX, mapY);

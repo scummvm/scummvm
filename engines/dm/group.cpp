@@ -50,13 +50,13 @@ GroupMan::GroupMan(DMEngine *vm) : _vm(vm) {
 		_fluxCages[i] = 0;
 	_currentGroupMapX = 0;
 	_currentGroupMapY = 0;
-	_currGroupThing = Thing(0);
+	_currGroupThing = Thing(0xFFFF);
 	for (uint16 i = 0; i < 4; ++i)
 		_groupMovementTestedDirections[i] = 0;
 	_currGroupDistanceToParty = 0;
 	_currGroupPrimaryDirToParty = 0;
 	_currGroupSecondaryDirToParty = 0;
-	_groupMovementBlockedByGroupThing = Thing(0);
+	_groupMovementBlockedByGroupThing = Thing(0xFFFF);
 	_groupMovementBlockedByDoor = false;
 	_groupMovementBlockedByParty = false;
 	_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = false;
@@ -1987,7 +1987,7 @@ void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
 	if (unusedThing == _vm->_thingNone)
 		return;
 
-	dungeon.linkThingToList(unusedThing, Thing(0), mapX, mapY);
+	dungeon.linkThingToList(unusedThing, Thing(0xFFFF), mapX, mapY);
 	dungeon.getExplosion(unusedThing)->setType(kDMExplosionTypeFluxcage);
 	TimelineEvent newEvent;
 	newEvent._mapTime = _vm->setMapAndTime(dungeon._currMapIndex, _vm->_gameTime + 100);

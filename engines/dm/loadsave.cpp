@@ -106,7 +106,8 @@ LoadgameResult DMEngine::loadgame(int16 slot) {
 		_disabledMovementTicks = file->readSint16BE();
 		_projectileDisableMovementTicks = file->readSint16BE();
 		_lastProjectileDisabledMovementDirection = file->readSint16BE();
-		_championMan->_leaderHandObject = Thing(file->readUint16BE());
+		uint16 handVal = file->readUint16BE();
+		_championMan->_leaderHandObject = (handVal == 0) ? _thingNone : Thing(handVal);
 		_groupMan->_maxActiveGroupCount = file->readUint16BE();
 		if (!_restartGameRequest) {
 			_timeline->initTimeline();

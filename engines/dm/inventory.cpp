@@ -72,7 +72,7 @@ InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 	_inventoryChampionOrdinal = 0;
 	_panelContent = kDMPanelContentFoodWaterPoisoned;
 	for (uint16 i = 0; i < 8; ++i)
-		_chestSlots[i] = Thing(0);
+		_chestSlots[i] = Thing(0xFFFF);
 	_openChest = _vm->_thingNone;
 	_objDescTextXpos = 0;
 	_objDescTextYpos = 0;
