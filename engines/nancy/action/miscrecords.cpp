@@ -211,11 +211,8 @@ void TextboxClear::execute() {
 void FrameTextBox::readData(Common::SeekableReadStream &stream) {
 	readTextboxText(stream, _text);
 
-	// Trailing two int16 fields: meaning differs slightly between the
-	// three opcodes that reuse this layout, but are safe to capture as a
-	// pair until UICO conversation rendering is wired up.
-	_flags = stream.readSint16LE();
-	_slot  = stream.readSint16LE();
+	// The original appends the "<e>" end-of-line hypertext tag to the caption
+	_text += "<e>";
 }
 
 void FrameTextBox::execute() {

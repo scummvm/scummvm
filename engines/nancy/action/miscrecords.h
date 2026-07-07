@@ -130,15 +130,13 @@ protected:
 // text into the new (UICO-driven) textbox
 class FrameTextBox : public ActionRecord {
 public:
-	FrameTextBox(bool fullMode) : _fullMode(fullMode), _flags(0), _slot(0) {}
+	FrameTextBox(bool fullMode) : _fullMode(fullMode) {}
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
 	bool _fullMode;
 	Common::String _text;
-	int16 _flags;
-	int16 _slot;
 
 protected:
 	Common::String getRecordTypeName() const override { return "FrameTextBox"; }
