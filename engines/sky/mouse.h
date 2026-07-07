@@ -122,6 +122,9 @@ public:
 		_invH = h;
 	}
 	bool isUILive();
+	void setTextChooserMode() {
+		_mMode = TEXT_CHOOSER;
+	}
 	void resetUI();
 	OSystem *giveSystem(){
 		return	_system;
@@ -157,6 +160,7 @@ protected:
 	void invMouse(uint16 xPos, uint16 yPos);
 	void lincInvMouse(uint16 xPos, uint16 yPos);
 	void invUseOn(uint16 xPos, uint16 yPos);
+	void textChooser(uint16 xPos, uint16 yPos);
 
 	bool _logicClick;
 

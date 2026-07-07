@@ -315,12 +315,86 @@ void Mouse::mouseEngineIBASS() {
 		invUseOn(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
 		break;
 	case TEXT_CHOOSER:
+		textChooser(_mouseX + TOP_LEFT_X, _mouseY + TOP_LEFT_Y);
 		break;
 	case INV_TEMP_EXAMINE:
 		break;
 	}
 	_mouseB = 0;
 	return;
+}
+
+void Mouse::textChooser(uint16 xPos, uint16 yPos) {
+	uint32 currentListNum = Logic::_scriptVariables[MOUSE_LIST_NO];
+	uint16 *currentList;
+	Compact *itemData;
+	uint32 itemNum;
+
+	if (yPos < (TOP_LEFT_Y + 4))
+		yPos = TOP_LEFT_Y + 4;
+
+	if (_mouseB) {
+		do {
+			currentList = (uint16 *)_skyCompact->fetchCpt(currentListNum);
+			while ((*currentList != 0) && (*currentList != 0xFFFF)) {
+				itemNum = *currentList;
+				itemData = _skyCompact->fetchCpt(itemNum);
+				currentList++;
+
+				if ((itemData->screen == Logic::_scriptVariables[SCREEN]) && (itemData->status & 16)) {
+					if (itemData->xcood + ((uint16)itemData->mouseRelX) > xPos)
+						continue;
+					if (itemData->xcood + ((uint16)itemData->mouseRelX) + itemData->mouseSizeX < xPos)
+						continue;
+					if (itemData->ycood + ((uint16)itemData->mouseRelY) > yPos)
+						continue;
+					if (itemData->ycood + ((uint16)itemData->mouseRelY) + itemData->mouseSizeY < yPos)
+						continue;
+
+					if (_touchId != itemNum) {
+						// run previous item's GET_OFF, if there was one
+						if (Logic::_scriptVariables[GET_OFF])
+							_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
+						// write mouseOff sript number
+						Logic::_scriptVariables[GET_OFF] = itemData->mouseOff;
+						// record what we're touching
+						Logic::_scriptVariables[SPECIAL_ITEM] = itemNum;
+						_touchId = itemNum;
+						if (itemData->mouseOn)
+							_skyLogic->mouseScript(itemData->mouseOn, itemData);
+					}
+					return;
+				}
+			}
+			if (*currentList == 0xFFFF)
+				currentListNum = currentList[1];
+		} while (*currentList != 0);
+		// run previous item's GET_OFF if there was one
+		if (Logic::_scriptVariables[GET_OFF]) {
+			// fetch the compact
+			itemData = _skyCompact->fetchCpt(_touchId);
+			_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
+			Logic::_scriptVariables[GET_OFF] = 0;
+		}
+		// clear
+		_touchId = 0;
+	} else {
+		if (Logic::_scriptVariables[GET_OFF]) {
+			// fetch the compact
+			itemData = _skyCompact->fetchCpt(_touchId);
+			_skyLogic->mouseScript(Logic::_scriptVariables[GET_OFF], itemData);
+			Logic::_scriptVariables[GET_OFF] = 0;
+		}
+		if (_touchId) {
+			Logic::_scriptVariables[BUTTON] = 3;
+			itemData = _skyCompact->fetchCpt(_touchId);
+			if (itemData->mouseClick)
+				_skyLogic->mouseScript(itemData->mouseClick, itemData);
+			_logicClick = 2;
+			_touchId = 0;
+			_mMode = GAMEPLAY;
+		}
+	}
 }
 
 int Mouse::doProximityHighlights(uint16 xPos, uint16 yPos) {
