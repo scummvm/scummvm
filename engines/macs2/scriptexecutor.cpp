@@ -2684,7 +2684,7 @@ void Script::ScriptExecutor::scriptLoadMusicSlot() {
 
 	Common::Array<uint8> slotData;
 	if (loadMusicResource(slotData, resourceIndex)) {
-		_musicSlots[slotID - 1] = slotData;
+		_musicSlots[slotID - 1] = Common::move(slotData);
 	}
 }
 
