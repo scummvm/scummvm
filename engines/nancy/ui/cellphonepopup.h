@@ -77,6 +77,11 @@ public:
 	// into `scene` (AR 128 returns via the setReturnScene slot).
 	void startIncomingCall(const SceneChangeDescription &scene);
 
+	// Called by AR 128 when a call's conversation ends. An incoming call takes
+	// the phone down; a player-placed call leaves it open at the welcome screen
+	// (matching the original CCellPhonePopCellSceneFromStack).
+	void endCall();
+
 private:
 	enum ScreenState : int {
 		kWelcome          = 0,
@@ -114,6 +119,9 @@ private:
 	// Back buttons: subButtons[0] on the help / directory / online screens,
 	// subButtons[7] in the zoomed email / browser content view).
 	void drawBackButton(uint subButtonIndex);
+	// Blit an online-hub option button (mail / browser), using its highlighted
+	// sprite when the cursor is over it.
+	void drawHubButton(uint subButtonIndex);
 	// Blit the lit key sprite of the currently held dial-pad slot over its
 	// dest rect, so keypad keys visually depress while pressed.
 	void drawPressedDialKey();
@@ -125,6 +133,10 @@ private:
 	void drawHeading(const UICL::SrcDestRectPair &heading);
 	// Render the opened entry's body text in the LCD area, word-wrapped.
 	void drawContentView();
+	// Expensive: render the current content page's hypertext into the cache
+	// surface (+ text height, image/link hotspots). Called by drawContentView
+	// only when the page key changes.
+	void renderContentPage(int surfaceWidth);
 	// Enter the content view for a list entry whose AUTOTEXT key is `key`.
 	void openContentView(const Common::String &key, const UICL::SrcDestRectPair &heading);
 	// Web button: open the first url entry as the browser home page (page 0).
@@ -243,6 +255,10 @@ private:
 	// Dial-pad slot currently held down (shows the lit / depressed key), or -1.
 	int _pressedSlot = -1;
 
+	// Online-hub option button under the cursor (subButtons index 3 = mail,
+	// 4 = browser), drawn with its highlighted sprite; -1 = none.
+	int _hoveredHubButton = -1;
+
 	// A call queued by auto-dial / Talk, waiting for the key's DTMF tone to
 	// finish before entering kPlaceCall (see updateGraphics).
 	bool _autoDialPending = false;
@@ -257,10 +273,27 @@ private:
 	Common::String _contentKey;
 	uint _contentScroll = 0;
 
+	// Email "opening" transition: the visible row whose closed envelope briefly
+	// flashes open before the body is shown (-1 = none), the deadline for that
+	// transition, and the body CVTX key to open when it fires.
+	int _openingEmailRow = -1;
+	uint32 _openingEmailTime = 0;
+	Common::String _openingEmailKey;
+
 	// In-page hyperlinks: rects (popup-local, recomputed every draw) and
 	// the target CVTX key parsed from each <H>...<L> region of the body.
 	Common::Array<Common::Rect> _contentHotspots;
 	Common::Array<Common::String> _contentHotspotTargets;
+
+	// Cached render of the current content page. Rendering the hypertext is
+	// expensive, so it's only rebuilt when the page key changes — scrolling
+	// and hover redraws just re-blit a window of the cached surface (fixes the
+	// cursor stutter while hovering the scroll arrows).
+	Graphics::ManagedSurface _contentCacheSurface;
+	Common::String _contentCacheKey;
+	uint16 _contentCacheTextHeight = 0;
+	Common::Array<Common::Rect> _contentCacheHotspots;
+	Common::Array<Common::String> _contentCacheTargets;
 
 	bool _noSignal = false;
 	bool _batteryLow = false;
@@ -269,6 +302,11 @@ private:
 	// kConnected handler once the player has answered).
 	SceneChangeDescription _pendingCallScene;
 	bool _hasPendingCallScene = false;
+
+	// True while the in-progress / just-finished call was incoming (auto-rung),
+	// so AR 128 knows to close the phone afterwards; player-placed calls leave
+	// it open. Persists past _hasPendingCallScene, which is consumed on connect.
+	bool _callWasIncoming = false;
 
 	SceneChangeDescription _returnScene;
 	bool _hasReturnScene = false;

@@ -390,8 +390,9 @@ void CellPhonePopCellSceneFromStack::execute() {
 			NancySceneState.changeScene(returnScene);
 	}
 
-	// Conversation is over; take the phone down.
-	phone.close();
+	// Conversation is over. An incoming call closes the phone; a player-placed
+	// call leaves it open at the welcome screen.
+	phone.endCall();
 
 	finishExecution();
 }
