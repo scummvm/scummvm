@@ -278,11 +278,11 @@ void Scene::pushScene(int16 itemID) {
 
 void Scene::popScene(bool inventory) {
 	if (!inventory || _sceneState.pushedInvItemID == -1) {
-		_sceneState.pushedScene.continueSceneSound = true;
+		_sceneState.pushedScene.continueSceneSound = kContinueSceneSound;
 		changeScene(_sceneState.pushedScene);
 		_sceneState.isScenePushed = false;
 	} else {
-		_sceneState.pushedInvScene.continueSceneSound = true;
+		_sceneState.pushedInvScene.continueSceneSound = kContinueSceneSound;
 		changeScene(_sceneState.pushedInvScene);
 		_sceneState.isInvScenePushed = false;
 		addItemToInventory(_sceneState.pushedInvItemID);
