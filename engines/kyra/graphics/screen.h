@@ -122,7 +122,7 @@ public:
 	/**
 	* Sets a text 16bit palette map. Only used in in EOB II FM-Towns. The map contains 2 entries.
 	*/
-	virtual void set16bitColorMap(const uint16 *src) {}
+	virtual void setHiColorMap(const uint32 *src) {}
 
 	enum FontStyle {
 		kStyleNone			=	0,
@@ -678,8 +678,14 @@ public:
 
 	void clearPage(int pageNum);
 
-	int getPagePixel(int pageNum, int x, int y);
-	void setPagePixel(int pageNum, int x, int y, uint8 color);
+	int getPagePixel(int pageNum, int x, int y) {
+		assert(_getPagePixelProc);
+		return (this->*_getPagePixelProc)(pageNum, x, y);
+	}
+	void setPagePixel(int pageNum, int x, int y, uint8 color) {
+		assert(_setPagePixelProc);
+		(this->*_setPagePixelProc)(pageNum, x, y, color);
+	}
 
 	const uint8 *getCPagePtr(int pageNum) const;
 	uint8 *getPageRect(int pageNum, int x, int y, int w, int h);
@@ -731,7 +737,7 @@ public:
 
 	virtual void setTextColorMap(const uint8 *cmap) = 0;
 	void setTextColor(const uint8 *cmap, int a, int b);
-	void setTextColor16bit(const uint16 *cmap16);
+	void setTextColorHiCol(const uint32 *cmap);
 	int setFontStyles(FontId fontId, int styles);
 
 	const ScreenDim *getScreenDim(int dim) const;
@@ -814,7 +820,7 @@ public:
 	// can well afford the 20 lines of extra code.
 	void crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
 
-	uint16 *get16bitPalette() { return _hiColorNativePalettes; }
+	const void *getHiColorPalette() const { return _hiColorNativePalettes; }
 	void set16bitShadingLevel(int lvl) { _hiColorShadingLevel = lvl; }
 
 protected:
@@ -824,13 +830,11 @@ protected:
 	void updateDirtyRectsAmiga();
 	void updateDirtyRectsOvl();
 
-	template<typename srcType, typename scaleToType> void scale2x(uint8 *dst, int dstPitch, const uint8 *src, int srcPitch, int w, int h);
+	template<typename srcPixelType, typename dstPixelType> void scale2x(uint8 *dst, int dstPitch, const uint8 *src, int srcPitch, int w, int h);
 	template<typename pixelType> void mergeOverlayImpl(int x, int y, int w, int h);
 	virtual void mergeOverlay(int x, int y, int w, int h) {
-		if (_useHiColorScreen)
-			mergeOverlayImpl<uint16>(x, y, w, h);
-		else
-			mergeOverlayImpl<uint8>(x, y, w, h);
+		assert(_mergeOverlayProc);
+		(this->*_mergeOverlayProc)(x, y, w, h);
 	}
 
 	// overlay specific
@@ -848,6 +852,23 @@ protected:
 	template<bool noXor> static void wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src);
 	template<bool noXor> static void wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch);
 
+	typedef void (Screen::*MergeOverlayFunc)(int, int, int, int);
+	MergeOverlayFunc _mergeOverlayProc;
+	static const MergeOverlayFunc _mergeOverlayProcs[];
+	typedef void (Screen::*Scale2xFunc)(uint8*, int, const uint8*, int, int, int);
+	Scale2xFunc _scale2xProc;
+	static const Scale2xFunc _scale2xProcs[];
+
+	template<typename T> int getPagePixelImpl(int pageNum, int x, int y);
+	template<typename T> void setPagePixelImpl(int pageNum, int x, int y, uint8 color);
+
+	typedef int (Screen::*GetPagePixelProc)(int, int, int);
+	GetPagePixelProc _getPagePixelProc;
+	static const GetPagePixelProc _getPagePixelProcs[];
+	typedef void (Screen::*SetPagePixelProc)(int, int, int, uint8);
+	SetPagePixelProc _setPagePixelProc;
+	static const SetPagePixelProc _setPagePixelProcs[];
+
 	uint8 *_pagePtrs[16];
 	const uint8 *_pagePtrsBuff;
 	uint8 *_sjisOverlayPtrs[SCREEN_OVLS_NUM];
@@ -859,7 +880,7 @@ protected:
 
 	Font *_fonts[FID_NUM];
 	uint8 _textColorsMap[16];
-	uint16 _textColorsMap16bit[2];
+	uint32 _textColorsMapHiCol[2];
 
 	uint8 *_textRenderBuffer;
 	int _textRenderBufferSize;
@@ -874,7 +895,6 @@ protected:
 	bool _4bitPixelPacking;
 	bool _useHiResEGADithering;
 	Graphics::PixelFormat _outputPixelFormat;
-	bool _useHiColorScreen;
 	bool _isAmiga;
 	bool _useAmigaExtraColors;
 	bool _isSegaCD;
@@ -888,10 +908,10 @@ protected:
 	Common::Array<Palette *> _palettes;
 	Palette *_internFadePalette;
 
-	uint16 shadeRGBColor(uint16 col);
+	uint32 shadeRGBColor(uint32 col);
 
-	uint16 *_hiColorNativePalettes;
-	uint16 *_hiColorConversionPalette;
+	void *_hiColorNativePalettes;
+	void *_hiColorConversionPalette;
 	uint8 _hiColorShadingLevel;
 
 	uint8 *_animBlockPtr;

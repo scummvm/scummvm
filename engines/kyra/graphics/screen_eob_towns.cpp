@@ -64,11 +64,19 @@ void Screen_EoB::decodeSHP(const uint8 *data, int dstPage) {
 void Screen_EoB::convertToHiColor(int page) {
 	if (!_hiColorNativePalettes)
 		return;
-	uint16 *dst = (uint16 *)getPagePtr(page);
-	memcpy(_hiColorConvertBuffer, dst, SCREEN_H * SCREEN_W);
+	memcpy(_hiColorConvertBuffer, getCPagePtr(page), SCREEN_H * SCREEN_W);
 	const uint8 *src = _hiColorConvertBuffer;
-	for (int s = SCREEN_H * SCREEN_W; s; --s)
-		*dst++ = _hiColorNativePalettes[*src++];
+	if (_internalBytesPerPixel == 4) {
+		uint32 *dst = reinterpret_cast<uint32*>(getPagePtr(page));
+		const uint32 *p = reinterpret_cast<const uint32*>(_hiColorNativePalettes);
+		for (int s = SCREEN_H * SCREEN_W; s; --s)
+			*dst++ = p[*src++];
+	} else {
+		uint16 *dst = reinterpret_cast<uint16*>(getPagePtr(page));
+		const uint16 *p = reinterpret_cast<const uint16*>(_hiColorNativePalettes);
+		for (int s = SCREEN_H * SCREEN_W; s; --s)
+			*dst++ = p[*src++];
+	}
 }
 
 void Screen_EoB::shadeRect(int x1, int y1, int x2, int y2, int shadingLevel) {
@@ -81,15 +89,26 @@ void Screen_EoB::shadeRect(int x1, int y1, int x2, int y2, int shadingLevel) {
 	if (_curPage == 0 || _curPage == 1)
 		addDirtyRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 
-	uint16 *dst = (uint16*)(getPagePtr(_curPage) + y1 * SCREEN_W * _internalBytesPerPixel + x1 * _internalBytesPerPixel);
-
-	for (; y1 < y2; ++y1) {
-		uint16 *ptr = dst;
-		for (int i = 0; i < x2 - x1; i++) {
-			*ptr = shadeRGBColor(*ptr);
-			ptr++;
+	if (_internalBytesPerPixel == 4) {
+		uint32 *dst = &(reinterpret_cast<uint32*>(getPagePtr(_curPage))[y1 * SCREEN_W + x1]);
+		for (; y1 < y2; ++y1) {
+			uint32 *ptr = dst;
+			for (int i = 0; i < x2 - x1; i++) {
+				*ptr = shadeRGBColor(*ptr);
+				ptr++;
+			}
+			dst += SCREEN_W;
 		}
-		dst += SCREEN_W;
+	} else {
+		uint16 *dst = &(reinterpret_cast<uint16 *>(getPagePtr(_curPage))[y1 * SCREEN_W + x1]);
+		for (; y1 < y2; ++y1) {
+			uint16 *ptr = dst;
+			for (int i = 0; i < x2 - x1; i++) {
+				*ptr = shadeRGBColor(*ptr);
+				ptr++;
+			}
+			dst += SCREEN_W;
+		}
 	}
 
 	_hiColorShadingLevel = l;

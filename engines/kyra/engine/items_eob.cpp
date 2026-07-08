@@ -773,7 +773,7 @@ void EoBCoreEngine::explodeObject(EoBFlyingObject *fo, int block, Item item) {
 		fo->enable = 2;
 
 	_screen->fillRect(0, 0, 176, 120, 0, 2);
-	uint8 col = _screen->getPagePixel(2, 0, 0);
+	int col = _screen->getPagePixel(2, 0, 0);
 	drawSceneShapes(_expObjectShpStart[dm]);
 
 	setLevelShapesDim(tl, x1, x2, 5);

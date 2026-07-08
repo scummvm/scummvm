@@ -315,15 +315,16 @@ protected:
 	bool checkSceneUpdateNeed(int block);
 	uint16 calcNewBlockPosition(uint16 curBlock, uint16 direction);
 
+	void setVcnFormat(int outputBPP);
 	void drawVcnBlocks();
 	void vcnDraw_fw_4bit(uint8 *&dst, const uint8 *&src);
 	void vcnDraw_bw_4bit(uint8 *&dst, const uint8 *&src);
 	void vcnDraw_fw_trans_4bit(uint8 *&dst, const uint8 *&src);
 	void vcnDraw_bw_trans_4bit(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_fw_hiCol(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_bw_hiCol(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_fw_trans_hiCol(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_bw_trans_hiCol(uint8 *&dst, const uint8 *&src);
+	template<typename T> void vcnDraw_fw_hiCol(uint8 *&dst, const uint8 *&src);
+	template<typename T> void vcnDraw_bw_hiCol(uint8 *&dst, const uint8 *&src);
+	template<typename T> void vcnDraw_fw_trans_hiCol(uint8 *&dst, const uint8 *&src);
+	template<typename T> void vcnDraw_bw_trans_hiCol(uint8 *&dst, const uint8 *&src);
 	void vcnDraw_fw_planar(uint8 *&dst, const uint8 *&src);
 	void vcnDraw_bw_planar(uint8 *&dst, const uint8 *&src);
 	void vcnDraw_fw_trans_planar(uint8 *&dst, const uint8 *&src);
