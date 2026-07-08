@@ -1018,6 +1018,8 @@ Nancy
 
    * - Kaloyan Chehlarski
      -
+   * - Filippos Karapetis
+     -
    * - Walter van Niftrik
      -
 
