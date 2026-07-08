@@ -422,7 +422,11 @@ void Taskbar::handleInput(NancyInput &input) {
 			drawButton(_hoveredButton, restingState(_hoveredButton));
 		}
 		if (newHovered != -1 && hoveredActive) {
-			drawButton(newHovered, kButtonHover);
+			// A pending notification badge takes priority over the hover sprite,
+			// so a badged button keeps its badge while hovered.
+			const ButtonState hoverState =
+				restingState(newHovered) == kButtonNotification ? kButtonNotification : kButtonHover;
+			drawButton(newHovered, hoverState);
 			if (isMoneyDisplay(newHovered)) {
 				drawMoney();
 			}
