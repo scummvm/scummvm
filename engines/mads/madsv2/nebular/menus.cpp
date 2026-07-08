@@ -40,7 +40,6 @@ namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
 
-
 #define MENU_MESSAGE_COLOR_BASE       10    /* 1st color to use for messages          */
 #define MENU_MESSAGE_COLOR_BASE_2     12    /* 1st color to use for second message    */
 #define MENU_MESSAGE_COLOR_BASE_3     14    /* 1st color to use for third  message    */
@@ -788,8 +787,6 @@ static void game_menu_main() {
 	}
 }
 
-
-
 static void game_menu_options() {
 	int going = true;
 	int first_time = true;
@@ -1514,7 +1511,6 @@ static void game_menu_difficulty() {
 	}
 }
 
-
 static void game_menu_alert() {
 	int going = true;
 	int first_time = true;
@@ -1585,12 +1581,23 @@ static void game_menu_alert() {
 	}
 }
 
+void global_menu_system_init() {
+	// No implementation
+}
 
+void global_menu_system_shutdown() {
+	// No implementation
+}
 
+void global_emergency_save() {
+	game_save_name(0);
 
+	if (scr_orig.data != NULL) mem_free(scr_orig.data);
 
+	g_engine->saveAutosaveIfEnabled();
+}
 
-void game_menu() {
+void global_game_menu() {
 	while (keys_any())
 		keys_get();
 

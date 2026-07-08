@@ -66,7 +66,6 @@ char *quote_vload(int quote_id, va_list marker) {
 	if (handle == NULL) goto done;
 
 	mark = 0;
-	va_start(marker, quote_id);
 	for (id = quote_id; id > 0; id = va_arg(marker, int)) {
 		list[mark++] = id;
 		if (mark > QUOTE_MAX_LIST_LENGTH) {

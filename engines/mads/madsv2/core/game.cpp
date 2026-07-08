@@ -1180,7 +1180,7 @@ void game_control() {
 		if (!kernel.teleported_in && (game.difficulty == -1)) {
 			// Difficulty menu
 			int gameId = g_engine->getGameID();
-			if (gameId == GType_Phantom || gameId == GType_Dragonsphere)
+			if (gameId != GType_Forest)
 				kernel.activate_menu = GAME_DIFFICULTY_MENU;
 			game_exec_function(game_menu_routine);
 			if (!game.going)
