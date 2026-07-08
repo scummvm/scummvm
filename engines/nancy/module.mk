@@ -53,6 +53,7 @@ MODULE_OBJS = \
   action/puzzle/rotatinglockpuzzle.o \
   action/puzzle/safedialpuzzle.o \
   action/puzzle/setplayerclock.o \
+  action/puzzle/sewingmachinepuzzle.o \
   action/puzzle/sliderpuzzle.o \
   action/puzzle/sortpuzzle.o \
   action/puzzle/soundequalizerpuzzle.o \

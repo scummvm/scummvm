@@ -69,6 +69,7 @@
 #include "engines/nancy/action/puzzle/rotatinglockpuzzle.h"
 #include "engines/nancy/action/puzzle/safedialpuzzle.h"
 #include "engines/nancy/action/puzzle/setplayerclock.h"
+#include "engines/nancy/action/puzzle/sewingmachinepuzzle.h"
 #include "engines/nancy/action/puzzle/sliderpuzzle.h"
 #include "engines/nancy/action/puzzle/sortpuzzle.h"
 #include "engines/nancy/action/puzzle/soundequalizerpuzzle.h"
@@ -456,8 +457,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new PlaySoundEventFlagTerse();
 	// -- Nancy 12 new puzzles/action records --
 	case 162:
-		// TODO: Nancy12 - sewing machine puzzle.
-		return nullptr;
+		return new SewingMachinePuzzle();
 	case 163:
 		return new MirrorLightPuzzle();
 	case 164:
