@@ -401,9 +401,9 @@ static void handleDialogs() {
 	if (_game._trigger == 0) {
 		_scene->_kernelMessages.reset();
 		_game._player._stepEnabled = false;
-		Common::String curQuote = _game.getQuote(_action._activeAction._verbId);
+		const char *curQuote = _game.getQuote(_action._activeAction._verbId);
 		if (_vm->_font->getWidth(curQuote, _scene->_textSpacing) > 200) {
-			Common::String subQuote1, subQuote2;
+			static char subQuote1[34], subQuote2[34];
 			_game.splitQuote(curQuote, subQuote1, subQuote2);
 			_scene->_kernelMessages.add(Common::Point(230, 42), 0x1110, 32, 0, 140, subQuote1);
 			_scene->_kernelMessages.add(Common::Point(230, 56), 0x1110, 32, 0, 140, subQuote2);

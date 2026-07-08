@@ -252,7 +252,7 @@ static void room_103_parser() {
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], -2, -2);
 
 				// Rex says "Gads.."
-				Common::String msg = _game.getQuote(51);
+				const char *msg = _game.getQuote(51);
 				_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 18, 0, 60, msg);
 				_scene->_sequences.addTimer(120, _vm->_game->_trigger + 1);
 			} else {
@@ -277,14 +277,14 @@ static void room_103_parser() {
 		case 0:
 		{
 			_game._player._stepEnabled = false;
-			Common::String msg = _game.getQuote(71);
+			const char *msg = _game.getQuote(71);
 			_scene->_kernelMessages.add(Common::Point(), 0x1110, 18, 1, 120, msg);
 			break;
 		}
 
 		case 1:
 		{
-			Common::String msg = _game.getQuote(72);
+			const char *msg = _game.getQuote(72);
 			_scene->_kernelMessages.add(Common::Point(310, 132), 0xFDFC, 16, 2, 120, msg);
 			break;
 		}
@@ -345,7 +345,7 @@ void room_103_error() {
 		_vm->_dialogs->show(10305);
 		_action._inProgress = false;
 	} else if (_action.isAction(VERB_PUT, NOUN_COAL, NOUN_FURNACE)) {
-		Common::String msg = _game.getQuote(73);
+		const char *msg = _game.getQuote(73);
 		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, msg);
 		_action._inProgress = false;
 	}

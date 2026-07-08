@@ -55,9 +55,9 @@ static Scratch local;
 static void handleRexDialogs(int quote) {
 	_scene->_kernelMessages.reset();
 
-	Common::String curQuote = _game.getQuote(quote);
+	const char *curQuote = _game.getQuote(quote);
 	if (_vm->_font->getWidth(curQuote, _scene->_textSpacing) > 200) {
-		Common::String subQuote1, subQuote2;
+		static char subQuote1[34], subQuote2[34];
 		_game.splitQuote(curQuote, subQuote1, subQuote2);
 
 

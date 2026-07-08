@@ -129,16 +129,8 @@ char *Game::getQuote(int quote_id) {
 	return quote_string(kernel.quotes, quote_id);
 }
 
-void Game::splitQuote(const Common::String &source, Common::String &line1, Common::String &line2) {
-	// Make the first line up the end of the word at the half-way point
-	const char *strP = source.c_str() + source.size() / 2;
-	while (*strP != ' ') ++strP;
-
-	line1 = Common::String(source.c_str(), strP);
-
-	// The rest of the string goes in the second line
-	while (*strP == ' ') ++strP;
-	line2 = Common::String(strP);
+void Game::splitQuote(const char *source, char *line1, char *line2) {
+	quote_split_string(source, line1, line2);
 }
 
 int16 &Globals::operator[](int idx) {
@@ -247,8 +239,8 @@ int Scene::KernelMessages::TalkFont::getWidth(const Common::String &message, int
 }
 
 int Scene::KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags, int endTrigger,
-		uint32 timeout, const Common::String &msg) {
-	return kernel_message_add(const_cast<char *>(msg.c_str()), pt.x, pt.y, fontColor, timeout, endTrigger, 0);
+		uint32 timeout, const char *msg) {
+	return kernel_message_add(const_cast<char *>(msg), pt.x, pt.y, fontColor, timeout, endTrigger, 0);
 }
 
 int Scene::KernelMessages::addQuote(int quoteId, int endTrigger, uint32 timeout) {

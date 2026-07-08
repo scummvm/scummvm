@@ -144,7 +144,7 @@ static void displayHermitQuestions(int question) {
 	switch (question) {
 	case 1:
 	{
-		Common::String curQuote = _game.getQuote(0x281);
+		const char *curQuote = _game.getQuote(0x281);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -158,7 +158,7 @@ static void displayHermitQuestions(int question) {
 
 	case 2:
 	{
-		Common::String curQuote = _game.getQuote(0x283);
+		const char *curQuote = _game.getQuote(0x283);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -172,7 +172,7 @@ static void displayHermitQuestions(int question) {
 
 	case 3:
 	{
-		Common::String curQuote = _game.getQuote(0x285);
+		const char *curQuote = _game.getQuote(0x285);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -181,7 +181,7 @@ static void displayHermitQuestions(int question) {
 
 	case 4:
 	{
-		Common::String curQuote = _game.getQuote(0x286);
+		const char *curQuote = _game.getQuote(0x286);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -190,7 +190,7 @@ static void displayHermitQuestions(int question) {
 
 	case 5:
 	{
-		Common::String curQuote = _game.getQuote(0x297);
+		const char *curQuote = _game.getQuote(0x297);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y - 14), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -209,7 +209,7 @@ static void displayHermitQuestions(int question) {
 
 	case 6:
 	{
-		Common::String curQuote = _game.getQuote(0x29A);
+		const char *curQuote = _game.getQuote(0x29A);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -223,7 +223,7 @@ static void displayHermitQuestions(int question) {
 
 	case 7:
 	{
-		Common::String curQuote = _game.getQuote(0x2A0);
+		const char *curQuote = _game.getQuote(0x2A0);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -237,7 +237,7 @@ static void displayHermitQuestions(int question) {
 
 	case 8:
 	{
-		Common::String curQuote = _game.getQuote(0x2A2);
+		const char *curQuote = _game.getQuote(0x2A2);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -256,7 +256,7 @@ static void displayHermitQuestions(int question) {
 
 	case 9:
 	{
-		Common::String curQuote = _game.getQuote(0x2A5);
+		const char *curQuote = _game.getQuote(0x2A5);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 45), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -270,7 +270,7 @@ static void displayHermitQuestions(int question) {
 
 	case 10:
 	{
-		Common::String curQuote = _game.getQuote(0x2A8);
+		const char *curQuote = _game.getQuote(0x2A8);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -289,7 +289,7 @@ static void displayHermitQuestions(int question) {
 
 	case 11:
 	{
-		Common::String curQuote = _game.getQuote(0x2AB);
+		const char *curQuote = _game.getQuote(0x2AB);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -313,7 +313,7 @@ static void displayHermitQuestions(int question) {
 
 	case 12:
 	{
-		Common::String curQuote = _game.getQuote(0x2AF);
+		const char *curQuote = _game.getQuote(0x2AF);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -337,7 +337,7 @@ static void displayHermitQuestions(int question) {
 
 	case 13:
 	{
-		Common::String curQuote = _game.getQuote(0x2B3);
+		const char *curQuote = _game.getQuote(0x2B3);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 3), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -365,7 +365,7 @@ static void displayHermitQuestions(int question) {
 
 	case 14:
 	{
-		Common::String curQuote = _game.getQuote(0x2BA);
+		const char *curQuote = _game.getQuote(0x2BA);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -389,7 +389,7 @@ static void displayHermitQuestions(int question) {
 
 	case 15:
 	{
-		Common::String curQuote = _game.getQuote(0x2BE);
+		const char *curQuote = _game.getQuote(0x2BE);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -413,7 +413,7 @@ static void displayHermitQuestions(int question) {
 
 	case 16:
 	{
-		Common::String curQuote = _game.getQuote(0x2C2);
+		const char *curQuote = _game.getQuote(0x2C2);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 3), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -442,7 +442,7 @@ static void displayHermitQuestions(int question) {
 
 	case 17:
 	{
-		Common::String curQuote = _game.getQuote(0x2C7);
+		const char *curQuote = _game.getQuote(0x2C7);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -466,7 +466,7 @@ static void displayHermitQuestions(int question) {
 
 	case 18:
 	{
-		Common::String curQuote = _game.getQuote(0x2CB);
+		const char *curQuote = _game.getQuote(0x2CB);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -485,7 +485,7 @@ static void displayHermitQuestions(int question) {
 
 	case 19:
 	{
-		Common::String curQuote = _game.getQuote(0x2CE);
+		const char *curQuote = _game.getQuote(0x2CE);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 31), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -504,7 +504,7 @@ static void displayHermitQuestions(int question) {
 
 	case 20:
 	{
-		Common::String curQuote = _game.getQuote(0x2E1);
+		const char *curQuote = _game.getQuote(0x2E1);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 3), 0xFDFC, 0, 0, INDEFINITE_TIMEOUT, curQuote);
@@ -533,7 +533,7 @@ static void displayHermitQuestions(int question) {
 
 	case 21:
 	{
-		Common::String curQuote = _game.getQuote(0x2D3);
+		const char *curQuote = _game.getQuote(0x2D3);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 3), 0xFDFC, 0, 0, 800, curQuote);
@@ -562,7 +562,7 @@ static void displayHermitQuestions(int question) {
 
 	case 22:
 	{
-		Common::String curQuote = _game.getQuote(0x2D8);
+		const char *curQuote = _game.getQuote(0x2D8);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 17), 0xFDFC, 0, 0, 700, curQuote);
@@ -586,7 +586,7 @@ static void displayHermitQuestions(int question) {
 
 	case 23:
 	{
-		Common::String curQuote = _game.getQuote(0x2DC);
+		const char *curQuote = _game.getQuote(0x2DC);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 3), 0xFDFC, 0, 0, 700, curQuote);
@@ -757,7 +757,7 @@ static void handleSubDialog1() {
 		handleTalking(200);
 		_scene->_kernelMessages.reset();
 
-		Common::String curQuote = _game.getQuote(0x2D1);
+		const char *curQuote = _game.getQuote(0x2D1);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, 120, curQuote);
@@ -817,7 +817,7 @@ static void handleSubDialog1() {
 	{
 		_scene->_kernelMessages.reset();
 
-		Common::String curQuote = _game.getQuote(0x2E6);
+		const char *curQuote = _game.getQuote(0x2E6);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, 120, curQuote);
@@ -855,7 +855,7 @@ static void handleSubDialog2() {
 	case 0x29F:
 	{
 		_scene->_kernelMessages.reset();
-		Common::String curQuote = _game.getQuote(0x2A7);
+		const char *curQuote = _game.getQuote(0x2A7);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y + 14), 0xFDFC, 0, 0, 120, curQuote);
@@ -874,11 +874,11 @@ static void handleDialog() {
 		_scene->_kernelMessages.reset();
 		_game._player._stepEnabled = false;
 
-		Common::String curQuote = _game.getQuote(_action._activeAction._verbId);
+		const char *curQuote = _game.getQuote(_action._activeAction._verbId);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 
 		if (width > 200) {
-			Common::String subQuote1, subQuote2;
+			static char subQuote1[34], subQuote2[34];
 			_game.splitQuote(curQuote, subQuote1, subQuote2);
 			_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 150, subQuote1);
 
@@ -1348,7 +1348,7 @@ static void room_611_parser() {
 	} else if (_action.isAction(VERB_GIVE, NOUN_HERMIT)) {
 		_scene->_kernelMessages.reset();
 
-		Common::String curQuote = _game.getQuote(0x323);
+		const char *curQuote = _game.getQuote(0x323);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = local._defaultDialogPos_x - (width / 2);
 		_scene->_kernelMessages.add(Common::Point(quotePosX, local._defaultDialogPos_y), 0xFDFC, 0, 0, 120, curQuote);

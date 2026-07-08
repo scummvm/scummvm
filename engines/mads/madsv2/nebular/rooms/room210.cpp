@@ -549,12 +549,12 @@ static void handleConversations() {
 	if (_game._trigger == 0) {
 		_scene->_kernelMessages.reset();
 		_game._player._stepEnabled = false;
-		Common::String curQuote = _game.getQuote(_action._activeAction._verbId);
+		const char *curQuote = _game.getQuote(_action._activeAction._verbId);
 		if (_scene->_kernelMessages._talkFont->getWidth(curQuote, _scene->_textSpacing) > 200) {
-			Common::String subQuote1, subQuote2;
-			_game.splitQuote(curQuote, subQuote1, subQuote2);
-			Common::strcpy_s(local._subQuote2, subQuote2.c_str());
-			_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 240, subQuote1);
+			static char line1[34], line2[34];
+			_game.splitQuote(curQuote, line1, line2);
+			Common::strcpy_s(local._subQuote2, line2);
+			_scene->_kernelMessages.add(Common::Point(0, -14), 0x1110, 34, 0, 240, line1);
 			_scene->_sequences.addTimer(60, 50);
 		} else {
 			_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 1, 120, curQuote);

@@ -269,7 +269,7 @@ struct Scene {
 		Entries _entries;
 
 		int add(const Common::Point &pt, uint fontColor, uint8 flags, int endTrigger,
-			uint32 timeout, const Common::String &msg);
+			uint32 timeout, const char *msg);
 		int addQuote(int quoteId, int endTrigger, uint32 timeout);
 		void remove(int msgIndex);
 		void reset();
@@ -563,7 +563,7 @@ struct Game {
 
 	void loadQuoteSet(int quote1, ...);
 	char *getQuote(int quote_id);
-	void splitQuote(const Common::String &source, Common::String &line1, Common::String &line2);
+	void splitQuote(const char *source, char *line1, char *line2);
 };
 extern Game _game;
 

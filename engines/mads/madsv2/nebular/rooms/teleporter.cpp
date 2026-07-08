@@ -38,8 +38,8 @@ static int _finishedCodeCounter;
 static int _meteorologistNextPlace;
 static int _meteorologistCurPlace;
 static int _teleporterSceneId;
-static char _msgText[256];
-
+static char _msgText1[256];
+static char _msgText2[256];
 
 void teleporter_init() {
 	_buttonTyped = -1;
@@ -60,7 +60,7 @@ void teleporter_init() {
 	_digitCount = 0;
 	_finishedCodeCounter = 0;
 	_curMessageId = -1;
-	Common::strcpy_s(_msgText, "_");
+	Common::strcpy_s(_msgText2, "_");
 
 	if (_scene->_priorSceneId == RETURNING_FROM_DIALOG)
 		_scene->_priorSceneId = _globals[kTeleporterDestination];
@@ -84,11 +84,11 @@ void teleporter_init() {
 			_meteorologistNextPlace = _globals[kTeleporterCode + i];
 	}
 
-	Common::String msgText2 = Common::String::format("#%.4d", codeVal);
+	Common::sprintf_s(_msgText1, "#%.4d", codeVal);
 
 	if (_scene->_currentSceneId != 711) {
-		_scene->_kernelMessages.add(Common::Point(133, 34), 0, 32, 0, INDEFINITE_TIMEOUT, msgText2);
-		_scene->_kernelMessages.add(Common::Point(143, 61), 0xFDFC, 16, 0, INDEFINITE_TIMEOUT, _msgText);
+		_scene->_kernelMessages.add(Common::Point(133, 34), 0, 32, 0, INDEFINITE_TIMEOUT, _msgText1);
+		_scene->_kernelMessages.add(Common::Point(143, 61), 0xFDFC, 16, 0, INDEFINITE_TIMEOUT, _msgText2);
 	}
 
 	_meteorologistCurPlace = 0;
@@ -195,9 +195,9 @@ void teleporter_handle_key() {
 
 				Common::String format = "%01d";
 				format.setChar('0' + _digitCount, 2);
-				Common::strcpy_s(_msgText, Common::String::format(format.c_str(), _curCode).c_str());
+				Common::strcpy_s(_msgText2, Common::String::format(format.c_str(), _curCode).c_str());
 				if (_digitCount < 4)
-					Common::strcat_s(_msgText, "_");
+					Common::strcat_s(_msgText2, "_");
 
 				if (_scene->_currentSceneId != 711)
 					_vm->_sound->command(32);
@@ -205,7 +205,7 @@ void teleporter_handle_key() {
 		} else if (_buttonTyped == 11) {
 			_digitCount = 0;
 			_curCode = 0;
-			Common::strcpy_s(_msgText, "_");
+			Common::strcpy_s(_msgText2, "_");
 			if (_scene->_currentSceneId != 711)
 				_vm->_sound->command(33);
 		} else if (_digitCount == 4) {
@@ -226,7 +226,7 @@ void teleporter_handle_key() {
 		if (_scene->_currentSceneId != 711) {
 			if (_curMessageId >= 0)
 				_scene->_kernelMessages.remove(_curMessageId);
-			_curMessageId = _scene->_kernelMessages.add(Common::Point(143, 61), 0xFDFC, 16, 0, INDEFINITE_TIMEOUT, _msgText);
+			_curMessageId = _scene->_kernelMessages.add(Common::Point(143, 61), 0xFDFC, 16, 0, INDEFINITE_TIMEOUT, _msgText2);
 		}
 		break;
 

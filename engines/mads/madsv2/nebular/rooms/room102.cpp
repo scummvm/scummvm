@@ -278,7 +278,7 @@ static void room_102_parser() {
 	if (_action.isAction(VERB_WALKTO, NOUN_REFRIGERATOR) && justOpenedFl) {
 		local._fridgeFirstOpenFl = false;
 		int quoteId = _vm->getRandomNumber(59, 63);
-		Common::String curQuote = _game.getQuote(quoteId);
+		const char *curQuote = _game.getQuote(quoteId);
 		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, -1);
 		_scene->_kernelMessages.reset();
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
