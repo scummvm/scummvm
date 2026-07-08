@@ -305,18 +305,27 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 			}
 		} else if (_puzzleType == kKeypadTerse) {
 			// Terse elements are the same size & placed on a grid (in the source image AND on screen)
-			uint16 columns = stream.readUint16LE();
 
-			// The Nancy 11 multi-stage terse keypad chains scenes: each scene holds one stage and
-			// the grid is preceded by the scene to advance to once this stage's code is entered.
-			// Standalone/final keypads omit it. A grid column count can never exceed maxNumElements,
-			// so a larger leading value is that scene id - it overrides the solve scene's target
-			// (the rest of the solve scene change is reused), then the real column count follows.
-			if (g_nancy->getGameType() >= kGameTypeNancy11 && columns > maxNumElements) {
-				_solveExitScene._sceneChange.sceneID = columns;
-				columns = stream.readUint16LE();
+			// In Nancy 11 the grid block is preceded by the scene to advance to on solving, which
+			// overrides the solve scene's target (the rest of the solve scene change is reused).
+			// 0 and 9999 mean "none", falling back to the solve scene read earlier.
+			if (g_nancy->getGameType() >= kGameTypeNancy11) {
+				uint16 advanceSceneID = stream.readUint16LE();
+
+				// HACK: In Nancy11, in the Betty automaton scene, this is set to scene 2721, but
+				// scene 2720 (the one set initially) is the one that eventually allows the player
+				// to gain the needed token to proceed.
+				// TODO: What is the correct way to handle this?
+				if (g_nancy->getGameType() == kGameTypeNancy11 && advanceSceneID == 2721 &&
+					_solveExitScene._sceneChange.sceneID == 2720)
+					advanceSceneID = 2720;
+
+				if (advanceSceneID != 0 && advanceSceneID != kNoScene) {
+					_solveExitScene._sceneChange.sceneID = advanceSceneID;
+				}
 			}
 
+			uint16 columns = stream.readUint16LE();
 			uint16 rows = stream.readUint16LE();
 
 			uint16 width = stream.readUint16LE();
@@ -486,7 +495,10 @@ void OrderingPuzzle::execute() {
 								}
 							}
 
-							if (_clickedSequence.size() > maxNumPressed) {
+							// Puzzles with a manual check button (e.g. the Nancy 11 Betty automaton keypad)
+							// keep the entered buttons down until the check button is pressed, so they
+							// must not auto-clear the entry here based on its length.
+							if (!_needButtonToCheckSuccess && _clickedSequence.size() > maxNumPressed) {
 								clearAllElements();
 								return;
 							}
@@ -542,19 +554,41 @@ void OrderingPuzzle::execute() {
 			}
 
 			if ((_puzzleType == kKeypad || _puzzleType == kKeypadTerse) && _needButtonToCheckSuccess) {
-				// KeypadPuzzle and KeypadTersePuzzle move to the "success" scene regardless whether the
-				// puzzle was solved or not, provided the check button is pressed. (e.g. the Nancy 11 Betty
-				// automaton keypad, where a red button confirms the entry.)
-				if (_checkButtonPressed) {
-					if (!g_nancy->_sound->isSoundPlaying(_pushDownSound)) {
-						if (solved) {
-							NancySceneState.setEventFlag(_solveExitScene._flag);
+				// The entry is only acted on when the confirm ("red") button is pressed.
+				if (!_checkButtonPressed) {
+					return;
+				}
+
+				if (g_nancy->_sound->isSoundPlaying(_pushDownSound)) {
+					// Wait for the button-press sound to finish first.
+					return;
+				}
+
+				if (g_nancy->getGameType() >= kGameTypeNancy11) {
+					// The confirm button does nothing on an empty entry. A pad that carries a code also
+					// does nothing on a non-matching entry (wrong names or a wrong order), clearing it.
+					// Otherwise it advances.
+					bool codedMismatch = !_correctSequence.empty() && !solved && _itemsStayDown;
+
+					if (_clickedSequence.empty() || codedMismatch) {
+						if (codedMismatch) {
+							clearAllElements();
 						}
-					} else {
+
+						_checkButtonPressed = false;
+						Common::Rect destRect = _checkButtonDest;
+						destRect.translate(-_screenPosition.left, -_screenPosition.top);
+						_drawSurface.fillRect(destRect, _drawSurface.getTransparentColor());
+						_needsRedraw = true;
 						return;
 					}
+
+					NancySceneState.setEventFlag(_solveExitScene._flag);
 				} else {
-					return;
+					// Earlier games advance to the success scene regardless; the flag is set only on a solve.
+					if (solved) {
+						NancySceneState.setEventFlag(_solveExitScene._flag);
+					}
 				}
 			} else {
 				if (solved) {
