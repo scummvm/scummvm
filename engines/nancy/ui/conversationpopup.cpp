@@ -272,11 +272,16 @@ void ConversationPopup::handleInput(NancyInput &input) {
 	const uint16 outer = localTextRect.height();
 	const int scrollY = inner > outer ? (int)(_scrollPos * (inner - outer)) : 0;
 
+	// Clip hit-testing and highlighting to the visible text viewport, not the
+	// whole popup: a response scrolled out of view still overlaps the popup rect,
+	// so intersecting with the popup would highlight text that is clipped away.
+	const Common::Rect textAreaOnScreen = convertToScreen(localTextRect);
+
 	bool hasHighlight = false;
 	for (uint i = _responseStartIdx; i < _hotspots.size(); ++i) {
 		Common::Rect hotspot = _hotspots[i];
 		hotspot.translate(localTextRect.left, localTextRect.top - scrollY);
-		Common::Rect hotspotOnScreen = convertToScreen(hotspot).findIntersectingRect(_screenPosition);
+		Common::Rect hotspotOnScreen = convertToScreen(hotspot).findIntersectingRect(textAreaOnScreen);
 		if (hotspotOnScreen.contains(input.mousePos)) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 
