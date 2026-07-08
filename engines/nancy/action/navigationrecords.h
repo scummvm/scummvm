@@ -35,6 +35,8 @@ public:
 
 	SceneChangeDescription _sceneChange;
 
+	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
+
 protected:
 	Common::String getRecordTypeName() const override { return "SceneChange"; }
 };
@@ -186,6 +188,8 @@ public:
 
 	SceneChangeDescription _defaultScene;
 	Common::Array<HotspotDescription> _hotspots;
+
+	Common::String getRecordExtraInfo() const override { return Common::String::format("Default scene %d", _defaultScene.sceneID); }
 
 protected:
 	Common::String getRecordTypeName() const override { return "HotMultiframeMultisceneCursorTypeSceneChange"; }

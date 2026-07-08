@@ -120,6 +120,7 @@ public:
 
 	// Used for debugging
 	virtual Common::String getRecordTypeName() const = 0;
+	virtual Common::String getRecordExtraInfo() const { return ""; }
 
 	// Used for handling kCursorType dependency
 	virtual bool canHaveHotspot() const { return false; }

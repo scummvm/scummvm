@@ -476,6 +476,10 @@ void NancyConsole::printActionRecord(const Action::ActionRecord *record, bool no
 		record->getRecordTypeName().c_str(),
 		record->_execType == Action::ActionRecord::kRepeating ? "kRepeating" : "kOneShot");
 
+	Common::String extraInfo = record->getRecordExtraInfo();
+	if (!extraInfo.empty())
+		debugPrintf("\n\textraInfo: %s", extraInfo.c_str());
+
 	if (!noDependencies && record->_dependencies.children.size()) {
 		debugPrintf("\n\tDependencies:");
 

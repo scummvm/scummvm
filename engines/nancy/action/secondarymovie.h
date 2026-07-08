@@ -140,6 +140,8 @@ public:
 		return _isRandom && !_isDone && !_randomStopRequested;
 	}
 
+	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
+
 protected:
 	Common::String getRecordTypeName() const override {
 		return _isRandom ? "PlayRandomMovie" : "PlaySecondaryMovie";

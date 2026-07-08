@@ -110,6 +110,8 @@ public:
 	SceneChangeDescription _sceneChange;
 	FlagDescription _flag;
 
+	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
+
 protected:
 	Common::String getRecordTypeName() const override;
 };
@@ -173,7 +175,8 @@ public:
 	Common::Array<HotspotDescription> _hotspots; // 0x31
 
 	bool canHaveHotspot() const override { return true; }
-
+	
+	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
 protected:
 	Common::String getRecordTypeName() const override { return "PlaySoundMultiHS"; }
 };
