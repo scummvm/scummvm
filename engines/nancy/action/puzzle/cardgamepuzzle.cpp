@@ -501,8 +501,7 @@ void CardGamePuzzle::playVoice(const Common::String &name) {
 	showSubtitle(name);
 }
 
-// The card-game lines carry no inline caption; the original looks the subtitle up by sound name in
-// the Autotext table. Mirror that and push it to the textbox (as QuizPuzzle does).
+// The card-game lines carry no inline caption; look the subtitle up by sound name in the Autotext table.
 void CardGamePuzzle::showSubtitle(const Common::String &soundName) {
 	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
 	if (!autotext) {
