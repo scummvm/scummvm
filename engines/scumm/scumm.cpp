@@ -536,6 +536,9 @@ ScummEngine::~ScummEngine() {
 
 	delete _macGui;
 
+	for (auto &it : _scriptOverrides)
+		delete it._value;
+
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	delete _townsScreen;
 #ifdef USE_RGB_COLOR

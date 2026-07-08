@@ -363,8 +363,10 @@ void ScummEngine::setupRoomSubBlocks() {
 	// Look for an exit script
 	//
 	ptr = findResourceData(MKTAG('E','X','C','D'), roomResPtr);
-	if (ptr)
+	if (ptr) {
 		_EXCD_offs = ptr - roomResPtr;
+		scriptOverride(_roomResource, -2);
+	}
 	if (_dumpScripts && _EXCD_offs)
 		dumpResource("exit-", _roomResource, roomResPtr + _EXCD_offs - _resourceHeaderSize, -1);
 
@@ -372,8 +374,10 @@ void ScummEngine::setupRoomSubBlocks() {
 	// Look for an entry script
 	//
 	ptr = findResourceData(MKTAG('E','N','C','D'), roomResPtr);
-	if (ptr)
+	if (ptr) {
 		_ENCD_offs = ptr - roomResPtr;
+		scriptOverride(_roomResource, -1);
+	}
 	if (_dumpScripts && _ENCD_offs)
 		dumpResource("entry-", _roomResource, roomResPtr + _ENCD_offs - _resourceHeaderSize, -1);
 
@@ -414,7 +418,9 @@ void ScummEngine::setupRoomSubBlocks() {
 			id = READ_LE_UINT32(ptr);
 
 			assertRange(_numGlobalScripts, id, _numLocalScripts + _numGlobalScripts, "local script");
+
 			_localScriptOffsets[id - _numGlobalScripts] = ptr + 4 - roomResPtr;
+			scriptOverride(_roomResource, id);
 
 			if (_dumpScripts) {
 				char buf[32];
@@ -431,6 +437,7 @@ void ScummEngine::setupRoomSubBlocks() {
 
 			id = ptr[0];
 			_localScriptOffsets[id - _numGlobalScripts] = ptr + 1 - roomResPtr;
+			scriptOverride(_roomResource, id);
 
 			if (_dumpScripts) {
 				char buf[32];
@@ -630,7 +637,7 @@ void ScummEngine::resetRoomSubBlocks() {
 	// We need to setup the current palette before initCycl for Indy4 Amiga.
 	if (_PALS_offs || _CLUT_offs)
 		setCurrentPalette(0);
-	
+
 	if (_game.id == GID_TENTACLE && VAR(VAR_VIDEOMODE) == 13) {
 		// This is a hack to avoid color glitches caused by incomplete EGA mode handling in the scripts.
 		// The original DOTT interpreter (executable and scripts) has various EGA mode handling leftovers

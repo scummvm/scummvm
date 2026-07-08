@@ -79,6 +79,8 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 		scriptOffs = _localScriptOffsets[script - _numGlobalScripts];
 		if (scriptOffs == 0)
 			error("Local script %d is not in room %d", script, _roomResource);
+		if (_scriptOverrides.contains(_roomResource * 100000 + script))
+			scriptOffs = 0;
 		scriptType = WIO_LOCAL;
 
 		debugC(DEBUG_SCRIPTS, "runScript(%d) from %d-%d", script,
@@ -441,6 +443,13 @@ void ScummEngine::getScriptBaseAddress() {
 			_scriptOrgPointer = getResourceAddress(rtRoom, _roomResource);
 			assert(_roomResource < _numRooms);
 			_lastCodePtr = &_res->_types[rtRoom][_roomResource]._address;
+
+			int cacheIdx = _roomResource * 100000 + ss->number;
+			if (_scriptOverrides.contains(cacheIdx)) {
+				_lastCodePtr = (const byte *const *)_scriptOverrides[cacheIdx];
+				// LSC2 block layout: [4 tag][4 BE size][4 LE script id][bytecode]
+				_scriptOrgPointer = (const byte *)_scriptOverrides[cacheIdx] + _resourceHeaderSize + 4;
+			}
 		}
 		break;
 
@@ -505,7 +514,7 @@ void ScummEngine::executeScript() {
 		_opcode = fetchScriptByte();
 		if (_game.version > 2) // V0-V2 games didn't use the didexec flag
 			vm.slot[_currentScript].didexec = true;
-		debugC(DEBUG_OPCODES, "Script %d, offset 0x%x: [%X] %s()",
+				debugC(DEBUG_OPCODES, "Script %d, offset 0x%x: [%X] %s()",
 				vm.slot[_currentScript].number,
 				(uint)(_scriptPointer - _scriptOrgPointer),
 				_opcode,

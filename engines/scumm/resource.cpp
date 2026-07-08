@@ -644,6 +644,34 @@ void ScummEngine::ensureResourceLoaded(ResType type, ResId idx) {
 		VAR(VAR_ROOM_FLAG) = 1;
 }
 
+void ScummEngine::scriptOverride(ResId room, int script) {
+	if (_game.id != GID_BASEBALL2001)
+		return;
+
+	Common::String scriptName;
+
+	if (script == -1)
+		scriptName = Common::String::format("entry-%d.scr", room);
+	else if (script == -2)
+		scriptName = Common::String::format("exit-%d.scr", room);
+	else
+		scriptName = Common::String::format("room-%d-%d.scr", room, script);
+
+	Common::Path resFilename = Common::Path(scriptName);
+	if (Common::File::exists(resFilename)) {
+		Common::File resFile;
+		if (resFile.open(resFilename)) {
+			int size = resFile.size();
+
+			byte *data1 = (byte *)malloc(size);
+			resFile.read(data1, size);
+			debug(1, "scriptOverride(): script loaded from file %s", resFilename.toString().c_str());
+
+			_scriptOverrides[room * 100000 + script] = data1;
+		}
+	}
+}
+
 int ScummEngine::loadResource(ResType type, ResId idx) {
 	int roomNr;
 	uint32 fileOffs;
