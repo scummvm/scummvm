@@ -590,11 +590,11 @@ void CardGamePuzzle::execute() {
 			const bool tie = (playerScore == aiScore);
 
 			// The result normally uses the first outcome scene; the second is the tie/alternate
-			// path the 0xff deal mode takes. 9999 marks an absent scene.
-			if (tie && _dealMode == 0xff && _winSceneStartEnemy != 9999) {
+			// path the 0xff deal mode takes.
+			if (tie && _dealMode == 0xff && _winSceneStartEnemy != kNoScene) {
 				sceneChange.sceneID = _winSceneStartEnemy;
 			} else {
-				sceneChange.sceneID = (_winSceneStartPlayer != 9999) ? _winSceneStartPlayer : _winSceneStartEnemy;
+				sceneChange.sceneID = (_winSceneStartPlayer != kNoScene) ? _winSceneStartPlayer : _winSceneStartEnemy;
 			}
 
 			// Record the outcome: the player-win flag when ahead, else the alternate flag on a tie.

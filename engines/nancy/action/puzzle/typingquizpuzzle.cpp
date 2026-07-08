@@ -380,7 +380,7 @@ void TypingQuizPuzzle::redraw() {
 
 void TypingQuizPuzzle::triggerSceneChange() {
 	if (_reachedTarget) {
-		if (_winScene.sceneID != 9999)
+		if (_winScene.sceneID != kNoScene)
 			NancySceneState.changeScene(_winScene);
 		if (_winFlag != -1)
 			NancySceneState.setEventFlag(_winFlag, g_nancy->_true);

@@ -143,7 +143,7 @@ void TwoDialPuzzle::execute() {
 			// The matched solution supplies the scene to change to.
 			for (uint i = 0; i < _solutions.size(); ++i) {
 				const DialSolution &sol = _solutions[i];
-				if (sol.sceneID != 9999 &&
+				if (sol.sceneID != kNoScene &&
 						_currentPositions[0] == sol.positions[0] &&
 						_currentPositions[1] == sol.positions[1] &&
 						NancySceneState.getEventFlag(sol.condition.label, sol.condition.flag)) {
