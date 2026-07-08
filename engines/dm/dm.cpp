@@ -1019,6 +1019,8 @@ void DMEngine::fuseSequence() {
 
 	for (int16 attackId = 55; attackId <= 255; attackId += 40) {
 		_projexpl->createExplosion(_thingExplHarmNonMaterial, attackId, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
+		if (attackId == 255)
+			continue;
 		fuseSequenceUpdate();
 	}
 
