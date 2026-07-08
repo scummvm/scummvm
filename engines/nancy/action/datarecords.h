@@ -59,6 +59,10 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
+	Common::String getRecordExtraInfo() const override {
+		return Common::String::format("Value %d -> %d (should set is %d)", _index, _value, _shouldSet);
+	}
+
 protected:
 	Common::String getRecordTypeName() const override { return "SetValue"; }
 
@@ -72,6 +76,10 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
+	Common::String getRecordExtraInfo() const override {
+		return Common::String::format("Value %d", _valueIndex);
+	}
+
 protected:
 	Common::String getRecordTypeName() const override { return "SetValueCombo"; }
 
@@ -84,6 +92,10 @@ class ValueTest : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
+
+	Common::String getRecordExtraInfo() const override {
+		return Common::String::format("Value %d. Test type %d, condition %d. Set flag %d", _valueIndex, _testType, _condition, _flagToSet);
+	}
 
 protected:
 	Common::String getRecordTypeName() const override { return "ValueTest"; }
