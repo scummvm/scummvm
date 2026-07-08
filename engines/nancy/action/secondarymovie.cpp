@@ -237,8 +237,12 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	ser.syncAsUint16LE(_firstFrame);
 	ser.syncAsUint16LE(_lastFrame);
 
-	ser.syncAsSint16LE(_sceneChange.sceneID, kGameTypeNancy10);
-	ser.skip(3 * 2, kGameTypeNancy10);	// TODO
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		ser.syncAsSint16LE(_sceneChange.sceneID);
+		ser.syncAsUint16LE(_sceneChange.frameID);
+		ser.syncAsUint16LE(_sceneChange.verticalOffset);
+		ser.syncAsUint16LE(_sceneChange.continueSceneSound);
+	}
 
 	if (g_nancy->getGameType() >= kGameTypeNancy10) {
 		ser.syncAsSint16LE(_videoStartFlag.label);
