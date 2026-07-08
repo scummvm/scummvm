@@ -181,15 +181,13 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new HotMultiframeMultiSceneCursorTypeSceneChange(); // Moved from 24 to 27 in Nancy10
 	case 28:
 		return new InteractiveVideo();	// Moved from 26 to 28 in Nancy10
-	case 29:
-		// Nancy 10+
+	case 29:	// Nancy10
 		return new ControlUIItems();
 	case 30:	// Nancy11
 		return new StopPlayerScrolling();
 	case 31:	// Nancy11
 		return new StartPlayerScrolling();
-	case 32:
-		// Nancy 10+
+	case 32:	// Nancy10
 		return new UIPopupPrepScene();
 	case 45:	// Nancy11 - random-movie variant of PlaySecondaryMovie
 		return new PlaySecondaryMovie(true);
@@ -272,7 +270,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new ModifyListEntry(ModifyListEntry::kDelete);
 	case 73:
 		return new ModifyListEntry(ModifyListEntry::kMark);
-	case 74:	// Nancy 10
+	case 74:	// Nancy10
 		return new FrameTextBox(true);
 	case 75:
 		if (g_nancy->getGameType() <= kGameTypeNancy9)
@@ -367,20 +365,15 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new PopInvViewPriorScene();
 	case 126:
 		return new GoInvViewScene();
-	case 128:
-		// Nancy10+
+	case 128:	// Nancy10
 		return new CellPhonePopCellSceneFromStack();
-	case 129:
-		// Nancy10+
+	case 129:	// Nancy10
 		return new SetCellPhoneBatteryAndSignal();
-	case 130:
-		// Nancy10+
+	case 130:	// Nancy10
 		return new ChangeCellPhoneInfo();
-	case 131:
-		// Nancy10+
+	case 131:	// Nancy10
 		return new AddSearchLink();
-	case 132:
-		// Nancy12+
+	case 132:	// Nancy12
 		return new ResourceUse();
 	case 140:
 		if (g_nancy->getGameType() >= kGameTypeNancy12)
