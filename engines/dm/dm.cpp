@@ -720,13 +720,18 @@ T0444017:
 				_displayMan->fillScreen(kDMColorBlack);
 				_displayMan->startEndFadeToPalette(_displayMan->_palDungeonView[0]);
 				_gameMode = kDMModeLoadSavedGame;
-				if (loadgame(1) != kDMLoadgameFailure) {
+				GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
+				int16 saveSlot = dialog->runModalWithCurrentTarget();
+				delete dialog;
+
+				if (saveSlot >= 0 && loadgame(saveSlot) != kDMLoadgameFailure) {
 					startGame();
 					_restartGameRequest = false;
 					_eventMan->hideMouse();
 					_eventMan->discardAllInput();
 					return;
 				}
+				_restartGameRequest = false;
 			}
 		}
 
