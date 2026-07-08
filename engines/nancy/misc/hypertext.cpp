@@ -248,7 +248,11 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 			hotspot.left = textBounds.left;
 			hotspot.top = textBounds.top + (_numDrawnLines * lineStep(font)) - 1;
 			hotspot.setHeight(0);
-			hotspot.setWidth(0);
+			// Conversation responses are clickable across the whole width of the
+			// text area, not only where the glyphs are, so the player can click
+			// (and highlight) anywhere on the line. The MAX() width accumulation
+			// below preserves this since no wrapped line is wider than the area.
+			hotspot.setWidth(textBounds.width());
 		}
 
 		// Go through the wrapped lines and draw them, making sure to
