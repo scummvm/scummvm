@@ -717,6 +717,10 @@ struct UIIV : public EngineData {
 	Common::Array<Common::Rect> slotSrcRects;       // 16 entries (image coords)
 	Common::Array<Common::Rect> slotDestRects;      // 16 entries (screen coords)
 	Common::Rect slotsHotspot;                      // Nancy13+: clickable region of the item slots
+	// When nonzero, items added while the popup is open are appended to the end
+	// of the inventory order instead of being inserted at the front (so the most
+	// recently dropped item ends up last). See Scene::addItemToInventory.
+	byte appendItemsWhileOpen = 0;
 	UIButtonSlot filters[kNumFilters];              // 6 entries
 	Common::Array<Common::Rect> tabCaptionSrcRects; // 6 entries
 	Common::Rect tabCaptionDestRect;                // on-screen target

@@ -398,6 +398,30 @@ void Scene::addItemToInventory(int16 id) {
 		if (g_nancy->getGameType() <= kGameTypeNancy9) {
 			_inventoryBox.addItem(id);
 		} else {
+			// Nancy 10+ has no always-visible inventory box; the popup renders
+			// from the shared, save-persisted order list instead. Items are
+			// inserted at the front, except that when the UIIV chunk opts in
+			// (appendItemsWhileOpen) an item added while the popup is open goes
+			// to the end. That's how the most recently dropped item ends up last.
+			bool addToBack = false;
+			if (_inventoryPopup.isOpen()) {
+				const UIIV *uiivData = GetEngineData(UIIV);
+				addToBack = uiivData && uiivData->appendItemsWhileOpen;
+			}
+
+			Common::Array<int16> &order = _inventoryBox.getOrder();
+			for (uint i = 0; i < order.size(); ++i) {
+				if (order[i] == id) {
+					order.remove_at(i);
+					break;
+				}
+			}
+			if (addToBack) {
+				order.push_back(id);
+			} else {
+				order.insert_at(0, id);
+			}
+
 			if (_inventoryPopup.isOpen()) {
 				_inventoryPopup.refreshGrid();
 			} else if (_taskbar) {
@@ -425,8 +449,18 @@ void Scene::removeItemFromInventory(int16 id, bool pickUp) {
 
 		if (g_nancy->getGameType() <= kGameTypeNancy9) {
 			_inventoryBox.removeItem(id);
-		} else if (_inventoryPopup.isOpen()) {
-			_inventoryPopup.refreshGrid();
+		} else {
+			Common::Array<int16> &order = _inventoryBox.getOrder();
+			for (uint i = 0; i < order.size(); ++i) {
+				if (order[i] == id) {
+					order.remove_at(i);
+					break;
+				}
+			}
+
+			if (_inventoryPopup.isOpen()) {
+				_inventoryPopup.refreshGrid();
+			}
 		}
 	}
 }

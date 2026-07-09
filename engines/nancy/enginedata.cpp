@@ -1090,7 +1090,11 @@ UIIV::UIIV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	if (g_nancy->getGameType() >= kGameTypeNancy13)
 		readRect(*chunkStream, slotsHotspot);
 
-	chunkStream->skip(2);
+	// Two byte flags. The first controls where items added while the popup is
+	// open land in the inventory order (see appendItemsWhileOpen); the second
+	// is unused here.
+	appendItemsWhileOpen = chunkStream->readByte();
+	chunkStream->skip(1);
 
 	for (uint i = 0; i < kNumFilters; ++i) {
 		readUIButtonSlot(*chunkStream, filters[i]);

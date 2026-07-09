@@ -84,6 +84,15 @@ private:
 	void drawCloseButton(bool hovered);
 	void drawScrollbar(UIButtonState state);
 	void rebuildVisibleList();
+
+	// Reconcile the shared, save-persisted inventory order list with the items
+	// the player actually owns: drop stale entries and append any owned items
+	// missing from it (in item-ID order). Fixes up saves made before ordering
+	// was tracked in one pass, instead of one item at a time. Returns true if
+	// the order list was changed.
+	bool syncOrderWithInventory();
+
+	bool itemMatchesFilter(int16 itemID) const;
 	void setActiveFilterIndex(uint index);
 
 	// Play a popup button's click sound (the filter tabs and the close X),
