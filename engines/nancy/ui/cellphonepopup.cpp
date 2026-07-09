@@ -1679,9 +1679,12 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		if (overClose) {
 			g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
-				playButtonClickSound(closeBtn);
 				input.eatMouseInput();
+				// close() stops the call-sound channel, which the X's click
+				// sound may share; close first so the click sound isn't cut off
+				// once a call / dial / web tone has occupied that channel.
 				close();
+				playButtonClickSound(closeBtn);
 				return;
 			}
 		}
