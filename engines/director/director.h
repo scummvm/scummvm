@@ -298,6 +298,7 @@ public:
 	uint16 _wmWidth;
 	uint16 _wmHeight;
 	CastMemberID _lastPalette;
+	CastMemberID _lastPuppetPalette;
 
 	// used for quirks
 	byte _fpsLimit;
