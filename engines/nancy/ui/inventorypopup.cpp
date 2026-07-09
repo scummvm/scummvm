@@ -317,13 +317,6 @@ void InventoryPopup::handleInput(NancyInput &input) {
 		input.mousePos.x - _screenPosition.left + _uiivData->header.normalDestRect.left,
 		input.mousePos.y - _screenPosition.top  + _uiivData->header.normalDestRect.top);
 
-	// Item slots use kHotspot: the highlighted magnifier, which also blends a
-	// held-item sprite on Nancy 10+, so it works in both "empty hand" (plain
-	// magnifier) and "carrying" (magnifier + item) states. The popup chrome
-	// (close button, scrollbar, filter tabs) uses kHotspotArrow instead, like
-	// the other Nancy 10+ popups.
-	const CursorManager::CursorType slotCursor = CursorManager::kHotspot;
-
 	// Scrollbar interaction takes priority while dragging.
 	const UISliderRecord &slider = _uiivData->header.slider;
 	if (_uiivData->header.sliderEnabled) {
@@ -421,14 +414,14 @@ void InventoryPopup::handleInput(NancyInput &input) {
 	}
 
 	if (hoveredSlot != -1) {
-		g_nancy->_cursor->setCursorType(slotCursor);
+		g_nancy->_cursor->setCursorType(CursorManager::kHotspotArrow);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			if (heldItem != -1) {
 				const int16 slotItem = _slotItemIDs[hoveredSlot];
 
 				// Empty slot: drop the held item back into the inventory
-				// and keep the popup open. Occupied slot: swap — held
+				// and keep the popup open. Occupied slot: swap - held
 				// item goes into the inventory, the clicked item becomes
 				// the new held item.
 				NancySceneState.addItemToInventory(heldItem);
