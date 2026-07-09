@@ -30,7 +30,7 @@ namespace Nancy {
 namespace Misc {
 
 struct MetaInfo {
-	enum Type { kColor, kFont, kMark, kHotspot };
+	enum Type { kColor, kFont, kMark, kHotspot, kUnderline };
 
 	Type type;
 	uint numChars;
@@ -171,6 +171,15 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 
 					currentLine += '\t';
 					continue;
+				case 'u' :
+					// Underline toggle. Paired <u> tags bracket underlined text
+					// (e.g. journal cross-references).
+					if (curToken.size() != 1) {
+						break;
+					}
+
+					metaInfo.push({MetaInfo::kUnderline, numNonSpaceChars, 0});
+					continue;
 				case 'c' :
 					// Color tokens
 					// We keep the positions (excluding spaces) and colors of the color tokens in a queue
@@ -259,6 +268,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 		// respect color tokens
 		uint totalCharsDrawn = 0;
 		byte colorID = _defaultTextColor;
+		bool underline = false;
 		uint numNewlineTokens = 0;
 		uint horizontalOffset = 0;
 		bool newLineStart = false;
@@ -326,6 +336,9 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 						break;
 					case MetaInfo::kColor:
 						colorID = change.index;
+						break;
+					case MetaInfo::kUnderline:
+						underline = !underline;
 						break;
 					case MetaInfo::kMark: {
 						auto *mark = GetEngineData(MARK);
@@ -407,12 +420,22 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 				Common::String &stringToDraw = subLine.size() ? subLine : line;
 
 				// Draw the normal text
+				const int drawX = textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline);
+				const int drawY = textBounds.top + _numDrawnLines * lineStep(font) + _imageVerticalOffset;
 				font->drawString(				&_fullSurface,
 												stringToDraw,
-												textBounds.left + horizontalOffset + (newLineStart ? 0 : leftOffsetNonNewline),
-												textBounds.top + _numDrawnLines * lineStep(font) + _imageVerticalOffset,
+												drawX,
+												drawY,
 												textBounds.width(),
 												colorID);
+
+				// Underline the segment (the <u> markup toggle) in the text color.
+				if (underline && !stringToDraw.empty()) {
+					const int underlineWidth = font->getStringWidth(stringToDraw);
+					const int underlineY = drawY + font->getFontHeight() - 1;
+					_fullSurface.fillRect(Common::Rect(drawX, underlineY, drawX + underlineWidth, underlineY + 1),
+											font->getColorPixel(colorID));
+				}
 
 				// Then, draw the highlight
 				if (hasHotspot && !_textHighlightSurface.empty()) {

@@ -52,6 +52,11 @@ public:
 
 	const Graphics::ManagedSurface &getImageSurface() const { return _image; }
 
+	// Samples an opaque pixel from a solid glyph rendered in the given color
+	// variant, so callers can match the exact text color. Used to draw
+	// underlines (the <u> markup toggle), for which the atlas has no glyph.
+	uint32 getColorPixel(uint color) const;
+
 	// Custom word wrapping function to fix an edge case with overflowing whitespaces
 	void wordWrap(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth = 0) const;
 

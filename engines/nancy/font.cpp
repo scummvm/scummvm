@@ -183,6 +183,35 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 	dest.blitFrom(_image, srcRect, Common::Point(x, y + yOffset));
 }
 
+uint32 Font::getColorPixel(uint color) const {
+	// The glyphs are pre-colored in the atlas (two color variants selected by
+	// the color-coordinate offsets, mirroring drawChar). Scan a solid glyph for
+	// the first non-transparent pixel to recover the color an underline should
+	// use to match the text.
+	Common::Rect src = getCharacterSourceRect('l');
+	if (color == 0) {
+		src.translate(_color0CoordsOffset.x, _color0CoordsOffset.y);
+	} else if (color == 1) {
+		src.translate(_color1CoordsOffset.x, _color1CoordsOffset.y);
+	}
+
+	const Graphics::Surface &surf = _image.rawSurface();
+	for (int yy = src.top; yy < src.bottom; ++yy) {
+		for (int xx = src.left; xx < src.right; ++xx) {
+			if (xx < 0 || yy < 0 || xx >= surf.w || yy >= surf.h) {
+				continue;
+			}
+			const void *p = surf.getBasePtr(xx, yy);
+			const uint32 px = surf.format.bytesPerPixel == 2 ? *(const uint16 *)p : *(const uint32 *)p;
+			if (px != _transColor) {
+				return px;
+			}
+		}
+	}
+
+	return _transColor;
+}
+
 void Font::wordWrap(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth) const {
 	Common::String temp;
 	for (const char *c = str.begin(); c != str.end(); ++c) {
