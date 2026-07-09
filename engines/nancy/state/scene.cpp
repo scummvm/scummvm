@@ -1412,7 +1412,7 @@ Common::Rect Scene::activePopupConfinement() const {
 	// The cellphone stays up during a call it placed, but the conversation
 	// (textbox) is the active UI then — don't confine the cursor to the phone,
 	// or it fights the textbox as each new line starts.
-	if (_cellPhonePopup.isVisible() && _activeConversation == nullptr)
+	if (_cellPhonePopup.isVisible() && _activeConversation != nullptr)
 		return _cellPhonePopup.getScreenPosition();
 	return Common::Rect();
 }
