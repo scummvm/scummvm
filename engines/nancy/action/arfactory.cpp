@@ -45,6 +45,7 @@
 #include "engines/nancy/action/puzzle/cubepuzzle.h"
 #include "engines/nancy/action/puzzle/cuttingpuzzle.h"
 #include "engines/nancy/action/puzzle/dotconnectpuzzle.h"
+#include "engines/nancy/action/puzzle/drivingpuzzle.h"
 #include "engines/nancy/action/puzzle/gridmappuzzle.h"
 #include "engines/nancy/action/puzzle/matchpuzzle.h"
 #include "engines/nancy/action/puzzle/hamradiopuzzle.h"
@@ -446,9 +447,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 160:
 		// In Nancy12 the hint system was removed (the HINT boot chunk is gone) and this
 		// slot was reused for a new driving/racing puzzle.
-		// TODO: Nancy12 DrivingPuzzle (new), not implemented
 		if (g_nancy->getGameType() >= kGameTypeNancy12)
-			return nullptr;
+			return new DrivingPuzzle(DrivingPuzzle::kDriving);
 		return new HintSystem();
 	case 161:
 		// PlaySoundEventFlagTerse moved to 149 in Nancy12; this slot was reused for a new puzzle.
@@ -468,8 +468,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		// OneBuildPuzzle, moved here from 234 in Nancy12
 		return new OneBuildPuzzle();
 	case 167:
-		// TODO: Nancy12 ChasePuzzle (new), not implemented
-		return nullptr;
+		return new DrivingPuzzle(DrivingPuzzle::kChase);
 	case 168:
 		return new Set3DSoundListenerPosition();
 	// -- Nancy 13 new/relocated puzzles (types 169-176) --

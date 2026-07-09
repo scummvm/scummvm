@@ -428,6 +428,35 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			break;
 		}
 		case DependencyType::kElapsedPlayerDay:
+			if (g_nancy->getGameType() >= kGameTypeNancy12) {
+				// Nancy12 repurposed dependency type 10 as a resource check (e.g. the
+				// car's gas gauge): resource value vs. threshold, by condition modifier.
+				int32 resVal = NancySceneState.getUIResource(dep.label);
+				int32 threshold = dep.milliseconds;
+				switch (dep.condition) {
+				case 0:	// equal
+					dep.satisfied = (resVal == threshold);
+					break;
+				case 1:	// resource greater than the threshold
+					dep.satisfied = (resVal > threshold);
+					break;
+				case 2:	// resource greater than or equal to the threshold
+					dep.satisfied = (resVal >= threshold);
+					break;
+				case 3:	// resource less than the threshold
+					dep.satisfied = (resVal < threshold);
+					break;
+				case 4:	// resource less than or equal to the threshold
+					dep.satisfied = (resVal <= threshold);
+					break;
+				default:
+					dep.satisfied = false;
+					break;
+				}
+
+				break;
+			}
+
 			if (record._days == -1) {
 				record._days = NancySceneState.getPlayerTime().getDays();
 				dep.satisfied = true;
