@@ -1006,6 +1006,11 @@ void Scene::init() {
 	_flags.items.resize(g_nancy->getStaticData().numItems, g_nancy->_false);
 	_flags.disabledItems.resize(_flags.items.size(), 0);
 
+	// The CursorManager is owned by the engine and survives a New Game (which
+	// destroys and recreates the Scene). Clear any held-item cursor left over
+	// from a previous playthrough so a fresh game starts with the normal cursor.
+	g_nancy->_cursor->setCursorItemID(-1);
+
 	_timers.lastTotalTime = 0;
 	_timers.playerTime = bootSummary->startTimeHours * 3600000;
 	_timers.sceneTime = 0;
