@@ -19,18 +19,25 @@
  *
  */
 
+#include "mads/madsv2/core/attr.h"
 #include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/error.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/hspot.h"
+#include "mads/madsv2/core/inter.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/keys.h"
+#include "mads/madsv2/core/magic.h"
 #include "mads/madsv2/core/matte.h"
+#include "mads/madsv2/core/mcga.h"
 #include "mads/madsv2/core/mouse.h"
 #include "mads/madsv2/core/mem.h"
 #include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/quote.h"
+#include "mads/madsv2/core/sound.h"
+#include "mads/madsv2/core/text.h"
 #include "mads/madsv2/core/timer.h"
+#include "mads/madsv2/core/video.h"
 #include "mads/madsv2/nebular/mads/quotes.h"
 #include "mads/madsv2/nebular/menus.h"
 #include "mads/madsv2/nebular/global.h"
@@ -65,6 +72,8 @@ struct MenuMessage {
 	int spacing;        /* Font auto spacing             */
 };
 
+#define MAX_MENU_MESSAGE 20
+
 static MenuMessage *menu = NULL;
 static byte *save_menu = NULL;
 static byte *trash_bag = NULL;
@@ -93,6 +102,155 @@ static int game_save_status = RESTORE_FAILED;
 static int  game_menu_save_dirty;
 static char *game_menu_save_buffer;
 static char *game_menu_save_pointer;
+static int menu_room_id;
+static int menu_series_handle;
+
+
+
+void global_emergency_save() {
+	game_save_name(0);
+
+	if (scr_orig.data != NULL)
+		mem_free(scr_orig.data);
+
+	g_engine->saveAutosaveIfEnabled();
+}
+
+static void choose_menu_background() {
+	switch (section_id) {
+	case 1:
+	case 2:
+		menu_room_id = 921;
+		break;
+	case 3:
+	case 4:
+		menu_room_id = 922;
+		break;
+	case 5:
+	case 6:
+	case 7:
+		menu_room_id = 923;
+		break;
+	case 8:
+		menu_room_id = 924;
+		break;
+	default:
+		menu_room_id = 920;
+		break;
+	}
+}
+
+static void game_menu_setup() {
+	Palette specialPal;
+
+	MADS::MADSV2::game_menu_setup();
+
+	menu = (MenuMessage *)malloc(MAX_MENU_MESSAGE * sizeof(MenuMessage));
+
+	choose_menu_background();
+
+	kernel.quotes = quote_load(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+		21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+		41, 42, 43, 44, 45, 46, 47, 48, 0);
+
+	
+	cursor_id = MAX(CURSOR_WAIT, cursor->num_sprites);
+	if (cursor_id != cursor_last) {
+		mouse_cursor_sprite(cursor, cursor_id);
+		cursor_last = cursor_id;
+	}
+
+	vocab_clear_active();
+	kernel_init_dynamic();
+
+	text_default_x = text_default_y = -1;
+
+	int newRoom = new_room;
+	int roomId = room_id;
+	int previousRoom = previous_room;
+
+	inter_input_mode = INTER_BUILDING_SENTENCES;
+
+	bool palFlag = kernel.activate_menu == GAME_DIFFICULTY_MENU;
+	if (!palFlag)
+		player_preserve_palette();
+
+	game.going = (byte)!kernel_room_startup(menu_room_id, 0, kernel.interface, palFlag);
+
+	previous_room = previousRoom;
+	room_id = roomId;
+	new_room = newRoom;
+
+	viewing_at_y = 22;
+	sound_queue_hold();
+
+	Series *menuSprites = sprite_series_load("*MENU", 0);
+	if (!menuSprites) {
+		error_report(-7, 3, 23, 0, 0);
+		return;
+	}
+
+	menu_series_handle = matte_allocate_series(menuSprites, 0);
+
+	Common::fill(magic_color_flags, magic_color_flags + 3, 0);
+	Common::fill(magic_color_values, magic_color_values + 3, 0);
+
+	if (config_file.screen_fade) {
+		memset(&specialPal[0], 0, Graphics::PALETTE_SIZE);
+		mcga_setpal(&specialPal);
+	} else {
+		mcga_getpal(&specialPal);
+		magic_fade_to_grey(specialPal, NULL, 0, 256, 0, 1, 1, 16);
+	}
+
+	mouse_hide();
+	buffer_fill(scr_main, 0);
+	video_update(&scr_main, 0, 0, 0, 0, 320, 200);
+
+	buffer_rect_fill(scr_work, 0, 0, 320, 1, 2);
+	video_update(&scr_work, 0, 0, 0, viewing_at_y - 2, 320, 1);
+	video_update(&scr_work, 0, 0, 0, viewing_at_y + 157, 320, 1);
+
+	kernel.fx = config_file.screen_fade ? MATTE_FX_FAST_THRU_BLACK : MATTE_FX_FADE_FROM_BLACK;
+	kernel.trigger = 0;
+
+	game_emergency_save = global_emergency_save;
+
+	cursor_id = (cursor->num_sprites > 1) ? CURSOR_NORMAL : cursor->num_sprites;
+	if (cursor_id != cursor_last) {
+		mouse_cursor_sprite(cursor, cursor_id);
+		cursor_last = cursor_id;
+	}
+
+	pal_change_color(10, 0, 63, 0);
+	pal_change_color(11, 0, 45, 0);
+	pal_change_color(12, 63, 63, 0);
+	pal_change_color(13, 45, 45, 0);
+	pal_change_color(14, 63, 63, 63);
+	pal_change_color(15, 45, 45, 45);
+
+	mouse_show();
+}
+
+static void game_menu_shutdown() {
+	MADS::MADSV2::game_menu_shutdown();
+
+	viewing_at_y = 0;
+
+	matte_deallocate_series(menu_series_handle, true);
+	kernel_room_shutdown();
+
+	mem_free(kernel.quotes);
+	kernel.quotes = nullptr;
+
+	free(menu);
+	menu = nullptr;
+
+	previous_room = room_id = KERNEL_RESTORING_GAME;
+
+	if (!game.going)
+		room_id = new_room;
+}
 
 static int global_save(int id, const char *save_game_name) {
 	int status;
@@ -1587,14 +1745,6 @@ void global_menu_system_init() {
 
 void global_menu_system_shutdown() {
 	// No implementation
-}
-
-void global_emergency_save() {
-	game_save_name(0);
-
-	if (scr_orig.data != NULL) mem_free(scr_orig.data);
-
-	g_engine->saveAutosaveIfEnabled();
 }
 
 void global_game_menu() {

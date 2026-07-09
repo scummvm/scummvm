@@ -62,7 +62,7 @@ extern char *vocab;
 extern int vocab_emergency;
 
 extern char *vocab_text;
-extern word vocab_active;
+extern bool vocab_active;
 extern word vocab_list_id[VOCAB_MAX_ACTIVE];
 extern word vocab_list_pointer[VOCAB_MAX_ACTIVE];
 
@@ -74,6 +74,7 @@ extern char *vocab_get_word(char *out, int inp);
 extern void vocab_report_error(int number);
 extern char *vocab_select_word(char *out, const char *prompt, const char *default_word);
 extern void vocab_unload_active();
+extern void vocab_clear_active();
 extern int vocab_make_active(int id);
 extern int vocab_load_active();
 extern char *vocab_string(int vocab_id);

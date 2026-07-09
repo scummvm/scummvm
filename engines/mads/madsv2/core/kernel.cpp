@@ -2414,7 +2414,7 @@ void kernel_init_dynamic() {
 		kernel_dynamic_hot[count].flags = false;
 	}
 	kernel_num_dynamic = 0;
-	kernel_dynamic_changed = 0;
+	kernel_dynamic_changed = false;
 }
 
 int  kernel_dynamic_consecutive(int id) {

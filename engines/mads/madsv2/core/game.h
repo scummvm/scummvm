@@ -170,6 +170,7 @@ extern int key_abort_level;
 
 extern int game_keystroke;
 extern int game_any_keystroke;
+extern int game_any_emergency;
 
 extern int win_status;
 

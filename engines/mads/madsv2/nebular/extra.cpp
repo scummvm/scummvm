@@ -250,6 +250,8 @@ RoomPtr room_load_rex(int id, int variant, const char *base_path, Buffer *pictur
 		goto error;
 	}
 
+	// Note: num_variants and num_hotspots at least are just part of room statistics, and aren't used.
+	// Hotspots, for examples, are loaded separately, and have their own count
 	roomPtr->num_variants = 0;
 	roomPtr->num_hotspots = 0;
 	roomPtr->num_rails = roomfile.num_rails;

@@ -42,6 +42,7 @@ int vocab_words = 0;
 int vocab_allocation = 0;
 int vocab_first_soft = 0;
 int vocab_longest = 0;
+bool vocab_active = false;
 
 char *vocab_text = NULL;
 word vocab_size;
@@ -495,6 +496,11 @@ done:
 	return error_flag;
 }
 
+void vocab_clear_active() {
+	vocab_unload_active();
+	vocab_active = 0;
+}
+
 int vocab_make_active(int id) {
 	return id;
 }
@@ -534,6 +540,7 @@ void init_vocab() {
 	vocab_longest = 0;
 	vocab_text = NULL;
 	vocab_size = 0;
+	vocab_active = false;
 }
 
 } // namespace MADSV2
