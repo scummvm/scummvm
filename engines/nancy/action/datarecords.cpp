@@ -446,6 +446,18 @@ void ModifyListEntry::readData(Common::SeekableReadStream &stream) {
 		_sceneID = stream.readUint16LE();
 		if (_mark < 10 && _mark != 7)
 			_sceneID = kNoScene;
+
+		// WORKAROUND: Shadow Ranch (Nancy 10) ships the "Ask Dave for the key to
+		// the rolltop desk" task (SHAT04) with completion event-flag 1824 (index
+		// 824), which is out of range (816 flags). For a checkable task (mark 7)
+		// the sceneID doubles as that flag; the original engine reads it out of
+		// bounds and happens to pass, so the box appears tickable, but we bounds-
+		// check and would reject it forever. The intended flag is
+		// EV_DG_Said_Rolltop_Key (1169).
+		if (g_nancy->getGameType() == kGameTypeNancy10 && _mark == 7 &&
+				_sceneID == 1824 && _stringID.equalsIgnoreCase("SHAT04")) {
+			_sceneID = 1169;
+		}
 	} else if (g_nancy->getGameType() >= kGameTypeNancy9 && _mark >= 10) {
 		// Nancy 9: the trailing sceneID is only present when mark >= 10.
 		_sceneID = stream.readUint16LE();
