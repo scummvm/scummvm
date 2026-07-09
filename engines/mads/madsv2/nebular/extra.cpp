@@ -173,21 +173,28 @@ int room_load_depth(Load *load_handle, Buffer *depth, Room *room_info, int varia
 
 	byte *destP = buffer_pointer(depth, 0, 0);
 	byte *endP = destP + depth->x * depth->y;
-	byte runLength, runValue;
+	int runLength, runValue;
 
-	// The data is encoded as a sequence of run lengths of given values
+	// The data is encoded as a sequence of run lengths of given values, though they're nibble amounts,
+	// and the engine expects them to be saved in a two pixels per byte format
 	LoaderReadStream src(load_handle);
+	bool isLowNibble = true;
 
-	while (destP < endP) {
-		runLength = src.readByte();
-		if (!runLength)
-			break;
-
-		runValue = src.readByte();
+	runLength = src.readByte();
+	while (destP < endP && runLength != 0) {
+		runValue = src.readByte() & 0xf;
 
 		// Write out the run length
-		Common::fill(destP, MIN(endP, destP + runLength), runValue);
-		destP += runLength;
+		for (; runLength > 0 && destP < endP; --runLength) {
+			if (isLowNibble) {
+				*destP = runValue;
+			} else {
+				*destP++ |= (runValue << 4);
+			}
+			isLowNibble = !isLowNibble;
+		}
+
+		runLength = src.readByte();
 	}
 
 	if (!hasLoad)
@@ -211,7 +218,6 @@ RoomPtr room_load_rex(int id, int variant, const char *base_path, Buffer *pictur
 	char block_name[20];
 	bool sceneFlag = id >= 0;
 	int width, height, picSize;
-	int depthSize;
 	SeriesPtr sprites[10] = { nullptr };
 	int16 spritesColor[10] = { -1 };
 
@@ -276,10 +282,10 @@ RoomPtr room_load_rex(int id, int variant, const char *base_path, Buffer *pictur
 		buffer_init(picture, width, height);
 	assert(picture->data);
 
-	// Determine depth surface size
-	if (roomfile.format == 2)
-		width >>= 2;
-	depthSize = width * height;
+	// Original only used packed surface for a specific format, but subsequent games' codebase
+	// expects the depth surface to always be fixed
+	//if (roomfile.format == 2) width >>= 2;
+	width >>= 2;
 
 	if (!depth->data)
 		buffer_init(depth, width, height);
