@@ -435,12 +435,20 @@ void Lingo::func_mci(const Common::String &name) {
 	MCICommand parsedCmd;
 	parseMCICommand(name, parsedCmd);
 
+	// b_mci() is a command that doesn't return anything, but it does set the value of
+	// "the result" to any output string from the MCI driver.
+	// this will be set to the empty string for anything that doesn't return a value,
+	// a string representation of an integer for integer return types,
+	// a string for string return types, or an error message starting with "MCI Error: "
+	g_lingo->_theResult = Datum("");
+
 	switch (parsedCmd.id) {
 	case MCI_OPEN: {
 		Common::File *file = new Common::File();
 
 		if (!file->open(Common::Path(parsedCmd.device, g_director->_dirSeparator))) {
 			warning("func_mci(): Failed to open %s", parsedCmd.device.c_str());
+			g_lingo->_theResult = Datum(Common::String::format("MCI Error: Failed to open %s", parsedCmd.device.c_str()));
 			delete file;
 			return;
 		}
@@ -457,6 +465,8 @@ void Lingo::func_mci(const Common::String &name) {
 		} else {
 			warning("func_mci(): Unhandled audio type %s", parsedCmd.parameters["type"].string.c_str());
 			delete file;
+			g_lingo->_theResult = Datum(Common::String::format("MCI Error: Unhandle audio type %s", parsedCmd.parameters["type"].string.c_str()));
+			return;
 		}
 		}
 		break;
@@ -466,6 +476,7 @@ void Lingo::func_mci(const Common::String &name) {
 
 		if (!_audioAliases.contains(parsedCmd.device)) {
 			warning("func_mci(): Unknown alias %s", parsedCmd.device.c_str());
+			g_lingo->_theResult = Datum(Common::String::format("MCI Error: Unknown alias %s", parsedCmd.device.c_str()));
 			return;
 		}
 
@@ -476,8 +487,17 @@ void Lingo::func_mci(const Common::String &name) {
 		}
 		break;
 
+	case MCI_STATUS: {
+		warning("func_mci(): MCI get status: %s", parsedCmd.device.c_str());
+
+		if (!_audioAliases.contains(parsedCmd.device)) {
+			warning("func_mci(): Unknown alias %s", parsedCmd.device.c_str());
+			g_lingo->_theResult = Datum(Common::String::format("MCI Error: Unknown alias %s", parsedCmd.device.c_str()));
+			return;
+		}
+		}
 	default:
-		warning("func_mci: Unhandled MCI command: %d (%s)", parsedCmd.id, name.c_str()); /* TODO: Convert MCITokenType into string */
+		warning("func_mci: Unhandled MCI command: %d", parsedCmd.id); /* TODO: Convert MCITokenType into string */
 	}
 }
 
