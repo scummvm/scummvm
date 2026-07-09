@@ -155,6 +155,11 @@ public:
 	int16 _startScene = 0; // start scene id (9999 = none); also the auto-open cell phone's call target
 	int16 _endScene = 0;   // end scene id (9999 = none)
 
+	Common::String getRecordExtraInfo() const override {
+		return Common::String::format("uiButton: %d, autoOpenOrBadgeSound: %d, flagB: %d, startScene: %d, endScene: %d",
+									  _uiButton, _autoOpenOrBadgeSound, _flagB, _startScene, _endScene);
+	}
+
 protected:
 	Common::String getRecordTypeName() const override { return "ControlUIItems"; }
 };
@@ -186,6 +191,11 @@ public:
 	int16 _flag = 0;              // stored but unused by the original; reserved
 	int16 _eventFlag = 0;         // event-flag index set when the entry is opened
 
+	Common::String getRecordExtraInfo() const override {
+		return Common::String::format("Key: %s, Value: %s, Mode: %d, Extra: %d, Flag: %d, EventFlag: %d",
+			_key.c_str(), _value.c_str(), _mode, _extra, _flag, _eventFlag);
+	}
+
 protected:
 	Common::String getRecordTypeName() const override { return "AddSearchLink"; }
 };
@@ -212,6 +222,10 @@ public:
 	void execute() override;
 
 	UICL::Contact _contact;
+
+	Common::String getRecordExtraInfo() const override {
+		return Common::String::format("Contact: %s", _contact.name.c_str());
+	}
 
 protected:
 	Common::String getRecordTypeName() const override { return "ChangeCellPhoneInfo"; }
