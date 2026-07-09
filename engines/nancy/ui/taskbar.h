@@ -117,6 +117,8 @@ private:
 	ButtonState restingState(uint index) const;
 	// Mirror one button's override into the persisted TaskbarData chunk.
 	void persistOverride(uint index);
+	// Mirror one button's notification flags into the persisted TaskbarData chunk.
+	void persistNotifications(uint index);
 	// True when the button currently accepts hover/click (not disabled).
 	bool isButtonActive(uint index) const;
 

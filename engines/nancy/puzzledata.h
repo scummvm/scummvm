@@ -307,6 +307,7 @@ struct UIResourceData : public PuzzleData {
 // load into a scene that doesn't itself re-run the AR.
 struct TaskbarData : public PuzzleData {
 	static const uint kNumButtons = 6;
+	static const uint kNumNotificationSubCategories = 3;
 
 	struct Override {
 		bool active = false;
@@ -322,6 +323,10 @@ struct TaskbarData : public PuzzleData {
 	virtual void synchronize(Common::Serializer &ser);
 
 	Override overrides[kNumButtons];
+	// Notification badge flags, mirrored from the Taskbar so they survive a
+	// load. Set by AR triggers (inventory add, ModifyListEntryAdd, etc.) that
+	// won't re-run when loading into a later scene.
+	bool notifications[kNumButtons][kNumNotificationSubCategories] = {};
 };
 
 PuzzleData *makePuzzleData(const uint32 tag);

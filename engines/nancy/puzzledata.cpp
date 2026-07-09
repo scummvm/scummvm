@@ -397,6 +397,16 @@ void TaskbarData::synchronize(Common::Serializer &ser) {
 		ser.syncAsSint16LE(overrides[i].endScene);
 		ser.syncAsUint16LE(overrides[i].clickSoundMode);
 	}
+
+	// Notification badges were added in savegame version 5. Older saves don't
+	// have these bytes; the flags stay at their default (cleared) state.
+	if (ser.getVersion() >= 5) {
+		for (uint i = 0; i < kNumButtons; ++i) {
+			for (uint s = 0; s < kNumNotificationSubCategories; ++s) {
+				ser.syncAsByte(notifications[i][s]);
+			}
+		}
+	}
 }
 
 PuzzleData *makePuzzleData(const uint32 tag) {

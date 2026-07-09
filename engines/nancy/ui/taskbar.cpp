@@ -232,6 +232,7 @@ void Taskbar::setNotification(uint buttonIndex, uint subCategory) {
 		return;
 	}
 	_notifications[buttonIndex][subCategory] = true;
+	persistNotifications(buttonIndex);
 
 	if ((int)buttonIndex != _hoveredButton) {
 		drawButton(buttonIndex, restingState(buttonIndex));
@@ -243,6 +244,7 @@ void Taskbar::clearNotification(uint buttonIndex, uint subCategory) {
 		return;
 	}
 	_notifications[buttonIndex][subCategory] = false;
+	persistNotifications(buttonIndex);
 
 	if ((int)buttonIndex != _hoveredButton) {
 		drawButton(buttonIndex, restingState(buttonIndex));
@@ -256,6 +258,7 @@ void Taskbar::clearAllNotifications(uint buttonIndex) {
 	for (uint s = 0; s < kNumNotificationSubCategories; ++s) {
 		_notifications[buttonIndex][s] = false;
 	}
+	persistNotifications(buttonIndex);
 
 	if ((int)buttonIndex != _hoveredButton) {
 		drawButton(buttonIndex, restingState(buttonIndex));
@@ -311,6 +314,19 @@ void Taskbar::persistOverride(uint index) {
 	data->overrides[index].clickSoundMode = (uint16)_overrides[index].clickSoundMode;
 }
 
+void Taskbar::persistNotifications(uint index) {
+	if (index >= TASK::kNumButtons || index >= TaskbarData::kNumButtons) {
+		return;
+	}
+	TaskbarData *data = (TaskbarData *)NancySceneState.getPuzzleData(TaskbarData::getTag());
+	if (!data) {
+		return;
+	}
+	for (uint s = 0; s < kNumNotificationSubCategories; ++s) {
+		data->notifications[index][s] = _notifications[index][s];
+	}
+}
+
 void Taskbar::syncFromPuzzleData() {
 	TaskbarData *data = (TaskbarData *)NancySceneState.getPuzzleData(TaskbarData::getTag());
 	if (!data) {
@@ -321,6 +337,10 @@ void Taskbar::syncFromPuzzleData() {
 		_overrides[i].startScene = data->overrides[i].startScene;
 		_overrides[i].endScene = data->overrides[i].endScene;
 		_overrides[i].clickSoundMode = data->overrides[i].clickSoundMode;
+
+		for (uint s = 0; s < kNumNotificationSubCategories; ++s) {
+			_notifications[i][s] = data->notifications[i][s];
+		}
 	}
 }
 
