@@ -270,6 +270,7 @@ _xcodetoolspath=
 _sparklepath=
 _pkgconfig=pkg-config
 _sdlconfig=sdl2-config
+_prefer_sdl3=no
 _libcurlconfig=curl-config
 _libmikmodconfig=libmikmod-config
 _freetypeconfig=freetype-config
@@ -1192,6 +1193,8 @@ Optional Libraries:
                            then you should pass:
                            '--with-sdl-prefix=/opt/mxe/usr/i686-w64-mingw32.static'
 
+  --prefer-sdl3               prefer SDL3 over SDL2 if both are available [no]
+
   --with-freetype2-prefix=DIR prefix where the freetype-config script is
                               installed (optional)
   --disable-freetype2         disable freetype2 TTF library usage [autodetect]
@@ -1439,6 +1442,7 @@ for ac_option in $@; do
 	--disable-ext-avx2)          _ext_avx2=no            ;;
 	--enable-ext-neon)           _ext_neon=yes           ;;
 	--disable-ext-neon)          _ext_neon=no            ;;
+	--prefer-sdl3)               _prefer_sdl3=yes        ;;
 	--with-fluidsynth-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLUIDSYNTH_CFLAGS="-I$arg/include"
@@ -4482,7 +4486,7 @@ fi
 # Setup SDL specifics for SDL based backends
 #
 if test "$_sdl" = auto ; then
-	if test "$_pkg_config" = "yes" && ($_pkgconfig --exists sdl || $_pkgconfig --exists sdl2); then
+	if test "$_pkg_config" = "yes" && test "$_prefer_sdl3" = "no" && ($_pkgconfig --exists sdl || $_pkgconfig --exists sdl2); then
 		find_sdlconfig
 		_sdlversion=`$_sdlconfig --version`
 		cat > $TMPC << EOF
@@ -5638,7 +5642,7 @@ if test "$_nfm" = auto ; then
 sOplInterface gOplIf;
 
 int main(void)
-{ 
+{
 	nfInit(NULL, NULL);
 
 	sOplInterfaceConfiguration ifCfg;
@@ -5652,7 +5656,7 @@ int main(void)
 	params.uParam.outputPort = OPT_INTERNAL;
     params.uParam.param = 0;
 
-    gOplIf = nfCreateInterface(ifCfg); 
+    gOplIf = nfCreateInterface(ifCfg);
 
     const int32_t retval = nfInitialiseInterface(&gOplIf, &params);
 
@@ -5660,7 +5664,7 @@ int main(void)
     {
 	 (void)nfDestroyInterface(&gOplIf);
      return 0;
-    }	
+    }
 
   return -1;
 }
