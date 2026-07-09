@@ -471,9 +471,14 @@ Graphics::Surface *BitmapCastMember::getDitherImg() {
 		// Only redither 8-bit images in 8-bit mode if we have the remap palette flag set, or it is external
 		if (targetBpp == 1 && !movie->_remapPalettesWhenNeeded && !_external)
 			break;
-		// If we're in RGB mode, and not in puppet palette mode, then "redither" as well.
-		if (targetBpp != 1 && score->_puppetPalette && !_external)
+		if (targetBpp != 1 && score->_puppetPalette && !_external) {
+			// we're in true colour mode, rendering a paletted image, and the puppet palette has been set
+			// use the score palette
+			const byte *palPtr = currentPalette->palette;
+			int palCount = currentPalette->length;
+			dither = _picture->_surface.convertTo(g_director->_wm->_pixelformat, palPtr, palCount, dstPalette, dstPaletteCount, Graphics::kDitherNaive);
 			break;
+		}
 		if (_external || (targetBpp != 1) || (castPaletteId != currentPaletteId && !isColorCycling)) {
 			const auto pals = g_director->getLoadedPalettes();
 			CastMemberID palIndex = pals.contains(castPaletteId) ? castPaletteId : CastMemberID(kClutSystemMac, -1);

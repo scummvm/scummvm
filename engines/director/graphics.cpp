@@ -247,9 +247,10 @@ void DirectorEngine::syncPalette() {
 		memcpy(paletteBuf, _currentPalette, _currentPaletteLength*3);
 	}
 
-	// Pass the palette to OSystem only for 8bpp mode
-	if (_pixelformat.bytesPerPixel == 1)
+	if (_pixelformat.bytesPerPixel == 1) {
+		// Pass the palette to OSystem only for 8bpp mode
 		_system->getPaletteManager()->setPalette(paletteBuf, 0, _currentPaletteLength);
+	}
 
 	_wm->passPalette(paletteBuf, _currentPaletteLength);
 }

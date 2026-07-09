@@ -125,7 +125,7 @@ void Score::setPuppetTempo(int16 puppetTempo) {
 }
 
 CastMemberID Score::getCurrentPalette() {
-	return _vm->_lastPalette;
+	return _puppetPalette ? _vm->_lastPuppetPalette : _vm->_lastPalette;
 }
 
 bool Score::processImmediateFrameScript(Common::String s, int id) {

@@ -3213,12 +3213,13 @@ void LB::b_puppetPalette(int nargs) {
 	Score *score = movie->getScore();
 	if (!palette.isNull()) {
 		g_director->setPalette(palette);
+		g_director->_lastPuppetPalette = palette;
 		score->_puppetPalette = true;
 	} else {
 		// Setting puppetPalette to 0 disables it (Lingo Dictionary, 226)
 
 		score->_puppetPalette = false;
-
+		g_director->_lastPuppetPalette = CastMemberID();
 		// FIXME: set system palette decided by platform, should be fixed after windows palette is working.
 		// try to set mac system palette if lastPalette is 0.
 		if (g_director->_lastPalette.isNull())
