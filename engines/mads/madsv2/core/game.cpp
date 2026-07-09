@@ -1176,10 +1176,14 @@ void game_control() {
 	}
 
 	if (!game_restore_flag && (result != COPY_FAIL) && (result != COPY_ESCAPE)) {
+		int gameId = g_engine->getGameID();
+
 		// Get difficulty level if new game
-		if (!kernel.teleported_in && (game.difficulty == -1)) {
+		if (!kernel.teleported_in && (game.difficulty == -1) && gameId != GType_Forest) {
 			// Difficulty menu
-			int gameId = g_engine->getGameID();
+			if (gameId == GType_RexNebular)
+				game.going = !kernel_section_startup(new_section);
+
 			if (gameId != GType_Forest)
 				kernel.activate_menu = GAME_DIFFICULTY_MENU;
 			game_exec_function(game_menu_routine);

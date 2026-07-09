@@ -827,7 +827,7 @@ static int game_menu_standard_keyboard(int mykey, int going) {
 	return going;
 }
 
-static int game_menu_keyboard(int going) {
+static bool game_menu_keyboard(int going) {
 	int mykey;
 
 	if (keys_any()) {
@@ -878,7 +878,7 @@ static void game_menu_main() {
 
 		while (going && (game_menu_selected_item < 1)) {
 
-			going = game_menu_keyboard(going);
+			going = game_menu_keyboard(going) && !g_engine->shouldQuit();
 
 			now_clock = timer_read();
 
@@ -971,7 +971,7 @@ static void game_menu_options() {
 
 		while (going && (game_menu_selected_item < 1)) {
 
-			going = game_menu_keyboard(going);
+			going = game_menu_keyboard(going) && !g_engine->shouldQuit();
 
 			now_clock = timer_read();
 
@@ -1602,8 +1602,7 @@ static void game_menu_difficulty() {
 		game_menu_changed = true;
 
 		while (going && (game_menu_selected_item < 1)) {
-
-			going = game_menu_keyboard(going);
+			going = game_menu_keyboard(going) && !g_engine->shouldQuit();
 
 			now_clock = timer_read();
 
@@ -1693,7 +1692,7 @@ static void game_menu_alert() {
 
 		while (going && (game_menu_selected_item < 1)) {
 
-			going = game_menu_keyboard(going);
+			going = game_menu_keyboard(going) && !g_engine->shouldQuit();
 
 			now_clock = timer_read();
 
@@ -1748,6 +1747,8 @@ void global_menu_system_shutdown() {
 }
 
 void global_game_menu() {
+
+
 	while (keys_any())
 		keys_get();
 
