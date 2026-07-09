@@ -843,7 +843,7 @@ ADDetectedGames AdvancedMetaEngineDetectionBase::detectGame(const Common::FSNode
 			curFilesMatched++;
 		}
 
-		debugC(3, kDebugGlobalDetection, "Game '%s' matched %d files all files present: %d has unknown files: %d, total files: %d",
+		debugC(5, kDebugGlobalDetection, "Game '%s' matched %d files all files present: %d has unknown files: %d, total files: %d",
 				g->gameId, curFilesMatched, allFilesPresent, game.hasUnknownFiles, numFilesInEntry);
 
 		// We found at least one entry with all required files present.
