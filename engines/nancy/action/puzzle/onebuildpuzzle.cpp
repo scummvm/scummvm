@@ -101,8 +101,16 @@ void OneBuildPuzzle::init() {
 		} else {
 			// Normal pieces start at home with defaultRotation
 			p.curRotation = p.defaultRotation;
-			p.gameRect = p.homeRect;
 			p.placed = false;
+
+			// Nancy12 puzzles may ship pieces with an empty home rect
+			// (top == bottom), which means "start scattered": the original
+			// init picks a random spot inside the home-scatter zone. Without
+			// this, such pieces get a zero-height rect and are invisible.
+			if (g_nancy->getGameType() >= kGameTypeNancy12 && p.homeRect.top == p.homeRect.bottom)
+				scatterPiece(p);
+			else
+				p.gameRect = p.homeRect;
 		}
 
 		updatePieceRender(i);
@@ -137,9 +145,16 @@ void OneBuildPuzzle::readDataNancy12(Common::SeekableReadStream &stream) {
 	stream.skip(6);                         // 0x23: rotation/zone config + placement-mode byte
 	_slotTolerance = stream.readSint16LE(); // 0x29
 
-	// 0x2b..0x11f: placement-mode byte, final-animation centering rect, filler
-	// count and the home-scatter zone. None are needed by this port.
-	stream.skip(0x120 - 0x2b);
+	// 0x2b..0xe9: placement-mode byte, final-animation centering rect and filler
+	// count. None are needed by this port.
+	stream.skip(0xea - 0x2b);
+
+	// 0xea: home-scatter zone. Pieces whose stored home rect is empty are
+	// scattered to a random spot inside this rect at init (see scatterPiece()).
+	readRect(stream, _scatterZone);         // 0xea..0xf9
+
+	// 0xfa..0x11f: misc config, unused by this port.
+	stream.skip(0x120 - 0xfa);
 
 	readFilename(stream, _extraSoundName);  // 0x120: final-animation atlas image
 	readRect(stream, _animRectA);           // 0x141
@@ -676,6 +691,30 @@ void OneBuildPuzzle::clampRectToViewport(Common::Rect &rect) {
 		rect.right = vpW;
 		rect.left = vpW - w;
 	}
+}
+
+void OneBuildPuzzle::scatterPiece(Piece &p) {
+	// Piece display size at its starting rotation. Fall back to rotation 0 when
+	// the rotated surface wasn't generated (non-rotatable pieces).
+	int rot = p.hasSurface[p.curRotation] ? p.curRotation : 0;
+	int w = p.rotateSurfaces[rot].w;
+	int h = p.rotateSurfaces[rot].h;
+
+	// The scatter zone comes from the puzzle data; if it's degenerate the
+	// original engine falls back to the full viewport (as kBegin does).
+	Common::Rect zone = _scatterZone;
+	if (zone.isEmpty()) {
+		const VIEW *viewData = GetEngineData(VIEW);
+		if (viewData)
+			zone = Common::Rect(viewData->screenPosition.width(), viewData->screenPosition.height());
+	}
+
+	int maxLeft = MAX<int>(zone.left, zone.right - w);
+	int maxTop  = MAX<int>(zone.top, zone.bottom - h);
+	int left = zone.left + (int)g_nancy->_randomSource->getRandomNumber(MAX(0, maxLeft - zone.left));
+	int top  = zone.top  + (int)g_nancy->_randomSource->getRandomNumber(MAX(0, maxTop - zone.top));
+
+	p.gameRect = Common::Rect((int16)left, (int16)top, (int16)(left + w), (int16)(top + h));
 }
 
 void OneBuildPuzzle::checkAllPlaced() {

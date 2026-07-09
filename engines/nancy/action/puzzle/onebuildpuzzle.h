@@ -109,6 +109,9 @@ protected:
 	SoundDescription _animSound2;
 	bool _hasFinalAnim = false;   // true when _animRectA is non-empty
 
+	// Nancy12: pieces with an empty home rect start scattered inside this zone.
+	Common::Rect _scatterZone;
+
 	Common::Array<Piece> _pieces;
 
 	// Nancy12 stores the puzzle's sounds as this many random-sound blocks, in
@@ -200,6 +203,8 @@ protected:
 	void playGoodPlacementSound();
 	void playBadPlacementSound();
 	void checkAllPlaced();
+	// Place a piece at a random spot inside _scatterZone (Nancy12 empty-home pieces)
+	void scatterPiece(Piece &p);
 	void rotatePiece(int pieceIdx);
 	void updateDragPosition(Common::Point mouseVP);
 	// Update the render object for a piece (set _drawSurface and moveTo gameRect)
