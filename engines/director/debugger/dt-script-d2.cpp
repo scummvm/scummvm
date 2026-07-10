@@ -74,9 +74,8 @@ public:
 			}
 			ImGui::NewLine();
 		}
-		if (_state->_dbg._goToDefinition && _scrollTo) {
+		if (_scrollTo) {
 			ImGui::SetScrollHereY(0.5f);
-			_state->_dbg._goToDefinition = false;
 		}
 
 		indent();
@@ -511,8 +510,11 @@ public:
 			ScriptContext *context = resolveHandlerContext(obj, _script.id, *node->name);
 			if (context) {
 				ImGuiScript script = buildImGuiHandlerScript(context, _script.id.castLib, *node->name, _script.moviePath);
-				setScriptToDisplay(script);
-				_state->_dbg._goToDefinition = true;
+				// Open the definition in the window that hosts this script view
+				if (_state->_dbg._hostExecutionContext)
+					setScriptToDisplay(script);
+				else
+					addToOpenHandlers(script);
 			}
 		}
 		ImGui::SameLine();
