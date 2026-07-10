@@ -149,7 +149,7 @@ namespace MADSV2 {
 #define AWAITING_RIGHT_MOUSE    4       /* Waiting for button release */
 
 #define INTER_MESSAGE_COLOR     254
-
+#define INTER_MESSAGE_COLOR_REX   3
 
 #define inter_verb            inter_words[0]
 #define inter_main_noun       inter_words[1]

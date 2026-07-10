@@ -2175,14 +2175,19 @@ void inter_main_loop(int allow_input) {
 			use_font = font_main;
 			use_spacing = -1;
 			width = font_string_width(use_font, inter_sentence, use_spacing);
+
 			if (width > video_x) {
 				use_font = font_inter;
 				use_spacing = 0;
 				width = font_string_width(font_inter, inter_sentence, use_spacing);
 			}
+
 			x = (video_x >> 1) - (width >> 1);
 			y = (viewing_at_y + scr_work.y - 1) - 12;
-			inter_sentence_handle = matte_add_message (use_font, inter_sentence, x, y, INTER_MESSAGE_COLOR, use_spacing);
+
+			inter_sentence_handle = matte_add_message (use_font, inter_sentence, x, y,
+				g_engine->getGameID() == GType_RexNebular ? INTER_MESSAGE_COLOR_REX : INTER_MESSAGE_COLOR,
+				use_spacing);
 		}
 		inter_sentence_changed = false;
 	}
