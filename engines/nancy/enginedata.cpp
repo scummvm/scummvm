@@ -169,12 +169,12 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 	s.skip(0x10, kGameTypeVampire, kGameTypeNancy9); // unknown rect, same size as a hotspot
 
-	byte textBuf[60];
+	byte textBuf[61];
 
 	if (s.getVersion() >= kGameTypeNancy2) {
 		cantSound.readNormal(*chunkStream);
 		s.syncBytes(textBuf, 60);
-		textBuf[59] = '\0';
+		textBuf[60] = '\0';
 		cantText = (char *)textBuf;
 	}
 
@@ -210,18 +210,18 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 		if (s.getVersion() == kGameTypeNancy2) {
 			s.syncBytes(textBuf, 60);
-			textBuf[59] = '\0';
+			textBuf[60] = '\0';
 			assembleTextLine((char *)textBuf, item.cantText, 60);
 
 			s.syncBytes(textBuf, 60);
-			textBuf[59] = '\0';
+			textBuf[60] = '\0';
 			assembleTextLine((char *)textBuf, item.cantTextNotHolding, 60);
 
 			item.cantSound.readNormal(*chunkStream);
 			item.cantSoundNotHolding.readNormal(*chunkStream);
 		} else if (s.getVersion() >= kGameTypeNancy3 && s.getVersion() <= kGameTypeNancy8) {
 			s.syncBytes(textBuf, 60);
-			textBuf[59] = '\0';
+			textBuf[60] = '\0';
 			assembleTextLine((char *)textBuf, item.cantText, 60);
 
 			item.cantSound.readNormal(*chunkStream);
@@ -230,7 +230,7 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 				if (s.getVersion() >= kGameTypeNancy10)
 					readFilename(s, item.cantSounds[j].name);
 				s.syncBytes(textBuf, 60);
-				textBuf[59] = '\0';
+				textBuf[60] = '\0';
 				assembleTextLine((char *)textBuf, item.cantTexts[j], 60);
 				if (s.getVersion() == kGameTypeNancy9)
 					readFilename(s, item.cantSounds[j].name);
