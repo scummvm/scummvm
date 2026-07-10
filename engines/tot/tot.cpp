@@ -134,6 +134,7 @@ void TotEngine::syncSoundSettings() {
 
 int TotEngine::engineStart() {
 	if (ConfMan.hasKey("save_slot")) {
+		_mouse->setMouseArea(Common::Rect(0, 0, 305, 185));
 		return startGame();
 	}
 	_graphics->clear();
@@ -164,7 +165,6 @@ int TotEngine::engineStart() {
 	if (_startNewGame && !shouldQuit()) {
 		newGame();
 	} else if (_continueGame && !shouldQuit()) {
-
 		resumeGame();
 	}
 	return startGame();
