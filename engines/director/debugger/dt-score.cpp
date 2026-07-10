@@ -448,8 +448,15 @@ static void drawSpriteInspector(Score *score, Cast *cast, uint numFrames) {
 				ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
 			}
 			ImGui::SameLine();
+			ImGui::BeginGroup();
 			ImGui::Text("%s", sprite->_castId.asString().c_str());
 			ImGui::Text("%s", spriteType2str(sprite->_spriteType));
+			ImGui::Text("Script:"); ImGui::SameLine();
+			if (sprite->_scriptId.member)
+				displayScriptRef(sprite->_scriptId);
+			else
+				ImGui::TextDisabled("none");
+			ImGui::EndGroup();
 		}
 
 		ImGui::PopStyleColor();
