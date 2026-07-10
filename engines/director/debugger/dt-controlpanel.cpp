@@ -295,8 +295,8 @@ void showControlPanel() {
 
 		{
 			ImGui::Separator();
-			ImGui::TextColored(_state->theme->cp_path_color, movie->getArchive()->getPathName().toString().c_str());
-			ImGui::SetItemTooltip(movie->getArchive()->getPathName().toString().c_str());
+			ImGui::TextColored(_state->theme->cp_path_color, "%s", movie->getArchive()->getPathName().toString().c_str());
+			ImGui::SetItemTooltip("%s", movie->getArchive()->getPathName().toString().c_str());
 		}
 
 		ImGui::Separator();

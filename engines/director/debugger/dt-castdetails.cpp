@@ -91,7 +91,7 @@ void drawBitmapCMprops(BitmapCastMember *member) {
 		if (ImGui::CollapsingHeader("Media Properties")) {
 			if (ImGui::BeginTable("##BitmapMediaProperties", 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
 
-				showProperty("paletteRef", (member->_clut.castLib > 0 ? "Custom Palette" : paletteType2str((PaletteType)member->_clut.member).c_str()));
+				showProperty("paletteRef", "%s", (member->_clut.castLib > 0 ? "Custom Palette" : paletteType2str((PaletteType)member->_clut.member).c_str()));
 
 				showPropertyBool("centerRegPoint", (member->_flags1 & BitmapCastMember::kFlagCenterRegPoint) || (member->_flags1 & BitmapCastMember::kFlagCenterRegPointD4));
 
@@ -1123,9 +1123,9 @@ void showCastDetails() {
 			// Move to the right of the Bitmap
 			ImGui::TableSetColumnIndex(1);
 
-			// Show Name of member
-			ImGui::Text(getDisplayName(member).c_str());
-			ImGui::Text(castType2str(memberType));
+			// the name is game data and can contain '%'
+			ImGui::TextUnformatted(getDisplayName(member).c_str());
+			ImGui::TextUnformatted(castType2str(memberType));
 
 			ImGui::EndTable();
 		}
