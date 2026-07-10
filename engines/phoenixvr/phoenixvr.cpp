@@ -1313,7 +1313,7 @@ void PhoenixVREngine::rollover(int textId, RolloverType type) {
 	auto textColor = _text->format.RGBToColor(r, g, b);
 	for (int i = 0; i != numLines; ++i) {
 		int dw = (textW - widths[i]) / 2;
-		font->drawAlphaString(_text.get(), lines[i], dw, i * fontH, textW, textColor, Graphics::kTextAlignLeft);
+		font->drawString(_text.get(), lines[i], dw, i * fontH, textW, textColor, Graphics::kTextAlignLeft);
 	}
 	_textRect = dstRect;
 }

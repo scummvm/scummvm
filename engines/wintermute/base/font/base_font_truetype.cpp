@@ -256,7 +256,6 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 
 	// TODO: This debug call does not work with WideString because text.c_str() returns an uint32 array.
 	//debugC(kWintermuteDebugFont, "%s %d %d %d %d", text.c_str(), RGBCOLGetR(_layers[0]->_color), RGBCOLGetG(_layers[0]->_color), RGBCOLGetB(_layers[0]->_color), RGBCOLGetA(_layers[0]->_color));
-//	void drawAlphaString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), _game->_renderer->getPixelFormat());
 	uint32 useColor = 0xffffffff;
@@ -269,7 +268,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 		} else {
 			str = Common::convertBiDiU32String(*it, Common::BIDI_PAR_LTR);
 		}
-		_font->drawAlphaString(surface, str, 0, heightOffset, width, useColor, alignment);
+		_font->drawString(surface, str, 0, heightOffset, width, useColor, alignment);
 		heightOffset += (int)_lineHeight;
 	}
 
