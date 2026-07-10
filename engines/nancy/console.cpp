@@ -502,7 +502,9 @@ void NancyConsole::recursePrintDependencies(const Action::DependencyRecord &reco
 		case DependencyType::kInventory:
 			debugPrintf("kInventory, item %u, %s, %s",
 				dep.label,
-				inventoryData->itemDescriptions[dep.label].name.c_str(),
+				(uint16)dep.label < inventoryData->itemDescriptions.size() ?
+					inventoryData->itemDescriptions[dep.label].name.c_str() :
+					"Invalid",
 				dep.condition == g_nancy->_true ? "true" : "false");
 			break;
 		case DependencyType::kEvent:
