@@ -36,6 +36,11 @@
 
 #include "comfy/detection.h"
 
+#define COMFY_SCREEN_WIDTH 320
+#define COMFY_SCREEN_HEIGHT 200
+#define COMFY_PIT_INPUT_FREQUENCY 1193182
+#define COMFY_PIT_TIMER_DIVISOR 0x2E9B
+
 namespace Comfy {
 
 struct ComfyGameDescription;
@@ -44,11 +49,30 @@ class ComfyEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+	Graphics::Screen *_screen;
+
+	void gameMainLoop();
+	void gameMainLoopTick();
+	void waitForTimerTick(uint64 pitAccumulator);
+	void processEvents();
+
+	uint16 timerTick();
+	void midiTrackTickAndRemove();
+	void animFileTickCommands();
+	void sceneTickEvent();
+	void midiPollChannels(uint16 ticks);
+	void paletteFadeStep(uint16 ticks);
+	void lptKeyboardScanAndProcess();
+	void actorTickTree();
+	void renderFrame();
+	void processInput();
+	void processMusicEvents();
+	void processSceneTransition();
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
-public:
-	Graphics::Screen *_screen = nullptr;
+
 public:
 	ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~ComfyEngine() override;

@@ -20,7 +20,6 @@
  */
 
 #include "comfy/comfy.h"
-#include "graphics/framelimiter.h"
 #include "comfy/detection.h"
 #include "comfy/console.h"
 #include "common/scummsys.h"
@@ -53,46 +52,116 @@ Common::String ComfyEngine::getGameId() const {
 }
 
 Common::Error ComfyEngine::run() {
-	// Initialize 320x200 paletted graphics mode
-	initGraphics(320, 200);
-	_screen = new Graphics::Screen();
+	initGraphics(COMFY_SCREEN_WIDTH, COMFY_SCREEN_HEIGHT);
+	_screen = new Graphics::Screen(COMFY_SCREEN_WIDTH, COMFY_SCREEN_HEIGHT);
+	_screen->clear(0);
+	_screen->update();
 
-	// Set the engine's debugger console
 	setDebugger(new Console());
 
-	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	// Draw a series of boxes on screen as a sample
-	for (int i = 0; i < 100; ++i)
-		_screen->frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
-	_screen->update();
+	gameMainLoop();
+	return Common::kNoError;
+}
 
-	// Simple event handling loop
-	byte pal[256 * 3] = { 0 };
-	Common::Event e;
-	int offset = 0;
+void ComfyEngine::gameMainLoop() {
+	uint32 previousMillis = _system->getMillis();
+	uint64 pitAccumulator = 0;
+	uint64 pitThreshold = uint64(COMFY_PIT_TIMER_DIVISOR) * 1000;
 
-	Graphics::FrameLimiter limiter(g_system, 60);
 	while (!shouldQuit()) {
-		while (g_system->getEventManager()->pollEvent(e)) {
+		processEvents();
+		if (shouldQuit())
+			break;
+
+		uint32 currentMillis = _system->getMillis();
+		pitAccumulator += uint64(currentMillis - previousMillis) * COMFY_PIT_INPUT_FREQUENCY;
+		previousMillis = currentMillis;
+
+		while (pitAccumulator >= pitThreshold && !shouldQuit()) {
+			pitAccumulator -= pitThreshold;
+			gameMainLoopTick();
 		}
 
-		// Cycle through a simple palette
-		++offset;
-		for (int i = 0; i < 256; ++i)
-			pal[i * 3 + 1] = (i + offset) % 256;
-		g_system->getPaletteManager()->setPalette(pal, 0, 256);
-		// Delay for a bit. All events loops should have a delay
-		// to prevent the system being unduly loaded
-		limiter.delayBeforeSwap();
-		_screen->update();
-		limiter.startFrame();
+		if (!shouldQuit() && pitAccumulator < pitThreshold)
+			waitForTimerTick(pitAccumulator);
 	}
+}
 
-	return Common::kNoError;
+void ComfyEngine::waitForTimerTick(uint64 pitAccumulator) {
+	uint64 pitThreshold = uint64(COMFY_PIT_TIMER_DIVISOR) * 1000;
+	uint64 remaining = pitThreshold - pitAccumulator;
+	uint32 delay = (remaining + COMFY_PIT_INPUT_FREQUENCY - 1) / COMFY_PIT_INPUT_FREQUENCY;
+
+	if (delay != 0)
+		_system->delayMillis(delay);
+}
+
+void ComfyEngine::processEvents() {
+	Common::Event event;
+
+	while (_system->getEventManager()->pollEvent(event)) {
+	}
+}
+
+void ComfyEngine::gameMainLoopTick() {
+	uint16 ticks = timerTick();
+
+	midiTrackTickAndRemove();
+	animFileTickCommands();
+	sceneTickEvent();
+	midiPollChannels(ticks);
+	paletteFadeStep(ticks);
+	lptKeyboardScanAndProcess();
+	actorTickTree();
+	renderFrame();
+	processInput();
+	processMusicEvents();
+	processSceneTransition();
+}
+
+uint16 ComfyEngine::timerTick() {
+	return 1;
+}
+
+void ComfyEngine::midiTrackTickAndRemove() {
+}
+
+void ComfyEngine::animFileTickCommands() {
+}
+
+void ComfyEngine::sceneTickEvent() {
+}
+
+void ComfyEngine::midiPollChannels(uint16 ticks) {
+	(void)ticks;
+}
+
+void ComfyEngine::paletteFadeStep(uint16 ticks) {
+	(void)ticks;
+}
+
+void ComfyEngine::lptKeyboardScanAndProcess() {
+}
+
+void ComfyEngine::actorTickTree() {
+}
+
+void ComfyEngine::renderFrame() {
+	_screen->makeAllDirty();
+	_screen->update();
+}
+
+void ComfyEngine::processInput() {
+}
+
+void ComfyEngine::processMusicEvents() {
+}
+
+void ComfyEngine::processSceneTransition() {
 }
 
 Common::Error ComfyEngine::syncGame(Common::Serializer &s) {
