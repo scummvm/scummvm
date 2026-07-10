@@ -1083,16 +1083,17 @@ static void drawLabelBar(ImDrawList *dl, ImVec2 pos, Score *score) {
 
 	for (int f = 0; f < cfg._visibleFrames; f++) {
 		int rf = startFrame + f;
-		Common::String *labelName = score->getFrameLabel((uint)rf);
+		// labels are stored with 1-based frame numbers, rf is 0-based
+		Common::String labelName = score->getFrameLabel((uint)rf + 1);
 		float x = cfg._cellWidth * (f + 0.5f) + pos.x;
 		float y = pos.y;
 
 		// Draw label triangle and add tooltip
-		if (labelName && !labelName->empty()) {
+		if (!labelName.empty()) {
 			float textY = y + (cfg._labelBarHeight - ImGui::GetTextLineHeight()) / 2.0f;
 
 			float iconW = ImGui::CalcTextSize(ICON_MS_BEENHERE).x;
-			float textW = ImGui::CalcTextSize(labelName->c_str()).x;
+			float textW = ImGui::CalcTextSize(labelName.c_str()).x;
 			float totalW = iconW + 2.0f + textW;
 
 			// draw background rect sized to icon + text
@@ -1106,12 +1107,12 @@ static void drawLabelBar(ImDrawList *dl, ImVec2 pos, Score *score) {
 			// draw text if it fits
 			float textX = x + 2.0f + iconW + 2.0f;
 			if (textX + textW < finalPos.x)
-				dl->AddText(ImVec2(textX, textY), _state->theme->sidebarTextColor, labelName->c_str());
+				dl->AddText(ImVec2(textX, textY), _state->theme->sidebarTextColor, labelName.c_str());
 
 			ImGui::SetCursorScreenPos(ImVec2(x, y));
 			ImGui::InvisibleButton(Common::String::format("##labelcell_%d", f).c_str(), ImVec2(cfg._cellWidth, cfg._labelBarHeight));
 			if (ImGui::IsItemHovered())
-				setTooltip("%s", labelName->c_str());
+				setTooltip("%s", labelName.c_str());
 
 		}
 	}
