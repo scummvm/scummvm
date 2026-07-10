@@ -35,12 +35,15 @@ namespace Comfy {
 ComfyEngine *g_engine;
 
 ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Comfy") {
+	_gameDescription(gameDesc), _randomSource("Comfy"), _screen(nullptr),
+	_logicalScreenWidth(COMFY_SCREEN_WIDTH), _logicalScreenHeight(COMFY_SCREEN_HEIGHT),
+	_timerLastMillis(0), _pitAccumulator(0), _gameInitialized(false), _videoInitialized(false),
+	_timerInitialized(false), _lptKeyboardInitialized(false), _mainLoopRunning(false) {
 	g_engine = this;
 }
 
 ComfyEngine::~ComfyEngine() {
-	delete _screen;
+	gameShutdown();
 }
 
 uint32 ComfyEngine::getFeatures() const {
@@ -52,48 +55,113 @@ Common::String ComfyEngine::getGameId() const {
 }
 
 Common::Error ComfyEngine::run() {
-	initGraphics(COMFY_SCREEN_WIDTH, COMFY_SCREEN_HEIGHT);
-	_screen = new Graphics::Screen(COMFY_SCREEN_WIDTH, COMFY_SCREEN_HEIGHT);
-	_screen->clear(0);
-	_screen->update();
-
 	setDebugger(new Console());
+
+	Common::Error result = gameInit();
+	if (result.getCode() != Common::kNoError)
+		return result;
 
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
 	gameMainLoop();
+	gameShutdown();
 	return Common::kNoError;
 }
 
-void ComfyEngine::gameMainLoop() {
-	uint32 previousMillis = _system->getMillis();
-	uint64 pitAccumulator = 0;
-	uint64 pitThreshold = uint64(COMFY_PIT_TIMER_DIVISOR) * 1000;
+Common::Error ComfyEngine::gameInit() {
+	if (_gameInitialized)
+		return Common::kNoError;
 
-	while (!shouldQuit()) {
+	videoInit();
+	timerInit();
+	lptKeyboardInit();
+	_gameInitialized = true;
+	return Common::kNoError;
+}
+
+void ComfyEngine::gameShutdown() {
+	if (_lptKeyboardInitialized)
+		lptKeyboardShutdown();
+
+	if (_timerInitialized)
+		timerShutdown();
+
+	if (_videoInitialized)
+		videoShutdown();
+
+	_mainLoopRunning = false;
+	_gameInitialized = false;
+}
+
+void ComfyEngine::videoInit() {
+	if (_videoInitialized)
+		return;
+
+	initGraphics(_logicalScreenWidth, _logicalScreenHeight);
+	_screen = new Graphics::Screen(_logicalScreenWidth, _logicalScreenHeight);
+	_screen->clear(0);
+	_screen->update();
+	_videoInitialized = true;
+}
+
+void ComfyEngine::videoShutdown() {
+	delete _screen;
+	_screen = nullptr;
+	_videoInitialized = false;
+}
+
+void ComfyEngine::timerInit() {
+	if (_timerInitialized)
+		return;
+
+	_timerLastMillis = _system->getMillis();
+	_pitAccumulator = 0;
+	_timerInitialized = true;
+}
+
+void ComfyEngine::timerShutdown() {
+	_timerLastMillis = 0;
+	_pitAccumulator = 0;
+	_timerInitialized = false;
+}
+
+void ComfyEngine::lptKeyboardInit() {
+	_lptKeyboardInitialized = true;
+}
+
+void ComfyEngine::lptKeyboardShutdown() {
+	_lptKeyboardInitialized = false;
+}
+
+void ComfyEngine::gameMainLoop() {
+	_mainLoopRunning = true;
+
+	while (_mainLoopRunning && !shouldQuit()) {
 		processEvents();
 		if (shouldQuit())
 			break;
 
 		uint32 currentMillis = _system->getMillis();
-		pitAccumulator += uint64(currentMillis - previousMillis) * COMFY_PIT_INPUT_FREQUENCY;
-		previousMillis = currentMillis;
+		_pitAccumulator += uint64(currentMillis - _timerLastMillis) * COMFY_PIT_INPUT_FREQUENCY;
+		_timerLastMillis = currentMillis;
 
-		while (pitAccumulator >= pitThreshold && !shouldQuit()) {
-			pitAccumulator -= pitThreshold;
+		while (_pitAccumulator >= uint64(COMFY_PIT_TIMER_DIVISOR) * 1000 && !shouldQuit()) {
+			_pitAccumulator -= uint64(COMFY_PIT_TIMER_DIVISOR) * 1000;
 			gameMainLoopTick();
 		}
 
-		if (!shouldQuit() && pitAccumulator < pitThreshold)
-			waitForTimerTick(pitAccumulator);
+		if (!shouldQuit() && _pitAccumulator < uint64(COMFY_PIT_TIMER_DIVISOR) * 1000)
+			waitForTimerTick();
 	}
+
+	_mainLoopRunning = false;
 }
 
-void ComfyEngine::waitForTimerTick(uint64 pitAccumulator) {
+void ComfyEngine::waitForTimerTick() {
 	uint64 pitThreshold = uint64(COMFY_PIT_TIMER_DIVISOR) * 1000;
-	uint64 remaining = pitThreshold - pitAccumulator;
+	uint64 remaining = pitThreshold - _pitAccumulator;
 	uint32 delay = (remaining + COMFY_PIT_INPUT_FREQUENCY - 1) / COMFY_PIT_INPUT_FREQUENCY;
 
 	if (delay != 0)

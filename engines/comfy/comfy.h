@@ -50,10 +50,27 @@ private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	Graphics::Screen *_screen;
+	uint16 _logicalScreenWidth;
+	uint16 _logicalScreenHeight;
+	uint32 _timerLastMillis;
+	uint64 _pitAccumulator;
+	bool _gameInitialized;
+	bool _videoInitialized;
+	bool _timerInitialized;
+	bool _lptKeyboardInitialized;
+	bool _mainLoopRunning;
 
+	Common::Error gameInit();
+	void gameShutdown();
+	void videoInit();
+	void videoShutdown();
+	void timerInit();
+	void timerShutdown();
+	void lptKeyboardInit();
+	void lptKeyboardShutdown();
 	void gameMainLoop();
 	void gameMainLoopTick();
-	void waitForTimerTick(uint64 pitAccumulator);
+	void waitForTimerTick();
 	void processEvents();
 
 	uint16 timerTick();
