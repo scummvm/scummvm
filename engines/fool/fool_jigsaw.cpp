@@ -226,7 +226,6 @@ void FoolGame::jigsawDragSelect() {
 void FoolGame::jigsawMoveSelected() {
 	// 132:0962
 	// move select area to new target
-	warning("call: %s", __func__);
 	do {
 		getNextEvent(2);
 		getGridFromMouse(var_i16_68a, var_i16_68c);

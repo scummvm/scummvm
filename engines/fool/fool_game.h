@@ -210,9 +210,9 @@ public:
 
 	// fool_jumble.cpp:
 	void jumbleRun();
-	void sub_130_c56();
+	void jumbleSave(); // sub_130_c56
 	void jumbleStoreState(); // sub_130_c66
-	void sub_130_d2e();
+	void jumbleRunRearrange(); // sub_130_d2e
 	void jumbleRunSubstitution(); // sub_130_d90
 	void sub_130_1004();
 	void jumbleRunWordSquare(); // sub_130_10a6
@@ -235,13 +235,13 @@ public:
 	void jumblePreviousPosition(); // sub_130_2094
 	void sub_130_20aa();
 	void sub_130_20d2();
-	void sub_130_20fe();
+	Common::Point jumbleGetGridPos(); // sub_130_20fe
 	void sub_130_2178();
-	void sub_130_2226();
-	void sub_130_22ee();
-	void sub_130_23cc();
-	void sub_130_24aa();
-	void sub_130_2548();
+	void jumbleDrawHint(); // sub_130_2226
+	void jumbleDrawHintBoat(); // sub_130_22ee
+	void jumbleDrawHintBlacksmith(); // sub_130_23cc
+	void jumbleDrawHintSentry(); // sub_130_24aa
+	void jumbleDrawHintMetapuzzle(); // sub_130_2548
 	void sub_130_25d8();
 	void sub_130_2790();
 
@@ -324,8 +324,8 @@ public:
 	void mazeDelay(); // sub_136_1ddc
 	void mazeYeetObject(); // sub_136_1df4
 	void mazeThornsGetScroll(); // sub_136_1e4c
-	void sub_136_21fa();
-	void sub_136_2200();
+	void mazeWaitForMouseUp(); // sub_136_21fa
+	void mazeClearText(); // sub_136_2200
 	void mazeMovementTrail(); // sub_136_2208
 
 	void mazeLoadTone(int16 offset); // sub_136_24ae
@@ -501,6 +501,7 @@ private:
 	int16 var_i16_586;
 	Common::U32String var_str_588;
 	int16 var_i16_688;
+	Common::Point _jumbleGridPos; // var_i16_68a
 	int16 var_i16_68a;
 	int16 var_i16_68c;
 	uint32 var_i32_692;
@@ -676,7 +677,7 @@ private:
 	int16 var_i16_1bd6;
 	int16 var_i16_1bd8;
 	int16 var_i16_1bda;
-	int16 var_i16_1bdc;
+	bool _mazeClearText; // var_i16_1bdc
 	Common::String var_str_1bde;
 
 	int16 var_i16_1cde;
