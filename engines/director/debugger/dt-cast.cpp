@@ -134,7 +134,7 @@ void drawCastRow(Cast* cast) {
 			ImVec2(0, 32.f) // match row height
 		)) {
 			castMember._value->load();
-			_state->_castDetails._castMember = castMember._value;
+			_state->_castDetails._castMemberID = CastMemberID(castMember._key, cast->_castLibID);
 			_state->_w.castDetails = true;
 		}
 		ImGui::SameLine();
@@ -346,7 +346,7 @@ void showCast() {
 						if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
 							// Cast Member Clicked
 							castMember._value->load();
-							_state->_castDetails._castMember = castMember._value; // Must set _castMember before making the caseDetails window visible to prevent null castMember
+							_state->_castDetails._castMemberID = CastMemberID(castMember._key, cast->_castLibID);
 							_state->_w.castDetails = true;
 						}
 					}
