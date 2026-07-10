@@ -290,6 +290,7 @@ void Screen::renderFinalFrame() {
 		update32BitScreen(_currentScreen, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 		_paletteDirty = false;
 		setIcon(UI_ICON_INV, 0, GAME_SCREEN_HEIGHT - 35);
+		setIcon(UI_ICON_OPTIONS, 4, 4);
 		drawIbassIcon();
 		drawIbassInventory();
 		if (_screen32.getPixels()) {
