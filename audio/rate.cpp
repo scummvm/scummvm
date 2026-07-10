@@ -80,6 +80,10 @@ private:
 	/** Current sample(s) in the input stream (left/right channel) */
 	int16 _inCurL, _inCurR;
 
+	/** Write one output frame built from a single input frame, and advance outBuffer. */
+	template<st_volume_t volL, st_volume_t volR, typename st_sample_t, MixMode mixMode>
+	FORCEINLINE void writeFrame(st_sample_t *&outBuffer, int16 inL, int16 inR, st_volume_t volL_val, st_volume_t volR_val);
+
 	template<st_volume_t volL, st_volume_t volR, typename st_sample_t, MixMode mixMode>
 	int commonConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL_val, st_volume_t volR_val, int outputSamples);
 
@@ -134,6 +138,49 @@ public:
 
 template<bool inStereo, bool outStereo, bool reverseStereo>
 template<st_volume_t volL, st_volume_t volR, typename st_sample_t, MixMode mixMode>
+void RateConverter_Impl<inStereo, outStereo, reverseStereo>::writeFrame(st_sample_t *&outBuffer, int16 inL, int16 inR, st_volume_t volL_val, st_volume_t volR_val) {
+	if (volL | volR) {
+		st_sample_t outL, outR;
+
+		if (volL != 0) {
+			if (volL != Audio::Mixer::kMaxMixerVolume)
+				outL = (inL * (int)volL_val) / Audio::Mixer::kMaxMixerVolume;
+			else
+				outL = inL;
+		}
+
+		if (volR != 0) {
+			if (volR != Audio::Mixer::kMaxMixerVolume)
+				outR = (inR * (int)volR_val) / Audio::Mixer::kMaxMixerVolume;
+			else
+				outR = inR;
+		}
+
+		if (outStereo) {
+			// Output left channel
+			if (volL != 0)
+				processSample<mixMode>(outBuffer[reverseStereo    ], outL);
+
+			// Output right channel
+			if (volR != 0)
+				processSample<mixMode>(outBuffer[reverseStereo ^ 1], outR);
+		} else {
+			// Output mono channel
+			st_sample_t monoOut;
+			if (volL != 0 && volR != 0)
+				monoOut = (outL + outR) / 2;
+			else if (volL != 0)
+				monoOut = outL / 2;
+			else if (volR != 0)
+				monoOut = outR / 2;
+			processSample<mixMode>(outBuffer[0], monoOut);
+		}
+	}
+	outBuffer += (outStereo ? 2 : 1);
+}
+
+template<bool inStereo, bool outStereo, bool reverseStereo>
+template<st_volume_t volL, st_volume_t volR, typename st_sample_t, MixMode mixMode>
 int RateConverter_Impl<inStereo, outStereo, reverseStereo>::commonConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL_val, st_volume_t volR_val, int outputSamples) {
 	const st_sample_t *outStart = outBuffer;
 	const st_sample_t *outEnd = outBuffer + numSamples * (outStereo ? 2 : 1);
@@ -148,7 +195,7 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::commonConvert(AudioS
 				return (outBuffer - outStart) / (outStereo ? 2 : 1);
 		}
 
-		// Process as many samples as we can from the current buffer
+		// Process as many whole outputSample groups as we can from the current buffer
 		const int count = MIN(
 			_bufferSize / (inStereo ? 2 : 1),
 			(int)(outEnd - outBuffer) / (outStereo ? 2 : 1) / outputSamples);
@@ -157,67 +204,13 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::commonConvert(AudioS
 		if (volL | volR) {
 			// Mix the data into the output buffer
 			for (int i = 0; i < count; ++i) {
-				int16 inL, inR;
+				// This code is eliminated if muted
+				const int16 inL = _bufferPos[0];
+				const int16 inR = inStereo ? _bufferPos[1] : _bufferPos[0];
+				_bufferPos += (inStereo ? 2 : 1);
 
-				if (inStereo) {
-					if (volL != 0)
-						inL = *_bufferPos++;
-					else
-						_bufferPos++;
-
-					if (volR != 0)
-						inR = *_bufferPos++;
-					else
-						_bufferPos++;
-				} else {
-					if (volL != 0) {
-						inL = *_bufferPos++;
-						if (volR != 0)
-							inR = inL;
-					} else {
-						inR = *_bufferPos++;
-					}
-				}
-
-				st_sample_t outL, outR;
-
-				if (volL != 0) {
-					if (volL != Audio::Mixer::kMaxMixerVolume)
-						outL = (inL * (int)volL_val) / Audio::Mixer::kMaxMixerVolume;
-					else
-						outL = inL;
-				}
-
-				if (volR != 0) {
-					if (volR != Audio::Mixer::kMaxMixerVolume)
-						outR = (inR * (int)volR_val) / Audio::Mixer::kMaxMixerVolume;
-					else
-						outR = inR;
-				}
-
-				// TODO: could be unrolled
-				for (int j = 0; j < outputSamples; ++j) {
-					if (outStereo) {
-						// Output left channel
-						if (volL != 0)
-							processSample<mixMode>(outBuffer[reverseStereo    ], outL);
-
-						// Output right channel
-						if (volR != 0)
-							processSample<mixMode>(outBuffer[reverseStereo ^ 1], outR);
-					} else {
-						// Output mono channel
-						st_sample_t monoOut;
-						if (volL != 0 && volR != 0)
-							monoOut = (outL + outR) / 2;
-						else if (volL != 0)
-							monoOut = outL / 2;
-						else if (volR != 0)
-							monoOut = outR / 2;
-						processSample<mixMode>(outBuffer[0], monoOut);
-					}
-					outBuffer += (outStereo ? 2 : 1);
-				}
+				for (int j = 0; j < outputSamples; ++j)
+					writeFrame<volL, volR, st_sample_t, mixMode>(outBuffer, inL, inR, volL_val, volR_val);
 			}
 		} else {
 			_bufferPos += count * (inStereo ? 2 : 1);
