@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "chewy/cursor.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
 
@@ -75,6 +76,13 @@ void EventsManager::handleEvent(const Common::Event &event) {
 		handleKbdEvent(event);
 }
 
+static void returnInventoryCursorToSlot() {
+	if (_G(cur)->usingInventoryCursor()) {
+		invent_2_slot(_G(cur)->getInventoryCursor());
+		_G(cur)->setInventoryCursor(-1);
+	}
+}
+
 void EventsManager::handleMouseEvent(const Common::Event &event) {
 	_pendingEvents.push(event);
 
@@ -99,6 +107,7 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 	case Common::EVENT_WHEELUP:
 		// Cycle backwards through cursors
 		if (isWheelEnabled) {
+			returnInventoryCursorToSlot();
 			if (--_G(menu_item) < 0)
 				_G(menu_item) = CUR_TALK;
 			cursorChoice(_G(menu_item));
@@ -108,6 +117,7 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 	case Common::EVENT_WHEELDOWN:
 		// Cycle forwards through cursors
 		if (isWheelEnabled) {
+			returnInventoryCursorToSlot();
 			if (++_G(menu_item) > CUR_TALK)
 				_G(menu_item) = CUR_WALK;
 			cursorChoice(_G(menu_item));
@@ -117,6 +127,7 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 	case Common::EVENT_MBUTTONDOWN:
 		// Toggle between walk and look cursor
 		if (isWheelEnabled) {
+			returnInventoryCursorToSlot();
 			_G(menu_item) = (_G(menu_item) == CUR_WALK) ? CUR_LOOK : CUR_WALK;
 			cursorChoice(_G(menu_item));
 		}

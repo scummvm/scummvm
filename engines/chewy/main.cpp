@@ -807,6 +807,7 @@ void mouseAction() {
 				else if (_G(cur)->usingInventoryCursor()) {
 					if (_G(inv_disp_ok)) {
 						if (_G(cur)->usingInventoryCursor()) {
+							invent_2_slot(_G(cur)->getInventoryCursor());
 							_G(menu_item) = CUR_USE;
 							cursorChoice(_G(menu_item));
 							_G(cur)->setInventoryCursor(-1);
