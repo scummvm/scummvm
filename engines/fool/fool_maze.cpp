@@ -373,9 +373,9 @@ void FoolGame::sub_136_ade() {
 
 void FoolGame::mazeHotspot() {
 	// 136:0b00
-	if (arr_i16_1eb8[22] || var_i16_1bdc) {
+	if (arr_i16_1eb8[22] || _mazeClearText) {
 		fillRect(0x136, 0, SCREEN_HEIGHT, SCREEN_WIDTH, var_i16_1ac4);
-		var_i16_1bdc = 0;
+		_mazeClearText = false;
 		var_str_1578.clear(); // was: str(OFF(2))
 	}
 	// 136:0b5e
@@ -476,10 +476,10 @@ void FoolGame::mazeHotspot() {
 				mazeThornsGetScroll();
 				break;
 			case 20: // K
-				sub_136_21fa();
+				mazeWaitForMouseUp();
 				break;
 			case 21: // V
-				sub_136_2200();
+				mazeClearText();
 				break;
 			default:
 				warning("mazeHotspot: breaking out of switch statement");
@@ -510,7 +510,6 @@ void FoolGame::mazePrintMessage() {
 
 void FoolGame::mazePickUpItem() {
 	// 136:0e4c
-	warning(__func__);
 	int16 itemID = _zbasic->decodeInt(var_str_1ce2);
 	_mazeInvItemCount[itemID]++;
 	if (arr_i16_3738[var_i16_1574] & 0x1000) {
@@ -521,7 +520,6 @@ void FoolGame::mazePickUpItem() {
 }
 
 void FoolGame::mazeUseItem() {
-	warning(__func__);
 	// 136:0ed8
 	var_i16_1de4 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 1, 2));
 	int16 itemID = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 3, 2));
@@ -572,7 +570,6 @@ void FoolGame::mazeWanderingWinds() {
 }
 
 void FoolGame::mazeDrawLetter() {
-	warning(__func__);
 	// 136:115a
 	if (_zbasic->leftStr(var_str_1ce2, 1) == _zbasic->strRaw(OFF(10))) { // P
 		var_i16_1dea = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 2, 2));
@@ -627,26 +624,29 @@ void FoolGame::sub_136_137c() {
 	Common::String op = _zbasic->leftStr(var_str_1ce2, 1);
 	warning("%s: op %s", __func__, op.c_str());
 	// 136:137c
-	var_i16_1df0 = 0;
+	bool failed = false;
+	// has an inventory item
 	if (op == _zbasic->strRaw(OFF(13))) { // I
 		var_i16_484 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 2, 2));
 		if (_mazeInvItemCount[var_i16_484] == 0) {
-			var_i16_1df0 = 1;
+			failed = true;
 		}
 	}
 	// 136:13d8
+	// has at least X of an inventory item
 	if (op == _zbasic->strRaw(OFF(14))) { // M
 		var_i16_1de4 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 2, 2));
 		var_i16_1de2 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 4, 2));
 		if (_mazeInvItemCount[var_i16_1de2] < var_i16_1de4) {
-			var_i16_1df0 = 1;
+			failed = true;
 		}
 	}
 	// 136:144e
+	// has set a trigger elsewhere in the maze (e.g. picked up the Scroll of Prowess, so activate the exit)
 	if (op == _zbasic->strRaw(OFF(15))) { // B
 		var_i16_484 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 2, 2));
 		if ((arr_i16_3738[var_i16_484] & 0x1000) == 0) {
-			var_i16_1df0 = 1;
+			failed = true;
 		}
 	}
 	// 136:14b2
@@ -654,16 +654,17 @@ void FoolGame::sub_136_137c() {
 		// 136:14d6
 		var_i16_7e4 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 2, 2));
 		if (arr_i16_4338[var_i16_484] != var_i16_7e4) {
-			var_i16_1df0 = 1;
+			failed = true;
 		}
 	}
 	// 136:1528
+	// has visited all of the characters in the maze
 	if (op == _zbasic->strRaw(OFF(17))) { // S
 		var_i16_484 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 2, 2));
 		for (int16 i = 4; i <= (2*var_i16_484 + 2); i += 2) {
 			var_i16_7e4 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, i, 2));
 			if (arr_i16_4338[var_i16_7e4] == 0) {
-				var_i16_1df0 = 1;
+				failed = true;
 			}
 		}
 	}
@@ -671,11 +672,11 @@ void FoolGame::sub_136_137c() {
 	if (op == _zbasic->strRaw(OFF(18))) { // P
 		var_i16_484 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 2, 2));
 		if (var_i16_1bd0 != var_i16_484) {
-			var_i16_1df0 = 1;
+			failed = true;
 		}
 	}
 	// 136:1612
-	if (var_i16_1df0 != 0) {
+	if (failed) {
 		var_i16_1cde = _zbasic->instr(1, var_str_1ac8, _zbasic->strRaw(OFF(19))); // ||
 	}
 	// 136:163a
@@ -772,14 +773,12 @@ void FoolGame::sub_136_1806() {
 }
 
 void FoolGame::mazeSetTrigger() {
-	warning(__func__);
 	// 136:185a
 	var_i16_484 = _zbasic->decodeInt(var_str_1ce2);
 	arr_i16_3738[var_i16_484] |= 0x1000;
 }
 
 void FoolGame::mazeClearTrigger() {
-	warning(__func__);
 	// 136:1898
 	var_i16_484 = _zbasic->decodeInt(var_str_1ce2);
 	if (arr_i16_3738[var_i16_484] & 0x1000) {
@@ -788,7 +787,6 @@ void FoolGame::mazeClearTrigger() {
 }
 
 void FoolGame::mazePickUpTone() {
-	warning(__func__);
 	// 136:18f4
 	var_i16_1de4 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 1, 2));
 	mazeLoadTone(3);
@@ -798,7 +796,6 @@ void FoolGame::mazePickUpTone() {
 }
 
 void FoolGame::mazeFireDemon() {
-	warning(__func__);
 	// 136:1932
 	var_i16_1de4 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 1, 2));
 	mazeLoadTone(3);
@@ -868,7 +865,6 @@ void FoolGame::sub_136_19d2() {
 }
 
 void FoolGame::mazeNoisySprite() {
-	warning(__func__);
 	// 136:1cf4
 	var_i16_1de4 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 1, 2));
 	var_i16_1dea = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 3, 2));
@@ -896,14 +892,12 @@ void FoolGame::mazeNoisySprite() {
 }
 
 void FoolGame::mazeDelay() {
-	warning(__func__);
 	// 136:1ddc
 	var_i16_484 = _zbasic->decodeInt(var_str_1ce2);
 	_toolbox->Delay(var_i16_484*60/1000);
 }
 
 void FoolGame::mazeYeetObject() {
-	warning(__func__);
 	// 136:1df4
 	var_i16_1dea = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 1, 2));
 	var_i16_1de8 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, 3, 2));
@@ -992,16 +986,14 @@ void FoolGame::mazeThornsGetScroll() {
 	}
 }
 
-void FoolGame::sub_136_21fa() {
-	warning(__func__);
+void FoolGame::mazeWaitForMouseUp() {
 	// 136:21fa
 	waitForMouseUp();
 }
 
-void FoolGame::sub_136_2200() {
-	warning(__func__);
+void FoolGame::mazeClearText() {
 	// 136:2200
-	var_i16_1bdc = 1;
+	_mazeClearText = true;
 }
 
 void FoolGame::mazeMovementTrail() {
@@ -1045,7 +1037,6 @@ void FoolGame::mazeMovementTrail() {
 }
 
 void FoolGame::mazeLoadTone(int16 offset) {
-	warning(__func__);
 	// 136:24ae
 	mazeToneFreq = _zbasic->decodeInt(_zbasic->midStr(var_str_1ce2, offset, 2));
 	if (mazeToneFreq > 0) {
@@ -1155,7 +1146,6 @@ void FoolGame::mazeSetupMenu() {
 }
 
 void FoolGame::mazeAddWallLeft() {
-	warning(__func__);
 	// 136:2a7c
 	arr_i16_3738[var_i16_1574] |= 0x100;
 	_toolbox->MoveTo(
@@ -1169,7 +1159,6 @@ void FoolGame::mazeAddWallLeft() {
 }
 
 void FoolGame::mazeAddWallTop() {
-	warning(__func__);
 	// 136:2b30
 	arr_i16_3738[var_i16_1574] |= 0x200;
 	_toolbox->MoveTo(
@@ -1183,7 +1172,6 @@ void FoolGame::mazeAddWallTop() {
 }
 
 void FoolGame::mazeAddWallRight() {
-	warning(__func__);
 	// 136:2be2
 	arr_i16_3738[var_i16_1574] |= 0x400;
 	_toolbox->MoveTo(
@@ -1197,7 +1185,6 @@ void FoolGame::mazeAddWallRight() {
 }
 
 void FoolGame::mazeAddWallBottom() {
-	warning(__func__);
 	// 136:2c96
 	arr_i16_3738[var_i16_1574] |= 0x800;
 	_toolbox->MoveTo(
@@ -1211,7 +1198,6 @@ void FoolGame::mazeAddWallBottom() {
 }
 
 void FoolGame::mazeDrawWallLeft() {
-	warning(__func__);
 	// 136:2d4c
 	_toolbox->MoveTo(
 		_screenGrid[var_i16_1bd8].left - 2,
@@ -1224,7 +1210,6 @@ void FoolGame::mazeDrawWallLeft() {
 }
 
 void FoolGame::mazeDrawWallTop() {
-	warning(__func__);
 	// 136:2dd0
 	_toolbox->MoveTo(
 		_screenGrid[var_i16_1bd8].left + 3,
@@ -1237,7 +1222,6 @@ void FoolGame::mazeDrawWallTop() {
 }
 
 void FoolGame::mazeDrawWallRight() {
-	warning(__func__);
 	// 136:2e52
 	_toolbox->MoveTo(
 		_screenGrid[var_i16_1bd8].right - 3,
@@ -1250,7 +1234,6 @@ void FoolGame::mazeDrawWallRight() {
 }
 
 void FoolGame::mazeDrawWallBottom() {
-	warning(__func__);
 	// 136:2ed6
 	_toolbox->MoveTo(
 		_screenGrid[var_i16_1bd8].left + 3,

@@ -1427,7 +1427,7 @@ void FoolGame::printStory() {
 	// 128:2b0a
 	_stateFlags = kStateNull;
 	// printing the story
-	warning("STUB: %s", __func__);
+	warning("FoolGame::printStory: not implemented yet");
 }
 
 void FoolGame::newGame() {
@@ -1806,9 +1806,8 @@ void FoolGame::cursorExplodingWatchShort() {
 void FoolGame::sub_128_388a() {
 	// 128:388a
 	if ((var_i16_7e6 & 0xff) == 2) {
-		// problem with saving
+		// problem with saving, we don't have to worry about it
 	}
-	warning("STUB: %s", __func__);
 }
 
 void FoolGame::puzzleRun() {
