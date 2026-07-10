@@ -1377,6 +1377,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "jmac",				"J-MAC みんなの広場 Vol.1" },
 	{ "keiri",				"経理入門" },										// Introduction to Accounting
 	{ "llla",				"Live Love Life AIDS" },
+	{ "madeinchina",		"鶴田謙二 CD教養画集「MADE IN CHINA」" }, // Kenji Tsuruta CD Art Collection: Made in China
 	{ "mazebox",			"The Latest Works of MazeBox" },
 	{ "macintosho20",		"村上隆" }, // Macintosho exhibit disk #20 - Takashi Murakami's Hiropon
 	{ "microphonefiend",	"Microphone Fiend" },
@@ -2417,6 +2418,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1f_l("henachoco05r", "Patched version (later)", "rodem-tti", "e6165016b17961ac8616568301842c51", 4095754, Common::JA_JPN, 402, GF_DESKTOP|GF_640x480),
 	// From a 2000-dated game disc containing a prepatched game
 	MACGAME1f_l("henachoco05r", "Patched version (later)", "rodem-tti", "8aaf8baa98598362ab0accbbc8aae457", 292698, Common::JA_JPN, 402, GF_DESKTOP|GF_640x480),
+
+	// 鶴田謙二 CD教養画集「MADE IN CHINA」 (Kenji Tsuruta CD Art Collection: Made in China)
+	// published by Gainax, Tokyo (1995-10).
+	// Hybrid Mac/Windows disc. Only the Windows projector survives in the known dump.
+	// GF_DESKTOP: the boot movie reads `the stageTop` to choose between the 640x480
+	// build (MOVIE/MENU13.DXR) and the 800x600 one (MOVIE/MENU16.DXR). Without a
+	// desktop the stage sits at the origin, stageTop is 0, and the 800x600 build is
+	// unreachable. Note the title bails out to an error frame unless colorDepth is 8,
+	// so GF_TRUECOLOR must not be set here.
+	WINGAME1tf_l("madeinchina", "", "MENU.EXE", "3bd6cec01e8e576e80d8c4dcad56d1f6", 884291, Common::JA_JPN, 404, GF_DESKTOP),
 
 	// German release is D5
 	MACGAME1("majestic", "", "Majestic", "01be45e7241194dad07938e7059b88e3", 483518, 400),
