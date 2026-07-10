@@ -27,6 +27,7 @@
 #include "backends/platform/sdl/sdl.h"
 #include "backends/graphics/graphics.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
 #include "common/textconsole.h"
 #include "common/fs.h"
 #include "engines/engine.h"
@@ -78,6 +79,60 @@ void SdlEventSource::convertTouchXYToGameXY(float touchX, float touchY, int *gam
 
 bool SdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
+
+#if defined(MACOSX) && SDL_VERSION_ATLEAST(2, 0, 4)
+	// WORKAROUND: macOS 26 sometimes delivers a mouse motion event carrying
+	// a stale position, typically replaying an old cursor position when the
+	// cursor crosses the window edge shortly after a focus change, which
+	// makes the cursor visibly teleport for a frame. This is an Apple bug,
+	// reported to SDL as https://github.com/libsdl-org/SDL/issues/15967;
+	// SDL works around another form of it (in fullscreen Spaces, SDL commit
+	// c39d772a07) by relying on the global mouse position query, which
+	// remains correct even when event positions lie. A truthful motion
+	// event matches the global mouse position minus the window position (up
+	// to a small pipeline lag), so when the two disagree significantly,
+	// trust the global position instead of the event.
+	//
+	// The workaround can be disabled at runtime through
+	// OSystem::kFeatureStaleMousePositionWorkaround; the testbed engine
+	// does this in EventTests::staleMousePosition() so it can be checked
+	// periodically whether the underlying bug still occurs. Once SDL or
+	// macOS fixes it, the workaround can be removed.
+	//
+	// SDL 2.0.4 is required because that is when SDL_GetGlobalMouseState()
+	// was introduced. With older SDL (e.g. an SDL 1.2 build via
+	// sdl12-compat) the workaround is unavailable and the bug remains.
+	if (_staleMousePositionWorkaround) {
+		SdlGraphicsManager *gm = dynamic_cast<SdlGraphicsManager *>(_graphicsManager);
+		SDL_Window *win = gm ? gm->getWindow()->getSDLWindow() : nullptr;
+		bool relativeMode;
+		int gx, gy;
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		relativeMode = win && SDL_GetWindowRelativeMouseMode(win);
+		float fgx, fgy;
+		SDL_GetGlobalMouseState(&fgx, &fgy);
+		gx = (int)fgx;
+		gy = (int)fgy;
+#else
+		relativeMode = SDL_GetRelativeMouseMode() == SDL_TRUE;
+		SDL_GetGlobalMouseState(&gx, &gy);
+#endif
+		if (win && !relativeMode) {
+			int wx, wy, ww, wh;
+			SDL_GetWindowPosition(win, &wx, &wy);
+			SDL_GetWindowSize(win, &ww, &wh);
+			// Clamp to the window like SDL does for motion events at the edges
+			const int tx = CLIP<int>(gx - wx, 0, ww - 1);
+			const int ty = CLIP<int>(gy - wy, 0, wh - 1);
+			if (ABS(tx - (int)ev.motion.x) > 16 || ABS(ty - (int)ev.motion.y) > 16) {
+				debug(2, "SdlEventSource: corrected stale mouse position (%d,%d) to (%d,%d)",
+						(int)ev.motion.x, (int)ev.motion.y, tx, ty);
+				ev.motion.x = tx;
+				ev.motion.y = ty;
+			}
+		}
+	}
+#endif
 
 	return processMouseEvent(event, ev.motion.x, ev.motion.y, ev.motion.xrel, ev.motion.yrel);
 }

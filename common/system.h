@@ -634,6 +634,16 @@ public:
 		* Graphics code is able to rotate the screen
 		*/
 		kFeatureRotationMode,
+
+		/**
+		* WORKAROUND: The backend corrects mouse motion events that carry a
+		* stale position, an Apple bug on macOS 26
+		* (https://github.com/libsdl-org/SDL/issues/15967). The workaround is
+		* enabled by default where available; the testbed engine disables it
+		* at runtime to check whether the underlying bug still occurs (see
+		* EventTests::staleMousePosition()).
+		*/
+		kFeatureStaleMousePositionWorkaround,
 	};
 
 	/**
