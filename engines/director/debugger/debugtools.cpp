@@ -909,6 +909,30 @@ void onImGuiInit() {
 	Common::setLogWatcher(onLog);
 }
 
+// Caches keyed by CastMember pointers dangle when any window switches movies.
+static void invalidateStaleCaches() {
+	Common::String signature;
+	Movie *stageMovie = g_director->getStage()->getCurrentMovie();
+	if (stageMovie)
+		signature = stageMovie->getArchive()->getPathName().toString();
+	for (auto window : *g_director->getWindowList()) {
+		Movie *movie = window->getCurrentMovie();
+		if (movie) {
+			signature += '|';
+			signature += movie->getArchive()->getPathName().toString();
+		}
+	}
+
+	if (signature == _state->_movieSignature)
+		return;
+	_state->_movieSignature = signature;
+
+	for (auto &it : _state->_cast._textures)
+		g_system->freeImGuiTexture((void *)(intptr_t)it._value.id);
+	_state->_cast._textures.clear();
+	_state->_castDetails._filmLoopCurrentFrame.clear();
+}
+
 void onImGuiRender() {
 	if (!debugChannelSet(-1, kDebugImGui)) {
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse;
@@ -917,6 +941,8 @@ void onImGuiRender() {
 
 	if (!_state)
 		return;
+
+	invalidateStaleCaches();
 
 	if (_state->_windowToRedraw) {
 		_state->_windowToRedraw->render(true);
@@ -1015,6 +1041,10 @@ void onImGuiCleanup() {
 	Common::setLogWatcher(nullptr);
 	if (_state) {
 		free(_state->_archive.data);
+		free(_state->_imageViewerState.buffer);
+
+		for (auto &it : _state->_cast._textures)
+			g_system->freeImGuiTexture((void *)(intptr_t)it._value.id);
 
 		delete _state->_logger;
 	}
