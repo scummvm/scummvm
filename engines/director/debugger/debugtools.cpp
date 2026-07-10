@@ -79,6 +79,8 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 
 const LingoDec::Handler *getHandler(CastMemberID id, const Common::String &handlerId) {
 	const Director::Movie *movie = g_director->getCurrentMovie();
+	if (!movie)
+		return nullptr;
 	if (id.castLib == SHARED_CAST_LIB)
 		return getHandler(movie->getSharedCast(), id, handlerId);
 
@@ -102,15 +104,18 @@ ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::
 
 	const LingoDec::Handler *handler = getHandler(id, handlerId);
 	if (!handler) {
+		Movie *movie = g_director->getCurrentMovie();
+		if (!movie)
+			return result;
 		const ScriptContext *ctx;
 		if (id.castLib == SHARED_CAST_LIB) {
 			// null guard
-			Cast *sharedCast = g_director->getCurrentMovie()->getSharedCast();
+			Cast *sharedCast = movie->getSharedCast();
 			if (!sharedCast)
 				return result;
 			ctx = sharedCast->_lingoArchive->getScriptContext(scriptType, id.member);
 		} else {
-			ctx = g_director->getCurrentMovie()->getScriptContext(scriptType, id);
+			ctx = movie->getScriptContext(scriptType, id);
 		}
 		if (!ctx) return result;
 		result.oldAst = ctx->_assemblyAST;
@@ -121,25 +126,27 @@ ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::
 	result.root = handler->ast.root;
 	result.isGenericEvent = handler->isGenericEvent;
 	result.argumentNames = handler->argumentNames;
-	result.propertyNames = handler->script->propertyNames;
 	result.globalNames = handler->globalNames;
 
 	LingoDec::Script *script = handler->script;
 	if (!script)
 		return result;
 
+	result.propertyNames = script->propertyNames;
 	result.isMethod = script->isFactory();
 	return result;
 }
 
 ScriptContext *getScriptContext(CastMemberID id) {
 	const Director::Movie *movie = g_director->getCurrentMovie();
+	if (!movie)
+		return nullptr;
 	const Cast *cast;
 
 	if (id.castLib == SHARED_CAST_LIB)
 		cast = movie->getSharedCast();
 	else
-		cast = movie->getCasts()->getVal(id.castLib);
+		cast = movie->getCasts()->getValOrDefault(id.castLib, nullptr);
 
 	if (!cast)
 		return nullptr;
@@ -159,6 +166,8 @@ ScriptContext *getScriptContext(CastMemberID id) {
 
 ScriptContext *getScriptContext(uint32 nameIndex, CastMemberID id, Common::String handlerName) {
 	Movie *movie = g_director->getCurrentMovie();
+	if (!movie)
+		return nullptr;
 	Cast *cast;
 	if (id.castLib == SHARED_CAST_LIB)
 		cast = movie->getSharedCast();
@@ -169,7 +178,7 @@ ScriptContext *getScriptContext(uint32 nameIndex, CastMemberID id, Common::Strin
 		return nullptr;
 
 	// If the name at nameIndex is not the same as handler name, means its a local script (in the same Lscr resource)
-	if (cast->_lingoArchive->names[nameIndex] != handlerName) {
+	if (nameIndex < cast->_lingoArchive->names.size() && cast->_lingoArchive->names[nameIndex] != handlerName) {
 		return cast->_lingoArchive->findScriptContext(id.member);
 	}
 
@@ -206,7 +215,7 @@ ScriptContext *resolveHandlerContext(int32 nameIndex, const CastMemberID &refId,
 	if (refId.castLib == SHARED_CAST_LIB) {
 		cast = movie->getSharedCast();
 	} else {
-		cast = movie->getCasts()->getVal(refId.castLib);
+		cast = movie->getCasts()->getValOrDefault(refId.castLib, nullptr);
 	}
 
 	if (cast && cast->_lingoArchive && nameIndex >= 0 && (uint32)nameIndex < cast->_lingoArchive->names.size()) {
@@ -239,7 +248,7 @@ ImGuiScript buildImGuiHandlerScript(ScriptContext *ctx, int castLibID, const Com
 	if (castLibID == SHARED_CAST_LIB) {
 		cast = movie ? movie->getSharedCast() : nullptr;
 	} else {
-		cast = movie ? movie->getCasts()->getVal(castLibID) : nullptr;
+		cast = movie ? movie->getCasts()->getValOrDefault(castLibID, nullptr) : nullptr;
 	}
 
 	int castId = ctx->_id;
@@ -611,12 +620,14 @@ Window *windowListCombo(Common::String *target) {
 	const Common::String selWin = *target;
 	Window *res = nullptr;
 
-	Common::String stage = g_director->getStage()->getCurrentMovie()->getMacName();
+	// windows may not have a movie loaded yet
+	Movie *stageMovie = g_director->getStage()->getCurrentMovie();
+	Common::String stage = stageMovie ? stageMovie->getMacName() : Common::String();
 
 	// Check if the relevant window is gone
 	bool found = false;
 	for (auto window : (*windowList)) {
-		if (window->getCurrentMovie()->getMacName() == selWin) {
+		if (window->getCurrentMovie() && window->getCurrentMovie()->getMacName() == selWin) {
 			// Found the selected window
 			found = true;
 			res = window;
@@ -644,6 +655,8 @@ Window *windowListCombo(Common::String *target) {
 		}
 
 		for (auto window : (*windowList)) {
+			if (!window->getCurrentMovie())
+				continue;
 			Common::String winName = window->getCurrentMovie()->getMacName();
 			selected = (*target == winName);
 			if (ImGui::Selectable(winName.c_str(), selected)) {
