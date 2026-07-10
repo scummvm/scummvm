@@ -1038,14 +1038,17 @@ UICL::UICL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRect(*chunkStream, browserHeading.srcRect);
 	readRect(*chunkStream, browserHeading.destRect);
 
-	readFilename(*chunkStream, holdMusicSound);
-	readFilename(*chunkStream, answeringMachineSound);
-	holdLink1 = chunkStream->readSint16LE();
-	holdLink2 = chunkStream->readSint16LE();
-	readFilename(*chunkStream, urlSound);
-	urlLink1 = chunkStream->readSint16LE();
-	urlLink2 = chunkStream->readSint16LE();
-	urlLink3 = chunkStream->readSint16LE();
+	// Initial email entry (key + value + flag + event flag), then initial
+	// web-search entry (key + extra + flag + event flag). Both are optional;
+	// an empty key marks an absent entry. CellPhonePopup seeds these on init.
+	readFilename(*chunkStream, initialEmailKey);
+	readFilename(*chunkStream, initialEmailValue);
+	initialEmailFlag = chunkStream->readSint16LE();
+	initialEmailEventFlag = chunkStream->readSint16LE();
+	readFilename(*chunkStream, initialSearchKey);
+	initialSearchExtra = chunkStream->readSint16LE();
+	initialSearchFlag = chunkStream->readSint16LE();
+	initialSearchEventFlag = chunkStream->readSint16LE();
 
 	fontId1 = chunkStream->readUint16LE();
 	fontId2 = chunkStream->readUint16LE();

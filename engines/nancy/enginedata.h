@@ -674,14 +674,17 @@ struct UICL : public EngineData {
 	SrcDestRectPair helpHeading;
 	SrcDestRectPair browserHeading;
 
-	Common::Path holdMusicSound;
-	Common::Path answeringMachineSound;       // chunk+0xCE4 (33B): "SHAMA02"
-	int16 holdLink1 = 0;
-	int16 holdLink2 = 0;
-	Common::Path urlSound;
-	int16 urlLink1 = 0;
-	int16 urlLink2 = 0;
-	int16 urlLink3 = 0;
+	// One initial email entry and one initial web-search entry can be baked
+	// into the UICL chunk itself; the original seeds them at new-game init
+	// (its cellphone reset). An empty key means the game ships that list empty.
+	Common::String initialEmailKey;           // email entry CVTX key
+	Common::String initialEmailValue;         // email entry CVTX body/value
+	int16 initialEmailFlag = 0;
+	int16 initialEmailEventFlag = 0;
+	Common::String initialSearchKey;          // web-search entry CVTX key
+	int16 initialSearchExtra = 0;
+	int16 initialSearchFlag = 0;
+	int16 initialSearchEventFlag = 0;
 
 	uint16 fontId1 = 0;
 	uint16 fontId2 = 0;

@@ -117,6 +117,19 @@ void CellPhonePopup::init() {
 		if (!cellData->seeded) {
 			cellData->contacts = _uiclData->contacts;
 			cellData->seeded = true;
+
+			// The UICL chunk can ship one initial email and one initial
+			// web-search entry, populated at new-game start (an empty key
+			// means none). addSearchLink appends into cellData's lists.
+			if (!_uiclData->initialEmailKey.empty()) {
+				addSearchLink(0, _uiclData->initialEmailKey, _uiclData->initialEmailValue,
+					0, _uiclData->initialEmailFlag, _uiclData->initialEmailEventFlag);
+			}
+			if (!_uiclData->initialSearchKey.empty()) {
+				addSearchLink(1, _uiclData->initialSearchKey, Common::String(),
+					_uiclData->initialSearchExtra, _uiclData->initialSearchFlag,
+					_uiclData->initialSearchEventFlag);
+			}
 		}
 		_contacts = cellData->contacts;
 		_noSignal = cellData->noSignal;
