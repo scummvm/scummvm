@@ -217,6 +217,8 @@ void showBreakpointList() {
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
 
+				ImGui::PushID(i);
+
 				ImDrawList *dl = ImGui::GetWindowDrawList();
 				ImVec2 pos = ImGui::GetCursorScreenPos();
 				const ImVec2 mid(pos.x + 7, pos.y + 7);
@@ -245,7 +247,6 @@ void showBreakpointList() {
 				// enabled column
 				ImGui::TableNextColumn();
 				PushStyleCompact();
-				ImGui::PushID(i);
 				ImGui::Checkbox("", &bps[i].enabled);
 				PopStyleCompact();
 
