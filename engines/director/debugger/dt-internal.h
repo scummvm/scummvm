@@ -299,6 +299,9 @@ typedef struct ImGuiState {
 	Common::Array<Common::Array<Common::Pair<uint, uint>>> _continuationData;
 	Common::String _loadedContinuationData;
 
+	// archive paths of every window's movie, to detect movie switches
+	Common::String _movieSignature;
+
 	Common::Array<WatchLogEntry> _watchLog;
 
 	Common::String _scoreWindow;
