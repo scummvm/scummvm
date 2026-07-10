@@ -159,7 +159,6 @@ void loadSavedState() {
 		*it.flag = (openFlags & 1 << index) ? true : false;
 		index += 1;
 	}
-	_state->_w.archive = (openFlags & 1) ? true : false;
 	if (debugChannelSet(7, kDebugImGui)) {
 		debugC(7, kDebugImGui, "Window flags: ");
 		for (auto it : windows) {

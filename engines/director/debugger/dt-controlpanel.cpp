@@ -146,7 +146,8 @@ void showControlPanel() {
 		float bgX1 = -4.0f, bgX2 = 21.0f;
 
 		int frameNum = score->getCurrentFrameNum();
-		int maxFrame = score->getFramesNum() - 1;
+		// frame numbers are 1-based
+		int maxFrame = score->getFramesNum();
 
 		if (_state->_prevFrame != -1 && _state->_prevFrame != frameNum) {
 			score->_playState = kPlayPaused;
