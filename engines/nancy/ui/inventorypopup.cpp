@@ -87,14 +87,8 @@ void InventoryPopup::open() {
 
 	setVisible(true);
 
-	// If the player opens the popup while carrying an item, move the cursor
-	// into the toolbox so the whole popup is immediately usable as a drop
-	// zone (e.g. double-clicking the taskbar icon opens the popup and lands
-	// the cursor over it, ready to drop on the next click).
-	if (NancySceneState.getHeldItem() != -1) {
-		g_nancy->_cursor->warpCursor(Common::Point(_screenPosition.left + _screenPosition.width() / 2,
-													_screenPosition.top + _screenPosition.height() / 2));
-	}
+	g_nancy->_cursor->warpCursor(Common::Point(_screenPosition.left + _screenPosition.width() / 2,
+												_screenPosition.top + _screenPosition.height() / 2));
 
 	NancySceneState.getTaskbar()->clearAllNotifications(kTaskButtonInventory);
 

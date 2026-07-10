@@ -128,6 +128,9 @@ void NotebookPopup::open() {
 
 	setVisible(true);
 
+	g_nancy->_cursor->warpCursor(Common::Point(_screenPosition.left + _screenPosition.width() / 2,
+												_screenPosition.top + _screenPosition.height() / 2));
+
 	NancySceneState.getTaskbar()->clearAllNotifications(kTaskButtonNotebook);
 
 	// JournalData entries may have changed since the last open (added by

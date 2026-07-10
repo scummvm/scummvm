@@ -257,6 +257,9 @@ void CellPhonePopup::open() {
 	drawScreenContent();
 	setVisible(true);
 
+	g_nancy->_cursor->warpCursor(Common::Point(_screenPosition.left + _screenPosition.width() / 2,
+												_screenPosition.top + _screenPosition.height() / 2));
+
 	NancySceneState.getTaskbar()->clearAllNotifications(kTaskButtonCellphone);
 
 	if (!_uiclData->header.sounds[0].name.empty()) {
