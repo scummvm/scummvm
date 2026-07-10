@@ -634,7 +634,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheFrameLabel:
 		d.type = STRING;
-		d.u.s = score->getFrameLabel(score->getCurrentFrameNum());
+		d.u.s = new Common::String(score->getFrameLabel(score->getCurrentFrameNum()));
 		break;
 	case kTheFramePalette:
 		d = score->getCurrentPalette().toMultiplex();

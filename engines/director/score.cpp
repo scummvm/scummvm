@@ -200,18 +200,16 @@ Common::String *Score::getLabelList() {
 	return res;
 }
 
-Common::String *Score::getFrameLabel(uint id) {
+Common::String Score::getFrameLabel(uint id) {
 	if (!_labels)
-		return new Common::String;
+		return Common::String();
 
 	for (auto &i : *_labels) {
-		if (i->number == id) {
-			return new Common::String(i->name);
-			break;
-		}
+		if (i->number == id)
+			return i->name;
 	}
 
-	return new Common::String;
+	return Common::String();
 }
 
 void Score::setStartToLabel(Common::String &label) {
