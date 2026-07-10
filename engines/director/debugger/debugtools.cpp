@@ -492,12 +492,8 @@ ImGuiImage getTextID(CastMember *castMember) {
 
 void displayVariable(const Common::String &name, bool changed, bool outOfScope) {
 	ImU32 var_color = ImGui::GetColorU32(_state->theme->var_ref);
-	ImU32 color;
 
-	color = ImGui::GetColorU32(_state->theme->bp_color_disabled);
-
-	if (_state->_variables.contains(name))
-		color = ImGui::GetColorU32(_state->theme->bp_color_enabled);
+	bool watched = _state->_variables.contains(name);
 
 	ImDrawList *dl = ImGui::GetWindowDrawList();
 	ImVec2 pos = ImGui::GetCursorScreenPos();
@@ -506,12 +502,12 @@ void displayVariable(const Common::String &name, bool changed, bool outOfScope) 
 
 	ImGui::InvisibleButton("Line", ImVec2(textSize.x + eyeSize.x, textSize.y));
 	if (ImGui::IsItemClicked(0)) {
-		if (color == ImGui::GetColorU32(_state->theme->bp_color_enabled)) {
+		if (watched) {
 			_state->_variables.erase(name);
-			color = ImGui::GetColorU32(_state->theme->bp_color_disabled);
+			watched = false;
 		} else {
 			_state->_variables[name] = true;
-			color = ImGui::GetColorU32(_state->theme->bp_color_enabled);
+			watched = true;
 		}
 	}
 
@@ -521,9 +517,13 @@ void displayVariable(const Common::String &name, bool changed, bool outOfScope) 
 		var_color = ImGui::GetColorU32(_state->theme->var_ref_out_of_scope);
 	}
 
-	if (color == ImGui::GetColorU32(_state->theme->bp_color_disabled) && ImGui::IsItemHovered()) {
+	ImU32 color;
+	if (watched)
+		color = ImGui::GetColorU32(_state->theme->bp_color_enabled);
+	else if (ImGui::IsItemHovered())
 		color = ImGui::GetColorU32(_state->theme->bp_color_hover);
-	}
+	else
+		color = ImGui::GetColorU32(_state->theme->bp_color_disabled);
 
 	dl->AddText(pos, color, ICON_MS_VISIBILITY " ");
 	dl->AddText(ImVec2(pos.x + eyeSize.x, pos.y), var_color, name.c_str());

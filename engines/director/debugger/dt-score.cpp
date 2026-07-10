@@ -1215,7 +1215,7 @@ void showChannels() {
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Channels", &_state->_w.channels)) {
-		Window *selectedWindow = windowListCombo(&_state->_scoreWindow);
+		Window *selectedWindow = windowListCombo(&_state->_channelsWindow);
 
 		if (!selectedWindow->getCurrentMovie()) {
 			ImGui::Text("No movie loaded");
