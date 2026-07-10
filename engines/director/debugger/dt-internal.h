@@ -220,7 +220,7 @@ typedef struct ImGuiState {
 		bool _listView = true;
 		int _thumbnailSize = 64;
 		ImGuiTextFilter _nameFilter;
-		int _typeFilter = 0x7FFF;
+		int _typeFilter = 0xFFFF;
 	} _cast;
 
 	struct {
