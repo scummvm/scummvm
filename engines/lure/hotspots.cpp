@@ -3651,13 +3651,6 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 			responseNumber = Script::execute(_talkResponse->preSequenceId);
 			debugC(ERROR_DETAILED, kLureDebugAnimations, "Character response new response = %d",
 				responseNumber);
-
-			// FIXME: Fix for resetting the character being talked to
-			// after talking to Goewin whilst transformed
-			if (_talkResponse->preSequenceId == 10902) {
-				HotspotData *character = res.getHotspot(PLAYER_ID);
-				character->talkDestCharacterId = 0;
-			}
 		} while (responseNumber != TALK_RESPONSE_MAGIC_ID);
 
 		descId = _talkResponse->descId;
@@ -3721,7 +3714,12 @@ void HotspotTickHandlers::talkEndConversation() {
 	Hotspot *charHotspot = res.getActiveHotspot(talkDestCharacter);
 	assert(charHotspot);
 
-	res.getActiveHotspot(PLAYER_ID)->setTickProc(PLAYER_TICK_PROC_ID);
+	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
+	player->setTickProc(PLAYER_TICK_PROC_ID);
+
+	// Clear the player's talk destination now that the conversation is over.
+	player->resource()->talkDestCharacterId = 0;
+
 	charHotspot->setUseHotspotId(0);
 	charHotspot->resource()->talkerId = 0;
 	charHotspot->setDelayCtr(24);
