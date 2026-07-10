@@ -27,6 +27,7 @@
 #include "common/memstream.h"
 
 #include "graphics/paletteman.h"
+#include "graphics/blit.h"
 
 #include "image/png.h"
 
@@ -73,7 +74,7 @@ void Screen::drawIbassIcon() {
 			// get the current animation frame
 			Graphics::Surface *currentFrame = _uiIcon[i]._anim->_frames[_uiIcon[i]._curFrame];
 			if ((_uiIcon[i]._x + currentFrame->w) <= _screen32.w)
-				_screen32.copyRectToSurfaceWithKey(*currentFrame, _uiIcon[i]._x, _uiIcon[i]._y, Common::Rect(currentFrame->w, currentFrame->h), _screen32.format.ARGBToColor(0x00, 0xFF, 0xFF, 0xFF));
+				Graphics::alphaBlit((byte *)_screen32.getBasePtr(_uiIcon[i]._x, _uiIcon[i]._y), (const byte *)currentFrame->getPixels(), _screen32.pitch, currentFrame->pitch, currentFrame->w, currentFrame->h, _screen32.format, currentFrame->format, 0, 255);
 		}
 
 	}
