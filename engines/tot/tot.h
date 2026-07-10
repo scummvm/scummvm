@@ -88,6 +88,7 @@ private:
 	SavedGame *saveGameToRegister();
 	void originalSaveLoadScreen();
 	void loadGame(SavedGame *game);
+	bool autosaveExists();
 
 	RoomFileRegister *readScreenDataFile(Common::SeekableReadStream *screenDataFile);
 	void lookAtObject(byte objectNumber);
