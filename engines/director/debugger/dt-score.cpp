@@ -746,7 +746,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					if (sprite._castId.member) {
 						CastMember *clickedCM = cast->getCastMember(sprite._castId.member, true);
 						if (clickedCM) {
-							_state->_castDetails._castMember = clickedCM;
+							_state->_castDetails._castMemberID = CastMemberID(clickedCM->getID(), clickedCM->getCast()->_castLibID);
 							_state->_w.castDetails = true;
 						}
 					}

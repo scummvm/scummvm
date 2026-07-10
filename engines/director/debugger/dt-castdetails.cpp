@@ -763,10 +763,14 @@ void drawFilmLoopCMprops(FilmLoopCastMember *member) {
 		}
 
 		// Initialize current frame for this member if needed
+		CastMemberID memberID(member->getID(), member->getCast()->_castLibID);
 		auto &filmLoopFrames = _state->_castDetails._filmLoopCurrentFrame;
-		if (!filmLoopFrames.contains(member))
-			filmLoopFrames[member] = 0;
-		int &currentFrame = filmLoopFrames[member];
+		if (!filmLoopFrames.contains(memberID))
+			filmLoopFrames[memberID] = 0;
+		int &currentFrame = filmLoopFrames[memberID];
+		// The stored frame can be stale if the score cache changed size
+		if (currentFrame >= numFrames)
+			currentFrame = 0;
 
 		const float cellW = 30.0f;
 		const float cellH = 18.0f;
@@ -1074,6 +1078,8 @@ void drawCMTypeProps(CastMember *member) {
 }
 
 int columnSizeForThumbnail(const ImGuiImage& imgID, float imageDrawSize, float padding) {
+	if (imgID.width <= 0 || imgID.height <= 0)
+		return (int)(imageDrawSize + padding);
 	if (imgID.width > imgID.height) {
 		return imageDrawSize + padding;
 	} else {
@@ -1089,8 +1095,13 @@ void showCastDetails() {
 	ImGui::SetNextWindowSize(ImVec2(240, 480), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Cast Details", &_state->_w.castDetails)) {
-		CastMember *member = _state->_castDetails._castMember;
-		assert(member != nullptr);
+		Movie *movie = g_director->getCurrentMovie();
+		CastMember *member = movie ? movie->getCastMember(_state->_castDetails._castMemberID) : nullptr;
+		if (!member) {
+			ImGui::TextDisabled("No cast member selected");
+			ImGui::End();
+			return;
+		}
 
 		CastType memberType = member->_type;
 
@@ -1131,9 +1142,9 @@ void showCastDetails() {
 
 			ImGui::EndTabBar();
 		}
-
-		ImGui::End();
 	}
+	// End() must be called regardless of what Begin() returned
+	ImGui::End();
 }
 
 } // namespace DT
