@@ -213,6 +213,20 @@ protected:
 	 */
 	Common::Event _fakeMouseMove;
 
+	/**
+	 * WORKAROUND: Whether stale mouse positions on macOS 26 are corrected in
+	 * handleMouseMotion(). Enabled by default; the testbed engine disables it
+	 * at runtime, through OSystem::kFeatureStaleMousePositionWorkaround, to
+	 * check whether the underlying bug still occurs.
+	 */
+	bool _staleMousePositionWorkaround = true;
+
+public:
+	void setStaleMousePositionWorkaround(bool enable) { _staleMousePositionWorkaround = enable; }
+	bool getStaleMousePositionWorkaround() const { return _staleMousePositionWorkaround; }
+
+protected:
+
 	uint8 _lastHatPosition;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
