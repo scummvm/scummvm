@@ -395,7 +395,7 @@ static void drawModeSelector(ImVec2 startPos) {
 	}
 }
 
-static void drawSpriteInspector(Score *score, Cast *cast, uint numFrames) {
+static void drawSpriteInspector(Score *score, Movie *movie, uint numFrames) {
 
 	if (_state->_scoreFrameOffset >= (int)numFrames)
 		_state->_scoreFrameOffset = 1;
@@ -411,7 +411,9 @@ static void drawSpriteInspector(Score *score, Cast *cast, uint numFrames) {
 			sprite = score->_scoreCache[_state->_selectedScoreCast.frame]->_sprites[_state->_selectedScoreCast.channel];
 
 		if (sprite) {
-			castMember = cast->getCastMember(sprite->_castId.member, true);
+			// resolve through the movie: the member can live in any cast lib
+			// or the shared cast, not just the default one
+			castMember = movie->getCastMember(sprite->_castId);
 
 			shape = sprite->isQDShape();
 		}
@@ -594,8 +596,9 @@ static void drawSpriteInspector(Score *score, Cast *cast, uint numFrames) {
 
 }
 
-static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *cast, Window *window) {
+static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Window *window) {
 	int total_frames = (int)score->_scoreCache.size();
+	Movie *movie = window->getCurrentMovie();
 
 	auto &cfg = _state->_scoreCfg;
 	float cellH = (_state->_scoreMode == kModeExtended) ? cfg._cellHeightExtended : cfg._cellHeight;
@@ -675,7 +678,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 				dl->AddRect(ImVec2(x2 - 7.0f, cy - 3.0f), ImVec2(x2 - 1.0f, cy + 3.0f), U32(_state->theme->line_color), 0.0f, 0, 1.5f);
 
 			float spanWidth = x2 - x1 - 8.0f; // available width inside the span bar
-			CastMember *cm = cast->getCastMember(sprite._castId.member, true);
+			CastMember *cm = movie->getCastMember(sprite._castId);
 			if (spanWidth < 4.0f) continue;
 
 			if (_state->_scoreMode == kModeExtended && startVisible && (sprite._castId.member || sprite.isQDShape())) {
@@ -686,7 +689,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 				Common::String member = cm ? getDisplayName(cm) : (sprite.isQDShape() ? "Q" : "");
 				Common::String behavior;
 				if (sprite._scriptId.member) {
-					CastMember *sc = cast->getCastMember(sprite._scriptId.member, true);
+					CastMember *sc = movie->getCastMember(sprite._scriptId);
 					if (sc) behavior = getDisplayName(sc);
 				}
 				Common::String ink = inkType2str(sprite._ink);
@@ -712,7 +715,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					break;
 				case kModeBehavior:
 					if (sprite._scriptId.member) {
-						CastMember *script = cast->getCastMember(sprite._scriptId.member, true);
+						CastMember *script = movie->getCastMember(sprite._scriptId);
 						if (script) label = getDisplayName(script);
 					}
 					break;
@@ -763,7 +766,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 
 					// Open cast member details window
 					if (sprite._castId.member) {
-						CastMember *clickedCM = cast->getCastMember(sprite._castId.member, true);
+						CastMember *clickedCM = movie->getCastMember(sprite._castId);
 						if (clickedCM) {
 							_state->_castDetails._castMemberID = CastMemberID(clickedCM->getID(), clickedCM->getCast()->_castLibID);
 							_state->_w.castDetails = true;
@@ -795,14 +798,14 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					_state->_hoveredScoreCast.channel = ch;
 
 					if (sprite._castId.member || sprite.isQDShape()) {
-						CastMember *cm = cast->getCastMember(sprite._castId.member, true);
+						CastMember *cm = movie->getCastMember(sprite._castId);
 
 						if (_state->_scoreMode == kModeExtended) {
 							// build multi-line tooltip for extended mode
 							Common::String member = cm ? getDisplayName(cm) : (sprite.isQDShape() ? "Q" : "");
 							Common::String behavior;
 							if (sprite._scriptId.member) {
-								CastMember *sc = cast->getCastMember(sprite._scriptId.member, true);
+								CastMember *sc = movie->getCastMember(sprite._scriptId);
 								if (sc) behavior = getDisplayName(sc);
 							}
 							Common::String ink = inkType2str(sprite._ink);
@@ -827,7 +830,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 								break;
 							case kModeBehavior:
 								if (sprite._scriptId.member) {
-									CastMember *sc = cast->getCastMember(sprite._scriptId.member, true);
+									CastMember *sc = movie->getCastMember(sprite._scriptId);
 									if (sc) label = getDisplayName(sc);
 								}
 								break;
@@ -1171,9 +1174,9 @@ void showScore() {
 		}
 
 		buildContinuationData(selectedWindow);
-		Score *score = selectedWindow->getCurrentMovie()->getScore();
+		Movie *movie = selectedWindow->getCurrentMovie();
+		Score *score = movie->getScore();
 		uint numFrames = score->_scoreCache.size();
-		Cast *cast = selectedWindow->getCurrentMovie()->getCast();
 
 		if (!numFrames) {
 			ImGui::Text("No frames");
@@ -1187,7 +1190,7 @@ void showScore() {
 		if (!numFrames || _state->_selectedScoreCast.channel >= (int)score->_scoreCache[0]->_sprites.size())
 			_state->_selectedScoreCast.channel = 0;
 
-		drawSpriteInspector(score, cast, numFrames);
+		drawSpriteInspector(score, movie, numFrames);
 		int numChannels = MIN<int>(score->_scoreCache[0]->_sprites.size(), score->_maxChannelsUsed + 10);
 		handleScrolling(score, numChannels);
 
@@ -1201,7 +1204,7 @@ void showScore() {
 		drawModeSelector(layout.modeSelectorPos);
 		drawRuler(dl, layout.rulerPos);
 		drawSidebar2(dl, layout.sidebar2Pos, score, selectedWindow);
-		drawSpriteGrid(dl, layout.gridPos, score, cast, selectedWindow);
+		drawSpriteGrid(dl, layout.gridPos, score, selectedWindow);
 		drawPlayhead(dl, layout.rulerPos, layout.mainChannelGridPos, layout.gridPos, score);
 		drawSliderX(layout.sliderPos, score);
 		drawSliderY(layout.sliderYPos, numChannels);
