@@ -67,6 +67,7 @@ int popup_available = false;
 BoxParam box_param;
 Popup *popup = NULL;
 word popup_default_status = POPUP_STATUS_BAR;
+bool popup_vomitation_flag = true;
 
 static char *popup_savelist_string(PopupItem *item, int element);
 
@@ -90,6 +91,7 @@ void init_popup() {
 	};
 	Common::copy(POPUP_COLORS, POPUP_COLORS + 24, popup_colors);
 	memset(&popup_preserve_initiator[0], BUFFER_PRESERVE, 3);
+	popup_vomitation_flag = true;
 }
 
 int popup_create(int horiz_pieces, int x, int y) {

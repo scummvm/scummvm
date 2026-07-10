@@ -71,12 +71,14 @@ MODULE_OBJS += \
 	madsv2/core/window.o \
 	madsv2/core/xms.o \
 	madsv2/nebular/nebular.o \
+	madsv2/nebular/asound.o \
+	madsv2/nebular/copy.o \
 	madsv2/nebular/extra.o \
 	madsv2/nebular/global.o \
 	madsv2/nebular/main.o \
 	madsv2/nebular/main_menu.o \
 	madsv2/nebular/menus.o \
-	madsv2/nebular/asound.o \
+	madsv2/nebular/popup.o \
 	madsv2/nebular/sound_nebular.o \
 	madsv2/nebular/mads/mads.o \
 	madsv2/nebular/rooms/thunks.o \

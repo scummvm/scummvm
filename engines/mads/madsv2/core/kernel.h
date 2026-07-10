@@ -40,8 +40,10 @@ namespace MADSV2 {
 
 #define KERNEL_INTERRUPT_STACK_SIZE    256    /* Size of interrupt stack */
 
-#define KERNEL_RESERVED_LOW_COLORS      26    /* Colors to reserve at bottom of palette */
-#define KERNEL_RESERVED_HIGH_COLORS     10    /* Colors to reserve at top of palette    */
+/* Colors to reserve at bottom of palette */
+#define KERNEL_RESERVED_LOW_COLORS      (g_engine->getGameID() == GType_RexNebular ? 18 : 26)
+/* Colors to reserve at top of palette    */
+#define KERNEL_RESERVED_HIGH_COLORS     10
 
 #define KERNEL_MESSAGE_COLOR_BASE       16    /* 1st color to use for messages          */
 #define KERNEL_MESSAGE_COLOR_BASE_2     252   /* 1st color to use for second message    */

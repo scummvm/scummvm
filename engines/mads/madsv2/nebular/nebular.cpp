@@ -39,6 +39,7 @@
 #include "mads/madsv2/nebular/nebular.h"
 #include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/main.h"
+#include "mads/madsv2/nebular/popup.h"
 #include "mads/madsv2/nebular/mads/inventory.h"
 #include "mads/madsv2/nebular/mads/words.h"
 #include "mads/madsv2/nebular/sound_nebular.h"
@@ -74,8 +75,11 @@ Common::Error RexNebularEngine::run() {
 	_soundManager = new RexSoundManager(_mixer, _soundFlag);
 	_soundManager->validate();
 
+	// Initialize globals
+	RexNebular::popup_init();
+
 	// Run the game
-		RexNebular::nebular_main();
+	RexNebular::nebular_main();
 
 	return Common::kNoError;
 }
@@ -607,9 +611,6 @@ void RexNebularEngine::global_error_code() {
 void RexNebularEngine::global_sound_driver() {
 	Common::strcpy_s(kernel.sound_driver, "/");
 	env_catint(kernel.sound_driver, new_section, 1);
-}
-
-void RexNebularEngine::player_keep_walking() {
 }
 
 } // namespace RexNebular

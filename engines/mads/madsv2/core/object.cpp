@@ -44,6 +44,7 @@
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/core/tile.h"
 #include "mads/madsv2/core/video.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
