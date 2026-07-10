@@ -162,10 +162,16 @@ static void buildContinuationData(Window *window) {
 		uint currentContinuation = 1;
 		for (int f = 0; f < (int)numFrames; f++) {
 			const Frame &frame = *score->_scoreCache[f];
+			// not every frame is guaranteed to carry the same channel count
+			if (ch >= (int)frame._sprites.size()) {
+				_state->_continuationData[ch][f].first = f;
+				currentContinuation = f;
+				continue;
+			}
 			Sprite &sprite = *frame._sprites[ch];
 
 			const Frame *prevFrame = (f == 0) ? nullptr : score->_scoreCache[f - 1];
-			Sprite *prevSprite = (prevFrame) ? prevFrame->_sprites[ch] : nullptr;
+			Sprite *prevSprite = (prevFrame && ch < (int)prevFrame->_sprites.size()) ? prevFrame->_sprites[ch] : nullptr;
 
 			if (prevSprite) {
 				if (!(*prevSprite == sprite)) {
@@ -200,10 +206,15 @@ static void buildContinuationData(Window *window) {
 		currentContinuation = 1;
 		for (int f = (int)numFrames - 1; f >= 0; f--) {
 			const Frame &frame = *score->_scoreCache[f];
+			if (ch >= (int)frame._sprites.size()) {
+				_state->_continuationData[ch][f].second = f;
+				currentContinuation = f;
+				continue;
+			}
 			Sprite &sprite = *frame._sprites[ch];
 
 			const Frame *nextFrame = (f == (int)numFrames - 1) ? nullptr : score->_scoreCache[f + 1];
-			Sprite *nextSprite = (nextFrame) ? nextFrame->_sprites[ch] : nullptr;
+			Sprite *nextSprite = (nextFrame && ch < (int)nextFrame->_sprites.size()) ? nextFrame->_sprites[ch] : nullptr;
 
 			if (nextSprite) {
 				if (!(*nextSprite == sprite)) {
@@ -468,7 +479,9 @@ static void drawSpriteInspector(Score *score, Cast *cast, uint numFrames) {
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 		ImGui::BeginChild("Range", ImVec2(100.0f, 20.0f));
 
-		if (castMember || shape) {
+		if ((castMember || shape)
+				&& _state->_selectedScoreCast.channel < (int)_state->_continuationData.size()
+				&& _state->_selectedScoreCast.frame < (int)_state->_continuationData[_state->_selectedScoreCast.channel].size()) {
 			ImGui::TextUnformatted("\uf816"); ImGui::SameLine();	// line_start_circle
 			// the continuation data is 0-indexed but the frames are 1-indexed
 			ImGui::Text("%4d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].first + 1); ImGui::SameLine(50);
@@ -608,6 +621,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 			int rf = startFrame + f;
 			if (rf >= total_frames) break;
 			Frame &frame = *score->_scoreCache[rf];
+			if (ch >= (int)frame._sprites.size()) continue;
 			Sprite &sprite = *frame._sprites[ch];
 
 			if (!sprite._castId.member && !sprite.isQDShape()) continue;
@@ -620,9 +634,6 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 			if (rf != spanStart && f != 0) continue;
 			float x1 = startPos.x + MAX<float>(spanStart - startFrame, 0) * cfg._cellWidth;
 			float x2 = MIN<float>(startPos.x + (spanEnd - startFrame + 1) * cfg._cellWidth, startPos.x + cfg._tableWidth);
-
-			if (ch >= (int)_state->_continuationData.size()) continue;
-			if (rf >= (int)_state->_continuationData[ch].size()) break;
 
 			bool startVisible = spanStart >= startFrame;
 			bool endVisible = spanEnd < startFrame + cfg._visibleFrames;
@@ -724,7 +735,8 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 			if (rf >= total_frames) break;
 
 			// recompute span info for tooltip
-			if (ch < (int)_state->_continuationData.size() && rf < (int)_state->_continuationData[ch].size()) {
+			if (ch < (int)_state->_continuationData.size() && rf < (int)_state->_continuationData[ch].size()
+					&& ch < (int)score->_scoreCache[rf]->_sprites.size()) {
 				Frame &frame = *score->_scoreCache[rf];
 				Sprite &sprite = *frame._sprites[ch];
 				int spanStart = _state->_continuationData[ch][rf].first;
@@ -1145,13 +1157,13 @@ void showScore() {
 	if (ImGui::Begin("Score", &_state->_w.score, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
 		Window *selectedWindow = windowListCombo(&_state->_scoreWindow);
 
-		buildContinuationData(selectedWindow);
-
 		if (!selectedWindow->getCurrentMovie()) {
 			ImGui::Text("No movie loaded");
 			ImGui::End();
 			return;
 		}
+
+		buildContinuationData(selectedWindow);
 		Score *score = selectedWindow->getCurrentMovie()->getScore();
 		uint numFrames = score->_scoreCache.size();
 		Cast *cast = selectedWindow->getCurrentMovie()->getCast();
@@ -1211,6 +1223,11 @@ void showChannels() {
 			return;
 		}
 		Score *score = selectedWindow->getCurrentMovie()->getScore();
+		if (!score->_currentFrame) {
+			ImGui::Text("No frame data");
+			ImGui::End();
+			return;
+		}
 		const Frame &frame = *score->_currentFrame;
 
 		CastMemberID defaultPalette = selectedWindow->getCurrentMovie()->_defaultPalette;
