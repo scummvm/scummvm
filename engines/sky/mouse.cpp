@@ -390,7 +390,7 @@ void Mouse::textChooser(uint16 xPos, uint16 yPos) {
 			itemData = _skyCompact->fetchCpt(_touchId);
 			if (itemData->mouseClick)
 				_skyLogic->mouseScript(itemData->mouseClick, itemData);
-			_logicClick = 2;
+			_logicClick = true;
 			_touchId = 0;
 			_mMode = GAMEPLAY;
 		}
