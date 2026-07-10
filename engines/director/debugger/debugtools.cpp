@@ -191,6 +191,45 @@ ScriptContext *getScriptContext(uint32 nameIndex, CastMemberID id, Common::Strin
 	return nullptr;
 }
 
+static bool archiveOwnsContext(LingoArchive *archive, const ScriptContext *ctx) {
+	if (!archive)
+		return false;
+	for (int i = 0; i <= kMaxScriptType; i++) {
+		for (auto &it : archive->scriptContexts[i])
+			if (it._value == ctx)
+				return true;
+	}
+	for (auto &it : archive->lctxContexts)
+		if (it._value == ctx)
+			return true;
+	for (auto &factory : archive->factoryContexts) {
+		if (!factory._value)
+			continue;
+		for (auto &it : *factory._value)
+			if (it._value == ctx)
+				return true;
+	}
+	return false;
+}
+
+// Find the cast library (or shared cast) a script context belongs to.
+int getCastLibIDForContext(const ScriptContext *ctx) {
+	Movie *movie = g_director->getCurrentMovie();
+	if (!movie || !ctx)
+		return DEFAULT_CAST_LIB;
+
+	for (auto &it : *movie->getCasts()) {
+		if (it._value && archiveOwnsContext(it._value->_lingoArchive, ctx))
+			return it._key;
+	}
+
+	Cast *shared = movie->getSharedCast();
+	if (shared && archiveOwnsContext(shared->_lingoArchive, ctx))
+		return SHARED_CAST_LIB;
+
+	return movie->getCast() ? movie->getCast()->_castLibID : DEFAULT_CAST_LIB;
+}
+
 static ScriptContext *findHandlerContext(Cast *cast, const Common::String &handlerName) {
 	if (!cast || !cast->_lingoArchive)
 		return nullptr;
@@ -559,6 +598,7 @@ void addToOpenHandlers(ImGuiScript handler) {
 
 	ScriptData &data = _state->_openScripts;
 	_state->_w.scripts = true;  // always (re)open the window
+	data._scrollToCurrent = true;
 	// Truncate forward history when navigating to a new script
 	if (data._current + 1 < data._scripts.size())
 		data._scripts.resize(data._current + 1);
@@ -573,6 +613,7 @@ void addToOpenHandlers(ImGuiScript handler) {
 void setScriptToDisplay(const ImGuiScript &script) {
 	ScriptData *scriptData = &_state->_functions._windowScriptData.getOrCreateVal(g_director->getCurrentWindow());
 	uint index = scriptData->_scripts.size();
+	scriptData->_scrollToCurrent = true;
 	if (index && scriptData->_scripts[index - 1] == script) {
 		scriptData->_showScript = true;
 		return;
@@ -605,6 +646,20 @@ void displayScriptRef(CastMemberID &scriptId) {
 	} else {
 		ImGui::Selectable("  ");
 	}
+}
+
+// One button of a mutually exclusive pair: clicking selects it, the
+// already-selected button is inert (unlike ImGuiEx::toggleButton).
+bool selectableViewButton(const char *label, bool selected) {
+	int pop = 0;
+	if (selected) {
+		ImVec4 hovered = ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered];
+		ImGui::PushStyleColor(ImGuiCol_Button, hovered);
+		pop = 1;
+	}
+	bool clicked = ImGui::Button(label);
+	ImGui::PopStyleColor(pop);
+	return clicked;
 }
 
 ImColor brightenColor(const ImColor& color, float factor) {

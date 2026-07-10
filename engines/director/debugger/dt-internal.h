@@ -118,6 +118,7 @@ typedef struct ScriptData {
 	uint _current = 0;
 	bool _showByteCode = false;
 	bool _showScript = false;
+	bool _scrollToCurrent = false; // pending scroll to the current script, consumed on render
 } ScriptData;
 
 typedef struct WindowFlag {
@@ -236,7 +237,7 @@ typedef struct ImGuiState {
 
 	struct {
 		bool _isScriptDirty = false; // indicates whether or not we have to display the script corresponding to the current stackframe
-		bool _goToDefinition = false;
+		bool _hostExecutionContext = false; // true while the Execution Context window is rendering scripts
 		bool _scrollToPC = false;
 		uint _lastLinePC = 0;
 		uint _callstackSize = 0;
@@ -307,6 +308,8 @@ typedef struct ImGuiState {
 	Common::String _scoreWindow;
 	Common::String _channelsWindow;
 	Common::String _castWindow;
+	Common::String _functionsWindow;
+	Common::String _executionContextWindow;
 	int _scoreMode = 0;
 	int _scoreFrameOffset = 1;
 	int _scorePageSlider = 0;
@@ -342,6 +345,7 @@ ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::
 ScriptContext *getScriptContext(CastMemberID id);
 ScriptContext *getScriptContext(uint32 nameIndex, CastMemberID castId, Common::String handler);
 ScriptContext *resolveHandlerContext(int32 nameIndex, const CastMemberID &refId, const Common::String &handlerName);
+int getCastLibIDForContext(const ScriptContext *ctx);
 ImGuiScript buildImGuiHandlerScript(ScriptContext *ctx, int castLibID, const Common::String &handlerName, const Common::String &moviePath);
 void maybeHighlightLastItem(const Common::String &text);
 void addToOpenHandlers(ImGuiScript handler);
@@ -358,6 +362,7 @@ ImVec4 convertColor(uint32 color);
 void displayVariable(const Common::String &name, bool changed, bool outOfScope = false);
 ImColor brightenColor(const ImColor &color, float factor);
 Window *windowListCombo(Common::String *target);
+bool selectableViewButton(const char *label, bool selected);
 Common::String formatHandlerName(int scriptId, int castId, Common::String handlerName, ScriptType scriptType, bool childScript);
 void setTheme(int themeIndex);
 void openImageViewer(ImGuiImage image, const Common::String &text = "", const Common::String &title = "");

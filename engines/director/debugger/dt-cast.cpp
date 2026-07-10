@@ -293,10 +293,12 @@ void showCast() {
 		Window *selectedWindow = windowListCombo(&_state->_castWindow);
 
 		// display a toolbar with: grid/list/filters buttons + name filter
-		ImGuiEx::toggleButton(ICON_MS_LIST, &_state->_cast._listView);
+		if (selectableViewButton(ICON_MS_LIST, _state->_cast._listView))
+			_state->_cast._listView = true;
 		ImGui::SetItemTooltip("List");
 		ImGui::SameLine();
-		ImGuiEx::toggleButton(ICON_MS_GRID_VIEW, &_state->_cast._listView, true);
+		if (selectableViewButton(ICON_MS_GRID_VIEW, !_state->_cast._listView))
+			_state->_cast._listView = false;
 		ImGui::SetItemTooltip("Grid");
 		ImGui::SameLine();
 

@@ -221,7 +221,6 @@ void showSearchBar() {
 				q.toLowercase();
 				_state->_dbg._highlightQuery = q;
 				addToOpenHandlers(script);
-				_state->_dbg._goToDefinition = true;
 			}
 
 			ImGui::TableNextColumn();
