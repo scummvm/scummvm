@@ -41,10 +41,8 @@ static const char *const kCursorResourcePath = "1:/GRAPHIC/POINTERS/POINTERS.ABM
 static const float kCursorEntityZ = -100.0f;
 static const int kCursorAnimationRate = 10;
 static const int kFramesPerSequence = 10;
-// Animation pacing remains provisional while we compare against the original.
-// Native rate values still feed the recovered 100 / rate interval formula, but
-// this clock divisor is tuned separately from the script/timer countdown clock.
-static const uint32 kAnimationClockDivisorMs = 15;
+// The native runtime measures entity animation intervals in centiseconds.
+static const uint32 kAnimationClockDivisorMs = 10;
 static const byte kTransparentPaletteIndex = 0;
 
 static int roundToInt(float value) {
