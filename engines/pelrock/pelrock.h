@@ -154,6 +154,7 @@ private:
 	bool _disableAmbientSounds = false;
 	bool _isDogPeeing = false;
 	bool _disableAction = false;
+	bool _roomChangedDuringAnimation = false;
 
 protected:
 	// Engine APIs
