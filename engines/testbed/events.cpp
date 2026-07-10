@@ -264,6 +264,129 @@ TestExitStatus EventTests::mouseEvents() {
 	return passed;
 }
 
+/**
+ * Interactive check for the WORKAROUND for stale mouse positions on macOS 26
+ * (https://github.com/libsdl-org/SDL/issues/15967), worth running a couple of
+ * times a year or after SDL/macOS updates. The backend normally corrects
+ * mouse motion events that carry a stale (old) position; this test disables
+ * the correction through kFeatureStaleMousePositionWorkaround, guides the
+ * user through reproducing the underlying OS bug, and reports each raw stale
+ * position it observes. If the bug stops being reproducible (and the SDL
+ * issue above is resolved), the workaround can be removed.
+ *
+ * A stale position replay is recognized by its signature: the reported
+ * position jumps far away for a single event and immediately snaps back near
+ * where it came from. Genuine movement does not do this: a fast flick
+ * continues from the new position, and leaving/re-entering the window at a
+ * different edge does not snap back.
+ */
+TestExitStatus EventTests::staleMousePosition() {
+	Testsuite::clearScreen();
+
+	if (!g_system->hasFeature(OSystem::kFeatureStaleMousePositionWorkaround)) {
+		Testsuite::logPrintf("Info! Skipping test : Stale mouse position "
+				"(backend has no such workaround)\n");
+		return kTestSkipped;
+	}
+
+	Common::String info = "Stale mouse position check.\n"
+		"Some systems (macOS 26) sometimes report an old, stale mouse position. The backend "
+		"normally corrects this; this test disables the correction and watches the raw events "
+		"to check whether the underlying OS bug still occurs.\n"
+		"1. Run this test in windowed mode.\n"
+		"2. Click another application to unfocus this window, then click this window again.\n"
+		"3. Move the mouse smoothly off a window edge and back in. Repeat with all edges.\n"
+		"A counter increases each time a stale position is detected. Press X to finish.";
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : Stale mouse position\n");
+		return kTestSkipped;
+	}
+
+	Common::EventManager *eventMan = g_system->getEventManager();
+
+	Common::Point pt(0, 40);
+	Testsuite::writeOnScreen("Unfocus and refocus the window, then move the mouse", pt);
+	pt.y += 15;
+	Testsuite::writeOnScreen("off a window edge and back in. Repeat with all edges.", pt);
+	pt.y += 15;
+	Testsuite::writeOnScreen("Press X to finish", pt);
+	pt.y += 30;
+	Common::Rect rectCount = Testsuite::writeOnScreen("Stale mouse positions detected: 0", pt);
+
+	// Watch the raw, uncorrected events while this test runs
+	g_system->setFeatureState(OSystem::kFeatureStaleMousePositionWorkaround, false);
+
+	const int16 jumpX = g_system->getWidth() / 8, jumpY = g_system->getHeight() / 8;
+	const int16 nearX = g_system->getWidth() / 16, nearY = g_system->getHeight() / 16;
+
+	Common::Point prev(-1, -1), anomalyOrigin, anomalyPos;
+	int anomalyCountdown = 0;
+	int detected = 0;
+
+	bool quitLoop = false;
+	Common::Event event;
+	while (!quitLoop) {
+		// Show mouse
+		CursorMan.showMouse(true);
+		g_system->updateScreen();
+
+		while (eventMan->pollEvent(event)) {
+			if (Engine::shouldQuit()) {
+				quitLoop = true;
+				break;
+			}
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				if (anomalyCountdown > 0 &&
+						ABS(event.mouse.x - anomalyOrigin.x) <= nearX &&
+						ABS(event.mouse.y - anomalyOrigin.y) <= nearY) {
+					// The position jumped far away and immediately snapped
+					// back: the jump was a stale position, not real movement
+					++detected;
+					Testsuite::logDetailedPrintf("Stale mouse position: (%d,%d) -> (%d,%d) -> (%d,%d)\n",
+							anomalyOrigin.x, anomalyOrigin.y, anomalyPos.x, anomalyPos.y,
+							event.mouse.x, event.mouse.y);
+					Testsuite::clearScreen(rectCount);
+					rectCount = Testsuite::writeOnScreen(
+							Common::String::format("Stale mouse positions detected: %d", detected),
+							Common::Point(rectCount.left, rectCount.top));
+					anomalyCountdown = 0;
+				} else if (anomalyCountdown > 0) {
+					// Movement continuing away from the origin: presumably a
+					// genuine fast flick or a window re-entry elsewhere
+					--anomalyCountdown;
+				} else if (prev.x >= 0 &&
+						(ABS(event.mouse.x - prev.x) > jumpX || ABS(event.mouse.y - prev.y) > jumpY)) {
+					anomalyOrigin = prev;
+					anomalyPos = event.mouse;
+					anomalyCountdown = 4;
+				}
+				prev = event.mouse;
+				break;
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_x)
+					quitLoop = true;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	CursorMan.showMouse(false);
+	g_system->setFeatureState(OSystem::kFeatureStaleMousePositionWorkaround, true);
+
+	if (detected) {
+		Testsuite::logPrintf("Info! Stale mouse position : reproduced %d time(s), "
+				"the backend workaround is still needed\n", detected);
+	} else {
+		Testsuite::logPrintf("Info! Stale mouse position : not reproduced; "
+				"if this persists, the backend workaround may no longer be needed\n");
+	}
+	return kTestPassed;
+}
+
 TestExitStatus EventTests::doubleClickTime() {
 	Testsuite::clearScreen();
 
@@ -372,6 +495,7 @@ TestExitStatus EventTests::showMainMenu() {
 
 EventTestSuite::EventTestSuite() {
 	addTest("MouseEvents", &EventTests::mouseEvents);
+	addTest("StaleMousePosition", &EventTests::staleMousePosition);
 	addTest("DoubleClickTime", &EventTests::doubleClickTime);
 	addTest("KeyboardEvents", &EventTests::kbdEvents);
 	addTest("MainmenuEvent", &EventTests::showMainMenu);
