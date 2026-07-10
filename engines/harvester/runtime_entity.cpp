@@ -41,8 +41,8 @@ static const char *const kCursorResourcePath = "1:/GRAPHIC/POINTERS/POINTERS.ABM
 static const float kCursorEntityZ = -100.0f;
 static const int kCursorAnimationRate = 10;
 static const int kFramesPerSequence = 10;
-// The native runtime measures entity animation intervals in centiseconds.
-static const uint32 kAnimationClockDivisorMs = 10;
+static const uint32 kDosPitInputFrequency = 1193180;
+static const uint32 kDosPitTimerDivisor = 65536;
 static const byte kTransparentPaletteIndex = 0;
 
 static int roundToInt(float value) {
@@ -70,7 +70,15 @@ static void scaleIndexedBitmapNearest(const IndexedBitmap &source, IndexedBitmap
 }
 
 static uint32 getAnimationClockTicks() {
-	return g_system ? (g_system->getMillis() / kAnimationClockDivisorMs) : 0;
+	if (!g_system)
+		return 0;
+
+	// Native obtains time through DOS int 21h/AH=2Ch. Its hundredths field
+	// advances on the 18.2 Hz BIOS timer, so preserve that quantization instead
+	// of deriving idealized centiseconds directly from wall-clock milliseconds.
+	const uint64 pitTicks = ((uint64)g_system->getMillis() * kDosPitInputFrequency) /
+		((uint64)kDosPitTimerDivisor * 1000U);
+	return (uint32)((pitTicks * kDosPitTimerDivisor * 100U) / kDosPitInputFrequency);
 }
 
 static void blitAnimationFrame(Graphics::Screen &screen, const Common::Array<AbmFrame> &frames, uint frameIndex,
@@ -381,7 +389,7 @@ void Entity::setDepthScale(float scale) {
 
 bool Entity::tickVisualState(uint32 now) {
 	_animationAdvancedLastTick = false;
-	if (!_animationEnabled || _currentFrame < 0 || _animationTickInterval == 0)
+	if (!_animationEnabled || _currentFrame < 0)
 		return false;
 	if (now < _nextAnimationTick)
 		return false;
@@ -730,7 +738,8 @@ void Entity::rebuildScaledFrames() {
 		const int scaledHeight = scaleDimension(source.height, _depthScale);
 
 		scaleIndexedBitmapNearest(source, scaled, scaledWidth, scaledHeight);
-		scaled.xOffset = roundToInt((float)source.xOffset * _depthScale);
+		// Native depth scaling preserves the authored horizontal frame offset.
+		scaled.xOffset = source.xOffset;
 		scaled.yOffset = roundToInt((float)source.yOffset * _depthScale);
 	}
 
@@ -814,8 +823,8 @@ Entity *EntityManager::spawnCursorEntity(const Common::Point &position) {
 		const uint32 animationInterval = _cursorEntity->getAnimationRate() == 0 ? 0 :
 			(100U / (uint32)_cursorEntity->getAnimationRate());
 		debugC(1, kDebugCursor,
-			"Harvester: spawned cursor entity rate=%d intervalTicks=%u clock_divisor_ms=%u frame=%d..%d pos=(%d,%d)",
-			_cursorEntity->getAnimationRate(), animationInterval, kAnimationClockDivisorMs,
+			"Harvester: spawned cursor entity rate=%d intervalTicks=%u clock_source=dos_centiseconds frame=%d..%d pos=(%d,%d)",
+			_cursorEntity->getAnimationRate(), animationInterval,
 			_cursorEntity->getCurrentFrame(),
 			_cursorEntity->getLastFrame(), position.x, position.y);
 	}
