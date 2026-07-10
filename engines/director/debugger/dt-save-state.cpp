@@ -183,7 +183,8 @@ void loadSavedState() {
 
 	_state->_logger->clear();
 	for (auto iter : log) {
-		_state->_logger->addLog(iter->asString().c_str());
+		// log lines can contain '%'
+		_state->_logger->addLog("%s", iter->asString().c_str());
 	}
 
 	// Load other settings
