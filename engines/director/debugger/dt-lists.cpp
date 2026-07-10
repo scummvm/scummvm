@@ -322,13 +322,17 @@ void showArchive() {
 									_state->_archive.resId = id;
 
 									free(_state->_archive.data);
+									_state->_archive.data = nullptr;
+									_state->_archive.dataSize = 0;
 
 									Common::SeekableReadStreamEndian *res = archive->getResource(tag, id);
-									_state->_archive.data = (byte *)malloc(res->size());
-									res->read(_state->_archive.data, res->size());
-									_state->_archive.dataSize = res->size();
+									if (res) {
+										_state->_archive.data = (byte *)malloc(res->size());
+										res->read(_state->_archive.data, res->size());
+										_state->_archive.dataSize = res->size();
 
-									delete res;
+										delete res;
+									}
 								}
 							}
 

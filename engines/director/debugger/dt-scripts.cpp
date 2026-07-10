@@ -288,6 +288,9 @@ void showFuncList() {
 
 				if (ImGui::TreeNodeEx(castName.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 					for (auto context : cast._value->_lingoArchive->lctxContexts) {
+						if (!context._value || !context._value->_functionHandlers.size()) {
+							continue;
+						}
 						CastMemberInfo *cmi = cast._value->getCastMemberInfo(context._value->_id);
 						Common::String contextName = Common::String::format("%d", context._value->_id);
 						if (cmi && cmi->name.size()) {
@@ -295,7 +298,7 @@ void showFuncList() {
 						}
 
 						contextName += Common::String::format(": %s", scriptType2str(context._value->_scriptType));
-						if (!context._value || !context._value->_functionHandlers.size() || !_state->_functions._nameFilter.PassFilter(contextName.c_str())) {
+						if (!_state->_functions._nameFilter.PassFilter(contextName.c_str())) {
 							continue;
 						}
 
@@ -306,7 +309,8 @@ void showFuncList() {
 								int castId = context._value->_id;
 								bool childScript = false;
 								if (castId == -1) {
-									castId = movie->getCast()->getCastIdByScriptId(context._value->_parentNumber);
+									// resolve the parent script in the cast that owns this context
+									castId = cast._value->getCastIdByScriptId(context._value->_parentNumber);
 									childScript = true;
 								}
 
@@ -343,6 +347,9 @@ void showFuncList() {
 
 				if (ImGui::TreeNode(castName.c_str())) {
 					for (auto context : sharedCast->_lingoArchive->lctxContexts) {
+						if (!context._value || !context._value->_functionHandlers.size()) {
+							continue;
+						}
 						CastMemberInfo *cmi = sharedCast->getCastMemberInfo(context._value->_id);
 						Common::String contextName = Common::String::format("%d", context._value->_id);
 						if (cmi && cmi->name.size()) {
@@ -350,7 +357,7 @@ void showFuncList() {
 						}
 
 						contextName += Common::String::format(": %s", scriptType2str(context._value->_scriptType));
-						if (!context._value || !context._value->_functionHandlers.size() || !_state->_functions._nameFilter.PassFilter(contextName.c_str())) {
+						if (!_state->_functions._nameFilter.PassFilter(contextName.c_str())) {
 							continue;
 						}
 
@@ -361,7 +368,8 @@ void showFuncList() {
 								int castId = context._value->_id;
 								bool childScript = false;
 								if (castId == -1) {
-									castId = movie->getCast()->getCastIdByScriptId(context._value->_parentNumber);
+									// resolve the parent script in the cast that owns this context
+									castId = sharedCast->getCastIdByScriptId(context._value->_parentNumber);
 									childScript = true;
 								}
 
@@ -375,7 +383,7 @@ void showFuncList() {
 										ImGuiScript script = toImGuiScript(context._value->_scriptType, memberID, functionHandler._key);
 										script.byteOffsets = context._value->_functionByteOffsets[script.handlerId];
 										script.moviePath = movie->getArchive()->getPathName().toString();
-										script.handlerName = formatHandlerName(context._value->_scriptId, castId, script.handlerName, context._value->_scriptType, childScript);
+										script.handlerName = formatHandlerName(context._value->_scriptId, castId, script.handlerId, context._value->_scriptType, childScript);
 										addToOpenHandlers(script);
 									}
 								}
