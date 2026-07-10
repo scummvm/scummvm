@@ -27,11 +27,11 @@
 
 #include "pelrock/computer.h"
 #include "pelrock/events.h"
+#include "pelrock/fonts/small_font.h"
 #include "pelrock/graphics.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/resources.h"
 #include "pelrock/room.h"
-#include "pelrock/fonts/small_font.h"
 
 namespace Pelrock {
 
@@ -189,75 +189,82 @@ void Computer::drawScreen() {
 		const char *section = _searchType == 0 ? _titleMsg.c_str() : _authorMsg.c_str();
 		Common::String title = _computerText[2][0];
 		int replacementIndex = title.findFirstOf("XXXXXXX");
+		if (replacementIndex != -1) {
 
-		title.replace(replacementIndex, 7, section);
-		int replacementIndex2 = title.findFirstOf("X");
-		title.replace(replacementIndex2, 1, Common::String(1, _searchLetter));
-		g_engine->_graphics->drawColoredText(g_engine->_screen, title, 210, 97, 200, defaultColor, g_engine->_smallFont);
+			title.replace(replacementIndex, 7, section);
+			int replacementIndex2 = title.findFirstOf("X");
+			title.replace(replacementIndex2, 1, Common::String(1, _searchLetter));
+			g_engine->_graphics->drawColoredText(g_engine->_screen, title, 210, 97, 200, defaultColor, g_engine->_smallFont);
 
-		int textX = 161;
-		int textY = 131;
-		int increment = 28;
+			int textX = 161;
+			int textY = 131;
+			int increment = 28;
 
-		// Display current book
-		int bookIdx = _searchResults[_currentResult];
-		const LibraryBook &book = _libraryBooks[bookIdx];
+			// Display current book
+			int bookIdx = _searchResults[_currentResult];
+			const LibraryBook &book = _libraryBooks[bookIdx];
 
-		// Title (may be long, truncate if needed)
-		Common::String titleLine = _computerText[3][0];
-		int titlePlaceholderIndex = titleLine.findFirstOf("XXXX");
+			// Title (may be long, truncate if needed)
+			Common::String titleLine = _computerText[3][0];
+			int titlePlaceholderIndex = titleLine.findFirstOf("XXXX");
 
-		uint titleIndex = 0;
-		while (titleIndex < book.title.size()) {
-			Common::String thisLine;
-			if (titleIndex == 0) {
-				thisLine = titleLine;
-				thisLine.replace(titlePlaceholderIndex, titleLine.size() - titlePlaceholderIndex, book.title[titleIndex]);
-			} else {
-				thisLine = book.title[titleIndex];
+			uint titleIndex = 0;
+			while (titleIndex < book.title.size()) {
+				Common::String thisLine;
+				if (titleIndex == 0) {
+					thisLine = titleLine;
+					thisLine.replace(titlePlaceholderIndex, titleLine.size() - titlePlaceholderIndex, book.title[titleIndex]);
+				} else {
+					thisLine = book.title[titleIndex];
+				}
+				g_engine->_graphics->drawColoredText(g_engine->_screen, thisLine, textX, textY + _lineHeight * titleIndex, 340, defaultColor, g_engine->_smallFont);
+				titleIndex++;
 			}
-			g_engine->_graphics->drawColoredText(g_engine->_screen, thisLine, textX, textY + _lineHeight * titleIndex, 340, defaultColor, g_engine->_smallFont);
-			titleIndex++;
-		}
 
-		// Author
-		Common::String authorLine = _computerText[4][0];
-		int authorPlaceholderIndex = authorLine.findFirstOf("XXXX");
-		uint authorIndex = 0;
+			// Author
+			Common::String authorLine = _computerText[4][0];
+			int authorPlaceholderIndex = authorLine.findFirstOf("XXXX");
+			if (authorPlaceholderIndex != -1) {
+				authorLine.replace(authorPlaceholderIndex, authorLine.size() - authorPlaceholderIndex, book.author[0]);
 
-		while (authorIndex < book.author.size()) {
-			Common::String thisLine;
-			if (authorIndex == 0) {
-				thisLine = authorLine;
-				thisLine.replace(authorPlaceholderIndex, authorLine.size() - authorPlaceholderIndex, book.author[authorIndex]);
-			} else {
-				thisLine = book.author[authorIndex];
+				uint authorIndex = 0;
+
+				while (authorIndex < book.author.size()) {
+					Common::String thisLine;
+					if (authorIndex == 0) {
+						thisLine = authorLine;
+						thisLine.replace(authorPlaceholderIndex, authorLine.size() - authorPlaceholderIndex, book.author[authorIndex]);
+					} else {
+						thisLine = book.author[authorIndex];
+					}
+					g_engine->_graphics->drawColoredText(g_engine->_screen, thisLine, textX, textY + increment + _lineHeight * authorIndex, 340, defaultColor, g_engine->_smallFont);
+					authorIndex++;
+				}
 			}
-			g_engine->_graphics->drawColoredText(g_engine->_screen, thisLine, textX, textY + increment + _lineHeight * authorIndex, 340, defaultColor, g_engine->_smallFont);
-			authorIndex++;
+
+			// Genre
+			Common::String genreLine = _computerText[5][0];
+			int genrePlaceholderIndex = genreLine.findFirstOf("XXXX");
+			if (genrePlaceholderIndex != -1) {
+				genreLine.replace(genrePlaceholderIndex, genreLine.size() - genrePlaceholderIndex, book.genre);
+				g_engine->_graphics->drawColoredText(g_engine->_screen, genreLine, textX, textY + increment * 2, 340, defaultColor, g_engine->_smallFont);
+			}
+			// "Situacion" (location/availability)
+			Common::String situacionLine = _computerText[6][0];
+			int situacionPlaceholderIndex = situacionLine.findFirstOf("XXXX");
+			if (situacionPlaceholderIndex != -1) {
+				situacionLine.replace(situacionPlaceholderIndex, situacionLine.size() - situacionPlaceholderIndex, book.available ? _computerText[8][0] : _computerText[9][0]);
+				g_engine->_graphics->drawColoredText(g_engine->_screen, situacionLine, textX, textY + increment * 3, 340, defaultColor, g_engine->_smallFont);
+			}
+			// Show navigation options
+			Common::String navOptions;
+			Common::String actions = _computerText[7][0];
+			if (!book.available) {
+				actions.setChar((char)180, 1);
+				actions.setChar((char)180, 4);
+			}
+			g_engine->_graphics->drawColoredText(g_engine->_screen, actions, 174, 258, 325, defaultColor, g_engine->_smallFont);
 		}
-
-		// Genre
-		Common::String genreLine = _computerText[5][0];
-		int genrePlaceholderIndex = genreLine.findFirstOf("XXXX");
-		genreLine.replace(genrePlaceholderIndex, genreLine.size() - genrePlaceholderIndex, book.genre);
-		g_engine->_graphics->drawColoredText(g_engine->_screen, genreLine, textX, textY + increment * 2, 340, defaultColor, g_engine->_smallFont);
-
-		// "Situacion" (location/availability)
-		Common::String situacionLine = _computerText[6][0];
-		int situacionPlaceholderIndex = situacionLine.findFirstOf("XXXX");
-		situacionLine.replace(situacionPlaceholderIndex, situacionLine.size() - situacionPlaceholderIndex, book.available ? _computerText[8][0] : _computerText[9][0]);
-		g_engine->_graphics->drawColoredText(g_engine->_screen, situacionLine, textX, textY + increment * 3, 340, defaultColor, g_engine->_smallFont);
-
-		// Show navigation options
-		Common::String navOptions;
-		Common::String actions = _computerText[7][0];
-		if (!book.available) {
-			actions.setChar((char)180, 1);
-			actions.setChar((char)180, 4);
-		}
-		g_engine->_graphics->drawColoredText(g_engine->_screen, actions, 174, 258, 325, defaultColor, g_engine->_smallFont);
-
 	} break;
 
 	case STATE_EXIT:
@@ -338,7 +345,6 @@ void Computer::memorizeBook(int bookIndex) {
 	g_engine->_state->libraryShelf = book.shelf; // 0-based shelf index
 	g_engine->_state->selectedBookIndex = book.inventoryIndex;
 	g_engine->_state->bookLetter = book.title[0][0];
-
 }
 
 void Computer::performSearch() {

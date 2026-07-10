@@ -30,7 +30,6 @@ struct SonidoFile {
 	Common::String filename;
 	uint32 offset;
 	uint32 size;
-	byte *data;
 };
 
 extern const char *SOUND_FILENAMES[];

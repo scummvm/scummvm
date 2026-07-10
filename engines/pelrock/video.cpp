@@ -315,6 +315,7 @@ void VideoManager::initMetadata() {
 MusicEffect VideoManager::readMusicEffect(Common::File &metadataFile) {
 	MusicEffect music;
 	Common::String buffer;
+	music.startFrame = 0;
 
 	// Skip spaces after "/c"
 	while (!metadataFile.eos() && metadataFile.readByte() == ' ')
@@ -343,6 +344,7 @@ MusicEffect VideoManager::readMusicEffect(Common::File &metadataFile) {
 AudioEffect VideoManager::readAudioEffect(Common::File &metadataFile) {
 	AudioEffect voice;
 	Common::String buffer;
+	voice.startFrame = 0;
 
 	// Skip spaces after "/x"
 	while (!metadataFile.eos() && metadataFile.readByte() == ' ')
