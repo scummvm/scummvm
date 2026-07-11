@@ -19,7 +19,84 @@
  *
  */
 
+#include "comfy/comfy.h"
+
+#include "common/endian.h"
+
+#include <cstdarg>
+
 namespace Comfy {
+
+bool ComfyEngine::scriptHasRange(uint32 pc, uint32 width) {
+	uint32 tileOffset = pc % COMFY_TILE_SIZE;
+	uint32 tileBase = pc - tileOffset;
+	uint32 tileSize = tileBase < _picDataSize ? MIN<uint32>(COMFY_TILE_SIZE, _picDataSize - tileBase) : 0;
+	if (tileBase > _comfyObjData.size() || tileSize > _comfyObjData.size() - tileBase ||
+			tileOffset > tileSize || width > tileSize - tileOffset) {
+		_scriptFault = true;
+		return false;
+	}
+
+	return true;
+}
+
+byte ComfyEngine::scriptReadByte(uint32 pc) {
+	return scriptHasRange(pc, 1) ? _comfyObjData[pc] : 0;
+}
+
+uint16 ComfyEngine::scriptReadWord(uint32 pc) {
+	return scriptHasRange(pc, 2) ? READ_LE_UINT16(&_comfyObjData[pc]) : 0;
+}
+
+uint32 ComfyEngine::scriptReadDword(uint32 pc) {
+	return scriptHasRange(pc, 4) ? READ_LE_UINT32(&_comfyObjData[pc]) : 0;
+}
+
+uint16 ComfyEngine::scriptReadStringIndex(uint32 pc) {
+	uint16 value = scriptReadWord(pc);
+	if (value >= 0x7530) {
+		uint32 index = value - 0x7530;
+		if (index < _stringTable.size())
+			value = _stringTable[index];
+	}
+
+	return value;
+}
+
+uint32 ComfyEngine::scriptReadArgs(uint32 pc, uint16 fallbackActor, const char *format, ...) {
+	va_list args;
+	va_start(args, format);
+	for (char type = *format; type; type = *++format) {
+		if (type == 'C') {
+			byte *value = va_arg(args, byte *);
+			if (value)
+				*value = scriptReadByte(pc);
+
+			pc++;
+		} else if (type == 'I' || type == 'N') {
+			uint16 *value = va_arg(args, uint16 *);
+			if (value)
+				*value = type == 'N' ? scriptReadStringIndex(pc) : scriptReadWord(pc);
+
+			pc += 2;
+		} else if (type == 'L') {
+			uint32 *value = va_arg(args, uint32 *);
+			if (value)
+				*value = scriptReadDword(pc);
+
+			pc += 4;
+		} else if (type == 'O') {
+			Actor **value = va_arg(args, Actor **);
+			if (value)
+				*value = actorResolve(scriptReadWord(pc), fallbackActor);
+
+			pc += 2;
+		}
+	}
+
+	va_end(args);
+	return pc;
+}
 
 
 } // End of namespace Comfy

@@ -68,6 +68,13 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_keyboardUiInitialized(false), _keyboardUiVisible(true),
 	_stringCount(0), _sceneCount(0), _keyBitCount(0), _resourceHandleCount(0), _midiEntryCount(0),
 	_picDataSize(0), _usesAnimFile(false), _sceneOpen(false),
+	_sceneMidiInstanceOffset(0), _sceneEntryListOffset(0), _sceneActorPcOffset(0), _sceneStringTableOffset(0),
+	_sceneHandlesOffset(0), _sceneActorsOffset(0), _sceneKeyBitsOffset(0), _scenePoolCursor(0),
+	_scenePoolEvictCursor(0), _activeSceneCount(0), _sceneEntryCount(0), _sceneEntryFrameSize(0),
+	_numObjects(0), _numFrames(0), _numSprites(0), _envNumSprites(0), _midiFileMode(0), _mirrorMode(false),
+	_currentActor(0), _pendingScene(0), _musicEventMask(0), _musicEventFlag(0), _musicEnabled(true),
+	_usesWcomfy99ScriptOps(false), _actorDestroyedCurrent(false),
+	_exprStackTop(0), _scriptFault(false),
 	_gameInitialized(false), _videoInitialized(false),
 	_timerInitialized(false), _lptKeyboardInitialized(false), _mainLoopRunning(false) {
 	memset(_paletteFadeSource, 0, sizeof(_paletteFadeSource));
@@ -240,9 +247,26 @@ void ComfyEngine::midiPollChannels(uint16 ticks) {
 }
 
 void ComfyEngine::actorTickTree() {
+	if (_sceneHandles.size() > 1 && _sceneHandles[1])
+		actorTickTreeInternal(_sceneHandles[1]);
+
+	scenePackRuntimeState();
 }
 
 void ComfyEngine::renderFrame() {
+	Actor *root = actorGet(0);
+	uint16 frame = root ? actorReadDword(*root, kActorSpriteSelector) : 0;
+	if (frame) {
+		SpriteResource *background = spriteGet(int16(frame));
+		if (background && background->header.width == _logicalScreenWidth &&
+				background->header.height == _logicalScreenHeight && !background->pixels.empty()) {
+			spriteBlitRle(&background->pixels[0], background->pixels.size());
+		} else {
+			uint16 clear = background && background->pixels.size() > 3 ? background->pixels[3] : 0;
+			framebufClear(clear);
+		}
+	}
+
 	videoPresentFrame();
 }
 

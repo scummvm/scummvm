@@ -49,6 +49,16 @@
 #define COMFY_PALETTE_BYTES 0x300
 #define COMFY_INPUT_QUEUE_CAPACITY 20
 #define COMFY_KEYBOARD_CONTACT_COUNT 24
+#define COMFY_ACTOR_SIZE 0x54
+#define COMFY_ACTOR_COUNT 0x79
+#define COMFY_EXPR_STACK_CAPACITY 64
+#define COMFY_ACTOR_PC_TABLE_COUNT 200
+#define COMFY_TILE_SIZE 0x800
+#define COMFY_RESOURCE_LIST_CAPACITY 32
+#define COMFY_SCENE_ENTRY_OFFSET_CAPACITY 16
+#define COMFY_SCENE_MIDI_INSTANCE_BYTES 0x18C
+#define COMFY_SCENE_ACTOR_PC_BYTES 0x320
+#define COMFY_SCENE_FRAME_BYTES 0x4E20
 
 namespace Comfy {
 
@@ -95,9 +105,64 @@ private:
 	};
 
 	struct SpriteResource {
+		int16 id;
 		SpriteObjectHeader header;
 		Common::Array<byte> pixels;
 		bool loaded;
+	};
+
+	struct SpriteCacheEntry {
+		uint32 poolOffset;
+		uint16 slotSize;
+	};
+
+	struct ResourceLoadList {
+		uint16 ids[COMFY_RESOURCE_LIST_CAPACITY];
+		uint16 count;
+	};
+
+	struct Actor {
+		byte raw[COMFY_ACTOR_SIZE];
+	};
+
+	enum ActorOffset {
+		kActorCurrentPc = 0x00,
+		kActorCallPc = 0x04,
+		kActorResetPc = 0x08,
+		kActorXFixed = 0x0C,
+		kActorYFixed = 0x10,
+		kActorSpriteSelector = 0x14,
+		kActorMoveDx = 0x18,
+		kActorMoveDy = 0x1C,
+		kActorTriggerPc = 0x20,
+		kActorStringRef = 0x24,
+		kActorSceneHandle = 0x28,
+		kActorVisible = 0x2A,
+		kActorActive = 0x2B,
+		kActorParent = 0x2C,
+		kActorChildTail = 0x2E,
+		kActorChildHead = 0x30,
+		kActorSiblingHead = 0x32,
+		kActorNextLink = 0x34,
+		kActorPrevLink = 0x36,
+		kActorMoveTicks = 0x38,
+		kActorBlockingMove = 0x3A,
+		kActorCompletionKey = 0x3B,
+		kActorTriggerKey = 0x3D,
+		kActorTriggerFlags = 0x3F,
+		kActorWaitTarget = 0x40,
+		kActorWaitAccum = 0x42,
+		kActorDirty = 0x44,
+		kActorCachedRect = 0x45,
+		kActorCachedVisible = 0x4F,
+		kActorCachedSprite = 0x50
+	};
+
+	enum ScriptDispatchStatus {
+		kScriptUnhandled,
+		kScriptContinue,
+		kScriptYield,
+		kScriptDeactivatedRoot
 	};
 
 	const ADGameDescription *_gameDescription;
@@ -161,6 +226,7 @@ private:
 	Common::Array<byte> _midiFileData;
 	Common::Array<SpriteObjectHeader> _spriteHeaders;
 	Common::Array<SpriteResource> _spriteResources;
+	SpriteResource _frameSpriteResource;
 	uint16 _stringCount;
 	uint16 _sceneCount;
 	uint16 _keyBitCount;
@@ -169,6 +235,47 @@ private:
 	uint32 _picDataSize;
 	bool _usesAnimFile;
 	bool _sceneOpen;
+	Common::Array<uint16> _stringTable;
+	Common::Array<uint16> _sceneHandles;
+	Common::Array<uint16> _midiHandles;
+	Common::Array<Actor> _actors;
+	Common::Array<byte> _sceneMemoryBlock;
+	Common::Array<byte> _scenePoolData;
+	Common::Array<byte> _environmentData;
+	Common::Array<byte> _sceneFrameData;
+	Common::Array<SpriteCacheEntry> _objectCacheEntries;
+	Common::Array<SpriteCacheEntry> _frameCacheEntries;
+	ResourceLoadList _spriteConversionLoads;
+	uint32 _sceneEntryOffsets[COMFY_SCENE_ENTRY_OFFSET_CAPACITY];
+	uint32 _sceneMidiInstanceOffset;
+	uint32 _sceneEntryListOffset;
+	uint32 _sceneActorPcOffset;
+	uint32 _sceneStringTableOffset;
+	uint32 _sceneHandlesOffset;
+	uint32 _sceneActorsOffset;
+	uint32 _sceneKeyBitsOffset;
+	uint32 _scenePoolCursor;
+	uint32 _scenePoolEvictCursor;
+	uint16 _activeSceneCount;
+	uint16 _sceneEntryCount;
+	uint16 _sceneEntryFrameSize;
+	uint16 _numObjects;
+	uint16 _numFrames;
+	uint32 _numSprites;
+	uint32 _envNumSprites;
+	byte _midiFileMode;
+	bool _mirrorMode;
+	uint32 _actorPcTable[COMFY_ACTOR_PC_TABLE_COUNT];
+	uint16 _currentActor;
+	uint16 _pendingScene;
+	uint16 _musicEventMask;
+	byte _musicEventFlag;
+	bool _musicEnabled;
+	bool _usesWcomfy99ScriptOps;
+	bool _actorDestroyedCurrent;
+	uint16 _exprStack[COMFY_EXPR_STACK_CAPACITY];
+	uint16 _exprStackTop;
+	bool _scriptFault;
 	bool _gameInitialized;
 	bool _videoInitialized;
 	bool _timerInitialized;
@@ -237,12 +344,50 @@ private:
 	bool comfyObjOpen();
 	bool picFileOpen();
 	bool midiFileOpen();
-	bool spriteLoad(uint16 spriteId);
+	bool spriteLoad(int16 spriteId);
+	SpriteResource *spriteGet(int16 spriteId);
 	bool spriteDecompressTile(SpriteResource &sprite, const byte *source, uint32 sourceSize);
-	void spriteBlitClipped(uint16 spriteId, int16 x, int16 y);
+	void spriteBlitClipped(int16 spriteId, int16 x, int16 y);
 	void spriteBlitRle(const byte *source, uint32 sourceSize);
 	bool sceneOpen();
 	void sceneClose();
+	void scenePackRuntimeState();
+	bool environmentLoad(uint16 index);
+	bool environmentStore(uint16 index);
+	void sceneGoto(uint16 count);
+	void sceneStop();
+	bool sceneEntryLoad(uint16 descriptor, uint16 index);
+	bool scriptHasRange(uint32 pc, uint32 width);
+	byte scriptReadByte(uint32 pc);
+	uint16 scriptReadWord(uint32 pc);
+	uint32 scriptReadDword(uint32 pc);
+	uint16 scriptReadStringIndex(uint32 pc);
+	uint32 scriptReadArgs(uint32 pc, uint16 fallbackActor, const char *format, ...);
+	uint16 scriptEvalExpr(uint32 &pc, uint16 fallbackActor);
+	ScriptDispatchStatus scriptDispatch(Actor &actor, byte opcode, uint32 &pc);
+	ScriptDispatchStatus scriptStep(Actor &actor, uint32 &pc);
+	uint32 actorReadDword(Actor &actor, uint offset);
+	uint16 actorReadWord(Actor &actor, uint offset);
+	byte actorReadByte(Actor &actor, uint offset);
+	void actorWriteDword(Actor &actor, uint offset, uint32 value);
+	void actorWriteWord(Actor &actor, uint offset, uint16 value);
+	void actorWriteByte(Actor &actor, uint offset, byte value);
+	Actor *actorGet(uint16 actorIndex);
+	Actor *actorResolve(uint16 sceneOrActor, uint16 fallbackActor);
+	uint16 actorAllocate(uint16 sceneSlot);
+	void actorFree(uint16 sceneSlot);
+	void actorInsertChild(uint16 childIndex, uint16 parentIndex);
+	void actorInsertSibling(uint16 actorIndex, uint16 ownerIndex);
+	void actorUnlink(uint16 actorIndex);
+	void actorSetPc(Actor &actor, uint32 pc);
+	uint32 actorPopPc(Actor &actor);
+	void actorFreePcChain(Actor &actor);
+	void actorFreeTree(uint16 actorIndex);
+	void actorClearDirtyTree(uint16 actorIndex);
+	uint16 actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible, byte active,
+		uint32 pc, int16 x, int16 y, int16 sprite, byte insertAsChild);
+	bool actorRunScript(uint16 actorIndex, bool &descendChildren);
+	bool actorTickTreeInternal(uint16 actorIndex);
 	void timerInit();
 	void timerShutdown();
 	void lptKeyboardInit();

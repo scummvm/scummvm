@@ -19,7 +19,118 @@
  *
  */
 
+#include "comfy/comfy.h"
+
 namespace Comfy {
+
+uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
+	_exprStackTop = 0;
+	for (;;) {
+		byte opcode = scriptReadByte(pc++);
+		if (_scriptFault)
+			return 0;
+
+		if (opcode == 0x0D)
+			return _exprStackTop ? _exprStack[0] : 0;
+
+		if (opcode == 0x01 || opcode == 0x03 || opcode == 0x15) {
+			if (_exprStackTop < COMFY_EXPR_STACK_CAPACITY)
+				_exprStack[_exprStackTop++] = scriptReadWord(pc);
+
+			pc += 2;
+			continue;
+		}
+
+		if (opcode == 0x02) {
+			uint16 index = scriptReadWord(pc);
+			pc += 2;
+			uint16 value = index < _stringTable.size() ? _stringTable[index] : 0;
+			if (_exprStackTop < COMFY_EXPR_STACK_CAPACITY)
+				_exprStack[_exprStackTop++] = value;
+
+			continue;
+		}
+
+		if (opcode >= 0x10 && opcode <= 0x14) {
+			Actor *actor = actorResolve(scriptReadWord(pc), fallbackActor);
+			pc += 2;
+			if (!actor) {
+				_scriptFault = true;
+				return 0;
+			}
+
+			uint16 value = 0;
+			if (opcode == 0x10)
+				value = actorReadDword(*actor, kActorXFixed) >> 12;
+			else if (opcode == 0x11)
+				value = actorReadDword(*actor, kActorYFixed) >> 12;
+			else if (opcode == 0x12 || opcode == 0x13) {
+				uint offset = opcode == 0x12 ? kActorXFixed : kActorYFixed;
+				int32 position = actorReadDword(*actor, offset);
+				while (actorReadWord(*actor, kActorParent)) {
+					actor = actorGet(actorReadWord(*actor, kActorParent));
+					if (!actor)
+						break;
+
+					position += actorReadDword(*actor, offset);
+				}
+
+				value = uint16(position >> 12);
+			} else if (opcode == 0x14)
+				value = actorReadWord(*actor, kActorSpriteSelector);
+
+			if (_exprStackTop < COMFY_EXPR_STACK_CAPACITY)
+				_exprStack[_exprStackTop++] = value;
+
+			continue;
+		}
+
+		if (opcode == 0x16) {
+			if (_exprStackTop) {
+				int16 maximum = _exprStack[_exprStackTop - 1];
+				_exprStack[_exprStackTop - 1] = uint16((int32(getRandomNumber(0x7FFF)) * maximum) / 0x8000);
+			}
+
+			continue;
+		}
+
+		if (opcode == 0x0C) {
+			if (_exprStackTop < 2) {
+				_exprStackTop = 0;
+				continue;
+			}
+
+			uint16 index = _exprStack[_exprStackTop - 2] + _exprStack[_exprStackTop - 1];
+			_exprStackTop--;
+			_exprStack[_exprStackTop - 1] = index < _stringTable.size() ? _stringTable[index] : 0;
+			continue;
+		}
+
+		if (opcode != 0x08 && opcode != 0x09 && opcode != 0x0A && opcode != 0x0B && opcode != 0x0E)
+			continue;
+
+		if (_exprStackTop < 2) {
+			_exprStackTop = 0;
+			continue;
+		}
+
+		int16 rhs = _exprStack[--_exprStackTop];
+		int16 lhs = _exprStack[_exprStackTop - 1];
+		if (opcode == 0x08)
+			_exprStack[_exprStackTop - 1] = uint16(lhs + rhs);
+		else if (opcode == 0x09)
+			_exprStack[_exprStackTop - 1] = uint16(lhs - rhs);
+		else if (opcode == 0x0A)
+			_exprStack[_exprStackTop - 1] = uint16(lhs * rhs);
+		else if ((opcode == 0x0B || opcode == 0x0E) && !rhs) {
+			_scriptFault = true;
+			return 0;
+		} else if (opcode == 0x0B)
+			_exprStack[_exprStackTop - 1] = uint16(lhs / rhs);
+		else if (opcode == 0x0E)
+			_exprStack[_exprStackTop - 1] = uint16(lhs % rhs);
+	}
+}
 
 
 } // End of namespace Comfy
