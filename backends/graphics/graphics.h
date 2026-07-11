@@ -83,8 +83,8 @@ public:
 
 	virtual int16 getHeight() const = 0;
 	virtual int16 getWidth() const = 0;
-	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
-	virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
+	void setPalette(const byte *colors, uint start, uint num) override = 0;
+	void grabPalette(byte *colors, uint start, uint num) const override = 0;
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) = 0;
 	virtual Graphics::Surface *lockScreen() = 0;
 	virtual void unlockScreen() = 0;

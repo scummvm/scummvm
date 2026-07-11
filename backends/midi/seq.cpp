@@ -272,17 +272,17 @@ const char *MidiDriver_SEQ::getDeviceName() {
 
 class SeqMusicPlugin : public MusicPluginObject {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return "SEQ";
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "seq";
 	}
 
-	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
-	bool checkDevice(MidiDriver::DeviceHandle hdl, int checkFlags, bool quiet) const;
+	MusicDevices getDevices() const override;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
+	bool checkDevice(MidiDriver::DeviceHandle hdl, int checkFlags, bool quiet) const override;
 
 private:
 	void addMidiDevices(int deviceFD, MusicDevices &devices, Common::Array<int> *portIDs) const;

@@ -47,7 +47,7 @@ public:
 	/**
 	 * Gets and processes SDL events.
 	 */
-	virtual bool pollEvent(Common::Event &event);
+	bool pollEvent(Common::Event &event) override;
 
 	/**
 	 * Emulates a mouse movement that would normally be caused by a mouse warp

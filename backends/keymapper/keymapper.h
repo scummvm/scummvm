@@ -48,7 +48,7 @@ public:
 	~Keymapper();
 
 	// EventMapper interface
-	virtual bool mapEvent(const Event &ev, List<Event> &mappedEvents);
+	bool mapEvent(const Event &ev, List<Event> &mappedEvents) override;
 
 	/**
 	 * Registers a HardwareInputSet and platform-specific default mappings with the Keymapper

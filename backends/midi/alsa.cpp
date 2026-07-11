@@ -339,17 +339,17 @@ int AlsaDevice::getClient() {
 
 class AlsaMusicPlugin : public MusicPluginObject {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return "ALSA";
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "alsa";
 	}
 
 	AlsaDevices getAlsaDevices() const;
-	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	MusicDevices getDevices() const override;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
 
 private:
 	static int parse_addr(const char *arg, int *client, int *port);

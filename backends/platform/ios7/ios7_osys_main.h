@@ -158,11 +158,11 @@ public:
 	void virtualController(bool connect);
 	bool isiOSAppOnMac() const;
 
-	virtual Common::Path getDefaultLogFileName() override { return Common::Path("/scummvm.log"); }
+	Common::Path getDefaultLogFileName() override { return Common::Path("/scummvm.log"); }
 
-	virtual GUI::OptionsContainerWidget* buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
-	virtual void applyBackendSettings() override;
-	virtual void registerDefaultSettings(const Common::String &target) const override;
+	GUI::OptionsContainerWidget* buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	void applyBackendSettings() override;
+	void registerDefaultSettings(const Common::String &target) const override;
 
 protected:
 	void updateOutputSurface();

@@ -39,19 +39,19 @@ public:
 	/**
 	 * Initialize and setups the mixer
 	 */
-	virtual void init();
+	void init() override;
 
 	// Used by Event recorder
 
 	/**
 	 * Pauses the audio system
 	 */
-	virtual void suspendAudio();
+	void suspendAudio() override;
 
 	/**
 	 * Resumes the audio system
 	 */
-	virtual int resumeAudio();
+	int resumeAudio() override;
 
 protected:
 	/**

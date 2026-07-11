@@ -205,7 +205,7 @@ protected:
 #endif
 
 	virtual uint32 getOSDoubleClickTime() const { return 0; }
-	virtual const char * const *buildHelpDialogData() override;
+	const char * const *buildHelpDialogData() override;
 };
 
 #endif
