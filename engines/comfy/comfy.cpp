@@ -114,7 +114,8 @@ Common::Error ComfyEngine::run() {
 
 	uint16 currentScene = _language;
 	uint16 chooserScene = currentScene;
-	if (_multiLanguage && !ConfMan.getBool("comfy_language_chosen")) {
+	if (_multiLanguage && (ConfMan.getBool("force_language_setup") ||
+			!ConfMan.getBool("comfy_language_chosen"))) {
 		if (!iniGetGameDataPath(0x63)) {
 			gameShutdown();
 			return Common::kNoGameDataFoundError;
