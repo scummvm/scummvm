@@ -55,6 +55,14 @@ namespace {
 static const char *const kQuickTipsPath = "ADJHEAD.RCS";
 static const char *const kMenuPath = "MENU.INI";
 static const char *const kMenuSectionName = "menu";
+static const char *const kDemoMenuItems[] = {
+	"NEW GAME",
+	"SAVE GAME",
+	"LOAD GAME",
+	"OPTIONS",
+	"HELP",
+	"QUIT GAME"
+};
 static const char *const kTownMapPalettePath = "1:/GRAPHIC/PAL/HARVMAP.PAL";
 static const char *const kTownMapMusicPath = "SOUND/MUSIC/MENACE.CMP";
 static const char *const kTownMapBitmapPaths[] = {
@@ -1484,6 +1492,15 @@ bool Flow::loadMenuItems() {
 
 	Common::Array<byte> data;
 	if (!_engine.getResources()->loadFile(kMenuPath, data)) {
+		if (_engine.isDemo()) {
+			for (const char *item : kDemoMenuItems)
+				_menuItems.push_back(item);
+			debugC(1, kDebugGeneral,
+				"Harvester: using %u built-in DOS demo menu items",
+				(uint)_menuItems.size());
+			return true;
+		}
+
 		warning("Harvester: unable to load startup menu '%s'", kMenuPath);
 		return true;
 	}
