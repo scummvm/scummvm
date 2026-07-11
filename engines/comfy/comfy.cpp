@@ -51,6 +51,7 @@ static ComfyEngineVersion getEngineVersion(const ADGameDescription *gameDesc) {
 
 ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _engineVersion(getEngineVersion(gameDesc)),
+	_language(2), _multiLanguage(true),
 	_randomSource("Comfy"), _screen(nullptr),
 	_logicalScreenWidth(!strcmp(gameDesc->gameId, "panther") ? COMFY_PANTHER_SCREEN_WIDTH : COMFY_SCREEN_WIDTH),
 	_logicalScreenHeight(!strcmp(gameDesc->gameId, "panther") ? COMFY_PANTHER_SCREEN_HEIGHT : COMFY_SCREEN_HEIGHT),
@@ -86,6 +87,10 @@ Common::Error ComfyEngine::run() {
 Common::Error ComfyEngine::gameInit() {
 	if (_gameInitialized)
 		return Common::kNoError;
+
+	gameConfigInit();
+	if (!iniReadGameConfig())
+		return Common::kNoGameDataFoundError;
 
 	videoInit();
 	timerInit();
