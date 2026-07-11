@@ -36,7 +36,7 @@ friend void freeResamplerModel(FloatSampleProvider &model, FloatSampleProvider &
 public:
 	CascadeStage(FloatSampleProvider &source, ResamplerStage &resamplerStage);
 
-	void getOutputSamples(FloatSample *outBuffer, unsigned int size);
+	void getOutputSamples(FloatSample *outBuffer, unsigned int size) override;
 
 protected:
 	ResamplerStage &resamplerStage;
