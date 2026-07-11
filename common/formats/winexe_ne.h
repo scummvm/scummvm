@@ -52,25 +52,25 @@ public:
 	~NEResources();
 
 	/** Clear all information. */
-	void clear();
+	void clear() override;
 
 	/** Load from an EXE file. */
 	using WinResources::loadFromEXE;
 
 	/** Load from a stream. */
-	bool loadFromEXE(SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle = DisposeAfterUse::YES);
+	bool loadFromEXE(SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle = DisposeAfterUse::YES) override;
 
 	/** Return a list of resources for a given type. */
-	const Array<WinResourceID> getIDList(const WinResourceID &type) const;
+	const Array<WinResourceID> getIDList(const WinResourceID &type) const override;
 
 	/** Return a stream to the specified resource (or 0 if non-existent). */
-	SeekableReadStream *getResource(const WinResourceID &type, const WinResourceID &id);
+	SeekableReadStream *getResource(const WinResourceID &type, const WinResourceID &id) override;
 
 	/** Get a string from a string resource. */
-	String loadString(uint32 stringID);
+	String loadString(uint32 stringID) override;
 
 protected:
-	VersionInfo *parseVersionInfo(SeekableReadStream *stream);
+	VersionInfo *parseVersionInfo(SeekableReadStream *stream) override;
 
 private:
 	/** A resource. */

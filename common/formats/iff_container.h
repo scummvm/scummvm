@@ -212,11 +212,11 @@ class IFFParser {
 			}
 		}
 		// ReadStream implementation
-		bool eos() const { return _input->eos(); }
-		bool err() const { return _input->err(); }
-		void clearErr() { _input->clearErr(); }
+		bool eos() const override { return _input->eos(); }
+		bool err() const override { return _input->err(); }
+		void clearErr() override { _input->clearErr(); }
 
-		uint32 read(void *dataPtr, uint32 dataSize) {
+		uint32 read(void *dataPtr, uint32 dataSize) override {
 			incBytesRead(dataSize);
 			return _input->read(dataPtr, dataSize);
 		}
@@ -272,9 +272,9 @@ public:
 	PackBitsReadStream(Common::ReadStream &input);
 	~PackBitsReadStream();
 
-	virtual bool eos() const;
+	bool eos() const override;
 
-	uint32 read(void *dataPtr, uint32 dataSize);
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 };
 
 /** @} */
