@@ -88,16 +88,16 @@ void ComfyEngine::gameConfigInit() {
 		_introDirectory = Common::Path("MINTRO");
 	} else if (!strcmp(_gameDescription->gameId, "colors")) {
 		_gameDirectory = Common::Path("COLORS");
-		_introDirectory = Common::Path("FINTRO");
+		_introDirectory = Common::Path("INTRO");
 	} else if (!strcmp(_gameDescription->gameId, "concert")) {
 		_gameDirectory = Common::Path("CONCERT");
 		_introDirectory = Common::Path("INTRO");
 	} else if (!strcmp(_gameDescription->gameId, "friends")) {
 		_gameDirectory = Common::Path("FRIENDS");
-		_introDirectory = Common::Path("FINTRO");
+		_introDirectory = Common::Path("INTRO");
 	} else if (!strcmp(_gameDescription->gameId, "panther")) {
 		_gameDirectory = Common::Path("PANTHER");
-		_introDirectory = Common::Path("MINTRO");
+		_introDirectory.clear(); // No intro
 	}
 
 	findLanguageDirectories();
