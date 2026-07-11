@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-08 18:20+0000\n"
-"PO-Revision-Date: 2026-07-11 11:33+0000\n"
+"PO-Revision-Date: 2026-07-11 11:35+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -3055,20 +3055,18 @@ msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr ""
-"Usa el botón de abajo para copiar la información del juego requerida en tu "
-"portapapeles."
+"Pulsa el botón de debajo para copiar la información necesaria del juego en "
+"el portapapeles."
 
 #: gui/unknown-game-dialog.cpp:105
 msgid "You can also directly report your game to the Bug Tracker."
-msgstr ""
-"También puedes informar directamente sobre tu juego en el gestor de fallos."
+msgstr "También puedes informar directamente en el gestor de fallos."
 
 #: gui/unknown-game-dialog.cpp:155
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
 msgstr ""
-"Toda la información necesaria sobre tu juego ha sido copiada en el "
-"portapapeles"
+"Se ha copiado toda la información necesaria sobre tu juego en el portapapeles"
 
 #: gui/unknown-game-dialog.cpp:157
 msgid "Copying the game information to the clipboard has failed!"
