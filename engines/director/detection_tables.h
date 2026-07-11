@@ -1551,6 +1551,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "inventos",			"Grandes Inventos" },
 	{ "pcplus64",			"PC Plus Super CD 64" },
 	{ "supermente",			"Super Mente" }, // Published only in Mexico
+	{ "titomina",			"Tito en la Mina" },
 	{ "unlimitedcl",		"Unlimited CD-ROMs Educativos" },
 
 	// Swedish titles
@@ -9846,6 +9847,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Copies provided in The Daily Mirror
 	WINGAME2("thematrix", "", "Presentation.exe", "c1a2e8b7e41fa204009324a9c7db1030", 2212124,
 							  "intro.dir",        "ebe2cac80218c4933ecc609cd8ef27cc", 10368479, 700),
+
+	WINGAME2_l("titomina", "", "MINA.EXE",	 "t:22d184d92a2cbf89a25fb340842005f9",  2642210,
+							   "PUEBLO.DXR", "f:c0fa4a38f797ff6efa454373a9195b01", 10141276, Common::ES_ESP, 700),
 
 	// Ein Fall für TKKG: Wer stoppt den Feuerteufel? (bilingual DE/EN)
 	MACGAME2("tkkg7", "", "TKKG-Start", "0944b962ebb00f4b5d5149d220f8449b", 113458,
