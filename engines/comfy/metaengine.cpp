@@ -21,6 +21,9 @@
 
 #include "common/translation.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+
 #include "comfy/metaengine.h"
 #include "comfy/detection.h"
 #include "comfy/comfy.h"
@@ -60,6 +63,37 @@ Common::Error ComfyMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 bool ComfyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
 		(f == kSupportsLoadingDuringStartup);
+}
+
+Common::KeymapArray ComfyMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+
+	static const char *actionIds[COMFY_KEYBOARD_CONTACT_COUNT] = {
+		"SUN", "ROLL", "RED", "DRUM", "SNAILY", "FUCHSIA", "PIANO", "POWER",
+		"ORANGE", "MOON", "JUMPY", "YELLOW", "STOP", "HANDSET", "BLUE", "TRUMPET",
+		"BUDDY", "GREEN", "FLUTE", "CONTACT19", "COMFY", "CLOUD", "PHILLY", "MUSIC"
+	};
+	static const char *actionNames[COMFY_KEYBOARD_CONTACT_COUNT] = {
+		_s("Sun"), _s("Rolling cylinder"), _s("Red"), _s("Drum"), _s("Snaily phone"), _s("Fuchsia"),
+		_s("Piano"), _s("Power"), _s("Orange"), _s("Moon"), _s("Jumpy phone"), _s("Yellow"),
+		_s("Stop"), _s("Handset"), _s("Blue"), _s("Trumpet"), _s("Buddy phone"), _s("Green"),
+		_s("Flute"), _s("Keyboard contact 19"), _s("Comfy phone"), _s("Rainy cloud"),
+		_s("Philly phone"), _s("Music")
+	};
+	static const char *defaultMappings[COMFY_KEYBOARD_CONTACT_COUNT] = {
+		"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "q", "w",
+		"e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f"
+	};
+
+	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "comfy-keyboard", _s("Comfy Keyboard"));
+	for (uint i = 0; i < COMFY_KEYBOARD_CONTACT_COUNT; i++) {
+		Action *action = new Action(actionIds[i], _(actionNames[i]));
+		action->setCustomEngineActionEvent(Comfy::kActionKeyboardContact0 + i);
+		action->addDefaultInputMapping(defaultMappings[i]);
+		keymap->addAction(action);
+	}
+
+	return Keymap::arrayOf(keymap);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(COMFY)

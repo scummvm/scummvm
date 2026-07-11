@@ -28,6 +28,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
+#include "common/keyboard.h"
 #include "common/random.h"
 #include "common/serializer.h"
 #include "common/util.h"
@@ -45,6 +46,8 @@
 #define COMFY_PIT_TIMER_DIVISOR 0x2E9B
 #define COMFY_RESOLUTION_CHANGE_CAPACITY 100
 #define COMFY_PALETTE_BYTES 0x300
+#define COMFY_INPUT_QUEUE_CAPACITY 20
+#define COMFY_KEYBOARD_CONTACT_COUNT 24
 
 namespace Comfy {
 
@@ -64,6 +67,13 @@ private:
 		int16 right;
 		int16 bottom;
 		uint16 area;
+	};
+
+	struct InputQueue {
+		uint16 words[COMFY_INPUT_QUEUE_CAPACITY];
+		uint16 readIndex;
+		uint16 writeIndex;
+		uint16 tailIndex;
 	};
 
 	const ADGameDescription *_gameDescription;
@@ -106,8 +116,22 @@ private:
 	int16 _midiTimeDelta;
 	int16 _midiCounterAdjustment;
 	MidiPlyrDriver *_midiPlyrDriver;
-	uint32 _timerLastMillis;
-	uint64 _pitAccumulator;
+	byte *_keyBits;
+	uint32 _keyBitsSize;
+	InputQueue _inputQueue;
+	byte _keyboardKeyToBit[256];
+	bool _keyboardMapLoaded;
+	uint32 _keyboardActiveMask;
+	uint32 _keyboardLatchedMask;
+	uint32 _keymapperActiveMask;
+	uint32 _keymapperLatchedMask;
+	uint32 _toyKeyboardActiveMask;
+	uint32 _toyKeyboardLatchedMask;
+	uint32 _toyKeyboardHoldMask;
+	uint32 _lptPrevScanState;
+	uint16 _inputDeviceMode;
+	bool _keyboardUiInitialized;
+	bool _keyboardUiVisible;
 	bool _gameInitialized;
 	bool _videoInitialized;
 	bool _timerInitialized;
@@ -150,13 +174,36 @@ private:
 	int16 midiGetCounterAdjustment();
 	bool midiPlyrStart();
 	void midiPlyrStop();
+	bool keyBitAllocate(uint16 keyBitCount);
+	void keyBitFree();
+	bool keyBitTest(uint16 bitIndex);
+	void keyBitCopyRange(uint16 destination, uint16 count, uint32 source);
+	void keyBitSet(uint16 bitIndex);
+	void keyBitClear(uint16 bitIndex);
+	void inputQueuePushKey(uint16 key);
+	void inputQueuePushChar(uint16 key);
+	bool inputQueueHasItems();
+	uint16 inputQueueDequeue();
+	void inputQueueReset();
+	uint16 lptReadKeyOrNext();
+	void lptKeyToFlags(uint16 key);
+	void hostKeyboardResetMap();
+	bool hostKeyboardLoadDatMap();
+	void hostKeyboardSetKeyState(uint16 key, bool pressed);
+	uint16 hostKeyboardVirtualKey(Common::KeyCode key);
+	uint32 lptKeyboardScan();
+	void lptKeyboardDispatchEvents(uint32 scanState);
+	void setKeyboardContact(uint16 contact, bool pressed, bool keymapper);
+	void keyboardUiRender();
+	static void keyboardUiInitCallback();
+	static void keyboardUiRenderCallback();
+	static void keyboardUiCleanupCallback();
 	void timerInit();
 	void timerShutdown();
 	void lptKeyboardInit();
 	void lptKeyboardShutdown();
 	void gameMainLoop();
 	void gameMainLoopTick();
-	void waitForTimerTick();
 	void processEvents();
 
 	uint16 timerTick();
@@ -196,7 +243,8 @@ public:
 		return
 		    (f == kSupportsLoadingDuringRuntime) ||
 		    (f == kSupportsSavingDuringRuntime) ||
-		    (f == kSupportsReturnToLauncher);
+		    (f == kSupportsReturnToLauncher) ||
+		    (f == kSupportsQuitDialogOverride);
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {

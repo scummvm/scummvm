@@ -26,6 +26,12 @@
 
 namespace Comfy {
 
+enum ComfyAction {
+	kActionNone,
+	kActionKeyboardContact0,
+	kActionKeyboardContactLast = kActionKeyboardContact0 + 23
+};
+
 enum ComfyDebugChannels {
 	kDebugGraphics = 1,
 	kDebugPath,

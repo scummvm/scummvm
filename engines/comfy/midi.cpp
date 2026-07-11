@@ -42,8 +42,13 @@ uint16 ComfyEngine::midiTick() {
 	do {
 		_midiTimeCounter = _midiPlyrDriver->getTimeCounter();
 		if ((_engineVersion == kEngineVersion3 && _midiTimeCounter <= previousCounter) ||
-				(_engineVersion != kEngineVersion3 && _midiTimeCounter == previousCounter))
+				(_engineVersion != kEngineVersion3 && _midiTimeCounter == previousCounter)) {
+			processEvents();
+			if (shouldQuit())
+				return 0;
+
 			_system->delayMillis(1);
+		}
 	} while ((_engineVersion == kEngineVersion3 && _midiTimeCounter <= previousCounter) ||
 		(_engineVersion != kEngineVersion3 && _midiTimeCounter == previousCounter));
 

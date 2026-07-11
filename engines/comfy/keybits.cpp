@@ -19,7 +19,60 @@
  *
  */
 
+#include "comfy/comfy.h"
+
+#include "common/endian.h"
+
 namespace Comfy {
+
+bool ComfyEngine::keyBitAllocate(uint16 keyBitCount) {
+	keyBitFree();
+
+	_keyBitsSize = uint16(keyBitCount + 1) / 8 + 1;
+	_keyBits = new byte[_keyBitsSize]();
+	return true;
+}
+
+void ComfyEngine::keyBitFree() {
+	delete[] _keyBits;
+	_keyBits = nullptr;
+	_keyBitsSize = 0;
+}
+
+bool ComfyEngine::keyBitTest(uint16 bitIndex) {
+	uint32 byteIndex = bitIndex / 8;
+	if (!_keyBits || byteIndex >= _keyBitsSize)
+		return false;
+
+	return (_keyBits[byteIndex] & (1 << (bitIndex & 7))) != 0;
+}
+
+void ComfyEngine::keyBitCopyRange(uint16 destination, uint16 count, uint32 source) {
+	uint32 destinationByte = destination / 8;
+	uint32 byteCount = count / 8;
+	if (!_keyBits || byteCount > sizeof(source) || destinationByte + byteCount > _keyBitsSize)
+		return;
+
+	byte sourceBytes[sizeof(source)];
+	WRITE_LE_UINT32(sourceBytes, source);
+	memcpy(_keyBits + destinationByte, sourceBytes, byteCount);
+}
+
+void ComfyEngine::keyBitSet(uint16 bitIndex) {
+	uint32 byteIndex = bitIndex / 8;
+	if (!_keyBits || byteIndex >= _keyBitsSize)
+		return;
+
+	_keyBits[byteIndex] |= 1 << (bitIndex & 7);
+}
+
+void ComfyEngine::keyBitClear(uint16 bitIndex) {
+	uint32 byteIndex = bitIndex / 8;
+	if (!_keyBits || byteIndex >= _keyBitsSize)
+		return;
+
+	_keyBits[byteIndex] &= ~(1 << (bitIndex & 7));
+}
 
 
 } // End of namespace Comfy

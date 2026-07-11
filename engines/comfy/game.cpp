@@ -101,6 +101,7 @@ void ComfyEngine::gameConfigInit() {
 	findLanguageDirectories();
 	ConfMan.registerDefault("comfy_language", 2);
 	ConfMan.registerDefault("comfy_screen_update_interleaved", false);
+	ConfMan.registerDefault("comfy_input_device", 0);
 }
 
 void ComfyEngine::findLanguageDirectories() {
@@ -143,6 +144,10 @@ void ComfyEngine::findLanguageDirectories() {
 bool ComfyEngine::iniReadGameConfig() {
 	_language = ConfMan.getInt("comfy_language");
 	_renderInterleaved = ConfMan.getBool("comfy_screen_update_interleaved");
+	_inputDeviceMode = ConfMan.getInt("comfy_input_device");
+	if (_inputDeviceMode > 2)
+		_inputDeviceMode = 0;
+
 	return !_gameDirectory.empty();
 }
 
