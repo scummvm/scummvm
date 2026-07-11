@@ -128,9 +128,9 @@ static void main_cold_data_init() {
 	game_menu_exit = global_menu_system_shutdown;
 	game_emergency_save = global_emergency_save;
 
-	Common::strcpy_s(config_file_name, "config.dra");
-	Common::strcpy_s(save_game_key, "drag");
-	Common::strcpy_s(restart_game_key, "dragon");
+	Common::strcpy_s(config_file_name, "config.rex");
+	Common::strcpy_s(save_game_key, "rex");
+	Common::strcpy_s(restart_game_key, "rex");
 
 	Common::strcpy_s(player.series_name, "RAL");
 	player.walker_must_reload = true;
@@ -138,7 +138,7 @@ static void main_cold_data_init() {
 	player.walker_visible = true;
 	player.scaling_velocity = true;
 
-	Common::strcpy_s(kernel_cheating_password, "WIDECHEW");
+	Common::strcpy_s(kernel_cheating_password, "WIDEPIPE");
 	kernel_cheating_allowed = strlen(kernel_cheating_password);
 
 	kernel.cheating = gDebugLevel == 9 ? kernel_cheating_allowed : 0;

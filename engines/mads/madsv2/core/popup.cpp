@@ -1020,6 +1020,9 @@ int popup_ask_string(char *target, int maxlen, int save_screen) {
 	mouse_init_cycle();
 
 	while (going) {
+		if (g_engine->shouldQuit())
+			return 1;
+
 		len = strlen(temp_buf);
 		while (!keys_any()) {
 			mouse_begin_cycle(false);

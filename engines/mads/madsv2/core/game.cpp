@@ -481,6 +481,11 @@ int game_parse_keystroke(int mykey) {
 			}
 			break;
 
+
+		case ctrl_e_key:
+			mcga_shakes = 350;
+			break;
+
 		case ctrl_f_key:
 			kernel.frame_by_frame = (byte)!(int)kernel.frame_by_frame;
 			kernel.paused = false;

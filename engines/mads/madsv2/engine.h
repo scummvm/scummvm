@@ -40,9 +40,12 @@ typedef void (*TimerFunction)();
 
 class MADSV2Engine : public MADSEngine {
 private:
+	uint16 _shakeRandom = 0x4D2;
+
 	void initGlobals();
 	void syncGame(Common::Serializer &s);
 	bool isSpecialKey(Common::KeyCode key) const;
+	void updateScreen();
 	
 protected:
 	Graphics::Screen *_screen = nullptr;

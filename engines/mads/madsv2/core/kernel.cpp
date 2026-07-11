@@ -390,10 +390,13 @@ int kernel_game_startup(int game_video_mode, int load_flag,
 		font_misc = font_load("*FONTMISC.FF");
 
 		font_menu = font_tele = nullptr;
-		if (g_engine->getGameID() == GType_RexNebular)
+
+		if (g_engine->getGameID() == GType_RexNebular) {
 			font_tele = font_load("*FONTTELE.FF");
-		else
+			box_param.font = font_inter;
+		} else {
 			font_menu = font_load("*FONTMENU.FF");
+		}
 
 		if ((font_main == NULL) || (font_inter == NULL) || (font_conv == NULL) || (font_misc == NULL) ||
 			(g_engine->getGameID() != GType_RexNebular && font_menu == NULL) ||

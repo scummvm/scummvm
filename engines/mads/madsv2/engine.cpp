@@ -41,6 +41,7 @@
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/keys.h"
 #include "mads/madsv2/core/matte.h"
+#include "mads/madsv2/core/mcga.h"
 #include "mads/madsv2/core/object.h"
 #include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/player.h"
@@ -247,10 +248,7 @@ void MADSV2Engine::pollEvents() {
 	// Check for screen update time
 	uint32 time = g_system->getMillis();
 	if (time >= _nextFrameTime) {
-		// Because the screen is accessed directly via Buffer objects,
-		// we need to do a full screen update each frame
-		_screen->markAllDirty();
-		_screen->update();
+		updateScreen();
 		_nextFrameTime = time + GAME_FRAME_TIME;
 	}
 
@@ -305,6 +303,30 @@ void MADSV2Engine::pollEvents() {
 		if (e.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START &&
 				KEYBINDING_ACTIONS[e.customType] != Common::KEYCODE_INVALID)
 			_keyEvents.push(Common::KeyState(KEYBINDING_ACTIONS[e.customType]));
+	}
+}
+
+void MADSV2Engine::updateScreen() {
+	// Handle any screen shaking
+	if (mcga_shakes) {
+		_shakeRandom = _shakeRandom * 5 + 1;
+		int offset = (_shakeRandom >> 8) & 3;
+		if (--mcga_shakes == 0)
+			offset = 0;
+
+		// Manually copy the screen with the left hand hide side of the screen of a given offset width shown
+		// at the very right. The offset changes to give an effect of shaking the screen
+		offset *= 4;
+		const byte *buf = (const byte *)_screen->getBasePtr(offset, 0);
+		g_system->copyRectToScreen(buf, 320, 0, 0, 320 - offset, 200);
+		if (offset > 0)
+			g_system->copyRectToScreen(_screen->getPixels(), 320, 320 - offset, 0, offset, 200);
+		g_system->updateScreen();
+
+	} else {
+		// Because the screen is accessed directly via Buffer objects, we need to do a full screen update each frame
+		_screen->markAllDirty();
+		_screen->update();
 	}
 }
 
