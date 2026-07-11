@@ -56,6 +56,7 @@ private:
 	bool Cmd_loadScene(int argc, const char **argv);
 	bool Cmd_sceneID(int argc, const char **argv);
 	bool Cmd_listActionRecords(int argc, const char **argv);
+	bool Cmd_actionRecordExport(int argc, const char **argv);
 	bool Cmd_scanForActionRecordType(int argc, const char **argv);
 	bool Cmd_getEventFlags(int argc, const char **argv);
 	bool Cmd_setEventFlags(int argc, const char **argv);

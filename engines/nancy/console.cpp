@@ -58,6 +58,7 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("load_scene", WRAP_METHOD(NancyConsole, Cmd_loadScene));
 	registerCmd("scene_id", WRAP_METHOD(NancyConsole, Cmd_sceneID));
 	registerCmd("list_actionrecords", WRAP_METHOD(NancyConsole, Cmd_listActionRecords));
+	registerCmd("actionrecord_export", WRAP_METHOD(NancyConsole, Cmd_actionRecordExport));
 	registerCmd("scan_ar_type", WRAP_METHOD(NancyConsole, Cmd_scanForActionRecordType));
 	registerCmd("get_eventflags", WRAP_METHOD(NancyConsole, Cmd_getEventFlags));
 	registerCmd("set_eventflags", WRAP_METHOD(NancyConsole, Cmd_setEventFlags));
@@ -661,6 +662,62 @@ bool NancyConsole::Cmd_listActionRecords(int argc, const char **argv) {
 	} else {
 		debugPrintf("Invalid input\n");
 	}
+
+	return true;
+}
+
+bool NancyConsole::Cmd_actionRecordExport(int argc, const char **argv) {
+	using namespace Action;
+
+	if (argc < 2) {
+		debugPrintf("Exports an action record of the current or a specified scene to a file\n");
+		debugPrintf("Usage: %s <actionRecordID> <sceneID>\n", argv[0]);
+		return true;
+	}
+
+	int recordId = atoi(argv[1]);
+	uint16 sceneId = 0;
+
+	if (argc == 2) {
+		// Export the record from the current scene
+		if (g_nancy->getState() != NancyState::kScene) {
+			debugPrintf("Not in the kScene state\n");
+			return true;
+		}
+
+		sceneId = NancySceneState.getSceneInfo().sceneID;
+	} else if (argc == 3) {
+		// Export a record from a different scene. We need to load all records into a temporary array and read from it
+		sceneId = (uint16)atoi(argv[2]);
+	}
+
+	Common::String s = Common::String::format("S%u", sceneId);
+
+	IFF *sceneIFF = g_nancy->_resource->loadIFF(Common::Path(s));
+	if (!sceneIFF) {
+		debugPrintf("Invalid scene S%s\n", argv[1]);
+		return true;
+	}
+
+	Common::SeekableReadStream *chunk = sceneIFF->getChunkStream("ACT", recordId);
+	if (chunk) {
+		char descBuf[48];
+		chunk->read(descBuf, 48);
+		descBuf[47] = '\0';
+		chunk->skip(2); // ARType, execType
+
+		Common::DumpFile f;
+		Common::String filename = Common::String::format("%s_scene_%d_record_%d_%s.dat", g_nancy->getGameId(), sceneId, recordId, descBuf);
+		f.open(Common::Path(filename));
+		f.writeStream(chunk, chunk->size() - 50);
+		f.close();
+		debugPrintf("Exported record %d (%s) from scene S%u to %s\n", recordId, descBuf, sceneId, filename.c_str());
+	} else {
+		debugPrintf("Invalid record ID %d\n", recordId);
+	}
+	delete chunk;
+
+	delete sceneIFF;
 
 	return true;
 }
