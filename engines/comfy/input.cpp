@@ -286,11 +286,11 @@ void ComfyEngine::lptKeyboardInit() {
 	}
 
 #ifdef USE_IMGUI
-	ImGuiCallbacks callbacks;
-	callbacks.init = &keyboardUiInitCallback;
-	callbacks.render = &keyboardUiRenderCallback;
-	callbacks.cleanup = &keyboardUiCleanupCallback;
-	_system->setImGuiCallbacks(callbacks);
+	ImGuiCallbacks imGuiCallbacks;
+	imGuiCallbacks.init = onImGuiInit;
+	imGuiCallbacks.render = onImGuiRender;
+	imGuiCallbacks.cleanup = onImGuiCleanup;
+	_system->setImGuiCallbacks(imGuiCallbacks);
 	_keyboardUiInitialized = true;
 #endif
 }

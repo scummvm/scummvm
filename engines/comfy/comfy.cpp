@@ -66,6 +66,8 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_keymapperActiveMask(0), _keymapperLatchedMask(0), _toyKeyboardActiveMask(0),
 	_toyKeyboardLatchedMask(0), _toyKeyboardHoldMask(0), _lptPrevScanState(0), _inputDeviceMode(0),
 	_keyboardUiInitialized(false), _keyboardUiVisible(true),
+	_stringCount(0), _sceneCount(0), _keyBitCount(0), _resourceHandleCount(0), _midiEntryCount(0),
+	_picDataSize(0), _usesAnimFile(false), _sceneOpen(false),
 	_gameInitialized(false), _videoInitialized(false),
 	_timerInitialized(false), _lptKeyboardInitialized(false), _mainLoopRunning(false) {
 	memset(_paletteFadeSource, 0, sizeof(_paletteFadeSource));
@@ -109,10 +111,13 @@ Common::Error ComfyEngine::gameInit() {
 	if (!iniReadGameConfig())
 		return Common::kNoGameDataFoundError;
 
-	if (!iniGetGameDataPath(0) || !midiPlyrStart())
+	if (!iniGetGameDataPath(0))
 		return Common::kNoGameDataFoundError;
 
 	videoInit();
+	if (!assetsLoad() || !sceneOpen())
+		return Common::kNoGameDataFoundError;
+
 	timerInit();
 	lptKeyboardInit();
 	_gameInitialized = true;
@@ -123,8 +128,10 @@ void ComfyEngine::gameShutdown() {
 	if (_lptKeyboardInitialized)
 		lptKeyboardShutdown();
 
+	sceneClose();
+	assetsUnload();
+
 	midiPlyrStop();
-	keyBitFree();
 
 	if (_timerInitialized)
 		timerShutdown();
