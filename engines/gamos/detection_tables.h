@@ -152,6 +152,19 @@ const GamosGameDescription gameDescriptions[] = {
 		0x80000016
 	},
 	{
+		{ /* Steam version, not supported, different engine. */
+			"pilots1",
+			"The game is using unsupported engine",
+			AD_ENTRY2s("bin/Pilot Brothers.exe", "ba220b82f644e5dcd9222e8c9264f544", 1057280,
+					   "content/sprites/s000.tex", "cd7bb45147ad91d4e4682c1fd0db9e4d", 397869),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NONE)
+		},
+		0x80000016
+	},
+	{
 		{ /* Copyright (C) 1997 by Gamos JSC, Moscow, Russia...  Run-time engine [1.50] by Vadim Sytnikov
 			17.12.1997 */
 			"pilots1",
@@ -182,6 +195,19 @@ const GamosGameDescription gameDescriptions[] = {
 			"pilots2",
 			"The game is using unsupported engine",
 			AD_ENTRY2s("bin/Pilot Brothers.exe", "4d7b3f9a03c4517dadf536ddc378f195", 428544,
+					   "content/sprites/s000.tex", "33714cdb4c53c234c23d8a9417a74dbd", 397637),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NONE)
+		},
+		0x80000016
+	},
+	{
+		{ /* Steam version, not supported, different engine */
+			"pilots2",
+			"The game is using unsupported engine",
+			AD_ENTRY2s("bin/Pilot Brothers.exe", "b91fbbc68e43b4b17e6f8685f1130b75", 1011712,
 					   "content/sprites/s000.tex", "33714cdb4c53c234c23d8a9417a74dbd", 397637),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
