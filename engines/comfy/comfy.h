@@ -48,6 +48,8 @@
 
 namespace Comfy {
 
+class MidiPlyrDriver;
+
 enum ComfyEngineVersion {
 	kEngineVersion1, // 1994-1995
 	kEngineVersion2, // 1996-1997
@@ -93,6 +95,17 @@ private:
 	uint16 _fadeStep;
 	byte _palettePage;
 	bool _paletteFading;
+	int16 _timerCurrent;
+	int16 _timer0;
+	int16 _timer1;
+	int16 _timer2;
+	uint32 _midiTimeCounter;
+	uint32 _midiInstanceEventTime;
+	int32 _midiEventBaseTime;
+	int32 _midiTimeScale;
+	int16 _midiTimeDelta;
+	int16 _midiCounterAdjustment;
+	MidiPlyrDriver *_midiPlyrDriver;
 	uint32 _timerLastMillis;
 	uint64 _pitAccumulator;
 	bool _gameInitialized;
@@ -132,6 +145,11 @@ private:
 	void paletteVsyncFlip();
 	void paletteConvertRgbToLogical(byte *source, byte *destination);
 	void paletteRealize(byte *rawPalette);
+	uint16 midiTick();
+	void midiSetTimeScale(int16 delta);
+	int16 midiGetCounterAdjustment();
+	bool midiPlyrStart();
+	void midiPlyrStop();
 	void timerInit();
 	void timerShutdown();
 	void lptKeyboardInit();
