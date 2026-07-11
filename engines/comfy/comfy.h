@@ -30,11 +30,9 @@
 #include "common/hash-str.h"
 #include "common/keyboard.h"
 #include "common/random.h"
-#include "common/serializer.h"
 #include "common/array.h"
 #include "common/util.h"
 #include "engines/engine.h"
-#include "engines/savestate.h"
 #include "graphics/screen.h"
 #include "audio/mixer.h"
 
@@ -417,7 +415,6 @@ private:
 	bool _videoInitialized;
 	bool _timerInitialized;
 	bool _lptKeyboardInitialized;
-	bool _mainLoopRunning;
 
 	Common::Error gameInit();
 	void gameShutdown();
@@ -431,7 +428,7 @@ private:
 	Common::Path pathBuild(const Common::Path &filename, bool useGamePath);
 	Common::SeekableReadStream *pathFOpen(const Common::Path &filename, bool useGamePath);
 	void videoInit();
-	void videoShutdown();
+	void videoShutdown(byte restorePalette);
 	void videoSetResolution();
 	void videoFindBestMode(VideoRectRecord record);
 	void videoPresentFrame();
@@ -511,6 +508,8 @@ private:
 	byte *spriteLoadFromFile(uint16 fileOffset, uint16 index);
 	void sceneBlockPackRuntimeState();
 	void sceneBlockUnpackRuntimeState();
+	uint16 sceneGetHandle(uint16 sceneIndex);
+	uint16 sceneGetActiveCount();
 	bool envXmsToConv(byte *destination, uint16 index);
 	void envConvToXms(byte *source, uint16 index);
 	void sceneGoto(uint16 count);
@@ -532,12 +531,12 @@ private:
 	void actorWriteU16(Actor &actor, uint offset, uint16 value);
 	void actorWriteU8(Actor &actor, uint offset, byte value);
 	Actor *rootActor();
-	Actor *actorGet(uint16 actorIndex);
+	Actor *actorGetPtr(uint16 actorIndex);
 	void actorSetFrame(int16 frame);
 	uint16 actorGetFrame();
 	Actor *actorResolve(uint16 sceneOrActor, uint16 fallbackActor);
-	uint16 actorAllocate(uint16 sceneSlot);
-	void actorFree(uint16 sceneSlot);
+	uint16 actorAlloc(uint16 sceneSlot);
+	void actorFreeSlot(uint16 sceneSlot);
 	void actorInsertChild(uint16 childIndex, uint16 parentIndex);
 	void actorInsertSibling(uint16 actorIndex, uint16 ownerIndex);
 	void actorUnlink(uint16 actorIndex);
@@ -643,12 +642,6 @@ public:
 		return (f == kSupportsReturnToLauncher);
 	};
 
-	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return false;
-	}
-	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return false;
-	}
 };
 
 extern ComfyEngine *g_engine;

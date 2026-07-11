@@ -823,7 +823,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			uint16 argument = scriptReadWord(pc);
 			pc += 2;
 			if (kind == 1)
-				condition = argument < _sceneHandles.size() && _sceneHandles[argument];
+				condition = sceneGetHandle(argument) != 0;
 			else if (kind == 2)
 				condition = _inputDeviceMode == 1;
 			else if (kind == 14) {
@@ -838,7 +838,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			}
 		} else if (kind == 1) {
 			uint16 scene = scriptReadWord(pc);
-			condition = scene < _sceneHandles.size() && _sceneHandles[scene];
+			condition = sceneGetHandle(scene) != 0;
 			pc += 2;
 		}
 
@@ -877,7 +877,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 
 	if (!opcode || opcode > 0x7F || opcode == 0x27 || (opcode >= 0x30 && opcode <= 0x4F) ||
 	    (opcode >= 0x53 && opcode <= 0x6D) || (opcode >= 0x78 && opcode <= 0x7E)) {
-		Actor *root = actorGet(0);
+		Actor *root = actorGetPtr(0);
 		if (root)
 			actorWriteU8(*root, kActorActive, 0);
 

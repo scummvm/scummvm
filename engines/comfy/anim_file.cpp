@@ -62,7 +62,7 @@ void ComfyEngine::animFileShutdown(bool closeFile) {
 			keyBitSet(_animCurrentFrameKey);
 
 		if (_animCurrentActorSceneHandle < _sceneHandles.size()) {
-			Actor *actor = actorGet(_sceneHandles[_animCurrentActorSceneHandle]);
+			Actor *actor = actorGetPtr(sceneGetHandle(_animCurrentActorSceneHandle));
 			if (actor)
 				actorWriteU32(*actor, kActorSpriteSelector, 0);
 		}
@@ -116,7 +116,7 @@ void ComfyEngine::animFileLoadFrame(uint16 animIndex, uint16 frameKey, uint16 ac
 	_animVocDeltaA = 0;
 	_animActive = true;
 	if (actorSceneHandle < _sceneHandles.size()) {
-		Actor *actor = actorGet(_sceneHandles[actorSceneHandle]);
+		Actor *actor = actorGetPtr(sceneGetHandle(actorSceneHandle));
 		if (actor)
 			actorWriteU32(*actor, kActorSpriteSelector, 0x00FFFFFF);
 	}

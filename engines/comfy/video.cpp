@@ -44,7 +44,10 @@ void ComfyEngine::videoInit() {
 	_videoInitialized = true;
 }
 
-void ComfyEngine::videoShutdown() {
+void ComfyEngine::videoShutdown(byte restorePalette) {
+	if (restorePalette)
+		paletteRealize(nullptr);
+
 	colorDatClose();
 	delete[] _presentBuffer;
 	_presentBuffer = nullptr;

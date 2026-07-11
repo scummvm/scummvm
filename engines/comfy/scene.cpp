@@ -25,6 +25,14 @@
 
 namespace Comfy {
 
+uint16 ComfyEngine::sceneGetHandle(uint16 sceneIndex) {
+	return sceneIndex < _sceneHandles.size() ? _sceneHandles[sceneIndex] : 0;
+}
+
+uint16 ComfyEngine::sceneGetActiveCount() {
+	return _activeSceneCount;
+}
+
 void ComfyEngine::sceneBlockPackRuntimeState() {
 	if (_sceneMemoryBlock.empty())
 		return;
@@ -104,11 +112,11 @@ void ComfyEngine::envConvToXms(byte *source, uint16 index) {
 
 bool ComfyEngine::envXmsToConv(byte *destination, uint16 index) {
 	if (!index || _sceneMemoryBlock.empty())
-		return false;
+		return true;
 
 	uint32 offset = uint32(index - 1) * _sceneMemoryBlock.size();
 	if (offset > _environmentData.size() || _sceneMemoryBlock.size() > _environmentData.size() - offset)
-		return false;
+		return true;
 
 	memcpy(destination, &_environmentData[offset], _sceneMemoryBlock.size());
 	sceneBlockUnpackRuntimeState();
@@ -212,7 +220,7 @@ void ComfyEngine::sceneStartWithMusic(uint16 scene) {
 	if (!_musicEnabled)
 		midiStopAll();
 
-	Actor *root = actorGet(0);
+	Actor *root = actorGetPtr(0);
 	if (root) {
 		paletteLoadWithFade(actorReadU16(*root, kActorXFixed), 0);
 		if (actorReadU32(*root, kActorYFixed))
