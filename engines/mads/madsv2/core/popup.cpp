@@ -1135,10 +1135,15 @@ int popup_estimate_pieces(int maxlen) {
 	int pieces;
 	int estimate;
 
-	font_len = maxlen * (box_param.font->max_x_size + box_param.font_spacing);
-	pieces = ((font_len - 1) / pop_xs(POPUP_TOP)) + 1;
-	estimate = (pieces - box_param.pieces_per_center) >> 1;
-	return (estimate);
+	if (g_engine->getGameID() == GType_RexNebular) {
+		estimate = maxlen;
+	} else {
+		font_len = maxlen * (box_param.font->max_x_size + box_param.font_spacing);
+		pieces = ((font_len - 1) / pop_xs(POPUP_TOP)) + 1;
+		estimate = (pieces - box_param.pieces_per_center) >> 1;
+	}
+
+	return estimate;
 }
 
 int popup_get_string(char *target, const char *top, const char *left, int maxlen) {
