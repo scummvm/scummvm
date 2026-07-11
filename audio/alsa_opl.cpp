@@ -69,12 +69,12 @@ public:
 	OPL(Config::OplType type);
 	~OPL();
 
-	bool init();
-	void reset();
+	bool init() override;
+	void reset() override;
 
-	void write(int a, int v);
+	void write(int a, int v) override;
 
-	void writeReg(int r, int v);
+	void writeReg(int r, int v) override;
 };
 
 const int OPL::voiceToOper0[OPL::kVoices] =

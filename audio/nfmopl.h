@@ -86,7 +86,7 @@ public:
 
 protected:
 
-	virtual void onTimer() override final;
+	void onTimer() override final;
 };
 };  // End of namespace RealChip
 

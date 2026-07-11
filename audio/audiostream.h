@@ -171,15 +171,15 @@ public:
 	 */
 	LoopingAudioStream(Common::DisposablePtr<RewindableAudioStream>&& stream, uint loops, bool rewind = true);
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool endOfData() const;
-	bool endOfStream() const;
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool endOfData() const override;
+	bool endOfStream() const override;
 
-	bool isStereo() const { return _parent->isStereo(); }
-	int getRate() const { return _parent->getRate(); }
+	bool isStereo() const override { return _parent->isStereo(); }
+	int getRate() const override { return _parent->getRate(); }
 
-	uint getCompleteIterations() const { return _completeIterations; }
-	void setRemainingIterations(uint loops) { _loops = _completeIterations + loops; }
+	uint getCompleteIterations() const override { return _completeIterations; }
+	void setRemainingIterations(uint loops) override { _loops = _completeIterations + loops; }
 private:
 	Common::DisposablePtr<RewindableAudioStream> _parent;
 
@@ -251,7 +251,7 @@ public:
 	 */
 	virtual Timestamp getLength() const = 0;
 
-	virtual bool rewind() { return seek(0); }
+	bool rewind() override { return seek(0); }
 };
 
 /**
@@ -304,15 +304,15 @@ public:
 	                      const Timestamp loopEnd,
 	                      DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool endOfData() const;
-	bool endOfStream() const;
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool endOfData() const override;
+	bool endOfStream() const override;
 
-	bool isStereo() const { return _parent->isStereo(); }
-	int getRate() const { return _parent->getRate(); }
+	bool isStereo() const override { return _parent->isStereo(); }
+	int getRate() const override { return _parent->getRate(); }
 
-	uint getCompleteIterations() const { return _completeIterations; }
-	void setRemainingIterations(uint loops) { _loops = _completeIterations + loops; }
+	uint getCompleteIterations() const override { return _completeIterations; }
+	void setRemainingIterations(uint loops) override { _loops = _completeIterations + loops; }
 private:
 	Common::DisposablePtr<SeekableAudioStream> _parent;
 
@@ -343,18 +343,18 @@ public:
 	 */
 	SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-	int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	bool isStereo() const { return _parent->isStereo(); }
+	bool isStereo() const override { return _parent->isStereo(); }
 
-	int getRate() const { return _parent->getRate(); }
+	int getRate() const override { return _parent->getRate(); }
 
-	bool endOfData() const { return (_pos >= _length) || _parent->endOfData(); }
-	bool endOfStream() const { return (_pos >= _length) || _parent->endOfStream(); }
+	bool endOfData() const override { return (_pos >= _length) || _parent->endOfData(); }
+	bool endOfStream() const override { return (_pos >= _length) || _parent->endOfStream(); }
 
-	bool seek(const Timestamp &where);
+	bool seek(const Timestamp &where) override;
 
-	Timestamp getLength() const { return _length; }
+	Timestamp getLength() const override { return _length; }
 private:
 	Common::DisposablePtr<SeekableAudioStream> _parent;
 
@@ -479,18 +479,17 @@ public:
 	virtual ~StatelessPacketizedAudioStream() {}
 
 	// AudioStream API
-	bool isStereo() const { return _channels == 2; }
-	int getRate() const { return _rate; }
-	int readBuffer(int16 *data, const int numSamples) { return _stream->readBuffer(data, numSamples); }
-	bool endOfData() const { return _stream->endOfData(); }
-	bool endOfStream() const { return _stream->endOfStream(); }
+	bool isStereo() const override { return _channels == 2; }
+	int getRate() const override { return _rate; }
+	int readBuffer(int16 *data, const int numSamples) override { return _stream->readBuffer(data, numSamples); }
+	bool endOfData() const override { return _stream->endOfData(); }
+	bool endOfStream() const override { return _stream->endOfStream(); }
 
-	// QueuingAudioStream API
 	uint32 numQueuedStreams() const { return _stream->numQueuedStreams(); }
 
 	// PacketizedAudioStream API
-	void queuePacket(Common::SeekableReadStream *data) { _stream->queueAudioStream(makeStream(data)); }
-	void finish() { _stream->finish(); }
+	void queuePacket(Common::SeekableReadStream *data) override { _stream->queueAudioStream(makeStream(data)); }
+	void finish() override { _stream->finish(); }
 
 	/**
 	 * Return how many channels this stream is using.

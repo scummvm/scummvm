@@ -63,13 +63,13 @@ protected:
 public:
 	ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign);
 
-	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos); }
-	virtual bool isStereo() const { return _channels == 2; }
-	virtual int getRate() const { return _rate; }
+	bool endOfData() const override { return (_stream->eos() || _stream->pos() >= _endpos); }
+	bool isStereo() const override { return _channels == 2; }
+	int getRate() const override { return _rate; }
 
-	virtual bool rewind();
-	virtual bool seek(const Timestamp &where) { return false; }
-	virtual Timestamp getLength() const { return Timestamp(); }
+	bool rewind() override;
+	bool seek(const Timestamp &where) override { return false; }
+	Timestamp getLength() const override { return Timestamp(); }
 
 	/**
 	 * This table is used by some ADPCM variants (IMA and OKI) to adjust the
@@ -86,9 +86,9 @@ public:
 	Oki_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
 		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) { _decodedSampleCount = 0; }
 
-	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
+	bool endOfData() const override { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
 
-	virtual int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
 protected:
 	int16 decodeOKI(byte);
@@ -103,9 +103,9 @@ public:
 	XA_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
 		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) { _decodedSampleCount = 0; }
 
-	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
+	bool endOfData() const override { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
 
-	virtual int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
 protected:
 	void decodeXA(const byte *src);
@@ -135,9 +135,9 @@ public:
 	DVI_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
 		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) { _decodedSampleCount = 0; }
 
-	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
+	bool endOfData() const override { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
 
-	virtual int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
 private:
 	uint8 _decodedSampleCount;
@@ -151,7 +151,7 @@ protected:
 	int16 _buffer[2][2];
 	uint8 _chunkPos[2];
 
-	void reset() {
+	void reset() override {
 		Ima_ADPCMStream::reset();
 		_chunkPos[0] = 0;
 		_chunkPos[1] = 0;
@@ -168,7 +168,7 @@ public:
 		_streamPos[1] = _blockAlign;
 	}
 
-	virtual int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 };
 
 class MSIma_ADPCMStream : public Ima_ADPCMStream {
@@ -186,9 +186,9 @@ public:
 		_samplesLeft[1] = 0;
 	}
 
-	virtual int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	void reset() {
+	void reset() override {
 		Ima_ADPCMStream::reset();
 		_samplesLeft[0] = 0;
 		_samplesLeft[1] = 0;
@@ -215,7 +215,7 @@ protected:
 		ADPCMChannelStatus ch[2];
 	} _status;
 
-	void reset() {
+	void reset() override {
 		ADPCMStream::reset();
 		memset(&_status, 0, sizeof(_status));
 	}
@@ -230,9 +230,9 @@ public:
 		_decodedSampleIndex = 0;
 	}
 
-	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
+	bool endOfData() const override { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
 
-	virtual int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
 protected:
 	int16 decodeMS(ADPCMChannelStatus *c, byte);
@@ -255,7 +255,7 @@ public:
 		assert(channels == 2);
 	}
 
-	virtual int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
 private:
 	byte _nibble, _lastByte;
