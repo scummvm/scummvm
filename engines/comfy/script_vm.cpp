@@ -351,6 +351,9 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			midiStopAndRemove(channel);
 		} else if (subop == 6 && channel < COMFY_MIDI_CHANNEL_COUNT) {
 			midiStopAndFireKeys(channel);
+		} else if ((subop == 7 || subop == 8) && _engineVersion == kEngineVersion3 &&
+				channel < COMFY_MIDI_CHANNEL_COUNT && _midiPlyrDriver) {
+			_midiPlyrDriver->musicSetLoop(subop == 7 ? 1 : 0, channel);
 		}
 
 		return kScriptContinue;
@@ -554,8 +557,18 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 
 	if (opcode == 0x30 && _usesAnimFile) {
 		byte subop = scriptReadByte(pc++);
-		if (subop == 1)
+		if (subop == 0) {
+			animFileShutdown(true);
+		} else if (subop == 1) {
+			uint16 animIndex = scriptReadWord(pc);
+			uint16 frameKey = scriptReadWord(pc + 2);
 			pc += 4;
+			animFileLoadFrame(animIndex, frameKey, actorReadWord(actor, kActorSceneHandle));
+		} else if (subop == 2) {
+			_animVocCounterMode = 1;
+		} else if (subop == 3) {
+			_animVocCounterMode = 0;
+		}
 
 		return kScriptContinue;
 	}
@@ -563,7 +576,12 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	if (opcode >= 0x31 && opcode <= 0x36 && _usesWcomfy99ScriptOps) {
 		if (opcode == 0x31) {
 			uint16 count = scriptReadStringIndex(pc);
-			pc += 2 + uint32(count) * 2;
+			pc += 2;
+			_wcomfy99FeatureWordCount = MIN<uint16>(count, ARRAYSIZE(_wcomfy99FeatureWords));
+			for (uint i = 0; i < _wcomfy99FeatureWordCount; i++)
+				_wcomfy99FeatureWords[i] = scriptReadWord(pc + i * 2);
+
+			pc += uint32(count) * 2;
 		} else if (opcode == 0x32) {
 			pc += 4;
 		} else if (opcode == 0x33) {
@@ -585,6 +603,10 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 				_stringTable[value] = ConfMan.hasKey(key) ? ConfMan.getInt(key) : 0;
 			} else if (subop == 1) {
 				ConfMan.setInt(key, value);
+				if (key.equalsIgnoreCase("SENSITIVITY"))
+					_wcomfy99Sensitivity = value;
+
+				ConfMan.flushToDisk();
 			} else if (subop == 4) {
 				if (ConfMan.hasKey(key) && !ConfMan.get(key).equalsIgnoreCase("?????"))
 					keyBitSet(value);
@@ -602,11 +624,31 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 					(Common::isAlpha(last) ? (Common::isUpper(last) ? 0x04 : 0x08) : 0x40);
 			}
 		} else if (opcode == 0x35) {
-			pc++;
+			byte subop = scriptReadByte(pc++);
+			if (subop == 2)
+				_wcomfy99SubsystemWord = 0;
 		} else {
 			byte subop = scriptReadByte(pc++);
-			if (subop >= 3 && subop <= 5)
-				pc += uint32(subop - 1) * 2;
+			if (subop == 1 || subop == 3)
+				_wcomfy99RecordHostEnabled = true;
+			else if (subop == 2)
+				_wcomfy99RecordHostEnabled = false;
+
+			if (subop >= 3 && subop <= 5) {
+				_wcomfy99MixedHostFirstWord = scriptReadWord(pc);
+				_wcomfy99MixedHostSecondWord = scriptReadWord(pc + 2);
+				pc += 4;
+				_wcomfy99RecordHostEnabled = true;
+				if (subop != 3) {
+					_wcomfy99MixedHostThirdWord = scriptReadWord(pc);
+					pc += 2;
+				}
+
+				if (subop == 5) {
+					_wcomfy99MixedHostFourthWord = scriptReadWord(pc);
+					pc += 2;
+				}
+			}
 		}
 
 		return kScriptContinue;
@@ -615,9 +657,31 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	if ((opcode == 0x46 || opcode == 0x47) && _usesWcomfy99ScriptOps) {
 		if (opcode == 0x46) {
 			byte subop = scriptReadByte(pc++);
-			if (subop >= 1 && subop <= 8)
+			if (subop >= 1 && subop <= 8) {
+				uint16 argument = scriptReadWord(pc);
 				pc += 2;
+				uint16 percentage = argument == 0x00FF ? 0x00FF :
+					(int16(argument) < 0 ? 0 : MIN<uint16>(argument, 100));
+				if (subop == 1)
+					_wcomfy99HostWordA = argument;
+				else if (subop == 2 && percentage != 0x00FF)
+					_wcomfy99WaveVolumePercent = percentage;
+				else if (subop == 3 && percentage != 0x00FF)
+					_wcomfy99WaveLeftPercent = percentage;
+				else if (subop == 4 && percentage != 0x00FF)
+					_wcomfy99WaveRightPercent = percentage;
+				else if ((subop == 5 || subop == 6) && percentage != 0x00FF)
+					_wcomfy99MixerVolumePercent = percentage;
+				else if (subop == 7 && percentage != 0x00FF)
+					_wcomfy99MixerAltPercent = percentage;
+				else if (subop == 8)
+					_wcomfy99HostWordB = argument;
+			}
 		} else {
+			_wcomfy99RangeHostStart = scriptReadWord(pc);
+			_wcomfy99RangeHostEnd = scriptReadWord(pc + 2);
+			_wcomfy99RangeHostCount = _wcomfy99RangeHostEnd >= _wcomfy99RangeHostStart ?
+				_wcomfy99RangeHostEnd - _wcomfy99RangeHostStart + 1 : 0;
 			pc += 4;
 		}
 
@@ -774,8 +838,16 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 				condition = argument < _sceneHandles.size() && _sceneHandles[argument];
 			else if (kind == 2)
 				condition = _inputDeviceMode == 1;
-			else if (kind == 14 && argument <= 4)
-				condition = _inputDeviceMode == argument;
+			else if (kind == 14) {
+				if (argument <= 4) {
+					condition = _inputDeviceMode == argument;
+				} else if (argument == 20) {
+					condition = _wcomfy99RecordHostEnabled;
+				} else if (argument == 30) {
+					Common::ScopedPtr<Common::SeekableReadStream> stream(pathFOpen(Common::Path("comfy.htm"), true));
+					condition = bool(stream);
+				}
+			}
 		} else if (kind == 1) {
 			uint16 scene = scriptReadWord(pc);
 			condition = scene < _sceneHandles.size() && _sceneHandles[scene];
