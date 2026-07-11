@@ -305,6 +305,7 @@ struct InteractionResult {
 	int playerGotoZ = 0;
 	bool requestPlayerDeath = false;
 	bool requestPlayerGotoXZ = false;
+	bool requestPlayerGotoZ = false;
 	bool requestRoomRestart = false;
 	Common::String roomRestartTargetName;
 	bool requestCloseupExit = false;
@@ -467,7 +468,7 @@ private:
 		Common::String *dialogueNpcName, Common::String *dialogueContinuationTag,
 		Common::String *continuationTag, ResolvedText *modalText,
 		StartupLightingCommand *lightingCommand, Common::String *moveEntityToPlayerZName,
-		bool *requestPlayerGotoXZ,
+		bool *requestPlayerGotoXZ, bool *requestPlayerGotoZ,
 		int *playerGotoX, int *playerGotoZ,
 		bool *requestPlayerDeath, int *playerDeathDamageType,
 		bool *mutatedRuntimeState, bool *visualRuntimeStateChanged,

@@ -1705,7 +1705,7 @@ bool Script::executeRoomEnterCommands(const Common::String &roomName,
 		&result.requestDemoEnding, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.moveEntityToPlayerZName,
-		&result.requestPlayerGotoXZ,
+		&result.requestPlayerGotoXZ, &result.requestPlayerGotoZ,
 		&result.playerGotoX, &result.playerGotoZ,
 		&result.requestPlayerDeath, &result.playerDeathDamageType,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
@@ -1728,7 +1728,8 @@ bool Script::executeRoomExitCommands(const Common::String &roomName,
 		&result.dialogueNpcName, &result.dialogueContinuationTag,
 		&result.continuationTag, &result.modalText, &result.lightingCommand,
 		&result.moveEntityToPlayerZName,
-		&result.requestPlayerGotoXZ, &result.playerGotoX, &result.playerGotoZ,
+		&result.requestPlayerGotoXZ, &result.requestPlayerGotoZ,
+		&result.playerGotoX, &result.playerGotoZ,
 		&result.requestPlayerDeath, &result.playerDeathDamageType,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
 		&result.previousTimerRecords, &result.requestCloseupExit);
@@ -1767,7 +1768,7 @@ bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionRes
 		&result.requestDemoEnding, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.moveEntityToPlayerZName,
-		&result.requestPlayerGotoXZ,
+		&result.requestPlayerGotoXZ, &result.requestPlayerGotoZ,
 		&result.playerGotoX, &result.playerGotoZ,
 		&result.requestPlayerDeath, &result.playerDeathDamageType,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
@@ -1779,6 +1780,7 @@ bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionRes
 		result.cdChangeDisc > 0 || !result.continuationTag.empty() || !result.modalText.value.empty() ||
 		result.lightingCommand != kStartupLightingCommandNone ||
 		!result.moveEntityToPlayerZName.empty() || result.requestPlayerGotoXZ ||
+		result.requestPlayerGotoZ ||
 		result.requestPlayerDeath ||
 		result.requestCloseupExit || result.mutatedRuntimeState ||
 		hasActionableCommandChain(object.actionTag);
@@ -1798,7 +1800,7 @@ bool Script::resolveRegionInteraction(const RegionRecord &region, InteractionRes
 		&result.requestDemoEnding, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.moveEntityToPlayerZName,
-		&result.requestPlayerGotoXZ,
+		&result.requestPlayerGotoXZ, &result.requestPlayerGotoZ,
 		&result.playerGotoX, &result.playerGotoZ,
 		&result.requestPlayerDeath, &result.playerDeathDamageType,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
@@ -1809,6 +1811,7 @@ bool Script::resolveRegionInteraction(const RegionRecord &region, InteractionRes
 		result.cdChangeDisc > 0 || !result.continuationTag.empty() || !result.modalText.value.empty() ||
 		result.lightingCommand != kStartupLightingCommandNone ||
 		!result.moveEntityToPlayerZName.empty() || result.requestPlayerGotoXZ ||
+		result.requestPlayerGotoZ ||
 		result.requestPlayerDeath ||
 		result.requestCloseupExit || result.mutatedRuntimeState ||
 		hasActionableCommandChain(region.actionTag);
@@ -1836,7 +1839,7 @@ bool Script::resolveUseItemInteraction(const Common::String &itemName, const Obj
 		&result.requestDemoEnding, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.moveEntityToPlayerZName,
-		&result.requestPlayerGotoXZ,
+		&result.requestPlayerGotoXZ, &result.requestPlayerGotoZ,
 		&result.playerGotoX, &result.playerGotoZ,
 		&result.requestPlayerDeath, &result.playerDeathDamageType,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
@@ -1879,7 +1882,7 @@ bool Script::executeActionTag(const Common::String &tag, InteractionResult &resu
 		&result.requestDemoEnding, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.moveEntityToPlayerZName,
-		&result.requestPlayerGotoXZ,
+		&result.requestPlayerGotoXZ, &result.requestPlayerGotoZ,
 		&result.playerGotoX, &result.playerGotoZ,
 		&result.requestPlayerDeath, &result.playerDeathDamageType,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
@@ -1891,6 +1894,7 @@ bool Script::executeActionTag(const Common::String &tag, InteractionResult &resu
 		result.cdChangeDisc > 0 || !result.continuationTag.empty() || !result.modalText.value.empty() ||
 		result.lightingCommand != kStartupLightingCommandNone ||
 		!result.moveEntityToPlayerZName.empty() || result.requestPlayerGotoXZ ||
+		result.requestPlayerGotoZ ||
 		result.requestPlayerDeath ||
 		result.requestCloseupExit || result.mutatedRuntimeState ||
 		hasActionableCommandChain(tag);
@@ -1920,7 +1924,7 @@ bool Script::executeTimerAction(const Common::String &timerName, InteractionResu
 		&result.requestDemoEnding, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.moveEntityToPlayerZName,
-		&result.requestPlayerGotoXZ,
+		&result.requestPlayerGotoXZ, &result.requestPlayerGotoZ,
 		&result.playerGotoX, &result.playerGotoZ,
 		&result.requestPlayerDeath, &result.playerDeathDamageType,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
@@ -1932,6 +1936,7 @@ bool Script::executeTimerAction(const Common::String &timerName, InteractionResu
 		result.cdChangeDisc > 0 || !result.continuationTag.empty() || !result.modalText.value.empty() ||
 		result.lightingCommand != kStartupLightingCommandNone ||
 		!result.moveEntityToPlayerZName.empty() || result.requestPlayerGotoXZ ||
+		result.requestPlayerGotoZ ||
 		result.requestPlayerDeath ||
 		result.requestCloseupExit || result.mutatedRuntimeState ||
 		hasActionableCommandChain(timer->arg2);
@@ -2767,7 +2772,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		Common::String *dialogueNpcName, Common::String *dialogueContinuationTag,
 		Common::String *continuationTag, ResolvedText *modalText,
 		StartupLightingCommand *lightingCommand, Common::String *moveEntityToPlayerZName,
-		bool *requestPlayerGotoXZ,
+		bool *requestPlayerGotoXZ, bool *requestPlayerGotoZ,
 		int *playerGotoX, int *playerGotoZ,
 		bool *requestPlayerDeath, int *playerDeathDamageType,
 		bool *mutatedRuntimeState, bool *visualRuntimeStateChanged,
@@ -3070,7 +3075,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 					deathFlicPath, requestMainMenu, requestDemoEnding, cdChangeDisc,
 					dialogueNpcName, dialogueContinuationTag,
 					continuationTag, modalText, lightingCommand, moveEntityToPlayerZName,
-					requestPlayerGotoXZ,
+					requestPlayerGotoXZ, requestPlayerGotoZ,
 					playerGotoX, playerGotoZ, requestPlayerDeath, playerDeathDamageType,
 					mutatedRuntimeState, visualRuntimeStateChanged,
 					previousTimerRecords, requestCloseupExit);
@@ -3249,6 +3254,20 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			continue;
 		}
 
+		if (command->opcodeName.equalsIgnoreCase("PC_GOTO_Z")) {
+			if (!requestPlayerGotoZ || !playerGotoZ) {
+				debug(1, "Harvester: deferred startup command '%s' for %s '%s' has no player-move context",
+					command->opcodeName.c_str(), contextLabel, contextName.c_str());
+				currentTag = command->arg4;
+				continue;
+			}
+
+			*requestPlayerGotoZ = true;
+			*playerGotoZ = parseAsciiIntOrZero(command->arg1);
+			currentTag = command->arg4;
+			continue;
+		}
+
 		if (command->opcodeName.equalsIgnoreCase("CHANGE_LIGHTING")) {
 			if (!lightingCommand) {
 				debug(1, "Harvester: deferred startup command '%s' for %s '%s' has no lighting context",
@@ -3398,6 +3417,7 @@ bool Script::probePickupBlockingCommandChain(const Common::String &initialTag,
 			command->opcodeName.equalsIgnoreCase("MOVE_BM2PCZ") ||
 			command->opcodeName.equalsIgnoreCase("PC_CHANGE_WEAPON") ||
 			command->opcodeName.equalsIgnoreCase("PC_GOTO_XZ") ||
+			command->opcodeName.equalsIgnoreCase("PC_GOTO_Z") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_LIGHTING") ||
 			command->opcodeName.equalsIgnoreCase("EXIT_CLOSEUP") ||
 			command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
@@ -3460,6 +3480,7 @@ bool Script::hasActionableCommandChain(const Common::String &initialTag) const {
 			command->opcodeName.equalsIgnoreCase("MOVE_BM2PCZ") ||
 			command->opcodeName.equalsIgnoreCase("PC_CHANGE_WEAPON") ||
 			command->opcodeName.equalsIgnoreCase("PC_GOTO_XZ") ||
+			command->opcodeName.equalsIgnoreCase("PC_GOTO_Z") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_LIGHTING") ||
 			command->opcodeName.equalsIgnoreCase("EXIT_CLOSEUP") ||
 			command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
