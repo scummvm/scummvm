@@ -293,6 +293,7 @@ struct InteractionResult {
 	Common::String dialogueNpcName;
 	Common::String dialogueContinuationTag;
 	Common::String continuationTag;
+	Common::String moveEntityToPlayerZName;
 	ResolvedText modalText;
 	Common::Array<AudioCommand> audioCommands;
 	Common::Array<TimerRecord> previousTimerRecords;
@@ -465,7 +466,8 @@ private:
 		int *cdChangeDisc,
 		Common::String *dialogueNpcName, Common::String *dialogueContinuationTag,
 		Common::String *continuationTag, ResolvedText *modalText,
-		StartupLightingCommand *lightingCommand, bool *requestPlayerGotoXZ,
+		StartupLightingCommand *lightingCommand, Common::String *moveEntityToPlayerZName,
+		bool *requestPlayerGotoXZ,
 		int *playerGotoX, int *playerGotoZ,
 		bool *requestPlayerDeath, int *playerDeathDamageType,
 		bool *mutatedRuntimeState, bool *visualRuntimeStateChanged,
