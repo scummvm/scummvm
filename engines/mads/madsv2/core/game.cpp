@@ -57,7 +57,6 @@
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/config.h"
 #include "mads/madsv2/core/fileio.h"
-#include "mads/madsv2/core/copy.h"
 #include "mads/madsv2/core/camera.h"
 #include "mads/madsv2/core/quote.h"
 #include "mads/madsv2/core/text.h"

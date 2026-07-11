@@ -28,6 +28,7 @@ namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
 
+extern int global_copy_verify();
 
 } // namespace RexNebular
 } // namespace MADSV2

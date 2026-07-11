@@ -30,6 +30,7 @@
 #include "graphics/screen.h"
 #include "mads/mads.h"
 #include "mads/core/sound_manager.h"
+#include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/speech.h"
 
 namespace MADS {
@@ -91,8 +92,8 @@ public:
 	int main_normal_key(int mykey) const {
 		return mykey;
 	}
-	int  main_copy_verify() {
-		return 0;
+	virtual int main_copy_verify() {
+		return COPY_SUCCEED;
 	}
 
 	bool canLoadGameStateCurrently(Common::U32String *msg) override;

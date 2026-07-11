@@ -37,6 +37,7 @@
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/copy.h"
 #include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/main.h"
 #include "mads/madsv2/nebular/popup.h"
@@ -82,6 +83,10 @@ Common::Error RexNebularEngine::run() {
 	RexNebular::nebular_main();
 
 	return Common::kNoError;
+}
+
+int RexNebularEngine::main_copy_verify() {
+	return global_copy_verify();
 }
 
 void RexNebularEngine::global_init_code() {

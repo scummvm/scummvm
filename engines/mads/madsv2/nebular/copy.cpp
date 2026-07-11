@@ -19,8 +19,10 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "mads/madsv2/core/env.h"
 #include "mads/madsv2/core/font.h"
+#include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/global.h"
 #include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/nebular/copy.h"
@@ -29,10 +31,6 @@
 namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
-
-#define COPY_SUCCEED            0
-#define COPY_FAIL               1
-#define COPY_ESCAPE             2
 
 #define COPY_TRIES_ALLOWED      2
 
@@ -56,7 +54,7 @@ struct CopyProt {
 };
 
 
-void copy_mangle(CopyProt *copy_prot) {
+static void copy_mangle(CopyProt *copy_prot) {
 	int count;
 	byte *dog;
 
@@ -198,6 +196,17 @@ done:
 	popup_vomitation_flag = true; /* Reset */
 
 	return (error_flag);
+}
+
+int global_copy_verify() {
+	if (!ConfMan.getBool("copy_protection"))
+		return COPY_SUCCEED;
+
+	// Note: the original did some extra work at this point to see whether the user's boot sector
+	// remained the same, and if so, bypass the copy protection check. And even if there wasn't
+	// an existing match, it would only sometimes prompt the user
+
+	return copy_pop_and_ask();
 }
 
 } // namespace RexNebular

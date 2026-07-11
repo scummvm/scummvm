@@ -52,6 +52,7 @@ public:
 	Common::Error run() override;
 	void syncRoom(Common::Serializer &s) override;
 
+	int main_copy_verify() override;
 	void global_init_code() override;
 	void section_music(int section_num) override;
 	void global_section_constructor() override;

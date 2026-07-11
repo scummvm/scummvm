@@ -21,7 +21,6 @@ MODULE_OBJS += \
 	madsv2/core/color.o \
 	madsv2/core/config.o \
 	madsv2/core/conv.o \
-	madsv2/core/copy.o \
 	madsv2/core/cursor.o \
 	madsv2/core/cycle.o \
 	madsv2/core/dialog.o \

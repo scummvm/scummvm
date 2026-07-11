@@ -94,6 +94,12 @@ namespace MADSV2 {
 
 #define DEBUGGER_MAX_WATCH      12
 
+// Copy protection statuses. Only Rex Nebular had a copy protection screen in the original release
+enum {
+	COPY_SUCCEED   = 0,
+	COPY_FAIL      = 1,
+	COPY_ESCAPE    = 2
+};
 
 extern int selected_intro;
 
