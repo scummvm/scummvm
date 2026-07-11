@@ -1480,6 +1480,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				!interaction.requestPlayerGotoXZ &&
 				interaction.lightingCommand == kStartupLightingCommandNone &&
 				!interaction.requestMainMenu &&
+				!interaction.requestDemoEnding &&
 				interaction.dialogueNpcName.empty() &&
 				interaction.dialogueContinuationTag.empty() &&
 				interaction.continuationTag.empty() &&

@@ -57,6 +57,11 @@ Common::Error RoomInteractionProcessor::handleInteractionResult(const Interactio
 	_playerState.turnActive = false;
 	_playerState.turnTargetFacing = -1;
 	_pendingRegionName.clear();
+	if (interaction.requestDemoEnding) {
+		_engine.quitGame();
+		didTransition = true;
+		return Common::kNoError;
+	}
 
 	if (interaction.requestMainMenu) {
 		_engine.stopMusic();
@@ -339,6 +344,7 @@ bool hasRoomEntryInteraction(const InteractionResult &interaction) {
 		!interaction.cutscenePath.empty() ||
 		!interaction.deathFlicPath.empty() ||
 		interaction.requestMainMenu ||
+		interaction.requestDemoEnding ||
 		interaction.requestCloseupExit ||
 		interaction.requestRoomRestart ||
 		interaction.requestPlayerDeath ||

@@ -308,6 +308,7 @@ struct InteractionResult {
 	Common::String roomRestartTargetName;
 	bool requestCloseupExit = false;
 	bool requestMainMenu = false;
+	bool requestDemoEnding = false;
 	bool abortRemainingCommandChain = false;
 	bool mutatedRuntimeState = false;
 	bool visualRuntimeStateChanged = false;
@@ -460,6 +461,7 @@ private:
 		Common::Array<AudioCommand> *audioCommands, Common::String *nextRoomName,
 		StartupRoomTransitionKind *roomTransition,
 		Common::String *cutscenePath, Common::String *deathFlicPath, bool *requestMainMenu,
+		bool *requestDemoEnding,
 		int *cdChangeDisc,
 		Common::String *dialogueNpcName, Common::String *dialogueContinuationTag,
 		Common::String *continuationTag, ResolvedText *modalText,
