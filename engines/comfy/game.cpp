@@ -358,6 +358,11 @@ bool ComfyEngine::assetsLoad() {
 	_musicEventMask = 0;
 	_musicEventFlag = 0;
 	_musicEnabled = true;
+	memset(_vocQueue, 0, sizeof(_vocQueue));
+	_soundEventIndex = 0;
+	_soundEventMaximum = 0;
+	_soundEventSubIndex = 0xFFFF;
+	_soundEventPreviousSubIndex = 0xFFFF;
 	_scriptFault = false;
 
 	return true;
