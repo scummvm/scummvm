@@ -148,7 +148,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 				"Mapas/mapa2.emc", "d0a8eb184e813cf337840bb0e5270ee8", 40452),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE,
+			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
 		EngineVersion::V2_1
@@ -166,7 +166,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 				"Mapas/mapa1.emc", "d0a8eb184e813cf337840bb0e5270ee8", 33515),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE,
+			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
 		EngineVersion::V2_1
@@ -184,7 +184,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 				"Mapas/mapa2.emc", "d0a8eb184e813cf337840bb0e5270ee8", 40452),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE,
+			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
 		EngineVersion::V2_1
@@ -203,7 +203,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 				"Mapas/mapa2.emc", "c04b7b6424c02d5da0719bdf648003a1", 67129),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE,
+			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
 		EngineVersion::V2_0
@@ -221,7 +221,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 				"Mapas/mapa1.emc", "c04b7b6424c02d5da0719bdf648003a1", 36530),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE,
+			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
 		EngineVersion::V2_0
@@ -236,7 +236,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 				"Mapas/mapa1.emc", "c04b7b6424c02d5da0719bdf648003a1", 36530),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE,
+			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
 		EngineVersion::V2_0
@@ -254,7 +254,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 				"Mapas/mapa2.emc", "c04b7b6424c02d5da0719bdf648003a1", 67129),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE,
+			ADGF_TESTING | ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
 		EngineVersion::V2_0
@@ -274,7 +274,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 			),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE | ADGF_CD,
+			ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_CD,
 			GUIO1(GAMEOPTION_TEXTURE_FILTER)
 		},
 		EngineVersion::V1_0
@@ -291,7 +291,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("terror.emc", "dc9357ee618bff160e2e2afa168ba913", 170113868),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE | ADGF_CD,
+			ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_CD,
 			GUIO1(GAMEOPTION_TEXTURE_FILTER)
 		},
 		EngineVersion::V1_0
@@ -308,7 +308,7 @@ const AlcachofaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("oeste.emc", "b4c1084557d4cfbae336f0e741ec9e9f", 183099320),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE | ADGF_CD,
+			ADGF_TESTING | ADGF_USEEXTRAASTITLE | ADGF_CD,
 			GUIO1(GAMEOPTION_TEXTURE_FILTER)
 		},
 		EngineVersion::V1_0
