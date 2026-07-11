@@ -67,10 +67,13 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_toyKeyboardLatchedMask(0), _toyKeyboardHoldMask(0), _lptPrevScanState(0), _inputDeviceMode(0),
 	_keyboardUiInitialized(false), _keyboardUiVisible(true),
 	_stringCount(0), _sceneCount(0), _keyBitCount(0), _resourceHandleCount(0), _midiEntryCount(0),
-	_picDataSize(0), _usesAnimFile(false), _sceneOpen(false),
+	_picDataSize(0), _usesAnimFile(false), _sceneOpen(false), _sceneEntryListActive(false),
 	_sceneMidiInstanceOffset(0), _sceneEntryListOffset(0), _sceneActorPcOffset(0), _sceneStringTableOffset(0),
 	_sceneHandlesOffset(0), _sceneActorsOffset(0), _sceneKeyBitsOffset(0), _scenePoolCursor(0),
-	_scenePoolEvictCursor(0), _activeSceneCount(0), _sceneEntryCount(0), _sceneEntryFrameSize(0),
+	_scenePoolEvictCursor(0), _scenePoolSize(0), _headerXmsObjectTableBase(0),
+	_headerXmsObjectTableBytes(0), _headerXmsPicEntriesBase(0), _headerXmsPicEntriesBytes(0),
+	_headerXmsSoundHeadersBase(0), _headerXmsSoundHeadersBytes(0), _selectorRing(0),
+	_selectorPoolInitialized(false), _activeSceneCount(0), _sceneEntryCount(0), _sceneEntryFrameSize(0),
 	_numObjects(0), _numFrames(0), _numSprites(0), _envNumSprites(0), _midiFileMode(0), _mirrorMode(false),
 	_currentActor(0), _pendingScene(0), _musicEventMask(0), _musicEventFlag(0), _musicEnabled(false),
 	_usesWcomfy99ScriptOps(false), _wcomfy99FeatureWordCount(0), _wcomfy99Sensitivity(0),
@@ -101,6 +104,10 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	memset(&_midiEvents, 0, sizeof(_midiEvents));
 	memset(&_midiTracks, 0, sizeof(_midiTracks));
 	memset(_midiChannels, 0, sizeof(_midiChannels));
+	_frameSpriteResource.id = 0;
+	memset(&_frameSpriteResource.header, 0, sizeof(_frameSpriteResource.header));
+	_frameSpriteResource.loaded = false;
+	memset(_selectorPoolEntries, 0, sizeof(_selectorPoolEntries));
 	memset(_wcomfy99FeatureWords, 0, sizeof(_wcomfy99FeatureWords));
 	memset(_animFrameHeader, 0, sizeof(_animFrameHeader));
 	memset(_animPendingDirtyRect, 0, sizeof(_animPendingDirtyRect));
@@ -121,10 +128,6 @@ Common::Error ComfyEngine::run() {
 	Common::Error result = gameInit();
 	if (result.getCode() != Common::kNoError)
 		return result;
-
-	int saveSlot = ConfMan.getInt("save_slot");
-	if (saveSlot != -1)
-		(void)loadGameState(saveSlot);
 
 	uint16 currentScene = _language;
 	uint16 chooserScene = currentScene;
@@ -155,9 +158,9 @@ Common::Error ComfyEngine::run() {
 			return Common::kNoGameDataFoundError;
 		}
 
-		if (currentScene == 0x63)
+		if (currentScene == 0x63) {
 			currentScene = sceneRun(chooserScene, _multiLanguage, false);
-		else {
+		} else {
 			chooserScene = currentScene;
 			currentScene = sceneRun(currentScene, _multiLanguage, false);
 		}
@@ -188,8 +191,7 @@ void ComfyEngine::gameShutdown() {
 	if (_lptKeyboardInitialized)
 		lptKeyboardShutdown();
 
-	sceneClose();
-	assetsUnload();
+	assetsUnload(1);
 
 	midiPlyrStop();
 
@@ -214,34 +216,16 @@ void ComfyEngine::timerShutdown() {
 	_timerInitialized = false;
 }
 
-void ComfyEngine::gameMainLoop() {
-	_mainLoopRunning = true;
-
-	while (_mainLoopRunning && !shouldQuit()) {
-		processEvents();
-		if (shouldQuit())
-			break;
-
-		gameMainLoopTick();
-	}
-
-	_mainLoopRunning = false;
-}
-
 uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
-	if (!assetsLoad() || !sceneOpen()) {
-		assetsUnload();
+	Common::Array<byte> sceneRunBuffer;
+	sceneRunBuffer.resize(0x10010);
+	memset(&sceneRunBuffer[0], 0, sceneRunBuffer.size());
+	if (!assetsLoad(0x4000, &sceneRunBuffer[0])) {
+		assetsUnload(0);
 		return 0;
 	}
 
-	keyBitSet(2);
-	lptKeyboardInit();
-	paletteVsyncFlip();
-	paletteVsyncFlip();
-	if (_activeSceneCount && _midiHandles.size() > 1)
-		_midiHandles[1] += sceneId;
-
-	gameMainLoop();
+	gameMainLoop(sceneId);
 	uint16 nextScene = 0;
 	if (checkNext && _activeSceneCount > 1 && _midiHandles.size() > 1)
 		nextScene = _midiHandles[1];
@@ -249,9 +233,8 @@ uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
 	if (nextScene == sceneId || int16(nextScene) <= 0 || int16(nextScene) >= 0x65)
 		nextScene = 0;
 
-	lptKeyboardShutdown();
-	sceneClose();
-	assetsUnload();
+	midiShutdown();
+	assetsUnload(0);
 	inputQueueReset();
 	if (!exitFlag && nextScene)
 		renderSetDirty();
@@ -299,24 +282,112 @@ void ComfyEngine::processEvents() {
 	}
 }
 
-void ComfyEngine::gameMainLoopTick() {
-	_pendingScene = 0;
-	_musicEventMask = 0;
-	_musicEventFlag = 0;
-	uint16 ticks = timerTick();
+void ComfyEngine::gameMainLoop(uint16 argument) {
+	byte keepRunning = 1;
+	uint16 lastKey = 0xFFFF;
+	actorInit(1, 0, 1, 1, 0x14, 0, 0, 0, 1);
+	keyBitSet(2);
+	lptKeyboardInit();
 
-	midiTrackTickAndRemove();
-	animFileTickCommands();
-	sceneTickEvent();
-	if (!_musicEnabled)
-		midiPollChannels(ticks);
-	paletteFadeStep(ticks);
-	lptKeyboardScanAndProcess();
-	actorTickTree();
-	renderFrame();
-	processInput();
-	processMusicEvents();
-	processSceneTransition();
+	uint16 rootIndex = _sceneHandles.size() > 1 ? _sceneHandles[1] : 0;
+	Actor *mainLoopActor = actorGet(rootIndex);
+	paletteLoadWithFade(0, 0);
+	paletteVsyncFlip();
+	paletteVsyncFlip();
+	if (_activeSceneCount && _midiHandles.size() > 1)
+		_midiHandles[1] += argument;
+
+	while (keepRunning && !shouldQuit()) {
+		_pendingScene = 0;
+		_musicEventMask = 0;
+		_musicEventFlag = 0;
+
+		uint16 ticks = timerTick();
+		midiTrackTickAndRemove();
+		animFileTickCommands();
+		sceneTickEvent();
+		if (!_musicEnabled)
+			midiPollChannels(ticks);
+
+		paletteFadeStep(ticks);
+		lptKeyboardScanAndProcess();
+		lptKeyToFlags(lastKey);
+		actorTickTree(rootIndex);
+
+		uint16 frame = actorGetFrame();
+		if (frame) {
+			SpriteResource *background = spriteGetPtr(int16(frame));
+			if (background && background->header.width == _logicalScreenWidth &&
+					background->header.height == _logicalScreenHeight && !background->pixels.empty()) {
+				spriteBlitRle(&background->pixels[0], background->pixels.size());
+				videoSetResolution();
+			} else {
+				uint16 clear = background && background->pixels.size() > 3 ? background->pixels[3] : 0;
+				framebufClear(clear);
+				videoSetResolution();
+			}
+		}
+
+		if (actorDraw(rootIndex, 0, 0)) {
+			paletteVsyncFlip();
+			animFrameWaitForVocCounter();
+			animFrameRecordVocCounter(3);
+			videoPresentFrame();
+			animFrameRecordVocCounter(4);
+		} else {
+			renderSetDirty();
+		}
+
+		lastKey = 0xFFFF;
+		if (inputQueueHasItems())
+			lastKey = lptReadKeyOrNext();
+
+		_lastKey = lastKey;
+		if (lastKey == 0x0101)
+			keepRunning = 0;
+		else if (mainLoopActor)
+			keepRunning = actorReadU8(*mainLoopActor, kActorActive);
+
+		processEvents();
+		if (shouldQuit())
+			keepRunning = 0;
+
+		if (_musicEventMask) {
+			if (_musicEventFlag)
+				vocQueuePlayAll();
+
+			if (vocQueueIsIdle() || _musicEnabled) {
+				uint16 track = 1;
+				for (;;) {
+					_musicEventMask = uint16(int16(_musicEventMask) >> 1);
+					if (!_musicEventMask)
+						break;
+
+					if (_musicEventMask & 1)
+						envConvToXms(&_sceneMemoryBlock[_sceneMidiInstanceOffset], track);
+
+					track++;
+				}
+			}
+		}
+
+		keyBitClear(0x42);
+		if (_pendingScene) {
+			sceneStartWithMusic(_pendingScene);
+			if (!_musicEnabled)
+				vocQueuePlayAll();
+
+			keyBitSet(0x42);
+		} else {
+			actorSetAllVisible();
+		}
+	}
+
+	if (_sceneHandles.size() > 1 && _sceneHandles[1])
+		actorFree(1);
+
+	lptKeyboardShutdown();
+	sceneBlockPackRuntimeState();
 }
 
 void ComfyEngine::midiTrackTickAndRemove() {
@@ -403,112 +474,6 @@ void ComfyEngine::midiPollChannels(uint16 ticks) {
 	}
 }
 
-void ComfyEngine::actorTickTree() {
-	if (_sceneHandles.size() > 1 && _sceneHandles[1])
-		actorTickTreeInternal(_sceneHandles[1]);
-
-	scenePackRuntimeState();
-}
-
-void ComfyEngine::renderFrame() {
-	Actor *root = actorGet(0);
-	uint16 frame = root ? actorReadDword(*root, kActorSpriteSelector) : 0;
-	if (frame) {
-		SpriteResource *background = spriteGet(int16(frame));
-		if (background && background->header.width == _logicalScreenWidth &&
-				background->header.height == _logicalScreenHeight && !background->pixels.empty()) {
-			spriteBlitRle(&background->pixels[0], background->pixels.size());
-		} else {
-			uint16 clear = background && background->pixels.size() > 3 ? background->pixels[3] : 0;
-			framebufClear(clear);
-		}
-	}
-
-	uint16 rootIndex = _sceneHandles.size() > 1 ? _sceneHandles[1] : 0;
-	if (!rootIndex || actorDraw(rootIndex, 0, 0)) {
-		paletteVsyncFlip();
-		animFrameWaitForVocCounter();
-		animFrameRecordVocCounter(3);
-		videoPresentFrame();
-		animFrameRecordVocCounter(4);
-	} else {
-		renderSetDirty();
-	}
-}
-
-void ComfyEngine::processInput() {
-	_lastKey = 0xFFFF;
-	if (inputQueueHasItems())
-		_lastKey = lptReadKeyOrNext();
-
-	lptKeyToFlags(_lastKey);
-	if (_lastKey == 0x0101) {
-		_mainLoopRunning = false;
-		return;
-	}
-
-	uint16 rootIndex = _sceneHandles.size() > 1 ? _sceneHandles[1] : 0;
-	Actor *root = actorGet(rootIndex);
-	if (root && !actorReadByte(*root, kActorActive))
-		_mainLoopRunning = false;
-}
-
-void ComfyEngine::processMusicEvents() {
-	if (!_musicEventMask)
-		return;
-
-	if (_musicEventFlag)
-		vocQueuePlayAll();
-
-	if (vocQueueIsIdle() || _musicEnabled) {
-		uint16 track = 1;
-		while ((_musicEventMask = uint16(int16(_musicEventMask) >> 1)) != 0) {
-			if (_musicEventMask & 1)
-				environmentStore(track);
-
-			track++;
-		}
-	}
-}
-
-void ComfyEngine::processSceneTransition() {
-	keyBitClear(0x42);
-	if (!_pendingScene) {
-		actorSetAllDirty();
-		return;
-	}
-
-	byte keySnapshot[15];
-	memset(keySnapshot, 0, sizeof(keySnapshot));
-	if (_keyBits)
-		memcpy(keySnapshot, _keyBits, MIN<uint32>(sizeof(keySnapshot), _keyBitsSize));
-
-	if (!_musicEnabled && _midiPlyrDriver)
-		_midiPlyrDriver->musicStopAll(1);
-
-	if (environmentLoad(_pendingScene)) {
-		if (!_musicEnabled) {
-			for (uint channel = 0; channel < COMFY_MIDI_CHANNEL_COUNT; channel++) {
-				_midiChannels[channel].playing = false;
-				if (_midiChannels[channel].entryCount)
-					midiStartChannel(channel);
-			}
-		}
-
-		Actor *root = actorGet(0);
-		if (root) {
-			paletteLoadWithFade(actorReadWord(*root, kActorXFixed), 0);
-			if (actorReadDword(*root, kActorYFixed))
-				paletteApplyBrightness(actorReadWord(*root, kActorYFixed));
-		}
-	}
-
-	if (_keyBits)
-		memcpy(_keyBits, keySnapshot, MIN<uint32>(sizeof(keySnapshot), _keyBitsSize));
-
-	keyBitSet(0x42);
-}
-
 void ComfyEngine::vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc) {
 	uint16 next = (_soundEventMaximum + 1) % COMFY_VOC_QUEUE_CAPACITY;
 	if (next == _soundEventIndex)
@@ -550,17 +515,6 @@ void ComfyEngine::vocQueuePlayAll() {
 
 bool ComfyEngine::vocQueueIsIdle() {
 	return _soundEventIndex == _soundEventMaximum;
-}
-
-Common::Error ComfyEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
-
-	return Common::kNoError;
 }
 
 } // End of namespace Comfy
