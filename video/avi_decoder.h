@@ -68,14 +68,14 @@ public:
 	AVIDecoder(const Common::Rational &frameRateOverride);
 	virtual ~AVIDecoder();
 
-	bool loadStream(Common::SeekableReadStream *stream);
-	void close();
-	uint16 getWidth() const { return _header.width; }
-	uint16 getHeight() const { return _header.height; }
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void close() override;
+	uint16 getWidth() const override { return _header.width; }
+	uint16 getHeight() const override { return _header.height; }
 
-	bool rewind();
-	bool isRewindable() const { return true; }
-	bool isSeekable() const;
+	bool rewind() override;
+	bool isRewindable() const override { return true; }
+	bool isSeekable() const override;
 
 	/**
 	 * Decode the next frame into a surface and return the latter.
@@ -92,7 +92,7 @@ public:
 	 *       hence the caller must *not* free it.
 	 * @note this may return 0, in which case the last frame should be kept on screen
 	 */
-	virtual const Graphics::Surface *decodeNextFrame();
+	const Graphics::Surface *decodeNextFrame() override;
 
 	/**
 	 * Decodes the next transparency track frame
@@ -100,10 +100,10 @@ public:
 	const Graphics::Surface *decodeNextTransparency();
 protected:
 	// VideoDecoder API
-	void readNextPacket();
-	bool seekIntern(const Audio::Timestamp &time);
-	bool supportsAudioTrackSwitching() const { return true; }
-	AudioTrack *getAudioTrack(int index);
+	void readNextPacket() override;
+	bool seekIntern(const Audio::Timestamp &time) override;
+	bool supportsAudioTrackSwitching() const override { return true; }
+	AudioTrack *getAudioTrack(int index) override;
 
 	/**
 	 * Define a track to be used by this class.
@@ -209,32 +209,32 @@ protected:
 		void decodeFrame(Common::SeekableReadStream *stream);
 		void forceTrackEnd();
 
-		uint16 getWidth() const { return _bmInfo.width; }
-		uint16 getHeight() const { return _bmInfo.height; }
+		uint16 getWidth() const override { return _bmInfo.width; }
+		uint16 getHeight() const override { return _bmInfo.height; }
 		uint16 getBitCount() const { return _bmInfo.bitCount; }
-		Graphics::PixelFormat getPixelFormat() const;
-		bool setOutputPixelFormat(const Graphics::PixelFormat &format);
-		void setCodecAccuracy(Image::CodecAccuracy accuracy);
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
+		Graphics::PixelFormat getPixelFormat() const override;
+		bool setOutputPixelFormat(const Graphics::PixelFormat &format) override;
+		void setCodecAccuracy(Image::CodecAccuracy accuracy) override;
+		int getCurFrame() const override { return _curFrame; }
+		int getFrameCount() const override { return _frameCount; }
 		Common::String &getName() { return _vidsHeader.name; }
-		const Graphics::Surface *decodeNextFrame() { return _lastFrame; }
+		const Graphics::Surface *decodeNextFrame() override { return _lastFrame; }
 
-		const byte *getPalette() const;
-		bool hasDirtyPalette() const;
+		const byte *getPalette() const override;
+		bool hasDirtyPalette() const override;
 		void setCurFrame(int frame) { _curFrame = frame; }
 		void loadPaletteFromChunk(Common::SeekableReadStream *chunk);
 		void loadPaletteFromChunkRaw(Common::SeekableReadStream *chunk, int firstEntry, int numEntries);
 		void useInitialPalette();
-		bool canDither() const;
-		void setDither(const byte *palette);
+		bool canDither() const override;
+		void setDither(const byte *palette) override;
 		bool isValid() const { return _videoCodec != nullptr; }
 
 		bool isTruemotion1() const;
 		void forceDimensions(uint16 width, uint16 height);
 
-		bool isRewindable() const { return true; }
-		bool rewind();
+		bool isRewindable() const override { return true; }
+		bool rewind() override;
 
 		/**
 		 * Set the video track to play in reverse or forward.
@@ -244,22 +244,22 @@ protected:
 		 * @param reverse true for reverse, false for forward
 		 * @return true for success, false for failure
 		 */
-		virtual bool setReverse(bool reverse);
+		bool setReverse(bool reverse) override;
 
 		/**
 		 * Is the video track set to play in reverse?
 		 */
-		virtual bool isReversed() const { return _reversed; }
+		bool isReversed() const override { return _reversed; }
 
 		/**
 		 * Returns true if at the end of the video track
 		 */
-		virtual bool endOfTrack() const;
+		bool endOfTrack() const override;
 
 		/**
 		 * Get track frame rate
 		 */
-		Common::Rational getFrameRate() const { return Common::Rational(_vidsHeader.rate, _vidsHeader.scale); }
+		Common::Rational getFrameRate() const override { return Common::Rational(_vidsHeader.rate, _vidsHeader.scale); }
 
 		/**
 		 * Force sets a new frame rate
@@ -297,11 +297,11 @@ protected:
 		Common::String &getName() { return _audsHeader.name; }
 		void setCurChunk(uint32 chunk) { _curChunk = chunk; }
 
-		bool isRewindable() const { return true; }
-		bool rewind();
+		bool isRewindable() const override { return true; }
+		bool rewind() override;
 
 	protected:
-		Audio::AudioStream *getAudioStream() const { return _audioStream; }
+		Audio::AudioStream *getAudioStream() const override { return _audioStream; }
 
 		AVIStreamHeader _audsHeader;
 		PCMWaveFormat _wvInfo;
@@ -367,7 +367,7 @@ public:
 	 * This only works when the video track(s) supports getFrameTime().
 	 * This calls seek() internally.
 	 */
-	virtual bool seekToFrame(uint frame);
+	bool seekToFrame(uint frame) override;
 };
 
 } // End of namespace Video

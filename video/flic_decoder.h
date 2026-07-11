@@ -52,7 +52,7 @@ public:
 	FlicDecoder();
 	virtual ~FlicDecoder();
 
-	virtual bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream) override;
 
 	const Common::List<Common::Rect> *getDirtyRects() const;
 	void clearDirtyRects();
@@ -67,8 +67,8 @@ protected:
 		virtual void readHeader();
 
 		bool endOfTrack() const override;
-		virtual bool isRewindable() const override{ return true; }
-		virtual bool rewind() override;
+		bool isRewindable() const override{ return true; }
+		bool rewind() override;
 
 		uint16 getWidth() const override;
 		uint16 getHeight() const override;
@@ -77,7 +77,7 @@ protected:
 		int getCurFrameDelay() const override { return _frameDelay; }
 		int getFrameCount() const override { return _frameCount; }
 		uint32 getNextFrameStartTime() const override { return _nextFrameStartTime; }
-		virtual const Graphics::Surface *decodeNextFrame() override;
+		const Graphics::Surface *decodeNextFrame() override;
 		virtual void handleFrame();
 		const byte *getPalette() const override{ _dirtyPalette = false; return _palette.data(); }
 		bool hasDirtyPalette() const override { return _dirtyPalette; }

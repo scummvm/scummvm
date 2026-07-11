@@ -71,16 +71,16 @@ public:
 	BinkDecoder();
 	~BinkDecoder();
 
-	bool loadStream(Common::SeekableReadStream *stream);
-	void close();
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void close() override;
 
 	Common::Rational getFrameRate();
 
 protected:
-	void readNextPacket();
-	bool supportsAudioTrackSwitching() const { return true; }
-	AudioTrack *getAudioTrack(int index);
-	bool seekIntern(const Audio::Timestamp &time);
+	void readNextPacket() override;
+	bool supportsAudioTrackSwitching() const override { return true; }
+	AudioTrack *getAudioTrack(int index) override;
+	bool seekIntern(const Audio::Timestamp &time) override;
 	uint32 findKeyFrame(uint32 frame) const;
 
 private:
@@ -351,13 +351,13 @@ private:
 		/** Decode an audio packet. */
 		void decodePacket();
 
-		bool seek(const Audio::Timestamp &time);
-		bool isSeekable() const { return true; }
+		bool seek(const Audio::Timestamp &time) override;
+		bool isSeekable() const override { return true; }
 		void skipSamples(const Audio::Timestamp &length);
 		int getRate();
 
 	protected:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 	private:
 		AudioInfo *_audioInfo;
