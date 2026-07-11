@@ -50,10 +50,10 @@ public:
 	virtual ~ScrDecoder();
 
 	// ImageDecoder API
-	void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual const Graphics::Surface *getSurface() const { return _surface; }
-	const Graphics::Palette &getPalette() const { return _palette; }
+	void destroy() override;
+	bool loadStream(Common::SeekableReadStream &stream) override;
+	const Graphics::Surface *getSurface() const override { return _surface; }
+	const Graphics::Palette &getPalette() const override { return _palette; }
 private:
 	Graphics::Surface *_surface;
 	Graphics::Palette _palette;
