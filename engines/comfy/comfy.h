@@ -38,16 +38,23 @@
 
 #define COMFY_SCREEN_WIDTH 320
 #define COMFY_SCREEN_HEIGHT 200
+#define COMFY_PANTHER_SCREEN_WIDTH 640
+#define COMFY_PANTHER_SCREEN_HEIGHT 480
 #define COMFY_PIT_INPUT_FREQUENCY 1193182
 #define COMFY_PIT_TIMER_DIVISOR 0x2E9B
 
 namespace Comfy {
 
-struct ComfyGameDescription;
+enum ComfyEngineVersion {
+	kEngineVersion1, // 1994-1995
+	kEngineVersion2, // 1996-1997
+	kEngineVersion3  // 1999
+};
 
 class ComfyEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
+	ComfyEngineVersion _engineVersion;
 	Common::RandomSource _randomSource;
 	Graphics::Screen *_screen;
 	uint16 _logicalScreenWidth;
@@ -93,8 +100,6 @@ protected:
 public:
 	ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~ComfyEngine() override;
-
-	uint32 getFeatures() const;
 
 	/**
 	 * Returns the game Id
