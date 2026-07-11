@@ -121,14 +121,11 @@ void CellPhonePopup::init() {
 			// The UICL chunk can ship one initial email and one initial
 			// web-search entry, populated at new-game start (an empty key
 			// means none). addSearchLink appends into cellData's lists.
-			if (!_uiclData->initialEmailKey.empty()) {
-				addSearchLink(0, _uiclData->initialEmailKey, _uiclData->initialEmailValue,
-					0, _uiclData->initialEmailFlag, _uiclData->initialEmailEventFlag);
+			if (!_uiclData->initialEmail.key.empty()) {
+				addSearchLink(0, _uiclData->initialEmail);
 			}
-			if (!_uiclData->initialSearchKey.empty()) {
-				addSearchLink(1, _uiclData->initialSearchKey, Common::String(),
-					_uiclData->initialSearchExtra, _uiclData->initialSearchFlag,
-					_uiclData->initialSearchEventFlag);
+			if (!_uiclData->initialSearch.key.empty()) {
+				addSearchLink(1, _uiclData->initialSearch);
 			}
 		}
 		_contacts = cellData->contacts;
@@ -179,9 +176,7 @@ void CellPhonePopup::setBatteryLow(bool low) {
 	}
 }
 
-void CellPhonePopup::addSearchLink(int16 mode, const Common::String &key,
-									const Common::String &value, int16 extra,
-									int16 flag, int16 eventFlag) {
+void CellPhonePopup::addSearchLink(int16 mode, const SearchLink &link) {
 	CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
 	if (!cellData) {
 		return;
@@ -190,24 +185,18 @@ void CellPhonePopup::addSearchLink(int16 mode, const Common::String &key,
 	// Original (AddSearchLink @ 004dac11) branches on `mode == 0` (email)
 	// vs anything else (search) — not specifically mode == 1.
 	const bool isSearch = (mode != 0);
-	Common::Array<CellPhoneData::LinkEntry> &list =
+	Common::Array<SearchLink> &list =
 		isSearch ? cellData->searchLinks : cellData->emailMessages;
 
 	// Skip duplicates (matched by key) so re-running the scene doesn't
 	// pile up the same entries.
 	for (uint i = 0; i < list.size(); ++i) {
-		if (list[i].key.equalsIgnoreCase(key)) {
+		if (list[i].key.equalsIgnoreCase(link.key)) {
 			return;
 		}
 	}
 
-	CellPhoneData::LinkEntry e;
-	e.key = key;
-	e.value = value;
-	e.extra = extra;
-	e.flag = flag;
-	e.eventFlag = eventFlag;
-	list.push_back(e);
+	list.push_back(link);
 
 	if (_isVisible &&
 			((isSearch && _screenState == kWebList) ||
@@ -807,7 +796,7 @@ void CellPhonePopup::drawLinkList() {
 	if (!cellData) {
 		return;
 	}
-	const Common::Array<CellPhoneData::LinkEntry> &list =
+	const Common::Array<SearchLink> &list =
 		_screenState == kWebList ? cellData->searchLinks : cellData->emailMessages;
 	const Common::Array<uint> visible = listVisibleIndices();
 	if (visible.empty()) {
@@ -1933,7 +1922,7 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 		if (row != (uint)-1 && row >= titleRows) {
 			const uint entryRow = row - titleRows;
 			CellPhoneData *cellData = (CellPhoneData *)NancySceneState.getPuzzleData(CellPhoneData::getTag());
-			Common::Array<CellPhoneData::LinkEntry> *list = nullptr;
+			Common::Array<SearchLink> *list = nullptr;
 			if (cellData) {
 				list = (_screenState == kWebList) ? &cellData->searchLinks
 												  : &cellData->emailMessages;
@@ -1948,7 +1937,7 @@ void CellPhonePopup::handleInput(NancyInput &input) {
 					// Move the selection indicator to the clicked row, then
 					// act on the entry.
 					_directorySelection = entryRow;
-					CellPhoneData::LinkEntry &e = (*list)[absolute];
+					SearchLink &e = (*list)[absolute];
 					// Original sets the event flag when an entry is opened;
 					// it does not scene-change from a list click.
 					if (e.eventFlag != -1) {

@@ -212,6 +212,20 @@ struct MultiEventFlagDescription {
 	void execute();
 };
 
+// A Nancy 10+ cellphone list entry: an email message (mode 0) or a web-search
+// link (mode 1). Added at runtime by AR 131 (AddSearchLink); the first entry of
+// each list may instead be embedded in the UICL chunk. Which fields are used
+// depends on the mode (see CellPhonePopup). The byte layout differs per source,
+// so each site fills the fields itself rather than sharing a readData.
+struct SearchLink {
+	Common::String key;       // CVTX key whose looked-up text is the list row
+	Common::String value;     // body CVTX key (email); unused for search
+	int16 extra = 0;          // page index (search); unused for email
+	int16 flag = 0;           // stored by the original but unused; reserved
+	int16 eventFlag = -1;     // event-flag index set when the entry is opened
+	bool read = false;        // email only: set once the message is opened
+};
+
 struct SecondaryVideoDescription {
 	int16 frameID = kFrNoFrame;
 	Common::Rect srcRect;

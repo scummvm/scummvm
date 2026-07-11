@@ -59,11 +59,10 @@ public:
 	// Used by AR 130 to add/modify entries at runtime.
 	void upsertContact(const UICL::Contact &c);
 
-	// Append an entry to the search/email results list (mode 0) or the
-	// web bookmarks list (mode 1). Driven by AR 131 (AddSearchLink).
-	void addSearchLink(int16 mode, const Common::String &key,
-						const Common::String &value, int16 extra,
-						int16 flag, int16 eventFlag);
+	// Append an entry to the email results list (mode 0) or the web
+	// bookmarks list (mode 1). Driven by AR 131 (AddSearchLink) and the
+	// UICL chunk's initial entries.
+	void addSearchLink(int16 mode, const SearchLink &link);
 
 	// Phone-call return scene. Set before jumping into a conversation scene
 	// so AR 128 (CellPhonePopCellSceneFromStack) can return there without

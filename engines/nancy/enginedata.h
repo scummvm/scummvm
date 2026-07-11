@@ -677,14 +677,8 @@ struct UICL : public EngineData {
 	// One initial email entry and one initial web-search entry can be baked
 	// into the UICL chunk itself; the original seeds them at new-game init
 	// (its cellphone reset). An empty key means the game ships that list empty.
-	Common::String initialEmailKey;           // email entry CVTX key
-	Common::String initialEmailValue;         // email entry CVTX body/value
-	int16 initialEmailFlag = 0;
-	int16 initialEmailEventFlag = 0;
-	Common::String initialSearchKey;          // web-search entry CVTX key
-	int16 initialSearchExtra = 0;
-	int16 initialSearchFlag = 0;
-	int16 initialSearchEventFlag = 0;
+	SearchLink initialEmail;
+	SearchLink initialSearch;
 
 	uint16 fontId1 = 0;
 	uint16 fontId2 = 0;

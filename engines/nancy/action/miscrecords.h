@@ -185,15 +185,11 @@ public:
 	void execute() override;
 
 	int16 _mode = 0;
-	Common::String _key;          // CVTX key for the list row text (both modes)
-	Common::String _value;        // body CVTX key (mode 0/email); unused for mode 1
-	int16 _extra = 0;             // page index (mode 1); unused for mode 0
-	int16 _flag = 0;              // stored but unused by the original; reserved
-	int16 _eventFlag = 0;         // event-flag index set when the entry is opened
+	SearchLink _link;
 
 	Common::String getRecordExtraInfo() const override {
 		return Common::String::format("Key: %s, Value: %s, Mode: %d, Extra: %d, Flag: %d, EventFlag: %d",
-			_key.c_str(), _value.c_str(), _mode, _extra, _flag, _eventFlag);
+			_link.key.c_str(), _link.value.c_str(), _mode, _link.extra, _link.flag, _link.eventFlag);
 	}
 
 protected:

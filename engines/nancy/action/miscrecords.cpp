@@ -310,17 +310,16 @@ void UIPopupPrepScene::execute() {
 void AddSearchLink::readData(Common::SeekableReadStream &stream) {
 	_mode = stream.readSint16LE();
 
-	readFilename(stream, _key);
-	readFilename(stream, _value);
+	readFilename(stream, _link.key);
+	readFilename(stream, _link.value);
 
-	_extra  = stream.readSint16LE();
-	_flag = stream.readSint16LE();
-	_eventFlag = stream.readSint16LE();
+	_link.extra = stream.readSint16LE();
+	_link.flag = stream.readSint16LE();
+	_link.eventFlag = stream.readSint16LE();
 }
 
 void AddSearchLink::execute() {
-	NancySceneState.getCellPhonePopup().addSearchLink(
-		_mode, _key, _value, _extra, _flag, _eventFlag);
+	NancySceneState.getCellPhonePopup().addSearchLink(_mode, _link);
 
 	// Cellphone taskbar badge: mode 0 = new email (sub-cat 1), mode != 0
 	// = new web search topic (sub-cat 2).

@@ -336,7 +336,7 @@ void CellPhoneData::synchronize(Common::Serializer &ser) {
 	syncLinkArray(ser, searchLinks);
 }
 
-void CellPhoneData::syncLinkArray(Common::Serializer &ser, Common::Array<LinkEntry> &arr) {
+void CellPhoneData::syncLinkArray(Common::Serializer &ser, Common::Array<SearchLink> &arr) {
 	uint16 n = (uint16)arr.size();
 	ser.syncAsUint16LE(n);
 	if (ser.isLoading()) {
