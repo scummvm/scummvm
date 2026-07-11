@@ -2,6 +2,7 @@ MODULE := engines/comfy
 
 MODULE_OBJS = \
 	actor.o \
+	anim_file.o \
 	comfy.o \
 	comfy_keyboard_ui.o \
 	console.o \

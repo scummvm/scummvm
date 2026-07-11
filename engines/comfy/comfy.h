@@ -67,6 +67,12 @@
 #define COMFY_MIDI_CHANNEL_COUNT 2
 #define COMFY_MIDI_TRACK_ENTRY_CAPACITY 5
 #define COMFY_ANIM_FRAME_CAPACITY 10
+#define COMFY_ANMFILE_HEADER_BYTES 16
+#define COMFY_ANMFILE_MAGIC 0x4143
+#define COMFY_ANMFILE_PANTHER_MAGIC 0x4643
+#define COMFY_ANMFRAME_MAGIC 0x4E41
+#define COMFY_ANMFRAME_PANTHER_MAGIC 0x4C46
+#define COMFY_ANMFRAME_BYTES 0xFA00
 
 namespace Comfy {
 
@@ -332,6 +338,25 @@ private:
 	byte _musicEventFlag;
 	bool _musicEnabled;
 	bool _usesWcomfy99ScriptOps;
+	uint16 _wcomfy99FeatureWords[16];
+	byte _wcomfy99FeatureWordCount;
+	uint16 _wcomfy99Sensitivity;
+	bool _wcomfy99RecordHostEnabled;
+	uint16 _wcomfy99SubsystemWord;
+	uint16 _wcomfy99MixedHostFirstWord;
+	uint16 _wcomfy99MixedHostSecondWord;
+	uint16 _wcomfy99MixedHostThirdWord;
+	uint16 _wcomfy99MixedHostFourthWord;
+	uint16 _wcomfy99HostWordA;
+	uint16 _wcomfy99HostWordB;
+	uint16 _wcomfy99WaveVolumePercent;
+	uint16 _wcomfy99WaveLeftPercent;
+	uint16 _wcomfy99WaveRightPercent;
+	uint16 _wcomfy99MixerVolumePercent;
+	uint16 _wcomfy99MixerAltPercent;
+	uint16 _wcomfy99RangeHostStart;
+	uint16 _wcomfy99RangeHostEnd;
+	uint16 _wcomfy99RangeHostCount;
 	bool _actorDestroyedCurrent;
 	uint16 _lastKey;
 	VocQueueEntry _vocQueue[COMFY_VOC_QUEUE_CAPACITY];
@@ -352,6 +377,27 @@ private:
 	uint _soundNextCue;
 	bool _soundCompressed;
 	bool _soundPaused;
+	Common::Array<byte> _animFileData;
+	Common::Array<uint32> _animIndexTable;
+	Common::Array<byte> _animFrameBuffer;
+	Common::Array<byte> _animFrameStorage;
+	byte _animFrameHeader[COMFY_ANMFILE_HEADER_BYTES];
+	byte _animPendingDirtyRect[16];
+	uint32 _animPosition;
+	uint16 _animPendingDirtyRectSize;
+	uint16 _animCurrentIndex;
+	uint16 _animCurrentActorSceneHandle;
+	uint16 _animCurrentFrameKey;
+	byte _animVocCounterMode;
+	uint16 _animVocClockHz;
+	uint16 _animVocTargetCounter;
+	uint16 _animVocBaseCounter;
+	uint16 _animVocDeltaA;
+	uint32 _animVocCounterStartA;
+	uint32 _animVocCounterStartB;
+	bool _animIndexLoaded;
+	bool _animPantherFormat;
+	bool _animActive;
 	uint16 _exprStack[COMFY_EXPR_STACK_CAPACITY];
 	uint16 _exprStackTop;
 	bool _scriptFault;
@@ -486,6 +532,16 @@ private:
 	uint16 timerTick();
 	void midiTrackTickAndRemove();
 	void animFileTickCommands();
+	bool animFileOpen();
+	void animFileShutdown(bool closeFile);
+	void animFileLoadFrame(uint16 animIndex, uint16 frameKey, uint16 actorSceneHandle);
+	uint32 animDecompressRle(const byte *source, uint32 sourceSize, byte *destination, uint32 destinationSize);
+	uint32 animDecodePanther(const byte *source, uint32 sourceSize);
+	bool animFrameShouldWaitForVoc();
+	bool animFrameShouldDraw(uint16 phase);
+	int16 animFrameVocCounterDelta();
+	void animFrameRecordVocCounter(uint16 phase);
+	void animFrameWaitForVocCounter();
 	void sceneTickEvent();
 	void midiPollChannels(uint16 ticks);
 	void midiInitInstance();

@@ -73,10 +73,21 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_scenePoolEvictCursor(0), _activeSceneCount(0), _sceneEntryCount(0), _sceneEntryFrameSize(0),
 	_numObjects(0), _numFrames(0), _numSprites(0), _envNumSprites(0), _midiFileMode(0), _mirrorMode(false),
 	_currentActor(0), _pendingScene(0), _musicEventMask(0), _musicEventFlag(0), _musicEnabled(false),
-	_usesWcomfy99ScriptOps(false), _actorDestroyedCurrent(false), _lastKey(0xFFFF),
+	_usesWcomfy99ScriptOps(false), _wcomfy99FeatureWordCount(0), _wcomfy99Sensitivity(0),
+	_wcomfy99RecordHostEnabled(false), _wcomfy99SubsystemWord(0), _wcomfy99MixedHostFirstWord(0),
+	_wcomfy99MixedHostSecondWord(0), _wcomfy99MixedHostThirdWord(0), _wcomfy99MixedHostFourthWord(0),
+	_wcomfy99HostWordA(0), _wcomfy99HostWordB(0), _wcomfy99WaveVolumePercent(0),
+	_wcomfy99WaveLeftPercent(0), _wcomfy99WaveRightPercent(0), _wcomfy99MixerVolumePercent(0),
+	_wcomfy99MixerAltPercent(0), _wcomfy99RangeHostStart(0), _wcomfy99RangeHostEnd(0),
+	_wcomfy99RangeHostCount(0), _actorDestroyedCurrent(false), _lastKey(0xFFFF),
 	_soundEventIndex(0), _soundEventMaximum(0), _soundEventSubIndex(0xFFFF),
 	_soundEventPreviousSubIndex(0xFFFF), _midiInstanceTrackBase(1),
 	_soundTileStride(0), _soundSampleRate(0x2B11), _soundNextCue(0), _soundCompressed(false), _soundPaused(false),
+	_animPosition(0), _animPendingDirtyRectSize(0), _animCurrentIndex(0),
+	_animCurrentActorSceneHandle(0), _animCurrentFrameKey(0), _animVocCounterMode(0),
+	_animVocClockHz(0), _animVocTargetCounter(0), _animVocBaseCounter(0), _animVocDeltaA(0),
+	_animVocCounterStartA(0), _animVocCounterStartB(0), _animIndexLoaded(false),
+	_animPantherFormat(false), _animActive(false),
 	_exprStackTop(0), _scriptFault(false),
 	_gameInitialized(false), _videoInitialized(false),
 	_timerInitialized(false), _lptKeyboardInitialized(false), _mainLoopRunning(false) {
@@ -90,6 +101,9 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	memset(&_midiEvents, 0, sizeof(_midiEvents));
 	memset(&_midiTracks, 0, sizeof(_midiTracks));
 	memset(_midiChannels, 0, sizeof(_midiChannels));
+	memset(_wcomfy99FeatureWords, 0, sizeof(_wcomfy99FeatureWords));
+	memset(_animFrameHeader, 0, sizeof(_animFrameHeader));
+	memset(_animPendingDirtyRect, 0, sizeof(_animPendingDirtyRect));
 	g_engine = this;
 }
 
@@ -316,9 +330,6 @@ void ComfyEngine::midiTrackTickAndRemove() {
 	}
 }
 
-void ComfyEngine::animFileTickCommands() {
-}
-
 void ComfyEngine::sceneTickEvent() {
 	soundAdvanceTick();
 	if (_soundEventIndex == _soundEventMaximum)
@@ -416,7 +427,10 @@ void ComfyEngine::renderFrame() {
 	uint16 rootIndex = _sceneHandles.size() > 1 ? _sceneHandles[1] : 0;
 	if (!rootIndex || actorDraw(rootIndex, 0, 0)) {
 		paletteVsyncFlip();
+		animFrameWaitForVocCounter();
+		animFrameRecordVocCounter(3);
 		videoPresentFrame();
+		animFrameRecordVocCounter(4);
 	} else {
 		renderSetDirty();
 	}

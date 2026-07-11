@@ -837,6 +837,9 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 	if (!actor)
 		return true;
 
+	if (!animFrameShouldDraw(1))
+		return false;
+
 	int16 drawX = int16(int32(actorReadDword(*actor, kActorXFixed)) >> 12) + x;
 	int16 drawY = int16(int32(actorReadDword(*actor, kActorYFixed)) >> 12) + y;
 	byte oldVisible = actorReadByte(*actor, kActorCachedVisible);
@@ -849,6 +852,7 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 		return true;
 	}
 
+	animFrameRecordVocCounter(1);
 	actorDrawList(actorReadWord(*actor, kActorSiblingHead), drawX, drawY);
 	uint32 selector = actorReadDword(*actor, kActorSpriteSelector);
 	VideoRectRecord newRect = {0, 0, 0, 0, 0};
@@ -865,6 +869,7 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 			spriteBlitClipped(int16(selector), drawX - sprite->header.hotspotX, drawY - sprite->header.hotspotY);
 		}
 	}
+	animFrameRecordVocCounter(2);
 
 	bool rectChanged = oldRect.left != newRect.left || oldRect.top != newRect.top ||
 		oldRect.right != newRect.right || oldRect.bottom != newRect.bottom || oldRect.area != newRect.area;
@@ -880,7 +885,7 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 	actorWriteDword(*actor, kActorCachedSprite, selector);
 	actorWriteCachedRect(*actor, newRect);
 	actorDrawList(actorReadWord(*actor, kActorChildHead), drawX, drawY);
-	return true;
+	return animFrameShouldDraw(2);
 }
 
 

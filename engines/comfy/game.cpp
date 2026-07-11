@@ -299,6 +299,11 @@ bool ComfyEngine::assetsLoad() {
 		return false;
 	}
 
+	if (_usesAnimFile && !animFileOpen()) {
+		assetsUnload();
+		return false;
+	}
+
 	_stringTable.resize(_stringCount + 1);
 	memset(&_stringTable[0], 0, _stringTable.size() * sizeof(uint16));
 	_sceneHandles.resize(_sceneCount + 1);
@@ -361,6 +366,25 @@ bool ComfyEngine::assetsLoad() {
 	_sceneEntryFrameSize = 0;
 	Common::ScopedPtr<Common::SeekableReadStream> message(pathFOpen(Common::Path("MESSAGE"), true));
 	_usesWcomfy99ScriptOps = bool(message);
+	_wcomfy99FeatureWordCount = 0;
+	_wcomfy99Sensitivity = ConfMan.hasKey("SENSITIVITY") ? ConfMan.getInt("SENSITIVITY") : 0;
+	_wcomfy99RecordHostEnabled = false;
+	_wcomfy99SubsystemWord = 0;
+	_wcomfy99MixedHostFirstWord = 0;
+	_wcomfy99MixedHostSecondWord = 0;
+	_wcomfy99MixedHostThirdWord = 0;
+	_wcomfy99MixedHostFourthWord = 0;
+	_wcomfy99HostWordA = 0;
+	_wcomfy99HostWordB = 0;
+	_wcomfy99WaveVolumePercent = 0;
+	_wcomfy99WaveLeftPercent = 0;
+	_wcomfy99WaveRightPercent = 0;
+	_wcomfy99MixerVolumePercent = 0;
+	_wcomfy99MixerAltPercent = 0;
+	_wcomfy99RangeHostStart = 0;
+	_wcomfy99RangeHostEnd = 0;
+	_wcomfy99RangeHostCount = 0;
+	memset(_wcomfy99FeatureWords, 0, sizeof(_wcomfy99FeatureWords));
 	_pendingScene = 0;
 	_musicEventMask = 0;
 	_musicEventFlag = 0;
@@ -376,6 +400,7 @@ bool ComfyEngine::assetsLoad() {
 }
 
 void ComfyEngine::assetsUnload() {
+	animFileShutdown(true);
 	soundShutdown();
 	keyBitFree();
 	_comfyObjData.clear();
@@ -397,6 +422,25 @@ void ComfyEngine::assetsUnload() {
 	memset(_sceneEntryOffsets, 0, sizeof(_sceneEntryOffsets));
 	memset(_actorPcTable, 0, sizeof(_actorPcTable));
 	_usesWcomfy99ScriptOps = false;
+	_wcomfy99FeatureWordCount = 0;
+	_wcomfy99Sensitivity = 0;
+	_wcomfy99RecordHostEnabled = false;
+	_wcomfy99SubsystemWord = 0;
+	_wcomfy99MixedHostFirstWord = 0;
+	_wcomfy99MixedHostSecondWord = 0;
+	_wcomfy99MixedHostThirdWord = 0;
+	_wcomfy99MixedHostFourthWord = 0;
+	_wcomfy99HostWordA = 0;
+	_wcomfy99HostWordB = 0;
+	_wcomfy99WaveVolumePercent = 0;
+	_wcomfy99WaveLeftPercent = 0;
+	_wcomfy99WaveRightPercent = 0;
+	_wcomfy99MixerVolumePercent = 0;
+	_wcomfy99MixerAltPercent = 0;
+	_wcomfy99RangeHostStart = 0;
+	_wcomfy99RangeHostEnd = 0;
+	_wcomfy99RangeHostCount = 0;
+	memset(_wcomfy99FeatureWords, 0, sizeof(_wcomfy99FeatureWords));
 	_pendingScene = 0;
 	_currentActor = 0;
 	_scriptFault = false;
