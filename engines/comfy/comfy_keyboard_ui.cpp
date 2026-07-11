@@ -151,9 +151,10 @@ void onImGuiRender() {
 
 	ImGui::GetIO().ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
 
-	ImGui::SetNextWindowSize(ImVec2(780, 520), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowPos(ImVec2(8, 8), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(740, 440), ImGuiCond_FirstUseEver);
 
-	if (ImGui::Begin("Comfy Keyboard", &_state->_visible)) {
+	if (ImGui::Begin("Comfy Keyboard", &_state->_visible, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize)) {
 		ImU32 shell = keyboardColor(232, 228, 208);
 		ImU32 red = keyboardColor(199, 31, 27);
 		ImU32 handset = keyboardColor(211, 48, 38);
