@@ -1484,6 +1484,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			return !didTransition &&
 				!interaction.mutatedRuntimeState &&
 				!interaction.requestPlayerGotoXZ &&
+				!interaction.requestPlayerGotoZ &&
 				interaction.lightingCommand == kStartupLightingCommandNone &&
 				!interaction.requestMainMenu &&
 				!interaction.requestDemoEnding &&
@@ -1650,7 +1651,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 						!exitInteraction.dialogueContinuationTag.empty() ||
 						!exitInteraction.modalText.value.empty() ||
 						exitInteraction.lightingCommand != kStartupLightingCommandNone ||
-						exitInteraction.requestPlayerGotoXZ) {
+						exitInteraction.requestPlayerGotoXZ ||
+						exitInteraction.requestPlayerGotoZ) {
 					debugC(1, kDebugRoom,
 						"Harvester: room exit command for '%s' produced unsupported deferred output; preserving accumulated state",
 						scene.state.roomName.c_str());

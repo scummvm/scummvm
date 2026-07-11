@@ -244,6 +244,8 @@ Common::Error RoomInteractionProcessor::handleInteractionResult(const Interactio
 
 	if (interaction.requestPlayerGotoXZ)
 		_callbacks.applyPlayerGotoXZ(interaction.playerGotoX, interaction.playerGotoZ);
+	else if (interaction.requestPlayerGotoZ)
+		_callbacks.applyPlayerGotoXZ(_playerState.centerX, interaction.playerGotoZ);
 
 	if (!interaction.moveEntityToPlayerZName.empty()) {
 		EntityManager *entityManager = _engine.getRuntimeEntities();
@@ -366,6 +368,7 @@ bool hasRoomEntryInteraction(const InteractionResult &interaction) {
 		interaction.requestPlayerDeath ||
 		!interaction.moveEntityToPlayerZName.empty() ||
 		interaction.requestPlayerGotoXZ ||
+		interaction.requestPlayerGotoZ ||
 		interaction.lightingCommand != kStartupLightingCommandNone ||
 		!interaction.modalText.value.empty() ||
 		!interaction.dialogueNpcName.empty() ||
