@@ -43,7 +43,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_DEMO | ADGF_UNSTABLE,
-		GUIO2(GAMEOPTION_GORE, GAMEOPTION_SHOW_CD_CHANGE_PROMPTS)
+		GUIO1(GAMEOPTION_GORE)
 	},
 
 	AD_TABLE_END_MARKER
