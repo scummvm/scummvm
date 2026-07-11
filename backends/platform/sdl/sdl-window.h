@@ -209,7 +209,7 @@ private:
 
 class SdlIconlessWindow : public SdlWindow {
 public:
-	virtual void setupIcon() {}
+	void setupIcon() override {}
 };
 
 #endif

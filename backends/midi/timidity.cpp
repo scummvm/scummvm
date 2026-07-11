@@ -516,16 +516,16 @@ void MidiDriver_TIMIDITY::sysEx(const byte *msg, uint16 length) {
 
 class TimidityMusicPlugin : public MusicPluginObject {
 public:
-	const char *getName() const {
+	const char *getName() const override {
 		return "TiMidity";
 	}
 
-	const char *getId() const {
+	const char *getId() const override {
 		return "timidity";
 	}
 
-	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+	MusicDevices getDevices() const override;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const override;
 };
 
 MusicDevices TimidityMusicPlugin::getDevices() const {

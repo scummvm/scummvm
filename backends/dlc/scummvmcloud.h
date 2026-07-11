@@ -44,11 +44,11 @@ public:
 	ScummVMCloud() {}
 	virtual ~ScummVMCloud() {}
 
-	virtual void getAllDLCs() override;
+	void getAllDLCs() override;
 
-	virtual void startDownloadAsync(const Common::String &id, const Common::String &url) override;
+	void startDownloadAsync(const Common::String &id, const Common::String &url) override;
 
-	virtual void removeCacheFile(const Common::Path &file) override;
+	void removeCacheFile(const Common::Path &file) override;
 
 	// extracts the provided zip in the provided destination path
 	Common::Error extractZip(const Common::Path &file, const Common::Path &destPath);

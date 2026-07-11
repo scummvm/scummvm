@@ -53,12 +53,12 @@ public:
 	AudioCDStream();
 	~AudioCDStream();
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return true; }
-	int getRate() const { return 44100; }
-	bool endOfData() const;
-	bool seek(const Audio::Timestamp &where);
-	Audio::Timestamp getLength() const;
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return true; }
+	int getRate() const override { return 44100; }
+	bool endOfData() const override;
+	bool seek(const Audio::Timestamp &where) override;
+	Audio::Timestamp getLength() const override;
 
 protected:
 	virtual uint getStartFrame() const = 0;
