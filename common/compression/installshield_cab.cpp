@@ -100,7 +100,7 @@ public:
 
 	int64 pos() const override { return _parentStream->pos(); }
 	int64 size() const override { return _parentStream->size(); }
-	bool seek(int64 offset, int whence = SEEK_SET) { return _parentStream->seek(offset, whence); }
+	bool seek(int64 offset, int whence = SEEK_SET) override { return _parentStream->seek(offset, whence); }
 
 #define ror8(x,n)   (((x) >> ((int)(n))) | ((x) << (8 - (int)(n))))
 
@@ -331,7 +331,7 @@ bool InstallShieldCabinet::open(const Path *baseName, Common::Archive *archive, 
 					if (fileIndex == volumeHeader.lastFileIndex &&
 						entry.compressedSize != headerHeader.lastFileSizeCompressed &&
 						headerHeader.lastFileSizeCompressed != 0) {
-						
+
 						entry.flags |= kSplit;
 					}
 
@@ -435,7 +435,7 @@ SeekableReadStream *InstallShieldCabinet::createReadStreamForMemberHelper(const 
 					stream.reset(nullptr);
 				}
 			}
-			
+
 			if (!stream.get()) {
 				warning("Failed to read split file %s", path.toString().c_str());
 				free(src);
@@ -455,7 +455,7 @@ SeekableReadStream *InstallShieldCabinet::createReadStreamForMemberHelper(const 
 		} else {
 			// File split, return the assembled data
 			return new MemoryReadStream(src, entry.uncompressedSize, DisposeAfterUse::YES);
-		}		
+		}
 	}
 
 	byte *dst = (byte *)malloc(entry.uncompressedSize);
