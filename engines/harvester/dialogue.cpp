@@ -1015,6 +1015,7 @@ public:
 				!interaction.musicPath.empty() || !interaction.nextRoomName.empty() ||
 				!interaction.cutscenePath.empty() ||
 				!interaction.deathFlicPath.empty() || interaction.requestMainMenu ||
+				interaction.requestDemoEnding ||
 				interaction.requestRoomRestart ||
 				interaction.requestCloseupExit ||
 				interaction.cdChangeDisc > 0 ||
