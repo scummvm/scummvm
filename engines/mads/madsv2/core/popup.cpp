@@ -23,6 +23,7 @@
 #include "mads/madsv2/core/general.h"
 #include "mads/madsv2/core/popup.h"
 #include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/core/cycle.h"
 #include "mads/madsv2/core/error.h"
 #include "mads/madsv2/core/mem.h"
 #include "mads/madsv2/core/heap.h"
@@ -39,6 +40,7 @@
 #include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/mcga.h"
 #include "mads/madsv2/engine.h"
+#include "mads/madsv2/nebular/popup.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -50,6 +52,18 @@ byte popup_colors[24] = {
 	25, 24,  0,  0,  0,  3,  0,  0,
 	0,   0,  0,  0,  3,  0,  0,  0
 };
+
+// Rex Nebular dialog colors
+static constexpr int BLACK = 0;
+static constexpr int PALETTE_CYCLING_AREA = 6;
+static constexpr int DIALOG_CONTENT1_COLOR = 248;
+static constexpr int DIALOG_CONTENT2_COLOR = 249;
+static constexpr int DIALOG_EDGE_COLOR = 250;
+static constexpr int DIALOG_BACKGROUND_COLOR = 251;
+static constexpr int DIALOG_FC_COLOR = 252;
+static constexpr int DIALOG_FD_COLOR = 253;
+static constexpr int DIALOG_FE_COLOR = 254;
+static constexpr int DIALOG_BLACK_COLOR = 0;
 
 int popup_preserve_initiator[3] = {
 	BUFFER_PRESERVE, BUFFER_PRESERVE, BUFFER_PRESERVE
@@ -99,8 +113,13 @@ int popup_create(int horiz_pieces, int x, int y) {
 	int middle_width;
 	int count;
 	long mem_to_get;
+	bool isRex = g_engine->getGameID() == GType_RexNebular;
 
-	if (box == NULL) goto done;
+	if (isRex)
+		box_param.font = font_inter;
+
+	if (box == NULL)
+		goto done;
 
 	box->dialog_system = false;
 
@@ -119,20 +138,35 @@ int popup_create(int horiz_pieces, int x, int y) {
 
 	box->horiz_pieces = horiz_pieces;
 
-	middle_width = pop_xs(POPUP_UPPER_CENTER) + ((pop_xs(POPUP_TOP) << 1) * horiz_pieces);
+	if (isRex) {
+		middle_width = (box_param.font->max_x_size + 1) * horiz_pieces;
+		box->xs = middle_width + 10;
+		box->window_xs = middle_width;
 
-	box->xs = pop_xs(POPUP_UPPER_LEFT) + pop_xs(POPUP_UPPER_RIGHT) + middle_width;
+		font_set_colors(-1, BLACK, BLACK, BLACK);
 
-	box->window_xs = box_param.extra_x + middle_width;
+		memcpy(&cycling_palette[Graphics::PALETTE_COUNT - PALETTE_CYCLING_AREA].r,
+			&master_palette[Graphics::PALETTE_COUNT - PALETTE_CYCLING_AREA].r,
+			PALETTE_CYCLING_AREA * 3);
+		pal_grey(master_palette, DIALOG_CONTENT1_COLOR, 2, 36, 32);
+		pal_grey(master_palette, DIALOG_EDGE_COLOR, 2, 39, 28);
+		pal_grey(master_palette, DIALOG_FC_COLOR, 2, 36, 32);
+		pal_grey(master_palette, DIALOG_FE_COLOR, 1, 55, 55);
+		mcga_setpal_range(&master_palette, DIALOG_CONTENT1_COLOR, 8);
+
+	} else {
+		middle_width = pop_xs(POPUP_UPPER_CENTER) + ((pop_xs(POPUP_TOP) << 1) * horiz_pieces);
+		box->xs = pop_xs(POPUP_UPPER_LEFT) + pop_xs(POPUP_UPPER_RIGHT) + middle_width;
+		box->window_xs = box_param.extra_x + middle_width;
+
+		font_set_colors(-1, POPUP_TEXT_COLOR, POPUP_TEXT_COLOR, POPUP_TEXT_COLOR);
+	}
 
 	box->cursor_x = 0;
-
 	box->text_x = 0;
 	box->text_y = 0;
 
 	box->dont_add_space = false;
-
-	font_set_colors(-1, POPUP_TEXT_COLOR, POPUP_TEXT_COLOR, POPUP_TEXT_COLOR);
 
 	box->text_xs = box->window_xs - (popup_padding_width << 1);
 
@@ -395,7 +429,7 @@ int popup_draw(int save_screen, int depth_code) {
 	int base_size;
 	int text_size;
 	int top, left, right;
-	int x_bonus, y_bonus;
+	int x_bonus = 0, y_bonus = 0;
 	int depth_x2;
 	int bottom_pieces;
 	int x, y;
@@ -408,6 +442,7 @@ int popup_draw(int save_screen, int depth_code) {
 	int icon_padding;
 	int icon_x;
 	int sum_y;
+	bool isRex = g_engine->getGameID() == GType_RexNebular;
 
 	// Arrow cursor
 	cursor_id = 1;
@@ -416,7 +451,8 @@ int popup_draw(int save_screen, int depth_code) {
 		cursor_last = cursor_id;
 	}
 
-	if (!box->cursor_x) box->text_y--;
+	if (!box->cursor_x)
+		box->text_y--;
 
 	// Find out how many vertical pieces are needed to contain the text,
 	// and determine the resulting size.
@@ -432,40 +468,42 @@ int popup_draw(int save_screen, int depth_code) {
 	}
 	base_size = MAX(base_text_size, base_sprite_size);
 
-	box->vert_pieces = ((base_size - (box_param.extra_y + 1)) / pop_ys(POPUP_LEFT)) + 1;
-	box->vert_pieces = MAX(0, box->vert_pieces);
-	text_size = (pop_ys(POPUP_LEFT) * box->vert_pieces) + box_param.extra_y;
+	if (!isRex) {
+		box->vert_pieces = ((base_size - (box_param.extra_y + 1)) / pop_ys(POPUP_LEFT)) + 1;
+		box->vert_pieces = MAX(0, box->vert_pieces);
+		text_size = (pop_ys(POPUP_LEFT) * box->vert_pieces) + box_param.extra_y;
 
-	box->window_ys = text_size;
-	box->text_extra = text_size - base_text_size;
+		box->window_ys = text_size;
+		box->text_extra = text_size - base_text_size;
 
-	box->ys = text_size - (box_param.extra_y)
-		+ pop_ys(POPUP_UPPER_LEFT)
-		+ pop_ys(POPUP_LOWER_LEFT);
+		box->ys = text_size - (box_param.extra_y)
+			+ pop_ys(POPUP_UPPER_LEFT)
+			+ pop_ys(POPUP_LOWER_LEFT);
 
-	// Determine the true size of the entire window (figure out which border
-	// pieces extend the furthest).
-	top = pop_y(POPUP_UPPER_LEFT);
-	top = MIN(top, pop_y(POPUP_UPPER_CENTER));
-	top = MIN(top, pop_y(POPUP_TOP));
+		// Determine the true size of the entire window (figure out which border
+		// pieces extend the furthest).
+		top = pop_y(POPUP_UPPER_LEFT);
+		top = MIN(top, pop_y(POPUP_UPPER_CENTER));
+		top = MIN(top, pop_y(POPUP_TOP));
 
-	y_bonus = pop_y(POPUP_UPPER_LEFT) - top;
-	box->ys += y_bonus;
+		y_bonus = pop_y(POPUP_UPPER_LEFT) - top;
+		box->ys += y_bonus;
 
 
 
-	left = pop_x(POPUP_UPPER_LEFT);
-	left = MIN(left, pop_x(POPUP_LEFT));
-	left = MIN(left, pop_x(POPUP_LOWER_LEFT));
+		left = pop_x(POPUP_UPPER_LEFT);
+		left = MIN(left, pop_x(POPUP_LEFT));
+		left = MIN(left, pop_x(POPUP_LOWER_LEFT));
 
-	x_bonus = pop_x(POPUP_UPPER_LEFT) - left;
-	box->xs += x_bonus;
+		x_bonus = pop_x(POPUP_UPPER_LEFT) - left;
+		box->xs += x_bonus;
 
-	right = pop_x2(POPUP_UPPER_RIGHT);
-	right = MAX(right, pop_x2(POPUP_RIGHT));
-	right = MAX(right, pop_x2(POPUP_LOWER_RIGHT));
+		right = pop_x2(POPUP_UPPER_RIGHT);
+		right = MAX(right, pop_x2(POPUP_RIGHT));
+		right = MAX(right, pop_x2(POPUP_LOWER_RIGHT));
 
-	box->xs += (right - pop_x2(POPUP_UPPER_RIGHT));
+		box->xs += (right - pop_x2(POPUP_UPPER_RIGHT));
+	}
 
 	// Determine the popup's coordinates on the screen
 	if (box->base_x & POPUP_CENTER) {
@@ -507,6 +545,12 @@ int popup_draw(int save_screen, int depth_code) {
 	// Compute window location
 	box->window_x = box->base_x + box_param.offset_x;
 	box->window_y = box->base_y + box_param.offset_y;
+
+
+	if (g_engine->getGameID() == GType_RexNebular) {
+		RexNebular::popup_draw(save_screen);
+		return 0;
+	}
 
 	if (save_screen) {
 		matte_map_work_screen();

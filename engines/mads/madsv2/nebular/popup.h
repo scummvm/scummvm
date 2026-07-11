@@ -29,11 +29,11 @@ namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
 
-extern bool popup_vomitation_flag;
+//extern bool popup_vomitation_flag;
 
 extern void popup_init();
-extern int popup_create(FontPtr font, int horiz_pieces, int x, int y);
-extern void popup_destroy();
+//extern int popup_create(FontPtr font, int horiz_pieces, int x, int y);
+//extern void popup_destroy();
 extern void popup_draw(bool save_screen);
 
 } // namespace RexNebular

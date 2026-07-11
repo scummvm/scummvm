@@ -100,6 +100,17 @@ namespace MADSV2 {
 
 #define popup_padding_width     3     /* Extra space on each side */
 
+enum {
+	REX_PALETTE_CYCLING_AREA	=   6,
+	REX_DIALOG_CONTENT1_COLOR	= 248,
+	REX_DIALOG_CONTENT2_COLOR	= 249,
+	REX_DIALOG_EDGE_COLOR		= 250,
+	REX_DIALOG_BACKGROUND_COLOR	= 251,
+	REX_DIALOG_FC_COLOR			= 252,
+	REX_DIALOG_FD_COLOR			= 253,
+	REX_DIALOG_FE_COLOR			= 254,
+	REX_DIALOG_BLACK_COLOR		=   0
+};
 
 
 struct BoxParam {

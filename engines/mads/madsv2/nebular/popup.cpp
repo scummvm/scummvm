@@ -36,25 +36,16 @@ namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
 
-static constexpr int BLACK = 0;
-static constexpr int PALETTE_CYCLING_AREA = 6;
-static constexpr int DIALOG_CONTENT1_COLOR = 248;
-static constexpr int DIALOG_CONTENT2_COLOR = 249;
-static constexpr int DIALOG_EDGE_COLOR = 250;
-static constexpr int DIALOG_BACKGROUND_COLOR = 251;
-static constexpr int DIALOG_FC_COLOR = 252;
-static constexpr int DIALOG_FD_COLOR = 253;
-static constexpr int DIALOG_FE_COLOR = 254;
 static constexpr int DIALOG_BLACK_COLOR = 0;
 
-int dialog_content_handle;
-bool popup_vomitation_flag;
-
+int dialog_content_seed;
 
 void popup_init() {
-	dialog_content_handle = -1;
-	popup_vomitation_flag = true;
+	dialog_content_seed = -1;
 }
+
+#if 0
+bool popup_vomitation_flag;
 
 int popup_create(FontPtr font, int horiz_pieces, int x, int y) {
 	int count;
@@ -112,6 +103,8 @@ void popup_destroy() {
 	mcga_setpal_range(&master_palette, DIALOG_CONTENT1_COLOR, 8);
 	box->active = false;
 }
+
+#endif
 
 static uint16 rotr16(uint16 value, int amount) {
 	return (value >> amount) | (value << (16 - amount));
@@ -181,18 +174,18 @@ void popup_draw(bool save_screen) {
 	askY = (box_param.font->max_y_size + 1) * box->ask_y;
 
 	// Fill area
-	buffer_rect_fill(scr_main, box->x, box->y, box->xs, box->ys, DIALOG_BACKGROUND_COLOR);
+	buffer_rect_fill(scr_main, box->x, box->y, box->xs, box->ys, REX_DIALOG_BACKGROUND_COLOR);
 
 	// Edge lines
-	buffer_rect_fill(scr_main, box->x + 1, box->y + box->ys - 2, box->xs - 1, 1, DIALOG_EDGE_COLOR);
-	buffer_rect_fill(scr_main, box->x, box->y + box->ys - 1, box->xs, 1, DIALOG_EDGE_COLOR);
+	buffer_rect_fill(scr_main, box->x + 1, box->y + box->ys - 2, box->xs - 1, 1, REX_DIALOG_EDGE_COLOR);
+	buffer_rect_fill(scr_main, box->x, box->y + box->ys - 1, box->xs, 1, REX_DIALOG_EDGE_COLOR);
 
 	// Right edge
-	buffer_rect_fill(scr_main, box->x + box->xs - 2, box->y + 2, 1, box->ys - 2, DIALOG_EDGE_COLOR);
-	buffer_rect_fill(scr_main, box->x + box->xs - 1, box->y + 1, 1, box->ys - 1, DIALOG_EDGE_COLOR);
+	buffer_rect_fill(scr_main, box->x + box->xs - 2, box->y + 2, 1, box->ys - 2, REX_DIALOG_EDGE_COLOR);
+	buffer_rect_fill(scr_main, box->x + box->xs - 1, box->y + 1, 1, box->ys - 1, REX_DIALOG_EDGE_COLOR);
 
-	dialog_content_handle = popup_draw_content(box->x + 2, box->y + 2, box->xs - 4, askY, 0,
-		DIALOG_CONTENT2_COLOR, DIALOG_CONTENT1_COLOR, box->ys - 4, scr_main);
+	dialog_content_seed = popup_draw_content(box->x + 2, box->y + 2, box->xs - 4, askY, 0,
+		REX_DIALOG_CONTENT2_COLOR, REX_DIALOG_CONTENT1_COLOR, box->ys - 4, scr_main);
 
 	askY = box->y + 5;
 

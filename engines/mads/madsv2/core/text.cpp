@@ -38,6 +38,7 @@
 #include "mads/madsv2/core/object.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/core/global.h"
+#include "mads/madsv2/engine.h"
 
 namespace MADS {
 namespace MADSV2 {
@@ -203,8 +204,11 @@ static void text_copy_vocab(char **mark, int vocab_id, char *alternative) {
 static int text_popup_check(int *popup_created, word width, int x, int y, SeriesPtr icon, int icon_id, int icon_center) {
 	int error_flag = false;
 
+	if (g_engine->getGameID() != GType_RexNebular)
+		width = popup_estimate_pieces(width);
+
 	if (!*popup_created) {
-		error_flag = popup_create(popup_estimate_pieces(width), x, y);
+		error_flag = popup_create(width, x, y);
 		*popup_created = !error_flag;
 
 		if (!error_flag) {

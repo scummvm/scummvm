@@ -106,7 +106,7 @@ static int copy_pop_and_ask() {
 	char entry_buf[80];
 	CopyProt copy_prot;
 
-	popup_vomitation_flag = false; /* Allow keep of first letter */
+	//popup_vomitation_flag = false; /* Allow keep of first letter */
 
 	if (copy_load(&copy_prot)) goto finish;
 
@@ -116,7 +116,8 @@ static int copy_pop_and_ask() {
 
 	for (count = 0; (count < COPY_TRIES_ALLOWED); count++) {
 
-		if (popup_create(font_inter, 32, POPUP_CENTER, POPUP_CENTER)) goto finish;
+		if (popup_create(32, POPUP_CENTER, POPUP_CENTER))
+			goto finish;
 
 		if (!count) {
 			Common::strcpy_s(work_buf, "REX NEBULAR version ");
@@ -193,9 +194,9 @@ finish:
 	error_flag = COPY_SUCCEED;
 
 done:
-	popup_vomitation_flag = true; /* Reset */
+	//popup_vomitation_flag = true; /* Reset */
 
-	return (error_flag);
+	return error_flag;
 }
 
 int global_copy_verify() {
