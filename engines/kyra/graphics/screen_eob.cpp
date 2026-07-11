@@ -2253,10 +2253,10 @@ void OldDOSFont::drawCharIntern(uint16 c, byte *dst, int pitch, int bpp, int col
 							*dst = col1;
 					} else {
 						if (bpp == 4) {
-							if (col2)
+							if (col2 != -1)
 								*reinterpret_cast<uint32*>(dst) = col2;
 						} else if (bpp == 2) {
-							if (col2)
+							if (col2 != 0xFFFF)
 								*reinterpret_cast<uint16*>(dst) = col2;
 						} else if (col2) {
 							*dst = col2;
