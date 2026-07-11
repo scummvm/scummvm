@@ -4891,6 +4891,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "game.ags", "38a49a28c0af599633006c09fe6c2f72", 160015617), // 1.10k Mac
 	GAME_ENTRY_EN_STEAM("crimsondiamond", "game.ags", "5277b25b5f93d59c02391b280d6a5d18", 160141434), // 1.10u Mac
 	GAME_ENTRY_EN_PLATFORM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 159589239, "itch.io"), // 1.02b itch.io
+	GAME_ENTRY_EN_PLATFORM("crimsondiamond", "The Crimson Diamond - Full Game.exe", "5277b25b5f93d59c02391b280d6a5d18", 160141428, "itch.io"), // 1.10u itch.io
 	GAME_ENTRY_EN_GOG("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 159920906), // 1.07b Win
 	GAME_ENTRY_EN_GOG("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 160015780), // 1.10k Win
 	GAME_ENTRY_EN_GOG("crimsondiamond", "The Crimson Diamond - Full Game.exe", "38a49a28c0af599633006c09fe6c2f72", 160027802), // 1.10l Win
