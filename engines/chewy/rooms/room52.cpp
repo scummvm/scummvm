@@ -91,7 +91,7 @@ int16 Room52::use_hot_dog() {
 		action_ret = true;
 		autoMove(5, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
-		startSetAILWait(7, 1, ANI_FRONT);
+		startDetailWait(7, 1, ANI_FRONT);
 		_G(det)->playSound(7, 0);
 		_G(det)->startDetail(8, 255, ANI_FRONT);
 
@@ -103,7 +103,7 @@ int16 Room52::use_hot_dog() {
 		_G(det)->stopSound(0);
 		_G(det)->stopDetail(0);
 		_G(det)->stopDetail(8);
-		startSetAILWait(7, 1, ANI_BACK);
+		startDetailWait(7, 1, ANI_BACK);
 		_G(det)->stopSound(0);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(atds)->setControlBit(341, ATS_ACTIVE_BIT);

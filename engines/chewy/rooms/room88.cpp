@@ -76,7 +76,7 @@ int Room88::proc2() {
 	autoMove(1, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->showStaticSpr(0);
-	startSetAILWait(0, 1, _G(gameState).flags30_10 ? ANI_GO : ANI_FRONT);
+	startDetailWait(0, 1, _G(gameState).flags30_10 ? ANI_GO : ANI_FRONT);
 	_G(det)->hideStaticSpr(1 + (_G(gameState).flags30_10 ? 1 : 0));
 	_G(gameState).flags31_10 = false;
 	_G(det)->showStaticSpr(1 + (!_G(gameState).flags30_10 ? 1 : 0));
@@ -116,8 +116,8 @@ int Room88::proc3() {
 		const int aniNr = 1 + (_G(gameState).flags31_10 ? 1 : 0);
 
 		for (int i = 0; i < 3; ++i) {
-			startSetAILWait(aniNr, 1, ANI_FRONT);
-			startSetAILWait(aniNr, 1, ANI_GO);
+			startDetailWait(aniNr, 1, ANI_FRONT);
+			startDetailWait(aniNr, 1, ANI_GO);
 		}
 
 		_G(out)->setPointer(nullptr);
@@ -129,7 +129,7 @@ int Room88::proc3() {
 		_G(out)->raster_col(0, 0, 0, 0);
 		switchRoom(80);
 		hideCur();
-		startSetAILWait(1, 1, ANI_FRONT);
+		startDetailWait(1, 1, ANI_FRONT);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;

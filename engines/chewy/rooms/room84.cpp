@@ -144,7 +144,7 @@ void Room84::setup_func() {
 		startAadWait(455);
 		_G(det)->del_static_ani(4);
 		start_spz(62, 1, false, P_HOWARD);
-		startSetAILWait(5, 1, ANI_FRONT);
+		startDetailWait(5, 1, ANI_FRONT);
 		_G(det)->set_static_ani(3, -1);
 		startAadWait(456);
 		_G(flags).NoScroll = false;
@@ -192,7 +192,7 @@ int Room84::proc4() {
 
 	if (_G(gameState).flags32_10) {
 		_G(det)->stopDetail(7);
-		startSetAILWait(8, 1, ANI_FRONT);
+		startDetailWait(8, 1, ANI_FRONT);
 	} else {
 		_G(gameState)._personRoomNr[P_NICHELLE] = 88;
 	}

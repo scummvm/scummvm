@@ -132,14 +132,14 @@ void Room49::calc_boy() {
 		goAutoXy(374, 79, P_HOWARD, ANI_WAIT);
 		setPersonSpr(P_LEFT, P_HOWARD);
 		_G(det)->del_static_ani(2);
-		startSetAILWait(3, 1, ANI_FRONT);
+		startDetailWait(3, 1, ANI_FRONT);
 
 		_G(det)->showStaticSpr(9);
 		_G(gameState)._personHide[P_HOWARD] = true;
-		startSetAILWait(8, 1, ANI_FRONT);
+		startDetailWait(8, 1, ANI_FRONT);
 		_G(gameState)._personHide[P_HOWARD] = false;
 		_G(det)->hideStaticSpr(9);
-		startSetAILWait(4, 1, ANI_GO);
+		startDetailWait(4, 1, ANI_GO);
 
 		_G(SetUpScreenFunc) = setup_func;
 		_G(det)->set_static_ani(_G(gameState).R49BoyAni ? 1 : 0, -1);
@@ -260,7 +260,7 @@ int16 Room49::use_taxi() {
 		}
 
 		_G(det)->hideStaticSpr(7);
-		startSetAILWait(5, 1, ANI_FRONT);
+		startDetailWait(5, 1, ANI_FRONT);
 		_G(det)->stopSound(0);
 		switchRoom(48);
 	}

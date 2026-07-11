@@ -457,7 +457,7 @@ void calc_z_ebene();
 
 void startAniBlock(int16 nr, const AniBlock *ab);
 
-void startSetAILWait(int16 aniNr, int16 rep, int16 mode);
+void startDetailWait(int16 aniNr, int16 rep, int16 mode);
 
 void startDetailFrame(int16 aniNr, int16 rep, int16 mode,
                         int16 frame);

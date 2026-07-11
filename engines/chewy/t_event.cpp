@@ -143,7 +143,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 					case 73:
 						if (!_G(gameState).R9Grid) {
 							_G(gameState)._personHide[P_CHEWY] = true;
-							startSetAILWait(5, 1, ANI_FRONT);
+							startDetailWait(5, 1, ANI_FRONT);
 							_G(gameState)._personHide[P_CHEWY] = false;
 						} else {
 							retValue = false;
@@ -1198,7 +1198,7 @@ void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr) {
 		case 20:
 			if (blkNr == 0 && strEndNr == 1) {
 				_G(gameState)._personHide[P_CHEWY] = true;
-				startSetAILWait(28, 3, ANI_FRONT);
+				startDetailWait(28, 3, ANI_FRONT);
 				_G(gameState)._personHide[P_CHEWY] = false;
 			}
 			break;
@@ -1224,7 +1224,7 @@ void endDialogCloseup(int16 diaNr, int16 blkNr, int16 strEndNr) {
 	case 22:
 		if (strEndNr == 1) {
 			_G(det)->del_static_ani(3);
-			startSetAILWait(5, 1, ANI_FRONT);
+			startDetailWait(5, 1, ANI_FRONT);
 			_G(det)->set_static_ani(3, -1);
 			startAadWait(456);
 		}

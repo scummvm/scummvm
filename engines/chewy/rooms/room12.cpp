@@ -180,7 +180,7 @@ void Room12::bork_ok() {
 	init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], 3, (const MovLine *)R12_BORK_MPKT2);
 	wait_auto_obj(R12_BORK_OBJ);
 	_G(det)->hideStaticSpr(10);
-	startSetAILWait(4, 1, ANI_FRONT);
+	startDetailWait(4, 1, ANI_FRONT);
 	_G(talk_hide_static) = -1;
 	_G(det)->showStaticSpr(12);
 	_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 2, ATS_DATA);

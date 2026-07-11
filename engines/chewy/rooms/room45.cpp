@@ -200,11 +200,11 @@ int16 Room45::use_taxi() {
 void Room45::talk_taxi(int16 aad_nr) {
 	_G(room)->set_timer_status(12, TIMER_STOP);
 	_G(det)->del_static_ani(12);
-	startSetAILWait(13, 1, ANI_FRONT);
+	startDetailWait(13, 1, ANI_FRONT);
 	_G(det)->set_static_ani(14, -1);
 	startAadWait(aad_nr);
 	_G(det)->del_static_ani(14);
-	startSetAILWait(13, 1, ANI_BACK);
+	startDetailWait(13, 1, ANI_BACK);
 	_G(det)->set_static_ani(12, -1);
 	_G(room)->set_timer_status(12, TIMER_START);
 }
@@ -229,7 +229,7 @@ void Room45::taxi_mov() {
 	_G(det)->hideStaticSpr(11);
 	_G(det)->playSound(15, 2);
 	_G(det)->playSound(15, 0);
-	startSetAILWait(15, 1, ANI_FRONT);
+	startDetailWait(15, 1, ANI_FRONT);
 	_G(det)->stopSound(0);
 	switchRoom(48);
 }
@@ -247,7 +247,7 @@ int16 Room45::use_boy() {
 			startAadWait(258);
 			_G(room)->set_timer_status(0, TIMER_STOP);
 			_G(det)->del_static_ani(0);
-			startSetAILWait(1, 1, ANI_FRONT);
+			startDetailWait(1, 1, ANI_FRONT);
 			_G(room)->set_timer_status(0, TIMER_START);
 			_G(det)->set_static_ani(0, -1);
 			_G(gameState).R45MagOk = true;

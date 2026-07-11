@@ -142,7 +142,7 @@ int16 Room54::use_schalter() {
 			_G(det)->playSound(0, 1);
 			_G(det)->stopSound(2);
 
-			startSetAILWait(1, 1, ANI_FRONT);
+			startDetailWait(1, 1, ANI_FRONT);
 			_G(det)->startDetail(3, 255, ANI_FRONT);
 			startAadWait(292 + _G(gameState).R54LiftCount);
 			_G(det)->stopDetail(3);
@@ -150,19 +150,19 @@ int16 Room54::use_schalter() {
 
 			int16 aad_nr;
 			if (_G(gameState).R54LiftCount < 3) {
-				startSetAILWait(2, 1, ANI_FRONT);
+				startDetailWait(2, 1, ANI_FRONT);
 				_G(det)->hideStaticSpr(0);
 				_G(det)->stopSound(0);
 				_G(det)->stopSound(1);
 				_G(det)->playSound(1, 2);
-				startSetAILWait(1, 1, ANI_BACK);
+				startDetailWait(1, 1, ANI_BACK);
 				_G(det)->stopSound(2);
 				aad_nr = 295;
 
 			} else {
-				startSetAILWait(5, 1, ANI_FRONT);
+				startDetailWait(5, 1, ANI_FRONT);
 				_G(det)->showStaticSpr(9);
-				startSetAILWait(4, 1, ANI_FRONT);
+				startDetailWait(4, 1, ANI_FRONT);
 				aad_nr = 296;
 				_G(gameState).R54FputzerWeg = true;
 				_G(atds)->delControlBit(345, ATS_ACTIVE_BIT);
@@ -200,13 +200,13 @@ void Room54::talk_verkauf() {
 		startAadWait(299);
 		_G(room)->set_timer_status(6, TIMER_STOP);
 		_G(det)->del_static_ani(6);
-		startSetAILWait(7, 1, ANI_FRONT);
+		startDetailWait(7, 1, ANI_FRONT);
 		_G(det)->startDetail(8, 255, ANI_FRONT);
 		startAadWait(310);
 
 		_G(det)->stopDetail(8);
-		startSetAILWait(9, 1, ANI_FRONT);
-		startSetAILWait(10, 1, ANI_FRONT);
+		startDetailWait(9, 1, ANI_FRONT);
+		startDetailWait(10, 1, ANI_FRONT);
 		_G(det)->startDetail(11, 255, ANI_FRONT);
 		startAadWait(311);
 		_G(det)->stopDetail(11);

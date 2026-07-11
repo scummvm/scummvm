@@ -45,7 +45,7 @@ void Room53::entry() {
 	hideCur();
 	_G(obj)->hide_sib(SIB_VISIT_R53);
 	_G(atds)->delControlBit(319, ATS_ACTIVE_BIT);
-	startSetAILWait(0, 1, ANI_FRONT);
+	startDetailWait(0, 1, ANI_FRONT);
 	_G(det)->set_static_ani(1, -1);
 	_G(timer_nr)[0] = _G(room)->set_timer(1, 7);
 	showCur();
@@ -54,7 +54,7 @@ void Room53::entry() {
 void Room53::man_go() {
 	_G(room)->set_timer_status(1, TIMER_STOP);
 	_G(det)->del_static_ani(1);
-	startSetAILWait(5, 1, ANI_FRONT);
+	startDetailWait(5, 1, ANI_FRONT);
 	_G(atds)->setControlBit(319, ATS_ACTIVE_BIT);
 	if (!_G(gameState).R53Visit)
 		_G(obj)->show_sib(SIB_VISIT_R53);
@@ -65,11 +65,11 @@ void Room53::talk_man() {
 	autoMove(2, P_CHEWY);
 	_G(room)->set_timer_status(1, TIMER_STOP);
 	_G(det)->del_static_ani(1);
-	startSetAILWait(2, 1, ANI_FRONT);
+	startDetailWait(2, 1, ANI_FRONT);
 	_G(det)->set_static_ani(3, -1);
 	startAadWait(269 + (_G(gameState).R53Kostuem ? 1 : 0));
 	_G(det)->del_static_ani(3);
-	startSetAILWait(4, 1, ANI_FRONT);
+	startDetailWait(4, 1, ANI_FRONT);
 	man_go();
 	showCur();
 }

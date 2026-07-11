@@ -62,7 +62,7 @@ void Room9::entry() {
 void Room9::gtuer() {
 	_G(gameState).R9Grid = true;
 	_G(det)->showStaticSpr(5);
-	startSetAILWait(6, 1, ANI_FRONT);
+	startDetailWait(6, 1, ANI_FRONT);
 	setPersonPos(74, 93, P_CHEWY, P_LEFT);
 	_G(atds)->delControlBit(74, ATS_ACTIVE_BIT);
 	_G(atds)->delControlBit(75, ATS_ACTIVE_BIT);
@@ -104,7 +104,7 @@ void Room9::surimy_ani() {
 	startDetailFrame(0, 1, ANI_FRONT, 15);
 	_G(det)->startDetail(2, 1, ANI_FRONT);
 	waitDetail(0);
-	startSetAILWait(1, 1, ANI_FRONT);
+	startDetailWait(1, 1, ANI_FRONT);
 	start_spz(CH_EKEL, 2, ANI_FRONT, P_CHEWY);
 	_G(det)->hideStaticSpr(4);
 	_G(mov_phasen)[SURIMY_OBJ].Repeat = 1;

@@ -136,8 +136,8 @@ void Room24::calc_animation(int16 crystal_nr) {
 			_G(det)->playSound(ani_nr + crystal_nr * 4, 0);
 			_G(det)->stopSound(0);
 			_G(det)->hideStaticSpr(_G(gameState).R24CrystalLast[crystal_nr] + crystal_nr * 2);
-			startSetAILWait(ani_nr + crystal_nr * 4, 1, ANI_BACK);
-			startSetAILWait(6 + crystal_nr * 4, 1, ANI_BACK);
+			startDetailWait(ani_nr + crystal_nr * 4, 1, ANI_BACK);
+			startDetailWait(6 + crystal_nr * 4, 1, ANI_BACK);
 			_G(det)->startDetail(5 + crystal_nr * 4, 255, ANI_BACK);
 
 		} else if (_G(gameState).R24CrystalLast[crystal_nr] == 20) {
@@ -145,8 +145,8 @@ void Room24::calc_animation(int16 crystal_nr) {
 			_G(det)->stopSound(0);
 			_G(det)->playSound(5 + ani_nr + crystal_nr * 4, 0);
 			_G(det)->stopDetail(5 + crystal_nr * 4);
-			startSetAILWait(6 + crystal_nr * 4, 1, ANI_FRONT);
-			startSetAILWait(ani_nr + crystal_nr * 4, 1, ANI_FRONT);
+			startDetailWait(6 + crystal_nr * 4, 1, ANI_FRONT);
+			startDetailWait(ani_nr + crystal_nr * 4, 1, ANI_FRONT);
 		}
 
 		showCur();

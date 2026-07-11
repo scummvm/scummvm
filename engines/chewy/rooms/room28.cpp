@@ -257,7 +257,7 @@ void Room28::set_pump() {
 				++_G(gameState).R28PumpTxt1;
 			}
 
-			startSetAILWait(tmp, 1, ANI_FRONT);
+			startDetailWait(tmp, 1, ANI_FRONT);
 			_G(gameState)._personHide[P_CHEWY] = false;
 
 			load_chewy_taf(CHEWY_PUMPKIN);
@@ -298,7 +298,7 @@ void Room28::get_pump() {
 		_G(gameState)._personHide[P_CHEWY] = true;
 		int16 tmp = (_G(person_end_phase)[P_CHEWY] == P_RIGHT) ? 1 : 0;
 		_G(det)->setDetailPos(tmp, _G(moveState)[P_CHEWY].Xypos[0], _G(moveState)[P_CHEWY].Xypos[1]);
-		startSetAILWait(tmp, 1, ANI_BACK);
+		startDetailWait(tmp, 1, ANI_BACK);
 
 		invent_2_slot(K_MASKE_INV);
 		_G(atds)->set_all_ats_str(209, 0, ATS_DATA);

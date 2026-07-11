@@ -85,7 +85,7 @@ short Room39::use_howard() {
 				_G(det)->startDetail(6, 255, ANI_FRONT);
 				startAadWait(170);
 				_G(det)->stopDetail(6);
-				startSetAILWait(7, 1, ANI_FRONT);
+				startDetailWait(7, 1, ANI_FRONT);
 				_G(gameState)._personHide[P_CHEWY] = false;
 
 				delInventory(_G(cur)->getInventoryCursor());
@@ -94,7 +94,7 @@ short Room39::use_howard() {
 				start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
 				startAadWait(167);
 				_G(det)->stopDetail(3);
-				startSetAILWait(4, 1, ANI_FRONT);
+				startDetailWait(4, 1, ANI_FRONT);
 				_G(det)->set_static_ani(5, -1);
 				_G(atds)->set_all_ats_str(62, 1, ATS_DATA);
 				startAadWait(169);

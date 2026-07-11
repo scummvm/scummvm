@@ -74,7 +74,7 @@ void Room8::hole_kohle() {
 		_G(gameState).R8Kohle = true;
 		autoMove(4, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
-		startSetAILWait(12, 1, ANI_FRONT);
+		startDetailWait(12, 1, ANI_FRONT);
 		cur_2_inventory();
 		invent_2_slot(KOHLE_HEISS_INV);
 		_G(gameState)._personHide[P_CHEWY] = false;
@@ -124,11 +124,11 @@ bool Room8::gips_wurf() {
 
 		_G(gameState)._personHide[P_CHEWY] = true;
 		delInventory(GIPS_EIMER_INV);
-		startSetAILWait(4, 1, ANI_FRONT);
+		startDetailWait(4, 1, ANI_FRONT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 
 		startDetailFrame(5, 1, ANI_FRONT, 16);
-		startSetAILWait(6, 1, ANI_FRONT);
+		startDetailWait(6, 1, ANI_FRONT);
 		_G(obj)->show_sib(33);
 		_G(det)->showStaticSpr(14);
 		waitDetail(5);
@@ -142,7 +142,7 @@ bool Room8::gips_wurf() {
 		Dialogs::Inventory::look_screen(INVENTORY_NORMAL, 178);
 		_G(flags).AtsAction = true;
 		_G(gameState)._personHide[P_CHEWY] = true;
-		startSetAILWait(20, 1, ANI_FRONT);
+		startDetailWait(20, 1, ANI_FRONT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		invent_2_slot(MASKE_INV);
 		cursorChoice(_G(menu_item));
@@ -156,7 +156,7 @@ void Room8::open_gdoor() {
 	_G(gameState)._personHide[P_CHEWY] = true;
 	_G(det)->showStaticSpr(17);
 	setupScreen(DO_SETUP);
-	startSetAILWait(7, 1, ANI_FRONT);
+	startDetailWait(7, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(15);
 	_G(det)->hideStaticSpr(17);
 	_G(gameState)._personHide[P_CHEWY] = false;

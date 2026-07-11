@@ -101,7 +101,7 @@ int16 Room57::use_taxi() {
 		_G(det)->playSound(3, 0);
 		_G(room)->set_timer_status(3, TIMER_STOP);
 		_G(det)->del_static_ani(3);
-		startSetAILWait(5, 1, ANI_FRONT);
+		startDetailWait(5, 1, ANI_FRONT);
 		_G(det)->stopSound(0);
 		switchRoom(48);
 	}
@@ -138,7 +138,7 @@ int16 Room57::use_pfoertner() {
 			_G(gameState).R57StudioAuf = true;
 			_G(gameState).room_e_obj[91].Attribut = EXIT_TOP;
 			_G(det)->hideStaticSpr(4);
-			startSetAILWait(6, 1, ANI_WAIT);
+			startDetailWait(6, 1, ANI_WAIT);
 			_G(det)->stopSound(0);
 			_G(atds)->setControlBit(358, ATS_ACTIVE_BIT);
 		} else {

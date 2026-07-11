@@ -94,9 +94,9 @@ int16 Room35::use_cat() {
 			delInventory(_G(cur)->getInventoryCursor());
 			_G(det)->stopDetail(0);
 			_G(det)->del_static_ani(0);
-			startSetAILWait(1, 1, ANI_FRONT);
+			startDetailWait(1, 1, ANI_FRONT);
 			_G(det)->startDetail(2, 1, ANI_FRONT);
-			startSetAILWait(3, 1, ANI_FRONT);
+			startDetailWait(3, 1, ANI_FRONT);
 			_G(obj)->show_sib(SIB_KNOCHEN_R35);
 			_G(obj)->calc_rsi_flip_flop(SIB_KNOCHEN_R35);
 			_G(det)->showStaticSpr(7);
