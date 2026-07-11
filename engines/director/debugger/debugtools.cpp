@@ -615,7 +615,11 @@ void setScriptToDisplay(const ImGuiScript &script) {
 	uint index = scriptData->_scripts.size();
 	scriptData->_scrollToCurrent = true;
 	if (index && scriptData->_scripts[index - 1] == script) {
+		// operator== ignores pc, so carry the new execution point over
+		scriptData->_scripts[index - 1].pc = script.pc;
+		scriptData->_current = index - 1;
 		scriptData->_showScript = true;
+		_state->_dbg._scrollToPC = true;
 		return;
 	}
 	scriptData->_scripts.push_back(script);
