@@ -3184,6 +3184,13 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			continue;
 		}
 
+		if (command->opcodeName.equalsIgnoreCase("PC_CHANGE_WEAPON")) {
+			noteCurrentRoomVisualMutation(
+				setPlayerCombatLoadout(parseAsciiIntOrZero(command->arg1)), true);
+			currentTag = command->arg4;
+			continue;
+		}
+
 		if (command->opcodeName.equalsIgnoreCase("KILL_PC")) {
 			if (requestPlayerDeath)
 				*requestPlayerDeath = true;
@@ -3367,6 +3374,7 @@ bool Script::probePickupBlockingCommandChain(const Common::String &initialTag,
 			command->opcodeName.equalsIgnoreCase("PAUSE_PC") ||
 			command->opcodeName.equalsIgnoreCase("RESUME_PC") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_CD") ||
+			command->opcodeName.equalsIgnoreCase("PC_CHANGE_WEAPON") ||
 			command->opcodeName.equalsIgnoreCase("PC_GOTO_XZ") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_LIGHTING") ||
 			command->opcodeName.equalsIgnoreCase("EXIT_CLOSEUP") ||
@@ -3427,6 +3435,7 @@ bool Script::hasActionableCommandChain(const Common::String &initialTag) const {
 			command->opcodeName.equalsIgnoreCase("PAUSE_PC") ||
 			command->opcodeName.equalsIgnoreCase("RESUME_PC") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_CD") ||
+			command->opcodeName.equalsIgnoreCase("PC_CHANGE_WEAPON") ||
 			command->opcodeName.equalsIgnoreCase("PC_GOTO_XZ") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_LIGHTING") ||
 			command->opcodeName.equalsIgnoreCase("EXIT_CLOSEUP") ||

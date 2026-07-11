@@ -1352,6 +1352,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			scene.sceneObjects = updatedScene.sceneObjects;
 			scene.sceneAnimations = updatedScene.sceneAnimations;
 			scene.sceneRegions = updatedScene.sceneRegions;
+			const int playerCombatLoadout = script->getPlayerCombatLoadout();
+			if (playerState.entity && playerState.combatLoadout != playerCombatLoadout &&
+					!Player::syncCombatLoadoutVisual(
+						_engine, updatedState, playerState, playerCombatLoadout)) {
+				return false;
+			}
 			if (preservePaletteState) {
 				memcpy(scene.palette, previousPalette, sizeof(scene.palette));
 				scene.targetPaletteBrightness = previousPaletteBrightness;
