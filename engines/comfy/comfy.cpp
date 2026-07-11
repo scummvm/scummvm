@@ -61,12 +61,19 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_timerCurrent(1), _timer0(1), _timer1(1), _timer2(1),
 	_midiTimeCounter(0), _midiInstanceEventTime(0), _midiEventBaseTime(0),
 	_midiTimeScale(0x400), _midiTimeDelta(0), _midiCounterAdjustment(0), _midiPlyrDriver(nullptr),
-	_timerLastMillis(0), _pitAccumulator(0), _gameInitialized(false), _videoInitialized(false),
+	_keyBits(nullptr), _keyBitsSize(0),
+	_keyboardMapLoaded(false), _keyboardActiveMask(0), _keyboardLatchedMask(0),
+	_keymapperActiveMask(0), _keymapperLatchedMask(0), _toyKeyboardActiveMask(0),
+	_toyKeyboardLatchedMask(0), _toyKeyboardHoldMask(0), _lptPrevScanState(0), _inputDeviceMode(0),
+	_keyboardUiInitialized(false), _keyboardUiVisible(true),
+	_gameInitialized(false), _videoInitialized(false),
 	_timerInitialized(false), _lptKeyboardInitialized(false), _mainLoopRunning(false) {
 	memset(_paletteFadeSource, 0, sizeof(_paletteFadeSource));
 	memset(_paletteTarget, 0, sizeof(_paletteTarget));
 	memset(_paletteDisplay, 0, sizeof(_paletteDisplay));
 	memset(_logicalPalette, 0, sizeof(_logicalPalette));
+	memset(&_inputQueue, 0, sizeof(_inputQueue));
+	memset(_keyboardKeyToBit, 0xFF, sizeof(_keyboardKeyToBit));
 	g_engine = this;
 }
 
@@ -113,10 +120,11 @@ Common::Error ComfyEngine::gameInit() {
 }
 
 void ComfyEngine::gameShutdown() {
-	midiPlyrStop();
-
 	if (_lptKeyboardInitialized)
 		lptKeyboardShutdown();
+
+	midiPlyrStop();
+	keyBitFree();
 
 	if (_timerInitialized)
 		timerShutdown();
@@ -132,23 +140,11 @@ void ComfyEngine::timerInit() {
 	if (_timerInitialized)
 		return;
 
-	_timerLastMillis = _system->getMillis();
-	_pitAccumulator = 0;
 	_timerInitialized = true;
 }
 
 void ComfyEngine::timerShutdown() {
-	_timerLastMillis = 0;
-	_pitAccumulator = 0;
 	_timerInitialized = false;
-}
-
-void ComfyEngine::lptKeyboardInit() {
-	_lptKeyboardInitialized = true;
-}
-
-void ComfyEngine::lptKeyboardShutdown() {
-	_lptKeyboardInitialized = false;
 }
 
 void ComfyEngine::gameMainLoop() {
@@ -159,35 +155,50 @@ void ComfyEngine::gameMainLoop() {
 		if (shouldQuit())
 			break;
 
-		uint32 currentMillis = _system->getMillis();
-		_pitAccumulator += uint64(currentMillis - _timerLastMillis) * COMFY_PIT_INPUT_FREQUENCY;
-		_timerLastMillis = currentMillis;
-
-		while (_pitAccumulator >= uint64(COMFY_PIT_TIMER_DIVISOR) * 1000 && !shouldQuit()) {
-			_pitAccumulator -= uint64(COMFY_PIT_TIMER_DIVISOR) * 1000;
-			gameMainLoopTick();
-		}
-
-		if (!shouldQuit() && _pitAccumulator < uint64(COMFY_PIT_TIMER_DIVISOR) * 1000)
-			waitForTimerTick();
+		gameMainLoopTick();
 	}
 
 	_mainLoopRunning = false;
 }
 
-void ComfyEngine::waitForTimerTick() {
-	uint64 pitThreshold = uint64(COMFY_PIT_TIMER_DIVISOR) * 1000;
-	uint64 remaining = pitThreshold - _pitAccumulator;
-	uint32 delay = (remaining + COMFY_PIT_INPUT_FREQUENCY - 1) / COMFY_PIT_INPUT_FREQUENCY;
-
-	if (delay != 0)
-		_system->delayMillis(delay);
-}
-
 void ComfyEngine::processEvents() {
 	Common::Event event;
 
-	while (_system->getEventManager()->pollEvent(event)) {
+	while (!shouldQuit() && _system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
+			return;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (event.customType >= kActionKeyboardContact0 && event.customType <= kActionKeyboardContactLast)
+				setKeyboardContact(event.customType - kActionKeyboardContact0, true, true);
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			if (event.customType >= kActionKeyboardContact0 && event.customType <= kActionKeyboardContactLast)
+				setKeyboardContact(event.customType - kActionKeyboardContact0, false, true);
+			break;
+		case Common::EVENT_KEYDOWN:
+			if (!event.kbdRepeat) {
+				hostKeyboardSetKeyState(hostKeyboardVirtualKey(event.kbd.keycode), true);
+				if (event.kbd.keycode == Common::KEYCODE_UP)
+					inputQueuePushKey(0x48);
+				else if (event.kbd.keycode == Common::KEYCODE_DOWN)
+					inputQueuePushKey(0x50);
+				else if (event.kbd.keycode == Common::KEYCODE_LEFT)
+					inputQueuePushKey(0x4B);
+				else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
+					inputQueuePushKey(0x4D);
+				else if (event.kbd.ascii)
+					inputQueuePushChar(event.kbd.ascii);
+			}
+			break;
+		case Common::EVENT_KEYUP:
+			hostKeyboardSetKeyState(hostKeyboardVirtualKey(event.kbd.keycode), false);
+			break;
+		default:
+			debug("EVent %d", event.type);
+			break;
+		}
 	}
 }
 
@@ -219,9 +230,6 @@ void ComfyEngine::sceneTickEvent() {
 
 void ComfyEngine::midiPollChannels(uint16 ticks) {
 	(void)ticks;
-}
-
-void ComfyEngine::lptKeyboardScanAndProcess() {
 }
 
 void ComfyEngine::actorTickTree() {
