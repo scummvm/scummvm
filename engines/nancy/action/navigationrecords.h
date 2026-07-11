@@ -79,6 +79,7 @@ public:
 	void execute() override;
 
 	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
+	bool cursorSetFromScript() const override { return _isTerse; }
 
 	Common::Array<HotspotDescription> _hotspots;
 	bool _isTerse = false;
