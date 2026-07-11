@@ -19,7 +19,16 @@
  *
  */
 
+#include "comfy/comfy.h"
+
 namespace Comfy {
 
+uint16 ComfyEngine::timerTick() {
+	_timer2 = _timer1;
+	_timer1 = _timer0;
+	_timer0 = _timerCurrent;
+	_timerCurrent = int16(midiTick());
+	return uint16(_timerCurrent);
+}
 
 } // End of namespace Comfy

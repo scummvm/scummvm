@@ -58,6 +58,9 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_resolutionChangeCount(0), _renderDirtyCount(0), _renderInterleaved(false),
 	_colorDatStream(nullptr), _paletteDataPtr(nullptr), _vsyncPending(0), _fadeMax(0), _fadeStep(0),
 	_palettePage(0), _paletteFading(false),
+	_timerCurrent(1), _timer0(1), _timer1(1), _timer2(1),
+	_midiTimeCounter(0), _midiInstanceEventTime(0), _midiEventBaseTime(0),
+	_midiTimeScale(0x400), _midiTimeDelta(0), _midiCounterAdjustment(0), _midiPlyrDriver(nullptr),
 	_timerLastMillis(0), _pitAccumulator(0), _gameInitialized(false), _videoInitialized(false),
 	_timerInitialized(false), _lptKeyboardInitialized(false), _mainLoopRunning(false) {
 	memset(_paletteFadeSource, 0, sizeof(_paletteFadeSource));
@@ -99,6 +102,9 @@ Common::Error ComfyEngine::gameInit() {
 	if (!iniReadGameConfig())
 		return Common::kNoGameDataFoundError;
 
+	if (!iniGetGameDataPath(0) || !midiPlyrStart())
+		return Common::kNoGameDataFoundError;
+
 	videoInit();
 	timerInit();
 	lptKeyboardInit();
@@ -107,6 +113,8 @@ Common::Error ComfyEngine::gameInit() {
 }
 
 void ComfyEngine::gameShutdown() {
+	midiPlyrStop();
+
 	if (_lptKeyboardInitialized)
 		lptKeyboardShutdown();
 
@@ -198,10 +206,6 @@ void ComfyEngine::gameMainLoopTick() {
 	processInput();
 	processMusicEvents();
 	processSceneTransition();
-}
-
-uint16 ComfyEngine::timerTick() {
-	return 1;
 }
 
 void ComfyEngine::midiTrackTickAndRemove() {
