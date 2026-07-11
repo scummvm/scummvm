@@ -44,6 +44,10 @@ public:
 	void read(Common::SeekableReadStream &stream);
 
 	int getFontHeight() const override { return _fontHeight - 1; }
+
+	// The vertical advance between text lines (height of the first glyph).
+	int getLineHeight() const;
+
 	int getMaxCharWidth() const override { return _maxCharWidth; }
 	int getCharWidth(uint32 chr) const override;
 	int getKerningOffset(uint32 left, uint32 right) const override { return 0; }

@@ -158,6 +158,10 @@ int Font::getCharWidth(uint32 chr) const {
 	return getCharacterSourceRect(chr).width() + _charSpace;
 }
 
+int Font::getLineHeight() const {
+	return _characterRects.empty() ? getFontHeight() : _characterRects[0].height();
+}
+
 void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	Common::Rect srcRect = getCharacterSourceRect(chr);
 	if (color == 0) {

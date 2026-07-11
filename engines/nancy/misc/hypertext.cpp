@@ -60,11 +60,12 @@ void HypertextParser::setImageName(const Common::Path &name) {
 	_imageName = name;
 }
 
-static uint lineStep(const Graphics::Font *font) {
-	const uint h = font->getFontHeight();
-	if (g_nancy->getGameType() >= kGameTypeNancy10)
+static uint lineStep(const Font *font) {
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		const uint h = font->getLineHeight();
 		return h + h / 9;
-	return h;
+	}
+	return font->getFontHeight();
 }
 
 void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffsetNonNewline, uint fontID, uint highlightFontID) {
