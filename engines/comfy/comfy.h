@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/error.h"
+#include "common/file.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/random.h"
@@ -55,6 +56,12 @@ class ComfyEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	ComfyEngineVersion _engineVersion;
+	Common::Path _gameDirectory;
+	Common::Path _introDirectory;
+	Common::Path _gameDataPath;
+	Common::Path _languageDirectories[16];
+	uint16 _language;
+	bool _multiLanguage;
 	Common::RandomSource _randomSource;
 	Graphics::Screen *_screen;
 	uint16 _logicalScreenWidth;
@@ -69,6 +76,15 @@ private:
 
 	Common::Error gameInit();
 	void gameShutdown();
+	void gameConfigInit();
+	void findLanguageDirectories();
+	bool iniReadGameConfig();
+	bool iniGetGameDataPath(uint16 sceneId);
+	void iniWriteLanguage(uint16 language);
+	Common::Path getLanguageDirectory(uint16 language);
+	void pathSetGameDataDir(const Common::Path &path);
+	Common::Path pathBuild(const Common::Path &filename, bool useGamePath);
+	Common::SeekableReadStream *pathFOpen(const Common::Path &filename, bool useGamePath);
 	void videoInit();
 	void videoShutdown();
 	void timerInit();
