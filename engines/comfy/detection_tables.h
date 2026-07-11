@@ -23,12 +23,12 @@ namespace Comfy {
 
 const PlainGameDescriptor comfyGames[] = {
 	{ "comfyland", "ComfyLand" },
-	{ "boo", "Didi and Boo" },
-	{ "first", "The First Step" },
-	{ "match", "A Purrfect Match" },
-	{ "colors", "Colorful Adventures" },
-	{ "concert", "The Great Concert" },
-	{ "friends", "Playground of Friends" },
+	{ "boo", "Comfy Touch-n-See: Didi and Boo" },
+	{ "first", "Comfy Touch-n-See: The First Step" },
+	{ "match", "Comfy Max: A Purrfect Match" },
+	{ "colors", "Comfy: Colorful Adventures - The Missing Bone" },
+	{ "concert", "Comfy: The Great Concert" },
+	{ "friends", "Comfy: Playground of Friends" },
 	{ "panther", "The Pink Panther's House of Numbers" },
 	{ 0, 0 }
 };
