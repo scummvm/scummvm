@@ -110,6 +110,23 @@ Common::Error ComfyEngine::run() {
 
 	uint16 currentScene = _language;
 	uint16 chooserScene = currentScene;
+	if (_multiLanguage && !ConfMan.getBool("comfy_language_chosen")) {
+		if (!iniGetGameDataPath(0x63)) {
+			gameShutdown();
+			return Common::kNoGameDataFoundError;
+		}
+
+		uint16 selectedLanguage = sceneRun(currentScene, true, false);
+		if (selectedLanguage) {
+			currentScene = selectedLanguage;
+			chooserScene = selectedLanguage;
+			iniWriteLanguage(selectedLanguage);
+		}
+
+		ConfMan.setBool("comfy_language_chosen", true);
+		ConfMan.flushToDisk();
+	}
+
 	if (iniGetGameDataPath(0))
 		sceneRun(currentScene, false, true);
 
