@@ -272,8 +272,10 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			return kScriptYield;
 		}
 
+		uint16 soundId = scriptReadWord(pc);
 		pc += 2;
 		byte count = scriptReadByte(pc++);
+		vocQueuePush(soundId, count, pc);
 		pc += uint32(count) * 2;
 		return kScriptContinue;
 	}
@@ -304,8 +306,10 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x1B)
+	if (opcode == 0x1B) {
+		vocQueuePlayAll();
 		return kScriptContinue;
+	}
 
 	if (opcode == 0x1C) {
 		pc += 2;

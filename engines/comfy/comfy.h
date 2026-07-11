@@ -59,6 +59,8 @@
 #define COMFY_SCENE_MIDI_INSTANCE_BYTES 0x18C
 #define COMFY_SCENE_ACTOR_PC_BYTES 0x320
 #define COMFY_SCENE_FRAME_BYTES 0x4E20
+#define COMFY_VOC_ARG_CAPACITY 10
+#define COMFY_VOC_QUEUE_CAPACITY 16
 
 namespace Comfy {
 
@@ -119,6 +121,13 @@ private:
 	struct ResourceLoadList {
 		uint16 ids[COMFY_RESOURCE_LIST_CAPACITY];
 		uint16 count;
+	};
+
+	struct VocQueueEntry {
+		uint16 soundId;
+		uint16 argumentCount;
+		uint16 state;
+		uint16 arguments[COMFY_VOC_ARG_CAPACITY];
 	};
 
 	struct Actor {
@@ -273,6 +282,12 @@ private:
 	bool _musicEnabled;
 	bool _usesWcomfy99ScriptOps;
 	bool _actorDestroyedCurrent;
+	uint16 _lastKey;
+	VocQueueEntry _vocQueue[COMFY_VOC_QUEUE_CAPACITY];
+	uint16 _soundEventIndex;
+	uint16 _soundEventMaximum;
+	uint16 _soundEventSubIndex;
+	uint16 _soundEventPreviousSubIndex;
 	uint16 _exprStack[COMFY_EXPR_STACK_CAPACITY];
 	uint16 _exprStackTop;
 	bool _scriptFault;
@@ -384,15 +399,23 @@ private:
 	void actorFreePcChain(Actor &actor);
 	void actorFreeTree(uint16 actorIndex);
 	void actorClearDirtyTree(uint16 actorIndex);
+	void actorSetAllDirty();
 	uint16 actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible, byte active,
 		uint32 pc, int16 x, int16 y, int16 sprite, byte insertAsChild);
 	bool actorRunScript(uint16 actorIndex, bool &descendChildren);
 	bool actorTickTreeInternal(uint16 actorIndex);
+	bool actorDraw(uint16 actorIndex, int16 x, int16 y);
+	void actorDrawList(uint16 actorIndex, int16 x, int16 y);
+	void actorDrawScripted(uint16 actorIndex, uint32 selector, int16 x, int16 y);
+	VideoRectRecord actorReadCachedRect(Actor &actor);
+	void actorWriteCachedRect(Actor &actor, VideoRectRecord rect);
+	void actorInvalidateDrawTree(uint16 actorIndex);
 	void timerInit();
 	void timerShutdown();
 	void lptKeyboardInit();
 	void lptKeyboardShutdown();
 	void gameMainLoop();
+	uint16 sceneRun(uint16 sceneId, bool checkNext, bool exitFlag);
 	void gameMainLoopTick();
 	void processEvents();
 
@@ -408,6 +431,9 @@ private:
 	void processInput();
 	void processMusicEvents();
 	void processSceneTransition();
+	void vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc);
+	void vocQueuePlayAll();
+	bool vocQueueIsIdle();
 
 protected:
 	// Engine APIs

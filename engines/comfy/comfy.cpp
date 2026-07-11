@@ -73,7 +73,9 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_scenePoolEvictCursor(0), _activeSceneCount(0), _sceneEntryCount(0), _sceneEntryFrameSize(0),
 	_numObjects(0), _numFrames(0), _numSprites(0), _envNumSprites(0), _midiFileMode(0), _mirrorMode(false),
 	_currentActor(0), _pendingScene(0), _musicEventMask(0), _musicEventFlag(0), _musicEnabled(true),
-	_usesWcomfy99ScriptOps(false), _actorDestroyedCurrent(false),
+	_usesWcomfy99ScriptOps(false), _actorDestroyedCurrent(false), _lastKey(0xFFFF),
+	_soundEventIndex(0), _soundEventMaximum(0), _soundEventSubIndex(0xFFFF),
+	_soundEventPreviousSubIndex(0xFFFF),
 	_exprStackTop(0), _scriptFault(false),
 	_gameInitialized(false), _videoInitialized(false),
 	_timerInitialized(false), _lptKeyboardInitialized(false), _mainLoopRunning(false) {
@@ -83,6 +85,7 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	memset(_logicalPalette, 0, sizeof(_logicalPalette));
 	memset(&_inputQueue, 0, sizeof(_inputQueue));
 	memset(_keyboardKeyToBit, 0xFF, sizeof(_keyboardKeyToBit));
+	memset(_vocQueue, 0, sizeof(_vocQueue));
 	g_engine = this;
 }
 
@@ -105,7 +108,28 @@ Common::Error ComfyEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	gameMainLoop();
+	uint16 currentScene = _language;
+	uint16 chooserScene = currentScene;
+	if (iniGetGameDataPath(0))
+		sceneRun(currentScene, false, true);
+
+	while (currentScene && !shouldQuit()) {
+		if (!iniGetGameDataPath(currentScene)) {
+			gameShutdown();
+			return Common::kNoGameDataFoundError;
+		}
+
+		if (currentScene == 0x63)
+			currentScene = sceneRun(chooserScene, _multiLanguage, false);
+		else {
+			chooserScene = currentScene;
+			currentScene = sceneRun(currentScene, _multiLanguage, false);
+		}
+
+		if (currentScene && currentScene != 0x63)
+			iniWriteLanguage(currentScene);
+	}
+
 	gameShutdown();
 	return Common::kNoError;
 }
@@ -118,15 +142,8 @@ Common::Error ComfyEngine::gameInit() {
 	if (!iniReadGameConfig())
 		return Common::kNoGameDataFoundError;
 
-	if (!iniGetGameDataPath(0))
-		return Common::kNoGameDataFoundError;
-
 	videoInit();
-	if (!assetsLoad() || !sceneOpen())
-		return Common::kNoGameDataFoundError;
-
 	timerInit();
-	lptKeyboardInit();
 	_gameInitialized = true;
 	return Common::kNoError;
 }
@@ -175,6 +192,37 @@ void ComfyEngine::gameMainLoop() {
 	_mainLoopRunning = false;
 }
 
+uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
+	if (!assetsLoad() || !sceneOpen()) {
+		assetsUnload();
+		return 0;
+	}
+
+	keyBitSet(2);
+	lptKeyboardInit();
+	paletteVsyncFlip();
+	paletteVsyncFlip();
+	if (_activeSceneCount && _midiHandles.size() > 1)
+		_midiHandles[1] += sceneId;
+
+	gameMainLoop();
+	uint16 nextScene = 0;
+	if (checkNext && _activeSceneCount > 1 && _midiHandles.size() > 1)
+		nextScene = _midiHandles[1];
+
+	if (nextScene == sceneId || int16(nextScene) <= 0 || int16(nextScene) >= 0x65)
+		nextScene = 0;
+
+	lptKeyboardShutdown();
+	sceneClose();
+	assetsUnload();
+	inputQueueReset();
+	if (!exitFlag && nextScene)
+		renderSetDirty();
+
+	return nextScene;
+}
+
 void ComfyEngine::processEvents() {
 	Common::Event event;
 
@@ -210,13 +258,15 @@ void ComfyEngine::processEvents() {
 			hostKeyboardSetKeyState(hostKeyboardVirtualKey(event.kbd.keycode), false);
 			break;
 		default:
-			debug("EVent %d", event.type);
 			break;
 		}
 	}
 }
 
 void ComfyEngine::gameMainLoopTick() {
+	_pendingScene = 0;
+	_musicEventMask = 0;
+	_musicEventFlag = 0;
 	uint16 ticks = timerTick();
 
 	midiTrackTickAndRemove();
@@ -226,7 +276,6 @@ void ComfyEngine::gameMainLoopTick() {
 	paletteFadeStep(ticks);
 	lptKeyboardScanAndProcess();
 	actorTickTree();
-	paletteVsyncFlip();
 	renderFrame();
 	processInput();
 	processMusicEvents();
@@ -240,6 +289,41 @@ void ComfyEngine::animFileTickCommands() {
 }
 
 void ComfyEngine::sceneTickEvent() {
+	if (_soundEventIndex == _soundEventMaximum)
+		return;
+
+	VocQueueEntry &entry = _vocQueue[_soundEventIndex % COMFY_VOC_QUEUE_CAPACITY];
+	if (entry.state == 0xFFFF) {
+		entry.state = 0;
+		keyBitSet(1);
+		keyBitSet(4);
+		keyBitClear(2);
+		keyBitClear(3);
+		_soundEventSubIndex = 0xFFFF;
+	} else if (_soundEventSubIndex != 0xFFFF && _soundEventSubIndex != _soundEventPreviousSubIndex) {
+		if (!_soundEventSubIndex) {
+			if (entry.argumentCount)
+				keyBitSet(entry.arguments[0]);
+
+			_soundEventIndex = (_soundEventIndex + 1) % COMFY_VOC_QUEUE_CAPACITY;
+			if (_soundEventIndex == _soundEventMaximum) {
+				keyBitClear(1);
+				keyBitClear(4);
+				keyBitSet(2);
+				keyBitSet(3);
+			}
+		} else if (_soundEventSubIndex == 1) {
+			keyBitSet(3);
+			keyBitClear(4);
+		} else if (_soundEventSubIndex == 2) {
+			keyBitSet(4);
+			keyBitClear(3);
+		} else if (_soundEventSubIndex < entry.argumentCount) {
+			keyBitSet(entry.arguments[_soundEventSubIndex]);
+		}
+	}
+
+	_soundEventPreviousSubIndex = _soundEventSubIndex;
 }
 
 void ComfyEngine::midiPollChannels(uint16 ticks) {
@@ -267,16 +351,94 @@ void ComfyEngine::renderFrame() {
 		}
 	}
 
-	videoPresentFrame();
+	uint16 rootIndex = _sceneHandles.size() > 1 ? _sceneHandles[1] : 0;
+	if (!rootIndex || actorDraw(rootIndex, 0, 0)) {
+		paletteVsyncFlip();
+		videoPresentFrame();
+	} else {
+		renderSetDirty();
+	}
 }
 
 void ComfyEngine::processInput() {
+	_lastKey = 0xFFFF;
+	if (inputQueueHasItems())
+		_lastKey = lptReadKeyOrNext();
+
+	lptKeyToFlags(_lastKey);
+	if (_lastKey == 0x0101) {
+		_mainLoopRunning = false;
+		return;
+	}
+
+	uint16 rootIndex = _sceneHandles.size() > 1 ? _sceneHandles[1] : 0;
+	Actor *root = actorGet(rootIndex);
+	if (root && !actorReadByte(*root, kActorActive))
+		_mainLoopRunning = false;
 }
 
 void ComfyEngine::processMusicEvents() {
+	if (!_musicEventMask)
+		return;
+
+	if (_musicEventFlag)
+		vocQueuePlayAll();
+
+	if (vocQueueIsIdle() || _musicEnabled) {
+		uint16 track = 1;
+		while ((_musicEventMask = uint16(int16(_musicEventMask) >> 1)) != 0)
+			track++;
+
+		(void)track;
+	}
 }
 
 void ComfyEngine::processSceneTransition() {
+	keyBitClear(0x42);
+	if (!_pendingScene) {
+		actorSetAllDirty();
+		return;
+	}
+
+	byte keySnapshot[15];
+	memset(keySnapshot, 0, sizeof(keySnapshot));
+	if (_keyBits)
+		memcpy(keySnapshot, _keyBits, MIN<uint32>(sizeof(keySnapshot), _keyBitsSize));
+
+	if (environmentLoad(_pendingScene)) {
+		Actor *root = actorGet(0);
+		if (root) {
+			paletteLoadWithFade(actorReadWord(*root, kActorXFixed), 0);
+			if (actorReadDword(*root, kActorYFixed))
+				paletteApplyBrightness(actorReadWord(*root, kActorYFixed));
+		}
+	}
+
+	if (_keyBits)
+		memcpy(_keyBits, keySnapshot, MIN<uint32>(sizeof(keySnapshot), _keyBitsSize));
+
+	keyBitSet(0x42);
+}
+
+void ComfyEngine::vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc) {
+	VocQueueEntry &entry = _vocQueue[_soundEventMaximum % COMFY_VOC_QUEUE_CAPACITY];
+	entry.soundId = soundId;
+	entry.argumentCount = MIN<uint16>(argumentCount, COMFY_VOC_ARG_CAPACITY);
+	entry.state = 0xFFFF;
+	memset(entry.arguments, 0, sizeof(entry.arguments));
+	for (uint i = 0; i < entry.argumentCount; i++)
+		entry.arguments[i] = scriptReadWord(pc + i * 2);
+
+	_soundEventMaximum = (_soundEventMaximum + 1) % COMFY_VOC_QUEUE_CAPACITY;
+}
+
+void ComfyEngine::vocQueuePlayAll() {
+	if (_soundEventIndex != _soundEventMaximum)
+		_soundEventSubIndex = 0xFFFF;
+}
+
+bool ComfyEngine::vocQueueIsIdle() {
+	return _soundEventIndex == _soundEventMaximum;
 }
 
 Common::Error ComfyEngine::syncGame(Common::Serializer &s) {
