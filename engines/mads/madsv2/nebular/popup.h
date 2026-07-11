@@ -34,7 +34,7 @@ namespace RexNebular {
 extern void popup_init();
 //extern int popup_create(FontPtr font, int horiz_pieces, int x, int y);
 //extern void popup_destroy();
-extern void popup_draw(bool save_screen);
+extern void popup_draw();
 
 } // namespace RexNebular
 } // namespace MADSV2

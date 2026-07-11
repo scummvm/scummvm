@@ -44,68 +44,6 @@ void popup_init() {
 	dialog_content_seed = -1;
 }
 
-#if 0
-bool popup_vomitation_flag;
-
-int popup_create(FontPtr font, int horiz_pieces, int x, int y) {
-	int count;
-
-	box->x = x;
-	box->y = y;
-	box_param.font = font;
-	box->xs = (box_param.font->max_x_size + 1) * horiz_pieces + 10;
-	box->text_width = horiz_pieces * 2;
-
-	box->cursor_x = 0;
-	box->text_x = box->text_y = 0;
-	font_set_colors(-1, BLACK, BLACK, BLACK);
-
-	// Allocate text lines
-	box->text[0] = (char *)malloc((box->text_width + 1) * POPUP_MAX_LINES);
-	assert(box->text[0]);
-
-	// Set pointers within text for remaining text array indexes
-	for (count = 1; count < POPUP_MAX_LINES; ++count)
-		box->text[count] = box->text[0] + (count * (box->text_width + 1));
-
-	for (count = 0; count < POPUP_MAX_LINES; ++count) {
-		*box->text[count] = '\0';
-		box->tab[count] = 0;
-	}
-
-
-	memcpy(&cycling_palette[Graphics::PALETTE_COUNT - PALETTE_CYCLING_AREA].r,
-		&master_palette[Graphics::PALETTE_COUNT - PALETTE_CYCLING_AREA].r,
-		PALETTE_CYCLING_AREA * 3);
-	pal_grey(master_palette, DIALOG_CONTENT1_COLOR, 2, 36, 32);
-	pal_grey(master_palette, DIALOG_EDGE_COLOR, 2, 39, 28);
-	pal_grey(master_palette, DIALOG_FC_COLOR, 2, 36, 32);
-	pal_grey(master_palette, DIALOG_FE_COLOR, 1, 55, 55);
-	mcga_setpal_range(&master_palette, DIALOG_CONTENT1_COLOR, 8);
-	box->active = true;
-
-	return 0;
-}
-
-void popup_destroy() {
-	if (box->depth_saved) {
-		buffer_restore(&scr_main, box->preserve_handle, 0, box->x, box->y, box->xs, box->ys);
-		video_update(&scr_main, box->x, box->y - viewing_at_y, box->x, box->y, box->xs, box->ys);
-	}
-	box->depth_saved = false;
-
-	if (box->active)
-		mem_free(box->text);
-
-	memcpy(&master_palette[Graphics::PALETTE_COUNT - PALETTE_CYCLING_AREA].r,
-		&cycling_palette[Graphics::PALETTE_COUNT - PALETTE_CYCLING_AREA].r,
-		PALETTE_CYCLING_AREA * 3);
-	mcga_setpal_range(&master_palette, DIALOG_CONTENT1_COLOR, 8);
-	box->active = false;
-}
-
-#endif
-
 static uint16 rotr16(uint16 value, int amount) {
 	return (value >> amount) | (value << (16 - amount));
 }
@@ -145,18 +83,8 @@ static int popup_draw_content(int x, int y, int xs, int ys, int unknown, byte co
 	return result;
 }
 
-void popup_draw(bool save_screen) {
+void popup_draw() {
 	int askY;
-
-	if (box->cursor_x == 0)
-		box->text_y--;
-
-	box->ys = (box_param.font->max_y_size + 1) * (box->text_y + 1) + 10;
-
-	if (box->x == POPUP_CENTER)
-		box->x = 160 - box->xs / 2;
-	if (box->y == POPUP_CENTER)
-		box->y = 100 - box->ys / 2;
 
 	int y2 = box->y + box->ys;
 	int x2 = box->x + box->xs;
@@ -165,11 +93,6 @@ void popup_draw(bool save_screen) {
 		x2 = -(x2 - 320);
 	if (y2 > 200)
 		y2 = -(y2 - 200);
-
-	if (save_screen) {
-		box->preserve_handle = buffer_preserve(&scr_main, 0xfff8, 0, box->x, box->y, box->xs, box->ys);
-		box->depth_saved = true;
-	}
 
 	askY = (box_param.font->max_y_size + 1) * box->ask_y;
 

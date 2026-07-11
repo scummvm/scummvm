@@ -45,8 +45,7 @@ private:
 	void showRecipe();
 
 public:
-	RexNebularEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
-		MADSV2Engine(syst, gameDesc) {}
+	RexNebularEngine(OSystem *syst, const MADSGameDescription *gameDesc);
 	~RexNebularEngine() override {}
 
 	Common::Error run() override;

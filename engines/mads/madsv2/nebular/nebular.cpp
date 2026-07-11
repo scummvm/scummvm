@@ -57,6 +57,12 @@ namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
 
+RexNebularEngine::RexNebularEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
+		MADSV2Engine(syst, gameDesc) {
+	// Initialize globals
+	RexNebular::popup_init();
+}
+
 Common::Error RexNebularEngine::run() {
 	initGraphics(320, 200);
 	_screen = new Graphics::Screen();
@@ -75,9 +81,6 @@ Common::Error RexNebularEngine::run() {
 	// Set up sound manager
 	_soundManager = new RexSoundManager(_mixer, _soundFlag);
 	_soundManager->validate();
-
-	// Initialize globals
-	RexNebular::popup_init();
 
 	// Run the game
 	RexNebular::nebular_main();

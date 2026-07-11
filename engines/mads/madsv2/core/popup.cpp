@@ -115,8 +115,10 @@ int popup_create(int horiz_pieces, int x, int y) {
 	long mem_to_get;
 	bool isRex = g_engine->getGameID() == GType_RexNebular;
 
-	if (isRex)
+	if (isRex) {
 		box_param.font = font_inter;
+		box_param.font_spacing = 1;
+	}
 
 	if (box == NULL)
 		goto done;
@@ -141,7 +143,8 @@ int popup_create(int horiz_pieces, int x, int y) {
 	if (isRex) {
 		middle_width = (box_param.font->max_x_size + 1) * horiz_pieces;
 		box->xs = middle_width + 10;
-		box->window_xs = middle_width;
+		box->text_xs = middle_width;
+		box->text_width = horiz_pieces * 2;
 
 		font_set_colors(-1, BLACK, BLACK, BLACK);
 
@@ -158,6 +161,8 @@ int popup_create(int horiz_pieces, int x, int y) {
 		middle_width = pop_xs(POPUP_UPPER_CENTER) + ((pop_xs(POPUP_TOP) << 1) * horiz_pieces);
 		box->xs = pop_xs(POPUP_UPPER_LEFT) + pop_xs(POPUP_UPPER_RIGHT) + middle_width;
 		box->window_xs = box_param.extra_x + middle_width;
+		box->text_xs = box->window_xs - (popup_padding_width << 1);
+		box->text_width = (box->text_xs / box_param.font->max_x_size) << 1;
 
 		font_set_colors(-1, POPUP_TEXT_COLOR, POPUP_TEXT_COLOR, POPUP_TEXT_COLOR);
 	}
@@ -167,10 +172,6 @@ int popup_create(int horiz_pieces, int x, int y) {
 	box->text_y = 0;
 
 	box->dont_add_space = false;
-
-	box->text_xs = box->window_xs - (popup_padding_width << 1);
-
-	box->text_width = (box->text_xs / box_param.font->max_x_size) << 1;
 
 	box->screen_buffer.data = NULL;
 	box->orig_buffer.data   = NULL;
@@ -468,7 +469,10 @@ int popup_draw(int save_screen, int depth_code) {
 	}
 	base_size = MAX(base_text_size, base_sprite_size);
 
-	if (!isRex) {
+	if (isRex) {
+		box->ys = (box_param.font->max_y_size + 1) * (box->text_y + 1) + 10;
+
+	} else {
 		box->vert_pieces = ((base_size - (box_param.extra_y + 1)) / pop_ys(POPUP_LEFT)) + 1;
 		box->vert_pieces = MAX(0, box->vert_pieces);
 		text_size = (pop_ys(POPUP_LEFT) * box->vert_pieces) + box_param.extra_y;
@@ -488,8 +492,6 @@ int popup_draw(int save_screen, int depth_code) {
 
 		y_bonus = pop_y(POPUP_UPPER_LEFT) - top;
 		box->ys += y_bonus;
-
-
 
 		left = pop_x(POPUP_UPPER_LEFT);
 		left = MIN(left, pop_x(POPUP_LEFT));
@@ -545,12 +547,6 @@ int popup_draw(int save_screen, int depth_code) {
 	// Compute window location
 	box->window_x = box->base_x + box_param.offset_x;
 	box->window_y = box->base_y + box_param.offset_y;
-
-
-	if (g_engine->getGameID() == GType_RexNebular) {
-		RexNebular::popup_draw(save_screen);
-		return 0;
-	}
 
 	if (save_screen) {
 		matte_map_work_screen();
@@ -611,6 +607,12 @@ int popup_draw(int save_screen, int depth_code) {
 			box->orig_saved = (box->orig_buffer.data != NULL);
 		}
 	}
+
+	if (g_engine->getGameID() == GType_RexNebular) {
+		RexNebular::popup_draw();
+		return 0;
+	}
+
 
 	matte_map_work_screen();
 
