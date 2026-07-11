@@ -56,6 +56,7 @@ public:
 	 * Returns the game Id
 	 */
 	Common::String getGameId() const;
+	bool isDemo() const;
 
 	/**
 	 * Gets a random number

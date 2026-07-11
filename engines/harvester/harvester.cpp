@@ -60,6 +60,10 @@ Common::String HarvesterEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+bool HarvesterEngine::isDemo() const {
+	return (_gameDescription->flags & ADGF_DEMO) != 0;
+}
+
 bool HarvesterEngine::canLoadGameStateCurrently(Common::U32String *) {
 	return _script != nullptr;
 }
