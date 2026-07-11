@@ -39,8 +39,15 @@ const DebugChannelDef ComfyMetaEngineDetection::debugFlagList[] = {
 };
 
 static const char *const directoryGlobs[] = {
-	"SETLANG",
+	"BOO",
+	"COLORS",
+	"COMFY1",
+	"CONCERT",
 	"ENGLISH",
+	"FIRST",
+	"FRIENDS",
+	"MATCH",
+	"PANTHER",
 	nullptr
 };
 

@@ -34,9 +34,26 @@ namespace Comfy {
 
 ComfyEngine *g_engine;
 
+static ComfyEngineVersion getEngineVersion(const ADGameDescription *gameDesc) {
+	if (!strcmp(gameDesc->gameId, "comfyland")) {
+		if (gameDesc->extra && !strcmp(gameDesc->extra, "1999"))
+			return kEngineVersion3;
+
+		return kEngineVersion1;
+	}
+
+	if (!strcmp(gameDesc->gameId, "boo") || !strcmp(gameDesc->gameId, "first") ||
+			!strcmp(gameDesc->gameId, "panther"))
+		return kEngineVersion2;
+
+	return kEngineVersion3;
+}
+
 ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Comfy"), _screen(nullptr),
-	_logicalScreenWidth(COMFY_SCREEN_WIDTH), _logicalScreenHeight(COMFY_SCREEN_HEIGHT),
+	_gameDescription(gameDesc), _engineVersion(getEngineVersion(gameDesc)),
+	_randomSource("Comfy"), _screen(nullptr),
+	_logicalScreenWidth(!strcmp(gameDesc->gameId, "panther") ? COMFY_PANTHER_SCREEN_WIDTH : COMFY_SCREEN_WIDTH),
+	_logicalScreenHeight(!strcmp(gameDesc->gameId, "panther") ? COMFY_PANTHER_SCREEN_HEIGHT : COMFY_SCREEN_HEIGHT),
 	_timerLastMillis(0), _pitAccumulator(0), _gameInitialized(false), _videoInitialized(false),
 	_timerInitialized(false), _lptKeyboardInitialized(false), _mainLoopRunning(false) {
 	g_engine = this;
@@ -44,10 +61,6 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 
 ComfyEngine::~ComfyEngine() {
 	gameShutdown();
-}
-
-uint32 ComfyEngine::getFeatures() const {
-	return _gameDescription->flags;
 }
 
 Common::String ComfyEngine::getGameId() const {
