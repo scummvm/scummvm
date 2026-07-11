@@ -597,8 +597,8 @@ protected:
 		VideoTrack() {}
 		virtual ~VideoTrack() {}
 
-		TrackType getTrackType() const  { return kTrackTypeVideo; }
-		virtual bool endOfTrack() const;
+		TrackType getTrackType() const override { return kTrackTypeVideo; }
+		bool endOfTrack() const override;
 
 		/**
 		 * Get the width of this track
@@ -715,9 +715,9 @@ protected:
 		FixedRateVideoTrack() {}
 		virtual ~FixedRateVideoTrack() {}
 
-		uint32 getNextFrameStartTime() const;
-		virtual Audio::Timestamp getDuration() const;
-		Audio::Timestamp getFrameTime(uint frame) const;
+		uint32 getNextFrameStartTime() const override;
+		Audio::Timestamp getDuration() const override;
+		Audio::Timestamp getFrameTime(uint frame) const override;
 
 		/**
 		 * Get the frame that should be displaying at the given time. This is
@@ -740,9 +740,9 @@ protected:
 		AudioTrack(Audio::Mixer::SoundType soundType);
 		virtual ~AudioTrack() {}
 
-		TrackType getTrackType() const { return kTrackTypeAudio; }
+		TrackType getTrackType() const override { return kTrackTypeAudio; }
 
-		virtual bool endOfTrack() const;
+		bool endOfTrack() const override;
 
 		/**
 		 * Start playing this track
@@ -814,7 +814,7 @@ protected:
 		void setMute(bool mute);
 
 	protected:
-		void pauseIntern(bool shouldPause);
+		void pauseIntern(bool shouldPause) override;
 
 		/**
 		 * Get the AudioStream that is the representation of this AudioTrack
@@ -839,11 +839,11 @@ protected:
 		RewindableAudioTrack(Audio::Mixer::SoundType soundType) : AudioTrack(soundType) {}
 		virtual ~RewindableAudioTrack() {}
 
-		bool isRewindable() const { return true; }
-		bool rewind();
+		bool isRewindable() const override { return true; }
+		bool rewind() override;
 
 	protected:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 		/**
 		 * Get the RewindableAudioStream pointer to be used by this class
@@ -861,13 +861,13 @@ protected:
 		SeekableAudioTrack(Audio::Mixer::SoundType soundType) : AudioTrack(soundType) {}
 		virtual ~SeekableAudioTrack() {}
 
-		bool isSeekable() const { return true; }
-		bool seek(const Audio::Timestamp &time);
+		bool isSeekable() const override { return true; }
+		bool seek(const Audio::Timestamp &time) override;
 
-		Audio::Timestamp getDuration() const;
+		Audio::Timestamp getDuration() const override;
 
 	protected:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 		/**
 		 * Get the SeekableAudioStream pointer to be used by this class
@@ -895,7 +895,7 @@ protected:
 
 	protected:
 		Audio::SeekableAudioStream *_stream;
-		Audio::SeekableAudioStream *getSeekableAudioStream() const { return _stream; }
+		Audio::SeekableAudioStream *getSeekableAudioStream() const override { return _stream; }
 	};
 
 	/**

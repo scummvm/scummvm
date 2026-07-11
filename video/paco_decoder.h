@@ -52,13 +52,13 @@ public:
 	virtual ~PacoDecoder();
 	void close() override;
 
-	virtual bool loadStream(Common::SeekableReadStream *stream) override;
+	bool loadStream(Common::SeekableReadStream *stream) override;
 
 	const Common::List<Common::Rect> *getDirtyRects() const;
 	void clearDirtyRects();
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 	const byte *getPalette();
-	virtual void readNextPacket() override;
+	void readNextPacket() override;
 
 
 protected:
@@ -69,14 +69,14 @@ protected:
 		~PacoVideoTrack();
 
 		bool endOfTrack() const override;
-		virtual bool isRewindable() const override { return false; }
+		bool isRewindable() const override { return false; }
 
 		uint16 getWidth() const override;
 		uint16 getHeight() const override;
 		Graphics::PixelFormat getPixelFormat() const override;
 		int getCurFrame() const override { return _curFrame; }
 		int getFrameCount() const override { return _frameCount; }
-		virtual const Graphics::Surface *decodeNextFrame() override;
+		const Graphics::Surface *decodeNextFrame() override;
 		virtual void handleFrame(Common::SeekableReadStream *fileStream, uint32 chunkSize, int curFrame);
 		virtual void handleEOC() { _curFrame += 1; };
 		void handlePalette(Common::SeekableReadStream *fileStream);
@@ -109,7 +109,7 @@ protected:
 		bool needsAudio() const;
 
 	protected:
-		Audio::AudioStream *getAudioStream() const { return _packetStream; }
+		Audio::AudioStream *getAudioStream() const override { return _packetStream; }
 
 	private:
 		Audio::StatelessPacketizedAudioStream *_packetStream;

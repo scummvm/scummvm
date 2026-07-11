@@ -79,19 +79,19 @@ public:
 	SmackerDecoder();
 	virtual ~SmackerDecoder();
 
-	virtual bool loadStream(Common::SeekableReadStream *stream);
-	void close();
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void close() override;
 	const Graphics::Surface *forceSeekToFrame(uint frame);
-	bool rewind();
+	bool rewind() override;
 
 	Common::Rational getFrameRate() const;
 
 	virtual const Common::Rect *getNextDirtyRect();
 
 protected:
-	void readNextPacket();
-	bool supportsAudioTrackSwitching() const { return true; }
-	AudioTrack *getAudioTrack(int index);
+	void readNextPacket() override;
+	bool supportsAudioTrackSwitching() const override { return true; }
+	AudioTrack *getAudioTrack(int index) override;
 
 	virtual void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
 
@@ -102,24 +102,24 @@ protected:
 		SmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 version);
 		~SmackerVideoTrack();
 
-		bool isRewindable() const { return true; }
-		bool rewind() { _curFrame = -1; return true; }
+		bool isRewindable() const override { return true; }
+		bool rewind() override { _curFrame = -1; return true; }
 
-		uint16 getWidth() const;
-		uint16 getHeight() const;
-		Graphics::PixelFormat getPixelFormat() const;
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
-		const Graphics::Surface *decodeNextFrame() { return _surface; }
-		const byte *getPalette() const { _dirtyPalette = false; return _palette.data(); }
-		bool hasDirtyPalette() const { return _dirtyPalette; }
+		uint16 getWidth() const override;
+		uint16 getHeight() const override;
+		Graphics::PixelFormat getPixelFormat() const override;
+		int getCurFrame() const override { return _curFrame; }
+		int getFrameCount() const override { return _frameCount; }
+		const Graphics::Surface *decodeNextFrame() override { return _surface; }
+		const byte *getPalette() const override { _dirtyPalette = false; return _palette.data(); }
+		bool hasDirtyPalette() const override { return _dirtyPalette; }
 
 		void readTrees(SmackerBitStream &bs, uint32 mMapSize, uint32 mClrSize, uint32 fullSize, uint32 typeSize);
 		void increaseCurFrame() { _curFrame++; }
 		void decodeFrame(SmackerBitStream &bs);
 		void unpackPalette(Common::SeekableReadStream *stream);
 
-		Common::Rational getFrameRate() const { return _frameRate; }
+		Common::Rational getFrameRate() const override { return _frameRate; }
 
 		const Common::Rect *getNextDirtyRect();
 
@@ -189,14 +189,14 @@ private:
 		SmackerAudioTrack(const AudioInfo &audioInfo, Audio::Mixer::SoundType soundType);
 		~SmackerAudioTrack();
 
-		bool isRewindable() const { return true; }
-		bool rewind();
+		bool isRewindable() const override { return true; }
+		bool rewind() override;
 
 		void queueCompressedBuffer(byte *buffer, uint32 bufferSize, uint32 unpackedSize);
 		void queuePCM(byte *buffer, uint32 bufferSize);
 
 	protected:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 	private:
 		Audio::QueuingAudioStream *_audioStream;
@@ -204,12 +204,12 @@ private:
 	};
 
 	class SmackerEmptyTrack : public Track {
-		VideoDecoder::Track::TrackType getTrackType() const { return VideoDecoder::Track::kTrackTypeNone; }
+		VideoDecoder::Track::TrackType getTrackType() const override { return VideoDecoder::Track::kTrackTypeNone; }
 
-		bool endOfTrack() const { return true; }
+		bool endOfTrack() const override { return true; }
 
-		bool isSeekable() const { return true; }
-		bool seek(const Audio::Timestamp &time) { return true; }
+		bool isSeekable() const override { return true; }
+		bool seek(const Audio::Timestamp &time) override { return true; }
 	};
 
 protected:

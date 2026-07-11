@@ -100,7 +100,7 @@ private:
 		const byte *getPalette() const override { _dirtyPalette = false; return _palette.data(); }
 		bool hasDirtyPalette() const override { return _dirtyPalette; }
 
-		virtual void newFrame(uint32 frameDelay) override;
+		void newFrame(uint32 frameDelay) override;
 
 	protected:
 		HNM45VideoTrack(uint32 width, uint32 height, uint32 frameSize, uint32 frameCount,
@@ -170,7 +170,7 @@ private:
 		bool setOutputPixelFormat(const Graphics::PixelFormat &format) override;
 		const Graphics::Surface *decodeNextFrame() override { return _surface; }
 
-		virtual void newFrame(uint32 frameDelay) override;
+		void newFrame(uint32 frameDelay) override;
 		/** Decode a video chunk. */
 		void decodeChunk(byte *data, uint32 size,
 		                 uint16 chunkType, uint16 flags) override;

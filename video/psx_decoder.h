@@ -65,7 +65,7 @@ public:
 	};
 
 	PSXStreamDecoder(CDSpeed speed, uint32 frameCount = 0);
-	virtual ~PSXStreamDecoder() override;
+	~PSXStreamDecoder() override;
 
 	bool loadStream(Common::SeekableReadStream *stream) override;
 	void close() override;

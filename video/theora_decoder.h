@@ -71,14 +71,14 @@ public:
 	 * Load a video file
 	 * @param stream  the stream to load
 	 */
-	bool loadStream(Common::SeekableReadStream *stream);
-	void close();
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void close() override;
 
 	/** Frames per second of the loaded video. */
 	Common::Rational getFrameRate() const;
 
 protected:
-	void readNextPacket();
+	void readNextPacket() override;
 
 private:
 	class TheoraVideoTrack : public VideoTrack {
@@ -86,21 +86,21 @@ private:
 		TheoraVideoTrack(th_info &theoraInfo, th_setup_info *theoraSetup);
 		~TheoraVideoTrack();
 
-		bool endOfTrack() const { return _endOfVideo; }
-		uint16 getWidth() const { return _width; }
-		uint16 getHeight() const { return _height; }
-		Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
-		bool setOutputPixelFormat(const Graphics::PixelFormat &format) {
+		bool endOfTrack() const override { return _endOfVideo; }
+		uint16 getWidth() const override { return _width; }
+		uint16 getHeight() const override { return _height; }
+		Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
+		bool setOutputPixelFormat(const Graphics::PixelFormat &format) override {
 			if (format.bytesPerPixel != 2 && format.bytesPerPixel != 4)
 				return false;
 			_pixelFormat = format;
 			return true;
 		}
 
-		int getCurFrame() const { return _curFrame; }
+		int getCurFrame() const override { return _curFrame; }
 		const Common::Rational &getFrameRate() const { return _frameRate; }
-		uint32 getNextFrameStartTime() const { return (uint32)(_nextFrameStartTime * 1000); }
-		const Graphics::Surface *decodeNextFrame() { return _displaySurface; }
+		uint32 getNextFrameStartTime() const override { return (uint32)(_nextFrameStartTime * 1000); }
+		const Graphics::Surface *decodeNextFrame() override { return _displaySurface; }
 
 		bool decodePacket(ogg_packet &oggPacket);
 		void setEndOfVideo() { _endOfVideo = true; }
@@ -139,7 +139,7 @@ private:
 		void setEndOfAudio() { _endOfAudio = true; }
 
 	protected:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 	private:
 		// single audio fragment audio buffering
