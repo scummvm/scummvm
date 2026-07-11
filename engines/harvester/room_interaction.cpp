@@ -58,7 +58,9 @@ Common::Error RoomInteractionProcessor::handleInteractionResult(const Interactio
 	_playerState.turnTargetFacing = -1;
 	_pendingRegionName.clear();
 	if (interaction.requestDemoEnding) {
-		_engine.quitGame();
+		Common::Error endingError = _flow.runDemoEnding();
+		if (endingError.getCode() != Common::kNoError)
+			return endingError;
 		didTransition = true;
 		return Common::kNoError;
 	}

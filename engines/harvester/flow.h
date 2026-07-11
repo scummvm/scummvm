@@ -64,6 +64,7 @@ private:
 	bool loadQuickTips();
 	bool loadMenuItems();
 	Common::Error runQuickTips();
+	Common::Error runDemoEnding();
 	Common::Error runMainMenuStub();
 	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, bool canSaveGame);
