@@ -1158,7 +1158,7 @@ void sib_event_inv(int16 sib_nr) {
 			_G(gameState).R5Terminal = true;
 			cur_2_inventory();
 			delInventory(RED_CARD_INV);
-			start_aad(103, -1);
+			start_aad(103, -1, true);
 			_G(det)->startDetail(6, 255, ANI_FRONT);
 			_G(atds)->set_all_ats_str(27, 1, ATS_DATA);
 			_G(atds)->set_all_ats_str(30, 1, ATS_DATA);
