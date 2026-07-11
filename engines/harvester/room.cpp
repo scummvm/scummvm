@@ -4086,6 +4086,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					Common::Error exitError = runRoomExitCommands();
 					if (exitError.getCode() != Common::kNoError)
 						return exitError;
+					// Native closeup exits return through room_setup so the parent on-enter command runs.
+					if (canExitCloseupToParent)
+						flow.requestCloseupParentRestart();
 					return Common::kNoError;
 				}
 
