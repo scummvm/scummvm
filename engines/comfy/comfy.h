@@ -36,8 +36,10 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
+#include "audio/mixer.h"
 
 #include "comfy/detection.h"
+#include "comfy/midiplyr/midiplyr.h"
 
 #define COMFY_SCREEN_WIDTH 320
 #define COMFY_SCREEN_HEIGHT 200
@@ -61,6 +63,10 @@
 #define COMFY_SCENE_FRAME_BYTES 0x4E20
 #define COMFY_VOC_ARG_CAPACITY 10
 #define COMFY_VOC_QUEUE_CAPACITY 16
+#define COMFY_MIDI_QUEUE_CAPACITY 32
+#define COMFY_MIDI_CHANNEL_COUNT 2
+#define COMFY_MIDI_TRACK_ENTRY_CAPACITY 5
+#define COMFY_ANIM_FRAME_CAPACITY 10
 
 namespace Comfy {
 
@@ -128,6 +134,51 @@ private:
 		uint16 argumentCount;
 		uint16 state;
 		uint16 arguments[COMFY_VOC_ARG_CAPACITY];
+	};
+
+	struct MidiQueueEntry {
+		uint16 id;
+		int32 time;
+	};
+
+	struct MidiQueue {
+		MidiQueueEntry entries[COMFY_MIDI_QUEUE_CAPACITY];
+		uint16 count;
+		int32 baseTime;
+		uint16 nextIndex;
+		int32 nextTime;
+	};
+
+	struct MidiTrackEntry {
+		uint16 songId;
+		uint16 completionKey;
+		byte loadFlag;
+		uint16 frameCount;
+		uint16 frames[COMFY_ANIM_FRAME_CAPACITY];
+	};
+
+	struct MidiChannelState {
+		MidiTrackEntry entries[COMFY_MIDI_TRACK_ENTRY_CAPACITY];
+		uint16 entryCount;
+		int16 volumeCurrent;
+		int16 volumeTarget;
+		int16 volumeTicksLeft;
+		int16 volumeDefault;
+		int16 rateCurrent;
+		int16 rateTarget;
+		int16 rateTicksLeft;
+		int16 rateDefault;
+		int16 pitchCurrent;
+		int16 pitchTarget;
+		int16 pitchTicksLeft;
+		int16 pitchDefault;
+		uint16 loadedFrameSize;
+		bool playing;
+	};
+
+	struct SoundCue {
+		uint16 value;
+		uint32 counterThreshold;
 	};
 
 	struct Actor {
@@ -288,6 +339,19 @@ private:
 	uint16 _soundEventMaximum;
 	uint16 _soundEventSubIndex;
 	uint16 _soundEventPreviousSubIndex;
+	MidiQueue _midiEvents;
+	MidiQueue _midiTracks;
+	MidiChannelState _midiChannels[COMFY_MIDI_CHANNEL_COUNT];
+	uint32 _midiInstanceTrackBase;
+	Common::Array<byte> _vocFileData;
+	Common::Array<byte> _soundPcm;
+	Common::Array<SoundCue> _soundCues;
+	Audio::SoundHandle _soundHandle;
+	uint16 _soundTileStride;
+	uint32 _soundSampleRate;
+	uint _soundNextCue;
+	bool _soundCompressed;
+	bool _soundPaused;
 	uint16 _exprStack[COMFY_EXPR_STACK_CAPACITY];
 	uint16 _exprStackTop;
 	bool _scriptFault;
@@ -424,6 +488,24 @@ private:
 	void animFileTickCommands();
 	void sceneTickEvent();
 	void midiPollChannels(uint16 ticks);
+	void midiInitInstance();
+	void midiInitChannels();
+	void midiFindNext(MidiQueue &queue);
+	void midiQueueAdd(MidiQueue &queue, uint16 id, int16 delta);
+	void midiQueueRemove(MidiQueue &queue, uint16 id);
+	void midiAddEvent(uint16 id, int16 delta);
+	void midiAddTrack(uint16 id, int16 delta);
+	void midiRemoveTrack(uint16 id);
+	void midiAddTrackEntry(uint16 channel, uint16 songId, uint16 completionKey, byte loadFlag,
+		uint16 frameCount, uint16 *frames);
+	void midiClearChannel(uint16 channel);
+	void midiStartChannel(uint16 channel);
+	void midiFinishChannel(uint16 channel);
+	void midiStopAndFireKeys(uint16 channel);
+	void midiStopAndRemove(uint16 channel);
+	void midiSetChannelParam(uint16 channel, byte parameter, uint16 value, uint16 ticks);
+	int16 midiApproachTarget(int16 current, int16 target, int16 &ticksLeft, int16 ticks);
+	void musicSetEnabled(byte value);
 	void paletteFadeStep(uint16 ticks);
 	void lptKeyboardScanAndProcess();
 	void actorTickTree();
@@ -434,6 +516,13 @@ private:
 	void vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc);
 	void vocQueuePlayAll();
 	bool vocQueueIsIdle();
+	bool soundInit();
+	void soundShutdown();
+	bool soundDecodeEntry(uint16 index);
+	bool soundDecodeCompressedEntry(uint32 dataOffset, uint32 dataSize);
+	bool soundLoadEntry(uint16 index);
+	void soundPlayEntry(uint16 index);
+	void soundAdvanceTick();
 
 protected:
 	// Engine APIs

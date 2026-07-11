@@ -293,6 +293,11 @@ bool ComfyEngine::assetsLoad() {
 		return false;
 	}
 
+	if (!soundInit()) {
+		assetsUnload();
+		return false;
+	}
+
 	_stringTable.resize(_stringCount + 1);
 	memset(&_stringTable[0], 0, _stringTable.size() * sizeof(uint16));
 	_sceneHandles.resize(_sceneCount + 1);
@@ -358,7 +363,7 @@ bool ComfyEngine::assetsLoad() {
 	_pendingScene = 0;
 	_musicEventMask = 0;
 	_musicEventFlag = 0;
-	_musicEnabled = true;
+	_musicEnabled = false;
 	memset(_vocQueue, 0, sizeof(_vocQueue));
 	_soundEventIndex = 0;
 	_soundEventMaximum = 0;
@@ -370,6 +375,7 @@ bool ComfyEngine::assetsLoad() {
 }
 
 void ComfyEngine::assetsUnload() {
+	soundShutdown();
 	keyBitFree();
 	_comfyObjData.clear();
 	_picFileData.clear();

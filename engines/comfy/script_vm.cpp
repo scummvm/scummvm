@@ -22,6 +22,7 @@
 #include "comfy/comfy.h"
 
 #include "common/config-manager.h"
+#include "common/endian.h"
 #include "common/ptr.h"
 
 namespace Comfy {
@@ -209,7 +210,10 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	}
 
 	if (opcode == 0x12) {
+		uint16 id = scriptReadWord(pc);
+		int16 delta = scriptReadStringIndex(pc + 2);
 		pc += 4;
+		midiAddTrack(id, delta);
 		return kScriptContinue;
 	}
 
@@ -260,6 +264,8 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 				spriteGet(int16(id));
 				if (_spriteConversionLoads.count < COMFY_RESOURCE_LIST_CAPACITY)
 					_spriteConversionLoads.ids[_spriteConversionLoads.count++] = id;
+			} else {
+				soundLoadEntry(id);
 			}
 		}
 
@@ -312,18 +318,39 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	}
 
 	if (opcode == 0x1C) {
+		midiRemoveTrack(scriptReadWord(pc));
 		pc += 2;
 		return kScriptContinue;
 	}
 
 	if (opcode == 0x1D) {
-		byte subop = scriptReadByte(pc++) & 0x0F;
+		byte packed = scriptReadByte(pc++);
+		byte channel = (packed >> 4) - 1;
+		byte subop = packed & 0x0F;
 		if (subop == 1) {
-			pc += 4;
-			uint16 count = scriptReadWord(pc);
-			pc += 2 + uint32(count) * 2;
+			uint16 songId = scriptReadWord(pc);
+			uint16 completionKey = scriptReadWord(pc + 2);
+			uint16 count = scriptReadWord(pc + 4);
+			pc += 6;
+			uint16 frames[COMFY_ANIM_FRAME_CAPACITY];
+			memset(frames, 0, sizeof(frames));
+			for (uint i = 0; i < count; i++) {
+				uint16 frame = scriptReadWord(pc);
+				pc += 2;
+				if (i < COMFY_ANIM_FRAME_CAPACITY)
+					frames[i] = frame;
+			}
+
+			midiAddTrackEntry(channel, songId, completionKey, 1, count, frames);
 		} else if (subop >= 2 && subop <= 4) {
+			uint16 value = scriptReadWord(pc);
+			uint16 ticks = scriptReadWord(pc + 2);
 			pc += 4;
+			midiSetChannelParam(channel, subop, value, ticks);
+		} else if (subop == 5 && channel < COMFY_MIDI_CHANNEL_COUNT) {
+			midiStopAndRemove(channel);
+		} else if (subop == 6 && channel < COMFY_MIDI_CHANNEL_COUNT) {
+			midiStopAndFireKeys(channel);
 		}
 
 		return kScriptContinue;
@@ -390,7 +417,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	}
 
 	if (opcode == 0x22) {
-		_musicEnabled = scriptReadByte(pc) != 0;
+		musicSetEnabled(scriptReadByte(pc));
 		pc++;
 		return kScriptContinue;
 	}
@@ -487,9 +514,23 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			pc += 4;
 			sceneEntryLoad(descriptor, index);
 		} else if (subop == 4) {
+			uint16 channel = scriptReadWord(pc);
+			uint16 frame = scriptReadWord(pc + 2);
 			pc += 4;
+			uint32 offset = uint32(_sceneEntryFrameSize) * frame;
+			if (_midiPlyrDriver && channel < COMFY_MIDI_CHANNEL_COUNT && offset + 6 <= _sceneFrameData.size()) {
+				uint16 size = READ_LE_UINT16(&_sceneFrameData[offset + 4]) + 6;
+				if (size <= _sceneFrameData.size() - offset) {
+					_midiPlyrDriver->musicStopSong(1, channel);
+					_midiPlyrDriver->musicPlaySong(&_sceneFrameData[offset], size, channel);
+					_midiPlyrDriver->musicSetVolume(0x64, channel);
+				}
+			}
 		} else if (subop == 5) {
+			uint16 channel = scriptReadWord(pc);
 			pc += 2;
+			if (_midiPlyrDriver && channel < COMFY_MIDI_CHANNEL_COUNT)
+				_midiPlyrDriver->musicStopSong(1, channel);
 		}
 
 		return kScriptContinue;
@@ -683,7 +724,10 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptYield;
 
 	if (opcode == 0x6F) {
+		uint16 id = scriptReadWord(pc);
+		int16 delta = scriptReadStringIndex(pc + 2);
 		pc += 4;
+		midiAddEvent(id, delta);
 		return kScriptContinue;
 	}
 
