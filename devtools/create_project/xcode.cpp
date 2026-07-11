@@ -1620,15 +1620,15 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	}
 
 	// Warning: This assumes we have all configurations with a Debug & Release pair
-	for (const auto *config : _buildConfiguration._objects) {
+	for (std::vector<Object *>::iterator config = _buildConfiguration._objects.begin(); config != _buildConfiguration._objects.end(); config++) {
 
-		Object *configList = new Object(this, "XCConfigurationList_" + config->_name, config->_name, "XCConfigurationList", "", "Build configuration list for " + config->_refType + " \"" + config->_name + "\"");
+		Object *configList = new Object(this, "XCConfigurationList_" + (*config)->_name, (*config)->_name, "XCConfigurationList", "", "Build configuration list for " + (*config)->_refType + " \"" + (*config)->_name + "\"");
 
 		Property buildConfigs;
 		buildConfigs._flags = kSettingsAsList;
 
-		buildConfigs._settings[getHash(config->_id)] = Setting("", "Debug", kSettingsNoValue, 0, 0);
-		buildConfigs._settings[getHash((++config)->_id)] = Setting("", "Release", kSettingsNoValue, 0, 1);
+		buildConfigs._settings[getHash((*config)->_id)] = Setting("", "Debug", kSettingsNoValue, 0, 0);
+		buildConfigs._settings[getHash((*(++config))->_id)] = Setting("", "Release", kSettingsNoValue, 0, 1);
 
 		configList->_properties["buildConfigurations"] = buildConfigs;
 
