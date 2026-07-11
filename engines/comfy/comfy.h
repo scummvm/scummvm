@@ -43,6 +43,8 @@
 #define COMFY_PANTHER_SCREEN_HEIGHT 480
 #define COMFY_PIT_INPUT_FREQUENCY 1193182
 #define COMFY_PIT_TIMER_DIVISOR 0x2E9B
+#define COMFY_RESOLUTION_CHANGE_CAPACITY 100
+#define COMFY_PALETTE_BYTES 0x300
 
 namespace Comfy {
 
@@ -54,6 +56,14 @@ enum ComfyEngineVersion {
 
 class ComfyEngine : public Engine {
 private:
+	struct VideoRectRecord {
+		int16 left;
+		int16 top;
+		int16 right;
+		int16 bottom;
+		uint16 area;
+	};
+
 	const ADGameDescription *_gameDescription;
 	ComfyEngineVersion _engineVersion;
 	Common::Path _gameDirectory;
@@ -64,8 +74,25 @@ private:
 	bool _multiLanguage;
 	Common::RandomSource _randomSource;
 	Graphics::Screen *_screen;
+	byte *_framebufPtr;
+	byte *_presentBuffer;
 	uint16 _logicalScreenWidth;
 	uint16 _logicalScreenHeight;
+	VideoRectRecord _resolutionChanges[COMFY_RESOLUTION_CHANGE_CAPACITY];
+	uint16 _resolutionChangeCount;
+	uint16 _renderDirtyCount;
+	bool _renderInterleaved;
+	Common::SeekableReadStream *_colorDatStream;
+	byte _paletteFadeSource[COMFY_PALETTE_BYTES];
+	byte _paletteTarget[COMFY_PALETTE_BYTES];
+	byte _paletteDisplay[COMFY_PALETTE_BYTES];
+	byte _logicalPalette[256 * 4];
+	byte *_paletteDataPtr;
+	uint16 _vsyncPending;
+	uint16 _fadeMax;
+	uint16 _fadeStep;
+	byte _palettePage;
+	bool _paletteFading;
 	uint32 _timerLastMillis;
 	uint64 _pitAccumulator;
 	bool _gameInitialized;
@@ -87,6 +114,24 @@ private:
 	Common::SeekableReadStream *pathFOpen(const Common::Path &filename, bool useGamePath);
 	void videoInit();
 	void videoShutdown();
+	void videoSetResolution();
+	void videoFindBestMode(VideoRectRecord record);
+	void videoPresentFrame();
+	void renderSetDirty();
+	void renderFlushDirty();
+	void framebufCopyAll(byte *destination, byte *source);
+	void framebufClear(uint16 color);
+	uint32 framebufferBytes();
+	void colorDatOpen();
+	void colorDatClose();
+	void colorDatReadEntry(uint16 paletteId);
+	void vsyncSetPalettePtr(byte *palette);
+	void paletteInterpolate(uint16 step, uint16 maximum);
+	void paletteLoadWithFade(uint16 paletteId, uint16 fadeTicks);
+	void paletteApplyBrightness(uint16 brightness);
+	void paletteVsyncFlip();
+	void paletteConvertRgbToLogical(byte *source, byte *destination);
+	void paletteRealize(byte *rawPalette);
 	void timerInit();
 	void timerShutdown();
 	void lptKeyboardInit();
