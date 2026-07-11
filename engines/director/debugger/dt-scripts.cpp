@@ -109,7 +109,21 @@ static void renderCallStack(uint pc) {
 			Common::String moviePath = movie->getArchive()->getPathName().toString();
 
 			ImGuiScript script = buildImGuiHandlerScript(scriptContext, castLibID, *head->sp.name, moviePath);
+			// retPC points after the call, find the call instruction in the disassembly
 			script.pc = framePc;
+			if (i > 0 && framePc > 0) {
+				// fallback for scripts without a disassembly
+				script.pc = framePc - 1;
+				for (auto &bytecode : script.bytecodeArray) {
+					if (bytecode.pos >= script.byteOffsets.size())
+						break;
+					// bytecode positions are raw offsets, translate to the engine's pc
+					uint32 bytecodePc = script.byteOffsets[bytecode.pos];
+					if (bytecodePc >= framePc)
+						break;
+					script.pc = bytecodePc;
+				}
+			}
 			setScriptToDisplay(script);
 		}
 	}
