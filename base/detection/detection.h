@@ -26,6 +26,6 @@ public:
 	Detection() {}
 	virtual ~Detection() {}
 
-	virtual const char *getName() const = 0;
+	const char *getName() const override = 0;
 	virtual PluginList getPlugins() const = 0;
 };
