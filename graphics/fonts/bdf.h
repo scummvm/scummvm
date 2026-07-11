@@ -62,12 +62,12 @@ public:
 	BdfFont(const BdfFontData &data, DisposeAfterUse::Flag dispose);
 	~BdfFont();
 
-	virtual int getFontHeight() const;
-	virtual int getFontAscent() const;
-	virtual int getMaxCharWidth() const;
+	int getFontHeight() const override;
+	int getFontAscent() const override;
+	int getMaxCharWidth() const override;
 
-	virtual int getCharWidth(uint32 chr) const;
-	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	int getCharWidth(uint32 chr) const override;
+	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 	const char *getFamilyName() const;
 	const char *getFontSlant() const;

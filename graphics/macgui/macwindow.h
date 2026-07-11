@@ -105,7 +105,7 @@ public:
 	 * Accessor method to check whether the window is editable (e.g. for resizing).
 	 * @return True if the window is editable as indicated in the constructor.
 	 */
-	bool isEditable() { return _editable; }
+	bool isEditable() override { return _editable; }
 
 	/**
 	 * Mutator to change the visible state of the window.
@@ -144,7 +144,7 @@ public:
 	 * being marked as dirty unless otherwise specified.
 	 * @param forceRedraw Its behavior depends on the subclass.
 	 */
-	virtual bool draw(bool forceRedraw = false) = 0;
+	bool draw(bool forceRedraw = false) override = 0;
 
 	/**
 	 * Method called to draw the window into the target surface.
@@ -153,7 +153,7 @@ public:
 	 * @param g Surface on which to draw the window.
 	 * @param forceRedraw It's behavior depends on the subclass.
 	 */
-	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) = 0;
+	bool draw(ManagedSurface *g, bool forceRedraw = false) override = 0;
 
 	/**
 	 * Method called by the WM when there is an event concerning the window.
@@ -162,7 +162,7 @@ public:
 	 * @param event Event to be processed.
 	 * @return true If the event was successfully consumed and processed.
 	 */
-	virtual bool processEvent(Common::Event &event) = 0;
+	bool processEvent(Common::Event &event) override = 0;
 
 	/**
 	 * Method that checks if the window is needs redrawing.

@@ -94,16 +94,16 @@ public:
 	AmigaFont(Topaz9Builtin);
 	virtual ~AmigaFont();
 
-	virtual int getFontHeight() const;
-	virtual int getCharWidth(uint32 chr) const;
-	virtual int getMaxCharWidth() const;
-	virtual int getKerningOffset(uint32 left, uint32 right) const;
+	int getFontHeight() const override;
+	int getCharWidth(uint32 chr) const override;
+	int getMaxCharWidth() const override;
+	int getKerningOffset(uint32 left, uint32 right) const override;
 	int getCharAdvanceWidth(uint32 chr) const;
 	int getCharDrawOffset(uint32 chr) const;
 	int getCharInkWidth(uint32 chr) const;
 	int getCharRenderWidth(uint32 chr) const;
 	void drawCharDoubleHeight(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
-	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 	int getLoChar() const { return _font->_loChar; }
 	int getHiChar() const { return _font->_hiChar; }

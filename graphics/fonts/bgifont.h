@@ -43,10 +43,10 @@ public:
 
 	void close();
 
-	int getFontHeight() const { return _totalHeight; }
-	int getCharWidth(uint32 chr) const;
-	int getMaxCharWidth() const { return _maxWidth; }
-	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	int getFontHeight() const override { return _totalHeight; }
+	int getCharWidth(uint32 chr) const override;
+	int getMaxCharWidth() const override { return _maxWidth; }
+	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 private:
 	struct DrawingInstruction {

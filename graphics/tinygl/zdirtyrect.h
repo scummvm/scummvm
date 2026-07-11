@@ -86,7 +86,7 @@ public:
 	ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue, bool clearStencilBuffer, int stencilValue);
 	virtual ~ClearBufferDrawCall() { }
 	bool operator==(const ClearBufferDrawCall &other) const;
-	virtual void execute(bool restoreState, const Common::Rect *clippingRectangle = nullptr) const;
+	void execute(bool restoreState, const Common::Rect *clippingRectangle = nullptr) const override;
 
 	void *operator new(size_t size) {
 		return Internal::allocateFrame(size);
@@ -122,7 +122,7 @@ public:
 	RasterizationDrawCall();
 	virtual ~RasterizationDrawCall() { }
 	bool operator==(const RasterizationDrawCall &other) const;
-	virtual void execute(bool restoreState, const Common::Rect *clippingRectangle = nullptr) const;
+	void execute(bool restoreState, const Common::Rect *clippingRectangle = nullptr) const override;
 
 	void *operator new(size_t size) {
 		return Internal::allocateFrame(size);
@@ -207,7 +207,7 @@ public:
 	BlittingDrawCall(BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode);
 	virtual ~BlittingDrawCall();
 	bool operator==(const BlittingDrawCall &other) const;
-	virtual void execute(bool restoreState, const Common::Rect *clippingRectangle = nullptr) const;
+	void execute(bool restoreState, const Common::Rect *clippingRectangle = nullptr) const override;
 
 	BlittingMode getBlittingMode() const { return _mode; }
 

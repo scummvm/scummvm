@@ -63,12 +63,12 @@ public:
 	void close();
 
 	// Font API
-	int getFontHeight() const { return _pixHeight; }	//< pixels, not points - for points, see getFontSizeInPointsAtDPI()
-	int getFontAscent() const { return _ascent; }
-	int getMaxCharWidth() const { return _maxWidth; }
+	int getFontHeight() const override { return _pixHeight; }	//< pixels, not points - for points, see getFontSizeInPointsAtDPI()
+	int getFontAscent() const override { return _ascent; }
+	int getMaxCharWidth() const override { return _maxWidth; }
 	Common::String getName() const { return _name; }
-	int getCharWidth(uint32 chr) const;
-	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	int getCharWidth(uint32 chr) const override;
+	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 	int getStyle() const;
 
 	int getFontSizeInPointsAtDPI(const int dpi) const;
