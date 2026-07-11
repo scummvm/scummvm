@@ -84,12 +84,12 @@ public:
 	virtual ~RealChip();
 
 	// Chip API
-	void setCallbackFrequency(int timerFrequency);
+	void setCallbackFrequency(int timerFrequency) override;
 
 protected:
 	// Chip API
-	void startCallbacks(int timerFrequency);
-	void stopCallbacks();
+	void startCallbacks(int timerFrequency) override;
+	void stopCallbacks() override;
 	virtual void onTimer();
 
 private:

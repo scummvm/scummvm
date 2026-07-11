@@ -82,7 +82,7 @@ public:
 				uint32 length = 0, Common::String theName = "VGMSampColl");
 	virtual ~VGMSampColl(void);
 
-	virtual bool Load();
+	bool Load() override;
 	virtual bool GetHeaderInfo() { return true; }  // retrieve any header data
 	virtual bool GetSampleInfo() { return true; }  // retrieve sample info, including pointers to data, # channels, rate, etc.
 

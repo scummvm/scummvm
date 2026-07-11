@@ -83,8 +83,8 @@ public:
 
 	Chunk *AddChildChunk(Chunk *ck);
 
-	virtual uint32 GetSize();  //  Returns the size of the chunk in bytes, including any pad byte.
-	virtual void Write(uint8 *buffer);
+	uint32 GetSize() override;  //  Returns the size of the chunk in bytes, including any pad byte.
+	void Write(uint8 *buffer) override;
 };
 
 ////////////////////////////////////////////////////////////////////////////

@@ -62,12 +62,12 @@ protected:
 	int32 _streamBytesLeft;
 
 	void reset();
-	bool rewind();
-	bool endOfData() const { return (_stream->pos() >= _stream->size()); }
-	bool isStereo() const { return _stereo; }
-	int getRate() const { return _sampleRate; }
+	bool rewind() override;
+	bool endOfData() const override { return (_stream->pos() >= _stream->size()); }
+	bool isStereo() const override { return _stereo; }
+	int getRate() const override { return _sampleRate; }
 
-	int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
 	bool _initialRead;
 	audio_3DO_ADP4_PersistentSpace *_callerDecoderData;
@@ -90,12 +90,12 @@ protected:
 	int32 _streamBytesLeft;
 
 	void reset();
-	bool rewind();
-	bool endOfData() const { return (_stream->pos() >= _stream->size()); }
-	bool isStereo() const { return _stereo; }
-	int getRate() const { return _sampleRate; }
+	bool rewind() override;
+	bool endOfData() const override { return (_stream->pos() >= _stream->size()); }
+	bool isStereo() const override { return _stereo; }
+	int getRate() const override { return _sampleRate; }
 
-	int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
 	bool _initialRead;
 	audio_3DO_SDX2_PersistentSpace *_callerDecoderData;

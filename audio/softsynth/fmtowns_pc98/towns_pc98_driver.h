@@ -63,8 +63,8 @@ private:
 	void writeReg(uint8 part, uint8 reg, uint8 val);
 	void preventRegisterWrite(bool prevent);
 
-	void timerCallbackA();
-	void timerCallbackB();
+	void timerCallbackA() override;
+	void timerCallbackB() override;
 
 	void startSoundEffect();
 

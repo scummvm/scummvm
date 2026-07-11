@@ -49,12 +49,12 @@ public:
 	EuphonyDriver(Audio::Mixer *mixer, EuphonyPlayer *pl);
 	~EuphonyDriver();
 
-	bool init();
+	bool init() override;
 	void reset();
 
 	int assignPartToChannel(int chan, int part);
 
-	void send(uint8 command);
+	void send(uint8 command) override;
 
 	void setTimerA(bool enable, int tempo);
 	void setTimerB(bool enable, int tempo);
@@ -107,9 +107,9 @@ public:
 	Type0Driver(EuphonyPlayer *pl);
 	~Type0Driver();
 
-	bool init();
+	bool init() override;
 
-	void send(uint8 command);
+	void send(uint8 command) override;
 };
 
 class EuphonyPlayer : public TownsAudioInterfacePluginDriver {
@@ -135,7 +135,7 @@ public:
 	int configPart_adjustVolume(int part, int val);
 	int configPart_setTranspose(int part, int val);
 
-	void timerCallback(int timerId);
+	void timerCallback(int timerId) override;
 
 	EuphonyDriver *driver() { return _eupDriver; }
 

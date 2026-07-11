@@ -36,8 +36,8 @@ public:
 	Vab(RawFile *file, uint32 offset);
 	virtual ~Vab(void);
 
-	virtual bool GetHeaderInfo();
-	virtual bool GetInstrPointers();
+	bool GetHeaderInfo() override;
+	bool GetInstrPointers() override;
 };
 
 // ********
@@ -50,7 +50,7 @@ public:
 			 uint32 theInstrNum, const Common::String &name = "Instrument");
 	virtual ~VabInstr();
 
-	virtual bool LoadInstr();
+	bool LoadInstr() override;
 
 public:
 	uint8 _tones;
@@ -65,7 +65,7 @@ class VabRgn : public VGMRgn {
 public:
 	VabRgn(VabInstr *instr, uint32 offset);
 
-	virtual bool LoadRgn();
+	bool LoadRgn() override;
 
 public:
 	uint16 _ADSR1;  // raw ps2 ADSR1 value (articulation data)
