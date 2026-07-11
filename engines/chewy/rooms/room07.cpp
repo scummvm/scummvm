@@ -80,7 +80,7 @@ void Room7::bell() {
 	if ((!_G(gameState).R7BellCount) ||
 		(_G(gameState).R7BellCount >= 2 && _G(gameState).R7RopeLeft && !_G(gameState).R7RopeOk)) {
 		_G(gameState)._personHide[P_CHEWY] = true;
-		start_aad(5, 0);
+		start_aad(5, 0, true);
 		startAniBlock(3, ABLOCK25);
 
 		_G(det)->showStaticSpr(7);
@@ -127,7 +127,7 @@ void Room7::bell() {
 
 	} else if (!_G(gameState).R7RopeOk) {
 		_G(gameState)._personHide[P_CHEWY] = true;
-		start_aad(7, 0);
+		start_aad(7, 0, true);
 		startAniBlock(3, ABLOCK25);
 		_G(det)->showStaticSpr(7);
 		_G(det)->load_taf_seq(192, 74, nullptr);
