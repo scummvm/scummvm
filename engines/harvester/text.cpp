@@ -28,6 +28,7 @@
 #include "common/fs.h"
 #include "common/ptr.h"
 #include "common/stream.h"
+#include "harvester/harvester.h"
 #include "harvester/parse_utils.h"
 #include "harvester/resources.h"
 
@@ -199,7 +200,8 @@ bool Text::loadDialogueResponses(ResourceManager &resources) {
 	if (_dialogueResponseLines.empty())
 		return false;
 
-	if (!hasNativeHankDialogueResponseLayout(_dialogueResponseLines)) {
+	if ((!g_engine || !g_engine->isDemo()) &&
+			!hasNativeHankDialogueResponseLayout(_dialogueResponseLines)) {
 		Common::Array<Common::String> preferredLines;
 		if (tryLoadPreferredDialogueResponsesFromGamePath(preferredLines))
 			_dialogueResponseLines = Common::move(preferredLines);
