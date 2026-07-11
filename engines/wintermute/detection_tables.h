@@ -1651,16 +1651,25 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("jamesperis", "Demo",
 		WME_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507), Common::ES_ESP, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
-	// James Peris 2: The Fountain of Eternal Drunkenness (English)
+	// James Peris 2: The Fountain of Eternal Drunkenness (English) (Steam 2023-11-18)
 	WME_WINENTRY("jamesperis2", "Steam",
-		WME_ENTRY2s("data.dcp", "1d19fac76ab9267881214d7c7968acb6", 980791568,
-					"audio.dcp", "0a768e0266238772b698b5a26a9c2b50", 488048201), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+		WME_ENTRY2s("data.dcp", "aefa9016a6fcc6a57fb1ac1561945885", 983123199,
+					"audio.dcp", "35ad443ee6a47476010875e81cceadd6", 488107857), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// James Peris 2: The Fountain of Eternal Drunkenness (Spanish)
+	// James Peris 2: The Fountain of Eternal Drunkenness (Spanish) (Steam 2023-11-18)
 	WME_WINENTRY("jamesperis2", "Steam",
-		WME_ENTRY2s("data.dcp", "1d19fac76ab9267881214d7c7968acb6", 980791568,
-					"audio.dcp", "0a768e0266238772b698b5a26a9c2b50", 488048201), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+		WME_ENTRY2s("data.dcp", "aefa9016a6fcc6a57fb1ac1561945885", 983123199,
+					"audio.dcp", "35ad443ee6a47476010875e81cceadd6", 488107857), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
 
+	// James Peris 2: The Fountain of Eternal Drunkenness - Uncut (English) (Steam 2023-11-18)
+	WME_WINENTRY("jamesperis2", "Steam",
+		WME_ENTRY2s("data.dcp", "f9102e99fadc25409ee2ef3040039023", 985240842,
+					"audio.dcp", "69f37a00693f812937dee6836e371d9e", 488048201), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// James Peris 2: The Fountain of Eternal Drunkenness - Uncut  (Spanish) (Steam 2023-11-18)
+	WME_WINENTRY("jamesperis2", "Steam",
+		WME_ENTRY2s("data.dcp", "f9102e99fadc25409ee2ef3040039023", 985240842,
+					"audio.dcp", "69f37a00693f812937dee6836e371d9e", 488048201), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
 	// Lov Mamuta
 	WME_WINENTRY("lovmamuta", "",
 		WME_ENTRY1s("data.dcp", "ce2be4691fa0104cfdd63656cedaf810", 11198933), Common::CS_CZE, GF_3D, WME_1_9_1),
