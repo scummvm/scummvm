@@ -193,6 +193,15 @@ void ComfyEngine::midiInitChannels() {
 	}
 }
 
+void ComfyEngine::midiSyncAndScan() {
+	_midiTimeCounter = _midiInstanceEventTime;
+	if (_midiPlyrDriver)
+		_midiPlyrDriver->setTimeCounter(_midiTimeCounter);
+
+	midiFindNext(_midiEvents);
+	midiFindNext(_midiTracks);
+}
+
 void ComfyEngine::midiQueueAdd(MidiQueue &queue, uint16 id, int16 delta) {
 	if (queue.count == COMFY_MIDI_QUEUE_CAPACITY)
 		return;
@@ -237,32 +246,67 @@ void ComfyEngine::midiClearChannel(uint16 channel) {
 	_midiChannels[channel].playing = false;
 }
 
-void ComfyEngine::midiStartChannel(uint16 channel) {
+void ComfyEngine::midiResumeAll() {
+	if (!_midiPlyrDriver)
+		return;
+
+	for (uint channel = 0; channel < COMFY_MIDI_CHANNEL_COUNT; channel++) {
+		if (_midiChannels[channel].entryCount)
+			_midiPlyrDriver->musicContinueSong(channel);
+	}
+}
+
+void ComfyEngine::midiStopChannel(uint16 channel) {
 	if (!_midiPlyrDriver || channel >= COMFY_MIDI_CHANNEL_COUNT || !_midiChannels[channel].entryCount)
 		return;
 
 	MidiChannelState &state = _midiChannels[channel];
-	uint32 descriptorOffset = 4 + uint32(state.entries[0].songId) * 6;
-	if (descriptorOffset > _midiFileData.size() || 6 > _midiFileData.size() - descriptorOffset) {
+	byte *song = spriteLoadFromFile(state.entries[0].songId, channel);
+	if (!song) {
 		midiClearChannel(channel);
 		return;
 	}
 
-	uint16 size = READ_LE_UINT16(&_midiFileData[descriptorOffset]);
-	uint32 fileOffset = READ_LE_UINT32(&_midiFileData[descriptorOffset + 2]);
-	if (!size || fileOffset > _midiFileData.size() || size > _midiFileData.size() - fileOffset || size > _sceneFrameData.size()) {
-		midiClearChannel(channel);
-		return;
-	}
-
-	uint32 destinationOffset = channel ? _sceneFrameData.size() - size : 0;
-	memcpy(&_sceneFrameData[destinationOffset], &_midiFileData[fileOffset], size);
-	state.loadedFrameSize = size;
-	state.rateCurrent = state.rateDefault = size >= 4 ? READ_LE_UINT16(&_sceneFrameData[destinationOffset + 2]) : 0x07D0;
+	uint16 size = state.loadedFrameSize;
+	state.rateCurrent = state.rateDefault = size >= 4 ? READ_LE_UINT16(song + 2) : 0x07D0;
 	state.rateTarget = state.rateCurrent;
-	_midiPlyrDriver->musicPlaySong(&_sceneFrameData[destinationOffset], size, channel);
+	_midiPlyrDriver->musicPlaySong(song, size, channel);
 	_midiPlyrDriver->musicSetVolume(uint16(state.volumeCurrent >> 8), channel);
 	state.playing = true;
+}
+
+void ComfyEngine::midiStopAll() {
+	for (uint channel = 0; channel < COMFY_MIDI_CHANNEL_COUNT; channel++)
+		midiClearChannel(channel);
+
+	if (_midiPlyrDriver)
+		_midiPlyrDriver->musicStopAll(1);
+
+	if (_sceneEntryListActive) {
+		for (uint i = 0; i < _sceneEntryCount && i < COMFY_SCENE_ENTRY_OFFSET_CAPACITY; i++) {
+			if (_sceneEntryOffsets[i] != 0xFFFF)
+				sceneEntryLoad(_sceneEntryOffsets[i], i);
+		}
+
+		return;
+	}
+
+	for (uint channel = 0; channel < COMFY_MIDI_CHANNEL_COUNT; channel++) {
+		if (_midiChannels[channel].entryCount)
+			midiStopChannel(channel);
+	}
+}
+
+void ComfyEngine::midiShutdown() {
+	_midiHandles.clear();
+	_sceneMemoryBlock.clear();
+	_sceneMidiInstanceOffset = 0;
+	_sceneEntryListOffset = 0;
+	_sceneActorPcOffset = 0;
+	_sceneStringTableOffset = 0;
+	_sceneHandlesOffset = 0;
+	_sceneActorsOffset = 0;
+	_sceneKeyBitsOffset = 0;
 }
 
 void ComfyEngine::midiFinishChannel(uint16 channel) {
@@ -285,7 +329,7 @@ void ComfyEngine::midiFinishChannel(uint16 channel) {
 	state.entryCount--;
 	midiClearChannel(channel);
 	if (state.entryCount)
-		midiStartChannel(channel);
+		midiStopChannel(channel);
 }
 
 void ComfyEngine::midiStopAndFireKeys(uint16 channel) {
@@ -338,7 +382,7 @@ void ComfyEngine::midiAddTrackEntry(uint16 channel, uint16 songId, uint16 comple
 
 	state.entryCount++;
 	if (state.entryCount == 1)
-		midiStartChannel(channel);
+		midiStopChannel(channel);
 }
 
 void ComfyEngine::midiSetChannelParam(uint16 channel, byte parameter, uint16 value, uint16 ticks) {
@@ -396,10 +440,7 @@ void ComfyEngine::musicSetEnabled(byte value) {
 	if (_musicEnabled) {
 		_midiPlyrDriver->musicStopAll(0);
 	} else {
-		for (uint channel = 0; channel < COMFY_MIDI_CHANNEL_COUNT; channel++) {
-			if (_midiChannels[channel].entryCount)
-				_midiPlyrDriver->musicContinueSong(channel);
-		}
+		midiResumeAll();
 	}
 }
 

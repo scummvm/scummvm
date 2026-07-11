@@ -25,7 +25,7 @@
 
 namespace Comfy {
 
-void ComfyEngine::scenePackRuntimeState() {
+void ComfyEngine::sceneBlockPackRuntimeState() {
 	if (_sceneMemoryBlock.empty())
 		return;
 
@@ -43,7 +43,7 @@ void ComfyEngine::scenePackRuntimeState() {
 	WRITE_LE_UINT16(&_sceneMemoryBlock[_sceneMidiInstanceOffset + 0x188], _midiEvents.count);
 	WRITE_LE_UINT16(&_sceneMemoryBlock[_sceneMidiInstanceOffset + 0x18A], _midiTracks.count);
 	byte *sceneEntries = &_sceneMemoryBlock[_sceneEntryListOffset];
-	sceneEntries[0] = _sceneEntryCount != 0;
+	sceneEntries[0] = _sceneEntryListActive;
 	WRITE_LE_UINT16(sceneEntries + 1, _sceneEntryCount);
 	WRITE_LE_UINT16(sceneEntries + 3, _sceneEntryFrameSize);
 	for (uint i = 0; i < COMFY_SCENE_ENTRY_OFFSET_CAPACITY; i++)
@@ -75,6 +75,7 @@ void ComfyEngine::scenePackRuntimeState() {
 				WRITE_LE_UINT16(packedEntry + 7 + frame * 2, state.entries[entry].frames[frame]);
 		}
 	}
+	memcpy(&_sceneMemoryBlock[_sceneActorPcOffset], _actorPcTable, sizeof(_actorPcTable));
 
 	if (!_stringTable.empty())
 		memcpy(&_sceneMemoryBlock[_sceneStringTableOffset], &_stringTable[0], _stringTable.size() * sizeof(uint16));
@@ -89,28 +90,35 @@ void ComfyEngine::scenePackRuntimeState() {
 		memcpy(&_sceneMemoryBlock[_sceneKeyBitsOffset], _keyBits, _keyBitsSize);
 }
 
-bool ComfyEngine::environmentStore(uint16 index) {
+void ComfyEngine::envConvToXms(byte *source, uint16 index) {
+	if (!index || _sceneMemoryBlock.empty())
+		return;
+
+	sceneBlockPackRuntimeState();
+	uint32 offset = uint32(index - 1) * _sceneMemoryBlock.size();
+	if (offset > _environmentData.size() || _sceneMemoryBlock.size() > _environmentData.size() - offset)
+		return;
+
+	memcpy(&_environmentData[offset], source, _sceneMemoryBlock.size());
+}
+
+bool ComfyEngine::envXmsToConv(byte *destination, uint16 index) {
 	if (!index || _sceneMemoryBlock.empty())
 		return false;
 
-	scenePackRuntimeState();
 	uint32 offset = uint32(index - 1) * _sceneMemoryBlock.size();
 	if (offset > _environmentData.size() || _sceneMemoryBlock.size() > _environmentData.size() - offset)
 		return false;
 
-	memcpy(&_environmentData[offset], &_sceneMemoryBlock[0], _sceneMemoryBlock.size());
+	memcpy(destination, &_environmentData[offset], _sceneMemoryBlock.size());
+	sceneBlockUnpackRuntimeState();
 	return true;
 }
 
-bool ComfyEngine::environmentLoad(uint16 index) {
-	if (!index || _sceneMemoryBlock.empty())
-		return false;
+void ComfyEngine::sceneBlockUnpackRuntimeState() {
+	if (_sceneMemoryBlock.empty())
+		return;
 
-	uint32 offset = uint32(index - 1) * _sceneMemoryBlock.size();
-	if (offset > _environmentData.size() || _sceneMemoryBlock.size() > _environmentData.size() - offset)
-		return false;
-
-	memcpy(&_sceneMemoryBlock[0], &_environmentData[offset], _sceneMemoryBlock.size());
 	for (uint i = 0; i < COMFY_MIDI_QUEUE_CAPACITY; i++) {
 		uint32 trackOffset = _sceneMidiInstanceOffset + i * 6;
 		_midiTracks.entries[i].id = READ_LE_UINT16(&_sceneMemoryBlock[trackOffset]);
@@ -129,6 +137,7 @@ bool ComfyEngine::environmentLoad(uint16 index) {
 	midiFindNext(_midiEvents);
 	midiFindNext(_midiTracks);
 	byte *sceneEntries = &_sceneMemoryBlock[_sceneEntryListOffset];
+	_sceneEntryListActive = sceneEntries[0] != 0;
 	_sceneEntryCount = READ_LE_UINT16(sceneEntries + 1);
 	_sceneEntryFrameSize = READ_LE_UINT16(sceneEntries + 3);
 	for (uint i = 0; i < COMFY_SCENE_ENTRY_OFFSET_CAPACITY; i++)
@@ -167,10 +176,13 @@ bool ComfyEngine::environmentLoad(uint16 index) {
 	if (_keyBits && _keyBitsSize)
 		memcpy(_keyBits, &_sceneMemoryBlock[_sceneKeyBitsOffset], _keyBitsSize);
 
-	return true;
 }
 
 void ComfyEngine::sceneGoto(uint16 count) {
+	if (_midiPlyrDriver)
+		_midiPlyrDriver->musicStopAll(1);
+
+	_sceneEntryListActive = true;
 	_sceneEntryCount = count;
 	_sceneEntryFrameSize = count ? COMFY_SCENE_FRAME_BYTES / int16(count) : 0;
 	for (uint i = 0; i < COMFY_SCENE_ENTRY_OFFSET_CAPACITY; i++)
@@ -178,17 +190,45 @@ void ComfyEngine::sceneGoto(uint16 count) {
 }
 
 void ComfyEngine::sceneStop() {
-	_sceneEntryCount = 0;
-	_sceneEntryFrameSize = 0;
+	if (_midiPlyrDriver)
+		_midiPlyrDriver->musicStopAll(1);
+
+	_sceneEntryListActive = false;
+}
+
+void ComfyEngine::sceneStartWithMusic(uint16 scene) {
+	byte keySnapshot[15];
+	memset(keySnapshot, 0, sizeof(keySnapshot));
+	if (_keyBits)
+		memcpy(keySnapshot, _keyBits, MIN<uint32>(sizeof(keySnapshot), _keyBitsSize));
+
+	if (!_musicEnabled && _midiPlyrDriver)
+		_midiPlyrDriver->musicStopAll(1);
+
+	if (!envXmsToConv(&_sceneMemoryBlock[_sceneMidiInstanceOffset], scene))
+		return;
+
+	midiSyncAndScan();
+	if (!_musicEnabled)
+		midiStopAll();
+
+	Actor *root = actorGet(0);
+	if (root) {
+		paletteLoadWithFade(actorReadU16(*root, kActorXFixed), 0);
+		if (actorReadU32(*root, kActorYFixed))
+			paletteApplyBrightness(actorReadU16(*root, kActorYFixed));
+	}
+
+	if (_keyBits)
+		memcpy(_keyBits, keySnapshot, MIN<uint32>(sizeof(keySnapshot), _keyBitsSize));
 }
 
 bool ComfyEngine::sceneEntryLoad(uint16 descriptor, uint16 index) {
-	uint32 descriptorOffset = 4 + uint32(descriptor) * 6;
-	if (descriptorOffset > _midiFileData.size() || 6 > _midiFileData.size() - descriptorOffset)
-		return false;
-
-	uint16 size = READ_LE_UINT16(&_midiFileData[descriptorOffset]);
-	uint32 fileOffset = READ_LE_UINT32(&_midiFileData[descriptorOffset + 2]);
+	byte header[6];
+	memset(header, 0, sizeof(header));
+	sceneEntryReadFromXms(header, descriptor, sizeof(header));
+	uint16 size = READ_LE_UINT16(header);
+	uint32 fileOffset = READ_LE_UINT32(header + 2);
 	uint32 destinationOffset = uint32(_sceneEntryFrameSize) * index;
 	if (fileOffset > _midiFileData.size() || size > _midiFileData.size() - fileOffset ||
 			destinationOffset > _sceneFrameData.size() || size > _sceneFrameData.size() - destinationOffset)
@@ -201,42 +241,91 @@ bool ComfyEngine::sceneEntryLoad(uint16 descriptor, uint16 index) {
 	return true;
 }
 
-bool ComfyEngine::sceneOpen() {
-	if (_sceneOpen)
-		sceneClose();
+void ComfyEngine::sceneEntryReadFromXms(byte *destination, uint16 row, uint16 size) {
+	objHdrReadFromXms(destination, _headerXmsPicEntriesBase, size, row);
+}
 
-	if (_comfyObjData.empty() || _picFileData.empty() || _midiFileData.empty() || !midiPlyrStart())
-		return false;
+byte *ComfyEngine::sceneFrameGetPtr(uint16 kind, uint16 size) {
+	byte *result = nullptr;
+	if (kind == 0 && !_sceneFrameData.empty())
+		result = &_sceneFrameData[0];
+	else if (kind == 1 && size <= _sceneFrameData.size())
+		result = &_sceneFrameData[_sceneFrameData.size() - size];
 
-	paletteLoadWithFade(0, 0);
-	framebufClear(0);
-	if (actorInit(1, 0, 1, 1, 0x14, 0, 0, 0, 1) != 1) {
-		midiPlyrStop();
-		return false;
+	if (result && kind < COMFY_MIDI_CHANNEL_COUNT)
+		_midiChannels[kind].loadedFrameSize = size;
+
+	return result;
+}
+
+byte *ComfyEngine::spriteLoadFromFile(uint16 fileOffset, uint16 index) {
+	byte header[6];
+	memset(header, 0, sizeof(header));
+	sceneEntryReadFromXms(header, fileOffset, sizeof(header));
+	uint16 size = READ_LE_UINT16(header);
+	uint32 position = READ_LE_UINT32(header + 2);
+	if (!size)
+		return nullptr;
+
+	byte *destination = sceneFrameGetPtr(index, size);
+	if (!destination || position > _midiFileData.size() || size > _midiFileData.size() - position) {
+		if (index < COMFY_MIDI_CHANNEL_COUNT)
+			_midiChannels[index].loadedFrameSize = 0;
+
+		return nullptr;
 	}
 
+	memcpy(destination, &_midiFileData[position], size);
+	return destination;
+}
+
+void ComfyEngine::midiStopSong(uint16 channel) {
+	if (_midiPlyrDriver && channel < COMFY_MIDI_CHANNEL_COUNT)
+		_midiPlyrDriver->musicStopSong(1, channel);
+}
+
+void ComfyEngine::midiPlaySongAtFrame(uint16 channel, uint16 frame) {
+	midiStopSong(channel);
+	uint32 offset = uint32(_sceneEntryFrameSize) * frame;
+	if (!_midiPlyrDriver || channel >= COMFY_MIDI_CHANNEL_COUNT ||
+			offset > _sceneFrameData.size() || 6 > _sceneFrameData.size() - offset)
+		return;
+
+	byte *song = &_sceneFrameData[offset];
+	uint16 size = READ_LE_UINT16(song + 4) + 6;
+	if (size > _sceneFrameData.size() - offset)
+		return;
+
+	_midiPlyrDriver->musicPlaySong(song, size, channel);
+	_midiPlyrDriver->musicSetVolume(0x64, channel);
+}
+
+bool ComfyEngine::sceneOpen(uint32 sceneEntryListOffset) {
+	_sceneEntryListOffset = sceneEntryListOffset;
+	_sceneEntryListActive = false;
+	_sceneEntryCount = 0;
+	_sceneEntryFrameSize = 0x4E20;
+	if (_sceneFrameData.empty()) {
+		_sceneFrameData.resize(0x4E20);
+		memset(&_sceneFrameData[0], 0, _sceneFrameData.size());
+	}
+
+	if (_midiFileData.empty() || !midiPlyrStart())
+		return false;
+
 	_sceneOpen = true;
+	memset(_sceneEntryOffsets, 0, sizeof(_sceneEntryOffsets));
 	midiInitInstance();
 	midiInitChannels();
-	scenePackRuntimeState();
-	renderSetDirty();
 	return true;
 }
 
-void ComfyEngine::sceneClose() {
+void ComfyEngine::sceneShutdown() {
 	if (!_sceneOpen)
 		return;
 
-	if (_sceneHandles.size() > 1 && _sceneHandles[1])
-		actorFreeTree(_sceneHandles[1]);
-
-	scenePackRuntimeState();
 	midiPlyrStop();
-	for (uint i = 0; i < _spriteResources.size(); i++) {
-		_spriteResources[i].pixels.clear();
-		_spriteResources[i].loaded = false;
-	}
-
+	_sceneFrameData.clear();
 	_sceneOpen = false;
 }
 

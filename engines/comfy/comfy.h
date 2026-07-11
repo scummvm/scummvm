@@ -301,6 +301,7 @@ private:
 	uint32 _picDataSize;
 	bool _usesAnimFile;
 	bool _sceneOpen;
+	bool _sceneEntryListActive;
 	Common::Array<uint16> _stringTable;
 	Common::Array<uint16> _sceneHandles;
 	Common::Array<uint16> _midiHandles;
@@ -308,6 +309,7 @@ private:
 	Common::Array<byte> _sceneMemoryBlock;
 	Common::Array<byte> _scenePoolData;
 	Common::Array<byte> _environmentData;
+	Common::Array<byte> _headerXmsData;
 	Common::Array<byte> _sceneFrameData;
 	Common::Array<SpriteCacheEntry> _objectCacheEntries;
 	Common::Array<SpriteCacheEntry> _frameCacheEntries;
@@ -322,6 +324,16 @@ private:
 	uint32 _sceneKeyBitsOffset;
 	uint32 _scenePoolCursor;
 	uint32 _scenePoolEvictCursor;
+	uint32 _scenePoolSize;
+	uint32 _headerXmsObjectTableBase;
+	uint32 _headerXmsObjectTableBytes;
+	uint32 _headerXmsPicEntriesBase;
+	uint32 _headerXmsPicEntriesBytes;
+	uint32 _headerXmsSoundHeadersBase;
+	uint32 _headerXmsSoundHeadersBytes;
+	uint16 _selectorPoolEntries[10];
+	uint16 _selectorRing;
+	bool _selectorPoolInitialized;
 	uint16 _activeSceneCount;
 	uint16 _sceneEntryCount;
 	uint16 _sceneEntryFrameSize;
@@ -464,21 +476,43 @@ private:
 	void lptKeyboardDispatchEvents(uint32 scanState);
 	void setKeyboardContact(uint16 contact, bool pressed, bool keymapper);
 	bool readAssetFile(const Common::Path &filename, Common::Array<byte> &data);
-	bool assetsLoad();
-	void assetsUnload();
+	uint32 assetsAlignEven32(uint32 value);
+	uint16 assetsReadLe16At(Common::Array<byte> &data, uint32 offset);
+	uint32 assetsReadLe32At(Common::Array<byte> &data, uint32 offset);
+	int32 assetsXmsCopy(byte *destination, uint32 destinationSize, uint32 destinationOffset,
+		const byte *source, uint32 sourceSize, uint32 sourceOffset, uint32 size);
+	bool selPoolInit();
+	void selPoolFree();
+	bool assetsLoad(uint32 budget, byte *scenePtr);
+	void assetsUnload(byte freeAudio);
+	bool sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 keyBitCount,
+		uint16 handleCount, uint32 &numSprites);
+	void midiShutdown();
 	bool comfyObjOpen();
 	bool picFileOpen();
 	bool midiFileOpen();
-	bool spriteLoad(int16 spriteId);
-	SpriteResource *spriteGet(int16 spriteId);
+	void objFileReadEntries(byte *destination);
+	byte *soundReadTiledData();
+	void soundGetTileParams(uint16 *tileStride, uint16 *fieldCount);
+	void spriteCache(int16 spriteId);
+	void spriteInvalidateHostCache(SpriteResource &sprite);
+	void objHdrReadFromXms(byte *destination, uint32 base, uint16 size, uint16 row);
+	void objHdrRead(SpriteObjectHeader &destination, uint16 index);
+	void scenePoolEvict();
+	void scenePoolReserveSlot(uint32 size);
+	SpriteResource *spriteGetPtr(int16 spriteId);
 	bool spriteDecompressTile(SpriteResource &sprite, const byte *source, uint32 sourceSize);
 	void spriteBlitClipped(int16 spriteId, int16 x, int16 y);
 	void spriteBlitRle(const byte *source, uint32 sourceSize);
-	bool sceneOpen();
-	void sceneClose();
-	void scenePackRuntimeState();
-	bool environmentLoad(uint16 index);
-	bool environmentStore(uint16 index);
+	bool sceneOpen(uint32 sceneEntryListOffset);
+	void sceneShutdown();
+	void sceneEntryReadFromXms(byte *destination, uint16 row, uint16 size);
+	byte *sceneFrameGetPtr(uint16 kind, uint16 size);
+	byte *spriteLoadFromFile(uint16 fileOffset, uint16 index);
+	void sceneBlockPackRuntimeState();
+	void sceneBlockUnpackRuntimeState();
+	bool envXmsToConv(byte *destination, uint16 index);
+	void envConvToXms(byte *source, uint16 index);
 	void sceneGoto(uint16 count);
 	void sceneStop();
 	bool sceneEntryLoad(uint16 descriptor, uint16 index);
@@ -491,13 +525,16 @@ private:
 	uint16 scriptEvalExpr(uint32 &pc, uint16 fallbackActor);
 	ScriptDispatchStatus scriptDispatch(Actor &actor, byte opcode, uint32 &pc);
 	ScriptDispatchStatus scriptStep(Actor &actor, uint32 &pc);
-	uint32 actorReadDword(Actor &actor, uint offset);
-	uint16 actorReadWord(Actor &actor, uint offset);
-	byte actorReadByte(Actor &actor, uint offset);
-	void actorWriteDword(Actor &actor, uint offset, uint32 value);
-	void actorWriteWord(Actor &actor, uint offset, uint16 value);
-	void actorWriteByte(Actor &actor, uint offset, byte value);
+	uint32 actorReadU32(Actor &actor, uint offset);
+	uint16 actorReadU16(Actor &actor, uint offset);
+	byte actorReadU8(Actor &actor, uint offset);
+	void actorWriteU32(Actor &actor, uint offset, uint32 value);
+	void actorWriteU16(Actor &actor, uint offset, uint16 value);
+	void actorWriteU8(Actor &actor, uint offset, byte value);
+	Actor *rootActor();
 	Actor *actorGet(uint16 actorIndex);
+	void actorSetFrame(int16 frame);
+	uint16 actorGetFrame();
 	Actor *actorResolve(uint16 sceneOrActor, uint16 fallbackActor);
 	uint16 actorAllocate(uint16 sceneSlot);
 	void actorFree(uint16 sceneSlot);
@@ -509,11 +546,11 @@ private:
 	void actorFreePcChain(Actor &actor);
 	void actorFreeTree(uint16 actorIndex);
 	void actorClearDirtyTree(uint16 actorIndex);
-	void actorSetAllDirty();
+	void actorSetAllVisible();
 	uint16 actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible, byte active,
 		uint32 pc, int16 x, int16 y, int16 sprite, byte insertAsChild);
 	bool actorRunScript(uint16 actorIndex, bool &descendChildren);
-	bool actorTickTreeInternal(uint16 actorIndex);
+	bool actorTickTree(uint16 actorIndex);
 	bool actorDraw(uint16 actorIndex, int16 x, int16 y);
 	void actorDrawList(uint16 actorIndex, int16 x, int16 y);
 	void actorDrawScripted(uint16 actorIndex, uint32 selector, int16 x, int16 y);
@@ -524,9 +561,8 @@ private:
 	void timerShutdown();
 	void lptKeyboardInit();
 	void lptKeyboardShutdown();
-	void gameMainLoop();
+	void gameMainLoop(uint16 argument);
 	uint16 sceneRun(uint16 sceneId, bool checkNext, bool exitFlag);
-	void gameMainLoopTick();
 	void processEvents();
 
 	uint16 timerTick();
@@ -543,9 +579,11 @@ private:
 	void animFrameRecordVocCounter(uint16 phase);
 	void animFrameWaitForVocCounter();
 	void sceneTickEvent();
+	void sceneStartWithMusic(uint16 scene);
 	void midiPollChannels(uint16 ticks);
 	void midiInitInstance();
 	void midiInitChannels();
+	void midiSyncAndScan();
 	void midiFindNext(MidiQueue &queue);
 	void midiQueueAdd(MidiQueue &queue, uint16 id, int16 delta);
 	void midiQueueRemove(MidiQueue &queue, uint16 id);
@@ -555,7 +593,11 @@ private:
 	void midiAddTrackEntry(uint16 channel, uint16 songId, uint16 completionKey, byte loadFlag,
 		uint16 frameCount, uint16 *frames);
 	void midiClearChannel(uint16 channel);
-	void midiStartChannel(uint16 channel);
+	void midiResumeAll();
+	void midiStopChannel(uint16 channel);
+	void midiStopAll();
+	void midiStopSong(uint16 channel);
+	void midiPlaySongAtFrame(uint16 channel, uint16 frame);
 	void midiFinishChannel(uint16 channel);
 	void midiStopAndFireKeys(uint16 channel);
 	void midiStopAndRemove(uint16 channel);
@@ -564,16 +606,12 @@ private:
 	void musicSetEnabled(byte value);
 	void paletteFadeStep(uint16 ticks);
 	void lptKeyboardScanAndProcess();
-	void actorTickTree();
-	void renderFrame();
-	void processInput();
-	void processMusicEvents();
-	void processSceneTransition();
 	void vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc);
 	void vocQueuePlayAll();
 	bool vocQueueIsIdle();
 	bool soundInit();
 	void soundShutdown();
+	void soundHdrReadFromXms(byte *destination, uint16 index, uint16 size);
 	bool soundDecodeEntry(uint16 index);
 	bool soundDecodeCompressedEntry(uint32 dataOffset, uint32 dataSize);
 	bool soundLoadEntry(uint16 index);
@@ -602,33 +640,14 @@ public:
 	}
 
 	bool hasFeature(EngineFeature f) const override {
-		return
-		    (f == kSupportsLoadingDuringRuntime) ||
-		    (f == kSupportsSavingDuringRuntime) ||
-		    (f == kSupportsReturnToLauncher) ||
-		    (f == kSupportsQuitDialogOverride);
+		return (f == kSupportsReturnToLauncher);
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
+		return false;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
-	}
-
-	/**
-	 * Uses a serializer to allow implementing savegame
-	 * loading and saving using a single method
-	 */
-	Common::Error syncGame(Common::Serializer &s);
-
-	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
-		Common::Serializer s(nullptr, stream);
-		return syncGame(s);
-	}
-	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
-		Common::Serializer s(stream, nullptr);
-		return syncGame(s);
+		return false;
 	}
 };
 

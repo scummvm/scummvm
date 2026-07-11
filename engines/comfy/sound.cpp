@@ -68,7 +68,7 @@ bool ComfyEngine::soundInit() {
 		return false;
 
 	_soundCompressed = _vocFileData[1] == 'W';
-	_soundTileStride = READ_LE_UINT16(&_vocFileData[2]);
+	_soundTileStride = assetsReadLe16At(_vocFileData, 2);
 	_soundEventIndex = 0;
 	_soundEventMaximum = 0;
 	_soundEventSubIndex = 0xFFFF;
@@ -88,13 +88,16 @@ void ComfyEngine::soundShutdown() {
 		_midiPlyrDriver->setIncreaseVocCounter(0);
 }
 
-bool ComfyEngine::soundLoadEntry(uint16 index) {
-	uint32 headerOffset = 4 + uint32(index) * 8;
-	if (headerOffset > _vocFileData.size() || 8 > _vocFileData.size() - headerOffset)
-		return false;
+void ComfyEngine::soundHdrReadFromXms(byte *destination, uint16 index, uint16 size) {
+	objHdrReadFromXms(destination, _headerXmsSoundHeadersBase, size, index);
+}
 
-	uint32 size = READ_LE_UINT32(&_vocFileData[headerOffset]);
-	uint32 offset = READ_LE_UINT32(&_vocFileData[headerOffset + 4]);
+bool ComfyEngine::soundLoadEntry(uint16 index) {
+	byte header[8];
+	memset(header, 0, sizeof(header));
+	soundHdrReadFromXms(header, index, sizeof(header));
+	uint32 size = READ_LE_UINT32(header);
+	uint32 offset = READ_LE_UINT32(header + 4);
 	return offset <= _vocFileData.size() && size <= _vocFileData.size() - offset;
 }
 
@@ -102,12 +105,11 @@ bool ComfyEngine::soundDecodeEntry(uint16 index) {
 	_soundPcm.clear();
 	_soundCues.clear();
 	_soundNextCue = 0;
-	uint32 headerOffset = 4 + uint32(index) * 8;
-	if (headerOffset > _vocFileData.size() || 8 > _vocFileData.size() - headerOffset)
-		return false;
-
-	uint32 dataSize = READ_LE_UINT32(&_vocFileData[headerOffset]);
-	uint32 dataOffset = READ_LE_UINT32(&_vocFileData[headerOffset + 4]);
+	byte header[8];
+	memset(header, 0, sizeof(header));
+	soundHdrReadFromXms(header, index, sizeof(header));
+	uint32 dataSize = READ_LE_UINT32(header);
+	uint32 dataOffset = READ_LE_UINT32(header + 4);
 	if (dataOffset > _vocFileData.size() || dataSize > _vocFileData.size() - dataOffset)
 		return false;
 

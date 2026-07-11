@@ -64,7 +64,7 @@ void ComfyEngine::animFileShutdown(bool closeFile) {
 		if (_animCurrentActorSceneHandle < _sceneHandles.size()) {
 			Actor *actor = actorGet(_sceneHandles[_animCurrentActorSceneHandle]);
 			if (actor)
-				actorWriteDword(*actor, kActorSpriteSelector, 0);
+				actorWriteU32(*actor, kActorSpriteSelector, 0);
 		}
 	}
 
@@ -118,7 +118,7 @@ void ComfyEngine::animFileLoadFrame(uint16 animIndex, uint16 frameKey, uint16 ac
 	if (actorSceneHandle < _sceneHandles.size()) {
 		Actor *actor = actorGet(_sceneHandles[actorSceneHandle]);
 		if (actor)
-			actorWriteDword(*actor, kActorSpriteSelector, 0x00FFFFFF);
+			actorWriteU32(*actor, kActorSpriteSelector, 0x00FFFFFF);
 	}
 
 	animFileTickCommands();
