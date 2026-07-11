@@ -61,10 +61,10 @@ public:
 		assert(parentStream);
 	}
 
-	virtual bool eos() const { return _eos || _parentStream->eos(); }
-	virtual bool err() const { return _parentStream->err(); }
-	virtual void clearErr() { _eos = false; _parentStream->clearErr(); }
-	virtual uint32 read(void *dataPtr, uint32 dataSize);
+	bool eos() const override { return _eos || _parentStream->eos(); }
+	bool err() const override { return _parentStream->err(); }
+	void clearErr() override { _eos = false; _parentStream->clearErr(); }
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 };
 
 /*
@@ -82,10 +82,10 @@ protected:
 public:
 	SeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
 
-	virtual int64 pos() const { return _pos - _begin; }
-	virtual int64 size() const { return _end - _begin; }
+	int64 pos() const override { return _pos - _begin; }
+	int64 size() const override { return _end - _begin; }
 
-	virtual bool seek(int64 offset, int whence = SEEK_SET);
+	bool seek(int64 offset, int whence = SEEK_SET) override;
 };
 
 /**
@@ -107,7 +107,7 @@ public:
 		: SeekableSubReadStream(parentStream, begin, end, disposeParentStream) {
 	}
 
-	virtual uint32 read(void *dataPtr, uint32 dataSize);
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 };
 
 /**

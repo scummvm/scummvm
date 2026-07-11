@@ -84,15 +84,15 @@ public:
 		_pos(0),
 		_eos(false) {}
 
-	uint32 read(void *dataPtr, uint32 dataSize);
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 
-	bool eos() const { return _eos; }
-	void clearErr() { _eos = false; }
+	bool eos() const override { return _eos; }
+	void clearErr() override { _eos = false; }
 
-	int64 pos() const { return _pos; }
-	int64 size() const { return _size; }
+	int64 pos() const override { return _pos; }
+	int64 size() const override { return _size; }
 
-	bool seek(int64 offs, int whence = SEEK_SET);
+	bool seek(int64 offs, int whence = SEEK_SET) override;
 };
 
 
