@@ -30,6 +30,7 @@
 #include "harvester/fst_player.h"
 #include "harvester/harvester.h"
 #include "harvester/resources.h"
+#include "harvester/runtime_entity.h"
 
 namespace Harvester {
 
@@ -244,6 +245,19 @@ Common::Error RoomInteractionProcessor::handleInteractionResult(const Interactio
 	if (interaction.requestPlayerGotoXZ)
 		_callbacks.applyPlayerGotoXZ(interaction.playerGotoX, interaction.playerGotoZ);
 
+	if (!interaction.moveEntityToPlayerZName.empty()) {
+		EntityManager *entityManager = _engine.getRuntimeEntities();
+		Entity *entity = entityManager
+			? entityManager->findSceneEntityByName(interaction.moveEntityToPlayerZName)
+			: nullptr;
+		if (entity && _playerState.entity) {
+			entity->setPosition(entity->getX(), entity->getY(), _playerState.entity->getZ());
+			entityManager->reinsertSceneEntity(entity);
+			debugC(1, kDebugPlayer, "Harvester: MOVE_BM2PCZ entity='%s' z=%.2f",
+				interaction.moveEntityToPlayerZName.c_str(), entity->getZ());
+		}
+	}
+
 	if (interaction.lightingCommand != kStartupLightingCommandNone) {
 		Common::Error lightingError = _callbacks.applyLightingCommand(interaction.lightingCommand);
 		if (lightingError.getCode() != Common::kNoError)
@@ -350,6 +364,7 @@ bool hasRoomEntryInteraction(const InteractionResult &interaction) {
 		interaction.requestCloseupExit ||
 		interaction.requestRoomRestart ||
 		interaction.requestPlayerDeath ||
+		!interaction.moveEntityToPlayerZName.empty() ||
 		interaction.requestPlayerGotoXZ ||
 		interaction.lightingCommand != kStartupLightingCommandNone ||
 		!interaction.modalText.value.empty() ||
