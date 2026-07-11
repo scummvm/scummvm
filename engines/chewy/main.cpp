@@ -801,6 +801,7 @@ void mouseAction() {
 				g_events->_kbInfo._scanCode = Common::KEYCODE_ESCAPE;
 			}
 		} else if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
+			g_events->_kbInfo._keyCode = '\0';
 			if (!_G(flags).mainMouseFlag) {
 				if (_G(menu_display) == MENU_DISPLAY)
 					g_events->_kbInfo._scanCode = Common::KEYCODE_RETURN;
