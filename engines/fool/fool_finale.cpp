@@ -988,6 +988,11 @@ void FoolPrologue::finaleRun() {
 				int16 y = (int16)smearMid[1];
 				// 131:3078
 				drawText(dialog, x, y);
+
+				// fudge factor
+				if ((k % 4) == 1) {
+					_toolbox->Delay(0);
+				}
 			}
 			_zbasic->text(kPrologueFontFool, 0xc, 0, Graphics::MacToolbox::kSrcOr);
 			drawText(dialog, smears[i].xEnd, smears[i].yEnd);
