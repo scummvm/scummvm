@@ -89,6 +89,10 @@ static const char *const kPlayerActorEntityName = "PLAYER";
 static const uint32 kPaletteFadeTickMs = 4;
 static const float kPaletteFadeStep = 0.1f;
 static const float kPaletteBrightnessBlack = 0.0f;
+static const float kPaletteBrightnessFull = 1.0f;
+static const uint32 kDemoEndingScreenDurationMs = 10000;
+static const int kDemoEndingScreenNumbers[] = { 1, 2, 3, 4, 6 };
+static const char *const kDemoEndingMusicPath = "SOUND/MUSIC/ROCKFITE.CMP";
 static const float kTownMapNightPaletteBrightness = 0.6f;
 // Native keeps WAIT_BM visible while room construction runs; fast local loads need a short floor.
 static const uint32 kTransitionWaitFrameMinMs = 120;
@@ -1613,6 +1617,99 @@ Common::Error Flow::runQuickTips() {
 		limiter.startFrame();
 	}
 
+	return Common::kNoError;
+}
+
+Common::Error Flow::runDemoEnding() {
+	Graphics::Screen *screen = _engine.getScreen();
+	ResourceManager *resources = _engine.getResources();
+	EntityManager *entityManager = _engine.getRuntimeEntities();
+	if (!screen || !resources)
+		return Common::kReadingFailed;
+
+	if (entityManager)
+		entityManager->hideCursor();
+	_engine.stopSound();
+	if (!_engine.playMusic(kDemoEndingMusicPath))
+		return Common::kReadingFailed;
+
+	auto fadePalette = [&](const byte *palette, float from, float to) -> Common::Error {
+		const float step = from < to ? kPaletteFadeStep : -kPaletteFadeStep;
+		for (float brightness = from; step > 0.0f ? brightness < to : brightness > to;
+				brightness += step) {
+			setScaledPalette(*screen, palette, brightness);
+			screen->makeAllDirty();
+			screen->update();
+
+			const uint32 nextTick = g_system->getMillis() + kPaletteFadeTickMs;
+			while ((int32)(nextTick - g_system->getMillis()) > 0) {
+				Common::Error eventError = Common::kNoError;
+				if (pumpTransitionEvents(eventError))
+					return eventError;
+				g_system->delayMillis(1);
+			}
+		}
+
+		setScaledPalette(*screen, palette, to);
+		screen->makeAllDirty();
+		screen->update();
+		return Common::kNoError;
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(kDemoEndingScreenNumbers) && !_engine.shouldQuit(); ++i) {
+		const int screenNumber = kDemoEndingScreenNumbers[i];
+		const Common::String bitmapPath = Common::String::format(
+			"1:/GRAPHIC/OTHER/SCREEN%d.BM", screenNumber);
+		const Common::String palettePath = Common::String::format(
+			"1:/GRAPHIC/PAL/SCREEN%d.PAL", screenNumber);
+		IndexedBitmap bitmap;
+		byte palette[256 * 3];
+		if (!loadBitmapResource(*resources, bitmapPath, bitmap) ||
+				!loadPaletteResource(*resources, palettePath, palette)) {
+			warning("Harvester: unable to load DOS demo ending screen %d", screenNumber);
+			return Common::kReadingFailed;
+		}
+
+		setScaledPalette(*screen, palette, kPaletteBrightnessBlack);
+		screen->fillRect(Common::Rect(0, 0, screen->w, screen->h), 0);
+		blitBitmap(*screen, bitmap, 0, 0);
+		screen->makeAllDirty();
+		screen->update();
+
+		Common::Error fadeError = fadePalette(
+			palette, kPaletteBrightnessBlack, kPaletteBrightnessFull);
+		if (fadeError.getCode() != Common::kNoError)
+			return fadeError;
+
+		const uint32 deadline = g_system->getMillis() + kDemoEndingScreenDurationMs;
+		bool skipScreen = false;
+		while (!skipScreen && !_engine.shouldQuit() &&
+				(int32)(deadline - g_system->getMillis()) > 0) {
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				Common::Error eventError = Common::kNoError;
+				if (handleSystemEvent(event, eventError))
+					return eventError;
+				if (event.type == Common::EVENT_LBUTTONDOWN ||
+						(event.type == Common::EVENT_KEYDOWN &&
+						(event.kbd.keycode == Common::KEYCODE_SPACE ||
+						event.kbd.keycode == Common::KEYCODE_ESCAPE ||
+						event.kbd.keycode == Common::KEYCODE_RETURN))) {
+					skipScreen = true;
+				}
+			}
+			g_system->delayMillis(1);
+		}
+
+		if (i + 1 == ARRAYSIZE(kDemoEndingScreenNumbers))
+			_engine.stopMusic();
+		fadeError = fadePalette(
+			palette, kPaletteBrightnessFull, kPaletteBrightnessBlack);
+		if (fadeError.getCode() != Common::kNoError)
+			return fadeError;
+	}
+
+	_engine.quitGame();
 	return Common::kNoError;
 }
 
