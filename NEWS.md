@@ -10,6 +10,17 @@ For a more comprehensive changelog of the latest experimental code, see:
      devices.
    - Switched Nuked-OPL3 AdLib emulator to Nuked-OPL3-fast fork.
 
+ Alcachofa:
+   - Added support for Mortadelo y Filemón: Una Aventura de Cine Edición Original
+   - Added support for Mortadelo y Filemón: Dos vaqueros chapuceros
+   - Added support for Mortadelo y Filemón: Terror, Espanto y Pavor
+   - Added support for Mortadelo y Filemón: La Sexta Secta
+   - Added support for Mortadelo y Filemón: Operación Moscú
+   - Added support for Mortadelo y Filemón: El Escarabajo de Cleopatra
+   - Added support for Mortadelo y Filemón: La Banda de Corvino
+   - Added support for Mortadelo y Filemón: Balones y Patadones
+   - Added support for Mortadelo y Filemón: Mamelucos a la Romana
+
  Bagel:
    - Fix saving options for Hodj n' Podj's Th Gesng Gme.
 
