@@ -31,6 +31,7 @@
 #include "common/keyboard.h"
 #include "common/random.h"
 #include "common/serializer.h"
+#include "common/array.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
@@ -59,6 +60,12 @@ enum ComfyEngineVersion {
 	kEngineVersion3  // 1999
 };
 
+#ifdef USE_IMGUI
+void onImGuiInit();
+void onImGuiRender();
+void onImGuiCleanup();
+#endif
+
 class ComfyEngine : public Engine {
 private:
 	struct VideoRectRecord {
@@ -74,6 +81,23 @@ private:
 		uint16 readIndex;
 		uint16 writeIndex;
 		uint16 tailIndex;
+	};
+
+	struct SpriteObjectHeader {
+		uint32 fileOffset;
+		uint16 dataSize;
+		uint16 width;
+		uint16 height;
+		int16 hotspotX;
+		int16 hotspotY;
+		byte reserved;
+		uint16 tiledSize;
+	};
+
+	struct SpriteResource {
+		SpriteObjectHeader header;
+		Common::Array<byte> pixels;
+		bool loaded;
 	};
 
 	const ADGameDescription *_gameDescription;
@@ -132,6 +156,19 @@ private:
 	uint16 _inputDeviceMode;
 	bool _keyboardUiInitialized;
 	bool _keyboardUiVisible;
+	Common::Array<byte> _comfyObjData;
+	Common::Array<byte> _picFileData;
+	Common::Array<byte> _midiFileData;
+	Common::Array<SpriteObjectHeader> _spriteHeaders;
+	Common::Array<SpriteResource> _spriteResources;
+	uint16 _stringCount;
+	uint16 _sceneCount;
+	uint16 _keyBitCount;
+	uint16 _resourceHandleCount;
+	uint16 _midiEntryCount;
+	uint32 _picDataSize;
+	bool _usesAnimFile;
+	bool _sceneOpen;
 	bool _gameInitialized;
 	bool _videoInitialized;
 	bool _timerInitialized;
@@ -194,10 +231,18 @@ private:
 	uint32 lptKeyboardScan();
 	void lptKeyboardDispatchEvents(uint32 scanState);
 	void setKeyboardContact(uint16 contact, bool pressed, bool keymapper);
-	void keyboardUiRender();
-	static void keyboardUiInitCallback();
-	static void keyboardUiRenderCallback();
-	static void keyboardUiCleanupCallback();
+	bool readAssetFile(const Common::Path &filename, Common::Array<byte> &data);
+	bool assetsLoad();
+	void assetsUnload();
+	bool comfyObjOpen();
+	bool picFileOpen();
+	bool midiFileOpen();
+	bool spriteLoad(uint16 spriteId);
+	bool spriteDecompressTile(SpriteResource &sprite, const byte *source, uint32 sourceSize);
+	void spriteBlitClipped(uint16 spriteId, int16 x, int16 y);
+	void spriteBlitRle(const byte *source, uint32 sourceSize);
+	bool sceneOpen();
+	void sceneClose();
 	void timerInit();
 	void timerShutdown();
 	void lptKeyboardInit();

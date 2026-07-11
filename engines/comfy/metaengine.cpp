@@ -69,16 +69,16 @@ Common::KeymapArray ComfyMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 
 	static const char *actionIds[COMFY_KEYBOARD_CONTACT_COUNT] = {
-		"SUN", "ROLL", "RED", "DRUM", "SNAILY", "FUCHSIA", "PIANO", "POWER",
+		"SUN", "ROLL", "RED", "DRUM", "SNAILY", "PURPLE", "PIANO", "POWER",
 		"ORANGE", "MOON", "JUMPY", "YELLOW", "STOP", "HANDSET", "BLUE", "TRUMPET",
-		"BUDDY", "GREEN", "FLUTE", "CONTACT19", "COMFY", "CLOUD", "PHILLY", "MUSIC"
+		"BUDDY", "GREEN", "FLUTE", "CONTACT19", "COMFY", "CLOUD", "FEELY", "MUSIC"
 	};
 	static const char *actionNames[COMFY_KEYBOARD_CONTACT_COUNT] = {
-		_s("Sun"), _s("Rolling cylinder"), _s("Red"), _s("Drum"), _s("Snaily phone"), _s("Fuchsia"),
+		_s("Sun"), _s("Rolling cylinder"), _s("Red"), _s("Drum"), _s("Snaily phone"), _s("Purple"),
 		_s("Piano"), _s("Power"), _s("Orange"), _s("Moon"), _s("Jumpy phone"), _s("Yellow"),
 		_s("Stop"), _s("Handset"), _s("Blue"), _s("Trumpet"), _s("Buddy phone"), _s("Green"),
 		_s("Flute"), _s("Keyboard contact 19"), _s("Comfy phone"), _s("Rainy cloud"),
-		_s("Philly phone"), _s("Music")
+		_s("Feely phone"), _s("Music")
 	};
 	static const char *defaultMappings[COMFY_KEYBOARD_CONTACT_COUNT] = {
 		"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "q", "w",

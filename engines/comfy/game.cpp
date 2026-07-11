@@ -22,6 +22,8 @@
 #include "comfy/comfy.h"
 
 #include "common/config-manager.h"
+#include "common/endian.h"
+#include "common/ptr.h"
 
 namespace Comfy {
 
@@ -205,6 +207,106 @@ Common::SeekableReadStream *ComfyEngine::pathFOpen(const Common::Path &filename,
 	}
 
 	return file;
+}
+
+bool ComfyEngine::readAssetFile(const Common::Path &filename, Common::Array<byte> &data) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(pathFOpen(filename, true));
+	if (!stream || stream->size() < 0 || uint64(stream->size()) > UINT32_MAX)
+		return false;
+
+	uint32 size = stream->size();
+	data.resize(size);
+	if (size && stream->read(&data[0], size) != size) {
+		data.clear();
+		return false;
+	}
+
+	return true;
+}
+
+bool ComfyEngine::comfyObjOpen() {
+	if (!readAssetFile(Common::Path("COMFY.OBJ"), _comfyObjData) || _comfyObjData.size() < 0x14)
+		return false;
+
+	_stringCount = READ_LE_UINT16(&_comfyObjData[0x08]);
+	_sceneCount = READ_LE_UINT16(&_comfyObjData[0x0A]);
+	_keyBitCount = READ_LE_UINT16(&_comfyObjData[0x0C]);
+	_picDataSize = READ_LE_UINT32(&_comfyObjData[0x0E]);
+	_resourceHandleCount = READ_LE_UINT16(&_comfyObjData[0x12]);
+	_usesAnimFile = (_resourceHandleCount & 0x8000) != 0;
+	_resourceHandleCount &= 0x7FFF;
+	return keyBitAllocate(_keyBitCount);
+}
+
+bool ComfyEngine::picFileOpen() {
+	if (!readAssetFile(Common::Path("PICFILE.DAT"), _picFileData) || _picFileData.size() < 2)
+		return false;
+
+	uint16 count = READ_LE_UINT16(&_picFileData[0]);
+	uint32 tableSize = 2 + uint32(count) * 0x11;
+	if (tableSize > _picFileData.size())
+		return false;
+
+	_spriteHeaders.resize(count);
+	_spriteResources.resize(count);
+	for (uint i = 0; i < count; i++) {
+		byte *entry = &_picFileData[2 + i * 0x11];
+		SpriteObjectHeader &header = _spriteHeaders[i];
+		header.fileOffset = READ_LE_UINT32(entry);
+		header.dataSize = READ_LE_UINT16(entry + 0x04);
+		header.width = READ_LE_UINT16(entry + 0x06);
+		header.height = READ_LE_UINT16(entry + 0x08);
+		header.hotspotX = int16(READ_LE_UINT16(entry + 0x0A));
+		header.hotspotY = int16(READ_LE_UINT16(entry + 0x0C));
+		header.reserved = entry[0x0E];
+		header.tiledSize = READ_LE_UINT16(entry + 0x0F);
+		_spriteResources[i].header = header;
+		_spriteResources[i].pixels.clear();
+		_spriteResources[i].loaded = false;
+
+		if (header.fileOffset > _picFileData.size() ||
+				header.dataSize > _picFileData.size() - header.fileOffset)
+			return false;
+	}
+
+	return true;
+}
+
+bool ComfyEngine::midiFileOpen() {
+	if (!readAssetFile(Common::Path("MIDIFILE.DAT"), _midiFileData) || _midiFileData.size() < 4)
+		return false;
+
+	if (_midiFileData[0] != 'C' || (_midiFileData[1] != 'M' && _midiFileData[1] != 'm'))
+		return false;
+
+	_midiEntryCount = READ_LE_UINT16(&_midiFileData[2]);
+	return true;
+}
+
+bool ComfyEngine::assetsLoad() {
+	assetsUnload();
+	if (!comfyObjOpen() || !picFileOpen() || !midiFileOpen()) {
+		assetsUnload();
+		return false;
+	}
+
+	return true;
+}
+
+void ComfyEngine::assetsUnload() {
+	keyBitFree();
+	_comfyObjData.clear();
+	_picFileData.clear();
+	_midiFileData.clear();
+	_spriteHeaders.clear();
+	_spriteResources.clear();
+	_stringCount = 0;
+	_sceneCount = 0;
+	_keyBitCount = 0;
+	_resourceHandleCount = 0;
+	_midiEntryCount = 0;
+	_picDataSize = 0;
+	_usesAnimFile = false;
 }
 
 } // End of namespace Comfy
