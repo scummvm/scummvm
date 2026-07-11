@@ -40,12 +40,12 @@ public:
 
 	virtual ~RepeatAnimationWrapper() {}
 
-	virtual void update(Drawable* drawable, long currentTime);
+	void update(Drawable* drawable, long currentTime) override;
 
 	/**
 	 * Set start time in millis
 	 */
-	virtual void start(long currentTime);
+	void start(long currentTime) override;
 
 private:
 	uint16 _timesToRepeat;
