@@ -30,8 +30,8 @@ public:
 	FIRResampler(const unsigned int upsampleFactor, const double downsampleFactor, const FIRCoefficient kernel[], const unsigned int kernelLength);
 	~FIRResampler();
 
-	void process(const FloatSample *&inSamples, unsigned int &inLength, FloatSample *&outSamples, unsigned int &outLength);
-	unsigned int estimateInLength(const unsigned int outLength) const;
+	void process(const FloatSample *&inSamples, unsigned int &inLength, FloatSample *&outSamples, unsigned int &outLength) override;
+	unsigned int estimateInLength(const unsigned int outLength) const override;
 
 private:
 	const struct Constants {

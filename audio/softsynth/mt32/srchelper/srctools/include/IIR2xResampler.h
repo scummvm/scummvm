@@ -78,8 +78,8 @@ public:
 	explicit IIR2xInterpolator(const Quality quality);
 	explicit IIR2xInterpolator(const unsigned int useSectionsCount, const IIRCoefficient useFIR, const IIRSection useSections[]);
 
-	void process(const FloatSample *&inSamples, unsigned int &inLength, FloatSample *&outSamples, unsigned int &outLength);
-	unsigned int estimateInLength(const unsigned int outLength) const;
+	void process(const FloatSample *&inSamples, unsigned int &inLength, FloatSample *&outSamples, unsigned int &outLength) override;
+	unsigned int estimateInLength(const unsigned int outLength) const override;
 
 private:
 	FloatSample lastInputSamples[IIR_RESAMPER_CHANNEL_COUNT];
@@ -91,8 +91,8 @@ public:
 	explicit IIR2xDecimator(const Quality quality);
 	explicit IIR2xDecimator(const unsigned int useSectionsCount, const IIRCoefficient useFIR, const IIRSection useSections[]);
 
-	void process(const FloatSample *&inSamples, unsigned int &inLength, FloatSample *&outSamples, unsigned int &outLength);
-	unsigned int estimateInLength(const unsigned int outLength) const;
+	void process(const FloatSample *&inSamples, unsigned int &inLength, FloatSample *&outSamples, unsigned int &outLength) override;
+	unsigned int estimateInLength(const unsigned int outLength) const override;
 };
 
 } // namespace SRCTools
