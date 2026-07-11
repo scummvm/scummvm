@@ -97,9 +97,9 @@ bool Room0::timer(int16 timerNr, int16 aniNr) {
 				eyeAnim();
 			} else if (!_G(gameState).R0PillowThrow) {
 				startAadWait(42);
-				start_spz(CH_TALK3, 255, false, P_CHEWY);
 
 				if (_G(gameState).R0FueterLab < 3) {
+					start_spz(CH_TALK3, 255, false, P_CHEWY);
 					startAadWait(43);
 					++_G(gameState).R0FueterLab;
 				}
