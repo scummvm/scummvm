@@ -392,8 +392,8 @@ public:
 
 	Functor0Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
 
-	bool isValid() const { return _func != 0 && _t != 0; }
-	Res operator()() const {
+	bool isValid() const override { return _func != 0 && _t != 0; }
+	Res operator()() const override {
 		return (_t->*_func)();
 	}
 private:
@@ -455,8 +455,8 @@ public:
 
 	Functor1Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
 
-	bool isValid() const { return _func != 0 && _t != 0; }
-	Res operator()(Arg v1) const {
+	bool isValid() const override { return _func != 0 && _t != 0; }
+	Res operator()(Arg v1) const override {
 		return (_t->*_func)(v1);
 	}
 private:
@@ -511,8 +511,8 @@ public:
 
 	Functor2Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
 
-	bool isValid() const { return _func != 0 && _t != 0; }
-	Res operator()(Arg1 v1, Arg2 v2) const {
+	bool isValid() const override { return _func != 0 && _t != 0; }
+	Res operator()(Arg1 v1, Arg2 v2) const override {
 		return (_t->*_func)(v1, v2);
 	}
 private:

@@ -305,7 +305,7 @@ public:
 		_artificialEventQueue.push(ev);
 	}
 
-	bool pollEvent(Event &ev) {
+	bool pollEvent(Event &ev) override {
 		if (!_artificialEventQueue.empty()) {
 			ev = _artificialEventQueue.pop();
 			return true;
@@ -318,7 +318,7 @@ public:
 	 * By default, an artificial event source prevents its events
 	 * from being mapped.
 	 */
-	virtual bool allowMapping() const { return false; }
+	bool allowMapping() const override { return false; }
 };
 
 /**
