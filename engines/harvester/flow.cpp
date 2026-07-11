@@ -39,6 +39,7 @@
 #include "graphics/framelimiter.h"
 #include "harvester/cft_font.h"
 #include "harvester/detection.h"
+#include "harvester/fst_player.h"
 #include "harvester/harvester.h"
 #include "harvester/palette_utils.h"
 #include "harvester/resources.h"
@@ -93,6 +94,15 @@ static const float kPaletteBrightnessFull = 1.0f;
 static const uint32 kDemoEndingScreenDurationMs = 10000;
 static const int kDemoEndingScreenNumbers[] = { 1, 2, 3, 4, 6 };
 static const char *const kDemoEndingMusicPath = "SOUND/MUSIC/ROCKFITE.CMP";
+static const uint32 kDemoIntroductionDurationMs = 17000;
+static const char *const kDemoIntroductionBitmapPath = "1:/GRAPHIC/OTHER/MAINMENU.BM";
+static const char *const kDemoIntroductionPalettePath = "1:/GRAPHIC/PAL/MAINMENU.PAL";
+static const char *const kDemoIntroductionMusicPath = "SOUND/MUSIC/LODGERB.CMP";
+static const char *const kDemoIntroductionFstPath = "GRAPHIC/FST/PCFALL.FST";
+static const char *const kDemoIntroductionText =
+	"After solving the enigmas of the Harvest town, you are thrust into the realm of "
+	"the Order of the Harvest Moon, a bizarre institution of secretive knowledge.  "
+	"However, the only thing you really care about is escaping from this hellish reality...";
 static const float kTownMapNightPaletteBrightness = 0.6f;
 // Native keeps WAIT_BM visible while room construction runs; fast local loads need a short floor.
 static const uint32 kTransitionWaitFrameMinMs = 120;
@@ -608,6 +618,26 @@ static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, in
 		return;
 
 	screen.copyRectToSurface(bitmap.pixels.data(), bitmap.width, x, y, bitmap.width, bitmap.height);
+}
+
+static void blitTransparentBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap,
+		int x, int y) {
+	if (!bitmap.isValid())
+		return;
+
+	for (uint32 srcY = 0; srcY < bitmap.height; ++srcY) {
+		const int destY = y + (int)srcY;
+		if (destY < 0 || destY >= screen.h)
+			continue;
+		for (uint32 srcX = 0; srcX < bitmap.width; ++srcX) {
+			const int destX = x + (int)srcX;
+			if (destX < 0 || destX >= screen.w)
+				continue;
+			const byte color = bitmap.pixels[srcY * bitmap.width + srcX];
+			if (color != 0)
+				*(byte *)screen.getBasePtr(destX, destY) = color;
+		}
+	}
 }
 
 bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap) {
@@ -1440,6 +1470,11 @@ Common::Error Flow::run() {
 		_engine.clearCurrentSaveRoomState();
 		_engine.clearPendingLoadedDialogueStateBlob();
 		_engine.getScript()->resetRuntimeState();
+		if (_engine.isDemo()) {
+			error = runDemoIntroduction();
+			if (error.getCode() != Common::kNoError)
+				return error;
+		}
 		error = runQuickTips();
 		if (error.getCode() != Common::kNoError)
 			return error;
@@ -1633,29 +1668,6 @@ Common::Error Flow::runDemoEnding() {
 	if (!_engine.playMusic(kDemoEndingMusicPath))
 		return Common::kReadingFailed;
 
-	auto fadePalette = [&](const byte *palette, float from, float to) -> Common::Error {
-		const float step = from < to ? kPaletteFadeStep : -kPaletteFadeStep;
-		for (float brightness = from; step > 0.0f ? brightness < to : brightness > to;
-				brightness += step) {
-			setScaledPalette(*screen, palette, brightness);
-			screen->makeAllDirty();
-			screen->update();
-
-			const uint32 nextTick = g_system->getMillis() + kPaletteFadeTickMs;
-			while ((int32)(nextTick - g_system->getMillis()) > 0) {
-				Common::Error eventError = Common::kNoError;
-				if (pumpTransitionEvents(eventError))
-					return eventError;
-				g_system->delayMillis(1);
-			}
-		}
-
-		setScaledPalette(*screen, palette, to);
-		screen->makeAllDirty();
-		screen->update();
-		return Common::kNoError;
-	};
-
 	for (uint i = 0; i < ARRAYSIZE(kDemoEndingScreenNumbers) && !_engine.shouldQuit(); ++i) {
 		const int screenNumber = kDemoEndingScreenNumbers[i];
 		const Common::String bitmapPath = Common::String::format(
@@ -1710,6 +1722,79 @@ Common::Error Flow::runDemoEnding() {
 	}
 
 	_engine.quitGame();
+	return Common::kNoError;
+}
+
+Common::Error Flow::runDemoIntroduction() {
+	Graphics::Screen *screen = _engine.getScreen();
+	ResourceManager *resources = _engine.getResources();
+	EntityManager *entityManager = _engine.getRuntimeEntities();
+	const Art *art = _engine.getArt();
+	const CftFontResource *fontResource = findStartupFontByName(_engine, "TEXTFONT");
+	if (!screen || !resources || !art || !fontResource)
+		return Common::kReadingFailed;
+
+	IndexedBitmap bitmap;
+	byte palette[256 * 3];
+	if (!loadBitmapResource(*resources, kDemoIntroductionBitmapPath, bitmap) ||
+			!loadPaletteResource(*resources, kDemoIntroductionPalettePath, palette)) {
+		return Common::kReadingFailed;
+	}
+
+	HarvesterCftFont font(*fontResource);
+	if (!font.isValid())
+		return Common::kReadingFailed;
+	debugC(1, kDebugGeneral,
+		"Harvester: showing DOS demo introduction for %u ms",
+		kDemoIntroductionDurationMs);
+
+	if (entityManager)
+		entityManager->hideCursor();
+	setScaledPalette(*screen, palette, kPaletteBrightnessBlack);
+	screen->fillRect(Common::Rect(0, 0, screen->w, screen->h), 0);
+	blitBitmap(*screen, bitmap, 0, 0);
+	blitTransparentBitmap(*screen, art->getLogoBitmap(), 160, 0);
+	drawWrappedText(*screen, font, kDemoIntroductionText, 90, 200, 420, 0xce,
+		kNativeIdentTextLineSpacing);
+	screen->makeAllDirty();
+	screen->update();
+
+	if (!_engine.playMusic(kDemoIntroductionMusicPath))
+		return Common::kReadingFailed;
+	Common::Error fadeError = fadePalette(
+		palette, kPaletteBrightnessBlack, kPaletteBrightnessFull);
+	if (fadeError.getCode() != Common::kNoError)
+		return fadeError;
+
+	const uint32 deadline = g_system->getMillis() + kDemoIntroductionDurationMs;
+	bool skipIntroduction = false;
+	while (!skipIntroduction && !_engine.shouldQuit() &&
+			(int32)(deadline - g_system->getMillis()) > 0) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Error eventError = Common::kNoError;
+			if (handleSystemEvent(event, eventError))
+				return eventError;
+			if (event.type == Common::EVENT_LBUTTONDOWN ||
+					event.type == Common::EVENT_RBUTTONDOWN ||
+					(event.type == Common::EVENT_KEYDOWN &&
+					(event.kbd.keycode == Common::KEYCODE_SPACE ||
+					event.kbd.keycode == Common::KEYCODE_ESCAPE ||
+					event.kbd.keycode == Common::KEYCODE_RETURN))) {
+				skipIntroduction = true;
+			}
+		}
+		g_system->delayMillis(1);
+	}
+
+	fadeError = fadePalette(palette, kPaletteBrightnessFull, kPaletteBrightnessBlack);
+	if (fadeError.getCode() != Common::kNoError)
+		return fadeError;
+	_engine.stopMusic();
+
+	FstPlayer fstPlayer(_engine);
+	if (!fstPlayer.play(kDemoIntroductionFstPath))
+		return Common::kReadingFailed;
 	return Common::kNoError;
 }
 
@@ -2399,6 +2484,35 @@ Common::Error Flow::fadeInRoomScene(const byte *palette, float targetBrightness)
 	}
 
 	setScaledPalette(*screen, palette, targetBrightness);
+	screen->makeAllDirty();
+	screen->update();
+	return Common::kNoError;
+}
+
+Common::Error Flow::fadePalette(const byte *palette, float fromBrightness,
+		float toBrightness) {
+	Graphics::Screen *screen = _engine.getScreen();
+	if (!screen || !palette)
+		return Common::kNoError;
+
+	const float step = fromBrightness < toBrightness ? kPaletteFadeStep : -kPaletteFadeStep;
+	for (float brightness = fromBrightness;
+			step > 0.0f ? brightness < toBrightness : brightness > toBrightness;
+			brightness += step) {
+		setScaledPalette(*screen, palette, brightness);
+		screen->makeAllDirty();
+		screen->update();
+
+		const uint32 nextTick = g_system->getMillis() + kPaletteFadeTickMs;
+		while ((int32)(nextTick - g_system->getMillis()) > 0) {
+			Common::Error eventError = Common::kNoError;
+			if (pumpTransitionEvents(eventError))
+				return eventError;
+			g_system->delayMillis(1);
+		}
+	}
+
+	setScaledPalette(*screen, palette, toBrightness);
 	screen->makeAllDirty();
 	screen->update();
 	return Common::kNoError;

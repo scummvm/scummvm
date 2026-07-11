@@ -64,6 +64,7 @@ private:
 	bool loadQuickTips();
 	bool loadMenuItems();
 	Common::Error runQuickTips();
+	Common::Error runDemoIntroduction();
 	Common::Error runDemoEnding();
 	Common::Error runMainMenuStub();
 	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
@@ -80,6 +81,7 @@ private:
 	Common::Error beginRoomSetupTransition();
 	Common::Error waitForRoomSetupTransitionHold();
 	Common::Error fadeInRoomScene(const byte *palette, float targetBrightness);
+	Common::Error fadePalette(const byte *palette, float fromBrightness, float toBrightness);
 	bool pumpTransitionEvents(Common::Error &result);
 	void executeStartupAudioCommands(const Common::Array<AudioCommand> &commands);
 	void queueDialogueInteraction(const InteractionResult &interaction);
