@@ -257,6 +257,11 @@ static bool loadRawMenuValue(const Common::Array<byte> &data, const char *key, C
 
 static bool loadMenuTextConfig(HarvesterEngine &engine, RoomMenuTextConfig &config) {
 	config = RoomMenuTextConfig();
+	if (engine.isDemo()) {
+		config.clickLabel = "Click";
+		config.newGamePrompt = "START A NEW GAME?";
+		config.quitGamePrompt = " QUIT HARVESTER?";
+	}
 	config.optionItems.resize(kOptionsItemCount);
 	config.optionItems[0] = "SOUND FX";
 	config.optionItems[1] = "MUSIC";
