@@ -261,6 +261,7 @@ bool ComfyEngine::picFileOpen() {
 		header.reserved = entry[0x0E];
 		header.tiledSize = READ_LE_UINT16(entry + 0x0F);
 		_spriteResources[i].header = header;
+		_spriteResources[i].id = i;
 		_spriteResources[i].pixels.clear();
 		_spriteResources[i].loaded = false;
 
@@ -280,6 +281,7 @@ bool ComfyEngine::midiFileOpen() {
 		return false;
 
 	_midiEntryCount = READ_LE_UINT16(&_midiFileData[2]);
+	_midiFileMode = _midiFileData[1] == 'm' ? 1 : 0;
 	return true;
 }
 
@@ -289,6 +291,74 @@ bool ComfyEngine::assetsLoad() {
 		assetsUnload();
 		return false;
 	}
+
+	_stringTable.resize(_stringCount + 1);
+	memset(&_stringTable[0], 0, _stringTable.size() * sizeof(uint16));
+	_sceneHandles.resize(_sceneCount + 1);
+	memset(&_sceneHandles[0], 0, _sceneHandles.size() * sizeof(uint16));
+	_midiHandles.resize(_resourceHandleCount + 1);
+	memset(&_midiHandles[0], 0, _midiHandles.size() * sizeof(uint16));
+	_actors.resize(COMFY_ACTOR_COUNT);
+	memset(&_actors[0], 0, _actors.size() * sizeof(Actor));
+	memset(_actorPcTable, 0, sizeof(_actorPcTable));
+	for (uint i = 1; i + 1 < _actors.size(); i++)
+		actorWriteWord(_actors[i], kActorNextLink, i + 1);
+
+	actorWriteWord(_actors[0], kActorNextLink, _actors.size() > 1 ? 1 : 0);
+	for (uint i = 1; i < COMFY_ACTOR_PC_TABLE_COUNT; i++)
+		_actorPcTable[i] = uint32(i + 1) << 24;
+
+	_actorPcTable[COMFY_ACTOR_PC_TABLE_COUNT - 1] = 0;
+	_actorPcTable[0] = 1 << 24;
+	uint32 stringBytes = _stringTable.size() * sizeof(uint16);
+	uint32 handleBytes = _sceneHandles.size() * sizeof(uint16);
+	uint32 actorBytes = _actors.size() * sizeof(Actor);
+	uint32 keyBytes = (_keyBitCount + 1) / 8 + 1;
+	_sceneMidiInstanceOffset = 0;
+	_sceneEntryListOffset = COMFY_SCENE_MIDI_INSTANCE_BYTES;
+	_sceneActorPcOffset = COMFY_SCENE_MIDI_INSTANCE_BYTES + 0x167;
+	_sceneStringTableOffset = _sceneActorPcOffset + COMFY_SCENE_ACTOR_PC_BYTES;
+	_sceneHandlesOffset = _sceneStringTableOffset + stringBytes;
+	_sceneActorsOffset = _sceneHandlesOffset + handleBytes;
+	_sceneKeyBitsOffset = _sceneActorsOffset + actorBytes;
+	uint32 sceneBytes = (_sceneKeyBitsOffset + keyBytes + 1) & ~1U;
+	_sceneMemoryBlock.resize(sceneBytes);
+	memset(&_sceneMemoryBlock[0], 0, _sceneMemoryBlock.size());
+	memcpy(&_sceneMemoryBlock[_sceneActorPcOffset], _actorPcTable, sizeof(_actorPcTable));
+	_sceneFrameData.resize(COMFY_SCENE_FRAME_BYTES);
+	memset(&_sceneFrameData[0], 0, _sceneFrameData.size());
+	memset(_sceneEntryOffsets, 0, sizeof(_sceneEntryOffsets));
+	_numFrames = _picDataSize / COMFY_TILE_SIZE + (_picDataSize % COMFY_TILE_SIZE ? 2 : 1);
+	_numObjects = _spriteHeaders.size();
+	_numSprites = sceneBytes;
+	_envNumSprites = _numSprites;
+	_objectCacheEntries.resize(_spriteHeaders.size());
+	_frameCacheEntries.resize(_numFrames + 1);
+	if (!_objectCacheEntries.empty())
+		memset(&_objectCacheEntries[0], 0xFF, _objectCacheEntries.size() * sizeof(SpriteCacheEntry));
+
+	if (!_frameCacheEntries.empty())
+		memset(&_frameCacheEntries[0], 0xFF, _frameCacheEntries.size() * sizeof(SpriteCacheEntry));
+	memset(&_spriteConversionLoads, 0, sizeof(_spriteConversionLoads));
+	_scenePoolData.resize(0x1FC000);
+	memset(&_scenePoolData[0], 0, _scenePoolData.size());
+	_scenePoolCursor = 0;
+	_scenePoolEvictCursor = 0;
+	uint32 environmentBytes = ((_envNumSprites * 5 + 0x3FF) / 0x400) * 0x400;
+	_environmentData.resize(environmentBytes);
+	if (environmentBytes)
+		memset(&_environmentData[0], 0, environmentBytes);
+
+	_activeSceneCount = _resourceHandleCount;
+	_sceneEntryCount = 0;
+	_sceneEntryFrameSize = 0;
+	Common::ScopedPtr<Common::SeekableReadStream> message(pathFOpen(Common::Path("MESSAGE"), true));
+	_usesWcomfy99ScriptOps = bool(message);
+	_pendingScene = 0;
+	_musicEventMask = 0;
+	_musicEventFlag = 0;
+	_musicEnabled = true;
+	_scriptFault = false;
 
 	return true;
 }
@@ -300,12 +370,37 @@ void ComfyEngine::assetsUnload() {
 	_midiFileData.clear();
 	_spriteHeaders.clear();
 	_spriteResources.clear();
+	_stringTable.clear();
+	_sceneHandles.clear();
+	_midiHandles.clear();
+	_actors.clear();
+	_sceneMemoryBlock.clear();
+	_scenePoolData.clear();
+	_environmentData.clear();
+	_sceneFrameData.clear();
+	_objectCacheEntries.clear();
+	_frameCacheEntries.clear();
+	memset(&_spriteConversionLoads, 0, sizeof(_spriteConversionLoads));
+	memset(_sceneEntryOffsets, 0, sizeof(_sceneEntryOffsets));
+	memset(_actorPcTable, 0, sizeof(_actorPcTable));
+	_usesWcomfy99ScriptOps = false;
+	_pendingScene = 0;
+	_currentActor = 0;
+	_scriptFault = false;
 	_stringCount = 0;
 	_sceneCount = 0;
 	_keyBitCount = 0;
 	_resourceHandleCount = 0;
 	_midiEntryCount = 0;
 	_picDataSize = 0;
+	_numFrames = 0;
+	_numObjects = 0;
+	_numSprites = 0;
+	_envNumSprites = 0;
+	_activeSceneCount = 0;
+	_sceneEntryCount = 0;
+	_sceneEntryFrameSize = 0;
+	_midiFileMode = 0;
 	_usesAnimFile = false;
 }
 
