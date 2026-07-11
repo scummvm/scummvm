@@ -43,7 +43,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 	},
 
 	{
@@ -57,7 +57,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 	},
 
 	{
@@ -69,7 +69,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 	},
 
 	{
@@ -80,7 +80,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 	},
 
 	{
@@ -91,7 +91,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 	},
 
 	{
@@ -103,7 +103,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 	},
 
 	{
@@ -115,7 +115,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 	},
 
 	{
@@ -127,7 +127,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 	},
 
 	{
@@ -139,7 +139,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 	},
 
 	AD_TABLE_END_MARKER

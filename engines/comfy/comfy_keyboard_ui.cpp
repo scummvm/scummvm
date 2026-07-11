@@ -138,8 +138,16 @@ void onImGuiInit() {
 }
 
 void onImGuiRender() {
-	if (_state->_engine->shouldQuit() || !_state || !_state->_engine || !_state->_visible)
+	if (!_state || !_state->_engine || _state->_engine->shouldQuit())
 		return;
+
+	if (!_state->_visible) {
+		_state->_engine->setToyKeyboardState(0, _state->_latchedMask | _state->_activeMask, 0);
+		_state->_activeMask = 0;
+		_state->_latchedMask = 0;
+		_state->_holdMask = 0;
+		return;
+	}
 
 	ImGui::GetIO().ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
 
@@ -227,9 +235,14 @@ void onImGuiRender() {
 	}
 
 	ImGui::End();
+	_state->_engine->setToyKeyboardState(_state->_activeMask, _state->_latchedMask, _state->_holdMask);
+	_state->_latchedMask = 0;
 }
 
 void onImGuiCleanup() {
+	if (_state && _state->_engine)
+		_state->_engine->setToyKeyboardState(0, 0, 0);
+
 	delete _state;
 	_state = nullptr;
 }

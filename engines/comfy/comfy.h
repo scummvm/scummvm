@@ -531,6 +531,7 @@ protected:
 public:
 	ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~ComfyEngine() override;
+	void setToyKeyboardState(uint32 activeMask, uint32 latchedMask, uint32 holdMask);
 
 	/**
 	 * Returns the game Id

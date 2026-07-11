@@ -103,6 +103,7 @@ void ComfyEngine::gameConfigInit() {
 	findLanguageDirectories();
 	ConfMan.registerDefault("comfy_language", 2);
 	ConfMan.registerDefault("comfy_language_chosen", false);
+	ConfMan.registerDefault("force_language_setup", false);
 	ConfMan.registerDefault("comfy_screen_update_interleaved", false);
 	ConfMan.registerDefault("comfy_input_device", 0);
 }

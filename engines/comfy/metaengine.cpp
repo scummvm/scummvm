@@ -32,11 +32,11 @@ namespace Comfy {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
+		GAMEOPTION_FORCE_LANGUAGE_SETUP,
 		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"original_menus",
+			_s("Force language setup screen on start-up"),
+			_s("Show the original language setup screen every time the game starts"),
+			"force_language_setup",
 			false,
 			0,
 			0

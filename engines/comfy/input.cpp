@@ -201,6 +201,12 @@ void ComfyEngine::setKeyboardContact(uint16 contact, bool pressed, bool keymappe
 	}
 }
 
+void ComfyEngine::setToyKeyboardState(uint32 activeMask, uint32 latchedMask, uint32 holdMask) {
+	_toyKeyboardActiveMask = activeMask & 0x00FFFFFF;
+	_toyKeyboardLatchedMask |= latchedMask & 0x00FFFFFF;
+	_toyKeyboardHoldMask = holdMask & 0x00FFFFFF;
+}
+
 uint32 ComfyEngine::lptKeyboardScan() {
 	// The original wrote eight successive column strobes to the LPT data port, waited 100 busy-loop
 	// iterations after each write, and sampled three bits from the status port. Concatenating those
