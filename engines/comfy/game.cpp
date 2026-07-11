@@ -100,9 +100,12 @@ void ComfyEngine::gameConfigInit() {
 
 	findLanguageDirectories();
 	ConfMan.registerDefault("comfy_language", 2);
+	ConfMan.registerDefault("comfy_screen_update_interleaved", false);
 }
 
 void ComfyEngine::findLanguageDirectories() {
+	uint languageCount = 0;
+	_multiLanguage = false;
 	for (uint i = 0; i < ARRAYSIZE(_languageDirectories); i++)
 		_languageDirectories[i] = Common::Path();
 
@@ -128,14 +131,18 @@ void ComfyEngine::findLanguageDirectories() {
 
 	for (Common::FSList::iterator it = directories.begin(); it != directories.end(); it++) {
 		uint16 language = getLanguageId(it->getName());
-		if (language)
+		if (language) {
 			_languageDirectories[language] = Common::Path(it->getName());
+			languageCount++;
+		}
 	}
+
+	_multiLanguage = languageCount > 1;
 }
 
 bool ComfyEngine::iniReadGameConfig() {
 	_language = ConfMan.getInt("comfy_language");
-	_multiLanguage = true;
+	_renderInterleaved = ConfMan.getBool("comfy_screen_update_interleaved");
 	return !_gameDirectory.empty();
 }
 

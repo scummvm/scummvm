@@ -52,11 +52,18 @@ static ComfyEngineVersion getEngineVersion(const ADGameDescription *gameDesc) {
 ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _engineVersion(getEngineVersion(gameDesc)),
 	_language(2), _multiLanguage(true),
-	_randomSource("Comfy"), _screen(nullptr),
+	_randomSource("Comfy"), _screen(nullptr), _framebufPtr(nullptr), _presentBuffer(nullptr),
 	_logicalScreenWidth(!strcmp(gameDesc->gameId, "panther") ? COMFY_PANTHER_SCREEN_WIDTH : COMFY_SCREEN_WIDTH),
 	_logicalScreenHeight(!strcmp(gameDesc->gameId, "panther") ? COMFY_PANTHER_SCREEN_HEIGHT : COMFY_SCREEN_HEIGHT),
+	_resolutionChangeCount(0), _renderDirtyCount(0), _renderInterleaved(false),
+	_colorDatStream(nullptr), _paletteDataPtr(nullptr), _vsyncPending(0), _fadeMax(0), _fadeStep(0),
+	_palettePage(0), _paletteFading(false),
 	_timerLastMillis(0), _pitAccumulator(0), _gameInitialized(false), _videoInitialized(false),
 	_timerInitialized(false), _lptKeyboardInitialized(false), _mainLoopRunning(false) {
+	memset(_paletteFadeSource, 0, sizeof(_paletteFadeSource));
+	memset(_paletteTarget, 0, sizeof(_paletteTarget));
+	memset(_paletteDisplay, 0, sizeof(_paletteDisplay));
+	memset(_logicalPalette, 0, sizeof(_logicalPalette));
 	g_engine = this;
 }
 
@@ -111,23 +118,6 @@ void ComfyEngine::gameShutdown() {
 
 	_mainLoopRunning = false;
 	_gameInitialized = false;
-}
-
-void ComfyEngine::videoInit() {
-	if (_videoInitialized)
-		return;
-
-	initGraphics(_logicalScreenWidth, _logicalScreenHeight);
-	_screen = new Graphics::Screen(_logicalScreenWidth, _logicalScreenHeight);
-	_screen->clear(0);
-	_screen->update();
-	_videoInitialized = true;
-}
-
-void ComfyEngine::videoShutdown() {
-	delete _screen;
-	_screen = nullptr;
-	_videoInitialized = false;
 }
 
 void ComfyEngine::timerInit() {
@@ -203,6 +193,7 @@ void ComfyEngine::gameMainLoopTick() {
 	paletteFadeStep(ticks);
 	lptKeyboardScanAndProcess();
 	actorTickTree();
+	paletteVsyncFlip();
 	renderFrame();
 	processInput();
 	processMusicEvents();
@@ -226,10 +217,6 @@ void ComfyEngine::midiPollChannels(uint16 ticks) {
 	(void)ticks;
 }
 
-void ComfyEngine::paletteFadeStep(uint16 ticks) {
-	(void)ticks;
-}
-
 void ComfyEngine::lptKeyboardScanAndProcess() {
 }
 
@@ -237,8 +224,7 @@ void ComfyEngine::actorTickTree() {
 }
 
 void ComfyEngine::renderFrame() {
-	_screen->makeAllDirty();
-	_screen->update();
+	videoPresentFrame();
 }
 
 void ComfyEngine::processInput() {
