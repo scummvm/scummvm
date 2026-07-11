@@ -36,7 +36,7 @@ class CFileException;
 #define DECLARE_DYNAMIC(class_name) \
 	public: \
 	static const CRuntimeClass class##class_name; \
-	virtual const CRuntimeClass *GetRuntimeClass() const override; \
+	const CRuntimeClass *GetRuntimeClass() const override; \
 
 
 #define RUNTIME_CLASS(class_name) ((const CRuntimeClass *)(&class_name::class##class_name))

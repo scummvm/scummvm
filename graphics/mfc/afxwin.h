@@ -1800,7 +1800,7 @@ class CView : public CWnd {
 	DECLARE_DYNAMIC(CView)
 
 protected:
-	virtual bool PreCreateWindow(CREATESTRUCT &cCs) override;
+	bool PreCreateWindow(CREATESTRUCT &cCs) override;
 	virtual void OnDraw(CDC *pDC) {}
 	void OnPaint();
 	void OnNcDestroy();
