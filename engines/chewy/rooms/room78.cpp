@@ -100,7 +100,7 @@ void Room78::entry() {
 						if (!chewysBoatFinished) {
 							_G(det)->startDetail(5, 1, false);
 						} else {
-							startSetAILWait(5, 1, ANI_FRONT);
+							startDetailWait(5, 1, ANI_FRONT);
 						}
 					} else {
 						// Chief's boat has no hole

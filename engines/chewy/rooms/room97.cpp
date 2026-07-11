@@ -113,7 +113,7 @@ void Room97::entry() {
 		_G(gameState).SVal2 = 0;
 		_G(gameState).flags35_4 = true;
 		_G(gameState)._personHide[P_CHEWY] = true;
-		startSetAILWait(19, 1, ANI_FRONT);
+		startDetailWait(19, 1, ANI_FRONT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		showCur();
 		switchRoom(89);
@@ -339,7 +339,7 @@ void Room97::proc4() {
 		stopPerson(P_CHEWY);
 		_G(det)->playSound(9, 0);
 		_G(det)->stopSound(1);
-		startSetAILWait(9, 1, ANI_FRONT);
+		startDetailWait(9, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(21);
 
 		while (_G(moveState)[P_HOWARD].Xypos[0] > 996) {
@@ -357,11 +357,11 @@ void Room97::proc4() {
 		goAutoXy(995, 77, P_HOWARD, ANI_WAIT);
 		goAutoXy(1047, 87, P_HOWARD, ANI_WAIT);
 
-		startSetAILWait(29, 1, ANI_FRONT);
+		startDetailWait(29, 1, ANI_FRONT);
 		_G(det)->hideStaticSpr(21);
 		_G(det)->playSound(9, 1);
 		_G(det)->stopSound(0);
-		startSetAILWait(9, 0, ANI_BACK);
+		startDetailWait(9, 0, ANI_BACK);
 
 		goAutoXy(1008, 93, P_CHEWY, ANI_WAIT);
 		goAutoXy(967, 111, P_CHEWY, ANI_WAIT);
@@ -404,7 +404,7 @@ int Room97::proc5() {
 	_G(det)->hideStaticSpr(21);
 	_G(det)->playSound(9, 1);
 	_G(det)->stopSound(0);
-	startSetAILWait(9, 0, ANI_GO);
+	startDetailWait(9, 0, ANI_GO);
 	
 	showCur();
 	return 1;
@@ -421,11 +421,11 @@ int Room97::proc6() {
 	setPersonSpr(P_LEFT, P_CHEWY);
 	start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 	_G(det)->hideStaticSpr(15);
-	startSetAILWait(1, 1, ANI_FRONT);
+	startDetailWait(1, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(28);
 	autoMove(1, P_CHEWY);
 	_G(det)->hideStaticSpr(18);
-	startSetAILWait(15, 1, ANI_FRONT);
+	startDetailWait(15, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(17);
 	start_spz(CH_TALK5, 255, false, P_CHEWY);
 	startAadWait(558);
@@ -453,7 +453,7 @@ int Room97::proc7() {
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	_G(gameState)._personHide[P_CHEWY] = true;
 	_G(det)->hideStaticSpr(17);
-	startSetAILWait(22, 1, ANI_FRONT);
+	startDetailWait(22, 1, ANI_FRONT);
 	_G(atds)->setControlBit(538, ATS_ACTIVE_BIT);
 	_G(atds)->set_all_ats_str(530, 2, ATS_DATA);
 	new_invent_2_cur(SLIME_INV);
@@ -495,7 +495,7 @@ int Room97::proc8() {
 		waitShowScreen(40);
 		_G(det)->stopDetail(24);
 		_G(det)->playSound(26, 0);
-		startSetAILWait(25, 1, ANI_FRONT);
+		startDetailWait(25, 1, ANI_FRONT);
 		_G(det)->startDetail(26, 255, false);
 		_G(det)->stopDetail(23);
 		_G(det)->startDetail(27, 255, false);
@@ -536,9 +536,9 @@ int Room97::proc9() {
 		startAadWait(556);
 	} else {
 		start_spz_wait(13, 1, false, P_CHEWY);
-		startSetAILWait(0, 1, ANI_FRONT);
+		startDetailWait(0, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(13);
-		startSetAILWait(13, 1, ANI_FRONT);
+		startDetailWait(13, 1, ANI_FRONT);
 		_G(det)->startDetail(14, 255, false);
 		startAadWait(555);
 		_G(gameState).flags36_40 = true;
@@ -561,7 +561,7 @@ int Room97::proc10() {
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->playSound(7, 0);
 	_G(det)->stopSound(1);
-	startSetAILWait(7, 1, ANI_FRONT);
+	startDetailWait(7, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(19);
 	_G(gameState).flags37_1 = true;
 	_G(atds)->setControlBit(543, ATS_ACTIVE_BIT);
@@ -692,10 +692,10 @@ void Room97::sensorAnim() {
 
 	hideCur();
 	if (!_slimeThrown) {
-		startSetAILWait(17, 1, ANI_FRONT);
+		startDetailWait(17, 1, ANI_FRONT);
 		_G(det)->startDetail(16, 1, true);
 		_G(gameState)._personHide[P_CHEWY] = true;
-		startSetAILWait(20, 1, false);
+		startDetailWait(20, 1, false);
 		setPersonPos(318, 42, P_CHEWY, P_LEFT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 	} else {
@@ -703,14 +703,14 @@ void Room97::sensorAnim() {
 		delInventory(_G(cur)->getInventoryCursor());
 		_G(det)->showStaticSpr(27);
 		_G(gameState)._personHide[P_CHEWY] = true;
-		startSetAILWait(21, 1, ANI_FRONT);
+		startDetailWait(21, 1, ANI_FRONT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(det)->hideStaticSpr(27);
-		startSetAILWait(18, 1, ANI_FRONT);
+		startDetailWait(18, 1, ANI_FRONT);
 
 		_G(det)->playSound(8, 0);
 		_G(det)->stopSound(1);
-		startSetAILWait(8, 1, ANI_FRONT);
+		startDetailWait(8, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(20);
 		autoMove(10, P_CHEWY);
 		auto_scroll(60, 0);

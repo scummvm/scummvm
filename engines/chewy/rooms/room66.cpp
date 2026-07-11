@@ -53,11 +53,11 @@ void Room66::entry(int16 eib_nr) {
 		_G(SetUpScreenFunc) = setup_func;
 		startAadWait(403);
 		_G(gameState)._personHide[P_CHEWY] = true;
-		startSetAILWait(0, 1, ANI_FRONT);
+		startDetailWait(0, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(14);
 		waitShowScreen(15);
 		_G(det)->hideStaticSpr(14);
-		startSetAILWait(1, 1, ANI_FRONT);
+		startDetailWait(1, 1, ANI_FRONT);
 		load_chewy_taf(CHEWY_NORMAL);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
@@ -194,7 +194,7 @@ int Room66::proc7() {
 	proc8(7, 2, 3, 411 + (_G(gameState).changedArtifactOrigin ? 1 : 0));
 	hideCur();
 	if (_G(gameState).flags26_20)
-		startSetAILWait(4, 1, ANI_FRONT);
+		startDetailWait(4, 1, ANI_FRONT);
 	showCur();
 
 	return 1;

@@ -185,13 +185,13 @@ void Room37::dog_bell() {
 			disable_timer();
 			_G(det)->stopDetail(3);
 			_G(det)->del_static_ani(3);
-			startSetAILWait(5, 1, ANI_FRONT);
+			startDetailWait(5, 1, ANI_FRONT);
 			_G(det)->hideStaticSpr(9);
-			startSetAILWait(6, 1, ANI_FRONT);
+			startDetailWait(6, 1, ANI_FRONT);
 			_G(gameState)._personHide[P_CHEWY] = true;
 			_G(det)->startDetail(11, 255, ANI_FRONT);
 			flic_cut(FCUT_050);
-			startSetAILWait(6, 1, ANI_BACK);
+			startDetailWait(6, 1, ANI_BACK);
 			_G(det)->stopDetail(11);
 			setPersonPos(326, 85, P_CHEWY, P_LEFT);
 			_G(gameState)._personHide[P_CHEWY] = false;
@@ -212,7 +212,7 @@ void Room37::dog_bell() {
 			_G(room)->set_timer_status(3, TIMER_STOP);
 			_G(det)->del_static_ani(3);
 			_G(det)->stopDetail(3);
-			startSetAILWait(4, 1, ANI_FRONT);
+			startDetailWait(4, 1, ANI_FRONT);
 			flic_cut(FCUT_051);
 			_G(gameState).scrollx = 104;
 			flic_cut(FCUT_054);

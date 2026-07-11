@@ -45,7 +45,7 @@ void Room2::entry() {
 
 void Room2::jump_out_r1(int16 nr) {
 	_G(gameState)._personHide[P_CHEWY] = true;
-	startSetAILWait(nr, 1, ANI_FRONT);
+	startDetailWait(nr, 1, ANI_FRONT);
 	setupScreen(DO_SETUP);
 	_G(det)->stopDetail(6);
 	setPersonPos(32, 127, P_CHEWY, P_LEFT);

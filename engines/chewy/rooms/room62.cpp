@@ -51,7 +51,7 @@ void Room62::entry() {
 		_G(det)->startDetail(6, 255, ANI_FRONT);
 		startAadWait(347);
 		_G(det)->stopDetail(6);
-		startSetAILWait(7, 1, ANI_FRONT);
+		startDetailWait(7, 1, ANI_FRONT);
 		_G(det)->set_static_ani(5, -1);
 		_G(det)->startDetail(0, 255, ANI_FRONT);
 		startAadWait(348);
@@ -63,7 +63,7 @@ void Room62::entry() {
 		goAutoXy(160, 240, P_CHEWY, ANI_WAIT);
 		_G(spieler_mi)[P_CHEWY].Mode = false;
 		_G(det)->del_static_ani(5);
-		startSetAILWait(7, 1, ANI_FRONT);
+		startDetailWait(7, 1, ANI_FRONT);
 		showCur();
 		_G(gameState).R64Moni1Ani = 3;
 		_G(gameState).R64Moni2Ani = 4;

@@ -83,7 +83,7 @@ void Room90::entry(int16 eib_nr) {
 		autoMove(1, P_CHEWY);
 		startDetailFrame(2, 1, ANI_FRONT, 3);
 		_G(det)->startDetail(0, 1, false);
-		startSetAILWait(1, 1, ANI_FRONT);
+		startDetailWait(1, 1, ANI_FRONT);
 		_G(gameState).flags33_10 = true;
 		_G(gameState)._personRoomNr[P_HOWARD] = 91;
 		switchRoom(91);
@@ -291,7 +291,7 @@ int Room90::shootControlUnit() {
 	goAutoXy(232, 142, P_CHEWY, ANI_WAIT);
 	_G(flags).NoScroll = true;
 	auto_scroll(176, 0);
-	startSetAILWait(13, 1, ANI_FRONT);
+	startDetailWait(13, 1, ANI_FRONT);
 	_G(flags).NoPalAfterFlc = true;
 	flic_cut(FCUT_107);
 	_G(gameState).scrollx = 0;

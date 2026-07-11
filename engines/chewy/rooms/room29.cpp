@@ -118,7 +118,7 @@ bool Room29::useWaterHose() {
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		_G(det)->hideStaticSpr(7);
 		_G(gameState)._personHide[P_CHEWY] = true;
-		startSetAILWait(4, 1, ANI_FRONT);
+		startDetailWait(4, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(8);
 		_G(det)->showStaticSpr(10);
 		_G(atds)->delControlBit(219, ATS_ACTIVE_BIT);

@@ -194,15 +194,15 @@ int16 Room68::useIndigo() {
 			_G(room)->set_timer_status(8, TIMER_STOP);
 			_G(det)->del_static_ani(8);
 			_G(det)->stopDetail(8);
-			startSetAILWait(13, 3, ANI_FRONT);
-			startSetAILWait(25, 1, ANI_FRONT);
+			startDetailWait(13, 3, ANI_FRONT);
+			startDetailWait(25, 1, ANI_FRONT);
 			_G(det)->set_static_ani(12, -1);
 			talkToIndigo(398);
 			hideCur();
 			_G(room)->set_timer_status(8, TIMER_STOP);
 			_G(det)->del_static_ani(8);
 			_G(det)->stopDetail(8);
-			startSetAILWait(26, 1, ANI_FRONT);
+			startDetailWait(26, 1, ANI_FRONT);
 			_G(room)->set_timer_status(8, TIMER_START);
 			_G(det)->set_static_ani(8, -1);
 			new_invent_2_cur(KARTE_INV);
@@ -223,7 +223,7 @@ void Room68::talkToBartender() {
 	autoMove(2, P_CHEWY);
 	_G(room)->set_timer_status(20, TIMER_STOP);
 	_G(det)->del_static_ani(20);
-	startSetAILWait(15, 1, ANI_FRONT);
+	startDetailWait(15, 1, ANI_FRONT);
 	_G(det)->set_static_ani(16, -1);
 	showCur();
 	int16 x = _G(moveState)[P_CHEWY].Xypos[0] - _G(gameState).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
@@ -232,7 +232,7 @@ void Room68::talkToBartender() {
 	startDialogCloseupWait(20);
 	hideCur();
 	_G(det)->del_static_ani(16);
-	startSetAILWait(15, 1, ANI_BACK);
+	startDetailWait(15, 1, ANI_BACK);
 	_G(room)->set_timer_status(20, TIMER_START);
 	_G(det)->set_static_ani(20, -1);
 	showCur();
@@ -307,7 +307,7 @@ int16 Room68::useDiva() {
 		autoMove(4, P_CHEWY);
 		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		_G(det)->hideStaticSpr(3);
-		startSetAILWait(4, 1, ANI_FRONT);
+		startDetailWait(4, 1, ANI_FRONT);
 		_G(gameState).R68DrinkCoupon = false;
 		_G(det)->showStaticSpr(3);
 	} else if (isCurInventory(B_MARY2_INV)) {
@@ -321,7 +321,7 @@ int16 Room68::useDiva() {
 		_G(det)->del_static_ani(18);
 		register_cutscene(22);
 		_G(det)->del_static_ani(18);
-		startSetAILWait(7, 1, ANI_FRONT);
+		startDetailWait(7, 1, ANI_FRONT);
 		_G(atds)->setControlBit(407, ATS_ACTIVE_BIT);
 		_G(atds)->setControlBit(412, ATS_ACTIVE_BIT);
 		setPersonSpr(P_RIGHT, P_CHEWY);
@@ -352,7 +352,7 @@ void Room68::useDressOnNichelle(int16 aad_nr) {
 		goAutoXy(161, 59, P_HOWARD, ANI_GO);
 		autoMove(4, P_CHEWY);
 		startAadWait(390);
-		startSetAILWait(22, 1, ANI_FRONT);
+		startDetailWait(22, 1, ANI_FRONT);
 		_G(gameState)._personHide[P_HOWARD] = true;
 		_G(det)->startDetail(27, 255, ANI_FRONT);
 
@@ -377,7 +377,7 @@ void Room68::useDressOnNichelle(int16 aad_nr) {
 
 		_G(room)->set_timer_status(8, TIMER_STOP);
 		_G(det)->del_static_ani(8);
-		startSetAILWait(10, 1, ANI_FRONT);
+		startDetailWait(10, 1, ANI_FRONT);
 		_G(det)->startDetail(11, 255, ANI_FRONT);
 		startAadWait(396);
 		_G(det)->stopDetail(11);

@@ -151,8 +151,8 @@ bool Room0::pullSlime() {
 		_G(flags).AutoAniPlay = true;
 		autoMove(2, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
-		startSetAILWait(3, 1, ANI_FRONT);
-		startSetAILWait(17, 2, ANI_FRONT);
+		startDetailWait(3, 1, ANI_FRONT);
+		startDetailWait(17, 2, ANI_FRONT);
 		setPersonPos(222, 106, P_CHEWY, P_LEFT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		invent_2_slot(1);

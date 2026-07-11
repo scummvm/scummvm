@@ -146,20 +146,20 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 
 		if (t_nr == _G(timer_nr)[0]) {
 			_G(det)->hideStaticSpr(16);
-			startSetAILWait(10, 1, ANI_FRONT);
+			startDetailWait(10, 1, ANI_FRONT);
 			_G(det)->showStaticSpr(16);
 			_G(uhr)->resetTimer(_G(timer_nr)[0], 10);
 		} else if (t_nr == _G(timer_nr)[1]) {
 			hideCur();
 			_G(det)->hideStaticSpr(17);
-			startSetAILWait(9, 1, ANI_FRONT);
+			startDetailWait(9, 1, ANI_FRONT);
 			_G(det)->showStaticSpr(17);
 
 			if (!_G(gameState).R18SondeMoni) {
 				_G(gameState).R18SondeMoni = true;
-				startSetAILWait(2, 1, ANI_FRONT);
+				startDetailWait(2, 1, ANI_FRONT);
 				_G(det)->showStaticSpr(9);
-				startSetAILWait(4, 1, ANI_FRONT);
+				startDetailWait(4, 1, ANI_FRONT);
 				_G(det)->showStaticSpr(11);
 				waitShowScreen(50);
 				_G(det)->hideStaticSpr(9);
@@ -219,7 +219,7 @@ int16 Room18::sonden_moni() {
 	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R18Grid) {
 		hideCur();
 		autoMove(8, P_CHEWY);
-		startSetAILWait(3, 1, ANI_FRONT);
+		startDetailWait(3, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(10);
 		startAniBlock(3, ABLOCK20);
 
@@ -362,10 +362,10 @@ short Room18::use_cart_moni() {
 		if (!_G(gameState).R18CartTerminal) {
 			_G(atds)->set_ats_str(147, TXT_MARK_LOOK, 0, ATS_DATA);
 			_G(det)->hideStaticSpr(23);
-			startSetAILWait(20, 1, ANI_BACK);
+			startDetailWait(20, 1, ANI_BACK);
 		} else {
 			_G(atds)->set_ats_str(147, TXT_MARK_LOOK, 1, ATS_DATA);
-			startSetAILWait(20, 1, ANI_FRONT);
+			startDetailWait(20, 1, ANI_FRONT);
 			_G(det)->showStaticSpr(23);
 
 			if (_G(gameState).R18CartridgeInSlot) {

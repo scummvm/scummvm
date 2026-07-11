@@ -76,7 +76,7 @@ void Room55::entry() {
 		if (_G(gameState).R55Location) {
 			_G(gameState).scrollx = 136;
 			setPersonPos(404, 66, P_CHEWY, P_RIGHT);
-			startSetAILWait(3, 1, ANI_FRONT);
+			startDetailWait(3, 1, ANI_FRONT);
 			_G(gameState)._personHide[P_CHEWY] = false;
 			_G(zoom_horizont) = 1;
 			_G(atds)->delControlBit(340, ATS_ACTIVE_BIT);
@@ -189,11 +189,11 @@ int16 Room55::use_telefon() {
 				_G(gameState).R55RaumOk = true;
 				autoMove(6, P_CHEWY);
 				_G(gameState)._personHide[P_CHEWY] = true;
-				startSetAILWait(10, 1, ANI_FRONT);
+				startDetailWait(10, 1, ANI_FRONT);
 				_G(det)->startDetail(11, 255, ANI_FRONT);
 				startAadWait(329);
 				_G(det)->stopDetail(11);
-				startSetAILWait(10, 1, ANI_BACK);
+				startDetailWait(10, 1, ANI_BACK);
 
 				_G(gameState)._personHide[P_CHEWY] = false;
 				autoMove(7, P_CHEWY);
@@ -201,7 +201,7 @@ int16 Room55::use_telefon() {
 				auto_scroll(0, 0);
 				startAadWait(330);
 				_G(det)->showStaticSpr(8);
-				startSetAILWait(0, 1, ANI_FRONT);
+				startDetailWait(0, 1, ANI_FRONT);
 				_G(det)->startDetail(1, 255, ANI_FRONT);
 				startAadWait(331);
 				_G(det)->stopDetail(1);
@@ -209,7 +209,7 @@ int16 Room55::use_telefon() {
 				_G(det)->showStaticSpr(16);
 				startAadWait(608);
 				_G(det)->hideStaticSpr(16);
-				startSetAILWait(2, 1, ANI_FRONT);
+				startDetailWait(2, 1, ANI_FRONT);
 				_G(det)->hideStaticSpr(0);
 				_G(det)->hideStaticSpr(8);
 				_G(atds)->set_all_ats_str(354, 1, ATS_DATA);
@@ -327,16 +327,16 @@ void Room55::rock2mans() {
 }
 
 void Room55::verleger_mov(int16 mode) {
-	startSetAILWait(7, 1, ANI_FRONT);
+	startDetailWait(7, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(11);
-	startSetAILWait(13, 1, ANI_FRONT);
-	startSetAILWait(14, 1, ANI_FRONT);
+	startDetailWait(13, 1, ANI_FRONT);
+	startDetailWait(14, 1, ANI_FRONT);
 
 	if (_G(gameState).ChewyAni == CHEWY_JMANS)
 		start_spz(CH_JM_TITS, 1, ANI_FRONT, P_CHEWY);
 	
 	if (mode)
-		startSetAILWait(15, 1, ANI_FRONT);
+		startDetailWait(15, 1, ANI_FRONT);
 
 	_G(det)->set_static_ani(16, -1);
 }
@@ -348,7 +348,7 @@ void Room55::strasse(int16 mode) {
 		_G(det)->del_static_ani(4);
 		_G(det)->stopDetail(4);
 		_G(atds)->setControlBit(340, ATS_ACTIVE_BIT);
-		startSetAILWait(3, 1, ANI_BACK);
+		startDetailWait(3, 1, ANI_BACK);
 
 		_G(gameState).scrollx = 0;
 		switchRoom(54);
@@ -366,7 +366,7 @@ int16 Room55::use_kammeraus() {
 		else if (!_G(gameState).R55SekWeg) {
 			hideCur();
 			_G(gameState)._personHide[P_CHEWY] = true;
-			startSetAILWait(5, 1, ANI_FRONT);
+			startDetailWait(5, 1, ANI_FRONT);
 			_G(det)->showStaticSpr(10);
 			flic_cut(FCUT_070);
 			register_cutscene(18);
@@ -431,7 +431,7 @@ void Room55::talk_line() {
 		_G(room)->set_timer_status(aniNr, TIMER_STOP);
 		_G(det)->stopDetail(aniNr);
 		_G(det)->del_static_ani(aniNr);
-		startSetAILWait(22, 1, ANI_FRONT);
+		startDetailWait(22, 1, ANI_FRONT);
 		_G(det)->set_static_ani(21, -1);
 	} else if (!_G(gameState).R55RaumOk) {
 		autoMove(3, P_CHEWY);
@@ -443,10 +443,10 @@ void Room55::talk_line() {
 
 	if (_G(gameState).R55SekWeg) {
 		_G(det)->del_static_ani(16);
-		startSetAILWait(14, 1, ANI_FRONT);
+		startDetailWait(14, 1, ANI_FRONT);
 	} else {
 		_G(det)->del_static_ani(21);
-		startSetAILWait(22, 1, ANI_FRONT);
+		startDetailWait(22, 1, ANI_FRONT);
 	}
 
 	_G(flags).NoScroll = false;

@@ -59,11 +59,11 @@ void Room56::entry() {
 			setPersonPos(3, 42, P_CHEWY, P_RIGHT);
 			_G(det)->stopSound(0);
 			_G(det)->playSound(7, 1);
-			startSetAILWait(7, 1, ANI_BACK);
-			startSetAILWait(8, 1, ANI_FRONT);
+			startDetailWait(7, 1, ANI_BACK);
+			startDetailWait(8, 1, ANI_FRONT);
 			_G(det)->stopSound(1);
 			_G(det)->playSound(7, 0);
-			startSetAILWait(7, 1, ANI_FRONT);
+			startDetailWait(7, 1, ANI_FRONT);
 			setupScreen(DO_SETUP);
 
 			if (!_G(gameState).R56GetTabak) {
@@ -213,7 +213,7 @@ int16 Room56::use_taxi() {
 		autoMove(1, P_CHEWY);
 		_G(det)->stopSound(0);
 		_G(det)->playSound(7, 1);
-		startSetAILWait(7, 1, ANI_BACK);
+		startDetailWait(7, 1, ANI_BACK);
 		_G(det)->startDetail(8, 1, ANI_FRONT);
 		_G(zoom_horizont) = 0;
 		_G(room)->set_zoom(23);
@@ -259,7 +259,7 @@ int16 Room56::use_man() {
 	_G(det)->del_static_ani(0);
 
 	if (!_G(gameState).R56WhiskyMix) {
-		startSetAILWait(4, 1, ANI_FRONT);
+		startDetailWait(4, 1, ANI_FRONT);
 
 		_G(det)->set_static_ani(5, -1);
 		startAadWait(304);
@@ -269,7 +269,7 @@ int16 Room56::use_man() {
 	} else {
 		delInventory(_G(cur)->getInventoryCursor());
 		_G(gameState).R56AbfahrtOk = true;
-		startSetAILWait(6, 1, ANI_FRONT);
+		startDetailWait(6, 1, ANI_FRONT);
 
 		_G(det)->set_static_ani(1, -1);
 		startAadWait(305);
@@ -299,7 +299,7 @@ int16 Room56::use_kneipe() {
 				_G(gameState).R56Kneipe = true;
 				_G(flags).NoScroll = true;
 				auto_scroll(0, 0);
-				startSetAILWait(12, 3, ANI_FRONT);
+				startDetailWait(12, 3, ANI_FRONT);
 				flic_cut(FCUT_075);
 				_G(det)->stopSound(0);
 				_G(det)->playSound(9, 0);

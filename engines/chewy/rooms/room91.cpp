@@ -115,7 +115,7 @@ void Room91::setup_func() {
 		const int aniNr = 1 + (g_events->_mousePos.y <= 100 ? 1 : 0);
 		hideCur();
 		_G(det)->stopDetail(0);
-		startSetAILWait(aniNr, 1, ANI_FRONT);
+		startDetailWait(aniNr, 1, ANI_FRONT);
 		_click = oldClick;
 		_G(det)->startDetail(0, 255, false);
 		_G(det)->startDetail(aniNr + 2, 1, false);
@@ -131,7 +131,7 @@ void Room91::setup_func() {
 			stop_spz();
 			startAadWait(505);
 			_G(gameState)._personHide[P_HOWARD] = true;
-			startSetAILWait(9, 1, ANI_FRONT);
+			startDetailWait(9, 1, ANI_FRONT);
 			_G(gameState)._personHide[P_HOWARD] = false;
 			_G(gameState)._personRoomNr[P_HOWARD] = 50;
 			_G(gameState).flags34_4 = false;
