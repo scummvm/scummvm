@@ -3834,7 +3834,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				}
 				Script *script = _engine.getScript();
 				if (!showingInspectText && !isPlayerCombatLocked() && script && playerState.entity &&
-						script->getPlayerCurrentHitPoints() > 0) {
+						script->getPlayerCurrentHitPoints() > 0 && !script->isPlayerControlPaused()) {
 					playerState.hasMoveTarget = false;
 					playerState.turnActive = false;
 					playerState.turnTargetFacing = -1;
@@ -4302,10 +4302,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			break;
 		}
 
-		const bool playerCanAct =
-			_engine.getScript() &&
-			_engine.getScript()->getPlayerCurrentHitPoints() > 0;
-		if (!playerCanAct && (moveLeft || moveRight || moveUp || moveDown ||
+		Script *script = _engine.getScript();
+		const bool playerAlive = script && script->getPlayerCurrentHitPoints() > 0;
+		const bool playerControlPaused = script && script->isPlayerControlPaused();
+		const bool playerCanAct = playerAlive && !playerControlPaused;
+		if (!playerAlive && (moveLeft || moveRight || moveUp || moveDown ||
 				playerState.hasMoveTarget || playerState.turnActive ||
 				playerState.attackActive || playerState.hitActive)) {
 			attackModifierHeld = false;
@@ -4313,23 +4314,25 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		}
 
 		bool playerAdvancedThisFrame = false;
-		Common::Error combatError = resolvePlayerAttackContact();
-		if (combatError.getCode() != Common::kNoError)
-			return combatError;
-		if (flow.hasPendingMainMenuReturn())
-			return Common::kNoError;
-		if (!pendingRoomChange.empty()) {
-			if (!stowCarriedRoomItemToInventory())
-				return Common::kReadingFailed;
-			break;
-		}
-		if (Player::updateAttackAnimationState(_engine, playerState)) {
-			needsRedraw = true;
-		}
-		if (Player::updateHitAnimationState(
-				_engine, scene.state, scene.sceneObjects, scene.sceneAnimations, playerState)) {
-			playerAdvancedThisFrame = true;
-			needsRedraw = true;
+		Common::Error combatError = Common::kNoError;
+		if (!playerControlPaused) {
+			combatError = resolvePlayerAttackContact();
+			if (combatError.getCode() != Common::kNoError)
+				return combatError;
+			if (flow.hasPendingMainMenuReturn())
+				return Common::kNoError;
+			if (!pendingRoomChange.empty()) {
+				if (!stowCarriedRoomItemToInventory())
+					return Common::kReadingFailed;
+				break;
+			}
+			if (Player::updateAttackAnimationState(_engine, playerState))
+				needsRedraw = true;
+			if (Player::updateHitAnimationState(
+					_engine, scene.state, scene.sceneObjects, scene.sceneAnimations, playerState)) {
+				playerAdvancedThisFrame = true;
+				needsRedraw = true;
+			}
 		}
 		const bool keyboardAttackRequested =
 			attackModifierHeld && (moveLeft || moveRight || moveUp || moveDown);
@@ -4359,7 +4362,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				}
 			}
 		}
-		if (!playerState.attackActive && !playerState.hitActive &&
+		if (playerCanAct && !playerState.attackActive && !playerState.hitActive &&
 				Player::updateTurnAnimationState(playerState)) {
 			playerAdvancedThisFrame = true;
 			needsRedraw = true;
