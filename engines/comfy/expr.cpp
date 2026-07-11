@@ -68,7 +68,7 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 				uint offset = opcode == 0x12 ? kActorXFixed : kActorYFixed;
 				int32 position = actorReadU32(*actor, offset);
 				while (actorReadU16(*actor, kActorParent)) {
-					actor = actorGet(actorReadU16(*actor, kActorParent));
+					actor = actorGetPtr(actorReadU16(*actor, kActorParent));
 					if (!actor)
 						break;
 

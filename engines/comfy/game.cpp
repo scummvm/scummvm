@@ -429,6 +429,8 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	if (!_headerXmsData.empty())
 		memset(&_headerXmsData[0], 0, _headerXmsData.size());
 
+	videoInit();
+
 	_objectCacheEntries.resize(_spriteHeaders.size());
 	_frameCacheEntries.resize(_numFrames + 1);
 	if (!_objectCacheEntries.empty())

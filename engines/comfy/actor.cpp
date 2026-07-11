@@ -463,7 +463,7 @@ void ComfyEngine::actorWriteU8(Actor &actor, uint offset, byte value) {
 		_scriptFault = true;
 }
 
-ComfyEngine::Actor *ComfyEngine::actorGet(uint16 actorIndex) {
+ComfyEngine::Actor *ComfyEngine::actorGetPtr(uint16 actorIndex) {
 	return actorIndex < _actors.size() ? &_actors[actorIndex] : nullptr;
 }
 
@@ -484,34 +484,34 @@ uint16 ComfyEngine::actorGetFrame() {
 
 ComfyEngine::Actor *ComfyEngine::actorResolve(uint16 sceneOrActor, uint16 fallbackActor) {
 	if (!sceneOrActor)
-		return actorGet(fallbackActor);
+		return actorGetPtr(fallbackActor);
 
-	return sceneOrActor < _sceneHandles.size() ? actorGet(_sceneHandles[sceneOrActor]) : nullptr;
+	return actorGetPtr(sceneGetHandle(sceneOrActor));
 }
 
-uint16 ComfyEngine::actorAllocate(uint16 sceneSlot) {
-	Actor *root = actorGet(0);
+uint16 ComfyEngine::actorAlloc(uint16 sceneSlot) {
+	Actor *root = actorGetPtr(0);
 	uint16 actorIndex = root ? actorReadU16(*root, kActorNextLink) : 0;
 	if (!actorIndex || sceneSlot >= _sceneHandles.size())
 		return 0;
 
-	Actor *actor = actorGet(actorIndex);
+	Actor *actor = actorGetPtr(actorIndex);
 	actorWriteU16(*root, kActorNextLink, actorReadU16(*actor, kActorNextLink));
 	_sceneHandles[sceneSlot] = actorIndex;
 	actorWriteU16(*actor, kActorSceneHandle, sceneSlot);
 	return actorIndex;
 }
 
-void ComfyEngine::actorFree(uint16 sceneSlot) {
+void ComfyEngine::actorFreeSlot(uint16 sceneSlot) {
 	if (sceneSlot >= _sceneHandles.size())
 		return;
 
 	uint16 actorIndex = _sceneHandles[sceneSlot];
-	Actor *actor = actorGet(actorIndex);
+	Actor *actor = actorGetPtr(actorIndex);
 	if (!actor)
 		return;
 
-	Actor *root = actorGet(0);
+	Actor *root = actorGetPtr(0);
 	actorWriteU16(*actor, kActorNextLink, root ? actorReadU16(*root, kActorNextLink) : 0);
 	actorWriteU16(*actor, kActorSceneHandle, 0);
 	if (root)
@@ -520,14 +520,14 @@ void ComfyEngine::actorFree(uint16 sceneSlot) {
 }
 
 void ComfyEngine::actorInsertChild(uint16 childIndex, uint16 parentIndex) {
-	Actor *child = actorGet(childIndex);
-	Actor *parent = actorGet(parentIndex);
+	Actor *child = actorGetPtr(childIndex);
+	Actor *parent = actorGetPtr(parentIndex);
 	if (!child || !parent)
 		return;
 
 	uint16 tail = actorReadU16(*parent, kActorChildTail);
 	if (tail) {
-		actorWriteU16(*actorGet(tail), kActorNextLink, childIndex);
+		actorWriteU16(*actorGetPtr(tail), kActorNextLink, childIndex);
 		actorWriteU16(*child, kActorPrevLink, tail);
 	} else {
 		actorWriteU16(*parent, kActorChildHead, childIndex);
@@ -539,14 +539,14 @@ void ComfyEngine::actorInsertChild(uint16 childIndex, uint16 parentIndex) {
 }
 
 void ComfyEngine::actorInsertSibling(uint16 actorIndex, uint16 ownerIndex) {
-	Actor *actor = actorGet(actorIndex);
-	Actor *owner = actorGet(ownerIndex);
+	Actor *actor = actorGetPtr(actorIndex);
+	Actor *owner = actorGetPtr(ownerIndex);
 	if (!actor || !owner)
 		return;
 
 	uint16 head = actorReadU16(*owner, kActorSiblingHead);
 	if (head)
-		actorWriteU16(*actorGet(head), kActorPrevLink, actorIndex);
+		actorWriteU16(*actorGetPtr(head), kActorPrevLink, actorIndex);
 
 	actorWriteU16(*actor, kActorNextLink, head);
 	actorWriteU16(*actor, kActorPrevLink, 0);
@@ -554,23 +554,23 @@ void ComfyEngine::actorInsertSibling(uint16 actorIndex, uint16 ownerIndex) {
 }
 
 void ComfyEngine::actorUnlink(uint16 actorIndex) {
-	Actor *actor = actorGet(actorIndex);
+	Actor *actor = actorGetPtr(actorIndex);
 	if (!actor)
 		return;
 
-	Actor *parent = actorGet(actorReadU16(*actor, kActorParent));
+	Actor *parent = actorGetPtr(actorReadU16(*actor, kActorParent));
 	if (!parent)
 		return;
 
 	uint16 next = actorReadU16(*actor, kActorNextLink);
 	uint16 previous = actorReadU16(*actor, kActorPrevLink);
 	if (next)
-		actorWriteU16(*actorGet(next), kActorPrevLink, previous);
+		actorWriteU16(*actorGetPtr(next), kActorPrevLink, previous);
 	else if (actorReadU16(*parent, kActorChildTail) == actorIndex)
 		actorWriteU16(*parent, kActorChildTail, previous);
 
 	if (previous)
-		actorWriteU16(*actorGet(previous), kActorNextLink, next);
+		actorWriteU16(*actorGetPtr(previous), kActorNextLink, next);
 	else if (actorReadU16(*parent, kActorSiblingHead) == actorIndex)
 		actorWriteU16(*parent, kActorSiblingHead, next);
 	else
@@ -579,8 +579,8 @@ void ComfyEngine::actorUnlink(uint16 actorIndex) {
 
 uint16 ComfyEngine::actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible, byte active,
 		uint32 pc, int16 x, int16 y, int16 sprite, byte insertAsChild) {
-	uint16 actorIndex = actorAllocate(sceneSlot);
-	Actor *actor = actorGet(actorIndex);
+	uint16 actorIndex = actorAlloc(sceneSlot);
+	Actor *actor = actorGetPtr(actorIndex);
 	if (!actor)
 		return 8;
 
@@ -595,7 +595,7 @@ uint16 ComfyEngine::actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible,
 	actorWriteU8(*actor, kActorDirty, 1);
 
 	if (parentSlot) {
-		uint16 parentIndex = parentSlot < _sceneHandles.size() ? _sceneHandles[parentSlot] : 0;
+		uint16 parentIndex = sceneGetHandle(parentSlot);
 		actorWriteU16(*actor, kActorParent, parentIndex);
 		if (insertAsChild)
 			actorInsertChild(actorIndex, parentIndex);
@@ -669,13 +669,13 @@ void ComfyEngine::actorFreePcChain(Actor &actor) {
 }
 
 void ComfyEngine::actorFreeTree(uint16 actorIndex) {
-	Actor *actor = actorGet(actorIndex);
+	Actor *actor = actorGetPtr(actorIndex);
 	if (!actor)
 		return;
 
 	uint16 child = actorReadU16(*actor, kActorSiblingHead);
 	while (child) {
-		Actor *childActor = actorGet(child);
+		Actor *childActor = actorGetPtr(child);
 		uint16 next = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
 		actorFreeTree(child);
 		child = next;
@@ -683,7 +683,7 @@ void ComfyEngine::actorFreeTree(uint16 actorIndex) {
 
 	child = actorReadU16(*actor, kActorChildHead);
 	while (child) {
-		Actor *childActor = actorGet(child);
+		Actor *childActor = actorGetPtr(child);
 		uint16 next = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
 		actorFreeTree(child);
 		child = next;
@@ -691,18 +691,18 @@ void ComfyEngine::actorFreeTree(uint16 actorIndex) {
 
 	uint16 sceneSlot = actorReadU16(*actor, kActorSceneHandle);
 	actorFreePcChain(*actor);
-	actorFree(sceneSlot);
+	actorFreeSlot(sceneSlot);
 }
 
 void ComfyEngine::actorClearDirtyTree(uint16 actorIndex) {
-	Actor *actor = actorGet(actorIndex);
+	Actor *actor = actorGetPtr(actorIndex);
 	if (!actor)
 		return;
 
 	actorWriteU8(*actor, kActorDirty, 0);
 	uint16 child = actorReadU16(*actor, kActorSiblingHead);
 	while (child) {
-		Actor *childActor = actorGet(child);
+		Actor *childActor = actorGetPtr(child);
 		uint16 next = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
 		actorClearDirtyTree(child);
 		child = next;
@@ -710,7 +710,7 @@ void ComfyEngine::actorClearDirtyTree(uint16 actorIndex) {
 
 	child = actorReadU16(*actor, kActorChildHead);
 	while (child) {
-		Actor *childActor = actorGet(child);
+		Actor *childActor = actorGetPtr(child);
 		uint16 next = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
 		actorClearDirtyTree(child);
 		child = next;
@@ -723,7 +723,7 @@ void ComfyEngine::actorSetAllVisible() {
 }
 
 bool ComfyEngine::actorRunScript(uint16 actorIndex, bool &descendChildren) {
-	Actor *actor = actorGet(actorIndex);
+	Actor *actor = actorGetPtr(actorIndex);
 	descendChildren = false;
 	if (!actor)
 		return false;
@@ -830,7 +830,7 @@ bool ComfyEngine::actorTickTree(uint16 actorIndex) {
 	if (_pendingScene)
 		return false;
 
-	Actor *actor = actorGet(actorIndex);
+	Actor *actor = actorGetPtr(actorIndex);
 	if (!actor)
 		return false;
 
@@ -841,30 +841,30 @@ bool ComfyEngine::actorTickTree(uint16 actorIndex) {
 
 	bool descendChildren = true;
 	bool stopBranch = actorRunScript(actorIndex, descendChildren);
-	actor = actorGet(actorIndex);
+	actor = actorGetPtr(actorIndex);
 	if (stopBranch || !descendChildren || !actor)
 		return stopBranch;
 
 	uint16 child = actorReadU16(*actor, kActorSiblingHead);
 	while (child) {
-		Actor *childActor = actorGet(child);
+		Actor *childActor = actorGetPtr(child);
 		uint16 savedNext = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
 		if (actorTickTree(child))
 			child = savedNext;
 		else {
-			childActor = actorGet(child);
+			childActor = actorGetPtr(child);
 			child = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
 		}
 	}
 
 	child = actorReadU16(*actor, kActorChildHead);
 	while (child) {
-		Actor *childActor = actorGet(child);
+		Actor *childActor = actorGetPtr(child);
 		uint16 savedNext = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
 		if (actorTickTree(child))
 			child = savedNext;
 		else {
-			childActor = actorGet(child);
+			childActor = actorGetPtr(child);
 			child = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
 		}
 	}
@@ -875,7 +875,7 @@ bool ComfyEngine::actorTickTree(uint16 actorIndex) {
 void ComfyEngine::actorDrawList(uint16 actorIndex, int16 x, int16 y) {
 	while (actorIndex) {
 		actorDraw(actorIndex, x, y);
-		Actor *actor = actorGet(actorIndex);
+		Actor *actor = actorGetPtr(actorIndex);
 		actorIndex = actor ? actorReadU16(*actor, kActorNextLink) : 0;
 	}
 }
@@ -931,7 +931,7 @@ void ComfyEngine::actorWriteCachedRect(Actor &actor, VideoRectRecord rect) {
 }
 
 void ComfyEngine::actorInvalidateDrawTree(uint16 actorIndex) {
-	Actor *actor = actorGet(actorIndex);
+	Actor *actor = actorGetPtr(actorIndex);
 	if (!actor)
 		return;
 
@@ -945,7 +945,7 @@ void ComfyEngine::actorInvalidateDrawTree(uint16 actorIndex) {
 	actorWriteCachedRect(*actor, empty);
 	uint16 child = actorReadU16(*actor, kActorSiblingHead);
 	while (child) {
-		Actor *childActor = actorGet(child);
+		Actor *childActor = actorGetPtr(child);
 		uint16 next = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
 		actorInvalidateDrawTree(child);
 		child = next;
@@ -953,7 +953,7 @@ void ComfyEngine::actorInvalidateDrawTree(uint16 actorIndex) {
 
 	child = actorReadU16(*actor, kActorChildHead);
 	while (child) {
-		Actor *childActor = actorGet(child);
+		Actor *childActor = actorGetPtr(child);
 		uint16 next = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
 		actorInvalidateDrawTree(child);
 		child = next;
@@ -961,7 +961,7 @@ void ComfyEngine::actorInvalidateDrawTree(uint16 actorIndex) {
 }
 
 bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
-	Actor *actor = actorGet(actorIndex);
+	Actor *actor = actorGetPtr(actorIndex);
 	if (!actor)
 		return true;
 

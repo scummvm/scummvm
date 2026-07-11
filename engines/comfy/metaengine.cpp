@@ -60,9 +60,8 @@ Common::Error ComfyMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 	return Common::kNoError;
 }
 
-bool ComfyMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return checkExtendedSaves(f) ||
-		(f == kSupportsLoadingDuringStartup);
+bool ComfyMetaEngine::hasFeature(MetaEngineFeature) const {
+	return false;
 }
 
 Common::KeymapArray ComfyMetaEngine::initKeymaps(const char *target) const {

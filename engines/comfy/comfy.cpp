@@ -93,7 +93,7 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_animPantherFormat(false), _animActive(false),
 	_exprStackTop(0), _scriptFault(false),
 	_gameInitialized(false), _videoInitialized(false),
-	_timerInitialized(false), _lptKeyboardInitialized(false), _mainLoopRunning(false) {
+	_timerInitialized(false), _lptKeyboardInitialized(false) {
 	memset(_paletteFadeSource, 0, sizeof(_paletteFadeSource));
 	memset(_paletteTarget, 0, sizeof(_paletteTarget));
 	memset(_paletteDisplay, 0, sizeof(_paletteDisplay));
@@ -124,13 +124,21 @@ Common::String ComfyEngine::getGameId() const {
 
 Common::Error ComfyEngine::run() {
 	setDebugger(new Console());
+	return gameInit();
+}
 
-	Common::Error result = gameInit();
-	if (result.getCode() != Common::kNoError)
-		return result;
+Common::Error ComfyEngine::gameInit() {
+	if (_gameInitialized)
+		return Common::kNoError;
 
+	gameConfigInit();
+	if (!iniReadGameConfig())
+		return Common::kNoGameDataFoundError;
+
+	timerInit();
+	_gameInitialized = true;
 	uint16 currentScene = _language;
-	uint16 chooserScene = currentScene;
+	uint16 chooserScene = 2;
 	if (_multiLanguage && (ConfMan.getBool("force_language_setup") ||
 			!ConfMan.getBool("comfy_language_chosen"))) {
 		if (!iniGetGameDataPath(0x63)) {
@@ -149,8 +157,13 @@ Common::Error ComfyEngine::run() {
 		ConfMan.flushToDisk();
 	}
 
-	if (iniGetGameDataPath(0))
+	if (iniGetGameDataPath(0)) {
 		sceneRun(currentScene, false, true);
+		if (shouldQuit()) {
+			gameShutdown();
+			return Common::kNoError;
+		}
+	}
 
 	while (currentScene && !shouldQuit()) {
 		if (!iniGetGameDataPath(currentScene)) {
@@ -173,25 +186,12 @@ Common::Error ComfyEngine::run() {
 	return Common::kNoError;
 }
 
-Common::Error ComfyEngine::gameInit() {
-	if (_gameInitialized)
-		return Common::kNoError;
-
-	gameConfigInit();
-	if (!iniReadGameConfig())
-		return Common::kNoGameDataFoundError;
-
-	videoInit();
-	timerInit();
-	_gameInitialized = true;
-	return Common::kNoError;
-}
-
 void ComfyEngine::gameShutdown() {
-	if (_lptKeyboardInitialized)
+	if (_lptKeyboardInitialized) {
 		lptKeyboardShutdown();
-
-	assetsUnload(1);
+		midiShutdown();
+		assetsUnload(0);
+	}
 
 	midiPlyrStop();
 
@@ -199,9 +199,8 @@ void ComfyEngine::gameShutdown() {
 		timerShutdown();
 
 	if (_videoInitialized)
-		videoShutdown();
+		videoShutdown(0);
 
-	_mainLoopRunning = false;
 	_gameInitialized = false;
 }
 
@@ -222,22 +221,26 @@ uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
 	memset(&sceneRunBuffer[0], 0, sceneRunBuffer.size());
 	if (!assetsLoad(0x4000, &sceneRunBuffer[0])) {
 		assetsUnload(0);
+		if (_videoInitialized)
+			videoShutdown(0);
+
 		return 0;
 	}
 
 	gameMainLoop(sceneId);
 	uint16 nextScene = 0;
-	if (checkNext && _activeSceneCount > 1 && _midiHandles.size() > 1)
+	if (checkNext && sceneGetActiveCount() > 1 && _midiHandles.size() > 1)
 		nextScene = _midiHandles[1];
 
 	if (nextScene == sceneId || int16(nextScene) <= 0 || int16(nextScene) >= 0x65)
 		nextScene = 0;
 
+	byte restorePalette = !exitFlag && !nextScene;
+
 	midiShutdown();
 	assetsUnload(0);
 	inputQueueReset();
-	if (!exitFlag && nextScene)
-		renderSetDirty();
+	videoShutdown(restorePalette);
 
 	return nextScene;
 }
@@ -289,12 +292,12 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 	keyBitSet(2);
 	lptKeyboardInit();
 
-	uint16 rootIndex = _sceneHandles.size() > 1 ? _sceneHandles[1] : 0;
-	Actor *mainLoopActor = actorGet(rootIndex);
+	uint16 rootIndex = sceneGetHandle(1);
+	Actor *mainLoopActor = actorGetPtr(rootIndex);
 	paletteLoadWithFade(0, 0);
 	paletteVsyncFlip();
 	paletteVsyncFlip();
-	if (_activeSceneCount && _midiHandles.size() > 1)
+	if (sceneGetActiveCount() && _midiHandles.size() > 1)
 		_midiHandles[1] += argument;
 
 	while (keepRunning && !shouldQuit()) {
@@ -383,8 +386,8 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 		}
 	}
 
-	if (_sceneHandles.size() > 1 && _sceneHandles[1])
-		actorFree(1);
+	if (sceneGetHandle(1))
+		actorFreeSlot(1);
 
 	lptKeyboardShutdown();
 	sceneBlockPackRuntimeState();

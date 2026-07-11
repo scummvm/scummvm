@@ -829,7 +829,7 @@ void MidiPlyrDriver::comfyboardPollTimer() {
 	if (_driverVersion != kDriverVersion2 || _comfyboardStopReading)
 		return;
 
-	// TODO: Reroute to actual LPT emulated parser...
+	// The original exports this state to the physical Comfyboard through LPT...
 }
 
 } // End of namespace Comfy
