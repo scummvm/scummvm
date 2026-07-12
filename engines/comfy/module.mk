@@ -6,7 +6,6 @@ MODULE_OBJS = \
 	comfy.o \
 	comfy_keyboard_ui.o \
 	console.o \
-	entry.o \
 	expr.o \
 	game.o \
 	input.o \

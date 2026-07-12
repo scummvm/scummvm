@@ -27,6 +27,29 @@
 
 namespace Comfy {
 
+void ComfyEngine::midiHandleAddTo(uint16 handleIndex, int16 delta) {
+	if (handleIndex < _midiHandles.size())
+		_midiHandles[handleIndex] += delta;
+}
+
+void ComfyEngine::midiHandleCopy(uint16 destination, uint16 source) {
+	if (destination < _midiHandles.size() && source < _midiHandles.size())
+		_midiHandles[destination] = _midiHandles[source];
+}
+
+void ComfyEngine::midiHandleSet(uint16 handleIndex, uint16 value) {
+	if (handleIndex < _midiHandles.size())
+		_midiHandles[handleIndex] = value;
+}
+
+uint16 ComfyEngine::midiGetHandle(uint16 handleIndex) {
+	return handleIndex < _midiHandles.size() ? _midiHandles[handleIndex] : 0;
+}
+
+uint16 ComfyEngine::midiGetVersion() {
+	return COMFY_SCENE_MIDI_VERSION_BYTES_CLASSIC;
+}
+
 uint16 ComfyEngine::midiTick() {
 	if (!_midiPlyrDriver)
 		return 0;
@@ -173,12 +196,44 @@ void ComfyEngine::midiFindNext(MidiQueue &queue) {
 	}
 }
 
-void ComfyEngine::midiInitInstance() {
+void ComfyEngine::midiInitInstanceAt() {
 	_midiEvents = MidiQueue();
 	_midiTracks = MidiQueue();
+	_midiTimeCounter = 0;
+	_midiInstanceEventTime = _midiTimeCounter;
+	_midiInstanceTrackBase = 1;
 	_midiEvents.baseTime = 0;
 	_midiTracks.baseTime = 1;
+	if (_midiPlyrDriver)
+		_midiPlyrDriver->setTimeCounter(_midiTimeCounter);
+
+	midiFindNext(_midiEvents);
+	midiFindNext(_midiTracks);
+}
+
+void ComfyEngine::midiInitInstance() {
+	if (_engineVersion == kEngineVersion3) {
+		_midiTracks.nextTime = 0;
+		_midiTracks.nextIndex = 0x03E7;
+		_midiEvents.nextTime = 0;
+		_midiEvents.nextIndex = 0x03E7;
+		_midiTimeScale = 0x400;
+		if (_midiPlyrDriver) {
+			_midiPlyrDriver->setIncreaseVocCounter(0);
+			_midiPlyrDriver->setVocCounter(0);
+			_midiPlyrDriver->setTimeCounter(0);
+		}
+
+		return;
+	}
+
+	_midiEvents = MidiQueue();
+	_midiTracks = MidiQueue();
+	_midiTimeCounter = 0;
+	_midiInstanceEventTime = _midiTimeCounter;
 	_midiInstanceTrackBase = 1;
+	_midiEvents.baseTime = 0;
+	_midiTracks.baseTime = 1;
 	midiFindNext(_midiEvents);
 	midiFindNext(_midiTracks);
 }
@@ -187,9 +242,14 @@ void ComfyEngine::midiInitChannels() {
 	for (uint channel = 0; channel < COMFY_MIDI_CHANNEL_COUNT; channel++) {
 		_midiChannels[channel] = MidiChannelState();
 		MidiChannelState &state = _midiChannels[channel];
-		state.volumeCurrent = state.volumeTarget = state.volumeDefault = 0x6400;
-		state.rateCurrent = state.rateTarget = state.rateDefault = 0x07D0;
-		state.pitchCurrent = state.pitchTarget = state.pitchDefault = 0x1388;
+		state.volumeCurrent = state.volumeDefault = 0x6400;
+		state.rateCurrent = state.rateDefault = 0x07D0;
+		state.pitchCurrent = state.pitchDefault = 0x1388;
+		if (_engineVersion != kEngineVersion3) {
+			state.volumeTarget = state.volumeDefault;
+			state.rateTarget = state.rateDefault;
+			state.pitchTarget = state.pitchDefault;
+		}
 	}
 }
 
@@ -212,17 +272,19 @@ void ComfyEngine::midiQueueAdd(MidiQueue &queue, uint16 id, int16 delta) {
 	midiFindNext(queue);
 }
 
-void ComfyEngine::midiQueueRemove(MidiQueue &queue, uint16 id) {
+bool ComfyEngine::midiQueueRemove(MidiQueue &queue, uint16 id) {
+	bool removed = false;
 	for (uint i = 0; i < queue.count;) {
 		if (queue.entries[i].id == id) {
 			queue.count--;
 			queue.entries[i] = queue.entries[queue.count];
+			removed = true;
 		} else {
 			i++;
 		}
 	}
 
-	midiFindNext(queue);
+	return removed;
 }
 
 void ComfyEngine::midiAddEvent(uint16 id, int16 delta) {
@@ -234,8 +296,11 @@ void ComfyEngine::midiAddTrack(uint16 id, int16 delta) {
 }
 
 void ComfyEngine::midiRemoveTrack(uint16 id) {
-	midiQueueRemove(_midiTracks, id);
+	if (midiQueueRemove(_midiTracks, id))
+		midiFindNext(_midiTracks);
+
 	midiQueueRemove(_midiEvents, id);
+	midiFindNext(_midiEvents);
 }
 
 void ComfyEngine::midiClearChannel(uint16 channel) {
@@ -243,7 +308,27 @@ void ComfyEngine::midiClearChannel(uint16 channel) {
 		return;
 
 	_midiChannels[channel].loadedFrameSize = 0;
-	_midiChannels[channel].playing = false;
+}
+
+void ComfyEngine::midiFireClearMarker(uint16 channel, int16 marker) {
+	if (channel >= COMFY_MIDI_CHANNEL_COUNT || marker <= 0)
+		return;
+
+	MidiTrackEntry &entry = _midiChannels[channel].entries[0];
+	if (marker <= entry.frameCount && marker <= COMFY_ANIM_FRAME_CAPACITY)
+		keyBitSet(entry.frames[marker - 1]);
+}
+
+void ComfyEngine::midiPollSceneEntries() {
+	if (!_midiPlyrDriver)
+		return;
+
+	for (uint channel = 0; channel < COMFY_SCENE_MUSIC_CHANNEL_COUNT; channel++) {
+		if (_sceneEntryCompletionKeys[channel] && !_midiPlyrDriver->musicIsSongPlaying(channel)) {
+			keyBitSet(_sceneEntryCompletionKeys[channel]);
+			_sceneEntryCompletionKeys[channel] = 0;
+		}
+	}
 }
 
 void ComfyEngine::midiResumeAll() {
@@ -269,10 +354,8 @@ void ComfyEngine::midiStopChannel(uint16 channel) {
 
 	uint16 size = state.loadedFrameSize;
 	state.rateCurrent = state.rateDefault = size >= 4 ? READ_LE_UINT16(song + 2) : 0x07D0;
-	state.rateTarget = state.rateCurrent;
+	state.rateTicksLeft = 0;
 	_midiPlyrDriver->musicPlaySong(song, size, channel);
-	_midiPlyrDriver->musicSetVolume(uint16(state.volumeCurrent >> 8), channel);
-	state.playing = true;
 }
 
 void ComfyEngine::midiStopAll() {
@@ -320,6 +403,7 @@ void ComfyEngine::midiFinishChannel(uint16 channel) {
 	if (_midiPlyrDriver)
 		_midiPlyrDriver->musicStopSong(1, channel);
 
+	midiClearChannel(channel);
 	if (state.entries[0].completionKey)
 		keyBitSet(state.entries[0].completionKey);
 
@@ -327,7 +411,6 @@ void ComfyEngine::midiFinishChannel(uint16 channel) {
 		state.entries[i - 1] = state.entries[i];
 
 	state.entryCount--;
-	midiClearChannel(channel);
 	if (state.entryCount)
 		midiStopChannel(channel);
 }
@@ -368,7 +451,7 @@ void ComfyEngine::midiAddTrackEntry(uint16 channel, uint16 songId, uint16 comple
 		channel = 0;
 
 	MidiChannelState &state = _midiChannels[channel];
-	if (state.entryCount == COMFY_MIDI_TRACK_ENTRY_CAPACITY)
+	if (state.entryCount >= COMFY_MIDI_TRACK_ENTRY_CAPACITY)
 		return;
 
 	MidiTrackEntry &entry = state.entries[state.entryCount];
@@ -376,7 +459,6 @@ void ComfyEngine::midiAddTrackEntry(uint16 channel, uint16 songId, uint16 comple
 	entry.completionKey = completionKey;
 	entry.loadFlag = loadFlag;
 	entry.frameCount = frameCount;
-	memset(entry.frames, 0, sizeof(entry.frames));
 	for (uint i = 0; i < frameCount && i < COMFY_ANIM_FRAME_CAPACITY; i++)
 		entry.frames[i] = frames ? frames[i] : 0;
 
@@ -430,12 +512,15 @@ int16 ComfyEngine::midiApproachTarget(int16 current, int16 target, int16 &ticksL
 
 void ComfyEngine::musicSetEnabled(byte value) {
 	_musicEnabled = value;
-	_soundPaused = value != 0;
-	_mixer->pauseHandle(_soundHandle, _soundPaused);
+	if (!_animFrameReady || !_animUsesWaveVocCounter || value) {
+		_soundPaused = value != 0;
+		_mixer->pauseHandle(_soundHandle, _soundPaused);
+		if (_midiPlyrDriver)
+			_midiPlyrDriver->setIncreaseVocCounter(_soundPaused ? 0 : 1);
+	}
+
 	if (!_midiPlyrDriver)
 		return;
-
-	_midiPlyrDriver->setIncreaseVocCounter(_soundPaused ? 0 : 1);
 
 	if (_musicEnabled) {
 		_midiPlyrDriver->musicStopAll(0);

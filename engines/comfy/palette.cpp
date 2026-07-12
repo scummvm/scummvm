@@ -93,7 +93,9 @@ void ComfyEngine::paletteFadeStep(uint16 delta) {
 
 void ComfyEngine::paletteLoadWithFade(uint16 paletteId, uint16 fadeTicks) {
 	colorDatReadEntry(paletteId);
-	_palettePage = 'S';
+	if (_engineVersion != kEngineVersion3)
+		_palettePage = 'S';
+
 	if (_paletteFading)
 		memcpy(_paletteFadeSource, _paletteDisplay, COMFY_PALETTE_BYTES);
 
