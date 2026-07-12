@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-08 18:20+0000\n"
+"POT-Creation-Date: 2026-07-12 10:29+0000\n"
 "PO-Revision-Date: 2026-05-19 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3471,18 +3471,29 @@ msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr "ScummVM에 대한 저장소 접속 프레임워크 권한이 취소되었습니다!"
 
 #: dists/android.strings.xml.cpp:55
+msgid ""
+"Local network access permission was denied: Web server won't be reachable"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:56
+#, fuzzy
+#| msgid "ScummVM (debug)"
+msgid "ScummVM Web server"
+msgstr "ScummVM (디버그)"
+
+#: dists/android.strings.xml.cpp:57
 msgid "Configuration file could not be parsed"
 msgstr "구성 파일을 구문 분석할 수 없음"
 
-#: dists/android.strings.xml.cpp:56
+#: dists/android.strings.xml.cpp:58
 msgid "Run a game"
 msgstr "게임 실행"
 
-#: dists/android.strings.xml.cpp:57
+#: dists/android.strings.xml.cpp:59
 msgid "Search a game"
 msgstr "게임 검색"
 
-#: dists/android.strings.xml.cpp:58
+#: dists/android.strings.xml.cpp:60
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
@@ -3490,15 +3501,15 @@ msgstr ""
 "(아직) 게임 없음\n"
 "ScummVM을 열고 여기에 게임을 추가하세요."
 
-#: dists/android.strings.xml.cpp:59
+#: dists/android.strings.xml.cpp:61
 msgid "Game icon"
 msgstr "게임 아이콘"
 
-#: dists/android.strings.xml.cpp:60
+#: dists/android.strings.xml.cpp:62
 msgid "Shortcut label"
 msgstr "바로가기 레이블"
 
-#: dists/android.strings.xml.cpp:61
+#: dists/android.strings.xml.cpp:63
 msgid "Shortcut icon"
 msgstr "바로가기 아이콘"
 
@@ -4763,7 +4774,7 @@ msgstr "파일을 업로드할 수 없습니다!"
 msgid "Back to the files manager"
 msgstr "파일 관리자로 돌아가기"
 
-#: backends/networking/sdl_net/localwebserver.cpp:129
+#: backends/networking/sdl_net/localwebserver.cpp:133
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."

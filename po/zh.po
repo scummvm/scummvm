@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-08 18:20+0000\n"
+"POT-Creation-Date: 2026-07-12 10:29+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -3313,40 +3313,51 @@ msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:55
+msgid ""
+"Local network access permission was denied: Web server won't be reachable"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:56
+#, fuzzy
+#| msgid "ScummVM"
+msgid "ScummVM Web server"
+msgstr "cummVM"
+
+#: dists/android.strings.xml.cpp:57
 #, fuzzy
 #| msgid "the video mode could not be changed"
 msgid "Configuration file could not be parsed"
 msgstr "无法更改视频模式"
 
-#: dists/android.strings.xml.cpp:56
+#: dists/android.strings.xml.cpp:58
 #, fuzzy
 #| msgid "In 2D games"
 msgid "Run a game"
 msgstr "2D遊戲中"
 
-#: dists/android.strings.xml.cpp:57
+#: dists/android.strings.xml.cpp:59
 #, fuzzy
 #| msgid "Search in game list"
 msgid "Search a game"
 msgstr "在游戏列表中搜索"
 
-#: dists/android.strings.xml.cpp:58
+#: dists/android.strings.xml.cpp:60
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
 
-#: dists/android.strings.xml.cpp:59
+#: dists/android.strings.xml.cpp:61
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game icon"
 msgstr "遊戲選項"
 
-#: dists/android.strings.xml.cpp:60
+#: dists/android.strings.xml.cpp:62
 msgid "Shortcut label"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:61
+#: dists/android.strings.xml.cpp:63
 msgid "Shortcut icon"
 msgstr ""
 
@@ -4576,7 +4587,7 @@ msgstr ""
 msgid "Back to the files manager"
 msgstr ""
 
-#: backends/networking/sdl_net/localwebserver.cpp:129
+#: backends/networking/sdl_net/localwebserver.cpp:133
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."

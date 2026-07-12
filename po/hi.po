@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-08 18:20+0000\n"
+"POT-Creation-Date: 2026-07-12 10:29+0000\n"
 "PO-Revision-Date: 2026-06-26 17:22+0000\n"
 "Last-Translator: KARTIK SAXENA <kartiksaxena2005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -3390,38 +3390,49 @@ msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:55
-msgid "Configuration file could not be parsed"
+msgid ""
+"Local network access permission was denied: Web server won't be reachable"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:56
+#, fuzzy
+#| msgid "Quit ScummVM"
+msgid "ScummVM Web server"
+msgstr "ScummVM बंद करें"
+
+#: dists/android.strings.xml.cpp:57
+msgid "Configuration file could not be parsed"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:58
 #, fuzzy
 #| msgid "Saved games"
 msgid "Run a game"
 msgstr "सेव गेम्स"
 
-#: dists/android.strings.xml.cpp:57
+#: dists/android.strings.xml.cpp:59
 #, fuzzy
 #| msgid "Search"
 msgid "Search a game"
 msgstr "खोजें"
 
-#: dists/android.strings.xml.cpp:58
+#: dists/android.strings.xml.cpp:60
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
 
-#: dists/android.strings.xml.cpp:59
+#: dists/android.strings.xml.cpp:61
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game icon"
 msgstr "गेम विकल्प(O)..."
 
-#: dists/android.strings.xml.cpp:60
+#: dists/android.strings.xml.cpp:62
 msgid "Shortcut label"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:61
+#: dists/android.strings.xml.cpp:63
 msgid "Shortcut icon"
 msgstr ""
 
@@ -4672,7 +4683,7 @@ msgstr ""
 msgid "Back to the files manager"
 msgstr ""
 
-#: backends/networking/sdl_net/localwebserver.cpp:129
+#: backends/networking/sdl_net/localwebserver.cpp:133
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."

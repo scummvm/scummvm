@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-08 18:20+0000\n"
+"POT-Creation-Date: 2026-07-12 10:29+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -3486,39 +3486,50 @@ msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:55
+msgid ""
+"Local network access permission was denied: Web server won't be reachable"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:56
+#, fuzzy
+#| msgid "Quit ScummVM"
+msgid "ScummVM Web server"
+msgstr "Saír de ScummVM"
+
+#: dists/android.strings.xml.cpp:57
 #, fuzzy
 msgid "Configuration file could not be parsed"
 msgstr "non se puido cambiar o modo de vídeo."
 
-#: dists/android.strings.xml.cpp:56
+#: dists/android.strings.xml.cpp:58
 #, fuzzy
 msgid "Run a game"
 msgstr "Gardar partida:"
 
-#: dists/android.strings.xml.cpp:57
+#: dists/android.strings.xml.cpp:59
 #, fuzzy
 #| msgid "Search in game list"
 msgid "Search a game"
 msgstr "Buscar na lista de xogos"
 
-#: dists/android.strings.xml.cpp:58
+#: dists/android.strings.xml.cpp:60
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
 
-#: dists/android.strings.xml.cpp:59
+#: dists/android.strings.xml.cpp:61
 #, fuzzy
 msgid "Game icon"
 msgstr "~O~pcións..."
 
-#: dists/android.strings.xml.cpp:60
+#: dists/android.strings.xml.cpp:62
 #, fuzzy
 #| msgid "Show object labels"
 msgid "Shortcut label"
 msgstr "Mostrar etiquetas"
 
-#: dists/android.strings.xml.cpp:61
+#: dists/android.strings.xml.cpp:63
 msgid "Shortcut icon"
 msgstr ""
 
@@ -4860,7 +4871,7 @@ msgstr "O camiño non é un ficheiro"
 msgid "Back to the files manager"
 msgstr "Abre o diálogo do xestor de descargas."
 
-#: backends/networking/sdl_net/localwebserver.cpp:129
+#: backends/networking/sdl_net/localwebserver.cpp:133
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."

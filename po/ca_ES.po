@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-08 18:20+0000\n"
+"POT-Creation-Date: 2026-07-12 10:29+0000\n"
 "PO-Revision-Date: 2026-07-04 18:22+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -3414,18 +3414,29 @@ msgstr ""
 "ScummVM!"
 
 #: dists/android.strings.xml.cpp:55
+msgid ""
+"Local network access permission was denied: Web server won't be reachable"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:56
+#, fuzzy
+#| msgid "ScummVM (debug)"
+msgid "ScummVM Web server"
+msgstr "ScummVM (depurar)"
+
+#: dists/android.strings.xml.cpp:57
 msgid "Configuration file could not be parsed"
 msgstr "No s'ha pogut analitzar el fitxer de configuració"
 
-#: dists/android.strings.xml.cpp:56
+#: dists/android.strings.xml.cpp:58
 msgid "Run a game"
 msgstr "Executa una partida"
 
-#: dists/android.strings.xml.cpp:57
+#: dists/android.strings.xml.cpp:59
 msgid "Search a game"
 msgstr "Cerca una partida"
 
-#: dists/android.strings.xml.cpp:58
+#: dists/android.strings.xml.cpp:60
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
@@ -3433,15 +3444,15 @@ msgstr ""
 "Sense jocs (encara)\n"
 "Obriu ScummVM i afegiu els vostres jocs aquí."
 
-#: dists/android.strings.xml.cpp:59
+#: dists/android.strings.xml.cpp:61
 msgid "Game icon"
 msgstr "Icona del joc"
 
-#: dists/android.strings.xml.cpp:60
+#: dists/android.strings.xml.cpp:62
 msgid "Shortcut label"
 msgstr "Etiqueta de la drecera"
 
-#: dists/android.strings.xml.cpp:61
+#: dists/android.strings.xml.cpp:63
 msgid "Shortcut icon"
 msgstr "Icona de drecera"
 
@@ -4716,7 +4727,7 @@ msgstr "No es pot pujar a un fitxer!"
 msgid "Back to the files manager"
 msgstr "Torna al gestor de fitxers"
 
-#: backends/networking/sdl_net/localwebserver.cpp:129
+#: backends/networking/sdl_net/localwebserver.cpp:133
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."

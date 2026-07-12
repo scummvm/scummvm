@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-08 18:20+0000\n"
+"POT-Creation-Date: 2026-07-12 10:29+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://"
@@ -3484,18 +3484,29 @@ msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr "ScummVM 存储访问框架的权限被撤回了！"
 
 #: dists/android.strings.xml.cpp:55
+msgid ""
+"Local network access permission was denied: Web server won't be reachable"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:56
+#, fuzzy
+#| msgid "ScummVM (debug)"
+msgid "ScummVM Web server"
+msgstr "ScummVM（调试）"
+
+#: dists/android.strings.xml.cpp:57
 msgid "Configuration file could not be parsed"
 msgstr "无法解析配置文件"
 
-#: dists/android.strings.xml.cpp:56
+#: dists/android.strings.xml.cpp:58
 msgid "Run a game"
 msgstr "运行游戏"
 
-#: dists/android.strings.xml.cpp:57
+#: dists/android.strings.xml.cpp:59
 msgid "Search a game"
 msgstr "搜索游戏"
 
-#: dists/android.strings.xml.cpp:58
+#: dists/android.strings.xml.cpp:60
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
@@ -3503,15 +3514,15 @@ msgstr ""
 "（还）没有游戏\n"
 "打开 ScummVM，将你的游戏添加到这里。"
 
-#: dists/android.strings.xml.cpp:59
+#: dists/android.strings.xml.cpp:61
 msgid "Game icon"
 msgstr "游戏图标"
 
-#: dists/android.strings.xml.cpp:60
+#: dists/android.strings.xml.cpp:62
 msgid "Shortcut label"
 msgstr "快捷方式标签"
 
-#: dists/android.strings.xml.cpp:61
+#: dists/android.strings.xml.cpp:63
 msgid "Shortcut icon"
 msgstr "快捷方式图标"
 
@@ -4822,7 +4833,7 @@ msgstr "无法上传进文件！"
 msgid "Back to the files manager"
 msgstr "返回文件管理器"
 
-#: backends/networking/sdl_net/localwebserver.cpp:129
+#: backends/networking/sdl_net/localwebserver.cpp:133
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."

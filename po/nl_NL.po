@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-08 18:20+0000\n"
+"POT-Creation-Date: 2026-07-12 10:29+0000\n"
 "PO-Revision-Date: 2026-02-11 14:23+0000\n"
 "Last-Translator: SecularSteve <fairfull.playing@gmail.com>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -3513,18 +3513,29 @@ msgid "Storage Access Framework Permissions for ScummVM were revoked!"
 msgstr "Storage Access Framework rechten van ScummVM zijn teruggetrokken!"
 
 #: dists/android.strings.xml.cpp:55
+msgid ""
+"Local network access permission was denied: Web server won't be reachable"
+msgstr ""
+
+#: dists/android.strings.xml.cpp:56
+#, fuzzy
+#| msgid "ScummVM (debug)"
+msgid "ScummVM Web server"
+msgstr "ScummVM (debug)"
+
+#: dists/android.strings.xml.cpp:57
 msgid "Configuration file could not be parsed"
 msgstr "Configuratiebestand kon niet verwerkt worden"
 
-#: dists/android.strings.xml.cpp:56
+#: dists/android.strings.xml.cpp:58
 msgid "Run a game"
 msgstr "Speel een spel"
 
-#: dists/android.strings.xml.cpp:57
+#: dists/android.strings.xml.cpp:59
 msgid "Search a game"
 msgstr "Zoek een spel"
 
-#: dists/android.strings.xml.cpp:58
+#: dists/android.strings.xml.cpp:60
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
@@ -3532,15 +3543,15 @@ msgstr ""
 "(Nog) geen spellen\n"
 "Open ScummVM en voeg uw spellen hier toe."
 
-#: dists/android.strings.xml.cpp:59
+#: dists/android.strings.xml.cpp:61
 msgid "Game icon"
 msgstr "Spel pictogram"
 
-#: dists/android.strings.xml.cpp:60
+#: dists/android.strings.xml.cpp:62
 msgid "Shortcut label"
 msgstr "Snelkoppeling tekst"
 
-#: dists/android.strings.xml.cpp:61
+#: dists/android.strings.xml.cpp:63
 msgid "Shortcut icon"
 msgstr "Snelkoppeling pictogram"
 
@@ -4823,7 +4834,7 @@ msgstr "Kan niet uploaden naar een file!"
 msgid "Back to the files manager"
 msgstr "Terug naar de bestanden manager"
 
-#: backends/networking/sdl_net/localwebserver.cpp:129
+#: backends/networking/sdl_net/localwebserver.cpp:133
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."
