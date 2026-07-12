@@ -7,7 +7,22 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Zur Verbesserung der Perforamcen wurden die Audio-Mixer und -Konverter optimiert.
    - ImGui-basierte Oberfläche für den Event-Recorder implementiert.
    - Fehler korrigiert, durch den MIDI- und MT-32-Geräte in den Spiel-Optionen
-     nicht überschrieben werden konnten.
+     nicht überschrieben werden konnten
+   - Der Nuked-OPL3 AdLib-Emulator wurden durch den Nuked-OPL3-fast-Fork ausgetauscht.
+
+ Alcachofa:
+   - Unterstützung für Mortadelo y Filemón: Una Aventura de Cine Edición Original hinzugefügt.
+   - Unterstützung für Mortadelo y Filemón: Dos vaqueros chapuceros hinzugefügt.
+   - Unterstützung für Mortadelo y Filemón: Terror, Espanto y Pavor hinzugefügt.
+   - Unterstützung für Mortadelo y Filemón: La Sexta Secta hinzugefügt.
+   - Unterstützung für Mortadelo y Filemón: Operación Moscú hinzugefügt.
+   - Unterstützung für Mortadelo y Filemón: El Escarabajo de Cleopatra hinzugefügt.
+   - Unterstützung für Mortadelo y Filemón: La Banda de Corvino hinzugefügt.
+   - Unterstützung für Mortadelo y Filemón: Balones y Patadones hinzugefügt.
+   - Unterstützung für Mortadelo y Filemón: Mamelucos a la Romana hinzugefügt.
+
+ Bagel:
+   - Speicher-Optionen in Hodj n' Podj's Th Gesng Gme korrigiert.
 
  GLK:
    - Fehler korrigiert, durch den ausgewählte Schriftarten nicht korrekt angewendet wurden.
@@ -28,6 +43,12 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Allgemeine Flags werden nicht mehr gelöscht, wenn das Spiel (automatisch) gespeichert
      wird. Das Löschen der Flags hat in einigen Szenen zu Problemen geführt.
    - Spielstände können jetzt über den GMM geladen werden, bevor eine neue Szene gestartet wird.
+
+ SCUMM:
+   - Cursor-Skalierung in frühen Windows HE-Spielen korrigiert.
+
+ SLUDGE:
+   - Shape-Shift Escape wurde zur Spiele-Datenbank hinzugefügt.
 
  Atari-Portierung:
    - Unterstützung für die nFM-Bibliothek hinzugefügt.
