@@ -98,16 +98,45 @@ private:
 		byte midiLoopFlag;
 		uint32 streamSize;
 		bool streamFault;
+
+		Track() {
+			state = 0;
+			streamBase = nullptr;
+			eventDataSize = 0;
+			eventCursor = 0;
+
+			for (uint channel = 0; channel < MIDIPLYR_CHANNEL_COUNT; channel++)
+				channelState[channel] = MIDIPLYR_FREE_CHANNEL;
+
+			rate = 0;
+			startTick = 0;
+			volume = 0;
+			pitch = 0;
+			marker = 0;
+			midiLoopFlag = 0;
+			streamSize = 0;
+			streamFault = false;
+		}
 	};
 
 	struct Note {
 		uint16 channel;
 		uint16 pitch;
+
+		Note() {
+			channel = 0;
+			pitch = 0;
+		}
 	};
 
 	struct ChannelSlot {
 		byte inUse;
 		byte volumePercent;
+
+		ChannelSlot() {
+			inUse = 0;
+			volumePercent = 100;
+		}
 	};
 
 	static void timerProc(void *refCon);
@@ -148,48 +177,48 @@ private:
 	void vocSrUpdateCountersInternal();
 
 	DriverVersion _driverVersion;
-	MidiDriver *_midiDriver;
+	MidiDriver *_midiDriver = nullptr;
 	mutable Common::Mutex _mutex;
-	bool _started;
-	bool _timerInstalled;
+	bool _started = false;
+	bool _timerInstalled = false;
 
-	byte _noteCount;
-	uint16 _midiDeviceId;
-	uint32 _midiDeviceHandle;
-	uint16 _deferredCc7QueuedCount;
+	byte _noteCount = 0;
+	uint16 _midiDeviceId = 0;
+	uint32 _midiDeviceHandle = 0;
+	uint16 _deferredCc7QueuedCount = 0;
 	uint16 _deferredCc7[MIDIPLYR_DEFERRED_CC7_COUNT_MAX];
 	uint16 _deferredCc7Order[MIDIPLYR_CHANNEL_COUNT];
-	byte _sendDirectGuard;
-	uint32 _seqCurrentTick;
-	uint16 _vocBlockNo;
-	uint32 _vocUnknown;
+	byte _sendDirectGuard = 0;
+	uint32 _seqCurrentTick = 0;
+	uint16 _vocBlockNo = 0;
+	uint32 _vocUnknown = 0;
 
-	byte _comfyboardStopReading;
-	uint16 _comfyboardSampleIndex;
-	uint32 _comfyboardButtons;
-	uint32 _comfyboardHostButtons;
-	byte _comfyboardSleepUseStopped;
-	uint16 _comfyboardPort;
-	uint32 _comfyboardXorMask;
+	byte _comfyboardStopReading = 1;
+	uint16 _comfyboardSampleIndex = 0;
+	uint32 _comfyboardButtons = 0;
+	uint32 _comfyboardHostButtons = 0;
+	byte _comfyboardSleepUseStopped = 1;
+	uint16 _comfyboardPort = 0;
+	uint32 _comfyboardXorMask = 0;
 	byte _comfyboardSamples[8];
-	byte _comfyboardSavedControl;
+	byte _comfyboardSavedControl = 0;
 
 	ChannelSlot _channels[MIDIPLYR_CHANNEL_COUNT];
-	uint16 _timeFracHi;
-	uint16 _timeFracLo;
-	byte _increaseVocCounter;
-	uint32 _tempoAcc;
-	uint32 _timeFracAcc;
+	uint16 _timeFracHi = 0;
+	uint16 _timeFracLo = 0;
+	byte _increaseVocCounter = 0;
+	uint32 _tempoAcc = 0;
+	uint32 _timeFracAcc = 0;
 	Note _notes[MIDIPLYR_NOTE_CAPACITY];
-	uint16 _midiOutResult;
+	uint16 _midiOutResult = 0;
 	Track _tracks[kTrackCount];
-	uint16 _midiFileFormat;
-	uint32 _ticksPerQuarter;
-	uint16 _channelAvailMask;
-	uint16 _drumsChannel;
-	uint16 _midiNoteCountCap;
-	uint16 _vocSnapshotHi;
-	uint16 _vocSnapshotLo;
+	uint16 _midiFileFormat = 0;
+	uint32 _ticksPerQuarter = 0;
+	uint16 _channelAvailMask = 0xFFFF;
+	uint16 _drumsChannel = 9;
+	uint16 _midiNoteCountCap = 0;
+	uint16 _vocSnapshotHi = 0;
+	uint16 _vocSnapshotLo = 0;
 };
 
 } // End of namespace Comfy
