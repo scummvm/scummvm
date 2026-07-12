@@ -29,6 +29,8 @@
 #include "mads/madsv2/core/fileio.h"
 #include "mads/madsv2/core/game.h"
 #include "mads/madsv2/core/himem.h"
+#include "mads/madsv2/core/imath.h"
+#include "mads/madsv2/core/keys.h"
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/magic.h"
 #include "mads/madsv2/core/matte.h"
@@ -37,7 +39,11 @@
 #include "mads/madsv2/core/pal.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/quote.h"
+#include "mads/madsv2/core/screen.h"
+#include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/speech.h"
+#include "mads/madsv2/core/timer.h"
+#include "mads/madsv2/core/video.h"
 #include "mads/madsv2/nebular/main_menu.h"
 #include "mads/madsv2/nebular/menus.h"
 #include "mads/madsv2/engine.h"
@@ -50,73 +56,188 @@ constexpr bool SHOW_LINES = true;
 constexpr byte LINE_COLOR = 2;
 
 char *quotes;
+static int mainmenu_val1;
+static void *mainmenu_ptr1;
+static void *mainmenu_ptr2;
+static Palette black_palette;
+
+static void timer_function() {
+	// TODO
+}
 
 static void main_menu_main() {
-	// TODO
-	selected_item = 0;
-	return;
-
 	auto &screen = *g_engine->getScreen();
 	Palette palette;
+	int screenId, soundId;
 
-	if (!kernel_game_startup(19, KERNEL_STARTUP_CURSOR | KERNEL_STARTUP_INTERRUPT | KERNEL_STARTUP_FONT,
-		nullptr, nullptr)) {
-		matte_init(0xFFFF);
-		bool valid = !kernel_room_startup(920, 0, nullptr, true, true);
+	mcga_compute_retrace_parameters();
+	memset(&black_palette, 0, sizeof(black_palette));
 
-		// Setup scr_work to use the full surface of scr_main (i.e. 320x200).
-		// Because of this, viewing_at_y is actually == 0
-		scr_work.y = picture_map.viewport_y;
-		viewing_at_y = (200 - scr_work.y) >> 1;
+	mainmenu_val1 = 0;
+	pal_init(8, 8);
+	pal_white(master_palette);
 
-		mouse_cursor_sprite(cursor, 7);
-		mouse_show();
-		mouse_force(280, 126);
-		mouse_hide();
+	buffer_init(&scr_work, 320, 156);
+	viewing_at_y = (200 - scr_work.y) >> 1;
+	if (!scr_work.data)
+		error("mainmenu -- didn't get work screen.");
 
-		mouse_cursor_sprite(cursor, 1);
-		kernel_seq_init();
-		kernel_message_init();
-		kernel_animation_init();
-		kernel_init_dynamic();
+	mainmenu_ptr1 = nullptr;
 
-		picture_view_x = 0;
-		picture_view_y = 0;
-		new_background = true;
+	buffer_init(&scr_orig, 320, 156);
+	if (!scr_orig.data)
+		error("mainmenu -- didn't get orig screen.");
 
-		if (valid) {
-			memset(&palette, 0, sizeof(palette));
-			mcga_setpal(&palette);
-			mouse_cursor_sprite(cursor, 1);
+	buffer_init(&scr_depth, 320, 156);
+	if (!scr_depth.data)
+		error("mainmenu -- didn't get orig screen.");
 
-			if (SHOW_LINES && viewing_at_y != 0) {
-				screen.hLine(0, viewing_at_y - 2, 319, LINE_COLOR);
-				screen.hLine(0, scr_work.y + viewing_at_y + 1, 319, LINE_COLOR);
-			}
+	buffer_fill(scr_work, 0);
+	buffer_fill(scr_orig, 0);
+	buffer_fill(scr_depth, 15);
 
-			kernel_load_sound_driver("*#SOUND.DR9", 'N', 544, 0, 49);
+	// TODO: identify what disassembly calls "nullsub_1" corresponds to (called
+	// with the mode value right before video_init/mouse_init in this exact spot).
+	// screen_dominant_mode looked like the closest candidate (it's a no-op stub
+	// taking a single mode int, called immediately before video_init/mouse_init
+	// in the equivalent kernel_game_startup() sequence), so using that for now.
+	screen_dominant_mode(mcga_mode);
+	video_init(mcga_mode, -1);
+	mouse_init(-1, mcga_mode);
 
-			menu_control();
+	memset(&master_palette, 0, sizeof(master_palette));
+	mcga_setpal(&master_palette);
 
-			if (selected_item >= 0) {
-				// Zero out the first 3 entries of both magic color arrays
-				for (int i = 0; i < 3; i++) {
-					magic_color_values[i] = 0;
-					magic_color_flags[i] = 0;
-				}
+	// TODO: sub_11E31(scr_work.data, scr_work.x) - unidentified call, please
+	// confirm the target function before this is implemented.
 
-				mcga_getpal(&palette);
+	mouse_set_view_port_loc(0, viewing_at_y, scr_work.x, scr_work.y + viewing_at_y - 1);
+	mouse_set_view_port(0, 0);
 
-				magic_fade_to_grey(palette, 0, 0x10, 1, 1, 0, 0, 0);
-			}
-		}
+	timer_install();
+	keys_install();
+	matte_init(0xFFFF);
+	timer_activate_low_priority(timer_function);
 
-		free(quotes);
-		kernel_unload_sound_driver();
-		kernel_game_shutdown();
+	if (SHOW_LINES && viewing_at_y != 0) {
+		screen.hLine(0, viewing_at_y - 2, 319, LINE_COLOR);
+		screen.hLine(0, scr_work.y + viewing_at_y + 1, 319, LINE_COLOR);
 	}
 
-	mcga_reset();
+	menu_control();
+
+	if (selected_item >= 0) {
+		for (int i = 0; i < 3; i++) {
+			magic_color_values[i] = 0;
+			magic_color_flags[i] = 0;
+		}
+
+		mcga_getpal(&palette);
+		magic_fade_to_grey(palette, 0, 0x10, 1, 1, 0, 0, 0);
+	}
+
+	kernel_unload_sound_driver();
+
+	if (selected_item == 5) {
+		buffer_free(&scr_depth);
+		buffer_free(&scr_orig);
+		buffer_free(&scr_work);
+
+		srand(timer_read_dos());
+
+		char soundName[] = "#SOUND.007";
+		if (imath_random(1, 1000) > 500) {
+			screenId = 996;
+			soundId = 9;
+		} else {
+			screenId = 995;
+			soundName[strlen(soundName) - 1] = '4';
+			soundId = 12;
+		}
+
+		pal_init(1, 8);
+
+		RoomPtr room = room_load(screenId, 0, nullptr, &scr_orig, &scr_depth, &scr_walk,
+			&scr_special, &picture_map, &depth_map, &picture_resource,
+			&depth_resource, -1, -1, 0);
+
+		if (room) {
+			mouse_hide();
+			video_update(&scr_orig, 0, 0, 0, 0, 320, 200);
+
+			// TODO: kernel_load_sound_driver(-1, -1) - only two int arguments are
+			// pushed in the disassembly, which doesn't match the current 5-param
+			// (name, sound_card, address, type, irq) signature. Please confirm how
+			// Rex Nebular's sound driver should be loaded here.
+
+			sound_queue(soundId);
+
+			magic_map_to_grey_ramp(&master_palette, 0x10, 1, 1, 0, (MagicGreyPtr)&palette);
+
+			mouse_init_cycle();
+			bool flag1 = true;
+			bool flag2 = false;
+			long time = timer_read();
+
+			while (flag1) {
+				mouse_begin_cycle(false);
+
+				if (keys_any()) {
+					keys_get();
+					flag1 = false;
+					flag2 = true;
+				}
+
+				long elapsed = timer_read() - time;
+				if (elapsed > 900)
+					flag1 = false;
+
+				if (mouse_stop_stroke) {
+					flag1 = false;
+					flag2 = true;
+				}
+
+				mouse_end_cycle(false, true);
+			}
+
+			sound_queue(1);
+
+			if (flag2) {
+				memset(&master_palette, 0, sizeof(master_palette));
+				mcga_setpal(&master_palette);
+			} else {
+				magic_fade_to_grey(master_palette, 0, 0x10, 1, 1, 0, 0, 0);
+			}
+
+			kernel_unload_sound_driver();
+
+			keys_remove();
+			timer_remove();
+			mouse_hide();
+
+			mouse_init(0, 3);
+			video_init(3, -1);
+			mcga_reset();
+		}
+		// If room_load failed, the keys_remove/timer_remove/mouse_init/video_init/
+		// mcga_reset block above is intentionally skipped, matching the disassembly
+		// (which jumps straight past it to the final buffer_free/mem_free cleanup).
+	} else {
+		keys_remove();
+		timer_remove();
+		mouse_hide();
+
+		mouse_init(0, 3);
+		video_init(3, -1);
+		mcga_reset();
+	}
+
+	buffer_free(&scr_depth);
+	buffer_free(&scr_orig);
+	buffer_free(&scr_work);
+
+	if (mainmenu_ptr2)
+		mem_free(mainmenu_ptr2);
 }
 
 static void main_cold_data_init() {
