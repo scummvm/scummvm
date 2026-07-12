@@ -33,8 +33,9 @@ const PlainGameDescriptor comfyGames[] = {
 	{ 0, 0 }
 };
 
-const ADGameDescription gameDescriptions[] = {
+const ComfyGameDescription gameDescriptions[] = {
 	{
+		{
 		"comfyland",
 		nullptr,
 		AD_ENTRY3s("COMFY1/ENGLISH/COMFY.OBJ",    "7b4ce03e92a27c2271d3657d3c13084b", 221184,
@@ -44,9 +45,12 @@ const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		},
+		1
 	},
 
 	{
+		{
 		"comfyland",
 		"1999",
 		AD_ENTRY5s("COMFY1/ENGLISH/COMFY.OBJ",    "8bbeefa3c59c8e80046f35a9202f6095", 221184,
@@ -58,9 +62,12 @@ const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		},
+		3
 	},
 
 	{
+		{
 		"boo",
 		nullptr,
 		AD_ENTRY3s("BOO/ENGLISH/COMFY.OBJ",    "5d847524a1e1cfce9799a31acca777f3", 301056,
@@ -70,9 +77,12 @@ const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		},
+		3
 	},
 
 	{
+		{
 		"first",
 		"1999",
 		AD_ENTRY2s("FIRST/ENGLISH/COMFY.OBJ",    "c187ac3fd5d547f59ff18b98a6a2f10b", 43008,
@@ -81,9 +91,12 @@ const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		},
+		3
 	},
 
 	{
+		{
 		"first",
 		nullptr,
 		AD_ENTRY2s("FIRST/ENGLISH/COMFY.OBJ",    "fe23f262d2282f76488fbe401067a76c", 43008,
@@ -92,9 +105,12 @@ const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		},
+		2
 	},
 
 	{
+		{
 		"match",
 		nullptr,
 		AD_ENTRY2s("MATCH/ENGLISH/COMFY.OBJ",    "daf2c1e6d3bc019f026edbe5465df13b", 337920,
@@ -103,9 +119,12 @@ const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		},
+		2
 	},
 
 	{
+		{
 		"colors",
 		nullptr,
 		AD_ENTRY3s("COLORS/ENGLISH/COMFY.OBJ",    "6679b5e35db4c4312d4cb85076403760", 268288,
@@ -115,9 +134,12 @@ const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		},
+		3
 	},
 
 	{
+		{
 		"concert",
 		nullptr,
 		AD_ENTRY3s("CONCERT/ENGLISH/COMFY.OBJ",    "c060145864e951fc13ba6106e75f4845", 272384,
@@ -127,9 +149,12 @@ const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		},
+		3
 	},
 
 	{
+		{
 		"friends",
 		nullptr,
 		AD_ENTRY3s("FRIENDS/ENGLISH/COMFY.OBJ",    "d4c620ba375834094b4151ebef862647", 364544,
@@ -139,9 +164,12 @@ const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		},
+		3
 	},
 
 	{
+		{
 		"panther",
 		nullptr,
 		AD_ENTRY3s("PANTHER/ENGLISH/COMFY.OBJ",    "05420f4122187233112a9dc374303c15", 65536,
@@ -151,9 +179,11 @@ const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		},
+		3
 	},
 
-	AD_TABLE_END_MARKER
+	{ AD_TABLE_END_MARKER, 0 }
 };
 
 } // End of namespace Comfy

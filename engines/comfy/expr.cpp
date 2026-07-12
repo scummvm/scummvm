@@ -94,7 +94,7 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 			continue;
 		}
 
-		if (_engineVersion == kEngineVersion3 && opcode >= 0x17 && opcode <= 0x21) {
+		if (_engineVersion == 3 && opcode >= 0x17 && opcode <= 0x21) {
 			uint16 value = 0;
 			bool pushValue = true;
 			if (opcode == 0x17)

@@ -348,7 +348,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			midiStopAndRemove(channel);
 		} else if (subop == 6 && channel < COMFY_MIDI_CHANNEL_COUNT) {
 			midiStopAndFireKeys(channel);
-		} else if ((subop == 7 || subop == 8) && _engineVersion == kEngineVersion3 &&
+		} else if ((subop == 7 || subop == 8) && _engineVersion == 3 &&
 				channel < COMFY_MIDI_CHANNEL_COUNT && _midiPlyrDriver) {
 			_midiPlyrDriver->musicSetLoop(subop == 7 ? 1 : 0, channel);
 		}

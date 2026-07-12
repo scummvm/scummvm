@@ -22,13 +22,13 @@
 #ifndef COMFY_METAENGINE_H
 #define COMFY_METAENGINE_H
 
-#include "engines/advancedDetector.h"
+#include "comfy/detection.h"
 
-class ComfyMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
+class ComfyMetaEngine : public AdvancedMetaEngine<Comfy::ComfyGameDescription> {
 public:
 	const char *getName() const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Comfy::ComfyGameDescription *desc) const override;
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.

@@ -85,12 +85,6 @@ namespace Comfy {
 
 class MidiPlyrDriver;
 
-enum ComfyEngineVersion {
-	kEngineVersion1, // 1994-1995
-	kEngineVersion2, // 1996-1997
-	kEngineVersion3  // 1999
-};
-
 #ifdef USE_IMGUI
 void onImGuiInit();
 void onImGuiRender();
@@ -343,8 +337,8 @@ private:
 		kScriptDeactivatedRoot
 	};
 
-	const ADGameDescription *_gameDescription;
-	ComfyEngineVersion _engineVersion;
+	const ComfyGameDescription *_game;
+	byte _engineVersion;
 	Common::Path _gameDirectory;
 	Common::Path _introDirectory;
 	Common::Path _gameDataPath;
@@ -852,7 +846,7 @@ protected:
 	Common::Error run() override;
 
 public:
-	ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	ComfyEngine(OSystem *syst, const ComfyGameDescription *gameDesc);
 	~ComfyEngine() override;
 
 	void setToyKeyboardState(uint32 activeMask, uint32 latchedMask, uint32 holdMask);

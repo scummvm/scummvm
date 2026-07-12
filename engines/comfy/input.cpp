@@ -88,7 +88,7 @@ void ComfyEngine::lptKeyToFlags(uint16 key) {
 			flags |= 0x10;
 			break;
 		case 27:
-			if (_engineVersion == kEngineVersion3 && (_inputDeviceMode == 2 || _inputDeviceMode == 4) &&
+			if (_engineVersion == 3 && (_inputDeviceMode == 2 || _inputDeviceMode == 4) &&
 					!_inputKeyboardBit7Held)
 				_inputKeyboardResetRequested = true;
 			else
@@ -113,7 +113,7 @@ void ComfyEngine::hostKeyboardResetMap() {
 }
 
 bool ComfyEngine::hostKeyboardLoadDatMap() {
-	if (_engineVersion == kEngineVersion3 && _inputDeviceMode == 1)
+	if (_engineVersion == 3 && _inputDeviceMode == 1)
 		return true;
 
 	hostKeyboardResetMap();
@@ -218,14 +218,14 @@ uint32 ComfyEngine::lptKeyboardScan() {
 	// iterations after each write, and sampled three bits from the status port. Concatenating those
 	// eight 3-bit samples produced the 24-contact scan word. ScummVM supplies that same word from the
 	// keymapper, KEYBOARD.DAT mappings, and the toy-keyboard UI instead of accessing an I/O port.
-	if (_engineVersion == kEngineVersion3 && _inputDeviceMode == 2) {
+	if (_engineVersion == 3 && _inputDeviceMode == 2) {
 		_keyboardActiveMask |= _keymapperActiveMask;
 		_keyboardLatchedMask |= _keymapperLatchedMask;
 		_keymapperActiveMask = 0;
 		_keymapperLatchedMask = 0;
 	}
 
-	if (_engineVersion == kEngineVersion3) {
+	if (_engineVersion == 3) {
 		if (_inputKeyboardResetRequested) {
 			_inputKeyboardResetRequested = false;
 			_inputKeyboardSyntheticBit7 = false;
@@ -272,15 +272,15 @@ uint32 ComfyEngine::lptKeyboardScan() {
 	uint32 comfyboardState = (_toyKeyboardActiveMask | _toyKeyboardHoldMask |
 		_toyKeyboardLatchedMask) & 0x00FFFFFF;
 	uint32 comfyboardHostState = (comfyboardState | _keymapperActiveMask | _keymapperLatchedMask) & 0x00FFFFFF;
-	if (_engineVersion == kEngineVersion3 && _midiPlyrDriver) {
+	if (_engineVersion == 3 && _midiPlyrDriver) {
 		_midiPlyrDriver->comfyboardSetHostButtons(comfyboardHostState);
 		comfyboardState |= _midiPlyrDriver->comfyboardGetButtons() & 0x00FFFFFF;
 	}
 
-	if (_engineVersion != kEngineVersion3 || _inputDeviceMode != 1)
+	if (_engineVersion != 3 || _inputDeviceMode != 1)
 		keyboardState |= _keymapperActiveMask | _keymapperLatchedMask;
 
-	if (_engineVersion == kEngineVersion3 && !_inputDeviceMode) {
+	if (_engineVersion == 3 && !_inputDeviceMode) {
 		_inputDeviceMode = inputDetectDevice(comfyboardState, keyboardState);
 		if (_inputDeviceMode == 1 && _midiPlyrDriver) {
 			_midiPlyrDriver->comfyboardStopSleepUse();
@@ -291,11 +291,11 @@ uint32 ComfyEngine::lptKeyboardScan() {
 	}
 
 	uint32 scanState;
-	if (_engineVersion == kEngineVersion3 && _inputDeviceMode == 1)
+	if (_engineVersion == 3 && _inputDeviceMode == 1)
 		scanState = comfyboardState;
-	else if (_engineVersion == kEngineVersion3 && _inputDeviceMode == 2)
+	else if (_engineVersion == 3 && _inputDeviceMode == 2)
 		scanState = keyboardState | (_inputKeyboardBit7Held ? 0x80 : 0);
-	else if (_engineVersion == kEngineVersion3 && (_inputDeviceMode == 3 || _inputDeviceMode == 4)) {
+	else if (_engineVersion == 3 && (_inputDeviceMode == 3 || _inputDeviceMode == 4)) {
 		// Modes 3 and 4 used WinMM MIDI input. ScummVM supplies their logical contacts through the keymapper/UI.
 		scanState = (_toyKeyboardActiveMask | _toyKeyboardHoldMask | _toyKeyboardLatchedMask |
 				_keymapperActiveMask | _keymapperLatchedMask) & 0x00FFFFFF;
@@ -304,7 +304,7 @@ uint32 ComfyEngine::lptKeyboardScan() {
 			if (_inputKeyboardSyntheticBit7)
 				scanState |= 0x80;
 		}
-	} else if (_engineVersion == kEngineVersion3 && !_inputDeviceMode) {
+	} else if (_engineVersion == 3 && !_inputDeviceMode) {
 		if (_inputComfyboardSuppressBit1)
 			comfyboardState &= ~0x02;
 
@@ -316,7 +316,7 @@ uint32 ComfyEngine::lptKeyboardScan() {
 		scanState = comfyboardState | keyboardState;
 	}
 
-	if (_engineVersion == kEngineVersion3)
+	if (_engineVersion == 3)
 		_inputKeyboardBit7Held = (scanState & 0x80) != 0;
 
 	_keyboardActiveMask &= ~_keyboardLatchedMask;
@@ -422,7 +422,7 @@ void ComfyEngine::lptKeyboardDispatchEvents(uint32 scanState) {
 void ComfyEngine::lptKeyboardInit() {
 	_inputInitialDeviceMode = _inputDeviceMode;
 	_keyboardUiVisible = true;
-	if (_engineVersion == kEngineVersion3 && _midiPlyrDriver &&
+	if (_engineVersion == 3 && _midiPlyrDriver &&
 			(_inputDeviceMode == 0 || _inputDeviceMode == 1)) {
 		if (!_inputDeviceMode)
 			_midiPlyrDriver->comfyboardStartSleepUse();
@@ -437,7 +437,7 @@ void ComfyEngine::lptKeyboardScanAndProcess() {
 }
 
 void ComfyEngine::lptKeyboardShutdown() {
-	if (_engineVersion == kEngineVersion3 && _midiPlyrDriver &&
+	if (_engineVersion == 3 && _midiPlyrDriver &&
 			(_inputInitialDeviceMode == 0 || _inputInitialDeviceMode == 1)) {
 		_midiPlyrDriver->comfyboardStopReading();
 		_midiPlyrDriver->comfyboardStopSleepUse();

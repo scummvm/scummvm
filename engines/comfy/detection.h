@@ -40,15 +40,22 @@ enum ComfyDebugChannels {
 	kDebugScript,
 };
 
+struct ComfyGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
+	ADGameDescription desc;
+	byte version;
+};
+
 extern const PlainGameDescriptor comfyGames[];
 
-extern const ADGameDescription gameDescriptions[];
+extern const ComfyGameDescription gameDescriptions[];
 
 #define GAMEOPTION_FORCE_LANGUAGE_SETUP GUIO_GAMEOPTIONS1
 
 } // End of namespace Comfy
 
-class ComfyMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
+class ComfyMetaEngineDetection : public AdvancedMetaEngineDetection<Comfy::ComfyGameDescription> {
 	static const DebugChannelDef debugFlagList[];
 
 public:
