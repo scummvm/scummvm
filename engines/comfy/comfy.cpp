@@ -99,7 +99,6 @@ Common::Error ComfyEngine::gameInit() {
 	imGuiCallbacks.render = onImGuiRender;
 	imGuiCallbacks.cleanup = onImGuiCleanup;
 	_system->setImGuiCallbacks(imGuiCallbacks);
-	_keyboardUiInitialized = true;
 #endif
 
 	timerInit();
@@ -108,7 +107,7 @@ Common::Error ComfyEngine::gameInit() {
 	uint16 chooserScene = 2;
 	if (_multiLanguage && (ConfMan.getBool("force_language_setup") ||
 			!ConfMan.getBool("comfy_language_chosen"))) {
-		if (!iniGetGameDataPath(0x63)) {
+		if (!iniGetGameDataPath(99)) {
 			gameShutdown();
 			return Common::kNoGameDataFoundError;
 		}
@@ -124,7 +123,7 @@ Common::Error ComfyEngine::gameInit() {
 		ConfMan.flushToDisk();
 	}
 
-	if (!_hasDataPath && iniGetGameDataPath(0)) {
+	if (iniGetGameDataPath(0)) {
 		sceneRun(_currentScene, false, true);
 		if (shouldQuit()) {
 			gameShutdown();
@@ -138,29 +137,27 @@ Common::Error ComfyEngine::gameInit() {
 			return Common::kNoGameDataFoundError;
 		}
 
-		if (_currentScene == 0x63) {
+		if (_currentScene == 99) {
 			_currentScene = sceneRun(chooserScene, _multiLanguage, false);
 		} else {
 			chooserScene = _currentScene;
 			_currentScene = sceneRun(_currentScene, _multiLanguage, false);
 		}
 
-		if (_currentScene && _currentScene != 0x63)
+		if (_currentScene && _currentScene != 99)
 			iniWriteLanguage(_currentScene);
 	}
 
 	gameShutdown();
+
+#ifdef USE_IMGUI
+	_system->setImGuiCallbacks(ImGuiCallbacks());
+#endif
+
 	return Common::kNoError;
 }
 
 void ComfyEngine::gameShutdown() {
-#ifdef USE_IMGUI
-	if (_keyboardUiInitialized) {
-		_system->setImGuiCallbacks(ImGuiCallbacks());
-		_keyboardUiInitialized = false;
-	}
-#endif
-
 	if (_lptKeyboardInitialized) {
 		lptKeyboardShutdown();
 		midiShutdown();
@@ -197,7 +194,10 @@ uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
 	byte restorePalette = 1;
 	byte shouldStartNext = 0;
 	uint16 nextScene = 0;
+
 	_lptKeyboardInitialized = true;
+	_keyboardUiInitialized = true;
+
 	hostKeyboardLoadDatMap();
 
 	if (_sceneRunBuffer.empty()) {
@@ -251,7 +251,9 @@ uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
 	}
 
 	videoShutdown(restorePalette);
+
 	_lptKeyboardInitialized = false;
+	_keyboardUiInitialized = false;
 
 	return nextScene;
 }

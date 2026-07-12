@@ -74,8 +74,19 @@ const ADGameDescription gameDescriptions[] = {
 
 	{
 		"first",
-		nullptr,
+		"1999",
 		AD_ENTRY2s("FIRST/ENGLISH/COMFY.OBJ",    "c187ac3fd5d547f59ff18b98a6a2f10b", 43008,
+				   "FIRST/ENGLISH/MIDIFILE.DAT", "4ab6c35308ed504a8abb96ae3fe81fe4", 1232),
+		Common::UNK_LANG,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+	},
+
+	{
+		"first",
+		nullptr,
+		AD_ENTRY2s("FIRST/ENGLISH/COMFY.OBJ",    "fe23f262d2282f76488fbe401067a76c", 43008,
 				   "FIRST/ENGLISH/MIDIFILE.DAT", "4ab6c35308ed504a8abb96ae3fe81fe4", 1232),
 		Common::UNK_LANG,
 		Common::kPlatformWindows,

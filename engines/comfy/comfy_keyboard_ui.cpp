@@ -130,15 +130,15 @@ static void keyboardDrawToggle(const char *label, uint bit, ImVec2 size, ImU32 o
 }
 
 void onImGuiInit() {
-	ImGuiIO &io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
 	_state = new ImGuiState();
 	_state->_engine = (ComfyEngine *)g_engine;
 }
 
 void onImGuiRender() {
 	if (!_state || !_state->_engine || _state->_engine->shouldQuit())
+		return;
+
+	if (!_state->_engine->_keyboardUiInitialized)
 		return;
 
 	if (!_state->_visible) {
@@ -148,8 +148,6 @@ void onImGuiRender() {
 		_state->_holdMask = 0;
 		return;
 	}
-
-	ImGui::GetIO().ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
 
 	ImGui::SetNextWindowPos(ImVec2(8, 8), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(740, 440), ImGuiCond_FirstUseEver);

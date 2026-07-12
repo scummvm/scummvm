@@ -420,7 +420,6 @@ private:
 	uint16 _inputKeyboardPulseTicks = 0;
 	bool _inputKeyboardPulseLatched = false;
 	uint32 _inputKeyboardPulseTime = 0;
-	bool _keyboardUiInitialized = false;
 	bool _keyboardUiVisible = true;
 	Common::Array<byte> _comfyObjData;
 	Common::Array<byte> _picFileData;
@@ -855,6 +854,7 @@ protected:
 public:
 	ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~ComfyEngine() override;
+
 	void setToyKeyboardState(uint32 activeMask, uint32 latchedMask, uint32 holdMask);
 
 	/**
@@ -873,6 +873,7 @@ public:
 		return (f == kSupportsReturnToLauncher);
 	};
 
+	bool _keyboardUiInitialized = false;
 };
 
 extern ComfyEngine *g_engine;
