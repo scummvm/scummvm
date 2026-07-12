@@ -31,12 +31,17 @@ For a more comprehensive changelog of the latest experimental code, see:
  Freescape:
    - Added support for loading ZX Spectrum games directly from TAP/TZX tape images.
 
+ Lure:
+   - Improved character pathfinding
+   - Fix being unable to talk to characters after a one-sided conversation
+
  MM:
    - Fix multiple M&M1 classic combat crashes.
    - Implement M&M1 classic PC speaker sound.
    - Fix stale view close handling causing crash.
    - Fix M&M1 spelling mistakes.
    - Improved M&M1 Enhanced mouse support, character generation, and general in-game UI.
+   - Fixed cutscene subtitle rendering
 
  NANCY:
    - Generic flags are no longer cleared when saving or auto-saving. Clearing
