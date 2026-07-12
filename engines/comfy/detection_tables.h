@@ -106,7 +106,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 		},
-		2
+		1
 	},
 
 	{
