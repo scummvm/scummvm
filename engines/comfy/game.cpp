@@ -230,7 +230,7 @@ Common::SeekableReadStream *ComfyEngine::pathFOpen(const Common::Path &filename,
 
 bool ComfyEngine::readAssetFile(const Common::Path &filename, Common::Array<byte> &data) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(pathFOpen(filename, true));
-	if (!stream || stream->size() < 0 || uint64(stream->size()) > UINT32_MAX)
+	if (!stream || stream->size() < 0 || (uint64)stream->size() > UINT32_MAX)
 		return false;
 
 	uint32 size = stream->size();
@@ -263,7 +263,7 @@ bool ComfyEngine::picFileOpen() {
 		return false;
 
 	uint16 count = assetsReadLe16At(_picFileData, 0);
-	uint32 tableSize = 2 + uint32(count) * 0x11;
+	uint32 tableSize = 2 + (uint32)count * 0x11;
 	if (tableSize > _picFileData.size())
 		return false;
 
@@ -322,7 +322,7 @@ void ComfyEngine::midiFileReadEntries(byte *destination) {
 	if (!destination || _midiFileData.size() <= 4)
 		return;
 
-	uint32 size = uint32(_midiEntryCount) * 6;
+	uint32 size = (uint32)_midiEntryCount * 6;
 	memcpy(destination, &_midiFileData[4], MIN<uint32>(size, _midiFileData.size() - 4));
 }
 
@@ -374,7 +374,7 @@ bool ComfyEngine::sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 
 
 	memset(_actorPcTable, 0, sizeof(_actorPcTable));
 	for (uint i = 0; i < 0xC7 && i < ARRAYSIZE(_actorPcTable); i++)
-		_actorPcTable[i] = uint32(i + 1) << 24;
+		_actorPcTable[i] = (uint32)(i + 1) << 24;
 
 	if (0xC7 < ARRAYSIZE(_actorPcTable))
 		_actorPcTable[0xC7] = 0;
@@ -382,7 +382,7 @@ bool ComfyEngine::sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 
 	uint32 stringBytes = _stringTable.size() * sizeof(uint16);
 	uint32 handleBytes = _sceneHandles.size() * sizeof(uint16);
 	uint32 actorBytes = _actors.size() * (_engineVersion == kEngineVersion3 ? COMFY_ACTOR_SIZE_V3 : COMFY_ACTOR_SIZE);
-	uint32 keyBytes = (uint32(keyBitCount) + 1) / 8 + 1;
+	uint32 keyBytes = ((uint32)keyBitCount + 1) / 8 + 1;
 	_sceneMidiInstanceOffset = 0;
 	if (_engineVersion == kEngineVersion3) {
 		_sceneEntryListOffset = COMFY_SCENE_MIDI_INSTANCE_BYTES + COMFY_SCENE_VOC_STATE_BYTES_V3 +
@@ -458,15 +458,15 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 		memset(&_environmentData[0], 0, environmentBytes);
 	_xmsEnvAllocated = !_environmentData.empty();
 
-	uint32 midiHeaderBytes = assetsAlignEven32(uint32(_midiEntryCount) * 6);
+	uint32 midiHeaderBytes = assetsAlignEven32((uint32)_midiEntryCount * 6);
 	uint16 soundEntryCount = 0;
 	uint16 soundEntrySize = 0;
 	soundGetTileParams(&soundEntryCount, &soundEntrySize);
-	uint32 soundHeaderBytes = assetsAlignEven32(uint32(soundEntryCount) * soundEntrySize);
-	uint32 objectTableBytes = assetsAlignEven32(uint32(_numObjects) * 0x11);
+	uint32 soundHeaderBytes = assetsAlignEven32((uint32)soundEntryCount * soundEntrySize);
+	uint32 objectTableBytes = assetsAlignEven32((uint32)_numObjects * 0x11);
 	uint32 headerTotalBytes = midiHeaderBytes + soundHeaderBytes + objectTableBytes;
 	uint16 headerPages = (headerTotalBytes + 0x400) / 0x400;
-	_headerXmsData.resize(uint32(headerPages) * 0x400);
+	_headerXmsData.resize((uint32)headerPages * 0x400);
 	if (!_headerXmsData.empty())
 		memset(&_headerXmsData[0], 0, _headerXmsData.size());
 
@@ -550,7 +550,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	_sceneEntryCount = 0;
 	_sceneEntryFrameSize = 0;
 	Common::ScopedPtr<Common::SeekableReadStream> message(pathFOpen(Common::Path("MESSAGE"), true));
-	_usesWcomfy99ScriptOps = bool(message);
+	_usesWcomfy99ScriptOps = (bool)message;
 	_scriptFault = false;
 
 	return true;

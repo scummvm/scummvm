@@ -41,7 +41,7 @@ public:
 				return value;
 			}
 
-			value |= uint32((_data[bytePosition] >> (_bitPosition & 7)) & 1) << bit;
+			value |= (uint32)((_data[bytePosition] >> (_bitPosition & 7)) & 1) << bit;
 			_bitPosition++;
 		}
 
@@ -139,7 +139,7 @@ bool ComfyEngine::soundDecodeEntry(uint16 index) {
 	while (pc < end && commandCount++ < dataSize) {
 		byte command = _vocFileData[pc++];
 		if (!command) {
-			SoundCue cue = {0, uint32((_soundPcm.size() * 100) / _soundSampleRate)};
+			SoundCue cue = {0, (uint32)((_soundPcm.size() * 100) / _soundSampleRate)};
 			_soundCues.push_back(cue);
 			break;
 		}
@@ -147,8 +147,8 @@ bool ComfyEngine::soundDecodeEntry(uint16 index) {
 		if (3 > end - pc)
 			return false;
 
-		uint32 argument = uint32(_vocFileData[pc]) | (uint32(_vocFileData[pc + 1]) << 8) |
-			(uint32(_vocFileData[pc + 2]) << 16);
+		uint32 argument = (uint32)_vocFileData[pc] | ((uint32)_vocFileData[pc + 1] << 8) |
+			((uint32)_vocFileData[pc + 2] << 16);
 		pc += 3;
 		if (command == 1 || command == 2) {
 			uint32 length = argument;
@@ -184,7 +184,7 @@ bool ComfyEngine::soundDecodeEntry(uint16 index) {
 			if (nextSample != sample) {
 				uint32 oldRate = _soundSampleRate;
 				uint32 newRate = 0x0F4240 / (0x100 - nextSample);
-				fill = uint16((uint32(fill) * oldRate) / newRate);
+				fill = (uint16)(((uint32)fill * oldRate) / newRate);
 			}
 
 			uint32 oldSize = _soundPcm.size();
@@ -194,7 +194,7 @@ bool ComfyEngine::soundDecodeEntry(uint16 index) {
 			if (2 > end - pc)
 				return false;
 
-			SoundCue cue = {READ_LE_UINT16(&_vocFileData[pc]), uint32((_soundPcm.size() * 100) / _soundSampleRate)};
+			SoundCue cue = {READ_LE_UINT16(&_vocFileData[pc]), (uint32)((_soundPcm.size() * 100) / _soundSampleRate)};
 			_soundCues.push_back(cue);
 			pc += 2;
 		} else if (command == 6) {
@@ -262,7 +262,7 @@ bool ComfyEngine::soundDecodeCompressedEntry(uint32 dataOffset, uint32 dataSize)
 		}
 
 		if (command == 0) {
-			SoundCue cue = {0, uint32((_soundPcm.size() * 100) / _soundSampleRate)};
+			SoundCue cue = {0, (uint32)((_soundPcm.size() * 100) / _soundSampleRate)};
 			_soundCues.push_back(cue);
 			break;
 		} else if (command == 1 || command == 2) {
@@ -299,7 +299,7 @@ bool ComfyEngine::soundDecodeCompressedEntry(uint32 dataOffset, uint32 dataSize)
 							value = bits.read(8);
 						else {
 							byte predictor = output >= predictorDistance ? _soundPcm[output - predictorDistance] : 0x80;
-							value = predictor + byte(delta - (1 << (width - 1)));
+							value = predictor + (byte)(delta - (1 << (width - 1)));
 						}
 					}
 
@@ -316,7 +316,7 @@ bool ComfyEngine::soundDecodeCompressedEntry(uint32 dataOffset, uint32 dataSize)
 		} else if (command == 4) {
 			uint16 mode = bits.read(2);
 			uint16 value = mode == 0 ? 1 : mode == 1 ? 2 : mode == 2 ? bits.read(8) : bits.read(16);
-			SoundCue cue = {value, uint32((_soundPcm.size() * 100) / _soundSampleRate)};
+			SoundCue cue = {value, (uint32)((_soundPcm.size() * 100) / _soundSampleRate)};
 			_soundCues.push_back(cue);
 		} else if (command == 6) {
 			loopCount = bits.read(16);
@@ -372,7 +372,7 @@ void ComfyEngine::soundAdvanceTick() {
 	}
 
 	uint32 counter = _midiPlyrDriver ? _midiPlyrDriver->getVocCounter() :
-		uint32((_mixer->getSoundElapsedTime(_soundHandle) + 9) / 10);
+		(uint32)((_mixer->getSoundElapsedTime(_soundHandle) + 9) / 10);
 	uint32 compareCounter = counter >= 2 ? counter - 2 : 0;
 	bool phaseCueSeen = false;
 	while (_soundNextCue < _soundCues.size() && compareCounter > _soundCues[_soundNextCue].counterThreshold &&

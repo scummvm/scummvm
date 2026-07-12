@@ -78,7 +78,7 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 	WRITE_LE_UINT16(sceneEntries + 1, _sceneEntryCount);
 	WRITE_LE_UINT16(sceneEntries + 3, _sceneEntryFrameSize);
 	for (uint i = 0; i < COMFY_SCENE_ENTRY_OFFSET_CAPACITY; i++)
-		WRITE_LE_UINT16(sceneEntries + 5 + i * 2, uint16(_sceneEntryOffsets[i]));
+		WRITE_LE_UINT16(sceneEntries + 5 + i * 2, (uint16)_sceneEntryOffsets[i]);
 
 	if (_engineVersion == kEngineVersion3) {
 		for (uint channel = 0; channel < COMFY_SCENE_MUSIC_CHANNEL_COUNT; channel++) {
@@ -135,23 +135,23 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 
 void ComfyEngine::envConvToXms(byte *source, uint16 index) {
 	if (!index || _sceneMemoryBlock.empty())
-		error("Invalid environment XMS destination %u", uint(index));
+		error("Invalid environment XMS destination %u", (uint)index);
 
 	sceneBlockPackRuntimeState();
-	uint32 offset = uint32(index - 1) * _sceneMemoryBlock.size();
+	uint32 offset = (uint32)(index - 1) * _sceneMemoryBlock.size();
 	if (offset > _environmentData.size() || _sceneMemoryBlock.size() > _environmentData.size() - offset)
-		error("Environment XMS destination %u is outside the allocated block", uint(index));
+		error("Environment XMS destination %u is outside the allocated block", (uint)index);
 
 	memcpy(&_environmentData[offset], source, _sceneMemoryBlock.size());
 }
 
 bool ComfyEngine::envXmsToConv(byte *destination, uint16 index) {
 	if (!index || _sceneMemoryBlock.empty())
-		error("Invalid environment XMS source %u", uint(index));
+		error("Invalid environment XMS source %u", (uint)index);
 
-	uint32 offset = uint32(index - 1) * _sceneMemoryBlock.size();
+	uint32 offset = (uint32)(index - 1) * _sceneMemoryBlock.size();
 	if (offset > _environmentData.size() || _sceneMemoryBlock.size() > _environmentData.size() - offset)
-		error("Environment XMS source %u is outside the allocated block", uint(index));
+		error("Environment XMS source %u is outside the allocated block", (uint)index);
 
 	memcpy(destination, &_environmentData[offset], _sceneMemoryBlock.size());
 	sceneBlockUnpackRuntimeState();
@@ -264,7 +264,7 @@ void ComfyEngine::sceneGoto(uint16 count) {
 	_sceneEntryListActive = true;
 	_sceneEntryCount = count;
 	uint32 frameSize = _engineVersion == kEngineVersion3 ? COMFY_SCENE_FRAME_BYTES_V3 : COMFY_SCENE_FRAME_BYTES;
-	_sceneEntryFrameSize = count ? frameSize / int16(count) : 0;
+	_sceneEntryFrameSize = count ? frameSize / (int16)count : 0;
 	for (uint i = 0; i < count && i < COMFY_SCENE_ENTRY_OFFSET_CAPACITY; i++)
 		_sceneEntryOffsets[i] = 0xFFFF;
 
@@ -303,7 +303,7 @@ void ComfyEngine::sceneStartWithMusic(uint16 scene) {
 	if (root) {
 		paletteLoadWithFade(actorReadU16(*root, kActorXFixed), 0);
 		if (actorReadU32(*root, kActorYFixed))
-			paletteApplyBrightness(byte(actorReadU16(*root, kActorYFixed)));
+			paletteApplyBrightness((byte)actorReadU16(*root, kActorYFixed));
 	}
 
 	if (_keyBits)
@@ -316,7 +316,7 @@ bool ComfyEngine::sceneEntryLoad(uint16 descriptor, uint16 index) {
 	sceneEntryReadFromXms(header, descriptor, sizeof(header));
 	uint16 size = READ_LE_UINT16(header);
 	uint32 fileOffset = READ_LE_UINT32(header + 2);
-	uint32 destinationOffset = uint32(_sceneEntryFrameSize) * index;
+	uint32 destinationOffset = (uint32)_sceneEntryFrameSize * index;
 	if (fileOffset > _midiFileData.size() || size > _midiFileData.size() - fileOffset ||
 			destinationOffset > _sceneFrameData.size() || size > _sceneFrameData.size() - destinationOffset)
 		return false;
@@ -373,7 +373,7 @@ void ComfyEngine::midiStopSong(uint16 channel) {
 
 void ComfyEngine::midiPlaySongAtFrame(uint16 channel, uint16 frame) {
 	midiStopSong(channel);
-	uint32 offset = uint32(_sceneEntryFrameSize) * frame;
+	uint32 offset = (uint32)_sceneEntryFrameSize * frame;
 	if (!_midiPlyrDriver || channel >= COMFY_SCENE_MUSIC_CHANNEL_COUNT ||
 			offset > _sceneFrameData.size() || 6 > _sceneFrameData.size() - offset)
 		return;

@@ -75,7 +75,7 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 					position += actorReadU32(*actor, offset);
 				}
 
-				value = uint16(position >> 12);
+				value = (uint16)(position >> 12);
 			} else if (opcode == 0x14)
 				value = actorReadU16(*actor, kActorSpriteSelector);
 
@@ -88,7 +88,7 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 		if (opcode == 0x16) {
 			if (_exprStackTop) {
 				int16 maximum = _exprStack[_exprStackTop - 1];
-				_exprStack[_exprStackTop - 1] = uint16((int32(getRandomNumber(0x7FFF)) * maximum) / 0x8000);
+				_exprStack[_exprStackTop - 1] = (uint16)(((int32)getRandomNumber(0x7FFF) * maximum) / 0x8000);
 			}
 
 			continue;
@@ -158,18 +158,18 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 		int16 rhs = _exprStack[--_exprStackTop];
 		int16 lhs = _exprStack[_exprStackTop - 1];
 		if (opcode == 0x08)
-			_exprStack[_exprStackTop - 1] = uint16(lhs + rhs);
+			_exprStack[_exprStackTop - 1] = (uint16)(lhs + rhs);
 		else if (opcode == 0x09)
-			_exprStack[_exprStackTop - 1] = uint16(lhs - rhs);
+			_exprStack[_exprStackTop - 1] = (uint16)(lhs - rhs);
 		else if (opcode == 0x0A)
-			_exprStack[_exprStackTop - 1] = uint16(lhs * rhs);
+			_exprStack[_exprStackTop - 1] = (uint16)(lhs * rhs);
 		else if ((opcode == 0x0B || opcode == 0x0E) && !rhs) {
 			_scriptFault = true;
 			return 0;
 		} else if (opcode == 0x0B)
-			_exprStack[_exprStackTop - 1] = uint16(lhs / rhs);
+			_exprStack[_exprStackTop - 1] = (uint16)(lhs / rhs);
 		else if (opcode == 0x0E)
-			_exprStack[_exprStackTop - 1] = uint16(lhs % rhs);
+			_exprStack[_exprStackTop - 1] = (uint16)(lhs % rhs);
 	}
 }
 

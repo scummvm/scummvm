@@ -28,7 +28,7 @@ namespace Comfy {
 bool ComfyEngine::keyBitAllocate(uint16 keyBitCount) {
 	keyBitFree();
 
-	_keyBitsSize = uint16(keyBitCount + 1) / 8 + 1;
+	_keyBitsSize = (uint16)(keyBitCount + 1) / 8 + 1;
 	_keyBits = new byte[_keyBitsSize]();
 	return true;
 }
