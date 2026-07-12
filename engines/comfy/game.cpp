@@ -194,10 +194,11 @@ Common::Path ComfyEngine::getLanguageDirectory(uint16 language) {
 
 void ComfyEngine::pathSetGameDataDir(const Common::Path &path) {
 	_gameDataPath = path;
+	_hasDataPath = !_gameDataPath.empty();
 }
 
 Common::Path ComfyEngine::pathBuild(const Common::Path &filename, bool useGamePath) {
-	if (useGamePath && !_gameDataPath.empty())
+	if (useGamePath && _hasDataPath)
 		return _gameDataPath.join(filename);
 
 	return filename;
@@ -239,6 +240,7 @@ bool ComfyEngine::comfyObjOpen() {
 	_resourceHandleCount = assetsReadLe16At(_comfyObjData, 0x12);
 	_usesAnimFile = (_resourceHandleCount & 0x8000) != 0;
 	_resourceHandleCount &= 0x7FFF;
+	_comfyObjOpen = true;
 	return true;
 }
 
@@ -261,6 +263,7 @@ bool ComfyEngine::picFileOpen() {
 		_spriteResources[i].loaded = false;
 	}
 
+	_picFileDatOpen = true;
 	return true;
 }
 
@@ -407,6 +410,8 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	if (!soundInit()) {
 		return false;
 	}
+	_soundLoaded = true;
+	_picFileMapped = true;
 
 	_numFrames = _picDataSize / COMFY_TILE_SIZE + (_picDataSize % COMFY_TILE_SIZE ? 2 : 1);
 	_numObjects = _spriteHeaders.size();
@@ -418,6 +423,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	_environmentData.resize(environmentBytes);
 	if (environmentBytes)
 		memset(&_environmentData[0], 0, environmentBytes);
+	_xmsEnvAllocated = !_environmentData.empty();
 
 	uint32 midiHeaderBytes = assetsAlignEven32(uint32(_midiEntryCount) * 6);
 	uint16 soundTileStride = 0;
@@ -558,8 +564,7 @@ void ComfyEngine::assetsUnload(byte freeAudio) {
 	_objectCacheEntries.clear();
 	_frameCacheEntries.clear();
 	keyBitFree();
-	if (!_vocFileData.empty())
-		soundShutdown();
+	soundShutdown();
 
 	if (_sceneOpen)
 		sceneShutdown();
@@ -600,6 +605,11 @@ void ComfyEngine::assetsUnload(byte freeAudio) {
 	_resourceHandleCount = 0;
 	_midiEntryCount = 0;
 	_picDataSize = 0;
+	_picFileDatOpen = false;
+	_comfyObjOpen = false;
+	_xmsEnvAllocated = false;
+	_soundLoaded = false;
+	_picFileMapped = false;
 	_numFrames = 0;
 	_numObjects = 0;
 	_numSprites = 0;

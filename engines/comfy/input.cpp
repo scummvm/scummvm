@@ -343,9 +343,6 @@ void ComfyEngine::lptKeyboardDispatchEvents(uint32 scanState) {
 }
 
 void ComfyEngine::lptKeyboardInit() {
-	if (_lptKeyboardInitialized)
-		return;
-
 	inputQueueReset();
 	hostKeyboardLoadDatMap();
 	_lptPrevScanState = 0;
@@ -354,13 +351,12 @@ void ComfyEngine::lptKeyboardInit() {
 	_inputPreviousKeyboardState = 0;
 	_inputComfyboardActivityCount = 0;
 	_inputKeyboardActivityCount = 0;
-	_lptKeyboardInitialized = true;
 	_keyboardUiVisible = true;
 	if (_engineVersion == kEngineVersion3 && _midiPlyrDriver) {
 		if (!_inputDeviceMode)
 			_midiPlyrDriver->comfyboardStartSleepUse();
 
-		_midiPlyrDriver->comfyboardStartReading(0x006D96DB, 0x0378);
+		_midiPlyrDriver->comfyboardStartReading(0x006D96DB, _lptPortBase);
 	}
 
 #ifdef USE_IMGUI
@@ -396,7 +392,6 @@ void ComfyEngine::lptKeyboardShutdown() {
 	_toyKeyboardActiveMask = 0;
 	_toyKeyboardLatchedMask = 0;
 	_toyKeyboardHoldMask = 0;
-	_lptKeyboardInitialized = false;
 }
 
 } // End of namespace Comfy

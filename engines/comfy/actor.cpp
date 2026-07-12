@@ -166,6 +166,7 @@ void ComfyEngine::objHdrRead(SpriteObjectHeader &destination, uint16 index) {
 	destination.hotspotY = int16(READ_LE_UINT16(raw + 0x0C));
 	destination.reserved = raw[0x0E];
 	destination.tiledSize = READ_LE_UINT16(raw + 0x0F);
+	_spriteLastHeader = destination;
 }
 
 void ComfyEngine::scenePoolEvict() {
@@ -880,8 +881,152 @@ void ComfyEngine::actorDrawList(uint16 actorIndex, int16 x, int16 y) {
 	}
 }
 
-void ComfyEngine::actorDrawScripted(uint16 actorIndex, uint32 selector, int16 x, int16 y) {
+uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, VideoRectRecord &maskRecord,
+		VideoRectRecord *rects, int16 baseX, int16 baseY) {
+	if (mode == 1) {
+		_keymaskBits = 0;
+		maskRecord.right = 0;
+		maskRecord.bottom = 0;
+	} else {
+		_keymaskBits = uint16(maskRecord.right) | (uint32(uint16(maskRecord.bottom)) << 16);
+	}
+
+	int16 wordsLeft = int16(scriptReadWord(pc) - 1);
+	pc += 2;
+	uint16 bitIndex = 0xFFFF;
+	_keymaskCount = wordsLeft;
+	while (wordsLeft > 0 && !_scriptFault) {
+		bitIndex++;
+		uint16 spriteId = scriptReadWord(pc);
+		uint16 dx = scriptReadWord(pc + 2);
+		uint16 dy = scriptReadWord(pc + 4);
+		pc += 6;
+		wordsLeft -= 3;
+		_keymaskCount = wordsLeft;
+		_keymaskSpriteWord = spriteId;
+		_keymaskArg0 = dx;
+		_keymaskArg1 = dy;
+
+		if (spriteId & 0x8000) {
+			wordsLeft -= 2;
+			_keymaskCount = wordsLeft;
+			uint32 mask = uint32(1) << (bitIndex & 31);
+			if (mode == 1) {
+				uint16 key = scriptReadWord(pc);
+				_keymaskResult = keyBitTest(key) ? 1 : 0;
+				if (_keymaskResult) {
+					_keymaskBits |= mask;
+					maskRecord.right = uint16(_keymaskBits);
+					maskRecord.bottom = uint16(_keymaskBits >> 16);
+				}
+
+				pc += 2;
+				if (_keymaskResult)
+					spriteId &= 0x7FFF;
+				else
+					spriteId = scriptReadWord(pc);
+			} else {
+				_keymaskResult = (_keymaskBits & mask) ? 1 : 0;
+				pc += 2;
+				if (_keymaskResult)
+					spriteId &= 0x7FFF;
+				else
+					spriteId = scriptReadWord(pc);
+			}
+
+			pc += 2;
+			_keymaskSpriteWord = spriteId;
+		}
+
+		VideoRectRecord *rect = bitIndex < COMFY_RESOLUTION_CHANGE_CAPACITY ? &rects[bitIndex] : nullptr;
+		if (rect) {
+			rect->left = 0;
+			rect->top = 0;
+			rect->right = 0;
+			rect->bottom = 0;
+			rect->area = 0;
+		}
+
+		if (!spriteId)
+			continue;
+
+		int16 spriteX = baseX + int16(dx);
+		int16 spriteY = baseY + int16(dy);
+		if (spriteX >= 0x0280 || spriteX <= int16(0xFEC0) ||
+				spriteY >= 0x0190 || spriteY <= int16(0xFF38))
+			continue;
+
+		SpriteResource *sprite = spriteGetPtr(int16(spriteId));
+		if (!sprite)
+			continue;
+
+		int16 left = spriteX - sprite->header.hotspotX;
+		int16 top = spriteY - sprite->header.hotspotY;
+		if (mode == 1)
+			spriteBlitClipped(int16(spriteId), left, top);
+
+		if (rect) {
+			rect->left = left;
+			rect->top = top;
+			rect->right = left + sprite->header.width;
+			rect->bottom = top + sprite->header.height;
+			rect->area = sprite->header.width * sprite->header.height;
+		}
+	}
+
+	_keymaskLastIndex = bitIndex;
+	return bitIndex;
+}
+
+void ComfyEngine::actorEvalFrameSelection(uint16 actorIndex, int16 x, int16 y) {
+	Actor *actor = actorGetPtr(actorIndex);
+	if (!actor)
+		return;
+
+	uint32 selector = actorReadU32(*actor, kActorCachedSprite);
+	VideoRectRecord rect = actorReadCachedRect(*actor);
+	if (selector & 0xFF000000) {
+		uint16 last = scriptEvalKeyMask(selector & 0x00FFFFFF, 0, rect, _keymaskOldRects,
+			rect.left, rect.top);
+		if (last >= COMFY_RESOLUTION_CHANGE_CAPACITY)
+			last = COMFY_RESOLUTION_CHANGE_CAPACITY - 1;
+
+		for (uint i = 0; i <= last; i++) {
+			if (_keymaskOldRects[i].area)
+				videoFindBestMode(_keymaskOldRects[i]);
+		}
+	} else if (rect.area) {
+		videoFindBestMode(rect);
+	}
+
+	actorWriteU32(*actor, kActorCachedSprite, 0);
+	uint16 child = actorReadU16(*actor, kActorSiblingHead);
+	while (child) {
+		actorEvalFrameSelection(child, x, y);
+		Actor *childActor = actorGetPtr(child);
+		child = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
+	}
+
+	child = actorReadU16(*actor, kActorChildHead);
+	while (child) {
+		actorEvalFrameSelection(child, x, y);
+		Actor *childActor = actorGetPtr(child);
+		child = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
+	}
+}
+
+uint16 ComfyEngine::actorDrawScripted(uint16 actorIndex, uint32 selector, int16 x, int16 y) {
 	uint32 pc = selector & 0x00FFFFFF;
+	if (_videoMode == 2) {
+		_keymaskCurrentRecord.left = x;
+		_keymaskCurrentRecord.top = y;
+		_keymaskCurrentRecord.right = 0;
+		_keymaskCurrentRecord.bottom = 0;
+		_keymaskCurrentRecord.area = 0;
+		uint16 last = scriptEvalKeyMask(pc, 1, _keymaskCurrentRecord, _keymaskRects, x, y);
+		return MIN<uint16>(last, COMFY_RESOLUTION_CHANGE_CAPACITY - 1);
+	}
+
 	int16 wordsLeft = int16(scriptReadWord(pc) - 1);
 	pc += 2;
 	while (wordsLeft > 0 && !_scriptFault) {
@@ -910,6 +1055,7 @@ void ComfyEngine::actorDrawScripted(uint16 actorIndex, uint32 selector, int16 x,
 	}
 
 	(void)actorIndex;
+	return 0xFFFF;
 }
 
 ComfyEngine::VideoRectRecord ComfyEngine::actorReadCachedRect(Actor &actor) {
@@ -941,7 +1087,7 @@ void ComfyEngine::actorInvalidateDrawTree(uint16 actorIndex) {
 
 	actorWriteU8(*actor, kActorCachedVisible, 0);
 	actorWriteU32(*actor, kActorCachedSprite, 0);
-	VideoRectRecord empty = {0, 0, 0, 0, 0};
+	VideoRectRecord empty;
 	actorWriteCachedRect(*actor, empty);
 	uint16 child = actorReadU16(*actor, kActorSiblingHead);
 	while (child) {
@@ -974,8 +1120,10 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 	uint32 oldSelector = actorReadU32(*actor, kActorCachedSprite);
 	VideoRectRecord oldRect = actorReadCachedRect(*actor);
 	if (!actorReadU8(*actor, kActorVisible)) {
-		if (oldVisible)
-			actorInvalidateDrawTree(actorIndex);
+		if (_videoMode == 2 && actorReadU8(*actor, kActorVisible) != oldVisible) {
+			actorEvalFrameSelection(actorIndex, drawX, drawY);
+			actorWriteU8(*actor, kActorCachedVisible, actorReadU8(*actor, kActorVisible));
+		}
 
 		return true;
 	}
@@ -983,9 +1131,17 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 	animFrameRecordVocCounter(1);
 	actorDrawList(actorReadU16(*actor, kActorSiblingHead), drawX, drawY);
 	uint32 selector = actorReadU32(*actor, kActorSpriteSelector);
-	VideoRectRecord newRect = {0, 0, 0, 0, 0};
-	if (selector & 0xFF000000) {
-		actorDrawScripted(actorIndex, selector, drawX, drawY);
+	bool oldScripted = (oldSelector & 0xFF000000) != 0;
+	bool newScripted = (selector & 0xFF000000) != 0;
+	VideoRectRecord newRect;
+	uint16 scriptedLastRect = 0xFFFF;
+	bool newRectValid = false;
+	if (newScripted) {
+		scriptedLastRect = actorDrawScripted(actorIndex, selector, drawX, drawY);
+		if (_videoMode == 2 && scriptedLastRect != 0xFFFF) {
+			newRect = _keymaskCurrentRecord;
+			newRectValid = true;
+		}
 	} else if (selector) {
 		SpriteResource *sprite = spriteGetPtr(int16(selector));
 		if (sprite) {
@@ -994,24 +1150,83 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 			newRect.right = newRect.left + sprite->header.width;
 			newRect.bottom = newRect.top + sprite->header.height;
 			newRect.area = sprite->header.width * sprite->header.height;
+			newRectValid = true;
 			spriteBlitClipped(int16(selector), drawX - sprite->header.hotspotX, drawY - sprite->header.hotspotY);
 		}
 	}
 	animFrameRecordVocCounter(2);
 
-	bool rectChanged = oldRect.left != newRect.left || oldRect.top != newRect.top ||
-		oldRect.right != newRect.right || oldRect.bottom != newRect.bottom || oldRect.area != newRect.area;
-	if (oldSelector != selector || oldVisible != actorReadU8(*actor, kActorVisible) || rectChanged) {
-		if (oldRect.area)
-			videoFindBestMode(oldRect);
+	if (_videoMode == 2) {
+		byte newVisible = actorReadU8(*actor, kActorVisible);
+		bool changed = oldSelector != selector || oldVisible != newVisible;
+		if (newRectValid && (oldRect.left != newRect.left || oldRect.top != newRect.top ||
+				oldRect.right != newRect.right || oldRect.bottom != newRect.bottom || oldRect.area != newRect.area))
+			changed = true;
 
-		if (newRect.area)
-			videoFindBestMode(newRect);
+		if (!newRectValid && oldRect.area)
+			changed = true;
+
+		uint16 oldScriptedLastRect = 0xFFFF;
+		if (oldScripted) {
+			VideoRectRecord maskRecord = oldRect;
+			oldScriptedLastRect = scriptEvalKeyMask(oldSelector & 0x00FFFFFF, 0, maskRecord,
+				_keymaskOldRects, oldRect.left, oldRect.top);
+			if (oldScriptedLastRect >= COMFY_RESOLUTION_CHANGE_CAPACITY)
+				oldScriptedLastRect = COMFY_RESOLUTION_CHANGE_CAPACITY - 1;
+		}
+
+		if (changed) {
+			bool comparedScriptRects = false;
+			if (newScripted && oldScripted && oldSelector == selector &&
+					oldRect.left == _keymaskCurrentRecord.left && oldRect.top == _keymaskCurrentRecord.top &&
+					scriptedLastRect != 0xFFFF && oldScriptedLastRect != 0xFFFF) {
+				uint16 last = MAX(scriptedLastRect, oldScriptedLastRect);
+				for (uint i = 0; i <= last; i++) {
+					VideoRectRecord *oldItem = i <= oldScriptedLastRect ? &_keymaskOldRects[i] : nullptr;
+					VideoRectRecord *newItem = i <= scriptedLastRect ? &_keymaskRects[i] : nullptr;
+					bool equal = oldItem && newItem && oldItem->left == newItem->left && oldItem->top == newItem->top &&
+						oldItem->right == newItem->right && oldItem->bottom == newItem->bottom && oldItem->area == newItem->area;
+					if (!equal) {
+						if (oldItem && oldItem->area)
+							videoFindBestMode(*oldItem);
+
+						if (newItem && newItem->area)
+							videoFindBestMode(*newItem);
+					}
+				}
+
+				comparedScriptRects = true;
+			} else if (newScripted) {
+				for (uint i = 0; i <= scriptedLastRect; i++) {
+					if (_keymaskRects[i].area)
+						videoFindBestMode(_keymaskRects[i]);
+				}
+			} else if (newRectValid && newRect.area) {
+				videoFindBestMode(newRect);
+			}
+
+			if (!comparedScriptRects) {
+				if (oldScripted) {
+					for (uint i = 0; i <= oldScriptedLastRect; i++) {
+						if (_keymaskOldRects[i].area)
+							videoFindBestMode(_keymaskOldRects[i]);
+					}
+				} else if (oldRect.area) {
+					videoFindBestMode(oldRect);
+				}
+			}
+		}
+
+		actorWriteU8(*actor, kActorCachedVisible, newVisible);
+		actorWriteU32(*actor, kActorCachedSprite, selector);
+		if (newRectValid) {
+			actorWriteCachedRect(*actor, newRect);
+		} else if (!selector) {
+			VideoRectRecord empty;
+			actorWriteCachedRect(*actor, empty);
+		}
 	}
 
-	actorWriteU8(*actor, kActorCachedVisible, actorReadU8(*actor, kActorVisible));
-	actorWriteU32(*actor, kActorCachedSprite, selector);
-	actorWriteCachedRect(*actor, newRect);
 	actorDrawList(actorReadU16(*actor, kActorChildHead), drawX, drawY);
 	return animFrameShouldDraw(2);
 }
