@@ -167,6 +167,11 @@ public:
 	static SeekableReadStream *openDataForkFromMacBinary(SeekableReadStream *inStream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::NO);
 
 	/**
+	 * Write macbinary data to a stream.
+	 */
+	static void writeMacBinary(SeekableWriteStream *outStream, SeekableReadStream *dataFork, SeekableReadStream *resourceFork, const Common::String &name, const MacFinderInfo &info, TimeDate *created = nullptr, TimeDate *modified = nullptr);
+
+	/**
 	 * See if a Mac data/resource fork pair exists.
 	 * @param fileName The base file name of the file
 	 * @return True if either a data fork or resource fork with this name exists
