@@ -25,7 +25,9 @@
 #include "common/savefile.h"
 #include "common/str-enc.h"
 #include "common/stream.h"
+#include "common/substream.h"
 #include "common/tokenizer.h"
+#include "common/types.h"
 #include "common/ustr.h"
 
 #include "fool/fool.h"
@@ -232,10 +234,26 @@ void ZBasic::close(int16 fileNo) {
 		_fileStreams.erase(fileNo);
 	}
 	if (_fileWriteStreams.contains(fileNo)) {
+		if (_fileWriteSaveStreams.contains(fileNo) && _filePaths.contains(fileNo)) {
+			Common::MacResManager resMan;
+			Common::MemoryReadStream ms(_fileWriteStreams[fileNo]->getData(), _fileWriteStreams[fileNo]->size(), DisposeAfterUse::NO);
+			Common::MacFinderInfo info;
+			info.creator = _fileCreator;
+			info.type = _fileType;
+			resMan.writeMacBinary(_fileWriteSaveStreams[fileNo].get(), &ms, nullptr, _filePaths[fileNo].toString(':'), info);
+		}
+		_fileWriteStreams[fileNo]->finalize();
 		_fileWriteStreams.erase(fileNo);
+	}
+	if (_fileWriteSaveStreams.contains(fileNo)) {
+		_fileWriteSaveStreams[fileNo]->finalize();
+		_fileWriteSaveStreams.erase(fileNo);
 	}
 	if (_fileLineSize.contains(fileNo)) {
 		_fileLineSize.erase(fileNo);
+	}
+	if (_filePaths.contains(fileNo)) {
+		_filePaths.erase(fileNo);
 	}
 }
 
@@ -243,9 +261,15 @@ void ZBasic::coordinateWindow() {
 	warning("STUB: ZBasic::coordinateWindow");
 }
 
-void ZBasic::defOpen(const Common::U32String &str) {
-	_fileType = str.substr(0, 4).encode(Common::kMacRoman);
-	_fileCreator = str.substr(4, 4).encode(Common::kMacRoman);
+void ZBasic::defOpen(const Common::String &str) {
+	Common::String fileType = str.substr(0, 4);
+	while (fileType.size() < 4)
+		fileType.append(0);
+	_fileType = ((uint32)fileType[0] << 24) + ((uint32)fileType[1] << 16) + ((uint32)fileType[2] << 8) + (uint32)fileType[3];
+	Common::String fileCreator = str.substr(4, 4);
+	while (fileCreator.size() < 4)
+		fileCreator.append(0);
+	_fileCreator = ((uint32)fileCreator[0] << 24) + ((uint32)fileCreator[1] << 16) + ((uint32)fileCreator[2] << 8) + (uint32)fileCreator[3];
 }
 
 void ZBasic::get(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::MacToolbox::BitMap &dest, bool preserveDims) {
@@ -411,37 +435,43 @@ void ZBasic::midStrSet(Common::String &target, int16 expr1, int16 expr2, const C
 
 
 void ZBasic::openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo) {
-	if (_fileStreams.contains(fileNo)) {
-		close(fileNo);
-	}
+	close(fileNo);
 	Common::MacResManager resMan;
 	Common::SaveFileManager *saves = g_system->getSavefileManager();
 	// first load from the save manager
 	Common::SeekableReadStream *result = saves->openForLoading(fileName.encode());
+	Common::Path path(fileName, ':');
 	if (!result) {
 		// if that fails, load from the filesystem
-		result = resMan.openFileOrDataFork(Common::Path(fileName, ':'));
+		result = resMan.openFileOrDataFork(path);
+	} else {
+		bool isMacBinary = resMan.isMacBinary(*result);
+		result->seek(0);
+		if (isMacBinary) {
+			result = resMan.openDataForkFromMacBinary(result, DisposeAfterUse::YES);
+		}
 	}
 	if (!result) {
 		error("ZBasic::openR: couldn't open %s", fileName.encode().c_str());
 	}
+	result->seek(0);
+	_filePaths[fileNo] = path;
 	_fileStreams[fileNo] = Common::SharedPtr<Common::SeekableReadStream>(result);
-	_fileWriteStreams[fileNo] = nullptr;
 	_fileLineSize[fileNo] = lineSize;
 }
 
 void ZBasic::openW(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo) {
-	if (_fileStreams.contains(fileNo)) {
-		close(fileNo);
-	}
+	close(fileNo);
 	Common::MacResManager resMan;
 	Common::SaveFileManager *saves = g_system->getSavefileManager();
 	Common::SeekableWriteStream *result = saves->openForSaving(fileName, false);
+	Common::Path path(fileName, ':');
 	if (!result) {
 		error("ZBasic::openW: couldn't open %s", fileName.encode().c_str());
 	}
-	_fileStreams[fileNo] = nullptr;
-	_fileWriteStreams[fileNo] = Common::SharedPtr<Common::SeekableWriteStream>(result);
+	_filePaths[fileNo] = path;
+	_fileWriteStreams[fileNo] = Common::SharedPtr<Common::MemoryWriteStreamDynamic>(new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES));
+	_fileWriteSaveStreams[fileNo] = Common::SharedPtr<Common::SeekableWriteStream>(result);
 	_fileLineSize[fileNo] = lineSize;
 }
 

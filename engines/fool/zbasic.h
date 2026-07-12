@@ -23,6 +23,7 @@
 #define FOOL_ZBASIC_H
 
 #include "common/memorypool.h"
+#include "common/memstream.h"
 #include "common/ptr.h"
 #include "common/str.h"
 #include "common/stream.h"
@@ -214,13 +215,15 @@ private:
 
 	Graphics::MacToolbox::GrafPtr _defaultPort;
 
+	Common::HashMap<int16, Common::Path> _filePaths;
 	Common::HashMap<int16, Common::SharedPtr<Common::SeekableReadStream>> _fileStreams;
-	Common::HashMap<int16, Common::SharedPtr<Common::SeekableWriteStream>> _fileWriteStreams;
+	Common::HashMap<int16, Common::SharedPtr<Common::MemoryWriteStreamDynamic>> _fileWriteStreams;
+	Common::HashMap<int16, Common::SharedPtr<Common::SeekableWriteStream>> _fileWriteSaveStreams;
 	Common::HashMap<int16, uint32> _fileLineSize;
 	Common::HashMap<int16, Common::Array<Common::String>> _index;
 
-	Common::String _fileType;
-	Common::String _fileCreator;
+	uint32 _fileType;
+	uint32 _fileCreator;
 
 public:
 
@@ -239,7 +242,7 @@ public:
 	Common::U32String chr(uint16 code);
 	void close(int16 fileNo);
 	void coordinateWindow();
-	void defOpen(const Common::U32String &str);
+	void defOpen(const Common::String &str);
 	void get(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::MacToolbox::BitMap &dest, bool preserveDims = false);
 	int16 instr(int16 expression, const Common::U32String &string1, const Common::U32String &string2);
 	int16 instr(int16 expression, const Common::String &string1, const Common::String &string2);
@@ -311,6 +314,7 @@ public:
 	int16 getFileId() { return _fileId; }
 	void injectFOND(const byte *data, const size_t size, const Common::String &name);
 	void setMenuFont(uint16 font, uint16 size);
+
 };
 
 } // namespace Fool

@@ -1300,7 +1300,7 @@ void FoolGame::menuNewGame() {
 }
 
 
-void FoolGame::sub_128_2808() {
+void FoolGame::writeSaveFile() {
 	// 128:2808
 	var_i16_7e6 = 0;
 	// 128:280e: LEA - [0x3808],A0
@@ -1347,7 +1347,7 @@ void FoolGame::menuOpenGame() {
 	if (var_str_588.empty()) { // was: str(22)
 		return;
 	}
-	sub_128_2808();
+	writeSaveFile();
 	if (var_str_588.empty()) { // was: str(23)
 		return;
 	}
@@ -1712,7 +1712,7 @@ void FoolGame::saveGame() {
 		var_i16_7e6 = 0;
 		// 128:359e: LEA - [0x3808],A0
 		// 128:35a2: MOVE.L - A0,-0x8ee(A5)
-		_zbasic->defOpen(Common::U32String("FOOLgf87")); // str(59)
+		_zbasic->defOpen(Common::String("FOOLgf87")); // str(59)
 		_zbasic->openW(2, _saveFileName, 0x400, var_i16_9ec);
 
 		if (var_i16_7e6 != 0xa) {
@@ -2835,7 +2835,7 @@ void FoolGame::sub_129_068() {
 			var_i16_f22 = var_i16_688;
 		} else {
 			// 129:052e
-			sub_128_2808();
+			writeSaveFile();
 			if (!var_str_588.empty()) { // was: str(129)
 				// 129:054c
 				_saveFileName = var_str_588;
