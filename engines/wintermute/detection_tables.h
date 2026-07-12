@@ -96,6 +96,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"imustkill",       "I Must Kill...: Fresh Meat"},
 	{"jamesperis",      "James Peris: No License Nor Control"},
 	{"jamesperis2",     "James Peris 2: The Fountain of Eternal Drunkenness"},
+	{"jamesperis2uncut","James Peris 2: The Fountain of Eternal Drunkenness (Uncut version)"},
 	{"keshaskazok",     "Кеша в мире сказок"},
 	{"klaymen1",        "Klaymen Episodes: Pilot"},
 	{"knossos",         "K'NOSSOS"},
@@ -1662,12 +1663,12 @@ static const WMEGameDescription gameDescriptions[] = {
 					"audio.dcp", "35ad443ee6a47476010875e81cceadd6", 488107857), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
 
 	// James Peris 2: The Fountain of Eternal Drunkenness - Uncut (English) (Steam 2023-11-18)
-	WME_WINENTRY("jamesperis2", "Steam",
+	WME_WINENTRY("jamesperis2uncut", "Steam",
 		WME_ENTRY2s("data.dcp", "f9102e99fadc25409ee2ef3040039023", 985240842,
 					"audio.dcp", "69f37a00693f812937dee6836e371d9e", 488048201), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// James Peris 2: The Fountain of Eternal Drunkenness - Uncut  (Spanish) (Steam 2023-11-18)
-	WME_WINENTRY("jamesperis2", "Steam",
+	WME_WINENTRY("jamesperis2uncut", "Steam",
 		WME_ENTRY2s("data.dcp", "f9102e99fadc25409ee2ef3040039023", 985240842,
 					"audio.dcp", "69f37a00693f812937dee6836e371d9e", 488048201), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
 	// Lov Mamuta
