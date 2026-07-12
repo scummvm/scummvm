@@ -24,6 +24,7 @@
 
 #include "audio/decoders/raw.h"
 #include "audio/audiostream.h"
+#include "common/debug.h"
 #include "common/endian.h"
 
 namespace Comfy {
@@ -123,11 +124,19 @@ bool ComfyEngine::soundDecodeEntry(uint16 index) {
 	soundHdrReadFromXms(header, index, sizeof(header));
 	uint32 dataSize = READ_LE_UINT32(header);
 	uint32 dataOffset = READ_LE_UINT32(header + 4);
-	if (dataOffset > _vocFileData.size() || dataSize > _vocFileData.size() - dataOffset)
+	debug(5, "COMFY VOC: decode id=%u offset=%u size=%u compressed=%u fileSize=%u",
+		index, dataOffset, dataSize, _soundCompressed ? 1 : 0, (uint)_vocFileData.size());
+	if (dataOffset > _vocFileData.size() || dataSize > _vocFileData.size() - dataOffset) {
+		debug(5, "COMFY VOC: decode id=%u rejected invalid range", index);
 		return false;
+	}
 
-	if (_soundCompressed)
-		return soundDecodeCompressedEntry(dataOffset, dataSize);
+	if (_soundCompressed) {
+		bool decoded = soundDecodeCompressedEntry(dataOffset, dataSize);
+		debug(5, "COMFY VOC: decode id=%u result=%u pcm=%u rate=%u cues=%u",
+			index, decoded ? 1 : 0, (uint)_soundPcm.size(), _soundSampleRate, (uint)_soundCues.size());
+		return decoded;
+	}
 
 	uint32 pc = dataOffset;
 	uint32 end = dataOffset + dataSize;
@@ -217,7 +226,10 @@ bool ComfyEngine::soundDecodeEntry(uint16 index) {
 		}
 	}
 
-	return !_soundPcm.empty();
+	bool decoded = !_soundPcm.empty();
+	debug(5, "COMFY VOC: decode id=%u result=%u pcm=%u rate=%u cues=%u",
+		index, decoded ? 1 : 0, (uint)_soundPcm.size(), _soundSampleRate, (uint)_soundCues.size());
+	return decoded;
 }
 
 bool ComfyEngine::soundDecodeCompressedEntry(uint32 dataOffset, uint32 dataSize) {
@@ -335,8 +347,10 @@ bool ComfyEngine::soundDecodeCompressedEntry(uint32 dataOffset, uint32 dataSize)
 }
 
 void ComfyEngine::soundPlayEntry(uint16 index) {
+	debug(5, "COMFY VOC: play id=%u", index);
 	_mixer->stopHandle(_soundHandle);
 	if (!soundDecodeEntry(index)) {
+		debug(5, "COMFY VOC: play id=%u decode failed", index);
 		_soundEventSubIndex = 0;
 		return;
 	}
@@ -344,6 +358,7 @@ void ComfyEngine::soundPlayEntry(uint16 index) {
 	Audio::AudioStream *stream = Audio::makeRawStream(&_soundPcm[0], _soundPcm.size(), _soundSampleRate,
 		Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 	if (!stream) {
+		debug(5, "COMFY VOC: play id=%u raw stream creation failed", index);
 		_soundPcm.clear();
 		_soundEventSubIndex = 0;
 		return;
@@ -351,6 +366,9 @@ void ComfyEngine::soundPlayEntry(uint16 index) {
 
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, stream, -1,
 		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
+	debug(5, "COMFY VOC: play id=%u submitted active=%u pcm=%u rate=%u cues=%u",
+		index, _mixer->isSoundHandleActive(_soundHandle) ? 1 : 0,
+		(uint)_soundPcm.size(), _soundSampleRate, (uint)_soundCues.size());
 	_soundPaused = false;
 	_soundEventSubIndex = 0xFFFF;
 	if (_midiPlyrDriver) {
@@ -365,8 +383,10 @@ void ComfyEngine::soundAdvanceTick() {
 		return;
 
 	if (!_mixer->isSoundHandleActive(_soundHandle)) {
-		if (!_soundPcm.empty())
+		if (!_soundPcm.empty() && _soundEventSubIndex != 0) {
+			debug(5, "COMFY VOC: mixer became inactive; marking entry complete");
 			_soundEventSubIndex = 0;
+		}
 
 		return;
 	}
@@ -379,6 +399,9 @@ void ComfyEngine::soundAdvanceTick() {
 			(_soundCues[_soundNextCue].value == 1 || _soundCues[_soundNextCue].value == 2)) {
 		phaseCueSeen = true;
 		_soundEventSubIndex = _soundCues[_soundNextCue].value;
+		debug(5, "COMFY VOC: cue=%u threshold=%u counter=%u index=%u/%u",
+			_soundEventSubIndex, _soundCues[_soundNextCue].counterThreshold, counter,
+			_soundNextCue, (uint)_soundCues.size());
 		_soundNextCue++;
 	}
 
@@ -387,6 +410,9 @@ void ComfyEngine::soundAdvanceTick() {
 		return;
 
 	_soundEventSubIndex = _soundCues[_soundNextCue].value;
+	debug(5, "COMFY VOC: cue=%u threshold=%u counter=%u index=%u/%u",
+		_soundEventSubIndex, _soundCues[_soundNextCue].counterThreshold, counter,
+		_soundNextCue, (uint)_soundCues.size());
 	_soundNextCue++;
 	if (!_soundEventSubIndex) {
 		_mixer->stopHandle(_soundHandle);
