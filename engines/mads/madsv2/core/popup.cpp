@@ -53,18 +53,6 @@ byte popup_colors[24] = {
 	0,   0,  0,  0,  3,  0,  0,  0
 };
 
-// Rex Nebular dialog colors
-static constexpr int BLACK = 0;
-static constexpr int PALETTE_CYCLING_AREA = 6;
-static constexpr int DIALOG_CONTENT1_COLOR = 248;
-static constexpr int DIALOG_CONTENT2_COLOR = 249;
-static constexpr int DIALOG_EDGE_COLOR = 250;
-static constexpr int DIALOG_BACKGROUND_COLOR = 251;
-static constexpr int DIALOG_FC_COLOR = 252;
-static constexpr int DIALOG_FD_COLOR = 253;
-static constexpr int DIALOG_FE_COLOR = 254;
-static constexpr int DIALOG_BLACK_COLOR = 0;
-
 int popup_preserve_initiator[3] = {
 	BUFFER_PRESERVE, BUFFER_PRESERVE, BUFFER_PRESERVE
 };
@@ -146,16 +134,7 @@ int popup_create(int horiz_pieces, int x, int y) {
 		box->text_xs = middle_width;
 		box->text_width = horiz_pieces * 2;
 
-		font_set_colors(-1, BLACK, BLACK, BLACK);
-
-		memcpy(&cycling_palette[Graphics::PALETTE_COUNT - PALETTE_CYCLING_AREA].r,
-			&master_palette[Graphics::PALETTE_COUNT - PALETTE_CYCLING_AREA].r,
-			PALETTE_CYCLING_AREA * 3);
-		pal_grey(master_palette, DIALOG_CONTENT1_COLOR, 2, 36, 32);
-		pal_grey(master_palette, DIALOG_EDGE_COLOR, 2, 39, 28);
-		pal_grey(master_palette, DIALOG_FC_COLOR, 2, 36, 32);
-		pal_grey(master_palette, DIALOG_FE_COLOR, 1, 55, 55);
-		mcga_setpal_range(&master_palette, DIALOG_CONTENT1_COLOR, 8);
+		RexNebular::popup_setup_cycle();
 
 	} else {
 		middle_width = pop_xs(POPUP_UPPER_CENTER) + ((pop_xs(POPUP_TOP) << 1) * horiz_pieces);
@@ -957,6 +936,11 @@ done:
 void popup_update_ask(char *string, int maxlen) {
 	int x1, y1, x2, x3, xs, ys, xs2;
 
+	if (g_engine->getGameID() == GType_RexNebular) {
+		RexNebular::popup_update_ask(string, maxlen);
+		return;
+	}
+
 	xs = box->text_xs;
 	ys = (box_param.font->max_y_size + 1);
 	x1 = box->window_x + popup_padding_width;
@@ -1009,7 +993,8 @@ int popup_ask_string(char *target, int maxlen, int save_screen) {
 		Common::strcat_s(box->text[box->ask_y], 65536, " ");
 	}
 
-	if (popup_draw(save_screen, false)) goto done;
+	if (popup_draw(save_screen, false))
+		goto done;
 
 	popup_update_ask(temp_buf, maxlen);
 
@@ -1024,7 +1009,7 @@ int popup_ask_string(char *target, int maxlen, int save_screen) {
 			return 1;
 
 		len = strlen(temp_buf);
-		while (!keys_any()) {
+		while (!g_engine->shouldQuit() && !keys_any()) {
 			mouse_begin_cycle(false);
 			if (mouse_stop_stroke) {
 				error_flag = 1;

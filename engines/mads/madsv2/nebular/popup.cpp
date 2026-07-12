@@ -36,7 +36,17 @@ namespace MADS {
 namespace MADSV2 {
 namespace RexNebular {
 
-static constexpr int DIALOG_BLACK_COLOR = 0;
+enum {
+	DIALOG_BLACK_COLOR		= 0,
+	PALETTE_CYCLING_AREA	= 6,
+	DIALOG_CONTENT1_COLOR	= 248,
+	DIALOG_CONTENT2_COLOR	= 249,
+	DIALOG_EDGE_COLOR		= 250,
+	DIALOG_BACKGROUND_COLOR	= 251,
+	DIALOG_FC_COLOR			= 252,
+	DIALOG_FD_COLOR			= 253,
+	DIALOG_FE_COLOR			= 254
+};
 
 int dialog_content_seed;
 
@@ -139,6 +149,48 @@ void popup_draw() {
 	mouse_hide();
 	video_update(&scr_main, box->x, box->y, box->x, box->y, box->xs, box->ys);
 	mouse_show();
+}
+
+void popup_setup_cycle() {
+	font_set_colors(-1, DIALOG_BLACK_COLOR, DIALOG_BLACK_COLOR, DIALOG_BLACK_COLOR);
+
+	memcpy(&cycling_palette[Graphics::PALETTE_COUNT - PALETTE_CYCLING_AREA].r,
+		&master_palette[Graphics::PALETTE_COUNT - PALETTE_CYCLING_AREA].r,
+		PALETTE_CYCLING_AREA * 3);
+	pal_grey(master_palette, DIALOG_CONTENT1_COLOR, 2, 36, 32);
+	pal_grey(master_palette, DIALOG_EDGE_COLOR, 2, 39, 28);
+	pal_grey(master_palette, DIALOG_FC_COLOR, 2, 36, 32);
+	pal_grey(master_palette, DIALOG_FE_COLOR, 1, 55, 55);
+	mcga_setpal_range(&master_palette, DIALOG_CONTENT1_COLOR, 8);
+}
+
+void popup_update_ask(const char *string, int maxlen) {
+	int xs = box->text_xs;
+	int ys = box_param.font->max_y_size + 1;
+	int x1 = box->x + 5;
+	int y1 = ys * box->ask_y + box->y + 5;
+
+	dialog_content_seed = popup_draw_content(x1, y1, box->text_xs, 0, dialog_content_seed,
+		DIALOG_CONTENT2_COLOR, DIALOG_CONTENT1_COLOR, ys, scr_main);
+
+	font_set_colors(-1, DIALOG_BLACK_COLOR, DIALOG_BLACK_COLOR, DIALOG_BLACK_COLOR);
+	int x2 = font_write(box_param.font, &scr_main, box->text[box->ask_y], x1, y1, 1);
+
+	int xs2 = font_string_width(box_param.font, "W", 1) * maxlen + 4;
+	int xs3 = font_string_width(box_param.font, string, 1) + 2;
+	int x3 = x2 + 2;
+
+	buffer_rect_fill(scr_main, x2 - 1, y1 - 3, xs2, 1, 0);
+	buffer_rect_fill(scr_main, x2 - 1, y1 + ys, xs2, 1, 0);
+	buffer_rect_fill(scr_main, x2 - 1, y1 - 3, 1, ys + 4, 0);
+	buffer_rect_fill(scr_main, x2 + xs2 - 1, y1 - 3, 1, ys + 4, 0);
+
+	buffer_rect_fill_swap(scr_main, x3 - 1, y1 - 1, xs3, ys, DIALOG_CONTENT1_COLOR, DIALOG_FC_COLOR);
+	buffer_rect_fill_swap(scr_main, x3 - 1, y1 - 1, xs3, ys, DIALOG_CONTENT2_COLOR, DIALOG_FD_COLOR);
+
+	font_set_colors(-1, DIALOG_FE_COLOR, DIALOG_FE_COLOR, DIALOG_FE_COLOR);
+	font_write(box_param.font, &scr_main, string, x3, y1, 1);
+	video_update(&scr_main, x1, y1 - 3, x1, y1 - 3, xs, ys + 4);
 }
 
 } // namespace RexNebular

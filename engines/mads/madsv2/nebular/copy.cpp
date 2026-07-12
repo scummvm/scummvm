@@ -54,13 +54,13 @@ struct CopyProt {
 };
 
 
-static void copy_mangle(CopyProt *copy_prot) {
+static void copy_mangle(byte copy_prot[CopyProt::SIZE]) {
 	int count;
 	byte *dog;
 
 	dog = (byte *)copy_prot;
 
-	for (count = 0; count < sizeof(CopyProt); count++) {
+	for (count = 0; count < CopyProt::SIZE; count++) {
 		*dog ^= 0xff;
 		dog++;
 	}
@@ -81,12 +81,18 @@ static int copy_load(CopyProt *copy_prot) {
 	item = imath_random(1, num_items);
 
 	seek_dog = (item - 1) * CopyProt::SIZE;
-	if (seek_dog)
-		handle->seek(seek_dog);
+	handle->seek(seek_dog, SEEK_CUR);
 
-	copy_prot->load(handle);
+	// Read in the entry and de-mangle it
+	byte buffer[CopyProt::SIZE];
+	handle->read(buffer, CopyProt::SIZE);
+	copy_mangle(buffer);
 
-	copy_mangle(copy_prot);
+	// Load the buffer into the copy protection record
+	{
+		Common::MemoryReadStream src(buffer, CopyProt::SIZE);
+		copy_prot->load(&src);
+	}
 
 	error_flag = false;
 
@@ -106,7 +112,8 @@ static int copy_pop_and_ask() {
 	char entry_buf[80];
 	CopyProt copy_prot;
 
-	//popup_vomitation_flag = false; /* Allow keep of first letter */
+	// Allow keep of first letter
+	box_param.erase_on_first = false;
 
 	if (copy_load(&copy_prot)) goto finish;
 
@@ -115,7 +122,6 @@ static int copy_pop_and_ask() {
 	mads_itoa(copy_prot.word_number, word_buf, 10);
 
 	for (count = 0; (count < COPY_TRIES_ALLOWED); count++) {
-
 		if (popup_create(32, POPUP_CENTER, POPUP_CENTER))
 			goto finish;
 
@@ -175,7 +181,7 @@ static int copy_pop_and_ask() {
 		popup_write_string("\n");
 
 		entry_buf[0] = copy_prot.say[0];
-		entry_buf[1] = 0;
+		entry_buf[1] = '\0';
 
 		result = popup_ask_string(entry_buf, 12, true);
 		if (result < 0) goto finish;
