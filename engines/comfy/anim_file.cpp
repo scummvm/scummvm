@@ -61,8 +61,8 @@ void ComfyEngine::animFileShutdown(bool closeFile) {
 		if (_animCurrentFrameKey)
 			keyBitSet(_animCurrentFrameKey);
 
-		if (_animCurrentActorSceneHandle < _sceneHandles.size()) {
-			Actor *actor = actorGetPtr(sceneGetHandle(_animCurrentActorSceneHandle));
+		if (_animCurrentAnimId < _sceneHandles.size()) {
+			Actor *actor = actorGetPtr(sceneGetHandle(_animCurrentAnimId));
 			if (actor)
 				actorWriteU32(*actor, kActorSpriteSelector, 0);
 		}
@@ -70,6 +70,7 @@ void ComfyEngine::animFileShutdown(bool closeFile) {
 
 	_animActive = false;
 	_animCurrentIndex = 0;
+	_animCurrentAnimId = 0;
 	_animCurrentActorSceneHandle = 0;
 	_animCurrentFrameKey = 0;
 	_animVocClockHz = 0;
@@ -107,6 +108,7 @@ void ComfyEngine::animFileLoadFrame(uint16 animIndex, uint16 frameKey, uint16 ac
 	_animPendingDirtyRectSize = 0;
 	_animPosition = offset + COMFY_ANMFILE_HEADER_BYTES;
 	_animCurrentIndex = animIndex;
+	_animCurrentAnimId = actorSceneHandle;
 	_animCurrentActorSceneHandle = actorSceneHandle;
 	_animCurrentFrameKey = frameKey;
 	_animVocCounterMode = 0;
@@ -395,11 +397,13 @@ void ComfyEngine::animFrameRecordVocCounter(uint16 phase) {
 	if (phase == 1) {
 		_animVocCounterStartA = counter;
 	} else if (phase == 2) {
-		_animVocDeltaA = uint16(counter - _animVocCounterStartA);
+		_animVocCounterEndA = counter;
+		_animVocDeltaA = uint16(_animVocCounterEndA - _animVocCounterStartA);
 	} else if (phase == 3) {
 		_animVocCounterStartB = counter;
 	} else if (phase == 4) {
-		_animVocBaseCounter = uint16(counter - _animVocCounterStartB);
+		_animVocCounterEndB = counter;
+		_animVocBaseCounter = uint16(_animVocCounterEndB - _animVocCounterStartB);
 	}
 }
 

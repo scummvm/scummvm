@@ -96,6 +96,14 @@ private:
 		int16 right;
 		int16 bottom;
 		uint16 area;
+
+		VideoRectRecord() {
+			left = 0;
+			top = 0;
+			right = 0;
+			bottom = 0;
+			area = 0;
+		}
 	};
 
 	struct InputQueue {
@@ -315,6 +323,7 @@ private:
 	Common::Path _gameDirectory;
 	Common::Path _introDirectory;
 	Common::Path _gameDataPath;
+	bool _hasDataPath = false;
 	Common::Path _languageDirectories[16];
 	uint16 _language = 2;
 	bool _multiLanguage = true;
@@ -324,6 +333,14 @@ private:
 	byte *_presentBuffer = nullptr;
 	uint16 _logicalScreenWidth;
 	uint16 _logicalScreenHeight;
+	uint16 _videoMode = 2;
+	int16 _videoScale = 1;
+	uint16 _screenWidth = 0;
+	uint16 _screenHeight = 0;
+	uint16 _renderWidth = 0;
+	uint16 _renderHeight = 0;
+	int16 _viewOffsetX = 0;
+	int16 _viewOffsetY = 0;
 	VideoRectRecord _resolutionChanges[COMFY_RESOLUTION_CHANGE_CAPACITY];
 	uint16 _resolutionChangeCount = 0;
 	uint16 _renderDirtyCount = 0;
@@ -363,6 +380,7 @@ private:
 	uint32 _toyKeyboardLatchedMask = 0;
 	uint32 _toyKeyboardHoldMask = 0;
 	uint32 _lptPrevScanState = 0;
+	uint16 _lptPortBase = 0x0378;
 	uint16 _inputDeviceMode = 0;
 	uint16 _inputDevicePreference = 0;
 	uint32 _inputPreviousComfyboardState = 0;
@@ -384,6 +402,11 @@ private:
 	uint16 _midiEntryCount = 0;
 	uint32 _picDataSize = 0;
 	bool _usesAnimFile = false;
+	bool _picFileDatOpen = false;
+	bool _comfyObjOpen = false;
+	bool _xmsEnvAllocated = false;
+	bool _soundLoaded = false;
+	bool _picFileMapped = false;
 	bool _sceneOpen = false;
 	bool _sceneEntryListActive = false;
 	Common::Array<uint16> _stringTable;
@@ -391,6 +414,8 @@ private:
 	Common::Array<uint16> _midiHandles;
 	Common::Array<Actor> _actors;
 	Common::Array<byte> _sceneMemoryBlock;
+	Common::Array<byte> _sceneRunBuffer;
+	byte *_sceneRunPtr = nullptr;
 	Common::Array<byte> _scenePoolData;
 	Common::Array<byte> _environmentData;
 	Common::Array<byte> _headerXmsData;
@@ -398,6 +423,17 @@ private:
 	Common::Array<SpriteCacheEntry> _objectCacheEntries;
 	Common::Array<SpriteCacheEntry> _frameCacheEntries;
 	ResourceLoadList _spriteConversionLoads;
+	SpriteObjectHeader _spriteLastHeader;
+	uint32 _keymaskBits = 0;
+	uint16 _keymaskLastIndex = 0xFFFF;
+	uint16 _keymaskCount = 0;
+	uint16 _keymaskSpriteWord = 0;
+	uint16 _keymaskArg0 = 0;
+	uint16 _keymaskArg1 = 0;
+	uint16 _keymaskResult = 0;
+	VideoRectRecord _keymaskCurrentRecord;
+	VideoRectRecord _keymaskRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
+	VideoRectRecord _keymaskOldRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
 	uint32 _sceneEntryOffsets[COMFY_SCENE_ENTRY_OFFSET_CAPACITY];
 	uint32 _sceneMidiInstanceOffset = 0;
 	uint32 _sceneEntryListOffset = 0;
@@ -429,11 +465,13 @@ private:
 	bool _mirrorMode = false;
 	uint32 _actorPcTable[COMFY_ACTOR_PC_TABLE_COUNT];
 	uint16 _currentActor = 0;
+	uint16 _currentScene = 0;
 	uint16 _pendingScene = 0;
 	uint16 _musicEventMask = 0;
 	byte _musicEventFlag = 0;
 	bool _musicEnabled = false;
 	bool _usesWcomfy99ScriptOps = false;
+	bool _languageSessionRestartRequested = false;
 	uint16 _wcomfy99FeatureWords[16];
 	byte _wcomfy99FeatureWordCount = 0;
 	uint16 _wcomfy99Sensitivity = 0;
@@ -482,6 +520,7 @@ private:
 	uint32 _animPosition = 0;
 	uint16 _animPendingDirtyRectSize = 0;
 	uint16 _animCurrentIndex = 0;
+	uint16 _animCurrentAnimId = 0;
 	uint16 _animCurrentActorSceneHandle = 0;
 	uint16 _animCurrentFrameKey = 0;
 	byte _animVocCounterMode = 0;
@@ -490,7 +529,9 @@ private:
 	uint16 _animVocBaseCounter = 0;
 	uint16 _animVocDeltaA = 0;
 	uint32 _animVocCounterStartA = 0;
+	uint32 _animVocCounterEndA = 0;
 	uint32 _animVocCounterStartB = 0;
+	uint32 _animVocCounterEndB = 0;
 	bool _animIndexLoaded = false;
 	bool _animPantherFormat = false;
 	bool _animActive = false;
@@ -639,7 +680,10 @@ private:
 	bool actorTickTree(uint16 actorIndex);
 	bool actorDraw(uint16 actorIndex, int16 x, int16 y);
 	void actorDrawList(uint16 actorIndex, int16 x, int16 y);
-	void actorDrawScripted(uint16 actorIndex, uint32 selector, int16 x, int16 y);
+	uint16 scriptEvalKeyMask(uint32 pc, uint16 mode, VideoRectRecord &maskRecord,
+		VideoRectRecord *rects, int16 baseX, int16 baseY);
+	void actorEvalFrameSelection(uint16 actorIndex, int16 x, int16 y);
+	uint16 actorDrawScripted(uint16 actorIndex, uint32 selector, int16 x, int16 y);
 	VideoRectRecord actorReadCachedRect(Actor &actor);
 	void actorWriteCachedRect(Actor &actor, VideoRectRecord rect);
 	void actorInvalidateDrawTree(uint16 actorIndex);

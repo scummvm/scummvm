@@ -33,6 +33,14 @@ void ComfyEngine::videoInit() {
 	if (_videoInitialized)
 		return;
 
+	_videoMode = 2;
+	_videoScale = 1;
+	_screenWidth = _logicalScreenWidth;
+	_screenHeight = _logicalScreenHeight;
+	_renderWidth = _screenWidth;
+	_renderHeight = _screenHeight;
+	_viewOffsetX = 0;
+	_viewOffsetY = 0;
 	initGraphics(_logicalScreenWidth, _logicalScreenHeight);
 	_screen = new Graphics::Screen(_logicalScreenWidth, _logicalScreenHeight);
 	_framebufPtr = new byte[framebufferBytes()]();

@@ -606,10 +606,14 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 					keyBitSet(value);
 				else
 					keyBitClear(value);
-			} else if (subop == 6 && value < _stringTable.size()) {
+			} else if (subop == 6) {
 				byte last = key.empty() ? 0 : key.lastChar();
-				_stringTable[value] = Common::isSpace(last) ? 0x81 : Common::isDigit(last) ? 0x12 :
-					(Common::isAlpha(last) ? (Common::isUpper(last) ? 0x04 : 0x08) : 0x40);
+				if (value < _stringTable.size())
+					_stringTable[value] = Common::isSpace(last) ? 0x81 : Common::isDigit(last) ? 0x12 :
+						(Common::isAlpha(last) ? (Common::isUpper(last) ? 0x04 : 0x08) : 0x40);
+
+				pathSetGameDataDir(Common::Path(key));
+				_languageSessionRestartRequested = true;
 			}
 		} else if (opcode == 0x35) {
 			byte subop = scriptReadByte(pc++);

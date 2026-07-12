@@ -89,7 +89,7 @@ Common::Error ComfyEngine::gameInit() {
 
 	timerInit();
 	_gameInitialized = true;
-	uint16 currentScene = _language;
+	_currentScene = _language;
 	uint16 chooserScene = 2;
 	if (_multiLanguage && (ConfMan.getBool("force_language_setup") ||
 			!ConfMan.getBool("comfy_language_chosen"))) {
@@ -98,9 +98,9 @@ Common::Error ComfyEngine::gameInit() {
 			return Common::kNoGameDataFoundError;
 		}
 
-		uint16 selectedLanguage = sceneRun(currentScene, true, false);
+		uint16 selectedLanguage = sceneRun(_currentScene, true, false);
 		if (selectedLanguage) {
-			currentScene = selectedLanguage;
+			_currentScene = selectedLanguage;
 			chooserScene = selectedLanguage;
 			iniWriteLanguage(selectedLanguage);
 		}
@@ -110,28 +110,28 @@ Common::Error ComfyEngine::gameInit() {
 	}
 
 	if (iniGetGameDataPath(0)) {
-		sceneRun(currentScene, false, true);
+		sceneRun(_currentScene, false, true);
 		if (shouldQuit()) {
 			gameShutdown();
 			return Common::kNoError;
 		}
 	}
 
-	while (currentScene && !shouldQuit()) {
-		if (!iniGetGameDataPath(currentScene)) {
+	while (_currentScene && !shouldQuit()) {
+		if (!iniGetGameDataPath(_currentScene)) {
 			gameShutdown();
 			return Common::kNoGameDataFoundError;
 		}
 
-		if (currentScene == 0x63) {
-			currentScene = sceneRun(chooserScene, _multiLanguage, false);
+		if (_currentScene == 0x63) {
+			_currentScene = sceneRun(chooserScene, _multiLanguage, false);
 		} else {
-			chooserScene = currentScene;
-			currentScene = sceneRun(currentScene, _multiLanguage, false);
+			chooserScene = _currentScene;
+			_currentScene = sceneRun(_currentScene, _multiLanguage, false);
 		}
 
-		if (currentScene && currentScene != 0x63)
-			iniWriteLanguage(currentScene);
+		if (_currentScene && _currentScene != 0x63)
+			iniWriteLanguage(_currentScene);
 	}
 
 	gameShutdown();
@@ -153,6 +153,10 @@ void ComfyEngine::gameShutdown() {
 	if (_videoInitialized)
 		videoShutdown(0);
 
+	_sceneRunBuffer.clear();
+	_sceneRunPtr = nullptr;
+	_languageSessionRestartRequested = false;
+	_currentScene = 0;
 	_gameInitialized = false;
 }
 
@@ -168,31 +172,63 @@ void ComfyEngine::timerShutdown() {
 }
 
 uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
-	Common::Array<byte> sceneRunBuffer;
-	sceneRunBuffer.resize(0x10010);
-	memset(&sceneRunBuffer[0], 0, sceneRunBuffer.size());
-	if (!assetsLoad(0x4000, &sceneRunBuffer[0])) {
+	byte restorePalette = 1;
+	byte shouldStartNext = 0;
+	uint16 nextScene = 0;
+	_lptKeyboardInitialized = true;
+
+	if (_sceneRunBuffer.empty()) {
+		_sceneRunBuffer.resize(0x10010);
+		memset(&_sceneRunBuffer[0], 0, _sceneRunBuffer.size());
+	}
+
+	_sceneRunPtr = _sceneRunBuffer.data();
+
+	if (!assetsLoad(0x4000, _sceneRunPtr)) {
 		assetsUnload(0);
+		if (_engineVersion != kEngineVersion3) {
+			_sceneRunBuffer.clear();
+			_sceneRunPtr = nullptr;
+		}
+
 		if (_videoInitialized)
 			videoShutdown(0);
 
+		_lptKeyboardInitialized = false;
 		return 0;
 	}
 
 	gameMainLoop(sceneId);
-	uint16 nextScene = 0;
-	if (checkNext && sceneGetActiveCount() > 1 && _midiHandles.size() > 1)
-		nextScene = _midiHandles[1];
+	if (_engineVersion == kEngineVersion3 && _languageSessionRestartRequested) {
+		nextScene = sceneId;
+		_languageSessionRestartRequested = false;
+	} else if (checkNext) {
+		if (sceneGetActiveCount() > 1 && _midiHandles.size() > 1)
+			nextScene = _midiHandles[1];
 
-	if (nextScene == sceneId || int16(nextScene) <= 0 || int16(nextScene) >= 0x65)
-		nextScene = 0;
+		if (int16(nextScene) > 0 && int16(nextScene) < 0x65 && nextScene != sceneId)
+			shouldStartNext = 1;
 
-	byte restorePalette = !exitFlag && !nextScene;
+		if (_engineVersion == kEngineVersion3)
+			shouldStartNext = 1;
+	}
+
+	if (exitFlag || shouldStartNext)
+		restorePalette = 0;
+
+	if (_engineVersion == kEngineVersion3)
+		soundShutdown();
 
 	midiShutdown();
 	assetsUnload(0);
 	inputQueueReset();
+	if (_engineVersion != kEngineVersion3) {
+		_sceneRunBuffer.clear();
+		_sceneRunPtr = nullptr;
+	}
+
 	videoShutdown(restorePalette);
+	_lptKeyboardInitialized = false;
 
 	return nextScene;
 }
