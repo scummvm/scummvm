@@ -31,6 +31,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Freescape:
    - Unterstützung für das Laden von ZX Spectrum-Spielen von TAP/TZX-Tape-Images hinzugefügt.
 
+ Lure:
+   - Charakter-Wegfindung optimiert.
+   - Fehler korrigiert, durch den Charaktere nach einer einseitigen Konversation nicht mehr angesprochen werden konnten.
+
  MM:
    - Mehrere Abstürze in Kämpfen in M&M1 korrigiert.
    - Unterstützung für PC-Speaker in M&M1 implementiert.
@@ -38,6 +42,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Schreibfehler in M&M1 korrigiert.
    - Verbesserung des erweiterten Maus-Modus, der Charakter-Erzeugung und der Spiel-Oberfläche
      in M&M1.
+   - Darstellung der Untertitel in Zwischensequenzen korrigiert.
 
  NANCY:
    - Allgemeine Flags werden nicht mehr gelöscht, wenn das Spiel (automatisch) gespeichert
