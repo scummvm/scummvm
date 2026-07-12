@@ -382,7 +382,7 @@ public class HTTPRequest implements Runnable {
 			final int responseCode = urlConnection.getResponseCode();
 			_manager.enqueue(() -> finished(_nativePointer, responseCode, null));
 		} catch (FileNotFoundException e) {
-			// The server returned an error, and we didn't managed to get the error stream:
+			// The server returned an error, and we didn't manage to get the error stream:
 			// return the error code and no data
 			int responseCode = -1;
 			try {

@@ -331,6 +331,7 @@ public class BackupManager {
 		}
 
 		if (parsedIniMap == null) {
+			//noinspection ResultOfMethodCallIgnored
 			configurationTmp.delete();
 			return ERROR_INVALID_BACKUP;
 		}
@@ -368,6 +369,7 @@ public class BackupManager {
 			} catch(IOException ignored) {
 				return ERROR_INVALID_BACKUP;
 			}
+			//noinspection ResultOfMethodCallIgnored
 			configurationTmp.delete();
 		}
 

@@ -166,6 +166,8 @@ public class INIParser {
 		}
 
 		String decoded = punycodeDecode(component);
+		// punycodeDecode returns component on failure
+		//noinspection StringEquality
 		if (component == decoded) {
 			return component;
 		}
@@ -184,6 +186,7 @@ public class INIParser {
 	}
 
 	/* Java isWhitespace is more inclusive than C one */
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	private static boolean isSpace(char c) {
 		return (c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\013');
 	}

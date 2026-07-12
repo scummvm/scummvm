@@ -22,7 +22,6 @@
 package org.scummvm.scummvm;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -223,7 +222,7 @@ public class ScummVMActivity extends Activity {
 							//_inputManager.toggleSoftInputFromWindow(_main_surface.getWindowToken(), InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
 							int flags = 0;
 							if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) {
-								@SuppressWarnings("deprecation")
+								@SuppressWarnings({"deprecation", "RedundantSuppression"})
 								final int flag = InputMethodManager.SHOW_IMPLICIT;
 								flags = flag;
 							}
@@ -552,7 +551,7 @@ public class ScummVMActivity extends Activity {
 						// _inputManager.hideSoftInputFromWindow(_main_surface.getWindowToken(), 0);
 						int flags = 0;
 						if (Build.VERSION.SDK_INT < Build.VERSION_CODES.BAKLAVA) {
-							@SuppressWarnings("deprecation")
+							@SuppressWarnings({"deprecation", "RedundantSuppression"})
 							final int flag = InputMethodManager.HIDE_IMPLICIT_ONLY;
 							flags = flag;
 						}
@@ -612,13 +611,14 @@ public class ScummVMActivity extends Activity {
 
 		if (_main_surface != null) {
 
+			//noinspection ConstantValue
 			if (bGlobalsCompatibilityHacksTextInputEmulatesHwKeyboard) {
 				showScreenKeyboardWithoutTextInputField(dGlobalsTextInputKeyboard);
 				//Log.d(ScummVM.LOG_TAG, "showScreenKeyboard - captureMouse(false)");
 				_main_surface.captureMouse(false);
 				//_main_surface.showSystemMouseCursor(true);
 				setupTouchModeBtn(_events.getTouchMode());
-				return;
+				//return;
 			}
 			//Log.d(ScummVM.LOG_TAG, "showScreenKeyboard: YOU SHOULD NOT SEE ME!!!");
 
@@ -1491,6 +1491,7 @@ public class ScummVMActivity extends Activity {
 				Log.d(ScummVM.LOG_TAG, "New ScummVM log: " + _logScummvmFile.getPath());
 			}
 		} catch(Exception e) {
+			//noinspection CallToPrintStackTrace
 			e.printStackTrace();
 			new AlertDialog.Builder(this)
 				.setTitle(R.string.no_log_file_title)
@@ -1503,7 +1504,7 @@ public class ScummVMActivity extends Activity {
 						}
 					})
 				.show();
-			return;
+			//return;
 		}
 	}
 
@@ -1565,7 +1566,7 @@ public class ScummVMActivity extends Activity {
 			private final int EstimatedKeyboardDP = defaultKeyboardHeightDP + (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? 48 : 0);
 			private final Rect rect = new Rect();
 
-			@TargetApi(Build.VERSION_CODES.CUPCAKE)
+			//@RequiresApi(Build.VERSION_CODES.CUPCAKE)
 			@Override
 			public void onGlobalLayout() {
 				int estimatedKeyboardHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, EstimatedKeyboardDP, parentView.getResources().getDisplayMetrics());
@@ -1583,12 +1584,12 @@ public class ScummVMActivity extends Activity {
 		});
 	}
 
-	public void onKeyboardVisibilityChanged(boolean visible) {
+	public void onKeyboardVisibilityChanged(boolean ignoredVisible) {
 //		Toast.makeText(HomeActivity.this, visible ? "Keyboard is active" : "Keyboard is Inactive", Toast.LENGTH_SHORT).show();
 		CompatHelpers.HideSystemStatusBar.hide(getWindow());
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({"deprecation", "RedundantSuppression"})
 	private int getDisplayPixelFormat() {
 		// Since API level 17 this always returns PixelFormat.RGBA_8888
 		// so if we target more recent API levels, we could remove this function
@@ -1613,7 +1614,7 @@ public class ScummVMActivity extends Activity {
 			audioTrackFramesPerBurst /= 4; // AudioTrack tends to buffer a lot
 
 			Log.d(ScummVM.LOG_TAG,  "updateAudioValues:" +
-				" at=" + Integer.toString(audioTrackSampleRate) + "/" + Integer.toString(audioTrackFramesPerBurst));
+				" at=" + audioTrackSampleRate + "/" + audioTrackFramesPerBurst);
 
 			ScummVM.setDefaultAudioValues(audioTrackSampleRate, audioTrackFramesPerBurst);
 			return;
@@ -1626,7 +1627,7 @@ public class ScummVMActivity extends Activity {
 		int audioManagerFramesPerBurst = Integer.parseInt(text);
 
 		Log.d(ScummVM.LOG_TAG,  "updateAudioValues:" +
-			" am=" + Integer.toString(audioManagerSampleRate) + "/" + Integer.toString(audioManagerFramesPerBurst));
+			" am=" + audioManagerSampleRate + "/" + audioManagerFramesPerBurst);
 
 		ScummVM.setDefaultAudioValues(audioManagerSampleRate, audioManagerFramesPerBurst);
 	}
@@ -1672,11 +1673,11 @@ public class ScummVMActivity extends Activity {
 				int newStatus = (micro ? 1 : 0) + (state ? 2 : 0);
 
 				Log.i(ScummVM.LOG_TAG, action +
-					" micro=" + Boolean.toString(micro) +
-					" state=" + Boolean.toString(state) +
-					" status=" + Integer.toString(newStatus) +
-					" lastStatus=" + Integer.toString(lastStatus) +
-					" diff=" + Integer.toString(lastStatus ^ newStatus));
+					" micro=" + micro +
+					" state=" + state +
+					" status=" + newStatus +
+					" lastStatus=" + lastStatus +
+					" diff=" + (lastStatus ^ newStatus));
 
 				if (isInitialStickyBroadcast()) {
 					if (lastStatus == -1) {
@@ -1703,7 +1704,7 @@ public class ScummVMActivity extends Activity {
 					containsAudioStreamingInterface(device, UsbConstants.USB_DIR_OUT);
 				final boolean hasAudioCapture =
 					containsAudioStreamingInterface(device, UsbConstants.USB_DIR_IN);
-				Log.w(ScummVM.LOG_TAG, action + " device=" + device.toString() + " playback=" + Boolean.toString(hasAudioPlayback) + " capture=" + Boolean.toString(hasAudioCapture));
+				Log.w(ScummVM.LOG_TAG, action + " device=" + device + " playback=" + hasAudioPlayback + " capture=" + hasAudioCapture);
 				if (!hasAudioPlayback) {
 					// We are only interested in playback sinks
 					return;
@@ -2029,6 +2030,7 @@ public class ScummVMActivity extends Activity {
 				}
 			}
 		} catch(Exception e) {
+			//noinspection CallToPrintStackTrace
 			e.printStackTrace();
 			new AlertDialog.Builder(this)
 				.setTitle(R.string.no_config_file_title)
@@ -2410,7 +2412,7 @@ public class ScummVMActivity extends Activity {
 	// Otherwise we would probably need to create a specifically named zip file with the selection of files we'd need to extract to the internal memory
 	// Returns true if the assetDir was a directory and false otherwise
 	private static boolean extractAssets(AssetManager assetManager, String assetDir, File dataDir) throws IOException {
-		String[] files = null;
+		String[] files;
 		try {
 			files = assetManager.list(assetDir);
 		} catch (IOException e) {
@@ -2587,6 +2589,7 @@ public class ScummVMActivity extends Activity {
 	// region Start of SAF enabled code
 	// -------------------------------------------------------------------------------------------
 	public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+		//noinspection SynchronizeOnNonFinalField
 		synchronized(safSyncObject) {
 			safRequestCode = requestCode;
 			safResultCode = resultCode;
@@ -2635,6 +2638,7 @@ public class ScummVMActivity extends Activity {
 
 		int resultCode;
 		Uri resultURI;
+		//noinspection SynchronizeOnNonFinalField
 		synchronized(safSyncObject) {
 			safRequestCode = 0;
 			startActivityForResult(intent, REQUEST_SAF);
@@ -2663,7 +2667,7 @@ public class ScummVMActivity extends Activity {
 			return null;
 		}
 
-		Log.d(ScummVM.LOG_TAG, "Selected SAF URI: " + resultURI.toString());
+		Log.d(ScummVM.LOG_TAG, "Selected SAF URI: " + resultURI);
 
 		int grant = Intent.FLAG_GRANT_READ_URI_PERMISSION;
 		if (write) {
@@ -2680,5 +2684,5 @@ public class ScummVMActivity extends Activity {
 
 // Used to define the interface for a callback after ScummVM thread has finished
 interface MyScummVMDestroyedCallback {
-	public void handle(int exitResult);
+	void handle(int exitResult);
 }

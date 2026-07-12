@@ -1229,7 +1229,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 				}
 				mMiniKeyboard.setKeyboard(keyboard);
 				mMiniKeyboard.setPopupParent(this);
-		                mMiniKeyboardContainer.measure(MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.AT_MOST));
+				mMiniKeyboardContainer.measure(MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.AT_MOST));
 				mMiniKeyboardCache.put(popupKey, mMiniKeyboardContainer);
 			} else {
 				mMiniKeyboard = (CustomKeyboardView) mMiniKeyboardContainer.findViewById(R.id.ScummVMKeyboardView);

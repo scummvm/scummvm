@@ -816,6 +816,7 @@ public class SAFFSTree {
 	}
 
 	private int createStream(SAFFSNode node, String mode) {
+		@SuppressWarnings("resource")
 		ParcelFileDescriptor pfd = createFileDescriptor(node, mode);
 		if (pfd == null) {
 			return -1;

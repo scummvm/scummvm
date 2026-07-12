@@ -429,6 +429,7 @@ public class ExternalStorage {
 				}
 			}
 		} catch (Exception e) {
+			//noinspection CallToPrintStackTrace
 			e.printStackTrace();
 		}
 
@@ -450,6 +451,7 @@ public class ExternalStorage {
 				}
 			}
 		} catch (Exception e) {
+			//noinspection CallToPrintStackTrace
 			e.printStackTrace();
 		}
 

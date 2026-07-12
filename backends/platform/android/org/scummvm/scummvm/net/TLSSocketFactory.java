@@ -29,7 +29,6 @@ package org.scummvm.scummvm.net;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -63,7 +62,7 @@ public class TLSSocketFactory extends SSLSocketFactory {
 	}
 
 	public TLSSocketFactory() {
-		SSLContext context = null;
+		SSLContext context;
 		try {
 			context = LETrustManager.getContext();
 		} catch (NoSuchAlgorithmException e) {
@@ -95,12 +94,12 @@ public class TLSSocketFactory extends SSLSocketFactory {
 	}
 
 	@Override
-	public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+	public Socket createSocket(String host, int port) throws IOException {
 		return enableTLSOnSocket(_factory.createSocket(host, port));
 	}
 
 	@Override
-	public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException, UnknownHostException {
+	public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException {
 		return enableTLSOnSocket(_factory.createSocket(host, port, localHost, localPort));
 	}
 

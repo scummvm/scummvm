@@ -54,6 +54,7 @@ public class Version implements Comparable<Version> {
 	// Here a version is considered "dirty" if it contains other characters in the description string than the expected digits (and dots) of a "clean" proper version
 	// eg. 2.3.0pre or 2.3.0git or 2.3.0git9272-gc71ac4748b are dirty
 	//     2.3.0 is NOT dirty
+	@SuppressWarnings("unused")
 	public boolean isDirty() {
 		return (versionOnlyDigits.compareTo(versionDescription) != 0);
 	}

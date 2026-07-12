@@ -25,7 +25,7 @@
 
 package org.scummvm.scummvm.zip;
 
-/*
+/**
  * This interface defines the constants that are used by the classes
  * which manipulate ZIP files.
  *

@@ -157,7 +157,6 @@ public class ScummVMEvents implements
 		@Override
 		public void onBackStarted(@NonNull BackEvent backEvent) {
 			final int typeOfLongPressMessage = MSG_SBACK_LONG_PRESS;
-			final boolean fired = !_handler.hasMessages(typeOfLongPressMessage);
 			_handler.removeMessages(typeOfLongPressMessage);
 			_handler.sendMessageDelayed(_handler.obtainMessage(typeOfLongPressMessage), _longPressTimeout);
 		}
@@ -600,7 +599,7 @@ public class ScummVMEvents implements
 	/**
 	 * This gets called only on Android < Q
 	 */
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({"deprecation", "RedundantSuppression"})
 	private boolean onKeyMultiple(int action, int keyCode, KeyEvent e) {
 		// The KeyEvent.ACTION_MULTIPLE constant was deprecated in API level 29 (Q).
 		// No longer used by the input system.
@@ -643,6 +642,7 @@ public class ScummVMEvents implements
 	 * @param action the id of the action (as returned by getAction()
 	 * @return the action description
 	 */
+	@SuppressWarnings("unused")
 	public static String motionEventActionToString(int action) {
 		switch (action) {
 
@@ -768,7 +768,7 @@ public class ScummVMEvents implements
 
 	// OnGestureListener
 	@Override
-	final public boolean onDown(MotionEvent e) {
+	final public boolean onDown(@NonNull MotionEvent e) {
 //		Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onDOWN MotionEvent");
 		if (_touchMode != TOUCH_MODE_GAMEPAD) {
 			_scummvm.pushEvent(JE_DOWN, (int)e.getX(), (int)e.getY(), 0, 0, 0, 0);
@@ -777,7 +777,7 @@ public class ScummVMEvents implements
 	}
 
 	@Override
-	final public boolean onFling(MotionEvent e1, MotionEvent e2,
+	final public boolean onFling(MotionEvent e1, @NonNull MotionEvent e2,
 									float velocityX, float velocityY) {
 		//Log.d(ScummVM.LOG_TAG, String.format(Locale.ROOT, "onFling: %s -> %s (%.3f %.3f)",
 		//										e1.toString(), e2.toString(),
@@ -789,12 +789,12 @@ public class ScummVMEvents implements
 	}
 
 	@Override
-	final public void onLongPress(MotionEvent e) {
+	final public void onLongPress(@NonNull MotionEvent e) {
 		// disabled, interferes with drag&drop
 	}
 
 	@Override
-	final public boolean onScroll(MotionEvent e1, MotionEvent e2,
+	final public boolean onScroll(MotionEvent e1, @NonNull MotionEvent e2,
 									float distanceX, float distanceY) {
 		_handler.removeMessages(MSG_LONG_TOUCH_EVENT);
 //		Log.d(ScummVM.LOG_TAG, "onScroll");
@@ -809,7 +809,7 @@ public class ScummVMEvents implements
 	}
 
 	@Override
-	final public void onShowPress(MotionEvent e) {
+	final public void onShowPress(@NonNull MotionEvent e) {
 //		Log.d(ScummVM.LOG_TAG, "onShowPress");
 		_handler.removeMessages(MSG_LONG_TOUCH_EVENT);
 		if (_touchMode != TOUCH_MODE_GAMEPAD && !_doubleTapMode) {
@@ -821,7 +821,7 @@ public class ScummVMEvents implements
 	}
 
 	@Override
-	final public boolean onSingleTapUp(MotionEvent e) {
+	final public boolean onSingleTapUp(@NonNull MotionEvent e) {
 //		Log.d(ScummVM.LOG_TAG, "onSingleTapUp");
 		_handler.removeMessages(MSG_LONG_TOUCH_EVENT);
 		if (_touchMode != TOUCH_MODE_GAMEPAD) {
@@ -833,7 +833,7 @@ public class ScummVMEvents implements
 
 	// OnDoubleTapListener
 	@Override
-	final public boolean onDoubleTap(MotionEvent e) {
+	final public boolean onDoubleTap(@NonNull MotionEvent e) {
 //		Log.d(ScummVM.LOG_TAG, "onDoubleTap");
 		_doubleTapMode = true;
 		_handler.removeMessages(MSG_LONG_TOUCH_EVENT);
@@ -870,7 +870,7 @@ public class ScummVMEvents implements
 	}
 
 	@Override
-	final public boolean onSingleTapConfirmed(MotionEvent e) {
+	final public boolean onSingleTapConfirmed(@NonNull MotionEvent e) {
 		// Note, timing thresholds for double tap detection seem to be hardcoded in the framework
 		// as ViewConfiguration.getDoubleTapTimeout()
 //		Log.d(ScummVM.LOG_TAG, "onSingleTapConfirmed - double tap failed");
@@ -968,11 +968,11 @@ public class ScummVMEvents implements
 		                                   getJoystickCenteredAxis(event, inputDevice, MotionEvent.AXIS_LTRIGGER, historyPos),
 		                                   getJoystickCenteredAxis(event, inputDevice, MotionEvent.AXIS_RTRIGGER, historyPos)};
 
-		float currX    = 0.0f;
-		float absCurrX = 0.0f;
+		float currX;
+		float absCurrX;
 		float currY    = 0.0f;
 		float absCurrY = 0.0f;
-		int stoppingMovementAxisIdBitFlags = 0;
+		int stoppingMovementAxisIdBitFlags;
 		int prevRepeatingAxisIdBitFlags = _repeatingJoystickAxisIdBitFlags;
 
 		for (int i = 0; i < centeredAxisValuesArray.length; ++i) {

@@ -21,7 +21,6 @@
 
 package org.scummvm.scummvm;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -36,6 +35,8 @@ import android.view.SurfaceView;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
+
+import androidx.annotation.RequiresApi;
 
 public class EditableSurfaceView extends SurfaceView {
 	final Context _context;
@@ -348,7 +349,7 @@ public class EditableSurfaceView extends SurfaceView {
 	// https://stackoverflow.com/a/55482761
 	// https://developer.android.com/reference/android/view/PointerIcon.html
 	//
-	@TargetApi(24)
+	@RequiresApi(24)
 	@Override
 	public PointerIcon onResolvePointerIcon(MotionEvent me, int pointerIndex) {
 		if (_allowHideSystemMousePointer) {

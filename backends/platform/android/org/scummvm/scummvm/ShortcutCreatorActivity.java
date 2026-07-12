@@ -215,6 +215,7 @@ public class ShortcutCreatorActivity extends Activity implements CompatHelpers.S
 			FileInputStream[] ret = new FileInputStream[children.length];
 			int i = 0;
 			for (File f: children) {
+				//noinspection resource
 				ret[i] = openFile(f);
 				i += 1;
 			}
@@ -384,7 +385,7 @@ public class ShortcutCreatorActivity extends Activity implements CompatHelpers.S
 		 * This kind of mimics Common::generateZipSet
 		 */
 		private final Context _context;
-		private final Map<String, byte[]> _icons = new LinkedHashMap<String, byte[]>(16,0.75f, true) {
+		private final Map<String, byte[]> _icons = new LinkedHashMap<>(16,0.75f, true) {
 			@Override
 			protected boolean removeEldestEntry(Map.Entry<String, byte[]> eldest) {
 				return size() > 128;

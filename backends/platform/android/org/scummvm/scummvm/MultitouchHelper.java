@@ -98,7 +98,7 @@ public class MultitouchHelper {
 	// 2: no "scrolling" (mouse wheel) (decided)
 	// Scrolling (mouse wheel) mode is mutually exclusive with the rest of the multi-touch modes,
 	// we can either send mouse wheel events or mouse click events in a multitouch session.
-	private int _touchMouseWheelDecisionLevel = 0;
+	private int _touchMouseWheelDecisionLevel;
 
 	// constructor
 	public MultitouchHelper(ScummVM scummvm) {
@@ -169,8 +169,8 @@ public class MultitouchHelper {
 
 			pointerIndex = 0;
 			_firstPointerId = event.getPointerId(pointerIndex);
-			_cachedActionEventOnPointer1DownX = (int) event.getX(pointerIndex);;
-			_cachedActionEventOnPointer1DownY = (int) event.getY(pointerIndex);;
+			_cachedActionEventOnPointer1DownX = (int) event.getX(pointerIndex);
+			_cachedActionEventOnPointer1DownY = (int) event.getY(pointerIndex);
 			return false;
 
 		} else if (maskedAction == MotionEvent.ACTION_CANCEL) {
