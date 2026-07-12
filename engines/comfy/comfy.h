@@ -283,6 +283,11 @@ private:
 	uint32 _toyKeyboardHoldMask;
 	uint32 _lptPrevScanState;
 	uint16 _inputDeviceMode;
+	uint16 _inputDevicePreference;
+	uint32 _inputPreviousComfyboardState;
+	uint32 _inputPreviousKeyboardState;
+	uint16 _inputComfyboardActivityCount;
+	uint16 _inputKeyboardActivityCount;
 	bool _keyboardUiInitialized;
 	bool _keyboardUiVisible;
 	Common::Array<byte> _comfyObjData;
@@ -470,6 +475,7 @@ private:
 	void hostKeyboardSetKeyState(uint16 key, bool pressed);
 	uint16 hostKeyboardVirtualKey(Common::KeyCode key);
 	uint32 lptKeyboardScan();
+	uint16 inputDetectDevice(uint32 comfyboardState, uint32 keyboardState);
 	void lptKeyboardDispatchEvents(uint32 scanState);
 	void setKeyboardContact(uint16 contact, bool pressed, bool keymapper);
 	bool readAssetFile(const Common::Path &filename, Common::Array<byte> &data);

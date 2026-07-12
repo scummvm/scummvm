@@ -212,12 +212,27 @@ uint32 ComfyEngine::lptKeyboardScan() {
 	// iterations after each write, and sampled three bits from the status port. Concatenating those
 	// eight 3-bit samples produced the 24-contact scan word. ScummVM supplies that same word from the
 	// keymapper, KEYBOARD.DAT mappings, and the toy-keyboard UI instead of accessing an I/O port.
-	uint32 keyboardReleased = (_keyboardLatchedMask | _keymapperLatchedMask) & 0x00FFFFFF;
-	uint32 keyboardState = (_keyboardActiveMask | _keymapperActiveMask | keyboardReleased) & 0x00FFFFFF;
+	uint32 keyboardState = (_keyboardActiveMask | _keyboardLatchedMask) & 0x00FFFFFF;
 	uint32 comfyboardState = (_toyKeyboardActiveMask | _toyKeyboardHoldMask |
 		_toyKeyboardLatchedMask) & 0x00FFFFFF;
-	if (_midiPlyrDriver)
+	uint32 comfyboardHostState = (comfyboardState | _keymapperActiveMask | _keymapperLatchedMask) & 0x00FFFFFF;
+	if (_engineVersion == kEngineVersion3 && _midiPlyrDriver) {
+		_midiPlyrDriver->comfyboardSetHostButtons(comfyboardHostState);
 		comfyboardState |= _midiPlyrDriver->comfyboardGetButtons() & 0x00FFFFFF;
+	}
+
+	if (_engineVersion != kEngineVersion3 || _inputDeviceMode != 1)
+		keyboardState |= _keymapperActiveMask | _keymapperLatchedMask;
+
+	if (_engineVersion == kEngineVersion3 && !_inputDeviceMode) {
+		_inputDeviceMode = inputDetectDevice(comfyboardState, keyboardState);
+		if (_inputDeviceMode == 1 && _midiPlyrDriver) {
+			_midiPlyrDriver->comfyboardStopSleepUse();
+		} else if (_inputDeviceMode == 2 && _midiPlyrDriver) {
+			_midiPlyrDriver->comfyboardStopReading();
+			_midiPlyrDriver->comfyboardStopSleepUse();
+		}
+	}
 
 	uint32 scanState;
 	if (_engineVersion == kEngineVersion3 && _inputDeviceMode == 1)
@@ -234,6 +249,58 @@ uint32 ComfyEngine::lptKeyboardScan() {
 	_keymapperLatchedMask = 0;
 	_toyKeyboardLatchedMask = 0;
 	return scanState;
+}
+
+uint16 ComfyEngine::inputDetectDevice(uint32 comfyboardState, uint32 keyboardState) {
+	uint32 previousComfyboardState = _inputPreviousComfyboardState;
+	uint32 previousKeyboardState = _inputPreviousKeyboardState;
+	uint32 filteredComfyboardState = comfyboardState & 0x00FFDF7D;
+	uint32 filteredKeyboardState = keyboardState & 0x00FFDFFD;
+	uint16 activeCount = 0;
+
+	for (uint bit = 0; bit < COMFY_KEYBOARD_CONTACT_COUNT; bit++) {
+		if (filteredComfyboardState & (1 << bit))
+			activeCount++;
+	}
+
+	if (activeCount > 6)
+		filteredComfyboardState = previousComfyboardState;
+
+	activeCount = 0;
+	for (uint bit = 0; bit < COMFY_KEYBOARD_CONTACT_COUNT; bit++) {
+		if (filteredKeyboardState & (1 << bit))
+			activeCount++;
+	}
+
+	if (activeCount > 6)
+		filteredKeyboardState = previousKeyboardState;
+
+	_inputPreviousComfyboardState = filteredComfyboardState;
+	_inputPreviousKeyboardState = filteredKeyboardState;
+	uint32 comfyboardPressed = (filteredComfyboardState ^ previousComfyboardState) & filteredComfyboardState;
+	uint32 keyboardPressed = (filteredKeyboardState ^ previousKeyboardState) & filteredKeyboardState;
+	if (!_inputKeyboardActivityCount && (keyboardPressed & 0x80) && !(comfyboardState & 0x80))
+		return 2;
+
+	keyboardPressed &= ~0x80;
+	if (comfyboardPressed)
+		_inputComfyboardActivityCount++;
+
+	if (keyboardPressed)
+		_inputKeyboardActivityCount++;
+
+	if (_inputDevicePreference == 2)
+		return 2;
+
+	if (_inputDevicePreference <= 1) {
+		if (_inputComfyboardActivityCount > 1)
+			return 1;
+
+		if (_inputKeyboardActivityCount > 1)
+			return 2;
+	}
+
+	return 0;
 }
 
 void ComfyEngine::lptKeyboardDispatchEvents(uint32 scanState) {
@@ -282,13 +349,18 @@ void ComfyEngine::lptKeyboardInit() {
 	inputQueueReset();
 	hostKeyboardLoadDatMap();
 	_lptPrevScanState = 0;
+	_inputDeviceMode = _inputDevicePreference;
+	_inputPreviousComfyboardState = 0;
+	_inputPreviousKeyboardState = 0;
+	_inputComfyboardActivityCount = 0;
+	_inputKeyboardActivityCount = 0;
 	_lptKeyboardInitialized = true;
 	_keyboardUiVisible = true;
-	if (_midiPlyrDriver) {
-		if (_engineVersion == kEngineVersion3 && !_inputDeviceMode)
+	if (_engineVersion == kEngineVersion3 && _midiPlyrDriver) {
+		if (!_inputDeviceMode)
 			_midiPlyrDriver->comfyboardStartSleepUse();
 
-		_midiPlyrDriver->comfyboardStartReading(0x006D96DB, 0);
+		_midiPlyrDriver->comfyboardStartReading(0x006D96DB, 0x0378);
 	}
 
 #ifdef USE_IMGUI
@@ -313,7 +385,7 @@ void ComfyEngine::lptKeyboardShutdown() {
 #endif
 
 	_keyboardUiInitialized = false;
-	if (_midiPlyrDriver) {
+	if (_engineVersion == kEngineVersion3 && _midiPlyrDriver) {
 		_midiPlyrDriver->comfyboardStopReading();
 		_midiPlyrDriver->comfyboardStopSleepUse();
 	}

@@ -65,6 +65,8 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_keyboardMapLoaded(false), _keyboardActiveMask(0), _keyboardLatchedMask(0),
 	_keymapperActiveMask(0), _keymapperLatchedMask(0), _toyKeyboardActiveMask(0),
 	_toyKeyboardLatchedMask(0), _toyKeyboardHoldMask(0), _lptPrevScanState(0), _inputDeviceMode(0),
+	_inputDevicePreference(0), _inputPreviousComfyboardState(0), _inputPreviousKeyboardState(0),
+	_inputComfyboardActivityCount(0), _inputKeyboardActivityCount(0),
 	_keyboardUiInitialized(false), _keyboardUiVisible(true),
 	_stringCount(0), _sceneCount(0), _keyBitCount(0), _resourceHandleCount(0), _midiEntryCount(0),
 	_picDataSize(0), _usesAnimFile(false), _sceneOpen(false), _sceneEntryListActive(false),
