@@ -4981,6 +4981,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER },
 
+	// Quest for Glory 1 / Hero's Quest - EGA Version
+	// Fanmade Hebrew translation, based on the series GOG version
+	// English DOS 3.5" Floppy (supplied by merkur in bug report #4253)
+	// Executable scanning reports "0.000.566"
+	{"qfg1", "", {
+		{"resource.map", 0, "c1dc4470fb947c067567252f62d6c1b6", 6474},
+		{"resource.000", 0, "481b034132106390cb5160fe61dd5f58", 80334},
+		{"resource.001", 0, "4d67acf52833ff45c7f753d6663532e8", 462727},
+		{"resource.002", 0, "439ba9b6dde216e6eb97ef3a9830fbe4", 646869},
+		{"resource.003", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 642203},
+		{"resource.004", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 641688},
+		{"font.000", 0, "5053e202adbd7a4fdebb30b2ea76ce27", 2835}, AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER},
+
 	// Quest for Glory 1 / Hero's Quest - English DOS 3.5" Floppy v1.001 Int#0.000.566 (supplied by alonzotg in bug report #5606)
 	{"qfg1", "", {
 		{"resource.map", 0, "85512508ed4e4ef1e3b309adabceeda9", 6486},
