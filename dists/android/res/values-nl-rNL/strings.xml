@@ -3,7 +3,6 @@
   <string name="app_name">ScummVM</string>
   <string name="app_name_debug">ScummVM (debug)</string>
   <string name="app_desc">Grafische avonturen spel engine</string>
-  <string name="ok">OK</string>
   <string name="quit">Stoppen</string>
   <string name="no_log_file_title">Logbestand Fout</string>
   <string name="no_log_file">Kan het ScummVM logbestand niet lezen of creëer een nieuwe!</string>
@@ -13,8 +12,6 @@
   <string name="no_save_path_configured">Kon geen toegang krijgen tot het standaard bewaar pad!</string>
   <string name="no_icons_path_title">Icoon Pad Fout</string>
   <string name="no_icons_path_configured">Kon geen toegang krijgen tot of aanmaken van het iconen en shaders pad!</string>
-  <string name="bad_explicit_save_path_configured">Kon geen toegang krijgen tot het algemene bewaar pad! Zet deze a.u.b. terug naar standaard in de ScummVM Opties</string>
-  <string name="keyboard_toggle_btn_desc">Virtueel toetsenbord aan-/uitzetten</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Annuleren</string>
   <string name="customkeyboardview_keycode_delete">Verwijderen</string>
@@ -23,8 +20,6 @@
   <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
   <string name="customkeyboardview_popup_close">Popup sluiten</string>
-  <string name="saf_request_prompt">Selecteer a.u.b. de \"root\" map van uw externe (fysieke) SD card. Dit heeft ScummVM nodig om toegang te krijgen tot het pad: </string>
-  <string name="saf_revoke_done">Storage Access Framework rechten van ScummVM zijn teruggetrokken!</string>
   <string name="ini_parsing_error">Configuratiebestand kon niet verwerkt worden</string>
   <string name="shortcut_creator_title">Speel een spel</string>
   <string name="shortcut_creator_search_game">Zoek een spel</string>

@@ -3,7 +3,6 @@
   <string name="app_name">ScummVM</string>
   <string name="app_name_debug">ScummVM (debug)</string>
   <string name="app_desc">Pelimoottori graafisille seikkailupeleille</string>
-  <string name="ok">OK</string>
   <string name="quit">Lopeta</string>
   <string name="no_log_file_title">Lokitiedostovirhe</string>
   <string name="no_log_file">ScummVM:n lokitiedoston lukeminen tai uuden luominen ei onnistu!</string>
@@ -13,8 +12,6 @@
   <string name="no_save_path_configured">Oletustallennuspolun luominen tai lukeminen ei onnistu!</string>
   <string name="no_icons_path_title">Ikonipolkuvirhe</string>
   <string name="no_icons_path_configured">Oletus ikoni- ja sävytinpolun luominen tai lukeminen ei onnistu!</string>
-  <string name="bad_explicit_save_path_configured">Globaalisti asetetun tallennuspolun lukeminen ei onnistu! Ole hyvä ja palauta oletusarvo käyttöön ScummVM:n asetuksista</string>
-  <string name="keyboard_toggle_btn_desc">Virtuaalinen näppäimistö päälle/pois</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Peruuta</string>
   <string name="customkeyboardview_keycode_delete">Poista</string>
@@ -23,8 +20,6 @@
   <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
   <string name="customkeyboardview_popup_close">Sulje ponnahdusikkuna</string>
-  <string name="saf_request_prompt">Ole hyvä ja valitse ulkoisen (fyysisen) SD-korttisi *juurihakemisto*. Tämä on tarpeellista jotta ScummVM pääsee kansioon: </string>
-  <string name="saf_revoke_done">ScummVM:n Storage Access Framework-luvat poistettu!</string>
   <string name="ini_parsing_error">Asetustiedostoa ei kyetty lukemaan</string>
   <string name="shortcut_creator_title">Käynnistä peli</string>
   <string name="shortcut_creator_search_game">Etsi peliä</string>

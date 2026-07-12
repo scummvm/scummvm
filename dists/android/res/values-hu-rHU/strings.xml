@@ -3,7 +3,6 @@
   <string name="app_name">ScummVM</string>
   <string name="app_name_debug">ScummVM (debug)</string>
   <string name="app_desc">Grafikus kalandjáték motor</string>
-  <string name="ok">OK</string>
   <string name="quit">Kilépés</string>
   <string name="no_log_file_title">Napló Fájl Hiba</string>
   <string name="no_log_file">Nem olvasható a ScummVM napló fájl, és nem is készíthető új!</string>
@@ -13,8 +12,6 @@
   <string name="no_save_path_configured">Nem lehet létrehozni vagy hozzáférni az alapértelmezett mentési útvonalat!</string>
   <string name="no_icons_path_title">Ikon Útvonal Hiba</string>
   <string name="no_icons_path_configured">Nem lehet létrehozni vagy hozzáférni az alapértelmezett ikonok és shaderek elérési útját!</string>
-  <string name="bad_explicit_save_path_configured">Nem érhető el az átfogó mentési útvonal! Kérem térjen vissza az alapbeállításra a ScummVM Opciókban</string>
-  <string name="keyboard_toggle_btn_desc">Virtuális billentyűzet bekapcsolása</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Mégse</string>
   <string name="customkeyboardview_keycode_delete">Törlés</string>
@@ -23,8 +20,6 @@
   <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
   <string name="customkeyboardview_popup_close">Felugró ablak bezárása</string>
-  <string name="saf_request_prompt">Kérem válassza ki a külső (fizikai) SD kártya *gyökérét*. A ScummVM-nek szüksége van erre, hogy hozzáférjen ehhez az elérési úthoz: </string>
-  <string name="saf_revoke_done">A ScummVM-hez tartozó Tárhely Hozzáférés Keretrendszer jogosultságok visszavonásra kerültek!</string>
   <string name="ini_parsing_error">Nem elemezhető a konfigurációs fájl</string>
   <string name="shortcut_creator_title">Egy játék indítása</string>
   <string name="shortcut_creator_search_game">Játék keresése</string>

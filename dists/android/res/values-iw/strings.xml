@@ -2,7 +2,6 @@
 <resources>
   <string name="app_name">ScummVM</string>
   <string name="app_desc">מנוע משחק הרפתקה גרפי</string>
-  <string name="ok">אישור</string>
   <string name="quit">יציאה</string>
   <string name="no_config_file_title">שגיאת קובץ תצורה</string>
   <string name="no_config_file">לא ניתן לקרוא את קובץ התצורה של ScummVM או ליצור חדש!</string>
@@ -10,7 +9,6 @@
   <string name="no_save_path_configured">לא ניתן ליצור נתיב שמירה ברירת מחדל או לגשת אליו!</string>
   <string name="no_icons_path_title">שגיאת נתיב צלמיות</string>
   <string name="no_icons_path_configured">לא ניתן ליצור נתיב ברירת מחדל עבור צלמיות וסוככים או לגשת אליו!</string>
-  <string name="keyboard_toggle_btn_desc">מיתוג מקלדת וירטואלית</string>
   <string name="customkeyboardview_keycode_alt">אלט</string>
   <string name="customkeyboardview_keycode_cancel">ביטול</string>
   <string name="customkeyboardview_keycode_delete">מחיקה</string>

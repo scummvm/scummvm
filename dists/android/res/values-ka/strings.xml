@@ -3,13 +3,11 @@
   <string name="app_name">ScummVM</string>
   <string name="app_name_debug">ScummVM (გამართვა)</string>
   <string name="app_desc">თავგადასავლების თამაშის ძრავა</string>
-  <string name="ok">დიახ</string>
   <string name="quit">გასვლა</string>
   <string name="no_log_file_title">ჟურნალის ფაილის შეცდომა</string>
   <string name="no_config_file_title">კონფიგურაციის ფაილის სეცდომა</string>
   <string name="no_save_path_title">ბილიკის შენახვის შეცდომა</string>
   <string name="no_icons_path_title">ხატულების ბილიკის შეცდომა</string>
-  <string name="keyboard_toggle_btn_desc">ვირტუალური კლავიატურის გადართვა</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">გაუქმება</string>
   <string name="customkeyboardview_keycode_delete">წაშლა</string>

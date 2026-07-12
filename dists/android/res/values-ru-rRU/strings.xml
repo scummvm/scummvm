@@ -3,7 +3,6 @@
   <string name="app_name">ScummVM</string>
   <string name="app_name_debug">ScummVM (отладка)</string>
   <string name="app_desc">Движок графической адвенчуры</string>
-  <string name="ok">OK</string>
   <string name="quit">Выход</string>
   <string name="no_log_file_title">Ошибка файла лога</string>
   <string name="no_log_file">Невозможно прочитать файл лога ScummVM или создать новый!</string>
@@ -13,8 +12,6 @@
   <string name="no_save_path_configured">Невозможно создать или получить доступ к пути сохранения по умолчанию!</string>
   <string name="no_icons_path_title">Ошибка пути к иконкам</string>
   <string name="no_icons_path_configured">Невозможно создать или получить доступ к пути иконок и шейдеров!</string>
-  <string name="bad_explicit_save_path_configured">Невозможно получить доступ к глобально установленному пути сохранения! Пожалуйста, вернитесь к параметрам по умолчанию в настройках ScummVM</string>
-  <string name="keyboard_toggle_btn_desc">Переключить виртуальную клавиатуру</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Отмена</string>
   <string name="customkeyboardview_keycode_delete">Удалить</string>
@@ -23,8 +20,6 @@
   <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Ввод</string>
   <string name="customkeyboardview_popup_close">Закрыть выпадающий список</string>
-  <string name="saf_request_prompt">Пожалуйста, выберите *корень* вашей внешней (физической) SD-карты. Это необходимо, чтобы ScummVM получил доступ к этой папке: </string>
-  <string name="saf_revoke_done">Разрешения Storage Access Framework для ScummVM были отозваны!</string>
   <string name="ini_parsing_error">Файл конфигурации содержит ошибку формата</string>
   <string name="shortcut_creator_title">Запустить игру</string>
   <string name="shortcut_creator_search_game">Искать игру</string>
