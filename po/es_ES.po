@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-12 10:29+0000\n"
+"POT-Creation-Date: 2026-07-12 19:03+0000\n"
 "PO-Revision-Date: 2026-07-11 11:39+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -124,7 +124,7 @@ msgstr "Arriba"
 #: gui/saveload-dialog.cpp:839 gui/saveload-dialog.cpp:1243
 #: gui/shaderbrowser-dialog.cpp:80 gui/themebrowser.cpp:54
 #: gui/unknown-game-dialog.cpp:53 base/main.cpp:608
-#: dists/android.strings.xml.cpp:46 engines/engine.cpp:800
+#: dists/android.strings.xml.cpp:43 engines/engine.cpp:800
 #: engines/engine.cpp:825 backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
@@ -380,9 +380,8 @@ msgstr "Los contenidos del código JSON no son válidos."
 #: gui/message.cpp:160 gui/message.cpp:231 gui/message.cpp:270
 #: gui/message.cpp:274 gui/options.cpp:2420 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 base/main.cpp:675 base/main.cpp:700
-#: dists/android.strings.xml.cpp:33 engines/engine.cpp:846
-#: backends/platform/wii/options.cpp:46 engines/buried/buried.cpp:622
-#: engines/buried/saveload.cpp:83
+#: engines/engine.cpp:846 backends/platform/wii/options.cpp:46
+#: engines/buried/buried.cpp:622 engines/buried/saveload.cpp:83
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:83
 #: engines/parallaction/saveload.cpp:270 engines/sci/engine/kgraphics.cpp:76
@@ -2869,7 +2868,7 @@ msgstr "Grabar o reproducir vídeos"
 
 #: gui/recorderdialog.cpp:71 gui/recorderdialog.cpp:211
 #: gui/saveload-dialog.cpp:460 gui/saveload-dialog.cpp:540
-#: dists/android.strings.xml.cpp:47 engines/engine.cpp:641
+#: dists/android.strings.xml.cpp:44 engines/engine.cpp:641
 msgid "Delete"
 msgstr "Eliminar"
 
@@ -3426,7 +3425,7 @@ msgstr "ScummVM (depuración)"
 msgid "Graphic adventure game engine"
 msgstr "Motor de aventuras gráficas"
 
-#: dists/android.strings.xml.cpp:34
+#: dists/android.strings.xml.cpp:33
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
@@ -3451,122 +3450,96 @@ msgstr "Motor de aventuras gráficas"
 msgid "Quit"
 msgstr "Salir"
 
-#: dists/android.strings.xml.cpp:35
+#: dists/android.strings.xml.cpp:34
 msgid "Log File Error"
 msgstr "Error en el archivo de registro"
 
-#: dists/android.strings.xml.cpp:36
+#: dists/android.strings.xml.cpp:35
 msgid "Unable to read ScummVM log file or create a new one!"
 msgstr "¡No se ha podido leer o crear el archivo de registro de ScummVM!"
 
-#: dists/android.strings.xml.cpp:37
+#: dists/android.strings.xml.cpp:36
 msgid "Config File Error"
 msgstr "Error en el archivo de configuración"
 
-#: dists/android.strings.xml.cpp:38
+#: dists/android.strings.xml.cpp:37
 msgid "Unable to read ScummVM config file or create a new one!"
 msgstr "¡No se ha podido leer o crear el archivo de configuración de ScummVM!"
 
-#: dists/android.strings.xml.cpp:39
+#: dists/android.strings.xml.cpp:38
 msgid "Save Path Error"
 msgstr "Error de la ruta de partidas guardadas"
 
-#: dists/android.strings.xml.cpp:40
+#: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default save path!"
 msgstr ""
 "¡No se ha podido crear o acceder a la ruta predeterminada de partidas "
 "guardadas!"
 
-#: dists/android.strings.xml.cpp:41
+#: dists/android.strings.xml.cpp:40
 msgid "Icons Path Error"
 msgstr "Error de la ruta de iconos"
 
-#: dists/android.strings.xml.cpp:42
+#: dists/android.strings.xml.cpp:41
 msgid "Unable to create or access default icons and shaders path!"
 msgstr ""
 "¡No se ha podido crear o acceder a la ruta predeterminada de iconos y "
 "shaders!"
 
-#: dists/android.strings.xml.cpp:43
-msgid ""
-"Unable to access the globally set save path! Please revert to default from "
-"ScummVM Options"
-msgstr ""
-"¡No se ha podido acceder a la ruta global de partidas guardadas! Cámbiala a "
-"la predeterminada dentro de las opciones de ScummVM"
-
-#: dists/android.strings.xml.cpp:44
-msgid "Toggle virtual keyboard"
-msgstr "Mostrar/Ocultar teclado virtual"
-
-#: dists/android.strings.xml.cpp:45 engines/scumm/help.cpp:82
+#: dists/android.strings.xml.cpp:42 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
 #: engines/scumm/help.cpp:97 engines/scumm/help.cpp:101
 #: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
 msgid "Alt"
 msgstr "Alt"
 
-#: dists/android.strings.xml.cpp:48
+#: dists/android.strings.xml.cpp:45
 #: backends/platform/libretro/src/libretro-options-widget.cpp:255
 msgid "Done"
 msgstr "Terminar"
 
-#: dists/android.strings.xml.cpp:49
+#: dists/android.strings.xml.cpp:46
 msgid "Mode change"
 msgstr "Cambiar modo"
 
-#: dists/android.strings.xml.cpp:50 engines/titanic/metaengine.cpp:211
+#: dists/android.strings.xml.cpp:47 engines/titanic/metaengine.cpp:211
 msgid "Shift"
 msgstr "Mayúsculas"
 
-#: dists/android.strings.xml.cpp:51 engines/dragons/metaengine.cpp:152
+#: dists/android.strings.xml.cpp:48 engines/dragons/metaengine.cpp:152
 #: engines/scumm/help.cpp:88 engines/scumm/help.cpp:91
 #: engines/ultima/ultima4/metaengine.cpp:53
 msgid "Enter"
 msgstr "Enter"
 
-#: dists/android.strings.xml.cpp:52
+#: dists/android.strings.xml.cpp:49
 msgid "Close popup"
 msgstr "Cerrar ventana"
 
-#: dists/android.strings.xml.cpp:53
-msgid ""
-"Please select the *root* of your external (physical) SD card. This is "
-"required for ScummVM to access this path: "
-msgstr ""
-"Selecciona la *raíz* de tu tarjeta SD externa (física). Debes indicarla para "
-"que ScummVM pueda acceder a la siguiente ruta: "
-
-#: dists/android.strings.xml.cpp:54
-msgid "Storage Access Framework Permissions for ScummVM were revoked!"
-msgstr ""
-"¡Se han revocado los permisos del framework de acceso al almacenamiento para "
-"ScummVM!"
-
-#: dists/android.strings.xml.cpp:55
+#: dists/android.strings.xml.cpp:50
 msgid ""
 "Local network access permission was denied: Web server won't be reachable"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:56
+#: dists/android.strings.xml.cpp:51
 #, fuzzy
 #| msgid "ScummVM (debug)"
 msgid "ScummVM Web server"
 msgstr "ScummVM (depuración)"
 
-#: dists/android.strings.xml.cpp:57
+#: dists/android.strings.xml.cpp:52
 msgid "Configuration file could not be parsed"
 msgstr "No se ha podido analizar el archivo de configuración"
 
-#: dists/android.strings.xml.cpp:58
+#: dists/android.strings.xml.cpp:53
 msgid "Run a game"
 msgstr "Ejecutar un juego"
 
-#: dists/android.strings.xml.cpp:59
+#: dists/android.strings.xml.cpp:54
 msgid "Search a game"
 msgstr "Buscar un juego"
 
-#: dists/android.strings.xml.cpp:60
+#: dists/android.strings.xml.cpp:55
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
@@ -3574,15 +3547,15 @@ msgstr ""
 "No hay juegos (todavía).\n"
 "Abre ScummVM y añade tus juegos desde aquí."
 
-#: dists/android.strings.xml.cpp:61
+#: dists/android.strings.xml.cpp:56
 msgid "Game icon"
 msgstr "Icono del juego"
 
-#: dists/android.strings.xml.cpp:62
+#: dists/android.strings.xml.cpp:57
 msgid "Shortcut label"
 msgstr "Etiqueta del acceso directo"
 
-#: dists/android.strings.xml.cpp:63
+#: dists/android.strings.xml.cpp:58
 msgid "Shortcut icon"
 msgstr "Icono del acceso directo"
 
@@ -17583,6 +17556,28 @@ msgstr ""
 "que es imprescindible tener audio en MIDI para poder resolverlos.  También "
 "se podrían resolver estos acertijos con subtítulos, si están disponibles. "
 "¿Quieres seguir ejecutando el juego?"
+
+#~ msgid ""
+#~ "Unable to access the globally set save path! Please revert to default "
+#~ "from ScummVM Options"
+#~ msgstr ""
+#~ "¡No se ha podido acceder a la ruta global de partidas guardadas! Cámbiala "
+#~ "a la predeterminada dentro de las opciones de ScummVM"
+
+#~ msgid "Toggle virtual keyboard"
+#~ msgstr "Mostrar/Ocultar teclado virtual"
+
+#~ msgid ""
+#~ "Please select the *root* of your external (physical) SD card. This is "
+#~ "required for ScummVM to access this path: "
+#~ msgstr ""
+#~ "Selecciona la *raíz* de tu tarjeta SD externa (física). Debes indicarla "
+#~ "para que ScummVM pueda acceder a la siguiente ruta: "
+
+#~ msgid "Storage Access Framework Permissions for ScummVM were revoked!"
+#~ msgstr ""
+#~ "¡Se han revocado los permisos del framework de acceso al almacenamiento "
+#~ "para ScummVM!"
 
 #~ msgid "Cover / back"
 #~ msgstr "Cubrirse/Volver"

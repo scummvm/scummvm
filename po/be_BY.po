@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-12 10:29+0000\n"
+"POT-Creation-Date: 2026-07-12 19:03+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -130,7 +130,7 @@ msgstr "Уверх"
 #: gui/saveload-dialog.cpp:839 gui/saveload-dialog.cpp:1243
 #: gui/shaderbrowser-dialog.cpp:80 gui/themebrowser.cpp:54
 #: gui/unknown-game-dialog.cpp:53 base/main.cpp:608
-#: dists/android.strings.xml.cpp:46 engines/engine.cpp:800
+#: dists/android.strings.xml.cpp:43 engines/engine.cpp:800
 #: engines/engine.cpp:825 backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
@@ -399,9 +399,8 @@ msgstr ""
 #: gui/message.cpp:160 gui/message.cpp:231 gui/message.cpp:270
 #: gui/message.cpp:274 gui/options.cpp:2420 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 base/main.cpp:675 base/main.cpp:700
-#: dists/android.strings.xml.cpp:33 engines/engine.cpp:846
-#: backends/platform/wii/options.cpp:46 engines/buried/buried.cpp:622
-#: engines/buried/saveload.cpp:83
+#: engines/engine.cpp:846 backends/platform/wii/options.cpp:46
+#: engines/buried/buried.cpp:622 engines/buried/saveload.cpp:83
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:83
 #: engines/parallaction/saveload.cpp:270 engines/sci/engine/kgraphics.cpp:76
@@ -2844,7 +2843,7 @@ msgstr "Прайграць ці запісаць гульнявы працэс"
 
 #: gui/recorderdialog.cpp:71 gui/recorderdialog.cpp:211
 #: gui/saveload-dialog.cpp:460 gui/saveload-dialog.cpp:540
-#: dists/android.strings.xml.cpp:47 engines/engine.cpp:641
+#: dists/android.strings.xml.cpp:44 engines/engine.cpp:641
 msgid "Delete"
 msgstr "Выдаліць"
 
@@ -3381,7 +3380,7 @@ msgstr "Завяршыць ScummVM"
 msgid "Graphic adventure game engine"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:34
+#: dists/android.strings.xml.cpp:33
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
@@ -3406,145 +3405,123 @@ msgstr ""
 msgid "Quit"
 msgstr "Выхад"
 
-#: dists/android.strings.xml.cpp:35
+#: dists/android.strings.xml.cpp:34
 #, fuzzy
 #| msgid "No error"
 msgid "Log File Error"
 msgstr "Няма памылкі"
 
-#: dists/android.strings.xml.cpp:36
+#: dists/android.strings.xml.cpp:35
 msgid "Unable to read ScummVM log file or create a new one!"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:37
+#: dists/android.strings.xml.cpp:36
 msgid "Config File Error"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:38
+#: dists/android.strings.xml.cpp:37
 msgid "Unable to read ScummVM config file or create a new one!"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:39
+#: dists/android.strings.xml.cpp:38
 #, fuzzy
 #| msgid "Save Path:"
 msgid "Save Path Error"
 msgstr "Захаванні гульняў:"
 
-#: dists/android.strings.xml.cpp:40
+#: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default save path!"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:41
+#: dists/android.strings.xml.cpp:40
 #, fuzzy
 msgid "Icons Path Error"
 msgstr "Каранёвая дырэкторыя:"
 
-#: dists/android.strings.xml.cpp:42
+#: dists/android.strings.xml.cpp:41
 msgid "Unable to create or access default icons and shaders path!"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:43
-msgid ""
-"Unable to access the globally set save path! Please revert to default from "
-"ScummVM Options"
-msgstr ""
-
-#: dists/android.strings.xml.cpp:44
-#, fuzzy
-#| msgid "Virtual keyboard"
-msgid "Toggle virtual keyboard"
-msgstr "Віртуальная клавіятура"
-
-#: dists/android.strings.xml.cpp:45 engines/scumm/help.cpp:82
+#: dists/android.strings.xml.cpp:42 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
 #: engines/scumm/help.cpp:97 engines/scumm/help.cpp:101
 #: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
 msgid "Alt"
 msgstr "Alt"
 
-#: dists/android.strings.xml.cpp:48
+#: dists/android.strings.xml.cpp:45
 #: backends/platform/libretro/src/libretro-options-widget.cpp:255
 msgid "Done"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:49
+#: dists/android.strings.xml.cpp:46
 msgid "Mode change"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:50 engines/titanic/metaengine.cpp:211
+#: dists/android.strings.xml.cpp:47 engines/titanic/metaengine.cpp:211
 #, fuzzy
 msgid "Shift"
 msgstr "Shift"
 
-#: dists/android.strings.xml.cpp:51 engines/dragons/metaengine.cpp:152
+#: dists/android.strings.xml.cpp:48 engines/dragons/metaengine.cpp:152
 #: engines/scumm/help.cpp:88 engines/scumm/help.cpp:91
 #: engines/ultima/ultima4/metaengine.cpp:53
 msgid "Enter"
 msgstr "Увод"
 
-#: dists/android.strings.xml.cpp:52
+#: dists/android.strings.xml.cpp:49
 #, fuzzy
 #| msgid "Close"
 msgid "Close popup"
 msgstr "Закрыць"
 
-#: dists/android.strings.xml.cpp:53
-msgid ""
-"Please select the *root* of your external (physical) SD card. This is "
-"required for ScummVM to access this path: "
-msgstr ""
-
-#: dists/android.strings.xml.cpp:54
-msgid "Storage Access Framework Permissions for ScummVM were revoked!"
-msgstr ""
-
-#: dists/android.strings.xml.cpp:55
+#: dists/android.strings.xml.cpp:50
 msgid ""
 "Local network access permission was denied: Web server won't be reachable"
 msgstr ""
 
-#: dists/android.strings.xml.cpp:56
+#: dists/android.strings.xml.cpp:51
 #, fuzzy
 #| msgid "Quit ScummVM"
 msgid "ScummVM Web server"
 msgstr "Завяршыць ScummVM"
 
-#: dists/android.strings.xml.cpp:57
+#: dists/android.strings.xml.cpp:52
 #, fuzzy
 #| msgid "the video mode could not be changed"
 msgid "Configuration file could not be parsed"
 msgstr "не атрымалася змяніць відэарэжым"
 
-#: dists/android.strings.xml.cpp:58
+#: dists/android.strings.xml.cpp:53
 #, fuzzy
 #| msgid "Saved games"
 msgid "Run a game"
 msgstr "Захавныя гульні"
 
-#: dists/android.strings.xml.cpp:59
+#: dists/android.strings.xml.cpp:54
 #, fuzzy
 #| msgid "Search in game list"
 msgid "Search a game"
 msgstr "Пошук у спісе гульняў"
 
-#: dists/android.strings.xml.cpp:60
+#: dists/android.strings.xml.cpp:55
 msgid ""
 "No games (yet)\n"
 "Open ScummVM and add your games here."
 msgstr ""
 
-#: dists/android.strings.xml.cpp:61
+#: dists/android.strings.xml.cpp:56
 #, fuzzy
 msgid "Game icon"
 msgstr "~Н~алады..."
 
-#: dists/android.strings.xml.cpp:62
+#: dists/android.strings.xml.cpp:57
 #, fuzzy
 #| msgid "Show object labels"
 msgid "Shortcut label"
 msgstr "Паказваць назвы аб'ектаў"
 
-#: dists/android.strings.xml.cpp:63
+#: dists/android.strings.xml.cpp:58
 msgid "Shortcut icon"
 msgstr ""
 
@@ -18268,6 +18245,11 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Virtual keyboard"
+#~ msgid "Toggle virtual keyboard"
+#~ msgstr "Віртуальная клавіятура"
 
 #, fuzzy
 #~| msgid "Move Back"
