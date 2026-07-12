@@ -145,6 +145,13 @@ Common::Error ComfyEngine::gameInit() {
 }
 
 void ComfyEngine::gameShutdown() {
+#ifdef USE_IMGUI
+	if (_keyboardUiInitialized) {
+		_system->setImGuiCallbacks(ImGuiCallbacks());
+		_keyboardUiInitialized = false;
+	}
+#endif
+
 	if (_lptKeyboardInitialized) {
 		lptKeyboardShutdown();
 		midiShutdown();
