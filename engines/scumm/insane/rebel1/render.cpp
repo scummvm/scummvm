@@ -578,8 +578,8 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	if (!_interactiveVideoActive || !renderBitmap)
 		return;
 
-	int width = _player->_width;
-	int height = _player->_height;
+	int width = _player ? _player->_width : 0;
+	int height = _player ? _player->_height : 0;
 	if (width == 0) width = _screenWidth;
 	if (height == 0) height = _screenHeight;
 	int pitch = width;

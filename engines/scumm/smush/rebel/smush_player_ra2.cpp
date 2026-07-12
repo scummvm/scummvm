@@ -267,17 +267,22 @@ void SmushPlayerRebel2::ra2ClearCurrentTarget() {
 	if (!_dst)
 		return;
 
+	// Match the off-screen buffers on identity alone: they can be smaller than the
+	// screen (424x260 against 640x400), so a bad _width/_height must not reach the
+	// screen-sized clear below.
 	int clearSize = 0;
-	if (_dst == _specialBuffer && _width > 0 && _height > 0) {
+	if (_dst == _specialBuffer) {
 		const int64 size64 = (int64)_width * _height;
-		if (size64 <= INT_MAX && size64 <= _specialBufferSize)
+		if (_width > 0 && _height > 0 && size64 <= INT_MAX && size64 <= _specialBufferSize)
 			clearSize = (int)size64;
-	} else if (_dst == _ra2LowResVideoBuffer && _width > 0 && _height > 0) {
+	} else if (_dst == _ra2LowResVideoBuffer) {
 		const int64 size64 = (int64)_width * _height;
-		if (size64 <= INT_MAX && size64 <= _ra2LowResVideoBufferSize)
+		if (_width > 0 && _height > 0 && size64 <= INT_MAX && size64 <= _ra2LowResVideoBufferSize)
 			clearSize = (int)size64;
 	} else {
-		clearSize = _vm->_screenWidth * _vm->_screenHeight;
+		const int64 screen64 = (int64)_vm->_screenWidth * _vm->_screenHeight;
+		if (screen64 > 0 && screen64 <= INT_MAX)
+			clearSize = (int)screen64;
 	}
 
 	if (clearSize > 0)

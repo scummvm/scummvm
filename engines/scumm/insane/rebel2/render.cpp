@@ -2536,7 +2536,7 @@ void InsaneRebel2::initDamageFlash() {
 		_damageRestorePaletteValid = true;
 	}
 
-	if (_damageFlashCounter == 0) {
+	if (_damageFlashCounter == 0 && _player) {
 		memcpy(_damageSavedPalette, _player->_pal, 0x300);
 	}
 	_damageFlashCounter = 5;

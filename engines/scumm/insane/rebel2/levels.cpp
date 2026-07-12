@@ -139,8 +139,6 @@ void InsaneRebel2::runGame() {
 							break;
 						}
 					} else {
-						if (_vm->shouldQuit() || result == kLevelQuit)
-							break;
 						break;
 					}
 				}
