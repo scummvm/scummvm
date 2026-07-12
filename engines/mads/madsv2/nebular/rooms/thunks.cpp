@@ -341,8 +341,9 @@ int16 Scene::Sequences::addReverseSpriteCycle(int series_id, int mirror, word ti
 	return kernel_seq_backward(series_id, mirror, ticks, interval_ticks, start_ticks, expire);
 }
 
-int Scene::Sequences::startPingPongCycle(int series_id, int mirror, word ticks, word interval_ticks,
-	word start_ticks, int expire) {
+int Scene::Sequences::startPingPongCycle(int series_id, int mirror, word ticks, word expire,
+	word start_ticks, int interval_ticks) {
+	// ***WARNING***: Last 3 params reversed
 	return kernel_seq_pingpong(series_id, mirror, ticks, interval_ticks, start_ticks, expire);
 }
 

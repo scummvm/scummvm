@@ -1629,22 +1629,22 @@ static void game_handle_preparse() {
  * various levels of parser code and error code.
  */
 static void game_handle_command() {
-	int handled_this_one;
-	int kernel_trigger_in;
+	bool isRex = g_engine->getGameID() == GType_RexNebular;
+	int handled_this_one = false;
+	int kernel_trigger_in = kernel.trigger;
 
-	kernel_trigger_in = kernel.trigger;
-
-	if (conv_control.running >= 0) {
-		player.look_around = false;
-		if ((conv_control.status == CONV_STATUS_WAIT_AUTO) ||
-			(conv_control.status == CONV_STATUS_WAIT_ENTRY)) {
-			player.commands_allowed = false;
+	if (!isRex) {
+		if (conv_control.running >= 0) {
+			player.look_around = false;
+			if ((conv_control.status == CONV_STATUS_WAIT_AUTO) ||
+				(conv_control.status == CONV_STATUS_WAIT_ENTRY)) {
+				player.commands_allowed = false;
+			}
 		}
-	}
 
-	handled_this_one = false;
-	if (kernel.trigger)
-		player.command_ready = true;
+		if (kernel.trigger)
+			player.command_ready = true;
+	}
 
 	kernel.trigger_setup_mode = KERNEL_TRIGGER_PARSER;
 
@@ -1660,7 +1660,7 @@ static void game_handle_command() {
 		handled_this_one = !player.command_ready;
 	}
 
-	if (conv_control.running >= 0) {
+	if (conv_control.running >= 0 || (isRex && inter_input_mode == INTER_CONVERSATION)) {
 		player.command_ready = false;
 		goto done;
 	}
@@ -1695,7 +1695,7 @@ done:
 	player.command_ready = false;
 
 	if (kernel.trigger_mode == KERNEL_TRIGGER_PARSER) {
-		if (kernel.trigger == kernel_trigger_in) {
+		if (isRex || kernel.trigger == kernel_trigger_in) {
 			kernel.trigger = 0;
 		}
 	}

@@ -315,8 +315,9 @@ struct Scene {
 			word start_ticks = 0, int interval_ticks = 0); 	// ***WARNING***: Last 3 params reversed
 		int16 addReverseSpriteCycle(int series_id, int mirror, word ticks, word expire = 0,
 			word start_ticks = 0, int interval_ticks = 0);	// ***WARNING***: Last 3 params reversed
-		int startPingPongCycle(int series_id, int mirror, word ticks, word interval_ticks = 0,
-			word start_ticks = 0, int expire = 0);
+		int startPingPongCycle(int series_id, int mirror, word ticks, word expire = 0,
+			word start_ticks = 0, int interval_ticks = 0);	// ***WARNING***: Last 3 params reversed
+
 		void remove(int sequence_id);
 		SequenceProxy operator[](uint sequence_id);
 
