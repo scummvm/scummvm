@@ -429,15 +429,6 @@ void ComfyEngine::lptKeyboardInit() {
 
 		_midiPlyrDriver->comfyboardStartReading(0x006D96DB, _lptPortBase);
 	}
-
-#ifdef USE_IMGUI
-	ImGuiCallbacks imGuiCallbacks;
-	imGuiCallbacks.init = onImGuiInit;
-	imGuiCallbacks.render = onImGuiRender;
-	imGuiCallbacks.cleanup = onImGuiCleanup;
-	_system->setImGuiCallbacks(imGuiCallbacks);
-	_keyboardUiInitialized = true;
-#endif
 }
 
 void ComfyEngine::lptKeyboardScanAndProcess() {
@@ -446,12 +437,6 @@ void ComfyEngine::lptKeyboardScanAndProcess() {
 }
 
 void ComfyEngine::lptKeyboardShutdown() {
-#ifdef USE_IMGUI
-	if (_keyboardUiInitialized)
-		_system->setImGuiCallbacks(ImGuiCallbacks());
-#endif
-
-	_keyboardUiInitialized = false;
 	if (_engineVersion == kEngineVersion3 && _midiPlyrDriver &&
 			(_inputInitialDeviceMode == 0 || _inputInitialDeviceMode == 1)) {
 		_midiPlyrDriver->comfyboardStopReading();

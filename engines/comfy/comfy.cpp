@@ -93,6 +93,15 @@ Common::Error ComfyEngine::gameInit() {
 	if (!iniReadGameConfig())
 		return Common::kNoGameDataFoundError;
 
+#ifdef USE_IMGUI
+	ImGuiCallbacks imGuiCallbacks;
+	imGuiCallbacks.init = onImGuiInit;
+	imGuiCallbacks.render = onImGuiRender;
+	imGuiCallbacks.cleanup = onImGuiCleanup;
+	_system->setImGuiCallbacks(imGuiCallbacks);
+	_keyboardUiInitialized = true;
+#endif
+
 	timerInit();
 	_gameInitialized = true;
 	_currentScene = _language;
