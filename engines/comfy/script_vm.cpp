@@ -156,13 +156,17 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		if (!parentSlot)
 			parentSlot = actorReadU16(actor, kActorSceneHandle);
 
-		actorInit(sceneSlot, parentSlot, flags & 1, flags & 2, newPc, x, y, sprite, flags & 4);
+		actorInit(sceneSlot, parentSlot, (flags & 1) != 0, (flags & 2) != 0,
+			newPc, x, y, sprite, (flags & 4) != 0);
 		return kScriptContinue;
 	}
 
 	case 0x09: {
 		actorSetFrame((int16)scriptReadWord(pc));
 		pc += 2;
+		if (_videoMode == 2 || _videoMode == 4)
+			videoSetResolution();
+
 		return kScriptContinue;
 	}
 
@@ -882,7 +886,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		if (!target)
 			error("Script opcode 0x%02X resolved an invalid actor", opcode);
 
-		if (!duration)
+		if (!duration && (opcode == 0x51 || opcode == 0x52))
 			error("Script opcode 0x%02X has a zero movement duration", opcode);
 
 		bool moveTo = opcode == 0x52 || opcode == 0x71;

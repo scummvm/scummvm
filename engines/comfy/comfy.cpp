@@ -24,6 +24,7 @@
 #include "comfy/console.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/system.h"
@@ -505,6 +506,7 @@ void ComfyEngine::sceneTickEvent() {
 	if (_engineVersion == 3) {
 		VocQueueEntry1999 &entry = _vocQueue1999[_soundEventIndex];
 		bool started = false;
+		uint16 currentSubIndex = _soundEventSubIndex;
 		if (entry.state == 0xFFFF && (entry.soundId != 0xFFFF || !animFrameIsReady())) {
 			entry.state = 0;
 			_soundEventSubIndex = 0xFFFF;
@@ -514,11 +516,12 @@ void ComfyEngine::sceneTickEvent() {
 			keyBitClear(2);
 			keyBitClear(3);
 			started = true;
+			currentSubIndex = 0xFFFF;
 		}
 
-		if (!started && _soundEventSubIndex != 0xFFFF &&
-				_soundEventSubIndex != _soundEventPreviousSubIndex) {
-			if (!_soundEventSubIndex) {
+		if (!started && currentSubIndex != 0xFFFF &&
+				currentSubIndex != _soundEventPreviousSubIndex) {
+			if (!currentSubIndex) {
 				if (entry.argumentCount)
 					keyBitSet(entry.arguments[0]);
 
@@ -532,27 +535,28 @@ void ComfyEngine::sceneTickEvent() {
 					keyBitSet(3);
 					keyBitSet(2);
 				}
-			} else if (_soundEventSubIndex == 1) {
+			} else if (currentSubIndex == 1) {
 				keyBitSet(3);
 				keyBitClear(4);
-			} else if (_soundEventSubIndex == 2) {
+			} else if (currentSubIndex == 2) {
 				keyBitSet(4);
 				keyBitClear(3);
-			} else if (_soundEventSubIndex - 2 < entry.argumentCount) {
+			} else if (currentSubIndex - 2 < entry.argumentCount) {
 				if (entry.clearArgumentKeys) {
 					for (uint i = 0; i < entry.argumentCount; i++)
 						keyBitClear(entry.arguments[i]);
 				}
 
-				keyBitSet(entry.arguments[_soundEventSubIndex - 2]);
+				keyBitSet(entry.arguments[currentSubIndex - 2]);
 			}
 		}
 
-		_soundEventPreviousSubIndex = _soundEventSubIndex;
+		_soundEventPreviousSubIndex = currentSubIndex;
 		return;
 	}
 
 	VocQueueEntry &entry = _vocQueue[_soundEventIndex % COMFY_VOC_QUEUE_CAPACITY];
+	uint16 currentSubIndex = _soundEventSubIndex;
 	if (entry.state == 0xFFFF) {
 		entry.state = 0;
 		_soundEventSubIndex = 0xFFFF;
@@ -561,8 +565,9 @@ void ComfyEngine::sceneTickEvent() {
 		keyBitSet(4);
 		keyBitClear(2);
 		keyBitClear(3);
-	} else if (_soundEventSubIndex != 0xFFFF && _soundEventSubIndex != _soundEventPreviousSubIndex) {
-		if (!_soundEventSubIndex) {
+		currentSubIndex = 0xFFFF;
+	} else if (currentSubIndex != 0xFFFF && currentSubIndex != _soundEventPreviousSubIndex) {
+		if (!currentSubIndex) {
 			if (entry.argumentCount)
 				keyBitSet(entry.arguments[0]);
 
@@ -573,18 +578,18 @@ void ComfyEngine::sceneTickEvent() {
 				keyBitSet(2);
 				keyBitSet(3);
 			}
-		} else if (_soundEventSubIndex == 1) {
+		} else if (currentSubIndex == 1) {
 			keyBitSet(3);
 			keyBitClear(4);
-		} else if (_soundEventSubIndex == 2) {
+		} else if (currentSubIndex == 2) {
 			keyBitSet(4);
 			keyBitClear(3);
-		} else if (_soundEventSubIndex - 2 < entry.argumentCount) {
-			keyBitSet(entry.arguments[_soundEventSubIndex - 2]);
+		} else if (currentSubIndex - 2 < entry.argumentCount) {
+			keyBitSet(entry.arguments[currentSubIndex - 2]);
 		}
 	}
 
-	_soundEventPreviousSubIndex = _soundEventSubIndex;
+	_soundEventPreviousSubIndex = currentSubIndex;
 }
 
 void ComfyEngine::midiPollChannels(uint16 ticks) {
@@ -628,8 +633,14 @@ void ComfyEngine::midiPollChannels(uint16 ticks) {
 
 bool ComfyEngine::vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc) {
 	uint16 next = (_soundEventMaximum + 1) % COMFY_VOC_QUEUE_CAPACITY;
-	if (next == _soundEventIndex)
+	if (next == _soundEventIndex) {
+		debug(5, "COMFY VOC: queue full; rejected id=%u args=%u index=%u maximum=%u",
+			soundId, argumentCount, _soundEventIndex, _soundEventMaximum);
 		return false;
+	}
+
+	debug(5, "COMFY VOC: queue id=%u args=%u slot=%u next=%u version=%u",
+		soundId, argumentCount, _soundEventMaximum, next, _engineVersion);
 
 	if (_engineVersion == 3) {
 		VocQueueEntry1999 &entry = _vocQueue1999[_soundEventMaximum];
