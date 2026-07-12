@@ -269,14 +269,17 @@ Common::Rect OpenGLDriver::getUnscaledViewport() const {
 	return _unscaledViewport;
 }
 
-Graphics::Surface *OpenGLDriver::getViewportScreenshot() const {
-	Graphics::Surface *s = new Graphics::Surface();
-	s->create(_viewport.width(), _viewport.height(), getRGBAPixelFormat());
+Graphics::Surface *OpenGLDriver::getViewportScreenshot(uint w, uint h) const {
+	Graphics::Surface *tmp = new Graphics::Surface();
+	tmp->create(_viewport.width(), _viewport.height(), Graphics::PixelFormat::createFormatRGBA32());
 
 	glReadPixels(_viewport.left, g_system->getHeight() - _viewport.bottom, _viewport.width(), _viewport.height(),
-	             GL_RGBA, GL_UNSIGNED_BYTE, s->getPixels());
+	             GL_RGBA, GL_UNSIGNED_BYTE, tmp->getPixels());
 
-	flipVertical(s);
+	Graphics::Surface *s = tmp->scale(w, h, false, Graphics::FLIP_V);
+
+	tmp->free();
+	delete tmp;
 
 	return s;
 }
