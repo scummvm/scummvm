@@ -21,6 +21,7 @@
 
 package org.scummvm.scummvm;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -51,6 +52,8 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class SAFFSTree {
+	@SuppressLint("ObsoleteSdkInt")
+	@SuppressWarnings("DefaultAnnotationParam")
 	@RequiresApi(api = Build.VERSION_CODES.BASE)
 	public interface IOBusyListener {
 		void onIOBusy(float ratio);
@@ -77,6 +80,8 @@ public class SAFFSTree {
 	// This atomic variable will generate unique identifiers for our objects
 	private static AtomicLong _idCounter;
 
+	@SuppressLint("ObsoleteSdkInt")
+	@SuppressWarnings("DefaultAnnotationParam")
 	@RequiresApi(api = Build.VERSION_CODES.BASE)
 	public static void setIOBusyListener(IOBusyListener l) {
 		if (_lastIOs == null) {
@@ -181,6 +186,8 @@ public class SAFFSTree {
 	 * Resolves a ScummVM virtual path to SAF objects if it's in the SAF domain.
 	 * Returns null otherwise and throws a FileNotFoundException if the SAF path doesn't exist.
 	 */
+	@SuppressLint("ObsoleteSdkInt")
+	@SuppressWarnings("DefaultAnnotationParam")
 	@RequiresApi(api = Build.VERSION_CODES.BASE)
 	public static PathResult fullPathToNode(Context context, String path, boolean createDirIfNotExists) throws FileNotFoundException {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N ||
@@ -208,6 +215,8 @@ public class SAFFSTree {
 		return new PathResult(tree, node);
 	}
 
+	@SuppressLint("ObsoleteSdkInt")
+	@SuppressWarnings("DefaultAnnotationParam")
 	@RequiresApi(api = Build.VERSION_CODES.BASE)
 	public static void clearCaches() {
 		if (_trees == null) {
