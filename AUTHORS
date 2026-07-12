@@ -287,6 +287,9 @@ ScummVM Team
     Hades Challenge:
        Vladimir Serbinenko/Google
 
+    Harvester:
+       Alex Bevilacqua
+
     HDB:
        Eugene Sandulenko
        Nipun Garg                     - GSoC student
@@ -351,6 +354,10 @@ ScummVM Team
     M4:
        Paul Gilbert
        Arnaud Boutonne
+
+    Macs2:
+       Florian Mehm
+       Martin Gerhardy
 
     MacVenture:
        Borja Lorente                  - GSoC student
@@ -425,6 +432,8 @@ ScummVM Team
     PhoenixVR:
        Vladimir Menshakov
        Hermann Noll                   - Help with 3D VR projections
+       Scorp                          - Dracula 1/2 and Messenger support,
+                                        Engine improvements
 
     Pink:
        Andrei Prykhodko
@@ -480,6 +489,7 @@ ScummVM Team
        Andrea Boscarino               - Digital iMUSE, SMUSH audio, GUI
        James Brown                    - (retired)
        Jonathan Gray                  - (retired)
+       Gustavo Grieco                 - Rebel Assault I & II
        Vincent Hamm                   - (retired)
        Max Horn                       - (retired)
        Travis Howell

@@ -3,6 +3,7 @@ begin_section("SCUMM");
 	add_person("Andrea Boscarino", "AndywinXp", "Digital iMUSE, SMUSH audio, GUI");
 	add_person("James Brown", "ender", "(retired)");
 	add_person("Jonathan Gray", "khalek", "(retired)");
+	add_person("Gustavo Grieco", "neuromancer", "Rebel Assault I &amp; II");
 	add_person("Vincent Hamm", "yaz0r", "(retired)");
 	add_person("Max Horn", "Fingolfin", "(retired)");
 	add_person("Travis Howell", "Kirben", "");
