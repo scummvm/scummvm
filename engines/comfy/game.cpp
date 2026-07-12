@@ -74,28 +74,28 @@ static uint16 getLanguageId(const Common::String &directory) {
 }
 
 void ComfyEngine::gameConfigInit() {
-	if (!strcmp(_gameDescription->gameId, "comfyland")) {
+	if (!strcmp(_game->desc.gameId, "comfyland")) {
 		_gameDirectory = Common::Path("COMFY1");
 		_introDirectory = Common::Path("INTRO");
-	} else if (!strcmp(_gameDescription->gameId, "boo")) {
+	} else if (!strcmp(_game->desc.gameId, "boo")) {
 		_gameDirectory = Common::Path("BOO");
 		_introDirectory = Common::Path("FINTRO");
-	} else if (!strcmp(_gameDescription->gameId, "first")) {
+	} else if (!strcmp(_game->desc.gameId, "first")) {
 		_gameDirectory = Common::Path("FIRST");
 		_introDirectory = Common::Path("FINTRO");
-	} else if (!strcmp(_gameDescription->gameId, "match")) {
+	} else if (!strcmp(_game->desc.gameId, "match")) {
 		_gameDirectory = Common::Path("MATCH");
 		_introDirectory = Common::Path("MINTRO");
-	} else if (!strcmp(_gameDescription->gameId, "colors")) {
+	} else if (!strcmp(_game->desc.gameId, "colors")) {
 		_gameDirectory = Common::Path("COLORS");
 		_introDirectory = Common::Path("INTRO");
-	} else if (!strcmp(_gameDescription->gameId, "concert")) {
+	} else if (!strcmp(_game->desc.gameId, "concert")) {
 		_gameDirectory = Common::Path("CONCERT");
 		_introDirectory = Common::Path("INTRO");
-	} else if (!strcmp(_gameDescription->gameId, "friends")) {
+	} else if (!strcmp(_game->desc.gameId, "friends")) {
 		_gameDirectory = Common::Path("FRIENDS");
 		_introDirectory = Common::Path("INTRO");
-	} else if (!strcmp(_gameDescription->gameId, "panther")) {
+	} else if (!strcmp(_game->desc.gameId, "panther")) {
 		_gameDirectory = Common::Path("PANTHER");
 		_introDirectory.clear(); // No intro
 	}
@@ -381,10 +381,10 @@ bool ComfyEngine::sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 
 
 	uint32 stringBytes = _stringTable.size() * sizeof(uint16);
 	uint32 handleBytes = _sceneHandles.size() * sizeof(uint16);
-	uint32 actorBytes = _actors.size() * (_engineVersion == kEngineVersion3 ? COMFY_ACTOR_SIZE_V3 : COMFY_ACTOR_SIZE);
+	uint32 actorBytes = _actors.size() * (_engineVersion == 3 ? COMFY_ACTOR_SIZE_V3 : COMFY_ACTOR_SIZE);
 	uint32 keyBytes = ((uint32)keyBitCount + 1) / 8 + 1;
 	_sceneMidiInstanceOffset = 0;
-	if (_engineVersion == kEngineVersion3) {
+	if (_engineVersion == 3) {
 		_sceneEntryListOffset = COMFY_SCENE_MIDI_INSTANCE_BYTES + COMFY_SCENE_VOC_STATE_BYTES_V3 +
 				COMFY_ANM_STATE_BYTES;
 		_sceneActorPcOffset = _sceneEntryListOffset + COMFY_SCENE_STATE_BYTES_V3;
@@ -398,7 +398,7 @@ bool ComfyEngine::sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 
 	_sceneHandlesOffset = _sceneStringTableOffset + stringBytes;
 	_sceneActorsOffset = _sceneHandlesOffset + handleBytes;
 	_sceneKeyBitsOffset = _sceneActorsOffset + actorBytes;
-	_sceneAnimStateOffset = _engineVersion == kEngineVersion3 ?
+	_sceneAnimStateOffset = _engineVersion == 3 ?
 			COMFY_SCENE_MIDI_INSTANCE_BYTES + COMFY_SCENE_VOC_STATE_BYTES_V3 : _sceneKeyBitsOffset + keyBytes;
 	uint32 sceneBytes = assetsAlignEven32(_sceneKeyBitsOffset + keyBytes);
 	_sceneMemoryBlock.resize(sceneBytes);
@@ -408,7 +408,7 @@ bool ComfyEngine::sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 
 	_envNumSprites = numSprites;
 	_activeSceneCount = handleCount;
 
-	if (_engineVersion == kEngineVersion3) {
+	if (_engineVersion == 3) {
 		midiInitInstanceAt();
 		if (!soundInit())
 			return false;
@@ -439,7 +439,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 		return false;
 	}
 
-	if (_engineVersion != kEngineVersion3 && !soundInit())
+	if (_engineVersion != 3 && !soundInit())
 		return false;
 
 	_picFileMapped = true;
@@ -485,7 +485,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	for (uint i = 0; i < _spriteResources.size(); i++)
 		spriteInvalidateHostCache(_spriteResources[i]);
 
-	if (_engineVersion != kEngineVersion3 && _usesAnimFile && !animFileOpen())
+	if (_engineVersion != 3 && _usesAnimFile && !animFileOpen())
 		return false;
 
 	if (_usesAnimFile) {
@@ -493,7 +493,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 		memset(&_animFrameBuffer[0], 0, _animFrameBuffer.size());
 	}
 
-	uint32 xmsLimit = _engineVersion == kEngineVersion3 ? 0x7D000 : 0x0800 << 10;
+	uint32 xmsLimit = _engineVersion == 3 ? 0x7D000 : 0x0800 << 10;
 	_scenePoolSize = xmsLimit > budget ? xmsLimit - budget : 0;
 	_scenePoolSize &= 0xFFFFFFFE;
 	_scenePoolData.resize(_scenePoolSize);
@@ -502,7 +502,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 
 	_scenePoolCursor = 0;
 	_scenePoolEvictCursor = 0;
-	if (_engineVersion != kEngineVersion3 && _scenePoolSize >= 2)
+	if (_engineVersion != 3 && _scenePoolSize >= 2)
 		WRITE_LE_UINT16(&_scenePoolData[0], 0x8000);
 
 	uint32 xmsOffset = 0;
@@ -557,7 +557,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 }
 
 void ComfyEngine::assetsUnload(byte freeAudio) {
-	if (_engineVersion == kEngineVersion3) {
+	if (_engineVersion == 3) {
 		_objectCacheEntries.clear();
 		_frameCacheEntries.clear();
 		_scenePoolData.clear();

@@ -34,26 +34,11 @@ namespace Comfy {
 
 ComfyEngine *g_engine;
 
-static ComfyEngineVersion getEngineVersion(const ADGameDescription *gameDesc) {
-	if (!strcmp(gameDesc->gameId, "comfyland")) {
-		if (gameDesc->extra && !strcmp(gameDesc->extra, "1999"))
-			return kEngineVersion3;
-
-		return kEngineVersion1;
-	}
-
-	if (!strcmp(gameDesc->gameId, "boo") || !strcmp(gameDesc->gameId, "first") ||
-			!strcmp(gameDesc->gameId, "match"))
-		return kEngineVersion2;
-
-	return kEngineVersion3;
-}
-
-ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _engineVersion(getEngineVersion(gameDesc)),
+ComfyEngine::ComfyEngine(OSystem *syst, const ComfyGameDescription *gameDesc) : Engine(syst),
+	_game(gameDesc), _engineVersion(gameDesc->version),
 	_randomSource("Comfy"),
-	_logicalScreenWidth(!strcmp(gameDesc->gameId, "panther") ? COMFY_PANTHER_SCREEN_WIDTH : COMFY_SCREEN_WIDTH),
-	_logicalScreenHeight(!strcmp(gameDesc->gameId, "panther") ? COMFY_PANTHER_SCREEN_HEIGHT : COMFY_SCREEN_HEIGHT) {
+	_logicalScreenWidth(!strcmp(gameDesc->desc.gameId, "panther") ? COMFY_PANTHER_SCREEN_WIDTH : COMFY_SCREEN_WIDTH),
+	_logicalScreenHeight(!strcmp(gameDesc->desc.gameId, "panther") ? COMFY_PANTHER_SCREEN_HEIGHT : COMFY_SCREEN_HEIGHT) {
 	memset(_paletteFadeSource, 0, sizeof(_paletteFadeSource));
 	memset(_paletteTarget, 0, sizeof(_paletteTarget));
 	memset(_paletteDisplay, 0, sizeof(_paletteDisplay));
@@ -77,7 +62,7 @@ ComfyEngine::~ComfyEngine() {
 }
 
 Common::String ComfyEngine::getGameId() const {
-	return _gameDescription->gameId;
+	return _game->desc.gameId;
 }
 
 Common::Error ComfyEngine::run() {
@@ -209,7 +194,7 @@ uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
 
 	if (!assetsLoad(0x4000, _sceneRunPtr)) {
 		assetsUnload(0);
-		if (_engineVersion != kEngineVersion3) {
+		if (_engineVersion != 3) {
 			_sceneRunBuffer.clear();
 			_sceneRunPtr = nullptr;
 		}
@@ -222,7 +207,7 @@ uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
 	}
 
 	gameMainLoop(sceneId);
-	if (_engineVersion == kEngineVersion3 && _languageSessionRestartRequested) {
+	if (_engineVersion == 3 && _languageSessionRestartRequested) {
 		nextScene = sceneId;
 		_languageSessionRestartRequested = false;
 	} else if (checkNext) {
@@ -232,20 +217,20 @@ uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
 		if ((int16)nextScene > 0 && (int16)nextScene < 0x65 && nextScene != sceneId)
 			shouldStartNext = 1;
 
-		if (_engineVersion == kEngineVersion3)
+		if (_engineVersion == 3)
 			shouldStartNext = 1;
 	}
 
 	if (exitFlag || shouldStartNext)
 		restorePalette = 0;
 
-	if (_engineVersion == kEngineVersion3)
+	if (_engineVersion == 3)
 		animFileShutdown();
 
 	midiShutdown();
 	assetsUnload(0);
 	inputQueueReset();
-	if (_engineVersion != kEngineVersion3) {
+	if (_engineVersion != 3) {
 		_sceneRunBuffer.clear();
 		_sceneRunPtr = nullptr;
 	}
@@ -293,29 +278,29 @@ void ComfyEngine::processEvents() {
 			hostKeyboardSetKeyState(hostKeyboardVirtualKey(event.kbd.keycode), false);
 			break;
 		case Common::EVENT_MOUSEMOVE:
-			if (_engineVersion == kEngineVersion3) {
+			if (_engineVersion == 3) {
 				_mouseX = CLIP<int16>((int32)event.mouse.x * 320 / _logicalScreenWidth, 0, 319);
 				_mouseY = CLIP<int16>((int32)event.mouse.y * 200 / _logicalScreenHeight, 0, 199);
 			}
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			if (_engineVersion == kEngineVersion3) {
+			if (_engineVersion == 3) {
 				_mouseLeftButton = true;
 				_mouseLeftButtonEdge = false;
 			}
 			break;
 		case Common::EVENT_LBUTTONUP:
-			if (_engineVersion == kEngineVersion3)
+			if (_engineVersion == 3)
 				_mouseLeftButtonEdge = true;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			if (_engineVersion == kEngineVersion3) {
+			if (_engineVersion == 3) {
 				_mouseRightButton = true;
 				_mouseRightButtonEdge = false;
 			}
 			break;
 		case Common::EVENT_RBUTTONUP:
-			if (_engineVersion == kEngineVersion3)
+			if (_engineVersion == 3)
 				_mouseRightButtonEdge = true;
 			break;
 		default:
@@ -382,11 +367,11 @@ void ComfyEngine::mouseUpdateCursor() {
 void ComfyEngine::gameMainLoop(uint16 argument) {
 	byte keepRunning = 1;
 	uint16 lastKey = 0xFFFF;
-	if (_engineVersion == kEngineVersion3)
+	if (_engineVersion == 3)
 		midiInitInstance();
 
 	actorInit(1, 0, 1, 1, 0x14, 0, 0, 0, 1);
-	if (_engineVersion == kEngineVersion3)
+	if (_engineVersion == 3)
 		mouseSetActor(nullptr);
 
 	keyBitSet(2);
@@ -417,7 +402,7 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 		lptKeyboardScanAndProcess();
 		lptKeyToFlags(lastKey);
 		actorTickTree(rootIndex);
-		if (_engineVersion == kEngineVersion3) {
+		if (_engineVersion == 3) {
 			mouseClearButtonEdges();
 			mouseUpdateCursor();
 		}
@@ -446,7 +431,7 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 			renderSetDirty();
 		}
 
-		if (_engineVersion == kEngineVersion3)
+		if (_engineVersion == 3)
 			_waveOutputActive = true;
 
 		lastKey = 0xFFFF;
@@ -517,7 +502,7 @@ void ComfyEngine::sceneTickEvent() {
 	if (_soundEventIndex == _soundEventMaximum)
 		return;
 
-	if (_engineVersion == kEngineVersion3) {
+	if (_engineVersion == 3) {
 		VocQueueEntry1999 &entry = _vocQueue1999[_soundEventIndex];
 		bool started = false;
 		if (entry.state == 0xFFFF && (entry.soundId != 0xFFFF || !animFrameIsReady())) {
@@ -646,7 +631,7 @@ bool ComfyEngine::vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc) 
 	if (next == _soundEventIndex)
 		return false;
 
-	if (_engineVersion == kEngineVersion3) {
+	if (_engineVersion == 3) {
 		VocQueueEntry1999 &entry = _vocQueue1999[_soundEventMaximum];
 		entry.clearArgumentKeys = (argumentCount & 0x80) != 0;
 		argumentCount &= 0x3F;
@@ -686,7 +671,7 @@ bool ComfyEngine::vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc) 
 void ComfyEngine::vocQueuePlayAll() {
 	_mixer->stopHandle(_soundHandle);
 	_soundCues.clear();
-	if (_engineVersion == kEngineVersion3) {
+	if (_engineVersion == 3) {
 		uint16 slot = _soundEventIndex;
 		while (slot != _soundEventMaximum) {
 			VocQueueEntry1999 &entry = _vocQueue1999[slot];

@@ -55,7 +55,7 @@ const ADExtraGuiOptionsMap *ComfyMetaEngine::getAdvancedExtraGuiOptions() const 
 	return Comfy::optionsList;
 }
 
-Common::Error ComfyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error ComfyMetaEngine::createInstance(OSystem *syst, Engine **engine, const Comfy::ComfyGameDescription *desc) const {
 	*engine = new Comfy::ComfyEngine(syst, desc);
 	return Common::kNoError;
 }

@@ -49,7 +49,7 @@ void ComfyEngine::colorDatReadEntry(uint16 paletteId) {
 	if (_colorDatStream->read(_paletteTarget, COMFY_PALETTE_BYTES) != COMFY_PALETTE_BYTES)
 		error("COLORS.DAT is truncated while reading palette %u", (uint)paletteId);
 
-	if (_engineVersion == kEngineVersion3) {
+	if (_engineVersion == 3) {
 		// Version 3 forces color 0 to black immediately after reading the palette...
 		_paletteTarget[0] = 0;
 		_paletteTarget[1] = 0;
@@ -93,7 +93,7 @@ void ComfyEngine::paletteFadeStep(uint16 delta) {
 
 void ComfyEngine::paletteLoadWithFade(uint16 paletteId, uint16 fadeTicks) {
 	colorDatReadEntry(paletteId);
-	if (_engineVersion != kEngineVersion3)
+	if (_engineVersion != 3)
 		_palettePage = 'S';
 
 	if (_paletteFading)

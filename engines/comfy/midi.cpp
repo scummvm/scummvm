@@ -55,7 +55,7 @@ uint16 ComfyEngine::midiTick() {
 		return 0;
 
 	uint32 previousCounter = _midiInstanceEventTime;
-	if (_engineVersion == kEngineVersion3) {
+	if (_engineVersion == 3) {
 		int16 adjustment = midiGetCounterAdjustment();
 		if (adjustment) {
 			_midiPlyrDriver->setVocCounter((uint32)((int32)_midiPlyrDriver->getVocCounter() + adjustment));
@@ -65,16 +65,16 @@ uint16 ComfyEngine::midiTick() {
 
 	do {
 		_midiTimeCounter = _midiPlyrDriver->getTimeCounter();
-		if ((_engineVersion == kEngineVersion3 && _midiTimeCounter <= previousCounter) ||
-				(_engineVersion != kEngineVersion3 && _midiTimeCounter == previousCounter)) {
+		if ((_engineVersion == 3 && _midiTimeCounter <= previousCounter) ||
+				(_engineVersion != 3 && _midiTimeCounter == previousCounter)) {
 			processEvents();
 			if (shouldQuit())
 				return 0;
 
 			_system->delayMillis(1);
 		}
-	} while ((_engineVersion == kEngineVersion3 && _midiTimeCounter <= previousCounter) ||
-		(_engineVersion != kEngineVersion3 && _midiTimeCounter == previousCounter));
+	} while ((_engineVersion == 3 && _midiTimeCounter <= previousCounter) ||
+		(_engineVersion != 3 && _midiTimeCounter == previousCounter));
 
 	_midiInstanceEventTime = _midiTimeCounter;
 	_midiEventBaseTime = (int32)_midiInstanceEventTime;
@@ -128,7 +128,7 @@ bool ComfyEngine::midiPlyrStart() {
 		return false;
 
 	midiPlyrStop();
-	MidiPlyrDriver::DriverVersion version = _engineVersion == kEngineVersion3 ?
+	MidiPlyrDriver::DriverVersion version = _engineVersion == 3 ?
 		MidiPlyrDriver::kDriverVersion2 : MidiPlyrDriver::kDriverVersion1;
 	_midiPlyrDriver = new MidiPlyrDriver(version);
 	if (!_midiPlyrDriver->musicStart(flags)) {
@@ -212,7 +212,7 @@ void ComfyEngine::midiInitInstanceAt() {
 }
 
 void ComfyEngine::midiInitInstance() {
-	if (_engineVersion == kEngineVersion3) {
+	if (_engineVersion == 3) {
 		_midiTracks.nextTime = 0;
 		_midiTracks.nextIndex = 0x03E7;
 		_midiEvents.nextTime = 0;
@@ -245,7 +245,7 @@ void ComfyEngine::midiInitChannels() {
 		state.volumeCurrent = state.volumeDefault = 0x6400;
 		state.rateCurrent = state.rateDefault = 0x07D0;
 		state.pitchCurrent = state.pitchDefault = 0x1388;
-		if (_engineVersion != kEngineVersion3) {
+		if (_engineVersion != 3) {
 			state.volumeTarget = state.volumeDefault;
 			state.rateTarget = state.rateDefault;
 			state.pitchTarget = state.pitchDefault;
