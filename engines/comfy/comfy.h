@@ -57,12 +57,19 @@
 #define COMFY_RESOURCE_LIST_CAPACITY 32
 #define COMFY_SCENE_ENTRY_OFFSET_CAPACITY 16
 #define COMFY_SCENE_MIDI_INSTANCE_BYTES 0x18C
+#define COMFY_SCENE_MIDI_VERSION_BYTES_CLASSIC 0x167
+#define COMFY_SCENE_VOC_STATE_BYTES_V3 0x24D
+#define COMFY_SCENE_STATE_BYTES_V3 0x17F
+#define COMFY_ACTOR_SIZE_V3 0x57
 #define COMFY_SCENE_ACTOR_PC_BYTES 0x320
 #define COMFY_SCENE_FRAME_BYTES 0x4E20
+#define COMFY_SCENE_FRAME_BYTES_V3 0x7530
 #define COMFY_VOC_ARG_CAPACITY 10
 #define COMFY_VOC_QUEUE_CAPACITY 16
+#define COMFY_VOC_ARG_CAPACITY_1999 12
 #define COMFY_MIDI_QUEUE_CAPACITY 32
 #define COMFY_MIDI_CHANNEL_COUNT 2
+#define COMFY_SCENE_MUSIC_CHANNEL_COUNT 6
 #define COMFY_MIDI_TRACK_ENTRY_CAPACITY 5
 #define COMFY_ANIM_FRAME_CAPACITY 10
 #define COMFY_ANMFILE_HEADER_BYTES 16
@@ -71,6 +78,8 @@
 #define COMFY_ANMFRAME_MAGIC 0x4E41
 #define COMFY_ANMFRAME_PANTHER_MAGIC 0x4C46
 #define COMFY_ANMFRAME_BYTES 0xFA00
+#define COMFY_ANMFRAME_COMMAND_DATA_BYTES 0x78
+#define COMFY_ANM_STATE_BYTES 0x68
 
 namespace Comfy {
 
@@ -189,6 +198,24 @@ private:
 		}
 	};
 
+	struct VocQueueEntry1999 {
+		uint16 soundId;
+		uint16 argumentCount;
+		uint16 state;
+		uint16 arguments[COMFY_VOC_ARG_CAPACITY_1999];
+		bool clearArgumentKeys;
+
+		VocQueueEntry1999() {
+			soundId = 0;
+			argumentCount = 0;
+			state = 0;
+			clearArgumentKeys = false;
+
+			for (uint i = 0; i < COMFY_VOC_ARG_CAPACITY_1999; i++)
+				arguments[i] = 0;
+		}
+	};
+
 	struct MidiQueueEntry {
 		uint16 id;
 		int32 time;
@@ -248,7 +275,6 @@ private:
 		int16 pitchTicksLeft;
 		int16 pitchDefault;
 		uint16 loadedFrameSize;
-		bool playing;
 
 		MidiChannelState() {
 			entryCount = 0;
@@ -265,7 +291,6 @@ private:
 			pitchTicksLeft = 0;
 			pitchDefault = 0;
 			loadedFrameSize = 0;
-			playing = false;
 		}
 	};
 
@@ -383,10 +408,18 @@ private:
 	uint16 _lptPortBase = 0x0378;
 	uint16 _inputDeviceMode = 0;
 	uint16 _inputDevicePreference = 0;
+	uint16 _inputInitialDeviceMode = 0;
 	uint32 _inputPreviousComfyboardState = 0;
 	uint32 _inputPreviousKeyboardState = 0;
 	uint16 _inputComfyboardActivityCount = 0;
 	uint16 _inputKeyboardActivityCount = 0;
+	bool _inputKeyboardBit7Held = false;
+	bool _inputKeyboardResetRequested = false;
+	bool _inputKeyboardSyntheticBit7 = false;
+	bool _inputComfyboardSuppressBit1 = false;
+	uint16 _inputKeyboardPulseTicks = 0;
+	bool _inputKeyboardPulseLatched = false;
+	uint32 _inputKeyboardPulseTime = 0;
 	bool _keyboardUiInitialized = false;
 	bool _keyboardUiVisible = true;
 	Common::Array<byte> _comfyObjData;
@@ -424,6 +457,10 @@ private:
 	Common::Array<SpriteCacheEntry> _frameCacheEntries;
 	ResourceLoadList _spriteConversionLoads;
 	SpriteObjectHeader _spriteLastHeader;
+	uint16 _spriteDecompressLastSize = 0;
+	bool _spriteDecompressLastComplete = false;
+	uint32 _objFileOffset = 0;
+	uint16 _objFileStride = 0;
 	uint32 _keymaskBits = 0;
 	uint16 _keymaskLastIndex = 0xFFFF;
 	uint16 _keymaskCount = 0;
@@ -431,10 +468,15 @@ private:
 	uint16 _keymaskArg0 = 0;
 	uint16 _keymaskArg1 = 0;
 	uint16 _keymaskResult = 0;
+	int16 _keymaskX = 0;
+	int16 _keymaskY = 0;
 	VideoRectRecord _keymaskCurrentRecord;
 	VideoRectRecord _keymaskRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
 	VideoRectRecord _keymaskOldRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
+	VideoRectRecord _keymaskInvalidationRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
 	uint32 _sceneEntryOffsets[COMFY_SCENE_ENTRY_OFFSET_CAPACITY];
+	uint16 _sceneEntryVolumes[COMFY_SCENE_MUSIC_CHANNEL_COUNT];
+	uint16 _sceneEntryCompletionKeys[COMFY_SCENE_MUSIC_CHANNEL_COUNT];
 	uint32 _sceneMidiInstanceOffset = 0;
 	uint32 _sceneEntryListOffset = 0;
 	uint32 _sceneActorPcOffset = 0;
@@ -442,13 +484,14 @@ private:
 	uint32 _sceneHandlesOffset = 0;
 	uint32 _sceneActorsOffset = 0;
 	uint32 _sceneKeyBitsOffset = 0;
+	uint32 _sceneAnimStateOffset = 0;
 	uint32 _scenePoolCursor = 0;
 	uint32 _scenePoolEvictCursor = 0;
 	uint32 _scenePoolSize = 0;
 	uint32 _headerXmsObjectTableBase = 0;
 	uint32 _headerXmsObjectTableBytes = 0;
-	uint32 _headerXmsPicEntriesBase = 0;
-	uint32 _headerXmsPicEntriesBytes = 0;
+	uint32 _headerXmsMidiEntriesBase = 0;
+	uint32 _headerXmsMidiEntriesBytes = 0;
 	uint32 _headerXmsSoundHeadersBase = 0;
 	uint32 _headerXmsSoundHeadersBytes = 0;
 	uint16 _selectorPoolEntries[10];
@@ -472,8 +515,30 @@ private:
 	bool _musicEnabled = false;
 	bool _usesWcomfy99ScriptOps = false;
 	bool _languageSessionRestartRequested = false;
+	int16 _mouseX = 0;
+	int16 _mouseY = 0;
+	bool _mouseLeftButton = false;
+	bool _mouseRightButton = false;
+	bool _mouseLeftButtonEdge = false;
+	bool _mouseRightButtonEdge = false;
+	uint16 _mouseActorSceneHandle = 0;
+	Actor *_mouseActor = nullptr;
+	SpriteResource *_mouseCursorSprite = nullptr;
+	uint16 _mouseCursorSpriteId = 0;
+	uint16 _mouseFlags = 0;
+	bool _waveOutputActive = false;
+	byte _wcomfy99VocState0 = 0;
+	byte _wcomfy99VocState1 = 0;
+	byte _wcomfy99VocState2 = 0;
+	byte _wcomfy99VocState3 = 0;
+	byte _wcomfy99VocState6 = 0;
+	bool _wcomfy99HostMediaValueAvailable = false;
+	uint16 _wcomfy99HostMediaValue = 0;
+	uint16 _wcomfy99HostMediaProgress = 0;
 	uint16 _wcomfy99FeatureWords[16];
 	byte _wcomfy99FeatureWordCount = 0;
+	uint16 _wcomfy99Stub32FirstWord = 0;
+	uint16 _wcomfy99Stub32SecondWord = 0;
 	uint16 _wcomfy99Sensitivity = 0;
 	bool _wcomfy99RecordHostEnabled = false;
 	uint16 _wcomfy99SubsystemWord = 0;
@@ -494,6 +559,7 @@ private:
 	bool _actorDestroyedCurrent = false;
 	uint16 _lastKey = 0xFFFF;
 	VocQueueEntry _vocQueue[COMFY_VOC_QUEUE_CAPACITY];
+	VocQueueEntry1999 _vocQueue1999[COMFY_VOC_QUEUE_CAPACITY];
 	uint16 _soundEventIndex = 0;
 	uint16 _soundEventMaximum = 0;
 	uint16 _soundEventSubIndex = 0xFFFF;
@@ -506,7 +572,7 @@ private:
 	Common::Array<byte> _soundPcm;
 	Common::Array<SoundCue> _soundCues;
 	Audio::SoundHandle _soundHandle;
-	uint16 _soundTileStride = 0;
+	uint16 _soundEntryCount = 0;
 	uint32 _soundSampleRate = 0x2B11;
 	uint _soundNextCue = 0;
 	bool _soundCompressed = false;
@@ -515,18 +581,21 @@ private:
 	Common::Array<uint32> _animIndexTable;
 	Common::Array<byte> _animFrameBuffer;
 	Common::Array<byte> _animFrameStorage;
+	uint32 _animStorageChunkFileOffsets[6];
+	uint32 _animStorageChunkOffsets[6];
+	uint16 _animStorageChunkSizes[6];
 	byte _animFrameHeader[COMFY_ANMFILE_HEADER_BYTES];
-	byte _animPendingDirtyRect[16];
+	byte _animFrameCommandData[COMFY_ANMFRAME_COMMAND_DATA_BYTES];
 	uint32 _animPosition = 0;
-	uint16 _animPendingDirtyRectSize = 0;
+	uint16 _animFrameCommandDataSize = 0;
+	uint16 _animFrameCommandArgument = 0;
+	bool _animFrameCommandFlag = false;
 	uint16 _animCurrentIndex = 0;
-	uint16 _animCurrentAnimId = 0;
 	uint16 _animCurrentActorSceneHandle = 0;
 	uint16 _animCurrentFrameKey = 0;
-	byte _animVocCounterMode = 0;
 	uint16 _animVocClockHz = 0;
 	uint16 _animVocTargetCounter = 0;
-	uint16 _animVocBaseCounter = 0;
+	uint16 _animVocDeltaB = 0;
 	uint16 _animVocDeltaA = 0;
 	uint32 _animVocCounterStartA = 0;
 	uint32 _animVocCounterEndA = 0;
@@ -535,6 +604,8 @@ private:
 	bool _animIndexLoaded = false;
 	bool _animPantherFormat = false;
 	bool _animActive = false;
+	bool _animFrameReady = false;
+	bool _animUsesWaveVocCounter = false;
 	uint16 _exprStack[COMFY_EXPR_STACK_CAPACITY];
 	uint16 _exprStackTop = 0;
 	bool _scriptFault = false;
@@ -575,6 +646,11 @@ private:
 	void paletteConvertRgbToLogical(byte *source, byte *destination);
 	void paletteRealize(byte *rawPalette);
 	uint16 midiTick();
+	void midiHandleAddTo(uint16 handleIndex, int16 delta);
+	void midiHandleCopy(uint16 destination, uint16 source);
+	void midiHandleSet(uint16 handleIndex, uint16 value);
+	uint16 midiGetHandle(uint16 handleIndex);
+	uint16 midiGetVersion();
 	void midiSetTimeScale(int16 delta);
 	int16 midiGetCounterAdjustment();
 	bool midiPlyrStart();
@@ -616,10 +692,11 @@ private:
 	bool comfyObjOpen();
 	bool picFileOpen();
 	bool midiFileOpen();
-	void objFileReadEntries(byte *destination);
+	void midiFileReadEntries(byte *destination);
 	byte *soundReadTiledData();
-	void soundGetTileParams(uint16 *tileStride, uint16 *fieldCount);
+	void soundGetTileParams(uint16 *entryCount, uint16 *entrySize);
 	void spriteCache(int16 spriteId);
+	SpriteResource *spriteLookup(uint16 spriteId, int16 x, int16 y);
 	void spriteInvalidateHostCache(SpriteResource &sprite);
 	void objHdrReadFromXms(byte *destination, uint32 base, uint16 size, uint16 row);
 	void objHdrRead(SpriteObjectHeader &destination, uint16 index);
@@ -671,7 +748,7 @@ private:
 	void actorSetPc(Actor &actor, uint32 pc);
 	uint32 actorPopPc(Actor &actor);
 	void actorFreePcChain(Actor &actor);
-	void actorFreeTree(uint16 actorIndex);
+	void actorFreeTreePc(uint16 actorIndex);
 	void actorClearDirtyTree(uint16 actorIndex);
 	void actorSetAllVisible();
 	uint16 actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible, byte active,
@@ -683,10 +760,8 @@ private:
 	uint16 scriptEvalKeyMask(uint32 pc, uint16 mode, VideoRectRecord &maskRecord,
 		VideoRectRecord *rects, int16 baseX, int16 baseY);
 	void actorEvalFrameSelection(uint16 actorIndex, int16 x, int16 y);
-	uint16 actorDrawScripted(uint16 actorIndex, uint32 selector, int16 x, int16 y);
 	VideoRectRecord actorReadCachedRect(Actor &actor);
 	void actorWriteCachedRect(Actor &actor, VideoRectRecord rect);
-	void actorInvalidateDrawTree(uint16 actorIndex);
 	void timerInit();
 	void timerShutdown();
 	void lptKeyboardInit();
@@ -694,40 +769,64 @@ private:
 	void gameMainLoop(uint16 argument);
 	uint16 sceneRun(uint16 sceneId, bool checkNext, bool exitFlag);
 	void processEvents();
+	void mouseSetActor(Actor *actor);
+	Actor *mouseGetActor();
+	void mouseClearButtonEdges();
+	void mouseUpdateCursor();
 
 	uint16 timerTick();
 	void midiTrackTickAndRemove();
 	void animFileTickCommands();
 	bool animFileOpen();
-	void animFileShutdown(bool closeFile);
+	void animFrameShutdown(bool freeBuffers);
+	void animFileShutdown();
 	void animFileLoadFrame(uint16 animIndex, uint16 frameKey, uint16 actorSceneHandle);
 	uint32 animDecompressRle(const byte *source, uint32 sourceSize, byte *destination, uint32 destinationSize);
 	uint32 animDecodePanther(const byte *source, uint32 sourceSize);
-	bool animFrameShouldWaitForVoc();
+	bool animFrameIsPending();
 	bool animFrameShouldDraw(uint16 phase);
 	int16 animFrameVocCounterDelta();
 	void animFrameRecordVocCounter(uint16 phase);
 	void animFrameWaitForVocCounter();
+	void animFrameSetReady(bool ready);
+	bool animFrameBlitAt(int16 x, int16 y);
+	void animFrameInvalidateRects(int16 x, int16 y, byte mode);
+	bool animFrameGetDimensions(uint16 &width, uint16 &height);
+	void animFrameClear();
+	void animFilePackState(byte *state);
+	void animFileRestoreStreamPosition(const byte *state);
+	void animFileRebuildStorage(uint32 targetSize);
+	void animFileUnpackState(const byte *state);
+	void animFrameInvalidateActorRect();
+	bool animFrameIsActive();
+	bool animFrameIsReady();
+	void animFrameReadStorage(byte *destination, uint32 offset, uint16 size);
+	void animFilePushStorageChunk(uint32 fileOffset, uint32 storageOffset, uint16 size);
+	void animFrameSetVocCounter(uint32 counter);
 	void sceneTickEvent();
 	void sceneStartWithMusic(uint16 scene);
 	void midiPollChannels(uint16 ticks);
+	void midiInitInstanceAt();
 	void midiInitInstance();
 	void midiInitChannels();
 	void midiSyncAndScan();
 	void midiFindNext(MidiQueue &queue);
 	void midiQueueAdd(MidiQueue &queue, uint16 id, int16 delta);
-	void midiQueueRemove(MidiQueue &queue, uint16 id);
+	bool midiQueueRemove(MidiQueue &queue, uint16 id);
 	void midiAddEvent(uint16 id, int16 delta);
 	void midiAddTrack(uint16 id, int16 delta);
 	void midiRemoveTrack(uint16 id);
 	void midiAddTrackEntry(uint16 channel, uint16 songId, uint16 completionKey, byte loadFlag,
 		uint16 frameCount, uint16 *frames);
 	void midiClearChannel(uint16 channel);
+	void midiFireClearMarker(uint16 channel, int16 marker);
+	void midiPollSceneEntries();
 	void midiResumeAll();
 	void midiStopChannel(uint16 channel);
 	void midiStopAll();
 	void midiStopSong(uint16 channel);
 	void midiPlaySongAtFrame(uint16 channel, uint16 frame);
+	void sceneEntrySetVolume(uint16 channel, uint16 volume);
 	void midiFinishChannel(uint16 channel);
 	void midiStopAndFireKeys(uint16 channel);
 	void midiStopAndRemove(uint16 channel);
@@ -736,12 +835,13 @@ private:
 	void musicSetEnabled(byte value);
 	void paletteFadeStep(uint16 ticks);
 	void lptKeyboardScanAndProcess();
-	void vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc);
+	bool vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc);
 	void vocQueuePlayAll();
 	bool vocQueueIsIdle();
 	bool soundInit();
 	void soundShutdown();
 	void soundHdrReadFromXms(byte *destination, uint16 index, uint16 size);
+	void soundUnprepareHeader();
 	bool soundDecodeEntry(uint16 index);
 	bool soundDecodeCompressedEntry(uint32 dataOffset, uint32 dataSize);
 	bool soundLoadEntry(uint16 index);

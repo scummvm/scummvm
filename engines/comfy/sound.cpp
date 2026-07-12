@@ -60,7 +60,6 @@ private:
 };
 
 bool ComfyEngine::soundInit() {
-	soundShutdown();
 	if (!readAssetFile(Common::Path("VOCFILE.DAT"), _vocFileData) || _vocFileData.size() < 4)
 		return false;
 
@@ -68,11 +67,21 @@ bool ComfyEngine::soundInit() {
 		return false;
 
 	_soundCompressed = _vocFileData[1] == 'W';
-	_soundTileStride = assetsReadLe16At(_vocFileData, 2);
+	_soundEntryCount = assetsReadLe16At(_vocFileData, 2);
 	_soundEventIndex = 0;
 	_soundEventMaximum = 0;
 	_soundEventSubIndex = 0xFFFF;
 	_soundEventPreviousSubIndex = 0xFFFF;
+	for (uint i = 0; i < COMFY_VOC_QUEUE_CAPACITY; i++) {
+		_vocQueue[i] = VocQueueEntry();
+		_vocQueue1999[i] = VocQueueEntry1999();
+	}
+
+	_wcomfy99VocState0 = 0;
+	_wcomfy99VocState1 = 0;
+	_wcomfy99VocState2 = 0;
+	_wcomfy99VocState3 = 0;
+	_wcomfy99VocState6 = 0;
 	return true;
 }
 
@@ -81,7 +90,7 @@ void ComfyEngine::soundShutdown() {
 	_soundPcm.clear();
 	_soundCues.clear();
 	_vocFileData.clear();
-	_soundTileStride = 0;
+	_soundEntryCount = 0;
 	_soundNextCue = 0;
 	_soundPaused = false;
 	if (_midiPlyrDriver)
@@ -90,6 +99,10 @@ void ComfyEngine::soundShutdown() {
 
 void ComfyEngine::soundHdrReadFromXms(byte *destination, uint16 index, uint16 size) {
 	objHdrReadFromXms(destination, _headerXmsSoundHeadersBase, size, index);
+}
+
+void ComfyEngine::soundUnprepareHeader() {
+	soundAdvanceTick();
 }
 
 bool ComfyEngine::soundLoadEntry(uint16 index) {

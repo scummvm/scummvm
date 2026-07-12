@@ -133,7 +133,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		bool current = target == &actor;
 		uint16 actorIndex = uint16(target - &_actors[0]);
 		actorUnlink(actorIndex);
-		actorFreeTree(actorIndex);
+		actorFreeTreePc(actorIndex);
 		_actorDestroyedCurrent = current;
 		return current ? kScriptYield : kScriptContinue;
 	}
@@ -426,8 +426,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		uint16 handle = scriptReadWord(pc);
 		int16 delta = scriptReadStringIndex(pc + 2);
 		pc += 4;
-		if (handle < _midiHandles.size())
-			_midiHandles[handle] += delta;
+		midiHandleAddTo(handle, delta);
 
 		return kScriptContinue;
 	}
@@ -535,9 +534,10 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		pc += 7;
 		if (destination < _midiHandles.size() && first < _midiHandles.size()) {
 			if (command == '=')
-				_midiHandles[destination] = _midiHandles[first];
+				midiHandleCopy(destination, first);
 			else if (command == 'm' && second < _midiHandles.size())
-				_midiHandles[destination] = int16(_midiHandles[second]) <= int16(_midiHandles[first]) ? _midiHandles[first] : _midiHandles[second];
+				midiHandleCopy(destination,
+					int16(midiGetHandle(second)) <= int16(midiGetHandle(first)) ? first : second);
 		}
 
 		return kScriptContinue;
@@ -546,16 +546,18 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	if (opcode == 0x30 && _usesAnimFile) {
 		byte subop = scriptReadByte(pc++);
 		if (subop == 0) {
-			animFileShutdown(true);
+			animFrameShutdown(true);
 		} else if (subop == 1) {
 			uint16 animIndex = scriptReadWord(pc);
 			uint16 frameKey = scriptReadWord(pc + 2);
 			pc += 4;
 			animFileLoadFrame(animIndex, frameKey, actorReadU16(actor, kActorSceneHandle));
 		} else if (subop == 2) {
-			_animVocCounterMode = 1;
+			animFrameSetReady(true);
 		} else if (subop == 3) {
-			_animVocCounterMode = 0;
+			animFrameSetReady(false);
+		} else if (subop == 6) {
+			animFrameInvalidateActorRect();
 		}
 
 		return kScriptContinue;
@@ -571,6 +573,8 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 
 			pc += uint32(count) * 2;
 		} else if (opcode == 0x32) {
+			_wcomfy99Stub32FirstWord = scriptReadWord(pc);
+			_wcomfy99Stub32SecondWord = scriptReadWord(pc + 2);
 			pc += 4;
 		} else if (opcode == 0x33) {
 			pc += 4;
@@ -607,13 +611,11 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 				else
 					keyBitClear(value);
 			} else if (subop == 6) {
+				key.trim();
 				byte last = key.empty() ? 0 : key.lastChar();
 				if (value < _stringTable.size())
 					_stringTable[value] = Common::isSpace(last) ? 0x81 : Common::isDigit(last) ? 0x12 :
 						(Common::isAlpha(last) ? (Common::isUpper(last) ? 0x04 : 0x08) : 0x40);
-
-				pathSetGameDataDir(Common::Path(key));
-				_languageSessionRestartRequested = true;
 			}
 		} else if (opcode == 0x35) {
 			byte subop = scriptReadByte(pc++);
@@ -804,8 +806,10 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptYield;
 	}
 
-	if (opcode == 0x73)
+	if (opcode == 0x73) {
+		_waveOutputActive = false;
 		return kScriptContinue;
+	}
 
 	if (opcode == 0x74) {
 		uint16 key = scriptReadWord(pc);

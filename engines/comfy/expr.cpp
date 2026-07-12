@@ -94,6 +94,47 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 			continue;
 		}
 
+		if (_engineVersion == kEngineVersion3 && opcode >= 0x17 && opcode <= 0x21) {
+			uint16 value = 0;
+			bool pushValue = true;
+			if (opcode == 0x17)
+				value = _mouseX;
+			else if (opcode == 0x18)
+				value = _mouseY;
+			else if (opcode == 0x19)
+				value = _wcomfy99VocState0;
+			else if (opcode == 0x1A)
+				value = _wcomfy99HostMediaValueAvailable ? _wcomfy99HostMediaValue : 0;
+			else if (opcode == 0x1B)
+				pushValue = false;
+			else if (opcode == 0x1C)
+				value = _wcomfy99VocState2;
+			else if (opcode == 0x1D)
+				value = _wcomfy99VocState3;
+			else if (opcode == 0x1E) {
+				if (_exprStackTop) {
+					uint16 dimension = _exprStack[_exprStackTop - 1];
+					if (dimension == 0x6E)
+						_exprStack[_exprStackTop - 1] = 320;
+					else if (dimension == 0x6F)
+						_exprStack[_exprStackTop - 1] = 200;
+					else
+						_exprStack[_exprStackTop - 1] = 0;
+				}
+
+				pushValue = false;
+			} else if (opcode == 0x1F || opcode == 0x20) {
+				value = _wcomfy99HostMediaProgress;
+			} else if (opcode == 0x21) {
+				value = _wcomfy99VocState6;
+			}
+
+			if (pushValue && _exprStackTop < COMFY_EXPR_STACK_CAPACITY)
+				_exprStack[_exprStackTop++] = value;
+
+			continue;
+		}
+
 		if (opcode == 0x0C) {
 			if (_exprStackTop < 2) {
 				_exprStackTop = 0;
