@@ -1247,8 +1247,8 @@ void FoolGame::mazeDrawWallBottom() {
 
 void FoolGame::mazeStoreState() {
 	// 136:2f5c
-	// for the endgame maze, there's specific code to not save the puzzle state
-	if (!((_activePuzzle != 0x57) && (!_activePuzzleSolved))) {
+	// don't save the puzzle state if solved, except for the metapuzzle maze
+	if ((_activePuzzle != 0x57) && (_activePuzzleSolved)) {
 		_activePuzzleBuffer.clear(); // was: str(OFF(35))
 		return;
 	}
