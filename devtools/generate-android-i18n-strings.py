@@ -17,6 +17,19 @@ import xml.etree.ElementTree as ET
 
 BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
+# These codes are ripped from Weblate
+ANDROID_CODES = {
+    "he": "iw",
+    "id": "in",
+    "yi": "ji",
+}
+LEGACY_CODES = {
+    "zh_Hans": "zh_CN",
+    "zh_Hant": "zh_TW",
+    "zh_Hans_SG": "zh_SG",
+    "zh_Hant_HK": "zh_HK",
+}
+
 def generate_fake_cpp():
     cpp_text = '''/* ScummVM - Graphic Adventure Engine
  *
@@ -94,15 +107,23 @@ def get_lang_qualifier(file):
     '''Generates <qualifier> for res/values-<qualifier> directory as per the specs given here:
     https://developer.android.com/guide/topics/resources/providing-resources#AlternativeResources
     '''
+    print(file)
+    if file in ANDROID_CODES:
+        return ANDROID_CODES[file]
+
+    if file in LEGACY_CODES:
+        file = LEGACY_CODES[file]
+
     if is_regional_language_code(file):
-        lang_qualifier = file.replace('_', '-r')
-    elif is_bcp47_language_code(file):
+        return file.replace('_', '-r')
+
+    if is_bcp47_language_code(file):
         subtags = re.split('[-_]', file)
         lang_qualifier = '+'.join(subtags)
         lang_qualifier = 'b+' + lang_qualifier
-    else:
-        raise Exception(f"Invalid language code: {file}")
-    return lang_qualifier
+        return lang_qualifier
+
+    raise Exception(f"Invalid language code: {file}")
 
 
 def generate_translated_xml(file):
