@@ -239,7 +239,7 @@ void ComfyEngine::spriteCache(int16 spriteId) {
 		WRITE_LE_UINT16(entryData + 2, slotSize);
 		memcpy(entryData + 0x0C, &_comfyObjData[fileOffset], size);
 		_frameSpriteResource.id = spriteId;
-		memset(&_frameSpriteResource.header, 0, sizeof(_frameSpriteResource.header));
+		_frameSpriteResource.header = SpriteObjectHeader();
 		_frameSpriteResource.header.dataSize = size;
 		_frameSpriteResource.header.tiledSize = size;
 		_frameSpriteResource.pixels.resize(size);

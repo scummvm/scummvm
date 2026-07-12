@@ -254,8 +254,8 @@ bool ComfyEngine::picFileOpen() {
 	_spriteHeaders.resize(count);
 	_spriteResources.resize(count);
 	for (uint i = 0; i < count; i++) {
-		memset(&_spriteHeaders[i], 0, sizeof(SpriteObjectHeader));
-		memset(&_spriteResources[i].header, 0, sizeof(SpriteObjectHeader));
+		_spriteHeaders[i] = SpriteObjectHeader();
+		_spriteResources[i].header = SpriteObjectHeader();
 		_spriteResources[i].id = i;
 		_spriteResources[i].pixels.clear();
 		_spriteResources[i].loaded = false;
@@ -441,7 +441,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	if (!_frameCacheEntries.empty())
 		memset(&_frameCacheEntries[0], 0xFF, _frameCacheEntries.size() * sizeof(SpriteCacheEntry));
 
-	memset(&_spriteConversionLoads, 0, sizeof(_spriteConversionLoads));
+	_spriteConversionLoads = ResourceLoadList();
 
 	for (uint i = 0; i < _spriteResources.size(); i++)
 		spriteInvalidateHostCache(_spriteResources[i]);
@@ -530,7 +530,8 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	_musicEventMask = 0;
 	_musicEventFlag = 0;
 	_musicEnabled = false;
-	memset(_vocQueue, 0, sizeof(_vocQueue));
+	for (uint i = 0; i < COMFY_VOC_QUEUE_CAPACITY; i++)
+		_vocQueue[i] = VocQueueEntry();
 	_soundEventIndex = 0;
 	_soundEventMaximum = 0;
 	_soundEventSubIndex = 0xFFFF;
@@ -567,7 +568,7 @@ void ComfyEngine::assetsUnload(byte freeAudio) {
 	_picFileData.clear();
 	_midiFileData.clear();
 	selPoolFree();
-	memset(&_spriteConversionLoads, 0, sizeof(_spriteConversionLoads));
+	_spriteConversionLoads = ResourceLoadList();
 	memset(_sceneEntryOffsets, 0, sizeof(_sceneEntryOffsets));
 	memset(_actorPcTable, 0, sizeof(_actorPcTable));
 	_usesWcomfy99ScriptOps = false;

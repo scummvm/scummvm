@@ -51,64 +51,14 @@ static ComfyEngineVersion getEngineVersion(const ADGameDescription *gameDesc) {
 
 ComfyEngine::ComfyEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _engineVersion(getEngineVersion(gameDesc)),
-	_language(2), _multiLanguage(true),
-	_randomSource("Comfy"), _screen(nullptr), _framebufPtr(nullptr), _presentBuffer(nullptr),
+	_randomSource("Comfy"),
 	_logicalScreenWidth(!strcmp(gameDesc->gameId, "panther") ? COMFY_PANTHER_SCREEN_WIDTH : COMFY_SCREEN_WIDTH),
-	_logicalScreenHeight(!strcmp(gameDesc->gameId, "panther") ? COMFY_PANTHER_SCREEN_HEIGHT : COMFY_SCREEN_HEIGHT),
-	_resolutionChangeCount(0), _renderDirtyCount(0), _renderInterleaved(false),
-	_colorDatStream(nullptr), _paletteDataPtr(nullptr), _vsyncPending(0), _fadeMax(0), _fadeStep(0),
-	_palettePage(0), _paletteFading(false),
-	_timerCurrent(1), _timer0(1), _timer1(1), _timer2(1),
-	_midiTimeCounter(0), _midiInstanceEventTime(0), _midiEventBaseTime(0),
-	_midiTimeScale(0x400), _midiTimeDelta(0), _midiCounterAdjustment(0), _midiPlyrDriver(nullptr),
-	_keyBits(nullptr), _keyBitsSize(0),
-	_keyboardMapLoaded(false), _keyboardActiveMask(0), _keyboardLatchedMask(0),
-	_keymapperActiveMask(0), _keymapperLatchedMask(0), _toyKeyboardActiveMask(0),
-	_toyKeyboardLatchedMask(0), _toyKeyboardHoldMask(0), _lptPrevScanState(0), _inputDeviceMode(0),
-	_inputDevicePreference(0), _inputPreviousComfyboardState(0), _inputPreviousKeyboardState(0),
-	_inputComfyboardActivityCount(0), _inputKeyboardActivityCount(0),
-	_keyboardUiInitialized(false), _keyboardUiVisible(true),
-	_stringCount(0), _sceneCount(0), _keyBitCount(0), _resourceHandleCount(0), _midiEntryCount(0),
-	_picDataSize(0), _usesAnimFile(false), _sceneOpen(false), _sceneEntryListActive(false),
-	_sceneMidiInstanceOffset(0), _sceneEntryListOffset(0), _sceneActorPcOffset(0), _sceneStringTableOffset(0),
-	_sceneHandlesOffset(0), _sceneActorsOffset(0), _sceneKeyBitsOffset(0), _scenePoolCursor(0),
-	_scenePoolEvictCursor(0), _scenePoolSize(0), _headerXmsObjectTableBase(0),
-	_headerXmsObjectTableBytes(0), _headerXmsPicEntriesBase(0), _headerXmsPicEntriesBytes(0),
-	_headerXmsSoundHeadersBase(0), _headerXmsSoundHeadersBytes(0), _selectorRing(0),
-	_selectorPoolInitialized(false), _activeSceneCount(0), _sceneEntryCount(0), _sceneEntryFrameSize(0),
-	_numObjects(0), _numFrames(0), _numSprites(0), _envNumSprites(0), _midiFileMode(0), _mirrorMode(false),
-	_currentActor(0), _pendingScene(0), _musicEventMask(0), _musicEventFlag(0), _musicEnabled(false),
-	_usesWcomfy99ScriptOps(false), _wcomfy99FeatureWordCount(0), _wcomfy99Sensitivity(0),
-	_wcomfy99RecordHostEnabled(false), _wcomfy99SubsystemWord(0), _wcomfy99MixedHostFirstWord(0),
-	_wcomfy99MixedHostSecondWord(0), _wcomfy99MixedHostThirdWord(0), _wcomfy99MixedHostFourthWord(0),
-	_wcomfy99HostWordA(0), _wcomfy99HostWordB(0), _wcomfy99WaveVolumePercent(0),
-	_wcomfy99WaveLeftPercent(0), _wcomfy99WaveRightPercent(0), _wcomfy99MixerVolumePercent(0),
-	_wcomfy99MixerAltPercent(0), _wcomfy99RangeHostStart(0), _wcomfy99RangeHostEnd(0),
-	_wcomfy99RangeHostCount(0), _actorDestroyedCurrent(false), _lastKey(0xFFFF),
-	_soundEventIndex(0), _soundEventMaximum(0), _soundEventSubIndex(0xFFFF),
-	_soundEventPreviousSubIndex(0xFFFF), _midiInstanceTrackBase(1),
-	_soundTileStride(0), _soundSampleRate(0x2B11), _soundNextCue(0), _soundCompressed(false), _soundPaused(false),
-	_animPosition(0), _animPendingDirtyRectSize(0), _animCurrentIndex(0),
-	_animCurrentActorSceneHandle(0), _animCurrentFrameKey(0), _animVocCounterMode(0),
-	_animVocClockHz(0), _animVocTargetCounter(0), _animVocBaseCounter(0), _animVocDeltaA(0),
-	_animVocCounterStartA(0), _animVocCounterStartB(0), _animIndexLoaded(false),
-	_animPantherFormat(false), _animActive(false),
-	_exprStackTop(0), _scriptFault(false),
-	_gameInitialized(false), _videoInitialized(false),
-	_timerInitialized(false), _lptKeyboardInitialized(false) {
+	_logicalScreenHeight(!strcmp(gameDesc->gameId, "panther") ? COMFY_PANTHER_SCREEN_HEIGHT : COMFY_SCREEN_HEIGHT) {
 	memset(_paletteFadeSource, 0, sizeof(_paletteFadeSource));
 	memset(_paletteTarget, 0, sizeof(_paletteTarget));
 	memset(_paletteDisplay, 0, sizeof(_paletteDisplay));
 	memset(_logicalPalette, 0, sizeof(_logicalPalette));
-	memset(&_inputQueue, 0, sizeof(_inputQueue));
 	memset(_keyboardKeyToBit, 0xFF, sizeof(_keyboardKeyToBit));
-	memset(_vocQueue, 0, sizeof(_vocQueue));
-	memset(&_midiEvents, 0, sizeof(_midiEvents));
-	memset(&_midiTracks, 0, sizeof(_midiTracks));
-	memset(_midiChannels, 0, sizeof(_midiChannels));
-	_frameSpriteResource.id = 0;
-	memset(&_frameSpriteResource.header, 0, sizeof(_frameSpriteResource.header));
-	_frameSpriteResource.loaded = false;
 	memset(_selectorPoolEntries, 0, sizeof(_selectorPoolEntries));
 	memset(_wcomfy99FeatureWords, 0, sizeof(_wcomfy99FeatureWords));
 	memset(_animFrameHeader, 0, sizeof(_animFrameHeader));

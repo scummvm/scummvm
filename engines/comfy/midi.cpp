@@ -174,8 +174,8 @@ void ComfyEngine::midiFindNext(MidiQueue &queue) {
 }
 
 void ComfyEngine::midiInitInstance() {
-	memset(&_midiEvents, 0, sizeof(_midiEvents));
-	memset(&_midiTracks, 0, sizeof(_midiTracks));
+	_midiEvents = MidiQueue();
+	_midiTracks = MidiQueue();
 	_midiEvents.baseTime = 0;
 	_midiTracks.baseTime = 1;
 	_midiInstanceTrackBase = 1;
@@ -184,8 +184,8 @@ void ComfyEngine::midiInitInstance() {
 }
 
 void ComfyEngine::midiInitChannels() {
-	memset(_midiChannels, 0, sizeof(_midiChannels));
 	for (uint channel = 0; channel < COMFY_MIDI_CHANNEL_COUNT; channel++) {
+		_midiChannels[channel] = MidiChannelState();
 		MidiChannelState &state = _midiChannels[channel];
 		state.volumeCurrent = state.volumeTarget = state.volumeDefault = 0x6400;
 		state.rateCurrent = state.rateTarget = state.rateDefault = 0x07D0;

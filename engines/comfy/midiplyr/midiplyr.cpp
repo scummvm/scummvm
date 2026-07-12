@@ -29,8 +29,7 @@
 
 namespace Comfy {
 
-MidiPlyrDriver::MidiPlyrDriver(DriverVersion driverVersion) :
-	_driverVersion(driverVersion), _midiDriver(nullptr), _started(false), _timerInstalled(false) {
+MidiPlyrDriver::MidiPlyrDriver(DriverVersion driverVersion) : _driverVersion(driverVersion) {
 	resetState();
 }
 
@@ -74,36 +73,17 @@ void MidiPlyrDriver::resetState() {
 
 	for (uint i = 0; i < MIDIPLYR_CHANNEL_COUNT; i++) {
 		_deferredCc7Order[i] = 0;
-		_channels[i].inUse = 0;
-		_channels[i].volumePercent = 100;
+		_channels[i] = ChannelSlot();
 	}
 
-	for (uint i = 0; i < MIDIPLYR_NOTE_CAPACITY; i++) {
-		_notes[i].channel = 0;
-		_notes[i].pitch = 0;
-	}
+	for (uint i = 0; i < MIDIPLYR_NOTE_CAPACITY; i++)
+		_notes[i] = Note();
 
 	for (uint i = 0; i < ARRAYSIZE(_comfyboardSamples); i++)
 		_comfyboardSamples[i] = 0;
 
-	for (uint i = 0; i < kTrackCount; i++) {
-		Track &track = _tracks[i];
-		track.state = 0;
-		track.streamBase = nullptr;
-		track.eventDataSize = 0;
-		track.eventCursor = 0;
-		track.rate = 0;
-		track.startTick = 0;
-		track.volume = 0;
-		track.pitch = 0;
-		track.marker = 0;
-		track.midiLoopFlag = 0;
-		track.streamSize = 0;
-		track.streamFault = false;
-
-		for (uint channel = 0; channel < MIDIPLYR_CHANNEL_COUNT; channel++)
-			track.channelState[channel] = MIDIPLYR_FREE_CHANNEL;
-	}
+	for (uint i = 0; i < kTrackCount; i++)
+		_tracks[i] = Track();
 }
 
 uint32 MidiPlyrDriver::midiFindDevice() {
