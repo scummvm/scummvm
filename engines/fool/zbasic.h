@@ -86,9 +86,9 @@ struct ZBasicBCD {
 		DoubleBits result = { 0 };
 		int64 expSigned = this->exponent <= 0x3fff ? (int64)this->exponent : ((int64)this->exponent - 0x8000);
 		if (expSigned > 0x7ff) {
-			result.i = 0x7ff0000000000000; // +inf
+			result.d = INFINITY;
 		} else if (expSigned < -0x800) {
-			result.i = 0xfff0000000000000; // -inf
+			result.d = -INFINITY;
 		} else {
 			int sign = expSigned < 0 ? -1 : 1;
 			uint64 mantissaRaw = this->mantissaBits;
