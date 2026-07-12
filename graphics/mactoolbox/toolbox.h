@@ -276,8 +276,10 @@ typedef size_t Size;
 }; // namespace MacToolbox
 }; // namespace Graphics
 
+namespace Common {
+
 template<>
-struct Common::Hash<Graphics::MacToolbox::Handle> {
+struct Hash<Graphics::MacToolbox::Handle> {
 	uint operator()(const Graphics::MacToolbox::Handle& h) const {
 		void *target = h.get();
 		uint result;
@@ -287,7 +289,7 @@ struct Common::Hash<Graphics::MacToolbox::Handle> {
 };
 
 template<>
-struct Common::Hash<Graphics::MacToolbox::PicHandle> {
+struct Hash<Graphics::MacToolbox::PicHandle> {
 	uint operator()(const Graphics::MacToolbox::PicHandle& h) const {
 		void *target = h.get();
 		uint result;
@@ -295,6 +297,8 @@ struct Common::Hash<Graphics::MacToolbox::PicHandle> {
 		return result;
 	}
 };
+
+}; // namespace Common
 
 namespace Graphics {
 namespace MacToolbox {
