@@ -79,6 +79,7 @@ private:
 	bool loadScene9010Resources();
 	bool loadI01Chunk(uint index, Common::Array<byte> &destination, uint fixedSize);
 	bool loadI01Chunk(uint index, IndexedSurfaceBuffer &destination, uint fixedSize);
+	bool loadI02StillFrameResource();
 	bool loadStage003Descriptors();
 	bool validateI02AnimationResources();
 
@@ -149,6 +150,7 @@ private:
 	Common::Array<byte> _i02PaletteTable;
 	Common::Array<byte> _i02FramePayload;
 	I02FramePayloadFormat _i02FramePayloadFormat;
+	bool _i02SingleFrameOnly;
 	IndexedSurfaceBuffer _frameDecodeBuffer;
 	IndexedSurfaceBuffer _sceneFramebuffer;
 	Graphics::ManagedSurface _screen;
