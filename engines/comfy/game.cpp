@@ -64,6 +64,9 @@ static uint16 getLanguageId(const Common::String &directory) {
 	if (directory.equalsIgnoreCase("SWEDISH"))
 		return 12;
 
+	if (directory.equalsIgnoreCase("FINISH") || directory.equalsIgnoreCase("FINNISH"))
+		return 13;
+
 	if (directory.equalsIgnoreCase("JAPANESE"))
 		return 14;
 
@@ -144,6 +147,12 @@ void ComfyEngine::findLanguageDirectories() {
 			_languageDirectories[language] = Common::Path(it->getName());
 			languageCount++;
 		}
+	}
+
+	for (uint language = 1; language < ARRAYSIZE(_languageDirectories); language++) {
+		Common::String key = Common::String::format("language%u", language);
+		ConfMan.set(key, _languageDirectories[language].empty() ? "?????" :
+			_languageDirectories[language].toString());
 	}
 
 	_multiLanguage = languageCount > 1;
@@ -549,8 +558,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 	_activeSceneCount = _resourceHandleCount;
 	_sceneEntryCount = 0;
 	_sceneEntryFrameSize = 0;
-	Common::ScopedPtr<Common::SeekableReadStream> message(pathFOpen(Common::Path("MESSAGE"), true));
-	_usesWcomfy99ScriptOps = (bool)message;
+	_usesWcomfy99ScriptOps = _engineVersion == 3;
 	_scriptFault = false;
 
 	return true;

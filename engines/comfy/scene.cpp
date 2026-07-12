@@ -129,7 +129,7 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 	if (_keyBits && _keyBitsSize)
 		memcpy(&_sceneMemoryBlock[_sceneKeyBitsOffset], _keyBits, _keyBitsSize);
 
-	if (_usesAnimFile)
+	if (_engineVersion == 3 && _usesAnimFile)
 		animFilePackState(&_sceneMemoryBlock[_sceneAnimStateOffset]);
 }
 
@@ -252,7 +252,7 @@ void ComfyEngine::sceneBlockUnpackRuntimeState() {
 	if (_keyBits && _keyBitsSize)
 		memcpy(_keyBits, &_sceneMemoryBlock[_sceneKeyBitsOffset], _keyBitsSize);
 
-	if (_usesAnimFile)
+	if (_engineVersion == 3 && _usesAnimFile)
 		animFileUnpackState(&_sceneMemoryBlock[_sceneAnimStateOffset]);
 
 }

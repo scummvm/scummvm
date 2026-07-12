@@ -46,7 +46,8 @@ const ComfyGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 		},
-		1
+		1,
+		0
 	},
 
 	{
@@ -63,7 +64,8 @@ const ComfyGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 		},
-		3
+		3,
+		0
 	},
 
 	{
@@ -78,13 +80,14 @@ const ComfyGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 		},
-		3
+		2,
+		COMFY_SCRIPT_OPCODE_31
 	},
 
 	{
 		{
 		"first",
-		"1999",
+		"1997",
 		AD_ENTRY2s("FIRST/ENGLISH/COMFY.OBJ",    "c187ac3fd5d547f59ff18b98a6a2f10b", 43008,
 				   "FIRST/ENGLISH/MIDIFILE.DAT", "4ab6c35308ed504a8abb96ae3fe81fe4", 1232),
 		Common::UNK_LANG,
@@ -92,7 +95,8 @@ const ComfyGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 		},
-		3
+		2,
+		COMFY_SCRIPT_OPCODE_31 | COMFY_SCRIPT_OPCODE_33
 	},
 
 	{
@@ -106,7 +110,8 @@ const ComfyGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 		},
-		1
+		1,
+		0
 	},
 
 	{
@@ -120,7 +125,8 @@ const ComfyGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 		},
-		2
+		2,
+		0
 	},
 
 	{
@@ -135,7 +141,8 @@ const ComfyGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 		},
-		3
+		3,
+		0
 	},
 
 	{
@@ -150,7 +157,8 @@ const ComfyGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 		},
-		3
+		3,
+		0
 	},
 
 	{
@@ -165,7 +173,8 @@ const ComfyGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 		},
-		3
+		3,
+		0
 	},
 
 	{
@@ -180,10 +189,11 @@ const ComfyGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 		},
-		3
+		2,
+		COMFY_SCRIPT_OPCODE_31 | COMFY_SCRIPT_OPCODE_32
 	},
 
-	{ AD_TABLE_END_MARKER, 0 }
+	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
 } // End of namespace Comfy
