@@ -329,13 +329,15 @@ void Scene::UserInterface::setup(int inputMode) {
 	kernel_set_interface_mode(inputMode);
 }
 
-int16 Scene::Sequences::addSpriteCycle(int series_id, int mirror, word ticks, word interval_ticks,
-	word start_ticks, int expire) {
+int16 Scene::Sequences::addSpriteCycle(int series_id, int mirror, word ticks, word expire,
+	word start_ticks, int interval_ticks) {
+	// ***WARNING***: Last 3 params reversed
 	return kernel_seq_forward(series_id, mirror, ticks, interval_ticks, start_ticks, expire);
 }
 
-int16 Scene::Sequences::addReverseSpriteCycle(int series_id, int mirror, word ticks, word interval_ticks,
-		word start_ticks, int expire) {
+int16 Scene::Sequences::addReverseSpriteCycle(int series_id, int mirror, word ticks, word expire,
+		word start_ticks, int interval_ticks) {
+	// ***WARNING***: Last 3 params reversed
 	return kernel_seq_backward(series_id, mirror, ticks, interval_ticks, start_ticks, expire);
 }
 
