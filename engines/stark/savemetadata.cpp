@@ -136,7 +136,7 @@ void SaveMetadata::skipGameScreenThumbnail(Common::SeekableReadStream *stream) {
 
 Graphics::Surface *SaveMetadata::readGameScreenThumbnail(Common::SeekableReadStream *stream) {
 	Graphics::Surface *thumb = new Graphics::Surface();
-	thumb->create(kThumbnailWidth, kThumbnailHeight, Gfx::Driver::getRGBAPixelFormat());
+	thumb->create(kThumbnailWidth, kThumbnailHeight, getPixelFormat());
 
 	stream->read(thumb->getPixels(), kThumbnailSize);
 

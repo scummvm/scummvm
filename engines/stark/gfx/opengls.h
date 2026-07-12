@@ -71,7 +71,7 @@ public:
 	Common::Rect getViewport() const;
 	Common::Rect getUnscaledViewport() const;
 
-	Graphics::Surface *getViewportScreenshot() const override;
+	Graphics::Surface *getViewportScreenshot(uint w, uint h) const override;
 
 private:
 	Common::Rect _viewport;

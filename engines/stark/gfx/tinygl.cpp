@@ -172,16 +172,12 @@ Common::Rect TinyGLDriver::getUnscaledViewport() const {
 	return _unscaledViewport;
 }
 
-Graphics::Surface *TinyGLDriver::getViewportScreenshot() const {
-	Graphics::Surface *tmp = TinyGL::copyFromFrameBuffer(getRGBAPixelFormat());
-	Graphics::Surface *s = new Graphics::Surface();
-	s->create(_viewport.width(), _viewport.height(), getRGBAPixelFormat());
-	byte *src = (byte *)tmp->getPixels();
-	s->copyRectToSurface(src + tmp->pitch * _viewport.top + _viewport.left * tmp->format.bytesPerPixel,
-	                     tmp->pitch, 0, 0, _viewport.width(), _viewport.height());
-	tmp->free();
-	delete tmp;
-	return s;
+Graphics::Surface *TinyGLDriver::getViewportScreenshot(uint w, uint h) const {
+	Graphics::Surface glBuffer;
+	TinyGL::getSurfaceRef(glBuffer);
+
+	const Graphics::Surface subArea = glBuffer.getSubArea(_viewport);
+	return subArea.scale(w, h);
 }
 
 } // End of namespace Gfx
