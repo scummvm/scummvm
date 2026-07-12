@@ -50,6 +50,7 @@ void MidiPlyrDriver::resetState() {
 	_comfyboardStopReading = 1;
 	_comfyboardSampleIndex = 0;
 	_comfyboardButtons = 0;
+	_comfyboardHostButtons = 0;
 	_comfyboardSleepUseStopped = 1;
 	_comfyboardPort = 0;
 	_comfyboardXorMask = 0;
@@ -799,11 +800,17 @@ uint32 MidiPlyrDriver::comfyboardGetButtons() const {
 	return _comfyboardButtons;
 }
 
+void MidiPlyrDriver::comfyboardSetHostButtons(uint32 buttons) {
+	Common::StackLock lock(_mutex);
+	_comfyboardHostButtons = buttons & 0x00FFFFFF;
+}
+
 void MidiPlyrDriver::comfyboardStartReading(uint32 xorMask, uint16 port) {
 	Common::StackLock lock(_mutex);
 	_comfyboardPort = port;
 	_comfyboardXorMask = xorMask;
 	_comfyboardButtons = 0;
+	_comfyboardHostButtons = 0;
 	_comfyboardSampleIndex = 0;
 	_comfyboardStopReading = 0;
 }
@@ -813,6 +820,7 @@ void MidiPlyrDriver::comfyboardStopReading() {
 	_comfyboardStopReading = 1;
 	_comfyboardSampleIndex = 0;
 	_comfyboardButtons = 0;
+	_comfyboardHostButtons = 0;
 }
 
 void MidiPlyrDriver::comfyboardStartSleepUse() {
@@ -829,7 +837,34 @@ void MidiPlyrDriver::comfyboardPollTimer() {
 	if (_driverVersion != kDriverVersion2 || _comfyboardStopReading)
 		return;
 
-	// The original exports this state to the physical Comfyboard through LPT...
+	if (!_comfyboardSleepUseStopped && !_comfyboardSampleIndex) {
+		// The original saves the LPT control byte, writes 0x0C to port + 2, and writes 1 to the data port.
+		_comfyboardSavedControl = 0;
+	}
+
+	if (_comfyboardSampleIndex) {
+		uint16 sampleIndex = _comfyboardSampleIndex - 1;
+		uint32 rawButtons = _comfyboardHostButtons ^ _comfyboardXorMask;
+		byte bits = (rawButtons >> ((7 - sampleIndex) * 3)) & 7;
+		_comfyboardSamples[sampleIndex] = ((bits & 4) << 5) | ((bits & 3) << 4);
+	}
+
+	if (_comfyboardSampleIndex >= ARRAYSIZE(_comfyboardSamples)) {
+		_comfyboardSampleIndex = 0;
+		uint32 packedButtons = 0;
+
+		for (uint i = 0; i < ARRAYSIZE(_comfyboardSamples); i++) {
+			uint16 sample = _comfyboardSamples[i];
+			uint16 bits = ((sample & 0x80) >> 5) | ((sample & 0x30) >> 4);
+			packedButtons = (packedButtons << 3) | bits;
+		}
+
+		_comfyboardButtons = packedButtons ^ _comfyboardXorMask;
+		return;
+	}
+
+	// The original writes ((_comfyboardSampleIndex << 1) | 1) to the LPT data port here.
+	_comfyboardSampleIndex++;
 }
 
 } // End of namespace Comfy

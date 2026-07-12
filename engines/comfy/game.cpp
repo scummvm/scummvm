@@ -152,6 +152,8 @@ bool ComfyEngine::iniReadGameConfig() {
 	if (_inputDeviceMode > 2)
 		_inputDeviceMode = 0;
 
+	_inputDevicePreference = _inputDeviceMode;
+
 	return !_gameDirectory.empty();
 }
 

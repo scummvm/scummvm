@@ -77,6 +77,7 @@ public:
 	void vocSrUpdateCounters();
 
 	uint32 comfyboardGetButtons() const;
+	void comfyboardSetHostButtons(uint32 buttons);
 	void comfyboardStartReading(uint32 xorMask, uint16 port);
 	void comfyboardStopReading();
 	void comfyboardStartSleepUse();
@@ -166,6 +167,7 @@ private:
 	byte _comfyboardStopReading;
 	uint16 _comfyboardSampleIndex;
 	uint32 _comfyboardButtons;
+	uint32 _comfyboardHostButtons;
 	byte _comfyboardSleepUseStopped;
 	uint16 _comfyboardPort;
 	uint32 _comfyboardXorMask;
