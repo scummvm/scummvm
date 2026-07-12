@@ -76,17 +76,13 @@ public class LedView extends View {
 	}
 
 	private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-		TypedArray a = context.getTheme().obtainStyledAttributes(
+		try (TypedArray a = context.getTheme().obtainStyledAttributes(
 			attrs,
 			R.styleable.LedView,
-			defStyleAttr, defStyleRes);
-
-		try {
+			defStyleAttr, defStyleRes)) {
 			_state = a.getBoolean(R.styleable.LedView_state, true);
 			int color = a.getColor(R.styleable.LedView_color, DEFAULT_LED_COLOR);
 			init(color);
-		} finally {
-			a.recycle();
 		}
 	}
 

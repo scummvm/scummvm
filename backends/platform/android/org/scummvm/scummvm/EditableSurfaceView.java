@@ -376,16 +376,17 @@ public class EditableSurfaceView extends SurfaceView {
 			return;
 		}
 
+		_mouseIsInCapturedState = capture;
+		/*
 		if (capture) {
 //			setFocusableInTouchMode(true);
 //			setFocusable(true);
 //			requestFocus();
-			_mouseIsInCapturedState = true;
 			//Log.d(ScummVM.LOG_TAG, "captureMouse::_mouseIsInCapturedState");
 		} else {
 			//Log.d(ScummVM.LOG_TAG, "captureMouse::no _mouseIsInCapturedState");
-			_mouseIsInCapturedState = false;
 		}
+		*/
 
 		showSystemMouseCursor(!capture);
 

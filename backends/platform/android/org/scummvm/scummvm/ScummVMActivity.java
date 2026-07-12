@@ -91,6 +91,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -100,7 +101,6 @@ public class ScummVMActivity extends Activity {
 
 	private ClipboardManager _clipboardManager;
 
-	private Version _currentScummVMVersion;
 	private boolean _assetsUpdated;
 	private File _configScummvmFile;
 	private File _logScummvmFile;
@@ -465,7 +465,7 @@ public class ScummVMActivity extends Activity {
 									// Excluding the CAPS LOCK NUM LOCK AND SCROLL LOCK keys,
 									// clear the state of all other sticky keys that are used in a key combo
 									// when we reach this part of the code
-									if (builtinKeyboard.stickyKeys.size() > 0) {
+									if (!builtinKeyboard.stickyKeys.isEmpty()) {
 										HashSet<Integer> stickiesToReleaseSet = new HashSet<>();
 										for (int tmpKeyCode : builtinKeyboard.stickyKeys) {
 											if (tmpKeyCode != KeyEvent.KEYCODE_CAPS_LOCK
@@ -474,7 +474,7 @@ public class ScummVMActivity extends Activity {
 												stickiesToReleaseSet.add(tmpKeyCode);
 											}
 										}
-										if (stickiesToReleaseSet.size() > 0) {
+										if (!stickiesToReleaseSet.isEmpty()) {
 											builtinKeyboard.stickyKeys.removeAll(stickiesToReleaseSet);
 											builtinKeyboard.recheckStickyKeys();
 										}
@@ -714,12 +714,8 @@ public class ScummVMActivity extends Activity {
 	public final View.OnLongClickListener touchModeKeyboardBtnOnLongClickListener = new View.OnLongClickListener() {
 		@Override
 		public boolean onLongClick(View v) {
-			runOnUiThread(new Runnable() {
-				public void run() {
-					// On long click, toggle screen keyboard (if there isn't any HW)
-					toggleScreenKeyboard();
-				}
-			});
+			// On long click, toggle screen keyboard (if there isn't any HW)
+			runOnUiThread(ScummVMActivity.this::toggleScreenKeyboard);
 			return true;
 		}
 	};
@@ -1035,7 +1031,7 @@ public class ScummVMActivity extends Activity {
 
 		@Override
 		protected int exportBackup(String prompt) {
-			String filename = (new SimpleDateFormat("'ScummVM backup 'yyyyMMdd-HHmmss'.zip'")).format(new Date());
+			String filename = (new SimpleDateFormat("'ScummVM backup 'yyyyMMdd-HHmmss'.zip'", Locale.ROOT)).format(new Date());
 			int ret;
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 				Uri uri = selectWithNativeUI(false, true, null, prompt, "application/zip", filename);
@@ -1091,7 +1087,6 @@ public class ScummVMActivity extends Activity {
 
 	private MyScummVM _scummvm;
 	private ScummVMEvents _events;
-	private MouseHelper _mouseHelper;
 	private Thread _scummvm_thread;
 
 	@Override
@@ -1171,8 +1166,8 @@ public class ScummVMActivity extends Activity {
 
 		// Currently in release builds version string does not contain the revision info
 		// but in debug builds (daily builds) this should be there (see base/internal_version_h)
-		_currentScummVMVersion = new Version(_scummvm.getInstallingScummVMVersionInfo());
-		Log.d(ScummVM.LOG_TAG, "Current ScummVM version launching is: " + _currentScummVMVersion.getDescription() + " (" + _currentScummVMVersion.get() + ")");
+		Version currentScummVMVersion = new Version(_scummvm.getInstallingScummVMVersionInfo());
+		Log.d(ScummVM.LOG_TAG, "Current ScummVM version launching is: " + currentScummVMVersion.getDescription() + " (" + currentScummVMVersion.get() + ")");
 		//
 		// seekAndInitScummvmConfiguration() returns false if something went wrong
 		// when initializing configuration (or when seeking and trying to use an existing ini file) for ScummVM
@@ -1201,13 +1196,13 @@ public class ScummVMActivity extends Activity {
 		_scummvm.setArgs(args);
 
 		Log.d(ScummVM.LOG_TAG, "Hover available: " + _hoverAvailable);
-		_mouseHelper = null;
+		MouseHelper mouseHelper = null;
 		if (_hoverAvailable) {
-			_mouseHelper = new MouseHelper(_scummvm);
-			//_mouseHelper.attach(_main_surface);
+			mouseHelper = new MouseHelper(_scummvm);
+			//mouseHelper.attach(_main_surface);
 		}
 
-		_events = new ScummVMEvents(this, _scummvm, _mouseHelper);
+		_events = new ScummVMEvents(this, _scummvm, mouseHelper);
 
 		setupTouchModeBtn(_events.getTouchMode());
 
@@ -1222,8 +1217,8 @@ public class ScummVMActivity extends Activity {
 
 		_main_surface.setOnKeyListener(_events);
 		_main_surface.setOnTouchListener(_events);
-		if (_mouseHelper != null) {
-			_main_surface.setOnHoverListener(_mouseHelper);
+		if (mouseHelper != null) {
+			_main_surface.setOnHoverListener(mouseHelper);
 		}
 
 		SAFFSTree.setIOBusyListener(new SAFFSTree.IOBusyListener() {
@@ -2322,12 +2317,15 @@ public class ScummVMActivity extends Activity {
 
 	// Deletes recursively a directory and its contents
 	private static void deleteDir(File dir) {
-		for (File child : dir.listFiles()) {
-			if (child.isDirectory()) {
-				deleteDir(child);
-			} else {
-				if (!child.delete()) {
-					Log.e(ScummVM.LOG_TAG, "Failed to delete file:" + child.getPath());
+		File[] files = dir.listFiles();
+		if (files != null) {
+			for (File child : files) {
+				if (child.isDirectory()) {
+					deleteDir(child);
+				} else {
+					if (!child.delete()) {
+						Log.e(ScummVM.LOG_TAG, "Failed to delete file:" + child.getPath());
+					}
 				}
 			}
 		}
@@ -2451,7 +2449,7 @@ public class ScummVMActivity extends Activity {
 		}
 
 		for (String filename : files) {
-			String assetPath = (assetDir.length() > 0 ? assetDir + File.separator : "") + filename;
+			String assetPath = (!assetDir.isEmpty() ? assetDir + File.separator : "") + filename;
 			File dataPath = new File(dataDir, filename);
 
 			if (extractAssets(assetManager, assetPath, dataPath)) {
@@ -2507,31 +2505,19 @@ public class ScummVMActivity extends Activity {
 		// First: read MD5SUMS from our assets, we will need it
 		byte[] newSums = null;
 		{
-			InputStream newStreamAsset = null;
-			try {
-				newStreamAsset = assetManager.open("MD5SUMS");
+			try (InputStream newStreamAsset = assetManager.open("MD5SUMS")) {
 				ByteArrayOutputStream newStream = new ByteArrayOutputStream();
 				copyStreamToStream(newStreamAsset, newStream);
 				newSums = newStream.toByteArray();
 			} catch (IOException e) {
 				Log.e(ScummVM.LOG_TAG, "Failed to read MD5SUMS asset");
-			} finally {
-				if (newStreamAsset != null) {
-					try {
-						newStreamAsset.close();
-					} catch (IOException e) {
-						// NOOP
-					}
-				}
-				// Closing a ByteArrayOutputStream is useless
 			}
+			// Closing a ByteArrayOutputStream is useless
 		}
 
 		// Then: open the on disk file, check its size and if they match, compare the contents
 		if (newSums != null && newSums.length > 0) {
-			FileInputStream oldStream = null;
-			try {
-				oldStream = new FileInputStream(md5sumsPath);
+			try (FileInputStream oldStream = new FileInputStream(md5sumsPath)) {
 				if (oldStream.getChannel().size() == newSums.length &&
 					equalsStreamToStream(new ByteArrayInputStream(newSums), oldStream)) {
 					// The files are identical: nothing to do
@@ -2541,14 +2527,6 @@ public class ScummVMActivity extends Activity {
 				}
 			} catch (IOException e) {
 				Log.e(ScummVM.LOG_TAG, "Failed to read MD5SUMS file");
-			} finally {
-				if (oldStream != null) {
-					try {
-						oldStream.close();
-					} catch (IOException e) {
-						// NOOP
-					}
-				}
 			}
 		}
 
@@ -2565,21 +2543,11 @@ public class ScummVMActivity extends Activity {
 
 		// Finally: everything is now fresh, store the new sums
 		if (newSums != null) {
-			FileOutputStream newStream = null;
-			try {
-				newStream = new FileOutputStream(md5sumsPath);
+			try (FileOutputStream newStream = new FileOutputStream(md5sumsPath)) {
 				newStream.write(newSums);
 			} catch (IOException e) {
 				Log.e(ScummVM.LOG_TAG, "Failed to write MD5SUMS file");
 				// If we fail to write MD5SUMS, we will try again at the next startup
-			} finally {
-				if (newStream != null) {
-					try {
-						newStream.close();
-					} catch (IOException e) {
-						// NOOP
-					}
-				}
 			}
 		}
 	}
