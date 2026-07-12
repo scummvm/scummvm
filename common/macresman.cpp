@@ -27,6 +27,7 @@
 #include "common/fs.h"
 #include "common/macresman.h"
 #include "common/md5.h"
+#include "common/memstream.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
 #include "common/archive.h"
@@ -427,6 +428,61 @@ SeekableReadStream * MacResManager::openFileOrDataFork(const Path &fileName, Arc
 
 	// The file doesn't exist
 	return nullptr;
+}
+
+void MacResManager::writeMacBinary(SeekableWriteStream *outStream, SeekableReadStream *dataFork, SeekableReadStream *resourceFork, const Common::String &name, const MacFinderInfo &info, TimeDate *created, TimeDate *modified) {
+	if (!outStream)
+		return;
+
+	Common::MemoryWriteStreamDynamic buffer(DisposeAfterUse::YES);
+
+	buffer.writeByte(0);
+	Common::String nameLimit = name.substr(0, 63);
+	buffer.writeByte((byte)nameLimit.size());
+	buffer.writeString(nameLimit);
+	for (int i = 0; i < (63 - (int)nameLimit.size()); i++) {
+		buffer.writeByte(0);
+	}
+	buffer.writeUint32BE(info.type);
+	buffer.writeUint32BE(info.creator);
+	buffer.writeUint16BE(info.flags);
+	buffer.writeUint16BE(info.position.y);
+	buffer.writeUint16BE(info.position.x);
+	buffer.writeUint16BE(0); // folder_id
+	buffer.writeUint16BE(0); // flags2
+	buffer.writeUint32BE(dataFork ? dataFork->size() : 0);
+	buffer.writeUint32BE(resourceFork ? resourceFork->size() : 0);
+	TimeDate now;
+	g_system->getTimeAndDate(now);
+	if (!created) {
+		created = &now;
+	}
+	if (!modified) {
+		modified = &now;
+	}
+	// fixed offset between unix epoch (1970-01-01 00:00) and macintosh HFS epoch (1904-01-01 00:00)
+	buffer.writeUint32BE((uint32)(DateTime::dateTimeToInt64(*created) + 2082844800));
+	buffer.writeUint32BE((uint32)(DateTime::dateTimeToInt64(*modified) + 2082844800));
+
+	while (buffer.pos() < 0x7a)
+		buffer.writeByte(0);
+
+	buffer.writeByte(0x81); // macbinary version
+	buffer.writeByte(0x81); // minimum macbinary version required
+	CRC_BINHEX crc;
+	uint16 checksum = crc.crcFast(buffer.getData(), 0x7c);
+	buffer.writeUint16BE(checksum);
+	buffer.writeUint16BE(0);
+
+	outStream->write(buffer.getData(), 0x80);
+	if (dataFork) {
+		outStream->writeStream(dataFork);
+		while ((outStream->pos() % 0x80) != 0)
+			outStream->writeByte(0);
+	}
+	if (resourceFork) {
+		outStream->writeStream(resourceFork);
+	}
 }
 
 
