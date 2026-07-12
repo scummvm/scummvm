@@ -453,7 +453,11 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 			// Originally designed for 1-bit mode so that
 			// black pixels would appear white on a black
 			// background.
-			*dst ^= src;
+			if (p->oneBitImage || p->ms || p->applyColor) {
+				*dst ^= src;
+			} else {
+				*dst = (src == p->backColor) ? *dst : src;
+			}
 		} else {
 			// In 32-bit mode, this is the opposite??
 			*dst ^= ~(src);
