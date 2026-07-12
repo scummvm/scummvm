@@ -425,7 +425,8 @@ int pal_allocate(ColorListPtr new_list, ShadowListPtr shadow_list, int pal_flags
 		// found a (shadowing) match; and  B) if we are defining an initial
 		// background and therefore should not have any matches.
 		conduct_search = !found && !defining_background &&
-			(cycle_mask != 0 || g_engine->getGameID() == GType_Dragonsphere);
+			(cycle_mask != 0 || g_engine->getGameID() == GType_Dragonsphere ||
+				g_engine->getGameID() == GType_RexNebular);
 
 		if (conduct_search) {
 			// Now, decide whether we need an exact match or are willing to just
@@ -439,10 +440,8 @@ int pal_allocate(ColorListPtr new_list, ShadowListPtr shadow_list, int pal_flags
 				best_hash = 1;
 			}
 
-
 			// Search through the existing palette for an appropriate color
 			for (target_color = search_start; target_color < search_stop; target_color++) {
-
 				if (color_status[target_color]) {
 					if ((!(color_status[target_color] & PAL_RESERVED)) || (pal_flags & PAL_MAP_RESERVED)) {
 						if (!(color_status[target_color] & cycle_mask)) {
@@ -451,8 +450,7 @@ int pal_allocate(ColorListPtr new_list, ShadowListPtr shadow_list, int pal_flags
 							} else {
 								// This is a little hack (or "optimization") to compare the 3 RGB bytes much
 								// more quickly when we are looking for an exact match only.
-								hash = ((*(word *) & new_list->table[list_color] == *(word *) & master_palette[target_color]) &&
-									(*(((byte *) & new_list->table[list_color]) + 2) == *(((byte *) & master_palette[target_color]) + 2))) ? 0 : 1;
+								hash = !memcmp(&new_list->table[list_color].r, &master_palette[target_color].r, 3) ? 0 : 1;
 							}
 							if (hash < best_hash) {
 								found = true;

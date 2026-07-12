@@ -81,7 +81,6 @@ struct ColorList {
 	Color table[COLOR_MAX_USER_COLORS];
 
 	static constexpr size_t SIZE = 2 + (Color::SIZE * COLOR_MAX_USER_COLORS);
-	bool load(Load &load_handle, int size);
 	void load(Common::SeekableReadStream *src);
 };
 

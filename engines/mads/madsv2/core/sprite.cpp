@@ -470,16 +470,21 @@ SeriesPtr sprite_series_load(const char *filename, int load_flags) {
 	}
 
 	// Read the color list
-	total_color_size = load_handle.pack.strategy[load_handle.pack_list_marker].size;
+	{
+		total_color_size = load_handle.pack.strategy[load_handle.pack_list_marker].size;
+		byte *buffer = (byte *)malloc(total_color_size);
+		if (!loader_read(buffer, total_color_size, 1, &load_handle)) {
+			free(buffer);
+			sprite_error = SS_ERR_READFILE;
+			goto done;
+		}
 
-	color_list = (ColorListPtr)mem_get_name(total_color_size, "$color$");
-	if (color_list == NULL) {
-		sprite_error = SS_ERR_NOMOREMEMORY;
-		goto done;
+		color_list = (ColorListPtr)mem_get_name(sizeof(ColorList), "$color$");
+		Common::MemoryReadStream src(buffer, total_color_size);
+		color_list->load(&src);
+
+		free(buffer);
 	}
-
-	if (!color_list->load(load_handle, total_color_size))
-		goto done;
 
 	/* Copy relevant header data to target header */
 
