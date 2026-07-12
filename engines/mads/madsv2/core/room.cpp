@@ -568,7 +568,11 @@ int room_picture_load(int roomId, Buffer *picture, int load_flags) {
 	}
 
 	if (!(load_flags & ROOM_LOAD_TRANSLATE)) {
-		color_handle = pal_allocate(&art.color_list, NULL, (load_flags & PAL_MAP_MASK));
+		int palFlags = load_flags & PAL_MAP_MASK;
+		if (g_engine->getGameID() == GType_RexNebular)
+			palFlags |= PAL_MAP_BACKGROUND;
+
+		color_handle = pal_allocate(&art.color_list, NULL, palFlags);
 		if (color_handle < 0) {
 			room_load_error = 4;
 			goto done;
