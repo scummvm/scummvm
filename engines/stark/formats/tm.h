@@ -88,8 +88,11 @@ public:
 	 */
 	Gfx::Texture *acquireTexturePointer();
 
-	/** Return a RGBA copy of the pixel data */
-	Graphics::Surface *getSurface() const;
+	/** Return a reference to the pixel data */
+	const Graphics::Surface &getSurface() const;
+
+	/** Return a pointer to the palette data */
+	const byte *getPalette() const;
 
 	// BiffObject API
 	void readData(ArchiveReadStream *stream, uint32 dataLength) override;
