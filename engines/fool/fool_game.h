@@ -151,7 +151,7 @@ public:
 	void sub_128_26f6();
 	void fetchPuzzleData(); // sub_128_271a
 	void menuNewGame(); // sub_128_27d6
-	void sub_128_2808();
+	void writeSaveFile(); // sub_128_2808
 	void menuOpenGame(); // sub_128_2988
 	void menuSaveGame(); // sub_128_2a06
 	void saveGameAs(); // sub_128_2a0e
