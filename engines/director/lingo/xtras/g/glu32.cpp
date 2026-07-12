@@ -190,6 +190,10 @@ void GLU32Xtra::m_GLUCall(int nargs) {
 			g_lingo->push(Datum(Common::String("92263924"))); // TODO: Check with the game
 			return;
 		}
+		if (gameId == "physicus" && g_director->getLanguage() == Common::EN_ANY) {
+			g_lingo->push(Datum((int)43289555)); //tested
+			return;
+		}
 		// TODO: Tiger Team 2: 32546872
 		warning("GLU32Xtra::m_GLUCall: unhandled optgraph.dll copy protection for game '%s'", gameId.c_str());
 	}
