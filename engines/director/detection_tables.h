@@ -884,6 +884,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "troubleshoot101",	"Troubleshooting 101" },
 	{ "twine",				"The World is Not Enough 007" },
 	{ "verttice",			"DreamLight Verttice" },
+	{ "wmyt",				"What Makes You Tick?" },
 	{ "wonkatrivia",		"Wonka Trivia" },
 	{ "wriggle",			"Wriggle" },
 
@@ -1031,6 +1032,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "girlspack",			"Girl's Pack!" },
 	{ "glitzerschuppen",	"Der Regenbogenfisch Die Suche Nach Den Glitzerschuppen" },
 	{ "globiabc",			"Mit Globi von A-Z: Mit Globi dem ABC auf der Spur" }, // aka Globi's ABC
+	{ "hansekapitan",		"Hanse Kapitän 1385" },
 	{ "hase",				"Mein Freund, der Hase" },
 	{ "ichsehewas",			"Ich sehe was..." },
 	{ "informaticus",		"Informaticus" },
@@ -8720,6 +8722,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Requires installation
 	WINGAME1("hamletmurder", "", "PMHamlet.exe", "t:d6d84f2abf4cabadd3dcfdc97a97ef03", 1873557, 600),
 
+	// Published by BMM GmbH. German only
+	WINGAME2_l("hansekapitan", "", "start95.exe", "t:fb330c038f0a0ffc6e38002575df57c4", 1725515,
+								   "kogge.dxr",	  "f:282fb842090dfb84b3c99d192e1cdd22", 3739060, Common::DE_DEU, 600),
+
 	WINGAME1t_l("historia", "", "HISTORIA.EXE", "1c213a176ea0441a145ebf6f1f5b9f66", 1508366, Common::SV_SWE, 600),
 
 	WINGAME2t("im7s7s", "", "start.exe", "be7baec9613a6e07c6acdaad2c12a90f", 2931014,
@@ -10659,6 +10665,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("westwood", "", "WW DPK", "4ea5fc09f79eee6dded94dc40f303779", 194863, 800),
 	WINGAME1("westwood", "", "WW_DPK.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2351418, 800),
+
+	// Freeware adventure made with "LASSIE Engine", with runs on Director
+	WINGAME1("wmyt", "", "WMYT_win.exe", "t:cc61a01762a3a9f3556ef3c6118dd836", 3776071, 800),
 
 	// These only differ by the included wallpaper and comic
 	MACGAME2("xmen-burgerking", "Cyclops", "XMEN", "4ea5fc09f79eee6dded94dc40f303779", 196871,
