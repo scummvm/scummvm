@@ -102,14 +102,12 @@ void TextureSet::extractArchive() {
 			return;
 		}
 
-		Graphics::Surface *surface = textures[i]->getSurface();
+		const Graphics::Surface &surface = textures[i]->getSurface();
+		const byte *palette = textures[i]->getPalette();
 
-		Image::writePNG(out, *surface);
+		Image::writePNG(out, surface, palette);
 
 		out.close();
-
-		surface->free();
-		delete surface;
 	}
 
 	delete archive;
