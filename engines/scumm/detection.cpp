@@ -241,6 +241,8 @@ DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist
 		game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
 		game.appendGUIOptions(getGameGUIOptionsDescriptionPlatform(x->game.platform));
 
+		if (x->game.features & GF_TESTING)
+			game.gameSupportLevel = kTestingGame;
 
 		detectedGames.push_back(game);
 	}

@@ -153,6 +153,9 @@ enum GameFeatures {
 	/** A demo, not a full blown game. */
 	GF_DEMO = 1 << 0,
 
+	/** Games ready for public testing, but not yet fully supported. */
+	GF_TESTING = 1 << 1,
+
 	/** Games with the AKOS costume system (ScummEngine_v7 and subclasses, HE games). */
 	GF_NEW_COSTUMES = 1 << 2,
 
