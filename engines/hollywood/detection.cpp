@@ -44,6 +44,20 @@ const DebugChannelDef debugFlagList[] = {
 };
 
 const ADGameDescription gameDescriptions[] = {
+	// Spanish Windows first edition full game, installed MONSTERS directory.
+	{
+		"hollywood",
+		"1st edition",
+		AD_ENTRY4s("MONSTERS.EXE", "1129cea40124683fc4aabaeaf6478f5a", 1167360,
+			"RESOURCE.000", "b16a8300ca1af75a0322e443a8971159", 3662162,
+			"RESOURCE.003", "352126965c51832ce970faece65cc2f8", 9444153,
+			"RESOURCE.004", "a79d937879665b899c255957c7310d42", 265002432),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
+
 	// Spanish Windows full game, installed MONSTERS directory.
 	{
 		"hollywood",

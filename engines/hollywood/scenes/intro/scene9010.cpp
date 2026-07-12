@@ -62,6 +62,7 @@ Scene9010::Scene9010(HollywoodEngine *vm) :
 		_characterFrameIndex(0),
 		_lastTalkingFrameVariant(0xff),
 		_i02FramePayloadFormat(kI02FramePayloadUnknown),
+		_i02SingleFrameOnly(false),
 		_scene9010FadeCountdown(63),
 		_scene9010FadeComplete(false),
 		_scene9010FadeAccumulator(0) {
@@ -125,17 +126,27 @@ bool Scene9010::loadScene9010Resources() {
 	}
 
 	if (!_i01ChunkTable.isValidChunk(0) || !_i01ChunkTable.isValidChunk(1) || !_i01ChunkTable.isValidChunk(2) ||
-			!_i01ChunkTable.isValidChunk(3) || !_i01ChunkTable.isValidChunk(4)) {
+			((_i01ChunkTable.isValidChunk(3) || _i01ChunkTable.isValidChunk(4)) &&
+			(!_i01ChunkTable.isValidChunk(3) || !_i01ChunkTable.isValidChunk(4)))) {
 		warning("%s is missing required post-intro chunks", kI01ArchiveName);
 		return false;
 	}
 
+	_i02SingleFrameOnly = false;
 	if (!loadI01Chunk(0, _frameDecodeBuffer, kFrameDecodeBufferSize) ||
 			!loadI01Chunk(1, _paletteSource, kPaletteSize) ||
-			!loadI01Chunk(2, _resourceArena, 0) ||
-			!loadI01Chunk(3, _i02PaletteTable, 0) ||
-			!loadI01Chunk(4, _i02FramePayload, 0) ||
-			!loadStage003Descriptors())
+			!loadI01Chunk(2, _resourceArena, 0))
+		return false;
+
+	if (_i01ChunkTable.isValidChunk(3)) {
+		if (!loadI01Chunk(3, _i02PaletteTable, 0) ||
+				!loadI01Chunk(4, _i02FramePayload, 0))
+			return false;
+	} else if (!loadI02StillFrameResource()) {
+		return false;
+	}
+
+	if (!loadStage003Descriptors())
 		return false;
 
 	if (!validateI02AnimationResources()) {
@@ -160,6 +171,40 @@ bool Scene9010::validateI02AnimationResources() {
 	debugC(1, kDebugResources, "Detected %s I02 frame payload format %u: paletteFrames=%u payloadSize=%u",
 		kI01ArchiveName, (uint)_i02FramePayloadFormat, (uint)(_i02PaletteTable.size() / kPaletteSize),
 		(uint)_i02FramePayload.size());
+	return true;
+}
+
+bool Scene9010::loadI02StillFrameResource() {
+	Common::File file;
+	if (!file.open(Common::Path(kI02ArchiveName))) {
+		warning("Failed to open %s", kI02ArchiveName);
+		return false;
+	}
+
+	const uint32 fileSize = (uint32)file.size();
+	uint32 frameSize = 0;
+	if (fileSize == kRawSceneFrameSize + kPaletteSize) {
+		frameSize = kRawSceneFrameSize;
+		_i02FramePayloadFormat = kI02FramePayloadSceneRows;
+	} else if (fileSize == kRawScreenFrameSize + kPaletteSize) {
+		frameSize = kRawScreenFrameSize;
+		_i02FramePayloadFormat = kI02FramePayloadScreenRows;
+	} else {
+		warning("%s has unexpected first-edition still frame size: %u", kI02ArchiveName, (uint)fileSize);
+		return false;
+	}
+
+	_i02FramePayload.resize(frameSize);
+	_i02PaletteTable.resize(kPaletteSize);
+	if (file.read(_i02FramePayload.data(), _i02FramePayload.size()) != _i02FramePayload.size() ||
+			file.read(_i02PaletteTable.data(), _i02PaletteTable.size()) != _i02PaletteTable.size()) {
+		warning("Failed to read %s first-edition still frame", kI02ArchiveName);
+		return false;
+	}
+
+	_i02SingleFrameOnly = true;
+	debugC(1, kDebugResources, "Loaded %s first-edition still frame: frame=%u palette=%u",
+		kI02ArchiveName, (uint)_i02FramePayload.size(), (uint)_i02PaletteTable.size());
 	return true;
 }
 
@@ -361,6 +406,9 @@ bool Scene9010::playI02Animation() {
 
 	if (delay(3000))
 		return false;
+
+	if (_i02SingleFrameOnly)
+		return true;
 
 	ResourceChunkTable i02ChunkTable;
 	const uint chunkedFrameCount = detectI02ChunkedFrameCount(i02ChunkTable);
