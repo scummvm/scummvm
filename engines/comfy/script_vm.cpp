@@ -39,37 +39,37 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		if (!target)
 			return kScriptUnhandled;
 
-		if ((opcode == 0x01 && x == int16(0xF830)) || (opcode == 0x02 && x == int16(0x8AD0))) {
-			Actor *other = actorResolve(uint16(y), _currentActor);
+		if ((opcode == 0x01 && x == (int16)0xF830) || (opcode == 0x02 && x == (int16)0x8AD0)) {
+			Actor *other = actorResolve((uint16)y, _currentActor);
 			if (!other)
 				return kScriptUnhandled;
 
-			x = int16(int32(actorReadU32(*other, kActorXFixed)) >> 12);
-			y = int16(int32(actorReadU32(*other, kActorYFixed)) >> 12);
-		} else if (opcode == 0x01 && x == int16(0xF448)) {
-			x = int16(-int32(actorReadU32(*target, kActorXFixed)) >> 12);
+			x = (int16)((int32)actorReadU32(*other, kActorXFixed) >> 12);
+			y = (int16)((int32)actorReadU32(*other, kActorYFixed) >> 12);
+		} else if (opcode == 0x01 && x == (int16)0xF448) {
+			x = (int16)(-(int32)actorReadU32(*target, kActorXFixed) >> 12);
 		}
 
-		if (opcode == 0x01 && y == int16(0xF448))
-			y = int16(-int32(actorReadU32(*target, kActorYFixed)) >> 12);
+		if (opcode == 0x01 && y == (int16)0xF448)
+			y = (int16)(-(int32)actorReadU32(*target, kActorYFixed) >> 12);
 
 		if (randomize) {
-			if (x != int16(0xFC18))
-				x = int16((int32(getRandomNumber(0x7FFF)) * x) / 0x8000);
+			if (x != (int16)0xFC18)
+				x = (int16)(((int32)getRandomNumber(0x7FFF) * x) / 0x8000);
 
-			if (y != int16(0xFC18))
-				y = int16((int32(getRandomNumber(0x7FFF)) * y) / 0x8000);
+			if (y != (int16)0xFC18)
+				y = (int16)(((int32)getRandomNumber(0x7FFF) * y) / 0x8000);
 		}
 
 		if (opcode == 0x01) {
-			if (x != int16(0xFC18))
-				actorWriteU32(*target, kActorXFixed, uint32(int32(x) * 0x1000));
+			if (x != (int16)0xFC18)
+				actorWriteU32(*target, kActorXFixed, (uint32)((int32)x * 0x1000));
 
-			if (y != int16(0xFC18))
-				actorWriteU32(*target, kActorYFixed, uint32(int32(y) * 0x1000));
+			if (y != (int16)0xFC18)
+				actorWriteU32(*target, kActorYFixed, (uint32)((int32)y * 0x1000));
 		} else {
-			actorWriteU32(*target, kActorXFixed, actorReadU32(*target, kActorXFixed) + uint32(int32(x) * 0x1000));
-			actorWriteU32(*target, kActorYFixed, actorReadU32(*target, kActorYFixed) + uint32(int32(y) * 0x1000));
+			actorWriteU32(*target, kActorXFixed, actorReadU32(*target, kActorXFixed) + (uint32)((int32)x * 0x1000));
+			actorWriteU32(*target, kActorYFixed, actorReadU32(*target, kActorYFixed) + (uint32)((int32)y * 0x1000));
 		}
 
 		return kScriptContinue;
@@ -81,7 +81,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		uint16 frame = scriptReadStringIndex(pc);
 		pc += 2;
 		if (target)
-			actorWriteU32(*target, kActorSpriteSelector, uint32(int32(int16(frame))));
+			actorWriteU32(*target, kActorSpriteSelector, (uint32)(int32)(int16)frame);
 
 		return kScriptContinue;
 	}
@@ -102,7 +102,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		byte state = scriptReadByte(pc + 2);
 		uint32 targetPc = scriptReadDword(pc + 3);
 		pc += 7;
-		if (!key || byte(keyBitTest(key)) == state) {
+		if (!key || (byte)keyBitTest(key) == state) {
 			if (opcode == 0x19)
 				actorSetPc(actor, pc);
 
@@ -131,7 +131,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			return kScriptUnhandled;
 
 		bool current = target == &actor;
-		uint16 actorIndex = uint16(target - &_actors[0]);
+		uint16 actorIndex = (uint16)(target - &_actors[0]);
 		actorUnlink(actorIndex);
 		actorFreeTreePc(actorIndex);
 		_actorDestroyedCurrent = current;
@@ -158,7 +158,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	}
 
 	if (opcode == 0x09) {
-		actorSetFrame(int16(scriptReadWord(pc)));
+		actorSetFrame((int16)scriptReadWord(pc));
 		pc += 2;
 		return kScriptContinue;
 	}
@@ -194,7 +194,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		if (!target)
 			return kScriptUnhandled;
 
-		int16 actual = int32(actorReadU32(*target, opcode == 0x0E || opcode == 0x10 ? kActorXFixed : kActorYFixed)) >> 12;
+		int16 actual = (int32)actorReadU32(*target, opcode == 0x0E || opcode == 0x10 ? kActorXFixed : kActorYFixed) >> 12;
 		bool matched = ((mode & 2) && expected == actual) || ((mode & 4) && expected < actual) || ((mode & 1) && expected > actual);
 		if (matched) {
 			if (opcode == 0x0E || opcode == 0x0F)
@@ -218,7 +218,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		byte totalWeight = scriptReadByte(pc++);
 		byte installReturnPc = scriptReadByte(pc++);
 		uint32 returnPc = pc + installReturnPc - 3;
-		byte choice = byte((getRandomNumber(0x7FFF) * totalWeight) / 0x8000);
+		byte choice = (byte)((getRandomNumber(0x7FFF) * totalWeight) / 0x8000);
 		byte accumulated = 0;
 		uint32 targetPc = 0;
 		do {
@@ -241,7 +241,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		if (!target)
 			return kScriptUnhandled;
 
-		uint16 targetIndex = uint16(target - &_actors[0]);
+		uint16 targetIndex = (uint16)(target - &_actors[0]);
 		uint16 oldParent = actorReadU16(*target, kActorParent);
 		actorUnlink(targetIndex);
 		if (mode == 'O')
@@ -258,7 +258,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			uint16 id = scriptReadWord(pc);
 			pc += 2;
 			if (opcode == 0x15) {
-				spriteGetPtr(int16(id));
+				spriteGetPtr((int16)id);
 				if (_spriteConversionLoads.count < COMFY_RESOURCE_LIST_CAPACITY)
 					_spriteConversionLoads.ids[_spriteConversionLoads.count++] = id;
 			} else {
@@ -279,7 +279,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		pc += 2;
 		byte count = scriptReadByte(pc++);
 		vocQueuePush(soundId, count, pc);
-		pc += uint32(count) * 2;
+		pc += (uint32)count * 2;
 		return kScriptContinue;
 	}
 
@@ -381,7 +381,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	if (opcode == 0x1F) {
 		uint16 bit = scriptReadWord(pc);
 		pc += 2;
-		if (int16(bit) >= 0x32) {
+		if ((int16)bit >= 0x32) {
 			bit -= 0x32;
 			_musicEventFlag = 1;
 		}
@@ -395,7 +395,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	if (opcode == 0x20) {
 		uint16 scene = scriptReadWord(pc);
 		pc += 2;
-		if (!_pendingScene || int16(scene) < int16(_pendingScene))
+		if (!_pendingScene || (int16)scene < (int16)_pendingScene)
 			_pendingScene = scene;
 
 		renderSetDirty();
@@ -432,7 +432,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	}
 
 	if (opcode == 0x24) {
-		midiSetTimeScale(int16(scriptReadStringIndex(pc)));
+		midiSetTimeScale((int16)scriptReadStringIndex(pc));
 		pc += 2;
 		return kScriptContinue;
 	}
@@ -461,7 +461,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		uint16 key = scriptReadWord(pc + 4);
 		pc += 6;
 		int16 lhs = first < _midiHandles.size() ? _midiHandles[first] : 0;
-		int16 rhs = opcode == 0x26 ? int16(second) : (second < _midiHandles.size() ? int16(_midiHandles[second]) : 0);
+		int16 rhs = opcode == 0x26 ? (int16)second : (second < _midiHandles.size() ? (int16)_midiHandles[second] : 0);
 		if (lhs >= rhs)
 			keyBitSet(key);
 
@@ -484,7 +484,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	}
 
 	if (opcode == 0x2B) {
-		pc = uint32(int32(pc) + int16(scriptReadWord(pc) * 2));
+		pc = (uint32)((int32)pc + (int16)(scriptReadWord(pc) * 2));
 		return kScriptContinue;
 	}
 
@@ -537,7 +537,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 				midiHandleCopy(destination, first);
 			else if (command == 'm' && second < _midiHandles.size())
 				midiHandleCopy(destination,
-					int16(midiGetHandle(second)) <= int16(midiGetHandle(first)) ? first : second);
+					(int16)midiGetHandle(second) <= (int16)midiGetHandle(first) ? first : second);
 		}
 
 		return kScriptContinue;
@@ -571,7 +571,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			for (uint i = 0; i < _wcomfy99FeatureWordCount; i++)
 				_wcomfy99FeatureWords[i] = scriptReadWord(pc + i * 2);
 
-			pc += uint32(count) * 2;
+			pc += (uint32)count * 2;
 		} else if (opcode == 0x32) {
 			_wcomfy99Stub32FirstWord = scriptReadWord(pc);
 			_wcomfy99Stub32SecondWord = scriptReadWord(pc + 2);
@@ -580,14 +580,14 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			pc += 4;
 			byte inlineBytes = scriptReadByte(pc++);
 			byte tripleCount = scriptReadByte(pc++);
-			pc += inlineBytes + uint32(tripleCount) * 3;
+			pc += inlineBytes + (uint32)tripleCount * 3;
 		} else if (opcode == 0x34) {
 			byte subop = scriptReadByte(pc++);
 			uint16 value = scriptReadWord(pc);
 			pc += 2;
 			Common::String key;
 			for (byte character = scriptReadByte(pc++); character; character = scriptReadByte(pc++))
-				key += char(character);
+				key += (char)character;
 
 			key.trim();
 
@@ -655,7 +655,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 				uint16 argument = scriptReadWord(pc);
 				pc += 2;
 				uint16 percentage = argument == 0x00FF ? 0x00FF :
-					(int16(argument) < 0 ? 0 : MIN<uint16>(argument, 100));
+					((int16)argument < 0 ? 0 : MIN<uint16>(argument, 100));
 				if (subop == 1)
 					_wcomfy99HostWordA = argument;
 				else if (subop == 2 && percentage != 0x00FF)
@@ -716,43 +716,43 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			return kScriptUnhandled;
 
 		bool moveTo = opcode == 0x52 || opcode == 0x71;
-		if ((moveTo && x == int16(0xF830)) || (!moveTo && x == int16(0x8AD0))) {
-			Actor *other = actorResolve(uint16(y), _currentActor);
+		if ((moveTo && x == (int16)0xF830) || (!moveTo && x == (int16)0x8AD0)) {
+			Actor *other = actorResolve((uint16)y, _currentActor);
 			if (!other)
 				return kScriptUnhandled;
 
 			if (moveTo) {
-				x = int16(int32(actorReadU32(*other, kActorXFixed)) >> 12);
-				y = int16(int32(actorReadU32(*other, kActorYFixed)) >> 12);
+				x = (int16)((int32)actorReadU32(*other, kActorXFixed) >> 12);
+				y = (int16)((int32)actorReadU32(*other, kActorYFixed) >> 12);
 			} else {
-				x = int16(actorReadU16(*other, kActorXFixed)) >> 12;
-				y = int16(actorReadU16(*other, kActorYFixed)) >> 12;
+				x = (int16)actorReadU16(*other, kActorXFixed) >> 12;
+				y = (int16)actorReadU16(*other, kActorYFixed) >> 12;
 			}
 		}
 
 		if (randomize) {
-			if (!moveTo || x != int16(0xFC18))
-				x = int16((int32(getRandomNumber(0x7FFF)) * x) / 0x8000);
+			if (!moveTo || x != (int16)0xFC18)
+				x = (int16)(((int32)getRandomNumber(0x7FFF) * x) / 0x8000);
 
-			if (!moveTo || y != int16(0xFC18))
-				y = int16((int32(getRandomNumber(0x7FFF)) * y) / 0x8000);
+			if (!moveTo || y != (int16)0xFC18)
+				y = (int16)(((int32)getRandomNumber(0x7FFF) * y) / 0x8000);
 		}
 
-		int32 dx = int32(x) * 0x1000;
-		int32 dy = int32(y) * 0x1000;
+		int32 dx = (int32)x * 0x1000;
+		int32 dy = (int32)y * 0x1000;
 		if (moveTo) {
-			dx = x == int16(0xFC18) ? 0 : dx - int32(actorReadU32(*target, kActorXFixed));
-			dy = y == int16(0xFC18) ? 0 : dy - int32(actorReadU32(*target, kActorYFixed));
+			dx = x == (int16)0xFC18 ? 0 : dx - (int32)actorReadU32(*target, kActorXFixed);
+			dy = y == (int16)0xFC18 ? 0 : dy - (int32)actorReadU32(*target, kActorYFixed);
 		}
 
 		if (opcode == 0x51 || opcode == 0x52 || (moveTo && duration < 0)) {
 			if (duration < 0)
 				duration = -duration;
 
-			int16 distanceX = ABS(int16(dx >> 12));
-			int16 distanceY = ABS(int16(dy >> 12));
+			int16 distanceX = ABS((int16)(dx >> 12));
+			int16 distanceY = ABS((int16)(dy >> 12));
 			int16 distance = MAX(distanceX, distanceY);
-			duration = int16((int32(distance) * 100) / duration);
+			duration = (int16)(((int32)distance * 100) / duration);
 			if (!duration)
 				duration = 1;
 		}
@@ -798,7 +798,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 
 		if (balance) {
 			uint16 step = balance < 5 ? balance : 5;
-			balance = step < uint16(requested - 1) ? step : uint16(requested - 1);
+			balance = step < (uint16)(requested - 1) ? step : (uint16)(requested - 1);
 			actorWriteU16(actor, kActorWaitAccum, actorReadU16(actor, kActorWaitAccum) - balance);
 		}
 
@@ -841,7 +841,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 					condition = _wcomfy99RecordHostEnabled;
 				} else if (argument == 30) {
 					Common::ScopedPtr<Common::SeekableReadStream> stream(pathFOpen(Common::Path("comfy.htm"), true));
-					condition = bool(stream);
+					condition = (bool)stream;
 				}
 			}
 		} else if (kind == 1) {

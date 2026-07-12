@@ -81,7 +81,7 @@ bool ComfyEngine::animFileOpen() {
 		return false;
 
 	uint16 count = READ_LE_UINT16(&_animFileData[2]);
-	if (uint32(COMFY_ANMFILE_HEADER_BYTES) + uint32(count) * 4 > _animFileData.size())
+	if ((uint32)COMFY_ANMFILE_HEADER_BYTES + (uint32)count * 4 > _animFileData.size())
 		return false;
 
 	_animIndexTable.resize(count);
@@ -135,12 +135,12 @@ void ComfyEngine::animFileLoadFrame(uint16 animIndex, uint16 frameKey, uint16 ac
 
 	uint32 offset = _animIndexTable[animIndex];
 	if (offset > _animFileData.size() || COMFY_ANMFILE_HEADER_BYTES > _animFileData.size() - offset)
-		error("ANMFILE.DAT is truncated while loading animation %u", uint(animIndex));
+		error("ANMFILE.DAT is truncated while loading animation %u", (uint)animIndex);
 
 	memcpy(_animFrameHeader, &_animFileData[offset], sizeof(_animFrameHeader));
 	uint16 magic = READ_LE_UINT16(_animFrameHeader);
 	if (magic != COMFY_ANMFRAME_MAGIC && magic != COMFY_ANMFRAME_PANTHER_MAGIC)
-		error("Invalid frame header in ANMFILE.DAT for animation %u", uint(animIndex));
+		error("Invalid frame header in ANMFILE.DAT for animation %u", (uint)animIndex);
 
 	_animFrameBuffer.resize(COMFY_ANMFRAME_BYTES);
 	memset(&_animFrameBuffer[0], 0xFF, _animFrameBuffer.size());
@@ -199,7 +199,7 @@ uint32 ComfyEngine::animDecompressRle(const byte *source, uint32 sourceSize, byt
 			if (word == 0)
 				return destinationPosition;
 
-			if (int16(word) > 0) {
+			if ((int16)word > 0) {
 				destinationPosition = MIN<uint32>(destinationPosition + word, destinationSize);
 				continue;
 			}
@@ -258,7 +258,7 @@ uint32 ComfyEngine::animDecodePanther(const byte *source, uint32 sourceSize) {
 			uint16 runCount = READ_LE_UINT16(source + sourcePosition);
 			sourcePosition += 2;
 			if (runCount & 0x4000) {
-				destinationPosition += uint32(uint16(0 - runCount)) * COMFY_SCREEN_WIDTH;
+				destinationPosition += (uint32)(uint16)(0 - runCount) * COMFY_SCREEN_WIDTH;
 				continue;
 			}
 
@@ -383,7 +383,7 @@ void ComfyEngine::animFileTickCommands() {
 		} else if (command == kAnimCommandStoreFrameBytes) {
 			uint32 oldSize = _animFrameStorage.size();
 			uint32 frameStart = _animIndexTable[_animCurrentIndex] + COMFY_ANMFILE_HEADER_BYTES;
-			animFilePushStorageChunk(uint32(payload - &_animFileData[frameStart]), oldSize, uint16(payloadSize));
+			animFilePushStorageChunk((uint32)(payload - &_animFileData[frameStart]), oldSize, (uint16)payloadSize);
 			_animFrameStorage.resize(oldSize + payloadSize);
 			if (payloadSize)
 				memcpy(&_animFrameStorage[oldSize], payload, payloadSize);
@@ -426,24 +426,24 @@ int16 ComfyEngine::animFrameVocCounterDelta() {
 	if (_animVocClockHz == 0)
 		error("Invalid VOC clock frequency in ANMFILE.DAT");
 
-	int32 expected = (int32(int16(_animVocTargetCounter)) * 100) / int16(_animVocClockHz);
-	return int16(uint16(counter) - uint16(expected));
+	int32 expected = ((int32)(int16)_animVocTargetCounter * 100) / (int16)_animVocClockHz;
+	return (int16)((uint16)counter - (uint16)expected);
 }
 
 bool ComfyEngine::animFrameShouldDraw(uint16 phase) {
 	if (!animFrameIsPending())
 		return true;
 
-	int16 baseStep = 100 / int16(_animVocClockHz);
+	int16 baseStep = 100 / (int16)_animVocClockHz;
 	int16 threshold = phase == 1 ? baseStep / 2 : baseStep;
 	int16 delta = animFrameVocCounterDelta();
-	int16 adjustedDelta = int16((phase == 1 ? int16(delta + _animVocDeltaA) : delta) + _animVocDeltaB);
+	int16 adjustedDelta = (int16)((phase == 1 ? (int16)(delta + _animVocDeltaA) : delta) + _animVocDeltaB);
 	bool shouldDraw = adjustedDelta <= threshold;
 	if (!shouldDraw) {
-		if (int16(_animVocDeltaA) > 0)
+		if ((int16)_animVocDeltaA > 0)
 			_animVocDeltaA--;
 
-		if (int16(_animVocDeltaB) > 0)
+		if ((int16)_animVocDeltaB > 0)
 			_animVocDeltaB--;
 	}
 
@@ -459,12 +459,12 @@ void ComfyEngine::animFrameRecordVocCounter(uint16 phase) {
 		_animVocCounterStartA = counter;
 	} else if (phase == 2) {
 		_animVocCounterEndA = counter;
-		_animVocDeltaA = uint16(_animVocCounterEndA - _animVocCounterStartA);
+		_animVocDeltaA = (uint16)(_animVocCounterEndA - _animVocCounterStartA);
 	} else if (phase == 3) {
 		_animVocCounterStartB = counter;
 	} else if (phase == 4) {
 		_animVocCounterEndB = counter;
-		_animVocDeltaB = uint16(_animVocCounterEndB - _animVocCounterStartB);
+		_animVocDeltaB = (uint16)(_animVocCounterEndB - _animVocCounterStartB);
 	}
 }
 
@@ -472,7 +472,7 @@ void ComfyEngine::animFrameWaitForVocCounter() {
 	if (!animFrameIsPending())
 		return;
 
-	while (animFrameVocCounterDelta() < -int16(_animVocDeltaB + 3)) {
+	while (animFrameVocCounterDelta() < -(int16)(_animVocDeltaB + 3)) {
 		processEvents();
 		if (shouldQuit())
 			break;
@@ -511,8 +511,8 @@ bool ComfyEngine::animFrameBlitAt(int16 x, int16 y) {
 			continue;
 
 		for (int16 row = clippedTop; row < clippedBottom; row++) {
-			uint32 sourceOffset = uint32(row - y) * COMFY_SCREEN_WIDTH + clippedLeft - x;
-			uint32 destinationOffset = uint32(row) * _logicalScreenWidth + clippedLeft;
+			uint32 sourceOffset = (uint32)(row - y) * COMFY_SCREEN_WIDTH + clippedLeft - x;
+			uint32 destinationOffset = (uint32)row * _logicalScreenWidth + clippedLeft;
 			uint32 width = clippedRight - clippedLeft;
 			if (sourceOffset >= _animFrameBuffer.size())
 				break;
@@ -630,7 +630,7 @@ void ComfyEngine::animFileRebuildStorage(uint32 targetSize) {
 			uint32 copySize = MIN<uint32>(payloadSize, targetSize - _animFrameStorage.size());
 			uint32 oldSize = _animFrameStorage.size();
 			uint32 frameStart = _animIndexTable[_animCurrentIndex] + COMFY_ANMFILE_HEADER_BYTES;
-			animFilePushStorageChunk(uint32(payload - &_animFileData[frameStart]), oldSize, uint16(copySize));
+			animFilePushStorageChunk((uint32)(payload - &_animFileData[frameStart]), oldSize, (uint16)copySize);
 			_animFrameStorage.resize(oldSize + copySize);
 			if (copySize)
 				memcpy(&_animFrameStorage[oldSize], payload, copySize);

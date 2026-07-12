@@ -26,7 +26,7 @@
 namespace Comfy {
 
 uint32 ComfyEngine::framebufferBytes() {
-	return uint32(_logicalScreenWidth) * _logicalScreenHeight;
+	return (uint32)_logicalScreenWidth * _logicalScreenHeight;
 }
 
 void ComfyEngine::videoInit() {
@@ -113,9 +113,9 @@ void ComfyEngine::videoFindBestMode(VideoRectRecord record) {
 		merged.right = (MAX(existing.right, record.right) + 1) / 2 * 2;
 		merged.top = MIN(existing.top, record.top) / 2 * 2;
 		merged.bottom = (MAX(existing.bottom, record.bottom) + 1) / 2 * 2;
-		merged.area = uint16((merged.right - merged.left) * (merged.bottom - merged.top));
+		merged.area = (uint16)((merged.right - merged.left) * (merged.bottom - merged.top));
 
-		if (uint32(existing.area) + record.area >= merged.area) {
+		if ((uint32)existing.area + record.area >= merged.area) {
 			existing = merged;
 			return;
 		}
@@ -130,7 +130,7 @@ void ComfyEngine::framebufCopyAll(byte *destination, byte *source) {
 }
 
 void ComfyEngine::framebufClear(uint16 color) {
-	memset(_framebufPtr, byte(color), framebufferBytes());
+	memset(_framebufPtr, (byte)color, framebufferBytes());
 }
 
 void ComfyEngine::videoPresentFrame() {
@@ -168,12 +168,12 @@ void ComfyEngine::videoPresentFrame() {
 					continue;
 
 				for (int16 y = record.top; y < record.bottom; y++) {
-					byte *source = _framebufPtr + uint32(y) * _logicalScreenWidth + record.left;
-					byte *destination = _presentBuffer + uint32(y) * _logicalScreenWidth + record.left;
+					byte *source = _framebufPtr + (uint32)y * _logicalScreenWidth + record.left;
+					byte *destination = _presentBuffer + (uint32)y * _logicalScreenWidth + record.left;
 					memcpy(destination, source, width);
 				}
 
-				byte *source = _presentBuffer + uint32(record.top) * _logicalScreenWidth + record.left;
+				byte *source = _presentBuffer + (uint32)record.top * _logicalScreenWidth + record.left;
 				_screen->copyRectToSurface(source, _logicalScreenWidth, record.left, record.top, width, height);
 			}
 		}

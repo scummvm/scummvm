@@ -58,8 +58,8 @@ uint16 ComfyEngine::midiTick() {
 	if (_engineVersion == kEngineVersion3) {
 		int16 adjustment = midiGetCounterAdjustment();
 		if (adjustment) {
-			_midiPlyrDriver->setVocCounter(uint32(int32(_midiPlyrDriver->getVocCounter()) + adjustment));
-			_midiPlyrDriver->setTimeCounter(uint32(int32(_midiPlyrDriver->getTimeCounter()) + adjustment));
+			_midiPlyrDriver->setVocCounter((uint32)((int32)_midiPlyrDriver->getVocCounter() + adjustment));
+			_midiPlyrDriver->setTimeCounter((uint32)((int32)_midiPlyrDriver->getTimeCounter() + adjustment));
 		}
 	}
 
@@ -77,37 +77,37 @@ uint16 ComfyEngine::midiTick() {
 		(_engineVersion != kEngineVersion3 && _midiTimeCounter == previousCounter));
 
 	_midiInstanceEventTime = _midiTimeCounter;
-	_midiEventBaseTime = int32(_midiInstanceEventTime);
+	_midiEventBaseTime = (int32)_midiInstanceEventTime;
 	_midiEvents.baseTime = _midiEventBaseTime;
 
-	int16 delta = int16(uint16(_midiInstanceEventTime - previousCounter));
+	int16 delta = (int16)(uint16)(_midiInstanceEventTime - previousCounter);
 	if (delta < 1)
 		delta = 1;
 
 	if (_midiTimeScale != 0x400) {
-		_midiTimeDelta = int16((int32(delta) * _midiTimeScale) >> 10);
+		_midiTimeDelta = (int16)(((int32)delta * _midiTimeScale) >> 10);
 		if (!_midiTimeDelta)
 			_midiTimeDelta = 1;
 
 		if (_midiTimeDelta != delta) {
-			_midiTimeCounter = uint32(int32(_midiTimeCounter) + _midiTimeDelta - delta);
+			_midiTimeCounter = (uint32)((int32)_midiTimeCounter + _midiTimeDelta - delta);
 			_midiPlyrDriver->setTimeCounter(_midiTimeCounter);
 
-			_midiInstanceEventTime = uint32(int32(_midiInstanceEventTime) + _midiTimeDelta - delta);
-			_midiEventBaseTime = int32(_midiInstanceEventTime);
+			_midiInstanceEventTime = (uint32)((int32)_midiInstanceEventTime + _midiTimeDelta - delta);
+			_midiEventBaseTime = (int32)_midiInstanceEventTime;
 			_midiEvents.baseTime = _midiEventBaseTime;
 			delta = _midiTimeDelta;
 		}
 	}
 
-	while (_midiEvents.nextIndex != 0x03E7 && int32(_midiInstanceEventTime) >= _midiEvents.nextTime) {
+	while (_midiEvents.nextIndex != 0x03E7 && (int32)_midiInstanceEventTime >= _midiEvents.nextTime) {
 		keyBitSet(_midiEvents.entries[_midiEvents.nextIndex].id);
 		_midiEvents.count--;
 		_midiEvents.entries[_midiEvents.nextIndex] = _midiEvents.entries[_midiEvents.count];
 		midiFindNext(_midiEvents);
 	}
 
-	return uint16(delta);
+	return (uint16)delta;
 }
 
 bool ComfyEngine::midiPlyrStart() {
@@ -171,7 +171,7 @@ void ComfyEngine::midiSetTimeScale(int16 delta) {
 		return;
 	}
 
-	_midiTimeScale = (int32(delta) * _midiTimeScale) >> 10;
+	_midiTimeScale = ((int32)delta * _midiTimeScale) >> 10;
 	if (_midiTimeScale < 100)
 		_midiTimeScale = 100;
 
@@ -479,7 +479,7 @@ void ComfyEngine::midiSetChannelParam(uint16 channel, byte parameter, uint16 val
 		state.pitchTarget = value;
 		state.pitchTicksLeft = ticks;
 	} else if (parameter == 4) {
-		state.volumeTarget = int16(value << 8);
+		state.volumeTarget = (int16)(value << 8);
 		state.volumeTicksLeft = ticks;
 	}
 
@@ -492,7 +492,7 @@ void ComfyEngine::midiSetChannelParam(uint16 channel, byte parameter, uint16 val
 			_midiPlyrDriver->musicSetPitch(state.pitchCurrent, channel);
 		} else if (parameter == 4) {
 			state.volumeCurrent = state.volumeTarget;
-			_midiPlyrDriver->musicSetVolume(uint16(state.volumeCurrent >> 8), channel);
+			_midiPlyrDriver->musicSetVolume((uint16)(state.volumeCurrent >> 8), channel);
 		}
 	}
 }
@@ -507,7 +507,7 @@ int16 ComfyEngine::midiApproachTarget(int16 current, int16 target, int16 &ticksL
 	}
 
 	ticksLeft -= ticks;
-	return int16((int32(current) * ticksLeft + int32(target) * ticks) / (ticksLeft + ticks));
+	return (int16)(((int32)current * ticksLeft + (int32)target * ticks) / (ticksLeft + ticks));
 }
 
 void ComfyEngine::musicSetEnabled(byte value) {

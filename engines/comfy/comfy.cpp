@@ -229,7 +229,7 @@ uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
 		if (sceneGetActiveCount() > 1 && _midiHandles.size() > 1)
 			nextScene = midiGetHandle(1);
 
-		if (int16(nextScene) > 0 && int16(nextScene) < 0x65 && nextScene != sceneId)
+		if ((int16)nextScene > 0 && (int16)nextScene < 0x65 && nextScene != sceneId)
 			shouldStartNext = 1;
 
 		if (_engineVersion == kEngineVersion3)
@@ -294,8 +294,8 @@ void ComfyEngine::processEvents() {
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			if (_engineVersion == kEngineVersion3) {
-				_mouseX = CLIP<int16>(int32(event.mouse.x) * 320 / _logicalScreenWidth, 0, 319);
-				_mouseY = CLIP<int16>(int32(event.mouse.y) * 200 / _logicalScreenHeight, 0, 199);
+				_mouseX = CLIP<int16>((int32)event.mouse.x * 320 / _logicalScreenWidth, 0, 319);
+				_mouseY = CLIP<int16>((int32)event.mouse.y * 200 / _logicalScreenHeight, 0, 199);
 			}
 			break;
 		case Common::EVENT_LBUTTONDOWN:
@@ -369,9 +369,9 @@ void ComfyEngine::mouseUpdateCursor() {
 		return;
 	}
 
-	_mouseCursorSprite = spriteGetPtr(int16(selector));
+	_mouseCursorSprite = spriteGetPtr((int16)selector);
 	if (_mouseCursorSprite)
-		_mouseCursorSpriteId = uint16(_mouseCursorSprite->id);
+		_mouseCursorSpriteId = (uint16)_mouseCursorSprite->id;
 
 	if (!actorReadU8(*_mouseActor, kActorVisible) && !(_mouseFlags & 8))
 		_mouseFlags |= 8;
@@ -424,7 +424,7 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 
 		uint16 frame = actorGetFrame();
 		if (frame) {
-			SpriteResource *background = spriteGetPtr(int16(frame));
+			SpriteResource *background = spriteGetPtr((int16)frame);
 			if (background && background->header.width == _logicalScreenWidth &&
 					background->header.height == _logicalScreenHeight && !background->pixels.empty()) {
 				spriteBlitRle(&background->pixels[0], background->pixels.size());
@@ -470,7 +470,7 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 			if (vocQueueIsIdle() || _musicEnabled) {
 				uint16 track = 1;
 				for (;;) {
-					_musicEventMask = uint16(int16(_musicEventMask) >> 1);
+					_musicEventMask = (uint16)((int16)_musicEventMask >> 1);
 					if (!_musicEventMask)
 						break;
 
@@ -625,7 +625,7 @@ void ComfyEngine::midiPollChannels(uint16 ticks) {
 
 		int16 volume = midiApproachTarget(state.volumeCurrent, state.volumeTarget, state.volumeTicksLeft, ticks);
 		if ((state.volumeCurrent & 0x7F00) != (volume & 0x7F00))
-			_midiPlyrDriver->musicSetVolume(uint16(volume >> 8), channel);
+			_midiPlyrDriver->musicSetVolume((uint16)(volume >> 8), channel);
 
 		state.volumeCurrent = volume;
 		int16 pitch = midiApproachTarget(state.pitchCurrent, state.pitchTarget, state.pitchTicksLeft, ticks);

@@ -515,9 +515,9 @@ void MidiPlyrDriver::musicSetVolume(uint16 volume, uint16 trackIndex) {
 		return;
 
 	if (_midiFileFormat != 1)
-		volume = (int16(volume) * 0x55) / 100;
+		volume = ((int16)volume * 0x55) / 100;
 
-	volume = (int16(volume) * 0x7F) / 100;
+	volume = ((int16)volume * 0x7F) / 100;
 	Track &track = _tracks[trackIndex];
 
 	for (uint i = 0; i < MIDIPLYR_CHANNEL_COUNT; i++) {
@@ -766,7 +766,7 @@ void MidiPlyrDriver::vocSrUpdateCounters() {
 
 void MidiPlyrDriver::vocSrGetCounters(uint32 &timeFrac, uint16 &blockNo) const {
 	Common::StackLock lock(_mutex);
-	timeFrac = (uint32(_vocSnapshotHi) << 16) | _vocSnapshotLo;
+	timeFrac = ((uint32)_vocSnapshotHi << 16) | _vocSnapshotLo;
 	blockNo = _vocBlockNo;
 }
 

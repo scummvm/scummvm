@@ -42,12 +42,12 @@ void ComfyEngine::colorDatClose() {
 
 void ComfyEngine::colorDatReadEntry(uint16 paletteId) {
 	colorDatOpen();
-	uint16 offset = uint16(paletteId * COMFY_PALETTE_BYTES);
+	uint16 offset = (uint16)(paletteId * COMFY_PALETTE_BYTES);
 	if (!_colorDatStream->seek(offset))
-		error("Could not seek to palette %u in COLORS.DAT", uint(paletteId));
+		error("Could not seek to palette %u in COLORS.DAT", (uint)paletteId);
 
 	if (_colorDatStream->read(_paletteTarget, COMFY_PALETTE_BYTES) != COMFY_PALETTE_BYTES)
-		error("COLORS.DAT is truncated while reading palette %u", uint(paletteId));
+		error("COLORS.DAT is truncated while reading palette %u", (uint)paletteId);
 
 	if (_engineVersion == kEngineVersion3) {
 		// Version 3 forces color 0 to black immediately after reading the palette...
@@ -66,11 +66,11 @@ void ComfyEngine::paletteInterpolate(uint16 step, uint16 maximum) {
 	if (!maximum)
 		return;
 
-	int16 remaining = int16(maximum - step);
+	int16 remaining = (int16)(maximum - step);
 	for (uint i = 0; i < COMFY_PALETTE_BYTES; i++) {
 		int32 from = _paletteFadeSource[i];
 		int32 to = _paletteTarget[i];
-		_paletteDisplay[i] = byte((from * remaining + to * int16(step)) / int16(maximum));
+		_paletteDisplay[i] = (byte)((from * remaining + to * (int16)step) / (int16)maximum);
 	}
 }
 
@@ -78,8 +78,8 @@ void ComfyEngine::paletteFadeStep(uint16 delta) {
 	if (!_paletteFading)
 		return;
 
-	_fadeStep = uint16(_fadeStep + delta);
-	if (int16(_fadeStep) >= int16(_fadeMax)) {
+	_fadeStep = (uint16)(_fadeStep + delta);
+	if ((int16)_fadeStep >= (int16)_fadeMax) {
 		_fadeStep = _fadeMax;
 		memcpy(_paletteFadeSource, _paletteTarget, COMFY_PALETTE_BYTES);
 		memcpy(_paletteDisplay, _paletteTarget, COMFY_PALETTE_BYTES);
@@ -115,7 +115,7 @@ void ComfyEngine::paletteApplyBrightness(uint16 brightness) {
 	if (_paletteFading)
 		_paletteFading = false;
 
-	uint16 inverse = uint16(0x100 - brightness);
+	uint16 inverse = (uint16)(0x100 - brightness);
 	memcpy(_paletteFadeSource, _paletteDisplay, COMFY_PALETTE_BYTES);
 	memcpy(_paletteDisplay, _paletteFadeSource + inverse * 3, brightness * 3);
 	memcpy(_paletteDisplay + brightness * 3, _paletteFadeSource, inverse * 3);
@@ -124,9 +124,9 @@ void ComfyEngine::paletteApplyBrightness(uint16 brightness) {
 
 void ComfyEngine::paletteConvertRgbToLogical(byte *source, byte *destination) {
 	for (uint i = 0; i < 256; i++) {
-		destination[i * 4 + 2] = byte(source[i * 3] << 2);
-		destination[i * 4 + 1] = byte(source[i * 3 + 1] << 2);
-		destination[i * 4] = byte(source[i * 3 + 2] << 2);
+		destination[i * 4 + 2] = (byte)(source[i * 3] << 2);
+		destination[i * 4 + 1] = (byte)(source[i * 3 + 1] << 2);
+		destination[i * 4] = (byte)(source[i * 3 + 2] << 2);
 	}
 }
 
