@@ -148,7 +148,7 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 		}
 
 		if (opcode != 0x08 && opcode != 0x09 && opcode != 0x0A && opcode != 0x0B && opcode != 0x0E)
-			continue;
+			error("Unknown expression opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
 
 		if (_exprStackTop < 2) {
 			_exprStackTop = 0;

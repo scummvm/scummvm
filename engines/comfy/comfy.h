@@ -331,7 +331,6 @@ private:
 	};
 
 	enum ScriptDispatchStatus {
-		kScriptUnhandled,
 		kScriptContinue,
 		kScriptYield,
 		kScriptDeactivatedRoot

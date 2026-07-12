@@ -28,7 +28,9 @@
 namespace Comfy {
 
 ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte opcode, uint32 &pc) {
-	if (opcode == 0x01 || opcode == 0x02) {
+	switch (opcode) {
+	case 0x01:
+	case 0x02: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		pc += 2;
 		int16 x = scriptReadStringIndex(pc);
@@ -37,12 +39,12 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		pc += 2;
 		byte randomize = scriptReadByte(pc++);
 		if (!target)
-			return kScriptUnhandled;
+			error("Script opcode 0x%02X resolved an invalid actor", opcode);
 
 		if ((opcode == 0x01 && x == (int16)0xF830) || (opcode == 0x02 && x == (int16)0x8AD0)) {
 			Actor *other = actorResolve((uint16)y, _currentActor);
 			if (!other)
-				return kScriptUnhandled;
+				error("Script opcode 0x%02X resolved an invalid reference actor", opcode);
 
 			x = (int16)((int32)actorReadU32(*other, kActorXFixed) >> 12);
 			y = (int16)((int32)actorReadU32(*other, kActorYFixed) >> 12);
@@ -75,7 +77,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x03) {
+	case 0x03: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		pc += 2;
 		uint16 frame = scriptReadStringIndex(pc);
@@ -86,7 +88,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x04) {
+	case 0x04: {
 		uint16 key = scriptReadWord(pc);
 		if (key && !keyBitTest(key)) {
 			pc--;
@@ -97,7 +99,8 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x05 || opcode == 0x19) {
+	case 0x05:
+	case 0x19: {
 		uint16 key = scriptReadWord(pc);
 		byte state = scriptReadByte(pc + 2);
 		uint32 targetPc = scriptReadDword(pc + 3);
@@ -112,7 +115,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x06) {
+	case 0x06: {
 		uint16 key = scriptReadWord(pc);
 		byte state = scriptReadByte(pc + 2);
 		pc += 3;
@@ -124,11 +127,11 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x07) {
+	case 0x07: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		pc += 2;
 		if (!target)
-			return kScriptUnhandled;
+			error("Script opcode 0x07 resolved an invalid actor");
 
 		bool current = target == &actor;
 		uint16 actorIndex = (uint16)(target - &_actors[0]);
@@ -138,7 +141,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return current ? kScriptYield : kScriptContinue;
 	}
 
-	if (opcode == 0x08) {
+	case 0x08: {
 		uint16 sceneSlot = scriptReadWord(pc);
 		uint16 parentSlot = scriptReadWord(pc + 2);
 		byte flags = scriptReadByte(pc + 4);
@@ -157,56 +160,78 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x09) {
+	case 0x09: {
 		actorSetFrame((int16)scriptReadWord(pc));
 		pc += 2;
 		return kScriptContinue;
 	}
 
-	if (opcode >= 0x0A && opcode <= 0x0D) {
+	case 0x0A:
+	case 0x0B:
+	case 0x0C:
+	case 0x0D: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		pc += 2;
 		if (!target)
-			return kScriptUnhandled;
+			error("Script opcode 0x%02X resolved an invalid actor", opcode);
 
-		if (opcode == 0x0A)
+		switch (opcode) {
+		case 0x0A:
 			actorWriteU8(*target, kActorVisible, 1);
-		else if (opcode == 0x0B)
+			break;
+		case 0x0B:
 			actorWriteU8(*target, kActorVisible, 0);
-		else if (opcode == 0x0C)
+			break;
+		case 0x0C:
 			actorWriteU8(*target, kActorActive, 1);
-		else {
+			break;
+		case 0x0D:
 			actorWriteU16(*target, kActorMoveTicks, 0);
 			actorWriteU8(*target, kActorActive, 0);
 			if (target == &actor)
 				return kScriptYield;
+
+			break;
+		default:
+			break;
 		}
 
 		return kScriptContinue;
 	}
 
-	if (opcode >= 0x0E && opcode <= 0x11) {
+	case 0x0E:
+	case 0x0F:
+	case 0x10:
+	case 0x11: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		int16 expected = scriptReadWord(pc + 2);
 		uint16 key = scriptReadWord(pc + 4);
 		byte mode = scriptReadByte(pc + 6);
 		pc += 7;
 		if (!target)
-			return kScriptUnhandled;
+			error("Script opcode 0x%02X resolved an invalid actor", opcode);
 
 		int16 actual = (int32)actorReadU32(*target, opcode == 0x0E || opcode == 0x10 ? kActorXFixed : kActorYFixed) >> 12;
 		bool matched = ((mode & 2) && expected == actual) || ((mode & 4) && expected < actual) || ((mode & 1) && expected > actual);
 		if (matched) {
-			if (opcode == 0x0E || opcode == 0x0F)
+			switch (opcode) {
+			case 0x0E:
+			case 0x0F:
 				keyBitSet(key);
-			else
+				break;
+			case 0x10:
+			case 0x11:
 				keyBitClear(key);
+				break;
+			default:
+				break;
+			}
 		}
 
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x12) {
+	case 0x12: {
 		uint16 id = scriptReadWord(pc);
 		int16 delta = scriptReadStringIndex(pc + 2);
 		pc += 4;
@@ -214,7 +239,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x13) {
+	case 0x13: {
 		byte totalWeight = scriptReadByte(pc++);
 		byte installReturnPc = scriptReadByte(pc++);
 		uint32 returnPc = pc + installReturnPc - 3;
@@ -234,16 +259,17 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x14) {
+	case 0x14: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		byte mode = scriptReadByte(pc + 2);
 		pc += 3;
 		if (!target)
-			return kScriptUnhandled;
+			error("Script opcode 0x14 resolved an invalid actor");
 
 		uint16 targetIndex = (uint16)(target - &_actors[0]);
 		uint16 oldParent = actorReadU16(*target, kActorParent);
 		actorUnlink(targetIndex);
+
 		if (mode == 'O')
 			actorInsertChild(targetIndex, oldParent);
 		else
@@ -252,24 +278,30 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x15 || opcode == 0x16) {
+	case 0x15:
+	case 0x16: {
 		byte count = scriptReadByte(pc++);
 		for (uint i = 0; i < count; i++) {
 			uint16 id = scriptReadWord(pc);
 			pc += 2;
-			if (opcode == 0x15) {
+			switch (opcode) {
+			case 0x15:
 				spriteGetPtr((int16)id);
 				if (_spriteConversionLoads.count < COMFY_RESOURCE_LIST_CAPACITY)
 					_spriteConversionLoads.ids[_spriteConversionLoads.count++] = id;
-			} else {
+				break;
+			case 0x16:
 				soundLoadEntry(id);
+				break;
+			default:
+				break;
 			}
 		}
 
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x17) {
+	case 0x17: {
 		if (_musicEventMask) {
 			pc--;
 			return kScriptYield;
@@ -283,11 +315,11 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x18) {
+	case 0x18: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		pc += 2;
 		if (!target)
-			return kScriptUnhandled;
+			error("Script opcode 0x18 resolved an invalid actor");
 
 		uint32 resetPc = actorReadU32(*target, kActorResetPc);
 		actorWriteU32(*target, kActorCurrentPc, resetPc);
@@ -309,28 +341,30 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x1B) {
+	case 0x1B: {
 		vocQueuePlayAll();
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x1C) {
+	case 0x1C: {
 		midiRemoveTrack(scriptReadWord(pc));
 		pc += 2;
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x1D) {
+	case 0x1D: {
 		byte packed = scriptReadByte(pc++);
 		byte channel = (packed >> 4) - 1;
 		byte subop = packed & 0x0F;
-		if (subop == 1) {
+		switch (subop) {
+		case 1: {
 			uint16 songId = scriptReadWord(pc);
 			uint16 completionKey = scriptReadWord(pc + 2);
 			uint16 count = scriptReadWord(pc + 4);
 			pc += 6;
 			uint16 frames[COMFY_ANIM_FRAME_CAPACITY];
 			memset(frames, 0, sizeof(frames));
+
 			for (uint i = 0; i < count; i++) {
 				uint16 frame = scriptReadWord(pc);
 				pc += 2;
@@ -339,31 +373,48 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			}
 
 			midiAddTrackEntry(channel, songId, completionKey, 1, count, frames);
-		} else if (subop >= 2 && subop <= 4) {
+			break;
+		}
+		case 2:
+		case 3:
+		case 4: {
 			uint16 value = scriptReadWord(pc);
 			uint16 ticks = scriptReadWord(pc + 2);
 			pc += 4;
 			midiSetChannelParam(channel, subop, value, ticks);
-		} else if (subop == 5 && channel < COMFY_MIDI_CHANNEL_COUNT) {
-			midiStopAndRemove(channel);
-		} else if (subop == 6 && channel < COMFY_MIDI_CHANNEL_COUNT) {
-			midiStopAndFireKeys(channel);
-		} else if ((subop == 7 || subop == 8) && _engineVersion == 3 &&
-				channel < COMFY_MIDI_CHANNEL_COUNT && _midiPlyrDriver) {
-			_midiPlyrDriver->musicSetLoop(subop == 7 ? 1 : 0, channel);
+			break;
+		}
+		case 5:
+			if (channel < COMFY_MIDI_CHANNEL_COUNT)
+				midiStopAndRemove(channel);
+			break;
+		case 6:
+			if (channel < COMFY_MIDI_CHANNEL_COUNT)
+				midiStopAndFireKeys(channel);
+			break;
+		case 7:
+		case 8:
+			if (_engineVersion == 3 && channel < COMFY_MIDI_CHANNEL_COUNT && _midiPlyrDriver)
+				_midiPlyrDriver->musicSetLoop(subop == 7 ? 1 : 0, channel);
+			else
+				error("Unknown script opcode 0x1D subopcode 0x%02X at script PC 0x%08X", subop, pc - 2);
+
+			break;
+		default:
+			error("Unknown script opcode 0x1D subopcode 0x%02X at script PC 0x%08X", subop, pc - 2);
 		}
 
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x1E) {
+	case 0x1E: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		uint16 key = scriptReadWord(pc + 2);
 		byte flags = scriptReadByte(pc + 4);
 		uint32 triggerPc = scriptReadDword(pc + 5);
 		pc += 9;
 		if (!target)
-			return kScriptUnhandled;
+			error("Script opcode 0x1E resolved an invalid actor");
 
 		if (key != 0xFC18)
 			actorWriteU16(*target, kActorTriggerKey, key);
@@ -378,7 +429,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x1F) {
+	case 0x1F: {
 		uint16 bit = scriptReadWord(pc);
 		pc += 2;
 		if ((int16)bit >= 0x32) {
@@ -392,7 +443,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptYield;
 	}
 
-	if (opcode == 0x20) {
+	case 0x20: {
 		uint16 scene = scriptReadWord(pc);
 		pc += 2;
 		if (!_pendingScene || (int16)scene < (int16)_pendingScene)
@@ -403,7 +454,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptYield;
 	}
 
-	if (opcode == 0x21) {
+	case 0x21: {
 		uint16 paletteId = scriptReadStringIndex(pc);
 		uint16 fadeTicks = scriptReadStringIndex(pc + 2);
 		byte brightness = scriptReadByte(pc + 4);
@@ -416,13 +467,13 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x22) {
+	case 0x22: {
 		musicSetEnabled(scriptReadByte(pc));
 		pc++;
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x23) {
+	case 0x23: {
 		uint16 handle = scriptReadWord(pc);
 		int16 delta = scriptReadStringIndex(pc + 2);
 		pc += 4;
@@ -431,18 +482,18 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x24) {
+	case 0x24: {
 		midiSetTimeScale((int16)scriptReadStringIndex(pc));
 		pc += 2;
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x1A) {
+	case 0x1A: {
 		pc = actorPopPc(actor);
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x25) {
+	case 0x25: {
 		uint16 first = scriptReadWord(pc);
 		uint16 last = scriptReadWord(pc + 2);
 		pc += 4;
@@ -455,7 +506,8 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x26 || opcode == 0x2E) {
+	case 0x26:
+	case 0x2E: {
 		uint16 first = scriptReadWord(pc);
 		uint16 second = scriptReadWord(pc + 2);
 		uint16 key = scriptReadWord(pc + 4);
@@ -468,12 +520,13 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x28 || opcode == 0x29) {
+	case 0x28:
+	case 0x29: {
 		pc += 2;
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x2A) {
+	case 0x2A: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		uint32 selector = scriptReadDword(pc + 2);
 		pc += 6;
@@ -483,15 +536,16 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x2B) {
+	case 0x2B: {
 		pc = (uint32)((int32)pc + (int16)(scriptReadWord(pc) * 2));
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x2C) {
+	case 0x2C: {
 		uint16 destination = scriptReadWord(pc);
 		uint16 source = scriptReadWord(pc + 2);
 		pc += 4;
+
 		if (keyBitTest(source))
 			keyBitSet(destination);
 		else
@@ -500,33 +554,44 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x2D) {
+	case 0x2D: {
 		byte subop = scriptReadByte(pc++);
-		if (subop == 1) {
+		switch (subop) {
+		case 1:
 			sceneGoto(scriptReadWord(pc));
 			pc += 2;
-		} else if (subop == 2) {
+			break;
+		case 2:
 			sceneStop();
-		} else if (subop == 3) {
+			break;
+		case 3: {
 			uint16 descriptor = scriptReadWord(pc);
 			uint16 index = scriptReadWord(pc + 2);
 			pc += 4;
 			sceneEntryLoad(descriptor, index);
-		} else if (subop == 4) {
+			break;
+		}
+		case 4: {
 			uint16 channel = scriptReadWord(pc);
 			uint16 frame = scriptReadWord(pc + 2);
 			pc += 4;
 			midiPlaySongAtFrame(channel, frame);
-		} else if (subop == 5) {
+			break;
+		}
+		case 5: {
 			uint16 channel = scriptReadWord(pc);
 			pc += 2;
 			midiStopSong(channel);
+			break;
+		}
+		default:
+			error("Unknown script opcode 0x2D subopcode 0x%02X at script PC 0x%08X", subop, pc - 2);
 		}
 
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x2F) {
+	case 0x2F: {
 		byte command = scriptReadByte(pc);
 		uint16 destination = scriptReadWord(pc + 1);
 		uint16 first = scriptReadWord(pc + 3);
@@ -543,28 +608,52 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x30 && _usesAnimFile) {
+	case 0x30:
+		if (!_usesAnimFile)
+			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
+	{
 		byte subop = scriptReadByte(pc++);
-		if (subop == 0) {
+		switch (subop) {
+		case 0:
 			animFrameShutdown(true);
-		} else if (subop == 1) {
+			break;
+		case 1: {
 			uint16 animIndex = scriptReadWord(pc);
 			uint16 frameKey = scriptReadWord(pc + 2);
 			pc += 4;
 			animFileLoadFrame(animIndex, frameKey, actorReadU16(actor, kActorSceneHandle));
-		} else if (subop == 2) {
+			break;
+		}
+		case 2:
 			animFrameSetReady(true);
-		} else if (subop == 3) {
+			break;
+		case 3:
 			animFrameSetReady(false);
-		} else if (subop == 6) {
+			break;
+		case 6:
 			animFrameInvalidateActorRect();
+			break;
+		default:
+			error("Unknown script opcode 0x30 subopcode 0x%02X at script PC 0x%08X", subop, pc - 2);
 		}
 
 		return kScriptContinue;
 	}
 
-	if (opcode >= 0x31 && opcode <= 0x36 && _usesWcomfy99ScriptOps) {
-		if (opcode == 0x31) {
+	case 0x31:
+	case 0x32:
+	case 0x33:
+	case 0x34:
+	case 0x35:
+	case 0x36:
+		if (!(_usesWcomfy99ScriptOps ||
+			(opcode == 0x31 && (_game->scriptFeatures & COMFY_SCRIPT_OPCODE_31)) ||
+			(opcode == 0x32 && (_game->scriptFeatures & COMFY_SCRIPT_OPCODE_32)) ||
+			(opcode == 0x33 && (_game->scriptFeatures & COMFY_SCRIPT_OPCODE_33))))
+			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
+	{
+		switch (opcode) {
+		case 0x31: {
 			uint16 count = scriptReadStringIndex(pc);
 			pc += 2;
 			_wcomfy99FeatureWordCount = MIN<uint16>(count, ARRAYSIZE(_wcomfy99FeatureWords));
@@ -572,16 +661,22 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 				_wcomfy99FeatureWords[i] = scriptReadWord(pc + i * 2);
 
 			pc += (uint32)count * 2;
-		} else if (opcode == 0x32) {
+
+			break;
+		}
+		case 0x32:
 			_wcomfy99Stub32FirstWord = scriptReadWord(pc);
 			_wcomfy99Stub32SecondWord = scriptReadWord(pc + 2);
 			pc += 4;
-		} else if (opcode == 0x33) {
+			break;
+		case 0x33: {
 			pc += 4;
 			byte inlineBytes = scriptReadByte(pc++);
 			byte tripleCount = scriptReadByte(pc++);
 			pc += inlineBytes + (uint32)tripleCount * 3;
-		} else if (opcode == 0x34) {
+			break;
+		}
+		case 0x34: {
 			byte subop = scriptReadByte(pc++);
 			uint16 value = scriptReadWord(pc);
 			pc += 2;
@@ -591,48 +686,79 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 
 			key.trim();
 
-			if (subop == 0 && value < _stringTable.size()) {
-				_stringTable[value] = ConfMan.hasKey(key) ? ConfMan.getInt(key) : 0;
-			} else if (subop == 1) {
+			switch (subop) {
+			case 0:
+				if (value < _stringTable.size())
+					_stringTable[value] = ConfMan.hasKey(key) ? ConfMan.getInt(key) : 0;
+
+				break;
+			case 1:
 				ConfMan.setInt(key, value);
 				if (key.equalsIgnoreCase("SENSITIVITY"))
 					_wcomfy99Sensitivity = value;
 
 				ConfMan.flushToDisk();
-			} else if (subop == 4) {
+				break;
+			case 4:
 				if (ConfMan.hasKey(key) && !ConfMan.get(key).equalsIgnoreCase("?????"))
 					keyBitSet(value);
 				else
 					keyBitClear(value);
-			} else if (subop == 5) {
+
+				break;
+			case 5: {
 				Common::ScopedPtr<Common::SeekableReadStream> stream(pathFOpen(Common::Path(key), true));
 				if (stream)
 					keyBitSet(value);
 				else
 					keyBitClear(value);
-			} else if (subop == 6) {
+
+				break;
+			}
+			case 6: {
 				key.trim();
 				byte last = key.empty() ? 0 : key.lastChar();
 				if (value < _stringTable.size())
 					_stringTable[value] = Common::isSpace(last) ? 0x81 : Common::isDigit(last) ? 0x12 :
 						(Common::isAlpha(last) ? (Common::isUpper(last) ? 0x04 : 0x08) : 0x40);
-			}
-		} else if (opcode == 0x35) {
-			byte subop = scriptReadByte(pc++);
-			if (subop == 2)
-				_wcomfy99SubsystemWord = 0;
-		} else {
-			byte subop = scriptReadByte(pc++);
-			if (subop == 1 || subop == 3)
-				_wcomfy99RecordHostEnabled = true;
-			else if (subop == 2)
-				_wcomfy99RecordHostEnabled = false;
 
-			if (subop >= 3 && subop <= 5) {
+				break;
+			}
+			default:
+				error("Unknown script opcode 0x34 subopcode 0x%02X near script PC 0x%08X", subop, pc);
+			}
+
+			break;
+		}
+		case 0x35: {
+			byte subop = scriptReadByte(pc++);
+			switch (subop) {
+			case 2:
+				_wcomfy99SubsystemWord = 0;
+				break;
+			default:
+				error("Unknown script opcode 0x35 subopcode 0x%02X at script PC 0x%08X", subop, pc - 2);
+			}
+
+			break;
+		}
+		case 0x36: {
+			byte subop = scriptReadByte(pc++);
+			switch (subop) {
+			case 1:
+				_wcomfy99RecordHostEnabled = true;
+				break;
+			case 2:
+				_wcomfy99RecordHostEnabled = false;
+				break;
+			case 3:
+			case 4:
+			case 5:
 				_wcomfy99MixedHostFirstWord = scriptReadWord(pc);
 				_wcomfy99MixedHostSecondWord = scriptReadWord(pc + 2);
 				pc += 4;
 				_wcomfy99RecordHostEnabled = true;
+
 				if (subop != 3) {
 					_wcomfy99MixedHostThirdWord = scriptReadWord(pc);
 					pc += 2;
@@ -642,47 +768,85 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 					_wcomfy99MixedHostFourthWord = scriptReadWord(pc);
 					pc += 2;
 				}
+
+				break;
+			default:
+				error("Unknown script opcode 0x36 subopcode 0x%02X at script PC 0x%08X", subop, pc - 2);
 			}
+
+			break;
+		}
+		default:
+			break;
 		}
 
 		return kScriptContinue;
 	}
 
-	if ((opcode == 0x46 || opcode == 0x47) && _usesWcomfy99ScriptOps) {
-		if (opcode == 0x46) {
+	case 0x46:
+	case 0x47:
+		if (!_usesWcomfy99ScriptOps)
+			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
+	{
+		switch (opcode) {
+		case 0x46: {
 			byte subop = scriptReadByte(pc++);
-			if (subop >= 1 && subop <= 8) {
-				uint16 argument = scriptReadWord(pc);
-				pc += 2;
-				uint16 percentage = argument == 0x00FF ? 0x00FF :
-					((int16)argument < 0 ? 0 : MIN<uint16>(argument, 100));
-				if (subop == 1)
-					_wcomfy99HostWordA = argument;
-				else if (subop == 2 && percentage != 0x00FF)
+			if (subop < 1 || subop > 8)
+				error("Unknown script opcode 0x46 subopcode 0x%02X at script PC 0x%08X", subop, pc - 2);
+
+			uint16 argument = scriptReadWord(pc);
+			pc += 2;
+			uint16 percentage = argument == 0x00FF ? 0x00FF : ((int16)argument < 0 ? 0 : MIN<uint16>(argument, 100));
+
+			switch (subop) {
+			case 1:
+				_wcomfy99HostWordA = argument;
+				break;
+			case 2:
+				if (percentage != 0x00FF)
 					_wcomfy99WaveVolumePercent = percentage;
-				else if (subop == 3 && percentage != 0x00FF)
+				break;
+			case 3:
+				if (percentage != 0x00FF)
 					_wcomfy99WaveLeftPercent = percentage;
-				else if (subop == 4 && percentage != 0x00FF)
+				break;
+			case 4:
+				if (percentage != 0x00FF)
 					_wcomfy99WaveRightPercent = percentage;
-				else if ((subop == 5 || subop == 6) && percentage != 0x00FF)
+				break;
+			case 5:
+			case 6:
+				if (percentage != 0x00FF)
 					_wcomfy99MixerVolumePercent = percentage;
-				else if (subop == 7 && percentage != 0x00FF)
+				break;
+			case 7:
+				if (percentage != 0x00FF)
 					_wcomfy99MixerAltPercent = percentage;
-				else if (subop == 8)
-					_wcomfy99HostWordB = argument;
+				break;
+			case 8:
+				_wcomfy99HostWordB = argument;
+				break;
+			default:
+				break;
 			}
-		} else {
+
+			break;
+		}
+		case 0x47:
 			_wcomfy99RangeHostStart = scriptReadWord(pc);
 			_wcomfy99RangeHostEnd = scriptReadWord(pc + 2);
 			_wcomfy99RangeHostCount = _wcomfy99RangeHostEnd >= _wcomfy99RangeHostStart ?
 				_wcomfy99RangeHostEnd - _wcomfy99RangeHostStart + 1 : 0;
 			pc += 4;
+			break;
+		default:
+			break;
 		}
 
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x50) {
+	case 0x50: {
 		uint16 lhsIndex = scriptReadWord(pc);
 		uint16 rhsIndex = scriptReadWord(pc + 2);
 		uint16 key = scriptReadWord(pc + 4);
@@ -699,7 +863,10 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x51 || opcode == 0x52 || opcode == 0x70 || opcode == 0x71) {
+	case 0x51:
+	case 0x52:
+	case 0x70:
+	case 0x71: {
 		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
 		pc += 2;
 		int16 x = scriptReadStringIndex(pc);
@@ -712,14 +879,17 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		byte blocking = scriptReadByte(pc++);
 		uint16 completionKey = scriptReadWord(pc);
 		pc += 2;
-		if (!target || !duration)
-			return kScriptUnhandled;
+		if (!target)
+			error("Script opcode 0x%02X resolved an invalid actor", opcode);
+
+		if (!duration)
+			error("Script opcode 0x%02X has a zero movement duration", opcode);
 
 		bool moveTo = opcode == 0x52 || opcode == 0x71;
 		if ((moveTo && x == (int16)0xF830) || (!moveTo && x == (int16)0x8AD0)) {
 			Actor *other = actorResolve((uint16)y, _currentActor);
 			if (!other)
-				return kScriptUnhandled;
+				error("Script opcode 0x%02X resolved an invalid reference actor", opcode);
 
 			if (moveTo) {
 				x = (int16)((int32)actorReadU32(*other, kActorXFixed) >> 12);
@@ -765,7 +935,11 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return blocking && target == &actor ? kScriptYield : kScriptContinue;
 	}
 
-	if ((opcode == 0x48 || opcode == 0x49) && _usesWcomfy99ScriptOps) {
+	case 0x48:
+	case 0x49:
+		if (!_usesWcomfy99ScriptOps)
+			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
+	{
 		uint16 key = scriptReadWord(pc);
 		uint32 targetPc = scriptReadDword(pc + 2);
 		bool jumpWhenSet = opcode == 0x49;
@@ -773,15 +947,32 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if ((opcode == 0x54 || opcode == 0x55) && _usesWcomfy99ScriptOps) {
+	case 0x53: {
+		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
+		uint16 frame = scriptReadStringIndex(pc + 2);
+		pc += 4;
+		if (!target)
+			error("Script opcode 0x53 resolved an invalid actor");
+
+		actorWriteU32(*target, kActorSpriteSelector, (uint32)(int32)(int16)frame);
+		actorWriteU32(*target, kActorMoveDx, 0);
+		actorWriteU32(*target, kActorMoveDy, 0);
+		return kScriptContinue;
+	}
+
+	case 0x54:
+	case 0x55:
+		if (_engineVersion < 2)
+			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
+	{
 		pc += 4;
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x6E)
+	case 0x6E:
 		return kScriptYield;
 
-	if (opcode == 0x6F) {
+	case 0x6F: {
 		uint16 id = scriptReadWord(pc);
 		int16 delta = scriptReadStringIndex(pc + 2);
 		pc += 4;
@@ -789,7 +980,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x72) {
+	case 0x72: {
 		uint16 requested = scriptReadStringIndex(pc);
 		pc += 2;
 		uint16 balance = actorReadU16(actor, kActorWaitAccum);
@@ -806,12 +997,12 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptYield;
 	}
 
-	if (opcode == 0x73) {
+	case 0x73: {
 		_waveOutputActive = false;
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x74) {
+	case 0x74: {
 		uint16 key = scriptReadWord(pc);
 		if (keyBitTest(key)) {
 			pc--;
@@ -822,7 +1013,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x75) {
+	case 0x75: {
 		byte kind = scriptReadByte(pc++);
 		uint16 key = scriptReadWord(pc);
 		pc += 2;
@@ -830,11 +1021,14 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		if (_usesWcomfy99ScriptOps) {
 			uint16 argument = scriptReadWord(pc);
 			pc += 2;
-			if (kind == 1)
+			switch (kind) {
+			case 1:
 				condition = sceneGetHandle(argument) != 0;
-			else if (kind == 2)
+				break;
+			case 2:
 				condition = _inputDeviceMode == 1;
-			else if (kind == 14) {
+				break;
+			case 14:
 				if (argument <= 4) {
 					condition = _inputDeviceMode == argument;
 				} else if (argument == 20) {
@@ -843,11 +1037,21 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 					Common::ScopedPtr<Common::SeekableReadStream> stream(pathFOpen(Common::Path("comfy.htm"), true));
 					condition = (bool)stream;
 				}
+				break;
+			default:
+				error("Unknown script opcode 0x75 subopcode 0x%02X at script PC 0x%08X", kind, pc - 6);
 			}
-		} else if (kind == 1) {
-			uint16 scene = scriptReadWord(pc);
-			condition = sceneGetHandle(scene) != 0;
-			pc += 2;
+		} else {
+			switch (kind) {
+			case 1: {
+				uint16 scene = scriptReadWord(pc);
+				condition = sceneGetHandle(scene) != 0;
+				pc += 2;
+				break;
+			}
+			default:
+				error("Unknown script opcode 0x75 subopcode 0x%02X at script PC 0x%08X", kind, pc - 4);
+			}
 		}
 
 		if (condition)
@@ -858,33 +1062,32 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x76 || opcode == 0x77) {
+	case 0x76:
+	case 0x77: {
 		uint16 index = scriptReadWord(pc);
 		pc += 2;
 		if (opcode == 0x77) {
-			if (_stringTable.size() <= 1) {
-				_scriptFault = true;
-				return kScriptUnhandled;
-			}
+			if (_stringTable.size() <= 1)
+				error("Script opcode 0x77 requires string table entry 1");
 
 			index += _stringTable[1];
 		}
 
 		uint16 value = scriptEvalExpr(pc, _currentActor);
-		if (index >= _stringTable.size()) {
-			_scriptFault = true;
-			return kScriptUnhandled;
-		}
+		if (index >= _stringTable.size())
+			error("Script opcode 0x%02X references invalid string table entry %u", opcode, (uint)index);
 
 		_stringTable[index] = value;
 		return kScriptContinue;
 	}
 
-	if (opcode == 0x7F)
+	case 0x7F:
 		return kScriptContinue;
 
-	if (!opcode || opcode > 0x7F || opcode == 0x27 || (opcode >= 0x30 && opcode <= 0x4F) ||
-	    (opcode >= 0x53 && opcode <= 0x6D) || (opcode >= 0x78 && opcode <= 0x7E)) {
+	default:
+		if (opcode)
+			error("Unknown script opcode 0x%02X at script PC 0x%08X", opcode, pc - 1);
+
 		Actor *root = actorGetPtr(0);
 		if (root)
 			actorWriteU8(*root, kActorActive, 0);
@@ -892,17 +1095,18 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		return kScriptDeactivatedRoot;
 	}
 
-	_scriptFault = true;
-	return kScriptUnhandled;
+	error("Script opcode 0x%02X left the dispatch switch without returning", opcode);
+	return kScriptDeactivatedRoot;
 }
 
 ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptStep(Actor &actor, uint32 &pc) {
 	uint32 originalPc = pc;
 	byte opcode = scriptReadByte(pc++);
 	ScriptDispatchStatus status = scriptDispatch(actor, opcode, pc);
-	if (status == kScriptUnhandled)
-		pc = originalPc;
-	else if (status == kScriptYield)
+	if (_scriptFault)
+		error("Script fault while executing opcode 0x%02X at script PC 0x%08X", opcode, originalPc);
+
+	if (status == kScriptYield)
 		actorWriteU32(actor, kActorCurrentPc, pc);
 
 	return status;
