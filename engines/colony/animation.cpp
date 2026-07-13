@@ -605,9 +605,11 @@ void ColonyEngine::playAnimation() {
 				debugC(5, kColonyDebugAnimation, "Animation Mouse: %d, %d", logical.x, logical.y);
 			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 				if (event.customType == kActionEscape) {
-					openMainMenuDialog();
-					_gfx->computeScreenViewport();
-					needsDraw = true;
+					// Exit the animation like right-click/Return. Opening the
+					// main menu here instead would be a dead end: save/load
+					// are disabled while _animationRunning is set.
+					debugC(1, kColonyDebugAnimation, "Animation: ESC exit");
+					_animationRunning = false;
 				}
 			} else if (event.type == Common::EVENT_KEYDOWN) {
 				if (event.kbd.keycode == Common::KEYCODE_RETURN) {
