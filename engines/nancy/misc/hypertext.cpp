@@ -204,17 +204,18 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 				case '3':
 				case '4':
 				case '5':
-					// Mark token for Nancy 8 and later games. no-op for earlier games
-					if (g_nancy->getGameType() <= kGameTypeNancy7) {
-						continue;
-					}
-
 					if (curToken.size() != 1) {
 						break;
 					}
 
-					metaInfo.push({MetaInfo::kMark, numNonSpaceChars, (byte)(curToken[0] - '1')});
-					hasMark = true;
+					// Mark token for Nancy 8 and later games. Treated as newline in earlier games
+					if (g_nancy->getGameType() <= kGameTypeNancy7) {
+						currentLine += '\n';
+						newlineTokens.push(numNonSpaceChars);
+					} else {
+						metaInfo.push({MetaInfo::kMark, numNonSpaceChars, (byte)(curToken[0] - '1')});
+						hasMark = true;
+					}
 					continue;
 				default:
 					break;
