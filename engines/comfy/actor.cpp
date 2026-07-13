@@ -552,6 +552,60 @@ void ComfyEngine::spriteBlitClipped(int16 spriteId, int16 x, int16 y) {
 	renderSetDirty();
 }
 
+bool ComfyEngine::spriteCoversPoint(int16 spriteId, int16 x, int16 y, int16 pointX, int16 pointY) {
+	SpriteResource *loadedSprite = spriteGetPtr(spriteId);
+	if (!loadedSprite)
+		return false;
+
+	SpriteResource &sprite = *loadedSprite;
+	if (pointX < x || pointY < y || pointX >= x + (int16)sprite.header.width ||
+			pointY >= y + (int16)sprite.header.height)
+		return false;
+
+	if (sprite.header.width == _logicalScreenWidth && sprite.header.height == _logicalScreenHeight)
+		return true;
+
+	uint32 rowPos = 0;
+	for (uint row = 0; row < sprite.header.height && rowPos + 2 <= sprite.pixels.size(); row++) {
+		uint16 rowSize = READ_LE_UINT16(&sprite.pixels[rowPos]);
+		if (rowSize < 2 || rowPos + rowSize > sprite.pixels.size())
+			return false;
+
+		int16 drawY = y + row;
+		uint32 packetPos = rowPos + 2;
+		int16 drawX = x;
+		while (packetPos < rowPos + rowSize) {
+			byte op = sprite.pixels[packetPos++];
+			uint16 count = op & 0x3F;
+			if (op & 0x80) {
+				if (packetPos >= rowPos + rowSize)
+					return false;
+
+				packetPos++;
+				if (drawY == pointY && pointX >= drawX && pointX < drawX + (int16)count)
+					return true;
+
+				drawX += count;
+			} else if (op & 0x40) {
+				drawX += count;
+			} else {
+				if (packetPos + count > rowPos + rowSize)
+					return false;
+
+				if (drawY == pointY && pointX >= drawX && pointX < drawX + (int16)count)
+					return true;
+
+				packetPos += count;
+				drawX += count;
+			}
+		}
+
+		rowPos += rowSize;
+	}
+
+	return false;
+}
+
 uint32 ComfyEngine::actorReadU32(Actor &actor, uint offset) {
 	if (offset + 4 > _actorSize)
 		return 0;
@@ -899,6 +953,16 @@ void ComfyEngine::actorSetAllVisible() {
 		actorWriteU8(_actors[i], kActorDirty, 1);
 }
 
+void ComfyEngine::actorClearFirstAnimFrameSelector() {
+	for (uint actorIndex = 1; actorIndex < COMFY_ACTOR_COUNT; actorIndex++) {
+		Actor *actor = actorGetPtr(actorIndex);
+		if (actor && actorReadU32(*actor, kActorSpriteSelector) == 0x00FFFFFF) {
+			actorWriteU32(*actor, kActorSpriteSelector, 0);
+			break;
+		}
+	}
+}
+
 bool ComfyEngine::actorRunScript(uint16 actorIndex, bool &descendChildren) {
 	Actor *actor = actorGetPtr(actorIndex);
 	descendChildren = false;
@@ -1063,7 +1127,7 @@ void ComfyEngine::actorDrawList(uint16 actorIndex, int16 x, int16 y, bool visibl
 	}
 }
 
-void ComfyEngine::renderQueueDrawCommand(int16 x, int16 y, uint32 selector, byte mode) {
+void ComfyEngine::renderQueueDrawCommand(int16 x, int16 y, uint32 selector, byte mode, uint16 actorIndex) {
 	if (!selector)
 		return;
 
@@ -1075,18 +1139,46 @@ void ComfyEngine::renderQueueDrawCommand(int16 x, int16 y, uint32 selector, byte
 	command.y = y;
 	command.selector = selector;
 	command.mode = mode;
+	command.actorIndex = actorIndex;
 	if (_drawCommandCount >= COMFY_DRAW_COMMAND_CAPACITY)
 		error("Too many actor draw commands");
 }
 
 void ComfyEngine::renderFlushDrawCommands() {
-	if (_isPanther && actorGetFrame())
+	if ((_isPanther || _engineVersion == 3) && actorGetFrame())
 		backgroundRestoreDirtyRects();
 
 	for (uint i = 0; i < _drawCommandCount; i++) {
 		DrawCommand &command = _drawCommands[i];
 		if (command.mode == 2) {
+			if (_engineVersion == 3) {
+				for (uint next = i + 1; next < _drawCommandCount; next++) {
+					DrawCommand &nextCommand = _drawCommands[next];
+					if (nextCommand.mode != 0)
+						continue;
+
+					SpriteResource *nextSprite = spriteGetPtr((int16)nextCommand.selector);
+					if (!nextSprite)
+						continue;
+
+					VideoRectRecord dirtyRect;
+					dirtyRect.left = nextCommand.x;
+					dirtyRect.top = nextCommand.y;
+					dirtyRect.right = nextCommand.x + nextSprite->header.width;
+					dirtyRect.bottom = nextCommand.y + nextSprite->header.height;
+					dirtyRect.area = (uint32)nextSprite->header.width * nextSprite->header.height;
+					videoFindBestMode(dirtyRect);
+				}
+			}
+
+			bool coversMouse = animFrameCoversPoint(command.x, command.y, _mouseX, _mouseY);
 			animFrameBlitAt(command.x, command.y);
+			if (_engineVersion == 3 && command.actorIndex) {
+				Actor *actor = actorGetPtr(command.actorIndex);
+				if (actor)
+					actorWriteU8(*actor, kActorBlitHitMouse, coversMouse ? 1 : 0);
+			}
+
 			continue;
 		}
 
@@ -1094,7 +1186,14 @@ void ComfyEngine::renderFlushDrawCommands() {
 		if (!sprite)
 			continue;
 
+		bool coversMouse = spriteCoversPoint((int16)command.selector, command.x, command.y, _mouseX, _mouseY);
 		spriteBlitClipped((int16)command.selector, command.x, command.y);
+		if (_engineVersion == 3 && command.actorIndex) {
+			Actor *actor = actorGetPtr(command.actorIndex);
+			if (actor)
+				actorWriteU8(*actor, kActorBlitHitMouse, coversMouse ? 1 : 0);
+		}
+
 		if (command.mode == 0) {
 			VideoRectRecord dirtyRect;
 			dirtyRect.left = command.x;
@@ -1185,17 +1284,19 @@ uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, VideoRectRecord &m
 
 		_keymaskX = baseX + (int16)dx;
 		_keymaskY = baseY + (int16)dy;
-		if (_keymaskX >= 0x0280 || _keymaskX <= (int16)0xFEC0 ||
-				_keymaskY >= 0x0190 || _keymaskY <= (int16)0xFF38)
+		if (_engineVersion <= 2 && (_keymaskX >= 0x0280 || _keymaskX <= (int16)0xFEC0 ||
+				_keymaskY >= 0x0190 || _keymaskY <= (int16)0xFF38))
 			continue;
 
-		SpriteResource *sprite = spriteGetPtr((int16)spriteId);
+		SpriteResource *sprite = _engineVersion <= 2 ?
+			spriteGetPtr((int16)spriteId) :
+			spriteLookup(spriteId, _keymaskX, _keymaskY);
 		if (!sprite)
 			continue;
 
 		int16 left = _keymaskX - sprite->header.hotspotX;
 		int16 top = _keymaskY - sprite->header.hotspotY;
-		if (mode == 1 && !_usesAnimFile)
+		if (mode == 1 && _engineVersion <= 2 && !_isPanther)
 			spriteBlitClipped((int16)spriteId, left, top);
 
 		if (rect) {
@@ -1203,7 +1304,7 @@ uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, VideoRectRecord &m
 			rect->top = top;
 			rect->right = left + sprite->header.width;
 			rect->bottom = top + sprite->header.height;
-			rect->area = _usesAnimFile ? spriteId :
+			rect->area = (_isPanther || _engineVersion == 3) ? spriteId :
 				(uint32)sprite->header.width * sprite->header.height;
 		}
 	}
@@ -1302,13 +1403,14 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 	}
 
 	animFrameRecordVocCounter(1);
-	if (_isPanther && _videoMode != 2 && _videoMode != 4)
+	bool queuedActorDraw = _usesAnimFile && (_isPanther || _engineVersion == 3) && (_videoMode == 2 || _videoMode == 4);
+	if ((_isPanther || _engineVersion == 3) && !queuedActorDraw)
 		actorDrawLegacyInternal(actorIndex, x, y);
 	else
 		actorDrawInternal(actorIndex, x, y, true);
 
 	if (_usesAnimFile) {
-		if (_isPanther && (_videoMode == 2 || _videoMode == 4))
+		if (queuedActorDraw)
 			renderFlushDrawCommands();
 
 		animFrameRecordVocCounter(2);
@@ -1403,7 +1505,8 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 	VideoRectRecord oldRect = actorReadCachedRect(*actor);
 	actorDrawList(actorReadU16(*actor, kActorSiblingHead), drawX, drawY, visible);
 	uint32 selector = actorReadU32(*actor, kActorSpriteSelector);
-	if (_isPanther) {
+	bool useDrawQueue = _usesAnimFile && (_isPanther || _engineVersion == 3) && (_videoMode == 2 || _videoMode == 4);
+	if (_isPanther || _engineVersion == 3) {
 		VideoRectRecord newRect;
 		if (selector == 0x00FFFFFF) {
 			bool changed = false;
@@ -1420,10 +1523,10 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 				newRect.top = drawY;
 				actorWriteU8(*actor, _actorCachedVisibleOffset, visible ? 1 : 0);
 				actorWriteCachedRect(*actor, newRect);
-				renderQueueDrawCommand(drawX, drawY, selector, 2);
+				renderQueueDrawCommand(drawX, drawY, selector, 2, actorIndex);
 			} else if (visible && actorReadU8(*actor, kActorVisible)) {
 				animFrameInvalidateRects(drawX, drawY, 0);
-				renderQueueDrawCommand(drawX, drawY, selector, 2);
+				renderQueueDrawCommand(drawX, drawY, selector, 2, actorIndex);
 			}
 
 			actorDrawList(actorReadU16(*actor, kActorChildHead), drawX, drawY, visible);
@@ -1476,7 +1579,7 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 						videoFindBestMode(previousRect);
 
 					renderQueueDrawCommand(currentRect.left, currentRect.top,
-						currentRect.area, equal ? 1 : 0);
+						currentRect.area, equal ? 1 : 0, actorIndex);
 				}
 			}
 
@@ -1494,10 +1597,10 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 				if (scripted && currentLastRect != 0xFFFF) {
 					for (uint i = 0; i <= currentLastRect; i++) {
 						VideoRectRecord &rect = _keymaskRects[i];
-						renderQueueDrawCommand(rect.left, rect.top, rect.area, 0);
+						renderQueueDrawCommand(rect.left, rect.top, rect.area, 0, actorIndex);
 					}
 				} else if (!scripted) {
-					renderQueueDrawCommand(newRect.left, newRect.top, newRect.area, 0);
+					renderQueueDrawCommand(newRect.left, newRect.top, newRect.area, 0, actorIndex);
 				}
 			}
 
@@ -1527,10 +1630,10 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			if (scripted && currentLastRect != 0xFFFF) {
 				for (uint i = 0; i <= currentLastRect; i++) {
 					VideoRectRecord &rect = _keymaskRects[i];
-					renderQueueDrawCommand(rect.left, rect.top, rect.area, 1);
+					renderQueueDrawCommand(rect.left, rect.top, rect.area, 1, actorIndex);
 				}
 			} else if (!scripted) {
-				renderQueueDrawCommand(newRect.left, newRect.top, newRect.area, 1);
+				renderQueueDrawCommand(newRect.left, newRect.top, newRect.area, 1, actorIndex);
 			}
 		}
 
@@ -1558,8 +1661,8 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 				for (uint i = 0; i <= scriptedLastRect; i++) {
 					VideoRectRecord &drawRecord = _keymaskRects[i];
 					if (drawRecord.area) {
-						if (_isPanther)
-							renderQueueDrawCommand(drawRecord.left, drawRecord.top, drawRecord.area, 1);
+						if (useDrawQueue)
+							renderQueueDrawCommand(drawRecord.left, drawRecord.top, drawRecord.area, 1, actorIndex);
 						else
 							spriteBlitClipped((int16)drawRecord.area, drawRecord.left, drawRecord.top);
 					}
@@ -1591,8 +1694,8 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 					if (sprite) {
 						int16 spriteX = drawX + dx - sprite->header.hotspotX;
 						int16 spriteY = drawY + dy - sprite->header.hotspotY;
-						if (_isPanther && (_videoMode == 2 || _videoMode == 4))
-							renderQueueDrawCommand(spriteX, spriteY, spriteId, 1);
+						if (useDrawQueue)
+							renderQueueDrawCommand(spriteX, spriteY, spriteId, 1, actorIndex);
 						else
 							spriteBlitClipped((int16)spriteId, spriteX, spriteY);
 					}
@@ -1613,8 +1716,8 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 		newRect.bottom = drawY + frameHeight;
 		newRect.area = frameWidth * frameHeight;
 		if (visible) {
-			if (_isPanther && (_videoMode == 2 || _videoMode == 4)) {
-				renderQueueDrawCommand(drawX, drawY, selector, 2);
+			if (useDrawQueue) {
+				renderQueueDrawCommand(drawX, drawY, selector, 2, actorIndex);
 			} else {
 				animFrameInvalidateRects(drawX, drawY, 1);
 				animFrameBlitAt(drawX, drawY);
@@ -1631,8 +1734,8 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			if (visible) {
 				int16 spriteX = drawX - sprite->header.hotspotX;
 				int16 spriteY = drawY - sprite->header.hotspotY;
-				if (_isPanther && (_videoMode == 2 || _videoMode == 4))
-					renderQueueDrawCommand(spriteX, spriteY, selector, 1);
+				if (useDrawQueue)
+					renderQueueDrawCommand(spriteX, spriteY, selector, 1, actorIndex);
 				else
 					spriteBlitClipped((int16)selector, spriteX, spriteY);
 			}

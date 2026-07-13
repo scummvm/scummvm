@@ -338,6 +338,9 @@ void ComfyEngine::sceneStartWithMusic(uint16 scene) {
 
 	if (_keyBits)
 		memcpy(_keyBits, keySnapshot, MIN<uint32>(sizeof(keySnapshot), _keyBitsSize));
+
+	if (_engineVersion == 3)
+		wcomfy99RestoreHostStateAfterSceneStart();
 }
 
 bool ComfyEngine::sceneEntryLoad(uint16 descriptor, uint16 index) {

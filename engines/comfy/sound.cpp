@@ -522,6 +522,91 @@ private:
 	BufferState _bufferStates[2];
 };
 
+void ComfyEngine::wcomfy99SetWaveBalancePercent(uint16 value) {
+	if ((int16)value < 0)
+		value = 0;
+	else if (value > 100)
+		value = 100;
+
+	_wcomfy99VocState0 = (byte)value;
+	_wcomfy99WaveVolumePercent = value;
+}
+
+void ComfyEngine::wcomfy99SetWaveLeftPercent(uint16 value) {
+	if (value == 0x00FF)
+		return;
+
+	if ((int16)value < 0)
+		value = 0;
+	else if (value > 100)
+		value = 100;
+
+	_wcomfy99VocState2 = (byte)value;
+	_wcomfy99WaveLeftPercent = value;
+}
+
+void ComfyEngine::wcomfy99SetWaveRightPercent(uint16 value) {
+	if (value == 0x00FF)
+		return;
+
+	if ((int16)value < 0)
+		value = 0;
+	else if (value > 100)
+		value = 100;
+
+	_wcomfy99VocState3 = (byte)value;
+	_wcomfy99WaveRightPercent = value;
+}
+
+void ComfyEngine::wcomfy99SetMixerVolumePercent(uint16 value) {
+	if (value == 0x00FF)
+		return;
+
+	if ((int16)value < 0)
+		value = 0;
+	else if (value > 100)
+		value = 100;
+
+	_wcomfy99VocState6 = (byte)value;
+	_wcomfy99MixerVolumePercent = value;
+}
+
+void ComfyEngine::wcomfy99SetHostMediaRangePercent(uint16 value) {
+	if ((int16)value < 0)
+		value = 0;
+	else if (value > 100)
+		value = 100;
+
+	_wcomfy99MixerAltPercent = value;
+}
+
+void ComfyEngine::wcomfy99SetHostMediaMode(byte mode) {
+	if (mode == 1 || mode == 3) {
+		_wcomfy99VocState1 = 1;
+		if (!_wcomfy99HostMediaValueAvailable) {
+			_wcomfy99HostMediaValue = 0;
+			_wcomfy99HostMediaValueAvailable = true;
+		}
+	} else if (mode == 2) {
+		_wcomfy99VocState1 = 0;
+		_wcomfy99HostMediaValue = 0;
+		_wcomfy99HostMediaValueAvailable = false;
+	}
+}
+
+void ComfyEngine::wcomfy99RestoreHostStateAfterSceneStart() {
+	wcomfy99SetWaveBalancePercent(_wcomfy99VocState0);
+	wcomfy99SetWaveLeftPercent(_wcomfy99VocState2);
+	wcomfy99SetWaveRightPercent(_wcomfy99VocState3);
+	wcomfy99SetMixerVolumePercent(_wcomfy99VocState6);
+	if (_wcomfy99VocState1) {
+		wcomfy99SetHostMediaMode(2);
+		wcomfy99SetHostMediaMode(1);
+	} else {
+		wcomfy99SetHostMediaMode(2);
+	}
+}
+
 bool ComfyEngine::soundInit() {
 	if (!readAssetFile(Common::Path("VOCFILE.DAT"), _vocFileData) || _vocFileData.size() < 4)
 		return false;

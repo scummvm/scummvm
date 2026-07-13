@@ -827,35 +827,29 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 
 			uint16 argument = scriptReadWord(pc);
 			pc += 2;
-			uint16 percentage = argument == 0x00FF ? 0x00FF : ((int16)argument < 0 ? 0 : MIN<uint16>(argument, 100));
 
 			switch (subop) {
 			case 1:
 				_wcomfy99HostWordA = argument;
 				break;
 			case 2:
-				if (percentage != 0x00FF)
-					_wcomfy99WaveVolumePercent = percentage;
+				wcomfy99SetWaveBalancePercent(argument);
 				break;
 			case 3:
-				if (percentage != 0x00FF)
-					_wcomfy99WaveLeftPercent = percentage;
+				_wcomfy99HostWordB = argument;
 				break;
 			case 4:
-				if (percentage != 0x00FF)
-					_wcomfy99WaveRightPercent = percentage;
+				wcomfy99SetWaveLeftPercent(argument);
 				break;
 			case 5:
-			case 6:
-				if (percentage != 0x00FF)
-					_wcomfy99MixerVolumePercent = percentage;
+				wcomfy99SetWaveRightPercent(argument);
 				break;
+			case 6:
 			case 7:
-				if (percentage != 0x00FF)
-					_wcomfy99MixerAltPercent = percentage;
+				wcomfy99SetHostMediaRangePercent(argument);
 				break;
 			case 8:
-				_wcomfy99HostWordB = argument;
+				wcomfy99SetMixerVolumePercent(argument);
 				break;
 			default:
 				break;
