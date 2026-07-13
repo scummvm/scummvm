@@ -42,6 +42,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_SKIP_INTRO,
+		{
+			_s("Skip intro"),
+			_s("Skip the intro sequence which precedes the interactive movie"),
+			"skip_intro",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

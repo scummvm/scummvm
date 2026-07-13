@@ -57,6 +57,7 @@ extern const PlainGameDescriptor comfyGames[];
 extern const ComfyGameDescription gameDescriptions[];
 
 #define GAMEOPTION_FORCE_LANGUAGE_SETUP GUIO_GAMEOPTIONS1
+#define GAMEOPTION_SKIP_INTRO           GUIO_GAMEOPTIONS2
 
 } // End of namespace Comfy
 

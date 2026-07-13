@@ -124,7 +124,7 @@ Common::Error ComfyEngine::gameInit() {
 		ConfMan.flushToDisk();
 	}
 
-	if (iniGetGameDataPath(0)) {
+	if (!_introDirectory.empty() && !ConfMan.getBool("skip_intro") && iniGetGameDataPath(0)) {
 		sceneRun(_currentScene, false, true);
 		if (shouldQuit()) {
 			gameShutdown();
