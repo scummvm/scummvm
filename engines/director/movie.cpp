@@ -156,43 +156,71 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 	if (debugChannelSet(8, kDebugLoading)) {
 		stream.hexdump(stream.size());
 	}
-	stream.readUint32(); // header size
-	uint32 count = stream.readUint32();
-	stream.readUint16();
-	uint32 unkCount = stream.readUint32() + 1;
-	for (uint32 i = 0; i < unkCount; i++) {
-		stream.readUint32();
-	}
+	// MCsL is a "list chunk": header gives per-cast-library field count and
+	// stride; the actual field bytes are found via an offset table located
+	// at dataOffset. libResourceId is 32-bit in all Director versions;
+	// D5/D6 movies simply store 0 in the high word.
+	uint32 dataOffset = stream.readUint32();
+	stream.readUint16(); // unknown
+	uint32 count = stream.readUint16();
+	uint32 itemsPerCast = stream.readUint16();
+
+	stream.seek(dataOffset);
+	uint16 offsetTableLen = stream.readUint16();
+	Common::Array<uint32> offsets(offsetTableLen);
+	for (uint16 i = 0; i < offsetTableLen; i++)
+		offsets[i] = stream.readUint32();
+	uint32 itemsLen = stream.readUint32();
+	uint32 itemsBase = stream.pos();
+
+	auto itemSpan = [&](uint32 idx, uint32 &start, uint32 &end) {
+		start = idx < offsetTableLen ? offsets[idx] : itemsLen;
+		end = (idx + 1) < offsetTableLen ? offsets[idx + 1] : itemsLen;
+		start = MIN<uint32>(start, itemsLen);
+		end = MIN<uint32>(end, itemsLen);
+		if (end < start)
+			end = start;
+	};
+
 	for (uint32 i = 0; i < count; i++) {
-		int nameSize = stream.readByte();
-		Common::String name = stream.readString('\0', nameSize);
-		stream.readByte(); // null
-		int pathSize = stream.readByte();
-		Common::String path = stream.readString('\0', pathSize);
-		stream.readByte(); // null
-		if (pathSize > 1) {
-			// Separator after an external cast path: 1 byte in D7, uint16 in D5/D6.
-			// Not verified for D8+; falls back to the D7 (1-byte) guess with a warning.
-			uint16 ver = g_director->getVersion();
-			if (ver >= 700 && ver < 800) {
-				stream.readByte();
-			} else if (ver >= 800) {
-				warning("STUB: Movie::loadCastLibMapping(): cast-lib path separator width not verified for version v%d", ver);
-				stream.readByte();
-			} else {
-				stream.readUint16();
+		uint32 base = i * itemsPerCast;
+		uint32 start, end;
+
+		Common::String name;
+		itemSpan(base + 1, start, end);
+		if (end - start >= 1) {
+			stream.seek(itemsBase + start);
+			int nameSize = stream.readByte();
+			name = stream.readString('\0', MIN<uint32>(nameSize, end - start - 1));
+		}
+
+		Common::String path;
+		if (itemsPerCast >= 2) {
+			itemSpan(base + 2, start, end);
+			if (end - start >= 1) {
+				stream.seek(itemsBase + start);
+				int pathSize = stream.readByte();
+				path = stream.readString('\0', MIN<uint32>(pathSize, end - start - 1));
 			}
 		}
-		uint16 minMember = stream.readUint16();
-		uint16 maxMember = stream.readUint16();
-		uint32 libResourceId;
-		if (g_director->getVersion() >= 700) {
-			// D7+: single 32-bit resource id; verified against a D7 specimen
-			// (0x00010402) that a 16-bit read would truncate.
-			libResourceId = stream.readUint32();
-		} else {
-			stream.readUint16(); // unknown/reserved; 0 in tested D5/D6 movies
-			libResourceId = stream.readUint16();
+
+		if (itemsPerCast >= 3) {
+			itemSpan(base + 3, start, end);
+			if (end - start >= 2) {
+				stream.seek(itemsBase + start);
+				stream.readUint16(); // preload settings; unused
+			}
+		}
+
+		uint16 minMember = 0, maxMember = 0;
+		uint32 libResourceId = 1024;
+		if (itemsPerCast >= 4) {
+			itemSpan(base + 4, start, end);
+			uint32 span = end - start;
+			stream.seek(itemsBase + start);
+			minMember = span >= 2 ? stream.readUint16() : 0;
+			maxMember = span >= 4 ? stream.readUint16() : 0;
+			libResourceId = span >= 8 ? stream.readUint32() : (span >= 6 ? stream.readUint16() : 1024);
 		}
 		uint16 libId = i + 1;
 		debugC(5, kDebugLoading, "Movie::loadCastLibMapping: name: %s, path: %s, minMember: %d, maxMember: %d, libResourceId: %d, libId: %d", utf8ToPrintable(name).c_str(), utf8ToPrintable(path).c_str(), minMember, maxMember, libResourceId, libId);
