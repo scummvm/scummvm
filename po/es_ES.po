@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-13 11:35+0000\n"
-"PO-Revision-Date: 2026-07-13 11:13+0000\n"
+"PO-Revision-Date: 2026-07-13 22:21+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.15.1\n"
+"X-Generator: Weblate 2026.7.1\n"
 "X-Language-name: Español\n"
 
 #: audio/mac_plugin.cpp:30
@@ -754,22 +754,20 @@ msgid "Misc"
 msgstr "Otras"
 
 #: gui/editgamedialog.cpp:333
-#, fuzzy
-#| msgid "Enable short transitions"
 msgid "Enable hotspot display"
-msgstr "Transiciones breves"
+msgstr "Mostrar zonas interactivas"
 
 #: gui/editgamedialog.cpp:334
 msgid "Enable visual markers and labels for interactive objects"
-msgstr ""
+msgstr "Muestra indicadores visuales y etiquetas en los objetos interactivos"
 
 #: gui/editgamedialog.cpp:339
 msgid "Hotspot marker:"
-msgstr ""
+msgstr "Icono zonas int.:"
 
 #: gui/editgamedialog.cpp:341
 msgid "Point"
-msgstr ""
+msgstr "Punto"
 
 #. I18N: Hardware key on controller
 #: gui/editgamedialog.cpp:342 backends/platform/sdl/ps3/ps3.cpp:46
@@ -778,20 +776,17 @@ msgid "Square"
 msgstr "Cuadrado"
 
 #: gui/editgamedialog.cpp:343
-#, fuzzy
-#| msgid "Cross"
 msgid "Crosshair"
-msgstr "Cruz/X"
+msgstr "Punto de mira"
 
 #: gui/editgamedialog.cpp:352
-#, fuzzy
-#| msgid "Show hotspots"
 msgid "Show hotspot labels"
-msgstr "Mostrar zonas interactivas"
+msgstr "Mostrar etiquetas de zonas interactivas"
 
 #: gui/editgamedialog.cpp:353
 msgid "Display text labels next to hotspot markers"
 msgstr ""
+"Muestra etiquetas de texto junto a los marcadores de las zonas interactivas"
 
 #: gui/editgamedialog.cpp:367 engines/dialogs.cpp:385
 msgid "Achievements"
