@@ -202,6 +202,9 @@ static bool decodeIffBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame
 	frame.palette.resize(palette.size() * 3);
 	if (!frame.palette.empty())
 		memcpy(frame.palette.data(), palette.data(), frame.palette.size());
+	debugC(3, kDebugResources,
+		"Ripper: decoded IFF bitmap width=%u height=%u transparent=%u colors=%u",
+		frame.width, frame.height, frame.transparentColor, palette.size());
 	return true;
 }
 
