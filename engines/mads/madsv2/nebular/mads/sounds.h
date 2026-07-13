@@ -19,27 +19,27 @@
  *
  */
 
-#ifndef MADS_DRAGONSPHERE_MAIN_MENU_H
-#define MADS_DRAGONSPHERE_MAIN_MENU_H
+#ifndef MADS_NEBULAR_MADS_SOUNDS_H
+#define MADS_NEBULAR_MADS_SOUNDS_H
 
-#include "common/str.h"
+#include "common/scummsys.h"
 
 namespace MADS {
 namespace MADSV2 {
-namespace Dragonsphere {
+namespace RexNebular {
 
-struct MenuItem {
-	int handle;           /* Sprite series handle */
-	int active;           /* Menu item is active  */
-	int status;           /* Current status       */
+enum {
+	/* Shared */
+	N_AllFade       =  1,
+	N_MusicOff      =  2,
+	N_MusicFade     =  3,
+	N_NoiseFade     =  5,
+	N_IsAnySoundOn  =  8,
+
+	N_TitleScreen   = 24
 };
 
-extern bool new_background;
-extern int selected_item;
-
-extern void menu_control();
-
-} // namespace Dragonsphere
+} // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS
 

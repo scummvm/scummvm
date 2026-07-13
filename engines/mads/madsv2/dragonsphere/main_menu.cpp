@@ -61,6 +61,20 @@ namespace Dragonsphere {
 
 #define CONFIG_FILE_NAME "CONFIG.PHA"
 
+#define COMMAND_LINE_MAX        10
+
+#define FRAME_RATE              1
+#define MENU_FRAME_RATE         3
+
+#define NUM_MENU_ITEMS          6
+
+#define MENU_APPEARING          0
+#define MENU_ACCEPTING_COMMANDS 1
+#define MENU_DISAPPEARING       2
+
+#define MENU_HIGH_SPRITE        15
+
+
 #define EYE_QUOTES      16
 #define EYE_HOTSPOT     32
 #define EYE_MESSAGES    2
@@ -271,8 +285,7 @@ static void process_sprites() {
 
 			for (look = 0; !match && (look < (int)image_marker); look++) {
 				if (image_list[look].segment_id == image.segment_id) {
-					if (memcmp(&image_list[look].series_id,
-						&image.series_id, 9) == 0) {
+					if (image_list[look].equals(image)) {
 						image_list[look].flags = IMAGE_STATIC;
 						match = true;
 					}

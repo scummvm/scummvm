@@ -56,51 +56,33 @@ constexpr bool SHOW_LINES = true;
 constexpr byte LINE_COLOR = 2;
 
 char *quotes;
-static int mainmenu_val1;
-static void *mainmenu_ptr1;
-static void *mainmenu_ptr2;
 static Palette black_palette;
 
-static void timer_function() {
-	// TODO
-}
-
 static void main_menu_main() {
-	auto &screen = *g_engine->getScreen();
+	auto &scr_screen = *g_engine->getScreen();
 	Palette palette;
 	int screenId, soundId;
 
 	mcga_compute_retrace_parameters();
 	memset(&black_palette, 0, sizeof(black_palette));
 
-	mainmenu_val1 = 0;
 	pal_init(8, 8);
 	pal_white(master_palette);
 
 	buffer_init(&scr_work, 320, 156);
 	viewing_at_y = (200 - scr_work.y) >> 1;
-	if (!scr_work.data)
-		error("mainmenu -- didn't get work screen.");
-
-	mainmenu_ptr1 = nullptr;
+	assert(scr_work.data);
 
 	buffer_init(&scr_orig, 320, 156);
-	if (!scr_orig.data)
-		error("mainmenu -- didn't get orig screen.");
+	assert(scr_orig.data);
 
 	buffer_init(&scr_depth, 320, 156);
-	if (!scr_depth.data)
-		error("mainmenu -- didn't get orig screen.");
+	assert(scr_depth.data);
 
 	buffer_fill(scr_work, 0);
 	buffer_fill(scr_orig, 0);
 	buffer_fill(scr_depth, 15);
 
-	// TODO: identify what disassembly calls "nullsub_1" corresponds to (called
-	// with the mode value right before video_init/mouse_init in this exact spot).
-	// screen_dominant_mode looked like the closest candidate (it's a no-op stub
-	// taking a single mode int, called immediately before video_init/mouse_init
-	// in the equivalent kernel_game_startup() sequence), so using that for now.
 	screen_dominant_mode(mcga_mode);
 	video_init(mcga_mode, -1);
 	mouse_init(-1, mcga_mode);
@@ -108,20 +90,17 @@ static void main_menu_main() {
 	memset(&master_palette, 0, sizeof(master_palette));
 	mcga_setpal(&master_palette);
 
-	// TODO: sub_11E31(scr_work.data, scr_work.x) - unidentified call, please
-	// confirm the target function before this is implemented.
-
+	mouse_set_work_buffer(scr_work.data, scr_work.x);
 	mouse_set_view_port_loc(0, viewing_at_y, scr_work.x, scr_work.y + viewing_at_y - 1);
 	mouse_set_view_port(0, 0);
 
 	timer_install();
 	keys_install();
 	matte_init(0xFFFF);
-	timer_activate_low_priority(timer_function);
 
-	if (SHOW_LINES && viewing_at_y != 0) {
-		screen.hLine(0, viewing_at_y - 2, 319, LINE_COLOR);
-		screen.hLine(0, scr_work.y + viewing_at_y + 1, 319, LINE_COLOR);
+	if (viewing_at_y != 0) {
+		scr_screen.hLine(0, viewing_at_y - 2, 319, LINE_COLOR);
+		scr_screen.hLine(0, scr_work.y + viewing_at_y + 1, 319, LINE_COLOR);
 	}
 
 	menu_control();
@@ -143,21 +122,19 @@ static void main_menu_main() {
 		buffer_free(&scr_orig);
 		buffer_free(&scr_work);
 
-		srand(timer_read_dos());
-
-		char soundName[] = "#SOUND.007";
+		int sectionNum = 7;
 		if (imath_random(1, 1000) > 500) {
 			screenId = 996;
 			soundId = 9;
 		} else {
 			screenId = 995;
-			soundName[strlen(soundName) - 1] = '4';
+			sectionNum = 4;
 			soundId = 12;
 		}
 
 		pal_init(1, 8);
 
-		RoomPtr room = room_load(screenId, 0, nullptr, &scr_orig, &scr_depth, &scr_walk,
+		room = room_load(screenId, 0, nullptr, &scr_orig, &scr_depth, &scr_walk,
 			&scr_special, &picture_map, &depth_map, &picture_resource,
 			&depth_resource, -1, -1, 0);
 
@@ -165,11 +142,7 @@ static void main_menu_main() {
 			mouse_hide();
 			video_update(&scr_orig, 0, 0, 0, 0, 320, 200);
 
-			// TODO: kernel_load_sound_driver(-1, -1) - only two int arguments are
-			// pushed in the disassembly, which doesn't match the current 5-param
-			// (name, sound_card, address, type, irq) signature. Please confirm how
-			// Rex Nebular's sound driver should be loaded here.
-
+			g_engine->_soundManager->init(sectionNum);
 			sound_queue(soundId);
 
 			magic_map_to_grey_ramp(&master_palette, 0x10, 1, 1, 0, (MagicGreyPtr)&palette);
@@ -179,7 +152,7 @@ static void main_menu_main() {
 			bool flag2 = false;
 			long time = timer_read();
 
-			while (flag1) {
+			while (!g_engine->shouldQuit() && flag1) {
 				mouse_begin_cycle(false);
 
 				if (keys_any()) {
@@ -219,9 +192,6 @@ static void main_menu_main() {
 			video_init(3, -1);
 			mcga_reset();
 		}
-		// If room_load failed, the keys_remove/timer_remove/mouse_init/video_init/
-		// mcga_reset block above is intentionally skipped, matching the disassembly
-		// (which jumps straight past it to the final buffer_free/mem_free cleanup).
 	} else {
 		keys_remove();
 		timer_remove();
@@ -235,9 +205,6 @@ static void main_menu_main() {
 	buffer_free(&scr_depth);
 	buffer_free(&scr_orig);
 	buffer_free(&scr_work);
-
-	if (mainmenu_ptr2)
-		mem_free(mainmenu_ptr2);
 }
 
 static void main_cold_data_init() {
@@ -339,6 +306,7 @@ done:
 
 void nebular_main() {
 	static const char *CMD_LINE[] = { nullptr, "-p" };
+	Palette palette;
 
 	pack_enable_pfab_explode();
 	if (!env_verify())
@@ -357,9 +325,17 @@ void nebular_main() {
 		switch (selected_item) {
 		case -1:
 			main_menu_main();
+
+			if (selected_item >= 0) {
+				Common::fill(magic_color_values, magic_color_values + 3, 0);
+				Common::fill(magic_color_flags, magic_color_flags + 3, 0);
+				mcga_getpal(&palette);
+				magic_fade_to_grey(palette, nullptr, 0, 256, 0, 1, 1, 16);
+			}
 			break;
 
 		case 0:
+			// Start Game
 			game_main(2, CMD_LINE);
 			return;
 
@@ -376,25 +352,43 @@ void nebular_main() {
 		}
 
 		case 2:
-			// Restore savegame
-			game_restore_flag = 2;
-			game_main(2, CMD_LINE);
-			return;
-
-		case 3:
-			AnimView::animview_main("@dragon");
+			// Intro
+			AnimView::animview_main("@rexopen");
 			selected_item = -1;
 			break;
 
-		case 4:
-			// Exit
-			return;
-
-		default:
+		case 3:
 			// Credits
 			TextView::textview_main("credits");
 			selected_item = -1;
 			break;
+
+		case 4:
+			// Quotes
+			TextView::textview_main("quotes");
+			selected_item = -1;
+			break;
+
+		case 17:
+			// Endgame cutscene
+			AnimView::animview_main("@rexend1");
+			AnimView::animview_main("@rexend2");
+			AnimView::animview_main("@rexend3");
+			TextView::textview_main("ending4");
+			selected_item = -1;
+			break;
+
+		case 33:
+			TextView::textview_main("ending1");
+			TextView::textview_main("ending2");
+			TextView::textview_main("credits");
+			selected_item = -1;
+			break;
+
+		case 5:
+		default:
+			// Exit
+			return;
 		}
 	}
 }

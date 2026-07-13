@@ -42,6 +42,11 @@ struct Image {
 
 	static constexpr size_t SIZE = 2 + 1 + 1 + 2 + 2 + 2 + 1 + 1;
 	void load(Common::SeekableReadStream *src);
+
+	bool equals(const Image &rhs) const {
+		return series_id == rhs.series_id && sprite_id == rhs.sprite_id &&
+			x == rhs.x && y == rhs.y && depth == rhs.depth && scale == rhs.scale;
+	}
 };
 
 typedef Image *ImagePtr;
