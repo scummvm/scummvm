@@ -25,6 +25,7 @@
 #include "common/stream.h"
 
 #include "ripper/detection.h"
+#include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
@@ -163,9 +164,9 @@ bool CompiledScript::parseHeader() {
 		interaction.label.clear();
 		for (uint labelIndex = 0; labelIndex < 0xd && _data[offset + labelIndex] != 0; ++labelIndex)
 			interaction.label += (char)_data[offset + labelIndex];
-		interaction.x = readSint16(offset + 0xd);
-		interaction.y = readSint16(offset + 0xf);
-		interaction.controlId = readSint16(offset + 0x11);
+		interaction.y = readSint16(offset + 0xd);
+		interaction.width = readSint16(offset + 0xf);
+		interaction.height = readSint16(offset + 0x11);
 		interaction.initialSelection = _data[offset + 0x15];
 		interaction.conditionOffset = readUint32(offset + 0x16);
 		interaction.callbackOffset = readUint32(offset + 0x1b);
@@ -294,7 +295,8 @@ bool CompiledScript::validateCallbacks() const {
 	return true;
 }
 
-ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine) {
+ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _activeBa0Frame(0),
+		_awaitingBa0Interaction(false) {
 }
 
 bool ScriptManager::initialize(ResourceManager &resources) {
@@ -446,7 +448,46 @@ bool ScriptManager::runStartupPath() {
 	result = 0;
 	if (!executeCallback(_ba0, _ba0.getFrames()[ba0StartFrame].enterCallbackOffset, result) || result != 0)
 		return false;
+	_activeBa0Frame = ba0StartFrame;
+	_awaitingBa0Interaction = true;
 	debugC(1, kDebugScene, "Ripper: BA0 start frame initialized; awaiting chooser interaction");
+	return true;
+}
+
+bool ScriptManager::serviceScene() {
+	const MouseState mouse = _engine->getInput()->publishMouseState();
+	if (!_awaitingBa0Interaction || (mouse.pressed & kMouseButtonLeft) == 0)
+		return true;
+
+	const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
+	for (uint i = 0; i < frame.interactionCount; ++i) {
+		const uint interactionIndex = frame.firstInteractionIndex + i;
+		const ScriptInteraction &interaction = _ba0.getInteractions()[interactionIndex];
+		if ((interaction.flags & 2) != 0 || interaction.width <= 0 || interaction.height <= 0)
+			continue;
+		if (mouse.position.x < 0 || mouse.position.x >= interaction.width ||
+			mouse.position.y < interaction.y || mouse.position.y >= interaction.y + interaction.height)
+			continue;
+
+		debugC(2, kDebugScene,
+			"Ripper: BA0 chooser selected interaction=%u label='%s' point=%d,%d rect=0,%d,%d,%d",
+			interactionIndex, interaction.label.c_str(), mouse.position.x, mouse.position.y,
+			interaction.y, interaction.width, interaction.height);
+		int result = 0;
+		if (!executeCallback(_ba0, interaction.callbackOffset, result))
+			return false;
+		if (result != -2) {
+			warning("Ripper: BA0 interaction %u returned unexpected result %d", interactionIndex, result);
+			return false;
+		}
+		_awaitingBa0Interaction = false;
+		debugC(1, kDebugScene, "Ripper: handed BA0 control to concurrent script='%s' entry='%s'",
+			_concurrent.getMemberName().c_str(), _concurrentEntryLabel.c_str());
+		return true;
+	}
+
+	debugC(3, kDebugScene, "Ripper: BA0 primary press missed chooser point=%d,%d",
+		mouse.position.x, mouse.position.y);
 	return true;
 }
 

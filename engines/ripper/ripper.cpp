@@ -89,6 +89,8 @@ Common::Error RipperEngine::run() {
 
 	while (!shouldQuit()) {
 		pumpEvents();
+		if (!_scripts->serviceScene())
+			return Common::kUnknownError;
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}
