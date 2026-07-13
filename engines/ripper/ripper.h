@@ -29,6 +29,7 @@ namespace Ripper {
 
 class InputManager;
 class ResourceManager;
+class ScriptManager;
 
 class RipperEngine : public Engine {
 public:
@@ -39,6 +40,7 @@ public:
 	bool hasFeature(EngineFeature feature) const override;
 	InputManager *getInput() const { return _input; }
 	ResourceManager *getResources() const { return _resources; }
+	ScriptManager *getScripts() const { return _scripts; }
 
 private:
 	void registerSearchPaths();
@@ -47,6 +49,7 @@ private:
 	const ADGameDescription *const _gameDescription;
 	InputManager *_input;
 	ResourceManager *_resources;
+	ScriptManager *_scripts;
 };
 
 } // End of namespace Ripper
