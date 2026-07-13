@@ -27,6 +27,8 @@ struct ADGameDescription;
 
 namespace Ripper {
 
+class InputManager;
+
 class RipperEngine : public Engine {
 public:
 	RipperEngine(OSystem *system, const ADGameDescription *gameDescription);
@@ -34,12 +36,14 @@ public:
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature feature) const override;
+	InputManager *getInput() const { return _input; }
 
 private:
 	void registerSearchPaths();
 	void pumpEvents();
 
 	const ADGameDescription *const _gameDescription;
+	InputManager *_input;
 };
 
 } // End of namespace Ripper
