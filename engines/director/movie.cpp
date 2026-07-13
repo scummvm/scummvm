@@ -527,7 +527,9 @@ Common::SharedPtr<Archive> Movie::loadExternalCastFrom(Common::Path &filename) {
 bool Movie::loadCastLibFrom(uint16 libId, Common::Path &filename) {
 	if (_casts.contains(libId)) {
 		Cast *cast = _casts[libId];
-		if (cast->getArchive()->getPathName() == filename) {
+		// The cast may not have an archive attached yet, e.g. when Lingo
+		// changes the fileName of a castLib before the movie finished loading.
+		if (cast->getArchive() && cast->getArchive()->getPathName() == filename) {
 			// CastLib is already loaded, change nothing
 			return false;
 		}
@@ -540,11 +542,13 @@ bool Movie::loadCastLibFrom(uint16 libId, Common::Path &filename) {
 
 	uint32 libResourceId = 1024;
 	Common::String name;
+	bool replacingDefault = false;
 	if (_casts.contains(libId)) {
-		Cast *cast = _casts[libId];
-		libResourceId = cast->_libResourceId;
-		name = cast->getCastName();
-		delete cast;
+		Cast *oldCast = _casts[libId];
+		libResourceId = oldCast->_libResourceId;
+		name = oldCast->getCastName();
+		replacingDefault = (oldCast == _cast);
+		delete oldCast;
 		_casts.erase(libId);
 	}
 
@@ -554,6 +558,9 @@ bool Movie::loadCastLibFrom(uint16 libId, Common::Path &filename) {
 	cast->loadCast();
 
 	_casts.setVal(libId, cast);
+	// Keep the default-cast shortcut from dangling when lib 1 is swapped.
+	if (replacingDefault)
+		_cast = cast;
 	_score->refreshPointersForCastLib(libId);
 	return true;
 }
@@ -847,8 +854,11 @@ Common::String InfoEntry::readString(bool pascal) {
 			encodedStr += data[i];
 	}
 
-	// FIXME: Use the case which contains this string, not the main cast.
-	return g_director->getCurrentMovie()->getCast()->decodeString(encodedStr).encode(Common::kUtf8);
+	// FIXME: Use the cast which contains this string, not the main cast.
+	Movie *movie = g_director->getCurrentMovie();
+	if (!movie || !movie->getCast())
+		return encodedStr; // no cast to decode against yet
+	return movie->getCast()->decodeString(encodedStr).encode(Common::kUtf8);
 }
 
 void InfoEntry::writeString(Common::String string, bool pascal) {

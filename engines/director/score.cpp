@@ -1769,6 +1769,11 @@ bool Score::refreshPointersForCastLib(uint16 castLib) {
 		}
 	}
 
+	// The frame may not be loaded yet, e.g. when Lingo swaps a cast lib
+	// before the score started playing.
+	if (!_currentFrame)
+		return hit;
+
 	for (auto &it : _currentFrame->_sprites) {
 		if (it->_castId.castLib == castLib) {
 			it->_cast = nullptr;
