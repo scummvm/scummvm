@@ -296,7 +296,7 @@ bool CompiledScript::validateCallbacks() const {
 }
 
 ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _activeBa0Frame(0),
-		_awaitingBa0Interaction(false) {
+		_awaitingBa0Interaction(false), _briefingArmed(false), _briefingSelector(0) {
 }
 
 bool ScriptManager::initialize(ResourceManager &resources) {
@@ -311,13 +311,47 @@ Common::String ScriptManager::argumentString(const ScriptArgument &argument) {
 	return value;
 }
 
-bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffset, int &result) {
+bool ScriptManager::isMilestoneFlagSet(uint32 flag) const {
+	return flag < _milestoneFlags.size() && _milestoneFlags[flag];
+}
+
+bool ScriptManager::isScenePlayed(const Common::String &scene) const {
+	for (uint i = 0; i < _playedScenes.size(); ++i) {
+		if (_playedScenes[i].equalsIgnoreCase(scene))
+			return true;
+	}
+	return false;
+}
+
+void ScriptManager::markScenePlayed(const Common::String &scene) {
+	if (scene.empty() || isScenePlayed(scene))
+		return;
+	_playedScenes.push_back(scene);
+	debugC(2, kDebugScene, "Ripper: marked scene played '%s'", scene.c_str());
+}
+
+bool ScriptManager::findFrameByLabel(const CompiledScript &script, const Common::String &label,
+		uint &frameIndex) const {
+	for (uint i = 0; i < script.getFrames().size(); ++i) {
+		if (script.getString(script.getFrames()[i].labelOffset).equalsIgnoreCase(label)) {
+			frameIndex = i;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffset, int &result,
+		uint *nextFrame) {
 	Common::Array<ScriptCommand> commands;
 	result = 0;
+	if (nextFrame)
+		*nextFrame = 0;
 	if (!script.decodeCallback(callbackOffset, true, commands))
 		return false;
 
-	for (uint commandIndex = 0; commandIndex < commands.size(); ++commandIndex) {
+	uint commandIndex = 0;
+	while (commandIndex < commands.size()) {
 		const ScriptCommand &command = commands[commandIndex];
 		debugC(2, kDebugScripts,
 			"Ripper: execute script='%s' offset=0x%x opcode=0x%02x selector=%u arguments=%u",
@@ -325,6 +359,44 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			command.arguments.size());
 
 		switch (command.opcode) {
+		case 0x08:
+		case 0x09: {
+			if (command.arguments.size() < 3)
+				return false;
+			const bool expected = command.arguments[0].value != 0;
+			bool actual = false;
+			if (command.opcode == 0x08) {
+				actual = isMilestoneFlagSet(command.arguments[1].value);
+				debugC(3, kDebugScripts,
+					"Ripper: milestone condition flag=%u expected=%d actual=%d target=0x%x",
+					command.arguments[1].value, expected, actual, command.arguments[2].value);
+			} else {
+				const Common::String scene = argumentString(command.arguments[1]);
+				actual = isScenePlayed(scene);
+				debugC(3, kDebugScripts,
+					"Ripper: played condition scene='%s' expected=%d actual=%d target=0x%x",
+					scene.c_str(), expected, actual, command.arguments[2].value);
+			}
+			if (actual != expected) {
+				uint targetIndex = 0;
+				while (targetIndex < commands.size() &&
+					commands[targetIndex].offset != command.arguments[2].value)
+					++targetIndex;
+				if (targetIndex == commands.size()) {
+					warning("Ripper: callback branch target 0x%x is not a command boundary in '%s'",
+						command.arguments[2].value, script.getMemberName().c_str());
+					return false;
+				}
+				commandIndex = targetIndex;
+				continue;
+			}
+			break;
+		}
+
+		case 0x0d:
+			debugC(3, kDebugScripts, "Ripper: cleared callback branch state");
+			break;
+
 		case 0x0e: {
 			if (command.arguments.size() < 1)
 				return false;
@@ -407,16 +479,32 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 		case 0x14:
 			if (command.arguments.size() < 1)
 				return false;
+			if (nextFrame)
+				*nextFrame = command.arguments[0].value;
 			result = -2;
-			debugC(2, kDebugScripts, "Ripper: callback result index=%u control=%d",
+			debugC(2, kDebugScripts, "Ripper: callback selected frame=%u control=%d",
 				command.arguments[0].value, result);
 			return true;
+
+		case 0x18: {
+			if (command.arguments.size() < 2 || command.arguments[0].value != 300) {
+				warning("Ripper: unsupported scene action %u in '%s' at 0x%x",
+					command.arguments.empty() ? 0 : command.arguments[0].value,
+					script.getMemberName().c_str(), command.offset);
+				return false;
+			}
+			_briefingSelector = command.arguments[1].value;
+			_briefingArmed = true;
+			debugC(2, kDebugScene, "Ripper: armed briefing media selector=%u", _briefingSelector);
+			break;
+		}
 
 		default:
 			warning("Ripper: unsupported opcode 0x%02x in '%s' at 0x%x",
 				command.opcode, script.getMemberName().c_str(), command.offset);
 			return false;
 		}
+		++commandIndex;
 	}
 	return true;
 }
@@ -454,6 +542,88 @@ bool ScriptManager::runStartupPath() {
 	return true;
 }
 
+bool ScriptManager::executeConcurrentFrame() {
+	if (_concurrent.getFrames().empty())
+		return true;
+
+	uint frameIndex = 0;
+	if (!findFrameByLabel(_concurrent, _concurrentEntryLabel, frameIndex)) {
+		warning("Ripper: concurrent script '%s' has no frame '%s'",
+			_concurrent.getMemberName().c_str(), _concurrentEntryLabel.c_str());
+		return false;
+	}
+
+	const ScriptFrame &frame = _concurrent.getFrames()[frameIndex];
+	debugC(2, kDebugScene, "Ripper: servicing concurrent script='%s' frame=%u label='%s'",
+		_concurrent.getMemberName().c_str(), frameIndex, _concurrentEntryLabel.c_str());
+	int result = 0;
+	uint nextFrame = frameIndex;
+	if (!executeCallback(_concurrent, frame.enterCallbackOffset, result, &nextFrame) || result != 0)
+		return false;
+	if (!executeCallback(_concurrent, frame.exitCallbackOffset, result, &nextFrame) || result != -2) {
+		warning("Ripper: concurrent frame '%s' returned unexpected result %d",
+			_concurrentEntryLabel.c_str(), result);
+		return false;
+	}
+	debugC(2, kDebugScene, "Ripper: concurrent frame yielded to BA0 nextFrame=%u", nextFrame);
+	return true;
+}
+
+bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
+	for (uint transitionCount = 0; transitionCount < _ba0.getFrames().size(); ++transitionCount) {
+		if (!executeConcurrentFrame())
+			return false;
+		if (nextFrame >= _ba0.getFrames().size()) {
+			warning("Ripper: BA0 requested invalid frame %u", nextFrame);
+			return false;
+		}
+
+		_activeBa0Frame = nextFrame;
+		const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
+		const Common::String label = _ba0.getString(frame.labelOffset);
+		debugC(1, kDebugScene, "Ripper: entering BA0 frame=%u label='%s' type=%u interactions=%u",
+			_activeBa0Frame, label.c_str(), frame.presentationType, frame.interactionCount);
+
+		int result = 0;
+		uint callbackFrame = _activeBa0Frame;
+		if (!executeCallback(_ba0, frame.enterCallbackOffset, result, &callbackFrame))
+			return false;
+		if (result == -2) {
+			nextFrame = callbackFrame;
+			continue;
+		}
+		if (result != 0)
+			return false;
+
+		if (frame.presentationType == 0 || frame.presentationType == 1) {
+			const Common::String mediaPath = _ba0.getString(frame.mediaNameOffset);
+			markScenePlayed(label);
+			if (!_engine->getMedia()->play(mediaPath, false, frame.x, frame.y))
+				return false;
+		}
+
+		if (frame.interactionCount != 0) {
+			_awaitingBa0Interaction = true;
+			debugC(1, kDebugScene, "Ripper: BA0 frame='%s' awaiting %u interactions",
+				label.c_str(), frame.interactionCount);
+			return true;
+		}
+
+		callbackFrame = _activeBa0Frame;
+		if (!executeCallback(_ba0, frame.exitCallbackOffset, result, &callbackFrame))
+			return false;
+		if (result != -2) {
+			warning("Ripper: automatic BA0 frame '%s' returned unexpected result %d",
+				label.c_str(), result);
+			return false;
+		}
+		nextFrame = callbackFrame;
+	}
+
+	warning("Ripper: BA0 exceeded the automatic transition limit");
+	return false;
+}
+
 bool ScriptManager::serviceScene() {
 	const MouseState mouse = _engine->getInput()->publishMouseState();
 	if (!_awaitingBa0Interaction || (mouse.pressed & kMouseButtonLeft) == 0)
@@ -474,16 +644,18 @@ bool ScriptManager::serviceScene() {
 			interactionIndex, interaction.label.c_str(), mouse.position.x, mouse.position.y,
 			interaction.y, interaction.width, interaction.height);
 		int result = 0;
-		if (!executeCallback(_ba0, interaction.callbackOffset, result))
+		uint nextFrame = _activeBa0Frame;
+		if (!executeCallback(_ba0, interaction.callbackOffset, result, &nextFrame))
 			return false;
 		if (result != -2) {
 			warning("Ripper: BA0 interaction %u returned unexpected result %d", interactionIndex, result);
 			return false;
 		}
 		_awaitingBa0Interaction = false;
-		debugC(1, kDebugScene, "Ripper: handed BA0 control to concurrent script='%s' entry='%s'",
-			_concurrent.getMemberName().c_str(), _concurrentEntryLabel.c_str());
-		return true;
+		debugC(1, kDebugScene,
+			"Ripper: BA0 yielded to concurrent script='%s' entry='%s' nextFrame=%u",
+			_concurrent.getMemberName().c_str(), _concurrentEntryLabel.c_str(), nextFrame);
+		return advanceBa0ToFrame(nextFrame);
 	}
 
 	debugC(3, kDebugScene, "Ripper: BA0 primary press missed chooser point=%d,%d",
