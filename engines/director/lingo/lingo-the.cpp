@@ -2234,7 +2234,12 @@ Datum Lingo::getTheCastLib(Datum &id1, int field) {
 
 	switch (field) {
 	case kTheFileName:
-		d = cast->getArchive()->getPathName().toString(g_director->_dirSeparator);
+		// The cast archive may not be attached yet, e.g. when Lingo runs
+		// before the movie finished loading.
+		if (cast->getArchive())
+			d = cast->getArchive()->getPathName().toString(g_director->_dirSeparator);
+		else
+			d = Common::String();
 		break;
 	case kTheName:
 		d = cast->getCastName();
