@@ -1337,6 +1337,7 @@ bool ComfyEngine::actorDrawLegacyInternal(uint16 actorIndex, int16 x, int16 y) {
 
 	uint32 selector = actorReadU32(*actor, kActorSpriteSelector);
 	if (selector == 0x00FFFFFF) {
+		animFrameInvalidateRects(drawX, drawY, 1);
 		drawResult = animFrameBlitAt(drawX, drawY);
 	} else if (selector & 0xFF000000) {
 		uint32 pc = selector & 0x00FFFFFF;
@@ -1612,10 +1613,12 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 		newRect.bottom = drawY + frameHeight;
 		newRect.area = frameWidth * frameHeight;
 		if (visible) {
-			if (_isPanther && (_videoMode == 2 || _videoMode == 4))
+			if (_isPanther && (_videoMode == 2 || _videoMode == 4)) {
 				renderQueueDrawCommand(drawX, drawY, selector, 2);
-			else
+			} else {
+				animFrameInvalidateRects(drawX, drawY, 1);
 				animFrameBlitAt(drawX, drawY);
+			}
 		}
 	} else if (selector) {
 		SpriteResource *sprite = spriteLookup((uint16)selector, drawX, drawY);

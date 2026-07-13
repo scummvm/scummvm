@@ -1157,7 +1157,11 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 
 ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptStep(Actor &actor, uint32 &pc) {
 	uint32 originalPc = pc;
+	_scriptFault = false;
 	byte opcode = scriptReadByte(pc++);
+	if (_scriptFault)
+		error("Script fault while fetching opcode at script PC 0x%08X", originalPc);
+
 	ScriptDispatchStatus status = scriptDispatch(actor, opcode, pc);
 	if (_scriptFault)
 		error("Script fault while executing opcode 0x%02X at script PC 0x%08X", opcode, originalPc);

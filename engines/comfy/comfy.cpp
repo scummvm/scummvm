@@ -710,7 +710,6 @@ void ComfyEngine::vocQueuePlayAll() {
 		}
 
 		_soundEventMaximum = _soundEventIndex;
-		_soundPcm.clear();
 		keyBitClear(1);
 		keyBitClear(4);
 		keyBitSet(3);
@@ -728,7 +727,6 @@ void ComfyEngine::vocQueuePlayAll() {
 	}
 
 	_soundEventMaximum = _soundEventIndex;
-	_soundPcm.clear();
 	keyBitClear(1);
 	keyBitClear(4);
 	keyBitSet(3);
