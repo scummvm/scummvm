@@ -829,9 +829,16 @@ void Cast::loadCast() {
 	if (!_loadedCast)
 		_loadedCast = new Common::HashMap<int, CastMember *>();
 
-	// External casts only have one library ID, so instead
-	// we use the movie's mapping.
-	uint32 libResourceId = _isExternal ? 1024 : _libResourceId;
+	// External casts have a single library. Its resource id lives in the
+	// cast file's own KEY* table (1024 in D5/D6, e.g. 0x00010400 in D7+),
+	// so resolve it from the archive's CAS* resource instead of assuming 1024.
+	uint32 libResourceId = _libResourceId;
+	if (_isExternal) {
+		libResourceId = 1024;
+		Common::Array<uint16> casStar = _castArchive->getResourceIDList(MKTAG('C', 'A', 'S', '*'));
+		if (!casStar.empty())
+			libResourceId = _castArchive->getResourceDetail(MKTAG('C', 'A', 'S', '*'), casStar[0]).libResourceId;
+	}
 
 	if (cast.size() > 0) {
 		debugC(2, kDebugLoading, "****** Loading CASt resources for libId %d (%s), resourceId %d", _castLibID, _castName.c_str(), libResourceId);
@@ -841,8 +848,6 @@ void Cast::loadCast() {
 		for (auto &iterator : cast) {
 			Resource res = _castArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), iterator);
 			// Only load cast members which belong to the requested library ID.
-			// External casts only have one library ID, so instead
-			// we use the movie's mapping.
 			if (res.libResourceId != libResourceId) {
 				debugC(5, kDebugLoading, "SKIPPED - CASt: resource %d, castId %d, libResourceId %d", iterator, res.castId, res.libResourceId);
 				continue;
