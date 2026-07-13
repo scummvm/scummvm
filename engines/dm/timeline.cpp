@@ -747,6 +747,7 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 				if (healthMultiplier == 0)
 					healthMultiplier = _vm->_dungeonMan->_currMap->_difficulty;
 
+				creatureCount = CLIP<int16>(creatureCount, 0, 3);
 				_vm->_groupMan->groupGetGenerated((CreatureType)curSensor->getData(), healthMultiplier, creatureCount, (Direction)_vm->getRandomNumber(4), mapX, mapY);
 				if (curSensor->getAttrAudibleA())
 					_vm->_sound->requestPlay(kDMSoundIndexBuzz, mapX, mapY, kDMSoundModePlayIfPrioritized);
