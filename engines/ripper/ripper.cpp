@@ -32,6 +32,7 @@
 #include "ripper/cursor.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
+#include "ripper/menu.h"
 #include "ripper/resources.h"
 #include "ripper/script.h"
 
@@ -89,6 +90,44 @@ Common::Error RipperEngine::run() {
 		return Common::kReadingFailed;
 	if (!_scripts->initialize(*_resources))
 		return Common::kReadingFailed;
+
+	_cursor->setVisible(false);
+	debugC(1, kDebugVideo,
+		"Ripper: startup presentation logo.avi from RunGameStartupAndMainLoop at 0x100c2");
+	if (!_media->play("logo.avi", true))
+		return shouldQuit() ? Common::kNoError : Common::kUnknownError;
+
+	bool startNewGame = false;
+	while (!shouldQuit() && !startNewGame) {
+		MainMenu menu(this);
+		switch (menu.run()) {
+		case kMainMenuNewGame:
+			debugC(1, kDebugGeneral, "Ripper: startup menu begins a new game");
+			startNewGame = true;
+			break;
+		case kMainMenuContinue:
+			debugC(1, kDebugGeneral,
+				"Ripper: Continue Game is not implemented; returning to startup menu");
+			break;
+		case kMainMenuLoadGame:
+			debugC(1, kDebugGeneral,
+				"Ripper: Restore Game is not implemented; returning to startup menu");
+			break;
+		case kMainMenuViewIntro:
+			debugC(1, kDebugVideo,
+				"Ripper: startup menu plays proint.avi from RunGameStartupAndMainLoop at 0x100c2");
+			if (!_media->play("proint.avi", true))
+				return shouldQuit() ? Common::kNoError : Common::kUnknownError;
+			break;
+		case kMainMenuQuit:
+			debugC(1, kDebugGeneral, "Ripper: startup menu exits the game");
+			quitGame();
+			break;
+		}
+	}
+
+	if (shouldQuit())
+		return Common::kNoError;
 	if (!_scripts->runStartupPath())
 		return Common::kUnknownError;
 

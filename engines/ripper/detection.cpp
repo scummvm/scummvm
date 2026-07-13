@@ -31,6 +31,7 @@ const DebugChannelDef RipperMetaEngineDetection::debugFlagList[] = {
 	{ Ripper::kDebugVideo, "video", "Media selection and playback" },
 	{ Ripper::kDebugInput, "input", "Keyboard and mouse translation" },
 	{ Ripper::kDebugCursor, "cursor", "Cursor assets, selection, and animation" },
+	{ Ripper::kDebugAudio, "audio", "Music, speech, and sound-effect playback" },
 	DEBUG_CHANNEL_END
 };
 

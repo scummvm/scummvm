@@ -439,15 +439,19 @@ bool ResourceManager::initialize() {
 
 	Common::String scriptLibrary;
 	Common::String interfaceLibrary;
+	Common::String soundLibrary;
 	if (!ini.getKey("script", "files", scriptLibrary) ||
-		!ini.getKey("interface", "files", interfaceLibrary)) {
-		warning("Ripper: RIPPER.INI is missing FILES script or interface entries");
+		!ini.getKey("interface", "files", interfaceLibrary) ||
+		!ini.getKey("sound", "files", soundLibrary)) {
+		warning("Ripper: RIPPER.INI is missing FILES script, interface, or sound entries");
 		return false;
 	}
 
-	debugC(2, kDebugResources, "Ripper: RIPPER.INI script='%s' interface='%s'",
-		scriptLibrary.c_str(), interfaceLibrary.c_str());
-	return _scripts.open(Common::Path(scriptLibrary)) && _interface.open(Common::Path(interfaceLibrary));
+	debugC(2, kDebugResources, "Ripper: RIPPER.INI script='%s' interface='%s' sound='%s'",
+		scriptLibrary.c_str(), interfaceLibrary.c_str(), soundLibrary.c_str());
+	return _scripts.open(Common::Path(scriptLibrary)) &&
+		_interface.open(Common::Path(interfaceLibrary)) &&
+		_sound.open(Common::Path(soundLibrary));
 }
 
 bool ResourceManager::loadInterfaceBitmapSequence(const Common::String &memberName,

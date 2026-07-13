@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	cursor.o \
 	input.o \
 	media.o \
+	menu.o \
 	metaengine.o \
 	resources.o \
 	ripper.o \
