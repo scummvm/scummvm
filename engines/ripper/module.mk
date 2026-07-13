@@ -2,6 +2,7 @@ MODULE := engines/ripper
 
 MODULE_OBJS := \
 	input.o \
+	media.o \
 	metaengine.o \
 	resources.o \
 	ripper.o \

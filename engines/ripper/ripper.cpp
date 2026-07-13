@@ -30,6 +30,7 @@
 
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/media.h"
 #include "ripper/resources.h"
 #include "ripper/script.h"
 
@@ -37,12 +38,14 @@ namespace Ripper {
 
 RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescription) :
 		Engine(system), _gameDescription(gameDescription), _input(new InputManager(_eventMan)),
-		_resources(new ResourceManager()), _scripts(new ScriptManager()) {
+		_media(new MediaPlayer(this, _input, _mixer)), _resources(new ResourceManager()),
+		_scripts(new ScriptManager(this)) {
 }
 
 RipperEngine::~RipperEngine() {
 	delete _scripts;
 	delete _resources;
+	delete _media;
 	delete _input;
 }
 
@@ -81,6 +84,8 @@ Common::Error RipperEngine::run() {
 		return Common::kReadingFailed;
 	if (!_scripts->initialize(*_resources))
 		return Common::kReadingFailed;
+	if (!_scripts->runStartupPath())
+		return Common::kUnknownError;
 
 	while (!shouldQuit()) {
 		pumpEvents();

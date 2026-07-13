@@ -25,7 +25,9 @@
 #include "common/stream.h"
 
 #include "ripper/detection.h"
+#include "ripper/media.h"
 #include "ripper/resources.h"
+#include "ripper/ripper.h"
 
 namespace Ripper {
 
@@ -292,9 +294,160 @@ bool CompiledScript::validateCallbacks() const {
 	return true;
 }
 
+ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine) {
+}
+
 bool ScriptManager::initialize(ResourceManager &resources) {
 	return _startup.load(resources.scripts(), "ripper.run") &&
 		_ba0.load(resources.scripts(), "ba0.run");
+}
+
+Common::String ScriptManager::argumentString(const ScriptArgument &argument) {
+	Common::String value;
+	for (uint i = 0; i < argument.data.size() && argument.data[i] != 0; ++i)
+		value += (char)argument.data[i];
+	return value;
+}
+
+bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffset, int &result) {
+	Common::Array<ScriptCommand> commands;
+	result = 0;
+	if (!script.decodeCallback(callbackOffset, true, commands))
+		return false;
+
+	for (uint commandIndex = 0; commandIndex < commands.size(); ++commandIndex) {
+		const ScriptCommand &command = commands[commandIndex];
+		debugC(2, kDebugScripts,
+			"Ripper: execute script='%s' offset=0x%x opcode=0x%02x selector=%u arguments=%u",
+			script.getMemberName().c_str(), command.offset, command.opcode, command.selector,
+			command.arguments.size());
+
+		switch (command.opcode) {
+		case 0x0e: {
+			if (command.arguments.size() < 1)
+				return false;
+			const uint32 flag = command.arguments[0].value;
+			if (_milestoneFlags.size() <= flag)
+				_milestoneFlags.resize(flag + 1);
+			_milestoneFlags[flag] = true;
+			debugC(2, kDebugScripts, "Ripper: set milestone flag %u", flag);
+			break;
+		}
+
+		case 0x1a: {
+			if (command.arguments.size() < 5)
+				return false;
+			const Common::String mediaPath = script.getString(command.arguments[0].value);
+			const bool allowEscSpace = command.arguments[2].value == 0;
+			if (!_engine->getMedia()->play(mediaPath, allowEscSpace,
+				(int32)command.arguments[3].value, (int32)command.arguments[4].value))
+				return false;
+			debugC(2, kDebugScripts, "Ripper: completed media command '%s' controls=%d",
+				mediaPath.c_str(), allowEscSpace);
+			break;
+		}
+
+		case 0x1d: {
+			if (command.arguments.size() < 3)
+				return false;
+			const Common::String target = argumentString(command.arguments[0]);
+			const Common::String entryLabel = argumentString(command.arguments[1]);
+			if (command.arguments[2].value == 0) {
+				debugC(1, kDebugScene, "Ripper: transition script='%s' entry='%s'",
+					target.c_str(), entryLabel.c_str());
+				result = -3;
+				return true;
+			}
+			Common::String memberName = target;
+			if (!memberName.hasSuffixIgnoreCase(".run"))
+				memberName += ".run";
+			if (!_concurrent.load(_engine->getResources()->scripts(), memberName))
+				return false;
+			_concurrentEntryLabel = entryLabel;
+			debugC(1, kDebugScene, "Ripper: created concurrent script='%s' entry='%s'",
+				target.c_str(), entryLabel.c_str());
+			break;
+		}
+
+		case 0x1f: {
+			if (command.arguments.size() < 2)
+				return false;
+			const Common::String audioPath = script.getString(command.arguments[0].value);
+			if (!_engine->getMedia()->loadAudio(audioPath))
+				return false;
+			break;
+		}
+
+		case 0x20: {
+			if (command.arguments.size() < 4)
+				return false;
+			const Common::String key = argumentString(command.arguments[0]);
+			const uint volume = command.arguments[1].value == 0 ? 100 : command.arguments[1].value & 0xff;
+			const uint trigger = command.arguments[2].value & 0xffff;
+			if (trigger == 0 && !_engine->getMedia()->startLoadedAudio(key, volume))
+				return false;
+			debugC(2, kDebugScripts,
+				"Ripper: configured audio key='%s' volume=%u trigger=%u control=%u",
+				key.c_str(), volume, trigger, command.arguments[3].value & 0xff);
+			break;
+		}
+
+		case 0x1b: {
+			if (command.arguments.size() < 4)
+				return false;
+			const Common::String mediaPath = script.getString(command.arguments[0].value);
+			if (!_engine->getMedia()->play(mediaPath, false, (int32)command.arguments[1].value,
+				(int32)command.arguments[2].value))
+				return false;
+			break;
+		}
+
+		case 0x14:
+			if (command.arguments.size() < 1)
+				return false;
+			result = -2;
+			debugC(2, kDebugScripts, "Ripper: callback result index=%u control=%d",
+				command.arguments[0].value, result);
+			return true;
+
+		default:
+			warning("Ripper: unsupported opcode 0x%02x in '%s' at 0x%x",
+				command.opcode, script.getMemberName().c_str(), command.offset);
+			return false;
+		}
+	}
+	return true;
+}
+
+bool ScriptManager::runStartupPath() {
+	if (_startup.getFrames().empty() || _ba0.getFrames().empty())
+		return false;
+
+	int result = 0;
+	const ScriptFrame &startupFrame = _startup.getFrames()[0];
+	if (!executeCallback(_startup, startupFrame.exitCallbackOffset, result) || result != -3) {
+		warning("Ripper: startup script did not request the BA0 transition (result=%d)", result);
+		return false;
+	}
+
+	uint ba0StartFrame = 0xffffffff;
+	for (uint i = 0; i < _ba0.getFrames().size(); ++i) {
+		if (_ba0.getString(_ba0.getFrames()[i].labelOffset).equalsIgnoreCase("start")) {
+			ba0StartFrame = i;
+			break;
+		}
+	}
+	if (ba0StartFrame == 0xffffffff) {
+		warning("Ripper: BA0 does not contain the start frame");
+		return false;
+	}
+
+	debugC(1, kDebugScene, "Ripper: entering BA0 frame=%u label='start'", ba0StartFrame);
+	result = 0;
+	if (!executeCallback(_ba0, _ba0.getFrames()[ba0StartFrame].enterCallbackOffset, result) || result != 0)
+		return false;
+	debugC(1, kDebugScene, "Ripper: BA0 start frame initialized; awaiting chooser interaction");
+	return true;
 }
 
 } // End of namespace Ripper
