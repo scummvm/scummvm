@@ -22,6 +22,7 @@
 #ifndef MADS_CORE_MOUSE_H
 #define MADS_CORE_MOUSE_H
 
+#include "graphics/surface.h"
 #include "mads/madsv2/core/general.h"
 #include "mads/madsv2/core/sprite.h"
 
@@ -107,6 +108,7 @@ extern void mouse_begin_cycle(int double_flag);
 extern void mouse_end_cycle(int double_flag, int timing_flag);
 
 extern void mouse_cursor_sprite(SeriesPtr series, int id);
+extern void mouse_cursor_surface(const Graphics::Surface &surf, int hot_x, int hot_y);
 extern void mouse_video_init();
 extern void mouse_video_update(int from_x, int from_y,
 	int unto_x, int unto_y, int size_x, int size_y);

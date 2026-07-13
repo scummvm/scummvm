@@ -83,8 +83,6 @@ namespace Dragonsphere {
 #define MESSAGE_COLOR   1284
 
 
-ConfigFile config_file;
-
 int mads_mode = false;
 
 FontPtr font = NULL;

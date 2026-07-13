@@ -151,6 +151,12 @@ void mouse_cursor_sprite(SeriesPtr series, int id) {
 	CursorMan.disableCursorPalette(true);
 }
 
+void mouse_cursor_surface(const Graphics::Surface &surf, int hot_x, int hot_y) {
+	// Set the cursor
+	CursorMan.replaceCursor(surf, hot_x, hot_y, 0xff);
+	CursorMan.disableCursorPalette(true);
+}
+
 void mouse_video_init() {
 	mouse_set_work_buffer(scr_work.data, scr_work.x);
 	mouse_set_view_port_loc(0, 0, scr_work.x - 1, scr_work.y - 1);
