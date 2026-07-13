@@ -82,10 +82,12 @@ public:
 
 	AssetLibrary &scripts() { return _scripts; }
 	AssetLibrary &interface() { return _interface; }
+	AssetLibrary &sound() { return _sound; }
 
 private:
 	AssetLibrary _scripts;
 	AssetLibrary _interface;
+	AssetLibrary _sound;
 };
 
 } // End of namespace Ripper
