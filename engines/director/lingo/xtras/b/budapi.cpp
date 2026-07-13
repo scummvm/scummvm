@@ -22,6 +22,7 @@
 #include "common/system.h"
 
 #include "director/director.h"
+#include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
@@ -34,6 +35,7 @@
  * Loewenzahn 2 / 3 / 4 / 5 / 6 / 7 / 8 / Adventskalender / Spielebox
  * TKKG 6 / 7 / 8 / 9 / 11 / 13 / 14
  * Oscar the Balloonist Flies into the Mountains
+ * Physicus / Physikus (l'Espresso, Italian; Ruske & Pühretmaier)
  *
  **************************************************/
 
@@ -374,7 +376,26 @@ void BudAPIXtra::m_new(int nargs) {
 XOBJSTUB(BudAPIXtra::m_baVersion, 0)
 XOBJSTUB(BudAPIXtra::m_baSysFolder, 0)
 XOBJSTUB(BudAPIXtra::m_baCpuInfo, 0)
-XOBJSTUB(BudAPIXtra::m_baDiskInfo, 0)
+void BudAPIXtra::m_baDiskInfo(int nargs) {
+	Common::String infoType = g_lingo->pop().asString();
+	Common::String disk = g_lingo->pop().asString();
+
+	if (!infoType.equalsIgnoreCase("type")) {
+		warning("STUB: BudAPIXtra::m_baDiskInfo: unsupported InfoType '%s'", infoType.c_str());
+		g_lingo->push(Datum());
+		return;
+	}
+
+	if (disk.hasSuffix(":"))
+		disk.deleteLastChar();
+
+	if (disk.equalsIgnoreCase("e"))
+		g_lingo->push(Datum(Common::String("CD-Rom")));
+	else if (disk.equalsIgnoreCase("c"))
+		g_lingo->push(Datum(Common::String("Hard")));
+	else
+		g_lingo->push(Datum(Common::String("")));
+}
 XOBJSTUB(BudAPIXtra::m_baMemoryInfo, 0)
 XOBJSTUB(BudAPIXtra::m_baFindApp, 0)
 XOBJSTUB(BudAPIXtra::m_baReadIni, 0)
@@ -436,7 +457,10 @@ XOBJSTUB(BudAPIXtra::m_baPrinterInfo, 0)
 XOBJSTUB(BudAPIXtra::m_baSetPrinter, 0)
 XOBJSTUB(BudAPIXtra::m_baRefreshDesktop, 0)
 XOBJSTUB(BudAPIXtra::m_baFileAge, 0)
-XOBJSTUB(BudAPIXtra::m_baFileExists, 0)
+void BudAPIXtra::m_baFileExists(int nargs) {
+	Common::String name = g_lingo->pop().asString();
+	g_lingo->push(Datum(findPath(name, true, true, false).empty() ? 0 : 1));
+}
 XOBJSTUB(BudAPIXtra::m_baFolderExists, 0)
 XOBJSTUB(BudAPIXtra::m_baCreateFolder, 0)
 XOBJSTUB(BudAPIXtra::m_baDeleteFolder, 0)
