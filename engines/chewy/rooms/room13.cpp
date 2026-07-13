@@ -129,7 +129,7 @@ void Room13::talk_bork() {
 		_G(flags).NoScroll = true;
 		auto_scroll(41, 0);
 
-		start_spz(68, 255, false, P_CHEWY);
+		start_spz(CH_BORK_TALK, 255, false, P_CHEWY);
 		startAadWait(248);
 		flic_cut(FCUT_013);
 		load_chewy_taf(CHEWY_NORMAL);

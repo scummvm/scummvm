@@ -217,7 +217,7 @@ int16 Room12::use_terminal() {
 				_G(gameState).R12ChewyBork = true;
 				_G(gameState).R12RaumOk = true;
 				autoMove(4, P_CHEWY);
-				start_spz(68, 255, false, P_CHEWY);
+				start_spz(CH_BORK_TALK, 255, false, P_CHEWY);
 				startAadWait(113);
 
 			} else if (_G(gameState).R12TalismanOk && !_G(gameState).R12RaumOk) {
@@ -275,6 +275,7 @@ int16 Room12::useTransformerTube() {
 			_G(atds)->set_ats_str(117, TXT_MARK_LOOK, 0, ATS_DATA);
 		} else {
 			autoMove(7, P_CHEWY);
+			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(29);
 		}
 	}
