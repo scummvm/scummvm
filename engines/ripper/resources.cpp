@@ -29,9 +29,9 @@
 #include "common/stream.h"
 #include "common/substream.h"
 #include "graphics/surface.h"
-#include "image/iff.h"
 
 #include "ripper/detection.h"
+#include "ripper/iff.h"
 
 namespace Ripper {
 
@@ -182,7 +182,7 @@ static bool decodeCustomBitmap(Common::SeekableReadStream &stream, BitmapAssetFr
 }
 
 static bool decodeIffBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame &frame) {
-	Image::IFFDecoder decoder;
+	IFFDecoder decoder;
 	if (!decoder.loadStream(stream))
 		return false;
 
@@ -202,6 +202,9 @@ static bool decodeIffBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame
 	frame.palette.resize(palette.size() * 3);
 	if (!frame.palette.empty())
 		memcpy(frame.palette.data(), palette.data(), frame.palette.size());
+	debugC(3, kDebugResources,
+		"Ripper: decoded IFF bitmap width=%u height=%u transparent=%u colors=%u",
+		frame.width, frame.height, frame.transparentColor, palette.size());
 	return true;
 }
 
