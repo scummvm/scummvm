@@ -4,7 +4,8 @@ MODULE_OBJS := \
 	input.o \
 	metaengine.o \
 	resources.o \
-	ripper.o
+	ripper.o \
+	script.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_RIPPER), DYNAMIC_PLUGIN)
