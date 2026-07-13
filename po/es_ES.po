@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-12 19:03+0000\n"
-"PO-Revision-Date: 2026-07-11 11:39+0000\n"
+"PO-Revision-Date: 2026-07-13 11:13+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -3520,12 +3520,11 @@ msgstr "Cerrar ventana"
 msgid ""
 "Local network access permission was denied: Web server won't be reachable"
 msgstr ""
+"Se ha denegado el acceso a la red local: el servidor web no estará accesible"
 
 #: dists/android.strings.xml.cpp:51
-#, fuzzy
-#| msgid "ScummVM (debug)"
 msgid "ScummVM Web server"
-msgstr "ScummVM (depuración)"
+msgstr "Servidor web de ScummVM"
 
 #: dists/android.strings.xml.cpp:52
 msgid "Configuration file could not be parsed"
