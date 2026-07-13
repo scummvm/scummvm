@@ -382,6 +382,17 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 			auto *pic = vr._pic.get();
 			if (pic3d) {
 				vr._vr = true;
+
+				if (g_engine->gameIdMatches("dracula2")) {
+					// Original engine seems to skip 1 pixel per tile.
+					// dct.dll uses while(x < 255) loop condition when unpacking pixels to color planes.
+					// However, game tiles for all games are matching perfectly with each other.
+					// Those bad pixels are present on right hand side of the right hand tiles
+					// only found in Dracula 2.
+					// Minimizing rendering artifacts, reducing face size
+					vr._ignoreRightPixel = true;
+				}
+
 				pic->create(kVRImageWidth, kVRImageHeight, format);
 			} else
 				pic->create(kStaticImageWidth, kStaticImageHeight, format);
@@ -614,6 +625,10 @@ void VR::renderVR(Graphics::Screen *screen, float ax, float ay, float fov, float
 	if (_showWaves)
 		_wavesT += dt * 20;
 
+	int faceSize = kVRFaceSize;
+	if (_ignoreRightPixel)
+		--faceSize;
+
 	ColorType *dstPixels = static_cast<ColorType *>(screen->getPixels());
 	const auto dstPixelsPitchIncrement = screen->pitch / sizeof(ColorType);
 	for (int dstY = 0; dstY != h; ++dstY, line += incrementY, dstPixels += dstPixelsPitchIncrement) {
@@ -637,7 +652,7 @@ void VR::renderVR(Graphics::Screen *screen, float ax, float ay, float fov, float
 
 		for (int dstX = 0; dstX != w; ++dstX, ray += incrementX, ++dst) {
 			auto cube = toCube(ray.x(), ray.y(), ray.z());
-			int srcX = static_cast<int>(kVRFaceSize * cube.x);
+			int srcX = static_cast<int>(faceSize * cube.x);
 			int srcY = static_cast<int>(kVRFaceSize * cube.y);
 			int tileId = cube.faceIdx << 2;
 			tileId += (srcY < kVRTileSize) ? (srcX < kVRTileSize ? 0 : 1) : (srcX < kVRTileSize ? 3 : 2);
