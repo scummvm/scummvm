@@ -374,6 +374,14 @@ Common::Error ColonyEngine::saveGameStream(Common::WriteStream *stream, bool isA
 		}
 	}
 
+	// Minimap fog-of-war, all levels
+	for (uint lv = 0; lv < ARRAYSIZE(_visited); lv++) {
+		for (int y = 0; y < 32; y++) {
+			for (int x = 0; x < 32; x++)
+				stream->writeByte(_visited[lv][x][y] ? 1 : 0);
+		}
+	}
+
 	stream->writeUint32LE(_objects.size());
 	for (uint i = 0; i < _objects.size(); i++)
 		writeThing(stream, _objects[i]);
@@ -481,6 +489,14 @@ Common::Error ColonyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 			_robotArray[x][y] = stream->readByte();
 			_foodArray[x][y] = stream->readByte();
 			_dirXY[x][y] = stream->readByte();
+		}
+	}
+
+	// Minimap fog-of-war, all levels
+	for (uint lv = 0; lv < ARRAYSIZE(_visited); lv++) {
+		for (int y = 0; y < 32; y++) {
+			for (int x = 0; x < 32; x++)
+				_visited[lv][x][y] = stream->readByte() != 0;
 		}
 	}
 
