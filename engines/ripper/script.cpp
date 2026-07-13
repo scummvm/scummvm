@@ -345,6 +345,18 @@ bool ScriptManager::findFrameByLabel(const CompiledScript &script, const Common:
 	return false;
 }
 
+void ScriptManager::beginBa0InteractionWait(const Common::String &frameLabel,
+		uint interactionCount) {
+	// ExecuteSceneFrameAndInteractions at 0x13277 services the new controls once after
+	// frame media, discarding that result before it starts the blocking chooser loop.
+	if (_engine->getInput()->pollEvents())
+		_engine->quitGame();
+	_engine->getInput()->discardMouseTransitions();
+	_awaitingBa0Interaction = true;
+	debugC(1, kDebugScene, "Ripper: BA0 frame='%s' awaiting %u interactions",
+		frameLabel.c_str(), interactionCount);
+}
+
 bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffset, int &result,
 		uint *nextFrame) {
 	Common::Array<ScriptCommand> commands;
@@ -573,8 +585,7 @@ bool ScriptManager::runStartupPath() {
 	if (!executeCallback(_ba0, _ba0.getFrames()[ba0StartFrame].enterCallbackOffset, result) || result != 0)
 		return false;
 	_activeBa0Frame = ba0StartFrame;
-	_awaitingBa0Interaction = true;
-	debugC(1, kDebugScene, "Ripper: BA0 start frame initialized; awaiting chooser interaction");
+	beginBa0InteractionWait("start", _ba0.getFrames()[ba0StartFrame].interactionCount);
 	return true;
 }
 
@@ -641,9 +652,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 		}
 
 		if (frame.interactionCount != 0) {
-			_awaitingBa0Interaction = true;
-			debugC(1, kDebugScene, "Ripper: BA0 frame='%s' awaiting %u interactions",
-				label.c_str(), frame.interactionCount);
+			beginBa0InteractionWait(label, frame.interactionCount);
 			return true;
 		}
 
