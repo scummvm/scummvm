@@ -59,7 +59,7 @@ public:
 	void list(const Common::String &treeName, Common::Array<Common::Path> &outList, CifInfo::ResType type) const;
 
 	// Exports a single resource as a standalone .cif file
-	bool exportCif(const Common::String &treeName, const Common::Path &name);
+	bool exportCif(const Common::Path &name);
 
 	// Exports a collection of resources as a ciftree
 	bool exportCifTree(const Common::String &treeName, const Common::Array<Common::Path> &names);

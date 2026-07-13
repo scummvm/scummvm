@@ -315,7 +315,7 @@ void ResourceManager::list(const Common::String &treeName, Common::Array<Common:
 	}
 }
 
-bool ResourceManager::exportCif(const Common::String &treeName, const Common::Path &name) {
+bool ResourceManager::exportCif(const Common::Path &name) {
 	if (!SearchMan.hasFile(name)) {
 		return false;
 	}

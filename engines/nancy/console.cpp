@@ -154,13 +154,13 @@ void NancyConsole::postEnter() {
 }
 
 bool NancyConsole::Cmd_cifExport(int argc, const char **argv) {
-	if (argc < 2 || argc > 3) {
+	if (argc != 2) {
 		debugPrintf("Exports the specified resource to .cif file\n");
-		debugPrintf("Usage: %s <name> [cal]\n", argv[0]);
+		debugPrintf("Usage: %s <name>\n", argv[0]);
 		return true;
 	}
 
-	if (!g_nancy->_resource->exportCif((argc == 2 ? "" : argv[2]), argv[1]))
+	if (!g_nancy->_resource->exportCif(argv[1]))
 		debugPrintf("Failed to export '%s'\n", argv[1]);
 
 	return true;
