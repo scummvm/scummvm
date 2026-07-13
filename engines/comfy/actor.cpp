@@ -1140,6 +1140,7 @@ void ComfyEngine::renderQueueDrawCommand(int16 x, int16 y, uint32 selector, byte
 	command.selector = selector;
 	command.mode = mode;
 	command.actorIndex = actorIndex;
+
 	if (_drawCommandCount >= COMFY_DRAW_COMMAND_CAPACITY)
 		error("Too many actor draw commands");
 }

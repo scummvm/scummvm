@@ -114,7 +114,7 @@ void ComfyEngine::animFrameShutdown(bool freeBuffers) {
 
 	if (freeBuffers) {
 		_animFrameBuffer.clear();
-		if (_animCurrentActorSceneHandle < _sceneHandles.size()) {
+		if (_animCurrentActorSceneHandle && _animCurrentActorSceneHandle < _sceneHandles.size()) {
 			Actor *actor = actorGetPtr(sceneGetHandle(_animCurrentActorSceneHandle));
 			if (actor)
 				actorWriteU32(*actor, kActorSpriteSelector, 0);
@@ -137,7 +137,10 @@ void ComfyEngine::animFileLoadFrame(uint16 animIndex, uint16 frameKey, uint16 ac
 	if (!_animIndexLoaded || _animActive || animIndex >= _animIndexTable.size())
 		return;
 
-	animFrameShutdown(true);
+	if (_engineVersion == 3)
+		animFrameShutdown(true);
+
+	renderFlushCachedDirtyRects();
 	_animShutdownBeforeSceneStart = true;
 
 	uint32 offset = _animIndexTable[animIndex];
@@ -600,7 +603,6 @@ bool ComfyEngine::animFrameBlitAt(int16 x, int16 y) {
 		}
 	}
 
-	renderSetDirty();
 	return true;
 }
 
