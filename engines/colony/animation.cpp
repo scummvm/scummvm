@@ -401,6 +401,12 @@ void ColonyEngine::playAnimation() {
 	_animationRunning = true;
 	_animExitPressed = _animExitInside = false;
 	_animExitStrip = _animExitButton = Common::Rect();
+	_coderCursor = 0;
+	for (int i = 0; i < 4; i++)
+		_coderPick[i] = 0;
+	_coderWin = Common::Rect();
+	_coderPressed = -1;
+	_coderPressInside = false;
 	_system->lockMouse(false);
 	warpMouseLogical(_centerX, _centerY);
 	const char *cursorName = "default arrow cursor";
@@ -597,7 +603,9 @@ void ColonyEngine::playAnimation() {
 				needsDraw = true;
 			} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 				const Common::Point pt = eventMouseToLogical(event.mouse);
-				if (!_animExitStrip.isEmpty() && _animExitStrip.contains(pt)) {
+				if (handleColonyCoderClick(pt)) {
+					needsDraw = true;
+				} else if (!_animExitStrip.isEmpty() && _animExitStrip.contains(pt)) {
 					// gamesprt.c TestButton(): strip clicks never reach sprites
 					if (_animExitButton.contains(pt)) {
 						_animExitPressed = _animExitInside = true;
@@ -611,6 +619,20 @@ void ColonyEngine::playAnimation() {
 					}
 				}
 			} else if (event.type == Common::EVENT_LBUTTONUP) {
+				if (_coderPressed >= 0) {
+					if (_coderPressInside) {
+						if (_coderCursor >= 4) {
+							for (int j = 0; j < 4; j++)
+								_coderPick[j] = 0;
+							_coderCursor = 0;
+						}
+						_coderPick[_coderCursor++] = _coderPressed + 1;
+						_sound->play(Sound::kDit);
+					}
+					_coderPressed = -1;
+					_coderPressInside = false;
+					needsDraw = true;
+				}
 				if (_animExitPressed) {
 					if (_animExitInside) {
 						debugC(1, kColonyDebugAnimation, "Animation: EXIT button");
@@ -626,6 +648,13 @@ void ColonyEngine::playAnimation() {
 				_animationRunning = false;
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
 				const Common::Point logical = eventMouseToLogical(event.mouse);
+				if (_coderPressed >= 0) {
+					const bool inside = _coderIconRects[_coderPressed].contains(logical);
+					if (inside != _coderPressInside) {
+						_coderPressInside = inside;
+						needsDraw = true;
+					}
+				}
 				if (_animExitPressed) {
 					const bool inside = _animExitButton.contains(logical);
 					if (inside != _animExitInside) {
@@ -853,6 +882,7 @@ void ColonyEngine::drawAnimation() {
 	}
 
 	drawAnimationExitButton(ox, oy);
+	drawColonyCoder(ox, oy);
 }
 
 // gamesprt.c DrawButton(): 30px strip below the 416x264 scene with a framed
@@ -894,6 +924,226 @@ void ColonyEngine::drawAnimationExitButton(int ox, int oy) {
 	_animExitStrip = Common::Rect(ox, oy + 264, ox + 416, oy + 294);
 	_animExitButton = button;
 	_animExitButton.translate(ox, oy + 264);
+}
+
+void ColonyEngine::loadCoderTiles() {
+	_coderTilesLoaded = true;
+
+	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(Common::Path("security"));
+	if (!file)
+		return;
+	Common::SeekableReadStreamEndianWrapper stream(file, true, DisposeAfterUse::YES);
+
+	byte bg[8];
+	stream.read(bg, 8);
+	stream.read(bg, 8);
+	stream.readSint16();
+	if (stream.readSint16() != 0) {
+		readRect(stream);
+		readRect(stream);
+		delete loadImage(stream);
+		delete loadImage(stream);
+	}
+
+	Common::Array<Image *> imgs;
+	const int16 maxsprite = stream.readSint16();
+	stream.readSint16();
+	for (int i = 0; i < maxsprite && !stream.err(); i++) {
+		imgs.push_back(loadImage(stream));
+		delete loadImage(stream); // mask
+		stream.readSint16();
+		readRect(stream);
+		readRect(stream);
+	}
+
+	// Object 2 (a digit key) provides the button faces (states 1..2),
+	// object 27 the four symbol tiles (states 2..5).
+	const int16 maxl = stream.readSint16();
+	stream.readSint16();
+	for (int i = 0; i < maxl && !stream.err(); i++) {
+		const int16 size = stream.readSint16();
+		for (int j = 0; j < size; j++) {
+			const int16 spritenum = stream.readSint16();
+			stream.readSint16();
+			stream.readSint16();
+			if (stream.err() || spritenum < 0 || spritenum >= (int16)imgs.size())
+				continue;
+			if (i == 1 && j == 0 && !_coderBtnUp) {
+				_coderBtnUp = imgs[spritenum];
+				imgs[spritenum] = nullptr;
+			} else if (i == 1 && j == 1 && !_coderBtnDown) {
+				_coderBtnDown = imgs[spritenum];
+				imgs[spritenum] = nullptr;
+			} else if (i == 26 && j >= 1 && j <= 4 && !_coderTiles[j - 1]) {
+				_coderTiles[j - 1] = imgs[spritenum];
+				imgs[spritenum] = nullptr;
+			}
+		}
+		readRect(stream);
+		for (int k = 0; k < 7; k++)
+			stream.readSint16();
+		stream.readByte();
+		stream.readByte();
+		stream.readByte();
+		stream.readSint16();
+		stream.readSint16();
+		stream.readSint16();
+	}
+
+	for (uint i = 0; i < imgs.size(); i++)
+		delete imgs[i];
+}
+
+static void drawCoderTile(Graphics::ManagedSurface &s, const Image *img, int x, int y, uint32 fg, uint32 bg) {
+	if (!img || !img->data)
+		return;
+	for (int r = 0; r < img->height; r++) {
+		for (int c = 0; c < img->width; c++) {
+			const bool on = (img->data[r * img->rowBytes + (c >> 3)] >> (7 - (c & 7))) & 1;
+			s.setPixel(x + c, y + r, on ? fg : bg);
+		}
+	}
+}
+
+void ColonyEngine::drawColonyCoder(int animOx, int animOy) {
+	if (!isMacRenderMode())
+		return;
+	if (_animationName != "security" && _animationName != "reactor")
+		return;
+
+	if (!_coderTilesLoaded)
+		loadCoderTiles();
+	if (!_coderTiles[0] || !_coderTiles[1] || !_coderTiles[2] || !_coderTiles[3] ||
+			!_coderBtnUp || !_coderBtnDown)
+		return;
+
+	Graphics::MacFont systemFont(Graphics::kMacFontSystem, 12);
+	const Graphics::Font *font = (_wm && _wm->_fontMan) ? _wm->_fontMan->getFont(systemFont) : nullptr;
+	if (!font)
+		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	if (!font)
+		return;
+	Graphics::MacFont genevaFont(Graphics::kMacFontGeneva, 9);
+	const Graphics::Font *instrFont = (_wm && _wm->_fontMan) ? _wm->_fontMan->getFont(genevaFont) : nullptr;
+	if (!instrFont)
+		instrFont = font;
+
+	const int contentW = 172;
+	const char *instrText = (_animationName == "security")
+		? "Press the symbols as shown on the display to determine the correct value."
+		: "Press the symbols from the desk in reverse order to determine the correct value.";
+	Common::Array<Common::U32String> instrLines;
+	instrFont->wordWrapText(Common::U32String(instrText), contentW - 16, instrLines);
+	const int instrLineH = instrFont->getFontHeight() + 1;
+
+	const int btnSize = _coderBtnUp->width;
+	const int tile = _coderTiles[0]->width;
+	const int pitch = btnSize + 4;
+	const int x0 = (contentW - (3 * pitch + btnSize)) / 2;
+	const int btnY = 8;
+	const int slotY = btnY + btnSize + 9;
+	const int codeY = slotY + tile + 16;
+	const int instrY = codeY + font->getFontHeight() + 8;
+	const int contentH = instrY + (int)instrLines.size() * instrLineH + 8;
+
+	Graphics::MacWindowBorder border;
+	Graphics::BorderOffsets offsets;
+	bool hasBorder = false;
+	if (_wm) {
+		border.setWindowManager(_wm);
+		border.setBorderType(Graphics::kWindowWindow);
+		if (border.hasBorder(Graphics::kWindowBorderActive) && border.hasOffsets()) {
+			hasBorder = true;
+			offsets = border.getOffset();
+		}
+	}
+	const int offL = hasBorder ? offsets.left : 2;
+	const int offR = hasBorder ? offsets.right : 2;
+	const int offT = hasBorder ? offsets.top : 2;
+	const int offB = hasBorder ? offsets.bottom : 2;
+	const int winW = contentW + offL + offR;
+	const int winH = contentH + offT + offB;
+
+	// Right of the scene, vertically centered on the 416x294 animation window
+	int wx = animOx + 416 + 4;
+	if (wx + winW > _screenR.right)
+		wx = MAX<int>(_screenR.left, _screenR.right - winW - 2);
+	int wy = animOy + (294 - winH) / 2;
+	wy = MAX<int>(_screenR.top, wy);
+
+	Graphics::ManagedSurface win;
+	win.create(winW, winH, _gfx->getPixelFormat());
+	const uint32 white = win.format.ARGBToColor(255, 255, 255, 255);
+	const uint32 black = win.format.ARGBToColor(255, 0, 0, 0);
+	win.fillRect(Common::Rect(0, 0, winW, winH), white);
+	if (hasBorder) {
+		border.setTitle("Colony Coder", winW);
+		border.blitBorderInto(win, Graphics::kWindowBorderActive);
+	} else {
+		win.frameRect(Common::Rect(0, 0, winW, winH), black);
+		win.frameRect(Common::Rect(1, 1, winW - 1, winH - 1), black);
+	}
+
+	// Keypad buttons with the symbol tile covering the digit
+	const int inset = (btnSize - tile) / 2;
+	for (int i = 0; i < 4; i++) {
+		const int bx = offL + x0 + i * pitch;
+		const bool pressed = (_coderPressed == i && _coderPressInside);
+		drawCoderTile(win, pressed ? _coderBtnDown : _coderBtnUp, bx, offT + btnY, black, white);
+		drawCoderTile(win, _coderTiles[i], bx + inset, offT + btnY + inset,
+			pressed ? white : black, pressed ? black : white);
+		_coderIconRects[i] = Common::Rect(wx + bx, wy + offT + btnY, wx + bx + btnSize, wy + offT + btnY + btnSize);
+
+		const int sx = bx + inset;
+		const Common::Rect slot(sx - 2, offT + slotY - 2, sx + tile + 2, offT + slotY + tile + 2);
+		win.frameRect(slot, black);
+		if (_coderPick[i] > 0)
+			drawCoderTile(win, _coderTiles[_coderPick[i] - 1], sx, offT + slotY, black, white);
+	}
+
+	if (_coderCursor < 4) {
+		const int cx = offL + x0 + _coderCursor * pitch + inset;
+		win.fillRect(Common::Rect(cx, offT + slotY + tile + 6, cx + tile, offT + slotY + tile + 8), black);
+	}
+
+	bool complete = true;
+	for (int i = 0; i < 4; i++) {
+		if (_coderPick[i] == 0)
+			complete = false;
+	}
+	Common::String text;
+	if (complete) {
+		uint8 code[6];
+		cryptArray(code, _coderPick[0] - 1, _coderPick[1] - 1, _coderPick[2] - 1, _coderPick[3] - 1);
+		for (int i = 0; i < 6; i++)
+			text += (char)('0' + code[i] - 2);
+	} else {
+		text = "- - - - - -";
+	}
+	font->drawString(&win, text, offL, offT + codeY, contentW, black, Graphics::kTextAlignCenter);
+
+	for (uint i = 0; i < instrLines.size(); i++)
+		instrFont->drawString(&win, instrLines[i], offL + 8, offT + instrY + (int)i * instrLineH,
+			contentW - 16, black, Graphics::kTextAlignCenter);
+
+	_gfx->drawSurface(&win.rawSurface(), wx, wy);
+	win.free();
+
+	_coderWin = Common::Rect(wx, wy, wx + winW, wy + winH);
+}
+
+// Mouse-down half of the button tracking; commit happens on mouse-up.
+bool ColonyEngine::handleColonyCoderClick(const Common::Point &pt) {
+	if (_coderWin.isEmpty() || !_coderWin.contains(pt))
+		return false;
+	for (int i = 0; i < 4; i++) {
+		if (_coderIconRects[i].contains(pt)) {
+			_coderPressed = i;
+			_coderPressInside = true;
+			break;
+		}
+	}
+	return true;
 }
 
 void ColonyEngine::drawComplexSprite(int index, int ox, int oy) {

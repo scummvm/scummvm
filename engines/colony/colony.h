@@ -806,6 +806,16 @@ private:
 	bool _animExitInside = false;
 	Common::Rect _animExitStrip;
 	Common::Rect _animExitButton;
+	int _coderPick[4] = {};
+	int _coderCursor = 0;
+	int _coderPressed = -1;
+	bool _coderPressInside = false;
+	Image *_coderTiles[4] = {};
+	Image *_coderBtnUp = nullptr;
+	Image *_coderBtnDown = nullptr;
+	bool _coderTilesLoaded = false;
+	Common::Rect _coderWin;
+	Common::Rect _coderIconRects[4];
 	bool _doorOpen;
 	int _liftObject = 0;  // sprite index for the carried object in lift animation
 	bool _liftUp = false;     // current lift state: true=raised, false=lowered
@@ -830,6 +840,9 @@ private:
 	void updateAnimation();
 	void drawAnimation();
 	void drawAnimationExitButton(int ox, int oy);
+	void drawColonyCoder(int animOx, int animOy);
+	void loadCoderTiles();
+	bool handleColonyCoderClick(const Common::Point &pt);
 	void drawComplexSprite(int index, int ox, int oy);
 	void drawAnimationImage(Image *img, Image *mask, int x, int y, uint32 fillColor,
 			Graphics::Surface *&bakedCache, uint64 &bakedCacheKey);
