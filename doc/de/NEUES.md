@@ -3,14 +3,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
 #### 2026.4.0 "TBD" (XX.10.2026)
 
- Allgemein:
-   - Zur Verbesserung der Perforamcen wurden die Audio-Mixer und -Konverter optimiert.
-   - ImGui-basierte Oberfläche für den Event-Recorder implementiert.
-   - Fehler korrigiert, durch den MIDI- und MT-32-Geräte in den Spiel-Optionen
-     nicht überschrieben werden konnten
-   - Der Nuked-OPL3 AdLib-Emulator wurden durch den Nuked-OPL3-fast-Fork ausgetauscht.
-
- Alcachofa:
+ Neue Spiele:
    - Unterstützung für Mortadelo y Filemón: Una Aventura de Cine Edición Original hinzugefügt.
    - Unterstützung für Mortadelo y Filemón: Dos vaqueros chapuceros hinzugefügt.
    - Unterstützung für Mortadelo y Filemón: Terror, Espanto y Pavor hinzugefügt.
@@ -20,6 +13,13 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Mortadelo y Filemón: La Banda de Corvino hinzugefügt.
    - Unterstützung für Mortadelo y Filemón: Balones y Patadones hinzugefügt.
    - Unterstützung für Mortadelo y Filemón: Mamelucos a la Romana hinzugefügt.
+
+ Allgemein:
+   - Zur Verbesserung der Perforamcen wurden die Audio-Mixer und -Konverter optimiert.
+   - ImGui-basierte Oberfläche für den Event-Recorder implementiert.
+   - Fehler korrigiert, durch den MIDI- und MT-32-Geräte in den Spiel-Optionen
+     nicht überschrieben werden konnten
+   - Der Nuked-OPL3 AdLib-Emulator wurden durch den Nuked-OPL3-fast-Fork ausgetauscht.
 
  Bagel:
    - Speicher-Optionen in Hodj n' Podj's Th Gesng Gme korrigiert.
