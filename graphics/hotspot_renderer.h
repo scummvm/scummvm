@@ -29,7 +29,7 @@
 namespace Graphics {
 
 class Font;
-class Surface;
+struct Surface;
 struct PixelFormat;
 
 /**
