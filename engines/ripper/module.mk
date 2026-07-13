@@ -3,6 +3,7 @@ MODULE := engines/ripper
 MODULE_OBJS := \
 	input.o \
 	metaengine.o \
+	resources.o \
 	ripper.o
 
 # This module can be built as a plugin

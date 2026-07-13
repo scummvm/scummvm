@@ -28,6 +28,7 @@ struct ADGameDescription;
 namespace Ripper {
 
 class InputManager;
+class ResourceManager;
 
 class RipperEngine : public Engine {
 public:
@@ -37,6 +38,7 @@ public:
 	Common::Error run() override;
 	bool hasFeature(EngineFeature feature) const override;
 	InputManager *getInput() const { return _input; }
+	ResourceManager *getResources() const { return _resources; }
 
 private:
 	void registerSearchPaths();
@@ -44,6 +46,7 @@ private:
 
 	const ADGameDescription *const _gameDescription;
 	InputManager *_input;
+	ResourceManager *_resources;
 };
 
 } // End of namespace Ripper

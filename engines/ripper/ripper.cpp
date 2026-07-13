@@ -30,14 +30,17 @@
 
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/resources.h"
 
 namespace Ripper {
 
 RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescription) :
-		Engine(system), _gameDescription(gameDescription), _input(new InputManager(_eventMan)) {
+		Engine(system), _gameDescription(gameDescription), _input(new InputManager(_eventMan)),
+		_resources(new ResourceManager()) {
 }
 
 RipperEngine::~RipperEngine() {
+	delete _resources;
 	delete _input;
 }
 
@@ -72,6 +75,8 @@ Common::Error RipperEngine::run() {
 
 	registerSearchPaths();
 	initGraphics(640, 480);
+	if (!_resources->initialize())
+		return Common::kReadingFailed;
 
 	while (!shouldQuit()) {
 		pumpEvents();
