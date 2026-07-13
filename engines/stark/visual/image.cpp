@@ -101,16 +101,24 @@ bool VisualImageXMG::loadPNG(Common::SeekableReadStream *stream) {
 }
 
 Graphics::Surface *VisualImageXMG::multiplyColorWithAlpha(const Graphics::Surface *source) {
-	assert(source->format == Gfx::Driver::getRGBAPixelFormat());
+	const Graphics::Surface *surface = source;
+	Graphics::Surface *convertedSurface = nullptr;
+
+	if (source->format != Gfx::Driver::getRGBAPixelFormat()) {
+		convertedSurface = source->convertTo(Gfx::Driver::getRGBAPixelFormat());
+		surface = convertedSurface;
+	}
+
+	assert(surface->format == Gfx::Driver::getRGBAPixelFormat());
 
 	Graphics::Surface *dest = new Graphics::Surface();
-	dest->create(source->w, source->h, Gfx::Driver::getRGBAPixelFormat());
+	dest->create(surface->w, surface->h, Gfx::Driver::getRGBAPixelFormat());
 
-	for (int y = 0; y < source->h; y++) {
-		const uint8 *src = (const uint8 *) source->getBasePtr(0, y);
-		uint8 *dst = (uint8 *) dest->getBasePtr(0, y);
+	for (int y = 0; y < surface->h; y++) {
+		const uint8 *src = (const uint8 *)surface->getBasePtr(0, y);
+		uint8 *dst = (uint8 *)dest->getBasePtr(0, y);
 
-		for (int x = 0; x < source->w; x++) {
+		for (int x = 0; x < surface->w; x++) {
 			uint8 a, r, g, b;
 			r = *src++;
 			g = *src++;
@@ -128,6 +136,11 @@ Graphics::Surface *VisualImageXMG::multiplyColorWithAlpha(const Graphics::Surfac
 			*dst++ = b;
 			*dst++ = a;
 		}
+	}
+
+	if (convertedSurface) {
+		convertedSurface->free();
+		delete convertedSurface;
 	}
 
 	return dest;
