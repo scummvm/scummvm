@@ -59,8 +59,9 @@ struct IavfSegment {
 	uint32 expectedFrames;
 	int x;
 	int y;
+	bool clearDisplayBefore;
 
-	IavfSegment() : expectedFrames(0), x(-1), y(-1) {}
+	IavfSegment() : expectedFrames(0), x(-1), y(-1), clearDisplayBefore(false) {}
 };
 
 struct IavfMovie {
@@ -73,9 +74,10 @@ struct IavfMovie {
 	uint presentationWidth;
 	uint presentationHeight;
 	uint displayScale;
+	bool clearDisplayAfter;
 
 	IavfMovie() : sampleRate(0), channels(0), bitsPerSample(0), audioPayloadBytes(0),
-		presentationWidth(0), presentationHeight(0), displayScale(1) {}
+		presentationWidth(0), presentationHeight(0), displayScale(1), clearDisplayAfter(false) {}
 };
 
 static bool readExact(Common::SeekableReadStream &stream, void *data, uint32 size) {
@@ -137,6 +139,7 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 	IavfSegment *activeSegment = nullptr;
 	bool reachedEnd = false;
 	bool hasPendingAudioOffset = false;
+	bool pendingDisplayClear = false;
 	uint32 descriptorIndex = 0;
 	uint32 pendingAudioOffset = 0;
 	while (stream.pos() < stream.size() && !reachedEnd) {
@@ -181,6 +184,9 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 		}
 
 		case 0x68:
+			pendingDisplayClear = true;
+			break;
+
 		case 0x75:
 		case 0x77:
 			break;
@@ -208,6 +214,8 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 			IavfSegment segment;
 			segment.x = branch[0];
 			segment.y = branch[1];
+			segment.clearDisplayBefore = pendingDisplayClear;
+			pendingDisplayClear = false;
 			if (descriptor.arg1 == 0) {
 				if (!readBlob(stream, descriptor.arg0, segment.setup))
 					return false;
@@ -244,6 +252,7 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 		}
 
 		case 0x70:
+			movie.clearDisplayAfter = pendingDisplayClear;
 			reachedEnd = true;
 			break;
 
@@ -502,7 +511,17 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 
 	bool result = true;
 	const uint32 audioByteRate = movie.sampleRate * movie.channels * movie.bitsPerSample / 8;
+	uint completedSegments = 0;
 	for (uint i = 0; i < movie.segments.size() && !_engine->shouldQuit(); ++i) {
+		if (movie.segments[i].clearDisplayBefore) {
+			// RunPacketizedMediaPlaybackCore at 0x5b592 handles IAVF opcode 0x68 by
+			// clearing the active logical page through display command 0x14.
+			g_system->fillScreen(0);
+			g_system->updateScreen();
+			debugC(2, kDebugVideo,
+				"Ripper: IAVF '%s' cleared display before segment=%u from opcode 0x68",
+				name.c_str(), i);
+		}
 		Common::SeekableReadStream *smacker = rebuildSmackerStream(movie.segments[i]);
 		bool stoppedByUser = false;
 		if (!smacker || !playSmacker(smacker, Common::String::format("%s#%u", name.c_str(), i),
@@ -515,9 +534,17 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		}
 		if (stoppedByUser)
 			break;
+		++completedSegments;
 	}
 	if (audioActive)
 		_mixer->stopHandle(audioHandle);
+	if (movie.clearDisplayAfter && completedSegments == movie.segments.size()) {
+		g_system->fillScreen(0);
+		g_system->updateScreen();
+		debugC(2, kDebugVideo,
+			"Ripper: IAVF '%s' cleared display after final segment from opcode 0x68",
+			name.c_str());
+	}
 	return result;
 }
 
