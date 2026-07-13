@@ -18,34 +18,49 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RIPPER_RIPPER_H
-#define RIPPER_RIPPER_H
+#ifndef RIPPER_INPUT_H
+#define RIPPER_INPUT_H
 
-#include "engines/engine.h"
-
-struct ADGameDescription;
+#include "common/events.h"
+#include "common/queue.h"
 
 namespace Ripper {
 
-class InputManager;
+enum MouseButtonFlags {
+	kMouseButtonLeft = 1 << 0,
+	kMouseButtonRight = 1 << 1,
+	kMouseButtonMiddle = 1 << 2
+};
 
-class RipperEngine : public Engine {
+struct MouseState {
+	Common::Point position;
+	uint16 buttons;
+	uint16 pressed;
+	uint16 released;
+
+	MouseState() : position(0, 0), buttons(0), pressed(0), released(0) {}
+};
+
+class InputManager {
 public:
-	RipperEngine(OSystem *system, const ADGameDescription *gameDescription);
-	~RipperEngine() override;
+	explicit InputManager(Common::EventManager *eventManager);
 
-	Common::Error run() override;
-	bool hasFeature(EngineFeature feature) const override;
-	InputManager *getInput() const { return _input; }
+	bool pollEvents();
+	bool hasPendingKey() const;
+	uint16 consumeKey();
+	void drainKeys();
+	MouseState publishMouseState();
 
 private:
-	void registerSearchPaths();
-	void pumpEvents();
+	static uint16 translateKey(const Common::KeyState &key);
+	void updateMousePosition(const Common::Event &event);
+	void updateMouseButton(const Common::Event &event, uint16 button, bool pressed);
 
-	const ADGameDescription *const _gameDescription;
-	InputManager *_input;
+	Common::EventManager *_eventManager;
+	Common::Queue<uint16> _pendingKeys;
+	MouseState _mouseState;
 };
 
 } // End of namespace Ripper
 
-#endif // RIPPER_RIPPER_H
+#endif // RIPPER_INPUT_H
