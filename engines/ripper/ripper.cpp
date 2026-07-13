@@ -29,14 +29,16 @@
 #include "engines/util.h"
 
 #include "ripper/detection.h"
+#include "ripper/input.h"
 
 namespace Ripper {
 
 RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescription) :
-		Engine(system), _gameDescription(gameDescription) {
+		Engine(system), _gameDescription(gameDescription), _input(new InputManager(_eventMan)) {
 }
 
 RipperEngine::~RipperEngine() {
+	delete _input;
 }
 
 bool RipperEngine::hasFeature(EngineFeature feature) const {
@@ -59,13 +61,9 @@ void RipperEngine::registerSearchPaths() {
 }
 
 void RipperEngine::pumpEvents() {
-	Common::Event event;
-
-	while (_eventMan->pollEvent(event)) {
-		if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
-			debugC(1, kDebugGeneral, "Ripper: received quit event");
-			quitGame();
-		}
+	if (_input->pollEvents()) {
+		debugC(1, kDebugGeneral, "Ripper: received quit event");
+		quitGame();
 	}
 }
 
