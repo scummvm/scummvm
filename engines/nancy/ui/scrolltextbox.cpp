@@ -161,7 +161,7 @@ void ScrollTextBox::drawContent() {
 		// Fixed two-line strip at the top of the overlay. Drop the chrome's
 		// bottom margin so it's just tall enough for two lines.
 		const Font *font = g_nancy->_graphics->getFont(fontID);
-		const int lineStep = font->getFontHeight() + font->getFontHeight() / 9;
+		const int lineStep = font->getLineHeight() + font->getLineHeight() / 9;
 		const int twoLineContent = _tboxData->scrollbarDefaultPos.y + 2 * lineStep;
 		const int miniHeight = MIN(viewport.top + MAX(contentHeight, twoLineContent), fullHeight);
 		boxRect = Common::Rect(_fullPopupRect.left, _fullPopupRect.top,
@@ -173,6 +173,7 @@ void ScrollTextBox::drawContent() {
 	_drawSurface.create(boxRect.width(), boxRect.height(), g_nancy->_graphics->getInputPixelFormat());
 
 	int textLeft = viewport.left;
+	int textTop = viewport.top;
 	if (_expanded) {
 		setTransparent(false);
 		drawBackground();
@@ -181,15 +182,21 @@ void ScrollTextBox::drawContent() {
 		// and pull the text left into the unused scrollbar gap.
 		setTransparent(true);
 		_drawSurface.clear(transColor);
+		// Nudge the first line down one pixel so its top padding matches the
+		// original's mini strip.
+		textTop += 1;
 		const UISliderRecord &sl = _header->slider;
 		if (_header->sliderEnabled && !sl.destRect.isEmpty()) {
-			textLeft = toPopupLocal(sl.destRect, sl.destUsesGameFrameOffset != 0).left;
+			// Align the glyphs to the scrollbar's left edge, dropping the
+			// line-start inset that is baked into the text surface (the mini
+			// strip reclaims the whole gutter).
+			textLeft = toPopupLocal(sl.destRect, sl.destUsesGameFrameOffset != 0).left - _tboxData->lineStartXCursor;
 		}
 	}
 
 	_drawSurface.blitFrom(_fullSurface,
 		Common::Rect(0, scrollY, _fullSurface.w, scrollY + visibleTextHeight),
-		Common::Point(textLeft, viewport.top));
+		Common::Point(textLeft, textTop));
 
 	if (_expanded) {
 		drawScrollbar(_scrollbarDragging ? kUIButtonPressed : (_scrollbarHovered ? kUIButtonHover : kUIButtonIdle));
