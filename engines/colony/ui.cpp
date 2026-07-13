@@ -599,10 +599,16 @@ void ColonyEngine::drawDashboardMac() {
 		}
 
 		// power.c: SetRect(&info, -2, -2, xSize-2, ySize-2); DrawPicture(inf, &info)
+		// — art pixel (2,2) sits at the window origin, so color blits at -2.
+		// The B&W path keeps its screenshot-calibrated +1 offset.
 		// In the original B&W game, GetPicture(-32752) returns null when !armor,
 		// so DrawPicture is a no-op — the window just shows white fill.
-		if (_pictPower)
-			drawPictAt(_pictPower, _powerRect.left + 1, _powerRect.top + 1);
+		if (_pictPower) {
+			if (macColor)
+				drawPictAt(_pictPower, _powerRect.left - 2, _powerRect.top - 2);
+			else
+				drawPictAt(_pictPower, _powerRect.left + 1, _powerRect.top + 1);
+		}
 
 		if (!macColor) {
 			// Match the B&W Window Manager shadow as pixels. The shadow is
@@ -630,10 +636,10 @@ void ColonyEngine::drawDashboardMac() {
 			// so draw the observed bar strips explicitly.
 			if (macColor) {
 				// Color power.c DrawInfo(): lft = 3 + info.left + i*23 with the
-				// shifted info rect's local origin at engine x = _powerRect.left + 3;
-				// strips are MoveTo(lft+1)..LineTo(lft+16) = 16px wide.
-				const int infoLeft = _powerRect.left + 3;
-				const int bot = _powerRect.bottom - 27; // power.c: bot = info.bottom - 27
+				// shifted info rect's local origin at engine x = _powerRect.left
+				// (PICT blitted at -2); strips MoveTo(lft+1)..LineTo(lft+16) = 16px.
+				const int infoLeft = _powerRect.left;
+				const int bot = _powerRect.bottom - 30; // power.c: bot = info.bottom - 27
 
 				for (int i = 0; i < 3; i++) {
 					const int lft = 3 + infoLeft + i * 23;
