@@ -442,6 +442,13 @@ void ConversationSound::execute() {
 }
 
 void ConversationSound::addConditionalDialogue() {
+	if (g_nancy->getGameType() >= kGameTypeNancy12) {
+		// TODO: Nancy12+ moved the per-character conditional dialogue out
+		// of the executable and into separate data files.
+		warning("Conditional dialogue for character %d is not implemented in Nancy12+", _conditionalResponseCharacterID);
+		return;
+	}
+
 	// We adjust the base label for Nancy 11 event flags, which can be
 	// larger than 1000.
 	int16 baseLabel = g_nancy->getGameType() >= kGameTypeNancy11 ? 1000 : 0;
@@ -512,6 +519,13 @@ void ConversationSound::addConditionalDialogue() {
 }
 
 void ConversationSound::addGoodbye() {
+	if (g_nancy->getGameType() >= kGameTypeNancy12) {
+		// TODO: Nancy12+ moved the per-character goodbye dialogue out
+		// of the executable and into separate data files.
+		warning("Goodbye dialogue for character %d is not implemented in Nancy12+", _goodbyeResponseCharacterID);
+		return;
+	}
+
 	// We adjust the base label for Nancy 11 event flags, which can be
 	// larger than 1000.
 	int16 baseLabel = g_nancy->getGameType() >= kGameTypeNancy11 ? 1000 : 0;
