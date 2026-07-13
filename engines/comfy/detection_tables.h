@@ -44,7 +44,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		1,
 		0
@@ -62,7 +62,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		3,
 		0
@@ -78,7 +78,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		2,
 		COMFY_SCRIPT_OPCODE_31
@@ -93,7 +93,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		2,
 		COMFY_SCRIPT_OPCODE_31 | COMFY_SCRIPT_OPCODE_33
@@ -108,7 +108,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		1,
 		0
@@ -123,7 +123,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		2,
 		0
@@ -139,7 +139,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		3,
 		0
@@ -155,7 +155,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		3,
 		0
@@ -171,7 +171,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		Common::UNK_LANG,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
+		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		3,
 		0
