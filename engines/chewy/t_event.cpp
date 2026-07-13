@@ -1283,6 +1283,8 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 	case 30000:
 	case 25:
 	case 34:
+	case 111:  // R12: use_linke_rohr()
+	case 114:  // R12: Chewy-as-Bork with terminal
 	case 252:
 	case 253:
 	case 259:
@@ -1324,7 +1326,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 				break;
 
 			case CHEWY_BORK:
-				aniNr = 68;
+				aniNr = CH_BORK_TALK;
 				break;
 
 			case CHEWY_PUMPKIN:
@@ -1718,7 +1720,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 					break;
 
 				case CHEWY_BORK:
-					aniNr = 68;
+					aniNr = CH_BORK_TALK;
 					break;
 
 				case CHEWY_PUMPKIN:

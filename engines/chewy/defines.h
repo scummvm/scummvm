@@ -271,6 +271,7 @@ enum SetupScreenMode {
 #define NI_STAND_R 40
 #define NI_TALK_R 41
 #define NI_BACK 42
+#define CH_BORK_TALK 68
 
 #define ROOM_0_3 3
 
