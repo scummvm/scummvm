@@ -114,7 +114,14 @@ public:
 	CompiledScript &ba0() { return _ba0; }
 
 private:
-	bool executeCallback(CompiledScript &script, uint32 callbackOffset, int &result);
+	bool executeCallback(CompiledScript &script, uint32 callbackOffset, int &result,
+		uint *nextFrame = nullptr);
+	bool advanceBa0ToFrame(uint nextFrame);
+	bool executeConcurrentFrame();
+	bool findFrameByLabel(const CompiledScript &script, const Common::String &label, uint &frameIndex) const;
+	bool isMilestoneFlagSet(uint32 flag) const;
+	bool isScenePlayed(const Common::String &scene) const;
+	void markScenePlayed(const Common::String &scene);
 	static Common::String argumentString(const ScriptArgument &argument);
 
 	RipperEngine *_engine;
@@ -123,8 +130,11 @@ private:
 	CompiledScript _concurrent;
 	Common::String _concurrentEntryLabel;
 	Common::Array<bool> _milestoneFlags;
+	Common::Array<Common::String> _playedScenes;
 	uint _activeBa0Frame;
 	bool _awaitingBa0Interaction;
+	bool _briefingArmed;
+	uint _briefingSelector;
 };
 
 } // End of namespace Ripper
