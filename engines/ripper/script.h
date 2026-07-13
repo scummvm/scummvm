@@ -60,9 +60,9 @@ struct ScriptFrame {
 
 struct ScriptInteraction {
 	Common::String label;
-	int16 x;
 	int16 y;
-	int16 controlId;
+	int16 width;
+	int16 height;
 	byte initialSelection;
 	uint32 conditionOffset;
 	uint32 callbackOffset;
@@ -108,6 +108,7 @@ public:
 
 	bool initialize(ResourceManager &resources);
 	bool runStartupPath();
+	bool serviceScene();
 
 	CompiledScript &startup() { return _startup; }
 	CompiledScript &ba0() { return _ba0; }
@@ -122,6 +123,8 @@ private:
 	CompiledScript _concurrent;
 	Common::String _concurrentEntryLabel;
 	Common::Array<bool> _milestoneFlags;
+	uint _activeBa0Frame;
+	bool _awaitingBa0Interaction;
 };
 
 } // End of namespace Ripper
