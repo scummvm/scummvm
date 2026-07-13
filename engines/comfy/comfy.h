@@ -131,12 +131,14 @@ private:
 		int16 y;
 		uint32 selector;
 		byte mode;
+		uint16 actorIndex;
 
 		DrawCommand() {
 			x = 0;
 			y = 0;
 			selector = 0;
 			mode = 0;
+			actorIndex = 0;
 		}
 	};
 
@@ -359,7 +361,8 @@ private:
 		kActorDirty = 0x44,
 		kActorCachedRect = 0x45,
 		kActorCachedVisible = 0x4F,
-		kActorCachedSprite = 0x50
+		kActorCachedSprite = 0x50,
+		kActorBlitHitMouse = 0x56
 	};
 
 	enum ScriptDispatchStatus {
@@ -652,6 +655,7 @@ private:
 	byte _animFrameHeader[COMFY_ANMFILE_HEADER_BYTES];
 	byte _animFrameCommandData[COMFY_ANMFRAME_COMMAND_DATA_BYTES];
 	uint32 _animPosition = 0;
+	uint32 _animSavedStreamPosition = 0;
 	uint32 _animSoundDataPosition = 0;
 	uint16 _animFrameCommandDataSize = 0;
 	uint16 _animFrameCommandArgument = 0;
@@ -672,6 +676,7 @@ private:
 	bool _animActive = false;
 	bool _animFrameReady = false;
 	bool _animUsesWaveVocCounter = false;
+	bool _animShutdownBeforeSceneStart = false;
 	uint16 _exprStack[COMFY_EXPR_STACK_CAPACITY];
 	uint16 _exprStackTop = 0;
 	bool _scriptFault = false;
@@ -775,6 +780,7 @@ private:
 	void spriteGetConvPtr(int16 spriteId);
 	bool spriteDecompressTile(SpriteResource &sprite, const byte *source, uint32 sourceSize);
 	void spriteBlitClipped(int16 spriteId, int16 x, int16 y);
+	bool spriteCoversPoint(int16 spriteId, int16 x, int16 y, int16 pointX, int16 pointY);
 	void spriteBlitRle(byte *destination, const byte *source, uint32 sourceSize);
 	bool sceneOpen(uint32 sceneEntryListOffset);
 	void sceneShutdown();
@@ -822,6 +828,7 @@ private:
 	void actorFreeTreePc(uint16 actorIndex);
 	void actorClearDirtyTree(uint16 actorIndex);
 	void actorSetAllVisible();
+	void actorClearFirstAnimFrameSelector();
 	uint16 actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible, byte active,
 		uint32 pc, int16 x, int16 y, int16 sprite, byte insertAsChild);
 	bool actorRunScript(uint16 actorIndex, bool &descendChildren);
@@ -830,7 +837,7 @@ private:
 	void actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool visible);
 	bool actorDrawLegacyInternal(uint16 actorIndex, int16 x, int16 y);
 	void actorDrawList(uint16 actorIndex, int16 x, int16 y, bool visible);
-	void renderQueueDrawCommand(int16 x, int16 y, uint32 selector, byte mode);
+	void renderQueueDrawCommand(int16 x, int16 y, uint32 selector, byte mode, uint16 actorIndex);
 	void renderFlushDrawCommands();
 	void renderFlushCachedDirtyRects();
 	uint16 scriptEvalKeyMask(uint32 pc, uint16 mode, VideoRectRecord &maskRecord,
@@ -866,6 +873,7 @@ private:
 	void animFrameWaitForVocCounter();
 	void animFrameSetReady(bool ready);
 	bool animFrameBlitAt(int16 x, int16 y);
+	bool animFrameCoversPoint(int16 x, int16 y, int16 pointX, int16 pointY);
 	void animFrameInvalidateRects(int16 x, int16 y, byte mode);
 	bool animFrameGetDimensions(uint16 &width, uint16 &height);
 	void animFrameClear();
@@ -914,6 +922,13 @@ private:
 	bool vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc);
 	void vocQueuePlayAll();
 	bool vocQueueIsIdle();
+	void wcomfy99SetWaveBalancePercent(uint16 value);
+	void wcomfy99SetWaveLeftPercent(uint16 value);
+	void wcomfy99SetWaveRightPercent(uint16 value);
+	void wcomfy99SetMixerVolumePercent(uint16 value);
+	void wcomfy99SetHostMediaRangePercent(uint16 value);
+	void wcomfy99SetHostMediaMode(byte mode);
+	void wcomfy99RestoreHostStateAfterSceneStart();
 	bool soundInit();
 	void soundShutdown();
 	void soundHdrReadFromXms(byte *destination, uint16 index, uint16 size);

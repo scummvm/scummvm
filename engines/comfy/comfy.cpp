@@ -460,7 +460,17 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 			if (_musicEventFlag)
 				vocQueuePlayAll();
 
-			if (vocQueueIsIdle() || _musicEnabled) {
+			bool processMusicEvents = true;
+			if (_engineVersion == 3 && animFrameIsActive() && !animFrameIsReady())
+				processMusicEvents = false;
+
+			if (!_isPanther && !vocQueueIsIdle() && !_musicEnabled)
+				processMusicEvents = false;
+
+			if (processMusicEvents) {
+				if (_engineVersion == 3)
+					_animShutdownBeforeSceneStart = false;
+
 				uint16 track = 1;
 				for (;;) {
 					_musicEventMask = (uint16)((int16)_musicEventMask >> 1);
@@ -477,7 +487,16 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 
 		keyBitClear(0x42);
 		if (_pendingScene) {
+			bool animFrameReady = animFrameIsReady();
+			if (_engineVersion == 3 && _animShutdownBeforeSceneStart)
+				animFrameShutdown(true);
+
 			sceneStartWithMusic(_pendingScene);
+			if (_engineVersion == 3 && !animFrameReady) {
+				animFrameShutdown(true);
+				actorClearFirstAnimFrameSelector();
+			}
+
 			if (!_musicEnabled)
 				vocQueuePlayAll();
 
@@ -485,7 +504,7 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 			frame = actorGetFrame();
 			if (frame)
 				backgroundTransitionFrames(frame, _backgroundFrame);
-		} else {
+		} else if (_engineVersion != 3) {
 			actorSetAllVisible();
 		}
 	}
