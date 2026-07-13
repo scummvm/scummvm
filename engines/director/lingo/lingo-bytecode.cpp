@@ -106,6 +106,7 @@ static const LingoV4Bytecode lingoV4[] = {
 	{ 0x64, LC::c_stackpeek, 	"b" },
 	{ 0x65, LC::c_stackdrop, 	"b" },
 	{ 0x66, LC::cb_v4theentitynamepush, "bN" },
+	{ 0x67, LC::cb_call,		"bN" }, // D5+ objcall
 
 	{ 0x81, LC::c_intpush,		"W" },
 	{ 0x82, LC::c_argcnoretpush,"w" },
@@ -141,6 +142,7 @@ static const LingoV4Bytecode lingoV4[] = {
 	{ 0xa4, LC::c_stackpeek, 	"w" },
 	{ 0xa5, LC::c_stackdrop, 	"w" },
 	{ 0xa6, LC::cb_v4theentitynamepush, "wN" },
+	{ 0xa7, LC::cb_call,		"wN" }, // D5+ objcall
 	{ 0, nullptr, nullptr }
 };
 
