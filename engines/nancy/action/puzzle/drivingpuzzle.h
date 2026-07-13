@@ -43,14 +43,18 @@ namespace Action {
 // destination scene id and the transition effect), type 0x14 zones are boundaries,
 // and the remaining subtypes are decorations and driving hazards.
 //
+// Controls: the car steers to face the cursor (distance is irrelevant); the left mouse
+// button drives forward (accelerating while held) and the right button reverses.
+//
 // TODO (need runtime tuning):
 //  - Fuel: burn the gas-gauge UI resource (index _frictionIndex) while driving; it
 //    currently stays at its seeded value. The DT_RESOURCE dependency that reads it is
 //    handled in ActionManager::processDependency.
-//  - Steering: approximated with the arrow keys (the game uses click-to-steer).
+//  - Hazards: potholes (type 0x17) should damage the car (more the faster it is hit,
+//    building to a flat tire) and mud puddles should be penalised; both are ignored.
 //  - Collision: only the type 0x14 boundary rects block the car (no per-pixel mask).
 //  - kChase: no second-path switch or "chaser left the viewport" loss branch.
-//  - Overlay / hazard zone subtypes (0x0d/0x0e/0x0f/0x05/0x03/0x17) are ignored.
+//  - The decorative overlay zone subtypes (0x0d and friends) are ignored.
 class DrivingPuzzle : public RenderActionRecord {
 public:
 	enum Variant { kDriving = 0, kChase };
@@ -122,9 +126,12 @@ protected:
 	// Plays one (randomly chosen) entry of a random-sound block.
 	void playSoundBlock(const RandomSoundBlock &block);
 
-	// Advances the car's heading/velocity/position for one frame from the current
-	// movement input.
-	void updatePhysics(const NancyInput &input);
+	// Advances the car's velocity/position for one frame. Throttle is +1 forward, -1
+	// reverse, 0 coast; the heading is set separately (steering toward the cursor).
+	void updatePhysics(int throttle);
+
+	// Top-left of the car-centered camera window into the map, clamped to its bounds.
+	Common::Point cameraOffset() const;
 
 	// Advances the chaser along its recorded path (kChase) and slows the player's
 	// speed cap the closer the chaser gets.

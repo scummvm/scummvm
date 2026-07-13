@@ -177,7 +177,7 @@ void DrivingPuzzle::playSoundBlock(const RandomSoundBlock &block) {
 	SoundDescription desc;
 	desc.name = name;
 	desc.channelID = block.channel;
-	desc.numLoops = block.numLoops > 0 ? block.numLoops : 1;
+	desc.numLoops = block.numLoops;	// 0 == loop forever (the engine ambience)
 	desc.volume = block.volume;
 
 	g_nancy->_sound->loadSound(desc);
@@ -235,15 +235,19 @@ uint DrivingPuzzle::frameIndexForHeading(double heading, uint frameCount) const 
 	return idx % frameCount;
 }
 
-void DrivingPuzzle::drawScene() {
-	int w = _drawSurface.w;
-	int h = _drawSurface.h;
-
+Common::Point DrivingPuzzle::cameraOffset() const {
 	// Car-centered camera, clamped to the map bounds.
-	int camX = CLIP<int>((int)(_carX + 0.5) - w / 2, 0, MAX(0, _image.w - w));
-	int camY = CLIP<int>((int)(_carY + 0.5) - h / 2, 0, MAX(0, _image.h - h));
+	int camX = CLIP<int>((int)(_carX + 0.5) - _drawSurface.w / 2, 0, MAX(0, _image.w - _drawSurface.w));
+	int camY = CLIP<int>((int)(_carY + 0.5) - _drawSurface.h / 2, 0, MAX(0, _image.h - _drawSurface.h));
+	return Common::Point(camX, camY);
+}
 
-	_drawSurface.blitFrom(_image, Common::Rect(camX, camY, camX + w, camY + h), Common::Point(0, 0));
+void DrivingPuzzle::drawScene() {
+	Common::Point cam = cameraOffset();
+	int camX = cam.x;
+	int camY = cam.y;
+
+	_drawSurface.blitFrom(_image, Common::Rect(camX, camY, camX + _drawSurface.w, camY + _drawSurface.h), Common::Point(0, 0));
 
 	// The chaser car (kChase), drawn under the player car.
 	if (_variant == kChase && !_frameRects2.empty() && _chaseCarImage.w > 0) {
@@ -300,29 +304,17 @@ void DrivingPuzzle::updateChaser() {
 	// (_chaseParams) and the "chaser left the viewport" loss branch are not simulated.
 }
 
-// Per-frame car physics. The acceleration divisors (1.0/0.4) and 0.02 timestep are
-// exact; the steering rate and velocity decay are playability stand-ins.
-void DrivingPuzzle::updatePhysics(const NancyInput &input) {
+// Per-frame car physics. Throttle is +1 (forward), -1 (reverse) or 0 (coast); the car
+// already faces the cursor (steering happens in handleInput). The acceleration divisors
+// (1.0/0.4) and 0.02 timestep are exact; the velocity decay is a playability stand-in.
+void DrivingPuzzle::updatePhysics(int throttle) {
 	const double timeStep = 0.02;
-	const double steerRate = 0.05;
 	const double decay = 0.98;
 	const double forwardCap = MAX(0.0, _speedCap);
 
-	if (input.input & NancyInput::kMoveLeft) {
-		_carHeading += steerRate;
-	}
-	if (input.input & NancyInput::kMoveRight) {
-		_carHeading -= steerRate;
-	}
-	if (_carHeading < 0.0) {
-		_carHeading += 2.0 * M_PI;
-	} else if (_carHeading >= 2.0 * M_PI) {
-		_carHeading -= 2.0 * M_PI;
-	}
-
-	if (input.input & NancyInput::kMoveUp) {
+	if (throttle > 0) {
 		_carVelocity += (forwardCap / 1.0) * timeStep;
-	} else if (input.input & NancyInput::kMoveDown) {
+	} else if (throttle < 0) {
 		_carVelocity -= ((double)_forwardSpeed / 0.4) * timeStep;
 	} else {
 		_carVelocity *= decay;
@@ -391,6 +383,7 @@ void DrivingPuzzle::execute() {
 	case kRun:
 		break;
 	case kActionTrigger:
+		g_nancy->_sound->stopSound(_soundBlocks[2].channel);	// stop the engine ambience
 		if (_triggeredDest >= 0 && _triggeredDest < (int)_destinations.size()) {
 			const DestinationZone &dest = _destinations[_triggeredDest];
 			if (dest.eventFlag != -1) {
@@ -411,12 +404,35 @@ void DrivingPuzzle::handleInput(NancyInput &input) {
 		return;
 	}
 
-	// Drive continuously so momentum, steering and the chaser animate every frame.
+	// Throttle with the mouse buttons: left drives forward, right reverses.
+	int throttle = 0;
+	if (input.input & NancyInput::kLeftMouseButtonHeld) {
+		throttle = 1;
+	} else if (input.input & NancyInput::kRightMouseButtonHeld) {
+		throttle = -1;
+	}
+
+	// Steer the car to face the cursor while driving (its distance is irrelevant).
+	if (throttle != 0) {
+		Common::Point cam = cameraOffset();
+		Common::Rect mouseVp = NancySceneState.getViewport().convertScreenToViewport(
+			Common::Rect(input.mousePos.x, input.mousePos.y, input.mousePos.x + 1, input.mousePos.y + 1));
+		double dx = (double)mouseVp.left - (_carX - cam.x);
+		double dy = (double)mouseVp.top - (_carY - cam.y);
+		if (dx != 0.0 || dy != 0.0) {
+			_carHeading = atan2(-dy, dx);
+			if (_carHeading < 0.0) {
+				_carHeading += 2.0 * M_PI;
+			}
+		}
+	}
+
+	// Drive continuously so momentum and the chaser animate every frame.
 	if (_variant == kChase) {
 		updateChaser();
 	}
 
-	updatePhysics(input);
+	updatePhysics(throttle);
 
 	if (_state == kRun) {
 		drawScene();
