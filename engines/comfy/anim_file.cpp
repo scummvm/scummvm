@@ -161,6 +161,11 @@ void ComfyEngine::animFileLoadFrame(uint16 animIndex, uint16 frameKey, uint16 ac
 	_animCurrentActorSceneHandle = actorSceneHandle;
 	_animCurrentFrameKey = frameKey;
 	_animUsesWaveVocCounter = READ_LE_UINT32(_animFrameHeader + 4) != 0;
+	if (_animUsesWaveVocCounter) {
+		vocQueuePlayAll();
+		vocQueuePush(0xFFFF, 0, 0);
+	}
+
 	_animVocClockHz = READ_LE_UINT16(_animFrameHeader + 8);
 	_animVocTargetCounter = 0xFFFF;
 	_animVocDeltaB = 0;
@@ -379,7 +384,7 @@ void ComfyEngine::animFileTickCommands() {
 		byte *header = &_animFileData[_animPosition];
 		uint16 command = READ_LE_UINT16(header);
 		uint32 rawCommandSize = _animPantherFormat ? READ_LE_UINT32(header + 2) : READ_LE_UINT16(header + 2);
-		uint32 commandSize = _animPantherFormat ? rawCommandSize & 0xFFFF : rawCommandSize;
+		uint32 commandSize = rawCommandSize;
 		debug(5, "COMFY ANM: index=%u position=%u command=0x%04X size=%u argument=%u",
 			_animCurrentIndex, _animPosition, command, commandSize,
 			_animPantherFormat ? READ_LE_UINT16(header + 6) : 0);
@@ -506,8 +511,6 @@ void ComfyEngine::animFrameSetReady(bool ready) {
 bool ComfyEngine::animFrameBlitAt(int16 x, int16 y) {
 	if (_animFrameBuffer.empty() || !_framebufPtr)
 		return false;
-	if (!_isPanther)
-		animFrameInvalidateRects(x, y, 1);
 
 	uint16 frameWidth = 0;
 	uint16 frameHeight = 0;
@@ -698,7 +701,7 @@ void ComfyEngine::animFileRebuildStorage(uint32 targetSize) {
 		byte *header = &_animFileData[position];
 		uint16 command = READ_LE_UINT16(header);
 		uint32 rawCommandSize = _animPantherFormat ? READ_LE_UINT32(header + 2) : READ_LE_UINT16(header + 2);
-		uint32 commandSize = _animPantherFormat ? rawCommandSize & 0xFFFF : rawCommandSize;
+		uint32 commandSize = rawCommandSize;
 		if (commandSize < headerSize || commandSize > _animFileData.size() - position)
 			error("Invalid command while rebuilding animation storage");
 

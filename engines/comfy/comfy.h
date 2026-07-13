@@ -602,7 +602,6 @@ private:
 	MidiChannelState _midiChannels[COMFY_MIDI_CHANNEL_COUNT];
 	uint32 _midiInstanceTrackBase = 1;
 	Common::Array<byte> _vocFileData;
-	Common::Array<byte> _soundPcm;
 	Common::Array<SoundCue> _soundCues;
 	SoundDecoderState *_soundDecoderState = nullptr;
 	Audio::SoundHandle _soundHandle;
@@ -639,6 +638,10 @@ private:
 	bool _soundCompressed = false;
 	bool _soundUsesAnimData = false;
 	bool _soundPaused = false;
+	bool _soundTimingPaused = false;
+	uint16 _soundVocBlockCount = 0;
+	uint32 _soundVocCounterSnapshot = 0;
+	int16 _soundVocTimingDelta = 0;
 	Common::Array<byte> _animFileData;
 	Common::Array<uint32> _animIndexTable;
 	Common::Array<byte> _animFrameBuffer;
@@ -914,9 +917,8 @@ private:
 	bool soundInit();
 	void soundShutdown();
 	void soundHdrReadFromXms(byte *destination, uint16 index, uint16 size);
+	void soundUpdateVocTiming();
 	void soundServiceWaveBuffers();
-	bool soundDecodeEntry(uint16 index);
-	bool soundDecodeCompressedEntry(uint32 dataOffset, uint32 dataSize);
 	bool soundLoadEntry(uint16 index);
 	bool soundPrepareDecoderState(uint16 index);
 	bool soundDecodePcmBlock(uint16 bufferIndex, byte *&buffer, uint32 &decodedSize);

@@ -27,38 +27,10 @@
 #include "common/debug.h"
 #include "common/endian.h"
 
+#define COMFY_ANM_COMMAND_END 0x2145
+#define COMFY_ANM_COMMAND_STORE_FRAME_BYTES 0x4356
+
 namespace Comfy {
-
-class SoundBitReader {
-public:
-	SoundBitReader(byte *data, uint32 size) : _data(data), _size(size), _bitPosition(0), _fault(false) {}
-
-	uint32 read(uint bits) {
-		uint32 value = 0;
-		for (uint bit = 0; bit < bits; bit++) {
-			uint32 bytePosition = _bitPosition >> 3;
-			if (bytePosition >= _size) {
-				_fault = true;
-				return value;
-			}
-
-			value |= (uint32)((_data[bytePosition] >> (_bitPosition & 7)) & 1) << bit;
-			_bitPosition++;
-		}
-
-		return value;
-	}
-
-	uint32 position() { return _bitPosition; }
-	void setPosition(uint32 position) { _bitPosition = position; }
-	bool fault() { return _fault; }
-
-private:
-	byte *_data;
-	uint32 _size;
-	uint32 _bitPosition;
-	bool _fault;
-};
 
 struct SoundDecoderState {
 public:
@@ -564,6 +536,10 @@ bool ComfyEngine::soundInit() {
 	_soundEventMaximum = 0;
 	_soundEventSubIndex = 0xFFFF;
 	_soundEventPreviousSubIndex = 0xFFFF;
+	_soundTimingPaused = false;
+	_soundVocBlockCount = 0;
+	_soundVocCounterSnapshot = 0;
+	_soundVocTimingDelta = 0;
 	for (uint i = 0; i < COMFY_VOC_QUEUE_CAPACITY; i++) {
 		_vocQueue[i] = VocQueueEntry();
 		_vocQueue1999[i] = VocQueueEntry1999();
@@ -582,19 +558,40 @@ void ComfyEngine::soundShutdown() {
 	_soundQueueStream = nullptr;
 	delete _soundDecoderState;
 	_soundDecoderState = nullptr;
-	_soundPcm.clear();
 	_soundCues.clear();
 	_vocFileData.clear();
 	_soundEntryCount = 0;
 	_soundNextCue = 0;
 	_soundPaused = false;
 	_soundUsesAnimData = false;
+	_soundTimingPaused = false;
+	_soundVocBlockCount = 0;
+	_soundVocCounterSnapshot = 0;
+	_soundVocTimingDelta = 0;
 	if (_midiPlyrDriver)
 		_midiPlyrDriver->setIncreaseVocCounter(0);
 }
 
 void ComfyEngine::soundHdrReadFromXms(byte *destination, uint16 index, uint16 size) {
 	objHdrReadFromXms(destination, _headerXmsSoundHeadersBase, size, index);
+}
+
+void ComfyEngine::soundUpdateVocTiming() {
+	if (_soundTimingPaused || !_midiPlyrDriver)
+		return;
+
+	uint32 timeFrac = 0;
+	uint16 blockNo = 0;
+	_midiPlyrDriver->vocSrGetCounters(timeFrac, blockNo);
+	if (!blockNo)
+		return;
+
+	_soundVocBlockCount += blockNo;
+	timeFrac -= _soundVocCounterSnapshot;
+	_midiPlyrDriver->vocSrResetBlockNo();
+	uint32 sampleRate = _soundSampleRate ? _soundSampleRate : 0x2B11;
+	uint32 expected = ((uint32)_soundVocBlockCount * 0x186A00) / sampleRate;
+	_soundVocTimingDelta = (int16)((uint16)expected - (uint16)timeFrac);
 }
 
 void ComfyEngine::soundServiceWaveBuffers() {
@@ -633,12 +630,49 @@ bool ComfyEngine::soundPrepareDecoderState(uint16 index) {
 	bool compressed = _soundCompressed;
 	if (index == 0xFFFF) {
 		uint32 storedSize = READ_LE_UINT32(_animFrameHeader + 4);
-		if (!storedSize || storedSize > _animFrameStorage.size())
+		if (!storedSize)
 			return false;
 
 		animationSoundData.resize(storedSize);
-		if (storedSize)
+		if (storedSize <= _animFrameStorage.size()) {
 			memcpy(&animationSoundData[0], &_animFrameStorage[0], storedSize);
+		} else {
+			// The original streams embedded ANM sound through the file object while VC
+			// chunks arrive. The host decoder owns its source buffer, so rebuild only
+			// the embedded sound stream without changing the animation command cursor.
+			if (_animCurrentIndex >= _animIndexTable.size())
+				return false;
+
+			uint32 copied = 0;
+			uint32 position = _animIndexTable[_animCurrentIndex] + COMFY_ANMFILE_HEADER_BYTES;
+			while (copied < storedSize) {
+				uint32 headerSize = _animPantherFormat ? 8 : 4;
+				if (position > _animFileData.size() || headerSize > _animFileData.size() - position)
+					return false;
+
+				byte *header = &_animFileData[position];
+				uint16 command = READ_LE_UINT16(header);
+				uint32 commandSize = _animPantherFormat ? READ_LE_UINT32(header + 2) : READ_LE_UINT16(header + 2);
+				if (commandSize < headerSize || commandSize > _animFileData.size() - position)
+					return false;
+
+				uint32 payloadSize = commandSize - headerSize;
+				if (command == COMFY_ANM_COMMAND_STORE_FRAME_BYTES) {
+					uint32 copySize = MIN<uint32>(payloadSize, storedSize - copied);
+					if (copySize)
+						memcpy(&animationSoundData[copied], header + headerSize, copySize);
+
+					copied += copySize;
+				} else if (command == COMFY_ANM_COMMAND_END) {
+					break;
+				}
+
+				position += commandSize;
+			}
+
+			if (copied < storedSize)
+				return false;
+		}
 
 		data = &animationSoundData[0];
 		fileSize = animationSoundData.size();
@@ -783,268 +817,6 @@ void ComfyEngine::soundUnpackState(byte *state) {
 		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 }
 
-bool ComfyEngine::soundDecodeEntry(uint16 index) {
-	_soundPcm.clear();
-	_soundCues.clear();
-	_soundNextCue = 0;
-	Common::Array<byte> animationSoundData;
-	byte *data = nullptr;
-	uint32 fileSize = 0;
-	uint32 dataSize = 0;
-	uint32 dataOffset = 0;
-	bool compressed = _soundCompressed;
-	if (index == 0xFFFF) {
-		uint32 storedSize = READ_LE_UINT32(_animFrameHeader + 4);
-		if (_animFrameStorage.size() < 2 || storedSize > _animFrameStorage.size() - 1)
-			return false;
-
-		animationSoundData.resize(storedSize + 1);
-		animationSoundData[0] = 1;
-		memcpy(&animationSoundData[1], &_animFrameStorage[1], storedSize);
-		data = &animationSoundData[0];
-		fileSize = animationSoundData.size();
-		dataSize = fileSize;
-		compressed = false;
-	} else {
-		byte header[8];
-		memset(header, 0, sizeof(header));
-		soundHdrReadFromXms(header, index, sizeof(header));
-		dataSize = READ_LE_UINT32(header);
-		dataOffset = READ_LE_UINT32(header + 4);
-		data = &_vocFileData[0];
-		fileSize = _vocFileData.size();
-	}
-
-	debug(5, "COMFY VOC: decode id=%u offset=%u size=%u compressed=%u fileSize=%u",
-		index, dataOffset, dataSize, compressed ? 1 : 0, fileSize);
-	if (dataOffset > fileSize || dataSize > fileSize - dataOffset) {
-		debug(5, "COMFY VOC: decode id=%u rejected invalid range", index);
-		return false;
-	}
-
-	if (compressed) {
-		bool decoded = soundDecodeCompressedEntry(dataOffset, dataSize);
-		debug(5, "COMFY VOC: decode id=%u result=%u pcm=%u rate=%u cues=%u",
-			index, decoded ? 1 : 0, (uint)_soundPcm.size(), _soundSampleRate, (uint)_soundCues.size());
-		return decoded;
-	}
-
-	uint32 pc = dataOffset;
-	uint32 end = dataOffset + dataSize;
-	byte sample = 0xA5;
-	_soundSampleRate = 0x2B11;
-	uint32 loopPc = 0;
-	int16 loopCount = 0;
-	uint32 commandCount = 0;
-	while (pc < end && commandCount++ < dataSize) {
-		byte command = data[pc++];
-		if (!command) {
-			SoundCue cue = {0, (uint32)_soundPcm.size(), (uint32)((_soundPcm.size() * 100) / _soundSampleRate)};
-			_soundCues.push_back(cue);
-			break;
-		}
-
-		if (3 > end - pc)
-			return false;
-
-		uint32 argument = (uint32)data[pc] | ((uint32)data[pc + 1] << 8) |
-			((uint32)data[pc + 2] << 16);
-		pc += 3;
-		if (command == 1 || command == 2) {
-			uint32 length = argument;
-			if (command == 1) {
-				if (length < 2 || 2 > end - pc)
-					return false;
-
-				sample = data[pc];
-				pc += 2;
-				length -= 2;
-				uint32 denominator = 0x100 - sample;
-				_soundSampleRate = denominator ? 0x0F4240 / denominator : 0x2B11;
-				if (_soundSampleRate > 0x2710 && _soundSampleRate < 0x2EE0) {
-					_soundSampleRate = 0x2B11;
-					sample = 0xA5;
-				} else if (_soundSampleRate > 0x4E20 && _soundSampleRate < 0x5DC0) {
-					_soundSampleRate = 0x5622;
-					sample = 0xD3;
-				}
-			}
-
-			if (length > end - pc)
-				return false;
-
-			uint32 oldSize = _soundPcm.size();
-			_soundPcm.resize(oldSize + length);
-			memcpy(&_soundPcm[oldSize], data + pc, length);
-			pc += length;
-		} else if (command == 3) {
-			if (3 > end - pc)
-				return false;
-
-			uint16 fill = READ_LE_UINT16(data + pc);
-			byte nextSample = data[pc + 2];
-			pc += 3;
-			if (nextSample != sample) {
-				uint32 oldRate = _soundSampleRate;
-				uint32 newRate = 0x0F4240 / (0x100 - nextSample);
-				fill = (uint16)(((uint32)fill * oldRate) / newRate);
-			}
-
-			uint32 oldSize = _soundPcm.size();
-			_soundPcm.resize(oldSize + fill);
-			memset(&_soundPcm[oldSize], 0x80, fill);
-		} else if (command == 4) {
-			if (2 > end - pc)
-				return false;
-
-			SoundCue cue = {READ_LE_UINT16(data + pc), (uint32)_soundPcm.size(),
-				(uint32)((_soundPcm.size() * 100) / _soundSampleRate)};
-			_soundCues.push_back(cue);
-			pc += 2;
-		} else if (command == 6) {
-			if (2 > end - pc)
-				return false;
-
-			loopCount = READ_LE_UINT16(data + pc);
-			pc += 2;
-			loopPc = pc;
-		} else if (command == 7) {
-			if (loopCount > 0 && loopPc) {
-				loopCount--;
-				pc = loopPc;
-			}
-		} else if (command == 99) {
-			if (pc >= end)
-				return false;
-
-			sample = data[pc++];
-		}
-	}
-
-	bool decoded = !_soundPcm.empty();
-	debug(5, "COMFY VOC: decode id=%u result=%u pcm=%u rate=%u cues=%u",
-		index, decoded ? 1 : 0, (uint)_soundPcm.size(), _soundSampleRate, (uint)_soundCues.size());
-	return decoded;
-}
-
-bool ComfyEngine::soundDecodeCompressedEntry(uint32 dataOffset, uint32 dataSize) {
-	if (dataSize < 5)
-		return false;
-
-	byte sample = _vocFileData[dataOffset + 4];
-	uint32 denominator = 0x100 - sample;
-	_soundSampleRate = denominator ? 0x0F4240 / denominator : 0x2B11;
-	if (_soundSampleRate > 0x2710 && _soundSampleRate < 0x2EE0) {
-		_soundSampleRate = 0x2B11;
-		sample = 0xA5;
-	} else if (_soundSampleRate > 0x4E20 && _soundSampleRate < 0x5DC0) {
-		_soundSampleRate = 0x5622;
-		sample = 0xD3;
-	}
-
-	SoundBitReader bits(&_vocFileData[dataOffset + 5], dataSize - 5);
-	uint32 loopPosition = 0;
-	int16 loopCount = 0;
-	byte width = 4;
-	byte predictorDistance = 1;
-	bool needInit = false;
-	uint32 commandCount = 0;
-	while (!bits.fault() && commandCount++ < dataSize * 8) {
-		uint16 command = bits.read(2);
-		uint32 argument = 0;
-		if (!command) {
-			uint16 subcommand = bits.read(2);
-			if (!subcommand)
-				command = 0;
-			else if (subcommand == 1) {
-				command = bits.read(8);
-				argument = bits.read(20);
-			} else if (subcommand == 2)
-				command = 7;
-			else
-				command = 99;
-		} else if (command == 1) {
-			argument = bits.read(20);
-		} else if (command == 2) {
-			command = 3;
-		} else {
-			command = 4;
-		}
-
-		if (command == 0) {
-			SoundCue cue = {0, (uint32)_soundPcm.size(), (uint32)((_soundPcm.size() * 100) / _soundSampleRate)};
-			_soundCues.push_back(cue);
-			break;
-		} else if (command == 1 || command == 2) {
-			uint32 length = argument;
-			if (command == 1)
-				needInit = true;
-
-			uint32 oldSize = _soundPcm.size();
-			_soundPcm.resize(oldSize + length);
-			uint32 output = oldSize;
-			if (needInit && length) {
-				needInit = false;
-				width = 4;
-				predictorDistance = 1;
-				_soundPcm[output++] = bits.read(8);
-				length--;
-			}
-
-			while (length && !bits.fault()) {
-				uint32 chunk = MIN<uint32>(length, 0x20);
-				if (bits.read(1))
-					width = bits.read(3);
-
-				if (width && bits.read(1))
-					predictorDistance = bits.read(7);
-
-				for (uint i = 0; i < chunk; i++) {
-					byte value;
-					if (!width) {
-						value = bits.read(8);
-					} else {
-						uint16 delta = bits.read(width);
-						if (!delta)
-							value = bits.read(8);
-						else {
-							byte predictor = output >= predictorDistance ? _soundPcm[output - predictorDistance] : 0x80;
-							value = predictor + (byte)(delta - (1 << (width - 1)));
-						}
-					}
-
-					_soundPcm[output++] = value;
-				}
-
-				length -= chunk;
-			}
-		} else if (command == 3) {
-			uint16 fill = bits.read(16);
-			uint32 oldSize = _soundPcm.size();
-			_soundPcm.resize(oldSize + fill);
-			memset(&_soundPcm[oldSize], 0x80, fill);
-		} else if (command == 4) {
-			uint16 mode = bits.read(2);
-			uint16 value = mode == 0 ? 1 : mode == 1 ? 2 : mode == 2 ? bits.read(8) : bits.read(16);
-			SoundCue cue = {value, (uint32)_soundPcm.size(),
-				(uint32)((_soundPcm.size() * 100) / _soundSampleRate)};
-			_soundCues.push_back(cue);
-		} else if (command == 6) {
-			loopCount = bits.read(16);
-			loopPosition = bits.position();
-		} else if (command == 7) {
-			if (loopCount > 0 && loopPosition) {
-				loopCount--;
-				bits.setPosition(loopPosition);
-			}
-		} else if (command == 99) {
-			sample = bits.read(8);
-		}
-	}
-
-	return !_soundPcm.empty() && !bits.fault();
-}
-
 void ComfyEngine::soundPlayEntry(uint16 index) {
 	debug(5, "COMFY VOC: play id=%u", index);
 	_mixer->stopHandle(_soundHandle);
@@ -1054,6 +826,11 @@ void ComfyEngine::soundPlayEntry(uint16 index) {
 		_soundEventSubIndex = 0;
 		return;
 	}
+
+	_soundTimingPaused = false;
+	_soundVocBlockCount = 0;
+	_soundVocCounterSnapshot = 0;
+	_soundVocTimingDelta = 0;
 
 	byte *buffers[2] = {nullptr, nullptr};
 	uint32 decodedSizes[2] = {0, 0};
@@ -1102,6 +879,8 @@ void ComfyEngine::soundAdvanceTick() {
 	if (_soundPaused)
 		return;
 
+	soundUpdateVocTiming();
+
 	if (!_mixer->isSoundHandleActive(_soundHandle)) {
 		_soundQueueStream = nullptr;
 		if (_soundDecoderState && _soundEventSubIndex != 0) {
@@ -1142,6 +921,7 @@ void ComfyEngine::soundAdvanceTick() {
 		_soundQueueStream = nullptr;
 		_soundCues.clear();
 		_soundNextCue = 0;
+		_soundVocTimingDelta = 0;
 		if (_midiPlyrDriver) {
 			_midiPlyrDriver->vocSrResetBlockNo();
 		}
