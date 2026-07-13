@@ -484,7 +484,39 @@ void ColonyEngine::destroyRobot(int num) {
 					_robotArray[gx][gy] = 0;
 				}
 			}
-			_sound->play(Sound::kExplode);
+			// Mac shoot.c: InvertRect(&Clip) strobe while the explosion sound
+			// plays (16 inversions with sound off). DOS SHOOT.C has no flash.
+			if (isMacRenderMode()) {
+				auto invertViewport = [this]() {
+					_gfx->setXorMode(true);
+					_gfx->fillRect(_screenR, 0xFFFFFF);
+					_gfx->setXorMode(false);
+					_gfx->copyToScreen();
+					_system->updateScreen();
+				};
+				const uint32 kFlipMs = 40;
+				int flips = 0;
+				if (!_soundOn) {
+					for (; flips < 16 && !shouldQuit(); flips++) {
+						invertViewport();
+						_system->delayMillis(kFlipMs);
+					}
+				} else {
+					_sound->play(Sound::kExplode);
+					const uint32 start = _system->getMillis();
+					while (!shouldQuit() && _sound->isPlaying() &&
+							_system->getMillis() - start < 1200) {
+						invertViewport();
+						_system->delayMillis(kFlipMs);
+						flips++;
+					}
+					_sound->stop();
+				}
+				if (flips & 1)
+					invertViewport();
+			} else {
+				_sound->play(Sound::kExplode);
+			}
 			copyOverflowObjectToSlot(num);
 			debugC(1, kColonyDebugCombat, "Robot %d destroyed!", num);
 		} else {
