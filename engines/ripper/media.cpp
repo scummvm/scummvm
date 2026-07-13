@@ -54,6 +54,7 @@ struct IavfSegment {
 	Common::Array<byte> setup;
 	Common::Array<uint32> frameSizes;
 	Common::Array<Common::Array<byte> > framePayloads;
+	Common::Array<uint32> frameAudioOffsets;
 	uint32 expectedFrames;
 	int x;
 	int y;
@@ -66,9 +67,10 @@ struct IavfMovie {
 	byte channels;
 	byte bitsPerSample;
 	Common::Array<byte> audio;
+	uint32 audioPayloadBytes;
 	Common::Array<IavfSegment> segments;
 
-	IavfMovie() : sampleRate(0), channels(0), bitsPerSample(0) {}
+	IavfMovie() : sampleRate(0), channels(0), bitsPerSample(0), audioPayloadBytes(0) {}
 };
 
 static bool readExact(Common::SeekableReadStream &stream, void *data, uint32 size) {
@@ -120,9 +122,12 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 	}
 
 	Common::HashMap<uint32, Common::Array<byte> > setupCache;
+	Common::HashMap<uint32, uint32> audioEndOffsets;
 	IavfSegment *activeSegment = nullptr;
 	bool reachedEnd = false;
+	bool hasPendingAudioOffset = false;
 	uint32 descriptorIndex = 0;
+	uint32 pendingAudioOffset = 0;
 	while (stream.pos() < stream.size() && !reachedEnd) {
 		IavfDescriptor descriptor;
 		if (!readDescriptor(stream, descriptor))
@@ -134,14 +139,36 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 
 		switch (descriptor.opcode) {
 		case 0x66: {
-			Common::Array<byte> audioChunk;
-			if (!readBlob(stream, descriptor.arg2, audioChunk))
+			if (descriptor.arg2 > descriptor.arg1 ||
+				(uint64)movie.audio.size() + descriptor.arg1 > 0xffffffffULL ||
+				(uint64)movie.audioPayloadBytes + descriptor.arg2 > 0xffffffffULL)
 				return false;
-			movie.audio.push_back(audioChunk);
+			const uint32 outputOffset = movie.audio.size();
+			movie.audio.resize(outputOffset + descriptor.arg1);
+			if (descriptor.arg2 != 0 && !readExact(stream, movie.audio.data() + outputOffset, descriptor.arg2))
+				return false;
+			if (descriptor.arg1 > descriptor.arg2) {
+				memset(movie.audio.data() + outputOffset + descriptor.arg2, 0,
+					descriptor.arg1 - descriptor.arg2);
+				debugC(3, kDebugVideo,
+					"Ripper: IAVF '%s' audio tag=%u payload=%u timeline=%u silence=%u",
+					name.c_str(), descriptor.arg0, descriptor.arg2, descriptor.arg1,
+					descriptor.arg1 - descriptor.arg2);
+			}
+			movie.audioPayloadBytes += descriptor.arg2;
+			audioEndOffsets[descriptor.arg0] = movie.audio.size();
 			break;
 		}
 
-		case 0x67:
+		case 0x67: {
+			Common::HashMap<uint32, uint32>::const_iterator audioOffset = audioEndOffsets.find(descriptor.arg0);
+			if (audioOffset == audioEndOffsets.end() || audioOffset->_value != descriptor.arg1)
+				return false;
+			pendingAudioOffset = audioOffset->_value;
+			hasPendingAudioOffset = true;
+			break;
+		}
+
 		case 0x68:
 		case 0x75:
 		case 0x77:
@@ -192,13 +219,16 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 
 		case 0x6c: {
 			if (!activeSegment || descriptor.arg1 != 0 || descriptor.arg2 != 0 ||
-				activeSegment->frameSizes.size() >= activeSegment->expectedFrames)
+				activeSegment->frameSizes.size() >= activeSegment->expectedFrames ||
+				!hasPendingAudioOffset)
 				return false;
 			Common::Array<byte> frame;
 			if (!readBlob(stream, descriptor.arg0, frame))
 				return false;
 			activeSegment->frameSizes.push_back(descriptor.arg0);
 			activeSegment->framePayloads.push_back(frame);
+			activeSegment->frameAudioOffsets.push_back(pendingAudioOffset);
+			hasPendingAudioOffset = false;
 			break;
 		}
 
@@ -216,11 +246,19 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 	if (!reachedEnd || movie.segments.empty())
 		return false;
 	for (uint i = 0; i < movie.segments.size(); ++i) {
-		if (movie.segments[i].frameSizes.size() != movie.segments[i].expectedFrames)
+		if (movie.segments[i].frameSizes.size() != movie.segments[i].expectedFrames ||
+			movie.segments[i].frameAudioOffsets.size() != movie.segments[i].expectedFrames)
 			return false;
+		for (uint frame = 0; frame < movie.segments[i].frameAudioOffsets.size(); ++frame) {
+			if (movie.segments[i].frameAudioOffsets[frame] > movie.audio.size())
+				return false;
+		}
 	}
-	debugC(1, kDebugVideo, "Ripper: parsed IAVF '%s' segments=%u audioBytes=%u",
-		name.c_str(), movie.segments.size(), movie.audio.size());
+	const uint32 audioByteRate = movie.sampleRate * movie.channels * movie.bitsPerSample / 8;
+	debugC(1, kDebugVideo,
+		"Ripper: parsed IAVF '%s' segments=%u audioPayloadBytes=%u audioTimelineBytes=%u audioMs=%u",
+		name.c_str(), movie.segments.size(), movie.audioPayloadBytes, movie.audio.size(),
+		audioByteRate != 0 ? (uint32)((uint64)movie.audio.size() * 1000 / audioByteRate) : 0);
 	return true;
 }
 
@@ -326,7 +364,8 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 }
 
 bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
-		bool allowEscSpace, int x, int y, Audio::SoundHandle *externalAudio, bool *stoppedByUser) {
+		bool allowEscSpace, int x, int y, Audio::SoundHandle *externalAudio, bool *stoppedByUser,
+		const Common::Array<uint32> *frameAudioOffsets, uint32 audioByteRate) {
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	Video::SmackerDecoder decoder;
@@ -340,6 +379,14 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		y = (g_system->getHeight() - decoder.getHeight()) / 2;
 	debugC(1, kDebugVideo, "Ripper: playing Smacker '%s' frames=%u size=%ux%u at %d,%d controls=%d",
 		name.c_str(), decoder.getFrameCount(), decoder.getWidth(), decoder.getHeight(), x, y, allowEscSpace);
+	const bool synchronizeToAudio = externalAudio && frameAudioOffsets &&
+		frameAudioOffsets->size() == decoder.getFrameCount() && audioByteRate != 0;
+	if (synchronizeToAudio) {
+		debugC(2, kDebugVideo, "Ripper: Smacker '%s' follows IAVF audio timeline %u..%u ms",
+			name.c_str(),
+			(uint32)((uint64)(*frameAudioOffsets)[0] * 1000 / audioByteRate),
+			(uint32)((uint64)frameAudioOffsets->back() * 1000 / audioByteRate));
+	}
 
 	bool paused = false;
 	bool completed = true;
@@ -351,17 +398,46 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				*stoppedByUser = true;
 			break;
 		}
-		if (!paused && decoder.needsUpdate()) {
+		uint32 audioElapsedMs = 0;
+		uint32 targetAudioMs = 0;
+		bool frameDue = !synchronizeToAudio && decoder.needsUpdate();
+		if (synchronizeToAudio && !paused) {
+			const uint32 nextFrame = decoder.getCurFrame() + 1;
+			targetAudioMs = (uint32)((uint64)(*frameAudioOffsets)[nextFrame] * 1000 / audioByteRate);
+			audioElapsedMs = _mixer->getSoundElapsedTime(*externalAudio);
+			frameDue = !_mixer->isSoundHandleActive(*externalAudio) || audioElapsedMs >= targetAudioMs;
+		}
+		if (!paused && frameDue) {
 			const Graphics::Surface *frame = decoder.decodeNextFrame();
 			if (frame) {
 				if (decoder.hasDirtyPalette())
 					g_system->getPaletteManager()->setPalette(decoder.getPalette(), 0, 256);
 				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 				g_system->updateScreen();
-				debugC(3, kDebugVideo, "Ripper: Smacker '%s' frame=%d", name.c_str(), decoder.getCurFrame());
+				if (synchronizeToAudio) {
+					debugC(3, kDebugVideo,
+						"Ripper: Smacker '%s' frame=%d audioTargetMs=%u audioElapsedMs=%u driftMs=%d",
+						name.c_str(), decoder.getCurFrame(), targetAudioMs, audioElapsedMs,
+						(int32)audioElapsedMs - (int32)targetAudioMs);
+				} else {
+					debugC(3, kDebugVideo, "Ripper: Smacker '%s' frame=%d", name.c_str(), decoder.getCurFrame());
+				}
 			}
 		}
-		g_system->delayMillis(MIN<uint32>(decoder.getTimeToNextFrame(), 10));
+		if (synchronizeToAudio) {
+			if (!paused && !frameDue)
+				g_system->delayMillis(MIN<uint32>(targetAudioMs - audioElapsedMs, 10));
+			else
+				g_system->delayMillis(1);
+		} else {
+			g_system->delayMillis(MIN<uint32>(decoder.getTimeToNextFrame(), 10));
+		}
+	}
+	if (synchronizeToAudio && completed) {
+		debugC(2, kDebugVideo, "Ripper: completed IAVF Smacker '%s' targetMs=%u audioElapsedMs=%u",
+			name.c_str(),
+			(uint32)((uint64)frameAudioOffsets->back() * 1000 / audioByteRate),
+			_mixer->getSoundElapsedTime(*externalAudio));
 	}
 	decoder.close();
 	return completed || (allowEscSpace && !_engine->shouldQuit());
@@ -389,12 +465,14 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 	}
 
 	bool result = true;
+	const uint32 audioByteRate = movie.sampleRate * movie.channels * movie.bitsPerSample / 8;
 	for (uint i = 0; i < movie.segments.size() && !_engine->shouldQuit(); ++i) {
 		Common::SeekableReadStream *smacker = rebuildSmackerStream(movie.segments[i]);
 		bool stoppedByUser = false;
 		if (!smacker || !playSmacker(smacker, Common::String::format("%s#%u", name.c_str(), i),
 			allowEscSpace, movie.segments[i].x, movie.segments[i].y,
-			audioActive ? &audioHandle : nullptr, &stoppedByUser)) {
+			audioActive ? &audioHandle : nullptr, &stoppedByUser,
+			audioActive ? &movie.segments[i].frameAudioOffsets : nullptr, audioByteRate)) {
 			result = false;
 			break;
 		}
