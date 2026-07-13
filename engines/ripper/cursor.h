@@ -18,46 +18,36 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RIPPER_RIPPER_H
-#define RIPPER_RIPPER_H
+#ifndef RIPPER_CURSOR_H
+#define RIPPER_CURSOR_H
 
-#include "engines/engine.h"
-
-struct ADGameDescription;
+#include "ripper/resources.h"
 
 namespace Ripper {
 
-class CursorManager;
-class InputManager;
-class MediaPlayer;
 class ResourceManager;
-class ScriptManager;
 
-class RipperEngine : public Engine {
+class CursorManager {
 public:
-	RipperEngine(OSystem *system, const ADGameDescription *gameDescription);
-	~RipperEngine() override;
+	CursorManager();
+	~CursorManager();
 
-	Common::Error run() override;
-	bool hasFeature(EngineFeature feature) const override;
-	CursorManager *getCursor() const { return _cursor; }
-	InputManager *getInput() const { return _input; }
-	MediaPlayer *getMedia() const { return _media; }
-	ResourceManager *getResources() const { return _resources; }
-	ScriptManager *getScripts() const { return _scripts; }
+	bool initialize(ResourceManager &resources);
+	void update(uint cursorIndex);
+	void setVisible(bool visible);
 
 private:
-	void registerSearchPaths();
-	void pumpEvents();
+	void applyFrame();
+	void getHotspot(const BitmapAssetFrame &frame, int &x, int &y) const;
 
-	const ADGameDescription *const _gameDescription;
-	CursorManager *_cursor;
-	InputManager *_input;
-	MediaPlayer *_media;
-	ResourceManager *_resources;
-	ScriptManager *_scripts;
+	BitmapAssetSequence _assets[24];
+	uint _cursorIndex;
+	uint _frameIndex;
+	uint32 _nextFrameMillis;
+	bool _initialized;
+	bool _visible;
 };
 
 } // End of namespace Ripper
 
-#endif // RIPPER_RIPPER_H
+#endif // RIPPER_CURSOR_H

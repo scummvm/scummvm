@@ -1,6 +1,7 @@
 MODULE := engines/ripper
 
 MODULE_OBJS := \
+	cursor.o \
 	input.o \
 	media.o \
 	metaengine.o \

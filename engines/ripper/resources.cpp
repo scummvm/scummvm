@@ -21,15 +21,240 @@
 #include "ripper/resources.h"
 
 #include "common/debug.h"
+#include "common/endian.h"
 #include "common/file.h"
 #include "common/formats/ini-file.h"
+#include "common/memstream.h"
+#include "common/ptr.h"
+#include "common/stream.h"
 #include "common/substream.h"
+#include "graphics/surface.h"
+#include "image/iff.h"
 
 #include "ripper/detection.h"
 
 namespace Ripper {
 
 static const uint32 kModernLibraryMagic = 0x4c494232;
+static const uint32 kCustomBitmapHeaderSize = 0x1c;
+static const uint32 kCustomBitmapExtendedHeaderSize = 0xc;
+
+static bool readStream(Common::SeekableReadStream &stream, Common::Array<byte> &data) {
+	if (stream.size() < 0 || (uint64)stream.size() > 0xffffffffULL)
+		return false;
+
+	data.resize((uint32)stream.size());
+	return data.empty() || stream.read(data.data(), data.size()) == data.size();
+}
+
+static bool readPackedByte(const Common::Array<byte> &payload, uint32 &offset, byte shift,
+		byte &value) {
+	if (offset >= payload.size() || (shift != 0 && offset + 1 >= payload.size()))
+		return false;
+
+	if (shift == 0)
+		value = payload[offset];
+	else
+		value = (payload[offset] >> 4) | (payload[offset + 1] << 4);
+	++offset;
+	return true;
+}
+
+static bool expandCustomBitmap(const Common::Array<byte> &payload, const byte *deltaTable,
+		uint colorCount, uint32 rawTailSize, byte compressionMode, const byte *colorMap,
+		Common::Array<byte> &pixels) {
+	if (payload.empty() || rawTailSize > pixels.size())
+		return false;
+
+	uint32 sourceOffset = 0;
+	uint32 outputOffset = 0;
+	byte nibbleShift = 0;
+	byte previousColor = payload[sourceOffset++];
+	const uint32 compressedPixelCount = pixels.size() - rawTailSize;
+	if (compressedPixelCount != 0)
+		pixels[outputOffset++] = colorMap[previousColor];
+
+	const bool repeatCodeEnabled = compressionMode == 2 || compressionMode == 6;
+	while (outputOffset < compressedPixelCount) {
+		if (sourceOffset >= payload.size())
+			return false;
+		const byte code = (payload[sourceOffset] >> nibbleShift) & 0xf;
+		nibbleShift ^= 4;
+		if (nibbleShift == 0)
+			++sourceOffset;
+
+		if (code == 0xf) {
+			if (!readPackedByte(payload, sourceOffset, nibbleShift, previousColor))
+				return false;
+			pixels[outputOffset++] = colorMap[previousColor];
+		} else if (code == 0xe && repeatCodeEnabled) {
+			byte repeatByte = 0;
+			if (!readPackedByte(payload, sourceOffset, nibbleShift, repeatByte))
+				return false;
+			uint32 repeatCount = repeatByte;
+			if (repeatByte == 0xff) {
+				byte high = 0;
+				byte low = 0;
+				if (!readPackedByte(payload, sourceOffset, nibbleShift, high) ||
+					!readPackedByte(payload, sourceOffset, nibbleShift, low))
+					return false;
+				repeatCount = ((uint32)high << 8) | low;
+			}
+			repeatCount += 2;
+			if (repeatCount > compressedPixelCount - outputOffset)
+				return false;
+			memset(pixels.data() + outputOffset, pixels[outputOffset - 1], repeatCount);
+			outputOffset += repeatCount;
+		} else {
+			uint color = previousColor + deltaTable[code];
+			if (color >= colorCount)
+				color -= colorCount;
+			previousColor = (byte)color;
+			pixels[outputOffset++] = colorMap[previousColor];
+		}
+	}
+
+	if (rawTailSize > payload.size() - sourceOffset)
+		return false;
+	for (uint32 i = 0; i < rawTailSize; ++i)
+		pixels[outputOffset++] = colorMap[payload[sourceOffset++]];
+	return outputOffset == pixels.size();
+}
+
+static bool decodeCustomBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame &frame) {
+	// DecodeCustomBitmapAsset at 0x53f60 reads this 0x1c-byte header and optional GCMS extension.
+	byte header[kCustomBitmapHeaderSize];
+	if (stream.read(header, sizeof(header)) != sizeof(header))
+		return false;
+
+	const byte flags = header[0];
+	const uint colorCount = (uint)header[1] + 1;
+	const uint paletteColorCount = (uint)header[2] + 1;
+	const byte transparentColor = header[3];
+	const byte compressionMode = header[4];
+	uint32 rawTailSize = READ_LE_UINT16(header + 0x14);
+	uint32 payloadSize = READ_LE_UINT16(header + 0x1a);
+	if (compressionMode >= 4 && compressionMode <= 6) {
+		byte extendedHeader[kCustomBitmapExtendedHeaderSize];
+		if (stream.read(extendedHeader, sizeof(extendedHeader)) != sizeof(extendedHeader) ||
+			READ_BE_UINT32(extendedHeader) != MKTAG('G', 'C', 'M', 'S'))
+			return false;
+		rawTailSize = READ_LE_UINT32(extendedHeader + 4);
+		payloadSize = READ_LE_UINT32(extendedHeader + 8);
+	} else if (compressionMode != 1 && compressionMode != 2) {
+		return false;
+	}
+
+	frame.width = READ_LE_UINT16(header + 0x16);
+	frame.height = READ_LE_UINT16(header + 0x18);
+	const uint32 pixelCount = (uint32)frame.width * frame.height;
+	if (frame.width == 0 || frame.height == 0 || rawTailSize > pixelCount ||
+		payloadSize == 0 || payloadSize > (uint64)stream.size() - stream.pos())
+		return false;
+
+	Common::Array<byte> payload;
+	payload.resize(payloadSize);
+	if (stream.read(payload.data(), payload.size()) != payload.size())
+		return false;
+
+	frame.palette.clear();
+	if ((flags & 1) != 0) {
+		const uint32 paletteSize = paletteColorCount * 3;
+		frame.palette.resize(paletteSize);
+		if (stream.read(frame.palette.data(), paletteSize) != paletteSize)
+			return false;
+		for (uint i = 0; i < frame.palette.size(); ++i)
+			frame.palette[i] = (frame.palette[i] << 2) | (frame.palette[i] >> 4);
+	}
+
+	byte colorMap[256];
+	for (uint i = 0; i < ARRAYSIZE(colorMap); ++i)
+		colorMap[i] = i;
+	if ((flags & 2) != 0 && stream.read(colorMap, colorCount) != colorCount)
+		return false;
+
+	frame.transparentColor = colorMap[transparentColor];
+	frame.pixels.resize(pixelCount);
+	// ExpandCustomBitmapCompressedPixels at 0x53de0 consumes low nibbles before high nibbles.
+	return expandCustomBitmap(payload, header + 5, colorCount, rawTailSize, compressionMode,
+		colorMap, frame.pixels);
+}
+
+static bool decodeIffBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame &frame) {
+	Image::IFFDecoder decoder;
+	if (!decoder.loadStream(stream))
+		return false;
+
+	const Graphics::Surface *surface = decoder.getSurface();
+	if (!surface || surface->format.bytesPerPixel != 1 || surface->w <= 0 || surface->h <= 0)
+		return false;
+
+	frame.width = surface->w;
+	frame.height = surface->h;
+	frame.transparentColor = decoder.getHeader()->transparentColor & 0xff;
+	frame.pixels.resize((uint32)frame.width * frame.height);
+	for (uint y = 0; y < frame.height; ++y)
+		memcpy(frame.pixels.data() + y * frame.width, surface->getBasePtr(0, y), frame.width);
+
+	const Graphics::Palette &palette = decoder.getPalette();
+	frame.palette.resize(palette.size() * 3);
+	if (!frame.palette.empty())
+		memcpy(frame.palette.data(), palette.data(), frame.palette.size());
+	return true;
+}
+
+static bool decodeBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame &frame) {
+	byte magic[4];
+	if (stream.read(magic, sizeof(magic)) != sizeof(magic))
+		return false;
+	stream.seek(0);
+	if (READ_BE_UINT32(magic) == MKTAG('F', 'O', 'R', 'M'))
+		return decodeIffBitmap(stream, frame);
+	return decodeCustomBitmap(stream, frame);
+}
+
+static bool decodeBitmapSequence(Common::SeekableReadStream &stream,
+		BitmapAssetSequence &sequence) {
+	Common::Array<byte> data;
+	if (!readStream(stream, data) || data.size() < 4)
+		return false;
+
+	sequence.frames.clear();
+	if (READ_BE_UINT32(data.data()) == MKTAG('F', 'O', 'R', 'M')) {
+		Common::MemoryReadStream bitmapStream(data.data(), data.size(), DisposeAfterUse::NO);
+		BitmapAssetFrame frame;
+		if (!decodeIffBitmap(bitmapStream, frame))
+			return false;
+		sequence.frames.push_back(Common::move(frame));
+		return true;
+	}
+
+	if (data.size() < 6)
+		return false;
+	const uint entryCount = READ_LE_UINT16(data.data());
+	const uint32 directoryOffset = READ_LE_UINT32(data.data() + 2);
+	if (entryCount == 0 || directoryOffset < 6 ||
+		(uint64)directoryOffset + (uint64)entryCount * 12 > data.size())
+		return false;
+
+	for (uint i = 0; i < entryCount; ++i) {
+		const uint32 entryOffset = READ_LE_UINT32(data.data() + directoryOffset + i * 12);
+		const uint32 endOffset = i + 1 < entryCount ?
+			READ_LE_UINT32(data.data() + directoryOffset + (i + 1) * 12) : directoryOffset;
+		if (entryOffset < 6 || endOffset <= entryOffset || endOffset > directoryOffset)
+			return false;
+
+		Common::MemoryReadStream bitmapStream(data.data() + entryOffset,
+			endOffset - entryOffset, DisposeAfterUse::NO);
+		BitmapAssetFrame frame;
+		if (!decodeBitmap(bitmapStream, frame))
+			return false;
+		if (frame.palette.empty() && !sequence.frames.empty())
+			frame.palette = sequence.frames.front().palette;
+		sequence.frames.push_back(Common::move(frame));
+	}
+	return true;
+}
 
 AssetLibrary::AssetLibrary() : _modernFormat(false) {
 }
@@ -221,6 +446,20 @@ bool ResourceManager::initialize() {
 	debugC(2, kDebugResources, "Ripper: RIPPER.INI script='%s' interface='%s'",
 		scriptLibrary.c_str(), interfaceLibrary.c_str());
 	return _scripts.open(Common::Path(scriptLibrary)) && _interface.open(Common::Path(interfaceLibrary));
+}
+
+bool ResourceManager::loadInterfaceBitmapSequence(const Common::String &memberName,
+		BitmapAssetSequence &sequence) const {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		_interface.createReadStreamForMember(memberName));
+	if (!stream || !decodeBitmapSequence(*stream, sequence)) {
+		warning("Ripper: could not decode interface bitmap sequence '%s'", memberName.c_str());
+		return false;
+	}
+
+	debugC(2, kDebugResources, "Ripper: decoded interface bitmap sequence '%s' frames=%u",
+		memberName.c_str(), sequence.frames.size());
+	return true;
 }
 
 } // End of namespace Ripper
