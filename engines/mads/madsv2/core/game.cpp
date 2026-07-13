@@ -1165,8 +1165,8 @@ void game_control() {
 			game.going = false;
 			force_chain = true;
 			game_restore_flag = false;
-
-			error_report(ERROR_COPY_PROTECTION, SEVERE, MODULE_LOCK, 0, 0);
+			return;
+			
 		} else if (result == COPY_ESCAPE) {
 			game.going = false;
 			force_chain = true;
