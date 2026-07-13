@@ -783,7 +783,7 @@ void RootStage::deleteChildrenFromContextId(uint contextId) {
 void RootStage::setMousePosition(int16 x, int16 y) {
 	x += _boundingBox.left;
 	y += _boundingBox.top;
-	warning("[%s] %s: STUB: (%d, %d)", debugName(), __func__, x, y);
+	g_system->warpMouse(x, y);
 }
 
 StageDirector::StageDirector() {

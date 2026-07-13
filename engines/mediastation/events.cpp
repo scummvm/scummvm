@@ -238,6 +238,15 @@ void MediaStationEngine::dispatchOneSystemEvent(const Common::Event &event) {
 	}
 }
 
+void MediaStationEngine::generateMouseUpdateEvent() {
+	queueMouseEvent(kMouseEnterExitEvent, g_system->getEventManager()->getMousePos());
+}
+
+void MediaStationEngine::queueMouseEvent(EventType type, const Common::Point &point) {
+	MouseEvent mouseEvent(type, point);
+	_eventLoop->queueEvent(mouseEvent);
+}
+
 PreDisplaySyncState EventLoop::preDisplaySync() {
 	PreDisplaySyncState state = kPreDisplaySyncNoScreenUpdateRequested;
 	for (auto it = _preDisplaySyncClients.begin(); it != _preDisplaySyncClients.end(); ++it) {

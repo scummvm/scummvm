@@ -87,6 +87,7 @@ public:
 	const char *getAppName() const;
 	bool hasFeature(EngineFeature f) const override;
 	void dispatchOneSystemEvent(const Common::Event &event);
+	void generateMouseUpdateEvent();
 
 	VideoDisplayManager *getDisplayManager() { return _displayManager; }
 	DisplayUpdateManager *getDisplayUpdateManager() { return _displayUpdateManager; }
