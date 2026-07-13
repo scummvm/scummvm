@@ -684,7 +684,8 @@ void WetEngine::drawKoreanChar(uint16 chr, int &curx, int y, uint32 color) {
 	int mididx = mididxlut[mid];
 	int finidx = fin >= 0x12 ? fin - 2 : fin - 1;
 
-	if (initidx < 0 || initidx > 19 || mididx < 0 || mididx > 21 || finidx < 0 || finidx >= 27)
+	// finidx 0 is "no final", 1..27 the final consonants: ㅎ is 27, so 28 is the bound
+	if (initidx < 0 || initidx > 19 || mididx < 0 || mididx > 21 || finidx < 0 || finidx >= 28)
 		return;
 
 	const int mid_to_init_lut[32] = {

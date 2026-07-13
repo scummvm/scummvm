@@ -400,6 +400,18 @@ bool WetEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting *
 }
 
 
+// Fixed columns instead of the original "%-20s = ...": that padding counts
+// bytes, so a Korean label (2 bytes, 9px per glyph) drifts the '=' column.
+// Korean labels use the 9px G9A font, spaces included; values stay scifi08.
+void WetEngine::drawStatLine(const Common::String &name, const Common::String &value, int y, uint32 color) {
+	const int labelX = 60;
+	const int valueX = labelX + 21 * 7;
+	const bool korean = (_language == Common::KO_KOR);
+
+	drawString(korean ? "g9a.syf" : "scifi08.fgx", getLocalizedString(name), labelX, korean ? y - 1 : y, 0, color);
+	drawString("scifi08.fgx", value, valueX, y, 0, color);
+}
+
 void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 	_checkpoint = _currentLevel;
 
@@ -436,15 +448,22 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 		Common::Event event;
 		while (!shouldQuit() && !skip) {
 
+			const Common::String pts = getLocalizedString("points");
+
 			drawImage(*frame, 0, 0, false);
-			drawString("scifi08.fgx", Common::String::format("Lives : %d", _lives), 36, 2, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "SHOTS FIRED", _stats.shootsFired), 60, 46, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "ENEMY TARGETS", _stats.enemyTargets), 60, 56, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "TARGETS DESTROYED", _stats.targetsDestroyed), 60, 66, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "TARGETS MISSED", _stats.targetsMissed), 60, 76, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %5d %%", "KILL RATIO", killRatio()), 60, 86, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %5d %%", "ACCURACY", accuracyRatio()), 60, 96, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %5d %%", "ENERGY", _health), 60, 106, 0, c);
+			if (_language == Common::KO_KOR) {
+				drawString("g9a.syf", getLocalizedString("lives"), 36, 1, 0, c);
+				drawString("scifi08.fgx", Common::String::format(": %d", _lives), 36 + 3 * 9, 2, 0, c);
+			} else {
+				drawString("scifi08.fgx", Common::String::format("%s : %d", getLocalizedString("lives").c_str(), _lives), 36, 2, 0, c);
+			}
+			drawStatLine("shotsFired", Common::String::format("= %7d", _stats.shootsFired), 46, c);
+			drawStatLine("enemyTargets", Common::String::format("= %7d", _stats.enemyTargets), 56, c);
+			drawStatLine("targetsDestroyed", Common::String::format("= %7d", _stats.targetsDestroyed), 66, c);
+			drawStatLine("targetsMissed", Common::String::format("= %7d", _stats.targetsMissed), 76, c);
+			drawStatLine("killRatio", Common::String::format("= %5d %%", killRatio()), 86, c);
+			drawStatLine("accuracy", Common::String::format("= %5d %%", accuracyRatio()), 96, c);
+			drawStatLine("health", Common::String::format("= %5d %%", _health), 106, c);
 
 			while (g_system->getEventManager()->pollEvent(event)) {
 				// Events
@@ -457,8 +476,8 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 				case Common::EVENT_LBUTTONDOWN:
 				case Common::EVENT_KEYDOWN:
 					bonusCounter = _bonus;
-					drawString("scifi08.fgx", Common::String::format("%-20s = %3d pts", "BONUS", _bonus), 60, 116, 0, c);
-					drawString("scifi08.fgx", Common::String::format("%-20s = %3d pts", "SCORE", _score), 60, 126, 0, c);
+					drawStatLine("bonus", Common::String::format("= %3d %s", _bonus, pts.c_str()), 116, c);
+					drawStatLine("score", Common::String::format("= %3d %s", _score, pts.c_str()), 126, c);
 					skip = true;
 					break;
 				default:
@@ -469,13 +488,13 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 			if (bonusCounter < _bonus) {
 				bonusCounter++;
 				scoreCounter++;
-				drawString("scifi08.fgx", Common::String::format("%-20s = %3d pts", "BONUS", bonusCounter), 60, 116, 0, c);
-				drawString("scifi08.fgx", Common::String::format("%-20s = %3d pts", "SCORE", scoreCounter), 60, 126, 0, c);
+				drawStatLine("bonus", Common::String::format("= %3d %s", bonusCounter, pts.c_str()), 116, c);
+				drawStatLine("score", Common::String::format("= %3d %s", scoreCounter, pts.c_str()), 126, c);
 			}
 
 			extraLife |= checkScoreMilestones(scoreCounter); // This increase the number of lives, if necessary
 			if (extraLife) {
-				drawString("scifi08.fgx", "EXTRA LIFE", 164, 140, 0, kHypnoColorRed);
+				drawString("scifi08.fgx", getLocalizedString("extraLife"), 164, 140, 0, kHypnoColorRed);
 			}
 
 			drawScreen();

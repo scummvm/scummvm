@@ -378,7 +378,7 @@ Common::String WetEngine::getLocalizedString(const Common::String &name) {
 		case Common::ES_ESP:
 			return "ENERGIA";
 		case Common::KO_KOR:
-			return "\xb5\x41\x90\xe1\xbb\xa1"; // 체력 (health)
+			return "\xb5\x41\x90\xe1\xbb\xa1"; // 에너지 (energy)
 		default:
 			return "ENERGY";
 		}
@@ -409,7 +409,7 @@ Common::String WetEngine::getLocalizedString(const Common::String &name) {
 		case Common::ES_ESP:
 			return "BLANCO FIJADO";
 		case Common::KO_KOR:
-			return "\xa1\xa2\xce\x61\x20\xbb\xe1\xaf\x81"; // 목표물포착 (target acquired)
+			return "\xa1\xa2\xce\x61\xa2\x89\x20\xcd\xa1\xc0\x62"; // 목표물 포착 (target acquired)
 		default:
 			return "TARGET ACQUIRED";
 		}
@@ -420,9 +420,74 @@ Common::String WetEngine::getLocalizedString(const Common::String &name) {
 		case Common::ES_ESP:
 			return "ELIGE DIRECCION";
 		case Common::KO_KOR:
-			return "\xa4\x77\xd0\xb7\xac\xe5\x00\x00\xc8\x82"; // 전향선택 (choose direction)
+			return "\xa4\x77\xd0\xb7\x20\xac\xe5\xc8\x82"; // 방향 선택 (choose direction)
 		default:
 			return "CHOOSE DIRECTION";
+		}
+	} else if (name == "shotsFired") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xa2\x81\x8b\xa1\x20\xa4\x69\xac\x61"; // 무기 발사
+		default:
+			return "SHOTS FIRED";
+		}
+	} else if (name == "enemyTargets") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xb8\xe2\xb7\x81\x20\xa1\xa2\xce\x61\xa2\x89"; // 적의 목표물
+		default:
+			return "ENEMY TARGETS";
+		}
+	} else if (name == "targetsDestroyed") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xa1\xa2\xce\x61\xa2\x89\x20\xb9\x41\x88\xe1"; // 목표물 제거
+		default:
+			return "TARGETS DESTROYED";
+		}
+	} else if (name == "targetsMissed") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\x91\xbd\xc3\xa5\x20\xa1\xa2\xce\x61\xa2\x89"; // 놓친 목표물
+		default:
+			return "TARGETS MISSED";
+		}
+	} else if (name == "killRatio") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xa1\x77\xba\x97\xb7\x49"; // 명중율
+		default:
+			return "KILL RATIO";
+		}
+	} else if (name == "accuracy") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xb8\xf7\xd1\xc2\x95\xa1"; // 정확도
+		default:
+			return "ACCURACY";
+		}
+	} else if (name == "bonus") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xc2\x81\x88\x61\xb8\xf1\xae\x81"; // 추가점수
+		default:
+			return "BONUS";
+		}
+	} else if (name == "points") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xb8\xf1"; // 점
+		default:
+			return "pts";
+		}
+	} else if (name == "extraLife") {
+		return "EXTRA LIFE";
+	} else if (name == "lives") {
+		switch (_language) {
+		case Common::KO_KOR:
+			return "\xac\x97\x20\xa1\x77"; // 생 명
+		default:
+			return "Lives";
 		}
 	} else
 		error("Invalid string name to localize: %s", name.c_str());

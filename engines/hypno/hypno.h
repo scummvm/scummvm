@@ -527,6 +527,7 @@ private:
 	uint16 getNextChar(const Common::String &str, uint32 &c);
 	void drawGlyph(const Common::BitArray &font, int x, int y, int bitoffset, int width, int height, int pitch, uint32 color, bool invert);
 	void drawKoreanChar(uint16 chr, int &curx, int y, uint32 color);
+	void drawStatLine(const Common::String &name, const Common::String &value, int y, uint32 color);
 	void runMainMenu(Code *code);
 	void runLevelMenu(Code *code);
 	void runCheckLives(Code *code);
