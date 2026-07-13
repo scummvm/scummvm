@@ -31,6 +31,7 @@
 #include "common/memstream.h"
 #include "common/ptr.h"
 #include "common/system.h"
+#include "graphics/blit.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
 #include "video/smk_decoder.h"
@@ -69,8 +70,12 @@ struct IavfMovie {
 	Common::Array<byte> audio;
 	uint32 audioPayloadBytes;
 	Common::Array<IavfSegment> segments;
+	uint presentationWidth;
+	uint presentationHeight;
+	uint displayScale;
 
-	IavfMovie() : sampleRate(0), channels(0), bitsPerSample(0), audioPayloadBytes(0) {}
+	IavfMovie() : sampleRate(0), channels(0), bitsPerSample(0), audioPayloadBytes(0),
+		presentationWidth(0), presentationHeight(0), displayScale(1) {}
 };
 
 static bool readExact(Common::SeekableReadStream &stream, void *data, uint32 size) {
@@ -106,7 +111,7 @@ static bool readDescriptor(Common::SeekableReadStream &stream, IavfDescriptor &d
 }
 
 static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &name, IavfMovie &movie) {
-	if (stream.size() < 0x91)
+	if (stream.size() < 0x91 || (uint64)stream.size() > 0xffffffffULL)
 		return false;
 
 	Common::Array<byte> header;
@@ -115,11 +120,17 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 	movie.sampleRate = READ_LE_UINT16(header.data() + 0x1c);
 	movie.channels = header[0x1e];
 	movie.bitsPerSample = header[0x1f];
+	movie.presentationHeight = READ_LE_UINT16(header.data() + 0x2f);
+	movie.presentationWidth = READ_LE_UINT16(header.data() + 0x31);
 	if (movie.channels != 1 || movie.bitsPerSample != 16 || movie.sampleRate == 0) {
 		warning("Ripper: unsupported IAVF audio format rate=%u channels=%u bits=%u in '%s'",
 			movie.sampleRate, movie.channels, movie.bitsPerSample, name.c_str());
 		return false;
 	}
+	if (movie.presentationWidth == 0 || movie.presentationHeight == 0)
+		return false;
+	movie.displayScale = movie.presentationHeight < 0xc9 && movie.presentationWidth < 0x141 ? 2 : 1;
+	movie.audio.reserve((uint32)stream.size());
 
 	Common::HashMap<uint32, Common::Array<byte> > setupCache;
 	Common::HashMap<uint32, uint32> audioEndOffsets;
@@ -208,7 +219,7 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 			}
 			if (!validateSmackerSetup(segment.setup, segment.expectedFrames))
 				return false;
-			movie.segments.push_back(segment);
+			movie.segments.push_back(Common::move(segment));
 			activeSegment = &movie.segments.back();
 			debugC(2, kDebugVideo,
 				"Ripper: IAVF '%s' segment=%u frames=%u x=%d y=%d setup=%u",
@@ -226,7 +237,7 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 			if (!readBlob(stream, descriptor.arg0, frame))
 				return false;
 			activeSegment->frameSizes.push_back(descriptor.arg0);
-			activeSegment->framePayloads.push_back(frame);
+			activeSegment->framePayloads.push_back(Common::move(frame));
 			activeSegment->frameAudioOffsets.push_back(pendingAudioOffset);
 			hasPendingAudioOffset = false;
 			break;
@@ -256,8 +267,9 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 	}
 	const uint32 audioByteRate = movie.sampleRate * movie.channels * movie.bitsPerSample / 8;
 	debugC(1, kDebugVideo,
-		"Ripper: parsed IAVF '%s' segments=%u audioPayloadBytes=%u audioTimelineBytes=%u audioMs=%u",
-		name.c_str(), movie.segments.size(), movie.audioPayloadBytes, movie.audio.size(),
+		"Ripper: parsed IAVF '%s' canvas=%ux%u scale=%u segments=%u audioPayloadBytes=%u audioTimelineBytes=%u audioMs=%u",
+		name.c_str(), movie.presentationWidth, movie.presentationHeight, movie.displayScale,
+		movie.segments.size(), movie.audioPayloadBytes, movie.audio.size(),
 		audioByteRate != 0 ? (uint32)((uint64)movie.audio.size() * 1000 / audioByteRate) : 0);
 	return true;
 }
@@ -365,7 +377,8 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 
 bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
 		bool allowEscSpace, int x, int y, Audio::SoundHandle *externalAudio, bool *stoppedByUser,
-		const Common::Array<uint32> *frameAudioOffsets, uint32 audioByteRate) {
+		const Common::Array<uint32> *frameAudioOffsets, uint32 audioByteRate,
+		uint32 timelineStartMillis, uint displayScale) {
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	Video::SmackerDecoder decoder;
@@ -373,19 +386,28 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		warning("Ripper: invalid Smacker stream '%s'", name.c_str());
 		return false;
 	}
+	const uint outputWidth = decoder.getWidth() * displayScale;
+	const uint outputHeight = decoder.getHeight() * displayScale;
 	if (x < 0)
-		x = (g_system->getWidth() - decoder.getWidth()) / 2;
+		x = (g_system->getWidth() - outputWidth) / 2;
+	else
+		x *= displayScale;
 	if (y < 0)
-		y = (g_system->getHeight() - decoder.getHeight()) / 2;
-	debugC(1, kDebugVideo, "Ripper: playing Smacker '%s' frames=%u size=%ux%u at %d,%d controls=%d",
-		name.c_str(), decoder.getFrameCount(), decoder.getWidth(), decoder.getHeight(), x, y, allowEscSpace);
-	const bool synchronizeToAudio = externalAudio && frameAudioOffsets &&
+		y = (g_system->getHeight() - outputHeight) / 2;
+	else
+		y *= displayScale;
+	debugC(1, kDebugVideo,
+		"Ripper: playing Smacker '%s' frames=%u source=%ux%u output=%ux%u at %d,%d controls=%d",
+		name.c_str(), decoder.getFrameCount(), decoder.getWidth(), decoder.getHeight(),
+		outputWidth, outputHeight, x, y, allowEscSpace);
+	const bool synchronizeToTimeline = frameAudioOffsets &&
 		frameAudioOffsets->size() == decoder.getFrameCount() && audioByteRate != 0;
-	if (synchronizeToAudio) {
-		debugC(2, kDebugVideo, "Ripper: Smacker '%s' follows IAVF audio timeline %u..%u ms",
+	if (synchronizeToTimeline) {
+		debugC(2, kDebugVideo, "Ripper: Smacker '%s' follows IAVF timeline %u..%u ms clock=%s",
 			name.c_str(),
 			(uint32)((uint64)(*frameAudioOffsets)[0] * 1000 / audioByteRate),
-			(uint32)((uint64)frameAudioOffsets->back() * 1000 / audioByteRate));
+			(uint32)((uint64)frameAudioOffsets->back() * 1000 / audioByteRate),
+			externalAudio ? "mixer" : "system");
 	}
 
 	bool paused = false;
@@ -400,21 +422,32 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		}
 		uint32 audioElapsedMs = 0;
 		uint32 targetAudioMs = 0;
-		bool frameDue = !synchronizeToAudio && decoder.needsUpdate();
-		if (synchronizeToAudio && !paused) {
+		bool frameDue = !synchronizeToTimeline && decoder.needsUpdate();
+		if (synchronizeToTimeline && !paused) {
 			const uint32 nextFrame = decoder.getCurFrame() + 1;
 			targetAudioMs = (uint32)((uint64)(*frameAudioOffsets)[nextFrame] * 1000 / audioByteRate);
-			audioElapsedMs = _mixer->getSoundElapsedTime(*externalAudio);
-			frameDue = !_mixer->isSoundHandleActive(*externalAudio) || audioElapsedMs >= targetAudioMs;
+			if (externalAudio && _mixer->isSoundHandleActive(*externalAudio))
+				audioElapsedMs = _mixer->getSoundElapsedTime(*externalAudio);
+			else
+				audioElapsedMs = g_system->getMillis(true) - timelineStartMillis;
+			frameDue = audioElapsedMs >= targetAudioMs;
 		}
 		if (!paused && frameDue) {
 			const Graphics::Surface *frame = decoder.decodeNextFrame();
 			if (frame) {
 				if (decoder.hasDirtyPalette())
 					g_system->getPaletteManager()->setPalette(decoder.getPalette(), 0, 256);
-				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+				if (displayScale == 1) {
+					g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+				} else {
+					Graphics::Surface *screen = g_system->lockScreen();
+					Graphics::scaleBlit((byte *)screen->getBasePtr(x, y),
+						(const byte *)frame->getPixels(), screen->pitch, frame->pitch,
+						outputWidth, outputHeight, frame->w, frame->h, frame->format);
+					g_system->unlockScreen();
+				}
 				g_system->updateScreen();
-				if (synchronizeToAudio) {
+				if (synchronizeToTimeline) {
 					debugC(3, kDebugVideo,
 						"Ripper: Smacker '%s' frame=%d audioTargetMs=%u audioElapsedMs=%u driftMs=%d",
 						name.c_str(), decoder.getCurFrame(), targetAudioMs, audioElapsedMs,
@@ -424,7 +457,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				}
 			}
 		}
-		if (synchronizeToAudio) {
+		if (synchronizeToTimeline) {
 			if (!paused && !frameDue)
 				g_system->delayMillis(MIN<uint32>(targetAudioMs - audioElapsedMs, 10));
 			else
@@ -433,11 +466,13 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 			g_system->delayMillis(MIN<uint32>(decoder.getTimeToNextFrame(), 10));
 		}
 	}
-	if (synchronizeToAudio && completed) {
+	if (synchronizeToTimeline && completed) {
+		const uint32 elapsedMs = externalAudio && _mixer->isSoundHandleActive(*externalAudio) ?
+			_mixer->getSoundElapsedTime(*externalAudio) : g_system->getMillis(true) - timelineStartMillis;
 		debugC(2, kDebugVideo, "Ripper: completed IAVF Smacker '%s' targetMs=%u audioElapsedMs=%u",
 			name.c_str(),
 			(uint32)((uint64)frameAudioOffsets->back() * 1000 / audioByteRate),
-			_mixer->getSoundElapsedTime(*externalAudio));
+			elapsedMs);
 	}
 	decoder.close();
 	return completed || (allowEscSpace && !_engine->shouldQuit());
@@ -452,15 +487,16 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 
 	Audio::SoundHandle audioHandle;
 	bool audioActive = false;
+	const uint32 timelineStartMillis = g_system->getMillis(true);
 	if (!movie.audio.empty()) {
-		byte *audioData = new byte[movie.audio.size()];
-		memcpy(audioData, movie.audio.data(), movie.audio.size());
 		Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(
-			new Common::MemoryReadStream(audioData, movie.audio.size(), DisposeAfterUse::YES),
-			movie.sampleRate, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::YES);
+			movie.audio.data(), movie.audio.size(), movie.sampleRate,
+			Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
 		if (audioStream) {
 			_mixer->playStream(Audio::Mixer::kSpeechSoundType, &audioHandle, audioStream);
-			audioActive = true;
+			audioActive = _mixer->isSoundHandleActive(audioHandle);
+			debugC(2, kDebugVideo, "Ripper: started IAVF audio rate=%u bytes=%u active=%d",
+				movie.sampleRate, movie.audio.size(), audioActive);
 		}
 	}
 
@@ -472,7 +508,8 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 		if (!smacker || !playSmacker(smacker, Common::String::format("%s#%u", name.c_str(), i),
 			allowEscSpace, movie.segments[i].x, movie.segments[i].y,
 			audioActive ? &audioHandle : nullptr, &stoppedByUser,
-			audioActive ? &movie.segments[i].frameAudioOffsets : nullptr, audioByteRate)) {
+			&movie.segments[i].frameAudioOffsets, audioByteRate, timelineStartMillis,
+			movie.displayScale)) {
 			result = false;
 			break;
 		}
