@@ -460,6 +460,15 @@ void OrderingPuzzle::execute() {
 			bool solved = true;
 
 			if (_puzzleType != kPiano) {
+				// The pre-nancy7 keypad whose buttons pop back up is a rolling entry pad: only the
+				// most recent presses count, so the correct code opens the lock even if wrong digits
+				// were entered first. Keep just the last few presses so the check below matches a
+				// sliding window (same approach as the piano puzzle below).
+				if (_puzzleType == kKeypad && !_itemsStayDown && g_nancy->getGameType() <= kGameTypeNancy6 &&
+						_clickedSequence.size() > _correctSequence.size() && !_correctSequence.empty()) {
+					_clickedSequence.erase(&_clickedSequence[0], &_clickedSequence[_clickedSequence.size() - _correctSequence.size()]);
+				}
+
 				if (_clickedSequence.size() >= _correctSequence.size()) {
 					bool equal = true;
 					if (_checkOrder) {
