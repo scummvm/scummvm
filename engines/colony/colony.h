@@ -802,6 +802,10 @@ private:
 	Common::Array<int16> _animBMColors;
 	bool _animationRunning;
 	int _animationResult;
+	bool _animExitPressed = false;
+	bool _animExitInside = false;
+	Common::Rect _animExitStrip;
+	Common::Rect _animExitButton;
 	bool _doorOpen;
 	int _liftObject = 0;  // sprite index for the carried object in lift animation
 	bool _liftUp = false;     // current lift state: true=raised, false=lowered
@@ -825,6 +829,7 @@ private:
 	void playAnimation();
 	void updateAnimation();
 	void drawAnimation();
+	void drawAnimationExitButton(int ox, int oy);
 	void drawComplexSprite(int index, int ox, int oy);
 	void drawAnimationImage(Image *img, Image *mask, int x, int y, uint32 fillColor,
 			Graphics::Surface *&bakedCache, uint64 &bakedCacheKey);

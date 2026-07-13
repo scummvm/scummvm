@@ -32,6 +32,10 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
+#include "graphics/fontman.h"
+#include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/managed_surface.h"
 #include "graphics/surface.h"
 
 #include "colony/colony.h"
@@ -395,6 +399,8 @@ void ColonyEngine::playAnimation() {
 	_rotateRight = false;
 
 	_animationRunning = true;
+	_animExitPressed = _animExitInside = false;
+	_animExitStrip = _animExitButton = Common::Rect();
 	_system->lockMouse(false);
 	warpMouseLogical(_centerX, _centerY);
 	const char *cursorName = "default arrow cursor";
@@ -590,9 +596,27 @@ void ColonyEngine::playAnimation() {
 				_gfx->computeScreenViewport();
 				needsDraw = true;
 			} else if (event.type == Common::EVENT_LBUTTONDOWN) {
-				int item = whichSprite(eventMouseToLogical(event.mouse));
-				if (item > 0) {
-					handleAnimationClick(item);
+				const Common::Point pt = eventMouseToLogical(event.mouse);
+				if (!_animExitStrip.isEmpty() && _animExitStrip.contains(pt)) {
+					// gamesprt.c TestButton(): strip clicks never reach sprites
+					if (_animExitButton.contains(pt)) {
+						_animExitPressed = _animExitInside = true;
+						needsDraw = true;
+					}
+				} else {
+					int item = whichSprite(pt);
+					if (item > 0) {
+						handleAnimationClick(item);
+						needsDraw = true;
+					}
+				}
+			} else if (event.type == Common::EVENT_LBUTTONUP) {
+				if (_animExitPressed) {
+					if (_animExitInside) {
+						debugC(1, kColonyDebugAnimation, "Animation: EXIT button");
+						_animationRunning = false;
+					}
+					_animExitPressed = _animExitInside = false;
 					needsDraw = true;
 				}
 			} else if (event.type == Common::EVENT_RBUTTONDOWN) {
@@ -602,6 +626,13 @@ void ColonyEngine::playAnimation() {
 				_animationRunning = false;
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
 				const Common::Point logical = eventMouseToLogical(event.mouse);
+				if (_animExitPressed) {
+					const bool inside = _animExitButton.contains(logical);
+					if (inside != _animExitInside) {
+						_animExitInside = inside;
+						needsDraw = true;
+					}
+				}
 				debugC(5, kColonyDebugAnimation, "Animation Mouse: %d, %d", logical.x, logical.y);
 			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 				if (event.customType == kActionEscape) {
@@ -820,6 +851,49 @@ void ColonyEngine::drawAnimation() {
 		if (_lSprites[i]->onoff)
 			drawComplexSprite(i, ox, oy);
 	}
+
+	drawAnimationExitButton(ox, oy);
+}
+
+// gamesprt.c DrawButton(): 30px strip below the 416x264 scene with a framed
+// "EXIT" default button; TestButton() inverts it while pressed inside.
+void ColonyEngine::drawAnimationExitButton(int ox, int oy) {
+	if (!isMacRenderMode())
+		return;
+
+	Graphics::MacFont systemFont(Graphics::kMacFontSystem, 12);
+	const Graphics::Font *font = (_wm && _wm->_fontMan) ? _wm->_fontMan->getFont(systemFont) : nullptr;
+	if (!font)
+		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	if (!font)
+		return;
+
+	Graphics::ManagedSurface strip;
+	strip.create(416, 30, _gfx->getPixelFormat());
+	const uint32 white = strip.format.ARGBToColor(255, 255, 255, 255);
+	const uint32 black = strip.format.ARGBToColor(255, 0, 0, 0);
+	strip.fillRect(Common::Rect(0, 0, 416, 30), white);
+	strip.hLine(0, 0, 415, black);
+
+	const int wd = font->getStringWidth("EXIT") / 2;
+	const Common::Rect button(208 - (wd + 15), 6, 208 + (wd + 15), 24);
+	const bool invert = _animExitPressed && _animExitInside;
+	strip.drawRoundRect(button, 8, black, invert);
+	Common::Rect ring(button.left - 3, button.top - 3, button.right + 3, button.bottom + 3);
+	strip.drawRoundRect(ring, 11, black, false);
+	ring.grow(-1);
+	strip.drawRoundRect(ring, 10, black, false);
+
+	const int textY = button.top + (button.height() - font->getFontHeight()) / 2 + 1;
+	font->drawString(&strip, "EXIT", button.left, textY, button.width(),
+		invert ? white : black, Graphics::kTextAlignCenter);
+
+	_gfx->drawSurface(&strip.rawSurface(), ox, oy + 264);
+	strip.free();
+
+	_animExitStrip = Common::Rect(ox, oy + 264, ox + 416, oy + 294);
+	_animExitButton = button;
+	_animExitButton.translate(ox, oy + 264);
 }
 
 void ColonyEngine::drawComplexSprite(int index, int ox, int oy) {
