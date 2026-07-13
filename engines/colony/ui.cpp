@@ -627,19 +627,38 @@ void ColonyEngine::drawDashboardMac() {
 		if (_armor > 0 && _pictPower) {
 			// power.c draws the bars with QuickDraw MoveTo/LineTo after shifting
 			// the PICT rect. GL line rasterization does not cover the same pixels,
-			// so draw the observed 18x2 bar strips explicitly.
-			const int infoLeft = _powerRect.left - 1;
-			const int bot = _powerRect.bottom - 27; // power.c: bot = info.bottom - 27
+			// so draw the observed bar strips explicitly.
+			if (macColor) {
+				// Color power.c DrawInfo(): lft = 3 + info.left + i*23 with the
+				// shifted info rect's local origin at engine x = _powerRect.left + 3;
+				// strips are MoveTo(lft+1)..LineTo(lft+16) = 16px wide.
+				const int infoLeft = _powerRect.left + 3;
+				const int bot = _powerRect.bottom - 27; // power.c: bot = info.bottom - 27
 
-			for (int i = 0; i < 3; i++) {
-				// Reference B&W frame: columns start at x 10, 33, 56; bars are
-				// inset by 2 pixels on each side: x 12..29, 35..52, 58..75.
-				const int lft = 3 + infoLeft + i * 23;
-				for (int j = 0; j < ePower[i] && j < 20; j++) {
-					const int ln = bot - 3 * j;
-					if (ln <= _powerRect.top)
-						break;
-					_gfx->fillRect(Common::Rect(lft + 1, ln - 1, lft + 19, ln + 1), colBlue);
+				for (int i = 0; i < 3; i++) {
+					const int lft = 3 + infoLeft + i * 23;
+					for (int j = 0; j < ePower[i] && j < 20; j++) {
+						const int ln = bot - 3 * j;
+						if (ln <= _powerRect.top)
+							break;
+						_gfx->fillRect(Common::Rect(lft + 1, ln - 1, lft + 17, ln + 1), colBlue);
+					}
+				}
+			} else {
+				// The B&W art uses other sizes than the color source. Reference B&W
+				// frame: columns start at x 10, 33, 56; bars are inset by 2 pixels
+				// on each side: x 12..29, 35..52, 58..75 (18px wide).
+				const int infoLeft = _powerRect.left - 1;
+				const int bot = _powerRect.bottom - 27; // power.c: bot = info.bottom - 27
+
+				for (int i = 0; i < 3; i++) {
+					const int lft = 3 + infoLeft + i * 23;
+					for (int j = 0; j < ePower[i] && j < 20; j++) {
+						const int ln = bot - 3 * j;
+						if (ln <= _powerRect.top)
+							break;
+						_gfx->fillRect(Common::Rect(lft + 1, ln - 1, lft + 19, ln + 1), colBlue);
+					}
 				}
 			}
 		}
