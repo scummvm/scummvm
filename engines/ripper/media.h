@@ -22,6 +22,7 @@
 #define RIPPER_MEDIA_H
 
 #include "audio/mixer.h"
+#include "common/array.h"
 #include "common/str.h"
 
 namespace Common {
@@ -49,7 +50,8 @@ public:
 private:
 	bool playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
 		bool allowEscSpace, int x, int y, Audio::SoundHandle *externalAudio = nullptr,
-		bool *stoppedByUser = nullptr);
+		bool *stoppedByUser = nullptr, const Common::Array<uint32> *frameAudioOffsets = nullptr,
+		uint32 audioByteRate = 0);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name, bool allowEscSpace);
 	bool servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
 		bool &paused, Audio::SoundHandle *externalAudio);
