@@ -162,8 +162,9 @@ bool CompiledScript::parseHeader() {
 		const uint32 offset = interactionOffset + i * kInteractionRecordSize;
 		ScriptInteraction interaction;
 		interaction.label.clear();
-		for (uint labelIndex = 0; labelIndex < 0xd && _data[offset + labelIndex] != 0; ++labelIndex)
+		for (uint labelIndex = 0; labelIndex < 0xb && _data[offset + labelIndex] != 0; ++labelIndex)
 			interaction.label += (char)_data[offset + labelIndex];
+		interaction.x = readSint16(offset + 0xb);
 		interaction.y = readSint16(offset + 0xd);
 		interaction.width = readSint16(offset + 0xf);
 		interaction.height = readSint16(offset + 0x11);
@@ -351,6 +352,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 		return false;
 
 	uint commandIndex = 0;
+	bool branchTaken = false;
 	while (commandIndex < commands.size()) {
 		const ScriptCommand &command = commands[commandIndex];
 		debugC(2, kDebugScripts,
@@ -378,6 +380,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 					scene.c_str(), expected, actual, command.arguments[2].value);
 			}
 			if (actual != expected) {
+				branchTaken = true;
 				uint targetIndex = 0;
 				while (targetIndex < commands.size() &&
 					commands[targetIndex].offset != command.arguments[2].value)
@@ -393,7 +396,31 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			break;
 		}
 
+		case 0x0c: {
+			if (command.arguments.size() < 1)
+				return false;
+			const bool useDefaultBranch = !branchTaken;
+			branchTaken = false;
+			debugC(3, kDebugScripts, "Ripper: default branch target=0x%x selected=%d",
+				command.arguments[0].value, useDefaultBranch);
+			if (useDefaultBranch) {
+				uint targetIndex = 0;
+				while (targetIndex < commands.size() &&
+					commands[targetIndex].offset != command.arguments[0].value)
+					++targetIndex;
+				if (targetIndex == commands.size()) {
+					warning("Ripper: callback branch target 0x%x is not a command boundary in '%s'",
+						command.arguments[0].value, script.getMemberName().c_str());
+					return false;
+				}
+				commandIndex = targetIndex;
+				continue;
+			}
+			break;
+		}
+
 		case 0x0d:
+			branchTaken = false;
 			debugC(3, kDebugScripts, "Ripper: cleared callback branch state");
 			break;
 
@@ -635,14 +662,14 @@ bool ScriptManager::serviceScene() {
 		const ScriptInteraction &interaction = _ba0.getInteractions()[interactionIndex];
 		if ((interaction.flags & 2) != 0 || interaction.width <= 0 || interaction.height <= 0)
 			continue;
-		if (mouse.position.x < 0 || mouse.position.x >= interaction.width ||
-			mouse.position.y < interaction.y || mouse.position.y >= interaction.y + interaction.height)
+		if (mouse.position.x < interaction.y || mouse.position.x >= interaction.y + interaction.height ||
+			mouse.position.y < interaction.x || mouse.position.y >= interaction.x + interaction.width)
 			continue;
 
 		debugC(2, kDebugScene,
-			"Ripper: BA0 chooser selected interaction=%u label='%s' point=%d,%d rect=0,%d,%d,%d",
+			"Ripper: BA0 chooser selected interaction=%u label='%s' point=%d,%d rect=%d,%d,%d,%d",
 			interactionIndex, interaction.label.c_str(), mouse.position.x, mouse.position.y,
-			interaction.y, interaction.width, interaction.height);
+			interaction.y, interaction.x, interaction.height, interaction.width);
 		int result = 0;
 		uint nextFrame = _activeBa0Frame;
 		if (!executeCallback(_ba0, interaction.callbackOffset, result, &nextFrame))
