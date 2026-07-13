@@ -1631,7 +1631,7 @@ void MenuMan::printMessageAfterReplacements(const char *str) {
 
 			*curCharacter = '\0';
 			size_t ln = Common::strlcat(outputString, replacementString, sizeof(outputString));
-			if (ln >= sizeof(outputString)) {
+			if (ln >= sizeof(outputString) - 1) {
 				error("Not enough space in outputString");
 			}
 			curCharacter = outputString + ln;
