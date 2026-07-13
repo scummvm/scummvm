@@ -209,24 +209,19 @@ void IFFDecoder::loadBitmap(Common::SeekableReadStream &stream) {
 
 		delete[] scanlines;
 	} else if (_type == TYPE_PBM) {
-		// PBM scanlines are padded to an even byte boundary.
-		const uint16 scanlinePitch = (_header.width + 1) & ~1;
-		byte *scanline = new byte[scanlinePitch];
 		byte *data = (byte *)_surface->getPixels();
+		loadPBMBitmap(stream, data, outPitch);
+	}
+}
 
-		for (uint16 i = 0; i < _header.height; ++i) {
-			if (_header.compression) {
-				Common::PackBitsReadStream packStream(stream);
-				packStream.read(scanline, scanlinePitch);
-			} else {
-				stream.read(scanline, scanlinePitch);
-			}
+void IFFDecoder::loadPBMBitmap(Common::SeekableReadStream &stream, byte *data, uint16) {
+	uint32 outSize = _header.width * _header.height;
 
-			memcpy(data, scanline, outPitch);
-			data += outPitch;
-		}
-
-		delete[] scanline;
+	if (_header.compression) {
+		Common::PackBitsReadStream packStream(stream);
+		packStream.read(data, outSize);
+	} else {
+		stream.read(data, outSize);
 	}
 }
 
