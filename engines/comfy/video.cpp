@@ -45,6 +45,10 @@ void ComfyEngine::videoInit() {
 	_screen = new Graphics::Screen(_logicalScreenWidth, _logicalScreenHeight);
 	_framebufPtr = new byte[framebufferBytes()]();
 	_presentBuffer = new byte[framebufferBytes()]();
+	if (_isPanther)
+		_backgroundFramebuf.resize(framebufferBytes());
+
+	_backgroundFrame = 0;
 	_resolutionChangeCount = 0;
 	_renderDirtyCount = 0;
 	videoSetResolution();
@@ -61,6 +65,8 @@ void ComfyEngine::videoShutdown(byte restorePalette) {
 	_presentBuffer = nullptr;
 	delete[] _framebufPtr;
 	_framebufPtr = nullptr;
+	_backgroundFramebuf.clear();
+	_backgroundFrame = 0;
 	delete _screen;
 	_screen = nullptr;
 	_resolutionChangeCount = 0;
@@ -90,6 +96,11 @@ void ComfyEngine::renderFlushDirty() {
 	}
 }
 
+void ComfyEngine::renderInvalidateFullFrame() {
+	renderFlushDirty();
+	videoSetResolution();
+}
+
 void ComfyEngine::videoFindBestMode(VideoRectRecord record) {
 	record.left = CLIP<int16>(record.left, 0, _logicalScreenWidth);
 	record.top = CLIP<int16>(record.top, 0, _logicalScreenHeight);
@@ -113,7 +124,7 @@ void ComfyEngine::videoFindBestMode(VideoRectRecord record) {
 		merged.right = (MAX(existing.right, record.right) + 1) / 2 * 2;
 		merged.top = MIN(existing.top, record.top) / 2 * 2;
 		merged.bottom = (MAX(existing.bottom, record.bottom) + 1) / 2 * 2;
-		merged.area = (uint16)((merged.right - merged.left) * (merged.bottom - merged.top));
+		merged.area = (uint32)(merged.right - merged.left) * (merged.bottom - merged.top);
 
 		if ((uint32)existing.area + record.area >= merged.area) {
 			existing = merged;
@@ -129,8 +140,9 @@ void ComfyEngine::framebufCopyAll(byte *destination, byte *source) {
 	memcpy(destination, source, framebufferBytes());
 }
 
-void ComfyEngine::framebufClear(uint16 color) {
-	memset(_framebufPtr, (byte)color, framebufferBytes());
+void ComfyEngine::framebufClear(byte *destination, uint16 color) {
+	if (destination)
+		memset(destination, (byte)color, framebufferBytes());
 }
 
 void ComfyEngine::videoPresentFrame() {

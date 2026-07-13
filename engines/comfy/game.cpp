@@ -390,12 +390,18 @@ bool ComfyEngine::sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 
 
 	uint32 stringBytes = _stringTable.size() * sizeof(uint16);
 	uint32 handleBytes = _sceneHandles.size() * sizeof(uint16);
-	uint32 actorBytes = _actors.size() * (_engineVersion == 3 ? COMFY_ACTOR_SIZE_V3 : COMFY_ACTOR_SIZE);
+	uint32 actorBytes = _actors.size() * _actorSize;
 	uint32 keyBytes = ((uint32)keyBitCount + 1) / 8 + 1;
 	_sceneMidiInstanceOffset = 0;
 	if (_engineVersion == 3) {
 		_sceneEntryListOffset = COMFY_SCENE_MIDI_INSTANCE_BYTES + COMFY_SCENE_VOC_STATE_BYTES_V3 +
 				COMFY_ANM_STATE_BYTES;
+		_sceneActorPcOffset = _sceneEntryListOffset + COMFY_SCENE_STATE_BYTES_V3;
+		_sceneStringTableOffset = _sceneActorPcOffset + COMFY_SCENE_ACTOR_PC_BYTES;
+	} else if (_isPanther) {
+		_sceneSoundStateOffset = COMFY_SCENE_MIDI_INSTANCE_BYTES;
+		_sceneAnimStateOffset = _sceneSoundStateOffset + COMFY_PANTHER_SOUND_STATE_BYTES;
+		_sceneEntryListOffset = _sceneAnimStateOffset + COMFY_PANTHER_ANM_STATE_BYTES;
 		_sceneActorPcOffset = _sceneEntryListOffset + COMFY_SCENE_STATE_BYTES_V3;
 		_sceneStringTableOffset = _sceneActorPcOffset + COMFY_SCENE_ACTOR_PC_BYTES;
 	} else {
@@ -407,8 +413,10 @@ bool ComfyEngine::sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 
 	_sceneHandlesOffset = _sceneStringTableOffset + stringBytes;
 	_sceneActorsOffset = _sceneHandlesOffset + handleBytes;
 	_sceneKeyBitsOffset = _sceneActorsOffset + actorBytes;
-	_sceneAnimStateOffset = _engineVersion == 3 ?
-			COMFY_SCENE_MIDI_INSTANCE_BYTES + COMFY_SCENE_VOC_STATE_BYTES_V3 : _sceneKeyBitsOffset + keyBytes;
+	if (_engineVersion == 3)
+		_sceneAnimStateOffset = COMFY_SCENE_MIDI_INSTANCE_BYTES + COMFY_SCENE_VOC_STATE_BYTES_V3;
+	else if (!_isPanther)
+		_sceneAnimStateOffset = _sceneKeyBitsOffset + keyBytes;
 	uint32 sceneBytes = assetsAlignEven32(_sceneKeyBitsOffset + keyBytes);
 	_sceneMemoryBlock.resize(sceneBytes);
 	memset(&_sceneMemoryBlock[0], 0, sceneBytes);
@@ -498,7 +506,7 @@ bool ComfyEngine::assetsLoad(uint32 budget, byte *scenePtr) {
 		return false;
 
 	if (_usesAnimFile) {
-		_animFrameBuffer.resize(COMFY_ANMFRAME_BYTES);
+		_animFrameBuffer.resize(framebufferBytes());
 		memset(&_animFrameBuffer[0], 0, _animFrameBuffer.size());
 	}
 
@@ -647,6 +655,7 @@ void ComfyEngine::assetsUnload(byte freeAudio) {
 	_sceneEntryCount = 0;
 	_sceneEntryFrameSize = 0;
 	_sceneMidiInstanceOffset = 0;
+	_sceneSoundStateOffset = 0;
 	_sceneEntryListOffset = 0;
 	_sceneActorPcOffset = 0;
 	_sceneStringTableOffset = 0;

@@ -48,12 +48,27 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ComfyGameDescription *gameDesc) : 
 	memset(_selectorPoolEntries, 0, sizeof(_selectorPoolEntries));
 	memset(_sceneEntryVolumes, 0, sizeof(_sceneEntryVolumes));
 	memset(_sceneEntryCompletionKeys, 0, sizeof(_sceneEntryCompletionKeys));
-	memset(_wcomfy99FeatureWords, 0, sizeof(_wcomfy99FeatureWords));
 	memset(_animFrameHeader, 0, sizeof(_animFrameHeader));
 	memset(_animFrameCommandData, 0, sizeof(_animFrameCommandData));
 	memset(_animStorageChunkFileOffsets, 0, sizeof(_animStorageChunkFileOffsets));
 	memset(_animStorageChunkOffsets, 0, sizeof(_animStorageChunkOffsets));
 	memset(_animStorageChunkSizes, 0, sizeof(_animStorageChunkSizes));
+	if (_engineVersion == 3) {
+		_actorSize = COMFY_ACTOR_SIZE_V3;
+		_actorCachedVisibleOffset = 0x51;
+		_actorCachedSpriteOffset = 0x52;
+		_actorCachedAreaIs32Bit = true;
+	}
+
+	if (!strcmp(gameDesc->desc.gameId, "panther")) {
+		_isPanther = true;
+		_actorSize = COMFY_PANTHER_ACTOR_SIZE;
+		_actorCachedVisibleOffset = 0x51;
+		_actorCachedSpriteOffset = 0x52;
+		_actorCachedAreaIs32Bit = true;
+		_vocQueueCapacity = COMFY_PANTHER_VOC_QUEUE_CAPACITY;
+	}
+
 	g_engine = this;
 }
 
@@ -409,18 +424,10 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 		}
 
 		uint16 frame = actorGetFrame();
-		if (frame) {
-			SpriteResource *background = spriteGetPtr((int16)frame);
-			if (background && background->header.width == _logicalScreenWidth &&
-					background->header.height == _logicalScreenHeight && !background->pixels.empty()) {
-				spriteBlitRle(&background->pixels[0], background->pixels.size());
-				videoSetResolution();
-			} else {
-				uint16 clear = background && background->pixels.size() > 3 ? background->pixels[3] : 0;
-				framebufClear(clear);
-				videoSetResolution();
-			}
-		}
+		if (frame)
+			backgroundTransitionFrames(frame, _backgroundFrame);
+
+		_backgroundFrame = frame;
 
 		if (actorDraw(rootIndex, 0, 0)) {
 			paletteVsyncFlip();
@@ -475,6 +482,9 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 				vocQueuePlayAll();
 
 			keyBitSet(0x42);
+			frame = actorGetFrame();
+			if (frame)
+				backgroundTransitionFrames(frame, _backgroundFrame);
 		} else {
 			actorSetAllVisible();
 		}
@@ -526,7 +536,7 @@ void ComfyEngine::sceneTickEvent() {
 					keyBitSet(entry.arguments[0]);
 
 				_soundEventIndex++;
-				if (_soundEventIndex == COMFY_VOC_QUEUE_CAPACITY)
+				if (_soundEventIndex == _vocQueueCapacity)
 					_soundEventIndex = 0;
 
 				if (_soundEventIndex == _soundEventMaximum) {
@@ -555,9 +565,9 @@ void ComfyEngine::sceneTickEvent() {
 		return;
 	}
 
-	VocQueueEntry &entry = _vocQueue[_soundEventIndex % COMFY_VOC_QUEUE_CAPACITY];
+	VocQueueEntry &entry = _vocQueue[_soundEventIndex % _vocQueueCapacity];
 	uint16 currentSubIndex = _soundEventSubIndex;
-	if (entry.state == 0xFFFF) {
+	if (entry.state == 0xFFFF && (entry.soundId != 0xFFFF || !animFrameIsReady())) {
 		entry.state = 0;
 		_soundEventSubIndex = 0xFFFF;
 		soundPlayEntry(entry.soundId);
@@ -571,7 +581,7 @@ void ComfyEngine::sceneTickEvent() {
 			if (entry.argumentCount)
 				keyBitSet(entry.arguments[0]);
 
-			_soundEventIndex = (_soundEventIndex + 1) % COMFY_VOC_QUEUE_CAPACITY;
+			_soundEventIndex = (_soundEventIndex + 1) % _vocQueueCapacity;
 			if (_soundEventIndex == _soundEventMaximum) {
 				keyBitClear(1);
 				keyBitClear(4);
@@ -632,7 +642,7 @@ void ComfyEngine::midiPollChannels(uint16 ticks) {
 }
 
 bool ComfyEngine::vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc) {
-	uint16 next = (_soundEventMaximum + 1) % COMFY_VOC_QUEUE_CAPACITY;
+	uint16 next = (_soundEventMaximum + 1) % _vocQueueCapacity;
 	if (next == _soundEventIndex) {
 		debug(5, "COMFY VOC: queue full; rejected id=%u args=%u index=%u maximum=%u",
 			soundId, argumentCount, _soundEventIndex, _soundEventMaximum);
@@ -663,7 +673,7 @@ bool ComfyEngine::vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc) 
 		return true;
 	}
 
-	VocQueueEntry &entry = _vocQueue[_soundEventMaximum % COMFY_VOC_QUEUE_CAPACITY];
+	VocQueueEntry &entry = _vocQueue[_soundEventMaximum % _vocQueueCapacity];
 	entry.soundId = soundId;
 	entry.argumentCount = MIN<uint16>(argumentCount, COMFY_VOC_ARG_CAPACITY);
 	entry.state = 0xFFFF;
@@ -681,7 +691,12 @@ bool ComfyEngine::vocQueuePush(uint16 soundId, uint16 argumentCount, uint32 pc) 
 
 void ComfyEngine::vocQueuePlayAll() {
 	_mixer->stopHandle(_soundHandle);
+	_soundQueueStream = nullptr;
 	_soundCues.clear();
+	_soundNextCue = 0;
+	if (_midiPlyrDriver)
+		_midiPlyrDriver->vocSrResetBlockNo();
+
 	if (_engineVersion == 3) {
 		uint16 slot = _soundEventIndex;
 		while (slot != _soundEventMaximum) {
@@ -690,7 +705,7 @@ void ComfyEngine::vocQueuePlayAll() {
 				keyBitSet(entry.arguments[i]);
 
 			slot++;
-			if (slot == COMFY_VOC_QUEUE_CAPACITY)
+			if (slot == _vocQueueCapacity)
 				slot = 0;
 		}
 
@@ -709,7 +724,7 @@ void ComfyEngine::vocQueuePlayAll() {
 		for (uint i = 0; i < entry.argumentCount && i < COMFY_VOC_ARG_CAPACITY; i++)
 			keyBitSet(entry.arguments[i]);
 
-		slot = (slot + 1) % COMFY_VOC_QUEUE_CAPACITY;
+		slot = (slot + 1) % _vocQueueCapacity;
 	}
 
 	_soundEventMaximum = _soundEventIndex;
