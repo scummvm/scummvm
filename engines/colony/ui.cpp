@@ -1065,6 +1065,48 @@ void ColonyEngine::drawAutomap() {
 	_gfx->drawEllipse(ccx, ccy, eyeRx, eyeRy, lineColor);
 	_gfx->fillEllipse(ccx, ccy, eyeRx >> 1, eyeRy, lineColor);
 }
+// inits.c: fl_icon[i] = GetIcon(i+1) — 32x32 1-bit ICON resources 1-5.
+// display.c PlotIcon: 1-bits are drawn black, 0-bits take the RGBBackColor —
+// white for the empty fork, the carried object's body color otherwise.
+void ColonyEngine::loadForkliftIcons() {
+	_flIconsLoaded = true;
+
+	// c_box1, c_cryo, c_teleport, c_ccore
+	static const int kBgColorIdx[5] = { -1, 84, 90, 93, 111 };
+	const uint32 white = packRGB(255, 255, 255);
+	const uint32 black = packRGB(0, 0, 0);
+
+	for (int i = 0; i < 5; i++) {
+		Common::SeekableReadStream *s = nullptr;
+		if (_colorResMan && _colorResMan->hasResFork())
+			s = _colorResMan->getResource(MKTAG('I', 'C', 'O', 'N'), i + 1);
+		if (!s && _resMan)
+			s = _resMan->getResource(MKTAG('I', 'C', 'O', 'N'), i + 1);
+		if (!s || s->size() < 128) {
+			delete s;
+			continue;
+		}
+
+		byte bits[128];
+		s->read(bits, 128);
+		delete s;
+
+		uint32 bg = white;
+		if (kBgColorIdx[i] >= 0 && isMacColorMode())
+			bg = packMacColor(_macColors[kBgColorIdx[i]].bg);
+
+		Graphics::Surface *surf = new Graphics::Surface();
+		surf->create(32, 32, renderColorFormat());
+		for (int y = 0; y < 32; y++) {
+			for (int x = 0; x < 32; x++) {
+				const bool on = (bits[y * 4 + (x >> 3)] >> (7 - (x & 7))) & 1;
+				surf->setPixel(x, y, on ? black : bg);
+			}
+		}
+		_flIconSurf[i] = surf;
+	}
+}
+
 void ColonyEngine::drawForkliftOverlay() {
 	if (_fl <= 0 || _screenR.width() <= 0 || _screenR.height() <= 0)
 		return;
@@ -1072,13 +1114,16 @@ void ColonyEngine::drawForkliftOverlay() {
 	// Original display.c: two diagonal fork arm lines when fl > 0.
 	// Left arm:  (centerX/4, 0) to (centerX/2, Height)
 	// Right arm: (Width - centerX/4, 0) to (Width - centerX/2, Height)
-	// Drawn with PenSize(2,2) in black (white in battle mode).
+	// Drawn with PenSize(2,2) in black (white pen pattern in battle mode).
 	const int left = _screenR.left;
 	const int top = _screenR.top;
 	const int w = _screenR.width();
 	const int h = _screenR.height();
 	const int cx = w / 2;
-	const uint32 color = isMacRenderMode() ? packRGB(0, 0, 0) : 0;
+	const bool isMac = isMacRenderMode();
+	const bool battle = (_gameMode == kModeBattle);
+	const uint32 color = isMac ? (battle ? packRGB(255, 255, 255) : packRGB(0, 0, 0))
+		: (battle ? 15 : 0);
 
 	const int tx2 = cx >> 2;  // centerX/4
 	const int tx1 = cx >> 1;  // centerX/2
@@ -1089,10 +1134,45 @@ void ColonyEngine::drawForkliftOverlay() {
 	// Right fork arm
 	_gfx->drawLine(left + w - tx2, top, left + w - tx1, top + h - 1, color);
 	_gfx->drawLine(left + w - tx2 - 1, top, left + w - tx1 - 1, top + h - 1, color);
+
+	// Fork status: fl==1 → empty fork, fl==2 → carried object type.
+	int fnum = 0;
+	if (_fl != 1) {
+		switch (_carryType) {
+		case kObjBox1:
+		case kObjBox2:     fnum = 1; break;
+		case kObjCryo:     fnum = 2; break;
+		case kObjTeleport: fnum = 3; break;
+		case kObjReactor:  fnum = 4; break;
+		default: break;
+		}
+	}
+
+	if (isMac) {
+		// display.c: PlotIcon(&fl_rect, fl_icon[fnum]);
+		// inits.c: fl_rect = (32, Height-64)-(64, Height-32), window-local.
+		if (!_flIconsLoaded)
+			loadForkliftIcons();
+		if (_flIconSurf[fnum])
+			_gfx->drawSurface(_flIconSurf[fnum], left + 32, _screenR.bottom - 64);
+	} else {
+		// IBM_DISP.C: framed white box at the bottom center naming the
+		// fork state, black text on vINTWHITE.
+		static const char *fltext[5] = { "EMPTY", "BOX", "CRYO", "TELEPORT", "REACTOR" };
+		Graphics::DosFont font;
+		const int half = 4 + font.getStringWidth(fltext[fnum]) / 2;
+		const Common::Rect r(_centerX - half, _screenR.bottom - 15, _centerX + half, _screenR.bottom - 1);
+		_gfx->fillRect(r, 15);
+		_gfx->drawRect(r, 0);
+		_gfx->drawString(&font, fltext[fnum], _centerX,
+			_screenR.bottom - 8 - font.getFontHeight() / 2, 0, Graphics::kTextAlignCenter);
+	}
 }
 
 void ColonyEngine::drawCrosshair() {
-	if (!_crosshair || _screenR.width() <= 0 || _screenR.height() <= 0)
+	// display.c / IBM_DISP.C: "if(fl){...} else if(crosshair)" — no aim
+	// crosshair while driving the forklift (you cannot shoot from it).
+	if (!_crosshair || _fl > 0 || _screenR.width() <= 0 || _screenR.height() <= 0)
 		return;
 
 	const bool isMac = isMacRenderMode();

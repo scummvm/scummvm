@@ -505,6 +505,8 @@ private:
 	Graphics::FrameLimiter *_frameLimiter = nullptr;
 	Common::RenderMode _renderMode;
 	Graphics::Surface *_savedScreen = nullptr;
+	Graphics::Surface *_flIconSurf[5] = {};
+	bool _flIconsLoaded = false;
 
 
 	int _tsin = 0, _tcos = 0;
@@ -753,6 +755,7 @@ private:
 	int automapWallFeature(int fx, int fy, int dir);
 	void automapDrawWallWithFeature(const Common::Rect &vp, int wx1, int wy1, int wx2, int wy2, int feat, int lExt, uint32 color);
 	void drawForkliftOverlay();
+	void loadForkliftIcons();
 	void drawCrosshair();
 	bool clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Common::Rect &clip) const;
 	void wallLine(const float corners[4][3], float u1, float v1, float u2, float v2, uint32 color);

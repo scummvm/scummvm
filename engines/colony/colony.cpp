@@ -282,6 +282,12 @@ ColonyEngine::~ColonyEngine() {
 		_animPatternSurface->free();
 		delete _animPatternSurface;
 	}
+	for (int i = 0; i < 5; i++) {
+		if (_flIconSurf[i]) {
+			_flIconSurf[i]->free();
+			delete _flIconSurf[i];
+		}
+	}
 	delete _frameLimiter;
 	delete _gfx;
 	delete _sound;
@@ -1185,6 +1191,7 @@ Common::Error ColonyEngine::run() {
 
 		if (_gameMode == kModeBattle) {
 			renderBattle();
+			drawForkliftOverlay();
 			drawDashboardStep1();
 			drawCrosshair();
 		} else {
