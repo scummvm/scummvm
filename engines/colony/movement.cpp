@@ -414,10 +414,11 @@ void ColonyEngine::clampToWalls(Locate *p) {
 }
 
 void ColonyEngine::clampToDiagonalWalls(Locate *p) {
-	// CWall/FWall objects are diagonal corner fills not registered in _robotArray.
-	// Enforce geometric collision: the CWall inner face is the line lx+ly=kThreshold
-	// in the object's local coordinate space.  The player must stay on the room side.
-	const int kThreshold = 120; // inner face ~112 + padding
+	// CWall/FWall diagonal fills (not in _robotArray). Object space is ang+32,
+	// as in the renderer. INITOBJ.C: cwall face at lx+ly=112 with the room
+	// below; fwall sits on lx+ly=0 with rooms on both sides.
+	const int kCWallLimit = 112 - 8; // face minus clearance
+	const int kFWallClearance = 20;
 	for (uint i = 0; i < _objects.size(); i++) {
 		const Thing &obj = _objects[i];
 		if (!obj.alive)
@@ -425,52 +426,40 @@ void ColonyEngine::clampToDiagonalWalls(Locate *p) {
 		if (obj.type != kObjCWall && obj.type != kObjFWall)
 			continue;
 
-		// Quick reject: skip objects more than 1 cell away
 		if (ABS(p->xloc - obj.where.xloc) > 300 || ABS(p->yloc - obj.where.yloc) > 300)
 			continue;
 
-		// Transform player position into object's local space (inverse rotation)
+		const uint8 objAng = (uint8)(obj.where.ang + 32);
 		const int wx = p->xloc - obj.where.xloc;
 		const int wy = p->yloc - obj.where.yloc;
-		const uint8 invAng = (uint8)(0 - obj.where.ang);
+		const uint8 invAng = (uint8)(0 - objAng);
 		const int lx = (int)(((int32)wx * _cost[invAng] - (int32)wy * _sint[invAng]) >> 7);
 		const int ly = (int)(((int32)wx * _sint[invAng] + (int32)wy * _cost[invAng]) >> 7);
 
-		// Also reject if clearly outside the cell (local coords span -128..128)
 		if (lx < -140 || lx > 140 || ly < -140 || ly > 140)
 			continue;
 
 		const int diag = lx + ly;
+		int push = 0; // applied to both local axes, so diag moves by 2*push
 		if (obj.type == kObjCWall) {
-			if (diag >= kThreshold)
-				continue; // already on room side
-
-			// Push player along normal (1,1) in local space to reach threshold
-			const int push = (kThreshold - diag + 1) / 2;
-			const int nlx = lx + push;
-			const int nly = ly + push;
-
-			// Transform back to world space
-			const uint8 ang = obj.where.ang;
-			p->xloc = obj.where.xloc + (int)(((int32)nlx * _cost[ang] - (int32)nly * _sint[ang]) >> 7);
-			p->yloc = obj.where.yloc + (int)(((int32)nlx * _sint[ang] + (int32)nly * _cost[ang]) >> 7);
-			p->xindex = p->xloc >> 8;
-			p->yindex = p->yloc >> 8;
-		} else { // kObjFWall — flat wall along the diagonal
-			const int kFWallThreshold = 20;
-			if (diag >= kFWallThreshold)
+			if (diag <= kCWallLimit)
 				continue;
-
-			const int push = (kFWallThreshold - diag + 1) / 2;
-			const int nlx = lx + push;
-			const int nly = ly + push;
-
-			const uint8 ang = obj.where.ang;
-			p->xloc = obj.where.xloc + (int)(((int32)nlx * _cost[ang] - (int32)nly * _sint[ang]) >> 7);
-			p->yloc = obj.where.yloc + (int)(((int32)nlx * _sint[ang] + (int32)nly * _cost[ang]) >> 7);
-			p->xindex = p->xloc >> 8;
-			p->yindex = p->yloc >> 8;
+			push = -((diag - kCWallLimit + 1) / 2);
+		} else { // kObjFWall
+			if (ABS(diag) >= kFWallClearance)
+				continue;
+			if (diag >= 0)
+				push = (kFWallClearance - diag + 1) / 2;
+			else
+				push = -((kFWallClearance + diag + 1) / 2);
 		}
+
+		const int nlx = lx + push;
+		const int nly = ly + push;
+		p->xloc = obj.where.xloc + (int)(((int32)nlx * _cost[objAng] - (int32)nly * _sint[objAng]) >> 7);
+		p->yloc = obj.where.yloc + (int)(((int32)nlx * _sint[objAng] + (int32)nly * _cost[objAng]) >> 7);
+		p->xindex = p->xloc >> 8;
+		p->yindex = p->yloc >> 8;
 	}
 }
 
