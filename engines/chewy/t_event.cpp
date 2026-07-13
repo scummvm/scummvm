@@ -1238,6 +1238,7 @@ void endDialogCloseup(int16 diaNr, int16 blkNr, int16 strEndNr) {
 #define R14_HERMIT_DIA 10000
 #define R8_NIMOYANER1_DIA 10001
 #define R8_NIMOYANER2_DIA 10002
+#define R11_TERMINAL_DIA 10003
 #define R12_BORK_DIA 10004
 #define R11_BORK_DIA 10005
 #define R8_NIMOYANER3_DIA 10006
@@ -1371,6 +1372,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 	case R14_HERMIT_DIA:
 	case R8_NIMOYANER1_DIA:
 	case R8_NIMOYANER2_DIA:
+	case R11_TERMINAL_DIA:
 		if (personNr <= P_CHEWY) {
 			if (mode == AAD_STR_START) {
 				start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
