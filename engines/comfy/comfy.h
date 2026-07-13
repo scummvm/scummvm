@@ -39,6 +39,10 @@
 #include "comfy/detection.h"
 #include "comfy/midiplyr/midiplyr.h"
 
+namespace Audio {
+class QueuingAudioStream;
+}
+
 #define COMFY_SCREEN_WIDTH 320
 #define COMFY_SCREEN_HEIGHT 200
 #define COMFY_PANTHER_SCREEN_WIDTH 640
@@ -46,6 +50,7 @@
 #define COMFY_PIT_INPUT_FREQUENCY 1193182
 #define COMFY_PIT_TIMER_DIVISOR 0x2E9B
 #define COMFY_RESOLUTION_CHANGE_CAPACITY 100
+#define COMFY_DRAW_COMMAND_CAPACITY 200
 #define COMFY_PALETTE_BYTES 0x300
 #define COMFY_INPUT_QUEUE_CAPACITY 20
 #define COMFY_KEYBOARD_CONTACT_COUNT 24
@@ -57,15 +62,22 @@
 #define COMFY_RESOURCE_LIST_CAPACITY 32
 #define COMFY_SCENE_ENTRY_OFFSET_CAPACITY 16
 #define COMFY_SCENE_MIDI_INSTANCE_BYTES 0x18C
+#define COMFY_PANTHER_SOUND_STATE_BYTES 0xBE
 #define COMFY_SCENE_MIDI_VERSION_BYTES_CLASSIC 0x167
 #define COMFY_SCENE_VOC_STATE_BYTES_V3 0x24D
 #define COMFY_SCENE_STATE_BYTES_V3 0x17F
+#define COMFY_PANTHER_ACTOR_SIZE 0x56
 #define COMFY_ACTOR_SIZE_V3 0x57
 #define COMFY_SCENE_ACTOR_PC_BYTES 0x320
 #define COMFY_SCENE_FRAME_BYTES 0x4E20
 #define COMFY_SCENE_FRAME_BYTES_V3 0x7530
 #define COMFY_VOC_ARG_CAPACITY 10
 #define COMFY_VOC_QUEUE_CAPACITY 16
+#define COMFY_PANTHER_VOC_QUEUE_CAPACITY 4
+#define COMFY_SOUND_PCM_BLOCK_BYTES 0x4E20
+#define COMFY_PANTHER_SOUND_PCM_BLOCK_BYTES 0x3E80
+#define COMFY_SOUND_PITCH_COUNT_LIMIT 0x13
+#define COMFY_FRAME_LOADER_DATA_BYTES 0x6000
 #define COMFY_VOC_ARG_CAPACITY_1999 12
 #define COMFY_MIDI_QUEUE_CAPACITY 32
 #define COMFY_MIDI_CHANNEL_COUNT 2
@@ -80,10 +92,13 @@
 #define COMFY_ANMFRAME_BYTES 0xFA00
 #define COMFY_ANMFRAME_COMMAND_DATA_BYTES 0x78
 #define COMFY_ANM_STATE_BYTES 0x68
+#define COMFY_PANTHER_ANM_STATE_BYTES 0x67
+#define COMFY_ANIM_DIRTY_RECT_CAPACITY 0x3C
 
 namespace Comfy {
 
 class MidiPlyrDriver;
+struct SoundDecoderState;
 
 #ifdef USE_IMGUI
 void onImGuiInit();
@@ -93,12 +108,14 @@ void onImGuiCleanup();
 
 class ComfyEngine : public Engine {
 private:
+	friend struct SoundDecoderState;
+
 	struct VideoRectRecord {
 		int16 left;
 		int16 top;
 		int16 right;
 		int16 bottom;
-		uint16 area;
+		uint32 area;
 
 		VideoRectRecord() {
 			left = 0;
@@ -106,6 +123,20 @@ private:
 			right = 0;
 			bottom = 0;
 			area = 0;
+		}
+	};
+
+	struct DrawCommand {
+		int16 x;
+		int16 y;
+		uint32 selector;
+		byte mode;
+
+		DrawCommand() {
+			x = 0;
+			y = 0;
+			selector = 0;
+			mode = 0;
 		}
 	};
 
@@ -290,11 +321,12 @@ private:
 
 	struct SoundCue {
 		uint16 value;
+		uint32 streamPosition;
 		uint32 counterThreshold;
 	};
 
 	struct Actor {
-		byte raw[COMFY_ACTOR_SIZE];
+		byte raw[COMFY_ACTOR_SIZE_V3];
 	};
 
 	enum ActorOffset {
@@ -332,12 +364,17 @@ private:
 
 	enum ScriptDispatchStatus {
 		kScriptContinue,
-		kScriptYield,
-		kScriptDeactivatedRoot
+		kScriptYield
 	};
 
 	const ComfyGameDescription *_game;
 	byte _engineVersion;
+	bool _isPanther = false;
+	uint16 _actorSize = COMFY_ACTOR_SIZE;
+	uint16 _actorCachedVisibleOffset = kActorCachedVisible;
+	uint16 _actorCachedSpriteOffset = kActorCachedSprite;
+	bool _actorCachedAreaIs32Bit = false;
+	uint16 _vocQueueCapacity = COMFY_VOC_QUEUE_CAPACITY;
 	Common::Path _gameDirectory;
 	Common::Path _introDirectory;
 	Common::Path _gameDataPath;
@@ -349,6 +386,8 @@ private:
 	Graphics::Screen *_screen = nullptr;
 	byte *_framebufPtr = nullptr;
 	byte *_presentBuffer = nullptr;
+	Common::Array<byte> _backgroundFramebuf;
+	uint16 _backgroundFrame = 0;
 	uint16 _logicalScreenWidth;
 	uint16 _logicalScreenHeight;
 	uint16 _videoMode = 2;
@@ -442,6 +481,7 @@ private:
 	Common::Array<byte> _sceneRunBuffer;
 	byte *_sceneRunPtr = nullptr;
 	Common::Array<byte> _scenePoolData;
+	Common::Array<byte> _frameLoaderData;
 	Common::Array<byte> _environmentData;
 	Common::Array<byte> _headerXmsData;
 	Common::Array<byte> _sceneFrameData;
@@ -466,10 +506,15 @@ private:
 	VideoRectRecord _keymaskRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
 	VideoRectRecord _keymaskOldRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
 	VideoRectRecord _keymaskInvalidationRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
+	VideoRectRecord _animFrameDirtyRects[COMFY_ANIM_DIRTY_RECT_CAPACITY];
+	uint16 _animFrameDirtyRectCount = 0;
+	DrawCommand _drawCommands[COMFY_DRAW_COMMAND_CAPACITY];
+	uint16 _drawCommandCount = 0;
 	uint32 _sceneEntryOffsets[COMFY_SCENE_ENTRY_OFFSET_CAPACITY];
 	uint16 _sceneEntryVolumes[COMFY_SCENE_MUSIC_CHANNEL_COUNT];
 	uint16 _sceneEntryCompletionKeys[COMFY_SCENE_MUSIC_CHANNEL_COUNT];
 	uint32 _sceneMidiInstanceOffset = 0;
+	uint32 _sceneSoundStateOffset = 0;
 	uint32 _sceneEntryListOffset = 0;
 	uint32 _sceneActorPcOffset = 0;
 	uint32 _sceneStringTableOffset = 0;
@@ -527,10 +572,6 @@ private:
 	bool _wcomfy99HostMediaValueAvailable = false;
 	uint16 _wcomfy99HostMediaValue = 0;
 	uint16 _wcomfy99HostMediaProgress = 0;
-	uint16 _wcomfy99FeatureWords[16];
-	byte _wcomfy99FeatureWordCount = 0;
-	uint16 _wcomfy99Stub32FirstWord = 0;
-	uint16 _wcomfy99Stub32SecondWord = 0;
 	uint16 _wcomfy99Sensitivity = 0;
 	bool _wcomfy99RecordHostEnabled = false;
 	uint16 _wcomfy99SubsystemWord = 0;
@@ -563,11 +604,40 @@ private:
 	Common::Array<byte> _vocFileData;
 	Common::Array<byte> _soundPcm;
 	Common::Array<SoundCue> _soundCues;
+	SoundDecoderState *_soundDecoderState = nullptr;
 	Audio::SoundHandle _soundHandle;
+	Audio::QueuingAudioStream *_soundQueueStream = nullptr;
+	uint16 _soundWaveBufferIndex = 0;
+	Common::Array<byte> _soundDecoderData;
+	uint32 _soundStreamPosition = 0;
+	uint32 _soundEventArgument = 0;
+	int32 _soundEventLength = 0;
+	uint32 _soundDataBase = 0;
+	uint32 _soundDataEnd = 0;
+	uint32 _soundPlayPosition = 0;
+	uint32 _soundLoopPosition = 0;
+	uint32 _soundCursor = 0;
+	uint32 _soundBlockBase = 0;
+	uint32 _soundRate = 0;
+	uint16 _soundFillCount = 0;
+	int16 _soundLoopCount = 0;
+	byte _soundSample = 0xA5;
+	byte _soundNextSample = 0;
+	bool _soundStopped = true;
+	bool _soundStarted = false;
+	uint16 _soundBitOffset = 0;
+	uint16 _soundLoopBitOffset = 0;
+	uint16 _soundBlockOffset = 0;
+	uint16 _soundBitAccumulator = 1;
+	byte _soundBitWidth = 4;
+	byte _soundPredictorDistance = 1;
+	bool _soundNeedInit = false;
+	Common::Array<byte> _soundPcmBlocks[2];
 	uint16 _soundEntryCount = 0;
 	uint32 _soundSampleRate = 0x2B11;
 	uint _soundNextCue = 0;
 	bool _soundCompressed = false;
+	bool _soundUsesAnimData = false;
 	bool _soundPaused = false;
 	Common::Array<byte> _animFileData;
 	Common::Array<uint32> _animIndexTable;
@@ -579,6 +649,7 @@ private:
 	byte _animFrameHeader[COMFY_ANMFILE_HEADER_BYTES];
 	byte _animFrameCommandData[COMFY_ANMFRAME_COMMAND_DATA_BYTES];
 	uint32 _animPosition = 0;
+	uint32 _animSoundDataPosition = 0;
 	uint16 _animFrameCommandDataSize = 0;
 	uint16 _animFrameCommandArgument = 0;
 	bool _animFrameCommandFlag = false;
@@ -624,8 +695,11 @@ private:
 	void videoPresentFrame();
 	void renderSetDirty();
 	void renderFlushDirty();
+	void renderInvalidateFullFrame();
 	void framebufCopyAll(byte *destination, byte *source);
-	void framebufClear(uint16 color);
+	void framebufClear(byte *destination, uint16 color);
+	void backgroundTransitionFrames(uint16 frame, uint16 previousFrame);
+	void backgroundRestoreDirtyRects();
 	uint32 framebufferBytes();
 	void colorDatOpen();
 	void colorDatClose();
@@ -695,9 +769,10 @@ private:
 	void scenePoolEvict();
 	void scenePoolReserveSlot(uint32 size);
 	SpriteResource *spriteGetPtr(int16 spriteId);
+	void spriteGetConvPtr(int16 spriteId);
 	bool spriteDecompressTile(SpriteResource &sprite, const byte *source, uint32 sourceSize);
 	void spriteBlitClipped(int16 spriteId, int16 x, int16 y);
-	void spriteBlitRle(const byte *source, uint32 sourceSize);
+	void spriteBlitRle(byte *destination, const byte *source, uint32 sourceSize);
 	bool sceneOpen(uint32 sceneEntryListOffset);
 	void sceneShutdown();
 	void sceneEntryReadFromXms(byte *destination, uint16 row, uint16 size);
@@ -731,6 +806,7 @@ private:
 	Actor *actorGetPtr(uint16 actorIndex);
 	void actorSetFrame(int16 frame);
 	uint16 actorGetFrame();
+	void actorSetPos(uint16 mode, int16 value);
 	Actor *actorResolve(uint16 sceneOrActor, uint16 fallbackActor);
 	uint16 actorAlloc(uint16 sceneSlot);
 	void actorFreeSlot(uint16 sceneSlot);
@@ -748,7 +824,12 @@ private:
 	bool actorRunScript(uint16 actorIndex, bool &descendChildren);
 	bool actorTickTree(uint16 actorIndex);
 	bool actorDraw(uint16 actorIndex, int16 x, int16 y);
-	void actorDrawList(uint16 actorIndex, int16 x, int16 y);
+	void actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool visible);
+	bool actorDrawLegacyInternal(uint16 actorIndex, int16 x, int16 y);
+	void actorDrawList(uint16 actorIndex, int16 x, int16 y, bool visible);
+	void renderQueueDrawCommand(int16 x, int16 y, uint32 selector, byte mode);
+	void renderFlushDrawCommands();
+	void renderFlushCachedDirtyRects();
 	uint16 scriptEvalKeyMask(uint32 pc, uint16 mode, VideoRectRecord &maskRecord,
 		VideoRectRecord *rects, int16 baseX, int16 baseY);
 	void actorEvalFrameSelection(uint16 actorIndex, int16 x, int16 y);
@@ -833,10 +914,15 @@ private:
 	bool soundInit();
 	void soundShutdown();
 	void soundHdrReadFromXms(byte *destination, uint16 index, uint16 size);
-	void soundUnprepareHeader();
+	void soundServiceWaveBuffers();
 	bool soundDecodeEntry(uint16 index);
 	bool soundDecodeCompressedEntry(uint32 dataOffset, uint32 dataSize);
 	bool soundLoadEntry(uint16 index);
+	bool soundPrepareDecoderState(uint16 index);
+	bool soundDecodePcmBlock(uint16 bufferIndex, byte *&buffer, uint32 &decodedSize);
+	bool soundQueuePcmBlock(uint16 bufferIndex);
+	void soundPackState(byte *state);
+	void soundUnpackState(byte *state);
 	void soundPlayEntry(uint16 index);
 	void soundAdvanceTick();
 

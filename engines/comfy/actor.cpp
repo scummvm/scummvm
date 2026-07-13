@@ -235,10 +235,10 @@ void ComfyEngine::scenePoolReserveSlot(uint32 size) {
 }
 
 void ComfyEngine::spriteCache(int16 spriteId) {
+	soundServiceWaveBuffers();
+
 	if (!spriteId)
 		return;
-
-	soundUnprepareHeader();
 
 	if (spriteId < 0) {
 		uint16 frameId = (uint16)-spriteId;
@@ -379,8 +379,43 @@ ComfyEngine::SpriteResource *ComfyEngine::spriteGetPtr(int16 spriteId) {
 	return _frameSpriteResource.loaded && _frameSpriteResource.id == frameId ? &_frameSpriteResource : nullptr;
 }
 
-void ComfyEngine::spriteBlitRle(const byte *source, uint32 sourceSize) {
-	if (!_framebufPtr || !source)
+void ComfyEngine::spriteGetConvPtr(int16 spriteId) {
+	soundServiceWaveBuffers();
+
+	if (spriteId <= 0 || (uint16)spriteId >= _objectCacheEntries.size())
+		return;
+
+	if (_spriteConversionLoads.count < COMFY_RESOURCE_LIST_CAPACITY)
+		_spriteConversionLoads.ids[_spriteConversionLoads.count++] = (uint16)spriteId;
+
+	SpriteCacheEntry &entry = _objectCacheEntries[spriteId];
+	byte *payload = nullptr;
+	uint16 width = 0;
+	if (entry.slotSize != 0xFFFF) {
+		if (entry.poolOffset <= _scenePoolData.size() && entry.slotSize >= 0x0C &&
+				0x0C <= _scenePoolData.size() - entry.poolOffset) {
+			byte *entryData = &_scenePoolData[entry.poolOffset];
+			width = READ_LE_UINT16(entryData + 4);
+			payload = entryData + 0x0C;
+		}
+	} else {
+		SpriteObjectHeader header;
+		objHdrRead(header, (uint16)spriteId);
+		width = header.width;
+		if (header.fileOffset <= _picFileData.size() &&
+				header.dataSize <= _picFileData.size() - header.fileOffset)
+			payload = &_picFileData[header.fileOffset];
+	}
+
+	if (!payload || width != 0xFFFF)
+		return;
+
+	// The original uploads the sound-cache tile named by the first payload
+	// word to XMS. ScummVM already keeps the complete source resident.
+}
+
+void ComfyEngine::spriteBlitRle(byte *destination, const byte *source, uint32 sourceSize) {
+	if (!destination || !source)
 		return;
 
 	uint32 sourcePos = 0;
@@ -394,19 +429,73 @@ void ComfyEngine::spriteBlitRle(const byte *source, uint32 sourceSize) {
 			if (sourcePos + count > sourceSize)
 				return;
 
-			memcpy(_framebufPtr + outputPos, source + sourcePos, count);
+			memcpy(destination + outputPos, source + sourcePos, count);
 			sourcePos += count;
 		} else if ((op & 0xC0) == 0xC0) {
-			memset(_framebufPtr + outputPos, previousFill, count);
+			memset(destination + outputPos, previousFill, count);
 		} else {
 			if (sourcePos >= sourceSize)
 				return;
 
 			previousFill = source[sourcePos++];
-			memset(_framebufPtr + outputPos, previousFill, count);
+			memset(destination + outputPos, previousFill, count);
 		}
 
 		outputPos += count;
+	}
+}
+
+void ComfyEngine::backgroundTransitionFrames(uint16 frame, uint16 previousFrame) {
+	if (_isPanther) {
+		if (frame == previousFrame || !frame || _backgroundFramebuf.empty())
+			return;
+
+		SpriteResource *background = spriteGetPtr((int16)frame);
+		if (!background)
+			return;
+
+		if (background->header.width == _logicalScreenWidth &&
+				background->header.height == _logicalScreenHeight && !background->pixels.empty()) {
+			spriteBlitRle(&_backgroundFramebuf[0], &background->pixels[0], background->pixels.size());
+		} else {
+			uint16 color = background->pixels.size() > 3 ? background->pixels[3] : 0;
+			framebufClear(&_backgroundFramebuf[0], color);
+		}
+
+		renderInvalidateFullFrame();
+		return;
+	}
+
+	SpriteResource *background = spriteGetPtr((int16)frame);
+	if (!background)
+		return;
+
+	if (background->header.width == _logicalScreenWidth &&
+			background->header.height == _logicalScreenHeight && !background->pixels.empty()) {
+		spriteBlitRle(_framebufPtr, &background->pixels[0], background->pixels.size());
+	} else {
+		uint16 color = background->pixels.size() > 3 ? background->pixels[3] : 0;
+		framebufClear(_framebufPtr, color);
+	}
+
+	videoSetResolution();
+}
+
+void ComfyEngine::backgroundRestoreDirtyRects() {
+	if (_backgroundFramebuf.empty() || !_framebufPtr)
+		return;
+
+	for (uint i = 0; i < _resolutionChangeCount; i++) {
+		VideoRectRecord &rect = _resolutionChanges[i];
+		int16 width = rect.right - rect.left;
+		int16 height = rect.bottom - rect.top;
+		if (width <= 0 || height <= 0)
+			continue;
+
+		for (int16 y = rect.top; y < rect.bottom; y++) {
+			uint32 offset = (uint32)y * _logicalScreenWidth + rect.left;
+			memcpy(_framebufPtr + offset, &_backgroundFramebuf[offset], width);
+		}
 	}
 }
 
@@ -417,7 +506,7 @@ void ComfyEngine::spriteBlitClipped(int16 spriteId, int16 x, int16 y) {
 
 	SpriteResource &sprite = *loadedSprite;
 	if (sprite.header.width == _logicalScreenWidth && sprite.header.height == _logicalScreenHeight) {
-		spriteBlitRle(&sprite.pixels[0], sprite.pixels.size());
+		spriteBlitRle(_framebufPtr, &sprite.pixels[0], sprite.pixels.size());
 		renderSetDirty();
 		return;
 	}
@@ -464,38 +553,38 @@ void ComfyEngine::spriteBlitClipped(int16 spriteId, int16 x, int16 y) {
 }
 
 uint32 ComfyEngine::actorReadU32(Actor &actor, uint offset) {
-	if (offset + 4 > COMFY_ACTOR_SIZE)
+	if (offset + 4 > _actorSize)
 		return 0;
 
 	return READ_LE_UINT32(actor.raw + offset);
 }
 
 uint16 ComfyEngine::actorReadU16(Actor &actor, uint offset) {
-	if (offset + 2 > COMFY_ACTOR_SIZE)
+	if (offset + 2 > _actorSize)
 		return 0;
 
 	return READ_LE_UINT16(actor.raw + offset);
 }
 
 byte ComfyEngine::actorReadU8(Actor &actor, uint offset) {
-	if (offset >= COMFY_ACTOR_SIZE)
+	if (offset >= _actorSize)
 		return 0;
 
 	return actor.raw[offset];
 }
 
 void ComfyEngine::actorWriteU32(Actor &actor, uint offset, uint32 value) {
-	if (offset + 4 <= COMFY_ACTOR_SIZE)
+	if (offset + 4 <= _actorSize)
 		WRITE_LE_UINT32(actor.raw + offset, value);
 }
 
 void ComfyEngine::actorWriteU16(Actor &actor, uint offset, uint16 value) {
-	if (offset + 2 <= COMFY_ACTOR_SIZE)
+	if (offset + 2 <= _actorSize)
 		WRITE_LE_UINT16(actor.raw + offset, value);
 }
 
 void ComfyEngine::actorWriteU8(Actor &actor, uint offset, byte value) {
-	if (offset < COMFY_ACTOR_SIZE)
+	if (offset < _actorSize)
 		actor.raw[offset] = value;
 }
 
@@ -516,6 +605,27 @@ void ComfyEngine::actorSetFrame(int16 frame) {
 uint16 ComfyEngine::actorGetFrame() {
 	Actor *root = rootActor();
 	return root ? (uint16)actorReadU32(*root, kActorSpriteSelector) : 0;
+}
+
+void ComfyEngine::actorSetPos(uint16 mode, int16 value) {
+	Actor *root = rootActor();
+	if (!root)
+		return;
+
+	switch (mode) {
+	case 1:
+		actorWriteU32(*root, kActorXFixed, (uint32)(int32)value);
+		actorWriteU32(*root, kActorYFixed, 0);
+		break;
+
+	case 2:
+		actorWriteU32(*root, kActorYFixed,
+			(actorReadU32(*root, kActorYFixed) + (int32)value) & 0xFF);
+		break;
+
+	default:
+		break;
+	}
 }
 
 ComfyEngine::Actor *ComfyEngine::actorResolve(uint16 sceneOrActor, uint16 fallbackActor) {
@@ -617,7 +727,7 @@ uint16 ComfyEngine::actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible,
 		uint32 pc, int16 x, int16 y, int16 sprite, byte insertAsChild) {
 	uint16 actorIndex = actorAlloc(sceneSlot);
 	Actor *actor = actorGetPtr(actorIndex);
-	if (!actor)
+	if (!actorIndex || !actor)
 		return 8;
 
 	actorWriteU16(*actor, kActorSceneHandle, sceneSlot);
@@ -637,11 +747,11 @@ uint16 ComfyEngine::actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible,
 	actorWriteU16(*actor, kActorWaitTarget, 0);
 	actorWriteU16(*actor, kActorWaitAccum, 0);
 	actorWriteU8(*actor, kActorDirty, 1);
-	if (_videoMode == 2) {
+	if (_videoMode == 2 || _videoMode == 4) {
 		VideoRectRecord empty;
 		actorWriteCachedRect(*actor, empty);
-		actorWriteU32(*actor, kActorCachedSprite, 0);
-		actorWriteU8(*actor, kActorCachedVisible, 0);
+		actorWriteU32(*actor, _actorCachedSpriteOffset, 0);
+		actorWriteU8(*actor, _actorCachedVisibleOffset, 0);
 	}
 
 	if (parentSlot) {
@@ -722,10 +832,8 @@ void ComfyEngine::actorFreeTreePc(uint16 actorIndex) {
 	if (!actor)
 		return;
 
-	if (_videoMode == 2) {
-		VideoRectRecord rect = actorReadCachedRect(*actor);
-		videoFindBestMode(rect);
-	}
+	if (!_usesAnimFile && _videoMode == 2)
+		videoFindBestMode(actorReadCachedRect(*actor));
 
 	actorFreePcChain(*actor);
 
@@ -745,8 +853,19 @@ void ComfyEngine::actorFreeTreePc(uint16 actorIndex) {
 		child = next;
 	}
 
-	if (_usesAnimFile && actorReadU32(*actor, kActorSpriteSelector) == 0x00FFFFFF)
-		animFrameShutdown(true);
+	if (_usesAnimFile) {
+		uint32 selector = actorReadU32(*actor, kActorSpriteSelector);
+		if (_videoMode == 2 || _videoMode == 4) {
+			if (selector & 0xFF000000) {
+				renderInvalidateFullFrame();
+			} else if (selector != 0x00FFFFFF) {
+				videoFindBestMode(actorReadCachedRect(*actor));
+			}
+		}
+
+		if (selector == 0x00FFFFFF)
+			animFrameShutdown(true);
+	}
 
 	uint16 sceneSlot = actorReadU16(*actor, kActorSceneHandle);
 	actorFreeSlot(sceneSlot);
@@ -848,11 +967,6 @@ bool ComfyEngine::actorRunScript(uint16 actorIndex, bool &descendChildren) {
 
 		actorWriteU16(*actor, kActorMoveTicks, moveTicks);
 		if (moveTicks && actorReadU8(*actor, kActorBlockingMove)) {
-			if (_stringTable.size() > 3) {
-				actorWriteU16(*actor, kActorStringRef, _stringTable[2]);
-				actorWriteU16(*actor, kActorStringRef + 2, _stringTable[3]);
-			}
-
 			descendChildren = true;
 			return false;
 		}
@@ -887,7 +1001,7 @@ bool ComfyEngine::actorRunScript(uint16 actorIndex, bool &descendChildren) {
 		}
 
 		descendChildren = status == kScriptYield && !_actorDestroyedCurrent;
-		return status == kScriptDeactivatedRoot || _actorDestroyedCurrent;
+		return _actorDestroyedCurrent;
 	}
 }
 
@@ -937,12 +1051,67 @@ bool ComfyEngine::actorTickTree(uint16 actorIndex) {
 	return false;
 }
 
-void ComfyEngine::actorDrawList(uint16 actorIndex, int16 x, int16 y) {
+void ComfyEngine::actorDrawList(uint16 actorIndex, int16 x, int16 y, bool visible) {
 	while (actorIndex) {
-		actorDraw(actorIndex, x, y);
+		if (_usesAnimFile)
+			actorDrawInternal(actorIndex, x, y, visible);
+		else
+			actorDraw(actorIndex, x, y);
+
 		Actor *actor = actorGetPtr(actorIndex);
 		actorIndex = actor ? actorReadU16(*actor, kActorNextLink) : 0;
 	}
+}
+
+void ComfyEngine::renderQueueDrawCommand(int16 x, int16 y, uint32 selector, byte mode) {
+	if (!selector)
+		return;
+
+	if (_drawCommandCount >= COMFY_DRAW_COMMAND_CAPACITY)
+		error("Too many actor draw commands");
+
+	DrawCommand &command = _drawCommands[_drawCommandCount++];
+	command.x = x;
+	command.y = y;
+	command.selector = selector;
+	command.mode = mode;
+	if (_drawCommandCount >= COMFY_DRAW_COMMAND_CAPACITY)
+		error("Too many actor draw commands");
+}
+
+void ComfyEngine::renderFlushDrawCommands() {
+	if (_isPanther && actorGetFrame())
+		backgroundRestoreDirtyRects();
+
+	for (uint i = 0; i < _drawCommandCount; i++) {
+		DrawCommand &command = _drawCommands[i];
+		if (command.mode == 2) {
+			animFrameBlitAt(command.x, command.y);
+			continue;
+		}
+
+		SpriteResource *sprite = spriteGetPtr((int16)command.selector);
+		if (!sprite)
+			continue;
+
+		spriteBlitClipped((int16)command.selector, command.x, command.y);
+		if (command.mode == 0) {
+			VideoRectRecord dirtyRect;
+			dirtyRect.left = command.x;
+			dirtyRect.top = command.y;
+			dirtyRect.right = command.x + sprite->header.width;
+			dirtyRect.bottom = command.y + sprite->header.height;
+			dirtyRect.area = (uint32)sprite->header.width * sprite->header.height;
+			videoFindBestMode(dirtyRect);
+		}
+	}
+
+	_drawCommandCount = 0;
+}
+
+void ComfyEngine::renderFlushCachedDirtyRects() {
+	for (uint i = 0; i < _animFrameDirtyRectCount; i++)
+		videoFindBestMode(_animFrameDirtyRects[i]);
 }
 
 uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, VideoRectRecord &maskRecord,
@@ -1026,7 +1195,7 @@ uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, VideoRectRecord &m
 
 		int16 left = _keymaskX - sprite->header.hotspotX;
 		int16 top = _keymaskY - sprite->header.hotspotY;
-		if (mode == 1)
+		if (mode == 1 && !_usesAnimFile)
 			spriteBlitClipped((int16)spriteId, left, top);
 
 		if (rect) {
@@ -1034,7 +1203,8 @@ uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, VideoRectRecord &m
 			rect->top = top;
 			rect->right = left + sprite->header.width;
 			rect->bottom = top + sprite->header.height;
-			rect->area = sprite->header.width * sprite->header.height;
+			rect->area = _usesAnimFile ? spriteId :
+				(uint32)sprite->header.width * sprite->header.height;
 		}
 	}
 
@@ -1047,23 +1217,29 @@ void ComfyEngine::actorEvalFrameSelection(uint16 actorIndex, int16 x, int16 y) {
 	if (!actor)
 		return;
 
-	uint32 selector = actorReadU32(*actor, kActorCachedSprite);
+	uint32 selector = actorReadU32(*actor, _actorCachedSpriteOffset);
 	VideoRectRecord rect = actorReadCachedRect(*actor);
-	if (selector & 0xFF000000) {
+	if (selector == 0x00FFFFFF) {
+		animFrameInvalidateRects(rect.left, rect.top, 0);
+	} else if (selector & 0xFF000000) {
 		uint16 last = scriptEvalKeyMask(selector & 0x00FFFFFF, 0, rect, _keymaskInvalidationRects,
 			rect.left, rect.top);
 		if (last != 0xFFFF && last >= COMFY_RESOLUTION_CHANGE_CAPACITY)
 			last = COMFY_RESOLUTION_CHANGE_CAPACITY - 1;
 
 		if (last != 0xFFFF) {
-			for (uint i = 0; i <= last; i++)
-				videoFindBestMode(_keymaskInvalidationRects[i]);
+			for (uint i = 0; i <= last; i++) {
+				VideoRectRecord dirtyRect = _keymaskInvalidationRects[i];
+				dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) *
+					(dirtyRect.bottom - dirtyRect.top);
+				videoFindBestMode(dirtyRect);
+			}
 		}
 	} else {
 		videoFindBestMode(rect);
 	}
 
-	actorWriteU32(*actor, kActorCachedSprite, 0);
+	actorWriteU32(*actor, _actorCachedSpriteOffset, 0);
 	uint16 child = actorReadU16(*actor, kActorSiblingHead);
 	while (child) {
 		actorEvalFrameSelection(child, x, y);
@@ -1085,7 +1261,8 @@ ComfyEngine::VideoRectRecord ComfyEngine::actorReadCachedRect(Actor &actor) {
 	rect.top = actorReadU16(actor, kActorCachedRect + 2);
 	rect.right = actorReadU16(actor, kActorCachedRect + 4);
 	rect.bottom = actorReadU16(actor, kActorCachedRect + 6);
-	rect.area = actorReadU16(actor, kActorCachedRect + 8);
+	rect.area = _actorCachedAreaIs32Bit ? actorReadU32(actor, kActorCachedRect + 8) :
+		actorReadU16(actor, kActorCachedRect + 8);
 	return rect;
 }
 
@@ -1094,7 +1271,10 @@ void ComfyEngine::actorWriteCachedRect(Actor &actor, VideoRectRecord rect) {
 	actorWriteU16(actor, kActorCachedRect + 2, rect.top);
 	actorWriteU16(actor, kActorCachedRect + 4, rect.right);
 	actorWriteU16(actor, kActorCachedRect + 6, rect.bottom);
-	actorWriteU16(actor, kActorCachedRect + 8, rect.area);
+	if (_actorCachedAreaIs32Bit)
+		actorWriteU32(actor, kActorCachedRect + 8, rect.area);
+	else
+		actorWriteU16(actor, kActorCachedRect + 8, rect.area);
 }
 
 bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
@@ -1102,33 +1282,268 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 	if (!actor)
 		return true;
 
-	if (!animFrameShouldDraw(1))
-		return false;
+	if (!animFrameShouldDraw(1)) {
+		if (_usesAnimFile)
+			animFrameInvalidateRects(x, y, 0);
 
-	int16 drawX = (int16)((int32)actorReadU32(*actor, kActorXFixed) >> 12) + x;
-	int16 drawY = (int16)((int32)actorReadU32(*actor, kActorYFixed) >> 12) + y;
-	byte oldVisible = actorReadU8(*actor, kActorCachedVisible);
-	uint32 oldSelector = actorReadU32(*actor, kActorCachedSprite);
-	VideoRectRecord oldRect = actorReadCachedRect(*actor);
-	if (!actorReadU8(*actor, kActorVisible)) {
-		if (_videoMode == 2 && actorReadU8(*actor, kActorVisible) != oldVisible) {
+		return false;
+	}
+
+	if (!_usesAnimFile && !actorReadU8(*actor, kActorVisible)) {
+		if ((_videoMode == 2 || _videoMode == 4) &&
+				actorReadU8(*actor, kActorVisible) != actorReadU8(*actor, _actorCachedVisibleOffset)) {
+			int16 drawX = (int16)((int32)actorReadU32(*actor, kActorXFixed) >> 12) + x;
+			int16 drawY = (int16)((int32)actorReadU32(*actor, kActorYFixed) >> 12) + y;
 			actorEvalFrameSelection(actorIndex, drawX, drawY);
-			actorWriteU8(*actor, kActorCachedVisible, actorReadU8(*actor, kActorVisible));
+			actorWriteU8(*actor, _actorCachedVisibleOffset, actorReadU8(*actor, kActorVisible));
 		}
 
 		return true;
 	}
 
 	animFrameRecordVocCounter(1);
-	actorDrawList(actorReadU16(*actor, kActorSiblingHead), drawX, drawY);
+	if (_isPanther && _videoMode != 2 && _videoMode != 4)
+		actorDrawLegacyInternal(actorIndex, x, y);
+	else
+		actorDrawInternal(actorIndex, x, y, true);
+
+	if (_usesAnimFile) {
+		if (_isPanther && (_videoMode == 2 || _videoMode == 4))
+			renderFlushDrawCommands();
+
+		animFrameRecordVocCounter(2);
+	}
+
+	return animFrameShouldDraw(2);
+}
+
+bool ComfyEngine::actorDrawLegacyInternal(uint16 actorIndex, int16 x, int16 y) {
+	Actor *actor = actorGetPtr(actorIndex);
+	if (!actor || !actorReadU8(*actor, kActorVisible))
+		return true;
+
+	int16 drawX = (int16)((int32)actorReadU32(*actor, kActorXFixed) >> 12) + x;
+	int16 drawY = (int16)((int32)actorReadU32(*actor, kActorYFixed) >> 12) + y;
+	bool drawResult = true;
+	uint16 linkedActor = actorReadU16(*actor, kActorSiblingHead);
+	while (linkedActor && drawResult) {
+		drawResult = actorDrawLegacyInternal(linkedActor, drawX, drawY);
+		Actor *linked = actorGetPtr(linkedActor);
+		linkedActor = linked ? actorReadU16(*linked, kActorNextLink) : 0;
+	}
+
+	if (!drawResult)
+		return false;
+
 	uint32 selector = actorReadU32(*actor, kActorSpriteSelector);
+	if (selector == 0x00FFFFFF) {
+		drawResult = animFrameBlitAt(drawX, drawY);
+	} else if (selector & 0xFF000000) {
+		uint32 pc = selector & 0x00FFFFFF;
+		int16 wordsLeft = (int16)(scriptReadWord(pc) - 1);
+		pc += 2;
+		while (wordsLeft > 0 && !_scriptFault) {
+			uint16 spriteId = scriptReadWord(pc);
+			int16 dx = scriptReadWord(pc + 2);
+			int16 dy = scriptReadWord(pc + 4);
+			pc += 6;
+			wordsLeft -= 3;
+			if (spriteId & 0x8000) {
+				wordsLeft -= 2;
+				uint16 key = scriptReadWord(pc);
+				pc += 2;
+				if (keyBitTest(key))
+					spriteId &= 0x7FFF;
+				else
+					spriteId = scriptReadWord(pc);
+
+				pc += 2;
+			}
+
+			if (spriteId) {
+				int16 spriteX = drawX + dx;
+				int16 spriteY = drawY + dy;
+				SpriteResource *sprite = spriteLookup(spriteId, spriteX, spriteY);
+				if (sprite)
+					spriteBlitClipped((int16)spriteId, spriteX - sprite->header.hotspotX,
+						spriteY - sprite->header.hotspotY);
+			}
+		}
+	} else if (selector) {
+		SpriteResource *sprite = spriteLookup((uint16)selector, drawX, drawY);
+		if (sprite)
+			spriteBlitClipped((int16)selector, drawX - sprite->header.hotspotX,
+				drawY - sprite->header.hotspotY);
+	}
+
+	if (!drawResult)
+		return false;
+
+	linkedActor = actorReadU16(*actor, kActorChildHead);
+	while (linkedActor && drawResult) {
+		drawResult = actorDrawLegacyInternal(linkedActor, drawX, drawY);
+		Actor *linked = actorGetPtr(linkedActor);
+		linkedActor = linked ? actorReadU16(*linked, kActorNextLink) : 0;
+	}
+
+	return drawResult;
+}
+
+void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool visible) {
+	Actor *actor = actorGetPtr(actorIndex);
+	if (!actor)
+		return;
+
+	int16 drawX = (int16)((int32)actorReadU32(*actor, kActorXFixed) >> 12) + x;
+	int16 drawY = (int16)((int32)actorReadU32(*actor, kActorYFixed) >> 12) + y;
+	visible = visible && actorReadU8(*actor, kActorVisible);
+	byte oldVisible = actorReadU8(*actor, _actorCachedVisibleOffset);
+	uint32 oldSelector = actorReadU32(*actor, _actorCachedSpriteOffset);
+	VideoRectRecord oldRect = actorReadCachedRect(*actor);
+	actorDrawList(actorReadU16(*actor, kActorSiblingHead), drawX, drawY, visible);
+	uint32 selector = actorReadU32(*actor, kActorSpriteSelector);
+	if (_isPanther) {
+		VideoRectRecord newRect;
+		if (selector == 0x00FFFFFF) {
+			bool changed = false;
+			if (oldVisible != (visible ? 1 : 0) && actorReadU8(*actor, kActorVisible) && oldVisible == 1)
+				changed = true;
+
+			if (oldRect.left != drawX || oldRect.top != drawY)
+				changed = true;
+
+			if (changed) {
+				renderFlushCachedDirtyRects();
+				animFrameInvalidateRects(drawX, drawY, 1);
+				newRect.left = drawX;
+				newRect.top = drawY;
+				actorWriteU8(*actor, _actorCachedVisibleOffset, visible ? 1 : 0);
+				actorWriteCachedRect(*actor, newRect);
+				renderQueueDrawCommand(drawX, drawY, selector, 2);
+			} else if (visible && actorReadU8(*actor, kActorVisible)) {
+				animFrameInvalidateRects(drawX, drawY, 0);
+				renderQueueDrawCommand(drawX, drawY, selector, 2);
+			}
+
+			actorDrawList(actorReadU16(*actor, kActorChildHead), drawX, drawY, visible);
+			return;
+		}
+
+		bool scripted = (selector & 0xFF000000) != 0;
+		uint16 currentLastRect = 0xFFFF;
+		if (scripted) {
+			_keymaskCurrentRecord.left = drawX;
+			_keymaskCurrentRecord.top = drawY;
+			_keymaskCurrentRecord.right = 0;
+			_keymaskCurrentRecord.bottom = 0;
+			_keymaskCurrentRecord.area = 0;
+			currentLastRect = scriptEvalKeyMask(selector & 0x00FFFFFF, 1,
+				_keymaskCurrentRecord, _keymaskRects, drawX, drawY);
+			if (currentLastRect != 0xFFFF && currentLastRect >= COMFY_RESOLUTION_CHANGE_CAPACITY)
+				currentLastRect = COMFY_RESOLUTION_CHANGE_CAPACITY - 1;
+
+			newRect = _keymaskCurrentRecord;
+		} else if (selector) {
+			SpriteResource *sprite = spriteLookup((uint16)selector, drawX, drawY);
+			if (sprite) {
+				newRect.left = drawX - sprite->header.hotspotX;
+				newRect.top = drawY - sprite->header.hotspotY;
+				newRect.right = newRect.left + sprite->header.width;
+				newRect.bottom = newRect.top + sprite->header.height;
+				newRect.area = selector;
+			}
+		}
+
+		if (scripted && oldSelector == selector && oldRect.left == newRect.left &&
+				oldRect.top == newRect.top && oldVisible == 1 && visible) {
+			VideoRectRecord oldMaskRecord = oldRect;
+			uint16 oldLastRect = scriptEvalKeyMask(oldSelector & 0x00FFFFFF, 0,
+				oldMaskRecord, _keymaskOldRects, oldRect.left, oldRect.top);
+			if (oldLastRect != 0xFFFF && oldLastRect >= COMFY_RESOLUTION_CHANGE_CAPACITY)
+				oldLastRect = COMFY_RESOLUTION_CHANGE_CAPACITY - 1;
+
+			if (oldLastRect != 0xFFFF) {
+				for (uint i = 0; i <= oldLastRect; i++) {
+					VideoRectRecord &currentRect = _keymaskRects[i];
+					VideoRectRecord &previousRect = _keymaskOldRects[i];
+					bool equal = currentRect.left == previousRect.left &&
+						currentRect.top == previousRect.top &&
+						currentRect.right == previousRect.right &&
+						currentRect.bottom == previousRect.bottom &&
+						currentRect.area == previousRect.area;
+					if (!equal)
+						videoFindBestMode(previousRect);
+
+					renderQueueDrawCommand(currentRect.left, currentRect.top,
+						currentRect.area, equal ? 1 : 0);
+				}
+			}
+
+			actorWriteCachedRect(*actor, newRect);
+			actorDrawList(actorReadU16(*actor, kActorChildHead), drawX, drawY, visible);
+			return;
+		}
+
+		bool changed = oldSelector != selector || oldRect.left != newRect.left ||
+			oldRect.top != newRect.top || oldRect.right != newRect.right ||
+			oldRect.bottom != newRect.bottom || oldRect.area != newRect.area ||
+			oldVisible != (visible ? 1 : 0);
+		if (changed) {
+			if (visible && selector) {
+				if (scripted && currentLastRect != 0xFFFF) {
+					for (uint i = 0; i <= currentLastRect; i++) {
+						VideoRectRecord &rect = _keymaskRects[i];
+						renderQueueDrawCommand(rect.left, rect.top, rect.area, 0);
+					}
+				} else if (!scripted) {
+					renderQueueDrawCommand(newRect.left, newRect.top, newRect.area, 0);
+				}
+			}
+
+			if (oldVisible) {
+				if (oldSelector == 0x00FFFFFF) {
+					renderFlushCachedDirtyRects();
+				} else if (oldSelector & 0xFF000000) {
+					VideoRectRecord oldMaskRecord = oldRect;
+					uint16 oldLastRect = scriptEvalKeyMask(oldSelector & 0x00FFFFFF, 0,
+						oldMaskRecord, _keymaskOldRects, oldRect.left, oldRect.top);
+					if (oldLastRect != 0xFFFF && oldLastRect >= COMFY_RESOLUTION_CHANGE_CAPACITY)
+						oldLastRect = COMFY_RESOLUTION_CHANGE_CAPACITY - 1;
+
+					if (oldLastRect != 0xFFFF) {
+						for (uint i = 0; i <= oldLastRect; i++)
+							videoFindBestMode(_keymaskOldRects[i]);
+					}
+				} else {
+					videoFindBestMode(oldRect);
+				}
+			}
+
+			actorWriteU8(*actor, _actorCachedVisibleOffset, visible ? 1 : 0);
+			actorWriteCachedRect(*actor, newRect);
+			actorWriteU32(*actor, _actorCachedSpriteOffset, selector);
+		} else if (visible) {
+			if (scripted && currentLastRect != 0xFFFF) {
+				for (uint i = 0; i <= currentLastRect; i++) {
+					VideoRectRecord &rect = _keymaskRects[i];
+					renderQueueDrawCommand(rect.left, rect.top, rect.area, 1);
+				}
+			} else if (!scripted) {
+				renderQueueDrawCommand(newRect.left, newRect.top, newRect.area, 1);
+			}
+		}
+
+		actorDrawList(actorReadU16(*actor, kActorChildHead), drawX, drawY, visible);
+		return;
+	}
+
 	bool oldScripted = (oldSelector & 0xFF000000) != 0;
 	bool newScripted = (selector & 0xFF000000) != 0;
 	VideoRectRecord newRect;
 	uint16 scriptedLastRect = 0xFFFF;
 	if (newScripted) {
 		uint32 pc = selector & 0x00FFFFFF;
-		if (_videoMode == 2) {
+		if (_videoMode == 2 || _videoMode == 4) {
 			_keymaskCurrentRecord.left = drawX;
 			_keymaskCurrentRecord.top = drawY;
 			_keymaskCurrentRecord.right = 0;
@@ -1137,6 +1552,18 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 			scriptedLastRect = scriptEvalKeyMask(pc, 1, _keymaskCurrentRecord, _keymaskRects, drawX, drawY);
 			if (scriptedLastRect != 0xFFFF && scriptedLastRect >= COMFY_RESOLUTION_CHANGE_CAPACITY)
 				scriptedLastRect = COMFY_RESOLUTION_CHANGE_CAPACITY - 1;
+
+			if (_usesAnimFile && visible && scriptedLastRect != 0xFFFF) {
+				for (uint i = 0; i <= scriptedLastRect; i++) {
+					VideoRectRecord &drawRecord = _keymaskRects[i];
+					if (drawRecord.area) {
+						if (_isPanther)
+							renderQueueDrawCommand(drawRecord.left, drawRecord.top, drawRecord.area, 1);
+						else
+							spriteBlitClipped((int16)drawRecord.area, drawRecord.left, drawRecord.top);
+					}
+				}
+			}
 		} else {
 			int16 wordsLeft = (int16)(scriptReadWord(pc) - 1);
 			pc += 2;
@@ -1158,16 +1585,21 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 					pc += 2;
 				}
 
-				if (spriteId) {
+				if (visible && spriteId) {
 					SpriteResource *sprite = spriteGetPtr((int16)spriteId);
-					if (sprite)
-						spriteBlitClipped((int16)spriteId, drawX + dx - sprite->header.hotspotX,
-							drawY + dy - sprite->header.hotspotY);
+					if (sprite) {
+						int16 spriteX = drawX + dx - sprite->header.hotspotX;
+						int16 spriteY = drawY + dy - sprite->header.hotspotY;
+						if (_isPanther && (_videoMode == 2 || _videoMode == 4))
+							renderQueueDrawCommand(spriteX, spriteY, spriteId, 1);
+						else
+							spriteBlitClipped((int16)spriteId, spriteX, spriteY);
+					}
 				}
 			}
 		}
 
-		if (_videoMode == 2 && scriptedLastRect != 0xFFFF) {
+		if ((_videoMode == 2 || _videoMode == 4) && scriptedLastRect != 0xFFFF) {
 			newRect = _keymaskCurrentRecord;
 		}
 	} else if (selector == 0x00FFFFFF) {
@@ -1179,7 +1611,12 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 		newRect.right = drawX + frameWidth;
 		newRect.bottom = drawY + frameHeight;
 		newRect.area = frameWidth * frameHeight;
-		animFrameBlitAt(drawX, drawY);
+		if (visible) {
+			if (_isPanther && (_videoMode == 2 || _videoMode == 4))
+				renderQueueDrawCommand(drawX, drawY, selector, 2);
+			else
+				animFrameBlitAt(drawX, drawY);
+		}
 	} else if (selector) {
 		SpriteResource *sprite = spriteLookup((uint16)selector, drawX, drawY);
 		if (sprite) {
@@ -1188,13 +1625,18 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 			newRect.right = newRect.left + sprite->header.width;
 			newRect.bottom = newRect.top + sprite->header.height;
 			newRect.area = sprite->header.width * sprite->header.height;
-			spriteBlitClipped((int16)selector, drawX - sprite->header.hotspotX, drawY - sprite->header.hotspotY);
+			if (visible) {
+				int16 spriteX = drawX - sprite->header.hotspotX;
+				int16 spriteY = drawY - sprite->header.hotspotY;
+				if (_isPanther && (_videoMode == 2 || _videoMode == 4))
+					renderQueueDrawCommand(spriteX, spriteY, selector, 1);
+				else
+					spriteBlitClipped((int16)selector, spriteX, spriteY);
+			}
 		}
 	}
-	animFrameRecordVocCounter(2);
-
-	if (_videoMode == 2) {
-		byte newVisible = actorReadU8(*actor, kActorVisible);
+	if (_videoMode == 2 || _videoMode == 4) {
+		byte newVisible = visible ? 1 : 0;
 		bool changed = oldSelector != selector || oldVisible != newVisible;
 		if (oldRect.left != newRect.left || oldRect.top != newRect.top ||
 				oldRect.right != newRect.right || oldRect.bottom != newRect.bottom || oldRect.area != newRect.area)
@@ -1221,39 +1663,59 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 					bool equal = oldItem && newItem && oldItem->left == newItem->left && oldItem->top == newItem->top &&
 						oldItem->right == newItem->right && oldItem->bottom == newItem->bottom && oldItem->area == newItem->area;
 					if (!equal) {
-						if (oldItem)
-							videoFindBestMode(*oldItem);
+						if (oldItem) {
+							VideoRectRecord dirtyRect = *oldItem;
+							dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) *
+								(dirtyRect.bottom - dirtyRect.top);
+							videoFindBestMode(dirtyRect);
+						}
 
-						if (newItem)
-							videoFindBestMode(*newItem);
+						if (newItem) {
+							VideoRectRecord dirtyRect = *newItem;
+							dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) *
+								(dirtyRect.bottom - dirtyRect.top);
+							videoFindBestMode(dirtyRect);
+						}
 					}
 				}
 
 				comparedScriptRects = true;
 			} else if (newScripted && scriptedLastRect != 0xFFFF) {
-				for (uint i = 0; i <= scriptedLastRect; i++)
-					videoFindBestMode(_keymaskRects[i]);
-			} else if (!newScripted) {
+				for (uint i = 0; i <= scriptedLastRect; i++) {
+					VideoRectRecord dirtyRect = _keymaskRects[i];
+					dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) *
+						(dirtyRect.bottom - dirtyRect.top);
+					videoFindBestMode(dirtyRect);
+				}
+			} else if (!newScripted && selector != 0x00FFFFFF) {
 				videoFindBestMode(newRect);
 			}
 
 			if (!comparedScriptRects) {
 				if (oldScripted && oldScriptedLastRect != 0xFFFF) {
-					for (uint i = 0; i <= oldScriptedLastRect; i++)
-						videoFindBestMode(_keymaskOldRects[i]);
+					for (uint i = 0; i <= oldScriptedLastRect; i++) {
+						VideoRectRecord dirtyRect = _keymaskOldRects[i];
+						dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) *
+							(dirtyRect.bottom - dirtyRect.top);
+						videoFindBestMode(dirtyRect);
+					}
+				} else if (oldSelector == 0x00FFFFFF) {
+					animFrameInvalidateRects(oldRect.left, oldRect.top, 0);
 				} else if (!oldScripted) {
 					videoFindBestMode(oldRect);
 				}
 			}
 		}
 
-		actorWriteU8(*actor, kActorCachedVisible, newVisible);
-		actorWriteU32(*actor, kActorCachedSprite, selector);
+		actorWriteU8(*actor, _actorCachedVisibleOffset, newVisible);
+		actorWriteU32(*actor, _actorCachedSpriteOffset, selector);
 		actorWriteCachedRect(*actor, newRect);
 	}
 
-	actorDrawList(actorReadU16(*actor, kActorChildHead), drawX, drawY);
-	return animFrameShouldDraw(2);
+	if (!_usesAnimFile)
+		animFrameRecordVocCounter(2);
+
+	actorDrawList(actorReadU16(*actor, kActorChildHead), drawX, drawY, visible);
 }
 
 
