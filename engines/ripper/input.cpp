@@ -173,6 +173,14 @@ void InputManager::drainKeys() {
 	debugC(2, kDebugInput, "Ripper: drained %d pending keyboard commands", count);
 }
 
+void InputManager::discardMouseTransitions() {
+	debugC(2, kDebugInput,
+		"Ripper: discarded mouse transitions pressed=0x%02x released=0x%02x buttons=0x%02x",
+		_mouseState.pressed, _mouseState.released, _mouseState.buttons);
+	_mouseState.pressed = 0;
+	_mouseState.released = 0;
+}
+
 MouseState InputManager::publishMouseState() {
 	const MouseState published = _mouseState;
 	_mouseState.pressed = 0;

@@ -117,6 +117,7 @@ public:
 private:
 	bool executeCallback(CompiledScript &script, uint32 callbackOffset, int &result,
 		uint *nextFrame = nullptr);
+	void beginBa0InteractionWait(const Common::String &frameLabel, uint interactionCount);
 	bool advanceBa0ToFrame(uint nextFrame);
 	bool executeConcurrentFrame();
 	bool findFrameByLabel(const CompiledScript &script, const Common::String &label, uint &frameIndex) const;

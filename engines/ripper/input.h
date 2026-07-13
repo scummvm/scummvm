@@ -49,6 +49,7 @@ public:
 	bool hasPendingKey() const;
 	uint16 consumeKey();
 	void drainKeys();
+	void discardMouseTransitions();
 	MouseState publishMouseState();
 
 private:
