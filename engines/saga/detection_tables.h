@@ -997,6 +997,31 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{},
 	},
 
+	// Inherit the earth - Russian Windows CD version (fan translation)
+	{
+		{
+			"ite",
+			"Windows CD Version",
+			{
+				{"ite.rsc",		GAME_RESOURCEFILE,	"fedbe4a01170f7a94e3426a2a9550be3", 9035369},
+				{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", 328193},
+				AD_LISTEND
+			},
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_ITE,
+		0,
+		ITE_DEFAULT_SCENE,
+		RESOURCELIST_ITE,
+		FONTLIST_ITE,
+		PATCHLIST_ITE,
+		INTROLIST_ITE_DEFAULT,
+		{},
+	},
+
 	// ITE floppy versions ////////////////////////////////////////////////////////////////////////////////////
 
 	// Inherit the earth - German Floppy version
