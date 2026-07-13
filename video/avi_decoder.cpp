@@ -464,7 +464,7 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 	if (_decodedHeader) {
 		// Ensure there's at least one supported media track. Some AVI files
 		// carry only audio data, which is still valid for MCI-style playback.
-		bool hasSupportedTrack = false;
+		bool hasSupportedTrack = findNextVideoTrack() != nullptr;
 		for (TrackListIterator it = getTrackListBegin(); it != getTrackListEnd(); it++) {
 			if ((*it)->getTrackType() == Track::kTrackTypeVideo || (*it)->getTrackType() == Track::kTrackTypeAudio) {
 				hasSupportedTrack = true;
