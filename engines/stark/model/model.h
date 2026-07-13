@@ -34,6 +34,10 @@ namespace Gfx {
 class TextureSet;
 }
 
+namespace Formats {
+class GltfModelReader;
+}
+
 class ArchiveReadStream;
 
 class VertNode {
@@ -113,6 +117,8 @@ public:
 	Math::AABB getBoundingBox() const;
 
 private:
+	friend class Formats::GltfModelReader;
+
 	void buildBonesBoundingBoxes();
 	void buildBoneBoundingBox(BoneNode *bone) const;
 	void readBones(ArchiveReadStream *stream);

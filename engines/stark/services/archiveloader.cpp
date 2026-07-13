@@ -24,6 +24,8 @@
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
+#include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
 
 namespace Stark {
 
@@ -79,6 +81,12 @@ void ArchiveLoader::unloadUnused() {
 }
 
 ArchiveReadStream *ArchiveLoader::getFile(const Common::Path &fileName, const Common::Path &archiveName) {
+	if (StarkSettings->isAssetsModEnabled()) {
+		Common::SeekableReadStream *modStream = getExternalFile(fileName, archiveName);
+		if (modStream) {
+			return new ArchiveReadStream(modStream);
+		}
+	}
 	LoadedArchive *archive = findArchive(archiveName);
 	const Formats::XARCArchive &xarc = archive->getXArc();
 

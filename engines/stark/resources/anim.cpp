@@ -23,8 +23,11 @@
 
 #include "engines/stark/debug.h"
 #include "engines/stark/formats/biffmesh.h"
+#include "engines/stark/formats/gltf.h"
 #include "engines/stark/formats/tm.h"
 #include "engines/stark/formats/xrc.h"
+
+#include "common/archive.h"
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/resources/anim.h"
@@ -579,11 +582,36 @@ void AnimSkeleton::readData(Formats::XRCReadStream *stream) {
 }
 
 void AnimSkeleton::onPostRead() {
-	ArchiveReadStream *stream = StarkArchiveLoader->getFile(_animFilename, _archiveName);
-
 	_skeletonAnim = new SkeletonAnim();
-	_skeletonAnim->createFromStream(stream);
 
+	if (StarkSettings->isAssetsModEnabled()) {
+		Common::String baseName = _animFilename.baseName();
+		if (baseName.hasSuffixIgnoreCase(".ani")) {
+			baseName = Common::String(baseName.c_str(), baseName.size() - 4);
+		}
+		Common::Path glbPath(baseName + ".glb");
+
+		Common::SeekableReadStream *glbStream = SearchMan.createReadStreamForMember(glbPath);
+		if (glbStream) {
+			debugC(kDebugModding, "Attempting to load replacement animation %s",
+			       glbPath.toString(Common::Path::kNativeSeparator).c_str());
+			bool loaded = Formats::GltfAnimReader::load(_skeletonAnim, glbStream, baseName);
+			delete glbStream;
+
+			if (loaded) {
+				debugC(kDebugModding, "Loaded replacement animation %s",
+				       glbPath.toString(Common::Path::kNativeSeparator).c_str());
+				return;
+			}
+
+			warning("Failed to load replacement animation %s, falling back to %s",
+			        glbPath.toString(Common::Path::kNativeSeparator).c_str(),
+			        _animFilename.toString(Common::Path::kNativeSeparator).c_str());
+		}
+	}
+
+	ArchiveReadStream *stream = StarkArchiveLoader->getFile(_animFilename, _archiveName);
+	_skeletonAnim->createFromStream(stream);
 	delete stream;
 }
 

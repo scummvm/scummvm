@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	formats/biff.o \
 	formats/biffmesh.o \
 	formats/dds.o \
+	formats/gltf.o \
 	formats/iss.o \
 	formats/tm.o \
 	formats/xarc.o \

@@ -21,11 +21,16 @@
 
 #include "engines/stark/resources/bonesmesh.h"
 
+#include "engines/stark/debug.h"
 #include "engines/stark/model/animhandler.h"
 #include "engines/stark/model/model.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
+#include "engines/stark/formats/gltf.h"
 #include "engines/stark/formats/xrc.h"
+
+#include "common/archive.h"
 
 namespace Stark {
 namespace Resources {
@@ -46,11 +51,36 @@ void BonesMesh::readData(Formats::XRCReadStream *stream) {
 }
 
 void BonesMesh::onPostRead() {
-	ArchiveReadStream *stream = StarkArchiveLoader->getFile(_filename, _archiveName);
-
 	_model = new Model();
-	_model->readFromStream(stream);
 
+	if (StarkSettings->isAssetsModEnabled()) {
+		Common::String baseName = _filename.baseName();
+		if (baseName.hasSuffixIgnoreCase(".cir")) {
+			baseName = Common::String(baseName.c_str(), baseName.size() - 4);
+		}
+		Common::Path glbPath(baseName + ".glb");
+
+		Common::SeekableReadStream *glbStream = SearchMan.createReadStreamForMember(glbPath);
+		if (glbStream) {
+			debugC(kDebugModding, "Attempting to load replacement model %s",
+			       glbPath.toString(Common::Path::kNativeSeparator).c_str());
+			bool loaded = Formats::GltfModelReader::load(_model, glbStream);
+			delete glbStream;
+
+			if (loaded) {
+				debugC(kDebugModding, "Loaded replacement model %s",
+				       glbPath.toString(Common::Path::kNativeSeparator).c_str());
+				return;
+			}
+
+			warning("Failed to load replacement model %s, falling back to %s",
+			        glbPath.toString(Common::Path::kNativeSeparator).c_str(),
+			        _filename.toString(Common::Path::kNativeSeparator).c_str());
+		}
+	}
+
+	ArchiveReadStream *stream = StarkArchiveLoader->getFile(_filename, _archiveName);
+	_model->readFromStream(stream);
 	delete stream;
 }
 

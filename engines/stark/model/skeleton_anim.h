@@ -28,6 +28,10 @@
 
 namespace Stark {
 
+namespace Formats {
+class GltfAnimReader;
+}
+
 class ArchiveReadStream;
 
 /**
@@ -53,6 +57,8 @@ public:
 	uint32 getBoneCount() const { return _boneAnims.size(); }
 
 private:
+	friend class Formats::GltfAnimReader;
+
 	struct AnimKey {
 		uint32 _time;
 		Math::Quaternion _rot;
