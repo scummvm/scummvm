@@ -63,13 +63,10 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
  	_field_60 = 0;
  	_actionIdx3 = 0;
  	// TODO field_68 till field_617
- 	_walkingSound1 = 0;
- 	_walkingSound2 = 0;
- 	_walkingSound3 = 0;
- 	_walkingSound4 = 0;
+	memset(_walkingSounds, 0, sizeof(_walkingSounds));
  	_field_64C = 0;
  	_field_650 = 0;
- 	memset(_graphicResourceIds, 0 , sizeof(_graphicResourceIds));
+	memset(_graphicResourceIds, 0, sizeof(_graphicResourceIds));
  	memset(&_name, 0, sizeof(_name));
  	memset(&_distancesEO, 0, sizeof(_distancesEO));
  	memset(&_distancesNS, 0, sizeof(_distancesNS));
@@ -149,10 +146,10 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	stream->skip(0x5B0);
 
 	inventory.load(stream);
-	_walkingSound1 = stream->readSint32LE();
-	_walkingSound2 = stream->readSint32LE();
-	_walkingSound3 = stream->readSint32LE();
-	_walkingSound4 = stream->readSint32LE();
+
+	for (int32 i = 0; i < ARRAYSIZE(_walkingSounds); i++)
+		_walkingSounds[i] = (ResourceId)stream->readSint32LE();
+
 	_field_64C     = stream->readUint32LE();
 	_field_650     = stream->readUint32LE();
 
@@ -242,10 +239,9 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 
 	inventory.saveLoadWithSerializer(s);
 
-	s.syncAsSint32LE(_walkingSound1);
-	s.syncAsSint32LE(_walkingSound2);
-	s.syncAsSint32LE(_walkingSound3);
-	s.syncAsSint32LE(_walkingSound4);
+	for (int i = 0; i < ARRAYSIZE(_walkingSounds); i++)
+		s.syncAsSint32LE(_walkingSounds[i]);
+
 	s.syncAsUint32LE(_field_64C);
 	s.syncAsUint32LE(_field_650);
 
@@ -1724,8 +1720,7 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 
 		_frameIndex = (_frameIndex + 1) % _frameCount;
 
-		if (_walkingSound1 != kResourceNone) {
-
+		if (_walkingSounds[0] != kResourceNone) {
 			// Compute volume
 			int32 vol = (int32)sqrt((double)-Config.sfxVolume);
 			if (_index != getSharedData()->getPlayerIndex())
@@ -1738,16 +1733,16 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 			if (_field_944 != 1 && _field_944 != 4) {
 				// Compute resource Id
 				ResourceId resourceId = kResourceNone;
-				if (getWorld()->actions[_actionIdx3]->soundResourceIdFrame != kResourceNone && strcmp((char *)&_name, "Crow") && strcmp((char *)&_name, "Big Crow")) {
+				if (getWorld()->actions[_actionIdx3]->walkingSounds[0] != kResourceNone && strcmp((char *)&_name, "Crow") && strcmp((char *)&_name, "Big Crow")) {
 					if (_frameIndex == _field_64C)
-						resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceIdFrame + (int)rnd(2));
+						resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->walkingSounds[0 + (int)rnd(2)]);
 					else if (_frameIndex == _field_650)
-						resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceId + (int)rnd(2));
+						resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->walkingSounds[2 + (int)rnd(2)]);
 				} else {
 					if (_frameIndex == _field_64C)
-						resourceId = (ResourceId)(_walkingSound1 + (int)rnd(2));
+						resourceId = (ResourceId)(_walkingSounds[0 + (int)rnd(2)]);
 					else if (_frameIndex == _field_650)
-						resourceId = (ResourceId)(_walkingSound3 + (int)rnd(2));
+						resourceId = (ResourceId)(_walkingSounds[2 + (int)rnd(2)]);
 				}
 
 				// Play sound
@@ -1760,7 +1755,7 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 		if (getWorld()->chapter == kChapter2) {
 			incPosition(actorDir, (int16)dist, &_point1);
 
-			if (_walkingSound1 == kResourceNone)
+			if (_walkingSounds[0] == kResourceNone)
 				break;
 
 			// Compute volume
@@ -1774,16 +1769,16 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 
 			// Compute resource Id
 			ResourceId resourceId = kResourceNone;
-			if (getWorld()->actions[_actionIdx3]->soundResourceIdFrame != kResourceNone && strcmp((char *)&_name, "Crow") && strcmp((char *)&_name, "Big Crow")) {
+			if (getWorld()->actions[_actionIdx3]->walkingSounds[0] != kResourceNone && strcmp((char *)&_name, "Crow") && strcmp((char *)&_name, "Big Crow")) {
 				if (_frameIndex == _field_64C)
-					resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceIdFrame + (int)rnd(2));
+					resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->walkingSounds[0 + (int)rnd(2)]);
 				else if (_frameIndex == _field_650)
-					resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceId + (int)rnd(2));
+					resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->walkingSounds[2 + (int)rnd(2)]);
 			} else {
 				if (_frameIndex == _field_64C)
-					resourceId = (ResourceId)(_walkingSound1 + (int)rnd(2));
+					resourceId = (ResourceId)(_walkingSounds[0 + (int)rnd(2)]);
 				else if (_frameIndex == _field_650)
-					resourceId = (ResourceId)(_walkingSound3 + (int)rnd(2));
+					resourceId = (ResourceId)(_walkingSounds[2 + (int)rnd(2)]);
 			}
 
 			// Play sound
