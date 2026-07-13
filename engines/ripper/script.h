@@ -28,6 +28,7 @@ namespace Ripper {
 
 class AssetLibrary;
 class ResourceManager;
+class RipperEngine;
 
 struct ScriptArgument {
 	byte type;
@@ -103,14 +104,24 @@ private:
 
 class ScriptManager {
 public:
+	explicit ScriptManager(RipperEngine *engine);
+
 	bool initialize(ResourceManager &resources);
+	bool runStartupPath();
 
 	CompiledScript &startup() { return _startup; }
 	CompiledScript &ba0() { return _ba0; }
 
 private:
+	bool executeCallback(CompiledScript &script, uint32 callbackOffset, int &result);
+	static Common::String argumentString(const ScriptArgument &argument);
+
+	RipperEngine *_engine;
 	CompiledScript _startup;
 	CompiledScript _ba0;
+	CompiledScript _concurrent;
+	Common::String _concurrentEntryLabel;
+	Common::Array<bool> _milestoneFlags;
 };
 
 } // End of namespace Ripper
