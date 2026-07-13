@@ -31,6 +31,20 @@ class SeekableReadStream;
 
 namespace Ripper {
 
+struct BitmapAssetFrame {
+	uint16 width;
+	uint16 height;
+	byte transparentColor;
+	Common::Array<byte> pixels;
+	Common::Array<byte> palette;
+
+	BitmapAssetFrame() : width(0), height(0), transparentColor(0) {}
+};
+
+struct BitmapAssetSequence {
+	Common::Array<BitmapAssetFrame> frames;
+};
+
 class AssetLibrary {
 public:
 	AssetLibrary();
@@ -63,6 +77,8 @@ private:
 class ResourceManager {
 public:
 	bool initialize();
+	bool loadInterfaceBitmapSequence(const Common::String &memberName,
+		BitmapAssetSequence &sequence) const;
 
 	AssetLibrary &scripts() { return _scripts; }
 	AssetLibrary &interface() { return _interface; }

@@ -27,6 +27,7 @@ struct ADGameDescription;
 
 namespace Ripper {
 
+class CursorManager;
 class InputManager;
 class MediaPlayer;
 class ResourceManager;
@@ -39,6 +40,7 @@ public:
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature feature) const override;
+	CursorManager *getCursor() const { return _cursor; }
 	InputManager *getInput() const { return _input; }
 	MediaPlayer *getMedia() const { return _media; }
 	ResourceManager *getResources() const { return _resources; }
@@ -49,6 +51,7 @@ private:
 	void pumpEvents();
 
 	const ADGameDescription *const _gameDescription;
+	CursorManager *_cursor;
 	InputManager *_input;
 	MediaPlayer *_media;
 	ResourceManager *_resources;

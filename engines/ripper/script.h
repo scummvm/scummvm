@@ -133,6 +133,7 @@ private:
 	Common::Array<bool> _milestoneFlags;
 	Common::Array<Common::String> _playedScenes;
 	uint _activeBa0Frame;
+	int _hoveredBa0Interaction;
 	bool _awaitingBa0Interaction;
 	bool _briefingArmed;
 	uint _briefingSelector;

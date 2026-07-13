@@ -29,6 +29,7 @@
 #include "engines/util.h"
 
 #include "ripper/detection.h"
+#include "ripper/cursor.h"
 #include "ripper/input.h"
 #include "ripper/media.h"
 #include "ripper/resources.h"
@@ -37,7 +38,8 @@
 namespace Ripper {
 
 RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescription) :
-		Engine(system), _gameDescription(gameDescription), _input(new InputManager(_eventMan)),
+		Engine(system), _gameDescription(gameDescription), _cursor(new CursorManager()),
+		_input(new InputManager(_eventMan)),
 		_media(new MediaPlayer(this, _input, _mixer)), _resources(new ResourceManager()),
 		_scripts(new ScriptManager(this)) {
 }
@@ -47,6 +49,7 @@ RipperEngine::~RipperEngine() {
 	delete _resources;
 	delete _media;
 	delete _input;
+	delete _cursor;
 }
 
 bool RipperEngine::hasFeature(EngineFeature feature) const {
@@ -81,6 +84,8 @@ Common::Error RipperEngine::run() {
 	registerSearchPaths();
 	initGraphics(640, 480);
 	if (!_resources->initialize())
+		return Common::kReadingFailed;
+	if (!_cursor->initialize(*_resources))
 		return Common::kReadingFailed;
 	if (!_scripts->initialize(*_resources))
 		return Common::kReadingFailed;
