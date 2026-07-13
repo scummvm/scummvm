@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-12 19:03+0000\n"
-"PO-Revision-Date: 2026-07-06 11:22+0000\n"
+"PO-Revision-Date: 2026-07-13 11:13+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -3541,10 +3541,8 @@ msgid ""
 msgstr ""
 
 #: dists/android.strings.xml.cpp:51
-#, fuzzy
-#| msgid "ScummVM (debug)"
 msgid "ScummVM Web server"
-msgstr "ScummVM (debug)"
+msgstr "Serveur web ScummVM"
 
 #: dists/android.strings.xml.cpp:52
 msgid "Configuration file could not be parsed"
