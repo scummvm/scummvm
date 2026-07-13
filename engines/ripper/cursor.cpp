@@ -67,8 +67,8 @@ void CursorManager::getHotspot(const BitmapAssetFrame &frame, int &x, int &y) co
 		x = 0;
 		y = 0;
 	} else if (_cursorIndex == 15) {
-		x = 0;
-		y = frame.height / 2;
+		x = frame.width / 2;
+		y = 0;
 	} else {
 		x = frame.width / 2;
 		y = frame.height / 2;

@@ -145,8 +145,9 @@ static bool decodeCustomBitmap(Common::SeekableReadStream &stream, BitmapAssetFr
 		return false;
 	}
 
-	frame.width = READ_LE_UINT16(header + 0x16);
-	frame.height = READ_LE_UINT16(header + 0x18);
+	// DecodeCustomBitmapAsset at 0x53f60 stores descriptor height first and width second.
+	frame.height = READ_LE_UINT16(header + 0x16);
+	frame.width = READ_LE_UINT16(header + 0x18);
 	const uint32 pixelCount = (uint32)frame.width * frame.height;
 	if (frame.width == 0 || frame.height == 0 || rawTailSize > pixelCount ||
 		payloadSize == 0 || payloadSize > (uint64)stream.size() - stream.pos())
@@ -189,6 +190,7 @@ static bool decodeIffBitmap(Common::SeekableReadStream &stream, BitmapAssetFrame
 	if (!surface || surface->format.bytesPerPixel != 1 || surface->w <= 0 || surface->h <= 0)
 		return false;
 
+	// DecodeIffBitmapAssetToDescriptor at 0x6aca4 maps IFF height/width to the same descriptor order.
 	frame.width = surface->w;
 	frame.height = surface->h;
 	frame.transparentColor = decoder.getHeader()->transparentColor & 0xff;

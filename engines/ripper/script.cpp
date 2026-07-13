@@ -23,6 +23,7 @@
 #include "common/debug.h"
 #include "common/ptr.h"
 #include "common/stream.h"
+#include "common/system.h"
 
 #include "ripper/detection.h"
 #include "ripper/cursor.h"
@@ -560,6 +561,12 @@ bool ScriptManager::runStartupPath() {
 		warning("Ripper: BA0 does not contain the start frame");
 		return false;
 	}
+
+	// InitializeSceneDisplayModeAndContext at 0x1e28a switches to a newly cleared scene page.
+	// ScummVM retains one framebuffer across presentations, so clear the previous cinematic here.
+	g_system->fillScreen(0);
+	g_system->updateScreen();
+	debugC(1, kDebugScene, "Ripper: initialized cleared scene display for BA0");
 
 	debugC(1, kDebugScene, "Ripper: entering BA0 frame=%u label='start'", ba0StartFrame);
 	result = 0;
