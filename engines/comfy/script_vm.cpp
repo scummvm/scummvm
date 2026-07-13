@@ -78,7 +78,8 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	}
 
 	case 0x03: {
-		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
+		uint16 actorSlot = scriptReadWord(pc);
+		Actor *target = actorResolve(actorSlot, _currentActor);
 		pc += 2;
 		uint16 frame = scriptReadStringIndex(pc);
 		pc += 2;
@@ -162,7 +163,8 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	}
 
 	case 0x09: {
-		actorSetFrame((int16)scriptReadWord(pc));
+		int16 frame = scriptReadWord(pc);
+		actorSetFrame(frame);
 		pc += 2;
 		if (!_usesAnimFile && _videoMode == 2)
 			videoSetResolution();
@@ -973,7 +975,8 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	}
 
 	case 0x53: {
-		Actor *target = actorResolve(scriptReadWord(pc), _currentActor);
+		uint16 actorSlot = scriptReadWord(pc);
+		Actor *target = actorResolve(actorSlot, _currentActor);
 		uint16 frame = scriptReadStringIndex(pc + 2);
 		pc += 4;
 		if (!target)
