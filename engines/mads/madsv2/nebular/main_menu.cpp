@@ -175,7 +175,7 @@ static void start_series() {
 	int count;
 	int handle;
 
-	for (count = 0; count < NUM_MENU_ITEMS; count++) {
+	for (count = 0; count <= NUM_MENU_ITEMS; count++) {
 		handle = -1;
 		Common::strcpy_s(temp_buf, "*RM990A0.SS");
 		temp_buf[7] = '1' + count;
@@ -203,7 +203,7 @@ done:
 static void stop_series() {
 	int count;
 
-	for (count = NUM_MENU_ITEMS - 1; count >= 0; count--) {
+	for (count = NUM_MENU_ITEMS; count >= 0; count--) {
 		matte_deallocate_series(menu_item[count].handle, true);
 	}
 }
