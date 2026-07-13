@@ -69,10 +69,7 @@ struct ActionArea : public Common::Serializable {
 	int32 flagNums[10];
 	int32 field_7C;
 	uint32 polygonIndex;
-	ResourceId soundResourceIdFrame;
-	int32 field_88;
-	ResourceId soundResourceId;
-	int32 field_90;
+	ResourceId walkingSounds[4];
 	ResourceId paletteResourceId;
 	int32 paths[5];
 	int32 volume;
@@ -91,10 +88,7 @@ struct ActionArea : public Common::Serializable {
 		memset(&flagNums, 0, sizeof(flagNums));
 		field_7C = 0;
 		polygonIndex = 0;
-		soundResourceIdFrame = kResourceNone;
-		field_88 = 0;
-		soundResourceId = kResourceNone;
-		field_90 = 0;
+		memset(&walkingSounds, 0, sizeof(walkingSounds));
 		paletteResourceId = kResourceNone;
 		memset(&paths, 0, sizeof(paths));
 		volume = 0;
@@ -107,9 +101,9 @@ struct ActionArea : public Common::Serializable {
 
 		output += Common::String::format("Action %d: %s\n", id, name);
 		output += Common::String::format("           flags=%d      scriptIndex=%d      scriptIndex2=%d   type=%d\n", flags, scriptIndex, scriptIndex2, actionType);
-		output += Common::String::format("           sound=%d      polygon=%d          palette=%d        volume=%d\n", soundResourceId, polygonIndex, paletteResourceId, volume);
+		output += Common::String::format("           sound=%d      polygon=%d          palette=%d        volume=%d\n", walkingSounds[2], polygonIndex, paletteResourceId, volume);
 		output += Common::String::format("           field01=%d    field02=%d          field40=%d        field44=%d\n", field01, field02, field_40, field_44);
-		output += Common::String::format("           field7C=%d    field84=%d          field88=%d        field90=%d\n", field_7C, soundResourceIdFrame, field_88, field_90);
+		output += Common::String::format("           field7C=%d    field84=%d          field88=%d        field90=%d\n", field_7C, walkingSounds[0], walkingSounds[1], walkingSounds[3]);
 
 		return output;
 	}

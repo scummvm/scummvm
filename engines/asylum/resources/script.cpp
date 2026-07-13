@@ -61,10 +61,10 @@ void ActionArea::load(Common::SeekableReadStream *stream) {
 
 	field_7C             = stream->readSint32LE();
 	polygonIndex         = stream->readUint32LE();
-	soundResourceIdFrame = (ResourceId)stream->readSint32LE();
-	field_88             = stream->readSint32LE();
-	soundResourceId      = (ResourceId)stream->readSint32LE();
-	field_90             = stream->readSint32LE();
+
+	for (int32 i = 0; i < ARRAYSIZE(walkingSounds); i++)
+		walkingSounds[i] = (ResourceId)stream->readSint32LE();
+
 	paletteResourceId    = (ResourceId)stream->readSint32LE();
 
 	for (int32 i = 0; i < 5; i++)
@@ -90,10 +90,10 @@ void ActionArea::saveLoadWithSerializer(Common::Serializer &s) {
 
 	s.syncAsSint32LE(field_7C);
 	s.syncAsUint32LE(polygonIndex);
-	s.syncAsSint32LE(soundResourceIdFrame);
-	s.syncAsSint32LE(field_88);
-	s.syncAsSint32LE(soundResourceId);
-	s.syncAsSint32LE(field_90);
+
+	for (int32 i = 0; i < 4; i++)
+		s.syncAsSint32LE(walkingSounds[i]);
+
 	s.syncAsSint32LE(paletteResourceId);
 
 	for (int32 i = 0; i < 5; i++)
