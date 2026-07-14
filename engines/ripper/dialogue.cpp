@@ -26,6 +26,7 @@ bool DialogueManager::execute(const CompiledScript &script, const ScriptCommand 
 	}
 
 	if (command.opcode == 0x0a) {
+		_pending = true;
 		debugC(1, kDebugScripts,
 			"Ripper: dialogue choice list completed script='%s' offset=0x%x "
 				"selector=%u choices=%u",
