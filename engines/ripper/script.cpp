@@ -484,6 +484,15 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 		case 0x16:
 			if (!_dialogue->execute(script, command))
 				return false;
+			if (command.opcode == 0x0a) {
+				// HandleSceneEntryChoiceListLifecycle @0x1523d does not return
+				// to the callback stream until the chooser reports event 4/5.
+				result = -6;
+				debugC(1, kDebugScripts,
+					"Ripper: dialogue chooser pending; pausing callback at 0x%x",
+					command.offset);
+				return true;
+			}
 			break;
 
 		case 0x1d: {
@@ -663,6 +672,12 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 		uint callbackFrame = _activeBa0Frame;
 		if (!executeCallback(_ba0, frame.enterCallbackOffset, result, &callbackFrame))
 			return false;
+		if (result == -6) {
+			debugC(1, kDebugScene,
+				"Ripper: BA0 frame='%s' paused for dialogue chooser",
+				label.c_str());
+			return true;
+		}
 		if (result == -2) {
 			nextFrame = callbackFrame;
 			continue;
@@ -699,6 +714,12 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 
 bool ScriptManager::serviceScene() {
 	const MouseState mouse = _engine->getInput()->publishMouseState();
+	if (_dialogue->isPending()) {
+		_engine->getToolbar()->leave();
+		_engine->getCursor()->setVisible(false);
+		debugC(3, kDebugScene, "Ripper: dialogue chooser remains pending; input service not yet wired");
+		return true;
+	}
 	if (!_awaitingBa0Interaction) {
 		_engine->getToolbar()->leave();
 		_engine->getCursor()->setVisible(false);

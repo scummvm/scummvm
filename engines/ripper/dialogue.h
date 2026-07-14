@@ -14,6 +14,8 @@ class CompiledScript;
 class DialogueManager {
 public:
 	bool execute(const CompiledScript &script, const ScriptCommand &command);
+	bool isPending() const { return _pending; }
+	void clearPending() { _pending = false; _choices.clear(); }
 
 private:
 	struct Choice {
@@ -21,6 +23,7 @@ private:
 		uint16 result;
 	};
 	Common::Array<Choice> _choices;
+	bool _pending = false;
 };
 
 } // End of namespace Ripper
