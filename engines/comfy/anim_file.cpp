@@ -181,9 +181,6 @@ void ComfyEngine::animFileLoadFrame(uint16 animIndex, uint16 frameKey, uint16 ac
 	_animVocDeltaA = 0;
 	_animActive = true;
 	_animFrameReady = false;
-	debug(5, "COMFY ANM: load index=%u offset=%u size=%u width=%u height=%u vocClock=%u",
-		animIndex, offset, (uint)_animFileData.size(), READ_LE_UINT16(_animFrameHeader + 10),
-		READ_LE_UINT16(_animFrameHeader + 12), _animVocClockHz);
 
 	if (actorSceneHandle < _sceneHandles.size()) {
 		Actor *actor = actorGetPtr(sceneGetHandle(actorSceneHandle));
@@ -396,9 +393,6 @@ void ComfyEngine::animFileTickCommands() {
 		uint32 rawCommandSize = _animPantherFormat ? READ_LE_UINT32(header + 2) : READ_LE_UINT16(header + 2);
 		int32 signedCommandSize = _animPantherFormat ? (int32)rawCommandSize : (int32)(uint16)rawCommandSize;
 		uint32 commandSize = rawCommandSize;
-		debug(5, "COMFY ANM: index=%u position=%u command=0x%04X size=%u signedSize=%d argument=%u",
-			_animCurrentIndex, _animPosition, command, commandSize, signedCommandSize,
-			_animPantherFormat ? READ_LE_UINT16(header + 6) : 0);
 
 		// WPANTHER compares the FR command size as signed. Some Panther data uses
 		// negative sizes here; this marks the frame ready without decoding payload.
@@ -460,10 +454,15 @@ void ComfyEngine::animFileTickCommands() {
 			memcpy(_animFrameCommandData, payload, MIN<uint32>(payloadSize, sizeof(_animFrameCommandData)));
 		} else if (command == kAnimCommandFrame) {
 			if (commandSize > 8) {
-				if (_animPantherFormat)
+				if (_animPantherFormat) {
 					animDecodePanther(payload, payloadSize);
-				else
+				} else {
 					animDecompressRle(payload, payloadSize, &_animFrameBuffer[0], _animFrameBuffer.size());
+					if (_framebufPtr) {
+						memcpy(_framebufPtr, &_animFrameBuffer[0], COMFY_ANMFRAME_BYTES);
+						renderSetDirty();
+					}
+				}
 			}
 
 			frameReady = true;
