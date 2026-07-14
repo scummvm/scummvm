@@ -591,6 +591,7 @@ struct Op : public Script::Command {
 	}
 };
 
+// Amerzone-specific preload plugin
 struct Preload : public Script::Command {
 	Common::String arg;
 	Preload(const Common::Array<Common::String> &args) : arg(args[0]) {}
@@ -600,16 +601,16 @@ struct Preload : public Script::Command {
 			g_engine->loadGameState(atoi(arg.c_str()));
 		} else {
 			auto loaded = g_engine->enterScript();
+			debug("preload: loaded: %d", loaded);
 			g_engine->setVariable(arg, loaded);
 			if (loaded) {
 				ctx.running = false;
-				g_engine->returnToWarp();
 			}
 		}
 	}
 };
 
-// Old loadsave/save plugins found in Amerzone.
+// Amerzone-specific loadsave plugin
 struct LoadSave : public Script::Command {
 	Common::Array<Common::String> args;
 	LoadSave(const Common::Array<Common::String> &args_) : args(args_) {}
@@ -629,7 +630,7 @@ struct LoadSave : public Script::Command {
 			auto slot = atoi(args[0].c_str());
 			auto &var = args[1];
 			auto &negativeVar = args[2];
-			debug("LoadSave %d %s %s", slot, var.c_str(), negativeVar.c_str());
+			debug("loadsave %d %s %s", slot, var.c_str(), negativeVar.c_str());
 			int status = 0;
 			// Amerzone script checks those:
 			// 99 -> true, 98 -> false: continue
@@ -655,6 +656,7 @@ struct LoadSave : public Script::Command {
 		} else if (n == 2) {
 			auto &srcVar = args[0];
 			auto &dstVar = args[1];
+			debug("loadsave %s %s", srcVar.c_str(), dstVar.c_str());
 			if (!dstVar.empty() && Common::isDigit(dstVar[0])) {
 				uint level = atoi(dstVar.c_str());
 				uint currentLevel = g_engine->currentAmerzoneLevel();
@@ -679,6 +681,7 @@ struct LoadSave : public Script::Command {
 	}
 };
 
+// Amerzone-specific save plugin
 struct Save : public Script::Command {
 	int slot;
 	Save(const Common::Array<Common::String> &args) : slot(atoi(args[0].c_str())) {}

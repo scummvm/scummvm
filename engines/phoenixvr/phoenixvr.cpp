@@ -1693,6 +1693,7 @@ void PhoenixVREngine::captureContext() {
 	ms.writeSint32LE(fromAngle(_angleX.rangeMin()));
 	ms.writeSint32LE(fromAngle(_angleX.rangeMax()));
 	ms.writeSint32LE(_warpIdx);
+	debug("captureContext: warpIdx: %d, prev: %d", _warpIdx, _prevWarp);
 	ms.writeUint32LE(_warp->tests.size());
 	writeString({});
 	writeString({});
@@ -1787,7 +1788,6 @@ bool PhoenixVREngine::enterScript() {
 	for (auto &warpCursors : _cursors) {
 		for (auto &warpCursor : warpCursors) {
 			auto cursor = ms.readString(0, 257);
-			debug("cursor %s", cursor.c_str());
 			if (cursor.hasSuffix(".VR") || cursor.hasSuffix(".vr")) {
 				debug("ignoring VR cursor, original engine saves `LOAD.VR` as a cursor name at loading screen");
 				cursor.clear();

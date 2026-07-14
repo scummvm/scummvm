@@ -339,7 +339,7 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 			if (!_warpsIndex.contains(vr))
 				_warpsIndex[vr] = _warps.size();
 			else
-				warning("duplicate warp %s\n", vr.c_str());
+				warning("duplicate warp %s", vr.c_str());
 			_warps.push_back(_currentWarp);
 			_warpNames.push_back(vr);
 		} else if (p.maybe("test]=")) {
