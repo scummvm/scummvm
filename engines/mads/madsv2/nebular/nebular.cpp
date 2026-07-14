@@ -502,7 +502,14 @@ void RexNebularEngine::global_parser_code() {
 			global[kPenlightCellStatus] = game.difficulty != DIFFICULTY_HARD || global[kDurafailRecharged] ? 1 : 2;
 			text_show(423);
 		}
+	} else {
+		goto done;
 	}
+
+	player.command_ready = false;
+
+done:
+	;
 }
 
 void RexNebularEngine::global_error_code() {
