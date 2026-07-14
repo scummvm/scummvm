@@ -69,7 +69,10 @@
   font. Toolbar bitmap color maps target palette index 0, indices 4 through 9,
   and indices 246 through 255. `ApplySharedDisplayPalettePatch` at `0x205d0`
   restores those bands on every media palette update so interface pixels remain
-  stable while the underlying Smacker palette changes.
+  stable while the underlying Smacker palette changes. The original captures
+  those bands while `LoadStartupBitmapAssetTable` prepares the startup assets;
+  the current slice captures them from the first decoded presentation until
+  that startup bitmap table is implemented.
 
 ## Scene Toolbar
 
@@ -189,6 +192,11 @@
   frame decoding to `Video::SmackerDecoder`; PCM is delegated to the ScummVM
   mixer. `PROINT.AVI` contains 16 Smacker segments and `PROLOG1.AVI` contains
   two.
+- `RenderCustomPacketFrameAndOverlays` at `0x6c486` installs an IAVF packet's
+  active palette directly through display service `0x1d`. It does not call
+  `ApplySharedDisplayPalettePatch`; that patch belongs to the separate
+  `RunMediaSequence` Smacker path. Reconstructed IAVF segments must therefore
+  retain their complete decoded palettes.
 - Audio command `0x66` distinguishes its timeline byte count from the smaller
   stored payload byte count. `SubmitMediaAudioChunkDescriptors` at `0x490e6`
   fills the difference with silence and submits the timeline byte count to the
