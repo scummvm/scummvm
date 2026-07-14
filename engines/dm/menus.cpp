@@ -592,7 +592,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 		championMan.isProjectileSpellCast(champIndex, Thing(curSpell->getType() + _vm->_thingFirstExplosion.toUint16()), CLIP((powerSymbolOrdinal + 2) * (4 + (skillLevel << 1)), 21, 255), 0);
 		break;
 	case kDMSpellKindOther: {
-		TimelineEvent newEvent;
+		TimelineEvent newEvent = {};
 		newEvent._priority = 0;
 		uint16 spellPower = (powerSymbolOrdinal + 1) << 2;
 		uint16 ticks;
@@ -830,7 +830,7 @@ Potion *MenuMan::getEmptyFlaskInHand(Champion *champ, Thing *potionThing) {
 }
 
 void MenuMan::createEvent70_light(int16 lightPower, int16 ticks) {
-	TimelineEvent newEvent;
+	TimelineEvent newEvent = {};
 	newEvent._type = kDMEventTypeLight;
 	newEvent._Bu._lightPower = lightPower;
 	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + ticks);
@@ -854,7 +854,7 @@ bool MenuMan::isPartySpellOrFireShieldSuccessful(Champion *champ, bool spellShie
 	}
 	ChampionMan &championMan = *_vm->_championMan;
 
-	TimelineEvent newEvent;
+	TimelineEvent newEvent = {};
 	newEvent._Bu._defense = ticks >> 5;
 	if (spellShield) {
 		newEvent._type = kDMEventTypeSpellShield;
@@ -1300,7 +1300,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		break;
 	case kDMActionWindow: {
 		int16 windowTicks = _vm->getRandomNumber(championMan.getSkillLevel(champIndex, actionSkillIndex) + 8) + 5;
-		TimelineEvent newEvent;
+		TimelineEvent newEvent = {};
 		newEvent._priority = 0;
 		newEvent._type = kDMEventTypeThievesEye;
 		newEvent._mapTime = _vm->setMapAndTime(dungeon._partyMapIndex, _vm->_gameTime + windowTicks);
