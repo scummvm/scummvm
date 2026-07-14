@@ -44,7 +44,8 @@ public:
 	~MediaPlayer();
 
 	bool play(const Common::String &path, bool allowEscSpace, int x = -1, int y = -1);
-	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly);
+	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
+		bool loopUntilInput = false);
 	bool loadAudio(const Common::String &path);
 	bool startLoadedAudio(const Common::String &key, uint volumePercent);
 

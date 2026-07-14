@@ -601,7 +601,8 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 	return result;
 }
 
-bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly) {
+bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
+		bool loopUntilInput) {
 	debugC(1, kDebugVideo,
 		"Ripper: entering interactive scene presentation media='%s' firstFrameOnly=%d",
 		path.c_str(), firstFrameOnly);
@@ -629,6 +630,14 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 		kScenePresentationTop);
 	bool result = false;
 	_stopSceneOnMouse = !firstFrameOnly;
+	const bool loop = loopUntilInput && !firstFrameOnly;
+	uint pass = 0;
+	do {
+		if (pass++ != 0) {
+			file = new Common::File();
+			if (!file->open(Common::Path(path)))
+				return false;
+		}
 	if (memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0) {
 		result = playSmacker(file, path, false, x, y, nullptr, nullptr, nullptr,
 			0, 0, 1, true, frameLimit, kScenePresentationTop);
@@ -639,6 +648,7 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 		warning("Ripper: unsupported scene media mode for '%s'", path.c_str());
 		delete file;
 	}
+	} while (loop && !_input->peekMouseState().pressed && !_engine->shouldQuit() && result);
 	_input->drainKeys();
 	_stopSceneOnMouse = false;
 	return result;
