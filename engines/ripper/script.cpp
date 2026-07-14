@@ -805,4 +805,8 @@ bool ScriptManager::serviceScene() {
 	return true;
 }
 
+void ScriptManager::drawDialogueOverlay() const {
+	_dialogue->draw();
+}
+
 } // End of namespace Ripper
