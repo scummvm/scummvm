@@ -78,8 +78,9 @@
   x=`0x276` (630), and subtracts each bitmap width plus five pixels.
 - The toolbar remains modal while the pointer is in that top 50-pixel band;
   scene hotspots do not receive those events. Scene Smacker coordinates are
-  relative to the original scene presentation region, whose top edge follows
-  that band at y=50 in the ScummVM surface. The bottom y>=440 strip remains
+  relative to the original 640x400 display page, whose top edge follows that
+  band at y=50. `RefreshDisplayDimensionsAndInputBounds` at `0x5d8e0` derives
+  the maximum input coordinate from the active descriptor height, so y>=400 is
   outside the scene hit-test region.
 - While a control is hovered, `RunFrontEndActionMenu` advances that action's
   frame index once per extended DOS tick. The preview gate uses

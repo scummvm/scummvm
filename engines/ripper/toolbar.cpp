@@ -99,7 +99,7 @@ bool ToolbarManager::initialize(ResourceManager &resources) {
 
 void ToolbarManager::enter(uint32 now) {
 	Graphics::Surface *screen = g_system->lockScreen();
-	if (!screen || screen->format.bytesPerPixel != 1 || screen->w < 640 || screen->h < 480) {
+	if (!screen || screen->format.bytesPerPixel != 1 || screen->w < 640 || screen->h < 400) {
 		if (screen)
 			g_system->unlockScreen();
 		return;
