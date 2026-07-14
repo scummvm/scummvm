@@ -19,8 +19,6 @@
  *
  */
 
-// Resource library
-
 #include "common/compression/dcl.h"
 #include "common/util.h"
 #include "common/endian.h"
@@ -32,18 +30,13 @@
 #include "sci/resource/resource.h"
 
 namespace Sci {
+
 int Decompressor::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
-	while (nPacked && !(src->eos() || src->err())) {
-		uint32 chunk = MIN<uint32>(1024, nPacked);
-		src->read(dest, chunk);
-		nPacked -= chunk;
-		dest += chunk;
-	}
-	return (src->eos() || src->err()) ? 1 : 0;
+	uint32 bytesRead = src->read(dest, nPacked);
+	return (bytesRead == nPacked) ? SCI_ERROR_NONE : SCI_ERROR_IO_ERROR;
 }
 
-void Decompressor::init(Common::ReadStream *src, byte *dest, uint32 nPacked,
-						uint32 nUnpacked) {
+void Decompressor::init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
 	_src = src;
 	_dest = dest;
 	_szPacked = nPacked;
@@ -100,26 +93,25 @@ byte Decompressor::getByteLSB() {
 void Decompressor::putByte(byte b) {
 	_dest[_dwWrote++] = b;
 }
+
 //-------------------------------
 //  Huffman decompressor
 //-------------------------------
-int DecompressorHuffman::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
-								uint32 nUnpacked) {
-	init(src, dest, nPacked, nUnpacked);
-	byte numnodes;
-	int16 c;
-	uint16 terminator;
 
-	numnodes = _src->readByte();
-	terminator = _src->readByte() | 0x100;
+int DecompressorHuffman::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
+	init(src, dest, nPacked, nUnpacked);
+
+	byte numnodes = _src->readByte();
+	uint16 terminator = _src->readByte() | 0x100;
 	_nodes = new byte [numnodes << 1];
 	_src->read(_nodes, numnodes << 1);
 
+	int16 c;
 	while ((c = getc2()) != terminator && (c >= 0) && !isFinished())
 		putByte(c);
 
 	delete[] _nodes;
-	return _dwWrote == _szUnpacked ? 0 : 1;
+	return (_dwWrote == _szUnpacked) ? SCI_ERROR_NONE : SCI_ERROR_DECOMPRESSION_ERROR;
 }
 
 int16 DecompressorHuffman::getc2() {
@@ -498,8 +490,7 @@ void DecompressorLZW::skipRLE(byte **rleData, int decodedSize) {
 // DCL decompressor for SCI1.1
 //----------------------------------------------
 
-int DecompressorDCL::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
-							uint32 nUnpacked) {
+int DecompressorDCL::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
 	return Common::decompressDCL(src, dest, nPacked, nUnpacked) ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
 }
 
@@ -510,6 +501,7 @@ int DecompressorDCL::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
 // Based on Andre Beck's code from
 // https://web.archive.org/web/20070817214826/http://micky.ibh.de/~beck/stuff/lzs4i4l/
 //----------------------------------------------
+
 int DecompressorLZS::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
 	return unpackLZS();
@@ -541,7 +533,7 @@ int DecompressorLZS::unpackLZS() {
 		} else // Literal byte follows
 			putByte(getByteMSB());
 	} // end of while ()
-	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
+	return (_dwWrote == _szUnpacked) ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
 }
 
 uint32 DecompressorLZS::getCompLen() {
