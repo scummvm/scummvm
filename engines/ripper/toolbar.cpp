@@ -304,7 +304,7 @@ bool ToolbarManager::service(const MouseState &mouse) {
 		action.frameIndex = (action.frameIndex + 1) % action.sequence.frames.size();
 		_lastFrameMillis = now;
 		redraw = true;
-		debugC(3, kDebugScene, "Ripper: toolbar action=%u frame=%u",
+		debugC(11, kDebugScene, "Ripper: toolbar action=%u frame=%u",
 			_hoveredAction + 1, action.frameIndex);
 	}
 	if (redraw)

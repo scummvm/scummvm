@@ -146,7 +146,7 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 		IavfDescriptor descriptor;
 		if (!readDescriptor(stream, descriptor))
 			return false;
-		debugC(3, kDebugVideo,
+		debugC(11, kDebugVideo,
 			"Ripper: IAVF '%s' descriptor=%u opcode=0x%02x arg0=%u arg1=%u arg2=%u offset=%lld",
 			name.c_str(), descriptorIndex++, descriptor.opcode, descriptor.arg0, descriptor.arg1,
 			descriptor.arg2, stream.pos() - 14);
@@ -164,7 +164,7 @@ static bool parseIavf(Common::SeekableReadStream &stream, const Common::String &
 			if (descriptor.arg1 > descriptor.arg2) {
 				memset(movie.audio.data() + outputOffset + descriptor.arg2, 0,
 					descriptor.arg1 - descriptor.arg2);
-				debugC(3, kDebugVideo,
+				debugC(11, kDebugVideo,
 					"Ripper: IAVF '%s' audio tag=%u payload=%u timeline=%u silence=%u",
 					name.c_str(), descriptor.arg0, descriptor.arg2, descriptor.arg1,
 					descriptor.arg1 - descriptor.arg2);
@@ -457,12 +457,12 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				}
 				g_system->updateScreen();
 				if (synchronizeToTimeline) {
-					debugC(3, kDebugVideo,
+					debugC(11, kDebugVideo,
 						"Ripper: Smacker '%s' frame=%d audioTargetMs=%u audioElapsedMs=%u driftMs=%d",
 						name.c_str(), decoder.getCurFrame(), targetAudioMs, audioElapsedMs,
 						(int32)audioElapsedMs - (int32)targetAudioMs);
 				} else {
-					debugC(3, kDebugVideo, "Ripper: Smacker '%s' frame=%d", name.c_str(), decoder.getCurFrame());
+					debugC(11, kDebugVideo, "Ripper: Smacker '%s' frame=%d", name.c_str(), decoder.getCurFrame());
 				}
 			}
 		}
