@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-13 11:35+0000\n"
-"PO-Revision-Date: 2026-07-04 18:22+0000\n"
+"PO-Revision-Date: 2026-07-14 13:57+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.15.1\n"
+"X-Generator: Weblate 2026.7.1\n"
 "X-Language-name: Italiano\n"
 
 #: audio/mac_plugin.cpp:30
@@ -755,22 +755,20 @@ msgid "Misc"
 msgstr "Varie"
 
 #: gui/editgamedialog.cpp:333
-#, fuzzy
-#| msgid "Enable short transitions"
 msgid "Enable hotspot display"
-msgstr "Abilita transizioni brevi"
+msgstr "Mostra aree interattive (hotspot)"
 
 #: gui/editgamedialog.cpp:334
 msgid "Enable visual markers and labels for interactive objects"
-msgstr ""
+msgstr "Abilita indicatori grafici e testuali per gli oggetti interattivi"
 
 #: gui/editgamedialog.cpp:339
 msgid "Hotspot marker:"
-msgstr ""
+msgstr "Indicatore hotspot:"
 
 #: gui/editgamedialog.cpp:341
 msgid "Point"
-msgstr ""
+msgstr "Punto"
 
 #. I18N: Hardware key on controller
 #: gui/editgamedialog.cpp:342 backends/platform/sdl/ps3/ps3.cpp:46
@@ -779,20 +777,16 @@ msgid "Square"
 msgstr "Quadrato"
 
 #: gui/editgamedialog.cpp:343
-#, fuzzy
-#| msgid "Cross"
 msgid "Crosshair"
-msgstr "Croce"
+msgstr "Mirino"
 
 #: gui/editgamedialog.cpp:352
-#, fuzzy
-#| msgid "Show hotspots"
 msgid "Show hotspot labels"
-msgstr "Mostra aree interattive"
+msgstr "Mostra etichette aree interattive (hotspot)"
 
 #: gui/editgamedialog.cpp:353
 msgid "Display text labels next to hotspot markers"
-msgstr ""
+msgstr "Mostra descrizioni testuali accanto ai marcatori hotspot"
 
 #: gui/editgamedialog.cpp:367 engines/dialogs.cpp:385
 msgid "Achievements"
@@ -3558,12 +3552,12 @@ msgstr "Chiudi popup"
 msgid ""
 "Local network access permission was denied: Web server won't be reachable"
 msgstr ""
+"Permessi di accesso alla rete locale negati: il server web non sarà "
+"reggiungibile"
 
 #: dists/android.strings.xml.cpp:51
-#, fuzzy
-#| msgid "ScummVM (debug)"
 msgid "ScummVM Web server"
-msgstr "ScummVM (debug)"
+msgstr "Server web di ScummVM"
 
 #: dists/android.strings.xml.cpp:52
 msgid "Configuration file could not be parsed"
@@ -8824,34 +8818,34 @@ msgstr ""
 "Abilita Sintesi Vocale per gli oggetti, le opzioni e i passaggi della Bibbia"
 
 #: engines/eem/metaengine.cpp:38
-#, fuzzy
-#| msgid "Highlight items"
 msgid "Hide the highlight boxes"
-msgstr "Evidenzia oggetti"
+msgstr "Nascondi riquadri aree interattive"
 
 #: engines/eem/metaengine.cpp:39
 msgid "Hide the boxes that highlight searchable clue locations."
-msgstr ""
+msgstr "Nasconde i riquadri che evidenziano le aree contenenti indizi."
 
 #: engines/eem/metaengine.cpp:49
 msgid "Better fit for dialog balloons"
-msgstr ""
+msgstr "Adatta le nuvolette dei dialoghi"
 
 #: engines/eem/metaengine.cpp:50
 msgid ""
 "Pick a smaller speech-bubble graphic when the wrapped text doesn't need the "
 "original size."
 msgstr ""
+"Utilizza nuvolette grafiche più piccole se il testo non necessita della "
+"dimensione originale."
 
 #: engines/eem/metaengine.cpp:61
-#, fuzzy
-#| msgid "Skip speech"
 msgid "Skip repeated cases"
-msgstr "Salta dialogo"
+msgstr "Salta casi ripetuti"
 
 #: engines/eem/metaengine.cpp:62
 msgid "Skip all Book 2 cases and jump to Book 3 once Book 1 is complete."
 msgstr ""
+"Al termine del Libro 1, ignora tutti i casi del Libro 2 e salta direttamente "
+"al Libro 3."
 
 #: engines/eem/metaengine.cpp:72 engines/hypno/metaengine.cpp:81
 msgid "Enable restored content"
@@ -8862,6 +8856,9 @@ msgid ""
 "Restore floppy release extras in the CD version, including pre-scrapbook "
 "conversations and first-try badges."
 msgstr ""
+"Aggiunge alla versione CD gli extra presenti nella versione floppy, che "
+"comprendono dialoghi precedenti l'album dei ricordi e medaglie \"primo "
+"tentativo\"."
 
 #: engines/efh/metaengine.cpp:235
 msgid "Select option 1"
@@ -10226,28 +10223,28 @@ msgid "The Troy minigame is not supported yet. Skipping"
 msgstr "Il minigioco di Troia non è ancora supportato e verrà saltato."
 
 #: engines/harvester/metaengine.cpp:33
-#, fuzzy
-#| msgid "Enable storage"
 msgid "Enable gore"
-msgstr "Attiva servizio di archiviazione"
+msgstr "Abilita scene sanguinose"
 
 #: engines/harvester/metaengine.cpp:34
 msgid ""
 "When disabled, the startup movie player follows the original GORE=NO "
 "censorship path."
 msgstr ""
+"Se disabilitato, il filmato introduttivo seguirà il percorso censurato "
+"GORE=NO come nel gioco originale."
 
 #: engines/harvester/metaengine.cpp:44
-#, fuzzy
-#| msgid "Show character portraits"
 msgid "Show CD change prompts"
-msgstr "Mostra volti dei personaggi"
+msgstr "Mostra richieste di cambio CD"
 
 #: engines/harvester/metaengine.cpp:45
 msgid ""
 "Display the original CD swap image and wait for a left click when the script "
 "requests disc 2 or 3."
 msgstr ""
+"Mostra l'immagine originale di cambio CD e attende il clic sinistro del "
+"mouse quando il gioco richiede di passare al disco 2 o al disco 3."
 
 #: engines/hdb/metaengine.cpp:44 engines/illusions/metaengine.cpp:153
 msgid "Enable cheat mode"
@@ -11174,16 +11171,12 @@ msgid "Select index"
 msgstr "Seleziona indice"
 
 #: engines/macs2/metaengine.cpp:52
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change cursor mode"
-msgstr "Cambia modalità"
+msgstr "Cambia modalità puntatore"
 
 #: engines/macs2/metaengine.cpp:75
-#, fuzzy
-#| msgid "Slower game speed"
 msgid "Cycle game speed"
-msgstr "Aumenta velocità gioco"
+msgstr "Modifica velocità gioco"
 
 #: engines/macs2/metaengine.cpp:80 engines/sherlock/metaengine.cpp:846
 #: engines/touche/metaengine.cpp:153
@@ -11192,7 +11185,7 @@ msgstr "Apri menù opzioni"
 
 #: engines/macs2/metaengine.cpp:85
 msgid "Help / map"
-msgstr ""
+msgstr "Aiuto / mappa"
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
 msgid "The game is using unsupported engine"
@@ -13999,7 +13992,7 @@ msgstr "Controlli di Rebel Assault II"
 
 #: engines/scumm/metaengine.cpp:1298
 msgid "Cover"
-msgstr ""
+msgstr "Copertura"
 
 #: engines/scumm/metaengine.cpp:1304
 msgid "Skip / back"
