@@ -29,6 +29,7 @@
 
 #define COMFY_ANM_COMMAND_END 0x2145
 #define COMFY_ANM_COMMAND_STORE_FRAME_BYTES 0x4356
+#define COMFY_ANM_COMMAND_FRAME 0x5246
 
 namespace Comfy {
 
@@ -486,9 +487,9 @@ private:
 	}
 
 	void pushCue(uint16 value) {
-		if (_cues.size() >= COMFY_SOUND_PITCH_COUNT_LIMIT)
-			return;
-
+		// The original keeps at most 0x13 pending pitch entries, but consumes them
+		// while refilling wave buffers. This host decoder stores the full cue
+		// timeline, so applying that pending-entry limit here would drop later cues.
 		ComfyEngine::SoundCue cue;
 		cue.value = value;
 		cue.streamPosition = _streamPosition;
@@ -737,7 +738,14 @@ bool ComfyEngine::soundPrepareDecoderState(uint16 index) {
 
 				byte *header = &_animFileData[position];
 				uint16 command = READ_LE_UINT16(header);
-				uint32 commandSize = _animPantherFormat ? READ_LE_UINT32(header + 2) : READ_LE_UINT16(header + 2);
+				uint32 rawCommandSize = _animPantherFormat ? READ_LE_UINT32(header + 2) : READ_LE_UINT16(header + 2);
+				int32 signedCommandSize = _animPantherFormat ? (int32)rawCommandSize : (int32)(uint16)rawCommandSize;
+				uint32 commandSize = rawCommandSize;
+				if (_animPantherFormat && command == COMFY_ANM_COMMAND_FRAME && signedCommandSize <= (int32)headerSize) {
+					position += headerSize;
+					continue;
+				}
+
 				if (commandSize < headerSize || commandSize > _animFileData.size() - position)
 					return false;
 
