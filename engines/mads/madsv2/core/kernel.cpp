@@ -664,6 +664,8 @@ int kernel_room_startup(int newRoom, int initial_variant, const char *interface,
 			nullptr, nullptr, nullptr, nullptr, nullptr, load_flags);
 		if (!inter_anim) goto done;
 
+		pal_activate_shadow(&kernel_shadow_main);
+
 		if (!inter_anim->font) {
 			mem_free(inter_anim);
 			inter_anim = nullptr;
