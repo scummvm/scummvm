@@ -72,6 +72,7 @@ Score::Score(Movie *movie, bool haveInteractivity) {
 	_labels = nullptr;
 
 	_currentFrameRate = 20;
+	_currentDigitalVideoTimeScale = 60;
 	_nextFrame = 0;
 	_currentLabel = 0;
 	_nextFrameTime = 0;
