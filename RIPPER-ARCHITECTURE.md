@@ -145,10 +145,9 @@
   appends each opcode `0x16` payload as a display value plus 16-bit result;
   opcode `0x0a` is the `HandleSceneEntryChoiceListLifecycle` path at `0x1523d`,
   which consumes the accumulated records through chooser control `0x4e2`.
-  The current slice mirrors the record accumulation and emits the complete
-  choice list. It now pauses callback execution at opcode `0x0a` until the
-  chooser service is implemented, matching the original's phase-2 wait rather
-  than advancing into later media and frame-transition commands.
+  The current slice mirrors the record accumulation and retains the complete
+  choice list, drawing a bottom-screen chooser overlay after the associated
+  media command. Input selection and looping-media integration remain pending.
 - `HandleSceneEntryPromptAndDispatchAction` at `0x1574d` is the confirmed
   three-argument follow-up path after a choice list: it shows the centered
   step prompt and dispatches the selected result through the shared scene
