@@ -35,6 +35,7 @@
 #include "ripper/menu.h"
 #include "ripper/resources.h"
 #include "ripper/script.h"
+#include "ripper/toolbar.h"
 
 namespace Ripper {
 
@@ -42,10 +43,11 @@ RipperEngine::RipperEngine(OSystem *system, const ADGameDescription *gameDescrip
 		Engine(system), _gameDescription(gameDescription), _cursor(new CursorManager()),
 		_input(new InputManager(_eventMan)),
 		_media(new MediaPlayer(this, _input, _mixer)), _resources(new ResourceManager()),
-		_scripts(new ScriptManager(this)) {
+		_scripts(new ScriptManager(this)), _toolbar(new ToolbarManager()) {
 }
 
 RipperEngine::~RipperEngine() {
+	delete _toolbar;
 	delete _scripts;
 	delete _resources;
 	delete _media;
@@ -89,6 +91,8 @@ Common::Error RipperEngine::run() {
 	if (!_cursor->initialize(*_resources))
 		return Common::kReadingFailed;
 	if (!_scripts->initialize(*_resources))
+		return Common::kReadingFailed;
+	if (!_toolbar->initialize(*_resources))
 		return Common::kReadingFailed;
 
 	_cursor->setVisible(false);

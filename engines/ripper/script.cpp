@@ -31,6 +31,7 @@
 #include "ripper/media.h"
 #include "ripper/resources.h"
 #include "ripper/ripper.h"
+#include "ripper/toolbar.h"
 
 namespace Ripper {
 
@@ -674,15 +675,20 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 bool ScriptManager::serviceScene() {
 	const MouseState mouse = _engine->getInput()->publishMouseState();
 	if (!_awaitingBa0Interaction) {
+		_engine->getToolbar()->leave();
 		_engine->getCursor()->setVisible(false);
 		_hoveredBa0Interaction = -1;
+		return true;
+	}
+	if (_engine->getToolbar()->service(mouse)) {
+		_engine->getCursor()->update(0);
 		return true;
 	}
 
 	const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
 	const ScriptInteraction *hoveredInteraction = nullptr;
 	uint hoveredInteractionIndex = 0;
-	for (uint i = 0; i < frame.interactionCount; ++i) {
+	for (uint i = 0; mouse.position.y < 440 && i < frame.interactionCount; ++i) {
 		const uint interactionIndex = frame.firstInteractionIndex + i;
 		const ScriptInteraction &interaction = _ba0.getInteractions()[interactionIndex];
 		if ((interaction.flags & 2) != 0 || interaction.width <= 0 || interaction.height <= 0)
