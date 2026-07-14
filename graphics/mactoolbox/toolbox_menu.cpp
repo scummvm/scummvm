@@ -147,6 +147,32 @@ void Toolbox::EnableItem(MenuHandle &theMenu, uint16 item) {
 	}
 }
 
+void Toolbox::GetItemMark(MenuHandle &theMenu, uint16 item, uint8 &markChar) {
+	markChar = 0;
+	if (!theMenu) {
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::GetItemMark: empty menu handle");
+		return;
+	}
+	if (theMenu->menuData.size() < (uint)(item)) {
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::GetItemMark: item %d out of range for menu %d", item, theMenu->menuID);
+		return;
+	}
+	if (_defaultMenu) {
+		Graphics::MacMenuItem *sub = _defaultMenu->getMenuItem(theMenu->menuID-1);
+		if (sub) {
+			Graphics::MacMenuItem *it = _defaultMenu->getSubMenuItem(sub, item-1);
+			if (it && it->checked) {
+				if (it->checkSymbol) {
+					markChar = it->checkSymbol;
+				} else {
+					markChar = _wm->_fontMan->hasBuiltInFonts() ? 0xD7 : 18;
+				}
+			}
+		}
+	}
+
+}
+
 
 MenuHandle Toolbox::GetMHandle(uint16 menuID) {
 	MenuHandle result;
@@ -269,6 +295,28 @@ void Toolbox::SetItem(MenuHandle &theMenu, uint16 item, const Common::U32String 
 			_defaultMenu->insertMenuItem(submenu, itemString.encode(Common::kMacRoman), item-1);
 		}
 	}
+}
+
+void Toolbox::SetItemMark(MenuHandle &theMenu, uint16 item, uint8 markChar) {
+	if (!theMenu) {
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::SetItemMark: empty menu handle");
+		return;
+	}
+	if (theMenu->menuData.size() < (uint)(item)) {
+		debugC(0, kDebugLevelMacToolbox, "Toolbox::SetItemMark: item %d out of range for menu %d", item, theMenu->menuID);
+		return;
+	}
+	if (_defaultMenu) {
+		Graphics::MacMenuItem *sub = _defaultMenu->getMenuItem(theMenu->menuID-1);
+		if (sub) {
+			Graphics::MacMenuItem *it = _defaultMenu->getSubMenuItem(sub, item-1);
+			if (it) {
+				it->checked = markChar != 0;
+				it->checkSymbol = markChar;
+			}
+		}
+	}
+
 }
 
 

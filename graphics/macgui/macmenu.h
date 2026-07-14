@@ -66,16 +66,17 @@ struct MacMenuItem {
 	int shortcutPos;
 	bool enabled;
 	bool checked;
+	int checkSymbol;
 	Common::Rect bbox;
 
 	MacMenuSubMenu *submenu;
 
-	MacMenuItem(const Common::String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true, bool c = false) :
+	MacMenuItem(const Common::String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true, bool c = false, int cs = 0) :
 			text(t), unicode(false), action(a), style(s), shortcut(sh),
-			shortcutPos(sp), enabled(e), submenu(nullptr), checked(c) {}
-	MacMenuItem(const Common::U32String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true, bool c = false) :
+			shortcutPos(sp), enabled(e), submenu(nullptr), checked(c), checkSymbol(cs) {}
+	MacMenuItem(const Common::U32String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true, bool c = false, int cs = 0) :
 			unicodeText(t), unicode(true), action(a), style(s), shortcut(sh),
-			shortcutPos(sp), enabled(e), submenu(nullptr), checked(c) {}
+			shortcutPos(sp), enabled(e), submenu(nullptr), checked(c), checkSymbol(cs) {}
 
 	~MacMenuItem() {
 		if (submenu)

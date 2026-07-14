@@ -826,6 +826,11 @@ public:
 	// string).
 	void EnableItem(MenuHandle &theMenu, uint16 item);
 
+	// PROCEDURE GetItemMark(theMenu: MenuHandle, item: INTEGER, VAR markChar: CHAR);
+	// GetItemMark returns in markChar whatever character the given menu item is marked with, or the
+	// predefined constant noMark if no mark is present
+	void GetItemMark(MenuHandle &theMenu, uint16 item, uint8 &markChar);
+
 	// FUNCTION GetMHandle(menuID: INTEGER): MenuHandle;
 	// Given the menu ID of a menu currentiy installed in the menu list, GetMHandle returns a handle to
 	// that menu; given any other menu ID, it returns NIL.
@@ -867,6 +872,12 @@ public:
 	// the menu item. The attributes already in effect for this item—its character style, icon, and so
 	// on—remain in effect. ItemString may be blank but should not be the empty string.
 	void SetItem(MenuHandle &theMenu, uint16 item, const Common::U32String &itemString);
+
+	// PROCEDURE SetItemMark(theMenu: MenuHandle; item: INTEGER; markChar: CHAR);
+	// SetltemMark marks the given menu item in a more general manner than Checkltem. It allows you
+	// to place any character in the system font, not just the check mark, to the left of the item. The
+	// character is passed in the markChar parameter.
+	void SetItemMark(MenuHandle &theMenu, uint16 item, uint8 markChar);
 
 	// toolbox_pict.cpp
 
