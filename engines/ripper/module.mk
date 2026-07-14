@@ -2,6 +2,7 @@ MODULE := engines/ripper
 
 MODULE_OBJS := \
 	cursor.o \
+	dialogue.o \
 	iff.o \
 	input.o \
 	media.o \

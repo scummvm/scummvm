@@ -29,6 +29,7 @@ namespace Ripper {
 class AssetLibrary;
 class ResourceManager;
 class RipperEngine;
+class DialogueManager;
 
 struct ScriptArgument {
 	byte type;
@@ -106,6 +107,7 @@ private:
 class ScriptManager {
 public:
 	explicit ScriptManager(RipperEngine *engine);
+	~ScriptManager();
 
 	bool initialize(ResourceManager &resources);
 	bool runStartupPath();
@@ -138,6 +140,7 @@ private:
 	bool _awaitingBa0Interaction;
 	bool _briefingArmed;
 	uint _briefingSelector;
+	DialogueManager *_dialogue;
 };
 
 } // End of namespace Ripper
