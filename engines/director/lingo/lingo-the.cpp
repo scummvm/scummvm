@@ -1727,9 +1727,14 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		// make sure the movieRate is up to date
 		if (sprite->_cast && sprite->_cast->_type == kCastDigitalVideo)
 			((DigitalVideoCastMember *)sprite->_cast)->isModified();
-		d = channel->_movieRate;
+		// real director will try and snap this to an integer if possible
+		if (ABS(channel->_movieRate - round(channel->_movieRate)) < 0.000001) {
+			d = Datum((int)round(channel->_movieRate));
+		} else {
+			d = Datum(channel->_movieRate);
+		}
 		if (debugChannelSet(-1, kDebugEndVideo))
-			d.u.f = 0.0;
+			d = Datum(0);
 		break;
 	case kTheMovieTime:
 		d = channel->_movieTime;
