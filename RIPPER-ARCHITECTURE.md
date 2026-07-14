@@ -136,6 +136,11 @@
 - `ReadSceneCallbackOpcodeAndArguments` at `0x140e9` decodes callback commands
   and their typed arguments.
 - `RunSceneCallbackCommandStream` at `0x14080` dispatches decoded commands.
+- Opcode `0x16` is dispatched through the callback handler table with its
+  two typed payload arguments intact. The first dialogue slice records the
+  selector, argument types, lengths, and decoded inline text; the
+  selector-specific handler and modal presentation remain to be mapped from
+  the handler table before rendering is implemented.
 - `ExecuteSceneFrameAndInteractions` at `0x13277` runs frame callbacks,
   presentations, chooser selection, and interaction callbacks.
 - `RIPPER.RUN` sets milestone flag 32, plays `PROINT.AVI` and `PROLOG1.AVI`,

@@ -20,6 +20,8 @@
 
 #include "ripper/script.h"
 
+#include "ripper/dialogue.h"
+
 #include "common/debug.h"
 #include "common/ptr.h"
 #include "common/stream.h"
@@ -307,6 +309,11 @@ bool CompiledScript::validateCallbacks() const {
 ScriptManager::ScriptManager(RipperEngine *engine) : _engine(engine), _activeBa0Frame(0),
 		_hoveredBa0Interaction(-1),
 		_awaitingBa0Interaction(false), _briefingArmed(false), _briefingSelector(0) {
+	_dialogue = new DialogueManager();
+}
+
+ScriptManager::~ScriptManager() {
+	delete _dialogue;
 }
 
 bool ScriptManager::initialize(ResourceManager &resources) {
@@ -471,6 +478,11 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				mediaPath.c_str(), allowEscSpace);
 			break;
 		}
+
+		case 0x16:
+			if (!_dialogue->execute(script, command))
+				return false;
+			break;
 
 		case 0x1d: {
 			if (command.arguments.size() < 3)
