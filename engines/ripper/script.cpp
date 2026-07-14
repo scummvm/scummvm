@@ -477,6 +477,12 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				return false;
 			debugC(2, kDebugScripts, "Ripper: completed media command '%s' controls=%d",
 				mediaPath.c_str(), allowEscSpace);
+			if (_dialogue->isPending()) {
+				result = -6;
+				debugC(1, kDebugScripts,
+					"Ripper: dialogue chooser pending after media at 0x%x", command.offset);
+				return true;
+			}
 			break;
 		}
 
@@ -485,11 +491,6 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 		case 0x16:
 			if (!_dialogue->execute(script, command))
 				return false;
-			if (command.opcode == 0x1a && _dialogue->isPending()) {
-				result = -6;
-				debugC(1, kDebugScripts, "Ripper: dialogue chooser pending after media at 0x%x", command.offset);
-				return true;
-			}
 			break;
 
 		case 0x1d: {
