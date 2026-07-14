@@ -30,6 +30,7 @@ namespace MADSV2 {
 class Console : public GUI::Debugger {
 private:
 	bool cmdTeleport(int argc, const char **argv);
+	bool cmdWalkable(int argc, const char **argv);
 
 public:
 	Console();

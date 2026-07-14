@@ -20,13 +20,16 @@
  */
 
 #include "mads/madsv2/console.h"
+#include "mads/madsv2/core/imath.h"
 #include "mads/madsv2/core/kernel.h"
+#include "mads/madsv2/core/matte.h"
 
 namespace MADS {
 namespace MADSV2 {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
+	registerCmd("walkable", WRAP_METHOD(Console, cmdWalkable));
 }
 
 static int strToInt(const char *s) {
@@ -57,6 +60,31 @@ bool Console::cmdTeleport(int argc, const char **argv) {
 
 		return false;
 	}
+}
+
+bool Console::cmdWalkable(int argc, const char **argv) {
+	const byte *srcP = scr_walk.data - 1;
+	byte *destP = scr_orig.data;
+	assert((scr_walk.x * 8) == scr_orig.x);
+
+	// Draw the walkable areas
+	for (int i = 0; i < scr_orig.x * scr_orig.y; ++i, ++destP) {
+		if ((i % 8) == 0)
+			++srcP;
+		if (!(*srcP & (1 << (7 - (i % 8)))))
+			*destP = 10;
+	}
+
+	// Draw cross-hairs at the locations of the rails within the room
+	for (int i = 0; i < room->num_rails; ++i) {
+		const Rail &r = room->rail[i];
+
+		buffer_hline(scr_orig, r.x - 2, r.x + 2, r.y, 0);
+		buffer_vline(scr_orig, r.x, r.y - 2, r.y + 2, 0);
+	}
+
+	matte_refresh_work();
+	return false;
 }
 
 } // namespace MADSV2
