@@ -1095,7 +1095,9 @@ void showCastDetails() {
 	ImGui::SetNextWindowSize(ImVec2(240, 480), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Cast Details", &_state->_w.castDetails)) {
-		Movie *movie = g_director->getCurrentMovie();
+		// resolve in the movie of the window the member was opened from
+		Window *sourceWindow = findWindowByName(_state->_castDetails._window);
+		Movie *movie = sourceWindow ? sourceWindow->getCurrentMovie() : g_director->getCurrentMovie();
 		CastMember *member = movie ? movie->getCastMember(_state->_castDetails._castMemberID) : nullptr;
 		if (!member) {
 			ImGui::TextDisabled("No cast member selected");

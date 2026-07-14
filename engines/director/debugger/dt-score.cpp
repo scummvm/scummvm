@@ -769,6 +769,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Window
 						CastMember *clickedCM = movie->getCastMember(sprite._castId);
 						if (clickedCM) {
 							_state->_castDetails._castMemberID = CastMemberID(clickedCM->getID(), clickedCM->getCast()->_castLibID);
+							_state->_castDetails._window = _state->_scoreWindow;
 							_state->_w.castDetails = true;
 						}
 					}

@@ -567,6 +567,11 @@ bool Movie::loadCastLibFrom(uint16 libId, Common::Path &filename) {
 
 CastMember *Movie::getCastMember(CastMemberID memberID) {
 	CastMember *result = nullptr;
+	if (memberID.castLib == SHARED_CAST_LIB) {
+		if (_sharedCast)
+			result = _sharedCast->getCastMember(memberID.member);
+		return result;
+	}
 	if (_casts.contains(memberID.castLib)) {
 		if (memberID.member == 0)
 			return nullptr;
