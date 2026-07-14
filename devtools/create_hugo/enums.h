@@ -523,7 +523,8 @@ enum seqActList_2w {
 	kALswzapper_2w,   kALtakepaper_2w,    kALtalkgard_2w,     kALthrown_2w,      kALthrowstick_2w,
 	kALtrap_2w,       kALuptrap_2w,       kALvenus_2w,        kALwho_2w,         kALwill1_2w,
 	kALwill2_2w,      kALwill_2w,         kALworkgates_2w,    kALzapperoff_2w,   kALzapperon_2w,
-	kALnewscr_2w,     kALscr01Story_2w,   kALscr01NoStory_2w
+	kALnewscr_2w,     kALscr01Story_2w,   kALscr01NoStory_2w, kALbananaGlobal_2w,
+	kALbananaDone_2w
 
 };
 
@@ -683,7 +684,7 @@ enum seqActList_2d {
 	kALstrike1_2d,    kALstrikematch_2d,   kALswgates_2d,    kALswzapper_2d,  kALthrown_2d,
 	kALthrowstick_2d, kALtrap_2d,          kALuptrap_2d,     kALvenus_2d,     kALwho_2d,
 	kALwill_2d,       kALwill1_2d,         kALwill2_2d,      kALworkgates_2d, kALzapperoff_2d,
-	kALzapperon_2d,   kALnewscr_2d
+	kALzapperon_2d,   kALnewscr_2d,       kALbananaGlobal_2d, kALbananaDone_2d
 };
 
 enum seqActList_3d {

@@ -6838,7 +6838,7 @@ act8 ascrmaze_2w   = {NEW_SCREEN, 0,               11}; // Maze exit to gatesopn
 act8 ascr01_2w     = {NEW_SCREEN, STORYDELAY_v2w + 10, 1};
 act8 askip5_2w     = {NEW_SCREEN, 0,               3};
 
-act9 abanana9_2w   = {INIT_OBJSTATE, 16,        GENIE_2w,    1};
+act9 abanana9_2w   = {INIT_OBJSTATE, 0,         GENIE_2w,    1};
 act9 abite1_2w     = {INIT_OBJSTATE, 0,         SNAKE_2w,    1};
 act9 acallp1_2w    = {INIT_OBJSTATE, 0,         TARDIS_2w,   1};
 act9 acat2_2w      = {INIT_OBJSTATE, 0,         CATNIP_2w,   1};
@@ -7384,6 +7384,8 @@ act33 amaidc2_2w  = {INIT_SCREEN, 8,  MAID_2w,      32};
 act33 amaidp1_2w  = {INIT_SCREEN, 0,  MAID_2w,      31};
 
 act34 abang1_2w   = {AGSCHEDULE, 6 * NORMAL_TPS_v3d,   kALbang2_2w};
+act34 abanana15_2w = {AGSCHEDULE, 16,                    kALbananaGlobal_2w};
+act34 abanana16_2w = {AGSCHEDULE, 0,                     kALbananaDone_2w};
 act34 abite3_2w   = {AGSCHEDULE, 60 * NORMAL_TPS_v3d,  kALpois1_2w};
 act34 abite4_2w   = {AGSCHEDULE, 200 * NORMAL_TPS_v3d, kALpois2_2w};
 act34 abite5_2w   = {AGSCHEDULE, 290 * NORMAL_TPS_v3d, kALpois3_2w};
@@ -7423,7 +7425,9 @@ act45 achkrx_2w    = {COND_ROUTE, 0, 3, 0,             kALchkmat1_2w};
 actListPtr AL11maze_2w[]        = {&ainitmaze_2w, &amazexy_2w, &ascr11maze_2w, 0};
 actListPtr AL_eatgar_2w[]       = {&agarchk_2w, 0};
 actListPtr ALballoon_2w[]       = {&aball1_2w, &aball2_2w, &aball3_2w, &aball4_2w, &aball5_2w, &aball6_2w, &asong6_2w, 0};
-actListPtr ALbanana_2w[]        = {&abonus18_2w, &abanana1_2w, &abanana2_2w, &abanana3_2w, &abanana4_2w, &abanana5_2w, &abanana6_2w, &abanana7_2w, &abanana8_2w, &abanana9_2w, &abanana10_2w, &abanana11_2w, &abanana12_2w, &abanana13_2w, &abanana14_2w, 0};
+actListPtr ALbanana_2w[]        = {&abonus18_2w, &abanana1_2w, &abanana2_2w, &abanana3_2w, &abanana4_2w, &abanana5_2w, &abanana6_2w, &abanana7_2w, &abanana8_2w, &abanana15_2w, &abanana10_2w, &abanana11_2w, &abanana12_2w, &abanana13_2w, &abanana14_2w, 0};
+actListPtr ALbananaGlobal_2w[]  = {&abanana16_2w, 0};
+actListPtr ALbananaDone_2w[]    = {&abanana9_2w, 0};
 actListPtr ALbang1_2w[]         = {&abang1_2w, &afuze1_2w, &afuze2_2w, &afuze3_2w, 0};
 actListPtr ALbang2_2w[]         = {&achkrr_2w, 0};
 actListPtr ALbed1_2w[]          = {&apenscr_2w, &apenbxy1_2w, &apenbseq1_2w, &apenbstart_2w, &apenbvxy1_2w, &apenbvxy2_2w, &apenbseq2_2w, &apenbstop_2w, &apenbxy2_2w, &apenblie1_2w, &apenblie2_2w, &alie1_2w, &alie2_2w, 0};
@@ -7773,7 +7777,8 @@ actList actListArr_2w[] = {
 	ALswgates_2w,       ALswzapper_2w,   ALtakepaper_2w, ALtalkgard_2w,     ALthrown_2w,
 	ALthrowstick_2w,    ALtrap_2w,       ALuptrap_2w,    ALvenus_2w,        ALwho_2w,
 	ALwill1_2w,         ALwill2_2w,      ALwill_2w,      ALworkgates_2w,    ALzapperoff_2w,
-	ALzapperon_2w,      ALnewscr_2w,     ALscr01Story_2w, ALscr01NoStory_2w
+	ALzapperon_2w,      ALnewscr_2w,     ALscr01Story_2w, ALscr01NoStory_2w,
+	ALbananaGlobal_2w,  ALbananaDone_2w
 };
 
 // Hugo 3 Win
@@ -9804,7 +9809,7 @@ act8 ascr3435_2d   = {NEW_SCREEN, DOORDELAY,       35};
 act8 ascr3436_2d   = {NEW_SCREEN, DOORDELAY,       36};
 act8 ascrmaze_2d   = {NEW_SCREEN, 0,               11};
 
-act9 abanana9_2d   = {INIT_OBJSTATE, 16,        GENIE_2d,    1};
+act9 abanana9_2d   = {INIT_OBJSTATE, 0,         GENIE_2d,    1};
 act9 abite1_2d     = {INIT_OBJSTATE, 0,         SNAKE_2d,    1};
 act9 acallp1_2d    = {INIT_OBJSTATE, 0,         TARDIS_2d,   1};
 act9 acat2_2d      = {INIT_OBJSTATE, 0,         CATNIP_2d,   1};
@@ -10311,6 +10316,8 @@ act33 amaidc2_2d  = {INIT_SCREEN, 8,  MAID_2d,      32};
 act33 amaidp1_2d  = {INIT_SCREEN, 0,  MAID_2d,      31};
 
 act34 abang1_2d   = {AGSCHEDULE, 5 * NORMAL_TPS_v1d,   kALbang2_2d};
+act34 abanana15_2d = {AGSCHEDULE, 16,                    kALbananaGlobal_2d};
+act34 abanana16_2d = {AGSCHEDULE, 0,                     kALbananaDone_2d};
 act34 abite3_2d   = {AGSCHEDULE, 60 * NORMAL_TPS_v1d,  kALpois1_2d};
 act34 abite4_2d   = {AGSCHEDULE, 200 * NORMAL_TPS_v1d, kALpois2_2d};
 act34 abite5_2d   = {AGSCHEDULE, 290 * NORMAL_TPS_v1d, kALpois3_2d};
@@ -10349,7 +10356,9 @@ act49 asong6_2d   = {OLD_SONG, 4,  kDTsong6_2d};
 
 actListPtr AL11maze_2d[]        = {&ainitmaze_2d, &amazexy_2d, &ascr11maze_2d, 0};
 actListPtr ALballoon_2d[]       = {&aball1_2d, &aball2_2d, &aball3_2d, &aball4_2d, &aball5_2d, &aball6_2d, &asong6_2d, 0};
-actListPtr ALbanana_2d[]        = {&abonus18_2d, &abanana1_2d, &abanana2_2d, &abanana3_2d, &abanana4_2d, &abanana5_2d, &abanana6_2d, &abanana7_2d, &abanana8_2d, &abanana9_2d, &abanana10_2d, &abanana11_2d, &abanana12_2d, &abanana13_2d, &abanana14_2d, 0};
+actListPtr ALbanana_2d[]        = {&abonus18_2d, &abanana1_2d, &abanana2_2d, &abanana3_2d, &abanana4_2d, &abanana5_2d, &abanana6_2d, &abanana7_2d, &abanana8_2d, &abanana15_2d, &abanana10_2d, &abanana11_2d, &abanana12_2d, &abanana13_2d, &abanana14_2d, 0};
+actListPtr ALbananaGlobal_2d[]  = {&abanana16_2d, 0};
+actListPtr ALbananaDone_2d[]    = {&abanana9_2d, 0};
 actListPtr ALbang1_2d[]         = {&abang1_2d, &afuze1_2d, &afuze2_2d, &afuze3_2d, 0};
 actListPtr ALbang2_2d[]         = {&achkrr_2d, 0};
 actListPtr ALbed1_2d[]          = {&apenscr_2d, &apenbxy1_2d, &apenbseq1_2d, &apenbstart_2d, &apenbvxy1_2d, &apenbvxy2_2d, &apenbseq2_2d, &apenbstop_2d, &apenbxy2_2d, &apenblie1_2d, &apenblie2_2d, &alie1_2d, &alie2_2d, 0};
@@ -10680,7 +10689,8 @@ actList actListArr_2d[] = {
 	ALsonic_2d,        ALstrike1_2d,    ALstrikematch_2d,   ALswgates_2d,    ALswzapper_2d,
 	ALthrown_2d,       ALthrowstick_2d, ALtrap_2d,          ALuptrap_2d,     ALvenus_2d,
 	ALwho_2d,          ALwill_2d,       ALwill1_2d,         ALwill2_2d,      ALworkgates_2d,
-	ALzapperoff_2d,    ALzapperon_2d,   ALnewscr_2d
+	ALzapperoff_2d,    ALzapperon_2d,   ALnewscr_2d,        ALbananaGlobal_2d,
+	ALbananaDone_2d
 };
 
 int oldrsp_3d[] = {kSTOldrsp1_3d, -1};

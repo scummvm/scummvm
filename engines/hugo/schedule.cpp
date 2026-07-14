@@ -808,6 +808,16 @@ void Scheduler::restoreSchedulerData(Common::ReadStream *in, int saveVersion) {
 
 	if (saveVersion == kSavegameVersionMin)
 		skipLegacyActions(in);
+
+	// Global actions were stored as local before they were converted from
+	// INIT_OBJSTATE to AGSCHEDULE.  Derive the flag from the current action so
+	// pending version 6 events receive the fix too.
+	if (saveVersion == kSavegameVersionMin) {
+		for (Event *event = _headEvent; event; event = event->_nextEvent) {
+			if (event->_action)
+				event->_localActionFl = event->_action->_a0._actType != AGSCHEDULE;
+		}
+	}
 }
 
 /**
