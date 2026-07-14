@@ -37,7 +37,7 @@ public:
 	ToolbarManager();
 
 	bool initialize(ResourceManager &resources);
-	void applySharedPalettePatch(byte *palette, uint colorCount) const;
+	void applySharedPalettePatch(byte *palette, uint colorCount);
 	bool service(const MouseState &mouse);
 	void leave();
 
