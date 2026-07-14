@@ -100,6 +100,12 @@
   before returning a control ID. A toolbar press therefore dispatches only
   when its release remains over the same action; leaving the control cancels
   the pending selection.
+- `PollInteractionAndResolveSelection` at `0x13c8d` checks the published
+  vertical coordinate before scene interaction handling, so the toolbar band
+  remains available during BA0 first-frame previews as well as normal scenes.
+  That band uses cursor `0xe` (14), matching the white cursor selected by
+  `RunStartupFrontEndLoop` at `0x10778`; scene hotspot cursor selection resumes
+  below y=50.
 - Action dispatch at `0x190b7` maps the nine controls to remote setup, world
   map, inventory, WAC, save, restore, options, help, and quit. The ScummVM
   toolbar currently preserves the click/release routing and logs these
