@@ -9,7 +9,8 @@ MODULE_OBJS := \
 	metaengine.o \
 	resources.o \
 	ripper.o \
-	script.o
+	script.o \
+	toolbar.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_RIPPER), DYNAMIC_PLUGIN)

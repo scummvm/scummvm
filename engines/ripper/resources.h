@@ -45,6 +45,29 @@ struct BitmapAssetSequence {
 	Common::Array<BitmapAssetFrame> frames;
 };
 
+struct BitmapFontGlyph {
+	uint32 pixelOffset;
+	byte width;
+	byte height;
+	int8 xOffset;
+	int8 yOffset;
+
+	BitmapFontGlyph() : pixelOffset(0), width(0), height(0), xOffset(0), yOffset(0) {}
+};
+
+struct BitmapFontAsset {
+	byte firstCharacter;
+	byte lineHeight;
+	byte characterSpacing;
+	byte spaceWidth;
+	byte transparentColor;
+	Common::Array<BitmapFontGlyph> glyphs;
+	Common::Array<byte> pixels;
+
+	BitmapFontAsset() : firstCharacter(0), lineHeight(0), characterSpacing(0),
+		spaceWidth(0), transparentColor(0) {}
+};
+
 class AssetLibrary {
 public:
 	AssetLibrary();
@@ -79,6 +102,8 @@ public:
 	bool initialize();
 	bool loadInterfaceBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence) const;
+	bool loadInterfaceBitmapFont(const Common::String &memberName, BitmapFontAsset &font) const;
+	bool loadGameText(Common::Array<Common::String> &strings) const;
 
 	AssetLibrary &scripts() { return _scripts; }
 	AssetLibrary &interface() { return _interface; }

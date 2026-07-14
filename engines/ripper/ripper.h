@@ -32,6 +32,7 @@ class InputManager;
 class MediaPlayer;
 class ResourceManager;
 class ScriptManager;
+class ToolbarManager;
 
 class RipperEngine : public Engine {
 public:
@@ -45,6 +46,7 @@ public:
 	MediaPlayer *getMedia() const { return _media; }
 	ResourceManager *getResources() const { return _resources; }
 	ScriptManager *getScripts() const { return _scripts; }
+	ToolbarManager *getToolbar() const { return _toolbar; }
 
 private:
 	void registerSearchPaths();
@@ -56,6 +58,7 @@ private:
 	MediaPlayer *_media;
 	ResourceManager *_resources;
 	ScriptManager *_scripts;
+	ToolbarManager *_toolbar;
 };
 
 } // End of namespace Ripper
