@@ -313,7 +313,7 @@ private:
 	Common::Array<int> _cibleBounds;
 
 	Common::Array<Common::String> _levels;
-	uint _currentLevel = 0;
+	uint _nextLevel = 0;
 
 	bool _restarted = false;
 	bool _loaded = false;
