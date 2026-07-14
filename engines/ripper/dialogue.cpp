@@ -37,6 +37,20 @@ bool DialogueManager::execute(const CompiledScript &script, const ScriptCommand 
 		return true;
 	}
 
+	if (command.opcode == 0x0b) {
+		debugC(1, kDebugScripts,
+			"Ripper: dialogue selection action script='%s' offset=0x%x selector=%u "
+				"arguments=%u choices=%u",
+			script.getMemberName().c_str(), command.offset, command.selector,
+			command.arguments.size(), _choices.size());
+		for (uint i = 0; i < command.arguments.size(); ++i)
+			debugC(2, kDebugScripts,
+				"Ripper: dialogue selection action argument=%u type=%u value=0x%x bytes=%u",
+				i, command.arguments[i].type, command.arguments[i].value,
+				command.arguments[i].data.size());
+		return true;
+	}
+
 	debugC(1, kDebugScripts,
 		"Ripper: dialogue command script='%s' offset=0x%x selector=%u arguments=%u",
 		script.getMemberName().c_str(), command.offset, command.selector,
