@@ -371,6 +371,9 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 		*nextFrame = 0;
 	if (!script.decodeCallback(callbackOffset, true, commands))
 		return false;
+	debugC(2, kDebugScripts,
+		"Ripper: decoded callback script='%s' offset=0x%x commands=%u",
+		script.getMemberName().c_str(), callbackOffset, commands.size());
 
 	uint commandIndex = 0;
 	bool branchTaken = false;
@@ -729,6 +732,14 @@ bool ScriptManager::serviceScene() {
 	if ((mouse.pressed & kMouseButtonLeft) == 0)
 		return true;
 	if (hoveredInteraction) {
+		debugC(1, kDebugInput,
+			"Ripper: hotspot click frame=%u label='%s' interaction=%u action='%s' "
+				"point=%d,%d rect=%d,%d,%d,%d cursor=%u condition=0x%x callback=0x%x flags=0x%02x",
+			_activeBa0Frame, _ba0.getString(frame.labelOffset).c_str(), hoveredInteractionIndex,
+			hoveredInteraction->label.c_str(), mouse.position.x, mouse.position.y,
+			hoveredInteraction->y, hoveredInteraction->x, hoveredInteraction->height,
+			hoveredInteraction->width, cursorIndex, hoveredInteraction->conditionOffset,
+			hoveredInteraction->callbackOffset, hoveredInteraction->flags);
 		debugC(2, kDebugScene,
 			"Ripper: BA0 chooser selected interaction=%u label='%s' point=%d,%d rect=%d,%d,%d,%d",
 			hoveredInteractionIndex, hoveredInteraction->label.c_str(), mouse.position.x, mouse.position.y,
@@ -738,6 +749,9 @@ bool ScriptManager::serviceScene() {
 		uint nextFrame = _activeBa0Frame;
 		if (!executeCallback(_ba0, hoveredInteraction->callbackOffset, result, &nextFrame))
 			return false;
+		debugC(1, kDebugScripts,
+			"Ripper: hotspot action script='%s' callback=0x%x result=%d nextFrame=%u",
+			_ba0.getMemberName().c_str(), hoveredInteraction->callbackOffset, result, nextFrame);
 		if (result != -2) {
 			warning("Ripper: BA0 interaction %u returned unexpected result %d",
 				hoveredInteractionIndex, result);
