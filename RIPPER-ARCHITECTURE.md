@@ -147,6 +147,11 @@
   which consumes the accumulated records through chooser control `0x4e2`.
   The current slice mirrors the record accumulation and emits the complete
   choice list; selection UI and result propagation are still pending.
+- `HandleSceneEntryPromptAndDispatchAction` at `0x1574d` is the confirmed
+  three-argument follow-up path after a choice list: it shows the centered
+  step prompt and dispatches the selected result through the shared scene
+  action multiplexer. The current slice records opcode `0x0b` and its typed
+  arguments while that chooser/action bridge is reconstructed.
 - `ExecuteSceneFrameAndInteractions` at `0x13277` runs frame callbacks,
   presentations, chooser selection, and interaction callbacks.
 - `RIPPER.RUN` sets milestone flag 32, plays `PROINT.AVI` and `PROLOG1.AVI`,
