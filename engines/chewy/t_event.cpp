@@ -1375,7 +1375,6 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 		break;
 
 	case 61:
-	case R14_HERMIT_DIA:
 	case R8_NIMOYANER1_DIA:
 	case R8_NIMOYANER2_DIA:
 	case R11_TERMINAL_DIA:
@@ -1435,6 +1434,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 
 	case 24:
 	case 26:
+	case R14_HERMIT_DIA:
 		oldFormat = true;
 		switch (personNr) {
 		case 0:
