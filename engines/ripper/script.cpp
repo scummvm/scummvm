@@ -813,4 +813,22 @@ void ScriptManager::drawDialogueOverlay() const {
 	_dialogue->draw();
 }
 
+void ScriptManager::updateInteractiveCursor(const Common::Point &point) {
+	if (!_awaitingBa0Interaction || _activeBa0Frame >= _ba0.getFrames().size())
+		return;
+	const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
+	uint cursorIndex = 0;
+	for (uint i = 0; i < frame.interactionCount; ++i) {
+		const ScriptInteraction &interaction = _ba0.getInteractions()[frame.firstInteractionIndex + i];
+		if ((interaction.flags & 2) == 0 && point.x >= interaction.y &&
+			point.x < interaction.y + interaction.height && point.y >= interaction.x &&
+			point.y < interaction.x + interaction.width) {
+			cursorIndex = interaction.conditionOffset != 0 ? 8 : interaction.initialSelection;
+			break;
+		}
+	}
+	_engine->getCursor()->setVisible(true);
+	_engine->getCursor()->update(cursorIndex);
+}
+
 } // End of namespace Ripper

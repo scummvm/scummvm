@@ -431,6 +431,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	uint presentedFrames = 0;
 	decoder.start();
 	while (!_engine->shouldQuit() && !decoder.endOfVideo()) {
+	_engine->getScripts()->updateInteractiveCursor(_input->peekMouseState().position);
 		if (!servicePlaybackInput(decoder, allowEscSpace, paused, externalAudio)) {
 			completed = false;
 			if (stoppedByUser && !_engine->shouldQuit())

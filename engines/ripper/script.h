@@ -22,6 +22,7 @@
 #define RIPPER_SCRIPT_H
 
 #include "common/array.h"
+#include "common/rect.h"
 #include "common/str.h"
 
 namespace Ripper {
@@ -113,6 +114,7 @@ public:
 	bool runStartupPath();
 	bool serviceScene();
 	void drawDialogueOverlay() const;
+	void updateInteractiveCursor(const Common::Point &point);
 
 	CompiledScript &startup() { return _startup; }
 	CompiledScript &ba0() { return _ba0; }
