@@ -44,6 +44,8 @@ namespace Ripper {
 
 namespace {
 
+static const int kScenePresentationTop = 50;
+
 struct IavfDescriptor {
 	uint16 opcode;
 	uint32 arg0;
@@ -387,7 +389,7 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
 		bool allowEscSpace, int x, int y, Audio::SoundHandle *externalAudio, bool *stoppedByUser,
 		const Common::Array<uint32> *frameAudioOffsets, uint32 audioByteRate,
-		uint32 timelineStartMillis, uint displayScale) {
+		uint32 timelineStartMillis, uint displayScale, uint frameLimit, int originY) {
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	Video::SmackerDecoder decoder;
@@ -404,11 +406,11 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	if (y < 0)
 		y = (g_system->getHeight() - outputHeight) / 2;
 	else
-		y *= displayScale;
+		y = y * displayScale + originY;
 	debugC(1, kDebugVideo,
-		"Ripper: playing Smacker '%s' frames=%u source=%ux%u output=%ux%u at %d,%d controls=%d",
+		"Ripper: playing Smacker '%s' frames=%u source=%ux%u output=%ux%u at %d,%d controls=%d frameLimit=%u",
 		name.c_str(), decoder.getFrameCount(), decoder.getWidth(), decoder.getHeight(),
-		outputWidth, outputHeight, x, y, allowEscSpace);
+		outputWidth, outputHeight, x, y, allowEscSpace, frameLimit);
 	const bool synchronizeToTimeline = frameAudioOffsets &&
 		frameAudioOffsets->size() == decoder.getFrameCount() && audioByteRate != 0;
 	if (synchronizeToTimeline) {
@@ -421,6 +423,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 
 	bool paused = false;
 	bool completed = true;
+	uint presentedFrames = 0;
 	decoder.start();
 	while (!_engine->shouldQuit() && !decoder.endOfVideo()) {
 		if (!servicePlaybackInput(decoder, allowEscSpace, paused, externalAudio)) {
@@ -456,6 +459,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 					g_system->unlockScreen();
 				}
 				g_system->updateScreen();
+				++presentedFrames;
 				if (synchronizeToTimeline) {
 					debugC(11, kDebugVideo,
 						"Ripper: Smacker '%s' frame=%d audioTargetMs=%u audioElapsedMs=%u driftMs=%d",
@@ -464,8 +468,16 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				} else {
 					debugC(11, kDebugVideo, "Ripper: Smacker '%s' frame=%d", name.c_str(), decoder.getCurFrame());
 				}
+				if (frameLimit != 0 && presentedFrames >= frameLimit) {
+					debugC(2, kDebugVideo,
+						"Ripper: stopped Smacker '%s' after bounded preview frame=%u",
+						name.c_str(), presentedFrames);
+					break;
+				}
 			}
 		}
+		if (frameLimit != 0 && presentedFrames >= frameLimit)
+			break;
 		if (synchronizeToTimeline) {
 			if (!paused && !frameDue)
 				g_system->delayMillis(MIN<uint32>(targetAudioMs - audioElapsedMs, 10));
@@ -574,6 +586,44 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 		delete file;
 	}
 
+	_input->drainKeys();
+	return result;
+}
+
+bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly) {
+	Common::File *file = new Common::File();
+	if (!file->open(Common::Path(path))) {
+		warning("Ripper: could not open scene media '%s'", path.c_str());
+		delete file;
+		return false;
+	}
+
+	byte magic[8];
+	if (!readExact(*file, magic, sizeof(magic))) {
+		delete file;
+		return false;
+	}
+	file->seek(0);
+
+	// HandleSceneEntryMediaPreviewOrPrompt at 0x15b03 supplies a target of one to
+	// MediaSequenceCounterEqualsTarget at 0x15ac8. RunMediaSequence at 0x1e516
+	// calls it after presenting the frame, so this path retains frame one onscreen.
+	const uint frameLimit = firstFrameOnly ? 1 : 0;
+	debugC(2, kDebugVideo,
+		"Ripper: scene media '%s' mode=%s scriptPosition=%d,%d originY=%d",
+		path.c_str(), firstFrameOnly ? "first-frame-preview" : "sequence", x, y,
+		kScenePresentationTop);
+	bool result = false;
+	if (memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0) {
+		result = playSmacker(file, path, false, x, y, nullptr, nullptr, nullptr,
+			0, 0, 1, frameLimit, kScenePresentationTop);
+	} else if (memcmp(magic, "IAVF2.00", 8) == 0 && !firstFrameOnly) {
+		result = playIavf(*file, path, false);
+		delete file;
+	} else {
+		warning("Ripper: unsupported scene media mode for '%s'", path.c_str());
+		delete file;
+	}
 	_input->drainKeys();
 	return result;
 }
