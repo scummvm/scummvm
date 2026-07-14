@@ -19,6 +19,7 @@
  *
  */
 
+#include "fool/detection.h"
 #include "graphics/mactoolbox/toolbox.h"
 
 #include "fool/fool_game.h"
@@ -889,7 +890,7 @@ void FoolGame::thothKeyLast() {
 	copyScreen(1, arr_bmp_b3ec);
 	arr_i16_1eb8[1] = -1;
 	var_i16_1de6 = arr_i16_3b38[_hermitPathStage];
-	warning("thothKeyLast: 1de6: %d, target: %d", var_i16_1de6, (arr_i16_3b38[0x20 + _hermitPathStage] + 1));
+	debugC(5, kDebugLoading, "thothKeyLast: 1de6: %d, target: %d", var_i16_1de6, (arr_i16_3b38[0x20 + _hermitPathStage] + 1));
 	// JMP 0x228c
 	while (((_stateFlags & kStateReturn) == 0) && !_activePuzzleSolved) {
 		// 140:20c2
@@ -961,7 +962,7 @@ void FoolGame::thothKeyLastOnClick() {
 				playTone(0x32 + (var_i16_1de6 * 5), 0x28, 0);
 				_toolbox->FillRect(_screenGrid[arr_i16_1eb8[0]], _patterns[2]);
 				var_i16_1de6++;
-				warning("thothKeyLastOnClick: 1de6: %d, target: %d", var_i16_1de6, (arr_i16_3b38[0x20 + _hermitPathStage] + 1));
+				debugC(5, kDebugLoading, "thothKeyLastOnClick: 1de6: %d, target: %d", var_i16_1de6, (arr_i16_3b38[0x20 + _hermitPathStage] + 1));
 			}
 		}
 		// 140:2422
