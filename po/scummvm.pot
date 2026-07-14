@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-13 11:35+0000\n"
+"POT-Creation-Date: 2026-07-14 16:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7744,20 +7744,20 @@ msgid ""
 "anyway?"
 msgstr ""
 
-#: engines/director/metaengine.cpp:70 engines/scumm/dialogs.cpp:1212
+#: engines/director/metaengine.cpp:74 engines/scumm/dialogs.cpp:1212
 #: engines/scumm/metaengine.cpp:792
 msgid "Enable gamma correction"
 msgstr ""
 
-#: engines/director/metaengine.cpp:71
+#: engines/director/metaengine.cpp:75
 msgid "Brighten the graphics to simulate a Macintosh monitor"
 msgstr ""
 
-#: engines/director/metaengine.cpp:81
+#: engines/director/metaengine.cpp:85
 msgid "Force true color (32bpp) mode"
 msgstr ""
 
-#: engines/director/metaengine.cpp:82
+#: engines/director/metaengine.cpp:86
 msgid ""
 "Use true color graphics mode (32 bits per pixel), even if the game is not "
 "designed for it"
