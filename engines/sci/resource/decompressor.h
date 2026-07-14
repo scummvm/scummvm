@@ -143,7 +143,6 @@ protected:
 
 /**
  * LZW decompressor for SCI0/01/1
- * TODO: Clean-up post-processing functions
  */
 class DecompressorLZW : public Decompressor {
 public:
@@ -153,12 +152,11 @@ public:
 protected:
 	int unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 
-	// functions to post-process view and pic resources
-	void reorderPic(byte *src, byte *dest, int dsize);
-	void reorderView(byte *src, byte *dest);
-	void decodeRLE(byte **rledata, byte **pixeldata, byte *outbuffer, int size);
-	int getRLEsize(byte *rledata, int dsize);
-	void buildCelHeaders(byte **seeker, byte **writer, int celindex, int *cc_lengths, int max);
+	// post-processing functions for view and pic resources
+	static void unpackView(byte *src, byte *dest);
+	static void unpackPic(byte *src, byte *dest, int unpackedSize);
+	static void decodeRLE(byte **rleData, byte **pixelData, byte *dest, int decodedSize);
+	static void skipRLE(byte **rleData, int decodedSize);
 
 	ResourceCompression _compression;
 };
