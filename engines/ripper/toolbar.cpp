@@ -356,9 +356,16 @@ bool ToolbarManager::service(const MouseState &mouse) {
 			_pressedAction + 1, mouse.position.x, mouse.position.y);
 	}
 	if ((mouse.released & kMouseButtonLeft) != 0 && _pressedAction >= 0) {
-		const uint action = _pressedAction;
-		dispatchAction(action);
-		leave();
+		const int action = _pressedAction;
+		_pressedAction = -1;
+		if (_hoveredAction == action) {
+			dispatchAction(action);
+			leave();
+		} else {
+			debugC(3, kDebugInput,
+				"Ripper: toolbar primary release cancelled pressedAction=%u hoverAction=%d",
+				action + 1, _hoveredAction < 0 ? 0 : _hoveredAction + 1);
+		}
 	}
 	return true;
 }
