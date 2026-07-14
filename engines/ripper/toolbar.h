@@ -37,6 +37,7 @@ public:
 	ToolbarManager();
 
 	bool initialize(ResourceManager &resources);
+	void applySharedPalettePatch(byte *palette, uint colorCount) const;
 	bool service(const MouseState &mouse);
 	void leave();
 
@@ -60,6 +61,7 @@ private:
 	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text) const;
 
 	Common::Array<Action> _actions;
+	Common::Array<byte> _sharedPalette;
 	BitmapFontAsset _font;
 	Common::Array<byte> _topBacking;
 	Common::Array<byte> _tooltipBacking;

@@ -66,8 +66,10 @@
 - The `7PT_FONT.FNT` member is an NF2T glyph descriptor used by
   `RenderFrontEndActionPreviewSprite` at `0x189b3`. The reimplementation
   decodes the descriptor and its custom bitmap instead of substituting a host
-  font. Toolbar pixels use the reserved indexed palette entries from the
-  original interface assets.
+  font. Toolbar bitmap color maps target palette index 0, indices 4 through 9,
+  and indices 246 through 255. `ApplySharedDisplayPalettePatch` at `0x205d0`
+  restores those bands on every media palette update so interface pixels remain
+  stable while the underlying Smacker palette changes.
 
 ## Scene Toolbar
 

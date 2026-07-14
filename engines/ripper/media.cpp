@@ -39,6 +39,7 @@
 #include "ripper/detection.h"
 #include "ripper/input.h"
 #include "ripper/ripper.h"
+#include "ripper/toolbar.h"
 
 namespace Ripper {
 
@@ -447,8 +448,12 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		if (!paused && frameDue) {
 			const Graphics::Surface *frame = decoder.decodeNextFrame();
 			if (frame) {
-				if (decoder.hasDirtyPalette())
-					g_system->getPaletteManager()->setPalette(decoder.getPalette(), 0, 256);
+				if (decoder.hasDirtyPalette()) {
+					byte palette[256 * 3];
+					memcpy(palette, decoder.getPalette(), sizeof(palette));
+					_engine->getToolbar()->applySharedPalettePatch(palette, 256);
+					g_system->getPaletteManager()->setPalette(palette, 0, 256);
+				}
 				if (displayScale == 1) {
 					g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 				} else {
