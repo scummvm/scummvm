@@ -16,7 +16,6 @@ MODULE_OBJS = \
 	palette.o \
 	scene.o \
 	script.o \
-	script_ops.o \
 	script_vm.o \
 	sound.o \
 	timer.o \
