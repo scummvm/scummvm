@@ -36,12 +36,14 @@
 #include "engines/enhancements.h"
 #include "gameobjects.h"
 #include "graphics/cursorman.h"
+#include "graphics/hotspot_renderer.h"
 #include "graphics/paletteman.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "gui/debugger.h"
 #include "macs2/debugtools.h"
 #include "macs2/detection.h"
+#include "macs2/hotspot_names.h"
 #include "macs2/music.h"
 #include "macs2/view1.h"
 
@@ -1238,6 +1240,191 @@ uint16 Macs2Engine::getHotspotAtPoint(const Common::Point &p) {
 	return 0;
 }
 
+namespace {
+
+static constexpr uint16 kMaxSceneObjects = 0x200;
+
+Common::String getObjectHotspotName(uint16 objectIndex) {
+	const GameObjects &objects = GameObjects::instance();
+	if (objectIndex > 0 && objectIndex < objects._objectNames.size() && !objects._objectNames[objectIndex].empty()) {
+		if (g_engine != nullptr)
+			return g_engine->translateHotspotLabel(objects._objectNames[objectIndex]);
+		return objects._objectNames[objectIndex];
+	}
+	return Common::String();
+}
+
+Common::U32String hotspotLabelToU32(const Common::String &name) {
+	if (name.empty())
+		return Common::U32String();
+	return Common::U32String(name.c_str(), Common::kDos850);
+}
+
+bool isMapModeActive() {
+	if (g_events == nullptr)
+		return false;
+	View1 *view = (View1 *)g_events->findView("View1");
+	return view != nullptr && view->_currentMode == ViewMode::VM_HELP;
+}
+
+Common::Point getSceneObjectHotspotPosition(View1 *view, GameObject *obj) {
+	if (view != nullptr) {
+		Character *character = view->getCharacterByIndex(obj->_index);
+		if (character != nullptr && !character->_markedForDeletion)
+			return character->getPosition();
+	}
+	return obj->_position;
+}
+
+} // namespace
+
+void Macs2Engine::rebuildHotspotSnapshot() const {
+	_hotspotSnapshot.currentSceneIndex = Scenes::instance()._currentSceneIndex;
+	_hotspotSnapshot.numHotspots = _numHotspots;
+	_hotspotSnapshot.hotspotColorTable = _hotspotColorTable;
+	_hotspotSnapshot.hotspotOverrides = _hotspotOverrides;
+	_hotspotSnapshot.mapModeActive = isMapModeActive();
+	_hotspotSnapshot.sceneHotspots.clear();
+	_hotspotSnapshot.sceneObjects.clear();
+
+	if (_hotspotMap.w > 0 && _numHotspots > 0) {
+		Common::Array<int32> sumX(_numHotspots, 0);
+		Common::Array<int32> sumY(_numHotspots, 0);
+		Common::Array<int32> count(_numHotspots, 0);
+
+		for (int y = 0; y < _hotspotMap.h; ++y) {
+			for (int x = 0; x < _hotspotMap.w; ++x) {
+				const uint8 pixel = _hotspotMap.getPixel(x, y);
+				if (pixel == 0)
+					continue;
+
+				for (uint16 i = 0; i < _numHotspots; ++i) {
+					if ((uint8)_hotspotColorTable[i] == pixel) {
+						sumX[i] += x;
+						sumY[i] += y;
+						count[i]++;
+						break;
+					}
+				}
+			}
+		}
+
+		for (uint16 i = 0; i < _numHotspots; ++i) {
+			if (count[i] == 0)
+				continue;
+
+			HotspotSnapshot::SceneHotspotEntry entry;
+			entry.index = i + 1;
+			if ((uint)(i + 1) < _hotspotOverrides.size() && _hotspotOverrides[i + 1] != 0xFFFF)
+				entry.index = _hotspotOverrides[i + 1];
+			entry.center = Common::Point(sumX[i] / count[i], sumY[i] / count[i]);
+			_hotspotSnapshot.sceneHotspots.push_back(entry);
+		}
+	}
+
+	View1 *view = g_events ? (View1 *)g_events->findView("View1") : nullptr;
+	const uint16 sceneIndex = (uint16)Scenes::instance()._currentSceneIndex;
+	for (uint16 objectIndex = 1; objectIndex <= kMaxSceneObjects; ++objectIndex) {
+		GameObject *obj = GameObjects::getObjectByIndex(objectIndex);
+		if (obj == nullptr || obj->_dataOffset == 0)
+			continue;
+		if ((int16)obj->_sceneIndex < 0 || obj->_sceneIndex != sceneIndex)
+			continue;
+
+		HotspotSnapshot::SceneObjectEntry entry;
+		entry.index = objectIndex;
+		entry.orientation = obj->_orientation;
+		entry.position = getSceneObjectHotspotPosition(view, obj);
+		_hotspotSnapshot.sceneObjects.push_back(entry);
+	}
+}
+
+bool Macs2Engine::hotspotDirty() const {
+	const bool mapMode = isMapModeActive();
+
+	if (Scenes::instance()._currentSceneIndex != _hotspotSnapshot.currentSceneIndex ||
+		_numHotspots != _hotspotSnapshot.numHotspots ||
+		_hotspotColorTable != _hotspotSnapshot.hotspotColorTable ||
+		_hotspotOverrides != _hotspotSnapshot.hotspotOverrides ||
+		mapMode != _hotspotSnapshot.mapModeActive) {
+		rebuildHotspotSnapshot();
+		return true;
+	}
+
+	if (mapMode)
+		return false;
+
+	View1 *view = g_events ? (View1 *)g_events->findView("View1") : nullptr;
+	const uint16 sceneIndex = (uint16)Scenes::instance()._currentSceneIndex;
+	uint snapshotIdx = 0;
+	for (uint16 objectIndex = 1; objectIndex <= kMaxSceneObjects; ++objectIndex) {
+		GameObject *obj = GameObjects::getObjectByIndex(objectIndex);
+		if (obj == nullptr || obj->_dataOffset == 0)
+			continue;
+		if ((int16)obj->_sceneIndex < 0 || obj->_sceneIndex != sceneIndex)
+			continue;
+
+		const Common::Point pos = getSceneObjectHotspotPosition(view, obj);
+		if (snapshotIdx >= _hotspotSnapshot.sceneObjects.size()) {
+			rebuildHotspotSnapshot();
+			return true;
+		}
+
+		const HotspotSnapshot::SceneObjectEntry &snap = _hotspotSnapshot.sceneObjects[snapshotIdx];
+		if (snap.index != objectIndex || snap.position != pos || snap.orientation != obj->_orientation) {
+			rebuildHotspotSnapshot();
+			return true;
+		}
+		snapshotIdx++;
+	}
+
+	if (snapshotIdx != _hotspotSnapshot.sceneObjects.size()) {
+		rebuildHotspotSnapshot();
+		return true;
+	}
+
+	return false;
+}
+
+void Macs2Engine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) {
+	if (isMapModeActive())
+		return;
+
+	for (const HotspotSnapshot::SceneHotspotEntry &entry : _hotspotSnapshot.sceneHotspots) {
+		if (entry.index == 0)
+			continue;
+
+		const Common::Point &center = entry.center;
+		if (center.x < 0 || center.x >= kScreenWidth || center.y < 0 || center.y >= kGameHeight)
+			continue;
+
+		const uint16 sceneIndex = (uint16)Scenes::instance()._currentSceneIndex;
+		const Common::String name = lookupSceneHotspotName(sceneIndex, entry.index);
+		const Graphics::HotspotType type = lookupSceneHotspotType(sceneIndex, entry.index);
+		hotspots.push_back(Graphics::HotspotInfo(center, hotspotLabelToU32(name), type));
+	}
+
+	View1 *view = g_events ? (View1 *)g_events->findView("View1") : nullptr;
+	const uint16 currentActorIndex = (uint16)Scenes::instance()._currentActorIndex;
+	for (const HotspotSnapshot::SceneObjectEntry &entry : _hotspotSnapshot.sceneObjects) {
+		if (entry.index == currentActorIndex)
+			continue;
+
+		const Common::Point &screenPos = entry.position;
+		if (screenPos.x < 0 || screenPos.x >= kScreenWidth || screenPos.y < 0 || screenPos.y >= kGameHeight)
+			continue;
+
+		Character *character = view ? view->getCharacterByIndex(entry.index) : nullptr;
+		const bool isCharacter = character != nullptr && !character->_markedForDeletion;
+		Graphics::HotspotType hotspotType = Graphics::kHotspotObject;
+		if (isCharacter && GameObjects::isNpcIndex(entry.index))
+			hotspotType = Graphics::kHotspotNPC;
+
+		const Common::String name = getObjectHotspotName(entry.index);
+		hotspots.push_back(Graphics::HotspotInfo(screenPos, hotspotLabelToU32(name), hotspotType));
+	}
+}
+
 void Macs2Engine::scheduleRun(bool initScene) {
 	_runScheduled = true;
 	_scheduledRunIsInitScene = initScene;
@@ -1385,7 +1572,7 @@ void Macs2Engine::loadTranslation() {
 	}
 
 	uint16 version = f->readUint16LE();
-	if (version != 1) {
+	if (version != 1 && version != 2) {
 		warning("Unsupported macs2_translation.dat version %u", version);
 		delete f;
 		return;
@@ -1393,6 +1580,9 @@ void Macs2Engine::loadTranslation() {
 
 	uint16 numScenes = f->readUint16LE();
 	uint16 numObjects = f->readUint16LE();
+	uint16 numHotspotLabels = 0;
+	if (version >= 2)
+		numHotspotLabels = f->readUint16LE();
 
 	// Read index tables
 	struct IndexEntry {
@@ -1415,6 +1605,8 @@ void Macs2Engine::loadTranslation() {
 		objectIndex[i].dataOffset = f->readUint32LE();
 	}
 
+	uint32 stringDataEnd = 0;
+
 	// Read string data for scenes
 	for (uint16 i = 0; i < numScenes; i++) {
 		f->seek(sceneIndex[i].dataOffset);
@@ -1426,6 +1618,7 @@ void Macs2Engine::loadTranslation() {
 				s += (char)f->readByte();
 			entry.strings.push_back(s);
 		}
+		stringDataEnd = MAX(stringDataEnd, (uint32)f->pos());
 		_sceneTranslations[sceneIndex[i].id] = entry;
 	}
 
@@ -1440,11 +1633,38 @@ void Macs2Engine::loadTranslation() {
 				s += (char)f->readByte();
 			entry.strings.push_back(s);
 		}
+		stringDataEnd = MAX(stringDataEnd, (uint32)f->pos());
 		_objectTranslations[objectIndex[i].id] = entry;
 	}
 
+	_hotspotLabelTranslations.clear();
+	if (numHotspotLabels > 0)
+		f->seek(stringDataEnd);
+	for (uint16 i = 0; i < numHotspotLabels; i++) {
+		uint16 keyLen = f->readUint16LE();
+		Common::String key;
+		for (uint16 k = 0; k < keyLen; k++)
+			key += (char)f->readByte();
+		uint16 valLen = f->readUint16LE();
+		Common::String val;
+		for (uint16 k = 0; k < valLen; k++)
+			val += (char)f->readByte();
+		if (!key.empty() && !val.empty())
+			_hotspotLabelTranslations[key] = val;
+	}
+
 	delete f;
-	debug("Loaded macs2_translation.dat: %u scenes, %u objects", numScenes, numObjects);
+	debug("Loaded macs2_translation.dat: %u scenes, %u objects, %u overlay labels",
+		  numScenes, numObjects, (uint)_hotspotLabelTranslations.size());
+}
+
+Common::String Macs2Engine::translateHotspotLabel(const Common::String &cp850Name) const {
+	if (cp850Name.empty() || !(getFeatures() & GF_TRANSLATED))
+		return cp850Name;
+	auto it = _hotspotLabelTranslations.find(cp850Name);
+	if (it != _hotspotLabelTranslations.end())
+		return it->_value;
+	return cp850Name;
 }
 
 Common::StringArray Macs2Engine::decodeStrings(Common::MemoryReadStream *stream, int offset, int numStrings, int sceneId, int objectId) {
@@ -1865,7 +2085,9 @@ bool Macs2Engine::tick() {
 		_scriptExecutor->_isRepeatRun = true;
 		_scriptExecutor->run(shouldRunInit);
 	}
-	return Events::tick();
+	const bool result = Events::tick();
+	drawHotspots();
+	return result;
 }
 
 void GlyphData::readFromeFile(Common::File &file) {

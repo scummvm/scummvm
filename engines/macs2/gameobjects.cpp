@@ -177,7 +177,46 @@ void Macs2::GameObjects::init() {
 		_objectNames[0x8C] = "Wolle"; // ball of wool
 		_objectNames[0x8E] = "Holzw\x81rfel";
 		_objectNames[0x8F] = "Brief";
+
+		// Characters/NPCs - from output-demo strings + Schatz-Demo RESOURCE.MCS dialogue
+		_objectNames[0x06] = "Tramp";              // strings_object006 [0]
+		_objectNames[0x0C] = "Droll";              // scene 28/30 dialogue (Tante Droll)
+		_objectNames[0x0F] = "Cornel";             // scene 5: Cornel Brinkley (obj_0xf)
+		_objectNames[0x13] = "Tramp";              // strings_object019 [0]; tramp henchman
+		_objectNames[0x45] = "Rafter";              // scene 30 dialogue
+		_objectNames[0x4D] = "Tramp";              // scene 5 tramp henchman
+		_objectNames[0x69] = "Wirt";               // scene 28 gatekeeper dialogue
+		_objectNames[0x6E] = "Mrs. Butler";        // strings_object110 [0]
 	} else {
+		// Characters/NPCs - labels from strings_object*.txt [0] and/or scene dialogue (demacs2)
+		_objectNames[0x01] = "Old Firehand";       // strings_object001 [0]
+		_objectNames[0x02] = "Kapit\xe4n";          // strings_object002 [0-1]
+		_objectNames[0x04] = "Bootsjunge";         // strings_object004 [0]
+		_objectNames[0x06] = "Tramp";              // strings_object006 [0]; tramp henchman
+		_objectNames[0x07] = "M\xe4""dchen";       // strings_object007 [0]
+		_objectNames[0x09] = "Panther";            // strings_object009 (panther scene)
+		_objectNames[0x0C] = "Droll";              // strings_object012 [0]
+		_objectNames[0x0D] = "Patterson";           // strings_object013 [0]
+		_objectNames[0x0F] = "Cornel";             // scene 9: Cornel Brinkley (obj_0xf)
+		_objectNames[0x12] = "Wachposten";         // scene 12 dialogue
+		_objectNames[0x13] = "Tramp";              // strings_object019 [0]; tramp henchman
+		_objectNames[0x16] = "Passagierin";        // scene 2 dialogue
+		_objectNames[0x21] = "Matrose";             // scene 10 dialogue
+		_objectNames[0x27] = "Branshky";            // strings_object039 [0]
+		_objectNames[0x35] = "Dieb";               // scene 24 dialogue
+		_objectNames[0x45] = "Rafter";              // scene 18: "wir sind Rafter"
+		_objectNames[0x4D] = "Tramp";              // tramp henchman, scenes 5/18
+		_objectNames[0x69] = "Wirt";               // scene 28 barkeeper dialogue
+		_objectNames[0x6E] = "Mrs. Butler";        // strings_object110 [0]
+		_objectNames[0x90] = "Bandit";             // scene 29
+		_objectNames[0x91] = "Bandit";             // scene 29
+		_objectNames[0x92] = "Bandit";             // scene 29
+		_objectNames[0x93] = "Winnetou";           // scene 29 dialogue
+		_objectNames[0x95] = "Grosser B\xe4""r";   // scene 45: greeted by Winnetou
+		_objectNames[0xA7] = "Winnetou";           // scene 45 dialogue
+		_objectNames[0xA8] = "Kleiner B\xe4""r";   // scene 45: greeted by Winnetou
+		_objectNames[0xB5] = "Winnetou";           // strings_object181; ending scenes
+
 		// Full game - verified against strings_object*.txt dumps
 		_objectNames[0x08] = "Brett";           // board
 		_objectNames[0x0E] = "Eimer";           // bucket, full of water
@@ -186,7 +225,7 @@ void Macs2::GameObjects::init() {
 		_objectNames[0x14] = "Eimer";           // bucket, full of water
 		_objectNames[0x17] = "Hutschachtel";    // hatbox, empty and open
 		_objectNames[0x18] = "Damenhut";        // lady's hat with veil
-		_objectNames[0x19] = "Huzschachtel";    // hatbox, closed
+		_objectNames[0x19] = "Hutschachtel";    // strings_object025 [4]
 		_objectNames[0x1A] = "Metalleimer";     // metal bucket, empty
 		_objectNames[0x1B] = "Feuerhaken";      // fire poker
 		_objectNames[0x1C] = "Topflappen";      // pot holder
@@ -203,10 +242,11 @@ void Macs2::GameObjects::init() {
 		_objectNames[0x2A] = "Brot";            // bread, stale
 		_objectNames[0x2B] = "Kuvert";          // envelope, open
 		_objectNames[0x2C] = "Kuvert";          // envelope, sealed
-		_objectNames[0x2D] = "Waschb\x84rfell"; // raccoon fur
+		_objectNames[0x2D] = "Waschb\x84rm\x81tze"; // strings_object045 [0]
 		_objectNames[0x2E] = "Whiskyglas";      // whisky glass
 		_objectNames[0x2F] = "Lederg\x81rtel";  // leather belt
 		_objectNames[0x30] = "Sch\x81rhaken";   // poker
+		_objectNames[0x31] = "Wachhund";           // strings_object049 [0]
 		_objectNames[0x34] = "Brett";           // board, solid
 		_objectNames[0x36] = "Vogelk\x84"
 							 "fig"; // birdcage, with bird
@@ -219,10 +259,10 @@ void Macs2::GameObjects::init() {
 		_objectNames[0x3A] = "Landkarte";       // map
 		_objectNames[0x3B] = "Kerze";           // candle
 		_objectNames[0x3C] = "Kieselsteine";    // pebbles
-		_objectNames[0x3D] = "Koffer";          // suitcase, full of dynamite
-		_objectNames[0x3E] = "Geldscheine";     // banknotes, freshly printed
+		_objectNames[0x3D] = "Koffer";          // strings_object061 [0]
+		_objectNames[0x3E] = "Kleider";         // strings_object062 [0]
 		_objectNames[0x3F] = "Lederbeutel";     // leather pouch, empty
-		_objectNames[0x40] = "Steinschleuder";  // slingshot
+		_objectNames[0x40] = "Knallfr\x94sche"; // strings_object064 [5]
 		_objectNames[0x41] = "Knallfr\x94sche"; // firecrackers
 		_objectNames[0x42] = "Koffer";          // suitcase, open
 		_objectNames[0x43] = "Koffer";          // suitcase, closed
@@ -230,7 +270,7 @@ void Macs2::GameObjects::init() {
 		_objectNames[0x47] = "Messer";          // knife, rusty
 		_objectNames[0x48] = "Kartonschachtel"; // cardboard box, open and empty
 		_objectNames[0x49] = "Kartonschachtel"; // cardboard box
-		_objectNames[0x4A] = "Teppich";         // carpet, hand-knotted
+		_objectNames[0x4A] = "Schal";             // strings_object074 [0-1]
 		_objectNames[0x4B] = "Schilfrohr";      // reeds, dry
 		_objectNames[0x4C] = "Schilfrohr";      // reeds, straight
 		_objectNames[0x4F] = "Schnapsflasche";  // liquor bottle
@@ -321,6 +361,33 @@ void Macs2::GameObjects::init() {
 		_objectNames[0xB3] = "Eisenstange";         // iron bar
 		_objectNames[0xB4] = "Tomahawk";            // tomahawk
 	}
+}
+
+bool Macs2::GameObjects::isNpcIndex(uint16 objectIndex) {
+	if (objectIndex == 0)
+		return false;
+
+	if (g_engine->isDemo()) {
+		static const uint16 kDemoNpcIndices[] = {
+			0x06, 0x0C, 0x0F, 0x13, 0x45, 0x4D, 0x69, 0x6E, 0
+		};
+		for (uint i = 0; kDemoNpcIndices[i] != 0; ++i) {
+			if (kDemoNpcIndices[i] == objectIndex)
+				return true;
+		}
+		return false;
+	}
+
+	static const uint16 kFullGameNpcIndices[] = {
+		0x01, 0x02, 0x04, 0x06, 0x07, 0x09, 0x0C, 0x0D, 0x0F, 0x12, 0x13, 0x16,
+		0x21, 0x27, 0x35, 0x45, 0x4D, 0x69, 0x6E, 0x90, 0x91, 0x92, 0x93, 0x95,
+		0xA7, 0xA8, 0xB5, 0
+	};
+	for (uint i = 0; kFullGameNpcIndices[i] != 0; ++i) {
+		if (kFullGameNpcIndices[i] == objectIndex)
+			return true;
+	}
+	return false;
 }
 
 Macs2::GameObject *Macs2::GameObjects::getProtagonistObject() {

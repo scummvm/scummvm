@@ -222,6 +222,9 @@ public:
 
 	void init();
 
+	/** True for character/NPC object indices (not inventory items). */
+	static bool isNpcIndex(uint16 objectIndex);
+
 	static GameObject *getProtagonistObject();
 
 	static GameObject *getObjectByIndex(uint16 index);

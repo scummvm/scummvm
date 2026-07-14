@@ -495,7 +495,9 @@ public:
 	};
 	Common::HashMap<uint32, TranslationEntry> _sceneTranslations;
 	Common::HashMap<uint32, TranslationEntry> _objectTranslations;
+	Common::HashMap<Common::String, Common::String> _hotspotLabelTranslations;
 	void loadTranslation();
+	Common::String translateHotspotLabel(const Common::String &cp850Name) const;
 	// Compute the sequential string index at the given byte offset in a string blob
 	int computeStringIndex(Common::MemoryReadStream *stream, int targetOffset);
 
@@ -551,6 +553,31 @@ public:
 	bool tick() override;
 
 	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT_NO_REPEAT) const;
+
+	void getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) override;
+	bool hotspotDirty() const override;
+	void rebuildHotspotSnapshot() const;
+
+	struct HotspotSnapshot {
+		struct SceneHotspotEntry {
+			uint16 index = 0;
+			Common::Point center;
+		};
+		struct SceneObjectEntry {
+			uint16 index = 0;
+			Common::Point position;
+			uint16 orientation = 0;
+		};
+
+		int currentSceneIndex = -1;
+		uint16 numHotspots = 0;
+		Common::Array<uint16> hotspotColorTable;
+		Common::Array<uint16> hotspotOverrides;
+		Common::Array<SceneHotspotEntry> sceneHotspots;
+		Common::Array<SceneObjectEntry> sceneObjects;
+		bool mapModeActive = false;
+	};
+	mutable HotspotSnapshot _hotspotSnapshot;
 };
 
 extern Macs2Engine *g_engine;

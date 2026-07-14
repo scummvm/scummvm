@@ -23,6 +23,7 @@
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
+#include "common/events.h"
 #include "common/savefile.h"
 #include "common/translation.h"
 #include "engines/enhancements.h"
@@ -85,6 +86,11 @@ Common::KeymapArray Macs2MetaEngine::initKeymaps(const char *target) const {
 	act = new Action("HELP", _("Help / map"));
 	act->setCustomEngineActionEvent(kMacs2ActionHelp);
 	act->addDefaultInputMapping("F1");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionToggleHotspots, _("Show hotspots"));
+	act->setEvent(Common::EVENT_HOTSPOTS_SHOW);
+	act->addDefaultInputMapping("h");
 	engineKeyMap->addAction(act);
 
 	return Keymap::arrayOf(engineKeyMap);

@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	dialogs.o \
 	events.o \
 	gameobjects.o \
+	hotspot_names.o \
 	macs2.o \
 	messages.o \
 	metaengine.o \
