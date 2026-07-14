@@ -70,9 +70,10 @@
   and indices 246 through 255. `ApplySharedDisplayPalettePatch` at `0x205d0`
   restores those bands on every media palette update so interface pixels remain
   stable while the underlying Smacker palette changes. The original captures
-  those bands while `LoadStartupBitmapAssetTable` prepares the startup assets;
-  the current slice captures them from the first decoded presentation until
-  that startup bitmap table is implemented.
+  those bands while `LoadStartupBitmapAssetTable` and
+  `InitializeSharedPresentationTemplates` prepare startup indexed assets; the
+  reimplementation uses the first `MNU0` bitmap palette as that startup
+  palette and applies only the reserved bands to later Smacker presentations.
 
 ## Scene Toolbar
 

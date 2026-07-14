@@ -64,7 +64,20 @@ bool ToolbarManager::initialize(ResourceManager &resources) {
 
 	_actions.clear();
 	_actions.resize(kToolbarActionCount);
-	_sharedPalette.clear();
+	// InitializeSharedPresentationTemplates at 0x1196f captures the shared
+	// interface palette while loading the startup indexed bitmap set. MNU0 is
+	// the first menu bitmap in that set; keep its reserved interface bands
+	// independent from scene/video palettes.
+	BitmapAssetSequence menuPalette;
+	if (!resources.loadInterfaceBitmapSequence("mnu0", menuPalette) ||
+		menuPalette.frames.empty() || menuPalette.frames.front().palette.size() < 256 * 3) {
+		warning("Ripper: startup interface palette MNU0 is unavailable");
+		return false;
+	}
+	_sharedPalette = menuPalette.frames.front().palette;
+	debugC(2, kDebugResources,
+		"Ripper: captured shared interface palette from startup MNU0 (%u bytes)",
+		_sharedPalette.size());
 	for (uint i = 0; i < kToolbarActionCount; ++i) {
 		if (!resources.loadInterfaceBitmapSequence(
 			Common::String::format("toolbar%u.pl", i + 1), _actions[i].sequence) ||
@@ -74,9 +87,6 @@ bool ToolbarManager::initialize(ResourceManager &resources) {
 		}
 		_actions[i].label = gameText[i];
 	}
-	debugC(2, kDebugResources,
-		"Ripper: deferred shared interface palette capture until first presentation");
-
 	// RunFrontEndActionMenu at 0x18b3a lays controls out from right to left,
 	// subtracting each bitmap width and a five-pixel gap from x=630, then
 	// centers each bitmap vertically in the 50-pixel toolbar band.
@@ -107,12 +117,8 @@ bool ToolbarManager::initialize(ResourceManager &resources) {
 void ToolbarManager::applySharedPalettePatch(byte *palette, uint colorCount) {
 	if (!palette || colorCount < 256)
 		return;
-	if (_sharedPalette.size() < 256 * 3) {
-		_sharedPalette.resize(256 * 3);
-		memcpy(_sharedPalette.data(), palette, 256 * 3);
-		debugC(2, kDebugResources,
-			"Ripper: captured shared interface palette from first presentation");
-	}
+	if (_sharedPalette.size() < 256 * 3)
+		return;
 
 	// ApplySharedDisplayPalettePatch at 0x205d0 reserves index 0, indices 4-9,
 	// and indices 246-255 across every presentation palette.
