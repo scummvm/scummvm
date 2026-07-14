@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-07-13 11:35+0000\n"
-"PO-Revision-Date: 2026-07-04 18:22+0000\n"
+"PO-Revision-Date: 2026-07-15 04:22+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.15.1\n"
+"X-Generator: Weblate 2026.7.1\n"
 "X-Language-name: Català\n"
 
 #: audio/mac_plugin.cpp:30
@@ -756,10 +756,8 @@ msgid "Misc"
 msgstr "Misc"
 
 #: gui/editgamedialog.cpp:333
-#, fuzzy
-#| msgid "Enable short transitions"
 msgid "Enable hotspot display"
-msgstr "Activa transicions curtes"
+msgstr "Habilita la visualització de zones interactives"
 
 #: gui/editgamedialog.cpp:334
 msgid "Enable visual markers and labels for interactive objects"
@@ -780,16 +778,12 @@ msgid "Square"
 msgstr "Quadrat"
 
 #: gui/editgamedialog.cpp:343
-#, fuzzy
-#| msgid "Cross"
 msgid "Crosshair"
-msgstr "Creu"
+msgstr "Punt de mira"
 
 #: gui/editgamedialog.cpp:352
-#, fuzzy
-#| msgid "Show hotspots"
 msgid "Show hotspot labels"
-msgstr "Mostra punts d'interès"
+msgstr "Mostra les etiquetes de les zones interactives"
 
 #: gui/editgamedialog.cpp:353
 msgid "Display text labels next to hotspot markers"
@@ -3438,10 +3432,8 @@ msgid ""
 msgstr ""
 
 #: dists/android.strings.xml.cpp:51
-#, fuzzy
-#| msgid "ScummVM (debug)"
 msgid "ScummVM Web server"
-msgstr "ScummVM (depurar)"
+msgstr "Servidor web ScummVM"
 
 #: dists/android.strings.xml.cpp:52
 msgid "Configuration file could not be parsed"
