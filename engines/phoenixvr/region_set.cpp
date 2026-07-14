@@ -64,7 +64,8 @@ bool Region::contains3D(float angleX, float angleY) const {
 		y1 = t;
 	}
 	float ax_pi2 = angleX + kTau;
-	if ((angleX >= x0 && angleX <= x1) || (ax_pi2 >= x0 && ax_pi2 <= x1)) {
+	float ax_mpi2 = angleX - kTau;
+	if ((angleX >= x0 && angleX <= x1) || (ax_pi2 >= x0 && ax_pi2 <= x1) || (ax_mpi2 >= x0 && ax_mpi2 <= x1)) {
 		if (angleY >= y0 && angleY <= y1)
 			return true;
 
