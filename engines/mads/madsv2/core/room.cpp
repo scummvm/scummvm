@@ -209,6 +209,8 @@ RoomPtr room_load(int id, int variant, const char *base_path, Buffer *picture,
 		goto done;
 	}
 
+	roomPtr->room_id = id;
+	roomPtr->format = 0;
 	Common::copy(roomfile.misc, roomfile.misc + 10, roomPtr->misc);
 	roomPtr->num_variants = roomfile.num_variants;
 	roomPtr->num_hotspots = roomfile.num_hotspots;

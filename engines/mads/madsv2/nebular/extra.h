@@ -32,7 +32,8 @@ extern RoomPtr room_load_rex(int id, int variant, const char *base_path, Buffer 
 	Buffer *depth, Buffer *walk, Buffer *special, TileMapHeader *picMap,
 	TileMapHeader *depthMap, TileResource *picResource, TileResource *depthResource,
 	int picture_ems_handle, int depth_ems_handle, int load_flags);
-extern int room_load_depth(Load *load_handle, Buffer *depth, Room *room_info, int variant);
+extern int room_load_depth(Load *load_handle, Buffer *depth, Buffer *walk, Room *room_info,
+	int variant, bool packedFormat);
 
 } // namespace RexNebular
 } // namespace MADSV2

@@ -20,6 +20,7 @@
  */
 
 #include "mads/madsv2/engine.h"
+#include "mads/madsv2/core/attr.h"
 #include "mads/madsv2/core/buffer.h"
 #include "mads/madsv2/core/env.h"
 #include "mads/madsv2/core/error.h"
@@ -159,10 +160,38 @@ done:
 }
 
 
-int room_load_depth(Load *load_handle, Buffer *depth, Room *room_info, int variant) {
+// Sets or clears the walk bit for pixel (x, y) in a bit-packed (8 pixels/byte, MSB first)
+// walk surface, matching the layout attr_walk() reads. No-op if walk is not being loaded.
+static void room_set_walk_bit(Buffer *walk, int x, int y, bool walkable) {
+	if (walk == nullptr || walk->data == nullptr)
+		return;
+
+	byte *scan = buffer_pointer(walk, x >> 3, y);
+	byte mask = (byte)(0x80 >> (x & 7));
+	if (walkable)
+		*scan |= mask;
+	else
+		*scan &= ~mask;
+}
+
+// Sets the depth nibble for pixel (x, y) in a nibble-packed (2 pixels/byte, even x in the
+// high nibble) depth surface, matching the layout attr_depth() reads. No-op if depth is not
+// being loaded.
+static void room_set_depth_nibble(Buffer *depth, int x, int y, byte depthVal) {
+	if (depth == nullptr || depth->data == nullptr)
+		return;
+
+	byte *scan = buffer_pointer(depth, x >> 1, y);
+	if (x & 1)
+		*scan = (byte)((*scan & 0xf0) | (depthVal & 0x0f));
+	else
+		*scan = (byte)((*scan & 0x0f) | ((depthVal & 0x0f) << 4));
+}
+
+int room_load_depth(Load *load_handle, Buffer *depth, Buffer *walk, Room *room_info,
+		int variant, bool packedFormat) {
 	char filename[80];
 	Load load;
-//	void *buffer = nullptr;
 
 	bool hasLoad = load_handle != nullptr;
 	if (!hasLoad) {
@@ -171,27 +200,47 @@ int room_load_depth(Load *load_handle, Buffer *depth, Room *room_info, int varia
 		load_handle = &load;
 	}
 
-	byte *destP = buffer_pointer(depth, 0, 0);
-	byte *endP = destP + depth->x * depth->y;
+	int width = room_info->xs;
+	int totalPixels = width * room_info->ys;
+	int pixelIndex = 0;
 	int runLength, runValue;
 
-	// The data is encoded as a sequence of run lengths of given values, though they're nibble amounts,
-	// and the engine expects them to be saved in a two pixels per byte format
+	// The data is encoded as a sequence of run lengths of a given source byte value. For
+	// packed (format == 2) rooms, each source byte represents a run of *groups* of 4 pixels
+	// (2 bits each); for unpacked rooms, each source byte represents a run of single pixels.
+	// In both cases, the byte's high bit(s) flag whether the pixel is walkable, and the
+	// remaining bit(s) give its depth. The results are unpacked into the standard walk
+	// (1 bit/pixel) and depth (4 bits/pixel) surface formats used throughout the engine.
 	LoaderReadStream src(load_handle);
-	bool isLowNibble = true;
 
 	runLength = src.readByte();
-	while (destP < endP && runLength != 0) {
-		runValue = src.readByte() & 0xf;
+	while (pixelIndex < totalPixels && runLength != 0) {
+		runValue = src.readByte();
 
-		// Write out the run length
-		for (; runLength > 0 && destP < endP; --runLength) {
-			if (isLowNibble) {
-				*destP = runValue;
-			} else {
-				*destP++ |= (runValue << 4);
+		if (packedFormat) {
+			for (; runLength > 0 && pixelIndex < totalPixels; --runLength) {
+				for (int sub = 0; sub < 4 && pixelIndex < totalPixels; ++sub) {
+					int bits = (3 - sub) * 2;
+					int subVal = (runValue >> bits) & ATTR_PACKED_ATTR_MASK;
+					bool walkable = (subVal & ATTR_PACKED_WALK_MASK) != 0;
+					byte depthVal = (subVal & ATTR_PACKED_DEPTH_MASK) ? 0x0f : 0x00;
+
+					int x = pixelIndex % width, y = pixelIndex / width;
+					room_set_walk_bit(walk, x, y, walkable);
+					room_set_depth_nibble(depth, x, y, depthVal);
+					++pixelIndex;
+				}
 			}
-			isLowNibble = !isLowNibble;
+		} else {
+			bool walkable = (runValue & ATTR_WALK_MASK) != 0;
+			byte depthVal = runValue & ATTR_DEPTH_MASK;
+
+			for (; runLength > 0 && pixelIndex < totalPixels; --runLength) {
+				int x = pixelIndex % width, y = pixelIndex / width;
+				room_set_walk_bit(walk, x, y, walkable);
+				room_set_depth_nibble(depth, x, y, depthVal);
+				++pixelIndex;
+			}
 		}
 
 		runLength = src.readByte();
@@ -282,16 +331,19 @@ RoomPtr room_load_rex(int id, int variant, const char *base_path, Buffer *pictur
 		buffer_init(picture, width, height);
 	assert(picture->data);
 
-	// Original only used packed surface for a specific format, but subsequent games' codebase
-	// expects the depth surface to always be fixed
-	//if (roomfile.format == 2) width >>= 2;
-	width >>= 2;
-
+	// scr_depth (nibble-packed, 2 pixels/byte) and scr_walk (bit-packed, 8 pixels/byte) always
+	// use the same layout as every other game, regardless of the source room's packed format
 	if (!depth->data)
-		buffer_init(depth, width, height);
+		buffer_init(depth, ((width - 1) >> 1) + 1, height);
 	assert(depth->data);
 
-	if (room_load_depth(&load_handle, depth, roomPtr, variant))
+	if (walk != nullptr) {
+		if (!walk->data)
+			buffer_init(walk, ((width - 1) >> 3) + 1, height);
+		assert(walk->data);
+	}
+
+	if (room_load_depth(&load_handle, depth, walk, roomPtr, variant, roomfile.format == 2))
 		goto error;
 
 	loader_close(&load_handle);

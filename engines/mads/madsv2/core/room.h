@@ -210,6 +210,7 @@ struct RoomFile {
 
 struct Room {
 	int16		room_id;				  /* Room id (only in Rex Nebular) */
+	byte        format;					  /* Room format (only in Rex Nebular) */
 	int16       xs, ys;                   /* X and Y size of room picture  */
 
 	uint16      misc[10];                /* Padding for future updates    */
