@@ -28,6 +28,7 @@ namespace MADS {
 namespace MADSV2 {
 
 Console::Console() : GUI::Debugger() {
+	registerCmd("depth", WRAP_METHOD(Console, cmdDepth));
 	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
 	registerCmd("walkable", WRAP_METHOD(Console, cmdWalkable));
 }
@@ -46,6 +47,19 @@ static int strToInt(const char *s) {
 	if (read < 1)
 		error("strToInt failed on string \"%s\"", s);
 	return (int)tmp;
+}
+
+bool Console::cmdDepth(int argc, const char **argv) {
+	const byte *srcP = scr_depth.data;
+	byte *destP = scr_orig.data;
+
+	for (int i = 0; i < scr_orig.x * scr_orig.y; i += 2, ++srcP) {
+		*destP++ = *srcP >> 4;
+		*destP++ = *srcP & 0xf;
+	}
+
+	matte_refresh_work();
+	return false;
 }
 
 bool Console::cmdTeleport(int argc, const char **argv) {
