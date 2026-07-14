@@ -3,11 +3,49 @@
 #include "ripper/dialogue.h"
 
 #include "common/debug.h"
+#include "common/system.h"
+#include "graphics/surface.h"
 
 #include "ripper/detection.h"
 #include "ripper/script.h"
 
 namespace Ripper {
+
+bool DialogueManager::initialize(ResourceManager &resources) {
+	return resources.loadInterfaceBitmapFont("7pt_font.fnt", _font);
+}
+
+void DialogueManager::draw() const {
+	if (!_pending || _choices.empty())
+		return;
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		return;
+	}
+	const int y = 348;
+	for (uint i = 0; i < _choices.size(); ++i) {
+		const int row = y + i * 18;
+		for (int yy = row; yy < row + 16 && yy < screen->h; ++yy)
+			memset(screen->getBasePtr(160, yy), i == 0 ? 4 : 0, 320);
+		int x = 166;
+		for (uint c = 0; c < _choices[i].text.size() && x < 475; ++c) {
+			const byte ch = (byte)_choices[i].text[c];
+			if (ch < _font.firstCharacter || ch >= _font.firstCharacter + _font.glyphs.size())
+				continue;
+			const BitmapFontGlyph &glyph = _font.glyphs[ch - _font.firstCharacter];
+			for (int gy = 0; gy < glyph.height; ++gy) {
+				for (int gx = 0; gx < glyph.width; ++gx) {
+					if (_font.pixels[glyph.pixelOffset + gy * glyph.width + gx])
+						*(byte *)screen->getBasePtr(x + gx, row + gy + 2) = 4;
+				}
+			}
+			x += glyph.width + _font.characterSpacing;
+		}
+	}
+	g_system->unlockScreen();
+}
 
 bool DialogueManager::execute(const CompiledScript &script, const ScriptCommand &command) {
 	if (command.opcode == 0x16) {
@@ -34,7 +72,6 @@ bool DialogueManager::execute(const CompiledScript &script, const ScriptCommand 
 		for (uint i = 0; i < _choices.size(); ++i)
 			debugC(2, kDebugScripts, "Ripper: dialogue choice index=%u result=%u text='%s'",
 				i, _choices[i].result, _choices[i].text.c_str());
-		_choices.clear();
 		return true;
 	}
 

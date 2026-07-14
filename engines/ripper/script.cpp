@@ -317,7 +317,8 @@ ScriptManager::~ScriptManager() {
 }
 
 bool ScriptManager::initialize(ResourceManager &resources) {
-	return _startup.load(resources.scripts(), "ripper.run") &&
+	return _dialogue->initialize(resources) &&
+		_startup.load(resources.scripts(), "ripper.run") &&
 		_ba0.load(resources.scripts(), "ba0.run");
 }
 
@@ -484,13 +485,9 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 		case 0x16:
 			if (!_dialogue->execute(script, command))
 				return false;
-			if (command.opcode == 0x0a) {
-				// HandleSceneEntryChoiceListLifecycle @0x1523d does not return
-				// to the callback stream until the chooser reports event 4/5.
+			if (command.opcode == 0x1a && _dialogue->isPending()) {
 				result = -6;
-				debugC(1, kDebugScripts,
-					"Ripper: dialogue chooser pending; pausing callback at 0x%x",
-					command.offset);
+				debugC(1, kDebugScripts, "Ripper: dialogue chooser pending after media at 0x%x", command.offset);
 				return true;
 			}
 			break;
@@ -717,6 +714,7 @@ bool ScriptManager::serviceScene() {
 	if (_dialogue->isPending()) {
 		_engine->getToolbar()->leave();
 		_engine->getCursor()->setVisible(false);
+		_dialogue->draw();
 		debugC(3, kDebugScene, "Ripper: dialogue chooser remains pending; input service not yet wired");
 		return true;
 	}

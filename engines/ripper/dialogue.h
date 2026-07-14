@@ -5,6 +5,7 @@
 
 #include "common/str.h"
 #include "common/array.h"
+#include "ripper/resources.h"
 
 namespace Ripper {
 
@@ -13,7 +14,9 @@ class CompiledScript;
 
 class DialogueManager {
 public:
+	bool initialize(ResourceManager &resources);
 	bool execute(const CompiledScript &script, const ScriptCommand &command);
+	void draw() const;
 	bool isPending() const { return _pending; }
 	void clearPending() { _pending = false; _choices.clear(); }
 
@@ -24,6 +27,7 @@ private:
 	};
 	Common::Array<Choice> _choices;
 	bool _pending = false;
+	BitmapFontAsset _font;
 };
 
 } // End of namespace Ripper
