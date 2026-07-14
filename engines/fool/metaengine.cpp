@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/punycode.h"
 #include "common/savefile.h"
 #include "common/translation.h"
 
@@ -93,7 +94,10 @@ SaveStateList FoolMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames = saveMan->listSavefiles(getSavegameFilePattern(target));
 	for (const Common::String &f : filenames) {
 		int slot = atoi(f.c_str() + f.size() - 3);
-		Common::String desc = f.substr(strlen(target) + 1, f.size() - strlen(target) - 1 - 4);
+		Common::String descOrig = f.substr(strlen(target) + 1, f.size() - strlen(target) - 1 - 4);
+		Common::String desc = Common::punycode_decodefilename(descOrig);
+		if (desc.empty())
+			desc = descOrig;
 		result.push_back(SaveStateDescriptor(this, slot, desc));
 	}
 	Common::sort(result.begin(), result.end(), SaveStateDescriptorSlotComparator());
