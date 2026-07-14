@@ -215,6 +215,9 @@ void BoyzEngine::loadAssets() {
 	Transition *territory_1 = new Transition("c19.mi_");
 	territory_1->intros.push_back("warnings/w17s.smk");
 	territory_1->intros.push_back("c1/c1t01.smk");
+	territory_1->music = kTransitionMusic;
+	territory_1->musicStereo = true;
+	territory_1->playMusicDuringIntro = true;
 	_levels["<territory_1>"] = territory_1;
 
 	Transition *warning_1 = new Transition("c14.mi_");
@@ -235,6 +238,9 @@ void BoyzEngine::loadAssets() {
 	Transition *territory_2 = new Transition("c21.mi_");
 	territory_2->intros.push_back("warnings/w13s.smk");
 	territory_2->intros.push_back("c2/c2t01.smk");
+	territory_2->music = kTransitionMusic;
+	territory_2->musicStereo = true;
+	territory_2->playMusicDuringIntro = true;
 	_levels["<territory_2>"] = territory_2;
 
 	loadArcadeLevel("c21.mi_", "c22.mi_", "<retry_menu>", "");
@@ -243,6 +249,9 @@ void BoyzEngine::loadAssets() {
 	Transition *territory_3 = new Transition("<select_c3>");
 	territory_3->intros.push_back("warnings/w14s.smk");
 	territory_3->intros.push_back("c3/c3t01.smk");
+	territory_3->music = kTransitionMusic;
+	territory_3->musicStereo = true;
+	territory_3->playMusicDuringIntro = true;
 	_levels["<territory_3>"] = territory_3;
 
 	loadArcadeLevel("c31.mi_", "<check_c3>", "<retry_menu>", "");
@@ -275,6 +284,9 @@ void BoyzEngine::loadAssets() {
 	Transition *territory_4 = new Transition("c41.mi_");
 	territory_4->intros.push_back("warnings/w15s.smk");
 	territory_4->intros.push_back("c4/c4t01.smk");
+	territory_4->music = kTransitionMusic;
+	territory_4->musicStereo = true;
+	territory_4->playMusicDuringIntro = true;
 	_levels["<territory_4>"] = territory_4;
 
 	loadArcadeLevel("c41.mi_", "c42.mi_", "<retry_menu>", "");
@@ -289,6 +301,9 @@ void BoyzEngine::loadAssets() {
 	territory_5->intros.push_back("warnings/w16s.smk");
 	territory_5->intros.push_back("c5/c5t01.smk");
 	territory_5->intros.push_back("c5/c5intras.smk");
+	territory_5->music = kTransitionMusic;
+	territory_5->musicStereo = true;
+	territory_5->playMusicDuringIntro = true;
 	_levels["<territory_5>"] = territory_5;
 
 	loadArcadeLevel("c51.mi_", "<check_c5>", "<retry_menu>", "");
