@@ -642,6 +642,11 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 	if (memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0) {
 		result = playSmacker(file, path, false, x, y, nullptr, nullptr, nullptr,
 			0, 0, 1, true, frameLimit, kScenePresentationTop);
+		if (!result && _stopSceneOnMouse && _input->peekMouseState().pressed != 0) {
+			result = true;
+			debugC(1, kDebugVideo,
+				"Ripper: interactive scene media stopped by mouse; returning to hotspot polling");
+		}
 	} else if (memcmp(magic, "IAVF2.00", 8) == 0 && !firstFrameOnly) {
 		result = playIavf(*file, path, false);
 		delete file;
