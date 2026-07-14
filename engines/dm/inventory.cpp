@@ -924,7 +924,8 @@ void InventoryMan::clickOnMouth() {
 		return;
 
 	Thing handThing = championMan._leaderHandObject;
-	if (!getFlag(dungeon._objectInfos[dungeon.getObjectInfoIndex(handThing)]._allowedSlots, kDMMaskMouth))
+	int16 infoIndex = dungeon.getObjectInfoIndex(handThing);
+	if (infoIndex < 0 || infoIndex >= 180 || !getFlag(dungeon._objectInfos[infoIndex]._allowedSlots, kDMMaskMouth))
 		return;
 
 	uint16 iconIndex = _vm->_objectMan->getIconIndex(handThing);

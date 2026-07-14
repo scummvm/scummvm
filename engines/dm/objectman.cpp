@@ -135,8 +135,10 @@ IconIndice ObjectMan::getObjectType(Thing thing) {
 		return kDMIconIndiceNone;
 
 	int16 objectInfoIndex = _vm->_dungeonMan->getObjectInfoIndex(thing);
-	if (objectInfoIndex != -1)
+	if (objectInfoIndex >= 0 && objectInfoIndex < 180)
 		objectInfoIndex = _vm->_dungeonMan->_objectInfos[objectInfoIndex]._type;
+	else
+		objectInfoIndex = kDMIconIndiceNone;
 
 	return (IconIndice)objectInfoIndex;
 }
@@ -239,6 +241,9 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 void ObjectMan::drawLeaderObjectName(Thing thing) {
 	Common::String objectName;
 	int16 iconIndex = getIconIndex(thing);
+	if (iconIndex < 0)
+		return;
+
 	if (iconIndex == kDMIconIndiceJunkChampionBones) {
 		Junk *junk = _vm->_dungeonMan->getJunk(thing);
 		Common::String champBonesName;
