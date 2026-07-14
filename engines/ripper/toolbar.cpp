@@ -36,8 +36,9 @@ static const int kToolbarRightEdge = 630;
 static const int kToolbarActionGap = 5;
 static const uint32 kDosTickMillis = 55;
 static const uint32 kPreviewDelayMillis = 27 * kDosTickMillis;
-static const byte kToolbarBlack = 4;
-static const byte kToolbarWhite = 253;
+static const byte kToolbarBorderColor = 0;
+static const byte kToolbarTextColor = 4;
+static const byte kToolbarFillColor = 253;
 
 static bool matchesSharedPalette(const Common::Array<byte> &left,
 		const Common::Array<byte> &right) {
@@ -93,12 +94,14 @@ bool ToolbarManager::initialize(ResourceManager &resources) {
 		"Ripper: captured shared interface palette bands indices=0,4-9,246-255");
 
 	// RunFrontEndActionMenu at 0x18b3a lays controls out from right to left,
-	// subtracting each bitmap width and a five-pixel gap from x=630.
+	// subtracting each bitmap width and a five-pixel gap from x=630, then
+	// centers each bitmap vertically in the 50-pixel toolbar band.
 	int x = kToolbarRightEdge;
 	for (int i = kToolbarActionCount - 1; i >= 0; --i) {
 		const BitmapAssetFrame &frame = _actions[i].sequence.frames[0];
 		x -= frame.width + kToolbarActionGap;
-		_actions[i].bounds = Common::Rect(x, 0, x + frame.width, frame.height);
+		const int y = (kToolbarActivationHeight - frame.height) / 2;
+		_actions[i].bounds = Common::Rect(x, y, x + frame.width, y + frame.height);
 		for (uint frameIndex = 1; frameIndex < _actions[i].sequence.frames.size(); ++frameIndex) {
 			const BitmapAssetFrame &candidate = _actions[i].sequence.frames[frameIndex];
 			if (candidate.width != frame.width || candidate.height != frame.height)
@@ -246,7 +249,7 @@ void ToolbarManager::drawText(byte *screen, uint pitch, int x, int y,
 				const byte pixel = _font.pixels[glyph.pixelOffset + glyphY * glyph.width + glyphX];
 				if (pixel != _font.transparentColor)
 					screen[(y + glyph.yOffset + glyphY) * pitch +
-						drawX + glyph.xOffset + glyphX] = kToolbarBlack;
+						drawX + glyph.xOffset + glyphX] = kToolbarTextColor;
 			}
 		}
 		drawX += glyph.xOffset + glyph.width + _font.characterSpacing;
@@ -269,8 +272,11 @@ void ToolbarManager::drawTooltip(const Common::Point &point) {
 	const Common::String &label = _actions[_hoveredAction].label;
 	const int width = measureText(label) + 4;
 	const int height = _font.lineHeight + 4;
-	int x = point.x + 20;
-	int y = point.y;
+	// RunFrontEndActionMenu publishes the original coordinates in transposed
+	// fields. RenderFrontEndActionPreviewSprite therefore adds 20 to the
+	// vertical coordinate, placing the preview below the pointer.
+	int x = point.x;
+	int y = point.y + 20;
 	if (x + width > 640)
 		x = 640 - width;
 	if (y + height > 400)
@@ -286,16 +292,16 @@ void ToolbarManager::drawTooltip(const Common::Point &point) {
 	_tooltipBacking.resize(width * height);
 	for (int row = 0; row < height; ++row) {
 		memcpy(_tooltipBacking.data() + row * width, screen->getBasePtr(x, y + row), width);
-		memset(screen->getBasePtr(x, y + row), kToolbarWhite, width);
+		memset(screen->getBasePtr(x, y + row), kToolbarFillColor, width);
 	}
 	byte *pixels = (byte *)screen->getPixels();
 	for (int column = 0; column < width; ++column) {
-		pixels[y * screen->pitch + x + column] = kToolbarBlack;
-		pixels[(y + height - 1) * screen->pitch + x + column] = kToolbarBlack;
+		pixels[y * screen->pitch + x + column] = kToolbarBorderColor;
+		pixels[(y + height - 1) * screen->pitch + x + column] = kToolbarBorderColor;
 	}
 	for (int row = 0; row < height; ++row) {
-		pixels[(y + row) * screen->pitch + x] = kToolbarBlack;
-		pixels[(y + row) * screen->pitch + x + width - 1] = kToolbarBlack;
+		pixels[(y + row) * screen->pitch + x] = kToolbarBorderColor;
+		pixels[(y + row) * screen->pitch + x + width - 1] = kToolbarBorderColor;
 	}
 	drawText(pixels, screen->pitch, x + 2, y + 2, label);
 	g_system->unlockScreen();

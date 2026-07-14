@@ -85,11 +85,14 @@
   the maximum input coordinate from the active descriptor height, so y>=400 is
   outside the scene hit-test region.
 - While a control is hovered, `RunFrontEndActionMenu` advances that action's
-  frame index once per extended DOS tick. The preview gate uses
+  frame index once per extended DOS tick. Each icon is vertically centered in
+  the 50-pixel band. The preview gate uses
   `front_end_action_preview_enabled` and a default delay of 27 DOS ticks from
   `PersistentSettingsBlob` (offsets 6 and 17). Once enabled,
   `RenderFrontEndActionPreviewSprite` builds a four-pixel-padded tooltip at
-  the pointer's right edge using the startup string and NF2T font.
+  the pointer's horizontal coordinate and 20 pixels below its vertical
+  coordinate using the startup string and NF2T font. The preview uses palette
+  index 0 for its border, index 253 for its fill, and index 4 for glyphs.
 - `ServiceUiControlStateSelection` at `0x4a912` hit-tests the current pointer
   before returning a control ID. A toolbar press therefore dispatches only
   when its release remains over the same action; leaving the control cancels
