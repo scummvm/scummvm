@@ -4468,7 +4468,7 @@ const cmd *cmdList_1w[] = {
 #define rublamp_2w        {kVRub_2w,       kRlamp_2w,   kDTnocgen_2w,  0,         0, kDTnopurps_2w,   kDTnull,           kALlamp_2w}
 #define serum_2w          {kVDrink_2w,     kRserum_2w,  kDTnocgen_2w,  0,         1, kDTsnoserum_2w,  kDTnull,           kALbottle_2w}
 #define strikematch_2w    {kVStrike_2w,    kRmatch_2w,  kDTnocgen_2w,  DONT_CARE, 0, kDTnull,         kDTnull,           kALstrikematch_2w}
-#define takepaper_2w      {kVTake_2w,      0,           kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALtakepaper_2w}
+#define takepaper_2w      {kVTake_2w,      0,           kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALchktakepaper_2w}
 #define takephone_2w      {kVTake_2w,      0,           kDTnull,       DONT_CARE, 0, kDTnull,         kDTnull,           kALphone_2w}
 #define talkharry_2w      {kVTalk_2w,      0,           kDTnull,       0,         1, kDTsharry_2w,    kDTnull,           kALharry_2w}
 #define throwstick_2w     {kVThrowit_2w,   kRstick_2w,  kDTnocgen_2w,  0,         1, kDTnull,         kDTnull,           kALthrowstick_2w}
@@ -4761,6 +4761,7 @@ const cmd *cmdList_1d[] = {
 #define rublamp_2d        {kVRub_2d,    kRlamp_2d,   kDTnocgen_2d,  0,         0, kDTnopurps_2d,  0,                   kALlamp_2d}
 #define serum_2d          {kVDrink_2d,  kRserum_2d,  kDTnocgen_2d,  0,         1, kDTsnosee_2d,   0,                   kALbottle_2d}
 #define strikematch_2d    {kVStrike_2d, kRmatch_2d,  kDTnocgen_2d,  DONT_CARE, 0, 0,              0,                   kALstrikematch_2d}
+#define takepaper_2d      {kVTake_2d,   0,           0,             DONT_CARE, 0, 0,              0,                   kALchktakepaper_2d}
 #define talkharry_2d      {kVTalk_2d,   0,           0,             0,         1, kDTsharry_2d,   0,                   kALharry_2d}
 #define throwstick_2d     {kVThrow_2d,  kRstick_2d,  kDTnocgen_2d,  0,         1, 0,              0,                   kALthrowstick_2d}
 #define unlock_2d         {kVUnlock_2d, 0,           0,             DONT_CARE, 0, 0,              kDTtnounlock_2d,     0}
@@ -4791,7 +4792,7 @@ cmd letter_2d[] =   {getletter_2d,   readletter_2d,   emptyCmd};
 cmd lookcupb_2d[] = {opengarlic_2d,  lookgarlic_2d,   emptyCmd};
 cmd lookdesk_2d[] = {openmat_2d,     lookmat_2d,      emptyCmd};
 cmd matches_2d[] =  {lookmatch_2d,   strikematch_2d,  emptyCmd};
-cmd paper_2d[] =    {pushpaper_2d,   emptyCmd};
+cmd paper_2d[] =    {pushpaper_2d,   takepaper_2d,    emptyCmd};
 cmd pdoor_2d[] =    {openpdoor_2d,   emptyCmd};
 cmd pencil_2d[] =   {pushpencil_2d,  emptyCmd};
 cmd red_2d[] =      {pushred_2d,     emptyCmd};
@@ -6953,6 +6954,7 @@ act11 achknasty_2w  = {COND_R, 0, BOTTLE_2w,   0,    kALnasty_2w,    0};
 act11 achkom_2w     = {COND_R, 0, OLDMAN_2w,   0,    kALomgag_2w,    0};
 act11 achkpanel_2w  = {COND_R, 0, PANEL_2w,    0,    kALpanel_2w,    0};
 act11 achkpaper1_2w = {COND_R, 0, PAPER_2w,    1,    kALchkpap2_2w,  kALridkey_2w};
+act11 achktakepaper_2w = {COND_R, 0, PAPER_2w, 1,    kALtakepaperretake_2w, kALtakepaper_2w};
 act11 achkpb1_2w    = {COND_R, 0, TARDIS_2w,   0,    kALcallp_2w,    0};
 act11 achkpb2_2w    = {COND_R, 0, TARDIS_2w,   0,    kALphonebox_2w, 0};
 act11 achkpb3_2w    = {COND_R, 0, TARDIS_2w,   1,    kALdial_2w,     0};
@@ -7347,6 +7349,7 @@ act27 asonic6_2w = {ADD_SCORE, 0, SCREW_2w};
 act28 abel4_2w     = {SUB_SCORE, 0, BELL_2w};
 act28 amat6_2w     = {SUB_SCORE, 0, MATCHES_2w};
 act28 asubban_2w   = {SUB_SCORE, 0, BANANA_2w};
+act28 asubpaper_2w = {SUB_SCORE, 0, PAPER_2w};
 act28 subgarlic_2w = {SUB_SCORE, 0, GARLIC_2w};
 
 act29 achkbel_2w    = {COND_CARRY, 0, BELL_2w,     kALcat2_2w,     kALnocarry_2w};
@@ -7700,6 +7703,8 @@ actListPtr ALstuck_2w[]         = {&astuck1_2w, 0};
 actListPtr ALswgates_2w[]       = {&aswgates_2w, &agatesnd_2w, &arumbling_2w, 0};
 actListPtr ALswzapper_2w[]      = {&aswzapper_2w, &aclicksnd_2w, &aclick_2w, 0};
 actListPtr ALtakepaper_2w[]     = {&apaper5_2w, 0};
+actListPtr ALchktakepaper_2w[]  = {&achktakepaper_2w, 0};
+actListPtr ALtakepaperretake_2w[] = {&apaper5_2w, &asubpaper_2w, 0};
 actListPtr ALtalkgard_2w[]      = {&atalkg_2w,  0};
 actListPtr ALthrown_2w[]        = {&achkken2_2w, 0};
 actListPtr ALthrowstick_2w[]    = {&abark_2w, &astick1_2w, &adisable_2w, &astick2_2w, &astick3_2w, &astick4_2w, &astick5_2w, &astick6_2w, &astick7_2w, &astick8_2w, &astick9_2w, &astick10_2w, &abonus12_2w, 0};
@@ -7782,7 +7787,8 @@ actList actListArr_2w[] = {
 	ALthrowstick_2w,    ALtrap_2w,       ALuptrap_2w,    ALvenus_2w,        ALwho_2w,
 	ALwill1_2w,         ALwill2_2w,      ALwill_2w,      ALworkgates_2w,    ALzapperoff_2w,
 	ALzapperon_2w,      ALnewscr_2w,     ALscr01Story_2w, ALscr01NoStory_2w,
-	ALbananaGlobal_2w,  ALbananaDone_2w,  ALrobotGlobal_2w, ALrobotDone_2w
+	ALbananaGlobal_2w,  ALbananaDone_2w,  ALrobotGlobal_2w, ALrobotDone_2w,
+	ALchktakepaper_2w,  ALtakepaperretake_2w
 };
 
 // Hugo 3 Win
@@ -9837,6 +9843,7 @@ act9 amissed1_2d   = {INIT_OBJSTATE, 0,         GUN_2d,      1};
 act9 aom4_2d       = {INIT_OBJSTATE, 12,        OLDMAN_2d,   1};
 act9 apanel1_2d    = {INIT_OBJSTATE, 0,         PANEL_2d,    1};
 act9 apaper1_2d    = {INIT_OBJSTATE, 0,         PAPER_2d,    1};
+act9 apaper5_2d    = {INIT_OBJSTATE, 0,         PAPER_2d,    0};
 act9 aphoto5_2d    = {INIT_OBJSTATE, 0,         ALBUM_2d,    1};
 act9 aridkey1_2d   = {INIT_OBJSTATE, 0,         PAPER_2d,    2};
 act9 asafe2_2d     = {INIT_OBJSTATE, 0,         SAFE_2d,     1};
@@ -9925,6 +9932,7 @@ act11 achknasty_2d  = {COND_R, 0, BOTTLE_2d,   0,    kALnasty_2d,    0};
 act11 achkom_2d     = {COND_R, 0, OLDMAN_2d,   0,    kALomgag_2d,    0};
 act11 achkpanel_2d  = {COND_R, 0, PANEL_2d,    0,    kALpanel_2d,    0};
 act11 achkpaper1_2d = {COND_R, 0, PAPER_2d,    1,    kALchkpap2_2d,  kALridkey_2d};
+act11 achktakepaper_2d = {COND_R, 0, PAPER_2d, 1,    kALtakepaperretake_2d, 0};
 act11 achkpb1_2d    = {COND_R, 0, TARDIS_2d,   0,    kALcallp_2d,    0};
 act11 achkpb2_2d    = {COND_R, 0, TARDIS_2d,   1,    kALdial_2d,     0};
 act11 achkphoto_2d  = {COND_R, 0, ALBUM_2d,    0,    kALphoto1_2d,   kALempty_2d};
@@ -10283,6 +10291,7 @@ act27 asonic6_2d = {ADD_SCORE, 0, SCREW_2d};
 act28 abel4_2d     = {SUB_SCORE, 0, BELL_2d};
 act28 amat6_2d     = {SUB_SCORE, 0, MATCHES_2d};
 act28 asubban_2d   = {SUB_SCORE, 0, BANANA_2d};
+act28 asubpaper_2d = {SUB_SCORE, 0, PAPER_2d};
 act28 subgarlic_2d = {SUB_SCORE, 0, GARLIC_2d};
 
 act29 achkbel_2d    = {COND_CARRY, 0, BELL_2d,     kALcat2_2d,     kALnocarry_2d};
@@ -10513,6 +10522,8 @@ actListPtr ALpois3_2d[]         = {&apois3_2d, 0};
 actListPtr ALpois4_2d[]         = {&apois4_2d, &adead1_2d, &adead2_2d, &adead3_2d, &adead4_2d, &adead5_2d, 0};
 actListPtr ALpushpaper_2d[]     = {&abonus26_2d, &apaper1_2d, &apaper2_2d, &apaper3_2d, &apaper4_2d, 0};
 actListPtr ALpushpencil_2d[]    = {&achkpencil_2d, 0};
+actListPtr ALchktakepaper_2d[]  = {&achktakepaper_2d, 0};
+actListPtr ALtakepaperretake_2d[] = {&apaper5_2d, &asubpaper_2d, 0};
 actListPtr ALreadlet_2d[]       = {&abonus24_2d, &acopbit16_2d, 0};
 actListPtr ALrepmsg1_2d[]       = {&amaid12_2d, &arepmsg1_2d, 0};
 actListPtr ALrg_2d[]            = {&arxy_2d, &arok_2d, &arg_2d, 0};
@@ -10698,7 +10709,8 @@ actList actListArr_2d[] = {
 	ALthrown_2d,       ALthrowstick_2d, ALtrap_2d,          ALuptrap_2d,     ALvenus_2d,
 	ALwho_2d,          ALwill_2d,       ALwill1_2d,         ALwill2_2d,      ALworkgates_2d,
 	ALzapperoff_2d,    ALzapperon_2d,   ALnewscr_2d,        ALbananaGlobal_2d,
-	ALbananaDone_2d,   ALdalekGlobal_2d, ALdalekDone_2d
+	ALbananaDone_2d,   ALdalekGlobal_2d, ALdalekDone_2d,     ALchktakepaper_2d,
+	ALtakepaperretake_2d
 };
 
 int oldrsp_3d[] = {kSTOldrsp1_3d, -1};
