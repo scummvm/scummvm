@@ -689,12 +689,14 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				"Ripper: frame presentation label='%s' media='%s' origin=%d,%d",
 				label.c_str(), mediaPath.c_str(), frame.x, frame.y);
 			markScenePlayed(label);
+			if (frame.interactionCount != 0)
+				beginBa0InteractionWait(label, frame.interactionCount);
 			if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false,
 				frame.presentationType == 1 && frame.interactionCount != 0))
 				return false;
 		}
 
-		if (frame.interactionCount != 0) {
+		if (frame.interactionCount != 0 && !_awaitingBa0Interaction) {
 			beginBa0InteractionWait(label, frame.interactionCount);
 			return true;
 		}
