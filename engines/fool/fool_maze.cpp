@@ -128,7 +128,7 @@ void FoolGame::mazeRun() {
 			var_i16_1bc8 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ac8, 3, 2));
 			if (var_i16_1bc8 != 666) {
 				for (int16 i = 1; i <= var_i16_1bc8; i++) {
-					sub_136_2582();
+					sub_136_2582(var_str_1ac8);
 				}
 			}
 			// 136:0664
@@ -446,7 +446,7 @@ void FoolGame::mazeHotspot() {
 				mazeHiddenDoorShut();
 				break;
 			case 10: // M
-				sub_136_1806();
+				sub_136_1806(var_str_1ac8);
 				break;
 			case 11: // O
 				mazeSetTrigger();
@@ -622,7 +622,7 @@ void FoolGame::mazeDrawLetter() {
 
 void FoolGame::sub_136_137c() {
 	Common::String op = _zbasic->leftStr(var_str_1ce2, 1);
-	warning("%s: op %s", __func__, op.c_str());
+	debugC(5, kDebugLoading, "%s: op %s", __func__, op.c_str());
 	// 136:137c
 	bool failed = false;
 	// has an inventory item
@@ -684,14 +684,14 @@ void FoolGame::sub_136_137c() {
 }
 
 void FoolGame::sub_136_163c() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 136:163c
 	var_i16_1bd8 = var_i16_1574;
 	var_i16_1bd6 = _zbasic->decodeInt(var_str_1ce2);
 }
 
 void FoolGame::sub_136_1650() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 136:1650
 	int16 index = _zbasic->decodeInt(var_str_1ce2);
 	Common::String data = _zbasic->indexRaw(1, index);
@@ -762,10 +762,10 @@ void FoolGame::mazeHiddenDoorShut() {
 	}
 }
 
-void FoolGame::sub_136_1806() {
-	warning(__func__);
+void FoolGame::sub_136_1806(const Common::String &unk1) {
+	debugC(5, kDebugLoading, __func__);
 	// 136:1806
-	sub_136_2582();
+	sub_136_2582(unk1);
 	if ((arr_i16_3738[var_i16_1574] & 0x1000) != 0) {
 		arr_i16_3738[var_i16_1574] ^= 0x1000;
 	}
@@ -820,7 +820,7 @@ void FoolGame::mazeFireDemon() {
 }
 
 void FoolGame::sub_136_19d2() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 136:19d2
 	_toolbox->PenNormal();
 	_toolbox->PenMode(Graphics::MacToolbox::kPatXor);
@@ -1056,13 +1056,13 @@ void FoolGame::mazePlayTone() {
 }
 
 
-void FoolGame::sub_136_2582() {
-	warning(__func__);
+void FoolGame::sub_136_2582(const Common::String &unk1) {
+	debugC(5, kDebugLoading, __func__);
 	// 136:2582
 	var_i16_1df2 = 0;
-	var_i16_1e06 = _zbasic->decodeInt(_zbasic->leftStr(var_str_1ac8, 2));
+	var_i16_1e06 = _zbasic->decodeInt(_zbasic->leftStr(unk1, 2));
 	for (int16 i = 1; i <= var_i16_1e06; i++) {
-		var_i16_484 = _zbasic->decodeInt(_zbasic->midStr(var_str_1ac8, i*2 + 3, 2));
+		var_i16_484 = _zbasic->decodeInt(_zbasic->midStr(unk1, i*2 + 3, 2));
 		if ((arr_i16_3738[var_i16_484] & 0x1000) == 0) {
 			var_i16_1df2++;
 			arr_i16_5bbc[var_i16_1df2] = var_i16_484;
@@ -1331,13 +1331,13 @@ void FoolGame::mazeStoreState() {
 }
 
 void FoolGame::sub_136_3408() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 136:3408
 	var_i16_1f08 |= _bitLUT[var_i16_1de6];
 }
 
 void FoolGame::sub_136_342a() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 136:342a
 	var_i16_1de6++;
 	if (var_i16_1de6 > 0xf) {
@@ -1490,7 +1490,7 @@ void FoolGame::mazeLoadState() {
 }
 
 void FoolGame::sub_136_3a30() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 136:3a30
 	var_i16_1de6++;
 	if (var_i16_1de6 > 0xf) {
@@ -1505,7 +1505,7 @@ void FoolGame::sub_136_3a30() {
 }
 
 void FoolGame::sub_136_3a70() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 136:3a70
 	if (_activePuzzle == 0x57) {
 		_activePuzzleStatus = 0x64;

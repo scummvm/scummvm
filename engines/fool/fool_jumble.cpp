@@ -494,7 +494,7 @@ void FoolGame::jumbleRunSubstitution() {
 }
 
 void FoolGame::sub_130_1004() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 130:1004
 	_jumblePosition = _zbasic->instr(1, var_str_1070, Common::U32String(" ")); // was: str(181)
 	if (_jumblePosition == 0) {
@@ -598,7 +598,7 @@ void FoolGame::jumbleRunHiddenMessage() {
 }
 
 void FoolGame::sub_130_1426() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 130:1426
 	var_i16_187e = 0;
 	var_i16_1880 = 0;
@@ -703,7 +703,7 @@ void FoolGame::jumbleOnKey() {
 }
 
 void FoolGame::sub_130_172c() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 130:172c
 	// word square, disallow clicking the centre tile
 	if ((_jumbleGameType == 4) && (arr_i16_3b38[_jumbleGridPos.x*32 + _jumbleGridPos.y] == 5)) {
@@ -748,7 +748,7 @@ void FoolGame::sub_130_172c() {
 }
 
 void FoolGame::sub_130_19ac() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 130:19ac
 	if (var_i16_187e > 0) {
 		_toolbox->InvertRect(_screenGrid[var_i16_187e]);
@@ -769,7 +769,7 @@ void FoolGame::jumbleClickFixedSquare() {
 }
 
 void FoolGame::sub_130_1a16() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 130:1a16
 	var_str_1374 = var_str_d12;
 	var_str_1474 = _zbasic->midStr(var_str_1070, _jumblePosition, 1);
@@ -819,7 +819,7 @@ void FoolGame::sub_130_1a16() {
 }
 
 void FoolGame::sub_130_1c1a() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 130:1c1a
 	_jumbleSelected = ABS(arr_i16_3738[_jumblePosition]);
 	_toolbox->InvertRect(_screenGrid[_jumbleSelected]);
@@ -831,7 +831,7 @@ void FoolGame::jumbleSelectSquare() {
 }
 
 void FoolGame::sub_130_1c6c() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	_toolbox->PenNormal();
 	_toolbox->FillRect(_screenGrid[_jumbleSelected], _patterns[var_i16_105e]);
 	_toolbox->PenPat(_patterns[var_i16_105c]);
@@ -866,7 +866,7 @@ void FoolGame::jumbleDrawLetter() {
 }
 
 void FoolGame::sub_130_1e5c() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 130:1e5c
 	_toolbox->PenNormal();
 	_toolbox->InvertRect(_screenGrid[_jumbleSelected]);
@@ -874,7 +874,7 @@ void FoolGame::sub_130_1e5c() {
 }
 
 void FoolGame::sub_130_1e76() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 130:1e76
 	arr_i16_4758[0] = _screenGrid[_jumbleSelected].top + 3;
 	arr_i16_4758[1] = _screenGrid[_jumbleSelected].left + 3;
@@ -903,7 +903,7 @@ void FoolGame::sub_130_1e76() {
 }
 
 void FoolGame::sub_130_201a() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 130:201a
 	_zbasic->midStrSet(var_str_1070, _jumblePosition, 1, var_str_d12);
 	if ((_activePuzzle > 0x50) && (_activePuzzle < 0x55)) {
@@ -935,7 +935,7 @@ void FoolGame::jumblePreviousPosition() {
 }
 
 void FoolGame::sub_130_20aa() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 130:20aa
 	jumbleSelectSquare();
 	_jumblePosition = arr_i16_3b38[_jumbleGridPos.x*32 + _jumbleGridPos.y];
@@ -944,7 +944,7 @@ void FoolGame::sub_130_20aa() {
 
 
 void FoolGame::sub_130_20d2() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 130:20d2
 	_jumbleSelected = ABS(arr_i16_3738[_jumblePosition]);
 	jumbleSelectSquare();
@@ -962,7 +962,7 @@ Common::Point FoolGame::jumbleGetGridPos() {
 }
 
 void FoolGame::sub_130_2178() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 130:2178
 	if ((arr_i16_2f38[_jumbleGridPos.x*32 + _jumbleGridPos.y] == var_i16_1678) || (_jumbleGameType == 2))
 		return;
@@ -1053,7 +1053,7 @@ void FoolGame::jumbleDrawHintMetapuzzle() {
 }
 
 void FoolGame::sub_130_25d8() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	// 130:25d8
 	_zbasic->unk_20();
 	var_i16_188a = var_str_384.size();
@@ -1093,7 +1093,7 @@ void FoolGame::sub_130_25d8() {
 }
 
 void FoolGame::sub_130_2790() {
-	warning(__func__);
+	debugC(5, kDebugLoading, __func__);
 	_zbasic->unk_20();
 	for (int16 i = 1; i <= 0x1a; i++) {
 		arr_i16_5bbc[i] = i;

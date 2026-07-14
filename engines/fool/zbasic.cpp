@@ -226,7 +226,7 @@ Common::U32String ZBasic::chr(uint16 code) {
 }
 
 void ZBasic::bufferFlush(const Common::U32String &str) {
-	warning("STUB: ZBasic::bufferFlush");
+	debugC(0, kDebugLoading, "STUB: ZBasic::bufferFlush");
 }
 
 void ZBasic::close(int16 fileNo) {
@@ -258,7 +258,7 @@ void ZBasic::close(int16 fileNo) {
 }
 
 void ZBasic::coordinateWindow() {
-	warning("STUB: ZBasic::coordinateWindow");
+	debugC(0, kDebugLoading, "STUB: ZBasic::coordinateWindow");
 }
 
 void ZBasic::defOpen(const Common::String &str) {
@@ -306,13 +306,13 @@ int16 ZBasic::instr(int16 expression, const Common::String &string1, const Commo
 }
 
 Common::U32String ZBasic::files(int16 expression, const Common::U32String &prompt, const Common::U32String &defaultFilename, int16 &volume) {
-	warning("STUB: ZBasic::files");
+	debugC(0, kDebugLoading, "STUB: ZBasic::files");
 	return Common::U32String();
 }
 
 
 int ZBasic::finderInfo(int16 &count, Common::U32String &var, uint32 &type, uint16 volume) {
-	warning("STUB: ZBasic::finderInfo");
+	debugC(0, kDebugLoading, "STUB: ZBasic::finderInfo");
 	return 0;
 }
 
@@ -345,11 +345,11 @@ void ZBasic::menu(uint16 menuNo, uint16 itemNo, uint16 state, const Common::U32S
 				_toolbox->CheckItem(handle, itemNo, false);
 			} else if (state == 2) {
 				_toolbox->EnableItem(handle, itemNo);
+				_toolbox->SetItemMark(handle, itemNo, 0);
 				_toolbox->CheckItem(handle, itemNo, true);
 			} else if (state >= 3) {
-				warning("ZBasic::menu: custom checkmarks not supported");
 				_toolbox->EnableItem(handle, itemNo);
-				_toolbox->CheckItem(handle, itemNo, true);
+				_toolbox->SetItemMark(handle, itemNo, (uint8)state);
 			}
 		} else {
 			warning("ZBasic::menu: no item %d in menu %d, ignoring", itemNo, menuNo);
@@ -495,7 +495,7 @@ void ZBasic::picture(int16 x, int16 y, Graphics::MacToolbox::PicHandle &src) {
 }
 
 void ZBasic::picture(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::MacToolbox::PicHandle &src) {
-	warning("STUB: ZBasic::picture");
+	debugC(0, kDebugLoading, "STUB: ZBasic::picture");
 }
 
 void ZBasic::put(int16 x, int16 y, Graphics::MacToolbox::BitMap &src, Graphics::MacToolbox::SourceMode mode) {
@@ -687,11 +687,11 @@ Common::U32String ZBasic::ucase(const Common::U32String &str) {
 }
 
 void ZBasic::window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type) {
-	warning("STUB: ZBasic::window");
+	debugC(0, kDebugLoading, "STUB: ZBasic::window");
 }
 
 void ZBasic::unk_4() {
-	warning("STUB: ZBasic::unk_4");
+	debugC(0, kDebugLoading, "STUB: ZBasic::unk_4");
 }
 
 int16 ZBasic::soundBusy() {
@@ -711,15 +711,15 @@ void ZBasic::sound(int16 frequency, int32 duration, int16 volume, int16 voice) {
 }
 
 void ZBasic::unk_8() {
-	warning("STUB: ZBasic::unk_8");
+	debugC(0, kDebugLoading, "STUB: ZBasic::unk_8");
 }
 
 void ZBasic::unk_11(int16 unk1) {
-	warning("STUB: ZBasic::unk_11");
+	debugC(0, kDebugLoading, "STUB: ZBasic::unk_11");
 }
 
 void ZBasic::unk_20() {
-	warning("STUB: ZBasic::unk_20");
+	debugC(0, kDebugLoading, "STUB: ZBasic::unk_20");
 }
 
 bool ZBasic::incrAndCheck(int16 &a0, int16 d1, int16 d0) {
@@ -728,7 +728,7 @@ bool ZBasic::incrAndCheck(int16 &a0, int16 d1, int16 d0) {
 }
 
 void ZBasic::unk_44(int16 unk1) {
-	warning("STUB: ZBasic::unk_44");
+	debugC(0, kDebugLoading, "STUB: ZBasic::unk_44");
 }
 
 void ZBasic::stringCopy(Common::U32String &target, const Common::U32String &src) {
@@ -776,11 +776,11 @@ Common::String ZBasic::encodeInt(uint16 data) {
 }
 
 void ZBasic::unk_130(int16 unk1) {
-	warning("STUB: ZBasic::unk_130");
+	debugC(0, kDebugLoading, "STUB: ZBasic::unk_130");
 }
 
 void ZBasic::unk_158() {
-	warning("STUB: ZBasic::unk_158");
+	debugC(0, kDebugLoading, "STUB: ZBasic::unk_158");
 }
 
 uint16 ZBasic::decodeInt(const Common::String &data) {
@@ -795,7 +795,7 @@ uint16 ZBasic::decodeInt(const Common::String &data) {
 }
 
 void ZBasic::unk_331(uint16 unk1, int16 unk2) {
-	warning("STUB: ZBasic::unk_331");
+	debugC(0, kDebugLoading, "STUB: ZBasic::unk_331");
 }
 
 void ZBasic::indexClear(int16 table) {

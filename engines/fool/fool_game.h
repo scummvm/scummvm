@@ -314,7 +314,7 @@ public:
 	void sub_136_1650();
 	void mazeHiddenDoorOpen(); // sub_136_1756
 	void mazeHiddenDoorShut(); // sub_136_17a4
-	void sub_136_1806();
+	void sub_136_1806(const Common::String &unk1);
 	void mazeSetTrigger(); // sub_136_185a
 	void mazeClearTrigger(); // sub_136_1898
 	void mazePickUpTone(); // sub_136_18f4
@@ -331,7 +331,7 @@ public:
 	void mazeLoadTone(int16 offset); // sub_136_24ae
 	void mazePlayTone(); // sub_136_2538
 
-	void sub_136_2582(); // sub_136_2582
+	void sub_136_2582(const Common::String &unk1); // sub_136_2582
 	void mazeDrawPlayer(); // sub_136_2664
 	void mazeSetupMenu(); // sub_136_274e
 	void mazeAddWallLeft(); // sub_136_2a7c
