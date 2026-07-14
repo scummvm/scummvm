@@ -479,6 +479,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			break;
 		}
 
+		case 0x0a:
 		case 0x16:
 			if (!_dialogue->execute(script, command))
 				return false;

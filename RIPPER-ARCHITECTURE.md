@@ -141,6 +141,12 @@
   selector, argument types, lengths, and decoded inline text; the
   selector-specific handler and modal presentation remain to be mapped from
   the handler table before rendering is implemented.
+- Ghidra's `HandleSceneEntryPushChoiceRecordAndStepPrompt` at `0x15085`
+  appends each opcode `0x16` payload as a display value plus 16-bit result;
+  opcode `0x0a` is the `HandleSceneEntryChoiceListLifecycle` path at `0x1523d`,
+  which consumes the accumulated records through chooser control `0x4e2`.
+  The current slice mirrors the record accumulation and emits the complete
+  choice list; selection UI and result propagation are still pending.
 - `ExecuteSceneFrameAndInteractions` at `0x13277` runs frame callbacks,
   presentations, chooser selection, and interaction callbacks.
 - `RIPPER.RUN` sets milestone flag 32, plays `PROINT.AVI` and `PROLOG1.AVI`,
