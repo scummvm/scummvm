@@ -390,7 +390,8 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::String &name,
 		bool allowEscSpace, int x, int y, Audio::SoundHandle *externalAudio, bool *stoppedByUser,
 		const Common::Array<uint32> *frameAudioOffsets, uint32 audioByteRate,
-		uint32 timelineStartMillis, uint displayScale, uint frameLimit, int originY) {
+		uint32 timelineStartMillis, uint displayScale, bool patchInterfacePalette,
+		uint frameLimit, int originY) {
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	Video::SmackerDecoder decoder;
@@ -412,6 +413,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		"Ripper: playing Smacker '%s' frames=%u source=%ux%u output=%ux%u at %d,%d controls=%d frameLimit=%u",
 		name.c_str(), decoder.getFrameCount(), decoder.getWidth(), decoder.getHeight(),
 		outputWidth, outputHeight, x, y, allowEscSpace, frameLimit);
+	debugC(2, kDebugVideo, "Ripper: Smacker '%s' interfacePalettePatch=%d",
+		name.c_str(), patchInterfacePalette);
 	const bool synchronizeToTimeline = frameAudioOffsets &&
 		frameAudioOffsets->size() == decoder.getFrameCount() && audioByteRate != 0;
 	if (synchronizeToTimeline) {
@@ -451,7 +454,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 				if (decoder.hasDirtyPalette()) {
 					byte palette[256 * 3];
 					memcpy(palette, decoder.getPalette(), sizeof(palette));
-					_engine->getToolbar()->applySharedPalettePatch(palette, 256);
+					if (patchInterfacePalette)
+						_engine->getToolbar()->applySharedPalettePatch(palette, 256);
 					g_system->getPaletteManager()->setPalette(palette, 0, 256);
 				}
 				if (displayScale == 1) {
@@ -545,7 +549,7 @@ bool MediaPlayer::playIavf(Common::SeekableReadStream &stream, const Common::Str
 			allowEscSpace, movie.segments[i].x, movie.segments[i].y,
 			audioActive ? &audioHandle : nullptr, &stoppedByUser,
 			&movie.segments[i].frameAudioOffsets, audioByteRate, timelineStartMillis,
-			movie.displayScale)) {
+			movie.displayScale, false)) {
 			result = false;
 			break;
 		}
@@ -621,7 +625,7 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 	bool result = false;
 	if (memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0) {
 		result = playSmacker(file, path, false, x, y, nullptr, nullptr, nullptr,
-			0, 0, 1, frameLimit, kScenePresentationTop);
+			0, 0, 1, true, frameLimit, kScenePresentationTop);
 	} else if (memcmp(magic, "IAVF2.00", 8) == 0 && !firstFrameOnly) {
 		result = playIavf(*file, path, false);
 		delete file;

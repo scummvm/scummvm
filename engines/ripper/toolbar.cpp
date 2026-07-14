@@ -40,13 +40,6 @@ static const byte kToolbarBorderColor = 0;
 static const byte kToolbarTextColor = 4;
 static const byte kToolbarFillColor = 253;
 
-static bool matchesSharedPalette(const Common::Array<byte> &left,
-		const Common::Array<byte> &right) {
-	return left.size() >= 256 * 3 && right.size() >= 256 * 3 &&
-		memcmp(left.data() + 4 * 3, right.data() + 4 * 3, 6 * 3) == 0 &&
-		memcmp(left.data() + 246 * 3, right.data() + 246 * 3, 10 * 3) == 0;
-}
-
 static const char *const kToolbarHandlerNames[kToolbarActionCount] = {
 	"RunTake2IniSliderSetupMenu",
 	"HandleSceneSelectionAction",
@@ -80,18 +73,9 @@ bool ToolbarManager::initialize(ResourceManager &resources) {
 			return false;
 		}
 		_actions[i].label = gameText[i];
-		const Common::Array<byte> &palette = _actions[i].sequence.frames.front().palette;
-		if (_sharedPalette.empty())
-			_sharedPalette = palette;
-		else if (!matchesSharedPalette(_sharedPalette, palette)) {
-			warning("Ripper: toolbar action %u does not share the interface palette bands", i + 1);
-			return false;
-		}
 	}
-	if (_sharedPalette.size() < 256 * 3)
-		return false;
 	debugC(2, kDebugResources,
-		"Ripper: captured shared interface palette bands indices=0,4-9,246-255");
+		"Ripper: deferred shared interface palette capture until first presentation");
 
 	// RunFrontEndActionMenu at 0x18b3a lays controls out from right to left,
 	// subtracting each bitmap width and a five-pixel gap from x=630, then
@@ -120,9 +104,15 @@ bool ToolbarManager::initialize(ResourceManager &resources) {
 	return true;
 }
 
-void ToolbarManager::applySharedPalettePatch(byte *palette, uint colorCount) const {
-	if (!palette || colorCount < 256 || _sharedPalette.size() < 256 * 3)
+void ToolbarManager::applySharedPalettePatch(byte *palette, uint colorCount) {
+	if (!palette || colorCount < 256)
 		return;
+	if (_sharedPalette.size() < 256 * 3) {
+		_sharedPalette.resize(256 * 3);
+		memcpy(_sharedPalette.data(), palette, 256 * 3);
+		debugC(2, kDebugResources,
+			"Ripper: captured shared interface palette from first presentation");
+	}
 
 	// ApplySharedDisplayPalettePatch at 0x205d0 reserves index 0, indices 4-9,
 	// and indices 246-255 across every presentation palette.
