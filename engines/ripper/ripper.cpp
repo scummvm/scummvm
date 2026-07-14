@@ -85,7 +85,7 @@ Common::Error RipperEngine::run() {
 	debugC(1, kDebugGeneral, "Ripper: starting skeletal engine runtime for '%s'", _gameDescription->gameId);
 
 	registerSearchPaths();
-	initGraphics(640, 480);
+	initGraphics(640, 400);
 	if (!_resources->initialize())
 		return Common::kReadingFailed;
 	if (!_cursor->initialize(*_resources))

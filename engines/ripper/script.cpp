@@ -691,7 +691,7 @@ bool ScriptManager::serviceScene() {
 	const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
 	const ScriptInteraction *hoveredInteraction = nullptr;
 	uint hoveredInteractionIndex = 0;
-	for (uint i = 0; mouse.position.y < 440 && i < frame.interactionCount; ++i) {
+	for (uint i = 0; mouse.position.y < 400 && i < frame.interactionCount; ++i) {
 		const uint interactionIndex = frame.firstInteractionIndex + i;
 		const ScriptInteraction &interaction = _ba0.getInteractions()[interactionIndex];
 		if ((interaction.flags & 2) != 0 || interaction.width <= 0 || interaction.height <= 0)
