@@ -648,7 +648,6 @@ void Macs2Engine::changeScene(uint32 newSceneIndex, bool executeScript) {
 	currentView->_drawnStringBox.clear();
 	currentView->_continueScriptAfterUI = false;
 	currentView->currentSpeechActData = SpeechActData();
-	currentView->_uiPanelState = View1::kUiPanelNone;
 	currentView->_pendingPanelRequest = View1::kPanelRequestNone;
 	currentView->_activeInventoryItem = nullptr;
 	currentView->_uiPanelState = View1::kUiPanelNone;
