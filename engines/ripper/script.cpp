@@ -689,7 +689,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 				"Ripper: frame presentation label='%s' media='%s' origin=%d,%d",
 				label.c_str(), mediaPath.c_str(), frame.x, frame.y);
 			markScenePlayed(label);
-			if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false))
+			if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false,
+				frame.presentationType == 1 && frame.interactionCount != 0))
 				return false;
 		}
 
