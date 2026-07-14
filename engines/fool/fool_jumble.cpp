@@ -418,7 +418,6 @@ void FoolGame::jumbleStoreState() {
 }
 
 void FoolGame::jumbleRunRearrange() {
-	warning(__func__);
 	// 130:0d2e
 	sub_130_1426();
 	sub_128_61ec();
@@ -435,7 +434,6 @@ void FoolGame::jumbleRunRearrange() {
 }
 
 void FoolGame::jumbleRunSubstitution() {
-	warning(__func__);
 	// 130:0d90
 	// substitution cipher
 	if (!_zbasic->index(1, 1).empty()) { // was: str(177)
@@ -523,7 +521,6 @@ void FoolGame::sub_130_1004() {
 }
 
 void FoolGame::jumbleRunWordSquare() {
-	warning(__func__);
 	// 130:10a6
 	// word square
 	sub_130_1426();
@@ -552,7 +549,6 @@ void FoolGame::jumbleRunWordSquare() {
 }
 
 void FoolGame::jumbleRunHiddenMessage() {
-	warning(__func__);
 	// 130:1282
 	// hidden message, change the mouse cursor
 	_jumblePosition = _zbasic->instr(1, var_str_1070, Common::U32String(" ")); // was: str(182)
@@ -615,7 +611,6 @@ void FoolGame::sub_130_1426() {
 }
 
 void FoolGame::jumbleOnClick() {
-	warning(__func__);
 	// 130:1476
 	getGridFromMouse(_jumbleGridPos.x, _jumbleGridPos.y);
 	if ((_jumbleGridPos.x < 1) || (_jumbleGridPos.x > arr_i16_1eb8[0]) || (_jumbleGridPos.y < 1) || (_jumbleGridPos.y > arr_i16_1eb8[1])) {
@@ -656,7 +651,6 @@ void FoolGame::jumbleOnClick() {
 }
 
 void FoolGame::jumbleOnKey() {
-	warning(__func__);
 	// 130:15da
 	if ((_keyLastPressed == 3) || (_keyLastPressed == 0xd)) {
 		jumbleSelectSquare();
@@ -832,7 +826,6 @@ void FoolGame::sub_130_1c1a() {
 }
 
 void FoolGame::jumbleSelectSquare() {
-	warning(__func__);
 	// 130:1c52
 	_toolbox->InvertRect(_screenGrid[_jumbleSelected]);
 }
