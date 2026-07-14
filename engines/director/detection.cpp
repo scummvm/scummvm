@@ -108,7 +108,7 @@ public:
 	DirectorMetaEngineDetection() : AdvancedMetaEngineDetection(Director::gameDescriptions, directorGames) {
 		_maxScanDepth = 5;
 		_directoryGlobs = Director::directoryGlobs;
-		_flags = kADFlagMatchFullPaths | kADFlagCanPlayUnknownVariants;
+		_flags = kADFlagMatchFullPaths | kADFlagCanPlayUnknownVariants | kADFlagUseExtraAsHint;
 
 		_fallback_blacklisted_names["Macromedia Projector"] = true;
 		_fallback_blacklisted_names["Projector Skeleton"] = true;
