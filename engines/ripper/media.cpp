@@ -39,6 +39,7 @@
 #include "ripper/detection.h"
 #include "ripper/input.h"
 #include "ripper/ripper.h"
+#include "ripper/script.h"
 #include "ripper/toolbar.h"
 
 namespace Ripper {
@@ -467,6 +468,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 						outputWidth, outputHeight, frame->w, frame->h, frame->format);
 					g_system->unlockScreen();
 				}
+				_engine->getScripts()->drawDialogueOverlay();
 				g_system->updateScreen();
 				++presentedFrames;
 				if (synchronizeToTimeline) {

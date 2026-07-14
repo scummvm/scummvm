@@ -112,6 +112,7 @@ public:
 	bool initialize(ResourceManager &resources);
 	bool runStartupPath();
 	bool serviceScene();
+	void drawDialogueOverlay() const;
 
 	CompiledScript &startup() { return _startup; }
 	CompiledScript &ba0() { return _ba0; }
