@@ -462,7 +462,7 @@ void EventManager::mouseDropChampionIcon() {
 	_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kDMChampionNone);
 	_mousePointerBitmapUpdated = true;
 	bool useByteBoxCoordinatesBackup = displMan._useByteBoxCoordinates;
-	displMan.blitToScreen(_mousePointerOriginalColorsChampionIcon, &_vm->_championMan->_boxChampionIcons[championIconIndex << 2], 16, kDMColorDarkestGray, 18);
+	displMan.blitToScreen(_mousePointerOriginalColorsChampionIcon, &_vm->_championMan->_boxChampionIcons[championIconIndex], 16, kDMColorDarkestGray, 18);
 	displMan._useByteBoxCoordinates = useByteBoxCoordinatesBackup;
 	_preventBuildPointerScreenArea = false;
 }
@@ -1259,7 +1259,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 		box._rect.right = box._rect.left + 66;
 		dispMan._useByteBoxCoordinates = false;
 		dispMan.fillScreenBox(box, kDMColorBlack);
-		dispMan.fillScreenBox(_vm->_championMan->_boxChampionIcons[champMan.getChampionIconIndex(champ->_cell, dunMan._partyDir) * 2], kDMColorBlack);
+		dispMan.fillScreenBox(_vm->_championMan->_boxChampionIcons[champMan.getChampionIconIndex(champ->_cell, dunMan._partyDir)], kDMColorBlack);
 		_vm->_menuMan->drawEnabledMenus();
 		showMouse();
 		return;
