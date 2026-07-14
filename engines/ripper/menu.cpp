@@ -183,7 +183,7 @@ MainMenuAction MainMenu::run() {
 				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, menuY,
 					frame->w, frame->h);
 				g_system->updateScreen();
-				debugC(3, kDebugVideo, "Ripper: startup menu frame=%d", decoder.getCurFrame());
+				debugC(11, kDebugVideo, "Ripper: startup menu frame=%d", decoder.getCurFrame());
 			}
 		}
 

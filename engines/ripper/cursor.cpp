@@ -87,7 +87,7 @@ void CursorManager::applyFrame() {
 		CursorMan.replaceCursorPalette(frame.palette.data(), 0, frame.palette.size() / 3);
 	CursorMan.replaceCursor(frame.pixels.data(), frame.width, frame.height,
 		hotspotX, hotspotY, frame.transparentColor);
-	debugC(3, kDebugCursor,
+	debugC(11, kDebugCursor,
 		"Ripper: applied cursor=%u frame=%u size=%ux%u hotspot=%d,%d transparent=%u",
 		_cursorIndex, _frameIndex, frame.width, frame.height, hotspotX, hotspotY,
 		frame.transparentColor);
