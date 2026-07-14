@@ -314,7 +314,7 @@ static Common::SeekableReadStream *rebuildSmackerStream(const IavfSegment &segme
 } // End of anonymous namespace
 
 MediaPlayer::MediaPlayer(RipperEngine *engine, InputManager *input, Audio::Mixer *mixer) :
-		_engine(engine), _input(input), _mixer(mixer) {
+		_engine(engine), _input(input), _mixer(mixer), _stopSceneOnMouse(false) {
 }
 
 MediaPlayer::~MediaPlayer() {
@@ -371,7 +371,7 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 		return false;
 	}
 	if (!allowEscSpace || !_input->hasPendingKey())
-		return true;
+		return !(_stopSceneOnMouse && _input->peekMouseState().pressed != 0);
 
 	const uint16 command = _input->consumeKey();
 	if (command == 0x1b) {
@@ -602,6 +602,9 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 }
 
 bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly) {
+	debugC(1, kDebugVideo,
+		"Ripper: entering interactive scene presentation media='%s' firstFrameOnly=%d",
+		path.c_str(), firstFrameOnly);
 	Common::File *file = new Common::File();
 	if (!file->open(Common::Path(path))) {
 		warning("Ripper: could not open scene media '%s'", path.c_str());
@@ -625,6 +628,7 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 		path.c_str(), firstFrameOnly ? "first-frame-preview" : "sequence", x, y,
 		kScenePresentationTop);
 	bool result = false;
+	_stopSceneOnMouse = !firstFrameOnly;
 	if (memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0) {
 		result = playSmacker(file, path, false, x, y, nullptr, nullptr, nullptr,
 			0, 0, 1, true, frameLimit, kScenePresentationTop);
@@ -636,6 +640,7 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 		delete file;
 	}
 	_input->drainKeys();
+	_stopSceneOnMouse = false;
 	return result;
 }
 

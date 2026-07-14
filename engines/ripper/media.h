@@ -64,6 +64,7 @@ private:
 	Common::String _loadedAudioPath;
 	Common::String _loadedAudioKey;
 	Audio::SoundHandle _sceneAudioHandle;
+	bool _stopSceneOnMouse;
 };
 
 } // End of namespace Ripper
