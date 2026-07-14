@@ -51,6 +51,7 @@ public:
 	void drainKeys();
 	void discardMouseTransitions();
 	MouseState publishMouseState();
+	const MouseState &peekMouseState() const { return _mouseState; }
 
 private:
 	static uint16 translateKey(const Common::KeyState &key);
