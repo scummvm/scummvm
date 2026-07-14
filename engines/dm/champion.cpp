@@ -930,7 +930,7 @@ void ChampionMan::disableAction(uint16 champIndex, uint16 ticks) {
 	Champion *curChampion = &_champions[champIndex];
 	int32 updatedEnableActionEventTime = _vm->_gameTime + ticks;
 
-	TimelineEvent curEvent;
+	TimelineEvent curEvent = {};
 	curEvent._type = kDMEventTypeEnableChampionAction;
 	curEvent._priority = champIndex;
 	curEvent._Bu._slotOrdinal = 0;
@@ -1136,7 +1136,7 @@ void ChampionMan::championPoison(int16 champIndex, uint16 attack) {
 
 	if (--attack) {
 		curChampion->_poisonEventCount++;
-		TimelineEvent newEvent;
+		TimelineEvent newEvent = {};
 		newEvent._type = kDMEventTypePoisonChampion;
 		newEvent._priority = champIndex;
 		newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 36);
@@ -1464,7 +1464,7 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 
 			int16 eventIndex = championPtr->_hideDamageReceivedIndex;
 			if (eventIndex == -1) {
-				TimelineEvent newEvent;
+				TimelineEvent newEvent = {};
 				newEvent._type = kDMEventTypeHideDamageReceived;
 				newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 5);
 				newEvent._priority = championIndex;

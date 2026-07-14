@@ -977,7 +977,7 @@ void InventoryMan::clickOnMouth() {
 				adjustedPotionPower >>= 2;
 
 			curChampion->_shieldDefense += adjustedPotionPower;
-			TimelineEvent newEvent;
+			TimelineEvent newEvent = {};
 			newEvent._type = kDMEventTypeChampionShield;
 			newEvent._mapTime = _vm->setMapAndTime(dungeon._partyMapIndex, _vm->_gameTime + (adjustedPotionPower * adjustedPotionPower));
 			newEvent._priority = championIndex;

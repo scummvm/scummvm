@@ -55,7 +55,7 @@ void ProjExpl::createProjectile(Thing thing, int16 mapX, int16 mapY, uint16 cell
 	projectilePtr->_kineticEnergy = MIN((int16)kineticEnergy, (int16)255);
 	projectilePtr->_attack = attack;
 	_vm->_dungeonMan->linkThingToList(projectileThing, Thing(0xFFFF), mapX, mapY); /* Projectiles are added on the square and not 'moved' onto the square. In the case of a projectile launcher sensor, this means that the new projectile traverses the square in front of the launcher without any trouble: there is no impact if it is a wall, the projectile direction is not changed if it is a teleporter. Impacts with creatures and champions are still processed */
-	TimelineEvent newEvent;
+	TimelineEvent newEvent = {};
 	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 1);
 	if (_createLauncherProjectile)
 		newEvent._type = kDMEventTypeMoveProjectile; /* Launcher projectiles can impact immediately */

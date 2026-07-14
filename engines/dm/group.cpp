@@ -387,7 +387,7 @@ bool GroupMan::groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 atta
 		byte *curSquare = &dungeon._currMapData[mapX][mapY];
 		if (Square(*curSquare).getDoorState() == kDMDoorStateClosed) {
 			if (ticks) {
-				TimelineEvent newEvent;
+				TimelineEvent newEvent = {};
 				newEvent._mapTime = _vm->setMapAndTime(dungeon._currMapIndex, _vm->_gameTime + ticks);
 				newEvent._type = kDMEventTypeDoorDestruction;
 				newEvent._priority = 0;
@@ -633,7 +633,7 @@ void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, TimelineEve
 	Group *curGroup = dungeon.getGroup(groupThing);
 	CreatureInfo creatureInfo = dungeon._creatureInfos[curGroup->_type];
 	/* Update the event */
-	TimelineEvent nextEvent;
+	TimelineEvent nextEvent = {};
 	nextEvent._mapTime = _vm->setMapAndTime(dungeon._currMapIndex, _vm->_gameTime);
 	nextEvent._priority = kDMMovementTicksImmobile - creatureInfo._movementTicks; /* The fastest creatures (with small MovementTicks value) get higher event priority */
 	nextEvent._Bu._location._mapX = eventMapX;
