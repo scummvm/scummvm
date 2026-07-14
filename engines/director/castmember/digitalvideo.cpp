@@ -37,6 +37,7 @@
 #include "director/channel.h"
 #include "director/images.h"
 #include "director/movie.h"
+#include "director/score.h"
 #include "director/window.h"
 #include "director/castmember/digitalvideo.h"
 #include "director/castmember/xtra.h"
@@ -90,7 +91,6 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId)
 	_channel = nullptr;
 
 	_getFirstFrame = false;
-	_duration = 0;
 
 	_vflags = 0;
 	_frameRate = 0;
@@ -125,7 +125,6 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 	_channel = nullptr;
 
 	_getFirstFrame = false;
-	_duration = 0;
 
 	_initialRect = Movie::readRect(stream);
 	_vflags = stream.readUint32();
@@ -197,7 +196,6 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Digita
 
 	_frameRate = source._frameRate;
 	_getFirstFrame = source._getFirstFrame;
-	_duration = source._duration;
 
 	_video = nullptr;
 	_lastFrame = nullptr;
@@ -379,8 +377,6 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 		_video->setDitheringPalette(_ditheringPalette);
 	}
 
-	_duration = getMovieTotalTime();
-
 	if (_video) {
 		// Setting the initial rect to the actual movie dimensions
 		_initialRect.setWidth(_video->getWidth());
@@ -402,11 +398,11 @@ bool DigitalVideoCastMember::isModified() {
 	// Inelegant, but necessary. isModified will get called on
 	// every screen update, so use it to keep the playback
 	// status up to date.
-	if (_video->endOfVideo()) {
+	if (endOfVideo()) {
 		if (_looping) {
-			_video->rewind();
-		} else if (_channel) {
-			_channel->_movieRate = 0.0;
+			rewindVideo();
+		} else {
+			stopVideo();
 		}
 	}
 
@@ -433,7 +429,7 @@ void DigitalVideoCastMember::startVideo() {
 	}
 
 	if (_video->isPlaying())
-		_video->rewind();
+		rewindVideo();
 	else
 		_video->start();
 
@@ -452,6 +448,10 @@ void DigitalVideoCastMember::stopVideo() {
 
 	_video->stop();
 
+	if (_channel) {
+		_channel->_movieRate = 0.0;
+	}
+
 	debugC(2, kDebugImages, "STOPPING VIDEO %s", _filename.c_str());
 }
 
@@ -462,9 +462,14 @@ void DigitalVideoCastMember::rewindVideo() {
 		return;
 	}
 
-	_video->rewind();
+	seekMovie(_channel->_startTime);
 
 	debugC(2, kDebugImages, "REWINDING VIDEO %s", _filename.c_str());
+}
+
+bool DigitalVideoCastMember::endOfVideo() {
+	return (_video->endOfVideo() ||
+			(getMovieCurrentTimeMillis() >= (uint)(_channel->_stopTime*1000/getTimeScale())));
 }
 
 Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) {
@@ -544,23 +549,50 @@ uint DigitalVideoCastMember::getDuration() {
 	if (!_video || !_video->isVideoLoaded()) {
 		loadVideoFromCast();
 	}
-	return _duration;
+	return getMovieTotalTime();
+}
+
+uint DigitalVideoCastMember::getTimeScale() {
+	uint result = MAX(0, g_director->getCurrentMovie()->getScore()->_currentDigitalVideoTimeScale);
+	// If the digitalVideoTimeScale gets set to 0, use the quicktime timescale default of 600
+	if (result == 0) {
+		result = 600;
+	}
+	return result;
 }
 
 uint DigitalVideoCastMember::getMovieCurrentTime() {
 	if (!_video)
 		return 0;
-	int ticks = 1 + ((_video->getTime() * 60 - 1)/1000);
+	int ticks = 1 + ((_video->getTime() * getTimeScale() - 1)/1000);
 	int stamp = MIN<int>(ticks, getMovieTotalTime());
 
 	return stamp;
 }
 
+uint DigitalVideoCastMember::getMovieCurrentTimeMillis() {
+	if (!_video)
+		return 0;
+	int ticks = _video->getTime();
+	int stamp = MIN<int>(ticks, getMovieTotalTime());
+
+	return stamp;
+}
+
+
 uint DigitalVideoCastMember::getMovieTotalTime() {
 	if (!_video)
 		return 0;
 
-	int ticks = 1 + ((_video->getDuration().msecs() * 60 - 1)/1000);
+	int ticks = 1 + ((_video->getDuration().msecs() * getTimeScale() - 1)/1000);
+	return ticks;
+}
+
+uint DigitalVideoCastMember::getMovieTotalTimeMillis() {
+	if (!_video)
+		return 0;
+
+	int ticks = _video->getDuration().msecs();
 	return ticks;
 }
 
@@ -577,13 +609,21 @@ void DigitalVideoCastMember::seekMovie(int stamp) {
 
 	Audio::Timestamp dur = _video->getDuration();
 
-	_video->seek(Audio::Timestamp(_channel->_startTime * 1000 / 60, dur.framerate()));
+	_video->seek(Audio::Timestamp(_channel->_startTime * 1000 / getTimeScale(), dur.framerate()));
 
 	if (_channel->_movieRate == 0.0) {
 		_getFirstFrame = true;
 	}
 
 	_dirty = true;
+}
+
+void DigitalVideoCastMember::setStartTime(int stamp) {
+	if (!_video)
+		return;
+
+	_channel->_startTime = stamp;
+	seekMovie(stamp);
 }
 
 void DigitalVideoCastMember::setStopTime(int stamp) {
@@ -599,7 +639,24 @@ void DigitalVideoCastMember::setStopTime(int stamp) {
 
 	Audio::Timestamp dur = _video->getDuration();
 
-	_video->setEndTime(Audio::Timestamp(_channel->_stopTime * 1000 / 60, dur.framerate()));
+	_video->setEndTime(Audio::Timestamp(_channel->_stopTime * 1000 / getTimeScale(), dur.framerate()));
+}
+
+void DigitalVideoCastMember::setMovieTime(int units) {
+	if (!_video)
+		return;
+
+	// startTime and stopTime are always in ticks (1/60)
+	// movieTime and duration are always in scaling units (1/digitalVideoTimeScale)
+
+	Audio::Timestamp dur = _video->getDuration();
+	_video->seek(Audio::Timestamp(units * 1000 / getTimeScale(), dur.framerate()));
+
+	if (_channel->_movieRate == 0.0) {
+		_getFirstFrame = true;
+	}
+
+	_dirty = true;
 }
 
 void DigitalVideoCastMember::setMovieRate(double rate) {
@@ -622,10 +679,17 @@ void DigitalVideoCastMember::setMovieRate(double rate) {
 			_getFirstFrame = false;
 		}
 		_video->setRate(Common::Rational((int)(rate * 100.0), 100));
+		if ((rate != 0.0) && !_video->isPlaying()) {
+			_video->start();
+		} else if ((rate == 0.0) && _video->isPlaying()) {
+			_video->stop();
+		}
 	}
 
-	if (_video->endOfVideo())
-		_video->rewind();
+	_channel->_movieRate = rate;
+
+	if (endOfVideo())
+		rewindVideo();
 }
 
 void DigitalVideoCastMember::setFrameRate(int rate) {
@@ -642,7 +706,7 @@ Common::String DigitalVideoCastMember::formatInfo() {
 		_initialRect.left, _initialRect.top,
 		_boundingRect.width(), _boundingRect.height(),
 		_boundingRect.left, _boundingRect.top,
-		_filename.c_str(), _duration,
+		_filename.c_str(), getMovieTotalTime(),
 		_enableVideo, _enableSound,
 		_looping, _crop, _center, _showControls
 	);
@@ -746,8 +810,9 @@ Datum DigitalVideoCastMember::getField(int field) {
 		d = _enableSound;
 		break;
 	case kTheTimeScale:
-		warning("STUB: DigitalVideoCastMember::getField(): timeScale not implemented");
-		d = Datum(600); // quicktime default
+		// quicktime defaults to 600
+		// happens irrespective of what the digitalVideoTimeScale is set to
+		d = Datum(600);
 		break;
 	case kTheVideo:
 		d = _enableVideo;

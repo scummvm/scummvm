@@ -611,6 +611,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheDeskTopRectList:
 		d = getTheDeskTopRectList();
 		break;
+	case kTheDigitalVideoTimeScale:
+		d = score->_currentDigitalVideoTimeScale;
+		break;
 	case kTheDoubleClick:
 		// Always measured against the last two clicks.
 		// 25 ticks seems to be the threshold for a double click.
@@ -1262,6 +1265,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		// We do not need to do anything special to yield to other applications
 		// so, ignore this setting
 		break;
+	case kTheDigitalVideoTimeScale:
+		score->_currentDigitalVideoTimeScale = d.asInt();
+		break;
 	case kTheExitLock:
 		g_lingo->_exitLock = bool(d.asInt());
 		break;
@@ -1718,6 +1724,9 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d = sprite->_moveable;
 		break;
 	case kTheMovieRate:
+		// make sure the movieRate is up to date
+		if (sprite->_cast && sprite->_cast->_type == kCastDigitalVideo)
+			((DigitalVideoCastMember *)sprite->_cast)->isModified();
 		d = channel->_movieRate;
 		if (debugChannelSet(-1, kDebugEndVideo))
 			d.u.f = 0.0;
@@ -2046,7 +2055,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		channel->_movieTime = d.asInt();
 		if (sprite->_cast && sprite->_cast->_type == kCastDigitalVideo) {
 			((DigitalVideoCastMember *)sprite->_cast)->setChannel(channel);
-			((DigitalVideoCastMember *)sprite->_cast)->seekMovie(channel->_movieTime);
+			((DigitalVideoCastMember *)sprite->_cast)->setMovieTime(channel->_movieTime);
 		} else
 			warning("Setting movieTime for non-digital video");
 		break;

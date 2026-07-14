@@ -140,9 +140,13 @@ DirectorPlotData Channel::getPlotData() {
 		// Add override flag for 1-bit images
 		pd.oneBitImage = true;
 	}
+
 	if (!pd.srf && _sprite->_spriteType != kBitmapSprite) {
 		// Shapes come colourized from macDrawPixel
 		pd.ms = _sprite->getShape();
+		pd.applyColor = false;
+	// Disable custom fgColor/bgColor blits for videos
+	} else if (_sprite->_cast && _sprite->_cast->_type == kCastDigitalVideo) {
 		pd.applyColor = false;
 	} else {
 		pd.setApplyColor();
@@ -645,15 +649,20 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 	if (!(_sprite->_puppet || _sprite->getAutoPuppet(kAPCast)) && (_sprite->_castId != nextSprite->_castId)) {
 		// if there's a video in the old sprite that's different, stop it before we continue
 		if (_sprite->_cast && _sprite->_cast->_type == kCastDigitalVideo) {
-			((DigitalVideoCastMember *)_sprite->_cast)->setChannel(nullptr);
 			((DigitalVideoCastMember *)_sprite->_cast)->stopVideo();
-			((DigitalVideoCastMember *)_sprite->_cast)->rewindVideo();
+			((DigitalVideoCastMember *)_sprite->_cast)->seekMovie(0);
+			((DigitalVideoCastMember *)_sprite->_cast)->setChannel(nullptr);
 		}
 		// if there's a video in the new sprite that's different, start it before we continue
 		if (nextSprite->_cast && nextSprite->_cast->_type == kCastDigitalVideo) {
 			if (((DigitalVideoCastMember *)nextSprite->_cast)->loadVideoFromCast()) {
 				_movieTime = 0;
+				_movieRate = 1.0;
 				((DigitalVideoCastMember *)nextSprite->_cast)->setChannel(this);
+				_startTime = 0;
+
+				_stopTime = ((DigitalVideoCastMember *)nextSprite->_cast)->getMovieTotalTime();
+				((DigitalVideoCastMember *)nextSprite->_cast)->rewindVideo();
 				((DigitalVideoCastMember *)nextSprite->_cast)->startVideo();
 			}
 		}
@@ -872,9 +881,9 @@ CastMemberID Channel::getSubChannelSound2() {
 }
 
 Common::String Channel::formatInfo() {
-	return Common::String::format("[sprite: %s], visible: %d, constraint: %d, movieRate: %f, movieTime: %d (%f), filmLoopFrame: %d",
+	return Common::String::format("[sprite: %s], visible: %d, constraint: %d, movieRate: %f, movieTime: %d (%f), filmLoopFrame: %d, startTime: %d, stopTime: %d",
 		_sprite->formatInfo().c_str(), _visible,
-		_constraint, _movieRate, _movieTime, (float)(_movieTime/60.0f), _filmLoopFrame);
+		_constraint, _movieRate, _movieTime, (float)(_movieTime/60.0f), _filmLoopFrame, _startTime, _stopTime);
 }
 
 } // End of namespace Director

@@ -208,6 +208,7 @@ public:
 	Common::MemoryReadStreamEndian *_framesStream;
 
 	byte _currentFrameRate;
+	int _currentDigitalVideoTimeScale;
 	byte _puppetTempo;
 
 	bool _puppetPalette;

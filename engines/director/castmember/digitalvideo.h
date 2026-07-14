@@ -58,12 +58,18 @@ public:
 	void startVideo();
 	void stopVideo();
 	void rewindVideo();
+	bool endOfVideo();
 
+	uint getTimeScale();
 	uint getMovieCurrentTime();
+	uint getMovieCurrentTimeMillis();
 	uint getDuration();
 	uint getMovieTotalTime();
+	uint getMovieTotalTimeMillis();
 	void seekMovie(int stamp);
+	void setStartTime(int stamp);
 	void setStopTime(int stamp);
+	void setMovieTime(int units);
 	void setMovieRate(double rate);
 	void setFrameRate(int rate);
 
@@ -103,7 +109,6 @@ public:
 
 	uint16 _frameRate;
 	bool _getFirstFrame;
-	int _duration;
 
 	Video::VideoDecoder *_video;
 	Graphics::Surface *_lastFrame;
