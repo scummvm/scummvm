@@ -93,7 +93,11 @@ void MemCheckXObj::m_new(int nargs) {
 }
 
 XOBJSTUBNR(MemCheckXObj::m_dispose)
-XOBJSTUB(MemCheckXObj::m_memoryCheck, 0)
+void MemCheckXObj::m_memoryCheck(int nargs) {
+	g_lingo->dropStack(nargs);
+
+	g_lingo->push(g_director->isDemo() ? 0 : 1);
+}
 XOBJSTUBNR(MemCheckXObj::m_memoryPurge)
 
 }
