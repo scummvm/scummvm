@@ -103,7 +103,7 @@ Common::String getDisplayName(CastMember *castMember) {
 	const CastMemberInfo *castMemberInfo = castMember->getInfo();
 	Common::String name(castMemberInfo ? castMemberInfo->name : "");
 	if (!name.empty())
-		return name;
+		return Common::String::format("%s (%u)", name.c_str(), castMember->getID());
 	if (castMember->_type == kCastText) {
 		TextCastMember *textCastMember = (TextCastMember *)castMember;
 		return textCastMember->getText();
