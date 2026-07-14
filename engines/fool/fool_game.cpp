@@ -20,6 +20,7 @@
  */
 
 #include "common/endian.h"
+#include "common/punycode.h"
 #include "common/translation.h"
 #include "common/ustr.h"
 #include "common/util.h"
@@ -102,16 +103,11 @@ Common::String getFileNameFromModal(bool save, const Common::String &suggested, 
 			// little bit of a hack; because the description is in the filename,
 			// we need to manually delete any existing save in that slot
 			g_engine->getMetaEngine()->removeSaveState(target.c_str(), slot);
-			Common::String intermediate = chooser.getResultString();
-			Common::String desc;
-			// because windows is bad, strip out any challenging characters
-			const char *ptr = intermediate.c_str();
-			const char *end = intermediate.c_str() + intermediate.size();
-			while (ptr < end) {
-				if (Common::isAlnum(*ptr) || (*ptr == ' ') || (*ptr == '-') || (*ptr == '_') || (*ptr == '.')) {
-					desc += *ptr;
-				}
-				ptr++;
+			Common::String desc = chooser.getResultString();
+			// because windows is bad, and we need to encode the description in
+			// the filename, use punycode for forbidden characters
+			if (Common::punycode_needEncode(desc)) {
+				desc = Common::punycode_encodefilename(desc.decode());
 			}
 			result = Common::String::format("%s-%s.%03d", target.c_str(), desc.c_str(), slot);
 		} else {
