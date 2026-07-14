@@ -77,9 +77,10 @@
   with action IDs `0x514` through `0x51c`, lays them out right-to-left from
   x=`0x276` (630), and subtracts each bitmap width plus five pixels.
 - The toolbar remains modal while the pointer is in that top 50-pixel band;
-  scene hotspots do not receive those events. The scene presentation itself is
-  centered in the 640x480 ScummVM surface with the 320x200-class media at
-  y=40, so the bottom y>=440 strip is outside the scene hit-test region.
+  scene hotspots do not receive those events. Scene Smacker coordinates are
+  relative to the original scene presentation region, whose top edge follows
+  that band at y=50 in the ScummVM surface. The bottom y>=440 strip remains
+  outside the scene hit-test region.
 - While a control is hovered, `RunFrontEndActionMenu` advances that action's
   frame index once per extended DOS tick. The preview gate uses
   `front_end_action_preview_enabled` and a default delay of 27 DOS ticks from
@@ -125,8 +126,9 @@
   first scene movie do not retain the final introduction frame.
 - `BA0.RUN` is a bridge rather than the durable opening scene. Its `start`
   callback creates the concurrent `PROLOGUE.RUN` loop, loads and starts
-  `R_P_L1.WAV`, and plays `BAW1A.SMK`; its sole chooser callback hands control
-  to the concurrent prologue runtime, which eventually transitions to ACT1.
+  `R_P_L1.WAV`, and presents only the first frame of `BAW1A.SMK`; its sole
+  chooser callback hands control to the concurrent prologue runtime, which
+  eventually transitions to ACT1.
 - Opcode `0x14` stores its argument as the next frame index and returns control
   code `-2`. `RunSceneScriptLoop` responds by servicing the concurrent runtime
   once before continuing BA0 at that stored frame.
@@ -206,7 +208,11 @@
 - Opcode `0x1a` enables the presentation callback when its third argument is
   zero. In that mode only keyboard Escape stops the whole presentation and
   Space pauses or resumes video and audio; mouse buttons do not skip it.
-- Opcode `0x1b` uses the ordinary Smacker path without the presentation
-  Escape/Space callback. This is how `BAW1A.SMK` is played from `BA0.RUN`.
+- Opcode `0x1b` enters `HandleSceneEntryMediaPreviewOrPrompt` at `0x15b03`.
+  That handler passes a target value of one and
+  `MediaSequenceCounterEqualsTarget` at `0x15ac8` to `RunMediaSequence` at
+  `0x1e516`. The callback is evaluated after each presented frame, so the
+  command decodes and retains the first Smacker frame before returning to the
+  scene chooser. The later BA0 frame presentation plays the full sequence.
 - Engine-local media code should remain an adapter or demultiplexer wherever
   packet payloads can be handed to existing ScummVM codecs.

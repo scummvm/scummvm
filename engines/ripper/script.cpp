@@ -513,9 +513,12 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			if (command.arguments.size() < 4)
 				return false;
 			const Common::String mediaPath = script.getString(command.arguments[0].value);
-			if (!_engine->getMedia()->play(mediaPath, false, (int32)command.arguments[1].value,
-				(int32)command.arguments[2].value))
+			if (!_engine->getMedia()->playScene(mediaPath, (int32)command.arguments[1].value,
+				(int32)command.arguments[2].value, true))
 				return false;
+			debugC(2, kDebugScripts,
+				"Ripper: retained first frame for scene media command '%s'",
+				mediaPath.c_str());
 			break;
 		}
 
@@ -648,7 +651,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 		if (frame.presentationType == 0 || frame.presentationType == 1) {
 			const Common::String mediaPath = _ba0.getString(frame.mediaNameOffset);
 			markScenePlayed(label);
-			if (!_engine->getMedia()->play(mediaPath, false, frame.x, frame.y))
+			if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false))
 				return false;
 		}
 
