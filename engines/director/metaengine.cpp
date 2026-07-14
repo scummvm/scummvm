@@ -46,6 +46,10 @@ uint32 DirectorEngine::getGameFlags() const {
 	return _gameDescription->desc.flags;
 }
 
+bool DirectorEngine::isDemo() const {
+	return (bool)(_gameDescription->desc.flags & ADGF_DEMO);
+}
+
 uint16 DirectorEngine::getDescriptionVersion() const {
 	return _gameDescription->version;
 }

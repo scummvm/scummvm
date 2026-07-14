@@ -169,6 +169,7 @@ public:
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
 	uint32 getGameFlags() const;
+	bool isDemo() const;
 	Common::String getTargetName() { return _targetName; }
 	const char *getExtra();
 	Common::String getRawEXEName() const;
