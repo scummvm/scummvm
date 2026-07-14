@@ -133,7 +133,9 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 					return false;
 			} else {
 				int16 associatedThingIndex = _vm->_dungeonMan->getObjectInfoIndex(projectileAssociatedThing);
-				uint16 associatedAllowedSlots = _vm->_dungeonMan->_objectInfos[associatedThingIndex].getAllowedSlots();
+				uint16 associatedAllowedSlots = 0;
+				if (associatedThingIndex >= 0 && associatedThingIndex < 180)
+					associatedAllowedSlots = _vm->_dungeonMan->_objectInfos[associatedThingIndex].getAllowedSlots();
 				int16 iconIndex = _vm->_objectMan->getIconIndex(projectileAssociatedThing);
 
 				if ((projectileThingData->_attack > _vm->getRandomNumber(128))

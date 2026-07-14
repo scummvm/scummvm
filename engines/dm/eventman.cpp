@@ -1509,9 +1509,11 @@ void EventManager::mouseProcessCommands125To128_clickOnChampionIcon(uint16 champ
 			} else
 				displMan.fillScreenBox(_vm->_championMan->_boxChampionIcons[championIconIndex], kDMColorBlack);
 
-			_vm->_championMan->_champions[championCellIndex]._cell = (ViewCell)_vm->normalizeModulo4(champIconIndex + _vm->_dungeonMan->_partyDir);
-			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, kDMAttributeIcon);
-			_vm->_championMan->drawChampionState((ChampionIndex)championCellIndex);
+			if (championCellIndex >= 0) {
+				_vm->_championMan->_champions[championCellIndex]._cell = (ViewCell)_vm->normalizeModulo4(champIconIndex + _vm->_dungeonMan->_partyDir);
+				setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, kDMAttributeIcon);
+				_vm->_championMan->drawChampionState((ChampionIndex)championCellIndex);
+			}
 		}
 	}
 	_preventBuildPointerScreenArea = false;

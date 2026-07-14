@@ -207,11 +207,14 @@ void MenuMan::drawActionIcon(ChampionIndex championIndex) {
 	IconIndice iconIndex;
 	if (thing == _vm->_thingNone) {
 		iconIndex = kDMIconIndiceActionEmptyHand;
-	} else if (dungeon._objectInfos[dungeon.getObjectInfoIndex(thing)]._actionSetIndex) {
-		iconIndex = _vm->_objectMan->getIconIndex(thing);
 	} else {
-		dm.fillBitmap(bitmapIcon, kDMColorCyan, 16, 16);
-		goto T0386006;
+		int16 infoIndex = dungeon.getObjectInfoIndex(thing);
+		if (infoIndex >= 0 && infoIndex < 180 && dungeon._objectInfos[infoIndex]._actionSetIndex) {
+			iconIndex = _vm->_objectMan->getIconIndex(thing);
+		} else {
+			dm.fillBitmap(bitmapIcon, kDMColorCyan, 16, 16);
+			goto T0386006;
+		}
 	}
 	_vm->_objectMan->extractIconFromBitmap(iconIndex, bitmapIcon);
 	dm.blitToBitmapShrinkWithPalChange(bitmapIcon, bitmapIcon, 16, 16, 16, 16, palChangesActionAreaObjectIcon);
@@ -1702,13 +1705,15 @@ void MenuMan::processCommands116To119_setActingChampion(uint16 champIndex) {
 
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 
-	uint16 actionSetIndex;
+	uint16 actionSetIndex = 0;
 	Thing slotActionThing = curChampion->_slots[kDMSlotActionHand];
 
 	if (slotActionThing == _vm->_thingNone)
 		actionSetIndex = 2; /* Actions Punch, Kick and War Cry */
 	else {
-		actionSetIndex = dungeon._objectInfos[dungeon.getObjectInfoIndex(slotActionThing)]._actionSetIndex;
+		int16 infoIndex = dungeon.getObjectInfoIndex(slotActionThing);
+		if (infoIndex >= 0 && infoIndex < 180)
+			actionSetIndex = dungeon._objectInfos[infoIndex]._actionSetIndex;
 		if (actionSetIndex == 0)
 			return;
 	}
