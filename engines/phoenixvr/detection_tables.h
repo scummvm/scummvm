@@ -255,7 +255,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "70362765ee83bb822d5bb08948317f23", 98844),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_TESTING,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -265,7 +265,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "195a7b2b6185245b64145f3e43e4f508", 90805),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -285,7 +285,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "5d7d770a74d6035957c7deffc4865e12", 106762),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
