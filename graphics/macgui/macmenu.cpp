@@ -44,7 +44,8 @@ enum {
 	kMenuLeftMargin = 7,
 	kMenuSpacing = 13,
 	kMenuPadding = 16,
-	kMenuDropdownPadding = 14,
+	kMenuLeftDropdownPadding = 17,
+	kMenuRightDropdownPadding = 11,
 	kMenuDropdownItemHeight = 16,
 	kMenuItemHeight = 20,
 	kMenuWin95LeftDropdownPadding = 34,
@@ -106,8 +107,8 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 		_menuRightDropdownPadding = kMenuWin95RightDropdownPadding;
 	} else {
 		_menuDropdownItemHeight = kMenuDropdownItemHeight;
-		_menuLeftDropdownPadding = kMenuDropdownPadding;
-		_menuRightDropdownPadding = kMenuDropdownPadding;
+		_menuLeftDropdownPadding = kMenuLeftDropdownPadding;
+		_menuRightDropdownPadding = kMenuRightDropdownPadding;
 	}
 
 	if (_wm->_mode & kWMModeAutohideMenu)
@@ -1262,10 +1263,12 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 
 			if (menu->items[i]->checked) {
 				const Font *font = getMenuFont(menu->items[i]->style);
-				int checkSymbol = _wm->_fontMan->hasBuiltInFonts() ? 0xD7 : 18;
+				int checkSymbol = menu->items[i]->checkSymbol;
+				if (!checkSymbol)
+					checkSymbol = _wm->_fontMan->hasBuiltInFonts() ? 0xD7 : 18;
 
 				int padding = _align == kTextAlignRight ? -_menuRightDropdownPadding: _menuLeftDropdownPadding;
-				int offset = padding - font->getCharWidth(checkSymbol);
+				int offset = _align == kTextAlignRight ? padding - font->getCharWidth(checkSymbol) : 3;
 
 				// calculating the padding and offset, we draw the √ at the center
 				font->drawChar(s, checkSymbol, tx - padding + offset, ty, color);
