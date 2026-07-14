@@ -471,4 +471,85 @@ bool ResourceManager::loadInterfaceBitmapSequence(const Common::String &memberNa
 	return true;
 }
 
+bool ResourceManager::loadInterfaceBitmapFont(const Common::String &memberName,
+		BitmapFontAsset &font) const {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		_interface.createReadStreamForMember(memberName));
+	Common::Array<byte> data;
+	if (!stream || !readStream(*stream, data) || data.size() < 12 ||
+		READ_BE_UINT32(data.data()) != MKTAG('N', 'F', '2', 'T')) {
+		warning("Ripper: could not read NF2T font '%s'", memberName.c_str());
+		return false;
+	}
+
+	// LoadNF2TDescriptorAndBitmap at 0x5c290 reads the 12-byte descriptor,
+	// its eight-byte glyph records, and the trailing custom bitmap.
+	const uint glyphCount = data[5];
+	const uint32 bitmapOffset = 12 + glyphCount * 8;
+	if (glyphCount == 0 || bitmapOffset >= data.size())
+		return false;
+
+	BitmapAssetFrame bitmap;
+	Common::MemoryReadStream bitmapStream(data.data() + bitmapOffset,
+		data.size() - bitmapOffset, DisposeAfterUse::NO);
+	if (!decodeCustomBitmap(bitmapStream, bitmap))
+		return false;
+
+	font.firstCharacter = data[4];
+	font.lineHeight = data[7];
+	font.characterSpacing = data[9];
+	font.spaceWidth = data[11];
+	font.transparentColor = bitmap.transparentColor;
+	font.pixels = Common::move(bitmap.pixels);
+	font.glyphs.clear();
+	font.glyphs.resize(glyphCount);
+	for (uint i = 0; i < glyphCount; ++i) {
+		const byte *record = data.data() + 12 + i * 8;
+		BitmapFontGlyph &glyph = font.glyphs[i];
+		glyph.pixelOffset = READ_LE_UINT32(record);
+		glyph.width = record[4];
+		glyph.height = record[5];
+		glyph.xOffset = (int8)record[6];
+		glyph.yOffset = (int8)record[7];
+		if ((uint64)glyph.pixelOffset + (uint32)glyph.width * glyph.height > font.pixels.size()) {
+			warning("Ripper: NF2T font '%s' has invalid glyph %u", memberName.c_str(), i);
+			return false;
+		}
+	}
+
+	debugC(2, kDebugResources,
+		"Ripper: decoded NF2T font '%s' first=%u glyphs=%u lineHeight=%u pixels=%u",
+		memberName.c_str(), font.firstCharacter, font.glyphs.size(), font.lineHeight,
+		font.pixels.size());
+	return true;
+}
+
+bool ResourceManager::loadGameText(Common::Array<Common::String> &strings) const {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		_scripts.createReadStreamForMember("gametext.tf"));
+	Common::Array<byte> data;
+	if (!stream || !readStream(*stream, data) || data.size() < 4)
+		return false;
+
+	// ResolveStartupResourceString at 0x1f7a2 indexes this one-based offset table.
+	const uint32 stringCount = READ_LE_UINT32(data.data());
+	if (stringCount == 0 || (uint64)4 + (uint64)stringCount * 4 > data.size())
+		return false;
+
+	strings.clear();
+	strings.resize(stringCount);
+	for (uint i = 0; i < stringCount; ++i) {
+		const uint32 offset = READ_LE_UINT32(data.data() + 4 + i * 4);
+		const uint32 end = i + 1 < stringCount ?
+			READ_LE_UINT32(data.data() + 8 + i * 4) : data.size();
+		if (offset >= end || end > data.size() || data[end - 1] != 0)
+			return false;
+		strings[i] = Common::String((const char *)data.data() + offset,
+			(const char *)data.data() + end - 1);
+	}
+
+	debugC(2, kDebugResources, "Ripper: decoded GAMETEXT.TF strings=%u", strings.size());
+	return true;
+}
+
 } // End of namespace Ripper
