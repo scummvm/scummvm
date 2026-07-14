@@ -685,6 +685,9 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 
 		if (frame.presentationType == 0 || frame.presentationType == 1) {
 			const Common::String mediaPath = _ba0.getString(frame.mediaNameOffset);
+			debugC(2, kDebugScene,
+				"Ripper: frame presentation label='%s' media='%s' origin=%d,%d",
+				label.c_str(), mediaPath.c_str(), frame.x, frame.y);
 			markScenePlayed(label);
 			if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false))
 				return false;
