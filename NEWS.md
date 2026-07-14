@@ -13,6 +13,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Mortadelo y Filemón: La Banda de Corvino.
    - Added support for Mortadelo y Filemón: Balones y Patadones.
    - Added support for Mortadelo y Filemón: Mamelucos a la Romana.
+   - Added support for Dracula: Resurrection.
+	 - Added support for Dracula 2: The Last Sanctuary.
 
  General:
    - Optimised mixing and rate converters, for better performance.
