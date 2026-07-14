@@ -674,6 +674,20 @@ ImColor brightenColor(const ImColor& color, float factor) {
 	return ImColor(col);
 }
 
+Window *findWindowByName(const Common::String &name) {
+	if (name.empty())
+		return nullptr;
+	Movie *stageMovie = g_director->getStage()->getCurrentMovie();
+	if (stageMovie && stageMovie->getMacName() == name)
+		return g_director->getStage();
+	for (auto window : *g_director->getWindowList()) {
+		Movie *movie = window->getCurrentMovie();
+		if (movie && movie->getMacName() == name)
+			return window;
+	}
+	return nullptr;
+}
+
 Window *windowListCombo(Common::String *target) {
 	const Common::Array<Window *> *windowList = g_director->getWindowList();
 	const Common::String selWin = *target;
