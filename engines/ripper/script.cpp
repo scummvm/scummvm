@@ -35,6 +35,11 @@
 
 namespace Ripper {
 
+// RunStartupFrontEndLoop at 0x10778 uses selection cursor 0xe for the white
+// menu pointer. PollInteractionAndResolveSelection at 0x13c8d enters the same
+// front-end action service for the top 50-pixel band of every scene frame.
+static const uint kToolbarCursor = 14;
+
 static const uint32 kScriptHeaderSize = 0xe9;
 static const uint32 kFrameRecordSize = 0x22;
 static const uint32 kInteractionRecordSize = 0x25;
@@ -684,7 +689,7 @@ bool ScriptManager::serviceScene() {
 		return true;
 	}
 	if (_engine->getToolbar()->service(mouse)) {
-		_engine->getCursor()->update(0);
+		_engine->getCursor()->update(kToolbarCursor);
 		return true;
 	}
 
