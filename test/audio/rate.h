@@ -94,6 +94,46 @@ public:
 	}
 
 	/**
+	 * The field configuration of the SegaCD Monkey Island 1 hang on OpenBSD:
+	 * an 11025 Hz mono sound effect upsampled into a 44100 Hz stereo mixer at
+	 * non-maximum volume with clamped mixing, in sndio-sized blocks of 882
+	 * frames. 882 = 4 * 220 + 2, so every request ends in the middle of a
+	 * group.
+	 */
+	void test_upsample_partial_group_sndio_blocks() {
+		Audio::RateConverter *converter = Audio::makeRateConverter(11025, 44100, false, true, false);
+		CountingAudioStream input(11025, false);
+
+		const int frames = 882;
+		const int totalFrames = 3 * frames;
+		const uint16 volume = 192;
+
+		int16 *out = new int16[totalFrames * 2]();
+		int16 *pos = out;
+
+		for (int i = 0; i < 3; ++i) {
+			const int written = converter->convert(input, (byte *)pos, sizeof(int16),
+				frames, volume, volume, Audio::MIX_CLAMPED_ADD);
+			TS_ASSERT_EQUALS(written, frames);
+			pos += frames * 2;
+		}
+
+		// Output frame k must be a volume-scaled copy of input frame k / 4,
+		// across call boundaries.
+		for (int k = 0; k < totalFrames; ++k) {
+			const int16 expected = (int16)(((k / 4 + 1) * volume) / Audio::Mixer::kMaxMixerVolume);
+			TS_ASSERT_EQUALS(out[k * 2 + 0], expected);
+			TS_ASSERT_EQUALS(out[k * 2 + 1], expected);
+		}
+
+		// totalFrames % 4 != 0, so a group is still open.
+		TS_ASSERT_EQUALS(converter->needsDraining(), true);
+
+		delete[] out;
+		delete converter;
+	}
+
+	/**
 	 * A 1:1 conversion never groups, and must not hold anything back.
 	 */
 	void test_copy() {
