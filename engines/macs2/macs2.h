@@ -120,15 +120,15 @@ struct AnimFrame : public Sprite {
 };
 
 struct BackgroundAnimation {
-	uint16 _x;
-	uint16 _y;
+	uint16 _x = 0;
+	uint16 _y = 0;
 	Common::Array<AnimFrame> _frames;
-	uint32 _frameIndex;
+	uint32 _frameIndex = 0;
 };
 
 struct BackgroundAnimationBlob {
-	uint16 _x;
-	uint16 _y;
+	uint16 _x = 0;
+	uint16 _y = 0;
 	Common::Array<uint8> _blob;
 	uint16 _unknown0C = 0; // +0x50F3: purpose unknown (word, read from file, not used at runtime)
 	uint8 _unknown0E = 0;  // +0x50F5: purpose unknown (byte, read from file, not used at runtime)
