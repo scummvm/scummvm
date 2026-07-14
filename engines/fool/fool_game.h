@@ -103,7 +103,7 @@ enum FoolFontID : uint16 {
 
 class FoolGame {
 public:
-	FoolGame(FoolVersion version): _version(version) {}
+	FoolGame(FoolVersion version, const Common::String &saveFileName): _version(version), _startSaveFileName(saveFileName) {}
 	~FoolGame() {}
 
 	void run();
@@ -469,6 +469,7 @@ private:
 	const int *_zstrOffset;
 	Toolbox *_toolbox;
 	ZBasic *_zbasic;
+	Common::String _startSaveFileName;
 	bool _quit = false;
 
 	GrafPtr var_i32_0;

@@ -20,11 +20,11 @@
  */
 
 #include "common/endian.h"
-#include "common/memstream.h"
+#include "common/translation.h"
 #include "common/ustr.h"
 #include "common/util.h"
 #include "graphics/mactoolbox/toolbox.h"
-#include "gui/filebrowser-dialog.h"
+#include "gui/saveload.h"
 
 #include "fool/fool.h"
 #include "fool/fool_game.h"
@@ -91,15 +91,34 @@ static const byte fondSmall[] = {
 };
 
 Common::String getFileNameFromModal(bool save, const Common::String &suggested, const Common::String &title) {
-	Common::String prefix = g_engine->getGameId() + '-';
-	Common::String mask = prefix + "*";
-	GUI::FileBrowserDialog browser(title.c_str(), "fool", save ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str(), suggested.c_str());
-	if (browser.runModal() <= 0) {
-		return Common::String();
+	Common::String target = g_engine->getGameId();
+	Common::String result;
+	GUI::SaveLoadChooser chooser(title, Common::U32String(save ? _("Save") : _("Open")), save);
+	int slot = chooser.runModalWithCurrentTarget();
+	if (slot != -1) {
+		Common::String existing = g_engine->getMetaEngine()->getSavegameFile(slot, target.c_str());
+
+		if (save) {
+			// little bit of a hack; because the description is in the filename,
+			// we need to manually delete any existing save in that slot
+			g_engine->getMetaEngine()->removeSaveState(target.c_str(), slot);
+			Common::String intermediate = chooser.getResultString();
+			Common::String desc;
+			// because windows is bad, strip out any challenging characters
+			const char *ptr = intermediate.c_str();
+			const char *end = intermediate.c_str() + intermediate.size();
+			while (ptr < end) {
+				if (Common::isAlnum(*ptr) || (*ptr == ' ') || (*ptr == '-') || (*ptr == '_') || (*ptr == '.')) {
+					desc += *ptr;
+				}
+				ptr++;
+			}
+			result = Common::String::format("%s-%s.%03d", target.c_str(), desc.c_str(), slot);
+		} else {
+			result = existing;
+		}
 	}
-	Common::String result = browser.getResult();
-	if (!result.empty() && !result.hasPrefixIgnoreCase(prefix))
-		result = prefix + result;
+
 	return result;
 }
 
@@ -357,7 +376,7 @@ void FoolGame::copyScreen(int16 put, BitMap &bmp) {
 	// 128:00a2
 	// the original code would use the memory at 5dfc + 2*arg2.
 	// to make this less bad, our version passes a BitMap pointer
-	warning("copyScreen: put %d, bmp %p", put, (void *)&bmp);
+	debugC(5, kDebugGraphics, "FoolGame::copyScreen: put %d, bmp %p", put, (void *)&bmp);
 	if (put == 0) {
 		_zbasic->get(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, bmp);
 	}
@@ -1681,7 +1700,7 @@ void FoolGame::autoSaveGame() {
 	// This wrapper changes the autosave behaviour to match the rest of ScummVM.
 	_isAutoSaving = true;
 	Common::U32String previous = _saveFileName;
-	_saveFileName = Common::U32String::format("%s-Autosave", g_engine->getGameId().c_str());
+	_saveFileName = Common::U32String::format("%s-Autosave.000", g_engine->getGameId().c_str());
 	saveGame();
 	_saveFileName = previous;
 	_isAutoSaving = false;
@@ -2827,8 +2846,13 @@ void FoolGame::sub_129_068() {
 	var_str_e22.clear(); // was: str(124);
 	_saveFileName.clear(); // was: str(125);
 
-	var_i16_484 = _zbasic->finderInfo(var_i16_7e4, var_str_588, var_i32_f28, var_i16_688);
 
+	// Check if the game was started from a saved file.
+	// Originally this would call the ZBasic FINDERINFO command, which returns
+	// the name of the save file (if one was used to open the game).
+
+	//var_i16_484 = _zbasic->finderInfo(var_i16_7e4, var_str_588, var_i32_f28, var_i16_688);
+	var_str_588 = _startSaveFileName;
 	if (!var_str_588.empty()) { // was: str(126)
 		if (var_str_588 == Common::U32String("Fool's Puzzles")) { // was: str(127)
 			var_str_e22 = Common::U32String("Fool's Puzzles"); // was: str(128)

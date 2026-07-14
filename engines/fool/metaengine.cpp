@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/savefile.h"
 #include "common/translation.h"
 
 #include "fool/detection.h"
@@ -56,6 +57,11 @@ public:
 	 */
 	bool hasFeature(MetaEngineFeature f) const override;
 
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override { return 999; }
+	Common::String getSavegameFile(int saveGameIdx, const char *target) const override;
+	bool removeSaveState(const char *target, int slot) const override;
+
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 };
 
@@ -73,9 +79,46 @@ Common::Error FoolMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 }
 
 bool FoolMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return checkExtendedSaves(f) ||
+	return (f == kSupportsListSaves) ||
+		(f == kSupportsDeleteSave) ||
 		(f == kSupportsLoadingDuringStartup);
 }
+
+SaveStateList FoolMetaEngine::listSaves(const char *target) const {
+	if (!target)
+		target = getName();
+	SaveStateList result;
+
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::StringArray filenames = saveMan->listSavefiles(getSavegameFilePattern(target));
+	for (const Common::String &f : filenames) {
+		int slot = atoi(f.c_str() + f.size() - 3);
+		Common::String desc = f.substr(strlen(target) + 1, f.size() - strlen(target) - 1 - 4);
+		result.push_back(SaveStateDescriptor(this, slot, desc));
+	}
+	Common::sort(result.begin(), result.end(), SaveStateDescriptorSlotComparator());
+
+	return result;
+}
+
+Common::String FoolMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
+	if (!target)
+		target = getName();
+	if (saveGameIdx == kSavegameFilePattern)
+		return Common::String::format("%s-*.###", target);
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::StringArray arr = saveMan->listSavefiles(Common::String::format("%s-*.%03d", target, saveGameIdx));
+	if (!arr.empty()) {
+		return arr.front();
+	}
+
+	return Common::String::format("%s-game.%03d", target, saveGameIdx);
+}
+
+bool FoolMetaEngine::removeSaveState(const char *target, int slot) const {
+	return g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+}
+
 
 #if PLUGIN_ENABLED_DYNAMIC(FOOL)
 REGISTER_PLUGIN_DYNAMIC(FOOL, PLUGIN_TYPE_ENGINE, FoolMetaEngine);
