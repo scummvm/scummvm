@@ -90,6 +90,10 @@
   `PersistentSettingsBlob` (offsets 6 and 17). Once enabled,
   `RenderFrontEndActionPreviewSprite` builds a four-pixel-padded tooltip at
   the pointer's right edge using the startup string and NF2T font.
+- `ServiceUiControlStateSelection` at `0x4a912` hit-tests the current pointer
+  before returning a control ID. A toolbar press therefore dispatches only
+  when its release remains over the same action; leaving the control cancels
+  the pending selection.
 - Action dispatch at `0x190b7` maps the nine controls to remote setup, world
   map, inventory, WAC, save, restore, options, help, and quit. The ScummVM
   toolbar currently preserves the click/release routing and logs these
