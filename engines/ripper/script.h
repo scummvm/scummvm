@@ -155,6 +155,8 @@ public:
 	bool serviceScene();
 	void drawDialogueOverlay() const;
 	void updateInteractiveCursor(const Common::Point &point);
+	bool isMilestoneFlagSet(uint32 flag) const;
+	void setMilestoneFlag(uint32 flag, const char *source);
 
 	CompiledScript &startup() { return _startup; }
 	CompiledScript &ba0() { return _ba0; }
@@ -169,7 +171,6 @@ private:
 	bool findFrameByLabel(const CompiledScript &script, const Common::String &label, uint &frameIndex) const;
 	const ScriptInteraction *findBa0Interaction(const Common::Point &point,
 		uint *interactionIndex = nullptr) const;
-	bool isMilestoneFlagSet(uint32 flag) const;
 	bool isScenePlayed(const Common::String &scene) const;
 	void markScenePlayed(const Common::String &scene);
 	static Common::String argumentString(const ScriptArgument &argument);

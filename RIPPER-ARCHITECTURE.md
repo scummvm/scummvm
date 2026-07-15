@@ -127,6 +127,16 @@
   leaves the modal loop. The reimplementation restores the indexed scene and
   palette when the WAC loop exits; database, text-viewer, and help dispatches
   remain explicit subsystem stubs at this boundary.
+- The `0x2000` action enters `RunWacInventorySelectionLoop` at `0x2252a`.
+  `BuildWacInventorySelectionMenu` at `0x22c91` scans 30 entries, using shared
+  named/milestone flags `0x46 + entry` as availability bits and game-text IDs
+  `0xdc + entry` as labels. It stores the original entry byte separately from
+  the visible chooser row, so locked entries do not change dispatch IDs. The
+  chooser control ID is `0x73a`; its recovered layout starts at x=50 and is
+  clamped to y=210 with a 282x190 outer rectangle. Entry 1 dispatches
+  `RunWacMugSelectionScene` at `0x236b9`, entry 2 dispatches
+  `PlayMugSelectionCompletionMedia` at `0x2361c`, and the remaining database
+  entry handlers are explicit stubs.
 
 ## Cursor
 
