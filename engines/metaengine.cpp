@@ -29,7 +29,6 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
-#include "common/events.h"
 
 #include "engines/dialogs.h"
 
@@ -157,11 +156,6 @@ Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	act->setKeyEvent(KEYCODE_KP6);
 	act->addDefaultInputMapping("JOY_RIGHT");
 	act->allowKbdRepeats();
-	engineKeyMap->addAction(act);
-
-	act = new Action(kStandardActionToggleHotspots, _("Show hotspots"));
-	act->setEvent(Common::EVENT_HOTSPOTS_SHOW);
-	act->addDefaultInputMapping("h");
 	engineKeyMap->addAction(act);
 
 	return Keymap::arrayOf(engineKeyMap);
