@@ -24,16 +24,26 @@ public:
 	void draw() const;
 	bool isPending() const { return _pending; }
 	bool hasChoices() const { return !_choices.empty(); }
-	void clearPending() { _pending = false; _choices.clear(); }
+	void clearPending();
 
 private:
 	struct Choice {
 		Common::String text;
 		uint16 result;
 	};
+	uint measureText(const Common::String &text) const;
+	void updateLayout();
+	void drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const;
+
 	Common::Array<Choice> _choices;
+	Common::Array<BitmapAssetFrame> _arrowFrames;
+	Common::Rect _chooserBounds;
+	Common::Rect _upArrowBounds;
+	Common::Rect _downArrowBounds;
 	bool _pending = false;
 	uint _selectedChoice = 0;
+	uint _firstVisibleChoice = 0;
+	int _hoveredArrow = 0;
 	BitmapFontAsset _font;
 };
 

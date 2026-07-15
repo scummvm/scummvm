@@ -157,6 +157,17 @@
   `small.fnt` space width, character spacing, per-glyph offsets, transparency,
   and line height. `7pt_font.fnt` belongs to a separate interface template and
   is not the dialogue-choice font.
+- `InitializeUiChoiceControlEntryRows` at `0x4c0b3` binds three visible row
+  controls to a list chooser. `ProcessChooserControlInput` at `0x57372` keeps
+  a separate first-visible index and moves it one row for the chooser's up and
+  down control IDs. The opcode `0x17` lifecycle places those controls five
+  pixels beyond the chooser's right edge, aligned to its top and bottom, with
+  cursor 16. Startup loads their normal and hover frames in order from
+  `mnarrow0.bbm` through `mnarrow3.bbm`.
+- `CreateListChooserControl` at `0x56ec2` measures the widest NF2T choice when
+  the scene-entry layout supplies a negative width. `ComputeChooserControlLayout`
+  at `0x54a74` adds the template padding and centers the resulting chooser,
+  instead of stretching dialogue rows across a fixed screen-width rectangle.
 - Opcode `0x0a` maps to `HandleSceneEntryStepPromptCondition` at `0x149b4`.
   In the dialogue entry callback it branches around the exhausted-dialogue
   media path while at least one choice record exists. The frame's persistent
