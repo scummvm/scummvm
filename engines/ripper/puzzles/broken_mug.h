@@ -39,6 +39,7 @@ public:
 	explicit BrokenMugPuzzle(RipperEngine *engine);
 
 	Result run();
+	static bool playCompletionMedia(RipperEngine *engine);
 
 private:
 	struct Frame {
@@ -69,6 +70,7 @@ private:
 	bool updateRotation(uint32 now);
 	void finishDrag();
 	bool isSolved() const;
+	bool completePuzzle();
 	const Frame &currentFrame(const Piece &piece) const;
 
 	RipperEngine *_engine;
