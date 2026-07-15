@@ -192,12 +192,7 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const MADS::MADSGameDescription *desc) const override;
-
-	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	bool removeSaveState(const char *target, int slot) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
@@ -236,83 +231,8 @@ Common::Error MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 	return Common::kNoError;
 }
 
-SaveStateList MADSMetaEngine::listSaves(const char *target) const {
-//	if (getGameId(target) != "nebular")
-		return AdvancedMetaEngine<MADS::MADSGameDescription>::listSaves(target);
-#if 0
-	SaveStateList saveList;
-
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String saveDesc;
-	Common::String pattern = Common::String::format("%s.0##", target);
-	MADS::MADSV2::RexNebular::MADSSavegameHeader header;
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		const char *ext = strrchr(file->c_str(), '.');
-		int slot = ext ? atoi(ext + 1) : -1;
-
-		if (slot >= 0 && slot < MAX_SAVES) {
-			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
-
-			if (in) {
-				if (MADS::Nebular::Game::readSavegameHeader(in, header))
-					saveList.push_back(SaveStateDescriptor(this, slot, header._saveName));
-				delete in;
-			}
-		}
-	}
-
-	// Sort saves based on slot number.
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-#endif
-}
-
 int MADSMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVES;
-}
-
-bool MADSMetaEngine::removeSaveState(const char *target, int slot) const {
-#if 0
-	if (getGameId(target) == "nebular") {
-		Common::String filename = Common::String::format("%s.%03d", target, slot);
-		return g_system->getSavefileManager()->removeSavefile(filename);
-	} else {
-#endif
-		return AdvancedMetaEngine<MADS::MADSGameDescription>::removeSaveState(target, slot);
-//	}
-}
-
-SaveStateDescriptor MADSMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-//	if (getGameId(target) != "nebular")
-		return AdvancedMetaEngine<MADS::MADSGameDescription>::querySaveMetaInfos(target, slot);
-#if 0
-	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
-
-	if (f) {
-		MADS::Nebular::MADSSavegameHeader header;
-		if (!MADS::Nebular::Game::readSavegameHeader(f, header, false)) {
-			delete f;
-			return SaveStateDescriptor();
-		}
-		delete f;
-
-		// Create the return descriptor
-		SaveStateDescriptor desc(this, slot, header._saveName);
-		desc.setThumbnail(header._thumbnail);
-		desc.setSaveDate(header._year, header._month, header._day);
-		desc.setSaveTime(header._hour, header._minute);
-		desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
-
-		return desc;
-	}
-
-	return SaveStateDescriptor();
-#endif
 }
 
 Common::KeymapArray MADSMetaEngine::initKeymaps(const char *target) const {

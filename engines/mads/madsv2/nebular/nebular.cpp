@@ -21,7 +21,6 @@
 
 #include "engines/util.h"
 #include "mads/core/mps_installer.h"
-#include "mads/madsv2/console.h"
 #include "mads/madsv2/core/attr.h"
 #include "mads/madsv2/core/conv.h"
 #include "mads/madsv2/core/env.h"
@@ -37,6 +36,7 @@
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/nebular/nebular.h"
+#include "mads/madsv2/nebular/console.h"
 #include "mads/madsv2/nebular/copy.h"
 #include "mads/madsv2/nebular/global.h"
 #include "mads/madsv2/nebular/main.h"

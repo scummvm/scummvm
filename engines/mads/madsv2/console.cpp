@@ -33,7 +33,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("walkable", WRAP_METHOD(Console, cmdWalkable));
 }
 
-static int strToInt(const char *s) {
+int strToInt(const char *s) {
 	if (!*s)
 		// No string at all
 		return 0;

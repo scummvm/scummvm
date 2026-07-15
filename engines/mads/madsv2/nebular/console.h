@@ -19,27 +19,26 @@
  *
  */
 
-#ifndef MADSV2_CONSOLE_H
-#define MADSV2_CONSOLE_H
+#ifndef MADSV2_NEBULAR_CONSOLE_H
+#define MADSV2_NEBULAR_CONSOLE_H
 
-#include "gui/debugger.h"
+#include "mads/madsv2/console.h"
 
 namespace MADS {
 namespace MADSV2 {
+namespace RexNebular {
 
-extern int strToInt(const char *s);
-
-class Console : public GUI::Debugger {
+class Console : public MADS::MADSV2::Console {
 private:
-	bool cmdTeleport(int argc, const char **argv);
-	bool cmdWalkable(int argc, const char **argv);
-	bool cmdDepth(int argc, const char **argv);
+	bool cmdLoad(int argc, const char **argv);
 
 public:
 	Console();
-	~Console() override {}
+	~Console() override {
+	}
 };
 
+} // namespace RexNebular
 } // namespace MADSV2
 } // namespace MADS
 
