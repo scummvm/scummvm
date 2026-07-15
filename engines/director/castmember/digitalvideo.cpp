@@ -478,9 +478,13 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 		}
 	}
 
-	// Zero-sized bbox: nothing to render, and scaling to it would divide by zero.
-	if (bbox.width() <= 0 || bbox.height() <= 0)
+	// Zero-sized bbox: nothing to render. Still pump the decoder so an
+	// invisible video used only as a timing/audio clock keeps advancing.
+	if (bbox.width() <= 0 || bbox.height() <= 0) {
+		if (_channel && _channel->_movieRate != 0.0 && _video->needsUpdate())
+			_video->decodeNextFrame();
 		return nullptr;
+	}
 
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow()->getMacWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
