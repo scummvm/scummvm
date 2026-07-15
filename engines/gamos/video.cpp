@@ -159,4 +159,4 @@ void GamosEngine::playVideo(const Common::String &video, const Common::Point &po
     }
 }
 
-};
+}

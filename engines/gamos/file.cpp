@@ -24,10 +24,10 @@
 namespace Gamos {
 
 GameFile::GameFile() {
-};
+}
 
 GameFile::~GameFile() {
-};
+}
 
 bool GameFile::open(const Common::Path &name) {
 	bool res = File::open(name);
