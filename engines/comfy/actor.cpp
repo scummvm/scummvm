@@ -486,7 +486,7 @@ void ComfyEngine::backgroundRestoreDirtyRects() {
 		return;
 
 	for (uint i = 0; i < _resolutionChangeCount; i++) {
-		VideoRectRecord &rect = _resolutionChanges[i];
+		ComfyRect &rect = _resolutionChanges[i];
 		int16 width = rect.right - rect.left;
 		int16 height = rect.bottom - rect.top;
 		if (width <= 0 || height <= 0)
@@ -606,42 +606,6 @@ bool ComfyEngine::spriteCoversPoint(int16 spriteId, int16 x, int16 y, int16 poin
 	return false;
 }
 
-uint32 ComfyEngine::actorReadU32(Actor &actor, uint offset) {
-	if (offset + 4 > _actorSize)
-		return 0;
-
-	return READ_LE_UINT32(actor.raw + offset);
-}
-
-uint16 ComfyEngine::actorReadU16(Actor &actor, uint offset) {
-	if (offset + 2 > _actorSize)
-		return 0;
-
-	return READ_LE_UINT16(actor.raw + offset);
-}
-
-byte ComfyEngine::actorReadU8(Actor &actor, uint offset) {
-	if (offset >= _actorSize)
-		return 0;
-
-	return actor.raw[offset];
-}
-
-void ComfyEngine::actorWriteU32(Actor &actor, uint offset, uint32 value) {
-	if (offset + 4 <= _actorSize)
-		WRITE_LE_UINT32(actor.raw + offset, value);
-}
-
-void ComfyEngine::actorWriteU16(Actor &actor, uint offset, uint16 value) {
-	if (offset + 2 <= _actorSize)
-		WRITE_LE_UINT16(actor.raw + offset, value);
-}
-
-void ComfyEngine::actorWriteU8(Actor &actor, uint offset, byte value) {
-	if (offset < _actorSize)
-		actor.raw[offset] = value;
-}
-
 ComfyEngine::Actor *ComfyEngine::actorGetPtr(uint16 actorIndex) {
 	return actorIndex < _actors.size() ? &_actors[actorIndex] : nullptr;
 }
@@ -653,12 +617,12 @@ ComfyEngine::Actor *ComfyEngine::rootActor() {
 void ComfyEngine::actorSetFrame(int16 frame) {
 	Actor *root = rootActor();
 	if (root)
-		actorWriteU32(*root, kActorSpriteSelector, (uint32)(int32)frame);
+		root->spriteSelector = (uint32)(int32)frame;
 }
 
 uint16 ComfyEngine::actorGetFrame() {
 	Actor *root = rootActor();
-	return root ? (uint16)actorReadU32(*root, kActorSpriteSelector) : 0;
+	return root ? (uint16)root->spriteSelector : 0;
 }
 
 void ComfyEngine::actorSetPos(uint16 mode, int16 value) {
@@ -668,13 +632,12 @@ void ComfyEngine::actorSetPos(uint16 mode, int16 value) {
 
 	switch (mode) {
 	case 1:
-		actorWriteU32(*root, kActorXFixed, (uint32)(int32)value);
-		actorWriteU32(*root, kActorYFixed, 0);
+		root->xFixed = value;
+		root->yFixed = 0;
 		break;
 
 	case 2:
-		actorWriteU32(*root, kActorYFixed,
-			(actorReadU32(*root, kActorYFixed) + (int32)value) & 0xFF);
+		root->yFixed = (int32)(((uint32)root->yFixed + (uint32)(int32)value) & 0xFF);
 		break;
 
 	default:
@@ -691,14 +654,14 @@ ComfyEngine::Actor *ComfyEngine::actorResolve(uint16 sceneOrActor, uint16 fallba
 
 uint16 ComfyEngine::actorAlloc(uint16 sceneSlot) {
 	Actor *root = actorGetPtr(0);
-	uint16 actorIndex = root ? actorReadU16(*root, kActorNextLink) : 0;
+	uint16 actorIndex = root ? root->nextLink : 0;
 	if (!actorIndex || sceneSlot >= _sceneHandles.size())
 		return 0;
 
 	Actor *actor = actorGetPtr(actorIndex);
-	actorWriteU16(*root, kActorNextLink, actorReadU16(*actor, kActorNextLink));
+	root->nextLink = actor->nextLink;
 	_sceneHandles[sceneSlot] = actorIndex;
-	actorWriteU16(*actor, kActorSceneHandle, sceneSlot);
+	actor->sceneHandle = sceneSlot;
 	return actorIndex;
 }
 
@@ -712,10 +675,10 @@ void ComfyEngine::actorFreeSlot(uint16 sceneSlot) {
 		return;
 
 	Actor *root = actorGetPtr(0);
-	actorWriteU16(*actor, kActorNextLink, root ? actorReadU16(*root, kActorNextLink) : 0);
-	actorWriteU16(*actor, kActorSceneHandle, 0);
+	actor->nextLink = root ? root->nextLink : 0;
+	actor->sceneHandle = 0;
 	if (root)
-		actorWriteU16(*root, kActorNextLink, actorIndex);
+		root->nextLink = actorIndex;
 	_sceneHandles[sceneSlot] = 0;
 }
 
@@ -725,17 +688,17 @@ void ComfyEngine::actorInsertChild(uint16 childIndex, uint16 parentIndex) {
 	if (!child || !parent)
 		return;
 
-	uint16 tail = actorReadU16(*parent, kActorChildTail);
+	uint16 tail = parent->childTail;
 	if (tail) {
-		actorWriteU16(*actorGetPtr(tail), kActorNextLink, childIndex);
-		actorWriteU16(*child, kActorPrevLink, tail);
+		actorGetPtr(tail)->nextLink = childIndex;
+		child->prevLink = tail;
 	} else {
-		actorWriteU16(*parent, kActorChildHead, childIndex);
-		actorWriteU16(*child, kActorPrevLink, 0);
+		parent->childHead = childIndex;
+		child->prevLink = 0;
 	}
 
-	actorWriteU16(*child, kActorNextLink, 0);
-	actorWriteU16(*parent, kActorChildTail, childIndex);
+	child->nextLink = 0;
+	parent->childTail = childIndex;
 }
 
 void ComfyEngine::actorInsertSibling(uint16 actorIndex, uint16 ownerIndex) {
@@ -744,13 +707,13 @@ void ComfyEngine::actorInsertSibling(uint16 actorIndex, uint16 ownerIndex) {
 	if (!actor || !owner)
 		return;
 
-	uint16 head = actorReadU16(*owner, kActorSiblingHead);
+	uint16 head = owner->siblingHead;
 	if (head)
-		actorWriteU16(*actorGetPtr(head), kActorPrevLink, actorIndex);
+		actorGetPtr(head)->prevLink = actorIndex;
 
-	actorWriteU16(*actor, kActorNextLink, head);
-	actorWriteU16(*actor, kActorPrevLink, 0);
-	actorWriteU16(*owner, kActorSiblingHead, actorIndex);
+	actor->nextLink = head;
+	actor->prevLink = 0;
+	owner->siblingHead = actorIndex;
 }
 
 void ComfyEngine::actorUnlink(uint16 actorIndex) {
@@ -758,23 +721,23 @@ void ComfyEngine::actorUnlink(uint16 actorIndex) {
 	if (!actor)
 		return;
 
-	Actor *parent = actorGetPtr(actorReadU16(*actor, kActorParent));
+	Actor *parent = actorGetPtr(actor->parent);
 	if (!parent)
 		return;
 
-	uint16 next = actorReadU16(*actor, kActorNextLink);
-	uint16 previous = actorReadU16(*actor, kActorPrevLink);
+	uint16 next = actor->nextLink;
+	uint16 previous = actor->prevLink;
 	if (next)
-		actorWriteU16(*actorGetPtr(next), kActorPrevLink, previous);
-	else if (actorReadU16(*parent, kActorChildTail) == actorIndex)
-		actorWriteU16(*parent, kActorChildTail, previous);
+		actorGetPtr(next)->prevLink = previous;
+	else if (parent->childTail == actorIndex)
+		parent->childTail = previous;
 
 	if (previous)
-		actorWriteU16(*actorGetPtr(previous), kActorNextLink, next);
-	else if (actorReadU16(*parent, kActorSiblingHead) == actorIndex)
-		actorWriteU16(*parent, kActorSiblingHead, next);
+		actorGetPtr(previous)->nextLink = next;
+	else if (parent->siblingHead == actorIndex)
+		parent->siblingHead = next;
 	else
-		actorWriteU16(*parent, kActorChildHead, next);
+		parent->childHead = next;
 }
 
 uint16 ComfyEngine::actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible, byte active,
@@ -784,48 +747,48 @@ uint16 ComfyEngine::actorInit(uint16 sceneSlot, uint16 parentSlot, byte visible,
 	if (!actorIndex || !actor)
 		return 8;
 
-	actorWriteU16(*actor, kActorSceneHandle, sceneSlot);
-	actorWriteU8(*actor, kActorVisible, visible);
-	actorWriteU8(*actor, kActorActive, active);
-	actorWriteU32(*actor, kActorCurrentPc, pc);
-	actorWriteU32(*actor, kActorCallPc, 0);
-	actorWriteU32(*actor, kActorResetPc, pc);
-	actorWriteU32(*actor, kActorXFixed, (uint32)((int32)x * 0x1000));
-	actorWriteU32(*actor, kActorYFixed, (uint32)((int32)y * 0x1000));
-	actorWriteU32(*actor, kActorSpriteSelector, (uint32)(int32)sprite);
-	actorWriteU16(*actor, kActorChildTail, 0);
-	actorWriteU16(*actor, kActorChildHead, 0);
-	actorWriteU16(*actor, kActorSiblingHead, 0);
-	actorWriteU16(*actor, kActorMoveTicks, 0);
-	actorWriteU16(*actor, kActorTriggerKey, 0);
-	actorWriteU16(*actor, kActorWaitTarget, 0);
-	actorWriteU16(*actor, kActorWaitAccum, 0);
-	actorWriteU8(*actor, kActorDirty, 1);
+	actor->sceneHandle = sceneSlot;
+	actor->visible = visible;
+	actor->active = active;
+	actor->currentPc = pc;
+	actor->callPc = 0;
+	actor->resetPc = pc;
+	actor->xFixed = (int32)x * 0x1000;
+	actor->yFixed = (int32)y * 0x1000;
+	actor->spriteSelector = (uint32)(int32)sprite;
+	actor->childTail = 0;
+	actor->childHead = 0;
+	actor->siblingHead = 0;
+	actor->moveTicks = 0;
+	actor->triggerKey = 0;
+	actor->waitTarget = 0;
+	actor->waitAccum = 0;
+	actor->dirty = 1;
 	if (_videoMode == 2 || _videoMode == 4) {
-		VideoRectRecord empty;
-		actorWriteCachedRect(*actor, empty);
-		actorWriteU32(*actor, _actorCachedSpriteOffset, 0);
-		actorWriteU8(*actor, _actorCachedVisibleOffset, 0);
+		ComfyRect empty;
+		actor->cachedRect = empty;
+		actor->cachedSprite = 0;
+		actor->cachedVisible = 0;
 	}
 
 	if (parentSlot) {
 		uint16 parentIndex = sceneGetHandle(parentSlot);
-		actorWriteU16(*actor, kActorParent, parentIndex);
+		actor->parent = parentIndex;
 		if (insertAsChild)
 			actorInsertChild(actorIndex, parentIndex);
 		else
 			actorInsertSibling(actorIndex, parentIndex);
 	} else {
-		actorWriteU16(*actor, kActorParent, 0);
-		actorWriteU16(*actor, kActorNextLink, 0);
-		actorWriteU16(*actor, kActorPrevLink, 0);
+		actor->parent = 0;
+		actor->nextLink = 0;
+		actor->prevLink = 0;
 	}
 
 	return 1;
 }
 
 void ComfyEngine::actorSetPc(Actor &actor, uint32 pc) {
-	uint32 previous = actorReadU32(actor, kActorCallPc);
+	uint32 previous = actor.callPc;
 	uint32 packed = pc;
 	if (previous) {
 		byte entry = _actorPcTable[0] >> 24;
@@ -839,14 +802,14 @@ void ComfyEngine::actorSetPc(Actor &actor, uint32 pc) {
 		packed = ((uint32)entry << 24) + pc;
 	}
 
-	actorWriteU32(actor, kActorCallPc, packed);
+	actor.callPc = packed;
 }
 
 uint32 ComfyEngine::actorPopPc(Actor &actor) {
-	uint32 packed = actorReadU32(actor, kActorCallPc);
+	uint32 packed = actor.callPc;
 	byte entry = packed >> 24;
 	if (entry) {
-		actorWriteU32(actor, kActorCallPc, _actorPcTable[entry]);
+		actor.callPc = _actorPcTable[entry];
 		_actorPcTable[entry] = _actorPcTable[0];
 		_actorPcTable[0] = (uint32)entry << 24;
 		if (_sceneActorPcOffset + sizeof(_actorPcTable) <= _sceneMemoryBlock.size()) {
@@ -854,14 +817,14 @@ uint32 ComfyEngine::actorPopPc(Actor &actor) {
 			WRITE_LE_UINT32(&_sceneMemoryBlock[_sceneActorPcOffset + entry * 4], _actorPcTable[entry]);
 		}
 	} else {
-		actorWriteU32(actor, kActorCallPc, 0);
+		actor.callPc = 0;
 	}
 
 	return packed & 0x00FFFFFF;
 }
 
 void ComfyEngine::actorFreePcChain(Actor &actor) {
-	byte first = actorReadU32(actor, kActorCallPc) >> 24;
+	byte first = actor.callPc >> 24;
 	byte entry = first;
 	while (entry) {
 		byte next = _actorPcTable[entry] >> 24;
@@ -878,7 +841,7 @@ void ComfyEngine::actorFreePcChain(Actor &actor) {
 		entry = next;
 	}
 
-	actorWriteU32(actor, kActorCallPc, 0);
+	actor.callPc = 0;
 }
 
 void ComfyEngine::actorFreeTreePc(uint16 actorIndex) {
@@ -887,33 +850,33 @@ void ComfyEngine::actorFreeTreePc(uint16 actorIndex) {
 		return;
 
 	if (!_usesAnimFile && _videoMode == 2)
-		videoFindBestMode(actorReadCachedRect(*actor));
+		videoFindBestMode(actor->cachedRect);
 
 	actorFreePcChain(*actor);
 
-	uint16 child = actorReadU16(*actor, kActorSiblingHead);
+	uint16 child = actor->siblingHead;
 	while (child) {
 		Actor *childActor = actorGetPtr(child);
-		uint16 next = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
+		uint16 next = childActor ? childActor->nextLink : 0;
 		actorFreeTreePc(child);
 		child = next;
 	}
 
-	child = actorReadU16(*actor, kActorChildHead);
+	child = actor->childHead;
 	while (child) {
 		Actor *childActor = actorGetPtr(child);
-		uint16 next = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
+		uint16 next = childActor ? childActor->nextLink : 0;
 		actorFreeTreePc(child);
 		child = next;
 	}
 
 	if (_usesAnimFile) {
-		uint32 selector = actorReadU32(*actor, kActorSpriteSelector);
+		uint32 selector = actor->spriteSelector;
 		if (_videoMode == 2 || _videoMode == 4) {
 			if (selector & 0xFF000000) {
 				renderInvalidateFullFrame();
 			} else if (selector != 0x00FFFFFF) {
-				videoFindBestMode(actorReadCachedRect(*actor));
+				videoFindBestMode(actor->cachedRect);
 			}
 		}
 
@@ -921,7 +884,7 @@ void ComfyEngine::actorFreeTreePc(uint16 actorIndex) {
 			animFrameShutdown(true);
 	}
 
-	uint16 sceneSlot = actorReadU16(*actor, kActorSceneHandle);
+	uint16 sceneSlot = actor->sceneHandle;
 	actorFreeSlot(sceneSlot);
 }
 
@@ -930,19 +893,19 @@ void ComfyEngine::actorClearDirtyTree(uint16 actorIndex) {
 	if (!actor)
 		return;
 
-	actorWriteU8(*actor, kActorDirty, 0);
-	uint16 child = actorReadU16(*actor, kActorSiblingHead);
+	actor->dirty = 0;
+	uint16 child = actor->siblingHead;
 	while (child) {
 		Actor *childActor = actorGetPtr(child);
-		uint16 next = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
+		uint16 next = childActor ? childActor->nextLink : 0;
 		actorClearDirtyTree(child);
 		child = next;
 	}
 
-	child = actorReadU16(*actor, kActorChildHead);
+	child = actor->childHead;
 	while (child) {
 		Actor *childActor = actorGetPtr(child);
-		uint16 next = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
+		uint16 next = childActor ? childActor->nextLink : 0;
 		actorClearDirtyTree(child);
 		child = next;
 	}
@@ -950,14 +913,14 @@ void ComfyEngine::actorClearDirtyTree(uint16 actorIndex) {
 
 void ComfyEngine::actorSetAllVisible() {
 	for (uint i = 0; i + 1 < _actors.size(); i++)
-		actorWriteU8(_actors[i], kActorDirty, 1);
+		_actors[i].dirty = 1;
 }
 
 void ComfyEngine::actorClearFirstAnimFrameSelector() {
 	for (uint actorIndex = 1; actorIndex < COMFY_ACTOR_COUNT; actorIndex++) {
 		Actor *actor = actorGetPtr(actorIndex);
-		if (actor && actorReadU32(*actor, kActorSpriteSelector) == 0x00FFFFFF) {
-			actorWriteU32(*actor, kActorSpriteSelector, 0);
+		if (actor && actor->spriteSelector == 0x00FFFFFF) {
+			actor->spriteSelector = 0;
 			break;
 		}
 	}
@@ -972,41 +935,41 @@ bool ComfyEngine::actorRunScript(uint16 actorIndex, bool &descendChildren) {
 	_currentActor = actorIndex;
 	_actorDestroyedCurrent = false;
 	if (_stringTable.size() > 3) {
-		_stringTable[2] = actorReadU16(*actor, kActorStringRef);
-		_stringTable[3] = actorReadU16(*actor, kActorStringRef + 2);
+		_stringTable[2] = actor->stringRefs[0];
+		_stringTable[3] = actor->stringRefs[1];
 	}
 
-	uint16 triggerKey = actorReadU16(*actor, kActorTriggerKey);
+	uint16 triggerKey = actor->triggerKey;
 	if (triggerKey && keyBitTest(triggerKey)) {
-		byte triggerFlags = actorReadU8(*actor, kActorTriggerFlags);
+		byte triggerFlags = actor->triggerFlags;
 		if (triggerFlags & 1)
-			actorSetPc(*actor, actorReadU32(*actor, kActorCurrentPc));
+			actorSetPc(*actor, actor->currentPc);
 
 		if (triggerFlags & 4)
 			keyBitClear(triggerKey);
 
 		if (triggerFlags & 2)
-			actorWriteU16(*actor, kActorTriggerKey, 0);
+			actor->triggerKey = 0;
 
-		actorWriteU16(*actor, kActorWaitTarget, 0);
-		actorWriteU16(*actor, kActorWaitAccum, 0);
-		actorWriteU32(*actor, kActorCurrentPc, actorReadU32(*actor, kActorTriggerPc));
+		actor->waitTarget = 0;
+		actor->waitAccum = 0;
+		actor->currentPc = actor->triggerPc;
 	}
 
 	bool timerWaitYield = false;
-	int16 waitTarget = actorReadU16(*actor, kActorWaitTarget);
+	int16 waitTarget = actor->waitTarget;
 	if (waitTarget) {
 		if (waitTarget > _timerCurrent) {
-			actorWriteU16(*actor, kActorWaitTarget, waitTarget - _timerCurrent);
+			actor->waitTarget = waitTarget - _timerCurrent;
 			timerWaitYield = true;
 		} else {
 			int16 elapsed = _timerCurrent - waitTarget;
-			actorWriteU16(*actor, kActorWaitAccum, actorReadU16(*actor, kActorWaitAccum) + elapsed);
-			actorWriteU16(*actor, kActorWaitTarget, 0);
+			actor->waitAccum += elapsed;
+			actor->waitTarget = 0;
 		}
 	}
 
-	int16 moveTicks = actorReadU16(*actor, kActorMoveTicks);
+	int16 moveTicks = actor->moveTicks;
 	if (moveTicks) {
 		int16 stepTicks = (int16)(uint16)(_timerCurrent + _timer0 + _timer1 + _timer2 + 2) / 4;
 		if (stepTicks > 20)
@@ -1014,42 +977,42 @@ bool ComfyEngine::actorRunScript(uint16 actorIndex, bool &descendChildren) {
 
 		if (moveTicks < stepTicks) {
 			moveTicks = stepTicks;
-			actorWriteU16(*actor, kActorMoveTicks, moveTicks);
+			actor->moveTicks = moveTicks;
 		}
 
-		int32 moveDx = actorReadU32(*actor, kActorMoveDx);
-		int32 moveDy = actorReadU32(*actor, kActorMoveDy);
+		int32 moveDx = actor->moveDx;
+		int32 moveDy = actor->moveDy;
 		int32 stepDx = ((int32)stepTicks * moveDx) / moveTicks;
 		int32 stepDy = ((int32)stepTicks * moveDy) / moveTicks;
-		actorWriteU32(*actor, kActorXFixed, actorReadU32(*actor, kActorXFixed) + stepDx);
-		actorWriteU32(*actor, kActorYFixed, actorReadU32(*actor, kActorYFixed) + stepDy);
-		actorWriteU32(*actor, kActorMoveDx, moveDx - stepDx);
-		actorWriteU32(*actor, kActorMoveDy, moveDy - stepDy);
+		actor->xFixed = (int32)((uint32)actor->xFixed + (uint32)stepDx);
+		actor->yFixed = (int32)((uint32)actor->yFixed + (uint32)stepDy);
+		actor->moveDx = moveDx - stepDx;
+		actor->moveDy = moveDy - stepDy;
 		moveTicks -= stepTicks;
 		if (moveTicks < 0)
 			moveTicks = 0;
 
-		actorWriteU16(*actor, kActorMoveTicks, moveTicks);
-		if (moveTicks && actorReadU8(*actor, kActorBlockingMove)) {
+		actor->moveTicks = moveTicks;
+		if (moveTicks && actor->blockingMove) {
 			descendChildren = true;
 			return false;
 		}
 
-		if (!moveTicks && actorReadU16(*actor, kActorCompletionKey))
-			keyBitSet(actorReadU16(*actor, kActorCompletionKey));
+		if (!moveTicks && actor->completionKey)
+			keyBitSet(actor->completionKey);
 	}
 
 	if (timerWaitYield) {
 		if (_stringTable.size() > 3) {
-			actorWriteU16(*actor, kActorStringRef, _stringTable[2]);
-			actorWriteU16(*actor, kActorStringRef + 2, _stringTable[3]);
+			actor->stringRefs[0] = _stringTable[2];
+			actor->stringRefs[1] = _stringTable[3];
 		}
 
 		descendChildren = true;
 		return false;
 	}
 
-	uint32 pc = actorReadU32(*actor, kActorCurrentPc);
+	uint32 pc = actor->currentPc;
 	for (;;) {
 		ScriptDispatchStatus status = scriptStep(*actor, pc);
 		if (status == kScriptContinue)
@@ -1057,11 +1020,11 @@ bool ComfyEngine::actorRunScript(uint16 actorIndex, bool &descendChildren) {
 
 		if (status == kScriptYield) {
 			if (_stringTable.size() > 3) {
-				actorWriteU16(*actor, kActorStringRef, _stringTable[2]);
-				actorWriteU16(*actor, kActorStringRef + 2, _stringTable[3]);
+				actor->stringRefs[0] = _stringTable[2];
+				actor->stringRefs[1] = _stringTable[3];
 			}
 
-			actorWriteU32(*actor, kActorCurrentPc, pc);
+			actor->currentPc = pc;
 		}
 
 		descendChildren = status == kScriptYield && !_actorDestroyedCurrent;
@@ -1077,7 +1040,7 @@ bool ComfyEngine::actorTickTree(uint16 actorIndex) {
 	if (!actor)
 		return false;
 
-	if (!actorReadU8(*actor, kActorActive)) {
+	if (!actor->active) {
 		actorClearDirtyTree(actorIndex);
 		return false;
 	}
@@ -1088,27 +1051,27 @@ bool ComfyEngine::actorTickTree(uint16 actorIndex) {
 	if (stopBranch || !descendChildren || !actor)
 		return stopBranch;
 
-	uint16 child = actorReadU16(*actor, kActorSiblingHead);
+	uint16 child = actor->siblingHead;
 	while (child) {
 		Actor *childActor = actorGetPtr(child);
-		uint16 savedNext = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
+		uint16 savedNext = childActor ? childActor->nextLink : 0;
 		if (actorTickTree(child))
 			child = savedNext;
 		else {
 			childActor = actorGetPtr(child);
-			child = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
+			child = childActor ? childActor->nextLink : 0;
 		}
 	}
 
-	child = actorReadU16(*actor, kActorChildHead);
+	child = actor->childHead;
 	while (child) {
 		Actor *childActor = actorGetPtr(child);
-		uint16 savedNext = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
+		uint16 savedNext = childActor ? childActor->nextLink : 0;
 		if (actorTickTree(child))
 			child = savedNext;
 		else {
 			childActor = actorGetPtr(child);
-			child = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
+			child = childActor ? childActor->nextLink : 0;
 		}
 	}
 
@@ -1123,7 +1086,7 @@ void ComfyEngine::actorDrawList(uint16 actorIndex, int16 x, int16 y, bool visibl
 			actorDraw(actorIndex, x, y);
 
 		Actor *actor = actorGetPtr(actorIndex);
-		actorIndex = actor ? actorReadU16(*actor, kActorNextLink) : 0;
+		actorIndex = actor ? actor->nextLink : 0;
 	}
 }
 
@@ -1162,7 +1125,7 @@ void ComfyEngine::renderFlushDrawCommands() {
 					if (!nextSprite)
 						continue;
 
-					VideoRectRecord dirtyRect;
+					ComfyRect dirtyRect;
 					dirtyRect.left = nextCommand.x;
 					dirtyRect.top = nextCommand.y;
 					dirtyRect.right = nextCommand.x + nextSprite->header.width;
@@ -1177,7 +1140,7 @@ void ComfyEngine::renderFlushDrawCommands() {
 			if (_engineVersion == 3 && command.actorIndex) {
 				Actor *actor = actorGetPtr(command.actorIndex);
 				if (actor)
-					actorWriteU8(*actor, kActorBlitHitMouse, coversMouse ? 1 : 0);
+					actor->blitHitMouse = coversMouse ? 1 : 0;
 			}
 
 			continue;
@@ -1192,11 +1155,11 @@ void ComfyEngine::renderFlushDrawCommands() {
 		if (_engineVersion == 3 && command.actorIndex) {
 			Actor *actor = actorGetPtr(command.actorIndex);
 			if (actor)
-				actorWriteU8(*actor, kActorBlitHitMouse, coversMouse ? 1 : 0);
+				actor->blitHitMouse = coversMouse ? 1 : 0;
 		}
 
 		if (command.mode == 0) {
-			VideoRectRecord dirtyRect;
+			ComfyRect dirtyRect;
 			dirtyRect.left = command.x;
 			dirtyRect.top = command.y;
 			dirtyRect.right = command.x + sprite->header.width;
@@ -1214,8 +1177,8 @@ void ComfyEngine::renderFlushCachedDirtyRects() {
 		videoFindBestMode(_animFrameDirtyRects[i]);
 }
 
-uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, VideoRectRecord &maskRecord,
-		VideoRectRecord *rects, int16 baseX, int16 baseY) {
+uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, ComfyRect &maskRecord,
+		ComfyRect *rects, int16 baseX, int16 baseY) {
 	if (mode == 1) {
 		_keymaskBits = 0;
 		maskRecord.right = 0;
@@ -1271,7 +1234,7 @@ uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, VideoRectRecord &m
 			_keymaskSpriteWord = spriteId;
 		}
 
-		VideoRectRecord *rect = bitIndex < COMFY_RESOLUTION_CHANGE_CAPACITY ? &rects[bitIndex] : nullptr;
+		ComfyRect *rect = bitIndex < COMFY_RESOLUTION_CHANGE_CAPACITY ? &rects[bitIndex] : nullptr;
 		if (rect) {
 			rect->left = 0;
 			rect->top = 0;
@@ -1305,8 +1268,13 @@ uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, VideoRectRecord &m
 			rect->top = top;
 			rect->right = left + sprite->header.width;
 			rect->bottom = top + sprite->header.height;
-			rect->area = (_isPanther || _engineVersion == 3) ? spriteId :
-				(uint32)sprite->header.width * sprite->header.height;
+			if (_isPanther || _engineVersion == 3) {
+				rect->area = spriteId;
+			} else {
+				rect->area = (uint32)sprite->header.width * sprite->header.height;
+				if (_engineVersion == 1)
+					rect->area = (uint16)rect->area;
+			}
 		}
 	}
 
@@ -1319,8 +1287,8 @@ void ComfyEngine::actorEvalFrameSelection(uint16 actorIndex, int16 x, int16 y) {
 	if (!actor)
 		return;
 
-	uint32 selector = actorReadU32(*actor, _actorCachedSpriteOffset);
-	VideoRectRecord rect = actorReadCachedRect(*actor);
+	uint32 selector = actor->cachedSprite;
+	ComfyRect rect = actor->cachedRect;
 	if (selector == 0x00FFFFFF) {
 		animFrameInvalidateRects(rect.left, rect.top, 0);
 	} else if (selector & 0xFF000000) {
@@ -1331,9 +1299,12 @@ void ComfyEngine::actorEvalFrameSelection(uint16 actorIndex, int16 x, int16 y) {
 
 		if (last != 0xFFFF) {
 			for (uint i = 0; i <= last; i++) {
-				VideoRectRecord dirtyRect = _keymaskInvalidationRects[i];
+				ComfyRect dirtyRect = _keymaskInvalidationRects[i];
 				dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) *
 					(dirtyRect.bottom - dirtyRect.top);
+				if (_engineVersion == 1)
+					dirtyRect.area = (uint16)dirtyRect.area;
+
 				videoFindBestMode(dirtyRect);
 			}
 		}
@@ -1341,42 +1312,20 @@ void ComfyEngine::actorEvalFrameSelection(uint16 actorIndex, int16 x, int16 y) {
 		videoFindBestMode(rect);
 	}
 
-	actorWriteU32(*actor, _actorCachedSpriteOffset, 0);
-	uint16 child = actorReadU16(*actor, kActorSiblingHead);
+	actor->cachedSprite = 0;
+	uint16 child = actor->siblingHead;
 	while (child) {
 		actorEvalFrameSelection(child, x, y);
 		Actor *childActor = actorGetPtr(child);
-		child = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
+		child = childActor ? childActor->nextLink : 0;
 	}
 
-	child = actorReadU16(*actor, kActorChildHead);
+	child = actor->childHead;
 	while (child) {
 		actorEvalFrameSelection(child, x, y);
 		Actor *childActor = actorGetPtr(child);
-		child = childActor ? actorReadU16(*childActor, kActorNextLink) : 0;
+		child = childActor ? childActor->nextLink : 0;
 	}
-}
-
-ComfyEngine::VideoRectRecord ComfyEngine::actorReadCachedRect(Actor &actor) {
-	VideoRectRecord rect;
-	rect.left = actorReadU16(actor, kActorCachedRect);
-	rect.top = actorReadU16(actor, kActorCachedRect + 2);
-	rect.right = actorReadU16(actor, kActorCachedRect + 4);
-	rect.bottom = actorReadU16(actor, kActorCachedRect + 6);
-	rect.area = _actorCachedAreaIs32Bit ? actorReadU32(actor, kActorCachedRect + 8) :
-		actorReadU16(actor, kActorCachedRect + 8);
-	return rect;
-}
-
-void ComfyEngine::actorWriteCachedRect(Actor &actor, VideoRectRecord rect) {
-	actorWriteU16(actor, kActorCachedRect, rect.left);
-	actorWriteU16(actor, kActorCachedRect + 2, rect.top);
-	actorWriteU16(actor, kActorCachedRect + 4, rect.right);
-	actorWriteU16(actor, kActorCachedRect + 6, rect.bottom);
-	if (_actorCachedAreaIs32Bit)
-		actorWriteU32(actor, kActorCachedRect + 8, rect.area);
-	else
-		actorWriteU16(actor, kActorCachedRect + 8, rect.area);
 }
 
 bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
@@ -1391,13 +1340,13 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 		return false;
 	}
 
-	if (!_usesAnimFile && !actorReadU8(*actor, kActorVisible)) {
+	if (!_usesAnimFile && !actor->visible) {
 		if ((_videoMode == 2 || _videoMode == 4) &&
-				actorReadU8(*actor, kActorVisible) != actorReadU8(*actor, _actorCachedVisibleOffset)) {
-			int16 drawX = (int16)((int32)actorReadU32(*actor, kActorXFixed) >> 12) + x;
-			int16 drawY = (int16)((int32)actorReadU32(*actor, kActorYFixed) >> 12) + y;
+				actor->visible != actor->cachedVisible) {
+			int16 drawX = (int16)(actor->xFixed >> 12) + x;
+			int16 drawY = (int16)(actor->yFixed >> 12) + y;
 			actorEvalFrameSelection(actorIndex, drawX, drawY);
-			actorWriteU8(*actor, _actorCachedVisibleOffset, actorReadU8(*actor, kActorVisible));
+			actor->cachedVisible = actor->visible;
 		}
 
 		return true;
@@ -1422,23 +1371,23 @@ bool ComfyEngine::actorDraw(uint16 actorIndex, int16 x, int16 y) {
 
 bool ComfyEngine::actorDrawLegacyInternal(uint16 actorIndex, int16 x, int16 y) {
 	Actor *actor = actorGetPtr(actorIndex);
-	if (!actor || !actorReadU8(*actor, kActorVisible))
+	if (!actor || !actor->visible)
 		return true;
 
-	int16 drawX = (int16)((int32)actorReadU32(*actor, kActorXFixed) >> 12) + x;
-	int16 drawY = (int16)((int32)actorReadU32(*actor, kActorYFixed) >> 12) + y;
+	int16 drawX = (int16)(actor->xFixed >> 12) + x;
+	int16 drawY = (int16)(actor->yFixed >> 12) + y;
 	bool drawResult = true;
-	uint16 linkedActor = actorReadU16(*actor, kActorSiblingHead);
+	uint16 linkedActor = actor->siblingHead;
 	while (linkedActor && drawResult) {
 		drawResult = actorDrawLegacyInternal(linkedActor, drawX, drawY);
 		Actor *linked = actorGetPtr(linkedActor);
-		linkedActor = linked ? actorReadU16(*linked, kActorNextLink) : 0;
+		linkedActor = linked ? linked->nextLink : 0;
 	}
 
 	if (!drawResult)
 		return false;
 
-	uint32 selector = actorReadU32(*actor, kActorSpriteSelector);
+	uint32 selector = actor->spriteSelector;
 	if (selector == 0x00FFFFFF) {
 		animFrameInvalidateRects(drawX, drawY, 1);
 		drawResult = animFrameBlitAt(drawX, drawY);
@@ -1483,11 +1432,11 @@ bool ComfyEngine::actorDrawLegacyInternal(uint16 actorIndex, int16 x, int16 y) {
 	if (!drawResult)
 		return false;
 
-	linkedActor = actorReadU16(*actor, kActorChildHead);
+	linkedActor = actor->childHead;
 	while (linkedActor && drawResult) {
 		drawResult = actorDrawLegacyInternal(linkedActor, drawX, drawY);
 		Actor *linked = actorGetPtr(linkedActor);
-		linkedActor = linked ? actorReadU16(*linked, kActorNextLink) : 0;
+		linkedActor = linked ? linked->nextLink : 0;
 	}
 
 	return drawResult;
@@ -1498,20 +1447,20 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 	if (!actor)
 		return;
 
-	int16 drawX = (int16)((int32)actorReadU32(*actor, kActorXFixed) >> 12) + x;
-	int16 drawY = (int16)((int32)actorReadU32(*actor, kActorYFixed) >> 12) + y;
-	visible = visible && actorReadU8(*actor, kActorVisible);
-	byte oldVisible = actorReadU8(*actor, _actorCachedVisibleOffset);
-	uint32 oldSelector = actorReadU32(*actor, _actorCachedSpriteOffset);
-	VideoRectRecord oldRect = actorReadCachedRect(*actor);
-	actorDrawList(actorReadU16(*actor, kActorSiblingHead), drawX, drawY, visible);
-	uint32 selector = actorReadU32(*actor, kActorSpriteSelector);
+	int16 drawX = (int16)(actor->xFixed >> 12) + x;
+	int16 drawY = (int16)(actor->yFixed >> 12) + y;
+	visible = visible && actor->visible;
+	byte oldVisible = actor->cachedVisible;
+	uint32 oldSelector = actor->cachedSprite;
+	ComfyRect oldRect = actor->cachedRect;
+	actorDrawList(actor->siblingHead, drawX, drawY, visible);
+	uint32 selector = actor->spriteSelector;
 	bool useDrawQueue = _usesAnimFile && (_isPanther || _engineVersion == 3) && (_videoMode == 2 || _videoMode == 4);
 	if (_isPanther || _engineVersion == 3) {
-		VideoRectRecord newRect;
+		ComfyRect newRect;
 		if (selector == 0x00FFFFFF) {
 			bool changed = false;
-			if (oldVisible != (visible ? 1 : 0) && actorReadU8(*actor, kActorVisible) && oldVisible == 1)
+			if (oldVisible != (visible ? 1 : 0) && actor->visible && oldVisible == 1)
 				changed = true;
 
 			if (oldRect.left != drawX || oldRect.top != drawY)
@@ -1522,15 +1471,16 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 				animFrameInvalidateRects(drawX, drawY, 1);
 				newRect.left = drawX;
 				newRect.top = drawY;
-				actorWriteU8(*actor, _actorCachedVisibleOffset, visible ? 1 : 0);
-				actorWriteCachedRect(*actor, newRect);
+				actor->cachedVisible = visible ? 1 : 0;
+				actor->cachedRect = newRect;
+
 				renderQueueDrawCommand(drawX, drawY, selector, 2, actorIndex);
-			} else if (visible && actorReadU8(*actor, kActorVisible)) {
+			} else if (visible && actor->visible) {
 				animFrameInvalidateRects(drawX, drawY, 0);
 				renderQueueDrawCommand(drawX, drawY, selector, 2, actorIndex);
 			}
 
-			actorDrawList(actorReadU16(*actor, kActorChildHead), drawX, drawY, visible);
+			actorDrawList(actor->childHead, drawX, drawY, visible);
 			return;
 		}
 
@@ -1561,7 +1511,7 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 
 		if (scripted && oldSelector == selector && oldRect.left == newRect.left &&
 				oldRect.top == newRect.top && oldVisible == 1 && visible) {
-			VideoRectRecord oldMaskRecord = oldRect;
+			ComfyRect oldMaskRecord = oldRect;
 			uint16 oldLastRect = scriptEvalKeyMask(oldSelector & 0x00FFFFFF, 0,
 				oldMaskRecord, _keymaskOldRects, oldRect.left, oldRect.top);
 			if (oldLastRect != 0xFFFF && oldLastRect >= COMFY_RESOLUTION_CHANGE_CAPACITY)
@@ -1569,8 +1519,8 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 
 			if (oldLastRect != 0xFFFF) {
 				for (uint i = 0; i <= oldLastRect; i++) {
-					VideoRectRecord &currentRect = _keymaskRects[i];
-					VideoRectRecord &previousRect = _keymaskOldRects[i];
+					ComfyRect &currentRect = _keymaskRects[i];
+					ComfyRect &previousRect = _keymaskOldRects[i];
 					bool equal = currentRect.left == previousRect.left &&
 						currentRect.top == previousRect.top &&
 						currentRect.right == previousRect.right &&
@@ -1584,8 +1534,9 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 				}
 			}
 
-			actorWriteCachedRect(*actor, newRect);
-			actorDrawList(actorReadU16(*actor, kActorChildHead), drawX, drawY, visible);
+			actor->cachedRect = newRect;
+
+			actorDrawList(actor->childHead, drawX, drawY, visible);
 			return;
 		}
 
@@ -1597,7 +1548,7 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			if (visible && selector) {
 				if (scripted && currentLastRect != 0xFFFF) {
 					for (uint i = 0; i <= currentLastRect; i++) {
-						VideoRectRecord &rect = _keymaskRects[i];
+						ComfyRect &rect = _keymaskRects[i];
 						renderQueueDrawCommand(rect.left, rect.top, rect.area, 0, actorIndex);
 					}
 				} else if (!scripted) {
@@ -1609,7 +1560,7 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 				if (oldSelector == 0x00FFFFFF) {
 					renderFlushCachedDirtyRects();
 				} else if (oldSelector & 0xFF000000) {
-					VideoRectRecord oldMaskRecord = oldRect;
+					ComfyRect oldMaskRecord = oldRect;
 					uint16 oldLastRect = scriptEvalKeyMask(oldSelector & 0x00FFFFFF, 0,
 						oldMaskRecord, _keymaskOldRects, oldRect.left, oldRect.top);
 					if (oldLastRect != 0xFFFF && oldLastRect >= COMFY_RESOLUTION_CHANGE_CAPACITY)
@@ -1624,13 +1575,14 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 				}
 			}
 
-			actorWriteU8(*actor, _actorCachedVisibleOffset, visible ? 1 : 0);
-			actorWriteCachedRect(*actor, newRect);
-			actorWriteU32(*actor, _actorCachedSpriteOffset, selector);
+			actor->cachedVisible = visible ? 1 : 0;
+			actor->cachedRect = newRect;
+
+			actor->cachedSprite = selector;
 		} else if (visible) {
 			if (scripted && currentLastRect != 0xFFFF) {
 				for (uint i = 0; i <= currentLastRect; i++) {
-					VideoRectRecord &rect = _keymaskRects[i];
+					ComfyRect &rect = _keymaskRects[i];
 					renderQueueDrawCommand(rect.left, rect.top, rect.area, 1, actorIndex);
 				}
 			} else if (!scripted) {
@@ -1638,13 +1590,13 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			}
 		}
 
-		actorDrawList(actorReadU16(*actor, kActorChildHead), drawX, drawY, visible);
+		actorDrawList(actor->childHead, drawX, drawY, visible);
 		return;
 	}
 
 	bool oldScripted = (oldSelector & 0xFF000000) != 0;
 	bool newScripted = (selector & 0xFF000000) != 0;
-	VideoRectRecord newRect;
+	ComfyRect newRect;
 	uint16 scriptedLastRect = 0xFFFF;
 	if (newScripted) {
 		uint32 pc = selector & 0x00FFFFFF;
@@ -1660,7 +1612,7 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 
 			if (_usesAnimFile && visible && scriptedLastRect != 0xFFFF) {
 				for (uint i = 0; i <= scriptedLastRect; i++) {
-					VideoRectRecord &drawRecord = _keymaskRects[i];
+					ComfyRect &drawRecord = _keymaskRects[i];
 					if (drawRecord.area) {
 						if (useDrawQueue)
 							renderQueueDrawCommand(drawRecord.left, drawRecord.top, drawRecord.area, 1, actorIndex);
@@ -1716,6 +1668,9 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 		newRect.right = drawX + frameWidth;
 		newRect.bottom = drawY + frameHeight;
 		newRect.area = frameWidth * frameHeight;
+		if (_engineVersion == 1)
+			newRect.area = (uint16)newRect.area;
+
 		if (visible) {
 			if (useDrawQueue) {
 				renderQueueDrawCommand(drawX, drawY, selector, 2, actorIndex);
@@ -1732,6 +1687,9 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			newRect.right = newRect.left + sprite->header.width;
 			newRect.bottom = newRect.top + sprite->header.height;
 			newRect.area = sprite->header.width * sprite->header.height;
+			if (_engineVersion == 1)
+				newRect.area = (uint16)newRect.area;
+
 			if (visible) {
 				int16 spriteX = drawX - sprite->header.hotspotX;
 				int16 spriteY = drawY - sprite->header.hotspotY;
@@ -1751,7 +1709,7 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 
 		uint16 oldScriptedLastRect = 0xFFFF;
 		if (oldScripted) {
-			VideoRectRecord maskRecord = oldRect;
+			ComfyRect maskRecord = oldRect;
 			oldScriptedLastRect = scriptEvalKeyMask(oldSelector & 0x00FFFFFF, 0, maskRecord,
 				_keymaskOldRects, oldRect.left, oldRect.top);
 			if (oldScriptedLastRect != 0xFFFF && oldScriptedLastRect >= COMFY_RESOLUTION_CHANGE_CAPACITY)
@@ -1765,22 +1723,28 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 					scriptedLastRect != 0xFFFF && oldScriptedLastRect != 0xFFFF) {
 				uint16 last = MAX(scriptedLastRect, oldScriptedLastRect);
 				for (uint i = 0; i <= last; i++) {
-					VideoRectRecord *oldItem = i <= oldScriptedLastRect ? &_keymaskOldRects[i] : nullptr;
-					VideoRectRecord *newItem = i <= scriptedLastRect ? &_keymaskRects[i] : nullptr;
+					ComfyRect *oldItem = i <= oldScriptedLastRect ? &_keymaskOldRects[i] : nullptr;
+					ComfyRect *newItem = i <= scriptedLastRect ? &_keymaskRects[i] : nullptr;
 					bool equal = oldItem && newItem && oldItem->left == newItem->left && oldItem->top == newItem->top &&
 						oldItem->right == newItem->right && oldItem->bottom == newItem->bottom && oldItem->area == newItem->area;
 					if (!equal) {
 						if (oldItem) {
-							VideoRectRecord dirtyRect = *oldItem;
+							ComfyRect dirtyRect = *oldItem;
 							dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) *
 								(dirtyRect.bottom - dirtyRect.top);
+							if (_engineVersion == 1)
+								dirtyRect.area = (uint16)dirtyRect.area;
+
 							videoFindBestMode(dirtyRect);
 						}
 
 						if (newItem) {
-							VideoRectRecord dirtyRect = *newItem;
+							ComfyRect dirtyRect = *newItem;
 							dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) *
 								(dirtyRect.bottom - dirtyRect.top);
+							if (_engineVersion == 1)
+								dirtyRect.area = (uint16)dirtyRect.area;
+
 							videoFindBestMode(dirtyRect);
 						}
 					}
@@ -1789,9 +1753,12 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 				comparedScriptRects = true;
 			} else if (newScripted && scriptedLastRect != 0xFFFF) {
 				for (uint i = 0; i <= scriptedLastRect; i++) {
-					VideoRectRecord dirtyRect = _keymaskRects[i];
+					ComfyRect dirtyRect = _keymaskRects[i];
 					dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) *
 						(dirtyRect.bottom - dirtyRect.top);
+					if (_engineVersion == 1)
+						dirtyRect.area = (uint16)dirtyRect.area;
+
 					videoFindBestMode(dirtyRect);
 				}
 			} else if (!newScripted && selector != 0x00FFFFFF) {
@@ -1801,9 +1768,12 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			if (!comparedScriptRects) {
 				if (oldScripted && oldScriptedLastRect != 0xFFFF) {
 					for (uint i = 0; i <= oldScriptedLastRect; i++) {
-						VideoRectRecord dirtyRect = _keymaskOldRects[i];
+						ComfyRect dirtyRect = _keymaskOldRects[i];
 						dirtyRect.area = (uint32)(dirtyRect.right - dirtyRect.left) *
 							(dirtyRect.bottom - dirtyRect.top);
+						if (_engineVersion == 1)
+							dirtyRect.area = (uint16)dirtyRect.area;
+
 						videoFindBestMode(dirtyRect);
 					}
 				} else if (oldSelector == 0x00FFFFFF) {
@@ -1814,15 +1784,17 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			}
 		}
 
-		actorWriteU8(*actor, _actorCachedVisibleOffset, newVisible);
-		actorWriteU32(*actor, _actorCachedSpriteOffset, selector);
-		actorWriteCachedRect(*actor, newRect);
+		actor->cachedVisible = newVisible;
+		actor->cachedSprite = selector;
+		actor->cachedRect = newRect;
+		if (_engineVersion == 1)
+			actor->cachedRect.area &= 0xFFFF;
 	}
 
 	if (!_usesAnimFile)
 		animFrameRecordVocCounter(2);
 
-	actorDrawList(actorReadU16(*actor, kActorChildHead), drawX, drawY, visible);
+	actorDrawList(actor->childHead, drawX, drawY, visible);
 }
 
 

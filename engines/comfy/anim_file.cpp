@@ -117,7 +117,7 @@ void ComfyEngine::animFrameShutdown(bool freeBuffers) {
 		if (_animCurrentActorSceneHandle && _animCurrentActorSceneHandle < _sceneHandles.size()) {
 			Actor *actor = actorGetPtr(sceneGetHandle(_animCurrentActorSceneHandle));
 			if (actor)
-				actorWriteU32(*actor, kActorSpriteSelector, 0);
+				actor->spriteSelector = 0;
 		}
 
 		_animCurrentActorSceneHandle = 0;
@@ -185,7 +185,7 @@ void ComfyEngine::animFileLoadFrame(uint16 animIndex, uint16 frameKey, uint16 ac
 	if (actorSceneHandle < _sceneHandles.size()) {
 		Actor *actor = actorGetPtr(sceneGetHandle(actorSceneHandle));
 		if (actor)
-			actorWriteU32(*actor, kActorSpriteSelector, 0x00FFFFFF);
+			actor->spriteSelector = 0x00FFFFFF;
 	}
 
 	animFileTickCommands();
@@ -564,7 +564,7 @@ bool ComfyEngine::animFrameBlitAt(int16 x, int16 y) {
 
 	uint16 rectCount = _resolutionChangeCount;
 	for (uint i = 0; i < rectCount; i++) {
-		VideoRectRecord &dirtyRect = _resolutionChanges[i];
+		ComfyRect &dirtyRect = _resolutionChanges[i];
 		int16 left = MAX<int16>(dirtyRect.left, x);
 		int16 top = MAX<int16>(dirtyRect.top, y);
 		int16 right = MIN<int16>(dirtyRect.right, x + frameWidth);
@@ -620,7 +620,7 @@ bool ComfyEngine::animFrameCoversPoint(int16 x, int16 y, int16 pointX, int16 poi
 
 	bool dirty = false;
 	for (uint i = 0; i < _resolutionChangeCount; i++) {
-		VideoRectRecord &dirtyRect = _resolutionChanges[i];
+		ComfyRect &dirtyRect = _resolutionChanges[i];
 		if (pointX >= dirtyRect.left && pointX < dirtyRect.right &&
 				pointY >= dirtyRect.top && pointY < dirtyRect.bottom) {
 			dirty = true;
@@ -653,12 +653,14 @@ void ComfyEngine::animFrameInvalidateRects(int16 x, int16 y, byte mode) {
 	for (uint i = 0; i < rectCount; i++) {
 		uint16 start = READ_LE_UINT16(_animFrameCommandData + i * 4);
 		uint16 end = READ_LE_UINT16(_animFrameCommandData + i * 4 + 2);
-		VideoRectRecord rect;
+		ComfyRect rect;
 		rect.left = x + (start % columns) * 4;
 		rect.top = y + (start / columns) * 4;
 		rect.right = x + ((end % columns) + 1) * 4;
 		rect.bottom = y + ((end / columns) + 1) * 4;
 		rect.area = (uint32)(rect.right - rect.left) * (rect.bottom - rect.top);
+		if (_engineVersion == 1)
+			rect.area = (uint16)rect.area;
 
 		if (i < splitIndex) {
 			if (!mode)
@@ -677,6 +679,8 @@ void ComfyEngine::animFrameInvalidateRects(int16 x, int16 y, byte mode) {
 			_animFrameDirtyRects[0].right = _logicalScreenWidth;
 			_animFrameDirtyRects[0].bottom = _logicalScreenHeight;
 			_animFrameDirtyRects[0].area = framebufferBytes();
+			if (_engineVersion == 1)
+				_animFrameDirtyRects[0].area = (uint16)_animFrameDirtyRects[0].area;
 		}
 
 		if (mode)
@@ -864,7 +868,7 @@ void ComfyEngine::animFileUnpackState(const byte *state) {
 	if (_animCurrentActorSceneHandle < _sceneHandles.size()) {
 		Actor *actor = actorGetPtr(sceneGetHandle(_animCurrentActorSceneHandle));
 		if (actor)
-			actorWriteU32(*actor, kActorSpriteSelector, 0x00FFFFFF);
+			actor->spriteSelector = 0x00FFFFFF;
 	}
 
 	_animFrameBuffer.resize(framebufferBytes());
@@ -885,8 +889,8 @@ void ComfyEngine::animFrameInvalidateActorRect() {
 	if (!actor)
 		return;
 
-	actorWriteU16(*actor, kActorCachedRect, 0x270F);
-	actorWriteU16(*actor, kActorCachedRect + 4, 0x270F);
+	actor->cachedRect.left = 0x270F;
+	actor->cachedRect.right = 0x270F;
 }
 
 } // End of namespace Comfy

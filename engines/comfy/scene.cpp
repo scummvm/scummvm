@@ -22,6 +22,7 @@
 #include "comfy/comfy.h"
 
 #include "common/endian.h"
+#include "common/memstream.h"
 
 namespace Comfy {
 
@@ -137,9 +138,71 @@ void ComfyEngine::sceneBlockPackRuntimeState() {
 	if (!_sceneHandles.empty())
 		memcpy(&_sceneMemoryBlock[_sceneHandlesOffset], &_sceneHandles[0], _sceneHandles.size() * sizeof(uint16));
 
-	uint32 actorStride = _actorSize;
-	for (uint i = 0; i < _actors.size(); i++)
-		memcpy(&_sceneMemoryBlock[_sceneActorsOffset + i * actorStride], &_actors[i], actorStride);
+	uint32 actorStride = COMFY_ACTOR_SIZE_V3;
+	if (_engineVersion == 1)
+		actorStride = COMFY_ACTOR_SIZE_V1;
+	else if (_engineVersion == 2)
+		actorStride = COMFY_ACTOR_SIZE_V2;
+
+	byte *actorBuffer = (byte *)malloc(actorStride);
+	if (!actorBuffer)
+		error("Unable to allocate Actor serialization buffer");
+
+	for (uint i = 0; i < _actors.size(); i++) {
+		byte *destination = &_sceneMemoryBlock[_sceneActorsOffset + i * actorStride];
+		Actor &actor = _actors[i];
+		Common::MemoryWriteStream actorStream(actorBuffer, actorStride);
+		actorStream.writeUint32LE(actor.currentPc);
+		actorStream.writeUint32LE(actor.callPc);
+		actorStream.writeUint32LE(actor.resetPc);
+		actorStream.writeSint32LE(actor.xFixed);
+		actorStream.writeSint32LE(actor.yFixed);
+		actorStream.writeUint32LE(actor.spriteSelector);
+		actorStream.writeSint32LE(actor.moveDx);
+		actorStream.writeSint32LE(actor.moveDy);
+		actorStream.writeUint32LE(actor.triggerPc);
+		actorStream.writeUint16LE(actor.stringRefs[0]);
+		actorStream.writeUint16LE(actor.stringRefs[1]);
+		actorStream.writeUint16LE(actor.sceneHandle);
+		actorStream.writeByte(actor.visible);
+		actorStream.writeByte(actor.active);
+		actorStream.writeUint16LE(actor.parent);
+		actorStream.writeUint16LE(actor.childTail);
+		actorStream.writeUint16LE(actor.childHead);
+		actorStream.writeUint16LE(actor.siblingHead);
+		actorStream.writeUint16LE(actor.nextLink);
+		actorStream.writeUint16LE(actor.prevLink);
+		actorStream.writeUint16LE(actor.moveTicks);
+		actorStream.writeByte(actor.blockingMove);
+		actorStream.writeUint16LE(actor.completionKey);
+		actorStream.writeUint16LE(actor.triggerKey);
+		actorStream.writeByte(actor.triggerFlags);
+		actorStream.writeUint16LE(actor.waitTarget);
+		actorStream.writeUint16LE(actor.waitAccum);
+		actorStream.writeByte(actor.dirty);
+		actorStream.writeSint16LE(actor.cachedRect.left);
+		actorStream.writeSint16LE(actor.cachedRect.top);
+		actorStream.writeSint16LE(actor.cachedRect.right);
+		actorStream.writeSint16LE(actor.cachedRect.bottom);
+		if (_engineVersion == 1)
+			actorStream.writeUint16LE((uint16)(actor.cachedRect.area & 0xFFFF));
+		else
+			actorStream.writeUint32LE(actor.cachedRect.area);
+
+		actorStream.writeByte(actor.cachedVisible);
+		actorStream.writeUint32LE(actor.cachedSprite);
+		if (_engineVersion == 3)
+			actorStream.writeByte(actor.blitHitMouse);
+
+		if (actorStream.err() || actorStream.pos() != actorStride) {
+			free(actorBuffer);
+			error("Invalid serialized Actor size for engine version %u", _engineVersion);
+		}
+
+		memcpy(destination, actorBuffer, actorStride);
+	}
+
+	free(actorBuffer);
 
 	if (_keyBits && _keyBitsSize)
 		memcpy(&_sceneMemoryBlock[_sceneKeyBitsOffset], _keyBits, _keyBitsSize);
@@ -276,9 +339,72 @@ void ComfyEngine::sceneBlockUnpackRuntimeState() {
 	memcpy(_actorPcTable, &_sceneMemoryBlock[_sceneActorPcOffset], sizeof(_actorPcTable));
 	memcpy(&_stringTable[0], &_sceneMemoryBlock[_sceneStringTableOffset], _stringTable.size() * sizeof(uint16));
 	memcpy(&_sceneHandles[0], &_sceneMemoryBlock[_sceneHandlesOffset], _sceneHandles.size() * sizeof(uint16));
-	uint32 actorStride = _actorSize;
-	for (uint i = 0; i < _actors.size(); i++)
-		memcpy(&_actors[i], &_sceneMemoryBlock[_sceneActorsOffset + i * actorStride], actorStride);
+	uint32 actorStride = COMFY_ACTOR_SIZE_V3;
+	if (_engineVersion == 1)
+		actorStride = COMFY_ACTOR_SIZE_V1;
+	else if (_engineVersion == 2)
+		actorStride = COMFY_ACTOR_SIZE_V2;
+
+	byte *actorBuffer = (byte *)malloc(actorStride);
+	if (!actorBuffer)
+		error("Unable to allocate Actor deserialization buffer");
+
+	for (uint i = 0; i < _actors.size(); i++) {
+		byte *source = &_sceneMemoryBlock[_sceneActorsOffset + i * actorStride];
+		Actor &actor = _actors[i];
+		actor = Actor();
+		memcpy(actorBuffer, source, actorStride);
+		Common::MemoryReadStream actorStream(actorBuffer, actorStride);
+		actor.currentPc = actorStream.readUint32LE();
+		actor.callPc = actorStream.readUint32LE();
+		actor.resetPc = actorStream.readUint32LE();
+		actor.xFixed = actorStream.readSint32LE();
+		actor.yFixed = actorStream.readSint32LE();
+		actor.spriteSelector = actorStream.readUint32LE();
+		actor.moveDx = actorStream.readSint32LE();
+		actor.moveDy = actorStream.readSint32LE();
+		actor.triggerPc = actorStream.readUint32LE();
+		actor.stringRefs[0] = actorStream.readUint16LE();
+		actor.stringRefs[1] = actorStream.readUint16LE();
+		actor.sceneHandle = actorStream.readUint16LE();
+		actor.visible = actorStream.readByte();
+		actor.active = actorStream.readByte();
+		actor.parent = actorStream.readUint16LE();
+		actor.childTail = actorStream.readUint16LE();
+		actor.childHead = actorStream.readUint16LE();
+		actor.siblingHead = actorStream.readUint16LE();
+		actor.nextLink = actorStream.readUint16LE();
+		actor.prevLink = actorStream.readUint16LE();
+		actor.moveTicks = actorStream.readUint16LE();
+		actor.blockingMove = actorStream.readByte();
+		actor.completionKey = actorStream.readUint16LE();
+		actor.triggerKey = actorStream.readUint16LE();
+		actor.triggerFlags = actorStream.readByte();
+		actor.waitTarget = actorStream.readUint16LE();
+		actor.waitAccum = actorStream.readUint16LE();
+		actor.dirty = actorStream.readByte();
+		actor.cachedRect.left = actorStream.readSint16LE();
+		actor.cachedRect.top = actorStream.readSint16LE();
+		actor.cachedRect.right = actorStream.readSint16LE();
+		actor.cachedRect.bottom = actorStream.readSint16LE();
+		if (_engineVersion == 1)
+			actor.cachedRect.area = actorStream.readUint16LE();
+		else
+			actor.cachedRect.area = actorStream.readUint32LE();
+
+		actor.cachedVisible = actorStream.readByte();
+		actor.cachedSprite = actorStream.readUint32LE();
+		if (_engineVersion == 3)
+			actor.blitHitMouse = actorStream.readByte();
+
+		if (actorStream.eos() || actorStream.pos() != actorStride) {
+			free(actorBuffer);
+			error("Invalid serialized Actor size for engine version %u", _engineVersion);
+		}
+	}
+
+	free(actorBuffer);
+
 	if (_keyBits && _keyBitsSize)
 		memcpy(_keyBits, &_sceneMemoryBlock[_sceneKeyBitsOffset], _keyBitsSize);
 
@@ -333,9 +459,9 @@ void ComfyEngine::sceneStartWithMusic(uint16 scene) {
 
 	Actor *root = actorGetPtr(0);
 	if (root) {
-		paletteLoadWithFade(actorReadU16(*root, kActorXFixed), 0);
-		if (actorReadU32(*root, kActorYFixed))
-			paletteApplyBrightness((byte)actorReadU16(*root, kActorYFixed));
+		paletteLoadWithFade((uint16)root->xFixed, 0);
+		if (root->yFixed)
+			paletteApplyBrightness((byte)root->yFixed);
 	}
 
 	if (_keyBits)

@@ -85,19 +85,8 @@ ComfyEngine::ComfyEngine(OSystem *syst, const ComfyGameDescription *gameDesc) : 
 	memset(_animStorageChunkFileOffsets, 0, sizeof(_animStorageChunkFileOffsets));
 	memset(_animStorageChunkOffsets, 0, sizeof(_animStorageChunkOffsets));
 	memset(_animStorageChunkSizes, 0, sizeof(_animStorageChunkSizes));
-	if (_engineVersion == 3) {
-		_actorSize = COMFY_ACTOR_SIZE_V3;
-		_actorCachedVisibleOffset = 0x51;
-		_actorCachedSpriteOffset = 0x52;
-		_actorCachedAreaIs32Bit = true;
-	}
-
 	if (!strcmp(gameDesc->desc.gameId, "panther")) {
 		_isPanther = true;
-		_actorSize = COMFY_PANTHER_ACTOR_SIZE;
-		_actorCachedVisibleOffset = 0x51;
-		_actorCachedSpriteOffset = 0x52;
-		_actorCachedAreaIs32Bit = true;
 		_vocQueueCapacity = COMFY_PANTHER_VOC_QUEUE_CAPACITY;
 	}
 
@@ -358,7 +347,7 @@ void ComfyEngine::processEvents() {
 }
 
 void ComfyEngine::mouseSetActor(Actor *actor) {
-	_mouseActorSceneHandle = actor ? actorReadU16(*actor, kActorSceneHandle) : 0;
+	_mouseActorSceneHandle = actor ? actor->sceneHandle : 0;
 }
 
 ComfyEngine::Actor *ComfyEngine::mouseGetActor() {
@@ -395,7 +384,7 @@ void ComfyEngine::mouseUpdateCursor() {
 		return;
 	}
 
-	uint32 selector = actorReadU32(*_mouseActor, kActorSpriteSelector);
+	uint32 selector = _mouseActor->spriteSelector;
 	if (!selector) {
 		_mouseCursorSprite = nullptr;
 		_mouseFlags &= ~0x10;
@@ -406,7 +395,7 @@ void ComfyEngine::mouseUpdateCursor() {
 	if (_mouseCursorSprite)
 		_mouseCursorSpriteId = (uint16)_mouseCursorSprite->id;
 
-	if (!actorReadU8(*_mouseActor, kActorVisible) && !(_mouseFlags & 8))
+	if (!_mouseActor->visible && !(_mouseFlags & 8))
 		_mouseFlags |= 8;
 
 	_mouseFlags &= ~0x10;
@@ -482,7 +471,7 @@ void ComfyEngine::gameMainLoop(uint16 argument) {
 		if (lastKey == 0x0101)
 			keepRunning = 0;
 		else if (mainLoopActor)
-			keepRunning = actorReadU8(*mainLoopActor, kActorActive);
+			keepRunning = mainLoopActor->active;
 
 		processEvents();
 		if (shouldQuit())

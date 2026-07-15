@@ -46,14 +46,14 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			if (!other)
 				error("Script opcode 0x%02X resolved an invalid reference actor", opcode);
 
-			x = (int16)((int32)actorReadU32(*other, kActorXFixed) >> 12);
-			y = (int16)((int32)actorReadU32(*other, kActorYFixed) >> 12);
+			x = (int16)(other->xFixed >> 12);
+			y = (int16)(other->yFixed >> 12);
 		} else if (opcode == 0x01 && x == (int16)0xF448) {
-			x = (int16)(-(int32)actorReadU32(*target, kActorXFixed) >> 12);
+			x = (int16)(-target->xFixed >> 12);
 		}
 
 		if (opcode == 0x01 && y == (int16)0xF448)
-			y = (int16)(-(int32)actorReadU32(*target, kActorYFixed) >> 12);
+			y = (int16)(-target->yFixed >> 12);
 
 		if (randomize) {
 			if (opcode == 0x02 || x != (int16)0xFC18)
@@ -65,13 +65,13 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 
 		if (opcode == 0x01) {
 			if (x != (int16)0xFC18)
-				actorWriteU32(*target, kActorXFixed, (uint32)((int32)x * 0x1000));
+				target->xFixed = (int32)x * 0x1000;
 
 			if (y != (int16)0xFC18)
-				actorWriteU32(*target, kActorYFixed, (uint32)((int32)y * 0x1000));
+				target->yFixed = (int32)y * 0x1000;
 		} else {
-			actorWriteU32(*target, kActorXFixed, actorReadU32(*target, kActorXFixed) + (uint32)((int32)x * 0x1000));
-			actorWriteU32(*target, kActorYFixed, actorReadU32(*target, kActorYFixed) + (uint32)((int32)y * 0x1000));
+			target->xFixed = (int32)((uint32)target->xFixed + (uint32)((int32)x * 0x1000));
+			target->yFixed = (int32)((uint32)target->yFixed + (uint32)((int32)y * 0x1000));
 		}
 
 		return kScriptContinue;
@@ -84,7 +84,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		uint16 frame = scriptReadStringIndex(pc);
 		pc += 2;
 		if (target)
-			actorWriteU32(*target, kActorSpriteSelector, (uint32)(int32)(int16)frame);
+			target->spriteSelector = (uint32)(int32)(int16)frame;
 
 		return kScriptContinue;
 	}
@@ -155,7 +155,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		int16 sprite = scriptReadWord(pc);
 		pc += 2;
 		if (!parentSlot)
-			parentSlot = actorReadU16(actor, kActorSceneHandle);
+			parentSlot = actor.sceneHandle;
 
 		actorInit(sceneSlot, parentSlot, (flags & 1) != 0, (flags & 2) != 0,
 			newPc, x, y, sprite, (flags & 4) != 0);
@@ -183,17 +183,17 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 
 		switch (opcode) {
 		case 0x0A:
-			actorWriteU8(*target, kActorVisible, 1);
+			target->visible = 1;
 			break;
 		case 0x0B:
-			actorWriteU8(*target, kActorVisible, 0);
+			target->visible = 0;
 			break;
 		case 0x0C:
-			actorWriteU8(*target, kActorActive, 1);
+			target->active = 1;
 			break;
 		case 0x0D:
-			actorWriteU16(*target, kActorMoveTicks, 0);
-			actorWriteU8(*target, kActorActive, 0);
+			target->moveTicks = 0;
+			target->active = 0;
 			if (target == &actor)
 				return kScriptYield;
 
@@ -217,7 +217,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		if (!target)
 			error("Script opcode 0x%02X resolved an invalid actor", opcode);
 
-		int16 actual = (int32)actorReadU32(*target, opcode == 0x0E || opcode == 0x10 ? kActorXFixed : kActorYFixed) >> 12;
+		int16 actual = (opcode == 0x0E || opcode == 0x10 ? target->xFixed : target->yFixed) >> 12;
 		bool matched = ((mode & 2) && expected == actual) || ((mode & 4) && expected < actual) || ((mode & 1) && expected > actual);
 		if (matched) {
 			switch (opcode) {
@@ -273,7 +273,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			error("Script opcode 0x14 resolved an invalid actor");
 
 		uint16 targetIndex = (uint16)(target - &_actors[0]);
-		uint16 oldParent = actorReadU16(*target, kActorParent);
+		uint16 oldParent = target->parent;
 		actorUnlink(targetIndex);
 
 		if (mode == 'O')
@@ -330,14 +330,14 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		if (!target)
 			error("Script opcode 0x18 resolved an invalid actor");
 
-		uint32 resetPc = actorReadU32(*target, kActorResetPc);
-		actorWriteU32(*target, kActorCurrentPc, resetPc);
-		actorWriteU8(*target, kActorActive, 1);
-		actorWriteU16(*target, kActorWaitTarget, 0);
-		actorWriteU16(*target, kActorWaitAccum, 0);
-		if (actorReadU16(*target, kActorMoveTicks)) {
-			actorWriteU16(*target, kActorMoveTicks, 0);
-			uint16 completionKey = actorReadU16(*target, kActorCompletionKey);
+		uint32 resetPc = target->resetPc;
+		target->currentPc = resetPc;
+		target->active = 1;
+		target->waitTarget = 0;
+		target->waitAccum = 0;
+		if (target->moveTicks) {
+			target->moveTicks = 0;
+			uint16 completionKey = target->completionKey;
 			if (completionKey)
 				keyBitSet(completionKey);
 		}
@@ -429,13 +429,13 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			error("Script opcode 0x1E resolved an invalid actor");
 
 		if (key != 0xFC18)
-			actorWriteU16(*target, kActorTriggerKey, key);
+			target->triggerKey = key;
 
 		if (triggerPc != 0xFFFFFC18) {
-			actorWriteU32(*target, kActorTriggerPc, triggerPc);
-			actorWriteU8(*target, kActorTriggerFlags, flags);
+			target->triggerPc = triggerPc;
+			target->triggerFlags = flags;
 		} else {
-			actorWriteU8(*target, kActorTriggerFlags, (actorReadU8(*target, kActorTriggerFlags) & 1) | flags);
+			target->triggerFlags = (target->triggerFlags & 1) | flags;
 		}
 
 		return kScriptContinue;
@@ -541,7 +541,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		uint32 selector = scriptReadDword(pc + 2);
 		pc += 6;
 		if (target)
-			actorWriteU32(*target, kActorSpriteSelector, (selector + 1) | 0xFF000000);
+			target->spriteSelector = (selector + 1) | 0xFF000000;
 
 		return kScriptContinue;
 	}
@@ -638,7 +638,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 			uint16 animIndex = scriptReadWord(pc);
 			uint16 frameKey = scriptReadWord(pc + 2);
 			pc += 4;
-			animFileLoadFrame(animIndex, frameKey, actorReadU16(actor, kActorSceneHandle));
+			animFileLoadFrame(animIndex, frameKey, actor.sceneHandle);
 			break;
 		}
 		case 2:
@@ -919,11 +919,11 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 				error("Script opcode 0x%02X resolved an invalid reference actor", opcode);
 
 			if (moveTo) {
-				x = (int16)((int32)actorReadU32(*other, kActorXFixed) >> 12);
-				y = (int16)((int32)actorReadU32(*other, kActorYFixed) >> 12);
+				x = (int16)(other->xFixed >> 12);
+				y = (int16)(other->yFixed >> 12);
 			} else {
-				x = (int16)actorReadU16(*other, kActorXFixed) >> 12;
-				y = (int16)actorReadU16(*other, kActorYFixed) >> 12;
+				x = (int16)(uint16)other->xFixed >> 12;
+				y = (int16)(uint16)other->yFixed >> 12;
 			}
 		}
 
@@ -938,8 +938,8 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		int32 dx = (int32)x * 0x1000;
 		int32 dy = (int32)y * 0x1000;
 		if (moveTo) {
-			dx = x == (int16)0xFC18 ? 0 : dx - (int32)actorReadU32(*target, kActorXFixed);
-			dy = y == (int16)0xFC18 ? 0 : dy - (int32)actorReadU32(*target, kActorYFixed);
+			dx = x == (int16)0xFC18 ? 0 : dx - target->xFixed;
+			dy = y == (int16)0xFC18 ? 0 : dy - target->yFixed;
 		}
 
 		if (opcode == 0x51 || opcode == 0x52 || (moveTo && duration < 0)) {
@@ -954,11 +954,11 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 				duration = 1;
 		}
 
-		actorWriteU32(*target, kActorMoveDx, dx);
-		actorWriteU32(*target, kActorMoveDy, dy);
-		actorWriteU16(*target, kActorMoveTicks, duration);
-		actorWriteU8(*target, kActorBlockingMove, blocking);
-		actorWriteU16(*target, kActorCompletionKey, completionKey);
+		target->moveDx = dx;
+		target->moveDy = dy;
+		target->moveTicks = duration;
+		target->blockingMove = blocking;
+		target->completionKey = completionKey;
 		return blocking && target == &actor ? kScriptYield : kScriptContinue;
 	}
 
@@ -982,9 +982,9 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		if (!target)
 			error("Script opcode 0x53 resolved an invalid actor");
 
-		actorWriteU32(*target, kActorSpriteSelector, (uint32)(int32)(int16)frame);
-		actorWriteU32(*target, kActorMoveDx, 0);
-		actorWriteU32(*target, kActorMoveDy, 0);
+		target->spriteSelector = (uint32)(int32)(int16)frame;
+		target->moveDx = 0;
+		target->moveDy = 0;
 		return kScriptContinue;
 	}
 
@@ -1036,17 +1036,17 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 	case 0x72: {
 		uint16 requested = scriptReadStringIndex(pc);
 		pc += 2;
-		uint16 balance = actorReadU16(actor, kActorWaitAccum);
+		uint16 balance = actor.waitAccum;
 		if (!requested)
 			balance = 0;
 
 		if (balance) {
 			uint16 step = balance < 5 ? balance : 5;
 			balance = step < (uint16)(requested - 1) ? step : (uint16)(requested - 1);
-			actorWriteU16(actor, kActorWaitAccum, actorReadU16(actor, kActorWaitAccum) - balance);
+			actor.waitAccum -= balance;
 		}
 
-		actorWriteU16(actor, kActorWaitTarget, requested - balance);
+		actor.waitTarget = requested - balance;
 		return kScriptYield;
 	}
 
@@ -1143,7 +1143,7 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 
 		Actor *root = actorGetPtr(0);
 		if (root)
-			actorWriteU8(*root, kActorActive, 0);
+			root->active = 0;
 
 		return kScriptContinue;
 	}

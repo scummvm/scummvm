@@ -378,7 +378,9 @@ bool ComfyEngine::sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 
 	_midiHandles.resize(handleCount + 1);
 	memset(&_midiHandles[0], 0, _midiHandles.size() * sizeof(uint16));
 	_actors.resize(actorCount + 1);
-	memset(&_actors[0], 0, _actors.size() * sizeof(Actor));
+	for (uint i = 0; i < _actors.size(); i++)
+		_actors[i] = Actor();
+
 	if (!keyBitAllocate(keyBitCount))
 		return false;
 
@@ -391,7 +393,13 @@ bool ComfyEngine::sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 
 
 	uint32 stringBytes = _stringTable.size() * sizeof(uint16);
 	uint32 handleBytes = _sceneHandles.size() * sizeof(uint16);
-	uint32 actorBytes = _actors.size() * _actorSize;
+	uint32 actorRecordSize = COMFY_ACTOR_SIZE_V3;
+	if (_engineVersion == 1)
+		actorRecordSize = COMFY_ACTOR_SIZE_V1;
+	else if (_engineVersion == 2)
+		actorRecordSize = COMFY_ACTOR_SIZE_V2;
+
+	uint32 actorBytes = _actors.size() * actorRecordSize;
 	uint32 keyBytes = ((uint32)keyBitCount + 1) / 8 + 1;
 	_sceneMidiInstanceOffset = 0;
 	if (_engineVersion == 3) {
@@ -439,12 +447,12 @@ bool ComfyEngine::sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 
 		return false;
 
 	for (uint i = 0; i + 1 < _actors.size(); i++) {
-		actorWriteU16(_actors[i], kActorNextLink, i + 1);
-		actorWriteU16(_actors[i], kActorSceneHandle, 0);
+		_actors[i].nextLink = i + 1;
+		_actors[i].sceneHandle = 0;
 	}
 
-	actorWriteU16(_actors[_actors.size() - 1], kActorNextLink, 0);
-	actorWriteU16(_actors[_actors.size() - 1], kActorSceneHandle, 0);
+	_actors[_actors.size() - 1].nextLink = 0;
+	_actors[_actors.size() - 1].sceneHandle = 0;
 	actorSetFrame(0);
 	return true;
 }

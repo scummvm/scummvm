@@ -54,7 +54,7 @@ class QueuingAudioStream;
 #define COMFY_PALETTE_BYTES 0x300
 #define COMFY_INPUT_QUEUE_CAPACITY 20
 #define COMFY_KEYBOARD_CONTACT_COUNT 24
-#define COMFY_ACTOR_SIZE 0x54
+#define COMFY_ACTOR_SIZE_V1 0x54
 #define COMFY_ACTOR_COUNT 0x79
 #define COMFY_EXPR_STACK_CAPACITY 64
 #define COMFY_ACTOR_PC_TABLE_COUNT 200
@@ -66,7 +66,7 @@ class QueuingAudioStream;
 #define COMFY_SCENE_MIDI_VERSION_BYTES_CLASSIC 0x167
 #define COMFY_SCENE_VOC_STATE_BYTES_V3 0x24D
 #define COMFY_SCENE_STATE_BYTES_V3 0x17F
-#define COMFY_PANTHER_ACTOR_SIZE 0x56
+#define COMFY_ACTOR_SIZE_V2 0x56
 #define COMFY_ACTOR_SIZE_V3 0x57
 #define COMFY_SCENE_ACTOR_PC_BYTES 0x320
 #define COMFY_SCENE_FRAME_BYTES 0x4E20
@@ -123,25 +123,26 @@ void drawComfyKeyboardUi(bool actorDebugEnabled);
 void cleanupComfyKeyboardUi();
 #endif
 
+struct ComfyRect {
+	int16 left;
+	int16 top;
+	int16 right;
+	int16 bottom;
+	// Version 1 stores area as a word; versions 2 and 3 store it as a dword.
+	uint32 area;
+
+	ComfyRect() {
+		left = 0;
+		top = 0;
+		right = 0;
+		bottom = 0;
+		area = 0;
+	}
+};
+
 class ComfyEngine : public Engine {
 private:
 	friend struct SoundDecoderState;
-
-	struct VideoRectRecord {
-		int16 left;
-		int16 top;
-		int16 right;
-		int16 bottom;
-		uint32 area;
-
-		VideoRectRecord() {
-			left = 0;
-			top = 0;
-			right = 0;
-			bottom = 0;
-			area = 0;
-		}
-	};
 
 	struct DrawCommand {
 		int16 x;
@@ -344,42 +345,75 @@ private:
 		uint32 counterThreshold;
 	};
 
+	// Serialized Actor strides are 0x54 in version 1, 0x56 in version 2, and 0x57 in version 3.
+	// Version 1 stores cachedRect.area as a word; later versions use a dword, and version 3 adds blitHitMouse.
+	// This is a host representation; XMS state serializes each field explicitly instead of copying this layout.
 	struct Actor {
-		byte raw[COMFY_ACTOR_SIZE_V3];
-	};
+		uint32 currentPc;
+		uint32 callPc;
+		uint32 resetPc;
+		int32 xFixed;
+		int32 yFixed;
+		uint32 spriteSelector;
+		int32 moveDx;
+		int32 moveDy;
+		uint32 triggerPc;
+		uint16 stringRefs[2];
+		uint16 sceneHandle;
+		byte visible;
+		byte active;
+		uint16 parent;
+		uint16 childTail;
+		uint16 childHead;
+		uint16 siblingHead;
+		uint16 nextLink;
+		uint16 prevLink;
+		uint16 moveTicks;
+		byte blockingMove;
+		uint16 completionKey;
+		uint16 triggerKey;
+		byte triggerFlags;
+		uint16 waitTarget;
+		uint16 waitAccum;
+		byte dirty;
+		ComfyRect cachedRect;
+		byte cachedVisible;
+		uint32 cachedSprite;
+		byte blitHitMouse;
 
-	enum ActorOffset {
-		kActorCurrentPc = 0x00,
-		kActorCallPc = 0x04,
-		kActorResetPc = 0x08,
-		kActorXFixed = 0x0C,
-		kActorYFixed = 0x10,
-		kActorSpriteSelector = 0x14,
-		kActorMoveDx = 0x18,
-		kActorMoveDy = 0x1C,
-		kActorTriggerPc = 0x20,
-		kActorStringRef = 0x24,
-		kActorSceneHandle = 0x28,
-		kActorVisible = 0x2A,
-		kActorActive = 0x2B,
-		kActorParent = 0x2C,
-		kActorChildTail = 0x2E,
-		kActorChildHead = 0x30,
-		kActorSiblingHead = 0x32,
-		kActorNextLink = 0x34,
-		kActorPrevLink = 0x36,
-		kActorMoveTicks = 0x38,
-		kActorBlockingMove = 0x3A,
-		kActorCompletionKey = 0x3B,
-		kActorTriggerKey = 0x3D,
-		kActorTriggerFlags = 0x3F,
-		kActorWaitTarget = 0x40,
-		kActorWaitAccum = 0x42,
-		kActorDirty = 0x44,
-		kActorCachedRect = 0x45,
-		kActorCachedVisible = 0x4F,
-		kActorCachedSprite = 0x50,
-		kActorBlitHitMouse = 0x56
+		Actor() {
+			currentPc = 0;
+			callPc = 0;
+			resetPc = 0;
+			xFixed = 0;
+			yFixed = 0;
+			spriteSelector = 0;
+			moveDx = 0;
+			moveDy = 0;
+			triggerPc = 0;
+			stringRefs[0] = 0;
+			stringRefs[1] = 0;
+			sceneHandle = 0;
+			visible = 0;
+			active = 0;
+			parent = 0;
+			childTail = 0;
+			childHead = 0;
+			siblingHead = 0;
+			nextLink = 0;
+			prevLink = 0;
+			moveTicks = 0;
+			blockingMove = 0;
+			completionKey = 0;
+			triggerKey = 0;
+			triggerFlags = 0;
+			waitTarget = 0;
+			waitAccum = 0;
+			dirty = 0;
+			cachedVisible = 0;
+			cachedSprite = 0;
+			blitHitMouse = 0;
+		}
 	};
 
 	enum ScriptDispatchStatus {
@@ -390,10 +424,6 @@ private:
 	const ComfyGameDescription *_game;
 	byte _engineVersion;
 	bool _isPanther = false;
-	uint16 _actorSize = COMFY_ACTOR_SIZE;
-	uint16 _actorCachedVisibleOffset = kActorCachedVisible;
-	uint16 _actorCachedSpriteOffset = kActorCachedSprite;
-	bool _actorCachedAreaIs32Bit = false;
 	uint16 _vocQueueCapacity = COMFY_VOC_QUEUE_CAPACITY;
 	Common::Path _gameDirectory;
 	Common::Path _introDirectory;
@@ -418,7 +448,7 @@ private:
 	uint16 _renderHeight = 0;
 	int16 _viewOffsetX = 0;
 	int16 _viewOffsetY = 0;
-	VideoRectRecord _resolutionChanges[COMFY_RESOLUTION_CHANGE_CAPACITY];
+	ComfyRect _resolutionChanges[COMFY_RESOLUTION_CHANGE_CAPACITY];
 	uint16 _resolutionChangeCount = 0;
 	uint16 _renderDirtyCount = 0;
 	bool _renderInterleaved = false;
@@ -522,11 +552,11 @@ private:
 	uint16 _keymaskResult = 0;
 	int16 _keymaskX = 0;
 	int16 _keymaskY = 0;
-	VideoRectRecord _keymaskCurrentRecord;
-	VideoRectRecord _keymaskRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
-	VideoRectRecord _keymaskOldRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
-	VideoRectRecord _keymaskInvalidationRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
-	VideoRectRecord _animFrameDirtyRects[COMFY_ANIM_DIRTY_RECT_CAPACITY];
+	ComfyRect _keymaskCurrentRecord;
+	ComfyRect _keymaskRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
+	ComfyRect _keymaskOldRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
+	ComfyRect _keymaskInvalidationRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
+	ComfyRect _animFrameDirtyRects[COMFY_ANIM_DIRTY_RECT_CAPACITY];
 	uint16 _animFrameDirtyRectCount = 0;
 	DrawCommand _drawCommands[COMFY_DRAW_COMMAND_CAPACITY];
 	uint16 _drawCommandCount = 0;
@@ -717,7 +747,7 @@ private:
 	void videoInit();
 	void videoShutdown(byte restorePalette);
 	void videoSetResolution();
-	void videoFindBestMode(VideoRectRecord record);
+	void videoFindBestMode(ComfyRect record);
 	void videoPresentFrame();
 	void renderSetDirty();
 	void renderFlushDirty();
@@ -823,12 +853,6 @@ private:
 	uint16 scriptEvalExpr(uint32 &pc, uint16 fallbackActor);
 	ScriptDispatchStatus scriptDispatch(Actor &actor, byte opcode, uint32 &pc);
 	ScriptDispatchStatus scriptStep(Actor &actor, uint32 &pc);
-	uint32 actorReadU32(Actor &actor, uint offset);
-	uint16 actorReadU16(Actor &actor, uint offset);
-	byte actorReadU8(Actor &actor, uint offset);
-	void actorWriteU32(Actor &actor, uint offset, uint32 value);
-	void actorWriteU16(Actor &actor, uint offset, uint16 value);
-	void actorWriteU8(Actor &actor, uint offset, byte value);
 	Actor *rootActor();
 	Actor *actorGetPtr(uint16 actorIndex);
 	void actorSetFrame(int16 frame);
@@ -858,11 +882,9 @@ private:
 	void renderQueueDrawCommand(int16 x, int16 y, uint32 selector, byte mode, uint16 actorIndex);
 	void renderFlushDrawCommands();
 	void renderFlushCachedDirtyRects();
-	uint16 scriptEvalKeyMask(uint32 pc, uint16 mode, VideoRectRecord &maskRecord,
-		VideoRectRecord *rects, int16 baseX, int16 baseY);
+	uint16 scriptEvalKeyMask(uint32 pc, uint16 mode, ComfyRect &maskRecord,
+		ComfyRect *rects, int16 baseX, int16 baseY);
 	void actorEvalFrameSelection(uint16 actorIndex, int16 x, int16 y);
-	VideoRectRecord actorReadCachedRect(Actor &actor);
-	void actorWriteCachedRect(Actor &actor, VideoRectRecord rect);
 	void timerInit();
 	void timerShutdown();
 	void lptKeyboardInit();
