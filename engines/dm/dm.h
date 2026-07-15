@@ -221,7 +221,7 @@ public:
 	uint16 getMap(int32 mapTime); // @ M29_MAP
 	Thing thingWithNewCell(Thing thing, int16 cell); // @ M15_THING_WITH_NEW_CELL
 	int16 getDistance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2); // @ M38_DISTANCE
-	int32 setMap(int32 mapTime, uint32 map); // @ M31_setMap
+	int32 setMap(int32 &mapTime, uint32 map); // @ M31_setMap
 
 
 private:
