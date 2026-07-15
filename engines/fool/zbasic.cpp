@@ -328,7 +328,13 @@ uint32 ZBasic::mem(int16 index) {
 
 void ZBasic::menu(uint16 menuNo, uint16 itemNo, uint16 state, const Common::U32String &title) {
 	debugC(5, kDebugLoading, "ZBasic::menu: menuNo %d, itemNo %d, state %d, title \"%s\"", menuNo, itemNo, state, title.encode().c_str());
-	Graphics::MacToolbox::MenuHandle handle = _toolbox->GetMHandle(menuNo);
+	Graphics::MacToolbox::MenuHandle handle;
+	// if we define itemNo = 0, throw out the old menu first
+	if (itemNo == 0) {
+		_toolbox->DeleteMenu(menuNo);
+	} else {
+		handle = _toolbox->GetMHandle(menuNo);
+	}
 	if (!handle) {
 		handle = _toolbox->NewMenu(menuNo, Common::U32String());
 	}
