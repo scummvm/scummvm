@@ -228,8 +228,8 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 			return true; /* The specified group thing cannot be moved because it was killed by a projectile impact */
 	}
 
-	uint16 mapIndexSource = 0;
-	uint16 mapIndexDestination = 0;
+	int16 mapIndexSource = 0;
+	int16 mapIndexDestination = 0;
 	bool groupOnPartyMap = false;
 	bool partySquare = false;
 	bool audibleTeleporter = false;
@@ -317,6 +317,8 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 																					/* BUG0_01 While drawing creatures the engine will read invalid ACTIVE_GROUP data in _vm->_groupMan->_g375_activeGroups because the data is for the creatures on the source map and not the map being drawn. The only consequence is that creatures may be drawn with incorrect bitmaps and/or directions */
 					}
 					mapIndexDestination = dungeon.getLocationAfterLevelChange(mapIndexDestination, 1, &destMapX, &destMapY);
+					if (mapIndexDestination < 0)
+						break;
 					dungeon.setCurrentMap(mapIndexDestination);
 					if (thing == _vm->_thingParty) {
 						dungeon._partyMapX = destMapX;
@@ -346,6 +348,8 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 				} else if ((destinationSquareType == (int)kDMElementTypeStairs) && (thing != _vm->_thingParty) && (thingType != kDMThingTypeProjectile)) {
 					if (!getFlag(destinationSquareData, kDMSquareMaskStairsUp)) {
 						mapIndexDestination = dungeon.getLocationAfterLevelChange(mapIndexDestination, 1, &destMapX, &destMapY);
+						if (mapIndexDestination < 0)
+							break;
 						dungeon.setCurrentMap(mapIndexDestination);
 					}
 					direction = dungeon.getStairsExitDirection(destMapX, destMapY);
