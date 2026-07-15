@@ -1072,7 +1072,7 @@ void FoolGame::hermitScreenZoom() {
 
 void FoolGame::hermitScreenBehold() {
 	// 140:28bc
-	if (_puzzleCompletionStatus[0x68] > 4) {
+	if (_puzzleCompletionStatus[0x34] > 4) {
 		waitForMouseUp();
 		menuClickMessage();
 		flashRect(0x29, 0x37, 0x142, 0x1c9, 0x96);
