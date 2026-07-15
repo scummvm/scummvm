@@ -686,7 +686,7 @@ void FoolGame::sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16
 	storyDrawZoom();
 }
 
-void FoolGame::getNextEvent(uint32 unk1) {
+void FoolGame::getNextEvent(int32 unk1) {
 	// 128:0c6a
 
 	// This function is usually called at the start of an event processing loop,
