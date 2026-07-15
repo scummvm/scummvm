@@ -1021,8 +1021,10 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 			movementArrowIdx += (_vm->_dungeonMan->_partyDir + 2);
 			int16 firstDamagedChampionIndex = _vm->_championMan->getTargetChampionIndex(partyMapX, partyMapY, _vm->normalizeModulo4(movementArrowIdx));
 			int16 secondDamagedChampionIndex = _vm->_championMan->getTargetChampionIndex(partyMapX, partyMapY, _vm->turnDirRight(movementArrowIdx));
-			int16 damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(firstDamagedChampionIndex, 1, kDMWoundTorso | kDMWoundLegs, kDMAttackTypeSelf);
-			if (firstDamagedChampionIndex != secondDamagedChampionIndex)
+			int16 damage = 0;
+			if (firstDamagedChampionIndex >= 0)
+				damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(firstDamagedChampionIndex, 1, kDMWoundTorso | kDMWoundLegs, kDMAttackTypeSelf);
+			if (secondDamagedChampionIndex >= 0 && firstDamagedChampionIndex != secondDamagedChampionIndex)
 				damage |= _vm->_championMan->addPendingDamageAndWounds_getDamage(secondDamagedChampionIndex, 1, kDMWoundTorso | kDMWoundLegs, kDMAttackTypeSelf);
 
 			if (damage)
