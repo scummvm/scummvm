@@ -528,7 +528,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			str += " ";
 			str += objMan._objectNames[iconIndex];
 			descString = str;
-		} else {
+		} else if (iconIndex >= 0) {
 			descString = objMan._objectNames[iconIndex];
 		}
 
