@@ -18,12 +18,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RIPPER_TOOLBAR_H
-#define RIPPER_TOOLBAR_H
+#ifndef RIPPER_WAC_H
+#define RIPPER_WAC_H
 
 #include "common/array.h"
 #include "common/rect.h"
-#include "common/str.h"
 
 #include "ripper/resources.h"
 
@@ -31,51 +30,45 @@ namespace Ripper {
 
 class ResourceManager;
 class RipperEngine;
-struct MouseState;
 
-class ToolbarManager {
+class WacManager {
 public:
-	explicit ToolbarManager(RipperEngine *engine);
+	explicit WacManager(RipperEngine *engine);
 
 	bool initialize(ResourceManager &resources);
-	void applySharedPalettePatch(byte *palette, uint colorCount);
-	bool service(const MouseState &mouse);
-	void leave();
+	void run();
 
 private:
-	struct Action {
-		BitmapAssetSequence sequence;
-		Common::String label;
-		Common::Rect bounds;
-		uint frameIndex;
-
-		Action() : frameIndex(0) {}
+	enum FrontEndAction {
+		kExitAction = 0x1900,
+		kDatabaseAction = 0x2000,
+		kTextViewerAction = 0x3100,
+		kHelpAction = 0x3b00
 	};
 
-	void enter(uint32 now);
-	int findAction(const Common::Point &point) const;
-	void drawIcons();
-	void drawTooltip(const Common::Point &point);
-	void removeTooltip();
-	void dispatchAction(uint actionIndex);
-	uint measureText(const Common::String &text) const;
-	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text) const;
+	struct Control {
+		BitmapAssetFrame bitmap;
+		Common::Rect bounds;
+		uint16 action;
+	};
 
-	Common::Array<Action> _actions;
-	Common::Array<byte> _sharedPalette;
-	BitmapFontAsset _font;
-	Common::Array<byte> _topBacking;
-	Common::Array<byte> _tooltipBacking;
-	Common::Rect _tooltipBounds;
-	uint32 _sessionStartMillis;
-	uint32 _lastFrameMillis;
-	int _hoveredAction;
-	int _pressedAction;
-	bool _active;
-	bool _previewEnabled;
+	bool captureDisplay();
+	void restoreDisplay();
+	void drawFrontEnd() const;
+	void drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const;
+	int findControl(const Common::Point &point) const;
+	bool dispatchAction(uint16 action);
+
 	RipperEngine *_engine;
+	BitmapAssetFrame _background;
+	Common::Array<Control> _controls;
+	Common::Array<byte> _savedPixels;
+	Common::Array<byte> _savedPalette;
+	int _hoveredControl;
+	int _pressedControl;
+	bool _initialized;
 };
 
 } // End of namespace Ripper
 
-#endif // RIPPER_TOOLBAR_H
+#endif // RIPPER_WAC_H

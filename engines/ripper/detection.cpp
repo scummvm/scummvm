@@ -33,6 +33,7 @@ const DebugChannelDef RipperMetaEngineDetection::debugFlagList[] = {
 	{ Ripper::kDebugCursor, "cursor", "Cursor assets, selection, and animation" },
 	{ Ripper::kDebugAudio, "audio", "Music, speech, and sound-effect playback" },
 	{ Ripper::kDebugDialogue, "dialogue", "Dialogue choices, presentation, and selection state" },
+	{ Ripper::kDebugWac, "wac", "WAC database, presentation, and puzzle state" },
 	DEBUG_CHANNEL_END
 };
 

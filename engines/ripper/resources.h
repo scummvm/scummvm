@@ -102,6 +102,7 @@ public:
 	bool initialize();
 	bool loadInterfaceBitmapSequence(const Common::String &memberName,
 		BitmapAssetSequence &sequence) const;
+	bool loadInterfacePcx(const Common::String &memberName, BitmapAssetFrame &frame) const;
 	bool loadInterfaceBitmapFont(const Common::String &memberName, BitmapFontAsset &font) const;
 	bool loadGameText(Common::Array<Common::String> &strings) const;
 
