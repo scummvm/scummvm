@@ -151,6 +151,27 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_paletteSwitchingEnabled = false;
 	_dungeonViewPaletteIndex = 0;
 
+	_stairsNativeBitmapIndexUpFrontD3L = 0;
+	_stairsNativeBitmapIndexUpFrontD3C = 0;
+	_stairsNativeBitmapIndexUpFrontD2L = 0;
+	_stairsNativeBitmapIndexUpFrontD2C = 0;
+	_stairsNativeBitmapIndexUpFrontD1L = 0;
+	_stairsNativeBitmapIndexUpFrontD1C = 0;
+	_stairsNativeBitmapIndexUpFrontD0CLeft = 0;
+	_stairsNativeBitmapIndexDownFrontD3L = 0;
+	_stairsNativeBitmapIndexDownFrontD3C = 0;
+	_stairsNativeBitmapIndexDownFrontD2L = 0;
+	_stairsNativeBitmapIndexDownFrontD2C = 0;
+	_stairsNativeBitmapIndexDownFrontD1L = 0;
+	_stairsNativeBitmapIndexDownFrontD1C = 0;
+	_stairsNativeBitmapIndexDownFrontD0CLeft = 0;
+	_stairsNativeBitmapIndexSideD2L = 0;
+	_stairsNativeBitmapIndexUpSideD1L = 0;
+	_stairsNativeBitmapIndexDownSideD1L = 0;
+	_stairsNativeBitmapIndexSideD0L = 0;
+
+	_useFlippedWallAndFootprintsBitmap = false;
+
 	for (uint16 i = 0; i < 16; ++i) {
 		_paletteTopAndBottomScreen[i] = 0;
 		_paletteMiddleScreen[i] = 0;
