@@ -29,6 +29,7 @@
 #include "ripper/detection.h"
 #include "ripper/input.h"
 #include "ripper/ripper.h"
+#include "ripper/script.h"
 
 namespace Ripper {
 
@@ -39,15 +40,34 @@ static const int kWacControlX[] = { 172, 252, 326, 390 };
 static const uint16 kWacControlActions[] = { 0x1900, 0x2000, 0x3100, 0x3b00 };
 static const uint kWacDefaultCursor = 14;
 static const uint kWacControlCursor = 16;
+static const uint16 kDosF10Command = 0x4400;
+static const uint kWacDatabaseEntryCount = 30;
+static const uint kWacDatabaseFlagBase = 0x46;
+static const uint kWacDatabaseTextBase = 0xdc;
+static const uint kWacDatabaseControlId = 0x73a;
+static const int kWacDatabaseLeft = 50;
+static const int kWacDatabaseTop = 210;
+static const int kWacDatabaseRight = 332;
+static const int kWacDatabaseBottom = 400;
+static const int kWacDatabaseRowHeight = 13;
+static const int kWacDatabaseTitleRows = 1;
+static const uint kWacDatabaseVisibleRows = 13;
+static const byte kWacNormalBackground = 0;
+static const byte kWacNormalText = 251;
+static const byte kWacSelectedBackground = 248;
+static const byte kWacSelectedText = 4;
 
 WacManager::WacManager(RipperEngine *engine) : _engine(engine), _hoveredControl(-1),
-		_pressedControl(-1), _initialized(false) {
+		_pressedControl(-1), _databaseSelection(0), _databaseFirstVisible(0),
+		_initialized(false) {
 }
 
 bool WacManager::initialize(ResourceManager &resources) {
 	if (!resources.loadInterfacePcx("wac.pcx", _background) ||
 		_background.width != kWacWidth || _background.height != kWacHeight ||
-		_background.palette.size() < 256 * 3)
+		_background.palette.size() < 256 * 3 ||
+		!resources.loadInterfaceBitmapFont("small.fnt", _font) ||
+		!resources.loadGameText(_gameText))
 		return false;
 
 	_controls.resize(ARRAYSIZE(kWacControlActions));
@@ -152,8 +172,9 @@ bool WacManager::dispatchAction(uint16 action) {
 		debugC(1, kDebugWac, "Ripper: WAC front end selected exit action=0x1900");
 		return false;
 	case kDatabaseAction:
-		debugC(1, kDebugWac,
-			"Ripper: WAC database action=0x2000 selected; inventory chooser is stubbed");
+		runDatabase();
+		drawFrontEnd();
+		_engine->getInput()->discardMouseTransitions();
 		break;
 	case kTextViewerAction:
 		debugC(1, kDebugWac,
@@ -168,6 +189,205 @@ bool WacManager::dispatchAction(uint16 action) {
 		break;
 	}
 	return true;
+}
+
+const Common::String &WacManager::resourceString(uint resourceId) const {
+	static const Common::String empty;
+	if (resourceId == 0 || resourceId > _gameText.size())
+		return empty;
+	return _gameText[resourceId - 1];
+}
+
+uint WacManager::measureText(const Common::String &text) const {
+	uint width = 0;
+	for (uint i = 0; i < text.size(); ++i) {
+		const byte character = (byte)text[i];
+		if (character == ' ') {
+			width += _font.spaceWidth;
+			continue;
+		}
+		if (character < _font.firstCharacter ||
+			character >= _font.firstCharacter + _font.glyphs.size())
+			continue;
+		const BitmapFontGlyph &glyph = _font.glyphs[character - _font.firstCharacter];
+		width += glyph.xOffset + glyph.width + _font.characterSpacing;
+	}
+	return width;
+}
+
+void WacManager::drawText(byte *screen, uint pitch, int x, int y,
+		const Common::String &text, byte color) const {
+	int drawX = x;
+	for (uint i = 0; i < text.size(); ++i) {
+		const byte character = (byte)text[i];
+		if (character == ' ') {
+			drawX += _font.spaceWidth;
+			continue;
+		}
+		if (character < _font.firstCharacter ||
+			character >= _font.firstCharacter + _font.glyphs.size())
+			continue;
+		const BitmapFontGlyph &glyph = _font.glyphs[character - _font.firstCharacter];
+		for (uint glyphY = 0; glyphY < glyph.height; ++glyphY) {
+			for (uint glyphX = 0; glyphX < glyph.width; ++glyphX) {
+				const byte pixel = _font.pixels[glyph.pixelOffset + glyphY * glyph.width + glyphX];
+				if (pixel != _font.transparentColor)
+					screen[(y + glyph.yOffset + glyphY) * pitch + drawX +
+						glyph.xOffset + glyphX] = color;
+			}
+		}
+		drawX += glyph.xOffset + glyph.width + _font.characterSpacing;
+	}
+}
+
+void WacManager::buildDatabaseEntries() {
+	_databaseEntries.clear();
+	for (uint index = 0; index < kWacDatabaseEntryCount; ++index) {
+		const uint flag = kWacDatabaseFlagBase + index;
+		if (!_engine->getScripts()->isMilestoneFlagSet(flag))
+			continue;
+		DatabaseEntry entry;
+		entry.originalIndex = index;
+		entry.label = resourceString(kWacDatabaseTextBase + index);
+		_databaseEntries.push_back(entry);
+		debugC(2, kDebugWac,
+			"Ripper: WAC database visibleRow=%u entry=%u flag=0x%x textId=0x%x label='%s'",
+			_databaseEntries.size() - 1, index, flag, kWacDatabaseTextBase + index,
+			entry.label.c_str());
+	}
+	debugC(1, kDebugWac, "Ripper: built WAC database visibleEntries=%u scannedFlags=%u",
+		_databaseEntries.size(), kWacDatabaseEntryCount);
+}
+
+void WacManager::drawDatabase() const {
+	const Common::Rect bounds(kWacDatabaseLeft, kWacDatabaseTop,
+		kWacDatabaseRight, kWacDatabaseBottom);
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		return;
+	}
+
+	for (int y = bounds.top; y < bounds.bottom; ++y)
+		memset(screen->getBasePtr(bounds.left, y), kWacNormalBackground,
+			bounds.width());
+	const Common::String &title = resourceString(0x4e);
+	const int titleX = bounds.left + (bounds.width() - measureText(title)) / 2;
+	drawText((byte *)screen->getPixels(), screen->pitch, titleX,
+		bounds.top + (kWacDatabaseRowHeight - _font.lineHeight) / 2,
+		title, kWacNormalText);
+
+	if (_databaseEntries.empty()) {
+		drawText((byte *)screen->getPixels(), screen->pitch, bounds.left + 4,
+			bounds.top + kWacDatabaseRowHeight + 2,
+			resourceString(0x46), kWacNormalText);
+	} else {
+		for (uint row = 0; row < kWacDatabaseVisibleRows; ++row) {
+			const uint entryIndex = _databaseFirstVisible + row;
+			if (entryIndex >= _databaseEntries.size())
+				break;
+			const int top = bounds.top +
+				(kWacDatabaseTitleRows + row) * kWacDatabaseRowHeight;
+			const bool selected = entryIndex == _databaseSelection;
+			if (selected) {
+				for (int y = top; y < top + kWacDatabaseRowHeight; ++y)
+					memset(screen->getBasePtr(bounds.left, y),
+						kWacSelectedBackground, bounds.width());
+			}
+			drawText((byte *)screen->getPixels(), screen->pitch,
+				bounds.left + 4,
+				top + (kWacDatabaseRowHeight - _font.lineHeight) / 2,
+				_databaseEntries[entryIndex].label,
+				selected ? kWacSelectedText : kWacNormalText);
+		}
+	}
+	g_system->unlockScreen();
+	g_system->updateScreen();
+}
+
+void WacManager::dispatchDatabaseEntry(const DatabaseEntry &entry) {
+	if (entry.originalIndex == 1) {
+		debugC(1, kDebugWac,
+			"Ripper: WAC database entry=1 label='%s' routes to RunWacMugSelectionScene stub",
+			entry.label.c_str());
+		return;
+	}
+	if (entry.originalIndex == 2) {
+		debugC(1, kDebugWac,
+			"Ripper: WAC database entry=2 label='%s' routes to PlayMugSelectionCompletionMedia stub",
+			entry.label.c_str());
+		return;
+	}
+	debugC(1, kDebugWac,
+		"Ripper: WAC database entry=%u label='%s' handler is stubbed",
+		entry.originalIndex, entry.label.c_str());
+}
+
+void WacManager::runDatabase() {
+	const Common::Rect bounds(kWacDatabaseLeft, kWacDatabaseTop,
+		kWacDatabaseRight, kWacDatabaseBottom);
+	buildDatabaseEntries();
+	_databaseSelection = 0;
+	_databaseFirstVisible = 0;
+	_engine->getInput()->discardMouseTransitions();
+	drawDatabase();
+	debugC(1, kDebugWac,
+		"Ripper: entered WAC database chooser control=0x%x bounds=%d,%d,%d,%d",
+		kWacDatabaseControlId, bounds.left, bounds.top, bounds.width(), bounds.height());
+
+	bool active = true;
+	while (active && !_engine->shouldQuit()) {
+		if (_engine->getInput()->pollEvents()) {
+			_engine->quitGame();
+			break;
+		}
+		while (_engine->getInput()->hasPendingKey()) {
+			const uint16 command = _engine->getInput()->consumeKey();
+			if (command == 0x1b || command == kExitAction || command == kDosF10Command) {
+				active = false;
+			} else if (!_databaseEntries.empty() && command == 0x4800) {
+				if (_databaseSelection > 0)
+					--_databaseSelection;
+			} else if (!_databaseEntries.empty() && command == 0x5000) {
+				if (_databaseSelection + 1 < _databaseEntries.size())
+					++_databaseSelection;
+			} else if (!_databaseEntries.empty() && command == 0x0d) {
+				dispatchDatabaseEntry(_databaseEntries[_databaseSelection]);
+			}
+			if (_databaseSelection < _databaseFirstVisible)
+				_databaseFirstVisible = _databaseSelection;
+			else if (_databaseSelection >= _databaseFirstVisible + kWacDatabaseVisibleRows)
+				_databaseFirstVisible = _databaseSelection - kWacDatabaseVisibleRows + 1;
+			drawDatabase();
+		}
+
+		const MouseState mouse = _engine->getInput()->publishMouseState();
+		_engine->getCursor()->update(bounds.contains(mouse.position) ?
+			kWacControlCursor : kWacDefaultCursor);
+		if (!_databaseEntries.empty() && bounds.contains(mouse.position)) {
+			const int relativeY = mouse.position.y - bounds.top -
+				kWacDatabaseTitleRows * kWacDatabaseRowHeight;
+			if (relativeY >= 0) {
+				const uint row = relativeY / kWacDatabaseRowHeight;
+				const uint entryIndex = _databaseFirstVisible + row;
+				if (row < kWacDatabaseVisibleRows && entryIndex < _databaseEntries.size() &&
+					entryIndex != _databaseSelection) {
+					_databaseSelection = entryIndex;
+					debugC(2, kDebugWac,
+						"Ripper: WAC database hover visibleRow=%u entry=%u label='%s' point=%d,%d",
+						entryIndex, _databaseEntries[entryIndex].originalIndex,
+						_databaseEntries[entryIndex].label.c_str(), mouse.position.x, mouse.position.y);
+					drawDatabase();
+				}
+				if ((mouse.released & kMouseButtonLeft) != 0 && row < kWacDatabaseVisibleRows &&
+					entryIndex < _databaseEntries.size())
+					dispatchDatabaseEntry(_databaseEntries[entryIndex]);
+			}
+		}
+		g_system->delayMillis(10);
+	}
+	debugC(1, kDebugWac, "Ripper: left WAC database chooser");
 }
 
 void WacManager::run() {
@@ -193,7 +413,7 @@ void WacManager::run() {
 		}
 		while (_engine->getInput()->hasPendingKey()) {
 			const uint16 command = _engine->getInput()->consumeKey();
-			if (command == 0x1b || command == kExitAction) {
+			if (command == 0x1b || command == kExitAction || command == kDosF10Command) {
 				debugC(1, kDebugWac,
 					"Ripper: WAC front end keyboard exit command=0x%x", command);
 				active = false;

@@ -336,6 +336,15 @@ bool ScriptManager::isMilestoneFlagSet(uint32 flag) const {
 	return flag < _milestoneFlags.size() && _milestoneFlags[flag];
 }
 
+void ScriptManager::setMilestoneFlag(uint32 flag, const char *source) {
+	if (_milestoneFlags.size() <= flag)
+		_milestoneFlags.resize(flag + 1);
+	_milestoneFlags[flag] = true;
+	debugC(2, kDebugScripts, "Ripper: set milestone flag %u source=%s", flag, source);
+	debugC(2, kDebugDialogue,
+		"Ripper: dialogue-visible milestone flag set=%u source=%s", flag, source);
+}
+
 bool ScriptManager::isScenePlayed(const Common::String &scene) const {
 	for (uint i = 0; i < _playedScenes.size(); ++i) {
 		if (_playedScenes[i].equalsIgnoreCase(scene))
@@ -501,12 +510,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 		case kSetMilestoneFlag: {
 			if (command.arguments.size() < 1)
 				return false;
-			const uint32 flag = command.arguments[0].value;
-			if (_milestoneFlags.size() <= flag)
-				_milestoneFlags.resize(flag + 1);
-			_milestoneFlags[flag] = true;
-			debugC(2, kDebugScripts, "Ripper: set milestone flag %u", flag);
-			debugC(2, kDebugDialogue, "Ripper: dialogue-visible milestone flag set=%u", flag);
+			setMilestoneFlag(command.arguments[0].value, "script-opcode-0x0e");
 			break;
 		}
 
