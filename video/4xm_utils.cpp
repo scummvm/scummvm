@@ -172,8 +172,22 @@ RawDeltaReader::RawDeltaReader(const byte *ptr, uint32 len) : data(ptr), size(le
 	mode = READ_LE_UINT32(data);
 	pairOffset = READ_LE_UINT32(data + 8) + 0x18;
 	byteOffset = READ_LE_UINT32(data + 12) + 0x18;
+	signedByteOffset = byteOffset;
 	nibbleOffset = READ_LE_UINT32(data + 16) + 0x18;
 	controlWord = READ_LE_UINT32(data + 0x18);
+	if (nibbleOffset + 4 <= size)
+		nibbleWord = READ_LE_UINT32(data + nibbleOffset);
+}
+
+RawDeltaReader::RawDeltaReader(const byte *ptr, uint32 len, uint32 streamBase, uint32 pairOff, uint32 byteOff,
+							   uint32 signedByteOff, uint32 nibbleOff, uint32 controlOff) : data(ptr), size(len) {
+	pairOffset = streamBase + pairOff;
+	byteOffset = streamBase + byteOff;
+	signedByteOffset = streamBase + signedByteOff;
+	nibbleOffset = streamBase + nibbleOff;
+	separateSignedByteStream = true;
+	if (controlOff + 4 <= size)
+		controlWord = READ_LE_UINT32(data + controlOff);
 	if (nibbleOffset + 4 <= size)
 		nibbleWord = READ_LE_UINT32(data + nibbleOffset);
 }
@@ -208,7 +222,12 @@ byte RawDeltaReader::readByteIndex() {
 }
 
 int8 RawDeltaReader::readSignedByte() {
-	return (int8)readByteIndex();
+	if (!separateSignedByteStream)
+		return (int8)readByteIndex();
+
+	uint32 off = signedByteOffset + signedByteIndex;
+	++signedByteIndex;
+	return off < size ? (int8)data[off] : 0;
 }
 
 uint32 RawDeltaReader::readNibble() {
