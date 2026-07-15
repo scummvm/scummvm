@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-14 23:12+0000\n"
+"POT-Creation-Date: 2026-07-15 08:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2738,10 +2738,11 @@ msgstr ""
 msgid "Restore game:"
 msgstr ""
 
-#: gui/saveload.cpp:37 engines/groovie/script.cpp:853
-#: engines/lab/savegame.cpp:237 engines/nancy/state/loadsave.cpp:108
-#: engines/parallaction/metaengine.cpp:157 engines/saga/metaengine.cpp:469
-#: engines/tinsel/metaengine.cpp:323 engines/zvision/metaengine.cpp:282
+#: gui/saveload.cpp:37 engines/fool/fool_game.cpp:97
+#: engines/groovie/script.cpp:853 engines/lab/savegame.cpp:237
+#: engines/nancy/state/loadsave.cpp:108 engines/parallaction/metaengine.cpp:157
+#: engines/saga/metaengine.cpp:469 engines/tinsel/metaengine.cpp:323
+#: engines/zvision/metaengine.cpp:282
 msgid "Save"
 msgstr ""
 
@@ -5829,12 +5830,12 @@ msgid "Look"
 msgstr ""
 
 #: engines/access/metaengine.cpp:314 engines/drascula/metaengine.cpp:240
-#: engines/queen/metaengine.cpp:259 engines/saga/metaengine.cpp:369
-#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
-#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:193
-#: engines/scumm/help.cpp:211 engines/sherlock/metaengine.cpp:425
-#: engines/supernova/metaengine.cpp:336 engines/tot/metaengine.cpp:144
-#: engines/twp/metaengine.cpp:177
+#: engines/fool/fool_game.cpp:97 engines/queen/metaengine.cpp:259
+#: engines/saga/metaengine.cpp:369 engines/scumm/help.cpp:125
+#: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
+#: engines/scumm/help.cpp:193 engines/scumm/help.cpp:211
+#: engines/sherlock/metaengine.cpp:425 engines/supernova/metaengine.cpp:336
+#: engines/tot/metaengine.cpp:144 engines/twp/metaengine.cpp:177
 msgid "Open"
 msgstr ""
 
@@ -6001,11 +6002,12 @@ msgstr ""
 #: engines/efh/metaengine.cpp:44 engines/glk/metaengine.cpp:205
 #: engines/gob/metaengine.cpp:57 engines/got/metaengine.cpp:48
 #: engines/griffon/metaengine.cpp:40 engines/hugo/metaengine.cpp:56
-#: engines/made/metaengine.cpp:51 engines/mm/metaengine.cpp:91
-#: engines/mortevielle/metaengine.cpp:37 engines/parallaction/metaengine.cpp:52
-#: engines/sci/detection_options.h:221 engines/scumm/dialogs.cpp:1252
-#: engines/scumm/metaengine.cpp:872 engines/supernova/metaengine.cpp:53
-#: engines/wage/metaengine.cpp:51 engines/wintermute/metaengine.cpp:81
+#: engines/macs2/dialogs.cpp:39 engines/made/metaengine.cpp:51
+#: engines/mm/metaengine.cpp:91 engines/mortevielle/metaengine.cpp:37
+#: engines/parallaction/metaengine.cpp:52 engines/sci/detection_options.h:221
+#: engines/scumm/dialogs.cpp:1252 engines/scumm/metaengine.cpp:872
+#: engines/supernova/metaengine.cpp:53 engines/wage/metaengine.cpp:51
+#: engines/wintermute/metaengine.cpp:81
 msgid "Enable Text to Speech"
 msgstr ""
 
@@ -6037,12 +6039,13 @@ msgstr ""
 #: engines/drascula/metaengine.cpp:42 engines/dreamweb/metaengine.cpp:48
 #: engines/fool/metaengine.cpp:35 engines/got/metaengine.cpp:35
 #: engines/groovie/metaengine.cpp:53 engines/m4/metaengine.cpp:37
-#: engines/mads/metaengine.cpp:116 engines/nancy/metaengine.cpp:104
-#: engines/neverhood/dialogs.cpp:47 engines/pelrock/metaengine.cpp:35
-#: engines/phoenixvr/metaengine.cpp:47 engines/sci/detection_options.h:105
-#: engines/sherlock/metaengine.cpp:47 engines/toltecs/metaengine.cpp:44
-#: engines/trecision/metaengine.cpp:41 engines/ultima/metaengine.cpp:56
-#: engines/waynesworld/metaengine.cpp:37 engines/zvision/metaengine.cpp:42
+#: engines/macs2/dialogs.cpp:34 engines/mads/metaengine.cpp:116
+#: engines/nancy/metaengine.cpp:104 engines/neverhood/dialogs.cpp:47
+#: engines/pelrock/metaengine.cpp:35 engines/phoenixvr/metaengine.cpp:47
+#: engines/sci/detection_options.h:105 engines/sherlock/metaengine.cpp:47
+#: engines/toltecs/metaengine.cpp:44 engines/trecision/metaengine.cpp:41
+#: engines/ultima/metaengine.cpp:56 engines/waynesworld/metaengine.cpp:37
+#: engines/zvision/metaengine.cpp:42
 msgid "Use original save/load screens"
 msgstr ""
 
@@ -6052,12 +6055,13 @@ msgstr ""
 #: engines/drascula/metaengine.cpp:43 engines/dreamweb/metaengine.cpp:49
 #: engines/fool/metaengine.cpp:36 engines/got/metaengine.cpp:36
 #: engines/groovie/metaengine.cpp:54 engines/m4/metaengine.cpp:38
-#: engines/mads/metaengine.cpp:117 engines/nancy/metaengine.cpp:105
-#: engines/neverhood/dialogs.cpp:48 engines/pelrock/metaengine.cpp:36
-#: engines/phoenixvr/metaengine.cpp:48 engines/sci/detection_options.h:106
-#: engines/sherlock/metaengine.cpp:48 engines/toltecs/metaengine.cpp:45
-#: engines/trecision/metaengine.cpp:42 engines/ultima/metaengine.cpp:57
-#: engines/waynesworld/metaengine.cpp:38 engines/zvision/metaengine.cpp:43
+#: engines/macs2/dialogs.cpp:35 engines/mads/metaengine.cpp:117
+#: engines/nancy/metaengine.cpp:105 engines/neverhood/dialogs.cpp:48
+#: engines/pelrock/metaengine.cpp:36 engines/phoenixvr/metaengine.cpp:48
+#: engines/sci/detection_options.h:106 engines/sherlock/metaengine.cpp:48
+#: engines/toltecs/metaengine.cpp:45 engines/trecision/metaengine.cpp:42
+#: engines/ultima/metaengine.cpp:57 engines/waynesworld/metaengine.cpp:38
+#: engines/zvision/metaengine.cpp:43
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 
@@ -10158,6 +10162,52 @@ msgstr ""
 msgid "Select index"
 msgstr ""
 
+#: engines/macs2/dialogs.cpp:40
+msgid "Use TTS to read the dialogue (if TTS is available)"
+msgstr ""
+
+#: engines/macs2/dialogs.cpp:44 engines/scumm/dialogs.cpp:1163
+msgid "Enhancements:"
+msgstr ""
+
+#: engines/macs2/dialogs.cpp:50 engines/scumm/dialogs.cpp:1168
+msgid "Fix original bugs"
+msgstr ""
+
+#: engines/macs2/dialogs.cpp:51 engines/scumm/dialogs.cpp:1169
+msgid ""
+"Fixes bugs which were present in the original release, and noticeable "
+"graphical/audio glitches."
+msgstr ""
+
+#: engines/macs2/dialogs.cpp:54 engines/scumm/dialogs.cpp:1172
+msgid "Audio-visual improvements"
+msgstr ""
+
+#: engines/macs2/dialogs.cpp:55 engines/scumm/dialogs.cpp:1173
+msgid ""
+"Makes adjustments not related to bugs for certain audio and graphics "
+"elements (e.g. version consistency changes)."
+msgstr ""
+
+#: engines/macs2/dialogs.cpp:58 engines/scumm/dialogs.cpp:1176
+msgid "Restored content"
+msgstr ""
+
+#: engines/macs2/dialogs.cpp:59 engines/scumm/dialogs.cpp:1177
+msgid ""
+"Restores dialogs, graphics, and audio elements which were originally cut in "
+"the original release."
+msgstr ""
+
+#: engines/macs2/dialogs.cpp:63 engines/scumm/dialogs.cpp:1180
+msgid "Modern UI/UX adjustments"
+msgstr ""
+
+#: engines/macs2/dialogs.cpp:64
+msgid "Activates some modern comforts for a smoother user experience."
+msgstr ""
+
 #: engines/macs2/metaengine.cpp:52
 msgid "Change cursor mode"
 msgstr ""
@@ -11780,44 +11830,6 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1056
 msgid "Expert"
-msgstr ""
-
-#: engines/scumm/dialogs.cpp:1163
-msgid "Enhancements:"
-msgstr ""
-
-#: engines/scumm/dialogs.cpp:1168
-msgid "Fix original bugs"
-msgstr ""
-
-#: engines/scumm/dialogs.cpp:1169
-msgid ""
-"Fixes bugs which were present in the original release, and noticeable "
-"graphical/audio glitches."
-msgstr ""
-
-#: engines/scumm/dialogs.cpp:1172
-msgid "Audio-visual improvements"
-msgstr ""
-
-#: engines/scumm/dialogs.cpp:1173
-msgid ""
-"Makes adjustments not related to bugs for certain audio and graphics "
-"elements (e.g. version consistency changes)."
-msgstr ""
-
-#: engines/scumm/dialogs.cpp:1176
-msgid "Restored content"
-msgstr ""
-
-#: engines/scumm/dialogs.cpp:1177
-msgid ""
-"Restores dialogs, graphics, and audio elements which were originally cut in "
-"the original release."
-msgstr ""
-
-#: engines/scumm/dialogs.cpp:1180
-msgid "Modern UI/UX adjustments"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1181
