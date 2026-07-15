@@ -504,8 +504,14 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			if (!_engine->getMedia()->play(mediaPath, allowEscSpace,
 				(int32)command.arguments[3].value, (int32)command.arguments[4].value))
 				return false;
-			debugC(2, kDebugScripts, "Ripper: completed media command '%s' controls=%d",
-				mediaPath.c_str(), allowEscSpace);
+			// HandleSceneEntryMediaAndSetBasenameFlag at 0x159e1 marks the
+			// presentation basename only after ExecutePresentationEntry returns.
+			const size_t extension = mediaPath.findFirstOf('.');
+			const Common::String playedKey = mediaPath.substr(0, extension);
+			markScenePlayed(playedKey);
+			debugC(2, kDebugScripts,
+				"Ripper: completed media command '%s' controls=%d playedKey='%s'",
+				mediaPath.c_str(), allowEscSpace, playedKey.c_str());
 			break;
 		}
 
