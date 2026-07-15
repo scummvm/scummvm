@@ -204,6 +204,15 @@
   `R_P_L1.WAV`, and presents only the first frame of `BAW1A.SMK`; its sole
   chooser callback hands control to the concurrent prologue runtime, which
   eventually transitions to ACT1.
+- Opcode `0x1f` loads a named WAV into the original's 20-slot trigger table
+  through `HandleSceneEntryLoadResourceIntoFirstFreeSlot` at `0x15e48`.
+  Opcode `0x20` configures that slot through
+  `HandleSceneEntryConfigureOrStartNamedAudioTrigger` at `0x15eea`; a zero
+  trigger starts it immediately, while control bit 0 makes
+  `StartAudioTriggerSlot` at `0x37297` set the descriptor repeat field to -1.
+  ScummVM maps that state to an infinite looping audio stream. Choice-list
+  activation does not stop or replace the named trigger, so `R_P_L1.WAV`
+  continues beneath dialogue selection until a later explicit stop or clear.
 - Opcode `0x14` stores its argument as the next frame index and returns control
   code `-2`. `RunSceneScriptLoop` responds by servicing the concurrent runtime
   once before continuing BA0 at that stored frame.
