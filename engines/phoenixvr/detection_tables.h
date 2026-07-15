@@ -313,8 +313,8 @@ const ADGameDescription gameDescriptions[] = {
 	},
 
 	{"dracula1",
-		nullptr,
-		AD_ENTRY2s("script.pak", "6998262fcce9cb5d3cc8a555f8ee024a", 265,
+		"Retail version",
+		AD_ENTRY2s("Install/script.pak", "6998262fcce9cb5d3cc8a555f8ee024a", 265,
 				   "Interface.vr", "47099471f31f794be8a7e5a3c382bf62", 104304),
 		Common::IT_ITA,
 		Common::kPlatformWindows,

@@ -416,13 +416,14 @@ bool PhoenixVREngine::setNextLevel() {
 void PhoenixVREngine::setNextScript(const Common::String &nextScript) {
 	debug("setNextScript %s", nextScript.c_str());
 	_contextScript = nextScript;
-	if (nextScript.find('\\') == nextScript.npos) {
+	const Common::String scriptPath = removeDrive(nextScript);
+	if (scriptPath.find('\\') == scriptPath.npos) {
 		// simple filename, e.g. "script.lst"
-		_nextScript = nextScript;
+		_nextScript = scriptPath;
 		return;
 	}
 
-	auto nextPath = Common::Path(removeDrive(nextScript), '\\');
+	auto nextPath = Common::Path(scriptPath, '\\');
 	_currentScriptPath = nextPath.getParent();
 	debug("changed script directory to %s", _currentScriptPath.toString().c_str());
 	_nextScript = nextPath.getLastComponent().toString();
