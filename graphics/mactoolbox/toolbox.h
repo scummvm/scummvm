@@ -604,7 +604,7 @@ public:
 	// available event of any type designated by the mask, subject to the priority rules discussed above
 	// under "Priority of Events". If no event of any of the designated types is available, GetNextEvent
 	// returns a null event.
-	bool GetNextEvent(uint32 eventMask, EventRecord &theEvent);
+	bool GetNextEvent(int32 eventMask, EventRecord &theEvent);
 
 	// FUNCTION TickCount : LONGINT;
 	// TickCount returns the current number of ticks (sixtieths of a second) since the system last started

@@ -335,7 +335,7 @@ void Toolbox::FlushEvents(uint32 eventMask, uint32 stopMask) {
 	//}
 }
 
-bool Toolbox::GetNextEvent(uint32 eventMask, EventRecord &theEvent) {
+bool Toolbox::GetNextEvent(int32 eventMask, EventRecord &theEvent) {
 	_pumpEvents();
 	if (!_events.empty() && eventMask) {
 		for (auto it = _events.begin(); it != _events.end(); ++it) {
