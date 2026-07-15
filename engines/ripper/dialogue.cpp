@@ -99,7 +99,8 @@ void DialogueManager::draw() const {
 
 bool DialogueManager::execute(const CompiledScript &script, const ScriptCommand &command,
 		bool includeChoice) {
-	if (command.opcode == 0x15 || command.opcode == 0x16) {
+	if (command.opcode == kAddDialogueChoice ||
+		command.opcode == kAddConditionalDialogueChoice) {
 		if (command.arguments.size() < 2 || command.arguments[0].data.empty())
 			return false;
 		Choice choice;
@@ -120,7 +121,7 @@ bool DialogueManager::execute(const CompiledScript &script, const ScriptCommand 
 		return true;
 	}
 
-	if (command.opcode == 0x17) {
+	if (command.opcode == kStartDialogue) {
 		_pending = true;
 		_selectedChoice = 0;
 		_firstVisibleChoice = 0;

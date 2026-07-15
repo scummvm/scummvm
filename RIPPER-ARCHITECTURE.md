@@ -138,6 +138,10 @@
 
 ## Scripts And Scenes
 
+- `ScriptOpcode` in `script.h` assigns stable symbolic names to every dispatch
+  entry from `0x00` through `0x24`. The explicit byte values and adjacent Ghidra
+  handler anchors mirror the callback table at `0x84040`; decoded script data
+  retains those serialized values while engine control flow uses the labels.
 - `CreateSceneRuntime` at `0x12be7` loads a compiled script and binds its frame,
   interaction, and callback tables.
 - `ReadSceneCallbackOpcodeAndArguments` at `0x140e9` decodes callback commands
