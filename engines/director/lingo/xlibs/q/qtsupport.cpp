@@ -70,6 +70,8 @@ const XlibFileDesc QTSupport::fileNames[] = {
 	{ "QuickTime Asset",	nullptr },
 	{ "QTASSET",			nullptr },
 	{ "QT3Asset",			nullptr },	// QuickTime 3 Asset Xtra
+	{ "QTAuth",			nullptr },	// Quicktime Asset Options Xtra
+	{ "QTExport",			nullptr },	// Macromedia Export Xtra
 	{ nullptr,		nullptr },
 };
 
