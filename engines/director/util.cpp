@@ -1718,7 +1718,7 @@ const byte equalityTableD5win[256] = {
 
 
 //
-// Director 6 Win, Director 7 win, cp1252 encoding
+// Director 6, 7, 8 Win, cp1252 encoding
 //
 
 const byte equalityTableD6win[256] = {
@@ -1866,7 +1866,7 @@ static int getCharEquality(Common::u32char_type_t ch) {
 	if (pl == Common::kPlatformWindows && lang != Common::JA_JPN && version < 600)
 		return equalityTableD5win[num];
 
-	if (pl == Common::kPlatformWindows && lang != Common::JA_JPN && version < 800)
+	if (pl == Common::kPlatformWindows && lang != Common::JA_JPN && version < 900)
 		return equalityTableD6win[num];
 
 	warning("BUILDBOT: No equality table for Director version: %d-%s", version, Common::getLanguageCode(lang));
