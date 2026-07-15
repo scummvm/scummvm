@@ -371,12 +371,15 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 		result = Common::String::format(" %s", v.c_str());
 		break;
 	}
-	case 0x10: {
+	case 0x10:
+	case 0x1F: {
 		Common::String o = decodeScriptValue(script), x = decodeScriptValue(script), y = decodeScriptValue(script);
 		result = Common::String::format(" obj=%s pos=(%s,%s)", o.c_str(), x.c_str(), y.c_str());
 		break;
 	}
 	case 0x11:
+	case 0x29:
+	case 0x2B:
 	case 0x47: {
 		Common::String o = decodeScriptValue(script);
 		result = Common::String::format(" obj=%s", o.c_str());
@@ -447,11 +450,6 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 		result = Common::String::format(" obj=%s slot=%s frame=%s", o.c_str(), s.c_str(), f.c_str());
 		break;
 	}
-	case 0x1F: {
-		Common::String o = decodeScriptValue(script), x = decodeScriptValue(script), y = decodeScriptValue(script);
-		result = Common::String::format(" obj=%s pos=(%s,%s)", o.c_str(), x.c_str(), y.c_str());
-		break;
-	}
 	case 0x20: {
 		Common::String o = decodeScriptValue(script), v = decodeScriptValue(script);
 		result = Common::String::format(" obj=%s offset=%s", o.c_str(), v.c_str());
@@ -492,20 +490,10 @@ static Common::String decodeParams(Common::MemoryReadStream *script, uint8 opcod
 		result = Common::String::format(" obj=%s maxFrame=%s", o.c_str(), v.c_str());
 		break;
 	}
-	case 0x29: {
-		Common::String o = decodeScriptValue(script);
-		result = Common::String::format(" obj=%s", o.c_str());
-		break;
-	}
 	case 0x2A: {
 		Common::String o = decodeScriptValue(script), s = decodeScriptValue(script), d = decodeScriptValue(script);
 		uint8 ai = script->readByte();
 		result = Common::String::format(" obj=%s slot=%s decode=%s idx=%u", o.c_str(), s.c_str(), d.c_str(), ai);
-		break;
-	}
-	case 0x2B: {
-		Common::String o = decodeScriptValue(script);
-		result = Common::String::format(" obj=%s", o.c_str());
 		break;
 	}
 	case 0x2C:
