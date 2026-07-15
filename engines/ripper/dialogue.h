@@ -33,6 +33,7 @@ private:
 	};
 	uint measureText(const Common::String &text) const;
 	void updateLayout();
+	void preparePresentation() const;
 	void drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const;
 
 	Common::Array<Choice> _choices;
