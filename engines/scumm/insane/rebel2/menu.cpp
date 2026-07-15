@@ -178,8 +178,7 @@ int InsaneRebel2::processMenuInput() {
 				int mouseY = event.mouse.y;
 				for (int i = 0; i < _menuItemCount; i++) {
 					int itemY = baseY + i * itemSpacing;
-					if (mouseY >= itemY - itemHitTop - 3 * (highRes ? 2 : 1) &&
-							mouseY < itemY - itemHitTop + itemHitHeight - 3 * (highRes ? 2 : 1)) {
+					if (mouseY >= itemY - itemHitTop && mouseY < itemY - itemHitTop + itemHitHeight) {
 						if (i != _menuSelection) {
 							_menuSelection = i;
 							debugC(DEBUG_INSANE, "Menu: Hover selection changed to %d (mouseY=%d)", _menuSelection, mouseY);
@@ -771,8 +770,7 @@ int InsaneRebel2::processChapterSelectInput() {
 
 				for (int i = 0; i < _chapterItemCount; i++) {
 					int itemY = baseY + i * itemSpacing;
-					if (mouseY >= itemY - itemHitTop - 3 * (highRes ? 2 : 1) &&
-							mouseY < itemY - itemHitTop + itemHitHeight - 3 * (highRes ? 2 : 1)) {
+					if (mouseY >= itemY - itemHitTop && mouseY < itemY - itemHitTop + itemHitHeight) {
 						if (i != _chapterSelection) {
 							_chapterSelection = i;
 							_previewOffsetY = _chapterSelection * -50 + 75;
@@ -1246,8 +1244,7 @@ int InsaneRebel2::processLevelSelectInput() {
 			_vm->_mouse.y = event.mouse.y;
 			for (int i = 0; i < itemCount; i++) {
 				int itemY = itemBaseY + i * itemSpacing;
-				if (event.mouse.y >= itemY - itemHitTop - 3 * (highRes ? 2 : 1) &&
-						event.mouse.y < itemY - itemHitTop + itemHitHeight - 3 * (highRes ? 2 : 1)) {
+				if (event.mouse.y >= itemY - itemHitTop && event.mouse.y < itemY - itemHitTop + itemHitHeight) {
 					selection = i;
 					break;
 				}
@@ -1350,6 +1347,40 @@ void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int wid
 	}
 
 	drawMenuItems(renderBitmap, pitch, width, height, pilotItems, _numPilots + 4, _levelSelection);
+
+	drawPilotInfoLines(renderBitmap);
+}
+
+// Difficulty and current chapter of the highlighted pilot, at the bottom left.
+void InsaneRebel2::drawPilotInfoLines(byte *renderBitmap) {
+	if (_pilotMenuMode != kPilotModeSelect || _levelSelection < 0 || _levelSelection >= _numPilots)
+		return;
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	if (!splayer)
+		return;
+
+	const PilotData &pilot = _pilots[_levelSelection];
+	const int scale = isHiRes() ? 2 : 1;
+
+	const char *diffFmt = splayer->getString(25);
+	if (!diffFmt || !diffFmt[0])
+		diffFmt = "^f01^c248Difficulty: %s";
+	const char *diffName = splayer->getString(111 + CLIP<int>(pilot.difficulty, 0, 5));
+	if (diffName && strlen(diffName) > 9) {
+		// Skip the ^f01^c005 prefix so the name inherits the line's color.
+		Common::String line = Common::String::format(diffFmt, diffName + 9);
+		drawMenuString(renderBitmap, line.c_str(), 30 * scale, 180 * scale);
+	}
+
+	int chapterIdx = 15;
+	while (chapterIdx > 0 && pilot.damage[chapterIdx] >= 0xFF)
+		chapterIdx--;
+	const char *chapFmt = splayer->getString(26);
+	if (!chapFmt || !chapFmt[0])
+		chapFmt = "^f01^c248Chapter:    %hd";
+	Common::String line = Common::String::format(chapFmt, (short)(chapterIdx + 1));
+	drawMenuString(renderBitmap, line.c_str(), 30 * scale, 190 * scale);
 }
 
 void InsaneRebel2::initDefaultRankings() {

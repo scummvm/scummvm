@@ -137,6 +137,7 @@ public:
 	int16 _previewOffsetY;
 
 	void drawChapterInfoLine(byte *renderBitmap, int pitch, int width, int height);
+	void drawPilotInfoLines(byte *renderBitmap);
 	Common::String getRankString(int rating);
 	Common::String getChapterPassword(int level, int difficulty);
 
