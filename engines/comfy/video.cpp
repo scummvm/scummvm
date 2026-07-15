@@ -75,12 +75,12 @@ void ComfyEngine::videoShutdown(byte restorePalette) {
 }
 
 void ComfyEngine::videoSetResolution() {
-	VideoRectRecord record;
+	ComfyRect record;
 	record.left = 0;
 	record.top = 0;
 	record.right = _logicalScreenWidth;
 	record.bottom = _logicalScreenHeight;
-	record.area = MIN<uint32>(framebufferBytes(), 0xFFFF);
+	record.area = _engineVersion == 1 ? (uint16)framebufferBytes() : framebufferBytes();
 	videoFindBestMode(record);
 }
 
@@ -101,7 +101,10 @@ void ComfyEngine::renderInvalidateFullFrame() {
 	videoSetResolution();
 }
 
-void ComfyEngine::videoFindBestMode(VideoRectRecord record) {
+void ComfyEngine::videoFindBestMode(ComfyRect record) {
+	if (_engineVersion == 1)
+		record.area = (uint16)record.area;
+
 	record.left = CLIP<int16>(record.left, 0, _logicalScreenWidth);
 	record.top = CLIP<int16>(record.top, 0, _logicalScreenHeight);
 	record.right = CLIP<int16>(record.right, 0, _logicalScreenWidth);
@@ -114,19 +117,21 @@ void ComfyEngine::videoFindBestMode(VideoRectRecord record) {
 	}
 
 	for (int i = _resolutionChangeCount - 1; i >= 0; i--) {
-		VideoRectRecord &existing = _resolutionChanges[i];
+		ComfyRect &existing = _resolutionChanges[i];
 		if (existing.right < record.left && existing.left <= record.right &&
 				existing.bottom >= record.top && existing.top <= record.bottom)
 			continue;
 
-		VideoRectRecord merged;
+		ComfyRect merged;
 		merged.left = MIN(existing.left, record.left) / 2 * 2;
 		merged.right = (MAX(existing.right, record.right) + 1) / 2 * 2;
 		merged.top = MIN(existing.top, record.top) / 2 * 2;
 		merged.bottom = (MAX(existing.bottom, record.bottom) + 1) / 2 * 2;
 		merged.area = (uint32)(merged.right - merged.left) * (merged.bottom - merged.top);
+		if (_engineVersion == 1)
+			merged.area = (uint16)merged.area;
 
-		if ((uint32)existing.area + record.area >= merged.area) {
+		if (existing.area + record.area >= merged.area) {
 			existing = merged;
 			return;
 		}
@@ -173,7 +178,7 @@ void ComfyEngine::videoPresentFrame() {
 				_logicalScreenWidth, _logicalScreenHeight);
 		} else {
 			for (uint i = 0; i < _resolutionChangeCount; i++) {
-				VideoRectRecord &record = _resolutionChanges[i];
+				ComfyRect &record = _resolutionChanges[i];
 				int16 width = record.right - record.left;
 				int16 height = record.bottom - record.top;
 				if (width <= 0 || height <= 0)

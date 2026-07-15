@@ -96,29 +96,29 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 
 	for (uint i = 0; i < _actors.size(); i++) {
 		Actor &actor = _actors[i];
-		uint16 sceneHandle = actorReadU16(actor, kActorSceneHandle);
+		uint16 sceneHandle = actor.sceneHandle;
 		if (!sceneHandle && i != 0)
 			continue;
 
-		int32 xFixed = (int32)actorReadU32(actor, kActorXFixed);
-		int32 yFixed = (int32)actorReadU32(actor, kActorYFixed);
-		uint16 parent = actorReadU16(actor, kActorParent);
+		int32 xFixed = actor.xFixed;
+		int32 yFixed = actor.yFixed;
+		uint16 parent = actor.parent;
 		uint guard = 0;
 		while (parent && parent < _actors.size() && guard++ < COMFY_ACTOR_COUNT) {
 			Actor *parentActor = actorGetPtr(parent);
 			if (!parentActor)
 				break;
 
-			xFixed += (int32)actorReadU32(*parentActor, kActorXFixed);
-			yFixed += (int32)actorReadU32(*parentActor, kActorYFixed);
-			parent = actorReadU16(*parentActor, kActorParent);
+			xFixed = (int32)((uint32)xFixed + (uint32)parentActor->xFixed);
+			yFixed = (int32)((uint32)yFixed + (uint32)parentActor->yFixed);
+			parent = parentActor->parent;
 		}
 
 		int16 x = (int16)(xFixed >> 12);
 		int16 y = (int16)(yFixed >> 12);
 		debugIncludeMapPoint(mapLeft, mapTop, mapRight, mapBottom, x, y);
 
-		uint32 selector = actorReadU32(actor, kActorSpriteSelector);
+		uint32 selector = actor.spriteSelector;
 		if (selector && !(selector & 0xFF000000) && selector != 0x00FFFFFF &&
 				selector < _spriteResources.size() && _spriteResources[selector].loaded) {
 			SpriteResource &sprite = _spriteResources[selector];
@@ -182,28 +182,28 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 	drawList->AddRect(screenTopLeft, screenBottomRight, IM_COL32(110, 170, 240, 230));
 	for (uint i = 0; i < _actors.size(); i++) {
 		Actor &actor = _actors[i];
-		uint16 sceneHandle = actorReadU16(actor, kActorSceneHandle);
+		uint16 sceneHandle = actor.sceneHandle;
 		if (!sceneHandle && i != 0)
 			continue;
 
-		int32 xFixed = (int32)actorReadU32(actor, kActorXFixed);
-		int32 yFixed = (int32)actorReadU32(actor, kActorYFixed);
-		uint16 parent = actorReadU16(actor, kActorParent);
+		int32 xFixed = actor.xFixed;
+		int32 yFixed = actor.yFixed;
+		uint16 parent = actor.parent;
 		uint guard = 0;
 		while (parent && parent < _actors.size() && guard++ < COMFY_ACTOR_COUNT) {
 			Actor *parentActor = actorGetPtr(parent);
 			if (!parentActor)
 				break;
 
-			xFixed += (int32)actorReadU32(*parentActor, kActorXFixed);
-			yFixed += (int32)actorReadU32(*parentActor, kActorYFixed);
-			parent = actorReadU16(*parentActor, kActorParent);
+			xFixed = (int32)((uint32)xFixed + (uint32)parentActor->xFixed);
+			yFixed = (int32)((uint32)yFixed + (uint32)parentActor->yFixed);
+			parent = parentActor->parent;
 		}
 
 		int16 x = (int16)(xFixed >> 12);
 		int16 y = (int16)(yFixed >> 12);
-		bool visibleActor = actorReadU8(actor, kActorVisible) != 0;
-		bool activeActor = actorReadU8(actor, kActorActive) != 0;
+		bool visibleActor = actor.visible != 0;
+		bool activeActor = actor.active != 0;
 		ImU32 color = visibleActor ? (activeActor ? IM_COL32(82, 220, 120, 230) : IM_COL32(238, 185, 74, 230)) :
 			IM_COL32(120, 120, 120, 170);
 
@@ -214,7 +214,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 		snprintf(actorLabel, sizeof(actorLabel), "%u", i);
 		drawList->AddText(ImVec2(point.x + 4.0F, point.y - 4.0F), color, actorLabel);
 
-		uint32 selector = actorReadU32(actor, kActorSpriteSelector);
+		uint32 selector = actor.spriteSelector;
 		if (visibleActor && selector && !(selector & 0xFF000000) && selector != 0x00FFFFFF &&
 				selector < _spriteResources.size() && _spriteResources[selector].loaded) {
 			SpriteResource &sprite = _spriteResources[selector];
@@ -304,13 +304,13 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 				continue;
 
 			Actor &actor = _actors[actorIndex];
-			uint16 sceneHandle = actorReadU16(actor, kActorSceneHandle);
+			uint16 sceneHandle = actor.sceneHandle;
 			if (!sceneHandle && actorIndex != 0)
 				continue;
 
 			uint16 children[COMFY_ACTOR_COUNT];
 			uint childCount = 0;
-			uint16 child = actorReadU16(actor, kActorChildHead);
+			uint16 child = actor.childHead;
 			uint guard = 0;
 			while (child && child < _actors.size() && child < COMFY_ACTOR_COUNT &&
 					childCount < COMFY_ACTOR_COUNT && guard++ < COMFY_ACTOR_COUNT) {
@@ -324,28 +324,28 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 				if (!childActor)
 					break;
 
-				child = actorReadU16(*childActor, kActorSiblingHead);
+				child = childActor->siblingHead;
 			}
 
-			uint32 selector = actorReadU32(actor, kActorSpriteSelector);
-			int32 xFixed = (int32)actorReadU32(actor, kActorXFixed);
-			int32 yFixed = (int32)actorReadU32(actor, kActorYFixed);
-			uint16 parent = actorReadU16(actor, kActorParent);
+			uint32 selector = actor.spriteSelector;
+			int32 xFixed = actor.xFixed;
+			int32 yFixed = actor.yFixed;
+			uint16 parent = actor.parent;
 			guard = 0;
 			while (parent && parent < _actors.size() && guard++ < COMFY_ACTOR_COUNT) {
 				Actor *parentActor = actorGetPtr(parent);
 				if (!parentActor)
 					break;
 
-				xFixed += (int32)actorReadU32(*parentActor, kActorXFixed);
-				yFixed += (int32)actorReadU32(*parentActor, kActorYFixed);
-				parent = actorReadU16(*parentActor, kActorParent);
+				xFixed = (int32)((uint32)xFixed + (uint32)parentActor->xFixed);
+				yFixed = (int32)((uint32)yFixed + (uint32)parentActor->yFixed);
+				parent = parentActor->parent;
 			}
 
 			int16 x = (int16)(xFixed >> 12);
 			int16 y = (int16)(yFixed >> 12);
-			bool visibleActor = actorReadU8(actor, kActorVisible) != 0;
-			bool activeActor = actorReadU8(actor, kActorActive) != 0;
+			bool visibleActor = actor.visible != 0;
+			bool activeActor = actor.active != 0;
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 			if (!childCount)
 				flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
@@ -355,16 +355,16 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 
 			ImGui::SameLine(120.0F);
 			ImGui::Text("scene=%u pos=%d,%d selector=0x%08X move=%d",
-				sceneHandle, x, y, selector, (int16)actorReadU16(actor, kActorMoveTicks));
+				sceneHandle, x, y, selector, (int16)actor.moveTicks);
 
 			ImGui::SameLine(520.0F);
 			if (ImGui::Checkbox("Visible", &visibleActor)) {
-				actorWriteU8(actor, kActorVisible, visibleActor ? 1 : 0);
+				actor.visible = visibleActor ? 1 : 0;
 				renderSetDirty();
 			}
 			ImGui::SameLine();
 			if (ImGui::Checkbox("Active", &activeActor))
-				actorWriteU8(actor, kActorActive, activeActor ? 1 : 0);
+				actor.active = activeActor ? 1 : 0;
 			ImGui::PopID();
 
 			if (open && childCount) {
@@ -384,7 +384,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 				for (uint i = 0; i < _actors.size() && i < COMFY_ACTOR_COUNT &&
 						stackCount < ARRAYSIZE(actorStack); i++) {
 					Actor &orphanActor = _actors[i];
-					if (visited[i] || (!actorReadU16(orphanActor, kActorSceneHandle) && i != 0))
+					if (visited[i] || (!orphanActor.sceneHandle && i != 0))
 						continue;
 
 					actorStack[stackCount] = i;
@@ -410,29 +410,29 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 
 		for (uint i = 0; i < _actors.size(); i++) {
 			Actor &actor = _actors[i];
-			uint16 sceneHandle = actorReadU16(actor, kActorSceneHandle);
+			uint16 sceneHandle = actor.sceneHandle;
 			if (!sceneHandle && i != 0)
 				continue;
 
-			uint32 selector = actorReadU32(actor, kActorSpriteSelector);
-			int32 xFixed = (int32)actorReadU32(actor, kActorXFixed);
-			int32 yFixed = (int32)actorReadU32(actor, kActorYFixed);
-			uint16 parent = actorReadU16(actor, kActorParent);
+			uint32 selector = actor.spriteSelector;
+			int32 xFixed = actor.xFixed;
+			int32 yFixed = actor.yFixed;
+			uint16 parent = actor.parent;
 			uint guard = 0;
 			while (parent && parent < _actors.size() && guard++ < COMFY_ACTOR_COUNT) {
 				Actor *parentActor = actorGetPtr(parent);
 				if (!parentActor)
 					break;
 
-				xFixed += (int32)actorReadU32(*parentActor, kActorXFixed);
-				yFixed += (int32)actorReadU32(*parentActor, kActorYFixed);
-				parent = actorReadU16(*parentActor, kActorParent);
+				xFixed = (int32)((uint32)xFixed + (uint32)parentActor->xFixed);
+				yFixed = (int32)((uint32)yFixed + (uint32)parentActor->yFixed);
+				parent = parentActor->parent;
 			}
 
 			int16 x = (int16)(xFixed >> 12);
 			int16 y = (int16)(yFixed >> 12);
-			bool visibleActor = actorReadU8(actor, kActorVisible) != 0;
-			bool activeActor = actorReadU8(actor, kActorActive) != 0;
+			bool visibleActor = actor.visible != 0;
+			bool activeActor = actor.active != 0;
 
 			ImGui::TableNextRow();
 			ImGui::TableSetColumnIndex(0);
@@ -440,7 +440,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 			ImGui::TableSetColumnIndex(1);
 			ImGui::Text("%u", sceneHandle);
 			ImGui::TableSetColumnIndex(2);
-			ImGui::Text("%u", actorReadU16(actor, kActorParent));
+			ImGui::Text("%u", actor.parent);
 			ImGui::TableSetColumnIndex(3);
 			ImGui::Text("%d", x);
 			ImGui::TableSetColumnIndex(4);
@@ -448,34 +448,33 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 			ImGui::TableSetColumnIndex(5);
 			ImGui::Text("0x%08X", selector);
 			ImGui::TableSetColumnIndex(6);
-			ImGui::Text("0x%08X", actorReadU32(actor, kActorCurrentPc));
+			ImGui::Text("0x%08X", actor.currentPc);
 			ImGui::TableSetColumnIndex(7);
 			ImGui::PushID((int)i * 2);
 			if (ImGui::Checkbox("", &visibleActor)) {
-				actorWriteU8(actor, kActorVisible, visibleActor ? 1 : 0);
+				actor.visible = visibleActor ? 1 : 0;
 				renderSetDirty();
 			}
 			ImGui::PopID();
 			ImGui::TableSetColumnIndex(8);
 			ImGui::PushID((int)i * 2 + 1);
 			if (ImGui::Checkbox("", &activeActor))
-				actorWriteU8(actor, kActorActive, activeActor ? 1 : 0);
+				actor.active = activeActor ? 1 : 0;
 			ImGui::PopID();
 			ImGui::TableSetColumnIndex(9);
-			ImGui::Text("%d", (int16)actorReadU16(actor, kActorMoveTicks));
+			ImGui::Text("%d", (int16)actor.moveTicks);
 
 			if (open) {
 				ImGui::TableNextRow();
 				ImGui::TableSetColumnIndex(1);
 				ImGui::Text("links prev=%u next=%u child=%u sibling=%u tail=%u",
-					actorReadU16(actor, kActorPrevLink), actorReadU16(actor, kActorNextLink),
-					actorReadU16(actor, kActorChildHead), actorReadU16(actor, kActorSiblingHead),
-					actorReadU16(actor, kActorChildTail));
+					actor.prevLink, actor.nextLink, actor.childHead, actor.siblingHead,
+					actor.childTail);
 				ImGui::TableNextRow();
 				ImGui::TableSetColumnIndex(1);
 				ImGui::Text("local fixed x=0x%08X y=0x%08X moveDx=0x%08X moveDy=0x%08X",
-					actorReadU32(actor, kActorXFixed), actorReadU32(actor, kActorYFixed),
-					actorReadU32(actor, kActorMoveDx), actorReadU32(actor, kActorMoveDy));
+					(uint32)actor.xFixed, (uint32)actor.yFixed,
+					(uint32)actor.moveDx, (uint32)actor.moveDy);
 				if (selector & 0xFF000000) {
 					uint32 pc = selector & 0x00FFFFFF;
 					int16 wordsLeft = (int16)(debugScriptReadWord(pc) - 1);

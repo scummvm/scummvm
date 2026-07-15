@@ -61,23 +61,23 @@ uint16 ComfyEngine::scriptEvalExpr(uint32 &pc, uint16 fallbackActor) {
 
 			uint16 value = 0;
 			if (opcode == 0x10)
-				value = actorReadU32(*actor, kActorXFixed) >> 12;
+				value = (uint32)actor->xFixed >> 12;
 			else if (opcode == 0x11)
-				value = actorReadU32(*actor, kActorYFixed) >> 12;
+				value = (uint32)actor->yFixed >> 12;
 			else if (opcode == 0x12 || opcode == 0x13) {
-				uint offset = opcode == 0x12 ? kActorXFixed : kActorYFixed;
-				int32 position = actorReadU32(*actor, offset);
-				while (actorReadU16(*actor, kActorParent)) {
-					actor = actorGetPtr(actorReadU16(*actor, kActorParent));
+				bool useX = opcode == 0x12;
+				int32 position = useX ? actor->xFixed : actor->yFixed;
+				while (actor->parent) {
+					actor = actorGetPtr(actor->parent);
 					if (!actor)
 						break;
 
-					position += actorReadU32(*actor, offset);
+					position = (int32)((uint32)position + (uint32)(useX ? actor->xFixed : actor->yFixed));
 				}
 
 				value = (uint16)(position >> 12);
 			} else if (opcode == 0x14)
-				value = actorReadU16(*actor, kActorSpriteSelector);
+				value = (uint16)actor->spriteSelector;
 
 			if (_exprStackTop < COMFY_EXPR_STACK_CAPACITY)
 				_exprStack[_exprStackTop++] = value;
