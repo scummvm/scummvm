@@ -110,10 +110,17 @@ public:
 	SceneChangeDescription _sceneChange;
 	FlagDescription _flag;
 
+	// Nancy13+: a list of flags (was a single flag) and a multi-name random sound.
+	Common::Array<FlagDescription> _flags;
+	byte _afterSoundAction = 0;	// Nancy13+: 1 dismisses the text box overlay
+
 	Common::String getRecordExtraInfo() const override { return Common::String::format("Scene %d", _sceneChange.sceneID); }
 
 protected:
 	Common::String getRecordTypeName() const override;
+
+	void readDataNancy13(Common::SeekableReadStream &stream);
+	void applyAfterSoundAction();
 };
 
 // The same as PlaySound, but with the addition of captioning text,

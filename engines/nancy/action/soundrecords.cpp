@@ -34,6 +34,20 @@
 namespace Nancy {
 namespace Action {
 
+// A name beginning with '*' is the forced selection (the marker is stripped);
+// otherwise the played sound is picked at random. The choice is made once, when
+// the record is loaded.
+static uint selectRandomSound(Common::Array<Common::String> &soundNames) {
+	for (uint i = 0; i < soundNames.size(); ++i) {
+		if (soundNames[i].hasPrefix("*")) {
+			soundNames[i].deleteChar(0);
+			return i;
+		}
+	}
+
+	return g_nancy->_randomSource->getRandomNumber(soundNames.size() - 1);
+}
+
 void SetVolume::readData(Common::SeekableReadStream &stream) {
 	channel = stream.readUint16LE();
 	volume = stream.readByte();
@@ -111,6 +125,11 @@ void Set3DSoundListenerPosition::execute() {
 }
 
 void PlaySound::readData(Common::SeekableReadStream &stream) {
+	if (g_nancy->getGameType() >= kGameTypeNancy13) {
+		readDataNancy13(stream);
+		return;
+	}
+
 	_sound.readDIGI(stream);
 
 	if (g_nancy->getGameType() >= kGameTypeNancy3) {
@@ -129,13 +148,50 @@ void PlaySound::readData(Common::SeekableReadStream &stream) {
 	stream.skip(2); // VIDEO_STOP_RENDERING, VIDEO_CONTINUE_RENDERING
 }
 
+void PlaySound::readDataNancy13(Common::SeekableReadStream &stream) {
+	// The sound is a set of candidate names, one picked at random (0 = no sound).
+	const uint16 numNames = stream.readUint16LE();
+	if (numNames > 0) {
+		Common::Array<Common::String> names;
+		names.resize(numNames);
+		for (uint16 i = 0; i < numNames; ++i) {
+			readFilename(stream, names[i]);
+		}
+
+		_sound.channelID = stream.readUint16LE();
+		_sound.numLoops = stream.readUint32LE();
+		_sound.volume = stream.readUint16LE();
+
+		_sound.name = names[selectRandomSound(names)];
+	}
+
+	// No inline SoundEffectDescription anymore, and the scene change is just a
+	// scene ID (frame/vertical offset stay 0).
+	_changeSceneImmediately = stream.readByte();
+	_sceneChange.sceneID = stream.readUint16LE();
+	_afterSoundAction = stream.readByte();	// overlay-refresh control; unused
+
+	// The single event flag became a list of { label, value } pairs.
+	const uint16 numFlags = stream.readUint16LE();
+	_flags.resize(numFlags);
+	for (uint16 i = 0; i < numFlags; ++i) {
+		_flags[i].label = stream.readSint16LE();
+		_flags[i].flag = (byte)stream.readSint16LE();
+	}
+}
+
 void PlaySound::execute() {
 	switch (_state) {
 	case kBegin:
 		g_nancy->_sound->loadSound(_sound, &_soundEffect);
 		g_nancy->_sound->playSound(_sound);
 
-		if (g_nancy->getGameType() >= kGameTypeNancy8) {
+		if (g_nancy->getGameType() >= kGameTypeNancy13) {
+			// Nancy13 sets a list of event flags.
+			for (const FlagDescription &flag : _flags) {
+				NancySceneState.setEventFlag(flag);
+			}
+		} else if (g_nancy->getGameType() >= kGameTypeNancy8) {
 			NancySceneState.setEventFlag(_flag);
 		}
 
@@ -148,6 +204,7 @@ void PlaySound::execute() {
 		}
 
 		if (_changeSceneImmediately) {
+			applyAfterSoundAction();
 			NancySceneState.changeScene(_sceneChange);
 			finishExecution();
 			break;
@@ -162,6 +219,7 @@ void PlaySound::execute() {
 
 		break;
 	case kActionTrigger:
+		applyAfterSoundAction();
 		NancySceneState.changeScene(_sceneChange);
 
 		if (g_nancy->getGameType() <= kGameTypeNancy7) {
@@ -172,6 +230,14 @@ void PlaySound::execute() {
 
 		finishExecution();
 		break;
+	}
+}
+
+void PlaySound::applyAfterSoundAction() {
+	// Nancy13: afterSoundAction 1 dismisses the game text box overlay. Value 2
+	// flashes a second overlay that ScummVM doesn't model.
+	if (g_nancy->getGameType() >= kGameTypeNancy13 && _afterSoundAction == 1) {
+		NancySceneState.getTextbox().clear();
 	}
 }
 
@@ -329,20 +395,6 @@ void StopSound::readData(Common::SeekableReadStream &stream) {
 void StopSound::execute() {
 	g_nancy->_sound->stopSound(_channelID);
 	_sceneChange.execute();
-}
-
-// A name beginning with '*' is the forced selection (the marker is stripped);
-// otherwise the played sound is picked at random. The choice is made once, when
-// the record is loaded.
-static uint selectRandomSound(Common::Array<Common::String> &soundNames) {
-	for (uint i = 0; i < soundNames.size(); ++i) {
-		if (soundNames[i].hasPrefix("*")) {
-			soundNames[i].deleteChar(0);
-			return i;
-		}
-	}
-
-	return g_nancy->_randomSource->getRandomNumber(soundNames.size() - 1);
 }
 
 void PlayRandomSound::readData(Common::SeekableReadStream &stream) {

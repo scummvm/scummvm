@@ -388,9 +388,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		// TODO: debug-only feature, not implemented
 		return nullptr;
 	case 145:
-		// Nancy13 renumbered the sound-playing AR block downwards; PlaySound
-		// moved here (it was 150 up to Nancy12).
-		// TODO: verify the Nancy13 PlaySound on-disk layout matches PlaySound::readData.
+		// Nancy13 moved PlaySound here (was 150).
 		if (g_nancy->getGameType() >= kGameTypeNancy13)
 			return new PlaySound();
 		return nullptr;
