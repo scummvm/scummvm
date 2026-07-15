@@ -97,13 +97,30 @@ class QueuingAudioStream;
 
 namespace Comfy {
 
+class ComfyEngine;
 class MidiPlyrDriver;
 struct SoundDecoderState;
 
 #ifdef USE_IMGUI
+typedef struct ImGuiState {
+	ComfyEngine *_engine = nullptr;
+	uint32 _activeMask = 0;
+	uint32 _latchedMask = 0;
+	uint32 _holdMask = 0;
+	uint16 _actorDebugLastScene = 0xFFFF;
+	uint32 _actorDebugLastSceneGeneration = 0xFFFFFFFF;
+	bool _visible = true;
+	bool _actorDebugVisible = false;
+	bool _actorDebugTreeView = false;
+} ImGuiState;
+
+extern ImGuiState *_state;
+
 void onImGuiInit();
 void onImGuiRender();
 void onImGuiCleanup();
+void drawComfyKeyboardUi(bool actorDebugEnabled);
+void cleanupComfyKeyboardUi();
 #endif
 
 class ComfyEngine : public Engine {
@@ -550,6 +567,7 @@ private:
 	uint16 _currentActor = 0;
 	uint16 _currentScene = 0;
 	uint16 _pendingScene = 0;
+	uint32 _debugSceneGeneration = 0;
 	uint16 _musicEventMask = 0;
 	byte _musicEventFlag = 0;
 	bool _musicEnabled = false;
@@ -942,6 +960,10 @@ private:
 	void soundUnpackState(byte *state);
 	void soundPlayEntry(uint16 index);
 	void soundAdvanceTick();
+#ifdef USE_IMGUI
+	bool debugScriptHasRange(uint32 pc, uint32 width);
+	uint16 debugScriptReadWord(uint32 pc);
+#endif
 
 protected:
 	// Engine APIs
@@ -952,6 +974,9 @@ public:
 	~ComfyEngine() override;
 
 	void setToyKeyboardState(uint32 activeMask, uint32 latchedMask, uint32 holdMask);
+#ifdef USE_IMGUI
+	void drawActorDebugUi(bool *visible);
+#endif
 
 	/**
 	 * Returns the game Id

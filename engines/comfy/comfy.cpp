@@ -35,6 +35,38 @@ namespace Comfy {
 
 ComfyEngine *g_engine;
 
+#ifdef USE_IMGUI
+ImGuiState *_state = nullptr;
+
+void onImGuiInit() {
+	_state = new ImGuiState();
+	_state->_engine = (ComfyEngine *)g_engine;
+}
+
+void onImGuiRender() {
+	if (!_state || !_state->_engine || _state->_engine->shouldQuit())
+		return;
+
+	if (!_state->_engine->_keyboardUiInitialized)
+		return;
+
+	bool actorDebugEnabled = debugChannelSet(-1, kDebugImGui);
+	if (actorDebugEnabled)
+		_state->_engine->drawActorDebugUi(&_state->_actorDebugVisible);
+	else
+		_state->_actorDebugVisible = false;
+
+	drawComfyKeyboardUi(actorDebugEnabled);
+}
+
+void onImGuiCleanup() {
+	cleanupComfyKeyboardUi();
+
+	delete _state;
+	_state = nullptr;
+}
+#endif
+
 ComfyEngine::ComfyEngine(OSystem *syst, const ComfyGameDescription *gameDesc) : Engine(syst),
 	_game(gameDesc), _engineVersion(gameDesc->version),
 	_randomSource("Comfy"),

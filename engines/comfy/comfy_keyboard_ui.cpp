@@ -29,16 +29,6 @@ namespace Comfy {
 
 #ifdef USE_IMGUI
 
-typedef struct ImGuiState {
-	ComfyEngine *_engine = nullptr;
-	uint32 _activeMask = 0;
-	uint32 _latchedMask = 0;
-	uint32 _holdMask = 0;
-	bool _visible = true;
-} ImGuiState;
-
-ImGuiState *_state = nullptr;
-
 static ImU32 keyboardColor(byte red, byte green, byte blue) {
 	return IM_COL32(red, green, blue, 255);
 }
@@ -129,15 +119,7 @@ static void keyboardDrawToggle(const char *label, uint bit, ImVec2 size, ImU32 o
 	}
 }
 
-void onImGuiInit() {
-	_state = new ImGuiState();
-	_state->_engine = (ComfyEngine *)g_engine;
-}
-
-void onImGuiRender() {
-	if (!_state || !_state->_engine || _state->_engine->shouldQuit())
-		return;
-
+void drawComfyKeyboardUi(bool actorDebugEnabled) {
 	if (!_state->_engine->_keyboardUiInitialized)
 		return;
 
@@ -153,6 +135,9 @@ void onImGuiRender() {
 	ImGui::SetNextWindowSize(ImVec2(740, 440), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Comfy Keyboard", &_state->_visible, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize)) {
+		if (actorDebugEnabled)
+			ImGui::Checkbox("Actor debug", &_state->_actorDebugVisible);
+
 		ImU32 shell = keyboardColor(232, 228, 208);
 		ImU32 red = keyboardColor(199, 31, 27);
 		ImU32 handset = keyboardColor(211, 48, 38);
@@ -238,12 +223,9 @@ void onImGuiRender() {
 	_state->_latchedMask = 0;
 }
 
-void onImGuiCleanup() {
+void cleanupComfyKeyboardUi() {
 	if (_state && _state->_engine)
 		_state->_engine->setToyKeyboardState(0, 0, 0);
-
-	delete _state;
-	_state = nullptr;
 }
 
 #endif // USE_IMGUI

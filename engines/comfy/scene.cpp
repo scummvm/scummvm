@@ -325,6 +325,8 @@ void ComfyEngine::sceneStartWithMusic(uint16 scene) {
 	if (!envXmsToConv(&_sceneMemoryBlock[_sceneMidiInstanceOffset], scene))
 		return;
 
+	_debugSceneGeneration++;
+
 	midiSyncAndScan();
 	if (!_musicEnabled)
 		midiStopAll();
