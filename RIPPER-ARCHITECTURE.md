@@ -168,6 +168,14 @@
   the scene-entry layout supplies a negative width. `ComputeChooserControlLayout`
   at `0x54a74` adds the template padding and centers the resulting chooser,
   instead of stretching dialogue rows across a fixed screen-width rectangle.
+- When `HandleSceneEntryChoiceListLifecycle` at `0x1523d` installs the chooser's
+  arrow controls, it deactivates the shared selection presentation, dispatches
+  two complete dirty-region updates through `DispatchDisplayDirtyRegionUpdate`
+  at `0x4e4b0`, and then reactivates presentation. The scene movie owns only
+  y=50 through y=349, so the ScummVM presentation rebuild clears the uncovered
+  top and bottom indexed bands before drawing the chooser. This prevents pixels
+  retained from the preceding presentation from being reinterpreted by the
+  active Smacker palette.
 - Opcode `0x0a` maps to `HandleSceneEntryStepPromptCondition` at `0x149b4`.
   In the dialogue entry callback it branches around the exhausted-dialogue
   media path while at least one choice record exists. The frame's persistent
