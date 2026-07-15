@@ -155,6 +155,14 @@
   marked played.
 - `ExecuteSceneFrameAndInteractions` at `0x13277` runs frame callbacks,
   presentations, chooser selection, and interaction callbacks.
+- `ExecuteSceneFrameAndInteractions` constructs the frame's hotspot controls
+  before running its entry and persistent callbacks. An opcode `0x17` chooser
+  is added to the same live control registry rather than replacing those
+  hotspots. `PollInteractionAndResolveSelection` services both registries;
+  when a scene hotspot wins, `CleanupCurrentSceneFrameInteractions` at
+  `0x13832` dispatches phase 3 to the active chooser handler before running
+  the hotspot callback. Dialogue choices therefore remain visible while the
+  player can still use the current frame's navigation and action targets.
 - `RIPPER.RUN` sets milestone flag 32, plays `PROINT.AVI` and `PROLOG1.AVI`,
   then transitions to `BA0.RUN`.
 - The transition from startup presentations to the scene runtime changes to a
