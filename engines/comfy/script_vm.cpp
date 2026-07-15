@@ -996,10 +996,10 @@ ComfyEngine::ScriptDispatchStatus ComfyEngine::scriptDispatch(Actor &actor, byte
 		pc += 4;
 		uint32 size = endPc >= pc ? endPc - pc : 0;
 		size = MIN<uint32>(size, COMFY_FRAME_LOADER_DATA_BYTES);
-		if (pc <= _comfyObjData.size() && size <= _comfyObjData.size() - pc) {
+		if (_comfyObjFile && pc <= _comfyObjFile->fileSize && size <= _comfyObjFile->fileSize - pc) {
 			_frameLoaderData.resize(COMFY_FRAME_LOADER_DATA_BYTES);
 			if (size)
-				memcpy(&_frameLoaderData[0], &_comfyObjData[pc], size);
+				objFileReadField(&_frameLoaderData[0], pc, size, _comfyObjFile);
 		} else {
 			error("Script opcode 0x54 references data outside COMFY.OBJ");
 		}

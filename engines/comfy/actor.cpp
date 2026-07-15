@@ -160,14 +160,34 @@ void ComfyEngine::objHdrReadFromXms(byte *destination, uint32 base, uint16 size,
 	if (!destination)
 		return;
 
-	uint32 offset = base + (uint32)size * row;
-	if (offset > _headerXmsData.size() || size > _headerXmsData.size() - offset)
+	uint16 transferSize = size + (size & 1);
+	byte *source = (byte *)malloc(transferSize);
+	if (!source)
 		error("Headers move (XMS->memory)");
 
-	memcpy(destination, &_headerXmsData[offset], size);
+	XmsMove move;
+	move.length = transferSize;
+	move.sourceHandle = _xmsHeaderHandle;
+	move.sourceOffset = base + (uint32)size * row;
+	move.destinationMemory = source;
+	if (xmsTransfer(move) < 0) {
+		free(source);
+		error("Headers move (XMS->memory)");
+	}
+
+	memcpy(destination, source, size);
+	free(source);
 }
 
-void ComfyEngine::objHdrRead(SpriteObjectHeader &destination, uint16 index) {
+uint32 ComfyEngine::frameLoaderGetFrameDataSize(SpriteObjectHeader &header) {
+	uint32 size = (uint16)header.dataSize;
+	if (_engineVersion == 3 && (header.reserved & 0x80))
+		size += 0x10000;
+
+	return size;
+}
+
+void ComfyEngine::frameLoaderLoadFrameHeader(SpriteObjectHeader &destination, uint16 index) {
 	byte raw[0x11];
 	memset(raw, 0, sizeof(raw));
 	objHdrReadFromXms(raw, _headerXmsObjectTableBase, sizeof(raw), index);
@@ -179,6 +199,9 @@ void ComfyEngine::objHdrRead(SpriteObjectHeader &destination, uint16 index) {
 	destination.hotspotY = (int16)READ_LE_UINT16(raw + 0x0C);
 	destination.reserved = raw[0x0E];
 	destination.tiledSize = READ_LE_UINT16(raw + 0x0F);
+	if (_engineVersion == 3)
+		destination.dataSize = frameLoaderGetFrameDataSize(destination);
+
 	_spriteLastHeader = destination;
 }
 
@@ -243,11 +266,14 @@ void ComfyEngine::spriteCache(int16 spriteId) {
 	if (spriteId < 0) {
 		uint16 frameId = (uint16)-spriteId;
 		uint32 fileOffset = (uint32)(frameId - 1) * COMFY_TILE_SIZE;
-		if (fileOffset >= _picDataSize || fileOffset >= _comfyObjData.size())
+		if (fileOffset >= _picDataSize || !_comfyObjFile)
 			return;
 
-		uint32 size = MIN<uint32>(COMFY_TILE_SIZE,
-			MIN<uint32>(_picDataSize - fileOffset, _comfyObjData.size() - fileOffset));
+		uint32 size = MIN<uint32>(COMFY_TILE_SIZE, _picDataSize - fileOffset);
+		byte *source = objFileReadTiled(fileOffset, size, _comfyObjFile);
+		if (!source)
+			return;
+
 		uint16 slotSize = (uint16)(size + (size & 1) + 0x0C);
 		scenePoolReserveSlot((uint32)slotSize + 2);
 		if (_scenePoolCursor > _scenePoolData.size() || slotSize > _scenePoolData.size() - _scenePoolCursor)
@@ -256,7 +282,7 @@ void ComfyEngine::spriteCache(int16 spriteId) {
 		byte *entryData = &_scenePoolData[_scenePoolCursor];
 		WRITE_LE_UINT16(entryData, (uint16)spriteId);
 		WRITE_LE_UINT16(entryData + 2, slotSize);
-		memcpy(entryData + 0x0C, &_comfyObjData[fileOffset], size);
+		memcpy(entryData + 0x0C, source, size);
 		_frameSpriteResource.id = frameId;
 		_frameSpriteResource.header = SpriteObjectHeader();
 		_frameSpriteResource.header.dataSize = size;
@@ -287,13 +313,17 @@ void ComfyEngine::spriteCache(int16 spriteId) {
 	spriteInvalidateHostCache(sprite);
 
 	SpriteObjectHeader header;
-	objHdrRead(header, spriteId);
+	frameLoaderLoadFrameHeader(header, spriteId);
 	sprite.header = header;
-	if (!header.dataSize || header.fileOffset > _picFileData.size() ||
-			header.dataSize > _picFileData.size() - header.fileOffset)
+	if (!header.dataSize || !_picFile)
 		return;
 
-	byte *source = &_picFileData[header.fileOffset];
+	byte *source = _engineVersion == 3 ?
+		frameLoaderReadFrameData(header.fileOffset, header.dataSize, _picFile) :
+		objFileReadTiled(header.fileOffset, header.dataSize, _picFile);
+	if (!source)
+		return;
+
 	if (header.width == _logicalScreenWidth && header.height == _logicalScreenHeight) {
 		sprite.pixels.resize(header.dataSize);
 		memcpy(&sprite.pixels[0], source, header.dataSize);
@@ -333,7 +363,7 @@ ComfyEngine::SpriteResource *ComfyEngine::spriteLookup(uint16 spriteId, int16 x,
 	SpriteCacheEntry *entry = spriteId < _objectCacheEntries.size() ? &_objectCacheEntries[spriteId] : nullptr;
 	if (entry && entry->slotSize == 0xFFFF) {
 		SpriteObjectHeader header;
-		objHdrRead(header, spriteId);
+		frameLoaderLoadFrameHeader(header, spriteId);
 		sprite.header = header;
 	}
 
@@ -348,6 +378,11 @@ ComfyEngine::SpriteResource *ComfyEngine::spriteLookup(uint16 spriteId, int16 x,
 	if (entry && entry->slotSize == 0xFFFF && !fullscreen && offscreen) {
 		_objFileOffset = _spriteLastHeader.fileOffset;
 		_objFileStride = _spriteLastHeader.tiledSize;
+		if (_engineVersion == 3)
+			frameLoaderReadFrameData(sprite.header.fileOffset, sprite.header.dataSize, _picFile);
+		else
+			objFileReadTiled(sprite.header.fileOffset, sprite.header.dataSize, _picFile);
+
 		return nullptr;
 	}
 
@@ -400,11 +435,11 @@ void ComfyEngine::spriteGetConvPtr(int16 spriteId) {
 		}
 	} else {
 		SpriteObjectHeader header;
-		objHdrRead(header, (uint16)spriteId);
+		frameLoaderLoadFrameHeader(header, (uint16)spriteId);
 		width = header.width;
-		if (header.fileOffset <= _picFileData.size() &&
-				header.dataSize <= _picFileData.size() - header.fileOffset)
-			payload = &_picFileData[header.fileOffset];
+		payload = _engineVersion == 3 ?
+			frameLoaderReadFrameData(header.fileOffset, header.dataSize, _picFile) :
+			objFileReadTiled(header.fileOffset, header.dataSize, _picFile);
 	}
 
 	if (!payload || width != 0xFFFF)

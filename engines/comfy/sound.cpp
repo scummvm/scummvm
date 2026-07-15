@@ -35,6 +35,8 @@ namespace Comfy {
 
 struct SoundDecoderState {
 public:
+	// soundPrepareDecoderState() collects an embedded ANM sound into one temporary buffer.
+	// This constructor copies those bytes, so decoding no longer needs the engine or a file.
 	SoundDecoderState(const byte *data, uint32 size, bool compressed) {
 		_data.resize(size);
 		if (size)
@@ -42,6 +44,7 @@ public:
 
 		_compressed = compressed;
 		_end = size;
+		_windowEnd = size;
 		if (_compressed) {
 			if (size < 5) {
 				_fault = true;
@@ -57,7 +60,40 @@ public:
 		}
 	}
 
+	// A regular VOC entry remains in VOCFILE.DAT. This constructor retains the engine and
+	// file object so loadSourceWindow() can read each block through objFileReadTiledCore().
+	SoundDecoderState(ComfyEngine *engine, ComfyEngine::ObjFile *objectFile,
+			uint32 sourceBase, uint32 size, bool compressed) {
+		_engine = engine;
+		_objectFile = objectFile;
+		_sourceBase = sourceBase;
+		_compressed = compressed;
+		_end = size;
+		if (!loadSourceWindow(6)) {
+			_fault = true;
+			return;
+		}
+
+		if (_compressed) {
+			if (size < 5) {
+				_fault = true;
+				return;
+			}
+
+			setSample(sourceByte(4));
+			_position = 5;
+		} else if (size >= 6 && sourceByte(0) == 1) {
+			setSample(sourceByte(4));
+		} else {
+			setSample(_sample);
+		}
+	}
+
 	uint32 decode(byte *buffer, uint32 size) {
+		_decodeBlockSize = size;
+		if (_objectFile && !_started && !loadSourceWindow(size))
+			return 0;
+
 		uint32 written = 0;
 		while (written < size && !_fault && !_finished) {
 			byte sample = 0x80;
@@ -71,7 +107,6 @@ public:
 	}
 
 	uint32 getRate() { return _sampleRate; }
-	bool finished() { return _finished; }
 
 	void copyCues(Common::Array<ComfyEngine::SoundCue> &cues) {
 		cues = _cues;
@@ -149,7 +184,7 @@ public:
 		_position = READ_LE_UINT32(packedState + 0x41);
 		_loopPosition = READ_LE_UINT32(packedState + 0x45);
 		uint32 packedEnd = READ_LE_UINT32(packedState + 0x49);
-		if (_position > _data.size() || _loopPosition > _data.size() || packedEnd > _data.size())
+		if (_position > _end || _loopPosition > _end || packedEnd > _end)
 			return false;
 
 		_end = packedEnd;
@@ -195,6 +230,69 @@ private:
 		int16 loopCount = 0;
 		bool started = false;
 	};
+
+	bool loadSourceWindow(uint32 size) {
+		if (!_objectFile)
+			return true;
+
+		if (!_engine || _position > _end)
+			return false;
+
+		uint32 remaining = _end - _position;
+		uint32 readSize = MIN<uint32>(size, remaining);
+		if (!_compressed)
+			readSize += 0xC8;
+
+		uint32 fileOffset = _sourceBase + _position;
+		if (fileOffset > _objectFile->fileSize)
+			return false;
+
+		if (readSize > _objectFile->fileSize - fileOffset)
+			readSize = _objectFile->fileSize - fileOffset;
+
+		if (!readSize) {
+			_data.clear();
+			_windowStart = _position;
+			_windowEnd = _position;
+			return true;
+		}
+
+		byte *source = _engine->objFileReadTiledCore(fileOffset, readSize, _objectFile);
+		if (!source)
+			return false;
+
+		_data.resize(readSize);
+		memcpy(&_data[0], source, readSize);
+		_windowStart = _position;
+		_windowEnd = _position + readSize;
+		return true;
+	}
+
+	byte sourceByte(uint32 position) {
+		if (position >= _end) {
+			_fault = true;
+			return 0;
+		}
+
+		if (_objectFile && (position < _windowStart || position >= _windowEnd)) {
+			uint32 savedPosition = _position;
+			_position = position;
+			bool loaded = loadSourceWindow(_decodeBlockSize ? _decodeBlockSize : 6);
+			_position = savedPosition;
+			if (!loaded) {
+				_fault = true;
+				return 0;
+			}
+		}
+
+		uint32 offset = position - _windowStart;
+		if (offset >= _data.size()) {
+			_fault = true;
+			return 0;
+		}
+
+		return _data[offset];
+	}
 
 	static uint32 calcSampleRate(byte sample) {
 		uint32 denominator = 0x100 - sample;
@@ -295,6 +393,8 @@ private:
 	void seekToLoop() {
 		_position = _loopPosition;
 		_bitOffset = _loopBitOffset;
+		if (_objectFile && !loadSourceWindow(_decodeBlockSize))
+			_fault = true;
 	}
 
 	uint16 parseCommand() {
@@ -305,15 +405,15 @@ private:
 				return 0;
 			}
 
-			uint16 command = _data[_position++];
+			uint16 command = sourceByte(_position++);
 			if (command) {
 				if (_end - _position < 3) {
 					_fault = true;
 					return 0;
 				}
 
-				_eventArgument = (uint32)_data[_position] | ((uint32)_data[_position + 1] << 8) |
-					((uint32)_data[_position + 2] << 16);
+				_eventArgument = (uint32)sourceByte(_position) | ((uint32)sourceByte(_position + 1) << 8) |
+					((uint32)sourceByte(_position + 2) << 16);
 				_position += 3;
 			}
 
@@ -359,7 +459,7 @@ private:
 		}
 
 		_eventRemaining -= 2;
-		setSample(_data[_position]);
+		setSample(sourceByte(_position));
 		_position += 2;
 	}
 
@@ -385,7 +485,7 @@ private:
 				return false;
 			}
 
-			sample = _data[_position++];
+			sample = sourceByte(_position++);
 			_history.push_back(sample);
 			return true;
 		}
@@ -434,7 +534,7 @@ private:
 				return value;
 			}
 
-			value |= (uint32)((_data[_position] >> _bitOffset) & 1) << bit;
+			value |= (uint32)((sourceByte(_position) >> _bitOffset) & 1) << bit;
 			_bitOffset++;
 			if (_bitOffset == 8) {
 				_bitOffset = 0;
@@ -472,7 +572,7 @@ private:
 			return 0;
 		}
 
-		uint16 value = READ_LE_UINT16(&_data[_position]);
+		uint16 value = (uint16)(sourceByte(_position) | ((uint16)sourceByte(_position + 1) << 8));
 		_position += 2;
 		return value;
 	}
@@ -483,7 +583,7 @@ private:
 			return 0;
 		}
 
-		return _data[_position++];
+		return sourceByte(_position++);
 	}
 
 	void pushCue(uint16 value) {
@@ -500,6 +600,12 @@ private:
 	Common::Array<byte> _data;
 	Common::Array<byte> _history;
 	Common::Array<ComfyEngine::SoundCue> _cues;
+	ComfyEngine *_engine = nullptr;
+	ComfyEngine::ObjFile *_objectFile = nullptr;
+	uint32 _sourceBase = 0;
+	uint32 _windowStart = 0;
+	uint32 _windowEnd = 0;
+	uint32 _decodeBlockSize = 0;
 	uint32 _end = 0;
 	uint32 _position = 0;
 	uint32 _streamPosition = 0;
@@ -608,16 +714,34 @@ void ComfyEngine::wcomfy99RestoreHostStateAfterSceneStart() {
 	}
 }
 
-bool ComfyEngine::soundInit() {
-	if (!readAssetFile(Common::Path("VOCFILE.DAT"), _vocFileData) || _vocFileData.size() < 4)
+bool ComfyEngine::soundOpenVocFile() {
+	soundBufFree(_vocFile);
+	uint32 maximumBytes = 0x40000;
+	if (sysGetExtMemKB() < 0x0FA0)
+		maximumBytes /= 2;
+
+	_vocFile = objFileLoadSoundData(Common::Path("VOCFILE.DAT"), 0x8000, maximumBytes);
+	if (!_vocFile)
 		return false;
 
-	if (_vocFileData[0] != 'C' || (_vocFileData[1] != 'V' && _vocFileData[1] != 'W'))
+	byte header[4];
+	memset(header, 0, sizeof(header));
+	objFileReadFieldCore(header, 0, sizeof(header), _vocFile);
+	if (header[0] != 'C' || (header[1] != 'V' && header[1] != 'W')) {
+		soundBufFree(_vocFile);
 		return false;
+	}
 
-	_soundCompressed = _vocFileData[1] == 'W';
+	_soundCompressed = header[1] == 'W';
 	_soundUsesAnimData = false;
-	_soundEntryCount = assetsReadLe16At(_vocFileData, 2);
+	_soundEntryCount = READ_LE_UINT16(header + 2);
+	return true;
+}
+
+bool ComfyEngine::soundInit() {
+	if (!soundOpenVocFile())
+		return false;
+
 	_soundEventIndex = 0;
 	_soundEventMaximum = 0;
 	_soundEventSubIndex = 0xFFFF;
@@ -645,7 +769,7 @@ void ComfyEngine::soundShutdown() {
 	delete _soundDecoderState;
 	_soundDecoderState = nullptr;
 	_soundCues.clear();
-	_vocFileData.clear();
+	soundBufFree(_vocFile);
 	_soundEntryCount = 0;
 	_soundNextCue = 0;
 	_soundPaused = false;
@@ -704,12 +828,13 @@ bool ComfyEngine::soundLoadEntry(uint16 index) {
 	soundHdrReadFromXms(header, index, sizeof(header));
 	uint32 size = READ_LE_UINT32(header);
 	uint32 offset = READ_LE_UINT32(header + 4);
-	return offset <= _vocFileData.size() && size <= _vocFileData.size() - offset;
+	return _vocFile && offset <= _vocFile->fileSize && size <= _vocFile->fileSize - offset;
 }
 
 bool ComfyEngine::soundPrepareDecoderState(uint16 index) {
 	Common::Array<byte> animationSoundData;
 	byte *data = nullptr;
+	ObjFile *objectFile = nullptr;
 	uint32 fileSize = 0;
 	uint32 dataSize = 0;
 	uint32 dataOffset = 0;
@@ -778,8 +903,11 @@ bool ComfyEngine::soundPrepareDecoderState(uint16 index) {
 		soundHdrReadFromXms(header, index, sizeof(header));
 		dataSize = READ_LE_UINT32(header);
 		dataOffset = READ_LE_UINT32(header + 4);
-		data = &_vocFileData[0];
-		fileSize = _vocFileData.size();
+		if (!_vocFile || dataOffset > _vocFile->fileSize || dataSize > _vocFile->fileSize - dataOffset)
+			return false;
+
+		objectFile = _vocFile;
+		fileSize = _vocFile->fileSize;
 		_soundUsesAnimData = false;
 	}
 
@@ -787,7 +915,11 @@ bool ComfyEngine::soundPrepareDecoderState(uint16 index) {
 		return false;
 
 	delete _soundDecoderState;
-	_soundDecoderState = new SoundDecoderState(data + dataOffset, dataSize, compressed);
+	if (objectFile)
+		_soundDecoderState = new SoundDecoderState(this, objectFile, dataOffset, dataSize, compressed);
+	else
+		_soundDecoderState = new SoundDecoderState(data + dataOffset, dataSize, compressed);
+
 	if (_soundDecoderState->fault()) {
 		delete _soundDecoderState;
 		_soundDecoderState = nullptr;

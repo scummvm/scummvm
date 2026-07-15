@@ -381,6 +381,9 @@ void ComfyEngine::midiStopAll() {
 }
 
 void ComfyEngine::midiShutdown() {
+	if (_usesAnimFile && _engineVersion == 2 && !_isPanther)
+		animFileShutdown();
+
 	_midiHandles.clear();
 	_sceneMemoryBlock.clear();
 	_sceneMidiInstanceOffset = 0;

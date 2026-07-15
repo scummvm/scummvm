@@ -45,9 +45,6 @@ void ComfyEngine::videoInit() {
 	_screen = new Graphics::Screen(_logicalScreenWidth, _logicalScreenHeight);
 	_framebufPtr = new byte[framebufferBytes()]();
 	_presentBuffer = new byte[framebufferBytes()]();
-	if (_isPanther)
-		_backgroundFramebuf.resize(framebufferBytes());
-
 	_backgroundFrame = 0;
 	_dirtyRectCount = 0;
 	_renderDirtyCount = 0;

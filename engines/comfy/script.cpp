@@ -27,29 +27,67 @@
 
 namespace Comfy {
 
-bool ComfyEngine::scriptHasRange(uint32 pc, uint32 width) {
-	uint32 tileOffset = pc % COMFY_TILE_SIZE;
-	uint32 tileBase = pc - tileOffset;
-	uint32 tileSize = tileBase < _picDataSize ? MIN<uint32>(COMFY_TILE_SIZE, _picDataSize - tileBase) : 0;
-	if (tileBase > _comfyObjData.size() || tileSize > _comfyObjData.size() - tileBase ||
-			tileOffset > tileSize || width > tileSize - tileOffset) {
+byte ComfyEngine::scriptReadByte(uint32 pc) {
+	uint16 tileIndex = (uint16)(pc / COMFY_TILE_SIZE);
+	uint16 tileOffset = (uint16)(pc % COMFY_TILE_SIZE);
+	int16 spriteId = (int16)(-(int16)tileIndex - 1);
+	SpriteResource *sprite = spriteGetPtr(spriteId);
+	uint16 frameId = (uint16)-spriteId;
+	if (!sprite || frameId >= _frameCacheEntries.size()) {
 		_scriptFault = true;
-		return false;
+		return 0;
 	}
 
-	return true;
-}
+	SpriteCacheEntry &entry = _frameCacheEntries[frameId];
+	uint32 offset = entry.poolOffset + 0x0C + tileOffset;
+	if (entry.slotSize == 0xFFFF || offset >= _scenePoolData.size()) {
+		_scriptFault = true;
+		return 0;
+	}
 
-byte ComfyEngine::scriptReadByte(uint32 pc) {
-	return scriptHasRange(pc, 1) ? _comfyObjData[pc] : 0;
+	return _scenePoolData[offset];
 }
 
 uint16 ComfyEngine::scriptReadWord(uint32 pc) {
-	return scriptHasRange(pc, 2) ? READ_LE_UINT16(&_comfyObjData[pc]) : 0;
+	uint16 tileIndex = (uint16)(pc / COMFY_TILE_SIZE);
+	uint16 tileOffset = (uint16)(pc % COMFY_TILE_SIZE);
+	int16 spriteId = (int16)(-(int16)tileIndex - 1);
+	SpriteResource *sprite = spriteGetPtr(spriteId);
+	uint16 frameId = (uint16)-spriteId;
+	if (!sprite || frameId >= _frameCacheEntries.size()) {
+		_scriptFault = true;
+		return 0;
+	}
+
+	SpriteCacheEntry &entry = _frameCacheEntries[frameId];
+	uint32 offset = entry.poolOffset + 0x0C + tileOffset;
+	if (entry.slotSize == 0xFFFF || offset > _scenePoolData.size() || 2 > _scenePoolData.size() - offset) {
+		_scriptFault = true;
+		return 0;
+	}
+
+	return READ_LE_UINT16(&_scenePoolData[offset]);
 }
 
 uint32 ComfyEngine::scriptReadDword(uint32 pc) {
-	return scriptHasRange(pc, 4) ? READ_LE_UINT32(&_comfyObjData[pc]) : 0;
+	uint16 tileIndex = (uint16)(pc / COMFY_TILE_SIZE);
+	uint16 tileOffset = (uint16)(pc % COMFY_TILE_SIZE);
+	int16 spriteId = (int16)(-(int16)tileIndex - 1);
+	SpriteResource *sprite = spriteGetPtr(spriteId);
+	uint16 frameId = (uint16)-spriteId;
+	if (!sprite || frameId >= _frameCacheEntries.size()) {
+		_scriptFault = true;
+		return 0;
+	}
+
+	SpriteCacheEntry &entry = _frameCacheEntries[frameId];
+	uint32 offset = entry.poolOffset + 0x0C + tileOffset;
+	if (entry.slotSize == 0xFFFF || offset > _scenePoolData.size() || 4 > _scenePoolData.size() - offset) {
+		_scriptFault = true;
+		return 0;
+	}
+
+	return READ_LE_UINT32(&_scenePoolData[offset]);
 }
 
 uint16 ComfyEngine::scriptReadStringIndex(uint32 pc) {
