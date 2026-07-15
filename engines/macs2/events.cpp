@@ -31,7 +31,7 @@ namespace Macs2 {
 
 Events *g_events;
 
-Events::Events() : UIElement("Root", nullptr) {
+Events::Events() : UIElement("Root", nullptr), currentMillis(0) {
 	g_events = this;
 }
 

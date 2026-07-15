@@ -172,7 +172,7 @@ struct SpeechActData {
 	Character *speaker = nullptr;
 	Common::Array<Common::String> strings;
 	Common::Point position;
-	bool onRightSide;
+	bool onRightSide = false;
 	// Mouth animation counter from handleTimerCallback (1008:d38b).
 	// Decremented each frame. Controls which portrait frame is drawn:
 	// >1: draw frame 2 from primary portrait blob (+0x14C)

@@ -85,7 +85,7 @@ public:
 class GameObject {
 public:
 	// Index of the object, starting at 1
-	uint16 _index;
+	uint16 _index = 0;
 	uint32 _dataOffset = 0;
 
 	Common::Array<uint8> _overloadAnimation;
@@ -99,7 +99,7 @@ public:
 
 	// These are the values read by the code around l0037_082D:
 	Common::Point _position;
-	uint16 _sceneIndex;
+	uint16 _sceneIndex = 0;
 	// 8-directional movement system from walkAlongPath (1008:1b8f).
 	// Direction codes 1-8 are walking directions, 9-16 are standing (idle) variants.
 	// The direction is chosen based on the angle between current and target position:
@@ -115,12 +115,12 @@ public:
 	//   17 (0x11) = Pickup animation
 	// Each direction has a validity flag at runtime offset +0x43 + (dir-1)*0x20
 	// that indicates whether the object has animation data for that direction.
-	uint16 _orientation;
+	uint16 _orientation = 0;
 	// Per-object percentage multiplier for ground-elevation vertical offset.
 	// Walkability map values < 0xC8 represent ground height at each pixel;
 	// this factor scales how much that height displaces the object upward
 	// when drawn. 0 = no vertical offset. 100 = full elevation offset.
-	uint16 _verticalOffsetScale;
+	uint16 _verticalOffsetScale = 0;
 	// Runtime +0x217: frame index during pickup animation at which the item is grabbed
 	uint16 _pickupFrameStart = 0;
 	// Runtime +0x219: frame index at which pickup animation completes

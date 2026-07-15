@@ -3422,7 +3422,7 @@ bool Character::isWalkable(const Common::Point &p) const {
 	return Macs2Engine::isWalkabilityWalkable(lookupWalkability(p));
 }
 
-Character::Character() {
+Character::Character() : _startTime(0), _duration(0) {
 	_pathfindingOverlay = Common::Array<uint8>(kScreenWidth * kGameHeight, 0);
 }
 
