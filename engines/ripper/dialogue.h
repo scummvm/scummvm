@@ -3,21 +3,26 @@
 #ifndef RIPPER_DIALOGUE_H
 #define RIPPER_DIALOGUE_H
 
-#include "common/str.h"
 #include "common/array.h"
+#include "common/rect.h"
+#include "common/str.h"
 #include "ripper/resources.h"
 
 namespace Ripper {
 
 struct ScriptCommand;
+struct MouseState;
 class CompiledScript;
 
 class DialogueManager {
 public:
 	bool initialize(ResourceManager &resources);
-	bool execute(const CompiledScript &script, const ScriptCommand &command);
+	bool execute(const CompiledScript &script, const ScriptCommand &command, bool includeChoice = true);
+	bool service(const MouseState &mouse, uint &result);
+	void updateHover(const Common::Point &point);
 	void draw() const;
 	bool isPending() const { return _pending; }
+	bool hasChoices() const { return !_choices.empty(); }
 	void clearPending() { _pending = false; _choices.clear(); }
 
 private:
@@ -27,6 +32,7 @@ private:
 	};
 	Common::Array<Choice> _choices;
 	bool _pending = false;
+	uint _selectedChoice = 0;
 	BitmapFontAsset _font;
 };
 

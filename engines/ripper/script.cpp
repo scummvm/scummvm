@@ -428,6 +428,33 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			break;
 		}
 
+		case 0x0a: {
+			if (command.arguments.size() < 2)
+				return false;
+			const bool choicesAvailable = _dialogue->hasChoices();
+			const bool takeBranch = command.arguments[0].value == 0 ?
+				choicesAvailable : !choicesAvailable;
+			debugC(2, kDebugDialogue,
+				"Ripper: dialogue availability condition choices=%u invert=%u target=0x%x selected=%d",
+				choicesAvailable, command.arguments[0].value != 0,
+				command.arguments[1].value, takeBranch);
+			if (takeBranch) {
+				branchTaken = true;
+				uint targetIndex = 0;
+				while (targetIndex < commands.size() &&
+					commands[targetIndex].offset != command.arguments[1].value)
+					++targetIndex;
+				if (targetIndex == commands.size()) {
+					warning("Ripper: dialogue branch target 0x%x is not a command boundary in '%s'",
+						command.arguments[1].value, script.getMemberName().c_str());
+					return false;
+				}
+				commandIndex = targetIndex;
+				continue;
+			}
+			break;
+		}
+
 		case 0x0c: {
 			if (command.arguments.size() < 1)
 				return false;
@@ -478,21 +505,28 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				return false;
 			debugC(2, kDebugScripts, "Ripper: completed media command '%s' controls=%d",
 				mediaPath.c_str(), allowEscSpace);
-			if (_dialogue->isPending()) {
-				result = -6;
-				debugC(1, kDebugScripts,
-					"Ripper: dialogue chooser pending after media at 0x%x", command.offset);
-				return true;
-			}
 			break;
 		}
 
-		case 0x0a:
-		case 0x0b:
+		case 0x15:
 		case 0x16:
-			if (!_dialogue->execute(script, command))
+		case 0x17: {
+			bool includeChoice = true;
+			if (command.opcode == 0x16) {
+				if (command.arguments.size() < 2 ||
+					command.arguments[1].value >= _ba0.getFrames().size())
+					return false;
+				const ScriptFrame &responseFrame = _ba0.getFrames()[command.arguments[1].value];
+				const Common::String responseLabel = _ba0.getString(responseFrame.labelOffset);
+				includeChoice = !isScenePlayed(responseLabel);
+				debugC(2, kDebugDialogue,
+					"Ripper: dialogue response frame=%u label='%s' played=%d",
+					command.arguments[1].value, responseLabel.c_str(), !includeChoice);
+			}
+			if (!_dialogue->execute(script, command, includeChoice))
 				return false;
 			break;
+		}
 
 		case 0x1d: {
 			if (command.arguments.size() < 3)
@@ -671,12 +705,6 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 		uint callbackFrame = _activeBa0Frame;
 		if (!executeCallback(_ba0, frame.enterCallbackOffset, result, &callbackFrame))
 			return false;
-		if (result == -6) {
-			debugC(1, kDebugScene,
-				"Ripper: BA0 frame='%s' paused for dialogue chooser",
-				label.c_str());
-			return true;
-		}
 		if (result == -2) {
 			nextFrame = callbackFrame;
 			continue;
@@ -692,6 +720,17 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			markScenePlayed(label);
 			if (frame.interactionCount != 0)
 				beginBa0InteractionWait(label, frame.interactionCount);
+			if (frame.idleCallbackOffset != 0 && _dialogue->hasChoices()) {
+				int idleResult = 0;
+				if (!executeCallback(_ba0, frame.idleCallbackOffset, idleResult) || idleResult != 0) {
+					warning("Ripper: dialogue idle callback for frame '%s' returned %d",
+						label.c_str(), idleResult);
+					return false;
+				}
+				debugC(1, kDebugDialogue,
+					"Ripper: activated frame dialogue chooser before media label='%s' idle=0x%x",
+					label.c_str(), frame.idleCallbackOffset);
+			}
 			if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false,
 				frame.presentationType == 1 && frame.interactionCount != 0))
 				return false;
@@ -723,9 +762,20 @@ bool ScriptManager::serviceScene() {
 	const MouseState mouse = _engine->getInput()->publishMouseState();
 	if (_dialogue->isPending()) {
 		_engine->getToolbar()->leave();
-		_engine->getCursor()->setVisible(false);
+		_engine->getCursor()->setVisible(true);
+		_engine->getCursor()->update(kToolbarCursor);
+		uint dialogueFrame = 0;
+		if (_dialogue->service(mouse, dialogueFrame)) {
+			_awaitingBa0Interaction = false;
+			_engine->getCursor()->setVisible(false);
+			debugC(1, kDebugDialogue,
+				"Ripper: dialogue chooser returned control=-2 nextFrame=%u", dialogueFrame);
+			return advanceBa0ToFrame(dialogueFrame);
+		}
 		_dialogue->draw();
-		debugC(3, kDebugScene, "Ripper: dialogue chooser remains pending; input service not yet wired");
+		debugC(3, kDebugDialogue,
+			"Ripper: dialogue chooser pending point=%d,%d buttons=0x%02x",
+			mouse.position.x, mouse.position.y, mouse.buttons);
 		return true;
 	}
 	if (!_awaitingBa0Interaction) {
@@ -821,6 +871,12 @@ void ScriptManager::drawDialogueOverlay() const {
 void ScriptManager::updateInteractiveCursor(const Common::Point &point) {
 	if (!_awaitingBa0Interaction || _activeBa0Frame >= _ba0.getFrames().size())
 		return;
+	if (_dialogue->isPending()) {
+		_dialogue->updateHover(point);
+		_engine->getCursor()->setVisible(true);
+		_engine->getCursor()->update(kToolbarCursor);
+		return;
+	}
 	const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
 	uint cursorIndex = 0;
 	for (uint i = 0; i < frame.interactionCount; ++i) {
