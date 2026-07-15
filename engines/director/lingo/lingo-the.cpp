@@ -2028,16 +2028,18 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheMovieRate:
 		channel->_movieRate = d.asFloat();
-		if (sprite->_cast && sprite->_cast->_type == kCastDigitalVideo)
+		if (sprite->_cast && sprite->_cast->_type == kCastDigitalVideo) {
+			((DigitalVideoCastMember *)sprite->_cast)->setChannel(channel);
 			((DigitalVideoCastMember *)sprite->_cast)->setMovieRate(channel->_movieRate);
-		else
+		} else
 			warning("Setting movieTime for non-digital video");
 		break;
 	case kTheMovieTime:
 		channel->_movieTime = d.asInt();
-		if (sprite->_cast->_type == kCastDigitalVideo)
+		if (sprite->_cast && sprite->_cast->_type == kCastDigitalVideo) {
+			((DigitalVideoCastMember *)sprite->_cast)->setChannel(channel);
 			((DigitalVideoCastMember *)sprite->_cast)->seekMovie(channel->_movieTime);
-		else
+		} else
 			warning("Setting movieTime for non-digital video");
 		break;
 	case kThePattern:
@@ -2072,16 +2074,18 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheStartTime:
 		channel->_startTime = d.asInt();
-		if (sprite->_cast->_type == kCastDigitalVideo)
+		if (sprite->_cast && sprite->_cast->_type == kCastDigitalVideo) {
+			((DigitalVideoCastMember *)sprite->_cast)->setChannel(channel);
 			((DigitalVideoCastMember *)sprite->_cast)->seekMovie(channel->_startTime);
-		else
+		} else
 			warning("Setting startTime for non-digital video");
 		break;
 	case kTheStopTime:
 		channel->_stopTime = d.asInt();
-		if (sprite->_cast->_type == kCastDigitalVideo)
+		if (sprite->_cast && sprite->_cast->_type == kCastDigitalVideo) {
+			((DigitalVideoCastMember *)sprite->_cast)->setChannel(channel);
 			((DigitalVideoCastMember *)sprite->_cast)->setStopTime(channel->_stopTime);
-		else
+		} else
 			warning("Setting stopTime for non-digital video");
 		break;
 	case kTheStretch:
