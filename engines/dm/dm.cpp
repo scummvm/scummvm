@@ -105,8 +105,9 @@ uint16 DMEngine::getMap(int32 mapTime) {
 	return ((uint16)(mapTime >> 24));
 }
 
-int32 DMEngine::setMap(int32 mapTime, uint32 map) {
-	return ((mapTime & 0x00FFFFFF) | (map << 24));
+int32 DMEngine::setMap(int32 &mapTime, uint32 map) {
+	mapTime = ((mapTime & 0x00FFFFFF) | (map << 24));
+	return mapTime;
 }
 
 Thing DMEngine::thingWithNewCell(Thing thing, int16 cell) {
