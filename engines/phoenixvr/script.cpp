@@ -53,7 +53,17 @@ public:
 
 	bool peek(const Common::String &prefix) {
 		skip();
-		return scumm_strnicmp(_line.c_str() + _pos, prefix.c_str(), prefix.size()) == 0;
+		if (_pos + prefix.size() > _line.size())
+			return false;
+
+		auto n = prefix.size();
+		auto *ch0 = _line.c_str() + _pos;
+		auto *ch1 = prefix.c_str();
+		while (n--) {
+			if (tolower(*ch0++) != tolower(*ch1++))
+				return false;
+		}
+		return true;
 	}
 
 	bool maybe(const Common::String &prefix) {
@@ -312,10 +322,20 @@ Script::TestPtr Script::Warp::getLastTest(int idx) const {
 }
 
 Script::Script(Common::SeekableReadStream &s) {
+	s.seek(0);
+	Common::Array<char> text(s.size());
+	if (s.read(text.data(), text.size()) != text.size())
+		error("script: short read");
 	uint lineno = 1;
-	while (!s.eos()) {
-		auto line = s.readLine();
-		parseLine(line, lineno++);
+	uint lineStartOffset = 0;
+	auto textSize = text.size();
+	while (lineStartOffset < textSize) {
+		auto lineStart = text.begin() + lineStartOffset;
+		auto lineEnd = Common::find(lineStart, text.end(), '\n');
+		parseLine({lineStart, lineEnd}, lineno++);
+		lineStartOffset += Common::distance(lineStart, lineEnd) + 1;
+		if (lineStartOffset < textSize && text[lineStartOffset] == '\r')
+			++lineStartOffset;
 	}
 }
 
@@ -328,7 +348,7 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 		return;
 
 	if (p.maybe('[')) {
-		if (p.maybe("bool]=") || p.maybe("bool)=") || p.maybe("b\x00\x00ool]=")) {
+		if (p.maybe("bool]=") || p.maybe("bool)=") || p.maybe({"b\x00\x00ool]=", 8})) {
 			_vars.push_back(p.nextWord());
 		} else if (p.maybe("warp]=")) {
 			auto vr = p.nextWord();
