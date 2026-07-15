@@ -744,8 +744,13 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 					"Ripper: activated frame dialogue chooser before media label='%s' idle=0x%x",
 					label.c_str(), frame.idleCallbackOffset);
 			}
+			const bool loopUntilInput = frame.presentationType == 1 && frame.interactionCount != 0;
+			const bool allowEscSpace = frame.presentationType == 0;
+			debugC(2, kDebugVideo,
+				"Ripper: frame presentation controls label='%s' keyboard=%d mouse=%d",
+				label.c_str(), allowEscSpace, loopUntilInput);
 			if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false,
-				frame.presentationType == 1 && frame.interactionCount != 0))
+				loopUntilInput, allowEscSpace))
 				return false;
 			if (frame.interactionCount != 0)
 				return true;

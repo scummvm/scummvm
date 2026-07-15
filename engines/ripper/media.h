@@ -45,7 +45,7 @@ public:
 
 	bool play(const Common::String &path, bool allowEscSpace, int x = -1, int y = -1);
 	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
-		bool loopUntilInput = false);
+		bool loopUntilInput = false, bool allowEscSpace = false);
 	bool loadAudio(const Common::String &path);
 	bool startLoadedAudio(const Common::String &key, uint volumePercent, bool loop);
 	bool isSceneAudioActive() const;
