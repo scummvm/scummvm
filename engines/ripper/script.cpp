@@ -760,7 +760,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 
 bool ScriptManager::serviceScene() {
 	const MouseState mouse = _engine->getInput()->publishMouseState();
-	if (_dialogue->isPending()) {
+	const bool dialoguePending = _dialogue->isPending();
+	if (dialoguePending) {
 		if (_engine->getToolbar()->service(mouse)) {
 			_engine->getCursor()->setVisible(true);
 			_engine->getCursor()->update(kToolbarCursor);
@@ -780,7 +781,6 @@ bool ScriptManager::serviceScene() {
 		debugC(3, kDebugDialogue,
 			"Ripper: dialogue chooser pending point=%d,%d buttons=0x%02x",
 			mouse.position.x, mouse.position.y, mouse.buttons);
-		return true;
 	}
 	if (!_awaitingBa0Interaction) {
 		_engine->getToolbar()->leave();
@@ -788,29 +788,19 @@ bool ScriptManager::serviceScene() {
 		_hoveredBa0Interaction = -1;
 		return true;
 	}
-	if (_engine->getToolbar()->service(mouse)) {
+	if (!dialoguePending && _engine->getToolbar()->service(mouse)) {
 		_engine->getCursor()->update(kToolbarCursor);
 		return true;
 	}
 
 	const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
-	const ScriptInteraction *hoveredInteraction = nullptr;
 	uint hoveredInteractionIndex = 0;
-	for (uint i = 0; mouse.position.y < 400 && i < frame.interactionCount; ++i) {
-		const uint interactionIndex = frame.firstInteractionIndex + i;
-		const ScriptInteraction &interaction = _ba0.getInteractions()[interactionIndex];
-		if ((interaction.flags & 2) != 0 || interaction.width <= 0 || interaction.height <= 0)
-			continue;
-		if (mouse.position.x < interaction.y || mouse.position.x >= interaction.y + interaction.height ||
-			mouse.position.y < interaction.x || mouse.position.y >= interaction.x + interaction.width)
-			continue;
-		hoveredInteraction = &interaction;
-		hoveredInteractionIndex = interactionIndex;
-		break;
-	}
+	const ScriptInteraction *hoveredInteraction =
+		findBa0Interaction(mouse.position, &hoveredInteractionIndex);
 
 	const uint cursorIndex = hoveredInteraction ?
-		(hoveredInteraction->conditionOffset != 0 ? 8 : hoveredInteraction->initialSelection) : 0;
+		(hoveredInteraction->conditionOffset != 0 ? 8 : hoveredInteraction->initialSelection) :
+		(dialoguePending ? kToolbarCursor : 0);
 	_engine->getCursor()->update(cursorIndex);
 	const int hoveredIndex = hoveredInteraction ? (int)hoveredInteractionIndex : -1;
 	if (hoveredIndex != _hoveredBa0Interaction) {
@@ -829,6 +819,12 @@ bool ScriptManager::serviceScene() {
 	if ((mouse.pressed & kMouseButtonLeft) == 0)
 		return true;
 	if (hoveredInteraction) {
+		if (dialoguePending) {
+			_dialogue->clearPending();
+			debugC(1, kDebugDialogue,
+				"Ripper: dialogue chooser closed by scene interaction=%u label='%s'",
+				hoveredInteractionIndex, hoveredInteraction->label.c_str());
+		}
 		debugC(1, kDebugInput,
 			"Ripper: hotspot click frame=%u label='%s' interaction=%u action='%s' "
 				"point=%d,%d rect=%d,%d,%d,%d cursor=%u condition=0x%x callback=0x%x flags=0x%02x",
@@ -882,23 +878,39 @@ void ScriptManager::updateInteractiveCursor(const Common::Point &point) {
 			return;
 		}
 		_dialogue->updateHover(point);
+		const ScriptInteraction *interaction = findBa0Interaction(point);
+		const uint cursorIndex = interaction ?
+			(interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) :
+			kToolbarCursor;
 		_engine->getCursor()->setVisible(true);
-		_engine->getCursor()->update(kToolbarCursor);
+		_engine->getCursor()->update(cursorIndex);
 		return;
 	}
-	const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
-	uint cursorIndex = 0;
-	for (uint i = 0; i < frame.interactionCount; ++i) {
-		const ScriptInteraction &interaction = _ba0.getInteractions()[frame.firstInteractionIndex + i];
-		if ((interaction.flags & 2) == 0 && point.x >= interaction.y &&
-			point.x < interaction.y + interaction.height && point.y >= interaction.x &&
-			point.y < interaction.x + interaction.width) {
-			cursorIndex = interaction.conditionOffset != 0 ? 8 : interaction.initialSelection;
-			break;
-		}
-	}
+	const ScriptInteraction *interaction = findBa0Interaction(point);
+	const uint cursorIndex = interaction ?
+		(interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) : 0;
 	_engine->getCursor()->setVisible(true);
 	_engine->getCursor()->update(cursorIndex);
+}
+
+const ScriptInteraction *ScriptManager::findBa0Interaction(const Common::Point &point,
+		uint *interactionIndex) const {
+	if (_activeBa0Frame >= _ba0.getFrames().size() || point.y >= 400)
+		return nullptr;
+	const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
+	for (uint i = 0; i < frame.interactionCount; ++i) {
+		const uint index = frame.firstInteractionIndex + i;
+		const ScriptInteraction &interaction = _ba0.getInteractions()[index];
+		if ((interaction.flags & 2) != 0 || interaction.width <= 0 || interaction.height <= 0)
+			continue;
+		if (point.x < interaction.y || point.x >= interaction.y + interaction.height ||
+			point.y < interaction.x || point.y >= interaction.x + interaction.width)
+			continue;
+		if (interactionIndex)
+			*interactionIndex = index;
+		return &interaction;
+	}
+	return nullptr;
 }
 
 } // End of namespace Ripper

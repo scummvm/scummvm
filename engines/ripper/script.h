@@ -126,6 +126,8 @@ private:
 	bool advanceBa0ToFrame(uint nextFrame);
 	bool executeConcurrentFrame();
 	bool findFrameByLabel(const CompiledScript &script, const Common::String &label, uint &frameIndex) const;
+	const ScriptInteraction *findBa0Interaction(const Common::Point &point,
+		uint *interactionIndex = nullptr) const;
 	bool isMilestoneFlagSet(uint32 flag) const;
 	bool isScenePlayed(const Common::String &scene) const;
 	void markScenePlayed(const Common::String &scene);
