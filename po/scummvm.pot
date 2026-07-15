@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-15 15:49+0000\n"
+"POT-Creation-Date: 2026-07-15 18:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1039,7 +1039,7 @@ msgstr ""
 #. I18N: Action in In Cold Blood
 #: gui/gui-manager.cpp:163 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173
-#: engines/lab/metaengine.cpp:160 engines/macs2/metaengine.cpp:45
+#: engines/lab/metaengine.cpp:160 engines/macs2/metaengine.cpp:46
 #: engines/mohawk/myst.cpp:572 engines/mohawk/riven.cpp:853
 #: engines/sludge/keymapper_tables.h:40 engines/supernova/metaengine.cpp:226
 #: engines/teenagent/metaengine.cpp:207
@@ -3724,7 +3724,7 @@ msgstr ""
 #: engines/composer/metaengine.cpp:126 engines/drascula/metaengine.cpp:224
 #: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:93
 #: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
-#: engines/illusions/metaengine.cpp:142 engines/macs2/metaengine.cpp:57
+#: engines/illusions/metaengine.cpp:142 engines/macs2/metaengine.cpp:58
 #: engines/made/metaengine.cpp:151 engines/mohawk/myst.cpp:566
 #: engines/mohawk/riven.cpp:847 engines/prince/metaengine.cpp:269
 #: engines/sherlock/metaengine.cpp:384
@@ -3756,8 +3756,8 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
-#: engines/metaengine.cpp:162 engines/touche/metaengine.cpp:135
-#: engines/twp/metaengine.cpp:176
+#: engines/metaengine.cpp:162 engines/macs2/metaengine.cpp:91
+#: engines/touche/metaengine.cpp:135 engines/twp/metaengine.cpp:176
 msgid "Show hotspots"
 msgstr ""
 
@@ -5523,7 +5523,7 @@ msgstr ""
 #: backends/platform/sdl/miyoo/miyoo.cpp:114
 #: engines/alcachofa/metaengine.cpp:110 engines/grim/grim.cpp:545
 #: engines/grim/grim.cpp:645 engines/hdb/metaengine.cpp:264
-#: engines/macs2/metaengine.cpp:69 engines/made/metaengine.cpp:186
+#: engines/macs2/metaengine.cpp:70 engines/made/metaengine.cpp:186
 #: engines/phoenixvr/metaengine.cpp:110 engines/scumm/metaengine.cpp:1232
 #: engines/toltecs/metaengine.cpp:252
 msgid "Menu"
@@ -5901,7 +5901,7 @@ msgstr ""
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:521
 #: engines/grim/grim.cpp:621 engines/hdb/metaengine.cpp:251
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
-#: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:63
+#: engines/icb/icb.cpp:179 engines/macs2/metaengine.cpp:64
 #: engines/petka/metaengine.cpp:173 engines/phoenixvr/metaengine.cpp:82
 #: engines/scumm/help.cpp:228 engines/scumm/help.cpp:237
 #: engines/scumm/help.cpp:244 engines/scumm/help.cpp:252
@@ -10215,20 +10215,20 @@ msgstr ""
 msgid "Activates some modern comforts for a smoother user experience."
 msgstr ""
 
-#: engines/macs2/metaengine.cpp:52
+#: engines/macs2/metaengine.cpp:53
 msgid "Change cursor mode"
 msgstr ""
 
-#: engines/macs2/metaengine.cpp:75
+#: engines/macs2/metaengine.cpp:76
 msgid "Cycle game speed"
 msgstr ""
 
-#: engines/macs2/metaengine.cpp:80 engines/sherlock/metaengine.cpp:846
+#: engines/macs2/metaengine.cpp:81 engines/sherlock/metaengine.cpp:846
 #: engines/touche/metaengine.cpp:153
 msgid "Open options menu"
 msgstr ""
 
-#: engines/macs2/metaengine.cpp:85
+#: engines/macs2/metaengine.cpp:86
 msgid "Help / map"
 msgstr ""
 
