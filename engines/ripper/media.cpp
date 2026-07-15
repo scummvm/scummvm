@@ -373,7 +373,8 @@ bool MediaPlayer::isSceneAudioActive() const {
 }
 
 bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
-		bool &paused, Audio::SoundHandle *externalAudio) {
+		bool &paused, bool &skipToEnd, Audio::SoundHandle *externalAudio) {
+	skipToEnd = false;
 	if (_input->pollEvents()) {
 		_engine->quitGame();
 		return false;
@@ -383,6 +384,7 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 
 	const uint16 command = _input->consumeKey();
 	if (command == 0x1b) {
+		skipToEnd = true;
 		debugC(2, kDebugVideo, "Ripper: Escape advanced skippable presentation to end");
 		return false;
 	}
@@ -400,7 +402,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		bool allowEscSpace, int x, int y, Audio::SoundHandle *externalAudio, bool *stoppedByUser,
 		const Common::Array<uint32> *frameAudioOffsets, uint32 audioByteRate,
 		uint32 timelineStartMillis, uint displayScale, bool patchInterfacePalette,
-		uint frameLimit, int originY) {
+		uint frameLimit, int originY, bool presentFinalFrameOnEsc) {
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	Video::SmackerDecoder decoder;
@@ -437,11 +439,43 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	bool paused = false;
 	bool completed = true;
 	uint presentedFrames = 0;
+	auto presentFrame = [&](const Graphics::Surface *frame, bool forcePalette) {
+		if (forcePalette || decoder.hasDirtyPalette()) {
+			byte palette[256 * 3];
+			memcpy(palette, decoder.getPalette(), sizeof(palette));
+			if (patchInterfacePalette)
+				_engine->getToolbar()->applySharedPalettePatch(palette, 256);
+			g_system->getPaletteManager()->setPalette(palette, 0, 256);
+		}
+		if (displayScale == 1) {
+			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+		} else {
+			Graphics::Surface *screen = g_system->lockScreen();
+			Graphics::scaleBlit((byte *)screen->getBasePtr(x, y),
+				(const byte *)frame->getPixels(), screen->pitch, frame->pitch,
+				outputWidth, outputHeight, frame->w, frame->h, frame->format);
+			g_system->unlockScreen();
+		}
+		_engine->getScripts()->drawDialogueOverlay();
+		g_system->updateScreen();
+	};
 	decoder.start();
 	while (!_engine->shouldQuit() && !decoder.endOfVideo()) {
-	_engine->getScripts()->updateInteractiveCursor(_input->peekMouseState().position);
-		if (!servicePlaybackInput(decoder, allowEscSpace, paused, externalAudio)) {
+		_engine->getScripts()->updateInteractiveCursor(_input->peekMouseState().position);
+		bool skipToEnd = false;
+		if (!servicePlaybackInput(decoder, allowEscSpace, paused, skipToEnd, externalAudio)) {
 			completed = false;
+			if (skipToEnd && presentFinalFrameOnEsc && decoder.getFrameCount() != 0) {
+				const uint finalFrame = decoder.getFrameCount() - 1;
+				const Graphics::Surface *frame = decoder.forceSeekToFrame(finalFrame);
+				if (frame) {
+					presentFrame(frame, true);
+					completed = true;
+					debugC(2, kDebugVideo,
+						"Ripper: Escape presented final scene-transition frame '%s' frame=%u",
+						name.c_str(), finalFrame);
+				}
+			}
 			if (stoppedByUser && !_engine->shouldQuit())
 				*stoppedByUser = true;
 			break;
@@ -461,24 +495,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		if (!paused && frameDue) {
 			const Graphics::Surface *frame = decoder.decodeNextFrame();
 			if (frame) {
-				if (decoder.hasDirtyPalette()) {
-					byte palette[256 * 3];
-					memcpy(palette, decoder.getPalette(), sizeof(palette));
-					if (patchInterfacePalette)
-						_engine->getToolbar()->applySharedPalettePatch(palette, 256);
-					g_system->getPaletteManager()->setPalette(palette, 0, 256);
-				}
-				if (displayScale == 1) {
-					g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
-				} else {
-					Graphics::Surface *screen = g_system->lockScreen();
-					Graphics::scaleBlit((byte *)screen->getBasePtr(x, y),
-						(const byte *)frame->getPixels(), screen->pitch, frame->pitch,
-						outputWidth, outputHeight, frame->w, frame->h, frame->format);
-					g_system->unlockScreen();
-				}
-				_engine->getScripts()->drawDialogueOverlay();
-				g_system->updateScreen();
+				presentFrame(frame, false);
 				++presentedFrames;
 				if (synchronizeToTimeline) {
 					debugC(11, kDebugVideo,
@@ -649,7 +666,7 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 		}
 	if (memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0) {
 		result = playSmacker(file, path, allowEscSpace, x, y, nullptr, nullptr, nullptr,
-			0, 0, 1, true, frameLimit, kScenePresentationTop);
+			0, 0, 1, true, frameLimit, kScenePresentationTop, allowEscSpace);
 		if (!result && _stopSceneOnMouse && _input->peekMouseState().pressed != 0) {
 			result = true;
 			debugC(1, kDebugVideo,

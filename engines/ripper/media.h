@@ -55,10 +55,11 @@ private:
 		bool allowEscSpace, int x, int y, Audio::SoundHandle *externalAudio = nullptr,
 		bool *stoppedByUser = nullptr, const Common::Array<uint32> *frameAudioOffsets = nullptr,
 		uint32 audioByteRate = 0, uint32 timelineStartMillis = 0, uint displayScale = 1,
-		bool patchInterfacePalette = true, uint frameLimit = 0, int originY = 0);
+		bool patchInterfacePalette = true, uint frameLimit = 0, int originY = 0,
+		bool presentFinalFrameOnEsc = false);
 	bool playIavf(Common::SeekableReadStream &stream, const Common::String &name, bool allowEscSpace);
 	bool servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
-		bool &paused, Audio::SoundHandle *externalAudio);
+		bool &paused, bool &skipToEnd, Audio::SoundHandle *externalAudio);
 
 	RipperEngine *_engine;
 	InputManager *_input;
