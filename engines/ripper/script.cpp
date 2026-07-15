@@ -752,6 +752,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false,
 				loopUntilInput, allowEscSpace))
 				return false;
+			if (allowEscSpace)
+				_dialogue->rebuildPresentationBands("controlled-media-complete");
 			if (frame.interactionCount != 0)
 				return true;
 		}
