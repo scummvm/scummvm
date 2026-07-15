@@ -31,6 +31,11 @@
 #include "engines/util.h"
 #include "graphics/paletteman.h"
 
+#ifdef USE_IMGUI
+#include "backends/imgui/imgui.h"
+#include "gui/gui-manager.h"
+#endif
+
 namespace Comfy {
 
 ComfyEngine *g_engine;
@@ -44,8 +49,16 @@ void onImGuiInit() {
 }
 
 void onImGuiRender() {
-	if (!_state || !_state->_engine || _state->_engine->shouldQuit())
+	if (!_state || !_state->_engine || _state->_closing || _state->_engine->shouldQuit())
 		return;
+
+	ImGuiIO &io = ImGui::GetIO();
+	if (GUI::GuiManager::instance().isActive()) {
+		io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse;
+		return;
+	}
+
+	io.ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
 
 	bool actorDebugEnabled = debugChannelSet(-1, kDebugImGui);
 	if (actorDebugEnabled)
@@ -170,14 +183,26 @@ Common::Error ComfyEngine::gameInit() {
 
 	gameShutdown();
 
-#ifdef USE_IMGUI
-	_system->setImGuiCallbacks(ImGuiCallbacks());
-#endif
-
 	return Common::kNoError;
 }
 
 void ComfyEngine::gameShutdown() {
+#ifdef USE_IMGUI
+	// Submit an empty ImGui frame so the backend releases detached platform windows.
+	if (_state) {
+		_state->_closing = true;
+		ImGuiIO &io = ImGui::GetIO();
+		// Ignore the last Comfy window's cursor state while clearing input capture.
+		io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
+		ImGui::SetNextFrameWantCaptureMouse(false);
+		ImGui::SetNextFrameWantCaptureKeyboard(false);
+		_system->updateScreen();
+		io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+	}
+
+	_system->setImGuiCallbacks(ImGuiCallbacks());
+#endif
+
 	if (_lptKeyboardInitialized) {
 		lptKeyboardShutdown();
 		midiShutdown();
