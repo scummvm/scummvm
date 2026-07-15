@@ -196,6 +196,14 @@
   at `0x143af` services that callback during interaction polling. Consequently,
   `VM0_1_P3.AVI` is reached only when every response-frame choice is already
   marked played.
+- Opcode `0x10` maps to `HandleSceneEntryClearInteractionSelectionAndStepPrompt`
+  at `0x14d41`. Its 16-bit argument is relative to the current frame's
+  interaction list. The handler clears bit 0 in both the runtime UI proxy at
+  `+0x2c` and its backing interaction descriptor at `+0x21`, disabling that
+  hotspot for the current frame entry. `ExecuteSceneFrameAndInteractions` at
+  `0x13277` recreates and enables eligible proxies before each enter callback,
+  so the change does not persist when the frame is entered again. The handler's
+  `Step` prompt is visible only when the original script-debug flag pair is set.
 - Opcode `0x1a` maps to `HandleSceneEntryMediaAndSetBasenameFlag` at `0x159e1`.
   After `ExecutePresentationEntry` at `0x1652a` returns, the handler removes the
   media extension and sets that basename in the shared played-entry catalog.
