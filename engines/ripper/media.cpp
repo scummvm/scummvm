@@ -383,7 +383,7 @@ bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allo
 
 	const uint16 command = _input->consumeKey();
 	if (command == 0x1b) {
-		debugC(2, kDebugVideo, "Ripper: Escape stopped skippable presentation");
+		debugC(2, kDebugVideo, "Ripper: Escape advanced skippable presentation to end");
 		return false;
 	}
 	if (command == 0x20) {
@@ -611,10 +611,10 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 }
 
 bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
-		bool loopUntilInput) {
+		bool loopUntilInput, bool allowEscSpace) {
 	debugC(1, kDebugVideo,
-		"Ripper: entering interactive scene presentation media='%s' firstFrameOnly=%d",
-		path.c_str(), firstFrameOnly);
+		"Ripper: entering scene presentation media='%s' firstFrameOnly=%d loopUntilInput=%d controls=%d",
+		path.c_str(), firstFrameOnly, loopUntilInput, allowEscSpace);
 	Common::File *file = new Common::File();
 	if (!file->open(Common::Path(path))) {
 		warning("Ripper: could not open scene media '%s'", path.c_str());
@@ -634,11 +634,11 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 	// calls it after presenting the frame, so this path retains frame one onscreen.
 	const uint frameLimit = firstFrameOnly ? 1 : 0;
 	debugC(2, kDebugVideo,
-		"Ripper: scene media '%s' mode=%s scriptPosition=%d,%d originY=%d",
+		"Ripper: scene media '%s' mode=%s scriptPosition=%d,%d originY=%d controls=%d",
 		path.c_str(), firstFrameOnly ? "first-frame-preview" : "sequence", x, y,
-		kScenePresentationTop);
+		kScenePresentationTop, allowEscSpace);
 	bool result = false;
-	_stopSceneOnMouse = !firstFrameOnly;
+	_stopSceneOnMouse = loopUntilInput && !firstFrameOnly;
 	const bool loop = loopUntilInput && !firstFrameOnly;
 	uint pass = 0;
 	do {
@@ -648,7 +648,7 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 				return false;
 		}
 	if (memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0) {
-		result = playSmacker(file, path, false, x, y, nullptr, nullptr, nullptr,
+		result = playSmacker(file, path, allowEscSpace, x, y, nullptr, nullptr, nullptr,
 			0, 0, 1, true, frameLimit, kScenePresentationTop);
 		if (!result && _stopSceneOnMouse && _input->peekMouseState().pressed != 0) {
 			result = true;
@@ -656,7 +656,7 @@ bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool first
 				"Ripper: interactive scene media stopped by mouse; returning to hotspot polling");
 		}
 	} else if (memcmp(magic, "IAVF2.00", 8) == 0 && !firstFrameOnly) {
-		result = playIavf(*file, path, false);
+		result = playIavf(*file, path, allowEscSpace);
 		delete file;
 	} else {
 		warning("Ripper: unsupported scene media mode for '%s'", path.c_str());
