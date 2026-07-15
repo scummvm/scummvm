@@ -51,16 +51,16 @@ static ImVec2 debugMapPointToCanvas(const ImVec2 &canvasPos, int16 mapLeft, int1
 }
 
 bool ComfyEngine::debugScriptHasRange(uint32 pc, uint32 width) {
-	uint32 tileOffset = pc % COMFY_TILE_SIZE;
-	uint32 tileBase = pc - tileOffset;
-	uint32 tileSize = tileBase < _picDataSize ? MIN<uint32>(COMFY_TILE_SIZE, _picDataSize - tileBase) : 0;
-
-	return tileBase <= _comfyObjData.size() && tileSize <= _comfyObjData.size() - tileBase &&
-		tileOffset <= tileSize && width <= tileSize - tileOffset;
+	return _comfyObjFile && pc <= _comfyObjFile->fileSize && width <= _comfyObjFile->fileSize - pc;
 }
 
 uint16 ComfyEngine::debugScriptReadWord(uint32 pc) {
-	return debugScriptHasRange(pc, 2) ? READ_LE_UINT16(&_comfyObjData[pc]) : (uint16)0;
+	byte value[2];
+	memset(value, 0, sizeof(value));
+	if (debugScriptHasRange(pc, sizeof(value)))
+		objFileReadField(value, pc, sizeof(value), _comfyObjFile);
+
+	return READ_LE_UINT16(value);
 }
 
 void ComfyEngine::drawActorDebugUi(bool *visible) {
@@ -166,7 +166,7 @@ void ComfyEngine::drawActorDebugUi(bool *visible) {
 		}
 	}
 
-	const float margin = 32.0F;
+	float margin = 32.0F;
 	float scale = 1.0F;
 	ImVec2 canvasSize((float)(mapRight - mapLeft) * scale + margin * 2.0F,
 		(float)(mapBottom - mapTop) * scale + margin * 2.0F);

@@ -96,6 +96,7 @@ class QueuingAudioStream;
 #define COMFY_ANM_STATE_BYTES 0x68
 #define COMFY_PANTHER_ANM_STATE_BYTES 0x67
 #define COMFY_ANIM_DIRTY_RECT_CAPACITY 0x3C
+#define COMFY_XMS_HANDLE_CAPACITY 12
 
 namespace Comfy {
 
@@ -180,7 +181,7 @@ private:
 
 	struct SpriteObjectHeader {
 		uint32 fileOffset;
-		uint16 dataSize;
+		uint32 dataSize;
 		uint16 width;
 		uint16 height;
 		int16 hotspotX;
@@ -347,6 +348,83 @@ private:
 		uint32 counterThreshold;
 	};
 
+	struct XmsBlock {
+		byte *data;
+		uint32 size;
+
+		XmsBlock() {
+			data = nullptr;
+			size = 0;
+		}
+	};
+
+	struct XmsMove {
+		uint32 length;
+		uint16 sourceHandle;
+		uint32 sourceOffset;
+		uint16 destinationHandle;
+		uint32 destinationOffset;
+		const byte *sourceMemory;
+		byte *destinationMemory;
+
+		XmsMove() {
+			length = 0;
+			sourceHandle = 0;
+			sourceOffset = 0;
+			destinationHandle = 0;
+			destinationOffset = 0;
+			sourceMemory = nullptr;
+			destinationMemory = nullptr;
+		}
+	};
+
+	struct ObjFileCacheRow {
+		uint16 tileIndex;
+		uint16 frameIndex;
+		uint16 previousIndex;
+		uint16 previousValid;
+		uint16 nextIndex;
+		uint16 nextValid;
+	};
+
+	struct ObjFile {
+		Common::SeekableReadStream *stream;
+		Common::Path path;
+		uint32 fileSize;
+		uint16 cacheXmsHandle;
+		byte *readBuffer;
+		uint32 readBufferSize;
+		byte *tileReadBuffer;
+		uint16 blockSize;
+		uint16 cacheRowCount;
+		uint16 currentBlock;
+		uint16 *tileStatus;
+		uint16 tileStatusCount;
+		ObjFileCacheRow *cacheRows;
+		uint16 tileLruTail;
+		uint16 tileLruTailValid;
+		uint32 trackedSize;
+
+		ObjFile() {
+			stream = nullptr;
+			path = Common::Path();
+			fileSize = 0;
+			cacheXmsHandle = 0;
+			readBuffer = nullptr;
+			readBufferSize = 0;
+			tileReadBuffer = nullptr;
+			blockSize = 0;
+			cacheRowCount = 0;
+			currentBlock = 0;
+			tileStatus = nullptr;
+			tileStatusCount = 0;
+			cacheRows = nullptr;
+			tileLruTail = 0;
+			tileLruTailValid = 0;
+			trackedSize = 0;
+		}
+	};
+
 	// Serialized Actor strides are 0x54 in version 1, 0x56 in version 2, and 0x57 in version 3.
 	// Version 1 stores cachedRect.area as a word; later versions use a dword, and version 3 adds blitHitMouse.
 	// This is a host representation; XMS state serializes each field explicitly instead of copying this layout.
@@ -505,9 +583,10 @@ private:
 	bool _inputKeyboardPulseLatched = false;
 	uint32 _inputKeyboardPulseTime = 0;
 	bool _keyboardUiVisible = true;
-	Common::Array<byte> _comfyObjData;
-	Common::Array<byte> _picFileData;
-	Common::Array<byte> _midiFileData;
+	ObjFile *_comfyObjFile = nullptr;
+	ObjFile *_picFile = nullptr;
+	ObjFile *_vocFile = nullptr;
+	Common::SeekableReadStream *_midiFileStream = nullptr;
 	Common::Array<SpriteObjectHeader> _spriteHeaders;
 	Common::Array<SpriteResource> _spriteResources;
 	SpriteResource _frameSpriteResource;
@@ -534,9 +613,14 @@ private:
 	byte *_sceneRunPtr = nullptr;
 	Common::Array<byte> _scenePoolData;
 	Common::Array<byte> _frameLoaderData;
-	Common::Array<byte> _environmentData;
-	Common::Array<byte> _headerXmsData;
 	Common::Array<byte> _sceneFrameData;
+	XmsBlock _xmsBlocks[COMFY_XMS_HANDLE_CAPACITY];
+	uint16 _xmsBlockCount = 0;
+	uint32 _memAllocTotal = 0;
+	uint32 _tilesRead = 0;
+	uint32 _stripsDrawn = 0;
+	uint16 _xmsEnvHandle = 0;
+	uint16 _xmsHeaderHandle = 0;
 	Common::Array<SpriteCacheEntry> _objectCacheEntries;
 	Common::Array<SpriteCacheEntry> _frameCacheEntries;
 	ResourceLoadList _spriteConversionLoads;
@@ -654,7 +738,6 @@ private:
 	MidiQueue _midiTracks;
 	MidiChannelState _midiChannels[COMFY_MIDI_CHANNEL_COUNT];
 	uint32 _midiInstanceTrackBase = 1;
-	Common::Array<byte> _vocFileData;
 	Common::Array<SoundCue> _soundCues;
 	SoundDecoderState *_soundDecoderState = nullptr;
 	Audio::SoundHandle _soundHandle;
@@ -802,29 +885,61 @@ private:
 	void lptKeyboardDispatchEvents(uint32 scanState);
 	void setKeyboardContact(uint16 contact, bool pressed, bool keymapper);
 	bool readAssetFile(const Common::Path &filename, Common::Array<byte> &data);
+	int32 memAllocTrack(uint16 pages);
+	int32 memAllocTrackFar(uint16 pages);
+	int32 memFreeTrack(uint16 handle);
+	int32 memFreeTrackFar(uint16 handle);
+	uint16 sysGetExtMemKB();
+	uint32 memCompactAndCheck(uint32 minimumBytes);
+	bool memIsReady();
+	uint32 memGetFreeKB();
+	uint32 memGetFreeKBThunk();
+	uint32 memGetXmsLimit();
+	uint32 memGetXmsLimitFar();
+	int32 xmsCopyToConv(XmsMove &move);
+	int32 xmsTransfer(XmsMove &move);
+	void xmsReset();
+	ObjFileCacheRow *tileListEvictTail(ObjFile *objectFile);
+	ObjFileCacheRow *tileListAlloc(ObjFile *objectFile);
+	void tileListRemove(ObjFile *objectFile, uint16 index);
+	uint16 tileListRemoveRange(ObjFile *objectFile, uint16 first, uint16 last);
+	void tileUploadToXms(ObjFile *objectFile, const byte *source, uint16 size, uint32 destinationOffset);
+	void tileCopyXmsPair(ObjFile *objectFile, byte *destination, uint32 sourceOffset, uint32 size);
+	uint16 tileDrawStrip(ObjFile *objectFile, byte *destination, uint16 cacheRow, uint16 sourceColumn, uint32 width);
+	void tileLoadAndDraw(ObjFile *objectFile, const byte *source, uint16 tileId);
+	void frameLoaderLoadTileCore(ObjFile *objectFile, const byte *source, uint16 tileId);
+	void frameLoaderLoadTile(ObjFile *objectFile, uint16 tileId);
+	byte *frameLoaderReadFrameData(uint32 sourceOffset, uint32 byteCount, ObjFile *objectFile);
+	void objFileReadRow(byte *destination, uint16 row, uint16 count, uint16 size, ObjFile *objectFile);
+	void objFileReadFieldCore(byte *destination, uint32 sourceOffset, uint32 byteCount, ObjFile *objectFile);
+	byte *objFileReadTiledCore(uint32 sourceOffset, uint32 byteCount, ObjFile *objectFile);
+	void objFileReadField(byte *destination, uint32 sourceOffset, uint32 byteCount, ObjFile *objectFile);
+	byte *objFileReadTiled(uint32 sourceOffset, uint32 byteCount, ObjFile *objectFile);
+	ObjFile *objFileLoadSoundData(const Common::Path &path, uint16 blockSize, uint32 maximumBytes);
+	void soundBufFree(ObjFile *&objectFile);
 	uint32 assetsAlignEven32(uint32 value);
-	uint16 assetsReadLe16At(Common::Array<byte> &data, uint32 offset);
-	uint32 assetsReadLe32At(Common::Array<byte> &data, uint32 offset);
-	int32 assetsXmsCopy(byte *destination, uint32 destinationSize, uint32 destinationOffset,
-		const byte *source, uint32 sourceSize, uint32 sourceOffset, uint32 size);
+	void stringTableSetCount(uint16 count);
+	uint16 stringTableGetSize();
 	bool selPoolInit();
 	void selPoolFree();
 	bool assetsLoad(uint32 budget, byte *scenePtr);
 	void assetsUnload(byte freeAudio);
 	bool sceneLoadAndInit(uint16 sceneCount, uint16 actorCount, uint16 keyBitCount,
 		uint16 handleCount, uint32 &numSprites);
+	bool sceneFrameInitTables(uint16 sceneCount, uint16 actorCount, uint16 keyBitCount,
+		uint16 handleCount, uint32 &numSprites);
 	void midiShutdown();
-	bool comfyObjOpen();
-	bool picFileOpen();
-	bool midiFileOpen();
+	void midiFileGetTileParams(uint16 *entryCount, uint16 *entrySize);
 	void midiFileReadEntries(byte *destination);
 	byte *soundReadTiledData();
 	void soundGetTileParams(uint16 *entryCount, uint16 *entrySize);
+	bool soundOpenVocFile();
 	void spriteCache(int16 spriteId);
 	SpriteResource *spriteLookup(uint16 spriteId, int16 x, int16 y);
 	void spriteInvalidateHostCache(SpriteResource &sprite);
 	void objHdrReadFromXms(byte *destination, uint32 base, uint16 size, uint16 row);
-	void objHdrRead(SpriteObjectHeader &destination, uint16 index);
+	void frameLoaderLoadFrameHeader(SpriteObjectHeader &destination, uint16 index);
+	uint32 frameLoaderGetFrameDataSize(SpriteObjectHeader &header);
 	void scenePoolEvict();
 	void scenePoolReserveSlot(uint32 size);
 	SpriteResource *spriteGetPtr(int16 spriteId);
@@ -847,7 +962,6 @@ private:
 	void sceneGoto(uint16 count);
 	void sceneStop();
 	bool sceneEntryLoad(uint16 descriptor, uint16 index);
-	bool scriptHasRange(uint32 pc, uint32 width);
 	byte scriptReadByte(uint32 pc);
 	uint16 scriptReadWord(uint32 pc);
 	uint32 scriptReadDword(uint32 pc);

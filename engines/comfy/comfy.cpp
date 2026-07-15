@@ -223,7 +223,7 @@ uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
 	hostKeyboardLoadDatMap();
 
 	if (_sceneRunBuffer.empty()) {
-		_sceneRunBuffer.resize(0x10010);
+		_sceneRunBuffer.resize(_isPanther || _engineVersion == 3 ? 0x20010 : 0x10010);
 		memset(&_sceneRunBuffer[0], 0, _sceneRunBuffer.size());
 	}
 
@@ -261,7 +261,7 @@ uint16 ComfyEngine::sceneRun(uint16 sceneId, bool checkNext, bool exitFlag) {
 	if (exitFlag || shouldStartNext)
 		restorePalette = 0;
 
-	if (_engineVersion == 3)
+	if (_isPanther || _engineVersion == 3)
 		animFileShutdown();
 
 	midiShutdown();

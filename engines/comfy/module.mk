@@ -11,9 +11,11 @@ MODULE_OBJS = \
 	game.o \
 	input.o \
 	keybits.o \
+	memory.o \
 	metaengine.o \
 	midi.o \
 	midiplyr/midiplyr.o \
+	object_file.o \
 	palette.o \
 	scene.o \
 	script.o \

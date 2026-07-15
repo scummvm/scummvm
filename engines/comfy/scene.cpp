@@ -216,22 +216,27 @@ void ComfyEngine::envConvToXms(byte *source, uint16 index) {
 		error("Invalid environment XMS destination %u", (uint)index);
 
 	sceneBlockPackRuntimeState();
-	uint32 offset = (uint32)(index - 1) * _sceneMemoryBlock.size();
-	if (offset > _environmentData.size() || _sceneMemoryBlock.size() > _environmentData.size() - offset)
+	XmsMove move;
+	move.length = _sceneMemoryBlock.size();
+	move.destinationHandle = _xmsEnvHandle;
+	move.destinationOffset = (uint32)(index - 1) * _sceneMemoryBlock.size();
+	move.sourceMemory = source;
+	if (xmsTransfer(move) < 0)
 		error("Environment XMS destination %u is outside the allocated block", (uint)index);
-
-	memcpy(&_environmentData[offset], source, _sceneMemoryBlock.size());
 }
 
 bool ComfyEngine::envXmsToConv(byte *destination, uint16 index) {
 	if (!index || _sceneMemoryBlock.empty())
 		error("Invalid environment XMS source %u", (uint)index);
 
-	uint32 offset = (uint32)(index - 1) * _sceneMemoryBlock.size();
-	if (offset > _environmentData.size() || _sceneMemoryBlock.size() > _environmentData.size() - offset)
+	XmsMove move;
+	move.length = _sceneMemoryBlock.size();
+	move.sourceHandle = _xmsEnvHandle;
+	move.sourceOffset = (uint32)(index - 1) * _sceneMemoryBlock.size();
+	move.destinationMemory = destination;
+	if (xmsTransfer(move) < 0)
 		error("Environment XMS source %u is outside the allocated block", (uint)index);
 
-	memcpy(destination, &_environmentData[offset], _sceneMemoryBlock.size());
 	sceneBlockUnpackRuntimeState();
 	return true;
 }
@@ -478,11 +483,12 @@ bool ComfyEngine::sceneEntryLoad(uint16 descriptor, uint16 index) {
 	uint16 size = READ_LE_UINT16(header);
 	uint32 fileOffset = READ_LE_UINT32(header + 2);
 	uint32 destinationOffset = (uint32)_sceneEntryFrameSize * index;
-	if (fileOffset > _midiFileData.size() || size > _midiFileData.size() - fileOffset ||
-			destinationOffset > _sceneFrameData.size() || size > _sceneFrameData.size() - destinationOffset)
+	if (!_midiFileStream || destinationOffset > _sceneFrameData.size() ||
+			size > _sceneFrameData.size() - destinationOffset || !_midiFileStream->seek(fileOffset))
 		return false;
 
-	memcpy(&_sceneFrameData[destinationOffset], &_midiFileData[fileOffset], size);
+	if (_midiFileStream->read(&_sceneFrameData[destinationOffset], size) != size)
+		return false;
 	if (index < COMFY_SCENE_ENTRY_OFFSET_CAPACITY)
 		_sceneEntryOffsets[index] = descriptor;
 
@@ -516,14 +522,14 @@ byte *ComfyEngine::spriteLoadFromFile(uint16 fileOffset, uint16 index) {
 		return nullptr;
 
 	byte *destination = sceneFrameGetPtr(index, size);
-	if (!destination || position > _midiFileData.size() || size > _midiFileData.size() - position) {
+	if (!destination || !_midiFileStream || !_midiFileStream->seek(position) ||
+			_midiFileStream->read(destination, size) != size) {
 		if (index < COMFY_MIDI_CHANNEL_COUNT)
 			_midiChannels[index].loadedFrameSize = 0;
 
 		return nullptr;
 	}
 
-	memcpy(destination, &_midiFileData[position], size);
 	return destination;
 }
 
@@ -573,14 +579,23 @@ bool ComfyEngine::sceneOpen(uint32 sceneEntryListOffset) {
 		memset(&_sceneFrameData[0], 0, _sceneFrameData.size());
 	}
 
-	if (_midiFileData.empty() || !midiPlyrStart())
+	delete _midiFileStream;
+	_midiFileStream = pathFOpen(Common::Path("MIDIFILE.DAT"), true);
+	if (!_midiFileStream)
+		return false;
+
+	byte header[4];
+	if (_midiFileStream->read(header, sizeof(header)) != sizeof(header) ||
+			header[0] != 'C' || (header[1] != 'M' && header[1] != 'm'))
+		return false;
+
+	_midiFileMode = header[1] == 'm' ? 1 : 0;
+	_midiEntryCount = READ_LE_UINT16(header + 2);
+	if (!midiPlyrStart())
 		return false;
 
 	_sceneOpen = true;
 	memset(_sceneEntryOffsets, 0, sizeof(_sceneEntryOffsets));
-	if (_engineVersion != 3)
-		midiInitInstance();
-
 	midiInitChannels();
 	return true;
 }
@@ -590,6 +605,8 @@ void ComfyEngine::sceneShutdown() {
 		return;
 
 	midiPlyrStop();
+	delete _midiFileStream;
+	_midiFileStream = nullptr;
 	_sceneFrameData.clear();
 	if (_engineVersion == 3) {
 		_wcomfy99VocState2 = 0xFF;
