@@ -111,8 +111,22 @@
   resumes below y=50.
 - Action dispatch at `0x190b7` maps the nine controls to remote setup, world
   map, inventory, WAC, save, restore, options, help, and quit. The ScummVM
-  toolbar currently preserves the click/release routing and logs these
-  handlers as explicit stubs until their subsystems are implemented.
+  toolbar preserves the click/release routing. Action `0x517` now enters the
+  WAC subsystem; the remaining handlers are explicit stubs.
+
+## WAC
+
+- `DispatchFrontEndAction` at `0x190b7` routes toolbar action `0x517` to the
+  modal `RunWacFrontEndLoop` at `0x21865`. The loop snapshots the active scene
+  presentation and chooser state, sets the default cursor to 14, loads the
+  640x400 `wac.pcx` background, and creates four bottom-row controls from
+  `wac0.bbm` through `wac3.bbm`. Controls use cursor 16.
+- `g_astWacFrontEndButtonLayouts` at `0x84156` places those controls at y=349
+  and x=172, 252, 326, and 390. Their action IDs are `0x1900` (exit), `0x2000`
+  (object database), `0x3100` (text viewer), and `0x3b00` (help). Escape also
+  leaves the modal loop. The reimplementation restores the indexed scene and
+  palette when the WAC loop exits; database, text-viewer, and help dispatches
+  remain explicit subsystem stubs at this boundary.
 
 ## Cursor
 
