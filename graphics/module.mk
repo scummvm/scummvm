@@ -43,16 +43,6 @@ MODULE_OBJS := \
 	macgui/macwindow.o \
 	macgui/macwindowborder.o \
 	macgui/macwindowmanager.o \
-	mactoolbox/siphash/halfsip.o \
-	mactoolbox/toolbox_fileman.o \
-	mactoolbox/toolbox_menu.o \
-	mactoolbox/toolbox_pict.o \
-	mactoolbox/toolbox_quickdraw.o \
-	mactoolbox/toolbox_resman.o \
-	mactoolbox/toolbox_sound.o \
-	mactoolbox/toolbox_text.o \
-	mactoolbox/toolbox.o \
-	mactoolbox/utils.o \
 	managed_surface.o \
 	nine_patch.o \
 	opengl/context.o \
@@ -85,6 +75,21 @@ ifdef USE_ARM_SCALER_ASM
 MODULE_OBJS += \
 	scaler/downscalerARM.o
 endif
+
+ifdef USE_MACTOOLBOX
+MODULE_OBJS += \
+	mactoolbox/siphash/halfsip.o \
+	mactoolbox/toolbox_fileman.o \
+	mactoolbox/toolbox_menu.o \
+	mactoolbox/toolbox_pict.o \
+	mactoolbox/toolbox_quickdraw.o \
+	mactoolbox/toolbox_resman.o \
+	mactoolbox/toolbox_sound.o \
+	mactoolbox/toolbox_text.o \
+	mactoolbox/toolbox.o \
+	mactoolbox/utils.o
+endif
+
 
 ifdef USE_MFC
 MODULE_OBJS += \
