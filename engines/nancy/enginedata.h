@@ -743,9 +743,8 @@ struct UINB : public EngineData {
 	Common::Rect tabCaptionDestRect;                            // on-screen target
 };
 
-// Named-event table. Introduced in Nancy 12. Empty in Secret of the Old Clock
-// (the engine registers several built-in event categories at runtime on top of
-// whatever this chunk provides). Each record is a name followed by an id.
+// Event flags table. Introduced in Nancy 12, and replaces the event flag names
+// that were hardcoded in the executable. Each record is a name followed by an id.
 struct EVNT : public EngineData {
 	EVNT(Common::SeekableReadStream *chunkStream);
 
