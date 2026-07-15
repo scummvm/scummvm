@@ -326,7 +326,9 @@ bool ResourceManager::exportCif(const Common::Path &name) {
 	if (stream) {
 		// .cifs are compressed, so we need to extract
 		CifFile cifFile(stream, name); // cifFile takes ownership of the current stream
-		stream = cifFile.createReadStreamRaw();
+		stream = cifFile.createReadStream();
+		if (!stream)
+			stream = cifFile.createReadStreamRaw();
 		info = cifFile.getInfo();
 	}
 
@@ -351,7 +353,9 @@ bool ResourceManager::exportCif(const Common::Path &name) {
 			}
 
 			if (tree) {
-				stream = tree->createReadStreamRaw(name);
+				stream = tree->createReadStreamForMember(name);
+				if (!stream)
+					stream = tree->createReadStreamRaw(name);
 				info = tree->getCifInfo(name);
 			} else {
 				// Finally, use SearchMan to get a loose file. This is useful if we want to add files that
