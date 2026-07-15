@@ -136,4 +136,9 @@ void DialogueManager::updateHover(const Common::Point &point) {
 		_choices[_selectedChoice].text.c_str(), point.x, point.y);
 }
 
+bool DialogueManager::contains(const Common::Point &point) const {
+	return _pending && !_choices.empty() && point.x >= 150 && point.x < 510 &&
+		point.y >= 344 && point.y < 344 + (int)_choices.size() * 13;
+}
+
 } // End of namespace Ripper

@@ -41,6 +41,7 @@ namespace Ripper {
 // menu pointer. PollInteractionAndResolveSelection at 0x13c8d enters the same
 // front-end action service for the top 50-pixel band of every scene frame.
 static const uint kToolbarCursor = 14;
+static const uint kDialogueCursor = 16;
 
 static const uint32 kScriptHeaderSize = 0xe9;
 static const uint32 kFrameRecordSize = 0x22;
@@ -767,8 +768,6 @@ bool ScriptManager::serviceScene() {
 			_engine->getCursor()->update(kToolbarCursor);
 			return true;
 		}
-		_engine->getCursor()->setVisible(true);
-		_engine->getCursor()->update(kToolbarCursor);
 		uint dialogueFrame = 0;
 		if (_dialogue->service(mouse, dialogueFrame)) {
 			_awaitingBa0Interaction = false;
@@ -800,7 +799,7 @@ bool ScriptManager::serviceScene() {
 
 	const uint cursorIndex = hoveredInteraction ?
 		(hoveredInteraction->conditionOffset != 0 ? 8 : hoveredInteraction->initialSelection) :
-		(dialoguePending ? kToolbarCursor : 0);
+		(dialoguePending && _dialogue->contains(mouse.position) ? kDialogueCursor : 0);
 	_engine->getCursor()->update(cursorIndex);
 	const int hoveredIndex = hoveredInteraction ? (int)hoveredInteractionIndex : -1;
 	if (hoveredIndex != _hoveredBa0Interaction) {
@@ -811,8 +810,8 @@ bool ScriptManager::serviceScene() {
 				hoveredInteractionIndex, hoveredInteraction->label.c_str(), cursorIndex,
 				mouse.position.x, mouse.position.y);
 		} else {
-			debugC(2, kDebugScene, "Ripper: BA0 hover cleared; cursor=0 point=%d,%d",
-				mouse.position.x, mouse.position.y);
+			debugC(2, kDebugScene, "Ripper: BA0 hover cleared; cursor=%u point=%d,%d",
+				cursorIndex, mouse.position.x, mouse.position.y);
 		}
 	}
 
@@ -879,9 +878,8 @@ void ScriptManager::updateInteractiveCursor(const Common::Point &point) {
 		}
 		_dialogue->updateHover(point);
 		const ScriptInteraction *interaction = findBa0Interaction(point);
-		const uint cursorIndex = interaction ?
-			(interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) :
-			kToolbarCursor;
+		const uint cursorIndex = _dialogue->contains(point) ? kDialogueCursor :
+			(interaction ? (interaction->conditionOffset != 0 ? 8 : interaction->initialSelection) : 0);
 		_engine->getCursor()->setVisible(true);
 		_engine->getCursor()->update(cursorIndex);
 		return;
