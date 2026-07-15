@@ -72,7 +72,6 @@ struct RoomFileRex {
 static int room_picture_load(Room *room, int room_id, Buffer *picture, int load_flags) {
 	int error_flag = true;
 	int xs, ys;
-//	int color_handle;
 	long picture_size;
 	char temp_buf[80];
 	RoomArt art;
@@ -91,7 +90,7 @@ static int room_picture_load(Room *room, int room_id, Buffer *picture, int load_
 	// Read the room art header
 	{
 		byte buffer[RoomArt::SIZE];
-		if (!loader_read(&art, RoomArt::SIZE, 1, &load_handle)) {
+		if (!loader_read(buffer, RoomArt::SIZE, 1, &load_handle)) {
 			room_load_error = 2;
 			goto done;
 		}
@@ -113,7 +112,7 @@ static int room_picture_load(Room *room, int room_id, Buffer *picture, int load_
 			pal_shadow_sort(master_shadow, &art.color_list);
 		}
 
-		room->color_handle = pal_allocate(&art.color_list, NULL, (load_flags & PAL_MAP_MASK));
+		room->color_handle = pal_allocate(&art.color_list, master_shadow, (load_flags & PAL_MAP_MASK));
 		if (room->color_handle < 0) {
 			room_load_error = 4;
 			goto done;
@@ -256,7 +255,6 @@ RoomPtr room_load_rex(int id, int variant, const char *base_path, Buffer *pictur
 	Buffer *depth, Buffer *walk, Buffer *special, TileMapHeader *picMap,
 	TileMapHeader *depthMap, TileResource *picResource, TileResource *depthResource,
 	int picture_ems_handle, int depth_ems_handle, int load_flags) {
-//	int error_flag = true;
 	int count;
 	long mem_needed;
 	Load load_handle;
@@ -349,7 +347,7 @@ RoomPtr room_load_rex(int id, int variant, const char *base_path, Buffer *pictur
 	loader_close(&load_handle);
 
 	// Load in the foreground picture
-	room_picture_load(id, picture, load_flags);
+	room_picture_load(roomPtr, id, picture, load_flags);
 
 	// Handle room sprites
 
