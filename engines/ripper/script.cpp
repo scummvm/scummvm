@@ -761,7 +761,11 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 bool ScriptManager::serviceScene() {
 	const MouseState mouse = _engine->getInput()->publishMouseState();
 	if (_dialogue->isPending()) {
-		_engine->getToolbar()->leave();
+		if (_engine->getToolbar()->service(mouse)) {
+			_engine->getCursor()->setVisible(true);
+			_engine->getCursor()->update(kToolbarCursor);
+			return true;
+		}
 		_engine->getCursor()->setVisible(true);
 		_engine->getCursor()->update(kToolbarCursor);
 		uint dialogueFrame = 0;
@@ -872,6 +876,11 @@ void ScriptManager::updateInteractiveCursor(const Common::Point &point) {
 	if (!_awaitingBa0Interaction || _activeBa0Frame >= _ba0.getFrames().size())
 		return;
 	if (_dialogue->isPending()) {
+		if (_engine->getToolbar()->service(_engine->getInput()->peekMouseState())) {
+			_engine->getCursor()->setVisible(true);
+			_engine->getCursor()->update(kToolbarCursor);
+			return;
+		}
 		_dialogue->updateHover(point);
 		_engine->getCursor()->setVisible(true);
 		_engine->getCursor()->update(kToolbarCursor);
