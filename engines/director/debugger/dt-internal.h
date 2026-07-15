@@ -219,6 +219,7 @@ typedef struct ImGuiState {
 	struct {
 		Common::HashMap<CastMember *, ImGuiImage> _textures;
 		bool _listView = true;
+		bool _showGridNumbers = false;
 		int _thumbnailSize = 64;
 		ImGuiTextFilter _nameFilter;
 		int _typeFilter = 0xFFFF;

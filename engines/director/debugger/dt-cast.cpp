@@ -163,16 +163,16 @@ static ImGuiImage getThumbnail(CastMember *member) {
 	}
 }
 
-static void drawCastRow(const CastRowEntry &entry) {
+static void drawCastRow(const CastRowEntry &entry, int serial) {
 	// member numbers repeat across cast libs, so scope the row IDs
 	ImGui::PushID(entry.cast->_castLibID);
 	ImGui::PushID(entry.id);
 
 	ImGui::TableNextRow();
 
-	// Make the entire row selectable/clickable
+	// serial number, the 1-based position in the whole cast listing
 	ImGui::TableSetColumnIndex(0);
-	if (ImGui::Selectable("##row", false,
+	if (ImGui::Selectable(Common::String::format("%d", serial).c_str(), false,
 			ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap,
 			ImVec2(0, 32.f) // match row height
 	)) {
@@ -180,8 +180,8 @@ static void drawCastRow(const CastRowEntry &entry) {
 		_state->_castDetails._window = _state->_castWindow;
 		_state->_w.castDetails = true;
 	}
-	ImGui::SameLine();
 
+	ImGui::TableNextColumn();
 	ImGui::Text("%s %s", toIcon(entry.member->_type), entry.name.c_str());
 
 	ImGui::TableNextColumn();
@@ -209,13 +209,13 @@ static void drawCastRow(const CastRowEntry &entry) {
 	ImGui::PopID();
 }
 
-static void drawCastTile(const CastRowEntry &entry, float thumbnailSize) {
+static void drawCastTile(const CastRowEntry &entry, int serial, float thumbnailSize) {
 	// member numbers repeat across cast libs, so scope the tile IDs
 	ImGui::PushID(entry.cast->_castLibID);
 	ImGui::PushID(entry.id);
 
 	// show the member number so tiles can be identified without clicking
-	Common::String label = Common::String::format("%d: %s", entry.id, entry.name.c_str());
+	Common::String label = Common::String::format("No. %d, %d: %s", serial, entry.id, entry.name.c_str());
 
 	ImGui::BeginGroup();
 	const ImVec2 textSize = ImGui::CalcTextSize(entry.name.c_str());
@@ -243,6 +243,16 @@ static void drawCastTile(const CastRowEntry &entry, float thumbnailSize) {
 	}
 	ImGui::EndGroup();
 
+	// optional member-number overlay in the top-left corner of the tile
+	if (_state->_cast._showGridNumbers) {
+		const ImVec2 p0 = ImGui::GetItemRectMin();
+		Common::String num = Common::String::format("%d", entry.id);
+		const ImVec2 sz = ImGui::CalcTextSize(num.c_str());
+		ImDrawList *draw_list = ImGui::GetWindowDrawList();
+		draw_list->AddRectFilled(p0, p0 + sz + ImVec2(4.f, 2.f), IM_COL32(0, 0, 0, 160));
+		draw_list->AddText(p0 + ImVec2(2.f, 1.f), _state->theme->gridTextColor, num.c_str());
+	}
+
 	if (!imgID.id)
 		ImGui::SetItemTooltip("%s", label.c_str());
 
@@ -266,6 +276,12 @@ void showCast() {
 
 	if (ImGui::Begin("Cast", &_state->_w.cast)) {
 		Window *selectedWindow = windowListCombo(&_state->_castWindow);
+		Movie *movie = selectedWindow->getCurrentMovie();
+		if (!movie) {
+			ImGui::Text("No movie loaded");
+			ImGui::End();
+			return;
+		}
 
 		// display a toolbar with: grid/list/filters buttons + name filter
 		if (selectableViewButton(ICON_MS_LIST, _state->_cast._listView))
@@ -276,6 +292,13 @@ void showCast() {
 			_state->_cast._listView = false;
 		ImGui::SetItemTooltip("Grid");
 		ImGui::SameLine();
+
+		// number overlay toggle, only meaningful in the grid view
+		if (!_state->_cast._listView) {
+			ImGuiEx::toggleButton(ICON_MS_123, &_state->_cast._showGridNumbers);
+			ImGui::SetItemTooltip("Show member numbers");
+			ImGui::SameLine();
+		}
 
 		if (ImGui::Button(ICON_MS_FILTER_ALT)) {
 			ImGui::OpenPopup("filters_popup");
@@ -294,23 +317,35 @@ void showCast() {
 			ImGui::EndPopup();
 		}
 		_state->_cast._nameFilter.Draw();
+
+		Common::Array<CastRowEntry> rows;
+		int total = 0;
+		for (auto it : *movie->getCasts()) {
+			gatherCastMembers(it._value, rows);
+			if (it._value->_loadedCast)
+				total += it._value->_loadedCast->size();
+		}
+		gatherCastMembers(movie->getSharedCast(), rows);
+		if (movie->getSharedCast() && movie->getSharedCast()->_loadedCast)
+			total += movie->getSharedCast()->_loadedCast->size();
+
+		ImGui::SameLine();
+		if ((int)rows.size() == total)
+			ImGui::Text("%d members", total);
+		else
+			ImGui::Text("%d / %d members", (int)rows.size(), total);
 		ImGui::Separator();
 
 		// display a list or a grid
 		const float sliderHeight = _state->_cast._listView ? 0.f : 38.f;
 		const ImVec2 childsize = ImGui::GetContentRegionAvail();
-		Movie *movie = selectedWindow->getCurrentMovie();
 		ImGui::BeginChild("##cast", ImVec2(childsize.x, childsize.y - sliderHeight));
 
-		Common::Array<CastRowEntry> rows;
-		for (auto it : *movie->getCasts())
-			gatherCastMembers(it._value, rows);
-		gatherCastMembers(movie->getSharedCast(), rows);
-
 		if (_state->_cast._listView) {
-			if (ImGui::BeginTable("Resources", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
+			if (ImGui::BeginTable("Resources", 6, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
+				ImGui::TableSetupColumn("No.", 0, 30.f);
 				ImGui::TableSetupColumn("Name", 0, 120.f);
-				ImGui::TableSetupColumn("#", 0, 20.f);
+				ImGui::TableSetupColumn("ID", 0, 20.f);
 				ImGui::TableSetupColumn("Script", 0, 80.f);
 				ImGui::TableSetupColumn("Type", 0, 80.f);
 				ImGui::TableSetupColumn("Preview", ImGuiTableColumnFlags_WidthStretch, 50.f);
@@ -321,7 +356,7 @@ void showCast() {
 				clipper.Begin((int)rows.size());
 				while (clipper.Step()) {
 					for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
-						drawCastRow(rows[i]);
+						drawCastRow(rows[i], i + 1);
 				}
 
 				ImGui::EndTable();
@@ -342,7 +377,7 @@ void showCast() {
 							if (index >= (int)rows.size())
 								break;
 							ImGui::TableNextColumn();
-							drawCastTile(rows[index], thumbnailSize);
+							drawCastTile(rows[index], index + 1, thumbnailSize);
 						}
 					}
 				}
