@@ -924,7 +924,10 @@ void DungeonMan::loadDungeonFile(Common::SeekableReadStream *file) {
 			_dungeonMapData[i] = colFirstSquares;
 			byte *square = _dungeonRawMapData + _dungeonMaps[i]._rawDunDataOffset;
 			*colFirstSquares++ = square;
-			for (uint16 w = 1; w <= _dungeonMaps[i]._width; ++w) {
+			uint16 mapWidth = _dungeonMaps[i]._width;
+			if (mapWidth > 32)
+				mapWidth = 32;
+			for (uint16 w = 1; w <= mapWidth; ++w) {
 				square += _dungeonMaps[i]._height + 1;
 				*colFirstSquares++ = square;
 			}
