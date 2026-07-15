@@ -332,6 +332,16 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	{"dracula1",
+		"7 Wolf",
+		AD_ENTRY2s("Install/script.pak", "6998262fcce9cb5d3cc8a555f8ee024a", 265,
+				   "Interface.vr", "61c68db8bb7a9e22387d3f27fb24bad4", 107904),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
 	{"dracula2",
 		"GOG release",
 		AD_ENTRY3s("script.pak", "ff52d2000eddc5c438f3c8ef50fea858", 277,
@@ -394,6 +404,17 @@ const ADGameDescription gameDescriptions[] = {
 				   "Compiler.dat", "ff30c7ea065af1e86182b428e1f2cc7b", 42650,
 				   "InsertCD.vr", "2d5d17124caeebad668661abaff0c8fc", 54442),
 		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"dracula2",
+		"Russobit-M",
+		AD_ENTRY3s("Install/script.pak", "ff52d2000eddc5c438f3c8ef50fea858", 277,
+				   "Install/Compiler.dat", "ff30c7ea065af1e86182b428e1f2cc7b", 42650,
+				   "Install/InsertCD.vr", "bd73f26480428507118d9a9b7a047f4a", 53851),
+		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
