@@ -28,6 +28,7 @@
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/puzzles/broken_mug.h"
 #include "ripper/ripper.h"
 #include "ripper/script.h"
 
@@ -308,9 +309,14 @@ void WacManager::drawDatabase() const {
 
 void WacManager::dispatchDatabaseEntry(const DatabaseEntry &entry) {
 	if (entry.originalIndex == 1) {
+		drawFrontEnd();
+		BrokenMugPuzzle puzzle(_engine);
+		const BrokenMugPuzzle::Result result = puzzle.run();
 		debugC(1, kDebugWac,
-			"Ripper: WAC database entry=1 label='%s' routes to RunWacMugSelectionScene stub",
-			entry.label.c_str());
+			"Ripper: WAC database entry=1 label='%s' RunWacMugSelectionScene result=%d",
+			entry.label.c_str(), result);
+		drawFrontEnd();
+		drawDatabase();
 		return;
 	}
 	if (entry.originalIndex == 2) {
