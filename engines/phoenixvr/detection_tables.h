@@ -267,7 +267,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "Interface.vr", "70362765ee83bb822d5bb08948317f23", 98844),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
