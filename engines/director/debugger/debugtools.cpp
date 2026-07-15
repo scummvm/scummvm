@@ -1017,11 +1017,6 @@ void onImGuiRender() {
 
 	invalidateStaleCaches();
 
-	if (_state->_windowToRedraw) {
-		_state->_windowToRedraw->render(true);
-		_state->_windowToRedraw = nullptr;
-	}
-
 	ImGuiIO &io = ImGui::GetIO();
 	io.ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
 
@@ -1124,6 +1119,13 @@ void onImGuiCleanup() {
 
 	delete _state;
 	_state = nullptr;
+}
+
+void renderPendingWindow() {
+	if (!_state || !_state->_windowToRedraw)
+		return;
+	_state->_windowToRedraw->render(true);
+	_state->_windowToRedraw = nullptr;
 }
 
 int getSelectedChannel(){

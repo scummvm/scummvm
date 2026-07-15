@@ -27,6 +27,9 @@ namespace DT {
 void onImGuiInit();
 void onImGuiRender();
 void onImGuiCleanup();
+// Render a window the debugger asked to refresh. Called from the main loop
+// before compositing so a forced redraw is visible even while paused.
+void renderPendingWindow();
 int getSelectedChannel();
 void setSelectedChannel(int channel);
 bool isMouseInputIgnored();
