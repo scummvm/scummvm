@@ -46,6 +46,7 @@ static const uint kDialogueCursor = 16;
 static const uint32 kScriptHeaderSize = 0xe9;
 static const uint32 kFrameRecordSize = 0x22;
 static const uint32 kInteractionRecordSize = 0x25;
+static const byte kCallbackTerminator = 'c';
 
 CompiledScript::CompiledScript() : _version(0), _argumentLayoutOffset(0),
 		_argumentLayoutStride(0), _argumentLayoutCount(0) {
@@ -202,18 +203,19 @@ bool CompiledScript::decodeCallback(uint32 offset, bool decodeText, Common::Arra
 	while (cursor < _data.size()) {
 		ScriptCommand command;
 		command.offset = cursor;
-		command.opcode = _data[cursor++];
-		if (command.opcode == 'c')
+		const byte opcode = _data[cursor++];
+		if (opcode == kCallbackTerminator)
 			return true;
-		if (command.opcode >= _argumentLayoutCount || !canRead(cursor, 2)) {
+		if (opcode >= _argumentLayoutCount || !canRead(cursor, 2)) {
 			warning("Ripper: script '%s' has invalid opcode 0x%02x at 0x%x",
-				_memberName.c_str(), command.opcode, command.offset);
+				_memberName.c_str(), opcode, command.offset);
 			return false;
 		}
+		command.opcode = (ScriptOpcode)opcode;
 
 		command.selector = readUint16(cursor);
 		cursor += 2;
-		const uint32 layout = _argumentLayoutOffset + command.opcode * _argumentLayoutStride;
+		const uint32 layout = _argumentLayoutOffset + opcode * _argumentLayoutStride;
 		for (uint argumentIndex = 0; argumentIndex < _argumentLayoutStride; ++argumentIndex) {
 			const byte type = _data[layout + argumentIndex];
 			if (type == 0)
@@ -406,13 +408,13 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			command.arguments.size());
 
 		switch (command.opcode) {
-		case 0x08:
-		case 0x09: {
+		case kMilestoneCondition:
+		case kScenePlayedCondition: {
 			if (command.arguments.size() < 3)
 				return false;
 			const bool expected = command.arguments[0].value != 0;
 			bool actual = false;
-			if (command.opcode == 0x08) {
+			if (command.opcode == kMilestoneCondition) {
 				actual = isMilestoneFlagSet(command.arguments[1].value);
 				debugC(3, kDebugScripts,
 					"Ripper: milestone condition flag=%u expected=%d actual=%d target=0x%x",
@@ -441,7 +443,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			break;
 		}
 
-		case 0x0a: {
+		case kDialogueChoiceCondition: {
 			if (command.arguments.size() < 2)
 				return false;
 			const bool choicesAvailable = _dialogue->hasChoices();
@@ -468,7 +470,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			break;
 		}
 
-		case 0x0c: {
+		case kDefaultBranch: {
 			if (command.arguments.size() < 1)
 				return false;
 			const bool useDefaultBranch = !branchTaken;
@@ -491,12 +493,12 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			break;
 		}
 
-		case 0x0d:
+		case kClearBranchFlag:
 			branchTaken = false;
 			debugC(3, kDebugScripts, "Ripper: cleared callback branch state");
 			break;
 
-		case 0x0e: {
+		case kSetMilestoneFlag: {
 			if (command.arguments.size() < 1)
 				return false;
 			const uint32 flag = command.arguments[0].value;
@@ -508,7 +510,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			break;
 		}
 
-		case 0x10: {
+		case kDisableInteraction: {
 			if (command.arguments.size() < 1)
 				return false;
 			if (&script != &_ba0 || _activeBa0Frame >= _ba0.getFrames().size()) {
@@ -533,7 +535,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			break;
 		}
 
-		case 0x1a: {
+		case kPlayMedia: {
 			if (command.arguments.size() < 5)
 				return false;
 			const Common::String mediaPath = script.getString(command.arguments[0].value);
@@ -552,11 +554,11 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			break;
 		}
 
-		case 0x15:
-		case 0x16:
-		case 0x17: {
+		case kAddDialogueChoice:
+		case kAddConditionalDialogueChoice:
+		case kStartDialogue: {
 			bool includeChoice = true;
-			if (command.opcode == 0x16) {
+			if (command.opcode == kAddConditionalDialogueChoice) {
 				if (command.arguments.size() < 2 ||
 					command.arguments[1].value >= _ba0.getFrames().size())
 					return false;
@@ -569,14 +571,14 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			}
 			if (!_dialogue->execute(script, command, includeChoice))
 				return false;
-			if (command.opcode == 0x17)
+			if (command.opcode == kStartDialogue)
 				debugC(2, kDebugAudio,
 					"Ripper: dialogue chooser retained scene audio active=%d",
 					_engine->getMedia()->isSceneAudioActive());
 			break;
 		}
 
-		case 0x1d: {
+		case kStartSceneRuntime: {
 			if (command.arguments.size() < 3)
 				return false;
 			const Common::String target = argumentString(command.arguments[0]);
@@ -598,7 +600,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			break;
 		}
 
-		case 0x1f: {
+		case kLoadAudio: {
 			if (command.arguments.size() < 2)
 				return false;
 			const Common::String audioPath = script.getString(command.arguments[0].value);
@@ -607,7 +609,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			break;
 		}
 
-		case 0x20: {
+		case kConfigureAudio: {
 			if (command.arguments.size() < 4)
 				return false;
 			const Common::String key = argumentString(command.arguments[0]);
@@ -623,7 +625,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			break;
 		}
 
-		case 0x1b: {
+		case kPreviewMedia: {
 			if (command.arguments.size() < 4)
 				return false;
 			const Common::String mediaPath = script.getString(command.arguments[0].value);
@@ -636,7 +638,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			break;
 		}
 
-		case 0x14:
+		case kSelectFrame:
 			if (command.arguments.size() < 1)
 				return false;
 			if (nextFrame)
@@ -646,7 +648,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				command.arguments[0].value, result);
 			return true;
 
-		case 0x18: {
+		case kDispatchSceneAction: {
 			if (command.arguments.size() < 2 || command.arguments[0].value != 300) {
 				warning("Ripper: unsupported scene action %u in '%s' at 0x%x",
 					command.arguments.empty() ? 0 : command.arguments[0].value,

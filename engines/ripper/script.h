@@ -32,6 +32,46 @@ class ResourceManager;
 class RipperEngine;
 class DialogueManager;
 
+enum ScriptOpcode : byte {
+	kNoOp0                       = 0x00, // HandleSceneEntryNoOp at 0x146e5
+	kNoOp1                       = 0x01, // HandleSceneEntryNoOp at 0x146e5
+	kNoOp2                       = 0x02, // HandleSceneEntryNoOp at 0x146e5
+	kNoOp3                       = 0x03, // HandleSceneEntryNoOp at 0x146e5
+	kNoOp4                       = 0x04, // HandleSceneEntryNoOp at 0x146e5
+	kNoOp5                       = 0x05, // HandleSceneEntryNoOp at 0x146e5
+	kNoOp6                       = 0x06, // HandleSceneEntryNoOp at 0x146e5
+	kNoOp7                       = 0x07, // HandleSceneEntryNoOp at 0x146e5
+	kMilestoneCondition          = 0x08, // HandleSceneEntryPromptMilestoneCondition at 0x1470a
+	kScenePlayedCondition        = 0x09, // HandleSceneEntryPromptScenePlayedCondition at 0x1488f
+	kDialogueChoiceCondition     = 0x0a, // HandleSceneEntryStepPromptCondition at 0x149b4
+	kPreviousSceneCondition      = 0x0b, // HandleSceneEntryPromptPreviousSceneCondition at 0x14a37
+	kDefaultBranch               = 0x0c, // HandleSceneEntryStepPromptDefaultBranch at 0x14bbb
+	kClearBranchFlag             = 0x0d, // HandleSceneEntryStepPromptClearBranchFlag at 0x14c11
+	kSetMilestoneFlag            = 0x0e, // HandleSceneEntrySetMilestoneFlag at 0x14c4d
+	kClearMilestoneFlag          = 0x0f, // HandleSceneEntryClearMilestoneFlag at 0x14cc2
+	kDisableInteraction          = 0x10, // HandleSceneEntryClearInteractionSelectionAndStepPrompt at 0x14d41
+	kSetInteractionSelection     = 0x11, // HandleSceneEntrySetInteractionSelectionAndStepPrompt at 0x14dbc
+	kResetInteractionSelection   = 0x12, // HandleSceneEntryResetInteractionProxySelectionAndStepPrompt at 0x14e31
+	kShowTextPanel               = 0x13, // HandleSceneEntryWrappedTextPanelLifecycle at 0x14ec4
+	kSelectFrame                 = 0x14, // HandleSceneEntrySetResultAndStepPrompt at 0x15042
+	kAddDialogueChoice           = 0x15, // HandleSceneEntryPushChoiceRecordAndStepPrompt at 0x15085
+	kAddConditionalDialogueChoice = 0x16, // HandleSceneEntryPushFrameChoiceOnPlayedStateCondition at 0x150ea
+	kStartDialogue               = 0x17, // HandleSceneEntryChoiceListLifecycle at 0x1523d
+	kDispatchSceneAction         = 0x18, // HandleSceneEntryPromptAndDispatchAction at 0x1574d
+	kRequestTextInput            = 0x19, // HandleSceneEntryAsyncTextRequest at 0x157a1
+	kPlayMedia                   = 0x1a, // HandleSceneEntryMediaAndSetBasenameFlag at 0x159e1
+	kPreviewMedia                = 0x1b, // HandleSceneEntryMediaPreviewOrPrompt at 0x15b03
+	kFadePalette                 = 0x1c, // HandleSceneEntryStepPromptTransition at 0x15c30
+	kStartSceneRuntime           = 0x1d, // HandleSceneEntryAndStartConcurrentSceneRuntime at 0x15cd3
+	kSetNamedFlag                = 0x1e, // HandleSceneEntrySetOrClearNamedFlag at 0x15dfe
+	kLoadAudio                   = 0x1f, // HandleSceneEntryLoadResourceIntoFirstFreeSlot at 0x15e48
+	kConfigureAudio              = 0x20, // HandleSceneEntryConfigureOrStartNamedAudioTrigger at 0x15eea
+	kClearAudio                  = 0x21, // HandleSceneEntryClearNamedAudioTrigger at 0x15fba
+	kStopAudio                   = 0x22, // HandleSceneEntryStopNamedAudioTrigger at 0x16043
+	kSetAudioVolume              = 0x23, // HandleSceneEntrySetNamedSlotVolume at 0x160cc
+	kWaitForFrameCounter         = 0x24  // HandleSceneEntryWaitForSceneFrameCounter at 0x1633e
+};
+
 struct ScriptArgument {
 	byte type;
 	uint32 value;
@@ -40,7 +80,7 @@ struct ScriptArgument {
 
 struct ScriptCommand {
 	uint32 offset;
-	byte opcode;
+	ScriptOpcode opcode;
 	uint16 selector;
 	Common::Array<ScriptArgument> arguments;
 };
