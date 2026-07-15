@@ -19,6 +19,9 @@
  *
  */
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
 #include "common/punycode.h"
 #include "common/savefile.h"
 #include "common/translation.h"
@@ -64,6 +67,7 @@ public:
 	bool removeSaveState(const char *target, int slot) const override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 const char *FoolMetaEngine::getName() const {
@@ -121,6 +125,62 @@ Common::String FoolMetaEngine::getSavegameFile(int saveGameIdx, const char *targ
 
 bool FoolMetaEngine::removeSaveState(const char *target, int slot) const {
 	return g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+}
+
+Common::KeymapArray FoolMetaEngine::initKeymaps(const char *target) const {
+
+	Common::String gameId = ConfMan.get("gameid", target);
+	Common::Keymap *engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "fool-default", _("Fool's Errand keymappings"));
+
+	Common::Action *act;
+
+	act = new Common::Action(Common::kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionMiddleClick, _("Middle click"));
+	act->addDefaultInputMapping("MOUSE_MIDDLE");
+	act->setMiddleClickEvent();
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("PIND", _("Predictive input dialog"));
+	act->setEvent(Common::EVENT_PREDICTIVE_DIALOG);
+	act->allowKbdRepeats();
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionMoveUp, _("Up"));
+	act->setKeyEvent(Common::KEYCODE_KP8);
+	act->addDefaultInputMapping("JOY_UP");
+	act->allowKbdRepeats();
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionMoveDown, _("Down"));
+	act->setKeyEvent(Common::KEYCODE_KP2);
+	act->addDefaultInputMapping("JOY_DOWN");
+	act->allowKbdRepeats();
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionMoveLeft, _("Left"));
+	act->setKeyEvent(Common::KEYCODE_KP4);
+	act->addDefaultInputMapping("JOY_LEFT");
+	act->allowKbdRepeats();
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionMoveRight, _("Right"));
+	act->setKeyEvent(Common::KEYCODE_KP6);
+	act->addDefaultInputMapping("JOY_RIGHT");
+	act->allowKbdRepeats();
+	engineKeyMap->addAction(act);
+
+	return Common::Keymap::arrayOf(engineKeyMap);
 }
 
 
