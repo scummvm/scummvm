@@ -372,6 +372,18 @@ void ScriptManager::beginBa0InteractionWait(const Common::String &frameLabel,
 		frameLabel.c_str(), interactionCount);
 }
 
+void ScriptManager::initializeBa0InteractionState(const ScriptFrame &frame) {
+	_activeBa0InteractionEnabled.clear();
+	_activeBa0InteractionEnabled.resize(frame.interactionCount);
+	for (uint i = 0; i < frame.interactionCount; ++i) {
+		const ScriptInteraction &interaction =
+			_ba0.getInteractions()[frame.firstInteractionIndex + i];
+		_activeBa0InteractionEnabled[i] = (interaction.flags & 2) == 0;
+	}
+	debugC(3, kDebugScene, "Ripper: initialized %u BA0 interaction proxies",
+		frame.interactionCount);
+}
+
 bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffset, int &result,
 		uint *nextFrame) {
 	Common::Array<ScriptCommand> commands;
@@ -493,6 +505,31 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			_milestoneFlags[flag] = true;
 			debugC(2, kDebugScripts, "Ripper: set milestone flag %u", flag);
 			debugC(2, kDebugDialogue, "Ripper: dialogue-visible milestone flag set=%u", flag);
+			break;
+		}
+
+		case 0x10: {
+			if (command.arguments.size() < 1)
+				return false;
+			if (&script != &_ba0 || _activeBa0Frame >= _ba0.getFrames().size()) {
+				warning("Ripper: interaction disable opcode has no active BA0 frame in '%s' at 0x%x",
+					script.getMemberName().c_str(), command.offset);
+				return false;
+			}
+			const uint relativeIndex = command.arguments[0].value & 0xffff;
+			const ScriptFrame &frame = _ba0.getFrames()[_activeBa0Frame];
+			if (relativeIndex < _activeBa0InteractionEnabled.size()) {
+				const uint interactionIndex = frame.firstInteractionIndex + relativeIndex;
+				const ScriptInteraction &interaction = _ba0.getInteractions()[interactionIndex];
+				_activeBa0InteractionEnabled[relativeIndex] = false;
+				debugC(2, kDebugScene,
+					"Ripper: disabled frame interaction relative=%u global=%u label='%s'",
+					relativeIndex, interactionIndex, interaction.label.c_str());
+			} else {
+				debugC(2, kDebugScene,
+					"Ripper: ignored out-of-range interaction disable relative=%u count=%u",
+					relativeIndex, frame.interactionCount);
+			}
 			break;
 		}
 
@@ -662,10 +699,11 @@ bool ScriptManager::runStartupPath() {
 	debugC(1, kDebugScene, "Ripper: initialized cleared scene display for BA0");
 
 	debugC(1, kDebugScene, "Ripper: entering BA0 frame=%u label='start'", ba0StartFrame);
+	_activeBa0Frame = ba0StartFrame;
+	initializeBa0InteractionState(_ba0.getFrames()[ba0StartFrame]);
 	result = 0;
 	if (!executeCallback(_ba0, _ba0.getFrames()[ba0StartFrame].enterCallbackOffset, result) || result != 0)
 		return false;
-	_activeBa0Frame = ba0StartFrame;
 	beginBa0InteractionWait("start", _ba0.getFrames()[ba0StartFrame].interactionCount);
 	return true;
 }
@@ -713,6 +751,7 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 		const Common::String label = _ba0.getString(frame.labelOffset);
 		debugC(1, kDebugScene, "Ripper: entering BA0 frame=%u label='%s' type=%u interactions=%u",
 			_activeBa0Frame, label.c_str(), frame.presentationType, frame.interactionCount);
+		initializeBa0InteractionState(frame);
 
 		int result = 0;
 		uint callbackFrame = _activeBa0Frame;
@@ -923,7 +962,8 @@ const ScriptInteraction *ScriptManager::findBa0Interaction(const Common::Point &
 	for (uint i = 0; i < frame.interactionCount; ++i) {
 		const uint index = frame.firstInteractionIndex + i;
 		const ScriptInteraction &interaction = _ba0.getInteractions()[index];
-		if ((interaction.flags & 2) != 0 || interaction.width <= 0 || interaction.height <= 0)
+		if (i >= _activeBa0InteractionEnabled.size() || !_activeBa0InteractionEnabled[i] ||
+			(interaction.flags & 2) != 0 || interaction.width <= 0 || interaction.height <= 0)
 			continue;
 		if (point.x < interaction.y || point.x >= interaction.y + interaction.height ||
 			point.y < interaction.x || point.y >= interaction.x + interaction.width)
