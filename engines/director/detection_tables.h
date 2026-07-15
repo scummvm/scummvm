@@ -10063,12 +10063,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("billetrille2", "Demo", "VilleLilli2Demo", "4ea5fc09f79eee6dded94dc40f303779", 196171, Common::FI_FIN, 800),
 
 	// German title is Biolab: Das Abenteuerspiel aus der Welt der Biologie
-	MACGAME1("bioscopia", "", "Bioscopia",	   "r:057ed568f65dd2cdf41afd8cb7f534fc", 193939, 800),
-	MACGAME1_l("bioscopia", "", "Biolab",	   "r:057ed568f65dd2cdf41afd8cb7f534fc", 193939, Common::DE_DEU, 800),
-	WINGAME1("bioscopia", "", "Bioscopia.exe", "t:5ecd9009618d6622dfb8a3dd5bedce1e", 2277226, 800),
-	WINGAME1_l("bioscopia", "", "Biolab.exe",  "t:3313b5e91dfc4c6c315a02ac6fd10b29", 2281667, Common::DE_DEU, 800),
+	MACGAME1f("bioscopia", "", "Bioscopia",	   "r:057ed568f65dd2cdf41afd8cb7f534fc", 193939, 800, GF_TRUECOLOR),
+	MACGAME1f_l("bioscopia", "", "Biolab",	   "r:057ed568f65dd2cdf41afd8cb7f534fc", 193939, Common::DE_DEU, 800, GF_TRUECOLOR),
+	WINGAME1f("bioscopia", "", "Bioscopia.exe", "t:5ecd9009618d6622dfb8a3dd5bedce1e", 2277226, 800, GF_TRUECOLOR),
+	WINGAME1f_l("bioscopia", "", "Biolab.exe",  "t:3313b5e91dfc4c6c315a02ac6fd10b29", 2281667, Common::DE_DEU, 800, GF_TRUECOLOR),
 	// TRAC #14520 (Re-Release)
-	WINGAME1_l("bioscopia", "", "Biolab.exe",  "t:3313b5e91dfc4c6c315a02ac6fd10b29", 2281685, Common::DE_DEU, 800),
+	WINGAME1f_l("bioscopia", "", "Biolab.exe",  "t:3313b5e91dfc4c6c315a02ac6fd10b29", 2281685, Common::DE_DEU, 800, GF_TRUECOLOR),
 
 	WINGAME2("bobmambo5", "ECD", "START.EXE", "e24d4bab978b1a5c2326d2c56cf4d781", 6980680,
 								 "MAMBO.MOV", "990db0c7187621250dfca0a55996538e", 39868175, 800),
@@ -10919,7 +10919,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("bidule4", "", "BAB4.exe", "t:4ff5d572c2555b49d231015883183900", 2689236, Common::FR_FRA, 1010),
 
 	//Another rerelease
-	WINGAME1_l("bioscopia", "", "Biolab.exe", "t:ec275332cc5b0b2b7d82938b440e1df1", 2672901, Common::DE_DEU, 1010),
+	WINGAME1f_l("bioscopia", "", "Biolab.exe", "t:ec275332cc5b0b2b7d82938b440e1df1", 2672901, Common::DE_DEU, 1010, GF_TRUECOLOR),
 
 	WINGAME1_l("chemicus2", "", "Chemicus II.exe", "t:f3062b6d2280686a564db4fa052d36b1", 2651552, Common::DE_DEU, 1010),
 
