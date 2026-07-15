@@ -693,10 +693,10 @@ void DisplayMan::setUpScreens(uint16 width, uint16 height) {
 	_screenHeight = height;
 	delete[] _tmpBitmap;
 	delete[] _bitmapScreen;
-	_bitmapScreen = new byte[_screenWidth * _screenHeight];
+	_bitmapScreen = new byte[(uint32)_screenWidth * _screenHeight];
 	fillScreen(kDMColorBlack);
 
-	_tmpBitmap = new byte[_screenWidth * _screenHeight];
+	_tmpBitmap = new byte[(uint32)_screenWidth * _screenHeight];
 }
 
 
@@ -1234,7 +1234,7 @@ uint16 DisplayMan::getPixelHeight(uint16 index) {
 }
 
 void DisplayMan::copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height) {
-	memmove(destBitmap, srcBitmap, byteWidth * 2 * height * sizeof(byte));
+	memmove(destBitmap, srcBitmap, (size_t)byteWidth * 2 * height * sizeof(byte));
 	flipBitmapHorizontal(destBitmap, byteWidth, height);
 }
 
