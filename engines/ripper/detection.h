@@ -34,6 +34,7 @@ enum RipperDebugChannels {
 	kDebugInput = 1 << 5,
 	kDebugCursor = 1 << 6,
 	kDebugAudio = 1 << 7
+	, kDebugDialogue = 1 << 8
 };
 
 extern const PlainGameDescriptor ripperGames[];

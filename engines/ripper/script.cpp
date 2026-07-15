@@ -464,6 +464,7 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 				_milestoneFlags.resize(flag + 1);
 			_milestoneFlags[flag] = true;
 			debugC(2, kDebugScripts, "Ripper: set milestone flag %u", flag);
+			debugC(2, kDebugDialogue, "Ripper: dialogue-visible milestone flag set=%u", flag);
 			break;
 		}
 
