@@ -526,6 +526,10 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			}
 			if (!_dialogue->execute(script, command, includeChoice))
 				return false;
+			if (command.opcode == 0x17)
+				debugC(2, kDebugAudio,
+					"Ripper: dialogue chooser retained scene audio active=%d",
+					_engine->getMedia()->isSceneAudioActive());
 			break;
 		}
 
@@ -566,11 +570,13 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			const Common::String key = argumentString(command.arguments[0]);
 			const uint volume = command.arguments[1].value == 0 ? 100 : command.arguments[1].value & 0xff;
 			const uint trigger = command.arguments[2].value & 0xffff;
-			if (trigger == 0 && !_engine->getMedia()->startLoadedAudio(key, volume))
+			const uint control = command.arguments[3].value & 0xff;
+			const bool loop = (control & 1) != 0;
+			if (trigger == 0 && !_engine->getMedia()->startLoadedAudio(key, volume, loop))
 				return false;
-			debugC(2, kDebugScripts,
-				"Ripper: configured audio key='%s' volume=%u trigger=%u control=%u",
-				key.c_str(), volume, trigger, command.arguments[3].value & 0xff);
+			debugC(2, kDebugAudio,
+				"Ripper: configured audio key='%s' volume=%u trigger=%u control=%u loop=%d",
+				key.c_str(), volume, trigger, control, loop);
 			break;
 		}
 
