@@ -157,6 +157,13 @@
   `small.fnt` space width, character spacing, per-glyph offsets, transparency,
   and line height. `7pt_font.fnt` belongs to a separate interface template and
   is not the dialogue-choice font.
+- The primary chooser's normal glyph template at `0x84034` maps text to palette
+  index `0xfb` over background index `0x00`. Its selected glyph template at
+  `0x84035` maps text to index `0x04`, while
+  `InitializeSharedPresentationTemplates` stores selected background index
+  `0xf8` at template offset `+0x44`. `RenderChooserTextRow` at `0x58651`
+  selects between those templates from the row state, producing white-on-black
+  normal rows and black-on-white selected rows.
 - `InitializeUiChoiceControlEntryRows` at `0x4c0b3` binds three visible row
   controls to a list chooser. `ProcessChooserControlInput` at `0x57372` keeps
   a separate first-visible index and moves it one row for the chooser's up and

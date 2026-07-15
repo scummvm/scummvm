@@ -19,6 +19,10 @@ static const int kChoiceHorizontalPadding = 5;
 static const int kArrowGap = 5;
 static const int kSceneTop = 50;
 static const int kSceneBottom = 350;
+static const byte kNormalBackgroundColor = 0;
+static const byte kNormalTextColor = 251;
+static const byte kSelectedBackgroundColor = 248;
+static const byte kSelectedTextColor = 4;
 
 bool DialogueManager::initialize(ResourceManager &resources) {
 	if (!resources.loadInterfaceBitmapFont("small.fnt", _font))
@@ -32,6 +36,10 @@ bool DialogueManager::initialize(ResourceManager &resources) {
 			return false;
 		_arrowFrames[i] = sequence.frames[0];
 	}
+	debugC(2, kDebugDialogue,
+		"Ripper: initialized dialogue colors normal=%u/%u selected=%u/%u",
+		kNormalTextColor, kNormalBackgroundColor,
+		kSelectedTextColor, kSelectedBackgroundColor);
 	return true;
 }
 
@@ -49,7 +57,8 @@ void DialogueManager::draw() const {
 		const int row = _chooserBounds.top + visibleRow * kChoiceRowHeight;
 		const bool selected = choiceIndex == _selectedChoice;
 		for (int y = row; y < row + kChoiceRowHeight; ++y)
-			memset(screen->getBasePtr(_chooserBounds.left, y), selected ? 253 : 0,
+			memset(screen->getBasePtr(_chooserBounds.left, y),
+				selected ? kSelectedBackgroundColor : kNormalBackgroundColor,
 				_chooserBounds.width());
 		if (choiceIndex >= _choices.size())
 			continue;
@@ -70,7 +79,8 @@ void DialogueManager::draw() const {
 					const byte pixel = _font.pixels[glyph.pixelOffset + gy * glyph.width + gx];
 					if (pixel != _font.transparentColor)
 						*(byte *)screen->getBasePtr(x + glyph.xOffset + gx,
-							textY + glyph.yOffset + gy) = selected ? 0 : 4;
+							textY + glyph.yOffset + gy) =
+								selected ? kSelectedTextColor : kNormalTextColor;
 				}
 			}
 			x += glyph.xOffset + glyph.width + _font.characterSpacing;
