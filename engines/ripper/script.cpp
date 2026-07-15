@@ -780,6 +780,11 @@ bool ScriptManager::serviceScene() {
 		debugC(3, kDebugDialogue,
 			"Ripper: dialogue chooser pending point=%d,%d buttons=0x%02x",
 			mouse.position.x, mouse.position.y, mouse.buttons);
+		if (_dialogue->contains(mouse.position)) {
+			_engine->getCursor()->setVisible(true);
+			_engine->getCursor()->update(kDialogueCursor);
+			return true;
+		}
 	}
 	if (!_awaitingBa0Interaction) {
 		_engine->getToolbar()->leave();
