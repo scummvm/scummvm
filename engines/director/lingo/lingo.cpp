@@ -207,6 +207,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_trace = false;
 	_traceLoad = 0;
 	_updateMovieEnabled = false;
+	_soundDevice = "DirectSound";
 
 	// events
 	_passEvent = false;
