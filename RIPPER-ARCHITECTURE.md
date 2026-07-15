@@ -183,6 +183,12 @@
   top and bottom indexed bands before drawing the chooser. This prevents pixels
   retained from the preceding presentation from being reinterpreted by the
   active Smacker palette.
+- `RunMediaPresentation` at `0x168af` performs the corresponding restoration
+  after a controlled response movie: it restores display state, submits a
+  full-display dirty-region update, reapplies the display palette, and then
+  restores selection presentation state. The ScummVM response path therefore
+  rebuilds the same top and bottom bands immediately after type-0 media returns,
+  including the exhausted-dialogue path where no new chooser is installed.
 - Opcode `0x0a` maps to `HandleSceneEntryStepPromptCondition` at `0x149b4`.
   In the dialogue entry callback it branches around the exhausted-dialogue
   media path while at least one choice record exists. The frame's persistent
