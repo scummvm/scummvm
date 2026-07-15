@@ -104,11 +104,14 @@ void ScrollTextBox::updateGraphics() {
 }
 
 Common::Rect ScrollTextBox::textViewportLocal() const {
-	// The viewport is in screen space; the overlay shares it, so subtract the
-	// dest origin to get popup-local coordinates.
+	// Nancy13 stores the viewport as a source rect within the overlay image, so
+	// it's already popup-local. Earlier games store it in screen space and share
+	// the popup origin, so subtract the dest origin there.
 	Common::Rect r = _textViewportScreen;
-	r.translate(-_header->normalDestRect.left,
-				-_header->normalDestRect.top);
+	if (g_nancy->getGameType() < kGameTypeNancy13) {
+		r.translate(-_header->normalDestRect.left,
+					-_header->normalDestRect.top);
+	}
 	return r;
 }
 
