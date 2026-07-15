@@ -34,6 +34,7 @@ public:
 
 	bool initialize(ResourceManager &resources);
 	void update(uint cursorIndex);
+	void refresh();
 	void setVisible(bool visible);
 
 private:

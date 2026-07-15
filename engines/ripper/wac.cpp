@@ -46,17 +46,36 @@ static const uint kWacDatabaseEntryCount = 30;
 static const uint kWacDatabaseFlagBase = 0x46;
 static const uint kWacDatabaseTextBase = 0xdc;
 static const uint kWacDatabaseControlId = 0x73a;
-static const int kWacDatabaseLeft = 50;
-static const int kWacDatabaseTop = 210;
-static const int kWacDatabaseRight = 332;
-static const int kWacDatabaseBottom = 400;
-static const int kWacDatabaseRowHeight = 13;
-static const int kWacDatabaseTitleRows = 1;
-static const uint kWacDatabaseVisibleRows = 13;
-static const byte kWacNormalBackground = 0;
-static const byte kWacNormalText = 251;
-static const byte kWacSelectedBackground = 248;
-static const byte kWacSelectedText = 4;
+static const int kWacDatabaseLeft = 400;
+static const int kWacDatabaseTop = 50;
+static const int kWacDatabaseRight = 590;
+static const int kWacDatabaseBottom = 332;
+static const int kWacDatabaseHeadingInset = 20;
+static const int kWacDatabaseBottomInset = 6;
+static const int kWacDatabaseLeftInset = 5;
+static const int kWacDatabaseRightInset = 20;
+static const int kWacDatabaseRowInset = 1;
+static const int kWacDatabaseTextInset = 2;
+static const int kWacDatabaseRowHeight = 14;
+static const uint kWacDatabaseVisibleRows = 18;
+static const uint kWacDatabaseFrameTileCount = 9;
+static const uint kWacDatabaseSkinFrameCount = 16;
+static const byte kWacDatabaseBackground = 4;
+static const byte kWacDatabaseTitleText = 248;
+static const byte kWacDatabaseNormalText = 251;
+static const byte kWacDatabaseSelectedText = 254;
+
+static void blitBitmap(Graphics::Surface *screen, const BitmapAssetFrame &bitmap,
+		int x, int y) {
+	for (uint row = 0; row < bitmap.height; ++row) {
+		byte *destination = (byte *)screen->getBasePtr(x, y + row);
+		const byte *source = bitmap.pixels.data() + row * bitmap.width;
+		for (uint column = 0; column < bitmap.width; ++column) {
+			if (source[column] != bitmap.transparentColor)
+				destination[column] = source[column];
+		}
+	}
+}
 
 WacManager::WacManager(RipperEngine *engine) : _engine(engine), _hoveredControl(-1),
 		_pressedControl(-1), _databaseSelection(0), _databaseFirstVisible(0),
@@ -88,10 +107,19 @@ bool WacManager::initialize(ResourceManager &resources) {
 			control.bounds.width(), control.bounds.height());
 	}
 
+	_databaseSkin.clear();
+	for (uint i = 0; i < kWacDatabaseSkinFrameCount; ++i) {
+		BitmapAssetSequence sequence;
+		if (!resources.loadInterfaceBitmapSequence(
+			Common::String::format("wacmnu%u", i), sequence) || sequence.frames.empty())
+			return false;
+		_databaseSkin.push_back(sequence.frames[0]);
+	}
+
 	_initialized = true;
 	debugC(1, kDebugWac,
-		"Ripper: initialized WAC front end background=wac.pcx controls=%u",
-		_controls.size());
+		"Ripper: initialized WAC front end background=wac.pcx controls=%u databaseSkin=wacmnu frames=%u",
+		_controls.size(), _databaseSkin.size());
 	return true;
 }
 
@@ -139,14 +167,7 @@ void WacManager::drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const 
 			g_system->unlockScreen();
 		return;
 	}
-	for (uint row = 0; row < bitmap.height; ++row) {
-		byte *destination = (byte *)screen->getBasePtr(x, y + row);
-		const byte *source = bitmap.pixels.data() + row * bitmap.width;
-		for (uint column = 0; column < bitmap.width; ++column) {
-			if (source[column] != bitmap.transparentColor)
-				destination[column] = source[column];
-		}
-	}
+	blitBitmap(screen, bitmap, x, y);
 	g_system->unlockScreen();
 }
 
@@ -263,6 +284,11 @@ void WacManager::buildDatabaseEntries() {
 void WacManager::drawDatabase() const {
 	const Common::Rect bounds(kWacDatabaseLeft, kWacDatabaseTop,
 		kWacDatabaseRight, kWacDatabaseBottom);
+	const Common::Rect client(bounds.left + kWacDatabaseLeftInset,
+		bounds.top + kWacDatabaseHeadingInset,
+		bounds.right - kWacDatabaseRightInset,
+		bounds.bottom - kWacDatabaseBottomInset);
+	const int rowTop = client.top + kWacDatabaseRowInset;
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen || screen->format.bytesPerPixel != 1) {
 		if (screen)
@@ -271,39 +297,56 @@ void WacManager::drawDatabase() const {
 	}
 
 	for (int y = bounds.top; y < bounds.bottom; ++y)
-		memset(screen->getBasePtr(bounds.left, y), kWacNormalBackground,
+		memset(screen->getBasePtr(bounds.left, y), kWacDatabaseBackground,
 			bounds.width());
+	// TileChooserControlFrame at 0x54fbe selects the first nine WACMNU
+	// descriptors as column-major left/center/right and top/middle/bottom tiles.
+	if (_databaseSkin.size() >= kWacDatabaseFrameTileCount) {
+		const int tileWidth = _databaseSkin[0].width;
+		const int tileHeight = _databaseSkin[0].height;
+		const int columns = (bounds.width() + tileWidth - 1) / tileWidth;
+		const int rows = (bounds.height() + tileHeight - 1) / tileHeight;
+		for (int column = 0; column < columns; ++column) {
+			for (int row = 0; row < rows; ++row) {
+				const uint columnBand = column == 0 ? 0 :
+					(column == columns - 1 ? 2 : 1);
+				const uint rowBand = row == 0 ? 0 : (row == rows - 1 ? 2 : 1);
+				const BitmapAssetFrame &tile = _databaseSkin[columnBand * 3 + rowBand];
+				const int x = column == columns - 1 ? bounds.right - tile.width :
+					bounds.left + column * tileWidth;
+				const int y = row == rows - 1 ? bounds.bottom - tile.height :
+					bounds.top + row * tileHeight;
+				blitBitmap(screen, tile, x, y);
+			}
+		}
+	}
 	const Common::String &title = resourceString(0x4e);
-	const int titleX = bounds.left + (bounds.width() - measureText(title)) / 2;
+	const int titleX = client.left + (client.width() - measureText(title)) / 2;
 	drawText((byte *)screen->getPixels(), screen->pitch, titleX,
-		bounds.top + (kWacDatabaseRowHeight - _font.lineHeight) / 2,
-		title, kWacNormalText);
+		bounds.top + (kWacDatabaseHeadingInset - _font.lineHeight) / 2,
+		title, kWacDatabaseTitleText);
 
 	if (_databaseEntries.empty()) {
-		drawText((byte *)screen->getPixels(), screen->pitch, bounds.left + 4,
-			bounds.top + kWacDatabaseRowHeight + 2,
-			resourceString(0x46), kWacNormalText);
+		drawText((byte *)screen->getPixels(), screen->pitch,
+			client.left + kWacDatabaseTextInset,
+			rowTop + (kWacDatabaseRowHeight - _font.lineHeight) / 2,
+			resourceString(0x46), kWacDatabaseNormalText);
 	} else {
 		for (uint row = 0; row < kWacDatabaseVisibleRows; ++row) {
 			const uint entryIndex = _databaseFirstVisible + row;
 			if (entryIndex >= _databaseEntries.size())
 				break;
-			const int top = bounds.top +
-				(kWacDatabaseTitleRows + row) * kWacDatabaseRowHeight;
+			const int top = rowTop + row * kWacDatabaseRowHeight;
 			const bool selected = entryIndex == _databaseSelection;
-			if (selected) {
-				for (int y = top; y < top + kWacDatabaseRowHeight; ++y)
-					memset(screen->getBasePtr(bounds.left, y),
-						kWacSelectedBackground, bounds.width());
-			}
 			drawText((byte *)screen->getPixels(), screen->pitch,
-				bounds.left + 4,
+				client.left + kWacDatabaseTextInset,
 				top + (kWacDatabaseRowHeight - _font.lineHeight) / 2,
 				_databaseEntries[entryIndex].label,
-				selected ? kWacSelectedText : kWacNormalText);
+				selected ? kWacDatabaseSelectedText : kWacDatabaseNormalText);
 		}
 	}
 	g_system->unlockScreen();
+	_engine->getCursor()->refresh();
 	g_system->updateScreen();
 }
 
@@ -349,8 +392,12 @@ void WacManager::runDatabase() {
 	_engine->getInput()->discardMouseTransitions();
 	drawDatabase();
 	debugC(1, kDebugWac,
-		"Ripper: entered WAC database chooser control=0x%x bounds=%d,%d,%d,%d",
-		kWacDatabaseControlId, bounds.left, bounds.top, bounds.width(), bounds.height());
+		"Ripper: entered WAC database chooser control=0x%x bounds=%d,%d,%d,%d client=%d,%d,%d,%d rows=%u",
+		kWacDatabaseControlId, bounds.left, bounds.top, bounds.width(), bounds.height(),
+		bounds.left + kWacDatabaseLeftInset, bounds.top + kWacDatabaseHeadingInset,
+		bounds.width() - kWacDatabaseLeftInset - kWacDatabaseRightInset,
+		bounds.height() - kWacDatabaseHeadingInset - kWacDatabaseBottomInset,
+		kWacDatabaseVisibleRows);
 
 	bool active = true;
 	while (active && !_engine->shouldQuit()) {
@@ -383,7 +430,7 @@ void WacManager::runDatabase() {
 			kWacControlCursor : kWacDefaultCursor);
 		if (!_databaseEntries.empty() && bounds.contains(mouse.position)) {
 			const int relativeY = mouse.position.y - bounds.top -
-				kWacDatabaseTitleRows * kWacDatabaseRowHeight;
+				kWacDatabaseHeadingInset - kWacDatabaseRowInset;
 			if (relativeY >= 0) {
 				const uint row = relativeY / kWacDatabaseRowHeight;
 				const uint entryIndex = _databaseFirstVisible + row;

@@ -74,6 +74,7 @@ private:
 	RipperEngine *_engine;
 	BitmapAssetFrame _background;
 	Common::Array<Control> _controls;
+	Common::Array<BitmapAssetFrame> _databaseSkin;
 	Common::Array<DatabaseEntry> _databaseEntries;
 	Common::Array<Common::String> _gameText;
 	BitmapFontAsset _font;
