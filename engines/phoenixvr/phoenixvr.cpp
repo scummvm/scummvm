@@ -509,6 +509,7 @@ void PhoenixVREngine::interpolateAngle(float x, float y, float speed, float zoom
 				break;
 			}
 			default:
+				processGenericEvents(event);
 				break;
 			}
 		}
@@ -565,6 +566,7 @@ void PhoenixVREngine::fade(int start, int stop, int speed) {
 			}
 
 			default:
+				processGenericEvents(event);
 				break;
 			}
 		}
@@ -618,8 +620,15 @@ void PhoenixVREngine::transFade(int speed) {
 		while (!shouldQuit() && waiting && (direction > 0 ? pos < 0 : pos > -256)) {
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
-				if (event.type == Common::EVENT_KEYDOWN && event.kbd.ascii == ' ')
-					waiting = false;
+				switch (event.type) {
+				case Common::EVENT_KEYDOWN:
+					if (event.kbd.ascii == ' ')
+						waiting = false;
+					break;
+				default:
+					processGenericEvents(event);
+					break;
+				}
 			}
 
 			renderTransition(direction > 0 ? 0 : pos, direction > 0 ? pos : 0);
@@ -646,6 +655,7 @@ void PhoenixVREngine::until(const Common::String &var, int value) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			default:
+				processGenericEvents(event);
 				break;
 			}
 		}
@@ -671,6 +681,7 @@ void PhoenixVREngine::wait(float seconds) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			default:
+				processGenericEvents(event);
 				break;
 			}
 		}
@@ -944,6 +955,7 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 			}
 
 			default:
+				processGenericEvents(event);
 				break;
 			}
 		}
@@ -1600,7 +1612,7 @@ Common::Error PhoenixVREngine::run() {
 				}
 			} break;
 			case Common::EVENT_RBUTTONUP: {
-				if (_prevWarp != -1)
+				if (!_hasFocus || _prevWarp != -1)
 					break;
 				debug("right click");
 				auto &rclick = _lockKey[12];
@@ -1645,13 +1657,8 @@ Common::Error PhoenixVREngine::run() {
 					}
 				}
 			} break;
-			case Common::EVENT_FOCUS_GAINED:
-				_hasFocus = true;
-				break;
-			case Common::EVENT_FOCUS_LOST:
-				_hasFocus = false;
-				break;
 			default:
+				processGenericEvents(event);
 				break;
 			}
 		}
@@ -1669,6 +1676,20 @@ Common::Error PhoenixVREngine::run() {
 	}
 
 	return Common::kNoError;
+}
+
+void PhoenixVREngine::processGenericEvents(const Common::Event &event) {
+	switch (event.type) {
+	case Common::EVENT_FOCUS_GAINED:
+		_hasFocus = true;
+		_mouseRel = {};
+		break;
+	case Common::EVENT_FOCUS_LOST:
+		_hasFocus = false;
+		break;
+	default:
+		break;
+	}
 }
 
 bool PhoenixVREngine::testSaveSlot(int idx) const {

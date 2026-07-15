@@ -45,6 +45,10 @@
 #include "phoenixvr/script.h"
 #include "phoenixvr/vr.h"
 
+namespace Common {
+class Event;
+}
+
 namespace Graphics {
 class Font;
 }
@@ -235,6 +239,8 @@ private:
 	Common::SharedPtr<Video::Subtitles> loadSubtitles(const Common::String &path) const;
 	void setupSubtitles(Video::Subtitles &subtitles) const;
 	void drawAudioSubtitles();
+
+	void processGenericEvents(const Common::Event &event);
 
 private:
 	bool _hasFocus = true;
