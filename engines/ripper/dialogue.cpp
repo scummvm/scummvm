@@ -57,7 +57,7 @@ bool DialogueManager::execute(const CompiledScript &script, const ScriptCommand 
 			choice.text += (char)command.arguments[0].data[i];
 		choice.result = command.arguments[1].value & 0xffff;
 		_choices.push_back(choice);
-		debugC(1, kDebugScripts,
+		debugC(1, kDebugDialogue,
 			"Ripper: dialogue choice appended index=%u result=%u text='%s'",
 			_choices.size() - 1, choice.result, choice.text.c_str());
 		return true;
@@ -65,31 +65,31 @@ bool DialogueManager::execute(const CompiledScript &script, const ScriptCommand 
 
 	if (command.opcode == 0x0a) {
 		_pending = true;
-		debugC(1, kDebugScripts,
+		debugC(1, kDebugDialogue,
 			"Ripper: dialogue choice list completed script='%s' offset=0x%x "
 				"selector=%u choices=%u",
 			script.getMemberName().c_str(), command.offset, command.selector, _choices.size());
 		for (uint i = 0; i < _choices.size(); ++i)
-			debugC(2, kDebugScripts, "Ripper: dialogue choice index=%u result=%u text='%s'",
+			debugC(2, kDebugDialogue, "Ripper: dialogue choice index=%u result=%u text='%s'",
 				i, _choices[i].result, _choices[i].text.c_str());
 		return true;
 	}
 
 	if (command.opcode == 0x0b) {
-		debugC(1, kDebugScripts,
+		debugC(1, kDebugDialogue,
 			"Ripper: dialogue selection action script='%s' offset=0x%x selector=%u "
 				"arguments=%u choices=%u",
 			script.getMemberName().c_str(), command.offset, command.selector,
 			command.arguments.size(), _choices.size());
 		for (uint i = 0; i < command.arguments.size(); ++i)
-			debugC(2, kDebugScripts,
+			debugC(2, kDebugDialogue,
 				"Ripper: dialogue selection action argument=%u type=%u value=0x%x bytes=%u",
 				i, command.arguments[i].type, command.arguments[i].value,
 				command.arguments[i].data.size());
 		return true;
 	}
 
-	debugC(1, kDebugScripts,
+	debugC(1, kDebugDialogue,
 		"Ripper: dialogue command script='%s' offset=0x%x selector=%u arguments=%u",
 		script.getMemberName().c_str(), command.offset, command.selector,
 		command.arguments.size());
@@ -98,7 +98,7 @@ bool DialogueManager::execute(const CompiledScript &script, const ScriptCommand 
 		Common::String text;
 		for (uint j = 0; j < argument.data.size() && argument.data[j] != 0; ++j)
 			text += (char)argument.data[j];
-		debugC(2, kDebugScripts,
+		debugC(2, kDebugDialogue,
 			"Ripper: dialogue argument=%u type=%u value=0x%x bytes=%u text='%s'",
 			i, argument.type, argument.value, argument.data.size(), text.c_str());
 	}
