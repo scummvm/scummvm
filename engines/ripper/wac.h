@@ -51,6 +51,10 @@ private:
 		Common::Rect bounds;
 		uint16 action;
 	};
+	struct DatabaseEntry {
+		Common::String label;
+		byte originalIndex;
+	};
 
 	bool captureDisplay();
 	void restoreDisplay();
@@ -58,14 +62,27 @@ private:
 	void drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const;
 	int findControl(const Common::Point &point) const;
 	bool dispatchAction(uint16 action);
+	void buildDatabaseEntries();
+	void runDatabase();
+	void drawDatabase() const;
+	void dispatchDatabaseEntry(const DatabaseEntry &entry);
+	const Common::String &resourceString(uint resourceId) const;
+	uint measureText(const Common::String &text) const;
+	void drawText(byte *screen, uint pitch, int x, int y, const Common::String &text,
+		byte color) const;
 
 	RipperEngine *_engine;
 	BitmapAssetFrame _background;
 	Common::Array<Control> _controls;
+	Common::Array<DatabaseEntry> _databaseEntries;
+	Common::Array<Common::String> _gameText;
+	BitmapFontAsset _font;
 	Common::Array<byte> _savedPixels;
 	Common::Array<byte> _savedPalette;
 	int _hoveredControl;
 	int _pressedControl;
+	uint _databaseSelection;
+	uint _databaseFirstVisible;
 	bool _initialized;
 };
 
