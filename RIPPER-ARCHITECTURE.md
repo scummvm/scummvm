@@ -127,6 +127,11 @@
 - `ServiceUiControlStateSelection` at `0x4a912` hit-tests the current pointer,
   selects the hovered control's cursor index, and restores cursor 0 when no
   control is hit.
+- `ConfigureSceneEntryChooserLayout` at `0x18740` assigns selection index
+  `0x10` (cursor 16) to an opcode `0x17` choice list. `ProcessChooserControlInput`
+  at `0x57372` applies that cursor only while the pointer is inside the chooser
+  row client area. Toolbar controls keep cursor 14, scene hotspots keep their
+  script cursor byte, and empty scene space falls back to cursor 0.
 - Cursor hotspots are centered except for the explicit startup-table cases:
   cursors 14 and 16 use the top-left pixel, while cursor 15 uses the top edge
   at half its width.
