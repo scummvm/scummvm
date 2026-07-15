@@ -22,6 +22,7 @@ public:
 	void updateHover(const Common::Point &point);
 	bool contains(const Common::Point &point) const;
 	void draw() const;
+	void rebuildPresentationBands(const char *reason) const;
 	bool isPending() const { return _pending; }
 	bool hasChoices() const { return !_choices.empty(); }
 	void clearPending();
@@ -33,7 +34,6 @@ private:
 	};
 	uint measureText(const Common::String &text) const;
 	void updateLayout();
-	void preparePresentation() const;
 	void drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const;
 
 	Common::Array<Choice> _choices;
