@@ -448,7 +448,7 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		bool allowEscSpace, int x, int y, Audio::SoundHandle *externalAudio, bool *stoppedByUser,
 		const Common::Array<uint32> *frameAudioOffsets, uint32 audioByteRate,
 		uint32 timelineStartMillis, uint displayScale, bool patchInterfacePalette,
-		uint frameLimit, int originY, bool presentFinalFrameOnEsc) {
+		uint frameLimit, int originY, bool presentFinalFrameOnEsc, bool patchWacMediaPalette) {
 	if (stoppedByUser)
 		*stoppedByUser = false;
 	Video::SmackerDecoder decoder;
@@ -472,6 +472,8 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 		outputWidth, outputHeight, x, y, allowEscSpace, frameLimit);
 	debugC(2, kDebugVideo, "Ripper: Smacker '%s' interfacePalettePatch=%d",
 		name.c_str(), patchInterfacePalette);
+	if (patchWacMediaPalette)
+		debugC(2, kDebugVideo, "Ripper: Smacker '%s' WAC palette patch=10..149", name.c_str());
 	const bool synchronizeToTimeline = frameAudioOffsets &&
 		frameAudioOffsets->size() == decoder.getFrameCount() && audioByteRate != 0;
 	if (synchronizeToTimeline) {
@@ -488,8 +490,13 @@ bool MediaPlayer::playSmacker(Common::SeekableReadStream *stream, const Common::
 	auto presentFrame = [&](const Graphics::Surface *frame, bool forcePalette) {
 		if (forcePalette || decoder.hasDirtyPalette()) {
 			byte palette[256 * 3];
-			memcpy(palette, decoder.getPalette(), sizeof(palette));
-			if (patchInterfacePalette)
+			if (patchWacMediaPalette) {
+				g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+				memcpy(palette + 10 * 3, decoder.getPalette() + 10 * 3, 140 * 3);
+			} else {
+				memcpy(palette, decoder.getPalette(), sizeof(palette));
+			}
+			if (patchInterfacePalette && !patchWacMediaPalette)
 				_engine->getToolbar()->applySharedPalettePatch(palette, 256);
 			g_system->getPaletteManager()->setPalette(palette, 0, 256);
 		}
@@ -691,6 +698,61 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 
 	_input->drainKeys();
 	return result;
+}
+
+bool MediaPlayer::playWacMedia(const Common::String &path, int x, int y) {
+	Common::File *file = new Common::File();
+	if (!file->open(Common::Path(path))) {
+		warning("Ripper: could not open WAC media '%s'", path.c_str());
+		delete file;
+		return false;
+	}
+
+	byte magic[4];
+	if (!readExact(*file, magic, sizeof(magic))) {
+		delete file;
+		return false;
+	}
+	file->seek(0);
+	if (memcmp(magic, "SMK2", 4) != 0 && memcmp(magic, "SMK4", 4) != 0) {
+		warning("Ripper: unsupported WAC media magic for '%s'", path.c_str());
+		delete file;
+		return false;
+	}
+
+	debugC(1, kDebugVideo,
+		"Ripper: entering WAC media presentation media='%s' position=%d,%d palette=10..149",
+		path.c_str(), x, y);
+	const bool result = playSmacker(file, path, false, x, y, nullptr, nullptr, nullptr,
+		0, 0, 1, false, 0, 0, false, true);
+	_input->drainKeys();
+	return result;
+}
+
+bool MediaPlayer::playBlockingAudio(const Common::String &path) {
+	Common::File *file = new Common::File();
+	if (!file->open(Common::Path(path))) {
+		warning("Ripper: could not open blocking audio '%s'", path.c_str());
+		delete file;
+		return false;
+	}
+	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
+	if (!stream)
+		return false;
+
+	Audio::SoundHandle handle;
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream);
+	debugC(2, kDebugAudio, "Ripper: started blocking audio '%s'", path.c_str());
+	while (!_engine->shouldQuit() && _mixer->isSoundHandleActive(handle)) {
+		if (_input->pollEvents()) {
+			_engine->quitGame();
+			break;
+		}
+		g_system->delayMillis(10);
+	}
+	_mixer->stopHandle(handle);
+	debugC(2, kDebugAudio, "Ripper: completed blocking audio '%s'", path.c_str());
+	return !_engine->shouldQuit();
 }
 
 bool MediaPlayer::playScene(const Common::String &path, int x, int y, bool firstFrameOnly,

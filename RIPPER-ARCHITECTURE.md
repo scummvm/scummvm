@@ -146,6 +146,13 @@
   during that drag advances eight frames and rotates the piece to the next of
   four orientation states. The puzzle implementation is isolated under
   `engines/ripper/puzzles/`.
+- The mug is solved only when all nine orientation states are zero and every
+  piece is within five pixels of its recovered x/y offset from piece 0. The
+  completion path centers `mug9.smk` in the WAC media viewport, plays
+  `q_p_2.wav`, then sets shared flags `0x47` and `0x48`; `q_p_1.wav` is played
+  before the manipulation loop. Once flag `0x48` is set, selecting either the
+  Broken Mug path or database entry 2 replays the completed-mug presentation
+  through `PlayMugSelectionCompletionMedia` at `0x2361c`.
 
 ## Cursor
 

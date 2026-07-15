@@ -31,7 +31,9 @@
 #include "ripper/cursor.h"
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/media.h"
 #include "ripper/ripper.h"
+#include "ripper/script.h"
 
 namespace Ripper {
 
@@ -52,6 +54,10 @@ static const byte kViewportFillColor = 4;
 static const uint kPalettePatchFirst = 10;
 static const uint kPalettePatchCount = 140;
 static const int kSolvedTolerance = 5;
+static const uint kBrokenMugAvailableFlag = 0x47;
+static const uint kBrokenMugCompletedFlag = 0x48;
+static const int kCompletionX = 111;
+static const int kCompletionY = 143;
 
 static const int kInitialX[kPieceCount] = {
 	122, 220, 216, 61, 54, 114, 160, 207, 230
@@ -305,6 +311,40 @@ bool BrokenMugPuzzle::isSolved() const {
 	return true;
 }
 
+bool BrokenMugPuzzle::playCompletionMedia(RipperEngine *engine) {
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		return false;
+	}
+	for (int y = kViewportTop; y < kViewportBottom; ++y)
+		memset(screen->getBasePtr(kViewportLeft, y), kViewportFillColor,
+			kViewportRight - kViewportLeft);
+	g_system->unlockScreen();
+	g_system->updateScreen();
+
+	debugC(1, kDebugWac,
+		"Ripper: playing completed mug presentation media='mug9.smk' audio='q_p_2.wav' position=%d,%d",
+		kCompletionX, kCompletionY);
+	if (!engine->getMedia()->playWacMedia("mug9.smk", kCompletionX, kCompletionY))
+		return false;
+	return engine->getMedia()->playBlockingAudio("q_p_2.wav");
+}
+
+bool BrokenMugPuzzle::completePuzzle() {
+	if (!playCompletionMedia(_engine)) {
+		warning("Ripper: broken mug completion media failed; flags unchanged");
+		return false;
+	}
+	_engine->getScripts()->setMilestoneFlag(kBrokenMugAvailableFlag, "wac-broken-mug");
+	_engine->getScripts()->setMilestoneFlag(kBrokenMugCompletedFlag, "wac-broken-mug");
+	debugC(1, kDebugWac,
+		"Ripper: completed broken mug puzzle availabilityFlag=0x%x completionFlag=0x%x",
+		kBrokenMugAvailableFlag, kBrokenMugCompletedFlag);
+	return true;
+}
+
 BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 	if (!captureBackground() || !loadPieces()) {
 		restoreBackground();
@@ -316,6 +356,10 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 		kPieceCount, kViewportLeft, kViewportTop, kViewportRight - kViewportLeft,
 		kViewportBottom - kViewportTop, kInitialOrientation);
 	_engine->getInput()->discardMouseTransitions();
+	if (!_engine->getMedia()->playBlockingAudio("q_p_1.wav")) {
+		restoreBackground();
+		return kLoadFailed;
+	}
 	_engine->getCursor()->update(kPuzzleCursor);
 	render();
 
@@ -358,9 +402,8 @@ BrokenMugPuzzle::Result BrokenMugPuzzle::run() {
 			if (_releasePending && _rotationStep < 0) {
 				finishDrag();
 				if (isSolved()) {
-					debugC(1, kDebugWac,
-						"Ripper: broken mug solved; completion path pending");
-					result = kSolved;
+					debugC(1, kDebugWac, "Ripper: broken mug layout solved");
+					result = completePuzzle() ? kSolved : kLoadFailed;
 					active = false;
 				}
 			}
