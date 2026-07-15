@@ -102,21 +102,16 @@ void MidiParser_Macs2::parseNextEvent(EventInfo &info) {
 		break;
 
 	case 0x8: // Note Off
+	case 0xB: // Control Change
 		info.basic.param1 = *(playPos++);
 		info.basic.param2 = *(playPos++);
 		break;
 
 	case 0xA: // Aftertouch (polyphonic key pressure) - consumed but ignored
+	case 0xE: // Pitch Wheel - consumed but treated as noop
 		info.basic.param1 = *(playPos++);
 		info.basic.param2 = *(playPos++);
 		info.noop = true;
-		break;
-
-	case 0xB: // Control Change
-		info.basic.param1 = *(playPos++);
-		info.basic.param2 = *(playPos++);
-		// Custom CCs 0x66-0x69 are game-specific; pass them through
-		// and let the MidiDriver handle them (or ignore them).
 		break;
 
 	case 0xC: // Program Change
@@ -127,12 +122,6 @@ void MidiParser_Macs2::parseNextEvent(EventInfo &info) {
 	case 0xD: // Channel Pressure
 		info.basic.param1 = *(playPos++);
 		info.basic.param2 = 0;
-		info.noop = true;
-		break;
-
-	case 0xE: // Pitch Wheel - consumed but treated as noop
-		info.basic.param1 = *(playPos++);
-		info.basic.param2 = *(playPos++);
 		info.noop = true;
 		break;
 

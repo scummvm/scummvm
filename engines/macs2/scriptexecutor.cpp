@@ -3318,6 +3318,8 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 	case 0x05:
 		break;
 	case 0x06:
+	case 0x0A:
+	case 0x0C:
 		out1 = 1;
 		break;
 	case 0x07:
@@ -3325,14 +3327,8 @@ uint32 ScriptExecutor::getSpecialValue(uint16 value) {
 	case 0x09:
 		out1 = 0;
 		break;
-	case 0x0A:
-		out1 = 1;
-		break;
 	case 0x0B:
 		out1 = _repeatRunFlag ? 1 : 0;
-		break;
-	case 0x0C:
-		out1 = 1;
 		break;
 	case 0x0D:
 		out1 = _chosenDialogueOption;
