@@ -526,6 +526,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 
 			descString = str;
 		} else if ((thingType == kDMThingTypePotion)
+				   && (iconIndex >= 0)
 				   && (iconIndex != kDMIconIndicePotionWaterFlask)
 				   && (champMan.getSkillLevel((ChampionIndex)_vm->ordinalToIndex(_inventoryChampionOrdinal), kDMSkillPriest) > 1)) {
 			str = ('_' + dungeon.getPotion(thingToDraw)->getPower() / 40);
