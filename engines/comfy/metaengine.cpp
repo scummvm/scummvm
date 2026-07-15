@@ -20,6 +20,7 @@
  */
 
 #include "common/translation.h"
+#include "common/config-manager.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
@@ -53,6 +54,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_USE_IMGUI_KEYBOARD,
+		{
+			_s("Use ImGui based virtual keyboard"),
+			_s("Show the interactive virtual Comfy keyboard implemented with ImGui"),
+			"use_imgui_keyboard",
+			true,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
@@ -64,6 +76,11 @@ const char *ComfyMetaEngine::getName() const {
 
 const ADExtraGuiOptionsMap *ComfyMetaEngine::getAdvancedExtraGuiOptions() const {
 	return Comfy::optionsList;
+}
+
+void ComfyMetaEngine::registerDefaultSettings(const Common::String &) const {
+	for (const ADExtraGuiOptionsMap *entry = Comfy::optionsList; entry->guioFlag; ++entry)
+		ConfMan.registerDefault(entry->option.configOption, entry->option.defaultState);
 }
 
 Common::Error ComfyMetaEngine::createInstance(OSystem *syst, Engine **engine, const Comfy::ComfyGameDescription *desc) const {
@@ -85,7 +102,7 @@ Common::KeymapArray ComfyMetaEngine::initKeymaps(const char *target) const {
 	};
 	static const char *actionNames[COMFY_KEYBOARD_CONTACT_COUNT] = {
 		_s("Sun"), _s("Rolling cylinder"), _s("Red"), _s("Drum"), _s("Snaily phone"), _s("Purple"),
-		_s("Piano"), _s("Power"), _s("Orange"), _s("Moon"), _s("Jumpy phone"), _s("Yellow"),
+		_s("Piano"), _s("On / off"), _s("Orange"), _s("Moon"), _s("Jumpy phone"), _s("Yellow"),
 		_s("Stop"), _s("Handset"), _s("Blue"), _s("Trumpet"), _s("Buddy phone"), _s("Green"),
 		_s("Flute"), _s("Keyboard contact 19"), _s("Comfy phone"), _s("Rainy cloud"),
 		_s("Feely phone"), _s("Music")

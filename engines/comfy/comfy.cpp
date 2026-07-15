@@ -47,16 +47,14 @@ void onImGuiRender() {
 	if (!_state || !_state->_engine || _state->_engine->shouldQuit())
 		return;
 
-	if (!_state->_engine->_keyboardUiInitialized)
-		return;
-
 	bool actorDebugEnabled = debugChannelSet(-1, kDebugImGui);
 	if (actorDebugEnabled)
 		_state->_engine->drawActorDebugUi(&_state->_actorDebugVisible);
 	else
 		_state->_actorDebugVisible = false;
 
-	drawComfyKeyboardUi(actorDebugEnabled);
+	if (ConfMan.getBool("use_imgui_keyboard"))
+		drawComfyKeyboardUi(actorDebugEnabled);
 }
 
 void onImGuiCleanup() {
