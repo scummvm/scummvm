@@ -35,6 +35,7 @@
  * TKKG 6 (disabled in start.dir), 7(hashed), 8(hashed), 9 (hashed)
  * Tiger Team 2 (detectionTable TBD)
  * Kommissar Kugelblitz - Vermisst am Missisippi (hashed)
+ * Janosch Panama - Oh wie schön ist Panama
  *
  **************************************************/
 
