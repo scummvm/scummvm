@@ -56,6 +56,7 @@ public:
 		bool running = true;
 		bool subroutine = false;
 		const Scope *scope = nullptr;
+		const Scope *rootScope = nullptr;
 	};
 	struct Command {
 		virtual ~Command() {}

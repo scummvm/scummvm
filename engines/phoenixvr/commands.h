@@ -217,6 +217,14 @@ bool louvreObjectCanCombine(int objectId) {
 	return false;
 }
 
+bool louvreObjectCanSeparate(int objectId) {
+	if (objectId == 3500 || objectId == 3700)
+		return true;
+
+	int parts[3] = {0, 0, 0};
+	return louvreSeparateObject(objectId, parts) != 0;
+}
+
 int louvreObjectActionMask(int objectId) {
 	if (objectId == 0)
 		return 0;
@@ -228,6 +236,8 @@ int louvreObjectActionMask(int objectId) {
 		mask |= 2;
 	if (louvreObjectCanCombine(objectId))
 		mask |= 4;
+	if (louvreObjectCanSeparate(objectId))
+		mask |= 8;
 	return mask;
 }
 
@@ -295,14 +305,16 @@ void drawLouvreSelectedObject(int objectSlot) {
 	drawLouvreSelectionMarker(objectSlot, objectSlot, true);
 }
 
-void clearLouvreSelection() {
+void clearLouvreSelection(bool clearObjectPreview = true) {
 	int selection = g_engine->getVariable("Selection");
 	int slot = selection > 100 ? selection - 100 : selection;
 
 	g_engine->setVariable("Selection", 0);
-	drawLouvreImage(louvreObjectImage(0, 0), 103, 123);
-	clearLouvreText();
-	drawLouvreActionButtons();
+	if (clearObjectPreview) {
+		drawLouvreImage(louvreObjectImage(0, 0), 103, 123);
+		clearLouvreText();
+		drawLouvreActionButtons();
+	}
 	drawLouvreSelectionMarker(slot, selection, false);
 }
 
@@ -312,7 +324,7 @@ void setLouvreSelectedSlot(int slot, int flags) {
 	int targetSlot = slot > 100 ? slot - 100 : slot;
 
 	if (previousSelection == slot && (flags & 2) == 0) {
-		clearLouvreSelection();
+		clearLouvreSelection((flags & 1) == 0);
 		return;
 	}
 
@@ -360,7 +372,7 @@ void drawLouvreChestSlot(int slot) {
 	drawLouvreImage(louvreNumberedImageName("CText", slot), kChestTextRect[slot - 1].left, kChestTextRect[slot - 1].top);
 	g_engine->clearArchiveText(kChestTextRect[slot - 1]);
 	if (objectId != 0)
-		g_engine->drawArchiveText(objectId, kChestTextRect[slot - 1], 8, false, 1987);
+		g_engine->drawArchiveText(objectId, kChestTextRect[slot - 1], 12, false, 1987);
 }
 
 void drawLouvreChest() {
@@ -370,7 +382,7 @@ void drawLouvreChest() {
 
 void drawLouvreChestSelection(int slot) {
 	static const Common::Point kChestSelectionPos[] = {
-		Common::Point(69, 70), Common::Point(70, 134), Common::Point(70, 199), Common::Point(70, 262)};
+		Common::Point(69, 70), Common::Point(70, 134), Common::Point(70, 199), Common::Point(70, 262), Common::Point(70, 326)};
 
 	int current = g_engine->getVariable("CoffreSelect");
 	if (current != 0 && current <= 4) {
@@ -422,6 +434,7 @@ void updateLouvreChestScroll(int direction) {
 
 	offset = CLIP(offset, 0, MIN(124, MAX(0, count - 1)));
 	if (offset != g_engine->getVariable("CoffreOffset")) {
+		g_engine->setVariable("CoffreSelect", 0);
 		g_engine->setVariable("CoffreOffset", offset);
 		drawLouvreChest();
 	}
@@ -777,7 +790,7 @@ struct Cmp : public Script::Command {
 		if (args.size() == 5) {
 			arg1 = args[4];
 		} else {
-			uint opLength = (op.size() > 1 && op[1] == '=') ? 2 : 1;
+			uint opLength = (op.size() > 1 && (op[1] == '=' || op[1] == '>')) ? 2 : 1;
 			arg1 = op.substr(opLength);
 			op = op.substr(0, opLength);
 		}
@@ -790,7 +803,7 @@ struct Cmp : public Script::Command {
 		auto value1 = valueOf(arg1);
 		if (op == "==") {
 			r = value0 == value1;
-		} else if (op == "!=") {
+		} else if (op == "!=" || op == "<>") {
 			r = value0 != value1;
 		} else if (op == "<") {
 			r = value0 < value1;
@@ -835,6 +848,8 @@ struct Select : public Script::Command {
 				g_engine->setVariable("CurrentAction", 0);
 				setMessengerInventorySlot(selectedSlot, combinedObjectId);
 				setMessengerInventorySlot(value, 0);
+				drawLouvreInventorySlotObject(selectedSlot, combinedObjectId);
+				drawLouvreInventorySlotObject(value, 0);
 				drawLouvreActionButtons();
 				setLouvreSelectedSlot(selectedSlot, 0);
 			}
@@ -1038,7 +1053,7 @@ struct AffichePorteF : public Script::Command {
 	AffichePorteF(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		initLouvrePluginState();
-		drawLouvreInventoryObjects(true);
+		drawLouvreInventoryObjects(value != 0);
 	}
 };
 
@@ -1443,10 +1458,10 @@ struct CarteDestination : public Script::Command {
 			comefrom -= 10000000;
 
 		Common::String value = Common::String::format("%d", comefrom);
-		if (value.size() >= 3) {
+		if (value.size() >= 1)
 			g_engine->setVariable(varX, value[0] - '0');
-			g_engine->setVariable(varY, atoi(value.c_str() + 1));
-		}
+		if (value.size() >= 3)
+			g_engine->setVariable(varY, atoi(value.substr(1, 2).c_str()));
 	}
 };
 
@@ -1684,12 +1699,17 @@ struct GoSub : public Script::Command {
 	GoSub(const Common::String &l) : label(l) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("gosub %s", label.c_str());
-		assert(ctx.scope);
-		auto *labelPtr = ctx.scope->findLabel(label);
-		assert(labelPtr);
+		auto *scope = ctx.rootScope ? ctx.rootScope : ctx.scope;
+		assert(scope);
+		auto *labelPtr = scope->findLabel(label);
+		if (!labelPtr) {
+			warning("gosub: label %s not found", label.c_str());
+			return;
+		}
 		Script::ExecutionContext sub = {};
 		sub.subroutine = true;
-		ctx.scope->exec(sub, labelPtr->offset);
+		sub.rootScope = scope;
+		scope->exec(sub, labelPtr->offset);
 	}
 };
 
@@ -1706,12 +1726,10 @@ struct Return : public Script::Command {
 	Return() {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		ctx.running = false;
-		if (ctx.subroutine) {
+		if (ctx.subroutine)
 			debug("return to caller");
-		} else {
-			debug("return to previous warp");
-			g_engine->returnToWarp();
-		}
+		else
+			debug("return from script");
 	}
 };
 

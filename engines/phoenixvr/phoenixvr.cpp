@@ -1220,7 +1220,7 @@ void PhoenixVREngine::tickTimer(float dt) {
 }
 
 void PhoenixVREngine::renderTimer() {
-	if (_timerFlags == 0 || !_showTimer || !_arn)
+	if ((_timerFlags & 4) == 0 || !_showTimer || !_arn)
 		return;
 	auto timerBg = _arn->get("cadre.bmp");
 	auto timerFg = _arn->get("cadreB.bmp");
@@ -1230,7 +1230,7 @@ void PhoenixVREngine::renderTimer() {
 	// Necronomicon has timer in scripts, but does not contain bitmaps for timers.
 	Common::Rect bgRect{320, 16, 632, 44};
 	Common::Rect fgRect{333, 23, 619, 38};
-	if (gameIdMatches("dracula2")) {
+	if (gameIdMatches("dracula2") || gameIdMatches("messenger")) {
 		bgRect = Common::Rect(165, 15, 474, 48);
 		fgRect = Common::Rect(177, 15, 461, 48);
 	}
@@ -1293,8 +1293,8 @@ void PhoenixVREngine::paintText(const TextState &textState) {
 	int16 dstX = textState.rect.left + (textState.rect.width() - textW) / 2;
 	int16 dstY = textState.rect.top + (textState.rect.height() - fontH * lines.size()) / 2;
 	for (uint i = 0; i < lines.size(); ++i) {
-		int x = (textW - font->getStringWidth(lines[i])) / 2;
-		font->drawString(_screen, lines[i], dstX + x, dstY + i * fontH, textW, textColor, Graphics::kTextAlignLeft);
+		int16 lineX = dstX + (textW - font->getStringWidth(lines[i])) / 2;
+		font->drawString(_screen, lines[i], lineX, dstY + i * fontH, textState.rect.right - lineX, textColor, Graphics::kTextAlignLeft);
 	}
 }
 
@@ -1444,7 +1444,7 @@ void PhoenixVREngine::tick(float dt) {
 		loadNextScript();
 		goToWarp(_script->getInitScript()->vrFile);
 	}
-	if (_nextWarp >= 0) {
+	while (_nextWarp >= 0) {
 		_rolloverText = TextState();
 		_archiveImages.clear();
 		_archiveTexts.clear();
@@ -1486,7 +1486,6 @@ void PhoenixVREngine::tick(float dt) {
 		else
 			warning("no default script!");
 		_restarted = false;
-		return;
 	}
 
 	if (_nextTest >= 0) {
@@ -1501,7 +1500,8 @@ void PhoenixVREngine::tick(float dt) {
 	auto &cursors = _cursors[_warpIdx];
 	bool anyMatched = false;
 	int messengerInventoryHover = -1;
-	for (int i = 0, n = cursors.size(); i != n; ++i) {
+	int regionCount = _regSet ? _regSet->size() : 0;
+	for (int i = 0, n = MAX<int>(regionCount, cursors.size()); i != n; ++i) {
 		auto *region = getRegion(i);
 		if (!region)
 			continue;
@@ -1518,15 +1518,17 @@ void PhoenixVREngine::tick(float dt) {
 				executeTest(i);
 			}
 
-			auto &name = cursors[i];
-			if (!cursor) {
+			if (!cursor && i < static_cast<int>(cursors.size())) {
+				auto &name = cursors[i];
 				cursor = loadCursor(name);
 			}
 		} else if (i == _hoverIndex) {
 			debug("leaving hover region");
-			auto leave = _warp->getTest(i + 1);
+			auto leave = _warp->getTest(i - 1);
+			if (!leave || leave->hover != 2)
+				leave = _warp->getTest(i + 1);
 			if (leave && leave->hover == 2) {
-				executeTest(i + 1);
+				executeTest(leave->idx);
 			}
 			_hoverIndex = -1;
 		}
@@ -1715,8 +1717,12 @@ Common::Error PhoenixVREngine::run() {
 				}
 			} break;
 			case Common::EVENT_RBUTTONUP: {
-				if (!_hasFocus || _prevWarp != -1)
+				if (!_hasFocus)
 					break;
+				if (_prevWarp != -1) {
+					returnToWarp();
+					break;
+				}
 				debug("right click");
 				auto &rclick = _lockKey[12];
 				if (!rclick.empty())
@@ -1740,7 +1746,8 @@ Common::Error PhoenixVREngine::run() {
 				if (_warpIdx < 0)
 					break;
 				auto &cursors = _cursors[_warpIdx];
-				for (uint i = 0, n = cursors.size(); i != n; ++i) {
+				int regionCount = _regSet ? _regSet->size() : 0;
+				for (uint i = 0, n = MAX<int>(regionCount, cursors.size()); i != n; ++i) {
 					auto *region = getRegion(i);
 					if (!region)
 						continue;
