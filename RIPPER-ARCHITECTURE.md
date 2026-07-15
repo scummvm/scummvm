@@ -137,6 +137,15 @@
   `RunWacMugSelectionScene` at `0x236b9`, entry 2 dispatches
   `PlayMugSelectionCompletionMedia` at `0x2361c`, and the remaining database
   entry handlers are explicit stubs.
+- `RunWacMugSelectionScene` owns nine draggable controls (`0x640` through
+  `0x648`) backed by `mug0.smk` through `mug8.smk`. It initially advances each
+  32-frame asset to orientation state 2, draws the controls over the WAC media
+  viewport at x=50, y=50, width=282, height=350, and patches only palette
+  entries 10 through 149 so the WAC interface colors remain available. A left
+  drag promotes the selected piece to the front; a right-button transition
+  during that drag advances eight frames and rotates the piece to the next of
+  four orientation states. The puzzle implementation is isolated under
+  `engines/ripper/puzzles/`.
 
 ## Cursor
 

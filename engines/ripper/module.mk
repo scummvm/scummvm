@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	media.o \
 	menu.o \
 	metaengine.o \
+	puzzles/broken_mug.o \
 	resources.o \
 	ripper.o \
 	script.o \
