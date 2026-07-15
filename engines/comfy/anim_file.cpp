@@ -562,9 +562,9 @@ bool ComfyEngine::animFrameBlitAt(int16 x, int16 y) {
 	if (!animFrameGetDimensions(frameWidth, frameHeight))
 		return false;
 
-	uint16 rectCount = _resolutionChangeCount;
+	uint16 rectCount = _dirtyRectCount;
 	for (uint i = 0; i < rectCount; i++) {
-		ComfyRect &dirtyRect = _resolutionChanges[i];
+		ComfyRect &dirtyRect = _dirtyRects[i];
 		int16 left = MAX<int16>(dirtyRect.left, x);
 		int16 top = MAX<int16>(dirtyRect.top, y);
 		int16 right = MIN<int16>(dirtyRect.right, x + frameWidth);
@@ -619,8 +619,8 @@ bool ComfyEngine::animFrameCoversPoint(int16 x, int16 y, int16 pointX, int16 poi
 		return false;
 
 	bool dirty = false;
-	for (uint i = 0; i < _resolutionChangeCount; i++) {
-		ComfyRect &dirtyRect = _resolutionChanges[i];
+	for (uint i = 0; i < _dirtyRectCount; i++) {
+		ComfyRect &dirtyRect = _dirtyRects[i];
 		if (pointX >= dirtyRect.left && pointX < dirtyRect.right &&
 				pointY >= dirtyRect.top && pointY < dirtyRect.bottom) {
 			dirty = true;

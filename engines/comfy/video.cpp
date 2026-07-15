@@ -49,7 +49,7 @@ void ComfyEngine::videoInit() {
 		_backgroundFramebuf.resize(framebufferBytes());
 
 	_backgroundFrame = 0;
-	_resolutionChangeCount = 0;
+	_dirtyRectCount = 0;
 	_renderDirtyCount = 0;
 	videoSetResolution();
 	videoPresentFrame();
@@ -69,7 +69,7 @@ void ComfyEngine::videoShutdown(byte restorePalette) {
 	_backgroundFrame = 0;
 	delete _screen;
 	_screen = nullptr;
-	_resolutionChangeCount = 0;
+	_dirtyRectCount = 0;
 	_renderDirtyCount = 0;
 	_videoInitialized = false;
 }
@@ -89,7 +89,7 @@ void ComfyEngine::renderSetDirty() {
 }
 
 void ComfyEngine::renderFlushDirty() {
-	_resolutionChangeCount = 0;
+	_dirtyRectCount = 0;
 	if (_renderDirtyCount) {
 		_renderDirtyCount--;
 		videoSetResolution();
@@ -101,7 +101,117 @@ void ComfyEngine::renderInvalidateFullFrame() {
 	videoSetResolution();
 }
 
+void ComfyEngine::renderAddDirtyRectMerged(ComfyRect record) {
+	int16 alignment = _isPanther ? 4 : 2;
+	uint32 mergeThreshold = _game->dirtyRectMergeThreshold;
+	record.left = CLIP<int16>(record.left, 0, _logicalScreenWidth);
+	record.left = record.left / alignment * alignment;
+	record.top = CLIP<int16>(record.top, 0, _logicalScreenHeight);
+	record.right = CLIP<int16>(record.right, 0, _logicalScreenWidth);
+	record.right = (record.right + alignment - 1) / alignment * alignment;
+	record.right = MIN<int16>(record.right, _logicalScreenWidth);
+	record.bottom = CLIP<int16>(record.bottom, 0, _logicalScreenHeight);
+	record.area = (uint32)((int32)(record.right - record.left) * (record.bottom - record.top));
+	if (!record.area)
+		return;
+
+	if (_dirtyRectCount >= COMFY_DIRTY_RECT_CAPACITY) {
+		renderFlushDirty();
+		videoSetResolution();
+		return;
+	}
+
+	for (int i = _dirtyRectCount - 1; i >= 0; i--) {
+		ComfyRect &existing = _dirtyRects[i];
+		if (existing.right <= record.left || existing.left >= record.right ||
+				existing.bottom <= record.top || existing.top >= record.bottom)
+			continue;
+
+		ComfyRect merged;
+		merged.left = MIN(existing.left, record.left) / alignment * alignment;
+		merged.top = MIN(existing.top, record.top);
+		merged.right = (MAX(existing.right, record.right) + alignment - 1) / alignment * alignment;
+		merged.bottom = MAX(existing.bottom, record.bottom);
+		merged.area = (uint32)((int32)(merged.right - merged.left) * (merged.bottom - merged.top));
+
+		ComfyRect intersection;
+		intersection.left = (MAX(existing.left, record.left) + alignment - 1) / alignment * alignment;
+		intersection.top = MAX(existing.top, record.top);
+		intersection.right = MIN(existing.right, record.right) / alignment * alignment;
+		intersection.bottom = MIN(existing.bottom, record.bottom);
+		intersection.area = (uint32)((int32)(intersection.right - intersection.left) *
+			(intersection.bottom - intersection.top));
+
+		uint32 extraArea = merged.area + intersection.area - record.area - existing.area;
+		if (extraArea < mergeThreshold) {
+			_dirtyRectCount--;
+			_dirtyRects[i] = _dirtyRects[_dirtyRectCount];
+			renderAddDirtyRectMerged(merged);
+			return;
+		}
+
+		if (intersection.area <= mergeThreshold)
+			continue;
+
+		ComfyRect *upperRect;
+		ComfyRect *lowerRect;
+		if (existing.top > record.top) {
+			upperRect = &record;
+			lowerRect = &existing;
+		} else {
+			upperRect = &existing;
+			lowerRect = &record;
+		}
+
+		ComfyRect *bottomRect = existing.bottom < record.bottom ? &record : &existing;
+		ComfyRect upperStrip;
+		upperStrip.left = upperRect->left;
+		upperStrip.top = upperRect->top;
+		upperStrip.right = upperRect->right;
+		upperStrip.bottom = lowerRect->top;
+		upperStrip.area = (uint32)((int32)(upperStrip.right - upperStrip.left) *
+			(upperStrip.bottom - upperStrip.top));
+
+		ComfyRect middleStrip;
+		middleStrip.left = MIN(lowerRect->left, upperRect->left);
+		middleStrip.top = lowerRect->top;
+		middleStrip.right = MAX(lowerRect->right, upperRect->right);
+		middleStrip.bottom = MIN(lowerRect->bottom, upperRect->bottom);
+		middleStrip.area = (uint32)((int32)(middleStrip.right - middleStrip.left) *
+			(middleStrip.bottom - middleStrip.top));
+
+		ComfyRect bottomStrip;
+		bottomStrip.left = bottomRect->left;
+		bottomStrip.top = middleStrip.bottom;
+		bottomStrip.right = bottomRect->right;
+		bottomStrip.bottom = bottomRect->bottom;
+		bottomStrip.area = (uint32)((int32)(bottomStrip.right - bottomStrip.left) *
+			(bottomStrip.bottom - bottomStrip.top));
+
+		_dirtyRectCount--;
+		_dirtyRects[i] = _dirtyRects[_dirtyRectCount];
+		if (upperStrip.area)
+			renderAddDirtyRectMerged(upperStrip);
+
+		if (middleStrip.area)
+			renderAddDirtyRectMerged(middleStrip);
+
+		if (bottomStrip.area)
+			renderAddDirtyRectMerged(bottomStrip);
+
+		return;
+	}
+
+	_dirtyRects[_dirtyRectCount] = record;
+	_dirtyRectCount++;
+}
+
 void ComfyEngine::videoFindBestMode(ComfyRect record) {
+	if (_engineVersion >= 2) {
+		renderAddDirtyRectMerged(record);
+		return;
+	}
+
 	if (_engineVersion == 1)
 		record.area = (uint16)record.area;
 
@@ -110,14 +220,14 @@ void ComfyEngine::videoFindBestMode(ComfyRect record) {
 	record.right = CLIP<int16>(record.right, 0, _logicalScreenWidth);
 	record.bottom = CLIP<int16>(record.bottom, 0, _logicalScreenHeight);
 
-	if (_resolutionChangeCount >= COMFY_RESOLUTION_CHANGE_CAPACITY) {
+	if (_dirtyRectCount >= COMFY_DIRTY_RECT_CAPACITY_V1) {
 		renderFlushDirty();
 		videoSetResolution();
 		return;
 	}
 
-	for (int i = _resolutionChangeCount - 1; i >= 0; i--) {
-		ComfyRect &existing = _resolutionChanges[i];
+	for (int i = _dirtyRectCount - 1; i >= 0; i--) {
+		ComfyRect &existing = _dirtyRects[i];
 		if (existing.right < record.left && existing.left <= record.right &&
 				existing.bottom >= record.top && existing.top <= record.bottom)
 			continue;
@@ -137,8 +247,8 @@ void ComfyEngine::videoFindBestMode(ComfyRect record) {
 		}
 	}
 
-	_resolutionChanges[_resolutionChangeCount] = record;
-	_resolutionChangeCount++;
+	_dirtyRects[_dirtyRectCount] = record;
+	_dirtyRectCount++;
 }
 
 void ComfyEngine::framebufCopyAll(byte *destination, byte *source) {
@@ -169,16 +279,18 @@ void ComfyEngine::videoPresentFrame() {
 			_logicalScreenWidth, _logicalScreenHeight);
 	} else {
 		uint32 dirtyArea = 0;
-		for (uint i = 0; i < _resolutionChangeCount; i++)
-			dirtyArea += _resolutionChanges[i].area;
+		if (_engineVersion == 1) {
+			for (uint i = 0; i < _dirtyRectCount; i++)
+				dirtyArea += _dirtyRects[i].area;
+		}
 
-		if (dirtyArea > framebufferBytes() - 1000) {
+		if (_engineVersion == 1 && dirtyArea > framebufferBytes() - 1000) {
 			framebufCopyAll(_presentBuffer, _framebufPtr);
 			_screen->copyRectToSurface(_presentBuffer, _logicalScreenWidth, 0, 0,
 				_logicalScreenWidth, _logicalScreenHeight);
 		} else {
-			for (uint i = 0; i < _resolutionChangeCount; i++) {
-				ComfyRect &record = _resolutionChanges[i];
+			for (uint i = 0; i < _dirtyRectCount; i++) {
+				ComfyRect &record = _dirtyRects[i];
 				int16 width = record.right - record.left;
 				int16 height = record.bottom - record.top;
 				if (width <= 0 || height <= 0)
