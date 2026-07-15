@@ -136,23 +136,21 @@
 - `ReadSceneCallbackOpcodeAndArguments` at `0x140e9` decodes callback commands
   and their typed arguments.
 - `RunSceneCallbackCommandStream` at `0x14080` dispatches decoded commands.
-- Opcode `0x16` is dispatched through the callback handler table with its
-  two typed payload arguments intact. The first dialogue slice records the
-  selector, argument types, lengths, and decoded inline text; the
-  selector-specific handler and modal presentation remain to be mapped from
-  the handler table before rendering is implemented.
-- Ghidra's `HandleSceneEntryPushChoiceRecordAndStepPrompt` at `0x15085`
-  appends each opcode `0x16` payload as a display value plus 16-bit result;
-  opcode `0x0a` is the `HandleSceneEntryChoiceListLifecycle` path at `0x1523d`,
-  which consumes the accumulated records through chooser control `0x4e2`.
-  The current slice mirrors the record accumulation and retains the complete
-  choice list, drawing a bottom-screen chooser overlay after the associated
-  media command. Input selection and looping-media integration remain pending.
-- `HandleSceneEntryPromptAndDispatchAction` at `0x1574d` is the confirmed
-  three-argument follow-up path after a choice list: it shows the centered
-  step prompt and dispatches the selected result through the shared scene
-  action multiplexer. The current slice records opcode `0x0b` and its typed
-  arguments while that chooser/action bridge is reconstructed.
+- The callback handler table at `0x84040` maps opcode `0x15` to
+  `HandleSceneEntryPushChoiceRecordAndStepPrompt` at `0x15085`, opcode `0x16`
+  to `HandleSceneEntryPushFrameChoiceOnPlayedStateCondition` at `0x150ea`, and
+  opcode `0x17` to `HandleSceneEntryChoiceListLifecycle` at `0x1523d`.
+  Opcode `0x16` omits a choice once its 16-bit BA0 response-frame result has
+  been marked played. Opcode `0x17` presents the remaining records through
+  chooser control `0x4e2` and returns control code `-2` with the selected
+  response frame.
+- Opcode `0x0a` maps to `HandleSceneEntryStepPromptCondition` at `0x149b4`.
+  In the dialogue entry callback it branches around the exhausted-dialogue
+  media path while at least one choice record exists. The frame's persistent
+  callback at `+0x12` then invokes opcode `0x17`; `StepFrameIdleCallbackCommandStream`
+  at `0x143af` services that callback during interaction polling. Consequently,
+  `VM0_1_P3.AVI` is reached only when every response-frame choice is already
+  marked played.
 - `ExecuteSceneFrameAndInteractions` at `0x13277` runs frame callbacks,
   presentations, chooser selection, and interaction callbacks.
 - `RIPPER.RUN` sets milestone flag 32, plays `PROINT.AVI` and `PROLOG1.AVI`,
