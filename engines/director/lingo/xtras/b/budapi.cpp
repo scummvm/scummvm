@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/formats/ini-file.h"
 #include "common/system.h"
 
 #include "director/director.h"
@@ -401,10 +402,56 @@ void BudAPIXtra::m_baDiskInfo(int nargs) {
 }
 XOBJSTUB(BudAPIXtra::m_baMemoryInfo, 0)
 XOBJSTUB(BudAPIXtra::m_baFindApp, 0)
-XOBJSTUB(BudAPIXtra::m_baReadIni, 0)
-XOBJSTUB(BudAPIXtra::m_baWriteIni, 0)
+void BudAPIXtra::m_baReadIni(int nargs) {
+	ARGNUMCHECK(4);
+	Common::String iniFile = g_lingo->pop().asString();
+	Common::String defaultVal = g_lingo->pop().asString();
+	Common::String key = g_lingo->pop().asString();
+	Common::String section = g_lingo->pop().asString();
+
+	Common::String saveName = savePrefix() + lastPathComponent(iniFile, g_director->_dirSeparator);
+	Common::INIFile ini;
+	ini.allowNonEnglishCharacters();
+	Common::String value;
+	if (ini.loadFromSaveFile(saveName) && ini.getKey(key, section, value)) {
+		g_lingo->push(Datum(value));
+		return;
+	}
+
+	Common::Path resolved = findPath(iniFile);
+	if (!resolved.empty()) {
+		Common::INIFile bundled;
+		bundled.allowNonEnglishCharacters();
+		if (bundled.loadFromFile(resolved) && bundled.getKey(key, section, value)) {
+			g_lingo->push(Datum(value));
+			return;
+		}
+	}
+	g_lingo->push(Datum(defaultVal));
+}
+void BudAPIXtra::m_baWriteIni(int nargs) {
+	ARGNUMCHECK(4);
+	Common::String iniFile = g_lingo->pop().asString();
+	Common::String value = g_lingo->pop().asString();
+	Common::String key = g_lingo->pop().asString();
+	Common::String section = g_lingo->pop().asString();
+
+	Common::String saveName = savePrefix() + lastPathComponent(iniFile, g_director->_dirSeparator);
+	Common::INIFile ini;
+	ini.allowNonEnglishCharacters();
+	ini.loadFromSaveFile(saveName);
+	ini.setKey(key, section, value);
+	g_lingo->push(Datum(ini.saveToSaveFile(saveName) ? 1 : 0));
+}
 XOBJSTUB(BudAPIXtra::m_baFlushIni, 0)
-XOBJSTUB(BudAPIXtra::m_baReadRegString, 0)
+void BudAPIXtra::m_baReadRegString(int nargs) {
+	ARGNUMCHECK(4);
+	/* branch  */ g_lingo->pop();
+	Common::String defaultVal = g_lingo->pop().asString();
+	/* value   */ g_lingo->pop();
+	/* keyName */ g_lingo->pop();
+	g_lingo->push(Datum(defaultVal));
+}
 XOBJSTUB(BudAPIXtra::m_baWriteRegString, 0)
 XOBJSTUB(BudAPIXtra::m_baReadRegNumber, 0)
 XOBJSTUB(BudAPIXtra::m_baWriteRegNumber, 0)
