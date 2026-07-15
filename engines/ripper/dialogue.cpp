@@ -17,6 +17,8 @@ static const int kChoiceRowHeight = 13;
 static const int kChoiceTop = 344;
 static const int kChoiceHorizontalPadding = 5;
 static const int kArrowGap = 5;
+static const int kSceneTop = 50;
+static const int kSceneBottom = 350;
 
 bool DialogueManager::initialize(ResourceManager &resources) {
 	if (!resources.loadInterfaceBitmapFont("small.fnt", _font))
@@ -114,6 +116,7 @@ bool DialogueManager::execute(const CompiledScript &script, const ScriptCommand 
 		_firstVisibleChoice = 0;
 		_hoveredArrow = 0;
 		updateLayout();
+		preparePresentation();
 		debugC(1, kDebugDialogue,
 			"Ripper: dialogue chooser activated script='%s' offset=0x%x "
 				"selector=%u choices=%u",
@@ -248,6 +251,28 @@ void DialogueManager::updateLayout() {
 	_downArrowBounds = Common::Rect(arrowLeft,
 		_chooserBounds.bottom - _arrowFrames[2].height,
 		arrowLeft + _arrowFrames[2].width, _chooserBounds.bottom);
+}
+
+void DialogueManager::preparePresentation() const {
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1 || screen->w < 640 || screen->h < 400) {
+		if (screen)
+			g_system->unlockScreen();
+		return;
+	}
+
+	// HandleSceneEntryChoiceListLifecycle at 0x1523d submits two full display
+	// dirty-region updates before reactivating the chooser presentation. The
+	// scene movie only owns y=50..349, so rebuild the uncovered indexed bands
+	// instead of retaining pixels that belonged to the preceding palette.
+	for (int y = 0; y < kSceneTop; ++y)
+		memset(screen->getBasePtr(0, y), 0, 640);
+	for (int y = kSceneBottom; y < 400; ++y)
+		memset(screen->getBasePtr(0, y), 0, 640);
+	g_system->unlockScreen();
+	debugC(2, kDebugDialogue,
+		"Ripper: rebuilt dialogue presentation bands top=0..%d bottom=%d..399",
+		kSceneTop - 1, kSceneBottom);
 }
 
 void DialogueManager::drawBitmap(const BitmapAssetFrame &bitmap, int x, int y) const {
