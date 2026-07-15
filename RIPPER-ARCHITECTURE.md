@@ -103,10 +103,12 @@
   the pending selection.
 - `PollInteractionAndResolveSelection` at `0x13c8d` checks the published
   vertical coordinate before scene interaction handling, so the toolbar band
-  remains available during BA0 first-frame previews as well as normal scenes.
-  That band uses cursor `0xe` (14), matching the white cursor selected by
-  `RunStartupFrontEndLoop` at `0x10778`; scene hotspot cursor selection resumes
-  below y=50.
+  remains available during BA0 first-frame previews, normal scenes, and an
+  active opcode `0x17` dialogue chooser. `RunFrontEndActionMenu` snapshots and
+  restores both the chooser registry and scene UI-control list while it owns
+  input. That band uses cursor `0xe` (14), matching the white cursor selected
+  by `RunStartupFrontEndLoop` at `0x10778`; scene and chooser cursor selection
+  resumes below y=50.
 - Action dispatch at `0x190b7` maps the nine controls to remote setup, world
   map, inventory, WAC, save, restore, options, help, and quit. The ScummVM
   toolbar currently preserves the click/release routing and logs these
