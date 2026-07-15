@@ -601,7 +601,7 @@ gln_game_tableref_t GameDetection::gln_gameid_identify_game() {
 	if (!game)
 		game = gln_gameid_lookup_game(length, checksum, crc, true);
 
-	if (!game) {
+	if (!game && 0) {
 		if (is_version2)
 			game = &GLN_UNGAME_TABLE[1];
 		else if (length >= 0x8500)
@@ -755,8 +755,9 @@ const GlkDetectionEntry* Level9MetaEngine::getDetectionEntries() {
 
 GameDescriptor Level9MetaEngine::findGame(const char *gameId) {
 	if (!strncmp(gameId, "level9v", 7)) {
-		GameDescriptor gd(gameId, "Unknown Level 9 game or version", 0);
-		return gd;
+//		GameDescriptor gd(gameId, "Unknown Level 9 game or version", 0);
+//		return gd;
+		return PlainGameDescriptor::empty();
 	}
 	for (const gln_game_table_t *pd = GLN_GAME_TABLE; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId)) {
