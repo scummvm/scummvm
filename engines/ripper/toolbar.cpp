@@ -27,6 +27,8 @@
 
 #include "ripper/detection.h"
 #include "ripper/input.h"
+#include "ripper/ripper.h"
+#include "ripper/wac.h"
 
 namespace Ripper {
 
@@ -52,8 +54,9 @@ static const char *const kToolbarHandlerNames[kToolbarActionCount] = {
 	"RunBinaryPromptChooser"
 };
 
-ToolbarManager::ToolbarManager() : _sessionStartMillis(0), _lastFrameMillis(0), _hoveredAction(-1),
-		_pressedAction(-1), _active(false), _previewEnabled(false) {
+ToolbarManager::ToolbarManager(RipperEngine *engine) : _sessionStartMillis(0), _lastFrameMillis(0),
+		_hoveredAction(-1), _pressedAction(-1), _active(false), _previewEnabled(false),
+		_engine(engine) {
 }
 
 bool ToolbarManager::initialize(ResourceManager &resources) {
@@ -304,6 +307,13 @@ void ToolbarManager::drawTooltip(const Common::Point &point) {
 }
 
 void ToolbarManager::dispatchAction(uint actionIndex) {
+	if (actionIndex == 3) {
+		debugC(1, kDebugWac,
+			"Ripper: toolbar action=4 id=0x517 label='%s' entering RunWacFrontEndLoop",
+			_actions[actionIndex].label.c_str());
+		_engine->getWac()->run();
+		return;
+	}
 	debugC(1, kDebugScene,
 		"Ripper: toolbar action=%u id=0x%x label='%s' handler=%s is stubbed",
 		actionIndex + 1, actionIndex + 0x514, _actions[actionIndex].label.c_str(),

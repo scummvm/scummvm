@@ -29,6 +29,7 @@
 #include "common/stream.h"
 #include "common/substream.h"
 #include "graphics/surface.h"
+#include "image/pcx.h"
 
 #include "ripper/detection.h"
 #include "ripper/iff.h"
@@ -468,6 +469,37 @@ bool ResourceManager::loadInterfaceBitmapSequence(const Common::String &memberNa
 
 	debugC(2, kDebugResources, "Ripper: decoded interface bitmap sequence '%s' frames=%u",
 		memberName.c_str(), sequence.frames.size());
+	return true;
+}
+
+bool ResourceManager::loadInterfacePcx(const Common::String &memberName,
+		BitmapAssetFrame &frame) const {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(
+		_interface.createReadStreamForMember(memberName));
+	Image::PCXDecoder decoder;
+	if (!stream || !decoder.loadStream(*stream)) {
+		warning("Ripper: could not decode interface PCX '%s'", memberName.c_str());
+		return false;
+	}
+
+	const Graphics::Surface *surface = decoder.getSurface();
+	if (!surface || surface->format.bytesPerPixel != 1 || surface->w <= 0 || surface->h <= 0)
+		return false;
+
+	frame.width = surface->w;
+	frame.height = surface->h;
+	frame.transparentColor = 0;
+	frame.pixels.resize((uint32)frame.width * frame.height);
+	for (uint y = 0; y < frame.height; ++y)
+		memcpy(frame.pixels.data() + y * frame.width, surface->getBasePtr(0, y), frame.width);
+
+	const Graphics::Palette &palette = decoder.getPalette();
+	frame.palette.resize(palette.size() * 3);
+	if (!frame.palette.empty())
+		memcpy(frame.palette.data(), palette.data(), frame.palette.size());
+	debugC(2, kDebugResources,
+		"Ripper: decoded interface PCX '%s' width=%u height=%u colors=%u",
+		memberName.c_str(), frame.width, frame.height, palette.size());
 	return true;
 }
 

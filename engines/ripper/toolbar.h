@@ -30,11 +30,12 @@
 namespace Ripper {
 
 class ResourceManager;
+class RipperEngine;
 struct MouseState;
 
 class ToolbarManager {
 public:
-	ToolbarManager();
+	explicit ToolbarManager(RipperEngine *engine);
 
 	bool initialize(ResourceManager &resources);
 	void applySharedPalettePatch(byte *palette, uint colorCount);
@@ -72,6 +73,7 @@ private:
 	int _pressedAction;
 	bool _active;
 	bool _previewEnabled;
+	RipperEngine *_engine;
 };
 
 } // End of namespace Ripper

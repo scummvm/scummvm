@@ -11,7 +11,8 @@ MODULE_OBJS := \
 	resources.o \
 	ripper.o \
 	script.o \
-	toolbar.o
+	toolbar.o \
+	wac.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_RIPPER), DYNAMIC_PLUGIN)
