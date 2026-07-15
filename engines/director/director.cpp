@@ -252,6 +252,7 @@ void DirectorEngine::setVersion(uint16 version) {
 namespace DT {
 bool isMouseInputIgnored() { return false; }
 void setSelectedChannel(int channel) { }
+void renderPendingWindow() { }
 }
 #endif
 
@@ -377,6 +378,10 @@ Common::Error DirectorEngine::run() {
 				_currentWindow->step();
 			}
 		}
+
+		// service a debugger-requested redraw before compositing, so it
+		// is visible even when playback is paused and step() renders nothing
+		DT::renderPendingWindow();
 
 		draw();
 		while (!_windowsToForget.empty()) {
