@@ -47,7 +47,8 @@ public:
 	bool playScene(const Common::String &path, int x, int y, bool firstFrameOnly,
 		bool loopUntilInput = false);
 	bool loadAudio(const Common::String &path);
-	bool startLoadedAudio(const Common::String &key, uint volumePercent);
+	bool startLoadedAudio(const Common::String &key, uint volumePercent, bool loop);
+	bool isSceneAudioActive() const;
 
 private:
 	bool playSmacker(Common::SeekableReadStream *stream, const Common::String &name,

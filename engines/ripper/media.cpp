@@ -341,12 +341,12 @@ bool MediaPlayer::loadAudio(const Common::String &path) {
 		}
 	}
 	_loadedAudioKey = path.substr(start, end - start);
-	debugC(2, kDebugVideo, "Ripper: loaded audio slot key='%s' path='%s'",
+	debugC(2, kDebugAudio, "Ripper: loaded audio slot key='%s' path='%s'",
 		_loadedAudioKey.c_str(), _loadedAudioPath.c_str());
 	return true;
 }
 
-bool MediaPlayer::startLoadedAudio(const Common::String &key, uint volumePercent) {
+bool MediaPlayer::startLoadedAudio(const Common::String &key, uint volumePercent, bool loop) {
 	if (!_loadedAudioKey.equalsIgnoreCase(key))
 		return false;
 	Common::File *file = new Common::File();
@@ -354,14 +354,22 @@ bool MediaPlayer::startLoadedAudio(const Common::String &key, uint volumePercent
 		delete file;
 		return false;
 	}
-	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
-	if (!stream)
+	Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
+	if (!wavStream)
 		return false;
+	Audio::AudioStream *stream = wavStream;
+	if (loop)
+		stream = Audio::makeLoopingAudioStream(wavStream, 0);
 	_mixer->stopHandle(_sceneAudioHandle);
 	const byte volume = (byte)(MIN<uint>(volumePercent, 100) * Audio::Mixer::kMaxChannelVolume / 100);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sceneAudioHandle, stream, -1, volume);
-	debugC(2, kDebugVideo, "Ripper: started audio key='%s' volume=%u", key.c_str(), volumePercent);
+	debugC(1, kDebugAudio, "Ripper: started audio key='%s' volume=%u loop=%d active=%d",
+		key.c_str(), volumePercent, loop, _mixer->isSoundHandleActive(_sceneAudioHandle));
 	return true;
+}
+
+bool MediaPlayer::isSceneAudioActive() const {
+	return _mixer->isSoundHandleActive(_sceneAudioHandle);
 }
 
 bool MediaPlayer::servicePlaybackInput(Video::SmackerDecoder &decoder, bool allowEscSpace,
