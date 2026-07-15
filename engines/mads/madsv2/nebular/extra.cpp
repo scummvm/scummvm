@@ -112,7 +112,7 @@ static int room_picture_load(Room *room, int room_id, Buffer *picture, int load_
 			pal_shadow_sort(master_shadow, &art.color_list);
 		}
 
-		room->color_handle = pal_allocate(&art.color_list, master_shadow, (load_flags & PAL_MAP_MASK));
+		room->color_handle = pal_allocate(&art.color_list, master_shadow, (load_flags & PAL_MAP_MASK) | PAL_MAP_BACKGROUND);
 		if (room->color_handle < 0) {
 			room_load_error = 4;
 			goto done;

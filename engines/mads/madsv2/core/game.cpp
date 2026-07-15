@@ -1336,16 +1336,9 @@ void game_control() {
 
 			if (!player.walker_is_loaded) {
 				if (player.walker_loads_first) {
-
 					game.going |= !player_load_series(NULL);
-
 					player.walker_loaded_first = true;
 				}
-			}
-
-			for (count = 0; count < master_shadow->num_shadow_colors; count++) {
-				color = PAL_FORCE_SHADOW + count;
-				color_status[color] = 0;
 			}
 
 			game.going = (byte)!kernel_room_startup(new_room, kernel_initial_variant, kernel.interface, false);
