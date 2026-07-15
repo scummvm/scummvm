@@ -1047,7 +1047,7 @@ void ColonyEngine::drawColonyCoder(int animOx, int animOy) {
 	const int contentH = instrY + (int)instrLines.size() * instrLineH + 8;
 
 	Graphics::MacWindowBorder border;
-	Graphics::BorderOffsets offsets;
+	Graphics::BorderOffsets offsets = {};
 	bool hasBorder = false;
 	if (_wm) {
 		border.setWindowManager(_wm);
