@@ -1135,7 +1135,7 @@ Common::SeekableReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16 id
 		} else {
 			_stream->seek(_ilsBodyOffset + res.offset);
 			uint32 actualUncompLength = res.uncompSize;
-			Common::SeekableReadStreamEndian *stream = readZlibData(*_stream, res.size, &actualUncompLength, _isBigEndian);
+			Common::SeekableReadStreamEndian *stream = readZlibData(*_stream, res.size, &actualUncompLength, bigEndian);
 			if (!stream) {
 				error("RIFXArchive::getResource(): Could not uncompress '%s' %d", tag2str(tag), id);
 			}
