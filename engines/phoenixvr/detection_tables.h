@@ -334,9 +334,54 @@ const ADGameDescription gameDescriptions[] = {
 
 	{"dracula2",
 		nullptr,
-		AD_ENTRY2s("script.pak", "ff52d2000eddc5c438f3c8ef50fea858", 277,
-				   "Compiler.dat", "ff30c7ea065af1e86182b428e1f2cc7b", 42650),
+		AD_ENTRY3s("script.pak", "ff52d2000eddc5c438f3c8ef50fea858", 277,
+				   "Compiler.dat", "ff30c7ea065af1e86182b428e1f2cc7b", 42650,
+				   "InsertCD.vr", "54d1ea71f27a849a4a088cf21ca64aff", 53817),
 		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"dracula2",
+		nullptr,
+		AD_ENTRY3s("script.pak", "ff52d2000eddc5c438f3c8ef50fea858", 277,
+				   "Compiler.dat", "ff30c7ea065af1e86182b428e1f2cc7b", 42650,
+				   "InsertCD.vr", "0bc196a016845e99d99a0bc634f51e9d", 53670),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"dracula2",
+		nullptr,
+		AD_ENTRY3s("script.pak", "ff52d2000eddc5c438f3c8ef50fea858", 277,
+				   "Compiler.dat", "ff30c7ea065af1e86182b428e1f2cc7b", 42650,
+				   "InsertCD.vr", "699f7519cc1caa740fe27434f6ca9766", 54394),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"dracula2",
+		nullptr,
+		AD_ENTRY3s("script.pak", "ff52d2000eddc5c438f3c8ef50fea858", 277,
+				   "Compiler.dat", "ff30c7ea065af1e86182b428e1f2cc7b", 42650,
+				   "InsertCD.vr", "21b1cb64d71010799368a8e7097c133b", 54210),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_TESTING,
+		GUIO1(GUIO_NONE)
+	},
+
+	{"dracula2",
+		nullptr,
+		AD_ENTRY3s("script.pak", "ff52d2000eddc5c438f3c8ef50fea858", 277,
+				   "Compiler.dat", "ff30c7ea065af1e86182b428e1f2cc7b", 42650,
+				   "InsertCD.vr", "2d5d17124caeebad668661abaff0c8fc", 54442),
+		Common::IT_ITA,
 		Common::kPlatformWindows,
 		ADGF_DROPPLATFORM | ADGF_TESTING,
 		GUIO1(GUIO_NONE)
