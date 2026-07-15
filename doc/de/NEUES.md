@@ -13,6 +13,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Mortadelo y Filemón: La Banda de Corvino hinzugefügt.
    - Unterstützung für Mortadelo y Filemón: Balones y Patadones hinzugefügt.
    - Unterstützung für Mortadelo y Filemón: Mamelucos a la Romana hinzugefügt.
+   - Unterstützung für Dracula: Resurrection hinzugefügt.
+   - Unterstützung für Dracula 2: The Last Sanctuary hinzugefügt.
+   - Unterstützung für Nancy Drew: The Secret of Shadow Ranch hinzugefügt.
+   - Unterstützung für Nancy Drew: Curse of Blackmoor Manor hinzugefügt.
+
 
  Allgemein:
    - Zur Verbesserung der Perforamcen wurden die Audio-Mixer und -Konverter optimiert.
