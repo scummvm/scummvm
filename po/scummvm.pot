@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2026.3.1git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-07-15 18:03+0000\n"
+"POT-Creation-Date: 2026-07-15 20:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1048,7 +1048,7 @@ msgstr ""
 msgid "Interact"
 msgstr ""
 
-#: gui/gui-manager.cpp:174 engines/metaengine.cpp:138
+#: gui/gui-manager.cpp:174 engines/metaengine.cpp:137
 #: engines/awe/metaengine.cpp:57 engines/bagel/metaengine.cpp:66
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:158 engines/fool/metaengine.cpp:159
@@ -1069,7 +1069,7 @@ msgstr ""
 msgid "Up"
 msgstr ""
 
-#: gui/gui-manager.cpp:180 engines/metaengine.cpp:144
+#: gui/gui-manager.cpp:180 engines/metaengine.cpp:143
 #: engines/awe/metaengine.cpp:58 engines/bagel/metaengine.cpp:67
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:164 engines/fool/metaengine.cpp:165
@@ -1090,7 +1090,7 @@ msgstr ""
 msgid "Down"
 msgstr ""
 
-#: gui/gui-manager.cpp:186 engines/metaengine.cpp:150
+#: gui/gui-manager.cpp:186 engines/metaengine.cpp:149
 #: engines/awe/metaengine.cpp:59 engines/bagel/metaengine.cpp:68
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:170 engines/fool/metaengine.cpp:171
@@ -1111,7 +1111,7 @@ msgstr ""
 msgid "Left"
 msgstr ""
 
-#: gui/gui-manager.cpp:192 engines/metaengine.cpp:156
+#: gui/gui-manager.cpp:192 engines/metaengine.cpp:155
 #: engines/awe/metaengine.cpp:60 engines/bagel/metaengine.cpp:69
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:176 engines/fool/metaengine.cpp:177
@@ -3625,16 +3625,16 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr ""
 
-#: engines/metaengine.cpp:40
+#: engines/metaengine.cpp:39
 msgid "Game not implemented"
 msgstr ""
 
-#: engines/metaengine.cpp:76 engines/saga/metaengine.cpp:267
+#: engines/metaengine.cpp:75 engines/saga/metaengine.cpp:267
 #: engines/scumm/metaengine.cpp:1074
 msgid "Default game keymappings"
 msgstr ""
 
-#: engines/metaengine.cpp:83 backends/platform/maemo/maemo.cpp:161
+#: engines/metaengine.cpp:82 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:158 engines/asylum/metaengine.cpp:159
 #: engines/bbvs/metaengine.cpp:99 engines/cge/metaengine.cpp:203
 #: engines/cge2/metaengine.cpp:216 engines/cine/metaengine.cpp:277
@@ -3660,7 +3660,7 @@ msgstr ""
 msgid "Left click"
 msgstr ""
 
-#: engines/metaengine.cpp:89 backends/platform/maemo/maemo.cpp:165
+#: engines/metaengine.cpp:88 backends/platform/maemo/maemo.cpp:165
 #: engines/fool/metaengine.cpp:143 engines/mtropolis/metaengine.cpp:173
 #: engines/saga/metaengine.cpp:284 engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
@@ -3668,7 +3668,7 @@ msgstr ""
 msgid "Middle click"
 msgstr ""
 
-#: engines/metaengine.cpp:94 backends/platform/maemo/maemo.cpp:169
+#: engines/metaengine.cpp:93 backends/platform/maemo/maemo.cpp:169
 #: engines/agos/metaengine.cpp:164 engines/asylum/metaengine.cpp:165
 #: engines/bbvs/metaengine.cpp:105 engines/cge/metaengine.cpp:209
 #: engines/cge2/metaengine.cpp:222 engines/cine/metaengine.cpp:283
@@ -3695,7 +3695,7 @@ msgid "Right click"
 msgstr ""
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:100 engines/agos/metaengine.cpp:178
+#: engines/metaengine.cpp:99 engines/agos/metaengine.cpp:178
 #: engines/buried/metaengine.cpp:167 engines/crab/input/input.cpp:261
 #: engines/cruise/metaengine.cpp:217 engines/dm/metaengine.cpp:126
 #: engines/grim/grim.cpp:550 engines/hdb/metaengine.cpp:258
@@ -3713,14 +3713,14 @@ msgstr ""
 msgid "Pause"
 msgstr ""
 
-#: engines/metaengine.cpp:106 engines/parallaction/metaengine.cpp:163
+#: engines/metaengine.cpp:105 engines/parallaction/metaengine.cpp:163
 #: engines/ultima/ultima8/metaengine.cpp:47
 msgid "Game menu"
 msgstr ""
 
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
-#: engines/metaengine.cpp:113 engines/access/metaengine.cpp:246
+#: engines/metaengine.cpp:112 engines/access/metaengine.cpp:246
 #: engines/composer/metaengine.cpp:126 engines/drascula/metaengine.cpp:224
 #: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:93
 #: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
@@ -3737,35 +3737,30 @@ msgstr ""
 msgid "Skip"
 msgstr ""
 
-#: engines/metaengine.cpp:120 engines/sky/metaengine.cpp:121
+#: engines/metaengine.cpp:119 engines/sky/metaengine.cpp:121
 #: engines/supernova/metaengine.cpp:315
 msgid "Skip line"
 msgstr ""
 
-#: engines/metaengine.cpp:127 engines/fool/metaengine.cpp:154
+#: engines/metaengine.cpp:126 engines/fool/metaengine.cpp:154
 msgid "Predictive input dialog"
 msgstr ""
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows confirming popup dialog prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
-#: engines/metaengine.cpp:132 engines/bladerunner/metaengine.cpp:273
+#: engines/metaengine.cpp:131 engines/bladerunner/metaengine.cpp:273
 #: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:539
 #: engines/grim/grim.cpp:639 engines/sky/metaengine.cpp:101
 #: engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr ""
 
-#: engines/metaengine.cpp:162 engines/macs2/metaengine.cpp:91
-#: engines/touche/metaengine.cpp:135 engines/twp/metaengine.cpp:176
-msgid "Show hotspots"
-msgstr ""
-
-#: engines/metaengine.cpp:440
+#: engines/metaengine.cpp:434
 msgid "Autosave on"
 msgstr ""
 
-#: engines/metaengine.cpp:440
+#: engines/metaengine.cpp:434
 msgid "Autosave off"
 msgstr ""
 
@@ -10230,6 +10225,11 @@ msgstr ""
 
 #: engines/macs2/metaengine.cpp:86
 msgid "Help / map"
+msgstr ""
+
+#: engines/macs2/metaengine.cpp:91 engines/touche/metaengine.cpp:135
+#: engines/twp/metaengine.cpp:176
+msgid "Show hotspots"
 msgstr ""
 
 #: engines/made/detection_tables.h:446 engines/made/detection_tables.h:463
