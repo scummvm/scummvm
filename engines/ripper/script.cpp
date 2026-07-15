@@ -543,6 +543,10 @@ bool ScriptManager::executeCallback(CompiledScript &script, uint32 callbackOffse
 			if (!_engine->getMedia()->play(mediaPath, allowEscSpace,
 				(int32)command.arguments[3].value, (int32)command.arguments[4].value))
 				return false;
+			// RunMediaPresentation at 0x168af restores the display context before
+			// HandleSceneEntryMediaAndSetBasenameFlag at 0x159e1 marks the media
+			// played and the command stream advances to a bounded scene preview.
+			_dialogue->rebuildPresentationBands("media-command-complete");
 			// HandleSceneEntryMediaAndSetBasenameFlag at 0x159e1 marks the
 			// presentation basename only after ExecutePresentationEntry returns.
 			const size_t extension = mediaPath.findFirstOf('.');
