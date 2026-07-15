@@ -678,7 +678,10 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 #if defined(USE_IMGUI)
 		ImGui_ImplSDL3_ProcessEvent(&ev);
 		ImGuiIO &io = ImGui::GetIO();
-		if (io.WantTextInput || io.WantCaptureMouse)
+		bool mouseEvent = ev.type == SDL_EVENT_MOUSE_MOTION || ev.type == SDL_EVENT_MOUSE_BUTTON_DOWN ||
+			ev.type == SDL_EVENT_MOUSE_BUTTON_UP || ev.type == SDL_EVENT_MOUSE_WHEEL;
+		bool textEvent = ev.type == SDL_EVENT_TEXT_INPUT;
+		if ((mouseEvent && io.WantCaptureMouse) || (textEvent && io.WantTextInput))
 			continue;
 #endif
 		if (dispatchSDLEvent(ev, event))
@@ -747,6 +750,16 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 
 		return _queuedFakeKeyUp;
 		}
+
+	case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+		if (_graphicsManager) {
+			uint32 windowID = SDL_GetWindowID(_graphicsManager->getWindow()->getSDLWindow());
+			if (windowID != ev.window.windowID)
+				return false;
+		}
+
+		event.type = Common::EVENT_QUIT;
+		return true;
 
 		case SDL_EVENT_WINDOW_EXPOSED:
 			if (_graphicsManager) {
