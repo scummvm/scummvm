@@ -4304,6 +4304,9 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 		int cw = _smush_iconsNut->getCharWidth(reticleIndex);
 		int ch = _smush_iconsNut->getCharHeight(reticleIndex);
 
+		// Enlarge the tiny third-person/cover reticles; the turret crosshair is already large.
+		const int spriteScale = (_rebelHandler == 0x26) ? 1 : 2;
+
 		const int reticleScale = isHiRes() ? 2 : getRebel2IndicatorScale(width, height);
 		int crosshairX = aimPos.x * reticleScale;
 		int crosshairY = aimPos.y * reticleScale;
@@ -4317,12 +4320,14 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 			crosshairY += _rebelViewOffsetY * reticleScale;
 		}
 
-		crosshairX += _smush_iconsNut->getCharXOffset(reticleIndex) - cw / 2;
-		crosshairY += _smush_iconsNut->getCharYOffset(reticleIndex) - ch / 2;
+		crosshairX += (_smush_iconsNut->getCharXOffset(reticleIndex) - cw / 2) * spriteScale;
+		crosshairY += (_smush_iconsNut->getCharYOffset(reticleIndex) - ch / 2) * spriteScale;
 
-		renderNutSprite(renderBitmap, pitch, width, height,
+		// reticle glyphs key only on color 0, so transparent231 is false.
+		renderNutSpriteScaledClipped(renderBitmap, pitch, width, height,
+			0, 0, width, height,
 			crosshairX, crosshairY,
-			_smush_iconsNut, reticleIndex);
+			_smush_iconsNut, reticleIndex, false, spriteScale, false);
 	}
 }
 
