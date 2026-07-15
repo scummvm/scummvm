@@ -429,7 +429,7 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::EN_USA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
 	{"amerzone",
@@ -440,7 +440,7 @@ const ADGameDescription gameDescriptions[] = {
 		),
 		Common::EN_USA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_CD,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE | ADGF_CD,
 		GUIO1(GUIO_NONE)
 	},
 
