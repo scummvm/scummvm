@@ -310,8 +310,14 @@ void WacManager::drawDatabase() const {
 void WacManager::dispatchDatabaseEntry(const DatabaseEntry &entry) {
 	if (entry.originalIndex == 1) {
 		drawFrontEnd();
-		BrokenMugPuzzle puzzle(_engine);
-		const BrokenMugPuzzle::Result result = puzzle.run();
+		BrokenMugPuzzle::Result result;
+		if (_engine->getScripts()->isMilestoneFlagSet(0x48)) {
+			result = BrokenMugPuzzle::playCompletionMedia(_engine) ?
+				BrokenMugPuzzle::kSolved : BrokenMugPuzzle::kLoadFailed;
+		} else {
+			BrokenMugPuzzle puzzle(_engine);
+			result = puzzle.run();
+		}
 		debugC(1, kDebugWac,
 			"Ripper: WAC database entry=1 label='%s' RunWacMugSelectionScene result=%d",
 			entry.label.c_str(), result);
@@ -320,9 +326,13 @@ void WacManager::dispatchDatabaseEntry(const DatabaseEntry &entry) {
 		return;
 	}
 	if (entry.originalIndex == 2) {
+		drawFrontEnd();
+		const bool played = BrokenMugPuzzle::playCompletionMedia(_engine);
 		debugC(1, kDebugWac,
-			"Ripper: WAC database entry=2 label='%s' routes to PlayMugSelectionCompletionMedia stub",
-			entry.label.c_str());
+			"Ripper: WAC database entry=2 label='%s' PlayMugSelectionCompletionMedia success=%d",
+			entry.label.c_str(), played);
+		drawFrontEnd();
+		drawDatabase();
 		return;
 	}
 	debugC(1, kDebugWac,
