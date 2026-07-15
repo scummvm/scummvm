@@ -48,6 +48,15 @@ namespace {
 
 static const int kScenePresentationTop = 50;
 
+struct SavedDisplayContext {
+	Common::Array<byte> pixels;
+	Common::Array<byte> palette;
+	uint width;
+	uint height;
+
+	SavedDisplayContext() : width(0), height(0) {}
+};
+
 struct IavfDescriptor {
 	uint16 opcode;
 	uint32 arg0;
@@ -86,6 +95,43 @@ struct IavfMovie {
 
 static bool readExact(Common::SeekableReadStream &stream, void *data, uint32 size) {
 	return stream.read(data, size) == size;
+}
+
+static bool captureDisplayContext(SavedDisplayContext &context) {
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1) {
+		if (screen)
+			g_system->unlockScreen();
+		return false;
+	}
+
+	context.width = screen->w;
+	context.height = screen->h;
+	context.pixels.resize(context.width * context.height);
+	for (uint y = 0; y < context.height; ++y)
+		memcpy(context.pixels.data() + y * context.width, screen->getBasePtr(0, y), context.width);
+	g_system->unlockScreen();
+
+	context.palette.resize(256 * 3);
+	g_system->getPaletteManager()->grabPalette(context.palette.data(), 0, 256);
+	return true;
+}
+
+static bool restoreDisplayContext(const SavedDisplayContext &context) {
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen || screen->format.bytesPerPixel != 1 ||
+		(uint)screen->w != context.width || (uint)screen->h != context.height) {
+		if (screen)
+			g_system->unlockScreen();
+		return false;
+	}
+
+	for (uint y = 0; y < context.height; ++y)
+		memcpy(screen->getBasePtr(0, y), context.pixels.data() + y * context.width, context.width);
+	g_system->unlockScreen();
+	g_system->getPaletteManager()->setPalette(context.palette.data(), 0, 256);
+	g_system->updateScreen();
+	return true;
 }
 
 static bool readBlob(Common::SeekableReadStream &stream, uint32 size, Common::Array<byte> &data) {
@@ -612,15 +658,35 @@ bool MediaPlayer::play(const Common::String &path, bool allowEscSpace, int x, in
 	}
 	file->seek(0);
 
+	// RunMediaPresentation at 0x168af preserves the current logical display
+	// page and palette while packetized IAVF media owns the physical presentation.
+	const bool isSmacker = memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0;
+	const bool isIavf = memcmp(magic, "IAVF2.00", 8) == 0;
+	SavedDisplayContext displayContext;
+	const bool displayContextCaptured = isIavf && captureDisplayContext(displayContext);
+	if (isIavf) {
+		debugC(2, kDebugVideo,
+			"Ripper: captured script media display context media='%s' valid=%d size=%ux%u",
+			path.c_str(), displayContextCaptured, displayContext.width, displayContext.height);
+	}
+
 	bool result = false;
-	if (memcmp(magic, "SMK2", 4) == 0 || memcmp(magic, "SMK4", 4) == 0) {
+	if (isSmacker) {
 		result = playSmacker(file, path, allowEscSpace, x, y);
-	} else if (memcmp(magic, "IAVF2.00", 8) == 0) {
+	} else if (isIavf) {
 		result = playIavf(*file, path, allowEscSpace);
 		delete file;
 	} else {
 		warning("Ripper: unsupported media magic for '%s'", path.c_str());
 		delete file;
+	}
+	if (displayContextCaptured && !_engine->shouldQuit()) {
+		const bool restored = restoreDisplayContext(displayContext);
+		debugC(restored ? 2 : 1, kDebugVideo,
+			"Ripper: restored script media display context media='%s' success=%d size=%ux%u",
+			path.c_str(), restored, displayContext.width, displayContext.height);
+		if (!restored)
+			result = false;
 	}
 
 	_input->drainKeys();
