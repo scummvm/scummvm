@@ -13,7 +13,7 @@
 namespace Ripper {
 
 bool DialogueManager::initialize(ResourceManager &resources) {
-	return resources.loadInterfaceBitmapFont("7pt_font.fnt", _font);
+	return resources.loadInterfaceBitmapFont("small.fnt", _font);
 }
 
 void DialogueManager::draw() const {
@@ -35,18 +35,25 @@ void DialogueManager::draw() const {
 		for (int yy = row; yy < row + rowHeight && yy < screen->h; ++yy)
 			memset(screen->getBasePtr(150, yy), selected ? 253 : 0, 360);
 		int x = 166;
+		const int textY = row + (rowHeight - _font.lineHeight) / 2;
 		for (uint c = 0; c < _choices[i].text.size() && x < 475; ++c) {
 			const byte ch = (byte)_choices[i].text[c];
+			if (ch == ' ') {
+				x += _font.spaceWidth;
+				continue;
+			}
 			if (ch < _font.firstCharacter || ch >= _font.firstCharacter + _font.glyphs.size())
 				continue;
 			const BitmapFontGlyph &glyph = _font.glyphs[ch - _font.firstCharacter];
 			for (int gy = 0; gy < glyph.height; ++gy) {
 				for (int gx = 0; gx < glyph.width; ++gx) {
-					if (_font.pixels[glyph.pixelOffset + gy * glyph.width + gx])
-						*(byte *)screen->getBasePtr(x + gx, row + gy + 2) = selected ? 0 : 4;
+					const byte pixel = _font.pixels[glyph.pixelOffset + gy * glyph.width + gx];
+					if (pixel != _font.transparentColor)
+						*(byte *)screen->getBasePtr(x + glyph.xOffset + gx,
+							textY + glyph.yOffset + gy) = selected ? 0 : 4;
 				}
 			}
-			x += glyph.width + _font.characterSpacing;
+			x += glyph.xOffset + glyph.width + _font.characterSpacing;
 		}
 	}
 	g_system->unlockScreen();

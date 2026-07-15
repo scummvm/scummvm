@@ -151,6 +151,12 @@
   been marked played. Opcode `0x17` presents the remaining records through
   chooser control `0x4e2` and returns control code `-2` with the selected
   response frame.
+- `InitializeSharedPresentationTemplates` at `0x1196f` loads `small.fnt` into
+  chooser template `0x8a392`; the primary scene-entry chooser template at
+  `0x8a2de` reuses that NF2T descriptor. Dialogue rows therefore use the
+  `small.fnt` space width, character spacing, per-glyph offsets, transparency,
+  and line height. `7pt_font.fnt` belongs to a separate interface template and
+  is not the dialogue-choice font.
 - Opcode `0x0a` maps to `HandleSceneEntryStepPromptCondition` at `0x149b4`.
   In the dialogue entry callback it branches around the exhausted-dialogue
   media path while at least one choice record exists. The frame's persistent
