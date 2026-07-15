@@ -496,6 +496,7 @@ public:
 	int _traceLoad; // internal Director verbosity level
 	bool _updateMovieEnabled;
 	bool _romanLingo;
+	Common::String _soundDevice;
 
 	Datum getTheEntity(int entity, Datum &id, int field);
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);

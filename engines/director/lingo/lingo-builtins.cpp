@@ -376,7 +376,6 @@ static const BuiltinProto builtins[] = {
    pathName				//	D5
    preloadMode			//				D8
    selectiomn			//	D5
-   soundDevice			//			D7
    version				//	D5
 
    Movie properties:
