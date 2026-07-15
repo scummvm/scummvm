@@ -47,6 +47,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		1,
+		0,
 		0
 	},
 
@@ -65,7 +66,8 @@ const ComfyGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		3,
-		0
+		0,
+		0x100
 	},
 
 	{
@@ -81,7 +83,8 @@ const ComfyGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		2,
-		COMFY_SCRIPT_OPCODE_31
+		COMFY_SCRIPT_OPCODE_31,
+		0x100
 	},
 
 	{
@@ -96,7 +99,8 @@ const ComfyGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		2,
-		COMFY_SCRIPT_OPCODE_31 | COMFY_SCRIPT_OPCODE_33
+		COMFY_SCRIPT_OPCODE_31 | COMFY_SCRIPT_OPCODE_33,
+		0x100
 	},
 
 	{
@@ -111,6 +115,7 @@ const ComfyGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		1,
+		0,
 		0
 	},
 
@@ -126,7 +131,8 @@ const ComfyGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		2,
-		0
+		0,
+		0x40
 	},
 
 	{
@@ -142,7 +148,8 @@ const ComfyGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		3,
-		0
+		0,
+		0x100
 	},
 
 	{
@@ -158,7 +165,8 @@ const ComfyGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		3,
-		0
+		0,
+		0x100
 	},
 
 	{
@@ -174,7 +182,8 @@ const ComfyGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_FORCE_LANGUAGE_SETUP, GAMEOPTION_SKIP_INTRO)
 		},
 		3,
-		0
+		0,
+		0x100
 	},
 
 	{
@@ -190,10 +199,11 @@ const ComfyGameDescription gameDescriptions[] = {
 		GUIO1(GAMEOPTION_FORCE_LANGUAGE_SETUP)
 		},
 		2,
-		COMFY_SCRIPT_OPCODE_31 | COMFY_SCRIPT_OPCODE_32
+		COMFY_SCRIPT_OPCODE_31 | COMFY_SCRIPT_OPCODE_32,
+		0x40
 	},
 
-	{ AD_TABLE_END_MARKER, 0, 0 }
+	{ AD_TABLE_END_MARKER, 0, 0, 0 }
 };
 
 } // End of namespace Comfy

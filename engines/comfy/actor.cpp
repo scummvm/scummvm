@@ -485,8 +485,8 @@ void ComfyEngine::backgroundRestoreDirtyRects() {
 	if (_backgroundFramebuf.empty() || !_framebufPtr)
 		return;
 
-	for (uint i = 0; i < _resolutionChangeCount; i++) {
-		ComfyRect &rect = _resolutionChanges[i];
+	for (uint i = 0; i < _dirtyRectCount; i++) {
+		ComfyRect &rect = _dirtyRects[i];
 		int16 width = rect.right - rect.left;
 		int16 height = rect.bottom - rect.top;
 		if (width <= 0 || height <= 0)
@@ -1234,7 +1234,7 @@ uint16 ComfyEngine::scriptEvalKeyMask(uint32 pc, uint16 mode, ComfyRect &maskRec
 			_keymaskSpriteWord = spriteId;
 		}
 
-		ComfyRect *rect = bitIndex < COMFY_RESOLUTION_CHANGE_CAPACITY ? &rects[bitIndex] : nullptr;
+		ComfyRect *rect = bitIndex < COMFY_KEYMASK_RECT_CAPACITY ? &rects[bitIndex] : nullptr;
 		if (rect) {
 			rect->left = 0;
 			rect->top = 0;
@@ -1294,8 +1294,8 @@ void ComfyEngine::actorEvalFrameSelection(uint16 actorIndex, int16 x, int16 y) {
 	} else if (selector & 0xFF000000) {
 		uint16 last = scriptEvalKeyMask(selector & 0x00FFFFFF, 0, rect, _keymaskInvalidationRects,
 			rect.left, rect.top);
-		if (last != 0xFFFF && last >= COMFY_RESOLUTION_CHANGE_CAPACITY)
-			last = COMFY_RESOLUTION_CHANGE_CAPACITY - 1;
+		if (last != 0xFFFF && last >= COMFY_KEYMASK_RECT_CAPACITY)
+			last = COMFY_KEYMASK_RECT_CAPACITY - 1;
 
 		if (last != 0xFFFF) {
 			for (uint i = 0; i <= last; i++) {
@@ -1494,8 +1494,8 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			_keymaskCurrentRecord.area = 0;
 			currentLastRect = scriptEvalKeyMask(selector & 0x00FFFFFF, 1,
 				_keymaskCurrentRecord, _keymaskRects, drawX, drawY);
-			if (currentLastRect != 0xFFFF && currentLastRect >= COMFY_RESOLUTION_CHANGE_CAPACITY)
-				currentLastRect = COMFY_RESOLUTION_CHANGE_CAPACITY - 1;
+			if (currentLastRect != 0xFFFF && currentLastRect >= COMFY_KEYMASK_RECT_CAPACITY)
+				currentLastRect = COMFY_KEYMASK_RECT_CAPACITY - 1;
 
 			newRect = _keymaskCurrentRecord;
 		} else if (selector) {
@@ -1514,8 +1514,8 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			ComfyRect oldMaskRecord = oldRect;
 			uint16 oldLastRect = scriptEvalKeyMask(oldSelector & 0x00FFFFFF, 0,
 				oldMaskRecord, _keymaskOldRects, oldRect.left, oldRect.top);
-			if (oldLastRect != 0xFFFF && oldLastRect >= COMFY_RESOLUTION_CHANGE_CAPACITY)
-				oldLastRect = COMFY_RESOLUTION_CHANGE_CAPACITY - 1;
+			if (oldLastRect != 0xFFFF && oldLastRect >= COMFY_KEYMASK_RECT_CAPACITY)
+				oldLastRect = COMFY_KEYMASK_RECT_CAPACITY - 1;
 
 			if (oldLastRect != 0xFFFF) {
 				for (uint i = 0; i <= oldLastRect; i++) {
@@ -1563,8 +1563,8 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 					ComfyRect oldMaskRecord = oldRect;
 					uint16 oldLastRect = scriptEvalKeyMask(oldSelector & 0x00FFFFFF, 0,
 						oldMaskRecord, _keymaskOldRects, oldRect.left, oldRect.top);
-					if (oldLastRect != 0xFFFF && oldLastRect >= COMFY_RESOLUTION_CHANGE_CAPACITY)
-						oldLastRect = COMFY_RESOLUTION_CHANGE_CAPACITY - 1;
+					if (oldLastRect != 0xFFFF && oldLastRect >= COMFY_KEYMASK_RECT_CAPACITY)
+						oldLastRect = COMFY_KEYMASK_RECT_CAPACITY - 1;
 
 					if (oldLastRect != 0xFFFF) {
 						for (uint i = 0; i <= oldLastRect; i++)
@@ -1607,8 +1607,8 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			_keymaskCurrentRecord.bottom = 0;
 			_keymaskCurrentRecord.area = 0;
 			scriptedLastRect = scriptEvalKeyMask(pc, 1, _keymaskCurrentRecord, _keymaskRects, drawX, drawY);
-			if (scriptedLastRect != 0xFFFF && scriptedLastRect >= COMFY_RESOLUTION_CHANGE_CAPACITY)
-				scriptedLastRect = COMFY_RESOLUTION_CHANGE_CAPACITY - 1;
+			if (scriptedLastRect != 0xFFFF && scriptedLastRect >= COMFY_KEYMASK_RECT_CAPACITY)
+				scriptedLastRect = COMFY_KEYMASK_RECT_CAPACITY - 1;
 
 			if (_usesAnimFile && visible && scriptedLastRect != 0xFFFF) {
 				for (uint i = 0; i <= scriptedLastRect; i++) {
@@ -1712,8 +1712,8 @@ void ComfyEngine::actorDrawInternal(uint16 actorIndex, int16 x, int16 y, bool vi
 			ComfyRect maskRecord = oldRect;
 			oldScriptedLastRect = scriptEvalKeyMask(oldSelector & 0x00FFFFFF, 0, maskRecord,
 				_keymaskOldRects, oldRect.left, oldRect.top);
-			if (oldScriptedLastRect != 0xFFFF && oldScriptedLastRect >= COMFY_RESOLUTION_CHANGE_CAPACITY)
-				oldScriptedLastRect = COMFY_RESOLUTION_CHANGE_CAPACITY - 1;
+			if (oldScriptedLastRect != 0xFFFF && oldScriptedLastRect >= COMFY_KEYMASK_RECT_CAPACITY)
+				oldScriptedLastRect = COMFY_KEYMASK_RECT_CAPACITY - 1;
 		}
 
 		if (changed) {

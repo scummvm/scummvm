@@ -49,7 +49,9 @@ class QueuingAudioStream;
 #define COMFY_PANTHER_SCREEN_HEIGHT 480
 #define COMFY_PIT_INPUT_FREQUENCY 1193182
 #define COMFY_PIT_TIMER_DIVISOR 0x2E9B
-#define COMFY_RESOLUTION_CHANGE_CAPACITY 100
+#define COMFY_DIRTY_RECT_CAPACITY_V1 100
+#define COMFY_DIRTY_RECT_CAPACITY 200
+#define COMFY_KEYMASK_RECT_CAPACITY 100
 #define COMFY_DRAW_COMMAND_CAPACITY 200
 #define COMFY_PALETTE_BYTES 0x300
 #define COMFY_INPUT_QUEUE_CAPACITY 20
@@ -448,8 +450,8 @@ private:
 	uint16 _renderHeight = 0;
 	int16 _viewOffsetX = 0;
 	int16 _viewOffsetY = 0;
-	ComfyRect _resolutionChanges[COMFY_RESOLUTION_CHANGE_CAPACITY];
-	uint16 _resolutionChangeCount = 0;
+	ComfyRect _dirtyRects[COMFY_DIRTY_RECT_CAPACITY];
+	uint16 _dirtyRectCount = 0;
 	uint16 _renderDirtyCount = 0;
 	bool _renderInterleaved = false;
 	Common::SeekableReadStream *_colorDatStream = nullptr;
@@ -553,9 +555,9 @@ private:
 	int16 _keymaskX = 0;
 	int16 _keymaskY = 0;
 	ComfyRect _keymaskCurrentRecord;
-	ComfyRect _keymaskRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
-	ComfyRect _keymaskOldRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
-	ComfyRect _keymaskInvalidationRects[COMFY_RESOLUTION_CHANGE_CAPACITY];
+	ComfyRect _keymaskRects[COMFY_KEYMASK_RECT_CAPACITY];
+	ComfyRect _keymaskOldRects[COMFY_KEYMASK_RECT_CAPACITY];
+	ComfyRect _keymaskInvalidationRects[COMFY_KEYMASK_RECT_CAPACITY];
 	ComfyRect _animFrameDirtyRects[COMFY_ANIM_DIRTY_RECT_CAPACITY];
 	uint16 _animFrameDirtyRectCount = 0;
 	DrawCommand _drawCommands[COMFY_DRAW_COMMAND_CAPACITY];
@@ -748,6 +750,7 @@ private:
 	void videoShutdown(byte restorePalette);
 	void videoSetResolution();
 	void videoFindBestMode(ComfyRect record);
+	void renderAddDirtyRectMerged(ComfyRect record);
 	void videoPresentFrame();
 	void renderSetDirty();
 	void renderFlushDirty();
