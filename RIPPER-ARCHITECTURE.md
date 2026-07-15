@@ -183,6 +183,13 @@
   at `0x143af` services that callback during interaction polling. Consequently,
   `VM0_1_P3.AVI` is reached only when every response-frame choice is already
   marked played.
+- Opcode `0x1a` maps to `HandleSceneEntryMediaAndSetBasenameFlag` at `0x159e1`.
+  After `ExecutePresentationEntry` at `0x1652a` returns, the handler removes the
+  media extension and sets that basename in the shared played-entry catalog.
+  Opcode `0x09`, handled by `HandleSceneEntryPromptScenePlayedCondition` at
+  `0x1488f`, can therefore skip a completed lead-in such as `VM0_1_P2` when a
+  dialogue response returns to the same frame, while the response-frame flags
+  continue to control which opcode `0x16` choices remain available.
 - `ExecuteSceneFrameAndInteractions` at `0x13277` runs frame callbacks,
   presentations, chooser selection, and interaction callbacks.
 - `ExecuteSceneFrameAndInteractions` constructs the frame's hotspot controls
