@@ -32,6 +32,7 @@
  * USED IN:
  * Loewenzahn 2 / 3 / 4
  * Webmaster
+ * Janosch Panama - Oh wie schön ist Panama
  *
  **************************************************/
 

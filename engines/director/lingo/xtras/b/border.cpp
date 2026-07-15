@@ -29,6 +29,7 @@
  *
  * USED IN:
  * Physikus (l'Espresso, Italian; Ruske & Pühretmaier)
+ * Bioscopia / Biolab
  *
  **************************************************/
 
