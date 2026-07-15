@@ -25,6 +25,7 @@
 #include "mediastation/mediascript/function.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/mediastation.h"
+#include "mediastation/minigames/maze.h"
 
 namespace MediaStation {
 
@@ -97,6 +98,8 @@ FunctionManager::~FunctionManager() {
 		delete it->_value;
 	}
 	_functions.clear();
+
+	delete _maze;
 }
 
 bool FunctionManager::attemptToReadFromStream(Chunk &chunk, uint sectionType) {
@@ -616,24 +619,20 @@ void FunctionManager::script_DebugPrint(Common::Array<ScriptValue> &args, Script
 	debug("%s", output.c_str());
 }
 
-void FunctionManager::script_MazeGenerate(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
-	warning("STUB: %s", __func__);
-}
-
-void FunctionManager::script_MazeApplyMoveMask(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
-	warning("STUB: %s", __func__);
-}
-
-void FunctionManager::script_MazeSolve(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
-	warning("STUB: %s", __func__);
-}
-
 void FunctionManager::script_BeginTimedInterval(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
-	warning("STUB: %s", __func__);
+	_timedIntervalStartInMs = g_engine->getTotalPlayTime();
 }
 
 void FunctionManager::script_EndTimedInterval(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {
-	warning("STUB: %s", __func__);
+	uint32 now = g_engine->getTotalPlayTime();
+	if (now < _timedIntervalStartInMs) {
+		warning("%s: Timed interval ended before it started", __func__);
+		return;
+	}
+
+	const uint32 millisecondsElapsed = now - _timedIntervalStartInMs;
+	const double secondsElapsed = millisecondsElapsed / 1000.0;
+	returnValue.setToFloat(secondsElapsed);
 }
 
 void FunctionManager::script_Checkers(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {

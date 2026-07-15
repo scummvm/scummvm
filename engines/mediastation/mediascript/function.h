@@ -54,6 +54,10 @@ private:
 	uint32 _bytecodeSize = 0;
 };
 
+namespace MazeMinigame {
+	class Maze;
+} // End of namespace MazeMinigame
+
 class FunctionManager : public ParameterClient {
 friend class Debugger;
 
@@ -66,10 +70,13 @@ public:
 	ScriptFunction *getFunctionById(uint functionId);
 	void deleteFunctionsForContext(uint contextId);
 
+	MazeMinigame::Maze *_maze = nullptr;
+
 	uint _scriptBlockCallDepth = 0;
 
 private:
 	Common::HashMap<uint, ScriptFunction *> _functions;
+	uint32 _timedIntervalStartInMs = 0.0;
 
 	void script_GetPlatform(Common::Array<ScriptValue> &args, ScriptValue &returnValue);
 	void script_Random(Common::Array<ScriptValue> &args, ScriptValue &returnValue);

@@ -92,7 +92,7 @@ ScriptValue ImageActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptV
 }
 
 void ImageActor::draw(DisplayContext &displayContext) {
-	if (_isVisible) {
+	if (_asset != nullptr && _asset->bitmap != nullptr) {
 		Common::Point origin = getBbox().origin();
 		g_engine->getDisplayManager()->imageBlit(origin, _asset->bitmap, _dissolveFactor, &displayContext);
 	}

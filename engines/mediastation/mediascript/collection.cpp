@@ -80,11 +80,13 @@ ScriptValue Collection::callMethod(BuiltInMethod methodId, Common::Array<ScriptV
 
 	case kGetAtMethod: {
 		ARGCOUNTCHECK(1);
-		uint index = static_cast<uint>(args[0].asFloat());
-		if (index < size()) {
+		// Index can be -1, so make sure we check for that.
+		int index = static_cast<uint>(args[0].asFloat());
+		if (index >= 0 && (uint)index < size()) {
 			returnValue = operator[](index);
 		} else {
 			warning("%s: Index %d out of bounds %d", __func__, index, size());
+			returnValue.setToFloat(0.0);
 		}
 		break;
 	}

@@ -41,6 +41,7 @@ MODULE_OBJS = \
 	minigames/dotgame.o \
 	minigames/sophie.o \
 	minigames/stalkingzazu.o \
+	minigames/maze.o \
 	profile.o
 
 # This module can be built as a plugin
