@@ -57,6 +57,18 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+    {"necrono",
+		nullptr,
+		AD_ENTRY4s("script.pak", "da42a18dd02fc01f116228d5c219b2fd", 215,
+				   "textes.txt", "c3af2d55b4fa55d200b047b6ec0d9f73", 5507,
+				   "cd1/Data/Script1.pak", "626cac1db5160142313fdcf483fda2bf", 57410,
+				   "cd2/Data/Script3.pak", "4252ea1b2458264e8d2a3afb67242820", 64012),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_CD,
+		GUIO1(GUIO_NONE)
+	},
+
 	{"necrono",
 		nullptr,
 		AD_ENTRY2s("script.pak", "86294b9c445c3e06e24269c84036a207", 223,
