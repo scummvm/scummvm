@@ -868,8 +868,8 @@ void CellPhonePopup::openContentView(const Common::String &key, const UICL::SrcD
 
 void CellPhonePopup::openBrowserHome() {
 	// The Web button opens the browser home page (UIBW page 0 — the "River
-	// Heights Wireless" homepage), matching the original's FUN_004dae28(0).
-	// Its in-page hyperlinks then navigate to further pages / the search list.
+	// Heights Wireless" homepage). Its in-page hyperlinks then navigate to
+	// further pages / the search list.
 	const UIBW *browserData = GetEngineData(UIBW);
 	if (browserData && !browserData->pages.empty()) {
 		openContentView(browserData->pages[0].imageName.toString(), _uiclData->browserHeading);

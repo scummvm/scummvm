@@ -159,8 +159,7 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	s.syncAsUint16LE(captionAutoClearTime, kGameTypeNancy3);
 
 	readFilename(s, inventoryBoxIconsImageName);
-	// Nancy13 split the cursor sheet into two images and moved both cursor
-	// image names into the CURS chunk, so the inventory cursors name is no
+	// Nancy13 moved the inventory cursors name into the CURS chunk, so it is no
 	// longer stored here.
 	readFilename(s, inventoryCursorsImageName, kGameTypeVampire, kGameTypeNancy12);
 
@@ -1087,9 +1086,8 @@ UIIV::UIIV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	readRectArray(*chunkStream, slotSrcRects, 16);
 	readRectArray(*chunkStream, slotDestRects, 16);
 
-	// Nancy13 inserted a 16-byte Rect here (before the original 2-byte field):
-	// the clickable bounding region of the inventory item slots, used as a
-	// PtInRect gate before hit-testing the individual slots.
+	// Nancy13 inserted a Rect here (the clickable region of the item slots)
+	// before the original 2-byte field.
 	if (g_nancy->getGameType() >= kGameTypeNancy13)
 		readRect(*chunkStream, slotsHotspot);
 

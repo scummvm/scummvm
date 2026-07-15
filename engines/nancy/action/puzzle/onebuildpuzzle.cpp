@@ -847,8 +847,7 @@ void OneBuildPuzzle::startFinalAnimation() {
 
 void OneBuildPuzzle::stepFinalAnimation() {
 	// animLayout = {cols, framesPerStep, baseX, baseY, spacing, totalRows}.
-	// Matches `case 3` in OneBuildPuzzle @ 0x0047fb75: counter wraps to next
-	// row when (counter / framesPerStep) >= cols.
+	// Counter wraps to the next row when (counter / framesPerStep) >= cols.
 	const int16 cols          = _animLayout[0];
 	const int16 framesPerStep = _animLayout[1] ? _animLayout[1] : 1;
 	const int16 baseX         = _animLayout[2];
