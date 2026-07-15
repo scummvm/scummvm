@@ -120,7 +120,7 @@ static void keyboardDrawToggle(const char *label, uint bit, ImVec2 size, ImU32 o
 }
 
 void drawComfyKeyboardUi(bool actorDebugEnabled) {
-	if (!_state->_engine->_keyboardUiInitialized)
+	if (!_state->_engine || !_state->_engine->_keyboardUiInitialized)
 		return;
 
 	if (!_state->_visible) {
@@ -159,7 +159,8 @@ void drawComfyKeyboardUi(bool actorDebugEnabled) {
 		ImGui::SetCursorPos(ImVec2(24, 46));
 		keyboardDrawToggle("HANDSET", COMFY_KEYBOARD_HANDSET_CONTACT, ImVec2(92, 258), handset, keyboardColor(248, 70, 54));
 
-		static const char *phoneLabels[] = {"SNAILY", "BUDDY", "JUMPY", "FEELY", "COMFY"};
+		
+		const char *phoneLabels[] = {"SNAILY", "BUDDY", "JUMPY", "FEELY", "COMFY"};
 		static const uint phoneBits[] = {4, 16, 10, 22, 20};
 
 		for (uint i = 0; i < ARRAYSIZE(phoneBits); i++) {

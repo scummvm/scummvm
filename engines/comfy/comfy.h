@@ -116,6 +116,7 @@ typedef struct ImGuiState {
 	uint16 _actorDebugLastScene = 0xFFFF;
 	uint32 _actorDebugLastSceneGeneration = 0xFFFFFFFF;
 	bool _visible = true;
+	bool _closing = false;
 	bool _actorDebugVisible = false;
 	bool _actorDebugTreeView = false;
 } ImGuiState;
