@@ -1588,6 +1588,8 @@ int InsaneRebel2::processOptionsInput() {
 					break;
 				case 5:
 					_optRapidFire = !_optRapidFire;
+					ConfMan.setBool("rebel2_rapid_fire", _optRapidFire);
+					ConfMan.flushToDisk();
 					break;
 				case 6:
 					break;

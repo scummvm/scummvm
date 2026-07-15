@@ -1359,6 +1359,8 @@ void InsaneRebel1::runOptionsMenu() {
 				break;
 			case 6:
 				_optRapidFire = !_optRapidFire;
+				ConfMan.setBool("rebel1_rapid_fire", _optRapidFire);
+				ConfMan.flushToDisk();
 				break;
 			case 7:
 				break;

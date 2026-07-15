@@ -810,6 +810,9 @@ public:
 	bool _shipFiring;
 	uint32 _prevMouseButtons;
 
+	// Rapid-fire cadence counter, re-anchored on each press.
+	int16 _rapidFireCounter;
+
 	int16 _shipDirectionIndex;
 	int16 _shipDirectionH;
 	int16 _shipDirectionV;

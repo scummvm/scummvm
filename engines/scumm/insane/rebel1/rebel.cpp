@@ -351,7 +351,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 		!_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSpeechSoundType);
 	_optTextEnabled = ConfMan.getBool("subtitles");
 	_optControlsYFlip = false;
-	_optRapidFire = true;
+	_optRapidFire = ConfMan.hasKey("rebel1_rapid_fire") ? ConfMan.getBool("rebel1_rapid_fire") : true;
 	_optVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) * 127 / Audio::Mixer::kMaxChannelVolume;
 
 	const struct { const char *name; int32 score; byte difficulty; } kDefaultScores[kHighScoreCount] = {
@@ -380,7 +380,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_playerFired = false;
 	_playerSecondaryHeld = false;
 	_fireCooldown = 0;
-	_rapidFirePhase = 0;
+	_rapidFireCounter = 0;
 	_gameplayFlags75fe = 0;
 	_gameplayFlags75ff = 0;
 	memset(_shotSlots, 0, sizeof(_shotSlots));

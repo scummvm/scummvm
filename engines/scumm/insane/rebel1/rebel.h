@@ -587,7 +587,8 @@ private:
 	// Secondary held button used by L9 on-foot controls.
 	bool _playerSecondaryHeld;
 	int16 _fireCooldown;
-	int16 _rapidFirePhase;
+	// Rapid-fire cadence counter, re-anchored on each press.
+	int16 _rapidFireCounter;
 	uint16 _gameplayFlags75fe;
 	uint16 _gameplayFlags75ff;
 

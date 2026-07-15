@@ -2005,7 +2005,7 @@ void InsaneRebel1::handleGameOpcode5EReset(uint32 param1) {
 	_playerFired = false;
 	_playerSecondaryHeld = false;
 	_fireCooldown = 0;
-	_rapidFirePhase = 0;
+	_rapidFireCounter = 0;
 	memset(_shotSlots, 0, sizeof(_shotSlots));
 	_shotAlternator = 0;
 	_shotSideToggle = false;
@@ -2344,20 +2344,23 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b,
 
 // Called once per frame during interactive rendering.
 void InsaneRebel1::processShot() {
+	// Rapid fire (not in the DOS original, ported from RA2) repeats held
+	// shots every 5th frame from the press.
+	const bool freshPress = _playerFired && _fireCooldown == 0;
+	if (freshPress)
+		_rapidFireCounter = 0;
+
+	bool rapidFireShot = false;
 	if (_optRapidFire) {
-		// fires immediately, while held repeats are gated to phase 0.
-		_rapidFirePhase++;
-		if (_rapidFirePhase > 2)
-			_rapidFirePhase = 0;
+		rapidFireShot = (_rapidFireCounter % 5 == 0) && _playerFired;
+		_rapidFireCounter++;
 	}
 
 	if (!_playerFired)
 		return;
 
-	if (_fireCooldown != 0) {
-		if (!_optRapidFire || _rapidFirePhase != 0)
-			return;
-	}
+	if (_fireCooldown != 0 && !rapidFireShot)
+		return;
 
 	// On-foot mode: only spawn when in aiming stance (dirIndex 11-19) or flags force it.
 	const uint16 effectiveOpcode = getEffectiveGameOpcode();
