@@ -241,6 +241,7 @@ private:
 	void drawAudioSubtitles();
 
 	void processGenericEvents(const Common::Event &event);
+	void pauseEngineIntern(bool pause) override;
 
 private:
 	bool _hasFocus = true;

@@ -1692,6 +1692,16 @@ void PhoenixVREngine::processGenericEvents(const Common::Event &event) {
 	}
 }
 
+void PhoenixVREngine::pauseEngineIntern(bool pause) {
+	// this is called when main menu appears on the screen
+	Engine::pauseEngineIntern(pause);
+	if (pause) {
+		_system->lockMouse(false);
+	} else {
+		_system->lockMouse(_vr.isVR());
+	}
+}
+
 bool PhoenixVREngine::testSaveSlot(int idx) const {
 	return _saveFileMan->exists(getSaveStateName(idx));
 }
