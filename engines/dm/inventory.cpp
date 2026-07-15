@@ -124,6 +124,10 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 			return;
 		}
 	}
+
+	if (championIndex == kDMChampionCloseInventory)
+		return;
+
 	display._useByteBoxCoordinates = false;
 	_inventoryChampionOrdinal = _vm->indexToOrdinal(championIndex);
 	if (!inventoryChampionOrdinal)
