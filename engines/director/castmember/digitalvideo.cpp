@@ -561,8 +561,13 @@ uint DigitalVideoCastMember::getMovieTotalTime() {
 }
 
 void DigitalVideoCastMember::seekMovie(int stamp) {
-	if (!_video)
+	if (!_channel)
 		return;
+
+	if (!_video || !_video->isVideoLoaded()) {
+		if (!loadVideoFromCast())
+			return;
+	}
 
 	_channel->_startTime = stamp;
 
@@ -578,8 +583,13 @@ void DigitalVideoCastMember::seekMovie(int stamp) {
 }
 
 void DigitalVideoCastMember::setStopTime(int stamp) {
-	if (!_video)
+	if (!_channel)
 		return;
+
+	if (!_video || !_video->isVideoLoaded()) {
+		if (!loadVideoFromCast())
+			return;
+	}
 
 	_channel->_stopTime = stamp;
 
@@ -589,8 +599,13 @@ void DigitalVideoCastMember::setStopTime(int stamp) {
 }
 
 void DigitalVideoCastMember::setMovieRate(double rate) {
-	if (!_video)
+	if (!_channel)
 		return;
+
+	if (!_video || !_video->isVideoLoaded()) {
+		if (!loadVideoFromCast())
+			return;
+	}
 
 	_channel->_movieRate = rate;
 
