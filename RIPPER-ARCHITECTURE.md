@@ -311,6 +311,13 @@
 - Opcode `0x1a` enables the presentation callback when its third argument is
   zero. In that mode only keyboard Escape stops the whole presentation and
   Space pauses or resumes video and audio; mouse buttons do not skip it.
+- `ExecuteSceneFrameAndInteractions` at `0x13277` marks a type-0 frame label
+  played before calling `ExecutePresentationEntry` at `0x1652a` with keyboard
+  controls enabled. That path installs `PollPresentationEscOrSpaceCommand` at
+  `0x49039`: Space pauses or resumes the response video and its IAVF audio,
+  while Escape advances to the normal post-presentation callback with the
+  response still marked played. Type-1 interactive loops retain their separate
+  mouse and hotspot path and do not install these keyboard controls.
 - Opcode `0x1b` enters `HandleSceneEntryMediaPreviewOrPrompt` at `0x15b03`.
   That handler passes a target value of one and
   `MediaSequenceCounterEqualsTarget` at `0x15ac8` to `RunMediaSequence` at
