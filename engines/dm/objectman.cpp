@@ -190,7 +190,8 @@ void ObjectMan::extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
 		if (_iconGraphicFirstIndex[counter] > iconIndex)
 			break;
 	}
-	--counter;
+	if (counter > 0)
+		--counter;
 	byte *iconBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxObjectIcons000To031 + counter);
 	iconIndex -= _iconGraphicFirstIndex[counter];
 	_vm->_displayMan->_useByteBoxCoordinates = true;
@@ -215,7 +216,8 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 		if (_iconGraphicFirstIndex[iconGraphicIndex] > iconIndex)
 			break;
 	}
-	iconGraphicIndex--;
+	if (iconGraphicIndex > 0)
+		iconGraphicIndex--;
 	byte *iconBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(iconGraphicIndex + kDMGraphicIdxObjectIcons000To031);
 	iconIndex -= _iconGraphicFirstIndex[iconGraphicIndex];
 	int16 byteWidth;
