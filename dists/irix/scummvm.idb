@@ -25,6 +25,7 @@ f 0644 root sys usr/ScummVM/share/scummvm/cryo.dat cryo.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/cryomni3d.dat cryomni3d.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/darkseed.dat darkseed.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/drascula.dat drascula.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/eem.dat eem.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/encoding.dat encoding.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/fonts.dat fonts.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/fonts-cjk.dat fonts-cjk.dat scummvm.sw.eoe
@@ -40,6 +41,7 @@ f 0644 root sys usr/ScummVM/share/scummvm/kyra.dat kyra.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/lure.dat lure.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/macgui.dat macgui.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/macventure.dat macventure.dat scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/macs2_translation.dat macs2_translation.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/monkey4-patch.m4b monkey4-patch.m4b scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/mort.dat mort.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/myst3.dat myst3.dat scummvm.sw.eoe

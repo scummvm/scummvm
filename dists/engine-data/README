@@ -81,6 +81,9 @@ scripts, from.
 lure.dat:
 This file contains essential game data used by Lure of the Temptress game.
 
+macs2_translation.dat:
+This file contains game translations for the MACS2 engine.
+
 macgui.dat:
 The file contains set of offsets for recreation of Classic Mac OS GUI, used
 by Director, MacVenture and WAGE engines.
