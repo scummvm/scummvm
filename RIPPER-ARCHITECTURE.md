@@ -132,9 +132,15 @@
   named/milestone flags `0x46 + entry` as availability bits and game-text IDs
   `0xdc + entry` as labels. It stores the original entry byte separately from
   the visible chooser row, so locked entries do not change dispatch IDs. The
-  chooser control ID is `0x73a`; its recovered layout starts at x=50 and is
-  clamped to y=210 with a 282x190 outer rectangle. Entry 1 dispatches
-  `RunWacMugSelectionScene` at `0x236b9`, entry 2 dispatches
+  chooser control ID is `0x73a`; the call site supplies x=400, y=50, width=190,
+  and height=282. `InitializeSharedPresentationTemplates` at `0x1196f` gives
+  this chooser its own `wacmnu0` through `wacmnu15` skin and `small.fnt`.
+  `TileChooserControlFrame` at `0x54fbe` uses the first nine bitmaps as a
+  column-major 3x3 frame, while `ComputeChooserControlLayout` at `0x54a74`
+  applies a 20-pixel heading inset, 6-pixel bottom inset, 5-pixel left inset,
+  20-pixel right inset, and 14-pixel rows. The heading, normal rows, and active
+  row use indexed glyph colors 248, 251, and 254 over chooser background 4.
+  Entry 1 dispatches `RunWacMugSelectionScene` at `0x236b9`, entry 2 dispatches
   `PlayMugSelectionCompletionMedia` at `0x2361c`, and the remaining database
   entry handlers are explicit stubs.
 - `RunWacMugSelectionScene` owns nine draggable controls (`0x640` through
