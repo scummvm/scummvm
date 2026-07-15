@@ -157,7 +157,7 @@ void drawComfyKeyboardUi(bool actorDebugEnabled) {
 		draw->AddRect(origin, ImVec2(origin.x + 700, origin.y + 390), keyboardColor(110, 110, 105), 20, 0, 2);
 
 		ImGui::SetCursorPos(ImVec2(24, 46));
-		keyboardDrawToggle("HANDSET", 13, ImVec2(92, 258), handset, keyboardColor(248, 70, 54));
+		keyboardDrawToggle("HANDSET", COMFY_KEYBOARD_HANDSET_CONTACT, ImVec2(92, 258), handset, keyboardColor(248, 70, 54));
 
 		static const char *phoneLabels[] = {"SNAILY", "BUDDY", "JUMPY", "FEELY", "COMFY"};
 		static const uint phoneBits[] = {4, 16, 10, 22, 20};
@@ -174,7 +174,7 @@ void drawComfyKeyboardUi(bool actorDebugEnabled) {
 		keyboardDrawMomentary("STOP", 12, ImVec2(58, 58), blueDark);
 
 		ImGui::SetCursorPos(ImVec2(702, 82));
-		keyboardDrawToggle("ON\nOFF", 7, ImVec2(22, 78), keyboardColor(86, 91, 95), keyboardColor(40, 160, 72));
+		keyboardDrawToggle("ON\nOFF", COMFY_KEYBOARD_ON_CONTACT, ImVec2(22, 78), keyboardColor(86, 91, 95), keyboardColor(40, 160, 72));
 
 		ImGui::SetCursorPos(ImVec2(604, 132));
 		keyboardDrawMomentary("SUN", 0, ImVec2(80, 42), blue);

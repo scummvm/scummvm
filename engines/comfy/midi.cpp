@@ -73,8 +73,8 @@ uint16 ComfyEngine::midiTick() {
 
 			_system->delayMillis(1);
 		}
-	} while ((_engineVersion == 3 && _midiTimeCounter <= previousCounter) ||
-		(_engineVersion != 3 && _midiTimeCounter == previousCounter));
+	} while (!shouldQuit() && ((_engineVersion == 3 && _midiTimeCounter <= previousCounter) ||
+		(_engineVersion != 3 && _midiTimeCounter == previousCounter)));
 
 	_midiInstanceEventTime = _midiTimeCounter;
 	_midiEventBaseTime = (int32)_midiInstanceEventTime;

@@ -199,6 +199,13 @@ void ComfyEngine::setKeyboardContact(uint16 contact, bool pressed, bool keymappe
 	uint32 mask = 1 << contact;
 	uint32 *activeMask = keymapper ? &_keymapperActiveMask : &_toyKeyboardActiveMask;
 	uint32 *latchedMask = keymapper ? &_keymapperLatchedMask : &_toyKeyboardLatchedMask;
+	if (keymapper && (contact == COMFY_KEYBOARD_ON_CONTACT || contact == COMFY_KEYBOARD_HANDSET_CONTACT)) {
+		if (pressed)
+			*activeMask ^= mask;
+
+		return;
+	}
+
 	if (pressed) {
 		*activeMask |= mask;
 		*latchedMask &= ~mask;
@@ -221,7 +228,7 @@ uint32 ComfyEngine::lptKeyboardScan() {
 	if (_engineVersion == 3 && _inputDeviceMode == 2) {
 		_keyboardActiveMask |= _keymapperActiveMask;
 		_keyboardLatchedMask |= _keymapperLatchedMask;
-		_keymapperActiveMask = 0;
+		_keymapperActiveMask &= COMFY_KEYBOARD_TOGGLE_MASK;
 		_keymapperLatchedMask = 0;
 	}
 
