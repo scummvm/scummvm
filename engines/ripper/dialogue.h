@@ -20,6 +20,7 @@ public:
 	bool execute(const CompiledScript &script, const ScriptCommand &command, bool includeChoice = true);
 	bool service(const MouseState &mouse, uint &result);
 	void updateHover(const Common::Point &point);
+	bool contains(const Common::Point &point) const;
 	void draw() const;
 	bool isPending() const { return _pending; }
 	bool hasChoices() const { return !_choices.empty(); }
