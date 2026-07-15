@@ -694,6 +694,8 @@ bool ScriptManager::advanceBa0ToFrame(uint nextFrame) {
 			if (!_engine->getMedia()->playScene(mediaPath, frame.x, frame.y, false,
 				frame.presentationType == 1 && frame.interactionCount != 0))
 				return false;
+			if (frame.interactionCount != 0)
+				return true;
 		}
 
 		if (frame.interactionCount != 0 && !_awaitingBa0Interaction) {
